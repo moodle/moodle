@@ -162,26 +162,26 @@ if ($INSTALL['stage'] == 2) {
     if (($fh = @fopen($INSTALL['dirroot'].'/install.php', 'r')) === false ) {
         $CFG->dirroot = dirname(__FILE__);
         $INSTALL['dirroot'] = dirname(__FILE__);
-        $errormsg = get_string('dirrooterror', 'install');
-    } else {
-        fclose($fh);
+        $errormsg .= get_string('dirrooterror', 'install').'<br />';
+    } 
+    if ($fh) fclose($fh);
             
-        $CFG->dirroot = $INSTALL['dirroot'];
+    $CFG->dirroot = $INSTALL['dirroot'];
 
-        /// check wwwroot
+    /// check wwwroot
+    if (ini_get('allow_url_fopen')) {
         if (($fh = @fopen($INSTALL['wwwroot'].'/install.php', 'r')) === false) {
-            $errormsg = get_string('wwwrooterror', 'install');
-        } else {
-            fclose($fh);
-
-            /// check dataroot
-            $CFG->dataroot = $INSTALL['dataroot'];
-            if (make_upload_directory('sessions', false) === false ) {
-                $errormsg = get_string('datarooterror', 'install');
-            }            
+            $errormsg .= get_string('wwwrooterror', 'install').'<br />';
         }
     }
-    
+    if ($fh) fclose($fh);
+
+    /// check dataroot
+    $CFG->dataroot = $INSTALL['dataroot'];
+    if (make_upload_directory('sessions', false) === false ) {
+        $errormsg = get_string('datarooterror', 'install').'<br />';
+    }
+    if ($fh) fclose($fh); 
 
     if (!empty($errormsg)) $nextstage = 2;
 
@@ -555,7 +555,7 @@ function form_table($nextstage = 0, $formaction = "install.php") {
             <tr>
                 <td class="td_left"><p><?php print_string('password') ?></p></td>
                 <td class="td_right">
-                    <input type="text" size="40" name="dbpass" value="<?php echo $INSTALL['dbpass'] ?>" />
+                    <input type="password" size="40" name="dbpass" value="<?php echo $INSTALL['dbpass'] ?>" />
                 </td>
             </tr>
             <tr>
