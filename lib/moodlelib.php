@@ -119,6 +119,13 @@ function print_heading($text, $align="CENTER", $size=3) {
     echo "<P ALIGN=\"$align\"><FONT SIZE=\"$size\"><B>".stripslashes($text)."</B></FONT></P>";
 }
 
+function print_heading_with_help($text, $helppage, $module="moodle") {
+// Centered heading with attached help button (same title text)
+    echo "<P ALIGN=\"CENTER\"><FONT SIZE=\"3\"><B>".stripslashes($text);
+    helpbutton($helppage, $text, $module);
+    echo "</B></FONT></P>";
+}
+    
 function print_continue($link) {
     global $HTTP_REFERER;
 
