@@ -3,7 +3,7 @@
 
 	require_once("../config.php");
 
-    define("MAX_USERS_PER_PAGE", 30);
+    define("MAX_USERS_PER_PAGE", 50);
 
     require_variable($id);         // course id
     optional_variable($add, "");
@@ -115,7 +115,7 @@
         echo "<p align=center>$strnopotentialstudents</p>";
 
     } else if ($usercount > MAX_USERS_PER_PAGE) {
-        echo "<p align=center>$strtoomanytoshow</p>";
+        echo "<p align=center>$strtoomanytoshow ($usercount) </p>";
 
     } else {
 
