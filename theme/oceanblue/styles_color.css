@@ -350,6 +350,17 @@ th {
     background-color: #F0F0F0;
 }
 
+.glossarycomment {
+    border-color: #DDDDDD;
+}
+
+.glossarycomment .entryheader,
+.glossarycomment .picture,
+.glossarycomment .left {
+    background-color: #F0F0F0;
+
+}
+
 
 #mod-glossary-report .generalbox .teacher {
     background: #F0F0F0;
@@ -363,7 +374,7 @@ th {
     color:#990000;
 }
 
-.forumheadminimal {
+.sideblock .post .head {
     color:#555555;
 }
 
@@ -402,7 +413,14 @@ table.message_search_results td {
 }
 
 
+/* quiz */
 
+body#mod-quiz-report table#attempts td {
+    border-color: #dddddd;
+}
+body#mod-quiz-report table#attempts .r1 {
+    background-color: #eeeeee;
+}
 
 
 

@@ -207,32 +207,16 @@ table.formtable tbody th {
 }
 
 .forumaddnew,
-.forumaddnewminimal,
 .forumnodiscuss,
-.forumnodiscussminimal,
-.forumolddiscussminimal,
 .noticeboxcontent {
     text-align:center;
 }
 
 .forumnodiscuss,
-.forumnodiscussminimal {
     font-weight:normal;
 }
 
-.forumpostheadername,
-.forumpostheaderreplies,
-.forumpostheaderdate {
-    font-size:small;
-}
 
-.forumaddnewminimal, 
-.forumnodiscussminimal,
-.forumheadminimal, 
-.foruminfominimal,
-.forumolddiscussminimal {
-    font-size:x-small;
-}
 
 .forumpost .topic .subject {
     font-weight: normal;
@@ -289,6 +273,16 @@ table.formtable tbody th {
     font-size:x-small;
 }
 
+body#mod-quiz-report table#attempts .header {
+    text-align: left;
+}
+body#mod-quiz-report table#attempts .picture {
+    text-align: center !important;
+}
+body#mod-quiz-report .controls {
+    text-align: center;
+}
+
 
 /* glossary */
 .glossarypost .commands {
@@ -300,6 +294,10 @@ table.formtable tbody th {
 }
 .concept {
     font-weight: normal;
+}
+.glossarycomment .time {
+    font-size: 0.7em;
+    font-style: italic;
 }
 
 
@@ -404,6 +402,12 @@ table.calendar-controls .next {
     text-align:center;
 }
 
+.sideblock .head,
+.sideblock .info {
+    font-size: 0.85em;
+}
+
+
 /* block_rss_client.php */
 .rssclientlink {
     font-size:x-small;
@@ -466,4 +470,12 @@ body#user-index #longtimenosee {
 
 .helplink {
     font-size:0.8em;
+}
+
+.headingblock .title {
+    font-weight: normal;
+}
+.headingblock .link {
+    font-size: 0.9em;
+    font-weight: normal;
 }
