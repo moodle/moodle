@@ -12,6 +12,7 @@ $string['canretake'] = "\$a can re-take";
 $string['checknavigation'] = "Check navigation";
 $string['confirmdeletionofthispage'] = "Confirm deletion of this page";
 $string['congratulations'] = "Congratulations - end of lesson reached";
+$string['continue'] = "Continue";
 $string['deadline'] = "Deadline";
 $string['deletingpage'] = "Deleting page: \$a";
 $string['displayofgrade'] = "Display of grade (for student)";
