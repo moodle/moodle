@@ -542,6 +542,19 @@ function delete_records($table, $field1="", $value1="", $field2="", $value2="", 
     return $db->Execute("DELETE FROM $CFG->prefix$table $select");
 }
 
+function delete_records_select($table, $select="") {
+/// Delete one or more records from a table
+/// "select" is a fragment of SQL to define the selection criteria
+
+    global $CFG, $db;
+
+    if ($select) {
+        $select = "WHERE $select";
+    }
+
+    return $db->Execute("DELETE FROM $CFG->prefix$table $select");
+}
+
 
 function insert_record($table, $dataobject, $returnid=true) {
 /// Insert a record into a table and return the "id" field if required
