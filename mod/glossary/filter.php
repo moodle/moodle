@@ -88,8 +88,7 @@
                         $href_tag_begin = "<a target=\"entry\" class=\"autolink\" title=\"$title\" href=\"$CFG->wwwroot/mod/glossary/showentry.php?courseid=$courseid&concept=$encodedconcept\" ".
                              "onClick=\"return openpopup('/mod/glossary/showentry.php?courseid=$courseid\&concept=$encodedconcept', 'entry', 'menubar=0,location=0,scrollbars,resizable,width=600,height=450', 0);\">";
                     }
-                    $replace = "\\[]'\"*()\?";
-                    $currentconcept = glossary_addslashes($replace,$concept->concept);
+                    $currentconcept = $concept->concept;
                     if ( $currentconcept = trim(strip_tags($currentconcept)) ) {
                         //Avoid integers < 1000 to be linked. See bug 1446.
                         $intcurrent = intval($currentconcept);
@@ -99,12 +98,12 @@
                         if ( !$concept->category ) {
                             if ( $aliases = get_records("glossary_alias","entryid",$concept->id, "alias") ) {
                                 foreach ($aliases as $alias) {
-                                    $currentalias = trim(glossary_addslashes($replace,$alias->alias));
+                                    $currentalias = trim(strip_tags($alias->alias));
                                     //Avoid integers < 1000 to be linked. See bug 1446.
                                     $intcurrent = intval($currentalias);
                                     if (!(!empty($intcurrent) && strval($intcurrent) == $currentalias && $intcurrent < 1000)) {
                                         if ( $currentalias != '' ) {
-                                            $currentconcept .= "|" . trim($currentalias);
+                                            $currentconcept .= "|" . $currentalias;
                                         }
                                     }
                                 }
@@ -121,91 +120,87 @@
     }
     
     function glossary_link_concepts($text,$concept,$href_tag_begin,$href_tag_end = "</a>",$casesensitive,$fullmatch) {
-        $concept = str_replace("/", "\/", $concept);
-        $list_of_words_cp = $concept;
 
-        if ($list_of_words_cp{0}=="|") {
-            $list_of_words_cp{0} = "";
-        }
-        if ($list_of_words_cp{strlen($list_of_words_cp)-1}=="|") {
-            $list_of_words_cp{strlen($list_of_words_cp)-1}="";
-        }
+        $list_of_words_cp = strip_tags($concept);
+
+        $list_of_words_cp = trim($list_of_words_cp,'|');
 
         $list_of_words_cp = trim($list_of_words_cp);
+
+        $list_of_words_cp = preg_quote($list_of_words_cp,'/');
+
+        //Take out scaped pipes
+        $list_of_words_cp = str_replace('\|','|',$list_of_words_cp);
+
         if ($fullmatch) {
             $invalidprefixs = "([a-zA-Z0-9])";
             $invalidsufixs  = "([a-zA-Z0-9])";
 
-            // getting ride of words or phrases that containg the pivot concept on it		
+            //Avoid seaching in the string if it's inside invalidprefixs and invalidsufixs
             $words = array();
-            $regexp = '/' . $invalidprefixs . "(" . $list_of_words_cp . ")" . "|"  . "(" . $list_of_words_cp . ")". $invalidsufixs .  '/is';
+            $regexp = '/'.$invalidprefixs.'('.$list_of_words_cp.')|('.$list_of_words_cp.')'.$invalidsufixs.'/is';
+
             preg_match_all($regexp,$text,$list_of_words);
 
             if ($list_of_words) {
                 foreach (array_unique($list_of_words[0]) as $key=>$value) {
                     $words['<*'.$key.'*>'] = $value;
                 }
-                if ( $words ) {
+                if (!empty($words)) {
                     $text = str_replace($words,array_keys($words),$text);
                 }
             }
         }
 
-        // getting ride of "nolink" tags
+        //Now avoid searching inside the <nolink>tag
         $excludes = array();
         preg_match_all('/<nolink>(.+?)<\/nolink>/is',$text,$list_of_excludes);
         foreach (array_unique($list_of_excludes[0]) as $key=>$value) {
             $excludes['<+'.$key.'+>'] = $value;
         }
-        if ( $excludes ) {
+        if (!empty($excludes)) {
             $text = str_replace($excludes,array_keys($excludes),$text);
         }
 
-        // getting ride of "A" tags
+        //Now avoid searching inside links
         $links = array();
         preg_match_all('/<A (.+?)>(.+?)<\/A>/is',$text,$list_of_links);
-
         foreach (array_unique($list_of_links[0]) as $key=>$value) {
             $links['<@'.$key.'@>'] = $value;
         }
-        if ( $links ) {
+        if (!empty($links)) {
             $text = str_replace($links,array_keys($links),$text);
         }
-        // getting ride of all other tags
+
+        //Now avoid searching inside every tag
         $final = array();
         preg_match_all('/<(.+?)>/is',$text,$list_of_tags);
-
         foreach (array_unique($list_of_tags[0]) as $key=>$value) {
             $final['<|'.$key.'|>'] = $value;
         }
-
-        $text = str_replace($final,array_keys($final),$text);
-
-        $list_of_words_cp = str_replace('{', '\{', $list_of_words_cp);
-        $list_of_words_cp = str_replace('+', '\+', $list_of_words_cp);
-        $list_of_words_cp = str_replace('(', '\(', $list_of_words_cp);
-
-        $list_of_words_cp = "(".$list_of_words_cp.")";
-
-        if ( $casesensitive ) {
-            $text = ereg_replace("$list_of_words_cp", "$href_tag_begin"."\\1"."$href_tag_end", $text);
-        } else {
-            $text = eregi_replace("$list_of_words_cp", "$href_tag_begin"."\\1"."$href_tag_end", $text);
+        if (!empty($final)) {
+            $text = str_replace($final,array_keys($final),$text);
         }
 
-        if ( $final ) {
+
+        if ($casesensitive) {
+            $text = preg_replace('/('.$list_of_words_cp.')/s', $href_tag_begin.'$1'.$href_tag_end, $text);
+        } else {
+            $text = preg_replace('/('.$list_of_words_cp.')/is', $href_tag_begin.'$1'.$href_tag_end, $text);
+        }
+
+        //Now rebuild excluded areas
+        if (!empty($final)) {
             $text = str_replace(array_keys($final),$final,$text);
         }
-        if ( $links ) {
+        if (!empty($links)) {
             $text = str_replace(array_keys($links),$links,$text);
         }
-        if ( $excludes ) {
+        if (!empty( $excludes)) {
             $text = str_replace(array_keys($excludes),$excludes,$text);
         }
-        if ( $fullmatch and isset($words) ) {
-            if ($words) {
-                $text = str_replace(array_keys($words),$words,$text);
-            }
+        if ($fullmatch and !empty($words)) {
+            $text = str_replace(array_keys($words),$words,$text);
         }
         return $text;
     }
