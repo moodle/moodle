@@ -3,24 +3,28 @@
 <tr valign=top>
 	<td><P><? print_string("fullname") ?>:</td>
 	<td><input type="text" name="fullname" size=50 value="<? p($form->fullname) ?>">
+    <? helpbutton("coursefullname", get_string("fullname")) ?>
 	<? formerr($err["fullname"]) ?>
 	</td>
 </tr>
 <tr valign=top>
 	<td><P><? print_string("shortname") ?>:</td>
 	<td><input type="text" name="shortname" size=10 value="<? p($form->shortname) ?>">
+    <? helpbutton("courseshortname", get_string("shortname")) ?>
 	<? formerr($err["shortname"]) ?>
 	</td>
 </tr>
 <tr valign=top>
 	<td><P><? print_string("summary") ?>:</td>
 	<td><TEXTAREA NAME=summary COLS=50 ROWS=10 WRAP=virtual><? p($form->summary) ?></TEXTAREA>
+    <? helpbutton("text", get_string("helptext")) ?>
 	<? formerr($err["summary"]) ?>
 	</td>
 </tr>
 <tr valign=top>
 	<td><P><? print_string("enrolmentkey") ?>:</td>
 	<td><input type="text" name="password" size=25 value="<? p($form->password) ?>">
+    <? helpbutton("enrolmentkey", get_string("enrolmentkey")) ?>
 	<? formerr($err["password"]) ?>
 	</td>
 </tr>
@@ -29,13 +33,15 @@
 	<td><?
     $choices["0"] = get_string("guestsno");
     $choices["1"] = get_string("guestsyes");
-    choose_from_menu ($choices, "guest", $form->guest, "") ?>
+    choose_from_menu ($choices, "guest", $form->guest, "");
+    helpbutton("guestaccess", get_string("opentoguests")); ?>
 	</td>
 </tr>
 <tr valign=top>
 	<td><P><? print_string("category") ?>:</td>
 	<td><? 
            choose_from_menu ($form->categories, "category", "$form->category", "");
+           helpbutton("coursecategory", get_string("category"));
 	       formerr($err["category"]);
         ?>
 	</td>
@@ -67,6 +73,7 @@
                         "9" => "9 $newsitems",
                         "10" => "10 $newsitems");
        choose_from_menu ($options, "newsitems", "$form->newsitems", "");
+       helpbutton("coursenewsitems", get_string("newsitemsnumber"));
        formerr($err["newsitems"]);
     ?>
     </td>
@@ -75,6 +82,7 @@
 	<td><P><? print_string("startdate") ?>:</td>
 	<td><?
            print_date_selector("startday", "startmonth", "startyear", $form->startdate);
+           helpbutton("coursestartdate", get_string("startdate"));
 	       formerr($err["startdate"]);
 	?></td>
 </tr>
@@ -85,6 +93,7 @@
               $sectionmenu[$i] = "$i";
            }
            choose_from_menu ($sectionmenu, "numsections", "$form->numsections");
+           helpbutton("coursenumsections", get_string("numberweeks"));
 	       formerr($err["numsections"]);
 	?></td>
 </tr>
@@ -102,7 +111,7 @@
 </tr>
 <tr>
 	<td></td>
-	<td><input type="submit" value="<? print_string("updatethiscourse") ?>"></td>
+	<td><input type="submit" value="<? print_string("savechanges") ?>"></td>
 </TABLE>
 <INPUT type="hidden" name="id" value="<?=$course->id ?>">
 </FORM>
