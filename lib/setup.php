@@ -11,7 +11,7 @@
 //////////////////////////////////////////////////////////////
 
 /// If there are any errors in the standard libraries we want to know!
-    error_reporting(E_ALL);   // use 0=none 7=normal 15=all 
+    error_reporting(E_ALL);
 
 /// Connect to the database using adodb
 

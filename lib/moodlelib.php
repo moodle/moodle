@@ -404,7 +404,7 @@ function isstudent($courseid, $userid=0) {
     global $USER;
 
     if (!$userid) {
-        return $USER->student[$courseid];
+        return !empty($USER->student[$courseid]);
     }
 
   //  $timenow = time();   // todo:  add time check below
