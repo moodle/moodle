@@ -43,6 +43,8 @@
             $buttontext = update_module_button($cm->id, $course->id, $strforum);
         } else {
             $cm->id = NULL;
+            $cm->visible = 1;
+            $cm->course = $course->id;
             $buttontext = "";
         }
 

@@ -2552,7 +2552,10 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5,
             error("Could not find the course this forum belongs to!");
         }
         if (! $cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
-            error("Course Module ID was incorrect");
+            // This happens for example for the teacher forum
+            $cm->id = NULL;
+            $cm->visible = 1;
+            $cm->course = $course->id;
         }
         require_course_login($course, true, $cm);
 
