@@ -9,7 +9,7 @@ function paypal_upgrade($oldversion=0) {
     $result = true;
 
     if ($oldversion == 0) {
-        $result = modify_database("$CFG->dirroot/enrol/paypal/db/postgres7.sql");
+        modify_database("$CFG->dirroot/enrol/paypal/db/postgres7.sql");
     }
 
     return $result;
