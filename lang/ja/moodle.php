@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.2 development (2004013101)
+      // moodle.php - created with Moodle 1.2 development (2004020903)
 
 
 $string['action'] = '操作';
@@ -111,8 +111,9 @@ $string['choose'] = '選択';
 $string['choosecourse'] = 'コースを選択してください';
 $string['chooselivelogs'] = '最近の活動を表示する';
 $string['chooselogs'] = '表示したいログを選択してください';
+$string['choosereportfilter'] = 'レポートのフィルタを選択してください';
 $string['choosetheme'] = 'テーマの選択';
-$string['chooseuser'] = 'ユーザを選択する';
+$string['chooseuser'] = 'ユーザを選択してください';
 $string['city'] = '都道府県';
 $string['cleaningtempdata'] = '一時データのクリーニング';
 $string['clicktochange'] = '変更';
@@ -249,6 +250,7 @@ $string['downloadtext'] = 'テキスト形式でダウンロードする';
 $string['doyouagree'] = 'これらの要件を読んで理解できましたか?';
 $string['edit'] = '$a 編集';
 $string['editcoursesettings'] = 'コース設定';
+$string['editgroupprofile'] = 'グループプロフィールの編集';
 $string['editinga'] = '$a 編集';
 $string['editmyprofile'] = 'プロフィールの編集';
 $string['editsummary'] = '概要の編集';
@@ -376,6 +378,7 @@ $string['groupaddusers'] = '選択したものをグループに追加する';
 $string['groupinfo'] = '選択したグループの情報';
 $string['groupinfomembers'] = '選択したメンバーの情報';
 $string['groupinfopeople'] = '選択した人の情報';
+$string['groupmemberssee'] = 'グループメンバーの表示';
 $string['groupmembersselected'] = '選択したグループのメンバー';
 $string['groupmode'] = 'グループモード';
 $string['groupmy'] = 'マイグループ';
@@ -385,6 +388,7 @@ $string['groupremove'] = '選択したグループを削除する';
 $string['groupremovemembers'] = '選択したメンバーを削除する';
 $string['groups'] = 'グループ';
 $string['groupsnone'] = 'グループ無し';
+$string['groupsseparate'] = '分離グループ';
 $string['guestskey'] = 'キーを持っているゲストを許可する';
 $string['guestsno'] = 'ゲストを許可しない';
 $string['guestsnotallowed'] = '\'$a\' さん申し訳ございません。ゲストでの入室は許可されていません。';
@@ -429,6 +433,7 @@ $string['includelogentries'] = 'ログファイルを含む';
 $string['includemodules'] = 'モジュールを含む';
 $string['includeneededusers'] = '必要なユーザを含む';
 $string['includeuserfiles'] = 'ユーザファイルを含む';
+$string['institution'] = '施設';
 $string['invalidemail'] = '不正なメールアドレスです';
 $string['invalidlogin'] = '不正なログインです、再度ログインしてください';
 $string['jumpto'] = '移動 ...';
@@ -499,6 +504,7 @@ $string['missingemail'] = 'メールアドレスが入力されていません';
 $string['missingfirstname'] = '名前が入力されていません';
 $string['missingfullname'] = 'フルネームが入力されていません';
 $string['missinglastname'] = '名字が入力されていません';
+$string['missingname'] = '名前が入力されていません';
 $string['missingnewpassword'] = '新しいパスワードが入力されていません';
 $string['missingpassword'] = 'パスワードが入力されていません';
 $string['missingshortname'] = '省略名が入力されていません';
