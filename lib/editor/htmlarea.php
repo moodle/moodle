@@ -27,6 +27,8 @@
 // Version 3.0 developed by Mihai Bazon for InteractiveTools.
 //   http://dynarch.com/mishoo
 //
+//
+// Modified for Moodle by Janne Mikkonen
 // $Id$
 
 // Creates a new HTMLArea object.  Tries to replace the textarea with the given
