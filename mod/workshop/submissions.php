@@ -1410,7 +1410,7 @@
 		
 		set_field("workshop", "overallocation", $form->overallocation, "id", $workshop->id);
 		echo "<p align=\"center\"><b>".get_string("overallocation", "workshop").": $form->overallocation</b></p>\n";
-		add_to_log($course->id, "workshop", "over allocation", "view.php?id=$cm->id", $form->overallocation);
+		add_to_log($course->id, "workshop", "over allocation", "view.php?id=$cm->id", $form->overallocation,$cm->id);
 
 		redirect("submissions.php?action=adminlist&id=$cm->id");
 		}

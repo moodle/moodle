@@ -948,7 +948,7 @@
 			echo "<CENTRE><B>".get_string("savedok", "workshop")."</B></CENTRE><BR>\n";
 			
 			add_to_log($course->id, "workshop", "grade", 
-                 "assessments.php?action=viewassessment&id=$cm->id&aid=$assessment->id", "$assessment->id");
+                 "assessments.php?action=viewassessment&id=$cm->id&aid=$assessment->id", "$assessment->id", "$cm->id");
 		}
 		switch ($form->stype) {
 			case "student" : 
