@@ -1,6 +1,6 @@
 Español Internacional
 
-Versión:  1.3dev
+Versión:  1.3
 
 Coordinador de traducción: 
 Claudio Tavares (claudio@enlaceacademico.com)
