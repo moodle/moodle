@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.2.1 (2004032500)
+      // editor.php - created with Moodle 1.3 (2004052500)
 
 
 $string['about'] = 'O tomto editoru';
@@ -27,6 +27,7 @@ $string['cut'] = 'Vyjmout výbìr';
 $string['delete'] = 'Odstranit';
 $string['filebrowser'] = 'Prohlí¾eè souborù';
 $string['forecolor'] = 'Barva písma';
+$string['fullscreen'] = 'Na celou obrazovku';
 $string['heading'] = 'Nadpis';
 $string['height'] = 'Vý¹ka';
 $string['hilitecolor'] = 'Barva zvýraznìní';
@@ -47,6 +48,7 @@ $string['justifyleft'] = 'Zarovnat vlevo';
 $string['justifyright'] = 'Zarovnat vpravo';
 $string['layout'] = 'Vzhled';
 $string['left'] = 'Vlevo';
+$string['lefttoright'] = 'Zleva doprava';
 $string['linkproperties'] = 'Vlastnosti odkazu';
 $string['linktarget'] = 'Kde otevøít';
 $string['linktargetblank'] = 'V novém oknì';
@@ -57,6 +59,7 @@ $string['linktargettop'] = 'Ve stejném oknì';
 $string['linktitle'] = 'Titulek';
 $string['linkurl'] = 'URL';
 $string['middle'] = 'Uprostøed (middle)';
+$string['minimize'] = 'Minimalizovat editor';
 $string['move'] = 'Pøesunout';
 $string['normal'] = 'Normální';
 $string['notimage'] = 'Vybraný soubor není obrázek. Prosím, vyberte jiný soubor.';
@@ -76,7 +79,9 @@ $string['redo'] = 'Opakovat poslední akci';
 $string['removelink'] = 'Odstranit odkaz';
 $string['rename'] = 'Pøejmenovat';
 $string['right'] = 'Vpravo';
+$string['righttoleft'] = 'Zprava doleva';
 $string['rows'] = 'Sloupcù';
+$string['selectcolor'] = 'Výbìr barvy';
 $string['selection'] = 'Výbìr';
 $string['showhelp'] = 'Nápovìda k pou¾ívání editoru';
 $string['size'] = 'Velikost';
@@ -95,6 +100,7 @@ $string['unorderedlist'] = 'Odrá¾kový seznam';
 $string['upload'] = 'Nahrát';
 $string['vertical'] = 'Svisle';
 $string['width'] = '©íøka';
+$string['wordclean'] = 'Vyèistit HTML z Wordu';
 $string['zip'] = 'ZIP';
 
 ?>

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.2 Beta (2004022400)
+      // auth.php - created with Moodle 1.3 (2004052500)
 
 
 $string['auth_dbdescription'] = 'Tato metoda pou¾ívá tabulku v externí databázi ke kontrole, zda zadané u¾ivatelské jméno a heslo je platné.  Pøi vytváøení nového úètu mohou být informace z dal¹ích polí zkopírovány do databáze Moodle.';
@@ -28,9 +28,10 @@ $string['auth_ldap_create_context'] = 'Povolíte-li vytváøení u¾ivatelù (po ovìøe
 $string['auth_ldap_creators'] = 'Seznam skupin, jejich¾ èlenové jsou oprávnìni vytváøet nové kurzy. Jednotlivé skupiny oddìlujte støedníkem. Pøíklad: \'cn=ucitele,ou=zamestnanci,o=naseskola\'';
 $string['auth_ldap_host_url'] = 'Zadejte URL serveru LDAP. Napøíklad \'ldap://ldap.naseskola.cz/\' nebo \'ldaps://ldap.naseskola.cz/\' ';
 $string['auth_ldap_memberattribute'] = 'Urèete atribut èlena skupiny (user member attribute), pokud u¾ivatel patøí do skupiny. Vìt¹inou \'member\'';
-$string['auth_ldap_search_sub'] = 'Zadejte hodnotu &lt;&gt; 0 pokud chcete prohledávat u¾ivatele v subkontextech.';
+$string['auth_ldap_search_sub'] = 'Zadejte hodnotu <> 0 pokud chcete prohledávat u¾ivatele v subkontextech.';
 $string['auth_ldap_update_userinfo'] = 'Aktualizovat informace o u¾ivateli (pøíjmení, køestní jméno, adresa...) z LDAP serveru do Moodle. Pro mapování viz /auth/ldap/attr_mappings.php';
 $string['auth_ldap_user_attribute'] = 'Atribut pou¾itý pro pojmenování a vyhledávání u¾ivatelù. Vìt¹inou \'cn\'.';
+$string['auth_ldap_version'] = 'Verze protokolu LDAP, kterou pou¾ívá vá¹ server.';
 $string['auth_ldapdescription'] = 'Tato metoda poskytuje ovìøení u¾ivatele proti LDAP serveru. Je-li zadané jméno a heslo platné, Moodle si vytvoøí nový záznam o u¾ivateli ve své vlastní databázi. Tento modul dále umí naèíst informace z LDAP serveru a pøednastavit po¾adované pole v Moodle. Pøi dal¹ím pøihla¹ování se ji¾ pouze ovìøuje u¾ivatelské jméno a heslo.';
 $string['auth_ldapextrafields'] = 'Tato pole jsou volitelná. Mù¾ete vybrat, která pole s informacemi z <B>LDAP serveru</B> budou pou¾ita jako pøednastavená v Moodle. <P>Necháte-li pole prázdná, nepøevezmou se ¾ádné údaje z LDAP a Moodle pou¾ije vlastní pøednastavené hodnoty. <P>V ka¾dém pøípadì si u¾ivatel mù¾e tyto hodnoty mìnit po pøihlá¹ení sám.';
 $string['auth_ldaptitle'] = 'Pou¾ití LDAP serveru';
@@ -57,7 +58,7 @@ $string['changepassword'] = 'URL ke zmìnì hesla';
 $string['changepasswordhelp'] = 'Zde mù¾ete urèit URL, na kterém si va¹i u¾ivatelé mohou obnovit heslo nebo zmìnit své u¾ivatelské jméno, pokud jej zapomnìli. URL bude u¾ivatelùm poskytnuto jako tlaèitko na pøihla¹ovací a osobní stránce. Necháte-li toto pole prázdné, nebude toto tlaèítko zobrazováno.';
 $string['chooseauthmethod'] = 'Vyberte si zpùsob ovìøení u¾ivatelù: ';
 $string['guestloginbutton'] = 'Tlaèítko pro hosta';
-$string['instructions'] = 'Instrukce';
+$string['instructions'] = 'Pokyny';
 $string['md5'] = 'MD5 ¹ifrování';
 $string['plaintext'] = 'Èistý text';
 $string['showguestlogin'] = 'Na pøihla¹ovací stránce mù¾ete skrýt nebo ukázat tlaèítko pro pøihlá¹ení se jako host.';

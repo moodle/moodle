@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.2 Beta (2004022400)
+      // glossary.php - created with Moodle 1.3 (2004052500)
 
 
 $string['addcomment'] = 'Pøidat komentáø';
@@ -18,7 +18,7 @@ $string['areyousuredeletecomment'] = 'Jste si jistí, ¾e chcete odstranit tento k
 $string['areyousureexport'] = 'Jste si jistí, ¾e chcete exportovat tuto polo¾ku do';
 $string['ascending'] = '(vzestupnì)';
 $string['attachment'] = 'Pøíloha';
-$string['authorview'] = 'Procházet podle Autora';
+$string['authorview'] = 'Procházet podle autora';
 $string['back'] = 'Zpìt';
 $string['cantinsertcat'] = 'Nelze vlo¾it kategorii';
 $string['cantinsertrec'] = 'Nelze vlo¾it záznam';
@@ -33,7 +33,7 @@ $string['cnfallowdupentries'] = 'Urèete, zda budou implicitnì povoleny duplicitn
 $string['cnfapprovalstatus'] = 'Urèete implicitní stav schvalování polo¾ek vlo¾ených studenty';
 $string['cnfcasesensitive'] = 'Urèete, zda bude implicitnì zále¾et na VELKÝCH/malých písmenech u propojovaných polo¾ek';
 $string['cnfdefaulthook'] = 'Vyberte imlicitní výbìr pro první zobrazení slovníku.';
-$string['cnfdefaultmode'] = 'Vyberte implicitní rámec (frame) pro první zobrazení slovníku.';
+$string['cnfdefaultmode'] = 'Vyberte implicitní mód pro první zobrazení slovníku.';
 $string['cnffullmatch'] = 'Urèete, zda má u automatického propojování implicitnì odpovídat celá polo¾ka cílovému textu';
 $string['cnflinkentry'] = 'Urèete, zda má být implicitnì polo¾ka automaticky propojována';
 $string['cnflinkglossaries'] = 'Urèete, zda má být implicitnì slovník automaticky propojován';
@@ -49,6 +49,7 @@ $string['commentson'] = 'Komentáøe k';
 $string['commentupdated'] = 'Komentáø byl aktualizován.';
 $string['concept'] = 'Pojem';
 $string['concepts'] = 'Pojmy';
+$string['configenablerssfeeds'] = 'Tímto povolíte funkci RSS kanálù pro v¹echny slovníky. Budete je¹tì muset zapnout RSS kanály v nastavení jednotlivých slovníkù.';
 $string['currentglossary'] = 'Stávající slovník';
 $string['dateview'] = 'Procházet podle data';
 $string['defaultapproval'] = 'Implicitní stav schvalování';
@@ -68,6 +69,7 @@ $string['displayformat6'] = 'Seznam polo¾ek';
 $string['displayformatcontinuous'] = 'Souvislý bez autora';
 $string['displayformatdefault'] = 'Prostý slovníkový styl';
 $string['displayformats'] = 'Zpùsoby zobrazení';
+$string['displayformatssetup'] = 'Nastavení zpùsobù zobrazení';
 $string['duplicateentry'] = 'Duplicitní polo¾ka';
 $string['editcategories'] = 'Upravit kategorie';
 $string['editentry'] = 'Upravit polo¾ku';
@@ -81,6 +83,7 @@ $string['entryapproved'] = 'Polo¾ka byla schválena';
 $string['entrydeleted'] = 'Polo¾ka odstranìna';
 $string['entryexported'] = 'Polo¾ka úspì¹nì exportována';
 $string['entryishidden'] = '(tato polo¾ka je momentálnì skrytá)';
+$string['entryleveldefaultsettings'] = 'Výchozí nastavení pro polo¾ky';
 $string['entryusedynalink'] = 'Tato polo¾ka by mìla být automaticky propojována';
 $string['explainaddentry'] = 'Pøidat novou polo¾ku do stávajícího slovníku.<br>Pojem a jeho definice jsou povinná pole.';
 $string['explainall'] = 'Zobrazit V©ECHNY polo¾ky na jedné stránce';
@@ -97,6 +100,7 @@ $string['filetoimport'] = 'Importovat ze souboru';
 $string['fillfields'] = 'Pojem a definice jsou povinná pole.';
 $string['filtername'] = 'Automatické propojování slovníku';
 $string['fullmatch'] = 'Srovnávat pouze celá slova<br><small>(pøi automatickém propojování)</small>';
+$string['glossaryleveldefaultsettings'] = 'Výchozí nastavení pro slovník';
 $string['glossarytype'] = 'Typ slovníku';
 $string['glosssaryexported'] = 'Slovník exportován.';
 $string['importcategories'] = 'Importovat kategorie';
@@ -134,6 +138,7 @@ $string['ratingsuse'] = 'Pou¾ít hodnocení';
 $string['ratingtime'] = 'Omezit hodnocení pouze na polo¾ky v tomto rozsahu:';
 $string['rejectedentries'] = 'Zamítnuté polo¾ky';
 $string['rejectionrpt'] = 'Zpráva o zamítnutí';
+$string['rsssubscriberss'] = 'Zobrazit RSS kanál pro \'$a\' pojmy';
 $string['searchindefinition'] = 'Vyhledat text';
 $string['secondaryglossary'] = 'Vedlej¹í slovník';
 $string['sendinratings'] = 'Odeslat mé poslední hodnocení';
@@ -151,6 +156,8 @@ $string['totalentries'] = 'Polo¾ek celkem';
 $string['usedynalink'] = 'Automaticky propojovat polo¾ky slovníku';
 $string['waitingapproval'] = 'Èeká na schválení';
 $string['warningstudentcapost'] = '(Platí pouze, pokud toto není hlavní slovník)';
+$string['withauthor'] = 'Pojmy s autorem';
+$string['withoutauthor'] = 'Pojmy bez autora';
 $string['writtenby'] = 'od';
 $string['youarenottheauthor'] = 'Proto¾e nejste autorem tohoto komentáøe, nemù¾ete jej upravovat.';
 

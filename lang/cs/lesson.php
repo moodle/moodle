@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // lesson.php - created with Moodle 1.2.1 (2004032500)
+      // lesson.php - created with Moodle 1.3 (2004052500)
 
 
 $string['actionaftercorrectanswer'] = 'Akce po správné odpovìdi';
@@ -28,8 +28,9 @@ $string['displayofgrade'] = 'Zobrazit studentùm body';
 $string['endofbranch'] = 'Konec cesty';
 $string['endoflesson'] = 'Konec pøedná¹ky';
 $string['fileformat'] = 'Formát souboru';
-$string['firstanswershould'] = 'První odpovìï by mìla skoèit na &quot;správnou&quot; stránku';
+$string['firstanswershould'] = 'První odpovìï by mìla skoèit na \"správnou\" stránku';
 $string['gradeis'] = 'Poèet bodù: ';
+$string['handlingofretakes'] = 'Øízení opakovaných prùchodù';
 $string['here'] = 'Zde';
 $string['importquestions'] = 'Importovat otázky';
 $string['jump'] = 'Pøejít na';

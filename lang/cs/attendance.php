@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // attendance.php - created with Moodle 1.2 Beta (2004022400)
+      // attendance.php - created with Moodle 1.3 (2004052500)
 
 
 $string['absentlong'] = 'Chybí';
@@ -57,6 +57,7 @@ $string['takeroll'] = 'Zapsat v tomto dni docházku?';
 $string['tardiesperabsence'] = 'Kolik zpo¾dìní bude poèítáno jako jedna absence';
 $string['tardylong'] = 'Zpo¾dení';
 $string['tardyshort'] = 'Z';
+$string['teacheredit'] = 'Zjistit docházku';
 $string['thursday'] = 'Èt';
 $string['tuesday'] = 'Út';
 $string['viewall'] = 'Zobrazit v¹echny docházkové archy';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.2 Beta (2004022400)
+      // resource.php - created with Moodle 1.3 (2004052500)
 
 
 $string['addresource'] = 'Pøidat studijní materiál';
@@ -19,6 +19,7 @@ $string['configpopuptoolbar'] = 'Mìl by se v nových oknech implicitnì zobrazovat
 $string['configpopupwidth'] = 'Výchozí ¹íøka nových oken';
 $string['configwebsearch'] = 'Pokud pøidáváte vlo¾enou stránku nebo odkaz, je tato adresa nabídnuta jako stránka, kde mù¾e u¾ivatel najít po¾adované URL.';
 $string['directlink'] = 'Pøímý odkaz na tento soubor';
+$string['directoryinfo'] = 'Budou zobrazeny v¹echny soubory ve zvoleném adresáøi.';
 $string['editingaresource'] = 'Úprava studijního materiálu';
 $string['example'] = 'Pøíklad';
 $string['examplereference'] = 'BLACKMOREOVÁ, S. <i>Teorie memù : kultura a její evoluce.</i> Vyd. 1. Praha : Portál, 2001. 236 s. ISBN 80-7178-394-3.';
@@ -27,8 +28,10 @@ $string['fetchclienterror'] = 'Pøi pokusu o získání webové stránky do¹lo u va¹eh
 $string['fetcherror'] = 'Pøi pokusu o získání webové stránky do¹lo k chybì.';
 $string['fetchservererror'] = 'Pøi pokusu o získání webové stránky do¹lo u vzdáleného serveru k chybì (pravdìpodobnì chyba programu).</p>';
 $string['filename'] = 'Jméno souboru';
+$string['filtername'] = 'Automatické propojování materiálu';
 $string['fulltext'] = 'Full text';
 $string['htmlfragment'] = 'HTML fragment';
+$string['maindirectory'] = 'Adresáø s hlavními soubory';
 $string['modulename'] = 'Studijní materiál';
 $string['modulenameplural'] = 'Studijní materiály';
 $string['neverseen'] = 'Neprohlí¾eno';
@@ -58,5 +61,6 @@ $string['resourcetype5'] = 'Odkaz';
 $string['resourcetype6'] = 'HTML text';
 $string['resourcetype7'] = 'Program';
 $string['resourcetype8'] = 'Wiki text';
+$string['resourcetype9'] = 'Adresáø';
 
 ?>

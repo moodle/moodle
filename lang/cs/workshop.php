@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // workshop.php - created with Moodle 1.2 Beta (2004022400)
+      // workshop.php - created with Moodle 1.3 (2004052500)
 
 
 $string['absent'] = 'Chybí';
@@ -112,7 +112,7 @@ $string['noassessmentsdone'] = 'Nebylo provedeno ¾ádné hodnocení';
 $string['nosubmission'] = '®ádný úkol';
 $string['nosubmissionsavailableforassessment'] = 'Nejsou ¾ádné odevzdané úkoly k hodnocení';
 $string['notavailable'] = 'Není k dispozici';
-$string['noteonassessmentelements'] = 'Pov¹imnìte si, ¾e bodování je rozdìleno do nìkolika &quot;polo¾ek hodnocení&quot;.<br />Tím se dosáhne toho, ¾e bodování je snadnìj¹í a celistvìj¹í. Jako uèitel musíte pøidat tyto <br />polo¾ky  je¹tì pøed zpøístupnìním úkolu studentùm. To udìláte tak,<br />¾e kliknete na úkol v kurzu - budete vyzváni k pøidání<br />tìchto polo¾ek hodnocení. Jejich poèet mù¾ete mìnit na obrazovce Upravit úkol,<br /> samy polo¾ky mohou být upraveny na stránce &quot;Správa úkolù&quot;.';
+$string['noteonassessmentelements'] = 'Pov¹imnìte si, ¾e bodování je rozdìleno do nìkolika \"polo¾ek hodnocení\".<br />Tím se dosáhne toho, ¾e bodování je snadnìj¹í a celistvìj¹í. Jako uèitel musíte pøidat tyto <br />polo¾ky  je¹tì pøed zpøístupnìním úkolu studentùm. To udìláte tak,<br />¾e kliknete na úkol v kurzu - budete vyzváni k pøidání<br />tìchto polo¾ek hodnocení. Jejich poèet mù¾ete mìnit na obrazovce Upravit úkol,<br /> samy polo¾ky mohou být upraveny na stránce \"Správa úkolù\".';
 $string['notgraded'] = 'Nebodováno';
 $string['notitlegiven'] = 'Bez titulku';
 $string['numberofassessmentelements'] = 'Poèet komentáøù, polo¾ek hodnocení, bodù, kritérií nebo kategorií v oddílu';
@@ -220,6 +220,7 @@ $string['weightforbias'] = 'Váha zkreslení';
 $string['weightforgradingofassessments'] = 'Váha bodového hodnocení';
 $string['weightforpeerassessments'] = 'Váha hodnocení spolu¾áky';
 $string['weightforreliability'] = 'Váha spolehlivosti';
+$string['weightforteacherassessments'] = 'Váha hodnocení uèitele';
 $string['weights'] = 'Váhy';
 $string['weightsusedforfinalgrade'] = 'Váhy pro celkový poèet bodù';
 $string['weightsusedforsubmissions'] = 'Váhy pro odevzdané úkoly';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.2 Beta (2004022400)
+      // quiz.php - created with Moodle 1.3 (2004052500)
 
 
 $string['acceptederror'] = 'Pøijatelná chyba';
@@ -25,6 +25,7 @@ $string['attemptlast'] = 'Poslední pokus';
 $string['attemptquiznow'] = 'Pokusit se o zvládnutí testu';
 $string['attempts'] = 'Pokusù';
 $string['attemptsallowed'] = 'Dovoleno pokusù';
+$string['attemptsexist'] = 'O zvládnutí tohoto testu se ji¾ nìkdo pokusil';
 $string['attemptsunlimited'] = 'Neomezený poèet pokusù';
 $string['backtoquiz'] = 'Zpìt k úpravì testu';
 $string['bestgrade'] = 'Nejlep¹í bodování';
@@ -114,6 +115,7 @@ $string['noquestions'] = 'Zatím ¾ádné úlohy nebyly vlo¾eny do testu';
 $string['noresponse'] = 'Bez odezvy';
 $string['noreview'] = 'Není vám dovoleno pøezkou¹et tento test';
 $string['noreviewuntil'] = 'Není vám dovoleno pøezkou¹et tento test a¾ do $a';
+$string['notenoughanswers'] = 'Tento typ úlohy vy¾aduje nejménì $a odpovìdí';
 $string['notenoughsubquestions'] = 'Není definováno dost podotázek!<br>Chcete se vrátit zpìt a opravit tuto úlohu?';
 $string['numerical'] = 'Numerická úloha';
 $string['paragraphquestion'] = 'Odstavcová úloha na øádku $a není podporovaná. Úloha bude ignorována';
@@ -131,6 +133,7 @@ $string['quizclosed'] = 'Test byl uzavøen $a';
 $string['quizcloses'] = 'Test se uzavírá';
 $string['quiznotavailable'] = 'Test nebude pøístupný a¾ do: $a';
 $string['quizopen'] = 'Zpøístupnit test';
+$string['quizopens'] = 'Test zpøístupnìn';
 $string['random'] = 'Náhodnì vybraná úloha';
 $string['randomcreate'] = 'Vytvoøit náhodnì vybrané úlohy';
 $string['randomsamatch'] = 'Pøiøazování pro náhodnì vybrané úlohy se struènou odpovìdí';
@@ -173,7 +176,7 @@ $string['toomanyrandom'] = 'Poèet po¾adovaných náhodných úloh je vìt¹í, ne¾ koli
 $string['true'] = 'Pravda';
 $string['truefalse'] = 'Pravda/Nepravda';
 $string['type'] = 'Typ';
-$string['unknowntype'] = 'Na øádku $a je nepodporovaný typ úlohy- Úloha bude ignorována.';
+$string['unknowntype'] = 'Na øádku $a je nepodporovaný typ úlohy. Úloha bude ignorována.';
 $string['viewallanswers'] = 'Zobrazit $a hotových testù';
 $string['viewallreports'] = 'Zobrazit výsledky za $a pokusù';
 $string['warningsdetected'] = 'Poèet zji¹tìných upozornìní: $a';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.2 Beta (2004022400)
+      // forum.php - created with Moodle 1.3 (2004052500)
 
 
 $string['addanewdiscussion'] = 'Pøidat nový pøíspìvek';
@@ -12,6 +12,7 @@ $string['anyfile'] = 'Libovolný soubor';
 $string['attachment'] = 'Pøíloha';
 $string['bynameondate'] = 'autor $a->name - $a->date';
 $string['configdisplaymode'] = 'Pøedvolený zpùsob zobrazování diskuse, není-li øeèeno jinak.';
+$string['configenablerssfeeds'] = 'Tímto povolíte funkci RSS kanálù pro v¹echna diskusní fóra. Budete je¹tì muset zapnout RSS kanály v nastavení jednotlivých fórech.';
 $string['configlongpost'] = 'Pøíspìvek del¹í ne¾ tato vlo¾ená hodnota (HTML kód se nepoèítá) je pova¾ován za dlouhý.';
 $string['configmanydiscussions'] = 'Maximální poèet diskusí vo fóru zobrazovaný na jedné stránce.';
 $string['configmaxbytes'] = 'Výchozí maximální velikost pøílohy ve v¹ech fórech na tìchto stránkách (mù¾e být upravena nastavením kurzu a dal¹ími lokálními promìnnými)';
@@ -87,7 +88,7 @@ $string['postadded'] = 'Vá¹ pøíspìvek byl úspì¹nì pøidán.<P>Na pøípadné úpravy m
 $string['postincontext'] = 'Ukázat pøíspìvek v kontextu';
 $string['postmailinfo'] = 'Toto je kopie nove zpravy ze stranek $a .
 Chcete-li na prispevek odpovedet, nasledujte tento odkaz:';
-$string['postrating1'] = 'Vykazuje zejména SAMOSTATNÉ poznávání';
+$string['postrating1'] = 'Vykazuje zejména INDIVIDUÁLNÍ poznávání';
 $string['postrating2'] = 'Rovnomìrnì samostatné i kolektivní';
 $string['postrating3'] = 'Vykazuje zejména KOLEKTIVNÍ poznávání';
 $string['posts'] = 'Pøíspìvky';
@@ -111,6 +112,8 @@ $string['repliesmany'] = '$a odpovìdí';
 $string['repliesone'] = '$a odpovìï';
 $string['reply'] = 'Odpovìdìt';
 $string['replyforum'] = 'Odpovìdìt do fóra';
+$string['rsssubscriberssdiscussions'] = 'Zobrazit RSS kanál \'$a\' diskusí';
+$string['rsssubscriberssposts'] = 'Zobrazit RSS kanál \'$a\' pøíspìvkù';
 $string['search'] = 'Hledat';
 $string['searchforums'] = 'Prohledat fóra';
 $string['searcholderposts'] = 'Prohledat star¹í pøíspìvky...';
@@ -121,7 +124,9 @@ $string['singleforum'] = 'Prostá diskuse';
 $string['startedby'] = 'Zahájena';
 $string['subject'] = 'Pøedmìt';
 $string['subscribe'] = 'Odebírat nové pøíspìvky emailem';
+$string['subscribeall'] = 'Nastavit v¹em odebírání pøíspìvku emailem';
 $string['subscribed'] = 'Pøíspìvky odebírány emailem';
+$string['subscribenone'] = 'Odebrat v¹em odebírání pøíspìvkù emailem';
 $string['subscribers'] = 'Odbìratelé';
 $string['subscribersto'] = 'Odbìratelé - \'$a\'';
 $string['subscribestart'] = 'Posílej mi emailem kopie pøíspìvkù v tomto fóru';
@@ -130,6 +135,7 @@ $string['subscription'] = 'Odebírání';
 $string['subscriptions'] = 'Odebírání';
 $string['unsubscribe'] = 'Neodebírat pøíspìvky z tohoto fóra emailem';
 $string['unsubscribed'] = 'Neodebíráno';
+$string['unsubscribeshort'] = 'Neodebírat';
 $string['youratedthis'] = 'Ji¾ jste hodnotili';
 $string['yournewtopic'] = 'Va¹e nové téma diskuse';
 $string['yourreply'] = 'Va¹e odpovìï';
