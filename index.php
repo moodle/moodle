@@ -58,8 +58,6 @@
 
     $PAGE = page_create_object(MOODLE_PAGE_COURSE, SITEID);
 
-    echo '<div id="entry-page" class="entry">';  // entry wrapper start
-
     $editing = $PAGE->user_is_editing();
 
     $pageblocks = blocks_get_by_page($PAGE);
@@ -229,7 +227,5 @@
 </table>
 
 <?php
-    echo '</div>';  // entry wrapper end
-
     print_footer('home');     // Please do not modify this line
 ?>
