@@ -52,7 +52,7 @@
                  print_course_categories($categories, "none", $side);
              } else {
                  $category = array_shift($categories);
-                 print_all_courses($category->id, "minimal", 10);
+                 print_all_courses($category->id, "minimal", 10, $side);
              }
          } 
          print_spacer(1,$side);
