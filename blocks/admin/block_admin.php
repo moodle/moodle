@@ -40,6 +40,12 @@ class CourseBlock_admin extends MoodleBlock {
 
             $this->content->items[] = '<a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/users.php">'.get_string('users').'</a>...';
             $this->content->icons[] = '<img src="'.$CFG->pixpath.'/i/users.gif" height="16" width="16" alt="" />';
+
+            $this->content->items[]='<a href="'.$CFG->wwwroot.'/backup/backup.php?id='.SITEID.'">'.get_string('backup').'...</a>';
+            $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/backup.gif" height="16" width="16" alt="">';
+
+            $this->content->items[]='<a href="'.$CFG->wwwroot.'/files/index.php?id='.SITEID.'&amp;wdir=/backupdata">'.get_string('restore').'...</a>';
+            $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/restore.gif" height="16" width="16" alt="">';
         }
 
         if (iscreator()) {
@@ -48,10 +54,10 @@ class CourseBlock_admin extends MoodleBlock {
         }
 
         if (isadmin()) {
-            $this->content->items[] = '<a href="'.$CFG->wwwroot.'/course/log.php?id=1">'.get_string('logs').'</a>';
+            $this->content->items[] = '<a href="'.$CFG->wwwroot.'/course/log.php?id='.SITEID.'">'.get_string('logs').'</a>';
             $this->content->icons[] = '<img src="'.$CFG->pixpath.'/i/log.gif" height="16" width="16" alt="" />';
 
-            $this->content->items[] = '<a href="'.$CFG->wwwroot.'/files/index.php?id=1">'.get_string('sitefiles').'</a>';
+            $this->content->items[] = '<a href="'.$CFG->wwwroot.'/files/index.php?id='.SITEID.'">'.get_string('sitefiles').'</a>';
             $this->content->icons[] = '<img src="'.$CFG->pixpath.'/i/files.gif" height="16" width="16" alt="" />';
 
             if (file_exists($CFG->dirroot.'/'.$CFG->admin.'/'.$CFG->dbtype)) {
