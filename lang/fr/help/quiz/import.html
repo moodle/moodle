@@ -1,0 +1,58 @@
+<p align="center"><b>Importation de questions</b></p>
+
+<p>Cette fonction vous permet d'importer des questions &agrave; partir
+de fichiers de texte externes, &agrave;l'aide d'un formulaire. Les
+formats de fichiers suivants sont support&eacute;s&nbsp;:</p>
+
+<p><b>R&eacute;ponse int&eacute;gr&eacute;e au texte</b></p>
+<ul>
+  <p>Ce format supporte seulement des questions o&ugrave; la r&eacute;ponse est
+  int&eacute;gr&eacute;e au texte et qu'un choix de r&eacute;ponses est propos&eacute;.
+  Chaque r&eacute;ponse est pr&eacute;c&eacute;d&eacute;e d'un tilde (~), sauf la r&eacute;ponse
+  correcte qui est pr&eacute;c&eacute;d&eacute;e d'un signe d'&eacute;galit&eacute; (=). Voici un
+  exemple&nbsp;:</p>
+  <blockquote>D&egrave;s que nous commen&ccedil;ons &agrave; explorer les parties de
+  notre corps lorsque nous sommes enfant, nous devenons des
+  &eacute;tudiants {=en anatomie et physiologie ~ en science ~ en
+  r&eacute;flexologie}, et dans un sens, nous demeurons des &eacute;tudiants
+  pour la vie.</blockquote>
+  <p align="right">Plus d'informations au sujet du format <a
+  href="help.php?file=formatmissingword.html&amp;module=quiz">&laquo;&nbsp;R&eacute;ponse
+  int&eacute;gr&eacute;e au texte&nbsp;&raquo;</a></p>
+</ul>
+
+<p><b>AON</b></p>
+<ul>
+  <p>Ce format est identique au format pr&eacute;c&eacute;dent, sauf qu'apr&egrave;s
+  l'importation des questions, toutes les questions &agrave; r&eacute;ponse
+  courte sont converties en question d'appariements, par groupe de
+  quatre. En outre, les r&eacute;ponses des questions &agrave; choix
+  multiples sont plac&eacute;es al&eacute;atoirement.</p>
+  <p>Ce type de question porte le nom d'une organisation qui a
+  commandit&eacute; le d&eacute;veloppement de beaucoup de types de
+  questions.</p>
+</ul>
+
+<p><b>BlackBoard</b></p>
+<ul>
+  <p>Ce module permet d'importer des questions enregistr&eacute;es dans le
+  format &laquo;&nbsp;BlackBoard&nbsp;&raquo;. Il se fonde sur des fonctions XML
+  incluses avec le serveur PHP utilis&eacute; par Moodle. </p>
+  <p align="right">Plus d'informations au sujet du format <a
+  href="help.php?file=formatblackboard.html&amp;module=quiz">&laquo;&nbsp;BlackBoard&nbsp;&raquo;</a></p>
+</ul>
+
+<p><b>Personnalis&eacute;</b></p>
+<ul>
+  <p>Si vous avez votre propre format que vous d&eacute;sirez importer,
+  vous pouvez en programmer son importation en &eacute;ditant le fichier
+  mod&egrave;le &laquo;&nbsp;mod/quiz/format/custom.php&nbsp;&raquo;. Le bout de programme
+  requis est minimal puisqu'il n'a qu'&agrave; analyser le texte d'une
+  question.</p>
+  <p align="right">Plus d'informations au sujet du format <a
+  href="help.php?file=formatcustom.html&amp;module=quiz">&laquo;&nbsp;personnalis&eacute;&nbsp;&raquo;</a></p>
+</ul>
+
+<p>D'autres formats sont &agrave; venir dans une prochaine version,
+y compris WebCT, IMS QTI et tous les autres formats que les
+utilisateurs de  Moodle voudront bien fournir&nbsp;!</p>
