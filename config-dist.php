@@ -133,6 +133,28 @@ $CFG->admin = 'admin';
 // 
 // eg   $CFG->textfilter1 = "mod/glossary/dynalink.php";
 //      $CFG->textfilter2 = "library/librarylib.php";
+//      $CFG->textfilter3 = "filter/censor/censor.php";
+
+
+
+//=========================================================================
+// 8. OTHER MISCELLANEOUS SETTINGS (ignore these for new installations)
+//=========================================================================
+//
+// Prevent users from updating their profile images
+//      $CFG->disableuserimages = true;  
+//
+// Allow Google and Google users enter your site automatically as guests
+//      $CFG->opentogoogle = true;       
+//
+// Restrict certain usernames from doing things that may mess up a site
+// This is especially useful for demonstration teacher accounts
+//      $CFG->restrictusers = 'teacher,fred,jim';
+//
+// Prevent scheduled backups from operating (and hide the GUI for them)
+// Useful for webhost operators who have alternate methods of backups
+//      $CFG->disablescheduledbackups = true;
+
 
 
 //=========================================================================
