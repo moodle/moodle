@@ -169,6 +169,8 @@ function schedule_backup_cron() {
             $message .= "  ".get_string('backupfailed')."\n\n";
             $dest_url = $CFG->wwwroot.'/backup/log.php';
             $message .= "  ".get_string('backuptakealook','',$dest_url)."\n\n";
+            //Set message priority
+            $admin->priority = 1;
             //Reset unfinished to error
             set_field('backup_courses','laststatus','0','laststatus','2');
         } else {

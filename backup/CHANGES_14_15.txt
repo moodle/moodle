@@ -51,5 +51,7 @@ Now I show the specific detailed status of every item in the process:
 30. DELAY:Add support for user->dstpreset. After talking with Jon, delayed
           because there isn't possible to recode it to destination server. But
           sometime we should think in a solution (STAMPS or CHECKSUMS of DSTs).
+31. DONE: Change mail's priority (bug 2647) if something goes wrong in scheduled backups.
+         
 Eloy (stronk7)
 23-01-2004
