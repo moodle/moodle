@@ -375,6 +375,7 @@
                             if (trim(strip_tags($answer->response))) {
                                 $response = $answer->response;
                             }
+                            break;
                         }
                     }
                 }
