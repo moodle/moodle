@@ -18,7 +18,7 @@ class CourseBlock_course_summary extends MoodleBlock {
             return $this->content;
         }
 
-        $this->content = New object;
+        $this->content = New stdClass;
         $this->content->text = format_text($this->course->summary, FORMAT_HTML);
         $this->content->footer = '';
 

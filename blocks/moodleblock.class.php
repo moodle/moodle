@@ -66,22 +66,46 @@ class MoodleBlock {
             case BLOCK_TYPE_NUKE:
             case BLOCK_TYPE_TEXT:
                 if(empty($this->content->text) && empty($this->content->footer)) {
-                    break;
+                    if(empty($this->edit_controls)) {
+                        // No content, no edit controls, so just shut up
+                        break;
+                    }
+                    else {
+                        // No content but editing, so show something at least
+                        $this->print_shadow();
+                    }
                 }
-                if ($this->edit_controls !== NULL || !$this->hide_header()) {
-                    print_side_block($title, $this->content->text, NULL, NULL, $this->content->footer, $this->html_attributes());
-                } else {
-                    print_side_block(NULL, $this->content->text, NULL, NULL, $this->content->footer, $this->html_attributes());
+                else {
+                    if($this->hide_header() && empty($this->edit_controls)) {
+                        // Header wants to hide, no edit controls to show, so no header it is
+                        print_side_block(NULL, $this->content->text, NULL, NULL, $this->content->footer, $this->html_attributes());
+                    }
+                    else {
+                        // The full treatment, please
+                        print_side_block($title, $this->content->text, NULL, NULL, $this->content->footer, $this->html_attributes());
+                    }
                 }
             break;
             case BLOCK_TYPE_LIST:
-                if(empty($this->content->items) && empty($this->content->footer)) {
-                    break;
+                if(empty($this->content->text) && empty($this->content->footer)) {
+                    if(empty($this->edit_controls)) {
+                        // No content, no edit controls, so just shut up
+                        break;
+                    }
+                    else {
+                        // No content but editing, so show something at least
+                        $this->print_shadow();
+                    }
                 }
-                if ($this->edit_controls !== NULL || !$this->hide_header()) {
-                    print_side_block($title, '', $this->content->items, $this->content->icons, $this->content->footer, $this->html_attributes());
-                } else {
-                    print_side_block(NULL, '', $this->content->items, $this->content->icons, $this->content->footer, $this->html_attributes());
+                else {
+                    if($this->hide_header() && empty($this->edit_controls)) {
+                        // Header wants to hide, no edit controls to show, so no header it is
+                        print_side_block(NULL, '', $this->content->items, $this->content->icons, $this->content->footer, $this->html_attributes());
+                    }
+                    else {
+                        // The full treatment, please
+                        print_side_block($title, '', $this->content->items, $this->content->icons, $this->content->footer, $this->html_attributes());
+                    }
                 }
             break;
         }
