@@ -80,10 +80,10 @@ create or replace trigger p_glossary_entries_trig
 .
 /
 
-insert into prefix_glossary_entries(glossaryid,userid,concept,definition,format,attachment,timecreated,timemodified,teacherentry) values(1,1,'1','1',1,'1',1,1,1);
-insert into prefix_glossary_entries(glossaryid,userid,concept,definition,format,attachment,timecreated,timemodified,teacherentry) values(2,2,'2','2',2,'2',2,2,2);
-insert into prefix_glossary_entries(glossaryid,userid,concept,definition,format,attachment,timecreated,timemodified,teacherentry) values(3,3,'3','3',3,'3',3,3,3);
-insert into prefix_glossary_entries(glossaryid,userid,concept,definition,format,attachment,timecreated,timemodified,teacherentry) values(4,4,'4','4',4,'4',4,4,4);
+insert into prefix_glossary_entries(glossaryid,userid,concept,definition,format,attachment,timecreated,timemodified,teacherentry,sourceglossaryid) values(1,1,'1','1',1,'1',1,1,1,1);
+insert into prefix_glossary_entries(glossaryid,userid,concept,definition,format,attachment,timecreated,timemodified,teacherentry,sourceglossaryid) values(2,2,'2','2',2,'2',2,2,2,2);
+insert into prefix_glossary_entries(glossaryid,userid,concept,definition,format,attachment,timecreated,timemodified,teacherentry,sourceglossaryid) values(3,3,'3','3',3,'3',3,3,3,3);
+insert into prefix_glossary_entries(glossaryid,userid,concept,definition,format,attachment,timecreated,timemodified,teacherentry,sourceglossaryid) values(4,4,'4','4',4,'4',4,4,4,4);
 
 col format format 99
 select * from prefix_glossary_entries order by 1,2;
