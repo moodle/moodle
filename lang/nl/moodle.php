@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.2 development (2003100900)
+      // moodle.php - created with Moodle 1.2 development (2003101200)
 
 
 $string['action'] = "Actie";
@@ -106,6 +106,7 @@ $string['cleaningtempdata'] = "Schoon de tijdelijke data op";
 $string['closewindow'] = "Sluit dit venster";
 $string['comparelanguage'] = "Vergelijk en bewerk huidige taal ";
 $string['complete'] = "Voltooid";
+$string['configallowunenroll'] = "Als dit op 'ja' staat, dan mogen leerlingen zichzelf uitschrijven uit vakken wanneer ze willen. Anders mogen zij dat niet en dan wordt dit proces uitsluitend door leraars en beheerders gecontroleerd.";
 $string['configcountry'] = "Als je hier een land invult zal dit land als standaard worden geselecteerd bij nieuwe gebruikersaccounts. Laat dit veld gewoon leeg om gebruikers te dwingen een land te kiezen.";
 $string['configdebug'] = "Als je dit aan zet zullen er meer PHP-fouten op het scherm worden weergegeven. Dit is alleen maar handig voor ontwikkelaars van de applicatie.";
 $string['configerrorlevel'] = "Kies hoeveel PHP waarschuwingen je wilt dat Moodle laat zien. 'Normaal' is meestal de beste keuze.

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // workshop.php - created with Moodle 1.2 development (2003092900)
+      // workshop.php - created with Moodle 1.2 development (2003101200)
 
 
 $string['absent'] = "Afwezig";
@@ -117,10 +117,17 @@ $string['overallteachergrade'] = "Volledige beoordeling door leraar: \$a";
 $string['ownwork'] = "Eigen werk";
 $string['phase'] = "Fase";
 $string['phase1'] = "Begin taak";
+$string['phase1short'] = "Begin";
 $string['phase2'] = "\$a Bijdragen en evaluaties";
+$string['phase2short'] = "Bijdragen";
 $string['phase3'] = "Berekening van de totalen";
-$string['phase4'] = "Toon de totalen";
+$string['phase3short'] = "Beide";
+$string['phase4'] = "Laat \$a Beoordelingen toe";
+$string['phase4short'] = "Opdrachten";
 $string['phase5'] = "Toon de totalen";
+$string['phase5short'] = "Berekening";
+$string['phase6'] = "Toon eindtotalen";
+$string['phase6short'] = "Toon cijfers";
 $string['pleaseassesstheseexamplesfromtheteacher'] = "Evalueer a.j.b. deze voorbeelden van de \$a";
 $string['pleaseassessthesestudentsubmissions'] = "Evalueer a.j.b. deze \$a bijdragen";
 $string['pleaseassessyoursubmissions'] = "Evalueer alsjeblieft je inzendingen";
@@ -157,6 +164,7 @@ $string['studentsubmissions'] = "\$a Bijdragen";
 $string['studentsubmissionsforassessment'] = "\$a leerlingenbijdragen aan evaluatie";
 $string['submission'] = "Inzending";
 $string['submissions'] = "Inzendingen";
+$string['submissionsnolongerallowed'] = "Bijdragen niet langer toegelaten";
 $string['submitassignment'] = "Stuur de taak door";
 $string['submitassignmentusingform'] = "Stuur je taak in met dit formulier";
 $string['submitexampleassignment'] = "Stuur de voorbeeldtaak door";
