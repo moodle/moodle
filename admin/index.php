@@ -55,7 +55,11 @@
             print_heading("<A HREF=\"index.php\">Continue</A>");
             die;
         } else {
-            error("A problem occurred inserting current version into databases");
+            if (upgrade_moodle(0)) {
+                print_heading("<A HREF=\"index.php\">Continue</A>");
+            } else {
+                error("A problem occurred inserting current version into databases");
+            }
         }
     }
 

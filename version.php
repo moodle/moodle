@@ -17,10 +17,25 @@
 // If there's something it cannot do itself, it 
 // will tell you what you need to do.
 
-$version = 2002072704;
+$version = 2002072801;
 
-function upgrade_moodle($oldversion) {
+function upgrade_moodle($oldversion=0) {
 
+    if ($oldversion == 0) {
+        execute_sql("
+          CREATE TABLE `config` (
+            `id` int(10) unsigned NOT NULL auto_increment,
+            `name` varchar(255) NOT NULL default '',
+            `value` varchar(255) NOT NULL default '',
+            PRIMARY KEY  (`id`),
+            UNIQUE KEY `name` (`name`)
+          ) TYPE=MyISAM COMMENT='Moodle configuration variables';");
+        notify("Created a new table 'config' to hold configuration data");
+    }
+
+    if ($oldversion < 2002072801) {
+
+    }
     return true;
 }
 
