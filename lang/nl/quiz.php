@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.0.9 Beta 1 + (2003052300)
+      // quiz.php - created with Moodle 1.1 development (2003053000)
 
 
 $string['addingquestions'] = "Aan deze kant van de pagina kun je je vragenlijst beheren. De vragen worden bewaard per categorie om je te helpen ze te ordenen. Ze kunnen gebruikt worden in elke test van je vak of zelfs in andere vakken als je ze wil 'publiceren'.
@@ -24,7 +24,7 @@ $string['attemptsallowed'] = "Toegestane pogingen ";
 $string['attemptsunlimited'] = "Onbeperkt aantal pogingen";
 $string['backtoquiz'] = "Terug naar het bewerken/wijzigen van de test";
 $string['bestgrade'] = "Hoogste cijfer";
-$string['blackboard'] = "Schoolbord";
+$string['blackboard'] = "Blackboard";
 $string['caseno'] = "Nee, hoofd/kleine letters zijn niet belangrijk";
 $string['casesensitive'] = "Gevoeligheid voor hoofd/kleine letters";
 $string['caseyes'] = "Ja, hoofd/kleine letters moeten exact hetzelfde zijn";
