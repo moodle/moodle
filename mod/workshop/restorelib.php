@@ -306,6 +306,7 @@
             $assessment->timeagreed = backup_todb($ass_info['#']['TIMEAGREED']['0']['#']);
             $assessment->grade = backup_todb($ass_info['#']['GRADE']['0']['#']);
             $assessment->gradinggrade = backup_todb($ass_info['#']['GRADINGGRADE']['0']['#']);
+            $assessment->resubmission = backup_todb($ass_info['#']['RESUBMISSION']['0']['#']);
             $assessment->mailed = backup_todb($ass_info['#']['MAILED']['0']['#']);
             $assessment->generalcomment = backup_todb($ass_info['#']['GENERALCOMMENT']['0']['#']);
             $assessment->teachercomment = backup_todb($ass_info['#']['TEACHERCOMMENT']['0']['#']);

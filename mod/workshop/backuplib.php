@@ -227,6 +227,7 @@
                 fwrite ($bf,full_tag("TIMEAGREED",8,false,$wor_ass->timeagreed));
                 fwrite ($bf,full_tag("GRADE",8,false,$wor_ass->grade));
                 fwrite ($bf,full_tag("GRADINGGRADE",8,false,$wor_ass->gradinggrade));
+                fwrite ($bf,full_tag("RESUBMISSION",8,false,$wor_ass->resubmission));
                 fwrite ($bf,full_tag("MAILED",8,false,$wor_ass->mailed));
                 fwrite ($bf,full_tag("GENERALCOMMENT",8,false,$wor_ass->generalcomment));
                 fwrite ($bf,full_tag("TEACHERCOMMENT",8,false,$wor_ass->teachercomment));
