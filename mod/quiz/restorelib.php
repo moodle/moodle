@@ -261,6 +261,26 @@
                 //map between the XML file and the database to be able to restore the responses
                 //in each attempt.
                 $status = quiz_restore_map_answers($oldid,$newid,$que_info,$restore);
+                //Now, depending of the type of questions, invoke different functions
+                //to create the necessary mappings in backup_ids, because we are not
+                //creating the question, but need some records in backup table
+                if ($question->qtype == "1") {
+                    //Shortanswer question. Nothing to remap
+                } else if ($question->qtype == "2") {
+                    //Truefalse question. Nothing to remap
+                } else if ($question->qtype == "3") {
+                    //Multichoice question. Nothing to remap
+                } else if ($question->qtype == "4") {
+                    //Random question. Nothing to remap
+                } else if ($question->qtype == "5") {
+                    $status = quiz_restore_map_match($oldid,$newid,$que_info,$restore);
+                } else if ($question->qtype == "6") {
+                    //Randomsamatch question. Nothing to remap
+                } else if ($question->qtype == "7") {
+                    //Description question. Nothing to remap
+                } else if ($question->qtype == "8") {
+                    //Numerical question. Nothing to remap
+                }
             }
         }
         return $status;
@@ -615,6 +635,65 @@
 
         if (!$newid) {
             $status = false;
+        }
+
+        return $status;
+    }
+
+    function quiz_restore_map_match ($old_question_id,$new_question_id,$info,$restore) {  
+
+        global $CFG;
+
+        $status = true;
+
+        //Get the matchs array 
+        $matchs = $info['#']['MATCHS']['0']['#']['MATCH'];   
+
+        //We have to build the subquestions field (a list of match_sub id)
+        $subquestions_field = "";
+        $in_first = true;
+
+        //Iterate over matchs
+        for($i = 0; $i < sizeof($matchs); $i++) {
+            $mat_info = $matchs[$i];
+            //traverse_xmlize($mat_info);                                                                 //Debug
+            //print_object ($GLOBALS['traverse_array']);                                                  //Debug
+            //$GLOBALS['traverse_array']="";                                                              //Debug
+
+            //We'll need this later!!
+            $oldid = backup_todb($mat_info['#']['ID']['0']['#']);
+
+            //Now, build the QUIZ_MATCH_SUB record structure
+            $match_sub->question = $new_question_id;
+            $match_sub->questiontext = backup_todb($mat_info['#']['QUESTIONTEXT']['0']['#']);
+            $match_sub->answertext = backup_todb($mat_info['#']['ANSWERTEXT']['0']['#']);
+
+            //If we are in this method is because the question exists in DB, so its
+            //match_sub must exist too.
+            //Now, we are going to look for that match_sub in DB and to create the
+            //mappings in backup_ids to use them later where restoring responses (user level).
+
+            //Get the match_sub from DB (by question, questiontext and answertext)
+            $db_match_sub = get_record ("quiz_match_sub","question",$new_question_id,
+                                                      "questiontext",$match_sub->questiontext,
+                                                      "answertext",$match_sub->answertext);
+            //Do some output
+            if (($i+1) % 50 == 0) {
+                echo ".";
+                if (($i+1) % 1000 == 0) {
+                    echo "<br>";
+                }
+                backup_flush(300);
+            }
+
+            //We have the database match_sub, so update backup_ids
+            if ($db_match_sub) {
+                //We have the newid, update backup_ids
+                backup_putid($restore->backup_unique_code,"quiz_match_sub",$oldid,
+                             $db_match_sub->id);
+            } else {
+                $status = false;
+            }
         }
 
         return $status;
@@ -1009,11 +1088,15 @@
                             $exploded = explode("-",$tok);      
                             $match_question_id = $exploded[0];
                             $match_answer_id = $exploded[1];
-                            //Get the match_sub from backup_ids
+                            //Get the match_sub from backup_ids (for the question)
                             $match_que = backup_getid($restore->backup_unique_code,"quiz_match_sub",$match_question_id);
-                            //Get the answer from backup_ids
+                            //Get the match_sub from backup_ids (for the answer)
                             $match_ans = backup_getid($restore->backup_unique_code,"quiz_match_sub",$match_answer_id);
-                            if ($match_que and $match_ans) {
+                            if ($match_que) {
+                                //It the question hasn't response, it must be 0
+                                if (!$match_ans and $match_answer_id == 0) {
+                                    $match_ans->new_id = 0;
+                                }
                                 if ($in_first) {
                                     $answer_field .= $match_que->new_id."-".$match_ans->new_id;
                                     $in_first = false;
@@ -1042,7 +1125,7 @@
                             $ans = backup_getid($restore->backup_unique_code,"quiz_answers",$answer_id);
                             if ($que) {
                                 //It the question hasn't response, it must be 0
-                                if (!$ans) {
+                                if (!$ans and $answer_id == 0) {
                                     $ans->new_id = 0;
                                 }
                                 if ($in_first) {
