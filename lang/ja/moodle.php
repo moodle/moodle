@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.0.9 development (2003032601)
+      // moodle.php - created with Moodle 1.0.9 development (2003032602)
 
 
 $string['action'] = "操作";
@@ -370,7 +370,7 @@ $string['nostudentsyet'] = "このコースにはまだ学生が参加していません";
 $string['nosuchemail'] = "そのようなメールアドレスは存在しません";
 $string['noteachersyet'] = "このコースにはまだ教師が登録されていません";
 $string['notenrolled'] = "\$a はこのコースには参加していません";
-$string['nothingnew'] = "最終ログインより変更されたものはありません";
+$string['nothingnew'] = "最終ログインより更新されたものはありません";
 $string['nousersmatching'] = "ユーザ '\$a' は見つかりませんでした";
 $string['nousersyet'] = "まだ利用者がいません";
 $string['now'] = "現在";
