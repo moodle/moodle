@@ -13,7 +13,10 @@
 	<TD ALIGN=RIGHT><P>auth_dbtype:</TD>
 	<TD>
     <? $dbtypes = array("access","ado_access", "ado", "ado_mssql", "borland_ibase", "csv", "db2", "fbsql", "firebird", "ibase", "informix72", "informix", "mssql", "mysql", "mysqlt", "oci805", "oci8", "oci8po", "odbc", "odbc_mssql", "odbc_oracle", "oracle", "postgres64", "postgres7", "postgres", "proxy", "sqlanywhere", "sybase", "vfp");
-       choose_from_menu($dbtypes, "auth_dbtype", $config->auth_dbtype, "");
+       foreach ($dbtypes as $dbtype) {
+           $dboptions[$dbtype] = $dbtype;
+       }
+       choose_from_menu($dboptions, "auth_dbtype", $config->auth_dbtype, "");
     ?>
       
     </TD>
