@@ -70,6 +70,11 @@ $CFG->lang     = "en";
 
 $CFG->smtphosts  = "mail.example.com";
 
+// Choose a password to be used by the cron script.  This helps avoid
+// any problems caused by someone spamming moodle/admin/cron.php
+
+$CFG->cronpassword = "fr0o6y";
+
 
 // You should not need to change anything else. To continue setting up 
 // Moodle, use your web browser to go to the moodle/admin web page.
