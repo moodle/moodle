@@ -1,5 +1,5 @@
-<?php // $Id$ 
-      // resource.php - created with Moodle 1.2 development (2003120700)
+<?PHP // $Id$ 
+      // resource.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005032600)
 
 
 $string['addresource'] = 'Add a resource';
@@ -31,9 +31,9 @@ $string['example'] = 'Example';
 $string['exampleurl'] = 'http://www.example.com/somedirectory/somefile.html';
 $string['fetchclienterror'] = 'An error was found with your web client while trying to retrieve the web page (possibly a wrong URL).';
 $string['fetcherror'] = 'An error was found while trying to retrieve the web page.';
-$string['fetchservererror'] = 'An error was found with the remote server while trying to retrieve the web page (possibly a program error).</p>';
+$string['fetchservererror'] = 'An error was found with the remote server while trying to retrieve the web page (possibly a program error).';
 $string['filename'] = 'File name';
-$string['filtername'] = "Resource Names Auto-linking";
+$string['filtername'] = 'Resource Names Auto-linking';
 $string['frameifpossible'] = 'Put resource in a frame to keep site navigation visible';
 $string['fulltext'] = 'Full text';
 $string['htmlfragment'] = 'HTML fragment';
@@ -82,4 +82,5 @@ $string['searchweb'] = 'Search for web page';
 $string['serverurl'] = 'Server URL ($a->wwwroot)';
 $string['variablename'] = 'Variable name';
 $string['vol'] = 'Vol';
+
 ?>
