@@ -53,6 +53,12 @@ class ChatConnection {
 }
 
 class ChatDaemon {
+    var $_readytogo = false;
+    var $_logfile   = false;
+    var $_trace_to_console = true;
+    var $_trace_to_stdout  = true;
+    var $_logfile_name = 'chatd.log';
+
     var $conn_ufo = array();     // Connections not identified yet
     var $conn_side = array();    // Sessions with sidekicks waiting for the main connection to be processed
     var $conn_half = array();    // Sessions that have valid connections but not all of them
@@ -61,10 +67,58 @@ class ChatDaemon {
 
     var $message_queue = array(); // Holds messages that we haven't committed to the DB yet
 
+    function ChatDaemon() {
+        // Check the STDOUT constant
+        $this->_trace_to_stdout     = defined('STDOUT');
+        $this->_trace_level         = E_ALL ^ E_USER_NOTICE;
+        $this->_pcntl_exists        = function_exists('pcntl_fork');
+        $this->_time_rest_socket    = 20;
+        $this->_beepsoundsrc        = $GLOBALS['CFG']->wwwroot.'/mod/chat/beep.wav';
+        $this->_freq_update_records = 15;
+    }
+
+    function query_start() {
+        return $this->_readytogo;
+    }
+
+    function trace($message, $level = E_USER_NOTICE) {
+        $severity = '';
+
+        switch($level) {
+            case E_USER_WARNING: $severity = '*IMPORTANT* '; break;
+            case E_USER_ERROR:   $severity = ' *CRITICAL* '; break;
+        }
+
+        $date = date('[Y-m-d H:i:s] ');
+        $message = $date.$severity.$message."\n";
+
+        if ($this->_trace_level & $level) {
+            // It is accepted for output
+
+            // Error-class traces go to STDERR too
+            if($level & E_USER_ERROR) {
+                fwrite(STDERR, $message);
+            }
+
+            // Emit the message to wherever we should
+            if($this->_trace_to_stdout) {
+                fwrite(STDOUT, $message);
+            }
+            if($this->_trace_to_console) {
+                echo $message;
+                flush();
+            }
+            if($this->_logfile) {
+                fwrite($this->_logfile, $message);
+                fflush($this->_logfile);
+            }
+        }
+    }
+
     function update_lastmessageping($sessionid, $time = NULL) {
         // TODO: this can and should be written as a single UPDATE query
         if(empty($this->sets_info[$sessionid])) {
-            trace('update_lastmessageping() called for an invalid SID: '.$sessionid, E_USER_WARNING);
+            $this->trace('update_lastmessageping() called for an invalid SID: '.$sessionid, E_USER_WARNING);
             return false;
         }
 
@@ -76,11 +130,12 @@ class ChatDaemon {
         // We 'll be cheating a little, and NOT updating lastmessageping
         // as often as we have to, so we can save on DB queries (imagine MANY users)
         $this->sets_info[$sessionid]['chatuser']->lastmessageping = $time;
+        $this->sets_info[$sessionid]['chatuser']->lastping        = $time;
 
         // This will set it just fine for bookkeeping purposes.
-        if($now - $this->sets_info[$sessionid]['lastinfocommit'] > $this->live_data_update_threshold) {
+        if($now - $this->sets_info[$sessionid]['lastinfocommit'] > $this->_freq_update_records) {
             // commit to permanent storage
-            // trace('Committing volatile lastmessageping for session '.$sessionid);
+            // $this->trace('Committing volatile lastmessageping for session '.$sessionid);
             $this->sets_info[$sessionid]['lastinfocommit'] = $now;
             update_record('chat_users', $this->sets_info[$sessionid]['chatuser']);
         }
@@ -243,7 +298,7 @@ class ChatDaemon {
                 $header .= "\n";
 
                 // That's enough headers for one lousy dummy response
-                trace('writing users http response to handle '.$handle);
+                $this->trace('writing users http response to handle '.$handle);
                 chat_socket_write($handle, $header . $content);
 
 /*
@@ -256,7 +311,7 @@ class ChatDaemon {
                 $header .= "Cache-Control: no-cache, must-revalidate\n";
                 $header .= "Expires: Wed, 4 Oct 1978 09:32:45 GMT\n";
                 $header .= "\n";
-                trace('writing users http response to handle '.$handle);
+                $this->trace('writing users http response to handle '.$handle);
                 chat_socket_write($handle, $header);
 */
             break;
@@ -265,10 +320,10 @@ class ChatDaemon {
 
                 // Browser stupidity protection from duplicate messages:
                 $messageindex = intval($customdata['index']);
-                
+
                 if($this->sets_info[$sessionid]['lastmessageindex'] >= $messageindex) {
                     // We have already broadcasted that!
-                    trace('discarding message with stale index');
+                    $this->trace('discarding message with stale index');
                     break;
                 }
                 else {
@@ -325,7 +380,7 @@ class ChatDaemon {
 
     function promote_final($sessionid, $groupid, $customdata) {
         if(isset($this->conn_sets[$sessionid])) {
-            trace('Set cannot be finalized: Session '.$sessionid.' is already active');
+            $this->trace('Set cannot be finalized: Session '.$sessionid.' is already active');
             return false;
         }
 
@@ -382,11 +437,11 @@ class ChatDaemon {
             'quirks'    => $customdata['quirks']
         );
 
-        trace('QUIRKS value for this connection is '.$customdata['quirks']);
+        $this->trace('QUIRKS value for this connection is '.$customdata['quirks']);
 
         $this->dismiss_half($sessionid, false);
         chat_socket_write($this->conn_sets[$sessionid][CHAT_CONNECTION_CHANNEL], $CHAT_HTMLHEAD_JS);
-        trace('Connection accepted: '.$this->conn_sets[$sessionid][CHAT_CONNECTION_CHANNEL].', SID: '.$sessionid.' UID: '.$chatuser->userid.' GID: '.intval($groupid));
+        $this->trace('Connection accepted: '.$this->conn_sets[$sessionid][CHAT_CONNECTION_CHANNEL].', SID: '.$sessionid.' UID: '.$chatuser->userid.' GID: '.intval($groupid));
 
         // Finally, broadcast the "entered the chat" message
 
@@ -416,13 +471,13 @@ class ChatDaemon {
                     // Is the main connection ready?
                     if(isset($this->conn_sets[$sessionid])) {
                         // Yes, so dispatch this sidekick now and be done with it
-                        //trace('Dispatching sidekick immediately');
+                        //$this->trace('Dispatching sidekick immediately');
                         $this->dispatch_sidekick($handle, $type, $sessionid, $customdata);
                         $this->dismiss_ufo($handle, false);
                     }
                     else {
                         // No, so put it in the waiting list
-                        trace('sidekick waiting');
+                        $this->trace('sidekick waiting');
                         $this->conn_side[$sessionid][] = array('type' => $type, 'handle' => $handle, 'customdata' => $customdata);
                     }
                     return true;
@@ -432,12 +487,12 @@ class ChatDaemon {
 
                 if($type & CHAT_CONNECTION) {
                     // This forces a new connection right now...
-                    trace('Incoming connection from '.$ufo->ip.':'.$ufo->port);
+                    $this->trace('Incoming connection from '.$ufo->ip.':'.$ufo->port);
 
                     // Do we have such a connection active?
                     if(isset($this->conn_sets[$sessionid])) {
                         // Yes, so regrettably we cannot promote you
-                        trace('Connection rejected: session '.$sessionid.' is already final');
+                        $this->trace('Connection rejected: session '.$sessionid.' is already final');
                         $this->dismiss_ufo($handle);
                         return false;
                     }
@@ -517,7 +572,7 @@ class ChatDaemon {
         $id = $this->new_ufo_id();
         $this->conn_ufo[$id] = $newconn;
 
-        //trace('UFO #'.$id.': connection from '.$newconn->ip.' on port '.$newconn->port.', '.$newconn->handle);
+        //$this->trace('UFO #'.$id.': connection from '.$newconn->ip.' on port '.$newconn->port.', '.$newconn->handle);
     }
 
     function conn_activity_ufo (&$handles) {
@@ -552,10 +607,10 @@ class ChatDaemon {
 
                 // Simply give them the message
                 $output = chat_format_message_manually($message, 0, $sender, $info['user'], $info['lang']);
-                trace('Delivering message "'.$output->text.'" to '.$this->conn_sets[$sessionid][CHAT_CONNECTION_CHANNEL]);
+                $this->trace('Delivering message "'.$output->text.'" to '.$this->conn_sets[$sessionid][CHAT_CONNECTION_CHANNEL]);
 
                 if($output->beep) {
-                    chat_socket_write($this->conn_sets[$sessionid][CHAT_CONNECTION_CHANNEL], '<embed src="'.$this->beepsoundsrc.'" autostart="true" hidden="true" />');
+                    chat_socket_write($this->conn_sets[$sessionid][CHAT_CONNECTION_CHANNEL], '<embed src="'.$this->_beepsoundsrc.'" autostart="true" hidden="true" />');
                 }
 
                 if($info['quirks'] & QUIRK_CHUNK_UPDATE) {
@@ -578,7 +633,7 @@ class ChatDaemon {
                     $msg->message = 'exit';
                     $msg->timestamp = time();
 
-                    trace('Client socket write failed, destroying uid '.$info['userid'].' with SID '.$sessionid);
+                    $this->trace('Client socket write failed, destroying uid '.$info['userid'].' with SID '.$sessionid);
                     insert_record('chat_messages', $msg);
 
                     // *************************** IMPORTANT
@@ -590,12 +645,51 @@ class ChatDaemon {
                     $this->dismiss_set($sessionid);
                     $this->message_broadcast($msg, $latesender);
                 }
-                //trace('Sent to UID '.$this->sets_info[$sessionid]['userid'].': '.$message->text_);
+                //$this->trace('Sent to UID '.$this->sets_info[$sessionid]['userid'].': '.$message->text_);
             }
         }
     }
 
     function message_commit() {
+    }
+
+    function fatal($message) {
+        $message .= "\n";
+        if($this->_logfile) {
+            $this->trace($message);
+        }
+        echo "FATAL ERROR:: $message\n";
+        die();
+    }
+
+    function cli_switch($switch, $param = NULL) {
+        switch($switch) { //LOL
+            case 'start':
+                // Start the daemon
+                $this->_readytogo = true;
+                return false;
+            break;
+            case 'v':
+                // Verbose mode
+                $this->_trace_level = E_ALL;
+                return false;
+            break;
+            case 'l':
+                // Use logfile
+                if(!empty($param)) {
+                    $this->_logfile_name = $param;
+                }
+                $this->_logfile = @fopen($this->_logfile_name, 'a+');
+                if($this->_logfile == false) {
+                    $this->fatal('Failed to open '.$this->_logfile_name.' for writing');
+                }
+                return false;
+            default:
+                // Unrecognized
+                $this->fatal('Unrecognized command line switch: '.$switch);
+            break;
+        }
+        return false;
     }
 
 }
@@ -614,36 +708,67 @@ define('CHAT_SIDEKICK_BEEP',        0x23);
 
 
 $DAEMON = New ChatDaemon;
-$DAEMON->socket_active = false;
-$DAEMON->trace_level = E_ALL;
-$DAEMON->socketserver_refresh = 20;
-$DAEMON->can_daemonize = function_exists('pcntl_fork');
-$DAEMON->beepsoundsrc = $CFG->wwwroot.'/mod/chat/beep.wav';
-$DAEMON->live_data_update_threshold = 15;
 
 /// Check the parameters //////////////////////////////////////////////////////
 
-    $param = empty($argv[1]) ? NULL : trim(strtolower($argv[1]));
-
-    if (empty($param) || eregi('^(\-\-help|\-h)$', $param)) {
-        echo 'Starts the Moodle chat socket server on port '.$CFG->chat_serverport;
-        echo "\n\n";
-        echo "Usage: chatd.php [-h|--start]\n\n";
-        echo "Example:\n";
-        echo "  chatd.php --start\n\n";
-        echo "Options:\n";
-        echo "  --start      Starts the daemon\n";
-        echo "  -h, --help   Show this help\n";
-        echo "\n";
-        die();
+unset($argv[0]);
+$commandline = implode(' ', $argv);
+if(strpos($commandline, '-') === false) {
+    if(!empty($commandline)) {
+        // We cannot have received any meaningful parameters
+        $DAEMON->fatal('Garbage in command line');
     }
+}
+else {
+    // Parse command line
+    $switches = preg_split('/(-{1,2}[a-zA-Z]+) */', $commandline, -1, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE);
 
+    // Taking advantage of the fact that $switches is indexed with incrementing numeric keys
+    // We will be using that to pass additional information to those switches who need it
+    $numswitches = count($switches);
 
-$logfile = fopen('chatd.log', 'a+');
+    // Fancy way to give a "hyphen" boolean flag to each "switch"
+    $switches = array_map(create_function('$x', 'return array("str" => $x, "hyphen" => (substr($x, 0, 1) == "-"));'), $switches);
+
+    for($i = 0; $i < $numswitches; ++$i) {
+
+        $switch = $switches[$i]['str'];
+        $params = ($i == $numswitches - 1 ? NULL :
+                                            ($switches[$i + 1]['hyphen'] ? NULL : trim($switches[$i + 1]['str']))
+                  );
+
+        if(substr($switch, 0, 2) == '--') {
+            // Double-hyphen switch
+            $DAEMON->cli_switch(strtolower(substr($switch, 2)), $params);
+        }
+        else if(substr($switch, 0, 1) == '-') {
+            // Single-hyphen switch(es), may be more than one run together
+            $switch = substr($switch, 1); // Get rid of the -
+            $len = strlen($switch);
+            for($j = 0; $j < $len; ++$j) {
+                $DAEMON->cli_switch(strtolower(substr($switch, $j, 1)), $params);
+            }
+        }
+    }
+}
+
+if(!$DAEMON->query_start()) {
+    // For some reason we didn't start, so print out some info
+    echo 'Starts the Moodle chat socket server on port '.$CFG->chat_serverport;
+    echo "\n\n";
+    echo "Usage: chatd.php [parameters]\n\n";
+    echo "Parameters:\n";
+    echo "  --start         Starts the daemon\n";
+    echo "  -v              Verbose mode (prints trivial information messages)\n";
+    echo "  -l [logfile]    Log all messages to logfile (if not specified, chatd.log)\n";
+    echo "Example:\n";
+    echo "  chatd.php --start -l\n\n";
+    die();
+}
 
 /// Try to set up all the sockets ////////////////////////////////////////////////
 
-trace('Setting up sockets');
+$DAEMON->trace('Setting up sockets');
 
 if (!function_exists('socket_set_option')) {
     // PHP < 4.3
@@ -688,8 +813,7 @@ if(!socket_listen($DAEMON->listen_socket, $CFG->chat_servermax)) {
 }
 
 // Socket has been initialized and is ready
-trace('Socket opened on port '.$CFG->chat_serverport);
-$DAEMON->socket_active = true;
+$DAEMON->trace('Socket opened on port '.$CFG->chat_serverport);
 
 // [pj]: I really must have a good read on sockets. What exactly does this do?
 // http://www.unixguide.net/network/socketfaq/4.5.shtml is still not enlightening enough for me.
@@ -719,16 +843,16 @@ pcntl_signal(SIGTERM, "sig_handler");
 pcntl_signal(SIGHUP, "sig_handler");
 */
 
-if($DAEMON->can_daemonize) {
-    trace('Unholy spirit possession: daemonizing');
+if($DAEMON->_pcntl_exists && false) {
+    $DAEMON->trace('Unholy spirit possession: daemonizing');
     $DAEMON->pid = pcntl_fork();
     if($pid == -1) {
-        trace('Process fork failed, terminating');
+        $DAEMON->trace('Process fork failed, terminating');
         die();
     }
     else if($pid) {
         // We are the parent
-        trace('Successfully forked the daemon with PID '.$pid);
+        $DAEMON->trace('Successfully forked the daemon with PID '.$pid);
         die();
     }
     else {
@@ -739,15 +863,15 @@ if($DAEMON->can_daemonize) {
 
     // Detach from controlling terminal
     if(!posix_setsid()) {
-        trace('Could not detach daemon process from terminal!');
+        $DAEMON->trace('Could not detach daemon process from terminal!');
     }
 }
 else {
     // Cannot go demonic
-    trace('Unholy spirit possession failed: PHP is not compiled with --enable-pcntl');
+    $DAEMON->trace('Unholy spirit possession failed: PHP is not compiled with --enable-pcntl');
 }
 
-trace('Started Moodle chatd on port '.$CFG->chat_serverport.', listening socket '.$DAEMON->listen_socket, E_USER_WARNING);
+$DAEMON->trace('Started Moodle chatd on port '.$CFG->chat_serverport.', listening socket '.$DAEMON->listen_socket, E_USER_WARNING);
 
 while(true) {
     $active = array();
@@ -768,7 +892,7 @@ while(true) {
 
                 if(!ereg('win=(chat|users|message|beep).*&chat_sid=([a-zA-Z0-9]*)&groupid=([0-9]*) HTTP', $data, $info)) {
                     // Malformed data
-                    trace('UFO with '.$handle.': Request with malformed data; connection closed', E_USER_WARNING);
+                    $DAEMON->trace('UFO with '.$handle.': Request with malformed data; connection closed', E_USER_WARNING);
                     $DAEMON->dismiss_ufo($handle);
                     continue;
                 }
@@ -784,7 +908,7 @@ while(true) {
                        $type = CHAT_CONNECTION_CHANNEL;
                         $customdata['quirks'] = 0;
                         if(strpos($data, 'Safari')) {
-                            trace('Safari identified...', E_USER_WARNING);
+                            $DAEMON->trace('Safari identified...', E_USER_WARNING);
                             $customdata['quirks'] += QUIRK_CHUNK_UPDATE;
                         }
                     break;
@@ -794,7 +918,7 @@ while(true) {
                     case 'beep':
                         $type = CHAT_SIDEKICK_BEEP;
                         if(!ereg('beep=([^&]*)[& ]', $data, $info)) {
-                            trace('Beep sidekick did not contain a valid userid', E_USER_WARNING);
+                            $DAEMON->trace('Beep sidekick did not contain a valid userid', E_USER_WARNING);
                             $DAEMON->dismiss_ufo($handle);
                             continue;
                         }
@@ -805,7 +929,7 @@ while(true) {
                     case 'message':
                         $type = CHAT_SIDEKICK_MESSAGE;
                         if(!ereg('chat_message=([^&]*)[& ]chat_msgidnr=([^&]*)[& ]', $data, $info)) {
-                            trace('Message sidekick did not contain a valid message', E_USER_WARNING);
+                            $DAEMON->trace('Message sidekick did not contain a valid message', E_USER_WARNING);
                             $DAEMON->dismiss_ufo($handle);
                             continue;
                         }
@@ -814,7 +938,7 @@ while(true) {
                         }
                     break;
                     default:
-                        trace('UFO with '.$handle.': Request with unknown type; connection closed', E_USER_WARNING);
+                        $DAEMON->trace('UFO with '.$handle.': Request with unknown type; connection closed', E_USER_WARNING);
                         $DAEMON->dismiss_ufo($handle);
                         continue;
                     break;
@@ -830,43 +954,18 @@ while(true) {
     // Finally, accept new connections
     $DAEMON->conn_accept();
 
-    usleep($DAEMON->socketserver_refresh);
+    usleep($DAEMON->_time_rest_socket);
 }
 
 @socket_shutdown($DAEMON->listen_socket, 0);
 die("\n\n-- terminated --\n");
 
 
-function trace($message, $level = E_USER_NOTICE) {
-    global $DAEMON, $logfile;
-
-    $date = date('[Y-m-d H:i:s] ');
-    $severity = '';
-
-    switch($level) {
-        case E_USER_WARNING: $severity = '*IMPORTANT* '; break;
-        case E_USER_ERROR:   $severity = ' *CRITICAL* '; break;
-    }
-
-    $message = $date.$severity.$message."\n";
-
-    if ($DAEMON->trace_level & $level) {
-        if($level & E_USER_ERROR) {
-            fwrite(STDERR, $message);
-        }
-        fwrite(STDOUT, $message);
-        fwrite($logfile, $message);
-        fflush($logfile);
-    }
-    flush();
-}
-
 function chat_socket_write($connection, $text) {
     $check_socket = array($connection);
     $socket_changed = socket_select($read = NULL, $check_socket, $except = NULL, 0, 0);
     if($socket_changed > 0) {
         $written = socket_write($connection, $text, strlen($text));
-        //trace('socket_write wrote '.$written.' of '.strlen($text).' bytes');
         return true;
     }
     return false;
