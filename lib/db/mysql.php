@@ -347,6 +347,12 @@ function main_upgrade($oldversion=0) {
         }
     }
 
+	if ($oldversion < 2003042600) {
+        /// Some more indexes - we need al the help we can get on the logs
+        execute_sql(" ALTER TABLE `{$CFG->prefix}log` ADD INDEX(module) ");
+        execute_sql(" ALTER TABLE `{$CFG->prefix}log` ADD INDEX(action) ");
+    }
+
     return $result;
 
 }
