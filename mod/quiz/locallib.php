@@ -406,7 +406,7 @@ class quiz_default_questiontype {
 
                 $strstudents = $studentcount === 1 ? $course->student : $course->students;
                 echo "<tr>\n";
-                echo "<td align=\"left\" class=\"generaltablecell c0\">$quiz->name</td>\n";
+                echo "<td align=\"left\" class=\"generaltablecell c0\">".format_string($quiz->name)."</td>\n";
                 echo "<td align=\"center\" class=\"generaltablecell c0\"><input name=\"q{$quiz->id}replace\" type=\"checkbox\" ".$checked." /></td>\n";
                 echo "<td align=\"left\" class=\"generaltablecell c0\">".(($studentcount) ? $studentcount.' '.$strstudents : '-')."</td>\n";
                 echo "</tr>\n";

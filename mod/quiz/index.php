@@ -76,10 +76,10 @@
     foreach ($quizzes as $quiz) {
         if (!$quiz->visible) { 
             //Show dimmed if the mod is hidden
-            $link = "<a class=\"dimmed\" href=\"view.php?id=$quiz->coursemodule\">$quiz->name</a>";
+            $link = "<a class=\"dimmed\" href=\"view.php?id=$quiz->coursemodule\">".format_string($quiz->name,true)."</a>";
         } else {
             //Show normal if the mod is visible
-            $link = "<a href=\"view.php?id=$quiz->coursemodule\">$quiz->name</a>";
+            $link = "<a href=\"view.php?id=$quiz->coursemodule\">".format_string($quiz->name,true)."</a>";
         }
 
         $bestgrade = quiz_get_best_grade($quiz, $USER->id);

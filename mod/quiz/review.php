@@ -75,14 +75,14 @@
     $strtimecompleted = get_string("timecompleted", "quiz");
     $stroverdue = get_string("overdue", "quiz");
 
-    print_header_simple("$quiz->name", "",
+    print_header_simple(format_string($quiz->name), "",
                  "<a href=\"index.php?id=$course->id\">$strquizzes</a>
-                  -> <a href=\"view.php?id=$cm->id\">$quiz->name</a> -> $strreview",
+                  -> <a href=\"view.php?id=$cm->id\">".format_string($quiz->name,true)."</a> -> $strreview",
                  "", "", true);
 
     echo '<div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>'; // for overlib
 
-    print_heading($quiz->name);
+    print_heading(format_string($quiz->name));
 
 
 /// Include Javascript protection for this page if required

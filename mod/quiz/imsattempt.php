@@ -74,7 +74,7 @@
     if ($quiz->password and empty($_POST['q'])) {
         if (empty($_POST['quizpassword'])) {
     
-            print_heading($quiz->name);
+            print_heading(format_string($quiz->name));
             print_heading(get_string("attempt", "quiz", $attemptnumber));
             if (trim(strip_tags($quiz->intro))) {
                 print_simple_box(format_text($quiz->intro), "CENTER");

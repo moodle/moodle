@@ -30,7 +30,7 @@ class page_quiz extends page_generic_activity {
 
         $this->init_full();
         $replacements = array(
-            '%fullname%' => $this->activityrecord->name
+            '%fullname%' => format_string($this->activityrecord->name)
         );
         foreach($replacements as $search => $replace) {
             $title = str_replace($search, $replace, $title);
@@ -44,7 +44,7 @@ class page_quiz extends page_generic_activity {
         }
 
         $breadcrumbs[get_string('modulenameplural', 'quiz')] = $CFG->wwwroot.'/mod/quiz/index.php?id='.$this->courserecord->id;
-        $breadcrumbs[$this->activityrecord->name]            = $CFG->wwwroot.'/mod/quiz/view.php?id='.$this->modulerecord->id;
+        $breadcrumbs[format_string($this->activityrecord->name)]            = $CFG->wwwroot.'/mod/quiz/view.php?id='.$this->modulerecord->id;
 
         if(!empty($morebreadcrumbs)) {
             $breadcrumbs = array_merge($breadcrumbs, $morebreadcrumbs);

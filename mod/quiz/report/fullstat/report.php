@@ -312,7 +312,7 @@ class quiz_report extends quiz_default_report {
         require_once("$CFG->libdir/excel/Worksheet.php");
         require_once("$CFG->libdir/excel/Workbook.php");
         header("Content-type: application/vnd.ms-excel");
-        $downloadfilename = clean_filename("$course->shortname $quiz->name");
+        $downloadfilename = clean_filename("$course->shortname ".format_string($quiz->name,true));
         header("Content-Disposition: attachment; filename=$downloadfilename.xls");
         header("Expires: 0");
         header("Cache-Control: must-revalidate, post-check=0,pre-check=0");
@@ -351,7 +351,7 @@ class quiz_report extends quiz_default_report {
         $formatblue->set_bold(1);
         $formatblue->set_color('blue');
         $formatblue->set_align('center');
-        $myxls->write_string(0,0,$quiz->name);
+        $myxls->write_string(0,0,format_string($quiz->name,true));
         $myxls->set_column(0,0,25);
         $row=2;
         $qcount=0;
@@ -572,7 +572,7 @@ class quiz_report extends quiz_default_report {
         /// Print header to force download
 
         header("Content-Type: application/download\n"); 
-        $downloadfilename = clean_filename("$course->shortname $quiz->name");
+        $downloadfilename = clean_filename("$course->shortname ".format_string($quiz->name,true));
         header("Content-Disposition: attachment; filename=\"$downloadfilename.txt\"");
         header("Expires: 0");
         header("Cache-Control: must-revalidate, post-check=0,pre-check=0");
@@ -580,7 +580,7 @@ class quiz_report extends quiz_default_report {
 
         /// Print names of all the fields
 
-        echo "$quiz->name";
+        echo format_string($quiz->name,true);
         echo "\n";
         
         /// Print all the user data
@@ -762,7 +762,7 @@ class quiz_report extends quiz_default_report {
 
     print ("<br /><table width=\"95%\" border=\"1\" align=\"center\" cellpadding=\"2\" cellspacing=\"0\">\n");
     if ($containsMCTF){$ws = " ". $strwithsummary;} else {$ws = "";}
-    print("<tr><th colspan=\"3\">QUIZ: $quiz->name&nbsp;&nbsp; -- &nbsp;&nbsp;$strlistitems$ws</th></tr>\n");
+    print("<tr><th colspan=\"3\">QUIZ: ".format_string($quiz->name)."&nbsp;&nbsp; -- &nbsp;&nbsp;$strlistitems$ws</th></tr>\n");
     $qcount = 0;
     $itemcount = 0; //needed since matching Qs adds additional columns of data in $analysis
     foreach ($qs_in_order as $qid){

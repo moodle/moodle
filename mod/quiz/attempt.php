@@ -56,14 +56,14 @@
 
     if (!empty($quiz->popup)) {
         define('MESSAGE_WINDOW', true);  // This prevents the message window coming up
-        print_header("$course->shortname: $quiz->name", '', '', '', '', false, '', '', false, '');
+        print_header("$course->shortname: ".format_string($quiz->name), '', '', '', '', false, '', '', false, '');
         
     } else {
         $strquizzes = get_string("modulenameplural", "quiz");
         $strquiz  = get_string("modulename", "quiz");
-        print_header_simple("$quiz->name", "",
+        print_header_simple(format_string($quiz->name), "",
                  "<a href=\"index.php?id=$course->id\">$strquizzes</a> ->
-                  <a href=\"view.php?id=$cm->id\">$quiz->name</a> -> $strattemptnum",
+                  <a href=\"view.php?id=$cm->id\">".format_string($quiz->name,true)."</a> -> $strattemptnum",
                   "", "", true);
     }
 
@@ -84,7 +84,7 @@
     if ($quiz->password and empty($_POST['q'])) {
         if (empty($_POST['quizpassword'])) {
     
-            print_heading($quiz->name);
+            print_heading(format_string($quiz->name));
             print_heading(get_string("attempt", "quiz", $attemptnumber));
             if (trim(strip_tags($quiz->intro))) {
                 print_simple_box(format_text($quiz->intro), "center");
@@ -276,7 +276,7 @@
 
 /// First print the headings and so on
 
-    print_heading($quiz->name);
+    print_heading(format_string($quiz->name));
 
     if (!$available) {
         error("Sorry, this quiz is not available", "view.php?id=$cm->id");

@@ -50,12 +50,12 @@
         $strquiz  = get_string("modulename", "quiz");
         $strreport  = get_string("report", "quiz");
 
-        print_header_simple("$quiz->name", "",
+        print_header_simple(format_string($quiz->name), "",
                      "<a href=\"index.php?id=$course->id\">$strquizzes</a>
-                      -> <a href=\"view.php?id=$cm->id\">$quiz->name</a> -> $strreport",
+                      -> <a href=\"view.php?id=$cm->id\">".format_string($quiz->name,true)."</a> -> $strreport",
                      "", "", true, update_module_button($cm->id, $course->id, $strquiz), navmenu($course, $cm));
 
-        print_heading($quiz->name);
+        print_heading(format_string($quiz->name));
 
 
     /// Print list of available quiz reports

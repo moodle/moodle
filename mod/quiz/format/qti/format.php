@@ -377,7 +377,7 @@ function handle_questions_media(&$questions, $path, $courseid) {
         $smarty->assign('userid', $USER->id);        
         $smarty->assign('username', htmlspecialchars($USER->username, ENT_COMPAT, 'UTF-8'));
         $smarty->assign('quiz_level_export', 1);
-        $smarty->assign('quiztitle', $quiz->name); //assigned specifically so as not to cause problems with category-level export
+        $smarty->assign('quiztitle', format_string($quiz->name,true)); //assigned specifically so as not to cause problems with category-level export
         $smarty->assign('quiztimeopen', date('Y-m-d\TH:i:s', $quiz->timeopen)); // ditto
         $smarty->assign('quiztimeclose', date('Y-m-d\TH:i:s', $quiz->timeclose)); // ditto
         $smarty->assign('grademethod', $gradingmethod[$quiz->grademethod]);

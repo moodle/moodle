@@ -1359,7 +1359,7 @@
             $newid = insert_record ("quiz",$quiz);
 
             //Do some output
-            echo "<li>".get_string("modulename","quiz")." \"".$quiz->name."\"</li>";
+            echo "<li>".get_string("modulename","quiz")." \"".format_string(stripslashes($quiz->name),true)."\"</li>";
             backup_flush(300);
 
             if ($newid) {

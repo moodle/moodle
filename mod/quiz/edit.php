@@ -324,10 +324,10 @@
     // one column layout with table of questions used in this quiz
         print_header_simple($strediting, '',
                  "<a href=\"index.php?id=$course->id\">$strquizzes</a>".
-                 " -> <a href=\"view.php?q=$modform->instance\">$modform->name</a>".
+                 " -> <a href=\"view.php?q=$modform->instance\">".format_string($modform->name,true)."</a>".
                  " -> $strediting");
         print_simple_box_start("center");
-        print_heading($modform->name);
+        print_heading(format_string($modform->name));
         $attemptcount = count_records_select("quiz_attempts", "quiz = '$modform->instance' AND timefinish > 0");
 
         $strviewallanswers  = get_string("viewallanswers","quiz",$attemptcount);
@@ -362,12 +362,12 @@
         // two column layout with quiz info in left column
         print_header_simple($strediting, '',
                  "<a href=\"index.php?id=$course->id\">$strquizzes</a>".
-                 " -> <a href=\"view.php?q=$modform->instance\">$modform->name</a>".
+                 " -> <a href=\"view.php?q=$modform->instance\">".format_string($modform->name,true)."</a>".
                  " -> $strediting");
         echo '<table border="0" width="100%" cellpadding="2" cellspacing="0">';
         echo '<tr><td width="50%" valign="top">';
         print_simple_box_start("center", "100%");
-        print_heading($modform->name);
+        print_heading(format_string($modform->name));
         $sumgrades = quiz_print_question_list($modform->questions, $modform->grades, true, $modform->instance);
         if (!set_field('quiz', 'sumgrades', $sumgrades, 'id', $modform->instance)) {
             error('Failed to set sumgrades');

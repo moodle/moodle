@@ -9,7 +9,7 @@ defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
 var timerID = null;
 var timerRunning = false;
 var secondsleft = <?php echo $secondsleft ?>;
-var titleafter  = '<?php echo $quiz->name ?>';
+var titleafter  = '<?php echo format_string($quiz->name) ?>';
 var titlebefore = '<?php echo get_string("countdown", "quiz").": " ?>';
 var alertmessage  = '<?php print_string("countdownfinished", "quiz") ?>';
 var alertmessage10  = '<?php print_string("countdowntenminutes", "quiz") ?>';
