@@ -107,7 +107,7 @@
     }
 
     if ($user->icq) {
-        print_row("ICQ:","<A HREF=\"http://wwp.icq.com/$user->icq\">$user->icq <IMG SRC=\"http://online.mirabilis.com/scripts/online.dll?icq=$user->icq&img=5\" WIDTH=18 HEIGHT=18 BORDER=0></A>");
+        print_row("ICQ:","<A HREF=\"http://web.icq.com/wwp?Uin=$user->icq\">$user->icq <IMG SRC=\"http://web.icq.com/whitepages/online?icq=$user->icq&img=5\" WIDTH=18 HEIGHT=18 BORDER=0></A>");
     }
 
     if ($user->lastaccess) {
