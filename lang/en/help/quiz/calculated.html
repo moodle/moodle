@@ -50,13 +50,13 @@ In the question text input and "Correct Answer Formula" {a} and {b} can be seen.
 abs, acos, acosh, asin, asinh, atan, atanh, ceil, cos, cosh, deg2rad, exp, expm1, floor, log, log10, log1p, rad2deg, round, sin, sinh, sprt, tan, tanh
 </b><br />and two two-argument functions<br /><b>
 atan2, pow
-</b><br />and the functions <b>min</b> and <b>max</b> that can take two or more arguments. It is also possible to use the function <b>pi</b> that takes no arguments but do not forget the use the parentheses - the correct usage is <b>pi()</b>. Similary the other function must have their argument(s) within parentheses. Possible usage is for example <b>sin({a}) + cos({b}) * 2</b>. It should not be any problem to wrap functions within eachother like <b>cos(deg2rad({a} + 90))</b> etc.
+</b><br />and the functions <b>min</b> and <b>max</b> that can take two or more arguments. It is also possible to use the function <b>pi</b> that takes no arguments but do not forget the use the parentheses - the correct usage is <b>pi()</b>. Similarly the other function must have their argument(s) within parentheses. Possible usage is for example <b>sin({a}) + cos({b}) * 2</b>. It should not be any problem to wrap functions within each other like <b>cos(deg2rad({a} + 90))</b> etc.
 <br />More details on how to use these PHP-style functions can be found in the <a target="phpmathdoc" href="http://www.php.net/manual/en/ref.math.php">documentation at the PHP web site</a>
 <br /><br />
 As for numerical questions it is possible to allow a margin within which all responses are accepted as correct. The "Tolerance" field is used for this. However, there are three different types of tolerances. These are <b>Relative, Nominal and Geometric</b>. If we say that the correct answer at quiz time is calculated to 200 and the tolerance is set to 0.5 then the different tolerance types work like this:
 <br /><br /><b>Relative:</b> A tolerance interval is calculated by multiplying the correct answer with 0.5, ie in this case we get 100 so for this tolerance the correct response must be between 100 and 300.  (200 ± 100)<br />
 This is useful if the magnitude of the correct answer can differ greatly between different wildcard values.
-<br /><br /><b>Nominal:</b>  This is the simpliest tolerance type but not very powerful. The correct response must be between 199.5 and 200.5 (200 ± 0.5)<br />
+<br /><br /><b>Nominal:</b>  This is the simplest tolerance type but not very powerful. The correct response must be between 199.5 and 200.5 (200 ± 0.5)<br />
 This tolerance type can be useful if the differences between different correct answers are small.
 <br /><br /><b>Geometric:</b> The upper limit of the tolerance interval is calculated as 200 + 0.5*200 and is the same as for the relative case. The lower limit is calculated as 200/(1 + 0.5). The correct response must then be between 133.33 and 300.<br />
 This is useful for complex calculation that must have great tolerances where relative tolerances of 1 or more would be used for the upper limit but clearly not acceptable for the lower limit as it would make zero a correct answer for all cases.
