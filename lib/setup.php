@@ -101,6 +101,12 @@
         ini_set('session.gc_maxlifetime', $CFG->sessiontimeout);
     }
 
+/// Set custom session path
+    if (!file_exists("$CFG->dataroot/sessions")) {
+        make_upload_directory('sessions');
+    }
+    ini_set('session.save_path', "$CFG->dataroot/sessions");
+
 /// Set sessioncookie variable if it isn't already
     if (!isset($CFG->sessioncookie)) {
         $CFG->sessioncookie = '';

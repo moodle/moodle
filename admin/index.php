@@ -18,10 +18,10 @@
         die;
     }
 
+
 /// Check some PHP server settings
 
     $documentationlink = "please read the <A HREF=\"../doc/?frame=install.html&sub=webserver\">install documentation</A>";
-
 
     if (ini_get_bool('session.auto_start')) {
         error("The PHP server variable 'session.auto_start' should be Off - $documentationlink");
@@ -33,15 +33,6 @@
 
     if (!ini_get_bool('file_uploads')) {
         error("The PHP server variable 'file_uploads' is not turned On - $documentationlink");
-    }
-
-
-
-/// Check that sessions are supported
-
-    if (!is_readable(ini_get('session.save_path')) and !ini_get_bool('safe_mode')) {
-        $sessionpath = ini_get('session.save_path');
-        notify("Warning: It appears your server does not support sessions (session.save_path = '$sessionpath')");
     }
 
 
