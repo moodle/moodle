@@ -1087,7 +1087,7 @@ function forum_count_discussion_replies($forum="0") {
     if ($forum) {
         $forumselect = " AND d.forum = '$forum'";
     }
-    return get_records_sql("SELECT p.discussion, (count(*)) as replies
+    return get_records_sql("SELECT p.discussion, (count(*)) as replies, max(p.id) as lastpostid
                               FROM {$CFG->prefix}forum_posts p,
                                    {$CFG->prefix}forum_discussions d
                              WHERE p.parent > 0
@@ -1570,6 +1570,13 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
 }
 
 
+// [pj] The first parameter in this function "looks like" a post, but if you find
+// the ONLY place it's called from, you 'll see that what gets passed is actually
+// a DISCUSSION object!!! Furthermore, that object has properties like discussion
+// which a normal discussion object wouldn't have. WTF?!?!?
+// 
+// *** THIS IS MISLEADING AT BEST AND SHOULD BE CORRECTED!!! ***
+
 function forum_print_discussion_header(&$post, $forum, $datestring="") {
     global $THEME, $USER, $CFG;
 
@@ -1602,8 +1609,12 @@ function forum_print_discussion_header(&$post, $forum, $datestring="") {
     }
 
     echo "<td bgcolor=\"$THEME->cellcontent2\" class=\"forumpostheaderdate\" align=right nowrap>";
+
+    // [pj] This is also VERY suspicious, as it discriminates between a post record and a discussion record
+    // based on the presence of the timemodified field WITHOUT SAYING ANYTHING. Ummm.... documentation, anyone?
+
     if (!empty($post->timemodified)) {
-        echo userdate($post->timemodified, $datestring);
+        echo '<a href="'.$CFG->wwwroot.'/mod/forum/discuss.php?d='.$post->discussion.'#'.$post->lastpostid.'">'.userdate($post->timemodified, $datestring).'</a>';
     } else {
         echo userdate($post->modified, $datestring);
     }
@@ -2436,7 +2447,7 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5,
 
     $discussioncount = 0;
     $olddiscussionlink = false;
-    $strdatestring = get_string("strftimedaydatetime");
+    $strdatestring = get_string("strftimerecentfull");
 
     if ($forum_style == "minimal") {
         $strftimerecent = get_string("strftimerecent");
@@ -2472,6 +2483,7 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5,
         }
         if (!empty($replies[$discussion->discussion])) {
             $discussion->replies = $replies[$discussion->discussion]->replies;
+            $discussion->lastpostid = $replies[$discussion->discussion]->lastpostid;
         } else {
             $discussion->replies = 0;
         }
