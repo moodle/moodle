@@ -33,6 +33,7 @@
             if ( $concepts ) {
                 $lastglossary = 0;
                 $lastcategory = 0;
+                $cm = get_coursemodule_from_instance("glossary", $glossary->id, $courseid);
                 foreach ( $concepts as $concept ) {
                     if ( $lastglossary != $concept->glossaryid ) {
                         $glossary = get_record("glossary","id",$concept->glossaryid);
@@ -46,7 +47,7 @@
                         }
 
                         $title = strip_tags("$glossary->name: " . get_string("category","glossary"). " $category->name");
-                        $href_tag_begin = "<a class=\"autolink\" title=\"$title\" href=\"$CFG->wwwroot/mod/glossary/view.php?id=182&currentview=categories&cat=$concept->id\">";
+                        $href_tag_begin = "<a class=\"autolink\" title=\"$title\" href=\"$CFG->wwwroot/mod/glossary/view.php?id=$cm->id&currentview=categories&cat=$concept->id\">";
                     } else {
                         $title = strip_tags("$glossary->name: $concept->concept");
                         $href_tag_begin = "<a target=\"entry\" class=\"autolink\" title=\"$title\" href=\"$CFG->wwwroot/mod/glossary/showentry.php?courseid=$courseid&concept=$concept->concept\" ".
