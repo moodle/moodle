@@ -6,6 +6,40 @@
 <BODY BGCOLOR="#FFFFFF">
 <H2>Release notes</H2>
 
+<P>  New in Moodle 1.0.6.4:   </P>
+<UL><DL>
+
+<DT> Authentication
+<DD> Moodle now features seven different authentication mechanisms!
+     New methods just added include IMAP, POP3 and NNTP servers (including
+     those using SSL or certificate-based authentication), and also 
+     authentication against user-specified fields in ANY 
+     external database table.  In addition, (thanks to contributor Petri
+     Asikainen), Moodle now sports a cool new GUI for configuring 
+     all of this, so it should be pretty easy to hook Moodle up to 
+     nearly any external list of users.
+
+<DT> Languages
+<DD> Complete new Norwegian translation (see credits for details), 
+     and updates for several others.
+
+<DT> Bug fixes
+<DD> <UL>
+     <LI> Day value in dates (eg forum posts, weekly listing) are 
+          now displayed correctly on Windows servers.
+     <LI> config-dist.php is now DOS format to make it easier for Windows users.
+     <LI> Added a workaround (and new config switch in config-dist.php) for 
+          some systems which have buggy referer variables.  This should help 
+          those people getting "stuck" on a form during setup.
+     <LI> Logout now sends you to the home page.
+     <LI> Timezones now range between -13 to 13 hours (for daylight saving).
+     <LI> Character set in email now matches current language
+     </UL>
+
+</DL></UL>
+
+
+<HR>
 <P>  New in Moodle 1.0.6.3:   </P>
 <UL><DL>
 
