@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.2 development (2004010800)
+      // resource.php - created with Moodle 1.2 Beta (2004022400)
 
 
 $string['addresource'] = 'Tilføj materiale';
@@ -18,6 +18,7 @@ $string['configpopupstatus'] = 'Skal popupvinduer vide statusbaren som standart?
 $string['configpopuptoolbar'] = 'Skal popupvinduer vise værktøjslinjen som standart?';
 $string['configpopupwidth'] = 'Hvilken bredde skal popupvinduer have som standart?';
 $string['configwebsearch'] = 'Når der tilføjes en URL som en webside eller weblink, vil denne lokation tilbydes som et sted der kan hjælpe brugeren med at søge efter den URL de ønsker.';
+$string['directlink'] = 'Direkte link til denne fil';
 $string['editingaresource'] = 'Rediger i materialet';
 $string['example'] = 'Eksempel';
 $string['examplereference'] = 'Tobin, K. & Tippins, D (1993) Constructivism as a Referent for Teaching and Learning. In: K. Tobin (Ed) The Practice of Constructivism in Science Education, pp 3-21, Lawrence-Erlbaum, Hillsdale, NJ.';

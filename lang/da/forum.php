@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.2 development (2004010800)
+      // forum.php - created with Moodle 1.2 Beta (2004022400)
 
 
 $string['addanewdiscussion'] = 'Tilføj en ny diskusion';
@@ -109,6 +109,7 @@ $string['replies'] = 'Svar';
 $string['repliesmany'] = '$a svar indtil videre';
 $string['repliesone'] = '$a svar indtil videre';
 $string['reply'] = 'Svar';
+$string['replyforum'] = 'Svar til forum';
 $string['search'] = 'Søg';
 $string['searchforums'] = 'Søg i forum';
 $string['searcholderposts'] = 'Søg i gamle beskeder';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.2 development (2003121500)
+      // quiz.php - created with Moodle 1.2 Beta (2004022400)
 
 
 $string['acceptederror'] = 'Accepteret fejl';
@@ -16,9 +16,11 @@ $string['answerhowmany'] = 'Et eller flere svar?';
 $string['answersingleno'] = 'Flere svar tilladt';
 $string['answersingleyes'] = 'Kun et svar';
 $string['answerswithacceptederrormarginmustbenumeric'] = 'Svar med accepteret fejl skal være nummeriske';
+$string['answertoolong'] = 'Svar for langt efter linje $a (255 karaktere maks)';
 $string['aon'] = 'AON format';
 $string['attempt'] = 'Forsøg $a';
 $string['attemptfirst'] = 'Første forsøg';
+$string['attemptincomplete'] = 'Dette forsøg (af $a) er ikke afsluttet endnu,';
 $string['attemptlast'] = 'Sidste forsøg';
 $string['attemptquiznow'] = 'Lav quizzen nu';
 $string['attempts'] = 'Forsøg';
@@ -27,6 +29,7 @@ $string['attemptsunlimited'] = 'Ingen begrænsniger i antal forsøg';
 $string['backtoquiz'] = 'Tilbage til redigering i quiz';
 $string['bestgrade'] = 'Bedste bedømmelse';
 $string['blackboard'] = 'BlackBoard';
+$string['calculatedquestion'] = 'Beregnet spørgsmål ikke understøttet på linje $a. Spørgsmålet vil blive ignoreret.';
 $string['caseno'] = 'Nej, ingen case sensitivity';
 $string['casesensitive'] = 'Case sensitivity';
 $string['caseyes'] = 'Ja, der er case sensitivity';
@@ -69,6 +72,7 @@ $string['editingrandomsamatch'] = 'Ret et \'Tilfældigt passende kort-svar\' spør
 $string['editingshortanswer'] = 'Redigerer et \"kort svar\" spørgsmål';
 $string['editingtruefalse'] = 'Redigerer et sandt/falsk spørgsmål';
 $string['editquestions'] = 'Ret spørgsmål';
+$string['errorsdetected'] = '$a fejl fundet.';
 $string['false'] = 'Falsk';
 $string['feedback'] = 'Tilbagemelding';
 $string['fileformat'] = 'Filformat';
@@ -85,6 +89,7 @@ $string['gradehighest'] = 'Højeste bedømmelse';
 $string['grademethod'] = 'Bedømmelsesmetode';
 $string['guestsno'] = 'Beklager, gæster kan ikke deltage i quizzen';
 $string['imagedisplay'] = 'Billede';
+$string['imagemissing'] = 'Billede ikke tilgængeligt på linje $a. Filnavnet vil blive ignoreret.';
 $string['importquestions'] = 'Importer spørgsmål fra fil';
 $string['indivresp'] = 'Tilbagemelding af individuel til hver del';
 $string['introduction'] = 'Introduktion';
@@ -93,8 +98,10 @@ $string['listitems'] = 'Listning af dele i quiz\'en';
 $string['marks'] = 'Point';
 $string['match'] = 'Sammenpasse';
 $string['matchanswer'] = 'Sammenpassende svar';
+$string['missinganswer'] = 'For få :ANSWER, :Lx, :Rx sætninger for spørgsmål linje $a. Du skal definere mindst to mulige svar.';
 $string['missingcorrectanswer'] = 'Det rigtige svar skal angives';
 $string['missingname'] = 'Mangler navn på spørgsmål';
+$string['missingquestion'] = 'Manglende spørgsmåls overskrift efter linje $a';
 $string['missingquestiontext'] = 'Mangler tekst til spørgsmål';
 $string['missingword'] = 'Mangler ord spørgsmål';
 $string['modulename'] = 'Quiz';
@@ -111,12 +118,14 @@ $string['noreview'] = 'Du kan ikke se quizzen igen';
 $string['noreviewuntil'] = 'Du kan se quizzen igen indtil $a';
 $string['notenoughsubquestions'] = 'Der er ikke lavet nok underspørgsmål<br />Ønsker du at gå tilbage og rette det.';
 $string['numerical'] = 'Nummerisk';
+$string['paragraphquestion'] = '\"Skriv selv\" spørgsmål ikke understøttet på linje $a. Spørgsmål vil blive ignoreret.';
 $string['percentcorrect'] = 'Procent korrekt';
 $string['publish'] = 'Publicér';
 $string['qti'] = 'IMS QTI format';
 $string['question'] = 'Spørgsmål';
 $string['questioninuse'] = 'Spørgsmålet \'$a\' er foreløbigt brugt:';
 $string['questionname'] = 'Navn på spørgsmål';
+$string['questionnametoolong'] = 'Spørgsmåls navn for langt på linje $a (255 karaktere maks). Navnet vil blive forkortet ned.';
 $string['questions'] = 'Spørgsmål';
 $string['quizavailable'] = 'Quizzen er åben indtil: $a';
 $string['quizclose'] = 'Luk quizzen';
@@ -166,10 +175,13 @@ $string['toomanyrandom'] = 'Der er defineret flere \'tilfældige spørgsmål\' end 
 $string['true'] = 'Sandt';
 $string['truefalse'] = 'Sandt/Falsk';
 $string['type'] = 'Type';
+$string['unknowntype'] = 'Spørgsmålstype ikke understøttet på linje $a. Dette spørgsmål vil blive ignoreret.';
 $string['viewallanswers'] = 'Se $a færdige quizzer';
 $string['viewallreports'] = 'Vis rapport for $a forsøg';
+$string['warningsdetected'] = '$a advarsel/er fundet';
 $string['webct'] = 'WebCT format';
 $string['withsummary'] = 'Med opsummering statestik';
+$string['wronggrade'] = 'Forkert karakter (efter linje $a ) :';
 $string['yourfinalgradeis'] = 'Din endelige bedømmelse for denne quiz er $a';
 
 ?>

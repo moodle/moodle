@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.2 development (2003121500)
+      // editor.php - created with Moodle 1.2 Beta (2004022400)
 
 
 $string['about'] = 'Om denne editor';
@@ -21,10 +21,14 @@ $string['chooseicon'] = 'Vælg en ikon der skal indsættes';
 $string['close'] = 'Luk';
 $string['cols'] = 'Kolonner';
 $string['copy'] = 'Kopier markeret tekst';
+$string['createfolder'] = 'Lav mappe';
 $string['createlink'] = 'Indsæt weblink';
 $string['cut'] = 'Klip markeret tekst';
+$string['delete'] = 'Slet';
+$string['filebrowser'] = 'Fil-browser';
 $string['forecolor'] = 'Bogstavsfarve';
 $string['heading'] = 'Overskrift';
+$string['height'] = 'Højde';
 $string['hilitecolor'] = 'Baggrundsfarve';
 $string['horizontal'] = 'Horisontal';
 $string['horizontalrule'] = 'Horisontal linie';
@@ -33,6 +37,7 @@ $string['imageurl'] = 'Billede URL';
 $string['indent'] = 'Større margin';
 $string['insertchar'] = 'Indsæt special karakter';
 $string['insertimage'] = 'indsæt billede';
+$string['insertlink'] = 'Indsæt link';
 $string['insertsmile'] = 'Indsæt smiley';
 $string['inserttable'] = 'Indsæt tabel';
 $string['italic'] = 'Skrå skrift';
@@ -42,8 +47,19 @@ $string['justifyleft'] = 'Venstrestillet tekst';
 $string['justifyright'] = 'Højrestillet tekst';
 $string['layout'] = 'Layout';
 $string['left'] = 'Venstre';
+$string['linkproperties'] = 'Link egenskaber';
+$string['linktarget'] = 'Destination';
+$string['linktargetblank'] = 'Nyt vindue';
+$string['linktargetnone'] = 'Ingen';
+$string['linktargetother'] = 'Andre (tilfældig orden)';
+$string['linktargetself'] = 'Samme ramme';
+$string['linktargettop'] = 'Samme vindue';
+$string['linktitle'] = 'Title';
+$string['linkurl'] = 'URL';
 $string['middle'] = 'Midten';
+$string['move'] = 'Flyt';
 $string['normal'] = 'Normal';
+$string['notimage'] = 'Valgte fil er ikke et billede. Vælg venlist et billede!';
 $string['notset'] = 'Ikke sat';
 $string['ok'] = 'OK';
 $string['orderedlist'] = 'Ordnet liste';
@@ -55,10 +71,14 @@ $string['pixels'] = 'Pixels';
 $string['popupeditor'] = 'Forstør editor';
 $string['preformatted'] = 'Preformateret';
 $string['preview'] = 'Se resultat';
+$string['properties'] = 'Egenskaber';
 $string['redo'] = 'Gendan dine sidste ændringer';
+$string['rename'] = 'Omdøb';
 $string['right'] = 'Højre';
 $string['rows'] = 'Rækker';
+$string['selection'] = 'Valgte';
 $string['showhelp'] = 'Hjælp i brugen af editoren';
+$string['size'] = 'Størrelse';
 $string['spacing'] = 'Mellemrum';
 $string['strikethrough'] = 'Overstreget';
 $string['subscript'] = 'Sænket skrift';
@@ -67,10 +87,13 @@ $string['textindicator'] = 'Nuværende stil';
 $string['textmode'] = 'Du er i TEKST mode. Brug [<>] knappen til at gå tilbage til WYSIWYG mode.';
 $string['texttop'] = 'Teksttop';
 $string['top'] = 'Top';
+$string['type'] = 'Type';
 $string['underline'] = 'Understreget';
 $string['undo'] = 'Fortryd dine sidste handlinger';
 $string['unorderedlist'] = 'Punktliste';
+$string['upload'] = 'Upload';
 $string['vertical'] = 'Vertikal';
 $string['width'] = 'Bredde';
+$string['zip'] = 'Zip';
 
 ?>
