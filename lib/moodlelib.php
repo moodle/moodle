@@ -775,21 +775,26 @@ function enrol_student($userid, $courseid) {
     return true;
 }
 
-function unenrol_student($user, $course=0) {
+function unenrol_student($userid, $courseid=0) {
 /// Unenrols a student from a given course
 
-    if ($course) {
+    if ($courseid) {
         /// First delete any crucial stuff that might still send mail
-        if ($forums = get_records("forum", "course", $course)) {
+        if ($forums = get_records("forum", "course", $courseid)) {
             foreach ($forums as $forum) {
-                delete_records("forum_subscriptions", "forum", $forum->id, "userid", $user);
+                delete_records("forum_subscriptions", "forum", $forum->id, "userid", $userid);
             }
         }
-        return delete_records("user_students", "userid", $user, "course", $course);
+        if ($groups = get_groups($courseid, $userid)) {
+            foreach ($groups as $group) {
+                delete_records("groups_members", "groupid", $group->id, "userid", $userid);
+            }
+        }
+        return delete_records("user_students", "userid", $userid, "course", $courseid);
 
     } else {
-        delete_records("forum_subscriptions", "userid", $user);
-        return delete_records("user_students", "userid", $user);
+        delete_records("forum_subscriptions", "userid", $userid);
+        return delete_records("user_students", "userid", $userid);
     }
 }
 
