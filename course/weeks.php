@@ -147,7 +147,9 @@
         echo "<TD $colormain VALIGN=top WIDTH=\"100%\">";
         echo "<P><FONT SIZE=3 COLOR=\"$THEME->cellheading2\">$weekday - $endweekday</FONT></P>";
 
-        if (! $thisweek = $sections[$week]) {
+        if (!empty($sections[$week])) {
+            $thisweek = $sections[$week];
+        } else {
             $thisweek->course = $course->id;   // Create a new week structure
             $thisweek->section = $week;
             $thisweek->summary = "";

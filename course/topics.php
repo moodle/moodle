@@ -146,7 +146,10 @@
 
         echo "<TD VALIGN=top $colormain WIDTH=\"100%\">";
 
-        if (! $thissection = $sections[$section]) {
+        if (!empty($sections[$section])) {
+            $thissection = $sections[$section];
+
+        } else {
             $thissection->course = $course->id;   // Create a new section structure
             $thissection->section = $section;
             $thissection->summary = "";
