@@ -18,9 +18,9 @@
     $preferred_width_right = min($preferred_width_right, BLOCK_R_MAX_WIDTH);
     $preferred_width_right = max($preferred_width_right, BLOCK_R_MIN_WIDTH);
 
-    $strgroups       = get_string("groups");
-    $strgroupmy      = get_string("groupmy");
-    $editing         = isediting($course->id);
+    $strgroups  = get_string('groups');
+    $strgroupmy = get_string('groupmy');
+    $editing    = $PAGE->user_is_editing();
 
     echo '<table id="layout-table">';
     echo '<tr>';

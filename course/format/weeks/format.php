@@ -31,13 +31,15 @@
         $news = forum_get_course_forum($course->id, "news");
     }
 
-    $streditsummary  = get_string("editsummary");
-    $stradd          = get_string("add");
-    $stractivities   = get_string("activities");
-    $strshowallweeks = get_string("showallweeks");
-    $strweek         = get_string("week");
-    $strgroups       = get_string("groups");
-    $strgroupmy      = get_string("groupmy");
+    $streditsummary  = get_string('editsummary');
+    $stradd          = get_string('add');
+    $stractivities   = get_string('activities');
+    $strshowallweeks = get_string('showallweeks');
+    $strweek         = get_string('week');
+    $strgroups       = get_string('groups');
+    $strgroupmy      = get_string('groupmy');
+    $editing         = $PAGE->user_is_editing();
+
     if ($editing) {
         $strstudents = moodle_strtolower($course->students);
         $strweekhide = get_string("weekhide", "", $strstudents);

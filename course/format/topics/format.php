@@ -38,13 +38,15 @@
         }
     }
 
-    $streditsummary   = get_string("editsummary");
-    $stradd           = get_string("add");
-    $stractivities    = get_string("activities");
-    $strshowalltopics = get_string("showalltopics");
-    $strtopic         = get_string("topic");
-    $strgroups       = get_string("groups");
-    $strgroupmy      = get_string("groupmy");
+    $streditsummary   = get_string('editsummary');
+    $stradd           = get_string('add');
+    $stractivities    = get_string('activities');
+    $strshowalltopics = get_string('showalltopics');
+    $strtopic         = get_string('topic');
+    $strgroups        = get_string('groups');
+    $strgroupmy       = get_string('groupmy');
+    $editing          = $PAGE->user_is_editing();
+
     if ($editing) {
         $strstudents = moodle_strtolower($course->students);
         $strtopichide = get_string("topichide", "", $strstudents);

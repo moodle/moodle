@@ -8,6 +8,7 @@
 
     $id          = optional_param('id', 0, PARAM_INT);
     $name        = optional_param('name');
+    $edit        = optional_param('edit');
     $idnumber    = optional_param('idnumber');
     $blockaction = optional_param('blockaction');
 
@@ -47,18 +48,16 @@
         $USER->editing = false;
     }
 
-    $editing = false;
-
-    if (isteacheredit($course->id)) {
-       if (isset($edit)) {
-            if ($edit == "on") {
-                $USER->editing = true;
-            } else if ($edit == "off") {
-                $USER->editing = false;
+    if ($PAGE->user_allowed_editing()) {
+        if ($edit == 'on') {
+            $USER->editing = true;
+        } else if ($edit == 'off') {
+            $USER->editing = false;
+            if(!empty($USER->activitycopy) && $USER->activitycopycourse == $course->id) {
+                $USER->activitycopy       = false;
+                $USER->activitycopycourse = NULL;
             }
         }
-
-        $editing = $USER->editing;
 
         if (isset($hide) && confirm_sesskey()) {
             set_section_visible($course->id, $hide, '0');
