@@ -139,12 +139,15 @@
                 echo "<input type=\"hidden\" name=\"action\" value=\"continue\">\n";
                 echo "<input type=\"hidden\" name=\"pageid\" value=\"$pageid\">\n";
                 print_simple_box_start("center");
+                echo '<table width="100%">';
                 foreach ($answers as $answer) {
-                    echo "<p><input type=\"radio\" name=\"answerid\" value=\"{$answer->id}\"> \n";
+                    echo "<tr><td><input type=\"radio\" name=\"answerid\" value=\"{$answer->id}\"></td>\n";
+                    echo "<td>\n";
                     $options->para = false; // no <p></p>
                     echo format_text(trim($answer->answer), FORMAT_MOODLE, $options); 
-                    echo "</p>\n";
+                    echo "</td></tr>\n";
                 }
+                echo '</table>';
                 print_simple_box_end();
                 echo "<p align=\"center\"><input type=\"submit\" name=\"continue\" value=\"".
                     get_string("pleasecheckoneanswer", "lesson")."\"></p>\n";
