@@ -66,7 +66,7 @@
                     add_to_log($newcourseid, "course", "new", "view.php?id=$newcourseid", "");
 
                     if (isadmin()) { // Redirect admin to add teachers
-                        redirect("../$CFG->admin/teacher.php?id=$newcourseid", get_string("changessaved"));
+                        redirect("teacher.php?id=$newcourseid", get_string("changessaved"));
 
                     } else {         // Add current teacher and send to course
                         

@@ -830,160 +830,6 @@ function adminlogin($username, $md5password) {
 }
 
 
-function get_site () {
-/// Returns $course object of the top-level site.
-
-    if ( $course = get_record("course", "category", 0)) {
-        return $course;
-    } else {
-        return false;
-    }
-}
-
-function get_courses($categoryid="all", $sort="sortorder ASC", $fields="*") {
-/// Returns list of courses, for whole site, or category
-
-    if ($categoryid == "all") {
-        $courses = get_records("course", "", "", $sort, $fields);
-    } else {
-        $courses = get_records("course", "category", "$categoryid", $sort, $fields);
-    }
-
-    if ($courses) {  /// Remove unavailable courses from the list
-        foreach ($courses as $key => $course) {
-            if (!$course->visible) {
-                if (!isteacher($course->id)) {
-                    unset($courses[$key]);
-                }
-            }
-        }
-    }
-    return $courses;
-}
-
-
-function get_my_courses($userid, $sort="c.fullname ASC") {
-    global $CFG;
-
-    return get_records_sql("SELECT c.* 
-                              FROM {$CFG->prefix}course c, 
-                                   {$CFG->prefix}user_students s, 
-                                   {$CFG->prefix}user_teachers t 
-                             WHERE (s.userid = '$userid' AND s.course = c.id)
-                                OR (t.userid = '$userid' AND t.course = c.id)
-                             GROUP BY c.id 
-                             ORDER BY $sort");
-}
-
-function get_courses_search($search, $sort="fullname ASC", $page=0, $recordsperpage=50) {
-/// Returns a list of courses that match a search
-
-    global $CFG;
-
-    switch ($CFG->dbtype) {
-        case "mysql":
-             $limit = "LIMIT $page,$recordsperpage";
-             break;
-        case "postgres7":
-             $limit = "LIMIT $recordsperpage OFFSET ".($page * $recordsperpage);
-             break;
-        default: 
-             $limit = "LIMIT $recordsperpage,$page";
-    }
-
-    //to allow caseinsensitive search for postgesql
-    if ($CFG->dbtype == "postgres7") {
-       $LIKE = "ILIKE";
-    } else {
-       $LIKE = "LIKE";
-    }
-
-    $fullnamesearch = "";
-    $summarysearch = "";
-
-    $searchterms = explode(" ", $search);     // Search for words independently
-
-    foreach ($searchterms as $searchterm) {
-        if ($fullnamesearch) {
-            $fullnamesearch .= " AND ";
-        }
-        $fullnamesearch .= " fullname $LIKE '%$searchterm%' ";
-
-        if ($summarysearch) {
-            $summarysearch .= " AND ";
-        }
-        $summarysearch .= " summary $LIKE '%$searchterm%' ";
-    }
-
-
-    $courses = get_records_sql("SELECT * 
-                                  FROM {$CFG->prefix}course
-                                 WHERE ($fullnamesearch OR $summarysearch)
-                              ORDER BY $sort $limit");
-
-    if ($courses) {  /// Remove unavailable courses from the list
-        foreach ($courses as $key => $course) {
-            if (!$course->visible) {
-                if (!isteacher($course->id)) {
-                    unset($courses[$key]);
-                }
-            }
-        }
-    }
-
-    return $courses;
-}
-
-
-function get_categories($parent="none", $sort="sortorder ASC") {
-/// Returns a sorted list of categories
-
-    if ($parent == "none") {
-        $categories = get_records("course_categories", "", "", $sort);
-    } else {
-        $categories = get_records("course_categories", "parent", $parent, $sort);
-    }
-    if ($categories) {  /// Remove unavailable categories from the list
-        $admin = isadmin();
-        foreach ($categories as $key => $category) {
-            if (!$category->visible) {
-                if (!$admin) {
-                    unset($categories[$key]);
-                }
-            }
-        }
-    }
-    return $categories;
-}
-
-
-function fix_course_sortorder($categoryid, $sort="sortorder ASC") {
-/// Given a category object, this function makes sure the courseorder 
-/// variable reflects the real world.
-
-    if (!$courses = get_records("course", "category", "$categoryid", "$sort", "id, sortorder")) {
-        return true;
-    }
-
-    $count = 0;
-    $modified = false;
-
-    foreach ($courses as $course) {
-        if ($course->sortorder != $count) {
-            set_field("course", "sortorder", $count, "id", $course->id);
-            $modified = true;
-        }
-        $count++;
-    }
-
-    if ($modified) {
-        set_field("course_categories", "timemodified", time(), "id", $categoryid);
-    }
-
-    return true;
-}
-
-
 function get_guest() {
     return get_user_info_from_db("username", "guest");
 }
@@ -1222,6 +1068,222 @@ function get_users_longtimenosee($cutofftime) {
                           GROUP BY u.id");
 }
 
+
+
+/// OTHER SITE AND COURSE FUNCTIONS /////////////////////////////////////////////
+
+
+function get_site () {
+/// Returns $course object of the top-level site.
+
+    if ( $course = get_record("course", "category", 0)) {
+        return $course;
+    } else {
+        return false;
+    }
+}
+
+
+function get_courses($categoryid="all", $sort="sortorder ASC", $fields="*") {
+/// Returns list of courses, for whole site, or category
+
+    if ($categoryid == "all") {
+        $courses = get_records("course", "", "", $sort, $fields);
+    } else {
+        $courses = get_records("course", "category", "$categoryid", $sort, $fields);
+    }
+
+    if ($courses) {  /// Remove unavailable courses from the list
+        foreach ($courses as $key => $course) {
+            if (!$course->visible) {
+                if (!isteacher($course->id)) {
+                    unset($courses[$key]);
+                }
+            }
+        }
+    }
+    return $courses;
+}
+
+
+function get_my_courses($userid, $sort="c.fullname ASC") {
+    global $CFG;
+
+    return get_records_sql("SELECT c.* 
+                              FROM {$CFG->prefix}course c, 
+                                   {$CFG->prefix}user_students s, 
+                                   {$CFG->prefix}user_teachers t 
+                             WHERE (s.userid = '$userid' AND s.course = c.id)
+                                OR (t.userid = '$userid' AND t.course = c.id)
+                             GROUP BY c.id 
+                             ORDER BY $sort");
+}
+
+
+function get_courses_search($search, $sort="fullname ASC", $page=0, $recordsperpage=50) {
+/// Returns a list of courses that match a search
+
+    global $CFG;
+
+    switch ($CFG->dbtype) {
+        case "mysql":
+             $limit = "LIMIT $page,$recordsperpage";
+             break;
+        case "postgres7":
+             $limit = "LIMIT $recordsperpage OFFSET ".($page * $recordsperpage);
+             break;
+        default: 
+             $limit = "LIMIT $recordsperpage,$page";
+    }
+
+    //to allow caseinsensitive search for postgesql
+    if ($CFG->dbtype == "postgres7") {
+       $LIKE = "ILIKE";
+    } else {
+       $LIKE = "LIKE";
+    }
+
+    $fullnamesearch = "";
+    $summarysearch = "";
+
+    $searchterms = explode(" ", $search);     // Search for words independently
+
+    foreach ($searchterms as $searchterm) {
+        if ($fullnamesearch) {
+            $fullnamesearch .= " AND ";
+        }
+        $fullnamesearch .= " fullname $LIKE '%$searchterm%' ";
+
+        if ($summarysearch) {
+            $summarysearch .= " AND ";
+        }
+        $summarysearch .= " summary $LIKE '%$searchterm%' ";
+    }
+
+
+    $courses = get_records_sql("SELECT * 
+                                  FROM {$CFG->prefix}course
+                                 WHERE ($fullnamesearch OR $summarysearch)
+                              ORDER BY $sort $limit");
+
+    if ($courses) {  /// Remove unavailable courses from the list
+        foreach ($courses as $key => $course) {
+            if (!$course->visible) {
+                if (!isteacher($course->id)) {
+                    unset($courses[$key]);
+                }
+            }
+        }
+    }
+
+    return $courses;
+}
+
+
+function get_categories($parent="none", $sort="sortorder ASC") {
+/// Returns a sorted list of categories
+
+    if ($parent == "none") {
+        $categories = get_records("course_categories", "", "", $sort);
+    } else {
+        $categories = get_records("course_categories", "parent", $parent, $sort);
+    }
+    if ($categories) {  /// Remove unavailable categories from the list
+        $admin = isadmin();
+        foreach ($categories as $key => $category) {
+            if (!$category->visible) {
+                if (!$admin) {
+                    unset($categories[$key]);
+                }
+            }
+        }
+    }
+    return $categories;
+}
+
+
+function fix_course_sortorder($categoryid, $sort="sortorder ASC") {
+/// Given a category object, this function makes sure the courseorder 
+/// variable reflects the real world.
+
+    if (!$courses = get_records("course", "category", "$categoryid", "$sort", "id, sortorder")) {
+        return true;
+    }
+
+    $count = 0;
+    $modified = false;
+
+    foreach ($courses as $course) {
+        if ($course->sortorder != $count) {
+            set_field("course", "sortorder", $count, "id", $course->id);
+            $modified = true;
+        }
+        $count++;
+    }
+
+    if ($modified) {
+        set_field("course_categories", "timemodified", time(), "id", $categoryid);
+    }
+
+    return true;
+}
+
+function make_default_scale() {
+/// This function creates a default separated/connected scale
+/// so there's something in the database.  The locations of 
+/// strings and files is a bit odd, but this is because we 
+/// need to maintain backward compatibility with many different
+/// existing language translations and older sites.
+
+    global $CFG;
+
+    $defaultscale = NULL;
+    $defaultscale->courseid = 0;
+    $defaultscale->userid = 0;
+    $defaultscale->name  = get_string("separateandconnected");
+    $defaultscale->scale = get_string("postrating1", "forum").",".
+                           get_string("postrating2", "forum").",".
+                           get_string("postrating3", "forum");
+    $defaultscale->timemodified = time();
+
+    /// Read in the big description from the file.  Note this is not 
+    /// HTML (despite the file extension) but Moodle format text.
+    $parentlang = get_string("parentlang");
+    if (is_readable("$CFG->dirroot/lang/$CFG->lang/help/forum/ratings.html")) {
+        $file = file("$CFG->dirroot/lang/$CFG->lang/help/forum/ratings.html");
+    } else if ($parentlang and is_readable("$CFG->dirroot/lang/$parentlang/help/forum/ratings.html")) {
+        $file = file("$CFG->dirroot/lang/$parentlang/help/forum/ratings.html");
+    } else if (is_readable("$CFG->dirroot/lang/en/help/forum/ratings.html")) {
+        $file = file("$CFG->dirroot/lang/en/help/forum/ratings.html");
+    } else {
+        $file = "";
+    }
+
+    $defaultscale->description = addslashes(implode("", $file));
+
+    if ($defaultscale->id = insert_record("scale", $defaultscale)) {
+        execute_sql("UPDATE {$CFG->prefix}forum SET scale = '$defaultscale->id'");
+    }
+}
+
+function get_scales_menu($courseid=0) {
+/// Returns a menu of all available scales
+/// from the site as well as the given course
+
+    global $CFG;
+    
+    $sql = "SELECT id, name FROM {$CFG->prefix}scale 
+             WHERE courseid = '0' or courseid = '$courseid' 
+          ORDER BY courseid ASC, name ASC";
+
+    if ($scales = get_records_sql_menu("$sql")) {
+        return $scales;
+    }
+
+    make_default_scale();
+
+    return get_records_sql_menu("$sql");
+}
 
 /// MODULE FUNCTIONS /////////////////////////////////////////////////
 

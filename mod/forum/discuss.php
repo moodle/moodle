@@ -89,6 +89,9 @@
                  "$navmiddle -> $navtail", "", "", true, $searchform, navmenu($course, $cm));
     }
 
+    echo "<table width=\"100%\"><tr><td width=\"33%\">&nbsp;</td><td width=\"33%\">";
+    forum_print_mode_form($discussion->id, $mode);
+    echo "</td><td width=\"33%\">";
     if (isteacher($course->id)) {    // Popup menu to allow discussions to be moved to other forums
         if ($forums = get_all_instances_in_course("forum", $course)) {
             foreach ($forums as $courseforum) {
@@ -105,6 +108,7 @@
             }
         }
     }
+    echo "</td></tr></table>";
 
     if (isset($discussionmoved)) {
         notify(get_string("discussionmoved", "forum", $forum->name));

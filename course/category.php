@@ -267,7 +267,7 @@
             if ($creatorediting) {
                 echo "<td>";
                 if ($adminediting) {
-                    echo "<a title=\"$strassignteachers\" href=\"$CFG->wwwroot/$CFG->admin/teacher.php?id=$course->id\"><img".
+                    echo "<a title=\"$strassignteachers\" href=\"$CFG->wwwroot/course/teacher.php?id=$course->id\"><img".
                          " src=\"$pixpath/t/user.gif\" height=11 width=11 border=0></a> ";
                     echo "<a title=\"$strdelete\" href=\"delete.php?id=$course->id\"><img".
                          " src=\"$pixpath/t/delete.gif\" height=11 width=11 border=0></a> ";
@@ -311,7 +311,7 @@
 
                 } else if (isteacher($course->id)) {
                     echo "<td>";
-                    echo "<a title=\"$strassignteachers\" href=\"$CFG->wwwroot/$CFG->admin/teacher.php?id=$course->id\"><img".
+                    echo "<a title=\"$strassignteachers\" href=\"$CFG->wwwroot/course/teacher.php?id=$course->id\"><img".
                          " src=\"$pixpath/t/user.gif\" height=11 width=11 border=0></a> ";
                 }
                 echo "</td>";

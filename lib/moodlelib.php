@@ -1584,6 +1584,17 @@ function microtime_diff($a, $b) {
     return $b_sec - $a_sec + $b_dec - $a_dec;
 }
 
+function make_menu_from_list($list, $separator=",") {
+/// Given a list (eg a,b,c,d,e) this function returns 
+/// an array of 1->a, 2->b, 3->c etc
+
+    $array = array_reverse(explode($separator, $list), true);
+    foreach ($array as $key => $item) {
+        $outarray[$key+1] = trim($item);
+    }
+    return $outarray;
+}
+
 
 // vim:autoindent:expandtab:shiftwidth=4:tabstop=4:tw=140:
 ?>

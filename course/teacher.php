@@ -10,18 +10,19 @@
     optional_variable($remove, "");
     optional_variable($search, ""); // search string
 
-    if (! $site = get_site()) {
-        redirect("$CFG->wwwroot/$CFG->admin/index.php");
-    }
-
     require_login();
 
-    if (!iscreator()) {
+    if (! $course = get_record("course", "id", $id)) {
+        error("Course ID was incorrect (can't find it)");
+    }
+
+    if (!iscreator() and isteacher($course->id)) {
         error("You must be an administrator or course creator to use this page.");
     }
 
     $strassignteachers = get_string("assignteachers");
     $strcourses = get_string("courses");
+    $strteachers = get_string("teachers");
     $stradministration = get_string("administration");
     $strexistingteachers   = get_string("existingteachers");
     $strnoexistingteachers = get_string("noexistingteachers");
@@ -40,32 +41,63 @@
         $searchstring = $strsearch;
     }
 
-
-    if (! $course = get_record("course", "id", $id)) {
-        error("Course ID was incorrect (can't find it)");
+    if ($course->teachers != $strteachers) {
+        $parateachers = " ($course->teachers)";
+    } else {
+        $parateachers = "";
     }
 
 
-	print_header("$site->shortname: $course->shortname: $strassignteachers", 
-                 "$site->fullname", 
-                 "<a href=\"../course/index.php\">$strcourses</a> -> ".
-                 "<a href=\"../course/view.php?id=$course->id\">$course->fullname</a> -> ".
+
+/// Print headers
+
+	print_header("$course->shortname: $strassignteachers", 
+                 "$course->fullname", 
+                 "<a href=\"index.php\">$strcourses</a> -> ".
+                 "<a href=\"view.php?id=$course->id\">$course->shortname</a> -> ".
                  "$strassignteachers", "");
 
-    print_heading("<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->fullname ($course->shortname)</a>");
+
+/// If data submitted, then process and store.
+
+    if ($form = data_submitted()) {
+        $rank = array();
+
+        // Peel out all the data from variable names.
+        foreach ($form as $key => $val) {
+            if ($key <> "id") {
+                $type = substr($key,0,1);
+                $num  = substr($key,1);
+                $rank[$num][$type] = $val;
+            }
+        }
+
+        foreach ($rank as $num => $vals) {
+            if (! $teacher = get_record("user_teachers", "course", "$course->id", "userid", "$num")) {
+                error("No such teacher in course $course->shortname with user id $num");
+            }
+            $teacher->role = $vals['r'];
+            $teacher->authority = $vals['a'];
+            if (!update_record("user_teachers", $teacher)) {
+                error("Could not update teacher entry id = $teacher->id");
+            }
+        }
+		redirect("teacher.php?id=$course->id", get_string("changessaved"));
+	}
 
 
 /// Get all existing teachers for this course.
     $teachers = get_course_teachers($course->id);
 
+
 /// Add a teacher if one is specified
 
-    if (!empty($add)) {
+    if (!empty($_GET['add'])) {
 	    if (!isteacher($course->id)){
 		    error("You must be an administrator or teacher to modify this course.");
         }
 
-        if (! $user = get_record("user", "id", $add)) {
+        if (! $user = get_record("user", "id", $_GET['add'])) {
             error("That teacher (id = $add) doesn't exist", "teacher.php?id=$course->id");
         }
 
@@ -88,17 +120,19 @@
         if (empty($teacher->id)) {
             error("Could not add that teacher to this course!");
         }
+        $user->authority = $teacher->authority;
         $teachers[] = $user;
+
     }
 
 /// Remove a teacher if one is specified.
 
-    if (!empty($remove)) {
+    if (!empty($_GET['remove'])) {
 
         if (!isteacher($course->id)){
         	error("You must be an administrator or teacher to modify this course.");
 		}
-        if (! $user = get_record("user", "id", $remove)) {
+        if (! $user = get_record("user", "id", $_GET['remove'])) {
             error("That teacher (id = $remove) doesn't exist", "teacher.php?id=$course->id");
         }
         if (!empty($teachers)) {
@@ -111,34 +145,58 @@
         }
     }
 
+    print_heading_with_help("$strexistingteachers $parateachers", "teachers");
 
-/// Print the lists of existing and potential teachers
-
-    echo "<table cellpadding=2 cellspacing=10 align=center>";
-    echo "<tr><th width=50%>$strexistingteachers</th><th width=50%>$strpotentialteachers</th></tr>";
-    echo "<tr><td width=50% nowrap valign=top>";
-
-/// First, show existing teachers for this course
-
-    if (empty($teachers)) { 
+    if (empty($teachers)) {
         echo "<p align=center>$strnoexistingteachers</a>";
         $teacherlist = "";
 
     } else {
+
+        $table->head  = array ("", get_string("name"), get_string("order"), get_string("role"), "&nbsp");
+        $table->align = array ("right", "left", "center", "center", "center");
+        $table->size  = array ("35", "", "", "", "");
+    
+        $option[0] = get_string("hide");
+        for ($i=1; $i<=8; $i++) {
+            $option[$i] = $i;
+        }
+
         $teacherarray = array();
+    
+        echo "<form action=teacher.php method=post>";
         foreach ($teachers as $teacher) {
             $teacherarray[] = $teacher->id;
-            echo "<p align=right>$teacher->firstname $teacher->lastname, $teacher->email &nbsp;";
-            print_user_picture($teacher->id, $site->id, $teacher->picture, false, false, false);
-            echo "&nbsp;&nbsp;<a href=\"teacher.php?id=$course->id&remove=$teacher->id\" title=\"$strremoveteacher\"><img src=\"../pix/t/right.gif\" border=0></a></p>";
+    
+            $picture = print_user_picture($teacher->id, $course->id, $teacher->picture, false, true);
+    
+            $authority = choose_from_menu ($option, "a$teacher->id", $teacher->authority, "", "", "", true);
+    
+            $removelink = "<a href=\"teacher.php?id=$course->id&remove=$teacher->id\">$strremoveteacher</a>";
+
+            if (!$teacher->role) {
+                $teacher->role = $course->teacher;
+            }
+    
+            $table->data[] = array ($picture, "$teacher->firstname $teacher->lastname", $authority,
+                                    "<input type=text name=\"r$teacher->id\" value=\"$teacher->role\" size=30>",
+                                    $removelink);
         }
         $teacherlist = implode(",",$teacherarray);
         unset($teacherarray);
+
+        print_table($table);
+        echo "<input type=hidden name=id value=\"$course->id\">";
+        echo "<center><input type=submit value=\"".get_string("savechanges")."\"> ";
+        echo "</center>";
+        echo "</form>";
+        echo "<br />";
     }
 
-    echo "<td width=50% nowrap valign=top>";
 
 /// Print list of potential teachers
+
+    print_heading("$strpotentialteachers $parateachers");
 
     $usercount = get_users(false, $search, true, $teacherlist);
 
@@ -158,24 +216,29 @@
             error("Could not get users!");
         }
 
+        unset($table);
+        $table->head  = array ("", get_string("name"), get_string("email"), "");
+        $table->align = array ("right", "left", "center", "center");
+        $table->size  = array ("35", "", "", "");
+
+
         foreach ($users as $user) {
-            echo "<p align=left><a href=\"{$_SERVER['PHP_SELF']}?id=$course->id&add=$user->id\"".
-                   "title=\"$straddteacher\"><img src=\"../pix/t/left.gif\"".
-                   "border=0></a>&nbsp;&nbsp;";
-            print_user_picture($user->id, $site->id, $user->picture, false, false, false);
-            echo "&nbsp;$user->firstname $user->lastname, $user->email";
+            $addlink = "<a href=\"teacher.php?id=$course->id&add=$user->id\">$straddteacher</a>";
+            $picture = print_user_picture($user->id, $course->id, $user->picture, false, true);
+            $table->data[] = array ($picture, "$user->firstname $user->lastname", $user->email, $addlink);
         }
+        print_table($table);
     }
 
     if ($search or $usercount > MAX_USERS_PER_PAGE) {
-        echo "<form action={$_SERVER['PHP_SELF']} method=post>";
+        echo "<form action=teacher.php method=post>";
         echo "<input type=hidden name=id value=\"$course->id\">";
         echo "<input type=text name=search size=20>";
         echo "<input type=submit value=\"$searchstring\">";
         echo "</form>";
     }
 
-    echo "</tr></table>";
+    echo "</td></tr></table>";
 
     print_footer();
 

@@ -75,19 +75,29 @@
         <?php 
             choose_from_menu($FORUM_OPEN_MODES, "open", $form->open, "");
             helpbutton("allowdiscussions", get_string("allowdiscussions", 
-                       "forum", strtolower("$course->student")), "forum");
+                       "forum", moodle_strtolower("$course->student")), "forum");
         ?>
     </td>
 </tr>
 
 <tr>
-    <td align=right><p><b><?php print_string("allowratings", "forum") ?>:</b></p></td>
+    <td align=right valign=top><p><b><?php print_string("allowratings", "forum") ?>:</b></p></td>
     <td>
         <?php 
-            $options[0] = get_string("no"); 
-            $options[1] = get_string("yes");
+            // The odd order below was to maintain backward compatibility
+            unset($options);
+            $options[0] = get_string("ratingno", "forum"); 
+            $options[2] = get_string("ratingonlyteachers", "forum", moodle_strtolower($course->teachers));
+            $options[1] = get_string("ratingeveryone", "forum");
+
             choose_from_menu($options, "assessed", $form->assessed, "");
             helpbutton("ratings", get_string("allowratings", "forum"), "forum");
+            echo "<p><b>";
+            print_string("scale");
+            echo ":</b> ";
+            print_scale_menu($course->id, "scale", $form->scale);
+            echo "</p>";
+
         ?>
     </td>
 </tr>
@@ -95,6 +105,9 @@
     <td align=right><p><b><?php print_string("forcesubscribeq", "forum") ?>:</b></p></td>
     <td>
         <?php 
+            unset($options);
+            $options[0] = get_string("no"); 
+            $options[1] = get_string("yes");
             choose_from_menu($options, "forcesubscribe", $form->forcesubscribe, "");
             helpbutton("subscription", get_string("forcesubscribeq", "forum"), "forum");
         ?>

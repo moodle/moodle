@@ -31,32 +31,44 @@
         $sort = "r.time";
     }
 
-    print_header("Ratings for: $post->subject");
+    if (!$scale = get_record("scale", "id", $forum->scale)) {
+        error("Scale not found!");
+    }
+
+    $scalemenu = make_menu_from_list($scale->scale);
+
+    $strratings = get_string("ratings", "forum");
+    $strrating = get_string("rating", "forum");
+    $strname = get_string("name");
+    $strtime = get_string("time");
+
+    print_header("$strratings: $post->subject");
 
     if (!$ratings = forum_get_ratings($post->id, $sort)) {
-        echo "No ratings for this post: \"$post->subject\"";
-        die;
+        error("No ratings for this post: \"$post->subject\"");
+
     } else {
-        echo "<TABLE BORDER=0 CELLPADDING=3>";
-        echo "<TR>";
-        echo "<TH>&nbsp;</TH>";
-        echo "<TH><A HREF=report.php?id=$post->id&sort=u.firstname>Name</A>";
-        echo "<TH><A HREF=report.php?id=$post->id&sort=r.rating>Rating</A>";
-        echo "<TH><A HREF=report.php?id=$post->id&sort=r.time>Date</A>";
+        echo "<table border=0 cellpadding=3 cellspacing=3 class=generalbox width=100%>";
+        echo "<tr>";
+        echo "<th>&nbsp;</th>";
+        echo "<th><a href=report.php?id=$post->id&sort=u.firstname>$strname</a>";
+        echo "<th width=100%><a href=report.php?id=$post->id&sort=r.rating>$strrating</a>";
+        echo "<th><a href=report.php?id=$post->id&sort=r.time>$strtime</a>";
         foreach ($ratings as $rating) {
             if (isteacher($discussion->course, $rating->id)) {
-                echo "<TR BGCOLOR=\"$THEME->cellcontent2\">";
+                echo "<tr bgcolor=\"$THEME->cellcontent2\">";
             } else {
-                echo "<TR BGCOLOR=\"$THEME->cellcontent\">";
+                echo "<tr bgcolor=\"$THEME->cellcontent\">";
             }
-            echo "<TD>";
+            echo "<td>";
             print_user_picture($rating->id, $forum->course, $rating->picture);
-            echo "<TD NOWRAP><P><FONT SIZE=-1>$rating->firstname $rating->lastname</P>";
-            echo "<TD NOWRAP><P><FONT SIZE=-1>".$FORUM_POST_RATINGS[$rating->rating]."</P>";
-            echo "<TD NOWRAP><P><FONT SIZE=-1>".userdate($rating->time)."</P>";
-            echo "</TR>\n";
+            echo "<td nowrap><p><font size=-1>$rating->firstname $rating->lastname</p>";
+            echo "<td nowrap align=center><p><font size=-1>".$scalemenu[$rating->rating]."</p>";
+            echo "<td nowrap align=center><p><font size=-1>".userdate($rating->time)."</p>";
+            echo "</tr>\n";
         }
-        echo "</TABLE>";
+        echo "</table>";
+        echo "<br />";
     }
 
     close_window_button();

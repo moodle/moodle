@@ -61,6 +61,16 @@ function forum_upgrade($oldversion) {
   if ($oldversion < 2003042402) {
       execute_sql("INSERT INTO {$CFG->prefix}log_display VALUES ('forum', 'move discussion', 'forum_discussions', 'name')");
   }
+
+  if ($oldversion < 2003081300) {
+      table_column("forum", "assessed", "assessed", "integer", "10", "unsigned", "0");
+      table_column("forum", "", "scale", "integer", "10", "unsigned", "0", "", "assessed");
+  }
+
+  if ($oldversion < 2003081403) {
+      get_scales_menu();   /// This function will create a new default scale
+  }
+  
   return true;
 
 }

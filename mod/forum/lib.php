@@ -405,7 +405,6 @@ function forum_print_recent_instance_activity($forum, $timestart, $detail=false)
 
 function forum_grades($forumid) {
 /// Must return an array of grades, indexed by user, and a max grade.
-    global $FORUM_POST_RATINGS;
 
     if (!$forum = get_record("forum", "id", $forumid)) {
         return false;
@@ -413,19 +412,33 @@ function forum_grades($forumid) {
     if (!$forum->assessed) {
         return false;
     }
+    if (!$scale = get_record("scale", "id", $forum->scale)) {
+        return false;
+    }
+    $scalemenu = make_menu_from_list($scale->scale);
+
+    $currentuser = 0;
+    $ratingsuser = array();
+
     if ($ratings = forum_get_user_grades($forumid)) {
-        foreach ($ratings as $rating) {
-            $u = $rating->userid;
-            $r = $rating->rating;
-            if (!isset($sumrating[$u])) {
-                $sumrating[$u][1] = 0;
-                $sumrating[$u][2] = 0;
-                $sumrating[$u][3] = 0;
+        foreach ($ratings as $rating) {     // Ordered by user
+            if ($currentuser and $rating->userid != $currentuser) {
+                if (!empty($ratingsuser)) {
+                    $return->grades[$currentuser] = forum_get_ratings_median(0, $scalemenu, $ratingsuser);
+                    $return->grades[$currentuser] .= "<br />".forum_get_ratings_summary(0, $scalemenu, $ratingsuser);
+                } else {
+                    $return->grades[$currentuser] = "";
+                }
+                $ratingsuser = array();
             }
-            $sumrating[$u][$r]++;
+            $ratingsuser[] = $rating->rating;
+            $currentuser = $rating->userid;
         }
-        foreach ($sumrating as $user => $rating) {
-            $return->grades[$user] = $rating[1]."s/".$rating[2]."/".$rating[3]."c";
+        if (!empty($ratingsuser)) {
+            $return->grades[$currentuser] = forum_get_ratings_median(0, $scalemenu, $ratingsuser);
+            $return->grades[$currentuser] .= "<br />".forum_get_ratings_summary(0, $scalemenu, $ratingsuser);
+        } else {
+            $return->grades[$currentuser] = "";
         }
     } else {
         $return->grades = array();
@@ -631,7 +644,8 @@ function forum_get_user_grades($forumid) {
                                    {$CFG->prefix}forum_ratings r
                              WHERE d.forum = '$forumid' 
                                AND p.discussion = d.id
-                               AND r.post = p.id");
+                               AND r.post = p.id
+                             ORDER by p.userid ");
 }
 
 
@@ -945,7 +959,7 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
 }
 
 
-function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link=false, $rate=false, $footer="", $highlight="") {
+function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link=false, $ratings=NULL, $footer="", $highlight="") {
     global $THEME, $USER, $CFG;
 
     echo "<a name=\"$post->id\"></a>";
@@ -1025,16 +1039,16 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
     echo "</p>";
 
     echo "<div align=right><p align=right>";
-    if ($rate && $USER->id) {
+    if (!empty($ratings) and !empty($USER->id)) {
         if (isteacher($courseid)) {
-            forum_print_ratings($post->id);
+            forum_print_ratings_median($post->id, $ratings->scale);
             if ($USER->id != $post->userid) {
-                forum_print_rating($post->id, $USER->id);
+                 forum_print_rating_menu($post->id, $USER->id, $ratings->scale);
             }
         } else if ($USER->id == $post->userid) {
-            forum_print_ratings($post->id);
-        } else {
-            forum_print_rating($post->id, $USER->id);
+            forum_print_ratings_median($post->id, $ratings->scale);
+        } else if (!empty($ratings->allow) ) {
+            forum_print_rating_menu($post->id, $USER->id, $ratings->scale);
         }
     }
     
@@ -1142,33 +1156,106 @@ function forum_shorten_post($message) {
 }
 
 
-function forum_print_ratings($post) {
-    if ($ratings = get_records("forum_ratings", "post", $post)) {
-        $sumrating[1] = 0;
-        $sumrating[2] = 0;
-        $sumrating[3] = 0;
-        foreach ($ratings as $rating) {
-            $sumrating[$rating->rating]++;
-        }
-        $summary = $sumrating[1]."s/".$sumrating[2]."/".$sumrating[3]."c";
+function forum_print_ratings_median($postid, $scale) {
+/// Print the multiple ratings on a post given to the current user by others.
+/// Scale is an array of ratings
 
-        echo get_string("ratings", "forum").": ";
-        link_to_popup_window ("/mod/forum/report.php?id=$post", "ratings", $summary, 400, 550);
+    static $strrate;
+    
+    if ($median = forum_get_ratings_median($postid, $scale)) {
+
+        if (empty($strratings)) {
+            $strratings = get_string("ratings", "forum");
+        }
+
+        echo "$strratings: ";
+        link_to_popup_window ("/mod/forum/report.php?id=$postid", "ratings", $median, 400, 600);
     }
 }
 
-function forum_print_rating($post, $user) {
-    global $FORUM_POST_RATINGS;
 
-    if ($rating = get_record("forum_ratings", "userid", $user, "post", $post)) {
-        if ($FORUM_POST_RATINGS[$rating->rating]) {
-            echo "<FONT SIZE=-1>".get_string("youratedthis", "forum").": <FONT COLOR=green>";
-            echo $FORUM_POST_RATINGS[$rating->rating];
-            echo "</FONT></FONT>";
-            return;
+function forum_get_ratings_median($postid, $scale, $ratings=NULL) {
+/// Return the median rating of a post given to the current user by others.
+/// Scale is an array of possible ratings in the scale
+/// Ratings is an optional simple array of actual ratings (just integers)
+
+    if (!$ratings) {
+        $ratings = array();
+        if ($rates = get_records("forum_ratings", "post", $postid)) {
+            foreach ($rates as $rate) {
+                $ratings[] = $rate->rating;
+            }
         }
     }
-    choose_from_menu($FORUM_POST_RATINGS, $post, "", get_string("rate", "forum")."...");
+
+    if (!$count = count($ratings)) {
+        return "";
+    }
+
+    sort($ratings, SORT_NUMERIC);
+  
+    if ($count == 1) {
+        return $scale[$ratings[0]]." (1)";
+    } else {
+        $median = $ratings[ceil($count/2)];
+        return $scale[$median]." ($count)";
+    }
+}
+
+function forum_get_ratings_summary($postid, $scale, $ratings=NULL) {
+/// Return a summary of post ratings given to the current user by others.
+/// Scale is an array of possible ratings in the scale
+/// Ratings is an optional simple array of actual ratings (just integers)
+
+    if (!$ratings) {
+        $ratings = array();
+        if ($rates = get_records("forum_ratings", "post", $postid)) {
+            foreach ($rates as $rate) {
+                $rating[] = $rate->rating;
+            }
+        }
+    }
+
+
+    if (!$count = count($ratings)) {
+        return "";
+    }
+
+
+    foreach ($scale as $key => $scaleitem) {
+        $sumrating[$key] = 0;
+    }
+
+    foreach ($ratings as $rating) {
+        $sumrating[$rating]++;
+    }
+
+    $summary = "";
+    foreach ($scale as $key => $scaleitem) {
+        $summary = $sumrating[$key].$summary;
+        if ($key > 1) {
+            $summary = "/$summary";
+        }
+    }
+    return $summary;
+}
+
+function forum_print_rating_menu($postid, $userid, $scale) {
+/// Print the menu of ratings as part of a larger form.  
+/// If the post has already been - set that value.
+/// Scale is an array of ratings
+
+    static $strrate;
+
+    if (!$rating = get_record("forum_ratings", "userid", $userid, "post", $postid)) {
+        $rating->rating = 0;
+    }
+
+    if (empty($strrate)) {
+        $strrate = get_string("rate", "forum");
+    }
+
+    choose_from_menu($scale, $postid, $rating->rating, "$strrate...");
 }
 
 function forum_print_mode_form($discussion, $mode) {
@@ -1772,50 +1859,49 @@ function forum_print_discussion($course, $forum, $discussion, $post, $mode) {
     }
     $reply   = forum_user_can_post($forum);
 
-    forum_print_post($post, $course->id, $ownpost, $reply, $link=false, $rate=false);
-
-    forum_print_mode_form($discussion->id, $mode);
-
-    $ratingform = false;
+    $ratings = NULL;
     if ($forum->assessed and !empty($USER->id)) {
-        $unrated = forum_count_unrated_posts($discussion->id, $USER->id);
-        if ($unrated > 0) {
-            $ratingform = true;
+        if ($scale = get_record("scale", "id", $forum->scale)) {
+            $ratings->scale = make_menu_from_list($scale->scale);
+            if ($forum->assessed == 2 and !isteacher($course->id)) {
+                $ratings->allow = false;
+            } else {
+                $ratings->allow = true;
+            }
+            echo "<form name=form method=post action=rate.php>";
+            echo "<input type=hidden name=id value=\"$course->id\">";
         }
     }
 
-    if ($ratingform) {
-        echo "<FORM NAME=form METHOD=POST ACTION=rate.php>";
-        echo "<INPUT TYPE=hidden NAME=id VALUE=\"$course->id\">";
-    }
+    forum_print_post($post, $course->id, $ownpost, $reply, $link=false, $ratings);
 
     switch ($mode) {
         case 1 :   // Flat ascending
         case -1 :  // Flat descending
         default:   
-            echo "<UL>";
-            forum_print_posts_flat($post->discussion, $course->id, $mode, $forum->assessed, $reply);
-            echo "</UL>";
+            echo "<ul>";
+            forum_print_posts_flat($post->discussion, $course->id, $mode, $ratings, $reply);
+            echo "</ul>";
             break;
 
         case 2 :   // Threaded 
-            forum_print_posts_threaded($post->id, $course->id, 0, $forum->assessed, $reply);
+            forum_print_posts_threaded($post->id, $course->id, 0, $ratings, $reply);
             break;
 
         case 3 :   // Nested
-            forum_print_posts_nested($post->id, $course->id, $forum->assessed, $reply);
+            forum_print_posts_nested($post->id, $course->id, $ratings, $reply);
             break;
     }
 
-    if ($ratingform) {
-        echo "<CENTER><P ALIGN=center><INPUT TYPE=submit VALUE=\"".get_string("sendinratings", "forum")."\">";
-        helpbutton("ratings", get_string("separateandconnected"), "forum");
-        echo "</P></CENTER>";
-        echo "</FORM>";
+    if ($ratings) {
+        echo "<center><input type=\"submit\" value=\"".get_string("sendinratings", "forum")."\">";
+        print_scale_menu_helpbutton($course->id, $scale);
+        echo "</center>";
+        echo "</form>";
     }
 }
 
-function forum_print_posts_flat($discussion, $course, $direction, $assessed, $reply) { 
+function forum_print_posts_flat($discussion, $course, $direction, $ratings, $reply) { 
     global $USER;
 
     $link  = false;
@@ -1829,14 +1915,14 @@ function forum_print_posts_flat($discussion, $course, $direction, $assessed, $re
     if ($posts = forum_get_discussion_posts($discussion, $sort)) {
         foreach ($posts as $post) {
             $ownpost = ($USER->id == $post->userid);
-            forum_print_post($post, $course, $ownpost, $reply, $link, $assessed);
+            forum_print_post($post, $course, $ownpost, $reply, $link, $ratings);
         }
     } else {
         return;
     }
 }
 
-function forum_print_posts_threaded($parent, $course, $depth, $assessed, $reply) { 
+function forum_print_posts_threaded($parent, $course, $depth, $ratings, $reply) { 
     global $USER;
 
     $link  = false;
@@ -1847,7 +1933,7 @@ function forum_print_posts_threaded($parent, $course, $depth, $assessed, $reply)
             echo "<ul>";
             if ($depth > 0) {
                 $ownpost = ($USER->id == $post->userid);
-                forum_print_post($post, $course, $ownpost, $reply, $link, $assessed);  // link=true?
+                forum_print_post($post, $course, $ownpost, $reply, $link, $ratings);  // link=true?
                 echo "<br />";
             } else {
                 $by->name = "$post->firstname $post->lastname";
@@ -1857,7 +1943,7 @@ function forum_print_posts_threaded($parent, $course, $depth, $assessed, $reply)
                 echo "</font></p></li>";
             }
 
-            forum_print_posts_threaded($post->id, $course, $depth-1, $assessed, $reply);
+            forum_print_posts_threaded($post->id, $course, $depth-1, $ratings, $reply);
             echo "</ul>\n";
         }
     } else {
@@ -1865,7 +1951,7 @@ function forum_print_posts_threaded($parent, $course, $depth, $assessed, $reply)
     }
 }
 
-function forum_print_posts_nested($parent, $course, $assessed, $reply) { 
+function forum_print_posts_nested($parent, $course, $ratings, $reply) { 
     global $USER;
 
     $link  = false;
@@ -1880,9 +1966,9 @@ function forum_print_posts_nested($parent, $course, $assessed, $reply) {
             }
 
             echo "<UL>";
-            forum_print_post($post, $course, $ownpost, $reply, $link, $assessed);
+            forum_print_post($post, $course, $ownpost, $reply, $link, $ratings);
             echo "<BR>";
-            forum_print_posts_nested($post->id, $course, $assessed, $reply);
+            forum_print_posts_nested($post->id, $course, $ratings, $reply);
             echo "</UL>\n";
         }
     } else {

@@ -1273,6 +1273,41 @@ function print_time_selector($hour, $minute, $currenttime=0) {
     choose_from_menu($minutes, $minute, $currentdate['minutes'], "");
 }
 
+function print_scale_menu($courseid, $name, $current) {
+/// Prints a scale menu (as part of an existing form) including help button
+
+    global $CFG, $THEME;
+
+    $strscales = get_string("scales");
+    choose_from_menu(get_scales_menu($courseid), "$name", $current, "");
+    if (empty($THEME->custompix)) {
+        $helpicon = "$CFG->wwwroot/pix/help.gif";
+    } else {
+        $helpicon = "$CFG->wwwroot/theme/$CFG->theme/pix/help.gif";
+    }
+    $linkobject = "<img align=\"absmiddle\" border=0 height=17 width=22 alt=\"$strscales\" src=\"$helpicon\">";
+    link_to_popup_window ("/course/scales.php?id=$courseid&list=true", "ratingscales", 
+                          $linkobject, 400, 500, $strscales);
+}
+
+function print_scale_menu_helpbutton($courseid, $scale) {
+/// Prints a help button about a scale
+/// scale is an object
+
+    global $CFG, $THEME;
+
+    $strscales = get_string("scales");
+    if (empty($THEME->custompix)) {
+        $helpicon = "$CFG->wwwroot/pix/help.gif";
+    } else {
+        $helpicon = "$CFG->wwwroot/theme/$CFG->theme/pix/help.gif";
+    }
+    $linkobject = "<img align=\"absmiddle\" border=0 height=17 width=22 alt=\"$scale->name\" src=\"$helpicon\">";
+    link_to_popup_window ("/course/scales.php?id=$courseid&list=true&scale=$scale->id", "ratingscale", 
+                          $linkobject, 400, 500, $scale->name);
+}
+
+
 function error ($message, $link="") {
     global $CFG, $SESSION;
 

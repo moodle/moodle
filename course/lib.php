@@ -742,19 +742,32 @@ function print_course_admin_links($course, $width=180) {
         $modpixpath = "$CFG->wwwroot/theme/$CFG->theme/pix/mod";
     }
     if (isteacher($course->id)) {
-        $adminicon[]="<img src=\"$pixpath/i/edit.gif\" height=16 width=16 alt=\"\">";
-        if (isediting($course->id)) {
-            $admindata[]="<a href=\"view.php?id=$course->id&edit=off\">".get_string("turneditingoff")."</a>";
-        } else {
-            $admindata[]="<a href=\"view.php?id=$course->id&edit=on\">".get_string("turneditingon")."</a>";
+        if (iscreator()) {
+            $adminicon[]="<img src=\"$pixpath/i/edit.gif\" height=16 width=16 alt=\"\">";
+            if (isediting($course->id)) {
+                $admindata[]="<a href=\"view.php?id=$course->id&edit=off\">".get_string("turneditingoff")."</a>";
+            } else {
+                $admindata[]="<a href=\"view.php?id=$course->id&edit=on\">".get_string("turneditingon")."</a>";
+            }
+            $admindata[]="<a href=\"edit.php?id=$course->id\">".get_string("settings")."...</a>";
+            $adminicon[]="<img src=\"$pixpath/i/settings.gif\" height=16 width=16 alt=\"\">";
+            if (!$course->teachers) {
+                $course->teachers = get_string("defaultcourseteachers");
+            }
+            $admindata[]="<a href=\"teacher.php?id=$course->id\">$course->teachers...</a>";
+            $adminicon[]="<img src=\"$pixpath/i/settings.gif\" height=16 width=16 alt=\"\">";
+
+            $admindata[]="<a href=\"$CFG->wwwroot/backup/backup.php?id=$course->id\">".get_string("backup")."...</a>";
+            $adminicon[]="<img src=\"$pixpath/i/backup.gif\" height=16 width=16 alt=\"\">";
+        
+            //Only showed if "backupdata" dir exists
+            if (is_dir("$CFG->dataroot/$course->id/backupdata")) {
+                $admindata[]="<a href=\"$CFG->wwwroot/files/index.php?id=$course->id&wdir=/backupdata\">".get_string("restore")."...</a>";
+                $adminicon[]="<img src=\"$pixpath/i/restore.gif\" height=16 width=16 alt=\"\">";
+            }
+            $admindata[]="<a href=\"scales.php?id=$course->id\">".get_string("scales")."...</a>";
+            $adminicon[]="<img src=\"$pixpath/i/scales.gif\" height=16 width=16 alt=\"\">";
         }
-        $admindata[]="<a href=\"edit.php?id=$course->id\">".get_string("settings")."...</a>";
-        $adminicon[]="<img src=\"$pixpath/i/settings.gif\" height=16 width=16 alt=\"\">";
-        if (!$course->teachers) {
-            $course->teachers = get_string("defaultcourseteachers");
-        }
-        $admindata[]="<a href=\"teachers.php?id=$course->id\">$course->teachers...</a>";
-        $adminicon[]="<img src=\"$pixpath/i/settings.gif\" height=16 width=16 alt=\"\">";
     
         $admindata[]="<a href=\"grades.php?id=$course->id\">".get_string("grades")."...</a>";
         $adminicon[]="<img src=\"$pixpath/i/grades.gif\" height=16 width=16 alt=\"\">";
@@ -765,14 +778,6 @@ function print_course_admin_links($course, $width=180) {
         $admindata[]="<a href=\"$CFG->wwwroot/files/index.php?id=$course->id\">".get_string("files")."...</a>";
         $adminicon[]="<img src=\"$pixpath/i/files.gif\" height=16 width=16 alt=\"\">";
 
-        $admindata[]="<a href=\"$CFG->wwwroot/backup/backup.php?id=$course->id\">".get_string("backup")."...</a>";
-        $adminicon[]="<img src=\"$pixpath/i/backup.gif\" height=16 width=16 alt=\"\">";
-        
-        //Only showed if "backupdata" dir exists
-        if (is_dir("$CFG->dataroot/$course->id/backupdata")) {
-            $admindata[]="<a href=\"$CFG->wwwroot/files/index.php?id=$course->id&wdir=/backupdata\">".get_string("restore")."...</a>";
-            $adminicon[]="<img src=\"$pixpath/i/restore.gif\" height=16 width=16 alt=\"\">";
-        }
     
         $admindata[]="<a href=\"$CFG->wwwroot/doc/view.php?id=$course->id&file=teacher.html\">".get_string("help")."...</a>";
         $adminicon[]="<img src=\"$modpixpath/resource/icon.gif\" height=16 width=16 alt=\"\">";

@@ -7,6 +7,7 @@
        "auth"             => "email",
        "changepassword"   =>  true,
        "country"          => "",
+       "creatornewcourse" =>  false,
        "debug"            =>  7,
        "framename"        =>  "_top",
        "frontpage"        =>  0,

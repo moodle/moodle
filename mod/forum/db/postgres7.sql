@@ -10,6 +10,7 @@ CREATE TABLE prefix_forum (
   intro text NOT NULL default '',
   open integer NOT NULL default '2',
   assessed integer NOT NULL default '0',
+  scale integer NOT NULL default '0',
   forcesubscribe integer NOT NULL default '0',
   timemodified integer NOT NULL default '0'
 );

@@ -24,19 +24,23 @@
             if ($post == "id") {
                 continue;
             }
-            if ($rating) {
-                if (record_exists("forum_ratings", "userid", $USER->id, "post", $post)) {
-                    error("You've rated this question before ($post)");
-                } else {
-                    unset($newrating);
-                    $newrating->userid = $USER->id;
-                    $newrating->time = time();
-                    $newrating->post = $post;
-                    $newrating->rating = $rating;
-
-                    if (! insert_record("forum_ratings", $newrating)) {
-                        error("Could not insert a new rating ($post = $rating)");
+            if ($oldrating = get_record("forum_ratings", "userid", $USER->id, "post", $post)) {
+                if ($rating != $oldrating->rating) {
+                    $oldrating->rating = $rating;
+                    $oldrating->time = time();
+                    if (! update_record("forum_ratings", $oldrating)) {
+                        error("Could not update an old rating ($post = $rating)");
                     }
+                }
+            } else if ($rating) {
+                unset($newrating);
+                $newrating->userid = $USER->id;
+                $newrating->time = time();
+                $newrating->post = $post;
+                $newrating->rating = $rating;
+
+                if (! insert_record("forum_ratings", $newrating)) {
+                    error("Could not insert a new rating ($post = $rating)");
                 }
             }
         }
