@@ -32,7 +32,7 @@
         print_header("$course->shortname: $strforums", "$course->fullname", "$strforums");
     }
     $strforum = get_string("forum", "forum");
-    $strdescription = get_string("description", "forum");
+    $strdescription = get_string("description");
     $strdiscussions = get_string("discussions", "forum");
     $strsubscribed = get_string("subscribed", "forum");
 
