@@ -8,7 +8,7 @@
         $user->firstname = "Admin";
         $user->lastname  = "User";
         $user->username  = "admin";
-        $user->password  = "";
+        $user->password  = md5("admin");
         $user->email     = "root@localhost";
         $user->confirmed = 1;
         $user->maildisplay = 1;
@@ -41,6 +41,7 @@
 
         $USER = $user;
         $USER->loggedin = true;
+        $USER->site = $CFG->wwwroot;
         $USER->admin = true;
         $USER->teacher["$site->id"] = true;
         save_session("USER");
