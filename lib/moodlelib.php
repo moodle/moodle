@@ -1040,10 +1040,23 @@ function get_course_teachers($courseid, $sort="t.authority ASC") {
 }
 
 function get_course_users($courseid, $sort="u.lastaccess DESC") {
-    return get_records_sql("SELECT u.* FROM user u, user_students s, user_teachers t
-                            WHERE (s.course = '$courseid' AND s.user = u.id) OR 
-                                  (t.course = '$courseid' AND t.user = u.id)
-                            ORDER BY $sort");
+// Using this method because the direct SQL just would not always work!
+
+    $teachers = get_course_teachers($courseid, $sort);
+    $students = get_course_students($courseid, $sort);
+
+    if ($teachers and $students) {
+        return array_merge($teachers, $students);
+    } else if ($teachers) {
+        return $teachers;
+    } else {
+        return $students;
+    }
+
+//    return get_records_sql("SELECT u.* FROM user u, user_students s, user_teachers t
+//                            WHERE (s.course = '$courseid' AND s.user = u.id) OR 
+//                                  (t.course = '$courseid' AND t.user = u.id)
+//                            ORDER BY $sort");
 }
 
 
