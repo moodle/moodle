@@ -379,10 +379,10 @@ function workshop_cron () {
                 // "A comment has been added to the assignment \"$submission->title\" by
                 if (isstudent($course->id, $assessmentowner->id)) {
                     $msg = get_string("mail4", "workshop", $submission->title)." a $course->student.\n";
-                    }
+                }
                 else {
                     $msg = get_string("mail4", "workshop", $submission->title)." ".fullname($assessmentowner)."\n";
-                    }
+                }
                 // "The new comment can be seen in the workshop assignment '$workshop->name'
                 $msg .= get_string("mail5", "workshop", $workshop->name)."\n\n";
     
@@ -404,20 +404,20 @@ function workshop_cron () {
                     $posthtml .= "<p>".get_string("mail3", "workshop").
                         " <a href=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">$workshop->name</a>
                         .</p></font><hr>";
-                    } 
+                } 
                 else {
                     $posthtml = "";
-                    }
+                }
     
                 if (!$teacher = get_teacher($course->id)) {
                     echo "Error: can not find teacher for course $course->id!\n";
-                    }
+                }
                     
                 if (! email_to_user($sendto, $teacher, $postsubject, $posttext, $posthtml)) {
                     echo "Error: workshop cron: Could not send out mail for id $submission->id to user 
                         $sendto->id ($sendto->email)\n";
-                    }
                 }
+            }
             // see if the assessor needs to to told
             if ($comment->userid != $assessment->userid) {
                 $USER->lang = $assessmentowner->lang;
@@ -425,11 +425,11 @@ function workshop_cron () {
                 // "A comment has been added to the assignment \"$submission->title\" by
                 if (isstudent($course->id, $submissionowner->id)) {
                     $msg = get_string("mail4", "workshop", $submission->title)." a $course->student.\n";
-                    }
+                }
                 else {
                     $msg = get_string("mail4", "workshop", $submission->title).
                         " ".fullname($submissionowner)."\n";
-                    }
+                }
                 // "The new comment can be seen in the workshop assignment '$workshop->name'
                 $msg .= get_string("mail5", "workshop", $workshop->name)."\n\n";
     
@@ -450,115 +450,25 @@ function workshop_cron () {
                     $posthtml .= "<p>$msg</p>";
                     $posthtml .= "<p>".get_string("mail3", "workshop").
                         " <a href=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">$workshop->name</a>.</p></font><hr>";
-                    } 
+                } 
                 else {
                     $posthtml = "";
-                    }
+                }
     
                 if (!$teacher = get_teacher($course->id)) {
                     echo "Error: can not find teacher for course $course->id!\n";
-                    }
+                }
                     
                 if (! email_to_user($sendto, $teacher, $postsubject, $posttext, $posthtml)) {
                     echo "Error: workshop cron: Could not send out mail for id $submission->id to user 
                         $sendto->id ($sendto->email)\n";
-                    }
+                }
                 if (! set_field("workshop_comments", "mailed", "1", "id", "$comment->id")) {
                     echo "Could not update the mailed field for comment id $comment->id\n";
-                    }
                 }
-            }
-        }
-
-
-    // look for new gradings
-    if ($assessments = workshop_get_unmailed_graded_assessments($cutofftime)) {
-        foreach ($assessments as $assessment) {
-
-            echo "Processing workshop assessment $assessment->id (graded)\n";
-            
-            // only process the entry once
-            if (! set_field("workshop_assessments", "mailed", "1", "id", "$assessment->id")) {
-                echo "Could not update the mailed field for id $assessment->id\n";
-            }
-
-            if (! $submission = get_record("workshop_submissions", "id", "$assessment->submissionid")) {
-                echo "Could not find submission $assessment->submissionid\n";
-                continue;
-            }
-
-            if (! $workshop = get_record("workshop", "id", $submission->workshopid)) {
-                echo "Could not find workshop id $submission->workshopid\n";
-                continue;
-            }
-            if (! $course = get_record("course", "id", $workshop->course)) {
-                error("Could not find course id $workshop->course");
-                continue;
-            }
-            if (! $cm = get_coursemodule_from_instance("workshop", $workshop->id, $course->id)) {
-                error("Course Module ID was incorrect");
-                continue;
-            }
-            if (! $submissionowner = get_record("user", "id", "$submission->userid")) {
-                echo "Could not find user $submission->userid\n";
-                continue;
-            }
-            if (! $assessmentowner = get_record("user", "id", "$assessment->userid")) {
-                echo "Could not find user $assessment->userid\n";
-                continue;
-            }
-            if (! isstudent($course->id, $submissionowner->id) and !isteacher($course->id, 
-                        $submissionowner->id)) {
-                continue;  // Not an active participant
-            }
-            if (! isstudent($course->id, $assessmentowner->id) and !isteacher($course->id, 
-                        $assessmentowner->id)) {
-                continue;  // Not an active participant
-            }
-
-            $strworkshops = get_string("modulenameplural", "workshop");
-            $strworkshop  = get_string("modulename", "workshop");
-
-            // it's a grading tell the assessment owner
-            $USER->lang = $assessmentowner->lang;
-            $sendto = $assessmentowner;
-            // Your assessment of the assignment \"$submission->title\" has by reviewed
-            $msg = get_string("mail6", "workshop", $submission->title).".\n";
-            // The comments given by the $course->teacher can be seen in the Workshop Assignment 
-            $msg .= get_string("mail7", "workshop", $course->teacher)." '$workshop->name'.\n\n";
-
-            $postsubject = "$course->shortname: $strworkshops: $workshop->name";
-            $posttext  = "$course->shortname -> $strworkshops -> $workshop->name\n";
-            $posttext .= "---------------------------------------------------------------------\n";
-            $posttext .= $msg;
-            // "You can see it in your workshop assignment"
-            $posttext .= get_string("mail3", "workshop").":\n";
-            $posttext .= "   $CFG->wwwroot/mod/workshop/view.php?id=$cm->id\n";
-            $posttext .= "---------------------------------------------------------------------\n";
-            if ($sendto->mailformat == 1) {  // HTML
-                $posthtml = "<p><font face=\"sans-serif\">".
-                    "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> ->".
-                    "<a href=\"$CFG->wwwroot/mod/workshop/index.php?id=$course->id\">$strworkshops</a> ->".
-                    "<a href=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">$workshop->name</a></font></p>";
-                $posthtml .= "<hr><font face=\"sans-serif\">";
-                $posthtml .= "<p>$msg</p>";
-                $posthtml .= "<p>".get_string("mail3", "workshop").
-                    " <a href=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">$workshop->name</a>.</p></font><hr>";
-            } else {
-              $posthtml = "";
-            }
-
-            if (!$teacher = get_teacher($course->id)) {
-                echo "Error: can not find teacher for course $course->id!\n";
-                }
-                
-            if (! email_to_user($sendto, $teacher, $postsubject, $posttext, $posthtml)) {
-                echo "Error: workshop cron: Could not send out mail for id $submission->id to user 
-                    $sendto->id ($sendto->email)\n";
             }
         }
     }
-
     return true;
 }
 
@@ -1440,12 +1350,11 @@ function workshop_get_submit_logs($course, $timestart) {
 
 //////////////////////////////////////////////////////////////////////////////////////
 function workshop_get_unmailed_assessments($cutofftime) {
-    /// Return list of (ungraded) assessments that have not been mailed out
+    /// Return list of assessments that have not been mailed out
     global $CFG;
     return get_records_sql("SELECT a.*, g.course, g.name
                               FROM {$CFG->prefix}workshop_assessments a, {$CFG->prefix}workshop g
                              WHERE a.mailed = 0 
-                               AND a.timegraded = 0
                                AND a.timecreated < $cutofftime 
                                AND g.id = a.workshopid");
 }
