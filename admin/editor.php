@@ -15,13 +15,13 @@
     if ($data = data_submitted()) {
 
         // do we want default values?
-        if(isset($data->resettodefaults)) {
-            if(!(reset_to_defaults())) {
+        if (isset($data->resettodefaults)) {
+            if (!(reset_to_defaults())) {
                 error("Editor settings could not be restored!");
             }
         } else {
 
-            if(!(editor_update_config($data))) {
+            if (!(editor_update_config($data))) {
                 error("Editor settings could not be updated!");
             }
         }
@@ -54,14 +54,14 @@
 function editor_convert_to_array ($string) {
 /// Converts $CFG->editorfontlist to array
 
-    if(empty($string) || !is_string($string)) {
+    if (empty($string) || !is_string($string)) {
         return false;
     }
     $fonts = array();
 
     $lines = explode(";", $string);
-    foreach($lines as $line) {
-        if(!empty($line)) {
+    foreach ($lines as $line) {
+        if (!empty($line)) {
             list($fontkey, $fontvalue) = explode(":", $line);
             $fonts[$fontkey] = $fontvalue;
         }
@@ -73,7 +73,7 @@ function editor_convert_to_array ($string) {
 function editor_update_config ($data) {
 /// Updates the editor config values.
 
-    if(!is_object($data)) {
+    if (!is_object($data)) {
         return false;
     }
 
@@ -88,8 +88,9 @@ function editor_update_config ($data) {
     $fontlist = '';
 
     // make font string
-    for($i = 0; $i < count($data->fontname); $i++) {
-        if(!empty($data->fontname[$i])) {
+    $cnt = count($data->fontname);
+    for ($i = 0; $i < $cnt; $i++) {
+        if (!empty($data->fontname[$i])) {
             $fontlist .= str_replace($nochars, "", $data->fontname[$i]) .":";
             $fontlist .= str_replace($nochars, "", $data->fontnamevalue[$i]) .";";
         }
@@ -106,8 +107,17 @@ function editor_update_config ($data) {
     $updatedata['editorspelling'] = !empty($data->spelling) ? $data->spelling : 0;
     $updatedata['editorfontlist'] = $fontlist;
 
-    foreach($updatedata as $name => $value) {
-        if(!(set_config($name, $value))) {
+    $hidebuttons = '';
+    if (!empty($data->buttons) && is_array($data->buttons)) {
+        foreach ($data->buttons as $key => $value) {
+            $hidebuttons .= $key . " ";
+        }
+
+        $updatedata['editorhidebuttons'] = trim($hidebuttons);
+    }
+
+    foreach ($updatedata as $name => $value) {
+        if (!(set_config($name, $value))) {
             return false;
         }
     }
@@ -116,6 +126,8 @@ function editor_update_config ($data) {
 }
 
 function reset_to_defaults () {
+/// Reset the values to default
+
     global $CFG;
     include_once($CFG->dirroot .'/lib/defaults.php');
 
@@ -127,9 +139,10 @@ function reset_to_defaults () {
     $updatedata['editorkillword'] = $defaults['editorkillword'];
     $updatedata['editorspelling'] = $defaults['editorspelling'];
     $updatedata['editorfontlist'] = $defaults['editorfontlist'];
+    $updatedata['editorhidebuttons'] = $defaults['editorhidebuttons'];
 
-    foreach($updatedata as $name => $value) {
-        if(!(set_config($name, $value))) {
+    foreach ($updatedata as $name => $value) {
+        if (!(set_config($name, $value))) {
             return false;
         }
     }

@@ -3374,6 +3374,11 @@ function print_side_block_end() {
         $i++;
     }
     echo '};';
+
+    if (!empty($CFG->editorhidebuttons)) {
+        echo "\nconfig.hideSomeButtons(\" ". $CFG->editorhidebuttons ." \");\n";
+    }
+
     if(!empty($CFG->editorspelling) && !empty($CFG->aspellpath)) {
         print_speller_code($usehtmleditor=true);
     }
