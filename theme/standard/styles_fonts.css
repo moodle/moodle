@@ -314,3 +314,14 @@ table.calendarmonth tbody td div {
 .rssclientdescription {
     font-size:x-small;
 }
+
+
+/*****************************
+***
+*** User
+***
+******************************/
+
+body#user-index #longtimenosee {
+    text-align:center;
+}
