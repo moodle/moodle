@@ -1,0 +1,30 @@
+<?PHP // $Id: 
+$string['modulename'] = 'Planner';
+$string['modulenameplural'] = 'Planners';
+$string['action'] = 'Action';
+$string['addsession'] = 'Voeg sessie toe';
+$string['addslot'] = 'Op elk moment kun je meer afspraak momenten toevoegen.';
+$string['cantfit'] = 'Een afspraak van $a minuten past niet in deze sessie';
+$string['choice'] = 'Keus';
+$string['conflict'] = 'Er was al een afspraak moment op het tijdsblok dat je nu weer probeert toe te voegen';
+$string['date'] = 'Datum';
+$string['duration'] = 'Duur (minuten)';
+$string['endtime'] = 'Eindtijd';
+$string['markseen'] = 'Nadat je een afspraak met een student hebt gehad kun je hem/haar als \"gezien\" markeren door het juiste hokje aan te vinken in de tabel hieronder.';
+$string['minutes'] = 'minuten';
+$string['minutesperslot'] = 'minuten per afspraak';
+$string['missingstudents'] = '$a studenten moeten nog steeds een afspraak maken';
+$string['moreslots'] = 'Je hebt meer studenten dan afspraak momenten, waarschijnlijk wil je dus meer sessies toevoegen.';
+$string['moveslot'] = 'Verplaats afspraak moment';
+$string['notselected'] = 'Je hebt nog geen keuze gemaakt';
+$string['save'] = 'Sla op';
+$string['savechoice'] = 'Bewaar mijn keuze';
+$string['seen'] = 'Gezien';
+$string['slots'] = 'Afspraak momenten';
+$string['slotsadded'] = '$a afpraak momenten zijn toegevoegd';
+$string['startpast'] = 'Je kunt geen afspraak moment in het verleden laten beginnen';
+$string['starttime'] = 'Begintijd';
+$string['welcomebackstudent'] = 'De dikgedrukte lijn in de tabel hieronder laat zien welk afspraakmoment je gekozen hebt. Je mag elk ander vrij afspraak moment kiezen';
+$string['welcomenewstudent'] = 'De tabel hieronder laat alle vrije momenten zien voor het maken van een afspraak. Maak je keuze door de \"radio knop\" te selecteren. Vergeet niet op \"Bewaar mijn keuze\" te klikken. Als je de afspraak later wilt verzetten, dan kan dat via deze pagina.';
+$string['welcomenewteacher'] = 'Klik op de knop hieronder om afspraak sessies aan te maken zodat je al je studenten kunt zien.';
+?>
