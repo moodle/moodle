@@ -551,7 +551,7 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry,$mode="",$ho
 
     
     if ( $glossary->allowcomments and !isguest()) {
-        $return .= " <a title=\"" . get_string("addcomment","glossary") . "\" href=\"comment.php?id=$cm->id&eid=$entry->id\"><img src=\"comment.gif\" height=16 width=16 border=0></a> ";
+        $return .= " <a title=\"" . get_string("addcomment","glossary") . "\" href=\"comment.php?id=$cm->id&eid=$entry->id\"><img src=\"comment.gif\" height=11 width=11 border=0></a> ";
     }
 
     if ($isteacher or $glossary->studentcanpost and $entry->userid == $USER->id) {
