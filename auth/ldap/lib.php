@@ -1,28 +1,64 @@
 <?PHP  // $Id$
 //CHANGELOG:
+//15.08.2004 Added support for user syncronization
 //24.02.2003 Added support for coursecreators
 //20.02.2003 Added support for user creation
 //12.10.2002 Reformatted source for consistency
 //03.10.2002 First version to CVS
 //29.09.2002 Clean up and splitted code to functions v. 0.02
 //29.09.2002 LDAP authentication functions v. 0.01
-//Distributed under GPL (c)Petri Asikainen 2002-2003
+//Distributed under GPL (c)Petri Asikainen 2002-2004
 
 /* README!
 Module is quite complete and  most functinality can be configured from
 configinterfave /admin/auth.php. Some of latest additions/features need to
 be configured by modifying source code.
  
-If you plan to use user creation feature, look function auth_user_create
-and modify it for your needs.
-You have to change all hardcoded attribute values to fit your LDAP-server.
+USER CREATION FEATURE
 User-creation makes posible that your current 
 users can authenticate with existings usernames/password and new users can 
 create own accounts to LDAP-directory. I'm using this feature and new users
 are created to LDAP different context, without rights to other system. When
 user-creation feature is set like that, there's no known security issues.
+
+If you plan to use user creation feature, look function auth_user_create
+and modify it for your needs.
+You have to change all hardcoded attribute values to fit your LDAP-server.
+
 I write ldap-module on Novell E-directory / Linux & Solaris , 
 so all default values are for it.
+
+LDAP USER SYNCRONIZATION
+
+BACKUP
+This is first version of usersync so backup your database, if you like to test this feature!
+
+BINARY FIELDS
+I'm testing this against Novell eDirectory where guid field is binary
+so I have to use bin2hex() in function auth_get_users (), If your guid field is not binary
+comment that line out.
+
+EXISTING USERS
+For existing systems there no way to figure out is account from ldap or not.
+So sysadmin,  you have to update 'auth' and 'guid' fields for your existing ldap-users by hand (or scripting)
+If your users usernamed are stabile, you can use auth_get_users() for this.
+
+AUTOMATING SYNCRONIZATION
+Right now moodle does not automaticly run auth_sync_users() so you have to create
+your own script like:
+auth/ldap/cron.php
+<?
+    require_once("../../config.php");
+    require_once("../../course/lib.php");
+    require_once('../../lib/blocklib.php');
+    require_once("../../mod/resource/lib.php");
+    require_once("lib.php");
+    require_once("../../mod/forum/lib.php");
+    auth_sync_users();
+?>
+
+Usersync is quite heavy process, it could be good idea to place that script outside of webroot and run it  with cron.
+                            
 
 Any feedback is wellcome,
 
@@ -147,6 +183,130 @@ function auth_user_create ($userobject,$plainpass) {
     ldap_close($ldapconnect);
     return $uadd;
     
+}
+
+function auth_get_users($filter='*') {
+//returns all userobjects from external database
+    global $CFG;
+
+    $fresult = array();
+    $ldap_connection = auth_ldap_connect();
+
+    auth_ldap_bind($ldap_connection);
+
+    if (! isset($CFG->ldap_objectclass)) {
+        $CFG->ldap_objectclass="objectClass=*";
+    }
+
+    if ($filter=="*") {
+       $filter = "(&(".$CFG->ldap_user_attribute."=*)(".$CFG->ldap_objectclass."))";
+    }
+
+    $contexts = explode(";",$CFG->ldap_contexts);
+ 
+    if (!empty($CFG->ldap_create_context)){
+          array_push($contexts, $CFG->ldap_create_context);
+    }
+
+    $attrmap = auth_ldap_attributes();
+   
+    $search_attribs = array();
+  
+    foreach ($attrmap as $key=>$value) {
+        if (!in_array($value, $search_attribs)) {
+            array_push($search_attribs, $value);
+        }    
+    }
+
+
+    foreach ($contexts as $context) {
+
+        if ($CFG->ldap_search_sub) {
+            //use ldap_search to find first user from subtree
+            $ldap_result = ldap_search($ldap_connection, $context,
+                                       $filter,
+                                       $search_attribs);
+        } else {
+            //search only in this context
+            $ldap_result = ldap_list($ldap_connection, $context,
+                                     $filter,
+                                     $search_attribs);
+        }
+
+        $users = auth_ldap_get_entries($ldap_connection, $ldap_result);
+
+        //add found users to list
+        foreach ($users as $ldapuser=>$attribs) {
+            $user = new object();
+            foreach ($attrmap as $key=>$value){
+                if(isset($users[$ldapuser][$value][0])){
+                    $user->$key=$users[$ldapuser][$value][0];
+                }
+            }    
+            //quick way to get around binarystrings
+            $user->guid=bin2hex($user->guid);
+            //add authentication source stamp 
+            $user->auth='ldap';
+            $fresult[$user->username]=$user;
+
+        }
+    }
+   
+    return $fresult;
+}
+
+function auth_sync_users () {
+//Syncronizes userdb with ldap
+//This will add, rename 
+    global $CFG ;
+    $users = auth_get_users();
+    $usedguids = Array();
+    
+    foreach ($users as $user) {
+        $usedguids[] = $user->guid; //we will need all used guids later
+        //update modified time
+        $user->modified = time();
+        //All users are confirmed
+        $user->confirmed = 1;
+        // if user does not exist create it
+        if (!record_exists('user','auth', 'ldap', 'guid', $user->guid)) {
+            if (insert_record ('user',$user)) {
+                echo "inserted user $user->username with guid $user->guid \n";
+            } else {
+                echo "error inserting user $user->username with guid $user->guid \n";
+            }
+            continue ;
+        } else {
+           //update username
+           set_field('user', 'username', $user->username , 'auth', 'ldap', 'guid', $user->guid);
+        }
+    }    
+    
+    //find nonexisting users from moodles userdb
+    $sql = "SELECT * FROM ".$CFG->prefix."user WHERE auth='ldap' AND guid  NOT IN ('".implode('\' , \'',$usedguids)."');" ;
+    $result = get_records_sql($sql);
+
+    if (!empty($result)){
+        foreach ($result as $user) {
+            //following is copy pasted from admin/user.php
+            //maybe this should moved to function in lib/datalib.php
+            unset($updateuser);
+            $updateuser->id = $user->id;
+            $updateuser->deleted = "1";
+            $updateuser->username = "$user->email.".time();  // Remember it just in case
+            $updateuser->email = "";               // Clear this field to free it up
+            $updateuser->timemodified = time();
+            if (update_record("user", $updateuser)) {
+                unenrol_student($user->id);  // From all courses
+                remove_teacher($user->id);   // From all courses
+                remove_admin($user->id);
+                notify(get_string("deletedactivity", "", fullname($user, true)) );
+            } else {
+                notify(get_string("deletednot", "", fullname($user, true)));
+            }
+            //copy pasted part ends
+        }     
+    }    
 }
 
 function auth_user_activate ($username) {
@@ -311,7 +471,7 @@ function auth_ldap_attributes (){
     $config = (array)$CFG;
     $fields = array("firstname", "lastname", "email", "phone1", "phone2", 
                     "department", "address", "city", "country", "description", 
-                    "idnumber", "lang");
+                    "idnumber", "lang", "guid");
 
     $moodleattributes = array();
     foreach ($fields as $field) {
@@ -319,6 +479,7 @@ function auth_ldap_attributes (){
             $moodleattributes[$field] = $config["auth_user_$field"];
         }
     }
+    $moodleattributes['username']=$config["ldap_user_attribute"];
 	return $moodleattributes;
 }
 
@@ -369,5 +530,27 @@ function auth_ldap_get_userlist($filter="*") {
    
     return $fresult;
 }
+
+function auth_ldap_get_entries($conn, $searchresult){
+//Returns values like ldap_get_entries but is
+//binary compatible
+    $i=0;
+    $fresult=array();
+    $entry = ldap_first_entry($conn, $searchresult);
+    do {
+        $attributes = ldap_get_attributes($conn, $entry);
+        for($j=0; $j<$attributes['count']; $j++) {
+            $values = ldap_get_values_len($conn, $entry,$attributes[$j]);
+            $fresult[$i][$attributes[$j]] = $values;
+        }         
+        $i++;               
+    }
+    while ($entry = ldap_next_entry($conn, $entry));
+    //we're done
+    return ($fresult);
+}
+
+
+
 
 ?>
