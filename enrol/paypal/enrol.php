@@ -90,9 +90,8 @@ function get_access_icons($course) {
            default:    $currency = '$'; break;
         }
         
-        $str .= "<p class=\"coursecost\"><font size=\"-1\">$strcost: ".
-                "<a title=\"$strrequirespayment\" href=\"$CFG->wwwroot/course/view.php?id=$course->id\"></a>";
-        $str .= "$currency".format_float($cost,2).'</a></p>';
+        $str .= '<span class="courseboxcost" title="'.$strrequirespayment.'">'.$strcost.': ';
+        $str .= $currency.format_float($cost,2).'</span>';
         
     }
 
