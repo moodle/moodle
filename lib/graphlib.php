@@ -1378,6 +1378,9 @@ function init_colours() {
   $this->colour['red']      = ImageColorAllocate ($this->image, 0xFF, 0x00, 0x00);
   $this->colour['ltred']    = ImageColorAllocate ($this->image, 0xFF, 0x99, 0x99);
   $this->colour['ltltred']  = ImageColorAllocate ($this->image, 0xFF, 0xCC, 0xCC);
+  $this->colour['orange']   = ImageColorAllocate ($this->image, 0xFF, 0x66, 0x00);
+  $this->colour['ltorange']   = ImageColorAllocate ($this->image, 0xFF, 0x99, 0x66);
+  $this->colour['ltltorange'] = ImageColorAllocate ($this->image, 0xFF, 0xcc, 0x99);
   $this->colour['lime']     = ImageColorAllocate ($this->image, 0x00, 0xFF, 0x00);
   $this->colour['yellow']   = ImageColorAllocate ($this->image, 0xFF, 0xFF, 0x00);
   $this->colour['blue']     = ImageColorAllocate ($this->image, 0x00, 0x00, 0xFF);
