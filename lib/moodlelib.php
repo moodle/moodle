@@ -948,25 +948,6 @@ function isguest($userid=0) {
     return record_exists_sql("SELECT * FROM user WHERE user='$userid' AND username = 'guest' ");
 }
 
-function get_course_students($courseid, $sort="u.lastaccess DESC") {
-    return get_records_sql("SELECT u.* FROM user u, user_students s
-                            WHERE s.course = '$courseid' AND s.user = u.id
-                            ORDER BY $sort");
-}
-
-function get_course_teachers($courseid, $sort="t.authority ASC") {
-    return get_records_sql("SELECT u.* FROM user u, user_teachers t
-                            WHERE t.course = '$courseid' AND t.user = u.id
-                            ORDER BY $sort");
-}
-
-function get_course_users($courseid, $sort="u.lastaccess DESC") {
-    return get_records_sql("SELECT u.* FROM user u, user_students s, user_teachers t
-                            WHERE (s.course = '$courseid' AND s.user = u.id) OR 
-                                  (t.course = '$courseid' AND t.user = u.id)
-                            ORDER BY $sort");
-}
-
 function reset_login_count() {
     global $SESSION;
 
@@ -1036,6 +1017,25 @@ function get_teacher($courseid) {
     } else {
         return false;
     }
+}
+
+function get_course_students($courseid, $sort="u.lastaccess DESC") {
+    return get_records_sql("SELECT u.* FROM user u, user_students s
+                            WHERE s.course = '$courseid' AND s.user = u.id
+                            ORDER BY $sort");
+}
+
+function get_course_teachers($courseid, $sort="t.authority ASC") {
+    return get_records_sql("SELECT u.* FROM user u, user_teachers t
+                            WHERE t.course = '$courseid' AND t.user = u.id
+                            ORDER BY $sort");
+}
+
+function get_course_users($courseid, $sort="u.lastaccess DESC") {
+    return get_records_sql("SELECT u.* FROM user u, user_students s, user_teachers t
+                            WHERE (s.course = '$courseid' AND s.user = u.id) OR 
+                                  (t.course = '$courseid' AND t.user = u.id)
+                            ORDER BY $sort");
 }
 
 
