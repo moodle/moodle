@@ -69,4 +69,4 @@ CREATE TABLE `prefix_lesson_grades` (
 # --------------------------------------------------------
 
 
-
+INSERT INTO prefix_log_display VALUES ('lesson', 'view', 'lesson', 'name');
