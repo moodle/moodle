@@ -14,16 +14,21 @@ function quiz_add_instance($quiz) {
 /// will create a new instance and return the id number
 /// of the new instance.
 
-    global $SESSION;
-
-    unset($SESSION->modform);
-
     $quiz->created      = time();
     $quiz->timemodified = time();
     $quiz->timeopen = make_timestamp($quiz->openyear, $quiz->openmonth, $quiz->openday,
                                      $quiz->openhour, $quiz->openminute, 0);
     $quiz->timeclose = make_timestamp($quiz->closeyear, $quiz->closemonth, $quiz->closeday,
                                       $quiz->closehour, $quiz->closeminute, 0);
+    
+    if (empty($quiz->name)) {
+        if (empty($quiz->intro)) {
+            $quiz->name = get_string('modulename', 'quiz');
+        } else {
+            $quiz->name = strip_tags($quiz->intro);
+        }
+    }
+    $quiz->name = trim($quiz->name);
 
     if (!$quiz->id = insert_record("quiz", $quiz)) {
         return false;  // some error occurred
@@ -72,10 +77,6 @@ function quiz_update_instance($quiz) {
 /// Given an object containing all the necessary data,
 /// (defined by the form in mod.html or edit.php) this function
 /// will update an existing instance with new data.
-
-    global $SESSION;
-
-    unset($SESSION->modform);
 
     $quiz->timemodified = time();
     if (isset($quiz->openyear)) { // this would not be set if we come from edit.php

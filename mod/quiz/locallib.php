@@ -353,24 +353,24 @@ function quiz_get_question_grades($quizid, $questionlist) {
 }
 
 function quiz_questiongrades_update($grades, $quizid) {
+    // this is called from edit.php to store changes to the question grades 
+    // in the quiz_question_grades table. It does not update 'sumgrades' in the quiz table.
     $existing = get_records("quiz_question_grades", "quiz", $quizid, "", "question,grade,id");
     foreach ($grades as $question => $grade) {
-        if ($question) {
-            unset($questiongrade);
-            $questiongrade->quiz = $quizid;
-            $questiongrade->question = $question;
-            $questiongrade->grade = $grade;
-            if (isset($existing[$question])) {
-                if ($existing[$question]->grade != $grade) {
-                    $questiongrade->id = $existing[$question]->id;
-                    if (!update_record("quiz_question_grades", $questiongrade)) {
-                        return false;
-                    }
-                }
-            } else {
-                if (!insert_record("quiz_question_grades", $questiongrade)) {
+        unset($questiongrade);
+        $questiongrade->quiz = $quizid;
+        $questiongrade->question = $question;
+        $questiongrade->grade = $grade;
+        if (isset($existing[$question])) {
+            if ($existing[$question]->grade != $grade) {
+                $questiongrade->id = $existing[$question]->id;
+                if (!update_record("quiz_question_grades", $questiongrade)) {
                     return false;
                 }
+            }
+        } else {
+            if (!insert_record("quiz_question_grades", $questiongrade)) {
+                return false;
             }
         }
     }
@@ -1109,7 +1109,7 @@ function quiz_print_question_list($questionlist, $grades) {
 // $questionlist is comma-separated list
 // $grades is an array of corresponding grades
 
-    global $THEME;
+    global $THEME, $USER;
 
     if (!$questionlist) {
         echo "<p align=\"center\">";
@@ -1143,6 +1143,7 @@ function quiz_print_question_list($questionlist, $grades) {
     $sumgrade = 0;
     $total = count($order);
     echo "<form method=\"post\" action=\"edit.php\">";
+    echo "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\">";
     echo "<table border=\"0\" cellpadding=\"5\" cellspacing=\"2\" width=\"100%\">\n";
     echo "<tr><th width=\"*\" colspan=\"3\" nowrap=\"nowrap\">$strorder</th><th align=\"left\" width=\"100%\" nowrap=\"nowrap\">$strquestionname</th><th width=\"*\" nowrap=\"nowrap\">$strtype</th><th width=\"*\" nowrap=\"nowrap\">$strgrade</th><th width=\"*\" nowrap=\"nowrap\">$stredit</th></tr>\n";
     foreach ($order as $qnum) {
@@ -1156,13 +1157,13 @@ function quiz_print_question_list($questionlist, $grades) {
         echo "<td>$count</td>";
         echo "<td>";
         if ($count != 1) {
-            echo "<a title=\"$strmoveup\" href=\"edit.php?up=$qnum\"><img
+            echo "<a title=\"$strmoveup\" href=\"edit.php?up=$qnum&amp;sesskey=$USER->sesskey\"><img
                  src=\"../../pix/t/up.gif\" border=\"0\" alt=\"$strmoveup\" /></a>";
         }
         echo "</td>";
         echo "<td>";
         if ($count != $total) {
-            echo "<a title=\"$strmovedown\" href=\"edit.php?down=$qnum\"><img
+            echo "<a title=\"$strmovedown\" href=\"edit.php?down=$qnum&amp;sesskey=$USER->sesskey\"><img
                  src=\"../../pix/t/down.gif\" border=\"0\" alt=\"$strmovedown\" /></a>";
         }
         echo "</td>";
@@ -1178,15 +1179,15 @@ function quiz_print_question_list($questionlist, $grades) {
                              "q$qnum", (string)$grades[$qnum], "");
         }
         echo "<td>";
-            echo "<a title=\"$strdelete\" href=\"edit.php?delete=$qnum\"><img
-                 src=\"../../pix/t/delete.gif\" border=\"0\" alt=\"$strdelete\" /></a>&nbsp;";
-            echo "<a title=\"$strpreview\" href=\"#\" onClick=\"openpopup('/mod/quiz/preview.php?id=$qnum','$strpreview','scrollbars=yes,resizable=yes,width=700,height=480', false)\"><img
-                  src=\"../../pix/t/preview.gif\" border=\"0\" alt=\"$strpreview\" /></a>&nbsp;";
 
-            if ($canedit) {
-                echo "<a title=\"$stredit\" href=\"question.php?id=$qnum\"><img
-                     src=\"../../pix/t/edit.gif\" border=\"0\" alt=\"$stredit\" /></a>\n";
-            }
+        if ($canedit) {
+            echo "<a title=\"$stredit\" href=\"question.php?id=$qnum\">
+                  <img src=\"../../pix/t/edit.gif\" border=\"0\" alt=\"$stredit\" /></a>&nbsp;";
+            echo "<a title=\"$strdelete\" href=\"edit.php?delete=$qnum&amp;sesskey=$USER->sesskey\">
+                  <img src=\"../../pix/t/delete.gif\" border=\"0\" alt=\"$strdelete\" /></a>&nbsp;";
+            echo "<a title=\"$strpreview\" href=\"#\" onClick=\"openpopup('/mod/quiz/preview.php?id=$qnum','$strpreview','scrollbars=yes,resizable=yes,width=700,height=480', false)\">
+                  <img src=\"../../pix/t/preview.gif\" border=\"0\" alt=\"$strpreview\" /></a>";
+        }
         echo "</td>";
 
         $sumgrade += $grades[$qnum];
@@ -1207,7 +1208,7 @@ function quiz_print_question_list($questionlist, $grades) {
 function quiz_print_cat_question_list($categoryid, $quizselected=true, $recurse=1, $page, $perpage) {
 // Prints the table of questions in a category with interactions
 
-    global $THEME, $QUIZ_QUESTION_TYPE;
+    global $THEME, $QUIZ_QUESTION_TYPE, $USER;
 
     $strcategory = get_string("category", "quiz");
     $strquestion = get_string("question", "quiz");
@@ -1290,6 +1291,7 @@ function quiz_print_cat_question_list($categoryid, $quizselected=true, $recurse=
     $canedit = isteacheredit($category->course);
 
     echo "<form method=\"post\" action=\"edit.php\">";
+    echo "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\">";
     echo "<table border=\"0\" cellpadding=\"5\" cellspacing=\"2\" width=\"100%\">";
     echo "<tr>";
     if ($quizselected) {

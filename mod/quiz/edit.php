@@ -5,28 +5,12 @@
 
     require_login();
 
-    optional_variable($courseid);
-    optional_variable($quizid);
-    optional_variable($page, 0);
-    optional_variable($perpage, "20"); 
+    $courseid = optional_param('courseid');
+    $quizid   = optional_param('quizid');
+    $page     = optional_param('page', 0);
+    $perpage  = optional_param('perpage', 20);
 
-    if (empty($destination)) {
-        $destination = "";
-    }
-
-    $modform = data_submitted($destination);
-
-    if ($modform and !empty($modform->course)) { // data submitted
-
-        $modform->name = trim($modform->name);
-
-        if (empty($modform->name)) {
-            if (empty($modform->intro)) {
-                $modform->name = get_string('modulename', 'quiz');
-            } else {
-                $modform->name = strip_tags($modform->intro);
-            }
-        }
+    if ($modform = data_submitted() and !empty($modform->course)) { // data submitted
 
         $SESSION->modform = $modform;    // Save the form in the current session
 
@@ -79,17 +63,9 @@
     }
 
 
-    // Now, check for commands on this page and modify variables as necessary
-    
-    if (isset($cancel)) {
-        redirect('view.php?q='.$modform->instance);
-    }
-    
-    if (isset($recurse)) {
-        $modform->recurse = $recurse;
-    }
+/// Now, check for commands on this page and modify variables as necessary
 
-    if (!empty($up)) { /// Move the given question up a slot
+    if (isset($_REQUEST['up']) and confirm_sesskey()) { /// Move the given question up a slot
         $questions = explode(",", $modform->questions);
         if ($questions[0] <> $up) {
             foreach ($questions as $key => $question) {
@@ -107,7 +83,7 @@
         }
     }
 
-    if (!empty($down)) { /// Move the given question down a slot
+    if (isset($_REQUEST['down']) and confirm_sesskey()) { /// Move the given question down a slot
         $questions = explode(",", $modform->questions);
         if ($questions[count($questions)-1] <> $down) {
             foreach ($questions as $key => $question) {
@@ -125,7 +101,7 @@
         }
     }
 
-    if (!empty($add)) { /// Add a question to the current quiz
+    if (isset($_REQUEST['add']) and confirm_sesskey()) { /// Add a question to the current quiz
         $rawquestions = $_POST;
         if (!empty($modform->questions)) {
             $questions = explode(",", $modform->questions);
@@ -164,7 +140,7 @@
         quiz_questiongrades_update($modform->grades, $modform->instance);
     }
 
-    if (!empty($delete)) { /// Delete a question from the list 
+    if (isset($_REQUEST['delete']) and confirm_sesskey()) { /// Delete a question from the list 
         $questions = explode(",", $modform->questions);
         foreach ($questions as $key => $question) {
             if ($question == $delete) {
@@ -181,7 +157,7 @@
         }
     }
 
-    if (!empty($setgrades)) { /// The grades have been updated, so update our internal list
+    if (isset($_REQUEST['setgrades']) and confirm_sesskey()) { /// The grades have been updated, so update our internal list
         $rawgrades = $_POST;
         unset($modform->grades);
         foreach ($rawgrades as $key => $value) {    // Parse input for question -> grades
@@ -195,11 +171,16 @@
         }
         quiz_questiongrades_update($modform->grades, $modform->instance);
     }
- 
-
-    if (!empty($cat)) { //-----------------------------------------------------------
+    
+    if (isset($_REQUEST['cat'])) { /// coming from category selection drop-down menu
         $modform->category = $cat;
     }
+        
+    if (isset($_REQUEST['recurse'])) { /// coming from checkbox below category selection form
+        $modform->recurse = $recurse;
+    }
+    
+/// all commands have been dealt with, now print the page
 
     if (empty($modform->category)) {
         $category = quiz_get_default_category($course->id);
@@ -209,23 +190,15 @@
         $modform->recurse = 1;
     }
 
-    $modform->sumgrades = 0;
-    if (!empty($modform->grades)) {
-        foreach ($modform->grades as $grade) {
-            $modform->sumgrades += $grade;
-        }
-    }
-
     $SESSION->modform = $modform;
 
-    $strname    = get_string('name');
     $strquizzes = get_string('modulenameplural', 'quiz');
     $strediting = get_string('editquestions', "quiz");
-    $strheading = empty($modform->name) ? $strediting : $modform->name;
 
     // Print basic page layout.
 
     if (!isset($modform->instance)) {
+        // one column layout for non-quiz-specific editing page
         print_header_simple($strediting, '',
                  "<a href=\"index.php?id=$course->id\">$strquizzes</a>".
                  " -> $strediting");
@@ -233,6 +206,7 @@
         echo '<tr><td valign="top">';
 
     } else {
+        // two column layout with quiz info in left column
         print_header_simple($strediting, '',
                  "<a href=\"index.php?id=$course->id\">$strquizzes</a>".
                  " -> <a href=\"view.php?q=$modform->instance\">$modform->name</a>".
@@ -258,15 +232,16 @@
         }
 
         print_simple_box_end();
-        print_continue('view.php?q='.$modform->instance);
         echo '</td><td valign="top" width="50%">';
     }
+    // non-quiz-specific column
     print_simple_box_start("center", "100%", $THEME->cellcontent2);
+    // starts with category selection form
     quiz_print_category_form($course, $modform->category, $modform->recurse);
     print_simple_box_end();
     
     print_spacer(5,1);
-
+    // continues with list of questions
     print_simple_box_start("center", "100%", $THEME->cellcontent2);
     quiz_print_cat_question_list($modform->category,
                                  isset($modform->instance), $modform->recurse, $page, $perpage);
@@ -277,6 +252,8 @@
 
     if (!isset($modform->instance)) {
         print_continue("index.php?id=$modform->course");
+    } else {
+        print_continue('view.php?q='.$modform->instance);
     }
 
     print_footer($course);
