@@ -1,0 +1,31 @@
+<p align="center"><b>Caricamento degli utenti</b></p>
+
+<p>Innanzitutto, occorre notare che <strong>di solito non &egrave; necessario importare utenti in massa</strong>Ð per ridurre il proprio lavoro di manutenzione bisognerebbe, per prima cosa, esaminare i moduli di autenticazione che non richiedono la manutenzione manuale, come la connessione ad esistenti database esterni o consentire agli utenti la creazione di propri account. Consultare la sezione Autenticazione nei menu dell'amministratore.</p>
+<p>Se si &egrave; sicuri di voler importare molteplici account utente da un file di testo, allora occorre formattare il proprio file di testo come segue:</p>
+
+<ul>
+  <li>Ciascuna riga del file contiene un record</li>
+  <li>Ciascun record &egrave; una serie di dati separati da virgole</li>
+  <li>Il primo record del file &egrave; speciale e contiene un elenco di fieldname (nomi di campo). Ci˜ definisce il formato del resto del file.
+    <blockquote>
+      <p><strong>Fieldname richiesti:</strong> questi campi devono essere inclusi nel primo record e definiti per ciascun utente</p>
+      <p></p>
+      <font color="#990000" face="Courier New, Courier, mono">username, password, firstname, lastname, email</font></p>
+</p>
+      <p><strong>Fieldname predefiniti:</strong> sono facoltativi Ð se non sono inclusi allora i valori si prendono dall'amministratore principale</p>
+      <p><font color="#990000" face="Courier New, Courier, mono">institution, department, city, country, lang, timezone</font> </p>
+      <p><strong>Fieldname facoltativi: </strong>sono tutti completamente facoltativi. I nomi dei corsi sono i &quot;nomi brevi&quot; dei corsi Ð qualora sia presente, l'utente sar&agrave; allora iscritto come studente in questi corsi. I nomi dei gruppi devono corrispondere ai corsi assegnati, per esempio gruppo1 a corso1, ecc.</p>
+      <p> <font color="#990000" face="Courier New, Courier, mono">idnumber, icq, phone1, phone2, address, url, description, mailformat, maildisplay, htmleditor, autosubscribe, course1, course2, course3, course4, course5, group1, group2, group3, group4, group5</font></p>
+    </blockquote>
+    </li>
+  <li>Le virgole all'interno dei dati dovrebbero essere codificate come &#44 Ð lo script li decodificher&agrave; automaticamente di nuovo in virgole. </li>
+  <li>Per i campi booleani, utilizzare 0 per falso e 1 per vero.</li>
+  <li>Nota: se un utente &egrave; gi&agrave; registrato nel database utenti di Moodle, questa sequenza restituir&agrave; il numero di identificazione utente (indice database) di quell'utente ed iscriver&agrave; l'utente come studente in tutti i corsi specificati SENZA aggiornare gli altri dati specificati</li>
+</ul>
+  
+  
+<p>Ecco l'esempio di un file di importazione valido:</p>
+<p><font size="-1" face="Courier New, Courier, mono">username, password, firstname, lastname, email, lang, idnumber, maildisplay, course1, group1<br>
+jonest, verysecret, Tom, Jones, jonest@someplace.edu, en, 3663737, 1, Intro101, Section 1<br>
+reznort, somesecret, Trent, Reznor, reznort@someplace.edu, en_us, 6736733, 0, Advanced202, Section 3</font></p>
+
