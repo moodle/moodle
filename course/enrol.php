@@ -52,9 +52,11 @@
 /// Double check just in case they are enrolled to start in the future 
 
     if ($student = get_record('user_students', 'userid', $USER->id, 'course', $course->id)) { 
-        $message = get_string('enrolmentnotyet', '', userdate($student->timestart));
-        print_header();
-        notice($message, $CFG->wwwroot);
+        if ($course->enrolperiod and $student->timestart and ($student->timestart >= time())) {
+            $message = get_string('enrolmentnotyet', '', userdate($student->timestart));
+            print_header();
+            notice($message, $CFG->wwwroot);
+        }
     }
 
 /// Check the submitted enrollment key if there is one
