@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.4 development (2004080300)
+      // auth.php - created with Moodle 1.4 alpha (2004081500)
 
 
 $string['auth_dbdescription'] = 'Deze methode gebruikt een externe database om te controleren of een bepaalde gebruikersnaam en een bepaald wachtwoord geldig zijn. Als de account nieuw is dan kan informatie vanuit andere velden ook naar Moodle worden gekopieerd.';
@@ -35,6 +35,7 @@ $string['auth_ldap_create_context'] = 'Als je het aanmaken van gebruikers met e-
 $string['auth_ldap_creators'] = 'Lijst met groepen gebruikers. De leden van de groepen mogen nieuwe vakken aanmaken. Scheid meerdere groepen met \';\'. Meestal iets als \'cn=docenten,ou=medewerkers,o=mijnorganisatie\'';
 $string['auth_ldap_host_url'] = 'Geef de LDAP host in de vorm van een URL zoals bijvoorbeeld: \'ldap://ldap.myorg.com/\' of \'ldaps://ldap.myorg.com/\'  Com/\'or \'ldaps://ldap.myorg.com/\' ';
 $string['auth_ldap_memberattribute'] = 'Geef gebruiker lid attribuut, voor als gebruikers tot een groep behoren. Meestal \'member\'';
+$string['auth_ldap_objectclass'] = 'De filter om namen/gebruiker te zoeken. Gewoonlijk zet je dit op iets als objectClass=posixAccount. Staat standaard op objectclass=*, wat alle objecten van LDAP geeft.';
 $string['auth_ldap_search_sub'] = 'Zet waarde <> 0 als je gebruikers wilt kunnen zoeken in subcontexten.';
 $string['auth_ldap_update_userinfo'] = 'Werk de gebruikersinformatie bij (voornaam, achternaam, adres, ..) van LDAP naar Moodle. Bekijk /auth/ldap/attr_mappings.php om informatie te vinden over de \'mapping\'.';
 $string['auth_ldap_user_attribute'] = 'Het attribuut dat wordt gebruikt om gebruikers te benoemen of zoeken. Meestal \'cn\'.';
@@ -54,6 +55,7 @@ $string['auth_nonedescription'] = 'De gebruikers kunnen meteen inloggen en een g
 $string['auth_nonetitle'] = 'Geen authenticatie';
 $string['auth_pop3description'] = 'Deze methode gebruikt een POP3 server om te controleren of een gebruikersnaam en wachtwoord geldig zijn.';
 $string['auth_pop3host'] = 'Het adres van de POP3 server. Gebruik het IP-adres, niet een DNS naam.';
+$string['auth_pop3mailbox'] = 'Naam van de mailbox waarmee je een connectie probeert te maken. (gewoonlijk INBOX)';
 $string['auth_pop3port'] = 'De poort van de server (meestal is dat 110)';
 $string['auth_pop3title'] = 'Gebruik een  POP3 server';
 $string['auth_pop3type'] = 'Het type van de server. Als jouw server gebruikt maakt van beveiliging door middel van een certificaat, kies pop3cert.';

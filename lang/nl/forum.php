@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.4 development (2004062600)
+      // forum.php - created with Moodle 1.4 alpha (2004081500)
 
 
 $string['addanewdiscussion'] = 'Voeg een nieuw onderwerp voor discussie toe';
@@ -43,6 +43,7 @@ $string['editing'] = 'Wijzigen';
 $string['emptymessage'] = 'Er was iets mis met je bericht. Misschien heb je het leeg gelaten of was de bijlage te groot. Je wijzigingen zijn NIET bewaard.';
 $string['everyonecanchoose'] = 'Iedereen kan kiezen of ze wel of niet lid zijn.';
 $string['everyoneissubscribed'] = 'Iedereen is lid van dit forum';
+$string['existingsubscribers'] = 'Huidige leden';
 $string['forcesubscribe'] = 'Verplicht iedereen om lid te zijn';
 $string['forcesubscribeq'] = 'Moet iedereen verplicht lid zijn?';
 $string['forum'] = 'Forum';
@@ -81,12 +82,8 @@ $string['noposts'] = 'Geen berichten';
 $string['nopostscontaining'] = 'Er zijn geen berichten met \'$a\' gevonden';
 $string['nosubscribers'] = 'Er is nog niemand lid van dit forum';
 $string['notingroup'] = 'Sorry, je moet bij een groep horen om dit forum te kunnen zien.';
-$string['nownotsubscribed'] = '$a->name zal via e-mail GEEN bijdragen aan \'$a->forum\' ontvangen.
-
-';
-$string['nowsubscribed'] = '$a->naam zal bijdragen aan \'$a->forum\' ontvangen via e-mail.
-
-';
+$string['nownotsubscribed'] = '$a->name zal via e-mail GEEN bijdragen aan \'$a->forum\' ontvangen.';
+$string['nowsubscribed'] = '$a->naam zal bijdragen aan \'$a->forum\' ontvangen via e-mail.';
 $string['numposts'] = '$a berichten';
 $string['olderdiscussions'] = 'Oudere discussies';
 $string['openmode0'] = 'Geen nieuwe discussies, geen antwoorden';
@@ -105,6 +102,7 @@ $string['postrating3'] = 'Vooral \'Connected\'';
 $string['posts'] = 'Berichten';
 $string['posttoforum'] = 'Plaats op het forum';
 $string['postupdated'] = 'Je bericht is bijgewerkt';
+$string['potentialsubscribers'] = 'Mogelijke leden';
 $string['processingdigest'] = 'E-mail samenvatting aan het verwerken voor gebruiker $a';
 $string['processingpost'] = 'Bericht $a aan het verwerken';
 $string['prune'] = 'Splits discussie';

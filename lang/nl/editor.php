@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.4 development (2004062401)
+      // editor.php - created with Moodle 1.4 alpha (2004081500)
 
 
 $string['about'] = 'Info';
@@ -8,6 +8,7 @@ $string['absmiddle'] = 'Absmiddle';
 $string['address'] = 'Adres';
 $string['alignment'] = 'Uitlijning';
 $string['alternatetext'] = 'Alternatieve tekst';
+$string['anchors'] = 'Ankers';
 $string['baseline'] = 'Baseline';
 $string['bold'] = 'Vet';
 $string['borderthickness'] = 'Randdikte';
