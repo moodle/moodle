@@ -84,6 +84,8 @@ $string[emailmustbereal] = "Note: your email address must be a real one";
 $string[enrolmentkey] = "Enrolment key";
 $string[enrolmentkeyfrom] = "This course requires an 'enrolment key' - a one-time<BR>
 password that you should have got from \$a";
+$string[enrolmentkeyhint] = "That enrolment key was incorrect, please try again<BR>
+(Here's a hint - it starts with '\$a'";
 $string[entercourse] = "Click to enter this course";
 $string[enteremailaddress] = "Enter in your email address to reset your 
    password and have the new password sent to you via email.";

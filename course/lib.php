@@ -263,7 +263,7 @@ function print_recent_activity($course) {
 
     if (! $USER->lastlogin ) {
         echo "<P ALIGN=CENTER><FONT SIZE=1>";
-        print_string("welcometocourse");
+        print_string("welcometocourse", "", $course->shortname);
         echo "</FONT></P>";
         return;
     } else {

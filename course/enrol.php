@@ -48,8 +48,7 @@
     	    redirect($destination);
     
         } else {
-            $errormsg = "That enrolment key was incorrect, please try again".
-                        "<BR>(Here's a hint - it starts with \"".substr($course->password,0,1)."\")";
+            $errormsg = get_string("enrolmentkeyhint", "", substr($course->password,0,1));
         }
     }
 

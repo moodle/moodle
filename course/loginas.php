@@ -27,15 +27,22 @@
 
     $USER = get_user_info_from_db("id", $user);
     $USER->loggedin = true;
+    $USER->realuser = $teacher_id;
+    save_session("USER");
+
     set_moodle_cookie($USER->username);
     $student_name = "$USER->firstname $USER->lastname";
 
     add_to_log($course->id, "course", "loginas", "../user/view.php?id=$course->id&user=$user", "$teacher_name -> $student_name");
 
-    $USER->realuser = $teacher_id;
 
-    notice("You are now logged in as $student_name", "$CFG->wwwroot/course/view.php?id=$course->id");
+    $strloginas    = get_string("loginas");
+    $strloggedinas = get_string("loggedinas", "", $student_name);
 
-    save_session("USER");
+    print_header("$course->fullname: $strloginas $student_name", "$course->fullname", 
+                 "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> -> 
+                  $strloginas $student_name");
+    notice($strloggedinas, "$CFG->wwwroot/course/view.php?id=$course->id");
+
 
 ?>

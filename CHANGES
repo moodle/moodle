@@ -1,3 +1,69 @@
+2002-08-10 Saturday 23:16  martin
+
+	* user/view.php: Fixes to visibility of unenrol button
+
+2002-08-10 Saturday 23:10  martin
+
+	* user/lib.php: Tweak to display on "unenrol"
+
+2002-08-10 Saturday 22:56  martin
+
+	* mod/assignment/lib.php: Small fix to the full list of available
+	assignments
+
+2002-08-10 Saturday 22:28  martin
+
+	* lang/en/moodle.php: Additions
+
+2002-08-10 Saturday 22:27  martin
+
+	* course/: lib.php, topics.php, weeks.php: More tweaks to recent
+	activity box
+
+2002-08-10 Saturday 21:50  martin
+
+	* course/lib.php: Tweak teacher colour
+
+2002-08-10 Saturday 21:42  martin
+
+	* course/lib.php, course/log.php, course/topics.php,
+	course/weeks.php, lang/en/moodle.php, lib/moodlelib.php: Tweaks and
+	tidy-ups for course home pages (weekly and topics)
+
+2002-08-09 Friday 17:25  martin
+
+	* lib/moodlelib.php, user/lib.php, user/view.php: Further little
+	fixes to user image displaying
+
+2002-08-09 Friday 17:09  martin
+
+	* admin/user.php, lib/moodlelib.php, user/pix.php: Changes to make
+	uploaded user pictures work properly on Windows  :-(
+
+2002-08-09 Friday 17:08  martin
+
+	* doc/install.html: Clearer docs for Windows users
+
+2002-08-09 Friday 14:25  martin
+
+	* doc/install.html: Brought the install procedure up to date
+
+2002-08-09 Friday 10:48  martin
+
+	* index.php: Slight tweak to remove login button for ordinary users
+
+2002-08-09 Friday 10:45  martin
+
+	* index.php, admin/index.php, lib/moodlelib.php,
+	mod/forum/version.php: New functions get_list_of_modules() and
+	moodle_needs_upgrading().  Used on the home page when admin is
+	logged in, to check for any upgrading of the databases that might
+	need to be done.
+
+2002-08-09 Friday 01:43  martin
+
+	* CHANGES: Changes
+
 2002-08-09 Friday 01:34  martin
 
 	* CHANGES: 
