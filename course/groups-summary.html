@@ -1,14 +1,17 @@
-<table align="center" class="generalbox">
+<table align="center" class="generalbox" width="70%">
  <tr>
-   <td valign="top" width="100"><?php echo $t->picture ?></td>
-   <td><p style="font-size: larger"><?php echo $t->name ?></p>
+   <th colspan="2"><?php echo $t->name ?></th>
+ </tr>
+ <tr>
+   <td valign="top">
+   <p><?php echo $t->picture ?></p>
    <p><?php echo $t->description ?></p>
-   <p><ul><?php 
+   </td>
+   <td align="right">
+   <p style="font-size: x-small"><?php 
       if ($t->users) {
           foreach ($t->users as $user) {
-              echo '<li style="font-size: x-small">';
-              echo "<a href=\"$CFG->wwwroot/user/view.php?id=$user->id&course=$t->courseid\">$user->fullname</a>";
-              echo '</li>';
+              echo "<a href=\"$CFG->wwwroot/user/view.php?id=$user->id&course=$t->courseid\">$user->fullname</a><br />";
           }
       }
       ?>

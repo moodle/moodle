@@ -56,7 +56,7 @@
             foreach ($groups as $group) {
                 $t = $group;
                 $t->picture = print_group_picture($group, $course->id, true, true, true);
-                if ($t->users = get_users_in_group($group->id)) {
+                if ($t->users = get_users_in_group($group->id, 'u.lastname ASC')) {
                     foreach ($t->users as $key => $user) {
                         $t->users[$key]->fullname = fullname($user, $isteacher);
                     }
