@@ -979,7 +979,8 @@ function message_get_participants() {
     global $CFG;
 
     return get_records_sql("SELECT DISTINCT u.id 
-                              FROM {$CFG->prefix}message as m, 
+                              FROM {$CFG->prefix}user as u,
+                                   {$CFG->prefix}message as m, 
                                    {$CFG->prefix}message_read as mr
                              WHERE m.useridfrom = u.id 
                                 OR m.useridto = u.id
