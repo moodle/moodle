@@ -973,7 +973,6 @@ function print_category_info($category, $depth) {
                 echo "<span class=\"coursename\">";
                 echo "<a $linkcss href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->fullname</a>";
                 echo "&nbsp;&nbsp;";
-                unset($courses[$key]);
                 if ($course->guest ) {
                     echo "<a title=\"$strallowguests\" href=\"$CFG->wwwroot/course/view.php?id=$course->id\">";
                     echo "<img alt=\"\" height=16 width=16 border=0 src=\"$pixpath/i/user.gif\"></a>";
