@@ -3,10 +3,17 @@
     require_once("../config.php");
     require_once("$CFG->libdir/gdlib.php");
 
-    require_variable($id);       // user id
-    require_variable($course);   // course id
+    optional_variable($id);       // user id
+    optional_variable($course);   // course id
 
+    if (empty($id)) {         // See your own profile by default
+        require_login();
+        $id = $USER->id;
+    }
 
+    if (empty($course)) {     // See it at site level by default
+        $course = SITEID;
+    }
 
     if (! $user = get_record("user", "id", $id)) {
         error("User ID was incorrect");

@@ -5,11 +5,19 @@
     require_once("../config.php");
     require_once("../mod/forum/lib.php");
 
-    require_variable($id);
-    require_variable($course);
+    optional_variable($id);
+    optional_variable($course);
     optional_variable($enable, "");
     optional_variable($disable, "");
 
+    if (empty($id)) {         // See your own profile by default
+        require_login();
+        $id = $USER->id;
+    }
+
+    if (empty($course)) {     // See it at site level by default
+        $course = SITEID;
+    }
 
     if (! $user = get_record("user", "id", $id) ) {
         error("No such user in this course");
