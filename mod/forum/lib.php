@@ -1357,6 +1357,34 @@ function forum_delete_old_attachments($post, $exception="") {
     }
 }
 
+function forum_move_attachments($discussion, $forumid) {
+/// Given a discussion object that is being moved to forumid, 
+/// this function checks all posts in that discussion 
+/// for attachments, and if any are found, these are 
+/// moved to the new forum directory.
+
+    global $CFG;
+
+    $return = true;
+
+    if ($posts = get_records_select("forum_posts", "discussion = '$discussion->id' AND attachment <> ''")) {
+        foreach ($posts as $oldpost) {
+            $oldpost->course = $discussion->course;
+            $oldpost->forum = $discussion->forum;
+            $oldpostdir = "$CFG->dataroot/".forum_file_area_name($oldpost);
+            if (is_dir($oldpostdir)) {
+                $newpost = $oldpost;
+                $newpost->forum = $forumid;
+                $newpostdir = "$CFG->dataroot/".forum_file_area_name($newpost);
+                if (! @rename($oldpostdir, $newpostdir)) {
+                    $return = false;
+                }
+            }
+        }
+    }
+    return $return;
+}
+
 function forum_print_attachments($post, $return=NULL) {
 // if return=html, then return a html string.
 // if return=text, then return a text-only string.

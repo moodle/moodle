@@ -28,6 +28,9 @@
             error("Only teachers can do that!");
         }
         if ($forum = get_record("forum", "id", $move)) {
+            if (!forum_move_attachments($discussion, $move)) {
+                notify("Errors occurred while moving attachment directories - check your file permissions");
+            }
             set_field("forum_discussions", "forum", $forum->id, "id", $discussion->id);
             $discussion->forum = $forum->id;
             add_to_log($course->id, "forum", "move discussion", "discuss.php?d=$discussion->id", "$discussion->id");
