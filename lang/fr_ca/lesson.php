@@ -1,0 +1,67 @@
+<?PHP // $Id$ 
+
+
+$string['actionaftercorrectanswer'] = 'Action après réponse correcte';
+$string['addanewpage'] = 'Ajouter une nouvelle page';
+$string['addpagehere'] = 'Ajouter une page ici';
+$string['answer'] = 'Réponse';
+$string['answersfornumerical'] = 'Les réponses aux questions numériques doivent être constituées d\'une valeur minimale et d\'une valeur maximale.';
+$string['attempt'] = 'Tentative : $a';
+$string['attempts'] = 'Tentatives';
+$string['available'] = 'Disponible dès le';
+$string['canretake'] = 'Les étudiants peuvent refaire la leçon';
+$string['casesensitive'] = 'Sensible à la casse';
+$string['checknavigation'] = 'Vérifier la navigation';
+$string['checkquestion'] = 'Vérifier la question';
+$string['confirmdeletionofthispage'] = 'Voulez-vous vraiment supprimer cette page ?';
+$string['congratulations'] = 'Félicitations - la leçon est terminée';
+$string['continue'] = 'Continuer';
+$string['deadline'] = 'À faire jusqu\'au';
+$string['deletingpage'] = 'Suppression de la page : $a';
+$string['displayofgrade'] = 'Affichage de la note (pour l\'étudiant)';
+$string['endoflesson'] = 'Fin de la leçon';
+$string['fileformat'] = 'Format de fichier';
+$string['firstanswershould'] = 'La première réponse devrait toujours permettre l\'accès à la page « Réponse correcte »';
+$string['gradeis'] = 'La note est $a';
+$string['importquestions'] = 'Importer des questions';
+$string['jumpto'] = 'Aller à';
+$string['maximumnumberofanswers'] = 'Nombre maximal de réponses';
+$string['maximumnumberofattempts'] = 'Nombre maximal de tentatives';
+$string['modulename'] = 'Leçon';
+$string['modulenameplural'] = 'Leçons';
+$string['morethanoneanswer'] = 'Plus d\'une réponse';
+$string['movepagehere'] = 'Déplacer la page ici';
+$string['moving'] = 'Déplacement de la page : $a';
+$string['movingtonextpage'] = 'Déplacement vers la page suivante';
+$string['multipleanswer'] = 'Réponses multiples';
+$string['nextpage'] = 'Page suivante';
+$string['noanswer'] = 'Aucune réponse donnée';
+$string['noattemptrecordsfound'] = 'Aucune tentative trouvée : pas de note';
+$string['normal'] = 'Normal - suivre le parcours de la leçon';
+$string['numberofcorrectanswers'] = 'Nombre de réponses correctes : $a';
+$string['numberofcorrectmatches'] = 'Nombre de correspondances correctes : $a';
+$string['numberofpagesviewed'] = 'Nombre de pages vues : $a';
+$string['numberofpagestoshow'] = 'Nombre de pages (cartes) à afficher';
+$string['ordered'] = 'Ordonnés';
+$string['outof'] = 'sur $a';
+$string['questiontype'] = 'Type de question';
+$string['page'] = 'Page : $a';
+$string['pagecontents'] = 'Contenu de la page';
+$string['pagetitle'] = 'Titre de la page';
+$string['pleasecheckoneanswer'] = 'Veuillez choisir une réponse';
+$string['pleasecheckoneormoreanswers'] = 'Veuillez choisir une ou plusieurs réponses';
+$string['pleaseenteryouranswerinthebox'] = 'Veuillez saisir votre réponse dans le champ';
+$string['pleasematchtheabovepairs'] = 'Veuillez mettre en correspondance les paires suivantes';
+$string['response'] = 'Feedback';
+$string['sanitycheckfailed'] = 'Vérification échouée : cette tentative a été supprimée';
+$string['savepage'] = 'Enregistrer la page';
+$string['singleanswer'] = 'Réponse simple';
+$string['showanunseenpage'] = 'Afficher une page non vue';
+$string['showanunansweredpage'] = 'Affichée une page sans réponse';
+$string['thatsthecorrectanswer'] = 'C\'est la réponse correcte';
+$string['thatsthewronganswer'] = 'C\'est la mauvaise réponse';
+$string['thispage'] = 'Cette page';
+$string['youhaveseen'] = 'Vous avez déjà vu au moins une page de cette leçon.<br />Voulez-vous commencer à la dernière page que vous avez vue ?';
+$string['youranswer'] = 'Votre réponse';
+
+?>

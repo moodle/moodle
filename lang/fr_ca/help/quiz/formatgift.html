@@ -1,0 +1,217 @@
+<p align=center><b>Importer des fichiers en format &laquo;&nbsp;GIFT&nbsp;&raquo;</b></p>
+
+<p>Le format GIFT est le format le plus exhaustif pour l'importation de questions dans le module de tests de Moodle. Il permet l'importation de questions &agrave; Choix multiples, Vrai/Faux, &agrave; R&eacute;ponses courtes, d'Appariement et Num&eacute;riques, ainsi que l'insertion de _____ pour le format &laquo;&nbsp;Mot manquant&nbsp;&raquo;. Les diff&eacute;rents types de questions peuvent &ecirc;tre m&eacute;lang&eacute;s dans un seul fichier texte. Le format permet &eacute;galement l'insertion de commentaires, titres de questions, feedbacks et de coefficients.</p>
+
+<h3>Types de questions</h3>
+
+<h4>&Agrave; Choix multiples</h4>
+
+<p>Pour les questions &agrave; choix multiples, les mauvaises r&eacute;ponses sont pr&eacute;fix&eacute;es d'un tilde (~) et la r&eacute;ponse correcte d'un signe &eacute;gal (=).</p>
+
+<pre>     Who's buried in Grant's tomb?{~Grant ~Jefferson =no one}</pre>
+
+<p>Le format <b>Mot manquant</b> ins&egrave;re automatiquement une ligne &agrave; compl&eacute;ter (comme cela _____) au milieu du texte. Pour obtenir ce r&eacute;sultat, placez les r&eacute;ponses l&agrave; o&ugrave; vous voulez que la ligne apparaisse. Les signes _____ ne sont ins&eacute;r&eacute;s que si les r&eacute;ponses sont plac&eacute;es avant la ponctuation finale.</p>
+
+<pre>     Grant is {~buried =entombed ~living} in Grant's tomb.</pre>
+
+<p>Tous les types de questions permettent ce format <b>Mot manquant</b>.</p>
+
+<p>Une ligne vide (deux retours de chariot) doit s&eacute;parer les diff&eacute;rentes questions. Les r&eacute;ponses peuvent &ecirc;tre &eacute;crites sur des lignes s&eacute;par&eacute;es et m&ecirc;me indent&eacute;es, dans un souci de clart&eacute;&nbsp;:</p>
+
+<pre>
+     The American holiday of Thanksgiving is celebrated on the {
+     ~second
+     ~third
+     =fourth
+     } Thursday of November.
+
+     Japanese characters originally came from what country? {
+     ~India
+     =China
+     ~Korea
+     ~Egypt}
+</pre>
+
+<h4>R&eacute;ponse courte</h4>
+
+<p>Dans ce format, les r&eacute;ponses sont toutes pr&eacute;fix&eacute;es d'un signe &eacute;gal (=), indiquant que toutes sont correctes. Les r&eacute;ponses ne peuvent contenir de tilde.</p>
+
+<pre>
+     Who's buried in Grant's tomb?{=no one =nobody}
+
+     Two plus two equals {=four =4}.
+</pre>
+
+<p>S'il n'y a qu'une seule bonne R&eacute;ponse courte, elle peut &ecirc;tre &eacute;crite sans le signe &eacute;gal, &agrave; moins qu'elle ne puisse &ecirc;tre confondue avec une question Vrai/Faux.</p>
+
+<h4>Vrai/Faux</h4>
+
+<p>La r&eacute;ponse indique ici lequel des &eacute;nonc&eacute;s est vrai ou faux. La r&eacute;ponse s'&eacute;crit {TRUE} ou {FALSE}, ou de fa&ccedil;on abr&eacute;g&eacute;e {T} ou {F}.</p>
+
+<pre>
+     Grant is buried in Grant's tomb.{F}
+
+     The sun rises in the east.{T}
+</pre>
+
+<h4>Appariement</h4>
+
+<p>Les paires correspondantes doivent commencer par un signe &eacute;gal (=) et sont s&eacute;par&eacute;es par le symbole &laquo;&nbsp;->&nbsp;&raquo; (sans les guillemets). Il doit y avoir au moins trois paires.</p>
+
+<pre>
+     Matching Question. {
+     =subquestion1 -> subanswer1
+     =subquestion2 -> subanswer2
+     =subquestion3 -> subanswer3
+     }
+
+     Match the following countries with their corresponding capitals. {
+     =Canada -> Ottawa
+     =Italy  -> Rome
+     =Japan  -> Tokyo
+     =India  -> New Delhi
+     }
+</pre>
+
+<p>
+Les questions d'appariement ne permettent pas les feedbacks, ni les coefficients.</p>
+
+<h4>Num&eacute;rique</h4>
+
+<p>La r&eacute;ponse d'une question num&eacute;rique doit commencer par le signe di&egrave;ze (#). Elle peut contenir une marge d'erreur, &eacute;crite imm&eacute;diatement apr&egrave;s la r&eacute;ponse correcte, s&eacute;par&eacute;e par un signe deux-points (:). Si par exemple la r&eacute;ponse est situ&eacute;e entre 1.5 et 2.5, on &eacute;crira <b>{#2:0.5}</b>. Si aucune marge d'erreur n'est sp&eacute;cifi&eacute;e, elle est assimil&eacute;e &agrave; 0.</p>
+
+<pre>     
+     When was Ulysses S. Grant born? {#1822}
+
+     What is the value of pi (to 3 decimal places)? {#3.1415:0.0005}.
+</pre>
+
+<p>On peut aussi donner la r&eacute;ponse num&eacute;rique sous la forme d'un intervalle de la fa&ccedil;on suivante&nbsp;: {#<i>minimum</i>..<i>maximum</i>}.</p>
+
+<pre>
+     Quelle est la valeur de pi (3 d&eacute;cimales) ? {#3.141..3.142}.
+</pre>
+
+<p>L'interface graphique (navigateur) de Moodle ne permet pas les r&eacute;ponses num&eacute;riques multiples, mais le code de Moodle les permet, tout comme le format GIFT. On peut ainsi sp&eacute;cifier diff&eacute;rents intervalles num&eacute;riques, ce qui est particuli&egrave;rement utile en le combinant avec des coefficients. Si plusieurs r&eacute;ponses num&eacute;riques sont utilis&eacute;es, elles doivent &ecirc;tre s&eacute;par&eacute;es par un signe &eacute;gal (=), comme les r&eacute;ponses courtes.</p>
+
+<pre>
+     When was Ulysses S. Grant born? {#
+     =1822:0
+     =%50%1822:2}
+</pre>
+
+<p>Comme l'interface de Moodle ne permet pas les r&eacute;ponses multiples pour les questions num&eacute;riques, il n'y a aucun moyen de les voir, ni de les modifier autrement qu'en supprimant et en r&eacute;-important la question, ou en modifiant directement la base de donn&eacute;es (DANGER&nbsp;!).</p>
+
+<h3>Options</h3>
+
+<p>En plus de ces types de questions, les options suivantes sont offertes gr&acirc;ce &agrave; ce format&nbsp;: commentaires, nom de question, feedback et coefficients.</p>
+
+<h4>Commentaires</h4>
+
+<p>Les commentaires ne seront pas import&eacute;s dans Moodle. Il servent &agrave; documenter les questions. Toutes les lignes de commentaire commencent par une double barre oblique (sans compter les espaces ou tabulations qui pr&eacute;c&egrave;dent). Ces lignes seront simplement ignor&eacute;es lors de l'importation.</p>
+
+<pre>
+     // Subheading: Numerical questions below
+     What's 2 plus 2? {#4}
+</pre>
+
+<h4>Nom de question</h4>
+
+<p>Un nom de question peut &ecirc;tre indiqu&eacute; en le pla&ccedil;ant avant la question, entour&eacute; par des double deux-points.</p>
+
+<pre>     
+     ::Kanji Origins::Japanese characters originally
+     came from what country? {=China}
+
+     ::Thanksgiving Date::The American holiday of Thanksgiving is 
+     celebrated on the {~second ~third =fourth} Thursday of November.
+</pre>
+
+<p>Si aucun nom de question n'est donn&eacute;, la question elle-m&ecirc;me est utilis&eacute;e par d&eacute;faut.</p>
+
+<h4>Feedback</h4>
+
+<p>Un feedback peut &ecirc;tre inclus avec chaque r&eacute;ponse. Il suffit de placer le feedback imm&eacute;diatement apr&egrave;s la r&eacute;ponse, s&eacute;par&eacute; par un di&egrave;ze (#).</p>
+
+<pre>
+     What's the answer to this multiple-choice question?{
+     ~wrong answer#feedback comment on the wrong answer
+     ~another wrong answer#feedback comment on this wrong answer
+     =right answer#Very good!}
+
+     Who's buried in Grant's tomb?{
+     =no one#excellent answer!
+     =nobody#excellent answer!}
+
+     Grant is buried in Grant's tomb.{FALSE#No one is buried in Grant's tomb.}
+</pre>
+
+<p>Pour les questions &agrave; choix multiples, le feedback n'est affich&eacute; que pour la r&eacute;ponse s&eacute;lectionn&eacute;e par l'&eacute;tudiant. Pour la r&eacute;ponse courte, le feedback est affich&eacute;e uniquement si l'&eacute;tudiant a donn&eacute; la r&eacute;ponse correcte correspondante. Pour les questions Vrai/Faux, le feedback n'appara&icirc;t que si la r&eacute;ponse donn&eacute;e est incorrecte. Dans le dernier exemple ci-dessus, le feedback ne s'affichera donc que si l'&eacute;tudiant a s&eacute;lectionn&eacute; VRAI comme r&eacute;ponse.</p>
+
+<h4>Coefficients (en %)</h4>
+
+<p>Les coefficients sont disponibles pour les questions &agrave; choix multiples et pour les questions &agrave; r&eacute;ponse courte. Les coefficients peuvent &ecirc;tre inclus en faisant suivre le tilde (pour les questions &agrave; choix multiples) ou le signe &eacute;gal (pour les questions &agrave; r&eacute;ponse courte) par le pourcentage d&eacute;sir&eacute;, entour&eacute; de signes pour-cent (par exemple %50%). Cette option peut &ecirc;tre combin&eacute;e avec les feedbacks.</p>
+
+<pre>
+     Une question.{
+     ~R&eacute;ponse fausse
+     ~%50%R&eacute;ponse valant la moiti&eacute; des points
+     =R&eacute;ponse donnant tous les points}
+
+     ::Jesus' hometown::Jesus Christ was from {
+     ~Jerusalem#This was an important city, but the wrong answer.
+     ~%25%Bethlehem#He was born here, but not raised here.
+     ~%50%Galilee#You need to be more specific.
+     =Nazareth#Yes! That's right!}.
+
+     ::Jesus' hometown:: Jesus Christ was from {
+     =Nazareth#Yes! That's right!
+     =%75%Nazereth#Right, but misspelled.
+     =%25%Bethlehem#He was born here, but not raised here.}
+</pre>
+
+<p>Les deux derniers exemples sont une m&ecirc;me question, une premi&egrave;re foius comme question &agrave; choix multiples, la deuxi&egrave;me sous la forme de question &agrave; r&eacute;ponse courte.</p>
+
+<p><font size="-1">Il est possible de sp&eacute;cifier ainsi des coefficients non disponibles dans l'interface graphique (navigateur) de Moodle. De tels coefficients seront calcul&eacute;s correctement d'apr&egrave;s les valeurs donn&eacute;es dans le fichier import&eacute;) et appara&icirc;tront normales aux &eacute;tudiants faisant le test. Cependant ces coefficients n'appara&icirc;tront pas corrects pour les enseignants lors de l'&eacute;dition des questions dans Moodle. Si vous &eacute;ditez de telles questions avec l'interface de Moodle et que vous modifiez le coefficient, celui-ci sera chang&eacute;.</font></p>
+
+<h4>R&eacute;ponses multiples</h4>
+
+<p>L'option r&eacute;ponses multiples est utilis&eacute;e pour des questions &agrave; choix multiples ou deux ou plusieurs r&eacute;ponses doivent &ecirc;tre choisies afin d'obtenir tous les points. On active cette option en donnant aux diverses r&eacute;ponses des coefficients, aucune r&eacute;ponse ne donnant le total des points.</p>
+
+<pre>
+     What two people are entombed in Grant's tomb? {
+     ~No one
+     ~%50%Grant
+     ~%50%Grant's wife
+     ~Grant's father }
+</pre>
+
+<p>On remarque qu'il n'y a aucun signe &eacute;gal dans aucune r&eacute;ponse. Le total des coefficients ne doit pas exc&eacute;der 100%, sans quoi une erreur surviendrait dans Moodle. Pour &eacute;viter que les &eacute;tudiants obtiennent 100% en s&eacute;lectionnant syst&eacute;matiquement toutes les r&eacute;ponses, il est conseill&eacute; d'inclure des coefficients n&eacute;gatifs pour les r&eacute;ponses fausses.</p>
+
+<pre>
+     What two people are entombed in Grant's tomb? {
+     ~%-50%No one
+     ~%50%Grant
+     ~%50%Grant's wife
+     ~%-50%Grant's father }
+</pre>
+
+<h4>Autres options</h4>
+
+<p>D'autres options sont disponibles en &eacute;ditant le filtre d'importation <b>gift/format.php</b>.</p>
+
+<p>Les r&eacute;ponses courtes peuvent &ecirc;tre rendues sensibles &agrave; la casse des caract&egrave;res en rempla&ccedil;ant &laquo;&nbsp;0&nbsp;&raquo; par &laquo;&nbsp;1&nbsp;&raquo; dans la ligne suivante&nbsp;:</p>
+
+<pre>     $question->usecase = 0;  // Ignore case</pre>
+
+<h3>Des erreurs&nbsp;?</h3>
+
+<p>L'encodage de votre fichier texte doit &ecirc;tre le m&ecirc;me que celui de votre installation Moodle.</p>
+
+<p>Un fichier contenant des exemples de questions est &agrave; disposition ici&nbsp;: <a href="../../../../mod/quiz/format/gift/examples.txt">gift/examples.txt</a>.</p>
+
+<h3>Remerciements</h3>
+
+<p>Ce filtre d'importation a &eacute;t&eacute; &eacute;crit en collaboration avec de nombreux membres de la communaut&eacute; Moodle. Il &eacute;tait bas&eacute; &agrave; l'origine sur le format &laquo;&nbsp;mot manquant&nbsp;&raquo;, qui comportait du code de Martin Dougiamas, Thomas Robb et d'autres personnes. Paul Tsuchido Shew a &eacute;crit ce filtre en d&eacute;cembre 2003, y incorporant les suggestions de la communaut&eacute;, afin d'obtenir un format d'importation robuste. Le nom est un acronyme pour &laquo;&nbsp;General Import Format Technology&nbsp;&raquo; ou quelque chose comme &ccedil;a. Comme c'est trop long, c'est juste GIFT&nbsp;!</p>
+
+<p><font size="-1">GIFT documentation by Paul Tsuchido Shew, 13 Jan 2004, traduite par Nicolas Martignoni, 8 f&eacute;vrier 2004.</font></p>

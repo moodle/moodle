@@ -1,0 +1,480 @@
+<head>
+    
+<title>Documentation Moodle :  Notes de mise &agrave; jour</title>
+	
+<link rel="stylesheet" href="docstyles.css" type="text/css">
+    
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    
+<style type="text/css">
+       dt {font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif; font-weight: bold;}
+       dd {margin-bottom:1em;} 
+    </style>
+</head>
+
+<body bgcolor="#FFFFFF">
+<h1>Notes de mise &agrave; jour</h1>
+<h3>Nouveaut&eacute;s de Moodle 1.1.1 (10 septembre 2003) :</h3>
+<ul>
+  <dl>
+    <dt>&nbsp; </dt>
+    <dt>Am&eacute;liorations g&eacute;n&eacute;rales</dt>
+  </dl>
+  <dl>
+    <dd> 
+      <ul>
+        <li>Am&eacute;liorations de la traduction dans de nombreuses langues</li>
+        <li>Cadres corrig&eacute;s lors de changements de langue dans la documentation</li>
+        <li>Toutes les balises abr&eacute;g&eacute;es de PHP sont supprim&eacute;es.
+        L'option short_tags n'est plus n&eacute;cessaire</li>
+        <li>Les liens dans les r&eacute;sultats de recherche des forums utilisent les ancrages
+        pour un meilleur contexte</li>
+        <li>Retrait de &laquo;&nbsp;target&nbsp;&raquo; dans le lien
+        &laquo;&nbsp;Supprimer&nbsp;&raquo; sur la page de modification des utilisateurs</li>
+        <li>Dans les cours informels, &laquo;&nbsp;Rechercher&nbsp;&raquo; est plac&eacute;
+        plus haut pour &eacute;viter que le navigateur ne d&eacute;file tout seul</li>
+        <li>La redirection est plus rapide et emp&ecirc;che Internet Explorer
+        d'enregistrer la page interm&eacute;diaire dans son historique</li>
+        <li>La liste des cours a &eacute;t&eacute; am&eacute;lior&eacute;e lors de
+        l'affichage des cours, avec plus d'informations</li>
+        <li>Les listes de discipline de cours affichent compl&egrave;tement les cours s'il
+        y en a moins que dix</li>
+        <li>Les cours masqu&eacute;s sont toujours affich&eacute;s en dernier dans
+        &laquo;&nbsp;Mes cours&nbsp;&raquo;</li>
+        <li>Les responsables de cours peuvent maintenant voir les disciplines et les cours
+        masqu&eacute;s</li>
+        <li>Des styles sont &eacute;t&eacute; ajout&eacute;s pour les noms des disciplines
+        et des cours</li>
+        <li>Suppression des balises dans le texte des questions dans le rapport
+        &laquo;&nbsp;Statistique simple&nbsp;&raquo;</li>
+        <li>Ajout des pourcentages aux donn&eacute;es t&eacute;l&eacute;charg&eacute;es
+        du rapport &laquo;&nbsp;Statistique simple&nbsp;&raquo;</li>
+        <li>Permet les liens vers l'int&eacute;rieur du site lors de l'utilisation du compte
+        anonyme ?username=guest</li>
+        <li>Tous les administrateurs peuvent maintenant ajouter et supprimer des
+        responsables de cours</li>
+        <li>L'administrateur principal peut maintenant changer son nom d'utilisateur et
+        son mot de passe, m&ecirc;me avec une authentification externe</li>
+        <li>On peut indiquer &laquo;&nbsp;pas de notes&nbsp;&raquo; pour les tests, et
+        aucune note ne sera affich&eacute;e</li>
+        <li>Lors de la modification d'une langue, les cha&icirc;nes manquantes sont
+        cr&eacute;&eacute;es si possible</li>
+        <li>Bogue corrig&eacute; dans le calcul des dates du journal hebdomadaire</li>
+        <li>Bogue corrig&eacute; dans config.php, qui emp&ecirc;chait le fonctionnement
+        de error_reporting</li>
+        <li>Bogue corrig&eacute; lors de la modification des noms d'utilisateur contenant
+        une apostrophe</li>
+        <li>Bogue corrig&eacute; dans le masquage des adresses de courriel contenant des
+        chiffres</li>
+        <li>Ajout&eacute; le sch&eacute;ma PostgreSQL manquant du module chat</li>
+        <li>Plusieurs fautes corrig&eacute;es dans le code de mise &agrave; jour PostgreSQL</li>
+        <li>Correction de quelques variables sans initialisation</li>
+        <li>Plusieurs bogues corrig&eacute;s dans le module atelier</li>
+      </ul>
+    </dd>
+  </dl>
+</ul>
+<hr>
+
+
+
+<h3>Nouveaut&eacute;s de Moodle 1.1 (28 ao&ucirc;t 2003) :</h3>
+<ul>
+  <dl>
+    <dt>&nbsp; </dt>
+    <dt>Modifications pricipales</dt>
+  </dl>
+  <dl>
+    <dd> 
+      <ul>
+        <li>Un syst&egrave;me de <strong>backup</strong> compl&egrave;tement nouveau
+        permet d'effectuer des copies de sauvegarde et de les restaurer (Merci, Eloy&nbsp;!)</li>
+        <li>Un nouveau module<strong>atelier</strong> pour l'&eacute;valuation par les
+        pairs (merci, Ray&nbsp;!)</li>
+        <li>Un nouveau module <strong>chat</strong> pour les discussions synchrones</li>
+        <li>Tout nouveau <strong>gestionnaire de cours</strong> permettant de travailler
+        avec un grand nombre de cours (test&eacute; avec 3700 cours)</li>
+        <li><strong>Bar&egrave;mes de notation</strong> personnalis&eacute;s pouvant
+        &ecirc;tre utilis&eacute;s partout dans un cours</li>
+        <li>Am&eacute;liorations des performances dans de nombreux domaines</li>
+      </ul>
+    </dd>
+  </dl>
+  <dl>
+    <dt>G&eacute;n&eacute;ralit&eacute;s</dt>
+  </dl>
+  <dl>
+    <dd> 
+      <ul>
+        <li>R&eacute;-organisation de menu d'administration pour le rendre plus clair</li>
+        <li>Les disciplines de cours peuvent &ecirc;tre embo&icirc;t&eacute;es et
+        tri&eacute;es alphab&eacute;tiquement ou manuellement</li>
+        <li>Les cours et les disciplines de cours peuvent &ecirc;tre cach&eacute;es pour les
+        &eacute;tudiants</li>
+        <li>Les descriptions et noms des cours peuvent &ecirc;tre trouv&eacute;es lors de
+        recherches par mots-clef</li>
+        <li>Les disciplines avec de nombreux cours sont compl&egrave;tement pagin&eacute;es</li>
+        <li>Ant&eacute;m&eacute;moire web des feuilles de styles et des images
+        am&eacute;lior&eacute;e</li>
+        <li>Une fois connect&eacute;, &laquo;&nbsp;Mes cours&nbsp;&raquo; est affich&eacute; sur la
+        page d'accueil.</li>
+        <li>Ajout d'une page non li&eacute;e pour afficher TOUTES les images des
+        utilisateurs d'un coup (voir /userpix)</li>
+        <li>Le r&eacute;glage &laquo;&nbsp;secureforms&nbsp;&raquo; est d&eacute;sactiv&eacute; par
+        d&eacute;faut</li>
+        <li>Moodle fonctionne maintenant que &laquo;&nbsp;magic quotes&nbsp;&raquo; soit activ&eacute;
+        ou non</li>
+        <li>Les images dans /pix ont &eacute;t&eacute; r&eacute;organis&eacute;es</li>
+        <li>Les courriels en format HTML sont mieux format&eacute;s pour une meilleure
+        compatibilit&eacute;</li>
+        <li>Les courriels non remis et retourn&eacute;s sont maintenant envoy&eacute;s
+        &agrave; l'administrateur</li>
+        <li>Les t&acirc;ches cron demandent moins de temps CPU et les inscriptions
+        &agrave; doubles sont aussi nettoy&eacute;es</li>
+        <li>Am&eacute;lioration de l'affichage des journaux d'activit&eacute; avec une
+        infinit&eacute; de pages et une souplesse accrue</li>
+        <li>Les journaux d'activit&eacute; des utilisateurs fonctionnent au niveau du site
+        (affichant TOUT les journaux d'activit&eacute; du site)</li>
+        <li>Les utilisateurs ayant un compte manuel peuvent r&eacute;cup&eacute;rer leur mot
+        de passe</li>
+        <li>Meilleur syst&egrave;me pour d&eacute;finir et imprimer les fichiers d'aides des
+        modules d'activit&eacute; principaux</li>
+        <li>Les modules d'activit&eacute; ont maintenant des r&eacute;glages</li>
+        <li>Les adresses de courriel sont maintenant compl&egrave;tement masqu&eacute;es
+        (pour tromper les robots aspirateurs)</li>
+        <li>Il y a maintenant un index des fichiers d'aide</li>
+        <li>Le module suppl&eacute;mentaire Library (de Mark Kimes') est maintenant
+        support&eacute; s'il est install&eacute; (voir les contributions &agrave; Moodle
+        pour le code source de Library)</li>
+      </ul>
+    </dd>
+  </dl>
+  <dl>
+    <dt></dt>
+    <dt>Cours</dt>
+  </dl>
+  <dl>
+    <dd> 
+      <ul>
+        <li>On peut maintenant supprimer aux enseignants les privil&egrave;ges de modification
+        de leurs cours</li>
+        <li>Les enseignants peuvent maintenant inscrire manuellement leurs &eacute;tudiants
+        au besoin</li>
+        <li>La gestion des enseignants est maintenant regroup&eacute;e en une interface</li>
+        <li>Les activit&eacute;s peuvent &ecirc;tre d&eacute;plac&eacute;es n'importe
+        o&ugrave; en deux clics</li>
+        <li>Les th&egrave;mes et semaines peuvent &ecirc;tre d&eacute;plac&eacute;es
+        vers le haut ou le bas</li>
+        <li>Un menu d&eacute;roulant permet de changer rapidement de th&egrave;me et de semaine</li>
+        <li>Lorsque les &eacute;tudiants s'inscrivent, ils re&ccedil;oivent une notification
+        et peuvent annuler leur inscription</li>
+        <li>Les enseignants et &eacute;tudiants voient &laquo;&nbsp;Mes cours&nbsp;&raquo; sur 
+        les pages d'accueil des cours</li>
+        <li>Si elles ne sont pas utilis&eacute;es, les notes peuvent &ecirc;tre compl&egrave;tement
+        cach&eacute;es pour les &eacute;l&egrave;ves</li>
+      </ul>
+    </dd>
+  </dl>
+  <dl>
+    <dt></dt>
+    <dt>Langues</dt>
+  </dl>
+  <dl>
+    <dd> 
+      <ul>
+        <li>Le <strong>hongrois</strong> et le <strong>grec</strong> ont &eacute;t&eacute;
+        ajout&eacute;s, et il y a un grand nombre d'autres mises &agrave; jour. Comme
+        d'habitude, les fichiers de langue de cette version ne sont pas tous
+        termin&eacute;s. Vous pouvez toujours t&eacute;l&eacute;charger les derniers fichiers
+        de langue sur
+        <a href="http://moodle.org/download/lang/">http://moodle.org/download/lang/</a>.</li>
+        <li>Mises &agrave; jour et corrections de nombreuses langues</li>
+        <li>Les langues ont maintenant une langue parent pour l'affichage
+        des cha&icirc;nes manquantes</li>
+        <li>Corrections de l'affichage des dates et des temps dans plusieurs
+        langues</li>
+        <li>es_mx a &eacute;t&eacute; remplac&eacute; par es (espagnol international)</li>
+      </ul>
+    </dd>
+  </dl>
+  <dl>
+    <dt></dt>
+    <dt>Forums</dt>
+  </dl>
+  <dl>
+    <dd> 
+      <ul>
+        <li>Beaucoup d'am&eacute;liorations dans la recherche, plusieurs mots-clef,
+        pages, etc.</li>
+        <li>L'&eacute;valuation d'un forum peut &ecirc;tre active ou non, utilisable par tous
+        ou seulement par les enseignants</li>
+        <li>L'&eacute;valuation des forums peut utiliser des bar&egrave;mes personnalis&eacute;s
+        ou des nombres</li>
+        <li>Un intervalle de dates peut &ecirc;tre fix&eacute; pour restreindre les
+        messages pouvant &ecirc;tre &eacute;valu&eacute;s</li>
+        <li>L'administrateur peut acc&eacute;der &agrave; certains r&eacute;glages via Admin -&gt;
+        Modules -&gt; Forums</li>
+        <li>Apr&egrave;s modification d'un message, l'utilisateur est renvoy&eacute;
+        au message dans son contexte</li>
+        <li>Les images en annexe sont affich&eacute;es en ligne</li>
+        <li>Les copies courriel des messages en format texte affichent maintenant
+        correctement les URLs</li>
+      </ul>
+    </dd>
+  </dl>
+  <dl>
+    <dt>Tests</dt>
+  </dl>
+  <dl>
+    <dd> 
+      <ul>
+        <li>Nouveau type de question : format Cloze - permet des textes
+        contenant en ligne les r&eacute;ponses</li>
+        <li>Nouveau type de question : num&eacute;rique - permet des r&eacute;ponses
+        dans un intervalle de nombres</li>
+        <li>Nouveau type de question : description - n'est en fait pas
+        une question, mais permet d'introduire n'importe o&ugrave; dans un
+        test du texte ou des images</li>
+        <li>Rapport &eacute;tendu pour les tests, avec des modules de rapport
+        flexibles</li>
+        <li>Nouvelle fonctionnalit&eacute; pour les tentatives r&eacute;p&eacute;t&eacute;es,
+        o&ugrave; chaque tentative compl&egrave;te la pr&eacute;c&eacute;dente.</li>
+        <li>Si le test se termine dans les prochaine 24 heures, un
+        petit compte &agrave; rebours est affich&eacute; dans la barre de titre
+        et avertit l'utilisateur &agrave; 10 minutes et &agrave; 0 minutes</li>
+        <li>Modifications du code du module test, afin de simplifier
+        son extension par de nouveaux types de questions</li>
+      </ul>
+    </dd>
+  </dl>
+  <dl>
+    <dt></dt>
+    <dt>Ressources</dt>
+  </dl>
+  <dl>
+    <dd> 
+      <ul>
+        <li>Les liens web peuvent maintenant &ecirc;tre ouvert dans d'autres
+        fen&ecirc;tres enti&egrave;rement personnalisables</li>
+        <li>L'administrateur peut acc&eacute;der &agrave; certains r&eacute;glages via Admin -&gt;
+        Modules -&gt; Ressources</li>
+      </ul>
+    </dd>
+  </dl>
+  <dl>
+    <dt>Quelques bogues parmi les plus ennuyeux corrig&eacute;s</dt>
+  </dl>
+  <dl>
+    <dd> 
+      <ul>
+        <li>Lors du d&eacute;placement des messages, les annexes sont aussi
+        d&eacute;plac&eacute;es</li>
+        <li>Plus d'avertissements lors de la recherche de fichiers
+        d&eacute;pos&eacute;s dans des cours vides</li>
+        <li>Les &eacute;tudiants ne re&ccedil;oivent plus syst&eacute;matiquement des courriels
+        en format texte des forums dont ils re&ccedil;oivent obligatoirement
+        une copie des messages.</li>
+        <li>Les cookies ne peuvent plus interf&eacute;rer avec la mise en
+        place du compte de l'administrateur lors de l'installation</li>
+        <li>Plus de limite dans le nombre d'activit&eacute;s par section</li>
+        <li>Plusieurs corrections lors de l'utilisation des fichiers
+        zip, en particulier sous Windows</li>
+        <li>Les administrateurs peuvent maintenant modifier les comptes
+        cr&eacute;&eacute;s &agrave; partir de bases de donn&eacute;es externes.</li>
+        <li>Les sessions n'entrent plus en conflit avec d'autres logiciels</li>
+        <li>Les fichiers Excel fonctionnent maintenant aussi sur autre
+        chose que les machines Wintel</li>
+      </ul>
+    </dd>
+  </dl>
+  <dl>
+    <dt>&nbsp; </dt>
+  </dl>
+  <dd>&nbsp;</dd>
+</ul>
+<hr>
+
+<h3>Nouveaut&eacute;s de Moodle 1.0.9 (29 mai 2003)&nbsp;:</h3>
+<ul>
+  <dl>
+    <dt>G&eacute;n&eacute;ralit&eacute;s</dt>
+    <dd> 
+      <li>Diverses optimisations et am&eacute;liorations significatives des performaces</li>
+      <li>Plusieurs obscures corrections pour la s&eacute;curit&eacute;</li>
+      <li>Moodle se comporte correctement quand il est incorpor&eacute; dans un cadre</li>
+      <li>L'&eacute;diteur Richtext peut &ecirc;tre maintenant utilis&eacute; dans
+      plus de champs texte</li>
+      <li>Nouveau format &laquo;&nbsp;texte&nbsp;&raquo;, utile pour taper du code HTML</li>
+      <li>Nouveau format &laquo;&nbsp;Wiki&nbsp;&raquo;, permet l'ajout de balises en style
+      Wiki &agrave; de nombreux endroits</li>
+      <li>Nouvelle fen&ecirc;tre permettant d'ins&eacute;rer des binettes en cliquant
+      sur des images</li>
+      <li>Possibilit&eacute; d'indiquer les permissions des nouveaux dossiers et fichiers
+      cr&eacute;&eacute;s sur le serveur</li>
+      <li>Quelques corrections pour les serveurs tournant en Safe Mode (quelques
+      probl&egrave;mes de fichiers subsistent)</li>
+      <li>Diverses corrections pour le nettoyage des textes externes de
+      caract&egrave;res comme l'apostrophe, etc.</li>
+      <li>Diverses corrections pour compatibilit&eacute; avec PostgreSQL 7.3</li>
+      <li>D&eacute;but de transition du code HTML vers XHTML Transitional</li>
+      <li>D'innombrables autres petites corrections un peu partout</li>
+    </dd>
+    <dt>Langues</dt>
+    <dd> 
+      <li><b>10</b> nouvelles langues ! Espagnola argentin, Tch&egrave;que, Portugais,
+      Slovaque, Roumain, Danois, Russe, Polonais, Chinois traditionnel et Canadien
+      fran&ccedil;ais.</li>
+      <li>Corrections et mises &agrave; jour pour presque toutes les langues</li>
+      <li>La langue peut &ecirc;tre choisie pour la session en cours (voir le menu sur
+      la page d'accueil et sur la page de connexion) et peut &ecirc;tre chang&eacute;e
+      pour chaque page &agrave; l'aide de l'URL, p. ex. http://moodle.org/?lang=ru</li>
+      <li>Le menu des langues peut maintenant &ecirc;tre retreint &agrave; certaines
+      langues, et m&ecirc;me retir&eacute;</li>
+      <li>Des polices TrueType sont maintenant int&eacute;gr&eacute;es aux langues</li>
+      <li>TOUTES les heures et dates peuvent maintenant &ecirc;tre localis&eacute;es dans
+      les fichiers de langue</li>
+      <li>Un bogue petit, mais ennuyeux a &eacute;t&eacute; corrig&eacute; dans
+      l'&eacute;diteur des langues, qui causait sur les serveurs Windows un
+      grossissement des fichiers de langue.</li>
+    </dd>
+    <dt>D&eacute;veloppeurs</dt>
+    <dd> 
+      <li>Une variable de d&eacute;bogage globale donne plus d'informations sur les
+      variables non initialis&eacute;e et d'autre param&egrave;tres analogues</li>
+      <li>Diverses corrections pour nettoyer et standardiser le code PHP</li>
+      <li>Diverses corrections pour plus de robustesse (assurance que les
+      variables sont toujours initialis&eacute;es)</li>
+    </dd>
+    <dt>Administration</dt>
+    <dd> 
+      <li><font color=red>Plusieurs options et quelques morceaux de code de config-dist.php ont
+      &eacute;t&eacute; modifi&eacute;s (en cas de mise &agrave; jour, comparez-le avec
+      votre config.php ou reconstruisez compl&egrave;tement votre config.php)</font></li>
+      <li><font color=red>Nombreuses modifications dans les th&egrave;mes - les auteurs
+      de th&egrave;mes doivent lire
+      <a href="http://moodle.org/theme/UPGRADE.txt">theme/UPGRADE.txt</a></font></li>
+      <li>Nouvelle fonction d'enregistrement sur moodle.org permettant l'envoi
+      de bulletin de s&eacute;curit&eacute;, etc.</li>
+      <li>Le dossier admin peut &ecirc;tre d&eacute;plac&eacute; ailleurs que /admin
+      (voir config-dist.php)</li>
+      <li>Les listes d'utilisateurs sont maintenant pagin&eacute;es et l'on peut rechercher
+      des cha&icirc;nes de caract&egrave;res dans la liste des utilisateurs</li>
+      <li>Gestion des modules : les modules d'activit&eacute; peuvent maintenant
+      &ecirc;tre d&eacute;sactiv&eacute;s individuellement ou effac&eacute;s compl&egrave;tement</li>
+      <li>Am&eacute;lioration dans la page d'&eacute;dition des langues</li>
+      <li>Meilleure v&eacute;rification de l'environnement PHP durant l'installation,
+      avec notification d'avertissements</li>
+      <li>Proc&eacute;dure d'installation plus propre</li>
+    </dd>
+    <dt>Gestion des utilisateurs</dt>
+    <dd> 
+      <li>Nouveau r&ocirc;le : Responsable de cours - un enseignant pouvant en outre 
+      cr&eacute;er des cours</li>
+      <li>Nouvelle extension pour l'authentification &laquo;&nbsp;manuelle&nbsp;&raquo;,
+      qui emp&ecirc;che les utilisateurs de cr&eacute;er leur accompte eux-m&ecirc;mes</li>
+      <li>La proc&eacute;dure &laquo;&nbsp;mot de passe oubli&eacute;&nbsp;&raquo;
+      utilise une confirmation par courriel avant d'attribuer un nouveau mot de passe</li>
+    </dd>
+    <dt>Cours</dt>
+    <dd> 
+      <li>Un bouton plac&eacute; &agrave; c&ocirc;t&eacute; des activit&eacute;s permet
+      de les cacher ou de les montrer aux &eacute;tudiants</li>
+      <li>Des semaines ou th&egrave;mes entiers peuvent aussi &ecirc;tre cach&eacute;s</li>
+      <li>La liste des praticipants est elle aussi pagin&eacute;e, pour l'utilisation
+      avec de tr&egrave;s grandes classes</li>
+      <li>La compression et d&eacute;compression ZIP est effectu&eacute;e maintenant par
+      une librairie interne, supprimant la d&eacute;pendance vis-&agrave;-vis de programmes
+      externes. Une cons&eacute;quence en est que la compression fonctionne maintenant aussi
+      sous Windows</li>
+    </dd>
+    <dt>Devoirs</dt>
+    <dd> 
+      <li>Les remises de devoirs peuvent &ecirc;tre tri&eacute;es</li>
+      <li>Les courriels de notification de devoir ne sont pas envoy&eacute;s
+      aux &eacute;tudiants non inscrits dans le cours</li>
+    </dd>
+    <dt>Forums</dt>
+    <dd> 
+      <li>L'affichage des listes des discussions est bien
+      am&eacute;lior&eacute;e</li>
+      <li>Les discussions peuvent &ecirc;tre d&eacute;plac&eacute;es vers un autre forum d'un
+      simple clic</li>
+      <li>La date et l'heure des messages est celle de leur modification,
+      et non plus de leur cr&eacute;ation</li>
+      <li>Il n'est plus possible d'avoir des messages sans objet ou sans
+      texte</li>
+      <li>Meilleure analyse et affichage du texte des messages</li>
+      <li>Il est maintenant possible de forcer l'envoi des copies des
+      messages du forum &laquo;&nbsp;Nouvelles du site&nbsp;&raquo; (courriel &agrave;
+      tous les &eacute;tudiants et enseignants actifs)</li>
+      <li>Meilleure gestion des courriels sortant pour &eacute;viter l'envoi
+      de doublons, qui pouvait survenir dans de tr&egrave;s grandes classes</li>
+    </dd>
+    <dt>Module atelier (pas inclus : bient&ocirc;t disponible en
+    t&eacute;l&eacute;chargement s&eacute;par&eacute;)</dt>
+    <dd> 
+      <li>Un nouveau module tr&egrave;s int&eacute;ressant de Ray Kingdon</li>
+      <li>Un outil de grande souplesse offrant un &eacute;ventail de sch&eacute;mas
+      d'&eacute;valuation par les pairs et de fabrication exemples, permettant
+      &agrave; un groupe l'examen et l'&eacute;valuation de travaux</li>
+    </dd>
+    <dt>Tests</dt>
+    <dd> 
+      <li>Nouveau type de question : al&eacute;atoire (choisit une question
+      parmi toutes celles d'une cat&eacute;gorie)</li>
+      <li>Nouveau type de question : appariement (les
+      &eacute;tudiants doivent faire correspondre les r&eacute;ponses avec des questions)</li>
+      <li>Nouveau type de question : appariement al&eacute;atoire
+      (cr&eacute;e al&eacute;atoirement une question d'appariement avec les questions
+      &agrave; r&eacute;ponse courte d'une cat&eacute;gorie)</li>
+      <li>Importation de questions &agrave; partir de fichiers texte (concept modulaire
+      permettant l'extension &agrave; de nouveaux formats - une module pour le format
+      Blackboard est inclus en version b&ecirc;ta)</li>
+      <li>Un assistant &laquo;&nbsp;Cr&eacute;er plusieurs questions&nbsp;&raquo;
+      permet de cr&eacute;er rapidement un test al&eacute;atoire</li>
+      <li>Les questions d'un test peuvent &ecirc;tre m&eacute;lang&eacute;es
+      al&eacute;atoirement</li>
+      <li>Les r&eacute;ponses d'un test (choix multiples, etc.) peuvent &ecirc;tre
+      m&eacute;lang&eacute;es al&eacute;atoirement</li>
+      <li>Erreur corrig&eacute;e lorsque le bouton &laquo;&nbsp;Enregistrer les
+      notes&nbsp;&raquo; n'&eacute;tait pas utilis&eacute;</li>
+      <li>La re-notation fonctionne correctement si le test a &eacute;t&eacute;
+      modifi&eacute;</li>
+      <li>La modification d'une question apr&egrave;s son utilisation dans un test
+      n'a pas d'influence sur les r&eacute;sultats du test</li>
+      <li>Les r&eacute;ponses des questions &agrave; choix multiples sont
+      num&eacute;rot&eacute;es par a, b, c et non plus 1, 2, 3</li>
+    </dd>
+    <dt>Ressources</dt>
+    <dd> 
+      <li>Meilleure performance lors de la modification d'un long texte ou
+      de ressources HTML</li>
+      <li>Les images sont maintenant affich&eacute;es centr&eacute;es dans une page
+      web, et non plus de fa&ccedil;on brute</li>
+      <li>Le format Wiki a &eacute;t&eacute; ajout&eacute; comme une nouvelle option pour
+      les pages Ressources</li>
+    </dd>
+    <dt>Th&egrave;mes personnalis&eacute;s</dt>
+    <dd> 
+      <li>Un certain nombre de nouveaux styles ont &eacute;t&eacute; ajout&eacute;s
+      &agrave; tous les th&egrave;mes fournis en standard. Certains d'entre eux sont
+      ESSENTIELS &agrave; l'affichage des nouvelles fonctionnalit&eacute;s. VEUILLEZ LIRE SVP
+      <a href="http://moodle.org/theme/UPGRADE.txt">theme/UPGRADE.txt</a> 
+      POUR UNE LISTE DES MODIFICATIONS &Agrave; EFFECTUER SUR LES ANCIENS TH&Egrave;MES</li>
+      <li>Les th&egrave;mes personnalis&eacute;s peuvent maintenant red&eacute;finir tous les petits
+      boutons graphiques. Il existe pour cela un nouveau param&egrave;tre dans
+      theme/x/config.php ($THEME-&gt;custompix) et un nouveau dossier facultatif
+      &laquo;&nbsp;pix&nbsp;&raquo;. Pour un exemple, voyez le th&egrave;me cordoroyblue.</li>
+    </dd>
+  </dl>
+</ul>
+<hr>
+
+
+<p>Les anciennes notes de mise &agrave; jour sont disponibles dans le forum des nouvelles de
+<a href="http://moodle.org/mod/forum/view.php?f=1">Moodle.org</a>.</p>
+
+
+<p>&nbsp;</p>
+<p align="CENTER"><font size="1"><a href="../doc/" target="_top">Documentation Moodle</a></font></p>
+<p align="CENTER"><font size="1">Version: $Id$</font></p>
