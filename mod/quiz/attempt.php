@@ -146,8 +146,7 @@
         print_continue("view.php?id=$cm->id");
 
         if ($quiz->feedback) {
-            $quiz->shufflequestions = false;
-            $quiz->shuffleanswers = false;
+            $quiz->shuffleanswers = false;       // Never shuffle answers in feedback
             quiz_print_quiz_questions($quiz, $result, $questions, $shuffleorder);
             print_continue("view.php?id=$cm->id");
         }

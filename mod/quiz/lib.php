@@ -784,7 +784,6 @@ function quiz_print_quiz_questions($quiz, $results=NULL, $questions=NULL, $shuff
 
     foreach ($questions as $question) {
         $count++;
-        $questionorder[] = $question->id;
 
         $feedback       = NULL;
         $response       = NULL;
@@ -819,6 +818,8 @@ function quiz_print_quiz_questions($quiz, $results=NULL, $questions=NULL, $shuff
                 $grades[$question->id]->grade = $grades[$randomquestion->id]->grade;
             }
         }
+
+        $questionorder[] = $question->id;
 
         print_simple_box_start("CENTER", "90%");
         quiz_print_question($count, $question, $grades[$question->id]->grade, $quiz->course, 
