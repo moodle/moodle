@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.2 development (2004021500)
+      // moodle.php - created with Moodle 1.2 development (2004021700)
 
 
 $string['action'] = 'Azione';
@@ -54,6 +54,7 @@ $string['all'] = 'Tutto';
 $string['allactivities'] = 'Tutte le attività';
 $string['alldays'] = 'Tutti i giorni';
 $string['allfieldsrequired'] = 'La compilazione di tutti i campi è richiesta';
+$string['allgroups'] = 'Tutti i gruppi';
 $string['alllogs'] = 'Tutti i logs';
 $string['allow'] = 'Permettere';
 $string['allowguests'] = 'Questo corso permette l\'accesso ad utenti ospiti';
