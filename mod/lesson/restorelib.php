@@ -77,7 +77,7 @@
             $lesson->height = backup_todb($info['MOD']['#']['HEIGHT']['0']['#']);
             $lesson->bgcolor = backup_todb($info['MOD']['#']['BGCOLOR']['0']['#']);
             $lesson->displayleft = backup_todb($info['MOD']['#']['DISPLAYLEFT']['0']['#']);
-            $lesson->highscores = backup_todb($info['MOD']['#']['HIGHSCORES']['0']['#']);
+            $lesson->highscores = backup_todb($info['MOD']['#']['SHOWHIGHSCORES']['0']['#']);
             $lesson->maxhighscores = backup_todb($info['MOD']['#']['MAXHIGHSCORES']['0']['#']);
             $lesson->available = backup_todb($info['MOD']['#']['AVAILABLE']['0']['#']);
             $lesson->deadline = backup_todb($info['MOD']['#']['DEADLINE']['0']['#']);
@@ -113,9 +113,6 @@
                     //  is, there will only be one.
                     $status = lesson_default_restore_mods($info,$restore);
                 }
-                /*if ($restore->mods['lesson']->userinfo) {
-                    $status = lesson_grades_restore_mods($newid,$info,$restore);
-                }*/
             } else {
                 $status = false;
             }
@@ -161,10 +158,7 @@
             //The structure is equal to the db, so insert the lesson_pages
             $newid = insert_record ("lesson_pages",$page);
 
-            // save the new pageids (needed to fix the absolute jumps in the answers)
-            $newpageid[backup_todb($page_info['#']['PAGEID']['0']['#'])] = $newid;
-
-            // fix the forwards link of the previous page
+            //Fix the forwards link of the previous page
             if ($prevpageid) {
                 if (!set_field("lesson_pages", "nextpageid", $newid, "id", $prevpageid)) {
                     error("Lesson restorelib: unable to update link");
@@ -187,8 +181,8 @@
                 //We have to restore the lesson_answers table now (a page level table)
                 $status = lesson_answers_restore($lessonid,$newid,$page_info,$restore);
                 
-                // need to update useranswer field (which has answer id's in it)
-                //  for matching and multi-answer multi-choice questions
+                //Need to update useranswer field (which has answer id's in it)
+                //for matching and multi-answer multi-choice questions
                 if ($restore->mods["lesson"]->userinfo) {  // firs check to see if we even have to do this
                     // if multi-answer multi-choice question or matching
                     if (($page->qtype == 3 && $page->qoption) ||
@@ -202,7 +196,7 @@
                                     // $useranswer is an old answer id, so needs to be updated
                                     $useranswer = explode(",", $attempt->useranswer);
                                     foreach ($useranswer as $oldanswerid) {
-                                         $backupdata = backup_getid($restore->backup_unique_code,"answers",$oldanswerid);
+                                         $backupdata = backup_getid($restore->backup_unique_code,"lesson_answers",$oldanswerid);
                                          $newuseranswer[] = $backupdata->new_id;
                                     }
                                     // get the useranswer in the right format
@@ -226,15 +220,17 @@
             }
         }
 
-        // we've restored all the pages and answers, we now need to fix the jumps in the
-        // answer records if they are absolute
+        //We've restored all the pages and answers, we now need to fix the jumps in the
+        //answer records if they are absolute
         if ($answers = get_records("lesson_answers", "lessonid", $lessonid)) {
             foreach ($answers as $answer) {
                 if ($answer->jumpto > 0) {
                     // change the absolute page id
-                    if (!set_field("lesson_answers", "jumpto", $newpageid[$answer->jumpto], "id",
-                                $answer->id)) {
-                        error("Lesson restorelib: unable to reset jump");
+                    $page = backup_getid($restore->backup_unique_code,"lesson_pages",$answer->jumpto);
+                    if ($page) {
+                        if (!set_field("lesson_answers", "jumpto", $page->new_id, "id", $answer->id)) {
+                            error("Lesson restorelib: unable to reset jump");
+                        }
                     }
                 }
             }
@@ -261,10 +257,13 @@
                 //print_object ($GLOBALS['traverse_array']);                   //Debug
                 //$GLOBALS['traverse_array']="";                               //Debug
 
+                //We'll need this later!!
+                $oldid = backup_todb($answer_info['#']['ID']['0']['#']);
+
                 //Now, build the lesson_answers record structure
                 $answer->lessonid = $lessonid;
                 $answer->pageid = $pageid;
-                // the absolute jumps will need fixing
+                // the absolute jumps will need fixing later
                 $answer->jumpto = backup_todb($answer_info['#']['JUMPTO']['0']['#']);
                 $answer->grade = backup_todb($answer_info['#']['GRADE']['0']['#']);
                 $answer->score = backup_todb($answer_info['#']['SCORE']['0']['#']);
@@ -289,9 +288,8 @@
                 if ($newid) {
                     // need to store the id so we can update the useranswer
                     // field in attempts.  This is done in the lesson_pages_restore_mods
-                    backup_putid($restore->backup_unique_code,"answers",
-                                 backup_todb($answer_info['#']['ID']['0']['#']), $newid);                                 
-                                 
+                    backup_putid($restore->backup_unique_code,"lesson_answers", $oldid, $newid);                                 
+
                     if ($restore->mods['lesson']->userinfo) {
                         //We have to restore the lesson_attempts table now (a answers level table)
                         $status = lesson_attempts_restore($lessonid, $pageid, $newid, $answer_info, $restore);
@@ -389,7 +387,7 @@
                 //We have to recode the userid field
                 $user = backup_getid($restore->backup_unique_code,"user",$olduserid);
                 if ($user) {
-                    $attempt->userid = $user->new_id;
+                    $grade->userid = $user->new_id;
                 }
 
                 //The structure is equal to the db, so insert the lesson_grade
@@ -517,7 +515,8 @@
 
         return $status;
     }
-    //This function restores the lesson_high_score
+
+    //This function restores the lesson_high_scores
     function lesson_high_scores_restore_mods($lessonid, $info, $restore) {
 
         global $CFG;
@@ -525,9 +524,9 @@
         $status = true;
 
         //Get the highscores array (optional)
-        if (isset($info['#']['HIGHSCORES']['0']['#']['HIGHSCORE'])) {
-            $highscores = $info['#']['HIGHSCORES']['0']['#']['HIGHSCORE'];
-            //Iterate over times
+        if (isset($info['MOD']['#']['HIGHSCORES']['0']['#']['HIGHSCORE'])) {
+            $highscores = $info['MOD']['#']['HIGHSCORES']['0']['#']['HIGHSCORE'];
+            //Iterate over highscores
             for($i = 0; $i < sizeof($highscores); $i++) {
                 $highscore_info = $highscores[$i];
                 //traverse_xmlize($highscore_info);                     //Debug
@@ -537,7 +536,7 @@
                 //We'll need this later!!
                 $olduserid = backup_todb($highscore_info['#']['USERID']['0']['#']);
 
-                //Now, build the lesson_time record structure
+                //Now, build the lesson_highscores record structure
                 $highscore->lessonid = $lessonid;
                 $highscore->userid = backup_todb($highscore_info['#']['USERID']['0']['#']);
                 $highscore->gradeid = backup_todb($highscore_info['#']['GRADEID']['0']['#']);
@@ -550,7 +549,7 @@
                 }
                 
                 //The structure is equal to the db, so insert the lesson_grade
-                $newid = insert_record ("lesson_high_score",$highscore);
+                $newid = insert_record ("lesson_high_scores",$highscore);
 
                 //Do some output
                 if (($i+1) % 50 == 0) {
@@ -578,13 +577,13 @@
         $status = true;
 
         //Get the default array (optional)
-        if (isset($info['MOD']['#']['DEFAULTS']['0']['#']['DEFAULT'])) {
-            $defaults = $info['MOD']['#']['DEFAULTS']['0']['#']['DEFAULT'];
+        if (isset($info['MOD']['#']['DEFAULTS'])) {
+            $defaults = $info['MOD']['#']['DEFAULTS'];
 
             //Iterate over defaults (should only be 1!)
             for($i = 0; $i < sizeof($defaults); $i++) {
                 $default_info = $defaults[$i];
-                //traverse_xmlize($defaults_info);                     //Debug
+                //traverse_xmlize($default_info);                       //Debug
                 //print_object ($GLOBALS['traverse_array']);            //Debug
                 //$GLOBALS['traverse_array']="";                        //Debug
 

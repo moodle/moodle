@@ -30,8 +30,9 @@ Now I show the specific detailed status of every item in the process:
           teacher in the restored course. See bug 2381.
 19. DONE: Move blocks code to libraries and use it in a standard way. Now new
           blocks are supported by scheduled backup.
-20. TODO: Review the lesson module completely! Check the upgrade process to
-          mimic it.
+20. PROG: Review the lesson module completely! Check the upgrade process to
+          mimic it. Pending to decide if the grade field must go to the score
+          one when restoring old files!! (sent to Michael, Mark and Martin).
 21. TODO: Review the workshop module completely! Check the upgrade process to
           mimic it.
 22. PROG: Review the wiki module fully. Now the wiki backup & restore seems to

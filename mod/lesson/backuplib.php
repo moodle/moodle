@@ -74,7 +74,7 @@
                 fwrite ($bf,full_tag("HEIGHT",4,false,$lesson->height));
                 fwrite ($bf,full_tag("BGCOLOR",4,false,$lesson->bgcolor));
                 fwrite ($bf,full_tag("DISPLAYLEFT",4,false,$lesson->displayleft));
-                fwrite ($bf,full_tag("HIGHSCORES",4,false,$lesson->highscores));
+                fwrite ($bf,full_tag("SHOWHIGHSCORES",4,false,$lesson->highscores));
                 fwrite ($bf,full_tag("MAXHIGHSCORES",4,false,$lesson->maxhighscores));
                 fwrite ($bf,full_tag("AVAILABLE",4,false,$lesson->available));
                 fwrite ($bf,full_tag("DEADLINE",4,false,$lesson->deadline));
@@ -186,7 +186,7 @@
                 fwrite ($bf,full_tag("FLAGS",8,false,$answer->flags));
                 fwrite ($bf,full_tag("TIMECREATED",8,false,$answer->timecreated));
                 fwrite ($bf,full_tag("TIMEMODIFIED",8,false,$answer->timemodified));
-                fwrite ($bf,full_tag("ANSWERTEXT",8,false,$answer->answer)); // THIS MIGHT BE WRONG, IT IS ANSWER IN DB MARKN
+                fwrite ($bf,full_tag("ANSWERTEXT",8,false,$answer->answer));
                 fwrite ($bf,full_tag("RESPONSE",8,false,$answer->response));
                 //Now we backup any lesson attempts (if student data required)
                 if ($preferences->mods["lesson"]->userinfo) {
@@ -212,22 +212,22 @@
         //If there are attempts
         if ($lesson_attempts) {
             //Write start tag
-            $status =fwrite ($bf,start_tag("ATTEMPTS",4,true));
+            $status =fwrite ($bf,start_tag("ATTEMPTS",8,true));
             //Iterate over each attempt
             foreach ($lesson_attempts as $attempt) {
                 //Start Attempt
-                $status =fwrite ($bf,start_tag("ATTEMPT",5,true));
+                $status =fwrite ($bf,start_tag("ATTEMPT",9,true));
                 //Print attempt contents
-                fwrite ($bf,full_tag("USERID",6,false,$attempt->userid));       
-                fwrite ($bf,full_tag("RETRY",6,false,$attempt->retry));       
-                fwrite ($bf,full_tag("CORRECT",6,false,$attempt->correct));     
-                fwrite ($bf,full_tag("USERANSWER",6,false,$attempt->useranswer));
-                fwrite ($bf,full_tag("TIMESEEN",6,false,$attempt->timeseen));       
+                fwrite ($bf,full_tag("USERID",10,false,$attempt->userid));       
+                fwrite ($bf,full_tag("RETRY",10,false,$attempt->retry));       
+                fwrite ($bf,full_tag("CORRECT",10,false,$attempt->correct));     
+                fwrite ($bf,full_tag("USERANSWER",10,false,$attempt->useranswer));
+                fwrite ($bf,full_tag("TIMESEEN",10,false,$attempt->timeseen));       
                 //End attempt
-                $status =fwrite ($bf,end_tag("ATTEMPT",5,true));
+                $status =fwrite ($bf,end_tag("ATTEMPT",9,true));
             }
             //Write end tag
-            $status =fwrite ($bf,end_tag("ATTEMPTS",4,true));
+            $status =fwrite ($bf,end_tag("ATTEMPTS",8,true));
         }
         return $status;
     }
@@ -245,21 +245,21 @@
         //If there is grades
         if ($grades) {
             //Write start tag
-            $status =fwrite ($bf,start_tag("GRADES",8,true));
+            $status =fwrite ($bf,start_tag("GRADES",4,true));
             //Iterate over each grade
             foreach ($grades as $grade) {
                 //Start grade
-                $status =fwrite ($bf,start_tag("GRADE",9,true));
+                $status =fwrite ($bf,start_tag("GRADE",5,true));
                 //Print grade contents
-                fwrite ($bf,full_tag("USERID",10,false,$grade->userid));
-                fwrite ($bf,full_tag("GRADE_VALUE",10,false,$grade->grade));
-                fwrite ($bf,full_tag("LATE",10,false,$grade->late));
-                fwrite ($bf,full_tag("COMPLETED",10,false,$grade->completed));
-                //End comment
-                $status =fwrite ($bf,end_tag("GRADE",9,true));
+                fwrite ($bf,full_tag("USERID",6,false,$grade->userid));
+                fwrite ($bf,full_tag("GRADE_VALUE",6,false,$grade->grade));
+                fwrite ($bf,full_tag("LATE",6,false,$grade->late));
+                fwrite ($bf,full_tag("COMPLETED",6,false,$grade->completed));
+                //End grade
+                $status =fwrite ($bf,end_tag("GRADE",5,true));
             }
             //Write end tag
-            $status =fwrite ($bf,end_tag("GRADES",8,true));
+            $status =fwrite ($bf,end_tag("GRADES",4,true));
         }
         return $status;
     }
@@ -271,7 +271,7 @@
 
         $status = true;
 
-        // get the answers in a set order, the id order
+        // get the branches in a set order, the id order
         $lesson_branch = get_records("lesson_branch", "pageid", $pageno, "id");
 
         //If there is lesson_branch
@@ -282,10 +282,8 @@
             foreach ($lesson_branch as $branch) {
                 //Start branch
                 $status =fwrite ($bf,start_tag("BRANCH",7,true));
-                //Print answer contents
-                fwrite ($bf,full_tag("LESSONID",8,false,$branch->lessonid));
+                //Print branch contents
                 fwrite ($bf,full_tag("USERID",8,false,$branch->userid));
-                fwrite ($bf,full_tag("PAGEID",8,false,$branch->pageid));
                 fwrite ($bf,full_tag("RETRY",8,false,$branch->retry));
                 fwrite ($bf,full_tag("FLAG",8,false,$branch->flag));
                 fwrite ($bf,full_tag("TIMESEEN",8,false,$branch->timeseen));
@@ -310,21 +308,20 @@
         //If there is times
         if ($times) {
             //Write start tag
-            $status =fwrite ($bf,start_tag("TIMES",8,true));
+            $status =fwrite ($bf,start_tag("TIMES",4,true));
             //Iterate over each time
             foreach ($times as $time) {
                 //Start time
-                $status =fwrite ($bf,start_tag("TIME",9,true));
+                $status =fwrite ($bf,start_tag("TIME",5,true));
                 //Print time contents
-                fwrite ($bf,full_tag("LESSONID",10,false,$time->lessonid));
-                fwrite ($bf,full_tag("USERID",10,false,$time->userid));
-                fwrite ($bf,full_tag("STARTTIME",10,false,$time->starttime));
-                fwrite ($bf,full_tag("LESSONTIME",10,false,$time->lessontime));
-                //End comment
-                $status =fwrite ($bf,end_tag("TIME",9,true));
+                fwrite ($bf,full_tag("USERID",6,false,$time->userid));
+                fwrite ($bf,full_tag("STARTTIME",6,false,$time->starttime));
+                fwrite ($bf,full_tag("LESSONTIME",6,false,$time->lessontime));
+                //End time
+                $status =fwrite ($bf,end_tag("TIME",5,true));
             }
             //Write end tag
-            $status =fwrite ($bf,end_tag("TIMES",8,true));
+            $status =fwrite ($bf,end_tag("TIMES",4,true));
         }
         return $status;
     }
@@ -340,21 +337,20 @@
         //If there is highscores
         if ($highscores) {
             //Write start tag
-            $status =fwrite ($bf,start_tag("HIGHSCORES",8,true));
+            $status =fwrite ($bf,start_tag("HIGHSCORES",4,true));
             //Iterate over each highscore
             foreach ($highscores as $highscore) {
                 //Start highscore
-                $status =fwrite ($bf,start_tag("HIGHSCORE",9,true));
+                $status =fwrite ($bf,start_tag("HIGHSCORE",5,true));
                 //Print highscore contents
-                fwrite ($bf,full_tag("LESSONID",10,false,$highscore->lessonid));
-                fwrite ($bf,full_tag("USERID",10,false,$highscore->userid));
-                fwrite ($bf,full_tag("GRADEID",10,false,$highscore->gradeid));
-                fwrite ($bf,full_tag("NICKNAME",10,false,$highscore->nickname));
-                //End comment
-                $status =fwrite ($bf,end_tag("HIGHSCORE",9,true));
+                fwrite ($bf,full_tag("USERID",6,false,$highscore->userid));
+                fwrite ($bf,full_tag("GRADEID",6,false,$highscore->gradeid));
+                fwrite ($bf,full_tag("NICKNAME",6,false,$highscore->nickname));
+                //End highscore
+                $status =fwrite ($bf,end_tag("HIGHSCORE",5,true));
             }
             //Write end tag
-            $status =fwrite ($bf,end_tag("HIGHSCORES",8,true));
+            $status =fwrite ($bf,end_tag("HIGHSCORES",4,true));
         }
         return $status;
     }
@@ -369,8 +365,7 @@
         $default = get_record("lesson_default", "course", $preferences->backup_course);
         if ($default) {
             //Start mod
-            $status =fwrite ($bf,start_tag("DEFAULTS",3,true));            
-            $status =fwrite ($bf,start_tag("DEFAULT",4,true));
+            $status =fwrite ($bf,start_tag("DEFAULTS",4,true));            
             //Print default data
             fwrite ($bf,full_tag("PRACTICE",5,false,$default->practice));
             fwrite ($bf,full_tag("MODATTEMPTS",5,false,$default->modattempts));
@@ -397,8 +392,7 @@
             fwrite ($bf,full_tag("DISPLAYLEFT",5,false,$default->displayleft));
             fwrite ($bf,full_tag("HIGHSCORES",5,false,$default->highscores));
             fwrite ($bf,full_tag("MAXHIGHSCORES",5,false,$default->maxhighscores));
-            $status =fwrite ($bf,end_tag("DEFAULT",4,true));
-            $status =fwrite ($bf,end_tag("DEFAULTS",3,true));
+            $status =fwrite ($bf,end_tag("DEFAULTS",4,true));
         }
         return $status;  
     }
