@@ -334,7 +334,6 @@ function auth_sync_users ($firstsync=0, $unsafe_optimizations = false, $bulk_ins
                         if ($CFG->ldap_user_type == 'edir'){
                             $user->idnumber = bin2hex($user->idnumber);
                         } 
-                        
                         $idnumber = $user->$CFG->idnumber;
 
                         if (set_field('user', 'idnumber', $user->idnumber, 'username', $user->username, 'auth', 'ldap' )) {
@@ -371,14 +370,13 @@ function auth_sync_users ($firstsync=0, $unsafe_optimizations = false, $bulk_ins
         $updateremotes = array();
         foreach ($attrmap as $key=>$value) {
             if (isset($CFG->{'auth_user_'.$key.'_updatelocal'}) && $CFG->{'auth_user_'.$key.'_updatelocal'}  ) {
-                $updatelocals[$key]=$value;
+                $updatelocals[]=$key;
             }
 
             if (isset($CFG->{'auth_user_'.$key.'_updateremote'}) && $CFG->{'auth_user_'.$key.'_updateremote'}  ) {
-                $updateremotes[$key]=$value;
+                $updateremotes[]=$key;
             }
         }    
-
         $idattribute=$attrmap['idnumber'];
         $updateusers     = array(); //users what should be updated
         $newusers        = array(); //new users to create
@@ -403,9 +401,9 @@ function auth_sync_users ($firstsync=0, $unsafe_optimizations = false, $bulk_ins
                 }
 
                 //update local userinformation
-                foreach ($updatelocals as $local => $remote) {
-                    if (isset($user->$local)) {
-                        $userinfo->$local = utf8_decode($user->$local);
+                foreach ($updatelocals as $value) {
+                    if (isset($user->$value)) {
+                        $userinfo->$value = $user->$value;
                     }    
                 }
                 //Force values for some fields
@@ -414,7 +412,7 @@ function auth_sync_users ($firstsync=0, $unsafe_optimizations = false, $bulk_ins
                 $userinfo->deleted = 0;
                 
                 //store userinfo to selected array
-                $arraytoupdate[$useridnumber] = $userinfo;
+                $arraytoupdate[$idnumber] = $userinfo;
 
             } else {
                //cannot sync remoteuser  without idumber
@@ -425,9 +423,10 @@ function auth_sync_users ($firstsync=0, $unsafe_optimizations = false, $bulk_ins
         //update local users
         foreach ($updateusers as $user) {
             if (update_record('user', $user)) {
-                echo 'Updated user record'.$user->username."\n";
+                echo 'Updated user record '.$user->username."\n";
             } else {
-                echo 'Cannot update user recordi'.$user->username."\n";
+                echo 'Cannot update user record '.$user->username."\n";
+                print_r($user);
             }    
         }    
 
