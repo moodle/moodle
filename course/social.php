@@ -82,7 +82,7 @@
       }
 
       $SESSION->fromdiscussion = "$CFG->wwwdir/course/view.php?id=$course->id";
-      if (is_subscribed($USER->id, $social->id)) {
+      if (forum_is_subscribed($USER->id, $social->id)) {
           $subtext = "Unsubscribe";
       } else {
           $subtext = "Subscribe me by mail";
