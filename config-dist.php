@@ -85,6 +85,13 @@ $CFG->smtphosts  = "";
 $CFG->gdversion = 1;
 
 
+// If students haven't logged in for a very long time, then they are 
+// automatically unsubscribed from courses.  This parameter specifies
+// that time limit, in days.
+
+$CFG->longtimenosee = 100;
+
+
 // You should not need to change anything else. To continue setting up 
 // Moodle, use your web browser to go to the moodle/admin web page.
 ///////////////////////////////////////////////////////////////////////////
