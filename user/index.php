@@ -8,8 +8,9 @@
 
     require_variable($id);   //course
     optional_variable($sort, "lastaccess");  //how to sort students
-    optional_variable($dir,"DESC");          //how to sort students
-    optional_variable($showall,"");         //show all of the students?
+    optional_variable($dir,"desc");          //how to sort students
+    optional_variable($page, "0");           // which page to show
+    optional_variable($perpage, "20");       // how many per page
 
 
     if (! $course = get_record("course", "id", $id)) {
@@ -19,17 +20,6 @@
     require_login($course->id);
 
     add_to_log($course->id, "user", "view all", "index.php?id=$course->id", "");
-
-    $loggedinas = "<p class=\"logininfo\">".user_login_string($course, $USER)."</p>";
-
-    if ($course->category) {
-        print_header("$course->shortname: ".get_string("participants"), "$course->fullname",
-                     "<A HREF=../course/view.php?id=$course->id>$course->shortname</A> -> ".
-                      get_string("participants"), "", "", true, "&nbsp;", $loggedinas);
-    } else {
-        print_header("$course->shortname: ".get_string("participants"), "$course->fullname", 
-                      get_string("participants"), "", "", true, "&nbsp;", $loggedinas);
-    }
 
     $string->email       = get_string("email");
     $string->location    = get_string("location");
@@ -50,30 +40,42 @@
     $string->sec         = get_string("sec");
     $string->secs        = get_string("secs");
 
-    if ( $teachers = get_course_teachers($course->id)) {
-        echo "<H2 align=center>$course->teachers</H2>";
-        foreach ($teachers as $teacher) {
-            if ($teacher->authority > 0) {    // Don't print teachers with no authority
-                print_user($teacher, $course, $string);
+    $loggedinas = "<p class=\"logininfo\">".user_login_string($course, $USER)."</p>";
+
+    $showteachers = ($page == 0 and $sort == "lastaccess" and $dir == "desc");
+
+    if ($showteachers) {
+        $participantslink = get_string("participants");
+    } else {
+        $participantslink = "<a href=\"index.php?id=$course->id\">".get_string("participants")."</a>";
+    }
+
+    if ($course->category) {
+        print_header("$course->shortname: ".get_string("participants"), "$course->fullname",
+                     "<A HREF=../course/view.php?id=$course->id>$course->shortname</A> -> ".
+                     "$participantslink", "", "", true, "&nbsp;", $loggedinas);
+    } else {
+        print_header("$course->shortname: ".get_string("participants"), "$course->fullname", 
+                     "$participantslink", "", "", true, "&nbsp;", $loggedinas);
+    }
+
+
+    if ($showteachers) {
+        if ( $teachers = get_course_teachers($course->id)) {
+            echo "<h2 align=center>$course->teachers</h2>";
+            foreach ($teachers as $teacher) {
+                if ($teacher->authority > 0) {    // Don't print teachers with no authority
+                    print_user($teacher, $course, $string);
+                }
             }
         }
     }
 
-    if ($sort == "name") {
-        $dsort = "u.firstname";
-    } else {
-        $dsort = "u.$sort";
-    }
+    $dsort = "u.$sort";
 
-    if (!$showall) {
-        $limit = "LIMIT ".USER_LARGE_CLASS;
-    } else {
-        $limit = "";
-    }
+    $totalcount = count_records("user_students", "course", $course->id);
 
-    $numstudentsall = count_records("user_students", "course", $course->id);
-
-    echo "<h2 align=center>$numstudentsall $course->students</h2>";
+    echo "<h2 align=center>$totalcount $course->students</h2>";
 
     if ($CFG->longtimenosee < 500) {
         echo "<center><p><font size=1>(";
@@ -81,83 +83,93 @@
         echo ")</font></p></center>";
     }
 
-    if ($students = get_course_students($course->id, "$dsort $dir $limit")) {
-        $numstudents = count($students);
-        if ($numstudents < USER_SMALL_CLASS) {
-            foreach ($students as $student) {
-                print_user($student, $course, $string);
-            }
+    if (0 < $totalcount and $totalcount < USER_SMALL_CLASS) {    // Print simple listing
 
-        } else {  // Print one big table with abbreviated info
-            $columns = array("name", "city", "country", "lastaccess");
-
-            foreach ($columns as $column) {
-                $colname[$column] = get_string($column);
-                $columnsort = $column;
-                if ($column == "lastaccess") {
-                    $columndir = "DESC";
-                } else {
-                    $columndir = "ASC";
-                }
-                if ($columnsort == $sort) {
-                   $$column = $colname["$column"];
-                } else {
-                   $$column = "<a href=\"index.php?id=$course->id&sort=$columnsort&dir=$columndir&showall=$showall\">".$colname["$column"]."</a>";
-                }
-            }
-
-            foreach ($students as $key => $student) {
-                $students[$key]->country = $COUNTRIES[$student->country];
-            }
-            if ($sort == "country") {  // Need to re-sort by full country name, not code
-                foreach ($students as $student) {
-                    $sstudents[$student->id] = $student->country;
-                }
-                asort($sstudents);
-                foreach ($sstudents as $key => $value) {
-                    $nstudents[] = $students[$key];
-                }
-                $students = $nstudents;
-            }
-
-            $table->head = array ("&nbsp;", $name, $city, $country, $lastaccess);
-            $table->align = array ("LEFT", "LEFT", "LEFT", "LEFT", "LEFT");
-            $table->size = array ("10", "*", "*", "*", "*");
-            $table->size = array ("10", "*", "*", "*", "*");
-            $table->cellpadding = 2;
-            $table->cellspacing = 0;
-            
-            foreach ($students as $student) {
-
-                if ($student->lastaccess) {
-                    $lastaccess = format_time(time() - $student->lastaccess, $string);
-                } else {
-                    $lastaccess = $string->never;
-                }
-
-                if ($showall and $numstudents > USER_LARGE_CLASS) {  // Don't show pictures
-                    $picture = "";
-                } else {
-                    $picture = print_user_picture($student->id, $course->id, $student->picture, false, true);
-                }
-
-                $table->data[] = array ($picture,
-                    "<b><a href=\"$CFG->wwwroot/user/view.php?id=$student->id&course=$course->id\">$student->firstname $student->lastname</a></b>",
-                    "<font size=2>$student->city</font>", 
-                    "<font size=2>$student->country</font>",
-                    "<font size=2>$lastaccess</font>");
-            }
-            print_table($table);
-
-            if ($numstudents < $numstudentsall and !$showall) {
-                $moreinfo->count  = $numstudents;
-                $moreinfo->things = strtolower($course->students);
-                echo "<center><p>".get_string("displayingfirst", "", $moreinfo);
-                echo " (<a href=\"index.php?id=$course->id&sort=$sort&dir=$dir&showall=1\">".get_string("showall", "", $numstudentsall)."</a>)";
-                echo "</p></center>";
-            }
-
+        foreach ($students as $student) {
+            print_user($student, $course, $string);
         }
+
+    } else if ($students = get_course_students($course->id, $dsort, $dir, $page*$perpage, $perpage)) {
+
+        print_paging_bar($totalcount, $page, $perpage, 
+                         "index.php?id=$course->id&sort=$sort&dir=$dir&perpage=$perpage&");
+
+        // Print one big table with abbreviated info
+        $columns = array("firstname", "lastname", "city", "country", "lastaccess");
+
+        foreach ($columns as $column) {
+            $colname[$column] = get_string($column);
+            if ($sort != $column) {
+                $columnicon = "";
+                if ($column == "lastaccess") {
+                    $columndir = "desc";
+                } else {
+                    $columndir = "asc";
+                }
+            } else {
+                $columndir = $dir == "asc" ? "desc":"asc";
+                if ($column == "lastaccess") {
+                    $columnicon = $dir == "asc" ? "up":"down";
+                } else {
+                    $columnicon = $dir == "asc" ? "down":"up";
+                }
+                $columnicon = " <img src=\"$CFG->pixpath/t/$columnicon.gif\" />";
+            }
+            $$column = "<a href=\"index.php?id=$course->id&sort=$column&dir=$columndir\">".$colname["$column"]."</a>$columnicon";
+        }
+
+        foreach ($students as $key => $student) {
+            $students[$key]->country = $COUNTRIES[$student->country];
+        }
+        if ($sort == "country") {  // Need to re-sort by full country name, not code
+            foreach ($students as $student) {
+                $sstudents[$student->id] = $student->country;
+            }
+            asort($sstudents);
+            foreach ($sstudents as $key => $value) {
+                $nstudents[] = $students[$key];
+            }
+            $students = $nstudents;
+        }
+
+        $table->head = array ("&nbsp;", "$firstname / $lastname", $city, $country, $lastaccess);
+        $table->align = array ("LEFT", "LEFT", "LEFT", "LEFT", "LEFT");
+        $table->size = array ("10",  "*", "*", "*", "*");
+        $table->size = array ("10",  "*", "*", "*", "*");
+        $table->cellpadding = 2;
+        $table->cellspacing = 0;
+        
+        foreach ($students as $student) {
+
+            if ($student->lastaccess) {
+                $lastaccess = format_time(time() - $student->lastaccess, $string);
+            } else {
+                $lastaccess = $string->never;
+            }
+
+            if ($showall and $numstudents > USER_LARGE_CLASS) {  // Don't show pictures
+                $picture = "";
+            } else {
+                $picture = print_user_picture($student->id, $course->id, $student->picture, false, true);
+            }
+
+            $table->data[] = array ($picture,
+                "<b><a href=\"$CFG->wwwroot/user/view.php?id=$student->id&course=$course->id\">$student->firstname $student->lastname</a></b>",
+                "<font size=2>$student->city</font>", 
+                "<font size=2>$student->country</font>",
+                "<font size=2>$lastaccess</font>");
+        }
+        print_table($table);
+
+        print_paging_bar($totalcount, $page, $perpage, 
+                         "index.php?id=$course->id&sort=$sort&dir=$dir&perpage=$perpage&");
+
+        if ($perpage != 99999) {
+            echo "<center><p>";
+            echo "<a href=\"index.php?id=$course->id&sort=$sort&dir=$dir&perpage=99999\">".get_string("showall", "", $totalcount)."</a>";
+            echo "</p></center>";
+        }
+
     } 
 
     print_footer($course);

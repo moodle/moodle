@@ -1114,16 +1114,27 @@ function get_recent_enrolments($courseid, $timestart) {
 *
 * @param	type description
 */
-function get_course_students($courseid, $sort="u.lastaccess DESC") {
+function get_course_students($courseid, $sort="u.lastaccess", $dir="ASC", $page=1, $recordsperpage=20) {
 
     global $CFG;
+
+    switch ($CFG->dbtype) {
+        case "mysql":
+             $limit = "LIMIT $page,$recordsperpage";
+             break;
+        case "postgres7":
+             $limit = "LIMIT $recordsperpage OFFSET ".($page);
+             break;
+        default: 
+             $limit = "LIMIT $recordsperpage,$page";
+    }
 
     return get_records_sql("SELECT u.id, u.username, u.firstname, u.lastname, u.maildisplay, u.mailformat,
                             u.email, u.city, u.country, u.lastaccess, u.lastlogin, u.picture
                             FROM {$CFG->prefix}user u, 
                                  {$CFG->prefix}user_students s
                             WHERE s.course = '$courseid' AND s.userid = u.id AND u.deleted = '0'
-                            ORDER BY $sort");
+                            ORDER BY $sort $dir $limit");
 }
 
 /**
