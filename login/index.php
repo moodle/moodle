@@ -100,8 +100,7 @@
             
 
             // check whether the user should be changing password
-            reload_user_preferences();
-            if ($USER->preference['auth_forcepasswordchange']){
+            if (get_user_preferences('auth_forcepasswordchange', false)){
                 if (isset($passwordchangeurl)) {
                     redirect($passwordchangeurl);
                 } else {
