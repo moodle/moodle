@@ -89,8 +89,8 @@ function scorm_upgrade($oldversion) {
 	modify_database('',"INSERT INTO prefix_log_display VALUES ('resource', 'review', 'resource', 'name')");
     }
 
-    if ($oldversion < 2005031400) {
-	table_column("scorm", "popup", "");
+    if ($oldversion < 2005040200) {
+        execute_sql('ALTER TABLE `'.$CFG->prefix.'scorm` DROP `popup`');    // Old field
     }
 
     return true;
