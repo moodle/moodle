@@ -62,13 +62,13 @@ function p($var) {
 }
 
 function nvl(&$var, $default="") {
-/// if $var is undefined, return $default, otherwise return $var 
+/// if $var is undefined, return $default, otherwise return $var
 
     return isset($var) ? $var : $default;
 }
 
 function strip_querystring($url) {
-/// takes a URL and returns it without the querystring portion 
+/// takes a URL and returns it without the querystring portion
 
     if ($commapos = strpos($url, '?')) {
         return substr($url, 0, $commapos);
@@ -78,7 +78,7 @@ function strip_querystring($url) {
 }
 
 function get_referer() {
-/// returns the URL of the HTTP_REFERER, less the querystring portion 
+/// returns the URL of the HTTP_REFERER, less the querystring portion
 
     return strip_querystring(nvl($_SERVER["HTTP_REFERER"]));
 }
@@ -88,7 +88,7 @@ function me() {
 /// returns the name of the current script, WITH the querystring portion.
 /// this function is necessary because PHP_SELF and REQUEST_URI and SCRIPT_NAME
 /// return different things depending on a lot of things like your OS, Web
-/// server, and the way PHP is compiled (ie. as a CGI, module, ISAPI, etc.) 
+/// server, and the way PHP is compiled (ie. as a CGI, module, ISAPI, etc.)
 
     if (!empty($_SERVER["REQUEST_URI"])) {
         return $_SERVER["REQUEST_URI"];
@@ -113,7 +113,7 @@ function me() {
 
 
 function qualified_me() {
-/// like me() but returns a full URL 
+/// like me() but returns a full URL
 
     if (!empty($_SERVER["HTTP_HOST"])) {
         $hostname = $_SERVER["HTTP_HOST"];
@@ -136,7 +136,7 @@ function qualified_me() {
 
 function match_referer($goodreferer = "") {
 /// returns true if the referer is the same as the goodreferer.  If
-/// goodreferer is not specified, use qualified_me as the goodreferer 
+/// goodreferer is not specified, use qualified_me as the goodreferer
     global $CFG;
 
     if (empty($CFG->secureforms)) {    // Don't bother checking referer
@@ -147,8 +147,8 @@ function match_referer($goodreferer = "") {
         return true;
     }
 
-    if (empty($goodreferer)) { 
-        $goodreferer = qualified_me(); 
+    if (empty($goodreferer)) {
+        $goodreferer = qualified_me();
     }
     return $goodreferer == get_referer();
 }
@@ -158,9 +158,9 @@ function data_submitted($url="") {
 /// Returns the data as an object, if it's found.
 /// This object can be used in foreach loops without
 /// casting because it's cast to (array) automatically
-/// 
-/// Checks that submitted POST data exists, and also 
-/// checks the referer against the given url (it uses 
+///
+/// Checks that submitted POST data exists, and also
+/// checks the referer against the given url (it uses
 /// the current page if none was specified.
 
     global $CFG;
@@ -181,9 +181,9 @@ function data_submitted($url="") {
 }
 
 function stripslashes_safe($string) {
-/// stripslashes() removes ALL backslashes even from strings 
+/// stripslashes() removes ALL backslashes even from strings
 /// so  C:\temp becomes C:temp  ... this isn't good.
-/// The following should work as a fairly safe replacement 
+/// The following should work as a fairly safe replacement
 /// to be called on quoted AND unquoted strings (to be sure)
 
     $string = str_replace("\\'", "'", $string);
@@ -194,7 +194,7 @@ function stripslashes_safe($string) {
 
 
 function break_up_long_words($string, $maxsize=20, $cutchar=' ') {
-/// Given some normal text, this function will break up any 
+/// Given some normal text, this function will break up any
 /// long words to a given size, by inserting the given character
 
     $output = '';
@@ -270,7 +270,7 @@ function read_template($filename, &$var) {
 /// the variables interpolated.  all the variables must be in the $var[] array or
 /// object (whatever you decide to use).
 ///
-/// WARNING: do not use this on big files!! 
+/// WARNING: do not use this on big files!!
 
     $temp = str_replace("\\", "\\\\", implode(file($filename), ""));
     $temp = str_replace('"', '\"', $temp);
@@ -281,7 +281,7 @@ function read_template($filename, &$var) {
 function checked(&$var, $set_value = 1, $unset_value = 0) {
 /// if variable is set, set it to the set_value otherwise set it to the
 /// unset_value.  used to handle checkboxes when you are expecting them from
-/// a form 
+/// a form
 
     if (empty($var)) {
         $var = $unset_value;
@@ -292,7 +292,7 @@ function checked(&$var, $set_value = 1, $unset_value = 0) {
 
 function frmchecked(&$var, $true_value = "checked", $false_value = "") {
 /// prints the word "checked" if a variable is true, otherwise prints nothing,
-/// used for printing the word "checked" in a checkbox form input 
+/// used for printing the word "checked" in a checkbox form input
 
     if ($var) {
         echo $true_value;
@@ -302,9 +302,9 @@ function frmchecked(&$var, $true_value = "checked", $false_value = "") {
 }
 
 
-function link_to_popup_window ($url, $name="popup", $linkname="click here", 
+function link_to_popup_window ($url, $name="popup", $linkname="click here",
                                $height=400, $width=500, $title="Popup window", $options="none") {
-/// This will create a HTML link that will work on both 
+/// This will create a HTML link that will work on both
 /// Javascript and non-javascript browsers.
 /// Relies on the Javascript function openpopup in javascript.php
 /// $url must be relative to home page  eg /mod/survey/stuff.php
@@ -321,9 +321,9 @@ function link_to_popup_window ($url, $name="popup", $linkname="click here",
 }
 
 
-function button_to_popup_window ($url, $name="popup", $linkname="click here", 
+function button_to_popup_window ($url, $name="popup", $linkname="click here",
                                  $height=400, $width=500, $title="Popup window", $options="none") {
-/// This will create a HTML link that will work on both 
+/// This will create a HTML link that will work on both
 /// Javascript and non-javascript browsers.
 /// Relies on the Javascript function openpopup in javascript.php
 /// $url must be relative to home page  eg /mod/survey/stuff.php
@@ -361,7 +361,7 @@ function close_window_button() {
 function choose_from_menu ($options, $name, $selected="", $nothing="choose", $script="", $nothingvalue="0", $return=false) {
 /// Given an array of value, creates a popup menu to be part of a form
 /// $options["value"]["label"]
-    
+
     if ($nothing == "choose") {
         $nothing = get_string("choose")."...";
     }
@@ -400,7 +400,7 @@ function choose_from_menu ($options, $name, $selected="", $nothing="choose", $sc
     } else {
         echo $output;
     }
-}   
+}
 
 function popup_form ($common, $options, $formname, $selected="", $nothing="choose", $help="", $helptext="", $return=false, $targetwindow="self") {
 ///  Implements a complete little popup form
@@ -411,8 +411,34 @@ function popup_form ($common, $options, $formname, $selected="", $nothing="choos
 ///  $nothing  = The label for the "no choice" option
 ///  $help     = The name of a help page if help is required
 ///  $helptext  = The name of the label for the help button
-///  $return   = Boolean indicating whether the function should return the text 
+///  $return   = Boolean indicating whether the function should return the text
 ///    as a string or echo it directly to the page being rendered
+
+// TODO:
+//
+//  * Make sure it's W3C conformant (<form name=""> has to go for example)
+//  * Code it in a way that doesn't require JS to be on. Example code:
+//        $selector .= '<form method="get" action="" style="display: inline;"><span>';
+//        $selector .= '<input type="hidden" name="var" value="value" />';
+//        if(!empty($morevars)) {
+//            $getarray = explode('&amp;', $morevars);
+//            foreach($getarray as $thisvar) {
+//                $selector .= '<input type="hidden" name="'.strtok($thisvar, '=').'" value="'.strtok('=').'" />';
+//            }
+//        }
+//        $selector .= '<select name="" onchange="form.submit();">';
+//        foreach($options as $id => $text) {
+//            $selector .= "\n<option value='$id'";
+//            if($option->id == $selected) {
+//                $selector .= ' selected';
+//            }
+//            $selector .= '>'.$text."</option>\n";
+//        }
+//        $selector .= '</select>';
+//        $selector .= '<noscript id="unique_id" style="display: inline;"> <input type="submit" value="'.get_string('somestring').'" /></noscript>';
+//        $selector .= '<script type="text/javascript">'."\n<!--\n".'document.getElementById("unique_id").style.display = "none";'."\n<!--\n".'</script>';
+//        $selector .= '</span></form>';
+//
 
     global $CFG;
 
@@ -420,7 +446,7 @@ function popup_form ($common, $options, $formname, $selected="", $nothing="choos
         $nothing = get_string("choose")."...";
     }
 
-    $startoutput = "<form target=\"{$CFG->framename}\" name=\"$formname\">";
+    $startoutput = "<form method=\"get\" target=\"{$CFG->framename}\" name=\"$formname\">";
     $output = "<select name=\"popup\" onchange=\"$targetwindow.location=document.$formname.popup.options[document.$formname.popup.selectedIndex].value\">\n";
 
     if ($nothing != "") {
@@ -497,7 +523,7 @@ function get_slash_arguments($file="file.php") {
     }
 
     $pathinfo = explode($file, $string);
-    
+
     if (!empty($pathinfo[1])) {
         return $pathinfo[1];
     } else {
@@ -525,20 +551,20 @@ function parse_slash_arguments($string, $i=0) {
 
 function format_text_menu() {
 /// Just returns an array of formats suitable for a popup menu
-    return array (FORMAT_MOODLE => get_string("formattext"), 
+    return array (FORMAT_MOODLE => get_string("formattext"),
                   FORMAT_HTML   => get_string("formathtml"),
                   FORMAT_PLAIN  => get_string("formatplain"),
                   FORMAT_WIKI   => get_string("formatwiki"));
 }
 
 function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL ) {
-/// Given text in a variety of format codings, this function returns 
+/// Given text in a variety of format codings, this function returns
 /// the text as safe HTML.
 ///
 /// $text is raw text (originally from a user)
 /// $format is one of the format constants, defined above
 
-    global $CFG, $course; 
+    global $CFG, $course;
 
     if (!empty($CFG->cachetext)) {
         $time = time() - $CFG->cachetext;
@@ -602,7 +628,7 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
 }
 
 function format_text_email($text, $format) {
-/// Given text in a variety of format codings, this function returns 
+/// Given text in a variety of format codings, this function returns
 /// the text as plain text suitable for plain email.
 ///
 /// $text is raw text (originally from a user)
@@ -635,10 +661,10 @@ function format_text_email($text, $format) {
 
 
 function filter_text($text, $courseid=NULL) {
-/// Given some text in HTML format, this function will pass it 
+/// Given some text in HTML format, this function will pass it
 /// through any filters that have been defined in $CFG->textfilterx
-/// The variable defines a filepath to a file containing the 
-/// filter function.  The file must contain a variable called 
+/// The variable defines a filepath to a file containing the
+/// filter function.  The file must contain a variable called
 /// $textfilter_function which contains the name of the function
 /// with $courseid and $text parameters
 
@@ -659,22 +685,22 @@ function filter_text($text, $courseid=NULL) {
 
 
 function clean_text($text, $format=FORMAT_MOODLE) {
-/// Given raw text (eg typed in by a user), this function cleans it up 
+/// Given raw text (eg typed in by a user), this function cleans it up
 /// and removes any nasty tags that could mess up Moodle pages.
 
     global $ALLOWED_TAGS;
 
-    switch ($format) { 
+    switch ($format) {
         case FORMAT_MOODLE:
         case FORMAT_HTML:
         case FORMAT_WIKI:
         /// Remove tags that are not allowed
             $text = strip_tags($text, $ALLOWED_TAGS);
         /// Munge javascript: label
-            $text = str_ireplace("javascript:", "Xjavascript:", $text);           
+            $text = str_ireplace("javascript:", "Xjavascript:", $text);
         /// Remove script events
-            $text = eregi_replace("([^a-z])language([[:space:]]*)=", "\\1Xlanguage=", $text);    
-            $text = eregi_replace("([^a-z])on([a-z]+)([[:space:]]*)=", "\\1Xon\\2=", $text);  
+            $text = eregi_replace("([^a-z])language([[:space:]]*)=", "\\1Xlanguage=", $text);
+            $text = eregi_replace("([^a-z])on([a-z]+)([[:space:]]*)=", "\\1Xon\\2=", $text);
             return $text;
 
         case FORMAT_PLAIN:
@@ -812,11 +838,11 @@ function convert_urls_into_links(&$text) {
                           "\\1<a href=\"\\2://\\3\\4\" target=\"newpage\">\\2://\\3\\4</a>", $text);
 
 /// eg www.moodle.com
-    $text = eregi_replace("([[:space:]]|^|\(|\[)www\.([^[:space:]]*)([[:alnum:]#?/&=])", 
+    $text = eregi_replace("([[:space:]]|^|\(|\[)www\.([^[:space:]]*)([[:alnum:]#?/&=])",
                           "\\1<a href=\"http://www.\\2\\3\" target=\"newpage\">www.\\2\\3</a>", $text);
 }
 
-function highlight($needle, $haystack, $case=0, 
+function highlight($needle, $haystack, $case=0,
                     $left_string="<span class=\"highlight\">", $right_string="</span>") {
 /// This function will highlight search words in a given string
 /// It cares about HTML and will not ruin links.  It's best to use
@@ -866,7 +892,7 @@ function highlight($needle, $haystack, $case=0,
 
 function highlightfast($needle, $haystack) {
 /// This function will highlight instances of $needle in $haystack
-/// It's faster that the above function and doesn't care about 
+/// It's faster that the above function and doesn't care about
 /// HTML or anything.
 
     $parts = explode(strtolower($needle), strtolower($haystack));
@@ -879,7 +905,7 @@ function highlightfast($needle, $haystack) {
 
         $parts[$key] .= "<span class=\"highlight\">".substr($haystack, $pos, strlen($needle))."</span>";
         $pos += strlen($needle);
-    }   
+    }
 
     return (join('', $parts));
 }
@@ -887,7 +913,7 @@ function highlightfast($needle, $haystack) {
 
 /// STANDARD WEB PAGE PARTS ///////////////////////////////////////////////////
 
-function print_header ($title="", $heading="", $navigation="", $focus="", $meta="",  
+function print_header ($title="", $heading="", $navigation="", $focus="", $meta="",
                        $cache=true, $button="&nbsp;", $menu="", $usexml=false) {
 // $title - appears top of window
 // $heading - appears top of page
@@ -948,7 +974,7 @@ function print_header ($title="", $heading="", $navigation="", $focus="", $meta=
     } else {
         $direction = " dir=\"ltr\"";
     }
- 
+
     if (!$cache) {   // Do everything we can to prevent clients and proxies caching
         @header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
         @header("Pragma: no-cache");
@@ -982,7 +1008,7 @@ function print_header ($title="", $heading="", $navigation="", $focus="", $meta=
 }
 
 function print_footer ($course=NULL) {
-// Can provide a course object to make the footer contain a link to 
+// Can provide a course object to make the footer contain a link to
 // to the course home page, otherwise the link will go to the site home
     global $USER, $CFG, $THEME;
 
@@ -1013,10 +1039,10 @@ function style_sheet_setup($lastmodified=0, $lifetime=300, $themename="") {
 /// approriately as well as the current path
 
     global $CFG;
-    
+
     header("Last-Modified: " . gmdate("D, d M Y H:i:s", $lastmodified) . " GMT");
     header("Expires: " . gmdate("D, d M Y H:i:s", time() + $lifetime) . " GMT");
-    header("Cache-control: max_age = $lifetime"); 
+    header("Cache-control: max_age = $lifetime");
     header("Pragma: ");
     header("Content-type: text/css");  // Correct MIME type
 
@@ -1085,7 +1111,7 @@ function print_heading_with_help($text, $helppage, $module="moodle", $icon="") {
     helpbutton($helppage, $text, $module);
     echo "</b></font></p>";
 }
-    
+
 function print_continue($link) {
 
     if (!$link) {
@@ -1282,7 +1308,7 @@ function print_user($user, $course) {
                 echo "<a href=\"$CFG->wwwroot/course/loginas.php?id=$course->id&user=$user->id\">$string->loginas</a><br />";
             }
         }
-    } 
+    }
     echo "<a href=\"$CFG->wwwroot/user/view.php?id=$user->id&course=$course->id\">$string->fullprofile...</a>";
     echo '</font>';
 
@@ -1426,13 +1452,13 @@ function print_table($table) {
         $countcols = count($table->head);;
         echo "<tr>";
         foreach ($table->head as $key => $heading) {
-            
+
             if (!isset($size[$key])) {
                 $size[$key] = "";
-            } 
+            }
             if (!isset($align[$key])) {
                 $align[$key] = "";
-            } 
+            }
             echo "<th valign=\"top\" ".$align[$key].$size[$key]." nowrap=\"nowrap\" class=\"generaltableheader\">$heading</th>";
         }
         echo "</tr>\n";
@@ -1447,13 +1473,13 @@ function print_table($table) {
                 foreach ($row as $key => $item) {
                     if (!isset($size[$key])) {
                         $size[$key] = "";
-                    } 
+                    }
                     if (!isset($align[$key])) {
                         $align[$key] = "";
-                    } 
+                    }
                     if (!isset($wrap[$key])) {
                         $wrap[$key] = "";
-                    } 
+                    }
                     echo "<td ".$align[$key].$size[$key].$wrap[$key]." class=\"generaltablecell\">$item</td>";
                 }
             }
@@ -1543,10 +1569,10 @@ function make_table($table) {
         foreach ($table->head as $key => $heading) {
             if (!isset($size[$key])) {
                 $size[$key] = "";
-            } 
+            }
             if (!isset($align[$key])) {
                 $align[$key] = "";
-            } 
+            }
             $output .= "<th valign=\"top\" ".$align[$key].$size[$key]." nowrap=\"nowrap\" class=\"{$table->class}header\">$fontsize$heading</th>";
         }
         $output .= "</tr>\n";
@@ -1557,13 +1583,13 @@ function make_table($table) {
         foreach ($row as $key => $item) {
             if (!isset($size[$key])) {
                 $size[$key] = "";
-            } 
+            }
             if (!isset($align[$key])) {
                 $align[$key] = "";
-            } 
+            }
             if (!isset($wrap[$key])) {
                 $wrap[$key] = "";
-            } 
+            }
             $output .= "<td ".$align[$key].$size[$key].$wrap[$key]." class=\"{$table->class}cell\">$fontsize$item</td>";
         }
         $output .= "</tr>\n";
@@ -1676,7 +1702,7 @@ function update_category_button($categoryid) {
         } else {
             $string = get_string("turneditingon");
             $edit = "on";
-        } 
+        }
         return "<form target=\"$CFG->framename\" method=\"get\" action=\"$CFG->wwwroot/course/category.php\">".
                "<input type=\"hidden\" name=\"id\" value=\"$categoryid\" />".
                "<input type=\"hidden\" name=\"edit\" value=\"$edit\" />".
@@ -1835,7 +1861,7 @@ function navmenu($course, $cm=NULL, $targetwindow="self") {
         $logslink = "<td><a target=\"$CFG->framename\" href=".
                     "\"$CFG->wwwroot/course/log.php?chooselog=1&user=0&date=0&id=$course->id&modid=$selectmod->cm\">".
                     "<img border=\"0\" height=\"16\" width=\"16\" src=\"$CFG->pixpath/i/log.gif\"></a></td>";
-        
+
     }
     if ($backmod) {
         $backmod = "<form action=\"$CFG->wwwroot/mod/$backmod->mod/view.php\" target=\"$CFG->framename\">".
@@ -1921,7 +1947,7 @@ function print_grade_menu($courseid, $name, $current, $includenograde=true) {
 
     $helpicon = "$CFG->pixpath/help.gif";
     $linkobject = "<img align=\"absmiddle\" border=\"0\" height=\"17\" width=\"22\" alt=\"$strscales\" src=\"$helpicon\" />";
-    link_to_popup_window ("/course/scales.php?id=$courseid&amp;list=true", "ratingscales", 
+    link_to_popup_window ("/course/scales.php?id=$courseid&amp;list=true", "ratingscales",
                           $linkobject, 400, 500, $strscales);
 }
 
@@ -1935,7 +1961,7 @@ function print_scale_menu($courseid, $name, $current) {
     choose_from_menu(get_scales_menu($courseid), "$name", $current, "");
     $helpicon = "$CFG->pixpath/help.gif";
     $linkobject = "<img align=\"absmiddle\" border=\"0\" height=\"17\" width=\"22\" alt=\"$strscales\" src=\"$helpicon\" />";
-    link_to_popup_window ("/course/scales.php?id=$courseid&amp;list=true", "ratingscales", 
+    link_to_popup_window ("/course/scales.php?id=$courseid&amp;list=true", "ratingscales",
                           $linkobject, 400, 500, $strscales);
 }
 
@@ -1949,7 +1975,7 @@ function print_scale_menu_helpbutton($courseid, $scale) {
     $strscales = get_string("scales");
     $helpicon = "$CFG->pixpath/help.gif";
     $linkobject = "<img align=\"absmiddle\" border=\"0\" height=\"17\" width=\"22\" alt=\"$scale->name\" src=\"$helpicon\" />";
-    link_to_popup_window ("/course/scales.php?id=$courseid&amp;list=true&amp;scale=$scale->id", "ratingscale", 
+    link_to_popup_window ("/course/scales.php?id=$courseid&amp;list=true&amp;scale=$scale->id", "ratingscale",
                           $linkobject, 400, 500, $scale->name);
 }
 
@@ -1960,7 +1986,7 @@ function error ($message, $link="") {
     print_header(get_string("error"));
     echo "<br />";
     print_simple_box($message, "center", "", "#FFBBBB");
-   
+
     if (!$link) {
         if ( !empty($SESSION->fromurl) ) {
             $link = "$SESSION->fromurl";
@@ -1979,7 +2005,7 @@ function helpbutton ($page, $title="", $module="moodle", $image=true, $linktext=
     // $title = the title of links, rollover tips, alt tags etc
     // $module = which module is the page defined in
     // $image = use a help image for the link?  (true/false/"both")
-    // $text = if defined then this text is used in the page, and 
+    // $text = if defined then this text is used in the page, and
     //         the $page variable is ignored.
     global $CFG, $THEME;
 
@@ -2015,8 +2041,8 @@ function emoticonhelpbutton($form, $field) {
     $SESSION->inserttextfield = $field;
     helpbutton("emoticons", get_string("helpemoticons"), "moodle", false, true);
     echo "&nbsp;";
-    link_to_popup_window ("/help.php?module=moodle&amp;file=emoticons.html", "popup", 
-                          "<img src=\"$CFG->pixpath/s/smiley.gif\" border=\"0\" align=\"absmiddle\" width=\"15\" height=\"15\" />", 
+    link_to_popup_window ("/help.php?module=moodle&amp;file=emoticons.html", "popup",
+                          "<img src=\"$CFG->pixpath/s/smiley.gif\" border=\"0\" align=\"absmiddle\" width=\"15\" height=\"15\" />",
                            400, 500, get_string("helpemoticons"));
     echo "<br />";
 }
@@ -2059,7 +2085,7 @@ function redirect($url, $message="", $delay="0") {
         echo "<meta http-equiv=\"refresh\" content=\"$delay; url=$url\" />";
         echo "<script>location.replace('$url');</script>";   // To cope with Mozilla bug
     } else {
-        if (empty($delay)) {  
+        if (empty($delay)) {
             $delay = 3;  // There's no point having a message with no delay
         }
         print_header("", "", "", "", "<meta http-equiv=\"refresh\" content=\"$delay; url=$url\" />");
@@ -2071,7 +2097,7 @@ function redirect($url, $message="", $delay="0") {
         sleep($delay);
         echo "<script>location.replace('$url');</script>";   // To cope with Mozilla bug
     }
-    die; 
+    die;
 }
 
 function notify ($message, $color="red", $align="center") {
@@ -2132,7 +2158,7 @@ function obfuscate_mailto($email, $label="", $dimmed=false) {
         $title = '';
         $dimmed = '';
     }
-    return sprintf("<a href=\"%s:%s\" $dimmed title=\"$title\">%s</a>", 
+    return sprintf("<a href=\"%s:%s\" $dimmed title=\"$title\">%s</a>",
                     obfuscate_text('mailto'), obfuscate_email($email),
                     obfuscate_text($label));
 }
@@ -2184,7 +2210,7 @@ function print_paging_bar($totalcount, $page, $perpage, $baseurl) {
 //This function is used to rebuild the <nolink> tag because some formats (PLAIN and WIKI)
 //will transform it to html entities
 function rebuildnolinktag($text) {
-    
+
     $text = preg_replace('/&lt;(\/*nolink)&gt;/i','<$1>',$text);
 
     return $text;
