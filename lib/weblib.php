@@ -1729,6 +1729,7 @@ function navmenu($course, $cm=NULL, $targetwindow="self") {
     $previousmod = NULL;
     $backmod = NULL;
     $nextmod = NULL;
+    $selectmod = NULL;
     $logslink = NULL;
     $flag = false;
 
