@@ -1665,7 +1665,7 @@ function print_header ($title='', $heading='', $navigation='', $focus='', $meta=
 
     $bodytags .= ' class="'.$pageclass.'" id="'.$pageid.'"';
 
-    include ($CFG->dirroot .'/theme/'. $CFG->theme .'/header.html');
+    include ($CFG->themedir. $CFG->theme .'/header.html');
 
     if (!empty($CFG->messaging)) {
         echo message_popup_window();
@@ -1746,7 +1746,7 @@ function print_footer($course=NULL, $usercourse=NULL) {
 
 /// Include the actual footer file
 
-    include ($CFG->dirroot.'/theme/'.$CFG->theme.'/footer.html');
+    include ($CFG->themedir.$CFG->theme.'/footer.html');
 }
 
 /**
@@ -1804,7 +1804,7 @@ function style_sheet_setup($lastmodified=0, $lifetime=300, $themename='', $force
 
     if (!empty($forceconfig)) {        // Page wants to use the config from this theme instead
         unset($THEME);
-        include($CFG->dirroot.'/theme/'.$forceconfig.'/'.'config.php');
+        include($CFG->themedir.$forceconfig.'/'.'config.php');
     }
 
 /// If this is the standard theme calling us, then find out what sheets we need
@@ -1835,8 +1835,8 @@ function style_sheet_setup($lastmodified=0, $lifetime=300, $themename='', $force
 /// Work out the last modified date for this theme
 
     foreach ($THEME->sheets as $sheet) {
-        if (file_exists($CFG->dirroot.'/theme/'.$themename.'/'.$sheet.'.css')) {
-            $sheetmodified = filemtime($CFG->dirroot.'/theme/'.$themename.'/'.$sheet.'.css');
+        if (file_exists($CFG->themedir.$themename.'/'.$sheet.'.css')) {
+            $sheetmodified = filemtime($CFG->themedir.$themename.'/'.$sheet.'.css');
             if ($sheetmodified > $lastmodified) {
                 $lastmodified = $sheetmodified;
             }
@@ -1848,11 +1848,11 @@ function style_sheet_setup($lastmodified=0, $lifetime=300, $themename='', $force
 
     foreach ($THEME->sheets as $sheet) {
         echo "/***** $sheet.css start *****/\n\n";
-        @include_once($CFG->dirroot.'/theme/'.$themename.'/'.$sheet.'.css');
+        @include_once($CFG->themedir.$themename.'/'.$sheet.'.css');
         echo "\n\n/***** $sheet.css end *****/\n\n";
     }
 
-    return $CFG->wwwroot.'/theme/'.$themename;   // Only to help old themes (1.4 and earlier)
+    return $CFG->themewww.$themename;   // Only to help old themes (1.4 and earlier)
 }
 
 
@@ -1880,30 +1880,30 @@ function theme_setup($theme = '', $params=NULL) {
 
 /// Load up the theme config
     $THEME = NULL;   // Just to be sure
-    include($CFG->dirroot .'/theme/'. $theme .'/config.php');  // Main config for current theme
+    include($CFG->themedir. $theme .'/config.php');  // Main config for current theme
 
 /// Set up image paths
     if (empty($CFG->custompix)) {    // Could be set in the above file
         $CFG->pixpath = $CFG->wwwroot .'/pix';
         $CFG->modpixpath = $CFG->wwwroot .'/mod';
     } else {
-        $CFG->pixpath = $CFG->wwwroot .'/theme/'. $theme .'/pix';
-        $CFG->modpixpath = $CFG->wwwroot .'/theme/'. $theme .'/pix/mod';
+        $CFG->pixpath = $CFG->themewww . $theme .'/pix';
+        $CFG->modpixpath = $CFG->themewww . $theme .'/pix/mod';
     }
 
 /// Header and footer paths
-    $CFG->header = $CFG->dirroot .'/theme/'. $theme .'/header.html';
-    $CFG->footer = $CFG->dirroot .'/theme/'. $theme .'/footer.html';
+    $CFG->header = $CFG->themedir . $theme .'/header.html';
+    $CFG->footer = $CFG->themedir . $theme .'/footer.html';
 
 /// Define stylesheet loading order
     $CFG->stylesheets = array();
     if ($theme != 'standard') {    /// The standard sheet is always loaded first
-        $CFG->stylesheets[] = $CFG->wwwroot.'/theme/standard/styles.php'.$paramstring;
+        $CFG->stylesheets[] = $CFG->themewww.'standard/styles.php'.$paramstring;
     }
     if (!empty($THEME->parent)) {  /// Parent stylesheets are loaded next
-        $CFG->stylesheets[] = $CFG->wwwroot.'/theme/'.$THEME->parent.'/styles.php'.$paramstring;
+        $CFG->stylesheets[] = $CFG->themewww.$THEME->parent.'/styles.php'.$paramstring;
     }
-    $CFG->stylesheets[] = $CFG->wwwroot.'/theme/'.$theme.'/styles.php'.$paramstring;
+    $CFG->stylesheets[] = $CFG->themewww.$theme.'/styles.php'.$paramstring;
 
 }
 
@@ -3441,7 +3441,7 @@ function notify ($message, $style='notifyproblem', $align='center') {
 
     $message = clean_text($message);
 
-    echo '<div class="'.$style.'" align="'. $align .'"><p>'. $message .'</p></div>' . "<br />\n";
+    echo '<div class="'.$style.'" align="'. $align .'">'. $message .'</div>'."<br />\n";
 }
 
 
