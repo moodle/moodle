@@ -2874,6 +2874,9 @@ function error ($message, $link='') {
 
     print_header(get_string('error'));
     echo '<br />';
+
+    $message = clean_text($message);   // In case nasties are in here
+
     print_simple_box($message, 'center', '', '#FFBBBB');
 
     if (!$link) {
