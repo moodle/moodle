@@ -3297,7 +3297,7 @@ function navmenulist($course, $width=50) {
         }
     }
     if ($doneheading) {
-        $menu[] = '</ul>';
+        $menu[] = '</ul></li>';
     }
     $menu[] = '</ul>';
 
