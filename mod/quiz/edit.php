@@ -15,8 +15,14 @@
 
     if ($modform and !empty($modform->course)) {    // form submitted from mod.html
 
-        if (empty($modform->name) or empty($modform->intro)) {
-            error(get_string("filloutallfields"), $_SERVER["HTTP_REFERER"]);
+        $modform->name = trim($modform->name);
+
+        if (empty($modform->name)) {
+            if (empty($modform->intro)) {
+                $modform->name = get_string('modulename', 'quiz');
+            } else {
+                $modform->name = strip_tags($modform->intro);
+            }
         }
 
         $SESSION->modform = $modform;    // Save the form in the current session
@@ -164,7 +170,7 @@
     $strediting = get_string(isset($modform->instance) ? "editingquiz" : "editquestions", "quiz");
     $strheading = empty($modform->name) ? $strediting : $modform->name;
 
-    print_header_simple("$strediting", "$strheading",
+    print_header_simple($strediting, '',
                  "<a href=\"$CFG->wwwroot/mod/quiz/index.php?id=$course->id\">$strquizzes</a> -> $strediting");
 
     // Print basic page layout.
