@@ -776,28 +776,29 @@ function authenticate_user_login($username, $password) {
 
     $md5password = md5($password);
 
-    if (empty($CFG->auth)) {
-        $CFG->auth = "manual";   // Default authentication module
-    }
-
-    if ($username == "guest") {
-        $CFG->auth = "manual";   // Guest account always internal
-    }
-
-    // OK, the user is a normal user, so try and authenticate them
-
-    // If the user exists, use their stored authentication method
-    // otherwise just use the set method
-
-    $user = NULL;
-    $auth = $CFG->auth;
+    // First try to find the user in the database
 
     $user = get_user_info_from_db("username", $username);
-    if (!empty($user->auth)) {
-        $auth = $user->auth;
+
+    // Sort out the authentication method we are using.
+
+    if (empty($CFG->auth)) {
+        $CFG->auth = "manual";     // Default authentication module
     }
 
-    require_once("$CFG->dirroot/auth/$auth/lib.php");
+    if (empty($user->auth)) {      // For some reason it isn't set yet
+        if (isadmin($user->id) or isguest($user->id)) {
+            $user->auth = 'manual';    // Always assume these guys are internal
+        } else {
+            $user->auth = $CFG->auth;  // Normal users default to site method
+        }
+    }
+    
+    if (!file_exists("$CFG->dirroot/auth/$user->auth/lib.php")) {
+        $user->auth = "manual";    // Can't find auth module, default to internal
+    }
+
+    require_once("$CFG->dirroot/auth/$user->auth/lib.php");
 
     if (auth_user_login($username, $password)) {  // Successful authentication
         if ($user) {
