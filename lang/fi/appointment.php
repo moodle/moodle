@@ -43,6 +43,6 @@ $string['uploadnotregistered'] = 'Tiedosto vastaanotettiin mutta lähetyksen kirj
 $string['uploadsuccess'] = 'Tiedosto \'$a\' vastaanotettu';
 $string['viewfeedback'] = 'Tarkastele tapaamisten arviointeja ja palautteita';
 $string['viewsubmissions'] = 'Katso $a lähettyä tapaamista';
-$string['yoursubmission'] = 'vastauksesi';
+$string['yoursubmission'] = 'Vastauksesi';
 
 ?>
