@@ -1086,6 +1086,12 @@ function main_upgrade($oldversion=0) {
         table_column('message_read', '', 'format', 'integer', '4', 'unsigned', '0', 'not null', 'message');
     }
 
+    if ($oldversion < 2005010100) {
+        modify_database('', "INSERT INTO prefix_log_display VALUES ('message', 'add contact', 'user', 'CONCAT(firstname,\" \",lastname)'); ");
+        modify_database('', "INSERT INTO prefix_log_display VALUES ('message', 'remove contact', 'user', 'CONCAT(firstname,\" \",lastname)'); ");
+        modify_database('', "INSERT INTO prefix_log_display VALUES ('message', 'block contact', 'user', 'CONCAT(firstname,\" \",lastname)'); ");
+        modify_database('', "INSERT INTO prefix_log_display VALUES ('message', 'unblock contact', 'user', 'CONCAT(firstname,\" \",lastname)'); ");
+    }
     return $result;
 
 }

@@ -860,6 +860,14 @@ function main_upgrade($oldversion=0) {
     }
        
                                 
+    if ($oldversion < 2005010100) {
+        modify_database('',"INSERT INTO prefix_log_display VALUES ('message', 'add contact', 'user', 'firstname||\' \'||lastname');
+                            INSERT INTO prefix_log_display VALUES ('message', 'remove contact', 'user', 'firstname||\' \'||lastname');
+                            INSERT INTO prefix_log_display VALUES ('message', 'block contact', 'user', 'firstname||\' \'||lastname');
+                            INSERT INTO prefix_log_display VALUES ('message', 'unblock contact', 'user', 'firstname||\' \'||lastname');
+                            ");
+    }
+
     return $result;
 }
 

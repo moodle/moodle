@@ -556,3 +556,7 @@ INSERT INTO prefix_log_display VALUES ('course', 'update', 'course', 'fullname')
 INSERT INTO prefix_log_display VALUES ('course', 'enrol', 'course', 'fullname');
 INSERT INTO prefix_log_display VALUES ('message', 'write', 'user', 'CONCAT(firstname," ",lastname)');
 INSERT INTO prefix_log_display VALUES ('message', 'read', 'user', 'CONCAT(firstname," ",lastname)');
+INSERT INTO prefix_log_display VALUES ('message', 'add contact', 'user', 'CONCAT(firstname," ",lastname)');
+INSERT INTO prefix_log_display VALUES ('message', 'remove contact', 'user', 'CONCAT(firstname," ",lastname)');
+INSERT INTO prefix_log_display VALUES ('message', 'block contact', 'user', 'CONCAT(firstname," ",lastname)');
+INSERT INTO prefix_log_display VALUES ('message', 'unblock contact', 'user', 'CONCAT(firstname," ",lastname)');
