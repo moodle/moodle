@@ -479,14 +479,15 @@ function schedule_backup_course_execute($preferences,$starttime = 0) {
     //Create them as needed
     schedule_backup_log($starttime,$preferences->backup_course,"    checking temp structures");
     $status = check_and_create_backup_dir($preferences->backup_unique_code);
-    //Empty dir
+    //Empty backup dir
     if ($status) {
-        schedule_backup_log($starttime,$preferences->backup_course,"    cleaning old data");
+        schedule_backup_log($starttime,$preferences->backup_course,"    cleaning current dir");
         $status = clear_backup_dir($preferences->backup_unique_code);
     }
 
     //Delete old_entries from backup tables
     if ($status) {
+        schedule_backup_log($starttime,$preferences->backup_course,"    cleaning old data");
         $status = backup_delete_old_data();
     }
 

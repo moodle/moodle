@@ -52,10 +52,10 @@
     $backup_unique_code = time();
     
     //Now check and create the backup dir (if it doesn't exist)
+    echo "<li>".get_string("creatingtemporarystructures");
     $status = check_and_create_backup_dir($backup_unique_code);
     //Empty dir
     if ($status) {
-        echo "<li>".get_string("creatingtemporarystructures");
         $status = clear_backup_dir($backup_unique_code);
     }
 
