@@ -6,6 +6,7 @@ $string['modulenameplural'] = "Resources";
 #------------------------------------------------------------
 
 $string['addresource'] = "Add resource";
+$string['configframesize'] = "When a web page or an uploaded file is displayed within a frame, this value is the size (in pixels) of the top frame (which contains the navigation).";
 $string['editingaresource'] = "Editing a resource";
 $string['example'] = "Example";
 $string['examplereference'] = "Tobin, K. & Tippins, D (1993) Constructivism as a Referent for Teaching and Learning. In: K. Tobin (Ed) The Practice of Constructivism in Science Education, pp 3-21, Lawrence-Erlbaum, Hillsdale, NJ.";

@@ -18,7 +18,9 @@ $RESOURCE_TYPE = array (REFERENCE    => get_string("resourcetype1", "resource"),
                         PROGRAM      => get_string("resourcetype7", "resource"),
                         WIKITEXT     => get_string("resourcetype8", "resource") );
 
-$RESOURCE_FRAME_SIZE = 130;
+if (!isset($CFG->resource_framesize)) {
+    set_config("resource_framesize", 130);
+} 
 
 $RESOURCE_WINDOW_OPTIONS = array("resizable", "scrollbars", "directories", "location", 
                                  "menubar", "toolbar", "status", "height", "width");

@@ -1,0 +1,19 @@
+<form method="post" action="module.php" name="form">
+
+<table cellpadding=9 cellspacing=0 >
+<tr valign=top>
+	<td align=right><p>resource_framesize:</td>
+	<td>
+    <input name=resource_framesize type=text size=5 value="<?php p($CFG->resource_framesize) ?>">
+    </td>
+    <td>
+    <?php print_string("configframesize", "resource") ?>
+    </td>
+</tr>
+<tr>
+    <td colspan=3 align=center>
+	<input type="submit" value="<?php print_string("savechanges") ?>"></td>
+</tr>
+</table>
+
+</form>
