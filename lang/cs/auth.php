@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.3 (2004052500)
+      // auth.php - created with Moodle 1.4 (2004083100)
 
 
 $string['auth_dbdescription'] = 'Tato metoda pou¾ívá tabulku v externí databázi ke kontrole, zda zadané u¾ivatelské jméno a heslo je platné.  Pøi vytváøení nového úètu mohou být informace z dal¹ích polí zkopírovány do databáze Moodle.';
@@ -16,6 +16,13 @@ $string['auth_dbtype'] = 'Typ databáze (Viz <A HREF=../lib/adodb/readme.htm#driv
 $string['auth_dbuser'] = 'U¾ivatelské jméno s právy èíst externí databázi';
 $string['auth_emaildescription'] = 'Potvrzení emailem je pøednastavená metoda ovìøování. Pøi registraci si u¾ivatel vybere vlastní u¾ivatelské jméno a heslo. Poté je na jeho adresu odeslán email obsahující zabezpeèený odkaz na stránku, kde potvrdí zadané údaje. Pøi dal¹ím pøihlá¹ení se ji¾ ovìøuje pouze zadané u¾ivatelské jméno a heslo proti hodnotì ulo¾ené v databázi Moodle.';
 $string['auth_emailtitle'] = 'Ovìøení na základì emailu';
+$string['auth_fccreators'] = 'Seznam skupin, jejich¾ èlenové jsou oprávnìni vytváøet nové kurzy. Skupiny oddìlujte støedníkem. Názvy musí být zadány pøesnì jako na FirstClass serveru a zále¾í na malých/VELKÝCH písmenech.';
+$string['auth_fcdescription'] = 'Tato metoda pou¾ívá k ovìøovaní u¾ivatelského jména a hesla FirstClass server.';
+$string['auth_fcfppport'] = 'Port na serveru (nejpou¾ívanìj¹í je 3333)';
+$string['auth_fchost'] = 'Adresa serveru FirstClass. Vlo¾te IP adresu nebo DNS název.';
+$string['auth_fcpasswd'] = 'Heslo pro úèet uvedený vý¹e.';
+$string['auth_fctitle'] = 'Pou¾ívat FirstClass';
+$string['auth_fcuserid'] = 'Userid pro FirstClass úèet s nastaveným právem \'Subadministrator\'';
 $string['auth_imapdescription'] = 'Tato metoda pou¾ívá IMAP server ke kontrole, zda zadané u¾ivatelské jméno a heslo je platné.';
 $string['auth_imaphost'] = 'Adresa serveru IMAP. Zadejte IP adresu, nikoliv DNS jméno serveru!';
 $string['auth_imapport'] = 'Èíslo portu IMAP servere. Vìt¹inou bývá 143 nebo 993.';
@@ -28,6 +35,7 @@ $string['auth_ldap_create_context'] = 'Povolíte-li vytváøení u¾ivatelù (po ovìøe
 $string['auth_ldap_creators'] = 'Seznam skupin, jejich¾ èlenové jsou oprávnìni vytváøet nové kurzy. Jednotlivé skupiny oddìlujte støedníkem. Pøíklad: \'cn=ucitele,ou=zamestnanci,o=naseskola\'';
 $string['auth_ldap_host_url'] = 'Zadejte URL serveru LDAP. Napøíklad \'ldap://ldap.naseskola.cz/\' nebo \'ldaps://ldap.naseskola.cz/\' ';
 $string['auth_ldap_memberattribute'] = 'Urèete atribut èlena skupiny (user member attribute), pokud u¾ivatel patøí do skupiny. Vìt¹inou \'member\'';
+$string['auth_ldap_objectclass'] = 'Filtr pou¾itý pøi pojmenovávání/vyhledávání u¾ivatelù. Vìt¹inou nastavíte nìco jako objectClass=posixAccount . Výchozí hodnota objectClass=* vrátí v¹echny objekty z LDAP.';
 $string['auth_ldap_search_sub'] = 'Zadejte hodnotu <> 0 pokud chcete prohledávat u¾ivatele v subkontextech.';
 $string['auth_ldap_update_userinfo'] = 'Aktualizovat informace o u¾ivateli (pøíjmení, køestní jméno, adresa...) z LDAP serveru do Moodle. Pro mapování viz /auth/ldap/attr_mappings.php';
 $string['auth_ldap_user_attribute'] = 'Atribut pou¾itý pro pojmenování a vyhledávání u¾ivatelù. Vìt¹inou \'cn\'.';
@@ -46,6 +54,7 @@ $string['auth_nonedescription'] = 'U¾ivatelé si mohou vytváøet nová konta pøímo 
 $string['auth_nonetitle'] = 'Bez ovìøení';
 $string['auth_pop3description'] = 'Tato metoda pou¾ívá POP3 server ke kontrole, zda zadané u¾ivatelské jméno a heslo je platné.';
 $string['auth_pop3host'] = 'Adresa POP3 serveru. Zadejte IP adresu, nikoliv DNS název!';
+$string['auth_pop3mailbox'] = 'Název po¹tovní slo¾ky (mailbox), se kterou se má navázat spojení (vìt¹inou INBOX).';
 $string['auth_pop3port'] = 'Èíslo portu POP3 serveru (vìt¹inou 110)';
 $string['auth_pop3title'] = 'Pou¾ití POP3 serveru';
 $string['auth_pop3type'] = 'Typ serveru. Pokud vá¹ server pou¾ívá zabezpeèení pomocí certifikátù, zvolte pop3cert.';
