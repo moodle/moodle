@@ -4,7 +4,7 @@
 //CHANGELOG:
 //05.03.2005 replace /login/index.php
 
-    require_once($CFG->dirroot.'/auth/cas/caslogin.php');
+    require_once($CFG->dirroot.'/auth/cas/lib.php');
 
     //Define variables used in page
     if (!$site = get_site()) {
