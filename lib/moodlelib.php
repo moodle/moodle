@@ -285,7 +285,7 @@ function print_table($table) {
     if ($table->head) {
         echo "<TR>";
         foreach ($table->head as $key => $heading) {
-            echo "<TH ".$align[$key].$size[$key].">$heading</TH>";
+            echo "<TH VALIGN=top ".$align[$key].$size[$key].">$heading</TH>";
         }
         echo "</TR>\n";
     }
