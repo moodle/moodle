@@ -261,8 +261,8 @@ $string['gpl'] = "版权所有 (C) 2001-2002  Martin Dougiamas  (http://dougiamas.co
 发布该软件是希望它有用有益，但不提供任何形式的担保，不论是明确的还是隐含的，包括但不限于可销售和适合特定用途的隐含保证。详见GNU通用公共许可证：
 
 http://www.gnu.org/copyleft/gpl.html";
-$string['grade'] = "得分";
-$string['grades'] = "得分";
+$string['grade'] = "成绩";
+$string['grades'] = "成绩";
 $string['guestskey'] = "允许有密钥的访客进入";
 $string['guestsno'] = "不允许访客进入";
 $string['guestsnotallowed'] = "抱歉！ '\$a' 不允许访客进入。";

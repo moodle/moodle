@@ -17,11 +17,11 @@ $string['attempt'] = "试答 \$a";
 $string['attemptfirst'] = "初答分";
 $string['attemptlast'] = "最近分";
 $string['attemptquiznow'] = "现在试答测验";
-$string['attempts'] = "试答";
+$string['attempts'] = "试答成绩";
 $string['attemptsallowed'] = "允许多次尝试";
 $string['attemptsunlimited'] = "不限尝试次数";
 $string['backtoquiz'] = "回到测验编辑";
-$string['bestgrade'] = "最高分值";
+$string['bestgrade'] = "最佳成绩";
 $string['blackboard'] = "黑板软件";
 $string['caseno'] = "不,字母大小写无所谓";
 $string['casesensitive'] = "区分大小写字母";
@@ -63,7 +63,7 @@ $string['fractionsaddwrong'] = "你选的得分总和不等于 100%%
 <BR>而是等于 \$a%%
 
 <BR>你想回去修改吗?";
-$string['fractionsnomax'] = "一个答案得分应该有 100%%，
+$string['fractionsnomax'] = "答案得分应该有 100%%，
 
 <BR>这样这个题目才有可能得满分。
 
@@ -112,7 +112,7 @@ $string['randomsamatchnumber'] = "待选题目数";
 $string['readytosend'] = "你正在发送整份试卷去评分。你确定要继续吗？";
 $string['regrade'] = "给所有试答重新评分";
 $string['regradecomplete'] = "所有试答重新评分完毕";
-$string['regradecount'] = " 来自 \$a->attempt 得分的 \$a->changed 已做更改";
+$string['regradecount'] = " \$a->attempt 次试答得分中的 \$a->changed 次更改完成";
 $string['rename'] = "重命名";
 $string['report'] = "报告";
 $string['save'] = "保存";
@@ -130,7 +130,7 @@ $string['showfeedback'] = "回答之后显示反馈信息吗？";
 $string['shuffleanswers'] = "随机排列答案";
 $string['shufflequestions'] = "随机排列题目";
 $string['time'] = "时间";
-$string['timecompleted'] = "完成";
+$string['timecompleted'] = "完成时间";
 $string['timetaken'] = "所用时间";
 $string['toomanyrandom'] = "所要求的随机题的数量大于该类别现有题量";
 $string['true'] = "对";
