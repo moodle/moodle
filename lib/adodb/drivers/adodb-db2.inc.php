@@ -69,15 +69,15 @@ class ADODB_DB2 extends ADODB_odbc {
 	var $concat_operator = 'CONCAT';
 	var $sysDate = 'CURRENT DATE';
 	var $sysTimeStamp = 'CURRENT TIMESTAMP';
-	//var $curmode = SQL_CUR_USE_ODBC;
+	/* var $curmode = SQL_CUR_USE_ODBC; */
 	
 	function ADODB_DB2()
 	{
 		$this->ADODB_odbc();
 	}
 
-	// returns true or false
-	// curmode is not properly supported by DB2 odbc driver according to Mark Newnham
+	/*  returns true or false */
+	/*  curmode is not properly supported by DB2 odbc driver according to Mark Newnham */
 	function _connect($argDSN, $argUsername, $argPassword, $argDatabasename)
 	{
 	global $php_errormsg;
@@ -86,11 +86,11 @@ class ADODB_DB2 extends ADODB_odbc {
 		$this->_connectionID = odbc_connect($argDSN,$argUsername,$argPassword);
 		$this->_errorMsg = $php_errormsg;
 
-		//if ($this->_connectionID) odbc_autocommit($this->_connectionID,true);
+		/* if ($this->_connectionID) odbc_autocommit($this->_connectionID,true); */
 		return $this->_connectionID != false;
 	}
 	
-	// returns true or false
+	/*  returns true or false */
 	function _pconnect($argDSN, $argUsername, $argPassword, $argDatabasename)
 	{
 	global $php_errormsg;
@@ -98,7 +98,7 @@ class ADODB_DB2 extends ADODB_odbc {
 		$this->_connectionID = odbc_pconnect($argDSN,$argUsername,$argPassword);
 		$this->_errorMsg = $php_errormsg;
 		
-		//if ($this->_connectionID) odbc_autocommit($this->_connectionID,true);
+		/* if ($this->_connectionID) odbc_autocommit($this->_connectionID,true); */
 		return $this->_connectionID != false;
 	}
 	
@@ -111,7 +111,7 @@ class ADODB_DB2 extends ADODB_odbc {
 	function &SelectLimit($sql,$nrows=-1,$offset=-1,$arg3=false)
 	{
 		if ($offset <= 0) {
-		// could also use " OPTIMIZE FOR $nrows ROWS "
+		/*  could also use " OPTIMIZE FOR $nrows ROWS " */
 			$sql .=  " FETCH FIRST $nrows ROWS ONLY ";
 			return $this->Execute($sql,false,$arg3);
 		} else {
@@ -144,7 +144,7 @@ class  ADORecordSet_db2 extends ADORecordSet_odbc {
 		case 'LONGCHAR':
 		case 'TEXT':
 		case 'CLOB':
-		case 'DBCLOB': // double-byte
+		case 'DBCLOB': /*  double-byte */
 			return 'X';
 		
 		case 'BLOB':
@@ -159,12 +159,12 @@ class  ADORecordSet_db2 extends ADORecordSet_odbc {
 		case 'TIMESTAMP':
 			return 'T';
 		
-		//case 'BOOLEAN': 
-		//case 'BIT':
-		//	return 'L';
+		/* case 'BOOLEAN':  */
+		/* case 'BIT': */
+		/* 	return 'L'; */
 			
-		//case 'COUNTER':
-		//	return 'R';
+		/* case 'COUNTER': */
+		/* 	return 'R'; */
 			
 		case 'INT':
 		case 'INTEGER':
@@ -177,5 +177,5 @@ class  ADORecordSet_db2 extends ADORecordSet_odbc {
 	}
 }
 
-} //define
+} /* define */
 ?>

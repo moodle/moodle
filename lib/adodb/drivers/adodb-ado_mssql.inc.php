@@ -24,7 +24,7 @@ class  ADODB_ado_mssql extends ADODB_ado {
 	var $hasTop = 'top';
 	var $sysDate = 'GetDate()';
 	var $sysTimeStamp = 'GetDate()';
-	//var $_inTransaction = 1; // always open recordsets, so no transaction problems.
+	/* var $_inTransaction = 1; // always open recordsets, so no transaction problems. */
 	
 	function ADODB_ado_mssql()
 	{

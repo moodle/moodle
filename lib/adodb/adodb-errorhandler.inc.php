@@ -67,7 +67,7 @@ function ADODB_Error_Handler($dbms, $fn, $errno, $errmsg, $p1=false, $p2=false)
 	}
 
 
-	//print "<p>$s</p>";
+	/* print "<p>$s</p>"; */
 	trigger_error($s,E_USER_ERROR);
 }
 ?>

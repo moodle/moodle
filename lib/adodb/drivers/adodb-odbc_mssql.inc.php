@@ -22,7 +22,7 @@ class  ADODB_odbc_mssql extends ADODB_odbc {
 	var $fmtDate = "'Y-m-d'";
 	var $fmtTimeStamp = "'Y-m-d h:i:sA'";
 	var $_bindInputArray = true;
-	var $hasTop = 'top';		// support mssql/interbase SELECT TOP 10 * FROM TABLE
+	var $hasTop = 'top';		/*  support mssql/interbase SELECT TOP 10 * FROM TABLE */
 	var $sysDate = 'GetDate()';
 	var $sysTimeStamp = 'GetDate()';
 	

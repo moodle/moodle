@@ -26,7 +26,7 @@ if (sizeof($HTTP_GET_VARS) == 0) $testmysql = true;
 
 This script tests the following databases: Interbase, Oracle, Visual FoxPro, Microsoft Access (ODBC and ADO), MySQL, MSSQL (ODBC, native, ADO). 
 There is also support for Sybase, PostgreSQL.</p>
-For the latest version of ADODB, visit <a href=http://php.weblogs.com/ADODB>php.weblogs.com</a>.</p>
+For the latest version of ADODB, visit <a href=http:/* php.weblogs.com/ADODB>php.weblogs.com</a>.</p> */
 
 <form method=get>
 <input type=checkbox name=testaccess value=1 <?php echo !empty($testaccess) ? 'checked' : '' ?>> Access<br>
@@ -46,7 +46,7 @@ Test <a href=test4.php>GetInsertSQL/GetUpdateSQL</a> &nbsp;
 <?php
 
 
-// Set the following control flags to true/false to enable testing for a particular database.
+/*  Set the following control flags to true/false to enable testing for a particular database. */
 /*
 $testoracle = true;
 $testibase = true;
@@ -60,15 +60,15 @@ $testmysql = true;
 
 error_reporting(E_ALL);
 
-set_time_limit(240); // increase timeout
+set_time_limit(240); /*  increase timeout */
 
 include("../tohtml.inc.php");
 include("../adodb.inc.php");
 
 if ($ADODB_FETCH_MODE != ADODB_FETCH_DEFAULT) print "<h3>FETCH MODE IS NOT ADODB_FETCH_DEFAULT</h3>";
 
-// the table creation code is specific to the database, so we allow the user 
-// to define their own table creation stuff
+/*  the table creation code is specific to the database, so we allow the user  */
+/*  to define their own table creation stuff */
 function testdb(&$db,$createtab="create table ADOXYZ (id int, firstname char(24), lastname char(24), created date)")
 {
 GLOBAL $ADODB_vers,$ADODB_CACHE_DIR,$ADODB_FETCH_MODE, $HTTP_GET_VARS,$ADODB_COUNTRECS;
@@ -94,7 +94,7 @@ GLOBAL $ADODB_vers,$ADODB_CACHE_DIR,$ADODB_FETCH_MODE, $HTTP_GET_VARS,$ADODB_COU
 	print "<br><i>ts3</i> (1970-1-2 +/- timezone) = ".$db->DBTimeStamp(24*3600);
 	 $dd = $db->UnixDate('1999-02-20');
 	print "<br>unixdate</i> 1999-02-20 = ".date('Y-m-d',$dd)."<p>";
-	// mssql too slow in failing bad connection
+	/*  mssql too slow in failing bad connection */
 	if ($db->databaseType != 'mssql') {
 		print "<p>Testing bad connection. Ignore following error msgs:<br>";
 		$db2 = ADONewConnection();
@@ -105,16 +105,16 @@ GLOBAL $ADODB_vers,$ADODB_CACHE_DIR,$ADODB_FETCH_MODE, $HTTP_GET_VARS,$ADODB_COU
 	}
 	error_reporting($e);
 	
-	//$ADODB_COUNTRECS=false;
+	/* $ADODB_COUNTRECS=false; */
 	$rs=$db->Execute('select * from adoxyz order by id');
-	//print_r($rs);
-	//OCIFetchStatement($rs->_queryID,$rez,0,-1);//,OCI_ASSOC | OCI_FETCHSTATEMENT_BY_ROW);
-	//print_r($rez);
-	//die();
+	/* print_r($rs); */
+	/* OCIFetchStatement($rs->_queryID,$rez,0,-1);//,OCI_ASSOC | OCI_FETCHSTATEMENT_BY_ROW); */
+	/* print_r($rez); */
+	/* die(); */
 	if($rs === false) $create = true;
 	else $rs->Close();
 	
-	//if ($db->databaseType !='vfp') $db->Execute("drop table ADOXYZ");
+	/* if ($db->databaseType !='vfp') $db->Execute("drop table ADOXYZ"); */
         
 	if ($create) {
 	    if ($db->databaseType == 'ibase') {
@@ -128,7 +128,7 @@ GLOBAL $ADODB_vers,$ADODB_CACHE_DIR,$ADODB_FETCH_MODE, $HTTP_GET_VARS,$ADODB_COU
 		}
     }
 	
-	$rs = &$db->Execute("delete from ADOXYZ"); // some ODBC drivers will fail the drop so we delete
+	$rs = &$db->Execute("delete from ADOXYZ"); /*  some ODBC drivers will fail the drop so we delete */
 	if ($rs) {
 		if(! $rs->EOF)print "<b>Error: </b>RecordSet returned by Execute('delete...') should show EOF</p>";
 		$rs->Close();
@@ -140,7 +140,7 @@ GLOBAL $ADODB_vers,$ADODB_CACHE_DIR,$ADODB_FETCH_MODE, $HTTP_GET_VARS,$ADODB_COU
 	if ($rs) $rs->Close();
 	
 	
-	//$db->debug=true;	
+	/* $db->debug=true;	 */
 	print "<p>Testing Commit: ";
 	$time = $db->DBDate(time());
 	if (!$db->BeginTrans()) print '<b>Transactions not supported</b></p>';
@@ -311,7 +311,7 @@ GO
 	$db->debug = false;
 
 	$ADODB_FETCH_MODE = ADODB_FETCH_BOTH;
- //////////////////////////////////////////////////////////////////////////////////////////
+ /* //////////////////////////////////////////////////////////////////////////////////////// */
 	
 	$rs = &$db->Execute("select id,firstname as TheFirstName,lastname,created from ADOXYZ order by id");
 	if ($rs) {
@@ -342,7 +342,7 @@ GO
 	$rs = &$db->Execute('select * from ADOXYZ');
 	if (empty($rs->connection)) print "<b>Connection object missing from recordset</b></br>";
 	
-	while ($o = $rs->FetchNextObject()) { // calls FetchObject internally
+	while ($o = $rs->FetchNextObject()) { /*  calls FetchObject internally */
 		if (!is_string($o->FIRSTNAME) || !is_string($o->LASTNAME)) {
 			print_r($o);
 			print "<p><b>Firstname is not string</b></p>";
@@ -355,7 +355,7 @@ GO
 	$rs = &$db->Execute('select * from ADOXYZ');
 	if (empty($rs->connection)) print "<b>Connection object missing from recordset</b></br>";
 	
-	while ($o = $rs->FetchNextObject()) { // calls FetchObject internally
+	while ($o = $rs->FetchNextObject()) { /*  calls FetchObject internally */
 		if (!is_string($o->FIRSTNAME) || !is_string($o->LASTNAME)) {
 			print_r($o);
 			print "<p><b>Firstname is not string</b></p>";
@@ -420,7 +420,7 @@ GO
 		if (trim($arr['firstname']) != 'Caroline') {print "<b>Error 2</b><br>"; print_r($arr);};
 
 	}
-	//$db->debug = true;
+	/* $db->debug = true; */
 	print "<p>SelectLimit Test 1: Should see Caroline, John and Mary</p>";
 	$rs = &$db->SelectLimit('select distinct * from ADOXYZ order by id',3);
 	if ($rs && !$rs->EOF) {
@@ -431,7 +431,7 @@ GO
 		if (trim($rs->fields[1]) != 'Mary') print "<b>Error 3</b><br>";
 		$rs->MoveNext();
 		if (! $rs->EOF) print "<b>Not EOF</b><br>";
-		//rs2html($rs);
+		/* rs2html($rs); */
 	}
 	else "<p><b>Failed SelectLimit Test 1</b></p>";
 	print "<p>SelectLimit Test 2: Should see Mary, George and Mr. Alan</p>";
@@ -444,7 +444,7 @@ GO
 		if (trim($rs->fields[1]) != 'Mr. Alan') print "<b>Error 3</b><br>";
 		$rs->MoveNext();
 		if (! $rs->EOF) print "<b>Not EOF</b><br>";
-	//	rs2html($rs);
+	/* 	rs2html($rs); */
 	}
 	else "<p><b>Failed SelectLimit Test 2</b></p>";
 	
@@ -457,7 +457,7 @@ GO
 		if (trim($rs->fields[1]) != 'Steven') print "<b>Error 2</b><br>";
 		$rs->MoveNext();
 		if (! $rs->EOF) print "<b>Not EOF</b><br>";
-		//rs2html($rs);
+		/* rs2html($rs); */
 	}
 	else "<p><b>Failed SelectLimit Test 3</b></p>";
 		$db->debug = false;
@@ -476,7 +476,7 @@ GO
 			}
 			else print "MoveFirst() OK<BR>";
                         
-                        // Move(3) tests error handling -- MoveFirst should not move cursor
+                        /*  Move(3) tests error handling -- MoveFirst should not move cursor */
 			$rs->Move(3);
 			if (trim($rs->Fields("firstname")) != 'George') {
 				print '<p>'.$rs->Fields("id")."<b>$db->databaseType: Move(3) failed</b></p>";
@@ -497,7 +497,7 @@ GO
 		}
 	}
 	
- //	$db->debug=true;
+ /* 	$db->debug=true; */
 	print "<p>Testing ADODB_FETCH_ASSOC and concat: concat firstname and lastname</p>";
 	
 	$save = $ADODB_FETCH_MODE;
@@ -589,7 +589,7 @@ GO
 	if ($val == 0) echo " <p><b>GenID not supported</b>";
 	echo "<p>";
 	
-	if (substr($db->dataProvider,0,3) != 'notused') { // used to crash ado
+	if (substr($db->dataProvider,0,3) != 'notused') { /*  used to crash ado */
 		$sql = "select firstnames from adoxyz";
 		print "<p>Testing execution of illegal statement: <i>$sql</i></p>";
 		if ($db->Execute($sql) === false) {
@@ -665,7 +665,7 @@ GO
 	} else {
 		print "<p><b>\$db->sysDate not defined</b></p>";
 	}
-	// PEAR TESTS BELOW
+	/*  PEAR TESTS BELOW */
 	$ADODB_FETCH_MODE = ADODB_FETCH_NUM;
 	$pear = true;
 	$rs = $db->query('select * from adoxyz order by id');
@@ -674,7 +674,7 @@ GO
 	if ($rs && !$rs->EOF) {
 		while ($arr = $rs->fetchRow()) {
 			$i++;
-			//print "$i ";
+			/* print "$i "; */
 			if ($arr[0] != $i) {
 				print "<p><b>PEAR DB emulation error 1.</b></p>";
 				$pear = false;
@@ -716,7 +716,7 @@ GO
 	if ($ret != 1) print "<b>Replace failed: </b>";
 	print "test B return value=$ret (1 expected) <p>";
 	
-	/////////////////////////////////////////////////////////////
+	/* /////////////////////////////////////////////////////////// */
 
 
 	
@@ -733,8 +733,8 @@ GO
 		while (!is_object($rs->fetchInto($arr))) {
 			$i2++;
 			
-	//			print_r($arr);
-	//		print "$i ";print_r($arr);
+	/* 			print_r($arr); */
+	/* 		print "$i ";print_r($arr); */
 			if ($arr[0] != $i2) {
 				print "<p><b>PEAR DB emulation error 2.</b></p>";
 				$pear = false;

@@ -29,9 +29,9 @@ V2.12 12 June 2002 (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights rese
 		$max = ($rs) ? $rs->FieldCount() : 0;
 		
 		if ($sql) $sql = urlencode($sql);
-		// metadata setup
+		/*  metadata setup */
 		
-		if ($max <= 0 || $rs->dataProvider == 'empty') { // is insert/update/delete
+		if ($max <= 0 || $rs->dataProvider == 'empty') { /*  is insert/update/delete */
 			if (is_object($conn)) {
         		$sql .= ','.$conn->Affected_Rows();
 				$sql .= ','.$conn->Insert_ID();
@@ -44,7 +44,7 @@ V2.12 12 June 2002 (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights rese
 			$tt = ($rs->timeCreated) ? $rs->timeCreated : time();
 			$line = "====0,$tt,$sql\n";
 		}
-		// column definitions
+		/*  column definitions */
 		for($i=0; $i < $max; $i++) {
 			$o = $rs->FetchField($i);
 			$line .= urlencode($o->name).':'.$rs->MetaType($o->type,$o->max_length).":$o->max_length,";
@@ -52,7 +52,7 @@ V2.12 12 June 2002 (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights rese
 		$text = substr($line,0,strlen($line)-1)."\n";
 		
 		
-		// get data
+		/*  get data */
 		if ($rs->databaseType == 'array') {
 			$text .= serialize($rs->_array);
 		} else {
@@ -92,15 +92,15 @@ V2.12 12 June 2002 (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights rese
 		$ttl = 0;
 		
 		if ($meta = fgetcsv ($fp, 8192, ",")) {
-			// check if error message
+			/*  check if error message */
 			if (substr($meta[0],0,4) === '****') {
 				$err = trim(substr($meta[0],4,1024));
 				fclose($fp);
 				return false;
 			}
-			// check for meta data
-			// $meta[0] is -1 means return an empty recordset
-			// $meta[1] contains a time 
+			/*  check for meta data */
+			/*  $meta[0] is -1 means return an empty recordset */
+			/*  $meta[1] contains a time  */
 	
 			if (substr($meta[0],0,4) ===  '====') {
 			
@@ -156,10 +156,10 @@ V2.12 12 June 2002 (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights rese
 								fclose($fp);
 								$err = "Timeout 0";
 								return false;
-							} // switch
+							} /*  switch */
 							
-						} // if check flush cache
-					}// (timeout>0)
+						} /*  if check flush cache */
+					}/*  (timeout>0) */
 					$ttl = $meta[1];
 				}
 				$meta = fgetcsv($fp, 8192, ",");
@@ -170,7 +170,7 @@ V2.12 12 June 2002 (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights rese
 				}
 			}
 
-			// Get Column definitions
+			/*  Get Column definitions */
 			$flds = array();
 			foreach($meta as $o) {
 				$o2 = explode(':',$o);
@@ -188,12 +188,12 @@ V2.12 12 June 2002 (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights rese
 		} else {
 			fclose($fp);
 			$err = "Recordset had unexpected EOF 2";
-			//print "$url ";print_r($meta);
-			//die();
+			/* print "$url ";print_r($meta); */
+			/* die(); */
 			return false;
 		}
 		
-		// slurp in the data
+		/*  slurp in the data */
 		$MAXSIZE = 128000;
 		$text = fread($fp,$MAXSIZE);
 		$cnt = 1;
@@ -205,7 +205,7 @@ V2.12 12 June 2002 (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights rese
 		fclose($fp);
 		$arr = @unserialize($text);
 		
-		//var_dump($arr);
+		/* var_dump($arr); */
 		if (!is_array($arr)) {
 			$err = "Recordset had unexpected EOF 3";
 			return false;

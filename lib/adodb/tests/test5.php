@@ -10,7 +10,7 @@ V2.12 12 June 2002 (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights rese
 */
 
 
-// Select an empty record from the database 
+/*  Select an empty record from the database  */
 
 include('../adodb.inc.php');
 include('../tohtml.inc.php');
@@ -23,16 +23,16 @@ if (0) {
 }
 
 if (0) {
-	$conn = &ADONewConnection("oci8");  // create a connection
+	$conn = &ADONewConnection("oci8");  /*  create a connection */
 	$conn->debug=1;
-	$conn->PConnect("falcon", "scott", "tiger", "juris8.ecosystem.natsoft.com.my"); // connect to MySQL, testdb
+	$conn->PConnect("falcon", "scott", "tiger", "juris8.ecosystem.natsoft.com.my"); /*  connect to MySQL, testdb */
 	print $conn->databaseType.':'.$conn->GenID();
 }
 
 if (0) {
-	$conn = &ADONewConnection("ibase");  // create a connection
+	$conn = &ADONewConnection("ibase");  /*  create a connection */
 	$conn->debug=1;
-	$conn->Connect("localhost:c:\\Interbase\\Examples\\Database\\employee.gdb", "sysdba", "masterkey", ""); // connect to MySQL, testdb
+	$conn->Connect("localhost:c:\\Interbase\\Examples\\Database\\employee.gdb", "sysdba", "masterkey", ""); /*  connect to MySQL, testdb */
 	print $conn->databaseType.':'.$conn->GenID().'<br>';
 }
 

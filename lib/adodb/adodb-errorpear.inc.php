@@ -17,7 +17,7 @@ define('ADODB_ERROR_HANDLER','ADODB_Error_PEAR');
 /*
 * Enabled the following if you want to terminate scripts when an error occurs
 */
-//PEAR::setErrorHandling (PEAR_ERROR_DIE);
+/* PEAR::setErrorHandling (PEAR_ERROR_DIE); */
 
 /*
 * Name of the PEAR_Error derived class to call.
@@ -69,7 +69,7 @@ global $ADODB_Last_PEAR_Error;
 		$GLOBALS['_PEAR_default_error_options'], 
 		$errmsg);
 		
-	//print "<p>!$s</p>";
+	/* print "<p>!$s</p>"; */
 }
 
 /**

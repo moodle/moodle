@@ -35,14 +35,14 @@ You can also modify the date format using the ALTER SESSION command.
 class ADODB_oci8 extends ADOConnection {
     var $databaseType = 'oci8';
 	var $dataProvider = 'oci8';
-    var $replaceQuote = "''"; // string to use to replace quotes
+    var $replaceQuote = "''"; /*  string to use to replace quotes */
     var $concat_operator='||';
 	var $sysDate = "TRUNC(SYSDATE)";
 	var $sysTimeStamp = 'SYSDATE';
 	
 	var $_stmt;
 	var $_commit = OCI_COMMIT_ON_SUCCESS;
-	var $_initdate = true; // init date to YYYY-MM-DD
+	var $_initdate = true; /*  init date to YYYY-MM-DD */
 	var $metaTablesSQL = "select table_name from cat where table_type in ('TABLE','VIEW')";
 	var $metaColumnsSQL = "select cname,coltype,width from col where tname='%s' order by colno";
 	var $_bindInputArray = true;
@@ -55,7 +55,7 @@ class ADODB_oci8 extends ADOConnection {
 	var $connectSID = false;
 	var $_bind = false;
 	var $_hasOCIFetchStatement = false;
-	var $_getarray = false; // currently not working
+	var $_getarray = false; /*  currently not working */
 	
     function ADODB_oci8() 
 	{
@@ -67,7 +67,7 @@ class ADODB_oci8 extends ADOConnection {
 		return OCIRowCount($this->_stmt);
 	}
 	
-	// format and return date string in database date format
+	/*  format and return date string in database date format */
 	function DBDate($d)
 	{
 		if (empty($d) && $d !== 0) return 'null';
@@ -76,7 +76,7 @@ class ADODB_oci8 extends ADOConnection {
 		return 'TO_DATE('.date($this->fmtDate,$d).",'YYYY-MM-DD')";
 	}
 	
-	// format and return date string in database timestamp format
+	/*  format and return date string in database timestamp format */
 	function DBTimeStamp($ts)
 	{
 		if (empty($ts) && $ts !== 0) return 'null';
@@ -159,11 +159,11 @@ NATSOFT.DOMAIN =
     )
   )
 */
-    // returns true or false
+    /*  returns true or false */
     function _connect($argHostname, $argUsername, $argPassword, $argDatabasename,$persist=false)
     {
 		         
-    	if($argHostname) { // added by Jorma Tuomainen <jorma.tuomainen@ppoy.fi>
+    	if($argHostname) { /*  added by Jorma Tuomainen <jorma.tuomainen@ppoy.fi> */
         	if(strpos($argHostname,":")) {
 				$argHostinfo=explode(":",$argHostname);
                	$argHostname=$argHostinfo[0];
@@ -180,7 +180,7 @@ NATSOFT.DOMAIN =
 				.")(PORT=$argHostport))(CONNECT_DATA=(SERVICE_NAME=$argDatabasename)))";
     	}
 				
- 		//if ($argHostname) print "<p>Connect: 1st argument should be left blank for $this->databaseType</p>";
+ 		/* if ($argHostname) print "<p>Connect: 1st argument should be left blank for $this->databaseType</p>"; */
        if ($persist)$this->_connectionID = OCIPLogon($argUsername,$argPassword, $argDatabasename);
 	   else $this->_connectionID = OCILogon($argUsername,$argPassword, $argDatabasename);
 	   
@@ -189,10 +189,10 @@ NATSOFT.DOMAIN =
 			$this->Execute("ALTER SESSION SET NLS_DATE_FORMAT='YYYY-MM-DD'");
 		}
 		
-		//print OCIServerVersion($this->_connectionID);
+		/* print OCIServerVersion($this->_connectionID); */
         return true;
    	}
-        // returns true or false
+        /*  returns true or false */
     function _pconnect($argHostname, $argUsername, $argPassword, $argDatabasename)
 	{
         return $this->_connect($argHostname, $argUsername, $argPassword, $argDatabasename,true);
@@ -215,7 +215,7 @@ NATSOFT.DOMAIN =
 	*/
 	function &SelectLimit($sql,$nrows=-1,$offset=-1, $inputarr=false,$arg3=false,$secs2cache=0)
 	{
-		// seems that oracle only supports 1 hint comment in 8i
+		/*  seems that oracle only supports 1 hint comment in 8i */
 		if (strpos($sql,'/*+') !== false)
 			$sql = str_replace('/*+ ','/*+FIRST_ROWS ',$sql);
 		else
@@ -224,17 +224,17 @@ NATSOFT.DOMAIN =
 		if ($offset < 100) {
 			if ($nrows > 0) {	
 				if ($offset > 0) $nrows += $offset;
-				//$inputarr['adodb_rownum'] = $nrows;
+				/* $inputarr['adodb_rownum'] = $nrows; */
 				$sql = "select * from ($sql) where rownum <= $nrows";
 				$nrows = -1;
 			}
-			// note that $nrows = 0 still has to work ==> no rows returned
+			/*  note that $nrows = 0 still has to work ==> no rows returned */
 
 			return ADOConnection::SelectLimit($sql,$nrows,$offset,$inputarr,$arg3,$secs2cache);
 		} else {
-			 // Algorithm by Tomas V V Cox, from PEAR DB oci8.php
+			 /*  Algorithm by Tomas V V Cox, from PEAR DB oci8.php */
 	        
-	         // Let Oracle return the name of the columns
+	         /*  Let Oracle return the name of the columns */
 	         $q_fields = "SELECT * FROM ($sql) WHERE NULL = NULL";
 	         if (!$result = OCIParse($this->_connectionID, $q_fields)) {
 	             return false;
@@ -250,7 +250,7 @@ NATSOFT.DOMAIN =
 			 
 	         $fields = implode(',', $cols);
 	         $nrows += $offset;
-			 $offset += 1; // in Oracle rownum starts at 1
+			 $offset += 1; /*  in Oracle rownum starts at 1 */
 			 
 	         $sql = "SELECT $fields FROM".
 	                  "(SELECT rownum as adodb_rownum, $fields FROM".
@@ -348,7 +348,7 @@ NATSOFT.DOMAIN =
 	static $BINDNUM = 0;
 	
 		$stmt = OCIParse($this->_connectionID,$sql);
-		if (!$stmt) return $sql; // error in statement, let Execute() handle the error
+		if (!$stmt) return $sql; /*  error in statement, let Execute() handle the error */
 		
 		$BINDNUM += 1;
 		return array($sql,$stmt,0,$BINDNUM);
@@ -389,11 +389,11 @@ NATSOFT.DOMAIN =
 		if (!is_array($stmt)) return false;
 		if ($name == false) {
 			if ($type !== false) $rez = OCIBindByName($stmt[1],":".$name,$var,$size,$type);
-			else $rez = OCIBindByName($stmt[1],":".$stmt[2],$var,$size); // +1 byte for null terminator
+			else $rez = OCIBindByName($stmt[1],":".$stmt[2],$var,$size); /*  +1 byte for null terminator */
 			$stmt[2] += 1;
 		} else {
 			if ($type !== false) $rez = OCIBindByName($stmt[1],":".$name,$var,$size,$type);
-			else $rez = OCIBindByName($stmt[1],":".$name,$var,$size); // +1 byte for null terminator
+			else $rez = OCIBindByName($stmt[1],":".$name,$var,$size); /*  +1 byte for null terminator */
 		}
 		
 		return $rez;
@@ -440,18 +440,18 @@ NATSOFT.DOMAIN =
 	*/ 
 	function _query($sql,$inputarr)
 	{
-		if (is_array($sql)) { // is prepared sql
+		if (is_array($sql)) { /*  is prepared sql */
 			$stmt = $sql[1];
 			
-			// we try to bind to permanent array, so that OCIBindByName is persistent
-			// and carried out once only - note that max array element size is 4000 chars
+			/*  we try to bind to permanent array, so that OCIBindByName is persistent */
+			/*  and carried out once only - note that max array element size is 4000 chars */
 			if (is_array($inputarr)) {
 				$bindpos = $sql[3];
 				if (isset($this->_bind[$bindpos])) {
-				// all tied up already
+				/*  all tied up already */
 					$bindarr = &$this->_bind[$bindpos];
 				} else {
-				// one statement to bind them all
+				/*  one statement to bind them all */
 					$bindarr = array();
 					foreach($inputarr as $k => $v) {
 						$bindarr[$k] = $v;
@@ -471,16 +471,16 @@ NATSOFT.DOMAIN =
 		if (is_array($inputarr)) {
 			foreach($inputarr as $k => $v) {
 				if (is_array($v)) {
-					if (sizeof($v) == 2) // suggested by g.giunta@libero.
+					if (sizeof($v) == 2) /*  suggested by g.giunta@libero. */
 						OCIBindByName($stmt,":$k",$inputarr[$k][0],$v[1]);
 					else
 						OCIBindByName($stmt,":$k",$inputarr[$k][0],$v[1],$v[2]);
 				} else {
 					$len = -1;
 					if ($v === ' ') $len = 1;
-					if (isset($bindarr)) {	// is prepared sql, so no need to ocibindbyname again
+					if (isset($bindarr)) {	/*  is prepared sql, so no need to ocibindbyname again */
 						$bindarr[$k] = $v;
-					} else { 				// dynamic sql, so rebind every time
+					} else { 				/*  dynamic sql, so rebind every time */
 						OCIBindByName($stmt,":$k",$inputarr[$k],$len);
 					}
 				}
@@ -495,7 +495,7 @@ NATSOFT.DOMAIN =
 	    return false;
 	}
 	
-	// returns true or false
+	/*  returns true or false */
 	function _close()
 	{
 		if (!$this->autoCommit) OCIRollback($this->_connectionID);
@@ -506,7 +506,7 @@ NATSOFT.DOMAIN =
 
 	function MetaPrimaryKeys($table)
 	{
-	// tested with oracle 8.1.7
+	/*  tested with oracle 8.1.7 */
 		$table = strtoupper($table);
 		$sql = "SELECT /*+ RULE */ distinct b.column_name
    FROM ALL_CONSTRAINTS a
@@ -542,7 +542,7 @@ NATSOFT.DOMAIN =
 		case 'T': return 'DATE';
 		case 'L': return 'NUMBER(1)';
 		case 'R': return false;
-		case 'I': return 'NUMBER(16)';  // enough for 9 petabytes!
+		case 'I': return 'NUMBER(16)';  /*  enough for 9 petabytes! */
 		
 		case 'F': return 'NUMBER';
 		case 'N': return 'NUMBER';
@@ -584,12 +584,12 @@ NATSOFT.DOMAIN =
 			return  "'".str_replace("'",$this->replaceQuote,$s)."'";
 		}
 		
-		// undo magic quotes for "
+		/*  undo magic quotes for " */
 		$s = str_replace('\\"','"',$s);
 		
-		if ($this->replaceQuote == "\\'")  // ' already quoted, no need to change anything
+		if ($this->replaceQuote == "\\'")  /*  ' already quoted, no need to change anything */
 			return "'$s'";
-		else {// change \' to '' for sybase/mssql
+		else {/*  change \' to '' for sybase/mssql */
 			$s = str_replace('\\\\','\\',$s);
 			return "'".str_replace("\\'",$this->replaceQuote,$s)."'";
 		}
@@ -606,7 +606,7 @@ class ADORecordset_oci8 extends ADORecordSet {
     var $databaseType = 'oci8';
 	var $bind=false;
 	var $_fieldobjs;
-	//var $_arr = false;
+	/* var $_arr = false; */
 		
     function ADORecordset_oci8($queryID)
     {
@@ -670,7 +670,7 @@ class ADORecordset_oci8 extends ADORecordSet {
         $fld->type = OCIcolumntype($this->_queryID, $fieldOffset);
         $fld->max_length = OCIcolumnsize($this->_queryID, $fieldOffset);
 	 	if ($fld->type == 'NUMBER') {
-	 		//$p = OCIColumnPrecision($this->_queryID, $fieldOffset);
+	 		/* $p = OCIColumnPrecision($this->_queryID, $fieldOffset); */
 			$sc = OCIColumnScale($this->_queryID, $fieldOffset);
 			if ($sc == 0) $fld->type = 'INT';
 	 	}
@@ -692,7 +692,7 @@ class ADORecordset_oci8 extends ADORecordSet {
 	 */
 	function GetArray($nRows = -1) 
 	{
-	//	if ($this->_arr) return $this->_arr;
+	/* 	if ($this->_arr) return $this->_arr; */
 		$results = array();
 		$cnt = 0;
 		while (!$this->EOF && $nRows != $cnt) {
@@ -702,7 +702,7 @@ class ADORecordset_oci8 extends ADORecordSet {
 		return $results;
 	}
 	
-	// 10% speedup to move MoveNext to child class
+	/*  10% speedup to move MoveNext to child class */
 	function MoveNext() 
 	{
 		if (!$this->EOF) {		
@@ -795,7 +795,7 @@ class ADORecordset_oci8 extends ADORecordSet {
 		case 'DATE': 
 			return 'D';
 		
-		     //case 'T': return 'T';
+		     /* case 'T': return 'T'; */
 		
 		case 'INT': 
 		case 'SMALLINT':

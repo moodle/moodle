@@ -20,54 +20,54 @@ function testsql()
 include('../adodb.inc.php');
 include('../tohtml.inc.php');
 
-//==========================
-// This code tests an insert
+/* ========================== */
+/*  This code tests an insert */
 
 $sql = "SELECT * FROM ADOXYZ WHERE id = -1"; 
-// Select an empty record from the database 
+/*  Select an empty record from the database  */
 
-$conn = &ADONewConnection("mysql");  // create a connection
+$conn = &ADONewConnection("mysql");  /*  create a connection */
 $conn->debug=1;
-$conn->PConnect("localhost", "root", "", "test"); // connect to MySQL, testdb
+$conn->PConnect("localhost", "root", "", "test"); /*  connect to MySQL, testdb */
 $conn->Execute("delete from adoxyz where lastname like 'Smith%'");
 
-$rs = $conn->Execute($sql); // Execute the query and get the empty recordset
-$record = array(); // Initialize an array to hold the record data to insert
+$rs = $conn->Execute($sql); /*  Execute the query and get the empty recordset */
+$record = array(); /*  Initialize an array to hold the record data to insert */
 
-// Set the values for the fields in the record
+/*  Set the values for the fields in the record */
 $record["firstname"] = "Bob";
-$record["lastname"] = "Smith\$@//";
+$record["lastname"] = "Smith\$@/* "; */
 $record["created"] = time();
 
-// Pass the empty recordset and the array containing the data to insert
-// into the GetInsertSQL function. The function will process the data and return
-// a fully formatted insert sql statement.
+/*  Pass the empty recordset and the array containing the data to insert */
+/*  into the GetInsertSQL function. The function will process the data and return */
+/*  a fully formatted insert sql statement. */
 $insertSQL = $conn->GetInsertSQL($rs, $record);
 
-$conn->Execute($insertSQL); // Insert the record into the database
+$conn->Execute($insertSQL); /*  Insert the record into the database */
 
-//==========================
-// This code tests an update
+/* ========================== */
+/*  This code tests an update */
 
 $sql = "SELECT * FROM ADOXYZ WHERE lastname=".$conn->qstr($record['lastname']); 
-// Select a record to update 
+/*  Select a record to update  */
 
-$rs = $conn->Execute($sql); // Execute the query and get the existing record to update
+$rs = $conn->Execute($sql); /*  Execute the query and get the existing record to update */
 if (!$rs) print "<p>No record found!</p>";
-$record = array(); // Initialize an array to hold the record data to update
+$record = array(); /*  Initialize an array to hold the record data to update */
 
-// Set the values for the fields in the record
+/*  Set the values for the fields in the record */
 $record["firstname"] = "Caroline".rand();
-$record["lastname"] = "Smithy"; // Update Caroline's lastname from Miranda to Smith
+$record["lastname"] = "Smithy"; /*  Update Caroline's lastname from Miranda to Smith */
 $record["created"] = '2002-12-'.(rand()%30+1);
 
-// Pass the single record recordset and the array containing the data to update
-// into the GetUpdateSQL function. The function will process the data and return
-// a fully formatted update sql statement.
-// If the data has not changed, no recordset is returned
+/*  Pass the single record recordset and the array containing the data to update */
+/*  into the GetUpdateSQL function. The function will process the data and return */
+/*  a fully formatted update sql statement. */
+/*  If the data has not changed, no recordset is returned */
 $updateSQL = $conn->GetUpdateSQL($rs, $record);
 
-$conn->Execute($updateSQL); // Update the record in the database
+$conn->Execute($updateSQL); /*  Update the record in the database */
 print "<p>Rows Affected=".$conn->Affected_Rows()."</p>";
 
 rs2html($conn->Execute("select * from adoxyz where lastname like 'Smith%'"));

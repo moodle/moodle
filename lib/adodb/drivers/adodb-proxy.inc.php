@@ -25,6 +25,6 @@ if (! defined("_ADODB_PROXY_LAYER")) {
 			$this->ADORecordset($id);
 		}
 	};
-} // define
+} /*  define */
 	
 ?>

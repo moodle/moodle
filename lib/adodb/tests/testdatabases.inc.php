@@ -9,8 +9,8 @@ V2.12 12 June 2002 (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights rese
  
  /* this file is used by the ADODB test program: test.php */
  
-// cannot test databases below, but we include them anyway to check
-// if they parse ok...
+/*  cannot test databases below, but we include them anyway to check */
+/*  if they parse ok... */
 ADOLoadCode("sybase");
 ADOLoadCode("postgres");
 ADOLoadCode("postgres7");
@@ -20,7 +20,7 @@ ADOLoadCode("informix");
 ADOLoadCode("sqlanywhere");
 
 if (!empty($testpostgres)) {
-	//ADOLoadCode("postgres");
+	/* ADOLoadCode("postgres"); */
 	$db = &ADONewConnection('postgres64');
 	print "<h1>Connecting $db->databaseType...</h1>";
 	if (@$db->PConnect("susetikus","tester","test","test")) {
@@ -38,7 +38,7 @@ if (!empty($testibase)) {
 	
 }
 
-// REQUIRES ODBC DSN CALLED nwind
+/*  REQUIRES ODBC DSN CALLED nwind */
 if (!empty($testaccess)) {
 
 	$db = &ADONewConnection('access');
@@ -50,7 +50,7 @@ if (!empty($testaccess)) {
 	
 }
 
-if (!empty($testaccess) && !empty($testado)) { // ADO ACCESS
+if (!empty($testaccess) && !empty($testado)) { /*  ADO ACCESS */
 	
 	$db = &ADONewConnection("ado_access");
 	print "<h1>Connecting $db->databaseType...</h1>";
@@ -58,7 +58,7 @@ if (!empty($testaccess) && !empty($testado)) { // ADO ACCESS
 	$access = 'd:\inetpub\wwwroot\php\NWIND.MDB';
 	$myDSN =  'PROVIDER=Microsoft.Jet.OLEDB.4.0;'
 		. 'DATA SOURCE=' . $access . ';';
-		//. 'USER ID=;PASSWORD=;';
+		/* . 'USER ID=;PASSWORD=;'; */
 	
 	if (@$db->PConnect($myDSN, "", "", "")) {
 		print "ADO version=".$db->_connectionID->version."<br>";
@@ -67,7 +67,7 @@ if (!empty($testaccess) && !empty($testado)) { // ADO ACCESS
 	
 }
 
-if (!empty($testvfp)) { // ODBC
+if (!empty($testvfp)) { /*  ODBC */
 
 	
 	$db = &ADONewConnection('vfp');
@@ -79,8 +79,8 @@ if (!empty($testvfp)) { // ODBC
 }
 
 
-// REQUIRES MySQL server at localhost with database 'test'
-if (!empty($testmysql)) { // MYSQL
+/*  REQUIRES MySQL server at localhost with database 'test' */
+if (!empty($testmysql)) { /*  MYSQL */
 	
 	$db = &ADONewConnection('maxsql');
 	print "<h1>Connecting $db->databaseType...</h1>";
@@ -95,7 +95,7 @@ if (!empty($testmysql)) { // MYSQL
 	print "<h1>Connecting $db->databaseType...</h1>";
 	if ($HTTP_SERVER_VARS['HTTP_HOST'] == 'localhost') $server = 'localhost';
 
-	if ($db->PConnect('http://localhost/php/phplens/adodb/server.php'))
+	if ($db->PConnect('http:/* localhost/php/phplens/adodb/server.php')) */
 		testdb($db,
 		"create table ADOXYZ (id int, firstname char(24), lastname char(24), created date) type=innodb");
 	else print "ERROR: MySQL test requires a MySQL server on localhost, userid='admin', password='', database='test'".'<BR>'.$db->ErrorMsg();
@@ -109,12 +109,12 @@ if (!empty($testoracle)) {
 	$db = ADONewConnection('oci8po');
 	print "<h1>Connecting $db->databaseType...</h1>";
 	if ($db->Connect('', "scott", "tiger",'natsoft.ecosystem.natsoft.com.my'))
-	//if ($db->PConnect("", "scott", "tiger", "juris.ecosystem.natsoft.com.my"))
+	/* if ($db->PConnect("", "scott", "tiger", "juris.ecosystem.natsoft.com.my")) */
 		testdb($db,"create table ADOXYZ (id int, firstname varchar(24), lastname varchar(24),created date)");
 	else print "ERROR: Oracle test requires an Oracle server setup with scott/tiger".'<BR>'.$db->ErrorMsg();
 
 }
-ADOLoadCode("oracle"); // no longer supported
+ADOLoadCode("oracle"); /*  no longer supported */
 if (false && !empty($testoracle)) { 
 	
 	$db = ADONewConnection();
@@ -127,7 +127,7 @@ if (false && !empty($testoracle)) {
 
 
 ADOLoadCode("odbc_mssql");
-if (!empty($testmssql) && false) { // MS SQL Server via ODBC
+if (!empty($testmssql) && false) { /*  MS SQL Server via ODBC */
 	
 	$db = ADONewConnection();
 	
@@ -140,7 +140,7 @@ if (!empty($testmssql) && false) { // MS SQL Server via ODBC
 
 ADOLoadCode("ado_mssql");
 
-if (!empty($testmssql) && !empty($testado) ) { // ADO ACCESS MSSQL -- thru ODBC -- DSN-less
+if (!empty($testmssql) && !empty($testado) ) { /*  ADO ACCESS MSSQL -- thru ODBC -- DSN-less */
 	
 	$db = &ADONewConnection("ado_mssql");
 	$db->debug=1;
@@ -158,7 +158,7 @@ if (!empty($testmssql) && !empty($testado) ) { // ADO ACCESS MSSQL -- thru ODBC 
 
 
 ADOLoadCode("mssql");
-if (!empty($testmssql)) { // MS SQL Server -- the extension is buggy -- probably better to use ODBC
+if (!empty($testmssql)) { /*  MS SQL Server -- the extension is buggy -- probably better to use ODBC */
 	$db = ADONewConnection();
 	$db->debug=1;
 	print "<h1>Connecting $db->databaseType...</h1>";
@@ -172,13 +172,13 @@ if (!empty($testmssql)) { // MS SQL Server -- the extension is buggy -- probably
 	
 }
 
-if (!empty($testmssql) && !empty($testado)) { // ADO ACCESS MSSQL with OLEDB provider
+if (!empty($testmssql) && !empty($testado)) { /*  ADO ACCESS MSSQL with OLEDB provider */
 
 	$db = &ADONewConnection("ado_mssql");
 	print "<h1>Connecting DSN-less OLEDB Provider $db->databaseType...</h1>";
 	$db->debug=1;
 	$myDSN="SERVER=mangrove;DATABASE=ai;";
-	//$myDSN='SERVER=(local)\NetSDK;DATABASE=northwind;';
+	/* $myDSN='SERVER=(local)\NetSDK;DATABASE=northwind;'; */
 	if ($db->PConnect($myDSN, "sa", "natsoft", 'SQLOLEDB'))
 		testdb($db,"create table ADOXYZ (id int, firstname char(24), lastname char(24),created datetime)");
 	else print "ERROR: MSSQL test 2 requires a MS SQL 7 on a server='mangrove', userid='sa', password='', database='ai'";

@@ -18,7 +18,7 @@ if (!defined('_ADODB_ODBC_LAYER')) {
  
 class  ADODB_odbc_oracle extends ADODB_odbc {	
 	var $databaseType = 'odbc_oracle';
- 	var $replaceQuote = "''"; // string to use to replace quotes
+ 	var $replaceQuote = "''"; /*  string to use to replace quotes */
     var $concat_operator='||';
 	var $fmtDate = "'Y-m-d 00:00:00'"; 
 	var $fmtTimeStamp = "'Y-m-d h:i:sA'";
@@ -27,7 +27,7 @@ class  ADODB_odbc_oracle extends ADODB_odbc {
 	var $sysDate = "TO_DATE(TO_CHAR(SYSDATE,'YYYY-MM-DD'),'YYYY-MM-DD')";
 	var $sysTimeStamp = 'SYSDATE';
 	
-	//var $_bindInputArray = false;
+	/* var $_bindInputArray = false; */
 	
 	function ADODB_odbc_oracle()
 	{
@@ -58,7 +58,7 @@ class  ADODB_odbc_oracle extends ADODB_odbc {
 			if ($rs === false) return false;
 
 			$retarr = array();
-			while (!$rs->EOF) { //print_r($rs->fields);
+			while (!$rs->EOF) { /* print_r($rs->fields); */
 				$fld = new ADOFieldObject();
 				$fld->name = $rs->fields[0];
 				$fld->type = $rs->fields[1];
@@ -73,7 +73,7 @@ class  ADODB_odbc_oracle extends ADODB_odbc {
 		return false;
 	}
 
-	// returns true or false
+	/*  returns true or false */
 	function _connect($argDSN, $argUsername, $argPassword, $argDatabasename)
 	{
 	global $php_errormsg;
@@ -83,10 +83,10 @@ class  ADODB_odbc_oracle extends ADODB_odbc {
 		$this->_errorMsg = $php_errormsg;
 		
 		$this->Execute("ALTER SESSION SET NLS_DATE_FORMAT='YYYY-MM-DD HH24:MI:SS'");
-		//if ($this->_connectionID) odbc_autocommit($this->_connectionID,true);
+		/* if ($this->_connectionID) odbc_autocommit($this->_connectionID,true); */
 		return $this->_connectionID != false;
 	}
-	// returns true or false
+	/*  returns true or false */
 	function _pconnect($argDSN, $argUsername, $argPassword, $argDatabasename)
 	{
 	global $php_errormsg;
@@ -95,7 +95,7 @@ class  ADODB_odbc_oracle extends ADODB_odbc {
 		$this->_errorMsg = $php_errormsg;
 		
 		$this->Execute("ALTER SESSION SET NLS_DATE_FORMAT='YYYY-MM-DD HH24:MI:SS'");
-		//if ($this->_connectionID) odbc_autocommit($this->_connectionID,true);
+		/* if ($this->_connectionID) odbc_autocommit($this->_connectionID,true); */
 		return $this->_connectionID != false;
 	}
 } 

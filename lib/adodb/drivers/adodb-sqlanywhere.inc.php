@@ -147,7 +147,7 @@ if (!defined('ADODB_SYBASE_SQLANYWHERE')){
    $this->drop_blobvar($blobVarName);
    return true;
   }
- }; //class
+ }; /* class */
 
  class  ADORecordSet_sqlanywhere extends ADORecordSet_odbc {	
 
@@ -159,8 +159,8 @@ if (!defined('ADODB_SYBASE_SQLANYWHERE')){
  }
 
 
- }; //class
+ }; /* class */
 
 
-} //define
+} /* define */
 ?>

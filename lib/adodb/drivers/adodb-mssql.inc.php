@@ -14,31 +14,31 @@ Set tabs to 4 for best viewing.
 	
 */
 
-//----------------------------------------------------------------
-// MSSQL returns dates with the format Oct 13 2002 or 13 Oct 2002
-// and this causes tons of problems because localized versions of 
-// MSSQL will return the dates in dmy or  mdy order; and also the 
-// month strings depends on what language has been configured. The 
-// following two variables allow you to control the localization
-// settings - Ugh.
-//
-// MORE LOCALIZATION INFO
-// ----------------------
-// To configure datetime, look for and modify sqlcommn.loc, 
-//  	typically found in c:\mssql\install
-// Also read :
-//	 http://support.microsoft.com/default.aspx?scid=kb;EN-US;q220918
-// Alternatively use:
-// 	   CONVERT(char(12),datecol,120)
-//----------------------------------------------------------------
+/* ---------------------------------------------------------------- */
+/*  MSSQL returns dates with the format Oct 13 2002 or 13 Oct 2002 */
+/*  and this causes tons of problems because localized versions of  */
+/*  MSSQL will return the dates in dmy or  mdy order; and also the  */
+/*  month strings depends on what language has been configured. The  */
+/*  following two variables allow you to control the localization */
+/*  settings - Ugh. */
+/*  */
+/*  MORE LOCALIZATION INFO */
+/*  ---------------------- */
+/*  To configure datetime, look for and modify sqlcommn.loc,  */
+/*   	typically found in c:\mssql\install */
+/*  Also read : */
+/* 	 http://support.microsoft.com/default.aspx?scid=kb;EN-US;q220918 */
+/*  Alternatively use: */
+/*  	   CONVERT(char(12),datecol,120) */
+/* ---------------------------------------------------------------- */
 
-global $ADODB_mssql_date_order; // 'dmy' and 'mdy' supported
+global $ADODB_mssql_date_order; /*  'dmy' and 'mdy' supported */
 
 $ADODB_mssql_has_datetimeconvert = (strnatcmp(PHP_VERSION,'4.2.0')>=0);
 if ($ADODB_mssql_has_datetimeconvert) {
 	ini_set('mssql.datetimeconvert',0); 
 } else {
-global $ADODB_mssql_mths;		// array, months must be upper-case
+global $ADODB_mssql_mths;		/*  array, months must be upper-case */
 global $ADODB_mssql_has_datetimeconvert;
 
 	$ADODB_mssql_date_order = 'mdy'; 
@@ -46,9 +46,9 @@ global $ADODB_mssql_has_datetimeconvert;
 		'JAN'=>1,'FEB'=>2,'MAR'=>3,'APR'=>4,'MAY'=>5,'JUN'=>6,
 		'JUL'=>7,'AUG'=>8,'SEP'=>9,'OCT'=>10,'NOV'=>11,'DEC'=>12);
 }
-//---------------------------------------------------------------------------
-// Call this to autoset $ADODB_mssql_date_order at the beginning of your code,
-// just after you connect to the database. Supports mdy and dmy only
+/* --------------------------------------------------------------------------- */
+/*  Call this to autoset $ADODB_mssql_date_order at the beginning of your code, */
+/*  just after you connect to the database. Supports mdy and dmy only */
 function AutoDetect_MSSQL_Date_Order($conn)
 {
 global $ADODB_mssql_date_order;
@@ -69,14 +69,14 @@ global $ADODB_mssql_date_order;
 
 class ADODB_mssql extends ADOConnection {
 	var $databaseType = "mssql";	
-	var $replaceQuote = "''"; // string to use to replace quotes
+	var $replaceQuote = "''"; /*  string to use to replace quotes */
 	var $fmtDate = "'Y-m-d'";
 	var $fmtTimeStamp = "'Y-m-d h:i:sA'";
 	var $hasInsertID = true;
     var $hasAffectedRows = true;
 	var $metaTablesSQL="select name from sysobjects where type='U' or type='V' and (name not in ('sysallocations','syscolumns','syscomments','sysdepends','sysfilegroups','sysfiles','sysfiles1','sysforeignkeys','sysfulltextcatalogs','sysindexes','sysindexkeys','sysmembers','sysobjects','syspermissions','sysprotects','sysreferences','systypes','sysusers','sysalternates','sysconstraints','syssegments','REFERENTIAL_CONSTRAINTS','CHECK_CONSTRAINTS','CONSTRAINT_TABLE_USAGE','CONSTRAINT_COLUMN_USAGE','VIEWS','VIEW_TABLE_USAGE','VIEW_COLUMN_USAGE','SCHEMATA','TABLES','TABLE_CONSTRAINTS','TABLE_PRIVILEGES','COLUMNS','COLUMN_DOMAIN_USAGE','COLUMN_PRIVILEGES','DOMAINS','DOMAIN_CONSTRAINTS','KEY_COLUMN_USAGE'))";
 	var $metaColumnsSQL = "select c.name,t.name,c.length from syscolumns c join systypes t on t.xusertype=c.xusertype join sysobjects o on o.id=c.id where o.name='%s'";
-	var $hasTop = 'top';		// support mssql SELECT TOP 10 * FROM TABLE
+	var $hasTop = 'top';		/*  support mssql SELECT TOP 10 * FROM TABLE */
 	var $_hastrans = false;
 	var $hasGenID = true;
 	var $sysDate = 'GetDate()';
@@ -91,12 +91,12 @@ class ADODB_mssql extends ADOConnection {
 		$this->_has_mssql_init = (strnatcmp(PHP_VERSION,'4.1.0')>=0);	
 	}
 
-    // might require begintrans -- committrans
+    /*  might require begintrans -- committrans */
     function _insertid()
     {
             return $this->GetOne('select @@identity');
     }
-      // might require begintrans -- committrans
+      /*  might require begintrans -- committrans */
     function _affectedrows()
     {
         return $this->GetOne('select @@rowcount');
@@ -111,7 +111,7 @@ class ADODB_mssql extends ADOConnection {
 		
 	function GenID($seq='adodbseq',$start=1)
 	{	
-		//$this->debug=1;
+		/* $this->debug=1; */
 		$this->Execute('BEGIN TRANSACTION adodbseq');
 		$ok = $this->Execute("update $seq with (tablock,holdlock) set id = id + 1");
 		if (!$ok) {
@@ -128,8 +128,8 @@ class ADODB_mssql extends ADOConnection {
 		$this->Execute('COMMIT TRANSACTION adodbseq'); 
 		return $num;
 		
-		// in old implementation, pre 1.90, we returned GUID...
-		//return $this->GetOne("SELECT CONVERT(varchar(255), NEWID()) AS 'Char'");
+		/*  in old implementation, pre 1.90, we returned GUID... */
+		/* return $this->GetOne("SELECT CONVERT(varchar(255), NEWID()) AS 'Char'"); */
 	}
 	
 	function CommitTrans($ok=true) 
@@ -166,7 +166,7 @@ class ADODB_mssql extends ADOConnection {
 		return $this->GetOne("select top 1 null as ignore from $tables with (ROWLOCK,HOLDLOCK) where $where");
 	}
 	
-	//From: Fernando Moreira <FMoreira@imediata.pt>
+	/* From: Fernando Moreira <FMoreira@imediata.pt> */
 	function MetaDatabases() 
 	{ 
 	    if(@mssql_select_db("master")) { 
@@ -219,7 +219,7 @@ class ADODB_mssql extends ADOConnection {
        else return -1;
 	}
 	
-	// returns true or false
+	/*  returns true or false */
 	function _connect($argHostname, $argUsername, $argPassword, $argDatabasename)
 	{
 		$this->_connectionID = mssql_connect($argHostname,$argUsername,$argPassword);
@@ -229,7 +229,7 @@ class ADODB_mssql extends ADOConnection {
 	}
 	
 	
-	// returns true or false
+	/*  returns true or false */
 	function _pconnect($argHostname, $argUsername, $argPassword, $argDatabasename)
 	{
 		$this->_connectionID = mssql_pconnect($argHostname,$argUsername,$argPassword);
@@ -279,7 +279,7 @@ class ADODB_mssql extends ADOConnection {
 			return $sql;
 		}
 
-		$isNull = is_null($var); // php 4.0.4 and above...
+		$isNull = is_null($var); /*  php 4.0.4 and above... */
 			
 		if ($type === false) 
 			switch(gettype($var)) {
@@ -314,7 +314,7 @@ class ADODB_mssql extends ADOConnection {
 		return $this->Execute($sql) != false;
 	}
 	
-	// returns query ID if successful, otherwise false
+	/*  returns query ID if successful, otherwise false */
 	function _query($sql,$inputarr)
 	{
 		$this->_errorMsg = false;
@@ -322,7 +322,7 @@ class ADODB_mssql extends ADOConnection {
 		return mssql_query($sql,$this->_connectionID);
 	}
 	
-	// returns true or false
+	/*  returns true or false */
 	function _close()
 	{ 
 		if ($this->_hastrans) $this->RollbackTrans();
@@ -331,7 +331,7 @@ class ADODB_mssql extends ADOConnection {
 		return $rez;
 	}
 	
-	// mssql uses a default date like Dec 30 2000 12:00AM
+	/*  mssql uses a default date like Dec 30 2000 12:00AM */
 	function UnixDate($v)
 	{
 		return ADORecordSet_array_mssql::UnixDate($v);
@@ -351,7 +351,7 @@ class ADORecordset_mssql extends ADORecordSet {
 
 	var $databaseType = "mssql";
 	var $canSeek = true;
-	// _mths works only in non-localised system
+	/*  _mths works only in non-localised system */
 		
 	function ADORecordset_mssql($id)
 	{
@@ -361,8 +361,8 @@ class ADORecordset_mssql extends ADORecordSet {
 		return $this->ADORecordSet($id);
 	}
 
-	//Contributed by "Sven Axelsson" <sven.axelsson@bokochwebb.se>
-	// get next resultset - requires PHP 4.0.5 or later
+	/* Contributed by "Sven Axelsson" <sven.axelsson@bokochwebb.se> */
+	/*  get next resultset - requires PHP 4.0.5 or later */
 	function NextRecordSet()
 	{
 	    if (!mssql_next_result($this->_queryID)) return false;
@@ -416,7 +416,7 @@ class ADORecordset_mssql extends ADORecordSet {
 		return @mssql_data_seek($this->_queryID, $row);
 	}
 
-	// speedup
+	/*  speedup */
 	function MoveNext() 
 	{
 		if (!$this->EOF) {		
@@ -430,8 +430,8 @@ class ADORecordset_mssql extends ADORecordSet {
 		return false;
 	}
 	
-	// INSERT UPDATE DELETE returns false even if no error occurs in 4.0.4
-	// also the date format has been changed from YYYY-mm-dd to dd MMM YYYY in 4.0.4. Idiot!
+	/*  INSERT UPDATE DELETE returns false even if no error occurs in 4.0.4 */
+	/*  also the date format has been changed from YYYY-mm-dd to dd MMM YYYY in 4.0.4. Idiot! */
 	function _fetch($ignore_fields=false) 
 	{
 		if ($this->fetchMode & ADODB_FETCH_ASSOC) $this->fields = @mssql_fetch_array($this->_queryID);
@@ -447,7 +447,7 @@ class ADORecordset_mssql extends ADORecordSet {
 		$this->_queryID = false;	
 		return $rez;
 	}
-	// mssql uses a default date like Dec 30 2000 12:00AM
+	/*  mssql uses a default date like Dec 30 2000 12:00AM */
 	function UnixDate($v)
 	{
 		return ADORecordSet_array_mssql::UnixDate($v);
@@ -467,7 +467,7 @@ class ADORecordSet_array_mssql extends ADORecordSet_array {
 		$this->ADORecordSet_array($id);
 	}
 	
-		// mssql uses a default date like Dec 30 2000 12:00AM
+		/*  mssql uses a default date like Dec 30 2000 12:00AM */
 	function UnixDate($v)
 	{
 	global $ADODB_mssql_has_datetimeconvert;
@@ -475,7 +475,7 @@ class ADORecordSet_array_mssql extends ADORecordSet_array {
 		
 	global $ADODB_mssql_mths,$ADODB_mssql_date_order;
 	
-		//Dec 30 2000 12:00AM 
+		/* Dec 30 2000 12:00AM  */
 		if ($ADODB_mssql_date_order == 'dmy') {
 			if (!preg_match( "|^([0-9]{1,2})[-/\. ]+([A-Za-z]{3})[-/\. ]+([0-9]{4})|" ,$v, $rr)) {
 				return parent::UnixDate($v);
@@ -495,7 +495,7 @@ class ADORecordSet_array_mssql extends ADORecordSet_array {
 		}
 		$themth = $ADODB_mssql_mths[$themth];
 		if ($themth <= 0) return false;
-		// h-m-s-MM-DD-YY
+		/*  h-m-s-MM-DD-YY */
 		return  mktime(0,0,0,$themth,$theday,$rr[3]);
 	}
 	
@@ -506,7 +506,7 @@ class ADORecordSet_array_mssql extends ADORecordSet_array {
 		
 	global $ADODB_mssql_mths,$ADODB_mssql_date_order;
 	
-		//Dec 30 2000 12:00AM
+		/* Dec 30 2000 12:00AM */
 		 if ($ADODB_mssql_date_order == 'dmy') {
 			 if (!preg_match( "|^([0-9]{1,2})[-/\. ]+([A-Za-z]{3})[-/\. ]+([0-9]{4}) +([0-9]{1,2}):([0-9]{1,2}) *([apAP]{0,1})|"
 			,$v, $rr)) return parent::UnixTimeStamp($v);
@@ -536,7 +536,7 @@ class ADORecordSet_array_mssql extends ADORecordSet_array {
 		default:
 			break;
 		}
-		// h-m-s-MM-DD-YY
+		/*  h-m-s-MM-DD-YY */
 		return  mktime($rr[4],$rr[5],0,$themth,$theday,$rr[3]);
 	}
 }
