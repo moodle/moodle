@@ -133,4 +133,25 @@ function resource_get_participants($resourceid) {
     return false;
 }
 
+function resource_get_coursemodule_info($coursemodule) {
+/// Given a course_module object, this function returns any 
+/// "extra" information that may be needed when printing
+/// this activity in a course listing.
+///
+/// See get_array_of_activities() in course/lib.php
+///
+
+   if ($resource = get_record("resource", "id", $coursemodule->instance)) {
+       if (($resource->type == UPLOADEDFILE or $resource->type == WEBLINK) and !empty($resource->alltext)) {
+           return urlencode("target=\"resource$resource->id\" onClick=\"return ".
+                            "openpopup('/mod/resource/view.php?inpopup=true&id=".
+                            $coursemodule->id.
+                            "','resource$resource->id','$resource->alltext');\"");
+       }
+   }
+
+   return false;
+}
+
+
 ?>

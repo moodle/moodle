@@ -361,6 +361,8 @@ function get_array_of_activities($courseid) {
 //  visible - is the instance visible or not
 //  extra - contains extra string to include in any link
 
+    global $CFG;
+
     $mod = array();
 
     if (!$rawmods = get_course_mods($courseid)) {
@@ -381,21 +383,15 @@ function get_array_of_activities($courseid) {
                    $mod[$seq]->name = urlencode(get_field($rawmods[$seq]->modname, "name", "id", $rawmods[$seq]->instance));
                    $mod[$seq]->visible = $rawmods[$seq]->visible;
                    $mod[$seq]->extra = "";
-                   
-                   // This part is an ugly hack that doesn't belong here//
-                   if ($mod[$seq]->mod == "resource") {
-                       if ($resource = get_record("resource", "id", $rawmods[$seq]->instance)) {
-                           if (($resource->type == 3 or $resource->type == 5) and !empty($resource->alltext)) {
-                               $mod[$seq]->extra = urlencode("target=\"resource$resource->id\" onClick=\"return ".
-                                                   "openpopup('/mod/resource/view.php?inpopup=true&id=".
-                                                   $mod[$seq]->cm.
-                                                   "','resource$resource->id','$resource->alltext');\"");
-                           }
-                       }
-                   }
-                   if ($mod[$seq]->mod == "label") {
-                       if ($label = get_record("label", "id", $rawmods[$seq]->instance)) {
-                           $mod[$seq]->extra = urlencode($label->content);
+
+                   $modname = $mod[$seq]->mod;
+                   $functionname = $modname."_get_coursemodule_info";
+
+                   include_once("$CFG->dirroot/mod/$modname/lib.php");
+
+                   if (function_exists($functionname)) {
+                       if ($extra = $functionname($rawmods[$seq])) {
+                           $mod[$seq]->extra = $extra;
                        }
                    }
                }

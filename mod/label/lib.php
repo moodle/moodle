@@ -79,4 +79,18 @@ function label_get_participants($labelid) {
     return false;
 }
 
+function label_get_coursemodule_info($coursemodule) {
+/// Given a course_module object, this function returns any 
+/// "extra" information that may be needed when printing
+/// this activity in a course listing.
+///
+/// See get_array_of_activities() in course/lib.php
+
+   if ($label = get_record("label", "id", $coursemodule->instance)) {
+       return urlencode($label->content);
+   }
+
+   return false;
+}
+
 ?>
