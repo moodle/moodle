@@ -1223,7 +1223,7 @@ function workshop_list_submissions_for_admin($workshop, $order) {
                         $action ="";
                     }
                 }
-                $table->data[] = array("$user->firstname $user->lastname", $title, $action);
+                $table->data[] = array(fullname($user), $title, $action);
             }
         }
         if (isset($table->data)) {
@@ -1279,7 +1279,7 @@ function workshop_list_submissions_for_admin($workshop, $order) {
             }
             $action .= " | <a href=\"submissions.php?action=adminconfirmdelete&a=$workshop->id&sid=$submission->id\">".
                 get_string("delete", "workshop")."</a>";
-            $table->data[] = array("$user->firstname $user->lastname", $submission->title.
+            $table->data[] = array(fullname($user), $submission->title.
                 " ".workshop_print_submission_assessments($workshop, $submission, "teacher").
                 " ".workshop_print_submission_assessments($workshop, $submission, "student"), $action);
         }
@@ -1449,7 +1449,7 @@ function workshop_list_unassessed_student_submissions($workshop, $user) {
                     $action = "<A HREF=\"assessments.php?action=assesssubmission&a=$workshop->id&sid=$submission->id\">".
                         get_string("edit", "workshop")."</A>";
                     $table->data[] = array(workshop_print_submission_title($workshop, $submission), 
-                        $submissionowner->firstname." ".$submissionowner->lastname, $action, $comment);
+                        fullname($submissionowner), $action, $comment);
                     }
                 }
             else { // no assessment
@@ -1457,7 +1457,7 @@ function workshop_list_unassessed_student_submissions($workshop, $user) {
                 $action = "<A HREF=\"assessments.php?action=assesssubmission&a=$workshop->id&sid=$submission->id\">".
                     get_string("assess", "workshop")."</A>";
                 $table->data[] = array(workshop_print_submission_title($workshop, $submission), 
-                    $submissionowner->firstname." ".$submissionowner->lastname, $action, $comment);
+                    fullname($submissionowner), $action, $comment);
                 }
             }
         if (isset($table->data)) {
@@ -1541,8 +1541,7 @@ function workshop_list_ungraded_assessments($workshop, $stype) {
                 $submissionowner = get_record("user", "id", $submission->userid);
                 $assessor = get_record("user", "id", $assessment->userid);
                 $table->data[] = array(workshop_print_submission_title($workshop, $submission), 
-                    $submissionowner->firstname." ".$submissionowner->lastname, 
-                    $assessor->firstname." ".$assessor->lastname, userdate($assessment->timecreated), $action);
+                    fullname($submissionowner), fullname($assessor), userdate($assessment->timecreated), $action);
                 }
             }
         if (isset($table->data)) {
@@ -2151,7 +2150,7 @@ function workshop_print_assessments_by_user_for_admin($workshop, $user) {
 
     if ($assessments =workshop_get_user_assessments($workshop, $user)) {
         foreach ($assessments as $assessment) {
-            echo "<p><center><b>".get_string("assessmentby", "workshop", $user->firstname." ".$user->lastname)."</b></center></p>\n";
+            echo "<p><center><b>".get_string("assessmentby", "workshop", fullname($user))."</b></center></p>\n";
             workshop_print_assessment($workshop, $assessment);
             echo "<p align=\"right\"><a href=\"assessments.php?action=adminconfirmdelete&a=$workshop->id&aid=$assessment->id\">".
                 get_string("delete", "workshop")."</a></p><hr>\n";
@@ -2168,7 +2167,7 @@ function workshop_print_assessments_for_admin($workshop, $submission) {
             if (!$user = get_record("user", "id", $assessment->userid)) {
                 error (" workshop_print_assessments_for_admin: unable to get user record");
                 }
-            echo "<p><center><b>".get_string("assessmentby", "workshop", $user->firstname." ".$user->lastname)."</b></center></p>\n";
+            echo "<p><center><b>".get_string("assessmentby", "workshop", fullname($user))."</b></center></p>\n";
             workshop_print_assessment($workshop, $assessment);
             echo "<p align=\"right\"><a href=\"assessments.php?action=adminconfirmdelete&a=$workshop->id&aid=$assessment->id\">".
                 get_string("delete", "workshop")."</a></p><hr>\n";
@@ -2235,7 +2234,7 @@ function workshop_print_feedback($course, $submission) {
     echo "\n<TD ROWSPAN=3 BGCOLOR=\"$THEME->body\" WIDTH=35 VALIGN=TOP>";
     print_user_picture($teacher->id, $course->id, $teacher->picture);
     echo "</TD>";
-    echo "<TD NOWRAP WIDTH=100% BGCOLOR=\"$THEME->cellheading\">$teacher->firstname $teacher->lastname";
+    echo "<TD NOWRAP WIDTH=100% BGCOLOR=\"$THEME->cellheading\">".fullname($teacher);
     echo "&nbsp;&nbsp;<FONT SIZE=2><I>".userdate($submission->timemarked)."</I>";
     echo "</TR>";
 
@@ -2298,8 +2297,8 @@ function workshop_print_league_table($workshop) {
                         $submission->peergrade) / ($workshop->teacherweight + $workshop->peerweight), 1)) ;
                 }
             else {
-                $table->data[] = array(workshop_print_submission_title($workshop, $submission), $user->firstname." ".
-                    $user->lastname, workshop_print_submission_assessments($workshop, $submission, "teacher"),
+                $table->data[] = array(workshop_print_submission_title($workshop, $submission), fullname($user),
+                    workshop_print_submission_assessments($workshop, $submission, "teacher"),
                     workshop_print_submission_assessments($workshop, $submission, "student"),
                     number_format(($workshop->teacherweight * $submission->teachergrade + $workshop->peerweight *
                         $submission->peergrade) / ($workshop->teacherweight + $workshop->peerweight), 1)) ;

@@ -543,7 +543,7 @@
             } else {
                 $numtext = "$nsubmissions[$userid] &lt;$ndropped[$userid]&gt;";
             } 
-            $table->data[] = array($n, "$user->firstname $user->lastname", 
+            $table->data[] = array($n, fullname($user), 
                     number_format($error * 100 / $varguess, 2)."%", $vargoodtext, 
                     $numtext);
             $n++;
@@ -603,7 +603,7 @@
                     $finalgrade = ($assessmentgrade * $WORKSHOP_FWEIGHTS[$workshop->gradingweight] +
                         $submissiongrade) / ($WORKSHOP_FWEIGHTS[$workshop->gradingweight] + 1.0);
         			if ($n) {
-                        $table->data[] = array("$user->firstname $user->lastname", 
+                        $table->data[] = array(fullname($user), 
                             workshop_print_submission_title($workshop, $submission),
                             workshop_print_user_assessments($workshop, $user),
                             number_format($assessmentgrade, 2),
@@ -612,7 +612,7 @@
                             number_format($submissiongrade, 2),
                             number_format($finalgrade, 2));
                     } else {
-        			    $table->data[] = array("$user->firstname $user->lastname", 
+        			    $table->data[] = array(fullname($user), 
                             workshop_print_submission_title($workshop, $submission),
                             workshop_print_user_assessments($workshop, $user),
                             number_format($assessmentgrade, 2),  
@@ -635,7 +635,7 @@
                 // no submissions
                 $finalgrade = ($assessmentgrade * $WORKSHOP_FWEIGHTS[$workshop->gradingweight]) /
                     ($WORKSHOP_FWEIGHTS[$workshop->gradingweight] + 1.0);
-        		$table->data[] = array("$user->firstname $user->lastname", 
+        		$table->data[] = array(fullname($user),
                             "-", workshop_print_user_assessments($workshop, $user),
                             number_format($assessmentgrade, 2), "-", "-",
                             get_string("nosubmission", "workshop"), 
@@ -839,7 +839,7 @@
 							$grade = 0;
 							}
 						// display the grades...
-						echo "<TR><TD>$user->firstname $user->lastname</TD>\n";
+						echo "<TR><TD>".fullname($user)."</TD>\n";
 						echo "<TD>".workshop_print_submission_title($workshop, $submission)."</TD>\n";
 						if ($useteachersgrades) {
 							echo "<TD>$teachergrade</TD>\n";
@@ -1066,7 +1066,7 @@
 				($WORKSHOP_FWEIGHTS[$biasweight] * $usebiasgrades) +
 				($WORKSHOP_FWEIGHTS[$reliabilityweight] * $usereliabilitygrades) +
 				($WORKSHOP_FWEIGHTS[$gradingweight] * $usegradinggrades)));
-			echo "<TR><TD>$user->firstname $user->lastname</TD>";
+			echo "<TR><TD>".fullname($user)."</TD>";
 			if ($useteachersgrades) {
 				echo "<TD>$teachergrade</TD>";
 				}
@@ -1198,7 +1198,7 @@
 		foreach ($users as $user) {
 			if ($submissions = workshop_get_user_submissions($workshop, $user)) {
 				foreach ($submissions as $submission) {
-					echo "<tr><td>$user->firstname $user->lastname</td>";
+					echo "<tr><td>".fullname($user)".</td>";
 					echo "<td>".workshop_print_submission_title($workshop, $submission)."</td>\n";
 					if ($useteachersgrades) {
 						echo "<td align=\"center\">".workshop_print_submission_assessments($workshop, $submission, "teacher")."</td>";

@@ -174,7 +174,7 @@ function workshop_cron () {
             }
             else {
                 $msg = get_string("mail1", "workshop", $submission->title).
-                    " $assessmentowner->firstname $assessmentowner->lastname.\n";
+                    " ".fullname($assessmentowner)."\n";
             }
             // "The comments and grade can be seen in the workshop assignment '$workshop->name'
             $msg .= get_string("mail2", "workshop", $workshop->name)."\n\n";
@@ -363,7 +363,7 @@ function workshop_cron () {
                     $msg = get_string("mail4", "workshop", $submission->title)." a $course->student.\n";
                     }
                 else {
-                    $msg = get_string("mail4", "workshop", $submission->title)." $assessmentowner->firstname $assessmentowner->lastname.\n";
+                    $msg = get_string("mail4", "workshop", $submission->title)." ".fullname($assessmentowner)."\n";
                     }
                 // "The new comment can be seen in the workshop assignment '$workshop->name'
                 $msg .= get_string("mail5", "workshop", $workshop->name)."\n\n";
@@ -410,7 +410,7 @@ function workshop_cron () {
                     }
                 else {
                     $msg = get_string("mail4", "workshop", $submission->title).
-                        " $submissionowner->firstname $submissionowner->lastname.\n";
+                        " ".fullname($submissionowner)."\n";
                     }
                 // "The new comment can be seen in the workshop assignment '$workshop->name'
                 $msg .= get_string("mail5", "workshop", $workshop->name)."\n\n";
@@ -668,7 +668,7 @@ function workshop_print_recent_activity($course, $isteacher, $timestart) {
                     if (instance_is_visible("workshop",$tempmod)) {
                         $date = userdate($log->time, $strftimerecent);
                         if (isteacher($course->id, $log->userid)) {
-                            echo "<p><font size=1>$date - $log->firstname $log->lastname<br />";
+                            echo "<p><font size=1>$date - ".fullname($log)."<br />";
                             }
                         else { // don't break anonymous rule
                             echo "<p><font size=1>$date - A $course->student<br />";
@@ -709,7 +709,7 @@ function workshop_print_recent_activity($course, $isteacher, $timestart) {
                     if (instance_is_visible("workshop",$tempmod)) {
                         $date = userdate($log->time, $strftimerecent);
                         if (isteacher($course->id, $log->userid)) {
-                            echo "<p><font size=1>$date - $log->firstname $log->lastname<br />";
+                            echo "<p><font size=1>$date - ".fullname($log)."<br />";
                             }
                         else { // don't break anonymous rule
                             echo "<p><font size=1>$date - A $course->student<br />";
@@ -819,7 +819,7 @@ function workshop_print_recent_activity($course, $isteacher, $timestart) {
                     //Obtain the visible property from the instance
                     if (instance_is_visible("workshop",$tempmod)) {
                         $date = userdate($log->time, $strftimerecent);
-                        echo "<p><font size=1>$date - $log->firstname $log->lastname<br />";
+                        echo "<p><font size=1>$date - ".fullname($log)."<br />";
                         echo "\"<a href=\"$CFG->wwwroot/mod/workshop/$log->url\">";
                         echo "$log->name";
                         echo "</a>\"</font></p>";
