@@ -66,33 +66,33 @@
         $status = true;
 
         $glossary_categories = get_records("glossary_categories","glossaryid",$glossary,"id");
-        //If there is submissions
+        //If there is categories
         if ($glossary_categories) {
             $status =fwrite ($bf,start_tag("CATEGORIES",4,true));
 
             //Iterate over each category
             foreach ($glossary_categories as $glo_cat) {
                 //Start category
-                //Print submission contents
-               $status =fwrite ($bf,start_tag("CATEGORY",5,true));
+                //Print category contents
+                $status =fwrite ($bf,start_tag("CATEGORY",5,true));
 
-               fwrite ($bf,full_tag("ID",6,false,$glo_cat->id));
-               fwrite ($bf,full_tag("GLOSSARYID",6,false,$glo_cat->glossaryid));
-               fwrite ($bf,full_tag("NAME",6,false,$glo_cat->name));
+                fwrite ($bf,full_tag("ID",6,false,$glo_cat->id));
+                fwrite ($bf,full_tag("GLOSSARYID",6,false,$glo_cat->glossaryid));
+                fwrite ($bf,full_tag("NAME",6,false,$glo_cat->name));
 
-                    $entries = get_records("glossary_entries_categories","categoryid",$glo_cat->id,"glossaryid");
-                    if ($entries) {
-                         $status =fwrite ($bf,start_tag("ENTRIES",6,true));
-                         foreach ($entries as $entry) {
-                              fwrite ($bf,full_tag("ENTRYID",7,false,$entry->entryid));
-                         }
-                         $status =fwrite ($bf,end_tag("ENTRIES",6,true));
+                $entries = get_records("glossary_entries_categories","categoryid",$glo_cat->id,"entryid");
+                if ($entries) {
+                    $status =fwrite ($bf,start_tag("ENTRIES",6,true));
+                    foreach ($entries as $entry) {
+                        fwrite ($bf,full_tag("ENTRYID",7,false,$entry->entryid));
                     }
-               $status =fwrite ($bf,end_tag("CATEGORY",5,true));
+                    $status =fwrite ($bf,end_tag("ENTRIES",6,true));
+                }
+                $status =fwrite ($bf,end_tag("CATEGORY",5,true));
 
             }
-               //Write end tag
- 	       $status =fwrite ($bf,end_tag("CATEGORIES",4,true));
+            //Write end tag
+            $status =fwrite ($bf,end_tag("CATEGORIES",4,true));
         }
         return $status;
     }
