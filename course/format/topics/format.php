@@ -63,7 +63,7 @@
 
 /// The left column ...
 
-    if(blocks_have_content($pageblocks[BLOCK_POS_LEFT]) || $editing) {
+    if (blocks_have_content($pageblocks[BLOCK_POS_LEFT]) || $editing) {
         echo '<td style="width: '.$preferred_width_left.'px;" id="left-column">';
         blocks_print_group($PAGE, $pageblocks[BLOCK_POS_LEFT]);
         echo '</td>';
@@ -73,16 +73,15 @@
     echo '<td id="middle-column">';
 
     print_heading_block(get_string('topicoutline'), 'outline');
-    print_spacer(8, 1, true);
 
-    echo '<table class="topicsoutline" width="100%">';
+    echo '<table class="topics" width="100%">';
 
 /// If currently moving a file then show the current clipboard
     if (ismoving($course->id)) {
         $stractivityclipboard = strip_tags(get_string('activityclipboard', '', addslashes($USER->activitycopyname)));
         $strcancel= get_string('cancel');
-        echo '<tr>';
-        echo '<td colspan="3" class="topicoutlineclip">';
+        echo '<tr class="clipboard">';
+        echo '<td colspan="3">';
         echo $stractivityclipboard.'&nbsp;&nbsp;(<a href="mod.php?cancelcopy=true&amp;sesskey='.$USER->sesskey.'">'.$strcancel.'</a>)';
         echo '</td>';
         echo '</tr>';
@@ -94,9 +93,9 @@
     $thissection = $sections[$section];
 
     if ($thissection->summary or $thissection->sequence or isediting($course->id)) {
-        echo '<tr id="section-0">';
-        echo '<td class="topicsoutlineside left">&nbsp;</td>';
-        echo '<td class="topicsoutlinecontent">';
+        echo '<tr id="section-0" class="section">';
+        echo '<td class="left side">&nbsp;</td>';
+        echo '<td class="content">';
 
         $summaryformatoptions->noclean = true;
         echo format_text($thissection->summary, FORMAT_HTML, $summaryformatoptions);
@@ -114,9 +113,9 @@
         }
 
         echo '</td>';
-        echo '<td class="topicsoutlineside right">&nbsp;</td>';
+        echo '<td class="right side">&nbsp;</td>';
         echo '</tr>';
-        echo '<tr><td colspan="3" class="topicsoutlinespacer">&nbsp;</td></tr>';
+        echo '<tr class="section"><td colspan="3" class="spacer"></td></tr>';
     }
 
 
@@ -164,27 +163,24 @@
             $currenttopic = ($course->marker == $section);
 
             if (!$thissection->visible) {
-                $colorsides = 'topicsoutlinesidehidden';
-                $colormain  = 'topicsoutlinecontenthidden';
+                $sectionstyle = ' hidden';
             } else if ($currenttopic) {
-                $colorsides = 'topicsoutlinesidehighlight';
-                $colormain  = 'topicsoutlinecontenthighlight';
+                $sectionstyle = ' current';
             } else {
-                $colorsides = 'topicsoutlineside';
-                $colormain  = 'topicsoutlinecontent';
+                $sectionstyle = '';
             }
 
-            echo '<tr id="section-'.$section.'">';
-            echo '<td class="'.$colorsides.' left">';
+            echo '<tr id="section-'.$section.'" class="section'.$sectionstyle.'">';
+            echo '<td class="left side">';
             echo '<a name="'.$section.'">'.$section.'</a>';
             echo '</td>';
 
             if (!isteacher($course->id) and !$thissection->visible) {   // Hidden for students
-                echo '<td class="'.$colormain.'">';
+                echo '<td class="content">';
                 echo get_string('notavailable');
                 echo '</td>';
             } else {
-                echo '<td class="'.$colormain.'">';
+                echo '<td class="content">';
 
                 $summaryformatoptions->noclean = true;
                 echo format_text($thissection->summary, FORMAT_HTML, $summaryformatoptions);
@@ -202,7 +198,7 @@
 
                 echo '</td>';
             }
-            echo '<td class="'.$colorsides.' right">';
+            echo '<td class="right side">';
 
             if ($displaysection == $section) {      // Show the zoom boxes
                 echo '<a href="view.php?id='.$course->id.'&amp;topic=all#'.$section.'" title="'.$strshowalltopics.'">'.
@@ -243,7 +239,7 @@
             }
 
             echo '</td></tr>';
-            echo '<tr><td colspan="3" class="topicsoutlinespacer">&nbsp;</td></tr>';
+            echo '<tr class="section"><td colspan="3" class="spacer"></td></tr>';
         }
 
         $section++;
@@ -251,7 +247,7 @@
     echo '</table>';
 
     if (!empty($sectionmenu)) {
-        echo '<div align="center" class="topicsjumpmenu">';
+        echo '<div align="center" class="jumpmenu">';
         echo popup_form($CFG->wwwroot.'/course/view.php?id='.$course->id.'&', $sectionmenu,
                    'sectionmenu', '', get_string('jumpto'), '', '', true);
         echo '</div>';
@@ -261,7 +257,7 @@
     echo '</td>';
 
     // The right column
-    if(blocks_have_content($pageblocks[BLOCK_POS_RIGHT]) || $editing) {
+    if (blocks_have_content($pageblocks[BLOCK_POS_RIGHT]) || $editing) {
         echo '<td style="width: '.$preferred_width_right.'px;" id="right-column">';
         blocks_print_group($PAGE, $pageblocks[BLOCK_POS_RIGHT]);
         if ($editing) {
