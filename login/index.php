@@ -57,19 +57,16 @@
 
             if (user_not_fully_set_up($USER)) {
                 $site = get_site();
-                session_write_close();
-                header("Location: $CFG->wwwroot/user/edit.php?id=$USER->id&course=$site->id");
+                redirect("$CFG->wwwroot/user/edit.php?id=$USER->id&course=$site->id");
 
             } else if (empty($SESSION->wantsurl)) {
-                session_write_close();
-                header("Location: $CFG->wwwroot");
+                redirect($CFG->wwwroot);
 
             } else {
                 $wantsurl = $SESSION->wantsurl;
                 unset($SESSION->wantsurl);
                 save_session("SESSION");
-                session_write_close();
-                header("Location: $wantsurl");
+                redirect($wantsurl);
             }
     
             reset_login_count();
@@ -111,9 +108,14 @@
     if (!$site = get_site()) {
         error("No site found!");
     }
+
+    $currlang = current_language();
+    $langs    = get_list_of_languages();
+    $langmenu = popup_form ("$CFG->wwwroot/login/index.php?lang=", $langs, "chooselang", $currlang, "", "", "", true);
+
     $loginsite = get_string("loginsite");
 
-    print_header("$site->fullname: $loginsite", "$loginsite", get_string("login"), $focus); 
+    print_header("$site->fullname: $loginsite", "$loginsite", get_string("login"), $focus, "", true, "<div align=right>$langmenu</div>"); 
     include("index_form.html");
     print_footer();
 
