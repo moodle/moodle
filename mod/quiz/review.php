@@ -82,6 +82,12 @@
     print_heading($quiz->name);
 
 
+/// Include Javascript protection for this page if required
+
+    if (!empty($quiz->popup)) {
+        include("protect_js.php");
+    }
+
     if (!($questions = quiz_get_attempt_questions($quiz, $attempt))) {
         error("Unable to get questions from database for quiz $quiz->id attempt $attempt->id number $attempt->attempt");
     }
