@@ -538,7 +538,13 @@ function isteacher($courseid=0, $userid=0, $includeadmin=true) {
     }
 
     if (!$userid) {
-        return !empty($USER->teacher[$courseid]);
+        if ($courseid) {
+            return !empty($USER->teacher[$courseid]);
+        }
+        if (!isset($USER->id)) {
+            return false;
+        }
+        $userid = $USER->id;
     }
 
     if (!$courseid) {
