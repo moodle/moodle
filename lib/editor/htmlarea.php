@@ -145,10 +145,11 @@ HTMLArea.Config = function () {
           "insertorderedlist", "insertunorderedlist", "outdent", "indent", "separator",
           "forecolor", "hilitecolor", "separator",
           "inserthorizontalrule", "createanchor", "createlink", "unlink", "insertimage", "inserttable",
-          "insertsmile", "insertchar", "separator", "htmlmode", "separator", "popupeditor"<?php
-          if(!empty($CFG->aspellpath) && !empty($CFG->editorspelling)) {
-              echo ",\"spellcheck\"";
-          }?> ]
+          "insertsmile", "insertchar", 
+          <?php if (!empty($CFG->aspellpath) && !empty($CFG->editorspelling)) { 
+              echo '"separator","spellcheck",';
+            } ?> 
+          "separator", "htmlmode", "separator", "popupeditor"]
     ];
 
     this.fontname = {
@@ -225,10 +226,10 @@ HTMLArea.Config = function () {
         clean: [ "Clean Word HTML", "ed_wordclean.gif", false, function(e) {e.execCommand("killword"); }],
         lefttoright: [ "Direction left to right", "ed_left_to_right.gif", false, function(e) {e.execCommand("lefttoright");} ],
         righttoleft: [ "Direction right to left", "ed_right_to_left.gif", false, function(e) {e.execCommand("righttoleft");} ],
-        insertsmile: ["Insert Smiley", "em.icon.smile.gif", false, function(e) {e.execCommand("insertsmile");} ],
-        <?php if(!empty($CFG->aspellpath) && !empty($CFG->editorspelling)) {
-            echo "spellcheck: [\"Spell-check\", \"spell-check.gif\", false, spellClickHandler ],\n";
+        <?php if (!empty($CFG->aspellpath) && !empty($CFG->editorspelling)) {
+            echo 'spellcheck: ["Spell-check", "spell-check.gif", false, spellClickHandler ],'."\n";
         }?>
+        insertsmile: ["Insert Smiley", "em.icon.smile.gif", false, function(e) {e.execCommand("insertsmile");} ],
         insertchar: [ "Insert Char", "icon_ins_char.gif", false, function(e) {e.execCommand("insertchar");} ]
     };
 
