@@ -42,11 +42,6 @@
 
 
 /* general styles */
-th.header {
-    background-image:url(gradient.jpg);
-    background-position:top;
-    background-repeat:repeat-x;
-}
 
 form {
     margin-bottom:0px;
@@ -87,9 +82,6 @@ a img {
 #nav-bar {
     padding:3px 0.5em;
     height:1.3em;
-    background-image:url(gradient.jpg);
-    background-position:top;
-    background-repeat:repeat-x;
 }
 
 #breadcrumb {
@@ -241,9 +233,6 @@ table.formtable tbody th
 
 /* course, entry-page, login */
 .headingblock {
-    background-image:url(gradient.jpg);
-    background-position:top;
-    background-repeat:repeat-x;
     border-width:1px;
     border-style:solid;
     padding:5px;
@@ -465,9 +454,6 @@ dialouge, exercise, forum, lesson, quiz */
 table.generaltable td.header,
 table.generaltable th.header,
 .generaltableheader {
-    background-image:url(gradient.jpg);
-    background-position:top;
-    background-repeat:repeat-x;
 }
 
 
@@ -584,57 +570,71 @@ table.generaltable th.header,
 }
 
 /******************************************************************/
-/* Stretchy tabs code */
-/*#try4 table {
+/* tabs */
 .tabs {
+    width: auto;
+}
+
+body#mod-quiz-report .tabs .side {
+    border-style: solid;
+    border-width: 0px 0px 1px 0px;
+    border-color: #AAAAAA;
+    width: 50%;
+}
+
+body#mod-quiz-report .tabs {
+    margin-bottom: 15px;
+}
+
+.tabrow {
     border-collapse:collapse;
     width:100%;
     margin:0;
 }
-/*#try4 td {
-.tabs td {
+.tabrow td {
     height:34px;
     padding:0 0 0 14px;
-    background:url(images/gray_left.png) top left no-repeat;
+    background:url(pix/tab/left.gif) top left no-repeat;
 }
-#try4 th {
+.tabrow th {
     display:none;
 }
-/*#try4 td a {
-.tabs td a {
+.tabrow td .tablink {
     display:block;
     height:34px;
     line-height:38px;
     padding:0 14px 0 0;
-    background:url(images/gray_right.png) top right no-repeat;
+    background:url(pix/tab/right.gif) top right no-repeat;
     text-align:center;
     white-space:nowrap;
     text-decoration:none;
 }
-/*#try4 td:hover {
-    background-image:url(images/gray_left_f2.png);
+.tabrow td:hover {
+    background-image:url(pix/tab/left_hover.gif);
 }
-#try4 td:hover a {
+.tabrow td:hover .tablink {
     line-height:32px;
-    background-image:url(images/gray_right_f2.png);
+    background-image:url(pix/tab/right_hover.gif);
 }
 
-/*#try4 .last span {
-.tabs .last span {
+.tabrow .last span {
     display:block;
-    padding:0 1px 0 0;
-    background:url(imagesright_end.png) top right no-repeat;
+    padding:0px 1px 0px 0px;
+    background:url(pix/tab/right_end.gif) top right no-repeat;
 }
-/*html body #try4 .this {
-.glossarydisplay .tabs .selected {
-    background:url(images/active_left.png) top left no-repeat;
+.tabrow .selected {
+    background:url(pix/tab/left_active.gif) top left no-repeat;
 }
-/*html body #try4 .this a {
-.glossarydisplay .tabs .selected a {
-    background:url(images/active_right.png) top right no-repeat;
+.tabrow .selected .tablink {
+    background:url(pix/tab/right_active.gif) top right no-repeat;
     line-height:38px;
 }
-*/
+.tabrow td.selected:hover {
+    background-image:url(pix/tab/left_active_hover.gif);
+}
+.tabrow td.selected:hover .tablink {
+    background-image:url(pix/tab/right_active_hover.gif);
+}
 
 /******************************************************************/
 
@@ -743,9 +743,6 @@ table.minicalendar th {
 #calendar .maincalendar .heading,
 #calendar .sidecalendar .heading
 {
-    background-image:url(gradient.jpg);
-    background-position:top;
-    background-repeat:repeat-x;
     padding: 5px;
 }
 
@@ -896,7 +893,6 @@ table.minicalendar th {
 }
 
 .cal_popup_caption {
-    background-image:url(gradient.jpg);
     border-width:0px 0px 1px 0px;
     border-style:solid;
     padding-bottom:2px;
@@ -930,7 +926,7 @@ table.calendar-controls .next
 }
 
 .block_search_forums.sideblock .searchform img {
-    vertical-align: center;
+    vertical-align: middle;
 }
 
 /* block_rss_client.php */
@@ -955,9 +951,6 @@ table.calendar-controls .next
 }
 
 .sideblock .header {
-    background-image:url(gradient.jpg);
-    background-position:top;
-    background-repeat:repeat-x;
     padding:4px;
 }
 
