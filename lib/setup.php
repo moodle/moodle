@@ -88,6 +88,14 @@ global $THEME;
         $dbconnected = $db->Connect($CFG->dbhost,$CFG->dbuser,$CFG->dbpass,$CFG->dbname);
     }
     if (! $dbconnected) {
+        // In the name of protocol correctness, monitoring and performance
+        // profiling, set the appropriate error headers for machine comsumption
+        if (isset($_SERVER['SERVER_PROTOCOL'])) { 
+            // Avoid it with cron.php. Note that we assume it's HTTP/1.x
+            header($_SERVER['SERVER_PROTOCOL'] . ' 503 Service Unavailable');        
+        }
+        // and then for human consumption...
+        echo '<html><body>';
         echo '<table align="center"><tr>';
         echo '<td style="color:#990000; text-align:center; font-size:large; border-width:1px; '.
              '    border-color:#000000; border-style:solid; border-radius: 20px; border-collapse: collapse; '.
@@ -96,6 +104,7 @@ global $THEME;
         echo '<p>It is possible that the database is overloaded or otherwise not running properly.</p>';
         echo '<p>The site administrator should also check that the database details have been correctly specified in config.php</p>';
         echo '</td></tr></table>';
+        echo '</body></html>';
         die;
     }
 
