@@ -1317,11 +1317,17 @@ function isteacher($courseid, $userid=0, $includeadmin=true) {
  * @todo Finish documenting this function
  */
 function isteacherinanycourse($userid = 0, $includeadmin = true) {
+    global $USER;
+
     if(empty($userid)) {
         if(empty($USER) || empty($USER->id)) {
             return false;
         }
         $userid = $USER->id;
+    }
+
+    if (isadmin($userid) && $includeadmin) {  // admins can do anything
+        return true;
     }
 
     return record_exists('user_teachers', 'userid', $userid);
