@@ -74,7 +74,6 @@
                     $mod->visible = get_field("course_sections","visible","id",$sectionid);
                 }
                 if (!isset($mod->groupmode)) {
-                    $course = get_record('course', 'id', $mod->course);
                     $cm = get_record('course_modules', 'id', $mod->coursemodule);
                     $mod->groupmode = groupmode($course, $cm);
                 }
@@ -115,9 +114,17 @@
                     error($return, "view.php?id=$course->id");
                 }
 
-                $mod->groupmode = $course->groupmode;  /// Default groupmode the same as course
+                // to deal with pre-1.5 modules
+                if (!isset($mod->visible)) {
+                    //We get the section's visible field status
+                    $mod->visible = get_field("course_sections","visible","id",$sectionid);
+                }
+                if (!isset($mod->groupmode)) {
+                    $mod->groupmode = $course->groupmode;  /// Default groupmode the same as course
+                }
 
                 $mod->instance = $return;
+
                 // course_modules and course_sections each contain a reference 
                 // to each other, so we have to update one of them twice.
 
@@ -128,18 +135,6 @@
                     error("Could not add the new course module to that section");
                 }
                 
-                // to deal with pre-1.5 modules
-                if (!isset($mod->visible)) {
-                    //We get the section's visible field status
-                    $mod->visible = get_field("course_sections","visible","id",$sectionid);
-                }
-                if (!isset($mod->groupmode)) {
-                    $mod->groupmode = get_field('course', 'groupmode', 'id', $mod->course);
-                }
-                
-                set_coursemodule_visible($mod->coursemodule, $mod->visible);
-                set_coursemodule_groupmode($mod->coursemodule, $mod->groupmode);
-
                 if (! set_field("course_modules", "section", $sectionid, "id", $mod->coursemodule)) {
                     error("Could not update the course module with the correct section");
                 }   
