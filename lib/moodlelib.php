@@ -108,6 +108,7 @@ define('PARAM_CLEANFILE',0x0200);
 define('PARAM_ALPHANUM', 0x0400);  //numbers or letters only
 define('PARAM_BOOL',     0x0800);  //convert to value 1 or 0 using empty()
 define('PARAM_CLEANHTML',0x1000);  //actual HTML code that you want cleaned and slashes removed
+define('PARAM_ALPHAEXT', 0x2000);  // PARAM_ALPHA plus the chars in quotes: "/-_" allowed
 
 /**
  * Definition of page types
@@ -205,6 +206,10 @@ function clean_param($param, $options) {
 
     if ($options & PARAM_ALPHANUM) {     // Remove everything not a-zA-Z0-9
         $param = eregi_replace('[^A-Za-z0-9]', '', $param);
+    }
+
+    if ($options & PARAM_ALPHAEXT) {     // Remove everything not a-zA-Z/_-
+        $param = eregi_replace('[^a-zA-Z/_-]', '', $param);
     }
 
     if ($options & PARAM_BOOL) {         // Convert to 1 or 0
@@ -863,17 +868,19 @@ function get_user_timezone_preset() {
         return $preset;
     }
 
-    if (empty($CFG->calendar_dstforusers)) {
-        if (empty($USER->dstpreset)) {
+    if (empty($CFG->forcetimezone)) {
+        if (empty($USER->timezonename)) {
             return NULL;
         }
-        $presetid = $USER->dstpreset;
+        $presetname = $USER->timezonename;
 
     } else {
-        $presetid = $CFG->calendar_dstforusers;
+        $presetname = $CFG->forcetimezone;
     }
 
-    $preset = get_record('dst_preset', 'id', $presetid);
+    $presetrecords = get_records('timezone', 'name', $presetname);
+    
+    //print_object($presetrecords);
 
     if(!empty($USER)) {
         if(empty($USER->dstoffsets)) {
@@ -894,84 +901,6 @@ function get_user_timezone_preset() {
     }
     return $preset;
 }
-
-// This should be obsolete, but let's leave it inside a while longer
-/*
-function dst_update_preset($dstpreset, $time = NULL) {
-
-    // What's the date according to our user?
-    if($time === NULL) {
-        $time = time();
-    }
-    $date = usergetdate($time);
-
-    $changes = dst_changes_for_year($date['year'], $dstpreset);
-
-    if($changes['activate'] == 0 && $changes['deactivate'] == 0) {
-        // This timezone doesn't have DST, so don't do anything
-        return $dstpreset;
-    }
-    else if($changes['activate'] == 0) {
-        // There's only the "deactivate" time
-        if($time >= $changes['deactivate']) {
-            $nextchanges = dst_changes_for_year($date['year'] + 1, $dstpreset);
-            $dstpreset->next_change = min($nextchanges['activate'], $nextchanges['deactivate']);
-            $dstpreset->current_offset = 0;
-        }
-        return $dstpreset;
-    }
-    else if($changes['deactivate'] == 0) {
-        // There's only the "activate" time
-        if($time >= $changes['activate']) {
-            $nextchanges = dst_changes_for_year($date['year'] + 1, $dstpreset);
-            $dstpreset->next_change = min($nextchanges['activate'], $nextchanges['deactivate']);
-            $dstpreset->current_offset = $dstpreset->apply_offset;
-        }
-    }
-    else if($changes['activate'] < $changes['deactivate']) {
-        // Northern hemisphere
-
-        if ($time < $changes['activate']) {
-            // DST has not been turned on this year
-            $dstpreset->next_change = $changes['activate'];
-            $dstpreset->current_offset = 0;
-    
-        } else if($time < $changes['deactivate']) {
-            // DST is on at this time
-            $dstpreset->next_change = $changes['deactivate'];
-            $dstpreset->current_offset = $dstpreset->apply_offset;
-    
-        } else {
-            // DST has already been turned off; we are nearing the end of the year
-            $nextchanges = dst_changes_for_year($date['year'] + 1, $dstpreset);
-            $dstpreset->next_change = $nextchanges['activate'];
-            $dstpreset->current_offset = 0;
-        }
-    }
-    else if($changes['activate'] > $changes['deactivate']) {
-        // Southern hemisphere
-
-        if ($time < $changes['deactivate']) {
-            // DST is still on from the previous year
-            $dstpreset->next_change = $changes['deactivate'];
-            $dstpreset->current_offset = $dstpreset->apply_offset;
-
-        } else if($time < $changes['activate']) {
-            // DST is off at this time
-            $dstpreset->next_change = $changes['activate'];
-            $dstpreset->current_offset = 0;
-    
-        } else {
-            // DST has been turned on; we are nearing the end of the year
-            $nextchanges = dst_changes_for_year($date['year'] + 1, $dstpreset);
-            $dstpreset->next_change = $nextchanges['deactivate'];
-            $dstpreset->current_offset = $dstpreset->apply_offset;
-        }
-    }
-
-    return $dstpreset;
-}
-*/
 
 function dst_offset_for_year($year, $dstpreset) {
     return $dstpreset->apply_offset * MINSECS;

@@ -38,14 +38,14 @@
             set_config('calendar_adminseesall', intval($form->adminseesallcourses) != 0);
             unset($SESSION->cal_courses_shown);
         }
-        if(isset($form->dstforusers)) {
-            if($form->dstforusers == 'force') {
-                $preset = optional_param('dstpreset', 0, PARAM_INT);
+        if(isset($form->forcetimezone)) {
+            if($form->forcetimezone == 'force') {
+                $preset = optional_param('timezonepreset', 0, PARAM_INT);
             }
             else {
                 $preset = 0;
             }
-            set_config('calendar_dstforusers', $preset);
+            set_config('forcetimezone', $preset);
         }
         if(isset($form->startwday)) {
             $startwday = intval($form->startwday);
@@ -85,7 +85,7 @@
 
     // Populate some variables we 're going to need in calendar.html
 
-    $presets = get_records('dst_preset');
+    $presets = get_records('timezone');
     if(!empty($presets)) {
         foreach($presets as $id => $preset) {
             $presets[$id] = $preset->name;

@@ -240,7 +240,7 @@ if (isadmin()) {
             $presetarray = array('0' => get_string('notimezone', 'calendar'));
             if(!empty($presets)) {
                 foreach($presets as $preset) {
-                    $presetarray[$preset->id] = $preset->name;
+                    $presetarray[$preset->name] = $preset->name;
                 }
                 choose_from_menu ($presetarray, 'timezonename', empty($user->timezonename) ? 0 : $user->timezonename, '');
             }
@@ -249,7 +249,7 @@ if (isadmin()) {
             }
         }
         else {
-            $preset = get_record('timezone', 'id', $CFG->forcetimezone);
+            $preset = get_record('timezone', 'name', $CFG->forcetimezone);
             if(empty($preset)) {
                 print_string('nodstpresets');
             }

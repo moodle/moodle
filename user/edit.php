@@ -102,7 +102,9 @@
         $usernew->autosubscribe = clean_param($usernew->autosubscribe, PARAM_INT);
         $usernew->htmleditor    = clean_param($usernew->htmleditor,    PARAM_INT);
         $usernew->emailstop     = clean_param($usernew->emailstop,     PARAM_INT);
-        
+
+        $usernew->timezonename  = clean_param($usernew->timezonename,  PARAM_ALPHAEXT);
+
         foreach ($usernew as $key => $data) {
             $usernew->$key = addslashes(clean_text(stripslashes($usernew->$key), FORMAT_MOODLE));
         }
