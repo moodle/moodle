@@ -84,7 +84,7 @@
             print_simple_box_end();
 
             print_footer($course);
-            add_to_log($course->id, "glossary", "delete comment", "comments.php?id=$cm->id&eid=$entry->id", $comment,$cm->id);
+            add_to_log($course->id, "glossary", "delete comment", "comments.php?id=$cm->id&eid=$entry->id", "$comment->id",$cm->id);
             redirect("comments.php?id=$cm->id&eid=$entry->id");
 
         } else {
