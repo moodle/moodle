@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004112400)
+      // quiz.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004121600)
 
 
 $string['acceptederror'] = 'Geaccepteerde fout';
@@ -53,7 +53,8 @@ $string['confirmstartattempt'] = 'Deze test heeft een tijdsduurbeperking. Ben je
 $string['correctanswer'] = 'Het goede antwoord';
 $string['correctanswerformula'] = 'Juiste antwoordformule';
 $string['correctanswerlength'] = 'Aantal beduidende cijfers';
-$string['correctanswers'] = 'Goede antwoorden';
+$string['correctanswers'] = 'Juiste antwoorden';
+$string['correctanswershows'] = 'Juist antwoord toont';
 $string['corrresp'] = 'Juiste reactie';
 $string['countdown'] = 'Aftellen';
 $string['countdownfinished'] = 'De test gaat dicht. Je moet nu je antwoorden insturen.';
@@ -65,6 +66,7 @@ $string['custom'] = 'Aangepast formaat';
 $string['datasetdefinitions'] = 'Herbruikbare datasetdefinities voor categorie $a';
 $string['datasetnumber'] = 'Aantal';
 $string['daysavailable'] = 'Dagen beschikbaar';
+$string['decimalformat'] = 'decimalen';
 $string['decimals'] = 'met $a';
 $string['default'] = 'Standaard';
 $string['defaultgrade'] = 'Standaardbeoordeling vraag';
@@ -184,6 +186,7 @@ $string['overdue'] = 'Te laat';
 $string['paragraphquestion'] = 'Vraagparagraaf niet ondersteund op lijn $a. De vraag wordt genegeerd';
 $string['passworderror'] = 'Het wachtwoord was niet juist';
 $string['percentcorrect'] = 'Percentage juist';
+$string['popup'] = 'Toon de test in een \"veilig\" venster';
 $string['preview'] = 'Controleer vraag';
 $string['previewquestion'] = 'Weergave van een vraag testen';
 $string['publish'] = 'Publiceer  ';
@@ -245,11 +248,9 @@ $string['showfeedback'] = 'Feedback laten zien na het beantwoorden?';
 $string['shuffleanswers'] = 'Mix de antwoorden';
 $string['shufflequestions'] = 'Mix de vragen';
 $string['significantfigures'] = 'met $a';
+$string['significantfiguresformat'] = 'beduidende cijfers';
 $string['subneterror'] = 'Deze test is zo beveiligd dat hij alleen toegankelijk is vanop bepaalde plaatsen. Jouw computer staat niet in de lijst met toegelaten machines om deze test te maken.';
 $string['substitutedby'] = 'zal vervangen worden door';
-$string['thischarset'] = 'iso-8859-1';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Nederlands';
 $string['time'] = 'Tijd  ';
 $string['timecompleted'] = 'Voltooid';
 $string['timeleft'] = 'Resterende tijd';
@@ -276,5 +277,6 @@ $string['withsummary'] = 'met samenvattende statistieken';
 $string['wronggrade'] = 'Verkeerd cijfer (na lijn $a):';
 $string['xml'] = 'Moodle XML-formaat';
 $string['yourfinalgradeis'] = 'Je eindcijfer voor deze test is $a';
+$string['zerosignificantfiguresnotallowed'] = 'Het juiste antwoord kan geen nul beduidende cijfers hebben!';
 
 ?>
