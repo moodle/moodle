@@ -60,44 +60,28 @@
     <h3><a name="3.1" id="3.1"></a>3.1 CVS on Unix </h3>
     <blockquote>
       <p>Sourceforge CVS uses ssh as a transport layer for security, so you will have to set a CVS_RSH environment variable in your Unix shell. It's best to put these commands in your .bashrc or .cshrc so you don't have to type it all the time<strong>:</strong></p>
-      <blockquote>
-        <pre><strong>setenv CVS_RSH ssh</strong>        (for csh, tcsh etc)</pre>
-        <pre><strong>export CVS_RSH=ssh</strong>        (for sh, bash etc)</pre>
-      </blockquote>
+       <div class="commandline">setenv CVS_RSH ssh <em>(for csh, tcsh etc)</em><br /> 
+	    export CVS_RSH=ssh <em>(for sh, bash etc)</em></div>  
       <p>Next, you can check out the latest development version of Moodle using this (all one line): </p>
-      <blockquote>
-        <pre><strong>cvs -z3 -d:ext:<span class="style1">myusername</span>@cvs.sourceforge.net:/cvsroot/moodle co moodle</strong></pre>
-      </blockquote>
+       <div class="commandline">cvs -z3 -d:ext:<span class="style1">myusername</span>@cvs.sourceforge.net:/cvsroot/moodle co moodle</div>      
       <p>The command is similar for other CVS modules:</p>
-      <blockquote>
-        <pre><strong>cvs -z3 -d:ext:<span class="style1">myusername</span>@cvs.sourceforge.net:/cvsroot/moodle co contrib</strong></pre>
-      </blockquote>
+       <div class="commandline">cvs -z3 -d:ext:myusername@cvs.sourceforge.net:/cvsroot/moodle co contrib</div>      
       <p>Don't try to do run this first CVS command over an existing moodle installation: start fresh with a new directory.</p>
       <p>Note that you will be prompted for <strong><font color="#990000">mypassword</font></strong> for each command unless you set up <a target="_top" href="http://sourceforge.net/account/editsshkeys.php">authorized keys</a>.</p>
       <p>Now, you should have a new 'moodle' directory. You can rename it and move it around if you like. Go into it: </p>
-      <blockquote>
-        <pre><strong>cd moodle </strong></pre>
-      </blockquote>
+       <div class="commandline">cd moodle </div>      
       <p>All the latest Moodle files should be in there. You can now change files in your copy. To compare your files and directories against the main CVS copy on the server use cvs diff, e.g.: </p>
-      <blockquote>
-        <pre><strong>cvs diff -c config-dist.php
-cvs diff -c lang</strong></pre>
-      </blockquote>
+       <div class="commandline">cvs diff -c config-dist.php<br />
+       cvs diff -c lang </div>
       <p>To fetch the latest updates from the server use: </p>
-      <blockquote>
-        <pre><strong>cvs update -dP</strong> </pre>
-      </blockquote>
+      <div class="commandline">cvs update -dP</div>
       <p>To copy your new files back to the server you would do something like: </p>
-      <blockquote>
-        <pre><strong>cd lang/ca 
-cvs commit</strong> </pre>
-      </blockquote>
+      <div class="commandline">cd lang/ca <br />
+cvs commit</div>
       <p>You will be prompted to add some comments (depends on your default text editor) ... add a meaningful comment and close the editor ... the files will be sent to Sourceforge and stored. Done! </p>
       <p>To save more time you can put default arguments into a file called .cvsrc in your home directory. For example, mine contains: </p>
-      <blockquote>
-        <pre><strong>diff -c 
-update -dP</strong> </pre>
-      </blockquote>
+      <div class="commandline">diff -c <br />
+update -dP</div>
       <p>Try 'cvs help' for more details ... </p>
       <p>&nbsp;</p>
     </blockquote>
@@ -152,10 +136,14 @@ update -dP</strong> </pre>
     <p>This diagram shows how the main <strong>moodle</strong> module branches into different versions over time.</p>
     <p align="center"><img src="pix/cvstree.png" width="500" height="200"></p>
     <p align="left">To see all the current tags and branches that are available, use this command on any old file (such as index.php in the top moodle directory):</p>
-    <blockquote>
-      <pre><strong>cvs status -v index.php</strong></pre>
-    </blockquote>
-    <p>Tags and branches should ALWAYS be applied to the <strong>entire module</strong> (all of Moodle). Don't tag individual files or directories. <br />
+    <div class="commandline">cvs status -v index.php</div>
+    <p>Some tagging guidelines:</p>
+    <ul>
+      <li>Tag and branch names should always be all upper-case.</li>
+      <li>Tags and branches should ALWAYS be applied to the <strong>entire module</strong> (all of Moodle). Don't tag individual files or directories. </li>
+      <li>We don't allow renaming of tags because people may be relying on them, so get them right the first time! </li>
+    </ul>
+    <p><br />
     </p>
     <p>&nbsp;</p>
     <h3><a name="4.1" id="4.1"></a>4.1 Trunk development</h3>
@@ -170,13 +158,9 @@ update -dP</strong> </pre>
     <blockquote>
       <p>As soon as the stable branch <span class="style3">MOODLE_XX_STABLE</span> is created, development efforts will fork into two streams for a while. Some people may continue working on new features in the trunk for the next release, but most developers should be concentrating on using the current <span class="style1"><strong>STABLE</strong></span> branch and fixing bugs that are found in it. </p>
       <p>You can switch your local copy of Moodle to the STABLE version using the following command in Unix from the root directory:</p>
-      <blockquote>
-        <pre><strong>cvs update -dP -r <span class="style1">MOODLE_XX_STABLE</span></strong></pre>
-      </blockquote>
+      <div class="commandline">cvs update -dP -r <span class="style1">MOODLE_XX_STABLE</div>
       <p>After that, all the commands described above will apply to that stable version. To return to the trunk version just issue:</p>
-      <blockquote>
-        <pre><strong>cvs update -dPA</strong></pre>
-      </blockquote>
+      <div class="commandline">cvs update -dPA</div>
       <p>On Windows clients you should have a menu from which you can choose the branch. </p>
       <p>Once the new STABLE branch really stabilises, a release can be declared. Packages are created for distribution and the branch will be tagged (by Martin) with a tag named: <strong>MOODLE_XXX</strong></p>
       <p>Periodically, bug fixes in the STABLE branch should be merged into the trunk so that they become available in future versions of Moodle. A floating tag called MOODLE_XX_MERGED will be maintained to keep track of the last merge. The procedure for such a merge is as follows:</p>
@@ -184,22 +168,19 @@ update -dP</strong> </pre>
         <ol>
           <li>Get out the very latest trunk version.<br>
             <br>
-            <strong>cvs update -dPA</strong><br>
+            <div class="commandline">cvs update -dPA</div>
           </li>
-          <li>Merge everything on the branch since the last merge, into your trunk version <strong><br>
-            <br>
-            cvs update -j MOODLE_13_MERGED -j MOODLE_13_STABLE<br>
-            </strong></li>
-          <li>Check the merged copy back into CVS trunk version <span class="style1"><strong><br>
-            <br>
-            </strong></span><strong>cvs commit </strong><span class="style1"><strong><br>
-            </strong></span></li>
-          <li>Go back to the branch version <br>
-            <br>
-            <strong>cvs update -dPr MOODLE_13_STABLE<br>
-            </strong></li>
-          <li>Update the floating merge tag so that this process can be repeated next time <br>
-            <p><strong>cvs tag -RF MOODLE_13_MERGED</strong></p>
+          <li>Merge everything on the branch since the last merge, into your trunk version<br><br>
+            <div class="commandline">cvs update -j MOODLE_13_MERGED -j MOODLE_13_STABLE</div>
+	      </li>
+          <li>Check the merged copy back into CVS trunk version<br><br>
+            <div class="commandline">cvs commit</div>
+		 </li>
+          <li>Go back to the branch version<br><br>
+            <div class="commandline">cvs update -dPr MOODLE_13_STABLE</div>
+			</li>
+          <li>Update the floating merge tag so that this process can be repeated next time<br><br>
+            <div class="commandline">cvs tag -RF MOODLE_13_MERGED</div>
           </li>
         </ol>
       </ol>
@@ -212,31 +193,29 @@ update -dP</strong> </pre>
       <p>Occasionally, there may be a very large feature that needs to be checked in so several people can work on it, but it is too unstable to be included in the main development trunk.</p>
       <p>In these cases a short-term branch can be created to work on the feature, and then merged back into the main trunk as soon as possible. An example called <span class="style1"><strong>MOODLE_14_WIDGET</strong></span> branch can be seen in the above diagram.</p>
       <p>If you need to do this for your new WIDGET feature, follow these steps:</p>
-    </blockquote>
+
     <ol>
-      <ol>
         <ol>
           <li>Discuss with other developers to make sure it's necessary!</li>
-          <li>Make a new tag on the <strong>trunk</strong> (for all of moodle) called <strong>MOODLE_XX_WIDGET_PRE<br>
-            <br>
-            cvs tag -R MOODLE_XX_WIDGET_PRE <br>
-            </strong></li>
-          <li>Create your branch called <span class="style1"><strong>MOODLE_XX_WIDGET<br>
-            <br>
-            </strong></span><strong>cvs tag -Rb <span class="style1">MOODLE_XX_WIDGET</span></strong><span class="style1"><strong> <br>
-            </strong></span></li>
-          <li>Work in that branch until the feature is reasonably stable. Commit as necessary.<br>
-            <br>
-            <strong>cvs commit <br>
-            </strong></li>
-          <li>When ready, merge the whole branch into the trunk, commit it to the trunk and then abandon the branch.<br>
-            <p><strong>cvs update -dPA</strong></p>
-            <p><strong>cvs update -j <span class="style1">MOODLE_XX_WIDGET</span></strong></p>
-            <p><strong>cvs commit </strong></p>
+          <li>Make a new tag on the <strong>trunk</strong> (for all of moodle) called <strong>MOODLE_XX_WIDGET_PRE</strong>
+		  <br><br>
+            <div class="commandline">cvs tag -R MOODLE_XX_WIDGET_PRE</div></li>
+          <li>Create your branch called <span class="style1"><strong>MOODLE_XX_WIDGET</strong></span>
+		  <br><br>
+            <div class="commandline">cvs tag -Rb <span class="style1">MOODLE_XX_WIDGET</span></strong></div></li>
+          <li>Work in that branch until the feature is reasonably stable. Commit as necessary.
+		  <br><br>
+            <div class="commandline">cvs commit</div></li>
+          <li>When ready, merge the whole branch into the trunk, commit it to the trunk and then abandon the branch.
+		  <br><br>
+            <div class="commandline">
+            <strong>cvs update -dPA</strong><br />
+            <strong>cvs update -j <span class="style1">MOODLE_XX_WIDGET</span></strong><br />
+            <strong>cvs commit </strong></div>
           </li>
-        </ol>
       </ol>
     </ol>
+   </blockquote>
     <blockquote>
       <p>&nbsp;</p>
     </blockquote>
