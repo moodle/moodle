@@ -22,6 +22,7 @@ $string['discussion'] = "话题";
 $string['discussionmoved'] = "该讨论已被移到 \$a ";
 $string['discussions'] = "话题";
 $string['discussionsstartedby'] = "由 \$a 发起的话题";
+$string['discussionsstartedbyrecent'] = "最近由 \$a 发起的话题";
 $string['discussthistopic'] = "讨论这个话题";
 $string['eachuserforum'] = "每个人发表一个话题";
 $string['edit'] = "编辑";
