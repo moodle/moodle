@@ -40,19 +40,19 @@ function main_upgrade($oldversion=0) {
         insert_record("log_display", $new);
     }
     
-	//support user based course creating
+    //support user based course creating
     if ($oldversion < 2003032400) {
-	    execute_sql("CREATE TABLE $CFG->prefix_user_coursecreators (
+        execute_sql("CREATE TABLE $CFG->prefix_user_coursecreators (
                                   id int8 SERIAL PRIMARY KEY,
                                   userid int8  NOT NULL default '0'
                                   )");
-	}
+    }
 
-	if ($oldversion < 2003041400) {
+    if ($oldversion < 2003041400) {
         table_column("course_modules", "", "visible", "integer", "1", "unsigned", "1", "not null", "score");
     }
 
-	if ($oldversion < 2003042104) {  // Try to update permissions of all files
+    if ($oldversion < 2003042104) {  // Try to update permissions of all files
         if ($files = get_directory_list($CFG->dataroot)) {
             echo "Attempting to update permissions for all files... ignore any errors.";
             foreach ($files as $file) {
@@ -76,44 +76,51 @@ function main_upgrade($oldversion=0) {
         }
     }
 
-    if ($oldversion < 2003042401) {                 
-    //  Convert usernames to lowercase
-        $users = get_records_sql("SELECT  id, username FROM {$CFG->prefix}user"); 
-	    $cerrors = "";
-   	    $rarray = array();
-	    foreach ($users as $user) {
-        	$lcname = trim(moodle_strtolower($user->username));
-	        if (in_array($lcname, $rarray)) {
+    if ($oldversion < 2003042500) {                 
+    //  Convert all usernames to lowercase.  
+        $users = get_records_sql("SELECT id, username FROM {$CFG->prefix}user"); 
+        $cerrors = "";
+        $rarray = array();
+
+        foreach ($users as $user) {      // Check for possible conflicts
+            $lcname = trim(moodle_strtolower($user->username));
+            if (in_array($lcname, $rarray)) {
                 $cerrors .= $user->id."->".$lcname.'<br/>' ; 
-        	}else {
-            	    array_push($rarray,$lcname);
-        	}
+            } else {
+                array_push($rarray,$lcname);
+            }
         }
-	    /// Do convert or give error message
+
         if ($cerrors != '') {
-        	print "Error: Cannot convert usernames to lowercase. Following usernames would overlap (id->username):<br/> $cerrors . Please resolve overlapping errors."; 
+            notify("Error: Cannot convert usernames to lowercase. 
+                    Following usernames would overlap (id->username):<br/> $cerrors . 
+                    Please resolve overlapping errors."); 
             $result = false;
-        }else {
-            $cerrors = '';
-            print "Checking userdatabase:<br>";
-            foreach ($users as $user) {
-            	$lcname = trim(moodle_strtolower($user->username));
-            	$convert = set_field("user" , "username" , $lcname, "id", $user->id);
-            	if (!$convert) {
+        }
+
+        $cerrors = "";
+        echo "Checking userdatabase:<br>";
+        foreach ($users as $user) {
+            $lcname = trim(moodle_strtolower($user->username));
+            if ($lcname != $user->username) {
+                $convert = set_field("user" , "username" , $lcname, "id", $user->id);
+                if (!$convert) {
                     if ($cerrors){
                        $cerrors .= ", ";
                     }   
                     $cerrors .= $item;
-            	} else {
-                    print ".";
+                } else {
+                    echo ".";
                 }   
             }
-            if ($cerrors != '') {
-                print "There was errors when converting following usernames to lowercase. '$cerrors' . Please maintain your database by hand.";
-                $result=false;
-            }
+        }
+        if ($cerrors != '') {
+            notify("There were errors when converting following usernames to lowercase. 
+                   '$cerrors' . Sorry, but you will need to fix your database by hand.");
+            $result = false;
         }
     }
+
     return $result;
 }
 ?>    

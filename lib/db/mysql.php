@@ -21,6 +21,8 @@ function main_upgrade($oldversion=0) {
 
     global $CFG;
 
+    $result = true;
+
     if ($oldversion == 0) {
         execute_sql("
           CREATE TABLE `config` (
@@ -300,7 +302,53 @@ function main_upgrade($oldversion=0) {
         }
     }
 
-    return true;
+    if ($oldversion < 2003042500) {                 
+    //  Convert all usernames to lowercase.  
+        $users = get_records_sql("SELECT id, username FROM {$CFG->prefix}user"); 
+        $cerrors = "";
+        $rarray = array();
+
+        foreach ($users as $user) {      // Check for possible conflicts
+            $lcname = trim(moodle_strtolower($user->username));
+            if (in_array($lcname, $rarray)) {
+                $cerrors .= $user->id."->".$lcname.'<br/>' ; 
+            } else {
+                array_push($rarray,$lcname);
+            }
+        }
+
+        if ($cerrors != '') {
+            notify("Error: Cannot convert usernames to lowercase. 
+                    Following usernames would overlap (id->username):<br/> $cerrors . 
+                    Please resolve overlapping errors."); 
+            $result = false;
+        }
+
+        $cerrors = "";
+        echo "Checking userdatabase:<br>";
+        foreach ($users as $user) {
+            $lcname = trim(moodle_strtolower($user->username));
+            if ($lcname != $user->username) {
+                $convert = set_field("user" , "username" , $lcname, "id", $user->id);
+                if (!$convert) {
+                    if ($cerrors){
+                       $cerrors .= ", ";
+                    }   
+                    $cerrors .= $item;
+                } else {
+                    echo ".";
+                }   
+            }
+        }
+        if ($cerrors != '') {
+            notify("There were errors when converting following usernames to lowercase. 
+                   '$cerrors' . Sorry, but you will need to fix your database by hand.");
+            $result = false;
+        }
+    }
+
+    return $result;
+
 }
 
 ?>
