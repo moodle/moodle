@@ -8,8 +8,8 @@ Mike:
  - Grading
 
 Michael:
- - SiteMap
- - Notify
+ - More Logging
+ - Notify when page changes
 
 Unassigned or not ready:
  - Dump Pages
