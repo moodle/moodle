@@ -1,0 +1,71 @@
+<?PHP // $Id$ 
+      // attendance.php - created with Moodle 1.1.1 (2003091111)
+
+
+$string['absentlong'] = 'A 결석';
+$string['absentshort'] = 'A';
+$string['addingmultiple'] = '복수 참석자 명단 추가하기';
+$string['addmultiple'] = '복수 참석자 명단 추가하기';
+$string['allmodulename'] = '전체 참석자 명단';
+$string['auto'] = '자동';
+$string['autoattend'] = '사용자 활동 로그에 근거에 자동적으로 출석 확인하기';
+$string['autoattendmulti'] = '사용자 활동 로그에 모든 참가자에 출석 확인하기';
+$string['autoattendshort'] = '로그로 자동 출석확인하기';
+$string['choosedays'] = '요일별 출석 확인하기';
+$string['dayofroll'] = '참가자 명단의 날짜';
+$string['defaultautoattend'] = '사용자 활동 로그에 근거해 출석확인을 기본값으로 설정하기';
+$string['defaultdynamicsection'] = '참석자 명단을 정확한 주로 옮기기';
+$string['defaultgrade'] = '참석자 명단을 등급 가능하게 설정하기';
+$string['defaulthoursinclass'] = '참석자 명단에서 몇 시간 동안 있어야 할까?';
+$string['defaultmaxgrade'] = '개근했을때 최고 출석점수는 몇점으로 할까?';
+$string['defaultstudentstatus'] = '새로운 출석부에 기본 학생 출석 점수 설정';
+$string['downloadexcelfull'] = '다운로드: 전체를 엑셀 양식으로';
+$string['downloadexceltotals'] = '다운로드: 요약을 엑셀 양식으로';
+$string['downloadtextfull'] = '다운로드: 전체를 텍스트 보고서로';
+$string['downloadtexttotals'] = '다운로드: 요약을 텍스트 보고서로';
+$string['dynamicsection'] = '이 날짜에 근거해 출석할 주 결정하기';
+$string['dynamicsectionmulti'] = '자동으로 주별 마당에 출석부 놓기';
+$string['dynsectionshort'] = '마당으로 옮기기';
+$string['endbeforestart'] = '시작이 이전에도 종료일 설정하기';
+$string['endmulti'] = '출석부의 마지막 날';
+$string['for'] = 'for';
+$string['friday'] = '금요일';
+$string['gradeshort'] = '등급';
+$string['gradevalue'] = '장부를 등급 가능하게';
+$string['gradevaluemulti'] = '이 장부들을 등급가능하게';
+$string['hoursinclass'] = '학과에 대한 시간수';
+$string['hoursineachclass'] = '각 학과에 대한 시간수';
+$string['hoursinfullreport'] = '보고서 한 페이지에 보여질 출석 시간 최대';
+$string['maxgradeshort'] = '최고 등급';
+$string['maxgradevalue'] = '전체 참석자에 대한 최고 등급';
+$string['modulename'] = '참석';
+$string['modulenameplural'] = '참석자 명단';
+$string['monday'] = '월요일';
+$string['norolls'] = '이 배움터에 출석부가 없읍니다.';
+$string['notes'] = '예외적인 정보';
+$string['notesfor'] = '예외적인 정보';
+$string['noviews'] = '죄송합니다, 당신 계정에 관한 자료가 없습니다.';
+$string['of'] = 'of';
+$string['pages'] = '쪽';
+$string['presentlong'] = 'P 출석';
+$string['presentshort'] = 'P';
+$string['saturday'] = '토요일';
+$string['startafterend'] = '배움터가 끝나고 몇일 후에 시작할까';
+$string['startmulti'] = '출석부의 첫째날';
+$string['sunday'] = '일요일';
+$string['takeroll'] = '오늘의 명단을 보겠습니까?';
+$string['tardiesperabsence'] = '지각 몇 번을 결석으로 인정할까요';
+$string['tardylong'] = 'T 지각';
+$string['tardyshort'] = 'T';
+$string['thursday'] = '목요일';
+$string['tuesday'] = '화';
+$string['viewall'] = '보기: 모든 참석자 명단';
+$string['viewmulti'] = '보기: 보고서를 여러 쪽으로';
+$string['viewone'] = '보기: 보고서의 모든쪽';
+$string['viewsection'] = '보기: 이 마당의 모든 참석자 명단';
+$string['viewtable'] = '보기: 하나의 표로 보고서';
+$string['viewweek'] = '보기: 달력의 주로 모든 참석자 명단';
+$string['wednesday'] = '수요일';
+$string['weekmodulename'] = '지난 주 모든 참석자 명단';
+
+?>
