@@ -38,10 +38,12 @@
 
     add_to_log($course->id, "user", "view", "view.php?id=$user->id&course=$course->id", "$user->id");
 
-    if ($student = get_record("user_students", "userid", $user->id, "course", $course->id)) {
-        $user->lastaccess = $student->timeaccess;
-    } else if ($teacher = get_record("user_teachers", "userid", $user->id, "course", $course->id)) {
-        $user->lastaccess = $teacher->timeaccess;
+    if ($course->id != SITEID) {
+        if ($student = get_record("user_students", "userid", $user->id, "course", $course->id)) {
+            $user->lastaccess = $student->timeaccess;
+        } else if ($teacher = get_record("user_teachers", "userid", $user->id, "course", $course->id)) {
+            $user->lastaccess = $teacher->timeaccess;
+        }
     }
 
     $fullname = fullname($user, isteacher($course->id));
