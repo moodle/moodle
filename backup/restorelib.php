@@ -5,27 +5,8 @@
     //It automatically uses pclzip or command line unzip
     function restore_unzip ($file) {
         
-        global $CFG;
+        return unzip_file($file, '', false);
 
-        $status = true;
-
-        if (empty($CFG->unzip)) {    // Use built-in php-based unzip function
-            include_once("$CFG->dirroot/lib/pclzip/pclzip.lib.php");
-            //include_once("$CFG->dirroot/lib/pclzip/pclerror.lib.php");    //Debug
-            //include_once("$CFG->dirroot/lib/pclzip/pcltrace.lib.php");    //Debug
-            //PclTraceOn(2);                                          //Debug
-            $archive = new PclZip(cleardoubleslashes($file));
-            if (!$list = $archive->extract(PCLZIP_OPT_PATH, cleardoubleslashes(dirname($file)))) {
-                $status = false;
-            }
-            //PclTraceDisplay();                                       //Debug
-            //PclTraceOff();                                           //Debug
-        } else {                     // Use external unzip program
-            $command = "cd ".dirname($file)."; $CFG->unzip -o ".basename($file);
-            Exec($command);
-        }
-
-        return $status;
     }
 
     //This function checks if moodle.xml seems to be a valid xml file
