@@ -58,10 +58,6 @@
         redirect($CFG->wwwroot.'/'.$CFG->admin.'/index.php');
     }
 
-    $firstcolumn = false;  // for now
-    $side = 175;
-
-    calendar_session_vars();
     $now = usergetdate(time());
     $nav = calendar_get_link_tag(get_string('calendar', 'calendar'), CALENDAR_URL.'view.php?view=upcoming&amp;', $now['mday'], $now['mon'], $now['year']);
     $day = intval($now['mday']);
@@ -124,7 +120,7 @@
                 }
                 else {
                     foreach ($err as $key => $value) {
-                        $focus = "form.$key";
+                        $focus = 'form.'.$key;
                     }
                 }
             }
@@ -179,7 +175,7 @@
                 }
                 else {
                     foreach ($err as $key => $value) {
-                        $focus = "form.$key";
+                        $focus = 'form'.$key;
                     }
                 }
             }
@@ -202,7 +198,6 @@
     print_header(get_string('calendar', 'calendar').': '.$title, $site->fullname, $nav.' -> '.$title,
                  $focus, '', true, '', '<p class="logininfo">'.user_login_string($site).'</p>');
 
-    /// Layout the whole page as three big columns.
     echo '<table border="0" cellpadding="3" cellspacing="0" width="100%"><tr valign="top">';
     echo '<td valign="top" width="100%">';
 
@@ -408,7 +403,7 @@
     echo '</td>';
 
     // START: Last column (3-month display)
-    echo '<td valign="top" width="'.$side.'">';
+    echo '<td style="vertical-align: top; width: 180px;">';
 
     // [pj] There is a whole class of problems with minimonths in event.php, which
     // was why there were no minimonths before... I fixed them as best I could for now.
@@ -434,7 +429,7 @@
     echo calendar_get_mini($courses, $groups, $users, $nextmon, $nextyr);
     echo '</p>';
     print_side_block_end();
-    print_spacer(1, $side);
+    print_spacer(1, 180);
     echo '</td>';
 
     echo '</tr></table>';
