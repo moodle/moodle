@@ -139,6 +139,7 @@ $string['changepassword'] = 'Change password';
 $string['changessaved'] = 'Changes saved';
 $string['checkingbackup'] = 'Checking backup';
 $string['checkingcourse'] = 'Checking course';
+$string['checkingforbbexport'] = 'Checking for BlackBoard export';
 $string['checkinginstances'] = 'Checking instances';
 $string['checkingsections'] = 'Checking sections';
 $string['checklanguage'] = 'Check language';
