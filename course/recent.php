@@ -7,6 +7,13 @@
 
     require_variable($id);
 
+    optional_variable($days);
+    $day_list = array("1","7","14","21","30");
+    $strsince = get_string("since");
+    $strlastlogin = get_string("lastlogin");
+    $strday = get_string("day");
+    $strdays = get_string("days");
+
     if (! $course = get_record("course", "id", $id) ) {
         error("That's an invalid course id");
     }
@@ -25,7 +32,16 @@
 
     get_all_mods($course->id, $mods, $modnames, $modnamesplural, $modnamesused);
 
-    print_heading("Since:  Last Login | 1 day | 7 days | 14 days | 21 days | 30 days");
+    $heading = "";
+    foreach ($day_list as $count)  {
+        if ($count == "1")
+          $day = $strday;
+        else
+          $day = $strdays;
+        $heading = $heading . "<a href=\"$CFG->wwwroot/course/recent.php?id=$id&days=$count\"> $count $day</a> | ";
+    }
+    $heading = $strsince . ": <a href=\"$CFG->wwwroot/course/recent.php?id=$id\">$strlastlogin</a>" . " | " . $heading;
+    print_heading($heading);
 
     if (empty($days)) {
         $timestart = $USER->lastlogin;
