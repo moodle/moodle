@@ -28,13 +28,13 @@
         $pathname = "$CFG->dataroot/groups/$groupid/$image";
         $filetype = "image/jpeg";
     } else {
+        $image = "f1.png";
         $pathname = "$CFG->dirroot/pix/g/f1.png";
         $filetype = "image/png";
     }
 
-    $lastmodified = filemtime($pathname);
-
     if (file_exists($pathname)) {
+        $lastmodified = filemtime($pathname);
         header("Last-Modified: " . gmdate("D, d M Y H:i:s", $lastmodified) . " GMT");
         header("Expires: " . gmdate("D, d M Y H:i:s", time() + $lifetime) . " GMT");
         header("Cache-control: max_age = $lifetime"); // a day
