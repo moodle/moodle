@@ -171,7 +171,7 @@
 
     // Print basic page layout.
 
-    if (empty($modform->instance)) {
+    if (!isset($modform->instance)) {
         echo '<table align="center" border="0" cellpadding="2" cellspacing="0">';
         echo '<tr><td valign="top">';
 
@@ -208,7 +208,7 @@
     echo '</td></tr>';
     echo '</table>';
 
-    if (empty($modform->instance)) {
+    if (!isset($modform->instance)) {
         print_continue("index.php?id=$modform->course");
     }
 
