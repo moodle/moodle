@@ -111,19 +111,19 @@
         } else {
             $wwwroot = str_replace('http','https',$CFG->wwwroot);
         }
-        echo "<p><form action=\"$wwwroot/user/edit.php\" method=\"get\">";
+        echo "<form action=\"$wwwroot/user/edit.php\" method=\"get\">";
         echo "<input type=\"hidden\" name=\"id\" value=\"$id\" />";
         echo "<input type=\"hidden\" name=\"course\" value=\"$course->id\" />";
         echo "<input type=\"submit\" value=\"".get_string("editmyprofile")."\" />";
-        echo "</form></p>";
+        echo "</form>";
     }
-    echo "</td></tr></table>";
+    echo "</td></tr></table>\n\n";
 
 
     // Print the description
 
     if ($user->description) {
-        echo "<p>".format_text($user->description, FORMAT_MOODLE)."</p><hr />";
+        echo format_text($user->description, FORMAT_MOODLE)."<hr />";
     }
 
     // Print all the little details in a list
@@ -212,6 +212,7 @@
 
     echo "</td></tr></table>";
 
+
     $internalpassword = false;
     if (is_internal_auth()) {
         if(empty($CFG->loginhttps)) {
@@ -258,6 +259,7 @@
         echo "<input type=\"submit\" value=\"".get_string("loginas")."\" />";
         echo "</form></p></td>";
     }
+    echo "<td></td>";
     echo "</tr></table></center>\n";
 
     $isseparategroups = ($course->groupmode == SEPARATEGROUPS and
@@ -273,7 +275,7 @@
 /// Functions ///////
 
 function print_row($left, $right) {
-    echo "<tr><td nowrap=\"nowrap\" align=\"right\" valign=\"top\"><p>$left</p></td><td align=\"left\" valign=\"top\"><p>$right</p></td></tr>";
+    echo "\n<tr><td nowrap=\"nowrap\" align=\"right\" valign=\"top\">$left</td><td align=\"left\" valign=\"top\">$right</td></tr>\n";
 }
 
 ?>
