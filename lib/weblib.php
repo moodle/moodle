@@ -1053,6 +1053,30 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
     return $text;
 }
 
+/** Given a simple string, this function returns the string
+ *  processed by enabled filters if $CFG->filterall is enabled
+ *
+ *  @param string $string   The string to be filtered.
+ *  @param int    $courseid Current course as filters can, potentially, use it
+ *  @return string
+ */
+function format_string ($string, $courseid=NULL ) {
+
+    global $CFG, $course;
+
+    if (empty($courseid)) {
+        if (!empty($course->id)) {         // An ugly hack for better compatibility
+            $courseid = $course->id;       // (copied from format_text)
+        }
+    }
+
+    if ($CFG->filterall) {
+        $string = filter_text($string, $courseid);
+    }
+
+    return $string;
+}
+
 /**
  * Given text in a variety of format codings, this function returns
  * the text as plain text suitable for plain email.
