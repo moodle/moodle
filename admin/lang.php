@@ -27,14 +27,21 @@
         case "missing":
             $navigation = "<A HREF=\"lang.php\">$strlanguage</A> -> $strmissingstrings";
             $title = $strmissingstrings;
+            $button = '<form target="'.$CFG->framename.'" method="get" action="'.$CFG->wwwroot.'/admin/lang.php">'.
+                      '<input type="hidden" name="mode" value="compare" />'.
+                      '<input type="submit" value="'.$strcomparelanguage.'" /></form>';
             break;
         case "compare":
             $navigation = "<A HREF=\"lang.php\">$strlanguage</A> -> $strcomparelanguage";
             $title = $strcomparelanguage;
+            $button = '<form target="'.$CFG->framename.'" method="get" action="'.$CFG->wwwroot.'/admin/lang.php">'.
+                      '<input type="hidden" name="mode" value="missing" />'.
+                      '<input type="submit" value="'.$strmissingstrings.'" /></form>';
             break;
         default:
             $title = $strlanguage;
             $navigation = $strlanguage;
+            $button = '';
             break;
     }
 
@@ -42,7 +49,8 @@
 
     print_header("$site->shortname: $title", "$site->fullname",
                  "<a href=\"index.php\">$stradministration</a> -> ".
-                 "<a href=\"configure.php\">$strconfiguration</a> -> $navigation");
+                 "<a href=\"configure.php\">$strconfiguration</a> -> $navigation",
+                 '', '', true, $button);
 
     if (!$mode) {
         $currlang = current_language();
@@ -102,15 +110,18 @@
                     $value = str_replace("$"."a", "\\$"."a", $value);
                     $value = str_replace("%%","%",$value);
                     if ($first) {
-                        echo "</PRE><HR><P><B>".get_string("stringsnotset","","$langdir/$file")."</B></P><PRE>";
+                        echo "<p><b>".get_string("stringsnotset","","$langdir/$file")."</b></p><pre>";
                         $first = false;
                         $somethingfound = true;
                     }
-                    echo "$"."string['$key'] = \"$value\";<BR>";
+                    echo "$"."string['$key'] = \"$value\";<br />";
                 }
             }
+            if (!$first) {
+                echo '</pre><hr />';
+            }
         }
-    
+  
         if (! $files = get_directory_list("$CFG->dirroot/lang/en/help", "CVS")) {
             error("Could not find English language help files!");
         }
