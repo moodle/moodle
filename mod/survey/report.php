@@ -142,6 +142,12 @@
 
             print_heading($strselectedquestions);
 
+            if ($scale = get_records("survey_questions", "multi", "$qid")) {
+                $scale = array_pop($scale);
+                echo "<HR>";
+                print_heading($scale->text);
+            }
+
         } else {        // get all top-level questions
             $questions = get_records_sql("SELECT * FROM survey_questions WHERE id in ($survey->questions)");
             $questionorder = explode(",", $survey->questions);
