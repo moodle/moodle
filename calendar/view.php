@@ -564,9 +564,6 @@ function calendar_show_upcoming_events($courses, $groups, $users, $futuredays, $
             echo '<span class="calendarreferer">'.$events[$i]->referer.': </span>';
         }
         echo '<span class="cal_event">'.$events[$i]->name.":</span>\n";
-        if(!empty($events[$i]->referer) && !empty($events[$i]->icon)) {
-            echo '<span class="calendarreferer">'.$events[$i]->referer.': </span>';
-        }
         echo '<span class="cal_event_date">'.$events[$i]->time.'</span>';
         echo '<br />'.$events[$i]->description.'<br />';
         if($i < $numevents - 1) {
