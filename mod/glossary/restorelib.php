@@ -59,6 +59,7 @@
             $glossary->usedynalink = backup_todb($info['MOD']['#']['USEDYNALINK']['0']['#']);
             $glossary->defaultapproval = backup_todb($info['MOD']['#']['DEFAULTAPPROVAL']['0']['#']);
             $glossary->globalglossary = backup_todb($info['MOD']['#']['GLOBALGLOSSARY']['0']['#']);
+            $glossary->entbypage = backup_todb($info['MOD']['#']['ENTBYPAGE']['0']['#']);
             $glossary->timecreated = backup_todb($info['MOD']['#']['TIMECREATED']['0']['#']);
             $glossary->timemodified = backup_todb($info['MOD']['#']['TIMEMODIFIED']['0']['#']);
 

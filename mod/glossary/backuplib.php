@@ -55,6 +55,7 @@
                 fwrite ($bf,full_tag("USEDYNALINK",4,false,$glossary->usedynalink));
                 fwrite ($bf,full_tag("DEFAULTAPPROVAL",4,false,$glossary->defaultapproval));
                 fwrite ($bf,full_tag("GLOBALGLOSSARY",4,false,$glossary->globalglossary));
+                fwrite ($bf,full_tag("ENTBYPAGE",4,false,$glossary->entbypage));
                 fwrite ($bf,full_tag("TIMECREATED",4,false,$glossary->timecreated));
                 fwrite ($bf,full_tag("TIMEMODIFIED",4,false,$glossary->timemodified));
                 
