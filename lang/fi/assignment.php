@@ -2,41 +2,41 @@
       // assignment.php - created with Moodle 1.0.9 development (2003021600)
 
 
-$string['allowresubmit'] = "Salli uudelleenlÃ¤hetys";
-$string['assignmentdetails'] = "TehtÃ¤vÃ¤n tiedot";
-$string['assignmentname'] = "TehtÃ¤vÃ¤n nimi";
-$string['assignmenttype'] = "TehtÃ¤vÃ¤n tyyppi";
+$string['allowresubmit'] = "Salli uudelleenlähetys";
+$string['assignmentdetails'] = "Tehtävän tiedot";
+$string['assignmentname'] = "Tehtävän nimi";
+$string['assignmenttype'] = "Tehtävän tyyppi";
 $string['description'] = "Kuvaus";
 $string['duedate'] = "Palautuspvm.";
 $string['early'] = "\$a ennen";
-$string['failedupdatefeedback'] = "Palautteen tallentaminen epÃ¤onnistui kÃ¤yttÃ¤jÃ¤lle \$a";
+$string['failedupdatefeedback'] = "Palautteen tallentaminen epäonnistui käyttäjälle \$a";
 $string['feedback'] = "Palaute";
-$string['feedbackupdated'] = "Palaute pÃ¤ivitetty oppilaalle \$a";
-$string['late'] = "\$a myÃ¶hÃ¤ssÃ¤";
+$string['feedbackupdated'] = "Palaute päivitetty oppilaalle \$a";
+$string['late'] = "\$a myöhässä";
 $string['maximumgrade'] = "Arviointipisteet";
 $string['maximumsize'] = "Maksimikoko";
-$string['modulename'] = "TehtÃ¤vÃ¤";
-$string['modulenameplural'] = "TehtÃ¤vÃ¤t";
-$string['newsubmissions'] = "Palautetut tehtÃ¤vÃ¤t";
-$string['notsubmittedyet'] = "Ei vielÃ¤ palautettu";
-$string['overwritewarning'] = "Varoitus: uudelleen lÃ¤hettÃ¤minen korvaa aiemman vastauksesi";
+$string['modulename'] = "Tehtävä";
+$string['modulenameplural'] = "Tehtävät";
+$string['newsubmissions'] = "Palautetut tehtävät";
+$string['notsubmittedyet'] = "Ei vielä palautettu";
+$string['overwritewarning'] = "Varoitus: uudelleen lähettäminen korvaa aiemman vastauksesi";
 $string['saveallfeedback'] = "Tallenna palaute";
-$string['submissionfeedback'] = "Palaute tehtÃ¤vÃ¤stÃ¤";
-$string['submissions'] = "LÃ¤hetetyt";
-$string['submitassignment'] = "Palauta tehtÃ¤vÃ¤si kÃ¤yttÃ¤en tÃ¤tÃ¤ lomaketta";
-$string['submitted'] = "LÃ¤hetetty";
+$string['submissionfeedback'] = "Palaute tehtävästä";
+$string['submissions'] = "Lähetetyt";
+$string['submitassignment'] = "Palauta tehtäväsi käyttäen tätä lomaketta";
+$string['submitted'] = "Lähetetty";
 $string['typeoffline'] = "Offline aktiviteetti";
-$string['typeuploadsingle'] = "LÃ¤hetÃ¤ yksi tiedosto";
-$string['uploadbadname'] = "TiedostonimessÃ¤ on tuntemattomia merkkejÃ¤. Tiedostoa ei voida lÃ¤hettÃ¤Ã¤.";
-$string['uploadedfiles'] = "lÃ¤hetetyt tiedostot";
+$string['typeuploadsingle'] = "Lähetä yksi tiedosto";
+$string['uploadbadname'] = "Tiedostonimessä on tuntemattomia merkkejä. Tiedostoa ei voida lähettää.";
+$string['uploadedfiles'] = "lähetetyt tiedostot";
 $string['uploaderror'] = "Tiedoston tallentamisessa palvelimelle tapahtui virhe.";
 $string['uploadfailnoupdate'] = "Tiedosto saapui palvelimelle, mutta vastauksesi tallentamisessa tapahtui virhe.";
-$string['uploadfiletoobig'] = "Pahus, tiedosto jota yritit lÃ¤hettÃ¤Ã¤ on liian suuri.  (Kokorajoitus on \$a tavua);";
-$string['uploadnofilefound'] = "Tiedostoa ei lÃ¶ydy, oletko varma ettÃ¤ valitsit lÃ¤hetettÃ¤vÃ¤n tiedoston.";
-$string['uploadnotregistered'] = "'\$a' vastaanotettiin, mutta lÃ¤hetystÃ¤si ei rekisterÃ¶ity. ";
+$string['uploadfiletoobig'] = "Pahus, tiedosto jota yritit lähettää on liian suuri.  (Kokorajoitus on \$a tavua);";
+$string['uploadnofilefound'] = "Tiedostoa ei löydy, oletko varma että valitsit lähetettävän tiedoston.";
+$string['uploadnotregistered'] = "'\$a' vastaanotettiin, mutta lähetystäsi ei rekisteröity. ";
 $string['uploadsuccess'] = "'\$a' on vastaanotettu palvelimelle.";
-$string['viewfeedback'] = "Katso tehtÃ¤vien arviointeja ja palautteita.";
-$string['viewsubmissions'] = "Katso \$a palautettuja tehtÃ¤viÃ¤";
+$string['viewfeedback'] = "Katso tehtävien arviointeja ja palautteita.";
+$string['viewsubmissions'] = "Katso \$a palautettuja tehtäviä";
 $string['yoursubmission'] = "Vastauksesi";
 
 ?>

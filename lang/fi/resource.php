@@ -2,7 +2,7 @@
       // resource.php - created with Moodle 1.0.9 development (2003050400)
 
 
-$string['addresource'] = "Lis√§√§ aineisto";
+$string['addresource'] = "Lis‰‰ aineisto";
 $string['editingaresource'] = "Aineiston muokkaus";
 $string['example'] = "Esimerkki";
 $string['examplereference'] = "Tobin, K. & Tippins, D (1993) Constructivism as a Referent for Teaching and Learning. In: K. Tobin (Ed) The Practice of Constructivism in Science Education, pp 3-21, Lawrence-Erlbaum, Hillsdale, NJ.";
@@ -14,9 +14,9 @@ $string['modulename'] = "Aineisto";
 $string['modulenameplural'] = "Aineistot";
 $string['neverseen'] = "Lukematta";
 $string['note'] = "Huomaa";
-$string['notefile'] = "Lis√§t√§ksesi tiedostoja kurssille (jotta ne n√§kysiv√§t t√§ss√§ listassa) k√§yt√§ 
-<A HREF=\$a >Tiedostot-</A>ty√∂kalua.";
-$string['notypechosen'] = "Sinun pit√§√§ valita luettavan aineiston tyyppi tyyppi.  Kayt√§ selaimen \\\"back\\\"-nappia.";
+$string['notefile'] = "Lis‰t‰ksesi tiedostoja kurssille (jotta ne n‰kysiv‰t t‰ss‰ listassa) k‰yt‰ 
+<A HREF=\$a >Tiedostot-</A>tyˆkalua.";
+$string['notypechosen'] = "Sinun pit‰‰ valita luettavan aineiston tyyppi tyyppi.  Kayt‰ selaimen \\\"back\\\"-nappia.";
 $string['resourcetype'] = "Aineiston tyyppi";
 $string['resourcetype1'] = "Viittaus";
 $string['resourcetype2'] = "Web-sivu";
