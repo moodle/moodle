@@ -79,6 +79,10 @@
             }
             echo '</h2>';
             if($compactmode) {
+                // First of all, remove teachers with no authority
+                $teachers = array_filter($teachers, create_function('$t','return ($t->authority > 0);'));
+
+                // And now show the remainder as usual
                 $exceptions .= implode(',', array_keys($teachers));
                 print_user_table($teachers, $isteacher);
             }
