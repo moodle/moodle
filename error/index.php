@@ -1,23 +1,23 @@
 <?PHP // $Id$
 
-    require("../config.php");
+    require('../config.php');
 
     if (isset($text)) {    // form submitted
         if (!$admin = get_admin() ) {
-            error("Could not find the admin user to mail to!");
+            error('Could not find the admin user to mail to!');
         }
 
-        email_to_user($admin, $USER, "Error: $referer -> $requested", "$text");
+        email_to_user($admin, $USER, 'Error: '. $referer .' -> '. $requested, $text);
 
-        redirect("$CFG->wwwroot/course/", "Message sent, thanks", 3);
+        redirect($CFG->wwwroot .'/course/', 'Message sent, thanks', 3);
         die;
     }
 
     $site = get_site();
     
-    print_header("$site->fullname:Error", "$site->fullname: Error 404", "", "form.text");
+    print_header($site->fullname .':Error', $site->fullname .': Error 404', '', 'form.text');
 
-    print_simple_box("An unusual error occurred (tried to reach a page that doesn't exist).<p align="center">$REDIRECT_URL", "center", "", "$THEME->cellheading");
+    print_simple_box('An unusual error occurred (tried to reach a page that doesn\'t exist).<p align="center">'. $REDIRECT_URL, 'center', '', $THEME->cellheading);
   
 ?>
   
