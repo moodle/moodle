@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.3 development (2004040500)
+      // moodle.php - created with Moodle 1.3 development (2004041800)
 
 
 $string['action'] = '┴р║ю';
@@ -42,6 +42,7 @@ $string['adminhelpcourses'] = 'е│б╝е╣бжеле╞е┤еъд╬└▀─ъ╡┌д╙┐═д╬│ф┼Ўд╞дЄ╣╘ддд▐д╣';
 $string['adminhelpedituser'] = 'ецб╝е╢евележеєе╚еъе╣е╚д╬╔╜╝и╡┌д╙╩╘╜╕дЄ╣╘ддд▐д╣';
 $string['adminhelplanguage'] = '╕└╕ье╤е├епд╬│╬╟з╡┌д╙╩╘╜╕дЄ╣╘ддд▐д╣';
 $string['adminhelplogs'] = 'е╡еде╚д╬┴┤│ш╞░д╦┤╪д╣дыеэе░дЄ▒▄═ўд╖д▐д╣';
+$string['adminhelpmanageblocks'] = 'едеєе╣е╚б╝еы║╤д▀е╓еэе├епд╬┤╔═¤╡┌д╙└▀─ъ';
 $string['adminhelpmanagedatabase'] = 'е╟б╝е┐е┘б╝е╣д╦─╛└▄евепе╗е╣д╣ды(├э░╒д╖д╞дпд└д╡дд!)';
 $string['adminhelpmanagefilters'] = 'е╞ене╣е╚е╒егеые┐╡┌д╙┤╪╧в└▀─ъдЄ┴к┬Єд╖д╞дпд└д╡дд';
 $string['adminhelpmanagemodules'] = 'едеєе╣е╚б╝еы║╤ете╕ехб╝еы╡┌д╙д╜д╬е╗е├е╞егеєе░дЄ┤╔═¤д╖д▐д╣';
@@ -100,6 +101,8 @@ $string['backupsavetohelp'] = 'е╨е├епеве├е╫е╒ебедеы╩▌┬╕└ше╟егеьепе╚еъдЄе╒еые╤е╣д
 $string['backupuserfileshelp'] = '╝л╞░е╨е├епеве├е╫д╦ецб╝е╢е╒ебедеы(╬у е╫еэе╒егб╝еы╝╠┐┐)дЄ┤▐дсдыдл╚▌дл┴к┬Єд╖д╞дпд└д╡дд';
 $string['backupusershelp'] = 'е╡б╝е╨╞тд╬┴┤ецб╝е╢дЄ┤▐дсдыдлбв┴к┬Єд╖д┐ецб╝е╢д╬д▀дЄ┤▐дсдыдл┴к┬Єд╖д╞дпд└д╡дд';
 $string['backupversion'] = 'е╨е├епеве├е╫е╨б╝е╕ечеє';
+$string['blocksetup'] = 'е╓еэе├епе╞б╝е╓еыд╬└▀─ъ';
+$string['blocksuccess'] = '$a д╬е╞б╝е╓еыдм└╡╛яд╦└▀─ъд╡дьд▐д╖д┐';
 $string['bycourseorder'] = 'е│б╝е╣╜ч';
 $string['cancel'] = 'енеуеєе╗еы';
 $string['categories'] = 'е│б╝е╣еле╞е┤еъ';
@@ -226,6 +229,7 @@ $string['databaseperformance'] = 'е╟б╝е┐е┘б╝е╣е╤е╒ейб╝е▐еєе╣';
 $string['databasesetup'] = 'е╟б╝е┐е┘б╝е╣д╬└▀─ъ';
 $string['databasesuccess'] = 'е╟б╝е┐е┘б╝е╣д╬╣╣┐╖дм┤░╬╗д╖д▐д╖д┐';
 $string['databaseupgradebackups'] = 'е╨е├епеве├е╫е╨б╝е╕ечеєд╧ $a д╟д╣';
+$string['databaseupgradeblocks'] = 'е╓еэе├епе╨б╝е╕ечеєд╧ $a д╟д╣';
 $string['databaseupgrades'] = 'е╟б╝е┐е┘б╝е╣д╬╣╣┐╖';
 $string['datemostrecentfirst'] = '╞№╔╒ - ┐╖д╖дддтд╬дЄ║╟╜щд╦';
 $string['datemostrecentlast'] = '╞№╔╒ - ┐╖д╖дддтд╬дЄ║╟╕хд╦';
@@ -516,6 +520,7 @@ $string['logs'] = 'еэе░';
 $string['mainmenu'] = 'еседеєесе╦ехб╝';
 $string['makeafolder'] = 'е╒ейеые└дЄ║ю└од╣ды';
 $string['makeeditable'] = '\'$a\' дЄе╡б╝е╨╛х(╬у apache)д╟╩╘╜╕▓─╟╜д╦д╖д┐╛ь╣чбв─╛└▄д│д╬е┌б╝е╕дшдъ╩╘╜╕д╟днд▐д╣';
+$string['manageblocks'] = 'е╓еэе├еп';
 $string['managedatabase'] = 'е╟б╝е┐е┘б╝е╣┤╔═¤';
 $string['managefilters'] = 'е╒егеые┐';
 $string['managemodules'] = 'ете╕ехб╝еы┤╔═¤';
@@ -685,6 +690,7 @@ $string['readinginfofrombackup'] = 'е╨е├епеве├е╫дшдъ╛Ё╩єдЄ╞╔╝шдъ├ц';
 $string['readme'] = 'READMEе╒ебедеы';
 $string['recentactivity'] = '║╟╢сд╬│ш╞░';
 $string['recentactivityreport'] = '║╟╢сд╬│ш╞░╛▄║┘...';
+$string['refreshingevents'] = 'еде┘еєе╚д╬╣╣┐╖';
 $string['registration'] = 'Moodle┼╨╧┐';
 $string['registrationemail'] = 'есб╝еы─╠├╬';
 $string['registrationinfo'] = '<p>д│д╬е┌б╝е╕д╟д╧двд╩д┐д╬Moodleе╡еде╚дЄmoodle.orgд╦┼╨╧┐╜╨═шд▐д╣бг┼╨╧┐д╧╠╡╬┴д╟д╣бг┼╨╧┐д╬╝чд╩═°┼└д╧бв╚п┐о┐Їд╬╛пд╩ддесб╝еъеєе░еъе╣е╚д╦двд╩д┐д╬есб╝еыеве╔еье╣дм─╔▓├д╡дьбве╗енехеъе╞егб╝д╦┤╪д╣ды╖┘╣ЁдфMoodleд╬║╟┐╖еъеъб╝е╣д╦┤╪д╣ды╛Ё╩єдЄ╝ї╝шдьдыд│д╚д╟д╣бг

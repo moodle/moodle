@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.2 development (2004013101)
+      // auth.php - created with Moodle 1.3 development (2004041800)
 
 
 $string['auth_dbdescription'] = 'ユーザ名とパスワードを確認するために外部のデータベースを使用します。新しいアカウントを作成する場合、他のフィールドの情報がMoodleへ複製されます。';
@@ -34,6 +34,7 @@ $string['auth_ldap_memberattribute'] = 'ユーザがグループに属性している場合、ユー
 $string['auth_ldap_search_sub'] = 'サブコンテキストからユーザを検索する場合は、  &lt;&gt; 0 のように入力してください。';
 $string['auth_ldap_update_userinfo'] = 'LDAPよりMoodleの情報(名前、名字、住所等)を更新します。マッピング情報に関しては /auth/ldap/attr_mappings をご覧ください。';
 $string['auth_ldap_user_attribute'] = 'name/searchユーザに使われる属性です。通常は\'cn\'です。';
+$string['auth_ldap_version'] = 'サーバで使用しているLDAPプロトコルのバージョン';
 $string['auth_ldapdescription'] = '外部のLDAPサーバに対して認証を行います。ユーザ名とパスワードが正しい場合、Moodleは新しいユーザをデータベースに作成します。このモジュールはユーザ属性をLDAPから取得してMoodleのフィールドに入力します。認証後のログインではユーザ名とパスワードのみが確認されます。
 
 ';

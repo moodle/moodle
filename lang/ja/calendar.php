@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // calendar.php - created with Moodle 1.3 development (2004032800)
+      // calendar.php - created with Moodle 1.3 development (2004041800)
 
 
 $string['april'] = '4月';
@@ -54,6 +54,7 @@ $string['mon'] = '月';
 $string['monday'] = '月曜日';
 $string['monthlyview'] = '月表示';
 $string['newevent'] = '新しいイベント';
+$string['noupcomingevents'] = '直近のイベントはありません';
 $string['november'] = '11月';
 $string['october'] = '10月';
 $string['oneevent'] = '1 イベント';
