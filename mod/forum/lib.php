@@ -423,7 +423,7 @@ function forum_print_recent_activity($course, $isteacher, $timestart) {
                         $cm[$forum->id] = get_coursemodule_from_instance("forum", $forum->id, $course->id);
                         $groupmode[$forum->id] = groupmode($course, $cm[$forum->id]);
                     }
-                    if ($groupmode($forum->id)) {
+                    if ($groupmode[$forum->id]) {
                         if ($mygroupid != forum_get_groupid_from_discussion($post->discussion, $course->id)) {
                             continue;
                         }
@@ -823,7 +823,7 @@ function forum_get_groupid_from_discussion($discussionid, $courseid) {
                                    AND g.courseid = '$courseid'
                                    AND gm.groupid = g.id
                                    AND gm.userid = d.userid")) {
-        return $info->groupid;
+        return $info->id;
     }
     return 0;
 }
