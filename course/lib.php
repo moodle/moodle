@@ -598,10 +598,15 @@ function print_section_block($heading, $course, $section, $mods, $modnames, $mod
             if ($mod->visible or $isteacher) {
                 $instancename = urldecode($modinfo[$modnumber]->name);
                 $link_css = $mod->visible ? "" : " class=\"dimmed\" ";
+                if (!empty($modinfo[$modnumber]->extra)) {
+                    $extra = urldecode($modinfo[$modnumber]->extra);
+                } else {
+                    $extra = "";
+                }
 
                 $modicon[] = "<img src=\"$CFG->wwwroot/mod/$mod->modname/icon.gif\"".
                              " height=\"16\" width=\"16\" alt=\"$mod->modfullname\">";
-                $moddata[] = "<a title=\"$mod->modfullname\" $link_css ".
+                $moddata[] = "<a title=\"$mod->modfullname\" $link_css $extra".
                              "href=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\">$instancename</a>".
                              "<br />$editbuttons";
             }
