@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.3 Stable (001) (2004052500)
+      // forum.php - created with Moodle 1.3.3 (2004052503)
 
 
 $string['addanewdiscussion'] = 'Adicionar um novo tópico de discussão';
@@ -16,6 +16,7 @@ $string['configenablerssfeeds'] = 'Esta opção ativa a possibilidade de gerar fee
 $string['configlongpost'] = 'Todas as mensagens maiores que esta dimensão (sem contar o html) são consideradas longas.';
 $string['configmanydiscussions'] = 'Número máximo de discussões mostrado em um fórum, por página.';
 $string['configmaxbytes'] = 'Tamanho máximo predefinido dos anexos de todos os fóruns do site (sujeito aos limites dos cursos e outras configurações locais)';
+$string['configreplytouser'] = 'Quando as mensagens dos fóruns são enviadas aos usuários via email devem conter o endereço do autor para que seja possivel responder via email diretamente a ele sem passar pelo fórum? Mesmo quando a opção escolhida for \"sim\" os usuários terão a possibilidade de mudar o perfil pessoal deles para manter o endereço de email escondido.';
 $string['configshortpost'] = 'Todas as mensagens menores que esta dimensão (sem contar o html) são consideradas curtas.';
 $string['couldnotadd'] = 'Não foi possível publicar a sua mensagem. Infelizmente a causa do erro não foi identificada.';
 $string['couldnotdeleteratings'] = 'Não é possível apagar esta mensagem porque já existem avaliações.';
@@ -25,6 +26,10 @@ $string['delete'] = 'Apagar';
 $string['deleteddiscussion'] = 'A discussão foi apagada';
 $string['deletedpost'] = 'A mensagem foi apagada';
 $string['deletesure'] = 'Você tem certeza que quer apagar esta mensagem?';
+$string['digestmailheader'] = 'Este é o digest diário das novas mensagens dos fóruns de $a->sitename. Você pode mudar as suas preferências em relação às cópias das mensagens do fórum recebidas via email na seguinte página do site $a->userprefs.';
+$string['digestmailprefs'] = 'O seu perfil';
+$string['digestmailsubject'] = '$a: digest das mensagens do fórum';
+$string['digestsentusers'] = 'Digests enviados a $a usuários.';
 $string['discussion'] = 'Tópico';
 $string['discussionmoved'] = 'Esta discussão foi transferida para \'$a\'.';
 $string['discussionname'] = 'Titulo';
@@ -93,9 +98,12 @@ $string['postrating1'] = 'Mostra sobretudo saber DESTACADO';
 $string['postrating2'] = 'Igualmente DESTACADO e CONECTADO';
 $string['postrating3'] = 'Mostra sobretudo saber CONECTADO';
 $string['posts'] = 'Mensagens';
+$string['posttoforum'] = 'Enviar mensagem ao fórum';
 $string['postupdated'] = 'A sua mensagem foi atualizada';
+$string['processingdigest'] = 'Processando digest para o usuário $a';
 $string['processingpost'] = 'Processando mensagem $a';
 $string['prune'] = 'Interromper';
+$string['prunedpost'] = 'Foi criada uma nova discussão com esta mensagem inicial';
 $string['pruneheading'] = 'Interromper a mensagem e mover para uma nova discussão';
 $string['rate'] = 'Classificar';
 $string['rating'] = 'Classificação';

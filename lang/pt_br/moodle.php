@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.3.1 + (2004052501)
+      // moodle.php - created with Moodle 1.3.3 (2004052503)
 
 
 $string['action'] = 'Ação';
@@ -40,6 +40,7 @@ $string['adminhelpconfiguration'] = 'Configurar os parâmetros de visualização e 
 $string['adminhelpconfigvariables'] = 'Configurar variáveis que afetam as operções gerais do site';
 $string['adminhelpcourses'] = 'Definir cursos e categorias e designar participantes';
 $string['adminhelpedituser'] = 'Consultar a lista de contas de usuários e editá-las';
+$string['adminhelpenrolments'] = 'Escolher modalidades externas ou internas para controlar as inscrições';
 $string['adminhelplanguage'] = 'Para controlar e editar o idioma atual';
 $string['adminhelplogs'] = 'Consultar os Logs de toda a atividade do site';
 $string['adminhelpmanageblocks'] = 'Administrar e configurar os Box instalados';
@@ -99,8 +100,7 @@ $string['backuploglaststatus'] = 'Relatório do ultimo backup';
 $string['backuplogshelp'] = 'Se ativado, os logs dos cursos serão incluidos nos backups automáticos';
 $string['backupnameformat'] = '%%Y%%m%%d-%%H%%M';
 $string['backupnoneusersinfo'] = 'Atenção: Como você selecionou \"nenhum\" usuário, o backup de todos os módulos foi reconfigurado para \"sem dados de usuários\". 
-Infelizmente o backup dos módulos exercício e workshop não é compatível com esta opção e foi desativado completamente.
-';
+Infelizmente o backup dos módulos exercício e workshop não é compatível com esta opção e foi desativado completamente.';
 $string['backuporiginalname'] = 'Nome do Backup ';
 $string['backupsavetohelp'] = 'Percurso completo do diretório de destinação dos arquivos de backup<br>(deixar em branco para salvar no diretório predefinido)';
 $string['backupuserfileshelp'] = 'Decida se os arquivos dos usuários (ex. imagens dos perfis) devem ser incluidos em backups automáticos';
@@ -141,10 +141,12 @@ $string['closewindow'] = 'Fechar esta janela';
 $string['comparelanguage'] = 'Compare e edite o idioma em uso';
 $string['complete'] = 'Detalhes';
 $string['configallowunenroll'] = 'A opção \"sim\" permite ao estudante de fazer o cancelamento da inscrição no curso quando quiser. A configuração predefinida atribui esta permissão apenas aos professores e administradores.';
+$string['configautologinguests'] = 'Os visitantes devem fazer o login automaticamente quando acessam cursos com permissão de visitas?';
 $string['configcachetext'] = 'Esta opção pode acelerar os sites muito grandes e os sites que usam filtros de texto. Cópias dos textos serão conservadas durante o período de tempo configurado. Períodos muito breves podem haver o efeito contrário e períodos excessivamente longos terão como consequência a dificuldade de visualização de novas versões das páginas (refresh).';
 $string['configcountry'] = 'Se voce escolher um país, esta será a opção predefinida nos formularios de inscrição de novos usuários.  Para obrigar os usuários a escolherem o país, não configure esta opção.';
 $string['configdebug'] = 'Se você ativar a função PHP\'s error_reporting, informações endereçadas a programadores serão visualizadas como mensagens de erro.';
 $string['configdeleteunconfirmed'] = 'Se você está usando a autenticação de email, este é o período durante o qual a resposta será aceita pelos usuários. Depois deste período as contas não confirmadas serão canceladas.';
+$string['configdigestmailtime'] = 'As pessoas que escolherem o formato digest receberão todas as mensagens do dia via email em um arquivo único. Esta configuração define a ora aproximada do dia em que a mensagem será enviada (a ora exata corresponde ao primeiro cron ativado a partir deste orário).';
 $string['configenablerssfeeds'] = 'Habilita a geração de feeds RSS no site. Para completar o processo você precisa habilitar a geração de feeds rss no painel de configuração de cada módulo.';
 $string['configenablerssfeedsdisabled'] = 'Não é disponível porque a geração de RSS não está habilitada na seção \"configurar variáveis\" do painel de administração do site.';
 $string['configerrorlevel'] = 'Escolha a quantidade de avisos de PHP que devem ser mostrados.  Normal é quase sempre a melhor escolha.';
@@ -170,6 +172,7 @@ $string['configloglifetime'] = 'Isto define o período de tempo em que os registr
 $string['configlongtimenosee'] = 'Se os estudantes não visitarem o site por um longo periodo as inscrições nos cursos serão canceladas automaticamente.  Este parametro determina o limite de tempo';
 $string['configmaxbytes'] = 'Define o tamanho maximo dos arquivos que podem ser carregados no site. Esta configuração é limitada pelos parâmetros do PHP - upload_max_filesize e do APACHE - LimitRequestBody. Isto condiciona os parametros da escala de tamanhos de arquivos que podem ser configurados a nivel de curso ou modulo.';
 $string['configmaxeditingtime'] = 'Este é o limite de tempo que um usuário tem para modificar as mensagens e textos enviados ao fórum. O vlor aconselhado é 30 minutos.';
+$string['confignoreplyaddress'] = 'Algumas das mensagens enviadas via email tem como endereço do remetente um usuário do curso, por exemplo, o autor de uma mensagem do fórum. O endereço que você indicar aquivai ser usado nos casos em que os destinatários não devem ter a possibilidade de responder diretamente ao remetente, por exemplo, quando um usuário escolhe a opção de não mostrar o endereço email aos outros participantes.';
 $string['configopentogoogle'] = 'Permite que Google acesse o site como visitante. Além disto, quem chegar ao site a partir de um link em uma página de Google fará o login automático como visitante. Isto é aplicável apenas aos cursos che permitem o acesso a visitantes.';
 $string['configproxyhost'] = 'Se este <B>servidor</B> usa um proxy ou firewall para o acesso à rede, indique o  hostname e a porta correspondentes.  Em caso contrário, deixe em branco.';
 $string['configsecureforms'] = 'Moodle pode ter um nível adicional de segurança quando recebe dados de web forms. Se isto for ativado, a variável HTTP_REFERER do browser vai ser comparada com o endereço atual do form. Em alguns casos podem surgir problemas se o usuário estiver usando um firewall configurado para eliminar o HTTP_REFERER (ex. Zonealarm). O sintoma típico é a página do form bloqueada. Se os teus usuários tiverem estes problemas com a página de ingresso, por exemplo, você pode desabilitar esta funcionalidade mas lembre-se que assim o site fica mais vulnerável a ataques ligados a senhas. Em caso de dúvidas, escolha \'Sim\'.';
@@ -189,12 +192,14 @@ $string['confirm'] = 'Confirmar';
 $string['confirmed'] = 'A sua inscrição foi confirmada';
 $string['confirmednot'] = 'A sua inscrição ainda não foi confirmada!';
 $string['continue'] = 'Continuar';
+$string['continuetocourse'] = 'Clicar aqui para entrar no curso';
 $string['cookiesenabled'] = 'O uso de Cookies deve ser consentido no seu navegador';
 $string['copy'] = 'copiar';
 $string['copyingcoursefiles'] = 'Copiando archivos do curso';
 $string['copyinguserfiles'] = 'Copiando arquivos de usuários';
 $string['copyingzipfile'] = 'Copiando arquivo zip';
 $string['copyrightnotice'] = 'Nota sobre os Direitos Autorais';
+$string['cost'] = 'Custo';
 $string['country'] = 'País';
 $string['course'] = 'Curso';
 $string['courseavailable'] = 'Este curso pode ser acessado pelos participantes';
@@ -316,6 +321,10 @@ Se você precisar de ajuda, por favor contate o administrador do site,
 $a->admin';
 $string['emailconfirmationsubject'] = '$a: confirmação de cadastramento de novo usuário';
 $string['emailconfirmsent'] = '<P>Uma mensagem foi enviada para o seu endereço <B>$a</B><P>Esta mensagem contem instruções para completar a sua inscrição.<P>Se você encontrar dificuldades contate o administrador do site.';
+$string['emaildigest'] = 'Tipo de digest das mensagens';
+$string['emaildigestcomplete'] = 'Completo (um email diário com as mensagens dos fóruns completas)';
+$string['emaildigestoff'] = 'Nenhum (um email para cada mensagem do fórum';
+$string['emaildigestsubjects'] = 'Assuntos (um email diário com apenas a lista dos assuntos das mensagens)';
 $string['emaildisable'] = 'Este endereço de email não está ativado';
 $string['emaildisplay'] = 'Mostrar endereço de email';
 $string['emaildisplaycourse'] = 'Apenas os participantes do curso podem ver o meu endereço de email';
@@ -339,13 +348,11 @@ Se isto não funcionar, você pode copiar este link na barra de endereços do seu n
 
 Se você precisar de ajuda, por favor contate o administrador do site,
 
-$a->admin
-';
+$a->admin';
 $string['emailpasswordconfirmationsubject'] = '$a: confirmação da mudança de senha';
 $string['emailpasswordconfirmsent'] = 'Um Email será enviada ao seguinte endereço: <b>$a</b>.
 Siga as instruções do Email para completar a mundança de senha.
-Em caso de dificuldades contate o administrador do site.
-';
+Em caso de dificuldades contate o administrador do site.';
 $string['emailpasswordsent'] = '<p>Um Email com a sua nova senha foi enviada ao seguinte endereço: <b>$a->email</b>.
 <p>A nova senha foi criada automaticamente. Se você quiser, é possível <a href=$a->link>mudar a senha</a>.';
 $string['enable'] = 'Ativar';
@@ -355,6 +362,9 @@ $string['enrolmentconfirmation'] = 'Você tem certeza que quer fazer a inscrição 
 $string['enrolmentkey'] = 'Código de Inscrição';
 $string['enrolmentkeyfrom'] = 'Este curso requer um código de inscrição -<BR> uma senha que deve ser usada a primeira vez que um usuário inscrito entra no curso.';
 $string['enrolmentkeyhint'] = 'Código de inscrição errado, por favor tente novamente<BR> (uma dica - começa com \'$a\')';
+$string['enrolmentnew'] = 'Nova inscrição em $a';
+$string['enrolmentnointernal'] = 'A inscrição manual não está abilitada';
+$string['enrolments'] = 'Inscrições';
 $string['entercourse'] = 'Clique para entrar no curso';
 $string['enteremailaddress'] = 'Escreva o seu endereço de email para reconfigurar a sua senha e recebê-la via correio eletrônico.';
 $string['error'] = 'Erro';
@@ -629,8 +639,7 @@ Se isto não funcionar, você pode copiar este link na barra de endereços do seu n
 
 Se você precisar de ajuda, por favor contate o administrador do site,
 
-$a->signoff
-';
+$a->signoff';
 $string['newpicture'] = 'Nova imagem';
 $string['newsitem'] = 'Notícia';
 $string['newsitems'] = 'Notícias';
@@ -695,6 +704,11 @@ $string['passwordsdiffer'] = 'Estas senhas não são iguais';
 $string['passwordsent'] = 'A senha foi enviada ';
 $string['passwordsenttext'] = '<P>Uma mensagem contendo a sua nova senha foi enviada ao endereço $a->email.
 <P>A senha nova foi gerada automaticamente mas é possível <A HREF=$a->link>modificá-la</A> se vocè quiser.';
+$string['paymentinstant'] = 'Clique o botão abaixo para efetuar o pagamento e fazer a sua inscrição em poucos minutos!';
+$string['paymentrequired'] = 'Este curso requer o pagamento da taxa de inscrição antes do acesso.';
+$string['paymentsorry'] = 'Infelizmente o seu pagamento ainda está sendo processado e você ainda não pode acessar o curso \"$a->fullname\". 
+Espere alguns minutos antes de tentar um novo acesso. Se você continuar a ter problemas para acessar o curso contate $a->teacher ou o administrador do site.';
+$string['paymentthanks'] = 'Pagamento completado! Agora você já está inscrito no seguinte curso:<br />\"$a\"';
 $string['people'] = 'Participantes';
 $string['personalprofile'] = 'Perfil pessoal';
 $string['phone'] = 'Telefone';
@@ -737,6 +751,7 @@ $string['rename'] = 'Renomear';
 $string['renamefileto'] = 'Necessário';
 $string['required'] = 'Necessários';
 $string['requireskey'] = 'Este curso tem um código de inscrição';
+$string['requirespayment'] = 'O acesso a este curso só é possível após o pagamento da taxa de inscrição';
 $string['resortcoursesbyname'] = 'Ordenar cursos por nome';
 $string['resources'] = 'Materiais';
 $string['restore'] = 'Restore';
@@ -798,6 +813,7 @@ $string['sitefiles'] = 'Arquivos do site';
 $string['sitelogs'] = 'Logs do site';
 $string['sitenews'] = 'Novidades';
 $string['sites'] = 'Sites';
+$string['sitesection'] = 'Incluir uma seção de topico';
 $string['sitesettings'] = 'Configurações do site';
 $string['size'] = 'Tamanho';
 $string['sizeb'] = 'bytes';
