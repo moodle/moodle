@@ -129,7 +129,7 @@
 
     chat_delete_old_users();
 
-    if ($chatusers = chat_get_users($chat->id)) {
+    if ($chatusers = chat_get_users($chat->id, $currentgroup)) {
         $timenow = time();
         print_simple_box_start("center");
         print_heading($strcurrentusers);
