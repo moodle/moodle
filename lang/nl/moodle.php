@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.2 development (2004021201)
+      // moodle.php - created with Moodle 1.2 development (2004021500)
 
 
 $string['action'] = 'Actie';
@@ -340,6 +340,7 @@ $string['firsttime'] = 'Is dit de eerste keer dat je hier bent?';
 $string['followingoptional'] = 'De volgende velden zijn niet verplicht';
 $string['followingrequired'] = 'De volgende velden zijn verplicht';
 $string['force'] = 'Verplicht';
+$string['forcedmode'] = 'Verplichte modus';
 $string['forcelanguage'] = 'Verplicht taal';
 $string['forceno'] = 'Verplicht niet';
 $string['forgotten'] = 'Ben je je gebruikersnaam of wachtwoord vergeten?';
@@ -416,6 +417,7 @@ $string['helptext'] = 'Hoe je een tekst kunt schrijven ';
 $string['helpwiki'] = 'Hoe je een Wiki-tekst kunt schrijven';
 $string['helpwriting'] = 'Schrijf zorgvuldig';
 $string['hide'] = 'Verberg';
+$string['hidepicture'] = 'Verberg afbeelding';
 $string['hits'] = 'Hits';
 $string['hitsoncourse'] = 'Hits voor $a->coursename door $a->username';
 $string['hitsoncoursetoday'] = 'Hits van vandaag voor $a->coursename door $a->username';
