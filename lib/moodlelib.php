@@ -52,6 +52,16 @@ define('SEPARATEGROUPS', 1);
  */
 define('VISIBLEGROUPS', 2);
 
+/**
+ * Time constants
+ */
+
+define('WEEKSECS', 604800); 
+define('DAYSECS', 86400);
+define('HOURSECS', 3600);
+define('MINSECS', 60);
+define('DAYMINS', 1440);
+define('HOURMINS', 60);
 
 /// PARAMETER HANDLING ////////////////////////////////////////////////////
 
@@ -320,12 +330,12 @@ function make_timestamp($year, $month=1, $day=1, $hour=0, $minute=0, $second=0, 
         $str->secs  = get_string('secs');
     }
 
-    $days      = floor($totalsecs/86400);
-    $remainder = $totalsecs - ($days*86400);
-    $hours     = floor($remainder/3600);
-    $remainder = $remainder - ($hours*3600);
-    $mins      = floor($remainder/60);
-    $secs      = $remainder - ($mins*60);
+    $days      = floor($totalsecs/DAYSECS);
+    $remainder = $totalsecs - ($days*DAYSECS);
+    $hours     = floor($remainder/HOURSECS);
+    $remainder = $remainder - ($hours*HOURSECS);
+    $mins      = floor($remainder/MINSECS);
+    $secs      = $remainder - ($mins*MINSECS);
 
     $ss = ($secs == 1)  ? $str->sec  : $str->secs;
     $sm = ($mins == 1)  ? $str->min  : $str->mins;
@@ -390,7 +400,7 @@ function userdate($date, $format='', $timezone=99, $fixday = true) {
             $datestring = strftime($format, $date);
         }
     } else {
-        $date = $date + (int)($timezone * 3600);
+        $date = $date + (int)($timezone * HOURSECS);
         if ($fixday) {
             $datestring = gmstrftime($formatnoday, $date);
             $daystring  = str_replace(' 0', '', gmstrftime(" %d", $date));
@@ -420,7 +430,7 @@ function usergetdate($date, $timezone=99) {
         return getdate($date);
     }
     //There is no gmgetdate so I have to fake it...
-    $date = $date + (int)($timezone * 3600);
+    $date = $date + (int)($timezone * HOURSECS);
     $getdate['seconds'] = gmstrftime("%S", $date);
     $getdate['minutes'] = gmstrftime("%M", $date);
     $getdate['hours']   = gmstrftime("%H", $date);
@@ -449,7 +459,7 @@ function usertime($date, $timezone=99) {
     if (abs($timezone) > 13) {
         return $date;
     }
-    return $date - (int)($timezone * 3600);
+    return $date - (int)($timezone * HOURSECS);
 }
 
 /**
@@ -1015,9 +1025,9 @@ function set_moodle_cookie($thing) {
     $cookiename = 'MOODLEID_'.$CFG->sessioncookie;
 
     $days = 60;
-    $seconds = 60*60*24*$days;
+    $seconds = DAYSECS*$days;
 
-    setCookie($cookiename, '', time() - 3600, '/');
+    setCookie($cookiename, '', time() - HOURSECS, '/');
     setCookie($cookiename, rc4encrypt($thing), time()+$seconds, '/');
 }
 
@@ -3525,7 +3535,7 @@ function notify_login_failures() {
                  : ((strlen($ipstr) != 0) ? ' AND ip IN ('. $ipstr .') ' : ' AND info IN ('. $userstr .') ')), 'l.time DESC', '', '', $count);
 
         // if we haven't run in the last hour and we have something useful to report and we are actually supposed to be reporting to somebody
-        if (is_array($recip) and count($recip) > 0 and ((time() - (60 * 60)) > $CFG->lastnotifyfailure)
+        if (is_array($recip) and count($recip) > 0 and ((time() - HOURSECS) > $CFG->lastnotifyfailure)
             and is_array($logs) and count($logs) > 0) {
 
             $message = '';
@@ -3656,7 +3666,7 @@ function getweek ($startdate, $thedate) {
         return 0;
     }
 
-    return floor(($thedate - $startdate) / 604800.0) + 1;
+    return floor(($thedate - $startdate) / WEEKSECS) + 1;
 }
 
 /**

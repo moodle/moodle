@@ -2589,7 +2589,7 @@ function get_logs_usercourse($userid, $courseid, $coursestart) {
         $courseselect = '';
     }
 
-    return get_records_sql("SELECT floor((`time` - $coursestart)/86400) as day, count(*) as num
+    return get_records_sql("SELECT floor((`time` - $coursestart)/".DAYSECS."86400) as day, count(*) as num
                             FROM {$CFG->prefix}log
                            WHERE userid = '$userid'
                              AND `time` > '$coursestart' $courseselect
@@ -2615,7 +2615,7 @@ function get_logs_userday($userid, $courseid, $daystart) {
         $courseselect = '';
     }
 
-    return get_records_sql("SELECT floor((`time` - $daystart)/3600) as hour, count(*) as num
+    return get_records_sql("SELECT floor((`time` - $daystart)/".HOURSECS.") as hour, count(*) as num
                             FROM {$CFG->prefix}log
                            WHERE userid = '$userid'
                              AND `time` > '$daystart' $courseselect
