@@ -1212,10 +1212,13 @@ function workshop_compare_assessments($workshop, $assessment1, $assessment2) {
 //////////////////////////////////////////////////////////////////////////////////////
 function workshop_count_ungraded_assessments($workshop) {
     // function returns the number of ungraded assessments by students
+    global $CFG;
     
+    $timenow = time();
     $n = 0;
+    // get all the cold assessments that have not been graded
     if ($assessments = get_records_select("workshop_assessments", "workshopid = $workshop->id AND 
-            timegraded = 0")) {
+            (timecreated + $CFG->maxeditingtime) < $timenow AND timegraded = 0")) {
         foreach ($assessments as $assessment) {
             if (isstudent($workshop->course, $assessment->userid)) {
                 $n++;

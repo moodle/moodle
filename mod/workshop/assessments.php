@@ -747,7 +747,7 @@
                 } 
             }
         }
-        redirect("submissions.php?id=$cm->id&amp;action=adminlist");
+        redirect("submissions.php?id=$cm->id&action=adminlist");
     }
     
 
