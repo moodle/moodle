@@ -66,12 +66,10 @@
 
     if ($usehtmleditor = can_use_richtext_editor()) {
         $defaultformat = FORMAT_HTML;
-        $onsubmit = "onsubmit=\"copyrichtext(theform.text);\"";
     } else {
         $defaultformat = FORMAT_MOODLE;
-        $onsubmit = "";
     }
-
+    
     if (empty($entry)) {
         $entry->text = "";
         $entry->format = $defaultformat;
@@ -83,13 +81,17 @@
                   <A HREF=\"view.php?id=$cm->id\">$journal->name</A> -> $stredit", "theform.text",
                   "", true, "", navmenu($course, $cm));
 
-    echo "<CENTER>\n";
+    echo "<center>\n";
 
-    print_simple_box( text_to_html($journal->intro) , "center");
+    print_simple_box( format_text($journal->intro) , "center");
 
-    echo "<BR>";
+    echo "<br />";
 
 	include("edit.html");
+
+    if ($usehtmleditor) {
+        use_html_editor();
+    }
 
     print_footer($course);
 

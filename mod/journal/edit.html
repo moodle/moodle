@@ -1,4 +1,4 @@
-<FORM name="theform" method="post" <?php echo $onsubmit ?> action="edit.php">
+<form name="theform" method="post" action="edit.php">
 <table><tr>
     <td align=right>
     <font size="1">
@@ -18,7 +18,9 @@
     </td>
 </tr></table>
 
+<table><tr><td>
 <?php  print_textarea($usehtmleditor, 20, 60, 630, 400, "text", $entry->text); ?>
+</td></tr></table>
 
 <p align=center>
 <?PHP
@@ -35,12 +37,7 @@
 <input type="hidden" name=id value="<?php echo $cm->id ?>">
 <input type="submit" value="<?php  print_string("savechanges") ?>">
 <input type="reset" value="<?php  print_string("revert") ?>">
-</P>
+</p>
 </form>
 
-<?PHP 
-   if ($usehtmleditor) { 
-       print_richedit_javascript("theform", "text", "no");
-   }
-?>
 
