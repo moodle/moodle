@@ -513,6 +513,7 @@
                fwrite ($bf,full_tag("ID",6,false,$tok));
                fwrite ($bf,full_tag("TYPE",6,false,$moduletype));
                fwrite ($bf,full_tag("INSTANCE",6,false,$course_module[$tok]->instance));
+               fwrite ($bf,full_tag("ADDED",6,false,$course_module[$tok]->added));
                fwrite ($bf,full_tag("DELETED",6,false,$course_module[$tok]->deleted));
                fwrite ($bf,full_tag("SCORE",6,false,$course_module[$tok]->score));
                fwrite ($bf,full_tag("VISIBLE",6,false,$course_module[$tok]->visible));
