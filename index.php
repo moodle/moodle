@@ -35,7 +35,17 @@
                  true, "", "<div align=right>$loginstring$langmenu</div>");
 
     $firstcolumn = false;  // for now
+    $lastcolumn = false;   // for now
     $side = 175;
+
+    if (isediting($site->id)) {
+        $site->summary .= "<br><center><a href=\"admin/site.php\"><img src=\"pix/i/edit.gif\" border=0></a>";
+    }
+
+    if ($site->summary) {
+        $lastcolumn = true;
+    }
+
 
 ?>
 
@@ -93,7 +103,11 @@
      if ($firstcolumn) {
          echo "</td>";
      }
-     echo "<td width=\"70%\" valign=\"top\">";
+     if ($lastcolumn) {
+         echo "<td width=\"70%\" valign=\"top\">";
+     } else {
+         echo "<td width=\"100%\" valign=\"top\">";
+     }
 
      switch ($CFG->frontpage) {     /// Display the main part of the front page.
          case FRONTPAGENEWS:
@@ -131,7 +145,9 @@
                  print_heading_block(get_string("availablecourses"));
                  print_spacer(8,1);
                  if (count_records("course_categories") > 1) {
+                     print_simple_box_start("center", "100%");
                      print_whole_category_list();
+                     print_simple_box_end();
                  } else {
                      print_courses(0, "100%");
                  }
@@ -141,15 +157,13 @@
      }
 
      echo "</td>";
-     echo "<td width=30% valign=top>";
-     
-     if (isediting($site->id)) {
-         $site->summary .= "<br><center><a href=\"admin/site.php\"><img src=\"pix/i/edit.gif\" border=0></a>";
-     }
 
-     print_simple_box($site->summary, "", "100%", $THEME->cellcontent2, 5, "siteinfo");
-     print_spacer(1,$side);
-     echo "</td>";
+     if ($lastcolumn) {
+         echo "<td width=\"30%\" valign=\"top\">";
+         print_simple_box($site->summary, "", "100%", $THEME->cellcontent2, 5, "siteinfo");
+         print_spacer(1,$side);
+         echo "</td>";
+     }
   ?>
 
   </tr>
