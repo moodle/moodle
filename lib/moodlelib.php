@@ -1064,6 +1064,10 @@ function get_directory_list($rootdir, $excludefile="", $descend=true) {
 
     $dirs = array();
 
+    if (!is_dir($rootdir)) {
+        return $dirs;
+    }
+
     if (!$dir = opendir($rootdir)) {
         return $dirs;
     }
