@@ -25,8 +25,17 @@
 
       <? include("mod/reading/lib.php"); 
          list_all_readings();
-         echo "<P>";
-         print_editing_switch($site->id); 
+      ?>
+
+        <BR><BR>
+
+      <?
+         if (isadmin()) {
+             print_simple_box("Admin", $align="CENTER", $width="100%", $color="$THEME->cellheading");
+             echo "<LI><A HREF=\"$CFG->wwwroot/admin/\">Admin Page</A></LI>";
+             echo "<LI>";
+             print_editing_switch($site->id); 
+         }
       ?>
 
     </TD>
