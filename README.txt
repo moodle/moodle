@@ -1,8 +1,17 @@
 README     $Id$
 ------
 
-Here is a basic outline of the installation process,
-which normally takes me only a few minutes:
+I highly recommend you read the detailed help on 
+installation, upgrading and use of Moodle, stored
+in the doc subdirectory of this installation, or 
+read at:
+
+   http://moodle.com/doc/
+
+
+For the impatient, here is a basic outline of the 
+installation process, which normally takes me only 
+a few minutes:
 
 1) Move the Moodle files into your web directory. 
 
@@ -24,9 +33,6 @@ which normally takes me only a few minutes:
 6) Set up a cron task to call the file admin/cron.php
    every five minutes or so.
 
-For more details, I highly recommend you read the 
-full installation documentation, which is stored 
-in the "doc" directory or found at http://moodle.com/doc/.
 
 Cheers!
 Martin Dougiamas
