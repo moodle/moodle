@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.2 development (2003111400)
+      // quiz.php - created with Moodle 1.2 development (2003113000)
 
 
 $string['acceptederror'] = 'Geaccepteerde fout';
@@ -39,6 +39,7 @@ $string['choice'] = 'Keuzemogelijkheid';
 $string['choices'] = 'Mogelijke keuzes';
 $string['correctanswer'] = 'Het goede antwoord';
 $string['correctanswers'] = 'Goede antwoorden';
+$string['corrresp'] = 'Juiste reactie';
 $string['countdown'] = 'Aftellen';
 $string['countdownfinished'] = 'De test gaat dicht. Je moet nu je antwoorden insturen.';
 $string['countdowntenminutes'] = 'De test gaat over tien minuten dicht.';
@@ -51,6 +52,7 @@ $string['defaultgrade'] = 'Standaard beoordeling vraag';
 $string['defaultinfo'] = 'De standaardcategorie voor vragen.';
 $string['deletequestioncheck'] = 'Weet je heel zeker dat je \'$a\' wilt verwijderen?';
 $string['description'] = 'Beschrijving';
+$string['discrimination'] = 'Discrim. Index';
 $string['eachattemptbuildsonthelast'] = 'Elke poging bouwt voort op de vorige';
 $string['editcategories'] = 'Bewerk de categorieën ';
 $string['editingdescription'] = 'Een beschrijving bewerken';
@@ -79,11 +81,13 @@ $string['fractionsnomax'] = 'Eén van de antwoorden moet 100%% zijn, zodat het mo
 $string['gradeaverage'] = 'Gemiddelde cijfer';
 $string['gradehighest'] = 'Hoogste cijfer';
 $string['grademethod'] = 'Beoordelingsmethode';
-$string['grades'] = 'Beoordelingen';
 $string['guestsno'] = 'Sorry, gasten kunnen testen niet bekijken noch een poging wagen';
 $string['imagedisplay'] = 'Weer te geven afbeelding';
 $string['importquestions'] = 'Importeer vragen uit een bestand';
+$string['indivresp'] = 'Reacties van ieder afzonderlijk op elk item';
 $string['introduction'] = 'Inleiding';
+$string['itemanal'] = 'Analyse van de reacties op de items';
+$string['listitems'] = 'Lijst van items in de test';
 $string['marks'] = 'Punten';
 $string['match'] = 'Koppelen';
 $string['matchanswer'] = 'Gepaarde antwoord';
@@ -95,14 +99,17 @@ $string['modulename'] = 'Test';
 $string['modulenameplural'] = 'Testen';
 $string['multianswer'] = 'Ingebedde antwoorden (Cloze)';
 $string['multichoice'] = 'Multiple choice';
+$string['name'] = 'Naam';
 $string['noanswers'] = 'Er zijn geen antwoorden geselecteerd!';
 $string['noattempts'] = 'Er zijn geen pogingen geweest om deze test te maken';
 $string['nomoreattempts'] = 'Een nieuwe poging is niet meer toegestaan';
 $string['noquestions'] = 'Er zijn nog geen vragen toegevoegd';
+$string['noresponse'] = 'Geen reactie';
 $string['noreview'] = 'Het is niet toegestaan om de antwoorden na te lezen en te verbeteren';
 $string['noreviewuntil'] = 'Het is niet toegestaan om deze test na te lezen tot $a';
 $string['notenoughsubquestions'] = 'Er zijn onvoldoende deelvragen gedefinieerd!<br>Wil je teruggaan en deze vraag herstellen?';
 $string['numerical'] = 'Numeriek';
+$string['percentcorrect'] = 'Percentage juist';
 $string['publish'] = 'Publiceer  ';
 $string['qti'] = 'IMS QTI opmaak';
 $string['question'] = 'Vraag';
@@ -129,6 +136,9 @@ $string['regradecount'] = '$a->changed van de $a->attempt cijfers zijn gewijzigd
 $string['rename'] = 'Hernoem';
 $string['report'] = 'Rapporten';
 $string['reportfullstat'] = 'Gedetailleerde cijfers';
+$string['reportmulti_percent'] = 'Meerdere percentages';
+$string['reportmulti_q_x_student'] = 'Overzicht keuzes van alle leerlingen';
+$string['reportmulti_resp'] = 'Individuele reacties';
 $string['reportoverview'] = 'Overzicht';
 $string['reportregrade'] = 'Herwaarderen van de pogingen';
 $string['reportsimplestat'] = 'Eenvoudige statistieken';
@@ -157,6 +167,7 @@ $string['type'] = 'Soort';
 $string['viewallanswers'] = 'Bekijk $a voltooide testen';
 $string['viewallreports'] = 'Bekijk overzicht van $a pogingen';
 $string['webct'] = 'WebCT opmaak';
+$string['withsummary'] = 'met samenvattende statistieken';
 $string['yourfinalgradeis'] = 'Je eindcijfer voor deze test is $a';
 
 ?>
