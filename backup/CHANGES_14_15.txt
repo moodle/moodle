@@ -24,8 +24,8 @@ Now I show the specific detailed status of every item in the process:
 14. TODO: quiz->popup and questionsperpage.
 15. TODO: quiz_categories->parent and sortorder.
 16. DONE: Message subsystem (MIM). Available in SITE backups!
-17. TODO: Detect questions without categories and create a category for them
-          (in backup process).
+17. DONE: Detect questions without categories and create a category for them
+          (in backup process). See bug 2380. fix_orphaned_questions() function.
 18. TODO: If the course hasn't users and the importer is a teacher, make him
           teacher in the restored course.
 19. DONE: Move blocks code to libraries and use it in a standard way. Now new
