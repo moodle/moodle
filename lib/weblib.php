@@ -397,29 +397,44 @@ function validate_email ($address) {
                   $address));
 }
 
+function get_slash_arguments($file="file.php") {
+/// Searches the current environment variables for some slash arguments
 
-function get_slash_arguments($i=0) {
+    if (isset($_SERVER['PATH_INFO'])) {
+        return $_SERVER['PATH_INFO'];
+    }
+
+    if (isset($_SERVER['PHP_SELF'])) {
+        $string = $_SERVER['PHP_SELF'];
+    } else if (isset($_SERVER['REQUEST_URI'])) {
+        $string = $_SERVER['REQUEST_URI'];
+    } else {
+        return false;
+    }
+    $pathinfo = explode($file, $string);
+    
+    if (!empty($path_info[1])) {
+        return $path_info[1];
+    } else {
+        return false;
+    }
+}
+
+function parse_slash_arguments($string, $i=0) {
 /// Extracts arguments from "/foo/bar/something"
 /// eg http://mysite.com/script.php/foo/bar/something
-/// Might only work on Apache
 
-    global $PATH_INFO;
-
-    if (!isset($PATH_INFO)) {
+    if (strpos($string, "..")) { // check for parent URLs
+        return false;
+    }
+    if (strpos($string, "|")) {  // check for pipes
+        return false;
+    }
+    if (strpos($string, "`")) {  // check for backquotes
         return false;
     }
 
-    if (strpos($PATH_INFO, "..")) { // check for parent URLs
-        return false;
-    }
-    if (strpos($PATH_INFO, "|")) {  // check for pipes
-        return false;
-    }
-    if (strpos($PATH_INFO, "`")) {  // check for backquotes
-        return false;
-    }
-
-    $args = explode("/", $PATH_INFO);
+    $args = explode("/", $string);
 
     if ($i) {     // return just the required argument
         return $args[$i];

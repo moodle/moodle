@@ -7,14 +7,14 @@
 
     $lifetime = 86400;
 
-    if (isset($file)) {
-        $PATH_INFO = $file;
+    if (isset($file)) {     // workaround for situations where / syntax doesn't work
+        $pathinfo = $file;
 
-    } else if (!$PATH_INFO) {
-        $PATH_INFO = "";       // Will just show default picture
+    } else {
+        $pathinfo = get_slash_arguments("pix.php");
     }
 
-    if (! $args = get_slash_arguments()) {
+    if (! $args = parse_slash_arguments($pathinfo)) {
         error("No valid arguments supplied");
     }
 

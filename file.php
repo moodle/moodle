@@ -8,14 +8,16 @@
     $lifetime = 86400;
 
     if (isset($file)) {     // workaround for situations where / syntax doesn't work
-        $PATH_INFO = $file;
+        $pathinfo = $file;
+    } else {
+        $pathinfo = get_slash_arguments("file.php");
     }
 
-    if (!$PATH_INFO) {
-        error("This script DEPENDS on PATH_INFO being available.  Read the README.");
+    if (!$pathinfo) {
+        error("No file parameters!");
     }
 
-    if (! $args = get_slash_arguments()) {
+    if (! $args = parse_slash_arguments($pathinfo)) {
         error("No valid arguments supplied");
     }
 

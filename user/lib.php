@@ -122,7 +122,7 @@ function save_user_image($userid, $filename) {
         }
     }
     
-    if ($badpermissions) {
+    if (!empty($badpermissions)) {
         return 0;
 
     } else {
