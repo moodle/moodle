@@ -53,4 +53,9 @@ $string['saturday'] = "Sat";
 $string['endbeforestart'] = "The end date is before the start date";
 $string['startafterend'] = "The start date is after the end of the course";
 $string['defaultstudentstatus'] = "The default student attendance status on new attendance rolls";
+$string['downloadexcelfull'] = "Download Full Excel Spreadsheet";
+$string['downloadexceltotals'] = "Download Summary Excel Spreadsheet";
+$string['downloadtextfull'] = "Download Full Text Report";
+$string['downloadtexttotals'] = "Download Summary Text Report";
+
 ?>
