@@ -1,4 +1,4 @@
-<?PHP // $Id$ 
+<?php // $Id$ 
 
 
 $string['acceptederror'] = 'Erreur acceptée';
@@ -40,6 +40,7 @@ $string['categorymove'] = 'La catégorie « $a->name » contient $a->count question
 $string['categorymoveto'] = 'Les déplacer dans cette catégorie';
 $string['choice'] = 'Proposition';
 $string['choices'] = 'Propositions';
+$string['confirmstartattempt'] = 'Le temps pour effectuer ce test est limité. Voulez-vous vraiment le commencer ?';
 $string['correctanswer'] = 'Bonne réponse';
 $string['correctanswers'] = 'Bonnes réponses';
 $string['corrresp'] = 'Réponse correcte';
@@ -96,6 +97,7 @@ $string['listitems'] = 'Liste des questions du test';
 $string['marks'] = 'Points';
 $string['match'] = 'Appariement';
 $string['matchanswer'] = 'Réponse correspondante';
+$string['minutes'] = 'minutes';
 $string['missinganswer'] = 'Nombre insuffisant d\'indications :ANSWER, :Lx, :Rx pour la question de la ligne $a. Vous devez définir au moins 2 réponses possibles';
 $string['missingcorrectanswer'] = 'La réponse correcte doit être indiquée';
 $string['missingname'] = 'Le nom de la question doit être indiqué';
@@ -114,6 +116,7 @@ $string['noquestions'] = 'Aucune question n\'a été encore ajoutée';
 $string['noresponse'] = 'Pas de response';
 $string['noreview'] = 'Vous n\'êtes pas autorisé à relire ce test';
 $string['noreviewuntil'] = 'Vous n\'êtes pas autorisé à relire ce test avant le $a';
+$string['noscript'] = 'JavaScript doit être activé pour continuer !';
 $string['notenoughsubquestions'] = 'Vous n\'avez pas défini assez de sous-questions !<br />Souhaitez-vous revenir en arrière pour corriger cela ?';
 $string['notenoughanswers'] = 'Ce type de question requiert au moins $a réponses';
 $string['numerical'] = 'Numérique';
@@ -133,6 +136,8 @@ $string['quizcloses'] = 'Test est fermé';
 $string['quiznotavailable'] = 'Ce test ne sera pas disponible avant le $a';
 $string['quizopen'] = 'Ouvrir ce test';
 $string['quizopens'] = 'Le test est disponible';
+$string['quiztimelimit'] = 'Temps disponible : $a';
+$string['quiztimer'] = 'Chronomètre';
 $string['random'] = 'Question aléatoire';
 $string['randomcreate'] = 'Créer des questions aléatoires';
 $string['randomsamatch'] = 'Question aléatoire à réponse courte';
@@ -170,7 +175,11 @@ $string['shuffleanswers'] = 'Mélanger les réponses';
 $string['shufflequestions'] = 'Mélanger les questions';
 $string['time'] = 'Temps';
 $string['timecompleted'] = 'Terminé';
+$string['timeleft'] = 'Temps restant';
+$string['timelimit'] = 'Temps disponible';
+$string['timelimitexeeded'] = 'Désolé ! La limite de temps est échue !';
 $string['timetaken'] = 'Temps mis';
+$string['timesup'] = 'Le chrono est enclenché !';
 $string['toomanyrandom'] = 'Le nombre de questions aléatoires demandées est plus grand que le total ($a) des questions de cette catégorie !';
 $string['true'] = 'Vrai';
 $string['truefalse'] = 'Vrai/Faux';
