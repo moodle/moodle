@@ -1804,7 +1804,7 @@ function truncate_userinfo($info) {
     // apply where needed
     foreach (array_keys($info) as $key) {
         if (!empty($limit[$key])) {
-            $info[$key] = substr($info[$key],0, $limit[$key]);
+            $info[$key] = substr(trim($info[$key]),0, $limit[$key]);
         }
     }
 
