@@ -75,11 +75,11 @@
 
         unset($THEME);
 
-        if (!file_exists("$CFG->dirroot/theme/$theme/config.php")) {   // bad folder
+        if (!file_exists($CFG->themedir.$theme.'/config.php')) {   // bad folder
             continue;
         }
 
-        include_once("$CFG->dirroot/theme/$theme/config.php");
+        include_once($CFG->themedir.$theme.'/config.php');
 
         $readme = '';
         $screenshot = '';
