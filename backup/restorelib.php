@@ -323,7 +323,7 @@
                 $sequence = "";
                 $section->course = $restore->course_id;
                 $section->section = $sect->number;
-                $section->summary = $sect->summary;
+                $section->summary = addslashes($sect->summary);
                 $section->visible = $sect->visible;
                 $section->sequence = "";
                 //Now calculate the section's newid
