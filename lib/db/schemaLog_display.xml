@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<schema>
+  <table name="log_display">
+    <field name="module" type="C" size="20" default="">
+      <NOTNULL/>
+    </field>
+    <field name="action" type="C" size="20" default="">
+      <NOTNULL/>
+    </field>
+    <field name="mtable" type="C" size="20" default="">
+      <NOTNULL/>
+    </field>
+    <field name="field" type="C" size="40" default="">
+      <NOTNULL/>
+    </field>
+  </table>
+  <sql>
+    <descr>Insert 1 row for testing only...comment out later</descr>
+    <query platform="postgres|postgres7">
+      insert into log_display values (1,1,1,1)
+    </query>
+    <query platform="mysql">
+      insert into log_display values (1,1,1,1)
+    </query>
+    <query platform="oci8po">
+      insert into log_display values (1,1,1,1)
+    </query>
+  </sql>
+</schema>
+
