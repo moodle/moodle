@@ -2663,7 +2663,7 @@ function add_to_log($courseid, $module, $action, $url='', $info='', $cm=0, $user
     if (!$user and isset($USER->id)) {
         $db->Execute('UPDATE '. $CFG->prefix .'user SET lastIP=\''. $REMOTE_ADDR .'\', lastaccess=\''. $timenow .'\'
                      WHERE id = \''. $USER->id .'\' ');
-        if ($courseid != SITEID) {
+        if ($courseid != SITEID && !empty($courseid)) { // logins etc dont't have a courseid and isteacher will break without it.
             if (isstudent($courseid)) {
                 $db->Execute('UPDATE '. $CFG->prefix .'user_students SET timeaccess = \''. $timenow .'\' '.
                              'WHERE course = \''. $courseid .'\' AND userid = \''. $userid .'\'');
