@@ -12,7 +12,7 @@ $string['auth_dbpass'] = "Mot de passe pour ce compte";
 $string['auth_dbpasstype'] = "Indiquez la méthode de cryptage du mot de passe. L'algorithme MD5 est utile pour une utilisation conjointe avec d'autres applications Web telles que PostNuke.";
 $string['auth_dbtable'] = "Nom de la table dans la base de données";
 $string['auth_dbtitle'] = "Utiliser une base de données externe";
-$string['auth_dbtype'] = "Type de la base de données (Pour plus d'information, voir la <a href=../lib/adodb/readme.htm#drivers>documentation de ADOdb</a>)";
+$string['auth_dbtype'] = "Type de la base de données (Pour plus d'information, voir la <a href=\"../lib/adodb/readme.htm#drivers\">documentation de ADOdb</a>)";
 $string['auth_dbuser'] = "Compte avec accès en lecture à la base de données";
 $string['auth_emaildescription'] = "La confirmation par courriel est la méthode d'authentification par défaut. Lorsqu'un utilisateur s'enregistre en choisissant ses nom d'utilisateur et mot de passe, un message de confirmation est envoyé à son adresse de courriel. Ce message contient un lien sécurisé vers une page Web où il peut confirmer son inscription. Les connexions suivantes ne vérifient que les nom d'utilisateur et mot de passe précédemment enregistrés dans la base de données de Moodle.";
 $string['auth_emailtitle'] = "Authentification par courriel";
