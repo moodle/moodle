@@ -32,7 +32,7 @@ class CourseBlock_course_list extends MoodleBlock {
                      " height=\"16\" width=\"16\" alt=\"".get_string("course")."\">";
         }
 
-        if (isset($USER->id)) {    // Just print My Courses
+        if (isset($USER->id) and !isadmin()) {    // Just print My Courses
             if ($courses = get_my_courses($USER->id)) {
                 foreach ($courses as $course) {
                     if (!$course->category) {
