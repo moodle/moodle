@@ -16,7 +16,6 @@
 <meta http-equiv="Content-Type" content="text/html; <?php print_string("thischarset");?>">
 <script type="text/javascript" src="popup.js"></script>
 <script language="JavaScript" type="text/javascript">
-
 //I18N = window.opener.HTMLArea.I18N.dialogs;
 
 // function i18n(str) {
@@ -92,17 +91,30 @@ function onCancel() {
   return false;
 };
 
-function indexFrom() {
-    var set_url = document.getElementById('findex');
-    var url = set_url.value;
-    window.fbrowser.location.replace(url);
-    
-    var resetme = document.forms['mainform'];
-    resetme.fcreated.value = "";
-    resetme.ftype.value = "";
-    resetme.fsize.value = "";
+function checkvalue(elm,formname) {
+    var el = document.getElementById(elm);
+    if(!el.value) {
+        alert("Nothing to do!");
+        el.focus();
+        return false;
+    } 
+}
+
+function submit_form(dothis) {
+    if(dothis == "delete") {
+        window.fbrowser.document.dirform.action.value = "delete";
+    }
+    if(dothis == "move") {
+        window.fbrowser.document.dirform.action.value = "move";
+    }
+    if(dothis == "zip") {
+        window.fbrowser.document.dirform.action.value = "zip";
+    }
+        
+    window.fbrowser.document.dirform.submit();
     return false;
-};
+}
+
 </script>
 <style type="text/css">
 html, body {
@@ -197,7 +209,7 @@ color: black;
 		</fieldset>
 		<fieldset><legend><?php print_string("linkproperties","editor");?></legend>
 		<br>
-		<table width="82%">
+		<table width="82%" border="0">
 		<tr>
 			<td width="35" align="right"><?php print_string("linkurl","editor");?>:</td>
 			<td><input id="f_href" type="text" name="f_href" size="40"></td>
@@ -227,6 +239,48 @@ color: black;
 		</fieldset>
         </form>
 		</td>
+    </tr>
+  </table>
+  <table border="0" cellpadding="2" cellspacing="0">
+          <tr><td><?php print_string("selection","editor");?>: </td>
+          <td><form name="idelete" id="idelete">
+          <input name="btnDelete" type="submit" id="btnDelete" value="<?php print_string("delete","editor");?>" onclick="return submit_form('delete');" /></form></td>
+          <td><form name="imove" id="imove">
+          <input name="btnMove" type="submit" id="btnMove" value="<?php print_string("move","editor");?>" onclick="return submit_form('move');" /></td>
+          <td><form name="izip" id="izip">
+          <input name="btnZip" type="submit" id="btnZip" value="<?php print_string("zip","editor");?>" onclick="return submit_form('zip');" /></form></td>
+          <td><form name="irename" id="irename" method="post" action="../coursefiles.php" target="fbrowser">
+          <input type="hidden" name="id" value="<?php print($course->id);?>" />
+          <input type="hidden" name="wdir" value="" />
+          <input type="hidden" name="file" value="" />
+          <input type="hidden" name="action" value="rename" />
+          <input name="btnRename" type="submit" id="btnRename" value="<?php print_string("rename","editor");?>" /></form></td>
+          <tr></table>
+    <table border="0" cellpadding="1" cellspacing="1">
+    <tr> 
+      <td height="22"><?php
+      if(isteacher($id)) { ?>
+          <form name="cfolder" id="cfolder" action="../coursefiles.php" method="post" target="fbrowser">
+          <input type="hidden" name="id" value="<?php print($course->id);?>" />
+          <input type="hidden" name="wdir" value="" />
+          <input type="hidden" name="action" value="mkdir" />
+          <input name="name" type="text" id="foldername" size="35" />
+          <input name="btnCfolder" type="submit" id="btnCfolder" value="<?php print_string("createfolder","editor");?>" onclick="return checkvalue('foldername','cfolder');" />
+          </form>
+          <div class="space"></div>
+          <form action="../coursefiles.php?id=<?php print($course->id);?>" method="post" enctype="multipart/form-data" name="uploader" target="fbrowser" id="uploader">
+          <input type="hidden" name="MAX_FILE_SIZE" value="<?php print($upload_max_filesize);?>" />
+          <input type="hidden" name="id" VALUE="<?php print($course->id);?>" />
+          <input type="hidden" name="wdir" value="" />
+          <input type="hidden" name="action" value="upload" />
+          <input type="file" name="userfile" id="userfile" size="35" />
+          <input name="save" type="submit" id="save" onclick="return checkvalue('userfile','uploader');" value="<?php print_string("upload","editor");?>" />
+          </form>
+          <?php 
+          } else {
+              print "";
+          } ?>
+          </td>
     </tr>
   </table>
 <p>&nbsp;</p>
