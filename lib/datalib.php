@@ -100,7 +100,7 @@ function table_column($table, $oldfield, $field, $type="integer", $size="10",
             $default = "DEFAULT '$default'";
 
             if (!empty($after)) {
-                $after = "AFTER '$after'";
+                $after = "AFTER `$after`";
             }
 
             execute_sql("ALTER TABLE {$CFG->prefix}$table $operation $type $signed $default $null $after");
@@ -172,7 +172,7 @@ function table_column($table, $oldfield, $field, $type="integer", $size="10",
             $default = "DEFAULT '$default'";
 
             if (!empty($after)) {
-                $after = "AFTER '$after'";
+                $after = "AFTER $after";
             }
 
             if (!empty($oldfield)) {
