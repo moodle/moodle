@@ -1566,6 +1566,7 @@ function delete_mod_from_section($mod, $section) {
 
 function move_section($course, $section, $move) {
 /// Moves a whole course section up and down within the course
+    global $USER;
 
     if (!$move) {
         return true;
@@ -1590,6 +1591,10 @@ function move_section($course, $section, $move) {
     }
     if (!set_field("course_sections", "section", $section, "id", $sectiondestrecord->id)) {
         return false;
+    }
+    // if the focus is on the section that is being moved, then move the focus along
+    if (isset($USER->display[$course->id]) and ($USER->display[$course->id] == $section)) {
+        course_set_display($course->id, $sectiondest);
     }
     return true;
 }
