@@ -85,7 +85,9 @@
         if ($timenow < $timefinish) {
             if ($entry->modified) {
                 echo "<P><FONT SIZE=-2><B>Last edited:</B> ";
-                echo userdate($entry->modified)."</FONT></P>";
+                echo userdate($entry->modified);
+                echo " (".count_words($entry->text)." words)";
+                echo "</FONT></P>";
             }
             if ($journal->days) {
                 echo "<P><FONT SIZE=-2><B>Editing period ends:</B> ";
