@@ -107,6 +107,12 @@
             if (!$user = get_record("user", "id", "$delete")) {
                 error("No such user!");
             }
+
+            $primaryadmin = get_admin();
+            if ($user->id == $primaryadmin->id) {
+                error("You are not allowed to delete the primary admin user!");
+            }
+
             if ($confirm != md5($delete)) {
                 notice_yesno(get_string("deletecheckfull", "", "'$user->firstname $user->lastname'"),
                      "user.php?delete=$delete&confirm=".md5($delete), "user.php");
