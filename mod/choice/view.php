@@ -131,11 +131,9 @@
                 echo "<table cellpadding=\"10\" cellspacing=\"10\" align=\"center\">";     
                 foreach ($choice->option as $optionid => $text) {
                     if ($text) {
-                        $options = null;
-                        $options->para = false;                                                                 
                         echo "<tr><td align=\"left\">";              
-                        echo "<input type=\"radio\" name=\"answer\" value=\"".$optionid."\" ".$answerchecked[$optionid]." alt=\"".strip_tags(format_text($text, FORMAT_MOODLE, $options))."\" />".
-                              format_text($text);                            
+                        echo "<input type=\"radio\" name=\"answer\" value=\"".$optionid."\" ".$answerchecked[$optionid]." alt=\"".strip_tags(format_text($text))."\" />".
+                              format_text($text);
                         echo "</td>";
                         echo "</tr>";
                     }
