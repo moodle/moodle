@@ -27,7 +27,11 @@
 
     if (isset($_POST["course"])) {    // add or update form submitted
 
-        if (!isteacheredit($mod->course)) {
+        if (!$course = get_record("course", "id", $mod->course)) {
+            error("This course doesn't exist");
+        }
+
+        if (!isteacheredit($course->id)) {
             error("You can't modify this course!");
         }
 
@@ -51,15 +55,15 @@
                         include_once($moderr);
                         die;
                     }
-                    error("Could not update the $mod->modulename", "view.php?id=$mod->course");
+                    error("Could not update the $mod->modulename", "view.php?id=$course->id");
                 }
                 if (is_string($return)) {
-                    error($return, "view.php?id=$mod->course");
+                    error($return, "view.php?id=$course->id");
                 }
-                add_to_log($mod->course, "course", "update mod", 
+                add_to_log($course->id, "course", "update mod", 
                            "../mod/$mod->modulename/view.php?id=$mod->coursemodule", 
                            "$mod->modulename $mod->instance"); 
-                add_to_log($mod->course, $mod->modulename, "update", 
+                add_to_log($course->id, $mod->modulename, "update", 
                            "view.php?id=$mod->coursemodule", 
                            "$mod->instance", $mod->coursemodule); 
                 break;
@@ -72,11 +76,14 @@
                         include_once($moderr);
                         die;
                     }
-                    error("Could not add a new instance of $mod->modulename", "view.php?id=$mod->course");
+                    error("Could not add a new instance of $mod->modulename", "view.php?id=$course->id");
                 }
                 if (is_string($return)) {
-                    error($return, "view.php?id=$mod->course");
+                    error($return, "view.php?id=$course->id");
                 }
+
+                $mod->groupmode = $course->groupmode;  /// Default groupmode the same as course
+
                 $mod->instance = $return;
                 // course_modules and course_sections each contain a reference 
                 // to each other, so we have to update one of them twice.
@@ -97,10 +104,10 @@
                 if (! set_field("course_modules", "section", $sectionid, "id", $mod->coursemodule)) {
                     error("Could not update the course module with the correct section");
                 }   
-                add_to_log($mod->course, "course", "add mod", 
+                add_to_log($course->id, "course", "add mod", 
                            "../mod/$mod->modulename/view.php?id=$mod->coursemodule", 
                            "$mod->modulename $mod->instance"); 
-                add_to_log($mod->course, $mod->modulename, "add", 
+                add_to_log($course->id, $mod->modulename, "add", 
                            "view.php?id=$mod->coursemodule", 
                            "$mod->instance", $mod->coursemodule); 
                 break;
@@ -114,7 +121,7 @@
                 if (! delete_mod_from_section($mod->coursemodule, "$mod->section")) {
                     notify("Could not delete the $mod->modulename from that section");
                 }
-                add_to_log($mod->course, "course", "delete mod", 
+                add_to_log($course->id, "course", "delete mod", 
                            "view.php?id=$mod->course", 
                            "$mod->modulename $mod->instance", $mod->coursemodule); 
                 break;
@@ -123,14 +130,14 @@
 
         }
 
-        rebuild_course_cache($mod->course);
+        rebuild_course_cache($course->id);
 
         if (!empty($SESSION->returnpage)) {
             $return = $SESSION->returnpage;
             unset($SESSION->returnpage);
             redirect($return);
         } else {
-            redirect("view.php?id=$mod->course");
+            redirect("view.php?id=$course->id");
         }
         exit;
     }
