@@ -760,21 +760,23 @@ function calendar_get_sideblock_upcoming($courses, $groups, $users, $daysinfutur
 
     $content = '';
     $lines = count($events);
-    if(!$lines) return $content;
+    if (!$lines) {
+        return $content;
+    }
 
-    for($i = 0; $i < $lines; ++$i) {
+    for ($i = 0; $i < $lines; ++$i) {
         $content .= '<div class="cal_event">'.$events[$i]->icon.' ';
-        $content .= $events[$i]->name.':';
-        if(!empty($events[$i]->icon)) {
+        if (!empty($events[$i]->icon)) {
             // That's an activity event, so let's provide the hyperlink
-            $content .= ' '.$events[$i]->referer;
+            $content .= $events[$i]->referer;
+        } else {
+            $content .= $events[$i]->name;
         }
         $content .= '</div><div class="cal_event_date">'.$events[$i]->time.'</div>';
-        if($i < $lines - 1) $content .= '<hr />';
+        if ($i < $lines - 1) $content .= '<hr />';
     }
 
     return $content;
-
 }
 
 function calendar_add_month($month, $year) {
