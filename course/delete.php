@@ -27,7 +27,7 @@
             print_heading(get_string("choosecourse"));
             print_simple_box_start("CENTER");
             foreach ($courses as $course) {
-                echo "<A HREF=\"delete.php?id=$course->id\">$course->fullname</A><BR>";
+                echo "<A HREF=\"delete.php?id=$course->id\">$course->fullname ($course->shortname)</A><BR>";
             }
             print_simple_box_end();
         } else {
@@ -49,7 +49,7 @@
                      "<A HREF=\"../$CFG->admin/index.php\">$stradministration</A> -> 
                       <A HREF=\"delete.php\">$strdeletecourse</A> -> $strdeletecheck");
 
-        notice_yesno("$strdeletecoursecheck<BR><BR>$course->fullname", 
+        notice_yesno("$strdeletecoursecheck<BR><BR>$course->fullname ($course->shortname)", 
                      "delete.php?id=$course->id&delete=".md5($course->timemodified), 
                      "delete.php");
         exit;
