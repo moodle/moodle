@@ -58,7 +58,7 @@ CREATE TABLE prefix_backup_courses (
 # Table structure for table prefix_backup_log
 #
 
-CREATE TABLE prefix_backup_log
+CREATE TABLE prefix_backup_log (
     id SERIAL PRIMARY KEY,
     courseid int8 NOT NULL default '0',
     time int8 NOT NULL default '0',
