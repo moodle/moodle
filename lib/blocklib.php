@@ -325,10 +325,17 @@ function blocks_execute_action($page, &$pageblocks, $blockaction, $instanceorid)
         case 'config':
             global $USER;
             $block = blocks_get_record($instance->blockid);
-            $blockobject = block_instance($block->name, $instance);
+            // Hacky hacky tricky stuff to get the original human readable block title,
+            // even if the block has configured its title to be something else.
+            // Create the object WITHOUT instance data.            
+            $blockobject = block_instance($block->name);
             if ($blockobject === false) {
                 continue;
             }
+            // Now get the title and AFTER that load up the instance
+            $blocktitle = $blockobject->get_title();
+            $blockobject->_load_instance($instance);
+            
             optional_param('submitted', 0, PARAM_INT);
 
             // Define the data we're going to silently include in the instance config form here,
@@ -354,7 +361,7 @@ function blocks_execute_action($page, &$pageblocks, $blockaction, $instanceorid)
             }
             else {
                 // We need to show the config screen, so we highjack the display logic and then die
-                $strheading = get_string('blockconfiga', 'moodle', $block->name);
+                $strheading = get_string('blockconfiga', 'moodle', $blocktitle);
                 $page->print_header(get_string('pageheaderconfigablock', 'moodle'), array($strheading => ''));
                 print_heading($strheading);
                 echo '<form method="post" action="'. $page->url_get_path() .'">';
