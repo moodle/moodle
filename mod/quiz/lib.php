@@ -1618,6 +1618,7 @@ function quiz_save_question_options($question) {
             }
 
             if ($true = array_shift($oldanswers)) {  // Existing answer, so reuse it
+                $true->answer   = "";  // We will display this in the user's language later
                 $true->fraction = $question->answer;
                 $true->feedback = $question->feedbacktrue;
                 if (!update_record("quiz_answers", $true)) {
@@ -1626,7 +1627,7 @@ function quiz_save_question_options($question) {
                 }
             } else {
                 unset($true);
-                $true->answer   = get_string("true", "quiz");
+                $true->answer   = "";  // We will display this in the user's language later
                 $true->question = $question->id;
                 $true->fraction = $question->answer;
                 $true->feedback = $question->feedbacktrue;
@@ -1637,6 +1638,7 @@ function quiz_save_question_options($question) {
             }
 
             if ($false = array_shift($oldanswers)) {  // Existing answer, so reuse it
+                $false->answer   = "";  // We will display this in the user's language later
                 $false->fraction = 1 - (int)$question->answer;
                 $false->feedback = $question->feedbackfalse;
                 if (!update_record("quiz_answers", $false)) {
@@ -1645,7 +1647,7 @@ function quiz_save_question_options($question) {
                 }
             } else {
                 unset($false);
-                $false->answer   = get_string("false", "quiz");
+                $false->answer   = "";  // We will display this in the user's language later
                 $false->question = $question->id;
                 $false->fraction = 1 - (int)$question->answer;
                 $false->feedback = $question->feedbackfalse;
