@@ -1178,6 +1178,7 @@ function forum_print_attachments($post, $return=NULL) {
     if ($basedir = forum_file_area($post)) {
         if ($files = get_directory_list($basedir)) {
             $strattachment = get_string("attachment", "forum");
+            $strpopupwindow = get_string("popupwindow");
             foreach ($files as $file) {
                 $icon = mimeinfo("icon", $file);
                 if ($CFG->slasharguments) {
@@ -1185,19 +1186,19 @@ function forum_print_attachments($post, $return=NULL) {
                 } else {
                     $ffurl = "file.php?file=/$filearea/$file";
                 }
-                $image = "<IMG BORDER=0 SRC=\"$CFG->wwwroot/files/pix/$icon\" HEIGHT=16 WIDTH=16 ALT=\"File\">";
+                $image = "<img border=0 src=\"$CFG->wwwroot/files/pix/$icon\" height=16 width=16 alt=\"$strpopupwindow\">";
 
                 if ($return == "html") {
-                    $output .= "<A HREF=\"$CFG->wwwroot/$ffurl\">$image</A> ";
-                    $output .= "<A HREF=\"$CFG->wwwroot/$ffurl\">$file</A><BR>";
+                    $output .= "<a href=\"$CFG->wwwroot/$ffurl\">$image</a> ";
+                    $output .= "<a href=\"$CFG->wwwroot/$ffurl\">$file</a><br />";
 
                 } else if ($return == "text") {
                     $output .= "$strattachment $file:\n$CFG->wwwroot/$ffurl\n";
 
                 } else {
                     link_to_popup_window("/$ffurl", "attachment", $image, 500, 500, $strattachment);
-                    echo "<A HREF=\"$CFG->wwwroot/$ffurl\">$file</A>";
-                    echo "<BR>";
+                    echo "<a href=\"$CFG->wwwroot/$ffurl\">$file</a>";
+                    echo "<br />";
                 }
             }
         }

@@ -476,6 +476,7 @@ $string['passwordsenttext'] = "
 $string['people'] = "People";
 $string['personalprofile'] = "Personal profile";
 $string['phone'] = "Phone";
+$string['popupwindow'] = "Open file in new window";
 $string['potentialadmins'] = "Potential admins";
 $string['potentialcreators'] = "Potential course creators";
 $string['potentialteachers'] = "Potential teachers";
