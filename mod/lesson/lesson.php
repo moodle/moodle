@@ -60,7 +60,7 @@
                   "", "", true);
 
 	//...get the action 
-	require_variable($action);
+	$action = required_param('action');
 	
 	/************** add branch table ************************************/
 	if ($action == 'addbranchtable' ) {
@@ -73,7 +73,8 @@
         $pageid = required_param('pageid', PARAM_INT);
             
         // set of jump array
-        $jump[0] = get_string("thispage", "lesson");
+        $jump = array();
+		$jump[0] = get_string("thispage", "lesson");
         $jump[LESSON_NEXTPAGE] = get_string("nextpage", "lesson");
 		//// CDC-FLAG /////
 		$jump[LESSON_PREVIOUSPAGE] = get_string("previouspage", "lesson");
@@ -180,6 +181,7 @@
             }
         }
         if ($btpage->qtype == LESSON_BRANCHTABLE) {
+			$newpage = new stdClass;
             $newpage->lessonid = $lesson->id;
             $newpage->prevpageid = $pageid;
             $newpage->nextpageid = $page->nextpageid;
@@ -201,6 +203,7 @@
                 }
             }
             // ..and the single "answer"
+			$newanswer = new stdClass;
             $newanswer->lessonid = $lesson->id;
             $newanswer->pageid = $newpageid;
             $newanswer->timecreated = $timenow;
@@ -239,7 +242,7 @@
 				error("Error: Add cluster: page record not found");
         	}
 		}
-        
+        $newpage = new stdClass;
 		$newpage->lessonid = $lesson->id;
 		$newpage->prevpageid = $pageid;
 		if ($pageid != 0) {
@@ -271,6 +274,7 @@
 			}
 		}
 		// ..and the single "answer"
+		$newanswer = new stdClass;
 		$newanswer->lessonid = $lesson->id;
 		$newanswer->pageid = $newpageid;
 		$newanswer->timecreated = $timenow;
@@ -304,6 +308,7 @@
 		
 		// could put code in here to check if the user really can insert an end of cluster
 		
+		$newpage = new stdClass;
 		$newpage->lessonid = $lesson->id;
 		$newpage->prevpageid = $pageid;
 		$newpage->nextpageid = $page->nextpageid;
@@ -325,6 +330,7 @@
 			}
 		}
 		// ..and the single "answer"
+		$newanswer = new stdClass;
 		$newanswer->lessonid = $lesson->id;
 		$newanswer->pageid = $newpageid;
 		$newanswer->timecreated = $timenow;
@@ -347,6 +353,7 @@
         $pageid = required_param('pageid', PARAM_INT);
             
         // set of jump array
+		$jump = array();
         $jump[0] = get_string("thispage", "lesson");
         $jump[LESSON_NEXTPAGE] = get_string("nextpage", "lesson");
 		//// CDC-FLAG 6/18/04 /////
@@ -680,7 +687,7 @@
 					echo "<p align=\"center\">".get_string("studentoutoftime", "lesson")."</p>";
 					$outoftime = true;
 				}
-				unset($newtime);
+				$newtime = new stdClass;
 				$newtime->id = $timer->id;
 				$newtime->lessontime = time();
 				
@@ -1118,7 +1125,7 @@
 				} else {
 					$retries = 0;
 				}
-				unset($branch);
+				$branch = new stdClass;
 				$branch->lessonid = $lesson->id;
 				$branch->userid = $USER->id;
 				$branch->pageid = $pageid;
@@ -1171,6 +1178,7 @@
             $nretakes = count_records("lesson_grades", "lessonid", $lesson->id, "userid", $USER->id); 
             if (isstudent($course->id)) {
                 // record student's attempt
+				$attempt = new stdClass;
                 $attempt->lessonid = $lesson->id;
                 $attempt->pageid = $pageid;
                 $attempt->userid = $USER->id;
@@ -1215,7 +1223,7 @@
                 if ($lesson->nextpagedefault) {
                     // in Flash Card mode...
                     // ... first get the page ids (lessonid the 5th param is needed to make get_records play)
-                    $allpages = get_records("lesson_pages", "lessonid", $lesson->id, "id", "id,lessonid");
+                    $allpages = get_records("lesson_pages", "lessonid", $lesson->id, "id", "id,lessonid,qtype");
                     shuffle ($allpages);
                     $found = false;
                     if ($lesson->nextpagedefault == LESSON_UNSEENPAGE) {
@@ -1228,11 +1236,19 @@
                         }
                     } elseif ($lesson->nextpagedefault == LESSON_UNANSWEREDPAGE) {
                         foreach ($allpages as $thispage) {
-                            if (!count_records_select("lesson_attempts", "pageid = $thispage->id AND
-                                        userid = $USER->id AND correct = 1 AND retry = $nretakes")) {
-                                $found = true;
-                                break;
-                            }
+                            if ($thispage->qtype == LESSON_ESSAY) {
+								if (!count_records_select("lesson_attempts", "pageid = $thispage->id AND
+											userid = $USER->id AND retry = $nretakes")) {
+									$found = true;
+									break;
+								}
+							} else { 							
+								if (!count_records_select("lesson_attempts", "pageid = $thispage->id AND
+											userid = $USER->id AND correct = 1 AND retry = $nretakes")) {
+									$found = true;
+									break;
+								}
+							}
                         }
                     }
                     if ($found) {
@@ -1467,6 +1483,7 @@
 		}
 		
         // set of jump array
+		$jump = array();
         $jump[0] = get_string("thispage", "lesson");
         $jump[LESSON_NEXTPAGE] = get_string("nextpage", "lesson");
 		//// CDC-FLAG 6/18/04 /////
@@ -1936,7 +1953,8 @@
         $timenow = time();
 		
 		$form = lesson_clean_data_submitted();
-
+		$newpage = new stdClass;
+		$newanswer = new stdClass;
         if ($form->pageid) {
             // the new page is not the first page
             if (!$page = get_record("lesson_pages", "id", $form->pageid)) {
@@ -2269,7 +2287,8 @@
 
         $timenow = time();
 		$form = lesson_clean_data_submitted();
-
+		
+		$page = new stdClass;
         $page->id = $form->pageid;
         $page->timemodified = $timenow;
         $page->qtype = $form->qtype;
@@ -2297,6 +2316,7 @@
         }
         if ($page->qtype == LESSON_ENDOFBRANCH || $page->qtype == LESSON_ESSAY || $page->qtype == LESSON_CLUSTER || $page->qtype == LESSON_ENDOFCLUSTER) {
             // there's just a single answer with a jump
+			$oldanswer = new stdClass;
             $oldanswer->id = $form->answerid[0];
             $oldanswer->timemodified = $timenow;
             $oldanswer->jumpto = $form->jumpto[0];
@@ -2329,7 +2349,7 @@
                 // also save any answers where the editor is (going to be) used
                 if (trim(strip_tags($form->answer[$i])) or $form->answereditor[$i] or $form->responseeditor[$i]) {
                     if ($form->answerid[$i]) {
-                        unset($oldanswer);
+                        $oldanswer = new stdClass;
                         $oldanswer->id = $form->answerid[$i];
                         $oldanswer->flags = $form->answereditor[$i] * LESSON_ANSWER_EDITOR +
                             $form->responseeditor[$i] * LESSON_RESPONSE_EDITOR;
@@ -2349,7 +2369,7 @@
                         }
                     } else {
                         // it's a new answer
-                        unset($newanswer); // need to clear id if more than one new answer is ben added
+                        $newanswer = new stdClass; // need to clear id if more than one new answer is ben added
                         $newanswer->lessonid = $lesson->id;
                         $newanswer->pageid = $page->id;
                         $newanswer->flags = $form->answereditor[$i] * LESSON_ANSWER_EDITOR +
@@ -2378,7 +2398,7 @@
 								}
 							}
 						} else {
-							unset($oldanswer);
+							$oldanswer = new stdClass;
 							$oldanswer->id = $form->answerid[$i];
 							$oldanswer->flags = $form->answereditor[$i] * LESSON_ANSWER_EDITOR +
 								$form->responseeditor[$i] * LESSON_RESPONSE_EDITOR;
