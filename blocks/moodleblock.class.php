@@ -1,8 +1,8 @@
 <?php  // $Id$
 
 /**
- * This file contains the parent class for moodle blocks, MoodleBlock,
- * as well as the MoodleBlock_Nuke subclass.
+ * This file contains the parent class for moodle blocks, block_base,
+ * as well as the block_nuke subclass.
  *
  * @author Jon Papaioannou
  * @version  $Id$
@@ -300,31 +300,31 @@ class block_base {
         $script = $page->url_get_full(array('instanceid' => $this->instance->id, 'sesskey' => $USER->sesskey));
      
         $movebuttons .= '<a style="margin-right: 6px; margin-left: 2px;" title="'. $title .'" href="'.$script.'&amp;blockaction=toggle">' .
-                        '<img src="'. $pixpath.$icon .'" alt=\"\" /></a>';
+                        '<img src="'. $pixpath.$icon .'" alt="Hide" /></a>';
 
         if ($options & BLOCK_CONFIGURE) {
             $movebuttons .= '<a style="margin-right: 6px; margin-left: 2px;" title="'. $this->str->configure .'" href="'.$script.'&amp;blockaction=config">' .
-                            '<img src="'. $pixpath .'/t/edit.gif" alt=\"\" /></a>';
+                            '<img src="'. $pixpath .'/t/edit.gif" alt="Config" /></a>';
         }
 
         $movebuttons .= '<a style="margin-right: 2px; margin-left: 2px;" title="'. $this->str->delete .'" href="'.$script.'&amp;blockaction=delete">' .
-                        '<img src="'. $pixpath .'/t/delete.gif" alt=\"\" /></a> ';
+                        '<img src="'. $pixpath .'/t/delete.gif" alt="Delete" /></a> ';
 
         if ($options & BLOCK_MOVE_LEFT) {
             $movebuttons .= '<a style="margin-right: 2px; margin-left: 2px;" title="'. $this->str->moveleft .'" href="'.$script.'&amp;blockaction=moveleft">' .
-                            '<img src="'. $pixpath .'/t/left.gif" alt=\"\" /></a>';
+                            '<img src="'. $pixpath .'/t/left.gif" alt="Left" /></a>';
         }
         if ($options & BLOCK_MOVE_UP) {
             $movebuttons .= '<a style="margin-right: 2px; margin-left: 2px;" title="'. $this->str->moveup .'" href="'.$script.'&amp;blockaction=moveup">' .
-                            '<img src="'. $pixpath .'/t/up.gif" alt=\"\" /></a>';
+                            '<img src="'. $pixpath .'/t/up.gif" alt="Up" /></a>';
         }
         if ($options & BLOCK_MOVE_DOWN) {
             $movebuttons .= '<a style="margin-right: 2px; margin-left: 2px;" title="'. $this->str->movedown .'" href="'.$script.'&amp;blockaction=movedown">' .
-                            '<img src="'. $pixpath .'/t/down.gif" alt=\"\" /></a>';
+                            '<img src="'. $pixpath .'/t/down.gif" alt="Down" /></a>';
         }
         if ($options & BLOCK_MOVE_RIGHT) {
             $movebuttons .= '<a style="margin-right: 2px; margin-left: 2px;" title="'. $this->str->moveright .'" href="'.$script.'&amp;blockaction=moveright">' .
-                            '<img src="'. $pixpath .'/t/right.gif" alt=\"\" /></a>';
+                            '<img src="'. $pixpath .'/t/right.gif" alt="Right" /></a>';
         }
 
         $movebuttons .= '</div>';
@@ -479,7 +479,7 @@ class block_base {
     /**
      * This function is called on your subclass right after an instance is loaded
      * Use this function to act on instance data just after it's loaded and before anything else is done
-     * For instance: if your block will have different title's dependant on location (site, course, blog, etc)
+     * For instance: if your block will have different title's depending on location (site, course, blog, etc)
      */
     function specialization() {
         // Just to make sure that this method exists.
