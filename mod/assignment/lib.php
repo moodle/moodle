@@ -550,10 +550,10 @@ function assignment_print_upload_form($assignment) {
     echo "</DIV>";
 }
 
-function assignment_get_recent_mod_activity(&$activities, &$index, $sincetime, $courseid, $assignment="0", $user="", $groupid="") {
+function assignment_get_recent_mod_activity(&$activities, &$index, $sincetime, $courseid, $assignment="0", $user="", $groupid="")  {
 // Returns all assignments since a given time.  If assignment is specified then
 // this restricts the results
-
+    
     global $CFG;
 
     if ($assignment) {
@@ -563,17 +563,12 @@ function assignment_get_recent_mod_activity(&$activities, &$index, $sincetime, $
     }
     if ($user) {
         $userselect = " AND u.id = '$user'";
-    } else {
+    } else { 
         $userselect = "";
-    }
-    if ($groupid) {
-        $groupselect = " ";
-    } else {
-        $groupselect = "";
     }
 
     $assignments = get_records_sql("SELECT asub.*, u.firstname, u.lastname, u.picture, u.id as userid,
-                                           a.grade as maxgrade, name, cm.instance
+                                           a.grade as maxgrade, name, cm.instance, cm.section, a.type
                                   FROM {$CFG->prefix}assignment_submissions asub,
                                        {$CFG->prefix}user u,
                                        {$CFG->prefix}assignment a,
@@ -585,33 +580,38 @@ function assignment_get_recent_mod_activity(&$activities, &$index, $sincetime, $
                                    AND cm.instance = a.id
                                  ORDER BY asub.timemodified ASC");
 
-  if (empty($assignments))
+    if (empty($assignments))
+      return;
+
+    foreach ($assignments as $assignment) {
+        if (empty($groupid) || ismember($groupid, $assignment->userid)) {
+    
+          $tmpactivity->type = "assignment";
+          $tmpactivity->defaultindex = $index;
+          $tmpactivity->instance = $assignment->instance;
+          $tmpactivity->name = $assignment->name;
+          $tmpactivity->section = $assignment->section;
+
+          $tmpactivity->content->grade = $assignment->grade;
+          $tmpactivity->content->maxgrade = $assignment->maxgrade;
+          $tmpactivity->content->type = $assignment->type;
+
+          $tmpactivity->user->userid = $assignment->userid;
+          $tmpactivity->user->fullname = fullname($assignment);
+          $tmpactivity->user->picture = $assignment->picture;
+
+          $tmpactivity->timestamp = $assignment->timemodified;
+
+          $activities[] = $tmpactivity;
+
+          $index++;
+        }
+    }
+
     return;
-
-  foreach ($assignments as $assignment) {
-    $tmpactivity->type = "assignment";
-    $tmpactivity->defaultindex = $index;
-    $tmpactivity->instance = $assignment->instance;
-    $tmpactivity->name = $assignment->name;
-
-    $tmpactivity->content->grade = $assignment->grade;
-    $tmpactivity->content->maxgrade = $assignment->maxgrade;
-
-    $tmpactivity->user->userid = $assignment->userid;
-    $tmpactivity->user->fullname = fullname($assignment);
-    $tmpactivity->user->picture = $assignment->picture;
-
-    $tmpactivity->timestamp = $assignment->timemodified;
-
-    $activities[] = $tmpactivity;
-
-    $index++;
-  }
-
-  return;
 }
 
-function assignment_print_recent_mod_activity($activity, $course, $detail=false) {
+function assignment_print_recent_mod_activity($activity, $course, $detail=false)  {
     global $CFG, $THEME;
 
     echo '<table border="0" cellpadding="3" cellspacing="0">';
@@ -636,11 +636,13 @@ function assignment_print_recent_mod_activity($activity, $course, $detail=false)
         $assignment->course = $course;
         $user->id = $activity->user->userid;
 
-        $file = assignment_get_user_file($assignment, $user);
-
-        echo "<img src=\"$CFG->pixpath/f/$file->icon\" height=16 width=16 border=0 alt=\"file\">";
-        echo "&nbsp;<A TARGET=\"uploadedfile\" HREF=\"$CFG->wwwroot/$file->url\">$file->name</A>";
-        echo "<BR>";
+        echo $grades;
+        if ($activity->content->type == UPLOADSINGLE) {
+            $file = assignment_get_user_file($assignment, $user);
+            echo "<img src=\"$CFG->pixpath/f/$file->icon\" height=16 width=16 border=0 alt=\"file\">";
+            echo "&nbsp;<a target=\"uploadedfile\" HREF=\"$CFG->wwwroot/$file->url\">$file->name</A>";
+        }
+        echo "<br>";
     }
     echo "<a href=\"$CFG->wwwroot/user/view.php?id="
          . $activity->user->userid . "&course=$course\">"
