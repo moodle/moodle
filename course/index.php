@@ -324,13 +324,11 @@ function print_category_edit($category, $displaylist, $parentslist, $depth=-1, $
     
     if ($category) {
         echo "<tr><td align=\"left\" nowrap=\"nowrap\">";
-        echo "<p>";
         for ($i=0; $i<$depth;$i++) {
             echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
         }
         $linkcss = $category->visible ? "" : " class=\"dimmed\" ";
         echo "<a $linkcss title=\"$str->edit\" href=\"category.php?id=$category->id&amp;edit=on&amp;sesskey=$USER->sesskey\">$category->name</a>";
-        echo "</p>";
         echo "</td>";
 
         echo "<td align=\"right\">$category->coursecount</td>";
