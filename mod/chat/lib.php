@@ -110,6 +110,10 @@ function chat_delete_instance($id) {
         $result = false;
     }
 
+    if (! delete_records('event', 'modulename', 'chat', 'instance', $chat->id)) {
+        $result = false;
+    }
+
     return $result;
 }
 

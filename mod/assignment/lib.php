@@ -93,6 +93,10 @@ function assignment_delete_instance($id) {
         $result = false;
     }
 
+    if (! delete_records('event', 'modulename', 'assignment', 'instance', $assignment->id)) {
+        $result = false;
+    }
+
     return $result;
 }
 
