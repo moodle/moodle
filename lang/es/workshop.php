@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // workshop.php - created with Moodle 1.2 development (2003120700)
+      // workshop.php - created with Moodle 1.2 development (2004010900)
 
 
 $string['absent'] = 'Ausente';
@@ -201,6 +201,7 @@ $string['weightforbias'] = 'Peso de los sesgos';
 $string['weightforgradingofassessments'] = 'Peso de la calificación de evaluaciones';
 $string['weightforpeerassessments'] = 'Peso de las evaluaciones de los compañeros';
 $string['weightforreliability'] = 'Peso de la fiabilidad';
+$string['weightforteacherassessments'] = 'Peso de las evaluaciones de $a';
 $string['weights'] = 'Pesos';
 $string['weightsusedforfinalgrade'] = 'Pesos usados para la calificación final';
 $string['weightsusedforsubmissions'] = 'Pesos usados para los envíos';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.2 development (2003120700)
+      // quiz.php - created with Moodle 1.2 development (2004010900)
 
 
 $string['acceptederror'] = 'Margen de error';
@@ -37,6 +37,7 @@ $string['choice'] = 'Elección';
 $string['choices'] = 'Opciones disponibles';
 $string['correctanswer'] = 'Respuesta correcta';
 $string['correctanswers'] = 'Respuesta incorrecta';
+$string['corrresp'] = 'Respuesta Correcta';
 $string['countdown'] = 'Cuenta regresiva';
 $string['countdownfinished'] = 'Este cuestionario se está cerrando, debe enviar sus respuestas ahora.';
 $string['countdowntenminutes'] = 'El cuestionario se cerrará en diez minutos.';
@@ -49,6 +50,7 @@ $string['defaultgrade'] = 'Calificación por defecto de la pregunta';
 $string['defaultinfo'] = 'La categoría por defecto para preguntas';
 $string['deletequestioncheck'] = '¿Está seguro de que desea borrar \'$a\'?';
 $string['description'] = 'Descripción';
+$string['discrimination'] = 'Índice Discrim.';
 $string['eachattemptbuildsonthelast'] = 'Cada intento construye sobre el anterior';
 $string['editcategories'] = 'Editar categorías';
 $string['editingdescription'] = 'Editando la descripción';
@@ -76,7 +78,10 @@ $string['grademethod'] = 'Método de calificación';
 $string['guestsno'] = 'Lo sentimos, los invitados no pueden ver o responder cuestionarios';
 $string['imagedisplay'] = 'Imagen a mostrar';
 $string['importquestions'] = 'Importar preguntas de un archivo';
+$string['indivresp'] = 'Respuestas de individuos para cada ítem';
 $string['introduction'] = 'Introducción';
+$string['itemanal'] = 'Análisis de respuestas por ítem';
+$string['listitems'] = 'Liasta de ítems en el cuestionario';
 $string['marks'] = 'Puntos';
 $string['match'] = 'Acierto';
 $string['matchanswer'] = 'Respuesta acertada';
@@ -127,6 +132,7 @@ $string['report'] = 'Informes';
 $string['reportfullstat'] = 'Estadísticas detalladas';
 $string['reportmulti_percent'] = 'Porcentajes mútiples';
 $string['reportmulti_q_x_student'] = 'Elecciones multi estudinates';
+$string['reportmulti_resp'] = 'Respuestas individuales';
 $string['reportoverview'] = 'Vista general';
 $string['reportregrade'] = 'Intentos';
 $string['reportsimplestat'] = 'Estadística';
