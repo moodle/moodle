@@ -124,44 +124,20 @@ $CFG->admin = 'admin';
 
 
 //=========================================================================
-// 7. TEXT FILTERS  (most people can just ignore this setting)
-//=========================================================================
-// This is a new and experimental feature that allows text filters to 
-// be used on all printed texts in Moodle.  To add text filters, you
-// need to specify the path to a file that contains a standard textfilter.
-// The numbers need to start at one and increment up to ten.
-// 
-// eg   $CFG->textfilter1 = "mod/glossary/dynalink.php";
-//      $CFG->textfilter2 = "library/librarylib.php";
-//      $CFG->textfilter3 = "filter/censor/censor.php";
-
-
-
-//=========================================================================
-// 8. OTHER MISCELLANEOUS SETTINGS (ignore these for new installations)
+// 7. OTHER MISCELLANEOUS SETTINGS (ignore these for new installations)
 //=========================================================================
 //
 // Prevent users from updating their profile images
 //      $CFG->disableuserimages = true;  
 //
-// Allow Google and Google users enter your site automatically as guests
-//      $CFG->opentogoogle = true;       
+// Prevent scheduled backups from operating (and hide the GUI for them)
+// Useful for webhost operators who have alternate methods of backups
+//      $CFG->disablescheduledbackups = true;
 //
 // Restrict certain usernames from doing things that may mess up a site
 // This is especially useful for demonstration teacher accounts
 //      $CFG->restrictusers = 'teacher,fred,jim';
 //
-// Prevent scheduled backups from operating (and hide the GUI for them)
-// Useful for webhost operators who have alternate methods of backups
-//      $CFG->disablescheduledbackups = true;
-// 
-// On busy sites that use filters (such as the glossary autolinking) this 
-// may help - it specifies time in seconds to keep copies of formatted texts.
-//      $CFG->cachetext = 600;
-// It has some disadvantages:
-// 1) Texts will take this long to regenerate, so changes to the glossary 
-//    will not be evident immediately.
-// 2) It won't work with filters that use user settings eg: multilang
 
 
 
