@@ -81,19 +81,20 @@
                         if (move_uploaded_file($userfile['tmp_name'], $newfile)) {
                             echo "Uploaded $userfile_name (".$userfile['type'].") to $wdir";
                         } else {
-                            echo "A problem occurred while uploading $userfile_name to $wdir";
+                            echo "A problem occurred while uploading '$userfile_name'";
+                            echo " (possibly it was too large)";
                         }
                     }
                 }
                 displaydir($wdir);
                     
             } else {
-                //if ($upload_max_filesize = ini_get("upload_max_filesize")) {
-                    //str_replace("M", "000000", $upload_max_filesize);
-                //} else {
-                    $upload_max_filesize = 5000000;
-                //}
-                echo "<P>Upload a file into <B>$wdir</B>:";
+                if (! $filesize = ini_get("upload_max_filesize")) {
+                    $filesize = "5M";
+                }
+                $upload_max_filesize = get_real_size($filesize);
+
+                echo "<P>Upload a file (maximum size $filesize) into <B>$wdir</B>:";
                 echo "<TABLE><TR><TD COLSPAN=2>";
                 echo "<FORM ENCTYPE=\"multipart/form-data\" METHOD=\"post\" ACTION=index.php>";
                 echo " <INPUT TYPE=hidden NAME=MAX_FILE_SIZE value=\"$upload_max_filesize\">";
@@ -152,6 +153,7 @@
             if ($count = setfilelist($HTTP_POST_VARS)) {
                 $USER->fileop     = $action;
                 $USER->filesource = $wdir;
+                save_session("USER");
                 echo "<P align=center>$count files selected for moving. Now go to the destination and press \"Move files to here\".</P>";
             }
             displaydir($wdir);
@@ -412,7 +414,7 @@ function setfilelist($VARS) {
             $USER->filelist[] = rawurldecode($val);
         }
     }
-
+    save_session("USER");
     return $count;
 }
 
@@ -421,6 +423,7 @@ function clearfilelist() {
 
     $USER->filelist = array ();
     $USER->fileop = "";
+    save_session("USER");
 }
 
 
