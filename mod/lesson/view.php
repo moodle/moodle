@@ -39,9 +39,9 @@
             $action = 'teacherview';
         } elseif  (time() < $lesson->available) {
             print_header($course->shortname .': '. $lesson->name, $course->fullname,
-                         $navigation .'<a href="index.php?id='. $course->id .'">'. $strlessons .'</a> -> <a href="view.php?id='. $cm->id .'">'. $lesson->name .'</a>', '',
-                         "<style type=\"text/css\">@import url($CFG->wwwroot/mod/lesson/styles.php);</style>", true,
-                         '', navmenu($course, $cm));
+                         $navigation .'<a href="index.php?id='. $course->id .'">'. $strlessons .'</a> -> '.
+                         '<a href="view.php?id='. $cm->id .'">'. $lesson->name .'</a>', 
+                         '', '', true, '', navmenu($course, $cm));
             print_simple_box_start('center');
             echo '<div align="center">';
             echo get_string('lessonopen', 'lesson', userdate($lesson->available)).'<br />';
@@ -52,8 +52,7 @@
             exit();
         } elseif (time() > $lesson->deadline) {
             print_header($course->shortname .': '. $lesson->name, $course->fullname,
-                         "$navigation <a href=\"index.php?id=$course->id\">$strlessons</a> -> <a href=\"view.php?id=$cm->id\">$lesson->name</a>", '',
-                         "<style type=\"text/css\">@import url($CFG->wwwroot/mod/lesson/styles.php);</style>", true,
+                         "$navigation <a href=\"index.php?id=$course->id\">$strlessons</a> -> <a href=\"view.php?id=$cm->id\">$lesson->name</a>", '', "", true,
                           '', navmenu($course, $cm));
             print_simple_box_start('center');
             echo '<div align="center">';
@@ -92,8 +91,7 @@
     }
 
     print_header($course->shortname .': '. $lesson->name, $course->fullname,
-                 "$navigation <a href=\"index.php?id=$course->id\">$strlessons</a> -> <a href=\"view.php?id=$cm->id\">$lesson->name</a>", '',
-                 "<style type=\"text/css\">@import url($CFG->wwwroot/mod/lesson/styles.php);</style>", true,
+                 "$navigation <a href=\"index.php?id=$course->id\">$strlessons</a> -> <a href=\"view.php?id=$cm->id\">$lesson->name</a>", '', '', true,
                  $button, // took out update_module_button($cm->id, $course->id, $strlesson) and replaced it with $button
                   navmenu($course, $cm));
 

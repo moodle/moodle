@@ -1,23 +1,19 @@
-<?php
-    require_once("../../config.php");
-?>
-
-img {
+.mod-lesson img {
     border:0;
 }
 
-.hidden-label {
+.mod-lesson .hidden-label {
     display: none;
 }
 
-.footer {
+.mod-lesson .footer {
   padding-top:40px; margin-top:40px;
 }
  
-.footer a:link, .footer v:link, .footer a:visited { 
+.mod-lesson .footer a:link, .footer v:link, .footer a:visited { 
 }
 
-.leftmenutable {
+.mod-lesson .leftmenutable {
     width:170px;
     height:400px;
     overflow:auto;    
@@ -25,15 +21,15 @@ img {
     vertical-align:top;
 }
 
-.leftmenu a:link, .leftmenu a:active, .leftmenu a:visited, .leftmenu1 a:link, .leftmenu1 a:active, .leftmenu1 a:visited{
+.mod-lesson .leftmenu a:link, .leftmenu a:active, .leftmenu a:visited, .leftmenu1 a:link, .leftmenu1 a:active, .leftmenu1 a:visited{
     font-size:.7em;
     vertical-align:top;
 }
 
-.main a:link, .main a:active, .main a:visited{
+.mod-lesson .main a:link, .main a:active, .main a:visited{
     font-size:.9em; 
     vertical-align:top;
 }
 
-.viewpos {
+.mod-lesson .viewpos {
 }

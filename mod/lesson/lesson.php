@@ -22,7 +22,8 @@
     require("../../config.php");
     require("locallib.php");
     
-    $id = required_param('id', PARAM_INT);    // Course Module ID
+    $id     = required_param('id', PARAM_INT);         // Course Module ID
+    $action = required_param('action', PARAM_ALPHA);   // Action
  
     // get some esential stuff...
     if (! $cm = get_record("course_modules", "id", $id)) {
@@ -54,11 +55,7 @@
     // ... print the header and...
     print_header("$course->shortname: $lesson->name", "$course->fullname",
                  "$navigation <a href=index.php?id=$course->id>$strlessons</a> -> 
-                  <a href=\"view.php?id=$cm->id\">$lesson->name</a>", 
-                  "", "<style type=\"text/css\">@import url($CFG->wwwroot/mod/lesson/styles.php);</style>", true);
-
-    //...get the action 
-    $action = required_param('action');
+                  <a href=\"view.php?id=$cm->id\">$lesson->name</a>", "", "", true);
 
 	// include the appropriate action (check to make sure the file is there first)
 	if (file_exists($CFG->dirroot.'/mod/lesson/action/'.$action.'.php')) {
