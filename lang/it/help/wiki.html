@@ -1,0 +1,226 @@
+<p align="center"><b>Come redigere pagine in formato Wiki</b></p>
+
+<p>
+Il formato Wiki fornisce un metodo per formattare un testo  con un
+  <em>tag</em> intuitivi e comprensibili. Quando il testo Wiki sar&agrave; visualizzato,
+  si trasformer&agrave; in formato XHTML.
+  Il
+  notevole
+  vantaggio
+  del
+  formato
+  Wiki
+  risiede nel fatto che non &egrave; necessario imparare l'HTML per ottenere risultati
+  validi e che il testo che redigete rimane <em>comprensibile</em> anche <em>prima</em> della
+  conversione. Il formato Wiki &egrave; di fatto un'alternativa al semplice salvataggio
+  di file Word in formato HTML con in pi&ugrave; la possibilit&agrave; di mantenere la modificabilit&agrave;
+  del testo direttamente on-line.</p>
+<p>Per scrivere in formato Wiki,  &egrave; sufficiente inserire del testo semplice al
+quale aggiungere una serie di caratteri speciali di controllo della formattazione.</p>
+<h3>Formattazione di paragrafi</h3>
+
+<p>
+   I paragrafi devono essere separati da almeno un'interlinea. Per aggiungere
+     formati ai paragrafi, aggiungete uno dei seguenti caratteri di controllo
+     come primo carattere della prima riga del paragrafo seguito da uno spazio
+vuoto.</p>
+
+<table>
+  <tr>
+  <th>Carattere</th>
+  <th>Tipo di formatatzione</th>
+  </tr>
+  <tr>
+  <td>Nessuno</td>
+  <td>Paragrafo normale</td>
+  </tr>
+  <tr><td>&gt;</td>
+  <td>Citazione</td>
+  </tr>
+  <tr>
+  <td>Spazio</td>
+  <td>Testo pre formattato (Carattere Monospaced)</td>
+  </tr>
+  <tr><td>%</td>
+  <td>Esclude la pre formattazione <em>ed</em> il formato Wiki</td>
+  </tr>
+  <tr><td>!#</td>
+  <td>Titolo - sostituire al simbolo # i numeri da 1 a 6 per indicare la dimensione
+    del titolo. (1 &egrave; la pi&ugrave; grande)</td>
+  </tr>
+  <tr><td>Q.</td>
+  <td>Domanda - utilizzata per migliorare la presentazione di testi contenenti
+    domande e risposte</td>
+  </tr>
+  <tr><td>A.</td>
+  <td>Risposta - vedi sopra</td>
+  </tr>
+</table>
+
+<h3> Formattazione di elenchi</h3>
+
+<p>Elenchi semplici possono essere realizzati inserendo caratteri speciali
+  seguiti da uno spazio all'inizio di ciascuna riga. L'elenco termina con una
+  linea vuota. Gli elenchi possono essere nidificati a piacimento. </p>
+<table>
+  <tr><th>Carattere</th>
+  <th>Tipo di elenco</th>
+  </tr>
+  <tr><td>*</td>
+  <td>Elenco puntato  non ordinato</td>
+  </tr>
+  <tr><td>#</td>
+  <td>Elenco numerato ordinato</td>
+  </tr>
+  <tr><td>:</td>
+  <td>Elenco di definizioni, definizione</td>
+  </tr>
+  <tr><td>;</td>
+  <td>Elenco di definizioni, testo</td>
+  </tr>
+</table>  
+
+<p>Il seguente esempio di elenco nidificato:</p>
+<pre>
+  * Primo elemento
+  * Secondo elemento
+  ## elemento nidificato 1
+  ## elemento nidificato 2
+  * Terzo elemento</pre>
+<p>produce il seguente risultato:
+<ul>
+<li>Primo elemento</li>
+  <li>Secondo elemento</li>
+  <ol>
+    <li>elemento nidificato 1</li>
+    <li>elemento nidificato 1</li></ol>
+  <li>Terzo elemento
+</ul>
+<h3>Formattazione del testo</h3>
+
+<p> La formattazione del testo consente di formattare parti di linee con stili
+  particolari.
+  Questi caratteri speciali possono essere inseriti in un qualsiasi punto del
+testo ma non possono essere incrociati.</p>
+
+<table>
+  <tr><th>Example</th><th>Example</th><th>Formatting</th></tr>
+  <tr><td>*hello world*</td><td><strong>hello world</strong></td>
+  <td>Grassetto</td>
+  </tr>
+  <tr><td>/hello world/</td><td><em>hello world</em></td>
+  <td>Corsivo</td>
+  </tr>
+  <tr><td>+hello world+</td><td><ins>hello world</ins></td>
+  <td>Sottolineato</td>
+  </tr>
+  <tr><td>-hello world-</td><td><del>hello world</del></td>
+  <td>Barrato</td>
+  </tr>
+  <tr><td>hello ~world~</td><td>hello <sub>world</sub></td>
+  <td>Pedice</td>
+  </tr>
+  <tr><td>hello ^world^</td><td>hello <sup>world</sup></td>
+  <td>Apice</td>
+  </tr>
+  <tr><td>"hello world"</td><td>&#8220;hello world&#8221;</td>
+  <td>Virgolette</td>
+  </tr>
+  <tr><td>%hello world%</td><td><code>hello world</code></td>
+  <td>Carattere Monospaced</td>
+  </tr>
+  <tr><td>@hello world@</td><td><cite>hello world</cite></td>
+  <td>Esempio</td>
+  </tr>
+</table>  
+
+<h3>Acronimi</h3>
+
+<p>Per usare gli acronimi &egrave; sufficiente scrivere l'acronimo in maiuscolo seguito
+  dalla descrizione tra parentesi. Tra l'acronimo e la parentesi aperta non ci
+  devono essere spazi vuoti. Esempio:</p>
+
+<p>HTML(Hypertext Markup Language) <br />   <acronym title="Hypertext Markup Language">HTML</acronym></p>
+
+<h3>Hyper Link</h3>
+
+<p>I link possono essere inseriti nel testo facendoli seguire tra parentesi con
+  le parole che volete compaiano. Tra il testo del link e la parentesi
+  aperta
+non ci devono ssere spazi vuoti.</p>
+<p>Esempio: </em>http://www.google.com/(Cerca)</em> sar&agrave;
+  convertito in <a href="http://www.google.com/">Cerca</a>.</p>
+<p>Analogamente, per i link di posta elettronica:</p>
+<p>nobody@example.com(Test User) sar&agrave; convertito in <a href="mailto:nobody@example.com">Test
+    User</a></p>
+
+<h3>Link ai moduli di Moodle</h3>
+
+<p>Se conoscete l'id di un modulo di Moodle  (cercate
+  &quot; ?id=nn&quot; al termine dalla URL che punta al modulo)
+  e il nome del modulo, potete creare un link al modulo  utilizzando
+  la seguente sintassi:</p>
+
+<p>NomeDelModulo:nn(Descrizione)</p>
+<p>per esempio, <em>risorsa:36(Una pagina)</em>   <em>forum:10(Vai al forum)</em></p>
+
+<h3>Link alle immagini di Moodle</h3>
+
+<p> E' possibile inserire immagini in qualsiasi punto del testo Wiki.
+  E' necessario eseguire preventivamante l'upload delle immagini e tenere nota
+  del percorso all'interno dell'area di upload. <br>
+  Sintassi:</p>
+<p>/<em>..percorso del file..</em>(testo alternativo)</p>
+
+<p>Per esempio:  /mypics/graphic.jpg(Immagine dello staff)</p>
+
+<h3>Link ai file di Moodle</h3>
+
+<p>Analogamante alla immagini, &egrave; possibile creare link ai file. Anche i file
+devono essere preventivamante caricati nell'area di upload.<br>
+Sintassi:</p>
+
+<p><b>file:</b><em>..percorso del file</em>(testo del link)</p>
+
+<p>Per esempio, file:/pdfs/moodle.pdf(Informazioni su Moodle)</p>
+
+<h3>Formattazione automatica</h3>
+
+<p> Molte espressioni di uso comune sono convertite in XHTML automaticamante.
+Le principali sono:</p>
+
+<ul>
+  <li>HTTP link sono convertiti in link attivi
+  <li> ..., (R), (TM), (C), 1/4, 1/2, 3/4 sono convertiti nell'opportuno carattere
+    corrispondente.
+  <li> numeri x numeri si converte nel giusto simbolo di moltiplicazione
+  <li>una linea che iniza con almeno quattro trattini &egrave; convertita in una linea
+    orizzontale.
+</ul>  
+
+<h3>Controllo ortografico (Sperimentale)</h3>
+
+<p>Per attivare il controllo ortografico, potete inserire le seguente linea di
+  testo riportata sotto. Tutto il testo che segue la linea sar&agrave; controllato.
+<pre>
+!SPELL:language_code:language_variant
+
+Examples:
+!SPELL:en:british
+!SPELL:sp
+</pre>
+
+<p>"language_code" deve essere sostituito dal codice della lingua desiderata
+  (e.g., EN, FR etc), <br>"  language_variant" (insieme ai due punti) &egrave; facoltativo
+  e pu&ograve; assumere i valori, nel caso di language_code= EN, "american", "british",
+  o "canadian".</p>
+
+<p>Le parole non riconosciute sono evidenziate e potete valutare i suggerimenti
+posizionando il mouse sopra la parola.</p>
+
+<p><em>NOTA: il controllo ortografico utilizza le librerie <strong>pspell</strong>.
+    Queste librerie sono necessarie cos&igrave; come &egrave; necessario disporre nel proprio
+    server del dizionario della lingua che si intende utilizzare. In
+    mancanza, il controllo ortografico non potr&agrave; funzionare. Il controllo ortografico
+    non
+&egrave; supportato in Windows.</em></p>

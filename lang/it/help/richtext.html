@@ -1,0 +1,171 @@
+<P ALIGN=CENTER><B>Editor HTML</B></P>
+
+<P>Disponibilit&agrave;: <B>
+<?php  if (!$CFG->htmleditor) {
+       print_string("htmleditordisabledadmin");
+   } else if (!$USER->htmleditor) {
+       print_string("htmleditordisabled");
+   } else if (!can_use_richtext_editor()) {
+       print_string("htmleditordisabledbrowser");
+   } else {
+       print_string("htmleditoravailable");
+   }
+?>
+</B></P>
+
+<P>L'editor HTML mette a disposizione una interfaccia
+  tipo word-processor direttamente all'interno di una pagina web, permettendo
+  di creare contenuti   HTML in modo intuitivo. Inoltre, l'editor HTML ha una
+  serie di utili funzioni che facilitano la creazione di pagine.
+<P><B>Copia/incolla di testi da altre applicazioni</B>
+<UL>
+<P>E' possibile copiare ed incollare testi formattati
+  da altre applicazioni Windows, come Microsoft Word, direttamente nell'editor
+  HTML. Per accedere a questa funzione, potete usare i comandi copia ed incolla
+  da menu oppure utilizzare la combinazione di tasti Control-C (copia) e Control-V
+  (incolla).
+</UL>
+
+<P><B>Aggiunta di immagini<img border="0" hspace="10" src="lib/editor/images/ed_image.gif"></B></P>
+<UL>
+<P>Se disponete di immagini accessibili via web tramite una URL, potete inserirle
+  all'interno del testo HTML tramite il pulsante &quot;Inserici immagine&quot;.
+</UL>
+
+<P><B>Aggiunta di tabelle<img border="0" hspace="10" src="lib/editor/images/insert_table.gif"></B></P>
+<UL>
+<P>Per impaginare i vostri testi, avete a disposizione il pulsante &quot;Inserisci
+  tabella&quot; nella barra degli strumenti.
+</UL>
+
+<P><B>Aggiunta di link<img border="0" hspace="10" src="lib/editor/images/ed_link.gif"></B></P>
+<UL>
+<P>Per aggiungere un link al testo, per prima cosa dovete selezionare il testo
+  da trasformare in un link, poi fate click sul pulsante &quot;link&quot; nella barra degli
+  strumenti ed inserite la
+  URL
+  da collegare.
+</UL>
+
+
+<P><B>Aggiunta d&igrave; faccine (emoticons) <img border="0" hspace="10" src="pix/s/smiley.gif" width="15" height="15"></B></P>
+<UL>
+<p>Per aggiungere le faccine al testo, fate click sulla icona &quot;smiley&quot; nella
+  barra degli strumenti. Apparir&agrave; una finestra di dialogo che vi consentir&agrave; di
+  scegliere le faccine riportate nella tabella sottostante. E' anche possibile
+  inserire le faccine utilizzando il codice testuale corrispondente che sar&agrave;
+  automaticamante convertito nella relativa &quot;emoticons&quot;.</p>
+<table border="1" align="left">
+  <tr valign="top">
+    <td>
+      <table border="0" align="center" cellpadding="5">
+        <tr>
+          <td><a href="javascript:inserttext(':-)')"><img border="0" hspace="10" src="pix/s/smiley.gif" width="15" height="15"></a></td>
+          <td>sorriso</td>
+          <td><font face="courier">:-)</font></td>
+        </tr>
+        <tr>
+          <td><a href="javascript:inserttext(':-D')"><img alt border="0" hspace="10" src="pix/s/biggrin.gif" width="15" height="15"></a></td>
+          <td>sorriso smagliante</td>
+          <td><font face="courier">:-D</font></td>
+        </tr>
+        <tr>
+          <td><a href="javascript:inserttext(';-)')"><img alt border="0" hspace="10" src="pix/s/wink.gif" width="15" height="15"></a></td>
+          <td>strizzata d'occhi</td>
+          <td><font face="courier">;-)</font></td>
+        </tr>
+        <tr>
+          <td><a href="javascript:inserttext(':-/')"><img alt border="0" hspace="10" src="pix/s/mixed.gif" width="15" height="15"></a></td>
+          <td>combattuto</td>
+          <td><font face="courier">:-/</font></td>
+        </tr>
+        <tr>
+          <td><a href="javascript:inserttext('V-.')"><img alt border="0" hspace="10" src="pix/s/thoughtful.gif" width="15" height="15"></a></td>
+          <td>pensieroso</td>
+          <td><font face="courier">V-.</font></td>
+        </tr>
+        <tr>
+          <td><a href="javascript:inserttext(':-P')"><img alt border="0" hspace="10" src="pix/s/tongueout.gif" width="15" height="15"></a></td>
+          <td>lingua di fuori</td>
+          <td><font face="courier">:-P</font></td>
+        </tr>
+        <tr>
+          <td><a href="javascript:inserttext('B-)')"><img alt border="0" hspace="10" src="pix/s/cool.gif" width="15" height="15"></a></td>
+          <td>cool</td>
+          <td><font face="courier">B-)</font></td>
+        </tr>
+        <tr>
+          <td><a href="javascript:inserttext('^-)')"><img alt border="0" hspace="10" src="pix/s/approve.gif" width="15" height="15"></a></td>
+          <td>approvazione</td>
+          <td><font face="courier">^-)</font></td>
+        </tr>
+        <tr>
+          <td><a href="javascript:inserttext('8-)')"><img alt border="0" hspace="10" src="pix/s/wideeyes.gif" width="15" height="15"></a></td>
+          <td>occhi spalancati</td>
+          <td><font face="courier">8-)</font></td>
+        </tr>
+        <tr>
+          <td><a href="javascript:inserttext('8-o')"><img alt border="0" hspace="10" src="pix/s/surprise.gif" width="15" height="15"></a></td>
+          <td>stupore</td>
+          <td><font face="courier">8-o</font></td>
+        </tr>
+      </table>
+    </td>
+    <td>
+      <table border="0" align="center" cellpadding="5">
+        <tr>
+          <td><a href="javascript:inserttext(':-(')"><img alt border="0" hspace="10" src="pix/s/sad.gif" width="15" height="15"></a></td>
+          <td>triste</td>
+          <td><font face="courier">:-(</font></td>
+        </tr>
+        <tr>
+          <td><a href="javascript:inserttext('8-.')"><img alt border="0" hspace="10" src="pix/s/shy.gif" width="15" height="15"></a></td>
+          <td>timido</td>
+          <td><font face="courier">8-.</font></td>
+        </tr>
+        <tr>
+          <td><a href="javascript:inserttext(':-I')"><img alt border="0" hspace="10" src="pix/s/blush.gif" width="15" height="15"></a></td>
+          <td>arrossito</td>
+          <td><font face="courier">:-I</font></td>
+        </tr>
+        <tr>
+          <td><a href="javascript:inserttext(':-X')"><img alt border="0" hspace="10" src="pix/s/kiss.gif" width="15" height="15"></a></td>
+          <td>baci</td>
+          <td><font face="courier">:-X</font></td>
+        </tr>
+        <tr>
+          <td><a href="javascript:inserttext(':o)')"><img alt border="0" hspace="10" src="pix/s/clown.gif" width="15" height="15"></a></td>
+          <td>buffone</td>
+          <td><font face="courier">:o)</font></td>
+        </tr>
+        <tr>
+          <td><a href="javascript:inserttext('P-|')"><img alt border="0" hspace="10" src="pix/s/blackeye.gif" width="15" height="15"></a></td>
+          <td>occhio nero</td>
+          <td><font face="courier">P-|</font></td>
+        </tr>
+        <tr>
+          <td><a href="javascript:inserttext('8-[')"><img alt border="0" hspace="10" src="pix/s/angry.gif" width="15" height="15"></a></td>
+          <td>irritato</td>
+          <td><font face="courier">8-[</font></td>
+        </tr>
+        <tr>
+          <td><a href="javascript:inserttext('xx-P')"><img alt border="0" hspace="10" src="pix/s/dead.gif" width="15" height="15"></a></td>
+          <td>defunto</td>
+          <td><font face="courier">xx-P</font></td>
+        </tr>
+        <tr>
+          <td><a href="javascript:inserttext('|-.')"><img alt border="0" hspace="10" src="pix/s/sleepy.gif" width="15" height="15"></a></td>
+          <td>sonnolento</td>
+          <td><font face="courier">|-.</font></td>
+        </tr>
+        <tr>
+          <td><a href="javascript:inserttext('}-]')"><img alt border="0" hspace="10" src="pix/s/evil.gif" width="15" height="15"></a></td>
+          <td>cattivo</td>
+          <td><font face="courier">}-]</font></td>
+        </tr>
+      </table>
+</table>
+<p>&nbsp;  </p>
+</UL>
+
+
