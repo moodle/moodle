@@ -63,7 +63,7 @@
 /// Check settings in config.php
 
     $dirroot = dirname(realpath("../config.php"));
-    if ($dirroot != $CFG->dirroot) {
+    if (!empty($dirroot) and $dirroot != $CFG->dirroot) {
         error("Please fix your settings in config.php:
               <P>You have:
               <P>\$CFG->dirroot = \"".addslashes($CFG->dirroot)."\";
