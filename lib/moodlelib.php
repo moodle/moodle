@@ -2945,6 +2945,14 @@ function mtrace($string, $eol="\n") {
     flush();
 }
 
+function getremoteaddr() {
+//Returns most reliable client address
+    if (getenv("HTTP_CLIENT_IP")) $ip = getenv("HTTP_CLIENT_IP");
+    else if(getenv("HTTP_X_FORWARDED_FOR")) $ip = getenv("HTTP_X_FORWARDED_FOR");
+    else if(getenv("REMOTE_ADDR")) $ip = getenv("REMOTE_ADDR");
+    else $ip = false; //just in case
+    return $ip;
+}
 
 // vim:autoindent:expandtab:shiftwidth=4:tabstop=4:tw=140:
 ?>
