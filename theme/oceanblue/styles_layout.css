@@ -219,6 +219,7 @@ table.formtable tbody th
   height:1.3em;
   border-width:1px;
   border-style:solid;
+  width:100%;
 }
 
 .navbar .breadcrumb {
