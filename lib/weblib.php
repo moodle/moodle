@@ -619,15 +619,61 @@ function convert_urls_into_links(&$text) {
 
 /// Make lone URLs into links.   eg http://moodle.com/
     $text = eregi_replace("([[:space:]]|^|\(|\[)([[:alnum:]]+)://([^[:space:]]*)([[:alnum:]#?/&=])",
-                          "\\1<a href=\"\\2://\\3\\4\" TARGET=\"newpage\">\\2://\\3\\4</a>", $text);
+                          "\\1<a href=\"\\2://\\3\\4\" target=\"newpage\">\\2://\\3\\4</a>", $text);
 
 /// eg www.moodle.com
     $text = eregi_replace("([[:space:]]|^|\(|\[)www\.([^[:space:]]*)([[:alnum:]#?/&=])", 
-                          "\\1<a href=\"http://www.\\2\\3\" TARGET=\"newpage\">www.\\2\\3</a>", $text);
+                          "\\1<a href=\"http://www.\\2\\3\" target=\"newpage\">www.\\2\\3</a>", $text);
 }
 
-function highlight($needle, $haystack) {
+function highlight($needle, $haystack, $case=0, 
+                    $left_string="<span class=\"highlight\">", $right_string="</span>") {
+/// This function will highlight search words in a given string
+/// It cares about HTML and will not ruin links.  It's best to use
+/// this function after performing any conversions to HTML.
+/// Function found here: http://forums.devshed.com/t67822/scdaa2d1c3d4bacb4671d075ad41f0854.html
+
+    $list_of_words = eregi_replace("[^-a-zA-Z0-9&']", " ", $needle);
+    $list_array = explode(" ", $list_of_words);
+    for ($i=0; $i<sizeof($list_array); $i++) {
+        if (strlen($list_array[$i]) == 1) {
+            $list_array[$i] = "";
+        }
+    }
+    $list_of_words = implode(" ", $list_array);
+    $list_of_words_cp = $list_of_words;
+    $final = array();
+    preg_match_all('/<(.+?)>/is',$haystack,$list_of_words);
+
+    foreach (array_unique($list_of_words[0]) as $key=>$value) {
+        $final['<|'.$key.'|>'] = $value;
+    }
+
+    $haystack = str_replace($final,array_keys($final),$haystack);
+    $list_of_words_cp = eregi_replace(" +", "|", $list_of_words_cp);
+
+    if ($list_of_words_cp{0}=="|") {
+        $list_of_words_cp{0} = "";
+    }
+    if ($list_of_words_cp{strlen($list_of_words_cp)-1}=="|") {
+        $list_of_words_cp{strlen($list_of_words_cp)-1}="";
+    }
+    $list_of_words_cp = "(".trim($list_of_words_cp).")";
+
+    if (!$case){
+        $haystack = eregi_replace("$list_of_words_cp", "$left_string"."\\1"."$right_string", $haystack);
+    } else {
+        $haystack = ereg_replace("$list_of_words_cp", "$left_string"."\\1"."$right_string", $haystack);
+    }
+    $haystack = str_replace(array_keys($final),$final,$haystack);
+
+    return stripslashes($haystack);
+}
+
+function highlightfast($needle, $haystack) {
 /// This function will highlight instances of $needle in $haystack
+/// It's faster that the above function and doesn't care about 
+/// HTML or anything.
 
     $parts = explode(strtolower($needle), strtolower($haystack));
 
@@ -637,13 +683,12 @@ function highlight($needle, $haystack) {
         $parts[$key] = substr($haystack, $pos, strlen($part));
         $pos += strlen($part);
 
-        $parts[$key] .= "<SPAN CLASS=highlight>".substr($haystack, $pos, strlen($needle))."</SPAN>";
+        $parts[$key] .= "<span class=\"highlight\">".substr($haystack, $pos, strlen($needle))."</span>";
         $pos += strlen($needle);
     }   
 
     return (join('', $parts));
 }
-
 
 
 /// STANDARD WEB PAGE PARTS ///////////////////////////////////////////////////

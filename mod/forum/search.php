@@ -51,22 +51,21 @@
                     error("Could not find forum $discussion->forum");
                 }
 
-                $post->subject = highlight("$search", $post->subject);
-                $discussion->name = highlight("$search", $discussion->name);
+                $post->subject = highlightfast("$search", $post->subject);
+                $discussion->name = highlightfast("$search", $discussion->name);
 
-                $fullsubject = "<A HREF=\"view.php?f=$forum->id\">$forum->name</A>";
+                $fullsubject = "<a href=\"view.php?f=$forum->id\">$forum->name</a>";
                 if ($forum->type != "single") {
-                    $fullsubject .= " -> <A HREF=\"discuss.php?d=$discussion->id\">$discussion->name</A>";
+                    $fullsubject .= " -> <a href=\"discuss.php?d=$discussion->id\">$discussion->name</a>";
                     if ($post->parent != 0) {
-                        $fullsubject .= " -> <A HREF=\"discuss.php?d=$post->discussion&parent=$post->id\">$post->subject</A>";
+                        $fullsubject .= " -> <a href=\"discuss.php?d=$post->discussion&parent=$post->id\">$post->subject</a>";
                     }
                 }
 
                 $post->subject = $fullsubject;
-                $post->message = highlight("$search", $post->message);
 
-                $fulllink = "<P ALIGN=right><A HREF=\"discuss.php?d=$post->discussion&parent=$post->id\">".get_string("postincontext", "forum")."</A></P>";
-                forum_print_post($post, $course->id, false, false, false, false, $fulllink);
+                $fulllink = "<p align=\"right\"><a href=\"discuss.php?d=$post->discussion&parent=$post->id\">".get_string("postincontext", "forum")."</a></p>";
+                forum_print_post($post, $course->id, false, false, false, false, $fulllink, $search);
 
                 echo "<BR>";
             }

@@ -910,7 +910,7 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
 }
 
 
-function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link=false, $rate=false, $footer="") {
+function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link=false, $rate=false, $footer="", $highlight="") {
     global $THEME, $USER, $CFG;
 
     echo "<a name=\"$post->id\"></a>";
@@ -959,7 +959,11 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
         echo "</a> (".get_string("numwords", "", $numwords).")...</p>";
     } else {
         // Print whole message
-        echo format_text($post->message, $post->format);
+        if ($highlight) {
+            echo highlight($highlight, format_text($post->message, $post->format));
+        } else {
+            echo format_text($post->message, $post->format);
+        }
         echo $attachedimages; 
     }
 
