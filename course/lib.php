@@ -828,10 +828,18 @@ function print_course_admin_links($course, $width=180) {
             $adminicon[]="<img src=\"$modpixpath/forum/icon.gif\" height=16 width=16 alt=\"\">";
         }
 
-    } else {  // Students menu
+    } else if (!isguest()) {  // Students menu
         if ($course->showgrades) {
             $admindata[]="<a href=\"grade.php?id=$course->id\">".get_string("grades")."...</a>";
             $adminicon[]="<img src=\"$pixpath/i/grades.gif\" height=16 width=16 alt=\"\">";
+        }
+        if ($CFG->auth == "email" or $CFG->auth == "none" or $CFG->auth == "manual") {
+            $admindata[]="<a href=\"$CFG->wwwroot/login/change_password.php?id=$course->id\">".
+                          get_string("changepassword")."...</a>";
+            $adminicon[]="<img src=\"$pixpath/i/user.gif\" height=16 width=16 alt=\"\">";
+        } else if ($CFG->changepassword) {
+            $admindata[]="<a href=\"$CFG->changepassword\">".get_string("changepassword")."...</a>";
+            $adminicon[]="<img src=\"$pixpath/i/user.gif\" height=16 width=16 alt=\"\">";
         }
     } 
 
