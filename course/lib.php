@@ -780,6 +780,9 @@ function print_section_block($heading, $course, $section, $mods, $modnames, $mod
                                  " alt=\"$strmovehere\" border=\"0\"></a>";
                 }
                 $instancename = urldecode($modinfo[$modnumber]->name);
+                if (!empty($CFG->filterall)) {
+                    $instancename = filter_text($instancename, $course->id);
+                }
                 $linkcss = $mod->visible ? "" : " class=\"dimmed\" ";
                 if (!empty($modinfo[$modnumber]->extra)) {
                     $extra = urldecode($modinfo[$modnumber]->extra);
@@ -869,6 +872,9 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                          " alt=\"$strmovehere\" border=\"0\"></a><br />\n";
                 }
                 $instancename = urldecode($modinfo[$modnumber]->name);
+                if (!empty($CFG->filterall)) {
+                    $instancename = filter_text($instancename, $course->id);
+                }
 
                 if (!empty($modinfo[$modnumber]->extra)) {
                     $extra = urldecode($modinfo[$modnumber]->extra);
