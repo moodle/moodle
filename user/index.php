@@ -74,9 +74,9 @@
             if ($numstudents > $USER_LARGE_CLASS and $showall == "0") {
                 $a->count  = $USER_LARGE_CLASS;
                 $a->things = strtolower($course->students);
-                echo "<h3 align=center>".get_string("displayingfirst", "", $a);
+                echo "<p align=center>".get_string("displayingfirst", "", $a);
                 echo "(<a href=\"index.php?id=$course->id&sort=$sort&dir=$dir&showall=1\">".get_string("showallusers")."</a>)";
-                echo "</h3>";
+                echo "</p>";
             }
             $columns = array("name", "city", "country", "lastaccess");
 
