@@ -717,6 +717,10 @@ function highlight($needle, $haystack, $case=0,
 /// this function after performing any conversions to HTML.
 /// Function found here: http://forums.devshed.com/t67822/scdaa2d1c3d4bacb4671d075ad41f0854.html
 
+    if (empty($needle)) {
+        return $haystack;
+    }
+
     $list_of_words = eregi_replace("[^-a-zA-Z0-9&']", " ", $needle);
     $list_array = explode(" ", $list_of_words);
     for ($i=0; $i<sizeof($list_array); $i++) {
