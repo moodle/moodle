@@ -3,8 +3,8 @@
 $MAXNEWSDISPLAY = 4;
 
 $FORMATS = array (
-             "0" => "Non-weekly layout",
-             "1" => "Weekly layout"
+             "1" => "Weekly layout",
+             "2" => "Social layout"
            );
 
 

@@ -50,12 +50,14 @@
     }
 
     switch ($course->format) {
-        case 0:
-            include("noweeks.php");
-            break;
         case 1:
             include("weeks.php");
             break;
+        case 2:
+            include("social.php");
+            break;
+        default:
+            error("Course format not defined yet!");
     }
 
     print_footer($course);
