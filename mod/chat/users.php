@@ -64,7 +64,7 @@ header("Last-Modified: ".gmdate("D, d M Y H:i:s")." GMT");
 header("Cache-Control: no-cache, must-revalidate");
 header("Pragma: no-cache");
 header("Content-Type: text/html");
-header("Refresh: $CFG->chat_refresh_userlist; URL=users.php?chat_sid=$chat_sid");
+header("Refresh: $CFG->chat_refresh_userlist; URL=users.php?chat_sid=$chat_sid&groupid=$groupid");
 
 print_header();
 

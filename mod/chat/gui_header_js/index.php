@@ -4,7 +4,7 @@
     require_once('../lib.php');
 
     require_variable($id);
-    optional_variable($groupid);
+    optional_variable($groupid, -1);
 
     if (!$chat = get_record("chat", "id", $id)) {
         error("Could not find that chat room!");
@@ -39,7 +39,7 @@
         $groupname = '';
     }
 
-    if (!$chat_sid = chat_login_user($chat->id, "header_js")) {
+    if (!$chat_sid = chat_login_user($chat->id, "header_js", $currentgroup)) {
         error("Could not log in to chat room!!");
     }
 

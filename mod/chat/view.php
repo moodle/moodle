@@ -75,7 +75,7 @@
 
     if ($currentgroup) {
         $groupselect = " AND groupid = '$currentgroup'";
-        $groupparam = "&group=$currentgroup";
+        $groupparam = "&groupid=$currentgroup";
     } else {
         $groupselect = "";
         $groupparam = "";

@@ -239,11 +239,12 @@ function chat_get_latest_message($chatid, $groupid=0) {
 
 //////////////////////////////////////////////////////////////////////
 
-function chat_login_user($chatid, $version="header_js") {
+function chat_login_user($chatid, $version="header_js", $groupid=0) {
     global $USER;
 
     $chatuser->chatid   = $chatid;
     $chatuser->userid   = $USER->id;
+    $chatuser->groupid  = $groupid;
     $chatuser->version  = $version;
     $chatuser->ip       = $USER->lastIP;
     $chatuser->lastping = $chatuser->firstping = $chatuser->lastmessageping = time();
