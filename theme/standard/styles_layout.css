@@ -118,6 +118,14 @@ table {
     border-width:1px;
     border-style:solid;
 }
+.feedbackbox {
+    border-width:1px;
+    border-style:solid;
+}
+.feedbackby {
+}
+.feedback {
+}
 
 
 /* summary of a user in a nice little box - weblib.php */

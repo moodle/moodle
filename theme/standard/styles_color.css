@@ -76,23 +76,15 @@ th {
 
 /* notification messages (can be good or bad) */
 .notifyproblem {
-    background-color:#FFFFFF;
     color:#660000;
     padding: 10px;
-    text-align:center;
-    border-style: solid;
-    border-width: 1px;
-    border-color: #000000;
+    text-align: center;
 }
 
 .notifysuccess {
-    background-color:#FFFFFF;
     color:#006600;
     padding: 10px;
     text-align:center;
-    border-style: solid;
-    border-width: 1px;
-    border-color: #000000;
 }
 
 .required {
@@ -117,6 +109,15 @@ th {
 }
 .informationbox {
     border-color:#DDDDDD; /* borders */
+}
+.feedbackbox {
+    border-color: #888888; /* borders */
+}
+.feedbackby {
+    background-color:#BBBBBB;
+}
+.userpicture {
+    background:#EEEEEE; 
 }
 
 .admin .generalboxcontent {
@@ -242,6 +243,43 @@ th {
     background:#FFFFFF;
 }
 
+/* survey */
+#mod-survey-view .r0 {
+    background-color: #EEEEEE;
+}
+#mod-survey-view .r1 {
+    background-color: #DDDDDD;
+}
+
+
+/* assignment */
+.assignmentsubmission {
+}
+
+.assignmentnew .assignmentfeedback{
+    background-color:#DDDDDD; /* cellheading2 */
+}   
+    
+.assignmentold .assignmentfeedback{
+    background-color:#BBBBBB; /* cellheading */
+}
+
+.assignmentheading {
+    background-color:#BBBBBB; /* cellheading */
+}
+
+
+/* workshop */
+
+.workshoppostpicture {
+    background-color:#FEE6B9; /* cellcontent2 */
+}
+
+.workshopassessmentheading {
+    background-color:#DDDDDD; /* cellheading2 */
+}
+
+
 /* glossary, wiki */
 .generaltab {
     background-color:#BBBBBB; /* cellheading */
@@ -300,6 +338,13 @@ table.message_search_results td {
 .sideblockmain hr {
     border-top-color:#999999;
 }
+
+/* wiki */
+.sideblockheading {
+    background-color: #EEEEEE;
+}
+
+    
 
 
 /*****************************
