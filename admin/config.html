@@ -4,16 +4,17 @@
 <tr valign=top>
 	<td align=right><p>lang:</td>
 	<td>
-    <? choose_from_menu (get_list_of_languages(), "lang", $config->lang, "", "", ""); ?>
+    <?php choose_from_menu (get_list_of_languages(), "lang", $config->lang, "", "", ""); ?>
     </td>
     <td>
-    <? print_string("configlang") ?>
+    <?php print_string("configlang") ?>
     </td>
 </tr>
 <tr valign=top>
 	<td align=right><p>langdir:</td>
 	<td>
-    <? unset($options);
+    <?php 
+       unset($options);
        $options["LTR"] = get_string("langltr");
        $options["RTL"] = get_string("langrtl");
 
@@ -21,13 +22,14 @@
     ?>
     </td>
     <td>
-    <? print_string("configlangdir") ?>
+    <?php print_string("configlangdir") ?>
     </td>
 </tr>
 <tr valign=top>
 	<td align=right><p>langmenu:</td>
 	<td>
-    <? unset($options);
+    <?php 
+       unset($options);
        $options[0] = get_string("no");
        $options[1] = get_string("yes");
 
@@ -35,63 +37,64 @@
     ?>
     </td>
     <td>
-    <? print_string("configlangmenu") ?>
+    <?php print_string("configlangmenu") ?>
     </td>
 </tr>
 <tr valign=top>
 	<td align=right><p>langlist:</td>
 	<td>
-    <input name=langlist type=text size=40 value="<?=$config->langlist?>">
+    <input name=langlist type=text size=40 value="<?php p($config->langlist) ?>">
     </td>
     <td>
-    <? print_string("configlanglist") ?>
+    <?php print_string("configlanglist") ?>
     </td>
 </tr>
 <tr valign=top>
 	<td align=right><p>locale:</td>
 	<td>
-    <input name=locale type=text size=10 value="<?=$config->locale?>">
+    <input name=locale type=text size=10 value="<?php p($config->locale) ?>">
     </td>
     <td>
-    <? print_string("configlocale") ?>
+    <?php print_string("configlocale") ?>
     </td>
 </tr>
 <tr valign=top>
 	<td align=right><p>country:</td>
-	<td><? choose_from_menu ($COUNTRIES, "country", $config->country, get_string("selectacountry"), "", "") ?>
+	<td><?php choose_from_menu ($COUNTRIES, "country", $config->country, get_string("selectacountry"), "", "") ?>
 	</td>
     <td>
-    <? print_string("configcountry") ?>
+    <?php print_string("configcountry") ?>
     </td>
 </tr>
 <tr valign=top>
 	<td align=right><p>smtphosts:</td>
 	<td>
-    <input name=smtphosts type=text size=30 value="<?=$config->smtphosts?>">
+    <input name=smtphosts type=text size=30 value="<?php p($config->smtphosts)?>">
     </td>
     <td>
-    <? print_string("configsmtphosts") ?>
+    <?php print_string("configsmtphosts") ?>
     </td>
 </tr>
 <tr valign=top>
 	<td align=right><p>smtpuser:</td>
 	<td>
-    <input name=smtpuser type=text size=10 value="<?=$config->smtpuser?>">
+    <input name=smtpuser type=text size=10 value="<?php p($config->smtpuser)?>">
     </td>
     <td rowspan=2>
-    <? print_string("configsmtpuser") ?>
+    <?php print_string("configsmtpuser") ?>
     </td>
 </tr>
 <tr valign=top>
 	<td align=right><p>smtppass:</td>
 	<td>
-    <input name=smtppass type=text size=10 value="<?=$config->smtppass?>">
+    <input name=smtppass type=text size=10 value="<?php p($config->smtppass)?>">
     </td>
 </TR>
 <tr valign=top>
 	<td align=right><p>gdversion:</td>
 	<td>
-    <? unset($options);
+    <?php 
+       unset($options);
        $options[0] = get_string("gdnot");
        $options[1] = get_string("gd1");
        $options[2] = get_string("gd2");
@@ -102,26 +105,28 @@
     ?>
     </td>
     <td>
-    <? print_string("configgdversion") ?>
+    <?php print_string("configgdversion") ?>
     </td>
 </tr>
 <tr valign=top>
     <td align=right><p>htmleditor:</td>
     <td>
-    <? unset($options);
+    <?php 
+       unset($options);
        $options[0] = get_string("allownot");
        $options[1] = get_string("allow");
        choose_from_menu ($options, "htmleditor", $config->htmleditor, "", "", "");
     ?>
     </td>
     <td>
-    <? print_string("confightmleditor") ?>
+    <?php print_string("confightmleditor") ?>
     </td>
 </tr>
 <tr valign=top>
 	<td align=right><p>maxeditingtime:</td>
 	<td>
-    <? unset($options);
+    <?php 
+       unset($options);
        $options[3600] = get_string("numminutes", "", 60);
        $options[2700] = get_string("numminutes", "", 45);
        $options[1800] = get_string("numminutes", "", 30);
@@ -133,13 +138,14 @@
     ?>
     </td>
     <td>
-    <? print_string("configmaxeditingtime") ?>
+    <?php print_string("configmaxeditingtime") ?>
     </td>
 </tr>
 <tr valign=top>
 	<td align=right><p>longtimenosee:</td>
 	<td>
-    <? unset($options);
+    <?php 
+       unset($options);
        $options[1000] = get_string("numdays", "", 1000);
        $options[365]  = get_string("numdays", "", 365);
        $options[180]  = get_string("numdays", "", 180);
@@ -156,13 +162,14 @@
     ?>
     </td>
     <td>
-    <? print_string("configlongtimenosee") ?>
+    <?php print_string("configlongtimenosee") ?>
     </td>
 </tr>
 <tr valign=top>
 	<td align=right><p>loglifetime:</td>
 	<td>
-    <? unset($options);
+    <?php 
+       unset($options);
        $options[0]    = get_string("neverdeletelogs");
        $options[1000] = get_string("numdays", "", 1000);
        $options[365]  = get_string("numdays", "", 365);
@@ -177,13 +184,14 @@
     ?>
     </td>
     <td>
-    <? print_string("configloglifetime") ?>
+    <?php print_string("configloglifetime") ?>
     </td>
 </tr>
 <tr valign=top>
 	<td align=right><p>sessiontimeout:</td>
 	<td>
-    <? unset($options);
+    <?php 
+       unset($options);
        $options[14400] = get_string("numhours", "", 4);
        $options[10800] = get_string("numhours", "", 3);
        $options[7200]  = get_string("numhours", "", 2);
@@ -198,31 +206,31 @@
     ?>
     </td>
     <td>
-    <? print_string("configsessiontimeout") ?>
+    <?php print_string("configsessiontimeout") ?>
     </td>
 </tr>
 <tr valign=top>
 	<td align=right><p>zip:</td>
 	<td>
-    <input name=zip type=text size=30 value="<?=$config->zip?>">
+    <input name=zip type=text size=30 value="<?php p($config->zip) ?>">
     </td>
     <td>
-    <? print_string("configzip") ?>
+    <?php print_string("configzip") ?>
     </td>
 </tr>
 <tr valign=top>
 	<td align=right><p>unzip:</td>
 	<td>
-    <input name=unzip type=text size=30 value="<?=$config->unzip?>">
+    <input name=unzip type=text size=30 value="<?php p($config->unzip) ?>">
     </td>
     <td>
-    <? print_string("configunzip") ?>
+    <?php print_string("configunzip") ?>
     </td>
 </tr>
 <tr valign=top>
 	<td align=right><p>slasharguments:</td>
 	<td>
-    <? unset($options);
+    <?php unset($options);
        $options[0] = "file.php?file=/pic.jpg";
        $options[1] = "file.php/pic.jpg";
 
@@ -232,28 +240,29 @@
     ?>
     </td>
     <td>
-    <? print_string("configslasharguments") ?>
+    <?php print_string("configslasharguments") ?>
     </td>
 </tr>
 <tr valign=top>
 	<td align=right><p>proxyhost:</td>
 	<td>
-    <input name=proxyhost type=text size=30 value="<?=$config->proxyhost?>">
+    <input name=proxyhost type=text size=30 value="<?php p($config->proxyhost) ?>">
     </td>
     <td rowspan=2>
-    <? print_string("configproxyhost") ?>
+    <?php print_string("configproxyhost") ?>
     </td>
 </TR>
 <tr valign=top>
 	<td align=right><p>proxyport:</td>
 	<td>
-    <input name=proxyport type=text size=5 value="<?=$config->proxyport?>">
+    <input name=proxyport type=text size=5 value="<?php p($config->proxyport) ?>">
     </td>
 </tr>
 <tr valign=top>
 	<td align=right><p>debug:</td>
 	<td>
-    <? unset($options);
+    <?php 
+       unset($options);
        $options[7]  = get_string("no");
        $options[15] = get_string("yes");
 
@@ -261,27 +270,28 @@
     ?>
     </td>
     <td>
-    <? print_string("configdebug") ?>
+    <?php print_string("configdebug") ?>
     </td>
 </tr>
 <tr valign=top>
 	<td align=right><p>framename:</td>
 	<td>
-    <? if (empty($config->framename)) {
+    <?php 
+       if (empty($config->framename)) {
            $config->framename = "_top";
        }
     ?>
-    <input name=framename type=text size=15 value="<?=$config->framename?>">
+    <input name=framename type=text size=15 value="<?php p($config->framename)?>">
     </td>
     <td>
-    <? print_string("configframename") ?>
+    <?php print_string("configframename") ?>
     </td>
 </tr>
 
 
 <tr>
     <td colspan=3 align=center>
-	<input type="submit" value="<? print_string("savechanges") ?>"></td>
+	<input type="submit" value="<?php print_string("savechanges") ?>"></td>
 </tr>
 </table>
 
