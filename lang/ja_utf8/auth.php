@@ -4,12 +4,12 @@
 
 $string['auth_cas_baseuri'] = 'サーバのURI  ( ベースURIが無い場合は空白 )<br />CASサーバが host.domaine.fr/CAS/ に応答する場合、<br />cas_baseuri = CAS/';
 $string['auth_cas_create_user'] = 'MoodleデータベースにCAS認証ユーザを挿入したい場合は、「Yes」を選択してください。「No」を選択した場合は、Moodleデータベースに登録されているユーザのみがログインできます。';
+$string['auth_cas_enabled'] = 'CAS認証を利用したい場合は、「Yes」を選択してください。';
 $string['auth_cas_hostname'] = 'CASサーバのホスト名<br />例: host.domaine.fr';
 $string['auth_cas_language'] = '言語の選択';
 $string['auth_cas_port'] = 'CASサーバのポート';
 $string['auth_cas_server_settings'] = 'CASサーバ設定';
 $string['auth_cas_text'] = 'セキュアコネクション';
-$string['auth_cas_use_cas'] = 'CAS認証を使用する場合は、「Yes」を選択してください。';
 $string['auth_cas_version'] = 'CASのバージョン';
 $string['auth_casdescription'] = 'この方法は、単一ログイン環境 (Single Sign On environment: SSO) にて、CASサーバ (Central Authentication Service) をユーザ認証に使用します。シンプルLDAP認証を使用することもできます。ユーザ名とパスワードがCASで認証された場合、Moodleは新しいユーザエントリをデータベースに作成します。また、必要であれば、LDAPよりユーザ属性を取得します。次回からはユーザ名とパスワードのみが確認されます。';
 $string['auth_castitle'] = 'CASサーバ (SSO)';
