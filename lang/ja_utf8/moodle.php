@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005030501)
+      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005031000)
 
 
 $string['action'] = '操作';
@@ -759,6 +759,7 @@ $string['notifyloginfailuresmessagestart'] = '前回通知以降の、$a にお�
 $string['notifyloginfailuressubject'] = '$a :: ログイン失敗通知';
 $string['notincluded'] = '含まない';
 $string['notingroup'] = '申し訳ございません。この活動を閲覧するためにはグループに属している必要があります。';
+$string['notpublic'] = '非公開!';
 $string['nousersmatching'] = 'ユーザ \'$a\' は見つかりませんでした。';
 $string['nousersyet'] = 'まだ利用者がいません';
 $string['now'] = '現在';
@@ -829,6 +830,9 @@ $string['recentactivityreport'] = '最近の活動詳細...';
 $string['recreatedcategory'] = '再作成カテゴリ $a';
 $string['refreshingevents'] = 'イベントの更新';
 $string['registration'] = 'Moodle登録';
+$string['registrationcontact'] = '一般からの問い合わせ';
+$string['registrationcontactno'] = 'いいえ、サイト一覧にお問い合わせフォームを設置しないでください。';
+$string['registrationcontactyes'] = 'はい、潜在的なMoodlerが問い合わせをできるように、問い合わせフォームを設置してください。';
 $string['registrationemail'] = 'メール通知';
 $string['registrationinfo'] = '<p>このページではあなたのMoodleサイトをmoodle.orgに登録できます。登録は無料です。登録の主な利点は、発信数の少ないメーリングリストにあなたのメールアドレスが追加され、セキュリティーに関する警告やMoodleの最新リリースに関する情報を受取れることです。
 <p>デフォルトではあなたの情報は公開されず、他の人に販売・転送されることはありません。情報を収集する唯一の理由はサポートを目的とするものであり、Moodleコミュニティーの統計的全体像を構築するものにあります。<p>登録する場合、あなたのサイト名、国、URLがMoodleサイトの公開リストに登録されます。
@@ -933,6 +937,7 @@ $string['specifyname'] = '名前を特定してください。';
 $string['startdate'] = '開講日';
 $string['startsignup'] = '新しいアカウントを作成する';
 $string['state'] = '州/県';
+$string['statistics'] = '統計';
 $string['status'] = '状態';
 $string['strftimedate'] = '%%Y年 %%m月 %%d日 ';
 $string['strftimedateshort'] = '%%m/%%d';

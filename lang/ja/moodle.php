@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005030501)
+      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005031000)
 
 
 $string['action'] = '┴р║ю';
@@ -759,6 +759,7 @@ $string['notifyloginfailuresmessagestart'] = '┴░▓є─╠├╬░╩╣▀д╬бв$a д╦дкд▒дыеэе░еде
 $string['notifyloginfailuressubject'] = '$a :: еэе░едеє╝║╟╘─╠├╬';
 $string['notincluded'] = '┤▐д▐д╩дд';
 $string['notingroup'] = '┐╜д╖╠їд┤д╢ддд▐д╗дєбгд│д╬│ш╞░дЄ▒▄═ўд╣дыд┐дсд╦д╧е░еыб╝е╫д╦┬░д╖д╞ддды╔м═╫дмдвдъд▐д╣бг';
+$string['notpublic'] = '╚є╕°│л!';
 $string['nousersmatching'] = 'ецб╝е╢ \'$a\' д╧╕лд─длдъд▐д╗дєд╟д╖д┐бг';
 $string['nousersyet'] = 'д▐д└═°═╤╝╘дмддд▐д╗дє';
 $string['now'] = '╕╜║▀';
@@ -829,6 +830,9 @@ $string['recentactivityreport'] = '║╟╢сд╬│ш╞░╛▄║┘...';
 $string['recreatedcategory'] = '║╞║ю└оеле╞е┤еъ $a';
 $string['refreshingevents'] = 'еде┘еєе╚д╬╣╣┐╖';
 $string['registration'] = 'Moodle┼╨╧┐';
+$string['registrationcontact'] = '░ь╚╠длдщд╬╠фдд╣чдяд╗';
+$string['registrationcontactno'] = 'дддддибве╡еде╚░ь═ўд╦дк╠фдд╣чдяд╗е╒ейб╝ердЄ└▀├╓д╖д╩ддд╟дпд└д╡ддбг';
+$string['registrationcontactyes'] = 'д╧ддбв└°║▀┼кд╩Moodlerдм╠фдд╣чдяд╗дЄд╟дндыдшджд╦бв╠фдд╣чдяд╗е╒ейб╝ердЄ└▀├╓д╖д╞дпд└д╡ддбг';
 $string['registrationemail'] = 'есб╝еы─╠├╬';
 $string['registrationinfo'] = '<p>д│д╬е┌б╝е╕д╟д╧двд╩д┐д╬Moodleе╡еде╚дЄmoodle.orgд╦┼╨╧┐д╟днд▐д╣бг┼╨╧┐д╧╠╡╬┴д╟д╣бг┼╨╧┐д╬╝чд╩═°┼└д╧бв╚п┐о┐Їд╬╛пд╩ддесб╝еъеєе░еъе╣е╚д╦двд╩д┐д╬есб╝еыеве╔еье╣дм─╔▓├д╡дьбве╗енехеъе╞егб╝д╦┤╪д╣ды╖┘╣ЁдфMoodleд╬║╟┐╖еъеъб╝е╣д╦┤╪д╣ды╛Ё╩єдЄ╝ї╝шдьдыд│д╚д╟д╣бг
 <p>е╟е╒ейеые╚д╟д╧двд╩д┐д╬╛Ё╩єд╧╕°│лд╡дьд║бв┬╛д╬┐═д╦╚╬╟фбж┼╛┴ўд╡дьдыд│д╚д╧двдъд▐д╗дєбг╛Ё╩єдЄ╝¤╜╕д╣ды═г░ьд╬═¤═│д╧е╡е▌б╝е╚дЄ╠▄┼кд╚д╣дыдтд╬д╟двдъбвMoodleе│е▀ехе╦е╞егб╝д╬┼¤╖╫┼к┴┤┬╬┴№дЄ╣╜├█д╣дыдтд╬д╦двдъд▐д╣бг<p>┼╨╧┐д╣ды╛ь╣чбвдвд╩д┐д╬е╡еде╚╠╛бв╣ёбвURLдмMoodleе╡еде╚д╬╕°│леъе╣е╚д╦┼╨╧┐д╡дьд▐д╣бг
@@ -933,6 +937,7 @@ $string['specifyname'] = '╠╛┴░дЄ╞├─ъд╖д╞дпд└д╡ддбг';
 $string['startdate'] = '│л╣╓╞№';
 $string['startsignup'] = '┐╖д╖ддевележеєе╚дЄ║ю└од╣ды';
 $string['state'] = '╜г/╕й';
+$string['statistics'] = '┼¤╖╫';
 $string['status'] = '╛ї┬╓';
 $string['strftimedate'] = '%%Y╟п %%m╖ю %%d╞№ ';
 $string['strftimedateshort'] = '%%m/%%d';
