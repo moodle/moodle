@@ -189,7 +189,7 @@
         echo "</center>";
 
         print_paging_bar($matchcount, $page, $perpage,
-                         "index.php?id=$course->id&amp;sort=$sort&amp;dir=$dir&amp;perpage=$perpage&amp;firstinitial=$firstinitial&amp;lastinitial=$lastinitial");
+                         "index.php?id=$course->id&amp;sort=$sort&amp;dir=$dir&amp;perpage=$perpage&amp;firstinitial=$firstinitial&amp;lastinitial=$lastinitial&amp;");
 
     }
 
@@ -204,7 +204,7 @@
     } else if ($matchcount > 0) {
         print_user_table($students, $isteacher);
         print_paging_bar($matchcount, $page, $perpage,
-                         "index.php?id=$course->id&amp;sort=$sort&amp;dir=$dir&amp;perpage=$perpage&amp;firstinitial=$firstinitial&amp;lastinitial=$lastinitial");
+                         "index.php?id=$course->id&amp;sort=$sort&amp;dir=$dir&amp;perpage=$perpage&amp;firstinitial=$firstinitial&amp;lastinitial=$lastinitial&amp;");
 
         if ($perpage < $totalcount) {
             echo "<center><p>";
