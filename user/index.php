@@ -78,6 +78,20 @@
                 }
             }
 
+            foreach ($students as $key => $student) {
+                $students[$key]->country = $COUNTRIES[$student->country];
+            }
+            if ($sort == "country") {  // Need to re-sort by full country name, not code
+                foreach ($students as $student) {
+                    $sstudents[$student->id] = $student->country;
+                }
+                asort($sstudents);
+                foreach ($sstudents as $key => $value) {
+                    $nstudents[] = $students[$key];
+                }
+                $students = $nstudents;
+            }
+
             $table->head = array ("&nbsp;", $name, $city, $country, $lastaccess);
             $table->align = array ("LEFT", "LEFT", "LEFT", "LEFT", "LEFT");
             $table->size = array ("10", "*", "*", "*", "*");
