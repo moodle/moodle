@@ -1266,7 +1266,7 @@ function forum_get_course_forum($courseid, $type) {
         case "news":
             $forum->name  = addslashes(get_string("namenews", "forum"));
             $forum->intro = addslashes(get_string("intronews", "forum"));
-            $forum->forcesubscribe = 1;
+            $forum->forcesubscribe = FORUM_FORCESUBSCRIBE;
             $forum->open = 1;   // 0 - no, 1 - posts only, 2 - discuss and post
             $forum->assessed = 0;
             if ($courseid == SITEID) {
@@ -2843,12 +2843,12 @@ function forum_update_subscriptions_button($courseid, $forumid) {
 
 function forum_add_user($userid, $courseid) {
 /// Add subscriptions for new users
-    if ($forums = get_records_select('forum', "course = '$courseid' AND forcesubscribe = '2'")) {
+    if ($forums = get_records_select('forum', "course = '$courseid' AND forcesubscribe = '".FORUM_INITIALSUBSCRIBE."'")) {
         foreach ($forums as $forum) {
             forum_subscribe($userid, $forum->id);
         }
     }
-    if ($forums = get_records_select('forum', "course = '".SITEID."' AND forcesubscribe = '2'")) {
+    if ($forums = get_records_select('forum', "course = '".SITEID."' AND forcesubscribe = '".FORUM_INITIALSUBSCRIBE."'")) {
         foreach ($forums as $forum) {
             forum_subscribe($userid, $forum->id);
         }
