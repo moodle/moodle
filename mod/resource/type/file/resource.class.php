@@ -42,6 +42,8 @@ function set_parameters() {
                                        'value'   => $USER->id),
             'userusername'    => array('langstr' => get_string('username'),
                                        'value'   => $USER->username),
+            'userpassword'    => array('langstr' => get_string('password'),
+                                       'value'   => $USER->password),
             'useridnumber'    => array('langstr' => get_string('idnumber'),
                                        'value'   => $USER->idnumber),
             'userfirstname'   => array('langstr' => get_string('firstname'),
@@ -54,8 +56,10 @@ function set_parameters() {
                                        'value'   => $USER->email),
             'usericq'         => array('langstr' => get_string('icqnumber'),
                                        'value'   => $USER->icq),
-            'userphone1'      => array('langstr' => get_string('phone'),
+            'userphone1'      => array('langstr' => get_string('phone').' 1',
                                        'value'   => $USER->phone1),
+            'userphone2'      => array('langstr' => get_string('phone').' 2',
+                                       'value'   => $USER->phone2),
             'userinstitution' => array('langstr' => get_string('institution'),
                                        'value'   => $USER->institution),
             'userdepartment'  => array('langstr' => get_string('department'),
@@ -504,7 +508,7 @@ function setup($form) {
         }
 
         $windowtype = ($CFG->resource_popup) ? 'popup' : 'page';
-        if (!isset($form->options)) {
+        if (empty($form->options)) {
             $form->options = 'frame';
             $form->reference = $CFG->resource_defaulturl;
         }
