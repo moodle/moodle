@@ -916,16 +916,16 @@ function forum_print_discussion($course, $forum, $discussion, $post, $mode) {
         case -1 :  // Flat descending
         default:   
             echo "<UL>";
-            forum_print_posts_flat($post->discussion, $course->id, $mode, $ratingform);
+            forum_print_posts_flat($post->discussion, $course->id, $mode, $forum->assessed);
             echo "</UL>";
             break;
 
         case 2 :   // Threaded 
-            forum_print_posts_threaded($post->id, $course->id, 0, $ratingform);
+            forum_print_posts_threaded($post->id, $course->id, 0, $forum->assessed);
             break;
 
         case 3 :   // Nested
-            forum_print_posts_nested($post->id, $course->id, $ratingform);
+            forum_print_posts_nested($post->id, $course->id, $forum->assessed);
             break;
     }
 
