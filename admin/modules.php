@@ -27,7 +27,7 @@
     $strshow = get_string("show");
     $stractivitymodule = get_string("activitymodule");
 
-	print_header("$site->shortname: $strcategories", "$site->fullname", 
+	print_header("$site->shortname: $strmanagemodules", "$site->fullname", 
                  "<a href=\"../$CFG->admin/index.php\">$stradministration</a> -> $strmanagemodules");
 
     print_heading($strmanagemodules);
