@@ -126,6 +126,7 @@ function wiki_user_outline($course, $user, $mod, $wiki) {
 /// $return->time = the time they did it
 /// $return->info = a short text description
 
+    $return = NULL;
     return $return;
 }
 
@@ -169,7 +170,6 @@ function wiki_get_participants($wikiid) {
 //in the instance, independient of his role (student, teacher, admin...)
 //See other modules as example.
 
-    $return = NULL;
     return false;
 }
 
