@@ -4,7 +4,7 @@
 $string['intro.html'] = "Johdanto";
 $string['background.html'] = "Tausta";
 $string['features.html'] = "Ominaisuudet";
-$string['release.html'] = "Julkaisu tiedotteet";
+$string['release.html'] = "Julkaisutiedotteet";
 $string['install.html'] = "Asennus";
 $string['upgrade.html'] = "Päivitys";
 $string['teacher.html'] = "Opettajan käsikija";

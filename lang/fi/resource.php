@@ -22,7 +22,7 @@ $string['resourcetype1'] = "Viittaus";
 $string['resourcetype2'] = "Web-sivu";
 $string['resourcetype3'] = "Tiedosto";
 $string['resourcetype4'] = "Teksti";
-$string['resourcetype5'] = "Web-linkki";
+$string['resourcetype5'] = "WWW-linkki";
 $string['resourcetype6'] = "HTML";
 $string['resourcetype7'] = "Ohjelma";
 
