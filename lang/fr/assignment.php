@@ -7,7 +7,7 @@ $string['assignmentmail'] = '$a->teacher a écrit un feedback concernant votre de
 Vous pouvez le consulter en annexe à votre devoir:
 
 $a->url';
-$string['assignmentmailhtml'] = '$a->teacher a écrit un feedback concernant votre devoir rendu « <i>$a->assignment</i> »<br /><br />
+$string['assignmentmailhtml'] = '$a->teacher a écrit un feedback concernant votre devoir rendu « <em>$a->assignment</em> »<br /><br />
 
 Vous pouvez le consulter en annexe à <a href=\'$a->url\'>votre devoir</a>.';
 $string['assignmentname'] = 'Nom du devoir';

@@ -1,5 +1,4 @@
-<?PHP // $Id$ 
-
+<?php // $Id$ 
 
 $string['actual'] = 'Actuel';
 $string['actualclass'] = 'Classe actuelle';

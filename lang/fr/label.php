@@ -1,4 +1,4 @@
-<?PHP // $Id$ 
+<?php // $Id$ 
 
 
 $string['labeltext'] = 'Texte de l\'étiquette';
