@@ -749,6 +749,11 @@ function require_login($courseid=0, $autologinguest=true) {
         }
     }
 
+    // Make sure the USER has a sesskey set up.  Used for checking script parameters.
+    if (empty($USER->sesskey)) {
+        $USER->sesskey = random_string(10);
+    }
+
     // Next, check if the user can be in a particular course
     if ($courseid) {
         if ($courseid == SITEID) {   
