@@ -4,11 +4,12 @@
 
 $string['beep'] = 'beep';
 $string['chatintro'] = 'Texto introductorio';
-$string['chatname'] = 'Nombre de la sala ';
+$string['chatname'] = 'Nombre de la sala';
 $string['chatreport'] = 'Sesiones';
 $string['chattime'] = 'Próxima cita';
 $string['configoldping'] = '¿Después de cuánto tiempo de inactividad debemos considerar que el usuario se retiró?';
 $string['configrefreshroom'] = '¿Cada cuantos segundos se debe actualizar la página del chat?
+
 Un valor bajo permitirá una conversación más ágil, pero puede ser mucha carga para el servidor cuando hay mucha gente en la sala.';
 $string['configrefreshuserlist'] = '¿Cada cuantos segundos se debe actualizar la lista de usuarios presentes en el chat?';
 $string['currentchats'] = 'Salas activas';
@@ -33,7 +34,7 @@ $string['nomessages'] = 'Aún no hay mensajes';
 $string['repeatdaily'] = 'A la misma hora todos los días';
 $string['repeatnone'] = 'Sin repeticiones, sólo la fecha especificada';
 $string['repeattimes'] = 'Repetir sesiones';
-$string['repeatweekly'] = 'A la misma hora todos los días';
+$string['repeatweekly'] = 'Repetir todas las semanas';
 $string['savemessages'] = 'Número de mensajes a guardar';
 $string['seesession'] = 'Ver la sesión';
 $string['sessions'] = 'Sesiones';
