@@ -72,7 +72,6 @@
     switch ($frame) {     /// Put data into all the frames
 
         case 'info':      /// Print the top frame with information and links
-            $THEME->body = $THEME->cellcontent2;
             print_header('','','','','',false,'','',false,'leftmargin="2" topmargin="2" marginwidth="2" marginheight="2"');
             echo '<table width="100%" cellpadding="0" cellspacing="0"><tr>';
             echo '<td width="100">';
@@ -121,7 +120,6 @@
         break;
 
         case 'messages':  /// Print the main frame containing the current chat
-            $THEME->body = '#FFFFFF';
             print_header();
             echo '<script language="Javascript">';
             echo 'document.write(\'<link rel="stylesheet" type="text/css" href="'.$CFG->wwwroot.'/theme/standard/styles.php" />\');';

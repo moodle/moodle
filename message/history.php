@@ -23,9 +23,9 @@
     }
     $search = optional_param('search', '', PARAM_CLEAN);
 
-/// Our two users are defined - let's set up the page
+    add_to_log(SITEID, 'message', 'history', 'history.php?user1='.$userid1.'&amp;user2='.$userid2, $userid1);
 
-    $THEME->body = $THEME->cellcontent;
+/// Our two users are defined - let's set up the page
 
     print_header(get_string('messagehistory', 'message'));
 

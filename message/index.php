@@ -63,7 +63,7 @@
     echo '</tr><tr>';
 
 /// Print out contents of the tab
-    echo '<td colspan="3" bgcolor="'.$THEME->cellcontent.'">';
+    echo '<td colspan="3"">';
 
 /// a print function is associated with each tab
     $tabprintfunction = 'message_print_'.$tab;
