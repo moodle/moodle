@@ -187,7 +187,7 @@ function forum_cron () {
         $strforums = get_string('forums', 'forum');
     }
 
-    global $CFG, $USER;
+    global $CFG, $USER, $THEME;
 
     if (!empty($USER)) { // Remember real USER account if necessary
         $realuser = $USER;
@@ -364,8 +364,8 @@ function forum_cron () {
 
                 /// Override the language and timezone of the "current" user, so that
                 /// mail is customised for the receiver.
-                $USER->lang     = empty($userto->lang) ? $CFG->lang : $userto->lang;
-                $USER->timezone = get_user_timezone($userto->timezone);
+                $USER->lang     = $userto->lang;
+                $USER->timezone = $userto->timezone;
 
 
                 $postsubject = get_string('digestmailsubject', 'forum', $site->shortname);
@@ -375,7 +375,8 @@ function forum_cron () {
 
                 $posttext = get_string('digestmailheader', 'forum', $headerdata)."\n\n";
                 $headerdata->userprefs = '<a target="_blank" href="'.$headerdata->userprefs.'">'.get_string('digestmailprefs', 'forum').'</a>';
-                $posthtml = '<p>'.get_string('digestmailheader', 'forum', $headerdata).'</p><br /><hr size="1" noshade="noshade" />';
+                $posthtml = "<body bgcolor=\"$THEME->cellcontent2\">";
+                $posthtml .= '<p>'.get_string('digestmailheader', 'forum', $headerdata).'</p><br /><hr size="1" noshade="noshade" />';
 
                 foreach($thesediscussions as $discussionid) {
                     $discussion = $discussions[$discussionid];
@@ -456,6 +457,7 @@ function forum_cron () {
                     }
                     $posthtml .= '<hr size="1" noshade="noshade" /></p>';
                 }
+                $posthtml .= '</body>';
 
                 if (! email_to_user($userto, $site->shortname, $postsubject, $posttext, $posthtml, '', '', $CFG->forum_replytouser)) {
                     echo "ERROR!\n";
