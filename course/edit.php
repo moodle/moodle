@@ -41,7 +41,7 @@
 
             $form->timemodified = time();
 
-            if ($course) {
+            if (!empty($course)) {
                 if (update_record("course", $form)) {
                     add_to_log($course->id, "course", "update", "edit.php?id=$id", "");
 		            redirect("view.php?id=$course->id", get_string("changessaved"));
@@ -159,6 +159,20 @@ function validate_form($course, &$form, &$err) {
 
     if (empty($form->shortname))
         $err["shortname"] = get_string("missingshortname");
+
+    if ($foundcourses = get_records("course", "shortname", $form->shortname)) {
+        if (!empty($course->id)) {
+            unset($foundcourses[$course->id]);
+        }
+        if (!empty($foundcourses)) {
+            foreach ($foundcourses as $foundcourse) {
+                $foundcoursenames[] = $foundcourse->fullname;
+            }
+            $foundcoursenamestring = addslashes(implode(',', $foundcoursenames));
+
+            $err["shortname"] = get_string("shortnametaken", "", $foundcoursenamestring);
+        }
+    }
 
     if (empty($form->summary))
         $err["summary"] = get_string("missingsummary");
