@@ -240,6 +240,7 @@ $string['deletingexistingcoursedata'] = 'Deleting existing course data';
 $string['deletingolddata'] = 'Deleting old data';
 $string['department'] = 'Department';
 $string['description'] = 'Description';
+$string['disable'] = 'Disable';
 $string['displayingfirst'] = 'Only the first $a->count $a->things are displayed';
 $string['displayingrecords'] = 'Displaying $a records';
 $string['displayingusers'] = 'Displaying users $a->start to $a->end';
@@ -280,10 +281,12 @@ $string['emailconfirmationsubject'] = '$a: account confirmation';
 $string['emailconfirmsent'] = '   <P>An email should have been sent to your address at <B>$a</B>
    <P>It contains easy instructions to complete your registration.
    <P>If you continue to have difficulty, contact the site administrator.';
+$string['emaildisable'] = 'This email address is disabled.';
 $string['emaildisplay'] = 'Email display';
 $string['emaildisplaycourse'] = 'Allow only other course members to see my email address';
 $string['emaildisplayno'] = 'Hide my real email address from everyone';
 $string['emaildisplayyes'] = 'Allow everyone to see my email address';
+$string['emailenable'] = 'This email address is enabled.';
 $string['emailexists'] = 'This email address is already registered.';
 $string['emailformat'] = 'Email format';
 $string['emailmustbereal'] = 'Note: your email address must be a real one';
@@ -312,6 +315,7 @@ $string['emailpasswordsent'] = 'Thank you for confirming the change of password.
 <p>An email containing your new password has been sent to your address at <b>$a->email</b>.
 <p>The new password was automatically generated - you might like to
 <a href=$a->link>change your password</a> to something easier to remember.';
+$string['enable'] = 'Enable';
 $string['enrolledincourse'] = 'Enrolled in course \"$a\"';
 $string['enrolledincoursenot'] = 'Not enrolled in course \"$a\"';
 $string['enrolmentconfirmation'] = 'You are about to enroll yourself as a member of this course.<br />Are you sure you wish to do this?';
