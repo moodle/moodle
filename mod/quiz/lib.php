@@ -33,23 +33,6 @@ function quiz_add_instance($quiz) {
         set_user_preference('quiz_optionsettingspref', $quiz->optionsettingspref);
     }
 
-    // The grades for every question in this quiz are stored in an array
-    // (because this is currently only called from mod.html there are not
-    // going to be any grades, but we will leave this code here just in case)
-    if (isset($quiz->grades)) {
-        foreach ($quiz->grades as $question => $grade) {
-            if ($question) {
-                unset($questiongrade);
-                $questiongrade->quiz = $quiz->id;
-                $questiongrade->question = $question;
-                $questiongrade->grade = $grade;
-                if (!insert_record("quiz_question_grades", $questiongrade)) {
-                    return false;
-                }
-            }
-        }
-    }
-
     delete_records('event', 'modulename', 'quiz', 'instance', $quiz->id);  // Just in case
 
     $event = NULL;
@@ -109,34 +92,6 @@ function quiz_update_instance($quiz) {
 
     if (isset($quiz->optionsettingspref)) {
         set_user_preference('quiz_optionsettingspref', $quiz->optionsettingspref);
-    }
-
-    // The grades for every question in this quiz are stored in an array
-    // Insert or update records as appropriate
-
-    $existing = get_records("quiz_question_grades", "quiz", $quiz->id, "", "question,grade,id");
-
-    if (isset($quiz->grades)) { // this will not be set if we come from mod.html
-        foreach ($quiz->grades as $question => $grade) {
-            if ($question) {
-                unset($questiongrade);
-                $questiongrade->quiz = $quiz->id;
-                $questiongrade->question = $question;
-                $questiongrade->grade = $grade;
-                if (isset($existing[$question])) {
-                    if ($existing[$question]->grade != $grade) {
-                        $questiongrade->id = $existing[$question]->id;
-                        if (!update_record("quiz_question_grades", $questiongrade)) {
-                            return false;
-                        }
-                    }
-                } else {
-                    if (!insert_record("quiz_question_grades", $questiongrade)) {
-                        return false;
-                    }
-                }
-            }
-        }
     }
 
     // currently this code deletes all existing events and adds new ones

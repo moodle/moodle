@@ -352,6 +352,30 @@ function quiz_get_question_grades($quizid, $questionlist) {
                             AND question IN ($questionlist)");
 }
 
+function quiz_questiongrades_update($grades, $quizid) {
+    $existing = get_records("quiz_question_grades", "quiz", $quizid, "", "question,grade,id");
+    foreach ($grades as $question => $grade) {
+        if ($question) {
+            unset($questiongrade);
+            $questiongrade->quiz = $quizid;
+            $questiongrade->question = $question;
+            $questiongrade->grade = $grade;
+            if (isset($existing[$question])) {
+                if ($existing[$question]->grade != $grade) {
+                    $questiongrade->id = $existing[$question]->id;
+                    if (!update_record("quiz_question_grades", $questiongrade)) {
+                        return false;
+                    }
+                }
+            } else {
+                if (!insert_record("quiz_question_grades", $questiongrade)) {
+                    return false;
+                }
+            }
+        }
+    }
+}
+
 function quiz_get_grade_records($quiz) {
 /// Gets all info required to display the table of quiz results
 /// for report.php

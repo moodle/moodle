@@ -34,17 +34,21 @@
         if (! $modform = get_record('quiz', 'id', $quizid)) {
             error("The required quiz doesn't exist");
         }
-        
         $modform->instance = $modform->id;
-        
         $SESSION->modform = $modform;    // Save the form in the current session
+            
+        $cm = get_coursemodule_from_instance('quiz', $modform->instance);
+        add_to_log($cm->course, 'quiz', 'editquestions', 
+                           "view.php?id=$modform->instance", 
+                           "$modform->name", $cm->id); 
 
     } else if ($courseid) { // Page retrieve through "Edit Questions" link - no quiz selected
         $modform->course = $courseid;
         unset($modform->instance);
-
         $SESSION->modform = $modform;    // Save the form in the current session
-
+        
+        add_to_log($courseid, 'quiz', 'editquestions', "index.php?id=$courseid");
+        
     } else {
         if (!isset($SESSION->modform)) {
           // We currently also get here after editing a question by
@@ -52,6 +56,8 @@
             error('');
         }
 
+        // The data is obtained from a $SESSION variable. This is mostly for historic reasons. 
+        // With the way things work now it would be just as possible to get the data from the database.
         $modform = $SESSION->modform;
     }
 
@@ -96,6 +102,9 @@
             }
             $modform->questions = implode(",", $questions);
         }
+        if (!set_field('quiz', 'questions', $modform->questions, 'id', $modform->instance)) {
+            error('Could not save question list');
+        }
     }
 
     if (!empty($down)) { /// Move the given question down a slot
@@ -110,6 +119,9 @@
                 }
             }
             $modform->questions = implode(",", $questions);
+        }
+        if (!set_field('quiz', 'questions', $modform->questions, 'id', $modform->instance)) {
+            error('Could not save question list');
         }
     }
 
@@ -146,6 +158,10 @@
         } else {
             $modform->questions = "";
         }
+        if (!set_field('quiz', 'questions', $modform->questions, 'id', $modform->instance)) {
+            error('Could not save question list');
+        }
+        quiz_questiongrades_update($modform->grades, $modform->instance);
     }
 
     if (!empty($delete)) { /// Delete a question from the list 
@@ -154,9 +170,15 @@
             if ($question == $delete) {
                 unset($questions[$key]);
                 unset($modform->grades[$question]);
+                if (!delete_records('quiz_question_grades', 'quiz', $modform->instance, 'question', $question)) {
+                    error("Could not delete question grade");
+                }
             }
         }
         $modform->questions = implode(",", $questions);
+        if (!set_field('quiz', 'questions', $modform->questions, 'id', $modform->instance)) {
+            error('Could not save question list');
+        }
     }
 
     if (!empty($setgrades)) { /// The grades have been updated, so update our internal list
@@ -168,24 +190,10 @@
                 $modform->grades[$key] = $value;
             }
         }
-    }
-    
-    if (!empty($save)) {  // Save the list of questions and grades in the database and return
-    
-        //If caller is correct, $SESSION->sesskey must exist and coincide
-        if (empty($SESSION->sesskey) or !confirm_sesskey($SESSION->sesskey)) {
-            error(get_string('confirmsesskeybad', 'error'));
+        if (!set_field('quiz', 'questions', $modform->questions, 'id', $modform->instance)) {
+            error('Could not save question list');
         }
-        //Unset this, check done
-        unset($SESSION->sesskey);
-        
-        quiz_update_instance($modform);
-        $coursemodule = get_coursemodule_from_instance('quiz', $modform->instance);
-        add_to_log($course->id, 'quiz', 'editquestions', 
-                           "view.php?id=$coursemodule", 
-                           "$modform->instance", $coursemodule); 
-        redirect('view.php?q='.$modform->instance);
-        die;
+        quiz_questiongrades_update($modform->grades, $modform->instance);
     }
  
 
@@ -212,7 +220,7 @@
 
     $strname    = get_string('name');
     $strquizzes = get_string('modulenameplural', 'quiz');
-    $strediting = get_string(isset($modform->instance) ? "editingquiz" : "editquestions", "quiz");
+    $strediting = get_string('editquestions', "quiz");
     $strheading = empty($modform->name) ? $strediting : $modform->name;
 
     // Print basic page layout.
@@ -234,10 +242,6 @@
         print_simple_box_start("center", "100%", $THEME->cellcontent2);        
         print_heading($modform->name);
         quiz_print_question_list($modform->questions, $modform->grades); 
-        ?>
-        <center>
-        <p>&nbsp;</p>
-        <?php
 
         if ($attemptcount = count_records_select("quiz_attempts", "quiz = '$modform->instance' AND timefinish > 0"))  {
             $strviewallanswers  = get_string("viewallanswers","quiz",$attemptcount);
@@ -249,19 +253,9 @@
             }
             notify("$strattemptsexist<br /><a href=\"report.php?id=$cm->id\">$strviewallanswers ($usercount $strusers)</a>");
         }
-        
-        $SESSION->sesskey = !empty($USER->id) ? $USER->sesskey : '';
-        ?>
-        <form method="post" action="edit.php">
-        <input type="hidden" name="sesskey" value="save" />
-        <input type="submit" name="save" value="<?php  print_string("savequiz", "quiz") ?>" />
-        <input type="submit" name="cancel" value="<?php  print_string("cancel") ?>" />
-        </form>
-        </center>
-        <?php
-
 
         print_simple_box_end();
+        print_continue('view.php?q='.$modform->instance);
         echo '</td><td valign="top" width="50%">';
     }
     print_simple_box_start("center", "100%", $THEME->cellcontent2);
