@@ -66,7 +66,7 @@
 
         case 'info':      /// Print the top frame with information and links
             $THEME->body = $THEME->cellcontent2;
-            print_header('','','','','',false,'','',false,'leftmargin="0" topmargin="0" marginwidth="0" marginheight="0"');
+            print_header('','','','','',false,'','',false,'leftmargin="2" topmargin="2" marginwidth="2" marginheight="2"');
             echo '<table width="100%" cellpadding="0" cellspacing="0"><tr>';
             echo '<td width="100">';
             echo print_user_picture($user->id, SITEID, $user->picture, true, true, true, 'userwindow').'</td>';
@@ -76,10 +76,11 @@
             echo '<br /><font size="1">';     /// Print login status of this user
             if ($user->lastaccess) {
                 if (time() - $user->lastaccess > $CFG->message_offline_time) {
-                    echo get_string('offline', 'message');
+                    echo get_string('offline', 'message').":";
                 } else {
-                    echo get_string("lastaccess").":".get_string('ago', 'message', format_time(time() - $user->lastaccess));
+                    echo get_string("lastaccess").":";
                 }
+                echo get_string('ago', 'message', format_time(time() - $user->lastaccess));
             } else {
                 echo get_string("lastaccess").":". get_string("never");
             }
@@ -111,7 +112,6 @@
 
             echo '</table></table></body>'; // Close possible theme tables off
 
-            $USER->message_user_refresh[$user->id] = time();   // Remember this update
         break;
 
         case 'messages':  /// Print the main frame containing the current chat
@@ -165,12 +165,14 @@
             // Update the info pane, but only if the data there is getting too old
             $timenow = time();
             if ($timenow - $user->lastaccess > $CFG->message_offline_time) {   // Offline
-                if ($timenow - $USER->message_user_refresh[$user->id] < 30) {   // It's just happened so refresh
+                if ($timenow - $USER->message_user_refresh[$user->id] < 30) {  // It's just happened so refresh
+                    $USER->message_user_refresh[$user->id] = $timenow - 30;      // Prevent it happening again
                     $refreshinfo = true;
                 }
 
             } else {                                                            // Online
                 if ($timenow - $USER->message_user_refresh[$user->id] > 30) {   // Been a while
+                    $USER->message_user_refresh[$user->id] = $timenow;      // Prevent it happening again
                     $refreshinfo = true;
                 }
             }
