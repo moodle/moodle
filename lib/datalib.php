@@ -1454,14 +1454,14 @@ function get_groups($courseid, $userid=0) {
 * 
 * @param	type description
 */
-function get_users_in_group($groupid) {
+function get_users_in_group($groupid, $sort="u.lastaccess DESC") {
     global $CFG;
     return get_records_sql("SELECT DISTINCT u.*
                               FROM {$CFG->prefix}user u,
                                    {$CFG->prefix}groups_members m 
                              WHERE m.groupid = '$groupid'
                                AND m.userid = u.id 
-                          ORDER BY u.id");
+                          ORDER BY $sort");
 }
 
 /**
