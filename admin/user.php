@@ -190,7 +190,7 @@
                 $columnicon = " <img src=\"$CFG->pixpath/t/$columnicon.gif\" />";
 
             }
-            $$column = "<a HREF=\"user.php?sort=$column&dir=$columndir&search=$search\">".$string[$column]."</a>$columnicon";
+            $$column = "<a href=\"user.php?sort=$column&dir=$columndir&search=$search&firstinitial=$firstinitial&lastinitial=$lastinitial\">".$string[$column]."</a>$columnicon";
         }
 
         if ($sort == "name") {
