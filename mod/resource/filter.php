@@ -19,9 +19,9 @@
             case 'mysql':
                 $as = '';
                 break;
-        }    
+        }
 
-        ///sorting by the lenght of the title in order to assure that large resources 
+        ///sorting by the lenght of the title in order to assure that large resources
         ///could be linked first, if they exist in the text to parse
 
         switch ($CFG->dbtype) {
@@ -33,7 +33,7 @@
                 $rbylenght = "";
             break;
         }
-            
+
         $resources = get_records_select("resource", "course = $courseid", "$rbylenght");
 
         if (!empty($resources)) {
@@ -44,7 +44,7 @@
                 }
                 $title = strip_tags($resource->name);
                 $href_tag_begin = "<a class=\"autolink\" title=\"$title\" href=\"$CFG->wwwroot/mod/resource/view.php?id=$cm->id\">";
-                $currentname = $resource->name;                    
+                $currentname = $resource->name;
                 if ($currentname = trim($currentname)) {
                     //Avoid integers < 1000 to be linked. See bug 1441.
                     $intcurrent = intval($currentname);
@@ -56,7 +56,7 @@
         }
         return $text;
     }
-    
+
     function resource_link_names($text,$name,$href_tag_begin,$href_tag_end = "</a>") {
 
         $list_of_words_cp = strip_tags($name);
@@ -92,6 +92,18 @@
             $text = str_replace($excludes,array_keys($excludes),$text);
         }
 
+        //Now avoid searching inside the <span class="nolink">tag
+        // This style doesn't break in editor. See bug #2428
+        $nolinkspan = array();
+        preg_match_all('/<span class=\"nolink\">(.+?)<\/span>/is',$text,$list_of_span);
+        foreach (array_unique($list_of_span[0]) as $key=>$value) {
+            $nolinkspan['<%'.$key.'%>'] = $value;
+        }
+
+        if (!empty($nolinkspan)) {
+            $text = str_replace($nolinkspan,array_keys($nolinkspan),$text);
+        }
+
         //Now avoid searching inside links
         $links = array();
         preg_match_all('/<a[\s](.+?)>(.+?)<\/A>/is',$text,$list_of_links);
@@ -123,6 +135,9 @@
         }
         if (!empty($excludes)) {
             $text = str_replace(array_keys($excludes),$excludes,$text);
+        }
+        if (!empty( $nolinkspan)) {
+            $text = str_replace(array_keys($nolinkspan),$nolinkspan,$text);
         }
         if (!empty($words)) {
             $text = str_replace(array_keys($words),$words,$text);
