@@ -132,6 +132,21 @@ Dit moet een geldige webtekenset bevatten voor jouw taal. Nadat je deze string g
 
 <p style="margin-left: 80px;">Er is in Moodle nog geen ingebouwde editor om de helpbestanden te vertalen, maar het is echt niet zo moeilijk. Het is belangrijk om <span style="font-weight: bold;">en</span> als referentietaal te gebruiken. Kopieer een helpbestand van het en-taalpakket en zet het op dezelfde plaats in je eigen taalpakket. Gebruik dan een editor voor platte tekst om het bestand te vertalen. Let erop dat je de code in het bestand niet wijzigt (gewoonlijk is er geen code, alleen HTML-opmaak). (GEBRUIK GEEN TEKSTVERWERKER om de helpbestanden te schrijven omdat deze programma's te veel rommel aan de bestanden toevoegen).</p>
 
+<p style="margin-left: 80px;">Zorg er voor dat je de helpbestanden XHTML-compliant schrijft. Dit betekent in het kort:</p>
+<ul style="margin-left: 80px;">
+  <li>Alle tags moeten gesloten zijn: <span style="color:rgb(255, 0, 0);" >&lt;p&gt;</span>lalala<span style="color:rgb(255, 0, 0);" >&lt;/p&gt;</span></li>
+  <li>Alle elementen moeten genest zijn: <span style="color:rgb(255, 0, 0);" >&lt;p&gt;</span> lalala <span style="color:rgb(0, 0, 255);" >&lt;em&gt;</span>lalala<span style="color:rgb(0, 0, 255);" >&lt;/em&gt;</span> <span style="color:rgb(255, 0, 0);" >&lt;/p&gt;</span></li>
+  <li>Alle elementen en attributen moeten in kleine letters zijn</li>
+  <li>Alle attributen moeten volledig geschreven zijn en tussen dubbele aanhalingstekens staan: <span style="color:rgb(255, 0, 0);" >&lt;p align=&quot;right&quot;&gt;</span> lalala &lt;/p&gt;</li>
+  <li>Lege elementen moeten eindigen met /&gt;: <span style="color:rgb(255, 0, 0);" >&lt;br /&gt; &lt;hr /&gt;</span>. You should add an extra space before the "/" symbol.</li>
+  <li>Een &lt;img moet gevolgd worden door een alt (die leeg kan zijn) zoals <span style="color:rgb(255, 0, 0);" >&lt;img alt   src="foto.gif"></span></li>
+  <li><span style="color:rgb(255, 0, 0);" >&lt;?=</span> en <span style="color:rgb(255, 0, 0);" >&lt;?</span> moeten vervangen worden door <span style="color:rgb(255, 0, 0);" >&lt;?php</span></li>
+  <li>Er zouden GEEN font tags gebruikt mogen worden. <span style="color:rgb(255, 0, 0);" > &lt;p&gt;&lt;em&gt; &lt;h1&gt; &lt;h2&gt;</span> enz zou voldoende moeten zijn voor de taalbestanden ...</li>
+  <li>De naam van de taal zou in het taalpakket ($string['thislanguage']  in moodle.php) genoteerd moeten worden met Unicode Numeric Character References (NCR) indien mogelijk. Hierdoor kan deze naam in elke coderingsconteks juist weergegeven worden (bekijk het Chinese taalpakket voor een voorbeeld).</li>
+</ul>
+<p style="margin-left: 80px;">De bestanden in de help-map hebben geen doc type nodig. Ook geen html, body, head open- en sluit-tags - deze bestanden worden ingebed door help.php. Dat script zal zorgen voor het goed vormen van de paginas. Hierdoor is er niet veel ruimte voor HTML creativiteit! Blijf aub bij het Engelse voorbeeld.</p>
+<p style="margin-left: 80px;">De bestanden in de docs-map moeten volledig XHTML-compliant zijn, dus met een doc type, header enz.</p>
+
  
 <p style="margin-left: 80px;">Door te klikken op "Controleer op ontbrekenden strings" zul je ook zien welke helpbestanden ontbreken. Als er bestanden ontbreken zal Moodle automatisch de bestanden uit de parent language gebruiken. Het is dus niet nodig om <strong>onvertaalde</strong> helpbestanden in je taalpakket te laten staan..</p>
 
