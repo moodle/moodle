@@ -183,7 +183,7 @@
 
 
 function calendar_show_day($d, $m, $y, $courses, $groups, $users) {
-    global $CFG, $THEME, $db;
+    global $CFG, $THEME, $USER, $db;
 
     if (!checkdate($m, $d, $y)) {
         $now = usergetdate(time());
@@ -200,7 +200,6 @@ function calendar_show_day($d, $m, $y, $courses, $groups, $users) {
     // New event button
     if (empty($USER) || isguest()) {
         $text = get_string('dayview', 'calendar').': '.calendar_course_filter_selector($getvars);
-
     } else {
         $text = '<div style="float: left;">'.get_string('dayview', 'calendar').': '.
                 calendar_course_filter_selector($getvars).'</div><div style="float: right;">';
