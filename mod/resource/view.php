@@ -38,6 +38,7 @@
         notice(get_string("activityiscurrentlyhidden"));
     }
 
+add_seguimiento($cm->id,$USER->id);
     switch ($resource->type) {
         case REFERENCE:
             add_to_log($course->id, "resource", "view", "view.php?id=$cm->id", $resource->id, $cm->id);

@@ -440,7 +440,7 @@
                 $file = basename($file);
 
                 if (empty($CFG->unzip)) {    // Use built-in php-based unzip function
-                    include_once('../pclzip/pclzip.lib.php');
+                    include_once($CFG->libdir.'/pclzip/pclzip.lib.php');
                     $archive = new PclZip("$basedir/$wdir/$file");
                     if (!$list = $archive->extract("$basedir/$wdir")) {
                         error($archive->errorInfo(true));
@@ -501,7 +501,7 @@
                 echo "<P ALIGN=CENTER>$strlistfiles:</P>";
                 $file = basename($file);
 
-                include_once('../lib/pclzip/pclzip.lib.php');
+                include_once($CFG->libdir.'/pclzip/pclzip.lib.php');
                 $archive = new PclZip("$basedir/$wdir/$file");
                 if (!$list = $archive->listContent("$basedir/$wdir")) {
                     notify($archive->errorInfo(true));
