@@ -135,10 +135,11 @@ function auth_get_userinfo($username){
                 $result[$key]=$user_entry[0][strtolower($value)][0];
             }
         }
+        $result['guid']='ldap';
     }
 
     @ldap_close($ldap_connection);
-
+    
     return $result;
 }
 
