@@ -6,6 +6,12 @@
     if (!isset($form->maxbytes)) {
         $form->maxbytes = 0;
     }
+    if (!isset($form->hiddensections)) {
+        $form->hiddensections = 0;
+    }
+    if (!isset($form->lang)) {
+        $form->lang = '';
+    }
 ?>
 <FORM METHOD="post" action="edit.php" NAME="form">
 <table cellpadding=9 cellspacing=0 >
@@ -206,7 +212,7 @@
 </tr>
 <tr valign=top>
     <td align="right"><P><?php  print_string("forcelanguage") ?>:</td>
-	<td>
+  <td>
     <?php
         $languages[''] = get_string("forceno");
         $languages += get_list_of_languages();
