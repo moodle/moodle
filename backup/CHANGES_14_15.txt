@@ -18,7 +18,7 @@ Now I show the specific detailed status of every item in the process:
  8. DONE: assignment->emailteachers
  9. DONE: exercise->usepassword and exercise->password
 10. DONE: exercise_assessments->generalcomment and teachercomment
-11. TODO: glossary->allowprintview
+11. DONE: glossary->allowprintview
 12. TODO: quiz_responses->answer (analyse).
 13. TODO: quiz_calculated->correctaswerformat.
 14. TODO: quiz->popup and questionsperpage.
