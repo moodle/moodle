@@ -26,6 +26,7 @@ $string['-development'] = "開発";
 $string['developer.html'] = "開発者マニュアル";
 $string['coding.html'] = "コーディングガイド";
 $string['cvs.html'] = "CVSの使用";
+$string['translation.html'] = "翻訳";
 
 
 ?>
