@@ -300,17 +300,15 @@ h4 {
 ***
 ******************************/
 TABLE.minicalendar {
-    letter-spacing:0.1em;
+  letter-spacing:0em;
 }
 
 TABLE.minicalendar .day {
-    text-align:center;
-    letter-spacing:0em;
+  text-align:center;
 }
 
 TABLE.minicalendar TBODY TD {
-    text-align:center;
-    letter-spacing:0em;
+  text-align:center;
 }
 
 TABLE.calendarmonth TBODY TD TABLE {
@@ -324,7 +322,7 @@ TABLE.calendarmonth TBODY TD DIV {
 TABLE.minicalendar THEAD TD,
 TABLE.calendarmonth THEAD TD {
 	font-weight:bold;
-    text-align:center;
+  text-align:center;
 }
 
 TABLE.cal_controls td {
@@ -378,7 +376,7 @@ TABLE.cal_controls td {
 .sideblocklinks { }
 
 td.sideblockmain center, td.sideblockmain p, td.sideblockmain div {
-    text-align:left;
+  text-align:left;
 }
 
 
