@@ -309,7 +309,7 @@ TD.cal_event_description { }
 
 /* glossary styles */
 
-.glossary .generaltab B, 
+.glossary .generaltab B,
 .glossary .generaltabselected B {
     font-size:0.85em;
     font-weight:normal;

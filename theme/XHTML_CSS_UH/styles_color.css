@@ -413,7 +413,7 @@ TD.cal_event_description {
     /*background-color:#FFDA9D;*/
 }
 
-.sitetopic { 
+.sitetopic {
     border-color:#D1D7DC;
 }
 
@@ -429,7 +429,7 @@ TD.cal_event_description {
     background-color:#EEF0F2;
 }
 #entry-page,
-.course, 
+.course,
 .forum,
 .glossary,
 .mwiki .edit {
@@ -444,15 +444,15 @@ TD.cal_event_description {
 /* glossary styles */
 
 .glossary td,
-.glossary-edit td {  
+.glossary-edit td {
     background-color:transparent;
 }
 .glossary center center td table td,
-.glossary-edit center center td table td {  
+.glossary-edit center center td table td {
     background-color:#FFFFFF;
 }
 .glossary center center td,
-.glossary-edit center center td {  
+.glossary-edit center center td {
     background-color:#EEF0F2;
 }
 .glossary .generaltab {
