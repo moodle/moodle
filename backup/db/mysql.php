@@ -66,6 +66,10 @@ function backup_upgrade($oldversion=0) {
                          MODIFY `info` MEDIUMTEXT");
     } 
 
+    if ($oldversion < 2003082600 and $result) {
+        print_simple_box("This is the first non-alpha release of the Backup/Restore module.<p>Thanks for upgrading!","center", "50%", "$THEME->cellheading", "20", "noticebox");
+    } 
+
     //Finally, return result
     return $result;
 

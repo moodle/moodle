@@ -5,7 +5,7 @@ This documment shows the current status of the backup/restore option.
 
 Backup:  WORKING. COMPLETED !!
 
-Restore: WORKING. COMPLETED except workshops and logs.
+Restore: WORKING. COMPLETED except logs.
                   
 
 ========== ========== ========== ========== ========== ==========
@@ -129,7 +129,7 @@ Restore Details:
            - About existing users...............................DONE
         - Launch Restore........................................DONE
         - Show progress.........................................DONE
-   - Restore Items:.............................................IN PROGRESS
+   - Restore Items:.............................................DONE
         - Course................................................DONE
            - Course Summary Data................................DONE
               - Course Table....................................DONE
@@ -194,10 +194,10 @@ Restore Details:
                  + course data..................................DONE
                  + user data....................................DONE
                  + files.(NOT EXISTS)...........................DONE
-              x workshops.......................................IN PROGRESS
-                 + course data..................................IN PROGRESS
-                 + user data....................................IN PROGRESS
-                 + files........................................IN PROGRESS
+              x workshops.......................................DONE
+                 + course data..................................DONE
+                 + user data....................................DONE
+                 + files........................................DONE
    - User files from temp.......................................DONE
    - Course files from temp.....................................DONE
    - Log entries................................................NO EXISTS
