@@ -206,7 +206,13 @@ function get_referer() {
  */
 function qualified_me() {
 
-    if (!empty($_SERVER['SERVER_NAME'])) {
+    global $CFG;
+
+    $url = parse_url($CFG->wwwroot);
+
+    if (!empty($url['host'])) {
+        $hostname = $url['host'];
+    } else if (!empty($_SERVER['SERVER_NAME'])) {
         $hostname = $_SERVER['SERVER_NAME'];
     } else if (!empty($_ENV['SERVER_NAME'])) {
         $hostname = $_ENV['SERVER_NAME'];
