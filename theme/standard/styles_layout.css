@@ -352,6 +352,7 @@ table.message_search_results td {
 .sideblock {
     border-width:1px;
     border-style:solid;
+    width: 100%;
 }
 
 /* weblib.php, wiki */
