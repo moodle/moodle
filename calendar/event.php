@@ -330,6 +330,8 @@
 
             switch($_REQUEST['type']) {
                 case 'user':
+                    $form->name = '';
+                    $form->description = '';
                     $form->courseid = 0;
                     $form->groupid = 0;
                     $form->userid = $USER->id;
@@ -348,6 +350,8 @@
                         $_REQUEST['type'] = 'select';
                     }
                     else {
+                        $form->name = '';
+                        $form->description = '';
                         $form->courseid = $group->courseid;
                         $form->groupid = $group->id;
                         $form->userid = $USER->id;
@@ -367,6 +371,8 @@
                         $_REQUEST['type'] = 'select';
                     }
                     else {
+                        $form->name = '';
+                        $form->description = '';
                         $form->courseid = $courseid;
                         $form->groupid = 0;
                         $form->userid = $USER->id;
@@ -379,6 +385,8 @@
                     }
                 break;
                 case 'site':
+                    $form->name = '';
+                    $form->description = '';
                     $form->courseid = 1;
                     $form->groupid = 0;
                     $form->userid = $USER->id;
