@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // admin.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005021000)
+      // admin.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005031000)
 
 
 $string['adminseesallevents'] = '管理员看到所有事件';
@@ -10,6 +10,7 @@ $string['cachetext'] = '永久缓存数据';
 $string['calendarsettings'] = '日历';
 $string['change'] = '修改';
 $string['configallowcoursethemes'] = '如果激活，则可以为每个课程设定自己的主题风格。课程的主题风格将覆盖在其它位置(站点、用户或会话)设定的主题风格。';
+$string['configallowemailaddresses'] = '如果你希望将新的电邮地址限制在一定的域名中，可以将它们列出，域名之间以空格分割。系统会拒绝所有其它域名的邮件。例如<strong>ourcollege.edu.au .gov.au</strong>';
 $string['configallowunenroll'] = '是否允许学生从课程中注销自己';
 $string['configallowuserblockhiding'] = '是否允许用户隐藏/显示此站点中各页面两侧的版块？这个功能使用JavaScript和Cookie来记住每一个可折叠版块的状态，它只影响用户自己的视图。';
 $string['configallowuserthemes'] = '如果开启，则用户可以设定自己的主题风格。用户的主题风格设定会覆盖站点主题风格(但不会覆盖课程的)。';
@@ -23,6 +24,7 @@ $string['configcountry'] = '如果在此处设定一个国家或地区，则他�
 $string['configdbsessions'] = '如果开启此设定，将会使用数据库来保存当前的会话信息。这对于那些大的/繁忙的站点或是在集群上建立的站点是很有用的。对于多数站点这个选项应当保持关闭，即使用服务器硬盘来保存会话信息。注意改变这个设定将会强制退出所有的在线用户(包括您)。';
 $string['configdebug'] = '如果你打开这个选项，那么PHP的错误报告会增加，页面上会出现更多的警告信息。这只对开发人员有用。';
 $string['configdeleteunconfirmed'] = '设置认证时限。使用电子邮件认证注册时，超过该时限未认证的用户将被删除。';
+$string['configdenyemailaddresses'] = '要拒绝某些域名的电邮地址，请把他们列在这里。系统会接受所有其它域名的邮件。例如<strong>hotmail.com yahoo.co.uk</strong>';
 $string['configdigestmailtime'] = '系统每天会给那些希望以文摘形式接受邮件的人发送文摘。这个选项控制着每日发送文摘邮件的时间(下一个在此时间后运行的cron程序将会发出这些信件)。';
 $string['configdisplayloginfailures'] = '为选择的用户显示失败登录日志。';
 $string['configenablerssfeeds'] = '这个选项允许所有的论坛支持RSS种子。你仍需手工激活每一个论坛配置中的RSS种子选项。';
@@ -70,6 +72,7 @@ $string['configsectionuser'] = '用户';
 $string['configsecureforms'] = '当读取表单的数据时，Moodle可以提供更多的安全级别。如果此选项被激活，系统将检查浏览器的HTTP_REFERER变量是否与当前的表单相符。在一些极个别的情况下，这会带来一些麻烦，譬如用户使用防火墙(如Zonealam)并配置了从Web信息中删除HTTP_REFERER的时候。其症状是遇到表单就再也无法前进了。如果用户在登录页面上发生错误，或许您应当选在关闭这个选项，尽管这样做会使您的站点进一步暴露在暴力密码攻击之下。如果不知道选什么，那就让它保留‘是’吧。';
 $string['configsessioncookie'] = '此选项用来设定Moodle会话所使用的cookie的名称。这个选项是可选的，仅仅在一种情况下比较有用：一个站点上运行了多个Moodle的拷贝，要避免cookie发生混乱。';
 $string['configsessiontimeout'] = '如果用户登入本站后空闲了很长时间(没有加载新页面)，那么他们将自动登离(会话结束)。该变量指定这个时间有多长。';
+$string['configshowblocksonmodpages'] = '一些活动的模块支持在它们的页面上显示版块。如果你开启这个选项，教师们就可以在这些页面上添加版块，否则将不显示这一功能。';
 $string['configshowsiteparticipantslist'] = '站点中所有的学生和站点教师将会被列在站点参与者列表中。谁可以查看这个列表呢?';
 $string['configsitepolicy'] = '如果您有一份站点使用协议，并且需要所有的用户在使用此站点前阅读并同意，那么请在此指定它的URL，否则请留空。URL可以指向任何地址——一个方便的方法是指向站点中的文件，如 http://yoursite/file.php/1/policy.html 。';
 $string['configslasharguments'] = '文件(或图像)是通过使用“斜杠参数”(即这里的第二选项)脚本来提供。该方法能让文件更容易地缓存于网页浏览器和代理服务器等。但有些PHP服务器不支持这种方法，所以如果你查看上传的文件或图像有点麻烦，请选择第一个选项。';
@@ -86,11 +89,9 @@ $string['confirmation'] = '确认';
 $string['confirmdeletedst'] = '删除名为<strong>$a</strong>的预设信息会立刻关闭所有使用这一预设信息的用户的夏时制功能。这会在没有任何警告的情况下改变他们看到的时间。您确定要继续么?';
 $string['confirmdeletedstdefault'] = '<strong>名为{$a}的预设信息正在被此站点上的所有用户使用!</strong>删除它会在没有任何警告的情况下改变他们看到的时间。您确定要继续么?';
 $string['cronwarning'] = '<a href=\"cron.php\">cron.php维护脚本</a>已经有最少24个小时都没有运行过了。<br /><a href=\"../doc/?frame=install.html⊂=cron\">安装文档</a>中解释了如何自动运行它。';
-$string['dstisapreference'] = '每个用户可以选择使用哪个预设信息';
-$string['dstisforcedto'] = '强制全部用户使用';
-$string['dstpresets'] = '夏时制预设信息';
+$string['dstpresetforced'] = '站点管理员要求如此';
 $string['edithelpdocs'] = '编辑帮助文档';
-$string['editingdstpreset'] = '编辑夏时制预设信息';
+$string['editingtimezone'] = '编辑时区';
 $string['editstrings'] = '编辑字符串';
 $string['emptydstlist'] = '现在没有任何夏时制预设信息。点击添加按钮可以添加一个新的。';
 $string['errordstpresetactivateearlier'] = '开始的月份应当比关闭的月份早';
@@ -99,22 +100,27 @@ $string['errordstpresetnameexists'] = '另一个预设信息已经使用了这�
 $string['filteruploadedfiles'] = '过滤上传的文件';
 $string['helpadminseesall'] = '管理员看到日历中全部的事件还是只看到那些于他们自己相关的事件?';
 $string['helpcalendarsettings'] = '设定Moodle中几个与日历和日期/事件相关的方面';
-$string['helpdstforusers'] = '每个用户都可以选择他的夏时制设定么?';
-$string['helpmanagedstpresets'] = '点击这个按钮可以添加、修改和删除这个站点的夏时制预设信息。';
+$string['helpforcetimezone'] = '你可以允许用户选择他自己的时区或者让所有用户使用同一时区。';
+$string['helpmanagetimezones'] = '你可以手工添加、修改和删除本站的时区资料，或者让Moodle自动从moodle.org更新并下载新的资料。';
 $string['helpsitemaintenance'] = '用于升级和其它需要的工作';
 $string['helpstartofweek'] = '在日历中一周的开始是哪一天?';
 $string['helpupcominglookahead'] = '缺省情况下日历系统查找未来几天之内的即将发生事件?';
 $string['helpupcomingmaxevents'] = '缺省情况下为用户显示(最多)几天之内的即将发生事件?';
 $string['helpweekenddays'] = '一周中的哪天是“周末”并用不同的颜色显示?';
-$string['managedstpresets'] = '管理夏时制预设信息';
+$string['managetimezones'] = '管理时区资料';
 $string['nodstpresetsexist'] = '由于并未定义任何夏时制预设信息，夏时制功能对所有用户都不可用。您可以点击下面的按钮定义一些预设信息。';
 $string['optionalmaintenancemessage'] = '可选的维护信息';
+$string['returntocalendaroptions'] = '返回日历选项';
 $string['sitemaintenance'] = '这个站点目前正在维护中，暂时不能访问。';
 $string['sitemaintenancemode'] = '维护模式';
 $string['sitemaintenanceoff'] = '维护模式已经关闭了，现在站点已经重新正常运行。';
 $string['sitemaintenanceon'] = '您的站点目前处于维护模式(只有管理员可以登录或使用站点)。';
 $string['sitemaintenancewarning'] = '您的站点目前处于维护模式(只有管理员可以登录)。要让站点返回到正常模式，请<a href=\"maintenance.php\">关闭维护模式</a>。';
 $string['therewereerrors'] = '在您的数据中有错误。';
+$string['timezoneisforcedto'] = '强制所有用户使用';
+$string['timezonenotforced'] = '用户可以选择自己的时区';
+$string['timezones'] = '时区';
+$string['updatetimezones'] = '自动更新资料';
 $string['upgradelogs'] = '要获得完整功能，您的就日志必须升级。<a href=\"$a\">更多信息</a>';
 $string['upgradelogsinfo'] = '网站的变动记录保存在日志中.升级它以便查看最新的完整记录。升级较大规模网站的日志文件或许费时较长，耐心一些，升级过程中不要关闭浏览器--升级会顺利的，它不会影响升级后用户的访问<br /><br />打算升级日志文件吗?';
 $string['upgradesure'] = '您的Moodle文件已经被修改了，您正在准备自动升级您的服务器为如下版本:
