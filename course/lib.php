@@ -957,6 +957,8 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
     static $ismoving;
     static $strmovehere;
     static $strmovefull;
+    static $strunreadpostsone;
+    static $strunreadpostsnumber;
 
     $labelformatoptions = New stdClass;
 
@@ -970,6 +972,8 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
             $strmovehere = get_string("movehere");
             $strmovefull = strip_tags(get_string("movefull", "", "'$USER->activitycopyname'"));
         }
+        $strunreadpostsone    = get_string('unreadpostsone', 'forum');
+        $strunreadpostsnumber = get_string('unreadpostsnumber', 'forum');
     }
     $labelformatoptions->noclean = true;
 
@@ -1042,8 +1046,11 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                         get_current_group($course->id) : false;
                     $unread = forum_tp_count_forum_posts($mod->instance, $groupid) -
                         forum_tp_count_forum_read_records($USER->id, $mod->instance, $groupid);
-                    $cssclass = ($unread > 0) ? 'unread' : 'read';
-                    echo '<span class="'.$cssclass.'"> '.get_string('unreadpostsnumber', 'forum', $unread).'.</span>';
+                    if ($unread == 1) {
+                        echo '<span class="unread"> '.$strunreadpostsone.' </span>';
+                    } else if ($unread) {
+                        echo '<span class="unread"> '.$strunreadpostsnumber.' </span>';
+                    }
                 }
 
                 if ($isediting) {
