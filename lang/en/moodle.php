@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.2 development (2003111400)
+      // moodle.php - created with Moodle 1.2 development (2003122600)
 
 
 $string['action'] = 'Action';
@@ -89,8 +89,8 @@ $string['backuplogshelp'] = 'If enabled, then course logs will be included in au
 $string['backupnameformat'] = '%%Y%%m%%d-%%H%%M';
 $string['backuporiginalname'] = 'Backup Name';
 $string['backupsavetohelp'] = 'Full path to the directory where you want to save the backup files<br>(leave blank to save in its course default dir)';
-$string['backupusershelp'] = 'Select whether you want to include all the users in the server or only the needed users for each course';
 $string['backupuserfileshelp'] = 'Choose whether user files (eg profile images) should be included in automated backups';
+$string['backupusershelp'] = 'Select whether you want to include all the users in the server or only the needed users for each course';
 $string['backupversion'] = 'Backup Version';
 $string['cancel'] = 'Cancel';
 $string['categories'] = 'Course categories';
@@ -301,6 +301,8 @@ $string['emailpasswordsent'] = 'Thank you for confirming the change of password.
 <p>An email containing your new password has been sent to your address at <b>$a->email</b>.
 <p>The new password was automatically generated - you might like to
 <a href=$a->link>change your password</a> to something easier to remember.';
+$string['enrolledincourse'] = 'Enrolled in course \"$a\"';
+$string['enrolledincoursenot'] = 'Not enrolled in course \"$a\"';
 $string['enrolmentconfirmation'] = 'You are about to enroll yourself as a member of this course.<br />Are you sure you wish to do this?';
 $string['enrolmentkey'] = 'Enrolment key';
 $string['enrolmentkeyfrom'] = 'This course requires an \'enrolment key\' - a one-time<BR>
@@ -693,8 +695,8 @@ $string['restoreto'] = 'Restore to';
 $string['returningtosite'] = 'Returning to this web site?';
 $string['revert'] = 'Revert';
 $string['role'] = 'Role';
-$string['saveto'] = 'Save to';
 $string['savechanges'] = 'Save changes';
+$string['saveto'] = 'Save to';
 $string['scale'] = 'Scale';
 $string['scales'] = 'Scales';
 $string['scalescustom'] = 'Custom scales';
