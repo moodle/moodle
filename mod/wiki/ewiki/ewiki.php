@@ -711,7 +711,8 @@ function ewiki_page_view($id, &$data, $action, $all=1) {
    if (!$all) {
       return($o);
    }
-
+   #### MOODLE CHANGE
+   $o.= "<br><br>";
    #-- control line + other per-page info stuff
    if ($pf_a = $ewiki_plugins["view_append"]) {
       ksort($pf_a);
@@ -1553,16 +1554,11 @@ function ewiki_page_edit_preview(&$data) {
            . "<hr noshade>"
            . "<div align=\"right\">" . ewiki_t("PREVIEW") . "</div><hr noshade><br>\n"
            . format_text($preview_text, $moodle_format)
-           . "<hr noshade><br>"
+           . "<br><br><hr noshade><br>"
            . "</div>"
    );
 #### END MOODLE CHANGES   
 }
-
-
-
-
-
 
 
 function ewiki_control_links($id, &$data, $action) {
@@ -2050,7 +2046,12 @@ function ewiki_format_close_para(&$ooo, &$s) {
    #-- output text block
    if (trim($s["para"])) {
       if (!$s["block"]) {
-         $s["para"] = "\n<p>\n" . ltrim($s["para"], "\n") . "</p>\n";
+         #### MOODLE CHANGES
+         global $ewiki_use_editor;
+         if(!$ewiki_use_editor) {
+           $s["para"] = "\n<p>\n" . ltrim($s["para"], "\n") . "</p>\n";
+         }
+         #### MOODLE CHANGES
       }
       #-- paragraph formation plugins
       if ($pf_a = $GLOBALS["ewiki_plugins"]["format_para"]) {
