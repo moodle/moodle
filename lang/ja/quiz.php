@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.4 development (2004072500)
+      // quiz.php - created with Moodle 1.4 development (2004072901)
 
 
 $string['acceptederror'] = '¥¨¥é¡¼ÈÏ°Ï';
@@ -62,6 +62,7 @@ $string['description'] = 'ÀâÌÀ';
 $string['discrimination'] = '¼±ÊÌ¥¤¥ó¥Ç¥Ã¥¯¥¹';
 $string['eachattemptbuildsonthelast'] = '¤½¤ì¤¾¤ì¤Î²òÅú¤òºÇ¸å¤ËºîÀ®¤¹¤ë';
 $string['editcategories'] = '¥«¥Æ¥´¥ê¤òÊÔ½¸¤¹¤ë';
+$string['editdatasets'] = '¥Ç¡¼¥¿¥»¥Ã¥È¤òÊÔ½¸¤¹¤ë';
 $string['editingdescription'] = 'ÀâÌÀ¤òÊÔ½¸¤¹¤ë';
 $string['editingmatch'] = 'ÁÈ¤ß¹ç¤ï¤»ÌäÂê¤òÊÔ½¸¤¹¤ë';
 $string['editingmultianswer'] = '±£¤·²òÅúÊý¼°¤òÊÔ½¸¤¹¤ë';
@@ -106,6 +107,8 @@ $string['listitems'] = '¾®¥Æ¥¹¥È¤Î¥¢¥¤¥Æ¥à°ìÍ÷';
 $string['marks'] = 'ÆÀÅÀ';
 $string['match'] = 'ÁÈ¤ß¹ç¤ï¤»';
 $string['matchanswer'] = 'Åú¤¨¤òÁÈ¹ç¤ï¤»¤ë';
+$string['max'] = 'ºÇÂç';
+$string['min'] = 'ºÇ¾®';
 $string['minutes'] = 'Ê¬';
 $string['missingcorrectanswer'] = 'Àµ¤·¤¤Åú¤¨¤òÀßÄê¤·¤Æ¤¯¤À¤µ¤¤';
 $string['missingname'] = '¼ÁÌäÌ¾¤¬¸«¤Ä¤«¤ê¤Þ¤»¤ó';
@@ -129,6 +132,7 @@ $string['notenoughanswers'] = '¤³¤Î¥¿¥¤¥×¤Î¼ÁÌä¤Ë¤Ï¾¯¤Ê¤¯¤È¤â $a ¤Î²òÅú¤¬É¬Í×¤Ç¤
 $string['notenoughsubquestions'] = '½½Ê¬¤ÊÉû¼ÁÌä¤¬ÄêµÁ¤µ¤ì¤Æ¤¤¤Þ¤»¤ó¡ª<br>
 ¤³¤Î¼ÁÌä¤ò½¤Àµ¤·¤Þ¤¹¤«¡©';
 $string['numerical'] = '¿ô»úÊý¼°';
+$string['optional'] = '¥ª¥×¥·¥ç¥ó';
 $string['passworderror'] = '¥Ñ¥¹¥ï¡¼¥É¤¬´Ö°ã¤Ã¤Æ¤¤¤Þ¤¹';
 $string['percentcorrect'] = 'ÀµÅúÎ¨';
 $string['publish'] = '¸ø³«';
@@ -196,11 +200,13 @@ $string['toomanyrandom'] = 'Í×µá¤µ¤ì¤¿¥é¥ó¥À¥àÊý¼°¤Î¼ÁÌä¿ô¤Ï¡¢¤³¤Î¥«¥Æ¥´¥ê¤Ë´Þ¤Þ
 $string['true'] = '¡û';
 $string['truefalse'] = '¡û/¡ßÊý¼°';
 $string['type'] = '¥¿¥¤¥×';
+$string['unit'] = '¥æ¥Ë¥Ã¥È';
 $string['unknowntype'] = '$a ¹Ô¤Î¼ÁÌä¥¿¥¤¥×¤Ï¥µ¥Ý¡¼¥È¤µ¤ì¤Æ¤¤¤Þ¤»¤ó¡£¼ÁÌä¤ÏÌµ»ë¤µ¤ì¤Þ¤·¤¿';
 $string['viewallanswers'] = '²òÅúºÑ¤ß¾®¥Æ¥¹¥È¤ò¸«¤ë';
 $string['viewallreports'] = '$a ¤Î²òÅú¤Ë´Ø¤¹¤ë¥ì¥Ý¡¼¥È¤ò¸«¤ë';
 $string['warningsdetected'] = '$a ¤Î·Ù¹ð¤¬¸«¤Ä¤«¤ê¤Þ¤·¤¿';
 $string['webct'] = 'WebCT¥Õ¥©¡¼¥Þ¥Ã¥È';
+$string['wildcard'] = '¥ï¥¤¥ë¥É¥«¡¼¥É';
 $string['wronggrade'] = '´Ö°ã¤Ã¤¿É¾²Á($a °Ê¹ß):';
 $string['yourfinalgradeis'] = '¤¢¤Ê¤¿¤ÎºÇ½ªÀ®ÀÓ¤Ï $a ¤Ç¤¹';
 
