@@ -135,6 +135,7 @@ if ( $confirm ) {
             if (! $newentry->id = insert_record("glossary_entries", $newentry)) {
                 error("Could not insert this new entry");
             } else {
+                $e = $newentry->id;
                 $newentry->attachment = $_FILES["attachment"];
                 if ($newfilename = glossary_add_attachment($newentry, $newentry->attachment)) {
                     $newentry->attachment = $newfilename;
@@ -153,10 +154,10 @@ if ( $confirm ) {
     delete_records("glossary_alias","entryid",$e);
 
     if ( isset($form->categories) ) {
-        $newcategory->entryid = $newentry->id;
+        $newcategory->entryid = $e;
         foreach ($form->categories as $category) {
             if ( $category > 0 ) {
-                $newcategory->categoryid =$category;
+                $newcategory->categoryid = $category;
                 insert_record("glossary_entries_categories",$newcategory);
             } else {
                 break;
