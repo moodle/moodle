@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.3 Stable (001) (2004052500)
+      // moodle.php - created with Moodle 1.3.1 + (2004052501)
 
 
 $string['action'] = 'Ação';
@@ -145,8 +145,8 @@ $string['configcachetext'] = 'Esta opção pode acelerar os sites muito grandes e 
 $string['configcountry'] = 'Se voce escolher um país, esta será a opção predefinida nos formularios de inscrição de novos usuários.  Para obrigar os usuários a escolherem o país, não configure esta opção.';
 $string['configdebug'] = 'Se você ativar a função PHP\'s error_reporting, informações endereçadas a programadores serão visualizadas como mensagens de erro.';
 $string['configdeleteunconfirmed'] = 'Se você está usando a autenticação de email, este é o período durante o qual a resposta será aceita pelos usuários. Depois deste período as contas não confirmadas serão canceladas.';
-$string['configenablerssfeeds'] = 'Abilita a geração de feeds RSS no site. Para completar o processo você precisa abilitar a geração de feeds rss no painel de configuração de cada módulo.';
-$string['configenablerssfeedsdisabled'] = 'Não é disponível porque a geração de RSS não está abilitada na seção \"configurar variáveis\" do painel de administração do site.';
+$string['configenablerssfeeds'] = 'Habilita a geração de feeds RSS no site. Para completar o processo você precisa habilitar a geração de feeds rss no painel de configuração de cada módulo.';
+$string['configenablerssfeedsdisabled'] = 'Não é disponível porque a geração de RSS não está habilitada na seção \"configurar variáveis\" do painel de administração do site.';
 $string['configerrorlevel'] = 'Escolha a quantidade de avisos de PHP que devem ser mostrados.  Normal é quase sempre a melhor escolha.';
 $string['configextendedusernamechars'] = 'Autoriza o uso de caracteres que não sejam alfanumericos nos nomes dos usuários. A opção predefinida restringe a escolha dos caracteres áqueles alfanuméricos.';
 $string['configfilteruploadedfiles'] = 'Ativa a aplicação de filtros a todos os aquivos em formato html ou txt do site antes da visualização.';
@@ -272,7 +272,7 @@ $string['deletingexistingcoursedata'] = 'Cancelando dados do curso';
 $string['deletingolddata'] = 'Cancelando dados antigos';
 $string['department'] = 'Departamento';
 $string['description'] = 'Descrição';
-$string['disable'] = 'Disabilitar';
+$string['disable'] = 'Desabilitar';
 $string['displayingfirst'] = 'Só as primeiras $a->count $a->things são visualizadas';
 $string['displayingrecords'] = 'Mostrando $a records';
 $string['displayingusers'] = 'Mostrando usários $a->start a $a->end';
