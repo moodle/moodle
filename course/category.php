@@ -33,6 +33,9 @@
         $adminediting = (isadmin() and $creatorediting);
 
     } else {
+        if (!$category->visible) {
+            error(get_string('notavailable', 'error'));
+        }
         $navbaritem = print_course_search("", true, "navbar");
         $adminediting = false;
         $creatorediting = false;
@@ -203,14 +206,23 @@
 /// Print out all the sub-categories
 
     if ($subcategories = get_records("course_categories", "parent", $category->id)) {
-        echo "<table align=\"center\" border=0 cellspacing=2 cellpadding=4 class=\"generalbox\">";
-        echo "<tr><th>".get_string("subcategories")."</th></tr>";
-        echo "<tr><td nowrap>";
+        $firstentry = true;
         foreach ($subcategories as $subcategory) {
-            echo "<a href=\"category.php?id=$subcategory->id\">$subcategory->name</a><br />";
+            if ($subcategory->visible or iscreator()) {
+                if ($firstentry) {
+                    echo "<table align=\"center\" border=0 cellspacing=2 cellpadding=4 class=\"generalbox\">";
+                    echo "<tr><th>".get_string("subcategories")."</th></tr>";
+                    echo "<tr><td nowrap>";
+                    $firstentry = false;
+                }
+                $catlinkcss = $subcategory->visible ? "" : " class=\"dimmed\" ";
+                echo "<a $catlinkcss href=\"category.php?id=$subcategory->id\">$subcategory->name</a><br />";
+            }
         }
-        echo "</td></tr></table>";
-        echo "<br />";
+        if (!$firstentry) {
+            echo "</td></tr></table>";
+            echo "<br />";
+        }
     }
     
 
