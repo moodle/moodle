@@ -899,7 +899,7 @@ function print_whole_category_list($category=NULL, $displaylist=NULL, $parentsli
     }
 
     if ($category) {
-        if ($category->visible or isadmin()) {
+        if ($category->visible or iscreator()) {
             print_category_info($category, $depth);
         } else {
             return;  // Don't bother printing children of invisible categories

@@ -1127,7 +1127,7 @@ function get_courses($categoryid="all", $sort="c.sortorder ASC", $fields="c.*") 
     $teachergroup = "";
     $visiblecourses = "";
     if (!empty($USER)) {  // May need to check they are a teacher
-        if (!isadmin()) {
+        if (!iscreator()) {
             $visiblecourses = "AND ((c.visible > 0) OR (t.userid = '$USER->id' AND t.course = c.id))";
             $teachertable = ", {$CFG->prefix}user_teachers t";
             $teachergroup = "GROUP BY c.id";
@@ -1158,7 +1158,7 @@ function get_courses_page($categoryid="all", $sort="c.sortorder ASC", $fields="c
     $teachergroup = "";
     $visiblecourses = "";
     if (!empty($USER)) {  // May need to check they are a teacher
-        if (!isadmin()) {
+        if (!iscreator()) {
             $visiblecourses = "AND ((c.visible > 0) OR (t.userid = '$USER->id' AND t.course = c.id))";
             $teachertable = ", {$CFG->prefix}user_teachers t";
             $teachergroup = "GROUP BY c.id";
@@ -1312,10 +1312,10 @@ function get_categories($parent="none", $sort="sortorder ASC") {
         $categories = get_records("course_categories", "parent", $parent, $sort);
     }
     if ($categories) {  /// Remove unavailable categories from the list
-        $admin = isadmin();
+        $creator = iscreator();
         foreach ($categories as $key => $category) {
             if (!$category->visible) {
-                if (!$admin) {
+                if (!$creator) {
                     unset($categories[$key]);
                 }
             }
