@@ -155,74 +155,28 @@
                 $pivot = $pivot[0];
             }            
             
-        /// 
-        /// Validating special cases not covered by the SQL statement
-        /// 
-    
-        /// if we're browsing by alphabet and the current concept does not begin with
-        ///     the letter we are look for.
-            $showentry = 1;
-            if ( $mode == 'letter' and $hook != 'SPECIAL' and $hook != 'ALL' ) {
-                if ( substr($entry->concept, 0, strlen($hook)) != $hook ) {
-                    $showentry = 0;
-                }
-            } 
-            
-        /// if we're browsing for letter, looking for special characters not covered
-        ///     in the alphabet 
-            if ( $showentry and $hook == 'SPECIAL' ) {
-                $initial = $entry->concept[0];
-                for ($i = 0; $i < count($alphabet); $i++) {
-                    $curletter = $alphabet[$i];
-                    if ( $curletter == $initial ) {
-    
-                        $showentry = 0;
-                        break;
+            if ( $currentpivot != strtoupper($pivot) ) {  
+                // print the group break if apply
+                if ( $printpivot )  {
+                    $currentpivot = strtoupper($pivot);
+
+                    $pivottoshow = $currentpivot;
+                    if ( isset($entry->uid) ) {
+                        $user = get_record("user","id",$entry->uid);
+                        $pivottoshow = fullname($user, isteacher($course->id));
                     }
+
+                    echo "<p align=\"center\"><strong><i>$pivottoshow</i></strong></p>" ;
                 }
-            } 
-    
-        /// if we're browsing categories, looking for entries not categorised.
-            if ( $showentry and $mode == 'cat' and $hook == GLOSSARY_SHOW_NOT_CATEGORISED ) {
-                if ( record_exists("glossary_entries_categories", "entryid", $entry->id)) {
-                    $showentry = 0;
-                } 
             }
+
+            echo '<b>'. strip_tags($entry->concept) . ': </b>';
+            $options->para = false;
+            $definition = format_text('<nolink>' . strip_tags($entry->definition) . '</nolink>', $entry->format,$options);
     
-        /// if the entry is not approved, deal with it based on the current view and
-        ///     user.
-            if ( $showentry and $mode != 'approval' ) {
-                if ( !$entry->approved and isteacher($course->id, $entry->userid) ) {
-                    $showentry = 0;
-                }            
-            }
-    
-            /// ok, if it's a valid entry.. Print it.
-            if ( $showentry ) {
-    
-                if ( $currentpivot != strtoupper($pivot) ) {  
-                    // print the group break if apply
-                    if ( $printpivot )  {
-                        $currentpivot = strtoupper($pivot);
-    
-                        $pivottoshow = $currentpivot;
-                        if ( isset($entry->uid) ) {
-                            $user = get_record("user","id",$entry->uid);
-                            $pivottoshow = fullname($user, isteacher($course->id));
-                        }
-    
-                        echo "<p align=\"center\"><strong><i>$pivottoshow</i></strong></p>" ;
-                    }
-                }
-    
-                echo '<b>'. strip_tags($entry->concept) . ': </b>';
-                $options->para = false;
-                $definition = format_text('<nolink>' . strip_tags($entry->definition) . '</nolink>', $entry->format,$options);
+            echo ($definition);
         
-                echo ($definition);
-        
-                echo '<br><br>';
-            }
+            echo '<br><br>';
         }
     }
 
