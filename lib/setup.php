@@ -32,7 +32,7 @@
 
 
 /// Set error reporting back to normal
-    error_reporting(15);   
+    error_reporting(7);   
 
 
 /// Load up any configuration from the config table
