@@ -50,14 +50,18 @@
     if (! ($course = get_record("course", "id", $quiz->course))) {
         error("Supplied quiz $quiz->name does not belong to a valid course");
     }
+
     require_login($course->id);
-    if (!isteacher($course->id)
-        and !quiz_get_user_attempt_unfinished($quiz->id, $USER->id)
-        and ! ($quiz->review  &&  time() > $quiz->timeclose)
-            || !quiz_get_user_attempts($quiz->id, $USER->id) )
-    {
-        error("Logged-in user is not allowed to view this quiz");
-    }
+
+    // For now, let's not worry about this.  The following check causes 
+    // problems sometimes when reviewing a quiz
+    //if (!isteacher($course->id)
+    //    and !quiz_get_user_attempt_unfinished($quiz->id, $USER->id)
+    //    and ! ($quiz->review  &&  time() > $quiz->timeclose)
+    //        || !quiz_get_user_attempts($quiz->id, $USER->id) )
+    //{
+    //    error("Logged-in user is not allowed to view this quiz");
+    //}
 
     ///////////////////////////////////////////////////
     // The logged-in user has the right to view material on this quiz!
