@@ -1,7 +1,6 @@
 <?php // $Id$
       // Names of the documentation files
       // Files with a definition "-" are treated as spacers
-      // French translation 2003/10/12 22:54 Mina
 
 $string['-about'] = "À propos de Moodle";
 $string['intro.html'] = "Introduction";
@@ -21,11 +20,11 @@ $string['upgrade.html'] = "Mise à jour";
 
 $string['-usage'] = "Utilisation de Moodle";
 $string['teacher.html'] = "Manuel de l'enseignant";
-$string['other.html'] = "Autre documentation";
+$string['other.html'] = "Autres documentations";
 
 $string['-development'] = "Développement";
 $string['developer.html'] = "Manuel du développeur";
-$string['coding.html'] = "Guide se programmation";
+$string['coding.html'] = "Guide de programmation";
 $string['cvs.html'] = "Utilisation de CVS";
 
 
