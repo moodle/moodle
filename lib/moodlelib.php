@@ -1578,8 +1578,8 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml="", $a
     $mail->PluginDir = "$CFG->libdir/phpmailer/";      // plugin directory (eg smtp plugin)
 
 
-    if ($CFG->lang != "en") {
-        $mail->Charset = get_string("thischarset");
+    if (current_language() != "en") {
+        $mail->CharSet = get_string("thischarset");
     }
 
     if ($CFG->smtphosts) {
