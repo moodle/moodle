@@ -62,6 +62,8 @@
                  '<meta name="description" content="'. s(strip_tags($site->summary)) .'" />',
                  true, '', $loginstring . '<br />' . $langmenu);
 
+    echo '<div id="entry-page" class="entry">';  // entry wrapper start
+
     $editing = $PAGE->user_is_editing();
 
     $pageblocks = blocks_get_by_page($PAGE);
@@ -70,7 +72,7 @@
         if (!empty($blockaction) && confirm_sesskey()) {
             if (!empty($blockid)) {
                 blocks_execute_action($PAGE, $pageblocks, strtolower($blockaction), intval($blockid));
-                
+
             }
             else if (!empty($instanceid)) {
                 $instance = blocks_find_instance($instanceid, $pageblocks);
@@ -94,23 +96,23 @@
 ?>
 
 
-<table width="100%" border="0" cellspacing="5" cellpadding="5">
+<table width="100%" border="0" cellspacing="5" cellpadding="5" id="layout-table">
   <tr>
   <?PHP
 
     if(blocks_have_content($pageblocks[BLOCK_POS_LEFT]) || $editing) {
-        echo '<td style="vertical-align: top; width: '.$preferred_width_left.'px;">';
+        echo '<td style="vertical-align: top; width: '.$preferred_width_left.'px;" id="left-column">';
         blocks_print_group($PAGE, $pageblocks[BLOCK_POS_LEFT]);
         echo '</td>';
     }
 
-    echo '<td style="vertical-align: top;">';
-    
-    
+    echo '<td style="vertical-align: top;" id="middle-column">';
+
+
 /// Print Section
     if ($site->numsections > 0) {
         print_simple_box_start('center', '100%', $THEME->cellcontent, 5, 'sitetopic');
-    
+
         /// If currently moving a file then show the current clipboard
         if (ismoving($site->id)) {
             $stractivityclipboard = strip_tags(get_string('activityclipboard', '', addslashes($USER->activitycopyname)));
@@ -169,12 +171,12 @@
             } else {
                 $headertext = $newsforum->name;
             }
-            
+
             if ($site->newsitems) { //print forums only when needed
                 print_heading_block($headertext);
                 print_spacer(8,1);
                 forum_print_latest_discussions($newsforum->id, $site->newsitems);
-            }    
+            }
         break;
 
         case FRONTPAGECOURSELIST:
@@ -210,7 +212,7 @@
 
     // The right column
     if(blocks_have_content($pageblocks[BLOCK_POS_RIGHT]) || $editing || isadmin()) {
-        echo '<td style="vertical-align: top; width: '.$preferred_width_right.'px;">';
+        echo '<td style="vertical-align: top; width: '.$preferred_width_right.'px;" id="right-column">';
         if (isadmin()) {
             echo '<div align="center">'.update_course_icon($site->id).'</div>';
             echo '<br />';
@@ -226,4 +228,8 @@
   </tr>
 </table>
 
-<?php print_footer('home');     // Please do not modify this line ?>
+<?php
+    echo '</div>';  // entry wrapper end
+
+    print_footer('home');     // Please do not modify this line
+?>
