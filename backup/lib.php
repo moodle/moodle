@@ -360,7 +360,7 @@
     //gregb@crowncollege.edu by the idea.
     function backup_required_functions() {
 
-        if(!function_exists('utf8_encodes') {
+        if(!function_exists('utf8_encode')) {
             error('You need to add utf8 support to your PHP installation');  
         }
 
