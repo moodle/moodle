@@ -274,7 +274,7 @@ function lesson_grades($lessonid) {
     global $CFG;
 
 	if (!$lesson = get_record("lesson", "id", $lessonid)) {
-		error("Lesson record not found");
+		return NULL;
 	}
     if ($lesson->usemaxgrade) {
         $grades = get_records_sql_menu("SELECT userid,MAX(grade) FROM {$CFG->prefix}lesson_grades WHERE
