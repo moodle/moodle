@@ -54,8 +54,9 @@
                 $href_tag_begin = "<a class=\"autolink\" title=\"$title\" href=\"$CFG->wwwroot/mod/resource/view.php?id=$cm->id\">";
                 $currentname = $resource->name;                    
                 if ($currentname = trim($currentname)) {
-                    //Only if the term is >2 lenght
-                    if (strlen($currentname) >2) {
+                    //Avoid integers < 1000 to be linked. See bug 1441.
+                    $intcurrent = intval($currentname);
+                    if (!(!empty($intcurrent) && strval($intcurrent) == $currentname && $intcurrent < 1000)) {
                         $text = resource_link_names($text,$currentname,$href_tag_begin, "</a>");
                     }
                 }
@@ -72,7 +73,7 @@
 
         $list_of_words_cp = trim($list_of_words_cp);
 
-        $list_of_words_cp = preg_quote($list_of_words_cp);
+        $list_of_words_cp = preg_quote($list_of_words_cp,'/');
 
         $invalidprefixs = "([a-zA-Z0-9])";
         $invalidsufixs  = "([a-zA-Z0-9])";
