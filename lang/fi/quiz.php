@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.0.9 development (2003042702)
+      // quiz.php - created with Moodle 1.0.9 development (2003050400)
 
 
 $string['addquestions'] = "Lisää kysymyksiä";
@@ -21,6 +21,7 @@ $string['attemptsallowed'] = "Yritystä sallittu";
 $string['attemptsunlimited'] = "Rajattomasti yrityksiä";
 $string['backtoquiz'] = "Takaisin tentit muokkaukseen";
 $string['bestgrade'] = "Paras arviointi";
+$string['blackboard'] = "Blackboard";
 $string['caseno'] = "Ei, kirjainkoolla ei ole merkitystä";
 $string['casesensitive'] = "Kirjainkoko";
 $string['caseyes'] = "Kyllä, kirjainkoon pitää täsmätä";
@@ -63,6 +64,7 @@ Haluatko palata ja korjata tämän kysymyksen?";
 $string['gradeaverage'] = "Keskimääräinen arviointi";
 $string['gradehighest'] = "Ylin arviointi";
 $string['grademethod'] = "Arviointi tapa";
+$string['grades'] = "Arvioinnit";
 $string['guestsno'] = "Pahus, vieraat eivät voi katsella tai täyttää kyselyitä.";
 $string['imagedisplay'] = "Näytettävä kuva";
 $string['importquestions'] = "Tuo kysymykset tiedostosta";

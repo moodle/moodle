@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // pgassignment.php - created with Moodle 1.0.9 development (2003032500)
+      // pgassignment.php - created with Moodle 1.0.9 development (2003050400)
 
 
 $string['absent'] = "Puuttuva";
@@ -42,6 +42,7 @@ $string['doallocation'] = "Haluatko jatkaa tehtävien jakamista opiskelijoille?";
 $string['dontshowgrades'] = "Näytä arvioinnit vasta kun kommentit on hyväksytty";
 $string['editingassessmentelements'] = "Muokataan tehtävä elementtejä";
 $string['element'] = "Arviointi elementti";
+$string['elements'] = "Elementit";
 $string['elementweight'] = "Elementin paino";
 $string['feedbackgoeshere'] = "Palaute tulee tähän";
 $string['finalgrade'] = "Lopullinen arviointi";
@@ -55,6 +56,7 @@ $string['gradedawaitingreplydeadline'] = "Arvioitu, odottaa vastausta (Määräaika
 $string['gradedby'] = "Arvoitsija \$a";
 $string['gradeddate'] = "Arvionti suoritettava ennen";
 $string['gradedon'] = "Arvioitu \$a";
+$string['grades'] = "Arvioinnit";
 $string['gradethissubmission'] = "Arvioi tämä palautus";
 $string['gradethiswork'] = "Arvioi tämä työ";
 $string['grading'] = "Arviointi";
@@ -141,6 +143,7 @@ $string['specimengradingform'] = "Esimerkki arviointilomake";
 $string['stopsubmissions'] = "Estä palauttaminen";
 $string['submissiondate'] = "Tehtävien palautus ennen";
 $string['submissionfrom'] = "Palautus #\$a ";
+$string['submissions'] = "Palautukset";
 $string['submissionsalreadyallowed'] = "Palauttaminen on jo sallittu";
 $string['submissionsalreadystopped'] = "Palauttaminen on jo estetty";
 $string['submissionsawaitinggrading'] = "Arviointia odottavat tehtävät (\$a)";

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // survey.php - created with Moodle 1.0.9 development (2003032602)
+      // survey.php - created with Moodle 1.0.9 development (2003050400)
 
 
 $string['actual'] = "Toteutunut";
@@ -9,6 +9,7 @@ $string['allquestions'] = "Kaikki kysymykset järjestyksessä, kaikki opiskelijat"
 $string['allscales'] = "Kaikki asteikot, kaikki opiskelijat";
 $string['alreadysubmitted'] = "Olet jo palauttanut tämän tutkimuksen";
 $string['analysisof'] = "Analyysi \$a";
+$string['answers'] = "Vastaukset";
 $string['attls1'] = "Kun arvion mitä joku sanoo, keskityn argumenttien laatuun, en henkilöön joka esittää asian.";
 $string['attls10'] = "Minulle on tärkeää pysyä mahdollisimman objektiivisena kun arvion jotain.";
 $string['attls10short'] = "pysy objektiivisena";

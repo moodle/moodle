@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.0.9 development (2003042701)
+      // forum.php - created with Moodle 1.0.9 development (2003050400)
 
 
 $string['addanewdiscussion'] = "Lis‰‰ uusi keskustelu";
@@ -11,7 +11,7 @@ $string['anyfile'] = "Mik‰ tahansa tiedosto";
 $string['attachment'] = "Liite";
 $string['bynameondate'] = "\$a->name - \$a->date";
 $string['couldnotadd'] = "Viesti‰si ei voida lis‰t‰ tuntemattoman virheen takia.";
-$string['couldnotdeleteratings'] = "Pahus, viesti‰ ei voida postaa koska se on jo arvioitu";
+$string['couldnotdeleteratings'] = "Pahus, viesti‰ ei voida poistaa koska se on jo arvioitu";
 $string['couldnotdeletereplies'] = "Pahus, viesti‰ ei voida poistaa koska siihen on jo vastattu";
 $string['couldnotupdate'] = "Viesti‰si ei voida p‰ivitt‰‰ tuntemattoman virheen takia";
 $string['delete'] = "Poista";
@@ -19,6 +19,7 @@ $string['deleteddiscussion'] = "Keskustelu on poistettu";
 $string['deletedpost'] = "Viesti on poistettu";
 $string['deletesure'] = "Oletko varma ett‰ haluat poistaa t‰m‰n viestin?";
 $string['discussion'] = "Keskustelu";
+$string['discussionmoved'] = "T‰m‰ keskustelu on siirretty '\$a'";
 $string['discussions'] = "Keskustelut";
 $string['discussionsstartedby'] = "Keskustelun on aloittanut \$a";
 $string['discussthistopic'] = "Keskustele aiheesta";
@@ -77,6 +78,7 @@ Lis‰t‰ksesi vastauksen viestiin suoraan sivustolle, klikkaa seuraavaa linkki‰:";
 $string['postrating1'] = "Suurimmaksi osaksi eristyv‰‰ osaamista";
 $string['postrating2'] = "Yht‰laisesti eristynyt ja sosiaalinen";
 $string['postrating3'] = "Suurimmaksi osaksi sosiaalista osaamista";
+$string['posts'] = "Viestit";
 $string['postupdated'] = "Viestisi on p‰ivitetty";
 $string['processingpost'] = "K‰sitell‰‰n viesti‰ \$a";
 $string['rate'] = "Arvio";
@@ -100,6 +102,7 @@ $string['subscribe'] = "Tilaa t‰m‰ foorumi";
 $string['subscribed'] = "Tilaaja";
 $string['subscribers'] = "Tilaajat";
 $string['subscribersto'] = "Tilaa '\$a'";
+$string['subscriptions'] = "Tilaukset";
 $string['unsubscribe'] = "Poista t‰m‰n foorumin tilaus";
 $string['youratedthis'] = "Arvioit t‰m‰n";
 $string['yournewtopic'] = "Uusi keskustelun aiheesi";
