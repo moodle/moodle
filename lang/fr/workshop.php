@@ -224,6 +224,7 @@ $string['weightforbias'] = 'Coefficient du biais';
 $string['weightforgradingofassessments'] = 'Coefficient de la performance d\'évaluation';
 $string['weightforpeerassessments'] = 'Coefficient de l\'évaluation par les pairs';
 $string['weightforreliability'] = 'Coefficient de la fiabilité';
+$string['weightforteacherassessments'] = 'Coefficient des évaluations de l\'enseignant';
 $string['weights'] = 'Pondération';
 $string['weightsusedforfinalgrade'] = 'Coefficients utilisés pour la note finale';
 $string['weightsusedforsubmissions'] = 'Coefficients utilisés pour les travaux';
