@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.2.1 beta (2004032200)
+      // quiz.php - created with Moodle 1.3 development (2004040500)
 
 
 $string['acceptederror'] = 'Geaccepteerde fout';
@@ -63,7 +63,7 @@ $string['discrimination'] = 'Discrim. Index';
 $string['eachattemptbuildsonthelast'] = 'Elke poging bouwt voort op de vorige';
 $string['editcategories'] = 'Bewerk de categorieën ';
 $string['editingdescription'] = 'Een beschrijving bewerken';
-$string['editingmatch'] = 'Een kKoppelvraag bewerken';
+$string['editingmatch'] = 'Een koppelvraag bewerken';
 $string['editingmultianswer'] = 'Ingebedde antwoorden (Cloze) bewerken';
 $string['editingmultichoice'] = 'Een meerkeuzevraag bewerken';
 $string['editingnumerical'] = 'Een numerieke vraag bewerken';
