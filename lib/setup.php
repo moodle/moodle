@@ -2,8 +2,8 @@
 /**
  * setup.php - Sets up sessions, connects to databases and so on
  *
- * Normally this is only called by the main config.php file 
- * Normally this file does not need to be edited. 
+ * Normally this is only called by the main config.php file
+ * Normally this file does not need to be edited.
  * @author Martin Dougiamas
  * @version $Id$
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
@@ -25,11 +25,11 @@
  *  - $USER->secret - The user's ?.
  *  - $USER->lang - The user's language choice.
  *
- * @global object(user) $USER 
+ * @global object(user) $USER
  */
 global $USER;
 /**
- * $USER is a global instance of a typical $user record. 
+ * $USER is a global instance of a typical $user record.
  *
  * Items found in the user record:
  *  - $CFG->wwwroot - Path to moodle index directory in url format.
@@ -41,17 +41,17 @@ global $USER;
 global $CFG;
 /**
  * Definition of session type
- * @global object(session) $SESSION 
+ * @global object(session) $SESSION
  */
 global $SESSION;
 /**
  * Definition of course type
- * @global object(course) $COURSE 
+ * @global object(course) $COURSE
  */
 global $COURSE;
 /**
  * Definition of db type
- * @global object(db) $db 
+ * @global object(db) $db
  */
 global $db;
 /**
@@ -61,14 +61,14 @@ global $db;
  *  - $THEME->cellheading - Cell colors.
  *  - $THEME->cellheading2 - Alternate cell colors.
  *
- * @global object(theme) $THEME 
+ * @global object(theme) $THEME
  */
 global $THEME;
 
     if (!isset($CFG->wwwroot)) {
         die;
     }
-    
+
 /// If there are any errors in the standard libraries we want to know!
     error_reporting(E_ALL);
 
@@ -78,9 +78,9 @@ global $THEME;
 
     require_once($CFG->libdir .'/adodb/adodb.inc.php'); // Database access functions
 
-    $db = &ADONewConnection($CFG->dbtype);         
+    $db = &ADONewConnection($CFG->dbtype);
 
-    error_reporting(0);  // Hide errors 
+    error_reporting(0);  // Hide errors
 
     if (!isset($CFG->dbpersist) or !empty($CFG->dbpersist)) {    // Use persistent connection (default)
         $dbconnected = $db->PConnect($CFG->dbhost,$CFG->dbuser,$CFG->dbpass,$CFG->dbname);
@@ -113,7 +113,7 @@ global $THEME;
     }
 
 
-/// Load up standard libraries 
+/// Load up standard libraries
 
     require_once($CFG->libdir .'/weblib.php');          // Functions for producing HTML
     require_once($CFG->libdir .'/datalib.php');         // Functions for accessing databases
@@ -122,11 +122,11 @@ global $THEME;
 
 /// Increase memory limits if possible
 
-    raise_memory_limit('64M');    // We should never NEED this much but just in case...        
+    raise_memory_limit('64M');    // We should never NEED this much but just in case...
 
 
 /// Load up any configuration from the config table
-    
+
     if ($configs = get_records('config')) {
         $CFG = (array)$CFG;
         foreach ($configs as $config) {
@@ -167,7 +167,7 @@ global $THEME;
     }
 
 /// Set up smarty template system
-    //require_once($CFG->libdir .'/smarty/Smarty.class.php');  
+    //require_once($CFG->libdir .'/smarty/Smarty.class.php');
     //$smarty = new Smarty;
     //$smarty->template_dir = $CFG->dirroot .'/templates/'. $CFG->template;
     //if (!file_exists($CFG->dataroot .'/cache')) {
@@ -175,37 +175,37 @@ global $THEME;
     //}
     //$smarty->compile_dir = $CFG->dataroot .'/cache';
 
-/// Set up session handling 
+/// Set up session handling
     if(empty($CFG->respectsessionsettings)) {
         if (empty($CFG->dbsessions)) {   /// File-based sessions
-            
+
             // Some distros disable GC by setting probability to 0
-            // overriding the PHP default of 1 
+            // overriding the PHP default of 1
             // (gc_probability is divided by gc_divisor, which defaults to 1000)
             if (ini_get('session.gc_probability') == 0) {
                 ini_set('session.gc_probability', 1);
             }
-         
+
             if (!empty($CFG->sessiontimeout)) {
                 ini_set('session.gc_maxlifetime', $CFG->sessiontimeout);
             }
-        
+
             if (!file_exists($CFG->dataroot .'/sessions')) {
                 make_upload_directory('sessions');
             }
             ini_set('session.save_path', $CFG->dataroot .'/sessions');
-    
+
         } else {                         /// Database sessions
-    	    ini_set('session.save_handler', 'user');
-    
-    	    $ADODB_SESSION_DRIVER  = $CFG->dbtype;
-    	    $ADODB_SESSION_CONNECT = $CFG->dbhost;
-    	    $ADODB_SESSION_USER    = $CFG->dbuser;
-    	    $ADODB_SESSION_PWD     = $CFG->dbpass;
-    	    $ADODB_SESSION_DB      = $CFG->dbname;
-    	    $ADODB_SESSION_TBL     = $CFG->prefix.'sessions';
-            
-    	    require_once($CFG->libdir. '/adodb/session/adodb-session.php');
+            ini_set('session.save_handler', 'user');
+
+            $ADODB_SESSION_DRIVER  = $CFG->dbtype;
+            $ADODB_SESSION_CONNECT = $CFG->dbhost;
+            $ADODB_SESSION_USER    = $CFG->dbuser;
+            $ADODB_SESSION_PWD     = $CFG->dbpass;
+            $ADODB_SESSION_DB      = $CFG->dbname;
+            $ADODB_SESSION_TBL     = $CFG->prefix.'sessions';
+
+            require_once($CFG->libdir. '/adodb/session/adodb-session.php');
         }
     }
 /// Set sessioncookie variable if it isn't already
@@ -227,36 +227,15 @@ global $THEME;
 /// A hack to get around magic_quotes_gpc being turned off
 
     if (!ini_get_bool('magic_quotes_gpc') ) {
-        foreach ($_GET as $key => $var) {
-            if (!is_array($var)) {
-                $_GET[$key] = addslashes($var);
-            } else {
-                foreach ($var as $arrkey => $arrvar) {
-                    $var[$arrkey] = addslashes($arrvar);
-                }
-                $_GET[$key] = $var;
-            }
+        function stripslashes_deep($value) {
+            $value = is_array($value) ?
+                    array_map('stripslashes_deep', $value) :
+                    stripslashes($value);
+            return $value;
         }
-        foreach ($_POST as $key => $var) {
-            if (!is_array($var)) {
-                $_POST[$key] = addslashes($var);
-            } else {
-                foreach ($var as $arrkey => $arrvar) {
-                    $var[$arrkey] = addslashes($arrvar);
-                }
-                $_POST[$key] = $var;
-            }
-        }
-        foreach ($_COOKIE as $key => $var) {
-            if (!is_array($var)) {
-                $_COOKIE[$key] = addslashes($var);
-            } else {
-                foreach ($var as $arrkey => $arrvar) {
-                    $var[$arrkey] = addslashes($arrvar);
-                }
-                $_COOKIE[$key] = $var;
-            }
-        }
+        $_POST = array_map('stripslashes_deep', $_POST);
+        $_GET = array_map('stripslashes_deep', $_GET);
+        $_COOKIE = array_map('stripslashes_deep', $_COOKIE);
     }
 
 
@@ -270,11 +249,11 @@ global $THEME;
     if (isset($_POST)) {
         extract($_POST, EXTR_SKIP);   // Skip existing variables, ie CFG
     }
-    if (isset($_SERVER)) { 
+    if (isset($_SERVER)) {
         extract($_SERVER);
     }
 
-    
+
 /// Load up global environment variables
 
     class object {};
@@ -286,13 +265,13 @@ global $THEME;
     if (!isset($nomoodlecookie)) {
         session_name('MoodleSession'.$CFG->sessioncookie);
         @session_start();
-        if (! isset($_SESSION['SESSION'])) { 
-            $_SESSION['SESSION'] = new object; 
+        if (! isset($_SESSION['SESSION'])) {
+            $_SESSION['SESSION'] = new object;
         }
-        if (! isset($_SESSION['USER']))    { 
-            $_SESSION['USER']    = new object; 
+        if (! isset($_SESSION['USER']))    {
+            $_SESSION['USER']    = new object;
         }
-    
+
         $SESSION = &$_SESSION['SESSION'];   // Makes them easier to reference
         $USER    = &$_SESSION['USER'];
     }
@@ -309,7 +288,7 @@ global $THEME;
         $ME = strip_querystring($FULLME);
     }
 
-/// In VERY rare cases old PHP server bugs (it has been found on PHP 4.1.2 running 
+/// In VERY rare cases old PHP server bugs (it has been found on PHP 4.1.2 running
 /// as a CGI under IIS on Windows) may require that you uncomment the following:
 //  session_register("USER");
 //  session_register("SESSION");
@@ -333,10 +312,10 @@ global $THEME;
 
 
 
-/// Set language/locale of printed times.  If user has chosen a language that 
-/// that is different from the site language, then use the locale specified 
+/// Set language/locale of printed times.  If user has chosen a language that
+/// that is different from the site language, then use the locale specified
 /// in the language file.  Otherwise, if the admin hasn't specified a locale
-/// then use the one from the default language.  Otherwise (and this is the 
+/// then use the one from the default language.  Otherwise (and this is the
 /// majority of cases), use the stored locale specified by admin.
 
     if (isset($_GET['lang'])) {
@@ -371,7 +350,7 @@ global $THEME;
 
     if ($CFG->theme == 'standard') {    // Temporary measure to help with XHTML validation
         if (empty($_SESSION['USER'])) {      // Allow W3CValidator in as user called w3cvalidator (or guest)
-            if ((strpos($_SERVER['HTTP_USER_AGENT'], 'W3C_Validator') !== false) or 
+            if ((strpos($_SERVER['HTTP_USER_AGENT'], 'W3C_Validator') !== false) or
                 (strpos($_SERVER['HTTP_USER_AGENT'], 'Cynthia') !== false )) {
                 if ($USER = get_user_info_from_db("username", "w3cvalidator")) {
                     $USER->loggedin = true;
