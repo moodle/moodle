@@ -423,7 +423,7 @@
                 print_spacer(10,10);
             }
 
-            print_simple_box_start("center", "", "$THEME->cellcontent", "20" );
+            print_simple_box_start("center", "", "$THEME->cellcontent", '0' );
 
             if ($resource->reference) {
                 $relativepath = "$course->id/$resource->reference";
@@ -433,8 +433,15 @@
 
             $files = get_directory_list("$CFG->dataroot/$relativepath", 'moddata', false);
             $strftime = get_string('strftimedatetime');
+            $strname = get_string("name");
+            $strsize = get_string("size");
+            $strmodified = get_string("modified");
 
             echo '<table cellpadding="4">';
+            echo "<tr><th colspan=\"2\">$strname</th>". 
+                     "<th align=\"right\" colspan=\"2\">$strsize</th>".
+                     "<th align=\"right\">$strmodified</th>".
+                 "</tr>";
             foreach ($files as $file) {
                 $icon = mimeinfo("icon", $file);
 
@@ -443,6 +450,7 @@
                 } else {
                     $relativeurl = "/file.php?file=/$course->id/$resource->reference/$file";
                 }
+                $filesize = display_size(filesize("$CFG->dataroot/$course->id/$resource->reference/$file"));
 
                 echo '<tr>';
                 echo '<td>';
@@ -452,6 +460,9 @@
                 link_to_popup_window($relativeurl, "resourceedirectory$resource->id", "$file", 450, 600, '');
                 echo '</p></td>';
                 echo '<td>&nbsp;</td>';
+                echo '<td align="right" nowrap="nowrap"><p><font size="-1">';
+                echo $filesize;
+                echo '</font></p></td>';
                 echo '<td align="right" nowrap="nowrap"><p><font size="-1">';
                 echo userdate(filectime("$CFG->dataroot/$course->id/$resource->reference/$file"), $strftime);
                 echo '</font></p></td>';
