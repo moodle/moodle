@@ -822,31 +822,31 @@ function print_admin_links ($siteid, $width=180) {
     global $CFG, $THEME;
     
     if (isadmin()) {
-	    $moddata[]="<a href=\"$CFG->wwwroot/$CFG->admin/configure.php\">".get_string("configuration")."</a>...";
-		$modicon[]="<img src=\"$CFG->pixpath/i/admin.gif\" height=16 width=16 alt=\"\" />";
+        $moddata[]="<a href=\"$CFG->wwwroot/$CFG->admin/configure.php\">".get_string("configuration")."</a>...";
+        $modicon[]="<img src=\"$CFG->pixpath/i/admin.gif\" height=16 width=16 alt=\"\" />";
 
-	    $moddata[]="<a href=\"$CFG->wwwroot/$CFG->admin/users.php\">".get_string("users")."</a>...";
-		$modicon[]="<img src=\"$CFG->pixpath/i/users.gif\" height=16 width=16 alt=\"\" />";
+        $moddata[]="<a href=\"$CFG->wwwroot/$CFG->admin/users.php\">".get_string("users")."</a>...";
+        $modicon[]="<img src=\"$CFG->pixpath/i/users.gif\" height=16 width=16 alt=\"\" />";
     }
 
     if (iscreator()) {
-	    $moddata[]="<a href=\"$CFG->wwwroot/course/index.php?edit=on\">".get_string("courses")."</a>";
-		$modicon[]="<img src=\"$CFG->pixpath/i/course.gif\" height=16 width=16 alt=\"\" />";
+        $moddata[]="<a href=\"$CFG->wwwroot/course/index.php?edit=on\">".get_string("courses")."</a>";
+        $modicon[]="<img src=\"$CFG->pixpath/i/course.gif\" height=16 width=16 alt=\"\" />";
         $fulladmin = "";
     }
 
     if (isadmin()) {
-		$moddata[]="<a href=\"$CFG->wwwroot/course/log.php?id=$siteid\">".get_string("logs")."</a>";
-		$modicon[]="<img src=\"$CFG->pixpath/i/log.gif\" height=16 width=16 alt=\"\" />";
+        $moddata[]="<a href=\"$CFG->wwwroot/course/log.php?id=$siteid\">".get_string("logs")."</a>";
+        $modicon[]="<img src=\"$CFG->pixpath/i/log.gif\" height=16 width=16 alt=\"\" />";
 
-		$moddata[]="<a href=\"$CFG->wwwroot/files/index.php?id=$siteid\">".get_string("sitefiles")."</a>";
-		$modicon[]="<img src=\"$CFG->pixpath/i/files.gif\" height=16 width=16 alt=\"\" />";
+        $moddata[]="<a href=\"$CFG->wwwroot/files/index.php?id=$siteid\">".get_string("sitefiles")."</a>";
+        $modicon[]="<img src=\"$CFG->pixpath/i/files.gif\" height=16 width=16 alt=\"\" />";
 
-		if (file_exists("$CFG->dirroot/$CFG->admin/$CFG->dbtype")) {
+        if (file_exists("$CFG->dirroot/$CFG->admin/$CFG->dbtype")) {
             $moddata[]="<a href=\"$CFG->wwwroot/$CFG->admin/$CFG->dbtype/frame.php\">".
                         get_string("managedatabase")."</a>";
-		    $modicon[]="<img src=\"$CFG->pixpath/i/db.gif\" height=16 width=16 alt=\"\" />";
-		}
+            $modicon[]="<img src=\"$CFG->pixpath/i/db.gif\" height=16 width=16 alt=\"\" />";
+        }
         $fulladmin = "<p><a href=\"$CFG->wwwroot/$CFG->admin/\">".get_string("admin")."</a>...";
     }
 
@@ -1240,7 +1240,7 @@ function print_course($course, $width="100%") {
 
 
     echo "</td><td valign=top width=\"50%\" class=\"courseboxsummary\">";
-    echo "<p><font size=2>".text_to_html($course->summary)."</font></p>";
+    echo "<p><font size=2>".filter_text(text_to_html($course->summary), $course->id)."</font></p>";
     echo "</td></tr>";
     echo "</table>";
 

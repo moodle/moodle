@@ -66,7 +66,7 @@
     echo "<br />";
 
     print_simple_box_start("center", "100%");
-    echo text_to_html($course->summary);
+    echo filter_text(text_to_html($course->summary),$course->id);
     print_simple_box_end();
 
     echo "<br />";
