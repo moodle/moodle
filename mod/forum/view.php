@@ -4,6 +4,19 @@
     require_once("lib.php");
     require_once("$CFG->libdir/rsslib.php");
 
+/// Page timer:
+if ($CFG->debug and $CFG->debug > 7) {
+function benchmark() {
+   // microtime() outputs the seconds and the milli seconds
+   // separated with a space, so you have to explode it to
+   // access the parts independently
+  list($usec, $sec) = explode(' ', microtime());
+   return ((double)$usec + (double)$sec);
+}
+$start = benchmark();
+}
+/// /Page timer.
+
     $id      = optional_param('id', 0, PARAM_INT);        // Course Module ID
     $f       = optional_param('f', 0, PARAM_INT);         // Forum ID
     $mode    = optional_param('mode', 0, PARAM_INT);      // Display mode (for single forum)
@@ -240,5 +253,9 @@
     }
 
     print_footer($course);
+
+/// Page timer:
+if ($CFG->debug and $CFG->debug > 7) echo 'Page took: ' . round((benchmark() - $start), 5) . ' seconds.';
+/// /Page timer.
 
 ?>

@@ -4,6 +4,19 @@
     require_once("lib.php");
     require_once("$CFG->libdir/rsslib.php");
 
+/// Page timer:
+if ($CFG->debug and $CFG->debug > 7) {
+function benchmark() {
+   // microtime() outputs the seconds and the milli seconds
+   // separated with a space, so you have to explode it to
+   // access the parts independently
+  list($usec, $sec) = explode(' ', microtime());
+   return ((double)$usec + (double)$sec);
+}
+$start = benchmark();
+}
+/// /Page timer.
+
     optional_variable($id);          // course
 
     if ($id) {
@@ -128,8 +141,9 @@
 
             if ($CFG->forum_trackreadposts) {
                 $groupid = ($groupmode==SEPARATEGROUPS && !isteacheredit($course->id)) ? $currentgroup : false;
-                $unread = forum_tp_count_forum_posts($forum->id, $groupid) -
-                          forum_tp_count_forum_read_records($USER->id, $forum->id, $groupid);
+//                $unread = forum_tp_count_forum_posts($forum->id, $groupid) -
+//                          forum_tp_count_forum_read_records($USER->id, $forum->id, $groupid);
+                $unread = forum_tp_count_forum_unread_posts($USER->id, $forum->id, $groupid);
                 if ($unread > 0) {
                     $unreadlink = '<span class="unread"><a href="view.php?f='.$forum->id.'">'.$unread.'</a>';
                 } else {
@@ -251,8 +265,9 @@
 
                 if ($CFG->forum_trackreadposts) {
                     $groupid = ($groupmode==SEPARATEGROUPS && !isteacheredit($course->id)) ? $currentgroup : false;
-                    $unread = forum_tp_count_forum_posts($forum->id, $groupid) -
-                              forum_tp_count_forum_read_records($USER->id, $forum->id, $groupid);
+//                    $unread = forum_tp_count_forum_posts($forum->id, $groupid) -
+//                              forum_tp_count_forum_read_records($USER->id, $forum->id, $groupid);
+                    $unread = forum_tp_count_forum_unread_posts($USER->id, $forum->id, $groupid);
                     if ($unread > 0) {
                         $unreadlink = '<span class="unread">'.$unread.'</span>';
                     } else {
@@ -368,5 +383,9 @@
     }
 
     print_footer($course);
+
+/// Page timer:
+if ($CFG->debug and $CFG->debug > 7) echo 'Page took: ' . round((benchmark() - $start), 5) . ' seconds.';
+/// /Page timer.
 
 ?>

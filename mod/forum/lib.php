@@ -2715,8 +2715,9 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5,
                 $discussion->unread = 0;
             } else {
         /// Add in the unread posts. Add one to the replies to include the original post.
-                $discussion->unread = $discussion->replies+1 -
-                                      forum_tp_count_discussion_read_records($USER->id, $discussion->discussion);
+//                $discussion->unread = $discussion->replies+1 -
+//                                      forum_tp_count_discussion_read_records($USER->id, $discussion->discussion);
+                $discussion->unread = forum_tp_count_discussion_unread_posts($USER->id, $discussion->discussion);
             }
         }
 
@@ -3258,6 +3259,21 @@ function forum_tp_count_discussion_read_records($userid, $discussionid) {
     return (count_records_sql($sql));
 }
 
+function forum_tp_count_discussion_unread_posts($userid, $discussionid) {
+    /// Returns the count of records for the provided user and discussion.
+    global $CFG;
+
+    $cutoffdate = isset($CFG->forum_oldpostdays) ? (time() - ($CFG->forum_oldpostdays*24*60*60)) : 0;
+
+    $sql = 'SELECT COUNT(p.id) '.
+           'FROM '.$CFG->prefix.'forum_posts p '.
+           'LEFT JOIN '.$CFG->prefix.'forum_read r ON r.postid = p.id AND r.userid = '.$userid.' '.
+           'WHERE p.discussion = '.$discussionid.' '.
+                'AND p.modified >= '.$cutoffdate.' AND r.id is NULL';
+
+    return (count_records_sql($sql));
+}
+
 function forum_tp_count_forum_posts($forumid, $groupid=false) {
     /// Returns the count of posts for the provided forum and [optionally] group.
     global $CFG;
@@ -3289,6 +3305,26 @@ function forum_tp_count_forum_read_records($userid, $forumid, $groupid=false) {
            'FROM '.$CFG->prefix.'forum_posts p,'.$CFG->prefix.'forum_read r,'.$CFG->prefix.'forum_discussions d '.
            'WHERE d.forum = '.$forumid.$groupsel.' AND p.discussion = d.id AND '.
                 '((p.id = r.postid AND r.userid = '.$userid.') OR p.modified < '.$cutoffdate.' ) ';
+
+    return (count_records_sql($sql));
+}
+
+function forum_tp_count_forum_unread_posts($userid, $forumid, $groupid=false) {
+    /// Returns the count of records for the provided user and forum and [optionally] group.
+    global $CFG;
+
+    $cutoffdate = isset($CFG->forum_oldpostdays) ? (time() - ($CFG->forum_oldpostdays*24*60*60)) : 0;
+
+    $groupsel = '';
+    if ($groupid !== false) {
+        $groupsel = ' AND (d.groupid = '.$groupid.' OR d.groupid = -1)';
+    }
+
+    $sql = 'SELECT COUNT(p.id) '.
+           'FROM '.$CFG->prefix.'forum_posts p,'.$CFG->prefix.'forum_discussions d '.
+           'LEFT JOIN '.$CFG->prefix.'forum_read r ON r.postid = p.id AND r.userid = '.$userid.' '.
+           'WHERE d.forum = '.$forumid.$groupsel.' AND p.discussion = d.id '.
+                'AND p.modified >= '.$cutoffdate.' AND r.id is NULL';
 
     return (count_records_sql($sql));
 }
