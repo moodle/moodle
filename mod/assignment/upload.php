@@ -57,6 +57,7 @@
                     if ($submission) {
                         $submission->timemodified = time();
                         $submission->numfiles     = 1;
+                        $submission->comment = addslashes($submission->comment);
                         if (update_record("assignment_submissions", $submission)) {
                             print_heading(get_string("uploadsuccess", "assignment", $newfile_name) );
                         } else {
