@@ -1,6 +1,6 @@
 International Spanish
 
-Versión:  1.0.9
+Versión:  1.1
 
 Coordinador de traducción: 
 Claudio Tavares (claudio@enlaceacademico.com)
