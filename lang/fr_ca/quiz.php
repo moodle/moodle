@@ -1,7 +1,9 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.0.9 Beta 1 (2003051600)
+      // quiz.php - created with Moodle 1.1 Beta + (2003082300)
 
 
+$string['acceptederror'] = "Erreur acceptable";
+$string['addingquestions'] = "Vous gérez votre banque de questions de ce côté-ci de la page. Les questions sont classées en catégories afin d'en faciliter la gestion. Chaque question peut être utilisée dans n'importe quel test dans votre cours ou dans un autre cours si elle est publiée. <br><br /> Vous devez choisir ou créer une catégorie afin d'être capable de créer ou d'éditer une question. Vous pouvez choisir parmi les questions affichées pour les ajouter à votre test (à gauche de la page).";
 $string['addquestions'] = "Ajouter des questions";
 $string['addquestionstoquiz'] = "Ajouter des questions au test en cours";
 $string['addselectedtoquiz'] = "Ajouter la sélection au test";
@@ -12,6 +14,7 @@ $string['answer'] = "Réponse";
 $string['answerhowmany'] = "Une ou plusieurs réponses ?";
 $string['answersingleno'] = "Plusieurs réponses possibles";
 $string['answersingleyes'] = "Une seule réponse";
+$string['answerswithacceptederrormarginmustbenumeric'] = "Les réponses avec une erreur acceptable doivent être numériques";
 $string['attempt'] = "Tentative \$a";
 $string['attemptfirst'] = "Première tentative";
 $string['attemptlast'] = "Dernière tentative";
@@ -33,6 +36,9 @@ $string['choice'] = "Choix";
 $string['choices'] = "Choix disponibles";
 $string['correctanswer'] = "Bonne réponse";
 $string['correctanswers'] = "Bonnes réponses";
+$string['countdown'] = "Compte à rebours";
+$string['countdownfinished'] = "Le temps alloué au test est terminé : vous devez soumettre vos réponses maintenant.";
+$string['countdowntenminutes'] = "Il vous reste 10 minutes pour terminer le test.";
 $string['createmultiple'] = "Créer plusieurs questions";
 $string['createnewquestion'] = "Créer une nouvelle question";
 $string['custom'] = "Format personnel";
@@ -41,9 +47,14 @@ $string['default'] = "Défaut";
 $string['defaultgrade'] = "Note par défaut pour la question";
 $string['defaultinfo'] = "La catégorie par défaut pour les questions.";
 $string['deletequestioncheck'] = "Êtes-vous certain de vouloir supprimer « \$a » ?";
+$string['description'] = "Description";
+$string['eachattemptbuildsonthelast'] = "Chaque essai est fait à partir du dernier";
 $string['editcategories'] = "Modifier les catégories";
-$string['editingmatch'] = "Édition d'une question à appariements";
+$string['editingdescription'] = "Modifier une description";
+$string['editingmatch'] = "Modifier une question à appariements";
+$string['editingmultianswer'] = "Modifier une question dont la réponse est incoporée au texte (fermée)";
 $string['editingmultichoice'] = "Modifier une question à choix multiples";
+$string['editingnumerical'] = "Modifier une question numérique";
 $string['editingquestion'] = "Modifier une question";
 $string['editingquiz'] = "Modifier un test";
 $string['editingrandom'] = "Édition d'une question au hasard";
@@ -56,20 +67,6 @@ $string['fileformat'] = "Format du fichier";
 $string['filloutoneanswer'] = "Vous devez fournir au moins un choix de réponse. Les choix qui seront laissées vides ne seront pas pris en compte.";
 $string['filloutthreequestions'] = "Vous devez fournir au moins trois questions. Les questions vides ne seront pas utilisées.";
 $string['fillouttwochoices'] = "Vous devez compléter au moins deux choix de réponse.<br>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 Ceux qui seront laissées vides ne seront pas pris en compte.";
 $string['fractionsaddwrong'] = "La somme des notes positives que vous avez choisies n'atteint pas 100%%.<br/>Elle est de \$a%%.<br/>Souhaitez-vous revenir en arrière pour corriger cela ?";
@@ -85,11 +82,13 @@ $string['introduction'] = "Introduction";
 $string['marks'] = "Points";
 $string['match'] = "Appariement";
 $string['matchanswer'] = "Réponse correspondante";
+$string['missingcorrectanswer'] = "On doit préciser la bonne réponse";
 $string['missingname'] = "Il manque le nom de la question";
 $string['missingquestiontext'] = "Il manque le texte de la question";
 $string['missingword'] = "Il manque le format";
 $string['modulename'] = "Test";
 $string['modulenameplural'] = "Tests";
+$string['multianswer'] = "Réponses incorporées (fermées)";
 $string['multichoice'] = "Choix multiples";
 $string['noanswers'] = "Aucune réponse n'a été sélectionnée !";
 $string['noattempts'] = "Aucune tentative n'a été réalisée pour ce test";
@@ -98,6 +97,7 @@ $string['noquestions'] = "Aucune question n'a été encore ajoutée";
 $string['noreview'] = "Vous n'êtes pas autorisé à commenter ce test";
 $string['noreviewuntil'] = "Vous n'êtes pas autorisé à réviser ce test avant le \$a";
 $string['notenoughsubquestions'] = "Il n'y a pas assez de sous-questions de créées! <br /> Voulez retournez en arrière pour corriger cette question?";
+$string['numerical'] = "Numérique";
 $string['publish'] = "Publier";
 $string['qti'] = "Format IMS QTI";
 $string['question'] = "Question";
@@ -107,6 +107,7 @@ $string['questions'] = "Questions";
 $string['quizavailable'] = "Le test est disponible jusqu'à : \$a";
 $string['quizclose'] = "Ne plus permettre l'accès au test";
 $string['quizclosed'] = "Ce test n'est plus disponible depuis le \$a";
+$string['quizcloses'] = "Le test se termine";
 $string['quiznotavailable'] = "Ce test ne sera pas disponible avant : \$a";
 $string['quizopen'] = "Rendre disponible ce test";
 $string['random'] = "Ensemble aléatoire";
@@ -116,11 +117,16 @@ $string['randomsamatchcreate'] = "Créer des questions d'appariement de réponses 
 $string['randomsamatchintro'] = "Pour chacune de ces questions, choisissez la bonne réponse à partir du menu.";
 $string['randomsamatchnumber'] = "Nombre de questions à choisir";
 $string['readytosend'] = "Vous êtes sur le point d'envoyer l'ensemble de votre test pour évaluation. Êtes-vous certain de vouloir continuer ?";
+$string['recentlyaddedquestion'] = "Question ajouté récemment ";
 $string['regrade'] = "Renoter toutes les tentatives";
 $string['regradecomplete'] = "Toutes les tentatives ont été renotées";
 $string['regradecount'] = "\$a->changed sur \$a->attempt notes ont été changées";
 $string['rename'] = "Renommer";
 $string['report'] = "Rapports";
+$string['reportoverview'] = "Exposé général";
+$string['reportregrade'] = "Renoter les essais";
+$string['reportsimplestat'] = "Statistiques de base";
+$string['review'] = "Révision";
 $string['save'] = "Enregistrer";
 $string['savegrades'] = "Enregistrer les notes";
 $string['savemyanswers'] = "Enregistrer mes réponses";
@@ -143,6 +149,7 @@ $string['true'] = "Vrai";
 $string['truefalse'] = "Vrai/Faux";
 $string['type'] = "Type";
 $string['viewallanswers'] = "Afficher les \$a tests terminés";
+$string['viewallreports'] = "Afficher les rapports pour \$a essais";
 $string['webct'] = "Format WebCT";
 $string['yourfinalgradeis'] = "Votre note finale pour ce test est \$a";
 

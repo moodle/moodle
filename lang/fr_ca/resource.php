@@ -1,8 +1,9 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.0.9 Beta 1 (2003051600)
+      // resource.php - created with Moodle 1.1 Beta + (2003082300)
 
 
-$string['addresource'] = "Ajouter un document";
+$string['addresource'] = "Ajouter une ressource";
+$string['configframesize'] = "Lorsqu'une page ou un fichier téléversé est affiché dans un cadre, cette valeur représente la taille en pixels du cadre supérieur qui contient la barre du chemin parcouru.";
 $string['editingaresource'] = "Modifier un document";
 $string['example'] = "Exemple";
 $string['examplereference'] = "Tobin, K. & Tippins, D (1993) Constructivism as a Referent for Teaching and Learning. In: K. Tobin (Ed) The Practice of Constructivism in Science Education, pp 3-21, Lawrence-Erlbaum, Hillsdale, NJ.";
@@ -13,6 +14,18 @@ $string['htmlfragment'] = "Morceau de HTML";
 $string['modulename'] = "Document";
 $string['modulenameplural'] = "Documents";
 $string['neverseen'] = "Jamais lu";
+$string['newdirectories'] = "Afficher les liens sur les répertoires";
+$string['newfullscreen'] = "Remplir l'écran";
+$string['newheight'] = "Hauteur par défaut de la fenêtre (en pixels)";
+$string['newlocation'] = "Montrer la barre du chemin parcouru";
+$string['newmenubar'] = "Afficher la barre du menu";
+$string['newresizable'] = "Permettre la modification de la taille de la fenêtre";
+$string['newscrollbars'] = "Permettre le défilement dans la fenêtre";
+$string['newstatus'] = "Afficher la barre d'états";
+$string['newtoolbar'] = "Afficher la barre d'outils";
+$string['newwidth'] = "Largeur par défaut de la fenêtre (en pixels)";
+$string['newwindow'] = "Nouvelle fenêtre";
+$string['newwindowopen'] = "Afficher cette ressource dans une nouvelle fenêtre";
 $string['note'] = "Note";
 $string['notefile'] = "Pour téléverser plus de fichiers dans le cours (afin qu'ils apparaissent dans cette liste), utiliser le 
 

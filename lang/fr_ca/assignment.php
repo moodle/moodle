@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.0.9 Beta 1 (2003051600)
+      // assignment.php - created with Moodle 1.1 Beta + (2003082300)
 
 
 $string['allowresubmit'] = "Accepter de nouvelles soumissions";
@@ -24,6 +24,7 @@ $string['maximumsize'] = "Taille maximale";
 $string['modulename'] = "Devoir";
 $string['modulenameplural'] = "Devoirs";
 $string['newsubmissions'] = "Devoirs soumis";
+$string['notgradedyet'] = "Pas encore corrigé";
 $string['notsubmittedyet'] = "Pas encore soumis";
 $string['overwritewarning'] = "Attention: Si vous envoyez de nouveau votre devoir, ce dernier remplacera le devoir déjà remis";
 $string['saveallfeedback'] = "Enregistrer tous mes commentaires";
