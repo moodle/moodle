@@ -18,7 +18,7 @@
 // If there's something it cannot do itself, it 
 // will tell you what you need to do.
 
-$version = 2002092100;   // The current version is a date (YYYYMMDDXX) where 
+$version = 2002092200;   // The current version is a date (YYYYMMDDXX) where 
                          //    XX is a number that increments during the day
 
 $release = "1.0.5 dev";      // For humans only, not used for the upgrade process
