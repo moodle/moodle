@@ -1221,19 +1221,23 @@ function workshop_get_assess_logs($course, $timestart) {
 
 
 //////////////////////////////////////////////////////////////////////////////////////
-function workshop_get_assessments($submission, $all = '') {
+function workshop_get_assessments($submission, $all = '', $order = '') {
     // Return assessments for this submission ordered oldest first, newest last
     // new assessments made within the editing time are NOT returned unless the
     // second argument is set to ALL
     global $CFG;
+    
 
+    if (!$order) {
+        $order = "timecreated DESC";
+    }
     if ($all != 'ALL') {
         $timenow = time();
         return get_records_select("workshop_assessments", "(submissionid = $submission->id) AND 
-            (timecreated < $timenow - $CFG->maxeditingtime)", "timecreated DESC");
+            (timecreated < $timenow - $CFG->maxeditingtime)", $order);
     } else {
         return get_records_select("workshop_assessments", "submissionid = $submission->id", 
-                "timecreated DESC");
+                $order);
     }
 }
 

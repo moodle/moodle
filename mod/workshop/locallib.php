@@ -2747,7 +2747,8 @@ function workshop_print_submission_assessments($workshop, $submission, $type) {
     }
  
     $str = '';
-    if ($assessments = workshop_get_assessments($submission)) {
+    // get the cold assessments in grade order, highest first
+    if ($assessments = workshop_get_assessments($submission, "cold", "grade DESC")) {
         switch ($type) {
             case "teacher" :
                 // students can see teacher assessments only if the release date has passed
