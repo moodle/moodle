@@ -31,10 +31,13 @@
     now, but soon it will support PostgreSQL, MSSQL, Oracle, Interbase, Foxpro, 
     Access, ADO, Sybase, DB2 or ODBC).</LI>
 </UL>
-<P>The quickest way to satisfy these requirements on Windows platforms is to download 
-  <A HREF="http://www.phpgeek.com/">PHPTriad</A> or <A HREF="http://www.foxserv.net/">FoxServ</A>, 
-  which will install Apache, PHP, and MySQL for you. On Mac OS X I highly recommend 
-  the <a href="http://fink.sourceforge.net/">fink</a> project.</P>
+<P>On a Windows platform, the quickest way to satisfy these requirements is to 
+  download <A HREF="http://www.phpgeek.com/">PHPTriad</A> or <A HREF="http://www.foxserv.net/">FoxServ</A>, 
+  which will install Apache, PHP, and MySQL for you. Make sure you enable the 
+  GD module so Moodle can process images - you may have to edit php.ini and remove 
+  the comment (;) from this line: 'extension=php_gd.dll'.</P>
+<P>On Mac OS X I highly recommend the <a href="http://fink.sourceforge.net/">fink</a> 
+  project.</P>
 <P>&nbsp;</P>
 <H3><A NAME="downloading"></A>Download</H3>
 <P>There are two ways to get Moodle, as a compressed package and via CVS. These 
