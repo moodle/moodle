@@ -48,31 +48,39 @@
 	include("../../../config.php");
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<html style="height:270px;">
+<html style="height: 270px;">
 <head>
 <meta http-equiv="content-type" content="text/html; charset=utf-8">
 <style type="text/css">
 body {
-background-color: buttonface;
+  background: ButtonFace;
+  color: ButtonText;
+  font: 11px Tahoma,Verdana,sans-serif;
+  margin: 0px;
+  padding: 0px;
 }
-td.hover {
-background-color : Fuchsia;
+body { padding: 5px; }
+table {
+  font: 11px Tahoma,Verdana,sans-serif;
 }
-.description {
-font-family: "MS Sans-Serif", sans-serif;
-font-size: x-small;
+form p {
+  margin-top: 5px;
+  margin-bottom: 5px;
 }
-.dlg td {
-align: left;
-height: 20;
+
+select, input, button { font: 11px Tahoma,Verdana,sans-serif; }
+button { width: 70px; }
+.space { padding: 2px; }
+
+.title { background: #ddf; color: #000; font-weight: bold; font-size: 120%; padding: 3px 10px; margin-bottom: 10px;
+border-bottom: 1px solid black; letter-spacing: 2px;
 }
-.dlg input {
-border-top: 1px solid white;
-border-left: 1px solid white;
-border-bottom: 1px solid black;
-border-right: 1px solid black;
-font-size: xx-small;
-width: 60; 
+form { padding: 0px; margin: 0px; }
+.chr {
+background-color: transparent;
+border: 1px solid #dcdcdc;
+font-family: "Times New Roman", times;
+font-size: small;
 }
 </style>
 <script type="text/javascript" src="popup.js"></script>
@@ -84,17 +92,17 @@ function Init() {
 var chars = ["!","&quot;","#","$","%","&","'","(",")","*","+","-",".","/","0","1","2","3","4","5","6","7","8","9",":",";","&lt;","=","&gt;","?","@","A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","[","]","^","_","`","a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z","{","|","}","~","&euro;","ƒ","„","…","†","‡","ˆ","\‰","Š","‹","Œ","&lsquo;","&rsquo;","&rsquo;","&ldquo;","&rdquo;","•","&ndash;","&mdash;","˜","™","š","›","œ","Ÿ","&iexcl;","&cent;","&pound;","&pound;","&curren;","&yen;","&brvbar;","&sect;","&uml;","&copy;","&ordf;","&laquo;","&not;","­","&reg;","&macr;","&deg;","&plusmn;","&sup2;","&sup3;","&acute;","&micro;","&para;","&middot;","&cedil;","&sup1;","&ordm;","&raquo;","&frac14;","&frac12;","&frac34;","&iquest;","&Agrave;","&Aacute;","&Acirc;","&Atilde;","&Auml;","&Aring;","&AElig;","&Ccedil;","&Egrave;","&Eacute;","&Ecirc;","&Euml;","&Igrave;","&Iacute;","&Icirc;","&Iuml;","&ETH;","&Ntilde;","&Ograve;","&Oacute;","&Ocirc;","&Otilde;","&Ouml;","&times;","&Oslash;","&Ugrave;","&Uacute;","&Ucirc;","&Uuml;","&Yacute;","&THORN;","&szlig;","&agrave;","&aacute;","&acirc;","&atilde;","&auml;","&aring;","&aelig;","&ccedil;","&egrave;","&eacute;","&ecirc;","&euml;","&igrave;","&iacute;","&icirc;","&iuml;","&eth;","&ntilde;","&ograve;","&oacute;","&ocirc;","&otilde;","&ouml;","&divide;","&oslash;","&ugrave;","&uacute;","&ucirc;","&uuml;","&uuml;","&yacute;","&thorn;","&yuml;"]
 
 function tab(w,h) {
-	var strtab = ["<TABLE border='1' cellspacing='0' cellpadding='0' align='center' bordercolor='#dcdcdc' bgcolor='#C0C0C0'>"]
+	var strtab = ["<table border='0' cellspacing='0' cellpadding='0' align='center' bordercolor='#dcdcdc' bgcolor='#C0C0C0'>"]
 	var k = 0;
 	for(var i = 0; i < w; i++) {
-		strtab[strtab.length] = "<TR>";
+		strtab[strtab.length] = "<tr>";
 		for(var j = 0; j < h; j++) {
-			strtab[strtab.length] = "<TD width='14' align='center' onClick='getchar(this)' onMouseOver='hover(this,true)' onMouseOut='hover(this,false)'>"+(chars[k]||'')+"</TD>";
+			strtab[strtab.length] = "<td class='chr' width='14' align='center' onClick='getchar(this)' onMouseOver='hover(this,true)' onMouseOut='hover(this,false)'>"+(chars[k]||'')+"</td>";
 			k++;
 		}
-		strtab[strtab.length]="</TR>";
+		strtab[strtab.length]="</tr>";
 	}
-	strtab[strtab.length] = "</TABLE>";
+	strtab[strtab.length] = "</table>";
 	return strtab.join("\n");
 }
 
@@ -123,7 +131,7 @@ function cancel() {
 </head>
 <body onload="Init()">
 <table class="dlg" cellpadding="0" cellspacing="2">
-<tr><td><table width="100%"><tr><td class="description" nowrap><?php print_string("choosechar","editor") ?></td><td valign="middle" width="100%"><hr width="100%"></td></tr></table></td></tr>
+<tr><td><table width="100%"><tr><td class="title" nowrap><?php print_string("choosechar","editor") ?></td></tr></table></td></tr>
 <tr>
 <td>
     <table border="0" align="center" cellpadding="5">
@@ -143,7 +151,7 @@ function cancel() {
   </tr>
 <tr><td><table width="100%"><tr><td valign="middle" width="90%"><hr width="100%"></td></tr></table></td></tr>
 <tr><td align="right">
-	<input type="button" value="<?php print_string("close","editor") ?>" onclick="cancel()"></td></tr>
+	<button type="button" onclick="cancel()"><?php print_string("close","editor") ?></button></td></tr>
 </table>
 </body>
 </body>

@@ -48,7 +48,7 @@
 	include("../../../config.php"); 
 	$pix = $CFG->wwwroot . "/pix/s";	
 ?>
-<html style="width: 300px; height: 350px;">
+<html style="width: 320px; height: 350px;">
 <head>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <meta name=vs_targetSchema content="HTML 4.0">
@@ -88,7 +88,7 @@ function cancel() {
 </head>
 <body onload="Init()">
 <table class="dlg" cellpadding="0" cellspacing="2" width="100%" height="100%">
-<tr><td><table width="100%"><tr><td nowrap><?php print_string("chooseicon","editor") ?></td><td valign="middle" width="100%"><hr width="100%"></td></tr></table></td></tr>
+<tr><td><table width="100%"><tr><td class="title" nowrap><?php print_string("chooseicon","editor") ?></td></tr></table></td></tr>
 <tr>
 <td>
     <table border="0" align="center" cellpadding="5">
@@ -98,52 +98,52 @@ function cancel() {
           <tr>
             <td><img border="0" hspace="10" src="<?php echo $pix ?>/smiley.gif" onclick="insert('<?php echo $pix ?>/smiley.gif')" width="15" height="15"></td>
             <td>smile</td>
-            <td><FONT FACE=Courier>:-)</td>
+            <td class="smile">:-)</td>
           </tr>
           <tr>
             <td><img alt border="0" hspace="10" src="<?php echo $pix ?>/biggrin.gif" onclick="insert('<?php echo $pix ?>/biggrin.gif')" width="15" height="15"></td>
             <td>big grin</td>
-            <td><FONT FACE=Courier>:-D</td>
+            <td class="smile">:-D</td>
           </tr>
           <tr>
             <td><img alt border="0" hspace="10" src="<?php echo $pix ?>/wink.gif" onclick="insert('<?php echo $pix ?>/wink.gif')" width="15" height="15"></td>
             <td>wink</td>
-            <td><FONT FACE=Courier>;-)</td>
+            <td class="smile">;-)</td>
           </tr>
           <tr>
             <td><img alt border="0" hspace="10" src="<?php echo $pix ?>/mixed.gif" onclick="insert('<?php echo $pix ?>/mixed.gif')" width="15" height="15"></td>
             <td>mixed</td>
-            <td><FONT FACE=Courier>:-/</td>
+            <td class="smile">:-/</td>
           </tr>
             <tr>
               <td><img alt border="0" hspace="10" src="<?php echo $pix ?>/thoughtful.gif" onclick="insert('<?php echo $pix ?>/thoughtful.gif')" width="15" height="15"></td>
               <td>thoughtful</td>
-              <td><FONT FACE=Courier>V-.</FONT></td>
+              <td class="smile">V-.</td>
             </tr>
           <tr>
             <td><img alt border="0" hspace="10" src="<?php echo $pix ?>/tongueout.gif" onclick="insert('<?php echo $pix ?>/tongueout.gif')" width="15" height="15"></td>
             <td>tongue out</td>
-            <td><FONT FACE=Courier>:-P</td>
+            <td class="smile">:-P</td>
          </tr>
           <tr>
             <td><img alt border="0" hspace="10" src="<?php echo $pix ?>/cool.gif" onclick="insert('<?php echo $pix ?>/cool.gif')" width="15" height="15"></td>
             <td>cool</td>
-            <td><FONT FACE=Courier>B-)</td>
+            <td class="smile">B-)</td>
           </tr>
             <tr>
               <td><img alt border="0" hspace="10" src="<?php echo $pix ?>/approve.gif" onclick="insert('<?php echo $pix ?>/approve.gif')" width="15" height="15"></td>
               <td>approve</td>
-              <td><FONT FACE=Courier>^-)</td>
+              <td class="smile">^-)</td>
             </tr>
             <tr>
               <td><img alt border="0" hspace="10" src="<?php echo $pix ?>/wideeyes.gif" onclick="insert('<?php echo $pix ?>/wideeyes.gif')" width="15" height="15"></td>
               <td>wide eyes</td>
-              <td><FONT FACE=Courier>8-)</td>
+              <td class="smile">8-)</td>
             </tr>
             <tr>
               <td><img alt border="0" hspace="10" src="<?php echo $pix ?>/surprise.gif" onclick="insert('<?php echo $pix ?>/surprise.gif')" width="15" height="15"></td>
               <td>surprise</td>
-              <td><FONT FACE=Courier>8-o</td>
+              <td class="smile">8-o</td>
             </tr>
         </table>
         </td>
@@ -152,52 +152,52 @@ function cancel() {
             <tr>
               <td><img alt border="0" hspace="10" src="<?php echo $pix ?>/sad.gif" onclick="insert('<?php echo $pix ?>/sad.gif')" width="15" height="15"></td>
               <td>sad</td>
-              <td><FONT FACE=Courier>:-(</td>
+              <td class="smile">:-(</td>
             </tr>
             <tr>
               <td><img alt border="0" hspace="10" src="<?php echo $pix ?>/shy.gif" onclick="insert('<?php echo $pix ?>/shy.gif')" width="15" height="15"></td>
               <td>shy</td>
-              <td><FONT FACE=Courier>8-.</td>
+              <td class="smile">8-.</td>
             </tr>
           <tr>
             <td><img alt border="0" hspace="10" src="<?php echo $pix ?>/blush.gif" onclick="insert('<?php echo $pix ?>/blush.gif')" width="15" height="15"></td>
             <td>blush</td>
-            <td><FONT FACE=Courier>:-I</td>
+            <td class="smile">:-I</td>
           </tr>
             <tr>
               <td><img alt border="0" hspace="10" src="<?php echo $pix ?>/kiss.gif" onclick="insert('<?php echo $pix ?>/kiss.gif')" width="15" height="15"></td>
               <td>kisses</td>
-              <td><FONT FACE=Courier>:-X</td>
+              <td class="smile">:-X</td>
             </tr>
           <tr>
             <td><img alt border="0" hspace="10" src="<?php echo $pix ?>/clown.gif" onclick="insert('<?php echo $pix ?>/clown.gif')" width="15" height="15"></td>
             <td>clown</td>
-            <td><FONT FACE=Courier>:o)</td>
+            <td class="smile">:o)</td>
           </tr>
           <tr>
             <td><img alt border="0" hspace="10" src="<?php echo $pix ?>/blackeye.gif" onclick="insert('<?php echo $pix ?>/blackeye.gif')" width="15" height="15"></td>
             <td>black eye</td>
-            <td><FONT FACE=Courier>P-|</td>
+            <td class="smile">P-|</td>
           </tr>
             <tr>
               <td><img alt border="0" hspace="10" src="<?php echo $pix ?>/angry.gif" onclick="insert('<?php echo $pix ?>/angry.gif')" width="15" height="15"></td>
               <td>angry</td>
-              <td><FONT FACE=Courier>8-[</td>
+              <td class="smile">8-[</td>
             </tr>
             <tr>
               <td><img alt border="0" hspace="10" src="<?php echo $pix ?>/dead.gif" onclick="insert('<?php echo $pix ?>/dead.gif')" width="15" height="15"></td>
               <td>dead</td>
-              <td><FONT FACE=Courier>xx-P</td>
+              <td class="smile">xx-P</td>
             </tr>
             <tr>
               <td><img alt border="0" hspace="10" src="<?php echo $pix ?>/sleepy.gif" onclick="insert('<?php echo $pix ?>/sleepy.gif')" width="15" height="15"></td>
               <td>sleepy</td>
-              <td><FONT FACE=Courier>|-.</td>
+              <td class="smile">|-.</td>
             </tr>
           <tr>
             <td><img alt border="0" hspace="10" src="<?php echo $pix ?>/evil.gif" onclick="insert('<?php echo $pix ?>/evil.gif')" width="15" height="15"></td>
             <td>evil</td>
-            <td><FONT FACE=Courier>}-]</td>
+            <td class="smile">}-]</td>
           </tr>
         </table>
         </td>
@@ -208,7 +208,7 @@ function cancel() {
   </tr>
 <tr><td><table width="100%"><tr><td valign="middle" width="90%"><hr width="100%"></td></tr></table></td></tr>
 <tr><td align="right">
-	<input type="button" value="<?php print_string("close","editor") ?>" onclick="cancel()"></td></tr>
+	<button type="button" onclick="cancel()"><?php print_string("close","editor") ?></button></td></tr>
 </table>
 </body>
 </html>
