@@ -193,7 +193,7 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
                 } else if ($event->courseid == SITEID) {                                // Site event
                     $popupicon = $CFG->pixpath.'/c/site.gif';
                     $popupalt  = '';
-                } else if ($event->courseid != SITEID && empty($event->groupid)) {      // Course event
+                } else if ($event->courseid != 0 && $event->courseid != SITEID && $event->groupid == 0) {      // Course event
                     $popupicon = $CFG->pixpath.'/c/course.gif';
                     $popupalt  = '';
                 } else if ($event->groupid) {                                      // Group event
@@ -360,7 +360,7 @@ function calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxeve
                 $output[$outkey]->time = $eventtime;
 
 
-            } else if($event->courseid != SITEID && !$event->groupid) {          // Course event
+            } else if($event->courseid != 0 && $event->courseid != SITEID && $event->groupid == 0) {          // Course event
                 calendar_get_course_cached($coursecache, $event->courseid);
 
                 $output[$outkey]->icon = '<img height="16" width="16" src="'.$CFG->pixpath.'/c/course.gif" alt="" style="vertical-align: middle;" />';
@@ -801,7 +801,7 @@ function calendar_events_by_day($events, $month, $year, &$eventsbyday, &$duratio
             if($event->courseid == SITEID && $event->groupid == 0) {
                 $typesbyday[$eventdaystart]['startglobal'] = true;
             }
-            else if($event->courseid != SITEID  && $event->groupid == 0) {
+            else if($event->courseid != 0 && $event->courseid != SITEID && $event->groupid == 0) {
                 $typesbyday[$eventdaystart]['startcourse'] = true;
             }
             else if($event->groupid) {
@@ -829,7 +829,7 @@ function calendar_events_by_day($events, $month, $year, &$eventsbyday, &$duratio
             if($event->courseid == SITEID && $event->groupid == 0) {
                 $typesbyday[$i]['durationglobal'] = true;
             }
-            else if($event->courseid != SITEID && $event->groupid == 0) {
+            else if($event->courseid != 0 && $event->courseid != SITEID && $event->groupid == 0) {
                 $typesbyday[$i]['durationcourse'] = true;
             }
             else if($event->groupid) {
@@ -1003,7 +1003,7 @@ function calendar_edit_event_allowed($event) {
 
     if (isadmin($USER->id)) return true; // Admins are allowed anything
 
-    if ($event->courseid != SITEID) {
+    if ($event->courseid != 0 && $event->courseid != SITEID) {
         // Course event, only editing teachers may... edit :P
         if(isteacheredit($event->courseid)) {
             return true;
@@ -1048,40 +1048,6 @@ function calendar_get_default_courses($ignoreref = false) {
         $courses = $USER->teacher + $courses;
     }
     return $courses;
-}
-
-function calendar_get_tz_offset() {
-    global $USER, $CFG;
-    static $tzfix;
-
-    // Caching
-    if(isset($tzfix)) {
-        return $tzfix;
-    }
-
-    if(empty($USER)) {
-        // Don't forget that there are users which have NOT logged in, even as guests
-        $timezone = $CFG->timezone;
-    }
-    else {
-        // If, on the other hand, we do have a user...
-        $timezone = $USER->timezone;
-        if(abs($timezone > 13)) {
-            // But if the user has specified 'server default' time,
-            // don't get the server's; get the Moodle $CFG setting
-            // (Martin's help text on site cfg implies this)
-            $timezone = $CFG->timezone;
-        }
-    }
-
-    if(abs($timezone) <= 13) {
-        $tzfix = $timezone * 3600;
-    }
-    else {
-        $tzfix = date('Z');
-    }
-
-    return $tzfix;
 }
 
 function calendar_preferences_array() {
