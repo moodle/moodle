@@ -298,7 +298,7 @@ function text_to_html($text, $smiley=true, $para=true) {
         $text = ereg_replace(":-\(","<IMG ALT=\"{sad}\" WIDTH=16 HEIGHT=16 SRC=\"$CFG->wwwroot/pix/s/sad.gif\">", $text);
         $text = ereg_replace(":-P", "<IMG ALT=\"{tongue-out}\" WIDTH=16 HEIGHT=16 SRC=\"$CFG->wwwroot/pix/s/tongueout.gif\">", $text);
         $text = ereg_replace(":-/", "<IMG ALT=\"{mixed}\" WIDTH=16 HEIGHT=16 SRC=\"$CFG->wwwroot/pix/s/mixed.gif\">", $text);
-        $text = ereg_replace(":-o", "<IMG ALT=\"{surprised}\" WIDTH=16 HEIGHT=16 SRC=\"$CFG->wwwroot/pix/s/surprise.gif\">", $text);
+        $text = ereg_replace(":-o", "<IMG ALT=\"{surprised}\" WIDTH=29 HEIGHT=16 SRC=\"$CFG->wwwroot/pix/s/surprise.gif\">", $text);
         $text = ereg_replace("B-)", "<IMG ALT=\"{cool}\" WIDTH=16 HEIGHT=16 SRC=\"$CFG->wwwroot/pix/s/cool.gif\">", $text);
     }
 
