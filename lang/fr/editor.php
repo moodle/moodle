@@ -7,6 +7,7 @@ $string['address'] = 'Adresse';
 $string['alignment'] = 'Alignement';
 $string['alternatetext'] = 'Texte alt';
 $string['anchorname'] = 'Nom d\'ancrage';
+$string['anchors'] = 'Ancrages';
 $string['baseline'] = 'Ligne de base';
 $string['bold'] = 'Gras';
 $string['borderthickness'] = 'Épaisseur bordure';
