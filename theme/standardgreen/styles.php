@@ -341,13 +341,13 @@ a.dimmed:hover {
 }
 
 .categorybox {
-    border-width: 1px;
-    border-color: <?PHP echo $THEME->borders?>;
-    border-style: solid;
-    -moz-border-radius: 3px;
 }
 
 .categoryboxcontent {
+    border-width: 1px;
+    border-color: <?PHP echo $THEME->borders?>;
+    border-style: solid;
+    -moz-border-radius: 20px;
 }
 
 .categoryname {
