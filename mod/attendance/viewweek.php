@@ -30,76 +30,23 @@
           }        	
         }
     }
-//    echo "<pre>\n";
-//    foreach ($attendances as $attendance) {
-//    var_dump($attendances);
-//    }
-//    echo "\n</pre>";
-//    print_footer();
-//    exit;
-
+    
     require_login($course->id);
 
     add_to_log($course->id, "attendance", "viewweek", "viewweek.php?scope=".$scope."&id=$course->id");
 
-/// Print the page header
-    if ($course->category) {
-        $navigation = "<A HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> ->";
-    }
-
-    $strattendances = get_string("modulenameplural", "attendance");
-    $strattendance  = get_string("modulename", "attendance");
-    $strweekattendance  = get_string("weekmodulename", "attendance");
-    print_header("$course->shortname: $strallattendance", "$course->fullname",
-                 "$navigation <A HREF=index.php?id=$course->id>$strattendances</A> -> $strweekattendance", 
-                  "", "", true, "&nbsp;", 
-                  navmenu($course, $cm));
  
-/// Print the main part of the page
 if ($attendances) {
    if ( !(isteacher($course->id) || isstudent($course->id)) )  {
+		 attendance_print_header();
      notice(get_string("noviews", "attendance"));
      print_footer($course); exit;
    }
 
-// print other links at top of page
-  	$strviewsection = get_string("viewsection", "attendance");
-  	$strviewweek = get_string("viewweek", "attendance");
-  	$strviewall = get_string("viewall", "attendance");
-  	$strviewone = get_string("viewone", "attendance");
-  	$strviewtable = get_string("viewtable", "attendance");
-  	$strviewmulti = get_string("viewmulti", "attendance");
-
-
-    echo "<p align=\"right\"><a href=\"viewall.php?id=".$course->id."\">";
-    echo "$strviewall</a><br />";
-    if ($onepage) {  // one page for all tables
-      echo "<a href=\"viewweek.php?scope=".$scope."&id=".$id ."\">";
-      echo "$strviewmulti</a><br />";
-      echo "<a href=\"viewweek.php?scope=".$scope."&id=".$id ."&onetable=1\">";
-      echo "$strviewtable</a><br />";
-    } else if ($onetable) { // one table for all
-      echo "<a href=\"viewweek.php?scope=".$scope."&id=".$id ."\">";
-      echo "$strviewmulti</a><br />";
-      echo "<a href=\"viewweek.php?scope=".$scope."&id=".$id ."&onepage=1\">";
-      echo "$strviewone</a><br />";
-    } else { // multiple pages
-      echo "<a href=\"viewweek.php?scope=".$scope."&id=".$id ."&onepage=1\">";
-      echo "$strviewone</a><br />";
-      echo "<a href=\"viewweek.php?scope=".$scope."&id=".$id ."&onetable=1\">";
-      echo "$strviewtable</a><br />";
-    }
-    if ($scope=="week") {  // week view for scope
-      echo "<a href=\"viewweek.php?scope=section&id=".$id."\">";
-      echo "$strviewsection</a></p>";
-    } else { // section view for scope
-      echo "<a href=\"viewweek.php?scope=week&id=".$id."\">";
-      echo "$strviewweek</a></p>";
-    }
 
 
 
-/// create an array of all the attendance objects for the entire course
+/// create an array of all the attendance objects for the week
    $numatt=0;
    $numhours=0;
    foreach ($attendances as $attendance){
@@ -122,6 +69,164 @@ if ($attendances) {
      }
    $numatt++;
    }
+
+
+//
+//
+//  IF REQUESTING A DATA FILE DOWNLOAD, GENERATE IT INSTEAD OF THE HTML PAGE, SEND IT, AND EXIT
+//
+//
+
+
+if ($download == "xls") {
+    require_once("../../lib/psxlsgen.php");
+
+// add up the total columns that are required for the whole report
+    $myxls = new PhpSimpleXlsGen();
+if ($dlsub== "all") {
+    $myxls->totalcol=4+$numatt; // first,last,id ---...---> total
+} else {
+    $myxls->totalcol=4; // first,last,id ---...---> total
+}
+    // print the date headings at the top of the table
+    // for each day of attendance
+    $myxls->ChangePos(2,0);
+    $myxls->InsertText(get_string("lastname"));
+    $myxls->InsertText(get_string("firstname"));
+    $myxls->InsertText(get_string("idnumber"));
+    $pos=3;
+if ($dlsub== "all") {
+    for($k=0;$k<$numatt;$k++)  {
+    // put notes for the date in the date heading
+	    $myxls->ChangePos(0,$pos);
+	    $myxls->InsertText(userdate($atts[$k]->attendance->day,"%m/%0d"));
+	    $myxls->ChangePos(1,$pos);
+	    $myxls->InsertText($atts[$k]->attendance->notes);
+			$myxls->ChangePos(2,$pos);
+			for ($i=1;$i<=$atts[$k]->attendance->hours;$i++) {
+				$myxls->InsertText($i);
+				$pos++;
+			}
+    }
+}  // if dlsub==all
+		$myxls->ChangePos(2,$pos);
+		$myxls->InsertText(get_string("total"));
+		
+/// generate the attendance rolls for the body of the spreadsheet
+  if (isstudent($course->id)) { 
+  	$students[0] = get_user_info_from_db("id", $USER->id);
+  } else { // must be a teacher
+    $students = attendance_get_course_students($attendance->course, "u.lastname ASC");
+  }
+  $i=0;
+  $A = get_string("absentshort","attendance");
+  $T = get_string("tardyshort","attendance");
+  $P = get_string("presentshort","attendance");  
+  $row=3;
+  foreach ($students as $student) {
+    $myxls->ChangePos($row,0);
+    $myxls->InsertText($student->lastname);
+    $myxls->InsertText($student->firstname);
+    $studentid=(($student->idnumber != "") ? $student->idnumber : " ");
+    $myxls->InsertText($studentid);
+    if ($dlsub== "all") {
+	    for($k=0;$k<$numatt;$k++)  { // for each day of attendance for the student
+	  	  for($j=1;$j<=$atts[$k]->attendance->hours;$j++) {
+	        // set the attendance defaults for each student
+	  	    if ($atts[$k]->sroll[$student->id][$j]->status == 1) {$status=$T;}
+		      elseif ($atts[$k]->sroll[$student->id][$j]->status == 2) {$status=$A;}
+	 	      else {$status=$P;}
+	        $myxls->InsertText($status);
+		    } /// for loop
+	    }
+    }
+		$abs=$tar=0;
+    for($k=0;$k<$numatt;$k++)  {  // for eacj day of attendance for the student
+  	  for($j=1;$j<=$atts[$k]->attendance->hours;$j++) {
+	      // set the attendance defaults for each student
+	  	    if ($atts[$k]->sroll[$student->id][$j]->status == 1) {;$tar++;}
+		    elseif ($atts[$k]->sroll[$student->id][$j]->status == 2) {;$abs++;}
+		  } /// for loop
+	  } // outer for for each day of attendance
+    $tot=tally_overall_absences_decimal($abs,$tar);
+    $myxls->InsertNumber($tot);
+		$row++;
+  }
+  $myxls->SendFileName($course->shortname."_Attendance_Week");
+
+  exit;
+}
+
+if ($download == "txt") {
+
+        header("Content-Type: application/download\n"); 
+        header("Content-Disposition: attachment; filename=\"".$course->shortname."_Attendance_Week.txt\"");
+
+/// Print names of all the fields
+
+        echo get_string("firstname")."\t".get_string("lastname") . "\t". get_string("idnumber");
+
+if ($dlsub== "all") {
+    for($k=0;$k<$numatt;$k++)  {
+    // put notes for the date in the date heading
+	    echo "\t" . userdate($atts[$k]->attendance->day,"%m/%0d");
+	    echo (($atts[$k]->attendance->notes != "")?" ".$atts[$k]->attendance->notes:"");
+			for ($i=2;$i<=$atts[$k]->attendance->hours;$i++) { echo "\t$i"; }
+    }
+}  // if dlsub==all
+		echo "\t". get_string("total") . "\n";
+		
+/// generate the attendance rolls for the body of the spreadsheet
+  if (isstudent($course->id)) { 
+  	$students[0] = get_user_info_from_db("id", $USER->id);
+  } else { // must be a teacher
+    $students = attendance_get_course_students($attendance->course, "u.lastname ASC");
+  }
+  $i=0;
+  $A = get_string("absentshort","attendance");
+  $T = get_string("tardyshort","attendance");
+  $P = get_string("presentshort","attendance");  
+  $row=3;
+  foreach ($students as $student) {
+    echo $student->lastname;
+    echo "\t".$student->firstname;
+    $studentid=(($student->idnumber != "") ? $student->idnumber : " ");
+    echo "\t". $studentid;
+    if ($dlsub== "all") {
+	    for($k=0;$k<$numatt;$k++)  { // for each day of attendance for the student
+	  	  for($j=1;$j<=$atts[$k]->attendance->hours;$j++) {
+	        // set the attendance defaults for each student
+	  	    if ($atts[$k]->sroll[$student->id][$j]->status == 1) {$status=$T;}
+		      elseif ($atts[$k]->sroll[$student->id][$j]->status == 2) {$status=$A;}
+	 	      else {$status=$P;}
+	        echo "\t".$status;
+		    } /// for loop
+	    }
+    }
+		$abs=$tar=0;
+    for($k=0;$k<$numatt;$k++)  {  // for eacj day of attendance for the student
+  	  for($j=1;$j<=$atts[$k]->attendance->hours;$j++) {
+	      // set the attendance defaults for each student
+	  	    if ($atts[$k]->sroll[$student->id][$j]->status == 1) {;$tar++;}
+		    elseif ($atts[$k]->sroll[$student->id][$j]->status == 2) {;$abs++;}
+		  } /// for loop
+	  } // outer for for each day of attendance
+    $tot=tally_overall_absences_decimal($abs,$tar);
+    echo "\t".$tot."\n";
+		$row++;
+  }
+  exit;
+}
+
+
+
+//
+//
+//  FIGURE OUT THE PAGING LAYOUT FOR THE DATA BASED ON STATUS, PAGE NUMBER REQUESTED, ETC
+//
+//
+
+
 
    if (isstudent($course->id)) {
      $onepage=true;
@@ -188,6 +293,44 @@ while (($multipage || $onepage) && (!$endonepage)) {
 //  ALL PRELIMINARY STUFF DONE - MAKE THE MEAT OF THE PAGE
 //
 //
+    attendance_print_header();
+
+
+// print other links at top of page
+  	$strviewsection = get_string("viewsection", "attendance");
+  	$strviewweek = get_string("viewweek", "attendance");
+  	$strviewall = get_string("viewall", "attendance");
+  	$strviewone = get_string("viewone", "attendance");
+  	$strviewtable = get_string("viewtable", "attendance");
+  	$strviewmulti = get_string("viewmulti", "attendance");
+
+
+    echo "<p align=\"right\"><a href=\"viewall.php?id=".$course->id."\">";
+    echo "$strviewall</a><br />";
+    if ($onepage) {  // one page for all tables
+      echo "<a href=\"viewweek.php?scope=".$scope."&id=".$id ."\">";
+      echo "$strviewmulti</a><br />";
+      echo "<a href=\"viewweek.php?scope=".$scope."&id=".$id ."&onetable=1\">";
+      echo "$strviewtable</a><br />";
+    } else if ($onetable) { // one table for all
+      echo "<a href=\"viewweek.php?scope=".$scope."&id=".$id ."\">";
+      echo "$strviewmulti</a><br />";
+      echo "<a href=\"viewweek.php?scope=".$scope."&id=".$id ."&onepage=1\">";
+      echo "$strviewone</a><br />";
+    } else { // multiple pages
+      echo "<a href=\"viewweek.php?scope=".$scope."&id=".$id ."&onepage=1\">";
+      echo "$strviewone</a><br />";
+      echo "<a href=\"viewweek.php?scope=".$scope."&id=".$id ."&onetable=1\">";
+      echo "$strviewtable</a><br />";
+    }
+    if ($scope=="week") {  // week view for scope
+      echo "<a href=\"viewweek.php?scope=section&id=".$id."\">";
+      echo "$strviewsection</a></p>";
+    } else { // section view for scope
+      echo "<a href=\"viewweek.php?scope=week&id=".$id."\">";
+      echo "$strviewweek</a></p>";
+    }
+
 
   if (!$onepage) {
 
@@ -297,6 +440,36 @@ if ($onepage) {$page++; echo "<br /> <br />\n"; }
 
   if (!$onepage) { attendance_print_pagenav(); }
 
+
+  echo "<center><TABLE BORDER=0 ALIGN=CENTER><TR>";
+  echo "<TD>";
+  if (($numhours-4) > 255) {
+  	echo "<form><input type=\"button\" value=\"".get_string("downloadexcelfull", "attendance").
+  	"\" onclick=\"alert('Sorry, you have more than 251 days on this report.  This will not fit into an Excel Spreadsheet. ".
+  	" Please try downloading the report week by week instead.')\"></form>";
+  } else {
+    $options["id"] = "$id";
+    $options["download"] = "xls";
+    $options["dlsub"] = "all";  
+    print_single_button("viewweek.php", $options, get_string("downloadexcelfull", "attendance"));
+  }
+  echo "</td><TD>";
+  $options["id"] = "$id";
+  $options["download"] = "xls";
+  $options["dlsub"] = "totals";  
+  print_single_button("viewweek.php", $options, get_string("downloadexceltotals", "attendance"));
+  echo "</td><TD>";
+  $options["download"] = "txt";
+  $options["dlsub"] = "all";  
+  print_single_button("viewweek.php", $options, get_string("downloadtextfull", "attendance"));
+  echo "</td><TD>";
+  $options["dlsub"] = "totals";  
+  print_single_button("viewweek.php", $options, get_string("downloadtexttotals", "attendance"));
+  echo "</td></TABLE></center>";
+
+
+
+
  } else { error("There are no attendance rolls in this course.");} // for no attendance rolls  
 /// Finish the page
     print_footer($course);
@@ -329,6 +502,24 @@ function attendance_print_pagenav() {
   	}
 		echo "</tr></table></td></tr></table></center>\n";
   }
+}
+
+function attendance_print_header()  {
+  global $course, $cm;
+  
+
+/// Print the page header
+    if ($course->category) {
+        $navigation = "<A HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> ->";
+    }
+
+    $strattendances = get_string("modulenameplural", "attendance");
+    $strattendance  = get_string("modulename", "attendance");
+    $strweekattendance  = get_string("weekmodulename", "attendance");
+    print_header("$course->shortname: $strallattendance", "$course->fullname",
+                 "$navigation <A HREF=index.php?id=$course->id>$strattendances</A> -> $strweekattendance", 
+                  "", "", true, "&nbsp;", 
+                  navmenu($course, $cm));
 }
 
 ?>
