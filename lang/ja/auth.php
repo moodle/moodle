@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.5 unstable development (2004091900)
+      // auth.php - created with Moodle 1.5 unstable development (2004092000)
 
 
 $string['auth_common_settings'] = '一般設定';
@@ -38,12 +38,17 @@ $string['auth_ldap_bind_settings'] = 'Bind設定';
 $string['auth_ldap_contexts'] = 'ユーザが配置されているコンテキスト一覧です。異なるコンテキストは「;」で分けてください。例 \'ou=users,o=org; ou=others,o=org\'';
 $string['auth_ldap_create_context'] = 'ユーザ作成をメールによる認証で行う場合、ユーザが作成されるコンテキストを特定してください。セキュリティーの観点から、このコンテキストは各ユーザ毎に異なるものでなければなりません。Moodleが自動的にコンテキストからユーザを探しますので、ldap_context-vaiableをこのコンテキストに追加する必要はありません。';
 $string['auth_ldap_creators'] = 'メンバーが新しいコースの作成を許されているグループのリストです。複数のグループは「;」で分けられています。通常は\'cn=teachers,ou=staff,o=myorg\'のようになります。';
+$string['auth_ldap_expiration_desc'] = 'パスワードチェックの有効期限を無効にする場合、またはLDAPがLDAPサーバから直接passwordexpirationを参照する場合は、「No」を選択してください。必ず属性名にldap_expireattrを入力してください。';
+$string['auth_ldap_expireattr_desc'] = 'Ldap-attributeはパスワードの有効期限PasswordAxpirationTimeを保存します。';
+$string['auth_ldap_graceattr_desc'] = 'LDAP gracelogin属性';
+$string['auth_ldap_gracelogins_desc'] = 'LDAPのgraceloginサポートを有効にします。パスワードの有効期限が切れた後、graceloginカウントがゼロになるまでログインすることができます。この設定を「Yes」にすると、パスワードが期限切れになった場合にgraceloginメッセージが表示されます。';
 $string['auth_ldap_host_url'] = 'LDAPホストのURLを下記のように明示してください。
 
 \'ldap://ldap.myorg.com/\' または \'ldaps://ldap.myorg.com/\' ';
 $string['auth_ldap_login_settings'] = 'ログイン設定';
 $string['auth_ldap_memberattribute'] = 'ユーザがグループに属性している場合、ユーザの属性を特定してください。通常は\'member\'です。';
 $string['auth_ldap_objectclass'] = 'フィルタはユーザ名検索時に使用されます。通常は、objectClass=posixAccountのように設定します。デフォルトのobjectClass=*は全てのオブジェクトをLDAPより返します。';
+$string['auth_ldap_passwdexpire_settings'] = 'LDAPパスワード有効期限設定';
 $string['auth_ldap_search_sub'] = 'サブコンテキストからユーザを検索する場合は、  <> 0 のように入力してください。';
 $string['auth_ldap_server_settings'] = 'LDAPサーバ設定';
 $string['auth_ldap_update_userinfo'] = 'LDAPよりMoodleの情報(名前、名字、住所等)を更新します。マッピング情報に関しては /auth/ldap/attr_mappings をご覧ください。';
@@ -82,7 +87,8 @@ $string['changepassword'] = 'パスワードのURLを変更する';
 $string['changepasswordhelp'] = 'ユーザがユーザ名/パスワードを忘れたときに回復または変更するためのボタンをログインページに表示します。空白の場合、ボタンは表示されません。';
 $string['chooseauthmethod'] = '認証方法の選択:';
 $string['forcechangepassword'] = 'パスワード変更の強制';
-$string['forcechangepassword_help'] = 'Moodleに最初にログインする時に、ユーザのパスワード変更を強制します。';
+$string['forcechangepassword_help'] = '次にMoodleへログインする時に、ユーザのパスワード変更を強制します。';
+$string['forcechangepasswordfirst_help'] = '最初にMoodleへログインする時に、ユーザのパスワード変更を強制します。';
 $string['guestloginbutton'] = 'ゲストログインボタン';
 $string['instructions'] = '説明';
 $string['md5'] = 'MD5暗号化';
