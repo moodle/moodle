@@ -1400,7 +1400,7 @@ function print_user($user, $course) {
         $timemidnight = usergetmidnight(time());
         echo "<a href=\"$CFG->wwwroot/course/user.php?id=$course->id&user=$user->id\">$string->activity</a><br>";
         if (!iscreator($user->id)) {  // Includes admins
-            if (isteacheredit($course->id) and isstudent($course->id, $user->id)) {  // Includes admins
+            if ($course->category and isteacheredit($course->id) and isstudent($course->id, $user->id)) {  // Includes admins
                 echo "<a href=\"$CFG->wwwroot/course/unenrol.php?id=$course->id&user=$user->id\">$string->unenrol</a><br />";
             }
             if ($USER->id != $user->id) {
