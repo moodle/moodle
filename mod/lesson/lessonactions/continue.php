@@ -773,8 +773,7 @@
 	    echo "<p align=\"center\">".get_string("or", "lesson")."<br /><br />".
 	        get_string("continuetoanswer", "lesson")."</p>\n";
 	}
-	echo $qtype;
-	print_object($page);
+
 	if ($lesson->review && !$correctanswer && !$noanswer) {
 	    echo "<p align=\"center\"><input type=\"submit\" onClick='pageform.pageid.value=$pageid;' name=\"review\" value=\"".
 	        get_string("reviewquestionback", "lesson")."\"></p>\n";
