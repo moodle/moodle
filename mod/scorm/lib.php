@@ -21,12 +21,12 @@ if (!isset($CFG->scorm_validate)) {
     $scorm_validate = 'none';
     //I've commented this out for Moodle 1.4, as I've seen errors in 
     //SCORM packages even though the actual package worked fine. -- Martin Dougiamas
-    //if (extension_loaded('domxml') && version_compare(phpversion(),'5.0.0','<')) {
-    //    $scorm_validate = 'domxml';
-    //}
-    //if (version_compare(phpversion(),'5.0.0','>=')) {
-    //    $scorm_validate = 'php5';
-    //}
+    if (extension_loaded('domxml') && version_compare(phpversion(),'5.0.0','<')) {
+        $scorm_validate = 'domxml';
+    }
+    if (version_compare(phpversion(),'5.0.0','>=')) {
+        $scorm_validate = 'php5';
+    }
     set_config('scorm_validate', $scorm_validate);
 }
 
