@@ -77,7 +77,7 @@ function save_user_image($userid, $filename) {
         return false;
     }
 
-    chmod($originalfile, 0666);
+    @chmod($originalfile, 0666);
 
     $imageinfo = GetImageSize($originalfile);
     
@@ -159,8 +159,8 @@ function save_user_image($userid, $filename) {
 
     if (ImageJpeg($im1, "$CFG->dataroot/users/$userid/f1.jpg", 90) and 
         ImageJpeg($im2, "$CFG->dataroot/users/$userid/f2.jpg", 95) ) {
-        chmod("$CFG->dataroot/users/$userid/f1.jpg", 0666);
-        chmod("$CFG->dataroot/users/$userid/f2.jpg", 0666);
+        @chmod("$CFG->dataroot/users/$userid/f1.jpg", 0666);
+        @chmod("$CFG->dataroot/users/$userid/f2.jpg", 0666);
         return 1;
     } else {
         return 0;
