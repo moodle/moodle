@@ -24,6 +24,41 @@
         die;
     }
 
+    // Check version of Moodle code on disk compared with database
+    // and upgrade if possible.
+
+    include_once("$CFG->dirroot/version.php");  # defines $version and upgrades
+
+    if ($dversion = get_field("config", "value", "name", "version")) { 
+        if ($version > $dversion) {  // upgrade
+            notify("Upgrading databases from version $dversion to $version...");
+            if (upgrade_moodle($dversion)) {
+                if (set_field("config", "value", "$version", "name", "version")) {
+                    notify("Databases were successfully upgraded");
+                    print_heading("<A HREF=\"index.php\">Continue</A>");
+                    die;
+                } else {
+                    notify("Upgrade failed!  (Could not update version in config table)");
+                }
+            } else {
+                notify("Upgrade failed!  See /version.php");
+            }
+        } else if ($version < $dversion) {
+            notify("WARNING!!!  The code you are using is OLDER than the version that made these databases!");
+        }
+       
+    } else {
+        $dversion->name  = "version";
+        $dversion->value = $version;
+        if (insert_record("config", $dversion)) {
+            notify("You are currently using Moodle version $version");
+            print_heading("<A HREF=\"index.php\">Continue</A>");
+            die;
+        } else {
+            error("A problem occurred inserting current version into databases");
+        }
+    }
+
     // Find and check all modules and load them up.
     $dir = opendir("$CFG->dirroot/mod");
     while ($mod = readdir($dir)) {

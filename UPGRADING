@@ -1,0 +1,31 @@
+UPGRADING   $Id$
+---------
+
+Since the first main release of Moodle (2002080100)
+most upgrading is done automatically.  See the file
+version.php for all the details.
+
+When upgrading from any previous version of Moodle, 
+all you normally will need to do is this:
+
+1a) Update the source files using CVS
+
+    or
+
+1b) Make a backup of the current working installation 
+    files, then put the new files here.  Make sure you 
+    copy your old config.php back here (or make a new 
+    one by editing config-dist.php).
+
+2)  Login as the admin user and visit /admin using a 
+    web browser.
+
+If all goes well, your databases will be upgraded to 
+suit the new files, and you can go on using Moodle
+normally.
+
+If you have problems, let me know.
+
+Cheers,
+Martin
+
