@@ -1,0 +1,888 @@
+2002-06-01 Saturday 11:46  martin
+
+	* lib/weblib.php: Added lists to allowed html in cleantext
+
+2002-06-01 Saturday 11:33  martin
+
+	* mod/discuss/view.php: Checked for top-post also being an own-post
+	(hence editable).
+
+2002-05-31 Friday 21:54  martin
+
+	* doc/intro.html: Changed link to a newer and better paper on
+	social constructionism.
+
+2002-05-31 Friday 21:24  martin
+
+	* error/index.php: Removed log and fixed email call
+
+2002-05-31 Friday 21:22  martin
+
+	* chat/index.php: Removed logging
+
+2002-05-31 Friday 21:20  martin
+
+	* admin/: cron.php, site.php: Removed some logging
+
+2002-05-31 Friday 21:20  martin
+
+	* admin/index.php: Now looks for module SQL files in
+	mod/db/dbtype.sql
+
+2002-05-31 Friday 21:13  martin
+
+	* files/index.php: Removed log entry for now
+
+2002-05-31 Friday 21:10  martin
+
+	* course/noweeks.php: Replaced by social.php
+
+2002-05-31 Friday 17:37  martin
+
+	* config-dist.php: Indicates only MySQL is supported for now.
+
+2002-05-31 Friday 17:34  martin
+
+	* course/: editweek.php, email.php, lib.php, login.php,
+	loginas.php, new.php, social.php, user.php, view.php, weeks.php:
+	New logging format Improved "Recent Activity" on home page Better
+	formatting.  Many other small fixes.
+
+2002-05-31 Friday 17:27  martin
+
+	* course/edit.php: Changes to support new logging format
+
+2002-05-31 Friday 17:25  martin
+
+	* course/mod.php: Changes to logging to support new logging format
+
+2002-05-31 Friday 17:20  martin
+
+	* lib/moodlelib.php: Various small changes.  Main one was new
+	version of add_to_log to suit the new logging format.
+
+2002-05-31 Friday 17:19  martin
+
+	* login/: change_password.php, index.php, logout.php: Removed
+	logging from these files (probably temporary)
+
+2002-05-31 Friday 17:18  martin
+
+	* lib/db/: mysql.sql, postgres7.sql: Removed "logs" and added new
+	log format:  "log" and "log_display"
+
+2002-05-31 Friday 17:15  martin
+
+	* user/: edit.php, index.php, view.php: Updated to use new logging
+	format.
+
+2002-05-31 Friday 17:14  martin
+
+	* mod/: choice/db/mysql.sql, discuss/db/mysql.sql,
+	journal/db/mysql.sql, reading/db/mysql.sql, survey/db/mysql.sql:
+	Added new entries for log_display table.  These are used to define
+	what to display for any given logged item.
+
+2002-05-31 Friday 17:07  martin
+
+	* mod/: chat/install.sql, choice/index.php, choice/install.sql,
+	choice/mod.html, choice/report.php, choice/view.php,
+	discuss/index.php, discuss/lib.php, discuss/mod.html,
+	discuss/mod.php, discuss/post.php, discuss/subscribe.php,
+	discuss/view.php, journal/edit.php, journal/index.php,
+	journal/install.sql, journal/mod.html, journal/report.php,
+	journal/view.php, reading/details.php, reading/index.php,
+	reading/install.sql, reading/mod.html, reading/view.php,
+	survey/details.php, survey/download.php, survey/edit.php,
+	survey/index.php, survey/install.sql, survey/mod.html,
+	survey/report.php, survey/save.php, survey/view.php: Various small
+	fixes across all modules.  Most notable was the revised use of
+	add_to_log, and the new logging format.
+
+2002-05-31 Friday 17:03  martin
+
+	* mod/: chat/db/mysql.sql, choice/db/mysql.sql,
+	discuss/db/mysql.sql, journal/db/mysql.sql, reading/db/mysql.sql,
+	survey/db/mysql.sql: This is the new format for database schema. 
+	Each module has a db directory with one file per database.  All
+	these are called from admin/index.php and work in concert with
+	lib/db.
+
+2002-05-31 Friday 17:01  martin
+
+	* mod/discuss/db/postgres7.sql: Removed until postgres is supported
+	properly
+
+2002-05-31 Friday 17:01  martin
+
+	* pix/i/: allweeks.gif, oneweek.gif: New icons for courses
+	displayed in weekly format.  They collapse/unfold the display.
+
+2002-05-28 Tuesday 21:59  martin
+
+	* lib/moodlelib.php: Changed email_to_users to be a lot more
+	straightforward.  I don't think there's really need for all the BCC
+	hocus-pocus.  Everyone can find everyone's address anyway, the
+	email bloat is minimal, and perhaps distributing email addresses
+	will spark private emails.
+
+2002-05-28 Tuesday 09:22  martin
+
+	* login/: forgot_password.php, signup.php: email_to_user no longer
+	exists.  Using email_to_users instead.
+
+2002-05-27 Monday 22:53  martin
+
+	* theme/standard/styles.css: Added style for <LI>
+
+2002-05-27 Monday 21:20  martin
+
+	* mod/discuss/: install.sql, db/mysql.sql, db/postgres7.sql: Moved
+	SQL files to a db subdirectory, similar to lib/db for core
+	databases
+
+2002-05-27 Monday 21:17  martin
+
+	* lib/db/postgres7.sql: Reconverted using a newer converter.  Still
+	not tested.
+
+2002-05-27 Monday 21:02  martin
+
+	* admin/index.php: Changes to support various types of databases
+	(using SQL code in lib/db)
+
+2002-05-27 Monday 20:58  martin
+
+	* lib/db/postgres7.sql: QL to create core databases in PostgreSQL. 
+	Not tested at all.  In fact I'm pretty sure it won't work, because
+	it needs sequences.
+
+2002-05-27 Monday 20:56  martin
+
+	* lib/db/mysql.sql: SQL to create core databases in MySQL (any
+	version).
+
+2002-05-27 Monday 14:19  martin
+
+	* admin/moodle-core.sql: All moved to lib/db
+
+2002-05-27 Monday 14:18  martin
+
+	* admin/cron.php: Now uses $CFG->cronpassword from config.php
+
+2002-05-27 Monday 14:16  martin
+
+	* config-dist.php: Added CFG->cronpassword for
+	moodle/admin/cron.php
+
+2002-05-27 Monday 10:25  martin
+
+	* index.php: course->id now site->id so we can add a reading
+
+2002-05-24 Friday 14:48  martin
+
+	* lib/phpmailer/mailerc.php: This is part of the phpmailer
+	distribution
+
+2002-05-24 Friday 14:46  martin
+
+	* lib/: class.phpmailer.php, class.smtp.php: Moved to subdirectory
+	phpmailer
+
+2002-05-24 Friday 14:38  martin
+
+	* lib/moodlelib.php: Changes to mailing system, now supports HTML,
+	attachments.  Simplified functions.
+
+2002-05-24 Friday 14:35  martin
+
+	* lib/setup.php: Added version number for Moodle
+
+2002-05-24 Friday 14:27  martin
+
+	* mod/discuss/: cron.php, lib.php, new.php: Changes to support HTML
+	mail
+
+2002-05-19 Sunday 12:43  martin
+
+	* files/mimetypes.php: Moved the array into the function.
+
+2002-05-19 Sunday 11:51  martin
+
+	* config-dist.php: smtphost --> smtphosts
+
+2002-05-18 Saturday 14:54  martin
+
+	* lib/phpmailer/: ChangeLog.txt, LICENSE, class.phpmailer.php,
+	class.smtp.php, phpdoc/index-all.html, phpdoc/phpmailer.html,
+	test/phpmailer_test.php, test/phpunit.php, test/rocks.png: Upgraded
+	to phpmailer 1.60
+
+2002-05-18 Saturday 14:36  martin
+
+	* lib/phpmailer/class.phpmailer.php: Added Moodle into the
+	X-Mailer: header
+
+2002-05-18 Saturday 13:22  martin
+
+	* lib/weblib.php: Smiley conversion is now optional (better for
+	html mail)
+
+2002-05-18 Saturday 13:17  martin
+
+	* lib/phpmailer/: ChangeLog.txt, LICENSE, README,
+	class.phpmailer.php, class.smtp.php, docs/extending.html,
+	docs/faq.html, docs/timeoutfix.diff, phpdoc/allclasses-frame.html,
+	phpdoc/deprecated-list.html, phpdoc/help-doc.html,
+	phpdoc/index-all.html, phpdoc/index.html,
+	phpdoc/overview-tree.html, phpdoc/packages.html,
+	phpdoc/phpmailer.html, phpdoc/serialized-form.html,
+	phpdoc/stylesheet.css: Added full source distribution of phpmailer
+
+2002-05-18 Saturday 11:37  martin
+
+	* README: Added warning about unstable CVS tree
+
+2002-05-18 Saturday 11:13  martin
+
+	* user/edit.php: Checks for bad permissions and defaults to default
+	picture
+
+2002-05-18 Saturday 11:03  martin
+
+	* pix/i/log.gif: Now a picture of a log
+
+2002-05-18 Saturday 00:33  martin
+
+	* index.php: Alt=""
+
+2002-05-17 Friday 21:38  martin
+
+	* config-dist.php: Added to eliminate problems of config.php being
+	overwritten
+
+2002-05-17 Friday 21:36  martin
+
+	* doc/credits.html: Updated for ADOdb 2.00
+
+2002-05-17 Friday 21:34  martin
+
+	* doc/install.html: Added note about config-dist.php
+
+2002-05-17 Friday 21:29  martin
+
+	* config.php: Deleted this file from CVS (see config-dist.php)
+
+2002-05-17 Friday 21:24  martin
+
+	* lib/adodb/cute_icons_for_site/: adodb.gif, adodb.png, adodb2.gif,
+	adodb2.png: Upgraded to ADOsb 2.00
+
+2002-05-17 Friday 21:20  martin
+
+	* lib/adodb/tests/: benchmark.php, client.php, test.php, test2.php,
+	test3.php, test4.php, test5.php, testcache.php,
+	testdatabases.inc.php, testgenid.php, testoci8.php, testpaging.php,
+	testpear.php, testsessions.php: Upgraded ADOdb to 2.00
+
+2002-05-17 Friday 21:16  martin
+
+	* lib/adodb/: drivers/adodb-access.inc.php,
+	drivers/adodb-ado.inc.php, drivers/adodb-ado_access.inc.php,
+	drivers/adodb-ado_mssql.inc.php,
+	drivers/adodb-borland_ibase.inc.php, drivers/adodb-csv.inc.php,
+	drivers/adodb-db2.inc.php, drivers/adodb-fbsql.inc.php,
+	drivers/adodb-firebird.inc.php, drivers/adodb-ibase.inc.php,
+	drivers/adodb-informix.inc.php, drivers/adodb-informix72.inc.php,
+	drivers/adodb-mssql.inc.php, drivers/adodb-mysql.inc.php,
+	drivers/adodb-mysqlt.inc.php, drivers/adodb-oci8.inc.php,
+	drivers/adodb-oci805.inc.php, drivers/adodb-oci8po.inc.php,
+	drivers/adodb-odbc.inc.php, drivers/adodb-odbc_mssql.inc.php,
+	drivers/adodb-odbc_oracle.inc.php, drivers/adodb-oracle.inc.php,
+	drivers/adodb-postgres.inc.php, drivers/adodb-postgres64.inc.php,
+	drivers/adodb-postgres7.inc.php, drivers/adodb-proxy.inc.php,
+	drivers/adodb-sqlanywhere.inc.php, drivers/adodb-sybase.inc.php,
+	drivers/adodb-vfp.inc.php, adodb-cryptsession.php,
+	adodb-csvlib.inc.php, adodb-errorhandler.inc.php,
+	adodb-errorpear.inc.php, adodb-lib.inc.php, adodb-pear.inc.php,
+	adodb-session.php, adodb.inc.php, crypt.inc.php, license.txt,
+	readme.htm, readme.txt, server.php, tips_portable_sql.htm,
+	tohtml.inc.php, tute.htm: Upgraded to ADOdb 2.00
+
+2002-04-15 Monday 13:22  martin
+
+	* mod/survey/download.php: Fixed download for virtual scale
+	questions with type = -1 (eg ATTLS)
+
+2002-04-13 Saturday 14:24  martin
+
+	* mod/survey/graph.php: Modified most graphs to remove the "zero"
+	line of "No answer" because this never happens (survey form forces
+	students to always answer).
+
+2002-04-13 Saturday 10:49  martin
+
+	* lib/graphlib.php: If the array y_tick_labels is defined, then
+	these are used instead of numbers on the left-hand y-axis.  See
+	mod/survey/graph.php for usage.
+
+2002-04-12 Friday 22:24  martin
+
+	* mod/survey/lib.php: Slightly enlarged graphs to 900 pixels
+	instead of 800.
+
+2002-04-12 Friday 21:58  martin
+
+	* mod/survey/graph.php: Graphs now contain proper labels down the
+	left hand side.
+
+2002-04-12 Friday 21:20  martin
+
+	* lib/weblib.php: Added :) smileys as well.
+
+2002-04-12 Friday 21:20  martin
+
+	* lib/graphlib.php: Added "$factor = round($factor * 1000.0) /
+	1000.0;" to function find_range ... it fixes some strange rounding
+	errors that were happening with Moodle surveys.
+
+2002-04-07 Sunday 12:10  martin
+
+	* config.php: Added lang config!
+
+2002-04-03 Wednesday 19:44  martin
+
+	* course/: noweeks.php, social.php, weeks.php: Added ALT="" tags to
+	spacer.gif so they don't show in text browsers
+
+2002-04-03 Wednesday 14:36  martin
+
+	* course/: edit.php, log.php, loglive.php, mod.php, social.php,
+	view.php, weeks.php: Fixed up use of isteacher (removed isadmin
+	check because it's done in isteacher now)
+
+2002-04-03 Wednesday 14:30  martin
+
+	* lib/moodlelib.php: Add check for admin to isteacher() rather than
+	doing checks everywhere else
+
+2002-04-02 Tuesday 14:14  martin
+
+	* mod/discuss/view.php: Slight fix-up for threaded view.
+
+2002-03-28 Thursday 13:52  martin
+
+	* mod/survey/: graph.php, view.php: If students view surveys after
+	having done them, then they are now shown the survey results
+	compared to the class.	Needs docs still.
+
+2002-03-26 Tuesday 22:45  martin
+
+	* lib/moodlelib.php: Strip tags from emailed text versions of
+	postings
+
+2002-03-26 Tuesday 21:24  martin
+
+	* lang/en/help.text.php: Added help information about allowed HTML
+	tags
+
+2002-03-26 Tuesday 21:02  martin
+
+	* mod/discuss/post.php: $subject and $message coming from user are
+	now cleaned of bad tags
+
+2002-03-26 Tuesday 20:58  martin
+
+	* lib/weblib.php: Added cleantext function, used for cleaning
+	user-entered text of nasty tags etc
+
+2002-03-26 Tuesday 20:26  martin
+
+	* mod/discuss/post.php: new topics are now logged
+
+2002-03-26 Tuesday 20:23  martin
+
+	* mod/discuss/lib.php: When topics are listed, long ones are now
+	truncated to keep the display looking even (print_post)
+
+2002-03-16 Saturday 14:19  martin
+
+	* course/: edit.php, log.php, loglive.php, mod.php, view.php: Allow
+	admin to do anything the teacher can do
+
+2002-03-16 Saturday 14:06  martin
+
+	* course/social.php: Admin improvements
+
+2002-03-15 Friday 18:19  martin
+
+	* user/edit.html: Added help button
+
+2002-03-15 Friday 18:18  martin
+
+	* lang/en/help.picture.php: New help file for uploading a picture
+
+2002-03-14 Thursday 13:31  martin
+
+	* mod/discuss/lib.php: SLight formatting change on Reply
+
+2002-03-13 Wednesday 17:10  martin
+
+	* mod/discuss/index.php: id is now optional (if missing it assumes
+	the site forums)
+
+2002-03-11 Monday 11:26  martin
+
+	* lang/en/help.text.php: Help file for text
+
+2002-03-11 Monday 11:22  martin
+
+	* mod/discuss/post.html: Added a help button
+
+2002-03-11 Monday 11:21  martin
+
+	* lib/moodlelib.php: Added helpbutton function for popup help, see
+	also /help.php
+
+2002-03-11 Monday 11:18  martin
+
+	* help.php: First pass at a simple help system
+
+2002-03-11 Monday 10:03  martin
+
+	* pix/help.gif: This little help button indicates context-sensitive
+	help
+
+2002-03-10 Sunday 17:17  martin
+
+	* theme/standardblue/favicon.ico: Edited icon for consistency
+
+2002-03-10 Sunday 17:06  martin
+
+	* theme/standardblue/favicon.ico: Favicon for blue theme is now
+	blue (duh).
+
+2002-03-07 Thursday 15:07  martin
+
+	* doc/credits.html: URL for phpmailer
+
+2002-03-07 Thursday 14:31  martin
+
+	* lib/class.phpmailer.php: Changed version to reflect Moodle (it
+	shows up in the mail headers)
+
+2002-03-07 Thursday 14:18  martin
+
+	* user/index.php: Added location on the user overview
+
+2002-03-07 Thursday 13:39  martin
+
+	* login/signup_form.php: Added small warning about emails having to
+	be working ones
+
+2002-03-07 Thursday 12:50  martin
+
+	* mod/discuss/post.php: After posting a reply in a discussion, user
+	is automatically subscribed by mail Later this should be an option
+	(set by default).
+
+2002-03-07 Thursday 12:48  martin
+
+	* mod/discuss/cron.php: Old messages get marked "mailed" even when
+	noone is subscribed to get mail
+
+2002-03-04 Monday 17:04  martin
+
+	* mod/discuss/subscribe.php: Added logging for
+	subscribe/unsubscribe
+
+2002-03-02 Saturday 11:26  martin
+
+	* user/default/: f1.jpg, f2.jpg: Replaced shadowhead with something
+	a bit more positive (smiley face cake)
+
+2002-02-27 Wednesday 18:09  martin
+
+	* theme/standardblue/config.php: Slight color changes
+
+2002-02-26 Tuesday 21:40  martin
+
+	* index.php: Small change
+
+2002-02-26 Tuesday 14:37  martin
+
+	* mod/discuss/: install.sql, lib.php, subscribe.php: Some small
+	changes related to the updated social course format
+
+2002-02-26 Tuesday 14:36  martin
+
+	* mod/reading/lib.php: Changes to list function - now returns list
+	of links
+
+2002-02-26 Tuesday 14:35  martin
+
+	* index.php: Some changes to accomodate changes in the reading lib
+
+2002-02-26 Tuesday 14:34  martin
+
+	* course/: lib.php, view.php: Updated to accomodate new "social"
+	format
+
+2002-02-26 Tuesday 14:33  martin
+
+	* course/social.php: This social format replaces the old noweeks
+	format
+
+2002-02-26 Tuesday 11:50  martin
+
+	* theme/standardblue/: config.php, favicon.ico, footer.html,
+	header.html, styles.css: New blue theme
+
+2002-02-26 Tuesday 11:27  martin
+
+	* mod/reading/lib.php: Fixed case where course <> 0
+
+2002-02-01 Friday 10:56  martin
+
+	* doc/intro.html: Some clarification of the GPL
+
+2002-01-28 Monday 13:25  martin
+
+	* doc/COPYRIGHT.txt: Updated the years of Copyright
+
+2002-01-24 Thursday 15:20  martin
+
+	* login/logout.php: Changed unset($USER)  to $USER=NULL ... as
+	unset can cause problems with PHP 4.1
+
+2002-01-08 Tuesday 21:20  martin
+
+	* mod/discuss/: lib.php, user.php: Some small changes to add a
+	"parent" link to posts - this makes analysis easier
+
+2002-01-07 Monday 23:00  martin
+
+	* mod/journal/user.php: Added date stamp on journal entries
+
+2002-01-05 Saturday 12:11  martin
+
+	* login/signup_form.php: Removed Curtin-only thing and put email
+	first
+
+2001-12-12 Wednesday 23:03  martin
+
+	* doc/credits.html: Updated version number
+
+2001-12-11 Tuesday 12:30  martin
+
+	* index.php: Made an "Admin" section on the frojnt page
+
+2001-12-10 Monday 19:18  martin
+
+	* index.php: Fixed description tag and moved switch
+
+2001-12-10 Monday 19:10  martin
+
+	* index.php: Added meta tag - Description (for search engines)
+
+2001-12-09 Sunday 18:34  martin
+
+	* doc/: background.html, credits.html, developer.html, future.html,
+	install.html, intro.html, licence.html, teacher.html: Added version
+	control strings
+
+2001-12-09 Sunday 18:27  martin
+
+	* doc/future.html: Added stuff about scaling for large classes
+
+2001-12-06 Thursday 14:55  martin
+
+	* mod/reading/view.php: bit more work on URL view ...
+
+2001-12-06 Thursday 12:32  martin
+
+	* course/mod.php: Fixed headers
+
+2001-12-06 Thursday 12:27  martin
+
+	* mod/reading/view.php: Altered URL frameset size
+
+2001-12-06 Thursday 12:23  martin
+
+	* doc/: CHANGES, COPYRIGHT, COPYRIGHT.txt, INSTALL, LICENCE, NOTES,
+	ROADMAP, background.html, config.php, contents.html, credits.html,
+	developer.html, future.html, index.html, install.html, intro.html,
+	licence.html, teacher.html: First version of HTML documentation
+
+2001-12-05 Wednesday 00:14  martin
+
+	* pix/i/: edit.gif, switch.gif: New icons
+
+2001-12-05 Wednesday 00:13  martin
+
+	* course/: lib.php, weeks.php: Changed weekly format ... makes more
+	sense now I think
+
+2001-12-05 Wednesday 00:00  martin
+
+	* lib/moodlelib.php: Changed navigation bar so it uses Site name
+	instead of "Home"
+
+2001-12-04 Tuesday 23:59  martin
+
+	* theme/standard/styles.css: Backed out quote changes, they do need
+	to be where they were
+
+2001-12-04 Tuesday 22:04  martin
+
+	* pix/t/: left.gif, right.gif: Added left and right arrows
+
+2001-12-04 Tuesday 22:02  martin
+
+	* admin/: cron.php, index.php, teacher.php: Improvements to the
+	process of setting up Moodle the first time, also better interface
+	for adding/removing teachers
+
+2001-12-03 Monday 16:26  martin
+
+	* theme/standard/: favicon.ico, header.html, styles.css: Cleaned up
+	some formatting and updated the favicon to match the pages
+
+2001-12-01 Saturday 17:47  martin
+
+	* lib/graphlib.php: No functional changes, just fixed comments to
+	make the Moodle mods clearer.
+
+2001-11-30 Friday 23:42  martin
+
+	* config.php: Added copyright notices and cleaned up the
+	documentation
+
+2001-11-30 Friday 23:21  martin
+
+	* admin/index.php: Fixed serious bug that allowed any existing user
+	to use this page. Doh!
+
+2001-11-30 Friday 14:12  martin
+
+	* theme/standard/header.html: Added favicon support and a small
+	bugfix or two
+
+2001-11-30 Friday 14:10  martin
+
+	* theme/standard/favicon.ico: First go at a favicon for Moodle
+
+2001-11-29 Thursday 20:28  martin
+
+	* admin/index.php: Corrected a type   used "=" instead of "=="
+
+2001-11-29 Thursday 13:47  martin
+
+	* admin/index.php: Turned on link to teacher.php
+
+2001-11-29 Thursday 13:46  martin
+
+	* admin/teacher.php: Basic script to add/delete teachers of courses
+
+2001-11-29 Thursday 11:11  martin
+
+	* lib/moodlelib.php: made Print_Heading more general
+
+2001-11-28 Wednesday 22:44  martin
+
+	* admin/index.php: Make it ignore CVS directories
+
+2001-11-25 Sunday 23:53  martin
+
+	* doc/config.php: Added a copy of this in the doc directory, just
+	in case
+
+2001-11-25 Sunday 23:52  martin
+
+	* config.php: Added line about location
+
+2001-11-25 Sunday 23:50  martin
+
+	* config.php: Setting it back to default status.
+
+2001-11-25 Sunday 23:48  martin
+
+	* config.php, file.php, course/view.php, lib/moodlelib.php,
+	mod/discuss/lib.php, mod/reading/lib.php, mod/reading/view.php,
+	theme/standard/footer.html: Several changes related to the front
+	page, so that it now works OK.
+
+2001-11-25 Sunday 23:45  martin
+
+	* index.php: Tidied up the front page.	Added 'editing' switch and
+	normal footer
+
+2001-11-22 Thursday 21:47  martin
+
+	* mod/survey/graph.php: removed shadows from class averages when
+	they are combined with student results, so that the student graphs
+	"jump out" more
+
+2001-11-22 Thursday 14:51  martin
+
+	* theme/standard/: footer.html, header.html: removed CVS Id strings
+
+2001-11-22 Thursday 14:42  martin
+
+	* config.php: Updating with sane default values
+
+2001-11-22 Thursday 14:23  martin
+
+	* README, config.php, file.php, index.php, admin/cron.php,
+	admin/index.php, admin/log.php, admin/moodle-core.sql,
+	admin/site.html, admin/site.php, admin/teacher.php,
+	admin/user.html, admin/user.php, chat/DisplayArea.class,
+	chat/chatclient.class, chat/icon.gif, chat/index.php,
+	chat/simso1.au, chat/simso2.au, course/edit.html, course/edit.php,
+	course/editweek.html, course/editweek.php, course/email.html,
+	course/email.php, course/index.php, course/lib.php, course/log.php,
+	course/login.html, course/login.php, course/loginas.php,
+	course/loglive.php, course/mod.php, course/mod_delete.html,
+	course/new.php, course/noweeks.php, course/user.php,
+	course/view.php, course/weeks.php, doc/CHANGES, doc/COPYRIGHT,
+	doc/INSTALL, doc/LICENCE, doc/NOTES, doc/ROADMAP, error/index.php,
+	files/index.php, files/mimetypes.php, files/pix/audio.gif,
+	files/pix/edit.gif, files/pix/env.gif, files/pix/excel.gif,
+	files/pix/explore.gif, files/pix/files.gif, files/pix/folder.gif,
+	files/pix/help.gif, files/pix/html.gif, files/pix/image.gif,
+	files/pix/move.gif, files/pix/parent.gif, files/pix/pdf.gif,
+	files/pix/text.gif, files/pix/unknown.gif, files/pix/word.gif,
+	files/pix/zip.gif, lib/class.phpmailer.php, lib/class.smtp.php,
+	lib/graphlib.php, lib/javascript.php, lib/moodlelib.php,
+	lib/psxlsgen.php, lib/setup.php, lib/weblib.php, lib/wordlist.txt,
+	lib/fonts/arial.ttf, lib/fonts/vixar.ttf,
+	login/change_password.php, login/change_password_form.html,
+	login/confirm.php, login/countries.php, login/forgot_password.php,
+	login/forgot_password_change.html, login/forgot_password_form.html,
+	login/index.php, login/index_confirm.html, login/index_form.html,
+	login/logout.php, login/signup.php, login/signup_confirm.html,
+	login/signup_form.php, mod/assignment/README,
+	mod/assignment/module.php, mod/chat/icon.gif, mod/chat/install.sql,
+	mod/chat/module.php, mod/choice/icon.gif, mod/choice/index.php,
+	mod/choice/install.sql, mod/choice/mod.html, mod/choice/mod.php,
+	mod/choice/module.php, mod/choice/report.php, mod/choice/view.html,
+	mod/choice/view.php, mod/discuss/cron.php, mod/discuss/icon.gif,
+	mod/discuss/index.php, mod/discuss/install.sql,
+	mod/discuss/lib.php, mod/discuss/mod.html, mod/discuss/mod.php,
+	mod/discuss/module.php, mod/discuss/new.php, mod/discuss/post.html,
+	mod/discuss/post.php, mod/discuss/rate.php, mod/discuss/report.php,
+	mod/discuss/subscribe.php, mod/discuss/user.php,
+	mod/discuss/view.php, mod/journal/edit.html, mod/journal/edit.php,
+	mod/journal/icon.gif, mod/journal/index.php,
+	mod/journal/install.sql, mod/journal/lib.php, mod/journal/mod.html,
+	mod/journal/mod.php, mod/journal/module.php, mod/journal/new.php,
+	mod/journal/report.php, mod/journal/user.php, mod/journal/view.php,
+	mod/reading/details.php, mod/reading/icon.gif,
+	mod/reading/index.php, mod/reading/install.sql,
+	mod/reading/lib.php, mod/reading/mod.html, mod/reading/mod.php,
+	mod/reading/module.php, mod/reading/new.php, mod/reading/view.php,
+	mod/survey/details.php, mod/survey/download.php,
+	mod/survey/edit.php, mod/survey/edit_form.html,
+	mod/survey/edit_form.phtml, mod/survey/edit_new.html,
+	mod/survey/edit_new.phtml, mod/survey/graph.php,
+	mod/survey/icon.gif, mod/survey/icon2.gif, mod/survey/index.php,
+	mod/survey/install.sql, mod/survey/lib.php,
+	mod/survey/login_form.html, mod/survey/mod.html,
+	mod/survey/mod.php, mod/survey/module.php, mod/survey/report.php,
+	mod/survey/save.php, mod/survey/test.php, mod/survey/view.php,
+	mod/survey/docs/days.html, mod/survey/docs/intro.html,
+	mod/survey/docs/name.html, mod/survey/docs/password.html,
+	mod/survey/docs/surveytype.html, mod/survey/docs/url.html,
+	pix/b.gif, pix/madewithmoodle.gif, pix/madewithmoodle1.gif,
+	pix/madewithmoodle2.gif, pix/poo.html, pix/spacer.gif,
+	pix/webding.png, pix/i/ICONS-16x16, pix/i/email.gif, pix/i/log.gif,
+	pix/i/new.gif, pix/i/news.gif, pix/i/settings.gif, pix/s/SMILEYS,
+	pix/s/biggrin.gif, pix/s/cool.gif, pix/s/cross.gif,
+	pix/s/mixed.gif, pix/s/sad.gif, pix/s/smiley.gif,
+	pix/s/surprise.gif, pix/s/tongueout.gif, pix/s/wideeyes.gif,
+	pix/s/wink.gif, pix/t/TINY-ICONS, pix/t/delete.gif, pix/t/down.gif,
+	pix/t/edit.gif, pix/t/search.gif, pix/t/up.gif,
+	theme/standard/config.php, theme/standard/footer.html,
+	theme/standard/header.html, theme/standard/styles.css,
+	user/edit.html, user/edit.php, user/index.php, user/lib.php,
+	user/new.php, user/pix.php, user/user.gif, user/users.gif,
+	user/view.php, user/default/f1.jpg, user/default/f2.jpg: Initial
+	revision
+
+2001-11-22 Thursday 14:23  martin
+
+	* README, config.php, file.php, index.php, admin/cron.php,
+	admin/index.php, admin/log.php, admin/moodle-core.sql,
+	admin/site.html, admin/site.php, admin/teacher.php,
+	admin/user.html, admin/user.php, chat/DisplayArea.class,
+	chat/chatclient.class, chat/icon.gif, chat/index.php,
+	chat/simso1.au, chat/simso2.au, course/edit.html, course/edit.php,
+	course/editweek.html, course/editweek.php, course/email.html,
+	course/email.php, course/index.php, course/lib.php, course/log.php,
+	course/login.html, course/login.php, course/loginas.php,
+	course/loglive.php, course/mod.php, course/mod_delete.html,
+	course/new.php, course/noweeks.php, course/user.php,
+	course/view.php, course/weeks.php, doc/CHANGES, doc/COPYRIGHT,
+	doc/INSTALL, doc/LICENCE, doc/NOTES, doc/ROADMAP, error/index.php,
+	files/index.php, files/mimetypes.php, files/pix/audio.gif,
+	files/pix/edit.gif, files/pix/env.gif, files/pix/excel.gif,
+	files/pix/explore.gif, files/pix/files.gif, files/pix/folder.gif,
+	files/pix/help.gif, files/pix/html.gif, files/pix/image.gif,
+	files/pix/move.gif, files/pix/parent.gif, files/pix/pdf.gif,
+	files/pix/text.gif, files/pix/unknown.gif, files/pix/word.gif,
+	files/pix/zip.gif, lib/class.phpmailer.php, lib/class.smtp.php,
+	lib/graphlib.php, lib/javascript.php, lib/moodlelib.php,
+	lib/psxlsgen.php, lib/setup.php, lib/weblib.php, lib/wordlist.txt,
+	lib/fonts/arial.ttf, lib/fonts/vixar.ttf,
+	login/change_password.php, login/change_password_form.html,
+	login/confirm.php, login/countries.php, login/forgot_password.php,
+	login/forgot_password_change.html, login/forgot_password_form.html,
+	login/index.php, login/index_confirm.html, login/index_form.html,
+	login/logout.php, login/signup.php, login/signup_confirm.html,
+	login/signup_form.php, mod/assignment/README,
+	mod/assignment/module.php, mod/chat/icon.gif, mod/chat/install.sql,
+	mod/chat/module.php, mod/choice/icon.gif, mod/choice/index.php,
+	mod/choice/install.sql, mod/choice/mod.html, mod/choice/mod.php,
+	mod/choice/module.php, mod/choice/report.php, mod/choice/view.html,
+	mod/choice/view.php, mod/discuss/cron.php, mod/discuss/icon.gif,
+	mod/discuss/index.php, mod/discuss/install.sql,
+	mod/discuss/lib.php, mod/discuss/mod.html, mod/discuss/mod.php,
+	mod/discuss/module.php, mod/discuss/new.php, mod/discuss/post.html,
+	mod/discuss/post.php, mod/discuss/rate.php, mod/discuss/report.php,
+	mod/discuss/subscribe.php, mod/discuss/user.php,
+	mod/discuss/view.php, mod/journal/edit.html, mod/journal/edit.php,
+	mod/journal/icon.gif, mod/journal/index.php,
+	mod/journal/install.sql, mod/journal/lib.php, mod/journal/mod.html,
+	mod/journal/mod.php, mod/journal/module.php, mod/journal/new.php,
+	mod/journal/report.php, mod/journal/user.php, mod/journal/view.php,
+	mod/reading/details.php, mod/reading/icon.gif,
+	mod/reading/index.php, mod/reading/install.sql,
+	mod/reading/lib.php, mod/reading/mod.html, mod/reading/mod.php,
+	mod/reading/module.php, mod/reading/new.php, mod/reading/view.php,
+	mod/survey/details.php, mod/survey/download.php,
+	mod/survey/edit.php, mod/survey/edit_form.html,
+	mod/survey/edit_form.phtml, mod/survey/edit_new.html,
+	mod/survey/edit_new.phtml, mod/survey/graph.php,
+	mod/survey/icon.gif, mod/survey/icon2.gif, mod/survey/index.php,
+	mod/survey/install.sql, mod/survey/lib.php,
+	mod/survey/login_form.html, mod/survey/mod.html,
+	mod/survey/mod.php, mod/survey/module.php, mod/survey/report.php,
+	mod/survey/save.php, mod/survey/test.php, mod/survey/view.php,
+	mod/survey/docs/days.html, mod/survey/docs/intro.html,
+	mod/survey/docs/name.html, mod/survey/docs/password.html,
+	mod/survey/docs/surveytype.html, mod/survey/docs/url.html,
+	pix/b.gif, pix/madewithmoodle.gif, pix/madewithmoodle1.gif,
+	pix/madewithmoodle2.gif, pix/poo.html, pix/spacer.gif,
+	pix/webding.png, pix/i/ICONS-16x16, pix/i/email.gif, pix/i/log.gif,
+	pix/i/new.gif, pix/i/news.gif, pix/i/settings.gif, pix/s/SMILEYS,
+	pix/s/biggrin.gif, pix/s/cool.gif, pix/s/cross.gif,
+	pix/s/mixed.gif, pix/s/sad.gif, pix/s/smiley.gif,
+	pix/s/surprise.gif, pix/s/tongueout.gif, pix/s/wideeyes.gif,
+	pix/s/wink.gif, pix/t/TINY-ICONS, pix/t/delete.gif, pix/t/down.gif,
+	pix/t/edit.gif, pix/t/search.gif, pix/t/up.gif,
+	theme/standard/config.php, theme/standard/footer.html,
+	theme/standard/header.html, theme/standard/styles.css,
+	user/edit.html, user/edit.php, user/index.php, user/lib.php,
+	user/new.php, user/pix.php, user/user.gif, user/users.gif,
+	user/view.php, user/default/f1.jpg, user/default/f2.jpg: moodle
+
