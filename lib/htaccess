@@ -1,7 +1,30 @@
 # On some PHP servers it may help if this file is copied
 # to the main moodle directory and renamed .htaccess
 #
+# As soon as you do this, check your web site.  Is it 
+# still working OK?  If you are getting a "configuration
+# error" then you may need to enable overrides by editing
+# the main httpd.conf for Apache and in the main server
+# or virtual server area, adding something like:
+#
+# <Directory /web/moodle>
+#     AllowOverride All 
+# </Directory>
+#
+# Firstly, set up some PHP variables that Moodle needs
+
 php_value magic_quotes_gpc 1
 php_value file_uploads 1
+
+
+# These are optional - you may not want to override php.ini 
+
 #php_value upload_max_filesize 2M
 #php_value post_max_size 2M
+
+
+# Change the following line to point to the error/index.php
+# file in your Moodle distribution.  It provides a form 
+# which emails you (the admin) about 404 errors.
+
+#ErrorDocument 404 http://example.org/moodle/error/index.php
