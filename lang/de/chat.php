@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // chat.php - created with Moodle 1.4 aiming-for-beta-soon (2004082200)
+      // chat.php - created with Moodle 1.4.3 (2004083130)
 
 
 $string['beep'] = 'Signalton';
@@ -13,7 +13,7 @@ $string['configrefreshroom'] = 'Wie oft soll der Chatraum aktualisiert werden? (
 $string['configrefreshuserlist'] = 'Wie häufig soll die Teilnehmerliste aktualisiert werden? (Zeit in Sekunden)';
 $string['configserverhost'] = 'Hostname des Computers mit dem Server-Daemon';
 $string['configserverip'] = 'Die numerische IP-Adresse für diesen Hostnamen';
-$string['configservermax'] = 'Maximale zulässige Teilnehmerzahl';
+$string['configservermax'] = 'Maximal zulässige Teilnehmerzahl';
 $string['configserverport'] = 'Server-Port für die Nutzung von Daemon';
 $string['currentchats'] = 'Aktive Chat-Sitzungen';
 $string['currentusers'] = 'Aktueller Benutzer';
@@ -22,6 +22,10 @@ $string['deletesessionsure'] = 'Sind Sie sich sicher, dass Sie diese Sitzung lös
 $string['donotusechattime'] = 'Veröffentlichen Sie keine Chatzeiten';
 $string['enterchat'] = 'Klicken Sie hier, um den Chat zu betreten';
 $string['errornousers'] = 'Kann keinen Nutzer finden!';
+$string['explaingeneralconfig'] = 'Diese Einstellungen sind <strong>immer</strong> anzupassen';
+$string['explainmethoddaemon'] = 'Diese Einstellungen sind <strong>nur erforderlich </strong> wenn Sie die Chatmethode \"Chat server daemon\" gewählt haben';
+$string['explainmethodnormal'] = 'Diese Einstellungen sind <strong>nur erforderlich</strong> wenn Sie die \"Standardmethode\" ausgewählt haben';
+$string['generalconfig'] = 'Grundeinstellungen';
 $string['helpchatting'] = 'Hife beim Chatten';
 $string['idle'] = 'Leerlauf';
 $string['messagebeepseveryone'] = '$a signalisiert jedem!';
@@ -33,7 +37,7 @@ $string['methoddaemon'] = 'Chat Server Daemon';
 $string['methodnormal'] = 'Standardmethode';
 $string['modulename'] = 'Chat';
 $string['modulenameplural'] = 'Chats';
-$string['neverdeletemessages'] = 'Nie Mitteilungen Löschen';
+$string['neverdeletemessages'] = 'Mitteilungen nie löschen';
 $string['nextsession'] = 'Nächste geplante Sitzung';
 $string['noguests'] = 'Der Chat ist für Gäste nicht zugänglich.';
 $string['nomessages'] = 'Keine Nachrichten bisher';

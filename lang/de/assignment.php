@@ -1,15 +1,15 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.2 development (2004020300)
+      // assignment.php - created with Moodle 1.4.3 (2004083130)
 
 
 $string['allowresubmit'] = 'Erneutes Einreichen erlauben';
 $string['assignmentdetails'] = 'Aufgabendetails';
-$string['assignmentmail'] = '$a->Trainer/in hat einen Kommentar zu Ihrer eingereichten Aufgabe \'$a->assignment\' verfasst.
+$string['assignmentmail'] = '$a->teacher hat einen Kommentar zu Ihrer eingereichten Aufgabe \'$a->assignment\' verfasst.
 
 Sie finden diesen im Anhang Ihrer abgegebenen Aufgabe:
 
 $a->url';
-$string['assignmentmailhtml'] = '$a->Trainer/in hat einen Kommentar zu Ihrer abgegebenen Aufgabe verfasst.</i>\'<br /><br />
+$string['assignmentmailhtml'] = '$a->teacher hat einen Kommentar zu Ihrer abgegebenen Aufgabe verfasst.</i>\'<i>$a->assignment</i>\'<br /><br />
 Sie finden diesen im Anhang Ihrer 
 <a href=\"$a->url\">eingereichten Aufgabe</a>:.';
 $string['assignmentname'] = 'Aufgabenname';
@@ -17,7 +17,7 @@ $string['assignmenttype'] = 'Aufgabentyp';
 $string['configmaxbytes'] = 'Voreingestellte maximale Größe für alle Einstellungen auf dieser Seite';
 $string['description'] = 'Beschreibung ';
 $string['duedate'] = 'Abgabedatum';
-$string['duedateno'] = 'keine fälliges Datum';
+$string['duedateno'] = 'Kein Abgabedatum';
 $string['early'] = '$a früh';
 $string['existingfiledeleted'] = 'Die vorhandene Datei wurde gelöscht: $a';
 $string['failedupdatefeedback'] = 'Keine Aktualisierung der Rückmeldung für Benutzer $a';
@@ -43,7 +43,7 @@ $string['uploadbadname'] = 'Dieser Dateiname enthält unzulässige Zeichen und kan
 $string['uploadedfiles'] = 'hochgeladene Dateien';
 $string['uploaderror'] = 'Beim Hochladen der Datei trat ein Fehler auf';
 $string['uploadfailnoupdate'] = 'Die Datei wurde korrekt hochgeladen, aber Ihr Eintrag kann nicht aktualisiert werden!';
-$string['uploadfiletoobig'] = 'Entschuldigung, aber diese Datei ist zu groß (Die Begrenzung ist $a Bytes)';
+$string['uploadfiletoobig'] = 'Entschuldigung, aber diese Datei ist zu groß (die Begrenzung liegt bei $a Bytes)';
 $string['uploadnofilefound'] = 'Es wurde keine Datei gefunden. Sind Sie sicher, dass Sie eine für das Hochladen ausgewählt haben?';
 $string['uploadnotregistered'] = '\'$a\' wurde korrekt hochgeladen, aber der Eintrag wurde nicht registriert!';
 $string['uploadsuccess'] = '\'$a\' wurde erfolgreich hochgeladen';

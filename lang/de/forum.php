@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.4 aiming-for-beta-soon (2004082200)
+      // forum.php - created with Moodle 1.4.3 (2004083130)
 
 
 $string['addanewdiscussion'] = 'Ein neues Diskussionsthema hinzufügen';
@@ -12,7 +12,7 @@ $string['anyfile'] = 'Jede Datei';
 $string['attachment'] = 'Anhang';
 $string['bynameondate'] = 'von  $a->name - $a->date ';
 $string['configdisplaymode'] = 'Anzeige für Diskussionen, falls keine eingestellt wurde (Voreinstellung).';
-$string['configenablerssfeeds'] = 'Diese Einstellung ermöglicht die Nutzung der RSS-Feeds für alel Foren. Jedes Forum muss einzeln für den RSS-Feed aktiviert werden.';
+$string['configenablerssfeeds'] = 'Diese Einstellung ermöglicht die Nutzung der RSS-Feeds für alle Foren. Jedes Forum muss einzeln für den RSS-Feed aktiviert werden.';
 $string['configlongpost'] = 'Jeder Beitrag (ohne HTML-Codierung), der länger ist als diese Einstellung, wird als lang eingestuft.';
 $string['configmanydiscussions'] = 'Maximale Anzahl der Diskussionsthemen eines Forums pro Seite';
 $string['configmaxbytes'] = 'Maximale Größe für alle Anhänge, die zu den Beiträgen auf diese Seite hochgeladen wurden ';
@@ -75,7 +75,7 @@ $string['namesocial'] = 'Soziales Forum';
 $string['nameteacher'] = 'Trainer/innen-Forum';
 $string['newforumposts'] = 'Neue Foren-Beiträge';
 $string['nodiscussions'] = 'Es befindet sich noch kein Diskussionsthema in diesem Forum';
-$string['noguestpost'] = 'Gäste dürfen hier nicht mitdiskutieren.';
+$string['noguestpost'] = 'Gäste dürfen hier nicht mitdiskutieren. Bitte melden Sie sich an.';
 $string['nomorepostscontaining'] = 'Es wurden keine weiteren Beiträge mit \'$a\' gefunden';
 $string['nonews'] = 'Es wurden bisher keine Neuigkeiten gepostet';
 $string['noposts'] = 'Keine Beiträge';
@@ -136,7 +136,7 @@ $string['showsubscribers'] = 'Teilnehmer/innen anzeigen/Einträge bearbeiten';
 $string['singleforum'] = 'Eine einzelne, einfache Diskussion';
 $string['startedby'] = 'Beginnt mit';
 $string['subject'] = 'Betreff';
-$string['subscribe'] = 'Ich will die Beiträge dieses Forums als Email erhalten';
+$string['subscribe'] = 'Ich will die Beiträge dieses Forums als E-Mail erhalten';
 $string['subscribeall'] = 'Jede/n Teilnehmer/in in diesem Forum eintragen';
 $string['subscribed'] = 'Alle Beiträge in diesem Forum per Email?';
 $string['subscribenone'] = 'Jede/n Teilnehmer/in aus diesem Forum austragen';
@@ -146,9 +146,11 @@ $string['subscribestart'] = 'Senden Sie mir Kopien via E-Mail von den Beiträgen 
 $string['subscribestop'] = 'Ich möchte keine Kopien via E-Mail von den Beiträgen zu diesem Forum';
 $string['subscription'] = 'Anmeldung';
 $string['subscriptions'] = 'Anmeldungen';
-$string['unsubscribe'] = 'Ich will künftig keine Emails von Beiträgen aus dieem Forum erhalten';
+$string['unsubscribe'] = 'Ich will künftig keine Emails von Beiträgen aus diesem Forum erhalten';
 $string['unsubscribed'] = 'Abgemeldet';
 $string['unsubscribeshort'] = 'Abmelden';
+$string['yesforever'] = 'Ja, für immer';
+$string['yesinitially'] = 'Ja, zunächst';
 $string['youratedthis'] = 'Ihre Bewertung';
 $string['yournewtopic'] = 'Ihr neues Diskussionsthema';
 $string['yourreply'] = 'Ihre Antwort';

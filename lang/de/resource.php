@@ -1,30 +1,35 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.4 aiming-for-beta-soon (2004082200)
+      // resource.php - created with Moodle 1.4.3 (2004083130)
 
 
 $string['addresource'] = 'Material hinzufügen';
 $string['chooseafile'] = 'Wählen Sie ein Datei aus oder laden Sie eine auf den Server';
+$string['chooseparameter'] = 'Parameter auswählen';
 $string['configdefaulturl'] = 'Wenn Sie eine neue URL basierte Ressource anlegen wird dieser Wert als Voreinstellung bereits angezeigt.';
 $string['configfilterexternalpages'] = 'Diese Option wendet den eingestellten Filter (Wörterbuch, Autolinks, etc.) auch für alle externen Quellen (Webseiten und hochgeladene HTML-Seiten) an. Wenn Sie diese Option aktivieren, werden Ihre Kursseiten wesentlich langsamer laufen. Nutzen Sie diese Option daher nur wenn Sie sie wirklich benötigen.';
 $string['configframesize'] = 'Wenn eine Webseite oder eine hochgeladene Datei in einem Frame angezeigt wird, so gibt dieser Wert die Größe des Top-Frames, der die Navigation beinhaltet, in Pixeln an.';
+$string['configparametersettings'] = 'Stellen Sie die Anfangswerte für die Parameter im Formular zur Bereitstellung neuer Arbeitsunterlagen ein. Nach dem ersten Öffnen kann diese individuell angepasst werden.';
 $string['configpopup'] = 'Soll eine neue Ressource in einem Popup-Fenster angezeigt werden, falls dies möglich ist (Grundeinstellung)?';
 $string['configpopupdirectories'] = 'Sollen von Popup-Fenstern Verzeichnislinks angezeigt werden? (Voreinstellung)';
 $string['configpopupheight'] = 'Welche Höhe sollen Popup-Fenster haben (Voreinstellung)?';
 $string['configpopuplocation'] = 'Sollen Popup-Fenster das Adressmenu zeigen (Voreinstellung)?';
 $string['configpopupmenubar'] = 'Sollen Popup-Fenster das Menu zeigen (Voreinstellung)?';
-$string['configpopupresizable'] = 'Soll  die Größe von Popup-Fenstern veränderbar sein (Voreinstellung)?';
+$string['configpopupresizable'] = 'Soll die Größe von Popup-Fenstern veränderbar sein (Voreinstellung)?';
 $string['configpopupscrollbars'] = 'Sollen Popup-Fenster scrollbar sein (Voreinstellung)?';
 $string['configpopupstatus'] = 'Sollen Popup-Fenster eine Statusanzeige haben (Voreinstellung)?';
 $string['configpopuptoolbar'] = 'Sollen Popup-Fenster die Toolbar anzeigen (Voreinstellung)?';
 $string['configpopupwidth'] = 'Welche Breite sollen Popup-Fenster haben (Voreinstellung)?';
+$string['configsecretphrase'] = 'Dieser versteckte Wert wird verwandt, um einen verschlüsselten Wert zu erstellen, der als Parameter an andere Ressourcen gesandt wird. Der verschlüsselte Code wird erstellt von einem md5 Wert der derzeitigen IP Adresse in Verbindung mit dem eingegenen Wert. Z.B. code = md5(IP.secretphrase). Dies erlaubt der angesprochenen Ressource die Verbindung für erhöhte Sicherheit zu überprüfen.';
 $string['configwebsearch'] = 'Wenn eine URL als Webseite oder Link eingefügt wird soll diese Seite dem Benutzer bei der Suche nach einer URL unterstützen.';
+$string['configwindowsettings'] = 'Stellen Sie die Anfangswerte für die Fenstereinstellungen im Formular zur Bereitstellung neuer Arbeitsunterlagen ein. Nach dem ersten Öffnen kann diese individuell angepasst werden.';
 $string['directlink'] = 'Direkter Link zu dieser Datei';
 $string['directoryinfo'] = 'Alle Dateien im ausgewählten Verzeichnis werden angezeigt';
+$string['display'] = 'Fenster';
 $string['editingaresource'] = 'Material bearbeiten';
 $string['encryptedcode'] = 'Verschlüsselter Code';
 $string['example'] = 'Beispiel';
 $string['exampleurl'] = 'http://www.beispiel.de/Beispielverzeichnis/Beispieldatei.html';
-$string['fetchclienterror'] = 'Ein Fehler ist beim Aufruf der Seite aufgetreten (evtl. eine falsche Web-Adresse).';
+$string['fetchclienterror'] = 'Beim Aufruf der Seite ist ein Fehler aufgetreten (evtl. eine falsche Web-Adresse).';
 $string['fetcherror'] = 'Ein Fehler ist beim Aufruf der Seite aufgetreten.';
 $string['fetchservererror'] = 'Ein Fehler (evtl. ein Programmfehler) ist beim Remoteserver aufgetreten . </p>';
 $string['filename'] = 'Dateiname';
@@ -57,7 +62,7 @@ $string['pagewindow'] = 'Gleiches Fenster';
 $string['parameter'] = 'Einstellung';
 $string['parameters'] = 'Einstellungen';
 $string['popupresource'] = 'Diese Quelle erscheint in einem Pop-Up-Fenster';
-$string['popupresourcelink'] = 'Wenn es nicht klappt, klicken sie hier $a';
+$string['popupresourcelink'] = 'Wenn es nicht klappt, klicken Sie hier $a';
 $string['resourcetype'] = 'Typ der Quelle';
 $string['resourcetype1'] = 'Referenz';
 $string['resourcetype2'] = 'Internet-Seite';

@@ -1,11 +1,10 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.4 aiming-for-beta-soon (2004082200)
+      // editor.php - created with Moodle 1.4.3 (2004083130)
 
 
 $string['about'] = 'Über diesen Editor';
 $string['absbottom'] = 'Unten ausrichten';
-$string['middle'] = 'Position in der Mitte';
-$string['address'] = 'Anschrift';
+$string['address'] = 'Adresse';
 $string['alignment'] = 'Anordnung';
 $string['alternatetext'] = 'Alternativer Text';
 $string['anchorhelp'] = 'Hiermit erstellen Sie nur einen Anker. Zusätzlich müssen Sie einen Link manuell erstellen.';
@@ -15,7 +14,7 @@ $string['baseline'] = 'Grundlinie';
 $string['bold'] = 'Fett';
 $string['borderthickness'] = 'Dicke der Ränder';
 $string['bottom'] = 'Ende';
-$string['browse'] = 'Surchsuchen';
+$string['browse'] = 'Durchsuchen';
 $string['cancel'] = 'Abbrechen';
 $string['cellpadding'] = 'Zelle auffüllen';
 $string['cellspacing'] = 'Zellabstand';
@@ -29,7 +28,7 @@ $string['createfolder'] = 'Ordner erstellen';
 $string['createlink'] = 'Einen Link einfügen';
 $string['cut'] = 'Markierung ausschneiden';
 $string['delete'] = 'Löschen';
-$string['filebrowser'] = 'Dateienbrowser';
+$string['filebrowser'] = 'Dateibrowser';
 $string['forecolor'] = 'Farbe der Zeichen';
 $string['fullscreen'] = 'Große Bildschirmanzeige';
 $string['heading'] = 'Kopfbereich';
@@ -43,7 +42,7 @@ $string['indent'] = 'Einzug vergrößern';
 $string['insertchar'] = 'Spezielles Zeichen einfügen';
 $string['insertimage'] = 'Bild einfügen';
 $string['insertlink'] = 'Link einfügen';
-$string['insertsmile'] = 'Smilie einfügen';
+$string['insertsmile'] = 'Smiley einfügen';
 $string['inserttable'] = 'Tabelle einfügen';
 $string['italic'] = 'Kursivschrift';
 $string['justifycenter'] = 'Zentriert';
@@ -94,7 +93,7 @@ $string['strikethrough'] = 'Durchgestrichen';
 $string['subscript'] = 'Tiefgestellt';
 $string['superscript'] = 'Hochgestellt';
 $string['textindicator'] = 'Aktuelle Schrift';
-$string['textmode'] = 'Sie befinden sich zur Zeit im TEXT- Modus.Benutzen Sie die [<>]- Icon, um zurück in den WYSIWYG- MOdus zu wechseln. ';
+$string['textmode'] = 'Sie befinden sich zur Zeit im TEXT- Modus. Benutzen Sie die [<>]- Icon, um zurück in den WYSIWYG- MOdus zu wechseln. ';
 $string['texttop'] = 'Einleitungstext';
 $string['top'] = 'Anfang';
 $string['type'] = 'Typ';
@@ -104,7 +103,7 @@ $string['unorderedlist'] = 'Aufzählungszeichen';
 $string['upload'] = 'Hochladen';
 $string['vertical'] = 'Höhe';
 $string['width'] = 'Breite';
-$string['wordclean'] = 'HTML-Text';
+$string['wordclean'] = 'Word-Formatierung umwandeln (HTML)';
 $string['zip'] = 'Zip';
 
 ?>

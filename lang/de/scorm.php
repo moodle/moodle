@@ -1,7 +1,8 @@
 <?PHP // $Id$ 
-      // scorm.php - created with Moodle 1.4 aiming-for-beta-soon (2004082200)
+      // scorm.php - created with Moodle 1.4.3 (2004083130)
 
 
+$string['asset'] = 'Asset';
 $string['attr_error'] = 'Falscher Wert für Attribut ($a->atttr) in Tag $a->tag';
 $string['autocontinue'] = 'Automatische Fortsetzung';
 $string['badmanifest'] = 'Einige dauerhafte Fehler: siehe Fehlerprotokoll';
@@ -14,7 +15,7 @@ $string['configframesize'] = 'Dieser Wert ist die Größe (in Pixeln) des Topframe
 $string['configpopup'] = 'Wenn ein neues SCORM-Paket ergänzt wird, das in einem Popup-Fenster angezeigt werden kann, soll diese Option als Grundeinstellung gewählt werden?';
 $string['configpopupheight'] = 'Welche Höhe sollte ein Popup-Fenster als Grundeinstellung haben?';
 $string['configpopupresizable'] = 'Sollen Popup-Fenster normalerweise in der Größe anpassbar sein?';
-$string['configpopupscrollbars'] = 'Sollten Popup-Fenster normalerweise scrollbar seinß';
+$string['configpopupscrollbars'] = 'Sollten Popup-Fenster normalerweise scrollbar sein?';
 $string['configpopupstatus'] = 'Sollen Popup-Fenster normalerweise den Status anzeigen? ';
 $string['configpopupwidth'] = 'Welche Breite sollte ein Popup-Fenster normalerweise haben?';
 $string['coursepacket'] = 'Kurspaket';
@@ -46,7 +47,7 @@ $string['newwindow'] = 'Neues Fenster';
 $string['newwindowopen'] = 'Das Scorm-Paket in einem neuen Popup-Fenster anzeigen';
 $string['next'] = 'Fortsetzen';
 $string['no_attributes'] = 'Tag $a->tag muss Attribute haben';
-$string['no_children'] = 'Tag $a->tag muss Kinder/Children haben';
+$string['no_children'] = 'Tag $a->tag muss Kinder (children) haben';
 $string['nomanifest'] = 'Zeichen nicht gefunden';
 $string['noreports'] = 'Kein Bericht zum Anzeigen vorhanden';
 $string['normal'] = 'Normal';
@@ -70,7 +71,7 @@ $string['too_many_children'] = 'Tag $a->tag hat zu viele Kinder/children';
 $string['trackingloose'] = 'WARNUNG: Trackingdaten dieses SCORM Paketes gehen verloren!';
 $string['validateascorm'] = 'Überprüfen eines SCORM Pakets';
 $string['validation'] = 'Prüfergebnis';
-$string['validationtype'] = 'Die Einstellungen der DOMXML Library werden zur Prüfung des SCORM Manifests  verwandt. Wennn Sie sich nicht genau auskennen, lassen Sie die Einstellungen unverändert stehen.';
+$string['validationtype'] = 'Die Einstellungen der DOMXML Library werden zur Prüfung des SCORM Manifests  verwandt. Wenn Sie sich nicht genau auskennen, lassen Sie die Einstellungen unverändert stehen.';
 $string['versionwarning'] = 'Die Version des Manifests ist älter als 1.3, Warnung beim $a->tag Tag';
 $string['viewallreports'] = 'Berichte für $a Versuche anzeigen';
 

@@ -1,8 +1,8 @@
 <?PHP // $Id$ 
-      // install.php - created with Moodle 1.4 aiming-for-beta-soon (2004082200)
+      // install.php - created with Moodle 1.4.3 (2004083130)
 
 
-$string['admindirerror'] = 'Das angegebene Admin- Verzeichnis ist falsch.';
+$string['admindirerror'] = 'Das angegebene Admin-Verzeichnis ist falsch.';
 $string['admindirname'] = 'Name für das Admin-Verzeichnis';
 $string['admindirsetting'] = 'Einige wenige Webhosting-Anbieter benutzen /admin als spezielles Verzeichnis für den Zugang zum Administrationstool oder andere Dinge. Leider kommt es dadurch zu Konflikten mit dem Standard für das Administrationsverzeichnis von moodle. Sie können dies ändern, indem Sie das admin-Verzeichnis in der moodle-Installation umbenennen. Den gewählten Namen dieses Verzeichnisses müssen Sie hier eingeben.
 Zum Beispiel: <br/> <br /><b>moodleadmin</b><br /> 
@@ -72,18 +72,19 @@ $string['memorylimithelp'] = '<p>Die Einstellung der PHP  memory limit für Ihren
 <li>Wenn Sie PHP neu kompilieren können, nehmen Sie die Einstellung <i>--enable-memory-limit</i>. Dann kann moodle die Einstellung selber vornehmen.
 <li>Wenn Sie Zugriff auf die Datei php.ini haben, können Sie die Einstellung <b>memory_limit</b> selber auf z.B. 16M anpassen. Wenn Sie selber keinen Zugriff haben, fragen Sie den/die Administrator/in, dies für Sie zu tun.
 <li>Auf einigen PHP-Servern können Sie eine .htaccess-Datei im moodle-Verzeichnis einrichten. Tragen Sie darin die folgende Zeile ein: <p><blockquote>php_value memory_limit 16M</blockquote></p>
-<p>Achtung: auf einigen Servern hindert diese Einstellung <b>alle </b> PHP-Seiten und Sie erhalten Fehlermeldungen. Entfernen Sie dann den Eintrag in der .htaccess-Datei wieder.</p>
+<p>Achtung: auf einigen Servern hindert diese Einstellung <b>alle</b> PHP-Seiten und Sie erhalten Fehlermeldungen. Entfernen Sie dann den Eintrag in der .htaccess-Datei wieder.</p>
 </ol>';
+$string['mysqlextensionisnotpresentinphp'] = 'PHP wurde noch nicht richtig für diese MySQL Erweiterung konfiguriert. Daher kann es nicht mit MySQL kommunizieren. Prüfen Sie bitte die php.ini-Einstellungen oder kompilieren Sie PHP neu.';
 $string['pass'] = 'Durchgang';
 $string['phpversion'] = 'PHP Version';
 $string['phpversionerror'] = 'PHP muss mindestens in der Version 4.1.0 installiert sein.';
 $string['phpversionhelp'] = '<p>moodle erwartet PHP mit der Version 4.1.0 oderhöher.</p>
-<p>Sie nutzen zur Zeit die Version $a</p>
+<p>Sie nutzen zur Zeit die Version $a.</p>
 <p>Sie müssen Ihre PHP-Verson aktualisieren oder auf einen Rechner wechseln, der eine neuere Version von PHP nutzt.</p>';
 $string['safemode'] = 'Safe Mode';
 $string['safemodeerror'] = 'Die Nutzung von moodle im safe mode kann zu Schwierigkeiten führen.';
 $string['safemodehelp'] = '<p>moodle kann beim Betrieb im safe mode verschiedene Probleme haben, nicht zuletzt kann es unmöglich sein, neue Dateien zu erzeugen. </p>
-<p>Safe Mode ist zumeist nur auf einigen öffentlichen Webservern eingestellt. Suchen Sie sich einen Anbieter, der auf diese Einstellung verzichtet oder bitten Sie Ihren Dienstleister, dass Sie auf einen Server \'umziehen\' können der diese Einstellung nicht verwendet.</p>
+<p>Safe Mode ist zumeist nur auf einigen öffentlichen Webservern eingestellt. Suchen Sie sich einen Anbieter, der auf diese Einstellung verzichtet oder bitten Sie Ihren Dienstleister, dass Sie auf einen Server \'umziehen\' können, der diese Einstellung nicht verwendet.</p>
 <p>Sie können versuchen, die Installation fortzusetzen. Sie müssen aber später mit Problemen rechnen. </p>';
 $string['sessionautostart'] = 'Session Auto Start';
 $string['sessionautostarterror'] = 'Dies Option sollte abgestellt sein.';
@@ -91,6 +92,5 @@ $string['sessionautostarthelp'] = '<p>Moodle braucht session support und kann ni
 <p>Sessions sind möglich durch Einstellungen in der Datei php.ini. Bitte suchen Sie nach der Einstellung für session.auto_start </p>';
 $string['wwwroot'] = 'URL Adresse';
 $string['wwwrooterror'] = 'Diese URL scheint nicht gültig zu sein. Moodle ist nicht unter dieser Adresse installiert.  ';
-
 
 ?>

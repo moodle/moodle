@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // choice.php - created with Moodle 1.4 aiming-for-beta-soon (2004082200)
+      // choice.php - created with Moodle 1.4.3 (2004083130)
 
 
 $string['allowupdate'] = 'Abstimmung kann aktualisiert werden';
@@ -17,7 +17,7 @@ $string['notanswered'] = 'Noch nicht beantwortet';
 $string['notopenyet'] = 'Sorry, diese Aktivität ist erst ab $a verfügbar.';
 $string['privacy'] = 'Ergebnis nicht veröffentlichen';
 $string['publish'] = 'Ergebnisse veröffentlichen';
-$string['publishafteranswer'] = 'Ergebnisse den anderen Teilnehmer/inen nach der Abstimmung anzeigen';
+$string['publishafteranswer'] = 'Ergebnisse den anderen Teilnehmer/innen nach der Abstimmung anzeigen';
 $string['publishafterclose'] = 'Ergebnisse anderen Teilnehmer/innen erst anzeigen, nachdem die Abstimmung abgeschlossen ist';
 $string['publishalways'] = 'Ergebnisse der anderen Teilnehmer/innen immer zeigen';
 $string['publishanonymous'] = 'Anonyme Ergebnisse veröffentlichen, Namen der Teilnehmer nicht zeigen';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.4 aiming-for-beta-soon (2004082200)
+      // glossary.php - created with Moodle 1.4.3 (2004083130)
 
 
 $string['addcomment'] = 'Kommentar einfügen';
@@ -23,11 +23,11 @@ $string['back'] = 'zurück';
 $string['cantinsertcat'] = 'Eine Kategorie kann nicht eingefügt werden.';
 $string['cantinsertrec'] = 'Eintrag kann nicht eingefügt werden.';
 $string['cantinsertrel'] = 'Verbindung zur Kategorie kann nicht eingefügt werden.';
-$string['casesensitive'] = 'Dieser Eintrag ist <br /> abhängig von der Schreibweise.';
-$string['categories'] = 'Begriff';
-$string['category'] = 'Begriffe';
-$string['categorydeleted'] = 'Begriff wurde gelöscht';
-$string['categoryview'] = 'Suche nach Begriff';
+$string['casesensitive'] = 'Groß-/Kleinschreibung berücksichtigen';
+$string['categories'] = 'Kategorien';
+$string['category'] = 'Kategorie';
+$string['categorydeleted'] = 'Kategorie wurde gelöscht';
+$string['categoryview'] = 'Suche nach Kategorien';
 $string['cnfallowcomments'] = 'Kommentare im Glossar sind möglich (Grundeinstellung)';
 $string['cnfallowdupentries'] = 'Doppelte Einträge im Glossar sind möglich (Grundeinstellung)';
 $string['cnfapprovalstatus'] = 'Teilnehmer/innen sollen Beiträge einfügen (Grundeinstellung)';
@@ -49,7 +49,7 @@ $string['commentson'] = 'Kommentare eingeschaltet';
 $string['commentupdated'] = 'Dieser Kommentar wurde geändert.';
 $string['concept'] = 'Eintrag';
 $string['concepts'] = 'Einträge';
-$string['configenablerssfeeds'] = 'Diese Einstellung ermöglicht die Nutzung der RSS-Feeds für alel Foren. Jedes Forum muss einzeln für den RSS-Feed aktiviert werden.';
+$string['configenablerssfeeds'] = 'Diese Einstellung ermöglicht die Nutzung der RSS-Feeds für alle Foren. Jedes Forum muss einzeln für den RSS-Feed aktiviert werden.';
 $string['currentglossary'] = 'Derzeitiges Glossar';
 $string['dateview'] = 'Suche nach Datum';
 $string['defaultapproval'] = 'Status Standard Bestätigung';
@@ -58,7 +58,7 @@ $string['definitions'] = 'Definitionen';
 $string['deleteentry'] = 'Eintrag löschen';
 $string['deletingcomment'] = 'Kommentar löschen';
 $string['deletingnoneemptycategory'] = 'Wenn diese Kategorie gelöscht wird, werden die Einträge daraus nicht gelöscht. Sie werden als \'keiner Kategorie zugeordnet\' gekennzeichnet.';
-$string['descending'] = 'absteigend';
+$string['descending'] = '(absteigend)';
 $string['destination'] = 'Ziel';
 $string['displayformat'] = 'Anzeigeformat';
 $string['displayformatcontinuous'] = 'Anzeige fortsetzen ohne Autor/in';
@@ -85,12 +85,14 @@ $string['entrydeleted'] = 'Eintrag gelöscht';
 $string['entryexported'] = 'Der Eintrag wurde erfolgreich exportiert.';
 $string['entryishidden'] = '( Dieser Eintrag ist gegenwärtig nicht sichtbar.)';
 $string['entryleveldefaultsettings'] = 'Grundeinstellung für Einträge';
+$string['entrysaved'] = 'Der Eintrag wurde gespeichert';
+$string['entryupdated'] = 'Der Eintrag wurde aktualisiert.';
 $string['entryusedynalink'] = 'Dieser Eintrag sollte <br /> automatisch verbunden werden.';
 $string['explainaddentry'] = 'Fügt einen neuen Beitrag im Glossar ein. <br /> Konzept und Definition sind Pflichtfelder';
 $string['explainall'] = 'Zeigt alle Einträge auf einer Seite.';
 $string['explainalphabet'] = 'Durchsuche das Glossar unter Verwendung des Index.';
 $string['explainexport'] = 'Eine Datei wurde erstellt. <br />Downloaden Sie die Datei und bewahren Sie sie sicher auf. Sie können Sie jederzeit importieren oder in einen anderen Kurs einfügen.';
-$string['explainimport'] = 'Wählen Sie die zu importierende Datei aus und legen Sie die Kriterien des weiteren Vorgehen sfest. <p>Löst den Vorgang aus und zeigt die Ergebnisse.';
+$string['explainimport'] = 'Wählen Sie die zu importierende Datei aus und legen Sie die Kriterien des weiteren Vorgehens fest. <p>Löst den Vorgang aus und zeigt die Ergebnisse.';
 $string['explainspecial'] = 'Zeige Einträge, die nicht mit einem Buchstaben beginnen.';
 $string['exportedentry'] = 'Eintrag wurde exportiert.';
 $string['exportedfile'] = 'Exportierte Datei';
@@ -157,7 +159,7 @@ $string['studentcanpost'] = 'Studenten können Einträge einfügen.';
 $string['totalentries'] = 'Gesamtzahl der Einträge';
 $string['usedynalink'] = 'Automatisch verbundene Einträge im Glossar';
 $string['waitingapproval'] = 'Warten auf Bestätigung';
-$string['warningstudentcapost'] = '( Dies gilt nur, wenn dieses Glossar, nicht das Hauptglossar ist.)';
+$string['warningstudentcapost'] = '(Dies gilt nur, wenn dieses Glossar, nicht das Hauptglossar ist.)';
 $string['withauthor'] = 'Einträge mit Autorennennung';
 $string['withoutauthor'] = 'Einträge ohne Autorennennung';
 $string['writtenby'] = 'von';
