@@ -24,31 +24,33 @@
 
     if ($course->category) {
         require_login($course->id);
-        $navigation = "<A TARGET=\"{$CFG->framename}\" HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> ->
-                       <A TARGET=\"{$CFG->framename}\" HREF=\"index.php?id=$course->id\">$strresources</A> ->";
+        $navigation = "<a target=\"{$CFG->framename}\" href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->
+                       <a target=\"{$CFG->framename}\" href=\"index.php?id=$course->id\">$strresources</a> ->";
     } else {
-        $navigation = "<A TARGET=\"{$CFG->framename}\" HREF=\"index.php?id=$course->id\">$strresources</A> ->";
+        $navigation = "<a target=\"{$CFG->framename}\" href=\"index.php?id=$course->id\">$strresources</a> ->";
     }
 
+    $pagetitle = strip_tags("$course->shortname: $resource->name");
+
     if (!$cm->visible and !isteacher($course->id)) {
-        print_header("$course->shortname: $resource->name", "$course->fullname", "$navigation $resource->name",
-                         "", "", true, update_module_button($cm->id, $course->id, $strresource), navmenu($course, $cm));
+        print_header($pagetitle, "$course->fullname", "$navigation $resource->name", "", "", true, 
+                     update_module_button($cm->id, $course->id, $strresource), navmenu($course, $cm));
         notice(get_string("activityiscurrentlyhidden"));
     }
 
     switch ($resource->type) {
         case REFERENCE:
             add_to_log($course->id, "resource", "view", "view.php?id=$cm->id", "$resource->id");
-            print_header("$course->shortname: $resource->name", "$course->fullname", "$navigation $resource->name",
-                         "", "", true, update_module_button($cm->id, $course->id, $strresource), navmenu($course, $cm));
+            print_header($pagetitle, "$course->fullname", "$navigation $resource->name", "", "", true, 
+                         update_module_button($cm->id, $course->id, $strresource), navmenu($course, $cm));
 
             print_simple_box($resource->reference, "center");
-            echo "<CENTER><P>";
+            echo "<center><p>";
             echo text_to_html($resource->summary);
-            echo "</P>";
-            echo "<P>&nbsp</P>";
-            echo "<P><FONT SIZE=1>$strlastmodified: ".userdate($resource->timemodified)."</P>";
-            echo "</CENTER>";
+            echo "</p>";
+            echo "<p>&nbsp</p>";
+            echo "<p><font size=1>$strlastmodified: ".userdate($resource->timemodified)."</p>";
+            echo "</center>";
             print_footer($course);
             break;
 
@@ -59,18 +61,19 @@
 
         case WEBPAGE:
             if ($frameset == "top") {
-                print_header("$course->shortname: $resource->name", "$course->fullname", 
-                "$navigation <A TARGET=\"{$CFG->framename}\" HREF=\"$resource->reference\" TITLE=\"$resource->reference\">$resource->name</A>",
-                "", "", true, update_module_button($cm->id, $course->id, $strresource), navmenu($course, $cm));
-                echo "<CENTER><FONT SIZE=-1>".text_to_html($resource->summary, true, false)."</FONT></CENTER>";
+                print_header($pagetitle, "$course->fullname", 
+                  "$navigation <a target=\"{$CFG->framename}\" href=\"$resource->reference\" 
+                                title=\"$resource->reference\">$resource->name</a>", "", "", true, 
+                                update_module_button($cm->id, $course->id, $strresource), navmenu($course, $cm));
+                echo "<center><font size=-1>".text_to_html($resource->summary, true, false)."</font></center>";
 
             } else {
                 add_to_log($course->id, "resource", "view", "view.php?id=$cm->id", "$resource->id");
-                echo "<HEAD><TITLE>$course->shortname: $resource->name</TITLE></HEAD>\n";
-                echo "<FRAMESET ROWS=$RESOURCE_FRAME_SIZE,*>";
-                echo "<FRAME SRC=\"view.php?id=$cm->id&frameset=top\">";
-                echo "<FRAME SRC=\"$resource->reference\">";
-                echo "</FRAMESET>";
+                echo "<head><title>$course->shortname: $resource->name</title></head>\n";
+                echo "<frameset rows=$resource_frame_size,*>";
+                echo "<frame src=\"view.php?id=$cm->id&frameset=top\">";
+                echo "<frame src=\"$resource->reference\">";
+                echo "</frameset>";
             }
             break;
 
@@ -95,7 +98,7 @@
             // (could check for more embeddable media here...)
 
             if ($frameset == "top" or $embedded) {
-                print_header("$course->shortname: $resource->name", "$course->fullname", 
+                print_header($pagetitle, "$course->fullname", 
                              "$navigation <a target=\"$CFG->framename\" HREF=\"$fullurl\">$resource->name</A>",
                              "", "", true, update_module_button($cm->id, $course->id, $strresource), 
                              navmenu($course, $cm));
@@ -122,28 +125,28 @@
 
         case PLAINTEXT:
             add_to_log($course->id, "resource", "view", "view.php?id=$cm->id", "$resource->id");
-            print_header("$course->shortname: $resource->name", "$course->fullname", "$navigation $resource->name",
+            print_header($pagetitle, "$course->fullname", "$navigation $resource->name",
                          "", "", true, update_module_button($cm->id, $course->id, $strresource), navmenu($course, $cm));
 
-            print_simple_box(text_to_html($resource->alltext), "CENTER", "", "$THEME->cellcontent", "20");
+            print_simple_box(text_to_html($resource->alltext), "center", "", "$THEME->cellcontent", "20");
 
-            echo "<CENTER><P><FONT SIZE=1>$strlastmodified: ".userdate($resource->timemodified)."</P></CENTER>";
+            echo "<center><p><font size=1>$strlastmodified: ".userdate($resource->timemodified)."</p></center>";
 
             print_footer($course);
             break;
 
         case HTML:
             add_to_log($course->id, "resource", "view", "view.php?id=$cm->id", "$resource->id");
-            print_header("$course->shortname: $resource->name", "$course->fullname", "$navigation $resource->name",
+            print_header($pagetitle, "$course->fullname", "$navigation $resource->name",
                          "", "", true, update_module_button($cm->id, $course->id, $strresource), navmenu($course, $cm));
 
-            print_simple_box_start("CENTER", "", "$THEME->cellcontent", "20");
+            print_simple_box_start("center", "", "$THEME->cellcontent", "20");
 
             echo $resource->alltext;
 
             print_simple_box_end();
 
-            echo "<CENTER><P><FONT SIZE=1>$strlastmodified: ".userdate($resource->timemodified)."</P></CENTER>";
+            echo "<center><p><font size=1>$strlastmodified: ".userdate($resource->timemodified)."</p></center>";
 
             print_footer($course);
             break;
@@ -197,10 +200,10 @@
 
         case WIKITEXT:
             add_to_log($course->id, "resource", "view", "view.php?id=$cm->id", "$resource->id");
-            print_header("$course->shortname: $resource->name", "$course->fullname", "$navigation $resource->name",
+            print_header($pagetitle, "$course->fullname", "$navigation $resource->name",
                 "", "", true, update_module_button($cm->id, $course->id, $strresource), navmenu($course, $cm));
 
-            print_simple_box(wiki_to_html($resource->alltext), "CENTER", "", "$THEME->cellcontent", "20" );
+            print_simple_box(wiki_to_html($resource->alltext), "center", "", "$THEME->cellcontent", "20" );
 
             echo "<center><p><font size=\"1\">$strlastmodified: ".userdate($resource->timemodified)."</p></center>";
 
@@ -209,7 +212,7 @@
  
 
         default:
-            print_header("$course->shortname: $resource->name", "$course->fullname", "$navigation $resource->name",
+            print_header($pagetitle, "$course->fullname", "$navigation $resource->name",
                          "", "", true, update_module_button($cm->id, $course->id, $strresource), navmenu($course, $cm));
             print_heading($resource->name);
 
