@@ -63,7 +63,7 @@
 
 
     print_header($newaccount, $newaccount, "<A HREF=\"index.php\">$login</A> -> $newaccount", $focus, "", true, "<div align=right>$langmenu</div>");
-    include("signup_form.php");
+    include("signup_form.html");
     print_footer();
 
 
