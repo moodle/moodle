@@ -229,7 +229,19 @@ function usergetdate($date, $timezone=99) {
     if (abs($timezone) > 12) {
         return getdate($date);
     }
-    return getdate($date - (int)($timezone * 3600));
+    //There is no gmgetdate so I have to fake it...
+    $date = $date + (int)($timezone * 3600);
+    $getdate["seconds"] = gmstrftime("%S", $date);
+    $getdate["minutes"] = gmstrftime("%M", $date);
+    $getdate["hours"]   = gmstrftime("%H", $date);
+    $getdate["mday"]    = gmstrftime("%d", $date);
+    $getdate["wday"]    = gmstrftime("%u", $date);
+    $getdate["mon"]     = gmstrftime("%m", $date);
+    $getdate["year"]    = gmstrftime("%Y", $date);
+    $getdate["yday"]    = gmstrftime("%j", $date);
+    $getdate["weekday"] = gmstrftime("%A", $date);
+    $getdate["month"]   = gmstrftime("%B", $date);
+    return $getdate;
 }
 
 function usertime($date, $timezone=99) {
@@ -251,10 +263,6 @@ function usergetmidnight($date, $timezone=99) {
 // for the current user.
 
     global $USER;
-
-    if ($timezone == 99) {
-        $timezone = (float)$USER->timezone;
-    }
 
     $userdate = usergetdate($date, $timezone);
     $timemidnight = gmmktime (0, 0, 0, $userdate["mon"], $userdate["mday"], $userdate["year"]);
