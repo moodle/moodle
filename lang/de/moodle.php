@@ -67,6 +67,7 @@ $string['configproxyhost'] = "Wenn dieser <B>Server</B> einen Proxy braucht (bei
 $string['configslasharguments'] = "Dateien (Bilder, Dokumente, usw.) werden über ein Skript, das 'Slash-Argumente' benutz (hier die zweite Option). Diese Methode erlaubt es Dateien einfacher im Internet-Browsern, Proxy-Servern, usw., zwischengespeichert zu werden.
 Leider erlauben nicht alle PHP-Server diese Methode, so dass Sie, sofern Sie Probleme bei der Anzeige von Dateien oder Bildern (beispielsweise den Benutzer-Fotos) haben, diese Variable auf die erste Option stellen müssen. ";
 $string['configsmtphosts'] = "Geben Sie hier den vollen Namen von einem oder mehreren lokalen SMTP-Servern an, die Moodle für den Email-Versnad benutzen soll (beispielsweise 'email.a.de' oder 'email.a.de;email.b.de'). Wenn Sie dieses frei lassen, wird Moodle die Standard-Methode von PHP zum Senden von Emails verwenden.";
+$string['configsmtpuser'] = "Sofern Sie einen SMTP-Server angegeben haben und der Server erfordert Zugangsdaten, dann geben Sie hier den Benutzernamen und das Kennwort an.";
 $string['configunzip'] = "Geben Sie hier den Pfad zum Programm unzip an (Nur Unix). Dieser wird für das Entpacken von ZIP-Archiven auf dem Server benötigt.";
 $string['configvariables'] = "Variablen konfigurieren";
 $string['configzip'] = "Geben Sie hier den Pfad zum Programm zip an (Nur Unix). Dieser wird für die Erstellung ZIP-Archiven auf dem Server benötigt.";

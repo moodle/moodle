@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.0.6 dev (2002100200)
+      // forum.php - created with Moodle 1.0.6 dev 3 (2002102101)
 
 
 $string['addanewdiscussion'] = "Ein neues Diskussion-Thema hinzufügen";
@@ -9,7 +9,7 @@ $string['allowratings'] = "Dürfen Einträge bewertet werden?";
 $string['allowsdiscussions'] = "Jeder darf in diesem Forum ein Diskussion-Thema beginnen.";
 $string['anyfile'] = "Jede Datei";
 $string['attachment'] = "Anhang";
-$string['bynameondate'] = "durch  \$a->name - \$a->date ";
+$string['bynameondate'] = "von  \$a->name - \$a->date ";
 $string['couldnotadd'] = "Eintrag konnte aufgrund eines unbekannten Fehlers nicht hinzugefügt werden.";
 $string['couldnotdeleteratings'] = "Das kann nicht gelöscht werden, weil es schon bewertet wurde .";
 $string['couldnotdeletereplies'] = "Das kann nicht gelöscht werden, weil es schon beantwortet wurde .";
