@@ -1,4 +1,4 @@
-<?php
+<?
 //Moodle wersja polska, Adam Pawelczak, Michal Wozniak, Lukasz Wrona (crow1@interia.pl)
 //Modul moodle.php
 
@@ -1415,5 +1415,7 @@ $string['yourself'] = "samodzielnie";
 $string['yourteacher'] = "twój \$a";
 
 $string['zippingbackup'] = " Archiwizacja  kopii zapasowej";
+
+$string[''] = "";
 
 ?>

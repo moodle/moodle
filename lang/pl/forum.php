@@ -1,4 +1,4 @@
-<?php
+<?
 //Moodle wersja polska, Adam Pawelczak, Michal Wozniak, Lukasz Wrona (crow1@interia.pl)
 //Modul forum.php
 
@@ -247,5 +247,7 @@ $string['youratedthis'] = "Oceni³e¶(a¶) to";
 $string['yournewtopic'] = "Twoja nowa dyskusja";
 
 $string['yourreply'] = "Twoja odpowied¼";
+
+$string[''] = "";
 
 ?>

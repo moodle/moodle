@@ -1,4 +1,4 @@
-<?php
+<?
 //Moodle wersja polska, Adam Pawelczak, Michal Wozniak, Lukasz Wrona (crow1@interia.pl)
 //Modul resource.php
 
@@ -74,5 +74,6 @@ $string['resourcetype7'] = " Program";
 
 $string['resourcetype8'] = " Tekst Wiki";
 
+$string[''] = "";
 
 ?>

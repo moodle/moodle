@@ -1,4 +1,4 @@
-<?php
+<?
 //Moodle wersja polska, Adam Pawelczak, Michal Wozniak, Lukasz Wrona (crow1@interia.pl)
 //Modul choice.php
 
@@ -31,5 +31,7 @@ $string['responsesto'] = " Odpowiedzi na \$a";
 $string['savemychoice'] = " Zapisz mój wybór";
 
 $string['viewallresponses'] = " Przejrzyj \$a odpowiedzi";
+
+$string[''] = "";
 
 ?>

@@ -1,4 +1,4 @@
-<?php
+<?
 //Moodle wersja polska, Adam Pawelczak, Michal Wozniak, Lukasz Wrona
 //Modul quiz.php
 
@@ -300,5 +300,6 @@ $string['webct'] = "Format WebCT";
 
 $string['yourfinalgradeis'] = "Twoja ostateczna ocena za ten quiz wynosi $a";
 
+$string[''] = "";
 
 ?>

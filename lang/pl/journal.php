@@ -1,4 +1,4 @@
-<?php
+<?
 //Moodle wersja polska, Adam Pawelczak, Michal Wozniak, Lukasz Wrona (crow1@interia.pl)
 //Modul journal.php
 
@@ -54,5 +54,6 @@ $string['startoredit'] = "Rozpocznij lub edytuj mój wpis do dziennika";
 
 $string['viewallentries'] = "Poka¿ \$a wpisów do dziennika";
 
+$string[''] = "";
 
 ?>
