@@ -128,12 +128,13 @@
 
 function print_outline_row($mod, $instance, $info) {
     $image = "<IMG SRC=\"../mod/$mod->modname/icon.gif\" HEIGHT=16 WIDTH=16 ALT=\"$mod->modfullname\">";
+
     echo "<TR><TD VALIGN=top>$image</TD>";
-    echo "<TD align=left width=200>";
+    echo "<TD VALIGN=top width=300>";
     echo "<A TITLE=\"$mod->modfullname\"";
     echo "   HREF=\"../mod/$mod->modname/view.php?id=$mod->id\">$instance->name</A></TD>";
     echo "<TD>&nbsp;&nbsp;&nbsp;</TD>";
-    echo "<TD BGCOLOR=white>$info</TD></TR>";
+    echo "<TD VALIGN=top BGCOLOR=white>$info</TD></TR>";
 }
 
 ?>
