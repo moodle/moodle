@@ -7,16 +7,11 @@
 
     optional_variable($cat, 1);
 
-    if ($courses = get_records("course", "category", $cat, "fullname ASC")) {
-   
-        foreach ($courses as $course) {
-            print_course($course);
-            echo "<BR>\n";
-        }
+    print_simple_box_start("CENTER", "80%");
 
-    } else {
-        echo "<H3>No courses have been defined yet</H3>";
-    }
+    print_all_courses($cat);
+
+    print_simple_box_end();
 
     print_footer();
 

@@ -18,6 +18,25 @@
     <? formerr($err["summary"]) ?>
     </td>
 </tr>
+<tr valign=top>
+        <td><P>Front page format:</td>
+        <td><? 
+           $options = array("0" => "Show list of courses",
+                            "1" => "1 news item",
+                            "2" => "2 news items",
+                            "3" => "3 news items",
+                            "4" => "4 news items",
+                            "5" => "5 news items",
+                            "6" => "6 news items",
+                            "7" => "7 news items",
+                            "8" => "8 news items",
+                            "9" => "9 news items",
+                            "10" => "10 news items");
+           choose_from_menu ($options, "format", "$form->format");
+           formerr($err["format"]);
+        ?>
+        </td>
+</tr>
 <tr>
     <td></td>
 	<td><input type="submit" value="Update the site"></td>

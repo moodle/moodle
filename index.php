@@ -21,8 +21,10 @@
       <? print_simple_box("Main Menu", $align="CENTER", $width="100%", $color="$THEME->cellheading"); ?>
 
 	  <LI>Home</LI>
+      <? if ($site->format > 0 ) { ?>
       <LI><A TITLE="Available courses on this server" HREF="course/"><B>Courses</B></A><BR></LI>
       <LI><A TITLE="Site-level Forums" HREF="mod/discuss/index.php?id=<?=$site->id?>">Forums</A></LI>
+      <? } ?>
 
       <? 
          if ($readings = list_all_readings()) {
@@ -50,14 +52,20 @@
     </TD>
 
     <TD WIDTH="55%" VALIGN="TOP">
-      <? print_simple_box("Site News", $align="CENTER", $width="100%", $color="$THEME->cellheading"); ?>
+      <? if ($site->format == 0 ) {
+             print_simple_box("Available Courses", $align="CENTER", $width="100%", $color="$THEME->cellheading");
+             echo "<IMG HEIGHT=8 SRC=\"pix/spacer.gif\" ALT=\"\"><BR>";
+             include("course/lib.php");
+             print_all_courses();
 
-      <IMG HEIGHT=8 SRC="pix/spacer.gif" ALT=""><BR>
-
-      <? include("mod/discuss/lib.php");
-         forum_latest_topics();
+         } else {
+             print_simple_box("Site News", $align="CENTER", $width="100%", $color="$THEME->cellheading");
+             echo "<IMG HEIGHT=8 SRC=\"pix/spacer.gif\" ALT=\"\"><BR>";
+             include("mod/discuss/lib.php");
+             forum_latest_topics(0, $site->format);
+         }
       ?>
-    
+
     </TD>
     <TD WIDTH="30%" VALIGN="TOP"> 
       <? 

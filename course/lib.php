@@ -115,35 +115,51 @@ function print_log($course, $user=0, $date=0, $order="ORDER BY l.time ASC") {
 }
 
 
+function print_all_courses($cat=1) {
+
+    if ($courses = get_records("course", "category", $cat, "fullname ASC")) {
+        foreach ($courses as $course) {
+            print_course($course);
+            echo "<BR>\n";
+        }
+
+    } else {
+        echo "<H3>No courses have been defined yet</H3>";
+    }
+}
+
+
 function print_course($course) {
+
+    global $CFG;
 
     if (! $site = get_record("course", "category", "0") ) {
         error("Could not find a site!");
     }
 
-    print_simple_box_start("CENTER", "80%");
+    print_simple_box_start("CENTER", "100%");
 
     echo "<TABLE WIDTH=100%>";
     echo "<TR VALIGN=top>";
     echo "<TD VALIGN=top WIDTH=50%>";
-    echo "<P><FONT SIZE=3><B><A HREF=\"view.php?id=$course->id\">$course->fullname</A></B></FONT></P>";
+    echo "<P><FONT SIZE=3><B><A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->fullname</A></B></FONT></P>";
     if ($teachers = get_records_sql("SELECT u.* FROM user u, user_teachers t 
                                      WHERE u.id = t.user AND t.course = '$course->id' 
                                      ORDER BY t.authority ASC")) {
 
         echo "<P><FONT SIZE=1>\n";
         foreach ($teachers as $teacher) {
-            echo "$course->teacher: <A HREF=\"../user/view.php?id=$teacher->id&course=$site->id\">$teacher->firstname $teacher->lastname</A><BR>";
+            echo "$course->teacher: <A HREF=\"$CFG->wwwroot/user/view.php?id=$teacher->id&course=$site->id\">$teacher->firstname $teacher->lastname</A><BR>";
         }
         echo "</FONT></P>";
     }
     if ($course->guest or ($course->password == "")) {
-        echo "<A TITLE=\"Guest user allowed\" HREF=\"view.php?id=$course->id\">";
-        echo "<IMG VSPACE=4 ALT=\"\" HEIGHT=16 WIDTH=16 BORDER=0 SRC=\"../user/user.gif\"></A>&nbsp;&nbsp;";
+        echo "<A TITLE=\"Guest user allowed\" HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">";
+        echo "<IMG VSPACE=4 ALT=\"\" HEIGHT=16 WIDTH=16 BORDER=0 SRC=\"$CFG->wwwroot/user/user.gif\"></A>&nbsp;&nbsp;";
     }
     if ($course->password) {
-        echo "<A TITLE=\"Requires a Course entry key\" HREF=\"view.php?id=$course->id\">";
-        echo "<IMG VSPACE=4 ALT=\"\" HEIGHT=16 WIDTH=16 BORDER=0 SRC=\"../pix/i/key.gif\"></A>";
+        echo "<A TITLE=\"Requires a Course entry key\" HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">";
+        echo "<IMG VSPACE=4 ALT=\"\" HEIGHT=16 WIDTH=16 BORDER=0 SRC=\"$CFG->wwwroot/pix/i/key.gif\"></A>";
     }
 
 
