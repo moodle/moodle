@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 unstable development (2004091700)
+      // moodle.php - created with Moodle 1.5 unstable development (2004091900)
 
 
 $string['action'] = '操作';
@@ -337,6 +337,7 @@ $string['editcoursesettings'] = 'コース設定';
 $string['editfiles'] = 'ファイルの編集';
 $string['editgroupprofile'] = 'グループプロフィールの編集';
 $string['editinga'] = '$a 編集';
+$string['editlock'] = 'この値は編集できません!';
 $string['editmyprofile'] = 'プロフィールの編集';
 $string['editorbgcolor'] = '背景色';
 $string['editorcleanonpaste'] = 'ペースト時にWord HTMLを削除';
