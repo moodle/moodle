@@ -666,6 +666,7 @@
             $quiz->timeopen = backup_todb($info['MOD']['#']['TIMEOPEN']['0']['#']);
             $quiz->timeclose = backup_todb($info['MOD']['#']['TIMECLOSE']['0']['#']);
             $quiz->attempts = backup_todb($info['MOD']['#']['ATTEMPTS_NUMBER']['0']['#']);
+            $quiz->attemptonlast = backup_todb($info['MOD']['#']['ATTEMPTONLAST']['0']['#']);
             $quiz->feedback = backup_todb($info['MOD']['#']['FEEDBACK']['0']['#']);
             $quiz->correctanswers = backup_todb($info['MOD']['#']['CORRECTANSWERS']['0']['#']);
             $quiz->grademethod = backup_todb($info['MOD']['#']['GRADEMETHOD']['0']['#']);

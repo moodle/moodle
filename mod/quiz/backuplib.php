@@ -376,6 +376,7 @@
                 fwrite ($bf,full_tag("TIMEOPEN",4,false,$quiz->timeopen));
                 fwrite ($bf,full_tag("TIMECLOSE",4,false,$quiz->timeclose));
                 fwrite ($bf,full_tag("ATTEMPTS_NUMBER",4,false,$quiz->attempts));
+                fwrite ($bf,full_tag("ATTEMPTONLAST",4,false,$quiz->attemptonlast));
                 fwrite ($bf,full_tag("FEEDBACK",4,false,$quiz->feedback));
                 fwrite ($bf,full_tag("CORRECTANSWERS",4,false,$quiz->correctanswers));
                 fwrite ($bf,full_tag("GRADEMETHOD",4,false,$quiz->grademethod));
