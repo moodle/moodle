@@ -190,6 +190,8 @@ function resource_get_coursemodule_info($coursemodule) {
 	       $icon = mimeinfo("icon", $resource->reference);
            if ($icon != 'unknown.gif') {
 		       $info->icon ="f/$icon";
+           } else if ($resource->type == WEBLINK or $resource->type == WEBPAGE) {
+		       $info->icon ="f/web.gif";
            }
        } else if ($resource->type == DIRECTORY) {
 		   $info->icon ="f/folder.gif";
