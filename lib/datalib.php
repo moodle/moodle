@@ -545,7 +545,7 @@ function insert_record($table, $dataobject, $returnid=true) {
     foreach ($columns as $column) {
         if ($column->name <> "id") {
             if (isset($data[$column->name])) { 
-                if ($data[$column->name] == "" and !empty($column->has_default) and !empty($column->default_value)) {
+                if ((string)$data[$column->name] == "" and !empty($column->has_default) and !empty($column->default_value)) {
                     $ddd[$column->name] = $column->default_value;
                 } else {
                     $ddd[$column->name] = $data[$column->name];
