@@ -1,6 +1,6 @@
 <?php /// $Id$
 
-$string['filtername'] = "Actividades auto-enlazadas";
+$string['filtername'] = 'Actividades auto-enlazadas';
 
 ?>
 
