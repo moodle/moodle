@@ -221,7 +221,7 @@ $advancedfilter = 1;
                    $image = "<img src=\"$CFG->modpixpath/" . $activity->content->modname . "/icon.gif\"" .
                             "height=16 width=16 alt=\"" . $activity->content->modfullname . "\">";
                    echo "<ul><h4>$image " . $activity->content->modfullname . 
-                        "<a href=\"$CFG->wwwroot/mod/" . $activity->content->activity->modname . "/view.php?" . 
+                        "<a href=\"$CFG->wwwroot/mod/" . $activity->content->modname . "/view.php?" . 
                         "id=" . $activity->content->modid . "\">" .
                         $activity->name . "</a></h4></ul>";
                }
