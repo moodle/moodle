@@ -10,6 +10,9 @@ function attendance_upgrade($oldversion) {
         execute_sql("ALTER TABLE `{$CFG->prefix}attendance` ADD `edited` TINYINT( 1 ) DEFAULT '0' NOT NULL;");
 		execute_sql("UPDATE `{$CFG->prefix}attendance` set `edited` = 1;");
     }
+    if ($oldversion < 2003092500) {
+        execute_sql("ALTER TABLE `{$CFG->prefix}attendance` ADD `autoattend` TINYINT( 1 ) DEFAULT '0' NOT NULL;");
+    }
 
     return true;
 }

@@ -1,4 +1,4 @@
-<?  // $Id$
+<?php  // $Id$
 /// This page prints all instances of attendance in a given course
 
     require_once("../../config.php");
@@ -51,6 +51,8 @@ if ($attendances) {
    $numhours=0;
    foreach ($attendances as $attendance){
      // store the raw attendance object
+     $cm = get_coursemodule_from_instance("attendance", $attendance->id, $course->id);
+     $attendance->cmid = $cm->id;
      $atts[$numatt]->attendance=$attendance;
      // tally the hours for possible paging of the report
      $numhours=$numhours+$attendance->hours;
@@ -85,7 +87,7 @@ if ($download == "xls") {
   // Creating a workbook
   $workbook = new Workbook("-");
   // Creating the first worksheet
-  $myxls =& $workbook->add_worksheet('Grades');
+  $myxls =& $workbook->add_worksheet('Attendance');
 
     // print the date headings at the top of the table
     // for each day of attendance
@@ -268,7 +270,7 @@ while (($multipage || $onepage) && (!$endonepage)) {
   for($curpage=1;true;$curpage++) { // the for loop is broken from the inside
 		$pagehours=$atts[$endatt]->attendance->hours;
 		$startatt=$endatt;
-		while(($pagehours<$hoursinreport)) {
+		while(($pagehours<=$hoursinreport)) {
 			if ($endatt>=$numatt) { break 2; } // end the page number calculations and trigger the end of a multi-page report!
 			$endatt++;
 			$pagehours=$pagehours+$atts[$endatt]->attendance->hours;
@@ -331,7 +333,6 @@ while (($multipage || $onepage) && (!$endonepage)) {
 
   attendance_print_pagenav(); 
   } 
-
    // build the table for attendance roll
    // this is the wrapper table
    echo "<table align=\"center\" width=\"80\" class=\"generalbox\"".
@@ -350,8 +351,10 @@ while (($multipage || $onepage) && (!$endonepage)) {
     for($k=$minatt;$k<$maxatt;$k++)  {
     // put notes for the date in the date heading
       $notes = ($atts[$k]->attendance->notes != "") ? ":<br />".$atts[$k]->attendance->notes : "";
-	  echo "<th valign=\"top\" align=\"left\" colspan=\"" .$atts[$k]->attendance->hours. "\" nowrap class=\"generaltableheader\">".
-	       userdate($atts[$k]->attendance->day,"%m/%0d").$notes."</th>\n";
+      $auto = ($atts[$k]->attendance->autoattend == 1) ? "(".get_string("auto","attendance").")" : "";
+ 	    echo "<th valign=\"top\" align=\"left\" colspan=\"" .$atts[$k]->attendance->hours. "\" nowrap class=\"generaltableheader\">".
+	       "<a href=\"view.php?id=".$atts[$k]->attendance->cmid."\">".userdate($atts[$k]->attendance->day,"%m/%0d")."</a>".$auto.
+	       $notes."</th>\n";
     }
     // if we're at the end of the report
     if ($maxatt==$numatt || !$pagereport) {
@@ -489,8 +492,6 @@ function attendance_print_pagenav() {
 	  if ($pagereport) {
   	$of = get_string('of','attendance');
   	$pg = get_string('page');
-  	$next = get_string('next');
-  	$prev = get_string('previous', 'attendance');
 
 		echo "<center><table align=\"center\" width=\"80\" class=\"generalbox\"".
          "border=\"0\" cellpadding=\"0\" cellspacing=\"0\"><tr>".
@@ -501,13 +502,19 @@ function attendance_print_pagenav() {
     echo "<tr>";
   	if ($minatt!=0) {
     echo "<th valign=\"top\" align=\"right\" nowrap class=\"generaltableheader\">".
-	       "<a href=\"viewall.php?id=".$course->id ."&pagereport=1&page=".($page-1)."\">$prev $pg</a></th>\n";
+	       "<a href=\"viewall.php?id=".$course->id ."&pagereport=1&page=1\">&lt;&lt;</a>&nbsp;\n".
+	       "<a href=\"viewall.php?id=".$course->id ."&pagereport=1&page=".($page-1)."\">&lt;</a></th>\n";
+  	} else {
+    echo "<th valign=\"top\" align=\"right\" nowrap class=\"generaltableheader\">&lt;&lt;&nbsp;&lt;</th>\n";
   	}
     echo "<th valign=\"top\" align=\"right\" nowrap class=\"generaltableheader\">".
 	       "$pg $page $of $maxpages</th>\n";
   	if ($maxatt!=$numatt) {
       echo "<th valign=\"top\" align=\"right\" nowrap class=\"generaltableheader\">".
-      "<a href=\"viewall.php?id=".$course->id ."&pagereport=1&page=". ($page+1)."\">$next $pg</a></th>";
+      "<a href=\"viewall.php?id=".$course->id ."&pagereport=1&page=". ($page+1)."\">&gt;</a>&nbsp;".
+      "<a href=\"viewall.php?id=".$course->id ."&pagereport=1&page=$maxpages\">&gt;&gt;</a></th>";
+  	} else {
+    echo "<th valign=\"top\" align=\"right\" nowrap class=\"generaltableheader\">&gt;&nbsp;&gt;&gt;</th>\n";
   	}
 		echo "</tr></table></td></tr></table></center>\n";
   }

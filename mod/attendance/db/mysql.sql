@@ -13,6 +13,7 @@ CREATE TABLE prefix_attendance (
   timemodified int(10) unsigned NOT NULL default '0',
   dynsection tinyint(1) NOT NULL default '0',
   edited tinyint(1) NOT NULL default '0',
+  autoattend tinyint(1) NOT NULL default '0',
   PRIMARY KEY  (id)
 ) TYPE=MyISAM;
 

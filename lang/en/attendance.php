@@ -27,7 +27,6 @@ $string['defaultdynamicsection'] = "Whether to move attendance rolls to the corr
 $string['defaulthoursinclass'] = "How many hours there should be in a default attendance roll";
 $string['tardiesperabsence'] = "How many tardies should count as one absence";
 $string['hoursinfullreport'] = "The maximum number of hours of attendance that should be displayed on a single page of a report";
-$string['previous'] = "Previous";
 $string['pages'] = "Pages";
 $string['of'] = "of";
 $string['viewall'] = "View All Attendance Rolls";
@@ -57,5 +56,9 @@ $string['downloadexcelfull'] = "Download Full Excel Spreadsheet";
 $string['downloadexceltotals'] = "Download Summary Excel Spreadsheet";
 $string['downloadtextfull'] = "Download Full Text Report";
 $string['downloadtexttotals'] = "Download Summary Text Report";
+$string['autoattend'] = "Automatically take attendance based on user activity logs";
+$string['autoattendmulti'] = "Automatically take attendance for all rolls based on user activity logs";
+$string['auto'] = "auto";
+
 
 ?>

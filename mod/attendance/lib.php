@@ -6,7 +6,7 @@
 
 function attendance_add_module(&$mod) {
 //  global $mod;
-  require("../../course/lib.php");
+  require_once("../../course/lib.php");
 
   if (! $mod->instance = attendance_add_instance($mod)) {
       error("Could not add a new instance of $mod->modulename"); return 0;
@@ -34,6 +34,7 @@ function attendance_add_instance($attendance) {
 	global $mod;
      $attendance->timemodified = time();
      $attendance->dynsection = !empty($attendance->dynsection) ? 1 : 0;
+    $attendance->autoattend = !empty($attendance->autoattend) ? 1 : 0;
      if (empty($attendance->day)) {
        $attendance->day = make_timestamp($attendance->theyear, 
 			   $attendance->themonth, $attendance->theday);
@@ -71,6 +72,7 @@ function attendance_update_instance($attendance) {
 //    $attendance->oldid=$attendance->id;
     $attendance->id = $attendance->instance;
     $attendance->dynsection = !empty($attendance->dynsection) ? 1 : 0;
+    $attendance->autoattend = !empty($attendance->autoattend) ? 1 : 0;
 
      $attendance->day = make_timestamp($attendance->theyear, 
 			$attendance->themonth, $attendance->theday); 
@@ -257,11 +259,41 @@ function attendance_cron () {
 /// Function to be run periodically according to the moodle cron
 /// This function searches for things that need to be done, such 
 /// as sending out mail, toggling flags etc ... 
-
     global $CFG;
+// look for all attendance instances set to autoattend
+	$attendances = get_records("attendance", "autoattend", 1, "course ASC");
+	$td = attendance_find_today(time());
+	$tm = attendance_find_tomorrow(time());
+	foreach($attendances as $attendance) {
+    if (($attendance->day >=$td ) && ($attendance->day < $tm)) {
+			if(!isset($courses[$attendance->course]->students)) {
+			  $courses[$attendance->course]->students = 
+			    attendance_get_course_students($attendance->course, "u.lastname ASC");
+			}
+			foreach ($courses[$attendance->course]->students as $student) {
+				// first, clear out the records that may be there already
+     	  delete_records("attendance_roll", 
+          "dayid",$attendance->id,
+          "userid",$student->id);
+				$wc = "userid = " . $student->id . " AND course = " . $attendance->course . 
+				  " AND time >= " . $td . " AND time < " . $tm;
+			  $count = get_record_select("log",$wc,"COUNT(*) as c");
+				if ($count->c == "0") { // then the student hasn't done anything today, so mark him absent
+					$attrec->dayid = $attendance->id;
+					$attrec->userid = $student->id;
+					$attrec->status = 2; // status 2 is absent
+					// mark ALL hours as absent for first version
+					for ($i=1;$i<=$attendance->hours;$i++) { 
+  					$attrec->hour = $i;
+					  insert_record("attendance_roll",$attrec, false);
+					} // for loop to mark all hours absent
+				} // if student has no activity
+			} // foreach student in the list
+    } // if the attendance roll is for today 
+	} // for each attendance in the system
+  return true;
+} // function cron
 
-    return true;
-}
 
 function attendance_grades($attendanceid) {
 /// Must return an array of grades for a given instance of this module, 
@@ -507,5 +539,50 @@ function attendance_get_participants($attendanceid) {
     //Return students array (it contains an array of unique users)
     return ($students);
 }
+
+/**
+* Determines if two dates are on the same day
+* 
+* This function takes two unix timestamps and determines if they occur within the same 24 hours
+* It does this by comparing the year, month, and day
+*
+* @param	timestamp $d1	The first date to compare
+* @param	timestamp $d2	The second date to compare
+* @return	boolean	whether the two dates occur on the same day 
+*/
+function attendance_dates_same_day($d1,$d2) {
+  $da1 = getdate($d1);
+  $da2 = getdate($d2);
+  return (($da1["mday"]==$da2["mday"]) &&($da1["mon"]==$da2["mon"]) && ($da1["year"]==$da2["year"])); 
+}
+
+/**
+* Finds the beginning of the day for the date specified
+* 
+* This function returns the timestamp for midnight of the day specified in the timestamp
+*
+* @param	timestamp $d	The time to find the beginning of the day for
+* @return	timestamp	midnight for that day
+*/
+function attendance_find_today($d) {
+  // add 24 hours to the current time - to solve end of month date issues
+  $da = getdate($d);
+  // now return midnight of that day
+  return mktime(0,0,0,$da["mon"], $da["mday"], $da["year"]); 
+}
+
+/**
+* Finds the beginning of the day following the date specified
+* 
+* This function returns the timestamp for midnight of the day after the timestamp specified
+*
+* @param	timestamp $d	The time to find the next day of
+* @return	timestamp	midnight of the next day
+*/
+function attendance_find_tomorrow($d) {
+  // add 24 hours to the current time - to solve end of month date issues
+  return attendance_find_today($d+86400);
+}
+
 
 ?>
