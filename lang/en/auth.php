@@ -2,6 +2,7 @@
       // auth.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005010100)
 
 
+$string['auth_cas_server_settings'] = 'CAS server configuration';
 $string['auth_castitle'] = 'Use a CAS server (SSO)';
 $string['auth_cas_hostname'] = 'Hostname of the CAS server <br />eg: host.domaine.fr';
 $string['auth_cas_baseuri'] = 'URI of the server (nothing if no baseUri)<br />For example, if the CAS server responds to host.domaine.fr/CAS/ then<br />cas_baseuri = CAS/';
