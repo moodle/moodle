@@ -7,7 +7,15 @@
     require_once("lib.php");
 
     if (isguest()) {
-        error(get_string("noguestpost", "forum"), $_SERVER["HTTP_REFERER"]);
+        $wwwroot = $CFG->wwwroot.'/login/index.php';
+        if (!empty($CFG->loginhttps)) {
+            $wwwroot = str_replace('http','https', $wwwroot);
+        }
+        print_header();
+        notice_yesno(get_string('noguestpost', 'forum').'<br /><br />'.get_string('liketologin'),
+                     $wwwroot, $_SERVER['HTTP_REFERER']);
+        print_footer();
+        exit;
     }
 
     require_login(0, false);   // Script is useless unless they're logged in
