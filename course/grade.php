@@ -1,16 +1,20 @@
 <?PHP // $Id$
       // Displays all grades for a student in a course
 
-	require_once("../config.php");
-	require_once("lib.php");
+    require_once("../config.php");
+    require_once("lib.php");
 
     require_variable($id);              // course id
 
     if (! $course = get_record("course", "id", $id)) {
         error("Course ID was incorrect");
     }
+    
+    if (!$course->showgrades) {
+        error("Grades are not available for students in this course");
+    }
 
-	require_login($course->id);
+    require_login($course->id);
 
     $strgrades = get_string("grades");
     $strgrade = get_string("grade");
