@@ -1106,11 +1106,28 @@ function print_user_picture($userid, $courseid, $picture, $large=false, $returns
     }
 }
 
-function print_group_picture($groupid, $courseid, $picture, $large=false, $returnstring=false, $link=true) {
+function recent_internet_explorer() {
+/// Returns true if the current browser is a recent version 
+/// of Internet Explorer
+
+    $msie = '/msie\s([5-9])\.?[0-9]*.*(win)/i';
+    $opera='/opera\s+[0-9]+/i';                      
+
+    return isset($_SERVER['HTTP_USER_AGENT']) and 
+           preg_match($msie,$_SERVER['HTTP_USER_AGENT']) and
+          !preg_match($opera,$_SERVER['HTTP_USER_AGENT']);
+}
+
+function print_group_picture($group, $courseid, $large=false, $returnstring=false, $link=true) {
     global $CFG;
+    static $recentIE;
+
+    if (!isset($recentIE)) {
+        $recentIE = recent_internet_explorer();
+    }
 
     if ($link) {
-        $output = "<a href=\"$CFG->wwwroot/course/group.php?id=$courseid&group=$groupid\">";
+        $output = "<a href=\"$CFG->wwwroot/course/group.php?id=$courseid&group=$group->id\">";
     } else {
         $output = "";
     }
@@ -1121,17 +1138,23 @@ function print_group_picture($groupid, $courseid, $picture, $large=false, $retur
         $file = "f2";
         $size = 35;
     }
-    if ($picture) {  // Print custom group picture
+    if ($group->picture) {  // Print custom group picture
         if ($CFG->slasharguments) {        // Use this method if possible for better caching
-            $output .= "<img align=\"absmiddle\" src=\"$CFG->wwwroot/user/pixgroup.php/$groupid/$file.jpg\"".
-                       " border=\"0\" width=\"$size\" height=\"$size\" alt=\"\" />";
+            $pngsrc = "$CFG->wwwroot/user/pixgroup.php/$group->id/$file.png";
         } else {
-            $output .= "<img align=\"absmiddle\" src=\"$CFG->wwwroot/user/pixgroup.php?file=/$groupid/$file.jpg\"".
-                       " border=\"0\" width=\"$size\" height=\"$size\" alt=\"\" />";
+            $pngsrc = "$CFG->wwwroot/user/pixgroup.php?file=/$group->id/$file.png";
         }
-    } else {         // Print default group pictures (use theme version if available)
-        $output .= "<img align=\"absmiddle\" src=\"$CFG->pixpath/g/$file.png\"".
-                   " border=\"0\" width=\"$size\" height=\"$size\" alt=\"\" />";
+        if ($recentIE) {  // work around the HORRIBLE bug IE has with alpha transparencies
+            $output .= "<img align=\"absmiddle\" src=\"$CFG->pixpath/spacer.gif\" width=\"$size\" height=\"$size\"".
+                       " border=\"0\" style=\"width: {$size}px; height: {$size}px; ".
+                       " filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='$pngsrc', sizingMethod='scale') ".
+                       " alt=\"\" title=\"$group->name\" />";
+        } else {
+            $output .= "<img align=\"absmiddle\" src=\"$pngsrc\" border=\"0\" width=\"$size\" height=\"$size\" ".
+                       " alt=\"\" title=\"$group->name\" />";
+        }
+    } else {                // Print nothing
+        $output .= "";
     }
     if ($link) {
         $output .= "</a>";
