@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // wiki.php - created with Moodle 1.5 unstable development (2004083000)
+      // wiki.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
 
 
 $string['action'] = '-- Acción --';
@@ -159,6 +159,7 @@ $string['tabview'] = 'Ver';
 $string['thanksforcontribution'] = 'Gracias por su contribución';
 $string['thispageisntlinkedfromanywhereelse'] = 'Esta página no tiene ningún enlace.';
 $string['updatedpages'] = 'Páginas actualizadas';
+$string['updatedwikipages'] = 'Páginas wiki actualizadas';
 $string['uplerror'] = 'Lo sentimos, pero se produjo un error durante la subida del archivo.';
 $string['uplinsect'] = 'Cargar en';
 $string['uplnewnam'] = 'Guardar con otro nombre';

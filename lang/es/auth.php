@@ -1,7 +1,20 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005031000)
+      // auth.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
 
 
+$string['auth_cas_baseuri'] = 'URI del servidor (en blanco si no hay baseUri)<br />Por ejemplo, si el servidor CAS responde a host.domaine.fr/CAS/ entonces<br />cas_baseuri = CAS/';
+$string['auth_cas_create_user'] = 'Activar si se desea insertar usuarios autentificados con CAS en la base de datos de Moodle. En caso contrario, sólo tendrán acceso los usuarios que ya existen en la base de datos de Moodle.';
+$string['auth_cas_enabled'] = 'Activar si se desea usar la autentificación CAS.';
+$string['auth_cas_hostname'] = 'Nombre del servidor CAS <br />e.g.: host.domain.fr';
+$string['auth_cas_invalidcaslogin'] = 'Lo sentimos, ha fallado su login: no se puede autorizar';
+$string['auth_cas_language'] = 'Idioma seleccionado';
+$string['auth_cas_logincas'] = 'Acceso de conexión segura';
+$string['auth_cas_port'] = 'Puerto del servidor CAS';
+$string['auth_cas_server_settings'] = 'Configuración del servidor CAS';
+$string['auth_cas_text'] = 'Conexión segura';
+$string['auth_cas_version'] = 'Versión de CAS';
+$string['auth_casdescription'] = 'Este método utiliza un servidor CAS (Central Authentication Service) para autentificar a los usuarios en un contexto SSO (Single Sign On). Usted puede también usar una autenticación simple LDAP. Si el nombre de usuario y la contraseña son válidos de acuerdo con CAS, Moodle crea una entrada de nuevo usuario en su base de datos, tomando de LDAP los atributos del usuario si fuera preciso. En los siguientes accesos sólo se comprueban el nombre de usuario y la contraseña.';
+$string['auth_castitle'] = 'Usar un servidor CAS (SSO)';
 $string['auth_common_settings'] = 'Ajustes comunes';
 $string['auth_data_mapping'] = 'Mapeado de datos';
 $string['auth_dbdescription'] = 'Este método utiliza una tabla de una base de datos externa para comprobar si un determinado usuario y contraseña son válidos. Si la cuenta es nueva, la información de otros campos puede también ser copiada en Moodle.';
@@ -14,7 +27,7 @@ $string['auth_dbpass'] = 'Contraseña correspondiente al nombre de usuario anteri
 $string['auth_dbpasstype'] = 'Especifique el formato que usa el campo de contraseña. La encriptación MD5 es útil para conectar con otras aplicaciones web como PostNuke';
 $string['auth_dbtable'] = 'Nombre de la tabla en la base de datos';
 $string['auth_dbtitle'] = 'Usar una base de datos externa';
-$string['auth_dbtype'] = 'El tipo de base de datos (Vea la <a href=\"../lib/adodb/readme.htm#drivers\">documentación de ADOdb</a> para obtener más detalles)';
+$string['auth_dbtype'] = 'El tipo de base de datos (Vea la <a href=../lib/adodb/readme.htm#drivers>documentación de ADOdb</a> para obtener más detalles)';
 $string['auth_dbuser'] = 'Nombre de usuario con acceso de lectura a la base de datos';
 $string['auth_editlock'] = 'Bloquear valor';
 $string['auth_editlock_expl'] = '<p><b>Bloquear valor:</b> Si está activado, los usuarios y administradores de Moodle no podrán editar directamente el campo. Utilice esta opción si está manteniendo estos datos en el sistema de autenticación externo. </p>';
@@ -101,6 +114,7 @@ $string['forcechangepasswordfirst_help'] = 'Forzar a los usuarios a cambiar la c
 $string['guestloginbutton'] = 'Botón de entrada para invitados';
 $string['instructions'] = 'Instrucciones';
 $string['md5'] = 'Encriptación MD5';
+$string['parentlanguage'] = 'es';
 $string['plaintext'] = 'Texto plano';
 $string['showguestlogin'] = 'Puede ocultar o mostrar el botón de entrada para invitados en la página de acceso.';
 $string['stdchangepassword'] = 'Utilizar Página de cambio de contraseña estándar';

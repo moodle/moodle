@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005031000)
+      // resource.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
 
 
 $string['addresource'] = 'Agregar recurso';
@@ -55,10 +55,11 @@ $string['newwindow'] = 'Nueva ventana';
 $string['newwindowopen'] = 'Mostrar el recurso en una nueva ventana emergente (\"popup\")';
 $string['note'] = 'Nota';
 $string['notefile'] = 'Para subir más de un archivo (y se puedan ver en la lista) utilice el 
-<a href=\"$a\" >Administrador de archivos</a>.';
+<A HREF=$a >Administrador de archivos</A>.';
 $string['notypechosen'] = 'Necesita elegir un texto. Regrese e inténtelo de nuevo.';
 $string['pagedisplay'] = 'Mostrar este recurso dentro de la ventana actual';
 $string['pagewindow'] = 'La misma ventana';
+$string['pan'] = 'Pan';
 $string['parameter'] = 'Parámetro';
 $string['parameters'] = 'Parámetros';
 $string['popupresource'] = 'Este recurso debe aparecer en una ventana ';
@@ -79,6 +80,8 @@ $string['resourcetypehtml'] = 'Editar una página web';
 $string['resourcetypelabel'] = 'Añadir una etiqueta';
 $string['resourcetypetext'] = 'Editar una página de texto';
 $string['searchweb'] = 'Buscar una página web';
+$string['serverurl'] = 'URL del servidor ($a->wwwroot)';
 $string['variablename'] = 'Nombre de la variable';
+$string['vol'] = 'Vol';
 
 ?>

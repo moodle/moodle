@@ -6,5 +6,6 @@ $string['configcontent'] = 'Contenido';
 $string['configtitle'] = 'Título del Bloque';
 $string['html'] = 'HTML';
 $string['leaveblanktohide'] = 'dejar en blanco para ocultar el título';
+$string['newhtmlblock'] = '(nuevo bloque HTML)';
 
 ?>
