@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.0.9 development (2003032602)
+      // moodle.php - created with Moodle 1.0.9 development (2003041400)
 
 
 $string['action'] = "操作";
@@ -119,6 +119,7 @@ $string['deletednot'] = "\$a を削除出来ませんでした!";
 $string['deletingcourse'] = "\$a の削除";
 $string['department'] = "学科";
 $string['description'] = "説明";
+$string['displayingfirst'] = "最初の \$a->count \$a->things のみ表示されます";
 $string['displayingrecords'] = "\$a レコードを表示";
 $string['displayingusers'] = "ユーザを \$a->start から \$a->end まで表示";
 $string['documentation'] = "Moodle文書";
@@ -435,6 +436,7 @@ $string['shortname'] = "省略名";
 $string['shortnametaken'] = "省略名は他のコース(\$a)で使用されています";
 $string['shortsitename'] = "短いサイト名(例 単語)";
 $string['show'] = "表示";
+$string['showall'] = "全ての \$a を表示";
 $string['showallcourses'] = "全てのコースを表示";
 $string['showalltopics'] = "全てのトピックを表示";
 $string['showallusers'] = "全てのユーザを表示";
