@@ -26,6 +26,9 @@ define("NUMERICAL",     "8");
 define("MULTIANSWER",   "9");
 define("CALCULATED",   "10");
 
+// The $QUIZ_QUESTION_TYPE array holds the names of all the question types that the user should
+// be able to create directly. Some internal question types like random questions are excluded.
+// The complete list of question types can be found in $QUIZ_QTYPES.
 $QUIZ_QUESTION_TYPE = array ( MULTICHOICE   => get_string("multichoice", "quiz"),
                               TRUEFALSE     => get_string("truefalse", "quiz"),
                               SHORTANSWER   => get_string("shortanswer", "quiz"),
