@@ -15,7 +15,7 @@ class quiz_calculated_qtype extends quiz_dataset_dependent_questiontype {
     function get_answers($question) {
         global $CFG;
         return get_records_sql(
-            "SELECT a.*, c.tolerance, c.tolerancetype, c.correctanswerlength, c.id calcid
+            "SELECT a.*, c.tolerance, c.tolerancetype, c.correctanswerlength, c.correctanswerformat, c.id calcid
                FROM {$CFG->prefix}quiz_answers a,
                     {$CFG->prefix}quiz_calculated c
               WHERE c.question = $question->id AND a.id = c.answer");
@@ -126,7 +126,7 @@ class quiz_calculated_qtype extends quiz_dataset_dependent_questiontype {
                 ++$p10;
                 $nbr /= 10;
             }
-            // ... and have the nbr rounded of to the correct length
+            // ... and have the nbr rounded off to the correct length
             $nbr = round($nbr, $regs[4]);
 
             // Have the nbr written on a suitable format,
@@ -202,7 +202,8 @@ class quiz_calculated_qtype extends quiz_dataset_dependent_questiontype {
         foreach ($answers as $answer) {
             $calculated = quiz_qtype_calculated_calculate_answer(
                     $answer->answer, $data, $answer->tolerance,
-                    $answer->tolerancetype, $answer->correctanswerlength, $unit);
+                    $answer->tolerancetype, $answer->correctanswerlength,
+                    $answer->correctanswerformat, $unit);
             if ($calculated->min === '') {
                 // This should mean that something is wrong
                 $errors .= " -$calculated->answer";
@@ -237,6 +238,7 @@ class quiz_calculated_qtype extends quiz_dataset_dependent_questiontype {
             $calcrec->tolerance = $newanswer->tolerance;
             $calcrec->tolerancetype = $newanswer->tolerancetype;
             $calcrec->correctanswerlength = $newanswer->correctanswerlength;
+            $calcrec->correctanswerformat = $newanswer->correctanswerformat;
             if ($oldanswer = array_shift($oldanswers)) {
                 // Reuse old record:
                 $calcrec->answer = $answerrec->id = $oldanswer->id;
@@ -386,7 +388,8 @@ class quiz_calculated_qtype extends quiz_dataset_dependent_questiontype {
             $answernumerical = quiz_qtype_calculated_calculate_answer(
                     $answer->answer, $individualdata,
                     $answer->tolerance, $answer->tolerancetype,
-                    $answer->correctanswerlength, $unit);
+                    $answer->correctanswerlength,
+                    $answer->correctanswerformat, $unit);
             $answers[$aid]->answer = $answernumerical->answer;
             $answers[$aid]->min = $answernumerical->min;
             $answers[$aid]->max = $answernumerical->max;
@@ -410,7 +413,7 @@ class quiz_calculated_qtype extends quiz_dataset_dependent_questiontype {
 $QUIZ_QTYPES[CALCULATED]= new quiz_calculated_qtype();
 
 function quiz_qtype_calculated_calculate_answer($formula, $individualdata,
-        $tolerance, $tolerancetype, $answerlength, $unit='') {
+        $tolerance, $tolerancetype, $answerlength, $answerformat='1', $unit='') {
 /// The return value has these properties:
 /// ->answer    the correct answer
 /// ->min       the lower bound for an acceptable response
@@ -466,8 +469,30 @@ function quiz_qtype_calculated_calculate_answer($formula, $individualdata,
     $calculated->min    = $min;
     $calculated->max    = $max;
 
-    /// Adjust the number of significant digits for the correct answer
-    if ($answer) { // Applies only if the result is non-zero
+    if ('1' == $answerformat) { /* Answer is to have $answerlength decimals */
+        /*** Adjust to the correct number of decimals ***/
+
+        $calculated->answer = round($answer, $answerlength);
+
+        if ($answerlength) {
+            /* Try to include missing zeros at the end */
+            
+            if (ereg('^(.*\\.)(.*)$', $calculated->answer, $regs)) {
+                $calculated->answer = $regs[1] . substr(
+                        $regs[2] . '00000000000000000000000000000000000000000x',
+                        0, $answerlength)
+                        . $unit;
+            } else {
+                $calculated->answer .=
+                        substr('.00000000000000000000000000000000000000000x',
+                        0, $answerlength + 1) . $unit;
+            }
+        } else {
+            /* Attach unit */
+            $calculated->answer .= $unit;
+        }
+
+    } else if ($answer) { // Significant figures does only apply if the result is non-zero
 
         // Convert to positive answer...
         if ($answer < 0) {
@@ -518,6 +543,7 @@ function quiz_qtype_calculated_calculate_answer($formula, $individualdata,
                 $calculated->answer = $sign.substr($answer, 0, $oklen).$unit;
             }
         }
+
     } else {
         $calculated->answer = 0.0;
     }

@@ -33,17 +33,9 @@
         <input type="hidden" name="questiontext"       value="<?php  p($question->questiontext) ?>" />
         <input type="hidden" name="questiontextformat" value="<?php  p($question->questiontextformat) ?>" />
         <input type="hidden" name="image"              value="<?php  p($question->image) ?>" />
-        <?php foreach ($answers as $answer) { ?>
-        <input type="hidden" name="answer[]"              value="<?php  p($answer->answer) ?>" />
-        <input type="hidden" name="fraction[]"            value="<?php  p($answer->fraction) ?>" />
-        <input type="hidden" name="feedback[]"            value="<?php  p($answer->feedback) ?>" />
-        <input type="hidden" name="tolerance[]"           value="<?php  p($answer->tolerance) ?>" />
-        <input type="hidden" name="tolerancetype[]"       value="<?php  p($answer->tolerancetype) ?>" />
-        <input type="hidden" name="correctanswerlength[]" value="<?php  p($answer->correctanswerlength) ?>" />
-        <?php } ?>
-        <?php foreach ($units as $unit) { ?>
-        <input type="hidden" name="multiplier[]"   value="<?php  p($unit->multiplier) ?>" />
-        <input type="hidden" name="unit[]"         value="<?php  p($unit->unit) ?>" />
+        <?php if (!empty($hiddeninputnames)) foreach ($hiddeninputnames as $key => $hiddeninputname) { ?>
+            <input type="hidden" name="<?php p($hiddeninputname) ?>"
+                                value="<?php p($hiddeninputvalues[$key]) ?>" />
         <?php } ?>
     </td>
 </tr>

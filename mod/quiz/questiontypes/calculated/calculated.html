@@ -88,14 +88,18 @@
     </td>
 </tr>
 <tr valign="top">
-<td align="right"><b><?php  print_string("correctanswerlength", "quiz"); ?>:</b></td>
+<td align="right"><b><?php  print_string("correctanswershows", "quiz"); ?>:</b></td>
     <td>
-    <?php choose_from_menu(array('1' => '1', '2' => '2', '3' => '3',
-                                 '4' => '4', '5' => '5', '6' => '6',
-                                 '7' => '7', '8' => '8', '9' => '9',
-                                 '10' => '10'),
+    <?php choose_from_menu(array('0' => ' 0 ',
+                                 '1' => ' 1 ', '2' => ' 2 ', '3' => ' 3 ',
+                                 '4' => ' 4 ', '5' => ' 5 ', '6' => ' 6 ',
+                                 '7' => ' 7 ', '8' => ' 8 ', '9' => ' 9 '),
                            'correctanswerlength[]',
                            $answers[0]->correctanswerlength, false); ?>
+    <?php choose_from_menu(array('1' => get_string('decimalformat', 'quiz'),
+                                 '2' => get_string('significantfiguresformat', 'quiz')),
+                           'correctanswerformat[]',
+                           $answers[0]->correctanswerformat, false); ?>
     </td>
 </tr>
 <tr valign="top">
@@ -158,13 +162,17 @@ function determineMinAndMax() {
             return false;
             /* It could perhaps be an idea to parse the formula here
              * but as it is necessary at the server anyway, we can
-             * leave like this for the moment. */
+             * it leave like this for the moment. */
             
         } else if (''!=defaultunit.value && !isNaN(defaultunit.value)) {
             alert('<?php  print_string("unitmustnotbenumeric","quiz") ?>');
             return false;
         } else if (isNaN(tolerance0.value)) {
             alert('<?php  print_string("tolerancemustbenumeric","quiz") ?>');
+            return false;
+        } else if ('2' == document.theform['correctanswerformat[]'].value
+                && '0' == document.theform['correctanswerlength[]'].value) {
+            alert('<?php  print_string("zerosignificantfiguresnotallowed","quiz") ?>');
             return false;
         } else {
             return true;
