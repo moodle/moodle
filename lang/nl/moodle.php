@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.3 Nearly Ready (2004052000)
+      // moodle.php - created with Moodle 1.3 - (2004052400)
 
 
 $string['action'] = 'Actie';
@@ -147,8 +147,10 @@ $string['configenablerssfeeds'] = 'Met deze instelling maak je RSS feeds mogelij
 $string['configenablerssfeedsdisabled'] = 'Dit is niet beschikbaar omdat RSS voor heel de site is uitgeschakeld. Om RSS in te schakelen ga je naar Configureer variablen onder Beheer Configuratie.';
 $string['configerrorlevel'] = 'Kies hoeveel PHP waarschuwingen je wilt dat Moodle laat zien. \'Normaal\' is meestal de beste keuze.
 ';
+$string['configextendedusernamechars'] = 'Schakel deze optie in om het mogelijk te maken dat gelijk welke karakters in hun gebruikersnaam gebruikt kunnen worden (merk op dat deze instelling geen invloed heeft op de voornaam of achternaam). De standaardinstelling is \"false\", wat er voor zorgt dat alleen alphanumerieke tekens kunnen gebruikt worden.';
 $string['configfilteruploadedfiles'] = 'Door deze optie in te schakelen gaat Moodle alle geüploade HTML en tekstbestanden door de gekozen filters halen voor ze getoond worden';
 $string['configforcelogin'] = 'Standaard kunnen de startpagina van de site en de lijst van de vakken (maar niet de vakken zelf) bekeken worden door iedereen, zonder zich aan te melden op de site. Als je wil afdwingen dat er moet aangemeld worden voor er maar iets van de site te zien is, dan kan dat door deze instelling aan te zetten.';
+$string['configforceloginforprofiles'] = 'Schakel deze optie in om gebruikers te dwingen zich aan te melden met een echte (niet gast) account voor ze de pagina\'s met gebruikersprofielen kunnen zien. Standaard staat deze instelling uit (\"false\") zodat leerlingen op prospectie de profielen van de leraars bij elk vak kunnen lezen. Dit heeft als gevolg dat ook zoekrobots deze informatie kunnen lezen.';
 $string['configframename'] = 'Als je Moodle in een webframe opneemt (embed), zet de naam van het frame dan hier. In alle andere gevallen moet de waarde \'_top\' blijven staan.';
 $string['configfullnamedisplay'] = 'Deze instelling bepaalt hoe de volledige namen getoond worden. Voor de meeste enkeltalige sites is de beste instelling de standaardinstelling, nl \"voornaam + achternaam\", maar je kunt er voor kiezen de achternaam te verbergen of de gekozen taalinstelling te volgen (sommige talen gebruiken een andere volgorde).';
 $string['configgdversion'] = 'Geef aan welke versie van GD geïnstalleerd is. De versie die standaard getoond wordt is automatisch gevonden. Verander dit niet tenzij je echt weet wat je aan het doen bent.
