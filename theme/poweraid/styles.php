@@ -242,3 +242,12 @@ select {
 
 .headerhomemenu {
 }
+
+.categorybox {
+}
+
+.categoryname {
+}
+
+.coursename {
+}

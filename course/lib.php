@@ -950,8 +950,6 @@ function print_category_info($category, $depth) {
         $pixpath = "$CFG->wwwroot/theme/$CFG->theme/pix";
     }
 
-    $catlinkcss = $category->visible ? "" : " class=\"dimmed\" ";
-
     echo "<tr>";
     echo "<td valign=\"top\">";
     for ($i=0; $i<$depth;$i++) {
@@ -959,17 +957,20 @@ function print_category_info($category, $depth) {
     }
 
     $catimage = "";
+    $catlinkcss = $category->visible ? "" : " class=\"dimmed\" ";
+
     if ($CFG->frontpage == FRONTPAGECOURSELIST) {
         $catimage = "<img src=\"$pixpath/i/course.gif\" width=16 height=16 border=0>";
     }
-    echo "<font size=+1>$catimage <a $catlinkcss ".
-         "href=\"$CFG->wwwroot/course/category.php?id=$category->id\">$category->name</a></font>";
+    echo "<font size=+1>$catimage <span class=\"categoryname\"><a $catlinkcss ".
+         "href=\"$CFG->wwwroot/course/category.php?id=$category->id\">$category->name</a></span></font>";
 
     if ($CFG->frontpage == FRONTPAGECOURSELIST) {
         if ($courses = get_courses($category->id)) {
             foreach ($courses as $course) {
                 echo "<ul style=\"margin-bottom:0;margin-top:0\">";
                 $linkcss = $course->visible ? "" : " class=\"dimmed\" ";
+                echo "<span class=\"coursename\">";
                 echo "<a $linkcss href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->fullname</a>";
                 echo "&nbsp;&nbsp;";
                 unset($courses[$key]);
@@ -981,6 +982,7 @@ function print_category_info($category, $depth) {
                     echo "<a title=\"$strrequireskey\" href=\"$CFG->wwwroot/course/view.php?id=$course->id\">";
                     echo "<img alt=\"\" height=16 width=16 border=0 src=\"$pixpath/i/key.gif\"></a>";
                 }
+                echo "</span>";
                 echo "</ul>";
             }
         }

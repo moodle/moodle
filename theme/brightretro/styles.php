@@ -284,3 +284,12 @@ a.dimmed:hover {
 
 .headerhomemenu {
 }
+
+.categorybox {
+}
+
+.categoryname {
+}
+
+.coursename {
+}

@@ -89,3 +89,15 @@ ALL pix files can now be changed from within a theme,
 see cordoroyblue for an example:  config.php and the 
 pix subdirectory.
 
+
+
+================================
+Changes to 1.1 since 1.0.9
+--------------------------------
+
+/* Styles for the courses/categories on the course listing */
+
+.categorybox {}
+.categoryname {}
+.coursename {}
+
