@@ -1,8 +1,3 @@
-<html>
-<head>
-<title>GIFT Format Dateien importieren</title>
-</head>
-<body>
 <p align="center"><b>"GIFT"-Format-Dateien importieren</b></p>
 <p>GIFT ist das umfangreichste Format zum Import von Textdateien
 in das Moodle Quiz-Modul. Es unterst&uuml;tzt
@@ -13,14 +8,14 @@ k&ouml;nnen in einer Textdatei kombiniert werden. Das
 Importformat unterst&uuml;tzt auch Kommentarzeilen, Fragenamen,
 Feedback und die prozentuale Gewichtung der Antworten.</p>
 <h3>Verschiedene Frageformen</h3>
-<p><u>Multiple-Choice-Fragen:</u><br>
+<p><u>Multiple-Choice-Fragen:</u><br />
 F&uuml;r Multiple-Choice-Fragen wird das Tilde-Zeichen (~)
 verwandt, um falsche Antworten zu kennzeichnen. Richtige
 Antworten werden mit dem Gleichheitszeichen (=) markiert.</p>
 <pre>
      Who's buried in Grant's tomb?{~Grant ~Jefferson =no one}
 </pre>
-<br>
+<br />
 <h3>L&uuml;ckentexte</h3>
 <p>Das <b>L&uuml;ckentext</b>format f&uuml;llt automatisch ein
 unterstrichenes Leerfeld (wie _____) in den Satz. Die Reihenfolge
@@ -50,15 +45,15 @@ Beispiel:</p>
          ~Korea
          ~Egypt}
 </pre>
-<p>Kurzantwort-Fragen:<br>
-<br>
+<p>Kurzantwort-Fragen:<br />
+<br />
 Antworten im Kurzantzwortfragen-Format werden alle durch ein
 Gleichheitszeichen (=) eingeleitet, das verdeutlicht, dass alle
 Antworten richtig sind. Falsche Antwortvorgaben (~) sind nicht
 erforderlich.</p>
 <pre>
      Who's buried in Grant's tomb?{=no one =nobody}
-<br>
+<br />
 
      Two plus two equals {=four =4}.
 </pre>
@@ -66,7 +61,7 @@ erforderlich.</p>
 Gleichheitszeichen f&uuml;r die richtige Antwort verzichtet
 werden, solange keine Verwechslung mit Richtig-Falsch
 Fragestellung erfolgen kann.</p>
-<p>Richtig-Falsch-Fragen:<br>
+<p>Richtig-Falsch-Fragen:<br />
 Bei diesem Fragetyp kennzeichnet die antwort, ob die Aussage
 richtig oder falsch ist. Die Antwort sollte als richtig {TRUE}
 oder falsch {FALSE}, oder abgek&uuml;rzt {T} oder {F}
@@ -76,7 +71,7 @@ gekennzeichnet werden.</p>
 
      The sun rises in the east.{T}
 </pre>
-<p>Zuordnungen:<br>
+<p>Zuordnungen:<br />
 Zuordnungspaare beginnen mit einem Gleichheitszeichen (=) und
 werden durch das Pfeilsymbol "-&gt;" voneinander getrennt. Es
 sind mindestens drei Vergleichspaare erforderlich.</p>
@@ -96,7 +91,7 @@ sind mindestens drei Vergleichspaare erforderlich.</p>
 </pre>
 <p>Feedback und die prozentuale Gewichtung der Antworten werden
 hier nicht unterst&uuml;tzt.</p>
-<p>Numerische Fragen:<br>
+<p>Numerische Fragen:<br />
 Der Antwortabschnitt f&uuml;r eine numerische Antwort mu&szlig;
 mit dem Rautenzeichen (#) beginnen. Nicht exakt richtige, aber
 akzeptierte Antworten k&ouml;nnen ebenfalls eingegeben werden.
@@ -139,14 +134,14 @@ direkt in phpMyAdmin).</p>
 <p>Zus&auml;tzlich zu diesen Frageformen bietet dieser Filter
 folgende Optionen: Kommentarzeilen, Fragenamen, Feedback und eine
 prozentuale Gewichtung der Antworten bei der Bewertung.</p>
-<p><u>Kommentarzeilen:</u><br>
+<p><u>Kommentarzeilen:</u><br />
 Alle Zeilen, die mit einem doppelten backlash-Zeichen (\\)
 beginnen, werden von diesem Filter ignoriert.</p>
 <pre>
      // Subheading: Numerical questions below
      What's 2 plus 2? {#4}
 </pre>
-<p>Fragenname:<br>
+<p>Fragenname:<br />
 Der Fragenname wird zu Beginn der Frage geschrieben und durch
 zweifache Doppelpunkte eingefasst.</p>
 <pre>
@@ -158,7 +153,7 @@ zweifache Doppelpunkte eingefasst.</p>
 </pre>
 <p>Wenn kein Fragenname angegeben wird wird automatisch durch
 Voreinstellung eine Bezeichnung vergeben.</p>
-<p>Feedback:<br>
+<p>Feedback:<br />
 Feedback kann f&uuml;r jede Antwort definiert werden. Die
 Feedbackdefinition folgt der Antwort und wird durch ein(#) von
 ihr separiert.</p>
@@ -181,7 +176,7 @@ Richtig-Falsch-Fragen wird ein Kommentar bei der falschen Antwort
 gezeigt. Im obigen Beispiel wird der Feedback-Kommentar nur bei
 der falschen Antwort (hier: richtig) angezeigt.</p>
 <h3>Prozentuale Gewichtung der Antworten</h3>
-<br>
+<br />
 Eine prozentuale Gewichtung der Antworten ist bei den
 Kurzantwortfragen und bei Multiple-Choice-Fragen m&ouml;glich.
 Der Prozentwert folgt dem Tilde-Zeichen (bei
@@ -219,7 +214,7 @@ innerhalb von Moodle vornehmen wird der Wert entsprechend den
 M&ouml;glichkeiten von Moodle angepasst und
 ge&auml;ndert.</font></p>
 <h3>Mehrere Antworten</h3>
-<br>
+<br />
 Die Option Mehrere Antworten erm&ouml;glicht Fragen bei denen
 mehrere Antworten als richtig bezeichnet werden m&uuml;ssen, um
 die Antwort insgesamt als vollst&auml;ndig richtig zu
@@ -248,12 +243,12 @@ falsche Antworten vergeben werden.</p>
           ~%-50%Grant's father }
 </pre>
 <h3>Andere Optionen:</h3>
-<br>
+<br />
 Andere Optionen sind durch Anpassung des Importfilters
 <b>gift/format.php</b> m&ouml;glich.
 <p>Kurzantwortfragen k&ouml;nnen die Gro&szlig;- und
 Kleinschreibung der Antworten ber&uuml;cksichtigen durch eine
-&Auml;nderung der Zeile<br>
+&Auml;nderung der Zeile<br />
 <tt>$question-&gt;usecase = 0; // Ignore case</tt></p>
 <h3>Troubleshooting</h3>
 <p>Die Textdateibezeichnung mu&szlig; mit der Bezeichnung in
@@ -272,5 +267,3 @@ ist aber f&uuml;r die Bezeichnung eines Filters zu lang: deshalb
 einfach GIFT.</p>
 <p><font size="-1">GIFT documentation by Paul Tsuchido Shew, 13
 Jan 2004.</font></p>
-</body>
-</html>
