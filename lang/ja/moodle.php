@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005021601)
+      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005021700)
 
 
 $string['action'] = '操作';
@@ -713,6 +713,7 @@ $string['no'] = 'No';
 $string['nobody'] = '無し';
 $string['nocoursesfound'] = 'キーワード 「 $a 」 でコースは見つかりませんでした。';
 $string['nocoursesyet'] = 'このカテゴリにコースはありません。';
+$string['nodstpresets'] = '管理者が夏時間のサポート設定を行っていません。';
 $string['noexistingadmins'] = '管理者が存在しません。これは重大なエラーでこのようなメッセージを表示させてはいけません。';
 $string['noexistingcreators'] = 'コース作成者は登録されていません。';
 $string['noexistingstudents'] = '学生は登録されていません。';
