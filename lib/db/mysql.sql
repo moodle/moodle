@@ -161,6 +161,7 @@ CREATE TABLE `user` (
   `address` varchar(70) default NULL,
   `city` varchar(20) default NULL,
   `country` char(2) default NULL,
+  `lang` char(5) default 'en',
   `timezone` float NOT NULL default '99',
   `firstaccess` int(10) unsigned NOT NULL default '0',
   `lastaccess` int(10) unsigned NOT NULL default '0',
