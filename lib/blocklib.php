@@ -424,7 +424,7 @@ function block_print_blocks_admin(&$course, $missingblocks) {
                     $menu[$block->id] = $blockobject->get_title();
                 }
 
-                if($course->id == 1) {
+                if(!$course->category) {
                     $target = 'index.php';
                 }
                 else {
