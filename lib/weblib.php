@@ -774,6 +774,10 @@ function print_navigation ($navigation) {
    }
 }
 
+function print_headline($text, $size=2) {
+    echo "<b><font size=\"$size\">$text</font></b><br />\n";
+}
+
 function print_heading($text, $align="center", $size=3) {
     echo "<p align=\"$align\"><font size=\"$size\"><b>".stripslashes_safe($text)."</b></font></p>";
 }

@@ -298,10 +298,6 @@ function print_course($course) {
     print_simple_box_end();
 }
 
-function print_headline($text, $size=2) {
-    echo "<B><FONT SIZE=\"$size\">$text</FONT></B><BR>\n";
-}
-
 function print_recent_activity($course) {
     // $course is an object
     // This function trawls through the logs looking for 
