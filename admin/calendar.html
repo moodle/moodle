@@ -1,30 +1,34 @@
 
 <form method="post" action="calendar.php">
+<?php print_simple_box_start('center'); ?>
 <p><input type="hidden" name="sesskey" value="<?php echo $USER->sesskey ?>"></p>
 
-<div>
-<table style="margin: auto;" class="formtable">
+<table class="formtable">
   <tbody>
     <tr>
       <th>adminseesall:</th>
       <td>
+        <div><?php print_string('helpadminseesall', 'admin'); ?></div>
+        <p>
         <select name="adminseesallcourses">
           <option value="0" <?php if(empty($CFG->calendar_adminseesall)) echo "selected='selected'"; ?>><?php print_string('adminseesownevents', 'admin'); ?></option>
           <option value="1" <?php if(!empty($CFG->calendar_adminseesall)) echo "selected='selected'"; ?>><?php print_string('adminseesallevents', 'admin'); ?></option>
         </select>
+        </p>
       </td>
-      <td><?php print_string('helpadminseesall', 'admin'); ?></td>
     </tr>
     <tr>
       <th>startwday:</th>
       <td>
-        <?php choose_from_menu($weekdays, 'startwday', empty($CFG->calendar_startwday) ? 0 : $CFG->calendar_startwday, ''); ?>
+        <div><?php print_string('helpstartofweek', 'admin'); ?></div>
+        <p><?php choose_from_menu($weekdays, 'startwday', empty($CFG->calendar_startwday) ? 0 : $CFG->calendar_startwday, ''); ?></p>
       </td>
-      <td><?php print_string('helpstartofweek', 'admin'); ?></td>
     </tr>
     <tr>
       <th>weekenddays:</th>
       <td>
+        <div><?php print_string('helpweekenddays', 'admin'); ?></div>
+        <p>
         <nobr><input type="checkbox" name="weekend[]" value="1" id="weekend1" <?php if(CALENDAR_WEEKEND &  2) echo 'checked="checked"'; ?> /> <label for="weekend1"><?php print_string('monday', 'calendar'); ?></label></nobr>
         <nobr><input type="checkbox" name="weekend[]" value="2" id="weekend2" <?php if(CALENDAR_WEEKEND &  4) echo 'checked="checked"'; ?> /> <label for="weekend2"><?php print_string('tuesday', 'calendar'); ?></label></nobr>
         <nobr><input type="checkbox" name="weekend[]" value="3" id="weekend3" <?php if(CALENDAR_WEEKEND &  8) echo 'checked="checked"'; ?> /> <label for="weekend3"><?php print_string('wednesday', 'calendar'); ?></label></nobr>
@@ -32,26 +36,28 @@
         <nobr><input type="checkbox" name="weekend[]" value="5" id="weekend5" <?php if(CALENDAR_WEEKEND & 32) echo 'checked="checked"'; ?> /> <label for="weekend5"><?php print_string('friday', 'calendar'); ?></label></nobr>
         <nobr><input type="checkbox" name="weekend[]" value="6" id="weekend6" <?php if(CALENDAR_WEEKEND & 64) echo 'checked="checked"'; ?> /> <label for="weekend6"><?php print_string('saturday', 'calendar'); ?></label></nobr>
         <nobr><input type="checkbox" name="weekend[]" value="0" id="weekend0" <?php if(CALENDAR_WEEKEND &  1) echo 'checked="checked"'; ?> /> <label for="weekend0"><?php print_string('sunday', 'calendar'); ?></label></nobr>
+        </p>
       </td>
-      <td><?php print_string('helpweekenddays', 'admin'); ?></td>
     </tr>
     <tr>
       <th>upcoming_lookahead:</th>
       <td>
-        <input type="text" name="lookahead" size="3" value="<?php echo CALENDAR_UPCOMING_DAYS; ?>" />
+        <div><?php print_string('helpupcominglookahead', 'admin'); ?></div>
+        <p><input type="text" name="lookahead" size="3" value="<?php echo CALENDAR_UPCOMING_DAYS; ?>" /></p>
       </td>
-      <td><?php print_string('helpupcominglookahead', 'admin'); ?></td>
     </tr>
     <tr>
       <th>upcoming_maxevents:</th>
       <td>
-        <input type="text" name="maxevents" size="3" value="<?php echo CALENDAR_UPCOMING_MAXEVENTS; ?>" />
+        <div><?php print_string('helpupcomingmaxevents', 'admin'); ?></div>
+        <p><input type="text" name="maxevents" size="3" value="<?php echo CALENDAR_UPCOMING_MAXEVENTS; ?>" /></p>
       </td>
-      <td><?php print_string('helpupcomingmaxevents', 'admin'); ?></td>
     </tr>
     <tr>
       <th>dstforusers:</th>
       <td>
+        <div><?php print_string('helpdstforusers', 'admin'); ?></div>
+        <p>
         <?php if(empty($presets)) { print_string('nodstpresetsexist', 'admin'); } else { ?>
         <div>
           <nobr>
@@ -64,20 +70,21 @@
           </nobr>
         </div>
         <?php } ?>
+        </p>
       </td>
-      <td><?php print_string('helpdstforusers', 'admin'); ?></td>
     </tr>
     <tr>
       <th>managedstpresets:</th>
       <td>
-        <input type="submit" name="mode_dst" value="<?php print_string('managedstpresets', 'admin'); ?>..." />
+        <div><?php print_string('helpmanagedstpresets', 'admin'); ?></div>
+        <p><input type="submit" name="mode_dst" value="<?php print_string('managedstpresets', 'admin'); ?>..." /></p>
       </td>
-      <td><?php print_string('helpmanagedstpresets', 'admin'); ?></td>
     </tr>
   </tbody>
 </table>
-
+<?php print_simple_box_end(); ?>
+<p style="text-align: center;">
   <input type="submit" value="<?php print_string('savechanges'); ?>" />
-</div>
+</p>
 
 </form>

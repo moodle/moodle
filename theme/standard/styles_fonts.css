@@ -135,6 +135,11 @@ h4 {
 ***
 ******************************/
 
+table.formtable tbody th {
+    font-weight: normal;
+    text-align: right;
+}
+
 
 /*****************************
 ***

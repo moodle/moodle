@@ -78,6 +78,7 @@
                 set_config('calendar_maxevents', $maxevents);
             }
         }
+        redirect('index.php');
     }
 
     // Include the calendar library AFTER modifying the data, so we read the latest values
@@ -104,9 +105,7 @@
 
     // Main display starts here
 
-    print_simple_box_start('center');
     include('./calendar.html');
-    print_simple_box_end();
 
     print_footer();
 

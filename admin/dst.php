@@ -166,24 +166,15 @@
                     $preset->activate_time   = sprintf('%02d:%02d', $preset->activate_hour, $preset->activate_minute);
                     $preset->deactivate_time = sprintf('%02d:%02d', $preset->deactivate_hour, $preset->deactivate_minute);
                     $preset = dst_update_preset($preset);
-                    print_object("record is:");
-                    print_object($preset);
-                    print_object('The last change time was: ');
-                    print_object(gmdate('M d Y H:i', $preset->last_change));
-                    print_object('The next change time is: ');
-                    print_object(gmdate('M d Y H:i', $preset->next_change));
 
-                    // Write it!
                     if($preset->id) {
-                        print_object("UPDATED!");
                         update_record('dst_preset', $preset);
                     }
                     else {
-                        print_object("INSERT!");
                         insert_record('dst_preset', $preset);
                     }
-                    echo '<a href="dst.php">Proceed</a>';
-                    die();
+
+                    redirect('dst.php');
                 }
                 else {
                     echo '<div class="errorbox">';

@@ -190,8 +190,15 @@ a img {
 ***
 ******************************/
 /* admin, calendar */
-table.formtable td {
-    padding:9px;
+table.formtable {
+    border-spacing: 8px;
+    border-collapse: separate;
+    margin: auto;
+}
+
+table.formtable tbody th {
+    background: none;
+    vertical-align: top;
 }
 
 
