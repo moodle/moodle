@@ -3,37 +3,33 @@ Version: $Id$
 French Translation
 ------------------
 
-Authors: 
-Nicolas Martignoni <nicolas@martignoni.net>
-Jean-François Nadeau <nadeau.jf@videotron.ca>
-Sébastien Namèche <seb@gaia.anet.fr>
-
-La traduction française de Moodle semblant ne plus être mise à jour,
-je (Nicolas Martignoni) me suis mis au travail pour améliorer et compléter
-le début de traduction de Sébastien Namèche.
-
-J'ai également incorporé les fichiers d'aide (dossier help) et
-workshop.php traduits pour nos amis du Canada francophone par Jean-François
-Nadeau, et que j'ai légèrement adaptés.
+La traduction française de Moodle est coordonnée et en grande partie
+accomplie par Nicolas Martignoni <nicolas@martignoni.net>. Elle
+comprend en outre des adaptations de certains fichiers d'aide (dossier
+help) et du fichier workshop.php traduits pour nos amis du Canada
+francophone par Jean-François Nadeau <nadeau.jf@videotron.ca>.
 
 Une liste des termes utilisés pour la traduction est disponible dans le
 glossaire du cours "Moodle en français" à l'URL suivante :
 http://moodle.org/mod/glossary/view.php?id=997
 
-Cette liste comprend certains termes canadiens-français qui diffèrent
-de l'usage du français d'Europe.
+Cette liste comprend Žgalement certains termes canadiens-français
+qui diffèrent de l'usage du français d'Europe, et qui sont utilisés dans
+la traduction en canadien-français.
 
-Si vous avez d'autres suggestions concernant la traduction de certains
-termes, merci de me les communiquer.
+Si vous avez des suggestions ou des propositions d'amélioration au
+sujet de la traduction de certains termes, merci d'utiliser le forum
+"Traduction en français" à l'URL suivante :
+http://moodle.org/mod/forum/view.php?id=1683
 
 TODO
-  Beaucoup de choses encore. Entre autres :
+  Entre autres :
   - trouver une bonne traduction de "Reflective Thinking" ;
-  - traduire les fichiers d'aide des modules "Dialogue" et "Exercise"
+  - traduire les fichiers d'aide des modules "Dialogue" et "Exercise" ;
   - traduire la documentation du module "Attendance" (non inclus en
-    standard)
+    standard).
 
-Voici quelques liens que j'utilise :
+Voici quelques liens utilisés :
   - Le grand dictionnaire terminologique
       http://www.granddictionnaire.com/
   - Le Trésor de la Langue Française Informatisé
@@ -49,8 +45,7 @@ Quelques conventions :
   - les majuscules *sont* accentuées ;
   - les guillemets français sont « ».
 
-
-Quelques liens qui traitent du constructivisme social en français :
+Quelques liens en français qui traitent du constructivisme social :
   - http://www.acelf.ca/revue/XXV1/articles/rxxv1-10.html
   - http://www.schule.suedtirol.it/blikk/angebote/reformpaedagogik/rp70110b.htm
   - http://agora.unige.ch/sred/Archive/const/ecole.html
