@@ -110,7 +110,7 @@ class quiz_file_format extends quiz_default_format {
         }
     }
 
-    function postprocess() {
+    function importpostprocess() {
     /// Goes through the questionids, looking for shortanswer questions
     /// and converting random groups of 4 into matching questions.
 

@@ -15,7 +15,7 @@ class quiz_default_format {
 
 /// Importing functions
 
-    function preprocess($category) {
+    function importpreprocess($category) {
     /// Does any pre-processing that may be desired
 
         $this->category = $category;  // Important
@@ -23,7 +23,7 @@ class quiz_default_format {
         return true;
     }
 
-    function process($filename) {
+    function importprocess($filename) {
     /// Processes a given file.  There's probably little need to change this
 
         if (! $lines = $this->readdata($filename)) {
@@ -119,7 +119,7 @@ class quiz_default_format {
     }
 
 
-    function postprocess() {
+    function importpostprocess() {
     /// Does any post-processing that may be desired
     /// Argument is a simple array of question ids that 
     /// have just been added.

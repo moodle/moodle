@@ -51,15 +51,15 @@
 
             $format = new quiz_file_format();
 
-            if (! $format->preprocess($category)) {             // Do anything before that we need to
+            if (! $format->importpreprocess($category)) {             // Do anything before that we need to
                 error("Error occurred during pre-processing!");
             }
 
-            if (! $format->process($newfile['tmp_name'])) {     // Process the uploaded file
+            if (! $format->importprocess($newfile['tmp_name'])) {     // Process the uploaded file
                 error("Error occurred during processing!");
             }
 
-            if (! $format->postprocess()) {                     // In case anything needs to be done after
+            if (! $format->importpostprocess()) {                     // In case anything needs to be done after
                 error("Error occurred during post-processing!");
             }
 
