@@ -50,7 +50,7 @@ function olson_todst ($filename) {
         for ($y = 1970 ; $y > 0 ; $y--) {
             if (array_key_exists((string)$y, $zbyyear )) { // we have a zone entry for the year
                 $zone = $zbyyear[$y];
-                // print "Zone $zname pre1970 is in  $y\n"; 
+                //print_object("Zone $zname pre1970 is in  $y\n");
                 break; // Perl's last -- get outta here
             }
         }
@@ -59,7 +59,7 @@ function olson_todst ($filename) {
             for ($y = 1970 ; $y > 0 ; $y--) {
                 if (array_key_exists((string)$y, $rules[$zone['rule']] )) { // we have a rule entry for the year                    
                     $rule  =  $rules[$zone['rule']][$y];
-                    // print "Rule $rule[name] pre1970 is $y\n"; 
+                    //print_object("Rule $rule[name] pre1970 is $y\n");
                     break; // Perl's last -- get outta here
                 }
                 
@@ -88,6 +88,8 @@ function olson_todst ($filename) {
         } else {
             // just a simple zone
             $mdl_tz = $zone;
+            // TODO: Add other default values here!
+            $mdl_tz['dstoff'] = 0;
         }        
 
         // Fix the from year to 1970
@@ -96,11 +98,12 @@ function olson_todst ($filename) {
 
         // add to the array
         $mdl_zones[] = $mdl_tz;
+        //print_object("Zero entry for $zone[name] added");
 
         ///
-        /// 1970 onwards
+        /// 1971 onwards
         /// 
-        for ($y = 1970 ; $y < $maxyear ; $y++) {
+        for ($y = 1971; $y < $maxyear ; $y++) {
             $changed = false;
             ///
             /// We create a "zonerule" entry if either zone or rule change...
@@ -122,12 +125,15 @@ function olson_todst ($filename) {
             }
 
             if ($changed) {
-                // print "CHANGE YEAR $y Zone $zone[name] Rule $zone[rule]\n";
+                //print_object("CHANGE YEAR $y Zone $zone[name] Rule $zone[rule]\n");
                 if (!empty($rule)) {
                     // merge the two arrays into the moodle rule
                     unset($rule['name']); 
                     unset($rule['year']);
                     $mdl_tz = array_merge($zone, $rule);
+
+                    // VERY IMPORTANT!!
+                    $mdl_tz['from'] = $y;
 
                     //fix (de)activate_time (AT) field to be GMT
                     $mdl_tz['dst_time'] = olson_parse_at($mdl_tz['dst_time'], 'set',   $mdl_tz['gmtoff']);
@@ -147,6 +153,12 @@ function olson_todst ($filename) {
                     // This can still happen if $mdl_tz['gmtoff'] < 0
                     continue;
                 }
+                /*
+                if($mdl_tz['from_timestamp'] == 0) {
+                    print_object("suspicious from_timestamp:");
+                    print_object($mdl_tz);
+                }
+                */
                 $mdl_zones[] = $mdl_tz;
             }
         } 
@@ -201,8 +213,11 @@ function olson_simple_rule_parser ($filename) {
 
         $srs = ($save === '0') ? 'reset' : 'set';
 
-        if(intval($to) == 0) {
+        if($to == 'only') {
             $to = $from;
+        }
+        else if($to == 'max') {
+            $to = intval(date('Y'));
         }
 
         for($i = $from; $i <= $to; ++$i) {
@@ -230,6 +245,11 @@ function olson_simple_rule_parser ($filename) {
                 // No "reset" rule. We will assume that this is somewhere in the southern hemisphere
                 // after a period of not using DST, otherwise it doesn't make sense at all.
                 // With that assumption, we can put in a fake reset e.g. on Jan 1, 12:00.
+                /*
+                print_object("no reset");
+                print_object($rules);
+                die();
+                */
                 $rulesthisyear['reset'] = array(
                     NULL, NULL, NULL, NULL, NULL, 'jan', 1, '12:00', '00:00', NULL
                 );
