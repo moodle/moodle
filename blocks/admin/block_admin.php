@@ -124,7 +124,7 @@ class block_admin extends block_list {
                 $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/scales.gif" height="16" width="16" alt="" />';
             }
 
-            $this->content->items[]='<a href="'.$CFG->wwwroot.'/grade/index.php?id='.$this->instance->pageid.'">'.get_string('grades').'...</a>';
+            $this->content->items[]='<a href="'.$CFG->wwwroot.'/course/grades.php?id='.$this->instance->pageid.'">'.get_string('grades').'...</a>';
             $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/grades.gif" height="16" width="16" alt="" />';
 
             $this->content->items[]='<a href="log.php?id='.$this->instance->pageid.'">'.get_string('logs').'...</a>';
@@ -146,7 +146,7 @@ class block_admin extends block_list {
         } else if (!isguest()) {  // Students menu
 
             if ($course->showgrades) {
-                $this->content->items[]='<a href="'.$CFG->wwwroot.'/grade/index.php?id='.$this->instance->pageid.'">'.get_string('grades').'...</a>';
+                $this->content->items[]='<a href="'.$CFG->wwwroot.'/course/grade.php?id='.$this->instance->pageid.'">'.get_string('grades').'...</a>';
                 $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/grades.gif" height="16" width="16" alt="" />';
             }
             if ($course->showreports) {
