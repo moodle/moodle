@@ -10,7 +10,8 @@ define("GLOSSARY_SHOW_NOT_CATEGORISED", -1);
 
 define("GLOSSARY_STANDARD_VIEW", 0);
 define("GLOSSARY_CATEGORY_VIEW", 1);
-define("GLOSSARY_APPROVAL_VIEW", 2);
+define("GLOSSARY_DATE_VIEW", 2);
+define("GLOSSARY_APPROVAL_VIEW", 3);
 
 define("GLOSSARY_FORMAT_SIMPLE", 0);
 define("GLOSSARY_FORMAT_CONTINUOUS", 1);
@@ -216,7 +217,7 @@ global $CFG;
 function glossary_print_entry($course, $cm, $glossary, $entry, $tab="",$cat="") {
     global $THEME, $USER, $CFG;
 
-    if ($entry->approved or $USER->id == $entry->userid or $tab == GLOSSARY_APPROVAL_VIEW) {
+    if ($entry->approved or ($USER->id == $entry->userid and !isteacher($course->id)) or $tab == GLOSSARY_APPROVAL_VIEW) {
         $permissiongranted = 0;
         $formatfile = "$CFG->dirroot/mod/glossary/formats/$glossary->displayformat.php";
         $functionname = "glossary_print_entry_by_format";
@@ -313,7 +314,7 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry,$tab="",$cat
         echo "</a>";
     }
     echo "</font>";
-    if ( $glossary->allowcomments ) {
+    if ( $glossary->allowcomments and !isguest()) {
         echo " <a href=\"comment.php?id=$cm->id&eid=$entry->id\"><img  alt=\"" . get_string("addcomment","glossary") . "\" src=\"comment.gif\" height=16 width=16 border=0></a> ";
     }
 
@@ -382,9 +383,6 @@ function glossary_search_entries($searchterms, $glossary, $includedefinition) {
 
 
     foreach ($searchterms as $searchterm) {
-/*        if (strlen($searchterm) < 2) {
-            continue;
-        }*/
         if ($conceptsearch) {
             $conceptsearch.= " OR ";
         }
@@ -415,8 +413,6 @@ function glossary_search_entries($searchterms, $glossary, $includedefinition) {
              WHERE ($conceptsearch OR $definitionsearch)
                AND (e.glossaryid = g.id or e.sourceglossaryid = g.id) $onlyvisible
                AND g.id = $glossary->id AND e.approved != 0";
-
-//    $totalcount = count_records_sql("SELECT COUNT(*) FROM $selectsql");
 
     return get_records_sql("SELECT e.* 
                             FROM $selectsql ORDER BY e.concept ASC");
@@ -749,11 +745,8 @@ function glossary_print_tabbed_table_end() {
 }
 
 function glossary_print_approval_menu($cm, $glossary, $l, $sortkey, $sortorder = "",$tab=GLOSSARY_STANDARD_VIEW) {
-    $entriesawaiting     = get_string("entriesawaitingapproval", "glossary");
-    echo "<center>$entriesawaiting<p>";
-
     if ($glossary->showalphabet and $glossary->displayformat != GLOSSARY_FORMAT_CONTINUOUS) {
-        echo '<center>' . get_string("explainalphabet","glossary") . '<br /><p>';
+        echo '<center>' . get_string("explainalphabet","glossary") . '<p>';
     }
     glossary_print_special_links($cm, $glossary,$l, $tab);
 
@@ -765,39 +758,42 @@ function glossary_print_approval_menu($cm, $glossary, $l, $sortkey, $sortorder =
 }
 
 function glossary_print_alphabet_menu($cm, $glossary, $l, $sortkey, $sortorder = "", $tab=GLOSSARY_STANDARD_VIEW) {
-    if ($glossary->showalphabet and $glossary->displayformat != GLOSSARY_FORMAT_CONTINUOUS) {
-        echo '<center>' . get_string("explainalphabet","glossary") . '<br /><p>';
+    if ( $tab != GLOSSARY_DATE_VIEW ) {
+        if ($glossary->showalphabet and $glossary->displayformat != GLOSSARY_FORMAT_CONTINUOUS) {
+            echo '<center>' . get_string("explainalphabet","glossary") . '<p>';
+        }
+
+        glossary_print_special_links($cm, $glossary,$l, $tab);
+
+        glossary_print_alphabet_links($cm, $glossary,$l, $tab);
+
+        glossary_print_all_links($cm, $glossary,$l, $tab);
+    } else {
+        glossary_print_sorting_links($cm, $sortkey,$sortorder, $tab);
     }
-    glossary_print_special_links($cm, $glossary,$l, $tab);
-
-    glossary_print_alphabet_links($cm, $glossary,$l, $tab);
-
-    glossary_print_all_links($cm, $glossary,$l, $tab);
-	 
-    glossary_print_sorting_links($cm, $sortkey,$sortorder, $tab);
 }
 
 function glossary_print_categories_menu($course, $cm, $glossary, $cat, $category) {
 global $CFG, $THEME;
-     echo "<table border=0 width=100%>";
-     echo "<tr>";
+     echo '<table border=0 width=100%>';
+     echo '<tr>';
 
-     echo "<td align=center width=20%>";
+     echo '<td align=center width=20%>';
      if ( isteacher($course->id) ) {
              $options['id'] = $cm->id;
              $options['cat'] = $cat;
              echo print_single_button("editcategories.php", $options, get_string("editcategories","glossary"), "get");
      }
-     echo "</td>";
+     echo '</td>';
 
-     echo "<td align=center width=60%>";
-     echo "<b>";
+     echo '<td align=center width=60%>';
+     echo '<b>';
 
      $menu[GLOSSARY_SHOW_ALL_CATEGORIES] = get_string("allcategories","glossary");
      $menu[GLOSSARY_SHOW_NOT_CATEGORISED] = get_string("notcategorised","glossary");
 
      $categories = get_records("glossary_categories", "glossaryid", $glossary->id, "name ASC");
-     $selected = "";
+     $selected = '';
      if ( $categories ) {
           foreach ($categories as $currentcategory) {
                  $url = $currentcategory->id;
@@ -828,24 +824,23 @@ global $CFG, $THEME;
 
         }
      }
-     echo "</b></td>";
-     echo "<td align=center width=20%>";
+     echo '</b></td>';
+     echo '<td align=center width=20%>';
 
      echo popup_form("$CFG->wwwroot/mod/glossary/view.php?id=$cm->id&tab=" . GLOSSARY_CATEGORY_VIEW . "&cat=", $menu, "catmenu", $selected, "",
                       "", "", false);
 
-     echo "</td>";
-     echo "</tr>";
+     echo '</td>';
+     echo '</tr>';
 
-     echo "<tr><td colspan=3><hr></td></tr>";
-     echo "</table>";
+     echo '</table>';
 }
 
 function glossary_print_all_links($cm, $glossary, $l, $tab) {
 global $CFG;  
      if ( $glossary->showall and $glossary->displayformat != GLOSSARY_FORMAT_CONTINUOUS) {
          $strallentries       = get_string("allentries", "glossary");
-         if ( $l == "ALL" ) {
+         if ( $l == 'ALL' ) {
               echo "<b>$strallentries</b>";
          } else {
               $strexplainall = strip_tags(get_string("explainall","glossary"));
@@ -858,7 +853,7 @@ function glossary_print_special_links($cm, $glossary, $l, $tab) {
 global $CFG;
      if ( $glossary->showspecial and $glossary->displayformat != GLOSSARY_FORMAT_CONTINUOUS ) {
          $strspecial          = get_string("special", "glossary");
-         if ( $l == "SPECIAL" ) {
+         if ( $l == 'SPECIAL' ) {
               echo "<b>$strspecial</b> | ";
          } else {
               $strexplainspecial = strip_tags(get_string("explainspecial","glossary"));
@@ -879,9 +874,9 @@ global $CFG;
                    echo "<a href=\"$CFG->wwwroot/mod/glossary/view.php?id=$cm->id&l=$alphabet[$i]&tab=$tab\">$alphabet[$i]</a>";
               }
               if ((int) ($i % $letters_by_line) != 0 or $i == 0) {
-                   echo " | ";
+                   echo ' | ';
               } else {
-                   echo "<br>";
+                   echo '<br>';
               }
           }
      }
@@ -893,50 +888,50 @@ global $CFG;
     $strsortbycreation   = get_string("sortbycreation", "glossary");
     $strsortbylastupdate = get_string("sortbylastupdate", "glossary");
 
-     $neworder = "";
+     $neworder = '';
      if ( $sortorder ) {
-         if ( $sortorder == "asc" ) {
-             $neworder = "&sortorder=desc";
+         if ( $sortorder == 'asc' ) {
+             $neworder = '&sortorder=desc';
              $ordertitle = get_string("descending","glossary");
          } else {
-             $neworder = "&sortorder=asc";
+             $neworder = '&sortorder=asc';
              $ordertitle = get_string("ascending","glossary");
          }
          $icon = " <img src=\"$sortorder.gif\" border=0 width=16 height=16>";
      } else {
-         if ( $sortkey != "CREATION" and $sortkey != "UPDATE" ) {
+         if ( $sortkey != 'CREATION' and $sortkey != 'UPDATE' ) {
              $icon = "";
              $ordertitle = get_string("ascending","glossary");
          } else {
              $ordertitle = get_string("descending","glossary");
-             $neworder = "&sortorder=desc";
-             $icon = " <img src=\"asc.gif\" border=0 width=16 height=16>";
+             $neworder = '&sortorder=desc';
+             $icon = ' <img src="asc.gif" border=0 width=16 height=16>';
          }
      }
-     $cicon = "";
-     $cneworder = "";
-     $cbtag = "";
-     $cendbtag = "";
+     $cicon = '';
+     $cneworder = '';
+     $cbtag = '';
+     $cendbtag = '';
 
-     $uicon = "";
-     $uneworder = "";
-     $ubtag = "";
-     $uendbtag = "";
+     $uicon = '';
+     $uneworder = '';
+     $ubtag = '';
+     $uendbtag = '';
 
-     if ( $sortkey == "CREATION" ) {
+     if ( $sortkey == 'CREATION' ) {
          $cicon = $icon;
          $cneworder = $neworder;
          $cordertitle = $ordertitle;
          $uordertitle = get_string("ascending","glossary");
-         $cbtag = "<b>";
-         $cendbtag = "</b>";
-     } elseif ($sortkey == "UPDATE") {
+         $cbtag = '<b>';
+         $cendbtag = '</b>';
+     } elseif ($sortkey == 'UPDATE') {
          $uicon = $icon;
          $uneworder = $neworder;
          $cordertitle = get_string("ascending","glossary");
          $uordertitle = $ordertitle;
-         $ubtag = "<b>";
-         $uendbtag = "</b>";
+         $ubtag = '<b>';
+         $uendbtag = '</b>';
      } else {
          $cordertitle = get_string("ascending","glossary");
          $uordertitle = get_string("ascending","glossary");
@@ -976,25 +971,25 @@ function glossary_print_comment($course, $cm, $glossary, $entry, $comment) {
     echo "<br><FONT SIZE=2>$strby $user->firstname $user->lastname</font>";
     echo "<br><FONT SIZE=1>(".get_string("lastedited").": ".userdate($comment->timemodified).")</FONT></small><br>";
     echo "</TD>";
-	
+
     echo "<TD NOWRAP valign=top WIDTH=75% BGCOLOR=\"$THEME->cellcontent\">";
     if ($comment) {
-	    echo format_text($comment->comment, $comment->format);
+        echo format_text($comment->comment, $comment->format);
     } else {
-	  echo "<center>";
+      echo "<center>";
         print_string("nocomment", "glossary");
-	  echo "</center>";
+      echo "</center>";
     }
 
     echo "<p align=right>";
-	if ( (time() - $comment->timemodified <  $CFG->maxeditingtime and $USER->id == $comment->userid)  or isteacher($course->id) ) {
+    if ( (time() - $comment->timemodified <  $CFG->maxeditingtime and $USER->id == $comment->userid)  or isteacher($course->id) ) {
         echo "<a href=\"comment.php?id=$cm->id&eid=$entry->id&cid=$comment->id&action=edit\"><img  alt=\"" . get_string("edit") . "\" src=\"../../pix/t/edit.gif\" height=11 width=11 border=0></a> ";
-	}
-	if ( $USER->id == $comment->userid or isteacher($course->id) ) {
+    }
+    if ( $USER->id == $comment->userid or isteacher($course->id) ) {
         echo "<a href=\"comment.php?id=$cm->id&eid=$entry->id&cid=$comment->id&action=delete\"><img  alt=\"" . get_string("delete") . "\" src=\"../../pix/t/delete.gif\" height=11 width=11 border=0></a>";
-	}
+    }
     echo "</td>";
-	
+    
     echo "</tr></TABLE>\n";
 
     echo "</td></tr></table>";

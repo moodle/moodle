@@ -163,7 +163,7 @@
 
 <p align="center"><?php p(get_string("edit")) ?> <?php p(get_string("categories","glossary")) ?><font size="3">
 
-<FORM name="theform" method="post" <?=$onsubmit ?> action="editcategories.php">
+<FORM name="theform" method="post" action="editcategories.php">
 <table width="40%" class=generalbox cellpadding=5 bgcolor="<?php p($THEME->cellheading)?>">
         <tr>
           <td width="90%" align="center"><b>

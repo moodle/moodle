@@ -38,7 +38,7 @@
             $categories  = get_records_select("glossary_categories", "glossaryid IN ($glossaries)", "$cbylenght glossaryid,id","id,glossaryid,name concept, 1 casesensitive,$GLOSSARY_CONCEPT_IS_CATEGORY category, 1 fullmatch");
             if ( $entries and $categories ) {
                 $concepts = array_merge($entries, $categories);
-                usort($concepts,glossary_sort_entries_by_lenght);
+                usort($concepts,'glossary_sort_entries_by_lenght');
             } elseif ( $categories ) {
                 $concepts = $categories;
             } elseif ( $entries ) {
@@ -61,7 +61,7 @@
                         }
                         $cm = get_coursemodule_from_instance("glossary", $glossary->id, $courseid);						
                         $title = strip_tags("$glossary->name: " . get_string("category","glossary"). " $category->name");
-                        $href_tag_begin = "<a class=\"autolink\" title=\"$title\" href=\"$CFG->wwwroot/mod/glossary/view.php?id=$cm->id&currentview=categories&cat=$concept->id\">";
+                        $href_tag_begin = "<a class=\"autolink\" title=\"$title\" href=\"$CFG->wwwroot/mod/glossary/view.php?id=$cm->id&tab=1&cat=$concept->id\">";
                     } else {
                         $title = strip_tags("$glossary->name: $concept->concept");
                         $href_tag_begin = "<a target=\"entry\" class=\"autolink\" title=\"$title\" href=\"$CFG->wwwroot/mod/glossary/showentry.php?courseid=$courseid&concept=$concept->concept\" ".
@@ -159,9 +159,9 @@
     
     function glossary_sort_entries_by_lenght ( $entry0, $entry1 ) {
         if ( strlen(trim($entry0->concept)) < strlen(trim($entry1->concept)) ) {
-            return -1;
-        } elseif ( strlen(trim($entry0->concept)) > strlen(trim($entry1->concept)) ) {
             return 1;
+        } elseif ( strlen(trim($entry0->concept)) > strlen(trim($entry1->concept)) ) {
+            return -1;
         } else {
             return 0;
         }

@@ -33,6 +33,6 @@
     } else {
         add_to_log($course->id, "glossary", "approve entry", "showentry.php?id=$cm->id&eid=$eid", "$eid");
     }
-    redirect("view.php?id=$cm->id&tab=$tab");
+    redirect("view.php?id=$cm->id&tab=$tab&l=ALL",get_string("entryapproved","glossary"),1);
     die;
 ?>

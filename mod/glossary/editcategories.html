@@ -1,10 +1,9 @@
 <?PHP
 	global $CFG, $THEME;
-    	require_once("../../config.php");
-
+    require_once("../../config.php");
 ?>
 
-<FORM name="form" method="post" <?=$onsubmit ?> action="editcategories.php">
+<FORM name="form" method="post" action="editcategories.php">
 <table  class=generalbox cellpadding=5 bgcolor="<?php p($THEME->cellheading)?>">
 <tr valign=top>
     <td align=right><p><b><?php echo get_string("name") ?>:</b></p></td>

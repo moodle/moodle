@@ -53,7 +53,7 @@ if ( $confirm ) {
             if ($dupentries = get_records("glossary_entries","UCASE(concept)", strtoupper($newentry->concept))) {
                 foreach ($dupentries as $curentry) {
                     if ( $glossary->id == $curentry->glossaryid ) {
-                       if ( $curentry->id != $entry ) {
+                       if ( $curentry->id != $e ) {
                           $permissiongranted = 0;
                            break;
                        }
