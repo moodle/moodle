@@ -198,7 +198,10 @@ function blocks_print_group(&$page, &$instances) {
             continue;
         }
 
-        $obj = block_instance($block->name, $instance);
+        if (!$obj = block_instance($block->name, $instance)) {
+            // Invalid block
+            continue;
+        }
 
         if ($isediting) {
             $options = 0;
