@@ -740,63 +740,61 @@ function forum_print_recent_activity($course, $isteacher, $timestart) {
 
     foreach ($logs as $log) {
         //Get post info, I'll need it later
-        $post = forum_get_post_from_log($log);
+        if ($post = forum_get_post_from_log($log)) {
+            //Create a temp valid module structure (course,id)
+            $tempmod->course = $log->course;
+            $tempmod->id = $post->forum;
+            //Obtain the visible property from the instance
+            $modvisible = instance_is_visible($log->module, $tempmod);
+        }
 
-        //Create a temp valid module structure (course,id)
-        $tempmod->course = $log->course;
-        $tempmod->id = $post->forum;
-        //Obtain the visible property from the instance
-        $modvisible = instance_is_visible($log->module, $tempmod);
-
-        //Only if the mod is visible
-        if ($modvisible) {
-            if ($post) {
-                /// Check whether this is for teachers only
-                $teacheronly = "";
-                if ($forum = get_record("forum", "id", $post->forum)) {
-                    if ($forum->type == "teacher") {
-                        if ($isteacher) {
-                            $teacheronly = "class=\"teacheronly\"";
-                        } else {
-                            continue;
-                        }
+        //Only if the post exists and mod is visible
+        if ($post && $modvisible) {
+            /// Check whether this is for teachers only
+            $teacheronly = "";
+            if ($forum = get_record("forum", "id", $post->forum)) {
+                if ($forum->type == "teacher") {
+                    if ($isteacher) {
+                        $teacheronly = "class=\"teacheronly\"";
+                    } else {
+                        continue;
                     }
                 }
-                /// Check whether this is belongs to a discussion in a group that
-                /// should NOT be accessible to the current user
-
-                if (!$isteacheredit and $post->groupid != -1) {   /// Editing teachers or open discussions
-                    if (!isset($cm[$post->forum])) {
-                        $cm[$forum->id] = get_coursemodule_from_instance("forum", $forum->id, $course->id);
-                        $groupmode[$forum->id] = groupmode($course, $cm[$forum->id]);
-                    }
-                    if ($groupmode[$forum->id]) {
-                        if ($mygroupid != $post->groupid) {
-                            continue;
-                        }
-                    }
-                }
-
-                if (! $heading) {
-                    print_headline(get_string("newforumposts", "forum").":");
-                    $heading = true;
-                    $content = true;
-                }
-                $date = userdate($post->modified, $strftimerecent);
-                $fullname = fullname($post, $isteacher);
-                echo "<p $teacheronly><font size=\"1\">$date - $fullname<br />";
-                echo "\"<a href=\"$CFG->wwwroot/mod/forum/".str_replace('&', '&amp;', $log->url)."\">";
-                $post->subject = break_up_long_words($post->subject);
-                if (!empty($CFG->filterall)) {
-                    $post->subject = filter_text("<nolink>$post->subject</nolink>", $course->id);
-                }
-                if ($log->action == "add discussion") {
-                    echo "<b>$post->subject</b>";
-                } else {
-                    echo "$post->subject";
-                }
-                echo "</a>\"</font></p>";
             }
+            /// Check whether this is belongs to a discussion in a group that
+            /// should NOT be accessible to the current user
+
+            if (!$isteacheredit and $post->groupid != -1) {   /// Editing teachers or open discussions
+                if (!isset($cm[$post->forum])) {
+                    $cm[$forum->id] = get_coursemodule_from_instance("forum", $forum->id, $course->id);
+                    $groupmode[$forum->id] = groupmode($course, $cm[$forum->id]);
+                }
+                if ($groupmode[$forum->id]) {
+                    if ($mygroupid != $post->groupid) {
+                        continue;
+                    }
+                }
+            }
+
+            if (! $heading) {
+                print_headline(get_string("newforumposts", "forum").":");
+                $heading = true;
+                $content = true;
+            }
+            $date = userdate($post->modified, $strftimerecent);
+            $fullname = fullname($post, $isteacher);
+            echo "<p $teacheronly><font size=\"1\">$date - $fullname<br />";
+            echo "\"<a href=\"$CFG->wwwroot/mod/forum/".str_replace('&', '&amp;', $log->url)."\">";
+            $post->subject = break_up_long_words($post->subject);
+            if (!empty($CFG->filterall)) {
+                $post->subject = filter_text("<nolink>$post->subject</nolink>", $course->id);
+            }
+            if ($log->action == "add discussion") {
+                echo "<b>$post->subject</b>";
+            } else {
+                echo "$post->subject";
+            }
+            echo "</a>\"</font></p>";
         }
     }
 
