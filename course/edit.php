@@ -51,27 +51,32 @@
             } else {
                 $form->timecreated = time();
 
-                if ($newid = insert_record("course", $form)) {  // Set up new course
-                    $section->course = $newid;   // Create a default section.
+                if ($newcourseid = insert_record("course", $form)) {  // Set up new course
+                    $section = NULL;
+                    $section->course = $newcourseid;   // Create a default section.
                     $section->section = 0;
-                    $section->timemodified = time();
                     $section->id = insert_record("course_sections", $section);
 
-                    add_to_log($newid, "course", "new", "view.php?id=$newid", "");
-                    $teacher = array();
-                    $teacher[userid] = $USER->id;
-                    $teacher[course] = $newid;
-                    $teacher[authority] = 1;   // First teacher is the main teacher
-                    
-		    $mainteacher = insert_record("user_teachers", $teacher);
-                    if (!$mainteacher){
-                        error("Could not add main teacher to new course!");
-                    }
-                    
-                    if (isadmin()){ //redirect admin to add teachers
-                        redirect("teacher.php?id=$newid", get_string("changessaved"));
-                    } else { //redirect teachers to course
-                        redirect("$CFG->wwwroot/course/view.php?id=$newid", get_string("changessaved"));
+                    add_to_log($newcourseid, "course", "new", "view.php?id=$newcourseid", "");
+
+                    if (isadmin()) { // Redirect admin to add teachers
+                        redirect("teacher.php?id=$newcourseid", get_string("changessaved"));
+
+                    } else {         // Add current teacher and send to course
+                        
+                        $newteacher = NULL;
+                        $newteacher->userid = $USER->id;
+                        $newteacher->course = $newcourseid;
+                        $newteacher->authority = 1;   // First teacher is the main teacher
+
+                        if (!$newteacher->id = insert_record("user_teachers", $newteacher)) {
+                            error("Could not add you to this new course!");
+                        }
+
+                        $USER->teacher[$newcourseid] = true;
+                        save_session("USER");
+
+                        redirect("view.php?id=$newcourseid", get_string("changessaved"));
                     }
 
                 } else {
