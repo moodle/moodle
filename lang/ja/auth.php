@@ -71,6 +71,8 @@ $string['auth_nonedescription'] = '¥æ¡¼¥¶¤Ï¥í¥°¥¤¥ó¤·¤Æ³°Éô¥µ¡¼¥ÐµÚ¤Ó¥á¡¼¥ë¤Ë¤è¤
 $string['auth_nonetitle'] = 'Ç§¾ÚÌµ¤·';
 $string['auth_pamdescription'] = '¤³¤ÎÊý¼°¤Ç¤Ï¡¢¥µ¡¼¥Ð¤Î¥Í¥¤¥Æ¥£¥Ö¥æ¡¼¥¶Ì¾¤Ë¥¢¥¯¥»¥¹¤¹¤ë¼êÃÊ¤È¤·¤ÆPAM¤ò»ÈÍÑ¤·¤Þ¤¹¡£¤³¤Î¥â¥¸¥å¡¼¥ë¤ò»ÈÍÑ¤¹¤ë¤¿¤á¤Ë¤Ï¡¢<a href=\"http://www.math.ohio-state.edu/~ccunning/pam_auth/\" target=\"_blank\">PHP4 PAM Authentication</a>¤¬¥¤¥ó¥¹¥È¡¼¥ë¤µ¤ì¤Æ¤¤¤ëÉ¬Í×¤¬¤¢¤ê¤Þ¤¹¡£';
 $string['auth_pamtitle'] = 'PAM (Pluggable Authentication Modules)';
+$string['auth_passwordisexpired'] = '¤¢¤Ê¤¿¤Î¥Ñ¥¹¥ï¡¼¥É¤ÎÍ­¸ú´ü¸Â¤¬ÀÚ¤ì¤Þ¤·¤¿¡£¥Ñ¥¹¥ï¡¼¥É¤òÊÑ¹¹¤·¤Þ¤¹¤«?';
+$string['auth_passwordwillexpire'] = '¤¢¤Ê¤¿¤Î¥Ñ¥¹¥ï¡¼¥É¤ÎÍ­¸ú´ü¸Â¤Ï¡¢$a Æü¤ÇÀÚ¤ì¤Þ¤¹¡£¥Ñ¥¹¥ï¡¼¥É¤òÊÑ¹¹¤·¤Þ¤¹¤«?';
 $string['auth_pop3description'] = '¥æ¡¼¥¶Ì¾¤È¥Ñ¥¹¥ï¡¼¥É¤ò³ÎÇ§¤¹¤ë¤¿¤á¤ËPOP3¥µ¡¼¥Ð¤ò»ÈÍÑ¤·¤Þ¤¹¡£';
 $string['auth_pop3host'] = 'POP3¥µ¡¼¥Ð¡¼¥¢¥É¥ì¥¹¤Ç¤¹¡£IP¥¢¥É¥ì¥¹¤Ç¤Ï¤Ê¤¯¥É¥á¥¤¥óÌ¾¤ò»ÈÍÑ¤·¤Æ¤¯¤À¤µ¤¤¡£';
 $string['auth_pop3mailbox'] = 'ÀÜÂ³¤ò»î¤ß¤ë¥á¡¼¥ë¥Ü¥Ã¥¯¥¹Ì¾(ÄÌ¾ï¤Ï¼õ¿®¥Ü¥Ã¥¯¥¹)';
