@@ -1,7 +1,8 @@
 <?PHP // $Id$ 
-      // error.php - created with Moodle 1.4.2 (2004083120)
+      // error.php - created with Moodle 1.4.2+ (2004083126)
 
 
+$string['confirmsesskeybad'] = 'Sinto muito mas ñão foi possível confirmar a chave da sua sessão para completar esta ação. Esta medida de segurança evita a execução de funções importantes em seu nome, causadas por terceiros maliciosos ou por erros acidentais. Controle se a execução desta função é intencional.';
 $string['coursegroupunknown'] = 'O curso correspondente ao grupo $a não foi definido';
 $string['erroronline'] = 'Erro na linha $a';
 $string['fieldrequired'] = '\"$a\" é um campo obrigatório';
