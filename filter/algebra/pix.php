@@ -48,7 +48,12 @@
             $texexp = preg_replace('!\r\n?!',' ',$texexp);
             $texexp = '\Large ' . $texexp;
 
-            if (is_executable("$CFG->dirroot/$CFG->texfilterdir/mimetex")) {   /// Use the custom binary
+            if ((PHP_OS == "WINNT") || (PHP_OS == "WIN32") || (PHP_OS == "Windows")) {
+                $texexp = str_replace('"','\"',$texexp);
+                $cmd = "$CFG->dirroot/$CFG->texfilterdir/mimetex.exe";
+                $cmd = str_replace(' ','^ ',$cmd);
+                $cmd .= " ++ -e  \"$pathname\" \"$texexp\"";
+            } else if (is_executable("$CFG->dirroot/$CFG->texfilterdir/mimetex")) {   /// Use the custom binary
 
                 $cmd = "$CFG->dirroot/$CFG->texfilterdir/mimetex -e $pathname ". escapeshellarg($texexp);
                 
@@ -57,15 +62,6 @@
 
                     case "Linux":
                         $cmd = "\"$CFG->dirroot/$CFG->texfilterdir/mimetex.linux\" -e \"$pathname\" ". escapeshellarg($texexp);
-                    break;
-
-                    case "WINNT":
-                    case "WIN32":
-                    case "Windows":
-                        $texexp = str_replace('"','\"',$texexp);
-                        $cmd = "$CFG->dirroot/$CFG->texfilterdir/mimetex.exe";
-                        $cmd = str_replace(' ','^ ',$cmd);
-                        $cmd .= " ++ -e  \"$pathname\" \"$texexp\"";
                     break;
 
                     case "Darwin":
