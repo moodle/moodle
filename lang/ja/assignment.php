@@ -1,0 +1,40 @@
+<?PHP // $Id$ 
+      // assignment.php - created with Moodle 1.0.6.4 (2002112400)
+
+
+$string['allowresubmit'] = "再提出を許可する";
+$string['assignmentdetails'] = "課題の詳細";
+$string['assignmentname'] = "課題名";
+$string['assignmenttype'] = "課題タイプ";
+$string['description'] = "詳細";
+$string['duedate'] = "提出期限";
+$string['early'] = "\$a 日早い";
+$string['failedupdatefeedback'] = "ユーザ \$a のフィードバック更新に失敗しました ";
+$string['feedbackupdated'] = "\$a　の参加者に対するフィードバックの更新";
+$string['late'] = "\$a　日遅い";
+$string['maximumgrade'] = "最大評価";
+$string['maximumsize'] = "最大サイズ";
+$string['modulename'] = "課題";
+$string['modulenameplural'] = "課題";
+$string['newsubmissions'] = "課題が提出されました";
+$string['notsubmittedyet'] = "未提出";
+$string['overwritewarning'] = "警告:再度アップロードすることにより現在の提出物は置き換えられます";
+$string['submissionfeedback'] = "提出のフィードバック";
+$string['submissions'] = "提出";
+$string['submitassignment'] = "このフォームを使用して課題を提出する";
+$string['submitted'] = "提出されました";
+$string['typeoffline'] = "オフラインモード";
+$string['typeuploadsingle'] = "単一ファイルをアップロードする";
+$string['uploadbadname'] = "不正な文字がファイル名に含まれているため、このファイルはアップロード出来ません";
+$string['uploadedfiles'] = "ファイルをアップロードしました";
+$string['uploaderror'] = "サーバにファイルを保存中にエラーが発生しました";
+$string['uploadfailnoupdate'] = "ファイルはアップロードされましたが提出物の更新は出来ませんでした!";
+$string['uploadfiletoobig'] = "申し訳ございません、ファイルサイズが制限を越えています(\$a バイト以内)";
+$string['uploadnofilefound'] = "ファイルが見つかりませんでした - 実際に存在するファイルですか?";
+$string['uploadnotregistered'] = "'\$a' は正常にアップロードされましたが登録されませんでした!";
+$string['uploadsuccess'] = "'\$a' のアップロードが完了しました";
+$string['viewfeedback'] = "課題の評価とフィードバックを確認する";
+$string['viewsubmissions'] = "\$a の提出課題を確認する";
+$string['yoursubmission'] = "あなたの提出物";
+
+?>
