@@ -16,6 +16,13 @@ $string['auth_dbtype'] = 'The database type (See the <a href=\"../lib/adodb/read
 $string['auth_dbuser'] = 'Username with read access to the database';
 $string['auth_emaildescription'] = 'Email confirmation is the default authentication method.  When the user signs up, choosing their own new username and password, a confirmation email is sent to the user\'s email address.  This email contains a secure link to a page where the user can confirm their account. Future logins just check the username and password against the stored values in the Moodle database.';
 $string['auth_emailtitle'] = 'Email-based authentication';
+$string['auth_fctitle'] = 'Use a FirstClass server';
+$string['auth_fcdescription'] = 'This method uses a FisrtClass server to check whether a given username and password is valid.';
+$string['auth_fchost'] = 'The FirstClass server address. Use the IP number or DNS name.';
+$string['auth_fcfppport'] = 'Server port (3333 is the most common)';
+$string['auth_fcuserid'] = "Userid for FirstClass account with privilege 'Subadministrator' set.";
+$string['auth_fcpasswd'] = 'Password for the account above.';
+$string['auth_fccreators'] = "List of groups whose members are allowed to create new courses. Separate multiple groups with ';'. Names must be spelled exactly as on FirstClass server. System is case-sensitive.";
 $string['auth_imapdescription'] = 'This method uses an IMAP server to check whether a given username and password is valid.';
 $string['auth_imaphost'] = 'The IMAP server address. Use the IP number, not DNS name.';
 $string['auth_imapport'] = 'IMAP server port number. Usually this is 143 or 993.';
