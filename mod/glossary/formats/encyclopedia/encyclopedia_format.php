@@ -36,6 +36,7 @@ function glossary_show_entry_encyclopedia($course, $cm, $glossary, $entry, $mode
         echo "\n<tr>";
         echo "\n<td bgcolor=\"$colour\" width=35 valign=top class=\"forumpostside\">&nbsp;</td>";
         echo "\n<td width=100% colspan=\"2\" bgcolor=\"$THEME->cellcontent\" class=\"forumpostmessage\">";
+        echo "<table width=\"100%\" border=\"0\"><tr><td>";
 
         if ($entry->attachment) {
             $entry->course = $course->id;
@@ -47,11 +48,9 @@ function glossary_show_entry_encyclopedia($course, $cm, $glossary, $entry, $mode
             glossary_print_entry_attachment($entry,"",$align,false);
         }
         glossary_print_entry_definition($entry);
+        echo "</td></tr></table>";
+
         if ($printicons or $ratings or $aliases) {
-            echo "</td></tr>";
-            echo "\n<td bgcolor=\"$colour\" width=35 valign=top class=\"forumpostside\">&nbsp;</td>";
-            echo "\n<td width=100% colspan=\"2\" bgcolor=\"$THEME->cellcontent\" class=\"forumpostmessage\">";
-    
             $return = glossary_print_entry_lower_section($course, $cm, $glossary, $entry,$mode,$hook,$printicons,$ratings, $aliases);
             echo ' ';
         }
