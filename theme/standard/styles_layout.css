@@ -988,8 +988,9 @@ body#mod-forum-search .introcontent {
   vertical-align: middle;
 }
 
-.forumheaderlist .discussion .lastpost {
+.forumheaderlist .lastpost {
   white-space: nowrap;
+  text-align: right;
 }
 
 .forumheaderlist .discussion .author {
