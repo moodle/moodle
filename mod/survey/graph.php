@@ -260,9 +260,9 @@
        }
        foreach ($qqq as $qq) {         // if any virtual, then use JUST virtual, else use JUST nonvirtual
            if ($qq->multi) {
-               if ($virtualscales && $qq->type < 0) {
+               if (!empty($virtualscales) && $qq->type < 0) {
                    $question[] = $qq;
-               } else if (!$virtualscales && $qq->type > 0) {
+               } else if (empty($virtualscales) && $qq->type > 0) {
                    $question[] = $qq;
                }
            }

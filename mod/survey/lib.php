@@ -234,7 +234,7 @@ function survey_get_responses($surveyid, $groupid) {
                                    {$CFG->prefix}user AS u   $groupsdb
                              WHERE a.survey = $surveyid 
                                    AND a.userid = u.id $groupsql
-                          GROUP BY u.id, u.firstname, u.lastname
+                          GROUP BY u.id, u.firstname, u.lastname, u.picture
                           ORDER BY time ASC");
 }
 
