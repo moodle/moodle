@@ -39,7 +39,7 @@
  
 /// Print the main part of the page
 if ($attendances) {
-   if ( !(isteacher($course->id) || isstudent($course->id)) )  {
+   if ( isstudent($course->id) && !isteacher($course->id))  {
 		 attendance_print_header();
      notice(get_string("noviews", "attendance"));
      print_footer($course); exit;
@@ -49,7 +49,7 @@ if ($attendances) {
 /// create an array of all the attendance objects for the entire course
    $numatt=0;
    $numhours=0;
-   foreach ($attendances as $attendance){
+   if ($attendances) foreach ($attendances as $attendance){
      // store the raw attendance object
      $cm = get_coursemodule_from_instance("attendance", $attendance->id, $course->id);
      $attendance->cmid = $cm->id;
@@ -58,7 +58,7 @@ if ($attendances) {
      $numhours=$numhours+$attendance->hours;
      // get the list of attendance records for all hours of the given day and 
      // put it in the array for use in the attendance table
-     if (isstudent($course->id)) { 
+     if (isstudent($course->id) && !isteacher($course->id)) { 
        $rolls = get_records("attendance_roll", "dayid", $form->id, "userid", $USER->id);
      } else { // must be a teacher
     	 $rolls = get_records("attendance_roll", "dayid", $attendance->id);
@@ -112,7 +112,7 @@ if ($dlsub== "all") {
 	    $myxls->set_column($pos,$pos,5);
 		
 /// generate the attendance rolls for the body of the spreadsheet
-  if (isstudent($course->id)) { 
+  if (isstudent($course->id) && !isteacher($course->id)) { 
   	$students[0] = get_user_info_from_db("id", $USER->id);
   } else { // must be a teacher
     $students = attendance_get_course_students($attendance->course, "u.lastname ASC");
@@ -122,7 +122,7 @@ if ($dlsub== "all") {
   $T = get_string("tardyshort","attendance");
   $P = get_string("presentshort","attendance");  
   $row=4;
-  foreach ($students as $student) {
+  if ($students) foreach ($students as $student) {
     $myxls->write_string($row,0,$student->lastname);
     $myxls->write_string($row,1,$student->firstname);
     $studentid=(($student->idnumber != "") ? $student->idnumber : " ");
@@ -178,7 +178,7 @@ if ($dlsub== "all") {
 		echo "\t". get_string("total") . "\n";
 		
 /// generate the attendance rolls for the body of the spreadsheet
-  if (isstudent($course->id)) { 
+  if (isstudent($course->id) && !isteacher($course->id)) { 
   	$students[0] = get_user_info_from_db("id", $USER->id);
   } else { // must be a teacher
     $students = attendance_get_course_students($attendance->course, "u.lastname ASC");
@@ -188,7 +188,7 @@ if ($dlsub== "all") {
   $T = get_string("tardyshort","attendance");
   $P = get_string("presentshort","attendance");  
   $row=3;
-  foreach ($students as $student) {
+  if ($students) foreach ($students as $student) {
     echo $student->lastname;
     echo "\t".$student->firstname;
     $studentid=(($student->idnumber != "") ? $student->idnumber : " ");
@@ -228,7 +228,7 @@ if ($dlsub== "all") {
 //
 
 // A LOOP FOR CREATING SINGLE-USER VERSION OF THE REPORT OR A ONE-PAGE REPORT
-   if (isstudent($course->id)) {
+   if (isstudent($course->id) && !isteacher($course->id)) {
      $onepage=true;
      $multipage=false; 
    } else if (!(isset($onepage))){
@@ -244,14 +244,14 @@ if ($dlsub== "all") {
 
    if (($onetable) || ($CFG->attendance_hours_in_full_report == 0)) {
       $hoursinreport = 100+$numhours;
-   } else if (isstudent($course->id)) {
+   } else if (isstudent($course->id) && !isteacher($course->id)) {
       $hoursinreport = $CFG->attendance_hours_in_full_report + 15;
    } else { 
       $hoursinreport = $CFG->attendance_hours_in_full_report;
    }   	
 while (($multipage || $onepage) && (!$endonepage)) {
    // this makes for a one iteration loop for multipage
-	 $multipage = false;
+	 if ($multipage) {$onepage = false; $multipage = false; $endonepage=false;}
 	 
 	 
    if ($numhours>=$hoursinreport) {
@@ -387,7 +387,7 @@ while (($multipage || $onepage) && (!$endonepage)) {
    //   lastaccess,lastlogin,picture (picture is null, 0, or 1), idnumber
 
 
-  if (isstudent($course->id)) { 
+  if (isstudent($course->id) && !isteacher($course->id)) { 
   	$students[0] = get_user_info_from_db("id", $USER->id);
   } else { // must be a teacher
     $students = attendance_get_course_students($attendance->course, "u.lastname ASC");
@@ -396,7 +396,7 @@ while (($multipage || $onepage) && (!$endonepage)) {
   $A = get_string("absentshort","attendance");
   $T = get_string("tardyshort","attendance");
   $P = get_string("presentshort","attendance");  
-  foreach ($students as $student) {
+  if ($students) foreach ($students as $student) {
     if (isteacher($course->id)) {
       echo "<tr><td align=\"left\" nowrap class=\"generaltablecell\" style=\"border-top: 1px solid;\">".$student->lastname."</td>\n";
       echo "<td align=\"left\" nowrap class=\"generaltablecell\"  style=\"border-top: 1px solid;\">".$student->firstname."</td>\n";
