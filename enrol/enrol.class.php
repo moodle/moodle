@@ -138,12 +138,11 @@ function print_entry($course) {
             exit;
 
         } else {
-            if ($course->enrolperiod == 0) {
-                $timestart = 0;
-                $timeend = 0;
-            } else {
+            if ($course->enrolperiod) {
                 $timestart = time();
                 $timeend = time() + $course->enrolperiod;
+            } else {
+                $timestart = $timeend = 0;
             }
 
             if (! enrol_student($USER->id, $course->id, $timestart, $timeend)) {
@@ -200,9 +199,16 @@ function check_entry($form, $course) {
         
             add_to_log($course->id, "course", "guest", "view.php?id=$course->id", $_SERVER['REMOTE_ADDR']);
             
-        } else if (!record_exists("user_students", "userid", $USER->id, "course", $course->id)) {
+        } else {  /// Update or add new enrolment
 
-            if (! enrol_student($USER->id, $course->id)) {
+            if ($course->enrolperiod) {
+                $timestart = time();
+                $timeend   = $timestart + $course->enrolperiod;
+            } else {
+                $timestart = $timeend = 0;
+            }
+
+            if (! enrol_student($USER->id, $course->id, $timestart, $timeend)) {
                 error("An error occurred while trying to enrol you.");
             }
             
