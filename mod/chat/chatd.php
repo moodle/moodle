@@ -1,6 +1,8 @@
 #!/usr/bin/php -q
 <?php
 
+define('QUIRK_CHUNK_UPDATE', 0x0001);
+
 echo "Moodle chat daemon v1.0  (\$Id$)\n\n";
 
 /// Set up all the variables we need   /////////////////////////////////////
@@ -376,8 +378,11 @@ class ChatDaemon {
             'user'      => $user,
             'userid'    => $chatuser->userid,
             'groupid'   => $groupid,
-            'lang'      => $lang
+            'lang'      => $lang,
+            'quirks'    => $this->conn_sets[$sessionid]['customdata']['quirks']
         );
+
+        trace('QUIRKS value for this connection is '.$this->conn_sets[$sessionid]['customdata']['quirks']);
 
         $this->dismiss_half($sessionid, false);
         chat_socket_write($this->conn_sets[$sessionid][CHAT_CONNECTION_CHANNEL], $CHAT_HTMLHEAD_JS);
@@ -554,7 +559,11 @@ class ChatDaemon {
                 }
 
                 // Testing for Safari
-                $output->html .= $GLOBALS['CHAT_DUMMY_DATA'];
+                if($info['quirks'] & QUIRK_CHUNK_UPDATE) {
+                    $output->html .= $GLOBALS['CHAT_DUMMY_DATA'];
+                    $output->html .= $GLOBALS['CHAT_DUMMY_DATA'];
+                    $output->html .= $GLOBALS['CHAT_DUMMY_DATA'];
+                }
 
                 if(!chat_socket_write($this->conn_sets[$sessionid][CHAT_CONNECTION_CHANNEL], $output->html)) {
 
@@ -774,6 +783,13 @@ while(true) {
                 switch($type) {
                     case 'chat':
                        $type = CHAT_CONNECTION_CHANNEL;
+                        if(!ereg('Safari', $data)) {
+                            trace('Safari identified...', E_USER_WARNING);
+                            $customdata['quirks'] = QUIRK_CHUNK_UPDATE;
+                        }
+                        else {
+                            $customdata['quirks'] = 0;
+                        }
                     break;
                     case 'users':
                         $type = CHAT_SIDEKICK_USERS;
