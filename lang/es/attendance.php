@@ -5,6 +5,7 @@
 $string['absentlong'] = "Ausente";
 $string['absentshort'] = "A";
 $string['addmultiple'] = "Agregar múltiples registros de asistencia";
+$string['addingmultiple'] = "Agregando múltiples registros de asistencia";
 $string['allmodulename'] = "Todos los registros de asistencia";
 $string['choosedays'] = "Días de la semana para registrar asistencia";
 $string['dayofroll'] = "Fecha para tomar el registro";
@@ -28,7 +29,7 @@ $string['presentlong'] = "Presente";
 $string['presentshort'] = "P";
 $string['previous'] = "Anterior";
 $string['startmulti'] = "Fecha del primer registro de asistencia";
-$string['takeroll'] = "Tomar registro de ese día";
+$string['takeroll'] = "¿Pasar lista este día?";
 $string['tardiesperabsence'] = "¿Cuántas llegadas tarde suman una inasistencia?";
 $string['tardylong'] = "Retrasado";
 $string['tardyshort'] = "R";
@@ -36,5 +37,6 @@ $string['viewall'] = "Ver todos los registros de asistencia";
 $string['viewmulti'] = "Ver informe en múltiples páginas";
 $string['viewone'] = "Ver todas las páginas del informe";
 $string['viewtable'] = "Ver informe como una tabla";
+$string['weekmodulename'] = "Todos los registros de asistencia de la última semana";
 
 ?>

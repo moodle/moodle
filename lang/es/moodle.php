@@ -242,21 +242,9 @@ $string['edituser'] = "Editar usuario";
 $string['email'] = "Dirección de correo";
 $string['emailconfirm'] = "Confirme su cuenta";
 $string['emailconfirmation'] = "Hola \$a->firstname,
-
-
-
 Alguien, seguramente usted, ha solicitado la apertura de una cuenta en '\$a->sitename' utilizando esta dirección de correo.
-
-
-
 Para completar el proceso de inscripción haga clic aquí:
-
-
-
   \$a->link
-
-
-
 Si usted no lo ha solicitado, ignore este mensaje.
 
 Felicitaciones 
@@ -286,26 +274,11 @@ Para concluir el proceso diríjase a
 Si necesita ayuda adicional, entre en contacto con el administrador, \$a->admin";
 $string['emailpasswordconfirmationsubject'] = "\$a: confirmación de cambio de contraseña";
 $string['emailpasswordconfirmsent'] = "Un e-mail se ha enviado a su dirección <b>\$a</b>.
-
-
-
 <p>Este mensaje contiene instrucciones sencillas para completar el proceso.
-
-
-
 Si enfrenta alguna dificultad, contacte al Administrador.
-
-
-
 ";
 $string['emailpasswordsent'] = "Gracias por confirmar el cambio.
-
-
-
 <p>Ya le enviamos un su nueva contraseña a <b>\$a->email</b>.
-
-
-
 <p>Le recomendamos cambiarla inmediatamente por una propia en <a href=\$a->link>";
 $string['enrolmentconfirmation'] = "Está a punto de inscribirse como alumno de este curso <br />¿Está seguro que desea hacer eso?";
 $string['enrolmentkey'] = "contraseña de acceso";
@@ -363,9 +336,6 @@ $string['gd2'] = "GD 2.x instalado";
 $string['gdneed'] = "GD debe estar instalado para ver este gráfico.";
 $string['gdnot'] = "GD no instalado";
 $string['gpl'] = "Copyright (C) 2001-2002  Martin Dougiamas  (http://dougiamas.com)<BR> Traducción: Claudio Tavares (http://enlaceacademico.com)
-
-
-
 Este programa es software gratuito; Ud. puede redistribuirlo y/o modificarlo
 
 bajo los términos de GNU General Public License según la publicación
@@ -509,9 +479,6 @@ $string['missingurl'] = "URL perdida";
 $string['missingusername'] = "Colocar: nombre de usuario";
 $string['modified'] = "Modificado";
 $string['moduledeleteconfirm'] = "Está a punto de borrar completamente el módulo '\$a'.
-
-
-
 Esto borrará de la base de datos todo lo asociado con este módulo. ¿Está SEGURO de que desea continuar?";
 $string['moduledeletefiles'] = "Todos los datos asociados con el módulo '\$a->module' se han borrado de la base de datos. Para completar el proceso (y prevenir que el módulo se reinstale a sí mismo) debe borrar ahora el directorio \$a->directory de su servidor.";
 $string['modulesetup'] = "Instalando el módulo de tablas";
@@ -525,6 +492,8 @@ $string['movedown'] = "Mover hacia abajo";
 $string['movefilestohere'] = "Colocar archivos aquí";
 $string['movefull'] = "Mover \$a a este lugar";
 $string['movehere'] = "Colocar aquí";
+$string['moveleft'] = "Mover a la izquierda";
+$string['moveright'] = "Mover a la derecha";
 $string['moveselectedcoursesto'] = "Mover los cursos seleccionados a...";
 $string['movetoanotherfolder'] = "Mover a otro directrorio";
 $string['moveup'] = "Mover hacia arriba";
@@ -542,25 +511,13 @@ $string['newaccount'] = "Nueva cuenta";
 $string['newcourse'] = "Nuevo curso";
 $string['newpassword'] = "Nueva contraseña";
 $string['newpasswordtext'] = "Hola \$a->firstname,
-
-
-
 La contraseña de su cuenta en '\$a->sitename' se ha cancelado y se le ha otorgado una nueva contraseña temporal.
-
-
-
    Nombre de usuario: \$a->username
 
    contraseña: \$a->newpassword
-
-
-
 Dirígase a esta página y cambie su contraseña temporal por una que pueda recordar mejor:
 
    \$a->link
-
-
-
 Atte. '\$a->sitename' El Administrador,
 
 \$a->signoff";
@@ -654,21 +611,9 @@ $string['recentactivity'] = "Actividad reciente";
 $string['registration'] = "Registro";
 $string['registrationemail'] = "Notificaciones por correo electrónico";
 $string['registrationinfo'] = "<p>Esta página le permite registrar si sitio Moodle en moodle.org. el registro es gratuito.
-
-
-
 El principal beneficio del registro es que usted será incluido en una lista de correo de bajo volumen para notificaciones importantes como alertas de seguridad y nuevos lanzamientos de Moodle.
-
-
-
 <p>Su información será confidencial, y nunca será vendida o transmitida a nadia más. La única razón para recolectar esta información es para el soporte y para ayudar a costruir un cuadro estadístico de la comunidad Moodle.
-
-
-
 <p>Si lo desea, puede colocar el nombre de su sitio, país y URL para que aparezca en la lista pública de los sitios que usan Moodle.
-
-
-
 <p>Todos los registros son verificados manualmente antes de ser colocados en la lista, pero una vez en ella, pueden actualizar su registro (y sus datos en la lista pública) en cualquier momento llenado este formulario otra vez.";
 $string['registrationno'] = "No deseo recibir notificaciones por correo electrónico";
 $string['registrationsend'] = "Enviar mi información de registro a moodle.org";
@@ -744,9 +689,6 @@ $string['sitesettings'] = "Configurar página";
 $string['size'] = "Tamaño";
 $string['socialheadline'] = "Foro social, últimos temas";
 $string['someallowguest'] = "Si solamente desea ver el funcionamiento de la plataforma puede entrar como invitado. Esto le permitirá ver algunos cursos, pero no podrá 
-
-
-
 participar en ellos (escribir, etc.) Para entrar como invitado haga clic aquí";
 $string['someerrorswerefound'] = "Falta alguna información o es incorrecta. Abajo aparecen más detalles.";
 $string['startdate'] = "Fecha de inicio del curso";
@@ -837,17 +779,8 @@ $string['weeklyoutline'] = "Diagrama semanal";
 $string['weekshow'] = "Mostrar esta semana a \$a";
 $string['welcometocourse'] = "Bienvenido a \$a";
 $string['welcometocoursetext'] = "Bienvenido a \$a->coursename
-
-
-
 Lo primero que debe hacer es actualizar su información personal, así podremos saber algo más sobre usted.
-
-
-
 No olvide colocar su foto u otra imagen que lo identifique.
-
-
-
   \$a->profileurl";
 $string['whattocallzip'] = "¿Para qué quiere el archivo zip?";
 $string['withchosenfiles'] = "Con los archivos escogidos";
