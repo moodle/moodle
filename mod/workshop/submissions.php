@@ -781,7 +781,7 @@
 			error("Only teachers can look at this page");
 		}
 
-		if ($workshop->phase != 4) { // is this at the expected phase?
+		if ($workshop->phase != 5) { // is this at the expected phase?
 			print_heading(get_string("assignmentnotinthecorrectphase", "workshop"));
 			print_continue("view.php?a=$workshop->id");
 			}
