@@ -62,7 +62,7 @@
                 //Now check if want to restore user data and do it.
                 if ($restore->mods[assignment]->userinfo) {
                     //Restore assignmet_submissions
-                    $status = assignment_submissions_restore_mods ($newid,$info,$restore);
+                    $status = assignment_submissions_restore_mods ($mod->id, $newid,$info,$restore);
                 }
             } else {
                 $status = false;
@@ -76,7 +76,7 @@
     }
 
     //This function restores the assignment_submissions
-    function assignment_submissions_restore_mods($assignment_id,$info,$restore) {
+    function assignment_submissions_restore_mods($old_assignment_id, $new_assignment_id,$info,$restore) {
 
         global $CFG;
 
@@ -97,7 +97,7 @@
             $olduserid = backup_todb($sub_info['#']['USERID']['0']['#']);
 
             //Now, build the ASSIGNMENT_SUBMISSIONS record structure
-            $submission->assignment = $assignment_id;
+            $submission->assignment = $new_assignment_id;
             $submission->userid = backup_todb($sub_info['#']['USERID']['0']['#']);
             $submission->timecreated = backup_todb($sub_info['#']['TIMECREATED']['0']['#']);
             $submission->timemodified = backup_todb($sub_info['#']['TIMEMODIFIED']['0']['#']);
@@ -128,7 +128,8 @@
                              $newid);
 
                 //Now copy moddata associated files
-                $status = assignment_restore_files ($oldid, $newid, $olduserid, $submission->userid, $restore);
+                $status = assignment_restore_files ($old_assignment_id, $new_assignment_id, 
+                                                    $olduserid, $submission->userid, $restore);
 
             } else {
                 $status = false;
