@@ -198,9 +198,17 @@
 
             //Check if the question exists
             //by category,questiontext and qtype
-            $question_exists = get_record ("quiz_questions","category",$question->category,
-                                                            "questiontext",$question->questiontext,
-                                                            "qtype",$question->qtype);
+            //But do it only if the question type isn't RANDOM (4) or RANDOMSAMATCH (6), because this
+            //types can have duplicates in the fields I'm searching !!
+            //I think that some modifications should be done here !!
+            //Detected by scott dot elliott at mchsi dot com in Bug 84 
+            if ($question->qtype != 4 and $question->qtype != 6) {
+                $question_exists = get_record ("quiz_questions","category",$question->category,
+                                                                "questiontext",$question->questiontext,
+                                                                "qtype",$question->qtype);
+            } else {
+                $question_exists = false;
+            }
             //If the question exists, only record its id
             if ($question_exists) {
                 $newid = $question_exists->id;
@@ -248,6 +256,11 @@
                 } else if ($question->qtype == "8") {
                     $status = quiz_restore_numerical($oldid,$newid,$que_info,$restore);
                 }
+            } else {
+                //We are NOT creating the question, but we need to know every quiz_answers
+                //map between the XML file and the database to be able to restore the responses
+                //in each attempt.
+                $status = quiz_restore_map_answers($oldid,$newid,$que_info,$restore);
             }
         }
         return $status;
@@ -294,6 +307,61 @@
                 //We have the newid, update backup_ids
                 backup_putid($restore->backup_unique_code,"quiz_answers",$oldid,
                              $newid);
+            } else {
+                $status = false;
+            }
+        }
+
+        return $status;
+    }
+
+    function quiz_restore_map_answers ($old_question_id,$new_question_id,$info,$restore) {
+
+        global $CFG;
+
+        $status = true;
+
+        //Get the answers array
+        $answers = $info['#']['ANSWERS']['0']['#']['ANSWER'];
+
+        //Iterate over answers
+        for($i = 0; $i < sizeof($answers); $i++) {
+            $ans_info = $answers[$i];
+            //traverse_xmlize($ans_info);                                                                 //Debug
+            //print_object ($GLOBALS['traverse_array']);                                                  //Debug
+            //$GLOBALS['traverse_array']="";                                                              //Debug
+
+            //We'll need this later!!
+            $oldid = backup_todb($ans_info['#']['ID']['0']['#']);
+
+            //Now, build the QUIZ_ANSWERS record structure
+            $answer->question = $new_question_id;
+            $answer->answer = backup_todb($ans_info['#']['ANSWER_TEXT']['0']['#']);
+            $answer->fraction = backup_todb($ans_info['#']['FRACTION']['0']['#']);
+            $answer->feedback = backup_todb($ans_info['#']['FEEDBACK']['0']['#']);
+
+            //If we are in this method is because the question exists in DB, so its
+            //answers must exist too.
+            //Now, we are going to look for that answer in DB and to create the 
+            //mappings in backup_ids to use them later where restoring responses (user level).
+
+            //Get the answer from DB (by question and answer)
+            $db_answer = get_record ("quiz_answers","question",$new_question_id,
+                                                    "answer",$answer->answer);
+
+            //Do some output
+            if (($i+1) % 50 == 0) {
+                echo ".";
+                if (($i+1) % 1000 == 0) {
+                    echo "<br>";
+                }
+                backup_flush(300);
+            }
+
+            if ($db_answer) {
+                //We have the database answer, update backup_ids
+                backup_putid($restore->backup_unique_code,"quiz_answers",$oldid,
+                             $db_answer->id);
             } else {
                 $status = false;
             }
