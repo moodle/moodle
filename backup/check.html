@@ -64,7 +64,20 @@
     echo "<td align=\"right\"><P><B>";
     echo get_string("name").":";
     echo "</td><td>";
-    $backup_name = userdate(time(),get_string("backupnameformat")).".zip";
+    //Calculate the backup string
+    $backup_name = strtolower(get_string("backup"));
+    //If non-translated, use "backup"
+    if (substr($backup_name,0,1) == "[") {
+        $backup_name = "backup";
+    }
+    //Calculate the format string
+    $backup_name_format = get_string("backupnameformat");
+    //If non-translated, use "%%Y%%m%%d-%%H%%M"
+    if (substr($backup_name_format,0,1) == "[") {
+        $backup_name_format = "%%Y%%m%%d-%%H%%M";
+    }
+    
+    $backup_name .= "-".userdate(time(),$backup_name_format,99,false).".zip";
     echo $backup_name;
     //Add as hidden name
     echo "<input type=\"hidden\" name=\"backup_name\" value=\"".$backup_name."\">";
