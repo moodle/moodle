@@ -1808,7 +1808,7 @@ function navmenu($course, $cm=NULL, $targetwindow="self") {
                 $backmod = $previousmod;
                 $flag = true; // set flag so we know to use next mod for "next"
             }
-            $mod->name = urldecode($mod->name);
+            $mod->name = strip_tags(urldecode($mod->name));
             if (strlen($mod->name) > 55) {
                 $mod->name = substr($mod->name, 0, 50)."...";
             }
