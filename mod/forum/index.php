@@ -2,6 +2,7 @@
 
     require_once("../../config.php");
     require_once("lib.php");
+    require_once("$CFG->dirroot/rss/rsslib.php");
 
     optional_variable($id);          // course
 
@@ -34,6 +35,7 @@
     $strdescription = get_string("description");
     $strdiscussions = get_string("discussions", "forum");
     $strsubscribed = get_string("subscribed", "forum");
+    $strrss = get_string("rss");
 
     $searchform = forum_print_search_form($course, "", true, "plain");
 
@@ -45,6 +47,12 @@
 
     if ($can_subscribe = (isstudent($course->id) or isteacher($course->id) or isadmin())) {
         $generaltable->head[] = $strsubscribed;
+        $generaltable->align[] = "CENTER";
+    }
+
+    if ($show_rss = ($can_subscribe && isset($CFG->enablerssfeeds) && isset($CFG->forum_enablerssfeeds) &&
+                     $CFG->enablerssfeeds && $CFG->forum_enablerssfeeds)) {
+        $generaltable->head[] = $strrss;
         $generaltable->align[] = "CENTER";
     }
 
@@ -146,7 +154,24 @@
                         $sublink = "<a title=\"$subtitle\" href=\"subscribe.php?id=$forum->id\">$subscribed</a>";
                     }
                 }
-                $generaltable->data[] = array ($forumlink, "$forum->intro", "$count", $sublink);
+                //If this forum has RSS activated, calculate it
+                if ($show_rss) {
+                    $rsslink = '';
+                    if ($forum->rsstype and $forum->rssarticles) {
+                        //Calculate the tolltip text
+                        if ($forum->rsstype == 1) {
+                            $tooltiptext = get_string("rsssubscriberssdiscussions","forum",$forum->name);
+                        } else {
+                            $tooltiptext = get_string("rsssubscriberssposts","forum",$forum->name);
+                        }
+                        //Get html code for RSS link
+                        $rsslink = rss_get_link($course->id, $USER->id, "forum", $forum->id, $tooltiptext);
+                    }
+                    //Save data
+                    $generaltable->data[] = array ($forumlink, "$forum->intro", "$count", $sublink,$rsslink);
+                } else {
+                    $generaltable->data[] = array ($forumlink, "$forum->intro", "$count", $sublink);
+                }
             } else {
                 $generaltable->data[] = array ($forumlink, "$forum->intro", "$count");
             }
@@ -213,7 +238,24 @@
                             $sublink = "<a title=\"$subtitle\" href=\"subscribe.php?id=$forum->id\">$subscribed</a>";
                         }
                     }
-                    $learningtable->data[] = array ($printsection, $forumlink, "$forum->intro", "$count", "$sublink");
+                    //If this forum has RSS activated, calculate it
+                    if ($show_rss) {
+                        $rsslink = '';
+                        if ($forum->rsstype and $forum->rssarticles) {
+                            //Calculate the tolltip text
+                            if ($forum->rsstype == 1) {
+                                $tooltiptext = get_string("rsssubscriberssdiscussions","forum",$forum->name);
+                            } else {
+                                $tooltiptext = get_string("rsssubscriberssposts","forum",$forum->name);
+                            }
+                            //Get html code for RSS link
+                            $rsslink = rss_get_link($course->id, $USER->id, "forum", $forum->id, $tooltiptext);
+                        }
+                        //Save data
+                        $learningtable->data[] = array ($printsection,$forumlink, "$forum->intro", "$count", $sublink,$rsslink);
+                    } else {
+                        $learningtable->data[] = array ($printsection,$forumlink, "$forum->intro", "$count", $sublink);
+                    }
                 } else {
                     $learningtable->data[] = array ($printsection, $forumlink, "$forum->intro", "$count");
                 }
