@@ -317,7 +317,7 @@
     $userdata .= "<font size=+1>&nbsp;</font><a href=\"$CFG->wwwroot/$CFG->admin/user.php?newuser=true\">".
                  get_string("addnewuser")."</a> - <font size=\"1\">".
                  get_string("adminhelpaddnewuser")."</font><br />";
-    $userdata .= "<font size=+1>&nbsp;</font><a href=\"$CFG->wwwroot/$CFG->admin/uploaduser.php\">".
+    $userdata .= "<font size=+1>&nbsp;</font><a href=\"$CFG->wwwroot/$CFG->admin/uploaduser.php?sesskey=$USER->sesskey\">".
                  get_string("uploadusers")."</a> - <font size=\"1\">".
                  get_string("adminhelpuploadusers")."</font><br />";
 
