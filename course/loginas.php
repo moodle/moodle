@@ -8,7 +8,6 @@
     optional_variable($user);   // login as this user
     optional_variable($return); // return to the page we came from
 
-
     if (! $course = get_record("course", "id", $id)) {
         error("Course ID was incorrect");
     }
@@ -23,8 +22,8 @@
         $USER->site = $CFG->wwwroot;
         $USER->sessionIP = md5(getremoteaddr());     // Store the current IP in the session
 
-        if (isset($SESSION->oldcurrentgroup)) {      // Restore previous "current group"
-            $SESSION->currentgroup[$course->id] = $SESSION->oldcurrentgroup;
+        if (isset($SESSION->oldcurrentgroup)) {      // Restore previous "current group" cache.
+            $SESSION->currentgroup = $SESSION->oldcurrentgroup;
             unset($SESSION->oldcurrentgroup);
         }
         if (isset($SESSION->oldtimeaccess)) {        // Restore previous timeaccess settings
@@ -71,9 +70,9 @@
     $USER->realuser = $teacher_id;
     $USER->sessionIP = md5(getremoteaddr());   // Store the current IP in the session
 
-    if (isset($SESSION->currentgroup[$course->id])) {    // Remember current setting for later
-        $SESSION->oldcurrentgroup = $SESSION->currentgroup[$course->id];
-        unset($SESSION->currentgroup[$course->id]);
+    if (isset($SESSION->currentgroup)) {    // Remember current cache setting for later
+        $SESSION->oldcurrentgroup = $SESSION->currentgroup;
+        unset($SESSION->currentgroup);
     }
 
     $student_name = fullname($USER, true);
