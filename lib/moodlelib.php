@@ -91,20 +91,6 @@ define('HOURMINS', 60);
 /**
  * Parameter constants - if set then the parameter is cleaned of scripts etc
  */
-<<<<<<< moodlelib.php
-define('PARAM_RAW',     0x00);
-define('PARAM_CLEAN',   0x01);
-define('PARAM_INT',     0x02);
-define('PARAM_INTEGER', 0x02);  // Alias for PARAM_INT
-define('PARAM_ALPHA',   0x04);
-define('PARAM_ACTION',  0x04);  // Alias for PARAM_ALPHA
-define('PARAM_FORMAT',  0x04);  // Alias for PARAM_ALPHA
-define('PARAM_NOTAGS',  0x08);
-define('PARAM_FILE',    0x10);
-define('PARAM_PATH',    0x20);
-define('PARAM_HOST',    0x40);  // FQDN or IPv4 dotted quad
-
-=======
 define('PARAM_RAW',     0x0000);
 define('PARAM_CLEAN',   0x0001);
 define('PARAM_INT',     0x0002);
@@ -118,9 +104,6 @@ define('PARAM_PATH',    0x0020);
 define('PARAM_HOST',    0x0040);  // FQDN or IPv4 dotted quad
 define('PARAM_URL',     0x0080);  
 define('PARAM_LOCALURL',0x0180);  // NOT orthogonal to the others! Implies PARAM_URL!
-<<<<<<< moodlelib.php
->>>>>>> 1.427
-=======
 define('PARAM_CLEANFILE',0x0200);
 define('PARAM_ALPHANUM',0x0400);  //numbers or letters only
 define('PARAM_BOOL',    0x0800);  //convert to value 1 or 0 using empty()
@@ -129,7 +112,6 @@ define('PARAM_BOOL',    0x0800);  //convert to value 1 or 0 using empty()
  * Definition of page types
  */
 define('PAGE_COURSE_VIEW', 'course-view');
->>>>>>> 1.450
 
 /// PARAMETER HANDLING ////////////////////////////////////////////////////
 
@@ -254,31 +236,6 @@ function clean_param($param, $options) {
         $param = ereg_replace('/(\./)+', '/', $param);
     }
 
-<<<<<<< moodlelib.php
-    if ($options & PARAM_HOST) {         // allow FQDN or IPv4 dotted quad
-        preg_replace('/[^\.\d\w-]/','', $param ); // only allowed chars 
-	    // match ipv4 dotted quad
-        if (preg_match('/(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/',$param, $match)){
-            // confirm values are ok
-            if ( $match[0] > 255
-                 || $match[1] > 255
-                 || $match[3] > 255 
-                 || $match[4] > 255 ) {
-                // hmmm, what kind of dotted quad is this?
-                $param = '';
-            }
-        } elseif ( preg_match('/^[\w\d\.-]+$/', $param) // dots, hyphens, numbers
-                   && !preg_match('/^[\.-]/',  $param) // no leading dots/hyphens
-                   && !preg_match('/[\.-]$/',  $param) // no trailing dots/hyphens
-                   ) {
-            // all is ok - $param is respected
-        } else {
-            // all is not ok...
-            $param='';               
-        } 
-    }
-
-=======
     if ($options & PARAM_HOST) {         // allow FQDN or IPv4 dotted quad
         preg_replace('/[^\.\d\w-]/','', $param ); // only allowed chars 
         // match ipv4 dotted quad
@@ -350,7 +307,6 @@ function clean_param($param, $options) {
         }
     }
 
->>>>>>> 1.427
     return $param;
 }
 
