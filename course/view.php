@@ -23,6 +23,10 @@
         }
     }
 
+    if ($course->id == SITEID) {      // This course is not a real course.
+        redirect("$CFG->wwwroot/");
+    }
+
     require_login($course->id);
 
     require_once($CFG->dirroot.'/calendar/lib.php');    /// This is after login because it needs $USER
@@ -134,10 +138,6 @@
     }
 
     $SESSION->fromdiscussion = "$CFG->wwwroot/course/view.php?id=$course->id";
-
-    if (! $course->category) {      // This course is not a real course.
-        redirect("$CFG->wwwroot/");
-    }
 
     $strcourse = get_string("course");
 
