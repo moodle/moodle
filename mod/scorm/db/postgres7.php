@@ -47,7 +47,7 @@ function scorm_upgrade($oldversion) {
 	table_column("scorm_scoes", "", "timelimitaction", "VARCHAR", "19", "", "", "NOT NULL", "maxtimeallowed");
 	table_column("scorm_scoes", "", "masteryscore", "VARCHAR", "200", "", "", "NOT NULL", "datafromlms");
 	
-	$oldScoesData = get_records_select("scorm_scoes","1","id ASC");
+	$oldScoesData = get_records_select("scorm_scoes",null,"id ASC");
 	table_column("scorm_scoes", "type", "scormtype", "VARCHAR", "5", "", "", "NOT NULL");
 	foreach ($oldScoesData as $sco) {
 	    $sco->scormtype = $sco->type;
@@ -90,7 +90,7 @@ function scorm_upgrade($oldversion) {
     }
 
     if ($oldversion < 2005040200) {
-        execute_sql('ALTER TABLE `'.$CFG->prefix.'scorm` DROP `popup`');    // Old field
+        execute_sql('ALTER TABLE '.$CFG->prefix.'scorm DROP popup');    // Old field
     }
     
     if ($oldversion < 2005040400) {
