@@ -920,12 +920,14 @@ function get_site_users($sort="u.lastaccess DESC") {
 
     global $CFG;
 
-    return get_records_sql("SELECT u.* FROM {$CFG->prefix}user u, 
-                                            {$CFG->prefix}user_students s, 
-                                            {$CFG->prefix}user_teachers t
-                            WHERE s.userid = u.id 
-                               OR t.userid = u.id
-                            GROUP BY u.id ORDER BY $sort");
+    return get_records_sql("SELECT u.id, u.username, u.firstname, u.lastname, u.maildisplay,
+                                   u.email, u.city, u.country, u.lastaccess, u.lastlogin, u.picture
+                              FROM {$CFG->prefix}user u, 
+                                   {$CFG->prefix}user_students s, 
+                                   {$CFG->prefix}user_teachers t
+                             WHERE s.userid = u.id 
+                                OR t.userid = u.id
+                             GROUP BY u.id ORDER BY $sort");
 }
 
 
