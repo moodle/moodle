@@ -407,6 +407,8 @@ function forum_grades($forumid) {
 
 function forum_get_course_forum($courseid, $type) {
 // How to set up special 1-per-course forums
+    global $CFG;
+
     if ($forum = get_record_sql("SELECT * from forum WHERE course = '$courseid' AND type = '$type'")) {
         return $forum;
 
@@ -465,6 +467,11 @@ function forum_get_course_forum($courseid, $type) {
             if (! set_field("course_modules", "section", $sectionid, "id", $mod->coursemodule)) {
                 notify("Could not update the course module with the correct section");
                 return false;
+            }
+            include_once("$CFG->dirroot/course/lib.php");
+            $modinfo = serialize(get_array_of_activities($courseid));
+            if (!set_field("course", "modinfo", $modinfo, "id", $courseid)) {
+                error("Could not cache module information!");
             }
         }
             
