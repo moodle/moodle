@@ -186,10 +186,10 @@ function chat_get_latest_message($chatid) {
 
     global $CFG;
 
-    return get_record_sql("SELECT * 
+    return get_record_sql("SELECT *
                              FROM {$CFG->prefix}chat_messages 
                             WHERE chatid = '$chatid' 
-                         ORDER BY timestamp DESC LIMIT 1");
+                         ORDER BY timestamp DESC");
 }
 
 //////////////////////////////////////////////////////////////////////
