@@ -623,7 +623,7 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
             break;
 
         case FORMAT_WIKI:
-            $text = wiki_to_html($text);
+            $text = wiki_to_html($text,$courseid);
             $text = rebuildnolinktag($text);
             if (!isset($options->noclean)) {
                 $text = clean_text($text, $format);
@@ -908,14 +908,14 @@ function text_to_html($text, $smiley=true, $para=true, $newlines=true) {
     }
 }
 
-function wiki_to_html($text) {
+function wiki_to_html($text,$courseid) {
 /// Given Wiki formatted text, make it into XHTML using external function
-    global $CFG, $course;
+    global $CFG;
 
     require_once("$CFG->libdir/wiki.php");
 
     $wiki = new Wiki;
-    return $wiki->format($text);
+    return $wiki->format($text,$courseid);
 }
 
 function markdown_to_html($text) {

@@ -54,6 +54,7 @@ class Wiki {
   var $spelling_on;
   var $list_backtrack;
   var $output; // output buffer
+  var $courseid;
 
   function close_block( $state ) {
     // provide appropriate closure for block according to state
@@ -270,23 +271,23 @@ class Wiki {
          " <a href=\"".$CFG->wwwroot."/mod/\\1/view.php?id=\\2\">\\3</a> ", $line );
 
       // Replace picture resource link 
-      global $course;    // This is a bit risky - it won't work everywhere
+      // global $course;    // This is a bit risky - it won't work everywhere
 
       if ($CFG->slasharguments) {
         $line = eregi_replace( "/([a-zA-Z0-9./_-]+)(png|gif|jpg)\(([^)]+)\)",
-          "<img src=\"$CFG->wwwroot/file.php/$course->id/\\1\\2\" alt=\"\\3\" />", $line );
+          "<img src=\"$CFG->wwwroot/file.php/$this->courseid/\\1\\2\" alt=\"\\3\" />", $line );
       } else {
         $line = eregi_replace( "/([a-zA-Z0-9./_-]+)(png|gif|jpg)\(([^)]+)\)",
-          "<img src=\"$CFG->wwwroot/file.php\?file=$course->id/\\1\\2\" alt=\"\\3\" />", $line );
+          "<img src=\"$CFG->wwwroot/file.php\?file=$this->courseid/\\1\\2\" alt=\"\\3\" />", $line );
       }
 
       // Replace everything else resource link
       if ($CFG->slasharguments) {
         $line = eregi_replace( "file:/([[:alnum:]/._-]+)\(([^)]+)\)",
-          "<a href=\"$CFG->wwwroot/file.php/$course->id/\\1\" >\\2</a>", $line );
+          "<a href=\"$CFG->wwwroot/file.php/$this->courseid/\\1\" >\\2</a>", $line );
       } else {
         $line = eregi_replace( "file:/([[:alnum:]/._-]+)\(([^)]+)\)",
-          "<a href=\"$CFG->wwwroot/file.php\?file=$course->id/\\1\" >\\2</a>", $line );
+          "<a href=\"$CFG->wwwroot/file.php\?file=$this->courseid/\\1\" >\\2</a>", $line );
       }
 
       replace_smilies( $line );
@@ -327,7 +328,7 @@ class Wiki {
   }
 
 
-  function format( $content ) {
+  function format( $content, $courseid ) {
     // main entry point for processing TikiText
     // $content is string containing text with Tiki formatting
     // return: string containing XHTML formatting
@@ -339,6 +340,7 @@ class Wiki {
     $this->list_depth = 0;
     $this->list_backtrack = array();
     $this->spelling_on = false;
+    $this->courseid = $courseid;
 
     // split content into array of single lines
     $lines = explode( "\n",$content );
