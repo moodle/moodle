@@ -12,10 +12,14 @@
     }
 
     if (! $discussion = get_record("forum_discussions", "id", $post->discussion)) {
+        error("Discussion ID was incorrect");
+    }
+
+    if (! $forum = get_record("forum", "id", $discussion->forum)) {
         error("Forum ID was incorrect");
     }
 
-    if ($USER->id <> $post->user) {
+    if ($USER->id != $post->user) {
         error("You can only look at results for posts you own");
     }
 
@@ -23,14 +27,14 @@
         $sort = "r.time";
     }
 
-    print_header("(Ratings for) $post->subject");
+    print_header("Ratings for: $post->subject");
 
     if (!$ratings = get_records_sql("SELECT u.*, r.rating, r.time FROM forum_ratings r, user u
                                      WHERE r.post='$post->id' AND r.user=u.id ORDER BY $sort")) {
         echo "No ratings for this post: \"$post->subject\"";
         die;
     } else {
-        echo "<TABLE BORDER=0 CELLPADDING=2>";
+        echo "<TABLE BORDER=0 CELLPADDING=3>";
         echo "<TR>";
         echo "<TH>&nbsp;</TH>";
         echo "<TH><A HREF=report.php?id=$post->id&sort=u.firstname>Name</A>";
@@ -43,11 +47,7 @@
                 echo "<TR BGCOLOR=\"$THEME->cellcontent\">";
             }
             echo "<TD>";
-            if ($rating->picture) {
-                echo "<IMG SRC=\"$CFG->wwwroot/user/pix.php/".$rating->picture."/f2.jpg\" ALIGN=left BORDER=0>";
-            } else {
-                echo "<IMG SRC=\"$CFG->wwwroot/user/pix.php/0/f2.jpg\" ALIGN=left BORDER=0>";
-            }
+            print_user_picture($rating->id, $forum->course, $rating->picture);
             echo "<TD NOWRAP><P><FONT SIZE=-1>$rating->firstname $rating->lastname</P>";
             echo "<TD NOWRAP><P><FONT SIZE=-1>".$FORUM_POST_RATINGS[$rating->rating]."</P>";
             echo "<TD NOWRAP><P><FONT SIZE=-1>".userdate($rating->time)."</P>";
