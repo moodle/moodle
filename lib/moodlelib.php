@@ -1015,6 +1015,25 @@ function require_login($courseid=0, $autologinguest=true) {
             }
         }
 
+        //User is not enrolled in the course, wants to access course content
+        //as a guest, and course setting allow unlimited guest access
+        //Code cribbed from course/loginas.php
+        if (strstr($FULLME,"username=guest") && ($course->guest==1)) {
+          $realuser = $USER->id;
+          $realname = fullname($USER, true);
+          $USER = guest_user();
+          $USER->loggedin = true;
+          $USER->site = $CFG->wwwroot;
+          $USER->realuser = $realuser;
+          if (isset($SESSION->currentgroup[$course->id])) {    // Remember current setting for later
+            $SESSION->oldcurrentgroup = $SESSION->currentgroup[$course->id];
+            unset($SESSION->currentgroup[$course->id]);
+          }
+          $guest_name = fullname($USER, true);
+          add_to_log($course->id, "course", "loginas", "../user/view.php?id=$course->id&$USER->id$", "$realname -> $guest_name");
+          return;
+        }
+
         // Currently not enrolled in the course, so see if they want to enrol
         $SESSION->wantsurl = $FULLME;
         redirect($CFG->wwwroot .'/course/enrol.php?id='. $courseid);
