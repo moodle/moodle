@@ -1,4 +1,4 @@
-<? // $Id$
+<?php  // $Id$
    // Library of useful functions
 
 
@@ -1185,7 +1185,7 @@ function print_my_moodle() {
         }
 
         echo "<table width=\"100%\"><tr><td align=\"center\">";
-        print_course_search();
+        print_course_search("", false, "short");
         echo "</td><td align=\"center\">";
         print_single_button("$CFG->wwwroot/course/index.php", NULL, get_string("fulllistofcourses"), "get");
         echo "</td></tr></table>\n";
@@ -1211,6 +1211,12 @@ function print_course_search($value="", $return=false, $format="plain") {
         $output  = "<center><p align=\"center\" class=\"coursesearchbox\">";
         $output .= "<form name=\"coursesearch\" action=\"$CFG->wwwroot/course/search.php\" method=\"get\">";
         $output .= "<input type=\"text\" size=30 name=\"search\" value=\"$value\">";
+        $output .= "<input type=\"submit\" value=\"$strsearchcourses\">";
+        $output .= "</form></p></center>";
+    } else if ($format == "short") {
+        $output  = "<center><p align=\"center\" class=\"coursesearchbox\">";
+        $output .= "<form name=\"coursesearch\" action=\"$CFG->wwwroot/course/search.php\" method=\"get\">";
+        $output .= "<input type=\"text\" size=12 name=\"search\" value=\"$value\">";
         $output .= "<input type=\"submit\" value=\"$strsearchcourses\">";
         $output .= "</form></p></center>";
     } else if ($format == "navbar") {
