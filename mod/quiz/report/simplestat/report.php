@@ -432,7 +432,11 @@ function quiz_report_simplestat_grade_attempt_results($quiz, $questions) {
         $result->correct[$question->id] = $questionresult->correct;
     }
 
-    $fraction = (float)($result->sumgrades / $quiz->sumgrades);
+    if ($quiz->sumgrades) {
+        $fraction = (float)($result->sumgrades / $quiz->sumgrades);
+    } else {
+        $fraction = 0.0;
+    }
     $result->percentage = format_float($fraction * 100.0);
     $result->grade      = format_float($fraction * $quiz->grade);
     $result->sumgrades = round($result->sumgrades, 2);
