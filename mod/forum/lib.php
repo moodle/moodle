@@ -1224,6 +1224,8 @@ function forum_subscribed_users($course, $forum, $groupid=0) {
                           ORDER BY u.email ASC");
 }
 
+
+
 /// OTHER FUNCTIONS ///////////////////////////////////////////////////////////
 
 
@@ -2271,7 +2273,7 @@ function forum_post_subscription($post) {
         return "";
     }
 
-    $info->name  = "$USER->firstname $USER->lastname";
+    $info->name  = fullname($USER);
     $info->forum = $forum->name;
 
     if (!empty($post->subscribe)) {

@@ -54,9 +54,9 @@
             }
             echo "<td>";
             print_user_picture($rating->id, $glossary->course, $rating->picture);
-            echo "<td nowrap><p><font size=-1>$rating->firstname $rating->lastname</p>";
-            echo "<td nowrap align=center><p><font size=-1>".$scalemenu[$rating->rating]."</p>";
-            echo "<td nowrap align=center><p><font size=-1>".userdate($rating->time)."</p>";
+            echo '<td nowrap><p><font size="-1">'.fullname($rating).'</p>';
+            echo '<td nowrap align="center"><p><font size="-1">'.$scalemenu[$rating->rating]."</p>";
+            echo '<td nowrap align="center"><p><font size="-1">'.userdate($rating->time)."</p>";
             echo "</tr>\n";
         }
         echo "</table>";

@@ -77,7 +77,7 @@ function dialogue_cron () {
             $strdialogue  = get_string("modulename", "dialogue");
     
             unset($dialogueinfo);
-            $dialogueinfo->userfrom = "$userfrom->firstname $userfrom->lastname";
+            $dialogueinfo->userfrom = fullname($userfrom);
             $dialogueinfo->dialogue = "$dialogue->name";
             $dialogueinfo->url = "$CFG->wwwroot/mod/dialogue/view.php?id=$cm->id";
 
@@ -170,7 +170,7 @@ function dialogue_print_recent_activity($course, $isteacher, $timestart) {
                 //Obtain the visible property from the instance
                 if (instance_is_visible("dialogue",$tempmod)) {
                     $date = userdate($log->time, $strftimerecent);
-                    echo "<p><font size=1>$date - $log->firstname $log->lastname<br />";
+                    echo '<p><font size="1">'.$date.' - '.fullname($log).'<br />';
                     echo "\"<a href=\"$CFG->wwwroot/mod/dialogue/$log->url\">";
                     echo "$log->name";
                     echo "</a>\"</font></p>";
@@ -204,7 +204,7 @@ function dialogue_print_recent_activity($course, $isteacher, $timestart) {
                 //Obtain the visible property from the instance
                 if (instance_is_visible("dialogue",$tempmod)) {
                     $date = userdate($log->time, $strftimerecent);
-                    echo "<p><font size=1>$date - $log->firstname $log->lastname<br />";
+                    echo '<p><font size="1">'.$date.' - '.fullname($log).'<br />';
                     echo "\"<a href=\"$CFG->wwwroot/mod/dialogue/$log->url\">";
                     echo "$log->name";
                     echo "</a>\"</font></p>";
@@ -239,7 +239,7 @@ function dialogue_print_recent_activity($course, $isteacher, $timestart) {
                 if (instance_is_visible("dialogue",$tempmod)) {
                     $date = userdate($log->time, $strftimerecent);
                     echo "<p><font size=1>$date - ".get_string("namehascloseddialogue", "dialogue",
-                        "$log->firstname $log->lastname")."<br />";
+                        fullname($log))."<br />";
                     echo "\"<a href=\"$CFG->wwwroot/mod/dialogue/$log->url\">";
                     echo "$log->name";
                     echo "</a>\"</font></p>";
@@ -297,7 +297,7 @@ function dialogue_user_complete($course, $user, $mod, $dialogue) {
             } else {
                 $status = get_string("open", "dialogue");
             }
-            $table->data[] = array("$with->firstname $with->lastname", $byuser." ".
+            $table->data[] = array(fullname($with), $byuser." ".
                 get_string("of", "dialogue")." ".$total, userdate($conversation->timemodified), $status);
         }
         print_table($table);

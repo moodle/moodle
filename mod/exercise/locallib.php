@@ -788,7 +788,7 @@ function exercise_list_submissions_for_admin($exercise) {
                             $action ="";
                         }
                         $nassessments++;
-                        $table->data[] = array("$user->firstname $user->lastname", $title, 
+                        $table->data[] = array(fullname($user), $title, 
                                 userdate($assessment->timecreated), $action);
                     }
                 }
@@ -900,7 +900,7 @@ function exercise_list_submissions_for_admin($exercise) {
                     if ($submission->late) {
                         $datesubmitted = "<font color=\"red\">".$datesubmitted."</font>";
                     }
-                    $table->data[] = array("$user->firstname $user->lastname", $title.
+                    $table->data[] = array(fullname($user), $title.
                             " ".exercise_print_submission_assessments($exercise, $submission), 
                             $datesubmitted, $action);
                     $nsubmissions++;
@@ -1203,13 +1203,13 @@ function exercise_list_unassessed_student_submissions($exercise, $user) {
                                 $action = "<A HREF=\"assessments.php?action=teacherassessment&id=$cm->id&aid=$studentassessment->id&sid=$submission->id\">".
                                     get_string("edit", "exercise")."</A>";
                                 $table->data[] = array(exercise_print_submission_title($exercise, $submission), 
-                                        $submissionowner->firstname." ".$submissionowner->lastname, 
+                                        fullname($submissionowner), 
                                         $timegap, $action, $comment);
                             } else {
                                 $action = "<A HREF=\"assessments.php?action=teacherassessment&id=$cm->id&aid=$studentassessment->id&sid=$submission->id\">".
                                     get_string("assess", "exercise")."</A>";
                                 $table->data[] = array(exercise_print_submission_title($exercise, $submission), 
-                                        $submissionowner->firstname." ".$submissionowner->lastname, 
+                                        fullname($submissionowner), 
                                         $timegap, $action, $comment);
                             }
                         } else {
@@ -1229,7 +1229,7 @@ function exercise_list_unassessed_student_submissions($exercise, $user) {
                                     error("List unassessed student submissions: teacher record not found");
                                 }
                                 $comment = get_string("resubmissionfor", "exercise",
-                                                "$teacher->firstname $teacher->lastname");
+                                                fullname($teacher));
                                 if ($assessment->timecreated > $timenow - $CFG->maxeditingtime) {
                                     $warm = true;
                                 }
@@ -1247,7 +1247,7 @@ function exercise_list_unassessed_student_submissions($exercise, $user) {
                             $timegap = "<font color=\"red\">".$timegap."</font>";
                         }
                         $table->data[] = array(exercise_print_submission_title($exercise, $submission), 
-                            $submissionowner->firstname." ".$submissionowner->lastname, 
+                            fullname($submissionowner), 
                             $timegap, $action, $comment);
                     }
                     if (!$teacherassessed) { 
@@ -1270,7 +1270,7 @@ function exercise_list_unassessed_student_submissions($exercise, $user) {
                                         error("List unassessed student submissions: teacher record not found");
                                     }
                                     $comment = get_string("resubmissionfor", "exercise",
-                                                    "$teacher->firstname $teacher->lastname");
+                                                    fullname($teacher));
                                     break; // no need to look further
                                     
                                 }
@@ -1284,7 +1284,7 @@ function exercise_list_unassessed_student_submissions($exercise, $user) {
                              $timegap = "<font color=\"red\">".$timegap."</font>";
                         }
                         $table->data[] = array(exercise_print_submission_title($exercise, $submission), 
-                            $submissionowner->firstname." ".$submissionowner->lastname, 
+                            fullname($submissionowner), 
                             $timegap, $action, $comment);
                     }
                 }
@@ -1378,8 +1378,8 @@ function exercise_list_ungraded_assessments($exercise, $stype) {
                 $submissionowner = get_record("user", "id", $submission->userid);
                 $assessor = get_record("user", "id", $assessment->userid);
                 $table->data[] = array(exercise_print_submission_title($exercise, $submission), 
-                    $submissionowner->firstname." ".$submissionowner->lastname, 
-                    $assessor->firstname." ".$assessor->lastname, userdate($assessment->timecreated), $action);
+                    fullname($submissionowner), 
+                    fullname($assessor), userdate($assessment->timecreated), $action);
                 }
             }
         if (isset($table->data)) {
@@ -1499,7 +1499,7 @@ function exercise_print_assessment_form($exercise, $assessment = false, $allowch
                 }
             if ($exercisefound) {
                 print_heading(get_string("theexerciseandthesubmissionby", "exercise", 
-                    "$submissionowner->firstname $submissionowner->lastname"));
+                    fullname($submissionowner)));
                 echo "<CENTER><TABLE BORDER=\"1\" WIDTH=\"30%\"><TR>
                     <TD ALIGN=CENTER BGCOLOR=\"$THEME->cellcontent\">\n";
                 echo exercise_print_submission_title($exercise, $teachersubmission);
@@ -1545,7 +1545,7 @@ function exercise_print_assessment_form($exercise, $assessment = false, $allowch
             $formtitle = get_string("yourassessment", "exercise");
             }
         else {
-            $formtitle = get_string("assessmentby", "exercise", "$assessmentowner->firstname $assessmentowner->lastname");
+            $formtitle = get_string("assessmentby", "exercise", fullname($assessmentowner));
             }
         }
     else {
@@ -2004,7 +2004,7 @@ function exercise_print_assessments_by_user_for_admin($exercise, $user) {
 
     if ($assessments =exercise_get_user_assessments($exercise, $user)) {
         foreach ($assessments as $assessment) {
-            echo "<p><center><b>".get_string("assessmentby", "exercise", $user->firstname." ".$user->lastname)."</b></center></p>\n";
+            echo "<p><center><b>".get_string("assessmentby", "exercise", fullname($user))."</b></center></p>\n";
             exercise_print_assessment_form($exercise, $assessment);
             echo "<p align=\"right\"><a href=\"assessments.php?action=adminamendgradinggrade&id=$cm->id&aid=$assessment->id\">".
                 get_string("amend", "exercise")." ".get_string("gradeforstudentsassessment","exercise",
@@ -2031,7 +2031,7 @@ function exercise_print_assessments_for_admin($exercise, $submission) {
             if (!$user = get_record("user", "id", $assessment->userid)) {
                 error (" exercise_print_assessments_for_admin: unable to get user record");
                 }
-            echo "<p><center><b>".get_string("assessmentby", "exercise", $user->firstname." ".$user->lastname)."</b></center></p>\n";
+            echo "<p><center><b>".get_string("assessmentby", "exercise", fullname($user))."</b></center></p>\n";
             exercise_print_assessment_form($exercise, $assessment);
             echo "<p align=\"right\"><a href=\"assessments.php?action=adminconfirmdelete&id=$cm->id&aid=$assessment->id\">".
                 get_string("delete", "exercise")."</a></p><hr>\n";
@@ -2104,7 +2104,7 @@ function exercise_print_feedback($course, $submission) {
     echo "\n<TD ROWSPAN=3 BGCOLOR=\"$THEME->body\" WIDTH=35 VALIGN=TOP>";
     print_user_picture($teacher->id, $course->id, $teacher->picture);
     echo "</TD>";
-    echo "<TD NOWRAP WIDTH=100% BGCOLOR=\"$THEME->cellheading\">$teacher->firstname $teacher->lastname";
+    echo "<TD NOWRAP WIDTH=100% BGCOLOR=\"$THEME->cellheading\">".fullname($teacher);
     echo "&nbsp;&nbsp;<FONT SIZE=2><I>".userdate($submission->timemarked)."</I>";
     echo "</TR>";
 
@@ -2164,7 +2164,7 @@ function exercise_print_league_table($exercise) {
                             number_format($submission->grade * $exercise->grade / 100.0, 1));
                 } else {
                     $table->data[] = array(exercise_print_submission_title($exercise, $submission), 
-                            $user->firstname." ".$user->lastname, 
+                            fullname($user), 
                             number_format($submission->grade * $exercise->grade / 100.0, 1));
                 }
                 $n++;
@@ -2328,15 +2328,15 @@ function exercise_print_teacher_assessment_form($exercise, $assessment, $submiss
     echo exercise_print_submission_title($exercise, $submission);
     echo "</TD></TR></TABLE></center><BR CLEAR=ALL>\n";
 
-	?>
-	<form name="assessmentform" method="post" action="assessments.php">
-	<INPUT TYPE="hidden" NAME="id" VALUE="<?PHP echo $cm->id ?>">
-	<input type="hidden" name="said" value="<?PHP echo $assessment->id ?>">
-	<input type="hidden" name="sid" value="<?PHP echo $submission->id ?>">
-	<input type="hidden" name="action" value="updateteacherassessment">
-	<input type="hidden" name="resubmit" value="0">
-	<input type="hidden" name="returnto" value="<?PHP echo $returnto ?>">
-	<?PHP
+    ?>
+    <form name="assessmentform" method="post" action="assessments.php">
+    <INPUT TYPE="hidden" NAME="id" VALUE="<?PHP echo $cm->id ?>">
+    <input type="hidden" name="said" value="<?PHP echo $assessment->id ?>">
+    <input type="hidden" name="sid" value="<?PHP echo $submission->id ?>">
+    <input type="hidden" name="action" value="updateteacherassessment">
+    <input type="hidden" name="resubmit" value="0">
+    <input type="hidden" name="returnto" value="<?PHP echo $returnto ?>">
+    <?PHP
 
     // now print a normal assessment form based on the student's assessment for this submission 
     // and allow the teacher to grade and add additional comments
@@ -2344,7 +2344,7 @@ function exercise_print_teacher_assessment_form($exercise, $assessment, $submiss
     $allowchanges = true;
     
     print_heading_with_help(get_string("pleasemakeyourownassessment", "exercise",
-        "$submissionowner->firstname $submissionowner->lastname"), "grading", "exercise");
+        fullname($submissionowner)), "grading", "exercise");
     
     // is there an existing assessment for the submission
     if (!$assessment = exercise_get_submission_assessment($submission, $USER)) {
@@ -2796,7 +2796,7 @@ function exercise_print_teacher_table($course) {
             $j++;
         }
         $grandtotal += $total;
-        $table->data[] = array_merge(array("$teacher->firstname $teacher->lastname"), array($total), $n);
+        $table->data[] = array_merge(array(fullname($teacher)), array($total), $n);
     }
     $table->data[] = array_merge(array(get_string("total")), array($grandtotal), $grand);
     print_heading(get_string("teacherassessmenttable", "exercise", $course->teacher));

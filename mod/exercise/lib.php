@@ -175,7 +175,7 @@ function exercise_cron() {
             $USER->lang = $submissionowner->lang;
             $sendto = $submissionowner;
             // "Your assignment \"$submission->title\" has been assessed by"
-            $msg = get_string("mail1", "exercise", $submission->title)." $assessmentowner->firstname $assessmentowner->lastname.\n";
+            $msg = get_string("mail1", "exercise", $submission->title).' '.fullname($assessmentowner).".\n";
             // "The comments and grade can be seen in the exercise assignment '$exercise->name'
             $msg .= get_string("mail2", "exercise", $exercise->name)."\n\n";
     
@@ -334,7 +334,7 @@ function exercise_print_recent_activity($course, $isteacher, $timestart) {
                     //Obtain the visible property from the instance
                     if (instance_is_visible("exercise",$tempmod)) {
                         $date = userdate($log->time, $strftimerecent);
-                        echo "<p><font size=1>$date - $log->firstname $log->lastname<br />";
+                        echo '<p><font size="1">'.$date.' - '.fullname($log).'<br />';
                         echo "\"<a href=\"$CFG->wwwroot/mod/exercise/$log->url\">";
                         echo "$log->name";
                         echo "</a>\"</font></p>";
@@ -369,7 +369,7 @@ function exercise_print_recent_activity($course, $isteacher, $timestart) {
                 //Obtain the visible property from the instance
                 if (instance_is_visible("exercise",$tempmod)) {
                     $date = userdate($log->time, $strftimerecent);
-                    echo "<p><font size=1>$date - $log->firstname $log->lastname<br />";
+                    echo '<p><font size="1">'.$date.' - '.fullname($log).'<br />';
                     echo "\"<a href=\"$CFG->wwwroot/mod/exercise/$log->url\">";
                     echo "$log->name";
                     echo "</a>\"</font></p>";
@@ -404,7 +404,7 @@ function exercise_print_recent_activity($course, $isteacher, $timestart) {
                     //Obtain the visible property from the instance
                     if (instance_is_visible("exercise",$tempmod)) {
                         $date = userdate($log->time, $strftimerecent);
-                        echo "<p><font size=1>$date - $log->firstname $log->lastname<br />";
+                        echo '<p><font size="1">'.$date.' - '.fullname($log).'<br />';
                         echo "\"<a href=\"$CFG->wwwroot/mod/exercise/$log->url\">";
                         echo "$log->name";
                         echo "</a>\"</font></p>";

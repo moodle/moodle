@@ -280,7 +280,7 @@
                                 $grade = "<font color=\"red\">(".$grade.")</font>";
                                 $overallgrade = "<font color=\"red\">(".$overallgrade.")</font>";
                             }
-                            echo "<tr><td>$user->firstname $user->lastname</td>\n";
+                            echo "<tr><td>".fullname($user)."</td>\n";
                             echo "<td>".exercise_print_submission_title($exercise, $submission)."</td>\n";
                             echo "<td align=\"center\">$gradinggrade</td>";
                             echo "<td align=\"center\">$grade</td>";
