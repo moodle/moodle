@@ -5,8 +5,8 @@
     require_once("lib.php");
     require_once("$CFG->libdir/blocklib.php");
 
-    optional_variable($id, 0);   // course id
-    optional_variable($category, 0);   // category id
+    $id       = (int)parameter('id', 0);         // course id
+    $category = (int)parameter('category', 0);   // possible default category
 
     require_login();
 
