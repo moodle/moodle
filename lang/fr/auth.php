@@ -1,5 +1,6 @@
 <?php // $Id$ 
 
+$string['auth_cas_server_settings'] = 'Configuration du serveur CAS';
 $string['auth_castitle'] = 'Utiliser un serveur CAS (SSO)';
 $string['auth_cas_hostname'] = 'Nom d\'hôte du serveur,<br />par exemple&nbsp;: «&nbsp;host.domaine.fr&nbsp;»';
 $string['auth_cas_baseuri'] = 'Adresse URI du serveur CAS (ne rien mettre s\'il n\'y en a pas).<br />par exemple, si le serveur CAS répond à l\'adresse «&nbsp;host.domaine.fr/CAS/&nbsp;», la valeur à indiquer ici est «&nbsp;CAS/&nbsp;».';
@@ -7,7 +8,7 @@ $string['auth_cas_port'] = 'Port utilisé par le serveur CAS';
 $string['auth_cas_version'] = 'Version du logiciel CAS';
 $string['auth_cas_language'] = 'Langue choisie';
 $string['auth_casdescription'] = 'Cette méthode utilise un serveur CAS (Central Authentication Service) pour authentifier les utilisateurs dans un environnement Single Sign On (SSO). Il est aussi possible d\'utiliser une simple authentification LDAP. Si le nom d\'utilisateur et le mot de passe donnés sont valides suivant le CAS, Moodle crée un nouvel utilisateur dans sa base de données, en héritant si nécessaire des attributs LDAP de l\'utilisateur. Lors des connexions ultérieures, seuls le nom d\'utilisateur et le mot de passe sont vérifiés.';
-$string['auth_cas_use_cas'] = 'Veuillez activer cette option si vous voulez utiliser l\'authentification CAS.';
+$string['auth_cas_enabled'] = 'Veuillez activer cette option si vous voulez utiliser l\'authentification CAS.';
 $string['auth_cas_text'] = 'Connection sécurisée';
 $string['auth_cas_create_user'] = 'Veuillez activer cette option si vous voulez insérer dans la base de données de Moodle les utilisateurs authentifiés par le CAS. Dans le cas contraire, seuls les utilisateurs déjà présents dans la base de données de Moodle pourront se connecter.';
 $string['auth_common_settings'] = 'Réglages communs';
