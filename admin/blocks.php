@@ -49,13 +49,6 @@
             error("Block doesn't exist!");
         }
         set_field('blocks', 'visible', '0', 'id', $block->id);      // Hide block
-
-        // [pj] There is no need to do this, since print_course_blocks()
-        //      will not display blocks which are disabled. In fact, the
-        //      comment "This block is hidden. Don't show it." there
-        //      suggests that this db update SHOULDN'T be needed.
-        ///I'M NOT SURE IF THIS IS THE CORRECT APPROACH
-        //blocks_update_every_block_by_id($block->id, "hide");                        // Hide blocks in all courses by id
     }
 
     if (!empty($_GET['show'])) {
@@ -63,9 +56,6 @@
             error("Block doesn't exist!");
         }
         set_field('blocks', 'visible', '1', 'id', $block->id);      // Show block
-        // [pj] See note above
-        ///I'M NOT SURE IF THIS IS THE CORRECT APPROACH
-        //blocks_update_every_block_by_id($block->id,"show");                        // Show blocks in all courses by id
     }
 
     if (!empty($delete)) {
@@ -74,7 +64,8 @@
             error("Block doesn't exist!");
         }
 
-        $strblockname = get_string('blockname', 'block_'.$block->name);
+        $blockobject = block_instance($block->name, $site);
+        $strblockname = $blockobject->get_title();
 
         if (!$_GET['confirm']) {
             notice_yesno(get_string('blockdeleteconfirm', '', $strblockname),
