@@ -3,7 +3,7 @@
 
     require_once("../config.php");
 
-    define("MAX_USERS_PER_PAGE", 50);
+    define("MAX_USERS_PER_PAGE", 1000);
 
     require_variable($id);         // course id
     optional_variable($add, "");
@@ -122,11 +122,16 @@
     
 /// If no search results then get potential students for this course excluding users already in course
     if (empty($searchusers)) {
-        if (!$users = get_users(true, '', true, $existinguserlist, 'firstname ASC, lastname ASC', '', '', 
-                                0, 99999, 'id, firstname, lastname, email') ) {
-            $users = array();
+        
+        $usercount = get_users(false, '', true, $existinguserlist, 'firstname ASC, lastname ASC', '', '', 
+                              0, 99999, 'id, firstname, lastname, email') ;
+        $users = array();
+        
+        if ($usercount <= MAX_USERS_PER_PAGE) {
+            $users = get_users(true, '', true, $existinguserlist, 'firstname ASC, lastname ASC', '', '', 
+                               0, 99999, 'id, firstname, lastname, email');
         }
-        $usercount = count($users);
+
     }
 
 
