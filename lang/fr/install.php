@@ -18,7 +18,7 @@ $string['databasesettings'] = 'Il faut maintenant configurer la base de données 
 <b>Mot de passe :</b> le mot de passe de la base de données<br />
 <b>Préfixe des tables :</b> préfixe à utiliser pour les noms de toutes les tables (facultatif)';
 $string['dataroot'] = 'Données';
-$string['datarooterror'] = 'Le dossier de « Données » indiqué n\'a pas pu être trouvé, ni créé. Veuillez corriger le paramètre ou créer manuellement le dossier.';
+$string['datarooterror'] = 'Le dossier des données indiqué n\'a pas pu être trouvé, ni créé. Veuillez corriger le paramètre ou créer manuellement le dossier.';
 $string['dbconnectionerror'] = 'Moodle n\'a pas pu se connecter à la base de données indiquée. Veuillez vérifier les paramètres de votre base de données';
 $string['dbcreationerror'] = 'Erreur lors de la création de la base de données. Impossible de créer la base de données avec les paramètres fournis';
 $string['dbhost'] = 'Serveur hôte';
@@ -28,7 +28,7 @@ $string['dbtype'] = 'Type';
 $string['directorysettings'] = 'Veuillez confirmer les emplacements de cette installation de Moodle.<br />&nbsp;<br />
 <b>Adresse web :</b> veuillez indiquer l\'adresse web complète par laquelle on accédera à Moodle. Si votre site web est accessible par plusieurs URL, choisissez celle qui est la plus naturelle ou la plus évidente. Ne placez pas de barre oblique à la fin de l\'adresse.<br />&nbsp;<br />
 <b>Dossier Moodle :</b> veuillez spécifier le chemin complet de cette installation de Moodle (« OS path »). Assurez-vous que la casse des caractères (majuscules/minuscules) est correcte<br />&nbsp;<br />
-<b>Dossier de données :</b> Moodle a besoin d\'un emplacement où enregistrer les fichiers déposés sur le site. Le serveur web (utilisateur dénommé habituellement « www », « apache » ou « nobody ») doit avoir accès à ce dossier en lecture et EN ÉCRITURE. Toutefois ce dossier ne devrait pas être accessible directement depuis le web.';
+<b>Dossier des données :</b> Moodle a besoin d\'un emplacement où enregistrer les fichiers déposés sur le site. Le serveur web (utilisateur dénommé habituellement « www », « apache » ou « nobody ») doit avoir accès à ce dossier en lecture et EN ÉCRITURE. Toutefois ce dossier ne devrait pas être accessible directement depuis le web.';
 $string['dirroot'] = 'Dossier Moodle';
 $string['dirrooterror'] = 'Le paramètre « Dossier Moodle » semble incorrect : aucune installation de Moodle ne se trouve dans ce dossier. Le paramètre ci-dessous à été réinitialisé';
 $string['download'] = 'Télécharger';
