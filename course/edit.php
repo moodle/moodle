@@ -115,6 +115,7 @@
             $form->numsections = 10;
             $form->newsitems = 5;
             $form->showrecent = 1;
+            $form->showgrades = 1;
             $form->category = $category;
             $form->id = "";
             $form->visible = 1;
