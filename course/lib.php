@@ -20,6 +20,125 @@ define("FRONTPAGENEWS",           0);
 define("FRONTPAGECOURSELIST",     1);
 define("FRONTPAGECATEGORYNAMES",  2);
 
+function print_recent_selector_form($course, $selecteduser=0, $selecteddate="today",
+                                    $mod="", $modid=0, $modaction="") {
+
+    global $USER, $CFG;
+
+
+    $isteacher = isteacher($course->id);
+    // Get all the possible users
+    $users = array();
+
+    if ($course->category) {
+        $courseusers = get_course_users($course->id);
+    } else {
+        $courseusers = get_site_users("u.lastaccess DESC", "u.id, u.firstname, u.lastname");
+    }
+
+    if ($courseusers) {
+        foreach ($courseusers as $courseuser) {
+            $users[$courseuser->id] = fullname($courseuser, $isteacher);
+        }
+    }
+    if ($guest = get_guest()) {
+        $users[$guest->id] = fullname($guest);
+    }
+
+    if (isadmin()) {
+        if ($ccc = get_records("course", "", "", "fullname")) {
+            foreach ($ccc as $cc) {
+                if ($cc->category) {
+                    $courses["$cc->id"] = "$cc->fullname";
+                } else {
+                    $courses["$cc->id"] = " $cc->fullname (Site)";
+                }
+            }
+        }
+        asort($courses);
+    }
+
+    $activities = array();
+    $selectedactivity = "";
+
+    if ($modinfo = unserialize($course->modinfo)) {
+        $section = 0;
+        if ($course->format == 'weeks') {  // Bodgy
+            $strsection = get_string("week");
+        } else {
+            $strsection = get_string("topic");
+        }
+        foreach ($modinfo as $mod) {
+            if ($mod->mod == "label") {
+                continue;
+            }
+            if ($mod->section > 0 and $section <> $mod->section) {
+                $activities["section/$mod->section"] = "-------------- $strsection $mod->section --------------";
+            }
+            $section = $mod->section;
+            $mod->name = urldecode($mod->name);
+            if (strlen($mod->name) > 55) {
+                $mod->name = substr($mod->name, 0, 50)."...";
+            }
+            if (!$mod->visible) {
+                $mod->name = "(".$mod->name.")";
+            }
+            $activities["$mod->cm"] = $mod->name;
+
+            if ($mod->cm == $modid) {
+                $selectedactivity = "$mod->cm";
+            }
+        }
+    }
+
+    $strftimedate = get_string("strftimedate");
+    $strftimedaydate = get_string("strftimedaydate");
+
+    asort($users);
+
+    // Get all the possible dates
+    // Note that we are keeping track of real (GMT) time and user time
+    // User time is only used in displays - all calcs and passing is GMT
+
+    $timenow = time(); // GMT
+
+    // What day is it now for the user, and when is midnight that day (in GMT).
+    $timemidnight = $today = usergetmidnight($timenow);
+
+    // Put today up the top of the list
+    $dates = array("$timemidnight" => get_string("today").", ".userdate($timenow, $strftimedate) );
+
+    if (!$course->startdate or ($course->startdate > $timenow)) {
+        $course->startdate = $course->timecreated;
+    }
+
+    $numdates = 1;
+    while ($timemidnight > $course->startdate and $numdates < 365) {
+        $timemidnight = $timemidnight - 86400;
+        $timenow = $timenow - 86400;
+        $dates["$timemidnight"] = userdate($timenow, $strftimedaydate);
+        $numdates++;
+    }
+
+    if ($selecteddate == "today") {
+        $selecteddate = $today;
+    }
+
+    echo '<center>';
+    echo '<form action="recent.php" method="get">';
+    echo '<input type=hidden name=chooserecent value="1">';
+    if (isadmin()) {
+        choose_from_menu ($courses, "id", $course->id, "");
+    } else {
+        echo "<input type=hidden name=id value=\"$course->id\">";
+    }
+    choose_from_menu ($users, "user", $selecteduser, get_string("allparticipants") );
+    choose_from_menu ($dates, "date", $selecteddate, get_string("alldays"));
+    choose_from_menu ($activities, "modid", $selectedactivity, get_string("allactivities"), "", "");
+    echo "<input type=submit value=\"".get_string("showthesereports")."\">";
+    echo "</form>";
+    echo "</center>";
+}
 
 function print_log_selector_form($course, $selecteduser=0, $selecteddate="today",
                                  $mod="", $modid=0, $modaction="") {
@@ -198,7 +317,6 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
         $enddate = $date + 86400;
         $selector .= " AND l.time > '$date' AND l.time < '$enddate'";
     }
-
 
     $totalcount = 0;  // Initialise
 
