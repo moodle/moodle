@@ -23,7 +23,9 @@
     optional_variable($rsstype);
     optional_variable($item);
     
-    print_header('Add/Edit RSS Feeds','Add/Edit RSS Feeds','Add/Edit RSS Feeds' );
+    print_header(get_string('block_rss_feeds_add_edit', 'block_rss_client'), 
+                 get_string('block_rss_feeds_add_edit', 'block_rss_client'), 
+                 get_string('block_rss_feeds_add_edit', 'block_rss_client') );
 
     //check to make sure that the user is allowed to post new feeds
     $submitters = $CFG->block_rss_client_submitters;
