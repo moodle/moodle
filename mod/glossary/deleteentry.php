@@ -7,6 +7,8 @@
     require_variable($mode);  // edit or delete
     optional_variable($go);  // commit the operation?
     optional_variable($entry);  // entry id
+    optional_variable($tab); // browsing entries by categories?
+    optional_variable($cat);         // categoryID
 
     $strglossary = get_string("modulename", "glossary");
     $strglossaries = get_string("modulenameplural", "glossary");
@@ -72,8 +74,8 @@
                     print_simple_box_end();
                 }
                 print_footer($course);
-                add_to_log($course->id, "glossary", "delete entry", "view.php?id=$cm->id&currentview=$currentview&cat=$cat", $entry);
-                redirect("view.php?id=$cm->id&currentview=$currentview&cat=$cat");
+                add_to_log($course->id, "glossary", "delete entry", "view.php?id=$cm->id&tab=$tab&cat=$cat", $entry);
+                redirect("view.php?id=$cm->id&tab=$tab&cat=$cat");
             } else {        // the operation has not been confirmed yet so ask the user to do so
                 if ( $mode == "delete") {				
                     print_simple_box_start("center","40%", "#FFBBBB");
@@ -86,7 +88,7 @@
                         <input type="hidden" name=mode         value="delete">
                         <input type="hidden" name=go       value="1">
                         <input type="hidden" name=entry         value="<?php p($entry) ?>">
-                        <input type="hidden" name=currentview value=<?php p($currentview) ?>>
+                        <input type="hidden" name=tab value=<?php p($tab) ?>>
                         <input type="hidden" name=cat=<?php p($cat) ?>>
 
                         <input type="submit" value=" <?php print_string("yes")?> ">

@@ -1,6 +1,6 @@
 <?PHP  // $Id$
 
-function glossary_print_entry_by_format($course, $cm, $glossary, $entry, $currentview="",$cat="") {
+function glossary_print_entry_by_format($course, $cm, $glossary, $entry, $tab="",$cat="") {
     global $THEME, $CFG, $USER;
 
     $colour = $THEME->cellheading2;
@@ -16,8 +16,11 @@ function glossary_print_entry_by_format($course, $cm, $glossary, $entry, $curren
         print_user_picture($user->id, $course->id, $user->picture);
     }
     echo "</td>";
-    echo "<td nowrap width=100% bgcolor=\"$THEME->cellheading\" class=\"forumpostheader\">";
+    echo "<td align=\"top\" nowrap width=100% bgcolor=\"$THEME->cellheading\" class=\"forumpostheader\">";
     if ($entry) {
+        if ( $tab == GLOSSARY_APPROVAL_VIEW ) {
+            echo "<a title=\"" . get_string("approve","glossary"). "\" href=\"approve.php?id=$cm->id&eid=$entry->id&tab=$tab\"><IMG align=\"right\" src=\"check.gif\" border=0 width=\"34\" height=\"34\"></a>";
+        }
         echo "<b>$entry->concept</b><br />";
         echo "<font size=\"2\">$strby $user->firstname $user->lastname</font>";
         echo "&nbsp;&nbsp;<font size=1>(".get_string("lastedited").": ".
@@ -27,7 +30,7 @@ function glossary_print_entry_by_format($course, $cm, $glossary, $entry, $curren
 
     echo "\n<tr>";
     echo "\n<td bgcolor=\"$colour\" width=35 valign=top class=\"forumpostside\">&nbsp;</td>";
-    echo "\n<td width=100% bgcolor=\"$THEME->cellcontent\" class=\"forumpostmessage\">";
+    echo "\n<td width=100% align=\"top\" bgcolor=\"$THEME->cellcontent\" class=\"forumpostmessage\">";
     if ($entry) {
         if ($entry->attachment) {
             $entry->course = $course->id;
@@ -42,7 +45,7 @@ function glossary_print_entry_by_format($course, $cm, $glossary, $entry, $curren
         }
         echo format_text($entry->definition, $entry->format);
 
-        glossary_print_entry_icons($course, $cm, $glossary, $entry,$currentview,$cat);
+        glossary_print_entry_icons($course, $cm, $glossary, $entry,$tab,$cat);
 
     } else {
         echo "<center>";

@@ -132,6 +132,25 @@ if (!$mainglossary or $mainglossary->id == $form->instance ) {
     </TD>
 </TR>
 <TR valign=top>
+    <TD align=right><P><B><?php echo get_string("defaultapproval", "glossary") ?>:</B></P></TD>
+    <TD>
+  <select size="1" name="defaultapproval">
+  <option value="1" <?php
+   if ( $form->defaultapproval ) {
+      echo "selected";
+   }
+   ?> 
+   ><?php echo get_string("yes") ?></option>
+  <option value="0" <?php
+   if ( !$form->defaultapproval ) {
+      echo "selected";
+   }
+   ?>><?php echo get_string("no") ?>
+  </option>
+  </select> <?php helpbutton("defaultapproval", get_string("defaultapproval", "glossary"), "glossary") ?>
+    </TD>
+</TR>
+<TR valign=top>
 <td colspan=2><hr>
 </tr>
 </tr>

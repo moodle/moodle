@@ -109,6 +109,15 @@ function glossary_upgrade($oldversion) {
         execute_sql( "UPDATE `{$CFG->prefix}glossary`" .
                     " SET displayformat = 5 WHERE displayformat = 1");
     }
+    if ( $oldversion < 2003102000 ) {
+        execute_sql( "ALTER TABLE `{$CFG->prefix}glossary`" .
+                     " ADD `defaultapproval` TINYINT(2) UNSIGNED NOT NULL default '1' AFTER `usedynalink`");
+					
+        execute_sql( "ALTER TABLE `{$CFG->prefix}glossary_entries`" .
+                    " ADD `approved` TINYINT(2) UNSIGNED NOT NULL default '1' AFTER `fullmatch`");
+
+        execute_sql(" INSERT INTO {$CFG->prefix}log_display VALUES ('glossary', 'approve entry', 'glossary', 'name') ");
+    }
     return true;
 }
 

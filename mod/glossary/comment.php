@@ -150,7 +150,7 @@
             $newentry->entryid = $entry->id;
             $newentry->comment = $form->text;
             $newentry->format = $form->format;
-            $newentry->timemodified = $comment->timemodified;
+            $newentry->timemodified = time();
 			
             if ( $action == "add" ) {
                 $newentry->userid = $USER->id;
@@ -185,9 +185,13 @@
                 $defaultformat = FORMAT_MOODLE;
                 $onsubmit = "";
             }
-
-            $form->text = $comment->comment;
-            $form->format = $comment->format;
+            if (isset($comment) ) {
+                $form->text = $comment->comment;
+                $form->format = $comment->format;
+            } else {
+                $form->text = "";
+                $form->format = $defaultformat;
+            }
             include("comment.html");
         }
     }

@@ -28,10 +28,12 @@
    	   helpbutton("textformat", get_string("helpformatting"));
        print_string("formattexttype");
        echo ":&nbsp;";
-       if (!$form->format) {
-           $form->format = $defaultformat;
+       if (!isset($form->format)) {
+           if (!$form->format) {
+               $form->format = $defaultformat;
+           }
        }
-       choose_from_menu(format_text_menu(), "format", $format->format, ""); 
+       choose_from_menu(format_text_menu(), "format", $form->format, ""); 
        echo "</p>";
     ?>
     </td>
@@ -40,7 +42,7 @@
 <td colspan=2>
 	<p align=center>
 	<?php 
-	    if ($comment->id) {
+	    if (isset($comment->id)) {
 		    echo "<input type=\"hidden\" name=cid value=\"$comment->id\">";
    	    }
 	?>

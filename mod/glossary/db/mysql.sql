@@ -22,6 +22,7 @@ CREATE TABLE prefix_glossary (
      showall tinyint(2) unsigned NOT NULL default '1',
      allowcomments tinyint(2) unsigned NOT NULL default '0',
      usedynalink tinyint(2) unsigned NOT NULL default '1',
+     defaultapproval tinyint(2) unsigned NOT NULL default '1',
      timecreated int(10) unsigned NOT NULL default '0',
      timemodified int(10) unsigned NOT NULL default '0',
      PRIMARY KEY  (id)
@@ -46,6 +47,7 @@ CREATE TABLE prefix_glossary_entries (
      usedynalink tinyint(2) unsigned NOT NULL default '1',
      casesensitive tinyint(2) unsigned NOT NULL default '0',
      fullmatch tinyint(2) unsigned NOT NULL default '1',
+     approved tinyint(2) unsigned NOT NULL default '1',
      PRIMARY KEY  (id)
 ) TYPE=MyISAM COMMENT='all glossary entries';
 
@@ -98,4 +100,5 @@ INSERT INTO prefix_log_display VALUES ('glossary', 'delete category', 'glossary'
 INSERT INTO prefix_log_display VALUES ('glossary', 'add comment', 'glossary', 'name');
 INSERT INTO prefix_log_display VALUES ('glossary', 'update comment', 'glossary', 'name');
 INSERT INTO prefix_log_display VALUES ('glossary', 'delete comment', 'glossary', 'name');
+INSERT INTO prefix_log_display VALUES ('glossary', 'approve entry', 'glossary', 'name');
 

@@ -20,7 +20,7 @@
             }
             $glossaries=substr($glossaries,0,-1);
 
-            $entries = get_records_select("glossary_entries", "glossaryid IN ($glossaries) AND usedynalink = 1","glossaryid","id,glossaryid,concept,casesensitive,$GLOSSARY_CONCEPT_IS_ENTRY category,fullmatch");
+            $entries = get_records_select("glossary_entries", "glossaryid IN ($glossaries) AND usedynalink = 1 and approved != 0","glossaryid","id,glossaryid,concept,casesensitive,$GLOSSARY_CONCEPT_IS_ENTRY category,fullmatch");
             $categories  = get_records_select("glossary_categories", "glossaryid IN ($glossaries)", "glossaryid,id","id,glossaryid,name concept, 1 casesensitive,$GLOSSARY_CONCEPT_IS_CATEGORY category, 1 fullmatch");
             if ( $entries and $categories ) {
                 $concepts = array_merge($entries, $categories);

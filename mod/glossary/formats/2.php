@@ -1,6 +1,6 @@
 <?PHP  // $Id$
 
-function glossary_print_entry_by_format($course, $cm, $glossary, $entry, $currentview="",$cat="") {
+function glossary_print_entry_by_format($course, $cm, $glossary, $entry, $tab="",$cat="") {
     global $THEME, $CFG, $USER;
 
     $colour = $THEME->cellheading2;
@@ -16,7 +16,10 @@ function glossary_print_entry_by_format($course, $cm, $glossary, $entry, $curren
         print_user_picture($user->id, $course->id, $user->picture);
     }
     echo "</td>";
-    echo "<td nowrap width=100% bgcolor=\"$THEME->cellheading\" class=\"forumpostheader\">";
+    echo "<td nowrap valign=\"top\" width=100% bgcolor=\"$THEME->cellheading\" class=\"forumpostheader\">";
+    if ( $tab == GLOSSARY_APPROVAL_VIEW ) {
+        echo "<a title=\"" . get_string("approve","glossary"). "\" href=\"approve.php?id=$cm->id&eid=$entry->id&tab=$tab\"><IMG align=\"right\" src=\"check.gif\" border=0 width=\"34\" height=\"34\"></a>";
+    }
     if ($entry->attachment) {
           $entry->course = $glossary->course;
           echo "<table border=0 align=right><tr><td>";
@@ -36,7 +39,7 @@ function glossary_print_entry_by_format($course, $cm, $glossary, $entry, $curren
     echo "\n<td width=100% bgcolor=\"$THEME->cellcontent\" class=\"forumpostmessage\">";
     if ($entry) {
         echo format_text($entry->definition, $entry->format);
-        glossary_print_entry_icons($course, $cm, $glossary, $entry,$currentview,$cat);
+        glossary_print_entry_icons($course, $cm, $glossary, $entry,$tab,$cat);
 
     } else {
         echo "<center>";
