@@ -5,10 +5,14 @@
 
     require_login();
 
+    if (empty($destination)) {
+        $destination = "";
+    }
+
     if (match_referer($destination) && isset($course) && isset($HTTP_POST_VARS)) {    // form submitted from mod.html
         $modform = (object)$HTTP_POST_VARS;
 
-        if (!$modform->name or !$modform->intro) {
+        if (empty($modform->name) or empty($modform->intro)) {
             error(get_string("filloutallfields"), $HTTP_REFERER);
         }
 
@@ -34,14 +38,14 @@
         error("You can't modify this course!");
     }
 
-    if (! $modform->grades) {  // Construct an array to hold all the grades.
+    if (empty($modform->grades)) {  // Construct an array to hold all the grades.
         $modform->grades = quiz_get_all_question_grades($modform->questions, $modform->instance);
     }
 
 
     // Now, check for commands on this page and modify variables as necessary
 
-    if ($up) { /// Move the given question up a slot
+    if (!empty($up)) { /// Move the given question up a slot
         $questions = explode(",", $modform->questions);
         if ($questions[0] <> $up) {
             foreach ($questions as $key => $question) {
@@ -56,7 +60,7 @@
         }
     }
 
-    if ($down) { /// Move the given question down a slot
+    if (!empty($down)) { /// Move the given question down a slot
         $questions = explode(",", $modform->questions);
         if ($questions[count($questions)-1] <> $down) {
             foreach ($questions as $key => $question) {
@@ -71,9 +75,9 @@
         }
     }
 
-    if ($add) { /// Add a question to the current quiz
+    if (!empty($add)) { /// Add a question to the current quiz
         $rawquestions = $HTTP_POST_VARS;
-        if ($modform->questions) {
+        if (!empty($modform->questions)) {
             $questions = explode(",", $modform->questions);
         }
         foreach ($rawquestions as $key => $value) {    // Parse input for question ids
@@ -90,14 +94,14 @@
                 $modform->grades[$key] = 1;   // default score
             }
         }
-        if ($questions) {
+        if (!empty($questions)) {
             $modform->questions = implode(",", $questions);
         } else {
             $modform->questions = "";
         }
     }
 
-    if ($delete) { /// Delete a question from the list 
+    if (!empty($delete)) { /// Delete a question from the list 
         $questions = explode(",", $modform->questions);
         foreach ($questions as $key => $question) {
             if ($question == $delete) {
@@ -108,7 +112,7 @@
         $modform->questions = implode(",", $questions);
     }
 
-    if ($setgrades) { /// The grades have been updated, so update our internal list
+    if (!empty($setgrades)) { /// The grades have been updated, so update our internal list
         $rawgrades = $HTTP_POST_VARS;
         unset($modform->grades);
         foreach ($rawgrades as $key => $value) {    // Parse input for question -> grades
@@ -119,12 +123,16 @@
         }
     }
 
-    if ($cat) { //-----------------------------------------------------------
+    if (!empty($cat)) { //-----------------------------------------------------------
         $modform->category = $cat;
     }
 
+    if (empty($modform->category)) {
+        $modform->category = "";
+    }
+
     $modform->sumgrades = 0;
-    if ($modform->grades) {
+    if (!empty($modform->grades)) {
         foreach ($modform->grades as $grade) {
             $modform->sumgrades += $grade;
         }

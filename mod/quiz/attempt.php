@@ -69,14 +69,8 @@
         }
     }
 
-    if ($course->format == "weeks" and $quiz->days) {
-        $timenow = time();
-        $timestart = $course->startdate + (($cw->section - 1) * 608400);
-        $timefinish = $timestart + (3600 * 24 * $quiz->days);
-        $available = ($timestart < $timenow and $timenow < $timefinish);
-    } else {
-        $available = true;
-    }
+    $timenow = time();
+    $available = ($quiz->timeopen < $timenow and $timenow < $quiz->timeclose);
 
 /// Check to see if they are submitting answers
     if (match_referer() && isset($HTTP_POST_VARS)) {

@@ -83,7 +83,7 @@
 
     echo "<P ALIGN=CENTER><FONT SIZE=3>";
     echo $streditcategories;
-    helpbutton("categories", $strcategories, "quiz");
+    helpbutton("categories", $streditcategories, "quiz");
     echo "</FONT></P>";
 
 /// If data submitted, then process and store.

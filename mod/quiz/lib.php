@@ -34,9 +34,9 @@ function quiz_add_instance($quiz) {
     $quiz->created      = time();
     $quiz->timemodified = time();
     $quiz->timeopen = make_timestamp($quiz->openyear, $quiz->openmonth, $quiz->openday, 
-                                     $quiz->openhour, $quiz->openminute, $quiz->opensecond);
+                                     $quiz->openhour, $quiz->openminute, 0);
     $quiz->timeclose = make_timestamp($quiz->closeyear, $quiz->closemonth, $quiz->closeday, 
-                                      $quiz->closehour, $quiz->closeminute, $quiz->closesecond);
+                                      $quiz->closehour, $quiz->closeminute, 0);
 
     if (!$quiz->id = insert_record("quiz", $quiz)) {
         return false;  // some error occurred
@@ -68,9 +68,9 @@ function quiz_update_instance($quiz) {
 
     $quiz->timemodified = time();
     $quiz->timeopen = make_timestamp($quiz->openyear, $quiz->openmonth, $quiz->openday, 
-                                     $quiz->openhour, $quiz->openminute, $quiz->opensecond);
+                                     $quiz->openhour, $quiz->openminute, 0);
     $quiz->timeclose = make_timestamp($quiz->closeyear, $quiz->closemonth, $quiz->closeday, 
-                                      $quiz->closehour, $quiz->closeminute, $quiz->closesecond);
+                                      $quiz->closehour, $quiz->closeminute, 0);
     $quiz->id = $quiz->instance;
 
     if (!update_record("quiz", $quiz)) {
