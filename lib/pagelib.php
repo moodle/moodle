@@ -495,41 +495,37 @@ class page_course extends page_base {
 }
 
 /**
- * Class that models the behavior of a moodle quiz
+ * Class that models the common parts of all activity modules
  *
  * @author Jon Papaioannou
  * @package pages
  */
 
-class page_quiz extends page_base {
-
-    var $courserecord = NULL;
-    var $modulerecord = NULL;
-    var $quizrecord   = NULL;
-
-    function init_quick($data) {
-        if(empty($data->pageid)) {
-            error('Cannot quickly initialize page: empty course id');
-        }
-        parent::init_quick($data);
-    }
+class page_generic_activity extends page_base {
+    var $activityname   = NULL;
+    var $courserecord   = NULL;
+    var $modulerecord   = NULL;
+    var $activityrecord = NULL;
 
     function init_full() {
         if($this->full_init_done) {
             return;
         }
-        $module = get_record('modules', 'name', 'quiz');
+        if(empty($this->activityname)) {
+            error('Page object derived from page_generic_activity but did not define $this->activityname');
+        }
+        $module = get_record('modules', 'name', $this->activityname);
         $this->modulerecord = get_record('course_modules', 'module', $module->id, 'instance', $this->id);
         if(empty($this->modulerecord)) {
-            error('Cannot fully initialize page: invalid quiz instance id '. $this->id);
+            error('Cannot fully initialize page: invalid '.$this->activityname.' instance id '. $this->id);
         }
         $this->courserecord = get_record('course', 'id', $this->modulerecord->course);
         if(empty($this->courserecord)) {
             error('Cannot fully initialize page: invalid course id '. $this->modulerecord->course);
         }
-        $this->quizrecord = get_record('quiz', 'id', $this->id);
+        $this->activityrecord = get_record($this->activityname, 'id', $this->id);
         if(empty($this->courserecord)) {
-            error('Cannot fully initialize page: invalid quiz id '. $this->id);
+            error('Cannot fully initialize page: invalid '.$this->activityname.' id '. $this->id);
         }
         $this->full_init_done = true;
     }
@@ -544,12 +540,48 @@ class page_quiz extends page_base {
         return isediting($this->modulerecord->course);
     }
 
+    function url_get_path() {
+        global $CFG;
+        return $CFG->wwwroot .'/mod/'.$this->activityname.'/view.php';
+    }
+
+    function url_get_parameters() {
+        $this->init_full();
+        return array('id' => $this->modulerecord->id);
+    }
+
+    function blocks_get_positions() {
+        return array(BLOCK_POS_LEFT);
+    }
+
+    function blocks_default_position() {
+        return BLOCK_POS_LEFT;
+    }
+}
+
+/**
+ * Class that models the behavior of a moodle quiz
+ *
+ * @author Jon Papaioannou
+ * @package pages
+ */
+
+class page_quiz extends page_generic_activity {
+
+    function init_quick($data) {
+        if(empty($data->pageid)) {
+            error('Cannot quickly initialize page: empty course id');
+        }
+        $this->activityname = 'quiz';
+        parent::init_quick($data);
+    }
+
     function print_header($title, $morebreadcrumbs = NULL) {
         global $USER, $CFG;
 
         $this->init_full();
         $replacements = array(
-            '%fullname%' => $this->quizrecord->name
+            '%fullname%' => $this->activityrecord->name
         );
         foreach($replacements as $search => $replace) {
             $title = str_replace($search, $replace, $title);
@@ -558,7 +590,7 @@ class page_quiz extends page_base {
         $breadcrumbs = array(
             $this->courserecord->shortname => $CFG->wwwroot.'/course/view.php?id='.$this->courserecord->id,
             get_string('modulenameplural', 'quiz') => $CFG->wwwroot.'/mod/quiz/index.php?id='.$this->courserecord->id,
-            $this->quizrecord->name => $CFG->wwwroot.'/mod/quiz/view.php?id='.$this->modulerecord->id,
+            $this->activityrecord->name => $CFG->wwwroot.'/mod/quiz/view.php?id='.$this->modulerecord->id,
         );
 
         if(!empty($morebreadcrumbs)) {
@@ -579,7 +611,7 @@ class page_quiz extends page_base {
 
         if(empty($morebreadcrumbs) && $this->user_allowed_editing()) {
             $buttons = '<table><tr><td><form target="'.$CFG->framename.'" method="get" action="edit.php">'.
-               '<input type="hidden" name="quizid" value="'.$this->quizrecord->id.'" />'.
+               '<input type="hidden" name="quizid" value="'.$this->activityrecord->id.'" />'.
                '<input type="submit" value="'.get_string('editquestions', 'quiz').'" /></form></td><td>'.
                update_module_button($this->modulerecord->id, $this->courserecord->id, get_string('modulename', 'quiz')).
                '</td>'.
@@ -597,24 +629,6 @@ class page_quiz extends page_base {
 
     function get_type() {
         return PAGE_QUIZ_VIEW;
-    }
-
-    function url_get_path() {
-        global $CFG;
-        return $CFG->wwwroot .'/mod/quiz/view.php';
-    }
-
-    function url_get_parameters() {
-        $this->init_full();
-        return array('id' => $this->modulerecord->id);
-    }
-
-    function blocks_get_positions() {
-        return array(BLOCK_POS_LEFT);
-    }
-
-    function blocks_default_position() {
-        return BLOCK_POS_LEFT;
     }
 }
 
