@@ -1689,7 +1689,7 @@ HTMLArea.prototype.execCommand = function(cmdID, UI, param) {
         case "createlink":
         this._createLink();
         break;
-        case "unlink": this._removelink();
+        case "unlink": this._removelink(); break;
         case "popupeditor":
         if (HTMLArea.is_ie) {
             //if (confirm(HTMLArea.I18N.msg["IE-sucks-full-screen"]))
