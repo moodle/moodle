@@ -535,6 +535,9 @@ function assignment_print_submission($assignment, $user, $submission, $teachers,
     } else {
         echo "<TD BGCOLOR=\"$THEME->cellheading\">";
     }
+    if (!$submission->grade and !$submission->timemarked) {
+        $submission->grade = -1;   /// Hack to stop zero being selected on the menu below (so it shows 'no grade')
+    }
     echo get_string("feedback", "assignment").":";
     choose_from_menu($grades, "g$submission->id", $submission->grade, get_string("nograde"));
     if ($submission->timemarked) {
