@@ -417,4 +417,6 @@ $string['textediting'] = "Ao editar texto";
 $string['texteditor'] = "Use formas de rede padrão";
 $string['total'] = "Total";
 $string['updatethis'] = "Atualize este \$a";
+$string['documentation'] = "Documentação do Moodle";
+
 ?>

@@ -29,5 +29,13 @@ $string[viewsubmissions] = "Ver \$a tarefas enviadas";
 $string[yoursubmission] = "Sua submissão";
 $string[newsubmissions] = "Tarefas enviadas";
 $string[submitassignment] = "Submeta sua tarefa usando esta forma";
+$string[uploadbadname] = "Os caráteres estranhos contidos este nome de arquivo e não podiam enviados";
+$string[uploaderror] = "Um erro aconteceu ao conservar o arquivo no usuário";
+$string[uploadfailnoupdate] = "O arquivo enviado está OK mas não pode atualizar sua submissão!  ";
+$string[uploadfiletoobig] = "Desculpe, mas esse arquivo é demasiado grande (o limite é \$a bytes)";
+$string[uploadnofilefound] = "Nenhum arquivo foi encontrado - você selecionou um para enviar?";
+$string[uploadnotregistered] = "'\$a' enviado está OK mas a submissão não registou!  ";
+$string[uploadsuccess] = "Enviado '\$a' com sucesso!";
+
 ?>
 

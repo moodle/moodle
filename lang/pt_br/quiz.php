@@ -94,3 +94,7 @@ $string['truefalse'] = "Verdadeiro/Falso";
 $string['type'] = "Tipo";
 $string['viewallanswers'] = "Verificar \$a exercícios completos";
 $string['yourfinalgradeis'] = "Seu grau final para este problema é \$a";
+$string['attemptquiznow'] = "Tentar resolver agora o exercício";
+$string['fractionsaddwrong'] = "As classes que positivas você escolheu não adicionam até 100%% <BR>preferivelmente, ele adicionam até \$a%% <BR>você quer voltar e reparar esta pergunta?";
+$string['fractionsnomax'] = "Uma das respostas deve ser 100%% <BR> possível começar uma classe cheia para esta pergunta. <BR> você quer voltar e reparar esta pergunta?";
+?>
