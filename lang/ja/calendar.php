@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // calendar.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004121600)
+      // calendar.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005011000)
 
 
 $string['calendar'] = 'カレンダー';
@@ -52,6 +52,7 @@ $string['explain_dstpreset'] = 'どの地域のDST ( 夏時間 )設定を使用するかドロップ
 $string['explain_dstpresetforced'] = '管理者によりこのオプションの変更は禁止されています。';
 $string['explain_lookahead'] = 'ここではイベントが直近のイベントとして表示されるための最大日数を設定します。この範囲より後に開催されるイベントは、直近イベントとして表示されません。全てのイベントがこのスケジュール通りに開始されることは<strong>保証されません</strong>; もし数多く ( 「直近イベントの最大表示数」以上 ) のイベントが登録されている場合は、時間が遅いイベントが表示されません。';
 $string['explain_maxevents'] = 'ここでは直近イベントの最大表示数を設定します。ここで大きな数を設定した場合は、直近のイベントを大量に表示するための画面スペースが必要になります。';
+$string['explain_persistflt'] = 'この設定を行った場合、Moodleはあなたの最新のイベントフィルタ設定を記憶します。また、あなたがログインするたびに最新のイベントを自動的に表示します。';
 $string['explain_startwday'] = 'ここでは全ての月間カレンダーの表示方法を設定します。あなたが慣れ親しんだ表示になるように設定してください。';
 $string['explain_timeformat'] = '時間の表示は12時間表示または24時間表示を選択することができます。デフォルトを選択した場合は、使用言語に合わせてフォーマットが自動的に選択されます。';
 $string['first'] = '最初の';
@@ -74,6 +75,7 @@ $string['oneevent'] = '1 イベント';
 $string['pref_dstpreset'] = '夏時間';
 $string['pref_lookahead'] = '直近イベントの日数範囲';
 $string['pref_maxevents'] = '直近イベントの最大表示数';
+$string['pref_persistflt'] = 'フィルタ設定を記憶する';
 $string['pref_startwday'] = '週の初め';
 $string['pref_timeformat'] = '時間フォーマット';
 $string['preferences'] = '設定';

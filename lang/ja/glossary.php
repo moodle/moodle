@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004121600)
+      // glossary.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005011000)
 
 
 $string['addcomment'] = 'コメントの追加';
@@ -10,6 +10,7 @@ $string['allcategories'] = '全てのカテゴリ';
 $string['allentries'] = '全て';
 $string['allowcomments'] = 'エントリへのコメントを許可する';
 $string['allowduplicatedentries'] = '重複エントリを許可する';
+$string['allowprintview'] = '印刷モードを許可する';
 $string['allowratings'] = 'エントリの評価を許可しますか?';
 $string['answer'] = '答え';
 $string['approve'] = '承認';
@@ -129,7 +130,8 @@ $string['noentry'] = 'エントリが見つかりませんでした。';
 $string['notcategorised'] = 'カテゴリ無し';
 $string['numberofentries'] = 'エントリ数';
 $string['onebyline'] = '(1行あたり1件)';
-$string['printerfriendly'] = '印刷形式';
+$string['printerfriendly'] = '印刷モード';
+$string['printviewnotallowed'] = '印刷モードは許可されていません。';
 $string['question'] = '質問';
 $string['rate'] = '評価';
 $string['rating'] = '評価';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005010100)
+      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005011000)
 
 
 $string['action'] = '操作';
@@ -231,6 +231,7 @@ $string['confirmednot'] = '登録はまだ完了していません！';
 $string['continue'] = '続ける';
 $string['continuetocourse'] = 'コースに入るにはここをクリックしてください。';
 $string['cookiesenabled'] = 'ブラウザのクッキーの設定を有効にしてください。';
+$string['cookiesnotenabled'] = 'あなたのブラウザーでは、クッキーの設定が有効にされていません。';
 $string['copy'] = 'コピー';
 $string['copyingcoursefiles'] = 'コースファイルの複写';
 $string['copyinguserfiles'] = 'ユーザファイルの複写';
