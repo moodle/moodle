@@ -4,7 +4,7 @@
 
     require_login();
 
-    if (!isadmin) {
+    if (!isadmin()) {
         error("Only admins can access this page");
     }
 
