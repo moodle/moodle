@@ -111,6 +111,8 @@
         $defaultformat = FORMAT_MOODLE;
     }
 
+    $parent=NULL;  // Initialise some things
+
 
     if (isset($post->error)) {     // User is re-editing a failed posting
 
