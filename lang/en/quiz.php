@@ -180,6 +180,7 @@ $string['overdue'] = 'Overdue';
 $string['paragraphquestion'] = 'Paragraph Question not supported at line $a. The question will be ignored';
 $string['passworderror'] = 'The password entered was incorrect';
 $string['percentcorrect'] = 'Percent Correct';
+$string['popup'] = 'Show quiz in a \"secure\" window';
 $string['preview'] = 'Preview';
 $string['previewquestion'] = 'Preview question';
 $string['publish'] = 'Publish';
