@@ -403,7 +403,7 @@ class quiz_dataset_dependent_questiontype extends quiz_default_questiontype {
     function create_virtual_nameprefix($nameprefix, $datasetinput) {
     // This default implementation is sometimes overridden
         if (!ereg('([0-9]+)' . $this->name() . '$', $nameprefix, $regs)) {
-            error("Malformed nameprefix $nameprefix");
+            error("Wrongly formatted nameprefix $nameprefix");
         }
         $virtualqtype = $this->get_virtual_qtype();
         return $nameprefix . $regs[1] . $virtualqtype->name();
@@ -412,7 +412,7 @@ class quiz_dataset_dependent_questiontype extends quiz_default_questiontype {
     function extract_response($rawresponse, $nameprefix) {
         if (!ereg('^dataset([;:0-9A-Za-z+/=]+)-(.*)$',
                 $rawresponse->answer, $regs)) {
-            error ("Malformated raw response answer $rawresponse->answer");
+            error ("Wrongly formatted raw response answer $rawresponse->answer");
         }
         
         // Truncate raw response to fit the virtual qtype
