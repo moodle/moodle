@@ -221,6 +221,7 @@ function main_upgrade($oldversion=0) {
     }
 
     if ($oldversion < 2003081503) {
+        table_column("forum", "", "scale", "integer", "10", "unsigned", "0", "", "assessed");
         get_scales_menu(0);    // Just to force the default scale to be created
     }
 
