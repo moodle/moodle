@@ -90,9 +90,9 @@
                         $USER->$variable = $value;
                     }
                     save_session("USER");
-		            redirect("view.php?id=$user->id&course=$course->id", "Changes saved");
+		            redirect("view.php?id=$user->id&course=$course->id", get_string("changessaved"));
                 } else {
-		            redirect("../admin/user.php", "Changes saved");
+		            redirect("../admin/user.php", get_string("changessaved"));
                 }
             } else {
                 error("Could not update the user record ($user->id)");
