@@ -57,13 +57,13 @@
                 fwrite ($bf,full_tag("PHASE",4,false,$exercise->phase));
                 fwrite ($bf,full_tag("GRADINGSTRATEGY",4,false,$exercise->gradingstrategy));
                 fwrite ($bf,full_tag("USEMAXIMUM",4,false,$exercise->usemaximum));
+                fwrite ($bf,full_tag("ASSESSMENTCOMPS",4,false,$exercise->assessmentcomps));
                 fwrite ($bf,full_tag("ANONYMOUS",4,false,$exercise->anonymous));
                 fwrite ($bf,full_tag("MAXBYTES",4,false,$exercise->maxbytes));
                 fwrite ($bf,full_tag("DEADLINE",4,false,$exercise->deadline));
-                fwrite ($bf,full_tag("GRADE",4,false,$exercise->grade));
                 fwrite ($bf,full_tag("TIMEMODIFIED",4,false,$exercise->timemodified));
-                fwrite ($bf,full_tag("TEACHERWEIGHT",4,false,$exercise->teacherweight));
-                fwrite ($bf,full_tag("GRADINGWEIGHT",4,false,$exercise->gradingweight));
+                fwrite ($bf,full_tag("GRADE",4,false,$exercise->grade));
+                fwrite ($bf,full_tag("GRADINGGRADE",4,false,$exercise->gradinggrade));
                 fwrite ($bf,full_tag("SHOWLEAGUETABLE",4,false,$exercise->showleaguetable));
                 //Now we backup exercise elements
                 $status = backup_exercise_elements($bf,$preferences,$exercise->id);

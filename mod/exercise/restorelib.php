@@ -60,13 +60,13 @@
             $exercise->phase = backup_todb($info['MOD']['#']['PHASE']['0']['#']);
             $exercise->gradingstrategy = backup_todb($info['MOD']['#']['GRADINGSTRATEGY']['0']['#']);
             $exercise->usemaximum = backup_todb($info['MOD']['#']['USEMAXIMUM']['0']['#']);
+            $exercise->assessmentcomps = backup_todb($info['MOD']['#']['ASSESSMENTCOMPS']['0']['#']);
             $exercise->anonymous = backup_todb($info['MOD']['#']['ANONYMOUS']['0']['#']);
             $exercise->maxbytes = backup_todb($info['MOD']['#']['MAXBYTES']['0']['#']);
             $exercise->deadline = backup_todb($info['MOD']['#']['DEADLINE']['0']['#']);
-            $exercise->grade = backup_todb($info['MOD']['#']['GRADE']['0']['#']);
             $exercise->timemodified = backup_todb($info['MOD']['#']['TIMEMODIFIED']['0']['#']);
-            $exercise->teacherweight = backup_todb($info['MOD']['#']['TEACHERWEIGHT']['0']['#']);
-            $exercise->gradingweight = backup_todb($info['MOD']['#']['GRADINGWEIGHT']['0']['#']);
+            $exercise->grade = backup_todb($info['MOD']['#']['GRADE']['0']['#']);
+            $exercise->gradinggrade = backup_todb($info['MOD']['#']['GRADINGGRADE']['0']['#']);
             $exercise->showleaguetable = backup_todb($info['MOD']['#']['SHOWLEAGUETABLE']['0']['#']);
 
             //The structure is equal to the db, so insert the exercise
