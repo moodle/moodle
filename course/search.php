@@ -66,9 +66,7 @@
 
         print_heading("$strsearchresults: $totalcount");
 
-        echo "<center>";
         print_paging_bar($totalcount, $page, $perpage, "search.php?search=$search&perpage=$perpage&");
-        echo "</center>";
 
         foreach ($courses as $course) {
             $course->fullname = highlight("$search", $course->fullname);
@@ -81,9 +79,7 @@
             print_spacer(5,5);
         }
 
-        echo "<center>";
         print_paging_bar($totalcount, $page, $perpage, "search.php?search=$search&perpage=$perpage&");
-        echo "</center>";
 
     } else {
         print_heading(get_string("nocoursesfound", "", $search));

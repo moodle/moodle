@@ -1108,9 +1108,39 @@ function get_site () {
 }
 
 
-function get_courses($categoryid="all", $sort="c.sortorder ASC", $fields="c.*", 
-                     &$totalcount, $limitfrom="", $limitnum="") {
+function get_courses($categoryid="all", $sort="c.sortorder ASC", $fields="c.*") {
 /// Returns list of courses, for whole site, or category
+
+    global $USER, $CFG;
+
+    $categoryselect = "";
+    if ($categoryid != "all") {
+        $categoryselect = "c.category = '$categoryid'";
+    }
+
+    $teachertable = "";
+    $teachergroup = "";
+    $visiblecourses = "";
+    if (!empty($USER)) {  // May need to check they are a teacher
+        if (!isadmin()) {
+            $visiblecourses = "AND ((c.visible > 0) OR (t.userid = '$USER->id' AND t.course = c.id))";
+            $teachertable = ", {$CFG->prefix}user_teachers t";
+            $teachergroup = "GROUP BY c.id";
+        }
+    } else {
+        $visiblecourses = "AND c.visible > 0";
+    }
+
+    $selectsql = "{$CFG->prefix}course c $teachertable WHERE $categoryselect $visiblecourses";
+
+    return get_records_sql("SELECT $fields FROM $selectsql $teachergroup ORDER BY $sort");
+}
+
+
+function get_courses_page($categoryid="all", $sort="c.sortorder ASC", $fields="c.*", 
+                          &$totalcount, $limitfrom="", $limitnum="") {
+/// Returns list of courses, for whole site, or category
+/// Similar to get_courses, but allows paging
 
     global $USER, $CFG;
 

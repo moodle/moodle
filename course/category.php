@@ -213,14 +213,12 @@
 
 /// Print out all the courses
 
-    if (!$courses = get_courses($category->id, "c.sortorder ASC", "c.*", $totalcount, $page*$perpage, $perpage)) {
+    if (!$courses = get_course_pages($category->id, "c.sortorder ASC", "c.*", $totalcount, $page*$perpage, $perpage)) {
         print_heading(get_string("nocoursesyet"));
 
     } else {
 
-        echo "<center>";
         print_paging_bar($totalcount, $page, $perpage, "category.php?id=$category->id&perpage=$perpage&");
-        echo "</center>";
 
         $strcourses  = get_string("courses");
         $strselect   = get_string("select");
