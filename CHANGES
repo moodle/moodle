@@ -1,3 +1,130 @@
+2002-07-06 Saturday 12:07  martin
+
+	* mod/: discuss/post.html, survey/edit_form.html,
+	survey/edit_form.phtml, survey/login_form.html: Got rid of all pv()
+	functions, now consistently uses p() to print variables safely.
+
+2002-07-06 Saturday 12:06  martin
+
+	* mod/discuss/mod.php: Strips bad HTML from subjects and intro text
+
+2002-07-05 Friday 13:11  martin
+
+	* mod/discuss/post.php: "Forums" links was wrong
+
+2002-07-04 Thursday 16:49  martin
+
+	* course/lib.php: Remove teacher posts from recent activity (for
+	students)
+
+2002-07-04 Thursday 16:31  martin
+
+	* UPGRADES: To keep track of upgrading info
+
+2002-07-04 Thursday 16:30  martin
+
+	* course/topics.php, course/weeks.php, mod/forum/index.php,
+	mod/forum/lib.php, mod/forum/subscribe.php, mod/forum/view.php,
+	mod/forum/db/mysql.sql: Added new teacher forum.  TABLE CHANGED: 
+	forum
+
+2002-07-04 Thursday 16:06  martin
+
+	* course/mod.php: Prevent caching of these forms
+
+2002-07-04 Thursday 16:01  martin
+
+	* lib/moodlelib.php: Typo in userdate
+
+2002-07-04 Thursday 15:56  martin
+
+	* lib/setup.php: Use lang if locale not defined
+
+2002-07-04 Thursday 15:52  martin
+
+	* config-dist.php, course/view.php, lang/en/strings.php,
+	lib/setup.php, login/index.php, login/index_confirm.html,
+	login/index_form.html, mod/discuss/lib.php, user/edit.html,
+	user/edit.php, user/index.php, user/view.php: Language-related
+	fixes
+
+2002-07-04 Thursday 15:49  martin
+
+	* lib/moodlelib.php: Added missing parameter to update_module_icon
+	(courseid)
+
+2002-07-04 Thursday 15:48  martin
+
+	* mod/: choice/view.php, discuss/view.php, forum/view.php,
+	journal/view.php, reading/view.php, survey/view.php: Fix to
+	update_module_icon (to pass the courseid)
+
+2002-07-04 Thursday 15:28  martin
+
+	* mod/discuss/post.php: Subscribe on new discussion too
+
+2002-07-02 Tuesday 15:09  martin
+
+	* help.php, index.php, lang/en/strings.php,
+	mod/assignment/lang/en/strings.php, mod/chat/README,
+	mod/choice/lang/en/strings.php, mod/forum/lang/en/strings.php,
+	mod/journal/lang/en/strings.php, mod/reading/lang/en/strings.php,
+	mod/survey/lang/en/strings.php: Further internationalisation
+
+2002-07-02 Tuesday 15:02  martin
+
+	* course/index.php, course/lib.php, course/log.php,
+	files/index.php, lib/moodlelib.php, lib/setup.php,
+	mod/forum/lib.php, mod/survey/download.php, mod/survey/lib.php,
+	mod/survey/report.php: Slight changes to userdate() function.  It
+	now uses gmstrftime() instead of gmdate to format times, thus
+	allowing it to take advantage of locale, if set, to print dates in
+	the appropriate language.  Several userdate invocations had to be
+	changed, though, to use the different formatting specs.
+
+2002-07-02 Tuesday 12:19  martin
+
+	* config-dist.php: Slight changes to documentation
+
+2002-07-02 Tuesday 12:11  martin
+
+	* lib/languages.php: List of all 2-letter language codes (ISO 639)
+
+2002-06-29 Saturday 13:44  martin
+
+	* mod/chat/lang/en/strings.php: Added strings file, for later
+
+2002-06-27 Thursday 16:47  martin
+
+	* lang/en/help.picture.php, lang/en/help.text.php,
+	lang/en/strings.php, lib/moodlelib.php, mod/discuss/post.html,
+	mod/discuss/lang/en/strings.php, theme/standard/footer.html,
+	theme/standardblue/footer.html: New languages system - get_string()
+	in moodlelib.
+
+2002-06-27 Thursday 16:46  martin
+
+	* help.php, lang/en/page/help.picture.php,
+	lang/en/page/help.text.php: Changes to the location of help files
+
+2002-06-26 Wednesday 00:42  martin
+
+	* course/view.php, mod/choice/index.php, mod/survey/index.php:
+	Minor formatting tweaks
+
+2002-06-26 Wednesday 00:42  martin
+
+	* user/view.php: Changes to display user discussions
+
+2002-06-26 Wednesday 00:41  martin
+
+	* mod/discuss/lib.php: New function to print user discussions (for
+	user profile page)
+
+2002-06-25 Tuesday 23:40  martin
+
+	* CHANGES: Ch-Ch-Changes
+
 2002-06-25 Tuesday 23:34  martin
 
 	* CHANGES: Ch-Ch-Changes
