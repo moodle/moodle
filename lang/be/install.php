@@ -1,13 +1,17 @@
 <?PHP // $Id$ 
-      // install.php - created with Moodle 1.4 development (2004080300)
+      // install.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005020101)
 
 
-$string['admindirerror'] = 'Вызначаны каталог адміністратара няслушны';
+$string['admindirerror'] = 'Абраны каталог адміністратара няслушны';
 $string['admindirname'] = 'Каталог адміністратара';
+$string['admindirsetting'] = 'Толькі некаторыя web-сайты выкарыстоўваюць /admin як спецыяльны адрас для доступу да панелі кіравання ці іншага. На жаль, ён канфліктуе з стандартным змяшчэннем старонак адміністравання Moodle. Вы можаце адрэдагаваць гэтую памылку, пераназваў папку admin ў вашай інсталяцыі і пазначыў яе імя тут. Напрыклад:
+<br /> <br /><b>moodleadmin</b><br /> <br />
+Будзе правільная настроўваць спасылкі на admin ў Moodle.';
 $string['caution'] = 'Папярэджанне';
-$string['chooselanguage'] = 'Выверыце мову';
+$string['chooselanguage'] = 'Выбярыце мову';
 $string['compatibilitysettings'] = 'Праверка настроек PHP...';
-$string['configfilewritten'] = 'config.php паспяхова створаны';
+$string['configfilenotwritten'] = 'Скрыпт ўстаноўкі не змог аўтаматычна стварыць файл config.php, які ўтрымлівае Вамі абраныя настроўкі, па прычыне, што нельга пісаць у папку з устаноўкай Moodle. Вы можаце ўручную скапіяваць наступны код ў файл з назвай config.php і змясць яго ў карнявую папку ўстаноўкі Moodle.';
+$string['configfilewritten'] = 'config.php быў паспяхова створаны';
 $string['configurationcomplete'] = 'Настройка завершаная';
 $string['database'] = 'База Дадзеных';
 $string['dataroot'] = 'Каталог дадзеных';
