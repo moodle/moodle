@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // dialogue.php - created with Moodle 1.2 development (2003120700)
+      // dialogue.php - created with Moodle 1.2 development (2003122600)
 
 
 $string['addmynewentries'] = 'Meine neuen Einträge hinzufügen.';
@@ -44,6 +44,7 @@ $string['onyouwrote'] = 'An $a haben Sie geschrieben';
 $string['open'] = 'offen';
 $string['openadialoguewith'] = 'Einen Dialog öffnen mit';
 $string['opendialogue'] = 'Dialog öffnen';
+$string['opendialogueentries'] = 'Dialogeinträge öffnen';
 $string['pane0'] = 'einen Dialog öffnen';
 $string['pane1'] = '$a Dialoge erwarten eine Antwort von Ihnen.';
 $string['pane1one'] = 'Ein Dialog erwarten eine Antwort von Ihnen.';

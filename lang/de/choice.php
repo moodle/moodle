@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // choice.php - created with Moodle 1.2 development (2003120700)
+      // choice.php - created with Moodle 1.2 development (2003122600)
 
 
 $string['answered'] = 'Beantwortet';
@@ -16,6 +16,7 @@ $string['publishnot'] = 'Keine Ergebnisse veröffentlichen';
 $string['responses'] = 'Antworten ';
 $string['responsesto'] = 'Antworten zu  $a';
 $string['savemychoice'] = 'Meine Wahl speichern';
+$string['showunanswered'] = 'Zeige Spalte für Unbeantwortete';
 $string['viewallresponses'] = 'Zeige $a Antworten';
 
 ?>

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.2 development (2003120700)
+      // quiz.php - created with Moodle 1.2 development (2003122600)
 
 
 $string['acceptederror'] = 'Akzeptierter Fehler';
@@ -7,6 +7,7 @@ $string['addingquestions'] = 'Diese Spalte der Seite ist zum Verwalten von Quizf
 $string['addquestions'] = 'Fragen hinzufügen';
 $string['addquestionstoquiz'] = 'Frage zu aktuellem Quiz hinzufügen';
 $string['addselectedtoquiz'] = 'Auswahl zum Quiz hinzufügen';
+$string['aiken'] = 'Aiken Format';
 $string['allowreview'] = 'Bericht erlauben';
 $string['alreadysubmitted'] = 'Es sieht so aus, als hätten Sie diesen Versuch schon eingetragen';
 $string['alwaysavailable'] = 'Immer verfügbar';
@@ -15,6 +16,7 @@ $string['answerhowmany'] = 'Eine oder mehrere Antworten?';
 $string['answersingleno'] = 'Mehrere Antworten erlaubt';
 $string['answersingleyes'] = 'Nur eine Antwort';
 $string['answerswithacceptederrormarginmustbenumeric'] = 'Antworten mit akzeptiertem Fehler';
+$string['aon'] = 'AON Format';
 $string['attempt'] = 'Versuch $a';
 $string['attemptfirst'] = 'Erster Versuch';
 $string['attemptlast'] = 'Letzter Versuch';
@@ -41,6 +43,7 @@ $string['corrresp'] = 'richtige Rückantwort';
 $string['countdown'] = 'Countdown';
 $string['countdownfinished'] = 'Das Quiz ist beendet, Sie sollten Ihre Antworten jetzt absenden.';
 $string['countdowntenminutes'] = 'Das Quiz endet in 10 Minuten.';
+$string['coursetestmanager'] = 'Kurstest Managerformat';
 $string['createmultiple'] = 'Mehrere Fragen erstellen';
 $string['createnewquestion'] = 'Eine neue Frage anlegen';
 $string['custom'] = 'Eigenes Format';
@@ -48,6 +51,7 @@ $string['daysavailable'] = 'Tage verfügbar';
 $string['default'] = 'Standard';
 $string['defaultgrade'] = 'Standard-Note der Frage';
 $string['defaultinfo'] = 'Die Standard-Kategorie für diese Frage';
+$string['deleteattemptcheck'] = 'Sind Sie wirklich sicher, dass Sie diese Versuche löschen wollen?';
 $string['deletequestioncheck'] = 'Sind Sie sich absolut sicher, dass Sie \'$a\' löschen möchten?';
 $string['description'] = 'Beschreibung';
 $string['discrimination'] = 'Index für die Abgrenzung';
@@ -77,6 +81,7 @@ $string['fractionsaddwrong'] = 'Ihre positiven gewählten Punktzahlen ergeben kei
 $string['fractionsnomax'] = 'Eine dieser Antworten sollte 100%% sein, so dass
 <br>es möglich ist, die volle Punktzahl für diese Frage zu bekommen.
 <br>Möchten Sie zurück gehen und diese Frage korrigieren?';
+$string['gift'] = 'GIFT Format';
 $string['gradeaverage'] = 'Durchschnittsnote';
 $string['gradehighest'] = 'Beste Note';
 $string['grademethod'] = 'Bewertungsschema';

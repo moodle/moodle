@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // exercise.php - created with Moodle 1.2 development (2003120700)
+      // exercise.php - created with Moodle 1.2 development (2003122600)
 
 
 $string['absent'] = 'fehlen';
@@ -7,6 +7,7 @@ $string['accumulative'] = 'kumulativ';
 $string['action'] = 'Aktion';
 $string['ago'] = '$a vor';
 $string['allgradeshaveamaximumof'] = 'Alle Bewertungen haben ein Maximum von: $a';
+$string['amend'] = 'Ergänzung';
 $string['amendassessmentelements'] = 'Bewertungskriterien ergänzen';
 $string['amendtitle'] = 'Titel ergänzen';
 $string['assess'] = 'beurteilen';
@@ -20,6 +21,7 @@ $string['assessments'] = 'Bewertungen';
 $string['atthisstageyou'] = 'In dieser Ebene haben Sie eine Bewertung abgeschlossen.<br />Wollen Sie Ihre Arbeit aufgrund dieser Bewertung überarbeiten.<br /> Wenn Sie dies machen wollen, denken Sie bitte daran, dass Sie die Lösung erneut zur Bewertung einreichen müssen.<br /> Sie können dies erledigen, indem Sie den Link nutzen, welcher unten angezeigt wird.';
 $string['awaitingassessmentbythe'] = 'Bewertung abwarten durch $a';
 $string['awaitingfeedbackfromthe'] = 'Rückmeldung abwarten von $a';
+$string['clearlateflag'] = 'Lösche letzt Markierung';
 $string['comment'] = 'Kommentar';
 $string['confirmdeletionofthisitem'] = 'Die Löschung von $a bestätigen';
 $string['correct'] = 'Korrektur';
@@ -90,8 +92,6 @@ $string['phase2'] = '$a Bewertungen und Einreichungen erlauben';
 $string['phase2short'] = 'offen';
 $string['phase3'] = '$a Bewertungen und Einreichungen beenden';
 $string['phase3short'] = 'geschlossen';
-$string['phase4'] = 'zeige die Gesamtbewertung und die Notenübersicht';
-$string['phase4short'] = 'Anzeige';
 $string['pleasegradetheassessment'] = 'Bitte benoten Sie die Bewertung der Arbeit von $a';
 $string['pleasesubmityourwork'] = 'Bitte stellen Sie ihre Ergebnisse, unter Nutzung folgender Vorgaben zur Verfügung';
 $string['pleaseusethisform'] = 'Bitte vervollständigen Sie dieses Formular <br/>,wenn Sie die Anweisungen, die unten beschrieben sind, durchgeführt haben.';
@@ -133,6 +133,7 @@ $string['suggestedgrade'] = 'vorgeschlagene Note';
 $string['teacherassessment'] = '$a Bewertung';
 $string['teacherassessmenttable'] = '$a Bewertungstabelle';
 $string['teacherscomment'] = 'Kommentar des/der Trainer/in';
+$string['theexercise'] = 'Die Übung';
 $string['theexerciseandthesubmissionby'] = 'Die Aufgaben und die Lösungen von $a';
 $string['thegradeis'] = 'Die Note  ist $a';
 $string['thereisfeedbackfromthe'] = 'Hier ist eine Kommentar von';
