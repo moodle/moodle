@@ -61,7 +61,7 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate="today"
     $timemidnight = $today = usergetmidnight($timenow);
 
     // Put today up the top of the list
-    $dates = array("$timemidnight" => get_string("today").", ".userdate($timenow, "%e %B %Y") );
+    $dates = array("$timemidnight" => get_string("today").", ".userdate($timenow, "%d %B %Y") );
 
     if (! $course->startdate) {
         $course->startdate = $course->timecreated;
@@ -71,7 +71,7 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate="today"
     while ($timemidnight > $course->startdate and $numdates < 365) {
         $timemidnight = $timemidnight - 86400;
         $timenow = $timenow - 86400;
-        $dates["$timemidnight"] = userdate($timenow, "%A, %e %B %Y");
+        $dates["$timemidnight"] = userdate($timenow, "%A, %d %B %Y");
         $numdates++;
     }
 
@@ -160,7 +160,7 @@ function print_log($course, $user=0, $date=0, $order="ORDER BY l.time ASC") {
             echo "<TD NOWRAP><FONT SIZE=2><A HREF=\"view.php?id=$log->course\">".$courses[$log->course]."</A></TD>";
         }
         echo "<TD NOWRAP ALIGN=right><FONT SIZE=2>".userdate($log->time, "%A")."</TD>";
-        echo "<TD NOWRAP><FONT SIZE=2>".userdate($log->time, "%e %B %Y, %I:%M %p")."</TD>";
+        echo "<TD NOWRAP><FONT SIZE=2>".userdate($log->time, "%d %B %Y, %I:%M %p")."</TD>";
         echo "<TD NOWRAP><FONT SIZE=2>";
         link_to_popup_window("$CFG->wwwroot/lib/ipatlas/plot.php?address=$log->ip&user=$log->user", "ipatlas","$log->ip", 400, 700);
         echo "</TD>";
@@ -287,7 +287,7 @@ function print_recent_activity($course) {
     } else {
         echo "<P ALIGN=CENTER><FONT SIZE=1>";
         echo get_string("yourlastlogin").":<BR>"; 
-        echo userdate($USER->lastlogin, "%A, %e %b %Y, %H:%M");
+        echo userdate($USER->lastlogin, "%A, %d %b %Y, %H:%M");
         echo "</FONT></P>";
     }
 

@@ -43,7 +43,7 @@
        $i = 0;
        while ($timestart < $timenow) {
            $timefinish = $timestart + 86400;
-           $days[$i] = userdate($timestart, "%a %e %b");
+           $days[$i] = userdate($timestart, "%a %d %b");
            $logs[$i] = 0;
            $i++;
            $timestart = $timefinish;

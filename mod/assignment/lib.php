@@ -206,7 +206,7 @@ function assignment_print_recent_activity(&$logs, $isteacher=false) {
         $content = true;
         print_headline(get_string("newsubmissions", "assignment").":");
         foreach ($assignments as $assignment) {
-            $date = userdate($assignment->time, "%e %b, %H:%M");
+            $date = userdate($assignment->time, "%d %b, %H:%M");
             echo "<P><FONT SIZE=1>$date - $assignment->firstname $assignment->lastname<BR>";
             echo "\"<A HREF=\"$CFG->wwwroot/mod/assignment/$assignment->url\">";
             echo "$assignment->name";

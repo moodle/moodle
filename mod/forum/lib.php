@@ -349,7 +349,7 @@ function forum_print_recent_activity(&$logs, $isteacher=false) {
                     $heading = true;
                     $content = true;
                 }
-                $date = userdate($post->modified, "%e %b, %H:%M");
+                $date = userdate($post->modified, "%d %b, %H:%M");
                 echo "<P><FONT SIZE=1 $teacherpost>$date - $post->firstname $post->lastname<BR>";
                 echo "\"<A HREF=\"$CFG->wwwroot/mod/forum/$log->url\">";
                 if ($log->action == "add") {
@@ -1315,7 +1315,7 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5, $f
         $ownpost = ($discussion->userid == $USER->id);
         switch ($forum_style) {
             case "minimal":
-                echo "<P><FONT COLOR=#555555>".userdate($discussion->modified, "%e %b, %H:%M")." - $discussion->firstname</FONT>";
+                echo "<P><FONT COLOR=#555555>".userdate($discussion->modified, "%d %b, %H:%M")." - $discussion->firstname</FONT>";
                 echo "<BR>$discussion->subject ";
                 echo "<A HREF=\"$CFG->wwwroot/mod/forum/discuss.php?d=$discussion->discussion\">";
                 echo get_string("more", "forum")."...</A>";

@@ -150,7 +150,7 @@ function journal_print_recent_activity(&$logs, $isteacher=false) {
         $content = true;
         print_headline(get_string("newjournalentries", "journal").":");
         foreach ($journals as $journal) {
-            $date = userdate($journal->time, "%e %b, %H:%M");
+            $date = userdate($journal->time, "%d %b, %H:%M");
             echo "<P><FONT SIZE=1>$date - $journal->firstname $journal->lastname<BR>";
             echo "\"<A HREF=\"$CFG->wwwroot/mod/journal/$journal->url\">";
             echo "$journal->name";

@@ -527,7 +527,7 @@ function userdate($date, $format="", $timezone=99) {
     global $USER;
 
     if ($format == "") {
-        $format = "%A, %e %B %Y, %I:%M %p";
+        $format = "%A, %d %B %Y, %I:%M %p";
     }
     if ($timezone == 99) {
         if (isset($USER->timezone)) {
