@@ -807,6 +807,8 @@ function add_teacher($userid, $courseid) {
             } else {
                 $teacher->authority = 1;
             }
+            delete_records("user_students", "userid", $userid, "course", $courseid); // Unenrol as student
+
             return insert_record("user_teachers", $teacher);
         }
         return false;
