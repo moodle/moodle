@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // attendance.php - created with Moodle 1.2.1 beta (2004032200)
+      // attendance.php - created with Moodle 1.3 development (2004050500)
 
 
 $string['absentlong'] = 'Afwezig';
@@ -23,7 +23,7 @@ $string['downloadexcelfull'] = 'Download volledig Excel-blad';
 $string['downloadexceltotals'] = 'Download samenvattend Excel-blad';
 $string['downloadtextfull'] = 'Download volledig tekstrapport';
 $string['downloadtexttotals'] = 'Download samenvattend tekstrapport';
-$string['dynamicsection'] = 'De week voor het nemen van aanwezigheid baseren op vandaag';
+$string['dynamicsection'] = 'De week voor het nemen van aanwezigheid bepalen op de datum van vandaag';
 $string['dynamicsectionmulti'] = 'Plaats de aanwezigheidslijsten automatisch in de juiste weeksectie';
 $string['dynsectionshort'] = 'Dynamisch verplaatst naar sectie';
 $string['endbeforestart'] = 'De einddatum is voor de startdatum';
@@ -57,6 +57,7 @@ $string['takeroll'] = 'Maak een aanwezigheidslijst op deze dag?';
 $string['tardiesperabsence'] = 'Hoe vaak te laat komen telt als één keer afwezig?';
 $string['tardylong'] = 'Te laat';
 $string['tardyshort'] = 'L';
+$string['teacheredit'] = 'Noteer aanwezigheid';
 $string['thursday'] = 'Do';
 $string['tuesday'] = 'Di';
 $string['viewall'] = 'Toon alle aanwezigheidslijsten';
