@@ -85,50 +85,41 @@ class quiz_file_format extends quiz_default_format {
                     unset($questiontext);
                 }
                  else {
-                    $questiontext .= $line;
+                    $questiontext .= str_replace('\:', ':', $line);
                     continue;
                 }
             }
 
             if (is_string($answertext)) {
                 if (ereg("^:",$line)) {
-                    if ($bIsHTMLText) {
-                    	$answertext = unhtmlentities($answertext); // answer as HTML text not supported by Moddle
-                    }
                     $answertext = addslashes(trim($answertext));
                     $question->answer[$currentchoice] = $answertext;
                     unset($answertext);
                 }
                  else {
-                    $answertext .= $line;
+                    $answertext .= str_replace('\:', ':', $line);
                     continue;
                 }
             }
 
             if (is_string($responstext)) {
                 if (ereg("^:",$line)) {
-                    if ($bIsHTMLText) {
-                    	$responstext = unhtmlentities($responstext); // answer as HTML text not supported by Moddle
-                    }
                     $question->subquestions[$currentchoice] = addslashes(trim($responstext));
                     unset($responstext);
                 }
                  else {
-                    $responstext .= $line;
+                    $responstext .= str_replace('\:', ':', $line);
                     continue;
                 }
             }
 
             if (is_string($feedbacktext)) {
                 if (ereg("^:",$line)) {
-                    if ($bIsHTMLText) {
-                    	$feedbacktext = unhtmlentities($feedbacktext); // feedback as HTML text not supported by Moddle
-                    }
                     $question->feedback[$currentchoice] = addslashes(trim($feedbacktext));
                     unset($feedbacktext);
                 }
                  else {
-                    $feedbacktext .= $line;
+                    $feedbacktext .= str_replace('\:', ':', $line);
                     continue;
                 }
             }
@@ -160,9 +151,9 @@ class quiz_file_format extends quiz_default_format {
                         $errors[] = get_string("missingquestion", "quiz", $nQuestionStartLine);
                         $QuestionOK = FALSE;
                     }
-                    if (sizeof($question->answer) <= 1) {  // a question must have at last 2 answers
-                        $errors[] = get_string("missinganswer", "quiz", $nQuestionStartLine);
-                        $QuestionOK = FALSE;
+                    if (empty($question->answer)) {  // a question must have at least 1 answer
+                       $errors[] = get_string("missinganswer", "quiz", $nQuestionStartLine);
+                       $QuestionOK = FALSE;
                     }
                     else {
                         // Perform string length check
