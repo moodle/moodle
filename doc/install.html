@@ -1,0 +1,228 @@
+<HEAD>
+    <TITLE>Moodle Docs: Installation</TITLE>
+	<LINK REL="stylesheet" HREF="../theme/standard/styles.css" TYPE="TEXT/CSS">
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF">
+
+<H2>Installing Moodle</H2>
+<P>This guide explains how to install Moodle for the first time.</P>
+<P>Sections in this document:</P>
+<OL>
+  <LI><A HREF="#requirements">Requirements</A></LI>
+  <LI><A HREF="#downloading">Download</A></LI>
+  <LI><A HREF="#site">Site structure</A></LI>
+  <LI><A HREF="#data">Create a data directory</A></LI>
+  <LI><A HREF="#database">Create a database</A></LI>
+  <LI><A HREF="#config">Edit config.php</A></LI>
+  <LI><A HREF="#admin">Go to the admin page</A></LI>
+  <LI><A HREF="#cron">Set up cron</A></LI>
+  <LI><A HREF="#course">Create a new course</A></LI>
+</OL>
+<H3><A NAME="requirements"></A>Requirements</H3>
+<P>Moodle is primarily developed in Linux and MacOSX environments using PHP, Apache 
+  and MySQL. However, it has been designed to run on as many platforms as possible.</P>
+<P>All you should need are:</P>
+<UL>
+  <LI>a working installation of <A HREF="http://www.php.net/">PHP</A> (version 
+    4.0.6 or better), including the <A HREF="http://www.boutell.com/gd/">GD</A> 
+    library for manipulating images.</LI>
+  <LI>a working database server (<A HREF="http://www.mysql.com/">MySQL</A>, PostgreSQL, 
+    MSSQL, Oracle, Interbase, Foxpro, Access, ADO, Sybase, DB2 or ODBC)</LI>
+</UL>
+<P>The quickest way to satisfy these requirements on Windows platforms is to download 
+  <A HREF="http://www.phpgeek.com/">PHPTriad</A> or <A HREF="http://www.foxserv.net/">FoxServ</A>, 
+  which will install Apache, PHP, and MySQL for you.</P>
+<P>&nbsp;</P>
+<H3><A NAME="downloading"></A>Download</H3>
+<P>There are two ways to get Moodle, as a compressed package and via CVS. These 
+  are explained in detail on the download page on <A HREF="http://moodle.com/">http://moodle.com/</A></P>
+<P>After downloading and unpacking the archive, or checking out the files via 
+  CVS, you will be left with a directory called &quot;moodle&quot;, containing 
+  a number of files and folders. </P>
+<P>You can either place the whole folder in your web server documents directory, 
+  in which case the site will be located at <B>http://yourwebserver.com/moodle</B>, 
+  or you can copy all the contents straight into the main web server documents 
+  directory, in which case the site will be simply <B>http://yourwebserver.com</B>.</P>
+<P>&nbsp;</P>
+<H3><A NAME="site"></A>Site structure</H3>
+<P>Here is a quick summary of the contents of the Moodle folder, to help get you 
+  oriented:</P>
+<BLOCKQUOTE> 
+  <P>config.php - the only file you need to edit to get started <BR>
+    index.php - the front page of the site</P>
+  <UL>
+    <LI>admin/ - code to administrate the whole server </LI>
+    <LI>course/ - code to display and manage courses </LI>
+    <LI>doc/ - help documentation for Moodle (eg this page)</LI>
+    <LI>files/ - code to display and manage uploaded files</LI>
+    <LI>lib/ - libraries of core Moodle code </LI>
+    <LI>login/ - code to handle login and account creation </LI>
+    <LI>mod/ - all Moodle course modules</LI>
+    <LI>pix/ - generic site graphics</LI>
+    <LI>theme/ - theme packs/skins to change the look of the site.</LI>
+    <LI>user/ - code to display and manage users</LI>
+  </UL>
+  <P>&nbsp;</P>
+</BLOCKQUOTE>
+<H3><A NAME="data"></A>Create a data directory</H3>
+<P>Moodle will also need some space on your hard disk to store uploaded files, 
+  such as course documents and user pictures.</P>
+<P>Create a directory for this purpose somewhere <B>away</B> from the web server 
+  documents directory (we don't want these files to be accessible from the web), 
+  and ensure that the web server software has permission to write to this directory. 
+  On Unix machines, this means setting the owner of the directory to be something 
+  like &quot;nobody&quot; or &quot;apache&quot;.</P>
+<P>&nbsp;</P>
+<H3><A NAME="database"></A>Create a database</H3>
+<P>You need to create an empty database (eg "moodle") in your database system 
+  along with a special user (eg "moodleuser") that has access to that database 
+  (and that database only. For example, don't use the "root" user for the moodle 
+  database - it's a security hazard). </P>
+<P>eg for MySQL: </P>
+<PRE>
+   # mysql -u root -p
+   > CREATE DATABASE moodle; 
+   > GRANT SELECT,INSERT,UPDATE,DELETE,CREATE,DROP,INDEX,ALTER ON moodle.* 
+           TO moodleuser@localhost IDENTIFIED BY 'yourpassword'; 
+   > quit 
+   # mysqladmin -p reload
+</PRE>
+
+<P>&nbsp;</P>
+<H3><A NAME="config"></A>Edit config.php</H3>
+<P>Now you can edit the configuration file, config.php. This file is used by all 
+  other files in Moodle.</P>
+<P>In it you specify the database details that you just defined, as well as the 
+  site address, file system directory, data directory and so on. The config file 
+  has detailed directions.</P>
+<P>For the rest of this installation document we will assume your site is at: 
+  http://example.com/moodle</P>
+<P>&nbsp;</P>
+<H3><A NAME="admin"></A>Go to the admin page</H3>
+<P>The admin page should now be working at: http://example.com/moodle/admin</P>
+<P>Go to this page using your favourite web browser.</P>
+<P>The first time you access this page, Moodle will set up your database and prompt 
+  you for more information.</P>
+<P>Firstly, the main database tables are created. You should see a number of statements 
+  like this (in green):</P>
+<BLOCKQUOTE> 
+  <P><FONT COLOR="#006600">SUCCESS: CREATE TABLE course ( id int(10) unsigned 
+    NOT NULL auto_increment, category int(10) unsigned NOT NULL default '0', password 
+    varchar(50) NOT NULL default '', fullname varchar(254) NOT NULL default '', 
+    shortname varchar(15) NOT NULL default '', summary text NOT NULL, format tinyint(4) 
+    NOT NULL default '1', teacher varchar(100) NOT NULL default 'Teacher', startdate 
+    int(10) unsigned NOT NULL default '0', enddate int(10) unsigned NOT NULL default 
+    '0', timemodified int(10) unsigned NOT NULL default '0', PRIMARY KEY (id)) 
+    TYPE=MyISAM</FONT></P>
+  <P>...and so on, followed by: <FONT COLOR="#FF0000">Main databases set up successfully</FONT>. 
+  </P>
+</BLOCKQUOTE>
+<P>If you don't see this, then there must have been some problem with the database 
+  or the configuration settings you defined in config.php. Check these and try 
+  this page again.</P>
+<P>Press the &quot;Continue&quot; link at the bottom of the page.</P>
+<P>Next you will see a similar page that sets up all the tables required by each 
+  Moodle module. As before, they should all be green, otherwise you may be a problem 
+  in the module code.</P>
+<P>Press the &quot;Continue&quot; link at the bottom of the page.</P>
+<P>You should now see a form where you can define more parameters for your Moodle 
+  site, such as the name, the description shown on the front page, and so on. 
+  Fill this out (you can always go back and change these later) and then press 
+  &quot;Update the site&quot;.</P>
+<P>Finally, you will then be asked to create an administration user for future 
+  access to the admin pages. Fill out the details with your own name, email etc 
+  and then click &quot;Update this user&quot;. You will be returned to the main 
+  admin page, which contain a number of links arranged in a menu.</P>
+<P>Make sure you remember the username and password you chose for the administration 
+  user, as they will be necessary to access the administration page in future.</P>
+<P>All your further configuration of Moodle can now be done using the administration 
+  page menu, which includes tasks such as:</P>
+<UL>
+  <LI>creating and deleting courses</LI>
+  <LI>administering teacher accounts</LI>
+  <LI>changing site-wide settings</LI>
+</UL>
+<P>&nbsp;</P>
+<H3><A NAME="cron"></A>Set up cron</H3>
+<P>Some of Moodle's modules require continual checks to perform tasks. For example, 
+  Moodle needs to check the discussion forums so it can mail out copies of posts 
+  to people who have subscribed.</P>
+<P>The script that does all this is located in the admin directory, and is called 
+  cron.php. However, it can not run itself, so you need to set up a mechanism 
+  where this script is run regularly (eg every five minutes). This provides a 
+  &quot;heartbeat&quot; so that the script can perform functions at periods defined 
+  by each module.</P>
+<P>For security reasons, this script defines a required password. Edit cron.php 
+  with a text editor and change the password to something unique. eg </P>
+<BLOCKQUOTE> 
+  <PRE>$PASSWORD = &quot;pword&quot;;
+</PRE>
+</BLOCKQUOTE>
+<P>Test that the script works by running it directly from your browser:</P>
+<BLOCKQUOTE> 
+  <PRE>http://example.com/moodle/admin/cron.php?p=pword</PRE>
+</BLOCKQUOTE>
+<P>Now, you need to set up some of way of running the script automatically. There 
+  are two main ways of doing this, 'externally' and 'internally'. </P>
+<BLOCKQUOTE> 
+  <H4>External cron</H4>
+  <P>You can set up a program to call the page just as you did in the example 
+    above. For example, you can use a Unix utility like 'wget':<BR>
+  </P>
+  <BLOCKQUOTE> 
+    <PRE>wget -q -O /dev/null 'http://example.com/moodle/admin/cron.php?p=pword'</PRE>
+  </BLOCKQUOTE>
+  <P>Note in this example that the output is thrown away (to /dev/null).</P>
+  <P>To automate the running of this script every 5 minutes you can use Unix <B>cron</B>. 
+    Edit your cron settings from the commandline using &quot;crontab -e&quot; 
+    and add a line like:</P>
+  <BLOCKQUOTE> 
+    <PRE>*/5 * * * * wget -q -O /dev/null 'http://example.com/moodle/admin/cron.php?p=pword'
+</PRE>
+  </BLOCKQUOTE>
+  <P>On non-Unix platforms you will need to find another way to do this (and let 
+    me know so I can update this documentation!)</P>
+  <H4>Internal cron</H4>
+  <P>To run the cron.php script internally, you need a version of PHP compiled 
+    to be run from the command-line, also called a &quot;cgi&quot; version. On 
+    a Unix machine, you can now run the script with your password as the first 
+    parameter, something like this:</P>
+  <BLOCKQUOTE>
+    <PRE>/opt/bin/php /web/moodle/admin/cron.php pword</PRE>
+  </BLOCKQUOTE>
+  <P>As before you can automate this using Unix cron (or the equivalent on your 
+    OS):</P>
+  <BLOCKQUOTE> 
+    <PRE>*/5 * * * * (/opt/bin/php /web/moodle/admin/cron.php pword) &amp;&gt; /dev/null
+</PRE>
+  </BLOCKQUOTE>
+</BLOCKQUOTE>
+<P>The advantage with running the script internally is that your web server logs 
+  aren't filled with constant requests to cron.php. The disadvantage is that you 
+  need to have access to a command-line version of php.</P>
+<P>&nbsp;</P>
+<H3><A NAME="course"></A>Create a new course</H3>
+<P>Now that Moodle is running properly, you can create a course. </P>
+<P>Start on the admin page ( http://example.com/moodle/admin ) and select &quot;Create 
+  a new course&quot;.</P>
+<P>Fill out the form, paying special attention to the course format. </P>
+<P>If you choose a &quot;weekly&quot; format, then course modules will be arranged 
+  by &quot;weeks&quot;. The weeks in your course are defined by the start and 
+  end dates you choose on this form. The idea is that the next time you run this 
+  course, you can just change the dates and keep the essential course format.</P>
+<P>The &quot;non-weekly&quot; format is for courses that don't have a start or 
+  finish, and so any start/end dates you choose will be ignored.</P>
+<P>Press &quot;Update this course&quot;, and you will be taken to a new form where 
+  you can add teachers to the course. You can only add existing user accounts 
+  from this form - if you want to create a new teacher account then either ask 
+  the teacher to create one for themselves (see the login page), or create one 
+  for them using the &quot;Create a user account&quot; on the Admin page.</P>
+<P>Once done, your course is ready to customise, and is accessible via the &quot;Courses&quot; 
+  link on the home page.</P>
+<P>See the &quot;<A HREF="teacher.html">Teacher Manual</A>&quot; for more details 
+  on course-building.</P>
+<P>&nbsp;</P>
+<P ALIGN="CENTER"><FONT SIZE="1"><A HREF="index.html" TARGET="_top">Moodle Documentation</A></FONT></P>
+
+</BODY>
