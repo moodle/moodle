@@ -7,7 +7,7 @@
 
     require_variable($id);    // Course Module ID, or
     optional_variable($mode);  // cat
-    optional_variable($hook);  // category ID
+    optional_variable($hook,0);  // category ID
     optional_variable($action);  // what to do
     optional_variable($usedynalink);  // category ID
     optional_variable($confirm);  // confirm the action
@@ -32,7 +32,7 @@
         error("Course module is incorrect");
     }
 
-    if ($hook) {
+    if ($hook > 0) {
         if ($category = get_record("glossary_categories","id",$hook)) {
             //Check it belongs to the same glossary
             if ($category->glossaryid != $glossary->id) {
@@ -57,7 +57,7 @@
                         "", "", true, update_module_button($cm->id, $course->id, $strglossary),
                         navmenu($course, $cm));
 
-    if ( $hook ) {
+    if ( $hook >0 ) {
 
         if ( $action == "edit" ) {
             if ( $confirm ) {
