@@ -309,7 +309,7 @@
 
             } else if (record_exists("forum_posts", "parent", $delete)) {
                 error(get_string("couldnotdeletereplies", "forum"),
-                        forum_go_back_to("discuss.php?id=$post->discussion"));
+                        forum_go_back_to("discuss.php?d=$post->discussion"));
 
             } else {
                 if (!$cm = get_coursemodule_from_instance("forum", $forum->id, $forum->course)) { // For the logs
