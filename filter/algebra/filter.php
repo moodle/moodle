@@ -73,6 +73,12 @@ function string_file_picture_algebra($imagefile, $tex= "", $height="", $width=""
     $width = "width=\"$width\"";
   }
   if ($imagefile) {
+    if (!file_exists("$CFG->dataroot/$CFG->algebrafilterdir/$imagefile") && isadmin()) {
+      $output .= "<a href=\"$CFG->wwwroot/$CFG->algebrafilterdir/algebradebug.php\">";
+    } else {
+      $output .= "<a href=\"javascript:prompt('The TeX code used to generate this formula is:','";
+      $output .= preg_replace('/(\\\)/',"\$1\$1",$tex) .  "')\">";
+    }
     $output .= "<img border=\"0\" $title $height $width src=\"";
     if ($CFG->slasharguments) {        // Use this method if possible for better caching
       $output .= "$CFG->wwwroot/$CFG->algebrafilterdir/pix.php/$imagefile";
@@ -80,6 +86,7 @@ function string_file_picture_algebra($imagefile, $tex= "", $height="", $width=""
       $output .= "$CFG->wwwroot/$CFG->algebrafilterdir/pix.php?file=$imagefile";
     }
     $output .= "\" />";
+    $output .= "</a>";
   } else {
     $output .= "Error: must pass URL or course";
   }
