@@ -119,12 +119,26 @@
 
 /// A hack to get around magic_quotes_gpc being turned off
 
-    if (!ini_get_bool("magic_quotes_gpc") ) {   // Hopefully it's on, though.
+    if (!ini_get_bool("magic_quotes_gpc") ) {
         foreach ($_GET as $key => $var) {
-            $_GET[$key] = addslashes($var);
+            if (!is_array($var)) {
+                $_GET[$key] = addslashes($var);
+            } else {
+                foreach ($var as $arrkey => $arrvar) {
+                    $var[$arrkey] = addslashes($arrvar);
+                }
+                $_GET[$key] = $var;
+            }
         }
         foreach ($_POST as $key => $var) {
-            $_POST[$key] = addslashes($var);
+            if (!is_array($var)) {
+                $_POST[$key] = addslashes($var);
+            } else {
+                foreach ($var as $arrkey => $arrvar) {
+                    $var[$arrkey] = addslashes($arrvar);
+                }
+                $_POST[$key] = $var;
+            }
         }
     }
 
