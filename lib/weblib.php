@@ -257,7 +257,7 @@ function link_to_popup_window ($url, $name="popup", $linkname="click here", $hei
 
     echo "\n<script language=\"javascript\">";
     echo "\n<!--";
-    echo "\ndocument.write('<a title=\"$title\" href=javascript:openpopup(\"$url\",\"$name\",\"$height\",\"$width\") >".addslashes($linkname)."</A>');";
+    echo "\ndocument.write('<a title=\"".addslashes($title)."\" href=javascript:openpopup(\"$url\",\"$name\",\"$height\",\"$width\") >".addslashes($linkname)."</a>');";
     echo "\n//-->";
     echo "\n</script>";
     echo "\n<noscript>\n<a target=\"$name\" title=\"$title\" href=\"$CFG->wwwroot/$url\">$linkname</a>\n</noscript>\n";
