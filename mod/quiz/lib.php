@@ -40,6 +40,8 @@ define("QUIZ_PICTURE_MAX_WIDTH",  "600");   // Not currently implemented
 
 define("QUIZ_MAX_NUMBER_ANSWERS", "10");
 
+define("QUIZ_MAX_EVENT_LENGTH", "43200");   // 5 days maximum
+
 /// FUNCTIONS ///////////////////////////////////////////////////////////////////
 
 function quiz_add_instance($quiz) {
@@ -73,7 +75,23 @@ function quiz_add_instance($quiz) {
             }
         }
     }
-    
+
+    $event = NULL;
+    $event->name        = $quiz->name;
+    $event->description = $quiz->intro;
+    $event->courseid    = $quiz->course;
+    $event->groupid     = 0;
+    $event->userid      = 0;
+    $event->modulename  = 'quiz';
+    $event->instance    = $quiz->id;
+    $event->eventtype   = 'start';
+    $event->timestart   = $quiz->timeopen;
+    $event->timeduration = ($quiz->timeclose - $quiz->timeopen);
+    if ($event->timeduration > QUIZ_MAX_EVENT_LENGTH) {  /// Ignore long durations
+        $event->timeduration = 1;
+    }
+    add_event($event);
+
     return $quiz->id;
 }
 
@@ -122,7 +140,22 @@ function quiz_update_instance($quiz) {
             }
         }
     }
-    
+
+    $event = NULL;
+
+    if ($event->id = get_field('event', 'id', 'modulename', 'quiz', 'instance', $quiz->id)) {
+
+        $event->name        = $quiz->name;
+        $event->description = $quiz->intro;
+        $event->timestart   = $quiz->timeopen;
+        $event->timeduration = ($quiz->timeclose - $quiz->timeopen);
+        if ($event->timeduration > QUIZ_MAX_EVENT_LENGTH) {  /// Ignore long durations
+            $event->timeduration = 1;
+        }
+
+        update_event($event);
+    }
+
     return true;
 }
 
@@ -254,6 +287,50 @@ function quiz_get_participants($quizid) {
                                  {$CFG->prefix}quiz_attempts a
                             WHERE a.quiz = '$quizid' and  
                                   u.id = a.userid");
+}
+
+function quiz_refresh_events($courseid = 0) {
+// This standard function will check all instances of this module
+// and make sure there are up-to-date events created for each of them.
+// If courseid = 0, then every assignment event in the site is checked, else
+// only assignment events belonging to the course specified are checked.
+// This function is used, in its new format, by restore_refresh_events()
+
+    if ($courseid == 0) {
+        if (! $quizzes = get_records("quiz")) {
+            return true;
+        }
+    } else {
+        if (! $quizzes = get_records("quiz", "course", $courseid)) {
+            return true;
+        }
+    }
+
+    foreach ($quizzes as $quiz) {
+        $event = NULL;
+        $event->name        = addslashes($quiz->name);
+        $event->description = addslashes($quiz->intro);
+        $event->timestart   = $quiz->timeopen;
+        $event->timeduration = ($quiz->timeclose - $quiz->timeopen);
+        if ($event->timeduration > QUIZ_MAX_EVENT_LENGTH) {  /// Ignore long durations
+            $event->timeduration = 1;
+        }
+
+        if ($event->id = get_field('event', 'id', 'modulename', 'quiz', 'instance', $quiz->id)) {
+            update_event($event);
+
+        } else {
+            $event->courseid    = $quiz->course;
+            $event->groupid     = 0;
+            $event->userid      = 0;
+            $event->modulename  = 'quiz';
+            $event->instance    = $quiz->id;
+            $event->eventtype   = 'start';
+
+            add_event($event);
+        }
+    }
+    return true;
 }
 
 /// SQL FUNCTIONS ////////////////////////////////////////////////////////////////////

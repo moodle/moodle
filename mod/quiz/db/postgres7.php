@@ -145,6 +145,11 @@ function quiz_upgrade($oldversion) {
         modify_database("","INSERT INTO prefix_log_display VALUES ('quiz', 'update', 'quiz', 'name');");
     }
 
+    if ($oldversion < 2004042501) {
+        include_once("$CFG->dirroot/mod/quiz/lib.php");
+        quiz_refresh_events();
+    }
+
     return true;
 }
 
