@@ -1,5 +1,5 @@
-<?php // $Id$ 
-      // auth.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004111000)
+<?PHP // $Id$ 
+      // auth.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004112900)
 
 
 $string['auth_common_settings'] = '░ь╚╠└▀─ъ';
@@ -14,7 +14,7 @@ $string['auth_dbpass'] = '╛х╡нецб╝е╢╠╛д╦╣ч├╫д╣дые╤е╣еяб╝е╔';
 $string['auth_dbpasstype'] = 'е╤е╣еяб╝е╔е╒егб╝еые╔д╟╗╚═╤д╣дые╒ейб╝е▐е├е╚дЄ╞├─ъд╖д╞дпд└д╡ддбгMD5░┼╣ц▓╜д╧PostNukeд╬дшджд╩┬╛д╬░ь╚╠┼кд╩ежезе╓еве╫еъе▒б╝е╖ечеєд╪д╬└▄┬│д╦╩╪═°д╟д╣бг';
 $string['auth_dbtable'] = 'е╟б╝е┐е┘б╝е╣д╬е╞б╝е╓еы╠╛';
 $string['auth_dbtitle'] = '│░╔Їе╟б╝е┐е┘б╝е╣дЄ╗╚═╤';
-$string['auth_dbtype'] = 'е╟б╝е┐е┘б╝е╣е┐еде╫(╛▄║┘д╧<a href=../lib/adodb/readme.htm#drivers>ADOdb documentation</a>дЄд┤═ўдпд└д╡дд';
+$string['auth_dbtype'] = 'е╟б╝е┐е┘б╝е╣е┐еде╫ ( ╛▄║┘д╧<a href=../lib/adodb/readme.htm#drivers>ADOdb documentation</a>дЄд┤═ўдпд└д╡дд )';
 $string['auth_dbuser'] = 'е╟б╝е┐е┘б╝е╣евепе╗е╣═╤д╬ецб╝е╢╠╛';
 $string['auth_editlock'] = 'еэе├еп├═';
 $string['auth_editlock_expl'] = '<p><b>еэе├еп├═:</b> д│д╬└▀─ъдЄб╓Yesб╫д╦д╖д┐╛ь╣чбвMoodleецб╝е╢╡┌д╙┤╔═¤╝╘дме╒егб╝еые╔дЄ─╛└▄╩╘╜╕д╟днд╩дддшджд╦д╖д▐д╣бг│░╔Ї╟з╛┌е╖е╣е╞ерд╦двдыд│д╬├═дЄесеєе╞е╩еєе╣д╣ды╗■д╦╗╚═╤д╖д╞дпд└д╡ддбг</p>';
@@ -22,7 +22,7 @@ $string['auth_emaildescription'] = 'есб╝еыд╦дшдыевележеєе╚│╬─ъд╧╟з╛┌╩¤╦бд╬╜щ┤№├═
 $string['auth_emailtitle'] = 'Emailе┘б╝е╣д╬╟з╛┌';
 $string['auth_fccreators'] = 'есеєе╨б╝дме│б╝е╣д╬║ю└одЄ╡Ў▓─д╡дьд╞дддые░еыб╝е╫д╬░ь═ўд╟д╣бг╩г┐Їд╬е░еыб╝е╫д╧б╓;б╫д╟╩мд▒д╞дпд└д╡ддбге░еыб╝е╫╠╛д╧FirstClassе╡б╝е╨д╚╕╖╠йд╦╞▒д╕╠╛┴░д╦д╖д╞дпд└д╡ддбге╖е╣е╞ерд╧бв┬ч╩╕╗·д╚╛о╩╕╗·дЄ╢ш╩╠д╖д▐д╣бг';
 $string['auth_fcdescription'] = 'д│д│д╟д╧бвецб╝е╢╠╛д╚е╤е╣еяб╝е╔дм└╡д╖дддл╚▌длдЄе┴езе├епд╣дыд┐дсд╦FisrtClassе╡б╝е╨дЄ╗╚═╤д╖д▐д╣бг';
-$string['auth_fcfppport'] = 'е╡б╝е╨е▌б╝е╚(3333дм║╟дт░ь╚╠┼к)';
+$string['auth_fcfppport'] = 'е╡б╝е╨е▌б╝е╚ ( 3333дм║╟дт░ь╚╠┼к )';
 $string['auth_fchost'] = 'FirstClassе╡б╝е╨еве╔еье╣бгIPеве╔еье╣д▐д┐д╧DNS╠╛дЄ╗╚═╤д╖д╞дпд└д╡ддбг';
 $string['auth_fcpasswd'] = '╛х╡невележеєе╚д╬е╤е╣еяб╝е╔бг';
 $string['auth_fctitle'] = 'FirstClassе╡б╝е╨дЄ╗╚═╤';
@@ -53,7 +53,7 @@ $string['auth_ldap_opt_deref'] = '╕б║ў╗■д╦еиедеъеве╣дмд╔д╬дшджд╦░╖дядьдыдл╖ш─ъд╖
 $string['auth_ldap_passwdexpire_settings'] = 'LDAPе╤е╣еяб╝е╔═н╕·┤№╕┬└▀─ъ';
 $string['auth_ldap_search_sub'] = 'е╡е╓е│еєе╞ене╣е╚длдщецб╝е╢дЄ╕б║ўд╣ды╛ь╣чд╧бв  <> 0 д╬дшджд╦╞■╬╧д╖д╞дпд└д╡ддбг';
 $string['auth_ldap_server_settings'] = 'LDAPе╡б╝е╨└▀─ъ';
-$string['auth_ldap_update_userinfo'] = 'LDAPдшдъMoodleд╬╛Ё╩є(╠╛бв└лбв╜╗╜ъ┼∙)дЄ╣╣┐╖д╖д▐д╣бге▐е├е╘еєе░╛Ё╩єд╦┤╪д╖д╞д╧ /auth/ldap/attr_mappings дЄд┤═ўдпд└д╡ддбг';
+$string['auth_ldap_update_userinfo'] = 'LDAPдшдъMoodleд╬╛Ё╩є ( ╠╛бв└лбв╜╗╜ъ┼∙ ) дЄ╣╣┐╖д╖д▐д╣бге▐е├е╘еєе░╛Ё╩єд╦┤╪д╖д╞д╧ /auth/ldap/attr_mappings дЄд┤═ўдпд└д╡ддбг';
 $string['auth_ldap_user_attribute'] = 'name/searchецб╝е╢д╦╗╚дядьды┬░└нд╟д╣бг─╠╛яд╧\'cn\'д╟д╣бг';
 $string['auth_ldap_user_settings'] = 'ецб╝е╢lookup└▀─ъ';
 $string['auth_ldap_user_type'] = 'ецб╝е╢дмд╔д╬дшджд╦LDAPд╦╩▌┬╕д╡дьдыдл┴к┬Єд╖д╞дпд└д╡ддбгд│д╬└▀─ъд╟д╧бв═н╕·┤№╕┬бв═▒═╜еэе░едеєбвецб╝е╢║ю└одмд╔д╬дшджд╦д╩д╡дьдыд╬длдт╗╪─ъд╖д▐д╣бг';
@@ -63,7 +63,7 @@ $string['auth_ldapextrafields'] = 'д│дьдщд╬е╒егб╝еые╔д╧╟д░╒╣р╠▄д╟д╣бг<b>LDAPе╒ег
 $string['auth_ldaptitle'] = 'LDAPе╡б╝е╨дЄ╗╚═╤';
 $string['auth_manualdescription'] = 'д│д╬╩¤╦бд╟д╧ецб╝е╢д╦дшдыецб╝е╢евележеєе╚║ю└о╡б╟╜дЄ─ф╗▀д╖д▐д╣бг┴┤д╞д╬евележеєе╚║ю└од╧┤╔═¤╝╘д╦дшдъ╝ъ╞░д╟╣╘дж╔м═╫дмдвдъд▐д╣бг';
 $string['auth_manualtitle'] = '╝ъ╞░евележеєе╚║ю└од╬д▀';
-$string['auth_multiplehosts'] = '╩г┐Їд╬е█е╣е╚дЄ└▀─ъд╟днд▐д╣(╬у host1.com;host2.com;host3.com)';
+$string['auth_multiplehosts'] = '╩г┐Їд╬е█е╣е╚дЄ└▀─ъд╟днд▐д╣ ( ╬у host1.com;host2.com;host3.com ) ';
 $string['auth_nntpdescription'] = 'ецб╝е╢╠╛д╚е╤е╣еяб╝е╔дЄ│╬╟зд╣дыд┐дсд╦NNTPе╡б╝е╨дЄ╗╚═╤д╖д▐д╣бг';
 $string['auth_nntphost'] = 'NNTPе╡б╝е╨б╝еве╔еье╣д╟д╣бгIPеве╔еье╣д╟д╧д╩дпе╔еседеє╠╛дЄ╗╚═╤д╖д╞дпд└д╡ддбг';
 $string['auth_nntpport'] = 'е╡б╝е╨б╝е▌б╝е╚(119дм░ь╚╠┼кд╟д╣)';
@@ -71,13 +71,13 @@ $string['auth_nntptitle'] = 'NNTPе╡б╝е╨дЄ╗╚═╤';
 $string['auth_nonedescription'] = 'ецб╝е╢д╧еэе░едеєд╖д╞│░╔Їе╡б╝е╨╡┌д╙есб╝еыд╦дшды╟з╛┌╠╡д╖д╦евележеєе╚дЄ─╛д┴д╦║ю└од╟днд▐д╣бгд│д╬еке╫е╖ечеєдЄ╗╚═╤д╣дыд╚днд╧╜╜╩мд╦├э░╒д╖д╞дпд└д╡дд - е╗енехеъе╞егб╝╡┌д╙┤╔═¤╛хд╬╠ф┬ъдм╚п└╕д╣дыдлдтд╖дьд╩ддд│д╚дЄ╣═дид╞дпд└д╡ддбг';
 $string['auth_nonetitle'] = '╟з╛┌╠╡д╖';
 $string['auth_pamdescription'] = 'д│д╬╩¤╝░д╟д╧бве╡б╝е╨д╬е═еде╞еге╓ецб╝е╢╠╛д╦евепе╗е╣д╣ды╝ъ├╩д╚д╖д╞PAMдЄ╗╚═╤д╖д▐д╣бгд│д╬ете╕ехб╝еыдЄ╗╚═╤д╣дыд┐дсд╦д╧бв<a href=\"http://www.math.ohio-state.edu/~ccunning/pam_auth/\" target=\"_blank\">PHP4 PAM Authentication</a>дмедеєе╣е╚б╝еыд╡дьд╞ддды╔м═╫дмдвдъд▐д╣бг';
-$string['auth_pamtitle'] = 'PAM (Pluggable Authentication Modules)';
+$string['auth_pamtitle'] = 'PAM ( Pluggable Authentication Modules )';
 $string['auth_passwordisexpired'] = 'двд╩д┐д╬е╤е╣еяб╝е╔д╬═н╕·┤№╕┬дм└┌дьд▐д╖д┐бге╤е╣еяб╝е╔дЄ╩╤╣╣д╖д▐д╣дл?';
 $string['auth_passwordwillexpire'] = 'двд╩д┐д╬е╤е╣еяб╝е╔д╬═н╕·┤№╕┬д╧бв$a ╞№д╟└┌дьд▐д╣бге╤е╣еяб╝е╔дЄ╩╤╣╣д╖д▐д╣дл?';
 $string['auth_pop3description'] = 'ецб╝е╢╠╛д╚е╤е╣еяб╝е╔дЄ│╬╟зд╣дыд┐дсд╦POP3е╡б╝е╨дЄ╗╚═╤д╖д▐д╣бг';
 $string['auth_pop3host'] = 'POP3е╡б╝е╨б╝еве╔еье╣д╟д╣бгIPеве╔еье╣д╟д╧д╩дпе╔еседеє╠╛дЄ╗╚═╤д╖д╞дпд└д╡ддбг';
 $string['auth_pop3mailbox'] = '└▄┬│дЄ╗юд▀дыесб╝еые▄е├епе╣╠╛(─╠╛яд╧╝ї┐ое▄е├епе╣)';
-$string['auth_pop3port'] = 'е╡б╝е╨б╝е▌б╝е╚ (110дм░ь╚╠┼кд╟д╣)';
+$string['auth_pop3port'] = 'е╡б╝е╨б╝е▌б╝е╚ ( 110дм░ь╚╠┼кд╟д╣ )';
 $string['auth_pop3title'] = 'POP3е╡б╝е╨дЄ╗╚═╤';
 $string['auth_pop3type'] = 'е╡б╝е╨е┐еде╫д╟д╣бгдтд╖╟з╛┌дм╔м═╫д╩╛ь╣чд╧pop3certдЄ┴к┬Єд╖д╞дпд└д╡ддбг';
 $string['auth_updatelocal'] = 'еэб╝елеые╟б╝е┐д╬╣╣┐╖';
@@ -86,7 +86,7 @@ $string['auth_updateremote'] = '│░╔Їе╟б╝е┐д╬╣╣┐╖';
 $string['auth_updateremote_expl'] = '<p><b>│░╔Їе╟б╝е┐д╬╣╣┐╖:</b> д│д╬└▀─ъдЄб╓Yesб╫д╦д╖д┐╛ь╣чбвецб╝е╢еье│б╝е╔дм╣╣┐╖д╡дьды╗■д╦│░╔Ї╟з╛┌дм╣╣┐╖д╡дьд▐д╣бг╩╘╜╕д╟дндыдшджд╦е╒егб╝еые╔дЄевеєеэе├епд╣ды╔м═╫дмдвдъд▐д╣бг</p>';
 $string['auth_updateremote_ldap'] = '<p><b>├э░╒:</b> │░╔ЇLDAPе╟б╝е┐дЄ╣╣┐╖д╣дыд┐дсд╦д╧бвbinddnд╚bindpwдЄ╜ёдн╣■д▀╕вдЄ╗¤д├д┐bindецб╝е╢д╦└▀─ъд╣ды╔м═╫дмдвдъд▐д╣бг╕╜║▀бве▐еые┴е╨еъехб╝┬░└ндЄ╩▌╕юд╖д▐д╗дєбгд▐д┐бв╣╣┐╖╗■д╦еиепе╣е╚еще╨еъехб╝д╧╝шдъ╜№длдьд▐д╣бг</p>';
 $string['auth_user_create'] = 'ецб╝е╢д╬║ю└одЄ╡Ў▓─д╣ды';
-$string['auth_user_creation'] = '┐╖д╖дд(╞┐╠╛д╬)ецб╝е╢д╧│░╔Ї╟з╛┌д╦дшдъецб╝е╢евележеєе╚дЄ║ю└од╣дыд│д╚дмд╟днд▐д╣бгецб╝е╢д╬│╬─ъд╧есб╝еыд╦дшд├д╞╣╘дядьд▐д╣бгд│д╬еке╫е╖ечеєдЄ═н╕·д╦д╖д┐╛ь╣чбвmodule-specificеке╫е╖ечеєдт╞▒╗■д╦═н╕·д╦д╣ды╔м═╫дмдвдъд▐д╣бг';
+$string['auth_user_creation'] = '┐╖д╖дд ( ╞┐╠╛д╬ ) ецб╝е╢д╧│░╔Ї╟з╛┌д╦дшдъецб╝е╢евележеєе╚дЄ║ю└од╣дыд│д╚дмд╟днд▐д╣бгецб╝е╢д╬│╬─ъд╧есб╝еыд╦дшд├д╞╣╘дядьд▐д╣бгд│д╬еке╫е╖ечеєдЄ═н╕·д╦д╖д┐╛ь╣чбвmodule-specificеке╫е╖ечеєдт╞▒╗■д╦═н╕·д╦д╣ды╔м═╫дмдвдъд▐д╣бг';
 $string['auth_usernameexists'] = 'д│д╬ецб╝е╢╠╛д╧┤√д╦┬╕║▀д╖д▐д╣бг┐╖д╖дддтд╬дЄ┴кдєд╟дпд└д╡ддбг';
 $string['authenticationoptions'] = '╟з╛┌еке╫е╖ечеє';
 $string['authinstructions'] = 'д╔д╬дшджд╩ецб╝е╢╠╛дфе╤е╣еяб╝е╔дЄ╗╚═╤д╖д┐дщдшддд╬длецб╝е╢д╦└т╠└д╖д▐д╣бгд│д│д╦╞■╬╧д╖д┐╩╕╛╧д╧еэе░едеєе┌б╝е╕д╦╔╜╝ид╡дьд▐д╣бг╢ї╟Єд╬╛ь╣чбв▓┐дт╔╜╝ид╡дьд▐д╗дєбг';
@@ -104,8 +104,5 @@ $string['showguestlogin'] = 'еэе░едеєе┌б╝е╕д╬е▓е╣е╚еэе░едеєе▄е┐еєдЄ╔╜╝иб┐╚є╔╜╝ид
 $string['stdchangepassword'] = '╔╕╜ре╤е╣еяб╝е╔╩╤╣╣е┌б╝е╕дЄ╗╚═╤';
 $string['stdchangepassword_expl'] = '│░╔Ї╟з╛┌е╖е╣е╞ердмMoodleд╦е╤е╣еяб╝е╔д╬╩╤╣╣дЄ╡Ў▓─д╣ды╛ь╣чбвд│д╬└▀─ъдЄб╓Yesб╫д╦д╖д╞дпд└д╡ддбгд│д╬└▀─ъд╧бвб╓Change Password URLб╫дЄ╛х╜ёднд╖д▐д╣бг';
 $string['stdchangepassword_explldap'] = '├э░╒: LDAPе╡б╝е╨дЄеъетб╝е╚д╟╗╚═╤д╣ды╛ь╣чд╧бвSSL░┼╣ц▓╜е╚еєе═еыдЄ╗╚═╤д╣дыд│д╚дЄдк┤лдсд╖д▐д╣бг';
-$string['thischarset'] = 'EUC-JP';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Japanese';
 
 ?>

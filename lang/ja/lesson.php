@@ -1,5 +1,5 @@
-<?php // $Id$ 
-      // lesson.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004111000)
+<?PHP // $Id$ 
+      // lesson.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004112900)
 
 
 $string['actionaftercorrectanswer'] = '正解後のアクション';
@@ -38,7 +38,7 @@ $string['correctanswerscore'] = '正答のスコア';
 $string['correctresponse'] = '正答のレスポンス';
 $string['customscoring'] = 'カスタムスコア';
 $string['deadline'] = '利用終了';
-$string['deleteattempts'] = 'このレッスンの学生の受験を削除(ユーザID)';
+$string['deleteattempts'] = 'このレッスンの学生の受験を削除 ( ユーザID )';
 $string['deleting'] = '削除中';
 $string['deletingpage'] = 'ページの削除: $a';
 $string['description'] = '説明';
@@ -47,9 +47,9 @@ $string['didnotanswerquestion'] = 'この問題に答えていません。';
 $string['displayhighscores'] = 'ハイスコアを表示';
 $string['displayinleftmenu'] = '左メニューに表示しますか?';
 $string['displayleftmenu'] = '左メニューを表示';
-$string['displayofgrade'] = '評価を表示する(学生に対して)';
+$string['displayofgrade'] = '評価を表示する ( 学生に対して )';
 $string['displayreview'] = 'レビューボタンを表示';
-$string['displayscorewithoutessays'] = 'あなたのスコアは、 $a->score ($a->grade 中)です。';
+$string['displayscorewithoutessays'] = 'あなたのスコアは、 $a->score ( $a->grade 中 )です。';
 $string['editlessonsettings'] = 'レッスン設定の編集';
 $string['editpagecontent'] = 'ページコンテンツの編集';
 $string['email'] = 'メール';
@@ -64,7 +64,7 @@ $string['essays'] = '作文';
 $string['essayscore'] = '作文スコア';
 $string['fileformat'] = 'ファイルフォーマット';
 $string['firstanswershould'] = '最初の答えは「正答」のページにジャンプする必要があります。';
-$string['firstwrong'] = 'あなたの答えが間違っていますので、残念ですが得点できませんでした。純粋な学習の楽しみのために、解答を続けますか(得点はできません)?';
+$string['firstwrong'] = 'あなたの答えが間違っていますので、残念ですが得点できませんでした。純粋な学習の楽しみのために、解答を続けますか ( 得点はできません ) ?';
 $string['gobacktolesson'] = 'レッスンに戻る';
 $string['grade'] = '評点';
 $string['gradeessay'] = '作文問題の評定';
@@ -91,7 +91,7 @@ $string['matchesanswer'] = '正答';
 $string['maxhighscores'] = 'ハイスコアの表示数';
 $string['maximumnumberofanswersbranches'] = '答え/選択枝の最大数';
 $string['maximumnumberofattempts'] = '受験の最大回数';
-$string['maxtime'] = '制限時間(分)';
+$string['maxtime'] = '制限時間 ( 分 )';
 $string['maxtimewarning'] = 'レッスン終了まで $a 分あります。';
 $string['minimumnumberofquestions'] = '問題の最小数';
 $string['modulename'] = 'レッスン';
@@ -111,7 +111,7 @@ $string['notdefined'] = '未定義';
 $string['notitle'] = 'タイトル無し';
 $string['numberofcorrectanswers'] = '正答数: $a';
 $string['numberofcorrectmatches'] = '正しいマッチ数: $a';
-$string['numberofpagestoshow'] = 'ページ(カード)の表示数';
+$string['numberofpagestoshow'] = 'ページ ( カード ) の表示数';
 $string['numberofpagesviewed'] = 'ページ閲覧数: $a';
 $string['ongoing'] = '進行中のスコアを表示';
 $string['ongoingnormal'] = 'あなたは $a->viewed の問題の中から $a->correct を正しく答えました。';
@@ -158,9 +158,6 @@ $string['teachertimerwarning'] = 'タイマーは学生に対してのみ作動します。タイマー
 $string['thatsthecorrectanswer'] = '正しい答えです';
 $string['thatsthewronganswer'] = '間違った答えです';
 $string['thefollowingpagesjumptothispage'] = '下記のページは、このページにジャンプします。';
-$string['thischarset'] = 'EUC-JP';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Japanese';
 $string['thispage'] = 'このページ';
 $string['timed'] = '時間制限';
 $string['timeremaining'] = '残り時間';

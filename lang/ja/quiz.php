@@ -1,5 +1,5 @@
-<?php // $Id$ 
-      // quiz.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004112400)
+<?PHP // $Id$ 
+      // quiz.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004112900)
 
 
 $string['acceptederror'] = 'エラー範囲';
@@ -17,7 +17,7 @@ $string['answerhowmany'] = '解答方法';
 $string['answersingleno'] = '複数解答可能';
 $string['answersingleyes'] = '単一の解答のみ';
 $string['answerswithacceptederrormarginmustbenumeric'] = '受入れるエラー範囲は数字を設定してください。';
-$string['answertoolong'] = '$a 行以降の解答が長過ぎます(最大、半角255文字)';
+$string['answertoolong'] = '$a 行以降の解答が長過ぎます ( 最大、半角255文字 )';
 $string['aon'] = 'AONフォーマット';
 $string['attempt'] = '受験  $a ';
 $string['attemptfirst'] = '初回受験';
@@ -77,7 +77,7 @@ $string['editdatasets'] = 'データセットの編集';
 $string['editingcalculated'] = '計算問題の編集';
 $string['editingdescription'] = '説明の編集';
 $string['editingmatch'] = '組み合わせ問題の編集';
-$string['editingmultianswer'] = '穴埋め問題(Cloze)の編集';
+$string['editingmultianswer'] = '穴埋め問題 ( Cloze ) の編集';
 $string['editingmultichoice'] = '多肢選択問題の編集';
 $string['editingnumerical'] = '数値問題の編集';
 $string['editingquestion'] = '問題の編集';
@@ -187,7 +187,7 @@ $string['qti'] = 'IMS QTIフォーマット';
 $string['question'] = '問題';
 $string['questioninuse'] = '問題  \'$a\' は現在使用中です：';
 $string['questionname'] = '問題名';
-$string['questionnametoolong'] = '$a 行の問題名が長過ぎます(最大、半角255文字)。問題名を省略しました。';
+$string['questionnametoolong'] = '$a 行の問題名が長過ぎます ( 最大、半角255文字 )。問題名を省略しました。';
 $string['questions'] = '問題';
 $string['quizavailable'] = '小テストは $a まで利用できます。';
 $string['quizclose'] = '小テスト終了日';
@@ -242,9 +242,6 @@ $string['shufflequestions'] = '問題を混ぜる';
 $string['significantfigures'] = '有効数字 $a 桁';
 $string['subneterror'] = '申し訳ございません、この小テストは特定の場所からのみアクセス可能です。あなたのコンピュータはこの小テストを利用できるコンピュータではありません。';
 $string['substitutedby'] = 'が次の値と置換されます:';
-$string['thischarset'] = 'EUC-JP';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Japanese';
 $string['time'] = '時間';
 $string['timecompleted'] = '完了日時';
 $string['timeleft'] = '残り時間';
@@ -254,7 +251,7 @@ $string['timesup'] = '時間終了!';
 $string['timetaken'] = '所要時間';
 $string['tolerance'] = '許容誤差';
 $string['tolerancetype'] = '許容誤差タイプ';
-$string['toomanyrandom'] = '要求されたランダム問題数は、このカテゴリに含まれている数($a)より多くなっています!';
+$string['toomanyrandom'] = '要求されたランダム問題数は、このカテゴリに含まれている数 ( $a ) より多くなっています!';
 $string['true'] = '○';
 $string['truefalse'] = '○/×問題';
 $string['type'] = 'タイプ';
@@ -267,8 +264,8 @@ $string['viewallreports'] = '$a 件の受験レポートを表示';
 $string['warningsdetected'] = '$a の警告が見つかりました。';
 $string['webct'] = 'WebCTフォーマット';
 $string['wildcard'] = 'ワイルドカード';
-$string['withsummary'] = '(統計概要を含む)';
-$string['wronggrade'] = '誤評定($a 以降):';
+$string['withsummary'] = '( 統計概要を含む )';
+$string['wronggrade'] = '誤評定 ( $a 以降 ):';
 $string['xml'] = 'Moodle XMLフォーマット';
 $string['yourfinalgradeis'] = 'あなたの最終評点は $a です。';
 

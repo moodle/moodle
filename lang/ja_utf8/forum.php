@@ -1,5 +1,5 @@
 <?php // $Id$ 
-      // forum.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
+      // forum.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004112900)
 
 
 $string['addanewdiscussion'] = 'ディスカッショントピックを追加';
@@ -13,11 +13,11 @@ $string['attachment'] = '添付ファイル';
 $string['bynameondate'] = '$a->date - $a->name の投稿';
 $string['configdisplaymode'] = '表示モードが設定されていない場合のデフォルト表示モードです。';
 $string['configenablerssfeeds'] = 'ここでは全フォーラムのRSS使用設定を行います。ここの設定をしても、各フォーラムでRSSフィードの設定を手動で行う必要があります。';
-$string['configlongpost'] = 'この文字長以上の長さ(HTMLは含まない)は長いと考えられます。';
+$string['configlongpost'] = 'この文字長以上の長さ ( HTMLは含まない ) は長いと考えられます。';
 $string['configmanydiscussions'] = 'フォーラムページに表示されるディスカッションの最大数';
 $string['configmaxbytes'] = '全てのフォーラム添付ファイルに関するデフォルトの最大サイズ(コース制限及び他のローカル設定に従います)';
 $string['configreplytouser'] = 'フォーラムの投稿がメール送信される場合、受信者がフォーラムを通さずに個人的に返信できるように、メールにユーザメールアドレスを表示した方が良いですか?　「Yes」に設定した場合でも、ユーザはプロフィール内のメールアドレスを隠すことができます。';
-$string['configshortpost'] = 'この文字長以下の長さ(HTMLは含まない)は短いと考えられます。';
+$string['configshortpost'] = 'この文字長以下の長さ ( HTMLは含まない ) は短いと考えられます。';
 $string['couldnotadd'] = 'エラーのため投稿できませんでした。';
 $string['couldnotdeleteratings'] = '申し訳ございません、評価済みのため削除できませんでした。';
 $string['couldnotdeletereplies'] = '申し訳ございません、返信済みのため削除できませんでした。';
@@ -60,7 +60,7 @@ $string['introteacher'] = '教師専用フォーラム';
 $string['lastpost'] = '最新の投稿';
 $string['learningforums'] = '学習フォーラム';
 $string['maxattachmentsize'] = '最大添付ファイルサイズ';
-$string['maxtimehaspassed'] = '申し訳ございません、この投稿($a)に対する最大編集回数を超えました!';
+$string['maxtimehaspassed'] = '申し訳ございません、この投稿 ( $a ) に対する最大編集回数を超えました!';
 $string['message'] = 'メッセージ';
 $string['modeflatnewestfirst'] = '返信を新しいものからフラット表示';
 $string['modeflatoldestfirst'] = '返信を古いものからフラット表示';
@@ -145,9 +145,6 @@ $string['subscribestart'] = 'フォーラムの投稿記事をメール送信す
 $string['subscribestop'] = 'フォーラムの投稿記事をメール送信しない';
 $string['subscription'] = 'メール通知登録';
 $string['subscriptions'] = 'メール通知登録';
-$string['thischarset'] = 'UTF-8';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Japanese';
 $string['unsubscribe'] = 'メール通知解除';
 $string['unsubscribed'] = 'メール通知を解除しました。';
 $string['unsubscribeshort'] = 'メール通知解除';
