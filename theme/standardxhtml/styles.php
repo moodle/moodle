@@ -70,6 +70,12 @@ form {
     font-size: x-small;
 }
 
+.formhelplinks
+{
+    font-size: x-small;
+    cursor: help;
+}
+
 
 .highlight {
     background-color: <?PHP echo $THEME->highlight?>;
