@@ -111,7 +111,7 @@ CREATE TABLE `prefix_workshop_grades` (
 # Table structure for table `workshop_comments`
 #
 
-CREATE TABLE `{$CFG->prefix}workshop_comments` (
+CREATE TABLE `prefix_workshop_comments` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `workshopid` int(10) unsigned NOT NULL default '0', 
   `assessmentid` int(10) unsigned NOT NULL default '0',
