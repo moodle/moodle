@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // lesson.php - created with Moodle 1.2 Beta + (2004030702)
+      // lesson.php - created with Moodle 1.2.1 (2004032500)
 
 
 $string['actionaftercorrectanswer'] = 'Azione dopo una risposta corretta';
@@ -30,10 +30,10 @@ $string['maximumnumberofanswers'] = 'Massimo numero di risposte';
 $string['maximumnumberofattempts'] = 'Massimo numero di tentativi';
 $string['modulename'] = 'Lezione';
 $string['modulenameplural'] = 'Lezioni';
-$string['morethanoneanswer'] = 'Più di una risposta';
 $string['movepagehere'] = 'Sposta la pagina qui';
 $string['moving'] = 'Spostamento pagina: $a';
 $string['movingtonextpage'] = 'Spostamento alla prossima pagina';
+$string['multianswer'] = 'Multi-risposta';
 $string['multipleanswer'] = 'Risposta multipla';
 $string['nextpage'] = 'Prossima pagina';
 $string['noanswer'] = 'Non è stata data una risposta';
@@ -52,6 +52,7 @@ $string['pleasecheckoneanswer'] = 'Prego scegli una risposta';
 $string['pleasecheckoneormoreanswers'] = 'Prego scegli una o più risposte';
 $string['pleaseenteryouranswerinthebox'] = 'Prego inserisci la risposta nel box';
 $string['pleasematchtheabovepairs'] = 'Prego assegna le seguenti coppie';
+$string['questionoption'] = 'Opzioni domanda';
 $string['questiontype'] = 'Tipo domanda';
 $string['response'] = 'Commento';
 $string['sanitycheckfailed'] = 'Controllo di correttezza fallito: Questo tentativo è stato cancellato';

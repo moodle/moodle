@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.2 Beta + (2004030702)
+      // editor.php - created with Moodle 1.2.1 (2004032500)
 
 
 $string['about'] = 'Info su questo editor';
@@ -47,7 +47,7 @@ $string['justifyleft'] = 'Sinistra';
 $string['justifyright'] = 'Destra';
 $string['layout'] = 'Schema';
 $string['left'] = 'Sinistra';
-$string['linkproperties'] = 'Prorioetà collegamento';
+$string['linkproperties'] = 'Proprietà collegamento';
 $string['linktarget'] = 'destinazione';
 $string['linktargetblank'] = 'Nuova finestra';
 $string['linktargetnone'] = 'Niente';
@@ -73,6 +73,7 @@ $string['preformatted'] = 'Preformattato';
 $string['preview'] = 'Anteprima';
 $string['properties'] = 'Proprietà';
 $string['redo'] = 'Ripeti ultima azione';
+$string['removelink'] = 'Elimina collegamento';
 $string['rename'] = 'Rinomina';
 $string['right'] = 'Destra';
 $string['rows'] = 'Righe';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.2 Beta + (2004030702)
+      // moodle.php - created with Moodle 1.2.1 (2004032500)
 
 
 $string['action'] = 'Azione';
@@ -68,6 +68,7 @@ $string['allparticipants'] = 'Tutti i partecipanti';
 $string['alphabet'] = 'A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z';
 $string['alphanumerical'] = 'Puo\' contenere solo lettere dell\'alfabeto o numeri';
 $string['alreadyconfirmed'] = 'La registrazione è già stata confermata';
+$string['always'] = 'Sempre';
 $string['answer'] = 'Risposta';
 $string['areyousuretorestorethis'] = 'Sei sicuro di voler recuperare i dati?';
 $string['areyousuretorestorethisinfo'] = 'Più avanti ti verrà chiesto di aggiungere questa copia di sicurezza a un corso esistente o di crearne uno nuovo.';
@@ -131,7 +132,9 @@ $string['configallowunenroll'] = 'Se selezioni \'Si\', gli studenti possono disi
 $string['configcachetext'] = 'Per i siti grandi o i siti che usa filtri di testo, questa impostazione può velocizzare molto le cose. Copie dei testi saranno mantenute nella loro forma elaborata per il tempo qui specificato. Impostandolo troppo breve potrebbe rallentare un po\' le cose, ma impostandolo troppo lungo potrebbe significare attendere molto tempo prima che il testo venga aggiornato (i nuovi collegamenti, per esempio)';
 $string['configcountry'] = 'Se scegli uno stato qui, questo verrà proposto di default. Per obbligare un utente a scegliere il proprio stato, lascialo vuoto.';
 $string['configdebug'] = 'Se si attiva questa opzione, Si incrementerà il livello di rapporto di errore e saranno stampati più avvertimenti. Questo è utile solo per sviluppatori.';
+$string['configdeleteunconfirmed'] = 'Se viene utilizzata l\'autenticazione via mail, questo è il periodo nel quale una risposta dell\'utente viene accettata. Dopo questo periodo, le registrazioni non confermate sono cancellate.';
 $string['configerrorlevel'] = 'Scegli il numero di messaggi di avvertimento PHP che vuoi siano mostrati. Questa <i>Normale</i> è, di solito la scelta migliore.';
+$string['configfilteruploadedfiles'] = 'Abilitando questa impostazione farà elaborare da Moodle con i filtri tutti i file HTML e di testo prima di visualizzarli.';
 $string['configforcelogin'] = 'Normalmente, la pagina principale del sito e la lista dei corsi (ma non i corsi) possono essere visualizzate senza registrarsi al sito. Se vuoi forzare le persone a registrarsi prima di poter fare QUALUNQUE COSA sul sito, allore devi abilitare questa impostazione.';
 $string['configframename'] = 'Se incorporate Moodle in un web frame, mettete il nome del frame qui. Altrimenti questo valore può rimanere a \'_top\'';
 $string['configfullnamedisplay'] = 'Questo definisce come devono essere mostrati i nomi quando devono essere visualizzati in modo completo. Per la maggior parte  dei siti mono-lingua l\'impostazione migliore è quella standard \"Nome + Cognome\", ma puoi decideredi nascondere tutti i cognomi, o lasciare che lo scelga l\'impostazione della lingua corrente (alcuni linguaggi hanno convenzioni differenti).';
@@ -170,6 +173,7 @@ $string['configuration'] = 'Configurazione';
 $string['configvariables'] = 'Configura variabili';
 $string['configwarning'] = 'Stai attento a modificare queste impostazioni - valori strani possono causare problemi.';
 $string['configzip'] = 'Indica la path del tuo programma di compressione dati (Solo per Unix). Questo è necessario per creare gli archivi compressi sul server.';
+$string['confirm'] = 'Conferma';
 $string['confirmed'] = 'La tua registrazione è stata confermata';
 $string['confirmednot'] = 'La tua registrazione non é stata ancora confermata';
 $string['continue'] = 'Continua';
@@ -415,6 +419,7 @@ $string['groupmode'] = 'Modalità gruppo';
 $string['groupmodeforce'] = 'Forza modalità gruppo';
 $string['groupmy'] = 'Mio gruppo';
 $string['groupnonmembers'] = 'Gente in nessun gruppo';
+$string['groupnotamember'] = 'Spiacente, non sei membro di quel gruppo';
 $string['grouprandomassign'] = 'Assegna casualmente tutti ai gruppi';
 $string['groupremove'] = 'Rimuovi gruppo selezionato';
 $string['groupremovemembers'] = 'Rimuovi menbri selezionati';
@@ -874,11 +879,13 @@ $string['uploadproblem'] = 'Un problema sconosciuto si è verificato salvando il 
 $string['uploadthisfile'] = 'Trasferisci questo file';
 $string['uploadusers'] = 'Trasferisci utenti';
 $string['user'] = 'Utente';
+$string['userconfirmed'] = 'Confermato da $a';
 $string['userdeleted'] = 'Questo account è stato cancellato';
 $string['userdescription'] = 'Descrizione';
 $string['userfiles'] = 'File utente';
 $string['username'] = 'Username';
 $string['usernameexists'] = 'Questo username è già esistente, scegline un altro';
+$string['usernotconfirmed'] = 'Non è possibile confermare $a';
 $string['userprofilefor'] = 'Profilo utente per $a';
 $string['users'] = 'Utenti';
 $string['usersnew'] = 'Nuovi utenti';
