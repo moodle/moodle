@@ -100,6 +100,9 @@
                 unset($searchcourses[$tmp->id]);
             }
         }
+        if (array_key_exists($course->id,$searchcourses)) {
+            unset($searchcourses[$course->id]);
+        }
         $numcourses = count($searchcourses);
     }
     
