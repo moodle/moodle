@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 unstable development (2004091100)
+      // moodle.php - created with Moodle 1.5 unstable development (2004091700)
 
 
 $string['action'] = '操作';
@@ -183,7 +183,7 @@ $string['configfullnamedisplay'] = 'ここではどのように名前が表示されるのかを設定
 $string['configgdversion'] = 'サーバにGDがインストールされている場合、そのバージョンを選択してください。初期値として表示されているバージョンは自動的に検知されたものです。分からない場合はそのままにしてください。';
 $string['confightmleditor'] = 'HTMLテキストエディタ使用を許可するか否か選択してください。「許可する」を選択した場合でも適切なブラウザ(IE5.5又はそれ以上)を使用していない場合、エディタは動作しません。';
 $string['configidnumber'] = 'このオプションでは次の内容を設定します。(a)ユーザがユーザIDの入力を求められない、(b)ユーザがユーザIDを空白にすることが出来る、又は(c)ユーザはユーザIDの入力を求められ、空白に出来ない。ユーザIDが入力されたときはプロファイルに表示される。';
-$string['configintro'] = 'このページではサーバでMoodleが最適に動くための設定値を入力出来ます。設定値を心配しないでください。通常初期値で最適に動作するように設定されています。いつでもこのページに戻って再度設定を行うことができます。';
+$string['configintro'] = 'このページではサーバでMoodleが最適に動くための設定値を入力出来ます。設定値を心配しないでください。通常初期値で最適に動作するように設定されています。いつでもこのページに戻って再度設定を行うことが出来ます。';
 $string['configintroadmin'] = 'このページではサイトの全管理を行うことの出来る最高管理者のアカウントを作成します。正しいメールアドレス及び安全なユーザ名、パスワードを設定してください。後で更に管理者の作成を行うことが出来ます。';
 $string['configintrosite'] = 'このページではこのサイトの表紙設定及びサイト名の設定を行います。ホームページの「サイトセッティング」リンクを使用することで、いつでもこれらのセッティングを変更することが出来ます。';
 $string['configlang'] = 'すべての画面に適用される言語を選択してください。利用者は後で設定を変更することが出来ます。';
@@ -744,7 +744,7 @@ $string['noteuserschangednonetocourse'] = '注意:ユーザデータをリストアする場合、
 $string['nothingnew'] = '最終ログインより更新されたものはありません。';
 $string['noticenewerbackup'] = 'このバックアップファイルは、現在インストールされているMoodle $a->serverrelease ($a->serverversion)よりも新しいバージョンMoodle $a->backuprelease ($a->backupversion) により作成されました。旧バージョンへの互換性が保障されない為、バックアップデータの矛盾を生じる恐れがあります。';
 $string['notifyloginfailuresmessage'] = 'a->time, IP: $a->ip, ユーザ: $a->info';
-$string['notifyloginfailuresmessageend'] = 'ログは、$a/course/log.php?id=1&amp;chooselog=1&amp;modid=site_errors で閲覧出来ます。';
+$string['notifyloginfailuresmessageend'] = 'ログは、$a/course/log.php?id=1&chooselog=1&modid=site_errors で閲覧出来ます。';
 $string['notifyloginfailuresmessagestart'] = '最後に通知されてから、$a におけるログイン失敗一覧です。';
 $string['notifyloginfailuressubject'] = '$a :: ログイン失敗通知';
 $string['notincluded'] = '含まない';
