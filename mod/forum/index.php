@@ -32,7 +32,7 @@
     $strunreadposts = get_string("unreadposts", "forum");
     $strrss = get_string("rss");
 
-    $searchform = forum_print_search_form($course, "", true, "plain");
+    $searchform = forum_print_search_form($course, "", true, "navbar");
 
 
     // Start of the table for General Forums

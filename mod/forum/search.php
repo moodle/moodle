@@ -34,7 +34,7 @@
     $strpage = get_string("page");
     $strmissingsearchterms = get_string('missingsearchterms','forum');
 
-    $searchform = forum_print_search_form($course, $search, true, "plain");
+    $searchform = forum_print_search_form($course, $search, true, "navbar");
 
     if (!$search) {
         print_header_simple("$strsearch", "",
