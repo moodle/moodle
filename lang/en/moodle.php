@@ -303,6 +303,7 @@ $string['name'] = "Name";
 $string['namesocial'] = "section";
 $string['nametopics'] = "topic";
 $string['nameweeks'] = "week";
+$string['new'] = "New";
 $string['newaccount'] = "New account";
 $string['newpassword'] = "New password";
 $string['newpasswordtext'] = "Hi \$a->firstname,
