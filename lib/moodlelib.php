@@ -596,7 +596,9 @@ function isstudent($courseid, $userid=0) {
         if (isguest($userid)) {
             return false;
         }
-        return record_exists('user_students', 'userid', $userid);
+        return (record_exists('user_students', 'userid', $userid)
+                  or (record_exists('user_teachers', 'userid', $userid)
+                       and !record_exists('user_teachers', 'userid', $userid, 'course', SITEID)));
     }  
 
     if (!$userid) {
