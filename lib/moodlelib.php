@@ -215,9 +215,17 @@ function print_table($table) {
         $table->width = "80%";
     }
 
+    if (!$table->cellpadding) {
+        $table->cellpadding = "5";
+    }
+
+    if (!$table->cellspacing) {
+        $table->cellspacing = "1";
+    }
+
     print_simple_box_start("CENTER", "$table->width", "#FFFFFF", 0);
     echo "<TABLE WIDTH=100% BORDER=0 valign=top align=center ";
-    echo " cellpadding=\"$cellpadding\" cellspacing=\"$cellspacing\">\n";
+    echo " cellpadding=\"$table->cellpadding\" cellspacing=\"$table->cellspacing\">\n";
 
     if ($table->head) {
         echo "<TR>";
