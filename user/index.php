@@ -68,30 +68,20 @@
     $guest = get_guest();
     $exceptions .= $guest->id;
     
-    $site = get_site();
-    if ($course->id == $site->id) { // Show all site users (even unconfirmed)
-        $students = get_users(true, '', true, $exceptions, $sort.' '.$dir, $firstinitial, $lastinitial, $page*$perpage, $perpage);
-        $totalcount = get_users(false, '', true, '', '', '', '') - 1; // -1 to not count guest user
-        if ($firstinitial or $lastinitial) {
-            $matchcount = get_users(false, '', true, '', '', $firstinitial, $lastinitial) - 1;
-        } else {
-            $matchcount = $totalcount;
-        }
+    if ($sort == "lastaccess") {
+        $dsort = "s.timeaccess";
     } else {
-        if ($sort == "lastaccess") {
-            $dsort = "s.timeaccess";
-        } else {
-            $dsort = "u.$sort";
-        }
-        $students = get_course_students($course->id, $dsort, $dir, $page*$perpage, 
-                                    $perpage, $firstinitial, $lastinitial, $currentgroup);
-        $totalcount = count_course_students($course, "", "", "", $currentgroup);
-        if ($firstinitial or $lastinitial) {
-            $matchcount = count_course_students($course, "", $firstinitial, $lastinitial, $currentgroup);
-        } else {
-            $matchcount = $totalcount;
-        }
+        $dsort = "u.$sort";
     }
+    $students = get_course_students($course->id, $dsort, $dir, $page*$perpage, 
+                                $perpage, $firstinitial, $lastinitial, $currentgroup);
+    $totalcount = count_course_students($course, "", "", "", $currentgroup);
+    if ($firstinitial or $lastinitial) {
+        $matchcount = count_course_students($course, "", $firstinitial, $lastinitial, $currentgroup);
+    } else {
+        $matchcount = $totalcount;
+    }
+
 
     echo "<h2 align=center>$totalcount $course->students</h2>";
 
