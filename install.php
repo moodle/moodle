@@ -280,7 +280,7 @@ if ($nextstage == 5) {
     $str .= "\r\n";
 
     $str .= '$CFG->dbtype    = \''.$INSTALL['dbtype']."';\r\n";
-    $str .= '$CFG->dbhost    = \''.$INSTALL['dbhost']."';\r\n";
+    $str .= '$CFG->dbhost    = \''.addslashes($INSTALL['dbhost'])."';\r\n";
     if (!empty($INSTALL['dbname'])) {
         $str .= '$CFG->dbname    = \''.$INSTALL['dbname']."';\r\n";
         $str .= '$CFG->dbuser    = \''.$INSTALL['dbuser']."';\r\n";
