@@ -26,16 +26,11 @@
         "assigncreators",
         "administration",
         "existingcreators",
-        "noexistingcreators",
         "potentialcreators",
-        "nopotentialcreators",
-        "addcreator",
-        "removecreator",
         "search",
-        "searchagain",
         "users",
-        "toomanytoshow",
-        "searchresults"
+        "searchresults",
+        "showall"
         );
 
     foreach ($stringstoload as $stringtoload){
@@ -43,105 +38,74 @@
         $$strstringtoload = get_string($stringtoload);
     }
 
-    if ($search) {
-        $searchstring = $strsearchagain;
-    } else {
-        $searchstring = $strsearch;
-    }
-
 	print_header("$site->shortname: $strassigncreators", 
                  "$site->fullname", 
                  "<a href=\"index.php\">$stradministration</a> -> <a href=\"users.php\">$strusers</a> ->
-                  $strassigncreators", "");
+                  $strassigncreators", "creatorsform.searchtext");
 
-/// Add a creator if one is specified
 
-    if (!empty($_GET['add'])) {
-        if (! add_creator($add)) {
-            error("Could not add that creator!");
-        }
-    }
-
-/// Remove a creator if one is specified.
-
-    if (!empty($_GET['remove'])) {
-        if (! remove_creator($remove)) {
-            error("Could not remove that creator!");
-        }
-    }
-
-/// Print a help notice about this page
-    if (empty($add) and empty($remove) and empty($search)) {
+    if (!$frm = data_submitted()) {
         print_simple_box("<center>".get_string("adminhelpassigncreators")."</center>", "center", "50%");
+
+/// A form was submitted so process the input
+
+    } else {
+        if (!empty($frm->add) and !empty($frm->addselect)) {
+            foreach ($frm->addselect as $addcreator) {
+                if (! add_creator($addcreator)) {
+                    error("Could not add course creator with user id $addcreator!");
+                }
+            }
+        } else if (!empty($frm->remove) and !empty($frm->removeselect)) {
+            foreach ($frm->removeselect as $removecreator) {
+                if (! remove_creator($removecreator)) {
+                    error("Could not remove course creator with user id $removecreator!");
+                }
+            }
+        } else if (!empty($frm->showall)) {
+            unset($frm->searchtext);
+            $frm->previoussearch = 0;
+        }
     }
+
+/// Is there a current search?
+    $previoussearch = (!empty($frm->search) or ($frm->previoussearch == 1)) ;
+
 
 /// Get all existing creators
-    $creators = get_creators();
-
-/// Print the lists of existing and potential creators
-    echo "<table cellpadding=2 cellspacing=10 align=center>";
-    echo "<tr><th width=50%>$strexistingcreators</th><th width=50%>$strpotentialcreators</th></tr>";
-    echo "<tr><td width=50% nowrap valign=top>";
-
-/// First, show existing creators
-
-    if (! $creators) { 
-        echo "<p align=center>$strnoexistingcreators</a>";
-
-        $creatorlist = "";
-
-    } else {
-        $creatorarray = array();
-        foreach ($creators as $creator) {
-            $creatorarray[] = $creator->id;
-            echo "<p align=right>".fullname($creator, true).", $creator->email &nbsp;&nbsp; ";
-                echo "<a href=\"creators.php?remove=$creator->id\"
-                title=\"$strremovecreator\"><img src=\"../pix/t/right.gif\"
-                border=0></a>";
-            echo "</p>";
-        }
-        $creatorlist = implode(",",$creatorarray);
-        unset($creatorarray);
+    if (! $creators = get_creators()) {
+        $creators = array();
     }
 
-    echo "<td width=50% nowrap valign=top>";
+    $creatorsarray = array();
+    foreach ($creators as $creator) {
+        $creatorsarray[] = $creator->id;
+    }
+    $creatorlist = implode(',', $creatorsarray);
 
-/// Print list of potential creators
+    unset($creatorarray);
 
-    $usercount = get_users(false, $search, true, $creatorlist);
 
-    if ($usercount == 0) {
-        echo "<p align=center>$strnopotentialcreators</p>";
-
-    } else if ($usercount > MAX_USERS_PER_PAGE) {
-        echo "<p align=center>$strtoomanytoshow ($usercount) </p>";
-
-    } else {
-
-        if ($search) {
-            echo "<p align=center>($strsearchresults : $search)</p>";
-        }
-
-        if (!$users = get_users(true, $search, true, $creatorlist)) {
-            error("Could not get users!");
-        }
-
-        foreach ($users as $user) {
-            $fullname = fullname($user, TRUE);
-            echo "<p align=left><a href=\"creators.php?add=$user->id\"".
-                   "title=\"$straddcreator\"><img src=\"../pix/t/left.gif\"".
-                   "border=0></a>&nbsp;&nbsp;$fullname, $user->email";
-        }
+/// Get search results excluding any current admins
+    if (!empty($frm->searchtext) and $previoussearch) {
+        $searchusers = get_users(true, $frm->searchtext, true, $creatorlist, 'firstname ASC, lastname ASC',
+                                      '', '', 0, 99999, 'id, firstname, lastname, email');
+        $usercount = get_users(false, '', true, $creatorlist);
     }
 
-    if ($search or $usercount > MAX_USERS_PER_PAGE) {
-        echo "<form action=creators.php method=post>";
-        echo "<input type=text name=search size=20>";
-        echo "<input type=submit value=\"$searchstring\">";
-        echo "</form>";
+/// If no search results then get potential users excluding current creators
+    if (empty($searchusers)) {
+        if (!$users = get_users(true, '', true, $creatorlist, 'firstname ASC, lastname ASC', '', '',
+                                0, 99999, 'id, firstname, lastname, email') ) {
+            $users = array();
+        }
+        $usercount = count($users);
     }
 
-    echo "</tr></table>";
+    $searchtext = (isset($frm->searchtext)) ? $frm->searchtext : "";
+    $previoussearch = ($previoussearch) ? '1' : '0';
+
+    include('./creators.html');
 
     print_footer();
 

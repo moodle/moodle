@@ -32,16 +32,11 @@
         "assignadmins",
         "administration",
         "existingadmins",
-        "noexistingadmins",
         "potentialadmins",
-        "nopotentialadmins",
-        "addadmin",
-        "removeadmin",
         "search",
-        "searchagain",
-        "toomanytoshow",
         "users",
-        "searchresults"
+        "searchresults",
+        "showall"
         );
 
     foreach ($stringstoload as $stringtoload){
@@ -49,107 +44,74 @@
         $$strstringtoload = get_string($stringtoload);
     }
 
-    if ($search) {
-        $searchstring = $strsearchagain;
-    } else {
-        $searchstring = $strsearch;
-    }
-
 	print_header("$site->shortname: $strassignadmins", 
                  "$site->fullname", 
-                 "<a href=\"index.php\">$stradministration</a> -> <a href=\"users.php\">$strusers</a> -> $strassignadmins", "");
+                 "<a href=\"index.php\">$stradministration</a> -> <a href=\"users.php\">$strusers</a> -> $strassignadmins", "adminform.searchtext");
 
-/// Add an admin if one is specified
-    if (!empty($_GET['add'])) {
-        if (! add_admin($add)) {
-            error("Could not add that admin!");
-        }
-    }
 
-/// Remove an admin if one is specified.
-    if (!empty($_GET['remove'])) {
-        if (! remove_admin($remove)) {
-            error("Could not remove that admin!");
-        }
-    }
-
-/// Print a help notice about this page
-    if (empty($add) and empty($remove) and empty($search)) {
+    if (!$frm = data_submitted()) {
         print_simple_box("<center>".get_string("adminhelpassignadmins")."</center>", "center", "50%");
+
+/// A form was submitted so process the input
+    
+    } else {
+        if (!empty($frm->add) and !empty($frm->addselect)) {
+            foreach ($frm->addselect as $addadmin) {
+                if (! add_admin($addadmin)) {
+                    error("Could not add admin with user id $addadmin!");
+                }
+            }
+        } else if (!empty($frm->remove) and !empty($frm->removeselect)) {
+            $admins = get_admins();
+            if (count($admins) > count($frm->removeselect)) {
+                foreach ($frm->removeselect as $removeadmin) {
+                    if (! remove_admin($removeadmin)) {
+                        error("Could not remove admin with user id $removeadmin!");
+                    }
+                }
+            }
+        } else if (!empty($frm->showall)) {
+            unset($frm->searchtext);
+            $frm->previoussearch = 0;
+        }
     }
+
+/// Is there a current search?
+    $previoussearch = (!empty($frm->search) or ($frm->previoussearch == 1)) ;
 
 /// Get all existing admins
     $admins = get_admins();
 
-/// Print the lists of existing and potential admins
-    echo "<table cellpadding=2 cellspacing=10 align=center>";
-    echo "<tr><th width=50%>$strexistingadmins</th><th width=50%>$strpotentialadmins</th></tr>";
-    echo "<tr><td width=50% nowrap valign=top>";
 
-/// First, show existing admins
+    $adminarray = array();
+    foreach ($admins as $admin) {
+        $adminarray[] = $admin->id;
+    }
+    $adminlist = implode(',', $adminarray);
 
-    if (! $admins) { 
-        echo "<p align=center>$strnoexistingadmins</p>";
-        $adminlist = "";
+    unset($adminarray);
 
-    } else {
-        $adminarray = array();
 
-        foreach ($admins as $admin) {
-            $adminarray[] = $admin->id;
-            echo "<p align=right>".fullname($admin, true).",
-                     $admin->email &nbsp;&nbsp; ";
-            if ($primaryadmin->id == $admin->id){
-                print_spacer(10, 9, false);
-            } else {
-                echo "<a href=\"admin.php?remove=$admin->id\"
-                title=\"$strremoveadmin\"><img src=\"../pix/t/right.gif\"
-                border=0></A>";
-            }
-            echo "</p>";
-        }
-        
-        $adminlist = implode(",",$adminarray);
-        unset($adminarray);
+/// Get search results excluding any current admins
+    if (!empty($frm->searchtext) and $previoussearch) {
+        $searchusers = get_users(true, $frm->searchtext, true, $adminlist, 'firstname ASC, lastname ASC',
+                                      '', '', 0, 99999, 'id, firstname, lastname, email');
+        $usercount = get_users(false, '', true, $adminlist);
     }
 
-    echo "<td width=50% nowrap valign=top>";
-
-/// Print list of potential admins
-
-    $usercount = get_users(false, $search, true, $adminlist);
-
-    if ($usercount == 0) { 
-        echo "<p align=center>$strnopotentialadmins</p>";
-
-    } else if ($usercount > MAX_USERS_PER_PAGE) { 
-        echo "<p align=center>$strtoomanytoshow ($usercount) </p>";
-
-    } else {
-
-        if ($search) {
-            echo "<p align=center>($strsearchresults : $search)</p>";
+/// If no search results then get potential users excluding current admins
+    if (empty($searchusers)) {
+        if (!$users = get_users(true, '', true, $adminlist, 'firstname ASC, lastname ASC', '', '',
+                                0, 99999, 'id, firstname, lastname, email') ) {
+            $users = array();
         }
-         
-        if (!$users = get_users(true, $search, true, $adminlist)) {
-            error("Could not get users!");
-        }
-
-        foreach ($users as $user) {
-            echo "<p align=left><a href=\"admin.php?add=$user->id\"".
-                   "title=\"$straddadmin\"><img src=\"../pix/t/left.gif\"".
-                   "border=0></a>&nbsp;&nbsp;".fullname($user).", $user->email";
-        }
+        $usercount = count($users);
     }
 
-    if ($search or $usercount > MAX_USERS_PER_PAGE) {
-        echo "<form action=admin.php method=post>";
-        echo "<input type=text name=search size=20>";
-        echo "<input type=submit value=\"$searchstring\">";
-        echo "</form>";
-    }
+    $searchtext = (isset($frm->searchtext)) ? $frm->searchtext : "";
+    $previoussearch = ($previoussearch) ? '1' : '0';
 
-    echo "</tr></table>";
+    include('./admin.html');
 
     print_footer();
 

@@ -1,0 +1,80 @@
+
+<form name="creatorsform" id="creatorsform" method="post" action="creators.php">
+<input type="hidden" name="previoussearch" value="<?php echo $previoussearch ?>">
+  <table align="center" border="0" cellpadding="5" cellspacing="0">
+    <tr>
+      <td valign="top">
+          <?php echo count($creators) . " ". $strexistingcreators ?>
+      </td>
+      <td></td>
+      <td valign="top">
+          <?php echo $usercount . " " . $strpotentialcreators ?>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top">
+          <select name="removeselect[]" size="20" id="removeselect" multiple
+                  onFocus="document.creatorsform.add.disabled=true;
+                           document.creatorsform.remove.disabled=false;
+                           document.creatorsform.addselect.selectedIndex=-1;">
+          <?php 
+              foreach ($creators as $creator) {
+                  $fullname = fullname($creator, true);
+                  echo "<option value=\"$creator->id\">".$fullname.", ".$creator->email."</option>\n";
+              }
+          ?>
+          
+          </select></td>
+      <td valign="top">
+        <br />
+        <input name="add" type="submit" id="add" value="&larr;" />
+        <br />
+        <input name="remove" type="submit" id="remove" value="&rarr;" />
+        <br />
+      </td>
+      <td valign="top">
+          <select name="addselect[]" size="20" id="addselect" multiple
+                  onFocus="document.creatorsform.add.disabled=false;
+                           document.creatorsform.remove.disabled=true;
+                           document.creatorsform.removeselect.selectedIndex=-1;">
+          <?php
+              if (!empty($searchusers)) {
+                  echo "<optgroup label=\"$strsearchresults (" . count($searchusers) . ")\">\n";
+                  foreach ($searchusers as $user) {
+                      $fullname = fullname($user, true);
+                      echo "<option value=\"$user->id\">".$fullname.", ".$user->email."</option>\n";
+                  }
+                  echo "</optgroup>\n";
+              }
+              foreach ($users as $user) {
+                  $fullname = fullname($user, true);
+                  echo "<option value=\"$user->id\">".$fullname.", ".$user->email."</option>\n";
+              }
+          ?>
+         </select>
+         <br />
+         <script>
+            function
+         </script>
+         <input type="text" name="searchtext" size="30" value="<?php echo $searchtext ?>" 
+                  onFocus ="document.creatorsform.add.disabled=true;
+                            document.creatorsform.remove.disabled=true;
+                            document.creatorsform.removeselect.selectedIndex=-1;
+                            document.creatorsform.addselect.selectedIndex=-1;"
+                  onkeydown = "var keyCode = event.which ? event.which : event.keyCode;
+                               if (keyCode == 13) {
+                                    document.creatorsform.previoussearch.value=1;
+                                    document.creatorsform.submit();
+                               } " />
+         <input name="search" id="search" type="submit" value="<?php p($strsearch) ?>"/>
+         <?php
+              if (!empty($searchusers)) {
+                  echo '<input name="showall" id="showall" type="submit" value="'.$strshowall.'" />'."\n";
+              }
+         ?>
+       </td>
+    </tr>
+  </table>
+</form>
+
+
