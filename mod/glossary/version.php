@@ -6,7 +6,7 @@
 /////////////////////////////////////////////////////////////////////////////////
 
 $module->version  = 2004111200;
-$module->requires = 2004091700;  // Requires this Moodle version
+$module->requires = 2004112300;  // Requires this Moodle version
 $module->cron     = 0;           // Period for cron to check this module (secs)
 
 $release = "1.5 development";   // User-friendly version number
