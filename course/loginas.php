@@ -1,7 +1,7 @@
 <?PHP // $Id$
 
-	require("../config.php");
-	require("lib.php");
+    require("../config.php");
+    require("lib.php");
 
     require_variable($id);     // course id
     require_variable($user);   // login as this user
@@ -10,14 +10,14 @@
         error("Course ID was incorrect");
     }
 
-	require_login($course->id);
+    require_login($course->id);
 
     if (!isteacher($course->id)) {
         error("Only teachers can use this page!");
     }
 
     if (!isstudent($course->id, $user)) {
-        error("This student is not in your course!");
+        error("This student is not in this course!");
     }
 
     // Login as this student and return to course home page.
