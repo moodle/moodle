@@ -199,7 +199,7 @@ class block_base {
     function _print_block() {
         // Wrap the title in a floating DIV, in case we have edit controls to display
         // These controls will always be wrapped on a right-floating DIV
-        $title = '<div style="float: left;">'.$this->title.'</div>';
+        $title = '<div class="title">'.$this->title.'</div>';
         if ($this->edit_controls !== NULL) {
             $title .= $this->edit_controls;
         }
@@ -230,7 +230,7 @@ class block_base {
      * block is in place, even if empty.
      */
     function _print_shadow() {
-        $title = '<div style="float: left;">'.$this->title.'</div>';
+        $title = '<div class="title">'.$this->title.'</div>';
         if ($this->edit_controls !== NULL) {
             $title .= $this->edit_controls;
         }
@@ -272,31 +272,31 @@ class block_base {
         $page   = page_create_object($this->instance->pagetype, $this->instance->pageid);
         $script = $page->url_get_full(array('instanceid' => $this->instance->id, 'sesskey' => $USER->sesskey));
      
-        $movebuttons .= '<a style="margin-right: 6px;" title="'. $title .'" href="'.$script.'&amp;blockaction=toggle">' .
+        $movebuttons .= '<a class="icon hide" title="'. $title .'" href="'.$script.'&amp;blockaction=toggle">' .
                         '<img src="'. $CFG->pixpath.$icon .'" alt="'.$title.'" /></a>';
 
         if ($options & BLOCK_CONFIGURE) {
-            $movebuttons .= '<a style="margin-right: 6px;" title="'. $this->str->configure .'" href="'.$script.'&amp;blockaction=config">' .
+            $movebuttons .= '<a class="icon edit" title="'. $this->str->configure .'" href="'.$script.'&amp;blockaction=config">' .
                             '<img src="'. $CFG->pixpath .'/t/edit.gif" alt="'. $this->str->configure .'" /></a>';
         }
 
-        $movebuttons .= '<a title="'. $this->str->delete .'" href="'.$script.'&amp;blockaction=delete">' .
-                        '<img src="'. $CFG->pixpath .'/t/delete.gif" alt="'. $this->str->delete .'" /></a> ';
+        $movebuttons .= '<a class="icon delete" title="'. $this->str->delete .'" href="'.$script.'&amp;blockaction=delete">' .
+                        '<img src="'. $CFG->pixpath .'/t/delete.gif" alt="'. $this->str->delete .'" /></a>';
 
         if ($options & BLOCK_MOVE_LEFT) {
-            $movebuttons .= '<a title="'. $this->str->moveleft .'" href="'.$script.'&amp;blockaction=moveleft">' .
+            $movebuttons .= '<a class="icon left" title="'. $this->str->moveleft .'" href="'.$script.'&amp;blockaction=moveleft">' .
                             '<img src="'. $CFG->pixpath .'/t/left.gif" alt="'. $this->str->moveleft .'" /></a>';
         }
         if ($options & BLOCK_MOVE_UP) {
-            $movebuttons .= '<a title="'. $this->str->moveup .'" href="'.$script.'&amp;blockaction=moveup">' .
+            $movebuttons .= '<a class="icon up" title="'. $this->str->moveup .'" href="'.$script.'&amp;blockaction=moveup">' .
                             '<img src="'. $CFG->pixpath .'/t/up.gif" alt="'. $this->str->moveup .'" /></a>';
         }
         if ($options & BLOCK_MOVE_DOWN) {
-            $movebuttons .= '<a title="'. $this->str->movedown .'" href="'.$script.'&amp;blockaction=movedown">' .
+            $movebuttons .= '<a class="icon down" title="'. $this->str->movedown .'" href="'.$script.'&amp;blockaction=movedown">' .
                             '<img src="'. $CFG->pixpath .'/t/down.gif" alt="'. $this->str->movedown .'" /></a>';
         }
         if ($options & BLOCK_MOVE_RIGHT) {
-            $movebuttons .= '<a title="'. $this->str->moveright .'" href="'.$script.'&amp;blockaction=moveright">' .
+            $movebuttons .= '<a class="icon right" title="'. $this->str->moveright .'" href="'.$script.'&amp;blockaction=moveright">' .
                             '<img src="'. $CFG->pixpath .'/t/right.gif" alt="'. $this->str->moveright .'" /></a>';
         }
 

@@ -829,6 +829,10 @@ table.calendar-controls .next
     margin-top: 0.3em;
 }
 
+.sideblock .heading .title {
+    float: left;
+}
+
 .sideblock .heading .commands a {
     margin: 0px 2px;
 }
@@ -867,6 +871,11 @@ table.calendar-controls .next
 
 .sideblock .footer {
     margin-top:4px;
+}
+
+.sideblock .heading .icon.hide,
+.sideblock .heading .icon.edit {
+    margin-right: 6px;
 }
 
 /* sideblock weblib.php */
