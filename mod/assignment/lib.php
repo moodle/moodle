@@ -411,7 +411,7 @@ function assignment_count_real_submissions($assignment, $groupid=0) {
     global $CFG;
 
     if ($groupid) {     /// How many in a particular group?
-        return count_records_sql("SELECT COUNT(*) 
+        return count_records_sql("SELECT COUNT(DISTINCT g.userid, g.groupid)
                                      FROM {$CFG->prefix}assignment_submissions a,
                                           {$CFG->prefix}groups_members g
                                     WHERE a.assignment = $assignment->id 
