@@ -12,16 +12,16 @@
   <TR>
     <TD WIDTH="<?=$leftwidth?>" VALIGN="TOP"> 
       <? 
-      $moddata[]="<A TITLE=\"".get_string("listofallpeople")."\" HREF=\"../user/index.php?id=$course->id\">".get_string("participants")."</A>";
-      $modicon[]="<IMG SRC=\"../user/users.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";
-      $editmyprofile = "<A TITLE=\"$USER->firstname $USER->lastname\" HREF=\"../user/edit.php?id=$USER->id&course=$course->id\">".
+      $moddata[]="<a title=\"".get_string("listofallpeople")."\" href=\"../user/index.php?id=$course->id\">".get_string("participants")."</a>";
+      $modicon[]="<img src=\"$pixpath/i/users.gif\" height=16 width=16 alt=\"\">";
+      $editmyprofile = "<a title=\"$USER->firstname $USER->lastname\" href=\"../user/edit.php?id=$USER->id&course=$course->id\">".
                         get_string("editmyprofile")."</A>";
       if ($USER->description) {
           $moddata[]= $editmyprofile;
       } else {
-          $moddata[]= $editmyprofile." <BLINK>*</BLINK>";
+          $moddata[]= $editmyprofile." <blink>*</blink>";
       }
-      $modicon[]="<IMG SRC=\"../user/user.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";
+      $modicon[]="<img src=\"$pixpath/i/user.gif\" height=16 width=16 alt=\"\">";
       print_side_block(get_string("people"), "", $moddata, $modicon, "", $leftwidth);
 
       
