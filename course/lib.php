@@ -713,7 +713,7 @@ function print_admin_links ($siteid, $width=180) {
 		$modicon[]="";
     }
     if (iscreator()) {
-	    $moddata[]="<a href=\"$CFG->wwwroot/course/index.php\">".get_string("coursemanagement")."</a>";
+	    $moddata[]="<a href=\"$CFG->wwwroot/course/index.php?edit=on\">".get_string("coursemanagement")."</a>";
 		$modicon[]=$icon;
 	    $moddata[]="<a href=\"$CFG->wwwroot/course/edit.php\">".get_string("addnewcourse")."</a>";
 		$modicon[]=$icon;

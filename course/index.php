@@ -224,7 +224,7 @@
     print_simple_box_start("center");
     echo "<center>";
     echo "<form name=\"addform\" action=\"index.php\" method=\"post\">";
-    echo "<input type=\"text\" size=55 name=\"addcategory\">";
+    echo "<input type=\"text\" size=30 name=\"addcategory\">";
     echo "<input type=\"submit\" value=\"$straddnewcategory\">";
     echo "</form>";
     echo "</center>";
