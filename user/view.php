@@ -123,6 +123,12 @@
 
 //  Print other functions
     echo "<CENTER><TABLE ALIGN=CENTER><TR>";
+    if ($user->id == $USER->id) {
+        echo "<TD NOWRAP><P><FORM ACTION=\"$CFG->wwwroot/login/change_password.php\" METHOD=GET>";
+        echo "<INPUT type=hidden name=id value=\"$course->id\">";
+        echo "<INPUT type=submit value=\"".get_string("changepassword")."\">";
+        echo "</FORM></P></TD>";
+    }
     if ((isstudent($course->id) and ($user->id == $USER->id)) or 
         (isteacher($course->id) and isstudent($course->id, $user->id)) ) {
         echo "<TD NOWRAP><P><FORM ACTION=\"../course/unenrol.php\" METHOD=GET>";
