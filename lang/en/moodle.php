@@ -364,8 +364,9 @@ $string['enrolmentkeyfrom'] = 'This course requires an \'enrolment key\' - a one
 password that you should have received from $a';
 $string['enrolmentkeyhint'] = 'That enrolment key was incorrect, please try again<BR>
 (Here\'s a hint - it starts with \'$a\')';
-$string['enrolments'] = 'Enrolments';
+$string['enrolmentnew'] = 'New enrolment in $a';
 $string['enrolmentnointernal'] = 'Manual enrolments are currently not enabled';
+$string['enrolments'] = 'Enrolments';
 $string['entercourse'] = 'Click to enter this course';
 $string['enteremailaddress'] = 'Enter in your email address to reset your 
    password and have the new password sent to you via email.';
@@ -765,6 +766,7 @@ $string['rename'] = 'Rename';
 $string['renamefileto'] = 'Rename <b>$a</b> to';
 $string['required'] = 'Required';
 $string['requireskey'] = 'This course requires an enrolment key';
+$string['requirespayment'] = 'This course requires payment for access';
 $string['resortcoursesbyname'] = 'Re-sort courses by name';
 $string['resources'] = 'Resources';
 $string['restore'] = 'Restore';
