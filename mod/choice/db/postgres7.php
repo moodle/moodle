@@ -41,41 +41,40 @@ function choice_upgrade($oldversion) {
         modify_database('','CREATE INDEX prefix_choice_answers_choice_idx ON prefix_choice_answers (choice);');
         modify_database('','CREATE INDEX prefix_choice_answers_userid_idx ON prefix_choice_answers (userid);');
     }
-    if ($oldversion < 2005033000){ 
-        execute_sql("ALTER TABLE {$CFG->prefix}choice_answers RENAME TO {$CFG->prefix}choice_responses;");
-        execute_sql("CREATE TABLE {$CFG->prefix}choice_answers (id SERIAL PRIMARY KEY, choice integer NOT NULL default '0', answer TEXT, timemodified integer NOT NULL default '0');");
-        execute_sql("CREATE INDEX {$CFG->prefix}choice_answers_choice_idx ON {$CFG->prefix}choice_answers (choice);");
-        table_column('choice','','display','integer','10','unsigned','0','not null');
-        table_column('choice_responses','answer','answerid','integer','10','unsigned','0','not null');
-        
-        //move old answers into new answer table.
-        $records = get_records('choice');
-        if (!empty($records)) {
-            foreach ($records as $thischoice) {
-                for ($i = 1; $i < 5; $i++) {                
-                    $instance = new stdClass;
-                    $instance->choice = $thischoice->id;
-                    $instance->answerid = $thischoice->{'answer'.$i};
-                    $instance->timemodified = $thischoice->timemodified;
-                    $result = insert_record('choice_answers', $instance);
-                    //now fix all responses to the answers.
-                    execute_sql("UPDATE {$CFG->prefix}choice_responses SET answerid={$result} WHERE choice={$thischoice->id} AND answerid={$i}");                                                            
-                }
-            }
-        }
+   // if ($oldversion < 2005033000){ 
+   //     execute_sql("ALTER TABLE {$CFG->prefix}choice_answers RENAME TO {$CFG->prefix}choice_responses;");
+   //     execute_sql("CREATE TABLE {$CFG->prefix}choice_answers (id SERIAL PRIMARY KEY, choice integer NOT NULL default '0', answer TEXT, timemodified integer NOT NULL default '0');");
+   //     execute_sql("CREATE INDEX {$CFG->prefix}choice_answers_choice_idx ON {$CFG->prefix}choice_answers (choice);");
+   //     table_column('choice','','display','integer','10','unsigned','0','not null');
+   //     table_column('choice_responses','answer','answerid','integer','10','unsigned','0','not null');
+   //     
+   //     //move old answers into new answer table.
+   //     $records = get_records('choice');
+   //     if (!empty($records)) {
+   //        foreach ($records as $thischoice) {
+   //             for ($i = 1; $i < 5; $i++) {                
+   //                 $instance = new stdClass;
+   //                $instance->choice = $thischoice->id;
+   //                 $instance->answerid = $thischoice->{'answer'.$i};
+   //                 $instance->timemodified = $thischoice->timemodified;
+   //                 $result = insert_record('choice_answers', $instance);
+   //                 //now fix all responses to the answers.
+   //                 execute_sql("UPDATE {$CFG->prefix}choice_responses SET answerid={$result} WHERE choice={$thischoice->id} AND answerid={$i}");                                                            
+   //             }
+   //         }
+   //     }
    
-        //drop old fields
-        modify_database('','ALTER TABLE prefix_choice DROP answer1;');
-        modify_database('','ALTER TABLE prefix_choice DROP answer2;');
-        modify_database('','ALTER TABLE prefix_choice DROP answer3;');
-        modify_database('','ALTER TABLE prefix_choice DROP answer4;');
-        modify_database('','ALTER TABLE prefix_choice DROP answer5;');
-        modify_database('','ALTER TABLE prefix_choice DROP answer6;');
+      // drop old fields
+      //  modify_database('','ALTER TABLE prefix_choice DROP answer1;');
+      //  modify_database('','ALTER TABLE prefix_choice DROP answer2;');
+      //  modify_database('','ALTER TABLE prefix_choice DROP answer3;');
+      //  modify_database('','ALTER TABLE prefix_choice DROP answer4;');
+      //  modify_database('','ALTER TABLE prefix_choice DROP answer5;');
+      //  modify_database('','ALTER TABLE prefix_choice DROP answer6;');
     
-    }
+  //  }
     return true;
 }
-
 
 ?>
 
