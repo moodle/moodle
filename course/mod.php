@@ -181,9 +181,16 @@
         error("You can't modify this course!");
     }
 
-    print_header("$course->shortname: Editing a $module->fullname", "$course->shortname: Editing a $module->fullname",
-                 "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> -> 
-                  Editing a $module->fullname", "form.name");
+    if ($course->category) {
+        print_header("$course->shortname: Editing a $module->fullname", 
+                     "$course->shortname: Editing a $module->fullname",
+                     "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> -> 
+                      Editing a $module->fullname", "form.name");
+    } else {
+        print_header("$course->shortname: Editing a $module->fullname", 
+                     "$course->shortname: Editing a $module->fullname",
+                     "Editing a $module->fullname", "form.name");
+    }
 
     $modform = "../mod/$module->name/mod.html";
 
