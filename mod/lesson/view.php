@@ -103,7 +103,7 @@
     } else {
         $pixpath = $path .'/../theme/'. $CFG->theme .'/pix';
     }
-                
+	                
     /************** navigation **************************************/
     if ($action == 'navigation') {
         //CDC Chris Berri added this echo call for left menu.  must match that in lesson.php for styles
@@ -131,7 +131,7 @@
         }
 
         /// CDC-FLAG /// password protected lesson code
-        if ($lesson->usepassword) {
+        if ($lesson->usepassword && !isteacher($course->id)) {
             $correctpass = false;
             if (isset($_POST['userpassword'])) {
                 if ($lesson->password == md5(trim($_POST['userpassword']))) {
@@ -208,8 +208,13 @@
                 $retries = 0;
             }
             if ($retries) {
-                print_heading(get_string('attempt', 'lesson', $retries + 1));
+					print_heading(get_string('attempt', 'lesson', $retries + 1));
             }
+			
+			if (isset($USER->modattempts[$lesson->id])) { 
+				unset($USER->modattempts[$lesson->id]);  // if no pageid, then student is NOT reviewing
+			}
+			
             // if there are any questions have been answered correctly in this attempt
             if ($attempts = get_records_select('lesson_attempts', 
                         "lessonid = $lesson->id AND userid = $USER->id AND retry = $retries AND 
@@ -248,7 +253,8 @@
                             print_simple_box('<p align="center">'. get_string('leftduringtimed', 'lesson') .'</p>', 'center');
                             echo '<p align="center"><input type="button" value="'. get_string('continue', 'lesson').
                                 "\" onclick=\"document.queryform.pageid.value='$firstpageid';document.queryform.startlastseen.value='no';document.queryform.submit();\"></p>\n";  /// CDC-FLAG added document.queryform.startlastseen.value='yes'
-                            echo '</form>' . "\n"; echo '</div></div>';///CDC Chris Berri added close div tag
+                            echo '</form>' . "\n"; 
+							echo '</div></div>';///CDC Chris Berri added close div tag
                         } else {
                             print_simple_box_start('center');
                             echo '<div align="center">';
@@ -271,9 +277,10 @@
                         echo "</form>\n"; echo "</div></div>";///CDC Chris Berri added close div tag
                     }
                     print_footer($course);
-                    exit();
+					exit();
                 }
             }
+			
             if ($grades) {
                 foreach ($grades as $grade) {
                     $bestgrade = $grade->grade;
@@ -296,9 +303,9 @@
                 }
             }
             // start at the first page
-            if (!$pageid = get_field('lesson_pages', 'id', 'lessonid', $lesson->id, 'prevpageid', 0)) {
-                error('Navigation: first page not found');
-            }
+			if (!$pageid = get_field('lesson_pages', 'id', 'lessonid', $lesson->id, 'prevpageid', 0)) {
+					error('Navigation: first page not found');
+			}
             /// CDC-FLAG /// -- This is the code for starting a timed test
             if($lesson->timed && !isset($USER->startlesson[$lesson->id])) {
                 unset($startlesson);
@@ -382,7 +389,10 @@
                     }
                     if ((($timer->starttime + $lesson->maxtime * 60) - time()) > 0) {
                         // code for the clock
-                        echo "<table align=\"right\"><tr><td>";
+						print_simple_box_start("right", "150px", "#ffffff", 0);
+                        echo "<table border=\"0\" valign=\"top\" align=\"center\" class=\"generaltable\" width=\"100%\" cellspacing=\"0\">".
+							"<tr><th valign=\"top\" class=\"generaltableheader\">".get_string("timeremaining", "lesson").
+							"</th></tr><tr><td align=\"center\" class=\"generaltablecell\">";
                         echo "<script language=\"javascript\">\n";
                             echo "var starttime = ". $timer->starttime . ";\n";
                             echo "var servertime = ". time() . ";\n";
@@ -390,14 +400,16 @@
                             echo "document.write('<SCRIPT LANGUAGE=\"JavaScript\" SRC=\"timer.js\"><\/SCRIPT>');\n";
                             echo "window.onload = function () { show_clock(); }\n";
                         echo "</script>\n";
-                        echo "</td></tr></table><br><br>";
+                        echo "</td></tr></table>";
+						print_simple_box_end();
+						echo "<br /><br /><br /><br />";
                     } else {
                         redirect("view.php?id=$cm->id&action=navigation&pageid=".LESSON_EOL."&outoftime=normal", get_string("outoftime", "lesson"));
                     }
                     // update clock when viewing a new page... no special treatment
                     if ((($timer->starttime + $lesson->maxtime * 60) - time()) < 60) {
-                        echo "<div align=\"center\"><table><tr><td align=\"center\">".get_string('studentoneminwarning', 'lesson').
-                             '</td></tr></table></div>';
+                        echo "<table align=\"center\"><tr><td align=\"center\">".get_string('studentoneminwarning', 'lesson').
+                             '</td></tr></table>';
                     }	
                                     
                     unset($newtime);
@@ -413,10 +425,9 @@
                             'prevpageid', 0)) {
                         error('Navigation: first page not found');
                     }
-                    if ($pageid == $firstpageid) {
+                    if ($pageid == $firstpageid && !isset($USER->modattempts[$lesson->id])) {
                         print_simple_box(get_string('maxtimewarning', 'lesson', $lesson->maxtime), 'center');
                     }
-
                 }
             }
             /// CDC-FLAG ///
@@ -425,15 +436,15 @@
             if (!$page = get_record('lesson_pages', 'id', $pageid)) {
                 error('Navigation: the page record not found');
             }
-            /// CDC-FLAG 6/21/04 /// - this only gets called when a user starts up a new lesson and the first page is a cluster page
-            if ($page->qtype == LESSON_CLUSTER) {
+            /// CDC-FLAG 6/21/04 ///
+            if ($page->qtype == LESSON_CLUSTER) {  //this only gets called when a user starts up a new lesson and the first page is a cluster page
                 if (!isteacher($course->id)) {
-                    // get new id
-                    $pageid = lesson_cluster_jump($lesson->id, $USER->id, $pageid);
-                    // get new page info
-                    if (!$page = get_record('lesson_pages', 'id', $pageid)) {
-                        error('Navigation: the page record not found');
-                    }
+					// get new id
+					$pageid = lesson_cluster_jump($lesson->id, $USER->id, $pageid);
+					// get new page info
+					if (!$page = get_record('lesson_pages', 'id', $pageid)) {
+						error('Navigation: the page record not found');
+					}
                 } else {
                     // get the next page
                     $pageid = $page->nextpageid;
@@ -489,7 +500,11 @@
                 if (isteacher($course->id)) {
                     echo "<div align=\"center\">".get_string('teacherongoingwarning', 'lesson').'<br /></div>';
                 } else {
-                    lesson_calculate_ongoing_score($lesson, $USER);
+					$ntries = count_records("lesson_grades", "lessonid", $lesson->id, "userid", $USER->id);
+					if (isset($USER->modattempts[$lesson->id])) {
+						$ntries--;
+					}
+					lesson_calculate_ongoing_score($lesson, $USER->id, $ntries);                
                 }
             }
             /// CDC-FLAG ///
@@ -552,6 +567,18 @@
             }
             /// CDC-FLAG ///
             echo "<br />\n";
+			
+			// this is for modattempts option.  Find the users previous answer to this page,
+			//   and then display it below in answer processing
+			if (isset($USER->modattempts[$lesson->id])) {            
+				$retries = count_records('lesson_grades', "lessonid", $lesson->id, "userid", $USER->id);
+				$retries--;
+				if (! $attempts = get_records_select("lesson_attempts", "lessonid = $lesson->id AND userid = $USER->id AND pageid = $page->id AND retry = $retries", "timeseen")) {
+					error("Previous attempt record could not be found!");
+				}
+				$attempt = end($attempts);
+			}
+			
             // get the answers in a set order, the id order
             if ($answers = get_records("lesson_answers", "pageid", $page->id, "id")) {
                 echo "<form name=\"answerform\" method =\"post\" action=\"lesson.php\">";
@@ -567,8 +594,13 @@
                 switch ($page->qtype) {
                     case LESSON_SHORTANSWER :
                     case LESSON_NUMERICAL :
+						if (isset($USER->modattempts[$lesson->id])) {     
+							$value = "value=\"$attempt->useranswer\"";
+						} else {
+							$value = "";
+						}       
                         echo "<tr><td align=\"center\">".get_string("youranswer", "lesson").
-                            ": <label for=\"answer\" class=\"hidden-label\">Answer</label><input type=\"text\" id=\"answer\" name=\"answer\" size=\"50\" maxlength=\"200\">\n"; //CDC hidden label added.
+                            ": <label for=\"answer\" class=\"hidden-label\">Answer</label><input type=\"text\" id=\"answer\" name=\"answer\" size=\"50\" maxlength=\"200\" $value>\n"; //CDC hidden label added.
                         echo '</table>';
                         print_simple_box_end();
                         if (!$lesson->slideshow) {
@@ -580,7 +612,12 @@
                         shuffle($answers);
                         foreach ($answers as $answer) {
                             echo "<tr><td valign=\"top\">";
-                            echo "<label for=\"answerid\" class=\"hidden-label\">Answer ID</label><input type=\"radio\" id=\"answerid\" name=\"answerid\" value=\"{$answer->id}\">"; //CDC hidden label added.
+							if (isset($USER->modattempts[$lesson->id]) && $answer->id == $attempt->answerid) {
+								$checked = "CHECKED";
+							} else {
+								$checked = "";
+							} 
+                            echo "<label for=\"answerid\" class=\"hidden-label\">Answer ID</label><input type=\"radio\" id=\"answerid\" name=\"answerid\" value=\"{$answer->id}\" $checked>"; //CDC hidden label added.
                             echo "</td><td>";
                             $options->para = false; // no <p></p>
                             echo format_text(trim($answer->answer), FORMAT_MOODLE, $options);
@@ -602,11 +639,25 @@
                         foreach ($answers as $answer) {
                             echo "<tr><td valign=\"top\">";
                             if ($page->qoption) {
+								$checked = "";
+								if (isset($USER->modattempts[$lesson->id])) {
+									$answerids = explode(",", $attempt->useranswer);
+									if (in_array($answer->id, $answerids)) {
+										$checked = "CHECKED";
+									} else {
+										$checked = "";
+									}
+								}
                                 // more than one answer allowed 
-                                echo "<label for=\"answer[$i]\" class=\"hidden-label\">answer[$i]</label><input type=\"checkbox\" id=\"answer[$i]\" name=\"answer[$i]\" value=\"{$answer->id}\">"; //CDC hidden label added.
+                                echo "<label for=\"answer[$i]\" class=\"hidden-label\">answer[$i]</label><input type=\"checkbox\" id=\"answer[$i]\" name=\"answer[$i]\" value=\"{$answer->id}\" $checked>"; //CDC hidden label added.
                             } else {
+								if (isset($USER->modattempts[$lesson->id]) && $answer->id == $attempt->answerid) {
+									$checked = "CHECKED";
+								} else {
+									$checked = "";
+								} 
                                 // only one answer allowed
-                                echo "<label for=\"answerid\" class=\"hidden-label\">answer id</label><input type=\"radio\" id=\"answerid\" name=\"answerid\" value=\"{$answer->id}\">"; //CDC hidden label added.
+                                echo "<label for=\"answerid\" class=\"hidden-label\">answer id</label><input type=\"radio\" id=\"answerid\" name=\"answerid\" value=\"{$answer->id}\" $checked>"; //CDC hidden label added.
                             }
                             echo "</td><td>";
                             $options->para = false; // no <p></p>
@@ -643,16 +694,32 @@
                             }
                         }
                         shuffle($responses);
+                        $responses = array_unique($responses);
+						
+                        if (isset($USER->modattempts[$lesson->id])) {
+							$useranswers = explode(",", $attempt->useranswer);
+							$t = 0;
+						}
                         foreach ($answers as $answer) {
                             if ($answer->response != NULL) {
                                 echo "<tr><td align=\"right\">";
                                 echo "<b>$answer->answer: </b></td><td valign=\"bottom\">";
                                 echo "<label for=\"response[$answer->id]\" class=\"hidden-label\">response[$answer->id]</label><select id=\"response[$answer->id]\" name=\"response[$answer->id]\">"; //CDC hidden label added.
-                                echo "<option value=\"0\" selected=\"selected\">Choose...</option>";
-                                $responses = array_unique($responses);
-                                foreach ($responses as $response) {
-                                    echo "<option value=\"$response\">$response</option>";
-                                }
+                                if (isset($USER->modattempts[$lesson->id])) {
+									$selected = trim($answers[$useranswers[$t]]->response);									
+									echo "<option value=\"$selected\" selected=\"selected\">$selected</option>";
+									foreach ($responses as $response) {
+										if (trim($answers[$useranswers[$t]]->response) != $response) {
+											echo "<option value=\"$response\">$response</option>";
+										}
+									}
+									$t++;
+								} else {
+									echo "<option value=\"0\" selected=\"selected\">Choose...</option>";
+									foreach ($responses as $response) {
+										echo "<option value=\"$response\">$response</option>";
+									}
+								}
                                 echo "</select>";
                                 echo "</td></tr>";
                                 if ($answer != end($answers)) {
@@ -688,8 +755,14 @@
                         print_simple_box_end();
                         break;
                     case LESSON_ESSAY :
+                        if (isset($USER->modattempts[$lesson->id])) {
+							$essayinfo = unserialize($attempt->useranswer);
+							$value = $essayinfo->answer;
+						} else {
+							$value = "";
+						}
                         echo "<tr><td align=\"center\" valign=\"top\" nowrap>".get_string("youranswer", "lesson").":</td><td>".
-                             "<label for=\"answer\" class=\"hidden-label\">Answer</label><textarea id=\"answer\" name=\"answer\" rows=\"15\" cols=\"60\"></textarea>\n"; //CDC hidden label added.
+                             "<label for=\"answer\" class=\"hidden-label\">Answer</label><textarea id=\"answer\" name=\"answer\" rows=\"15\" cols=\"60\">$value</textarea>\n"; //CDC hidden label added.
                         echo "</td></tr></table>";
                         print_simple_box_end();
                         if (!$lesson->slideshow) {
@@ -761,7 +834,7 @@
         } else {
             // end of lesson reached work out grade
             /// CDC-FLAG ///
-            if ($lesson->timed) {
+            if ($lesson->timed && !isteacher($course->id)) {
                 unset($USER->startlesson[$lesson->id]);  // take this variable out that I put in for timed tests
                 if (isset($_GET["outoftime"])) {
                     if ($_GET["outoftime"] == "normal") {
@@ -776,6 +849,9 @@
             print_heading(get_string("congratulations", "lesson"));
             print_simple_box_start("center");
             $ntries = count_records("lesson_grades", "lessonid", $lesson->id, "userid", $USER->id);
+			if (isset($USER->modattempts[$lesson->id])) {
+				$ntries--;  // need to look at the old attempts :)
+			}
             if (isstudent($course->id)) {
                 if ($nviewed = count_records("lesson_attempts", "lessonid", $lesson->id, "userid", 
                         $USER->id, "retry", $ntries)) {
@@ -892,9 +968,20 @@
                     $grade->grade = $thegrade;
                     $grade->completed = time();
                     if (!$lesson->practice) {
-                        if (!$newgradeid = insert_record("lesson_grades", $grade)) {
-                            error("Navigation: grade not inserted");
-                        }
+	                    if (isset($USER->modattempts[$lesson->id])) { // if reviewing, make sure update old grade record
+							if (!$grades = get_records_select("lesson_grades", "lessonid = $lesson->id and userid = $USER->id", "completed")) {
+								error("Could not find Grade Records");
+							}
+							$oldgrade = end($grades);
+							$grade->id = $oldgrade->id;
+							if (!$update = update_record("lesson_grades", $grade)) {
+								error("Navigation: grade not updated");
+							}
+						} else {
+							if (!$newgradeid = insert_record("lesson_grades", $grade)) {
+								error("Navigation: grade not inserted");
+							}
+						}
                     } else {
                         if (!delete_records("lesson_attempts", "lessonid", $lesson->id, "userid", $USER->id, "retry", $ntries)) {
                             error("Could not delete lesson attempts");
@@ -960,8 +1047,27 @@
                 echo "</div>";							
             }
             /// CDC-FLAG ///			
+			if ($lesson->modattempts && !isteacher($course->id)) {
+				// make sure if the student is reviewing, that he/she sees the same pages/page path that he/she saw the first time
+				// look at the attempt records to find the first QUESTION page that the user answered, then use that page id
+				// to pass to view again.  This is slick cause it wont call the empty($pageid) code
+				// $ntries is decremented above
+				$attempts = get_records_select("lesson_attempts", "lessonid = $lesson->id AND userid = $USER->id AND retry = $ntries", "timeseen");
+				$firstattempt = current($attempts);
+				$pageid = $firstattempt->pageid;
+				// IF the student wishes to review, need to know the last question page that the student answered.  This will help to make
+				// sure that the student can leave the lesson via pushing the continue button.
+				$lastattempt = end($attempts);
+				$USER->modattempts[$lesson->id] = $lastattempt->pageid;
+				echo "<form name=\"reviewform\" method=\"post\" action=\"view.php?id=$cm->id\">";
+				echo "<input type=\"hidden\" name=\"pageid\" value=\"$pageid\">";
+				echo "</form>";
+				echo "<p align=\"center\"><a href=\"javascript:document.reviewform.submit();\">".get_string("reviewlesson", "lesson")."</a></p>\n"; 
+			} elseif ($lesson->modattempts && isteacher($course->id)) {
+	            echo "<p align=\"center\">".get_string("modattemptsnoteacher", "lesson")."</p>";				
+			}
             echo "<p align=\"center\"><a href=\"../../course/view.php?id=$course->id\">".get_string("mainmenu", "lesson")."</a></p>\n"; //CDC Back to the menu (course view).
-            echo "<p align=\"center\"><a href=\"../../course/grade.php?id=$course->id\">".get_string("viewgrades", "lesson")."</a></p>\n"; //CDC Back to the menu (course view).
+            echo "<p align=\"center\"><a href=\"../../course/grade.php?id=$course->id\">".get_string("viewgrades", "lesson")."</a></p>\n"; //CDC view grades
         }
         /// CDC-FLAG ///
         if($lesson->slideshow) {
@@ -1002,57 +1108,59 @@
                          get_string("pleaseenteryouranswerinthebox", "lesson")."\"></p></td></tr>\n";
                     break;
                 case LESSON_BRANCHTABLE : 
-                    $nextprevious = array();
-                    $otherjumps = array();
-                    // seperate out next and previous jumps from the other jumps 
-                    foreach ($answers as $answer) {
-                        if($answer->jumpto == LESSON_NEXTPAGE || $answer->jumpto == LESSON_PREVIOUSPAGE) {
-                            $nextprevious[] = $answer;
-                        } else {
-                            $otherjumps[] = $answer;
-                        }
-                    }
-                    if ($page->layout) {
-                        echo "<tr>";
-                        // next 3 foreach loops print out the links in correct order
-                        foreach ($nextprevious as $jump) {
-                            if ($jump->jumpto == LESSON_PREVIOUSPAGE) {
-                                echo "<td align=\"left\"><input type=\"button\" onclick=\"document.answerform.jumpto.value=$jump->jumpto;document.answerform.submit();\"".
-                                     "value = \"$jump->answer\"></td>";
-                            }
-                        }
-                        echo "<td align=\"center\"><table><tr>";
-                        foreach ($otherjumps as $otherjump) {
-                                echo "<td><input type=\"button\" onclick=\"document.answerform.jumpto.value=$otherjump->jumpto;document.answerform.submit();\"".
-                                     "value = \"$otherjump->answer\"></td>";
-                        }
-                        echo "</tr></table></td>";
-                        foreach ($nextprevious as $jump) {
-                            if ($jump->jumpto == LESSON_NEXTPAGE) {
-                                echo "<td align=\"right\"><input type=\"button\" onclick=\"document.answerform.jumpto.value=$jump->jumpto;document.answerform.submit();\"".
-                                     "value = \"$jump->answer\"></td>";
-                            }
-                        }
-                        echo "</tr>";
-                    } else {
-                        // next 3 foreach loops print out the links in correct order
-                        foreach ($nextprevious as $jump) {
-                            if ($jump->jumpto == LESSON_NEXTPAGE) {
-                                echo "<tr><td><input type=\"button\" onclick=\"document.answerform.jumpto.value=$jump->jumpto;document.answerform.submit();\"".
-                                     "value = \"$jump->answer\"></td></tr>";
-                            }
-                        }
-                        foreach ($otherjumps as $otherjump) {
-                                echo "<tr><td><input type=\"button\" onclick=\"document.answerform.jumpto.value=$otherjump->jumpto;document.answerform.submit();\"".
-                                     "value = \"$otherjump->answer\"></td></tr>";
-                        }
-                        foreach ($nextprevious as $jump) {
-                            if ($jump->jumpto == LESSON_PREVIOUSPAGE) {
-                                echo "<tr><td><input type=\"button\" onclick=\"document.answerform.jumpto.value=$jump->jumpto;document.answerform.submit();\"".
-                                     "value = \"$jump->answer\"></td></tr>";
-                            }
-                        }
-                    }
+					if (!empty($answers)) {
+						$nextprevious = array();
+						$otherjumps = array();
+						// seperate out next and previous jumps from the other jumps 
+						foreach ($answers as $answer) {
+							if($answer->jumpto == LESSON_NEXTPAGE || $answer->jumpto == LESSON_PREVIOUSPAGE) {
+								$nextprevious[] = $answer;
+							} else {
+								$otherjumps[] = $answer;
+							}
+						}
+						if ($page->layout) {
+							echo "<tr>";
+							// next 3 foreach loops print out the links in correct order
+							foreach ($nextprevious as $jump) {
+								if ($jump->jumpto == LESSON_PREVIOUSPAGE) {
+									echo "<td align=\"left\"><input type=\"button\" onclick=\"document.answerform.jumpto.value=$jump->jumpto;document.answerform.submit();\"".
+										 "value = \"$jump->answer\"></td>";
+								}
+							}
+							echo "<td align=\"center\"><table><tr>";
+							foreach ($otherjumps as $otherjump) {
+									echo "<td><input type=\"button\" onclick=\"document.answerform.jumpto.value=$otherjump->jumpto;document.answerform.submit();\"".
+										 "value = \"$otherjump->answer\"></td>";
+							}
+							echo "</tr></table></td>";
+							foreach ($nextprevious as $jump) {
+								if ($jump->jumpto == LESSON_NEXTPAGE) {
+									echo "<td align=\"right\"><input type=\"button\" onclick=\"document.answerform.jumpto.value=$jump->jumpto;document.answerform.submit();\"".
+										 "value = \"$jump->answer\"></td>";
+								}
+							}
+							echo "</tr>";
+						} else {
+							// next 3 foreach loops print out the links in correct order
+							foreach ($nextprevious as $jump) {
+								if ($jump->jumpto == LESSON_NEXTPAGE) {
+									echo "<tr><td><input type=\"button\" onclick=\"document.answerform.jumpto.value=$jump->jumpto;document.answerform.submit();\"".
+										 "value = \"$jump->answer\"></td></tr>";
+								}
+							}
+							foreach ($otherjumps as $otherjump) {
+									echo "<tr><td><input type=\"button\" onclick=\"document.answerform.jumpto.value=$otherjump->jumpto;document.answerform.submit();\"".
+										 "value = \"$otherjump->answer\"></td></tr>";
+							}
+							foreach ($nextprevious as $jump) {
+								if ($jump->jumpto == LESSON_PREVIOUSPAGE) {
+									echo "<tr><td><input type=\"button\" onclick=\"document.answerform.jumpto.value=$jump->jumpto;document.answerform.submit();\"".
+										 "value = \"$jump->answer\"></td></tr>";
+								}
+							}
+						}
+					}
                     break;
             }				
             echo "</table></form>\n";
@@ -1069,7 +1177,7 @@
 
     /*******************teacher view **************************************/
     elseif ($action == 'teacherview') {
-        print_heading_with_help($lesson->name, "overview", "lesson");
+        print_heading_with_help($lesson->name, "overview", "lesson");		
         // get number of pages
         if ($page = get_record_select("lesson_pages", "lessonid = $lesson->id AND prevpageid = 0")) {
             $npages = 1;
@@ -1109,10 +1217,17 @@
             echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\" />\n";
             echo "<input type=\"hidden\" name=\"action\" value=\"navigation\" />\n";
             echo "<input type=\"hidden\" name=\"pageid\" />\n";
-            /// CDC-FLAG /// link to grade essay questions
-            if (count_records("lesson_essay", "lessonid", $lesson->id) > 0) {
-                echo "<div align=\"center\"><a href=\"view.php?id=$cm->id&amp;action=essayview\">".get_string("gradeessay", "lesson")."</a></div><br />";
-            }
+            /// CDC-FLAG /// link to grade essay questions and to report
+			if ($testattempts = get_records("lesson_attempts", "lessonid", $lesson->id)) { // just check to see if anyone has answered any questions.
+				echo "<div align=\"center\"><a href=\"report.php?id=$cm->id\">".get_string("viewlessonstats", "lesson")."</a></div>";
+			}
+			if ($essaypages = get_records_select("lesson_pages", "lessonid = $lesson->id AND qtype = ".LESSON_ESSAY)) { // get pages that are essay
+				// get only the attempts that are in response to essay questions
+				$essaypageids = implode(",", array_keys($essaypages)); // all the pageids in comma seperated list
+				if ($essayattempts = get_records_select("lesson_attempts", "lessonid = $lesson->id AND pageid IN($essaypageids)")) {
+					echo "<div align=\"center\"><a href=\"view.php?id=$cm->id&action=essayview\">".get_string("gradeessay", "lesson")."</a></div><br />";
+				}
+			}
             /// CDC-FLAG /// tree code - in final release, will use lang file for all text output.
             // NoticeFix next two lines and bowth viewAlls
             $branch = false;
@@ -1223,9 +1338,7 @@
                             break;
                         case LESSON_MATCHING :
                             echo $LESSON_QUESTION_TYPE[$page->qtype];
-                            if (!lesson_iscorrect($page->id, $answer->jumpto)) {
-                                echo " - ".get_string("firstanswershould", "lesson");
-                            }
+                            echo get_string("firstanswershould", "lesson");
                             break;
                         case LESSON_TRUEFALSE :
                         case LESSON_NUMERICAL :
@@ -1462,109 +1575,148 @@
     /*******************essay view **************************************/ // 6/29/04
     elseif ($action == 'essayview') {
         print_heading_with_help($lesson->name, "overview", "lesson");
-        if (!$essays = get_records_select("lesson_essay", "lessonid = $lesson->id", "timesubmitted")) {
-            error("No one has answered essay questions yet...");
-        }
-        if (!$pages = get_records_select("lesson_pages", "lessonid = $lesson->id")) {
+
+		// get lesson pages that are essay
+        if (!$pages = get_records_select("lesson_pages", "lessonid = $lesson->id AND qtype = ".LESSON_ESSAY)) {
             error("Error: could not find lesson pages");
         }
-        if (!$users = lesson_get_participants($lesson->id)) {
+		
+		// get all the users who have taken this lesson, order by their last name
+		if (!$users = get_records_sql("SELECT DISTINCT u.*
+                                 FROM {$CFG->prefix}user u,
+                                      {$CFG->prefix}lesson_attempts a
+                                 WHERE a.lessonid = '$lesson->id' and
+                                       u.id = a.userid
+							     ORDER BY u.lastname")) {
             error("Error: could not find users");
         }
-        
-        echo "<div align=\"center\"><a href=\"view.php?id=$cm->id\">Go Back to Lesson</a></div><br>";
-
-        foreach ($essays as $essay) {
-            $studentname = $users[$essay->userid]->lastname.", ".$users[$essay->userid]->firstname;
-            $essay->studentname = $studentname;
-            $temp[$studentname][] = $essay;
+		
+		// get only the attempts that are in response to essay questions
+		$pageids = implode(",", array_keys($pages)); // all the pageids in comma seperated list
+		if (!$essayattempts = get_records_select("lesson_attempts", "lessonid = $lesson->id AND pageid IN($pageids)")) {
+        	error ("No one has answered essay questions yet...");
+		}
+		// group all the essays by userid
+    	foreach ($essayattempts as $essay) {
+			// not very nice :) but basically
+			// this organizes the essays so I know how many times a student answered an essay per try and per page
+			$studentessays[$essay->userid][$essay->pageid][$essay->retry][] = $essay;            
         }
-        ksort($temp);
 
-        echo "<table width=\"100%\" align=\"center\" cellspacing=\"10\">";
-        echo "<tr align=\"center\" bgcolor=\"$THEME->cellheading2\"><td width=\"100px\"><b>$course->students</b></td><td><b>".get_string("essays", "lesson")."</b></td><td width=\"155px\"><b>".get_string("email", "lesson")."</b></td></tr>";
-        foreach ($temp as $student) {
-            echo "<tr><td>".$student[0]->studentname."</td><td>";
-            $end = end($student);
-            foreach ($student as $essay) {
-                if (!$essay->graded) {
-                    $style = "style='color:#DF041E;text-decoration:underline;'";
-                } elseif (!$essay->sent) {
-                    $style = "style='color:#006600;text-decoration:underline;'";
-                } else {
-                    $style = "style='color:#999999;'";
-                }
-                $output = "<a $style href=\"view.php?id=$cm->id&action=essaygrade&essayid=$essay->id\">".$pages[$essay->pageid]->title."</a>";
-                if ($essay->id != $end->id) {
-                    $output .= ", ";
-                }
-                echo $output;
+	   	print_heading("<a href=\"view.php?id=$cm->id\">".get_string("gobacktolesson", "lesson")."</a>");
+
+		$table->head = array($course->students, get_string("essays", "lesson"), get_string("email", "lesson"));
+        $table->align = array("left", "left", "left");
+        $table->wrap = array("nowrap", "wrap", "nowrap");
+        $table->width = "90%";
+        $table->size = array("*", "70%", "*");			 
+
+		// get the student ids of the students who have answered the essay question
+		$studentids = array_keys($studentessays);
+		
+		// cycle through all the ids
+        foreach ($studentids as $id) {
+            $studentname = $users[$id]->lastname.", ".$users[$id]->firstname;
+			unset($essaylinks);
+			// go through each essay
+            foreach ($studentessays[$id] as $page => $tries) {
+				// go through each essay per page
+				foreach($tries as $try) {
+					// make sure they didn't answer it more than the max number of attmepts
+					if (count($try) > $lesson->maxattempts) {
+						$essay = $try[$lesson->maxattempts-1];
+					} else {
+						$essay = end($try);
+					}
+					$essayinfo = unserialize($essay->useranswer);
+					// different colors for all the states of an essay (graded, if sent, not graded)
+					if (!$essayinfo->graded) {
+						$style = "style='color:#DF041E;text-decoration:underline;'";
+					} elseif (!$essayinfo->sent) {
+						$style = "style='color:#006600;text-decoration:underline;'";
+					} else {
+						$style = "style='color:#999999;'";
+					}
+					// link for each essay
+					$essaylinks[] = "<a $style href=\"view.php?id=$cm->id&action=essaygrade&attemptid=$essay->id\">".$pages[$essay->pageid]->title."</a>";
+				}
             }
-            echo "</td><td><a href=\"view.php?id=$cm->id&action=emailessay&userid=".$essay->userid."\">".get_string("emailgradedessays", "lesson")."</a></td></tr>";
-        }
-        echo "<td><td><td><a href=\"view.php?id=$cm->id&action=emailessay\">".get_string("emailallgradedessays", "lesson")."</a></td>";
-        echo "</table>";
+			// email link for this user
+			$emaillink = "<a href=\"view.php?id=$cm->id&action=emailessay&userid=".$id."\">".get_string("emailgradedessays", "lesson")."</a>";
 
+			$table->data[] = array($studentname, implode(", ", $essaylinks), $emaillink);        
+		}
+		// email link for all users
+		$emailalllink = "<a href=\"view.php?id=$cm->id&action=emailessay\">".get_string("emailallgradedessays", "lesson")."</a>";
+        
+		$table->data[] = array(" ", " ", $emailalllink);
+		
+		print_table($table);
     }
     
     /*******************grade essays **************************************/ // 6/29/04
     elseif ($action == 'essaygrade') {
         print_heading_with_help($lesson->name, "overview", "lesson");
-        if (!$essays = get_records_select("lesson_essay", "lessonid = $lesson->id", "timesubmitted")) {
-            error("Error: could not find essays");
+		
+		require_variable($attemptid);
+
+        if (!$essay = get_record("lesson_attempts", "id", $attemptid)) {
+            error("Error: could not find essay");
         }
-        if (!$pages = get_records_select("lesson_pages", "lessonid = $lesson->id")) {
+        if (!$page = get_record("lesson_pages", "id", $essay->pageid)) {
             error("Error: could not find lesson pages");
         }
-        if (!$users = lesson_get_participants($lesson->id)) {
+        if (!$student = get_record("user", "id", $essay->userid)) {
             error("Error: could not find users");
         }
-        if (!$answers = get_records_select("lesson_answers", "lessonid = $lesson->id")) {
-            error("Error: could not find essays");
+        if (!$answer = get_record("lesson_answers", "lessonid", $lesson->id, "pageid", $page->id)) {
+            error("Error: could not find answer");
         }
 
-        $essayid = $_GET['essayid'];
 
         echo "<form name=\"essaygrade\" method=\"post\" action=\"view.php\">\n";
         echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\">\n";
         echo "<input type=\"hidden\" name=\"action\">\n";
-        echo "<input type=\"hidden\" name=\"essayid\" value=\"$essayid\">\n";
-        echo "<input type=\"hidden\" name=\"userid\" value=\"".$essays[$essayid]->userid."\">\n";
+        echo "<input type=\"hidden\" name=\"attemptid\" value=\"$attemptid\">\n";
+	
+		// all tables will have these
+        $table->align = array("left");
+        $table->wrap = array("wrap");
+        $table->width = "70%";
+        $table->size = array("100%");			 
         
-        $style = "style=\"padding-left:40px;\"";
-        
-        
-        echo "<table cellspacing=\"10\" align=\"center\">";
-        echo "<tr><td>".get_string("question", "lesson").":</td></tr><tr><td $style>";
-        print_simple_box_start("left");
-        echo $pages[$essays[$essayid]->pageid]->contents;
-        print_simple_box_end();
-        echo "</td></tr>";
+		
+		$table->head = array(get_string("question", "lesson"));
+        $table->data[] = array(format_text($page->contents));
 
-        $studentname = $users[$essays[$essayid]->userid]->firstname." ".$users[$essays[$essayid]->userid]->lastname;
-        echo "<tr><td>".get_string("studentresponse", "lesson", $studentname).":</td></tr><tr><td $style>";
-        print_simple_box_start("left");
-        echo $essays[$essayid]->answer;
-        print_simple_box_end();
-        echo "</td></tr>";
-        echo "<tr><td>".get_string("comments", "lesson").":<br></td></tr>";
-        echo "<tr><td $style>";
-        echo "<textarea id=\"answer\" name=\"response\" align=\"center\" rows=\"10\" cols=\"50\">".$essays[$essayid]->response."</textarea>\n";	
-        echo "</td></tr>";
-        
-        echo "<tr><td>".get_string("essayscore", "lesson").": </td></tr><tr><td $style>";		
+		print_table($table);
+		echo "<br />";
+
+		unset($table->data);
+		$essayinfo = unserialize($essay->useranswer);		
+
+        $studentname = $student->firstname." ".$student->lastname;
+        $table->head = array(get_string("studentresponse", "lesson", $studentname));
+		$table->data[] = array(format_text($essayinfo->answer));
+		
+		print_table($table);
+		echo "<br />";
+		
+		unset($table->data);
+
+		$table->head = array(get_string("comments", "lesson"));
+        $table->data[] = array("<textarea id=\"answer\" name=\"response\" align=\"center\" rows=\"15\" cols=\"60\">".$essayinfo->response."</textarea>\n");	
         if ($lesson->custom) {
-            for ($i=$answers[$essays[$essayid]->answerid]->score; $i>=0; $i--) {
-                $grades[$i] = $i;
+            for ($i=$answer->score; $i>=0; $i--) {
+                $options[$i] = $i;
             }
-            lesson_choose_from_menu($grades, "score", $essays[$essayid]->score, "");
         } else {
             $options[0] = "incorrect"; $options[1] = "correct";
-            lesson_choose_from_menu($options, "score", $essays[$essayid]->score, "");
         }
-        echo "</td></tr>";		
-        echo "</table>";
-        
+		$table->data[] = array(get_string("essayscore", "lesson").": ".lesson_choose_from_menu($options, "score", $essayinfo->score, "", "", "", true));
+				
+		print_table($table);
+		echo "<br />";
         echo "<table align=\"center\"><tr><td>";
         echo "<input type=\"button\" value=\"Cancel\" onclick=\"document.essaygrade.action.value='essayview';".
              "document.essaygrade.submit();\">";
@@ -1572,113 +1724,120 @@
         echo "<input type=\"button\" value=\"Submit Grade\" onclick=\"document.essaygrade.action.value='updategrade';".
              "document.essaygrade.submit();\">";
         echo "</td></tr></table>";
-        echo "</form>";
+		echo "</form>";
+		
+		
     }
 
     /*******************update grade**************************************/ // 6/29/04
     elseif ($action == 'updategrade') {
         print_heading_with_help($lesson->name, "overview", "lesson");
         
-        $userid = $_POST['userid'];
-        
-        if (!$essays = get_records_select("lesson_essay", "lessonid = $lesson->id", "timesubmitted")) {
-            error("Error: could not find essays");
-        }
-        if (!$grades = get_records_select("lesson_grades", "lessonid = $lesson->id and userid= $userid", "completed")) {
-            error("Error: could not find grades");
-        }
-
-        echo "<div align=\"center\">";
-        echo "Please wait while updating...<br>"; 
-
         $form = data_submitted();
         
-        $update->id = $form->essayid;
-        $update->graded = true;
-        $update->score = $form->score;
-        $update->response = $form->response;
-        $update->sent = false;
-        
-        for ($i = 0; $i < $essays[$form->essayid]->try; $i++) {
-            next($grades);
+        if (!$essay = get_record("lesson_attempts", "id", $form->attemptid)) {
+            error("Error: could not find essay");
         }
-        $grade = current($grades);
-        // if teacher goes back and changes score, then need to take the old score off
-        $resetgrade = $grade->grade - ($essays[$form->essayid]->score / $lesson->grade * 100);
-        // now add the new score
-        $newgrade = ($form->score / $lesson->grade * 100) + $resetgrade;
-        if ($newgrade > 100) {
-            $newgrade = 100;
-        } elseif ($newgrade < 0) {
-            $newgrade = 0;
-        }
-        $updategrade->id = $grade->id;
-        $updategrade->grade = $newgrade;
 
-        if(update_record("lesson_essay", $update) && update_record("lesson_grades", $updategrade)) {
+        if (!$grades = get_records_select("lesson_grades", "lessonid = $lesson->id and userid = $essay->userid", "completed", "*", $essay->retry, 1)) {
+            error("Error: could not find grades");
+        }
+        
+		$essayinfo = unserialize($essay->useranswer);
+
+		$grade = current($grades);
+
+		// I modded this function a bit so it would work here...  :) ;) :P
+		$score = lesson_calculate_ongoing_score($lesson, $essay->userid, $essay->retry, true);  // this function ignores essay questions
+		$score += $form->score;
+		if ($score > $lesson->grade) {
+			$score = $lesson->grade;
+		} elseif ($score < 0) {
+			$score = 0;
+		}
+        $updategrade->grade = intval(100 * $score / $lesson->grade);
+		$updategrade->id = $grade->id;
+
+       	$essayinfo->graded = 1;
+        $essayinfo->score = $form->score;
+        $essayinfo->response = $form->response;
+		$essayinfo->sent = 0;
+		$essay->useranswer = serialize($essayinfo);
+		
+        if(update_record("lesson_attempts", $essay) && update_record("lesson_grades", $updategrade)) {
             redirect("view.php?id=$cm->id&action=essayview", get_string("updatesuccess", "lesson"));
         } else {
             echo get_string("updatefailed", "lesson")."!<br>";
             echo "<a href=\"view.php?id=$cm->id&action=essayview\">".get_string("continue", "lesson")."</a>";
             exit();
         }
-        echo "</div>";
     }
 
     /*******************email essay **************************************/ // 6/29/04
     elseif ($action == 'emailessay') {
         print_heading_with_help($lesson->name, "overview", "lesson");
-    
-        echo "<div align=\"center\">";
-        echo "Please wait while emailing...<br>"; 
-
+   
         if (isset($_GET['userid'])) {		
-            $queryadd = "and userid = ".$_GET['userid'];
+            $queryadd = " AND userid = ".$_GET['userid'];
+			if (! $users = get_records("user", "id", $_GET['userid'])) {
+    	        error("Error: could not find users");
+			}
         } else {
             $queryadd = "";
+	        if (!$users = lesson_get_participants($lesson->id)) {
+    	        error("Error: could not find users");
+	        }
         }
-
-        if (!$essays = get_records_select("lesson_essay", "lessonid = $lesson->id $queryadd", "timesubmitted")) {
-            error("Error: could not find essays");
-        }
-        if (!$pages = get_records_select("lesson_pages", "lessonid = $lesson->id")) {
+		
+		// get lesson pages that are essay
+        if (!$pages = get_records_select("lesson_pages", "lessonid = $lesson->id AND qtype = ".LESSON_ESSAY)) {
             error("Error: could not find lesson pages");
         }
-        if (!$users = lesson_get_participants($lesson->id)) {
-            error("Error: could not find users");
-        }
-        if (!$answers = get_records_select("lesson_answers", "lessonid = $lesson->id")) {
-            error("Error: could not find essays");
-        }
+		
+		// get only the attempts that are in response to essay questions
+		$pageids = implode(",", array_keys($pages)); // all the pageids in comma seperated list
+		if (!$essayattempts = get_records_select("lesson_attempts", "lessonid = $lesson->id AND pageid IN($pageids)".$queryadd)) {
+        	error ("No one has answered essay questions yet...");
+		}
+		
+		if (!$essayanswers = get_records_select("lesson_answers", "lessonid = $lesson->id AND pageid IN($pageids)", "", "pageid, score")) {
+        	error ("Could not find answer records.");
+		}
+
         // NoticeFix  big fix, change $essay[]'s that use $USER to just $USER
-        foreach ($essays as $essay) {
-            if ($essay->graded && !$essay->sent) {
-                $subject = "Your grade for ".$pages[$essay->pageid]->title." question";
-                $message = "Question:<br>\r\n";
+        foreach ($essayattempts as $essay) {
+			$essayinfo = unserialize($essay->useranswer);
+            if ($essayinfo->graded && !$essayinfo->sent) {
+                $subject = get_string('essayemailsubject', 'lesson', $pages[$essay->pageid]->title);
+                $message = get_string('question', 'lesson').":<br>";
                 $message .= $pages[$essay->pageid]->contents;
-                $message .= "<br><br>\r\n\r\n";
-                $message .= "Your response:<br>\r\n";
-                $message .= $essay->answer;
-                $message .= "<br><br>\r\n\r\n";
-                $message .= $USER->firstname." ".$USER->lastname."'s comments:<br>\r\n";
-                $message .= $essay->response;
-                $message .= "<br><br>\r\n\r\n";
-                $grades = get_records_select("lesson_grades", "lessonid = $lesson->id and userid = $essay->userid", "completed");
-                for ($i = 0; $i < $essay->try; $i++) {
-                    next($grades);
-                }
-                $grade = current($grades);
-                reset($grades);
+				$message .= "<br><br>";
+                $message .= get_string('yourresponse', 'lesson').":<br>";
+                $message .= $essayinfo->answer;
+				$message .= "<br><br>";
+				$message .= get_string('commentswithname', 'lesson', $USER).":<br>";
+                $message .= $essayinfo->response;
+				$message .= "<br><br>";
+		        $grades = get_records_select("lesson_grades", "lessonid = $lesson->id and userid = $essay->userid", "completed", "*", $essay->retry, 1);
+				$grade = current($grades);
                 if ($lesson->custom) {
-                    $message .= "You have received $essay->score points out of $lesson->grade".".<br>\r\n";
-                    $message .= "Your grade for the lesson has been changed to $grade->grade"."%.\r\n";
-                } else {
-                    // cannot think of a way to update if not custom...
-                }
-                if(email_to_user($users[$essay->userid], $USER, $subject, $message, $message)) {
-                    $updateessay->id = $essay->id;
-                    $updateessay->sent = true;
-                    update_record("lesson_essay", $updateessay);
+					$points->score = $essayinfo->score;
+					$points->outof = $essayanswers[$essay->pageid]->score;
+                    $message .= get_string("youhavereceived", "lesson", $points)."<br>";
+				} else {
+					$points->score = $essayinfo->score;
+					$points->outof = 1;
+                    $message .= get_string("youhavereceived", "lesson", $points)."<br>";
+				}
+				$message .= "<br><br>";
+				$message .= get_string("yourgradeisnow", "lesson", $grade->grade)."%.";
+				
+				$plaintxt = format_text_email($message, FORMAT_HTML);
+
+			    if(email_to_user($users[$essay->userid], $USER, $subject, $message, $plaintxt)) {
+					$essayinfo->sent = 1;
+					$essay->useranswer = serialize($essayinfo);
+                    update_record("lesson_attempts", $essay);
                 } else {
                     echo "Email Failed!<br>";
                     echo "<a href=\"view.php?id=$cm->id&action=essayview\">".get_string("continue", "lesson")."</a>";
