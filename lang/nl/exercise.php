@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // exercise.php - created with Moodle 1.4 development (2004081200)
+      // exercise.php - created with Moodle 1.4 alpha (2004081500)
 
 
 $string['absent'] = 'Afwezig';
@@ -122,7 +122,7 @@ oefening. ';
 $string['pleaseviewtheexercise'] = 'Bekijk de hieronder opgegeven oefening door op de titel ervan te klikken.<br/>Volg de instructies in deze oefening.<br/>Wanneer je klaar bent met de oefening<br/>klik je op de Beoordeel- (of Herbeoordeel-)link aan de <br/>rechterkant van de titel. Als je deze beoordeling gedaan hebt, krijg je <br/>verdere instructies te zien over wat er volgt.';
 $string['poor'] = 'Slecht';
 $string['present'] = 'Aanwezig';
-$string['reasonforadjustment'] = 'Reden voor aanpassing';
+$string['reasonforadjustment'] = 'Algemene opmerking / Reden voor aanpassing';
 $string['reassess'] = 'Beoordeel opnieuw';
 $string['regradestudentassessments'] = 'Geef opnieuw cijfers voor de leerlingbeoordelingen';
 $string['resubmissionfor'] = 'Herinzending voor $a';
