@@ -36,7 +36,9 @@
     if ( $teachers = get_course_teachers($course->id)) {
         echo "<H2 align=center>".$course->teacher."s</H2>";
         foreach ($teachers as $teacher) {
-            print_user($teacher, $course, $string);
+            if ($teacher->authority > 0) {    // Don't print teachers with no authority
+                print_user($teacher, $course, $string);
+            }
         }
     }
 
