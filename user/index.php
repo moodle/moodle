@@ -72,6 +72,12 @@
 
     echo "<h2 align=center>$numstudentsall $course->students</h2>";
 
+    if ($CFG->longtimenosee < 500) {
+        echo "<center><p><font size=1>(";
+        print_string("unusedaccounts","",$CFG->longtimenosee);
+        echo ")</font></p></center>";
+    }
+
     if ($students = get_course_students($course->id, "$dsort $dir $limit")) {
         $numstudents = count($students);
         if ($numstudents < USER_SMALL_CLASS) {
@@ -148,11 +154,6 @@
                 echo "</p></center>";
             }
 
-        }
-        if ($CFG->longtimenosee < 500) {
-            echo "<center><p><font size=1>(";
-            print_string("unusedaccounts","",$CFG->longtimenosee);
-            echo ")</font></p></center>";
         }
     } 
 
