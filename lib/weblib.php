@@ -2489,7 +2489,7 @@ function print_table($table) {
             if (!isset($align[$key])) {
                 $align[$key] = '';
             }
-            echo '<th valign="top" '. $align[$key].$size[$key] .' nowrap="nowrap" class="generaltableheader c'.$key.'">'. $heading .'</th>';
+            echo '<th valign="top" '. $align[$key].$size[$key] .' nowrap="nowrap" class="header c'.$key.'">'. $heading .'</th>';
         }
         echo '</tr>'."\n";
     }
@@ -2512,7 +2512,7 @@ function print_table($table) {
                     if (!isset($wrap[$key])) {
                         $wrap[$key] = '';
                     }
-                    echo '<td '. $align[$key].$size[$key].$wrap[$key] .' class="generaltablecell c'.$key.'">'. $item .'</td>';
+                    echo '<td '. $align[$key].$size[$key].$wrap[$key] .' class="cell c'.$key.'">'. $item .'</td>';
                 }
             }
             echo '</tr>'."\n";
