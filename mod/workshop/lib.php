@@ -554,16 +554,21 @@ function workshop_delete_instance($id) {
 ///////////////////////////////////////////////////////////////////////////////
 function workshop_grades($workshopid) {
 /// Must return an array of grades, indexed by user, and a max grade.
+/// only retruns grades in phase 6
 global $CFG;
 
-	if ($bestsubmissions = get_records_sql("SELECT userid, max(finalgrade) finalgrade FROM
-			{$CFG->prefix}workshop_submissions WHERE workshopid = $workshopid GROUP
-			BY userid")) {
-		foreach ($bestsubmissions as $bestgrade) {
-			$return->grades[$bestgrade->userid] = $bestgrade->finalgrade;
-			}
-		}		
-    $return->maxgrade = get_field("workshop", "grade", "id", "$workshopid");
+	if ($workshop = get_record("workshop", "id", $workshopid)) {
+        if ($workshop->phase == 6) {
+            if ($bestsubmissions = get_records_sql("SELECT userid, max(finalgrade) finalgrade FROM
+			        {$CFG->prefix}workshop_submissions WHERE workshopid = $workshopid GROUP
+			        BY userid")) {
+		        foreach ($bestsubmissions as $bestgrade) {
+			        $return->grades[$bestgrade->userid] = $bestgrade->finalgrade;
+                }
+            }
+		}
+		$return->maxgrade = $workshop->grade;
+    }
     return $return;
 }
 
