@@ -102,31 +102,39 @@
 
     if (isset($delete) and confirm_sesskey()) {
         if ($deletecat = get_record("course_categories", "id", $delete)) {
-
-            /// Send the children categories to live with their grandparent
-            if ($childcats = get_records("course_categories", "parent", $deletecat->id)) {
-                foreach ($childcats as $childcat) {
-                    if (! set_field("course_categories", "parent", $deletecat->parent, "id", $childcat->id)) {
-                        error("Could not update a child category!", "index.php");
-                    }
-                }
-            }
-
-            ///  If the grandparent is a valid (non-zero) category, then 
-            ///  send the children courses to live with their grandparent as well
-            if ($deletecat->parent) {
-                if ($childcourses = get_records("course", "category", $deletecat->id)) {
-                    foreach ($childcourses as $childcourse) {
-                        if (! set_field("course", "category", $deletecat->parent, "id", $childcourse->id)) {
-                            error("Could not update a child course!", "index.php");
+            if (!empty($sure) && $sure == md5($deletecat->timemodified)) {
+                /// Send the children categories to live with their grandparent
+                if ($childcats = get_records("course_categories", "parent", $deletecat->id)) {
+                    foreach ($childcats as $childcat) {
+                        if (! set_field("course_categories", "parent", $deletecat->parent, "id", $childcat->id)) {
+                            error("Could not update a child category!", "index.php");
                         }
                     }
                 }
+                
+                ///  If the grandparent is a valid (non-zero) category, then 
+                ///  send the children courses to live with their grandparent as well
+                if ($deletecat->parent) {
+                    if ($childcourses = get_records("course", "category", $deletecat->id)) {
+                        foreach ($childcourses as $childcourse) {
+                            if (! set_field("course", "category", $deletecat->parent, "id", $childcourse->id)) {
+                                error("Could not update a child course!", "index.php");
+                            }
+                        }
+                    }
+                }
+                
+                /// Finally delete the category itself
+                if (delete_records("course_categories", "id", $deletecat->id)) {
+                    notify(get_string("categorydeleted", "", $deletecat->name));
+                }
             }
-           
-            /// Finally delete the category itself
-            if (delete_records("course_categories", "id", $deletecat->id)) {
-                notify(get_string("categorydeleted", "", $deletecat->name));
+            else {
+                $strdeletecategorycheck = get_string("deletecategorycheck","",$deletecat->name);
+                notice_yesno("$strdeletecategorycheck",
+                             "index.php?delete=$delete&amp;sure=".md5($deletecat->timemodified)."&amp;sesskey=$USER->sesskey",
+                             "index.php?sesskey=$USER->sesskey");
+                exit();
             }
         }
     }

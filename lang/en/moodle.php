@@ -300,6 +300,7 @@ $string['defaultcourseteacher'] = 'Teacher';
 $string['defaultcourseteachers'] = 'Teachers';
 $string['delete'] = 'Delete';
 $string['deleteall'] = 'Delete all';
+$string['deletecategorycheck'] = 'Are you absolutely sure you want to completely delete this category <b>\'$a\'</b>?<br />This will move all courses into the parent category if there is one, or into Miscellaneous.';
 $string['deletecheck'] = 'Delete $a ?';
 $string['deletecheckfiles'] = 'Are you absolutely sure you want to delete these files?';
 $string['deletecheckfull'] = 'Are you absolutely sure you want to completely delete $a ?';
