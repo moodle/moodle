@@ -2,7 +2,7 @@
 
 
 $string['actionaftercorrectanswer'] = 'Action après réponse correcte';
-$string['addanewpage'] = 'Ajouter une nouvelle page';
+$string['addanewpage'] = 'Enregistrer la page';
 $string['addpagehere'] = 'Ajouter une page ici';
 $string['answer'] = 'Réponse';
 $string['answersfornumerical'] = 'Les réponses aux questions numériques doivent être constituées d\'une valeur minimale et d\'une valeur maximale.';
@@ -48,10 +48,10 @@ $string['questiontype'] = 'Type de question';
 $string['page'] = 'Page : $a';
 $string['pagecontents'] = 'Contenu de la page';
 $string['pagetitle'] = 'Titre de la page';
-$string['pleasecheckoneanswer'] = 'Veuillez choisir une réponse';
-$string['pleasecheckoneormoreanswers'] = 'Veuillez choisir une ou plusieurs réponses';
-$string['pleaseenteryouranswerinthebox'] = 'Veuillez saisir votre réponse dans le champ';
-$string['pleasematchtheabovepairs'] = 'Veuillez mettre en correspondance les paires suivantes';
+$string['pleasecheckoneanswer'] = 'Valider la réponse choisie';
+$string['pleasecheckoneormoreanswers'] = 'Valider la ou les réponses choisies';
+$string['pleaseenteryouranswerinthebox'] = 'Valider la réponse';
+$string['pleasematchtheabovepairs'] = 'Valider les correspondances choisies';
 $string['response'] = 'Feedback';
 $string['sanitycheckfailed'] = 'Vérification échouée : cette tentative a été supprimée';
 $string['savepage'] = 'Enregistrer la page';
@@ -59,7 +59,7 @@ $string['singleanswer'] = 'Réponse simple';
 $string['showanunseenpage'] = 'Afficher une page non vue';
 $string['showanunansweredpage'] = 'Afficher une page sans réponse';
 $string['thatsthecorrectanswer'] = 'C\'est la réponse correcte';
-$string['thatsthewronganswer'] = 'C\'est la mauvaise réponse';
+$string['thatsthewronganswer'] = 'C\'est une mauvaise réponse';
 $string['thispage'] = 'Cette page';
 $string['youhaveseen'] = 'Vous avez déjà vu au moins une page de cette leçon.<br />Voulez-vous commencer à la dernière page que vous avez vue ?';
 $string['youranswer'] = 'Votre réponse';
