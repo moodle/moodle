@@ -37,6 +37,7 @@ $string[chooseuser] = "Choose a user";
 $string[city] = "City/town";
 $string[confirmed] = "Your registration has been confirmed";
 $string[courseupdates] = "Course updates";
+$string[cookiesenabled] = "Cookies must be enabled in your browser";
 $string[complete] = "Complete";
 $string[copyrightnotice] = "Copyright notice";
 $string["continue"] = "Continue";
@@ -175,7 +176,7 @@ $string[loginas] = "Login as";
 $string[loginguest] = "Login as a guest";
 $string[loginsite] = "Login to the site";
 $string[loginto] = "Login to \$a";
-$string[loginusing] = "Login using your username and password";
+$string[loginusing] = "Login here using your username and password";
 $string[loginsteps] = "Hi! For full access to courses you'll need to take 
    a minute to create a new account for yourself on this web site.
    Each of the individual courses may also have a one-time
