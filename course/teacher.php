@@ -13,7 +13,7 @@
     require_login();
 
     if (!iscreator()) {
-        error("You must be an administrator or teacher to use this page.");
+        error("You must be an administrator or course creator to use this page.");
     }
 
     $strassignteachers = get_string("assignteachers");
@@ -40,7 +40,7 @@
 		print_simple_box_start("CENTER");
         
 		foreach ($courses as $course) {
-		    if ($isadmin OR ismainteacher($course->id, $USER->id)){
+		    if ($isadmin OR isteacher($course->id, $USER->id)){
 			    echo "<A HREF=\"teacher.php?id=$course->id\">$course->fullname</A><BR>\n";
 				$coursesfound = TRUE;
 			}
@@ -76,7 +76,7 @@
 /// Add a teacher if one is specified
 
     if (!empty($add)) {
-	    if (!ismainteacher($course->id, $USER->id)){
+	    if (!isteacher($course->id, $USER->id)){
 		    error("You must be an administrator or teacher to modify this course.");
         }
 
@@ -110,7 +110,7 @@
 
     if (!empty($remove)) {
 
-        if (!ismainteacher($course->id, $USER->id)){
+        if (!isteacher($course->id, $USER->id)){
         	error("You must be an administrator or teacher to modify this course.");
 		}
         if (! $user = get_record("user", "id", $remove)) {

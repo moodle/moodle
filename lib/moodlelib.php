@@ -418,24 +418,6 @@ function iscreator ($userid=0) {
     return record_exists("user_coursecreators", "userid", $userid);
 }
 
-function ismainteacher ($courseid, $userid=0){
-/// Is user the main teacher of course
-    global $USER;
-
-    if (isadmin($userid)) {  // admins can do anything the teacher can
-        return true;
-    }
-
-	if (empty($userid)) {
-        if (empty($USER->id)) {
-            return false;
-        }
-        $userid = $USER->id;
-    }
-    
-    return record_exists("user_teachers", "userid", $userid, "course", $courseid, "authority", "1");
-}
-
 function isstudent($courseid, $userid=0) {
 /// Is the user a student in this course?
     global $USER;
