@@ -325,4 +325,3 @@ $string['yourfinalgradeis'] = "Je eindcijfer voor deze test is \$a";
 
 
 ?>
-

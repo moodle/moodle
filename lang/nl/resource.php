@@ -81,4 +81,3 @@ $string['resourcetype8'] = "Wiki tekst";
 
 
 ?>
-
