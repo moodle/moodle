@@ -875,7 +875,7 @@ function quiz_save_best_grade($quiz, $userid) {
     $bestgrade = (($bestgrade / $quiz->sumgrades) * $quiz->grade);
 
     if ($grade = get_record("quiz_grades", "quiz", $quiz->id, "userid", $userid)) {
-        $grade->grade = $bestgrade;
+        $grade->grade = round($bestgrade, 2);
         $grade->timemodified = time();
         if (!update_record("quiz_grades", $grade)) {
             notify("Could not update best grade");
