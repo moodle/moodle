@@ -21,6 +21,7 @@
     $sortkey    = optional_param('sortkey');     // Sorted view: CREATION | UPDATE | FIRSTNAME | LASTNAME...
     $sortorder  = optional_param('sortorder');   // it defines the order of the sorting (ASC or DESC)
     $offset     = optional_param('offset',0);    // entries to bypass (for paging purpouses)
+    $page       = optional_param('page',0);      // Page to show (for paging purpouses)
     $show       = optional_param('show');        // [ concept | alias ] => mode=term hook=$show
 
     if (!empty($id)) {
@@ -61,6 +62,11 @@
     
     if ( !$entriesbypage = $glossary->entbypage ) {
         $entriesbypage = $CFG->glossary_entbypage;
+    }
+
+/// If we have received a page, recalculate offset
+    if ($page != 0 && $offset == 0) {
+        $offset = $page * $entriesbypage;
     }
 
 /// setting the default values for the display mode of the current glossary
@@ -284,35 +290,11 @@
 
     if ($allentries) {
 
-        /// printing the paging links
+        $paging = glossary_get_paging_bar($count, $page, $entriesbypage, "view.php?id=$id&mode=$mode&hook=$hook&sortkey=$sortkey&sortorder=$sortorder&fullsearch=$fullsearch&",9999,10,'&nbsp;&nbsp;', get_string("allentries","glossary"), -1);
 
-        $paging = get_string("allentries","glossary");
-        if ( $offset < 0 ) {
-            $paging = '<strong>' . $paging . '</strong>';
-        } else {
-            $paging = "<a href=\"view.php?id=$id&amp;mode=$mode&amp;hook=$hook&amp;offset=-1&amp;sortkey=$sortkey&amp;sortorder=$sortorder&amp;fullsearch=$fullsearch\">" . $paging . '</a>';
-        }
-        if ($count > $entriesbypage ) {
-            for ($i = 0; ($i*$entriesbypage) < $count  ; $i++   ) {
-                if ( $paging != '' ) {
-                    if ($i % 20 == 0 and $i) {
-                        $paging .= '<br />';
-                    } else {
-                        $paging .= ' | ';
-                    }
-                }
-                $pagenumber = (string) ($i + 1 );
-                if ($offset / $entriesbypage == $i) {
-                    $paging .= '<strong>' . $pagenumber . '</strong>';
-                } else {
-                    $paging .= "<a href=\"view.php?id=$id&amp;mode=$mode&amp;hook=$hook&amp;offset=" . ($i*$entriesbypage) . "&amp;sortkey=$sortkey&amp;sortorder=$sortorder&amp;fullsearch=$fullsearch\">" . $pagenumber . '</a>';
-                }
-            }
-            $paging  = "<font size=\"1\"><center>" . get_string ("jumpto") . " $paging</center></font>";
-        } else {
-            $paging = '';
-        }
+        echo '<div style="font-size: smaller;">';
         echo $paging;
+        echo '</div>';
 
         $ratings = NULL;
         $ratingsmenuused = false;
@@ -401,7 +383,10 @@
     }
 
     if ( $paging ) {
-        echo "<hr />$paging";
+        echo '<hr />';
+        echo '<div style="font-size: smaller;">';
+        echo $paging;
+        echo '</div>';
     }
     echo '<p>';
     echo '</center>';
