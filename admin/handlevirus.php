@@ -92,9 +92,12 @@ function validate_line($line) {
     }
     $index = strpos($line,":");
     $file = substr($line,0,$index);
-    $file = preg_replace('/\/\//','/',$file);
-    if (!file_exists($file)) {
-        // try and prepend dataroot, that might fix it (maybe) 
+    if (!(strpos($file,$CFG->dataroot) === false)) {
+        if (!file_exists($file)) {
+            return false;
+        }
+    }
+    else {
         if ($file{0} == "/") {
             $file = $CFG->dataroot.$file;
         }
@@ -105,6 +108,9 @@ function validate_line($line) {
             return false;
         }
     }
+    // clean up
+    $file = preg_replace('/\.\//','/',$file);
+    $file = preg_replace('/\/\//','/',$file);
     return $file;
 }
 
