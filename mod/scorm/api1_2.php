@@ -25,17 +25,23 @@ function SCORMapi() {
 	    cmi.core.student_id = "<?php echo $USER->username; ?>";
 	    cmi.core.student_name = "<?php echo $USER->firstname." ".$USER->lastname; ?>";
 	    cmi.core.lesson_location = "<?php echo $sco_user->cmi_core_lesson_location; ?>";
-	    cmi.core.credit = "credit";
+	    cmi.core.credit = "<?php if ($mode != 'normal') {
+	    				 echo "no-credit";
+	    			     } else {
+					 echo "credit";
+				     }?>";
 	    cmi.core.lesson_status = "<?php echo $sco_user->cmi_core_lesson_status; ?>";
 	    cmi.core.exit = "<?php echo $sco_user->cmi_core_exit ?>";
-	    cmi.core.entry = "<?php if ($sco_user->cmi_core_lesson_status=='not attempted') 
+	    cmi.core.entry = "<?php if ($sco_user->cmi_core_lesson_status == 'not attempted') {
 					echo 'ab-initio'; 
-				    else 
-					if ($sco_user->cmi_core_lesson_status!='completed') 
+				    } else {
+					if ($sco_user->cmi_core_lesson_status != 'completed') {
 					    echo 'resume'; 
-				    	else 
-					    echo '';?>";
-	    cmi.core.session_time = "";
+				    	} else {
+					    echo '';
+					}
+				    }?>";
+	    cmi.core.session_time = "00:00:00";
 	    cmi.core.total_time = "<?php echo $sco_user->cmi_core_total_time; ?>";
 	    cmi.core.lesson_mode = "<?php echo $mode; ?>";
 	    cmi.core.score = new Object();
@@ -65,7 +71,7 @@ function SCORMapi() {
     
     function LMSGetValue (param) {
 	if (Initialized) {
-	    //top.status="GET "+param;
+	    //top.alert("GET "+param);
 	    switch (param) {
 		case "cmi.core._children":
 		case "cmi.core.student_id":
@@ -101,24 +107,27 @@ function SCORMapi() {
     
     function LMSSetValue (param,value) {
 	if (Initialized) {
-	    //top.status="SET "+param+" = "+value;
 	    //top.alert("SET "+param+" = "+value);
 	    switch (param) {
 		case "cmi.core.session_time":
-		    //top.alert(typeof(value));
 		    if (typeof(value) == "string") {
-		        var parsedtime = value.match(/[0-9]{2,4}/g);
-		        //top.alert(parsedtime);
-		        if (((parsedtime.length == 3) || (parsedtime.length == 4)) && (parsedtime[0]>=0) && (parsedtime[0]<=9999) && (parsedtime[1]>=0) && (parsedtime[1]<=59) && (parsedtime[2]>=0) && (parsedtime[2]<=59)) {
-		            if ((parsedtime.length == 4) && (parsedtime[3]<=0) && (parsedtime[3]>=99)) {
-		                errorCode = 405;
-		        	return "false";
+		        var matchedtime = value.match(/([0-9]{2,4}):([0-9]{2}):([0-9]{2})/g);
+		        if (matchedtime != null) {
+		            var parsedtime = value.match(/[0-9]+/g);
+		            if (((parsedtime.length == 3) || (parsedtime.length == 4)) && (parsedtime[0]>=0) && (parsedtime[0]<=9999) && (parsedtime[1]>=0) && (parsedtime[1]<=59) && (parsedtime[2]>=0) && (parsedtime[2]<=59)) {
+		            	if ((parsedtime.length == 4) && (parsedtime[3]<=0) && (parsedtime[3]>=99)) {
+		                    errorCode = 405;
+		        	    return "false";
+		       	    	}
+		                eval(param+'="'+value+'";');
+		        	errorCode = 0;
+		        	return "true";
+		            } else {
+		            	errorCode = 405;
+		            	return "false";
 		       	    }
-		            eval(param+'="'+value+'";');
-		            errorCode = 0;
-		            return "true";
-		        } else {
-		            errorCode = 405;
+		       	} else {
+		       	    errorCode = 405;
 		            return "false";
 		       	}
 		    } else {
@@ -138,7 +147,6 @@ function SCORMapi() {
 		case "cmi.core.score.raw":
 		case "cmi.core.score.min":
 		case "cmi.core.score.max":
-		    //top.alert("SET "+param+" = "+value);
 		    if ((parseFloat(value,10)).toString() != value) {
 			errorCode = 405;
 			return "false";
@@ -186,7 +194,6 @@ function SCORMapi() {
 		case "nav.event":
 		    if ((value == "previous") || (value == "continue")) {
 		        eval(param+'="'+value+'";');
-		    	//changeSco(value);
 		    	errorCode = 0;
 		    	return "true";
 		    } else {
