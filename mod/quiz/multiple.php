@@ -52,6 +52,7 @@
                         // this question has the right recurse property, so use it
                         $newquestionids[] = $existingquestion->id;
                         $i++;
+                    }
                 }
                 $randomcreate = $form->randomcreate - $i; // the number of additional random questions needed.
             } else {
