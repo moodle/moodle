@@ -339,11 +339,13 @@ function print_recent_activity($course) {
 
     // Now display new things from each module
 
-    $mods = get_list_of_plugins("mod");
+    $mods = get_records("modules", "visible", "1", "name", "id, name");
+
+    print_object($mods);
 
     foreach ($mods as $mod) {      // Each module gets it's own logs and prints them
-        include_once("$CFG->dirroot/mod/$mod/lib.php");
-        $print_recent_activity = $mod."_print_recent_activity";
+        include_once("$CFG->dirroot/mod/$mod->name/lib.php");
+        $print_recent_activity = $mod->name."_print_recent_activity";
         if (function_exists($print_recent_activity)) {
             $modcontent = $print_recent_activity($course, $isteacher, $timestart);
             if ($modcontent) {
