@@ -9,11 +9,6 @@ define('BLOCK_MOVE_RIGHT',  0x02);
 define('BLOCK_MOVE_UP',     0x04);
 define('BLOCK_MOVE_DOWN',   0x08);
 
-define('BLOCKS_DEFAULT_SITE',   'site_main_menu,admin,course_list:course_summary,calendar_month');
-define('BLOCKS_DEFAULT_SOCIAL', 'participants,search_forums,calendar_month,calendar_upcoming,social_activities,recent_activity,admin,course_list');
-define('BLOCKS_DEFAULT_TOPICS', 'participants,activity_modules,search_forums,admin,course_list:news_items,calendar_upcoming,recent_activity');
-define('BLOCKS_DEFAULT_WEEKS',  'participants,activity_modules,search_forums,admin,course_list:news_items,calendar_upcoming,recent_activity');
-
 function block_remove_inappropriate_from_course(&$course) {
     $blocks = $course->blockinfo;
 
@@ -679,7 +674,8 @@ function upgrade_blocks_plugins($continueto) {
         if ($courses = get_records("course")) {
             foreach ($courses as $course) {
                 //Depending of the format, insert some values
-                $blockinfo = blocks_get_default_blocks ($course->id, constant('BLOCKS_DEFAULT_'.strtoupper($course->format)));
+                $blockinfo = blocks_get_default_blocks ($course->id,
+                                                        blocks_get_config_default($course->format));
                 if ($CFG->debug) {
                     echo 'Updating blockinfo for course: '.$course->shortname.'('.$blockinfo.')<br>';
                 }
@@ -688,7 +684,7 @@ function upgrade_blocks_plugins($continueto) {
     }
 
     if (!empty($CFG->siteblocksadded)) {     /// This is a once-off hack to make a proper upgrade
-        blocks_get_default_blocks(SITEID, BLOCKS_DEFAULT_SITE);  // Add blockinfo to the site course
+        blocks_get_default_blocks(SITEID, blocks_get_config_default());  // Add blockinfo to the site course
         delete_records('config', 'name', 'siteblocksadded');
     }
 
@@ -825,10 +821,10 @@ function blocks_get_default_blocks ($courseid = NULL, $blocknames = '') {
     global $CFG;
 
     if (empty($blocknames)) {
-        if (!empty($CFG->defaultblocks)) {
-            $blocknames = $CFG->defaultblocks;
+        if (!empty($CFG->defaultblocks_override)) {
+            $blocknames = $CFG->defaultblocks_override;
         } else {
-            $blocknames = BLOCKS_DEFAULT_WEEKS;
+            $blocknames = $CFG->defaultblocks;
         }
     }
 
@@ -915,6 +911,46 @@ function blocks_get_default_blocks ($courseid = NULL, $blocknames = '') {
 
     //Returns the blockinfo
     return $blockinfo;
+}
+
+// This function returns the appropriate block default configuration string
+// according to the $format argument. It will return the site override defined
+// in the site config, a format override defined in the site config, a specific
+// config defined in the course format config, or the site default.
+// To request the site format, leave $format blank.
+function blocks_get_config_default ($cformat='') {
+
+    global $CFG;
+
+    /// If the site override has been defined, it is the only valid one.
+    if (!empty($CFG->defaultblocks_override)) {
+        return $CFG->defaultblocks_override;
+    }
+    /// If not format is specified, return the site default.
+    else if ($cformat == '') {
+        if (!empty($CFG->defaultblocks_site)) {
+            return $CFG->defaultblocks_site;
+        }
+        else {
+            return $CFG->defaultblocks;
+        }
+    }
+    /// Return the appropriate block string for the format.
+    else if (!empty($CFG->{'defaultblocks_'.$cformat})) {
+        return $CFG->{'defaultblocks_'.$cformat};
+    }
+    else {
+        $format_config = $CFG->dirroot.'/course/format/'.$cformat.'/config.php';
+        if (file_exists($format_config)) {
+            require($format_config);
+        }
+        if (!empty($format['defaultblocks'])) {
+            return $format['defaultblocks'];
+        }
+        else {
+            return $CFG->defaultblocks;
+        }
+    }
 }
 
 //This function will return the names representation of the blockinfo field.

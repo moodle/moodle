@@ -69,12 +69,7 @@
                 $form->timecreated = time();
 
                 //Create blockinfo default content
-                if ($form->format == "social") {
-                    $form->blockinfo = blocks_get_default_blocks (NULL,"participants,search_forums,calendar_month,calendar_upcoming,social_activities,recent_activity,admin,course_list");
-                } else {
-                    //For topics and weeks formats (default built in the function)
-                    $form->blockinfo = blocks_get_default_blocks();
-                }
+                $form->blockinfo = blocks_get_default_blocks(null, blocks_get_config_default($form->format));
 
                 if ($newcourseid = insert_record("course", $form)) {  // Set up new course
                     $section = NULL;
