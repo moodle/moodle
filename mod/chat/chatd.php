@@ -67,6 +67,34 @@ class ChatDaemon {
 
     var $message_queue = array(); // Holds messages that we haven't committed to the DB yet
 
+    function get_user_window($sessionid) {
+        ob_start();
+        echo "<html>\n<head>\n";
+
+        // <head>
+        /*
+        echo "<script type='text/javascript'>\n";
+        echo "   function reloadme() {\n";
+        //echo "       return false;\n";
+        echo "       window.location.reload();\n";
+        echo "   }\n";
+        echo "</script>";
+        */
+        // </head>
+
+        //echo "</head>\n<body onload='window.setTimeout(\"reloadme()\", 2000);'>\n";
+        echo "</head>\n<body>\n";
+
+        // <body>
+        echo '<p style="font-size: 0.75em;">User window for session '.$sessionid.'</p>';
+        echo '<p style="font-size: 0.75em;">The time is '.time().'</p>';
+        // </body>
+
+        echo "</body>\n</html>\n";
+        return ob_get_clean();
+
+    }
+
     function new_ufo_id() {
         static $id = 0;
         if($id++ === 0x1000000) { // Cycling very very slowly to prevent overflow
@@ -91,7 +119,8 @@ class ChatDaemon {
 
         switch($type) {
             case CHAT_SIDEKICK_USERS:
-                $x = pusers($this->sets_info[$sessionid]['chat'], $this->sets_info[$sessionid]['groupid']);
+            /*
+                //$x = pusers($this->sets_info[$sessionid]['chatid'], $this->sets_info[$sessionid]['groupid']);
                 //$x = "<html>Lalalala! ".time()."</html>";
 
                 $header  = "HTTP/1.1 200 OK\n";
@@ -102,16 +131,38 @@ class ChatDaemon {
                 $header .= "Last-Modified: ".gmdate("D, d M Y H:i:s")." GMT\n";
                 $header .= "Cache-Control: no-cache, must-revalidate\n";
                 $header .= "Expires: Wed, 4 Oct 1978 09:32:45 GMT\n";
-                $header .= "Refresh: 3; url=http://$CFG->chat_serverhost:$CFG->chat_serverport?win=users&".
-                           "chat_sid=".$sessionid."&groupid=".$this->sets_info[$sessionid]['groupid']."\n";
+                //$header .= "Refresh: 3; url=http://$CFG->chat_serverhost:$CFG->chat_serverport?win=users&".
+                //           "chat_sid=".$sessionid."&groupid=".$this->sets_info[$sessionid]['groupid']."\n";
                 $header .= "\n";
 
                 $x = $header.$x;
+*/
 
+/*
                 trace('Outputting user list('.strlen($x).' chars)');
                 //trace($x);
 
                 chat_socket_write($handle, $x);
+*/
+
+                $content = $this->get_user_window($sessionid);
+
+                $header  = "HTTP/1.1 200 OK\n";
+                $header .= "Connection: close\n";
+                $header .= "Date: ".date('r')."\n";
+                $header .= "Server: Moodle\n";
+                $header .= "Content-Type: text/html\n";
+                $header .= "Last-Modified: ".gmdate("D, d M Y H:i:s")." GMT\n";
+                $header .= "Cache-Control: no-cache, must-revalidate\n";
+                $header .= "Expires: Wed, 4 Oct 1978 09:32:45 GMT\n";
+                $header .= "Content-Length: ".strlen($content)."\n";
+                $header .= "Refresh: 3; url=http://$CFG->chat_serverhost:$CFG->chat_serverport/?win=users&".
+                           "chat_sid=".$sessionid."&groupid=".$this->sets_info[$sessionid]['groupid']."\n";
+                $header .= "\n";
+
+                // That's enough headers for one lousy dummy response
+                chat_socket_write($handle, $header . $content);
+
             break;
             case CHAT_SIDEKICK_MESSAGE:
                 // Incoming message
@@ -128,21 +179,11 @@ class ChatDaemon {
                     break;
                 }
 
-                // Format the message object here
-                $output = chat_format_message($msg);
-
-                $msg->message = $output->text; // This is for writing into the DB
-                $msg->text_ = $output->text;
-                $msg->html_ = $output->html;
-                $msg->beep_ = $output->beep;
+                // Commit to DB
+                insert_record('chat_messages', $msg);
 
                 // OK, now push it out to all users
-                $this->message_broadcast($msg);
-
-                // Put it on the uncommitted queue
-                // TODO: error checking!!!
-                //$message_queue[] = $msg;
-                insert_record('chat_messages', $msg);
+                $this->message_broadcast($msg, $this->sets_info[$sessionid]['user']);
 
                 // Update that user's lastmessageping
                 // TODO: this can and should be written as a single UPDATE query
@@ -151,6 +192,23 @@ class ChatDaemon {
                     $user->lastmessageping = $msg->timestamp;
                     update_record('chat_users', $user);
                 }
+
+                // We did our work, but before slamming the door on the poor browser
+                // show the courtesy of responding to the HTTP request. Otherwise, some
+                // browsers decide to get vengeance by flooding us with repeat requests.
+
+                $header  = "HTTP/1.1 200 OK\n";
+                $header .= "Connection: close\n";
+                $header .= "Date: ".date('r')."\n";
+                $header .= "Server: Moodle\n";
+                $header .= "Content-Type: text/html\n";
+                $header .= "Last-Modified: ".gmdate("D, d M Y H:i:s")." GMT\n";
+                $header .= "Cache-Control: no-cache, must-revalidate\n";
+                $header .= "Expires: Wed, 4 Oct 1978 09:32:45 GMT\n";
+                $header .= "\n";
+
+                // That's enough headers for one lousy dummy response
+                chat_socket_write($handle, $header);
 
                 // All done
             break;
@@ -176,11 +234,41 @@ class ChatDaemon {
             $this->dismiss_half($sessionid);
             return false;
         }
+        $user = get_record('user', 'id', $chatuser->userid);
+        if($user === false) {
+            $this->dismiss_half($sessionid);
+            return false;
+        }
+        $course = get_record('course', 'id', $chat->course); {
+        if($course === false) {
+            $this->dismiss_half($sessionid);
+            return false;
+            }
+        }
 
-        global $CHAT_HTMLHEAD_JS;
+        global $CHAT_HTMLHEAD_JS, $CFG;
+
+        // A really sad thing, to have to do this by hand.... :-(
+        $lang = NULL;
+        if(empty($lang) && !empty($course->lang)) {
+            $lang = $course->lang;
+        }
+        if(empty($lang) && !empty($user->lang)) {
+            $lang = $user->lang;
+        }
+        if(empty($lang)) {
+            $lang = $CFG->lang;
+        }
 
         $this->conn_sets[$sessionid] = $this->conn_half[$sessionid];
-        $this->sets_info[$sessionid] = array('chatid' => $chatuser->chatid, 'userid' => $chatuser->userid, 'groupid' => $groupid, 'lastmessages' => array(), 'lastmsgindex' => 0);
+        $this->sets_info[$sessionid] = array(
+            'chatid'    => $chatuser->chatid,
+            'user'      => $user,
+            'userid'    => $chatuser->userid,
+            'groupid'   => $groupid,
+            'lang'      => $lang
+        );
+
         $this->dismiss_half($sessionid, false);
         chat_socket_write($this->conn_sets[$sessionid][CHAT_CONNECTION_CHANNEL], $CHAT_HTMLHEAD_JS);
         trace('Finalized client: sid: '.$sessionid.' uid: '.$chatuser->userid.' gid: '.intval($groupid));
@@ -196,16 +284,7 @@ class ChatDaemon {
         $msg->timestamp = time();
 
         insert_record('chat_messages', $msg);
-
-        // Format the message object here
-        $output = chat_format_message($msg);
-
-        $msg->message = $output->text; // This is for writing into the DB
-        $msg->text_ = $output->text;
-        $msg->html_ = $output->html;
-        $msg->beep_ = $output->beep;
-
-        $this->message_broadcast($msg);
+        $this->message_broadcast($msg, $this->sets_info[$sessionid]['user']);
 
         return true;
     }
@@ -293,8 +372,9 @@ class ChatDaemon {
             return false;
         }
         foreach($this->conn_sets[$sessionid] as $handle) {
-            socket_shutdown($handle);
-            socket_close($handle);
+            // Since we want to dismiss this, don't generate any errors if it's dead already
+            @socket_shutdown($handle);
+            @socket_close($handle);
         }
         unset($this->conn_sets[$sessionid]);
         unset($this->sets_info[$sessionid]);
@@ -355,12 +435,11 @@ class ChatDaemon {
         return $retval;
     }
 
-    function message_broadcast($message) {
+    function message_broadcast($message, $sender) {
         if(empty($this->conn_sets)) {
             return true;
         }
 
-        //trace('Broadcasting message');
         foreach($this->sets_info as $sessionid => $info) {
             // We need to get handles from users that are in the same chatroom, same group
             if($info['chatid'] == $message->chatid &&
@@ -368,8 +447,13 @@ class ChatDaemon {
             {
 
                 // Simply give them the message
+                $output = chat_format_message_manually($message, 0, $sender, $info['userid'], $info['lang']);
 
-                if(!chat_socket_write($this->conn_sets[$sessionid][CHAT_CONNECTION_CHANNEL], $message->html_)) {
+                if($output->beep) {
+                    chat_socket_write($this->conn_sets[$sessionid][CHAT_CONNECTION_CHANNEL], '<embed src="'.$this->beepsoundsrc.'" autostart="true" hidden="true" />');
+                }
+
+                if(!chat_socket_write($this->conn_sets[$sessionid][CHAT_CONNECTION_CHANNEL], $output->html)) {
 
                     // Send failed! We must now disconnect/forget about the user FIRST
                     // and THEN broadcast a message to all others... otherwise, infinite recursion.
@@ -386,17 +470,14 @@ class ChatDaemon {
                     trace('Client socket write failed, destroying uid '.$info['userid'].' with SID '.$sessionid);
                     insert_record('chat_messages', $msg);
 
-                    // Format the message object here
-                    $output = chat_format_message($msg);
-
-                    $msg->message = $output->text; // This is for writing into the DB
-                    $msg->text_ = $output->text;
-                    $msg->html_ = $output->html;
-                    $msg->beep_ = $output->beep;
-
-                    // Kill him before broadcasting!!
+                    // *************************** IMPORTANT
+                    //
+                    // Kill him BEFORE broadcasting, otherwise we 'll get infinite recursion!
+                    //
+                    // **********************************************************************
+                    $latesender = $this->sets_info[$sessionid]['user'];
                     $this->dismiss_set($sessionid);
-                    $this->message_broadcast($msg);
+                    $this->message_broadcast($msg, $latesender);
                 }
                 //trace('Sent to UID '.$this->sets_info[$sessionid]['userid'].': '.$message->text_);
             }
@@ -426,9 +507,7 @@ $DAEMON->trace_level = E_ALL;
 $DAEMON->socketserver_refresh = 10;
 $DAEMON->rememberlast = 10;
 $DAEMON->can_daemonize = function_exists('pcntl_fork');
-
-$logfile = fopen('chatd.log', 'a+');
-
+$DAEMON->beepsoundsrc = $CFG->wwwroot.'/mod/chat/beep.wav';
 
 /// Check the parameters //////////////////////////////////////////////////////
 
@@ -448,6 +527,7 @@ $logfile = fopen('chatd.log', 'a+');
     }
 
 
+$logfile = fopen('chatd.log', 'a+');
 
 /// Try to set up all the sockets ////////////////////////////////////////////////
 
@@ -482,6 +562,13 @@ if(!socket_bind($DAEMON->listen_socket, $CFG->chat_serverip, $CFG->chat_serverpo
     // Failed to bind socket
     $DAEMON->last_error = socket_last_error();
     echo "Error: socket_bind() failed: ". socket_strerror(socket_last_error($DAEMON->last_error)).' ['.$DAEMON->last_error."]\n";
+
+    // If $DAEMON->last_error == 98 (Success), maybe we need to try cleaning up a bit before dying
+    // This is EXPERIMENTAL code!
+    if($DAEMON->last_error == 98) {
+        trace('experimental fix kicks in');
+        socket_close($DAEMON->listen_socket);
+    }
     die();
 }
 if(!socket_listen($DAEMON->listen_socket, $CFG->chat_servermax)) {
@@ -653,16 +740,20 @@ function chat_socket_write($connection, $text) {
     $check_socket = array($connection);
     $socket_changed = socket_select($read = NULL, $check_socket, $except = NULL, 0, 0);
     if($socket_changed > 0) {
-        socket_write($connection, $text, strlen($text));
+        $written = socket_write($connection, $text, strlen($text));
+        //trace('socket_write wrote '.$written.' of '.strlen($text).' bytes');
         return true;
     }
     return false;
 }
 
-function pusers($chat, $groupid) {
+function pusers($chatid, $groupid) {
 /// Delete users who are using text version and are old
 
 global $CFG, $str;
+
+static $lastupdate  = 0;
+static $outputcache = NULL;
 
 //chat_delete_old_users();
 
@@ -674,60 +765,77 @@ ob_start();
 
 $timenow = time();
 
-if (empty($str)) {
-    $str->idle   = get_string("idle", "chat");
-    $str->beep   = get_string("beep", "chat");
-    $str->day   = get_string("day");
-    $str->days  = get_string("days");
-    $str->hour  = get_string("hour");
-    $str->hours = get_string("hours");
-    $str->min   = get_string("min");
-    $str->mins  = get_string("mins");
-    $str->sec   = get_string("sec");
-    $str->secs  = get_string("secs");
+
+// WARNING!!!! THESE ARE HERE TO REMOVE NOTICES!!!
+// THEY SHOULD BE FIXED!
+$chat_sid = 0;
+$chat->course = 0;
+
+// Keep the results cached for 5 seconds
+if($timenow - 5 > $lastupdate || empty($outputcache)) {
+
+    if (empty($str)) {
+        $str->idle   = get_string("idle", "chat");
+        $str->beep   = get_string("beep", "chat");
+        $str->day   = get_string("day");
+        $str->days  = get_string("days");
+        $str->hour  = get_string("hour");
+        $str->hours = get_string("hours");
+        $str->min   = get_string("min");
+        $str->mins  = get_string("mins");
+        $str->sec   = get_string("sec");
+        $str->secs  = get_string("secs");
+    }
+
+    /// Get list of users
+
+    if (!$chatusers = chat_get_users($chatid, $groupid)) {
+        print_string("errornousers", "chat");
+        die('no users');
+        //return ob_get_clean();
+        //exit;
+    }
+
+    echo "<html>\n";
+    echo "<head>\n";
+    echo "<script lang=\"Javascript\">\n";
+    echo "   function reloadme() {\n";
+    echo "       return false;\n";
+    echo "       window.location.reload();\n";
+    echo "   }\n";
+    echo "</script></head>\n";
+    //echo '<body onload="setTimeout(\'reloadme()\', 5000);">'."\n\n";
+    //for ($i = 0; $i < 100; ++$i) {
+    //    echo "<!-- nix -->\n";
+    //}
+
+    echo "<body>\n<table width=\"100%\">\n";
+    foreach ($chatusers as $chatuser) {
+        $lastping = $timenow - $chatuser->lastmessageping;
+        echo "<tr>\n<td width=35>";
+        echo "<a target=\"_new\" onClick=\"return openpopup('/user/view.php?id=$chatuser->id&course=$chat->course','user$chatuser->id','');\" href=\"$CFG->wwwroot/user/view.php?id=$chatuser->id&course=$chat->course\">";
+        print_user_picture($chatuser->id, 0, $chatuser->picture, false, false, false);
+        echo "</a></td><td valign=center>";
+        echo "<p><font size=1>";
+        echo fullname($chatuser)."<br />";
+        echo "<font color=\"#888888\">$str->idle: ".format_time($lastping, $str)."</font>";
+        echo " <a href=\"users.php?chat_sid=$chat_sid&beep=$chatuser->id&groupid=$groupid\">$str->beep</a>";
+        echo "</font></p>";
+        echo "<td>\n</tr>\n";
+    }
+    echo "</table>\n";
+
+    //window.setTimeout('reloadme', 1000)
+    echo "</body>\n</html>\n";
+
+    $lastupdate = $timenow;
+    return $outputcache = ob_get_clean();
 }
-
-/// Get list of users
-
-if (!$chatusers = chat_get_users($chat->id, $groupid)) {
-    print_string("errornousers", "chat");
-    die('no users');
-    //return ob_get_clean();
-    //exit;
+else {
+    // Return cached output
+    trace('User window cached return');
+    return $outputcache;
 }
-
-echo "<html>\n";
-echo "<head>\n";
-echo "<script lang=\"Javascript\">\n";
-echo "   function reloadme() {\n";
-echo "       return false;\n";
-echo "       window.location.reload();\n";
-echo "   }\n";
-echo "</script></head>\n";
-echo '<body onload="setTimeout(\'reloadme()\', 5000);">'."\n\n";
-for ($i = 0; $i < 100; ++$i) {
-    echo "<!-- nix -->\n";
-}
-
-echo "<table width=\"100%\">";
-foreach ($chatusers as $chatuser) {
-    $lastping = $timenow - $chatuser->lastmessageping;
-    echo "<tr><td width=35>";
-    echo "<a target=\"_new\" onClick=\"return openpopup('/user/view.php?id=$chatuser->id&course=$chat->course','user$chatuser->id','');\" href=\"$CFG->wwwroot/user/view.php?id=$chatuser->id&course=$chat->course\">";
-    print_user_picture($chatuser->id, 0, $chatuser->picture, false, false, false);
-    echo "</a></td><td valign=center>";
-    echo "<p><font size=1>";
-    echo fullname($chatuser)."<br />";
-    echo "<font color=\"#888888\">$str->idle: ".format_time($lastping, $str)."</font>";
-    echo " <a href=\"users.php?chat_sid=$chat_sid&beep=$chatuser->id&groupid=$groupid\">$str->beep</a>";
-    echo "</font></p>";
-    echo "<td></tr>";
-}
-echo "</table>";
-
-//window.setTimeout('reloadme', 1000)
-echo '</body></html>';
-return ob_get_clean();
 
 }
 

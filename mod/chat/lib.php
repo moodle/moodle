@@ -4,28 +4,28 @@
 
 if (!isset($CFG->chat_refresh_room)) {
     set_config("chat_refresh_room", 5);
-} 
+}
 if (!isset($CFG->chat_refresh_userlist)) {
     set_config("chat_refresh_userlist", 10);
-} 
+}
 if (!isset($CFG->chat_old_ping)) {
     set_config("chat_old_ping", 30);
-} 
+}
 if (!isset($CFG->chat_method)) {
     set_config("chat_method", "header_js");
-} 
+}
 if (!isset($CFG->chat_serverhost)) {
     set_config("chat_serverhost", $_SERVER['HTTP_HOST']);
-} 
+}
 if (!isset($CFG->chat_serverip)) {
     set_config("chat_serverip", $_SERVER['SERVER_ADDR']);
-} 
+}
 if (!isset($CFG->chat_serverport)) {
     set_config("chat_serverport", 9111);
-} 
+}
 if (!isset($CFG->chat_servermax)) {
     set_config("chat_servermax", 100);
-} 
+}
 
 define("CHAT_DRAWBOARD", false);  // Look into this later
 
@@ -47,16 +47,16 @@ $CHAT_HTMLHEAD_MSGINPUT_JS = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Trans
 
 
 function chat_add_instance($chat) {
-/// Given an object containing all the necessary data, 
-/// (defined by the form in mod.html) this function 
-/// will create a new instance and return the id number 
+/// Given an object containing all the necessary data,
+/// (defined by the form in mod.html) this function
+/// will create a new instance and return the id number
 /// of the new instance.
 
     $chat->timemodified = time();
 
-    $chat->chattime = make_timestamp($chat->chatyear, $chat->chatmonth, $chat->chatday, 
+    $chat->chattime = make_timestamp($chat->chatyear, $chat->chatmonth, $chat->chatday,
                                      $chat->chathour, $chat->chatminute);
-    
+
     if ($returnid = insert_record("chat", $chat)) {
 
         $event = NULL;
@@ -79,14 +79,14 @@ function chat_add_instance($chat) {
 
 
 function chat_update_instance($chat) {
-/// Given an object containing all the necessary data, 
-/// (defined by the form in mod.html) this function 
+/// Given an object containing all the necessary data,
+/// (defined by the form in mod.html) this function
 /// will update an existing instance with new data.
 
     $chat->timemodified = time();
     $chat->id = $chat->instance;
 
-    $chat->chattime = make_timestamp($chat->chatyear, $chat->chatmonth, $chat->chatday, 
+    $chat->chattime = make_timestamp($chat->chatyear, $chat->chatmonth, $chat->chatday,
                                      $chat->chathour, $chat->chatminute);
 
     if ($returnid = update_record("chat", $chat)) {
@@ -108,9 +108,9 @@ function chat_update_instance($chat) {
 
 
 function chat_delete_instance($id) {
-/// Given an ID of an instance of this module, 
-/// this function will permanently delete the instance 
-/// and any data that depends on it.  
+/// Given an ID of an instance of this module,
+/// this function will permanently delete the instance
+/// and any data that depends on it.
 
     if (! $chat = get_record("chat", "id", "$id")) {
         return false;
@@ -132,7 +132,7 @@ function chat_delete_instance($id) {
 }
 
 function chat_user_outline($course, $user, $mod, $chat) {
-/// Return a small object with summary information about what a 
+/// Return a small object with summary information about what a
 /// user has done with a given particular instance of this module
 /// Used for user activity reports.
 /// $return->time = the time they did it
@@ -142,7 +142,7 @@ function chat_user_outline($course, $user, $mod, $chat) {
 }
 
 function chat_user_complete($course, $user, $mod, $chat) {
-/// Print a detailed representation of what a  user has done with 
+/// Print a detailed representation of what a  user has done with
 /// a given particular instance of this module, for user activity reports.
 
     return true;
@@ -161,7 +161,7 @@ function chat_print_recent_activity($course, $isteacher, $timestart) {
                                         FROM {$CFG->prefix}chat_users as cu,
                                              {$CFG->prefix}chat as ch,
                                              {$CFG->prefix}user as u
-                                       WHERE cu.userid = u.id 
+                                       WHERE cu.userid = u.id
                                          AND cu.chatid = ch.id
                                          AND cu.lastping > '$timeold'
                                          AND ch.course = '$course->id'
@@ -200,8 +200,8 @@ function chat_print_recent_activity($course, $isteacher, $timestart) {
 
 function chat_cron () {
 /// Function to be run periodically according to the moodle cron
-/// This function searches for things that need to be done, such 
-/// as sending out mail, toggling flags etc ... 
+/// This function searches for things that need to be done, such
+/// as sending out mail, toggling flags etc ...
 
     global $CFG;
 
@@ -281,7 +281,7 @@ function chat_refresh_events($courseid = 0) {
             $event->eventtype   = $chat->schedule;
             $event->timeduration = 0;
             $event->visible     = get_field('course_modules', 'visible', 'module', $moduleid, 'instance', $chat->id);
-            
+
             add_event($event);
         }
     }
@@ -300,7 +300,7 @@ function chat_get_users($chatid, $groupid=0) {
     } else {
         $groupselect = "";
     }
-   
+
     return get_records_sql("SELECT DISTINCT u.id, u.firstname, u.lastname, u.picture, c.lastmessageping, c.firstping
                               FROM {$CFG->prefix}chat_users c,
                                    {$CFG->prefix}user u
@@ -312,7 +312,7 @@ function chat_get_users($chatid, $groupid=0) {
 function chat_get_latest_message($chatid, $groupid=0) {
 /// Efficient way to extract just the latest message
 /// Uses ADOdb directly instead of get_record_sql()
-/// because the LIMIT command causes problems with 
+/// because the LIMIT command causes problems with
 /// the developer debugging in there.
 
     global $db, $CFG;
@@ -324,7 +324,7 @@ function chat_get_latest_message($chatid, $groupid=0) {
     }
 
     if (!$rs = $db->Execute("SELECT *
-                               FROM {$CFG->prefix}chat_messages 
+                               FROM {$CFG->prefix}chat_messages
                               WHERE chatid = '$chatid' $groupselect
                            ORDER BY timestamp DESC LIMIT 1")) {
         return false;
@@ -373,7 +373,7 @@ function chat_delete_old_users() {
             $message->message = "exit";
             $message->system = 1;
             $message->timestamp = time();
-     
+
             if (!insert_record("chat_messages", $message)) {
                 error("Could not insert a chat message!");
             }
@@ -532,7 +532,7 @@ function chat_browser_detect($HTTP_USER_AGENT) {
  {
   $BPlatform = "Unknown";
  }
- 
+
  $return["name"] = $BName;
  $return["version"] = $BVersion;
  $return["platform"] = $BPlatform;
@@ -600,92 +600,125 @@ function chat_display_version($version, $browser)
 }
 
 
-function chat_format_message($message, $courseid=0) {
-/// Given a message object full of information, this function 
-/// formats it appropriately into text and html, then 
-/// returns the formatted data.
+function chat_format_message_manually($message, $courseid, $sender, $currentuserid, $language = NULL) {
+    global $CFG;
 
-    global $CFG, $USER;
-
-    $output = new object;
-
-    if (!$user = get_record("user", "id", $message->userid)) {
-        return "Error finding user id = $message->userid";
-    }
-
-    $picture = print_user_picture($user->id, 0, $user->picture, false, true, false);
-    if ($courseid) {
-        $picture = "<a target=\"_new\" href=\"$CFG->wwwroot/user/view.php?id=$user->id&course=$courseid\">$picture</a>";
-    }
-
-    $strtime = userdate($message->timestamp, get_string("strftimemessage", "chat"));
-
+    $output = New stdClass;
     $output->beep = false;   // by default
 
-    $text = $message->message;
+    if(empty($language)) {
+        $language = current_language();
+    }
 
-    if (!empty($message->system)) {             /// It's a system message
-        $output->text = get_string("message$text", "chat", fullname($user));
-        $output->text = "$strtime: $output->text";
-        $output->html  = "<table><tr><td valign=top>$picture</td><td>";
-        $output->html .= "<font size=2 color=\"#CCAAAA\">$output->text</font>";
-        $output->html .= "</td></tr></table>";
+    // Override the highest-ranking language variable from current_language() here
+    // And save it so we can restore it again afterwards
+
+    $oldcfglang = empty($CFG->courselang) ? NULL : $CFG->courselang;
+    $CFG->courselang = $language;
+
+    // Get some additional info now that the language has been correctly set
+
+    // But before that :-) let's override get_user_timezone() for this call... messy stuff...
+    $tz = ($sender->timezone == 99) ? $CFG->timezone : $sender->timezone;
+    $message->strtime = userdate($message->timestamp, get_string('strftimemessage', 'chat'), $tz);
+
+    $message->picture = print_user_picture($sender->id, 0, $sender->picture, false, true, false);
+    if ($courseid) {
+        $message->picture = "<a target=\"_new\" href=\"$CFG->wwwroot/user/view.php?id=$sender->id&course=$courseid\">$picture</a>";
+    }
+
+    // Start processing the message
+
+    if(!empty($message->system)) {
+        // System event
+        $output->text = $message->strtime.': '.get_string('message'.$message->message, 'chat', fullname($sender));
+        $output->html  = '<table><tr><td style="vertical-align: top;">'.$message->picture.'</td><td>';
+        $output->html .= '<font size=2 color="#CCAAAA">'.$output->text.'</font></td></tr></table>';
+
+        // Don't forget to reset the language before returning!!!
+        if(!empty($oldcfglang)) {
+            $CFG->courselang = $oldcfglang;
+        }
         return $output;
     }
 
+    // It's not a system event, so format it nicely
+
+    $text = $message->message;
     convert_urls_into_links($text);
     replace_smilies($text);
     $text = filter_text($text, $courseid);
 
-    if (substr($text, 0, 5) == "beep ") {          /// It's a beep!
+    // And now check for special cases
+
+    if (substr($text, 0, 5) == 'beep ') {
+        /// It's a beep!
         $beepwho = trim(substr($text, 5));
 
-        if ($beepwho == "all") {   // everyone
-            $outinfo = "$strtime: ". get_string("messagebeepseveryone", "chat", fullname($user));
-            $outmain = "";
-            $output->beep = true;  // (eventually this should be set to 
+        if ($beepwho == 'all') {   // everyone
+            $outinfo = $message->strtime.': '.get_string('messagebeepseveryone', 'chat', fullname($sender));
+            $outmain = '';
+            $output->beep = true;  // (eventually this should be set to
                                    //  to a filename uploaded by the user)
 
-        } else if ($beepwho == $USER->id) {  // current user
-            $outinfo = "$strtime: ". get_string("messagebeepsyou", "chat", fullname($user));
-            $outmain = "";
+        } else if ($beepwho == $currentuserid) {  // current user
+            $outinfo = $message->strtime.': '.get_string('messagebeepsyou', 'chat', fullname($sender));
+            $outmain = '';
             $output->beep = true;
 
         } else {
             return false;
         }
+    } else if (substr($text, 0, 1) == ':') {              /// It's an MOO emote
+        $outinfo = $message->strtime;
+        $outmain = $sender->firstname.' '.substr($text, 1);
 
-    } else if (substr($text, 0, 1) == ":") {              /// It's an MOO emote
-        $outinfo = $strtime;
-        $outmain = "$user->firstname ".substr($text, 1);
-
-    } else if (substr($text, 0, 1) == "/") {     /// It's a user command
+    } else if (substr($text, 0, 1) == '/') {     /// It's a user command
 
         if (substr($text, 0, 4) == "/me ") {
-            $outinfo = $strtime;
-            $outmain = "$user->firstname ".substr($text, 4);
+            $outinfo = $message->strtime;
+            $outmain = $sender->firstname.' '.substr($text, 4);
         } else {
-            $outinfo = $strtime;
+            $outinfo = $message->strtime;
             $outmain = $text;
         }
 
     } else {                                          /// It's a normal message
-        $outinfo = "$strtime $user->firstname";
+        $outinfo = $message->strtime.' '.$sender->firstname;
         $outmain = $text;
     }
 
     /// Format the message as a small table
 
-    $output->text  = strip_tags("$outinfo: $outmain");
+    $output->text  = strip_tags($outinfo.': '.$outmain);
 
-    $output->html  = "<table><tr><td valign=top>$picture</td><td><font size=2>";
+    $output->html  = "<table><tr><td valign=top>$message->picture</td><td><font size=2>";
     $output->html .= "<font color=\"#888888\">$outinfo</font>";
     if ($outmain) {
         $output->html .= ": $outmain";
     }
     $output->html .= "</font></td></tr></table>";
 
+    // Don't forget to reset the language before returning!!!
+    if(!empty($oldcfglang)) {
+        $CFG->courselang = $oldcfglang;
+    }
+
     return $output;
+}
+
+function chat_format_message($message, $courseid=0) {
+/// Given a message object full of information, this function
+/// formats it appropriately into text and html, then
+/// returns the formatted data.
+
+    global $CFG, $USER;
+
+    if (!$user = get_record("user", "id", $message->userid)) {
+        return "Error finding user id = $message->userid";
+    }
+
+    return chat_format_message_manually($message, $courseid, $user, $USER->id);
 
 }
 
