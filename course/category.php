@@ -213,12 +213,16 @@
     
 
 /// Print out all the courses
+    $courses = get_courses_page($category->id, "c.sortorder ASC", "c.*", $totalcount, $page*$perpage, $perpage);
+    $numcourses = count($courses);
 
-    if (!$courses = get_courses_page($category->id, "c.sortorder ASC", "c.*", $totalcount, $page*$perpage, $perpage)) {
+    if ($numcourses == 0) {
         print_heading(get_string("nocoursesyet"));
 
-    } else {
+    } else if ($numcourses <= COURSE_MAX_SUMMARIES_PER_PAGE and !$creatorediting) {
+        print_courses($category, "80%");
 
+    } else { 
         print_paging_bar($totalcount, $page, $perpage, "category.php?id=$category->id&perpage=$perpage&");
 
         $strcourses  = get_string("courses");
@@ -243,7 +247,6 @@
             $pixpath = "$CFG->wwwroot/theme/$CFG->theme/pix";
         }
 
-    
         echo "<form name=\"movecourses\" action=\"category.php\" method=\"post\">";
         echo "<table align=\"center\" border=0 cellspacing=2 cellpadding=4 class=\"generalbox\"><tr>";
         echo "<th>$strcourses</th>";
@@ -258,7 +261,6 @@
         echo "</tr>";
 
 
-        $numcourses = count($courses);
         $count = 0;
         $abletomovecourses = false;  // for now
 
@@ -322,18 +324,17 @@
                 }
                 echo "</td>";
             } else {
-                echo "<td>";
-                if ($course->summary) {
-                    link_to_popup_window ("/course/info.php?id=$course->id", "courseinfo", 
-                                          "<img alt=\"info\" height=16 width=16 border=0 src=\"$pixpath/i/info.gif\">", 
-                                           400, 500, $strsummary);
-                    echo "&nbsp;";
-                }
+                echo "<td align=\"right\">";
                 if ($course->guest ) {
-                    echo "<a href=\"view.php?id=$course->id\"><img title=\"$strallowguests\" alt=\"\" height=16 width=16 border=0 src=\"$pixpath/i/user.gif\"></a>&nbsp;";
+                    echo "<a href=\"view.php?id=$course->id\"><img hspace=2 title=\"$strallowguests\" alt=\"\" height=16 width=16 border=0 src=\"$pixpath/i/user.gif\"></a>";
                 }
                 if ($course->password) {
-                    echo "<a href=\"view.php?id=$course->id\"><img title=\"$strrequireskey\" alt=\"\" height=16 width=16 border=0 src=\"$pixpath/i/key.gif\"></a>";
+                    echo "<a href=\"view.php?id=$course->id\"><img hspace=2 title=\"$strrequireskey\" alt=\"\" height=16 width=16 border=0 src=\"$pixpath/i/key.gif\"></a>";
+                }
+                if ($course->summary) {
+                    link_to_popup_window ("/course/info.php?id=$course->id", "courseinfo", 
+                                          "<img hspace=2 alt=\"info\" height=16 width=16 border=0 src=\"$pixpath/i/info.gif\">", 
+                                           400, 500, $strsummary);
                 }
                 echo "</td>";
             }

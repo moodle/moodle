@@ -6,6 +6,8 @@ if (defined('COURSE_MAX_LOG_DISPLAY')) {  // Being included again - should never
     return;
 }
 
+define('COURSE_MAX_SUMMARIES_PER_PAGE', 8);    // records
+
 define('COURSE_MAX_LOG_DISPLAY', 150);       // days
 
 define('COURSE_MAX_LOGS_PER_PAGE', 1000);    // records
@@ -1095,17 +1097,6 @@ function print_courses($category, $width="100%") {
         $courses    = get_courses($category->id);
     }
 
-    if ($categories) {
-        print_simple_box_start("center");
-        print_heading(get_string("subcategories"));
-        foreach ($categories as $category) {
-            $linkcss = $category->visible ? "" : " class=\"dimmed\" ";
-            echo "<p align=\"center\"><a $linkcss".
-                 " href=\"$CFG->wwwroot/course/index.php?category=$category->id\">$category->name</a></p>";
-        }
-        print_simple_box_end();
-    }
-    
     if ($courses) {
         foreach ($courses as $course) {
             print_course($course, $width);

@@ -1330,6 +1330,7 @@ function fix_course_sortorder($categoryid, $sort="sortorder ASC") {
 /// variable reflects the real world.
 
     if (!$courses = get_records("course", "category", "$categoryid", "$sort", "id, sortorder")) {
+        set_field("course_categories", "coursecount", 0, "id", $categoryid);
         return true;
     }
 
