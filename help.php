@@ -37,7 +37,7 @@
                 if ($module == "moodle" && ($file == "index.html" || $file == "mods.html")) {
                     // include file for each module
 
-                    if (!$modules = get_records("modules")) {
+                    if (!$modules = get_records("modules", "visible", 1)) {
                         error("No modules found!!");        // Should never happen
                     }
 
