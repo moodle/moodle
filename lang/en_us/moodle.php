@@ -37,6 +37,7 @@ $string['areyousuretorestorethis'] = "Are you sure to restore it ?";
 $string['assessment'] = "Assessment";
 $string['assignadmins'] = "Assign admins";
 $string['assigncreators'] = "Assign course creators";
+$string['assignstudents'] = "Enroll students";
 $string['assignteachers'] = "Assign teachers";
 $string['authentication'] = "Authentication";
 $string['autosubscribe'] = "Forum auto-subscribe";
