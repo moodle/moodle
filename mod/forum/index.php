@@ -137,9 +137,9 @@
                 $unread = forum_tp_count_forum_posts($forum->id, $groupid) -
                           forum_tp_count_forum_read_records($USER->id, $forum->id, $groupid);
                 if ($unread > 0) {
-                    $unreadlink = '<span class="unread">'.$unread.'</span>';
+                    $unreadlink = '<span class="unread"><a href="view.php?f='.$forum->id.'">'.$unread.'</a>';
                 } else {
-                    $unreadlink = '<span class="read">'.$unread.'</span>';
+                    $unreadlink = '<span class="read"><a href="view.php?f='.$forum->id.'">'.$unread.'</a>';
                 }
             }
 
