@@ -74,7 +74,9 @@
         if ($timenow < $timefinish) {
             $options = array ("id" => "$cm->id");
             echo "<CENTER>";
-            print_single_button("edit.php", $options, get_string("startoredit","journal"));
+            if (!isguest()) {
+                print_single_button("edit.php", $options, get_string("startoredit","journal"));
+            }
             echo "</CENTER>";
         }
 
