@@ -82,7 +82,7 @@
     if (empty($CFG->debug)) {
         $CFG->debug = 7;
     }
-    error_reporting($CFG->debug);   
+    error_reporting($CFG->debug);
 
 
 /// File permissions on created directories in the $CFG->dataroot
@@ -146,11 +146,11 @@
 /// that have "register_globals" turned off (default since PHP 4.1.0).
 /// Eventually I'll go through and upgrade all the code to make this unnecessary
 
-    if (isset($_REQUEST)) {
-        if (isset($_REQUEST['CFG'])) {
-            unset($_REQUEST['CFG']);  // We don't want to overwrite $CFG!
-        }
-        extract($_REQUEST);
+    if (isset($_GET)) {
+        extract($_GET, EXTR_SKIP);    // Skip existing variables, ie CFG
+    }
+    if (isset($_POST)) {
+        extract($_POST, EXTR_SKIP);   // Skip existing variables, ie CFG
     }
     if (isset($_SERVER)) { 
         extract($_SERVER);
@@ -191,10 +191,12 @@
 /// then use the one from the default language.  Otherwise (and this is the 
 /// majority of cases), use the stored locale specified by admin.
 
-    if (isset($lang)) {
+    if (isset($_GET['lang'])) {
         $SESSION->lang = $lang;
     }
-
+    if (empty($CFG->lang)) {
+        $CFG->lang = "en";
+    }
     if (!empty($SESSION->lang) and ($SESSION->lang != $CFG->lang) ) {
         $CFG->locale = get_string("locale");
     } else if (!empty($USER->lang) and ($USER->lang != $CFG->lang) ) {
