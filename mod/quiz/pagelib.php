@@ -36,11 +36,15 @@ class page_quiz extends page_generic_activity {
             $title = str_replace($search, $replace, $title);
         }
 
-        $breadcrumbs = array(
-            $this->courserecord->shortname => $CFG->wwwroot.'/course/view.php?id='.$this->courserecord->id,
-            get_string('modulenameplural', 'quiz') => $CFG->wwwroot.'/mod/quiz/index.php?id='.$this->courserecord->id,
-            $this->activityrecord->name => $CFG->wwwroot.'/mod/quiz/view.php?id='.$this->modulerecord->id,
-        );
+        if($this->courserecord->id == SITEID) {
+            $breadcrumbs = array();
+        }
+        else {
+            $breadcrumbs = array($this->courserecord->shortname => $CFG->wwwroot.'/course/view.php?id='.$this->courserecord->id);
+        }
+
+        $breadcrumbs[get_string('modulenameplural', 'quiz')] = $CFG->wwwroot.'/mod/quiz/index.php?id='.$this->courserecord->id;
+        $breadcrumbs[$this->activityrecord->name]            = $CFG->wwwroot.'/mod/quiz/view.php?id='.$this->modulerecord->id;
 
         if(!empty($morebreadcrumbs)) {
             $breadcrumbs = array_merge($breadcrumbs, $morebreadcrumbs);
