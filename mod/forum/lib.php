@@ -1313,9 +1313,9 @@ function forum_print_recent_activity(&$logs, $isteacher=false) {
                 if ($forum = get_record("forum", "id", $post->forum) ) {
                     if ($forum->type == "teacher") {
                         if ($isteacher) {
-                            continue;
-                        } else {
                             $teacherpost = "COLOR=$COURSE_TEACHER_COLOR";
+                        } else {
+                            continue;
                         }
                     }
                 }
