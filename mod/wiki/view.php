@@ -132,6 +132,7 @@
         include_once($CFG->dirroot."/mod/wiki/ewiki/plugins/feature/imgresize_gd.php");
         include_once($CFG->dirroot."/mod/wiki/ewiki/plugins/moodle/moodle_highlight.php");
         include_once($CFG->dirroot."/mod/wiki/ewiki/plugins/moodle/f_fixhtml.php");
+        include_once($CFG->dirroot."/mod/wiki/ewiki/plugins/moodle/sitemap.php");
         include_once($CFG->dirroot."/mod/wiki/ewiki/plugins/aview/backlinks.php");
         #include_once($CFG->dirroot."/mod/wiki/ewiki/plugins/markup/css.php");
         include_once($CFG->dirroot."/mod/wiki/ewiki/plugins/markup/footnotes.php");
@@ -221,7 +222,7 @@
     $strwikis = get_string("modulenameplural", "wiki");
     $strwiki  = get_string("modulename", "wiki");
 
-    print_header("$course->shortname: $wiki_entry->pagename", "$course->fullname",
+    print_header("$course->shortname: ".($ewiki_title?$ewiki_title:$wiki->name), "$course->fullname",
                 "$navigation <A HREF=\"index.php?id=$course->id\">$strwikis</A> -> <A HREF=\"view.php?id=$moodleID\">$wiki->name</a> -> $ewiki_title",
                 "", "", true, update_module_button($cm->id, $course->id, $strwiki),
                 navmenu($course, $cm));
@@ -258,7 +259,7 @@
     }
 
     if ($wiki_entry) {
-        $specialpages=array("SearchPages", "PageIndex","NewestPages","MostVisitedPages","MostOftenChangedPages","UpdatedPages","FileDownload","FileUpload","OrphanedPages","WantedPages");
+        $specialpages=array("SiteMap", "SearchPages", "PageIndex","NewestPages","MostVisitedPages","MostOftenChangedPages","UpdatedPages","FileDownload","FileUpload","OrphanedPages","WantedPages");
     /// Page Actions
         echo '<table border="0" width="100%">';
         echo '<tr>';

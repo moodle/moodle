@@ -26,6 +26,7 @@ $string['searchwiki'] = 'Search Wiki';
 $string['wikilinks'] = 'Wiki Links';
 $string['choosewikilinks'] = '-- Choose Wiki Links --';
 $string['viewpage'] = 'View Page';
+$string['sitemap'] = 'Sitemap';
 $string['pageindex'] = 'Page Index';
 $string['newestpages'] = 'Newest pages';
 $string['mostvisitedpages'] = 'Most visited pages';
@@ -81,7 +82,6 @@ $string['strippagecheck'] = 'Are you sure that you want to strip old versions fr
 $string['nothingtostrip'] = 'There are no pages with more than one version.';
 $string['version'] = 'Version';
 $string['versions'] = 'Versions';
-$string['versions'] = 'Versions';
 $string['pagesstripped'] = 'Pages stripped.';
 $string['wrongversionrange'] = '$a is not a correct range!';
 $string['versionrangetoobig'] = 'You cannot delete all versions of a page! The last version should remain.';
@@ -126,10 +126,6 @@ $string['deletemewikiwordfound'] = '$a found on page';
 
 $string['submit'] = 'Submit';
 
-# Initial contents: Name as the directory
-$string['00empty']="Empty";
-$string['ewikidefault']="ErfurtWiki Default";
-
 # Ewiki
 $string['editform1']='Try not to worry too much about formatting, it can always be improved later.';
 $string['editform2']='Please write sensibly, and remember that all editing is logged.';
@@ -170,5 +166,11 @@ $string['meta']='Meta data';
 $string['refs']='References';
 $string['contentsize']='Content size';
 $string['pageslinkingto']="Pages linking to this page";
+$string['viewsmfor']="View sitemap for";
+$string['smfor']="Sitemap for";
+$string['invalidroot']="You are not authorized to access the current root page so no sitemap can be created.";
 $string['thispageisntlinkedfromanywhereelse'] = 'This page isn\'t linked from anywhere else.';
+
+$string['wikidump']='Here you can tailor your WikiDump to your needs. When you are ready, click the "Export" button.';
+$string['export']='Export.';
 ?>

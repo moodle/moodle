@@ -899,6 +899,7 @@ function wiki_print_wikilinks_block($cmid, $binary=false, $return=false) {
 
    $links=array();
 
+   $links["SiteMap"]=get_string("sitemap", "wiki");
    $links["PageIndex"]=get_string("pageindex", "wiki");
    $links["NewestPages"]=get_string("newestpages", "wiki");
    $links["MostVisitedPages"]=get_string("mostvisitedpages", "wiki");
