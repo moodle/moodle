@@ -415,7 +415,8 @@ function forum_print_recent_activity($course, $isteacher, $timestart) {
                 /// TEMPORARY:  This algorithm is ridiculously cumbersome ... 
                 ///             There MUST be a better way of doing this...
                 if ($cm = get_coursemodule_from_instance("forum", $post->forum, $course->id)) {
-                    if (groupmode($course, $cm) == SEPARATEGROUPS) {
+                    $groupmode = groupmode($course, $cm);
+                    if ($groupmode == SEPARATEGROUPS or $groupmode == VISIBLEGROUPS) {
                         if (!isteacheredit($course->id)) {
                             if ($discussion = get_record("forum_discussions", "id", $post->discussion)) {
                                 if ($firstpost = get_record("forum_posts", "id", $discussion->firstpost)) {
