@@ -1114,12 +1114,7 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
 
     $age = time() - $post->created;
     if ($ownpost) {
-        if (!record_exists("forum_posts", "parent", $post->id)) {
-            $output .= "<a href=\"$CFG->wwwroot/mod/forum/post.php?delete=$post->id\">".get_string("delete", "forum")."</a>";
-            if ($reply) {
-                $output .= ' | ';
-            }
-        }
+        $output .= "<a href=\"$CFG->wwwroot/mod/forum/post.php?delete=$post->id\">".get_string("delete", "forum")."</a>";
         if ($reply) {
             $output .= "<a target=\"_blank\" href=\"$CFG->wwwroot/mod/forum/post.php?reply=$post->id\">".get_string("replyforum", "forum")."</a>";
         }
@@ -1257,13 +1252,11 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
     }
     
     if ($ownpost or $isteacher) {
-        if (!record_exists("forum_posts", "parent", $post->id)) {
-            echo "<a href=\"$CFG->wwwroot/mod/forum/post.php?delete=$post->id\">$strdelete</a>";
-            if ($reply) {
-                echo " | ";
-            } else {
-                echo "&nbsp;&nbsp;";
-            }
+        echo "<a href=\"$CFG->wwwroot/mod/forum/post.php?delete=$post->id\">$strdelete</a>";
+        if ($reply) {
+            echo " | ";
+        } else {
+            echo "&nbsp;&nbsp;";
         }
     }
     if ($reply) {
