@@ -1637,8 +1637,12 @@ function remove_from_metacourse($metacourseid, $courseid) {
  */
 function isadmin($userid=0) {
     global $USER;
-    static $admins = array();
-    static $nonadmins = array();
+    static $admins, $nonadmins;
+
+    if (!isset($admins)) {
+        $admins = array();
+        $nonadmins = array();
+    }
 
     if (!$userid){
         if (empty($USER->id)) {
@@ -1661,7 +1665,7 @@ function isadmin($userid=0) {
 }
 
 /**
- * Determines if a user is a teacher or an admin
+ * Determines if a user is a teacher (or better)
  *
  * @uses $USER
  * @param int $courseid The id of the course that is being viewed, if any
@@ -1671,8 +1675,18 @@ function isadmin($userid=0) {
  * @todo Finish documenting this function
  */
 function isteacher($courseid=0, $userid=0, $includeadmin=true) {
-/// Is the user a teacher or admin?
+/// Is the user able to access this course as a teacher?
     global $USER, $CFG;
+
+    if (empty($userid)) {                           // we are relying on $USER
+        if (empty($USER) or empty($USER->id)) {     // not logged in so can't be a teacher
+            return false;
+        }
+        if (!empty($USER->teacher) and $courseid) { // look in session cache
+            return !empty($USER->teacher[$courseid]);
+        }
+        $userid = $USER->id;
+    }
 
     if ($includeadmin and isadmin($userid)) {  // admins can do anything the teacher can
         return true;
@@ -1683,16 +1697,6 @@ function isteacher($courseid=0, $userid=0, $includeadmin=true) {
             notify('Coding error: isteacher() should not be used without a valid course id as argument.  Please notify a developer.');
         }
         return isteacherinanycourse($userid, $includeadmin);
-    }
-
-    if (!$userid) {
-        if ($courseid) {
-            return !empty($USER->teacher[$courseid]);
-        }
-        if (!isset($USER->id)) {
-            return false;
-        }
-        $userid = $USER->id;
     }
 
     return record_exists('user_teachers', 'userid', $userid, 'course', $courseid);
@@ -1707,17 +1711,17 @@ function isteacher($courseid=0, $userid=0, $includeadmin=true) {
  * @return boolean
  * @todo Finish documenting this function
  */
-function isteacherinanycourse($userid = 0, $includeadmin = true) {
+function isteacherinanycourse($userid=0, $includeadmin=true) {
     global $USER;
 
-    if(empty($userid)) {
-        if(empty($USER) || empty($USER->id)) {
+    if (empty($userid)) {
+        if (empty($USER) or empty($USER->id)) {
             return false;
         }
         $userid = $USER->id;
     }
 
-    if (isadmin($userid) && $includeadmin) {  // admins can do anything
+    if ($includeadmin and isadmin($userid)) {  // admins can do anything
         return true;
     }
 
