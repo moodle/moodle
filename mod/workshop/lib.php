@@ -2095,43 +2095,45 @@ function workshop_list_student_submissions($workshop, $user) {
 				$nassessments[$submission->id] = $n + rand(0, 98) / 100;
 				}
 				
-			// put the submissions with the lowest number of assessments first
-			asort($nassessments);
-			reset($nassessments);
-			$nsassessments = $workshop->nsassessments;
-			foreach ($nassessments as $submissionid =>$n) {
-				// only use those submissions which fall below the allocation threshold
-				if ($n < ($workshop->nsassessments + $workshop->overallocation)) {
-					$comment = "";
-					$submission = get_record("workshop_submissions", "id", $submissionid);
-					// skip submission if it belongs to this user
-					if ($submission->userid != $user->id) {
-						// add a "hot" assessment record if user has NOT already assessed this submission
-						if (!get_record("workshop_assessments", "submissionid", $submission->id, "userid",
-                                    $user->id)) {
-							$yearfromnow = time() + 365 * 86400;
-							// ...create one and set timecreated way in the future, this is reset when record is updated
-							$assessment->workshopid = $workshop->id;
-							$assessment->submissionid = $submission->id;
-							$assessment->userid = $user->id;
-							$assessment->grade = -1; // set impossible grade
-							$assessment->timecreated = $yearfromnow;
-							if (!$assessment->id = insert_record("workshop_assessments", $assessment)) {
-								error("List Student submissions: Could not insert workshop assessment!");
-								}
-							$nassessed++;
-							// is user up to quota?
-							if ($nassessed == $nsassessments) {
-								break;
-								}
-							}
-						}
-					}
-				}
+            if (isset($nassessments)) { // make sure we end up with something to play with :-)
+                // put the submissions with the lowest number of assessments first
+                asort($nassessments);
+                reset($nassessments);
+                $nsassessments = $workshop->nsassessments;
+                foreach ($nassessments as $submissionid =>$n) {
+                    // only use those submissions which fall below the allocation threshold
+                    if ($n < ($workshop->nsassessments + $workshop->overallocation)) {
+                        $comment = "";
+                        $submission = get_record("workshop_submissions", "id", $submissionid);
+                        // skip submission if it belongs to this user
+                        if ($submission->userid != $user->id) {
+                            // add a "hot" assessment record if user has NOT already assessed this submission
+                            if (!get_record("workshop_assessments", "submissionid", $submission->id, "userid",
+                                        $user->id)) {
+                                $yearfromnow = time() + 365 * 86400;
+                                // ...create one and set timecreated way in the future, this is reset when record is updated
+                                $assessment->workshopid = $workshop->id;
+                                $assessment->submissionid = $submission->id;
+                                $assessment->userid = $user->id;
+                                $assessment->grade = -1; // set impossible grade
+                                $assessment->timecreated = $yearfromnow;
+                                if (!$assessment->id = insert_record("workshop_assessments", $assessment)) {
+                                    error("List Student submissions: Could not insert workshop assessment!");
+                                }
+                                $nassessed++;
+                                // is user up to quota?
+                                if ($nassessed == $nsassessments) {
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
 			}
 		}
-	// now list the student submissions this user has been allocated, list only the hot and warm ones, the cold ones
-	// are listed in the "your assessments list" (_list_assessed submissions)
+    }
+	// now list the student submissions this user has been allocated, list only the hot and warm ones, 
+    // the cold ones are listed in the "your assessments list" (_list_assessed submissions)
 	if ($assessments = workshop_get_user_assessments($workshop, $user)) {
 		$timenow = time();
 		foreach ($assessments as $assessment) {

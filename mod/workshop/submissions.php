@@ -1025,7 +1025,8 @@
 					}
 				}
 			else { // funny this user did not submit - create a dummy submission to hold any grades they might have
-				$bestsubmission->workshopid = $workshop->id;
+				unset($bestsubmission);
+                $bestsubmission->workshopid = $workshop->id;
 				$bestsubmission->userid = $user->id;
 				$bestsubmission->title = "No Submission";
 				$bestsubmission->timecreated = 0;
