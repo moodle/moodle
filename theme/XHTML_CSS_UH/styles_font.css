@@ -165,7 +165,6 @@ h4 {
 }
 
 
-
 /*****************************
 ***
 *** content styles
@@ -189,7 +188,6 @@ h4 {
 }
 
 
-
 /*****************************
 ***
 *** Admin
@@ -208,7 +206,6 @@ h4 {
 #admin-lang FORM {
     font-size:0.9em;
 }
-
 
 
 /*****************************
@@ -256,7 +253,6 @@ h4 {
 }
 
 
-
 /*****************************
 ***
 *** Activities
@@ -294,6 +290,11 @@ h4 {
 
 .wiki .upload {
     font-family:"Lucida Grande", Verdana, Geneva, Lucida, Arial, Helvetica, sans-serif;
+    font-size:0.9em;
+}
+
+.mwiki .generaltab,
+.mwiki .generaltabselected  {
     font-size:0.9em;
 }
 
@@ -381,7 +382,6 @@ TABLE.cal_controls td {
 }
 
 
-
 /*****************************
 ***
 *** Blocks
@@ -390,7 +390,7 @@ TABLE.cal_controls td {
 /* sideblock */
 .sideblock {
 	font-family:"Lucida Grande", Verdana, Geneva, Lucida, Arial, Helvetica, sans-serif;
-	font-size:0.75em;
+	font-size:0.80em;
 }
 
 .sideblockheading {

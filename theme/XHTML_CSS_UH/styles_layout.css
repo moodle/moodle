@@ -144,7 +144,6 @@ input {
 }
 
 
-
 /*****************************
 ***
 *** content styles
@@ -172,6 +171,16 @@ input {
 .noticebox {
     border-width:1px;
     border-style:solid;
+}
+
+
+/* weblib.php table */
+.tabledivider {
+    border-width:1px;
+    border-style:solid;
+    border-left:0px;
+    border-right:0px;
+    border-top:0px;
 }
 
 
@@ -210,27 +219,17 @@ input {
 }
 
 
-/* summary of a user in a nice little box - weblib.php */
-.userinfobox {
-    margin-bottom:5px;
-    border-width:1px;
-    border-style:solid;
-}
-
-
-/* weblib.php table */
-.tabledivider {
-    border-width:1px;
-    border-style:solid;
-    border-left:0px;
-    border-right:0px;
-    border-top:0px;
-}
-
-
 /* entry-page index.php */ 
 .sitetopic,
 .siteinfo  {
+    border-width:1px;
+    border-style:solid;
+}
+
+
+/* summary of a user in a nice little box - weblib.php */
+.userinfobox {
+    margin-bottom:5px;
     border-width:1px;
     border-style:solid;
 }
@@ -267,6 +266,10 @@ table.formtable td {
     border-style:solid;
 }
 
+.generaltableheader {
+    background-image:none;
+}
+
 
 /* course */
 #left-column,
@@ -281,12 +284,9 @@ table.formtable td {
 }
 
 .outlineheadingblock {
-    display:none;
-}
-
-.outlineheadingblock {
     background-image:none;
     border:none;
+    display:none;
 }
 
 .topicsoutlineside,
@@ -314,10 +314,6 @@ table.formtable td {
 .topicsoutlinecontenthighlight span,
 .topicsoutlinecontenthidden span {
     padding:1em 0em;
-}
-
-.generaltableheader {
-    background-image:none;
 }
 
 .weeklyoutlineside {
@@ -354,40 +350,6 @@ table.formtable td {
     border-top:1px;
     border-bottom:1px;
     border-style:dashed;
-}
-
-.topicsoutlineside {
-    border-width:1px;
-    border-style:solid;
-}
-
-.topicsoutlinesidehighlight {
-    border-width:1px;
-    border-style:solid;
-}
-
-.topicsoutlinesidehidden {
-    border-width:1px;
-    border-style:solid;
-}
-
-.topicsoutlinecontent {
-    border-width:0px;
-    border-top:1px;
-    border-bottom:1px;
-    border-style:solid;
-}
-
-.topicsoutlinecontenthighlight {
-    border-width:0px;
-    border-top:1px;
-    border-bottom:1px;
-    border-style:solid;
-}
-
-.topicsoutlinecontenthidden {
-    border-width:1px;
-    border-style:solid;
 }
 
 .categorybox {
