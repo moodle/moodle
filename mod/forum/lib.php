@@ -1064,7 +1064,7 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
     }
     echo "<p>";
     echo "<font size=3><b>$post->subject</b></font><br>";
-    echo "<font size=2>";
+    echo "<font size=1>";
     $by->name = "<a href=\"$CFG->wwwroot/user/view.php?id=$post->userid&course=$courseid\">$post->firstname $post->lastname</a>";
     $by->date = userdate($post->modified);
     print_string("bynameondate", "forum", $by);
