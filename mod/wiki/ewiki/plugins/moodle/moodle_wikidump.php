@@ -14,7 +14,7 @@ $ewiki_t["en"]["DOWNLOAD_ARCHIVE"] = "Download";
 #define("EWIKI_WIKIDUMP_ARCNAME", "WikiDump_");
 #define("EWIKI_WIKIDUMP_DEFAULTTYPE", "TAR");
 #define("EWIKI_WIKIDUMP_MAXLEVEL", 1);
-define('EWIKI_DUMP_FILENAME_REGEX',"/\W/");
+define('EWIKI_DUMP_FILENAME_REGEX',"/\W\+/");
 
 #-- glue
 #if((function_exists(gzcompress) && EWIKI_WIKIDUMP_DEFAULTTYPE=="ZIP") || EWIKI_WIKIDUMP_DEFAULTTYPE=="TAR"){
@@ -72,7 +72,7 @@ function moodle_ewiki_page_wiki_dump($id=0, $data=0, $action=0) {
     '<INPUT TYPE="HIDDEN" NAME="wikipage" VALUE="'.$wikipage.'">'."\n".
     "<CENTER>\n";
   
-  // Export binaroes too ?
+  // Export binaries too ?
   if(!$wiki->ewikiacceptbinary) {
     $ret.='<INPUT TYPE="HIDDEN" NAME="exportbinaries" VALUE="0">'.$exportdestinations[0]."\n";
   } else {
@@ -139,12 +139,14 @@ function ewiki_page_wiki_dump_send($exportbinaries=0, $exportformats=0, $withvir
   
   $filestozip=array();
   #-- disable protected email
-  foreach($ewiki_plugins["link_url"] as $key => $linkplugin){
-    if($linkplugin == "ewiki_email_protect_link"){
-      unset($ewiki_plugins["link_url"][$key]);
+  if(count($ewiki_plugins["link_url"])) {
+    foreach($ewiki_plugins["link_url"] as $key => $linkplugin){
+      if($linkplugin == "ewiki_email_protect_link"){
+        unset($ewiki_plugins["link_url"][$key]);
+      }
     }
   }
-
+  
   /// HTML-Export
   if($exportformats==1) {
     #-- if exportformats is html
@@ -249,8 +251,7 @@ function ewiki_page_wiki_dump_send($exportbinaries=0, $exportformats=0, $withvir
     
     
     #-- convert all pages
-    foreach($a_pagelist as $pagename){
-      
+    foreach($a_pagelist as $pagename){      
       if ((!in_array($pagename, $a_virtual))) {
         $id = $pagename;
         #-- not a virtual page
@@ -273,8 +274,10 @@ function ewiki_page_wiki_dump_send($exportbinaries=0, $exportformats=0, $withvir
       
       if (empty($content)){
         switch ($row["flags"] & EWIKI_DB_F_TYPE) {
+          // Text Page
           case (EWIKI_DB_F_TEXT):
             #print "<pre>"; print_r($row[content]); print "\n-------------</pre>";
+            
             if($exportformats==1) {/// HTML-Export
               $content = ewiki_format($row["content"]);
             } else {
@@ -285,6 +288,7 @@ function ewiki_page_wiki_dump_send($exportbinaries=0, $exportformats=0, $withvir
             if($exportformats==1) {
               $content = str_replace($a_images, $a_rimages, $content);
             }
+            
             $fn = preg_replace(EWIKI_DUMP_FILENAME_REGEX, "",  urlencode($id));
             $fn = $fn.$html_ext;
             if($exportformats==1) {/// HTML-Export
@@ -427,6 +431,7 @@ function ewiki_page_wiki_dump_send($exportbinaries=0, $exportformats=0, $withvir
       if(!deldir($exportbasedir)) {
         error("Cannot delete $exportbasedir");
       }
+      #exit();
       return false;
     } else {
        return get_string("exportsuccessful","wiki")."<br>";      
