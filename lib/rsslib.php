@@ -445,4 +445,16 @@ function rss_get_form($act, $url, $rssid, $printnow=true) {
     }
     return $returnstring;
 }
+
+/**
+ *   translates HTML special characters back to ASCII
+ * RSS feeds may have encoded html commands which we want to translate properly
+ * to display as intended rather than as source (html script visible in feed)
+ * This function taken from Simplog - www.simplog.net
+ */
+function rss_unhtmlentities($string) {
+    $trans_tbl = get_html_translation_table (HTML_ENTITIES);
+    $trans_tbl = array_flip ($trans_tbl);
+    return strtr ($string, $trans_tbl);
+}
 ?>
