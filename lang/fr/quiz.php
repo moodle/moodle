@@ -217,6 +217,7 @@ $string['randomsamatchnumber'] = 'Nombre de questions à sélectionner';
 $string['readytosend'] = 'Vous êtes sur le point d\'envoyer votre test à l\'évaluation. Êtes-vous certain de vouloir continuer ?';
 $string['reattemptquiz'] = 'Effectuer de nouveau le test';
 $string['recentlyaddedquestion'] = 'Question ajoutée récemment !';
+$string['recurse'] = 'Inclure les sous-catégories';
 $string['regrade'] = 'Recalculer les notes de toutes les tentatives';
 $string['regradecomplete'] = 'Toutes les notes ont été recalculées';
 $string['regradecount'] = '$a->changed sur $a->attempt notes ont été changées';
