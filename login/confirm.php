@@ -11,7 +11,7 @@
 
             if ($user->confirmed) {
                 print_header(get_string("alreadyconfirmed"), get_string("alreadyconfirmed"), "", "");
-                echo "<center><h3>".get_string("thanks").", ". $user->firstname ." ". $user->lastname . "</h3>\n";
+                echo "<center><h3>".get_string("thanks").", ". fullname($user) . "</h3>\n";
                 echo "<h4>".get_string("alreadyconfirmed")."</h4>\n";
                 echo "<h3> -> <a href=\"$CFG->wwwroot/course/\">".get_string("courses")."</a></h3></center>\n";
                 print_footer();
@@ -50,7 +50,7 @@
                 }
  
                 print_header(get_string("confirmed"), get_string("confirmed"), "", "");
-                echo "<center><h3>".get_string("thanks").", ". $USER->firstname ." ". $USER->lastname . "</h3>\n";
+                echo "<center><h3>".get_string("thanks").", ". fullname($USER) . "</h3>\n";
                 echo "<h4>".get_string("confirmed")."</h4>\n";
                 echo "<h3> -> <a href=\"$CFG->wwwroot/course/\">".get_string("courses")."</a></h3></center>\n";
                 print_footer();

@@ -89,7 +89,7 @@
     			if (is_array($user_data)) {
     				$data = current($user_data);
     				$row[] = "<a href=\"$CFG->wwwroot/user/view.php?id=$data->userid&amp;course=$course->id\">".
-    					 "$data->firstname $data->lastname</a>";
+    					 fullname($data)."</a>";
     				foreach ($user_data as $data) {
     				    $scoreview = "";
     				    if ($data->cmi_core_score_raw > 0)
