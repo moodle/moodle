@@ -33,6 +33,11 @@
         $participantslink = "<a href=\"index.php?id=$course->id\">".get_string("participants")."</a>";
     }
 
+    $isseparategroups = ($course->groupmode == SEPARATEGROUPS and $course->groupmodeforce and 
+                         !isteacheredit($course->id));
+
+    $currentgroup = $isseparategroups ? get_current_group($course->id) : NULL;
+
     if ($course->category) {
         print_header("$course->shortname: ".get_string("participants"), "$course->fullname",
                      "<A HREF=../course/view.php?id=$course->id>$course->shortname</A> -> ".
@@ -43,10 +48,14 @@
     }
 
     if ($showteachers) {
-        if ( $teachers = get_course_teachers($course->id)) {
-            echo "<h2 align=center>$course->teachers</h2>";
+        if ($teachers = get_course_teachers($course->id)) {
+            echo "<h2 align=\"center\">$course->teachers</h2>";
             foreach ($teachers as $teacher) {
-                if ($teacher->authority > 0) {    // Don't print teachers with no authority
+                if ($isseparategroups) {
+                    if ($teacher->editall or ismember($currentgroup, $teacher->id)) {
+                        print_user($teacher, $course);
+                    }
+                } else if ($teacher->authority > 0) {    // Don't print teachers with no authority
                     print_user($teacher, $course);
                 }
             }
@@ -60,9 +69,16 @@
     }
 
     $students = get_course_students($course->id, $dsort, $dir, $page*$perpage, 
-                                    $perpage, $firstinitial, $lastinitial);
+                                    $perpage, $firstinitial, $lastinitial, $currentgroup);
 
-    $totalcount = $matchcount = count_records("user_students", "course", $course->id);
+    $totalcount = count_course_students($course, "", "", "", $currentgroup);
+
+    if ($firstinitial or $lastinitial) {
+        $matchcount = count_course_students($course, "", $firstinitial, $lastinitial, $currentgroup);
+    } else {
+        $matchcount = $totalcount;
+    }
+
 
     echo "<h2 align=center>$totalcount $course->students</h2>";
 
@@ -118,8 +134,6 @@
         }
         echo "</p>";
         echo "</center>";
-
-        $matchcount = count_course_students($course, "", $firstinitial, $lastinitial);
 
         print_paging_bar($matchcount, $page, $perpage, 
                          "index.php?id=$course->id&sort=$sort&dir=$dir&perpage=$perpage&firstinitial=$firstinitial&lastinitial=$lastinitial&");
