@@ -1041,6 +1041,128 @@ function check_for_restricted_user($username=NULL, $redirect='') {
     }
 }
 
+function sync_metacourses() {
+
+    global $CFG;
+
+    if (!$courses = get_records_sql("SELECT DISTINCT parent_course,1 FROM {$CFG->prefix}meta_course")) {
+        return;
+    }
+    
+    foreach ($courses as $course) {
+        sync_metacourse($course->parent_course);
+    }
+}
+
+
+/**
+ * Goes through all enrolment records for the courses inside the metacourse and sync with them.
+ */ 
+
+function sync_metacourse($metacourseid) {
+
+    global $CFG;
+
+    if (!$metacourse = get_record("course","id",$metacourseid)) {
+        return false;
+    }
+
+
+    if (count_records('meta_course','parent_course',$metacourseid) == 0) { // if there are no child courses for this meta course, nuke the enrolments
+        if ($enrolments = get_records('user_students','course',$metacourseid,'','userid,1')) {
+            foreach ($enrolments as $enrolment) {
+                unenrol_student($enrolment->userid,$metacourseid);
+            }
+        }
+        return true;
+    }
+
+
+    // this will return a list of userids from user_student for enrolments in the metacourse that shouldn't be there.
+    $sql = "SELECT DISTINCT parent.userid,1 
+            FROM {$CFG->prefix}meta_course meta 
+              JOIN {$CFG->prefix}user_students parent 
+                ON meta.parent_course = parent.course 
+                AND meta.parent_course = $metacourseid
+              LEFT JOIN {$CFG->prefix}user_students child
+                ON meta.child_course = child.course 
+                WHERE child.course IS NULL";
+
+    if ($enrolmentstodelete = get_records_sql($sql)) {
+        foreach ($enrolmentstodelete as $enrolment) {
+            unenrol_student($enrolment->userid,$metacourseid); // doing it this way for forum subscriptions etc.
+        }
+    }
+
+
+    // this will return a list of userids that need to be enrolled in the metacourse
+    $sql = "SELECT DISTINCT child.userid,1 
+            FROM {$CFG->prefix}meta_course meta 
+              JOIN {$CFG->prefix}user_students child 
+                 ON meta.child_course = child.course 
+                 AND meta.parent_course = $metacourseid
+              LEFT JOIN {$CFG->prefix}user_students parent 
+                 ON meta.parent_course = parent.course 
+                 WHERE parent.course IS NULL";
+
+    if ($userstoadd = get_records_sql($sql)) {
+        foreach ($userstoadd as $user) {
+            enrol_student($user->userid,$metacourseid);
+        }
+    }
+    
+    // and next make sure that we have the right start time and end time (ie max and min) for them all.
+    if ($enrolments = get_records('user_students','course',$metacourseid,'','id,userid')) {
+        foreach ($enrolments as $enrol) {
+            if ($maxmin = get_record_sql("SELECT min(timestart) AS timestart, max(timeend) AS timeend
+               FROM mdl_user_students u JOIN mdl_meta_course mc ON u.course = mc.child_course WHERE userid = $enrol->userid
+               AND mc.parent_course = $metacourseid")) {
+                $enrol->timestart = $maxmin->timestart;
+                $enrol->timeend = $maxmin->timeend;
+                update_record('user_students',$enrol);
+            }
+        }
+    }
+    return true;
+}
+
+/** 
+ * Adds a record to the metacourse table and calls sync_metacoures
+ */
+function add_to_metacourse ($metacourseid, $courseid) {
+ 
+    if (!$metacourse = get_record("course","id",$metacourseid)) {
+        return false;
+    }
+    
+    if (!$course = get_record("course","id",$courseid)) {
+        return false;
+    }
+
+    if (!$record = get_record("meta_course","parent_course",$metacourseid,"child_course",$courseid)) {
+        $rec->parent_course = $metacourseid;
+        $rec->child_course = $courseid;
+        if (!insert_record('meta_course',$rec)) {
+            return false;
+        }
+        return sync_metacourse($metacourseid);
+    }
+    return true;
+   
+}
+
+/** 
+ * Removes the record from the metacourse table and calls sync_metacourse
+ */
+function remove_from_metacourse($metacourseid, $courseid) {
+
+    if (delete_records('meta_course','parent_course',$metacourseid,'child_course',$courseid)) {
+        return sync_metacourse($metacourseid);
+    }
+    return false;
+}
+
+
 /**
  * Determines if a user an admin
  *
@@ -1640,6 +1762,12 @@ function enrol_student($userid, $courseid, $timestart=0, $timeend=0, $enrol='man
     if (!$user = get_record('user', 'id', $userid)) {        // Check user
         return false;
     }
+    // enrol the student in any parent meta courses...
+    if ($parents = get_records('meta_course','child_course',$courseid)) {
+        foreach ($parents as $parent) {
+            enrol_student($userid, $parent->parent_course,$timestart,$timeend,$enrol);
+        }
+    }
     if ($student = get_record('user_students', 'userid', $userid, 'course', $courseid)) {
         $student->timestart = $timestart;
         $student->timeend = $timeend;
@@ -1680,6 +1808,12 @@ function unenrol_student($userid, $courseid=0) {
         if ($groups = get_groups($courseid, $userid)) {
             foreach ($groups as $group) {
                 delete_records('groups_members', 'groupid', $group->id, 'userid', $userid);
+            }
+        }
+        // enrol the student in any parent meta courses...
+        if ($parents = get_records('meta_course','child_course',$courseid)) {
+            foreach ($parents as $parent) {
+                unenrol_student($userid, $parent->parent_course);
             }
         }
         return delete_records('user_students', 'userid', $userid, 'course', $courseid);
@@ -2007,6 +2141,24 @@ function remove_course_contents($courseid, $showfeedback=true) {
         }
     } else {
         $result = false;
+    }
+
+    if ($course->meta_course) {
+        delete_records("meta_course","parent_course",$course->id);
+        sync_metacourse($course->id); // have to do it here so the enrolments get nuked. sync_metacourses won't find it without the id.
+        if ($showfeedback) {
+            notify("$strdeleted meta_course");
+        }
+    }
+    else {
+        if ($parents = get_records("meta_course","child_course",$course->id)) {
+            foreach ($parents as $parent) {
+                remove_from_metacourse($parent->parent_course,$parent->child_course); // this will do the unenrolments as well.
+            }
+            if ($showfeedback) {
+                notify("$strdeleted meta_course");
+            }
+        }
     }
 
     return $result;

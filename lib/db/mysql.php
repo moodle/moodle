@@ -1102,9 +1102,23 @@ function main_upgrade($oldversion=0) {
             }
         }
     }
+    
+
+    if ($oldversion < 2005012500) { 
+        // add new table for meta courses.
+        modify_database("","CREATE TABLE `prefix_meta_course` (
+            `id` int(1) unsigned NOT NULL auto_increment,
+            `parent_course` int(10) NOT NULL default 0,
+            `child_course` int(10) NOT NULL default 0,
+            PRIMARY KEY (`id`),
+            KEY `parent_course` (parent_course),
+            KEY `child_course` (child_course)
+        );");
+        // add flag to course field
+        table_column('course','','meta_course','integer','1','','0','not null');
+    }
 
     return $result;
-
 }
 
 ?>

@@ -9,6 +9,8 @@
     $category = (int)optional_param('category', 0);   // possible default category
 
     require_login();
+   
+    $disable_meta = false;
 
     if ($id) {
         if (! $course = get_record("course", "id", $id)) {
@@ -17,6 +19,20 @@
 
         if (!isteacheredit($course->id)) {
             error("You do not currently have editing privileges!");
+        }
+        
+        if (course_in_meta($course)) {
+            $disable_meta = get_string('metaalreadyinmeta');
+        }
+        else if ($course->meta_course) {
+            if (count_records("meta_course","parent_course",$course->id) > 0) {
+                $disable_meta = get_string('metaalreadyhascourses');
+            }
+        }
+        else {
+            if (count_records("user_students","course",$course->id) > 0) {
+                $disable_meta = get_string('metaalreadyhasenrolments');
+            }
         }
     } else {  // Admin is creating a new course
 

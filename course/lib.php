@@ -1867,4 +1867,26 @@ function make_editing_buttons($mod, $absolute=false, $moveselect=true, $indent=-
            " alt=\"$str->delete\" /></a>$hideshow$groupmode";
 }
 
+/**
+ * given a course object with shortname & fullname, this function will 
+ * truncate the the number of chars allowed and add ... if it was too long
+ */
+function course_format_name ($course,$max=100) {
+    
+    $str = $course->shortname.': '.$course->fullname;
+    if (strlen($str) <= $max) {
+        return $str;
+    }
+    else {
+        return substr($str,0,$max-3).'...';
+    }
+}
+
+/**
+ * This function will return true if the given course is a child course at all
+ */
+function course_in_meta ($course) {
+    return record_exists("meta_course","child_course",$course->id);
+}
+
 ?>

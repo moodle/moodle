@@ -18,6 +18,10 @@
         error("Course ID was incorrect (can't find it)");
     }
 
+    if ($course->meta_course) {
+        redirect("$CFG->wwwroot/course/importstudents.php?id=$course->id");
+    }
+
     require_login($course->id);
 
     if (!isteacheredit($course->id)) {

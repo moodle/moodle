@@ -1297,6 +1297,34 @@ function get_creators() {
                              ORDER BY u.id ASC");
 }
 
+function get_courses_in_metacourse($metacourseid) {
+    global $CFG;
+
+    $sql = "SELECT c.id,c.shortname,c.fullname FROM {$CFG->prefix}course c, {$CFG->prefix}meta_course mc WHERE mc.parent_course = $metacourseid
+        AND mc.child_course = c.id";
+
+    return get_records_sql($sql);
+}
+
+function get_courses_notin_metacourse($metacourseid,$count=false) {
+
+    global $CFG;
+
+    $site = get_site(); // we don't want the site course in here.
+
+    if ($count) {
+        $sql  = "SELECT COUNT(c.id)";
+    }
+    else {
+        $sql = "SELECT c.id,c.shortname,c.fullname";
+    }
+    $sql .= " FROM {$CFG->prefix}course c LEFT  JOIN {$CFG->prefix}meta_course mc ON mc.child_course = c.id
+     WHERE (mc.parent_course IS NULL OR mc.parent_course != $metacourseid) AND c.id != $metacourseid AND c.id != $site->id";
+
+    return get_records_sql($sql);
+}
+
+
 /**
  * Returns $user object of the main teacher for a course
  *

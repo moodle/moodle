@@ -123,6 +123,8 @@
         }
         flush();
 
+        sync_metacourses();
+
     } // End of occasional clean-up tasks
 
     if (file_exists("$CFG->dataroot/cronextra.php")) {

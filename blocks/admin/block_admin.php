@@ -103,10 +103,15 @@ class block_admin extends block_base {
 
                 if (!$course->students) {
                     $course->students = get_string('defaultcoursestudents');
+                } 
+                if (!$course->meta_course) {
+                    $this->content->items[]='<a href="student.php?id='.$this->instance->pageid.'">'.$course->students.'...</a>';
+                    $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/users.gif" height="16" width="16" alt="" />';
                 }
-                $this->content->items[]='<a href="student.php?id='.$this->instance->pageid.'">'.$course->students.'...</a>';
-                $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/users.gif" height="16" width="16" alt="" />';
-
+                else {
+                    $this->content->items[]='<a href="importstudents.php?id='.$this->instance->pageid.'">'.$course->students.'...</a>';
+                    $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/users.gif" height="16" width="16" alt="">';
+                }
                 $this->content->items[]='<a href="'.$CFG->wwwroot.'/backup/backup.php?id='.$this->instance->pageid.'">'.get_string('backup').'...</a>';
                 $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/backup.gif" height="16" width="16" alt="" />';
 

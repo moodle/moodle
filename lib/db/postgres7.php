@@ -878,6 +878,18 @@ function main_upgrade($oldversion=0) {
         }
     }
 
+    if ($oldversion < 2005012500) { // add new table for meta courses.
+        modify_database("","CREATE TABLE prefix_meta_course (
+	         id SERIAL primary key,
+	         parent_course integer NOT NULL,
+	         child_course integer NOT NULL
+             );");
+
+        modify_database("","CREATE INDEX prefix_meta_course_parent_idx ON prefix_meta_course (parent_course);");
+        modify_database("","CREATE INDEX prefix_meta_course_child_idx ON prefix_meta_course (child_course);");
+        table_column('course','','meta_course','integer','1','','0','not null');
+    }
+
     return $result;
 }
 
