@@ -1,4 +1,4 @@
-<?PHP  // $Id$
+<?php  // $Id$
        // register.php - allows admin to register their site on moodle.org
 
     include("../config.php");
@@ -11,6 +11,10 @@
 
     if (!$site = get_site()) {
         redirect("index.php");
+    }
+
+    if (!confirm_sesskey()) {
+        error(get_string('confirmsesskeybad', 'error'));
     }
 
     if (!$admin = get_admin()) {
@@ -35,7 +39,7 @@
 	print_header("$site->shortname: $strregistration", "$site->fullname", 
                  "<a href=\"../$CFG->admin/index.php\">$stradministration</a> -> $strregistration");
 
-    print_heading($strmanagemodules);
+    print_heading($strregistration);
 
     print_simple_box($strregistrationinfo, "center", "70%");
     echo "<br />";
