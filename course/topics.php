@@ -68,7 +68,7 @@
             $modicon[] = "<IMG SRC=\"../mod/$modname/icon.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";
         }
     }
-    print_simple_box("Activities", $align="CENTER", $width="100%", $color="$THEME->cellheading");
+    print_simple_box(get_string("activities"), $align="CENTER", $width="100%", $color="$THEME->cellheading");
     print_side_block("", $moddata, "", $modicon);
 
     // Print a form to search forums
