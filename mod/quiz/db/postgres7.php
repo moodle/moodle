@@ -316,7 +316,7 @@ function quiz_upgrade($oldversion) {
     }
 
     if ($oldversion < 2005032300) {
-        modify_database ('', 'ALTER TABLE prefix_quiz_question_version RENAME prefix_quiz_question_versions;');
+        modify_database ('', 'ALTER TABLE prefix_quiz_question_version RENAME TO prefix_quiz_question_versions;');
     }
 
     return true;
