@@ -1,4 +1,4 @@
-<?php
+<?
 //Moodle wersja polska, Adam Pawelczak, Michal Wozniak, Lukasz Wrona (crow1@interia.pl)
 //Modul moodle.php
 
@@ -538,7 +538,7 @@ $string['findmorecourses'] = " Znajd¼ wiêcej kursów ...";
 
 $string['firstname'] = "Imiê";
 
-$string['firsttime'] = "Czy jeste¶ na tym serwisie po raz pierwszy?";
+$string['firsttime'] = "Czy jeste¶ w tym serwisie po raz pierwszy?";
 
 $string['followingoptional'] = "Nastêpuj±ce punkty s± opcjonalne";
 
@@ -648,9 +648,9 @@ $string['hitsoncoursetoday'] = "Dzisiejszych trafieñ na \$a->coursename przez \$
 
 $string['home'] = "Strona g³ówna";
 
-$string['hour'] = "godzina";
+$string['hour'] = "godz.";
 
-$string['hours'] = "godziny";
+$string['hours'] = "godz.";
 
 $string['howtomakethemes'] = "Jak utworzyæ nowy temat";
 
@@ -740,7 +740,7 @@ $string['loginguest'] = "Zaloguj siê jako go¶æ";
 
 $string['loginsite'] = "Zaloguj siê do serwisu";
 
-$string['loginsteps'] = "Witaj! Aby otrzymaæ pe³ny dostêp do kursów musisz po¶wiêciæ chwilkê aby stworzyæ sobie konto na tym serwisie. <br>Ka¿dy z kursów mo¿e wymagaæ podania jednorazowego &quot;klucza dostêpu do kursu&quot;, który bêdzie niezbêdny tylko przy zapisywaniu siê na kurs. Pó¼niej nie bêdzie ju¿ potrzebny. <br> Oto kroki, które musisz wykonaæ: <OL size=2> <LI>Wype³nij formularz <A HREF=\$a> Nowe konto</A> swoimi danymi. <LI>Niezw³ocznie zostanie wys³any do Ciebie e-mail na podany przez Ciebie adres.<LI>Przeczytaj e-mail i kliknij zawarty w nim link.   <LI>Twoje konto zostanie potwierdzone i zostaniesz zalogowany.   <LI>Wybierz kurs, w którym chcesz wzi±æ udzia³.   <LI>Je¿eli zostaniesz poproszony(a) o podanie &quot;klucza dostêpu do kursu&quot; - wpisz otrzymany od prowadz±cego klucz. To spowoduje zapisanie Ciê na kurs. <LI>Od tego momentu bêdziesz mieæ dostêp do kursu. Aby zalogowaæ siê i uzyskaæ dostêp do kursów, na które siê zapisa³e¶(a¶), konieczne bêdzie tylko wpisanie Twojej nazwy u¿ytkownika i has³a (w formularzu na tej stronie) aby zalogowaæ siê i otrzymaæ dostêp do dowolnego kursu na który jeste¶ zapisany.";
+$string['loginsteps'] = "Witaj! Aby otrzymaæ pe³ny dostêp do kursów musisz po¶wiêciæ chwilkê aby stworzyæ sobie konto w tym serwisie. <br>Ka¿dy z kursów mo¿e wymagaæ podania jednorazowego &quot;klucza dostêpu do kursu&quot;, który bêdzie niezbêdny tylko przy zapisywaniu siê na kurs. Pó¼niej nie bêdzie ju¿ potrzebny. <br> Oto kroki, które musisz wykonaæ: <OL size=2> <LI>Wype³nij formularz <A HREF=\$a> Nowe konto</A> swoimi danymi. <LI>Niezw³ocznie zostanie wys³any do Ciebie e-mail na podany przez Ciebie adres.<LI>Przeczytaj e-mail i kliknij zawarty w nim link.   <LI>Twoje konto zostanie potwierdzone i zostaniesz zalogowany.   <LI>Wybierz kurs, w którym chcesz wzi±æ udzia³.   <LI>Je¿eli zostaniesz poproszony(a) o podanie &quot;klucza dostêpu do kursu&quot; - wpisz otrzymany od prowadz±cego klucz. To spowoduje zapisanie Ciê na kurs. <LI>Od tego momentu bêdziesz mieæ dostêp do kursu. Aby zalogowaæ siê i uzyskaæ dostêp do kursów, na które siê zapisa³e¶(a¶), konieczne bêdzie tylko wpisanie Twojej nazwy u¿ytkownika i has³a (w formularzu na tej stronie) aby zalogowaæ siê i otrzymaæ dostêp do dowolnego kursu na który jeste¶ zapisany.";
 
 $string['loginstepsnone'] = "Dla uzyskania pe³nego dostêpu do kursów niezbêdne jest utworzenie konta.<p>Wszystko co musisz zrobiæ to wymy¶liæ nazwê u¿ytkownika i has³o oraz u¿yæ w formularza na tej stronie!<p> Je¿eli kto¶ inny wybra³ ju¿ tak± nazwê u¿ytkownika bêdziesz musia³(a) powtórzyæ operacjê u¿ywaj±c innej nazwy.";
 
@@ -958,9 +958,9 @@ $string['numberweeks'] = "Liczba tygodni/tematów";
 
 $string['numdays'] = "\$a dni";
 
-$string['numhours'] = "\$a godzin";
+$string['numhours'] = "\$a godz.";
 
-$string['numminutes'] = "\$a minut";
+$string['numminutes'] = "\$a min.";
 
 $string['numviews'] = "\$a wgl±dów";
 
@@ -1226,7 +1226,7 @@ $string['summary'] = "Streszczenie";
 
 $string['summaryof'] = "Streszczenie \$a";
 
-$string['supplyinfo'] = "Proszê wpisaæ gar¶æ informacje o sobie";
+$string['supplyinfo'] = "Proszê wpisaæ kilka informacji o sobie";
 
 $string['teacheronly'] = "wy³±cznie dla \$a";
 
@@ -1415,5 +1415,7 @@ $string['yourself'] = "samodzielnie";
 $string['yourteacher'] = "twój \$a";
 
 $string['zippingbackup'] = " Archiwizacja  kopii zapasowej";
+
+$string[''] = "";
 
 ?>

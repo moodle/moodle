@@ -61,7 +61,7 @@ Je¶li nie znajdziesz odpowiedzi na swoje pytanie tutaj, udaj siê na kurs <a href
 <p class="questionlink"><a href="#headerssent">Dlaczego otrzymujê komunikaty &quot;headers already sent&quot; (&quot; nag³ówki ju¿ wys³ano&quot;)?</a></p>
 <p class="questionlink"><a href="#failedopen">Ci±gle pojawia siê b³±d &quot;Failed opening required '/web/moodle/lib/setup.php'&quot; (&quot;Nie uda³o siê otworzyæ wymaganego pliku ... &quot;)</a></p>
 
-<p class="questionlink"><a href="#quotes">Ka¿dy tekst zawieraj±cy apostrofy (') lub códzys³owy (&quot;) powoduje b³êdy lub jest zwracany z znakami '³amane na' </a></p>
+<p class="questionlink"><a href="#quotes">Ka¿dy tekst zawieraj±cy apostrofy (') lub cudzys³owy (&quot;) powoduje b³êdy lub jest zwracany z znakami '³amane na' </a></p>
 
 <p class="questionlink"><a href="#sessiontmp">Ci±gle otrzymujê komunikaty o b³êdzie session_start (rozpoczêcia sesji)</a></p>
 <p class="questionlink">&nbsp;</p>
@@ -69,7 +69,7 @@ Je¶li nie znajdziesz odpowiedzi na swoje pytanie tutaj, udaj siê na kurs <a href
 <h3 class="question"><a name="filenotfound"></a>
 Za ka¿dym razem gdy próbuje obejrzeæ, lub w inny sposób uzyskaæ dostêp do przes³anego przeze mnie pliku otrzymuje komentarz &quot;File not Found&quot; (&quot; Nie znaleziono pliku&quot;) </h3>
 
-<p class="answer">Przyk³ad :  Not Found : The requested URL /moodle/file.php/2/myfile.jpg 
+<p class="answer">Przyk³ad :  Not Found : The requested URL /moodle/file.php/2/myfile.jpg
   was not found on this server.<br> (Nie znaleziono : podany adres URL ... nie zosta³ znaleziony na serwerze)</p>
 
 <p class="answer">Twój serwer musi byæ skonfigurowany tak, aby umo¿liwia³ przekazywanie czê¶ci adresu URL, po nazwie skryptu, bezpo¶rednio do  skryptu. Opcja jest domy¶lnie w³±czona w Apache 1, ale na ogó³ jest domy¶lnie wy³±czona w Apache 2. Aby j± w³±czyæ dodaj poni¿sz± linijkê do httpd.conf, albo do .htaccess w twoim lokalnym katalogu (szczegó³y : <a href="./?file=install.html#webserver">Dokumentacja instalacji</a> ) :  </p>
@@ -81,25 +81,25 @@ Za ka¿dym razem gdy próbuje obejrzeæ, lub w inny sposób uzyskaæ dostêp do przes³
 <p class="answer">Aby u¿yæ tej alternatywnej metody : zaloguj siê jako administrator, przejd¼ do sekcji 'konfiguruj zmienne' i zmieñ ustawienie dla '<b>slasharguments</b>'. Teraz powiniene¶ ju¿ bez problemów otrzymywaæ dostêp do przes³anych plików.</p>
 
 <p class="answer">&nbsp;</p>
-  
+
   <h4 class="question"><a name="php"></a>PHP - czy jest ju¿ zainstalowane i którš wersjê posiadam?</h4>
   <p class="answer">Utwórz nowy plik na twoim serwerze. Nazwij go info.php i zamie¶æ w nim podany poni¿ej tekst, a nastêpnie uruchom go w przegl±darce internetowej :</p>
-    
+
   <p class="answercode">&lt;?PHP phpinfo() ?&gt;</p>
 
 <p class="answer">Je¶li nic siê nie wydarzy, to znaczy, ¿e PHP nie jest zainstalowane. Obejrzyj dokumentacje instalacji, aby dowiedzieæ siê sk±d je ¶ci±gn±æ na twój komputer.</p>
 
 <p class="answer">&nbsp;</p>
-<h4 class="question"><a name="blankpages"></a>Dlaczego wszystkie strony s± puste?</h4> 
+<h4 class="question"><a name="blankpages"></a>Dlaczego wszystkie strony s± puste?</h4>
 <p class="answer">W katalogu g³ównym sprawd¼ zmienne zapisane w config.php. Musisz u¿ywaæ pe³nych, bezwzglêdnych ¶cie¿ek dostêpu, np :</p>
 
 <p class="answercode"> $CFG->dirroot = "d:\inetpub\sites\www.yoursite.com\web\moodle";</p>
 <p>&nbsp; </p>
 <h4 class="question"><a name="errorgetstring"></a>Na stronach pojawiaj± siê krytyczne b³êdy takie jak "call to undefined function: get_string()" ("odwo³anie do niezdefiniowanej funkcji get_string()")</h4>
 <p class="answer">Je¶li pokazuj± siê b³êdy takie jak:</p>
-<p class="answercode">Parse error: parse error, unexpected T_VARIABLE in c:\program 
+<p class="answercode">Parse error: parse error, unexpected T_VARIABLE in c:\program
   files\easyphp\www\moodle\config.php on line 94 <br>
-  Fatal error: Call to undefined function: get_string() in c:\program files\easyphp\www\moodle\mod\resource\lib.php 
+  Fatal error: Call to undefined function: get_string() in c:\program files\easyphp\www\moodle\mod\resource\lib.php
   on line 11</p>
 <p class="answer">wtedy prawdopodobne jest, i¿ przeoczy³e¶ ¶rednik, albo koniec cytatu z pewnej linii pliku config.php (znajduj±cej siê przed lini± 94)</p>
 
@@ -107,14 +107,14 @@ Za ka¿dym razem gdy próbuje obejrzeæ, lub w inny sposób uzyskaæ dostêp do przes³
 <p>&nbsp;</p>
 <h4 class="question"><a name="headerssent"></a>Dlaczego otrzymujê komunikaty "headers already sent" (" nag³ówki ju¿ wys³ano")?</h4>
 <p class="answer">Je¶li otrzymujesz b³êdy takie jak:</p>
-<p class="answercode">Warning: Cannot add header information - headers already 
-  sent by (output started at /webs/moodle/config.php:87) in /webs/moodle/lib/moodlelib.php 
+<p class="answercode">Warning: Cannot add header information - headers already
+  sent by (output started at /webs/moodle/config.php:87) in /webs/moodle/lib/moodlelib.php
   on line 1322 </p>
-<p class="answercode"> Warning: Cannot add header information - headers already 
-  sent by (output started at /webs/moodle/config.php:87) in /webs/moodle/lib/moodlelib.php 
+<p class="answercode"> Warning: Cannot add header information - headers already
+  sent by (output started at /webs/moodle/config.php:87) in /webs/moodle/lib/moodlelib.php
   on line 1323 </p>
-<p class="answercode"> Warning: Cannot add header information - headers already 
-  sent by (output started at /webs/moodle/config.php:87) in /webs/moodle/login/index.php 
+<p class="answercode"> Warning: Cannot add header information - headers already
+  sent by (output started at /webs/moodle/config.php:87) in /webs/moodle/login/index.php
   on line 54 </p>
 <p class="answer">Masz puste linie lub znaki odstêpu po koñcowym znaku ?> w pliku config.php . Czasami edytory tekstu - przyk³adowo Notatnik Windows - dodaj± je. Mo¿liwe, ¿e bêdziesz musia³ u¿yæ innego edytora, aby usun±æ te puste linie lub znaki odstêpu.</p>
 
@@ -127,8 +127,8 @@ Za ka¿dym razem gdy próbuje obejrzeæ, lub w inny sposób uzyskaæ dostêp do przes³
 
 <p class="answer">Niektóre osoby umieszczaj± tylko ¶cie¿kê dostêpu z ich katalogu domowego, albo w odniesieniu do katalogu serwera.</p>
 <p class="answer">&nbsp;</p>
-<h4 class="question"><a name="quotes" id="quotes"></a>Ka¿dy tekst zawieraj±cy apostrofy (') lub códzys³owy (") powoduje b³êdy lub jest zwracany z znakami '³amane na' </h4>
-<p class="answer">Problemy z apostrofami pojawiaj± siê z powodu nieprawid³owego ustawienia &quot;magic 
+<h4 class="question"><a name="quotes" id="quotes"></a>Ka¿dy tekst zawieraj±cy apostrofy (') lub cudzys³owy (") powoduje b³êdy lub jest zwracany z znakami '³amane na' </h4>
+<p class="answer">Problemy z apostrofami pojawiaj± siê z powodu nieprawid³owego ustawienia &quot;magic
   quotes&quot;. Moodle wymaga nastêpuj±cych ustawieñ (na ogó³ s±to ustawienia domy¶lne): </p>
 <p class="answercode">magic_quotes_gpc = On<br>
   magic_quotes_runtime = Off</p>
@@ -157,7 +157,7 @@ Za ka¿dym razem gdy próbuje obejrzeæ, lub w inny sposób uzyskaæ dostêp do przes³
 <hr>
 <p align="right"><strong><em>Podziêkowania dla John'a Eyre za pomoc w utrzymaniu tego FAQ.</em></strong></p>
 <p align="CENTER"><font size="1"><a href="." target="_top">Dokumentacja Moodle</a></font></p>
-<p align="CENTER"><font size="1">Version: $Id: faq.html,v 1.6 2003/03/30 13:54:28 
+<p align="CENTER"><font size="1">Version: $Id: faq.html,v 1.6 2003/03/30 13:54:28
   moodler Exp $</font></p>
 
 </body>

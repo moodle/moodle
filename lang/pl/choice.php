@@ -1,10 +1,10 @@
-<?php
+<?
 //Moodle wersja polska, Adam Pawelczak, Michal Wozniak, Lukasz Wrona (crow1@interia.pl)
 //Modul choice.php
 
-$string['modulename'] = " Wybór";
+$string['modulename'] = " G³osowanie";
 
-$string['modulenameplural'] = " Wybory";
+$string['modulenameplural'] = " G³osowania";
 
 $string['answered'] = " z udzielon± odpowiedzi±";
 
