@@ -1725,14 +1725,6 @@ function get_list_of_plugins($plugin="mod") {
 }
 
 
-function iswindows() {
-// True if this is Windows, False if not.
-
-   global $WINDIR;
-
-   return isset($WINDIR);
-}
-
 function check_php_version($version="4.1.0") {
 // Returns true is the current version of PHP is greater that the specified one
     $minversion = intval(str_replace(".", "", $version));
@@ -1741,5 +1733,27 @@ function check_php_version($version="4.1.0") {
 }
 
 
+function check_gd_version() {
+    ob_start();
+    phpinfo();
+    $phpinfo = ob_get_contents();
+    ob_end_clean();
+
+    $phpinfo = explode("\n",$phpinfo);
+
+    $gdversion = 0;
+
+    foreach ($phpinfo as $text) {
+        $parts = explode('</b>',$text);
+        foreach ($parts as $key => $val) {
+            $parts[$key] = strip_tags($val);
+        }
+        if ($parts[0]=="GD Version") {
+            $gdversion = intval($parts[1]);
+        }
+    }
+
+    return $gdversion;   // 1, 2 or 0
+}
 
 ?>

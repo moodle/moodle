@@ -1,3 +1,119 @@
+2002-09-17 Tuesday 22:56  martin
+
+	* error/index.php: 
+	
+	Slight fix to error page to include site name properly
+
+2002-09-16 Monday 21:03  martin
+
+	* index.php: 
+	
+	Login link on home page
+
+2002-09-16 Monday 15:11  martin
+
+	* UPGRADING.txt: 
+	
+	eminder about saving themes in upgrades etc
+
+2002-09-16 Monday 15:08  martin
+
+	* lib/htaccess: 
+	
+	Typo
+
+2002-09-16 Monday 15:03  martin
+
+	* lib/javascript.php: 
+	
+	Fixed name in popup javascript window
+
+2002-09-16 Monday 14:33  martin
+
+	* lib/htaccess: 
+	
+	Sample .htaccess file
+
+2002-09-16 Monday 11:23  martin
+
+	* doc/install.html: 
+	
+	Fixed Id
+
+2002-09-16 Monday 11:20  martin
+
+	* doc/install.html: 
+	
+	Type on phpinfo
+
+2002-09-15 Sunday 14:09  martin
+
+	* config-dist.php: 
+	
+	Mentioned there's no need to use a trailing slash on the wwwroot
+
+2002-09-15 Sunday 14:06  martin
+
+	* course/enrol.html, lib/moodlelib.php, login/index_form.html: 
+	
+	Fixes to point directly to index.php wherever it was assumed.  This
+	wasn't a problem on most servers, but was causing some problems on
+	IIS servers
+
+2002-09-14 Saturday 11:43  martin
+
+	* version.php, lang/en/moodle.php, lib/moodlelib.php,
+	user/edit.html: 
+	
+	Can now specify current language on a per-user basis
+
+2002-09-13 Friday 18:33  martin
+
+	* mod/reading/view.php: 
+	
+	Consistent display of text
+
+2002-09-13 Friday 18:22  martin
+
+	* lang/en/help/html.html: 
+	
+	New help file for editing html
+
+2002-09-13 Friday 18:21  martin
+
+	* version.php, lang/en/moodle.php, lang/en/reading.php,
+	lang/en/help/reading/readingtype.html, mod/reading/details.php,
+	mod/reading/lib.php, mod/reading/mod.html, mod/reading/view.php: 
+	
+	Added a new reading type "html text".  It's similar to "plain text"
+	except none of the auto-formatting is done, and all HTML code is
+	accepted.
+
+2002-09-13 Friday 01:08  martin
+
+	* lib/weblib.php: 
+	
+	SUrprise icon is a bit wider than 16 pixels
+
+2002-09-12 Thursday 10:42  martin
+
+	* course/lib.php: 
+	
+	Fixed bug with category links on front page
+
+2002-09-11 Wednesday 22:02  martin
+
+	* login/confirm.php: 
+	
+	One more little buglet when confirming an email (added security
+	site value)
+
+2002-09-11 Wednesday 13:11  martin
+
+	* CHANGES: 
+	
+	CHANGES UP TO 1.0.4 (really, I mean it this time  :-)  )
+
 2002-09-11 Wednesday 10:26  martin
 
 	* course/lib.php: 
@@ -1180,13 +1296,13 @@
 
 2002-08-17 Saturday 11:03  martin
 
-	* README, README.txt, UPGRADING, UPGRADING.txt: 
+	* .htaccess, README, README.txt, UPGRADING, UPGRADING.txt: 
 	
 	Added .txt to these files to make them double-clickable
 
 2002-08-17 Saturday 11:01  martin
 
-	* README: 
+	* .htaccess, README: 
 	
 	Better introduction to installation
 
@@ -2729,7 +2845,8 @@
 
 2002-07-27 Saturday 21:09  martin
 
-	* README, UPGRADES, UPGRADING, version.php, admin/index.php: 
+	* .htaccess, README, UPGRADES, UPGRADING, version.php,
+	admin/index.php: 
 	
 	Moodle can now upgrade itself, just like the modules do
 
@@ -4263,7 +4380,7 @@
 
 2002-05-18 Saturday 11:37  martin
 
-	* README: 
+	* .htaccess, README: 
 	
 	Added warning about unstable CVS tree
 
@@ -4847,12 +4964,13 @@
 
 2001-11-22 Thursday 14:23  martin
 
-	* README, config.php, file.php, index.php, admin/cron.php,
-	admin/index.php, admin/log.php, admin/moodle-core.sql,
-	admin/site.html, admin/site.php, admin/teacher.php,
-	admin/user.html, admin/user.php, course/edit.html, course/edit.php,
-	course/editweek.html, course/editweek.php, course/email.html,
-	course/email.php, course/index.php, course/lib.php, course/log.php,
+	* .htaccess, README, config.php, file.php, index.php,
+	admin/cron.php, admin/index.php, admin/log.php,
+	admin/moodle-core.sql, admin/site.html, admin/site.php,
+	admin/teacher.php, admin/user.html, admin/user.php,
+	course/edit.html, course/edit.php, course/editweek.html,
+	course/editweek.php, course/email.html, course/email.php,
+	course/index.php, course/lib.php, course/log.php,
 	course/login.html, course/login.php, course/loginas.php,
 	course/loglive.php, course/mod.php, course/mod_delete.html,
 	course/new.php, course/noweeks.php, course/user.php,
@@ -4914,12 +5032,13 @@
 
 2001-11-22 Thursday 14:23  martin
 
-	* README, config.php, file.php, index.php, admin/cron.php,
-	admin/index.php, admin/log.php, admin/moodle-core.sql,
-	admin/site.html, admin/site.php, admin/teacher.php,
-	admin/user.html, admin/user.php, course/edit.html, course/edit.php,
-	course/editweek.html, course/editweek.php, course/email.html,
-	course/email.php, course/index.php, course/lib.php, course/log.php,
+	* .htaccess, README, config.php, file.php, index.php,
+	admin/cron.php, admin/index.php, admin/log.php,
+	admin/moodle-core.sql, admin/site.html, admin/site.php,
+	admin/teacher.php, admin/user.html, admin/user.php,
+	course/edit.html, course/edit.php, course/editweek.html,
+	course/editweek.php, course/email.html, course/email.php,
+	course/index.php, course/lib.php, course/log.php,
 	course/login.html, course/login.php, course/loginas.php,
 	course/loglive.php, course/mod.php, course/mod_delete.html,
 	course/new.php, course/noweeks.php, course/user.php,

@@ -1,130 +1,76 @@
 <?PHP // $Id$
 ///////////////////////////////////////////////////////////////////////////
-//
-// Moodle configuration file
-// 
-// This file should be located in the top-level directory.
-//
+//                                                                       //
+// Moodle configuration file                                             //
+//                                                                       //
+// This file should be renamed "config.php" in the top-level directory   //
+//                                                                       //
 ///////////////////////////////////////////////////////////////////////////
-// 
-// NOTICE OF COPYRIGHT
-//
-// Moodle - Modular Object-Oriented Dynamic Learning Environment
-//          http://moodle.com
-// 
-// Copyright (C) 2001  Martin Dougiamas  http://dougiamas.com
-//
-// This program is free software; you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation; either version 2 of the License, or
-// (at your option) any later version.
-// 
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details:
-// 
-//          http://www.gnu.org/copyleft/gpl.html
-// 
-////////////////////////////////////////////////////////////////////////////
-//
-// Site configuration variables are all stored in the CFG object.
+//                                                                       //
+// NOTICE OF COPYRIGHT                                                   //
+//                                                                       //
+// Moodle - Modular Object-Oriented Dynamic Learning Environment         //
+//          http://moodle.com                                            //
+//                                                                       //
+// Copyright (C) 2001-2002  Martin Dougiamas  http://dougiamas.com       //
+//                                                                       //
+// This program is free software; you can redistribute it and/or modify  //
+// it under the terms of the GNU General Public License as published by  //
+// the Free Software Foundation; either version 2 of the License, or     //
+// (at your option) any later version.                                   //
+//                                                                       //
+// This program is distributed in the hope that it will be useful,       //
+// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
+// GNU General Public License for more details:                          //
+//                                                                       //
+//          http://www.gnu.org/copyleft/gpl.html                         //
+//                                                                       //
+///////////////////////////////////////////////////////////////////////////
 
-// First, you need to configure the database where all Moodle data 
-// will be stored.  This database must already have been created
-// and a username/password created to access it.   See doc/INSTALL.
 
-$CFG->dbtype    = "mysql";       // eg mysql (postgres7, oracle, access etc coming soon)
-$CFG->dbhost    = "localhost";   // eg localhost 
-$CFG->dbname    = "moodle";      // eg moodle
+///////////////////////////////////////////////////////////////////////////
+// First, you need to configure the database where all Moodle data       //
+// will be stored.  This database must already have been created         //
+// and a username/password created to access it.  If you specify mysql   //
+// then Moodle can set up all your tables for you.  If you try to use    //
+// a different database you will need to set up all your tables by hand  //
+// which could be a big job.    See doc/install.html                     //
+
+$CFG->dbtype    = "mysql";     // eg mysql (postgres7, oracle, access etc)
+$CFG->dbhost    = "localhost"; // eg localhost 
+$CFG->dbname    = "moodle";    // eg moodle
 $CFG->dbuser    = "username";
 $CFG->dbpass    = "password";
 
 
-// Next you need to tell Moodle where it is located.
-// Specify the full URL where moodle has been installed (without a trailing slash):
+///////////////////////////////////////////////////////////////////////////
+// Now you need to tell Moodle where it is located. Specify the full
+// web address where moodle has been installed (without trailing slash)
 
 $CFG->wwwroot   = "http://example.com/moodle";
 
 
-// and now the full OS directory path to this same location:
+///////////////////////////////////////////////////////////////////////////
+// Next, specify the full OS directory path to this same location
+// For Windows this might be something like "C:\apache\htdocs\moodle"
 
 $CFG->dirroot   = "/web/moodle";
 
 
-// Now you need a place where Moodle can save uploaded files.  This directory 
-// should be writeable by the web server user (usually 'nobody' or 'apache'), 
-// but it should not be accessible directly via the web.
+///////////////////////////////////////////////////////////////////////////
+// Now you need a place where Moodle can save uploaded files.  This
+// directory should be writeable by the web server user (usually 'nobody'
+// or 'apache'), but it should not be accessible directly via the web.
 
 $CFG->dataroot  = "/home/moodledata";
 
 
-// Choose a sitewide language - this will affect text, buttons etc
-// See lib/languages.php for a full list of standard language codes.
-
-$CFG->lang     = "en";      // Currently the only option
-
-
-// Choose a sitewide locale - this will affect the display of dates
-// You need to have this locale data installed on your operating 
-// system.  If you don't know what to choose try using the same 
-// string as the language.
-
-$CFG->locale     = "en";
-
-
-// Give the full names of local SMTP servers that Moodle should use to
-// send mail (eg "mail.a.com" or "mail.a.com;mail.b.com").
-// If this is left empty (eg "") then Moodle will attempt to use PHP mail.
-
-$CFG->smtphosts  = "";
-
-
-// There is no way, currently, for PHP to automatically tell whether the 
-// graphic library GD is version 1.* or 2.*.  Specify here (either 1 or 2).
-
-$CFG->gdversion = 1;
-
-
-// If students haven't logged in for a very long time, then they are 
-// automatically unsubscribed from courses.  This parameter specifies
-// that time limit, in DAYS.
-
-$CFG->longtimenosee = 100;
-
-
-// These programs are used by the file management code to zip and unzip 
-// uploaded files.  This only works on Unix systems right now.
-
-$CFG->zip   = "/usr/bin/zip";
-$CFG->unzip = "/usr/bin/unzip";
-
-
-// Files (images, uploads etc) are provided via a script which 
-// is called like this example: file.php/1/myfiles/mymusic.mp3
-// Using this form of argument allows files to be more easily 
-// cached in web browsers, proxy servers etc, but they don't 
-// work in all PHP servers.  If you have trouble viewing 
-// uploaded files or images, then set the following to false
-
-$CFG->slasharguments = true;
-
-// If this server needs to use a proxy computer (eg a firewall)
-// to access the Internet, then provide the proxy details here.
-// This will only affect a few minor features such as the ability
-// to see user locations plotted on a graph.
-// Otherwise, leave these blank
-
-$CFG->proxyhost = "";
-$CFG->proxyport = "";
-
-
-// You should not need to change anything else. To continue setting up 
-// Moodle, use your web browser to go to the moodle/admin web page.
+///////////////////////////////////////////////////////////////////////////
+// To continue the setup, use your web browser to go to your Moodle page //
 ///////////////////////////////////////////////////////////////////////////
 
-$CFG->libdir    = "$CFG->dirroot/lib";
-
-require("$CFG->libdir/setup.php");  // Sets up all libraries, sessions etc
+$CFG->libdir    = "$CFG->dirroot/lib";   // Do not change this
+require("$CFG->libdir/setup.php");       // Do not change this
 
 ?>

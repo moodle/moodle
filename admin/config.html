@@ -1,0 +1,162 @@
+<FORM METHOD="post" action="config.php" NAME="form">
+
+<TABLE cellpadding=9 cellspacing=0 >
+<TR VALIGN=TOP>
+	<TD ALIGN=RIGHT><P>lang:</TD>
+	<TD>
+    <? choose_from_menu (get_list_of_languages(), "lang", $config->lang, "", "", "");
+       formerr($err["lang"]);
+    ?>
+    </TD>
+    <TD>
+    <? print_string("configlang") ?>
+    </TD>
+</TR>
+<TR VALIGN=TOP>
+	<TD ALIGN=RIGHT><P>locale:</TD>
+	<TD>
+    <INPUT NAME=locale TYPE=text SIZE=3 VALUE="<?=$config->locale?>">
+    <? formerr($err["locale"]); ?>
+    </TD>
+    <TD>
+    <? print_string("configlocale") ?>
+    </TD>
+</TR>
+<TR VALIGN=TOP>
+	<TD ALIGN=RIGHT><P>smtphosts:</TD>
+	<TD>
+    <INPUT NAME=smtphosts TYPE=text SIZE=30 VALUE="<?=$config->smtphosts?>">
+    <? formerr($err["smtphosts"]); ?>
+    </TD>
+    <TD>
+    <? print_string("configsmtphosts") ?>
+    </TD>
+</TR>
+<TR VALIGN=TOP>
+	<TD ALIGN=RIGHT><P>gdversion:</TD>
+	<TD>
+    <? $options[0] = get_string("gdnot");
+       $options[1] = get_string("gd1");
+       $options[2] = get_string("gd2");
+
+       $installed  = check_gd_version();
+
+       choose_from_menu ($options, "gdversion", $installed, "", "", "");
+       unset($options);
+    ?>
+    </TD>
+    <TD>
+    <? print_string("configgdversion") ?>
+    </TD>
+</TR>
+<TR VALIGN=TOP>
+	<TD ALIGN=RIGHT><P>errorlevel:</TD>
+	<TD>
+    <? $options[15] = get_string("all");
+       $options[7] = get_string("normal");
+       $options[0] = get_string("none");
+
+       choose_from_menu ($options, "errorlevel", $config->errorlevel, "", "", "");
+       unset($options);
+    ?>
+    </TD>
+    <TD>
+    <? print_string("configerrorlevel") ?>
+    </TD>
+</TR>
+<TR VALIGN=TOP>
+	<TD ALIGN=RIGHT><P>maxeditingtime:</TD>
+	<TD>
+    <? $options[3600] = get_string("numminutes", "", 60);
+       $options[2700] = get_string("numminutes", "", 45);
+       $options[1800] = get_string("numminutes", "", 30);
+       $options[900]  = get_string("numminutes", "", 15);
+       $options[300]  = get_string("numminutes", "", 5);
+
+       choose_from_menu ($options, "maxeditingtime", $config->maxeditingtime, "", "", "");
+       unset($options);
+    ?>
+    </TD>
+    <TD>
+    <? print_string("configmaxeditingtime") ?>
+    </TD>
+</TR>
+<TR VALIGN=TOP>
+	<TD ALIGN=RIGHT><P>longtimenosee:</TD>
+	<TD>
+    <? $options[1000] = get_string("numdays", "", 1000);
+       $options[365]  = get_string("numdays", "", 365);
+       $options[100]  = get_string("numdays", "", 100);
+       $options[50]   = get_string("numdays", "", 50);
+       $options[10]   = get_string("numdays", "", 10);
+
+       choose_from_menu ($options, "longtimenosee", $config->longtimenosee, "", "", "");
+       unset($options);
+    ?>
+    </TD>
+    <TD>
+    <? print_string("configlongtimenosee") ?>
+    </TD>
+</TR>
+<TR VALIGN=TOP>
+	<TD ALIGN=RIGHT><P>zip:</TD>
+	<TD>
+    <INPUT name=zip TYPE=text SIZE=30 VALUE="<?=$config->zip?>">
+    <? formerr($err["zip"]); ?>
+    </TD>
+    <TD>
+    <? print_string("configzip") ?>
+    </TD>
+</TR>
+<TR VALIGN=TOP>
+	<TD ALIGN=RIGHT><P>unzip:</TD>
+	<TD>
+    <INPUT name=unzip TYPE=text SIZE=30 VALUE="<?=$config->unzip?>">
+    <? formerr($err["unzip"]); ?>
+    </TD>
+    <TD>
+    <? print_string("configunzip") ?>
+    </TD>
+</TR>
+<TR VALIGN=TOP>
+	<TD ALIGN=RIGHT><P>slasharguments:</TD>
+	<TD>
+    <? $options[0] = "file.php?file=/pic.jpg";
+       $options[1] = "file.php/pic.jpg";
+
+       $installed  = check_gd_version();
+
+       choose_from_menu ($options, "slasharguments", $config->slasharguments, "", "", "");
+       unset($options);
+    ?>
+    </TD>
+    <TD>
+    <? print_string("configslasharguments") ?>
+    </TD>
+</TR>
+<TR VALIGN=TOP>
+	<TD ALIGN=RIGHT><P>proxyhost:</TD>
+	<TD>
+    <INPUT name=proxyhost TYPE=text SIZE=30 VALUE="<?=$config->proxyhost?>">
+    <? formerr($err["proxyhost"]); ?>
+    </TD>
+    <TD ROWSPAN=2>
+    <? print_string("configproxyhost") ?>
+    </TD>
+</TR>
+<TR VALIGN=TOP>
+	<TD ALIGN=RIGHT><P>proxyport:</TD>
+	<TD>
+    <INPUT name=proxyport TYPE=text SIZE=5 VALUE="<?=$config->proxyport?>">
+    <? formerr($err["proxyport"]); ?>
+    </TD>
+</TR>
+
+
+<TR>
+    <TD COLSPAN=3 ALIGN=CENTER>
+	<INPUT TYPE="submit" VALUE="<? print_string("savechanges") ?>"></TD>
+</TR>
+</TABLE>
+
+</FORM>

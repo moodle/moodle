@@ -536,14 +536,18 @@ function print_admin_links ($siteid, $width=180) {
     
     print_simple_box(get_string("administration"), $align="CENTER", $width, $color="$THEME->cellheading");
     $icon = "<IMG SRC=\"$CFG->wwwroot/pix/i/settings.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";
-    $moddata[]="<A HREF=\"$CFG->wwwroot/course/log.php?id=$siteid\">".get_string("sitelogs")."</A>";
+    $moddata[]="<A HREF=\"$CFG->wwwroot/admin/config.php\">".get_string("configvariables")."</A>";
     $modicon[]=$icon;
     $moddata[]="<A HREF=\"$CFG->wwwroot/admin/site.php\">".get_string("sitesettings")."</A>";
+    $modicon[]=$icon;
+    $moddata[]="<A HREF=\"$CFG->wwwroot/course/log.php?id=$siteid\">".get_string("sitelogs")."</A>";
     $modicon[]=$icon;
     $moddata[]="<A HREF=\"$CFG->wwwroot/theme/index.php\">".get_string("choosetheme")."</A>";
     $modicon[]=$icon;
     $moddata[]="<A HREF=\"$CFG->wwwroot/admin/lang.php\">".get_string("checklanguage")."</A>";
     $modicon[]=$icon;
+    $moddata[]="<HR>";
+    $modicon[]="";
     $moddata[]="<A HREF=\"$CFG->wwwroot/course/edit.php\">".get_string("addnewcourse")."</A>";
     $modicon[]=$icon;
     $moddata[]="<A HREF=\"$CFG->wwwroot/course/categories.php\">".get_string("categories")."</A>";
@@ -552,6 +556,8 @@ function print_admin_links ($siteid, $width=180) {
     $modicon[]=$icon;
     $moddata[]="<A HREF=\"$CFG->wwwroot/course/delete.php\">".get_string("deletecourse")."</A>";
     $modicon[]=$icon;
+    $moddata[]="<HR>";
+    $modicon[]="";
     $moddata[]="<A HREF=\"$CFG->wwwroot/admin/user.php?newuser=true\">".get_string("addnewuser")."</A>";
     $modicon[]=$icon;
     $moddata[]="<A HREF=\"$CFG->wwwroot/admin/user.php\">".get_string("edituser")."</A>";

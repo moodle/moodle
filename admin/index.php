@@ -3,11 +3,21 @@
     require("../config.php");
 
 
+/// Check that PHP is of a sufficient version
+
+    if ( ! check_php_version("4.1.0") ) {
+        $version = phpversion();
+        print_heading("Sorry, Moodle requires PHP 4.1.0 or later (currently using version $version)");
+        die;
+    }
+
+/// Check that config.php has been edited
+
     if ($CFG->wwwroot == "http://example.com/moodle") {
         error("Moodle has not been configured yet.  You need to to edit config.php first.");
     }
 
-    // Check databases and modules and install as needed.
+/// Check databases and modules and install as needed.
     if (! $db->Metatables() ) { 
 
         if (!$agreelicence) {
@@ -43,21 +53,21 @@
         die;
     }
 
-    // Check version of Moodle code on disk compared with database
-    // and upgrade if possible.
+/// Check version of Moodle code on disk compared with database
+/// and upgrade if possible.
 
     include_once("$CFG->dirroot/version.php");  # defines $version and upgrades
 
-    if ($dversion = get_field("config", "value", "name", "version")) { 
-        if ($version > $dversion) {  // upgrade
-            $a->oldversion = $dversion;
+    if ($CFG->version) { 
+        if ($version > $CFG->version) {  // upgrade
+            $a->oldversion = $CFG->version;
             $a->newversion = $version;
             $strdatabasechecking = get_string("databasechecking", "", $a);
             $strdatabasesuccess  = get_string("databasesuccess");
             print_header($strdatabaseupgrades, $strdatabaseupgrades, $strdatabaseupgrades);
             notify($strdatabasechecking);
             $db->debug=true;
-            if (upgrade_moodle($dversion)) {
+            if (upgrade_moodle($CFG->version)) {
                 $db->debug=false;
                 if (set_field("config", "value", "$version", "name", "version")) {
                     notify($strdatabasesuccess);
@@ -70,7 +80,7 @@
                 $db->debug=false;
                 notify("Upgrade failed!  See /version.php");
             }
-        } else if ($version < $dversion) {
+        } else if ($version < $CFG->version) {
             notify("WARNING!!!  The code you are using is OLDER than the version that made these databases!");
         }
        
@@ -94,9 +104,9 @@
         }
     }
 
-    // Updated human-readable release version if necessary
+/// Updated human-readable release version if necessary
 
-    if ($drelease = get_field("config", "value", "name", "release")) { 
+    if ($CFG->release) { 
         if ($release <> $drelease) {  // Update the release version
             set_field("config", "value", "$release", "name", "release");
         }
@@ -107,8 +117,7 @@
     }
 
 
-    // Find and check all modules and load them up or upgrade them if necessary
-
+/// Find and check all modules and load them up or upgrade them if necessary
 
     if (!$mods = get_list_of_plugins("mod") ) {
         error("No modules installed!");
@@ -178,11 +187,34 @@
         die;
     }
 
-    // Set up the overall site name etc.
+
+/// Insert default values for any important configuration variables
+
+    include_once("$CFG->dirroot/lib/defaults.php");
+
+    $CFG = (array)$CFG;
+    foreach ($defaults as $name => $value) {
+        if (!isset($CFG[$name])) {
+            $config->name  = $name;
+            $config->value = $CFG[$name] = $value;
+            insert_record("config", $config);
+            $configchange = true;
+        }
+    }
+    $CFG = (object)$CFG;
+
+/// If any new configurations were found then send to the config page to check
+
+    if ($configchange) {
+        redirect("$CFG->wwwroot/admin/config.php");
+    }
+
+/// Set up the overall site name etc.
     if (! $site = get_site()) {
         redirect("$CFG->wwwroot/admin/site.php");
     }
 
+/// Set up the admin user
     if (!isadmin()) {
         if (! record_exists_sql("SELECT * FROM user_admins")) {   // No admin user yet
             redirect("$CFG->wwwroot/admin/user.php");
@@ -191,14 +223,15 @@
     }
 
 
-    // At this point, the databases exist, and the user is an admin
+/// At this point everything is set up and the user is an admin, so print menu
 
     $stradministration = get_string("administration");
     print_header("$site->fullname: $stradministration","$site->fullname: $stradministration", "$stradministration");
 
     $table->head  = array (get_string("site"), get_string("courses"), get_string("users"));
     $table->align = array ("CENTER", "CENTER", "CENTER");
-    $table->data[0][0] = "<P><A HREF=\"site.php\">".get_string("sitesettings")."</A></P>".
+    $table->data[0][0] = "<P><A HREF=\"config.php\">".get_string("configvariables")."</A></P>".
+                         "<P><A HREF=\"site.php\">".get_string("sitesettings")."</A></P>".
                          "<P><A HREF=\"../course/log.php?id=$site->id\">".get_string("sitelogs")."</A></P>".
                          "<P><A HREF=\"../theme/index.php\">".get_string("choosetheme")."</A></P>".
                          "<P><A HREF=\"lang.php\">".get_string("checklanguage")."</A></P>";
@@ -215,6 +248,7 @@
     print_table($table);
 
     print_footer();
+
 ?>
 
 

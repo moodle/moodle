@@ -10,39 +10,44 @@
 //
 //////////////////////////////////////////////////////////////
 
-// Error reporting and bug hunting
+/// If there are any errors in the standard libraries we want to know!
+    error_reporting(15);   // use 0=none 7=normal 15=all 
 
-    error_reporting(7);   // use 0=none 7=normal 15=all 
-
-// Load up standard libraries 
+/// Load up standard libraries 
 
     require("$CFG->libdir/weblib.php");          // Standard web page functions
     require("$CFG->libdir/adodb/adodb.inc.php"); // Database access functions
     require("$CFG->libdir/adodb/tohtml.inc.php");// Database display functions
     require("$CFG->libdir/moodlelib.php");       // Various Moodle functions
 
-// Connect to the database using adodb
+/// Connect to the database using adodb
 
     ADOLoadCode($CFG->dbtype);          
     $db = &ADONewConnection();         
     $db->PConnect($CFG->dbhost,$CFG->dbuser,$CFG->dbpass,$CFG->dbname); 
 
-// Default editing time for posts and the like (in seconds)
-
-    $CFG->maxeditingtime = 1800;
-
-// Load up any configuration from the config table
+/// Load up any configuration from the config table
     
-    if (!$CFG->theme = get_field("config", "value", "name", "theme")) {
-        $theme->name  = "theme";
-        $theme->value = $CFG->theme = "standard";
-        insert_record("config", $theme);
+    if ($configs = get_records_sql("SELECT * FROM config")) {
+        $CFG = (array)$CFG;
+        foreach ($configs as $config) {
+            $CFG[$config->name] = $config->value;
+        }
+        $CFG = (object)$CFG;
+        unset($configs);
+        unset($config);
     }
 
-// Location of standard files
+/// Set error reporting to whatever the admin has said they want
 
-    $CFG->templatedir = "$CFG->dirroot/templates";
-    $CFG->imagedir    = "$CFG->wwwroot/images";
+    if (isset($CFG->errorlevel)) {
+        error_reporting((int)$CFG->errorlevel);   
+    } else {
+        error_reporting(7);   
+    }
+
+/// Location of standard files
+
     $CFG->wordlist    = "$CFG->libdir/wordlist.txt";
     $CFG->javascript  = "$CFG->libdir/javascript.php";
     $CFG->stylesheet  = "$CFG->wwwroot/theme/$CFG->theme/styles.css";
@@ -50,38 +55,31 @@
     $CFG->footer      = "$CFG->dirroot/theme/$CFG->theme/footer.html";
     $CFG->moddata     = "moddata";
 
-// Load up theme variables (colours etc)
+/// Load up theme variables (colours etc)
 
+    if (!isset($CFG->theme)) {
+        $CFG->theme = "standard";
+    }
     require("$CFG->dirroot/theme/$CFG->theme/config.php");
 
-// Set language/locale of printed times (must be supported by OS)
+/// Set language/locale of printed times (must be supported by OS)
 
-    if ($CFG->locale) {
-        setlocale ("LC_TIME", $CFG->locale);
-    } else {
-        setlocale ("LC_TIME", $CFG->lang);
+    if (! setlocale ("LC_TIME", $CFG->locale)) {
+        setlocale ("LC_TIME", $CFG->lang);        // Might work
     }
 
-// Check that PHP is of a sufficient version
+/// The following is a hack to get around the problem of PHP installations
+/// that have "register_globals" turned off (default since PHP 4.1.0).
+/// Eventually I'll go through and upgrade all the code to make this unnecessary
 
-    if ( ! check_php_version("4.1.0") ) {
-        $version = phpversion();
-        print_heading("Sorry, Moodle requires PHP 4.1.0 or later (currently using version $version)");
-        die;
+    if (isset($_REQUEST)) {
+        extract($_REQUEST);
     }
-
-// The following is a big hack to get around the problem of PHP installations
-// that have "register_globals" turned off (default since PHP 4.1.0).
-// Eventually I'll go through and upgrade all the code to make this unnecessary
-
-   if (isset($_REQUEST)) {
-       extract($_REQUEST);
-   }
-   if (isset($_SERVER)) { 
-       extract($_SERVER);
-   }
+    if (isset($_SERVER)) { 
+        extract($_SERVER);
+    }
     
-// Load up global environment variables
+/// Load up global environment variables
 
     class object {};
     
