@@ -12,6 +12,7 @@ $string['answersingleyes'] = "Nur eine Antwort";
 $string['attempt'] = "Versuch \$a";
 $string['attemptfirst'] = "Erster Versuch";
 $string['attemptlast'] = "Letzter Versuch";
+$string['attemptquiznow'] = "Quiz jetzt probieren";
 $string['attempts'] = "Versuche";
 $string['attemptsallowed'] = "Erlaubte Versuche";
 $string['attemptsunlimited'] = "Unbegrenzte Versuche";
