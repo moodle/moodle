@@ -3,11 +3,16 @@ French Translation
 
 Authors: 
 Nicolas Martignoni <nicolas@martignoni.net>
+Jean-François Nadeau <nadeau.jf@videotron.ca>
 Sébastien Namèche <seb@gaia.anet.fr>
 
 La traduction française de Moodle semblant ne plus être mise à jour,
 je (Nicolas Martignoni) me suis mis au travail pour améliorer et compléter
 le début de traduction de Sébastien Namèche.
+
+J'ai également incorporé certains fichiers d'aide (dossier help) et
+workshop.php traduits pour nos amis du Canada francophone par Jean-François
+Nadeau, et que j'ai légèrement adaptés.
 
 J'ai légèrement modifié la liste des termes choisis par Sébastien.
 Vous trouvez ci-dessous cette liste modifiée par mes soins.
@@ -54,6 +59,7 @@ to login         s'identifier
 upload           envoyer (ou déposer)
 user             utilisateur
 username         nom d'utilisateur
+workshop         atelier
 
 
 TODO
