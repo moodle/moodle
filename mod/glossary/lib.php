@@ -1529,13 +1529,21 @@ function glossary_print_dynaentry($courseid, $entries, $displayformat = -1) {
             if (!$cm = get_coursemodule_from_instance("glossary", $entry->glossaryid, $glossary->course) ) {
                 error("Glossary is misconfigured - don't know what course module it is ");
             }
-            $dp = $displayformat;
+
+            //If displayformat is present, override glossary->displayformat
+            if ($displayformat == -1) {
+                $dp = $glossary->displayformat;
+            } else { 
+                $dp = $displayformat;
+            }
+
             // Hard-coded until the Display formats manager is done.
-            if ( $dprecord = get_record("glossary_displayformats","fid", $glossary->displayformat) ) {
+            if ( $dprecord = get_record("glossary_displayformats","fid", $dp) ) {
                 if ( $dprecord->relatedview >= 0 ) {
                     $dp = $dprecord->relatedview;
                 }
             }
+
             glossary_print_entry($course, $cm, $glossary, $entry, "","",0,$dp);
         }
     }
