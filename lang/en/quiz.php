@@ -31,6 +31,7 @@ $string['createnewquestion'] = "Create new question";
 $string['daysavailable'] = "Days available";
 $string['default'] = "Default";
 $string['defaultinfo'] = "The default category for questions.";
+$string['editcategories'] = "Edit categories";
 $string['editingquiz'] = "Editing quiz";
 $string['editingquestion'] = "Editing a question";
 $string['editingshortanswer'] = "Editing a short answer question";
