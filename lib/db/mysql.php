@@ -843,6 +843,47 @@ function main_upgrade($oldversion=0) {
         execute_sql("UPDATE {$CFG->prefix}course SET lang = 'mi_nt' WHERE lang = 'ma_nt'");
     }
 
+    if ($oldversion < 2004083128) { // add indexes.
+        execute_sql(" ALTER TABLE `{$CFG->prefix}user` ADD INDEX user_idnumber (idnumber) ");
+        execute_sql(" ALTER TABLE `{$CFG->prefix}user` ADD INDEX user_auth (auth) ");
+    }
+
+    if ($oldversion < 2004083128) { // add indexes.
+        execute_sql(" ALTER TABLE `{$CFG->prefix}course` ADD INDEX idnumber (idnumber) ");
+        execute_sql(" ALTER TABLE `{$CFG->prefix}course` ADD INDEX shortname (shortname) ");
+        execute_sql(" ALTER TABLE `{$CFG->prefix}user_students` ADD INDEX userid (userid) ");
+        execute_sql(" ALTER TABLE `{$CFG->prefix}user_teachers` ADD INDEX userid (userid) ");
+    }
+
+    if ($oldversion < 2004083128) {// add an index to event for timestart and timeduration
+        modify_database('','ALTER TABLE prefix_event ADD INDEX timestart (timestart);');
+        modify_database('','ALTER TABLE prefix_event ADD INDEX timeduration (timeduration);');
+    }
+
+    if ($oldversion < 2004083128) { //add indexes on modules and course_modules
+        modify_database('','ALTER TABLE prefix_course_modules add key visible(visible);');
+        modify_database('','ALTER TABLE prefix_course_modules add key course(course);');
+        modify_database('','ALTER TABLE prefix_course_modules add key module(module);');
+        modify_database('','ALTER TABLE prefix_course_modules add key instance (instance);');
+        modify_database('','ALTER TABLE prefix_course_modules add key deleted (deleted);');
+        modify_database('','ALTER TABLE prefix_modules add key name(name);');
+    }
+
+
+    if ($oldversion < 2004083128) { // add an index on the groups_members table
+        modify_database('','ALTER TABLE prefix_groups_members ADD INDEX userid (userid);');
+    }
+
+    if ($oldversion < 2004083128) { // add an index on user students timeaccess (used for sorting)
+        modify_database('','ALTER TABLE prefix_user_students ADD INDEX timeaccess (timeaccess);');
+    }
+
+    if ($oldversion < 2004083128) { 
+        modify_database('','ALTER TABLE prefix_scale ADD INDEX courseid (courseid);');
+        modify_database('','ALTER TABLE prefix_user_admins ADD INDEX userid (userid);');
+        modify_database('','ALTER TABLE prefix_user_coursecreators ADD INDEX userid (userid);');
+    }
+    
     return $result;
 
 }

@@ -61,7 +61,9 @@ CREATE TABLE `prefix_course` (
   `timecreated` int(10) unsigned NOT NULL default '0',
   `timemodified` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`),
-  KEY `category` (`category`)
+  KEY `category` (`category`),
+  KEY `idnumber` (`idnumber`),
+  KEY `shortname` (`shortname`)	 
 ) TYPE=MyISAM;
 # --------------------------------------------------------
 
@@ -117,7 +119,12 @@ CREATE TABLE `prefix_course_modules` (
   `visible` tinyint(1) NOT NULL default '1',
   `groupmode` tinyint(4) NOT NULL default '0',
   PRIMARY KEY  (`id`),
-  UNIQUE KEY `id` (`id`)
+  UNIQUE KEY `id` (`id`),
+  KEY `visible` (`visible`),
+  KEY `course` (`course`),
+  KEY `module` (`module`),
+  KEY `instance` (`instance`),
+  KEY `deleted` (`deleted`)
 ) TYPE=MyISAM;
 # --------------------------------------------------------
 
@@ -159,7 +166,9 @@ CREATE TABLE `prefix_event` (
   PRIMARY KEY  (`id`),
   UNIQUE KEY `id` (`id`),
   KEY `courseid` (`courseid`),
-  KEY `userid` (`userid`)
+  KEY `userid` (`userid`),
+  KEY `timestart` (`timestart`),
+  KEY `timeduration` (`timeduration`)
 ) TYPE=MyISAM COMMENT='For everything with a time associated to it';
 # --------------------------------------------------------
 
@@ -227,7 +236,8 @@ CREATE TABLE `prefix_groups_members` (
   `timeadded` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`),
   UNIQUE KEY `id` (`id`),
-  KEY `groupid` (`groupid`)
+  KEY `groupid` (`groupid`),
+  KEY `userid` (`userid`)
 ) TYPE=MyISAM COMMENT='Lists memberships of users to groups';
 # --------------------------------------------------------
 
@@ -279,7 +289,8 @@ CREATE TABLE `prefix_modules` (
   `search` varchar(255) NOT NULL default '',
   `visible` tinyint(1) NOT NULL default '1',
   PRIMARY KEY  (`id`),
-  UNIQUE KEY `id` (`id`)
+  UNIQUE KEY `id` (`id`),
+  KEY `name` (`name`)
 ) TYPE=MyISAM;
 # --------------------------------------------------------
 
@@ -296,7 +307,8 @@ CREATE TABLE `prefix_scale` (
   `scale` text NOT NULL,
   `description` text NOT NULL,
   `timemodified` int(10) unsigned NOT NULL default '0',
-  PRIMARY KEY  (id)
+  PRIMARY KEY  (id),
+  KEY `courseid` (`courseid`)
 ) TYPE=MyISAM COMMENT='Defines grading scales';
 # --------------------------------------------------------
 
@@ -344,7 +356,9 @@ CREATE TABLE `prefix_user` (
   `timemodified` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`),
   UNIQUE KEY `id` (`id`),
-  UNIQUE KEY `username` (`username`)
+  UNIQUE KEY `username` (`username`),
+  KEY `user_idnumber` (`idnumber`),
+  KEY `user_auth` (`auth`)
 ) TYPE=MyISAM COMMENT='One record for each person';
 # --------------------------------------------------------
 
@@ -356,7 +370,8 @@ CREATE TABLE `prefix_user_admins` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `userid` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`),
-  UNIQUE KEY `id` (`id`)
+  UNIQUE KEY `id` (`id`),
+  KEY `userid` (`userid`)
 ) TYPE=MyISAM COMMENT='One record per administrator user';
 # --------------------------------------------------------
 
@@ -393,7 +408,9 @@ CREATE TABLE `prefix_user_students` (
   `timeaccess` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`),
   UNIQUE KEY `id` (`id`),
-  KEY `courseuserid` (course,userid)
+  KEY `courseuserid` (course,userid),
+  KEY `userid` (userid),
+  KEY `timeaccess` (timeaccess)
 ) TYPE=MyISAM;
 # --------------------------------------------------------
 
@@ -414,7 +431,8 @@ CREATE TABLE `prefix_user_teachers` (
   `timeaccess` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`),
   UNIQUE KEY `id` (`id`),
-  KEY `courseuserid` (course,userid)
+  KEY `courseuserid` (course,userid),
+  KEY `userid` (userid)
 ) TYPE=MyISAM COMMENT='One record per teacher per course';
 
 #
@@ -425,7 +443,8 @@ CREATE TABLE `prefix_user_coursecreators` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `userid` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`),
-  UNIQUE KEY `id` (`id`)
+  UNIQUE KEY `id` (`id`),
+  KEY `userid` (`userid`)
 ) TYPE=MyISAM COMMENT='One record per course creator';
 
 INSERT INTO prefix_log_display VALUES ('user', 'view', 'user', 'CONCAT(firstname," ",lastname)');

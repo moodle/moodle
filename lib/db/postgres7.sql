@@ -41,6 +41,8 @@ CREATE TABLE prefix_course (
 );
 
 CREATE INDEX prefix_course_category_idx ON prefix_course (category);
+CREATE INDEX prefix_course_idnumber_idx ON prefix_course (idnumber);
+CREATE INDEX prefix_course_shortname_idx ON prefix_course (shortname);
 
 CREATE TABLE prefix_course_categories (
    id SERIAL PRIMARY KEY,
@@ -76,6 +78,12 @@ CREATE TABLE prefix_course_modules (
    groupmode integer NOT NULL default '0'
 );
 
+CREATE INDEX prefix_course_modules_visible_idx ON prefix_course_modules (visible);
+CREATE INDEX prefix_course_modules_course_idx ON prefix_course_modules (course);
+CREATE INDEX prefix_course_modules_module_idx ON prefix_course_modules (module);
+CREATE INDEX prefix_course_modules_instance_idx ON prefix_course_modules (instance);
+CREATE INDEX prefix_course_modules_deleted_idx ON prefix_course_modules (deleted);
+
 CREATE TABLE prefix_course_sections (
    id SERIAL PRIMARY KEY,
    course integer NOT NULL default '0',
@@ -84,6 +92,8 @@ CREATE TABLE prefix_course_sections (
    sequence text NOT NULL default '',
    visible integer NOT NULL default '1'
 );
+
+CREATE INDEX prefix_course_sections_coursesection_idx ON prefix_course_sections (course,section);
 
 CREATE TABLE prefix_event (
    id SERIAL PRIMARY KEY,
@@ -104,6 +114,8 @@ CREATE TABLE prefix_event (
 
 CREATE INDEX prefix_event_courseid_idx ON prefix_event (courseid);
 CREATE INDEX prefix_event_userid_idx ON prefix_event (userid);
+CREATE INDEX prefix_event_timestart_idx ON prefix_event (timestart);
+CREATE INDEX prefix_event_timeduration_idx ON prefix_event (timeduration);
 
 CREATE TABLE prefix_groups (
    id SERIAL PRIMARY KEY,
@@ -127,6 +139,7 @@ CREATE TABLE prefix_groups_members (
 );
 
 CREATE INDEX prefix_groups_members_idx ON prefix_groups_members (groupid);
+CREATE INDEX prefix_groups_members_userid_idx ON prefix_groups_members (userid);
 
 CREATE TABLE prefix_log (
    id SERIAL PRIMARY KEY,
@@ -162,6 +175,8 @@ CREATE TABLE prefix_modules (
    visible integer NOT NULL default '1'
 );
 
+CREATE INDEX prefix_modules_name_idx ON prefix_modules (name);
+
 CREATE TABLE prefix_scale (
    id SERIAL PRIMARY KEY,
    courseid integer NOT NULL default '0',
@@ -171,6 +186,8 @@ CREATE TABLE prefix_scale (
    description text,
    timemodified integer NOT NULL default '0'
 );
+
+CREATE INDEX prefix_scale_courseid_idx ON prefix_scale (courseid);
 
 
 CREATE TABLE prefix_cache_filters (
@@ -235,10 +252,15 @@ CREATE TABLE prefix_user (
    CONSTRAINT prefix_user_username_uk UNIQUE (username)
 );
 
+CREATE INDEX prefix_user_idnumber_idx ON prefix_user (idnumber);
+CREATE INDEX prefix_user_auth_idx ON prefix_user (auth);
+
 CREATE TABLE prefix_user_admins (
    id SERIAL PRIMARY KEY,
    userid integer NOT NULL default '0'
 );
+
+CREATE INDEX prefix_user_admins_userid_idx ON prefix_user_admins (userid);
 
 CREATE TABLE prefix_user_preferences (
    id SERIAL PRIMARY KEY,
@@ -260,6 +282,8 @@ CREATE TABLE prefix_user_students (
 );
 
 CREATE INDEX prefix_user_students_courseuserid_idx ON prefix_user_students (course,userid);
+CREATE INDEX prefix_user_students_userid_idx ON prefix_user_students (userid);
+CREATE INDEX prefix_user_students_timeaccess_idx ON prefix_user_students (timeaccess);
 
 CREATE TABLE prefix_user_teachers (
    id SERIAL PRIMARY KEY,
@@ -275,14 +299,17 @@ CREATE TABLE prefix_user_teachers (
 );
 
 CREATE INDEX prefix_user_teachers_courseuserid_idx ON prefix_user_teachers (course,userid);
+CREATE INDEX prefix_user_teachers_userid_idx ON prefix_user_teachers (userid);
 
 CREATE TABLE prefix_user_coursecreators (
    id SERIAL8 PRIMARY KEY,
    userid int8  NOT NULL default '0'
 );
 
-INSERT INTO prefix_log_display VALUES ('user', 'view', 'user', 'CONCAT(firstname," ",lastname)');
-INSERT INTO prefix_log_display VALUES ('course', 'user report', 'user', 'CONCAT(firstname," ",lastname)');
+CREATE INDEX prefix_user_coursecreators_userid_idx ON prefix_user_coursecreators (userid);
+
+INSERT INTO prefix_log_display VALUES ('user', 'view', 'user', 'firstname||\' \'||lastname');
+INSERT INTO prefix_log_display VALUES ('course', 'user report', 'user', 'firstname||\' \'||lastname');
 INSERT INTO prefix_log_display VALUES ('course', 'view', 'course', 'fullname');
 INSERT INTO prefix_log_display VALUES ('course', 'update', 'course', 'fullname');
 INSERT INTO prefix_log_display VALUES ('course', 'enrol', 'course', 'fullname');

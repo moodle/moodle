@@ -577,8 +577,49 @@ function main_upgrade($oldversion=0) {
         execute_sql("UPDATE {$CFG->prefix}course SET lang = 'mi_nt' WHERE lang = 'ma_nt'");
     }
 
-    return $result;
+    if ($oldversion < 2004083128) { // add indexes.
+        modify_database("", "CREATE INDEX prefix_user_idnumber_idx ON prefix_user (idnumber);");        
+        modify_database("", "CREATE INDEX prefix_user_auth_idx ON prefix_user (auth);");        
+    }
 
+    if ($oldversion < 2004083128) { // add indexes
+        modify_database("","CREATE INDEX {$CFG->prefix}course_idnumber_idx ON {$CFG->prefix}course (idnumber);" );
+        modify_database("","CREATE INDEX {$CFG->prefix}course_shortname_idx ON {$CFG->prefix}course (shortname);" );
+        modify_database("","CREATE INDEX {$CFG->prefix}user_students_userid_idx ON {$CFG->prefix}user_students (userid);");
+        modify_database("","CREATE INDEX {$CFG->prefix}user_teachers_userid_idx ON {$CFG->prefix}user_teachers (userid);");
+    }
+
+    if ($oldversion < 2004083128) { // add an index to event for timestart and timeduration
+        modify_database('','CREATE INDEX prefix_event_timestart_idx ON prefix_event (timestart);');
+        modify_database('','CREATE INDEX prefix_event_timeduration_idx ON prefix_event (timeduration);');
+    }
+
+    if ($oldversion < 2004083128) { //add indexes on modules and course_modules
+        modify_database('','CREATE INDEX prefix_course_modules_visible_idx ON prefix_course_modules (visible);');
+        modify_database('','CREATE INDEX prefix_course_modules_course_idx ON prefix_course_modules (course);');
+        modify_database('','CREATE INDEX prefix_course_modules_module_idx ON prefix_course_modules (module);');
+        modify_database('','CREATE INDEX prefix_course_modules_instance_idx ON prefix_course_modules (instance);');
+        modify_database('','CREATE INDEX prefix_course_modules_deleted_idx ON prefix_course_modules (deleted);');
+        modify_database('','CREATE INDEX prefix_modules_name_idx ON prefix_modules (name);');
+    }
+
+    if ($oldversion < 2004083128) { // add an index on the groups_members table
+        modify_database('','CREATE INDEX prefix_groups_members_userid_idx ON prefix_groups_members (userid);');
+    }
+
+   
+    if ($oldversion < 2004083128) { // add an index on user students timeaccess (used for sorting)
+        modify_database('','CREATE INDEX prefix_user_students_timeaccess_idx ON prefix_user_students (timeaccess);');
+    }
+
+    if ($oldversion < 2004083128) { 
+        modify_database('','CREATE INDEX prefix_course_sections_coursesection_idx ON prefix_course_sections (course,section);');
+        modify_database('','CREATE INDEX prefix_scale_courseid_idx ON prefix_scale (courseid);');
+        modify_database('','CREATE INDEX prefix_user_admins_userid_idx ON prefix_user_admins (userid);');
+        modify_database('','CREATE INDEX prefix_user_coursecreators_userid_idx ON prefix_user_coursecreators (userid);');
+    }
+
+    return $result;
 }
 
 ?>
