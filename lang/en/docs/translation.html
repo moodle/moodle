@@ -68,7 +68,7 @@ an underscore and a meaningful two letter extension (e.g. <span style="font-styl
 
 <p style="margin-left: 40px;">Next, create in your new language folder the file &quot;moodle.php&quot;, containing the folowing lines:<br /><br />
 <code>
-&lt?PHP <br />
+&lt;?PHP <br />
 $string['thischarset'] = 'iso-8859-1';<br />
 $string['thisdirection'] = 'ltr';<br />
 $string['thislanguage'] = 'new language pack';<br />
@@ -180,7 +180,7 @@ help-files because these programs add too much rubbish to the files).
   <li>All elements and attributes must be lower case</li>
   <li>All atributes should be written in full and with quotes : <span style="color:rgb(255, 0, 0);" >&lt;p align=&quot;right&quot;&gt;</span> lalala &lt;/p&gt;</li>
   <li>Empty elements must end with /&gt;: <span style="color:rgb(255, 0, 0);" >&lt;br /&gt; &lt;hr /&gt;</span>. You should add an extra space before the "/" symbol.</li>
-  <li>An &lt;img should have an alt (it can be empty) like <span style="color:rgb(255, 0, 0);" >&lt;img alt   src="picture.gif"></span></li>
+  <li>An &lt;img should have an alt="" (it can be empty) en must be closed like other empty elements with a space and  /&gt; like <span style="color:rgb(255, 0, 0);" >&lt;img alt="" src="picture.gif" /></span></li>
   <li><span style="color:rgb(255, 0, 0);" >&lt;?=</span> and <span style="color:rgb(255, 0, 0);" >&lt;?</span> should be <span style="color:rgb(255, 0, 0);" >&lt;?php</span></li>
   <li>There should not be ANY font tags at all. <span style="color:rgb(255, 0, 0);" > &lt;p&gt;&lt;em&gt; &lt;h1&gt; &lt;h2&gt;</span> etc should be enough for the language files ...</li>
   <li>The language name in the languagepack ($string['thislanguage']  in moodle.php) should generally use Unicode Numeric Character References (NCR) if possible, because this allows the name to work within ANY encoding context (see the Chinese pack for example).</li>
@@ -223,7 +223,7 @@ Your interface language will be available in future versions of Moodle.<br />
 <li>Does the language pack run errorfree on a testsite?</li>
 <li>When "thislanguage" contains other then latin letters, is it written in NCR notation?</li>
 <li>Are the strings and files XHTML compliant?</li>
-</ul></p>
+</ul>
 
 
 <h2>Maintenance of a standard language pack<br />
