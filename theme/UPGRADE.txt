@@ -3,6 +3,9 @@ THEME UPGRADES
 
 This file lists the major changes to the theme files between Moodle versions.
 
+See the standard themes for examples of anything in here.
+
+
 ================================
 Changes to 1.0.9 since 1.0.8.1
 --------------------------------
@@ -13,52 +16,52 @@ config.php contains two new entries:
   $THEME->hidden
 
 
-Styles for the hide/show features (activities):
+/* Styles for the hide/show features (activities):  */
 
-a.dimmed:link
-a.dimmed:visited
-a.dimmed:hover
-.dimmed_text
-
-
-Styles used when listing discussions in a forum:
-
-.forumpostheaderpicture
-.forumpostheadername
-.forumpostheaderreplies
-.forumpostheaderdate
+a.dimmed:link {}
+a.dimmed:visited {}
+a.dimmed:hover {}
+.dimmed_text {}
 
 
-Style for the "you are logged in as" string top and bottom:
+/* Styles used when listing discussions in a forum: */
 
-.logininfo
-
-
-Style for the link to "home":
-
-.homelink
+.forumpostheaderpicture {}
+.forumpostheadername {}
+.forumpostheaderreplies {}
+.forumpostheaderdate {}
 
 
-Style for teacher only stuff (used to be hard-coded red):
+/* Style for the "you are logged in as" string top and bottom: */
 
-.teacheronly
-
-
-Styles to show hidden topics on the course page
-
-.topicsoutlinesidehidden
-.topicsoutlinecontenthidden
+.logininfo {}
 
 
-Styles to show hidden weeks on the course page
+/* Style for the link to "home": */
 
-.weeklyoutlinesidehidden
-.weeklyoutlinecontenthidden
+.homelink {}
 
 
-Style for the date-text on the weekly format
+/* Style for teacher only stuff (used to be hard-coded red): */
 
-.weeklydatetext
+.teacheronly {}
+
+
+/* Styles to show hidden topics on the course page */
+
+.topicsoutlinesidehidden {}
+.topicsoutlinecontenthidden {}
+
+
+/* Styles to show hidden weeks on the course page */
+
+.weeklyoutlinesidehidden {}
+.weeklyoutlinecontenthidden {}
+
+
+/* Style for the date-text on the weekly format */
+
+.weeklydatetext {}
 
 
 
