@@ -148,6 +148,16 @@ function print_entry($course) {
             if (! enrol_student($USER->id, $course->id, $timestart, $timeend)) {
                 error("An error occurred while trying to enrol you.");
             }
+
+            $subject = get_string("welcometocourse", "", $course->fullname);
+            $a->coursename = $course->fullname;
+            $a->profileurl = "$CFG->wwwroot/user/view.php?id=$USER->id&course=$course->id";
+            $message = get_string("welcometocoursetext", "", $a);
+            if (! $teacher = get_teacher($course->id)) {
+                $teacher = get_admin();
+            }
+            email_to_user($USER, $teacher, $subject, $message);
+
             add_to_log($course->id, "course", "enrol", "view.php?id=$course->id", "$USER->id");
 
             $USER->student[$course->id] = true;
