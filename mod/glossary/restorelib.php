@@ -122,7 +122,7 @@
             $entry->usedynalink = backup_todb($ent_info['#']['USEDYNALINK']['0']['#']);
             $entry->casesensitive = backup_todb($ent_info['#']['CASESENSITIVE']['0']['#']);
             $entry->fullmatch = backup_todb($ent_info['#']['FULLMATCH']['0']['#']);
-            $entry->approved = backup_todb($ent_info['#']['approved']['0']['#']);
+            $entry->approved = backup_todb($ent_info['#']['APPROVED']['0']['#']);
             $entry->timecreated = backup_todb($ent_info['#']['TIMECREATED']['0']['#']);
             $entry->timemodified = backup_todb($ent_info['#']['TIMEMODIFIED']['0']['#']);
             $entry->teacherentry = backup_todb($ent_info['#']['TEACHERENTRY']['0']['#']);
