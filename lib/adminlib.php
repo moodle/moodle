@@ -216,10 +216,10 @@ function upgrade_activity_modules($return) {
         
         if ( is_readable($fullmod .'/defaults.php')) {
             // Insert default values for any important configuration variables
+            unset($defaults);
             include_once($fullmod .'/defaults.php'); 
             foreach ($defaults as $name => $value) {
                 if (!isset($CFG->$name)) {
-                    $CFG->$name = $value;
                     set_config($name, $value);
                 }
             }
