@@ -218,7 +218,8 @@
             $value = str_replace("\n\n\n","\n",$value);
             $value = str_replace("\\","",$value);              // Delete all slashes
             $value = str_replace("%%","%",$value);
-            $value = htmlspecialchars($value);
+            $value = str_replace("<","&lt;",$value);
+            $value = str_replace(">","&gt;",$value);
 
             $cellcolour = $value ? $THEME->cellcontent: $THEME->highlight;
 
