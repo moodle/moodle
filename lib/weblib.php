@@ -780,7 +780,9 @@ function print_footer ($course=NULL) {
     include ("$CFG->dirroot/theme/$CFG->theme/footer.html");
 }
 
-function style_sheet_setup($lastmodified, $lifetime, $themename="") {
+function style_sheet_setup($lastmodified=0, $lifetime=300, $themename="") {
+/// This function is called by stylesheets to set up the header
+/// approriately as well as the current path
 
     global $CFG;
 
