@@ -43,6 +43,21 @@ ShibRequireSession On
 require valid-user
 
 
+NEW! Modifications to login/index.php
+-------------------------------------------------------------------------------
+Moodle checks if user theres a shibboleth authenticated session alive. If
+username attribute is found, user is considered authenticated.
+
+Add code after line 31:
+
+    if ($_SERVER[$CFG->shib_user_attribute]) {
+       /// Log in automatically if user is has been shibboleth authenticated
+        $frm->username = $_SERVER[$CFG->shib_user_attribute];
+        $frm->password = "guest";
+    } else {
+        $frm = data_submitted();
+    }
+
 
 MOODLE Authentication options
 -------------------------------------------------------------------------------
