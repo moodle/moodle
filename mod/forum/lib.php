@@ -267,7 +267,7 @@ function forum_cron () {
                     }
 
                     /// GWD: reset timelimit so that script does not get timed out when posting to many users
-                    set_time_limit(10);
+                    @set_time_limit(0);
 
                     /// Override the language and timezone of the "current" user, so that
                     /// mail is customised for the receiver.

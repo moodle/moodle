@@ -197,7 +197,7 @@
 	elseif ($action == 'analysisofassessments') {
 
         // timeout after 10 minutes
-        set_time_limit(600);
+        @set_time_limit(600);
         
 		if (!isteacher($course->id)) {
 			error("Only teachers can look at this page");
