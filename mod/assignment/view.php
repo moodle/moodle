@@ -95,6 +95,9 @@
 
         if ($assignment->type == OFFLINE) {
             if ($submission->timemarked) {
+                if (isset($scalegrades)) {
+                    $submission->grade = $scalegrades[$submission->grade];
+                }
                 assignment_print_feedback($course, $submission);
             }
         } else {
