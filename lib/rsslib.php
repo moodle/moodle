@@ -320,8 +320,8 @@ if (!isset($CFG->block_rss_timeout) ) {
 
 // Defines for moodle's use of magpierss classes
 define('MAGPIE_DIR', $CFG->dirroot.'/lib/magpie/');
-define('MAGPIE_CACHE_DIR', $CFG->dataroot .'/cache/rsscache/');
-define('MAGPIE_CACHE_ON', true); //should be exposed as an admin config option
+define('MAGPIE_CACHE_DIR', $CFG->dataroot .'/cache/rsscache');
+define('MAGPIE_CACHE_ON', true); //might want to expose as an admin config option, but perhaps this is something that should truly just be on unless the code is tweaked
 define('MAGPIE_CACHE_FRESH_ONLY', false); //should be exposed as an admin config option
 define('MAGPIE_CACHE_AGE', $CFG->block_rss_timeout);
 if ($CFG->debug) {
