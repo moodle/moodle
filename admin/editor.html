@@ -39,6 +39,11 @@
     <td valign="top"><?php print_string("edhelpcleanword");?></td>
 </tr>
 <tr>
+    <td align="right" valign="top">aspellpath:</td>
+    <td valign="top"><input onchange="change_state()" id="aspellpath" type="text" name="aspellpath" size="25" value="<?php print($CFG->aspellpath);?>" /></td>
+    <td valign="top"><?php print_string("edhelpaspellpath");?></td>
+</tr>
+<tr>
     <td align="right" valign="top">editorspelling:</td>
     <td valign="top"><select onchange="change_state()" id="spelling" name="spelling"<?php
     if (empty($CFG->aspellpath)) {
@@ -212,6 +217,13 @@ function change_state () {
 
     var choice = document.forms[0].spelling;
     var speller = choice.options[choice.selectedIndex].value;
+    var spellpath = document.forms[0].aspellpath.value;
+
+    if (spellpath == '') {
+        document.forms[0].spelling.disabled = true;
+    } else {
+        document.forms[0].spelling.disabled = false;
+    }
 
     if (speller != 1) {
         document.forms[0].dictionary.disabled = true;

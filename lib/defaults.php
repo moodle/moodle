@@ -9,6 +9,7 @@
        'allowuserthemes'          =>  false,
        'allowuserblockhiding'     =>  true,
        'allusersaresitestudents'  =>  true,
+       'aspellpath'               => '',
        'auth'                     => 'email',
        'auth_pop3mailbox'         => 'INBOX',
        'autologinguests'          =>  0,

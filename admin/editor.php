@@ -106,6 +106,7 @@ function editor_update_config ($data) {
     $updatedata['editorspelling'] = !empty($data->spelling) ? $data->spelling : 0;
     $updatedata['editorfontlist'] = $fontlist;
     $updatedata['editordictionary'] = !empty($data->dictionary) ? $data->dictionary : '';
+    $updatedata['aspellpath'] = !empty($data->aspellpath) ? $data->aspellpath : '';
 
     $hidebuttons = '';
     if (!empty($data->buttons) && is_array($data->buttons)) {
