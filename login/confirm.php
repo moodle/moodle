@@ -31,7 +31,7 @@
 
                 // The user has confirmed successfully, let's log them in
 
-                if (!$USER = get_user_info_from_db("username", $user->id)) {
+                if (!$USER = get_user_info_from_db("username", $user->username)) {
                     error("Something serious is wrong with the database");
                 }
 
