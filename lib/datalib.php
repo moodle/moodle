@@ -2278,13 +2278,14 @@ function add_to_log($courseid, $module, $action, $url="", $info="", $cm=0, $user
     if (!$result and ($CFG->debug > 7)) {
         echo "<P>Error: Could not insert a new entry to the Moodle log</P>";  // Don't throw an error
     }    
-    if (!$user) {
-        if (isstudent($courseid)) {
+    if (!$user and isset($USER->id)) {
+        $site = get_site();
+        if ($courseid == $site->id) {
+            update_user_in_db();
+        } else if (isstudent($courseid)) {
             $db->Execute("UPDATE {$CFG->prefix}user_students SET timeaccess = '$timenow' ".
                          "WHERE course = '$courseid' AND userid = '$userid'");
-        }
-
-        if (isteacher($courseid, false, false)) {
+        } else if (isteacher($courseid, false, false)) {
             $db->Execute("UPDATE {$CFG->prefix}user_teachers SET timeaccess = '$timenow' ".
                          "WHERE course = '$courseid' AND userid = '$userid'");
         }
