@@ -43,7 +43,8 @@
             print_course_search();
         } else {
             $strfulllistofcourses = get_string("fulllistofcourses");
-            print_header("$site->shortname: $strfulllistofcourses", $strfulllistofcourses, $strfulllistofcourses);
+            print_header("$site->shortname: $strfulllistofcourses", $strfulllistofcourses, $strfulllistofcourses,
+                         '', '', true, update_categories_button());
             print_courses(0, "80%");
         }
 
