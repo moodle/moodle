@@ -1174,14 +1174,17 @@ function forum_get_discussions($forum="0", $forumsort="d.timemodified DESC",
     }
 
     return get_records_sql("SELECT $postdata, d.name, d.timemodified, d.usermodified,
-                                   u.firstname, u.lastname, u.email, u.picture
+                                   u.firstname, u.lastname, u.email, u.picture, 
+                                   um.firstname AS umfirstname, um.lastname AS umlastname
                               FROM {$CFG->prefix}forum_discussions d,
                                    {$CFG->prefix}forum_posts p,
+                                   {$CFG->prefix}user um,
                                    {$CFG->prefix}user u
                              WHERE d.forum = '$forum'
                                AND p.discussion = d.id
                                AND p.parent = 0
                                AND p.userid = u.id $groupselect $userselect
+                               AND d.usermodified = um.id 
                           ORDER BY $forumsort");
 }
 
@@ -1624,6 +1627,10 @@ function forum_print_discussion_header(&$post, $forum, $datestring="") {
     echo "<td bgcolor=\"$THEME->cellcontent2\" class=\"forumpostheaderdate\" align=\"right\" nowrap=\"nowrap\">";
     $usedate = (empty($post->timemodified)) ? $post->modified : $post->timemodified;  // Just in case
     $parenturl = (empty($post->lastpostid)) ? '' : '&amp;parent='.$post->lastpostid;
+    $usermodified->firstname = $post->umfirstname;
+    $usermodified->lastname  = $post->umlastname;
+    echo "<a href=\"$CFG->wwwroot/user/view.php?id=$post->usermodified&amp;course=$forum->course\">".
+         fullname($usermodified)."</a><br />";
     echo '<a href="'.$CFG->wwwroot.'/mod/forum/discuss.php?d='.$post->discussion.$parenturl.'">'.
           userdate($usedate, $datestring).'</a>';
     echo "</td>\n";
