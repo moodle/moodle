@@ -135,7 +135,7 @@
                 displaydir($wdir);
                     
             } else {
-                $upload_max_filesize = get_max_upload_file_size();
+                $upload_max_filesize = get_max_upload_file_size($CFG->maxbytes);
                 $filesize = display_size($upload_max_filesize);
 
                 $struploadafile = get_string("uploadafile");
