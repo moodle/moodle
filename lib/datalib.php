@@ -374,7 +374,7 @@ function count_records($table, $field1='', $value1='', $field2='', $value2='', $
  * @param string $select A fragment of SQL to be used in a where clause in the SQL call.
  * @param string $countitem The count string to be used in the SQL call. Default is COUNT(*).
  * @return int The count of records returned from the specified criteria.
- */*
+ */
 function count_records_select($table, $select='', $countitem='COUNT(*)') {
 
     global $CFG;
@@ -502,7 +502,7 @@ function get_record_sql($sql) {
  * @param string $select A fragment of SQL to be used in a where clause in the SQL call.
  * @param string $fields A comma separated list of fields to be returned from the chosen table.
  * @return array An associative array with the results from the SQL call.
- */*
+ */
 function get_record_select($table, $select='', $fields='*') {
 
     global $CFG;
@@ -1082,7 +1082,6 @@ function update_record($table, $dataobject) {
  * @return user A {@link $USER} object.
  * @todo Finish documenting this function
  */
- */
 function get_user_info_from_db($field, $value) {
 
     global $CFG;
@@ -1514,7 +1513,6 @@ function get_course_users($courseid, $sort='timeaccess DESC', $exceptions='', $f
  * @param string $exceptions ? 
  * @return array  An array of {@link $USER} records.
  * @todo Finish documenting this function
- */
  */
 function search_users($courseid, $groupid, $searchtext, $sort='', $exceptions='') {
     global $CFG;
