@@ -2433,6 +2433,12 @@ function forum_print_user_discussions($courseid, $userid, $groupid=0) {
             }
             forum_print_post($discussion, $courseid, $ownpost, $reply=0, $link=1, $assessed=false);
         }
+    } else {
+        echo '<p align="center" class="allposts">';
+        echo '<a href="'.$CFG->wwwroot.'/mod/forum/search.php?id='.$courseid.'&amp;userid='.$userid.'">';
+        echo get_string('seeallposts', 'forum');
+        echo '</a>';
+        echo '</p>';
     }
 }
 
