@@ -1,7 +1,6 @@
 <?php //$Id$
 
     require_once('../../config.php');
-    global $USER, $CFG;
 
     require_variable($error);
 
@@ -9,7 +8,7 @@
                  get_string('error'), 
                  get_string('error') );
 
-    print urldecode($error);
+    echo clean_text(urldecode($error));
 
     print_footer();
 ?>

@@ -2,7 +2,7 @@
 /// This page prints a particular instance of glossary
     require_once("../../config.php");
     require_once("lib.php");
-    require_once("$CFG->dirroot/rss/rsslib.php");
+    require_once("$CFG->libdir/rsslib.php");
 
     global $CFG, $THEME, $USER;
     $debug = 0;

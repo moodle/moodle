@@ -16,8 +16,8 @@
     $nomoodlecookie = true;     // Because it interferes with caching
  
     require_once('../config.php');
-    require_once('../files/mimetypes.php');
-    require_once('rsslib.php');
+    require_once($CFG->dirroot.'/files/mimetypes.php');
+    require_once($CFG->libdir.'/rsslib.php');
 
 
     $lifetime = 3600;  // Seconds for files to remain in caches - 1 hour

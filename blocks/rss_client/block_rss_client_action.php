@@ -1,10 +1,9 @@
 <?php //$Id$
 
     require_once('../../config.php');
-    require_once($CFG->dirroot .'/rss/rsslib.php');
+    require_once($CFG->libdir .'/rsslib.php');
     require_once(MAGPIE_DIR .'rss_fetch.inc');
-    global $USER, $CFG;
-    
+
     require_login();
     
     //ensure that the logged in user is not using the guest account
