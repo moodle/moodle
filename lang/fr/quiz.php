@@ -201,6 +201,7 @@ $string['questionname'] = 'Nom de la question';
 $string['questionnametoolong'] = 'Nom de la question à la ligne $a trop long (255 caractères max.). Le nom a été tronqué.';
 $string['questions'] = 'Questions';
 $string['questionsperpage'] = 'Nombre maximal de questions par page';
+$string['questiontypesetupoptions'] = 'Options pour les types de questions&nbsp;:';
 $string['quizavailable'] = 'Le test est disponible jusqu\'au $a';
 $string['quizclose'] = 'Fermer le test';
 $string['quizclosed'] = 'Ce test a été fermé le $a';
