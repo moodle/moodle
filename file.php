@@ -69,7 +69,8 @@
 
         } else {     /// Try and put the file through filters
             if ($mimetype == "text/html") {
-                $output = format_text(implode('', file($pathname)), FORMAT_HTML, NULL, $courseid);
+                $options->noclean = true;
+                $output = format_text(implode('', file($pathname)), FORMAT_HTML, $options, $courseid);
 
                 header("Content-length: ".strlen($output));
                 header("Content-type: text/html");
@@ -77,6 +78,7 @@
     
             } else if ($mimetype == "text/plain") {
                 $options->newlines = false;
+                $options->noclean = true;
                 $output = '<pre>'.format_text(implode('', file($pathname)), FORMAT_MOODLE, $options, $courseid).'</pre>';
                 header("Content-length: ".strlen($output));
                 header("Content-type: text/html");
