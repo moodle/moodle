@@ -55,6 +55,7 @@ Now I show the specific detailed status of every item in the process:
 32. TODO: quiz_questions->hidden and quiz_responses->originalquestion
 33. TODO: quiz_question_version
 34. TODO: Group images aren't included at all in backup/restore. Bug 2674.
+35. TODO: Add suppor for user->msn, aim, yahoo and skype
          
 Eloy (stronk7)
 23-01-2004
