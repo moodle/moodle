@@ -126,7 +126,11 @@ table.minicalendar td {
     -moz-border-radius-bottomright:20px;
 }
 
-.forumpostside, .userinfoboxside {
+.forumpost .left {
+    -moz-border-radius-bottomleft:20px;
+}
+
+#user-view .left {
     -moz-border-radius-bottomleft:20px;
 }
 
