@@ -178,7 +178,7 @@ Restore Details:
                  + user data....................................NO EXISTS
                  + files........................................NO EXISTS
               x resources.......................................DONE
-                 + course data..................................SONE
+                 + course data..................................DONE
                  + user data....................................DONE
                  + files.(ARE COURSE FILES !!!).................DONE
               x surveys.........................................NO EXISTS
