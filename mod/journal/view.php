@@ -129,13 +129,16 @@ function print_feedback($course, $entry) {
     echo "</TR>";
 
     echo "\n<TR><TD WIDTH=100% BGCOLOR=\"$THEME->cellcontent\">";
+
+    echo "<P ALIGN=RIGHT><FONT SIZE=-1><I>";
     if ($RATING[$entry->rating]) {
-        echo "<P>Overall: ";
+        echo "Overall rating: ";
         echo $RATING[$entry->rating];
-        echo "</P>";
     } else {
-        echo "<P>No rating given</P>";
+        echo "No rating given";
     }
+    echo "</I></FONT></P>";
+
     echo text_to_html($entry->comment);
     echo "</TD></TR></TABLE>";
 

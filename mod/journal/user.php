@@ -61,6 +61,15 @@ function user_journal_complete($course, $user, $mod, $journal) {
             if ($entry->timemarked) {
                 echo "&nbsp;&nbsp;<FONT SIZE=1>".userdate($entry->timemarked)."</FONT>";
             }
+            echo "<P ALIGN=RIGHT><FONT SIZE=-1><I>";
+            if ($RATING[$entry->rating]) {
+                echo "Overall rating: ";
+                echo $RATING[$entry->rating];
+            } else {
+                echo "No rating given";
+            }
+            echo "</I></FONT></P>";
+
             echo "<BR><FONT COLOR=#000055>";
             echo text_to_html($entry->comment);
             echo "</FONT><BR>";
