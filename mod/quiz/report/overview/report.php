@@ -123,7 +123,7 @@ class quiz_report extends quiz_default_report {
             $attemptgrade = format_float(($attempt->sumgrades / $quiz->sumgrades) * $quiz->grade);
             $attemptdate = userdate($attempt->timestart, $timeformat);
             if ($attempt->timefinish) {
-                $attemptlapse = date("h:i:s", $attempt->timefinish - $attempt->timestart);
+                $attemptlapse = format_time($attempt->timefinish - $attempt->timestart);
             } else {
                 $attemptlapse = "...";
             }
