@@ -1007,6 +1007,13 @@ function calendar_set_filters(&$courses, &$group, &$user, $defaultcourses = NULL
     // WARNING: When calling this function, be VERY careful with the format for default courses arguments!
     // Correct formatting is [courseid] => 1 to be concise with moodlelib.php functions.
 
+    // Insidious bug-wannabe: setting $SESSION->cal_show_course to $course->id would cause
+    // the code to function incorrectly UNLESS we convert it to an integer. One case where
+    // PHP's loose type system works against us.
+    if(is_string($SESSION->cal_show_course)) {
+        $SESSION->cal_show_course = intval($SESSION->cal_show_course);
+    }
+
     $showcourse = (
         (is_int($SESSION->cal_show_course) && $SESSION->cal_show_course) ||
         (is_array($SESSION->cal_show_course) && count($SESSION->cal_show_course)) ||
