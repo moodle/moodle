@@ -143,7 +143,7 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
     calendar_events_by_day($events, $m, $y, $eventsbyday, $durationbyday, $typesbyday);
 
     $content .= '<table class="minicalendar">'; // Begin table
-    $content .= '<thead><tr>'; // Header row: day names
+    $content .= '<tr class="weekdays">'; // Header row: day names
 
     // Print out the names of the weekdays
     $days = array('sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat');
@@ -153,7 +153,7 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
         $content .= '<th>'.get_string($days[$i % 7], 'calendar').'</th>';
     }
 
-    $content .= '</tr></thead><tbody><tr>'; // End of day names; prepare for day numbers
+    $content .= '</tr><tr>'; // End of day names; prepare for day numbers
 
     // For the table display. $week is the row; $dayweek is the column.
     $dayweek = $startwday;
@@ -269,7 +269,7 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
     }
     $content .= '</tr>'; // Last row ends
 
-    $content .= '</tbody></table>'; // Tabular display of days ends
+    $content .= '</table>'; // Tabular display of days ends
 
     return $content;
 }

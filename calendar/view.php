@@ -344,7 +344,7 @@ function calendar_show_month_detailed($m, $y, $courses, $groups, $users) {
     echo '</div>';
 
     // Start calendar display
-    echo '<table class="calendarmonth"><thead><tr>'; // Begin table. First row: day names
+    echo '<table class="calendarmonth"><tr class="weekdays">'; // Begin table. First row: day names
 
     // Print out the names of the weekdays
     $days = array('sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday');
@@ -354,7 +354,7 @@ function calendar_show_month_detailed($m, $y, $courses, $groups, $users) {
         echo '<th>'.get_string($days[$i % 7], 'calendar').'</th>';
     }
 
-    echo '</tr></thead><tbody><tr>'; // End of day names; prepare for day numbers
+    echo '</tr><tr>'; // End of day names; prepare for day numbers
 
     // For the table display. $week is the row; $dayweek is the column.
     $week = 1;
@@ -459,12 +459,12 @@ function calendar_show_month_detailed($m, $y, $courses, $groups, $users) {
     for($i = $dayweek; $i <= $display->maxwday; ++$i) {
         echo '<td>&nbsp;</td>';
     }
-    echo "</tr>\n</tbody>\n"; // Last row ends
+    echo "</tr>\n"; // Last row ends
 
     echo "</table>\n"; // Tabular display of days ends
 
     // OK, now for the filtering display
-    echo '<div class="filters"><table><tbody><tr>';
+    echo '<div class="filters"><table><tr>';
 
     // Global events
     if($SESSION->cal_show_global) {
@@ -511,7 +511,7 @@ function calendar_show_month_detailed($m, $y, $courses, $groups, $users) {
         echo "</tr>\n";
     }
 
-    echo '</tbody></table></div>';
+    echo '</table></div>';
 }
 
 function calendar_show_upcoming_events($courses, $groups, $users, $futuredays, $maxevents) {
