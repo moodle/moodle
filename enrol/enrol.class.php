@@ -325,13 +325,13 @@ function get_access_icons($course) {
 
     $str = '';
 
-    if ($course->guest) {
+    if (!empty($course->guest)) {
         $strallowguests = get_string("allowguests");
         $str .= '<a title="'.$strallowguests.'" href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">';
         $str .= '<img vspace="4" alt="'.$strallowguests.'" height="16" width="16" border="0" '.
                 'src="'.$CFG->pixpath.'/i/guest.gif" /></a>&nbsp;&nbsp;';
     }
-    if ($course->password) {
+    if (!empty($course->password)) {
         $strrequireskey = get_string("requireskey");
         $str .= '<a title="'.$strrequireskey.'" href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">';
         $str .= '<img vspace="4" alt="'.$strrequireskey.'" height="16" width="16" border="0" src="'.$CFG->pixpath.'/i/key.gif" /></a>';
