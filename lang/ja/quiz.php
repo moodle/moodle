@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005010100)
+      // quiz.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005011000)
 
 
 $string['acceptederror'] = 'エラー範囲';
@@ -53,6 +53,8 @@ $string['choices'] = '利用可能な選択';
 $string['choosedatasetproperties'] = 'データセット属性の選択';
 $string['close'] = 'プレビューを閉じる';
 $string['confirmstartattempt'] = 'この小テストには時間制限が設けられています。本当にスタートしてもよろしいですか?';
+$string['copyingfrom'] = '問題「 $a 」のコピーを作成';
+$string['copyingquestion'] = '問題のコピー';
 $string['correctanswer'] = '正解';
 $string['correctanswerformula'] = '正解の公式';
 $string['correctanswerlength'] = '有効数字';
