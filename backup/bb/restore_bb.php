@@ -33,21 +33,27 @@ function blackboard_convert($dir){
 
 
     // Check for a Blackboard manifest file
-    if (is_file($dir."/imsmanifest.xml")){
-
-        //Select the proper XSL file
-        $xslt_file = choose_bb_xsl($dir."/imsmanifest.xml");
+    if (is_readable($dir.'/imsmanifest.xml')){
 
         if (!function_exists('xslt_create')) {  // XSLT MUST be installed for this to work
             notify('You need the XSLT library installed in PHP to open this Blackboard file');
             return false;
         }
 
-        //TODO: Use the get_string function
+        //Select the proper XSL file
+        $xslt_file = choose_bb_xsl($dir.'/imsmanifest.xml');
+
+
+        //TODO: Use the get_string function for this
         echo "<li>Converting Blackboard export</li>";
 
         // The XSL file must be in the same directory as the Blackboard files when it is processed
-        copy($CFG->dirroot."/backup/bb/$xslt_file", "$dir/$xslt_file");
+        if (!copy($CFG->dirroot."/backup/bb/$xslt_file", "$dir/$xslt_file")) {
+            notify('Could not copy the XSLT file to '."$dir/$xslt_file");
+            return false;
+        }
+
+        // Change to that directory
         $startdir = getcwd();
         chdir($dir);
 
@@ -56,8 +62,8 @@ function blackboard_convert($dir){
         // The imsmanifest contains all the XML files and their relationships. 
         // The XSL processor will open them as needed.
         $xsltproc = xslt_create();
-        if (!xslt_process($xsltproc, "imsmanifest.xml", $xslt_file, "$dir/moodle.xml")) {
-            dump("Failed writing xml file");
+        if (!xslt_process($xsltproc, 'imsmanifest.xml', $xslt_file, "$dir/moodle.xml")) {
+            notify('Failed writing xml file');
             chdir($startdir);
             return false;
         }
