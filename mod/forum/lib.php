@@ -644,6 +644,11 @@ function forum_get_course_forum($courseid, $type) {
         switch ($forum->type) {
             case "news":
                 $forum->name  = get_string("namenews", "forum");
+                if ($site = get_site()) {
+                    if ($courseid == $site->id) {
+                        $forum->name  = get_string("sitenews");
+                    }
+                }
                 $forum->intro = get_string("intronews", "forum");
                 $forum->open = 1;   // 0 - no, 1 - posts only, 2 - discuss and post
                 $forum->assessed = 0;
