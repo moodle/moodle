@@ -90,14 +90,14 @@
     }
 
     // If a course has been supplied in the URL, change the filters to show that one
-    if(!empty($_GET['course'])) {
-        if(is_numeric($_GET['course']) && $_GET['course'] > 0 && record_exists('course', 'id', $_GET['course'])) {
-            if($_GET['course'] == 1) {
+    if (!empty($_GET['course'])) {
+        if (is_numeric($_GET['course']) && $_GET['course'] > 0 && record_exists('course', 'id', $_GET['course'])) {
+            if ($_GET['course'] == 1) {
                 // If coming from the home page, show all courses
                 $SESSION->cal_courses_shown = calendar_get_default_courses(true);
                 calendar_set_referring_course(0);
-            }
-            else {
+
+            } else {
                 // Otherwise show just this one
                 $SESSION->cal_courses_shown = intval($_GET['course']);
                 calendar_set_referring_course($SESSION->cal_courses_shown);
@@ -105,18 +105,18 @@
         }
     }
 
-    if(empty($USER) || isguest($USER->id)) {
+    if (empty($USER) or isguest()) {
         $defaultcourses = calendar_get_default_courses();
         calendar_set_filters($courses, $groups, $users, $defaultcourses, $defaultcourses);
-    }
-    else {
+
+    } else {
         calendar_set_filters($courses, $groups, $users);
     }
 
     // Let's see if we are supposed to provide a referring course link
     // but NOT for the "main page" course
-    if($SESSION->cal_course_referer > 1 &&
-      ($shortname = get_field('course', 'shortname', 'id', $SESSION->cal_course_referer)) !== false) {
+    if ($SESSION->cal_course_referer > 1 &&
+       ($shortname = get_field('course', 'shortname', 'id', $SESSION->cal_course_referer)) !== false) {
         // If we know about the referring course, show a return link and ALSO require login!
         require_login();
         $nav = '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$SESSION->cal_course_referer.'">'.$shortname.'</a> -> '.$nav;
@@ -481,7 +481,7 @@ function calendar_show_month_detailed($m, $y, $courses, $groups, $users) {
 
     echo "</tr>\n";
 
-    if(!empty($USER) && !isguest($USER->id)) {
+    if(!empty($USER) && !isguest()) {
         echo '<tr>';
         // Group events
         if($SESSION->cal_show_groups) {
@@ -599,13 +599,12 @@ function calendar_print_event($event) {
 function calendar_course_filter_selector($getvars = '') {
     global $USER, $SESSION;
 
-    if (empty($USER) || isguest($USER->id)) {
+    if (empty($USER) or isguest()) {
         return '';
     }
 
-    if (isadmin($USER->id)) {
+    if (isadmin()) {
         $courses = get_courses('all', 'c.shortname');
-
     } else {
         $courses = get_my_courses($USER->id, 'shortname');
     }

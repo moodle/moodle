@@ -659,7 +659,7 @@ function calendar_filter_controls($type, $vars = NULL, $course = NULL) {
         $content .= '<td style="width: 8px;"></td><td><a href="'.CALENDAR_URL.'set.php?var=showcourses'.$getvars.'" title="'.get_string('tt_showcourse', 'calendar').'">'.get_string('courseevents', 'calendar').'</a></td>'."\n";
     }
 
-    if(!empty($USER) && !isguest($USER->id)) {
+    if(!empty($USER) && !isguest()) {
         $content .= "</tr>\n<tr>";
 
         if($groupevents) {
