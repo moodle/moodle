@@ -61,7 +61,7 @@
 <p>&nbsp;</p>
 
 <H3 class="sectionheading"><A NAME="site"></a>3. Struktura stránek</H3>
-<BLOCKQUOTE>
+<blockquote>
   <p>Pro orientaci uvádíme struèný pøehled obsahu adresáøe Moodle:</p>
   <blockquote>
     <p>config.php - jediný soubor, který musíte na zaèátku ruènì upravovat<br />
@@ -83,7 +83,7 @@
     </ul>
     <p>&nbsp;</p>
   </blockquote>
-</BLOCKQUOTE>
+</blockquote>
 
 <H3 class="sectionheading"><A NAME="data"></a>4. Vytvoøení datového adresáøe </H3>
 <blockquote>
@@ -152,7 +152,7 @@
   <p>Nemáte-li na va¹em serveru pøístup k httpd.conf nebo php.ini, nebo pokud je Moodle na jednom serveru spolu s aplikacemi, které vy¾adují jiné nastavení, mù¾ete tato standardní nastavení POTLAÈIT.     
 
   <p>K tomu je potøeba vytvoøit soubor <b>.htaccess</b> v hlavním adresáøi Moodle a do nìj napsat tato nastavení. Toto funguje pouze na serveru Apache, pokud má navíc povoleno Overrides.
-<BLOCKQUOTE><pRE>
+<blockquote><pRE>
 DirectoryIndex index.php index.html index.htm
 
 &lt;IfDefine APACHE2>
@@ -164,12 +164,12 @@ php_value magic_quotes_runtime Off
 php_value file_uploads On
 php_value short_open_tag On
 php_value session.auto_start Off
-php_value session.bug_compat_warn Off</BLOCKQUOTE></PRE>
+php_value session.bug_compat_warn Off</blockquote></PRE>
      <p>Zde mù¾ete rovnì¾ nastavit dal¹í vìci, jako napøíklad maximální mo¾nou velikost nahrávaných (tj. na server posílaných) souborù:
-     <BLOCKQUOTE><pRE>
+     <blockquote><pRE>
 php_value upload_max_filesize 2M
 php_value post_max_size 2M
-     </BLOCKQUOTE></PRE>
+     </blockquote></PRE>
 
   <p>Nejjednodu¹¹ím zpùsobem bude asi zkopírovat si pøipravený soubor lib/htaccess a upravit jej podle va¹ich potøeb. Sledujte dal¹í pokyny v tomto souboru. 
 
