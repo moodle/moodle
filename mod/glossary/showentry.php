@@ -5,41 +5,16 @@
     require_variable($courseid);
     require_variable($concept);  // entry id
 
-    $entries = get_records("glossary_entries","ucase(concept)",strtoupper(trim($concept)));
-
     print_header();
+    $entries = get_records_sql("select e.* from {$CFG->prefix}glossary_entries e, {$CFG->prefix}glossary g".
+                                  " where e.glossaryid = g.id and".
+                                      " ucase(concept) = 'MOODLE' and".
+                                      " g.course = $courseid and".
+                                      " e.usedynalink = 1 and g.usedynalink = 1");
     
-    glossary_show_entry($courseid, $entries);
+    glossary_print_dynaentry($courseid, $entries);
     
     close_window_button();
-
-    function glossary_show_entry($courseid, $entries) {
-        global $THEME, $USER;
-
-        $colour = $THEME->cellheading2;
-
-        echo "\n<center><table width=95% border=0><tr>";
-        echo "<td width=100%\">";
-        if ( $entries ) {
-            foreach ( $entries as $entry ) {
-
-                if (! $glossary = get_record("glossary", "id", $entry->glossaryid)) {
-                    error("Glossary ID was incorrect or no longer exists");
-                }
-                if (! $course = get_record("course", "id", $glossary->course)) {
-                    error("Glossary is misconfigured - don't know what course it's from");
-                }
-                if (!$cm = get_coursemodule_from_instance("glossary", $entry->glossaryid, $courseid) ) {
-                    error("Glossary is misconfigured - don't know what course module it is ");
-                }
-
-                glossary_print_entry($course, $cm, $glossary, $entry);
-            }
-        }
-        echo "</td>";
-        echo "</tr></table></center>";
-    }
-
 ?>
 </body>
 </html>
