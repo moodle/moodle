@@ -47,7 +47,7 @@ CREATE TABLE `prefix_lesson_answers` (
   `answer` text NOT NULL default '',
   `response` text NOT NULL default '',
   PRIMARY KEY  (`id`),
-  KEY {`pageid`)
+  KEY (`pageid`)
 ) COMMENT='Defines lesson_answers';
 # --------------------------------------------------------
 
