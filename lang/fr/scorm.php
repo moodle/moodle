@@ -5,14 +5,15 @@ $string['modulename'] = 'Scorm';
 $string['modulenameplural'] = 'Scorms';
 #------------------------------------------------------------
 
+$string['asset'] = 'Élément';
 $string['autocontinue'] = 'Continuer automatiquement';
 $string['browse'] = 'Consulter';
 $string['browsed'] = 'Consulté';
 $string['browsemode'] = 'Mode consultation';
 $string['chooseapacket'] = 'Sélectionner ou mettre à jour un paquet SCORM';
 $string['configframesize'] = 'Cette valeur est la taille (en pixels) du cadre supérieur (contenant la navigation) lors de l\'affichage d\'un paquet scorm.';
-$string['configpopup'] = 'Cette option doit-elle être activée par défaut lors de l\'ajout d\un nouveau paquet scorm capable de s\'afficher dans une fenêtre pop-up ?';
-$string['configpopupheight'] = 'Hauteur par défaut des nouvelles fenêtres pop-up ?';
+$string['configpopup'] = 'Si un paquet scorm peut s\'afficher dans une fenêtre pop-up, cette option doit-elle être activée par défaut lors de l\'ajout d\un paquet scorm ?';
+$string['configpopupheight'] = 'Hauteur par défaut des fenêtres pop-up ?';
 $string['configpopupresizable'] = 'Les fenêtres pop-up doivent-elles être redimensionnables par défaut ?';
 $string['configpopupscrollbars'] = 'Les fenêtres pop-up doivent-elles avoir des barres de défilement par défaut ?';
 $string['configpopupstatus'] = 'Les fenêtres pop-up doivent-elles avoir une barre d\'état par défaut ?';
@@ -50,4 +51,5 @@ $string['trackingloose'] = 'Attention ! Les données du suivi de ce paquet SCORM 
 $string['validation'] = 'Résultat de la validation';
 $string['validateascorm'] = 'Valider un paquet SCORM';
 $string['viewallreports'] = 'Afficher les rapports des $a tentatives';
+
 ?>

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // scorm.php - created with Moodle 1.4 development (2004070800)
+      // scorm.php - created with Moodle 1.4 alpha (2004081500)
 
 
 $string['attr_error'] = 'Valor erróneo para el atributo ($a->attr) en la marca $a->tag.';
@@ -52,6 +52,7 @@ $string['noreports'] = 'No hay informes que mostrar';
 $string['normal'] = 'Normal';
 $string['not_corr_type'] = 'No concuerda el tipo para la marca $a->tag';
 $string['notattempted'] = 'No se ha intentado';
+$string['organizations'] = 'Organizaciones';
 $string['packagedir'] = 'Error del Sistema: No se puede crear el directorio del paquete';
 $string['passed'] = 'Pasado';
 $string['php5'] = 'PHP 5 (librería nativa DOMXML)';

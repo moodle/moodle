@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.4 alpha (2004081500)
+      // quiz.php - created with Moodle 1.5 development (2004082300)
 
 
 $string['acceptederror'] = 'エラー範囲';
@@ -61,8 +61,8 @@ $string['daysavailable'] = '日利用可能';
 $string['default'] = 'デフォルト';
 $string['defaultgrade'] = '評価の初期値';
 $string['defaultinfo'] = '質問の標準カテゴリ';
-$string['deleteattemptcheck'] = '本当のこれらの挑戦を削除してもよろしいですか?';
-$string['deletequestioncheck'] = ' \'$a\' を本当に削除してもよろしいですか?';
+$string['deleteattemptcheck'] = '本当のこれらの挑戦を削除しても宜しいですか?';
+$string['deletequestioncheck'] = ' \'$a\' を本当に削除しても宜しいですか?';
 $string['description'] = '説明';
 $string['discrimination'] = '識別インデックス';
 $string['eachattemptbuildsonthelast'] = 'それぞれの解答を最後に作成する';
@@ -171,11 +171,12 @@ $string['randomsamatch'] = 'ランダム記述組み合わせ問題';
 $string['randomsamatchcreate'] = 'ランダム記述組み合わせ問題を作成する';
 $string['randomsamatchintro'] = '各質問に合致する答えをメニューより選択してください。';
 $string['randomsamatchnumber'] = '選択質問数';
-$string['readytosend'] = '採点のために全ての小テストを送信します。本当に送信してもよろしいですか?';
+$string['readytosend'] = '採点のために全ての小テストを送信します。本当に送信しても宜しいですか?';
 $string['recentlyaddedquestion'] = '最新の質問!';
 $string['regrade'] = '全解答を再評価する';
 $string['regradecomplete'] = '全解答が再評価されました。';
 $string['regradecount'] = '$a->attempt 中 $a->changed の評点が変更されました 。';
+$string['remove'] = '削除';
 $string['rename'] = 'リネーム';
 $string['report'] = 'レポート';
 $string['reportfullstat'] = '統計の詳細';

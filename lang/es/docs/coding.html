@@ -51,9 +51,24 @@
     textos en los archivos &quot;lang/es&quot; files
     con palabras reducidas en ingl&eacute;s y su traducci&oacute;n completa al Espa&ntilde;ol y recup&eacute;ralas
     en tu c&oacute;digo utilizando las funciones  get_string() or print_string().</li>
-  <li class="spaced">Todos los archivos de ayuda deber&iacute;an ser traducibles - crea
-    nuevos textos en el directorio &quot;es/help&quot; y ll&aacute;malos utilizando
-    la funci&oacute;n helpbutton().</li>
+  <li class="spaced">Todos los ficheros de ayuda deben ser traducibles - crea
+    nuevos textos en el directorio &quot;en/help&quot; y ll&aacute;malos utilizando
+    la funci&oacute;n helpbutton().
+     <p>Si necesitas actualizar un fichero de ayuda: 
+     <ul>
+      <li>para un peque&ntilde;o cambio, donde la traducci&oacute;n antigua del fichero
+        podr&iacute;a tener todav&iacute;a sentido, est&aacute; permitido que hagas el cambio, pero
+        deber&iacute;as notific&aacute;rselo a  translation@moodle.org</li>
+      <li>para un cambio importante tendr&aacute;s que crear un nuevo fichero a&ntilde;adiendole
+        en el nombre un numero incrementado 
+        (p.ej. filename2.html)
+        para que los traductores puedan ver facilmente que se trata de una nueva
+        versi&oacute;n del archivo. Obviamente el nuevo c&oacute;digo y los &iacute;ndices de las
+        p&aacute;ginas de ayuda deben ser modificados para apuntar a las versiones m&aacute;s
+        recientes.</li>
+    </ul>
+    </p>
+  </li>
   <li class="spaced">La informaci&oacute;n que llega desde el navegador (enviada 
     con los m&eacute;todos GET o POST) autom&aacute;ticamente tiene las &quot;magic_quotes&quot; 
     aplicadas (sin importar la configuraci&oacute;n de PHP) por lo que puedes 
@@ -61,6 +76,10 @@
     desde los archivos, o desde la base de datos) debe ser escapada con la funci&oacute;n 
     <font color="#339900">addslashes()</font> antes de insertarla en la base de 
     datos.</li>
+	  <li class="spaced">IMPORTANTE: Todos los textos dentro de Moodle, especialmente
+	    aqueloos que han sido introducidos por los usuarios, deben ser mostrados
+	    utilizando la funci&oacute;n format_text(). Esto asegura que el texto es filtrado
+	    y limpiado correctamente.</li>
 </ol>
 <p>&nbsp;</p>
 <h2>Estilo del C&oacute;digo</h2>

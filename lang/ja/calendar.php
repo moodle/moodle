@@ -1,21 +1,18 @@
 <?PHP // $Id$ 
-      // calendar.php - created with Moodle 1.3 - (2004052400)
+      // calendar.php - created with Moodle 1.5 development (2004082300)
 
 
-$string['april'] = '4月';
-$string['august'] = '8月';
 $string['calendar'] = 'カレンダー';
 $string['calendarheading'] = '$a カレンダー';
-$string['clickhide'] = 'クリックで非表示';
-$string['clickshow'] = 'クリックで表示';
+$string['clickhide'] = '非表示';
+$string['clickshow'] = '表示';
 $string['confirmeventdelete'] = '本当にこのイベントを削除しても宜しいですか?';
 $string['courseevents'] = 'コースイベント';
-$string['dayview'] = '日表示';
+$string['dayview'] = '1日分表示';
 $string['daywithnoevents'] = 'イベントがありません。';
-$string['december'] = '12月';
 $string['default'] = 'デフォルト';
 $string['deleteevent'] = 'イベントの削除';
-$string['detailedmonthview'] = '月表示詳細';
+$string['detailedmonthview'] = '月毎表示詳細';
 $string['durationminutes'] = '期間(分)';
 $string['durationnone'] = '期間無し';
 $string['durationuntil'] = '終了日:';
@@ -43,26 +40,18 @@ $string['explain_lookahead'] = 'ここではイベントが直近のイベントとして表示される
 $string['explain_maxevents'] = 'ここでは直近イベントの最大表示数を設定します。ここで大きな数を設定した場合は、直近のイベントを大量に表示する為の画面スペースが必要になります。';
 $string['explain_startwday'] = 'ここでは全ての月間カレンダーの表示方法を設定します。あなたが慣れ親しんだ表示になるように設定してください。';
 $string['explain_timeformat'] = '時間の表示は12時間表示または24時間表示を選択することが出来ます。デフォルトを選択した場合は、使用言語に合わせてフォーマットが自動的に選択されます。';
-$string['february'] = '2月';
 $string['fri'] = '金';
 $string['friday'] = '金曜日';
 $string['globalevents'] = '全体のイベント';
 $string['gotocalendar'] = 'カレンダーへ移動';
 $string['groupevents'] = 'グループイベント';
 $string['hidden'] = '非表示中';
-$string['january'] = '1月';
-$string['july'] = '7月';
-$string['june'] = '6月';
 $string['manyevents'] = '$a イベント';
-$string['march'] = '3月';
-$string['may'] = '5月';
 $string['mon'] = '月';
 $string['monday'] = '月曜日';
-$string['monthlyview'] = '月表示';
+$string['monthlyview'] = '月毎表示';
 $string['newevent'] = '新しいイベント';
 $string['noupcomingevents'] = '直近のイベントはありません';
-$string['november'] = '11月';
-$string['october'] = '10月';
 $string['oneevent'] = '1 イベント';
 $string['pref_lookahead'] = '直近イベントの日数範囲';
 $string['pref_maxevents'] = '直近イベントの最大表示数';
@@ -75,7 +64,6 @@ $string['repeatweeksl'] = '毎週、作成イベント数';
 $string['repeatweeksr'] = '件';
 $string['sat'] = '土';
 $string['saturday'] = '土曜日';
-$string['september'] = '9月';
 $string['shown'] = '表示中';
 $string['spanningevents'] = '進行中イベント';
 $string['sun'] = '日';

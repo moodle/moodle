@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // chat.php - created with Moodle 1.4 aiming-for-beta-soon (2004082200)
+      // chat.php - created with Moodle 1.5 development (2004082600)
 
 
 $string['beep'] = 'ビープ';
@@ -22,6 +22,10 @@ $string['deletesessionsure'] = '本当にこのセッションを削除しても宜しいですか?';
 $string['donotusechattime'] = 'チャット時間を表示しない';
 $string['enterchat'] = 'チャットルームに入室';
 $string['errornousers'] = 'ユーザが見つかりませんでした!';
+$string['explaingeneralconfig'] = 'これらの設定は、<strong>常に</strong>反映されます。';
+$string['explainmethoddaemon'] = 'これらの設定は、チャットメソッドに「Chatサーバデーモン」を選択した時<strong>のみ</strong>影響します。';
+$string['explainmethodnormal'] = 'これらの設定は、チャットメソッドに「ノーマルメソッド」を選択した時<strong>のみ</strong>影響します。';
+$string['generalconfig'] = '一般設定';
 $string['helpchatting'] = 'チャットヘルプ';
 $string['idle'] = 'アイドル';
 $string['messagebeepseveryone'] = '$a が全員にビープします!';

@@ -1,12 +1,13 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.4 alpha (2004081500)
+      // resource.php - created with Moodle 1.5 development (2004082600)
 
 
-$string['addresource'] = 'Voeg bron toe';
+$string['addresource'] = 'Bron toevoegen';
 $string['chooseafile'] = 'Kies of upload een bestand';
 $string['configdefaulturl'] = 'Deze waarde wordt gebruikt om een deel van de URL in te vullen wanneer er een nieuwe URL-gebaseerde bron gemaakt wordt.';
 $string['configfilterexternalpages'] = 'Door deze instelling in te schakelen zullen alle externe bronnen (web paginas, geüploade HTML-pagina\'s) verwerkt worden door de site-filters (zoals de autolinks van de woordenlijst bijvoorbeeld). Door deze optie in te schakelen kan je site behoorlijk vertragen - gebruik dit voorzichtig en alleen als je het echt nodig hebt';
 $string['configframesize'] = 'Als een webpagina of een geüpload bestand binnen een frame wordt weergegeven, dan is deze waarde de hoogte (in pixels) van het bovenste frame (dat de navigatie bevat).';
+$string['configparametersettings'] = 'Dit stelt de standaardwaarden voor het \"Parameters\" instellingspaneel van het formulier voor het invoeren van nieuwe bronnen. De voorkeur van de individuele gebruiker wordt na een eerste toegang verder gebruikt. ';
 $string['configpopup'] = 'Als een nieuwe bron toegevoegd wordt die in een popup-venster getoond kan worden, moet dat dan de standaard optie zijn?';
 $string['configpopupdirectories'] = 'Wil je dat in popup-vensters standaard de links naar mappen getoond worden?';
 $string['configpopupheight'] = 'Welke hoogte is de standaardhoogte voor popup-vensters?';
@@ -17,9 +18,12 @@ $string['configpopupscrollbars'] = 'Wil je dat standaard scrollen in popup-venst
 $string['configpopupstatus'] = 'Wil je dat popup-vensters standaard een statusbalk hebben?';
 $string['configpopuptoolbar'] = 'Wil je dat popup-vensters standaard een knoppenbalk hebben?';
 $string['configpopupwidth'] = 'Hoe breed zou een popup-venster standaard moeten zijn?';
+$string['configsecretphrase'] = 'Deze geheime zin wordt gebruikt om de geëncrypteerde code te genereren die naar sommige bronnen als een parameter kan meegestuurd worden. De geëncrypteerde code wordt gemaakt met een md5-waarde van het IP-adress van de huidige gebruiker samen met je geheime zin. ie code = md5(IP.secretphrase). Dit laat de bron op de bestemming to de connectie te controleren voor extra veiligheid.';
 $string['configwebsearch'] = 'Wanneer je een URL als webpagina of link toevoegt, wordt deze plaats aangeboden als een site om de gebruiker te helpen de URL te zoeken.';
+$string['configwindowsettings'] = 'Dit stelt de standaardwaarden voor het \"Venster\" instellingspaneel van het formulier voor het invoeren van nieuwe bronnen. De voorkeur van de individuele gebruiker wordt na een eerste toegang verder gebruikt.';
 $string['directlink'] = 'Rechtstreekse link naar dit bestand';
 $string['directoryinfo'] = 'Alle bestanden in de gekozen map zullen getoond worden.';
+$string['display'] = 'Venster';
 $string['editingaresource'] = 'Bewerk een bron';
 $string['encryptedcode'] = 'Geëncrypteerde code';
 $string['example'] = 'Voorbeeld';
@@ -67,11 +71,11 @@ $string['resourcetype6'] = 'HTML-tekst';
 $string['resourcetype7'] = 'Programma';
 $string['resourcetype8'] = 'Wiki-achtige tekst';
 $string['resourcetype9'] = 'Map';
-$string['resourcetypedirectory'] = 'Toon een map';
-$string['resourcetypefile'] = 'Link aan een bestand of website';
-$string['resourcetypehtml'] = 'Maak een webpagina';
-$string['resourcetypelabel'] = 'Voeg een label toe';
-$string['resourcetypetext'] = 'Maak een tekstpagina';
+$string['resourcetypedirectory'] = 'Map tonen';
+$string['resourcetypefile'] = 'Bestand/website linken';
+$string['resourcetypehtml'] = 'Webpagina maken';
+$string['resourcetypelabel'] = 'Label toevoegen';
+$string['resourcetypetext'] = 'Tekstpagina maken';
 $string['searchweb'] = 'Zoek webpagina\'s';
 $string['variablename'] = 'Variable naam';
 

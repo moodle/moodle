@@ -1,7 +1,7 @@
 <head>
     
 <title>Moodle Docs: Current Release notes</title>
-  
+	
 <link rel="stylesheet" href="docstyles.css" type="TEXT/CSS">
     
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
@@ -9,6 +9,7 @@
 <style type="text/css">
 <!--       dt {font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif; font-weight: bold;}
        dd {margin-bottom:1em;} 
+.style1 {font-weight: bold}
 -->
 </style>
 </head>
@@ -16,19 +17,9 @@
 <body bgcolor="#FFFFFF">
 <h1>Latest Release notes</h1>
 
-<h3> Moodle 1.4 BETA TEST  (23rd August, 2004)</h3>
+<h3> Moodle 1.4   (31st August, 2004)</h3>
 
-<ul>
-
-<p><b>
-  This is a test release to help you help us.  It's pretty stable, but probably contains a few 
-  bugs here and there especially in more recently-added code.  The final release will be August 31st - please 
-  <a target="_top" href="http://moodle.org/bugs/">report bugs you find</a> as soon as possible 
-  so we can make the final release of Moodle 1.4 strong and reliable.
-</b></p>
-
-
-  <dl>
+<ul><dl>
     <dt>Headlines</dt>
     <dd> 
       <ul>
@@ -70,6 +61,7 @@
         <li>Moodle can override the default character set in Apache, making languages more reliable</li>
         <li>Multibyte languages now wrap properly</li>
         <li>Better handling of locales and encodings on very multilingual sites (like moodle.org)</li>
+        <li>New languages: Slovenian and Hebrew! </li>
       </ul>
     </dd>
 
@@ -78,10 +70,10 @@
       <ul>
         <li>Fixed a number of possible XSS entry points and path disclosures</li>
         <li>Attributes of tags in HTML are now parsed even more thoroughly for naughty scripts</li>
-        <li>User profile pages are no longer availble by default to strangers</li>
+        <li>User profile pages are no longer available by default to strangers</li>
         <li>All text is now cleaned on output (not just input)</li>
         <li>Email addresses are not used on outgoing mail if the user requests that</li>
-        <li>New setting $CFG->loginhttps will use secure https for the login, then switch back to http</li>
+        <li>New setting <strong>loginhttps</strong> will use secure https for the login, then switch back to http</li>
       </ul>
     </dd>
 
@@ -91,6 +83,8 @@
         <li>Spiffy new interfaces for adding/removing students, creators and admins</li>
         <li>Failed logins are now logged, and can be displayed to users upon a successful login</li>
         <li>Logs now support viewing by group, and by errors</li>
+        <li>Modules now behave more consistently on the site front page</li>
+        <li>Front page &quot;students&quot; can be all users on site, or all users in at least one course on the site </li>
       </ul>
     </dd>
 
@@ -141,18 +135,9 @@
     <dt>Choice</dt>
     <dd> 
       <ul>
-        <li>Significantly revamped to make a lot more sense, with more options</li>
+        <li>Significantly revamped to make a lot more sense, with more option</li>
       </ul>
     </dd>
-
-    <dt>Exercise</dt>
-    <dd> 
-      <ul>
-        <li>Now supports groups</li>
-        <li>Many other changes</li>
-      </ul>
-    </dd>
-
 
     <dt>Forum</dt>
     <dd> 
@@ -186,8 +171,7 @@
         <li>Attempts may now be restricted to specific computers</li>
         <li>Quizzes can now require a special password</li>
         <li>New question type for Calculated Questions</li>
-        <li>Numerical questions now support units</li>
-        <li>Questions can be previewed in the editing pages</li>
+        <li>Numerical questions now support units<li>Questions can be previewed in the editing pages</li>
         <li>Questions can now be exported in several formats</li>
         <li>More intelligent handling of category listing when editing questions</li>
         <li>New (and incomplete) XML export format, will eventually be quiz-feature-complete</li>
@@ -200,6 +184,8 @@
       <ul>
         <li>Adding resources is now a one-step process with more control</li>
         <li>Web page, Web link, Uploaded file and Program resource all combined into one type!</li>
+        <li>Program resources replaced by Parameters that allow a lot of of interesting interaction with external resources, both remote and uploaded into Moodle. </li>
+        <li>Collapsible forms with memory to make forms less daunting for beginners without slowing down experienced users </li>
       </ul>
     </dd>
 
@@ -207,14 +193,28 @@
     <dd> 
       <ul>
         <li>Many fixes and improvements - works with an even wider variety of packages</li>
+        <li>Optional extra verification of the manifest file </li>
       </ul>
     </dd>
-
-
+    </dl>
+  <p>&nbsp;</p>
+  <dl>
+    <dt>
+      <div align="center" class="style1"></div>
+    </dt>
+    <dd>&nbsp;</dd>
+    <dt>&nbsp; </dt>
+    <dd>
+      <div align="center" class="style1"><font size="+1">Finally, don't forget to look at some of the <a href="http://moodle.org/download/modules/" target="_blank">many optional and innovative modules under development</a>.</font></div>
+    </dd>
   </dl>
+  <p align="center"><strong><font size="+1">If you experience any bugs in this release, please report them <a href="http://moodle.org/bugs" target="_blank">moodle.org/bugs</a> so we can fix them in the next release.</font></strong></p>
+  <p>&nbsp;</p>
 </ul>
 
-<br />
+<p>&nbsp;</p>
+<p><br />
+</p>
 <center>
   <p>
 <a href="./?file=releaseold.html">Old release information</a>

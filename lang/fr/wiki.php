@@ -2,7 +2,11 @@
 
 $string['action'] = '-- Action --';
 $string['administration'] = 'Administration';
-$string['attachments'] = 'Annexe de la page';
+$string['allowremovepages'] = 'Permettre « Supprimer des pages »';
+$string['allowrevertchanges'] = 'Permettre « Rétablir tous les changements »';
+$string['allowsetpage'] = 'Permettre « Changer les propriétés »';
+$string['allowstrippages'] = 'Permettre « Purger les pages »';
+$string['attachments'] = 'Cette page possède des annexes';
 $string['author'] = 'Auteur';
 $string['authorfieldpattern'] = 'Author field pattern';
 $string['authorfieldpatternerror'] = 'Veuillez saisir un auteur.';
@@ -78,7 +82,7 @@ $string['html'] = 'Format HTML';
 $string['htmlmode'] = 'Mode HTML';
 $string['htmlonly'] = 'HTML uniquement';
 $string['index'] = 'Index';
-$string['infoaboutpage'] = 'Information sur la page';
+$string['infoaboutpage'] = 'Historique de&nbsp;:';
 $string['initialcontent'] = 'Choisir une page initiale';
 $string['invalidroot'] = 'Vous n\'êtes pas autorisé à accéder à la page racine actuelle, et donc aucune carte du site ne peut être créée.';
 $string['lastchanged'] = 'Dernière modification le $a';
@@ -106,6 +110,7 @@ $string['nothingtostrip'] = 'Il n\'y a pas de pages avec plus d\'une version.';
 $string['nowikicreated'] = 'Aucune page n\'a été créée dans ce wiki.';
 $string['of'] = 'sur';
 $string['offline'] = 'HORS-LIGNE';
+$string['optional'] = 'Facultatif';
 $string['orphanedpage'] = 'Page orpheline';
 $string['orphanedpages'] = 'Pages orphelines';
 $string['otherwikis'] = 'Autres wikis';
@@ -144,6 +149,11 @@ $string['strippagecheck'] = 'Voulez-vous vraiment purger les anciennes versions 
 $string['strippages'] = 'Purger les pages';
 $string['studentadminoptions'] = 'Administration des réglages étudiant';
 $string['submit'] = 'Envoyer';
+$string['tabattachments']='Annexes';
+$string['tabedit']='Modifier';
+$string['tabinfo']='Historique';
+$string['tablinks']='Liens';
+$string['tabview']='Afficher';
 $string['thanksforcontribution'] = 'Merci pour votre contribution.';
 $string['thispageisntlinkedfromanywhereelse'] = 'Aucun lien n\'existe vers cette page.';
 $string['updatedpages'] = 'Pages modifiées';
@@ -173,11 +183,5 @@ $string['wikiusage'] = 'Utilisation de ce wiki';
 $string['withbinaries'] = 'Inclure les contenus binaires';
 $string['withvirtualpages'] = 'Inclure les liens wiki';
 $string['wrongversionrange'] = '$a n\'est pas un intervalle correct !';
-
-$string['tabedit']='Modifier';
-$string['tabview']='Afficher';
-$string['tabinfo']='Info';
-$string['tablinks']='Liens';
-$string['tabattachments']='Annexes';
 
 ?>

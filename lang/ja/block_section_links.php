@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // block_section_links.php - created with Moodle 1.3 development (2004050500)
+      // block_section_links.php - created with Moodle 1.5 development (2004082300)
 
 
 $string['blockname'] = 'セクションリンク';

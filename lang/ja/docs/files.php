@@ -6,7 +6,7 @@ $string['-about'] = "Moodleについて";
 $string['intro.html'] = "イントロダクション";
 $string['background.html'] = "背景";
 $string['philosophy.html'] = "理念";
-$string['licence.html'] = "ライセンス";
+$string['licence.html'] = "著作権・使用許諾条件";
 $string['features.html'] = "特徴";
 $string['release.html'] = "リリースノート";
 $string['future.html'] = "未来";
@@ -15,7 +15,7 @@ $string['credits.html'] = "謝辞";
 $string['-installation'] = "管理";
 $string['install.html'] = "インストール";
 $string['faq.html'] = "インストール FAQ";
-$string['installamp.html'] = "アパッチ、MySQL、PHP";
+$string['installamp.html'] = "アパッチ、MySQL、PHPのインストール";
 $string['upgrade.html'] = "アップグレード";
 
 $string['-usage'] = "Moodleの利用";

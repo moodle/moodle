@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.4 development (2004072500)
+      // resource.php - created with Moodle 1.4 alpha (2004081500)
 
 
 $string['addresource'] = 'Agregar recurso';
@@ -23,7 +23,6 @@ $string['directoryinfo'] = 'Se mostrarán todos los archivos en el directorio ele
 $string['editingaresource'] = 'Editar recurso';
 $string['encryptedcode'] = 'Código encriptado';
 $string['example'] = 'Ejemplo';
-$string['examplereference'] = 'Tobin, K. & Tippins, D (1993) Constructivism as a Referent for Teaching and Learning. En: K. Tobin (Ed.). The Practice of Constructivism in Science Education, pp 3-21, Lawrence-Erlbaum, Hillsdale, NJ.';
 $string['exampleurl'] = 'http://www.ejemplo.com/directorio/archivo.html';
 $string['fetchclienterror'] = 'Ha ocurrido un problema al tratar de abrir la página web (posiblemente la dirección esté equivocada).';
 $string['fetcherror'] = 'Ha ocurrido un problema al tratar de abrir la página web.';
@@ -60,11 +59,19 @@ $string['parameters'] = 'Parámetros';
 $string['popupresource'] = 'Este recurso debe aparecer en una ventana ';
 $string['popupresourcelink'] = 'Si no, haga clic aquí: $a';
 $string['resourcetype'] = 'Tipo de recurso';
+$string['resourcetype1'] = 'Referencia';
+$string['resourcetype2'] = 'Página web';
+$string['resourcetype3'] = 'Archivo subido';
+$string['resourcetype4'] = 'Texto plano';
+$string['resourcetype5'] = 'Enlace web';
+$string['resourcetype6'] = 'Texto HTML';
+$string['resourcetype7'] = 'Programa';
+$string['resourcetype8'] = 'Texto wiki';
+$string['resourcetype9'] = 'Directorio';
 $string['resourcetypedirectory'] = 'Mostrar un directorio';
 $string['resourcetypefile'] = 'Enlazar un archivo o una web';
 $string['resourcetypehtml'] = 'Editar una página web';
 $string['resourcetypelabel'] = 'Añadir una etiqueta';
-$string['resourcetypereference'] = 'Mostrar una referencia';
 $string['resourcetypetext'] = 'Editar una página de texto';
 $string['searchweb'] = 'Buscar una página web';
 $string['variablename'] = 'Nombre de la variable';

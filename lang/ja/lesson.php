@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // lesson.php - created with Moodle 1.4 development (2004062600)
+      // lesson.php - created with Moodle 1.5 development (2004082600)
 
 
 $string['actionaftercorrectanswer'] = '正解後の動作';
@@ -47,6 +47,7 @@ $string['multipleanswer'] = '重複解答';
 $string['nextpage'] = '次ページ';
 $string['noanswer'] = '解答がありません';
 $string['noattemptrecordsfound'] = '挑戦レコードが見つかりません: 評価無し';
+$string['nobranchtablefound'] = '分岐表が見つかりませんでした。';
 $string['normal'] = '通常 - レッスンパスに従う';
 $string['notdefined'] = '未定義';
 $string['notitle'] = 'タイトル無し';

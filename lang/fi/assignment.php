@@ -1,25 +1,24 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.2 Beta +++ (2004031300)
+      // assignment.php - created with Moodle 1.5 development (2004082600)
 
 
 $string['allowresubmit'] = 'Salli uudelleenl‰hetys';
 $string['assignmentdetails'] = 'Teht‰v‰n tiedot';
-$string['assignmentmail'] = '$a->teacher on l‰hett‰nyt sinulle palautetta teht‰v‰st‰ \'$a->assignment\'
+$string['assignmentmail'] = '$a->teacher on antanut sinulle palautetta teht‰v‰st‰ \'$a->assignment\'
 
 Voit n‰hd‰ sen osoitteessa:
 
-$a->url
-';
-$string['assignmentmailhtml'] = '$a->teacher on l‰hett‰nyt sinulle palautetta teht‰v‰st‰ \'<i>$a->assignment</i>\'<br /><br />
+$a->url';
+$string['assignmentmailhtml'] = '$a->teacher on antanut sinulle palautetta teht‰v‰st‰ \'<i>$a->assignment</i>\'<br /><br />
 
 Voit n‰hd‰ sen osoitteessa:
 
 <a href=\"$a->url\">Teht‰v‰n palautus</a>.';
 $string['assignmentname'] = 'Teht‰v‰n nimi';
 $string['assignmenttype'] = 'Teht‰v‰n tyyppi';
-$string['configmaxbytes'] = 'Oletusasetus teht‰v‰n maksimikoolle kaikille teht‰ville sivustolla';
+$string['configmaxbytes'] = 'Oletusasetus sivuston teht‰vien maksimikoolle.';
 $string['description'] = 'Kuvaus';
-$string['duedate'] = 'Palautusp‰iv‰m‰‰r‰';
+$string['duedate'] = 'Palautettava viimeist‰‰n';
 $string['duedateno'] = 'Ei palautusp‰iv‰m‰‰r‰‰';
 $string['early'] = '$a ajoissa';
 $string['existingfiledeleted'] = 'Tiedosto on poistettu: $a';
@@ -34,7 +33,7 @@ $string['modulenameplural'] = 'Teht‰v‰t';
 $string['newsubmissions'] = 'Palautetut teht‰v‰t';
 $string['notgradedyet'] = 'Ei viel‰ arvioitu';
 $string['notsubmittedyet'] = 'Ei viel‰ palautettu';
-$string['overwritewarning'] = 'Varoitus: uudelleen l‰hett‰minen KORVAA aiemman vastauksesi';
+$string['overwritewarning'] = 'Varoitus: uudelleen l‰hett‰minen KORVAA aiemman vastauksesi.';
 $string['saveallfeedback'] = 'Tallenna palaute';
 $string['submissionfeedback'] = 'Palaute teht‰v‰st‰';
 $string['submissions'] = 'Palautukset';

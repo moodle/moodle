@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.4 aiming-for-beta-soon (2004082200)
+      // moodle.php - created with Moodle 1.5 development (2004082600)
 
 
 $string['action'] = 'Actie';
@@ -13,7 +13,7 @@ $string['activityreport'] = 'Activiteitenrapport';
 $string['activityselect'] = 'Selecteer deze activiteit om ergens anders naar toe te verplaatsen';
 $string['activitysince'] = 'Activiteit sinds $a';
 $string['add'] = 'Voeg toe';
-$string['addactivity'] = 'Voeg een activiteit toe';
+$string['addactivity'] = 'Activiteit toevoegen';
 $string['addadmin'] = 'Voeg beheerder toe';
 $string['addcreator'] = 'Voeg een vak-aanmaker toe';
 $string['added'] = '$a toegevoegd';
@@ -26,7 +26,7 @@ $string['addingdatatoexisting'] = 'Gegevens toevoegen aan bestaande';
 $string['addnewcategory'] = 'Voeg een nieuwe categorie toe';
 $string['addnewcourse'] = 'Voeg een nieuw vak toe';
 $string['addnewuser'] = 'Voeg een nieuwe gebruiker toe';
-$string['addresource'] = 'Voeg een bron toe';
+$string['addresource'] = 'Bron toevoegen';
 $string['address'] = 'Adres';
 $string['addstudent'] = 'Voeg een leerling toe';
 $string['addteacher'] = 'Voeg een docent toe';
@@ -321,6 +321,7 @@ $string['editordefaultfont'] = 'Standaard lettertype';
 $string['editorenablespelling'] = 'Schakel spellingcontrole in';
 $string['editorfontlist'] = 'Lettertype lijst';
 $string['editorfontsize'] = 'Standaard lettertypegrootte';
+$string['editorresettodefaults'] = 'Terug naar standaardinstellingen';
 $string['editorsettings'] = 'Instellingen editor';
 $string['editsummary'] = 'Wijzig samenvatting';
 $string['editthisactivity'] = 'Wijzig deze activiteit';
@@ -512,6 +513,7 @@ $string['hiddensectionscollapsed'] = 'Verborgen secties worden samengeklapt geto
 $string['hiddensectionsinvisible'] = 'Verborgen secties worden helemaal niet getoond';
 $string['hide'] = 'Verberg';
 $string['hidepicture'] = 'Verberg afbeelding';
+$string['hidesettings'] = 'Verberg instellingen';
 $string['hits'] = 'Hits';
 $string['hitsoncourse'] = 'Hits voor $a->coursename door $a->username';
 $string['hitsoncoursetoday'] = 'Hits van vandaag voor $a->coursename door $a->username';
@@ -741,7 +743,6 @@ $string['order'] = 'Volgorde';
 $string['other'] = 'Andere';
 $string['outline'] = 'Overzicht';
 $string['page'] = 'Pagina';
-$string['parentlanguage'] = 'en';
 $string['participants'] = 'Deelnemers';
 $string['password'] = 'Wachtwoord';
 $string['passwordchanged'] = 'Het wachtwoord is veranderd';
@@ -856,6 +857,7 @@ $string['showonlytopic'] = 'Laat alleen onderwerp $a zien';
 $string['showonlyweek'] = 'Laat alleen week $a zien';
 $string['showrecent'] = 'Laat recente activiteiten zien';
 $string['showreports'] = 'Toon activiteitenrapporten ';
+$string['showsettings'] = 'Toon instellingen';
 $string['showtheselogs'] = 'Laat deze statistieken zien';
 $string['since'] = 'Sinds';
 $string['sincelast'] = 'sinds laatste aanmelding';
@@ -887,6 +889,7 @@ $string['strftimedatetime'] = '%%d %%B %%Y, %%H:%%M';
 $string['strftimedaydate'] = '%%A, %%d %%B %%Y';
 $string['strftimedaydatetime'] = '%%A, %%d %%B %%Y, %%H:%%M';
 $string['strftimedayshort'] = '%%A %%d  %%B';
+$string['strftimedaytime'] = '%%a, %%H:%%M';
 $string['strftimemonthyear'] = '%%B %%Y';
 $string['strftimerecent'] = '%%d %%b, %%H:%%M';
 $string['strftimerecentfull'] = '%%a, %%d %%b %%Y, %%H:%%M';

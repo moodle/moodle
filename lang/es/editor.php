@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.3 Nearly Ready (2004052000)
+      // editor.php - created with Moodle 1.4 alpha (2004081500)
 
 
 $string['about'] = 'Acerca de este editor';
@@ -8,6 +8,9 @@ $string['absmiddle'] = 'Centro';
 $string['address'] = 'Dirección';
 $string['alignment'] = 'Alinear';
 $string['alternatetext'] = 'Texto alterno';
+$string['anchorhelp'] = 'Esta acción sólo crea un ancla. Deberá crear un enlace manualmente.';
+$string['anchorname'] = 'Ancla';
+$string['anchors'] = 'Anclas';
 $string['baseline'] = 'Linea  de base';
 $string['bold'] = 'Negrita';
 $string['borderthickness'] = 'Borde';
@@ -21,6 +24,7 @@ $string['chooseicon'] = 'Seleccione un icono para insertar';
 $string['close'] = 'Cerrar';
 $string['cols'] = 'Cols';
 $string['copy'] = 'Copiar selección';
+$string['createanchor'] = 'Crear ancla';
 $string['createfolder'] = 'Crear carpeta';
 $string['createlink'] = 'Insertar enlace';
 $string['cut'] = 'Cortar selección';
