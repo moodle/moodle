@@ -148,17 +148,11 @@ function olson_todst ($filename) {
                 if($mdl_tz['from'] < 1970) {
                     $mdl_tz['from'] = 1970;
                 }
-                $mdl_tz['from_timestamp'] = gmmktime(0, 0, 0, 1, 1, $mdl_tz['from'], 0) + $mdl_tz['gmtoff'] * 60 ;
+                $mdl_tz['from_timestamp'] = gmmktime(0, 0, 0, 1, 1, $mdl_tz['from'], 0) - $mdl_tz['gmtoff'] * 60 ;
                 if($mdl_tz['from_timestamp'] < 0) {
                     // This can still happen if $mdl_tz['gmtoff'] < 0
                     continue;
                 }
-                /*
-                if($mdl_tz['from_timestamp'] == 0) {
-                    print_object("suspicious from_timestamp:");
-                    print_object($mdl_tz);
-                }
-                */
                 $mdl_zones[] = $mdl_tz;
             }
         } 
