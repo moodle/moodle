@@ -1,20 +1,20 @@
 <?php  // $Id$
        // config.php - allows admin to edit all configuration variables
 
-    require_once("../config.php");
+    require_once('../config.php');
 
     if ($site = get_site()) {   // If false then this is a new installation
         require_login();
         if (!isadmin()) {
-            error("Only the admin can use this page");
+            error('Only the admin can use this page');
         }
     }
 
 /// This is to overcome the "insecure forms paradox"
     if (isset($secureforms) and $secureforms == 0) {
-        $match = "nomatch";
+        $match = 'nomatch';
     } else {
-        $match = "";
+        $match = '';
     }
 
 /// If data submitted, then process and store.
@@ -38,18 +38,18 @@
                 unset($conf);
                 $conf->name  = $name;
                 $conf->value = $value;
-                if ($current = get_record("config", "name", $name)) {
+                if ($current = get_record('config', 'name', $name)) {
                     $conf->id = $current->id;
-                    if (! update_record("config", $conf)) {
+                    if (! update_record('config', $conf)) {
                         notify("Could not update $name to $value");
                     }
                 } else {
-                    if (! insert_record("config", $conf)) {
+                    if (! insert_record('config', $conf)) {
                         notify("Error: could not add new variable $name !");
                     }
                 }
             }
-            redirect("index.php", get_string("changessaved"), 1);
+            redirect('index.php', get_string('changessaved'), 1);
             exit;
 
         } else {
@@ -63,17 +63,17 @@
 
     if (empty($config)) {
         $config = $CFG;
-        if (!$config->locale = get_field("config", "value", "name", "locale")) {
+        if (!$config->locale = get_field('config', 'value', 'name', 'locale')) {
             $config->locale = $CFG->lang;
         }
     }
     if (empty($focus)) {
-        $focus = "";
+        $focus = '';
     }
 
-    $stradmin = get_string("administration");
-    $strconfiguration = get_string("configuration");
-    $strconfigvariables = get_string("configvariables");
+    $stradmin = get_string('administration');
+    $strconfiguration = get_string('configuration');
+    $strconfigvariables = get_string('configvariables');
 
     if ($site) {
         print_header("$site->shortname: $strconfigvariables", $site->fullname,
@@ -83,14 +83,14 @@
     } else {
         print_header();
         print_heading($strconfigvariables);
-        print_simple_box(get_string("configintro"), "center", "50%");
+        print_simple_box(get_string('configintro'), 'center', "50%");
         echo "<br />";
     }
 
     $sesskey = !empty($USER->id) ? $USER->sesskey : '';
 
-    print_simple_box_start("center", "", "$THEME->cellheading");
-	include("config.html");
+    print_simple_box_start('center', '', "$THEME->cellheading");
+    include('config.html');
     print_simple_box_end();
 
     /// Lock some options
@@ -121,6 +121,5 @@ function validate_form(&$form, &$err) {
 
     return true;
 }
-
 
 ?>
