@@ -34,13 +34,13 @@
     if ($form = data_submitted()) {   /// Filename
 
         if (isset($form->filename)) {                 // file already on server
-            $newfile['tmp_name'] = $form->filename; 
+            $newfile['tmp_name'] = $form->filename;
             $newfile['size'] = filesize($form->filename);
-            
+
         } else if (!empty($_FILES['newfile'])) {      // file was just uploaded
             require_once($CFG->dirroot.'/lib/uploadlib.php');
             $um = new upload_manager('newfile',false,false,$course,false,0,false);
-            if ($um->preprocess_files()) { // validate and virus check! 
+            if ($um->preprocess_files()) { // validate and virus check!
                 $newfile = $_FILES['newfile'];
             }
         }
@@ -59,17 +59,17 @@
             $format = new quiz_file_format();
 
             if (! $format->importpreprocess($category)) {             // Do anything before that we need to
-                error("Error occurred during pre-processing!", 
+                error("Error occurred during pre-processing!",
                       "$CFG->wwwroot/mod/quiz/import.php?category=$category->id");
             }
 
             if (! $format->importprocess($newfile['tmp_name'])) {     // Process the uploaded file
-                error("Error occurred during processing!", 
+                error("Error occurred during processing!",
                       "$CFG->wwwroot/mod/quiz/import.php?category=$category->id");
             }
 
             if (! $format->importpostprocess()) {                     // In case anything needs to be done after
-                error("Error occurred during post-processing!", 
+                error("Error occurred during post-processing!",
                       "$CFG->wwwroot/mod/quiz/import.php?category=$category->id");
             }
 
@@ -78,7 +78,7 @@
             print_footer($course);
             exit;
         }
-    } 
+    }
 
     /// Print upload form
 
@@ -100,7 +100,7 @@
 
     print_heading_with_help($strimportquestions, "import", "quiz");
 
-    print_simple_box_start("center", "", "$THEME->cellheading");
+    print_simple_box_start("center");
     echo "<form enctype=\"multipart/form-data\" method=\"post\" action=\"import.php\">";
     echo "<table cellpadding=\"5\">";
 

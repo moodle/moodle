@@ -344,7 +344,7 @@ class quiz_default_questiontype {
 
         // No options by default
         return false;
-    } 
+    }
 }
 
 quiz_load_questiontypes();
@@ -386,7 +386,7 @@ function quiz_get_question_grades($quizid, $questionlist) {
 }
 
 function quiz_questiongrades_update($grades, $quizid) {
-    // this is called from edit.php to store changes to the question grades 
+    // this is called from edit.php to store changes to the question grades
     // in the quiz_question_grades table. It does not update 'sumgrades' in the quiz table.
     $existing = get_records("quiz_question_grades", "quiz", $quizid, "", "question,grade,id");
     foreach ($grades as $question => $grade) {
@@ -432,7 +432,7 @@ function quiz_get_attempt_questions($quiz, $attempt, $attempting = false) {
     /// Returns the questions of the quiz attempt in a format used for
     /// grading and printing them...
     ///
-    /// $attempting should be set to true if this function is called in 
+    /// $attempting should be set to true if this function is called in
     ///   order to create an attempt page and false if it is called to create
     ///   a review page.
     ///
@@ -617,14 +617,10 @@ function quiz_extract_posted_id($name, $nameprefix='question') {
 }
 
 function quiz_print_comment($text) {
-    global $THEME;
-
     echo "<span class=\"feedbacktext\">".format_text($text, true, false)."</span>";
 }
 
 function quiz_print_correctanswer($text) {
-    global $THEME;
-
     echo "<p align=\"right\"><span class=\"highlight\">$text</span></p>";
 }
 
@@ -1142,7 +1138,7 @@ function quiz_print_question_list($questionlist, $grades) {
 // $questionlist is comma-separated list
 // $grades is an array of corresponding grades
 
-    global $THEME, $USER;
+    global $USER;
 
     if (!$questionlist) {
         echo "<p align=\"center\">";
@@ -1186,7 +1182,7 @@ function quiz_print_question_list($questionlist, $grades) {
         $question = $questions[$qnum];
         $canedit = isteacheredit($question->course);
         $count++;
-        echo "<tr bgcolor=\"$THEME->cellcontent\">";
+        echo "<tr>";
         echo "<td>$count</td>";
         echo "<td>";
         if ($count != 1) {
@@ -1228,7 +1224,7 @@ function quiz_print_question_list($questionlist, $grades) {
     echo "<tr><td colspan=\"5\" align=\"right\">\n";
     echo "<input type=\"submit\" value=\"$strsavegrades:\" />\n";
     echo "<input type=\"hidden\" name=\"setgrades\" value=\"save\" />\n";
-    echo "<td align=\"left\" bgcolor=\"$THEME->cellcontent\">\n";
+    echo "<td align=\"left\">\n";
     echo "<b>$sumgrade</b>";
     echo "</td><td>\n</td></tr>\n";
     echo "</table>\n";
@@ -1241,7 +1237,7 @@ function quiz_print_question_list($questionlist, $grades) {
 function quiz_print_cat_question_list($categoryid, $quizselected=true, $recurse=1, $page, $perpage) {
 // Prints the table of questions in a category with interactions
 
-    global $THEME, $QUIZ_QUESTION_TYPE, $USER;
+    global $QUIZ_QUESTION_TYPE, $USER;
 
     $strcategory = get_string("category", "quiz");
     $strquestion = get_string("question", "quiz");
@@ -1339,7 +1335,7 @@ function quiz_print_cat_question_list($categoryid, $quizselected=true, $recurse=
         if ($question->qtype == RANDOM) {
             //continue;
         }
-        echo "<tr bgcolor=\"$THEME->cellcontent\">\n";
+        echo "<tr>\n";
         if ($quizselected) {
             echo "<td align=\"center\">";
             echo "<input type=\"checkbox\" name=\"q$question->id\" value=\"1\" />\n";

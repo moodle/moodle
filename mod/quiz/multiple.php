@@ -34,7 +34,7 @@
     if ($form = data_submitted() and confirm_sesskey()) {
         if ($form->randomcreate > 0) {
             $newquestionids = array(); // this will hold the ids of the random questions
-            
+
             // find existing random questions in this category
             $random = RANDOM;
             if ($existingquestions = get_records_select('quiz_questions', "qtype = '$random' AND category = '$category->id'")) {
@@ -47,7 +47,7 @@
                 // now take as many of these as needed
                 $i = 0;
                 while (($existingquestion = array_pop($existingquestions)) and ($i < $form->randomcreate)) {
-                    if ($existingquestion->questiontext == "$form->recurse") { 
+                    if ($existingquestion->questiontext == "$form->recurse") {
                         // this question has the right recurse property, so use it
                         $newquestionids[] = $existingquestion->id;
                         $i++;
@@ -63,7 +63,7 @@
                 $question->qtype = RANDOM;
                 $question->category = $category->id;
                 $question->name = get_string('random', 'quiz') .' ('. $category->name .')';
-                $question->questiontext = "$form->recurse"; // we use the questiontext field to store the info 
+                $question->questiontext = "$form->recurse"; // we use the questiontext field to store the info
                                                             // on whether to include questions in subcategories
                 $question->image = '';
                 $question->defaultgrade = $form->randomgrade;
@@ -136,7 +136,7 @@
     $options[0] = get_string('no');
     $options[1] = get_string('yes');
 
-    print_simple_box_start('center', '', $THEME->cellheading);
+    print_simple_box_start('center');
     echo '<form method="POST" action="multiple.php">';
     echo "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\">";
     echo '<table cellpadding="5">';

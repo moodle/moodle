@@ -45,17 +45,17 @@
         $format = new quiz_file_format();
 
         if (! $format->exportpreprocess($category, $course)) {   // Do anything before that we need to
-            error("Error occurred during pre-processing!", 
+            error("Error occurred during pre-processing!",
                     "$CFG->wwwroot/mod/quiz/export.php?category=$category->id");
         }
 
         if (! $format->exportprocess($exportfilename)) {         // Process the export data
-            error("Error occurred during processing!", 
+            error("Error occurred during processing!",
                     "$CFG->wwwroot/mod/quiz/export.php?category=$category->id");
         }
 
         if (! $format->exportpostprocess()) {                    // In case anything needs to be done after
-            error("Error occurred during post-processing!", 
+            error("Error occurred during post-processing!",
                     "$CFG->wwwroot/mod/quiz/export.php?category=$category->id");
         }
 
@@ -63,7 +63,7 @@
         print_continue("edit.php");
         print_footer($course);
         exit;
-    } 
+    }
 
     /// Print upload form
 
@@ -85,11 +85,11 @@
     // get filename
     if (!isset($exportfilename)) {
         $exportfilename = default_export_filename($course, $category);
-    }    
+    }
 
     print_heading_with_help($strexportquestions, "export", "quiz");
 
-    print_simple_box_start("center", "", "$THEME->cellheading");
+    print_simple_box_start("center");
     echo "<form enctype=\"multipart/form-data\" method=\"post\" action=\"export.php\">";
     echo "<table cellpadding=\"5\">";
 

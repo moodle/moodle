@@ -41,7 +41,7 @@
             $definition->name = $name;
             $definition->id   = $form->id[$key];
             $definition->type = $form->type[$key];
-            
+
             if ($definition->id) {
                 if (!update_record('quiz_dataset_definitions', $definition)) {
                     notify("Could not update dataset item definition");
@@ -67,13 +67,13 @@
 
     print_heading_with_help($strdefinedataset, "datasets", "quiz");
 
-    print_simple_box_start("center", "", "$THEME->cellheading");
+    print_simple_box_start("center");
     echo "<form method=\"post\" action=\"categorydatasetdefinitions.php\">";
     echo "<input type=\"hidden\" name=\"category\" value=\"$category->id\" />";
     if ($question) {
         echo "<input type=\"hidden\" name=\"question\" value=\"$question\" />";
     }
-    
+
     echo "<table cellpadding=\"5\">";
 
     $definitions = get_records('quiz_dataset_definitions',

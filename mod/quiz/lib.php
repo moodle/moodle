@@ -20,7 +20,7 @@ function quiz_add_instance($quiz) {
                                      $quiz->openhour, $quiz->openminute, 0);
     $quiz->timeclose = make_timestamp($quiz->closeyear, $quiz->closemonth, $quiz->closeday,
                                       $quiz->closehour, $quiz->closeminute, 0);
-    
+
     if (empty($quiz->name)) {
         if (empty($quiz->intro)) {
             $quiz->name = get_string('modulename', 'quiz');
@@ -33,7 +33,7 @@ function quiz_add_instance($quiz) {
     if (!$quiz->id = insert_record("quiz", $quiz)) {
         return false;  // some error occurred
     }
-    
+
     if (isset($quiz->optionsettingspref)) {
         set_user_preference('quiz_optionsettingspref', $quiz->optionsettingspref);
     }
@@ -102,7 +102,7 @@ function quiz_update_instance($quiz) {
             delete_event($event->id);
         }
     }
-    
+
     unset($event);
     $event->description = $quiz->intro;
     $event->courseid    = $quiz->course;
@@ -420,11 +420,11 @@ function quiz_get_recent_mod_activity(&$activities, &$index, $sincetime, $course
 
 
 function quiz_print_recent_mod_activity($activity, $course, $detail=false) {
-    global $CFG, $THEME;
+    global $CFG
 
     echo '<table border="0" cellpadding="3" cellspacing="0">';
 
-    echo "<tr><td bgcolor=\"$THEME->cellcontent2\" class=\"forumpostpicture\" width=\"35\" valign=\"top\">";
+    echo "<tr><td class=\"forumpostpicture\" width=\"35\" valign=\"top\">";
     print_user_picture($activity->user->userid, $course, $activity->user->picture);
     echo "</td><td width=\"100%\"><font size=\"2\">";
 

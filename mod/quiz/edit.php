@@ -20,19 +20,19 @@
         }
         $modform->instance = $modform->id;
         $SESSION->modform = $modform;    // Save the form in the current session
-            
+
         $cm = get_coursemodule_from_instance('quiz', $modform->instance);
-        add_to_log($cm->course, 'quiz', 'editquestions', 
-                           "view.php?id=$modform->instance", 
-                           "$modform->name", $cm->id); 
+        add_to_log($cm->course, 'quiz', 'editquestions',
+                           "view.php?id=$modform->instance",
+                           "$modform->name", $cm->id);
 
     } else if ($courseid) { // Page retrieve through "Edit Questions" link - no quiz selected
         $modform->course = $courseid;
         unset($modform->instance);
         $SESSION->modform = $modform;    // Save the form in the current session
-        
+
         add_to_log($courseid, 'quiz', 'editquestions', "index.php?id=$courseid");
-        
+
     } else {
         if (!isset($SESSION->modform)) {
           // We currently also get here after editing a question by
@@ -40,7 +40,7 @@
             error('');
         }
 
-        // The data is obtained from a $SESSION variable. This is mostly for historic reasons. 
+        // The data is obtained from a $SESSION variable. This is mostly for historic reasons.
         // With the way things work now it would be just as possible to get the data from the database.
         $modform = $SESSION->modform;
     }
@@ -121,11 +121,11 @@
                 $questionrecord = get_record("quiz_questions", "id", $key);
 
                 if (!empty($questionrecord->defaultgrade)) {
-                    $modform->grades[$key] = $questionrecord->defaultgrade; 
+                    $modform->grades[$key] = $questionrecord->defaultgrade;
                 } else if ($questionrecord->qtype == DESCRIPTION){
-                    $modform->grades[$key] = 0; 
+                    $modform->grades[$key] = 0;
                 } else {
-                    $modform->grades[$key] = 1; 
+                    $modform->grades[$key] = 1;
                 }
             }
         }
@@ -140,7 +140,7 @@
         quiz_questiongrades_update($modform->grades, $modform->instance);
     }
 
-    if (isset($_REQUEST['delete']) and confirm_sesskey()) { /// Delete a question from the list 
+    if (isset($_REQUEST['delete']) and confirm_sesskey()) { /// Delete a question from the list
         $questions = explode(",", $modform->questions);
         foreach ($questions as $key => $question) {
             if ($question == $delete) {
@@ -171,18 +171,18 @@
         }
         quiz_questiongrades_update($modform->grades, $modform->instance);
     }
-    
+
     if (isset($_REQUEST['cat'])) { /// coming from category selection drop-down menu
         $modform->category = $cat;
     }
-        
+
     if (isset($_REQUEST['recurse'])) { /// coming from checkbox below category selection form
         $modform->recurse = $recurse;
     }
-    
+
 /// all commands have been dealt with, now print the page
 
-    if (empty($modform->category) or !record_exists('quiz_categories', 'id', $modform->category)) { 
+    if (empty($modform->category) or !record_exists('quiz_categories', 'id', $modform->category)) {
         $category = quiz_get_default_category($course->id);
         $modform->category = $category->id;
     }
@@ -213,7 +213,7 @@
                  " -> $strediting");
         echo '<table border="0" width="100%" cellpadding="2" cellspacing="0">';
         echo '<tr><td width="50%" valign="top">';
-        print_simple_box_start("center", "100%", $THEME->cellcontent2);        
+        print_simple_box_start("center", "100%");
         print_heading($modform->name);
         $sumgrades = quiz_print_question_list($modform->questions, $modform->grades);
         if (!set_field('quiz', 'sumgrades', $sumgrades, 'id', $modform->instance)) {
@@ -235,14 +235,14 @@
         echo '</td><td valign="top" width="50%">';
     }
     // non-quiz-specific column
-    print_simple_box_start("center", "100%", $THEME->cellcontent2);
+    print_simple_box_start("center", "100%");
     // starts with category selection form
     quiz_print_category_form($course, $modform->category, $modform->recurse);
     print_simple_box_end();
-    
+
     print_spacer(5,1);
     // continues with list of questions
-    print_simple_box_start("center", "100%", $THEME->cellcontent2);
+    print_simple_box_start("center", "100%");
     quiz_print_cat_question_list($modform->category,
                                  isset($modform->instance), $modform->recurse, $page, $perpage);
     print_simple_box_end();
