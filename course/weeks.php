@@ -116,11 +116,11 @@
         }
 
         echo "<TR>";
-        echo "<TD NOWRAP BGCOLOR=\"$highlightcolor\" VALIGN=top>";
+        echo "<TD NOWRAP BGCOLOR=\"$highlightcolor\" VALIGN=top WIDTH=20>";
         echo "<P ALIGN=CENTER><FONT SIZE=3><B>$week</B></FONT></P>";
         echo "</TD>";
 
-        echo "<TD VALIGN=top BGCOLOR=\"$THEME->cellcontent\">";
+        echo "<TD VALIGN=top BGCOLOR=\"$THEME->cellcontent\" WIDTH=\"100%\">";
         echo "<P><FONT SIZE=3 COLOR=\"$THEME->cellheading2\">$weekday - $endweekday</FONT></P>";
 
         if (! $thisweek = $weeks[$week]) {
@@ -161,7 +161,7 @@
         }
 
         echo "</TD>";
-        echo "<TD NOWRAP BGCOLOR=\"$highlightcolor\" VALIGN=top ALIGN=CENTER>";
+        echo "<TD NOWRAP BGCOLOR=\"$highlightcolor\" VALIGN=top ALIGN=CENTER WIDTH=10>";
         echo "<FONT SIZE=1>";
         if (isset($USER->week)) {
             echo "<A HREF=\"view.php?id=$course->id&week=all\" TITLE=\"Show all weeks\"><IMG SRC=../pix/i/allweeks.gif BORDER=0></A></FONT>";
