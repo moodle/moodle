@@ -178,7 +178,7 @@ function print_outline_row($mod, $instance, $result) {
     echo "<TD>&nbsp;&nbsp;&nbsp;</TD>";
     if (isset($result->time)) {
         $timeago = format_time(time() - $result->time);
-        echo "<TD VALIGN=top NOWRAP>".userdate($result->time)." ($timeago ago)</TD>";
+        echo "<TD VALIGN=top NOWRAP>".userdate($result->time)." ($timeago)</TD>";
     }
     echo "</TR>";
 }
