@@ -3,7 +3,7 @@
       // Syntax:      file.php/courseid/dir/dir/dir/filename.ext
       //              file.php/courseid/dir (returns index.html from dir)
       // Workaround:  file.php?file=/courseid/dir/dir/dir/filename.ext
-      // Test:        file.php/test
+      // Test:        file.php/testslasharguments
 
     require_once('config.php');
     require_once('files/mimetypes.php');

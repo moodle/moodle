@@ -399,7 +399,7 @@ class problem_000010 extends problem_base {
         if (!$this->is_enabled()) {
             return true;   
         }
-        if ($this->status() == 0) {
+        if ($this->status() < 1) {
             return true;
         }
         return false;
@@ -412,13 +412,16 @@ class problem_000010 extends problem_base {
         }
     }
     function description() {
+        global $CFG;
         $desc = 'Slasharguments are needed for relative linking in uploaded resources:<ul>';
         if (!$this->is_enabled()) {
             $desc .= '<li>slasharguments are <strong>disabled</strong> in Moodle configuration</li>';   
         } else {
             $desc .= '<li>slasharguments are enabled in Moodle configuration</li>';   
         }
-        if ($this->status() == 0) {
+        if ($this->status() == -1) {
+            $desc .= '<li>can not run automatic test, you can verify it <a href="'.$CFG->wwwroot.'/file.php/testslasharguments" target="_blank">here</a></li>';
+        } else if ($this->status() == 0) {
             $desc .= '<li>slashargument test <strong>failed</strong>, please check server configuration</li>';
         } else {
             $desc .= '<li>slashargument test passed</li>';
@@ -427,6 +430,7 @@ class problem_000010 extends problem_base {
         return $desc;
     }
     function solution() {
+        global $CFG;
         $enabled = $this->is_enabled();
         $status = $this->status();
         $solution = '';
@@ -434,12 +438,16 @@ class problem_000010 extends problem_base {
             $solution .= 'Slasharguments are enabled, but the test failed. Please disable slasharguments in Moodle configuration or fix the server configuration.<hr />';
         } else if ((!$enabled) and ($status == 0)) {
             $solution .= 'Slasharguments are disabled and the test failed. You may try to fix the server configuration.<hr />';
+        } else if ($enabled and ($status == -1)) {
+            $solution .= 'Slasharguments are enabled, <a href="'.$CFG->wwwroot.'/file.php/testslasharguments">automatic testing</a> not possible.<hr />';
+        } else if ((!$enabled) and ($status == -1)) {
+            $solution .= 'Slasharguments are disabled, <a href="'.$CFG->wwwroot.'/file.php/testslasharguments">automatic testing</a> not possible.<hr />';
         } else if ((!$enabled) and ($status > 0)) {
             $solution .= 'Slasharguments are disabled though the iternal test is OK. You should enable slasharguments in Moodle configuration.';
         } else if ($enabled and ($status > 0)) {
             $solution .= 'Congratulations - everything seems OK now :-D';
         }
-        if ($status ==0) {
+        if ($status < 1) {
             $solution .= '<p>IIS:<ul><li>try to add <code>cgi.fix_pathinfo=1</code> to php.ini</li><li>do NOT enable AllowPathInfoForScriptMappings !!!</li><li>slasharguments may not work when using ISAPI and PHP 4.3.10 and older</li></ul></p>'; 
             $solution .= '<p>Apache 1:<ul><li>try to add <code>cgi.fix_pathinfo=1</code> to php.ini</li></ul></p>'; 
             $solution .= '<p>Apache 2:<ul><li>you must add <code>AcceptPathInfo on</code> to php.ini or .htaccess</li><li>try to add <code>cgi.fix_pathinfo=1</code> to php.ini</li></ul></p>'; 
@@ -452,14 +460,20 @@ class problem_000010 extends problem_base {
     }
     function status() {
         global $CFG;
-        $handle = @fopen($CFG->wwwroot.'/file.php/test', "r");
-        $contents = trim(@fread($handle, 10));
+        $handle = @fopen($CFG->wwwroot.'/file.php?file=/testslasharguments', "r");
+        $contents = trim(@fread($handle, 7));
+        @fclose($handle);
+        if ($contents != 'test -1') {
+            return -1;
+        }
+        $handle = @fopen($CFG->wwwroot.'/file.php/testslasharguments', "r");
+        $contents = trim(@fread($handle, 6));
         @fclose($handle);
         switch ($contents) {
-            case '1': return 1;
-            case '2': return 2;
+            case 'test 1': return 1;
+            case 'test 2': return 2;
             default:  return 0;
-        }           
+        }
     }
 }
 
@@ -488,8 +502,7 @@ class problem_00000x extends problem_base {
 TODO:
 
     session.save_path -- it doesn't really matter because we are already IN a session, right?
-    
-    slasharguments -- get_file_argument() in weblib.php
+
 */
 
 ?>

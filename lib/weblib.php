@@ -802,6 +802,10 @@ function get_file_argument($scriptname) {
 
     // first try normal parameter (compatible method == no relative links!)
     $relativepath = optional_param('file', FALSE, PARAM_PATH);
+    if ($relativepath === '/testslasharguments') {
+        echo 'test -1: Incorrect use - try "file.php/testslasharguments" instead'; //indicate fopen/fread works for health center
+        die;
+    }
 
     // then try extract file from PATH_INFO (slasharguments method)
     if (!$relativepath and !empty($_SERVER['PATH_INFO'])) {
@@ -809,8 +813,8 @@ function get_file_argument($scriptname) {
         // check that PATH_INFO works == must not contain the script name
         if (!strpos($path_info, $scriptname)) {
             $relativepath = clean_param(rawurldecode($path_info), PARAM_PATH);
-            if ($relativepath === '/test') {
-                echo '1'; //indicate ok for health center
+            if ($relativepath === '/testslasharguments') {
+                echo 'test 1: Slasharguments test passed.'; //indicate ok for health center
                 die;
             }
         }
@@ -823,8 +827,8 @@ function get_file_argument($scriptname) {
         if (!empty($arr[1])) {
             $path_info = strip_querystring($arr[1]);
             $relativepath = clean_param(rawurldecode($path_info), PARAM_PATH);
-            if ($relativepath === '/test') {
-                echo '2'; //indicate ok for health center
+            if ($relativepath === '/testslasharguments') {
+                echo 'test 2:Slasharguments test passed (compatibility hack).'; //indicate ok for health center
                 die;
             }
         }
