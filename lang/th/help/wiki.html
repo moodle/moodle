@@ -1,39 +1,30 @@
-<p align="center"><b>Help on Writing Wiki Formatted Pages</b></p>
+<p align="center"><b>การเขียนรูปแบบ Wiki</b></p>
 
 <p>
-  Wiki formatted pages provide a facility for marking up plain text with intuitive, human readable
-  formatting that will be converted to XHTML when displayed. The big advantages are that you 
-  do not need to learn HTML to produce quite complex results, and that the text you write
-  <em>looks</em> good to the eye even <em>before</em> conversion. It is a real alternative to 
-  saving Word files as HTML retaining the ability to edit the resource online.
+รูปแบบ  Wiki เป็นการเขียนให้ง่ายต่อการอ่าน ซึ่งจะมีการเปลี่ยนรูปแบบเป็น   XHTML  เมื่อแสดงผล  ประโยชน์หลัก ๆ เลยก็คือคุณไม่จำเป้นต้องเรียนการเขียน html เพื่อให้ได้รูปแบบที่สวยงามตามต้องการ  และนั่นทำให้ข้อความที่คุณเขียนธรรมดา
+  <em>ดูดี</em> เวลาอ่าน แม้จะเป็นช่วง <em>ก่อน</em> การเปลี่ยนรูปแบบ  เป็นอีกทางเลือกที่จะบันทึก ไฟล์เวิร์ดเป็น html เพื่อที่จะแก้ไข source ออนไลน์ได้ 
 </p>
 
-<p>You should enter basically plain text. There are a number of <em>special</em> characters you
-can add to insert formatting</p>
+<p>คุณควรใส่ ตัวหนังสือธรรมดาลงไป มี <em>ตัวอักษรพิเศษ</em> ที่สามารถเพิ่มลงไปได้</p>
 
-<h3>Block level formatting</h3>
+<h3>รูปแบบบล็อคย่อหน้า</h3>
 
 <p>
-  Paragraph blocks are separated by at least one blank line. To add special formatting to a paragraph
-  add one of the following special characters in the first character of the first line of the block followed
-  by a space...
+บล็อคในแต่ละย่อหน้านั้นใช้บรรทัดว่างหนึ่งบรรทัดทำให้แยกกัน หากต้องการใส่รูปแบบพิเศษดังกล่าวลงในย่อหน้า ให้เพิ่มโค้ดตัวอักษรพิเศษลงในตัวอักษรแรกของบรรทัดที่หนึ่ง แล้วตามด้วยช่องว่าง   
 </p>
 
 <table>
-  <tr><th>Character</th><th>Block Type</th></tr>
-  <tr><td>No character</td><td>Ordinary paragraph</td></tr>
-  <tr><td>&gt;</td><td>Quotation</td></tr>
-  <tr><td>Space</td><td>Preformatted Text (Monospaced)</td></tr>
+  <tr><th>ตัวอักษรพิเศษ เช่น จุดวงกลม ตัวนะโม ตัวอะไรแปลก ๆ </th><th>การพิมพ์บล้อค</th></tr>
+  <tr><td>ไม่มีตัวอักษรพิเศษ</td><td>ย่อหน้าธรรมดา</td></tr>
+  <tr><td>&gt;</td><td>อ้างอิงความคิดเห็น</td></tr>
+  <tr><td>ช่องว่าง</td><td>Preformatted Text (Monospaced)</td></tr>
   <tr><td>%</td><td>Preformatted <em>and</em> Wikki formatting is ignored</td></tr>
   <tr><td>!#</td><td>Heading - where # is 1-6, the heading level (1 is biggest)</td></tr>
 </table>
 
-<h3>List Formatting</h3>
+<h3>รูปแบบรายการ</h3>
 
-<p>Simple lists can be constructed easily by placing a special character at the start of each line in the list followed by a space.
-The list is terminated by a blank line. At present lists cannot be intermixed or nested. Definition list
-definitions and text types may be freely intermixed to obtain the desired effect. The special characters
-are as follows...</p>
+<p>รายการง่าย ๆ สามารถสร้างขึ้นได้โดยการใส่ตัวอักษรแบบพิเศษลงไปที่จุดเริ่มของแต่ละบรรทัดตามด้วยช่องว่าง เมื่อพิมพ์รายการจบแล้วให้ทิ้งบรรทัดว่าง ๆ ไว้หนึ่งบรรทัด  ขณะนี้เราไม่สมารถที่จะใช้รูปแบบรายการหลาย ๆ แบบรวมกันได้ อักษรพิเศษมีตัวอย่างข้างล่างนี้</p>
 
 <table>
   <tr><th>Character</th><th>List item type</th></tr>
@@ -43,11 +34,9 @@ are as follows...</p>
   <tr><td>;</td><td>Definition list, text</td></tr>
 </table>  
 
-<h3>Inline formatting</h3>
+<h3>รูปแบบในบรรทัด</h3>
 
-<p>Inline formmating allows part of a line to be marked as having a particular style. The special
-characters used can appear anywhere on a line, but note that the formatting cannot
-cross lines. Codes are as follows...</p>
+<p>รูปแบบนี้ตัวอักษรพิเศษสามารถปรากฎอยู่ในส่วนใดก็ได้ของบรรทัด แต่ไม่สามารถที่จะสร้างข้ามบรรทัดได้ ตัวอย่าง </p>
 
 <table>
   <tr><th>Example</th><th>Example</th><th>Formatting</th></tr>
