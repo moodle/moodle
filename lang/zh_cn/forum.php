@@ -1,10 +1,10 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.0.9 Beta 1 + (2003052300)
+      // forum.php - created with Moodle 1.1 development (2003053000)
 
 
 $string['addanewdiscussion'] = "添加一个新的讨论话题";
 $string['allowchoice'] = "允许每个人选择";
-$string['allowdiscussions'] = "允许一个 \$a 在此讨论区发贴吗？";
+$string['allowdiscussions'] = "允许 \$a 在此讨论区发贴吗？";
 $string['allowratings'] = "允许对贴子评分吗？";
 $string['allowsdiscussions'] = "该讨论区允许每个人发起新话题。";
 $string['anyfile'] = "任何文件";
@@ -40,8 +40,8 @@ $string['generalforum'] = "一般用途的标准讨论区";
 $string['generalforums'] = "普通讨论区";
 $string['inforum'] = "在 \$a 里";
 $string['intronews'] = "普通新闻与通告";
-$string['introsocial'] = "一个开放的讨论区，可以随便聊聊";
-$string['introteacher'] = "一个教师专用讨论区";
+$string['introsocial'] = "开放的讨论区，可以随便聊聊";
+$string['introteacher'] = "教师专用讨论区";
 $string['lastpost'] = "最后一贴";
 $string['learningforums'] = "学习讨论区";
 $string['maxtimehaspassed'] = "抱歉，编辑该贴的时间限制（ \$a ）已过！";
