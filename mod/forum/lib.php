@@ -444,7 +444,31 @@ function forum_get_course_forum($courseid, $type) {
         }
         $forum->timemodified = time();
         $forum->id = insert_record("forum", $forum);
-        return get_record_sql("SELECT * from forum WHERE id = '$forum->id'");
+
+        if ($forum->type != "teacher") {
+            if (! $module = get_record("modules", "name", "forum")) {
+                notify("Could not find forum module!!");
+                return false;
+            }
+            $mod->course = $courseid;
+            $mod->module = $module->id;
+            $mod->instance = $forum->id;
+            $mod->section = 0;
+            if (! $mod->coursemodule = add_course_module($mod) ) {   // assumes course/lib.php is loaded
+                notify("Could not add a new course module to the course '$course->fullname'");
+                return false;
+            }
+            if (! $sectionid = add_mod_to_section($mod) ) {   // assumes course/lib.php is loaded
+                notify("Could not add the new course module to that section");
+                return false;
+            }
+            if (! set_field("course_modules", "section", $sectionid, "id", $mod->coursemodule)) {
+                notify("Could not update the course module with the correct section");
+                return false;
+            }
+        }
+            
+        return get_record("forum", "id", "$forum->id");
     }
 }
 
