@@ -49,7 +49,7 @@
     }
     
     function html_header($course, $wdir, $formfield=""){
-        global $CFG, $THEME, $ME, $choose;
+        global $CFG, $ME, $choose;
 
         if (! $site = get_site()) {
             error("Invalid site!");
@@ -94,13 +94,7 @@
 
             <?php
             $fullnav = str_replace('->', '&raquo;', "$course->shortname -> $fullnav");
-            echo '<table border="0" cellpadding="3" cellspacing="0" width="100%">';
-            echo '<tr>';
-            echo '<td bgcolor="'.$THEME->cellheading.'" class="navbar">';
-            echo '<font size="2"><b>'.$fullnav.'</b></font>';
-            echo '</td>';
-            echo '</tr>';
-            echo '</table>';
+            echo '<div id="nav-bar">'.$fullnav.'</div>';
 
             if ($course->id == $site->id) {
                 print_heading(get_string("publicsitefileswarning"), "center", 2);
