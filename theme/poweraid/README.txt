@@ -33,10 +33,14 @@ If you change the;
 It can hurt your eyes if you choose the wrong color ;-)
 
 To change the logo to something that is more like you...
-open up the file logo_empty.jpg that you can find inside the;
-moodledir/theme/PowerAid/images/
+edit the files frontlogo.jpg and smalllogo.jpg that you can find inside the;
+moodledir/theme/poweraid/images/
 
 For other configuration options for this theme please see the config.php
 
 Other than that, i should think that most of the options for this theme
 is simple to understand.
+
+----
+5 Jan 2003 - Martin made some changes to this theme and some of the 
+             filenames in this file to match

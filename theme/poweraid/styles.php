@@ -152,6 +152,7 @@ form {
 	border-width: 1px;
 	border-color: <?PHP echo $THEME->borders?>;
 	border-style: solid;
+	font-weight: bold;
 }
 
 .weeklyoutline {
@@ -181,6 +182,7 @@ form {
 
 .forumpostmessage {
 }
+
 input {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-size: 10px;

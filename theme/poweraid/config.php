@@ -33,9 +33,12 @@ $THEME->marginwidth   = "0";       // Used in the theme <body> tag
 
 $THEME->body         = "#FFFFFF";  // Main page color
 $THEME->cellheading  = "#E8E8E8";  // Standard headings of big tables
-$THEME->cellheading2 = "#DDDDDD";  // Highlight headings of tables
+$THEME->cellheading2 = "#AAAAAA";  // Highlight headings of tables
 $THEME->cellcontent  = "#FFFFFF";  // For areas with text
 $THEME->cellcontent2 = "#EFEFEF";  // Alternate colour
 $THEME->borders      = "#555555";  // Table borders
+
+$THEME->frontlogo    = "images/frontlogo.jpg";       // Logo on front page
+$THEME->smalllogo    = "images/smalllogo.jpg";  // Header logo on other pages
 
 ?>

@@ -47,54 +47,39 @@
 
 <BODY <? if ($focus) { echo "onLoad=setfocus()"; } echo " bgcolor=\"$THEME->body\" topmargin=\"$THEME->topmargin\" leftmargin=\"$THEME->leftmargin\" marginheight=\"$THEME->marginheight\" marginwidth=\"$THEME->marginwidth\" />"; ?>
 
-<div align="center">
 
-<table border="0" cellspacing="0" cellpadding="0" width="<? echo $THEME->themewidth?>">
-<tr>
-<td width="263" height="76"><a href="index.php" title="Moodle, <?=$title ?>"><img src="<?=$CFG->wwwroot?>/theme/<?=$CFG->theme ?>/images/logo.jpg" width="263" height="76" border="0" /></a></td>
-<td height="76" background="<?=$CFG->wwwroot?>/theme/<?=$CFG->theme ?>/images/top_middle.gif" align="center" valign="middle">&nbsp;</td>
-<td align="right" width="229" height="76" background="<?=$CFG->wwwroot?>/theme/<?=$CFG->theme ?>/images/top_right.gif" valign="middle"><?=$menu ?>&nbsp;<BR><?=$button ?>&nbsp;</td>
-</tr>
-</table>
-
-<table border="0" cellspacing="0" cellpadding="0" width="<? echo $THEME->themewidth?>">
-<tr>
-<td width="1" bgcolor="<? echo $THEME->themeborder?>"><img src="<?=$CFG->wwwroot?>/theme/<?=$CFG->theme ?>/images/side_left.gif" width="2" height="100%" /></td>
-<td align="center" valign="middle">
 <? if ($home) {  // This is what gets printed on the home page only  ?>
+<div align="center">
+<table border="0" cellspacing="0" cellpadding="0" width="<? echo $THEME->themewidth?>">
+<tr>
+<td width="6" ><img src="<?=$CFG->wwwroot?>/theme/<?=$CFG->theme ?>/images/right_corner_top.jpg" width="6" height="9" /></td>
+<td valign="bottom" background="<?=$CFG->wwwroot?>/theme/<?=$CFG->theme ?>/images/top_bar.jpg"><img src="<?=$CFG->wwwroot?>/theme/<?=$CFG->theme ?>/images/top_bar.jpg" width="1" height="9" /></td>
+<td width="6"><img src="<?=$CFG->wwwroot?>/theme/<?=$CFG->theme ?>/images/left_corner_top.jpg" width="6" height="9" /></td>
+</tr>
+<tr>
+<td width="6" bgcolor="<? echo $THEME->body?>"><img src="<?=$CFG->wwwroot?>/theme/<?=$CFG->theme ?>/images/side_left.gif" width="2" height="100%" /></td>
+<td align="left" valign="top"><A HREF="<? echo $CFG->wwwroot?>"><img src="<? echo "$CFG->wwwroot/theme/$CFG->theme/$THEME->frontlogo" ?>" border="0" /></A></td>
+<td width="6" bgcolor="<? echo $THEME->body?>"><img src="<?=$CFG->wwwroot?>/theme/<?=$CFG->theme ?>/images/left_sidebar.jpg" width="6" height="100%" /></td>
+</tr>
+</table><table border="0" cellspacing="0" cellpadding="0" width="<? echo $THEME->themewidth?>">
+<tr>
+<td width="1" bgcolor="<? echo $THEME->themeborders?>"><img src="<?=$CFG->wwwroot?>/theme/<?=$CFG->theme ?>/images/side_left.gif" width="2" height="100%" /></td>
+<td align="center" valign="middle" width="100%">
 <TABLE WIDTH=100% CELLPADDING=0 CELLSPACING=0 BORDER=0>
 <TR>
 <TD ALIGN=LEFT VALIGN=middle>&nbsp;<FONT SIZE=4><B><?=$heading?></B></FONT></TD>
 <TD ALIGN=RIGHT VALIGN=middle><?=$menu ?>&nbsp;</TD>
 </TR>
 </TABLE>
-<? } else if ($heading) {  // This is what gets printed on any other page with a heading ?>
-<TABLE WIDTH=100% CELLPADDING=0 CELLSPACING=0 BORDER=0>
-<TR>
-<TD ALIGN=LEFT VALIGN=middle>&nbsp;<FONT SIZE=4><B><?=$heading?></B></FONT></TD>
-</TR>
-</TABLE>
-<? } else {  // This is what gets printed on any other page (no heading, not home page) ?>
-<? } ?>
-<? if ($navigation) { // This is the navigation table with breadcrumbs  ?>
-<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0 WIDTH=100%>
-<TR>
-<TD BGCOLOR="<?=$THEME->cellheading?>" VALIGN=middle>&nbsp;<FONT SIZE=2><B><? print_navigation("$navigation"); ?></B></FONT></TD>
-</TR>
-</TABLE>
-<? } else if ($heading) { // If no navigation, but a heading, then print a line  ?>
-<? } ?>
+
 </td>
-<td width="1" bgcolor="<? echo $THEME->themeborder?>"><img src="<?=$CFG->wwwroot?>/theme/<?=$CFG->theme ?>/images/side_right.gif" width="2" height="100%" /></td>
+<td width="1" bgcolor="<? echo $THEME->themeborders?>"><img src="<?=$CFG->wwwroot?>/theme/<?=$CFG->theme ?>/images/side_right.gif" width="2" height="100%" /></td>
 </tr>
 </table><table border="0" cellspacing="0" cellpadding="0" width="<? echo $THEME->themewidth?>">
 <tr>
-<td width="1" bgcolor="<? echo $THEME->themeborder?>"><img src="<?=$CFG->wwwroot?>/theme/<?=$CFG->theme ?>/images/side_left.gif" width="2" height="100%" /></td>
-<td align="center" valign="top"><table border="0" width="100%">
-<tr>
-<td>&nbsp;</td>
-</tr>
-</table><table border="0" cellspacing="0" cellpadding="0" width="<? echo $THEME->themewidth?>">
+<td width="1" bgcolor="<? echo $THEME->themeborders?>"><img src="<?=$CFG->wwwroot?>/theme/<?=$CFG->theme ?>/images/side_left.gif" width="2" height="100%" /></td>
+<td align="center" valign="top">
+<table border="0" cellspacing="0" cellpadding="0" width="<? echo $THEME->themewidth?>">
 <tr>
 <td width="6"><img src="<?=$CFG->wwwroot?>/theme/<?=$CFG->theme ?>/images/right_corner_top.jpg" width="6" height="9" /></td>
 <td valign="bottom" background="<?=$CFG->wwwroot?>/theme/<?=$CFG->theme ?>/images/top_bar.jpg"><img src="<?=$CFG->wwwroot?>/theme/<?=$CFG->theme ?>/images/top_bar.jpg" width="1" height="9" /></td>
@@ -102,3 +87,61 @@
 </tr><tr>
 <td width="6" background="<?=$CFG->wwwroot?>/theme/<?=$CFG->theme ?>/images/right_sidebar.jpg"><img src="<?=$CFG->wwwroot?>/theme/<?=$CFG->theme ?>/images/right_sidebar.jpg" width="6" height="100" /></td>
 <td align="left" valign="top">
+
+
+<? } else if ($heading) {  // This is what gets printed on any other page with a heading ?>
+<div align="center">
+<table border="0" cellspacing="0" cellpadding="0" width="<? echo $THEME->themewidth?>">
+<tr>
+<td width="6"><img src="<?=$CFG->wwwroot?>/theme/<?=$CFG->theme ?>/images/right_corner_top.jpg" width="6" height="9" /></td>
+<td valign="bottom" background="<?=$CFG->wwwroot?>/theme/<?=$CFG->theme ?>/images/top_bar.jpg"><img src="<?=$CFG->wwwroot?>/theme/<?=$CFG->theme ?>/images/top_bar.jpg" width="1" height="9" /></td>
+<td width="6"><img src="<?=$CFG->wwwroot?>/theme/<?=$CFG->theme ?>/images/left_corner_top.jpg" width="6" height="9" /></td>
+</tr>
+<tr>
+<td width="6" bgcolor="<? echo $THEME->body?>"><img src="<?=$CFG->wwwroot?>/theme/<?=$CFG->theme ?>/images/side_left.gif" width="2" height="100%" /></td>
+<td align="left" valign="top"><A HREF="<? echo $CFG->wwwroot ?>"><img src="<? echo "$CFG->wwwroot/theme/$CFG->theme/$THEME->smalllogo" ?>" border="0" /></A></td>
+<td width="6" background="<?=$CFG->wwwroot?>/theme/<?=$CFG->theme ?>/images/left_sidebar.jpg"><img src="<?=$CFG->wwwroot?>/theme/<?=$CFG->theme ?>/images/left_sidebar.jpg" width="6" height="100%" /></td>
+</tr>
+</table><table border="0" cellspacing="0" cellpadding="0" width="<? echo $THEME->themewidth?>">
+<tr>
+<td width="1" bgcolor="<? echo $THEME->themeborders?>"><img src="<?=$CFG->wwwroot?>/theme/<?=$CFG->theme ?>/images/side_left.gif" width="2" height="100%" /></td>
+<td align="center" valign="middle">
+<table WIDTH=100% CELLPADDING=0 CELLSPACING=0 BORDER=0>
+<TR>
+<TD ALIGN=LEFT VALIGN=middle>&nbsp;<FONT SIZE=4><B><?=$heading?></B></FONT></TD>
+<TD ALIGN=RIGHT VALIGN=middle><?=$menu ?>&nbsp;</TD>
+</TR>
+</table>
+
+   <? if ($navigation) { // This is the navigation table with breadcrumbs  ?>
+    <table BORDER=0 CELLPADDING=0 CELLSPACING=0 WIDTH=100%>
+    <TR>
+    <TD BGCOLOR="<?=$THEME->cellheading?>" CLASS="navbar" VALIGN=middle>&nbsp;<FONT SIZE=2><B><? print_navigation("$navigation"); ?></B></FONT></TD>
+    <TD BGCOLOR="<?=$THEME->cellheading?>" CLASS="navbar" ALIGN=RIGHT WIDTH=20 VALIGN=TOP><?=$button ?></TD>
+    </TR>
+    </table>
+   <? } ?>
+
+</td>
+<td width="1" bgcolor="<? echo $THEME->themeborders?>"><img src="<?=$CFG->wwwroot?>/theme/<?=$CFG->theme ?>/images/side_right.gif" width="2" height="100%" /></td>
+</tr>
+</table><table border="0" cellspacing="0" cellpadding="0" width="<? echo $THEME->themewidth?>">
+<tr>
+<td width="1" bgcolor="<? echo $THEME->themeborders?>"><img src="<?=$CFG->wwwroot?>/theme/<?=$CFG->theme ?>/images/side_left.gif" width="2" height="100%" /></td>
+<td align="center" valign="top">
+<table border="0" cellspacing="0" cellpadding="0" width="<? echo $THEME->themewidth?>">
+<tr>
+<td width="6"><img src="<?=$CFG->wwwroot?>/theme/<?=$CFG->theme ?>/images/right_corner_top.jpg" width="6" height="9" /></td>
+<td valign="bottom" background="<?=$CFG->wwwroot?>/theme/<?=$CFG->theme ?>/images/top_bar.jpg"><img src="<?=$CFG->wwwroot?>/theme/<?=$CFG->theme ?>/images/top_bar.jpg" width="1" height="9" /></td>
+<td width="6"><img src="<?=$CFG->wwwroot?>/theme/<?=$CFG->theme ?>/images/left_corner_top.jpg" width="6" height="9" /></td>
+</tr><tr>
+<td width="6" background="<?=$CFG->wwwroot?>/theme/<?=$CFG->theme ?>/images/right_sidebar.jpg"><img src="<?=$CFG->wwwroot?>/theme/<?=$CFG->theme ?>/images/right_sidebar.jpg" width="6" height="100" /></td>
+<td align="left" valign="top">
+
+
+<? } else {  // This is what gets printed on any other page (no heading, not home page) ?>
+<BLOCKQUOTE>
+
+<? } ?>
+
+<!-- End of header -->
