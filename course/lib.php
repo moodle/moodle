@@ -597,19 +597,62 @@ function print_course_admin_links($course, $width=180) {
 function print_course_categories($categories, $selected="none", $width=180) {
     global $CFG, $THEME, $USER;
 
-    foreach ($categories as $cat) {
-        $caticon[]="<IMG SRC=\"$CFG->wwwroot/pix/i/course.gif\" HEIGHT=16 WIDTH=16>";
-        if ($cat->id == $selected) {
-            $catdata[]="$cat->name";
-        } else {
-            $catdata[]="<A HREF=\"$CFG->wwwroot/course/index.php?category=$cat->id\">$cat->name</A>";
+    if ($selected == "index") {  // Print comprehensive index of categories with courses
+        if ($courses = get_records_sql("SELECT * FROM course WHERE category > 0 ORDER BY shortname")) {
+            if (isset($USER->id) and !isadmin()) {
+                print_simple_box_start("LEFT", "100%");
+                print_heading("<A HREF=\"course/index.php?category=my\">".get_string("mycourses")."</A>", "LEFT");
+                $some = false;
+                echo "<UL>";
+                foreach ($courses as $key => $course) {
+                    if (isteacher($course->id) or isstudent($course->id)) {
+                        echo "<IMG SRC=\"$CFG->wwwroot/pix/i/course.gif\" HEIGHT=16 WIDTH=16>&nbsp;<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> &nbsp; ";
+                        $some = true;
+                    }
+                }
+                if (!$some) {
+                    print_string("nocoursesyet");
+                }
+                echo "</UL>";
+                print_simple_box_end();
+                print_spacer(8,1);
+            }
+            foreach ($categories as $category) {
+                print_simple_box_start("LEFT", "100%");
+                print_heading("<A HREF=\"course/index.php?category=my\">$category->name</A>", "LEFT");
+                $some = false;
+                echo "<UL>";
+                foreach ($courses as $key => $course) {
+                    if ($course->category == $category->id) {
+                        echo "<IMG SRC=\"$CFG->wwwroot/pix/i/course.gif\" HEIGHT=16 WIDTH=16>&nbsp;<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> &nbsp; ";
+                        unset($courses[$key]);
+                        $some = true;
+                    }
+                }
+                if (!$some) {
+                    print_string("nocoursesyet");
+                }
+                echo "</UL>";
+                print_simple_box_end();
+                print_spacer(8,1);
+            }
         }
+
+    } else {                    // Print short list of categories only 
+        foreach ($categories as $cat) {
+            $caticon[]="<IMG SRC=\"$CFG->wwwroot/pix/i/course.gif\" HEIGHT=16 WIDTH=16>";
+            if ($cat->id == $selected) {
+                $catdata[]="$cat->name";
+            } else {
+                $catdata[]="<A HREF=\"$CFG->wwwroot/course/index.php?category=$cat->id\">$cat->name</A>";
+            }
+        }
+        $catdata[] = "<A HREF=\"$CFG->wwwroot/course/index.php?category=all\">".get_string("fulllistofcourses")."</A>";
+        if (isset($USER->id)) {
+            $catdata[] = "<A HREF=\"$CFG->wwwroot/course/index.php?category=my\">".get_string("mycourses")."</A>";
+        }
+        print_side_block("", $catdata, $showall.$mine, $caticon, $width);
     }
-    $catdata[] = "<A HREF=\"$CFG->wwwroot/course/index.php?category=all\">".get_string("fulllistofcourses")."</A>";
-    if (isset($USER->id)) {
-        $catdata[] = "<A HREF=\"$CFG->wwwroot/course/index.php?category=my\">".get_string("mycourses")."</A>";
-    }
-    print_side_block("", $catdata, $showall.$mine, $caticon, $width);
 }
 
 function print_log_graph($course, $userid=0, $type="course.png", $date=0) {
