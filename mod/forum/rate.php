@@ -18,7 +18,16 @@
 
     require_login($course->id);
 
-    if ($data = data_submitted("$CFG->wwwroot/mod/forum/discuss.php")) {    // form submitted
+    $CFG->debug = 0;    /// Temporarily
+    $returntoview = false;
+
+    if (!$data = data_submitted("$CFG->wwwroot/mod/forum/discuss.php")) {    // form submitted
+        if ($data = data_submitted("$CFG->wwwroot/mod/forum/view.php")) {    // Single forums are special case
+            $returntoview = true;
+        }
+    }
+
+    if ($data) {
 
         foreach ($data as $postid => $rating) {
             if ($postid == "id") {
@@ -45,7 +54,11 @@
             }
         }
         if ($post = get_record('forum_posts', 'id', $postid)) {
-            redirect("$CFG->wwwroot/mod/forum/discuss.php?d=$post->discussion", get_string("ratingssaved", "forum"));
+            if ($returntoview and ($discussion = get_record('forum_discussions', 'id', $post->discussion))) {
+                redirect("$CFG->wwwroot/mod/forum/view.php?f=$discussion->forum", get_string("ratingssaved", "forum"));
+            } else {
+                redirect("$CFG->wwwroot/mod/forum/discuss.php?d=$post->discussion", get_string("ratingssaved", "forum"));
+            }
         } else {
             redirect($_SERVER["HTTP_REFERER"], get_string("ratingssaved", "forum"));
         }
