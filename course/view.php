@@ -31,7 +31,8 @@
         redirect("$CFG->wwwroot");
     }
 
-    print_header("Course: $course->fullname", "$course->fullname", "$course->shortname", "");
+    print_header("Course: $course->fullname", "$course->fullname", "$course->shortname", "", "", true,
+                  update_course_icon($course->id));
 
     if (! $modtypes = get_records_sql_menu("SELECT name,fullname FROM modules ORDER BY fullname") ) {
         error("No modules are installed!");

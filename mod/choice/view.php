@@ -48,11 +48,8 @@
 
     print_header("$course->shortname: $choice->name", "$course->fullname",
                  "<A HREF=../../course/view.php?id=$course->id>$course->shortname</A> -> 
-                  <A HREF=index.php?id=$course->id>Choices</A> -> $choice->name", "");
-
-    if ($USER->editing) {
-        print_update_module_icon($cm->id);
-    }
+                  <A HREF=index.php?id=$course->id>Choices</A> -> $choice->name", "", "", true,
+                  update_module_icon($cm->id));
 
     if (isteacher($course->id)) {
         echo "<P align=right><A HREF=\"report.php?id=$cm->id\">View all responses</A></P>";
