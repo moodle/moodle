@@ -144,7 +144,8 @@ HTMLArea.Config = function () {
           "lefttoright", "righttoleft", "separator",
           "insertorderedlist", "insertunorderedlist", "outdent", "indent", "separator",
           "forecolor", "hilitecolor", "separator",
-          "inserthorizontalrule", "createanchor", "createlink", "unlink", "insertimage", "inserttable",
+          "inserthorizontalrule", "createanchor", "createlink", "unlink", "nolink", "separator",
+          "insertimage", "inserttable",
           "insertsmile", "insertchar",
           <?php if (!empty($CFG->aspellpath) && !empty($CFG->editorspelling)) {
               echo '"separator","spellcheck",';
@@ -213,6 +214,7 @@ HTMLArea.Config = function () {
         createanchor: [ "Create anchor", "ed_anchor.gif", false, function(e) {e.execCommand("createanchor", true);} ],
         createlink: [ "Insert Web Link", "ed_link.gif", false, function(e) {e.execCommand("createlink", true);} ],
         unlink: [ "Remove Link", "ed_unlink.gif", false, function(e) {e.execCommand("unlink");} ],
+        nolink: [ "No link", "ed_nolink.gif", false, function(e) {e.execCommand("nolink");} ],
         insertimage: [ "Insert/Modify Image", "ed_image.gif", false, function(e) {e.execCommand("insertimage");} ],
         inserttable: [ "Insert Table", "insert_table.gif", false, function(e) {e.execCommand("inserttable");} ],
         htmlmode: [ "Toggle HTML Source", "ed_html.gif", true, function(e) {e.execCommand("htmlmode");} ],
@@ -665,6 +667,8 @@ HTMLArea.prototype.generate = function () {
         html += '<body>\n';
         // See bug #2222
         html += (editor._textArea.value != null && editor._textArea.value != '') ? editor._textArea.value : '<p>&nbsp;</p>';
+        html = html.replace(/<nolink>/gi, '<span class="nolink">').
+                    replace(/<\/nolink>/gi, '</span>');
         html += "</body>\n";
         html += "</html>";
     } else {
@@ -1381,7 +1385,7 @@ HTMLArea.prototype._createLink = function(link) {
                 var rng = this._createRange(sel);
                 var len = HTMLArea.is_ie ? rng.text.toString().length : sel.toString().length;
                 if(len < 1) {
-                    alert("You must select text first!");
+                    alert("<?php print_string("alertnoselectedtext","editor");?>");
                     return false;
                 }
             }
@@ -1619,7 +1623,7 @@ HTMLArea.prototype._createanchor = function () {
     var rng = this._createRange(sel);
     var len = HTMLArea.is_ie ? rng.text.toString().length : sel.toString().length;
     if(len < 1) {
-        alert("You must select text first!");
+        alert("<?php print_string("alertnoselectedtext","editor");?>");
         return false;
     }
     this._popupDialog("createanchor.php", function(objAn) {
@@ -1631,6 +1635,25 @@ HTMLArea.prototype._createanchor = function () {
         str += '</a>';
         editor.insertHTML(str);
     },null);
+};
+
+HTMLArea.prototype._nolinktag = function () {
+
+    var editor = this;
+    var sel = this._getSelection();
+    var rng = this._createRange(sel);
+    var len = HTMLArea.is_ie ? rng.text.toString().length : sel.toString().length;
+
+    if (len < 1) {
+        alert("<?php print_string("alertnoselectedtext","editor");?>");
+        return false;
+    }
+    var str = '<span class="nolink">';
+    str += HTMLArea.is_ie ? rng.text : sel;
+    str += '</span>';
+    editor.insertHTML(str);
+    this.focusEditor();
+
 };
 
 /// Moodle hack's ends
@@ -1682,6 +1705,7 @@ HTMLArea.prototype.execCommand = function(cmdID, UI, param) {
         this._createLink();
         break;
         case "unlink": this._removelink(); break;
+        case "nolink": this._nolinktag(); break;
         case "popupeditor":
         // this object will be passed to the newly opened window
         HTMLArea._object = this;

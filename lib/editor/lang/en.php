@@ -50,6 +50,7 @@ HTMLArea.I18N = {
         inserthorizontalrule: "<?php print_string("horizontalrule","editor") ?>",
         createlink:     "<?php print_string("createlink","editor") ?>",
         unlink:         "<?php print_string("removelink","editor") ?>",
+        nolink:         "<?php print_string("nolink","editor") ?>",
         insertimage:    "<?php print_string("insertimage","editor") ?>",
         inserttable:    "<?php print_string("inserttable","editor") ?>",
         htmlmode:       "<?php print_string("htmlmode","editor") ?>",
