@@ -909,7 +909,8 @@ function message_format_message(&$message, &$user, $format='', $keywords='') {
         $format = get_string('strftimedaytime');
     }
     $time = userdate($message->timecreated, $format);
-    $messagetext = format_text($message->message, $message->format);
+    $options->para = false;
+    $messagetext = format_text($message->message, $message->format, $options);
     if ($keywords) {
         $messagetext = highlight($keywords, $messagetext);
     }
