@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.3 Beta + (2004051600)
+      // moodle.php - created with Moodle 1.3 Nearly Ready (2004052000)
 
 
 $string['action'] = 'Actie';
@@ -98,6 +98,7 @@ $string['backuplogdetailed'] = 'Gedetailleerde log van de bewerking';
 $string['backuploglaststatus'] = 'Laatste log van de bewerking';
 $string['backuplogshelp'] = 'Selecteer als je de logbestanden van het vak mee in de backup wil';
 $string['backupnameformat'] = '%%d%%m%%Y-%%H%%M';
+$string['backupnoneusersinfo'] = 'Merk op: je hebt er voor gekozen om \"geen\" gebruikers in de backup op te nemen. De backup van alle modules staat nu in de \"zonder gebruikersgegevens\"-modus. De modules \"oefening\" en \"workshop\" zijn niet compatibel met dit type backup en zullen niet mee in de backup gezet worden.';
 $string['backuporiginalname'] = 'Naam backup';
 $string['backupsavetohelp'] = 'Volledig pad naar de map waar je de backupbestanden wil bewaren<br>(laat blanco als je ze in de standaardmap van het vak wil bewaren)';
 $string['backupuserfileshelp'] = 'Selecteer als je gebruikersbestanden in de de backup';
@@ -481,6 +482,7 @@ $string['included'] = 'Ingevoegd';
 $string['includelogentries'] = 'Voeg het logboek toe';
 $string['includemodules'] = 'Voeg modules toe';
 $string['includeneededusers'] = 'Voeg de nodige gebruikers toe';
+$string['includenoneusers'] = 'Voeg geen gebruikers toe';
 $string['includeuserfiles'] = 'Voeg gebruikersbestanden toe';
 $string['institution'] = 'Instituut';
 $string['invalidemail'] = 'Ongeldig e-mail adres';
@@ -879,6 +881,7 @@ $string['uploadnotallowed'] = 'Uploads niet toegestaan';
 $string['uploadproblem'] = 'Een was een onbekend probleem tijdens het uploaden van bestand \'$a\' (was het misschien te groot?)';
 $string['uploadthisfile'] = 'Upload dit bestand';
 $string['uploadusers'] = 'Upload gebruikers';
+$string['usedinnplaces'] = 'Gebruik op $a plaatsen';
 $string['user'] = 'Gebruiker';
 $string['userconfirmed'] = '$a bevestigd';
 $string['userdata'] = 'Gebruikersgegevens';

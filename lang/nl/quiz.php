@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.3 Beta + (2004051600)
+      // quiz.php - created with Moodle 1.3 Nearly Ready (2004052000)
 
 
 $string['acceptederror'] = 'Geaccepteerde fout';
@@ -27,6 +27,7 @@ $string['attemptlast'] = 'Laatste poging';
 $string['attemptquiznow'] = 'Probeer de test nu';
 $string['attempts'] = 'Pogingen';
 $string['attemptsallowed'] = 'Toegestane pogingen ';
+$string['attemptsexist'] = 'Deze test is al eens geprobeerd';
 $string['attemptsunlimited'] = 'Onbeperkt aantal pogingen';
 $string['backtoquiz'] = 'Terug naar het bewerken/wijzigen van de test';
 $string['bestgrade'] = 'Hoogste cijfer';
@@ -138,6 +139,7 @@ $string['quizclosed'] = 'Deze test  wordt op $a gesloten';
 $string['quizcloses'] = 'Test gaat dicht';
 $string['quiznotavailable'] = 'De test zal nog niet beschikbaar zijn tot :  $a  ';
 $string['quizopen'] = 'Open de test ';
+$string['quizopens'] = 'De test gaat open';
 $string['random'] = 'Willekeurige vraag uit categorie';
 $string['randomcreate'] = 'Maak willekeurige vragen';
 $string['randomsamatch'] = 'Willekeurig korte antwoorden koppelen';
