@@ -771,7 +771,7 @@ function quiz_save_best_grade($quiz, $user) {
     } else {
         $grade->quiz = $quiz->id;
         $grade->user = $user->id;
-        $grade->grade = $bestgrade;
+        $grade->grade = round($bestgrade, 2);
         $grade->timemodified = time();
         if (!insert_record("quiz_grades", $grade)) {
             notify("Could not insert new best grade");
