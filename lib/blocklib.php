@@ -280,7 +280,7 @@ function blocks_get_record($blockid = NULL, $invalidate = false) {
     static $cache = NULL;
 
     if($invalidate || empty($cache)) {
-        $cache = get_records('block', '', '', 'name');
+        $cache = get_records('block');
     }
 
     if($blockid === NULL) {
