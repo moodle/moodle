@@ -54,6 +54,7 @@
                     error("Could not update question!");
                 }
             } else {         // Question is a new one
+                $question->stamp = make_unique_id_code();  // Set the unique code (not to be changed)
                 if (!$question->id = insert_record("quiz_questions", $question)) {
                     error("Could not insert new question!");
                 }
