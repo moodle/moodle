@@ -1760,7 +1760,7 @@ function get_courses($categoryid="all", $sort="c.sortorder ASC", $fields="c.*") 
         $selectsql = "{$CFG->prefix}course c ";
     }
 
-    $courses = get_records_sql("SELECT DISTINCT $fields FROM $selectsql ORDER BY $sort");
+    $courses = get_records_sql("SELECT $fields FROM $selectsql ORDER BY $sort");
 
     if ($courses and (!$hideallinvisible) and (!$showallinvisible)) { // For ordinary users we need to check visibility
         foreach ($courses as $key => $course) {
@@ -1820,7 +1820,7 @@ function get_courses_page($categoryid="all", $sort="c.sortorder ASC", $fields="c
         $selectsql = "{$CFG->prefix}course c ";
     }
 
-    $courses = get_records_sql("SELECT DISTINCT $fields FROM $selectsql ORDER BY $sort");
+    $courses = get_records_sql("SELECT $fields FROM $selectsql ORDER BY $sort");
 
     if ($courses and (!$hideallinvisible) and (!$showallinvisible)) { // For ordinary users we need to check visibility
         foreach ($courses as $key => $course) {
