@@ -35,6 +35,7 @@ CREATE TABLE prefix_choice (
   timemodified integer NOT NULL default '0'
 );
 
+CREATE INDEX prefix_choice_course_idx ON prefix_choice (course);
 
 # --------------------------------------------------------
 
@@ -49,6 +50,9 @@ CREATE TABLE prefix_choice_answers (
   answer integer NOT NULL default '0',
   timemodified integer NOT NULL default '0'
 );
+
+CREATE INDEX prefix_choice_answers_choice_idx ON prefix_choice_answers (choice);
+CREATE INDEX prefix_choice_answers_userid_idx ON prefix_choice_answers (userid);
 
 #
 # Dumping data for table `log_display`

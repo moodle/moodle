@@ -34,7 +34,8 @@ CREATE TABLE prefix_choice (
   timeclose int(10) unsigned NOT NULL default '0',
   timemodified int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (id),
-  UNIQUE KEY id (id)
+  UNIQUE KEY id (id),
+  KEY course (course)
 ) TYPE=MyISAM COMMENT='Available choices are stored here.';
 
 
@@ -51,7 +52,9 @@ CREATE TABLE prefix_choice_answers (
   answer tinyint(4) NOT NULL default '0',
   timemodified int(10) NOT NULL default '0',
   PRIMARY KEY  (id),
-  UNIQUE KEY id (id)
+  UNIQUE KEY id (id),
+  KEY userid (userid),
+  KEY choice (choice)
 ) TYPE=MyISAM;
 
 #

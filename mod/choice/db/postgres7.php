@@ -29,6 +29,12 @@ function choice_upgrade($oldversion) {
         modify_database("", "UPDATE prefix_choice SET publish = publish - 1 WHERE publish > 0;");
     }
 
+    if ($oldversion < 2004111200) {
+        modify_database('','CREATE INDEX prefix_choice_course_idx ON prefix_choice (course);');
+        modify_database('','CREATE INDEX prefix_choice_answers_choice_idx ON prefix_choice_answers (choice);');
+        modify_database('','CREATE INDEX prefix_choice_answers_userid_idx ON prefix_choice_answers (userid);');
+    }
+
     return true;
 }
 
