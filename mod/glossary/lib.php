@@ -175,7 +175,8 @@ function glossary_print_recent_activity($course, $isteacher, $timestart) {
     if (!$logs = get_records_select("log", "time > '$timestart' AND ".
                                            "course = '$course->id' AND ".
                                            "module = 'glossary' AND ".
-                                           "action = 'add entry'", "time ASC")) {
+                                           "(action = 'add entry' OR ".
+                                           " action  = 'approve entry')", "time ASC")) {
         return false;
     }
 
@@ -188,7 +189,7 @@ function glossary_print_recent_activity($course, $isteacher, $timestart) {
         $modvisible = instance_is_visible($log->module,$tempmod);
 
         //Only if the mod is visible
-        if ($modvisible) {
+        if ($modvisible and $entry->approved) {
             $entries[$log->info] = glossary_log_info($log);
             $entries[$log->info]->time = $log->time;
             $entries[$log->info]->url  = $log->url;
@@ -920,7 +921,7 @@ function glossary_print_approval_menu($cm, $glossary,$mode, $hook, $sortkey = ''
     }
     glossary_print_special_links($cm, $glossary, $mode, $hook);
 
-    glossary_print_alphabet_links($cm, $glossary, $mode, $hook);
+    glossary_print_alphabet_links($cm, $glossary, $mode, $hook,$sortkey, $sortorder);
 
     glossary_print_all_links($cm, $glossary, $mode, $hook);
 	 
@@ -947,7 +948,7 @@ function glossary_print_alphabet_menu($cm, $glossary, $mode, $hook, $sortkey='',
 
         glossary_print_special_links($cm, $glossary, $mode, $hook);
 
-        glossary_print_alphabet_links($cm, $glossary, $mode, $hook);
+        glossary_print_alphabet_links($cm, $glossary, $mode, $hook, $sortkey, $sortorder);
 
         glossary_print_all_links($cm, $glossary, $mode, $hook);
     } else {
@@ -957,12 +958,13 @@ function glossary_print_alphabet_menu($cm, $glossary, $mode, $hook, $sortkey='',
 
 function glossary_print_author_menu($cm, $glossary,$mode, $hook, $sortkey = '', $sortorder = '') {
     if ($glossary->showalphabet and $glossary->displayformat != GLOSSARY_FORMAT_CONTINUOUS) {
-        echo '<center>' . get_string("explainalphabet","glossary") . '<p>';
+        echo '<center>' . get_string("explainalphabet","glossary") . '<br \>';
     }
 
-    glossary_print_alphabet_links($cm, $glossary, $mode, $hook);
-    echo "<br />";
+    glossary_print_sorting_links($cm, $mode, $sortkey,$sortorder);
+    glossary_print_alphabet_links($cm, $glossary, $mode, $hook, $sortkey, $sortorder);
     glossary_print_all_links($cm, $glossary, $mode, $hook);
+//    echo "<br />";
 }
 
 function glossary_print_categories_menu($cm, $glossary, $hook, $category) {
@@ -1055,7 +1057,7 @@ global $CFG;
      }
 }
 
-function glossary_print_alphabet_links($cm, $glossary, $mode, $hook) {
+function glossary_print_alphabet_links($cm, $glossary, $mode, $hook, $sortkey, $sortorder) {
 global $CFG;
      if ( $glossary->showalphabet and $glossary->displayformat != GLOSSARY_FORMAT_CONTINUOUS ) {
           $alphabet = explode(",", get_string("alphabet"));
@@ -1064,7 +1066,7 @@ global $CFG;
               if ( $hook == $alphabet[$i] and $hook) {
                    echo "<b>$alphabet[$i]</b>";
               } else {
-                   echo "<a href=\"$CFG->wwwroot/mod/glossary/view.php?id=$cm->id&mode=$mode&hook=$alphabet[$i]\">$alphabet[$i]</a>";
+                   echo "<a href=\"$CFG->wwwroot/mod/glossary/view.php?id=$cm->id&mode=$mode&hook=$alphabet[$i]&sortkey=$sortkey&sortorder=$sortorder\">$alphabet[$i]</a>";
               }
               if ((int) ($i % $letters_by_line) != 0 or $i == 0) {
                    echo ' | ';
@@ -1077,60 +1079,80 @@ global $CFG;
 
 function glossary_print_sorting_links($cm, $mode, $sortkey = '',$sortorder = '') {
 global $CFG;
-    $strsort             = get_string("sortchronogically", "glossary");
-    $strsortbycreation   = get_string("sortbycreation", "glossary");
-    $strsortbylastupdate = get_string("sortbylastupdate", "glossary");
 
+    $asc    = get_string("ascending","glossary");
+    $desc   = get_string("descending","glossary");
+    $bopen  = '<b>';
+    $bclose = '</b>';
+    
      $neworder = '';
      if ( $sortorder ) {
          if ( $sortorder == 'asc' ) {
              $neworder = '&sortorder=desc';
-             $ordertitle = get_string("descending","glossary");
+             $newordertitle = $desc;
          } else {
              $neworder = '&sortorder=asc';
-             $ordertitle = get_string("ascending","glossary");
+             $newordertitle = $asc;
          }
          $icon = " <img src=\"$sortorder.gif\" border=0 width=16 height=16>";
      } else {
-         if ( $sortkey != 'CREATION' and $sortkey != 'UPDATE' ) {
+         if ( $sortkey != 'CREATION' and $sortkey != 'UPDATE' and
+               $sortkey != 'FIRSTNAME' and $sortkey != 'LASTNAME' ) {
              $icon = "";
-             $ordertitle = get_string("ascending","glossary");
+             $newordertitle = $asc;
          } else {
-             $ordertitle = get_string("descending","glossary");
+             $newordertitle = $desc;
              $neworder = '&sortorder=desc';
              $icon = ' <img src="asc.gif" border=0 width=16 height=16>';
          }
      }
-     $cicon = '';
-     $cneworder = '';
-     $cbtag = '';
-     $cendbtag = '';
+     $ficon     = '';
+     $fneworder = '';
+     $fbtag     = '';
+     $fendbtag  = '';
 
-     $uicon = '';
-     $uneworder = '';
-     $ubtag = '';
-     $uendbtag = '';
+     $sicon     = '';
+     $sneworder = '';
+     $stag      = '';
+     $sendbtag  = '';
 
-     if ( $sortkey == 'CREATION' ) {
-         $cicon = $icon;
-         $cneworder = $neworder;
-         $cordertitle = $ordertitle;
-         $uordertitle = get_string("ascending","glossary");
-         $cbtag = '<b>';
-         $cendbtag = '</b>';
-     } elseif ($sortkey == 'UPDATE') {
-         $uicon = $icon;
-         $uneworder = $neworder;
-         $cordertitle = get_string("ascending","glossary");
-         $uordertitle = $ordertitle;
-         $ubtag = '<b>';
-         $uendbtag = '</b>';
+     if ( $sortkey == 'CREATION' or $sortkey == 'FIRSTNAME' ) {
+         $ficon       = $icon;
+         $fneworder   = $neworder;
+         $fordertitle = $newordertitle;
+         $sordertitle = $asc;
+         $fbtag       = $bopen;
+         $fendbtag    = $bclose;
+     } elseif ($sortkey == 'UPDATE' or $sortkey == 'LASTNAME') {
+         $sicon = $icon;
+         $sneworder   = $neworder;
+         $fordertitle = $asc;
+         $sordertitle = $newordertitle;
+         $sbtag       = $bopen;
+         $sendbtag    = $bclose;
      } else {
-         $cordertitle = get_string("ascending","glossary");
-         $uordertitle = get_string("ascending","glossary");
+         $fordertitle = $asc;
+         $sordertitle = $asc;
      }
-     echo "<br>$strsort: $ubtag<a title=\"$strsortbylastupdate $uordertitle\" href=\"$CFG->wwwroot/mod/glossary/view.php?id=$cm->id&sortkey=UPDATE$uneworder&mode=$mode\">$strsortbylastupdate$uicon</a>$uendbtag | ".
-                          "$cbtag<a title=\"$strsortbycreation $cordertitle\" href=\"$CFG->wwwroot/mod/glossary/view.php?id=$cm->id&sortkey=CREATION$cneworder&mode=$mode\">$strsortbycreation$cicon</a>$cendbtag</p>";
+
+     if ( $sortkey == 'CREATION' or $sortkey == 'UPDATE' ) {
+         $forder = 'CREATION';
+         $sorder =  'UPDATE';
+         $fsort  = get_string("sortbycreation", "glossary");
+         $ssort  = get_string("sortbylastupdate", "glossary");
+
+         $sort        = get_string("sortchronogically", "glossary");
+     } elseif ( $sortkey == 'FIRSTNAME' or $sortkey == 'LASTNAME') {
+         $forder = 'FIRSTNAME';
+         $sorder =  'LASTNAME';
+         $fsort  = get_string("firstname");
+         $ssort  = get_string("lastname");
+
+         $sort        = get_string("sortby", "glossary");
+     }
+
+     echo "<br>$sort: $sbtag<a title=\"$ssort $sordertitle\" href=\"$CFG->wwwroot/mod/glossary/view.php?id=$cm->id&sortkey=$sorder$sneworder&mode=$mode\">$ssort$sicon</a>$sendbtag | ".
+                          "$fbtag<a title=\"$fsort $fordertitle\" href=\"$CFG->wwwroot/mod/glossary/view.php?id=$cm->id&sortkey=$forder$fneworder&mode=$mode\">$fsort$ficon</a>$fendbtag<br \>";
 }
 
 function glossary_sort_entries ( $entry0, $entry1 ) {

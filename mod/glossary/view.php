@@ -14,11 +14,19 @@
     optional_variable($fullsearch,0); // full search (concept and definition) when searching?
 
     optional_variable($sortkey,"");    // Sorted view: 
-                                       //    [ CREATION | UPDATE | concept | timecreated | ... ]
+                                       //    [ CREATION | UPDATE | FIRSTNAME | LASTNAME |
+                                       //      concept | timecreated | ... ]
     optional_variable($sortorder,"");  // it defines the order of the sorting (ASC or DESC)
 
     optional_variable($offset,0);    // entries to bypass (for paging purpouses)
 
+    optional_variable($show,"");     // [ concept | alias ] => mode=term hook=$show
+
+    if ( $show ) {
+        $mode = 'term';
+        $hook = $show;
+        $show = '';
+    }
     if (! $cm = get_record("course_modules", "id", $id)) {
         error("Course Module ID was incorrect");
     }     
@@ -64,7 +72,11 @@
         }
     }
     if ( $sortkey = strtoupper($sortkey) ) {
-        if ($sortkey != 'CREATION' and $sortkey != 'UPDATE') {
+        if ($sortkey != 'CREATION' and 
+            $sortkey != 'UPDATE' and 
+            $sortkey != 'FIRSTNAME' and 
+            $sortkey != 'LASTNAME'
+            ) {
             $sortkey = '';
         }
     }
@@ -119,6 +131,12 @@
         if ( !$hook ) {
             $hook = 'ALL';
         } 
+        if ( !$sortkey ) {
+            $sortkey = 'FIRSTNAME';
+        } 
+        if ( !$sortorder ) {
+            $sortorder = 'asc';
+        }
     break;
 
     case 'letter':  /// Looking for entries that begin with a certain letter, ALL or SPECIAL characters
@@ -263,11 +281,21 @@
         $where = '';
         switch ($CFG->dbtype) {
         case 'postgres7':
-            $usernamefield = "u.firstname || ' ' || u.lastname";
+            $usernametoshow = "u.firstname || ' ' || u.lastname";
+            if ( $sortkey == 'FIRSTNAME' ) {
+                $usernamefield = "u.firstname || ' ' || u.lastname";
+            } else {
+                $usernamefield = "u.lastname || ' ' || u.firstname";
+            }
             $where = "AND substr(ucase($usernamefield),1," .  strlen($hook) . ") = '" . strtoupper($hook) . "'";
         break;
         case 'mysql':
-            $usernamefield = "CONCAT(CONCAT(u.firstname,' '), u.lastname)";
+            $usernametoshow = "CONCAT(CONCAT(u.firstname,' '), u.lastname)";
+            if ( $sortkey == 'FIRSTNAME' ) {
+                $usernamefield = "CONCAT(CONCAT(u.firstname,' '), u.lastname)";
+            } else {
+                $usernamefield = "CONCAT(CONCAT(u.lastname,' '), u.firstname)";
+            }
             $where = "AND left(ucase($usernamefield)," .  strlen($hook) . ") = '$hook'";
         break;
         }
@@ -275,13 +303,13 @@
             $where = '';
         }
 
-        $sqlselect  = "SELECT ge.id, $usernamefield pivot, u.id uid, ge.*";
+        $sqlselect  = "SELECT ge.id, $usernamefield pivot, $usernametoshow uname, u.id uid, ge.*";
         $sqlfrom    = "FROM {$CFG->prefix}glossary_entries ge, {$CFG->prefix}user u";
         $sqlwhere   = "WHERE ge.userid = u.id  AND
                              ge.approved != 0
                              $where AND 
                              (ge.glossaryid = $glossary->id OR ge.sourceglossaryid = $glossary->id)";
-        $sqlorderby = "ORDER BY $usernamefield, ge.concept";
+        $sqlorderby = "ORDER BY $usernamefield $sortorder, ge.concept";
 
         $count = count_records_sql("select count(*) $sqlfrom $sqlwhere");
         $sqllimit = " LIMIT $offset, $entriesbypage";
@@ -346,7 +374,13 @@
         case 'term': 
             $printpivot = 0;
             $sqlfrom .= ", {$CFG->prefix}glossary_alias ga";
-            $where = "AND ge.id = ga.entryid AND ( ge.concept = '$hook' OR ga.alias = '$hook' )";
+            $where = "AND ge.id = ga.entryid AND                            
+                          (ge.concept = '$hook' OR ga.alias = '$hook' )
+                     ";
+//            $where = "AND ge.id = ga.entryid AND (
+//                           (ge.casesensitive != 0 and ( ge.concept LIKE BINARY '$hook' OR ga.alias LIKE BINARY '$hook' ) ) or
+//                           (ge.casesensitive = 0 and ( ucase(ge.concept) = ucase('$hook') OR ucase(ga.alias) = ucase('$hook') ) )
+//                       )";
         break;
 
         case 'entry': 
@@ -431,21 +465,28 @@
         }
         
         foreach ($allentries as $entry) {
-//glossary_debug($debug,"<b>$entry->concept</b>");
+        /// Setting the pivot for the current entry
             $pivot = $entry->pivot;
             if ( !$fullpivot ) {
                 $pivot = $pivot[0];
             }            
             
-            /// Validating special cases not covered by the SQL statement
+        /// 
+        /// Validating special cases not covered by the SQL statement
+        /// 
+
+        /// if we're browsing by alphabet and the current concept does not begin with
+        ///     the letter we are look for.
             $showentry = 1;
             if ( $mode == 'letter' and $hook != 'SPECIAL' and $hook != 'ALL' ) {
                 if ( substr($entry->concept, 0, strlen($hook)) != $hook ) {
                     $showentry = 0;
                 }
             } 
-//glossary_debug($debug,(++$num) . ": $showentry");
-            if ( $hook == 'SPECIAL' ) {
+            
+        /// if we're browsing for letter, looking for special characters not covered
+        ///     in the alphabet 
+            if ( $showentry and $hook == 'SPECIAL' ) {
                 $initial = $entry->concept[0];
                 for ($i = 0; $i < count($alphabet); $i++) {
                     $curletter = $alphabet[$i];
@@ -456,26 +497,29 @@
                     }
                 }
             } 
-//glossary_debug($debug,(++$num) . ": $showentry");
-            if ( $mode == 'cat' and $hook == GLOSSARY_SHOW_NOT_CATEGORISED ) {
+
+        /// if we're browsing categories, looking for entries not categorised.
+            if ( $showentry and $mode == 'cat' and $hook == GLOSSARY_SHOW_NOT_CATEGORISED ) {
                 if ( record_exists("glossary_entries_categories", "entryid", $entry->id)) {
                     $showentry = 0;
                 } 
             }
-//glossary_debug($debug,(++$num) . ": $showentry");
-            if ( $mode != 'approval' ) {
+
+        /// if the entry is not approved, deal with it based on the current view and
+        ///     user.
+            if ( $showentry and $mode != 'approval' ) {
                 if ( !$entry->approved and isteacher($course->id, $entry->userid) ) {
                     $showentry = 0;
                 }            
             }
-//glossary_debug($debug,(++$num) . ": $showentry");
+
             /// ok, if it's a valid entry.. Print it.
             if ( $showentry ) {
             
                 /// if there's a group break
                 if ( $currentpivot != strtoupper($pivot) ) {  
 
-                    // print the group break if apply and necessary
+                    // print the group break if apply
                     if ( $printpivot )  {
                         if ( $tableisopen ) {
                             print_simple_box_end();
@@ -487,17 +531,19 @@
                         echo '<table width="95%" border="0" class="generaltabselected" bgcolor="' . $THEME->cellheading2 . '">';
 
                         echo '<tr>';
+                        $pivottoshow = $currentpivot;
                         if ( isset($entry->uid) ) {
                         // printing the user icon if defined (only when browsing authors)
                             echo '<td align="left">';
                             
                             $user = get_record("user","id",$entry->uid);
                             print_user_picture($user->id, $course->id, $user->picture);
+                            $pivottoshow = $entry->uname;
                         } else {
                             echo '<td align="center">';
                         }
 
-                        echo "<strong> $currentpivot</strong>" ;
+                        echo "<strong> $pivottoshow</strong>" ;
                         echo '</td></tr></table>';
 
                         if ($glossary->displayformat == GLOSSARY_FORMAT_CONTINUOUS OR 
