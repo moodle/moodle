@@ -159,6 +159,7 @@
 
     echo '</tr></table>';
 
+    $forum->intro = trim($forum->intro);
 
     switch ($forum->type) {
         case 'single':
@@ -181,7 +182,7 @@
             break;
 
         case 'eachuser':
-            if (!empty(trim($forum->intro))) {
+            if (!empty($forum->intro)) {
                 print_simple_box(format_text($forum->intro), 'center');
             }
             echo '<p align="center">';
@@ -207,7 +208,7 @@
             break;
 
         default:
-            if (!empty(trim($forum->intro))) {
+            if (!empty($forum->intro)) {
                 print_simple_box(format_text($forum->intro), 'center');
             }
             echo '<p>&nbsp;</p>';
