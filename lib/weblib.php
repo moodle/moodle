@@ -684,7 +684,7 @@ function format_text_email($text, $format) {
             $text = wiki_to_html($text);
         /// This expression turns links into something nice in a text format. (Russell Jungwirth)
         /// From: http://php.net/manual/en/function.eregi-replace.php and simplified
-            $text = eregi_replace('(<a [^<]*href=["|\']?([^ "\']*)["|\']?[^>]*>([^<]*)</a>)','\\3 [\\2]', $text);
+            $text = eregi_replace('(<a [^<]*href=["|\']?([^ "\']*)["|\']?[^>]*>([^<]*)</a>)','\\3 [ \\2 ]', $text);
             return strtr(strip_tags($text), array_flip(get_html_translation_table(HTML_ENTITIES)));
             break;
 
@@ -695,7 +695,7 @@ function format_text_email($text, $format) {
         case FORMAT_MOODLE:
         case FORMAT_MARKDOWN:
         default: 
-            $text = eregi_replace('(<a [^<]*href=["|\']?([^ "\']*)["|\']?[^>]*>([^<]*)</a>)','\\3 [\\2]', $text);
+            $text = eregi_replace('(<a [^<]*href=["|\']?([^ "\']*)["|\']?[^>]*>([^<]*)</a>)','\\3 [ \\2 ]', $text);
             return strtr(strip_tags($text), array_flip(get_html_translation_table(HTML_ENTITIES)));
             break;
     }
