@@ -381,13 +381,16 @@ function glossary_get_available_formats() {
     global $CFG;
 
     //Get available formats (plugin) and insert (if necessary) them into glossary_formats
-    $formats = get_list_of_plugins('mod/glossary/formats');
+    $formats = get_list_of_plugins('mod/glossary/formats', 'TEMPLATE');
+    $pluginformats = array();
     foreach ($formats as $format) {
         //If the format file exists
         if (file_exists($CFG->dirroot.'/mod/glossary/formats/'.$format.'/'.$format.'_format.php')) {
             include_once($CFG->dirroot.'/mod/glossary/formats/'.$format.'/'.$format.'_format.php');
             //If the function exists
             if (function_exists('glossary_show_entry_'.$format)) {
+                //Acummulate it as a valid format
+                $pluginformats[] = $format;
                 //If the format doesn't exist in the table
                 if (!$rec = get_record('glossary_formats','name',$format)) {
                     //Insert the record in glossary_formats
@@ -404,15 +407,9 @@ function glossary_get_available_formats() {
     $formats = get_records("glossary_formats");
     foreach ($formats as $format) {
         $todelete = false;
-        //If the format file doesn't exists delete the record
-        if (!file_exists($CFG->dirroot.'/mod/glossary/formats/'.$format->name.'/'.$format->name.'_format.php')) {
+        //If the format in DB isn't a valid previously detected format then delete the record
+        if (!in_array($format->name,$pluginformats)) {
             $todelete = true;
-        } else {
-            include_once($CFG->dirroot.'/mod/glossary/formats/'.$format->name.'/'.$format->name.'_format.php');
-            //If the glossary_show_entry_XXXX doesn't exists delete the record
-            if (!function_exists('glossary_show_entry_'.$format->name)) {
-                $todelete = true;
-            }
         }
 
         if ($todelete) {
@@ -695,24 +692,32 @@ function  glossary_print_entry_lower_section($course, $cm, $glossary, $entry, $m
     return $return;
 }
 
-function glossary_print_entry_attachment($entry,$format=NULL,$align="right") {
+function glossary_print_entry_attachment($entry,$format=NULL,$align="right",$insidetable=true) {
 ///   valid format values: html  : Return the HTML link for the attachment as an icon
 ///                        text  : Return the HTML link for tha attachment as text
 ///                        blank : Print the output to the screen
     if ($entry->attachment) {
           $glossary = get_record("glossary","id",$entry->glossaryid);		  
           $entry->course = $glossary->course; //used inside print_attachment
-          echo "<table border=0 width=\"100%\"><tr><td align=\"$align\" nowrap>\n";
+          if ($insidetable) {
+              echo "<table border=\"0\" width=\"100%\" align=\"$align\"><tr><td align=\"$align\" nowrap>\n";
+          }
           echo glossary_print_attachments($entry,$format,$align);
-          echo "</td></tr></table>\n";
+          if ($insidetable) {
+              echo "</td></tr></table>\n";
+          }
     }
 }
 
-function  glossary_print_entry_approval($cm, $entry, $mode,$align="right") {
+function  glossary_print_entry_approval($cm, $entry, $mode,$align="right",$insidetable=true) {
     if ( $mode == 'approval' and !$entry->approved ) {
-        echo "<table border=0 width=\"100%\"><tr><td align=\"$align\">\n";
-        echo "<a title=\"" . get_string("approve","glossary"). "\" href=\"approve.php?id=$cm->id&eid=$entry->id&mode=$mode\"><IMG align=\"right\" src=\"check.gif\" border=0 width=\"34\" height=\"34\"></a>";
-        echo "</td></tr></table>\n";
+        if ($insidetable) {
+            echo "<table border=\"0\" width=\"100%\" align=\"$align\"><tr><td align=\"$align\">\n";
+        }
+        echo "<a title=\"" . get_string("approve","glossary"). "\" href=\"approve.php?id=$cm->id&eid=$entry->id&mode=$mode\"><img align=\"$align\" src=\"check.gif\" border=0 width=\"34\" height=\"34\"></a>\n";
+        if ($insidetable) {
+            echo "</td></tr></table>\n";
+        }
     }
 }
 
@@ -1011,7 +1016,7 @@ function glossary_print_attachments($entry, $return=NULL, $align="left") {
 
                 } else {
                     if ($icon == "image.gif") {    // Image attachments don't get printed as links
-                        $imagereturn .= "<br /><img src=\"$CFG->wwwroot/$ffurl\" align=$align>";
+                        $imagereturn .= "<img src=\"$CFG->wwwroot/$ffurl\" align=$align>";
                     } else {
                         link_to_popup_window("/$ffurl", "attachment", $image, 500, 500, $strattachment);
                         echo "<a target=_image href=\"$CFG->wwwroot/$ffurl\">$file</a>";
