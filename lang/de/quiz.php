@@ -44,6 +44,12 @@ $string['false'] = "Falsch";
 $string['feedback'] = "Rückmeldung";
 $string['filloutoneanswer'] = "Sie müssen mindestens eine mögliche Antwort geben. Leere Antworten werden ignoriert.";
 $string['fillouttwochoices'] = "Sie müssen mindestens zwei mögliche Antwort geben. Leere Antworten werden ignoriert.";
+$string['fractionsaddwrong'] = "Ihre positiven gewählten Punktzahlen ergeben keine 100%
+<BR>Statt dessen ergeben Sie \$a%
+<BR>Möchten Sie zurück gehen und diese Frage korrigieren?";
+$string['fractionsnomax'] = "Eine dieser Antworten sollte 100% sein, so dass
+<br>es möglich ist, die volle Punktzahl für diese Frage zu bekommen.
+<br>Möchten Sie zurück gehen und diese Frage korrigieren?";
 $string['gradeaverage'] = "Durchschnittsnote";
 $string['gradehighest'] = "Beste Note";
 $string['grademethod'] = "Bewertungsschema";
