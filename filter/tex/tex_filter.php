@@ -35,7 +35,7 @@
 
 /// Edit these lines to correspond to your installation
 // File path to the directory where mathml_filter.php resides
-    $CFG->filterDirectory = "/var/www/html/moodle1_2d/filter/tex";
+    $CFG->filterDirectory = "$CFG->dirroot/filter/tex";
 // File paths to the echo binary executable
     $CFG->echo = "/bin/echo";
 // Frequency with which cache cleanup code is called: 119 means once in 119 times
@@ -97,25 +97,10 @@ function tex_filter ($courseid, $text) {
     global $CFG;
     $filterDirectory = $CFG->filterDirectory;
 
-    $scriptname = $_SERVER['SCRIPT_NAME'];
-    if (!strstr($scriptname,'/forum/')) {
-      return $text;
-    }
+    
     /// Do a quick check using stripos to avoid unnecessary wor
     if (!preg_match('/<tex/i',$text) && !strstr($text,'$$')) {
         return $text;
-    }
-    
-    if (strstr($scriptname,'post.php')) {
-      $parent = forum_get_post_full($_GET['reply']);
-      $discussion = get_record("forum_discussions","id",$parent->discussion);
-    } else if (strstr($scriptname,'discuss.php')) {
-      $discussion = get_record("forum_discussions","id",$_GET['d'] );
-    } else {
-      return $text;
-    }
-    if ($discussion->forum != 130) {
-      return $text;
     }
     
     $old_umask = umask();
@@ -170,7 +155,9 @@ function tex_filter ($courseid, $text) {
            $texexp = str_replace('&gt;','>',$texexp);
            $texexp = preg_replace('!\r\n?!',' ',$texexp);
 
-           system("QUERY_STRING=;export QUERY_STRING;$filterDirectory/mimetex.cgi -d ". escapeshellarg($texexp) . "  >$pathname");
+           $texexp = '\Large'.$texexp;
+
+           system("QUERY_STRING=;export QUERY_STRING;$filterDirectory/mimetex -d ". escapeshellarg($texexp) . "  >$pathname");
 	   $text = str_replace( $matches[0][$i], string_file_picture($filename, 1), $text);
         }
          
