@@ -20,6 +20,7 @@ $string['answertoolong'] = 'Respuesta demasiado larga luego de la línea $a (máx.
 $string['aon'] = 'Formato AON';
 $string['attempt'] = 'Intento $a';
 $string['attemptfirst'] = 'Primer intento';
+$string['attemptincomplete'] = 'Este intento (de $a) no se ha completado aún.';
 $string['attemptlast'] = 'Último intento';
 $string['attemptquiznow'] = 'Comenzar';
 $string['attempts'] = 'Intentos';
