@@ -118,7 +118,7 @@
     }
 
     if ($user->icq) {
-        print_row("icq:","<a href=\"http://web.icq.com/wwp?uin=$user->icq\">$user->icq <img src=\"http://web.icq.com/whitepages/online?icq=$user->icq&img=5\" width=18 height=18 border=0></a>");
+        print_row("ICQ:","<a href=\"http://web.icq.com/wwp?uin=$user->icq\">$user->icq <img src=\"http://web.icq.com/whitepages/online?icq=$user->icq&img=5\" width=18 height=18 border=0></a>");
     }
 
     if (isteacher($course->id)) {
