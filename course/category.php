@@ -287,6 +287,7 @@
         if ($abletomovecourses) {
             echo "<tr><td colspan=3 align=right>";
             echo "<br />";
+            unset($displaylist[$category->id]);
             choose_from_menu ($displaylist, "moveto", "", get_string("moveselectedcoursesto"), "");
             echo "<input type=\"hidden\" name=\"id\" value=\"$category->id\">";
             echo "<input type=\"submit\" value=\"".get_string("move")."\">";
