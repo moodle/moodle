@@ -633,14 +633,14 @@ function choose_from_menu ($options, $name, $selected='', $nothing='choose', $sc
 function popup_form($common, $options, $formname, $selected='', $nothing='choose', $help='', $helptext='', $return=false, $targetwindow='self') {
 
     global $CFG; 
-    static $jump, $choose;   /// Locally cached, in case there's lots on a page
+    static $go, $choose;   /// Locally cached, in case there's lots on a page
 
     if (empty($options)) {
         return '';
     }
 
-    if (!isset($jump)) {
-        $jump = get_string('jump');
+    if (!isset($go)) {
+        $go = get_string('go');
     }
 
     if ($nothing == 'choose') {
@@ -690,7 +690,7 @@ function popup_form($common, $options, $formname, $selected='', $nothing='choose
     }
     $output .= '</select>';
     $output .= '<noscript id="noscript'.$formname.'" style="display: inline;">';
-    $output .= '<input type="submit" value="'.$jump.'" /></noscript>';
+    $output .= '<input type="submit" value="'.$go.'" /></noscript>';
     $output .= '<script type="text/javascript">'.
                "\n<!--\n".
                'document.getElementById("noscript'.$formname.'").style.display = "none";'.
