@@ -1588,12 +1588,14 @@ function helpbutton ($page, $title="", $module="moodle", $image=true, $linktext=
     if ($image) {
         $icon = "$CFG->pixpath/help.gif";
         if ($linktext) {
-            $linkobject = "$title<img align=\"absmiddle\" border=\"0\" height=\"17\" width=\"22\" alt=\"\" src=\"$icon\" />";
+            $linkobject = "<span style=\"cursor:help;\">$title<img align=\"absmiddle\" border=\"0\" ".
+                          " height=\"17\" width=\"22\" alt=\"\" src=\"$icon\" /></span>";
         } else {
-            $linkobject = "<img align=\"absmiddle\" border=\"0\" height=\"17\" width=\"22\" alt=\"$title\" src=\"$icon\" />";
+            $linkobject = "<img align=\"absmiddle\" border=\"0\" height=\"17\" width=\"22\" ".
+                          " alt=\"$title\" style=\"cursor:help;\" src=\"$icon\" />";
         }
     } else {
-        $linkobject = $title;
+        $linkobject = "<span style=\"cursor:help;\">$title</span>";
     }
     if ($text) {
         $url = "/help.php?module=$module&amp;text=".htmlentities(urlencode($text));
