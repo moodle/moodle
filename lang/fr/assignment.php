@@ -16,6 +16,7 @@ $string['assignmentname'] = "Nom du devoir";
 $string['assignmenttype'] = "Type du devoir";
 $string['description'] = "Description";
 $string['duedate'] = "À rendre le";
+$string['duedateno'] = "Pas de date de retour";
 $string['early'] = "en avance de \$a";
 $string['failedupdatefeedback'] = "Impossible d'enregistrer le feedback pour \$a";
 $string['feedback'] = "Feedback";
