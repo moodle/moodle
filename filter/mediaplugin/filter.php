@@ -30,14 +30,14 @@ function mediaplugin_filter($courseid, $text) {
 
     $search = '/<a(.*)href=\"(.*)\.mp3\"([^>]*)>([^>]*)<\/a>/i';
 
-    $replace = '\\0 &nbsp;<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000"';
+    $replace = '\\0<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000"';
     $replace .= ' codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,0,0" ';
-    $replace .= ' width="400" height="50" id="mp3player" align="">';
-    $replace .= " <param name=movie value=\"$CFG->wwwroot/lib/mp3player/mp3player.swf?src=\\2.mp3\">";
+    $replace .= ' width="35" height="18" id="mp3player" align="">';
+    $replace .= " <param name=movie value=\"$CFG->wwwroot/filter/mediaplugin/mp3player/mp3player.swf?src=\\2.mp3\">";
     $replace .= ' <param name=quality value=high>';
     $replace .= ' <param name=bgcolor value="#333333">';
-    $replace .= " <embed src=\"$CFG->wwwroot/lib/mp3player/mp3player.swf?src=\\2.mp3\" ";
-    $replace .= "  quality=high bgcolor=\"#333333\" width=\"400\" height=\"50\" name=\"mp3player\" ";
+    $replace .= " <embed src=\"$CFG->wwwroot/filter/mediaplugin/mp3player.swf?src=\\2.mp3\" ";
+    $replace .= "  quality=high bgcolor=\"#333333\" width=\"35\" height=\"18\" name=\"mp3player\" ";
     $replace .= ' type="application/x-shockwave-flash" ';
     $replace .= ' pluginspage="http://www.macromedia.com/go/getflashplayer">';
     $replace .= '</embed>';
