@@ -1,8 +1,8 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.2 + (2004032100)
+      // assignment.php - created with Moodle 1.3 development (2004041800)
 
 
-$string['allowresubmit'] = 'Sta  meerdere malen insturen toe';
+$string['allowresubmit'] = 'Sta  herhaald insturen toe';
 $string['assignmentdetails'] = 'De details van de opdracht';
 $string['assignmentmail'] = '$a->teacher heeft feedback gepost voor je bijdrage aan de opdracht \'$a->assignment\'
 Het is toegevoegd aan je ingestuurde opdracht:

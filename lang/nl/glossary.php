@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.2 alpha (2004022200)
+      // glossary.php - created with Moodle 1.3 development (2004041800)
 
 
 $string['addcomment'] = 'Voeg commentaar toe';
@@ -18,7 +18,7 @@ $string['areyousuredeletecomment'] = 'Wil je deze commentaar echt verwijderen ?'
 $string['areyousureexport'] = 'Weet je zeker dat je dit item wil exporteren naar';
 $string['ascending'] = '(oplopend)';
 $string['attachment'] = 'Bijlage';
-$string['authorview'] = 'Blader op auteur';
+$string['authorview'] = 'Blader volgens auteur';
 $string['back'] = 'Terug';
 $string['cantinsertcat'] = 'Kan geen categorie toevoegen';
 $string['cantinsertrec'] = 'Kan geen record toevoegen';
@@ -50,7 +50,7 @@ $string['commentupdated'] = 'De commentaar is bijgewerkt';
 $string['concept'] = 'Concept';
 $string['concepts'] = 'Concepten';
 $string['currentglossary'] = 'Huidige woordenlijst';
-$string['dateview'] = 'Blader op datum';
+$string['dateview'] = 'Blader volgens datum';
 $string['defaultapproval'] = 'Standaardinstelling goedkeuring';
 $string['definition'] = 'Definitie';
 $string['definitions'] = 'Definities';
@@ -64,7 +64,7 @@ $string['displayformat2'] = 'Toon bijhorende gegevens, met auteur';
 $string['displayformat3'] = 'Encyclopedie';
 $string['displayformat4'] = 'FAQ';
 $string['displayformat5'] = 'Toon bijhorende gegevens, zonder auteur';
-$string['displayformat6'] = 'Item lijst';
+$string['displayformat6'] = 'Itemlijst';
 $string['displayformatcontinuous'] = 'Volledige lijst zonder auteur';
 $string['displayformatdefault'] = 'Eenvoudig, stijl woordenboek';
 $string['displayformats'] = 'Kies opmaakmogelijkheden';

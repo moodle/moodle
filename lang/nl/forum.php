@@ -1,11 +1,11 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.2 Beta +++ (2004031300)
+      // forum.php - created with Moodle 1.3 development (2004041800)
 
 
 $string['addanewdiscussion'] = 'Voeg een nieuw onderwerp voor discussie toe';
 $string['addanewtopic'] = 'Voeg een nieuw onderwerp toe';
 $string['allowchoice'] = 'Sta iedereen toe om te kiezen';
-$string['allowdiscussions'] = 'Kan een $a een bericht op dit forum achterlaten?';
+$string['allowdiscussions'] = 'Mag een $a berichten posten?';
 $string['allowratings'] = 'Mogen berichten beoordeeld worden?';
 $string['allowsdiscussions'] = 'In dit forum mag iedereen precies één discussie starten.';
 $string['anyfile'] = 'Een bestand';
@@ -51,7 +51,7 @@ $string['introsocial'] = 'Een open forum om te chatten over wat je maar wilt';
 $string['introteacher'] = 'Een forum alleen bestemd voor discussies en aantekeningen van docenten';
 $string['lastpost'] = 'Laatste bericht';
 $string['learningforums'] = 'Leer forums';
-$string['maxattachmentsize'] = 'Maximum grootte voor bijlagen';
+$string['maxattachmentsize'] = 'Maximum grootte van bijlagen';
 $string['maxtimehaspassed'] = 'Helaas is de maximale tijd voor het wijzigen van dit bericht ($a) verstreken!';
 $string['message'] = 'Bericht';
 $string['modeflatnewestfirst'] = 'Laat de antwoorden in één lijst zien, met de nieuwste eerst';
@@ -62,7 +62,7 @@ $string['modulename'] = 'Forum';
 $string['modulenameplural'] = 'Forums';
 $string['more'] = 'meer';
 $string['movethisdiscussionto'] = 'Verplaats deze discussie naar ...';
-$string['namenews'] = 'Nieuws forum';
+$string['namenews'] = 'Nieuwsforum';
 $string['namesocial'] = 'Sociaal forum';
 $string['nameteacher'] = 'Forum voor docenten';
 $string['newforumposts'] = 'Nieuwe forumberichten';
@@ -102,13 +102,13 @@ $string['rate'] = 'Beoordeel';
 $string['rating'] = 'Beoordeling';
 $string['ratingeveryone'] = 'Iedereen kan berichten beoordelen';
 $string['ratingno'] = 'Geen beoordelingen';
-$string['ratingonlyteachers'] = 'Alleen $a kan berichten beoordelen';
+$string['ratingonlyteachers'] = 'Alleen $a kunnen berichten beoordelen';
 $string['ratingpublic'] = '$a kunnen ieders beoordelingen zien';
 $string['ratingpublicnot'] = '$a kunnen alleen hun eigen beoordelingen zien';
 $string['ratings'] = 'Beoordelingen ';
 $string['ratingssaved'] = 'Beoordelingen zijn bewaard';
 $string['ratingsuse'] = 'Gebruik beoordelingen';
-$string['ratingtime'] = 'Hou alleen rekening met de beoordelingen van de berichten binnen het bereik van deze data:';
+$string['ratingtime'] = 'Beperk het beoordelen van berichten tot het bereik van deze data:';
 $string['re'] = 'Re:';
 $string['readtherest'] = 'Lees de rest van deze discussie';
 $string['replies'] = 'Antwoorden';
