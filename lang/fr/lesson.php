@@ -19,6 +19,7 @@ $string['confirmdeletionofthispage'] = 'Voulez-vous vraiment supprimer cette pag
 $string['congratulations'] = 'Félicitations - la leçon est terminée';
 $string['continue'] = 'Continuer';
 $string['deadline'] = 'À faire jusqu\'au';
+$string['deleteattempts'] = 'Supprimer les tentatives des étudiants pour cette leçon (user id)';
 $string['deleting'] = 'En cours de suppression';
 $string['deletingpage'] = 'Suppression de la page : $a';
 $string['description'] = 'Description';
