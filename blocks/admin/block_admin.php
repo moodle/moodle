@@ -23,7 +23,7 @@ class CourseBlock_admin extends MoodleBlock {
         $this->content->icons = array();
         $this->content->footer = '';
 
-        if (empty($course)) {
+        if (empty($this->course)) {
             $this->content = '';
         } else if ($this->course->category == 0) {
             $this->load_content_for_site();
@@ -68,6 +68,7 @@ class CourseBlock_admin extends MoodleBlock {
 
     function load_content_for_course() {
         global $CFG, $USER;
+
         require_once($CFG->dirroot.'/mod/forum/lib.php');
 
         if (isguest()) {
