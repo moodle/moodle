@@ -4,7 +4,6 @@
     <?php echo $meta ?>
     <meta name="keywords" content="moodle, <?php echo $title ?> " />
     <title><?php echo $title ?></title>
-    <link rel="stylesheet" type="text/css" href="<?php echo $styles ?>" />
     <link rel="shortcut icon" href="<?php echo "$CFG->wwwroot/theme/$CFG->theme" ?>/favicon.ico" />
     <?php include("$CFG->javascript"); ?>
 </head>
@@ -26,8 +25,6 @@
     </div>
     <div class="clearer"></div>
     <div id="nav-bar">
-        <div id="breadcrumb">&nbsp;</div>
-        <div id="navbutton">&nbsp;</div>
     </div>
 <?php } else if ($heading) {  // This is what gets printed on any other page with a heading 
 ?>
