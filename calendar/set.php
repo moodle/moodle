@@ -41,8 +41,6 @@
     require_once('../config.php');
     require_once('lib.php');
 
-    require_login();
-
     require_variable($_GET['from']);
     require_variable($_GET['var']);
     optional_variable($_GET['value']);

@@ -451,7 +451,6 @@ function calendar_sql_where($tstart, $tend, $users, $groups, $courses, $withdura
     if(is_bool($users) && is_bool($groups) && is_bool($courses)) {
         return false;
     }
-
     if(is_array($users) && !empty($users)) {
         // Events from a number of users
         if(!empty($whereclause)) $whereclause .= ' OR';
@@ -466,6 +465,13 @@ function calendar_sql_where($tstart, $tend, $users, $groups, $courses, $withdura
         // Events from ALL users
         if(!empty($whereclause)) $whereclause .= ' OR';
         $whereclause .= ' userid != 0 AND courseid = 0 AND groupid = 0';
+    }
+    else if($users === false) {
+        // No user at all
+        if(!empty($whereclause)) {
+            $whereclause .= ' OR';
+        }
+        $whereclause .= ' 0';
     }
     if(is_array($groups) && !empty($groups)) {
         // Events from a number of groups
@@ -482,10 +488,21 @@ function calendar_sql_where($tstart, $tend, $users, $groups, $courses, $withdura
         if(!empty($whereclause)) $whereclause .= ' OR ';
         $whereclause .= ' groupid != 0';
     }
-    if(is_array($courses) && !empty($courses)) {
-        // A number of courses
-        if(!empty($whereclause)) $whereclause .= ' OR';
-        $whereclause .= ' groupid = 0 AND courseid IN ('.implode(',', $courses).')';
+    if(is_array($courses)) {
+        // A number of courses (maybe none at all!)
+        if(!empty($courses)) {
+            if(!empty($whereclause)) {
+                $whereclause .= ' OR';
+            }
+            $whereclause .= ' groupid = 0 AND courseid IN ('.implode(',', $courses).')';
+        }
+        else {
+            // This means NO courses, not that we don't care!
+            if(!empty($whereclause)) {
+                $whereclause .= ' OR';
+            }
+            $whereclause .= ' 0';
+        }
     }
     else if(is_numeric($courses)) {
         // One course
@@ -517,6 +534,7 @@ function calendar_sql_where($tstart, $tend, $users, $groups, $courses, $withdura
         // Just basic time filtering
         $whereclause = $timeclause;
     }
+
     return $whereclause;
 }
 
@@ -639,7 +657,7 @@ function calendar_filter_controls($type, $vars = NULL, $course = NULL) {
         $content .= '<td style="width: 8px;"></td><td><a href="'.CALENDAR_URL.'set.php?var=showcourses'.$getvars.'" title="'.get_string('tt_showcourse', 'calendar').'">'.get_string('courseevents', 'calendar').'</a></td>'."\n";
     }
 
-    if(!isguest($USER->id)) {
+    if(!empty($USER) && !isguest($USER->id)) {
         $content .= "</tr>\n<tr>";
 
         if($groupevents) {
@@ -1032,6 +1050,10 @@ function calendar_set_filters(&$courses, &$group, &$user, $courseeventsfrom = NU
 function calendar_edit_event_allowed($event) {
     global $USER;
 
+    if(empty($USER) || isguest($USER->id)) {
+        return false;
+    }
+
     if (isadmin($USER->id)) return true; // Admins are allowed anything
 
     if ($event->courseid > 1) {
@@ -1128,7 +1150,7 @@ function calendar_preferences_button() {
     global $CFG, $USER;
 
     // Guests have no preferences
-    if (empty($USER->id) or isguest()) {
+    if (empty($USER->id) || isguest()) {
         return '';
     }
 
