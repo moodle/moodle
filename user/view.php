@@ -198,7 +198,7 @@
 /// Functions ///////
 
 function print_row($left, $right) {
-    echo "<tr><td nowrap align=right><p>$left</td><td align=left><p>$right</p></td></tr>";
+    echo "<tr><td nowrap align=right valign=top><p>$left</td><td align=left valign=top><p>$right</p></td></tr>";
 }
 
 ?>
