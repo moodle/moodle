@@ -1165,6 +1165,38 @@ function get_and_set_current_group($course, $groupmode, $groupid=0) {
 }
 
 
+/**
+* A big combination function to make it easier for modules
+* to set up groups.
+*
+* Terminates if the current user shouldn't be looking at this group
+* Otherwise returns the current group if there is one
+* Otherwise returns false if groups aren't relevant
+*
+* @param	type description
+*/
+function setup_and_print_groups($course, $groupmode, $urlroot) {
+
+    $currentgroup = get_and_set_current_group($course, $groupmode, $_GET['group']);
+
+    if ($currentgroup == false) {
+        return false;
+    }
+
+    if (!isteacheredit($course->id) and $groupmode and !$currentgroup) {
+        print_heading();
+        print_footer($course);
+        exit;
+    }
+
+    if ($groupmode == VISIBLEGROUPS or ($groupmode and isteacheredit($course->id))) {
+        if ($groups = get_records_menu("groups", "courseid", $course->id, "name ASC", "id,name")) {
+            print_group_menu($groups, $groupmode, $currentgroup, $urlroot);
+        }
+    }
+
+    return $currentgroup;
+}
 
 
 

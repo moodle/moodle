@@ -1222,29 +1222,31 @@ function print_user($user, $course) {
 function print_group_picture($group, $courseid, $large=false, $returnstring=false, $link=true) {
     global $CFG;
 
-    if ($link) {
-        $output = "<a href=\"$CFG->wwwroot/course/groupphp?id=$courseid&amp;group=$group->id\">";
-    } else {
-        $output = "";
-    }
-    if ($large) {
-        $file = "f1";
-        $size = 100;
-    } else {
-        $file = "f2";
-        $size = 35;
-    }
-    if ($group->picture) {  // Print custom group picture
-        if ($CFG->slasharguments) {        // Use this method if possible for better caching
-            $output .= "<img align=\"absmiddle\" src=\"$CFG->wwwroot/user/pixgroup.php/$group->id/$file.jpg\"".
-                       " border=\"0\" width=\"$size\" height=\"$size\" alt=\"\" />";
-        } else {
-            $output .= "<img align=\"absmiddle\" src=\"$CFG->wwwroot/user/pixgroup.php?file=/$group->id/$file.jpg\"".
-                       " border=\"0\" width=\"$size\" height=\"$size\" alt=\"\" />";
+    $output = '';
+
+    if ($group->showpicture) {
+        if ($link) {
+            $output = "<a href=\"$CFG->wwwroot/course/groupphp?id=$courseid&amp;group=$group->id\">";
         }
-    }
-    if ($link) {
-        $output .= "</a>";
+        if ($large) {
+            $file = "f1";
+            $size = 100;
+        } else {
+            $file = "f2";
+            $size = 35;
+        }
+        if ($group->picture) {  // Print custom group picture
+            if ($CFG->slasharguments) {        // Use this method if possible for better caching
+                $output .= "<img align=\"absmiddle\" src=\"$CFG->wwwroot/user/pixgroup.php/$group->id/$file.jpg\"".
+                           " border=\"0\" width=\"$size\" height=\"$size\" alt=\"\" />";
+            } else {
+                $output .= "<img align=\"absmiddle\" src=\"$CFG->wwwroot/user/pixgroup.php?file=/$group->id/$file.jpg\"".
+                           " border=\"0\" width=\"$size\" height=\"$size\" alt=\"\" />";
+            }
+        }
+        if ($link) {
+            $output .= "</a>";
+        }
     }
 
     if ($returnstring) {
@@ -1652,6 +1654,22 @@ function update_groups_button($courseid) {
                "<input type=\"hidden\" name=\"edit\" value=\"$edit\" />".
                "<input type=\"submit\" value=\"$string\" /></form>";
     }
+}
+
+function print_group_menu($groups, $groupmode, $currentgroup, $urlroot) {
+/// Prints an appropriate group selection menu
+
+    echo '<table><tr><td>';
+    if ($groupmode == VISIBLEGROUPS) {
+        print_string('groupsvisible');
+    } else {
+        print_string('groupsseparate');
+    }
+    echo ':';
+    echo '</td><td nowrap="nowrap" align="left" width="50%">';
+    popup_form($urlroot.'&group=', $groups, 'selectgroup', $currentgroup, "", "", "", false, "self");
+    echo '</tr></table>';
+
 }
 
 
