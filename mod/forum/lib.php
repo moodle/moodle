@@ -2368,14 +2368,16 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5,
 
 
     if (forum_user_can_post_discussion($forum, $currentgroup)) {
-        echo "<p align=\"center\">";
+        echo '<div class="';
+        echo ($forum_style == 'minimal') ? 'forumaddnewminimal' : 'forumaddnew';
+        echo '">';
         echo "<a href=\"$CFG->wwwroot/mod/forum/post.php?forum=$forum->id\">";
         if ($forum->type == "news") {
             echo get_string("addanewtopic", "forum")."</a>...";
         } else {
             echo get_string("addanewdiscussion", "forum")."</a>...";
         }
-        echo "</p>\n";
+        echo "</div>\n";
     }
 
     if ((!$forum_numdiscussions) && ($forum_style == "plain")) {
@@ -2403,11 +2405,15 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5,
 /// Get all the recent discussions we're allowed to see
 
     if (! $discussions = forum_get_discussions($forum->id, $forum_sort, 0, $fullpost, $visiblegroups) ) {
+        echo '<div class="';
+        echo ($forum_style == 'minimal') ? 'forumnodiscussminimal' : 'forumnodiscuss';
+        echo '">';
         if ($forum->type == "news") {
-            echo "<p align=\"center\"><b>(".get_string("nonews", "forum").")</b></p>";
+            echo "(".get_string("nonews", "forum").")";
         } else {
-            echo "<p align=\"center\"><b>(".get_string("nodiscussions", "forum").")</b></p>";
+            echo "(".get_string("nodiscussions", "forum").")";
         }
+        echo '</div>\n';
         return;
     }
 
@@ -2491,12 +2497,12 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5,
                 if (!empty($CFG->filterall)) {
                     $discussion->subject = filter_text($discussion->subject, $forum->course);
                 }
-                echo "<p><span class=\"smallinfohead\">".
+                echo "<p><span class=\"forumheadminimal\">".
                      userdate($discussion->modified, $strftimerecent).
                      " - ".
                      fullname($discussion).
                      "</span><br />";
-                echo "<span class=\"smallinfo\">$discussion->subject ";
+                echo "<span class=\"foruminfominimal\">$discussion->subject ";
                 echo "<a href=\"$CFG->wwwroot/mod/forum/discuss.php?d=$discussion->discussion\">";
                 echo $strmore."...</a></span>";
                 echo "</p>\n";
@@ -2521,13 +2527,15 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5,
     }
 
     if ($olddiscussionlink) {
+        echo '<div class="';
+        echo ($forum_style == 'minimal') ? 'forumolddiscussminimal">' : 'forumolddiscuss">';
         if ($forum_style == "minimal") {
             echo '<p align="center">';
         } else {
             echo '<p align="right">';
         }
         echo "<a href=\"$CFG->wwwroot/mod/forum/view.php?f=$forum->id&amp;showall=1\">";
-        echo get_string("olderdiscussions", "forum")."</a> ...</p>";
+        echo get_string("olderdiscussions", "forum")."</a> ...</div>";
     }
 
     //If we want paging
