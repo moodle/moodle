@@ -61,6 +61,69 @@ function wiki_upgrade($oldversion) {
         modify_database("", "ALTER TABLE ONLY prefix_wiki_pages 
                             ADD CONSTRAINT prefix_wiki_pages_pagename_version_wiki_unique PRIMARY KEY (pagename, \"version\", wiki);"); 
     }
+
+    if ($oldversion < 2005022000) {
+        // recreating the wiki_pages table completelly (missing id, bug 2608)
+        if ($rows = count_records("wiki_pages")) {
+            // we need to use the temp stuff
+            modify_database("","CREATE TABLE prefix_wiki_pages_tmp (
+                id SERIAL8 PRIMARY KEY, 
+                pagename VARCHAR(160) NOT NULL,
+                version INTEGER  NOT NULL DEFAULT 0,
+                flags INTEGER  DEFAULT 0,
+                content TEXT,
+                author VARCHAR(100) DEFAULT 'ewiki',
+                userid INTEGER  NOT NULL DEFAULT 0,
+                created INTEGER  DEFAULT 0,
+                lastmodified INTEGER  DEFAULT 0,
+                refs TEXT,
+                meta TEXT,
+                hits INTEGER  DEFAULT 0,
+                wiki INT8  NOT NULL);");
+            
+            execute_sql("INSERT INTO {$CFG->prefix}wiki_pages_tmp (pagename, version, flags, content,
+                                                                   author, userid, created, lastmodified,
+                                                                   refs, meta, hits, wiki) 
+                         SELECT pagename, version, flags, content,
+                                author, userid, created, lastmodified,
+                                refs, meta, hits, wiki
+                         FROM {$CFG->prefix}wiki_pages");
+
+            $insertafter = true;
+        }
+
+        execute_sql("DROP TABLE {$CFG->prefix}wiki_pages");
+
+        modify_database("","CREATE TABLE prefix_wiki_pages (
+            id SERIAL8 PRIMARY KEY, 
+            pagename VARCHAR(160) NOT NULL,
+            version INTEGER  NOT NULL DEFAULT 0,
+            flags INTEGER  DEFAULT 0,
+            content TEXT,
+            author VARCHAR(100) DEFAULT 'ewiki',
+            userid INTEGER  NOT NULL DEFAULT 0,
+            created INTEGER  DEFAULT 0,
+            lastmodified INTEGER  DEFAULT 0,
+            refs TEXT,
+            meta TEXT,
+            hits INTEGER  DEFAULT 0,
+            wiki INT8  NOT NULL);");
+
+        modify_database("","CREATE UNIQUE INDEX prefix_wiki_pages_pagename_version_wiki_uk 
+                            ON prefix_wiki_pages (pagename, version, wiki);");
+        
+        if (!empty($insertafter)) {
+            execute_sql("INSERT INTO {$CFG->prefix}wiki_pages (pagename, version, flags, content,
+                                                               author, userid, created, lastmodified,
+                                                               refs, meta, hits, wiki) 
+                         SELECT pagename, version, flags, content,
+                                author, userid, created, lastmodified,
+                                refs, meta, hits, wiki
+                         FROM {$CFG->prefix}wiki_pages_tmp");
+
+            execute_sql("DROP TABLE {$CFG->prefix}wiki_pages_tmp");
+        }
+    }
     
     return true;
 }

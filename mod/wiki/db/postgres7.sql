@@ -48,6 +48,7 @@ CREATE INDEX prefix_wiki_entries_pagename_idx ON prefix_wiki_entries (pagename);
 
 
 CREATE TABLE prefix_wiki_pages (
+  id SERIAL8 PRIMARY KEY, 
   pagename VARCHAR(160) NOT NULL,
   version INTEGER  NOT NULL DEFAULT 0,
   flags INTEGER  DEFAULT 0,
@@ -62,7 +63,4 @@ CREATE TABLE prefix_wiki_pages (
   wiki INT8  NOT NULL
 ) ;
 
-ALTER TABLE ONLY prefix_wiki_pages
-    ADD CONSTRAINT prefix_wiki_pages_pagename_version_wiki_unique PRIMARY KEY (pagename, version, wiki);
-
-CREATE INDEX prefix_wiki_pages_pagename_version_wiki_idx ON prefix_wiki_pages (pagename, version, wiki) ;
+CREATE UNIQUE INDEX prefix_wiki_pages_pagename_version_wiki_uk ON prefix_wiki_pages (pagename, version, wiki) ;

@@ -35,7 +35,6 @@ function ewiki_database_moodle($action, &$args, $sw1, $sw2) {
          $id = "'" . mysql_escape_string($args["id"]) . "'";
          ($version = 0 + @$args["version"]) and ($version = "AND (version=$version)") or ($version="");
 
-
          # $result = mysql_query("SELECT * FROM " . EWIKI_DB_TABLE_NAME
          #   . " WHERE (pagename=$id) $version  ORDER BY version DESC  LIMIT 1"
          #);
@@ -49,9 +48,14 @@ function ewiki_database_moodle($action, &$args, $sw1, $sw2) {
 
          $select="(pagename=$id) AND wiki=".$wiki_entry->id."  $version ";
          $sort="version DESC";
-         $result_obj=get_records_select(EWIKI_DB_TABLE_NAME, $select,$sort,"*",0,1);
+         $result_arr=get_records_select(EWIKI_DB_TABLE_NAME, $select,$sort,"*",0,1);
+         //Iterate to get the first (and unique!)
+         foreach ($result_arr as $obj) {
+             $result_obj = $obj;
+         }
          if($result_obj)  {
-           $r=get_object_vars($result_obj[$args["id"]]);
+           //Convert to array
+           $r=get_object_vars($result_obj);
            $r["id"] = $r["pagename"];
            unset($r["pagename"]);
            $r["meta"] = @unserialize($r["meta"]);

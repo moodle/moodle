@@ -49,6 +49,7 @@ CREATE TABLE `prefix_wiki_entries` (
 
 
 CREATE TABLE `prefix_wiki_pages` (
+  `id` int(10) unsigned NOT NULL auto_increment,
   `pagename` VARCHAR(160) NOT NULL,
   `version` INTEGER UNSIGNED NOT NULL DEFAULT 0,
   `flags` INTEGER UNSIGNED DEFAULT 0,
@@ -61,5 +62,6 @@ CREATE TABLE `prefix_wiki_pages` (
   `meta` MEDIUMTEXT,
   `hits` INTEGER UNSIGNED DEFAULT 0,
   `wiki` int(10) unsigned NOT NULL,
-  PRIMARY KEY id (pagename, version, wiki)
+  PRIMARY KEY `id` (`id`),
+  UNIQUE KEY `wiki_pages_uk` (`pagename`, `version`, `wiki`)
 ) TYPE=MyISAM COMMENT='Holds the Wiki-Pages';
