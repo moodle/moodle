@@ -55,18 +55,43 @@
                      update_module_button($cm->id, $course->id, $strscorm), navmenu($course, $cm));
         notice(get_string("activityiscurrentlyhidden"));
     }
-    $scoid='';
-    if (!empty($_POST["scoid"]))
-    	    $scoid = "&scoid=".$_POST["scoid"];
-    $currentorg='';
-    if (!empty($_POST['currentorg'])) {
-	$currentorg = $_POST['currentorg'];
-    }
+    
+    //
+    // Checkin script parameters
+    //
     $mode = '';
-    if (($scorm->popup != "") && (!empty($_POST["mode"])))
-    	$mode = $_POST["mode"];
-    if (($scorm->popup == "") && (!empty($_GET["mode"])))
-    	$mode = $_GET["mode"];
+    $scoid='';
+    $currentorg='';
+    $modestring = '';
+    $scoidstring = '';
+    $currentorgstring = '';
+    if (($scorm->popup == "") && ($frameset == "top")) {
+    	if (!empty($_GET["mode"])) {
+    	    $mode = $_GET["mode"];
+    	    $modestring = '&mode='.$mode;
+    	}
+    	if (!empty($_GET["scoid"])) {
+    	    $scoid = $_GET["scoid"];
+    	    $scoidstring = '&scoid='.$scoid;
+    	}
+    	if (!empty($_GET['currentorg'])) {
+	    $currentorg = $_GET['currentorg'];
+	    $currentorgstring = '&currentorg='.$currentorg;
+    	}
+    } else {
+    	if (!empty($_POST["mode"])) {
+    	    $mode = $_POST["mode"];
+    	    $modestring = '&mode='.$mode;
+    	}
+    	if (!empty($_POST["scoid"])) {
+    	    $scoid = $_POST["scoid"];
+    	    $scoidstring = '&scoid='.$scoid;
+    	}
+    	if (!empty($_POST['currentorg'])) {
+	    $currentorg = $_POST['currentorg'];
+	    $currentorgstring = '&currentorg='.$currentorg;
+    	}
+    }
     
     if (($frameset == "top") || ($scorm->popup != "")) {
     	add_to_log($course->id, "scorm", "view", "playscorm.php?id=$cm->id", "$scorm->id");
@@ -77,20 +102,19 @@
 	if ($scorm->popup != "") {
 	    $bodyscripts = "onLoad='SCOInitialize();' onUnload='SCOFinish(); closeMain();' ";
 	}
+    	//print_header($pagetitle, "$course->fullname",
+	//	"$navigation <a target=\"{$CFG->framename}\" href=\"view.php?id=$cm->id\">$scorm->name</a>",
+	//	"", "", true, update_module_button($cm->id, $course->id, $strscorm), navmenu($course, $cm, '_top'),"",$bodyscripts);
     	print_header($pagetitle, "$course->fullname",
 		"$navigation <a target=\"{$CFG->framename}\" href=\"view.php?id=$cm->id\">$scorm->name</a>",
-		"", "", true, update_module_button($cm->id, $course->id, $strscorm), navmenu($course, $cm, '_top'),"",$bodyscripts);
-    	
+		"", "", true, update_module_button($cm->id, $course->id, $strscorm), "", "", $bodyscripts);
     	echo "<table width=\"100%\">\n    <tr><td align=\"center\">".text_to_html($scorm->summary, true, false)."</td>\n";
     	if ($mode == "browse")
 	    echo "<td align=\"right\" width=\"10%\" nowrap>".get_string("browsemode","scorm")."</td>\n";
     	echo "     </tr>\n</table>\n";
     	
     	if ($scorm->popup != "") {
-    	    echo "<script id=\"scormAPI\" language=\"JavaScript\" type=\"text/javascript\" src=\"scormAPI.php?id=$cm->id&mode=".$mode.$scoid."\"></script>\n";
-	    $currentSCO = "";
-            if (!empty($_POST['scoid']))
-                $currentSCO = $_POST['scoid'];
+    	    echo "<script id=\"scormAPI\" language=\"JavaScript\" type=\"text/javascript\" src=\"scormAPI.php?id=$cm->id".$modestring.$scoidstring."\"></script>\n";
         ?>
             <br />
             <script language="Javascript">
@@ -164,12 +188,12 @@
     		    if ($sco->launch) {
     		        $startbold = '';
     		        $endbold = '';
-    		        if ($sco->id == $currentSCO) {
+    		        if ($sco->id == $scoid) {
     			    $startbold = '-> <b>';
     			    $endbold = '</b> <-';
     		    	}
-    		    	if (($currentSCO == "") && ($mode != "normal")) {
-    		    	    $currentSCO = $sco->id;
+    		    	if (($scoid == "") && ($mode != "normal")) {
+    		    	    $scoid = $sco->id;
  			    $startbold = '-> <b>';
     			    $endbold = '</b> <-';
     		    	}
@@ -180,9 +204,9 @@
     		    	    }
     			    echo "      <img src=\"pix/".scorm_remove_spaces($sco_user->cmi_core_lesson_status).".gif\" alt=\"".get_string(scorm_remove_spaces($sco_user->cmi_core_lesson_status),"scorm")."\" title=\"".get_string(scorm_remove_spaces($sco_user->cmi_core_lesson_status),"scorm")."\" />\n";
  			    if (($sco_user->cmi_core_lesson_status == "not attempted") || ($sco_user->cmi_core_lesson_status == "incomplete")) {
- 			        if ($currentSCO == "") {
+ 			        if ($scoid == "") {
  				    $incomplete = true;
- 				    $currentSCO = $sco->id;
+ 				    $scoid = $sco->id;
  				    $startbold = '-> <b>';
     			    	    $endbold = '</b> <-';
  				}
@@ -223,10 +247,6 @@
 		     	<input name=\"prev\" type=\"button\" value=\"".get_string("prev","scorm")."\" onClick=\"top.changeSco('previous');\" />&nbsp;\n";
 		     	
 	if ($scorm->popup == "") {
-	    $currentorg = '';
-	    if (isset($_GET['currentorg'])) {
-		$currentorg = $_GET['currentorg'];
-	    }
 	    if ($scoes = get_records_select("scorm_scoes","scorm='$scorm->id' AND organization='$currentorg' order by id ASC")){
     	    	$level=0;			
     	    	$parents[$level]="/";
@@ -273,9 +293,9 @@
     	    //
     	    echo "<html>\n";
             echo "<head><title>$course->shortname: $scorm->name</title></head>\n";
-            echo "<script id=\"scormAPI\" language=\"JavaScript\" type=\"text/javascript\" src=\"scormAPI.php?id=$cm->id&mode=".$mode.$scoid."\"></script>\n";
+            echo "<script id=\"scormAPI\" language=\"JavaScript\" type=\"text/javascript\" src=\"scormAPI.php?id=$cm->id".$modestring.$scoidstring."\"></script>\n";
 	    echo "<frameset rows=\"$CFG->scorm_framesize,*\" onLoad=\"SCOInitialize();\" onUnload=\"SCOFinish();\">\n";
-            echo "\t    <frame name=\"navigation\" src=\"playscorm.php?id=$cm->id&mode=".$mode.'&currentorg='.$currentorg."&frameset=top\">\n";
+            echo "\t    <frame name=\"navigation\" src=\"playscorm.php?id=$cm->id".$modestring.$currentorgstring."&frameset=top\">\n";
             echo "\t    <frame name=\"main\" src=\"\">\n";
             echo "</frameset>\n";
             echo "</html>\n";
