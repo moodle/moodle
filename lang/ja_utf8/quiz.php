@@ -220,6 +220,7 @@ $string['randomsamatchnumber'] = '選択問題数';
 $string['readytosend'] = '評定のために全ての小テストを送信します。本当に送信してもよろしいですか?';
 $string['reattemptquiz'] = '問題の再受験';
 $string['recentlyaddedquestion'] = '最新の問題!';
+$string['recurse'] = 'サブカテゴリを含む';
 $string['regrade'] = '全ての受験を再評定する';
 $string['regradecomplete'] = '全ての受験が再評定されました。';
 $string['regradecount'] = '$a->attempt 中 $a->changed の評点が変更されました。';

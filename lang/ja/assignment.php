@@ -1,5 +1,5 @@
-<?php // $Id$ 
-      // assignment.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
+<?PHP // $Id$ 
+      // assignment.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005010100)
 
 
 $string['allowresubmit'] = '再提出を許可する';
@@ -19,6 +19,14 @@ $string['description'] = '詳細';
 $string['duedate'] = '提出期限';
 $string['duedateno'] = '提出期限無し';
 $string['early'] = '$a 早く提出';
+$string['emailteachermail'] = '$a->username が「 $a->assignment 」の提出課題を更新しました。
+
+下記にて閲覧可能です:
+
+$a->url';
+$string['emailteachermailhtml'] = '$a->username が「<i>$a->assignment</i>」の提出課題を更新しました。<br /><br />
+<a href=\"$a->url\">ウェブサイトにて閲覧可能です</a>。';
+$string['emailteachers'] = '教師にメール通知を行う。';
 $string['existingfiledeleted'] = 'ファイルが削除されました: $a';
 $string['failedupdatefeedback'] = 'ユーザ $a のフィードバック更新に失敗しました ';
 $string['feedback'] = 'フィードバック';
@@ -37,9 +45,6 @@ $string['submissionfeedback'] = '提出のフィードバック';
 $string['submissions'] = '提出';
 $string['submitassignment'] = 'フォームを使用して課題を提出する';
 $string['submitted'] = '提出';
-$string['thischarset'] = 'EUC-JP';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Japanese';
 $string['typeoffline'] = 'オフライン課題';
 $string['typeuploadsingle'] = 'ファイルのアップロード';
 $string['uploadbadname'] = '不正な文字がファイル名に含まれているため、このファイルはアップロードできません';
