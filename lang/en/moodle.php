@@ -854,6 +854,7 @@ $string['page'] = 'Page';
 $string['pageheaderconfigablock'] = 'Configuring a block in %%fullname%%';
 $string['parentcoursenotfound'] = 'Parent course not found!';
 $string['parentcoursenotmetacourse'] = 'Parent course not metacourse!';
+$string['parentfolder'] = 'Parent folder';
 $string['participants'] = 'Participants';
 $string['password'] = 'Password';
 $string['passwordchanged'] = 'Password has been changed';
