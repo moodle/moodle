@@ -500,10 +500,12 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
     }
 
     if (empty($courseid)) {
-        if (!empty($course->id)) {     // An ugly hack for better compatibility
+        if (!empty($course->id)) {         // An ugly hack for better compatibility
             $courseid = $course->id;
         }
     }
+
+    $CFG->currenttextiscacheable = true;   // Default status - can be changed by any filter
 
     switch ($format) {
         case FORMAT_HTML:
@@ -535,7 +537,7 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
             break;
     }
 
-    if (!empty($CFG->cachetext)) {
+    if (!empty($CFG->cachetext) and $CFG->currenttextiscacheable) {
         $newrecord->md5key = $md5key;
         $newrecord->formattedtext = addslashes($text);
         $newrecord->timemodified = time();
