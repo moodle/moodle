@@ -88,15 +88,21 @@
             echo '<div class="message_users">';
             if ($contact = get_record('message_contacts', 'userid', $USER->id, 'contactid', $user->id)) {
                  if ($contact->blocked) {
-                     message_contact_link($user->id, 'add', false, 'user.php?frame=info'); echo "&nbsp;";
-                     message_contact_link($user->id, 'unblock', false, 'user.php?frame=info'); echo "&nbsp;";
+                     message_contact_link($user->id, 'add', false, 'user.php?id='.$user->id.'&amp;frame=info'); 
+                     echo "&nbsp;";
+                     message_contact_link($user->id, 'unblock', false, 'user.php?id='.$user->id.'&amp;frame=info'); 
+                     echo "&nbsp;";
                  } else {
-                     message_contact_link($user->id, 'remove', false, 'user.php?frame=info'); echo "&nbsp;";
-                     message_contact_link($user->id, 'block', false, 'user.php?frame=info'); echo "&nbsp;";
+                     message_contact_link($user->id, 'remove', false, 'user.php?id='.$user->id.'&amp;frame=info'); 
+                     echo "&nbsp;";
+                     message_contact_link($user->id, 'block', false, 'user.php?id='.$user->id.'&amp;frame=info'); 
+                     echo "&nbsp;";
                  }
             } else {
-                 message_contact_link($user->id, 'add', false, 'user.php?frame=info'); echo "&nbsp;";
-                 message_contact_link($user->id, 'block', false, 'user.php?frame=info'); echo "&nbsp;";
+                 message_contact_link($user->id, 'add', false, 'user.php?id='.$user->id.'&amp;frame=info'); 
+                 echo "&nbsp;";
+                 message_contact_link($user->id, 'block', false, 'user.php?id='.$user->id.'&amp;frame=info'); 
+                 echo "&nbsp;";
             }
             message_history_link($user->id, 0, false, '', '', 'icon');
             echo '</div>';

@@ -548,23 +548,23 @@ function message_contact_link($userid, $linktype='add', $return=false, $script="
 
     switch ($linktype) {
         case 'block':
-            $output = '<a target="message" href="'.$script.'&amp;blockcontact='.$userid.
+            $output = '<a href="'.$script.'&amp;blockcontact='.$userid.
                    '&amp;sesskey='.$USER->sesskey.'" title="'.$str->blockcontact.'">'.
                    '<img src="'.$CFG->pixpath.'/t/go.gif" height="11" width="11" border="0"></a>';
             break;
         case 'unblock':
-            $output = '<a target="message" href="'.$script.'&amp;unblockcontact='.$userid.
+            $output = '<a href="'.$script.'&amp;unblockcontact='.$userid.
                    '&amp;sesskey='.$USER->sesskey.'" title="'.$str->unblockcontact.'">'.
                    '<img src="'.$CFG->pixpath.'/t/stop.gif" height="11" width="11" border="0"></a>';
             break;
         case 'remove':
-            $output = '<a target="message" href="'.$script.'&amp;removecontact='.$userid.
+            $output = '<a href="'.$script.'&amp;removecontact='.$userid.
                    '&amp;sesskey='.$USER->sesskey.'" title="'.$str->removecontact.'">'.
                    '<img src="'.$CFG->pixpath.'/t/user.gif" height="11" width="11" border="0"></a>';
             break;
         case 'add':
         default:
-            $output = '<a target="message" href="'.$script.'&amp;addcontact='.$userid.
+            $output = '<a href="'.$script.'&amp;addcontact='.$userid.
                    '&amp;sesskey='.$USER->sesskey.'" title="'.$str->addcontact.'">'.
                    '<img src="'.$CFG->pixpath.'/t/usernot.gif" height="11" width="11" border="0"></a>';
 
