@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.2 development (2003111400)
+      // editor.php - created with Moodle 1.2 Beta (2004022400)
 
 
 $string['about'] = 'O tym edytorze';
@@ -21,10 +21,14 @@ $string['chooseicon'] = 'Wybierz ikonê do wstawienia';
 $string['close'] = 'Zamknij';
 $string['cols'] = 'Kolumny';
 $string['copy'] = 'Skopiuj zaznaczone';
+$string['createfolder'] = 'Utwórz folder';
 $string['createlink'] = 'Wstaw link';
 $string['cut'] = 'Wytnij zaznaczone';
+$string['delete'] = 'Usuñ';
+$string['filebrowser'] = 'Przejrzyj pliki';
 $string['forecolor'] = 'Kolor czcionki';
 $string['heading'] = 'Nag³ówek';
+$string['height'] = 'Wysoko¶æ';
 $string['hilitecolor'] = 'Kolor t³a';
 $string['horizontal'] = 'Poziome';
 $string['horizontalrule'] = 'Linia horyzontalna';
@@ -33,6 +37,7 @@ $string['imageurl'] = 'URL do obrazka';
 $string['indent'] = 'Zwiêksz indent';
 $string['insertchar'] = 'Wstaw specjaln± literê';
 $string['insertimage'] = 'Wstaw zdjêcie';
+$string['insertlink'] = 'Wstaw link';
 $string['insertsmile'] = 'Wstaw ikonkê (smiley)';
 $string['inserttable'] = 'Wstaw tabelê';
 $string['italic'] = 'Kursywa';
@@ -42,8 +47,19 @@ $string['justifyleft'] = 'Wyrównaj do lewej';
 $string['justifyright'] = 'Wyrównaj do prawej';
 $string['layout'] = 'Uk³ad';
 $string['left'] = 'Lewo';
+$string['linkproperties'] = 'W³a¶ciwo¶ci linku';
+$string['linktarget'] = 'Cel';
+$string['linktargetblank'] = 'Nowe okno';
+$string['linktargetnone'] = '¯adne';
+$string['linktargetother'] = 'Inne (nieuporz±dkowane)';
+$string['linktargetself'] = 'Ta sama ramka';
+$string['linktargettop'] = 'To samo okno';
+$string['linktitle'] = 'Tytu³';
+$string['linkurl'] = 'URL';
 $string['middle'] = '¦rodek';
+$string['move'] = 'Przesuñ';
 $string['normal'] = 'Normalne';
+$string['notimage'] = 'Wybrany plik nie jest zdjêciem! Proszê wska¿ zdjêcie.';
 $string['notset'] = 'Nie ustawione';
 $string['ok'] = 'OK';
 $string['orderedlist'] = 'Lista ponumerowana';
@@ -55,10 +71,14 @@ $string['pixels'] = 'Piksele';
 $string['popupeditor'] = 'Powiêksz edytor';
 $string['preformatted'] = 'Preformatowany';
 $string['preview'] = 'Podgl±d';
+$string['properties'] = 'W³a¶ciwo¶ci';
 $string['redo'] = 'Powtórz swoje ostatnie dzia³anie';
+$string['rename'] = 'Zmieñ nazwê';
 $string['right'] = 'Prawo';
 $string['rows'] = 'Rowki';
+$string['selection'] = 'Zaznaczenie';
 $string['showhelp'] = 'Pomoc';
+$string['size'] = 'Rozmiar';
 $string['spacing'] = 'Spacje';
 $string['strikethrough'] = 'Literki z przeciêciem';
 $string['subscript'] = 'Indeks dolny';
@@ -67,10 +87,13 @@ $string['textindicator'] = 'Aktualny styl';
 $string['textmode'] = 'Jeste¶ w trybie tekstowym. U¿yj przycisków [<>] aby wróciæ do trybu WYSIWYG.';
 $string['texttop'] = 'Tekst na górze';
 $string['top'] = 'Góra';
+$string['type'] = 'Typ';
 $string['underline'] = 'Podkre¶l';
 $string['undo'] = 'Cofnij swoje ostatnie dzia³anie';
 $string['unorderedlist'] = 'Lista wypunktowana';
+$string['upload'] = 'Prze¶lij';
 $string['vertical'] = 'Pionowe';
 $string['width'] = 'Szeroko¶æ';
+$string['zip'] = 'Skompresuj';
 
 ?>

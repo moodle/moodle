@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.2 development (2004020300)
+      // glossary.php - created with Moodle 1.2 Beta (2004022400)
 
 
 $string['addcomment'] = 'Dodaj komentarz';
@@ -95,6 +95,7 @@ $string['exportglossary'] = 'Eksportuj s³ownik pojêæ';
 $string['exporttomainglossary'] = 'Eksportuj do g³ównego s³ownika pojêæ';
 $string['filetoimport'] = 'Plik do importu';
 $string['fillfields'] = 'Pola: Termin i Definicja musz± zostaæ wype³nione';
+$string['filtername'] = 'Automatyczne linkowanie pojêæ';
 $string['fullmatch'] = 'Szukaj tylko wyrazów tak jak zosta³y wpisane<br><small>(je¶li zosta³y automatycznie po³±czone)';
 $string['glossarytype'] = 'Typ s³ownika pojêæ';
 $string['glosssaryexported'] = 'Wyeksportowano s³ownik pojêæ';

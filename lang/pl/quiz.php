@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.2 development (2004021201)
+      // quiz.php - created with Moodle 1.2 Beta (2004022400)
 
 
 $string['acceptederror'] = 'Zaakceptowany b³±d';
@@ -20,6 +20,7 @@ $string['answertoolong'] = 'Zbyt d³uga odpowied¼ (maks. 255 znaków)';
 $string['aon'] = 'Format AON';
 $string['attempt'] = 'Próba $a';
 $string['attemptfirst'] = 'Pierwsza próba';
+$string['attemptincomplete'] = 'Próba przez $a nie zosta³a jeszcze zakoñczona';
 $string['attemptlast'] = 'Ostatnia próba';
 $string['attemptquiznow'] = 'Spróbuj teraz rozwi±zaæ quiz';
 $string['attempts'] = 'Próby';
