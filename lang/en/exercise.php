@@ -127,6 +127,7 @@ $string['submitted'] = "Submitted";
 $string['submittedby'] = "Submitted by";
 $string['submission'] = "Submission";
 $string['submissions'] = "Submissions";
+$string['submissionsnowclosed'] = "Submissions now closed - Submission deadline has passed";
 $string['suggestedgrade'] = "Suggested Grade";
 $string['teacherassessment'] = "\$a Assessment";
 $string['teacherassessmenttable'] = "\$a Assessment Table";
