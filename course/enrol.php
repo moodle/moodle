@@ -17,7 +17,7 @@
         if ($form->password == $course->password) {
 
             if (isguest()) {
-                add_to_log($course->id, "course", "guest", "view.php?id=$course->id", "$REMOTE_ADDR, $REMOTE_HOST");
+                add_to_log($course->id, "course", "guest", "view.php?id=$course->id", $_SERVER['REMOTE_ADDR']);
 
             } else if (!record_exists("user_students", "userid", $USER->id, "course", $course->id)) {
 
