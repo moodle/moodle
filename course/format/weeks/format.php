@@ -52,7 +52,7 @@
             $modicon[]="<img src=\"$CFG->pixpath/i/group.gif\" height=16 width=16 alt=\"\">";
         } else if ($course->groupmode == SEPARATEGROUPS and $course->groupmodeforce) {
             // Show nothing
-        } else if ($currentgroup = get_current_group($course->id)) {
+        } else if ($currentgroup) {
             $moddata[]="<a title=\"$strgroupmy\" href=\"group.php?id=$course->id\">$strgroupmy</a>";
             $modicon[]="<img src=\"$CFG->pixpath/i/group.gif\" height=16 width=16 alt=\"\">";
         }
@@ -298,7 +298,7 @@
         if (!empty($news)) {
             print_side_block_start(get_string("latestnews"), 210, "sideblocklatestnews");
             echo "<font size=\"-2\">";
-            forum_print_latest_discussions($news->id, $course->newsitems, "minimal", "", false);
+            forum_print_latest_discussions($news->id, $course->newsitems, "minimal", "", $currentgroup);
             echo "</font>";
             print_side_block_end();
         }

@@ -61,6 +61,8 @@
         redirect("$CFG->wwwroot/");
     }
 
+    $currentgroup = get_current_group($course->id);
+
     $strcourse = get_string("course");
 
     $loggedinas = "<p class=\"logininfo\">".user_login_string($course, $USER)."</p>";

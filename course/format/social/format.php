@@ -23,7 +23,7 @@
               $modicon[]="<img src=\"$CFG->pixpath/i/group.gif\" height=16 width=16 alt=\"\">";
           } else if ($course->groupmode == SEPARATEGROUPS and $course->groupmodeforce) {
               // Show nothing
-          } else if ($currentgroup = get_current_group($course->id)) {
+          } else if ($currentgroup) {
               $moddata[]="<a title=\"$strgroupmy\" href=\"group.php?id=$course->id\">$strgroupmy</a>";
               $modicon[]="<img src=\"$CFG->pixpath/i/group.gif\" height=16 width=16 alt=\"\">";
           }
@@ -87,7 +87,7 @@
           print_heading_block($headertext);
           echo "<img alt=\"\" height=7 src=\"../pix/spacer.gif\"><br>";
     
-          forum_print_latest_discussions($social->id, 10, "plain", "", false);
+          forum_print_latest_discussions($social->id, 10, "plain", "", $currentgroup);
 
       } else {
           notify("Could not find or create a social forum here");
