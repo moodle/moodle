@@ -455,6 +455,7 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL) {
 
         case FORMAT_PLAIN:
             $text = htmlentities($text);
+            $text = str_replace("  ", "&nbsp; ", $text);
             replace_smilies($text);
             convert_urls_into_links($text);
             $text = nl2br($text);
@@ -608,11 +609,11 @@ function convert_urls_into_links(&$text) {
 /// Given some text, it converts any URLs it finds into HTML links.
 
 /// Make lone URLs into links.   eg http://moodle.com/
-    $text = eregi_replace("([[:space:]]|^|\(|\[|\<)([[:alnum:]]+)://([^[:space:]]*)([[:alnum:]#?/&=])",
+    $text = eregi_replace("([[:space:]]|^|\(|\[)([[:alnum:]]+)://([^[:space:]]*)([[:alnum:]#?/&=])",
                           "\\1<a href=\"\\2://\\3\\4\" TARGET=\"newpage\">\\2://\\3\\4</a>", $text);
 
 /// eg www.moodle.com
-    $text = eregi_replace("([[:space:]]|^|\(|\[|\<)www\.([^[:space:]]*)([[:alnum:]#?/&=])", 
+    $text = eregi_replace("([[:space:]]|^|\(|\[)www\.([^[:space:]]*)([[:alnum:]#?/&=])", 
                           "\\1<a href=\"http://www.\\2\\3\" TARGET=\"newpage\">www.\\2\\3</a>", $text);
 }
 
