@@ -27,12 +27,6 @@ class CourseBlock_online_users extends MoodleBlock {
     function get_content() {
         global $USER, $CFG;
 
-        $timetoshowusers = 300; //Seconds default
-
-        if (isset($CFG->block_online_users_timetosee)) {
-            $timetoshowusers = $CFG->block_online_users_timetosee * 60;
-        }
-
         if ($this->content !== NULL) {
             return $this->content;
         }
@@ -41,67 +35,79 @@ class CourseBlock_online_users extends MoodleBlock {
             $this->content = '';
             return $this->content;
         }
-
     
         $this->content = New object;
         $this->content->text = '';
         $this->content->footer = '';
-
-        //Calculate if we are in separate groups
-        $isseparategroups = ($this->course->groupmode == SEPARATEGROUPS and $this->course->groupmodeforce and
-                             !isteacheredit($this->course->id));
-
-        //Get the user current group
-        $currentgroup = $isseparategroups ? get_current_group($this->course->id) : NULL;
-
-        $groupmembers = "";
-        $groupselect = "";
-
-        //Add this to the SQL to show only group users
-        if ($currentgroup !== NULL) {
-            $groupmembers = ", {$CFG->prefix}groups_members gm ";
-            $groupselect .= " AND u.id = gm.userid AND gm.groupid = '$currentgroup'";
+        
+        $timetoshowusers = 300; //Seconds default
+        if (isset($CFG->block_online_users_timetosee)) {
+            $timetoshowusers = $CFG->block_online_users_timetosee * 60;
         }
-
         $timefrom = time()-$timetoshowusers;
 
-        if (empty($this->course->category)) {  // Site-level
-            $courseselect = '';
-            $timeselect = "AND (s.timeaccess > $timefrom OR u.lastaccess > $timefrom)";
-        } else {
-            $courseselect = "AND s.course = '".$this->course->id."'";
-            $timeselect = "AND s.timeaccess > $timefrom";
-        }
+        $users = array();
 
-        $students = get_records_sql("SELECT u.id, u.username, u.firstname, u.lastname, u.picture, u.lastaccess, s.timeaccess
-                                     FROM {$CFG->prefix}user u,
-                                          {$CFG->prefix}user_students s
-                                          $groupmembers
-                                     WHERE u.id = s.userid $courseselect $groupselect $timeselect 
-                                  ORDER BY s.timeaccess DESC");
+        if (!$this->course->category and $CFG->allusersaresitestudents) {
+            if ($users = get_records_sql("SELECT u.id, u.username, u.firstname, u.lastname, u.picture, u.lastaccess
+                                     FROM {$CFG->prefix}user u
+                                     WHERE u.lastaccess > $timefrom
+                                  ORDER BY u.lastaccess DESC")) {
+                foreach ($users as $user) {
+                    $user->fullname = '<b>'.fullname($user).'</b>';
+                    $users[$user->id] = $user;
+                }
+            }
 
-        $teachers = get_records_sql("SELECT u.id, u.username, u.firstname, u.lastname, u.picture, u.lastaccess, s.timeaccess
-                                     FROM {$CFG->prefix}user u,
-                                          {$CFG->prefix}user_teachers s
-                                          $groupmembers
-                                     WHERE u.id = s.userid $courseselect $groupselect $timeselect
-                                  ORDER BY s.timeaccess DESC");
+        } else { 
 
-        if ($teachers || $students) {
-            if ($students) {
+            //Calculate if we are in separate groups
+            $isseparategroups = ($this->course->groupmode == SEPARATEGROUPS and $this->course->groupmodeforce and
+                                 !isteacheredit($this->course->id));
+
+            //Get the user current group
+            $currentgroup = $isseparategroups ? get_current_group($this->course->id) : NULL;
+
+            $groupmembers = "";
+            $groupselect = "";
+
+            //Add this to the SQL to show only group users
+            if ($currentgroup !== NULL) {
+                $groupmembers = ", {$CFG->prefix}groups_members gm ";
+                $groupselect .= " AND u.id = gm.userid AND gm.groupid = '$currentgroup'";
+            }
+
+            if (empty($this->course->category)) {  // Site-level
+                $courseselect = '';
+                $timeselect = "AND (s.timeaccess > $timefrom OR u.lastaccess > $timefrom)";
+            } else {
+                $courseselect = "AND s.course = '".$this->course->id."'";
+                $timeselect = "AND s.timeaccess > $timefrom";
+            }
+
+            if ($students = get_records_sql("SELECT u.id, u.username, u.firstname, u.lastname, u.picture, u.lastaccess, s.timeaccess
+                                         FROM {$CFG->prefix}user u,
+                                              {$CFG->prefix}user_students s
+                                              $groupmembers
+                                         WHERE u.id = s.userid $courseselect $groupselect $timeselect 
+                                      ORDER BY s.timeaccess DESC")) {
                 foreach ($students as $student) {
                     $student->fullname = fullname($student);
                     $users[$student->id] = $student;
                 }
-            }
-            if ($teachers) {
+            }                                 
+
+            if ($teachers = get_records_sql("SELECT u.id, u.username, u.firstname, u.lastname, u.picture, u.lastaccess, s.timeaccess
+                                         FROM {$CFG->prefix}user u,
+                                              {$CFG->prefix}user_teachers s
+                                              $groupmembers
+                                         WHERE u.id = s.userid $courseselect $groupselect $timeselect
+                                      ORDER BY s.timeaccess DESC")) {
                 foreach ($teachers as $teacher) {
                     $teacher->fullname = '<b>'.fullname($teacher).'</b>';
                     $users[$teacher->id] = $teacher;
                 }
             }
-        } else {
-            $users = null;
         }
 
         //Calculate minutes
@@ -111,7 +117,7 @@ class CourseBlock_online_users extends MoodleBlock {
 
         //Now, we have in users, the list of users to show
         //Because they are online
-        if ($users !== null) {
+        if (!empty($users)) {
             foreach ($users as $user) {
                 $this->content->text .= '<div style="text-align: left; font-size: 0.75em; padding-top: 5px;">';
                 $timeago = format_time(time() - max($user->timeaccess, $user->lastaccess)); //bruno to calculate correctly on frontpage 
