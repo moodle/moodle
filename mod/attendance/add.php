@@ -142,6 +142,12 @@ if (isset($_POST["course"]))  {
 
     unset($SESSION->modform); // Clear any old ones that may be hanging around.
 
+
+        $icon = "<img align=absmiddle height=16 width=16 src=\"$CFG->modpixpath/$module->name/icon.gif\">&nbsp;";
+
+        print_heading_with_help($pageheading, "mods", $module->name, $icon);
+        print_simple_box_start("center", "", "$THEME->cellheading");
+
  
 /// Print the main part of the page
 
@@ -190,39 +196,68 @@ $form->hours = isset($CFG->attendance_default_hours)?$CFG->attendance_default_ho
     <input type="checkbox" name="fri" "checked">
     <?php print_string("saturday","attendance"); echo ":"; ?>
     <input type="checkbox" name="sat" >
+<?php helpbutton("choosedays", get_string("choosedays","attendance"), "attendance");?>
     </TD>
 </TR>
 
 <tr valign=top>
     <TD align="right"><P><B><?php print_string("dynamicsectionmulti", "attendance") ?>:</B></P></TD>
     <TD align="left">
-      <input type="checkbox" name="dynsection" <?php echo !empty($form->dynsection) ? 'checked' : '' ?> >
-    </TD>
+<?php
+        $options = array();
+        $options[0] = get_string("no");
+        $options[1] = get_string("yes");
+        choose_from_menu($options, "dynsection", "", "");
+        helpbutton("dynsection", get_string("dynamicsectionmulti","attendance"), "attendance");
+?>
+<!--      <input type="checkbox" name="dynsection" <?php echo !empty($form->dynsection) ? 'checked' : '' ?> > -->
+</TD>
 </tr>
 <tr valign=top>
     <TD align="right"><P><B><?php print_string("autoattendmulti", "attendance") ?>:</B></P></TD>
     <TD align="left">
-      <input type="checkbox" name="autoattend" <?php echo !empty($form->autoattend) ? 'checked' : '' ?> >
+<?php
+        $options = array();
+        $options[0] = get_string("no");
+        $options[1] = get_string("yes");
+        choose_from_menu($options, "autoattend", "", "");
+        helpbutton("autoattendmulti", get_string("autoattend","attendance"), "attendance");
+?>
+
+
+<!--      <input type="checkbox" name="autoattend" <?php echo !empty($form->autoattend) ? 'checked' : '' ?> > -->
     </TD>
 </tr>
 <?php // starting with 2 to allow for the nothing value in choose_from_menu to be the default of 1
 for ($i=2;$i<=24;$i++){ $opt[$i] = $i; } ?>
 <TR valign=top>
     <TD align=right><P><B><?php print_string("hoursineachclass", "attendance") ?>:</B></P></TD>
-    <TD  colspan="3" align="left"><?php choose_from_menu($opt, "hours", $form->hours, "1","","1") ?></td>
+    <TD  colspan="3" align="left"><?php choose_from_menu($opt, "hours", $form->hours, "1","","1") ?>
+<?php helpbutton("hours", get_string("hoursinclass","attendance"), "attendance"); ?>
+</td>
 </tr>
 
 <tr valign=top>
     <TD align="right"><P><B><?php print_string("gradevaluemulti", "attendance") ?>:</B></P></TD>
     <TD align="left">
-      <input type="checkbox" name="grade" <?php echo !empty($form->grade) ? 'checked' : '' ?> >
+<?php
+        $options = array();
+        $options[0] = get_string("no");
+        $options[1] = get_string("yes");
+        choose_from_menu($options, "grade", "", "");
+        helpbutton("grade", get_string("gradevalue","attendance"), "attendance");
+?>
+
+<!--      <input type="checkbox" name="grade" <?php echo !empty($form->grade) ? 'checked' : '' ?> > -->
     </TD>
 </tr>
 <?php // starting with 2 to allow for the nothing value in choose_from_menu to be the default of 1
 for ($i=0;$i<=100;$i++){ $opt2[$i] = $i; } ?>
 <TR valign=top>
     <TD align=right><P><B><?php print_string("maxgradevalue", "attendance") ?>:</B></P></TD>
-    <TD  colspan="3" align="left"><?php choose_from_menu($opt2, "maxgrade", $form->maxgrade, "0","","0") ?></td>
+    <TD  colspan="3" align="left"><?php choose_from_menu($opt2, "maxgrade", $form->maxgrade, "0","","0"); 
+   helpbutton("maxgrade", get_string("maxgradevalue","attendance"), "attendance");
+?></td>
 </tr>
 
 
@@ -243,6 +278,7 @@ for ($i=0;$i<=100;$i++){ $opt2[$i] = $i; } ?>
 </FORM>
 
 <?php
+    print_simple_box_end();
 /// Finish the page
     print_footer($course);
     }
