@@ -370,7 +370,7 @@
     $userdata = "<font size=+1>&nbsp;</font><a href=\"auth.php\">".get_string("authentication")."</a> - <font size=1>".
                  get_string("adminhelpauthentication")."</font><br />";
 
-    if ($CFG->auth == "email" || $CFG->auth == "none" || $CFG->auth == "manual") {
+    if (is_internal_auth()) {
         $userdata .= "<font size=+1>&nbsp;</font><a href=\"$CFG->wwwroot/$CFG->admin/user.php?newuser=true\">".
                       get_string("addnewuser")."</a> - <font size=1>".
                       get_string("adminhelpaddnewuser")."</font><br />";
