@@ -9,10 +9,10 @@
 
     require("../config.php");
 
-    require_variable($id);
-    optional_variable($file, "");
-    optional_variable($wdir, "");
-    optional_variable($action, "");
+    $id     = required_param('id', PARAM_INT);
+    $file   = optional_param('file', '');
+    $wdir   = optional_param('wdir', '');
+    $action = optional_param('action', '');
 
     if (! $course = get_record("course", "id", $id) ) {
         error("That's an invalid course id");
@@ -87,8 +87,7 @@
 
     require("mimetypes.php");
 
-    $regexp="\\.\\.";
-    if (ereg( $regexp, $file, $regs )| ereg( $regexp, $wdir,$regs )) {           
+    if (detect_munged_arguments($wdir, 0) or detect_munged_arguments($file, 0)) {           
         $message = "Error: Directories can not contain \"..\"";
         $wdir = "/";
         $action = "";
@@ -600,7 +599,10 @@ function setfilelist($VARS) {
     foreach ($VARS as $key => $val) {
         if (substr($key,0,4) == "file") {
             $count++;
-            $USER->filelist[] = rawurldecode($val);
+            $val = rawurldecode($val);
+            if (!detect_munged_arguments($val, 0)) {
+                $USER->filelist[] = rawurldecode($val);
+            }
         }
     }
     return $count;
