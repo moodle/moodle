@@ -117,7 +117,7 @@ function init() {
   config.height      = "auto";
 
   // change maximize button to minimize button
-  config.btnList["popupeditor"] = [ '<?php print_string("minimize","editor");?>', '<?php echo $CFG->wwwroot ?>/lib/editor/images/fullscreen_minimize.gif', true,
+  config.btnList["popupeditor"] = [ "<?php print_string("minimize","editor");?>", "<?php echo $CFG->wwwroot ?>/lib/editor/images/fullscreen_minimize.gif", true,
                                     function() { window.close(); } ];
 
   // generate editor and resize it
