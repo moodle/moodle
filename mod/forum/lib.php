@@ -19,7 +19,7 @@ $FORUM_OPEN_MODES   = array ("2" => get_string("openmode2", "forum"),
                              "0" => get_string("openmode0", "forum") );
 
 if (!isset($CFG->forum_displaymode)) {
-    set_config("forum_display_mode", 3);
+    set_config("forum_displaymode", 3);
 } 
 
 if (!isset($CFG->forum_shortpost)) {
@@ -1172,8 +1172,10 @@ function forum_print_ratings_mean($postid, $scale) {
 /// Scale is an array of ratings
 
     static $strrate;
+
+    $mean = forum_get_ratings_mean($postid, $scale);
     
-    if ($mean = forum_get_ratings_mean($postid, $scale)) {
+    if ($mean !== "") {
 
         if (empty($strratings)) {
             $strratings = get_string("ratings", "forum");
