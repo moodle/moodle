@@ -32,9 +32,10 @@
 <tr valign="top">
         <td align="right"><?php print_string("frontpageformat") ?>:</td>
         <td><?php
-           $options = array("0"  =>  get_string("frontpagenews"),
-                            "1"  =>  get_string("frontpagecourselist"),
-                            "2"  =>  get_string("frontpagecategorynames"));
+           $options = array(FRONTPAGENEWS           =>  get_string("frontpagenews"),
+                            FRONTPAGECOURSELIST     =>  get_string("frontpagecourselist"),
+                            FRONTPAGECATEGORYNAMES  =>  get_string("frontpagecategorynames"),
+                            FRONTPAGETOPICONLY      =>  get_string("frontpagetopiconly"));
            if (count_records("course") > 200) {
                unset($options[1]);
                if ($form->frontpage == 1) {
@@ -44,6 +45,16 @@
            choose_from_menu ($options, "frontpage", "$form->frontpage", "");
         ?>
         </td>
+</tr>
+<tr valign="top">
+    <td align="right"><?php  print_string("sitesection") ?>:</td>
+    <td><?php
+    unset($choices);
+    $choices["0"] = get_string("no");
+    $choices["1"] = get_string("yes");
+    choose_from_menu ($choices, "numsections", $form->numsections, "");
+    ?>
+    </td>
 </tr>
 <tr valign="top">
         <td align="right"><?php print_string("newsitemsnumber") ?>:</td>
@@ -64,16 +75,6 @@
            choose_from_menu ($options, "newsitems", "$form->newsitems", "");
         ?>
         </td>
-</tr>
-<tr valign="top">
-    <td align="right"><?php  print_string("sitesection") ?>:</td>
-    <td><?php
-    unset($choices);
-    $choices["0"] = get_string("no");
-    $choices["1"] = get_string("yes");
-    choose_from_menu ($choices, "numsections", $form->numsections, "");
-    ?>
-    </td>
 </tr>
 <tr valign="top">
     <td align="right"><?php print_string("wordforteacher") ?>:</td>

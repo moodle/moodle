@@ -23,6 +23,7 @@ define('COURSE_MAX_USERS_PER_DROPDOWN',5000); //  max users in log dropdown befo
 define("FRONTPAGENEWS",           0);
 define("FRONTPAGECOURSELIST",     1);
 define("FRONTPAGECATEGORYNAMES",  2);
+define("FRONTPAGETOPICONLY",      3);
 
 function print_recent_selector_form($course, $advancedfilter=0, $selecteduser=0, $selecteddate="lastlogin",
                                     $mod="", $modid="activity/All", $modaction="", $selectedgroup="", $selectedsort="default") {

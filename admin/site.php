@@ -1,6 +1,7 @@
 <?php // $Id$
 
     require_once("../config.php");
+    require_once("../course/lib.php");
 
     if ($site = get_site()) {
         require_login();
@@ -25,6 +26,9 @@
         if (count($err) == 0) {
 
             set_config("frontpage", $form->frontpage);
+            if ($form->frontpage = FRONTPAGETOPICONLY) {
+                $form->numsections = 1;    // Force the topic display for this format
+            }
 
             $form->timemodified = time();
 

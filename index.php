@@ -166,6 +166,9 @@
             }
         break;
 
+        case FRONTPAGETOPICONLY:    // Do nothing!!  :-)
+        break;
+
     }
 
     echo '</td>';
