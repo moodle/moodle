@@ -135,6 +135,8 @@
             print_continue("view.php?id=$cm->id");
         }
 
+        print_footer($course);
+
         exit;
     }
 

@@ -212,7 +212,7 @@ function  quiz_print_question($number, $questionid, $grade, $courseid,
 
     echo "<TABLE WIDTH=100% CELLSPACING=10><TR><TD NOWRAP WIDTH=100 VALIGN=top>";
     echo "<P ALIGN=CENTER><B>$number</B></P>";
-    if ($feedback) {
+    if ($feedback or $response) {
         echo "<P ALIGN=CENTER><FONT SIZE=1>$strmarks: $actualgrade/$grade</FONT></P>";
     } else {
         echo "<P ALIGN=CENTER><FONT SIZE=1>$grade $strmarks</FONT></P>";
@@ -810,15 +810,15 @@ function quiz_grade_attempt_results($quiz, $questions) {
         }
 
         $grade    = 0;   // default
-        unset($feedback);
-        unset($response);
+        $feedback = array();
+        $response = array();
 
         switch ($question->type) {
             case SHORTANSWER:
                 if ($question->answer) {
                     $question->answer = $question->answer[0];
                 } else {
-                    $question->answer = NULL;
+                    $question->answer = "";
                 }
                 $response[0] = $question->answer;
                 foreach($answers as $answer) {  // There might be multiple right answers
