@@ -3121,7 +3121,7 @@ function navmenu($course, $cm=NULL, $targetwindow='self') {
             $thissection = $sections[$mod->section];
 
             if ($thissection->visible or !$course->hiddensections or $isteacher) {
-                $thissection->summary = strip_tags($thissection->summary);
+                $thissection->summary = strip_tags(format_string($thissection->summary,true));
                 if ($course->format == 'weeks' or empty($thissection->summary)) {
                     $menu[] = '-------------- '. $strsection ." ". $mod->section .' --------------';
                 } else {
@@ -3151,7 +3151,7 @@ function navmenu($course, $cm=NULL, $targetwindow='self') {
                 $mod->name = $strjumpto;
                 $strjumpto = '';
             } else {
-                $mod->name = strip_tags(urldecode($mod->name));
+                $mod->name = strip_tags(format_string(urldecode($mod->name),true));
                 if (strlen($mod->name) > 55) {
                     $mod->name = substr($mod->name, 0, 50).'...';
                 }
