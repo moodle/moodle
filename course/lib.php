@@ -147,6 +147,8 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
         $selector .= " AND l.time > '$date' AND l.time < '$enddate'";
     }
 
+    $totalcount = 0;  // Initialise
+
     if (!$logs = get_logs($selector, $order, $page*$perpage, $perpage, $totalcount)) {
         notify("No logs found!");
         print_footer($course);
