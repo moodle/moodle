@@ -129,7 +129,11 @@ $string[''] = "";
 //            //print_object($thisattempt);
             $reportline++;
             $data_tally[$reportline][$thisattempt['attemptid']][] = $thisattempt['name'];
-            $data_tally[$reportline][$thisattempt['attemptid']][] =round(($thisattempt['grade']/$quiz->sumgrades)*100,0); 
+            if ($quiz->sumgrades > 0) {
+                $data_tally[$reportline][$thisattempt['attemptid']][] =round(($thisattempt['grade']/$quiz->sumgrades)*100,0);
+            } else {
+                $data_tally[$reportline][$thisattempt['attemptid']][] = 0;
+            }
             //now for each question, record response as it should be printed and whether right, wrong or skipped
             //SHORTASNSWER the answer as in $userdata; TF or MULTI need response looked by from cid from $quests
             //MATCH needs elaborate processing
