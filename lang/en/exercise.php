@@ -128,6 +128,7 @@ $string['submission'] = "Submission";
 $string['submissions'] = "Submissions";
 $string['suggestedgrade'] = "Suggested Grade";
 $string['teacherassessment'] = "\$a Assessment";
+$string['teacherassessmenttable'] = "\$a Assessment Table";
 $string['teacherscomment'] = "Teacher's Comment";
 $string['theexerciseandthesubmissionby'] = "The Exercise and the Submission by \$a";
 $string['thegradeis'] = "The Grade is \$a";
