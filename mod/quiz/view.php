@@ -70,13 +70,6 @@
 
     print_simple_box(text_to_html($quiz->intro), "CENTER");
 
-    if ($available) {
-        echo "<P ALIGN=CENTER>".get_string("quizavailable", "quiz", userdate($quiz->timeclose));
-    } else if ($timenow < $quiz->timeopen) {
-        echo "<P ALIGN=CENTER>".get_string("quiznotavailable", "quiz", userdate($quiz->timeopen));
-    } else {
-        echo "<P ALIGN=CENTER>".get_string("quizclosed", "quiz", userdate($quiz->timeclose));
-    }
 
     if (isguest()) {
         print_heading(get_string("guestsno", "quiz"));
@@ -114,6 +107,14 @@
                                     format_float(($attempt->sumgrades/$quiz->sumgrades)*$quiz->grade) );
         }
         print_table($table);
+    }
+
+    if ($available) {
+        echo "<P ALIGN=CENTER>".get_string("quizavailable", "quiz", userdate($quiz->timeclose));
+    } else if ($timenow < $quiz->timeopen) {
+        echo "<P ALIGN=CENTER>".get_string("quiznotavailable", "quiz", userdate($quiz->timeopen));
+    } else {
+        echo "<P ALIGN=CENTER>".get_string("quizclosed", "quiz", userdate($quiz->timeclose));
     }
 
     $mygrade = quiz_get_best_grade($quiz->id, $USER->id);

@@ -736,7 +736,7 @@ function quiz_get_best_grade($quizid, $userid) {
         return 0;
     }
 
-    return $grade->grade;
+    return (round($grade->grade,0));
 }
 
 function quiz_get_grade_records($quiz) {
