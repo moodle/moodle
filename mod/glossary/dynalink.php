@@ -83,8 +83,9 @@
         foreach (array_unique($list_of_links[0]) as $key=>$value) {
             $links['<|*'.$key.'*|>'] = $value;
         }
-        $text = str_replace($links,array_keys($links),$text);
-
+		if ( $links ) {
+            $text = str_replace($links,array_keys($links),$text);
+        }
         // getting ride of all other tahs
         $final = array();
         preg_match_all('/<(.+?)>/is',$text,$list_of_words);
@@ -105,8 +106,9 @@
 
         $text = eregi_replace("$list_of_words_cp", "$href_tag_begin"."\\1"."$href_tag_end", $text);
         $text = str_replace(array_keys($final),$final,$text);
-        $text = str_replace(array_keys($links),$links,$text);
-
+		if ( $links ) {
+            $text = str_replace(array_keys($links),$links,$text);
+        }
         return stripslashes($text);
     }
     
