@@ -77,14 +77,16 @@
                 if (function_exists($function_name)) {
                     echo "<li>".get_string ("to")." ".get_string("modulenameplural",$name);
                     $status = $function_name($restore);
+                    echo '</li>';
                 }
             }
         }
 
         //Now I'm going to decode to their new location all the links in wiki texts
         //having the syntax " modulename:moduleid".
-        echo "<li>wiki";
+        echo "<li>Wiki";
         $status = restore_decode_wiki_texts($restore);
+        echo '</li>';
 
         echo "</ul>";
 
@@ -110,7 +112,7 @@
         //FORUM: Decode every POST (message) in the course
         //Check we are restoring forums
         if ($restore->mods['forum']->restore == 1) {
-            echo "<li>".get_string("from")." ".get_string("modulenameplural","forum");
+            echo "<li>".get_string("from")." ".get_string("modulenameplural","forum").'</li>';
             //Get all course posts being restored
             if ($posts = get_records_sql ("SELECT p.id, p.message
                                        FROM {$CFG->prefix}forum_posts p,
@@ -155,7 +157,7 @@
 
         //Check we are restoring resources
         if ($restore->mods['resource']->restore == 1) {
-            echo "<li>".get_string("from")." ".get_string("modulenameplural","resource");
+            echo "<li>".get_string("from")." ".get_string("modulenameplural","resource").'</li>';
             //Get all course resources of type='text' and options=FORMAT_WIKI being restored
             if ($resources = get_records_sql ("SELECT r.id, r.alltext
                                        FROM {$CFG->prefix}resource r,
@@ -355,9 +357,9 @@
         $status = true;
         if ($info) {
             //This is tha align to every ingo table      
-            $table->align = array ("RIGHT","LEFT");
+            $table->align = array ("right","left");
             //This is the nowrap clause 
-            $table->wrap = array ("","NOWRAP");
+            $table->wrap = array ("","nowrap");
             //The width
             $table->width = "70%";
             //Put interesting info in table
@@ -450,7 +452,7 @@
         $status = true;
         if ($course_header) {
             //This is tha align to every ingo table
-            $table->align = array ("RIGHT","LEFT");
+            $table->align = array ("right","left");
             //The width
             $table->width = "70%";
             //Put interesting course header in table
@@ -1708,6 +1710,7 @@
         //from backup_ids (calling every mod restore function)
         if ($info) {
             if ($info !== true) {
+                echo '<ul>';
                 //Iterate over each module
                 foreach ($info as $mod) {
                     $modrestore = $mod->modtype."_restore_mods";
@@ -1719,6 +1722,7 @@
                         $status = false;
                     }
                 }
+                echo '</ul>';
             }
         } else {
             $status = false;
@@ -3486,7 +3490,7 @@
         
         //Now check and create the backup dir (if it doesn't exist)
         if (empty($silent)) {
-            echo "<li>".get_string("creatingtemporarystructures");
+            echo "<li>".get_string("creatingtemporarystructures").'</li>';
         }
         $status = check_and_create_backup_dir($backup_unique_code);
         //Empty dir
@@ -3497,7 +3501,7 @@
         //Now delete old data and directories under dataroot/temp/backup
         if ($status) {   
             if (empty($silent)) {
-                echo "<li>".get_string("deletingolddata");
+                echo "<li>".get_string("deletingolddata").'</li>';
             }
             $status = backup_delete_old_data();
         }
@@ -3505,7 +3509,7 @@
         //Now copy he zip file to dataroot/temp/backup/backup_unique_code
         if ($status) {
             if (empty($silent)) {
-                echo "<li>".get_string("copyingzipfile");
+                echo "<li>".get_string("copyingzipfile").'</li>';
             }
             if (! $status = backup_copy_file($file,$CFG->dataroot."/temp/backup/".$backup_unique_code."/".basename($file))) {
                 notify("Error copying backup file. Invalid name or bad perms.");
@@ -3515,7 +3519,7 @@
         //Now unzip the file
         if ($status) {
             if (empty($silent)) {
-                echo "<li>".get_string("unzippingbackup");
+                echo "<li>".get_string("unzippingbackup").'</li>';
             }
             if (! $status = restore_unzip ($CFG->dataroot."/temp/backup/".$backup_unique_code."/".basename($file))) {
                 notify("Error unzipping backup file. Invalid zip file.");
@@ -3526,7 +3530,7 @@
         if ($status) {
             $xml_file  = $CFG->dataroot."/temp/backup/".$backup_unique_code."/moodle.xml";
             if (empty($silent)) {
-                echo "<li>".get_string("checkingbackup");
+                echo "<li>".get_string("checkingbackup").'</li>';
             }
             if (! $status = restore_check_moodle_file ($xml_file)) {
                 notify("Error checking backup file. Invalid or corrupted.");
@@ -3539,7 +3543,7 @@
         //Now read the info tag (all)
         if ($status) {
             if (empty($silent)) {
-                echo "<li>".get_string("readinginfofrombackup");
+                echo "<li>".get_string("readinginfofrombackup").'</li>';
             }
             //Reading info from file
             $info = restore_read_xml_info ($xml_file);
@@ -3552,7 +3556,7 @@
             echo "</ul>";
             
             //End the main table
-            echo "</tr></td>";
+            echo "</td></tr>";
             echo "</table>";
         }
         

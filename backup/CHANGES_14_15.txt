@@ -42,6 +42,6 @@ Now I show the specific detailed status of every item in the process:
 25. TODO: Add support for forum_read table in backup and restore.
 26. DONE: chat_users->course and chat_users->lang. No changes required!
 27. PROG: Make the backup/restore/config/logs/index.php XHTML 1.0 Transitional.
-          Done in manual backups, config and logs
+          Done in manual backups, config, logs and restore.
 Eloy (stronk7)
 23-01-2004

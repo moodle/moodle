@@ -77,12 +77,12 @@
         //Print course fullname and shortname and category
         if ($status) {
             echo "<ul>";
-            echo "<li>".$course_header->course_fullname." (".$course_header->course_shortname.")";
-            echo "<li>".get_string("category").": ".$course_header->category->name;
+            echo "<li>".$course_header->course_fullname." (".$course_header->course_shortname.")".'</li>';
+            echo "<li>".get_string("category").": ".$course_header->category->name.'</li>';
             if (!empty($oldidnumber)) {
                 echo "<li>".get_string("nomoreidnumber","moodle",$oldidnumber)."</li>";
             }
-            echo "</ul>";
+            echo "</ul></li>";
             //Put the destination course_id
             $restore->course_id = $course_header->course_id;
         }
@@ -91,17 +91,17 @@
         if ($course) {
             echo "<li>".get_string("usingexistingcourse"); 
             echo "<ul>";
-            echo "<li>".get_string("from").": ".$course_header->course_fullname." (".$course_header->course_shortname.")";
-            echo "<li>".get_string("to").": ".$course->fullname." (".$course->shortname.")";
+            echo "<li>".get_string("from").": ".$course_header->course_fullname." (".$course_header->course_shortname.")".'</li>';
+            echo "<li>".get_string("to").": ".$course->fullname." (".$course->shortname.")".'</li>';
             if (($restore->deleting)) {
-                echo "<li>".get_string("deletingexistingcoursedata");
+                echo "<li>".get_string("deletingexistingcoursedata").'</li>';
             } else {
-                echo "<li>".get_string("addingdatatoexisting");
+                echo "<li>".get_string("addingdatatoexisting").'</li>';
             }
-            echo "</ul>";
+            echo "</ul></li>";
             //If we have selected to restore deleting, we do it now.
             if ($restore->deleting) {
-                echo "<li>".get_string("deletingolddata");
+                echo "<li>".get_string("deletingolddata").'</li>';
                 $status = remove_course_contents($restore->course_id,false) and 
                           delete_dir_contents($CFG->dataroot."/".$restore->course_id,"backupdata");
                 if ($status) {
@@ -122,7 +122,7 @@
     if($status) {
         //If we are deleting and bringing into a course or making a new course, same situation
         if($restore->restoreto == 0 || $restore->restoreto == 2) {
-            echo '<li>'.get_string('creatingblocks');
+            echo '<li>'.get_string('creatingblocks').'</li>';
             if (!$status = restore_create_blocks($restore, $info->backup_block_format, $course_header->blockinfo, $xml_file)) {
                 notify('Error while creating the course blocks');
             }
@@ -133,13 +133,13 @@
     if ($status) {
         //Into new course
         if ($restore->restoreto == 2) {
-            echo "<li>".get_string("creatingsections");
+            echo "<li>".get_string("creatingsections").'</li>';
             if (!$status = restore_create_sections($restore,$xml_file)) {
                 notify("Error creating sections in the existing course.");
             }
         //Into existing course
         } else if ($restore->restoreto == 0 or $restore->restoreto == 1) {
-            echo "<li>".get_string("checkingsections");
+            echo "<li>".get_string("checkingsections").'</li>';
             if (!$status = restore_create_sections($restore,$xml_file)) {
                 notify("Error creating sections in the existing course.");
             }
@@ -196,8 +196,8 @@
                 //Now print information gathered
                 echo " (".get_string("new").": ".$new_count.", ".get_string("existing").": ".$exists_count.")";
                 echo "<ul>";
-                echo "<li>".get_string("students").": ".$student_count;
-                echo "<li>".get_string("teachers").": ".$teacher_count;
+                echo "<li>".get_string("students").": ".$student_count.'</li>';
+                echo "<li>".get_string("teachers").": ".$teacher_count.'</li>';
                 echo "</ul>";
             } else {
                 notify("No users were found!");
@@ -209,7 +209,7 @@
     if ($status and $restore->metacourse) {
         //Only to new courses!
         if ($restore->restoreto == 2) {
-            echo "<li>".get_string("creatingmetacoursedata");
+            echo "</li><li>".get_string("creatingmetacoursedata");
             if (!$status = restore_create_metacourse($restore,$xml_file)) {
                 notify("Error creating metacourse in the course.");
             }
@@ -219,15 +219,15 @@
 
     //Now create categories and questions as needed (STEP1)
     if ($status and ($restore->mods['quiz']->restore)) {
-         echo "<li>".get_string("creatingcategoriesandquestions")."<br />";
-         if (!$status = restore_create_questions($restore,$xml_file)) {
-             notify("Could not restore categories and questions!");
-         }
+        echo "</li><li>".get_string("creatingcategoriesandquestions")."</li>";
+        if (!$status = restore_create_questions($restore,$xml_file)) {
+            notify("Could not restore categories and questions!");
+        }
     }
 
     //Now create user_files as needed
     if ($status and ($restore->user_files)) {
-        echo "<li>".get_string("copyinguserfiles")."<br />";
+        echo "<li>".get_string("copyinguserfiles");
         if (!$status = restore_user_files($restore)) {
             notify("Could not restore user files!");
         }
@@ -236,13 +236,13 @@
             //Inform about user dirs created from backup
             echo "<ul>";
             echo "<li>".get_string("userzones").": ".$status;
-            echo "</ul>";
+            echo "</li></ul>";
         }
     }
 
     //Now create course files as needed
     if ($status and ($restore->course_files)) {
-        echo "<li>".get_string("copyingcoursefiles")."<br />";
+        echo "</li><li>".get_string("copyingcoursefiles")."</li>";
         if (!$status = restore_course_files($restore)) {
             notify("Could not restore course files!");
         }
@@ -257,7 +257,7 @@
 
     //Now create scales as needed
     if ($status) {
-        echo "<li>".get_string("creatingscales");
+        echo "<li>".get_string("creatingscales").'</li>';
         if (!$status = restore_create_scales($restore,$xml_file)) {
             notify("Could not restore custom scales!");
         }
@@ -265,7 +265,7 @@
 
     //Now create groups as needed
     if ($status) {
-        echo "<li>".get_string("creatinggroups");
+        echo "<li>".get_string("creatinggroups").'</li>';
         if (!$status = restore_create_groups($restore,$xml_file)) {
             notify("Could not restore groups!");
         }
@@ -273,7 +273,7 @@
 
     //Now create events as needed
     if ($status) {
-        echo "<li>".get_string("creatingevents");
+        echo "<li>".get_string("creatingevents").'</li>';
         if (!$status = restore_create_events($restore,$xml_file)) {
             notify("Could not restore course events!");
         }
@@ -289,7 +289,7 @@
 
     //Now create log entries as needed
     if ($status and ($restore->logs)) {
-        echo "<li>".get_string("creatinglogentries");
+        echo "</li><li>".get_string("creatinglogentries");
         if (!$status = restore_create_logs($restore,$xml_file)) {
             notify("Could not restore logs!");
         }
@@ -297,7 +297,7 @@
 
     //Now, if all is OK, adjust the instance field in course_modules !!
     if ($status) {
-        echo "<li>".get_string("checkinginstances");
+        echo "</li><li>".get_string("checkinginstances").'</li>';
         if (!$status = restore_check_instances($restore)) {
             notify("Could not adjust instances in course_modules!");
         }
@@ -305,7 +305,7 @@
 
     //Now, if all is OK, adjust activity events
     if ($status) {
-        echo "<li>".get_string("refreshingevents");
+        echo "<li>".get_string("refreshingevents").'</li>';
         if (!$status = restore_refresh_events($restore)) {
             notify("Could not refresh events for activities!");
         }
@@ -323,7 +323,7 @@
     //   - course modinfo field 
     //   - categories table
     if ($status) {
-        echo "<li>".get_string("checkingcourse");
+        echo "</li><li>".get_string("checkingcourse").'</li>';
         //modinfo field
         rebuild_course_cache($restore->course_id);
         //categories table
@@ -333,7 +333,7 @@
 
     //Cleanup temps (files and db)
     if ($status) {
-        echo "<li>".get_string("cleaningtempdata");
+        echo "<li>".get_string("cleaningtempdata").'</li>';
         if (!$status = clean_temp_data ($restore)) {
             notify("Could not clean up temporary data from files and database");
         }
@@ -344,7 +344,7 @@
 
 
     //End the main table     
-    echo "</tr></td>";
+    echo "</td></tr>";
     echo "</table>";
 
     if (!$status) {
@@ -354,9 +354,9 @@
     if (!$restore->importing) {
         echo $output;
         //Print final message
-        print_simple_box(get_string("restorefinished"),"CENTER");
+        print_simple_box(get_string("restorefinished"),"center");
     } else {
-        print_simple_box(get_string("importdatafinished"),"CENTER");
+        print_simple_box(get_string("importdatafinished"),"center");
         unset($SESSION->restore);
     }
     print_continue("$CFG->wwwroot/course/view.php?id=".$restore->course_id);
