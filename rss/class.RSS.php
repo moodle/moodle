@@ -1,11 +1,12 @@
-<?php
-/*
+<?php //$Id$
+
+/**
  * Project:     MagpieRSS: a simple RSS integration tool
  * File:        rss_parse.inc includes code for parsing
- *				RSS, and returning an RSS object
+ *              RSS, and returning an RSS object
  * Author:      Kellan Elliott-McCrea <kellan@protest.net>
- * Version:		0.51
- * License:		GPL
+ * Version:     0.51
+ * License:     GPL
  *
  * The lastest version of MagpieRSS can be obtained from:
  * http://magpierss.sourceforge.net
@@ -17,7 +18,7 @@
  */
  
 
-/* 
+/**
  * NOTES ON RSS PARSING PHILOSOPHY (moderately important):
  * MagpieRSS parse all versions of RSS with a few limitation (mod_content, and
  * mod_taxonomy support is shaky) into a simple object, with 2 fields, 
@@ -57,19 +58,19 @@
  * onto the array $rss-items
  *
  * array(
- *	title => 'Weekly Peace Vigil',
- *	link =>
- *	'http://protest.net/NorthEast/calendrome.cgi?span=event&#38;ID=210257',
- *	description => 'Wear a white ribbon',
- *	dc => array (
- *			subject => 'Peace'
- *		),
- *	ev => array (
- *		startdate => '2002-06-01T11:00:00',
- *		enddate => '2002-06-01T12:00:00',
- *		type => 'Protest',
- *		location => 'Northampton, MA'
- *	)
+ *  title => 'Weekly Peace Vigil',
+ *  link =>
+ *  'http://protest.net/NorthEast/calendrome.cgi?span=event&#38;ID=210257',
+ *  description => 'Wear a white ribbon',
+ *  dc => array (
+ *          subject => 'Peace'
+ *      ),
+ *  ev => array (
+ *      startdate => '2002-06-01T11:00:00',
+ *      enddate => '2002-06-01T12:00:00',
+ *      type => 'Protest',
+ *      location => 'Northampton, MA'
+ *  )
  * )
  *
  */
@@ -97,15 +98,15 @@ class MagpieRSS {
      
     var $parser;
     
-    var $current_item	= array();	// item currently being parsed
-    var $items			= array();	// collection of parsed items
-    var $channel		= array();	// hash of channel fields
-    var $textinput		= array();
-    var $image			= array();
+    var $current_item   = array();	// item currently being parsed
+    var $items          = array();	// collection of parsed items
+    var $channel        = array();	// hash of channel fields
+    var $textinput      = array();
+    var $image          = array();
     
-    var $parent_field	= array('RDF');
-    var $current_field	= '';
-    var $current_namespace	= false;
+    var $parent_field   = array('RDF');
+    var $current_field  = '';
+    var $current_namespace  = false;
     
     var $ERROR = "";
     
@@ -163,7 +164,7 @@ class MagpieRSS {
     }
     
     function start_element ($p, $element, &$attrs) {
-        $element 	= strtolower( $element );
+        $element    = strtolower( $element );
         # check for a namespace, and split if found
         #
         $namespace	= false;
