@@ -1224,14 +1224,14 @@ function print_courses($category, $width="100%") {
         $categories = get_categories(0);  // Parent = 0   ie top-level categories only
         if (count($categories) == 1) {
             $category   = array_shift($categories);
-            $courses    = get_courses($category->id, NULL, 'c.id,c.sortorder,c.visible,c.fullname,c.shortname,c.password,c.summary');
+            $courses    = get_courses($category->id, 'c.sortorder ASC', 'c.id,c.sortorder,c.visible,c.fullname,c.shortname,c.password,c.summary,c.teacher');
         } else {
-            $courses    = get_courses("all", NULL, 'c.id,c.sortorder,c.visible,c.fullname,c.shortname,c.password,c.summary');
+            $courses    = get_courses("all", 'c.sortorder ASC', 'c.id,c.sortorder,c.visible,c.fullname,c.shortname,c.password,c.summary,c.teacher');
         }
         unset($categories);
     } else {
         $categories = get_categories($category->id);  // sub categories
-        $courses    = get_courses($category->id, NULL, 'c.id,c.sortorder,c.visible,c.fullname,c.shortname,c.password,c.summary');
+        $courses    = get_courses($category->id, 'c.sortorder ASC', 'c.id,c.sortorder,c.visible,c.fullname,c.shortname,c.password,c.summary,c.teacher');
     }
 
     if ($courses) {
