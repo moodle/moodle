@@ -1,35 +1,6 @@
 <!-- This page defines the form to create or edit an instance of this module -->
 <!-- It is used from /course/mod.php.  The whole instance is available as $form. -->
 
-<!-- Some javascript to allow for the hiding of advanced options
-     This code was derived from mod.html in the resource module -->
-<script language="javascript" type="text/javascript">
-    function showhide (id, set) {
-        divobj = document.getElementById(id);
-        butobj = document.getElementById(id+'button');
-        prefobj = document.getElementById(id+'pref');
-        if (set == true) {
-            if (prefobj.value == '1') {
-                divobj.style.display = 'block';
-                butobj.value = '<?php print_string("hideadvancedsettings") ?>';
-            } else {
-                divobj.style.display = 'none';
-                butobj.value = '<?php print_string("showadvancedsettings") ?>...';
-            }
-        } else {
-            if (prefobj.value == '1') {
-                divobj.style.display = 'none';
-                butobj.value = '<?php print_string("showadvancedsettings") ?>...';
-                prefobj.value = '0';
-            } else {
-                divobj.style.display = 'block';
-                butobj.value = '<?php print_string("hideadvancedsettings") ?>';
-                prefobj.value = '1';
-            }
-        }
-    }
-</script>
-
 <?php 
     require_once("$CFG->dirroot/mod/quiz/locallib.php");
 // Ensure that all form variables are initialized
@@ -380,6 +351,35 @@
 
 
 <?php if ($fix) { ?>
+
+<!-- Some javascript to allow for the hiding of advanced options
+     This code was derived from mod.html in the resource module -->
+<script language="javascript" type="text/javascript">
+    function showhide (id, set) {
+        divobj = document.getElementById(id);
+        butobj = document.getElementById(id+'button');
+        prefobj = document.getElementById(id+'pref');
+        if (set == true) {
+            if (prefobj.value == '1') {
+                divobj.style.display = 'block';
+                butobj.value = '<?php print_string("hideadvancedsettings") ?>';
+            } else {
+                divobj.style.display = 'none';
+                butobj.value = '<?php print_string("showadvancedsettings") ?>...';
+            }
+        } else {
+            if (prefobj.value == '1') {
+                divobj.style.display = 'none';
+                butobj.value = '<?php print_string("showadvancedsettings") ?>...';
+                prefobj.value = '0';
+            } else {
+                divobj.style.display = 'block';
+                butobj.value = '<?php print_string("hideadvancedsettings") ?>';
+                prefobj.value = '1';
+            }
+        }
+    }
+</script>
 
 <!-- Now comes a copy of the above but enclosed in a div with id optionsettings and with
      the conditions reversed, so that it shows exactly the options that are usually hidden.
