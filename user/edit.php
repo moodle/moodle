@@ -1,8 +1,8 @@
 <?PHP // $Id$
 
-	require_once("../config.php");
-	require_once("../lib/countries.php");
-	require_once("lib.php");
+    require_once("../config.php");
+    require_once("../lib/countries.php");
+    require_once("lib.php");
 
     require_variable($id);       // user id
     require_variable($course);   // course id
@@ -24,7 +24,7 @@
 
     } else {
         $newaccount  = false;
-	    require_login($course->id);
+        require_login($course->id);
     }
 
     if ($USER->id <> $user->id and !isadmin()) {
@@ -42,9 +42,13 @@
 
 /// If data submitted, then process and store.
 
-	if ($usernew = data_submitted()) {
+    if ($usernew = data_submitted()) {
         $usernew->firstname = strip_tags($usernew->firstname);
         $usernew->lastname  = strip_tags($usernew->lastname);
+        if (isset($usernew->username)) {
+            $usernew->username = trim(moodle_strtolower($usernew->username));
+        }
+
         $usernew->username = trim(moodle_strtolower($usernew->username));
         if (empty($_FILES['imagefile'])) {
             $_FILES['imagefile'] = NULL;    // To avoid using uninitialised variable later
@@ -58,7 +62,7 @@
             $user = $usernew;
 
         } else {
-		    $timenow = time();
+            $timenow = time();
 
             if ($filename = valid_uploaded_file($_FILES['imagefile'])) { 
                 $usernew->picture = save_user_image($user->id, $filename);
@@ -90,14 +94,14 @@
                     foreach ($usernew as $variable => $value) {
                         $USER->$variable = $value;
                     }
-		            redirect("view.php?id=$user->id&course=$course->id", get_string("changessaved"));
+                    redirect("view.php?id=$user->id&course=$course->id", get_string("changessaved"));
                 } else {
-		            redirect("../admin/user.php", get_string("changessaved"));
+                    redirect("../admin/user.php", get_string("changessaved"));
                 }
             } else {
                 error("Could not update the user record ($user->id)");
             }
-	    }
+        }
     }
     
 /// Otherwise fill and print the form.
@@ -113,13 +117,13 @@
             $userfullname = "$user->firstname $user->lastname";
         }
         if ($course->category) {
-	        print_header("$course->shortname: $streditmyprofile", "$course->fullname: $streditmyprofile",
+            print_header("$course->shortname: $streditmyprofile", "$course->fullname: $streditmyprofile",
                         "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> 
                         -> <A HREF=\"index.php?id=$course->id\">$strparticipants</A>
                         -> <A HREF=\"view.php?id=$user->id&course=$course->id\">$userfullname</A> 
                         -> $streditmyprofile", "");
         } else {
-	        print_header("$course->shortname: $streditmyprofile", "$course->fullname",
+            print_header("$course->shortname: $streditmyprofile", "$course->fullname",
                          "<A HREF=\"view.php?id=$user->id&course=$course->id\">$userfullname</A> 
                           -> $streditmyprofile", "");
         }
@@ -128,7 +132,7 @@
         $straddnewuser = get_string("addnewuser");
 
         $stradministration = get_string("administration");
-	    print_header("$course->shortname: $streditmyprofile", "$course->fullname",
+        print_header("$course->shortname: $streditmyprofile", "$course->fullname",
                      "<A HREF=\"$CFG->wwwroot/admin\">$stradministration</A> ->
                       $straddnewuser", "");
     }
@@ -147,7 +151,7 @@
        notify(get_string("someerrorswerefound"));
        echo "</CENTER>";
     }
-	include("edit.html");
+    include("edit.html");
     print_simple_box_end();
     print_footer($course);
 
