@@ -128,10 +128,22 @@ function journal_print_recent_activity(&$logs, $isteacher=false) {
     foreach ($logs as $log) {
         if ($log->module == "journal") {
             if ($log->action == "add entry" or $log->action == "update entry") {
-                if (!isset($journals[$log->info])) {
-                    $journals[$log->info] = journal_log_info($log);
-                    $journals[$log->info]->time = $log->time;
-                    $journals[$log->info]->url = $log->url;
+                ///Get journal info.  I'll need it later
+                $j_log_info = journal_log_info($log);
+
+                //Create a temp valid module structure (course,id)
+                $tempmod->course = $log->course;
+                $tempmod->id = $j_log_info->id;
+                //Obtain the visible property from the instance
+                $modvisible = instance_is_visible($log->module,$tempmod);
+
+                //Only if the mod is visible
+                if ($modvisible) {
+                    if (!isset($journals[$log->info])) {
+                        $journals[$log->info] = $j_log_info;
+                        $journals[$log->info]->time = $log->time;
+                        $journals[$log->info]->url = $log->url;
+                    }
                 }
             }
         }
