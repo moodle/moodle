@@ -204,7 +204,7 @@ table.formtable td {
 .section .activity img.activityicon {
     vertical-align:middle;
     height:16px;
-    weight:16px;
+    width:16px;
 }
 
 .section img.movetarget {
@@ -224,29 +224,53 @@ table.formtable td {
 
 
 /* course */
-.weeklyoutlinecontent,
-.topicsoutlinecontent {
-    border-width:1px;
-    border-left:0px;
-    border-right:0px;
-    border-style:solid;
+
+#course-view .section td {
+    border-color:#DDDDDD;
+    vertical-align:top;
 }
 
-.weeklyoutlinecontenthighlight,
-.topicsoutlinecontenthighlight {
+#course-view .section .content {
+    padding:5px;
+    border-style:solid;
     border-width:1px;
     border-left:0px;
     border-right:0px;
-    border-style:solid;
 }
 
-.weeklyoutlinecontenthidden,
-.topicsoutlinecontenthidden {
-    border-width:1px;
-    border-left:0px;
-    border-right:0px;
+#course-view .section .side {
+    padding:5px;
     border-style:solid;
+    border-width:1px;
+    background: #EEEEEE;
 }
+
+#course-view .section .left {
+    border-right:0px;
+    font-style:bold;
+}
+
+#course-view .section .right {
+    border-left:0px;
+}
+
+#course-view .current .side{
+    background: #FFD991;
+}
+
+#course-view .topics {
+    margin-top: 9px;
+}
+
+#course-view .weeks {
+    margin-top: 9px;
+}
+
+#course-view .section .spacer {
+    height:0.5em;
+}
+
+
 
 .categoryboxcontent,
 .courseboxcontent {
