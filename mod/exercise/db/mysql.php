@@ -30,6 +30,10 @@ function exercise_upgrade($oldversion) {
 		table_column("exercise", "", "password", "VARCHAR", "32", "", "", "NOT NULL");
     }
 
+    if ($oldversion < 2004091000) {
+        table_column("exercise_assessments","generalcomment","generalcomment","text","","","","NOT NULL");
+        table_column("exercise_assessments","teachercomment","teachercomment","text","","","","NOT NULL");
+    }
     return true;
 }
 

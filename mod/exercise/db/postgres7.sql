@@ -55,8 +55,8 @@ CREATE TABLE prefix_exercise_assessments (
   grade float NOT NULL default '0',
   gradinggrade INT NOT NULL default '0',
   mailed INT2  NOT NULL default '0',
-  generalcomment text NOT NULL,
-  teachercomment text NOT NULL
+  generalcomment text NOT NULL default '',
+  teachercomment text NOT NULL default ''
   );
 # --------------------------------------------------------
 CREATE INDEX prefix_exercise_assessments_submissionid_idx ON prefix_exercise_assessments (submissionid);

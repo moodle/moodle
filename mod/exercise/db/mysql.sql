@@ -57,8 +57,8 @@ CREATE TABLE `prefix_exercise_assessments` (
   `grade` float NOT NULL default '0',
   `gradinggrade` int(3) NOT NULL default '0',
   `mailed` tinyint(2) unsigned NOT NULL default '0',
-  `generalcomment` text NOT NULL,
-  `teachercomment` text NOT NULL,
+  `generalcomment` text NOT NULL default '',
+  `teachercomment` text NOT NULL default '',
    PRIMARY KEY  (`id`),
    INDEX (`submissionid`),
    INDEX (`userid`) 
