@@ -100,7 +100,7 @@ $string['type'] = "ÇáäæÚ";
 $string['category'] = "ÊÕäíÝ";
 $string['viewallanswers'] = "ÚÑÖ \$a ÇáÇãÊÍÇäÇÊ ÇáãäÌÒÉ";
 $string['yourfinalgradeis'] = "ÊÕäíÝß ÇáäåÇÆí Úä åÐÇ ÇáÇãÊÍÇä åæ \$a";
-$string[answersingleno] = "íÓãÍ ÈÊÚÏÏ ÇáÃÓÆáÉ";
-$string[readytosend] = "ÃäÊ ÈÕÏÏ ÅÑÓÇá ÇÎÊÈÇÑß ÈÇáßÇãá ááÊÞííã. åá ÃäÊ ãÊÃßÏ æÊÑíÏ ÇáÇÓÊãÑÇÑ¿";
+$string['answersingleno'] = "íÓãÍ ÈÊÚÏÏ ÇáÃÓÆáÉ";
+$string['readytosend'] = "ÃäÊ ÈÕÏÏ ÅÑÓÇá ÇÎÊÈÇÑß ÈÇáßÇãá ááÊÞííã. åá ÃäÊ ãÊÃßÏ æÊÑíÏ ÇáÇÓÊãÑÇÑ¿";
 ?>
 

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.0.8 dev (2002122301)
+      // moodle.php - created with Moodle 1.0.9 development (2003011300)
 
 
 $string['action'] = "Aktion";
@@ -436,6 +436,14 @@ $string['someerrorswerefound'] = "Eine Information fehlte oder war falsch. Schau
 $string['startdate'] = "Datum des Kursbeginns";
 $string['startsignup'] = "Jetzt einen neuen Zugang anlegen!";
 $string['status'] = "Status";
+$string['strftimedate'] = "%%d %%B %%Y";
+$string['strftimedateshort'] = "%%d %%B";
+$string['strftimedatetime'] = "%%d %%B %%Y, %%H:%%M";
+$string['strftimedaydate'] = "%%A, %%d %%B %%Y";
+$string['strftimedaydatetime'] = "%%A, %%d %%B %%Y, %%H:%%M";
+$string['strftimerecent'] = "%%d %%b, %%H:%%M";
+$string['strftimerecentfull'] = "%%a, %%d %%b %%Y, %%H:%%M";
+$string['strftimetime'] = "%%H:%%M";
 $string['stringsnotset'] = "Folgende Textteile sind nicht vorhanden in \$a";
 $string['studentnotallowed'] = "Entschuldigung, aber Sie können diesen Kurs nich al '\$a' betreten";
 $string['success'] = "Erfolg";
