@@ -66,7 +66,7 @@ CREATE TABLE prefix_glossary_entries (
 CREATE TABLE prefix_glossary_alias (
      id int(10) unsigned NOT NULL auto_increment,
      entryid int(10) unsigned NOT NULL default '0',
-     alias text NOT NULL,
+     alias varchar(255) NOT NULL,
      PRIMARY KEY  (id)
 ) TYPE=MyISAM COMMENT='entries alias';
 

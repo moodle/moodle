@@ -78,7 +78,7 @@ CREATE TABLE prefix_glossary_categories (
 CREATE TABLE prefix_glossary_alias (
      id SERIAL,
      entryid int4 NOT NULL default '0',
-     alias TEXT NOT NULL,
+     alias varchar(255) NOT NULL,
      PRIMARY KEY  (id)
 );
 

@@ -270,6 +270,10 @@ function glossary_upgrade($oldversion) {
             }
         }
   }
+
+  if ( $oldversion < 2004072300) {
+      table_column("glossary_alias", "alias", "alias", "VARCHAR", "255", "", "", "NOT NULL");
+  }
     
   return true;
 }
