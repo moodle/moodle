@@ -7,15 +7,21 @@ $string[modulenameplural] = "Assignments";
 
 
 $string[assignmentdetails] = "Assignment details";
+$string[assignmentname] = "Assignment name";
+$string[assignmenttype] = "Assignment type";
+$string[description] = "Description";
 $string[duedate] = "Assignment due";
 $string[early] = "\$a early";
 $string[failedupdatefeedback] = "Failed to update submission feedback for user \$a";
 $string[feedbackupdated] = "Submissions feedback updated for \$a people";
 $string[late] = "\$a late";
+$string[maximumgrade] = "Maximum grade";
+$string[maximumsize] = "Maximum size";
 $string[notsubmittedyet] = "Not submitted yet";
 $string[overwritewarning] = "Warning: uploading again will REPLACE your current submission";
 $string[submissionfeedback] = "Submission feedback";
 $string[submissions] = "Submissions";
+$string[typeuploadsingle] = "Upload a single file, worth between 0 - 100 marks";
 $string[uploadedfiles] = "uploaded files";
 $string[viewsubmissions] = "View \$a submitted assignments";
 $string[yoursubmission] = "Your submission";

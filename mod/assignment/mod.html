@@ -1,26 +1,26 @@
 <form name="form" method="post" action="<?=$ME ?>">
 <table cellpadding=5>
 <tr valign=top>
-    <td align=right><P><B>Assignment Name:</B></P></TD>
+    <td align=right><P><B><? print_string("assignmentname", "assignment") ?>:</B></P></TD>
     <td>
         <input type="text" name="name" size=30 value="<? p($form->name) ?>">
     </td>
 </tr>
 <tr valign=top>
-    <td align=right><P><B>Description:</B></P></TD>
+    <td align=right><P><B><? print_string("description", "assignment") ?>:</B></P></TD>
     <td>
         <textarea name="description" rows=15 cols=30 wrap="virtual"><? p($form->description) ?></textarea>
     </td>
 </tr>
 <tr valign=top>
-    <td align=right><P><B>Assignment Type:</B></P></TD>
+    <td align=right><P><B><? print_string("assignmenttype", "assignment") ?>:</B></P></TD>
     <td>
         <input type="hidden" name=type value="<? p($form->type) ?>">
-        Upload a single file, worth between 0 - 100 marks
+        <? print_string("typeuploadsingle", "assignment") ?>
     </td>
 </tr>
 <tr valign=top>
-    <td align=right><P><B>Maximum grade:</B></P></TD>
+    <td align=right><P><B><? print_string("maximumgrade", "assignment") ?>:</B></P></TD>
     <td>
         <?
         for ($i=100; $i>=0; $i--) {
@@ -31,7 +31,7 @@
     </td>
 </tr>
 <tr valign=top>
-    <td align=right><P><B>Maximum size:</B></P></TD>
+    <td align=right><P><B><? print_string("maximumsize", "assignment") ?>:</B></P></TD>
     <td>
         <?
         $filesize[10000] = "10kb";
@@ -48,7 +48,7 @@
     </td>
 </tr>
 <tr valign=top>
-    <td align=right><P><B>Due date:</B></td>
+    <td align=right><P><B><? print_string("duedate", "assignment") ?>:</B></td>
     <td><?
            print_date_selector("dueday", "duemonth", "dueyear", $form->timedue);
            echo "&nbsp;-&nbsp;";
@@ -65,6 +65,6 @@
 <input type="hidden" name=modulename value="<? p($form->modulename) ?>">
 <input type="hidden" name=instance   value="<? p($form->instance) ?>">
 <input type="hidden" name=mode       value="<? p($form->mode) ?>">
-<input type="submit" value="Save these settings">
+<input type="submit" value="<? print_string("savechanges") ?>">
 </CENTER>
 </FORM>
