@@ -112,7 +112,7 @@
 
                 $true->answer   = get_string("true", "quiz");
                 $true->question = $question->id;
-                $true->fraction = "1.0";
+                $true->fraction = $form->answer;
                 $true->feedback = $form->feedbacktrue;
                 if (!$true->id = insert_record("quiz_answers", $true)) {
                     error("Could not insert quiz answer \"true\")!");
@@ -120,7 +120,7 @@
 
                 $false->answer   = get_string("false", "quiz");
                 $false->question = $question->id;
-                $false->fraction = "0";
+                $false->fraction = 1 - (int)$form->answer;
                 $false->feedback = $form->feedbackfalse;
                 if (!$false->id = insert_record("quiz_answers", $false)) {
                     error("Could not insert quiz answer \"false\")!");
