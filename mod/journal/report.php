@@ -31,8 +31,8 @@
         }
         
     } else {
-        $entrybyuser = array () ;
-        $entrybyentry   = array () ;
+        $entrybyuser  = array () ;
+        $entrybyentry = array () ;
     }
 
     print_header("$course->shortname: Journals", "$course->fullname",
@@ -94,28 +94,25 @@
         $grades = make_grades_menu($journal->assessed);
         $teachers = get_course_teachers($course->id);
 
-        echo "<FORM ACTION=report.php METHOD=post>\n";
+        echo "<form action=report.php method=post>\n";
 
         if ($usersdone = journal_get_users_done($journal)) {
             foreach ($usersdone as $user) {
-                $entry = $entrybyuser[$user->id];
-                journal_print_user_entry($course, $user, $entry, $teachers, $grades);
+                journal_print_user_entry($course, $user, $entrybyuser[$user->id], $teachers, $grades);
+                unset($users[$user->id]);
             }
         }
 
-        foreach ($users as $user) {
-            if (empty($usersdone[$user->id])) {
-                $entry = NULL;
-                journal_print_user_entry($course, $user, $entry, $teachers, $grades);
-            }
+        foreach ($users as $user) {       // Remaining users
+            journal_print_user_entry($course, $user, NULL, $teachers, $grades);
         }
 
         $strsaveallfeedback = get_string("saveallfeedback", "journal");
-        echo "<CENTER>";
-        echo "<INPUT TYPE=hidden NAME=id VALUE=\"$cm->id\">";
-        echo "<INPUT TYPE=submit VALUE=\"$strsaveallfeedback\">";
-        echo "</CENTER>";
-        echo "</FORM>";
+        echo "<center>";
+        echo "<input type=hidden name=id value=\"$cm->id\">";
+        echo "<input type=submit value=\"$strsaveallfeedback\">";
+        echo "</center>";
+        echo "</form>";
     }
     
     print_footer($course);
