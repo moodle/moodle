@@ -10,6 +10,9 @@
     $CFG->texfilterdir = "filter/tex";
     $CFG->teximagedir = "filter/tex";
 
+    $cmd = '';      // Initialise these variables
+    $status = '';
+
     error_reporting(E_ALL);
 
     $lifetime = 86400;
