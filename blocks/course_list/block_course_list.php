@@ -91,7 +91,9 @@ class CourseBlock_course_list extends MoodleBlock {
                 } else {
                     $this->content->items = array();
                     $this->content->icons = array();
-                    $this->content->footer = get_string('nocoursesyet');
+                    $this->content->footer = get_string('nocoursesyet').'<br /><br />'.
+                            '<a href="'.$CFG->wwwroot.'/course/edit.php?category='.$category->id.'">'.
+                            get_string("addnewcourse").'</a>...';
                 }
                 $this->title = get_string('courses');
             }
