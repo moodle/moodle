@@ -42,6 +42,44 @@ function check_php_version($version="4.1.0") {
     return ($curversion >= $minversion);
 }
 
+function check_gd_version() {
+/// Hack to find out the GD version by parsing phpinfo output
+    $gdversion = 0;
+
+    if (function_exists('gd_info')){
+        $gd_info = gd_info();
+        if (substr_count($gd_info['GD Version'], "2.")) {
+            $gdversion = 2;
+        } else if (substr_count($gd_info['GD Version'], "1.")) {
+            $gdversion = 1;
+        }
+
+    } else {
+        ob_start();
+        phpinfo(8);
+        $phpinfo = ob_get_contents();
+        ob_end_clean();
+
+        $phpinfo = explode("\n",$phpinfo);
+
+
+        foreach ($phpinfo as $text) {
+            $parts = explode('</td>',$text);
+            foreach ($parts as $key => $val) {
+                $parts[$key] = trim(strip_tags($val));
+            }
+            if ($parts[0] == "GD Version") {
+                if (substr_count($parts[1], "2.0")) {
+                    $parts[1] = "2.0";
+                }
+                $gdversion = intval($parts[1]);
+            }
+        }
+    }
+
+    return $gdversion;   // 1, 2 or 0
+}
+
 
 
 /////////////////////////////////////////////////////////////////////////////////////
@@ -96,6 +134,14 @@ function check_php_version($version="4.1.0") {
     } else {
         print_row("session.save_path", "Works");
     }
+
+    if (!$gdversion = check_gd_version())  {
+        print_row("GD Library", "No", "The GD library should be present");
+        $error++;
+    } else {
+        print_row("GD Library", $gdversion);
+    }
+
 
     echo "</table>";
 
