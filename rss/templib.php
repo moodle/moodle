@@ -4,7 +4,7 @@ global $CFG;
 
 //initialize config vars for rss_client block if missing
 if (empty($CFG->block_rss_client_submitters) ) {
-    $CFG->block_rss_client_submitters = 2; //default to admin only
+    $CFG->block_rss_client_submitters = 1; //default to admin only
 }
 if (empty($CFG->block_rss_client_num_entries) ) {
     $CFG->block_rss_client_num_entries = 5; //default to 5 entries per block

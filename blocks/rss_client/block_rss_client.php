@@ -20,6 +20,7 @@ class block_rss_client extends block_base {
     }
     
     function get_content() {
+        require_once($CFG->dirroot .'/rss/templib.php');
         global $CFG, $editing;
 
         if($this->content !== NULL) {
@@ -36,7 +37,6 @@ class block_rss_client extends block_base {
             return $this->content;
         }
 
-        require_once($CFG->dirroot .'/rss/templib.php');
         $output = '';
         $rssid = -1;
         $display_description = false;

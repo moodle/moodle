@@ -26,9 +26,6 @@
     print_header('Add/Edit RSS Feeds','Add/Edit RSS Feeds','Add/Edit RSS Feeds' );
 
     //check to make sure that the user is allowed to post new feeds
-    if (empty( $CFG->block_rss_client_submitters)) {
-         $CFG->block_rss_client_submitters = 0;
-    }
     $submitters = $CFG->block_rss_client_submitters;
     $isteacher = false;
     if ($courseid != 'none'){
