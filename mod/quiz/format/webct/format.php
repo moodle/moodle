@@ -362,7 +362,7 @@ class quiz_file_format extends quiz_default_format {
                             case SHORTANSWER:
                                 if ($maxfraction != 1) {
                                     $maxfraction = $maxfraction * 100;
-                                    $errors[] = get_string("wronggrade", "quiz", $nLineCounter).get_string("fractionsnomax", "quiz", $maxfraction);
+                                    $errors[] = "'$question->name': ".get_string("wronggrade", "quiz", $nLineCounter).get_string("fractionsnomax", "quiz", $maxfraction);
                                     $QuestionOK = FALSE;
                                 }
                                 break;
@@ -371,14 +371,15 @@ class quiz_file_format extends quiz_default_format {
                                 if ($question->single) {
                                     if ($maxfraction != 1) {
                                         $maxfraction = $maxfraction * 100;
-                                        $errors[] = get_string("wronggrade", "quiz", $nLineCounter).get_string("fractionsnomax", "quiz", $maxfraction);
+                                        $errors[] = "'$question->name': ".get_string("wronggrade", "quiz", $nLineCounter).get_string("fractionsnomax", "quiz", $maxfraction);
                                         $QuestionOK = FALSE;
                                     }
                                 } else {
                                     $totalfraction = round($totalfraction,2);
                                     if ($totalfraction != 1) {
+                                echo "<p>$totalfraction</p>";
                                         $totalfraction = $totalfraction * 100;
-                                        $errors[] = get_string("wronggrade", "quiz", $nLineCounter).get_string("fractionsaddwrong", "quiz", $totalfraction);
+                                        $errors[] = "'$question->name': ".get_string("wronggrade", "quiz", $nLineCounter).get_string("fractionsaddwrong", "quiz", $totalfraction);
                                         $QuestionOK = FALSE;
                                     }
                                 }
@@ -387,7 +388,7 @@ class quiz_file_format extends quiz_default_format {
                             case CALCULATED:
                                 foreach ($question->answers as $answer) {
                                     if ($formulaerror = quiz_qtype_calculated_find_formula_errors($answer->answer)) {
-                                        $warnings[] = $formulaerror;
+                                        $warnings[] = "'$question->name': ". $formulaerror;
                                         $QuestionOK = FALSE;
                                     }
                                 }
@@ -550,8 +551,7 @@ class quiz_file_format extends quiz_default_format {
                 $question->answers[$currentchoice]->feedback = '';
                 $question->answers[$currentchoice]->correctanswerlength = 4;
                 
-                $datasetnames = $qtypecalculated
-                        ->find_dataset_names($webct_options[1]);
+                $datasetnames = $qtypecalculated->find_dataset_names($webct_options[1]);
                 foreach ($datasetnames as $datasetname) {
                     $question->datasets[$datasetname]->items = array();
                 }
