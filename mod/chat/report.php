@@ -94,6 +94,8 @@
                  <a href=\"view.php?id=$cm->id\">$chat->name</a> -> $strchatreport", 
                   "", "", true, "", navmenu($course, $cm));
 
+    print_heading($chat->name.": ".get_string("sessions", "chat"));
+
 
 /// Check to see if groups are being used here
     if ($groupmode = groupmode($course, $cm)) {   // Groups are being used
@@ -109,8 +111,6 @@
         $groupselect = "";
         $groupparam = "";
     }
-
-    print_heading($chat->name.": ".get_string("sessions", "chat"));
 
 /// Delete a session if one has been specified
 

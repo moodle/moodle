@@ -64,6 +64,7 @@
               get_string("viewreport", "chat")."</a></p>";
     }
 
+    print_heading($chat->name);
 
 /// Check to see if groups are being used here
     if ($groupmode = groupmode($course, $cm)) {   // Groups are being used
@@ -98,8 +99,6 @@
    // chat_display_version("header", $browser);
    // chat_display_version("box", $browser);
    // chat_display_version("text", $browser);
-
-    print_heading($chat->name);
 
 
     if (!isguest()) {
