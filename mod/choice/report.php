@@ -85,22 +85,14 @@
     echo "<table cellpadding=\"5\" cellspacing=\"10\" align=\"center\">";
     echo "<tr>";
     foreach ($useranswer as $key => $answer) {
-        if ($key) {
-            echo "<th width=\"$tablewidth%\">";
-        } else {
-            echo "<th bgcolor=\"$THEME->body\" width=\"$tablewidth%\">";
-        }
+        echo "<th class=\"col$key\" width=\"$tablewidth%\">";
         echo choice_get_answer($choice, $key);
         echo "</th>";
     }
     echo "</tr><tr>";
 
     foreach ($useranswer as $key => $answer) {
-        if ($key) {
-            echo "<td width=\"$tablewidth%\" valign=\"top\" nowrap=\"nowrap\" bgcolor=\"$THEME->cellcontent\">";
-        } else {
-            echo "<td width=\"$tablewidth%\" valign=\"top\" nowrap=\"nowrap\" bgcolor=\"$THEME->body\">";
-        }
+        echo "<td class=\"col$key\" width=\"$tablewidth%\" valign=\"top\" nowrap=\"nowrap\">";
 
         echo "<table width=\"100%\">";
         foreach ($answer as $user) {

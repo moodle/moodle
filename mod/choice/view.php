@@ -185,9 +185,9 @@
             echo "<tr>";
             foreach ($useranswer as $key => $answer) {
                 if ($key) {
-                    echo "<th width=\"$tablewidth%\">";
+                    echo "<th class=\"col$key\" width=\"$tablewidth%\">";
                 } else if ($choice->showunanswered) {
-                    echo "<th bgcolor=\"$THEME->body\" width=\"$tablewidth%\">";
+                    echo "<th class=\"col$key\" width=\"$tablewidth%\">";
                 } else {
                     continue;
                 }
@@ -198,9 +198,9 @@
         
             foreach ($useranswer as $key => $answer) {
                 if ($key) {
-                    echo "<td width=\"$tablewidth%\" valign=\"top\" nowrap=\"nowrap\" bgcolor=\"$THEME->cellcontent\">";
+                    echo "<td class=\"col$key\" width=\"$tablewidth%\" valign=\"top\" nowrap=\"nowrap\">";
                 } else if ($choice->showunanswered) {
-                    echo "<td width=\"$tablewidth%\" valign=\"top\" nowrap=\"nowrap\" bgcolor=\"$THEME->body\">";
+                    echo "<td class=\"col$key\" width=\"$tablewidth%\" valign=\"top\" nowrap=\"nowrap\">";
                 } else {
                     continue;
                 }
@@ -230,7 +230,7 @@
                 if ($key) {
                     echo "<th width=\"$tablewidth%\">";
                 } else if ($choice->showunanswered) {
-                    echo "<th bgcolor=\"$THEME->body\" width=\"$tablewidth%\">";
+                    echo "<th width=\"$tablewidth%\">";
                 } else {
                     continue;
                 }
