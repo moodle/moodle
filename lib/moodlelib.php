@@ -1341,6 +1341,7 @@ function create_user_record($username, $password) {
 
     $newuser->username = $username;
     $newuser->password = md5($password);
+    $newuser->lang = $CFG->lang
     $newuser->confirmed = 1;
     $newuser->lastIP = $REMOTE_ADDR;
     $newuser->timemodified = time();
