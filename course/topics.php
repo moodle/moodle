@@ -80,7 +80,7 @@
 
     if (isteacher($course->id)) {
         $adminicon[]="<IMG SRC=\"../pix/i/edit.gif\" HEIGHT=16 WIDTH=16 ALT=\"Edit\">";
-        if ($USER->editing) {
+        if (isediting($course->id)) {
             $admindata[]="<A HREF=\"view.php?id=$course->id&edit=off\">Turn editing off</A>";
         } else {
             $admindata[]="<A HREF=\"view.php?id=$course->id&edit=on\">Turn editing on</A>";
@@ -145,7 +145,7 @@
             $thissection->id = insert_record("course_sections", $thissection);
         }
 
-        if ($USER->editing) {
+        if (isediting($course->id)) {
             $thissection->summary .= "&nbsp;<A HREF=editsection.php?id=$thissection->id><IMG SRC=\"../pix/t/edit.gif\" BORDER=0 ALT=\"Edit summary\"></A></P>";
         }
 
@@ -162,7 +162,7 @@
                 echo "<IMG SRC=\"../mod/$mod->modname/icon.gif\" HEIGHT=16 WIDTH=16 ALT=\"$mod->modfullname\">";
                 echo " <A TITLE=\"$mod->modfullname\"";
                 echo "   HREF=\"../mod/$mod->modname/view.php?id=$mod->id\">$instancename</A>";
-                if ($USER->editing) {
+                if (isediting($course->id)) {
                     echo make_editing_buttons($mod->id);
                 }
                 echo "<BR>\n";
@@ -170,7 +170,7 @@
         }
         echo "</UL></P>\n";
 
-        if ($USER->editing) {
+        if (isediting($course->id)) {
             echo "<DIV ALIGN=right>";
             popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&section=$section&add=", 
                         $modtypes, "section$section", "", "Add...");
@@ -185,7 +185,7 @@
         } else {
             echo "<A HREF=\"view.php?id=$course->id&topic=$section\" TITLE=\"Show only topic $section\"><IMG SRC=../pix/i/one.gif BORDER=0></A><BR><BR>";
         }
-        if ($USER->editing and $course->marker != $section) {
+        if (isediting($course->id) and $course->marker != $section) {
             echo "<A HREF=\"view.php?id=$course->id&marker=$section\" TITLE=\"Mark this topic as the current topic\"><IMG SRC=../pix/i/marker.gif BORDER=0></A><BR><BR>";
         }
         echo "</TD>";
