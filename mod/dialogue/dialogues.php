@@ -129,6 +129,7 @@
 			foreach ($conversations as $conversation) {
 				$textarea_name = "reply$conversation->id";
 				if (!empty($_POST[$textarea_name])) {
+                    unset($item);
 					$item->dialogueid = $dialogue->id;
 					$item->conversationid = $conversation->id;
 					$item->userid = $USER->id;
