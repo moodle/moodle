@@ -52,6 +52,8 @@
                     error("Serious Error! Could not update the course record! (id = $form->id)");
                 }
             } else {
+                $form->timecreated = time();
+
                 if ($newid = insert_record("course", $form)) {  // Set up new course
                     $week->course = $newid;   // Create a default week.
                     $week->week = 0;
