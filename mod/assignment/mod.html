@@ -13,11 +13,46 @@
     </td>
 </tr>
 <tr valign=top>
+    <td align=right><P><B>Assignment Type:</B></P></TD>
+    <td>
+        <input type="hidden" name=type value="<? p($form->type) ?>">
+        Upload a single file, worth between 0 - 100 marks
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><P><B>Maximum grade:</B></P></TD>
+    <td>
+        <?
+        for ($i=100; $i>=0; $i--) {
+            $grades[$i] = $i;
+        }
+        choose_from_menu($grades, "grade", "$form->grade");
+        ?>
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><P><B>Maximum size:</B></P></TD>
+    <td>
+        <?
+        $filesize[10000] = "10kb";
+        $filesize[50000] = "50kb";
+        $filesize[100000] = "100kb";
+        $filesize[500000] = "500kb";
+        $filesize[1000000] = "1000Kb (1Mb)";
+        $filesize[2000000] = "2000Kb (2Mb)";
+        if (!$form->maxbytes) {
+            $form->maxbytes = 500000;
+        }
+        choose_from_menu($filesize, "maxbytes", "$form->maxbytes");
+        ?>
+    </td>
+</tr>
+<tr valign=top>
     <td align=right><P><B>Due date:</B></td>
     <td><?
-           print_date_selector("dueday", "duemonth", "dueyear", $form->dueday, $form->duemonth, $form->dueyear);
-           echo "-";
-           print_time_selector("duehour", "dueminute", $form->duehour, $form->dueminute);
+           print_date_selector("dueday", "duemonth", "dueyear", $form->timedue);
+           echo "&nbsp;-&nbsp;";
+           print_time_selector("duehour", "dueminute", $form->timedue);
            formerr($err["duedate"]);
     ?></td>
 </tr>
