@@ -22,7 +22,7 @@
 
     $table->align = array ("right", "left");
 
-    $table->data[] = array("<b><a href=\"auth.php\">".get_string("authentication")."</a></b>",
+    $table->data[] = array("<b><a href=\"auth.php?sesskey=$USER->sesskey\">".get_string("authentication")."</a></b>",
                            get_string("adminhelpauthentication"));
 
     $table->data[] = array("<b><a href=\"user.php\">".get_string("edituser")."</a></b>",

@@ -295,7 +295,7 @@
                             $configdata);
 
 
-    $userdata = "<font size=+1>&nbsp;</font><a href=\"auth.php\">".get_string("authentication")."</a> - <font size=1>".
+    $userdata = "<font size=+1>&nbsp;</font><a href=\"auth.php?sesskey=$USER->sesskey\">".get_string("authentication")."</a> - <font size=1>".
                  get_string("adminhelpauthentication")."</font><br />";
     $userdata .= "<font size=+1>&nbsp;</font><a href=\"user.php\">".get_string("edituser")."</a> - <font size=1>".
                  get_string("adminhelpedituser")."</font><br />";
