@@ -1,4 +1,4 @@
-<?php
+<?php  // $Id$
 defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
 
 $window = (!empty($quiz->popup)) ? 'quizpopup' : '_self';
