@@ -32,10 +32,11 @@
 /// Constants
 
 /// Define text formatting types ... eventually we can add Wiki, BBcode etc
-define("FORMAT_MOODLE", "0");   // Does all sorts of transformations and filtering
-define("FORMAT_HTML",   "1");   // Plain HTML (with some tags stripped)
-define("FORMAT_PLAIN",  "2");   // Plain text (even tags are printed in full)
-define("FORMAT_WIKI",   "3");   // Wiki-formatted text
+define("FORMAT_MOODLE",   "0");   // Does all sorts of transformations and filtering
+define("FORMAT_HTML",     "1");   // Plain HTML (with some tags stripped)
+define("FORMAT_PLAIN",    "2");   // Plain text (even tags are printed in full)
+define("FORMAT_WIKI",     "3");   // Wiki-formatted text
+define("FORMAT_MARKDOWN", "4");   // Markdown-formatted text http://daringfireball.net/projects/markdown/
 
 $ALLOWED_TAGS =
 "<p><br><b><i><u><font><table><tbody><span><div><tr><td><th><ol><ul><dl><li><dt><dd><h1><h2><h3><h4><h5><h6><hr><img><a><strong><emphasis><em><sup><sub><address><cite><blockquote><pre><strike><embed><object><param><acronym><nolink><style><lang><tex><algebra><math><mi><mn><mo><mtext><mspace><ms><mrow><mfrac><msqrt><mroot><mstyle><merror><mpadded><mphantom><mfenced><msub><msup><msubsup><munder><mover><munderover><mmultiscripts><mtable><mtr><mtd><maligngroup><malignmark><maction><cn><ci><apply><reln><fn><interval><inverse><sep><condition><declare><lambda><compose><ident><quotient><exp><factorial><divide><max><min><minus><plus><power><rem><times><root><gcd><and><or><xor><not><implies><forall><exists><abs><conjugate><eq><neq><gt><lt><geq><leq><ln><log><int><diff><partialdiff><lowlimit><uplimit><bvar><degree><set><list><union><intersect><in><notin><subset><prsubset><notsubset><notprsubset><setdiff><sum><product><limit><tendsto><mean><sdev><variance><median><mode><moment><vector><matrix><matrixrow><determinant><transpose><selector><annotation><semantics><annotation-xml>";
@@ -569,7 +570,8 @@ function format_text_menu() {
     return array (FORMAT_MOODLE => get_string("formattext"),
                   FORMAT_HTML   => get_string("formathtml"),
                   FORMAT_PLAIN  => get_string("formatplain"),
-                  FORMAT_WIKI   => get_string("formatwiki"));
+                  FORMAT_WIKI   => get_string("formatwiki"),
+                  FORMAT_MARKDOWN  => get_string("formatmarkdown"));
 }
 
 function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL ) {
@@ -613,6 +615,11 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
         case FORMAT_WIKI:
             $text = wiki_to_html($text);
             $text = rebuildnolinktag($text);
+            $text = filter_text($text, $courseid);
+            break;
+
+        case FORMAT_MARKDOWN:
+            $text = markdown_to_html($text);
             $text = filter_text($text, $courseid);
             break;
 
@@ -666,7 +673,9 @@ function format_text_email($text, $format) {
             return html_to_text($text);
             break;
 
-        default:  // FORMAT_MOODLE or anything else
+        case FORMAT_MOODLE:
+        case FORMAT_MARKDOWN:
+        default: 
             $text = eregi_replace('(<a [^<]*href=["|\']?([^ "\']*)["|\']?[^>]*>([^<]*)</a>)','\\3 [\\2]', $text);
             return strtr(strip_tags($text), array_flip(get_html_translation_table(HTML_ENTITIES)));
             break;
@@ -705,22 +714,29 @@ function clean_text($text, $format=FORMAT_MOODLE) {
     global $ALLOWED_TAGS;
 
     switch ($format) {
-        case FORMAT_MOODLE:
-        case FORMAT_HTML:
-        case FORMAT_WIKI:
+        case FORMAT_PLAIN:
+            return $text;
+
+        default:
+
         /// Remove tags that are not allowed
             $text = strip_tags($text, $ALLOWED_TAGS);
+
         /// Munge javascript: label
             $text = str_ireplace("javascript:", "Xjavascript:", $text);
+            $text = str_ireplace("vbscript:", "Xvbscript:", $text);
+
         /// Remove script events
             $text = eregi_replace("([^a-z])language([[:space:]]*)=", "\\1Xlanguage=", $text);
             $text = eregi_replace("([^a-z])on([a-z]+)([[:space:]]*)=", "\\1Xon\\2=", $text);
-            return $text;
 
-        case FORMAT_PLAIN:
+        /// Remove Javascript entities
+            $text = eregi_replace("&{([^};]*)};", "\\1", $text);
+
             return $text;
     }
 }
+
 
 function replace_smilies(&$text) {
 /// Replaces all known smileys in the text with image equivalents
@@ -832,6 +848,15 @@ function wiki_to_html($text) {
 
     $wiki = new Wiki;
     return $wiki->format($text);
+}
+
+function markdown_to_html($text) {
+/// Given Markdown formatted text, make it into XHTML using external function
+    global $CFG;
+
+    require_once("$CFG->libdir/markdown.php");
+
+    return Markdown($text);
 }
 
 function html_to_text($html) {
