@@ -21,8 +21,8 @@
     }
 
     if ( isteacher($course->id) ) {
-        $data[GLOSSARY_IMPORT_VIEW]->caption = "Import Entries";
-        $data[GLOSSARY_EXPORT_VIEW]->caption = "Export Entries";
+        $data[GLOSSARY_IMPORT_VIEW]->caption = get_string("importentries", "glossary");
+        $data[GLOSSARY_EXPORT_VIEW]->caption = get_string("exportentries", "glossary");
 
         $data[GLOSSARY_IMPORT_VIEW]->link = "import.php?id=$cm->id";
         $data[GLOSSARY_EXPORT_VIEW]->link = "export.php?id=$cm->id&tab=".GLOSSARY_CATEGORY_VIEW;
@@ -37,10 +37,8 @@
     $data[GLOSSARY_DATE_VIEW]->link = "view.php?id=$id&mode=date";
 
     if ( $glossary->displayformat != GLOSSARY_FORMAT_CONTINUOUS ) {
-        $data[GLOSSARY_STANDARD_VIEW]->link = "view.php?id=$id";
-        $data[GLOSSARY_CATEGORY_VIEW]->link = "view.php?id=$id&tab=".GLOSSARY_CATEGORY_VIEW;
 
-        $data[GLOSSARY_STANDARD_VIEW]->link = "view.php?id=$id";
+        $data[GLOSSARY_STANDARD_VIEW]->link = "view.php?id=$id&mode=letter";
         $data[GLOSSARY_CATEGORY_VIEW]->link = "view.php?id=$id&mode=cat";
         $data[GLOSSARY_AUTHOR_VIEW]->link = "view.php?id=$id&mode=author";
 
