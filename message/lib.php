@@ -64,7 +64,9 @@ function message_print_contacts() {
             print_user_picture($contact->id, SITEID, $contact->picture, 20, false, true, 'userwindow');
             echo '</td>';
             echo '<td class="message_contact">';
-            link_to_popup_window("/message/user.php?id=$contact->id", "message_$contact->id", $fullnamelink, 400, 400, get_string('sendmessageto', 'message', $fullname));
+            link_to_popup_window("/message/user.php?id=$contact->id", "message_$contact->id", 
+                                 $fullnamelink, 500, 500, get_string('sendmessageto', 'message', $fullname),
+                                 'menubar=0,location=0,status,scrollbars,resizable,width=500,height=500');
             echo '</td>';
             echo '<td class="message_link">'.$strcontact.'</td>';
             echo '</tr>';
@@ -97,7 +99,9 @@ function message_print_contacts() {
             print_user_picture($contact->id, SITEID, $contact->picture, 20, false, true, 'userwindow');
             echo '</td>';
             echo '<td class="message_contact">';
-            link_to_popup_window("/message/user.php?id=$contact->id", "message_$contact->id", $fullnamelink, 400, 400, get_string('sendmessageto', 'message', $fullname));
+            link_to_popup_window("/message/user.php?id=$contact->id", "message_$contact->id", 
+                                 $fullnamelink, 500, 500, get_string('sendmessageto', 'message', $fullname),
+                                 'menubar=0,location=0,status,scrollbars,resizable,width=500,height=500');
             echo '</td>';
             echo '<td class="message_link">'.$strcontact.'</td>';
             echo '</tr>';
@@ -154,7 +158,9 @@ function message_print_contacts() {
             print_user_picture($messageuser->useridfrom, SITEID, $messageuser->picture, 20, false, true, 'userwindow');
             echo '</td>';
             echo '<td class="message_contact">';
-            link_to_popup_window("/message/user.php?id=$messageuser->useridfrom", "message_$messageuser->useridfrom", $fullnamelink, 400, 400, get_string('sendmessageto', 'message', $fullname));
+            link_to_popup_window("/message/user.php?id=$messageuser->useridfrom", "message_$messageuser->useridfrom", 
+                                 $fullnamelink, 500, 500, get_string('sendmessageto', 'message', $fullname),
+                                 'menubar=0,location=0,status,scrollbars,resizable,width=500,height=500');
             echo '</td>';
             echo '<td class="message_link">'.$strcontact.'&nbsp;'.$strblock.'</td>';
             echo '</tr>';
@@ -224,7 +230,7 @@ function message_print_settings() {
 
         set_user_preferences($pref);
         
-        redirect($ME, get_string('settingssaved', 'message'), 3);
+        redirect($ME, get_string('settingssaved', 'message'), 1);
     }
 
     $cbshowmessagewindow = (get_user_preferences('message_showmessagewindow', 1) == '1') ? 'checked="checked"' : '';
@@ -337,7 +343,9 @@ function message_print_search_results($frm) {
                 print_user_picture($user->id, SITEID, $user->picture, 20, false, true, 'userwindow');
                 echo '</td>';
                 echo '<td class="message_contact">';
-                link_to_popup_window("/message/user.php?id=$user->id", "message_$user->id", fullname($user), 400, 400, get_string('sendmessageto', 'message', fullname($user)));
+                link_to_popup_window("/message/user.php?id=$user->id", "message_$user->id", fullname($user), 
+                                     500, 500, get_string('sendmessageto', 'message', fullname($user)),
+                                     'menubar=0,location=0,status,scrollbars,resizable,width=500,height=500');
                 echo '</td>';
                 
                 echo '<td class="message_link">'.$strcontact.'</td>';
@@ -500,7 +508,9 @@ function message_print_user ($user=false, $iscontact=false, $isblocked=false) {
             message_contact_link($user->id, 'block');
         }
         echo '<br />';
-        link_to_popup_window("/message/user.php?id=$user->id", "message_$user->id", fullname($user), 400, 400, get_string('sendmessageto', 'message', fullname($user)));
+        link_to_popup_window("/message/user.php?id=$user->id", "message_$user->id", 
+                             fullname($user), 400, 400, get_string('sendmessageto', 'message', fullname($user)),
+                             'menubar=0,location=0,status,scrollbars,resizable,width=500,height=500');
     }
 }
 
@@ -819,11 +829,64 @@ function message_get_history($user1, $user2) {
 
 function message_format_message(&$message, &$user, $format='') {
     if (empty($format)) {
-        $format = get_string('strftimemessage', 'chat');
+        $format = get_string('strftimedaytime');
     }
     $time = userdate($message->timecreated, $format);
-    return '<p><font size="-1"><b>'.addslashes($user->firstname).'</b> ['.$time.']: '.format_text($message->message, $message->format).'</font></p>';
+    return '<p><font size="-1"><strong>'.s($user->firstname).'</strong> ['.$time.']: '.
+            format_text($message->message, $message->format).'</font></p>';
 }
 
+/*
+ * Inserts a message into the database, but also forwards it
+ * via other means if appropriate.
+ */
+function message_post_message($userfrom, $userto, $message, $format, $messagetype) {
+
+    global $CFG, $SITE;
+
+/// Save the new message in the database
+
+    $savemessage = NULL;
+    $savemessage->useridfrom    = $userfrom->id;
+    $savemessage->useridto      = $userto->id;
+    $savemessage->message       = $message;
+    $savemessage->format        = $format;
+    $savemessage->timecreated   = time();
+    $savemessage->messagetype   = 'direct';
+
+    if (!insert_record('message', $savemessage)) {
+        return false;
+    }
+
+
+/// Check to see if anything else needs to be done with it
+
+    $preference = (object)get_user_preferences(NULL, NULL, $userto->id);
+
+    if (!empty($preference->message_emailmessages)) {  // Receiver wants mail forwarding
+        if ((time() - $userto->lastaccess) > ((int)$preference->message_emailtimenosee * 60)) { // Long enough
+
+            $message = stripslashes_safe($message);
+            $tagline = get_string('emailtagline', 'message', $SITE->shortname);
+            
+            $messagesubject = message_shorten_message(strip_tags($message), 30).'...';
+
+            $messagetext = format_text_email($message, $format).
+                           "\n\n--\n".$tagline."\n"."$CFG->wwwroot/message/index.php?popup=1";
+
+            if ($preference->message_emailformat == FORMAT_HTML) {
+                $messagehtml  = format_text($message, $format);
+                $messagehtml .= '<hr /><p><a href="'.$CFG->wwwroot.'/message/index.php?popup=1">'.$tagline.'</a></p>';
+            } else {
+                $messagehtml = NULL;
+            }
+
+            $userto->email = $preference->message_emailaddress;   // Use custom messaging address
+            email_to_user($userto, $userfrom, $messagesubject, $messagetext, $messagehtml);
+        }
+    }
+
+    return true;
+}
 
 ?>

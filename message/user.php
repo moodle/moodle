@@ -80,7 +80,7 @@
             if ($messages = get_records_select('message', "useridto = '$USER->id' AND useridfrom = '$user->id'", 
                                                'timecreated')) {
                 foreach ($messages as $message) {
-                    $time = userdate($message->timecreated, get_string('strftimemessage', 'chat'));
+                    $time = userdate($message->timecreated, get_string('strftimedaytime'));
 
                     $options = NULL;
                     $options->para = false;
@@ -131,17 +131,7 @@
             if ($message and confirm_sesskey()) {   /// Current user has just sent a message
 
             /// Save it to the database...
-                $savemessage = NULL;
-                $savemessage->useridfrom    = $USER->id;
-                $savemessage->useridto      = $user->id;
-                $savemessage->message       = $message;
-                $savemessage->format        = $format;
-                $savemessage->timecreated   = time();
-                $savemessage->messagetype   = 'direct';
-
-                if (!insert_record('message', $savemessage)) {
-                    notify('Error: Message was not sent!!');
-                }
+                message_post_message($USER, $user, $message, $format, 'direct');
 
             /// Format the message as HTML
                 $options = NULL;

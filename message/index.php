@@ -12,6 +12,14 @@ $addcontact     = optional_param('addcontact',     0, PARAM_INT); // adding a co
 $removecontact  = optional_param('removecontact',  0, PARAM_INT); // removing a contact
 $blockcontact   = optional_param('blockcontact',   0, PARAM_INT); // blocking a contact
 $unblockcontact = optional_param('unblockcontact', 0, PARAM_INT); // unblocking a contact
+$popup          = optional_param('popup', false, PARAM_ALPHA);    // If set then starts a new popup window
+
+if ($popup) {
+    print_header();
+    echo '<script language="JavaScript" type="text/javascript">'."\n openpopup('/message/index.php', 'message', 'menubar=0,location=0,scrollbars,status,resizable,width=400,height=500', 0);\n</script>";
+    redirect("$CFG->wwwroot/");
+    exit;
+}
 
 if ($addcontact and confirm_sesskey()) {
     add_to_log(SITEID, 'message', 'add contact', 'history.php?user1='.$addcontact.'&amp;user2='.$USER->id, $addcontact);

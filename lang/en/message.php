@@ -11,6 +11,7 @@ $string['blockedmessages'] = '$a message(s) to/from blocked users';
 $string['deletemessagesdays'] = 'Number of days before old messages are automatically deleted';
 $string['discussion'] = 'Discussion';
 $string['emailmessages'] = 'Email messages when I am offline';
+$string['emailtagline'] = 'This email is a copy of a message sent to you at \"$a\"';
 $string['emptysearchstring'] = 'You must search for something';
 $string['includeblockedusers'] = 'Include blocked users';
 $string['incomingcontacts'] = 'Incoming Contacts ($a)';
