@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.3 development (2004050300)
+      // resource.php - created with Moodle 1.3 Nearly Ready (2004052000)
 
 
 $string['addresource'] = 'Aggiungi risorsa';
@@ -34,6 +34,7 @@ $string['fetchclienterror'] = 'E\' stato rilevato un errore con il tuo browser m
 $string['fetcherror'] = 'E\' stato rilevato un errore mentre provavo a recuperare la pagina web.';
 $string['fetchservererror'] = 'E\' stato rilevato un errore con il server mentre provavo a recuperare la pagina web (potrebbe esserci un errore nel codice).<br />';
 $string['filename'] = 'Nome del file';
+$string['filtername'] = 'Auto-collegamento alla risorsa';
 $string['fulltext'] = 'Testo integrale';
 $string['htmlfragment'] = 'Codice HTML';
 $string['maindirectory'] = 'Cartella principale';

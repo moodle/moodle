@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.3 Beta + (2004051300)
+      // moodle.php - created with Moodle 1.3 Nearly Ready (2004052000)
 
 
 $string['action'] = 'Azione';
@@ -283,6 +283,7 @@ $string['downloadtext'] = 'Download in formato testo';
 $string['doyouagree'] = 'Hai letto queste condizioni e le hai accettate?';
 $string['edit'] = 'Modifica $a';
 $string['editcoursesettings'] = 'Modifica impostazioni del corso';
+$string['editfiles'] = 'Modifica i file';
 $string['editgroupprofile'] = 'Modifica profilo del gruppo';
 $string['editinga'] = 'Modifica di $a';
 $string['editmyprofile'] = 'Modifica profilo';
@@ -424,6 +425,7 @@ $string['grades'] = 'Valutazioni';
 $string['group'] = 'Gruppo';
 $string['groupadd'] = 'Aggiungi un nuovo gruppo';
 $string['groupaddusers'] = 'Aggiungi al gruppo selezionato';
+$string['groupfor'] = 'per gruppo';
 $string['groupinfo'] = 'Informazioni sul gruppo selezionato';
 $string['groupinfomembers'] = 'Informazioni sui membri selezionati';
 $string['groupinfopeople'] = 'Informazioni sulla gente selezionata';
@@ -904,6 +906,7 @@ $string['uploadnotallowed'] = 'Invio file non permesso';
 $string['uploadproblem'] = 'Un problema sconosciuto si è verificato salvando il file \'$a\' (può essere troppo grande?)';
 $string['uploadthisfile'] = 'Trasferisci questo file';
 $string['uploadusers'] = 'Trasferisci utenti';
+$string['usedinnplaces'] = 'Utilizzato in $a posti';
 $string['user'] = 'Utente';
 $string['userconfirmed'] = 'Confermato da $a';
 $string['userdata'] = 'Dati utente';

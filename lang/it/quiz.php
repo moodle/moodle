@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.2 development (2004021700)
+      // quiz.php - created with Moodle 1.3 Nearly Ready (2004052000)
 
 
 $string['acceptederror'] = 'Errore accettato';
@@ -25,6 +25,7 @@ $string['attemptlast'] = 'Ultimo tentativo';
 $string['attemptquiznow'] = 'Provare a rispondere al quiz adesso';
 $string['attempts'] = 'Tentativi';
 $string['attemptsallowed'] = 'Tentativi permessi';
+$string['attemptsexist'] = 'Questo quiz è già stato tentato';
 $string['attemptsunlimited'] = 'Tentativi illimitati';
 $string['backtoquiz'] = 'Indietro alla modifica del quiz';
 $string['bestgrade'] = 'Voto migliore';
@@ -62,7 +63,7 @@ $string['eachattemptbuildsonthelast'] = 'Ogni tentativo parte dall\'ultimo';
 $string['editcategories'] = 'Modifica categorie';
 $string['editingdescription'] = 'Modifica una descrizione';
 $string['editingmatch'] = 'Modifica una domanda a corrispondenza';
-$string['editingmultianswer'] = 'Modifica una domanda \"riempi i vuoti\" (Cloze)';
+$string['editingmultianswer'] = 'Modifica una domanda ';
 $string['editingmultichoice'] = 'Modifica una domanda a risposta multipla';
 $string['editingnumerical'] = 'Modifica domanda numerica';
 $string['editingquestion'] = 'Modifica una domanda';
@@ -113,7 +114,7 @@ $string['missingquestiontext'] = 'Testo della domanda mancante';
 $string['missingword'] = 'Formato parola mancante';
 $string['modulename'] = 'Quiz';
 $string['modulenameplural'] = 'Quiz';
-$string['multianswer'] = '\"riempi i vuoti\" (Cloze)';
+$string['multianswer'] = 'Risposte inglobate (tipo Cloze)';
 $string['multichoice'] = 'Risposta multipla';
 $string['name'] = 'Nome';
 $string['noanswers'] = 'Non è stata selezionata nessuna risposta!';
@@ -123,6 +124,7 @@ $string['noquestions'] = 'Non sono state aggiunte ancora domande';
 $string['noresponse'] = 'Nessuna risposta';
 $string['noreview'] = 'Non hai il permesso di rivedere questo quiz';
 $string['noreviewuntil'] = 'Non hai il permesso di rivedere questo quiz fino a $a';
+$string['notenoughanswers'] = 'Questo tipo di domanda richiede come minimo $a risposte';
 $string['notenoughsubquestions'] = 'Non sono state definite abbastanza sottodomande!<br>Vuoi tornare indietro e correggere questa domanda?';
 $string['numerical'] = 'Numerica';
 $string['paragraphquestion'] = 'Domanda paragrafo non supportata alla linea $a. La domanda sarà ignorata';
@@ -140,6 +142,7 @@ $string['quizclosed'] = 'Il quiz è stato chiuso il $a';
 $string['quizcloses'] = 'Quiz chiuso';
 $string['quiznotavailable'] = 'Il quiz non sarà disponibile fino al: $a';
 $string['quizopen'] = 'Apri il quiz';
+$string['quizopens'] = 'Quiz aperti';
 $string['random'] = 'Insieme casuale';
 $string['randomcreate'] = 'Crea Domande Casuali';
 $string['randomsamatch'] = 'Corrispondenze a risposte brevi casuali';

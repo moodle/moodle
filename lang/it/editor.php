@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.2.1 (2004032500)
+      // editor.php - created with Moodle 1.3 Nearly Ready (2004052000)
 
 
 $string['about'] = 'Info su questo editor';
@@ -27,6 +27,7 @@ $string['cut'] = 'Taglia selezione';
 $string['delete'] = 'Cancella';
 $string['filebrowser'] = 'Gestione file';
 $string['forecolor'] = 'Colore testo';
+$string['fullscreen'] = 'Editor a schermo intero';
 $string['heading'] = 'Intestazione';
 $string['height'] = 'Altezza';
 $string['hilitecolor'] = 'Colore sfondo';
@@ -47,6 +48,7 @@ $string['justifyleft'] = 'Sinistra';
 $string['justifyright'] = 'Destra';
 $string['layout'] = 'Schema';
 $string['left'] = 'Sinistra';
+$string['lefttoright'] = 'Direzione da sinistra a destra';
 $string['linkproperties'] = 'Proprietà collegamento';
 $string['linktarget'] = 'destinazione';
 $string['linktargetblank'] = 'Nuova finestra';
@@ -57,6 +59,7 @@ $string['linktargettop'] = 'Stessa finestra';
 $string['linktitle'] = 'Titolo';
 $string['linkurl'] = 'URL';
 $string['middle'] = 'Centro';
+$string['minimize'] = 'Minimizza editor';
 $string['move'] = 'Muovi';
 $string['normal'] = 'Normale';
 $string['notimage'] = 'Il file selezionato non è un immagine. Prego scegliere un immagine!';
@@ -76,7 +79,9 @@ $string['redo'] = 'Ripeti ultima azione';
 $string['removelink'] = 'Elimina collegamento';
 $string['rename'] = 'Rinomina';
 $string['right'] = 'Destra';
+$string['righttoleft'] = 'Direzione da destra a sinistra';
 $string['rows'] = 'Righe';
+$string['selectcolor'] = 'Selezione colore';
 $string['selection'] = 'Selezione';
 $string['showhelp'] = 'Aiuto sull\'editor';
 $string['size'] = 'Dimensione';
@@ -95,6 +100,7 @@ $string['unorderedlist'] = 'Lista puntata';
 $string['upload'] = 'Trasferisci file';
 $string['vertical'] = 'Verticale';
 $string['width'] = 'Larghezza';
+$string['wordclean'] = 'Pulisci codice HTML generato da Word';
 $string['zip'] = 'Comprimi';
 
 ?>
