@@ -137,7 +137,7 @@ function glossary_delete_instance($id) {
     } else {
         if ($categories = get_records("glossary_categories","glossaryid",$glossary->id)) {
             $cats = "";
-            foreach ( $categories as $hook ) {
+            foreach ( $categories as $cat ) {
                 $cats .= "$cat->id,";
             }
             $cats = substr($cats,0,-1);
