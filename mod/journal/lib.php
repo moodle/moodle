@@ -67,6 +67,8 @@ function journal_cron () {
                 continue;
             }
 
+            $USER->lang = $user->lang;
+
             if (! $course = get_record("course", "id", "$entry->course")) {
                 echo "Could not find course $entry->course\n";
                 continue;

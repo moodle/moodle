@@ -128,6 +128,8 @@ function assignment_cron () {
                 continue;
             }
 
+            $USER->lang = $user->lang;
+
             if (! $course = get_record("course", "id", "$submission->course")) {
                 echo "Could not find course $submission->course\n";
                 continue;

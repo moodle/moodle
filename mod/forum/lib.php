@@ -904,16 +904,18 @@ function forum_cron () {
             }
 
             if ($users = forum_subscribed_users($course, $forum)) {
-                $strforums = get_string("forums", "forum");
                 $canunsubscribe = ! forum_is_forcesubscribed($forum->id);
 
                 $mailcount=0;
                 foreach ($users as $userto) {
                     $USER->lang = $userto->lang;  // Affects the language of get_string
 
+
                     $by->name = "$userfrom->firstname $userfrom->lastname";
                     $by->date = userdate($post->created, "", $userto->timezone);
                     $strbynameondate = get_string("bynameondate", "forum", $by);
+
+                    $strforums = get_string("forums", "forum");
 
                     $postsubject = "$course->shortname: $post->subject";
                     $posttext  = "$course->shortname -> $strforums -> $forum->name";
