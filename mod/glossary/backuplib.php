@@ -15,7 +15,7 @@
     //                        |                                       
     //                        |                                       
     //                  glossary_comments
-    //         (UL,pk->id, fk->entryid)
+    //              (UL,pk->id, fk->entryid)
     //
     //
     // Meaning: pk->primary key field of the table
@@ -43,7 +43,7 @@
                 fwrite ($bf,full_tag("ID",4,false,$glossary->id));
                 fwrite ($bf,full_tag("MODTYPE",4,false,"glossary"));
                 fwrite ($bf,full_tag("NAME",4,false,$glossary->name));
-                fwrite ($bf,full_tag("INTRO",4,false,$glossary->INTRO));
+                fwrite ($bf,full_tag("INTRO",4,false,$glossary->intro));
                 fwrite ($bf,full_tag("STUDENTCANPOST",4,false,$glossary->studentcanpost));
                 fwrite ($bf,full_tag("ALLOWDUPLICATEDENTRIES",4,false,$glossary->allowduplicatedentries));
                 fwrite ($bf,full_tag("DISPLAYFORMAT",4,false,$glossary->displayformat));	
@@ -89,7 +89,7 @@
                 fwrite ($bf,full_tag("GLOSSARYID",6,false,$glo_cat->glossaryid));
                 fwrite ($bf,full_tag("NAME",6,false,$glo_cat->name));
 
-                $entries = get_records("glossary_entries_categories","categoryid",$glo_cat->id,"mainglossary");
+                $entries = get_records("glossary_entries_categories","categoryid",$glo_cat->id);
                 if ($entries) {
                     $status =fwrite ($bf,start_tag("ENTRIES",6,true));
                     foreach ($entries as $entry) {
@@ -116,7 +116,7 @@
         $status = true;
 
         $glossary_entries = get_records("glossary_entries","glossaryid",$glossary,"id");
-        //If there is submissions
+        //If there is entries
         if ($glossary_entries) {            
             $dumped_entries = 0;
             
@@ -139,32 +139,17 @@
                     fwrite ($bf,full_tag("FORMAT",6,false,$glo_ent->format));
                     fwrite ($bf,full_tag("ATTACHMENT",6,false,$glo_ent->attachment));
                     fwrite ($bf,full_tag("SOURCEGLOSSARYID",6,false,$glo_ent->sourceglossaryid));
-                    fwrite ($bf,full_tag("USEDYNALINK",4,false,$glo_ent->usedynalink));
-                    fwrite ($bf,full_tag("CASESENSITIVE",4,false,$glo_ent->casesensitive));
-                    fwrite ($bf,full_tag("FULLMATCH",4,false,$glo_ent->fullmatch));
+                    fwrite ($bf,full_tag("USEDYNALINK",6,false,$glo_ent->usedynalink));
+                    fwrite ($bf,full_tag("CASESENSITIVE",6,false,$glo_ent->casesensitive));
+                    fwrite ($bf,full_tag("FULLMATCH",6,false,$glo_ent->fullmatch));
                     fwrite ($bf,full_tag("TIMECREATED",6,false,$glo_ent->timecreated));
                     fwrite ($bf,full_tag("TIMEMODIFIED",6,false,$glo_ent->timemodified));
                     fwrite ($bf,full_tag("TEACHERENTRY",6,false,$glo_ent->teacherentry));
-/*
+
                     if ( $userinfo ) {
-                        $comments = get_records("glossary_comments","entryid",$glo_ent->id);
-                        if ( $comments ) {
-                            $status =fwrite ($bf,start_tag("COMMENTS",6,true));
-                            foreach ($comments as $comment) {
-                                $status =fwrite ($bf,start_tag("COMMENT",7,true));
-
-                                fwrite ($bf,full_tag("ID",6,false,$comment->id));
-                                fwrite ($bf,full_tag("USERID",6,false,$comment->userid));
-                                fwrite ($bf,full_tag("COMMENT",6,false,$comment->comment));
-                                fwrite ($bf,full_tag("FORMAT",6,false,$comment->format));
-                                fwrite ($bf,full_tag("TIMEMODIFIED",6,false,$comment->timemodified));
-
-                                $status =fwrite ($bf,end_tag("COMMENT",7,true));
-                            }
-                            $status =fwrite ($bf,end_tag("COMMENTS",6,true));
-                        }
+                        $status = backup_glossary_comments ($bf,$preferences,$glo_ent->id);
                     }
-*/
+
                     $status =fwrite ($bf,end_tag("ENTRY",5,true));
 
                     //Now include entry attachment in backup (if it exists)
@@ -177,6 +162,32 @@
 	        //Write end tag
       	        $status =fwrite ($bf,end_tag("ENTRIES",4,true));
             }
+        }
+        return $status;
+    }
+
+    //Backup glossary_comments contents (executed from backup_glossary_entries)
+    function backup_glossary_comments ($bf,$preferences,$entryid) {
+
+        global $CFG;
+
+        $status = true;
+
+        $comments = get_records("glossary_comments","entryid",$entryid);
+        if ($comments) {
+            $status =fwrite ($bf,start_tag("COMMENTS",6,true));
+            foreach ($comments as $comment) {
+                $status =fwrite ($bf,start_tag("COMMENT",7,true));
+
+                fwrite ($bf,full_tag("ID",8,false,$comment->id));
+                fwrite ($bf,full_tag("USERID",8,false,$comment->userid));
+                fwrite ($bf,full_tag("COMMENT",8,false,$comment->comment));
+                fwrite ($bf,full_tag("FORMAT",8,false,$comment->format));
+                fwrite ($bf,full_tag("TIMEMODIFIED",8,false,$comment->timemodified));
+
+                $status =fwrite ($bf,end_tag("COMMENT",7,true));        
+            }
+            $status =fwrite ($bf,end_tag("COMMENTS",6,true));
         }
         return $status;
     }
