@@ -150,10 +150,13 @@
             }
             if ($sort == "country") {  // Need to resort by full country name, not code
                 foreach ($users as $user) {
-                    $susers[$user->country] = $user;
+                    $susers[$user->id] = $user->country;
                 }
-                $users = $susers;
-                ksort($users);
+                asort($susers);
+                foreach ($susers as $key => $value) {
+                    $nusers[] = $users[$key];
+                }
+                $users = $nusers;
             }
 
             print_heading(get_string("chooseuser"));
