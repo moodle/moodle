@@ -1377,7 +1377,6 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml="", $a
 
     $mail->Version = "Moodle $CFG->moodleversion";     // mailer version 
     $mail->PluginDir = "$CFG->libdir/phpmailer/";      // plugin directory (eg smtp plugin)
-    $mail->Encoding = "8bit";                          // encoding format - should work in most places
 
     if ($CFG->smtphosts) {
         $mail->IsSMTP();                               // use SMTP directly
