@@ -249,24 +249,25 @@ class Wiki {
     // acronym handing, example HTML(Hypertext Markyp Language)
     $line = ereg_replace( "([A-Z]+)\(([^)]+)\)", "<acronym title=\"\\2\">\\1</acronym>", $line );
 
-    // *Moodle Specific* replace resource link >>##(Description Text)
+    // *Moodle Specific* 
     if (IN_MOODLE==1) {
+      // Replace resource link >>##(Description Text)
       $line = eregi_replace( " ([a-zA-Z]+):([0-9]+)\(([^)]+)\)",
          " <a href=\"".$CFG->wwwroot."/mod/\\1/view.php?id=\\2\">\\3</a> ", $line );
-    }
 
-    // *Moodle specific* replace picture resource link 
-    if (IN_MOODLE==1) {
-      global $course;
+      // Replace picture resource link 
+      global $course;    // This is a bit risky - it won't work everywhere
 
       if ($CFG->slasharguments) {
-      $line = eregi_replace( "/([a-zA-Z./_-]+)(png|gif|jpg)\(([^)]+)\)",
-        "<img src=\"$CFG->wwwroot/file.php/$course->id/\\1\\2\" alt=\"\\3\" />", $line );
+        $line = eregi_replace( "/([a-zA-Z./_-]+)(png|gif|jpg)\(([^)]+)\)",
+          "<img src=\"$CFG->wwwroot/file.php/$course->id/\\1\\2\" alt=\"\\3\" />", $line );
+      } else {
+        $line = eregi_replace( "/([a-zA-Z./_-]+)(png|gif|jpg)\(([^)]+)\)",
+          "<img src=\"$CFG->wwwroot/file.php\?file=$course->id/\\1\\2\" alt=\"\\3\" />", $line );
       }
-      else {
-      $line = eregi_replace( "/([a-zA-Z./_-]+)(png|gif|jpg)\(([^)]+)\)",
-        "<img src=\"$CFG->wwwroot/file.php\?file=$course->id/\\1\\2\" alt=\"\\3\" />", $line );
-      }
+
+      replace_smilies( $line );
+
     }
     
     return $line;

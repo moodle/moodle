@@ -462,11 +462,8 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL) {
             break;
 
         case FORMAT_WIKI:
-            $text = wiki_to_html($text);
-            replace_smilies($text);
-            return $text;
+            return wiki_to_html($text);
             break;
-
 
         default:  // FORMAT_MOODLE or anything else
             if (!isset($options->smiley)) {
