@@ -1040,7 +1040,11 @@
                             $que = backup_getid($restore->backup_unique_code,"quiz_questions",$question_id);
                             //Get the answer from backup_ids
                             $ans = backup_getid($restore->backup_unique_code,"quiz_answers",$answer_id);
-                            if ($que and $ans) {
+                            if ($que) {
+                                //It the question hasn't response, it must be 0
+                                if (!$ans) {
+                                    $ans->new_id = 0;
+                                }
                                 if ($in_first) {
                                     $answer_field .= $que->new_id."-".$ans->new_id;
                                     $in_first = false;
