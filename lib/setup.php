@@ -211,8 +211,9 @@
         $USER    = &$_SESSION['USER'];
     }
 
-    if (isset($FULLME)) {
-        $ME = $FULLME;
+    if (defined('FULLME')) {     // Usually in command-line scripts like admin/cron.php
+        $FULLME = FULLME;
+        $ME = FULLME;
     } else {
         $FULLME = qualified_me();
         $ME = strip_querystring($FULLME);
