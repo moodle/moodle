@@ -458,6 +458,8 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL) {
 /// $text is raw text (originally from a user)
 /// $format is one of the format constants, defined above
 
+    global $CFG;
+
     switch ($format) {
         case FORMAT_HTML:
             replace_smilies($text);
@@ -482,6 +484,12 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL) {
             }
             if (!isset($options->para)) {
                 $options->para=true;
+            }
+            if (!empty($CFG->librarypath)) {
+                if (file_exists("$CFG->dirroot/$CFG->librarypath/librarylib.php")) {
+                    include_once("$CFG->dirroot/$CFG->librarypath/librarylib.php");
+                    $text = librarytexttohtml($text);
+                }
             }
             return text_to_html($text, $options->smiley, $options->para);
             break;
