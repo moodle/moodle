@@ -57,20 +57,14 @@
   usually be be able to help you.</p>
 <p class="normaltext">Use this list to jump to the appropriate answer below:</p>
 
-<p class="questionlink"><a href="#filenotfound">Whenever I try to access or view 
-  a file that I uploaded, I get an error &quot;File not Found&quot;</a></p>
-<p class="questionlink"><a href="#php">PHP - is it installed and what version 
-  do I have?</a></p>
-<p class="questionlink"><a href="#blankpages">Why are all my pages blank?</a> 
-</p>
-<p class="questionlink"><a href="#errorgetstring">My pages show fatal errors such 
-  as : call to undefined function: get_string()</a></p>
-<p class="questionlink"><a href="#headerssent">Why do I keep getting error messages 
-  about &quot;headers already sent&quot;?</a></p>
-<p class="questionlink"><a href="#failedopen">I keep getting this error: Failed 
-  opening required '/web/moodle/lib/setup.php'</a></p>
-<p class="questionlink"><a href="#quotes">Any text I add with an apostrophe (') 
-  or a quote (&quot;) causes errors or comes up with a slash added</a></p>
+<p class="questionlink"><a href="#filenotfound">Whenever I try to access or view a file that I uploaded, I get an error &quot;File not Found&quot;</a></p>
+<p class="questionlink"><a href="#php">PHP - is it installed and what version do I have?</a></p>
+<p class="questionlink"><a href="#blankpages">Why are all my pages blank?</a></p>
+<p class="questionlink"><a href="#errorgetstring">My pages show fatal errors such as : call to undefined function: get_string()</a></p>
+<p class="questionlink"><a href="#headerssent">Why do I keep getting error messages about &quot;headers already sent&quot;?</a></p>
+<p class="questionlink"><a href="#failedopen">I keep getting this error: Failed opening required '/web/moodle/lib/setup.php'</a></p>
+<p class="questionlink"><a href="#quotes">Any text I add with an apostrophe (') or a quote (&quot;) causes errors or comes up with a slash added</a></p>
+<p class="questionlink"><a href="#sessiontmp">I keep getting error messages about session_start</a></p>
 <p class="questionlink">&nbsp;</p>
 <h3 class="question"><a name="filenotfound"></a>Whenever I try to access or view 
   a file that I uploaded, I get an error &quot;File not Found&quot;</h3>
@@ -154,6 +148,24 @@
   magic_quotes_runtime = Off</p>
 <p class="answer">See the section on <a href="http://moodle.org/doc/?file=install.html#webserver">webserver 
   configuration</a> in the Installation docs for more details.</p>
+
+<h4 class="question"><a name="sessiontmp"></a>I keep getting error messages about session_start</h4>
+<p class="answer">If you see errors like this:</p>
+<p class="answercode">Warning: session_start() [function.session-start]: open(/tmp\sess_d40f380d37d431fc1516e9a895ad9ce0, O_RDWR) failed: No such file or directory (2) in G:\web\moodle\lib\setup.php on line 123</p>
+<p class="answercode">Warning: session_start() [function.session-start]: open(/tmp\sess_d40f380d37d431fc1516e9a895ad9ce0, O_RDWR) failed: No such file or directory (2) in G:\web\moodle\lib\setup.php on line 123</p>
+<p class="answercode">Warning: session_start() [function.session-start]: Cannot send session cache limiter - headers already sent (output started at G:\web\moodle\lib\setup.php:1) in G:\web\moodle\lib\setup.php on line 123</p>
+
+<p class="answer">... these are all related to the fact that PHP is failing to save 
+  "session" files on your hard disk (in a directory called /tmp).  Usually the 
+  reason is that you don't HAVE a directory called /tmp on your computer.  This 
+  is usually the case with Windows installations.
+
+<p class="answer">The solution is to fix the PHP setting for this path to point to a real directory.  You can do this in your php.ini file:</p>
+<p class="answercode">session.save_path = C:\temp</p>
+<p class="answer">or otherwise in a .htaccess file in your main moodle directory:</p>
+<p class="answercode">php_value session.save_path "/home/moodle/sessions"</p>
+
+
 <h2>&nbsp;</h2>
 <h2>&nbsp;</h2>
 
