@@ -145,6 +145,9 @@
                         $form->timeduration = 0;
                     }
                 }
+                else if ($form->duration == 2) {
+                    $form->timeduration = $form->minutes * 60;
+                }
                 else {
                     $form->timeduration = 0;
                 }
@@ -160,7 +163,17 @@
 
                     /// Log the event entry.
                     add_to_log($form->courseid, 'calendar', 'add', 'event.php?action=edit&amp;id='.$eventid, $form->name);
-
+                    
+                    if ($form->repeat) {
+                        for($i = 1; $i < $form->repeats; $i++) {
+                            $form->timestart += 604800;  // add one week
+                            /// Get the event id for the log record.
+                            $eventid = insert_record('event', $form, true);
+                            /// Log the event entry.
+                            add_to_log($form->courseid, 'calendar', 'add', 'event.php?action=edit&amp;id='.$eventid, $form->name);
+                        }
+                    }
+                            
                     // OK, now redirect to day view
                     redirect(CALENDAR_URL.'view.php?view=day&cal_d='.$form->startday.'&cal_m='.$form->startmon.'&cal_y='.$form->startyr);
                 }
@@ -430,8 +443,14 @@ function validate_form(&$form, &$err) {
     if(!checkdate($form->startmon, $form->startday, $form->startyr)) {
         $err['timestart'] = get_string('errorinvaliddate', 'calendar');
     }
-    if(!checkdate($form->endmon, $form->endday, $form->endyr)) {
+    if($form->duration == 2 and !checkdate($form->endmon, $form->endday, $form->endyr)) {
         $err['timeduration'] = get_string('errorinvaliddate', 'calendar');
+    }
+    if($form->duration == 2 and !($form->minutes > 0 and $form->minutes < 1000)) {
+        $err['minutes'] = get_string('errorinvalidminutes', 'calendar');
+    }
+    if ($form->repeat and !($form->repeats > 1 and $form->repeats < 100)) {
+        $err['repeats'] = get_string('errorinvalidrepeats', 'calendar');
     }
     if(!empty($form->courseid)) {
         // Timestamps must be >= course startdate
