@@ -21,7 +21,7 @@ document lang en moeilijk. Laat je er niet door afschrikken - Moodle kan geïnsta
   <ol>
     <li><a href="#requirements">Systeemvereisten</a></li>
     <li><a href="#downloading">Download</a></li>
-    <li><a href="#site">Site structuur</a></li>
+    <li><a href="#site">Sitestructuur</a></li>
     <li><a href="#installer">Laat het installatiescript lopen om config.php te maken</a></li>
     <li><a href="#webserver">Algemene instelllingen van de webserver</a></li>
     <li><a href="#database">Een databank maken</a></li>
@@ -42,7 +42,7 @@ LAMP-platform), maar is ook grondig getest met PostgreSQL en op Windows XP, Mac 
       maar Moodle zou ook goed moeten werken op gelijk welke webserver met ondersteuning voor PHP, zoals
       IIS op Windowsplatforms.</li>
     <li><a href="http://www.php.net/" target="_blank">PHP</a>-scripting taal (version 4.1.0 
-      of later). PHP 5 is ondersteund vanaf Moodle 1.4</li>
+      of hoger). PHP 5 is ondersteund vanaf Moodle 1.4</li>
     <li>een werkende databank server: <a href="http://www.mysql.com/" target="_blank">MySQL</a> 
       of <a href="http://www.postgresql.org/" target="_blank">PostgreSQL</a> zijn volledig ondersteund en aangeraden
       voor het gebruik met Moodle.</li>
@@ -116,23 +116,23 @@ LAMP-platform), maar is ook grondig getest met PostgreSQL en op Windows XP, Mac 
 <h3 class="sectionheading"><a name="webserver" id="webserver"></a>4.1 Algemene instellingen van de webserver</h3>
 <blockquote>
   <p>Zorg er eerst voor dat je webserver ingesteld is om index.php als startpagina te gebruiken (eventueel aangevuld met index.html, default.htm enz).</p>
-  <p>In Apache gebeurt dit door een DirectoryIndexparameter te gebruiken in je httpd.conf-bestand. Het mijne ziet 
+  <p>In Apache gebeurt dit door een parameter DirectoryIndex te gebruiken in je httpd.conf-bestand. Het mijne ziet 
      er gewoonlijk zo uit:</P>
   <blockquote>
     <pre><strong>DirectoryIndex</strong> index.php index.html index.htm </pre>
   </blockquote>
-  <p>Verzeker jezelf er van dat index.php in het lijstje staat (en voor de efficiëntie liefst ergens 
+  <p>Vergewis je ervan dat index.php in het lijstje staat (en voor de efficiëntie liefst ergens 
      bovenaan de lijst).</p>
   <p>Verder <b>als je Apache 2 gebruikt</b>, moet je de <i>AcceptPathInfo</i>
      variable inschakelen.  Die zorgt er voor dat aan scriptparameters doorgegeven kunnen worden
      zoals http://server/file.php/arg1/arg2.
-     Dit is noodzakelijk om relatieve links tussen je bronnen toe te laten, wat dan weer voor een grote
+     Dit is noodzakelijk om relatieve links tussen je bronnen toe te laten, wat dan weer een grote
      snelheidswinst oplevert voor bezoekers van je Moodlesite. Je kunt dit inschakelen door volgende lijnen in je
      httpd.conf-bestand te zetten.</p>
   <blockquote>
     <pre><strong>AcceptPathInfo</strong> on </pre>
   </blockquote>
-  <p>Ten derde vereist Moodle een aantal PHP-instellingen actief vóór het werkt.  
+  <p>Ten derde vereist Moodle een aantal PHP-instellingen geactiveerd zijn vóór het werkt.  
      <b>Op de meeste servers zullen deze al in de standaardinstellingen voorzien zijn,</b>
      hoewel sommige PHP-servers (en sommige van de recentere PHP-versies) andere instellingen kunnen hebben. Je kunt
      ze vinden in het PHP-configuratiebestand (meestal php.ini):</p>
@@ -163,7 +163,7 @@ php_flag file_uploads 1
 php_flag session.auto_start 0
 php_flag session.bug_compat_warn 0</pre>
   </blockquote>
-  <p>Je kunt ook instellingen maken zoals de maximum grootte voor de geüploade bestanden.
+  <p>Je kunt ook instellingen maken zoals de maximumgrootte voor de geüploade bestanden.
   <blockquote>
     <pre>
 LimitRequestBody 0
@@ -237,7 +237,7 @@ php_value post_max_size 2M
      (bijvoorbeeld Apache) het recht heeft om te schrijven in deze map. Voor Unixmachines betekent dit de instellingen voor de eigenaar van de map op &quot;nobody&quaot; of &quot;apache&quot; zetten.</p>
   <p>Op veel gedeelde hostservers zul je waarschijnlijk alle bestandstoegang moeten beperken tot jouw groep
      (om te verhinderen dat andere klanten van je host je bestanden kunnen komen bekijken en wijzigen), maar volledig
-     lezen en schrijvenrecht geven alle anderen (wat de webserver zal toelaten tot jouw bestanden) Spreek er over met
+     lees- en schrijfrecht geven aan alle anderen (wat de webserver zal toelaten tot jouw bestanden) Spreek er over met
      de beheerder van je server als je problemen hebt met dit veilig in te stellen.</p>
 </blockquote>
 <p>&nbsp;</p>
@@ -262,15 +262,15 @@ php_value post_max_size 2M
   <p>...en zo verder, gevolgd door: <font color="#006600">Main databases set up 
       successfully.</font> </p>
   <blockquote>
-    <p class="style3">Als je dit niet ziet, dan moet er wat fout zijn met de databank of de instellingen die je gedefinieerd hebt voor config.php. Controleer of PHP niet in "Safe Mode" staat (commerciele webhosts schakelen dit soms in). Je kunt je PHP-instellingen controleren door een bestandje te maken dat <strong>&lt;?php phpinfo() ?&gt;</strong> bevat en dat te bekijken via een browser. Controleer dit en probeer dan nog eens.</p>
+    <p class="style3">Als je dit niet ziet, dan moet er wat fout zijn met de databank of de instellingen die je gedefinieerd hebt voor config.php. Controleer of PHP niet in "Safe Mode" staat (commerciële webhosts schakelen dit soms in). Je kunt je PHP-instellingen controleren door een bestandje te maken dat <strong>&lt;?php phpinfo() ?&gt;</strong> bevat en dat te bekijken via een browser. Controleer dit en probeer dan nog eens.</p>
   </blockquote>
   <p>Scroll naar onderaan de pagina en klik op de link &quot;Continue&quot;.</p>
   <p>Je zou nu een formulier moeten zien waar je heel wat variablen voor je installatie kunt ingeven, zoals de standaardtaal, SMT-hosts enzovoort. Maak je geen zorgen om alles van de eerste keer juist in te stellen - je kunt deze instellingen later nog altijd wijzigen via de beheerinterface. De standaardinstellingen zijn bedoeld om veilig en goed te staan voor de meeste sites. Scroll naar onderaan de pagina en klik op &quot;Bewaar de wijzigingen&quot;.</p>
   <blockquote>
     <p class="style3">Als (en alleen als) je vastzit op deze pagina, onmogelijk om verder te gaan, dan heeft je server waarschijnlijk het "buggy referrer" probleem. Dit is gemakkelijk te omzeilen door de  &quot;secureforms&quot; -instelling uit te schakelen en dan verder te gaan.</p>
   </blockquote>
-  <p>Daarna zie je meer pagina's die vele statusboodschappen totnen terwijl ze de nodige tabellen maken die nodig zijn voor de verschillende Moodlemodules. Zoals heer voor zouden ze allemaal <font color="#006600">groen</font> moeten zijn.</p>
-  <p>Ga verder naar de onderkant van de pagina en klik op de link &quot;Continue&quot;.</p>
+  <p>Daarna zie je meer pagina's die vele statusboodschappen tonen terwijl ze de nodige tabellen maken die nodig zijn voor de verschillende Moodlemodules. Zoals heer voor zouden ze allemaal <font color="#006600">groen</font> moeten zijn.</p>
+  <p>Ga verder naar de onderkant van de pagina en klik op de link &quot;Ga verder&quot;.</p>
   <p>De volgende pagina is een formulier waar je de parameters van je Moodlesite en de startpagina, zoals naam, format, beschrijving enzovoort kunt ingeven. Vul deze in (je kunt later altijd terugkeren om de gegevens te wijzigen) en klik op  &quot;Bewaar de wijzigingen&quot;.</p>
   <p>Tenslotte zal je gevraagd worden om een beheerder te maken om later de administratiepagina's te kunnen bedienen. Vul het formulier in met je naam, e-mailadres enzovoort en klik dan op  &quot;Bewaar wijzigingen&quot;. Niet alle velden moeten ingevuld worden, maar als je er enkele belangrijke mist, zullen die je opnieuw gevraagd worden. 
   </p>
@@ -279,7 +279,7 @@ php_value post_max_size 2M
       <blockquote> 
         <blockquote> 
           <blockquote> 
-            <p><strong>Zorg er voor dat je de gebruikersnaam en wachtwoord van de beheeraccount goed bewaart omdat die nog nodig is om later de beheerpagina's te kunnen bereiken.</strong></p>
+            <p><strong>Zorg ervoor dat je de gebruikersnaam en wachtwoord van de beheeraccount goed bewaart omdat die nog nodig is om later de beheerpagina's te kunnen bereiken.</strong></p>
           </blockquote>
         </blockquote>
       </blockquote>
@@ -301,11 +301,11 @@ php_value post_max_size 2M
 <h3 class="sectionheading"><a name="cron"></a>6. Cron installeren -- BELANGRIJK!</h3>
 <blockquote> 
   <p>Sommige Moodlemodules hebben constante controle nodig om hun activiteiten te kunnen doen.
-   Zo moet Moodle bijvoorbeeld de discussieforums regelmatig controleren om kopies van de berichten
+   Zo moet Moodle bijvoorbeeld de discussieforums regelmatig controleren om kopieën van de berichten
    te sturen naar gebruikers die daarvoor ingeschreven hebben.</p>
-  <p>Het script dat al deze taken doet staat in de admin map en heet cron.php. Alleen kan dit script niet
+  <p>Het script dat al deze taken doet staat in de adminmap en heet cron.php. Alleen kan dit script niet
    uit zichzelf lopen, dus moet je een mechanisme installeren dat dit script om de 5 á 10 minuten
-   start. Dit maakt een &quot;hartslag&quot;, zodqt het script taken kan uitvoeren na periodes die vastgelegd zijn
+   start. Dit maakt een &quot;hartslag&quot;, zodat het script taken kan uitvoeren na periodes die vastgelegd zijn
    in elke module.</p>
   <p>Merk op dat de machine die cron.php laat lopen <b>niet dezelfde machine moet zijn als degene waar Moodle
    op loopt</b>. Als je installatie bijvoorbeeld bij een beperkte webhost staat die geen cron aanbiedt, dan 
@@ -351,7 +351,7 @@ php_value post_max_size 2M
      "insert mode" door op "i"te drukken, dan kun je bovenstaande lijn inbrengen, dan ga je uit insert mode door op
       ESC te drukken. Je bewaart en verlaat het programma door "wq" te typen of door ":q!" te typen 
      (zonder de aanhalingstekens).</p>
-  <p><b>Op Windows systemen</b>: De gemakkelijkste manier is door dit kleine pakketje te gebruiken
+  <p><b>Op Windowssystemen</b>: De gemakkelijkste manier is door dit kleine pakketje te gebruiken
     <a href="http://moodle.org/download/moodle-cron-for-windows.zip" title="Klik om dit pakketje te downloaden (150k)" target="_blank">moodle-cron-for-windows.zip</a> 
     wat het hele ding erg gemakkelijk maakt. Je kunt eventueel ook gebruik maken van de ingebouwde Windowsfunctie
     "Scheduled Tasks".</p>
@@ -367,10 +367,10 @@ php_value post_max_size 2M
   <p>Nu Moodle goed loopt, kun je een vak aanmaken.</p>
   <p>Kies &quot;Voeg een nieuw vak toe&quot; vanuit de beheerpagina (of vanuit de beheerlinks op de startpagina).</p>
   <p>Vul het formulier in, met speciale aandacht voor de vakformat. Je moet je geen zorgen maken over de details,
-    omdat alles later door de leraar zelf kan veranderd worden door de leraar.</p>
+    omdat alles later door de leraar zelf kan veranderd worden.</p>
   <p>Druk op &quot;Bewaar de wijzigingen&quot;, en je wordt naar een nieuw formulier gebracht waar je leraars aan het
     vak kunt toewijzen. Je kunt alleen een bestaande gebruikersaccount aanwijzen vanuit dit formulier - als je een 
-    nieuwe lerarenaccount wil maken, dan kun je ofwel de leraar vragen om zelf zijn eigen account te maken (zie loginpagina)
+    nieuwe lerarenaccount wil maken, dan kun je ofwel de leraar vragen om zelf zijn eigen account te maken (zie logpagina)
     of maak er zelf een voor hen door gebruik te maken van de &quot;Voeg een nieuwe gebruiker toe&quot; 
     op de beheerpagina.</p>
   <p>Als dit gedaan is, dan is het vak klaar om aangepast te worden en is het toegankelijk vanaf de &quot;vakken&quot; link op 
