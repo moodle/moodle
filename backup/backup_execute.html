@@ -88,7 +88,8 @@
     if (!isset($backup_name)) {
         error ("Backup name not specified");
     }
-    $preferences->backup_name = $backup_name;
+    //We clean it again (to prevent diacritics entered manually)
+    $preferences->backup_name = clean_filename($backup_name);
 
     if (!isset($backup_unique_code)) {
         error ("Backup unique code not specified");
@@ -113,7 +114,7 @@
     echo "<td align=\"right\"><P><B>";
     echo get_string("name").":";
     echo "</B></td><td>";
-    echo $backup_name;
+    echo $preferences->backup_name;
     echo "</td></tr>";
     
     //Start the main tr, where all the backup progress is done
