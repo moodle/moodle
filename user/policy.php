@@ -2,7 +2,7 @@
 
     require_once("../config.php");
 
-    optional_param('agree', 0, PARAM_INT);
+    $agree = optional_param('agree', 0, PARAM_INT);
 
     define('MESSAGE_WINDOW', true);  // This prevents the message window coming up
 
