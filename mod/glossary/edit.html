@@ -46,7 +46,7 @@ if (isset($errors)) {
     <td valign="top"><table width="100%" border="0" cellspacing="0" cellpadding="5">
         <tr>
           <td valign="top" align=right><p><b>
-            <?php 
+            <?php
               echo get_string("aliases","glossary");
               echo ':<br />';
               helpbutton("aliases", strip_tags(get_string("aliases", "glossary")), "glossary");
@@ -58,7 +58,7 @@ if (isset($errors)) {
         </tr>
         <tr>
           <td colspan="2">
-<?php 
+<?php
     if ( !$glossary->usedynalink ) {
       echo '<input type="hidden" name=usedynalink value="0">';
       echo '<input type="hidden" name=casesensitive value="0">';
@@ -75,7 +75,7 @@ if (isset($errors)) {
         echo '<font size="-1">';
         print_string("entryusedynalink","glossary");
         echo '</font>';
-        echo helpbutton("usedynalink", strip_tags(get_string("usedynalink", "glossary")), "glossary"); 
+        echo helpbutton("usedynalink", strip_tags(get_string("usedynalink", "glossary")), "glossary");
         echo '<br />';
 
         if (!empty($newentry->casesensitive)) {
@@ -103,7 +103,7 @@ if (isset($errors)) {
         echo helpbutton("fullmatch", strip_tags(get_string("fullmatch", "glossary")), "glossary");
         echo '<br />';
     }
-?> 
+?>
           </td>
         </tr>
       </table></td>
@@ -122,7 +122,7 @@ if (isset($errors)) {
            helpbutton("richtext", get_string("helprichtext"), "moodle", true, true);
         } else {
            emoticonhelpbutton("form", "description");
-        } 
+        }
       ?>
       <br />
     </font>
@@ -130,7 +130,7 @@ if (isset($errors)) {
     <td>
     <?php
        print_textarea($usehtmleditor, 20, 60, 680, 400, "text", $newentry->definition);
-    
+
        echo "<p align=right>";
        helpbutton("textformat", get_string("helpformatting"));
        print_string("formattexttype");
@@ -138,7 +138,7 @@ if (isset($errors)) {
        if (!isset($newentry->format)) {
            $newentry->format = $defaultformat;
        }
-       choose_from_menu(format_text_menu(), "format", $newentry->format, ""); 
+       choose_from_menu(format_text_menu(), "format", $newentry->format, "");
        echo "</p>";
     ?>
     </td>
@@ -147,10 +147,10 @@ if (isset($errors)) {
     <td align=right><p><b><?php print_string("attachment", "glossary") ?>:<br />(<?php print_string("optional") ?>)&nbsp;</b></p></td>
     <td>
     <input type="hidden" name="MAX_FILE_SIZE" value="<?php echo get_max_upload_file_size($CFG->maxbytes, $course->maxbytes) ?>">
-    <input type="file" name="attachment" size=40> 
-    <?php 
-       helpbutton("attachment", get_string("attachment", "glossary"), "glossary"); 
-       print_string("maxsize", "", display_size(get_max_upload_file_size($CFG->maxbytes, $course->maxbytes))); 
+    <input type="file" name="attachment" size=40>
+    <?php
+       helpbutton("attachment", get_string("attachment", "glossary"), "glossary");
+       print_string("maxsize", "", display_size(get_max_upload_file_size($CFG->maxbytes, $course->maxbytes)));
     ?>
     </td>
 </tr>
@@ -181,10 +181,4 @@ if (isset($errors)) {
 
 
 </form>
-
-<?php 
-   if ($usehtmleditor) { 
-       print_richedit_javascript("form", "text", "yes");
-   }
-?>
 
