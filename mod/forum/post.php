@@ -218,8 +218,7 @@
                          $HTTP_REFERER);
                          
             echo "<CENTER><HR>";
-            forum_print_post($post, 0, $ownpost=false, $reply=false, $link=false);
-
+            forum_print_post($post, $forum->course, $ownpost=false, $reply=false, $link=false);
         }
 
         die;
