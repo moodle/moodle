@@ -245,7 +245,7 @@ function forum_shorten_post($message) {
         // Look for the first return between 50 and $FORUM_LONG_POST
         $shortmessage = substr($message, 50, $FORUM_LONG_POST);
         if ($pos = strpos($shortmessage, "\n")) {
-            return substr($message, 0, 50 + $pos);
+            return substr($message, 0, 50 + $pos). " ...";
         } else {
             return substr($message, 0, $FORUM_LONG_POST). "...";
         }
