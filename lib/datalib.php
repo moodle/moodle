@@ -970,27 +970,36 @@ function get_course_users($courseid, $sort="u.lastaccess DESC") {
     ///                            ORDER BY $sort");
 }
 
-function get_site_users($sort="u.lastaccess DESC") {
+function get_site_users($sort="u.lastaccess DESC", $select="") {
 /// Returns a list of all active users who are enrolled 
 /// or teaching in courses on this server
 
     global $CFG, $db;
 
-    //$db->debug = true;
 
-    return get_records_sql("SELECT u.id, u.username, u.firstname, u.lastname, u.maildisplay, u.mailformat,
-                                   u.email, u.city, u.country, u.lastaccess, u.lastlogin, u.picture
-                              FROM {$CFG->prefix}user u, 
-                                   {$CFG->prefix}user_students s, 
-                                   {$CFG->prefix}user_teachers t,
-                                   {$CFG->prefix}user_coursecreators c,
-                                   {$CFG->prefix}user_admins a
-                             WHERE s.userid = u.id 
-                                OR t.userid = u.id
-                                OR a.userid = u.id
-                                OR c.userid = u.id
-                             GROUP BY u.id 
-                             ORDER BY $sort ");
+    if ($select) {
+        $selectinfo = $select;
+    } else {
+        $selectinfo = "u.id, u.username, u.firstname, u.lastname, u.maildisplay, u.mailformat,".
+                      "u.email, u.city, u.country, u.lastaccess, u.lastlogin, u.picture";
+    }
+                  
+
+    if (!$students = get_records_sql("SELECT $selectinfo from {$CFG->prefix}user u, {$CFG->prefix}user_students s
+                                      WHERE s.userid = u.id GROUP BY u.id ORDER BY $sort")) {
+        $students = array();
+    }
+    if (!$teachers = get_records_sql("SELECT $selectinfo from {$CFG->prefix}user u, {$CFG->prefix}user_teachers t
+                                      WHERE t.userid = u.id GROUP BY u.id ORDER BY $sort")) {
+        $teachers = array();
+    }
+    if (!$admins = get_records_sql("SELECT $selectinfo from {$CFG->prefix}user u, {$CFG->prefix}user_admins a
+                                      WHERE a.userid = u.id GROUP BY u.id ORDER BY $sort")) {
+        $admins = array();
+    }
+    $users = array_merge($teachers, $students);
+    $users = array_merge($users, $admins);
+    return $users;
 }
 
 

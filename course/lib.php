@@ -27,14 +27,18 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate="today"
     $users = array();
 
     if ($course->category) {
-        if ($courseusers = get_course_users($course->id, "u.lastaccess DESC")) {
-            foreach ($courseusers as $courseuser) {
-                $users[$courseuser->id] = "$courseuser->firstname $courseuser->lastname";
-            }
+        $courseusers = get_course_users($course->id, "u.lastaccess DESC");
+    } else {
+        $courseusers = get_site_users("u.lastaccess DESC", "u.id, u.firstname, u.lastname");
+    }
+
+    if ($courseusers) {
+        foreach ($courseusers as $courseuser) {
+            $users[$courseuser->id] = "$courseuser->firstname $courseuser->lastname";
         }
-        if ($guest = get_guest()) {
-            $users[$guest->id] = "$guest->firstname $guest->lastname";
-        }
+    }
+    if ($guest = get_guest()) {
+        $users[$guest->id] = "$guest->firstname $guest->lastname";
     }
 
     if (isadmin()) {
@@ -92,9 +96,7 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate="today"
     } else {
         echo "<INPUT TYPE=hidden NAME=id VALUE=\"$course->id\">";
     }
-    if ($course->category) {
-        choose_from_menu ($users, "user", $selecteduser, get_string("allparticipants") );
-    }
+    choose_from_menu ($users, "user", $selecteduser, get_string("allparticipants") );
     choose_from_menu ($dates, "date", $selecteddate, get_string("alldays"));
     echo "<INPUT TYPE=submit VALUE=\"".get_string("showtheselogs")."\">";
     echo "</FORM>";
@@ -129,7 +131,7 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
 
     } else {
         $selector = "l.userid = u.id";  // Show all courses
-        if ($ccc = get_courses(-1)) {
+        if ($ccc = get_courses("all", "c.id ASC", "c.id,c.shortname")) {
             foreach ($ccc as $cc) {
                 $courses[$cc->id] = "$cc->shortname";
             }

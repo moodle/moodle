@@ -24,7 +24,6 @@
         if (!isadmin()) {
             error("Only administrators can look at the site logs");
         }
-        $user = "";
     }
 
     $strlogs = get_string("logs");
