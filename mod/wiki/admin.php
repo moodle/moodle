@@ -16,6 +16,8 @@
     optional_variable($action,"");    // Admin Action
     optional_variable($userid);     // User wiki.
     optional_variable($groupid);    // Group wiki.
+
+    $action = clean_text($action);
         
     if ($id) {
         if (! $cm = get_record("course_modules", "id", $id)) {
