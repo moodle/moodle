@@ -781,8 +781,7 @@ function adodb_gmmktime($hr,$min,$sec,$mon,$day,$year,$is_dst=false)
 	Note that $is_dst is not implemented and is ignored.
 */
 function adodb_mktime($hr,$min,$sec,$mon,$day,$year,$is_dst=false,$is_gmt=false) 
-{
-	if (!defined('ADODB_TEST_DATES')) {
+{ 	if (!defined('ADODB_TEST_DATES')) {
 		// for windows, we don't check 1970 because with timezone differences, 
 		// 1 Jan 1970 could generate negative timestamp, which is illegal
 		if (!defined('ADODB_NO_NEGATIVE_TS') || ($year >= 1971)) 
