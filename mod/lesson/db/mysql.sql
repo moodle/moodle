@@ -9,6 +9,7 @@ CREATE TABLE `prefix_lesson` (
   `course` int(10) unsigned NOT NULL default '0',
   `name` varchar(255) NOT NULL default '',
   `practice` TINYINT(3) UNSIGNED NOT NULL DEFAULT '0',
+  `modattempts` TINYINT(3) UNSIGNED NOT NULL DEFAULT '0',
   `usepassword` TINYINT(3) UNSIGNED NOT NULL DEFAULT '0',
   `password` VARCHAR(32) NOT NULL default '',
   `grade` tinyint(3) NOT NULL default '0',
@@ -81,6 +82,7 @@ CREATE TABLE `prefix_lesson_attempts` (
   `answerid` int(10) unsigned NOT NULL default '0',
   `retry` int(3) unsigned NOT NULL default '0',
   `correct` int(10) unsigned NOT NULL default '0',
+  `useranswer' text NOT NULL default '',
   `timeseen` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`),
   KEY (`userid`)
@@ -102,6 +104,7 @@ CREATE TABLE `prefix_lesson_default`
 		( `id` int(10) unsigned NOT NULL auto_increment,
 		  `course` int(10) unsigned NOT NULL default '0',
 		  `practice` tinyint(3) unsigned NOT NULL default '0',
+		  `modattempts` tinyint(3) unsigned NOT NULL default '0',
 		  `password` varchar(32) NOT NULL default '',
 		  `usepassword` int(3) unsigned NOT NULL default '0',
 		  `grade` tinyint(3) NOT NULL default '0',
@@ -147,23 +150,6 @@ CREATE TABLE `prefix_lesson_branch`
 	  `retry` int(10) unsigned not null,
 	  `flag`  tinyint(3) unsigned not null,
 	  `timeseen` int(10) unsigned not null,
-	  PRIMARY KEY (`id`)
-	);
-# --------------------------------------------------------
-
-CREATE TABLE `prefix_lesson_essay`
-	( `id` int(10) unsigned not null auto_increment,
-	  `lessonid` int(10) unsigned not null,
-	  `userid` int(10) unsigned not null,
-	  `pageid` int(10) unsigned not null,
-	  `answerid` int(10) unsigned not null,
-	  `try` int(10) unsigned not null,
-	  `answer` text not null,
-	  `graded` tinyint(3) unsigned not null default 0,
-	  `score` int(10) unsigned not null default 0,
-	  `response` text not null,
-	  `sent` tinyint(3) unsigned not null default 0,
-	  `timesubmitted` int(10) unsigned not null,
 	  PRIMARY KEY (`id`)
 	);
 # --------------------------------------------------------
