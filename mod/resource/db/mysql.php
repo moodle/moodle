@@ -26,7 +26,7 @@ function resource_upgrade($oldversion) {
                 }                
             }
         }
-        require("$CFG->dirroot/course/lib.php");
+        require_once("$CFG->dirroot/course/lib.php");
         rebuild_course_cache();
     }
 
