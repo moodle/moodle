@@ -731,7 +731,11 @@ function ewiki_page_view($id, &$data, $action, $all=1) {
       return($o);
    }
    #### MOODLE CHANGE
+   /// Add Moodle filters to text porion of wiki.
+   global $moodle_format;   // from wiki/view.php
+   $o = format_text($o, $moodle_format);
    $o.= "<br><br>";
+
    #-- control line + other per-page info stuff
    if ($pf_a = $ewiki_plugins["view_append"]) {
       ksort($pf_a);
