@@ -132,6 +132,7 @@
                 fwrite ($bf,full_tag("GROUPID",6,false,$for_dis->groupid));
                 fwrite ($bf,full_tag("ASSESSED",6,false,$for_dis->assessed));
                 fwrite ($bf,full_tag("TIMEMODIFIED",6,false,$for_dis->timemodified));
+                fwrite ($bf,full_tag("USERMODIFIED",6,false,$for_dis->usermodified));
                 //Now print posts to xml
                 $status = backup_forum_posts($bf,$preferences,$for_dis->id);
                 //End discussion

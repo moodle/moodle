@@ -203,6 +203,7 @@
             $discussion->groupid = backup_todb($dis_info['#']['GROUPID']['0']['#']);
             $discussion->assessed = backup_todb($dis_info['#']['ASSESSED']['0']['#']);
             $discussion->timemodified = backup_todb($dis_info['#']['TIMEMODIFIED']['0']['#']);
+            $discussion->usermodified = backup_todb($dis_info['#']['USERMODIFIED']['0']['#']);
 
             //We have to recode the userid field
             $user = backup_getid($restore->backup_unique_code,"user",$discussion->userid);
@@ -214,6 +215,12 @@
             $group = backup_getid($restore->backup_unique_code,"group",$discussion->groupid);
             if ($group) {
                 $discussion->groupid = $group->new_id;
+            }
+
+            //We have to recode the usermodified field
+            $user = backup_getid($restore->backup_unique_code,"user",$discussion->usermodified);
+            if ($user) {
+                $discussion->usermodified = $user->new_id;
             }
 
             //The structure is equal to the db, so insert the forum_discussions
