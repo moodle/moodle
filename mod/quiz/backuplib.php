@@ -450,6 +450,9 @@
                 fwrite ($bf,full_tag("GRADE",4,false,$quiz->grade));
                 fwrite ($bf,full_tag("TIMECREATED",4,false,$quiz->timecreated));
                 fwrite ($bf,full_tag("TIMEMODIFIED",4,false,$quiz->timemodified));
+                fwrite ($bf,full_tag("TIMELIMIT",4,false,$quiz->timelimit));
+                fwrite ($bf,full_tag("PASSWORD",4,false,$quiz->password));
+                fwrite ($bf,full_tag("SUBNET",4,false,$quiz->subnet));
                 //Now we print to xml question_grades (Course Level)
                 $status = backup_quiz_question_grades($bf,$preferences,$quiz->id);
                 //if we've selected to backup users info, then execute:
