@@ -2,6 +2,13 @@
 
 	include("../config.php");
 
+    optional_variable($id);
+
+    if ($id) {
+        if (!$course = get_record("course", "id", $id)) {
+            error("No such course!");
+        }
+    }
 
 	if (match_referer() && isset($HTTP_POST_VARS)) {
 
@@ -36,15 +43,29 @@
 
 			reset_login_count();
 
-            $passwordchanged = get_string("passwordchanged");
-			print_header($passwordchanged, $passwordchanged, $passwordchanged, "");
-			notice($passwordchanged, "$CFG->wwwroot/course/");
+            $strpasswordchanged = get_string("passwordchanged");
+
+            if ($course->id) {
+	            print_header($strpasswordchanged, $strpasswordchanged,
+                             "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> ->
+                              <A HREF=\"$CFG->wwwroot/user/index.php?id=$course->id\">".get_string("participants")."</A> ->
+                              <A HREF=\"$CFG->wwwroot/user/view.php?id=$USER->id&course=$course->id\">$USER->firstname $USER->lastname</A> -> $strpasswordchanged", $focus);
+			    notice($strpasswordchanged, "$CFG->wwwroot/user/view.php?id=$USER->id&course=$id");
+            } else {
+			    print_header($strpasswordchanged, $strpasswordchanged, $strpasswordchanged, "");
+			    notice($strpasswordchanged, "$CFG->wwwroot");
+            }
+
 			print_footer();
 			exit;
 		}
 	}
 
 
+
+    if ($course->id) {
+        $frm->id = $id;
+    }
 
 	if (!$frm->username)
     	$frm->username = get_moodle_cookie();
@@ -55,8 +76,16 @@
     	$focus = "form.username";
 	}
 
-    $changepassword = get_string("changepassword");
-	print_header($changepassword, $changepassword, $changepassword, $focus);
+    $strchangepassword = get_string("changepassword");
+    if ($course->id) {
+	    print_header($strchangepassword, $strchangepassword,
+                     "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> ->
+                      <A HREF=\"$CFG->wwwroot/user/index.php?id=$course->id\">".get_string("participants")."</A> ->
+                      <A HREF=\"$CFG->wwwroot/user/view.php?id=$USER->id&course=$course->id\">$USER->firstname $USER->lastname</A> -> $strchangepassword", $focus);
+    } else {
+	    print_header($strchangepassword, $strchangepassword, $strchangepassword, $focus);
+    }
+
     print_simple_box_start("center", "", $THEME->cellheading);
 	include("change_password_form.html");
     print_simple_box_end();
