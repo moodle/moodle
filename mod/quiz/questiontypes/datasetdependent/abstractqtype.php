@@ -340,7 +340,7 @@ class quiz_dataset_dependent_questiontype extends quiz_default_questiontype {
 
             } else {
                 $icon = '<IMG SRC="../../files/pix/'
-                        . mimeinfo('icon', $item->value) . '/>';
+                        . mimeinfo('icon', $item->value) . '" />';
                 if (substr(strtolower($item->value), 0, 7)=='http://') {
                     $link = $item->value;
                         
@@ -381,7 +381,6 @@ class quiz_dataset_dependent_questiontype extends quiz_default_questiontype {
         $virtualqtype = $this->get_virtual_qtype();
         return $nameprefix . $regs[1] . $virtualqtype->name();
     }
-        // Default implementation that sometimes can overridden
 
     function extract_response($rawresponse, $nameprefix) {
         if (!ereg('^dataset([;:0-9A-Za-z+/=]+)-(.*)$',
