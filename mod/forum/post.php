@@ -462,7 +462,8 @@
             error("Could not find top parent of post $post->id");
         }
     } else {
-        $toppost->subject = get_string("yournewtopic", "forum");
+        $toppost->subject = ($forum->type == "news") ? get_string("addanewtopic", "forum") : 
+                                                       get_string("addanewdiscussion", "forum");
     }
 
     if (empty($post->subject)) {
@@ -488,7 +489,7 @@
 
     $cm = get_coursemodule_from_instance("forum", $forum->id, $course->id);
 
-    if (empty($discussion->name)) {
+    if (!empty($discussion) and empty($discussion->name)) {
         $discussion->name = $forum->name;
     }
 
@@ -511,7 +512,11 @@
         echo "<h2>".get_string("yourreply", "forum").":</h2>";
     } else {
         echo "<center>";
-        echo "<h2>".get_string("yournewtopic", "forum")."</h2>";
+        $forum->intro = trim($forum->intro);
+        if (!empty($forum->intro)) {
+            print_simple_box(format_text($forum->intro), 'center');
+        }
+        print_heading(get_string('yournewtopic', 'forum'));
     }
     if (!empty($post->error)) {
         notify($post->error);
