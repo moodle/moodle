@@ -382,6 +382,7 @@ function chat_format_message($userid, $chatid, $timestamp, $message, $system=fal
         }
     }
 
+    convert_urls_into_links($message);
     replace_smilies($message);
 
     $output  = "<table><tr><td valign=top>$picture</td><td>";
