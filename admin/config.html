@@ -301,6 +301,21 @@
     </td>
 </tr>
 <tr valign=top>
+	<td align=right><p>allowunenroll:</td>
+	<td>
+    <?php 
+       unset($options);
+       $options[0]  = get_string("no");
+       $options[1]  = get_string("yes");
+
+       choose_from_menu ($options, "allowunenroll", $config->allowunenroll, "", "", "");
+    ?>
+    </td>
+    <td>
+    <?php print_string("configallowunenroll") ?>
+    </td>
+</tr>
+<tr valign=top>
 	<td align=right><p>maxbytes:</td>
 	<td>
     <?php 

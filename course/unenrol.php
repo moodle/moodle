@@ -24,6 +24,10 @@
         error("You must be a teacher to do this");
     }
 
+    if ($user->id == $USER->id and !$CFG->allowunenroll) {
+        error("You are not allowed to unenroll");
+    }
+
     if (isset($confirm)) {
 
         if (! unenrol_student($user->id, $course->id)) {

@@ -107,6 +107,7 @@ $string['cleaningtempdata'] = "Cleaning temp data";
 $string['closewindow'] = "Close this window";
 $string['comparelanguage'] = "Compare and edit current language";
 $string['complete'] = "Complete";
+$string['configallowunenroll'] = "If this is set 'Yes', then students are allowed to unenroll themselves from courses whenever they like. Otherwise they are not allowed, and this process will be solely controlled by the teachers and administrators.";
 $string['configcountry'] = "If you set a country here, then this country will be selected by default on new user accounts.  To force users to choose a country, just leave this unset.";
 $string['configdebug'] = "If you turn this on, then PHP's error_reporting will be increased so that more warnings are printed.  This is only useful for developers.";
 $string['configgdversion'] = "Indicate the version of GD that is installed.  The version shown by default is the one that has been auto-detected.  Don't change this unless you really know what you're doing.";

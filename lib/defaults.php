@@ -5,6 +5,7 @@
 
    $defaults = array (
        "auth"             => "email",
+       "allowunenroll"    =>  true,
        "changepassword"   =>  true,
        "country"          => "",
        "debug"            =>  7,
