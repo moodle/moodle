@@ -149,16 +149,27 @@
     $editmyprofile = get_string("editmyprofile");
     $participants = get_string("participants");
 
-    if ($course->category) {
-	    print_header("$course->fullname: $editmyprofile", "$course->fullname: $editmyprofile",
-                    "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> 
-                    -> <A HREF=\"index.php?id=$course->id\">$participants</A>
-                    -> <A HREF=\"view.php?id=$user->id&course=$course->id\">$user->firstname $user->lastname</A> 
-                    -> $editmyprofile", "");
+    if ($user->firstname and $user->lastname) {
+        $userfullname = "$user->firstname $user->lastname";
+        if ($course->category) {
+	        print_header("$course->fullname: $editmyprofile", "$course->fullname: $editmyprofile",
+                        "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> 
+                        -> <A HREF=\"index.php?id=$course->id\">$participants</A>
+                        -> <A HREF=\"view.php?id=$user->id&course=$course->id\">$userfullname</A> 
+                        -> $editmyprofile", "");
+        } else {
+	        print_header("$course->fullname: $editmyprofile", "$course->fullname",
+                         "<A HREF=\"view.php?id=$user->id&course=$course->id\">$userfullname</A> 
+                          -> $editmyprofile", "");
+        }
     } else {
+        $userfullname = get_string("newuser");
+        $straddnewuser = get_string("addnewuser");
+
+        $stradministration = get_string("administration");
 	    print_header("$course->fullname: $editmyprofile", "$course->fullname",
-                     "<A HREF=\"view.php?id=$user->id&course=$course->id\">$user->firstname $user->lastname</A> 
-                      -> $editmyprofile", "");
+                     "<A HREF=\"$CFG->wwwroot/admin\">$stradministration</A> ->
+                      $straddnewuser", "");
     }
 
     $teacher = strtolower($course->teacher);
@@ -167,7 +178,7 @@
     }
 
     print_simple_box_start("center", "", "$THEME->cellheading");
-    print_heading( get_string("userprofilefor", "", "$user->firstname $user->lastname") );
+    print_heading( get_string("userprofilefor", "", "$userfullname") );
 	include("edit.html");
     print_simple_box_end();
     print_footer($course);

@@ -222,6 +222,7 @@ Cheers from the '\$a->sitename' administrator,
 \$a->signoff\n";
 
 $string[newpicture] = "New picture";
+$string[newuser] = "New user";
 $string[newusers] = "New users";
 $string[newsitem] = "news item";
 $string[newsitems] = "news items";
