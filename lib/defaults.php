@@ -4,7 +4,8 @@
 // It defines default values for any important configuration variables
 
    $defaults = array (
-       "auth"                     => "email",
+       "auth"                     => 'email',
+       "auth_pop3mailbox"         => 'INBOX',
        "autologinguests"          => 0,
        "allowunenroll"            =>  true,
        "cachetext"                =>  60,
