@@ -656,7 +656,7 @@ $string['passwordsent'] = 'Le mot de passe a été envoyé';
 $string['passwordsenttext'] = '<p>Un message vous a été envoyé à cette adresse : $a->email.</p>
 <p><b>Merci de lire ce message afin de connaître votre nouveau mot de passe</b></p>
 <p>Ce nouveau mot de passe a été généré automatiquement. Vous voudrez sans doute<br /> le <a href=\"$a->link\">modifier</a> afin qu\'il vous soit plus facile de vous en souvenir.</p>';
-$string['people'] = 'La classe';
+$string['people'] = 'Personnes';
 $string['personalprofile'] = 'Fiche personnelle';
 $string['phone'] = 'Téléphone';
 $string['phpinfo'] = 'Info PHP';
