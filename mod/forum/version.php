@@ -5,7 +5,7 @@
 //  This fragment is called by /admin/index.php
 ////////////////////////////////////////////////////////////////////////////////
 
-$module->version  = 2002091000;
+$module->version  = 2002100300;
 $module->cron     = 60;
 
 function forum_upgrade($oldversion) {
@@ -47,6 +47,12 @@ function forum_upgrade($oldversion) {
     if (! execute_sql(" ALTER TABLE `forum_posts` ADD `attachment` VARCHAR(100) NOT NULL AFTER `message` ")) {
       echo "<P>Don't worry about this error - your server already had this upgrade applied";
     }
+  }
+
+  if ($oldversion < 2002100300) {
+      execute_sql(" ALTER TABLE `forum` CHANGE `open` `open` TINYINT(2) UNSIGNED DEFAULT '2' NOT NULL ");
+      execute_sql(" UPDATE `forum` SET `open` = 2 WHERE `open` = 1 ");
+      execute_sql(" UPDATE `forum` SET `open` = 1 WHERE `open` = 0 ");
   }
 
   return true;

@@ -20,6 +20,10 @@ $FORUM_POST_RATINGS = array ("3" => get_string("postrating3", "forum"),
                              "2" => get_string("postrating2", "forum"),
                              "1" => get_string("postrating1", "forum") );
 
+$FORUM_OPEN_MODES   = array ("2" => get_string("openmode2", "forum"),
+                             "1" => get_string("openmode1", "forum"),
+                             "0" => get_string("openmode0", "forum") );
+
 $FORUM_SHORT_POST = 300;  // Less than this is "short"
 
 $FORUM_LONG_POST  = 600;  // More than this is "long"
@@ -43,21 +47,21 @@ function forum_get_course_forum($courseid, $type) {
             case "news":
                 $forum->name  = get_string("namenews", "forum");
                 $forum->intro = get_string("intronews", "forum");
-                $forum->open  = 0;
+                $forum->open = 1;   // 0 - no, 1 - posts only, 2 - discuss and post
                 $forum->assessed = 0;
                 $forum->forcesubscribe = 1;
                 break;
             case "social":
                 $forum->name  = get_string("namesocial", "forum");
                 $forum->intro = get_string("introsocial", "forum");
-                $forum->open  = 1;
+                $forum->open = 2;   // 0 - no, 1 - posts only, 2 - discuss and post
                 $forum->assessed = 0;
                 $forum->forcesubscribe = 0;
                 break;
             case "teacher":
                 $forum->name  = get_string("nameteacher", "forum");
                 $forum->intro = get_string("introteacher", "forum");
-                $forum->open  = 0;
+                $forum->open = 0;   // 0 - no, 1 - posts only, 2 - discuss and post
                 $forum->assessed = 0;
                 $forum->forcesubscribe = 0;
                 break;
@@ -1045,10 +1049,22 @@ function forum_user_can_post_discussion($forum) {
     } else if (isteacher($forum->course)) {
         return true;
     } else {
-        return $forum->open;
+        return ($forum->open == 2);
     }
 }
 
+function forum_user_can_post($forum) {
+// $forum is an object
+    global $USER;
+
+    if ($forum->type == "teacher") {
+        return isteacher($forum->course);
+    } else if (isteacher($forum->course)) {
+        return true;
+    } else {
+        return $forum->open;
+    }
+}
 
 function forum_get_discussions($forum="0", $forum_sort="DESC", $user=0) {
     if ($user) {
@@ -1148,8 +1164,9 @@ function forum_print_discussion($course, $forum, $discussion, $post, $mode) {
     global $USER;
 
     $ownpost = ($USER->id == $post->user);
+    $reply   = forum_user_can_post($forum);
 
-    forum_print_post($post, $course->id, $ownpost, $reply=true, $link=false, $rate=false);
+    forum_print_post($post, $course->id, $ownpost, $reply, $link=false, $rate=false);
 
     forum_print_mode_form($discussion->id, $mode);
 
@@ -1171,16 +1188,16 @@ function forum_print_discussion($course, $forum, $discussion, $post, $mode) {
         case -1 :  // Flat descending
         default:   
             echo "<UL>";
-            forum_print_posts_flat($post->discussion, $course->id, $mode, $forum->assessed);
+            forum_print_posts_flat($post->discussion, $course->id, $mode, $forum->assessed, $reply);
             echo "</UL>";
             break;
 
         case 2 :   // Threaded 
-            forum_print_posts_threaded($post->id, $course->id, 0, $forum->assessed);
+            forum_print_posts_threaded($post->id, $course->id, 0, $forum->assessed, $reply);
             break;
 
         case 3 :   // Nested
-            forum_print_posts_nested($post->id, $course->id, $forum->assessed);
+            forum_print_posts_nested($post->id, $course->id, $forum->assessed, $reply);
             break;
     }
 
@@ -1192,10 +1209,9 @@ function forum_print_discussion($course, $forum, $discussion, $post, $mode) {
     }
 }
 
-function forum_print_posts_flat($discussion, $course, $direction, $assessed) { 
+function forum_print_posts_flat($discussion, $course, $direction, $assessed, $reply) { 
     global $USER;
 
-    $reply = true;
     $link  = false;
 
     if ($direction < 0) {
@@ -1217,10 +1233,9 @@ function forum_print_posts_flat($discussion, $course, $direction, $assessed) {
     }
 }
 
-function forum_print_posts_threaded($parent, $course, $depth, $assessed) { 
+function forum_print_posts_threaded($parent, $course, $depth, $assessed, $reply) { 
     global $USER;
 
-    $reply = true;
     $link  = false;
 
     if ($posts = get_records_sql("SELECT p.*, u.id as userid, u.firstname, u.lastname, u.email, u.picture
@@ -1242,7 +1257,7 @@ function forum_print_posts_threaded($parent, $course, $depth, $assessed) {
                 echo "</FONT></P></LI>";
             }
 
-            forum_print_posts_threaded($post->id, $course, $depth-1, $assessed);
+            forum_print_posts_threaded($post->id, $course, $depth-1, $assessed, $reply);
             echo "</UL>\n";
         }
     } else {
@@ -1250,10 +1265,9 @@ function forum_print_posts_threaded($parent, $course, $depth, $assessed) {
     }
 }
 
-function forum_print_posts_nested($parent, $course, $assessed) { 
+function forum_print_posts_nested($parent, $course, $assessed, $reply) { 
     global $USER;
 
-    $reply = true;
     $link  = false;
 
     if ($posts = get_records_sql("SELECT p.*, u.id as userid, u.firstname, u.lastname, u.email, u.picture
@@ -1268,7 +1282,7 @@ function forum_print_posts_nested($parent, $course, $assessed) {
             echo "<UL>";
             forum_print_post($post, $course, $ownpost, $reply, $link, $assessed);
             echo "<BR>";
-            forum_print_posts_nested($post->id, $course, $assessed);
+            forum_print_posts_nested($post->id, $course, $assessed, $reply);
             echo "</UL>\n";
         }
     } else {

@@ -32,27 +32,25 @@
 </tr>
 
 <tr valign=top>
-    <td align=right><P><B><? print_string("allowdiscussions", "forum", "$course->student") ?>:</B></P></TD>
+    <td align=right><P><B><? print_string("allowdiscussions", "forum", strtolower("$course->student")) ?>:</B></P></TD>
     <td>
-        <? $stryes = get_string("yes"); $strno = get_string("no"); ?>
-        <input type=radio name=open value=1 <? if ($form->open == 1) echo "CHECKED"; ?> ><?=$stryes ?>
-        <input type=radio name=open value=0 <? if ($form->open == 0) echo "CHECKED"; ?> ><?=$strno ?>
+        <?  choose_from_menu($FORUM_OPEN_MODES, "open", $form->open, ""); ?>
         <? helpbutton("allowdiscussions", get_string("allowdiscussions", "forum"), "forum") ?>
     </td>
 </tr>
+
 <tr>
     <td align=right><P><B><? print_string("allowratings", "forum") ?>:</B></P></TD>
     <td>
-        <input type=radio name=assessed value=1 <? if ($form->assessed == 1) echo "CHECKED"; ?> ><?=$stryes ?>
-        <input type=radio name=assessed value=0 <? if ($form->assessed == 0) echo "CHECKED"; ?> ><?=$strno ?>
+        <? $options[0] = get_string("no"); $options[1] = get_string("yes"); ?>
+        <? choose_from_menu($options, "assessed", $form->assessed, ""); ?>
         <? helpbutton("ratings", get_string("allowratings", "forum"), "forum") ?>
     </td>
 </tr>
 <tr>
     <td align=right><P><B><? print_string("forcesubscribeq", "forum") ?>:</B></P></TD>
     <td>
-        <input type=radio name=forcesubscribe value=1 <? if ($form->forcesubscribe == 1) echo "CHECKED"; ?> ><?=$stryes ?>
-        <input type=radio name=forcesubscribe value=0 <? if ($form->forcesubscribe == 0) echo "CHECKED"; ?> ><?=$strno ?>
+        <? choose_from_menu($options, "forcesubscribe", $form->forcesubscribe, ""); ?>
         <? helpbutton("subscription", get_string("forcesubscribeq", "forum"), "forum") ?>
     </td>
 </tr>
