@@ -204,7 +204,7 @@
                      $discussion->firstpost = 0;
                 }
                 //Create temp discussion record
-                $temp_discussion->id = $discussion->id;
+                $temp_discussion->id = $newid;
                 $temp_discussion->firstpost = $discussion->firstpost;
                 //echo "Updated firstpost ".$old_firstpost." to ".$temp_discussion->firstpost."<br>";                //Debug
             } else {
