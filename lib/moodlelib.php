@@ -1641,7 +1641,7 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml="", $a
 ///  Returns "true" if mail was sent OK, "emailstop" if email was blocked by user
 ///  and "false" if there was another sort of error.
 
-    global $CFG, $_SERVER;
+    global $CFG, $FULLME;
 
     global $course;                // This is a bit of an ugly hack to be gotten rid of later
     if (!empty($course->lang)) {   // Course language is defined
@@ -1745,7 +1745,7 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml="", $a
     } else {
         mtrace("ERROR: $mail->ErrorInfo");
         $site = get_site();
-        add_to_log($site->id, "library", "mailer", $_SERVER["REQUEST_URI"], "ERROR: $mail->ErrorInfo");
+        add_to_log($site->id, "library", "mailer", $FULLME, "ERROR: $mail->ErrorInfo");
         return false;
     }
 }
