@@ -13,7 +13,7 @@ $string['developer.html'] = "Entwickler-Anleitung";
 $string['cvs.html'] = "Nutzung von CVS";
 $string['future.html'] = "Zukunft";
 $string['credits.html'] = "Danksagungen";
-$string['licence.html'] = "Licenz";
+$string['licence.html'] = "Lizenz";
 
 
 ?>
