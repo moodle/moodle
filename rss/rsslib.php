@@ -92,15 +92,10 @@ function rss_save_file ($modname,$mod,$result) {
     
     $status = true;
 
-    $basedir = $CFG->dataroot."/rss";
-
-    //Check dataroot/rss exists
-    $status = check_dir_exists($basedir,true);
-
-    $basedir .= "/".$modname;
-
-    //Check dataroot/rrs/$modname exists
-    $status = check_dir_exists($basedir,true);
+    if (! $basedir = make_upload_directory ("rss/".$modname)) {
+        //Cannot be created, so error
+        $status = false;
+    }
 
     if ($status) {
         $file = $basedir .= "/".$mod->id.".xml";
@@ -108,6 +103,8 @@ function rss_save_file ($modname,$mod,$result) {
         if ($rss_file) {
             $status = fwrite ($rss_file,$result);
             fclose($rss_file);
+        } else {
+            $status = false;
         }
     }
     return $status;
