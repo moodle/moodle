@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.2 development (2003121500)
+      // assignment.php - created with Moodle 1.3 development (2004041800)
 
 
 $string['allowresubmit'] = 'Tillad gentagelser';
@@ -18,6 +18,7 @@ $string['description'] = 'Beskrivelse';
 $string['duedate'] = 'Afleveringsdato';
 $string['duedateno'] = 'Ingen afleveringsfrist';
 $string['early'] = '$a for tidlig';
+$string['existingfiledeleted'] = 'Eksisterende fil er blevet slettet: $a';
 $string['failedupdatefeedback'] = 'Mislykkedes at opdatere feedback på aflevering for bruger $a';
 $string['feedback'] = 'Feedback';
 $string['feedbackupdated'] = 'Afleverings feedback opdateret for $a ';
