@@ -314,7 +314,7 @@ function frmchecked(&$var, $true_value = "checked", $false_value = "") {
 
 
 function link_to_popup_window ($url, $name="popup", $linkname="click here",
-                               $height=400, $width=500, $title="Popup window", $options="none") {
+                               $height=400, $width=500, $title="Popup window", $options="none", $return=false) {
 /// This will create a HTML link that will work on both
 /// Javascript and non-javascript browsers.
 /// Relies on the Javascript function openpopup in javascript.php
@@ -327,8 +327,13 @@ function link_to_popup_window ($url, $name="popup", $linkname="click here",
     }
     $fullscreen = 0;
 
-    echo "<a target=\"$name\" title=\"$title\" href=\"$CFG->wwwroot$url\" ".
-         "onClick=\"return openpopup('$url', '$name', '$options', $fullscreen);\">$linkname</a>\n";
+    $link = "<a target=\"$name\" title=\"$title\" href=\"$CFG->wwwroot$url\" ".
+           "onClick=\"return openpopup('$url', '$name', '$options', $fullscreen);\">$linkname</a>\n";
+    if ($return) {
+        return $link;
+    } else {
+        echo $link;
+    }
 }
 
 
@@ -487,14 +492,16 @@ function popup_form ($common, $options, $formname, $selected="", $nothing="choos
     $output .= "</select>";
     $output .= "</form>\n";
 
-    if ($return) {
-        return $startoutput.$output;
+    if ($help) {
+        $button = helpbutton($help, $helptext, 'moodle', true, false, '', true);
     } else {
-        echo $startoutput;
-        if ($help) {
-            helpbutton($help, $helptext);
-        }
-        echo $output;
+        $button = '';
+    }
+
+    if ($return) {
+        return $startoutput.$button.$output;
+    } else {
+        echo $startoutput.$button.$output;
     }
 }
 
@@ -1085,7 +1092,7 @@ function print_header ($title="", $heading="", $navigation="", $focus="", $meta=
     include ("$CFG->dirroot/theme/$CFG->theme/header.html");
 }
 
-function print_footer ($course=NULL) {
+function print_footer ($course=NULL, $usercourse=NULL) {
 // Can provide a course object to make the footer contain a link to
 // to the course home page, otherwise the link will go to the site home
     global $USER, $CFG, $THEME;
@@ -1105,8 +1112,12 @@ function print_footer ($course=NULL) {
         $course = get_site();
     }
 
+    if (!$usercourse) {
+        $usercourse = $course;
+    }
+
 /// User links
-    $loggedinas = user_login_string($course, $USER);
+    $loggedinas = user_login_string($usercourse, $USER);
 
     include ("$CFG->dirroot/theme/$CFG->theme/footer.html");
 }
@@ -2132,7 +2143,7 @@ function error ($message, $link="") {
     die;
 }
 
-function helpbutton ($page, $title="", $module="moodle", $image=true, $linktext=false, $text="") {
+function helpbutton ($page, $title="", $module="moodle", $image=true, $linktext=false, $text="", $return=false) {
     // $page = the keyword that defines a help page
     // $title = the title of links, rollover tips, alt tags etc
     // $module = which module is the page defined in
@@ -2162,7 +2173,14 @@ function helpbutton ($page, $title="", $module="moodle", $image=true, $linktext=
     } else {
         $url = "/help.php?module=$module&amp;file=$page.html";
     }
-    link_to_popup_window ($url, "popup", $linkobject, 400, 500, $title);
+
+    $link = link_to_popup_window ($url, "popup", $linkobject, 400, 500, $title, 'none', true);
+
+    if ($return) {
+        return $link;
+    } else {
+        echo $link;
+    }
 }
 
 function emoticonhelpbutton($form, $field) {
