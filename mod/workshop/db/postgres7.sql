@@ -3,7 +3,7 @@
 #
 BEGIN;
 CREATE TABLE prefix_workshop (
-  id SERIAL8 PRIMARY KEY,
+  id SERIAL PRIMARY KEY,
   course INT8  NOT NULL default '0',
   name varchar(255) NOT NULL default '',
   description text NOT NULL,
@@ -39,7 +39,7 @@ CREATE TABLE prefix_workshop (
 #
 
 CREATE TABLE prefix_workshop_submissions (
-  id SERIAL8 PRIMARY KEY,
+  id SERIAL PRIMARY KEY,
   workshopid INT8  NOT NULL default '0',
   userid INT8  NOT NULL default '0',
   title varchar(100) NOT NULL default '',
@@ -60,7 +60,7 @@ CREATE INDEX prefix_workshop_submissions_title_idx on prefix_workshop_submission
 #
 
 CREATE TABLE prefix_workshop_assessments (
-  id SERIAL8 PRIMARY KEY,
+  id SERIAL PRIMARY KEY,
   workshopid INT8  NOT NULL default '0',
   submissionid INT8  NOT NULL default '0',
   userid INT8  NOT NULL default '0',
@@ -80,7 +80,7 @@ CREATE TABLE prefix_workshop_assessments (
 #
 
 CREATE TABLE prefix_workshop_elements (
-  id SERIAL8 PRIMARY KEY,
+  id SERIAL PRIMARY KEY,
   workshopid INT8  NOT NULL default '0',
   elementno INT  NOT NULL default '0',
   description text NOT NULL,
@@ -95,7 +95,7 @@ CREATE TABLE prefix_workshop_elements (
 #
 
 CREATE TABLE prefix_workshop_grades (
-  id SERIAL8 PRIMARY KEY,
+  id SERIAL PRIMARY KEY,
   workshopid INT8  NOT NULL default '0', 
   assessmentid INT8  NOT NULL default '0',
   elementno INT8  NOT NULL default '0',
@@ -104,7 +104,7 @@ CREATE TABLE prefix_workshop_grades (
 );
 # --------------------------------------------------------
 CREATE TABLE prefix_workshop_comments (
-  id SERIAL8 PRIMARY KEY,
+  id SERIAL PRIMARY KEY,
   workshopid int8 NOT NULL default '0',
   assessmentid int8  NOT NULL default '0',
   userid int8 NOT NULL default '0',
