@@ -203,5 +203,6 @@ $string['webct'] = 'Formato WebCT';
 $string['withsummary'] = 'con estadísticas resumidas';
 $string['wronggrade'] = 'Calificación equivocada (después de la línea $a) :';
 $string['yourfinalgradeis'] = 'Su calificación final en este cuestionario es $a';
+$string['overdue'] = 'Vencido';
 
 ?>
