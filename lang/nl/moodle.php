@@ -975,6 +975,7 @@ $string['topichide'] = 'Verberg dit onderwerp voor $a';
 $string['topicoutline'] = 'Overzicht van het onderwerp';
 $string['topicshow'] = 'Toon dit onderwerp aan $a';
 $string['total'] = 'Totaal';
+$string['trysearching'] = 'Probeer te zoeken';
 $string['turneditingoff'] = 'Zet wijzigen uit';
 $string['turneditingon'] = 'Zet wijzigen aan';
 $string['undecided'] = 'Onbeslist';
