@@ -123,6 +123,13 @@ function chat_delete_instance($id) {
         $result = false;
     }
 
+    $pagetypes = page_import_types('mod/chat/');
+    foreach($pagetypes as $pagetype) {
+        if(!delete_records('block_instance', 'pageid', $chat->id, 'pagetype', $pagetype)) {
+            $result = false;
+        }
+    }
+
     if (! delete_records('event', 'modulename', 'chat', 'instance', $chat->id)) {
         $result = false;
     }

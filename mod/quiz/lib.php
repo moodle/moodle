@@ -170,6 +170,13 @@ function quiz_delete_instance($id) {
         $result = false;
     }
 
+    $pagetypes = page_import_types('mod/quiz/');
+    foreach($pagetypes as $pagetype) {
+        if(!delete_records('block_instance', 'pageid', $quiz->id, 'pagetype', $pagetype)) {
+            $result = false;
+        }
+    }
+
     if ($events = get_records_select('event', "modulename = 'quiz' and instance = '$quiz->id'")) {
         foreach($events as $event) {
             delete_event($event->id);
