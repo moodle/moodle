@@ -85,7 +85,7 @@ function resource_user_complete($course, $user, $mod, $resource) {
         echo "$strnumviews - $strmostrecently ".userdate($lastlog->time);
 
     } else {
-        print_string("neverread", "resource");
+        print_string("neverseen", "resource");
     }
 }
 
