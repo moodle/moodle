@@ -13,7 +13,12 @@ function glossary_print_entry_by_format($course, $cm, $glossary, $entry,$mode=""
         echo "<b><a href=\"view.php?id=$cm->id&mode=entry&hook=$entry->id&displayformat=2\">";
 
         glossary_print_entry_concept($entry);
-        echo '</a></b><br />';
+        echo '</a></b> ';
+        if ( $return = glossary_print_entry_commentslink($course, $cm, $glossary, $entry,$mode,$hook, 'html') ) {
+            echo "<font size=-1>($return)</font>";
+        }
+
+        echo '<br />';
     } else {
         echo "<center>";
         print_string("noentry", "glossary");

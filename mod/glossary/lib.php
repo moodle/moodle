@@ -406,9 +406,10 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry,$mode="",$ho
     if (!$entry->approved) {
         $return .= get_string("entryishidden","glossary");
     }
-    $return .= "</font> ";
 
-    $return .= glossary_print_entry_commentslink($course, $cm, $glossary, $entry,$mode,$hook);
+    $return .= glossary_print_entry_commentslink($course, $cm, $glossary, $entry,$mode,$hook,'html');
+
+    $return .= "</font> ";
 
     
     if ( $glossary->allowcomments and !isguest()) {

@@ -454,7 +454,7 @@
             }
             $paging  = "<font size=1><center>" . get_string ("jumpto") . " $paging</center></font>";
         }
-        echo "$paging";
+        echo $paging;
 
         if ($glossary->displayformat == GLOSSARY_FORMAT_CONTINUOUS) {
             $printpivot = 0;
@@ -573,7 +573,6 @@
                 $entriesshown++;
             }
         }
-        echo '<p>';
         if ( $tableisopen ) {
             if ($glossary->displayformat == GLOSSARY_FORMAT_CONTINUOUS OR 
                 $glossary->displayformat == GLOSSARY_FORMAT_SIMPLE ) {
@@ -585,7 +584,10 @@
     if ( !$entriesshown ) {
         print_simple_box('<center>' . get_string("noentries","glossary") . '</center>',"center","95%");
     }
-
+    if ( $paging ) {
+        echo "<hr />$paging";
+    }
+    echo '<p>';
     echo '</center>';
     glossary_print_tabbed_table_end();
     if ( $debug ) {
