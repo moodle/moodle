@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.0.9 development (2003042801)
+      // auth.php - created with Moodle 1.0.9 Beta 1 + (2003052000)
 
 
 $string['auth_dbdescription'] = "¸Ã·½·¨Ê¹ÓÃÒ»¸öÍâ²¿Êý¾Ý¿âÀ´¼ìÑéÓÃ»§ÃûºÍÃÜÂëÊÇ·ñÓÐÐ§¡£Èç¹ûÊÇÒ»¸öÐÂÕÊºÅ£¬¸ÃÕÊºÅÆäËü×Ö¶ÎµÄÐÅÏ¢½«Ò»Æð¸´ÖÆµ½±¾ÏµÍ³ÖÐ¡£";
@@ -29,11 +29,16 @@ $string['auth_ldap_search_sub'] = "Èç¹ûÄãÏë´Ó´Î¼¶ÉÏÏÂÎÄÖÐËÑË÷ÓÃ»§£¬ÉèÖµ&lt;&gt; 
 $string['auth_ldap_update_userinfo'] = "´ÓLDAPÏò±¾ÏµÍ³¸üÐÂÓÃ»§ÐÅÏ¢£¨ÐÕÃû¡¢µØÖ·¡­¡­£©Òª²é¿´Ó³ÉäÐÅÏ¢£¬Çë¿´/auth/ldap/attr_mappings.php";
 $string['auth_ldap_user_attribute'] = "ÓÃÓÚÃüÃû/ËÑË÷ÓÃ»§µÄÊôÐÔ¡£Í¨³£Îª¡®cn¡¯¡£";
 $string['auth_ldapdescription'] = "¸Ã·½·¨ÀûÓÃÒ»¸öÍâ²¿µÄLDAP·þÎñÆ÷½øÐÐÉí·ÝÑéÖ¤¡£
+
                                   Èç¹ûÓÃ»§ÃûºÍÃÜÂëÊÇÓÐÐ§µÄ£¬±¾ÏµÍ³¾Ý´ËÔÚÊý¾Ý¿âÖÐ´´½¨Ò»¸öÐÂÓÃ»§¡£ 
+
                                   ¸ÃÄ£¿é¿ÉÒÔ´ÓLDAPÖÐ¶ÁÈ¡ÓÃ»§ÊôÐÔ£¬²¢°ÑÖ¸¶¨µÄ×Ö¶ÎÔ¤ÏÈÌîÈë±¾ÏµÍ³Êý¾Ý¿â¡£ 
+
                                   ´ËºóµÄµÇÂ¼Ö»Ðè¼ìÑéÓÃ»§ÃûºÍÃÜÂë¡£";
 $string['auth_ldapextrafields'] = "ÕâÐ©×Ö¶ÎÊÇ¿ÉÑ¡µÄ¡£Äã¿ÉÒÔÔÚ´ËÖ¸¶¨ÕâÐ©<B>LDAP×Ö¶Î</B>¸´ÖÆµ½±¾ÏµÍ³µÄÊý¾Ý¿âÖÐ¡£ <P>Èç¹ûÄã²»Ñ¡£¬½«Ê¹ÓÃ±¾ÏµÍ³Ä¬ÈÏÖµ¡£<P>ÎÞÂÛÒÔÉÏºÎÖÖÇé¿ö£¬ÓÃ»§ÔÚµÇÂ¼Ö®ºó¶¼¿ÉÒÔÐÞ¸ÄÕâÐ©×Ö¶Î¡£";
 $string['auth_ldaptitle'] = "Ê¹ÓÃÒ»¸öLDAP·þÎñÆ÷";
+$string['auth_manualdescription'] = "¸Ã·½·¨²»ÔÊÐíÓÃ»§ÒÔÈÎºÎ·½Ê½´´½¨ÕÊºÅ¡£ËùÓÐÕÊºÅÖ»ÄÜÓÉ¹ÜÀíÔ±ÊÖ¹¤´´½¨¡£";
+$string['auth_manualtitle'] = "Ö»ÔÊÐíÊÖ¹¤Ìí¼ÓÕÊºÅ";
 $string['auth_nntpdescription'] = "¸Ã·½·¨Ê¹ÓÃÒ»¸öNNTP·þÎñÆ÷À´¼ìÑéÓÃ»§ÃûºÍÃÜÂëÊÇ·ñÓÐÐ§¡£";
 $string['auth_nntphost'] = "NNTP·þÎñÆ÷µØÖ·¡£ÓÃIPµØÖ·£¬²»ÒªÓÃÓòÃû¡£";
 $string['auth_nntpport'] = "·þÎñÆ÷¶Ë¿Ú£¨Í¨³£ÊÇ119£©";
@@ -45,6 +50,9 @@ $string['auth_pop3host'] = "POP3·þÎñÆ÷µØÖ·¡£ÓÃIPµØÖ·£¬²»ÒªÓÃÓòÃû¡£";
 $string['auth_pop3port'] = "·þÎñÆ÷¶Ë¿Ú£¨Í¨³£ÊÇ110£©";
 $string['auth_pop3title'] = "Ê¹ÓÃÒ»¸öPOP3·þÎñÆ÷";
 $string['auth_pop3type'] = "·þÎñÆ÷ÀàÐÍ¡£Èç¹ûÄãµÄPOP3·þÎñÆ÷Ê¹ÓÃ°²È«ÑéÖ¤£¬ÇëÑ¡Ôñpop3cert¡£";
+$string['auth_user_create'] = "¼¤»îÓÃ»§´´½¨¹¦ÄÜ";
+$string['auth_user_creation'] = "ÐÂµÄ(ÄäÃû)ÓÃ»§¿ÉÒÔÔÚÍâ²¿Éí·ÝÑéÖ¤Ô´ÖÐ´´½¨ÐÂÓÃ»§ÕÊºÅ£¬²¢Í¨¹ýemailÈ·ÈÏ¡£Èç¹ûÄã¼¤»îÁËÕâ¸ö¹¦ÄÜ£¬Çë¼Ç×¡Í¬Ê±Ò²ÎªÓÃ»§´´½¨¹¦ÄÜÉèÖÃÒ»ÏÂÄ£¿éÌØ¶¨Ñ¡Ïî";
+$string['auth_usernameexists'] = "Ñ¡ÖÐµÄÓÃ»§ÃûÒÑ¾­´æÔÚ¡£ÇëÑ¡ÔñÒ»¸öÐÂµÄ¡£";
 $string['authenticationoptions'] = "Éí·ÝÑéÖ¤Ñ¡Ïî";
 $string['authinstructions'] = "ÄãÔÚÕâÀï¿ÉÒÔ¸øÄãµÄÓÃ»§Ìá¹©Ê¹ÓÃËµÃ÷£¬ÈÃËûÃÇÖªµÀ¸ÃÓÃÄÄ¸öÓÃ»§ÃûºÍÃÜÂë¡£ÄãÔÚÕâÀïÊäÈëµÄÎÄ±¾½«³öÏÖÔÚµÇÂ¼Ò³Ãæ¡£Èç¹ûÁô¿Õ²»Ìî£¬µÇÂ¼Ò³Ãæ½«²»»á³öÏÖÊ¹ÓÃËµÃ÷¡£";
 $string['changepassword'] = "¸ü¸ÄÃÜÂëµØÖ·£¨URL£©";
@@ -52,6 +60,8 @@ $string['changepasswordhelp'] = "ÔÚÕâÀïÄã¿ÉÒÔÖ¸¶¨Ò»¸öÎ»ÖÃÓÃ»§¿ÉÒÔÖØÐÂ»ñµÃ»ò¸ü¸ÄË
 $string['chooseauthmethod'] = "Ñ¡ÔñÒ»¸öÉí·ÝÑéÖ¤·½·¨£º";
 $string['guestloginbutton'] = "·Ã¿ÍµÇÂ¼°´Å¥";
 $string['instructions'] = "Ê¹ÓÃËµÃ÷";
+$string['md5'] = "MD5¼ÓÃÜ";
+$string['plaintext'] = "´¿ÎÄ±¾";
 $string['showguestlogin'] = "Äã¿ÉÒÔÔÚµÇÂ¼Ò³ÃæÏÔÊ¾»òÒþ²Ø·Ã¿ÍµÇÂ¼°´Å¥¡£";
 
 ?>

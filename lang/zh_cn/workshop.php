@@ -1,138 +1,195 @@
 <?PHP // $Id$ 
+      // workshop.php - created with Moodle 1.0.9 Beta 1 + (2003052000)
 
-$string['accumulative'] = "Accumulative";
-$string['action'] = "Action";
-$string['afterdeadline'] = "After Deadline: \$a";
-$string['allgradeshaveamaximumof'] = "All Grades have a Maximum of: \$a";
-$string['allowresubmit'] = "Allow Resubmissions";
-$string['alreadyinphase'] = "Already in Phase \$a";
-$string['amendassessmentelements'] = "Amend Assessment Elements";
-$string['assess'] = "Assess";
-$string['assessmentgrade'] = "Assessment Grade: \$a";
-$string['assessmentsby'] = "Assessments by \$a";
-$string['assessments'] = "Assessments";
-$string['assessmentsareok'] = "Assessments are OK";
-$string['assessmentsdone'] = "Assessments Done";
-$string['assessthissubmission'] = "Assess this submission";
-$string['assessmentofthissubmission'] = "Assessment of this submission";
-$string['assignmentnotinthecorrectphase'] = "Assignment not in the Correct Phase";
-$string['awaitinggradingbyteacher'] = "Awaiting Grading by \$a";
-$string['beforedeadline'] = "Before Deadline: \$a";
-$string['calculationoffinalgrades'] = "Calculation of Final Grades";
-$string['closeassignment'] = "Close Assignment";
-$string['comment'] = "Comment";
-$string['criteria'] = "Criteria";
-$string['deadline'] = "Deadline";
-$string['deadlineis'] = "The Deadline is \$a";
-$string['description'] = "Description";
-$string['detailsofassessment'] = "Details of Assessment";
-$string['displayoffinalgrades'] = "Display of Final Grades";
-$string['dontshowgrades'] = "Don't Show Grades";
-$string['edit'] = "Edit";
-$string['editingassessmentelements'] = "Editing Assessment Elements";
-$string['element'] = "Element";
-$string['elementweight'] = "Element Weight";
-$string['errorbanded'] = "Error Banded";
-$string['feedbackgoeshere'] = "Feedback goes here";
-$string['generalcomment'] = "General comment";
-$string['grade'] = "Grade";
-$string['gradeassessment'] = "Grade Assessment";
-$string['graded'] = "Graded";
-$string['gradedbyteacher'] = "Graded by \$a";
-$string['gradeforassessments'] = "Grade for Assessments";
-$string['gradeforbias'] = "Grade for Bias";
-$string['gradeforreliability'] = "Grade for Reliability";
-$string['gradeforstudentsassessment'] = "Grade for Student's Assessment";
-$string['gradeofsubmission'] = "Grade of Submission: \$a";
-$string['gradingstrategy'] = "Grading Strategy";
-$string['includeteachersgrade'] = "Include Teacher's Grade";
-$string['listofallsubmissions'] = "List of all Submissions";
-$string['managingassignment'] = "Managing Assignment";
-$string['maximumsize'] = "Maximum Size";
-$string['modulename'] = "Workshop";
-$string['modulenameplural'] = "Workshops";
-$string['movedtophase'] = "Moved to Phase \$a";
-$string['moveonto'] = "Move on to";
-$string['noassessmentsdone'] = "No Assessments Done";
-$string['nosubmissionsavailableforassessment'] = "No Submissions available for assessment";
-$string['notavailable'] = "Not Available";
-$string['noteonassessmentelements'] = 
-	"Note that grading is broken down into a number of 'Assessment Elements'.<BR>
-	This makes the grading easier and more consistent. As teacher you must add these <BR>
-	Elements before making the assignment available to students. This is done by<BR>
-	clicking on the assignment in the course, if no elements are present you will be asked<BR>
-	to add them. You can change the number of elements using the Edit Assignment screen,<BR>
-	the elements themselves can be amended from the &quot;Managing Assessment&quot; screen. ";
-$string['notitlegiven'] = "No Title Given";
-$string['notgraded'] = "Not Graded";
-$string['numberofassessments'] = "Number of Assessments";
-$string['numberofassessmentelements'] = "Number of Comments, Assessment Elements, Grade Bands or Criteria Statments";
-$string['numberofassessmentsofstudentsubmissions'] = "Number of Assessments of Student Submissions";
-$string['numberofassessmentsofteachersexamples'] = "Number of Assessments of Examples from Teacher";
-$string['openassignment'] = "Open Assignment";
-$string['optionforpeergrade'] = "Option for Peer Grade";
-$string['overallgrade'] = "Overall Grade";
-$string['overallpeergrade'] = "Overall Peer Grade: \$a";
-$string['overallteachergrade'] = "Overall Teacher Grade: \$a";
+
+$string['accumulative'] = "累积的";
+$string['action'] = "动作";
+$string['addacomment'] = "添加一个评论";
+$string['afterdeadline'] = "晚于最后期限： \$a";
+$string['agreetothisassessment'] = "同意这个评价";
+$string['allgradeshaveamaximumof'] = "得分最高不大于： \$a";
+$string['allowresubmit'] = "允许重交";
+$string['alreadyinphase'] = "已经在阶段 \$a";
+$string['amendassessmentelements'] = "修改评价要素";
+$string['assess'] = "评价";
+$string['assessedon'] = "对 \$a 评价";
+$string['assessment'] = "评价";
+$string['assessmentby'] = "由 \$a 评价";
+$string['assessmentgrade'] = "评价得分： \$a";
+$string['assessmentnotyetagreed'] = "评价还未允许";
+$string['assessmentofthissubmission'] = "关于这份提交的评价";
+$string['assessments'] = "评价";
+$string['assessmentsareok'] = "评价不错";
+$string['assessmentsby'] = "由 \$a 评价";
+$string['assessmentsdone'] = "评价完成";
+$string['assessmentsmustbeagreed'] = "须经允许才能做出评价";
+$string['assessmentwasagreedon'] = "允许对 \$a 进行评价";
+$string['assessor'] = "评价者";
+$string['assessthissubmission'] = "评价这份提交";
+$string['assignmentnotinthecorrectphase'] = "布置作业不在正确的阶段中";
+$string['authorofsubmission'] = "提交作业的作者";
+$string['awaitinggradingbyteacher'] = "等待由 \$a 评分";
+$string['beforedeadline'] = "早于最后期限： \$a";
+$string['calculationoffinalgrades'] = "最后得分总计";
+$string['closeassignment'] = "结束作业";
+$string['comment'] = "评论";
+$string['commentby'] = "评论来自";
+$string['criteria'] = "标准";
+$string['deadline'] = "最后期限";
+$string['deadlineis'] = "最后期限为 \$a";
+$string['delete'] = "删除";
+$string['description'] = "描述";
+$string['detailsofassessment'] = "评价的具体内容";
+$string['disagreewiththisassessment'] = "不同意这个评价";
+$string['displayoffinalgrades'] = "显示最后得分";
+$string['dontshowgrades'] = "不显示得分";
+$string['edit'] = "编辑";
+$string['editacomment'] = "编辑一份评论";
+$string['editingassessmentelements'] = "编辑评价要素";
+$string['element'] = "要素";
+$string['elementweight'] = "要素权重";
+$string['errorbanded'] = "误差范围";
+$string['feedbackgoeshere'] = "反馈到这里";
+$string['generalcomment'] = "一般性评论";
+$string['grade'] = "评分";
+$string['gradeassessment'] = "对评价评分";
+$string['graded'] = "已评分";
+$string['gradedbyteacher'] = "由 \$a 评分";
+$string['gradeforassessments'] = "对评价评分";
+$string['gradeforbias'] = "对偏见评分";
+$string['gradeforreliability'] = "对可靠性评分";
+$string['gradeforstudentsassessment'] = "对学生的评价评分";
+$string['gradeofsubmission'] = "提交的得分： \$a";
+$string['gradingstrategy'] = "评分策略";
+$string['hidegradesbeforeagreement'] = "允许评分之前先隐藏";
+$string['includeteachersgrade'] = "包含教师的评分";
+$string['listassessments'] = "列出评价";
+$string['listofallsubmissions'] = "全部提交列表";
+$string['managingassignment'] = "管理课外作业";
+$string['maximumsize'] = "大小限制";
+$string['modulename'] = "专题讨论";
+$string['modulenameplural'] = "专题讨论";
+$string['movedtophase'] = "移至阶段 \$a";
+$string['moveonto'] = "前进到";
+$string['noassessmentsdone'] = "尚无完成的评价";
+$string['nosubmissionsavailableforassessment'] = "尚无可评价的提交";
+$string['notavailable'] = "没有";
+$string['noteonassessmentelements'] = "注意，得分可分解为一些“评价要素”。.<BR>
+
+
+
+
+
+
+
+	这使评分变得容易且保持一致性。 <BR>
+
+
+
+
+
+
+
+	作为教师你须在布置好作业之前添加这些要素。<BR>
+
+
+
+
+
+
+
+	点击课程中的布置作业，如果没有指定过要素，你就会看到提示要求添加要素。<BR>
+
+
+
+
+
+
+
+	你可以使用编辑课外作业页面来改变要素的数量。<BR>
+
+
+
+
+
+
+
+	具体要素本身在“管理课外作业”页面中修改。";
+$string['notgraded'] = "尚未评分";
+$string['notitlegiven'] = "尚未命名";
+$string['numberofassessmentelements'] = "评论的数目、评价要素、得分范围或标准声明";
+$string['numberofassessments'] = "评价的数目";
+$string['numberofassessmentsofstudentsubmissions'] = "对学生所交作业的评价数目";
+$string['numberofassessmentsofteachersexamples'] = "对教师样例的评价数目";
+$string['on'] = "在 \$a";
+$string['openassignment'] = "打开作业布置";
+$string['optionforpeergrade'] = "同学评分选项";
+$string['overallgrade'] = "全部得分";
+$string['overallpeergrade'] = "全部同学评分： \$a";
+$string['overallteachergrade'] = "全部教师评分： \$a";
 $string['ownwork'] = "Own Work";
-$string['phase'] = "Phase";
-$string['phase1'] = "Set Up Assignment";
-$string['phase2'] = "\$a Submissions and Assessments";
-$string['phase3'] = "Calculation of Final Grades";
-$string['phase4'] = "Show Final Grades";
-$string['pleaseassesstheseexamplesfromtheteacher'] = "Please assess these Examples from the \$a";
-$string['pleaseassessthesestudentsubmissions'] = "Please assess these \$a Submissions";
-$string['returntosubmissionpage'] = "Return to Submission Page";
-$string['savemyassessment'] = "Save my Assessment";
-$string['savedok'] = "Saved OK";
-$string['savemygrading'] = "Save my Grading";
-$string['scaleyes'] = "2 point Yes/No scale";
-$string['scalepresent'] = "2 point Present/Absent scale";
-$string['scalecorrect'] = "2 point Correct/Incorrect scale";
-$string['scalegood3'] = "3 point Good/Poor scale";
-$string['scaleexcellent4'] = "4 point Excellent/Very Poor scale";
-$string['scaleexcellent5'] = "5 point Excellent/Very Poor scale";
-$string['scaleexcellent7'] = "7 point Excellent/Very Poor scale";
-$string['scale10'] = "Score out of 10";
-$string['scale20'] = "Score out of 20";
-$string['scale100'] = "Score out of 100";
-$string['selfassessment'] = "Self Assessment";
-$string['showgrades'] = "Show Grades";
-$string['specimenassessmentform'] = "Specimen Assessment Form";
-$string['studentsassessment'] = "Student's Assessment";
-$string['studentgrades'] = "\$a Grades";
-$string['studentsubmissionsforassessment'] = "\$a Student Submissions for Assessment";
-$string['studentsubmissions'] = "\$a Submissions";
-$string['submitassignment'] = "Submit Assignment";
-$string['submitexampleassignment'] = "Submit Example Assignment";
-$string['submitted'] = "Submitted";
-$string['submissions'] = "Submissions";
-$string['returnto'] = "Return to";
-$string['teachersassessment'] = "Teacher's Assessment";
-$string['teacherscomment'] = "Teacher's Comment";
-$string['teachersgrade'] = "Teacher's Grade";
-$string['teachersubmissionsforassessment'] = "\$a Teacher Submissions for Assessment";
-$string['thegradeis'] = "The Grade is \$a";
-$string['theseasessmentsaregradedbytheteacher'] = "These Assessments are graded by the \$a";
-$string['timeassessed'] = "Time Assessed";
-$string['title'] = "Title";
-$string['typeofscale'] = "Type of Scale";
-$string['ungradedassessmentsofstudentsubmissions'] = "\$a Ungraded Assessments of Student Submissions";
-$string['ungradedassessmentsofteachersubmissions'] = "\$a Ungraded Assessments of Teacher Submissions";
-$string['view'] = "View";
-$string['viewassessmentofteacher'] = "View Assessment of \$a";
-$string['viewotherassessments'] = "View other Assessments";
-$string['warningonamendingelements'] = "WARNING: There are submitted assessments. <BR>Do NOT change the number
- of elements, the scale types or the element weights.";
-$string['weightederrorcount'] = "Weighted Error Count: \$a";
-$string['weightforbias'] = "Weight for Bias";
-$string['weightforgradingofassessments'] = "Weight for Grading of Assessments";
-$string['weightforpeerassessments'] = "Weight for Peer Assessments";
-$string['weightforreliability'] = "Weight for Reliability";
-$string['weightforteachersassessment'] = "Weight for Teacher's Assessment";
-$string['weights'] = "Weights";
-$string['weightsusedforfinalgrade'] = "Weights used for Final Grade";
-$string['weightsusedforsubmissions'] = "Weights used for Submissions";
-$string['yourassessments'] = "Your Assessments";
+$string['phase'] = "阶段";
+$string['phase1'] = "布置作业";
+$string['phase2'] = "\$a 提交和评价";
+$string['phase3'] = "最后得分总计";
+$string['phase4'] = "显示最后得分";
+$string['pleaseassesstheseexamplesfromtheteacher'] = "请评价这些来自 \$a 的例样";
+$string['pleaseassessthesestudentsubmissions'] = "请评价这些 \$a 提交的作业";
+$string['reassess'] = "重新评价";
+$string['reply'] = "答复";
+$string['returnto'] = "返回到";
+$string['returntosubmissionpage'] = "返回到提交页面";
+$string['savedok'] = "保存好了";
+$string['savemyassessment'] = "保存我的评价";
+$string['savemycomment'] = "保存我的评论";
+$string['savemygrading'] = "保存我的评分";
+$string['scale10'] = "分数超出 10";
+$string['scale100'] = "分数超出 100";
+$string['scale20'] = "分数超出 20";
+$string['scalecorrect'] = "2 点正确/错误量表";
+$string['scaleexcellent4'] = "4 点极好/极差量表";
+$string['scaleexcellent5'] = "5 点极好/极差量表";
+$string['scaleexcellent7'] = "7 点极好/极差量表";
+$string['scalegood3'] = "3 点好/差量表";
+$string['scalepresent'] = "2 点有/无量表";
+$string['scaleyes'] = "2 点是/非量表";
+$string['selfassessment'] = "自我评价";
+$string['showgrades'] = "显示得分";
+$string['specimenassessmentform'] = "样本评价表单";
+$string['studentgrades'] = "\$a 评分";
+$string['studentsassessment'] = "学生的评价";
+$string['studentsubmissions'] = "\$a 提交";
+$string['studentsubmissionsforassessment'] = "\$a 学生提交的评价意见";
+$string['submissions'] = "提交";
+$string['submitassignment'] = "提交布置的作业";
+$string['submitexampleassignment'] = "提交作业例样";
+$string['submitted'] = "提交";
+$string['submittedby'] = "提交来自";
+$string['teachersassessment'] = "教师的评价";
+$string['teacherscomment'] = "教师的评论";
+$string['teachersgrade'] = "教师的评分";
+$string['teachersubmissionsforassessment'] = "\$a 教师提交的评价意见";
+$string['thegradeis'] = "得分为 \$a";
+$string['theseasessmentsaregradedbytheteacher'] = "这些评价由 \$a 评分";
+$string['timeassessed'] = "评价时间";
+$string['title'] = "标题";
+$string['typeofscale'] = "量表类型";
+$string['ungradedassessmentsofstudentsubmissions'] = "\$a 更新对学生提交所作的评价";
+$string['ungradedassessmentsofteachersubmissions'] = "\$a 更新对教师提交所作的评价";
+$string['view'] = "查看";
+$string['viewassessmentofteacher'] = "查看 \$a 的评价";
+$string['viewotherassessments'] = "查看其它评价";
+$string['warningonamendingelements'] = "<b>警告</b>：已经有提交的评价。 <BR>请<b><big>不要</big></b>改变要素的数目、量表的类型或要素的权重。";
+$string['weightederrorcount'] = "加权的错误数： \$a";
+$string['weightforbias'] = "偏见权重";
+$string['weightforgradingofassessments'] = "评价的得分权重";
+$string['weightforpeerassessments'] = "同学评价的权重";
+$string['weightforreliability'] = "可靠性的权重";
+$string['weightforteachersassessment'] = "教师评价的权重";
+$string['weights'] = "权重";
+$string['weightsusedforfinalgrade'] = "用于最后得分的权重";
+$string['weightsusedforsubmissions'] = "用于提交物的权重";
+$string['yourassessments'] = "你的评价";
+$string['yourfeedbackgoeshere'] = "你的反馈到这里来";
 
 ?>
