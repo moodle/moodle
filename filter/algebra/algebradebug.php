@@ -12,8 +12,8 @@
     $CFG->algebrafilterdir = "filter/algebra";
     $CFG->algebraimagedir = "filter/algebra";
 
-    error_reporting(E_ALL);
     $query = urldecode($_SERVER['QUERY_STRING']);
+    error_reporting(E_ALL);
 
     if ($query) {
       $output = $query;
@@ -60,7 +60,7 @@
       if (strpos($query,'ShowImage')) {
 	$output = algebra2tex($algebra);
         $output = refineTeX($output);
-        tex2image($output);
+        tex2image($output, $md5);
       } else {   
         outputText($output);
       }
@@ -74,7 +74,15 @@ function algebra2tex($algebra) {
   $algebra = str_replace('<>','#',$algebra);
   $algebra = str_replace('<=','%',$algebra);
   $algebra = str_replace('>=','!',$algebra);
+  $algebra = str_replace('delta','zdelta',$algebra);
+  $algebra = str_replace('beta','bita',$algebra);
+  $algebra = str_replace('theta','thita',$algebra);
+  $algebra = str_replace('zeta','zita',$algebra);
+  $algebra = str_replace('eta','xeta',$algebra);
+  $algebra = str_replace('epsilon','zepslon',$algebra);
+  $algebra = str_replace('upsilon','zupslon',$algebra);
   $algebra = preg_replace('!\r\n?!',' ',$algebra);
+
   if ( (PHP_OS == "WINNT") || (PHP_OS == "WIN32") || (PHP_OS == "Windows") ) {
     $algebra = "\"". str_replace('"','\"',$algebra) . "\"";
     $cmd  = "cd $CFG->dirroot/$CFG->algebrafilterdir & algebra2tex.pl $algebra";
@@ -94,6 +102,28 @@ function refineTeX($texexp) {
   $texexp = str_replace('\right}','}',$texexp);
   $texexp = str_replace('\fun',' ',$texexp);
   $texexp = str_replace('infty','\infty',$texexp);
+  $texexp = str_replace('alpha','\alpha',$texexp);
+  $texexp = str_replace('gamma','\gamma',$texexp);
+  $texexp = str_replace('iota','\iota',$texexp);
+  $texexp = str_replace('kappa','\kappa',$texexp);
+  $texexp = str_replace('lambda','\lambda',$texexp);
+  $texexp = str_replace('mu','\mu',$texexp);
+  $texexp = str_replace('nu','\nu',$texexp);
+  $texexp = str_replace('xi','\xi',$texexp);
+  $texexp = str_replace('rho','\rho',$texexp);
+  $texexp = str_replace('sigma','\sigma',$texexp);
+  $texexp = str_replace('tau','\tau',$texexp);
+  $texexp = str_replace('phi','\phi',$texexp);
+  $texexp = str_replace('chi','\chi',$texexp);
+  $texexp = str_replace('psi','\psi',$texexp);
+  $texexp = str_replace('omega','\omega',$texexp);
+  $texexp = str_replace('zdelta','\delta',$texexp);
+  $texexp = str_replace('bita','\beta',$texexp);
+  $texexp = str_replace('thita','\theta',$texexp);
+  $texexp = str_replace('zita','\zeta',$texexp);
+  $texexp = str_replace('xeta','\eta',$texexp);
+  $texexp = str_replace('zepslon','\epsilon',$texexp);
+  $texexp = str_replace('zupslon','\upsilon',$texexp);
   $texexp = str_replace('\mbox{logten}','\mbox{log}_{10}',$texexp);
   $texexp = str_replace('\mbox{acos}','\mbox{cos}^{-1}',$texexp);
   $texexp = str_replace('\mbox{asin}','\mbox{sin}^{-1}',$texexp);
@@ -107,7 +137,6 @@ function refineTeX($texexp) {
   $texexp = str_replace('\mbox{asech}','\mbox{sech}^{-1}',$texexp);
   $texexp = str_replace('\mbox{acsch}','\mbox{csch}^{-1}',$texexp);
   $texexp = str_replace('\mbox{acoth}','\mbox{coth}^{-1}',$texexp);
-  $texexp = preg_replace('/\\\frac{(.+?)}{\\\left\((.+?)\\\right\)}/s','\frac{'."\$1}{\$2}",$texexp);
   $texexp = preg_replace('/\\\sqrt{(.+?),(.+?)}/s','\sqrt['. "\$2]{\$1}",$texexp);
   $texexp = preg_replace('/\\\mbox{abs}\\\left\((.+?)\\\right\)/s',"|\$1|",$texexp);
   $texexp = preg_replace('/\\\log\\\left\((.+?),(.+?)\\\right\)/s','\log_{'. "\$2}\\left(\$1\\right)",$texexp);
@@ -132,12 +161,12 @@ function outputText($texexp) {
   echo "</pre></body></html>\n";
 }
 
-function tex2image($texexp) {
+function tex2image($texexp, $md5) {
   global $CFG;
   if ($texexp) {
        $texexp = '\Large ' . $texexp;
        $lifetime = 86400;
-       $image  = md5($texexp) . ".gif";
+       $image  = $md5 . ".gif";
        $filetype = 'image/gif';
        if (!file_exists("$CFG->dataroot/$CFG->algebraimagedir")) {
           make_upload_directory($CFG->algebraimagedir);
