@@ -182,7 +182,7 @@ function glossary_get_entries($glossaryid, $entrylist) {
                             AND id IN ($entrylist)");
 }
 
-function glossary_print_entry($course, $cm, $glossary, $entry,$currentview="",$cat="") {
+function glossary_print_entry($course, $cm, $glossary, $entry, $currentview="",$cat="") {
     global $THEME, $USER, $CFG;
     
     $permissiongranted = 0;
@@ -238,8 +238,14 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry,$currentview
     echo "<table width=100% border=0>";    
     echo "<tr><td>";
     $count = count_records("glossary_comments","entryid",$entry->id);
-    if ( $count ) {
-        echo "<a href=\"comments.php?id=$cm->id&eid=$entry->id\">$count " . get_string("comments","glossary") . "</a>";
+    if ($count) {
+        echo "<font size=1><a href=\"comments.php?id=$cm->id&eid=$entry->id\">$count ";
+        if ($count == 1) {
+            print_string("comment", "glossary");
+        } else {
+            print_string("comments", "glossary");
+        }
+        echo "</a></font>";
     }
     echo "</td><td align=\"right\">";
 
