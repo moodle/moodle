@@ -3,6 +3,11 @@
 include("plotconf.inc");
 include("plot.inc");
 
+if (isset($user)) {
+    $user = get_record("user", "id", $user);
+    $username = "<B>$user->firstname $user->lastname</B>";
+}
+
 if($warnings == "1") {
 error_reporting(E_ALL);
 } else {
@@ -105,7 +110,7 @@ print '
 ';
 
 if(isset($address)) {
-print "$values[desc]";
+print "$username, $values[desc]";
 }
 
 $PHP_SELF = $HTTP_SERVER_VARS['PHP_SELF'];

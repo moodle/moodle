@@ -159,7 +159,7 @@ function print_log($course, $user=0, $date=0, $order="ORDER BY l.time ASC") {
         echo "<TD NOWRAP ALIGN=right><FONT SIZE=2>".userdate($log->time, "%A")."</TD>";
         echo "<TD NOWRAP><FONT SIZE=2>".userdate($log->time, "%e %B %Y, %I:%M %p")."</TD>";
         echo "<TD NOWRAP><FONT SIZE=2>";
-        link_to_popup_window("$CFG->wwwroot/lib/ipatlas/plot.php?address=$log->ip", "ipatlas","$log->ip", 400, 600);
+        link_to_popup_window("$CFG->wwwroot/lib/ipatlas/plot.php?address=$log->ip&user=$log->user", "ipatlas","$log->ip", 400, 600);
         echo "</TD>";
         echo "<TD NOWRAP><FONT SIZE=2><A HREF=\"../user/view.php?id=$log->user&course=$log->course\"><B>$log->firstname $log->lastname</B></TD>";
         echo "<TD NOWRAP><FONT SIZE=2>";
