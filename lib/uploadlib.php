@@ -22,8 +22,9 @@ class upload_manager {
      * @param $recoverifmultiple - if we come across a virus, or if a file doesn't validate or whatever, do we continue? optional, defaults to true.
      * @param $modbytes - max bytes for this module - this and $course->maxbytes are used to get the maxbytes from get_max_upload_file_size().
      * @param $silent - whether to notify errors or not.
+     * @param $allownull - whether we care if there's no file when we've set the input name.
      */
-    function upload_manager($inputname='',$deleteothers=false,$handlecollisions=false,$course=null,$recoverifmultiple=false,$modbytes=0,$silent=false) {
+    function upload_manager($inputname='',$deleteothers=false,$handlecollisions=false,$course=null,$recoverifmultiple=false,$modbytes=0,$silent=false,$allownull=false) {
         
         global $CFG;
         
@@ -32,10 +33,14 @@ class upload_manager {
         $this->config->recoverifmultiple = $recoverifmultiple;
         $this->config->maxbytes = get_max_upload_file_size($CFG->maxbytes,$course->maxbytes,$modbytes);
         $this->config->silent = $silent;
+        $this->config->allownull = $allownull;
         $this->files = array();
         $this->status = false; 
         $this->course = $course;
         $this->inputname = $inputname;
+        if (empty($this->inputname)) {
+            $this->config->allownull = true;
+        }
     }
     
     /** 
@@ -49,8 +54,8 @@ class upload_manager {
             if (empty($this->inputname) || $name == $this->inputname) { // if we have input name, only process if it matches.
                 $file['originalname'] = $file['name']; // do this first for the log.
                 $this->files[$name] = $file; // put it in first so we can get uploadlog out in print_upload_log.
-                $this->status = $this->validate_file($this->files[$name],empty($this->inputname)); // default to only allowing empty on multiple uploads.
-                if (!$this->status && $this->files[$name]['error'] = 0 || $this->files[$name]['error'] == 4 && empty($this->inputname)) {
+                $this->status = $this->validate_file($this->files[$name]); // default to only allowing empty on multiple uploads.
+                if (!$this->status && ($this->files[$name]['error'] == 0 || $this->files[$name]['error'] == 4) && $this->config->allownull) {
                     // this shouldn't cause everything to stop.. modules should be responsible for knowing which if any are compulsory.
                     continue; 
                 }
@@ -94,7 +99,7 @@ class upload_manager {
             }
         }
         if (!is_array($_FILES) || count($_FILES) == 0) {
-            return false;
+            return $this->config->allownull;
         }
         $this->status = true;
         return true; // if we've got this far it means that we're recovering so we want status to be ok.
@@ -106,15 +111,12 @@ class upload_manager {
      * @param $allowempty - this is to allow module owners to control which files are compulsory if this function is being called straight from the module.
      * @return true if ok.
      */
-    function validate_file(&$file,$allowempty=true) {
+    function validate_file(&$file) {
         if (empty($file)) {
-            return $allowempty; // this shouldn't cause everything to stop.. modules should be responsible for knowing which if any are compulsory.
+            return false;
         }
         if (!is_uploaded_file($file['tmp_name']) || $file['size'] == 0) {
             $file['uploadlog'] .= "\n".$this->get_file_upload_error($file);
-            if ($file['error'] == 0 || $file['error'] == 4) {
-                return $allowempty;
-            }
             return false;
         }
         if ($file['size'] > $this->config->maxbytes) {
@@ -346,6 +348,13 @@ class upload_manager {
         }
         return false;
     }
+
+    /** 
+     * This function returns any errors wrapped up in red
+     */
+    function get_errors() {
+        return '<p style="color:red;">'.$this->notify.'</p>';
+    }
 }
 
 /**************************************************************************************
@@ -490,6 +499,8 @@ function clam_scan_file(&$file,$course) {
         return false; // erm, what is this supposed to be then, huh?
     }
 
+    $CFG->pathtoclam = trim($CFG->pathtoclam);
+
     if (!$CFG->pathtoclam || !file_exists($CFG->pathtoclam) || !is_executable($CFG->pathtoclam)) {
         $newreturn = 1;
         $notice = get_string('clamlost','moodle',$CFG->pathtoclam);
@@ -499,6 +510,10 @@ function clam_scan_file(&$file,$course) {
             $newreturn = false; 
         }
         clam_mail_admins($notice);
+        if ($appendlog) {
+            $file['uploadlog'] .= "\n".get_string('clambroken');
+            $file['clam'] = 1;
+        }
         return $newreturn; // return 1 if we're allowing clam failures
     }
     
