@@ -8,7 +8,7 @@ $string['confirmeventdelete'] = 'Are you sure you want to delete this event?';
 $string['courseevents'] = 'Course events';
 $string['dayview'] = 'Day View';
 $string['daywithnoevents'] = 'There are no events this day.';
-$string['default'];
+$string['default'] = 'Default';
 $string['deleteevent'] = 'Delete event';
 $string['detailedmonthview'] = 'Detailed Month View';
 $string['durationnone'] = 'Without duration';
