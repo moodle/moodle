@@ -63,6 +63,13 @@ $string['attlsmintro'] = "In discussion ...";
 $string['attlsm1'] = "Attitudes Towards Thinking and Learning";
 $string['attlsm2'] = "Connected Learning";
 $string['attlsm3'] = "Separate Learning";
+$string['ciqname'] = "Critical Incidents";
+$string['ciqintro'] = "While thinking about the events in this class over the past week, answer the questions below.";
+$string['ciq1'] = "At what moment in class were you most engaged as a learner?";
+$string['ciq2'] = "At what moment in class were you most distanced as a learner?";
+$string['ciq3'] = "What action from anyone in the forums did you find most affirming or helpful?";
+$string['ciq4'] = "What action from anyone in the forums did you find most puzzling or confusing?";
+$string['ciq5'] = "What event surprised you most?";
 $string['clicktocontinue'] = "Click here to continue";
 $string['clicktocontinuecheck'] = "Click here to check and continue";
 

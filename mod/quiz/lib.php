@@ -21,6 +21,11 @@ $QUIZ_QUESTION_TYPE = array ( MULTICHOICE => get_string("multichoice", "quiz"),
                               TRUEFALSE   => get_string("truefalse", "quiz"),
                               SHORTANSWER => get_string("shortanswer", "quiz") );
 
+$QUIZ_FILE_FORMAT = array ( "custom"   => get_string("custom", "quiz"),
+                            "webct"    => get_string("webct", "quiz"),
+                            "qti"      => get_string("qti", "quiz"),
+                            "missingword" => get_string("missingword", "quiz") );
+
 define("QUIZ_PICTURE_DEFAULT_HEIGHT", "200");
 
 /// FUNCTIONS ///////////////////////////////////////////////////////////////////
@@ -738,6 +743,8 @@ function quiz_print_cat_question_list($categoryid) {
 
     $strcategory = get_string("category", "quiz");
     $strquestion = get_string("question", "quiz");
+    $straddquestions = get_string("addquestions", "quiz");
+    $strimportquestions = get_string("importquestions", "quiz");
     $strnoquestions = get_string("noquestions", "quiz");
     $strselect = get_string("select", "quiz");
     $strcreatenewquestion = get_string("createnewquestion", "quiz");
@@ -761,13 +768,24 @@ function quiz_print_cat_question_list($categoryid) {
     echo "<CENTER>";
     echo text_to_html($category->info);
 
+    echo "<TABLE><TR>";
+    echo "<TD valign=top><B>$straddquestions:</B></TD>";
+    echo "<TD valign=top align=right>";
     echo "<FORM METHOD=GET ACTION=question.php>"; 
-    echo "<B>$strquestion:</B>&nbsp;";
     choose_from_menu($QUIZ_QUESTION_TYPE, "qtype", "", "");
     echo "<INPUT TYPE=hidden NAME=category VALUE=\"$category->id\">";
     echo "<INPUT TYPE=submit VALUE=\"$strcreatenewquestion\">";
     helpbutton("questiontypes", $strcreatenewquestion, "quiz");
     echo "</FORM>";
+
+    echo "<FORM METHOD=GET ACTION=import.php>"; 
+    echo "<INPUT TYPE=hidden NAME=category VALUE=\"$category->id\">";
+    echo "<INPUT TYPE=submit VALUE=\"$strimportquestions\">";
+    helpbutton("import", $strimportquestions, "quiz");
+    echo "</FORM>";
+
+    echo "</TR></TABLE>";
+
     echo "</CENTER>";
 
     if (!$questions = get_records("quiz_questions", "category", $category->id)) {
@@ -1106,5 +1124,159 @@ function quiz_grade_attempt_results($quiz, $questions) {
 }
 
 
+function quiz_save_question_options($question) {
+/// Given some question info and some data about the the answers
+/// this function parses, organises and saves the question
+/// It is used by question.php when saving new data from a 
+/// form, and also by import.php when importing questions
+///
+/// Returns $result->error or $result->notice
     
+    switch ($question->qtype) {
+        case SHORTANSWER:
+            // Delete all the old answers
+            // FIXME - instead of deleting, update existing answers
+            //         so as not to break existing references to them
+            delete_records("quiz_answers", "question", $question->id);
+            delete_records("quiz_shortanswer", "question", $question->id);
+
+            $answers = array();
+            $maxfraction = -1;
+
+            // Insert all the new answers
+            foreach ($question->answer as $key => $dataanswer) {
+                if ($dataanswer != "") {
+                    unset($answer);
+                    $answer->answer   = $dataanswer;
+                    $answer->question = $question->id;
+                    $answer->fraction = $question->fraction[$key];
+                    $answer->feedback = $question->feedback[$key];
+                    if (!$answer->id = insert_record("quiz_answers", $answer)) {
+                        $result->error = "Could not insert quiz answer!";
+                        return $result;
+                    }
+                    $answers[] = $answer->id;
+                    if ($question->fraction[$key] > $maxfraction) {
+                        $maxfraction = $question->fraction[$key];
+                    }
+                }
+            }
+
+            unset($options);
+            $options->question = $question->id;
+            $options->answers = implode(",",$answers);
+            $options->usecase = $question->usecase;
+            if (!insert_record("quiz_shortanswer", $options)) {
+                $result->error = "Could not insert quiz shortanswer options!";
+                return $result;
+            }
+
+            /// Perform sanity checks on fractional grades
+            if ($maxfraction != 1) {
+                $maxfraction = $maxfraction * 100;
+                $result->notice = get_string("fractionsnomax", "quiz", $maxfraction);
+                return $result;
+            }
+        break;
+        case TRUEFALSE:
+            // FIXME - instead of deleting, update existing answers
+            //         so as not to break existing references to them
+            delete_records("quiz_answers", "question", $question->id);
+            delete_records("quiz_truefalse", "question", $question->id);
+
+            $true->answer   = get_string("true", "quiz");
+            $true->question = $question->id;
+            $true->fraction = $question->answer;
+            $true->feedback = $question->feedbacktrue;
+            if (!$true->id = insert_record("quiz_answers", $true)) {
+                $result->error = "Could not insert quiz answer \"true\")!";
+                return $result;
+            }
+
+            $false->answer   = get_string("false", "quiz");
+            $false->question = $question->id;
+            $false->fraction = 1 - (int)$question->answer;
+            $false->feedback = $question->feedbackfalse;
+            if (!$false->id = insert_record("quiz_answers", $false)) {
+                $result->error = "Could not insert quiz answer \"false\")!";
+                return $result;
+            }
+
+            unset($options);
+            $options->question    = $question->id;
+            $options->trueanswer  = $true->id;
+            $options->falseanswer = $false->id;
+            if (!insert_record("quiz_truefalse", $options)) {
+                $result->error = "Could not insert quiz truefalse options!";
+                return $result;
+            }
+        break;
+        case MULTICHOICE:
+            // FIXME - instead of deleting, update existing answers
+            //         so as not to break existing references to them
+            delete_records("quiz_answers", "question", $question->id);
+            delete_records("quiz_multichoice", "question", $question->id);
+
+            $totalfraction = 0;
+            $maxfraction = -1;
+
+            $answers = array();
+
+            // Insert all the new answers
+            foreach ($question->answer as $key => $dataanswer) {
+                if ($dataanswer != "") {
+                    unset($answer);
+                    $answer->answer   = $dataanswer;
+                    $answer->question = $question->id;
+                    $answer->fraction = $question->fraction[$key];
+                    $answer->feedback = $question->feedback[$key];
+                    if (!$answer->id = insert_record("quiz_answers", $answer)) {
+                        $result->error = "Could not insert quiz answer!";
+                        return $result;
+                    }
+                    $answers[] = $answer->id;
+
+                    if ($question->fraction[$key] > 0) {                 // Sanity checks
+                        $totalfraction += $question->fraction[$key];
+                    }
+                    if ($question->fraction[$key] > $maxfraction) {
+                        $maxfraction = $question->fraction[$key];
+                    }
+                }
+            }
+
+            unset($options);
+            $options->question = $question->id;
+            $options->answers = implode(",",$answers);
+            $options->single = $question->single;
+            if (!insert_record("quiz_multichoice", $options)) {
+                $result->error = "Could not insert quiz multichoice options!";
+                return $result;
+            }
+
+            /// Perform sanity checks on fractional grades
+            if ($options->single) {
+                if ($maxfraction != 1) {
+                    $maxfraction = $maxfraction * 100;
+                    $result->notice = get_string("fractionsnomax", "quiz", $maxfraction);
+                    return $result;
+                }
+            } else {
+                $totalfraction = round($totalfraction,2);
+                if ($totalfraction != 1) {
+                    $totalfraction = $totalfraction * 100;
+                    $result->notice = get_string("fractionsaddwrong", "quiz", $totalfraction);
+                    return $result;
+                }
+            }
+        break;
+        default:
+            $result->error = "Unsupported question type ($question->qtype)!";
+            return $result;
+        break;
+    }
+    return true;
+}
+
+
 ?>

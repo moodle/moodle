@@ -36,9 +36,9 @@ function quiz_upgrade($oldversion) {
     }
 
     if ($oldversion < 2003010301) {
-        table_column("quiz_truefalse", "true", "trueanswer", "INTEGER", "UNSIGNED", "0", "NOT NULL", "");
-        table_column("quiz_truefalse", "false", "falseanswer", "INTEGER", "UNSIGNED", "0", "NOT NULL", "");
-        table_column("quiz_questions", "type", "qtype", "INTEGER", "UNSIGNED", "0", "NOT NULL", "");
+        table_column("quiz_truefalse", "true", "trueanswer", "INTEGER", "10", "UNSIGNED", "0", "NOT NULL", "");
+        table_column("quiz_truefalse", "false", "falseanswer", "INTEGER", "10", "UNSIGNED", "0", "NOT NULL", "");
+        table_column("quiz_questions", "type", "qtype", "INTEGER", "10", "UNSIGNED", "0", "NOT NULL", "");
     }
 
     return true;

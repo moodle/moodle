@@ -1,0 +1,6 @@
+This directory contains plug-in sub-modules to add 
+import-export formats to Moodle quizzes.
+
+Each sub-module is a file containing a class that 
+contains functions for reading, writing, importing 
+and exporting quiz questions.
