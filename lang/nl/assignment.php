@@ -36,17 +36,17 @@ $string['submitassignment'] = "Stuur je opdracht in door dit formulier in te vul
 $string['submitted'] = "Ingestuurd";
 $string['typeoffline'] = "Offline activiteit";
 $string['typeuploadsingle'] = "Upload een bestand";
-$string['uploadbadname'] = "In deze bestandsnaam staan rare tekens, het bestand kon daardoor niet worden upgeload
+$string['uploadbadname'] = "In deze bestandsnaam staan rare tekens, het bestand kon daardoor niet worden geüpload
 ";
 $string['uploadedfiles'] = "Ingestuurde bestanden";
 $string['uploaderror'] = "Er is een fout geconstanteerd tijdens het opslaan van het bestand op de server";
-$string['uploadfailnoupdate'] = "Het bestand werd prima upgeload, maar je bijdrage kon niet worden bijgewerkt!
+$string['uploadfailnoupdate'] = "Het bestand werd prima geüpload, maar je bijdrage kon niet worden bijgewerkt!
 ";
 $string['uploadfiletoobig'] = "Helaas is dat bestand te groot (de toegestane grootte is \$a bytes)";
 $string['uploadnofilefound'] = "Er werd geen bestand gevonden - weet je zeker dat je er één geselecteerd had om te uploaden?";
-$string['uploadnotregistered'] = "'\$a' werd prima upgeload, maar je bijdrage werd niet verwerkt!
+$string['uploadnotregistered'] = "'\$a' werd prima geüpload, maar je bijdrage werd niet verwerkt!
 ";
-$string['uploadsuccess'] = "'\$a' met succes upgeload  ";
+$string['uploadsuccess'] = "'\$a' met succes geüpload  ";
 $string['viewfeedback'] = "Bekijk de cijfers en feedback voor de opdrachten";
 $string['viewsubmissions'] = "Bekijk \$a ingestuurde opdrachten";
 $string['yoursubmission'] = "Jouw ingestuurde opdracht";
