@@ -50,7 +50,12 @@
     <blockquote> 
       <pre><strong>cvs -z3 -d:ext:myusername@cvs.sourceforge.net:/cvsroot/moodle co moodle</strong></pre>
     </blockquote>
-    <p>Don't try to do run this first CVS command into an existing moodle directory 
+    <p>The command is similar for other CVS modules (such as the contrib folder or the MySQL Admin folder):</p>
+    <blockquote> 
+      <pre><strong>cvs -z3 -d:ext:myusername@cvs.sourceforge.net:/cvsroot/moodle co contrib</strong><br />
+<strong>cvs -z3 -d:ext:myusername@cvs.sourceforge.net:/cvsroot/moodle co mysql</strong></pre>
+    </blockquote>
+    <p>Don't try to do run this first CVS command over an existing moodle installation  
       - start fresh with a new directory.</p>
     <p>Note that you will be prompted for <strong><font color="#990000">mypassword</font></strong> 
       for each command unless you set up <a target="_top" href="http://sourceforge.net/account/editsshkeys.php">authorized 
@@ -108,10 +113,7 @@ update -dP</strong> </pre>
         <pre> :ext:<font color="#990000">myusername</font>@cvs.sourceforge.net:/cvsroot/moodle</pre>
       </blockquote>
       <p><br>
-        5. Press the button: &quot;<strong>Fetch list...</strong>&quot;.<br>
-        <br>
-        6. To the right of the button you should see a list of modules: choose 
-        &quot;<strong>moodle</strong>&quot; from that list.<br>
+        5. Under the &quot;Module&quot; field, type &quot;<strong>moodle</strong>&quot; to get Moodle, &quot;<strong>contrib</strong>&quot; to get the contributions directory, or &quot;<strong>mysql</strong>&quot; to get the MySQL Admin module.<br>
         <br>
         7. Press the button: &quot;<strong>OK</strong>&quot; and everything should 
         be downloaded.<br>
