@@ -720,6 +720,7 @@
                 foreach ($unreads as $unread) {
                     //start message
                     fwrite($bf, start_tag("MESSAGE",3,true));
+                    fwrite ($bf,full_tag("ID",4,false,$unread->id));
                     fwrite ($bf,full_tag("STATUS",4,false,"UNREAD"));
                     fwrite ($bf,full_tag("USERIDFROM",4,false,$unread->useridfrom));
                     fwrite ($bf,full_tag("USERIDTO",4,false,$unread->useridto));
@@ -747,6 +748,7 @@
                 foreach ($reads as $read) {
                     //start message
                     fwrite($bf, start_tag("MESSAGE",3,true));
+                    fwrite ($bf,full_tag("ID",4,false,$read->id));
                     fwrite ($bf,full_tag("STATUS",4,false,"READ"));
                     fwrite ($bf,full_tag("USERIDFROM",4,false,$read->useridfrom));
                     fwrite ($bf,full_tag("USERIDTO",4,false,$read->useridto));
@@ -777,6 +779,7 @@
                 foreach ($contacts as $contact) {
                     //start contact
                     fwrite($bf, start_tag("CONTACT",4,true));
+                    fwrite ($bf,full_tag("ID",5,false,$contact->id));
                     fwrite ($bf,full_tag("USERID",5,false,$contact->userid));
                     fwrite ($bf,full_tag("CONTACTID",5,false,$contact->contactid));
                     fwrite ($bf,full_tag("BLOCKED",5,false,$contact->blocked));
