@@ -6,11 +6,8 @@
     require_variable($id);           // Course Module ID
     optional_variable($eid);         // Entry ID
 
-    optional_variable($mode,"approval");
-    optional_variable($hook,"ALL");
-
-    $mode = strip_tags(urldecode($mode));  //XSS 
-    $hook = strip_tags(urldecode($hook));  //XSS 
+    $mode = optional_param('mode','approval');
+    $hook = optional_param('hook','ALL');
 
     if (! $cm = get_record("course_modules", "id", $id)) {
         error("Course Module ID was incorrect");

@@ -8,10 +8,9 @@
     require_variable($eid);            // Entry ID
     optional_variable($cid,0);         // Comment ID
 
-    optional_variable($action,"add");     // Action to perform
     optional_variable($confirm,0);     // Confirm the action
 
-    $action = strip_tags(urldecode($action));  //XSS
+    $action = optional_param('action','add');
 
     $action = strtolower($action);
 

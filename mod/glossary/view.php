@@ -13,29 +13,15 @@
 
     optional_variable($tab,GLOSSARY_NO_VIEW); // browsing entries by categories?
 
-    optional_variable($mode,"");  // [ "term"   | "entry"  | "cat"     | "date" | 
-                                        //   "letter" | "search" | "author"  | "approval" ]
-    optional_variable($hook,"");  // the term, entry, cat, etc... to look for based on mode
-
-    optional_variable($fullsearch,0); // full search (concept and definition) when searching?
-
-    optional_variable($sortkey,"");    // Sorted view: 
-                                       //    [ CREATION | UPDATE | FIRSTNAME | LASTNAME |
-                                       //      concept | timecreated | ... ]
-    optional_variable($sortorder,"");  // it defines the order of the sorting (ASC or DESC)
-
-    optional_variable($offset,0);      // entries to bypass (for paging purpouses)
-
-    optional_variable($show,"");       // [ concept | alias ] => mode=term hook=$show
     optional_variable($displayformat,-1);  // override of the glossary display format
 
-    $mode = strip_tags(urldecode($mode));  //XSS
-    $hook = strip_tags(urldecode($hook));  //XSS
-    $fullsearch = strip_tags(urldecode($fullsearch));  //XSS
-    $sortkey = strip_tags(urldecode($sortkey));  //XSS
-    $sortorder = strip_tags(urldecode($sortorder));  //XSS
-    $offset = strip_tags(urldecode($offset));  //XSS
-    $show = strip_tags(urldecode($show));  //XSS
+    $mode       = optional_param('mode');        // term entry cat date letter search author approval
+    $hook       = optional_param('hook');        // the term, entry, cat, etc... to look for based on mode
+    $fullsearch = optional_param('fullsearch',0);// full search (concept and definition) when searching?
+    $sortkey    = optional_param('sortkey');     // Sorted view: CREATION | UPDATE | FIRSTNAME | LASTNAME...
+    $sortorder  = optional_param('sortorder');   // it defines the order of the sorting (ASC or DESC)
+    $offset     = optional_param('offset',0);    // entries to bypass (for paging purpouses)
+    $show       = optional_param('show');        // [ concept | alias ] => mode=term hook=$show
 
     if (!empty($id)) {
         if (! $cm = get_record("course_modules", "id", $id)) {

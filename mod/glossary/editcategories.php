@@ -6,9 +6,6 @@
     require_once("lib.php");
 
     require_variable($id);    // Course Module ID, or
-    optional_variable($mode);  // cat
-    optional_variable($hook,0);  // category ID
-    optional_variable($action);  // what to do
     optional_variable($usedynalink);  // category ID
     optional_variable($confirm);  // confirm the action
 
@@ -16,9 +13,9 @@
 
     $name = clean_text($name);
 
-    $action = strip_tags(urldecode($action));  //XSS
-    $hook = strip_tags(urldecode($hook));  //XSS
-    $mode = strip_tags(urldecode($mode));  //XSS
+    $action = optional_param('action'); // what to do
+    $hook   = optional_param('hook',0); // category ID
+    $mode   = optional_param('mode');   // cat
 
     $action = strtolower($action);
         
