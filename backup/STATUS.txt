@@ -3,7 +3,7 @@ STATUS $Id$
 
 This documment shows the current status of the backup/restore option.
 
-Backup:  NOT WORKING. No comments.
+Backup:  WORKING. Only xml generation into temp dir. Header & Info.
 
 Restore: NOT WORKING. No comments.
 
@@ -13,7 +13,7 @@ Now I show the specific detailed status of every item in the process:
 
 Backup Details:
 ===============
-   - Backup FrontEnd............................................IN PROGRESS
+   - Backup FrontEnd............................................DONE
         - Check Security........................................DONE
         - Select Info to Backup.(from mods).....................DONE
         - Check (summary info)..................................DONE
@@ -25,13 +25,13 @@ Backup Details:
         - Launch Backup.........................................DONE
         - Show progress.........................................DONE
         - Determine Backup location.............................DONE
-        - Delete old entries at backup startup..................IN PROGRESS
+        - Delete old entries at backup startup..................DONE
              - From database....................................DONE
-             - From filesystem..................................NO EXISTS
+             - From filesystem..................................DONE
    - Backup Items:..............................................IN PROGRESS
-        - Backup Info data......................................IN PROGRESS
-        - Course................................................NO EXISTS
-           - Course Summary Data................................NO EXISTS
+        - Backup Info data......................................DONE
+        - Course................................................IN PROGRESS
+           - Course Summary Data................................IN PROGRESS
            - User Accounts Info.................................NO EXISTS
               x teachers........................................NO EXISTS
                  - Needed.......................................NO EXISTS
@@ -78,6 +78,8 @@ Backup Details:
                  + course data..................................NO EXISTS
                  + user data....................................NO EXISTS
                  + files........................................NO EXISTS
+              x user files to temp..............................NO EXISTS
+              x course files to temp............................NO EXISTS
    - Compress the backup (zip)..................................NO EXISTS
       - XML File................................................NO EXISTS
       - Course Files............................................NO EXISTS
