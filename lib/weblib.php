@@ -1634,20 +1634,7 @@ function print_header ($title='', $heading='', $navigation='', $focus='', $meta=
 
     // Create class and id for this page
 
-    $path = str_replace($CFG->wwwroot.'/', '', $ME);
-    $path = str_replace('.php', '', $path);
-    if (substr($path, -1) == '/') {
-        $path .= 'index';
-    }
-    if (empty($path) or $path == '/index') {
-        $pageid    = 'site-index';
-        $pageclass = 'course';
-    } else {
-        $pageid    = str_replace('/', '-', $path);
-        $pageclass = explode('-', $pageid);
-        array_pop($pageclass);
-        $pageclass = implode('-', $pageclass);
-    }
+    page_id_and_class($pageid, $pageclass);
 
     if (isset($course->id)) {
         $pageclass .= ' course-'.$course->id;
@@ -3657,6 +3644,35 @@ function print_speller_code ($usehtmleditor=false) {
  */
 function print_speller_button () {
     echo '<input type="button" value="Check spelling" onclick="openSpellChecker();" />'."\n";
+}
+
+
+function page_id_and_class(&$getid, &$getclass) {
+    // Create class and id for this page
+    global $CFG, $ME;
+
+    static $class = NULL;
+    static $id    = NULL;
+
+    if(empty($class) || empty($id)) {
+        $path = str_replace($CFG->wwwroot.'/', '', $ME);
+        $path = str_replace('.php', '', $path);
+        if (substr($path, -1) == '/') {
+            $path .= 'index';
+        }
+        if (empty($path) || $path == '/index') {
+            $id    = 'site-index';
+            $class = 'course';
+        } else {
+            $id    = str_replace('/', '-', $path);
+            $class = explode('-', $id);
+            array_pop($class);
+            $class = implode('-', $class);
+        }
+    }
+
+    $getid    = $id;
+    $getclass = $class;
 }
 
 // vim:autoindent:expandtab:shiftwidth=4:tabstop=4:tw=140:
