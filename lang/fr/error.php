@@ -1,6 +1,7 @@
 <?php // $Id$ 
 
 $string['coursegroupunknown'] = 'Cours correspondant au groupe $a non indiqué';
+$string['confirmsesskeybad'] = 'Désolé, votre identifiant de session n\'a pas pu être confirmé pour exécuter cette action. Cette sécurité vous protège contre l\'exécution accidentelle ou malfaisante en votre nom de fonctions essentielles. Veuillez vérifier que vous avez vraiment voulu effectuer cette action.';
 $string['erroronline'] = 'Erreur à la ligne $a';
 $string['fieldrequired'] = '« $a » est un champ obligatoire';
 $string['filenotfound'] = 'Le fichier demandé n\'a pas été trouvé';
