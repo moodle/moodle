@@ -17,7 +17,7 @@ $string['defaultautoattend'] = 'Standardmäßig wird die Anwesenheit aus den Eintr
 $string['defaultdynamicsection'] = 'Soll die Anwesenheitsliste der richtigen Woche zugeordnet werden (Voreinstellung)';
 $string['defaultgrade'] = 'Soll die Anwesenheitsliste bewertbar sein (Voreinstellung)';
 $string['defaulthoursinclass'] = 'Wieviele Stunden sollen standardmäßig für die Anwesenheit eingestellt werden';
-$string['defaultmaxgrade'] = 'Welche maximale Bewertung soll standardmäßig für die 
+$string['defaultmaxgrade'] = 'Welche maximale Bewertung soll standardmäßig für die 
 volle Anwesenheit eingestellt werden.';
 $string['defaultstudentstatus'] = 'Der voreingestellte Anwesenheitsstatus auf neu eingerichteten Anwesenheitslisten';
 $string['downloadexcelfull'] = ' als Excel-Tabelle herunterladen';

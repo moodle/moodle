@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // chat.php - created with Moodle 1.2 development (2003120700)
+      // chat.php - created with Moodle 1.2 development (2004013101)
 
 
 $string['beep'] = 'Signalton';
@@ -12,6 +12,8 @@ $string['configrefreshroom'] = 'Wie oft soll der Chatraum aktualisiert werden? (
 $string['configrefreshuserlist'] = 'Wie oft soll die Teilnehmerliste aktualisiert werden? (in Sekunden)';
 $string['currentchats'] = 'Aktive Chat-Sitzungen';
 $string['currentusers'] = 'Aktueller Benutzer';
+$string['deletesession'] = 'Löschen dieser Sitzung';
+$string['deletesessionsure'] = 'Sind Sie sich sicher, dass Sie diese Sitzung löschen wollen?';
 $string['donotusechattime'] = 'Veröffentlichen Sie keine Chatzeiten';
 $string['enterchat'] = 'Klicken Sie hier, um den Chat zu betreten';
 $string['errornousers'] = 'Kann keinen Nutzer finden!';

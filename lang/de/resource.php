@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.2 development (2003120700)
+      // resource.php - created with Moodle 1.2 development (2004013101)
 
 
 $string['addresource'] = 'Material hinzufügen';
@@ -19,6 +19,7 @@ $string['configpopuptoolbar'] = 'Sollen Popup-Fenster die Toolbar anzeigen (Vore
 $string['configpopupwidth'] = 'Welche Breite sollen Popup-Fenster haben (Voreinstellung)?';
 $string['configwebsearch'] = 'Wenn eine URL als Webseite oder Link eingefügt wird,    
 soll diese Seite dem Benutzer bei der Suche nach einer URL unterstützen.';
+$string['directlink'] = 'Direkter Link zu dieser Datei';
 $string['editingaresource'] = 'Material bearbeiten';
 $string['example'] = 'Beispiel';
 $string['examplereference'] = 'Tobin, K. & Tippins, D (1993) Constructivism as a Referent for Teaching and Learning. In: K. Tobin (Ed) The Practice of Constructivism in Science Education, pp 3-21, Lawrence-Erlbaum, Hillsdale, NJ.';
@@ -30,8 +31,8 @@ $string['fetchservererror'] = 'Ein Fehler (evtl. ein Programmfehler) ist beim Re
 $string['filename'] = 'Dateiname';
 $string['fulltext'] = 'Voller Text';
 $string['htmlfragment'] = 'HTML-Teil';
-$string['modulename'] = 'Literatur';
-$string['modulenameplural'] = 'Literatur';
+$string['modulename'] = 'Unterlagen';
+$string['modulenameplural'] = 'Arbeitsunterlagen';
 $string['neverseen'] = 'Nie gelesen';
 $string['newdirectories'] = 'Die Verzeichnis-Verknüpfungen anzeigen';
 $string['newfullscreen'] = 'Den ganzen Bildschirm ausfüllen';
@@ -50,6 +51,8 @@ $string['notefile'] = 'Um mehr als eine Datei für diesen Kurs hochzuladen (damit
 
 <A HREF=$a >Datei-Manager</A>.';
 $string['notypechosen'] = 'Sie müssen einen Typ auswählen. Verwenden Sie den Zurück-Knopf und probieren Sie es erneut';
+$string['popupresource'] = 'Diese Quelle erscheint in einem Pop-Up-Fenster';
+$string['popupresourcelink'] = 'Wenn es nicht klappt, klicken sie hier $a';
 $string['resourcetype'] = 'Typ der Quelle';
 $string['resourcetype1'] = 'Referenz';
 $string['resourcetype2'] = 'Internet-Seite';

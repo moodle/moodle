@@ -4,13 +4,13 @@
 
 $string['allowresubmit'] = 'Erneutes Einreichen erlauben';
 $string['assignmentdetails'] = 'Aufgabendetails';
-$string['assignmentmail'] = '$a->Trainer/in hat einen Kommentar zu Ihrer eingereichten Aufgabe \'$a->assignment\' verfasst.
-
-Sie finden diesen im Anhang Ihrer eingereichten Aufgabe:
-
+$string['assignmentmail'] = '$a->Trainer/in hat einen Kommentar zu Ihrer eingereichten Aufgabe \'$a->assignment\' verfasst.
+
+Sie finden diesen im Anhang Ihrer eingereichten Aufgabe:
+
 $a->url';
-$string['assignmentmailhtml'] = '$a->Trainer/in hat einen Kommentar zu Ihrer eingereichten Aufgabe verfasst.</i>\'<br /><br />
-Sie finden diesen im Anhang Ihrer 
+$string['assignmentmailhtml'] = '$a->Trainer/in hat einen Kommentar zu Ihrer eingereichten Aufgabe verfasst.</i>\'<br /><br />
+Sie finden diesen im Anhang Ihrer 
 <a href=\"$a->url\">eingereichten Aufgabe</a>:.';
 $string['assignmentname'] = 'Aufgabenname';
 $string['assignmenttype'] = 'Aufgabentyp';

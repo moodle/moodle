@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // workshop.php - created with Moodle 1.2 development (2003120700)
+      // workshop.php - created with Moodle 1.2 development (2004013101)
 
 
 $string['absent'] = 'Abwesend';
@@ -27,7 +27,7 @@ $string['assessments'] = 'Bewertungen';
 $string['assessmentsareok'] = 'Bewertungen sind OK';
 $string['assessmentsby'] = 'Bewertungen von $a';
 $string['assessmentsdone'] = 'Bewertungen erledigt';
-$string['assessmentsexcluded'] = 'Zhal der Bewertungen, die nicht berücksichtigt wurden  für $a';
+$string['assessmentsexcluded'] = 'Zahl der Bewertungen, die nicht berücksichtigt wurden  für $a';
 $string['assessmentsmustbeagreed'] = 'Bewertungen muss zugestimmt werden';
 $string['assessmentwasagreedon'] = 'Bewertung wurde zugestimmt von $a';
 $string['assessor'] = 'Bewerter';
@@ -89,7 +89,7 @@ $string['listofallsubmissions'] = 'Liste aller Beiträge';
 $string['liststudentsassessments'] = 'Bewertung des/der Kursteilnehmer/in auflisten';
 $string['loadingforteacherassessments'] = 'Laden von $a\'s Bewertungen';
 $string['mail1'] = 'Ihr Beitrag \'$a\' wurde bewertet von';
-$string['mail10'] = 'Sie können es in Ihrer Workshopaufgabe beweten';
+$string['mail10'] = 'Sie können es in Ihrer Workshopaufgabe bewerten';
 $string['mail2'] = 'Kommentare und Benotungen finden Sie in der Workshop-Aufgabe \'$a\'';
 $string['mail3'] = 'Sie können es der Workshop- Aufgabe entnehmen';
 $string['mail4'] = 'Ein Kommentar wurde Ihrer Aufgabe durch \'$a\' hinzugefügt';

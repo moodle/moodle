@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.2 development (2003122600)
+      // moodle.php - created with Moodle 1.2 development (2004013101)
 
 
 $string['action'] = 'Aktion';
@@ -44,12 +44,14 @@ $string['adminhelpmanagemodules'] = 'Installierte Module und deren Einstellungen
 $string['adminhelpsitefiles'] = 'Allgemeine Dateien veröffentlichen oder externe Backups hochladen';
 $string['adminhelpsitesettings'] = 'Festlegen der Aufmachung für die Begrüßungsseite ';
 $string['adminhelpthemes'] = 'Optik der Seite auswählen';
+$string['adminhelpuploadusers'] = 'Import neuer Nutzer aus Textdatei';
 $string['adminhelpusers'] = 'Nutzer anlegen und Authentifizierung festlegen';
 $string['administration'] = 'Administration';
 $string['administrator'] = 'Administrator/in';
 $string['administrators'] = 'Administrator/innen';
 $string['again'] = 'nochmal';
 $string['all'] = 'Alle';
+$string['allactivities'] = 'Alle Aktivitäten';
 $string['alldays'] = 'Jeden Tag';
 $string['allfieldsrequired'] = 'Alle Felder sind zwingend';
 $string['alllogs'] = 'Alle Statistiken';
@@ -113,6 +115,7 @@ $string['choosetheme'] = 'Thema auswählen';
 $string['chooseuser'] = 'Nutzer auswählen';
 $string['city'] = 'Stadt/Ort';
 $string['cleaningtempdata'] = 'Lösche temporäre Dateien';
+$string['clicktochange'] = 'Klicken um zu ändern';
 $string['closewindow'] = 'Dieses Fenster schließen';
 $string['comparelanguage'] = 'Sprache vergleichen und bearbeiten';
 $string['complete'] = 'Fertig';
@@ -120,6 +123,7 @@ $string['configallowunenroll'] = 'Wenn Sie diesen Schalter auf \'Ja\' stellen, d
 $string['configcountry'] = 'Wenn Sie hier ein Land einstellen, wird dieses Land als Vorgabe für neue Benutzerkonten gewählt.  Um Benutzer/innen zu zwingen, ein Land zu wählen, lassen Sie dieses Feld leer.';
 $string['configdebug'] = 'Wenn Sie dies einschalten, werden die Fehlermeldungen von PHP erweitert, so dass mehr Warnungen ausgegeben werden. Dies ist nur nützlich für Entwickler.';
 $string['configerrorlevel'] = 'Wählen Sie die Menge der PHP Warnungen, die Sie angezeigt bekommen möchten. Normal ist gebräuchlicherweise die beste Wahl.';
+$string['configforcelogin'] = 'Normalerweise können die Startseite und die Kursübersicht (nicht die Kurse) eingesehen werden ohne sich anzumelden. Wenn Sie die Teilnehmer zwingen wollen sich erst anzumelden, bevor Sie irgendetwas auf dieser Seite tun können, dann müssen Sie diese Option aktivieren';
 $string['configframename'] = 'Sofern Sie Moodle innerhalb eines Frames einbinden, tragen Sie hier den Namen des Frames ein. Anderenfalls sollte dieser Wert auf \'_top\' stehen.';
 $string['configfullnamedisplay'] = 'Hier können Sie festlegen, wie die Namen angezeigt werden. In den meisten Fällen wird die Grundeinstellung \"Eingegebener Name und Vorname\" geeignet sein. Sie könnne jedoch auch die Vornamen ausblenden.';
 $string['configgdversion'] = 'Zeigt Ihnen die installierte Version von GD an. Die angezeigte Version wurde automatisch ermittelt. Ändern Sie diese nicht, es sei denn Sie wissen wirklich, was Sie tun. ';
@@ -188,6 +192,7 @@ $string['createuserandpass'] = 'Einen neuen Benutzernamen und Kennwort für den Z
 $string['createziparchive'] = 'ZIP-Archiv erstellen';
 $string['creatingcategoriesandquestions'] = 'Erstelle Kategorien und Fragen';
 $string['creatingcoursemodules'] = 'Erstelle Kurs-Module';
+$string['creatinggroups'] = 'Gruppen einrichten';
 $string['creatinglogentries'] = 'Erstelle Log-Einträge';
 $string['creatingnewcourse'] = 'Erstelle neuen Kurs';
 $string['creatingscales'] = 'Erstelle Skalen';
@@ -306,6 +311,8 @@ $string['emailpasswordsent'] = 'Danke für Ihre Bestätigung des neuen Kennworts.
 <p>Eine Email mit dem Inhalt Ihres neuen Kennwortes wurde an Ihre Adresse <b>$a->email</b> versendet.
 <p>Das Kennwort wurde automatisch generiert -
 Vielleicht möchten Sie <a href=$a->link>Ihr Kennwort ändern</a>, um es sich leichter zu merken.';
+$string['enrolledincourse'] = 'Eingetragen in Kurs \"$a\"';
+$string['enrolledincoursenot'] = 'Nicht in Kurs \"$a\" eingetragen';
 $string['enrolmentconfirmation'] = 'Sie sind dabei, sich in diesen Kurs einzuschreiben.<br />Sind Sie sicher?';
 $string['enrolmentkey'] = 'Zugangs-Schlüssel';
 $string['enrolmentkeyfrom'] = 'Für diesen Kurs benötigen Sie einen \'Zugangs-Schlüssel\' - ein einmaliges Kennwort,<br>das Sie von $a bekommen haben sollten<BR>';
@@ -604,6 +611,7 @@ $string['order'] = 'Reihenfolge';
 $string['other'] = 'Sonstige';
 $string['outline'] = 'Ausstehend';
 $string['page'] = 'Seite';
+$string['parentlanguage'] = 'Herkunftssprache (parentlanguage)';
 $string['participants'] = 'Teilnehmer/innen';
 $string['password'] = 'Kennwort';
 $string['passwordchanged'] = 'Kennwort wurde geändert';
@@ -798,6 +806,7 @@ $string['uploadnofilefound'] = 'Es wurde keine Datei gefunden - Sind Sie sicher,
 $string['uploadproblem'] = 'Ein unbekanntes Problem ist während dem Hochladen der Datei aufgetreten
 \'$a\' (Vielleicht war diese zu groß?)) ';
 $string['uploadthisfile'] = 'Diese Datei hochladen';
+$string['uploadusers'] = 'Nutzer hochladen';
 $string['user'] = 'Nutzer';
 $string['userdeleted'] = 'Dieser Benutzer-Zugang wurde gelöscht';
 $string['userdescription'] = 'Beschreibung';
@@ -806,6 +815,7 @@ $string['username'] = 'Benutzername';
 $string['usernameexists'] = 'Dieser Benutzername existiert, probieren Sie einen anderen';
 $string['userprofilefor'] = 'Benutzer-Profil für $a';
 $string['users'] = 'Benutzer/innen';
+$string['usersnew'] = 'Neue Nutzer';
 $string['userzones'] = 'Nutzerzonen';
 $string['usingexistingcourse'] = 'Verwende bestehenden Kurs';
 $string['version'] = 'Version';
@@ -836,6 +846,7 @@ $string['wordforteacherseg'] = 'z.B. Lehrer/innen, Berater/innen, Moderator/inne
 $string['writingcategoriesandquestions'] = 'Schreibe Kategorien und Fragen';
 $string['writingcoursedata'] = 'Schreibe Kursdaten';
 $string['writinggeneralinfo'] = 'Schreibe allgemeneine Information';
+$string['writinggroupsinfo'] = 'Schreibe Gruppeninformation';
 $string['writingheader'] = 'Schreibe Header';
 $string['writingloginfo'] = 'Schreibe Log-Info';
 $string['writingmoduleinfo'] = 'Schreibe Modulinformation';
