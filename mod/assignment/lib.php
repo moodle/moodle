@@ -108,7 +108,7 @@ function assignment_cron () {
 // Function to be run periodically according to the moodle cron
 // Finds all assignment notifications that have yet to be mailed out, and mails them
 
-    global $CFG;
+    global $CFG, $USER;
 
     $cutofftime = time() - $CFG->maxeditingtime;
 
