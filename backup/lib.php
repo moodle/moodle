@@ -177,16 +177,99 @@
     //Delete old data in backup tables (if exists)
     //Two days seems to be apropiate
     function backup_delete_old_data() {
+
+        global $CFG; 
+
         //Change this if you want !!
         $days = 2;
         //End change this
-        $seconds = days * 24 * 60 * 60;
+        $seconds = $days * 24 * 60 * 60;
         $delete_from = time()-$seconds;
         //Now delete from tables
-        $status = execute_sql("DELETE FROM {$CFG->prefix}backup_ids b
-                               WHERE b.backup_code < '$delete_from'",false);
-        $status = execute_sql("DELETE FROM {$CFG->prefix}backup_files b
-                               WHERE b.backup_code < '$delete_from'",false);
+        $status = execute_sql("DELETE FROM {$CFG->prefix}backup_ids
+                               WHERE backup_code < '$delete_from'",false);
+        if ($status) {
+            $status = execute_sql("DELETE FROM {$CFG->prefix}backup_files
+                                   WHERE backup_code < '$delete_from'",false);
+        }
         return($status);
     }
+
+    //Function to check if a directory exists
+    //and, optionally, create it
+    function check_dir_exists($dir,$create=false) {
+
+        global $CFG; 
+
+        $status = true;
+        if(!is_dir($dir)) {
+            if (!$create) {
+                $status = false;
+            } else {
+                $status = mkdir ($dir,$CFG->directorypermissions);
+            }
+        }
+        return $status;
+    }
+
+    //Function to check and create the needed dir to 
+    //save all the backup
+    function check_and_create_backup_dir($backup_unique_code) {
+   
+        global $CFG; 
+
+        $status = check_dir_exists($CFG->dataroot."/temp",true);
+        if ($status) {
+            $status = check_dir_exists($CFG->dataroot."/temp/backup",true);
+        }
+        if ($status) {
+            $status = check_dir_exists($CFG->dataroot."/temp/backup/".$backup_unique_code,true);
+        }
+        
+        return $status;
+    }
+
+    //Function to delete all the directory contents recursively
+    //Copied from admin/delete.php
+    function delete_dir_contents ($rootdir) {
+
+        $dir = opendir($rootdir);
+
+        $status = true;
+
+        while ($file = readdir($dir)) {
+            if ($file != "." and $file != "..") {
+                $fullfile = "$rootdir/$file";
+                if (filetype($fullfile) == "dir") {
+                    delete_dir_contents($fullfile);
+                    if (!rmdir($fullfile)) {
+                        $status = false;;
+                    }
+                } else {
+                    if (!unlink("$fullfile")) {
+                        $status = false;;
+                    }
+                }
+            }
+        }
+        closedir($dir);
+ 
+        return $status;
+
+    }
+
+    //Function to clear (empty) the contents of the backup_dir
+    //Copied from admin/delete.php
+    function clear_backup_dir($backup_unique_code) {
+  
+        global $CFG; 
+
+        $rootdir = $CFG->dataroot."/temp/backup/".$backup_unique_code;
+        
+        //Delete recursively
+        $status = delete_dir_contents($rootdir);
+
+        return $status;
+    }
+    
 ?>
