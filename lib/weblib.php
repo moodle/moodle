@@ -717,7 +717,7 @@ function clean_text($text, $format=FORMAT_MOODLE) {
             $text = eregi_replace("([^a-z])on([a-z]+)([[:space:]]*)=", "\\1Xon\\2=", $text);
 
         /// Remove Javascript entities
-            $text = eregi_replace("&{([^};]*)};", "\\1", $text);
+            $text = eregi_replace("&\{([^};]*)\};", "\\1", $text);
 
             return $text;
     }
