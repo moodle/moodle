@@ -178,17 +178,19 @@ function display() {
 
     $this->set_parameters(); // set the parameters array
 
+    $course = $this->course;      // shortcut
+    $resource = $this->resource;  // shortcut
 
     $strresource = get_string("modulename", "resource");
     $strresources = get_string("modulenameplural", "resource");
     $strlastmodified = get_string("lastmodified");
 
-    if ($this->course->category) {
-        require_login($this->course->id);
-        $navigation = "<a target=\"{$CFG->framename}\" href=\"../../course/view.php?id={$this->course->id}\">{$this->course->shortname}</a> ->              
-                       <a target=\"{$CFG->framename}\" href=\"index.php?id={$this->course->id}\">$strresources</a> ->";
+    if ($course->category) {
+        require_login($course->id);
+        $navigation = "<a target=\"{$CFG->framename}\" href=\"../../course/view.php?id={$course->id}\">{$course->shortname}</a> ->              
+                       <a target=\"{$CFG->framename}\" href=\"index.php?id={$course->id}\">$strresources</a> ->";
     } else {
-        $navigation = "<a target=\"{$CFG->framename}\" href=\"index.php?id={$this->course->id}\">$strresources</a> ->";
+        $navigation = "<a target=\"{$CFG->framename}\" href=\"index.php?id={$course->id}\">$strresources</a> ->";
     }
 
 
@@ -208,10 +210,10 @@ function display() {
     $querystring = '';
     $resourcetype = '';
     $embedded = false;
-    $mimetype = mimeinfo("type", $this->resource->reference);
-    $pagetitle = strip_tags($this->course->shortname.': '.$this->resource->name);
+    $mimetype = mimeinfo("type", $resource->reference);
+    $pagetitle = strip_tags($course->shortname.': '.$resource->name);
 
-    if ($this->resource->options != "frame") {
+    if ($resource->options != "frame") {
         if (in_array($mimetype, array('image/gif','image/jpeg','image/png'))) {  // It's an image
             $resourcetype = "image";
             $embedded = true;
@@ -236,9 +238,9 @@ function display() {
 
 
 /// Form the parse string
-    if (!empty($this->resource->alltext)) {
+    if (!empty($resource->alltext)) {
         $querys = array();
-        $parray = explode(',', $this->resource->alltext);
+        $parray = explode(',', $resource->alltext);
         foreach ($parray as $fieldstring) {
             $field = explode('=', $fieldstring);
             $querys[] = urlencode($field[1]).'='.urlencode($this->parameters[$field[0]]['value']);
@@ -251,10 +253,10 @@ function display() {
 
     $inpopup = !empty($_GET["inpopup"]);
 
-    if (resource_is_url($this->resource->reference)) {
-        $fullurl = $this->resource->reference;
+    if (resource_is_url($resource->reference)) {
+        $fullurl = $resource->reference;
         if (!empty($querystring)) {
-            $urlpieces = parse_url($this->resource->reference);
+            $urlpieces = parse_url($resource->reference);
             if (empty($urlpieces['query'])) {
                 $fullurl .= '?'.$querystring;
             } else {
@@ -263,12 +265,12 @@ function display() {
         }
     } else {
         if ($CFG->slasharguments) {
-            $relativeurl = "/file.php/{$this->course->id}/{$this->resource->reference}";
+            $relativeurl = "/file.php/{$course->id}/{$resource->reference}";
             if ($querystring) {
                 $relativeurl .= '?'.$querystring;
             }
         } else {
-            $relativeurl = "/file.php?file=/{$this->course->id}/{$this->resource->reference}";
+            $relativeurl = "/file.php?file=/{$course->id}/{$resource->reference}";
             if ($querystring) {
                 $relativeurl .= '&'.$querystring;
             }
@@ -279,23 +281,23 @@ function display() {
 
     /// Check whether this is supposed to be a popup, but was called directly
 
-    if ($this->resource->popup and !$inpopup) {    /// Make a page and a pop-up window
+    if ($resource->popup and !$inpopup) {    /// Make a page and a pop-up window
 
-        print_header($pagetitle, $this->course->fullname, "$navigation {$this->resource->name}", "", "", true, update_module_button($this->cm->id, $this->course->id, $strresource), navmenu($this->course, $this->cm));
+        print_header($pagetitle, $course->fullname, "$navigation {$resource->name}", "", "", true, update_module_button($this->cm->id, $course->id, $strresource), navmenu($course, $this->cm));
 
 
         echo "\n<script language=\"Javascript\">";
         echo "\n<!--\n";
-        echo "openpopup('/mod/resource/view.php?inpopup=true&id={$this->cm->id}','resource{$this->resource->id}','{$this->resource->popup}');\n";
+        echo "openpopup('/mod/resource/view.php?inpopup=true&id={$this->cm->id}','resource{$resource->id}','{$resource->popup}');\n";
         echo "\n-->\n";
         echo '</script>';
 
-        if (trim(strip_tags($this->resource->summary))) {
+        if (trim(strip_tags($resource->summary))) {
             $formatoptions->noclean = true;
-            print_simple_box(format_text($this->resource->summary, FORMAT_MOODLE, $formatoptions), "center");
+            print_simple_box(format_text($resource->summary, FORMAT_MOODLE, $formatoptions), "center");
         }
 
-        $link = "<a href=\"$CFG->wwwroot/mod/resource/view.php?inpopup=true&id={$this->cm->id}\" target=\"resource{$this->resource->id}\" onClick=\"return openpopup('/mod/resource/view.php?inpopup=true&id={$this->cm->id}', 'resource{$this->resource->id}','{$this->resource->popup}');\">{$this->resource->name}</a>";
+        $link = "<a href=\"$CFG->wwwroot/mod/resource/view.php?inpopup=true&id={$this->cm->id}\" target=\"resource{$resource->id}\" onClick=\"return openpopup('/mod/resource/view.php?inpopup=true&id={$this->cm->id}', 'resource{$resource->id}','{$resource->popup}');\">{$resource->name}</a>";
 
         echo "<p>&nbsp</p>";
         echo '<p align="center">';
@@ -304,17 +306,17 @@ function display() {
         print_string('popupresourcelink', 'resource', $link);
         echo "</p>";
 
-        print_footer($this->course);
+        print_footer($course);
         exit;
     }
 
 
     /// Now check whether we need to display a frameset
 
-    if (empty($_GET['frameset']) and !$embedded and !$inpopup and $this->resource->options == "frame") {
-        echo "<head><title>{$this->course->shortname}: {$this->resource->name}</title></head>\n";
+    if (empty($_GET['frameset']) and !$embedded and !$inpopup and $resource->options == "frame") {
+        echo "<head><title>{$course->shortname}: {$resource->name}</title></head>\n";
         echo "<frameset rows=\"$CFG->resource_framesize,*\" border=\"2\">";
-        echo "<frame src=\"view.php?id={$this->cm->id}&type={$this->resource->type}&frameset=top\">";
+        echo "<frame src=\"view.php?id={$this->cm->id}&type={$resource->type}&frameset=top\">";
         echo "<frame src=\"$fullurl\">";
         echo "</frameset>";
         exit;
@@ -323,15 +325,15 @@ function display() {
 
     /// We can only get here once per resource, so add an entry to the log
 
-    add_to_log($this->course->id, "resource", "view", "view.php?id={$this->cm->id}", $this->resource->id, $this->cm->id);
+    add_to_log($course->id, "resource", "view", "view.php?id={$this->cm->id}", $resource->id, $this->cm->id);
 
 
     /// If we are in a frameset, just print the top of it
 
     if (!empty($_GET['frameset']) and $_GET['frameset'] == "top") {
-        print_header($pagetitle, $this->course->fullname, "$navigation <a target=\"$CFG->framename\" href=\"$fullurl\">{$this->resource->name}</a>", "", "", true, update_module_button($this->cm->id, $this->course->id, $strresource), navmenu($this->course, $this->cm, "parent"));
+        print_header($pagetitle, $course->fullname, "$navigation <a target=\"$CFG->framename\" href=\"$fullurl\">{$resource->name}</a>", "", "", true, update_module_button($this->cm->id, $course->id, $strresource), navmenu($course, $this->cm, "parent"));
 
-        echo "<center><font size=-1>".text_to_html($this->resource->summary, true, false)."</font></center>";
+        echo "<center><font size=-1>".text_to_html($resource->summary, true, false)."</font></center>";
         echo "</body></html>";
         exit;
     }
@@ -345,13 +347,13 @@ function display() {
         if ($inpopup) {
             print_header($pagetitle);
         } else {
-            print_header($pagetitle, $this->course->fullname, "$navigation <a title=\"$strdirectlink\" target=\"$CFG->framename\" href=\"$fullurl\"> {$this->resource->name}</a>", "", "", true, update_module_button($this->cm->id, $this->course->id, $strresource), navmenu($this->course, $this->cm, "self"));
+            print_header($pagetitle, $course->fullname, "$navigation <a title=\"$strdirectlink\" target=\"$CFG->framename\" href=\"$fullurl\"> {$resource->name}</a>", "", "", true, update_module_button($this->cm->id, $course->id, $strresource), navmenu($course, $this->cm, "self"));
 
         }
 
         if ($resourcetype == "image") {
             echo "<center><p>";
-            echo "<img title=\"{$this->resource->name}\" class=\"resourceimage\" src=\"$fullurl\">";
+            echo "<img title=\"{$resource->name}\" class=\"resourceimage\" src=\"$fullurl\">";
             echo "</p></center>";
 
         } else if ($resourcetype == "mp3") {
@@ -415,16 +417,16 @@ function display() {
             echo "</p></center>";
         }
 
-        if (trim($this->resource->summary)) {
+        if (trim($resource->summary)) {
             $formatoptions->noclean = true;
-            print_simple_box(format_text($this->resource->summary, FORMAT_MOODLE, $formatoptions), "center");
+            print_simple_box(format_text($resource->summary, FORMAT_MOODLE, $formatoptions, $course->id), "center");
         }
 
         if ($inpopup) {
             echo "<center><p>(<a href=\"$fullurl\">$strdirectlink</a>)</p></center>";
         } else {
             print_spacer(20,20);
-            print_footer($this->course);
+            print_footer($course);
         }
     
     } else {              // Display the resource on it's own

@@ -63,46 +63,48 @@ function update_instance($resource) {
 function display() {
     global $CFG, $THEME;
 
+    $course = $this->course;  // Shortcut
+    $resource = $this->resource;  // Shortcut
 
     $strresource = get_string("modulename", "resource");
     $strresources = get_string("modulenameplural", "resource");
     $strlastmodified = get_string("lastmodified");
 
-    if ($this->course->category) {
-        require_login($this->course->id);
-        $navigation = "<a target=\"{$CFG->framename}\" href=\"../../course/view.php?id={$this->course->id}\">{$this->course->shortname}</a> ->              
-                       <a target=\"{$CFG->framename}\" href=\"index.php?id={$this->course->id}\">$strresources</a> ->";
+    if ($course->category) {
+        require_login($course->id);
+        $navigation = "<a target=\"{$CFG->framename}\" href=\"../../course/view.php?id={$course->id}\">{$course->shortname}</a> ->              
+                       <a target=\"{$CFG->framename}\" href=\"index.php?id={$course->id}\">$strresources</a> ->";
     } else {
-        $navigation = "<a target=\"{$CFG->framename}\" href=\"index.php?id={$this->course->id}\">$strresources</a> ->";     }
+        $navigation = "<a target=\"{$CFG->framename}\" href=\"index.php?id={$course->id}\">$strresources</a> ->";     }
 
-    $pagetitle = strip_tags($this->course->shortname.': '.$this->resource->name);
+    $pagetitle = strip_tags($course->shortname.': '.$resource->name);
     $formatoptions->noclean = true;
     $inpopup = !empty($_GET["inpopup"]);
 
-    if ($this->resource->popup) {
+    if ($resource->popup) {
         if ($inpopup) {                    /// Popup only
-            add_to_log($this->course->id, "resource", "view", "view.php?id={$this->cm->id}", 
-                       $this->resource->id, $this->cm->id);
+            add_to_log($course->id, "resource", "view", "view.php?id={$this->cm->id}", 
+                       $resource->id, $this->cm->id);
             print_header();
-            print_simple_box(format_text($this->resource->alltext, $this->resource->options, $formatoptions), 
+            print_simple_box(format_text($resource->alltext, $resource->options, $formatoptions, $course->id), 
                              "center", "", "$THEME->cellcontent", "20");
         } else {                           /// Make a page and a pop-up window
 
-            print_header($pagetitle, $this->course->fullname, "$navigation {$this->resource->name}", 
-                         "", "", true, update_module_button($this->cm->id, $this->course->id, $strresource), 
-                         navmenu($this->course, $this->cm));
+            print_header($pagetitle, $course->fullname, "$navigation {$resource->name}", 
+                         "", "", true, update_module_button($this->cm->id, $course->id, $strresource), 
+                         navmenu($course, $this->cm));
 
             echo "\n<script language=\"Javascript\">";
             echo "\n<!--\n";
-            echo "openpopup('/mod/resource/view.php?inpopup=true&id={$this->cm->id}','resource{$this->resource->id}','{$this->resource->popup}');\n";
+            echo "openpopup('/mod/resource/view.php?inpopup=true&id={$this->cm->id}','resource{$resource->id}','{$resource->popup}');\n";
             echo "\n-->\n";
             echo '</script>';
     
-            if (trim(strip_tags($this->resource->summary))) {
-                print_simple_box(format_text($this->resource->summary, FORMAT_MOODLE, $formatoptions), "center");
+            if (trim(strip_tags($resource->summary))) {
+                print_simple_box(format_text($resource->summary, FORMAT_MOODLE, $formatoptions, $course->id), "center");
             }
     
-            $link = "<a href=\"$CFG->wwwroot/mod/resource/view.php?inpopup=true&id={$this->cm->id}\" target=\"resource{$this->resource->id}\" onClick=\"return openpopup('/mod/resource/view.php?inpopup=true&id={$this->cm->id}', 'resource{$this->resource->id}','{$this->resource->popup}');\">{$this->resource->name}</a>";
+            $link = "<a href=\"$CFG->wwwroot/mod/resource/view.php?inpopup=true&id={$this->cm->id}\" target=\"resource{$resource->id}\" onClick=\"return openpopup('/mod/resource/view.php?inpopup=true&id={$this->cm->id}', 'resource{$resource->id}','{$resource->popup}');\">{$resource->name}</a>";
     
             echo "<p>&nbsp</p>";
             echo '<p align="center">';
@@ -111,21 +113,21 @@ function display() {
             print_string('popupresourcelink', 'resource', $link);
             echo "</p>";
     
-            print_footer($this->course);
+            print_footer($course);
         }
     } else {    /// not a popup at all
 
-        add_to_log($this->course->id, "resource", "view", "view.php?id={$this->cm->id}", $this->resource->id, $this->cm->id);
-        print_header($pagetitle, $this->course->fullname, "$navigation {$this->resource->name}",
-                     "", "", true, update_module_button($this->cm->id, $this->course->id, $strresource), 
-                     navmenu($this->course, $this->cm));
+        add_to_log($course->id, "resource", "view", "view.php?id={$this->cm->id}", $resource->id, $this->cm->id);
+        print_header($pagetitle, $course->fullname, "$navigation {$resource->name}",
+                     "", "", true, update_module_button($this->cm->id, $course->id, $strresource), 
+                     navmenu($course, $this->cm));
     
-        print_simple_box(format_text($this->resource->alltext, $this->resource->options, $formatoptions), 
+        print_simple_box(format_text($resource->alltext, $resource->options, $formatoptions, $course->id), 
                          "center", "", "$THEME->cellcontent", "20");
     
-        echo "<center><p><font size=1>$strlastmodified: ".userdate($this->resource->timemodified)."</p></center>";
+        echo "<center><p><font size=1>$strlastmodified: ".userdate($resource->timemodified)."</p></center>";
     
-        print_footer($this->course);
+        print_footer($course);
     }
 
 }

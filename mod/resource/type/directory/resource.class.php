@@ -14,23 +14,26 @@ function display() {
     $strresources = get_string("modulenameplural", "resource");
     $strlastmodified = get_string("lastmodified");
 
-    if ($this->course->category) {
-        require_login($this->course->id);
-        $navigation = "<a target=\"{$CFG->framename}\" href=\"../../course/view.php?id={$this->course->id}\">{$this->course->shortname}</a> ->              
-            <a target=\"{$CFG->framename}\" href=\"index.php?id={$this->course->id}\">$strresources</a> ->";
+    $course = $this->course;      // Shortcut
+    $resource = $this->resource;  // Shortcut
+
+    if ($course->category) {
+        require_login($course->id);
+        $navigation = "<a target=\"{$CFG->framename}\" href=\"../../course/view.php?id={$course->id}\">{$course->shortname}</a> ->              
+            <a target=\"{$CFG->framename}\" href=\"index.php?id={$course->id}\">$strresources</a> ->";
     } else {
-        $navigation = "<a target=\"{$CFG->framename}\" href=\"index.php?id={$this->course->id}\">$strresources</a> ->";     }
+        $navigation = "<a target=\"{$CFG->framename}\" href=\"index.php?id={$course->id}\">$strresources</a> ->";     }
 
     require_once("../../files/mimetypes.php");
 
     $subdir = isset($_GET['subdir']) ? $_GET['subdir'] : '';
 
-    add_to_log($this->course->id, "resource", "view", "view.php?id={$this->cm->id}", $this->resource->id, $this->cm->id);
+    add_to_log($course->id, "resource", "view", "view.php?id={$this->cm->id}", $resource->id, $this->cm->id);
 
-    if ($this->resource->reference) {
-        $relativepath = "{$this->course->id}/{$this->resource->reference}";
+    if ($resource->reference) {
+        $relativepath = "{$course->id}/{$resource->reference}";
     } else {
-        $relativepath = "{$this->course->id}";
+        $relativepath = "{$course->id}";
     }
 
     if ($subdir) {
@@ -43,7 +46,7 @@ function display() {
         array_shift($subs);
         $countsubs = count($subs);
         $count = 0;
-        $subnav = "<a href=\"view.php?id={$this->cm->id}\">{$this->resource->name}</a>";
+        $subnav = "<a href=\"view.php?id={$this->cm->id}\">{$resource->name}</a>";
         $backsub = '';
         foreach ($subs as $sub) {
             $count++;
@@ -55,24 +58,24 @@ function display() {
             }
         }
     } else {
-        $subnav = $this->resource->name;
+        $subnav = $resource->name;
     }
 
-    $pagetitle = strip_tags($this->course->shortname.': '.$this->resource->name);
+    $pagetitle = strip_tags($course->shortname.': '.$resource->name);
 
-    print_header($pagetitle, $this->course->fullname, "$navigation $subnav",
-            "", "", true, update_module_button($this->cm->id, $this->course->id, $strresource),
-            navmenu($this->course, $this->cm));
+    print_header($pagetitle, $course->fullname, "$navigation $subnav",
+            "", "", true, update_module_button($this->cm->id, $course->id, $strresource),
+            navmenu($course, $this->cm));
 
-    if (isteacheredit($this->course->id)) {
+    if (isteacheredit($course->id)) {
         echo "<div align=\"right\"><img src=\"$CFG->pixpath/i/files.gif\" height=16 width=16 alt=\"\">&nbsp".
-            "<a href=\"$CFG->wwwroot/files/index.php?id={$this->course->id}&wdir=/{$this->resource->reference}$subdir\">".
+            "<a href=\"$CFG->wwwroot/files/index.php?id={$course->id}&wdir=/{$resource->reference}$subdir\">".
             get_string("editfiles")."...</a></div>";
     }
 
-    if (trim(strip_tags($this->resource->summary))) {
+    if (trim(strip_tags($resource->summary))) {
         $formatoptions->noclean = true;
-        print_simple_box(format_text($this->resource->summary, FORMAT_MOODLE, $formatoptions), "center");
+        print_simple_box(format_text($resource->summary, FORMAT_MOODLE, $formatoptions, $course->id), "center");
         print_spacer(10,10);
     }
 
@@ -81,7 +84,7 @@ function display() {
 
     if (!$files) {
         print_heading(get_string("nofilesyet"));
-        print_footer($this->course);
+        print_footer($course);
         exit;
     }
 
@@ -122,7 +125,7 @@ function display() {
         if ($icon == 'folder.gif') {
             echo "<a href=\"view.php?id={$this->cm->id}&subdir=$subdir/$file\">$file</a>";
         } else {
-            link_to_popup_window($relativeurl, "resourcedirectory{$this->resource->id}", "$file", 450, 600, '');
+            link_to_popup_window($relativeurl, "resourcedirectory{$resource->id}", "$file", 450, 600, '');
         }
         echo '</p></td>';
         echo '<td>&nbsp;</td>';
@@ -138,7 +141,7 @@ function display() {
 
     print_simple_box_end();
 
-    print_footer($this->course);
+    print_footer($course);
 
 }
 
