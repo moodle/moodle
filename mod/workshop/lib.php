@@ -2,9 +2,6 @@
 
 include_once("$CFG->dirroot/files/mimetypes.php");
 
-// reset error reporting
-error_reporting($CFG->debug);
-
 /*** Constants **********************************/
 
 $WORKSHOP_TYPE = array (0 => get_string("notgraded", "workshop"),
@@ -37,6 +34,7 @@ $WORKSHOP_FWEIGHTS = array(  0 => 0, 1 => 0.1, 2 => 0.25, 3 => 0.5, 4 => 0.75, 5
 if (!defined("COMMENTSCALE")) {
 	define("COMMENTSCALE", 20);
 	}
+
 
 /*** Standard Moodle functions ******************
 function workshop_add_instance($workshop) 
@@ -209,10 +207,10 @@ function workshop_user_complete($course, $user, $mod, $workshop) {
 
 function workshop_cron () {
 // Function to be run periodically according to the moodle cron
-// Finds all workshop notifications that have yet to be mailed out, and mails them
 
     global $CFG, $USER;
-
+	
+	// Find all workshop notifications that have yet to be mailed out, and mails them
     $cutofftime = time() - $CFG->maxeditingtime;
 
 	// look for new assessments
@@ -1392,7 +1390,18 @@ function workshop_list_assessed_submissions($workshop, $user) {
 		foreach ($assessments as $assessment) {
 			$comment = "";
 			$submission = get_record("workshop_submissions", "id", $assessment->submissionid);
-			if (($timenow - $assessment->timecreated) > $CFG->maxeditingtime) {
+			// the assessment may be in three states: 1. "hanging", created but not completed (timecreated is in the future)
+			// 2. just created and still capable of being edited, and 3. fixed (after the editing time)
+			if ($assessment->timecreated > $timenow) { // funny but it does happen!
+				$action = "<A HREF=\"assessments.php?action=assesssubmission&a=$workshop->id&sid=$submission->id\">".
+					get_string("assess", "workshop")."</A>";
+				}
+			elseif (($timenow - $assessment->timecreated) < $CFG->maxeditingtime) { // still time to edit
+				$action = "<A HREF=\"assessments.php?action=assesssubmission&a=$workshop->id&sid=$submission->id\">".
+					get_string("edit", "workshop")."</A> | <A HREF=\"assessments.php?action=userconfirmdelete&a=$workshop->id&aid=$assessment->id\">".
+					get_string("delete", "workshop")."</A>";
+				}
+			else { // it's gone cold
 				$action = "<A HREF=\"assessments.php?action=viewassessment&a=$workshop->id&aid=$assessment->id&".
 					"allowcomments=$workshop->agreeassessments\">".
 					get_string("view", "workshop")."</A>";
@@ -1401,12 +1410,12 @@ function workshop_list_assessed_submissions($workshop, $user) {
 						get_string("reassess", "workshop")."</A>";
 					}
 				}
-			else { // there's still time left to edit...
-				$action = "<A HREF=\"assessments.php?action=assesssubmission&a=$workshop->id&sid=$submission->id\">".
-					get_string("edit", "workshop")."</A> | <A HREF=\"assessments.php?action=userconfirmdelete&a=$workshop->id&aid=$assessment->id\">".
-					get_string("delete", "workshop")."</A>";
+			if ($assessment->timecreated < $timenow) { // only show the date if it's in the past (future dates cause confusion
+				$comment = get_string("assessedon", "workshop", userdate($assessment->timecreated));
 				}
-			$comment = get_string("assessedon", "workshop", userdate($assessment->timecreated));
+			else {
+				$comment = '';
+				}
 			if ($submission->userid == $user->id) { // self assessment?
 				$comment .= "; ".get_string("ownwork", "workshop"); // just in case they don't know!
 				}
@@ -1620,7 +1629,11 @@ function workshop_list_submissions_for_admin($workshop, $order) {
 			if ($assessment = get_record_select("workshop_assessments", "submissionid = $submission->id
 					AND userid = $USER->id")) {
 				$curtime = time();
-				if (($curtime - $assessment->timecreated) > $CFG->maxeditingtime) {
+				if ($assessment->timecreated > $curtime) { // it's a "hanging" assessment 
+					$action .= " | <a href=\"assessments.php?action=assesssubmission&a=$workshop->id&sid=$submission->id\">".
+						get_string("assess", "workshop")."</a>";
+					}
+				elseif (($curtime - $assessment->timecreated) > $CFG->maxeditingtime) {
 					$action .= " | <a href=\"assessments.php?action=assesssubmission&a=$workshop->id&sid=$submission->id\">"
 						.get_string("reassess", "workshop")."</a>";
 					}
