@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005021601)
+      // forum.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005022400)
 
 
 $string['addanewdiscussion'] = 'ディスカッショントピックを追加';
@@ -135,9 +135,18 @@ $string['replyforum'] = 'フォーラムに返信';
 $string['rsssubscriberssdiscussions'] = '$a 件のディスカッションに関してRSSフィードを表示';
 $string['rsssubscriberssposts'] = '$a 件の投稿に関してRSSフィードを表示';
 $string['search'] = '検索';
+$string['searchforumintro'] = '1つまたはそれ以上のキーワードを下記のフィールドに入力してください:';
 $string['searchforums'] = 'フォーラム内を検索';
+$string['searchfullwords'] = 'すべてのキーワードを含む';
+$string['searchnotwords'] = 'キーワードを含めない';
 $string['searcholderposts'] = '過去の投稿を検索 ...';
+$string['searchphrase'] = 'フレーズを含む';
 $string['searchresults'] = '検索結果';
+$string['searchsubject'] = '題名';
+$string['searchuser'] = '投稿者名';
+$string['searchuserid'] = '投稿者のMoodle ID';
+$string['searchwords'] = 'いずれかのキーワードを含む';
+$string['seeallposts'] = 'このユーザによる全ての投稿を表示';
 $string['sendinratings'] = '私の評価を送信する';
 $string['showsubscribers'] = 'メール通知登録者を表示/編集';
 $string['singleforum'] = 'トピック1件のみのフォーラム';
