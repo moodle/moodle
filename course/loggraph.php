@@ -78,9 +78,6 @@
            }
        }
 
-       $maxlogs = max($logs);
-
-
        $graph = new graph(750, 400);
 
        $a->coursename = $course->shortname;
@@ -133,8 +130,6 @@
                $logs[$rawlog->hour] = $rawlog->num;
            }
        }
-
-       $maxlogs = max($logs);
 
        $graph = new graph(750, 400);
 
