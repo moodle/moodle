@@ -1421,7 +1421,7 @@ function quiz_print_cat_question_list($categoryid, $quizselected=true) {
 
     echo '</center>';
 
-    if (!$questions = get_records("quiz_questions", "category", $category->id, "qtype ASC")) {
+    if (!$questions = get_records("quiz_questions", "category", $category->id, "qtype ASC, name ASC")) {
         echo "<p align=\"center\">";
         print_string("noquestions", "quiz");
         echo "</p>";
@@ -1925,12 +1925,13 @@ function get_questions_category( $category ) {
     $qresults = array();
 
     // get the list of questions for the category
-    $questions = get_records("quiz_questions","category",$category->id);
+    if ($questions = get_records("quiz_questions","category",$category->id)) {
 
-    // iterate through questions, getting stuff we need
-    foreach($questions as $question) {
-        $new_question = get_question_data( $question );
-        $qresults[] = $new_question;
+        // iterate through questions, getting stuff we need
+        foreach($questions as $question) {
+            $new_question = get_question_data( $question );
+            $qresults[] = $new_question;
+        }
     }
 
     return $qresults;
