@@ -15,6 +15,7 @@ assignment submission for '<i>\$a->assignment</i>'<br /><br />
 You can see it appended to your <a href=\\\"\$a->url\\\">assignment submission</a>.";
 $string['assignmentname'] = "Assignment name";
 $string['assignmenttype'] = "Assignment type";
+$string['configmaxbytes'] = "Default maximum assignment size for all assignments on the site (subject to course limits and other local settings)";
 $string['description'] = "Description";
 $string['duedate'] = "Due date";
 $string['early'] = "\$a early";
