@@ -289,63 +289,57 @@ php_value post_max_size 2M
       </blockquote>
     </blockquote>
   </blockquote>
-  <p>(If for any reason your install is interrupted, or there is a system error 
-    of some kind that prevents you from logging in using the admin account, you 
-    can usually log in using the default username of &quot;<strong>admin</strong>&quot;, 
-    with password &quot;<strong>admin</strong>&quot;.)</p>
-  <p>Once successful, you will be returned to home page of your site. Note the 
-    administration links that appear down the left hand side of the page (these 
-    items also appear on a separate Admin page) - these items are only visible 
-    to you because you are logged in as the admin user. All your further administration 
-    of Moodle can now be done using this menu, such as:</p>
+  <p>(Als je installatie om één of andere reden onderbroken wordt, of er is een systeemfout die verhindert dat
+     je aanmeldt met je admin-account, dan kun je gewoonlijk nog aanmelden met de standaard gebruikersnaam 
+     &quot;<strong>admin</strong>&quot;, 
+    met wachtwoord &quot;<strong>admin</strong>&quot;.)</p>
+  <p>Eens je met succes aangemeld bent, wordt je teruggebracht naar de startpagina van je site. Merk op dat er 
+    onderaan links een aantal links voor beheer verschijnen (deze links kun je ook vinden op een aparte beheerpagina).
+    - Deze items kun jij alleen zien omdat je aangemeld bent als Beheerder. Alle beheerstaken van Moodle 
+    kunnen vanuit deze pagina gedaan worden, zoals:</p>
   <ul>
-    <li>creating and deleting courses</li>
-    <li>creating and editing user accounts</li>
-    <li>administering teacher accounts</li>
-    <li>changing site-wide settings like themes etc</li>
+    <li>Aanmaken en verwijderen van vakken</li>
+    <li>Aanmaken en bewerken van gebruikers</li>
+    <li>Beheer van lerarenaccounts</li>
+    <li>Het wijzigen van instellingen voor heel de site, zoals de opmaak enz</li>
   </ul>
 </blockquote>
 <p>&nbsp;</p>
-<h3 class="sectionheading"><a name="cron"></a>9. Set up cron</h3>
+<h3 class="sectionheading"><a name="cron"></a>9. Cron installeren</h3>
 <blockquote> 
-  <p>Some of Moodle's modules require continual checks to perform tasks. For example, 
-    Moodle needs to check the discussion forums so it can mail out copies of posts 
-    to people who have subscribed.</p>
-  <p>The script that does all this is located in the admin directory, and is called 
-    cron.php. However, it can not run itself, so you need to set up a mechanism 
-    where this script is run regularly (eg every five or ten minutes). This provides 
-    a &quot;heartbeat&quot; so that the script can perform functions at periods 
-    defined by each module.</p>
-  <p>Note that the machine performing the cron <b>does not need to be the same 
-    machine that is running Moodle</b>. For example, if you have a limited web 
-    hosting service that does not have cron, then you can might choose to run 
-    cron on another server or on your home computer. All that matters is that 
-    the cron.php file is called regularly. </p>
-  <p>The load of this script is not very high, so 5 minutes is usually reasonable, 
-    but if you're worried about it you can reduce the time period to something 
-    like 15 minutes or even 30 minutes. It's best not to make the time period 
-    too long, as delaying mail-outs can slow down activity within the course.</p>
-  <p>First, test that the script works by running it directly from your browser:</p>
+  <p>Sommige Moodlemodules hebben constante controle nodig om hun activiteiten te kunnen doen.
+   Zo moet Moodle bijvoorbeeld de discussieforums regelmatig controleren om kopies van de berichten
+   te sturen naar gebruikers die daarvoor ingeschreven hebben.</p>
+  <p>Het script dat al deze taken doet staat in de adminmapen heet cron.php. Alleen kan dit script niet
+   uit zichzelf lopen, dus moet je een mechanisme installeren dat dit script om de 5 á 10 minuten
+   start. Dit maakt een &quot;hartslag&quot;, zodqt het script taken kan uitvoeren na periodes die vastgelegd zijn
+   in elke module.</p>
+  <p>Merk op dat de machine die cron.php laat lopen<b>niet dezelfde machine moet zijn als degene waar Moodle
+   op loopt</b>. Als je installatie bijvoorbeeld bij een beperkte webhost staat die geen cron aanbiedt, dan 
+   kun je bijvoorbeeld opteren om cron te laten lopen op een andere server of op je eigen huiscomputer. Het enige
+   wat belang heeft is dat het bestand cron.php regelmatig opgevraagd wordt.</p>
+  <p>Het script veroorzaakt geen grote belasting, dus om de vijf minuten is redelijk, maar als je je daarover zorgen
+   maakt, dan kun je de periode verlengen tot 15 of zelfs 30 minuten. Je kunt de periode best niet te lang nemen,
+   omdat het vertragen van de e-mailverzendingen de activiteit in je vak kan vertragen.</p>
+  <p>Test het script eerst door het te laten lopen vanuit je browser.</p>
   <blockquote> 
     <pre>http://example.com/moodle/admin/cron.php</pre>
   </blockquote>
-  <p>Now, you need to set up some of way of running the script automatically and 
-    regularly. </p>
-  <h4> Running the script from a command line</h4>
-  <p>You can call the page from the command line just as you did in the example 
-    above. For example, you can use a Unix utility like 'wget':</p>
+  <p>Nu moet je iets installeren zodat het script automatisch en regelmatig opgevraagd wordt. </p>
+  <h4>Het script starten vanaf de opdrachtregel</h4>
+  <p>Je kunt vanuit de opdrachtregel de pagina opvragen, net zoals bij bovenstaand voorbeeld.
+   Je kunt bijvoorbeeld een Unixtool gebruiken zoals 'wget':</p>
   <blockquote>
     <pre>wget -q -O /dev/null http://example.com/moodle/admin/cron.php</pre>
   </blockquote>
-  <p>Note in this example that the output is thrown away (to /dev/null).</p>
-  <p>The same thing using lynx:</p>
+  <p>Merk op dat in dit voorbeeld de output weggegooid wordt (naar /dev/null).</p>
+  <p>Hetzelfde kan met lynx:</p>
   <blockquote>
     <pre>lynx -dump http://example.com/moodle/admin/cron.php &gt; /dev/null</pre>
   </blockquote>
-  <p>Alternatively you could use a standalone version of PHP, compiled to be run 
-    on the command line. The advantage with doing this is that your web server 
-    logs aren't filled with constant requests to cron.php. The disadvantage is 
-    that you need to have access to a command-line version of php.</p>
+  <p>Je zou ook een alleenstaande versie van PHP, gecompileerd om van de opdrachtregel te lopen, kunnen gebruiken.
+    Het voordeel hiervan is dat de logs van je webserver niet vol lopen met de continue vraag naar cron.php. Het
+    nadeel is dat je toegang moet hebben tot een opdrachtregel-versie van PHP.</p>
   <blockquote>
     <pre>/opt/bin/php /web/moodle/admin/cron.php
 
@@ -354,40 +348,38 @@ php_value post_max_size 2M
 
 </pre>
   </blockquote>
-  <h4>Automatically running the script every 5 minutes</h4>
-  <p><b>On Unix systems</b>: Use <b>cron</b>. Edit your cron settings from the commandline 
-    using &quot;crontab -e&quot; and add a line like:</p>
+  <h4>Het script automatisch laten lopetn om de 5 minuten</h4>
+  <p><b>Op Unix systemen</b>: Gebruik <b>cron</b>. Bewerk je croninstellingen door vanaf de opdrachtregel
+    gebruik te maken van &quot;crontab -e&quot; en voeg een lijn toe zoals:</p>
   <blockquote>
     <pre>*/5 * * * * wget -q -O /dev/null http://example.com/moodle/admin/cron.php</pre>
   </blockquote>
-  <p>Usually, the "crontab" command will put you into the 'vi' editor. You enter 
-     "insert mode" by pressing "i", then type in the line as above, then exit insert mode by 
-     pressing ESC.  You save and exit by typing ":wq", or quit with saving using ":q!" (without the quotes).</p>
-  <p><b>On Windows systems</b>: The simplest way is to use this little package <a href="http://moodle.org/download/moodle-cron-for-windows.zip" title="Click to download this package (150k)" target="_blank">moodle-cron-for-windows.zip</a> 
-    which makes this whole thing very easy. You can also explore using the built-in 
-    Windows feature for "Scheduled Tasks".</p>
-  <p>On web hosts: Your web-based control panel may have a web page that allows 
-    you to set up this cron process. Ask your administrator for details on how 
-    it works.</p>
+  <p>Gewoonlijk zal de "crontab" iodracht je in de 'vi' editor brengen. Je gaat in  
+     "insert mode" door op "i"te drukken, dan kun je bovenstaande lijn inbrengen, dan ga je uit insert mode door op
+      ESC te drukken. Je bewaart en verlaat het programma door "wq" te typen of door ":q!" te typen 
+     (zonder de aanhalingstekens).</p>
+  <p><b>Op Windows systemen</b>: De gemakkelijkste manier is door dit kleine pakketje te gebruiken
+    <a href="http://moodle.org/download/moodle-cron-for-windows.zip" title="Klik om dit pakketje te downloaden (150k)" target="_blank">moodle-cron-for-windows.zip</a> 
+    wat het hele ding erg gemakkelijk maakt. Je kunt eventueel ook gebruik maken van de ingebouwde Windowsfunctie
+    "Scheduled Tasks".</p>
+  <p>Bij web hosts: Je webgebaseerde controlepaneel kan een pagina hebben die bedoeld is om cron op te zetten. Vraag
+    je beheerder naar de details over hoe dit werkt.</p>
   <p></p>
 </blockquote>
-<h3 class="sectionheading"><a name="course"></a>10. Create a new course</h3>
+<h3 class="sectionheading"><a name="course"></a>10. Een nieuw vak maken</h3>
 <blockquote>
-  <p>Now that Moodle is running properly, you can create a course. </p>
-  <p>Select &quot;Create a new course&quot; from the Admin page (or the admin 
-    links on the home page).</p>
-  <p>Fill out the form, paying special attention to the course format. You don't 
-    have to worry about the details too much at this stage, as everything can 
-    be changed later by the teacher.</p>
-  <p>Press &quot;Save changes&quot;, and you will be taken to a new form where 
-    you can assign teachers to the course. You can only add existing user accounts 
-    from this form - if you want to create a new teacher account then either ask 
-    the teacher to create one for themselves (see the login page), or create one 
-    for them using the &quot;Add a new user&quot; on the Admin page.</p>
-  <p>Once done, the course is ready to customise, and is accessible via the &quot;Courses&quot; 
-    link on the home page.</p>
-  <p>See the &quot;<a href="./?file=teacher.html">Teacher Manual</a>&quot; for more details 
-    on course-building.</p>
+  <p>Nu Moodle goed loopt, kun je een vak aanmaken.</p>
+  <p>Kies &quot;Voeg een nieuw vak toe&quot; vanuit de beheerpagina (of vanuit de beheerlinks op de startpagina).</p>
+  <p>Vul het formulier in, met speciale aandacht voor de vakformat. Je moet je geen zorgen maken over de details,
+    omdat alles later door de leraar zelf kan veranderd worden door de leraar.</p>
+  <p>Druk op &quot;Bewaar de wijzigingen&quot;, en je wordt naar een nieuw formulier gebracht waar je leraars aan het
+    vak kunt toewijzen. Je kunt alleen een bestaande gebruikersaccount aanwijzen vanuit dit formulier - als je een 
+    nieuwe lerarenaccount wil maken, dan kun je ofwel de leraar vragen om zelf zijn eigen account te maken (zie loginpagina)
+    of maak er zelf een voor hen door gebruik te maken van de &quot;Voeg een nieuwe gebruiker toe&quot; 
+    op de beheerpagina.</p>
+  <p>Als dit gedaan is, dan is het vak klaar om aangepast te worden en is het toegankelijk vanaf de &quot;vakken&quot; link op 
+    de startpagina.</p>
+  <p>Zie ook de &quot;<a href="./?file=teacher.html">Help...</a>&quot; voor meer details over het opbouwen van een vak.</p>
 </blockquote>
 <p>&nbsp;</p>
 <p align="CENTER"><font size="1"><a href="." target="_top">Moodle Documentation</a></font></p>
