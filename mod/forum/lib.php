@@ -2760,7 +2760,7 @@ function forum_get_recent_mod_activity(&$activities, &$index, $sincetime, $cours
                                 AND cm.course = d.course
                                 AND cm.course = f.course
                                 AND f.id = d.forum
-                              ORDER BY d.id");
+                              ORDER BY p.discussion ASC,p.created ASC");
 
     if (empty($posts)) {
         return;
