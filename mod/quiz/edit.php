@@ -170,16 +170,20 @@
     $strediting = get_string(isset($modform->instance) ? "editingquiz" : "editquestions", "quiz");
     $strheading = empty($modform->name) ? $strediting : $modform->name;
 
-    print_header_simple($strediting, '',
-                 "<a href=\"$CFG->wwwroot/mod/quiz/index.php?id=$course->id\">$strquizzes</a> -> $strediting");
-
     // Print basic page layout.
 
     if (!isset($modform->instance)) {
+        print_header_simple($strediting, '',
+                 "<a href=\"index.php?id=$course->id\">$strquizzes</a>".
+                 " -> $strediting");
         echo '<table align="center" border="0" cellpadding="2" cellspacing="0">';
         echo '<tr><td valign="top">';
 
     } else {
+        print_header_simple($strediting, '',
+                 "<a href=\"index.php?id=$course->id\">$strquizzes</a>".
+                 " -> <a href=\"view.php?q=$modform->instance\">$modform->name</a>".
+                 " -> $strediting");
         echo '<table border="0" width="100%" cellpadding="2" cellspacing="0">';
         echo '<tr><td width="50%" valign="top">';
         print_simple_box_start("center", "100%", $THEME->cellcontent2);        

@@ -55,12 +55,18 @@
     }
 
     $strquizzes = get_string('modulenameplural', 'quiz');
-    $streditingquiz = get_string(isset($SESSION->modform->instance) ? "editingquiz" : "editquestions", "quiz");
-    $streditingquestion = get_string("editingquestion", "quiz");
+    if (isset($SESSION->modform->instance)) {
+        $strediting = '<a href="edit.php">'.get_string('editingquiz', 'quiz').'</a> ->'.
+            get_string('editingquestion', 'quiz');
+    } else {
+        $strediting = '<a href="edit.php?courseid='.$course->id.'">'.
+            get_string("editingquestions", "quiz").'</a> -> '.
+            get_string('editingquestion', 'quiz');
+    }
 
     print_header_simple("$streditingquestion", "$streditingquestion",
                  "<a href=\"$CFG->wwwroot/mod/quiz/index.php?id=$course->id\">$strquizzes</a>".
-                  " -> <a href=\"edit.php\">$streditingquiz</a> -> $streditingquestion");
+                  " -> ".$strediting);
 
     if (isset($delete)) {
         if (isset($confirm)) {
