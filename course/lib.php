@@ -17,11 +17,13 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate="today"
     $users = array();
 
     if ($course->category) {
-        if (!$users = get_course_users($course->id, "u.lastaccess DESC")) {
-            $users = array();
+        if ($courseusers = get_course_users($course->id, "u.lastaccess DESC")) {
+            foreach ($courseusers as $courseuser) {
+                $users[$courseuser->id] = "$courseuser->firstname $courseuser->lastname";
+            }
         }
         if ($guest = get_guest()) {
-            $users["$guest->id"] = "$guest->firstname $guest->lastname";
+            $users[$guest->id] = "$guest->firstname $guest->lastname";
         }
     }
 

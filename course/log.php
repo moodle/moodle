@@ -26,6 +26,7 @@
     }
 
     $strlogs = get_string("logs");
+    $stradministration = get_string("administration");
 
 
     if ($user || $date) {
@@ -42,9 +43,15 @@
             $dateinfo = userdate($date, "%A, %d %B %Y");
         }
 
-        print_header("$course->shortname: $strlogs", "$course->fullname", 
-                     "<A HREF=\"view.php?id=$course->id\">$course->shortname</A> ->
-                      <A HREF=\"log.php?id=$course->id\">$strlogs</A> -> $userinfo, $dateinfo", "");
+        if ($course->category) {
+            print_header("$course->shortname: $strlogs", "$course->fullname", 
+                         "<A HREF=\"view.php?id=$course->id\">$course->shortname</A> ->
+                          <A HREF=\"log.php?id=$course->id\">$strlogs</A> -> $userinfo, $dateinfo", "");
+        } else {
+            print_header("$course->shortname: $strlogs", "$course->fullname", 
+                         "<A HREF=\"$CFG->wwwroot/admin/\">$stradministration</A> ->
+                          <A HREF=\"log.php?id=$course->id\">$strlogs</A> -> $userinfo, $dateinfo", "");
+        }
         
         print_heading("$course->fullname: $userinfo, $dateinfo (".usertimezone().")");
 
@@ -53,8 +60,13 @@
         print_log($course, $user, $date, "ORDER BY l.time DESC");
 
     } else {
-        print_header("$course->shortname: $strlogs", "$course->fullname", 
-                 "<A HREF=\"view.php?id=$course->id\">$course->shortname</A> -> $strlogs", "");
+        if ($course->category) {
+            print_header("$course->shortname: $strlogs", "$course->fullname", 
+                     "<A HREF=\"view.php?id=$course->id\">$course->shortname</A> -> $strlogs", "");
+        } else {
+            print_header("$course->shortname: $strlogs", "$course->fullname", 
+                     "<A HREF=\"$CFG->wwwroot/admin/\">$stradministration</A> -> $strlogs", "");
+        }
 
         print_heading(get_string("chooselogs").":");
 
