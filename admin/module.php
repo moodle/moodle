@@ -40,7 +40,7 @@
     print_header("$site->shortname: $strmodulename: $strconfiguration", $site->fullname,
                   "<a href=\"index.php\">$stradmin</a> -> ".
                   "<a href=\"configure.php\">$strconfiguration</a> -> ".
-                  "<a href=\"modules.php\">$strmanagemodules</a> -> $strmodulename", $focus);
+                  "<a href=\"modules.php\">$strmanagemodules</a> -> $strmodulename");
 
     print_heading($strmodulename);
 
