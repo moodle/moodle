@@ -7,6 +7,7 @@ class flexible_table {
     var $headers         = array();
     var $columns         = array();
     var $column_style    = array();
+    var $column_class    = array();
     var $column_suppress = array();
     var $setup           = false;
     var $sess            = NULL;
@@ -57,6 +58,12 @@ class flexible_table {
         }
     }
 
+    function column_class($column, $classname) {
+        if(isset($this->column_class[$column])) {
+            $this->column_class[$column] = ' '.$classname; // This space needed so that classnames don't run together in the HTML
+        }
+    }
+
     function column_style($column, $property, $value) {
         if(isset($this->column_style[$column])) {
             $this->column_style[$column][$property] = $value;
@@ -82,11 +89,13 @@ class flexible_table {
     function define_columns($columns) {
         $this->columns = array();
         $this->column_style = array();
+        $this->column_class = array();
         $colnum = 0;
 
         foreach($columns as $column) {
             $this->columns[$column]         = $colnum++;
             $this->column_style[$column]    = array();
+            $this->column_class[$column]    = '';
             $this->column_suppress[$column] = false;
         }
     }
@@ -400,13 +409,13 @@ class flexible_table {
             }
             
             if($this->headers[$index] === NULL) {
-                echo '<th class="header c'.$index.'">&nbsp;</th>';
+                echo '<th class="header c'.$index.$this->column_class[$column].'">&nbsp;</th>';
             }
             else if(!empty($this->sess->collapse[$column])) {
-                echo '<th class="header c'.$index.'">'.$icon_hide.'</th>';
+                echo '<th class="header c'.$index.$this->column_class[$column].'">'.$icon_hide.'</th>';
             }
             else {
-                echo '<th class="header c'.$index.'" nowrap="nowrap"'.$this->make_styles_string($this->column_style[$column]).'>'.$this->headers[$index].$icon_sort.'<div class="commands">'.$icon_hide.'</div></th>';
+                echo '<th class="header c'.$index.$this->column_class[$column].'" nowrap="nowrap"'.$this->make_styles_string($this->column_style[$column]).'>'.$this->headers[$index].$icon_sort.'<div class="commands">'.$icon_hide.'</div></th>';
             }
 
         }
@@ -429,7 +438,7 @@ class flexible_table {
                             break;
                         }
                         $column = $colbyindex[$index];
-                        echo '<td class="cell c'.$index.'"'.$this->make_styles_string($this->column_style[$column]).'>';
+                        echo '<td class="cell c'.$index.$this->column_class[$column].'"'.$this->make_styles_string($this->column_style[$column]).'>';
                         if(empty($this->sess->collapse[$column])) {
                             if($this->column_suppress[$column] && $suppress_lastrow !== NULL && $suppress_lastrow[$index] === $data) {
                                 echo '&nbsp;';
