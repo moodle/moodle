@@ -58,6 +58,8 @@ Based on:   lang.php in 1.4.3+ release
         error("Could not find English language docs files!");
     }
 
+    $options = array();
+
     foreach ($files as $filekey => $file) {    // check all the docs files.
         $options["docs/$file"] = "docs/$file";
         // add (!) if file doesn't exists or is empty
