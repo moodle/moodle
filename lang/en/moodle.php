@@ -153,6 +153,7 @@ $string['configsmtphosts'] = 'Give the full name of one or more local SMTP serve
 $string['configsmtpuser'] = 'If you have specified an SMTP server above, and the server requires authentication, then enter the username and password here.';
 $string['configteacherassignteachers'] = 'Should ordinary teachers be allowed to assign other teachers within courses they teach?  If \'No\', then only course creators and admins can assign teachers.';
 $string['configtextfilters'] = 'Text filters process text in various ways.  Specify the relative paths to text filters you want to use in the order they should be applied to texts, separated by commas. (For example,  mod/glossary/dynalink.php, filter/censor/censor.php)';
+$string['configtimezone'] = 'You can set the default timezone here.  This is the only the DEFAULT timezone for displaying dates - each user can override this by setting their own in their profile. \"Server time\" will make Moodle default to the server\'s operating system setting.';
 $string['configunzip'] = 'Indicate the location of your unzip program (Unix only, optional).  If specified, this will be used to unpack zip archives on the server.  If you leave this blank, then Moodle will use internal routines.';
 $string['configuration'] = 'Configuration';
 $string['configvariables'] = 'Variables';

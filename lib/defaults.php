@@ -38,6 +38,7 @@
        "smtpuser"         => "",
        "teacherassignteachers"  => true,
        "textfilters"      => "mod/glossary/dynalink.php",
+       "timezone"         => 99,
        "theme"            => "standard",
        "unzip"            => "",
        "zip"              => ""
