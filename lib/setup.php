@@ -67,6 +67,12 @@
     }
 
 
+/// Set session timeouts
+    if (!empty($CFG->sessiontimeout)) {
+        ini_set("session.gc_maxlifetime", $CFG->sessiontimeout);
+    }
+
+
 /// Location of standard files
 
     $CFG->wordlist    = "$CFG->libdir/wordlist.txt";

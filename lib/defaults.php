@@ -25,6 +25,7 @@
        "country"          => "",
        "prefix"           => "",
        "guestloginbutton" =>  1,
+       "sessiontimeout"   =>  7200,
        "debug"            =>  7
     );
 

@@ -135,6 +135,27 @@
     </TD>
 </TR>
 <TR VALIGN=TOP>
+	<TD ALIGN=RIGHT><P>sessiontimeout:</TD>
+	<TD>
+    <? unset($options);
+       $options[14400] = get_string("numhours", "", 4);
+       $options[10800] = get_string("numhours", "", 3);
+       $options[7200]  = get_string("numhours", "", 2);
+       $options[5400]  = get_string("numhours", "", "1.5");
+       $options[3600]  = get_string("numminutes", "", 60);
+       $options[2700]  = get_string("numminutes", "", 45);
+       $options[1800]  = get_string("numminutes", "", 30);
+       $options[900]   = get_string("numminutes", "", 15);
+       $options[300]   = get_string("numminutes", "", 5);
+
+       choose_from_menu ($options, "sessiontimeout", $config->sessiontimeout, "", "", "");
+    ?>
+    </TD>
+    <TD>
+    <? print_string("configsessiontimeout") ?>
+    </TD>
+</TR>
+<TR VALIGN=TOP>
 	<TD ALIGN=RIGHT><P>zip:</TD>
 	<TD>
     <INPUT name=zip TYPE=text SIZE=30 VALUE="<?=$config->zip?>">
