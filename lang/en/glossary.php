@@ -83,10 +83,10 @@ $string['sortbycreation'] = "By creation date";
 $string['sortbylastupdate'] = "By last update";
 $string['standardview'] = "Browse by alphabet";
 $string['studentcanpost'] = "Students can add entries";
-$string['usedynalink'] = "Link this glossary with other modules automatically";
+$string['usedynalink'] = "Automatically link glossary entries";
 $string['warningstudentcapost'] = "(Applies only if the glossary is not the main one)";
 $string['waitingapproval'] = "Waiting approval";
 $string['writtenby'] = "by";
-$string['youarenottheauthor'] = "You are not the author of this comment, therefore, you are not allowed to edit it.";
+$string['youarenottheauthor'] = "You are not the author of this comment, so you are not allowed to edit it.";
 
 ?>
