@@ -588,16 +588,17 @@ function filter_text($text, $courseid=NULL) {
 
     global $CFG;
 
-    for ($i=1; $i<=10; $i++) {
-        $variable = "textfilter$i";
-        if (empty($CFG->$variable)) {   /// No more filters
-            return $text;
-        }
-        if (is_readable("$CFG->dirroot/".$CFG->$variable)) {
-            include("$CFG->dirroot/".$CFG->$variable);
-            $text = $textfilter_function($courseid, $text);
+    if (!empty($CFG->textfilters)) {
+        $textfilters = explode(',', $CFG->textfilters);
+        foreach ($textfilters as $textfilter) {
+            $textfilter = trim($textfilter);
+            if (is_readable($CFG->dirroot.'/'.$textfilter)) {
+                include($CFG->dirroot.'/'.$textfilter);
+                $text = $textfilter_function($courseid, $text);
+            }
         }
     }
+
     return $text;
 }
 

@@ -6,6 +6,7 @@
    $defaults = array (
        "auth"             => "email",
        "allowunenroll"    =>  true,
+       "cachetext"        =>  60,
        "changepassword"   =>  true,
        "country"          => "",
        "debug"            =>  7,
@@ -24,6 +25,7 @@
        "longtimenosee"    =>  100,
        "maxbytes"         =>  0,
        "maxeditingtime"   =>  1800,
+       "opentogoogle"     =>  false,
        "prefix"           => "",
        "proxyhost"        => "",
        "proxyport"        => "",
@@ -35,6 +37,7 @@
        "smtppass"         => "",
        "smtpuser"         => "",
        "teacherassignteachers"  => true,
+       "textfilters"      => "mod/glossary/dynalink.php",
        "theme"            => "standard",
        "unzip"            => "",
        "zip"              => ""

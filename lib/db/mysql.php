@@ -654,6 +654,24 @@ function main_upgrade($oldversion=0) {
                              ) TYPE=MyISAM COMMENT='For storing temporary copies of processed texts';");
     }
 
+    if ($oldversion < 2004021000) {
+        $textfilters = array();
+        for ($i=1; $i<=10; $i++) {
+            $variable = "textfilter$i";
+            if (!empty($CFG->$variable)) {   /// No more filters
+                if (is_readable("$CFG->dirroot/".$CFG->$variable)) {
+                    $textfilters[] = $CFG->$variable;
+                }
+            }
+        }
+        $textfilters = implode(',', $textfilters);
+        if (empty($textfilters)) {
+            $textfilters = 'mod/glossary/dynalink.php';
+        }
+        set_config('textfilters', $textfilters);
+    }
+
+
     return $result;
 
 }
