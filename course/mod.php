@@ -138,6 +138,9 @@
                 if (! delete_mod_from_section($mod->coursemodule, "$mod->section")) {
                     notify("Could not delete the $mod->modulename from that section");
                 }
+
+                unset($SESSION->returnpage);
+
                 add_to_log($course->id, "course", "delete mod", 
                            "view.php?id=$mod->course", 
                            "$mod->modulename $mod->instance", $mod->coursemodule); 
