@@ -107,7 +107,7 @@
     echo "<tr>";
     echo "<td width=\"100\" valign=\"top\" class=\"userinfoboxside\">";
     print_user_picture($user->id, $course->id, $user->picture, true, false, false);
-    echo "</td><td width=\"100%\" bgcolor=\"$THEME->cellcontent\" class=\"userinfoboxcontent\">";
+    echo "</td><td width=\"100%\" class=\"userinfoboxcontent\">";
 
 
     // Print name and edit button across top

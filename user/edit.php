@@ -224,7 +224,7 @@
         echo "<br />";
     }
 
-    print_simple_box_start("center", "", "$THEME->cellheading");
+    print_simple_box_start("center");
 
     if (!empty($err)) {
         echo "<center>";
