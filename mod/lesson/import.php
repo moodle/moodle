@@ -2,11 +2,10 @@
       // Import quiz questions into the given category
 
     require_once("../../config.php");
-	require_once("locallib.php");
+    require_once("lib.php");
 
-    $format = optional_param('format');
-    $id = required_param('id', PARAM_INT);    // Course Module ID
-	$pageid = required_param('pageid', PARAM_INT);
+    $id     = required_param('id', PARAM_INT);         // Course Module ID
+    $pageid = optional_param('pageid', '', PARAM_INT); // Page ID
 
     if (! $cm = get_record("course_modules", "id", $id)) {
         error("Course Module ID was incorrect");
@@ -30,30 +29,24 @@
     $strimportquestions = get_string("importquestions", "lesson");
     $strlessons = get_string("modulenameplural", "lesson");
 
-    print_header("$course->shortname: $strimportquestions", "$course->shortname: $strimportquestions",
-                 "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> -> ". 
+    print_header_simple("$strimportquestions", " $strimportquestions",
                  "<A HREF=index.php?id=$course->id>$strlessons</A> -> <a href=\"view.php?id=$cm->id\">$lesson->name</a>-> $strimportquestions");
 
-    if ($form = lesson_clean_data_submitted()) {   /// Filename
-		confirm_sesskey();
+    if ($form = data_submitted()) {   /// Filename
+
         $form->format = clean_filename($form->format); // For safety
 
-        if (isset($form->filename)) {                 // file already on server
-            $newfile['tmp_name'] = $form->filename; 
-            $newfile['size'] = filesize($form->filename);
-
-        } else if (!empty($_FILES['newfile'])) {      // file was just uploaded
-            require_once($CFG->dirroot.'/lib/uploadlib.php');
-            $um = new upload_manager('newfile',false,false,$course,false,0,false);
-            if ($um->preprocess_files()) { // validate and virus check! 
-                $newfile = $_FILES['newfile'];
-            }
+        if (empty($_FILES['newfile'])) {      // file was just uploaded
+            notify(get_string("uploadproblem") );
         }
+        
+        if ((!is_uploaded_file($_FILES['newfile']['tmp_name']) or $_FILES['newfile']['size'] == 0)) {
+            notify(get_string("uploadnofilefound") );
 
-        if (is_array($newfile)) { // either for file already on server or just uploaded file.
+        } else {  // Valid file is found
 
             if (! is_readable("../quiz/format/$form->format/format.php")) {
-                error("Format not known (".clean_text($form->format).")");
+                error("Format not known ($form->format)");
             }
 
             require("format.php");  // Parent class
@@ -61,25 +54,12 @@
             require("$CFG->dirroot/mod/quiz/format/$form->format/format.php");
 
             $format = new quiz_file_format();
-			
-			
-			// jjg7:8/9/2004 remove double '\n' from a file if the format is aiken and reformat Brusca's to Aiken
-			if ($form->format == 'aiken')
-			{
-				require("reformat.php"); // include functions to reformat styles
-				if (removedoublecr($newfile['tmp_name']) === FALSE) {
-					error("Error occurred while replacing double carriage returns");
-				}
-				if (importmodifiedaikenstyle($newfile['tmp_name']) === FALSE) {
-					error("Error occurred while converting to Aiken");
-				}
-			}
-			
+
             if (! $format->importpreprocess()) {             // Do anything before that we need to
                 error("Error occurred during pre-processing!");
             }
 
-            if (! $format->importprocess($newfile['tmp_name'], $lesson, $pageid)) {    // Process the uploaded file
+            if (! $format->importprocess($_FILES['newfile']['tmp_name'], $lesson, $pageid)) {    // Process the uploaded file
                 error("Error occurred during processing!");
             }
 
@@ -113,8 +93,7 @@
     print_simple_box_start("center", "", "$THEME->cellheading");
     echo "<form enctype=\"multipart/form-data\" method=\"post\" action=import.php>";
     echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\">\n";
-    echo "<input type=\"hidden\" name=\"pageid\" value=\"".$pageid."\">\n";
-	echo "<input type=\"hidden\" name=\"sesskey\" value=\"".$USER->sesskey."\">\n";
+    echo "<input type=\"hidden\" name=\"pageid\" value=\"$pageid\">\n";
     echo "<table cellpadding=5>";
 
     echo "<tr><td align=right>";
@@ -126,8 +105,7 @@
     echo "<tr><td align=right>";
     print_string("upload");
     echo ":</td><td>";
-    require_once($CFG->dirroot.'/lib/uploadlib.php');
-    upload_print_form_fragment(1,array('newfile'),null,false,null,$course->maxbytes,0,false);
+    echo " <input name=\"newfile\" type=\"file\" size=\"50\">";
     echo "</tr><tr><td>&nbsp;</td><td>";
     echo " <input type=submit name=save value=\"".get_string("uploadthisfile")."\">";
     echo "</td></tr>";
