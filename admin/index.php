@@ -230,7 +230,7 @@
 /// At this point everything is set up and the user is an admin, so print menu
 
     $stradministration = get_string("administration");
-    print_header("$site->fullname: $stradministration","$site->fullname: $stradministration", "$stradministration");
+    print_header("$site->shortname: $stradministration","$site->fullname: $stradministration", "$stradministration");
 
     $table->head  = array (get_string("site"), get_string("courses"), get_string("users"));
     $table->align = array ("CENTER", "CENTER", "CENTER");

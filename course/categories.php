@@ -24,7 +24,7 @@
     $straction = get_string("action");
     $stradd = get_string("add");
 
-	print_header("$site->fullname: $strcategories", "$site->fullname", 
+	print_header("$site->shortname: $strcategories", "$site->fullname", 
                  "<A HREF=\"$CFG->wwwroot/admin\">$stradministration</A> -> $strcategories");
 
     print_heading($strcategories);

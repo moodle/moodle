@@ -29,7 +29,7 @@
     $strtoomanytoshow   = get_string("toomanytoshow");
 
     if (!$id) {
-	    print_header("$site->fullname: $strassignteachers", "$site->fullname", 
+	    print_header("$site->shortname: $strassignteachers", "$site->fullname", 
                      "<A HREF=\"$CFG->wwwroot/admin\">$stradministration</A> -> $strassignteachers");
 
         if ($courses = get_records_sql("SELECT * from course WHERE category > 0 ORDER BY fullname")) {
@@ -53,7 +53,7 @@
     }
 
 
-	print_header("$site->fullname: $course->shortname: $strassignteachers", 
+	print_header("$site->shortname: $course->shortname: $strassignteachers", 
                  "$site->fullname", 
                  "<A HREF=\"$CFG->wwwroot/admin\">$stradministration</A> -> 
                   <A HREF=\"teacher.php\">$strassignteachers</A> ->

@@ -169,13 +169,13 @@
             $userfullname = "$user->firstname $user->lastname";
         }
         if ($course->category) {
-	        print_header("$course->fullname: $streditmyprofile", "$course->fullname: $streditmyprofile",
+	        print_header("$course->shortname: $streditmyprofile", "$course->fullname: $streditmyprofile",
                         "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> 
                         -> <A HREF=\"index.php?id=$course->id\">$strparticipants</A>
                         -> <A HREF=\"view.php?id=$user->id&course=$course->id\">$userfullname</A> 
                         -> $streditmyprofile", "");
         } else {
-	        print_header("$course->fullname: $streditmyprofile", "$course->fullname",
+	        print_header("$course->shortname: $streditmyprofile", "$course->fullname",
                          "<A HREF=\"view.php?id=$user->id&course=$course->id\">$userfullname</A> 
                           -> $streditmyprofile", "");
         }
@@ -184,7 +184,7 @@
         $straddnewuser = get_string("addnewuser");
 
         $stradministration = get_string("administration");
-	    print_header("$course->fullname: $streditmyprofile", "$course->fullname",
+	    print_header("$course->shortname: $streditmyprofile", "$course->fullname",
                      "<A HREF=\"$CFG->wwwroot/admin\">$stradministration</A> ->
                       $straddnewuser", "");
     }

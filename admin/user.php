@@ -91,7 +91,7 @@
         $strdelete = get_string("delete");
         $strdeletecheck = get_string("deletecheck");
 
-        print_header("$site->fullname : $stredituser", $site->fullname, 
+        print_header("$site->shortname: $stredituser", $site->fullname, 
                      "<A HREF=\"$CFG->wwwroot/admin\">$stradministration</A> -> $stredituser");
 
         if ($delete) {              // Delete a selected user, after confirmation

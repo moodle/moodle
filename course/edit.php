@@ -112,7 +112,7 @@
                      "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> 
                       -> $streditcoursesettings", $focus);
     } else {
-        print_header("$site->shortname : $straddnewcourse", "$site->fullname",
+        print_header("$site->shortname: $straddnewcourse", "$site->fullname",
                      "<A HREF=\"$CFG->wwwroot/admin/\">$stradministration</A> 
                       -> $straddnewcourse", $focus);
     }

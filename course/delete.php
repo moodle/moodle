@@ -20,7 +20,7 @@
     $stradministration = get_string("administration");
 
     if (!$id) {
-	    print_header("$site->fullname : $strdeletecourse", $site->fullname, 
+	    print_header("$site->shortname: $strdeletecourse", $site->fullname, 
                      "<A HREF=\"$CFG->wwwroot/admin\">$stradministration</A> -> $strdeletecourse");
 
         if ($courses = get_records_sql("SELECT * from course WHERE category > 0 ORDER BY fullname")) {
@@ -45,7 +45,7 @@
     if (! $delete) {
         $strdeletecheck = get_string("deletecheck", "", $course->shortname);
         $strdeletecoursecheck = get_string("deletecoursecheck");
-	    print_header("$site->fullname : $strdeletecheck", $site->fullname, 
+	    print_header("$site->shortname: $strdeletecheck", $site->fullname, 
                      "<A HREF=\"$CFG->wwwroot/admin\">$stradministration</A> -> 
                       <A HREF=\"delete.php\">$strdeletecourse</A> -> $strdeletecheck");
 
@@ -62,7 +62,7 @@
     // OK checks done, delete the course now.
     $strdeletingcourse = get_string("deletingcourse", "", $course->shortname);
 
-	print_header("$site->fullname : $strdeletingcourse", $site->fullname, 
+	print_header("$site->shortname: $strdeletingcourse", $site->fullname, 
                  "<A HREF=\"$CFG->wwwroot/admin\">$stradministration</A> -> 
                   <A HREF=\"delete.php\">$strdeletecourse</A> -> $strdeletingcourse");
 

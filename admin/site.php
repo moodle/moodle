@@ -61,7 +61,7 @@
     $stradmin = get_string("administration");
     $strsitesettings = get_string("sitesettings");
 
-    print_header("$site->fullname", "$site->fullname",
+    print_header("$site->shortname: $strsitesettings", "$site->fullname",
                   "<A HREF=\"$CFG->wwwroot/admin/\">$stradmin</A> -> $strsitesettings", "$focus");
 
     print_heading($strsitesettings);

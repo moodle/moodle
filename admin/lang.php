@@ -31,6 +31,7 @@
             $title = $strcomparelanguage;
             break;
         default:
+            $title = $strchecklanguage;
             $navigation = $strchecklanguage;
             break;
     }
@@ -41,7 +42,7 @@
         $currentlang = $CFG->lang;
     }
 
-    print_header("$site->fullname: $title", "$site->fullname",
+    print_header("$site->shortname: $title", "$site->fullname",
                  "<A HREF=\"index.php\">$stradministration</A> -> $navigation");
 
     if (!$mode) {

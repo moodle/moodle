@@ -66,7 +66,7 @@
     $strconfigvariables = get_string("configvariables");
 
     if ($site) {
-        print_header("$site->fullname", "$site->fullname",
+        print_header("$site->shortname: $strconfigvariables", "$site->fullname",
                       "<A HREF=\"$CFG->wwwroot/admin/\">$stradmin</A> -> $strconfigvariables", "$focus");
         print_heading($strconfigvariables);
     } else {
