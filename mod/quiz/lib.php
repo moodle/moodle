@@ -444,7 +444,7 @@ function quiz_print_question_icon($question, $editlink=true) {
 
 function quiz_print_question($number, $question, $grade, $courseid, 
                              $feedback=NULL, $response=NULL, $actualgrade=NULL, $correct=NULL,
-                             $realquestion=NULL, $shuffleanswers=false) {
+                             $realquestion=NULL, $shuffleanswers=false, $showgrades=true) {
 
 /// Prints a quiz question, any format
 /// $question is provided as an object
@@ -477,10 +477,12 @@ function quiz_print_question($number, $question, $grade, $courseid,
     echo "<table width=100% cellspacing=10>";
     echo "<tr><td nowrap width=100 valign=top>";
     echo "<p align=center><b>$number</b></p>";
-    if ($feedback or $response) {
-        echo "<p align=center><font size=1>$strmarks: $actualgrade/$grade</font></p>";
-    } else {
-        echo "<p align=center><font size=1>$grade $strmarks</font></p>";
+    if ($showgrades) {
+        if ($feedback or $response) {
+            echo "<p align=center><font size=1>$strmarks: $actualgrade/$grade</font></p>";
+        } else {
+            echo "<p align=center><font size=1>$grade $strmarks</font></p>";
+        }
     }
     print_spacer(1,100);
     
@@ -991,7 +993,7 @@ function quiz_print_quiz_questions($quiz, $results=NULL, $questions=NULL, $shuff
         print_simple_box_start("CENTER", "90%");
         quiz_print_question($count, $question, $grades[$question->id]->grade, $quiz->course, 
                             $feedback, $response, $actualgrades, $correct, 
-                            $randomquestion, $quiz->shuffleanswers);
+                            $randomquestion, $quiz->shuffleanswers, $quiz->grade);
         print_simple_box_end();
         echo "<br \>";
     }

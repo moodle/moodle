@@ -202,9 +202,11 @@
     <td align=right><p><b><?php print_string("maximumgrade") ?>:</b></p></td>
     <td>
     <?php
-        for ($i=100; $i>=0; $i--) {
+        for ($i=100; $i>=1; $i--) {
             $grades[$i] = $i;
         }
+        $grades[0] = get_string("nograde");
+
         choose_from_menu($grades, "grade", "$form->grade", "");
         helpbutton("maxgrade", get_string("maximumgrade"), "quiz");
      ?>

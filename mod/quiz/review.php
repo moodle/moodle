@@ -102,8 +102,8 @@
     $table->align  = array("right", "left");
     $table->data[] = array("$strtimetaken:", $timetaken);
     $table->data[] = array("$strtimecompleted:", userdate($attempt->timefinish));
-    $table->data[] = array("$strscore:", "$result->sumgrades/$quiz->sumgrades ($result->percentage %)");
     if ($quiz->grade) {
+        $table->data[] = array("$strscore:", "$result->sumgrades/$quiz->sumgrades ($result->percentage %)");
         $table->data[] = array("$strgrade:", "$result->grade/$quiz->grade");
     }
 
