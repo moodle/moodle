@@ -103,7 +103,7 @@
                     $section->id = insert_record("course_sections", $section);
 
                     fix_course_sortorder();
-                    add_to_log($newcourseid, "course", "new", "view.php?id=$newcourseid", "");
+                    add_to_log(SITEID, "course", "new", "view.php?id=$newcourseid", "$form->fullname (ID $newcourseid)");
 
                     if (isadmin()) { // Redirect admin to add teachers
                         redirect("teacher.php?id=$newcourseid", get_string("changessaved"));
