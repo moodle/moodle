@@ -1337,40 +1337,26 @@ HTMLArea.prototype._insertTable = function() {
 /******************************************************************
 * Moodle hack - insertSmile
 ******************************************************************/
+/// since method insertimage doesn't work the same way in mozilla
+/// as it does in IE, let's go around this for both browsers.
 HTMLArea.prototype._insertSmile = function() {
+	var sel = this._getSelection();
+	var range = this._createRange(sel);
 	var editor = this;	// for nested functions
-	this._popupDialog("dlg_ins_smile.php", function(param) {
-		if (!param) {	// user must have pressed Cancel
+	this._popupDialog("dlg_ins_char.php", function(imgString) {
+		if(!imgString) {
 			return false;
 		}
-		var sel = editor._getSelection();
-		var range = editor._createRange(sel);
-		editor._doc.execCommand("insertimage", false, param["f_url"]);
-		var img = null;
 		if (HTMLArea.is_ie) {
-			img = range.parentElement();
-			// wonder if this works...
-			if (img.tagName.toLowerCase() != "img") {
-				img = img.previousSibling;
-			}
+			range.pasteHTML(imgString);
 		} else {
-			img = range.startContainer.previousSibling;
+			// insert the table
+			editor.insertHTML(imgString);
 		}
-		for (field in param) {
-			var value = param[field];
-			if (!value) {
-				continue;
-			}
-			switch (field) {
-			    case "f_alt"    : img.alt	 = value; break;
-			    case "f_border" : img.border = parseInt(value); break;
-			    case "f_align"  : img.align	 = value; break;
-			    case "f_vert"   : img.vspace = parseInt(value); break;
-			    case "f_horiz"  : img.hspace = parseInt(value); break;
-			}
-		}
+		return true;
 	}, null);
 };
+
 HTMLArea.prototype._insertChar = function() {
 	var sel = this._getSelection();
 	var range = this._createRange(sel);
