@@ -567,13 +567,15 @@ function insert_record($table, $dataobject, $returnid=true) {
     if (! $columns = $db->MetaColumns("$CFG->prefix$table")) {
         return false;
     }
-
     $data = (array)$dataobject;
 
     // Pull out data from the dataobject that matches the fields in the table.
     // If fields are missing or empty, then try to set the defaults explicitly
     // because some databases (eg PostgreSQL) don't always set them properly
     foreach ($columns as $column) {
+        if(isset($column->primary_key) and $column->primary_key == 1) {
+            $pkey = $column->name; // take column name of primary key
+        }    
         if ($column->name <> "id") {
             if (isset($data[$column->name])) { 
                 if ((string)$data[$column->name] == "" and !empty($column->has_default) and !empty($column->default_value)) {
@@ -622,7 +624,16 @@ function insert_record($table, $dataobject, $returnid=true) {
             return $db->Insert_ID();   // ADOdb has stored the ID for us, but it isn't reliable
         }
         
-        
+        if ($CFG->dbtype == "postgres7" and isset($pkey)){
+            $oid = $db->Insert_ID();
+            if ($rs = $db->Execute("SELECT $pkey FROM $CFG->prefix$table WHERE 'oid' = $oid")) {
+                if ($rs->RecordCount() == 1) {
+                    return $rs->fields[0];
+                } else {
+                    return false;
+                }
+            }
+        }    
         // Try to pull the record out again to find the id.  This is the most cross-platform method.
         if ($rs = $db->Execute("SELECT id FROM $CFG->prefix$table WHERE $select")) {
             if ($rs->RecordCount() == 1) {
