@@ -7,6 +7,7 @@ $string['features.html'] = "Features";
 $string['release.html'] = "Release Notes";
 $string['install.html'] = "Installation";
 $string['upgrade.html'] = "Upgrading";
+$string['faq.html'] = "FAQ";
 $string['teacher.html'] = "Teacher Manual";
 $string['developer.html'] = "Developer Manual";
 $string['cvs.html'] = "Using CVS";
