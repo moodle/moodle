@@ -687,61 +687,27 @@ function userdate($date, $format='', $timezone=99, $fixday = true) {
 
     $timezone = get_user_timezone($timezone);
 
-    // Super special hack while moving from strftime to gmdate -- credits to MD :P
-    $flags_strftime = array('%a', '%A', '%b', '%B', '%c', '%d', '%D',    '%e', '%g', '%G', '%h', '%H', '%I', '%j', '%m', '%M', '%n', '%p', '%r',    '%R',  '%S', '%t', '%T',    '%V', '%W', '%w', '%x',    '%X',    '%y', '%Y', '%Z', '%%');
-    $flags_gmdate   = array('D',  'l',  'M',  'F',  'r',  'd',  'm/d/Y', 'j',  'y',  'Y',  'M',  'H',  'h',  'z',  'm',  'i',  "\n", 'A',  'g:i a', 'H:i', 's',  "\t", 'H:i:s', 'W',  'W',  'w',  'd/m/Y', 'H:i:s', 'y',  'Y',  'Z',  '%');
-    
-    if($fixday) {
-        $flags_gmdate[5] = 'j';
-    }
-
-    $gmdateformat   = '';
-    if(substr($format, 0, 1) == '#') {
-        $gmdateformat = substr($format, 1);
-    }
-    else {
-        $gmdateformat = str_replace($flags_strftime, $flags_gmdate, $format);
-    }
-
-    if(!empty($gmdateformat)) {
-        $date += dst_offset_on($date);
-        if (abs($timezone) > 13) {
-            $date += floatval(date('O')) * HOURSECS;
-        }
-        else {
-            $date += floatval($timezone) * HOURSECS;
-        }
-        $gmdatestring = gmdate($gmdateformat, $date);
-    }
-
     $formatnoday = str_replace('%d', 'DD', $format);
     if ($fixday) {
         $fixday = ($formatnoday != $format);
     }
 
+    $date += dst_offset_on($date);
     if (abs($timezone) > 13) {
-        if ($fixday) {
-            $datestring = strftime($formatnoday, $date);
-            $daystring  = str_replace(' 0', '', strftime(" %d", $date));
-            $datestring = str_replace('DD', $daystring, $datestring);
-        } else {
-            $datestring = strftime($format, $date);
-        }
+        $date += intval(date('O') * HOURSECS);
+    }
+    else {
+        $date += intval($timezone * HOURSECS);
+    }
+
+    if ($fixday) {
+        $datestring = gmstrftime($formatnoday, $date);
+        $daystring  = str_replace(' 0', '', gmstrftime(' %d', $date));
+        $datestring = str_replace('DD', $daystring, $datestring);
     } else {
-        $date = $date + (int)($timezone * HOURSECS);
-        if ($fixday) {
-            $datestring = gmstrftime($formatnoday, $date);
-            $daystring  = str_replace(' 0', '', gmstrftime(" %d", $date));
-            $datestring = str_replace('DD', $daystring, $datestring);
-        } else {
-            $datestring = gmstrftime($format, $date);
-        }
+        $datestring = gmstrftime($format, $date);
     }
-
-    if(!empty($gmdatestring)) {
-        return $gmdatestring;
-    }
-
+    
     return $datestring;
 }
 
