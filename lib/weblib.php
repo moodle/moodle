@@ -1322,6 +1322,9 @@ function navmenu($course, $cm=NULL, $targetwindow="self") {
     $section = -1;
     $selected = "";
     foreach ($modinfo as $mod) {
+        if ($mod->mod == "label") {
+            continue;
+        }
         if ($mod->section > 0 and $section <> $mod->section) {
             $menu[] = "-------------- $strsection $mod->section --------------";
         }
