@@ -49,7 +49,7 @@
         print_header("$site->shortname: $strcoursebackup", $site->fullname,
                      "<a href=\"$CFG->wwwroot/$CFG->admin/index.php\">$stradministration</a> -> $strcoursebackup");
 
-        if ($courses = get_courses()) {
+        if ($courses = get_courses('all','c.shortname','c.id,c.shortname,c.fullname')) {
             print_heading(get_string("choosecourse"));
             print_simple_box_start("center");
             foreach ($courses as $course) {
