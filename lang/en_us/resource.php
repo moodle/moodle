@@ -1,9 +1,6 @@
-<?PHP // $Id$
+<?PHP // $Id$ 
+      // resource.php - created with Moodle 1.1 development (2003053000)
 
-#------------------------------------------------------------
-$string['modulename'] = "Resource";
-$string['modulenameplural'] = "Resources";
-#------------------------------------------------------------
 
 $string['addresource'] = "Add resource";
 $string['editingaresource'] = "Editing a resource";
@@ -13,6 +10,8 @@ $string['exampleurl'] = "http://www.example.com/somedirectory/somefile.html";
 $string['filename'] = "File name";
 $string['fulltext'] = "Full text";
 $string['htmlfragment'] = "HTML fragment";
+$string['modulename'] = "Resource";
+$string['modulenameplural'] = "Resources";
 $string['neverseen'] = "Never seen";
 $string['note'] = "Note";
 $string['notefile'] = "To upload more files into the course (so they appear in this list) use the 
@@ -26,5 +25,6 @@ $string['resourcetype4'] = "Plain text";
 $string['resourcetype5'] = "Web Link";
 $string['resourcetype6'] = "HTML text";
 $string['resourcetype7'] = "Program";
+$string['resourcetype8'] = "Wiki text";
 
 ?>

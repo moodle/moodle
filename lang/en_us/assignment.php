@@ -1,9 +1,18 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.0.8 dev (2002121200)
+      // assignment.php - created with Moodle 1.1 development (2003053000)
 
 
 $string['allowresubmit'] = "Allow resubmitting";
 $string['assignmentdetails'] = "Assignment details";
+$string['assignmentmail'] = "\$a->teacher has posted some feedback on your
+assignment submission for '\$a->assignment'
+
+You can see it appended to your assignment submission:
+
+    \$a->url";
+$string['assignmentmailhtml'] = "\$a->teacher has posted some feedback on your
+    assignment submission for '<i>\$a->assignment</i>'<br /><br />
+    You can see it appended to your <a href=\\\"\$a->url\\\">assignment submission</a>.";
 $string['assignmentname'] = "Assignment name";
 $string['assignmenttype'] = "Assignment type";
 $string['description'] = "Description";

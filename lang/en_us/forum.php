@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.0.8 dev (2002121200)
+      // forum.php - created with Moodle 1.1 development (2003053000)
 
 
 $string['addanewdiscussion'] = "Add a new discussion topic";
@@ -19,6 +19,7 @@ $string['deleteddiscussion'] = "The discussion topic has been deleted";
 $string['deletedpost'] = "The post has been deleted";
 $string['deletesure'] = "Are you sure you want to delete this post?";
 $string['discussion'] = "Discussion";
+$string['discussionmoved'] = "This discussion has been moved to '\$a'.";
 $string['discussions'] = "Discussions";
 $string['discussionsstartedby'] = "Discussions started by \$a";
 $string['discussthistopic'] = "Discuss this topic";
@@ -41,6 +42,7 @@ $string['inforum'] = "in \$a";
 $string['intronews'] = "General news and announcements";
 $string['introsocial'] = "An open forum for chatting about anything you want to";
 $string['introteacher'] = "A forum for teacher-only notes and discussion";
+$string['lastpost'] = "Last post";
 $string['learningforums'] = "Learning forums";
 $string['maxtimehaspassed'] = "Sorry, but the maximum time for editing this post (\$a) has passed!";
 $string['message'] = "Message";
@@ -51,6 +53,7 @@ $string['modethreaded'] = "Display replies in threaded form";
 $string['modulename'] = "Forum";
 $string['modulenameplural'] = "Forums";
 $string['more'] = "more";
+$string['movethisdiscussionto'] = "Move this discussion to ... ";
 $string['namenews'] = "News forum";
 $string['namesocial'] = "Social forum";
 $string['nameteacher'] = "Teacher forum";
@@ -75,12 +78,15 @@ To add your reply via the website, click on this link:";
 $string['postrating1'] = "Shows mostly SEPARATE knowing";
 $string['postrating2'] = "Equally separate and connected";
 $string['postrating3'] = "Shows mostly CONNECTED knowing";
+$string['posts'] = "Posts";
 $string['postupdated'] = "Your post was updated";
 $string['processingpost'] = "Processing post \$a";
 $string['rate'] = "Rate";
 $string['ratings'] = "Ratings";
+$string['ratingssaved'] = "Ratings saved";
 $string['re'] = "Re:";
 $string['readtherest'] = "Read the rest of this topic";
+$string['replies'] = "Replies";
 $string['repliesmany'] = "\$a replies so far";
 $string['repliesone'] = "\$a reply so far";
 $string['reply'] = "Reply";
@@ -90,12 +96,18 @@ $string['searchresults'] = "Search results";
 $string['sendinratings'] = "Send in my latest ratings";
 $string['showsubscribers'] = "Show subscribers";
 $string['singleforum'] = "A single simple discussion";
+$string['startedby'] = "Started by";
 $string['subject'] = "Subject";
 $string['subscribe'] = "Subscribe to this forum";
 $string['subscribed'] = "Subscribed";
 $string['subscribers'] = "Subscribers";
 $string['subscribersto'] = "Subscribers to '\$a'";
+$string['subscribestart'] = "Send me email copies of posts to this forum";
+$string['subscribestop'] = "I don't want email copies of posts to this forum";
+$string['subscription'] = "Subscription";
+$string['subscriptions'] = "Subscriptions";
 $string['unsubscribe'] = "Unsubscribe from this forum";
+$string['unsubscribed'] = "Unsubscribed";
 $string['youratedthis'] = "You rated this";
 $string['yournewtopic'] = "Your new discussion topic";
 $string['yourreply'] = "Your reply";

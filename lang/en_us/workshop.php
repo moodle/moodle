@@ -1,4 +1,6 @@
 <?PHP // $Id$ 
+      // workshop.php - created with Moodle 1.1 development (2003053000)
+
 
 $string['accumulative'] = "Accumulative";
 $string['action'] = "Action";
@@ -15,15 +17,15 @@ $string['assessment'] = "Assessment";
 $string['assessmentby'] = "Assessment by \$a";
 $string['assessmentgrade'] = "Assessment Grade: \$a";
 $string['assessmentnotyetagreed'] = "Assessment not yet agreed";
-$string['assessmentsby'] = "Assessments by \$a";
-$string['assessmentsmustbeagreed'] = "Assessments must be agreed";
+$string['assessmentofthissubmission'] = "Assessment of this submission";
 $string['assessments'] = "Assessments";
 $string['assessmentsareok'] = "Assessments are OK";
+$string['assessmentsby'] = "Assessments by \$a";
 $string['assessmentsdone'] = "Assessments Done";
+$string['assessmentsmustbeagreed'] = "Assessments must be agreed";
 $string['assessmentwasagreedon'] = "Assessment was agreed on \$a";
 $string['assessor'] = "Assessor";
 $string['assessthissubmission'] = "Assess this submission";
-$string['assessmentofthissubmission'] = "Assessment of this submission";
 $string['assignmentnotinthecorrectphase'] = "Assignment not in the Correct Phase";
 $string['authorofsubmission'] = "Author of Submission";
 $string['awaitinggradingbyteacher'] = "Awaiting Grading by \$a";
@@ -35,8 +37,8 @@ $string['commentby'] = "Comment by";
 $string['criteria'] = "Criteria";
 $string['deadline'] = "Deadline";
 $string['deadlineis'] = "The Deadline is \$a";
-$string['description'] = "Description";
 $string['delete'] = "Delete";
+$string['description'] = "Description";
 $string['detailsofassessment'] = "Details of Assessment";
 $string['disagreewiththisassessment'] = "Disagree with this Assessment";
 $string['displayoffinalgrades'] = "Display of Final Grades";
@@ -72,17 +74,16 @@ $string['moveonto'] = "Move on to";
 $string['noassessmentsdone'] = "No Assessments Done";
 $string['nosubmissionsavailableforassessment'] = "No Submissions available for assessment";
 $string['notavailable'] = "Not Available";
-$string['noteonassessmentelements'] = 
-	"Note that grading is broken down into a number of 'Assessment Elements'.<BR>
+$string['noteonassessmentelements'] = "Note that grading is broken down into a number of 'Assessment Elements'.<BR>
 	This makes the grading easier and more consistent. As teacher you must add these <BR>
 	Elements before making the assignment available to students. This is done by<BR>
 	clicking on the assignment in the course, if no elements are present you will be asked<BR>
 	to add them. You can change the number of elements using the Edit Assignment screen,<BR>
 	the elements themselves can be amended from the &quot;Managing Assessment&quot; screen. ";
-$string['notitlegiven'] = "No Title Given";
 $string['notgraded'] = "Not Graded";
-$string['numberofassessments'] = "Number of Assessments";
+$string['notitlegiven'] = "No Title Given";
 $string['numberofassessmentelements'] = "Number of Comments, Assessment Elements, Grade Bands or Criteria Statments";
+$string['numberofassessments'] = "Number of Assessments";
 $string['numberofassessmentsofstudentsubmissions'] = "Number of Assessments of Student Submissions";
 $string['numberofassessmentsofteachersexamples'] = "Number of Assessments of Examples from Teacher";
 $string['on'] = "on \$a";
@@ -101,34 +102,34 @@ $string['pleaseassesstheseexamplesfromtheteacher'] = "Please assess these Exampl
 $string['pleaseassessthesestudentsubmissions'] = "Please assess these \$a Submissions";
 $string['reassess'] = "Re-assess";
 $string['reply'] = "Reply";
+$string['returnto'] = "Return to";
 $string['returntosubmissionpage'] = "Return to Submission Page";
+$string['savedok'] = "Saved OK";
 $string['savemyassessment'] = "Save my Assessment";
 $string['savemycomment'] = "Save my Comment";
-$string['savedok'] = "Saved OK";
 $string['savemygrading'] = "Save my Grading";
-$string['scaleyes'] = "2 point Yes/No scale";
-$string['scalepresent'] = "2 point Present/Absent scale";
+$string['scale10'] = "Score out of 10";
+$string['scale100'] = "Score out of 100";
+$string['scale20'] = "Score out of 20";
 $string['scalecorrect'] = "2 point Correct/Incorrect scale";
-$string['scalegood3'] = "3 point Good/Poor scale";
 $string['scaleexcellent4'] = "4 point Excellent/Very Poor scale";
 $string['scaleexcellent5'] = "5 point Excellent/Very Poor scale";
 $string['scaleexcellent7'] = "7 point Excellent/Very Poor scale";
-$string['scale10'] = "Score out of 10";
-$string['scale20'] = "Score out of 20";
-$string['scale100'] = "Score out of 100";
+$string['scalegood3'] = "3 point Good/Poor scale";
+$string['scalepresent'] = "2 point Present/Absent scale";
+$string['scaleyes'] = "2 point Yes/No scale";
 $string['selfassessment'] = "Self Assessment";
 $string['showgrades'] = "Show Grades";
 $string['specimenassessmentform'] = "Specimen Assessment Form";
-$string['studentsassessment'] = "Student's Assessment";
 $string['studentgrades'] = "\$a Grades";
-$string['studentsubmissionsforassessment'] = "\$a Student Submissions for Assessment";
+$string['studentsassessment'] = "Student's Assessment";
 $string['studentsubmissions'] = "\$a Submissions";
+$string['studentsubmissionsforassessment'] = "\$a Student Submissions for Assessment";
+$string['submissions'] = "Submissions";
 $string['submitassignment'] = "Submit Assignment";
 $string['submitexampleassignment'] = "Submit Example Assignment";
 $string['submitted'] = "Submitted";
 $string['submittedby'] = "Submitted by";
-$string['submissions'] = "Submissions";
-$string['returnto'] = "Return to";
 $string['teachersassessment'] = "Teacher's Assessment";
 $string['teacherscomment'] = "Teacher's Comment";
 $string['teachersgrade'] = "Teacher's Grade";
