@@ -1,3 +1,60 @@
+2002-11-22 Friday 00:00  moodler
+
+	* README.txt: 
+	
+	COnverted it to DOS format to make it easier for Windows users
+
+2002-11-21 Thursday 23:30  moodler
+
+	* doc/: install.html, release.html: 
+	
+	Updates
+
+2002-11-21 Thursday 22:57  moodler
+
+	* course/loggraph.php, lang/en/moodle.php: 
+	
+	Fixes to allow graphs to be translated
+
+2002-11-21 Thursday 20:39  moodler
+
+	* lib/moodlelib.php: 
+	
+	Allow admin user to always get in, no matter what the
+	authentication method
+
+2002-11-21 Thursday 20:17  paca70
+
+	* lang/fi/help/: courserecent.html, langedit.html, mods.html,
+	richtext.html, textformat.html: 
+	
+	New files for translation
+
+2002-11-21 Thursday 19:28  moodler
+
+	* lib/moodlelib.php: 
+	
+	No longer need the getuserinfo parameter
+
+2002-11-21 Thursday 19:27  moodler
+
+	* auth/ldap/README-LDAP, auth/ldap/config.html, auth/ldap/lib.php,
+	doc/release.html, lang/en/auth.php: 
+	
+	Added full configuration to LDAP (ie transferrable fields etc)
+
+2002-11-21 Thursday 19:12  moodler
+
+	* auth/db/config.html: 
+	
+	Bug fix for dbtype menu
+
+2002-11-21 Thursday 18:33  moodler
+
+	* CHANGES: 
+	
+	Daily changes
+
 2002-11-21 Thursday 18:26  moodler
 
 	* mod/assignment/submissions.php: 
