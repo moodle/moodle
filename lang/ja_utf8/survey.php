@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // survey.php - created with Moodle 1.5 unstable development (2004092000)
+      // survey.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004092700)
 
 
 $string['actual'] = '実体験';
@@ -198,7 +198,7 @@ $string['scales'] = '評価尺度';
 $string['scaletimes5'] = 'ほとんど無い,まれに,時々,頻繁に,ほとんどいつも';
 $string['seemoredetail'] = '詳細を見るためにはここをクリックしてください';
 $string['selectedquestions'] = '評価尺度から選ばれた質問, 全学生';
-$string['summary'] = '概略';
+$string['summary'] = '概要';
 $string['surveycompleted'] = '調査が終了しました。下のグラフはクラスの平均とあなたの結果を比較したものです。';
 $string['surveyname'] = '調査名';
 $string['surveysaved'] = '調査が保存されました';
