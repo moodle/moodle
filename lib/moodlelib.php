@@ -869,6 +869,10 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml="", $a
 
     if ($CFG->smtphosts) {
         $mail->IsSMTP();                               // use SMTP directly
+        if ($CFG->debug > 7) {
+            echo "<pre>\n";
+            $mail->SMTPDebug = true;
+        }
         $mail->Host = "$CFG->smtphosts";               // specify main and backup servers
 
         if ($CFG->smtpuser) {                          // Use SMTP authentication
