@@ -291,7 +291,7 @@ function clean_param($param, $options) {
         if (!empty($param)) {
             if (preg_match(':^/:', $param)) { 
                 // root-relative, ok!
-            } elseif (preg_match('/^'.preg_quote($CFG->wwwroot).'/i',$param)) {
+            } elseif (preg_match('/^'.preg_quote($CFG->wwwroot, '/').'/i',$param)) {
                 // absolute, and matches our wwwroot
             } else { 
                 // relative - let's make sure there are no tricks
