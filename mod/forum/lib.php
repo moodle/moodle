@@ -1088,8 +1088,8 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
     $output = "";
 
     $output .= "<style> <!--";       /// Styles for autolinks
-    $output .= "a.autolink:link {text-decoration: none; background-color: $THEME->autolink}\n";
-    $output .= "a.autolink:visited {text-decoration: none; background-color: $THEME->autolink}\n";
+    $output .= "a.autolink:link {text-decoration: none; color: black; background-color: $THEME->autolink}\n";
+    $output .= "a.autolink:visited {text-decoration: none; color: black; background-color: $THEME->autolink}\n";
     $output .= "a.autolink:hover {text-decoration: underline; color: red}\n";
     $output .= "--> </style>\n\n";
 
