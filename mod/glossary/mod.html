@@ -195,20 +195,10 @@ if (!$mainglossary or $mainglossary->id == $form->instance ) {
 <TR valign=top>
     <TD align=right><P><B><?php echo get_string("displayformat", "glossary") ?>:</B></P></TD>
     <TD>
-  <select size="1" name="displayformat">
-  <option value="0" <?php
-   if ( $form->displayformat == 0) {
-      echo "selected";
-   }
-  ?>><?php echo get_string("displayformatdefault", "glossary") ?></option>
-  <option value="1" <?php
-   if ( $form->displayformat == 1) {
-      echo "selected";
-   }
-  ?>><?php echo get_string("displayformatcontinuous", "glossary") ?></option>
-
-<?php
-    global $CFG;
+    <?php
+    $formats = array();
+    $formats[0] = get_string("displayformatdefault", "glossary");
+    $formats[0] = get_string("displayformatcontinuous", "glossary");
 
     $basedir = opendir("$CFG->dirroot/mod/glossary/formats");
     while ($dir = readdir($basedir)) {
@@ -222,15 +212,12 @@ if (!$mainglossary or $mainglossary->id == $form->instance ) {
         if ( $pos = strpos($dir, ".") ) {
             $dir = substr($dir, 0, $pos );
             if ($dir != 0 and $dir != 1) {  // excluding basic formats
-                echo "<option value=\"$dir\" ";
-                if ( $form->displayformat == $dir) {
-                    echo "selected ";
-                }
-                echo ">";
-                echo get_string("displayformat$dir", "glossary")."</option>";	
+                $formats[$dir] = get_string("displayformat$dir", "glossary");
             }
         }
     }
+    asort($formats);
+    choose_from_menu ($formats, "displayformat", $form->displayformat, "");
 
 ?>
 
