@@ -158,10 +158,14 @@ function SCOInitialize() {
 	print "\t".$navObj."document.navform.next.style.display = 'none';\n";
     }
 ?>
-	top.main.location="<?php echo $result; ?>";
-<?php	if ($scorm->popup == "") { ?>
-	hilightcurrent(<?php echo $navObj ?>document.navform.courseStructure);
-<?php   } ?>
+<?php	
+    if ($scorm->popup == "") { 
+	echo "\t    top.main.location=\"$result\";\n";
+	echo "\t    hilightcurrent(".$navObj."document.navform.courseStructure);\n";
+    } else {
+   	echo "\t    top.main = window.open('$result','main','$scorm->popup');\n";
+    }
+?>
 } 
 
 function changeSco(direction) {

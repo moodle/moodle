@@ -145,8 +145,13 @@
     		        $startbold = '';
     		        $endbold = '';
     		        if ($sco->id == $currentSCO) {
-    			    $startbold = '-> <b><u>';
-    			    $endbold = '</u></b> <-';
+    			    $startbold = '-> <b>';
+    			    $endbold = '</b> <-';
+    		    	}
+    		    	if (($currentSCO == "") && ($mode != "normal")) {
+    		    	    $currentSCO = $sco->id;
+ 			    $startbold = '-> <b>';
+    			    $endbold = '</b> <-';
     		    	}
     			if ($sco_user=get_record("scorm_sco_users","scoid",$sco->id,"userid",$USER->id)) {
     			    if ( $sco_user->cmi_core_lesson_status == "")
@@ -156,15 +161,18 @@
  			        if ($currentSCO == "") {
  				    $incomplete = true;
  				    $currentSCO = $sco->id;
- 				    $startbold = '-> <b><u>';
-    			    	    $endbold = '</u></b> <-';
+ 				    $startbold = '-> <b>';
+    			    	    $endbold = '</b> <-';
  				}
  			    }
     			} else {
     			    echo "      <img src=\"pix/notattempted.gif\" alt=\"".get_string("notattempted","scorm")."\" />";
     			    $incomplete = true;
     			}
-    		        echo "      &nbsp;$startbold<a href=\"javascript:playSCO(".$sco->id.");\">$sco->title</a>$endbold\n    </li>\n";
+    			$score = "";
+    			if (($sco_user->cmi_core_lesson_status == "passed") || ($sco_user->cmi_core_lesson_status == "failed"))
+    			    $score = "(".get_string("score","scorm").": ".$sco_user->cmi_core_score_raw.")";
+    		        echo "      &nbsp;$startbold<a href=\"javascript:playSCO(".$sco->id.");\">$sco->title</a> $score$endbold\n    </li>\n";
     		    } else {
 			echo "      &nbsp;$sco->title\n    </li>\n";
 		    }
@@ -218,7 +226,6 @@
     	if ($scorm->popup != "") {
     	?>
     	    <script language="Javascript">
-    	        top.main = window.open('','main','<?php echo $scorm->popup ?>');
 		SCOInitialize();
             </script>
         <?php
@@ -234,8 +241,8 @@
             echo "<head><title>$course->shortname: $scorm->name</title></head>\n";
             echo "<script id=\"scormAPI\" language=\"JavaScript\" type=\"text/javascript\" src=\"scormAPI.php?id=$cm->id&mode=".$mode.$scoid."\"></script>\n";
 	    echo "<frameset rows=\"$CFG->scorm_framesize,*\" onLoad=\"SCOInitialize();\">\n";
-            echo "	    <frame name=\"nav\" src=\"playscorm.php?id=$cm->id&mode=".$mode."&frameset=top\">\n";
-            echo "	    <frame name=\"main\" src=\"\">\n";
+            echo "\t    <frame name=\"nav\" src=\"playscorm.php?id=$cm->id&mode=".$mode."&frameset=top\">\n";
+            echo "\t    <frame name=\"main\" src=\"\">\n";
             echo "</frameset>\n";
             echo "</html>\n";
         }
