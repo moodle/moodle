@@ -1033,23 +1033,29 @@ function dst_offset_on($time) {
     return $finaloffset;
 }
 
-function find_day_in_month($index, $weekday, $month, $year) {
+function find_day_in_month($startday, $weekday, $month, $year) {
 
     $daysinmonth = days_in_month($month, $year);
 
     if($weekday == -1) {
-        // Don't care about weekday, so return either $index or $daysinmonth
-        return ($index == -1) ? $daysinmonth : $index;
+        // Don't care about weekday, so return:
+        //    abs($startday) if $startday != -1
+        //    $daysinmonth otherwise
+        return ($startday == -1) ? $daysinmonth : abs($startday);
     }
 
     // From now on we 're looking for a specific weekday
-    $numweeks = intval($weekday / 7); // 0 for first weekday, 1 for second etc.
-    $weekday  = $weekday % 7;
 
-    // Starting from day $index, -1 == last day of month
+    // Give "end of month" its actual value, since we know it
+    if($startday == -1) {
+        $startday = -1 * $daysinmonth;
+    }
 
-    if($index == -1) {
+    // Starting from day $startday, the sign is the direction
 
+    if($startday < 1) {
+
+        $startday = abs($startday);
         $lastmonthweekday  = strftime('%w', mktime(12, 0, 0, $month, $daysinmonth, $year, 0));
 
         // This is the last such weekday of the month
@@ -1058,8 +1064,8 @@ function find_day_in_month($index, $weekday, $month, $year) {
             $lastinmonth -= 7;
         }
 
-        // Skip the required number of weeks and return
-        while($numweeks--) {
+        // Find the first such weekday <= $startday
+        while($lastinmonth > $startday) {
             $lastinmonth -= 7;
         }
 
@@ -1068,20 +1074,15 @@ function find_day_in_month($index, $weekday, $month, $year) {
     }
     else {
 
-        $indexweekday = strftime('%w', mktime(12, 0, 0, $month, $index, $year, 0));
+        $indexweekday = strftime('%w', mktime(12, 0, 0, $month, $startday, $year, 0));
 
         $diff = $weekday - $indexweekday;
         if($diff < 0) {
             $diff += 7;
         }
 
-        // This is the first such weekday of the month equal to or after $index
-        $firstfromindex = $index + $diff;
-
-        // Skip the required number of weeks and return
-        while($numweeks--) {
-            $firstfromindex += 7;
-        }
+        // This is the first such weekday of the month equal to or after $startday
+        $firstfromindex = $startday + $diff;
 
         return $firstfromindex;
 
