@@ -272,6 +272,7 @@
             foreach ($matchs as $match) {
                 $status =fwrite ($bf,start_tag("MATCH",7,true));
                 //Print match contents
+                fwrite ($bf,full_tag("ID",8,false,$match->id));
                 fwrite ($bf,full_tag("QUESTIONTEXT",8,false,$match->questiontext));
                 fwrite ($bf,full_tag("ANSWERTEXT",8,false,$match->answertext));
                 $status =fwrite ($bf,end_tag("MATCH",7,true));
