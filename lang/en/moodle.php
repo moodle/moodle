@@ -9,6 +9,7 @@ $string['activity'] = "Activity";
 $string['activityiscurrentlyhidden'] = "Sorry, this activity is currently hidden";
 $string['activitymodule'] = "Activity module";
 $string['activityreport'] = "Activity report";
+$string['activitysince'] = "Activity since \$a";
 $string['add'] = "Add";
 $string['added'] = "Added \$a";
 $string['addinganew'] = "Adding a new \$a";

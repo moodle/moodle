@@ -19,13 +19,15 @@ define("MULTICHOICE",   "3");
 define("RANDOM",        "4");
 define("MATCH",         "5");
 define("RANDOMSAMATCH", "6");
+define("DESCRIPTION",   "7");
 
 $QUIZ_QUESTION_TYPE = array ( MULTICHOICE   => get_string("multichoice", "quiz"),
                               TRUEFALSE     => get_string("truefalse", "quiz"),
                               SHORTANSWER   => get_string("shortanswer", "quiz"),
                               MATCH         => get_string("match", "quiz"),
                               RANDOM        => get_string("random", "quiz"),
-                              RANDOMSAMATCH => get_string("randomsamatch", "quiz") );
+                              RANDOMSAMATCH => get_string("randomsamatch", "quiz"),
+                              DESCRIPTION   => get_string("description", "quiz") );
 
 $QUIZ_FILE_FORMAT = array ( "custom"   => get_string("custom", "quiz"),
                             "missingword" => get_string("missingword", "quiz"),
@@ -60,7 +62,7 @@ function quiz_add_instance($quiz) {
     // The grades for every question in this quiz are stored in an array
     if ($quiz->grades) {
         foreach ($quiz->grades as $question => $grade) {
-            if ($question and $grade) {
+            if ($question) {
                 unset($questiongrade);
                 $questiongrade->quiz = $quiz->id;
                 $questiongrade->question = $question;
@@ -100,7 +102,7 @@ function quiz_update_instance($quiz) {
 
     if ($quiz->grades) {
         foreach ($quiz->grades as $question => $grade) {
-            if ($question and $grade) {
+            if ($question) {
                 unset($questiongrade);
                 $questiongrade->quiz = $quiz->id;
                 $questiongrade->question = $question;
@@ -376,6 +378,9 @@ function quiz_print_question_icon($question, $editlink=true) {
         case RANDOMSAMATCH:
             echo "<IMG BORDER=0 HEIGHT=16 WIDTH=16 SRC=\"pix/rm.gif\">";
             break;
+        case DESCRIPTION:
+            echo "<IMG BORDER=0 HEIGHT=16 WIDTH=16 SRC=\"pix/de.gif\">";
+            break;
     }
     if ($editlink) {
         echo "</A>\n";
@@ -390,6 +395,16 @@ function quiz_print_question($number, $question, $grade, $courseid,
 
 /// Prints a quiz question, any format
 /// $question is provided as an object
+
+    if ($question->qtype == DESCRIPTION) {  // Special case question - has no answers etc
+        echo '<p align="center">';
+        echo text_to_html($question->questiontext);
+        if ($question->image) {
+            print_file_picture($question->image, $courseid);
+        }
+        echo '</p>';
+        return true;
+    }
 
     if (empty($actualgrade)) {
         $actualgrade = 0;
@@ -778,7 +793,10 @@ function quiz_print_quiz_questions($quiz, $results=NULL, $questions=NULL, $shuff
     $questionorder = array();
 
     foreach ($questions as $question) {
-        $count++;
+
+        if ($question->qtype != DESCRIPTION) {    // Description questions are not counted
+            $count++;
+        }
 
         $questionorder[] = $question->id;
 
@@ -1377,8 +1395,10 @@ function quiz_grade_attempt_results($quiz, $questions) {
             $question->grade = $grades[$question->id];
         }
         
-        if (!$answers = quiz_get_answers($question)) {
-            error("No answers defined for question id $question->id!");
+        if ($question->qtype != DESCRIPTION) {    // All real questions need answers defined
+            if (!$answers = quiz_get_answers($question)) {
+                error("No answers defined for question id $question->id!");
+            }
         }
 
         $grade    = 0;   // default
@@ -1837,6 +1857,9 @@ function quiz_save_question_options($question) {
         break;
 
         case RANDOM:
+        break;
+
+        case DESCRIPTION:
         break;
 
         default:

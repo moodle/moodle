@@ -93,8 +93,11 @@
                 $questions[] = $key;
 
                 $questionrecord = get_record("quiz_questions", "id", $key);
+
                 if (!empty($questionrecord->defaultgrade)) {
                     $modform->grades[$key] = $questionrecord->defaultgrade; 
+                } else if ($questionrecord->qtype == DESCRIPTION){
+                    $modform->grades[$key] = 0; 
                 } else {
                     $modform->grades[$key] = 1; 
                 }

@@ -107,6 +107,10 @@
             $question->image = $form->image;
         }
 
+        if (isset($form->defaultgrade)) {
+            $question->defaultgrade = $form->defaultgrade;
+        }
+
         if ($err = formcheck($question)) {
             notify(get_string("someerrorswerefound"));
 
@@ -307,6 +311,11 @@
         case RANDOM:
             print_heading_with_help(get_string("editingrandom", "quiz"), "random", "quiz");
             require("random.html");
+        break;
+
+        case DESCRIPTION:
+            print_heading(get_string("editingdescription", "quiz"));
+            require("description.html");
         break;
 
         default:
