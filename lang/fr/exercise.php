@@ -92,7 +92,7 @@ $string['noteonassessmentelements'] = 'L\'évaluation se fait à partir de divers 
 	en a encore aucun. Vous pourrez changer le nombre des éléments en cliquant Modifier cet exercice<br />
 	d\'édition. Vous pouvez modifier les éléments en cliquant sur « Modifier les éléments d\'évaluation ».';
 $string['noteongradinggrade'] =	'Cette note mesure à quel point votre évaluation est en accord avec<br />
-	celle de l\'enseignant. Plus la note est élevée, meilleur est l\'accord entre les deux évaluations.'
+	celle de l\'enseignant. Plus la note est élevée, meilleur est l\'accord entre les deux évaluations.';
 $string['noteonstudentassessments'] = '{Note donnée par l\'étudiant / Note de l\'évaluation donnée par l\'enseignant}';
 $string['notgraded'] = 'Sans note';
 $string['notitlegiven'] = 'Aucun nom fourni';
