@@ -1,4 +1,5 @@
 <?php
+
 /*
 Graph Class. PHP Class to draw line, point, bar, and area graphs, including numeric x-axis and double y-axis.
 Version: 1.6.3
