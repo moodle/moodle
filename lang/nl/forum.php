@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.0.8.1 (2003011200)
+      // forum.php - created with Moodle 1.0.9 development (2003042701)
 
 
 $string['addanewdiscussion'] = "Voeg een nieuwe onderwerp voor discussie toe";
@@ -41,6 +41,7 @@ $string['inforum'] = "in \$a";
 $string['intronews'] = "Algemeen nieuws en aankondigingen";
 $string['introsocial'] = "Een open forum om te chatten over wat je maar wilt";
 $string['introteacher'] = "Een forum alleen bestemd voor discussies en aantekeningen van docenten";
+$string['lastpost'] = "Laatste bericht";
 $string['learningforums'] = "Leer forums";
 $string['maxtimehaspassed'] = "Helaas is de maximale tijd voor het wijzigen van deze bijdrage (\$a) verstreken!";
 $string['message'] = "Bijdrage";
@@ -51,6 +52,7 @@ $string['modethreaded'] = "Laat de antwoorden in hun 'draden' zien";
 $string['modulename'] = "Forum";
 $string['modulenameplural'] = "Forums";
 $string['more'] = "meer";
+$string['movethisdiscussionto'] = "Verplaats deze discussie naar ...";
 $string['namenews'] = "Nieuws forum";
 $string['namesocial'] = "Sociaal forum";
 $string['nameteacher'] = "Forum voor docenten";
@@ -84,6 +86,7 @@ $string['ratings'] = "Classificaties  ";
 $string['ratingssaved'] = "Classificaties zijn bewaard";
 $string['re'] = "Re:";
 $string['readtherest'] = "Lees de rest van deze discussie";
+$string['replies'] = "Antwoorden";
 $string['repliesmany'] = "\$a antwoorden tot nu toe";
 $string['repliesone'] = "\$a antwoord tot nu toe";
 $string['reply'] = "Antwoord";
@@ -93,6 +96,7 @@ $string['searchresults'] = "Zoekresultaten";
 $string['sendinratings'] = "Verzend mijn laatste classificaties";
 $string['showsubscribers'] = "Toon leden";
 $string['singleforum'] = "Eén eenvoudige discussie";
+$string['startedby'] = "Begonnen door";
 $string['subject'] = "Onderwerp  ";
 $string['subscribe'] = "Wordt lid van dit forum";
 $string['subscribed'] = "Lid";
