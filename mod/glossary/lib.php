@@ -239,7 +239,10 @@ function glossary_print_recent_activity($course, $isteacher, $timestart) {
         print_headline(get_string("newentries", "glossary").":");
         foreach ($entries as $entry) {
             $date = userdate($entry->timemodified, $strftimerecent);
-            echo "<p><font size=1>$date - $entry->firstname $entry->lastname<br>";
+            
+            $user = get_record("user","id",$entry->userid);
+            $fullname = fullname($user, $isteacher);
+            echo "<p><font size=1>$date - $fullname<br>";
             echo "\"<a href=\"$CFG->wwwroot/mod/glossary/$entry->url\">";
             echo "$entry->concept";
             echo "</a>\"</font></p>";
