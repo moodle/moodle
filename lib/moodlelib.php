@@ -851,7 +851,7 @@ function get_user_dst_preset() {
     }
 
     if (empty($CFG->calendar_dstforusers)) {
-        if (empty($USER)) {
+        if (empty($USER->dstpreset)) {
             return NULL;
         }
         $presetid = $USER->dstpreset;
