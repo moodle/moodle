@@ -200,8 +200,6 @@ a img {
 ******************************/
 /* admin, calendar */
 table.formtable {
-    border-spacing: 8px;
-    border-collapse: separate;
     margin: auto;
 }
 
@@ -210,6 +208,11 @@ table.formtable tbody th {
     vertical-align: top;
 }
 
+table.formtable tbody td,
+table.formtable tbody th
+{
+    padding: 5px;
+}
 
 /*****************************
 ***
