@@ -642,20 +642,11 @@ function forum_get_course_forum($courseid, $type) {
 // How to set up special 1-per-course forums
     global $CFG;
 
-    if ($forum = get_record("forum", "course", $courseid, "type", $type)) {
-        // Already exists - return it
-        return $forum;
-
-    } else if (count_records("forum", "course", $courseid, "type", $type) > 1) {
-        // It MIGHT have failed because there is more than one - freaky but has happened
-        // In this case, just return the oldest one (lowest ID).
-        if ($forums = get_records_sql("SELECT * FROM {$CFG->prefix}forum 
-                                           WHERE course = '$courseid'
-                                             AND type   = '$type'
-                                        ORDER BY id ASC")) {
-            foreach ($forums as $forum) {
-                return $forum;   // ie the first one
-            }
+    if ($forums = get_records_select("forum", "course = '$courseid' AND type = '$type'", "id ASC")) {
+        // There should always only be ONE, but with the right combination of 
+        // errors there might be more.  In this case, just return the oldest one (lowest ID).
+        foreach ($forums as $forum) {
+            return $forum;   // ie the first one
         }
     }
 
