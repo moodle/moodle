@@ -893,6 +893,7 @@ $string['showalltopics'] = 'Afficher tous les sujets';
 $string['showallusers'] = 'Afficher tous les utilisateurs';
 $string['showallweeks'] = 'Afficher toutes les semaines';
 $string['showgrades'] = 'Afficher les notes';
+$string['showimmediately'] = 'Afficher immédiatement';
 $string['showlistofcourses'] = 'Afficher la liste des cours';
 $string['showonlytopic'] = 'Afficher uniquement le sujet $a';
 $string['showonlyweek'] = 'Afficher uniquement la semaine $a';
