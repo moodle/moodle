@@ -423,6 +423,7 @@ $string['thanks'] = "ÔßÑÇ";
 $string['theme'] = "ÇáÔßá";
 $string['themesaved'] = "Êã ÍİÙ ÇáÔßá ÇáÌÏíÏ";
 $string['thischarset'] = "windows-1256";
+$string['thisdirection'] = "rtl";
 $string['thislanguage'] = "Arabic";
 $string['timezone'] = "ÇáãäØŞÉ ÇáÒãäíÉ";
 $string['today'] = "Çáíæã";
