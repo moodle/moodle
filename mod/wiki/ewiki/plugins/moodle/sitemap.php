@@ -100,15 +100,18 @@ function ewiki_valid_pages($bool_allowimages=0, $virtual_pages=0){
     if (EWIKI_PROTECTED_MODE && EWIKI_PROTECTED_MODE_HIDING && !ewiki_auth($row["id"], $str_null, "view")) {
       continue;
     }   
-    if (($row["flags"] & EWIKI_DB_F_TYPE) == EWIKI_DB_F_TEXT || ($bool_allowimages ? $row["meta"]["class"]=="image" : 0)) {
+    
+    $isbinary= ($row["meta"]["class"]=="image"||$row["meta"]["class"]=="file")?true:false;
+    
+    if (($row["flags"] & EWIKI_DB_F_TYPE) == EWIKI_DB_F_TEXT || ($bool_allowimages ? $isbinary : 0)) {
       $temp_refs=explode("\n",$row["refs"]);
       foreach($temp_refs as $key => $value) {
         if(empty($value)) {
           unset($temp_refs[$key]);
         }
       }
-      if($row["meta"]["class"]=="image"){
-        $a_validpages[$row["id"]]=$temp_array=array("refs" => $temp_refs, "type" => "image", "touched" => FALSE);
+      if($isbinary){
+        $a_validpages[$row["id"]]=$temp_array=array("refs" => $temp_refs, "type" => $row["meta"]["class"], "touched" => FALSE);
       } else {
         $a_validpages[$row["id"]]=$temp_array=array("refs" => $temp_refs, "type" => "page", "touched" => FALSE);
       }
@@ -209,7 +212,7 @@ function ewiki_sitemap_create($str_rootid, $a_validpages, $i_maxdepth, $i_flatma
   //list all of the children of the root
   ewiki_page_listallchildren($str_rootid, $a_children, $a_sitemap, $a_validpages, $i_depth, $i_maxdepth, $i_flatmap);
   $i_depth++;    
-  
+    
   if($a_children){
     end($a_children);
     $str_nextlevel=key($a_children);

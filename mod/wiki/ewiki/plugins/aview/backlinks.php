@@ -19,6 +19,4 @@ function ewiki_view_append_backlinks($id, $data, $action) {
     
     return($o);
 }
-
-
-?> 
+?>

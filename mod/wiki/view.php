@@ -134,6 +134,7 @@
         include_once($CFG->dirroot."/mod/wiki/ewiki/plugins/moodle/moodle_highlight.php");
         include_once($CFG->dirroot."/mod/wiki/ewiki/plugins/moodle/f_fixhtml.php");
         include_once($CFG->dirroot."/mod/wiki/ewiki/plugins/moodle/sitemap.php");
+        include_once($CFG->dirroot."/mod/wiki/ewiki/plugins/moodle/moodle_wikidump.php");
         include_once($CFG->dirroot."/mod/wiki/ewiki/plugins/aview/backlinks.php");
         #include_once($CFG->dirroot."/mod/wiki/ewiki/plugins/markup/css.php");
         include_once($CFG->dirroot."/mod/wiki/ewiki/plugins/markup/footnotes.php");
@@ -260,7 +261,7 @@
     }
 
     if ($wiki_entry) {
-        $specialpages=array("SiteMap", "SearchPages", "PageIndex","NewestPages","MostVisitedPages","MostOftenChangedPages","UpdatedPages","FileDownload","FileUpload","OrphanedPages","WantedPages");
+        $specialpages=array("WikiExport", "SiteMap", "SearchPages", "PageIndex","NewestPages","MostVisitedPages","MostOftenChangedPages","UpdatedPages","FileDownload","FileUpload","OrphanedPages","WantedPages");
     /// Page Actions
         echo '<table border="0" width="100%">';
         echo '<tr>';
@@ -304,7 +305,7 @@
         /// Administrative Links
         if($canedit) {
           echo '<td align="center">';          
-          wiki_print_administration_actions($cm->id, $userid, $groupid, $ewiki_title, $wiki->htmlmode!=2);
+          wiki_print_administration_actions($wiki, $cm->id, $userid, $groupid, $ewiki_title, $wiki->htmlmode!=2, $course);
           echo '</td>';
         }
         

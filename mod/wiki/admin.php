@@ -74,7 +74,14 @@
     if (($wiki_entry = wiki_get_entry($wiki, $course, $userid, $groupid)) === false || wiki_can_edit_entry($wiki_entry, $wiki, $USER, $course) === false) {
       error(get_string("notadministratewiki","wiki"));
     }
-        
+
+    # Check for dangerous events (hacking) !
+    if(in_array($action,array("removepages","strippages","revertpages"))) {
+      if($wiki->wtype!="student" || !isteacher($course->id)) {
+        error("Hack attack detected !");
+      }          
+    }
+            
     /// The wiki_entry->pagename is set to the specified value of the wiki,
     /// or the default value in the 'lang' file if the specified value was empty.
     define("EWIKI_PAGE_INDEX",$wiki_entry->pagename);
@@ -294,7 +301,7 @@
     
         /// Administrative Links       
         echo '<td align="center">';          
-        wiki_print_administration_actions($cm->id, $userid, $groupid, $wikipage, $wiki->htmlmode!=2);
+        wiki_print_administration_actions($wiki, $cm->id, $userid, $groupid, $wikipage, $wiki->htmlmode!=2, $course);
         echo '</td>';
         
 #        if($wiki->htmlmode!=2) {

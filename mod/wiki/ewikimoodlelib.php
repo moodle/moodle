@@ -201,6 +201,9 @@ function ewiki_database_moodle($action, &$args, $sw1, $sw2) {
          #   }
          #}
          #print "<pre>"; print_r($result); print "</pre>";
+         if(!$result) {
+           $result=array();
+         }
          while(list($key, $val) = each($result)) {
             $row=get_object_vars($val);
             $i = EWIKI_CASE_INSENSITIVE ? strtolower($row["id"]) : $row["id"];

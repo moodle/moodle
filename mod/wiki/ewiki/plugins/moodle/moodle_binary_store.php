@@ -47,9 +47,9 @@ function moodle_binary_get_path($id, $meta, $course, $wiki, $userid, $groupid) {
     
     $dir=make_upload_directory("$course->id/$CFG->moddata/wiki/$wiki->id/$entry->id/".$meta["section"]);
     if(substr($id, 0, strlen(EWIKI_IDF_INTERNAL))!=EWIKI_IDF_INTERNAL) {
-      error("Binary entry does not start with ".EWIKI_IDF_INTERNAL.":::".substr($id, 0, strlen(EWIKI_IDF_INTERNAL)));
+      error("Binary entry does not start with ".EWIKI_IDF_INTERNAL.substr($id, 0, strlen(EWIKI_IDF_INTERNAL)));
     }
-    $id = substr($id,11);
+    $id = substr($id,strlen(EWIKI_IDF_INTERNAL));
     $id = clean_filename($id);
   
     return "$dir/$id";

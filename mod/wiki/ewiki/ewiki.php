@@ -277,6 +277,10 @@
 	#-- init stuff, autostarted parts
 	ksort($ewiki_plugins["init"]);
 	if ($pf_a = $ewiki_plugins["init"]) foreach ($pf_a as $pf) {
+           // Binary Handling starts here
+           if(headers_sent($file,$line)) {
+             print $file.":".$line."<br>";
+           }
            $pf($GLOBALS);
         }
 	unset($ewiki_plugins["init"]);
@@ -886,7 +890,7 @@ function ewiki_script_url() {
       return(NULL);   #-- could not guess it
    }
  
-   $url = "http://" . $_SERVER["SERVER_NAME"] . $url;
+   #$url = "http://" . $_SERVER["SERVER_NAME"] . $url;
    return($url);
 }
 

@@ -868,7 +868,7 @@ function wiki_get_owner(&$wiki_entry) {
         $owner = $course->shortname;
     }
     else {
-        $owner = '- unknown -';
+        $owner = '- '.get_string("ownerunknown","wiki").' -';
     }
     return $owner;
 }
@@ -907,6 +907,7 @@ function wiki_print_wikilinks_block($cmid, $binary=false, $return=false) {
    $links["UpdatedPages"]=get_string("updatedpages", "wiki");
    $links["OrphanedPages"]=get_string("orphanedpages", "wiki");
    $links["WantedPages"]=get_string("wantedpages", "wiki");
+   $links["WikiExport"]=get_string("wikiexport", "wiki");
    if($binary) {
      $links["FileDownload"]=get_string("filedownload", "wiki");
    }
@@ -938,7 +939,7 @@ function wiki_print_page_actions($cmid, $specialpages, $wikipage, $action, $bina
   popup_form(EWIKI_SCRIPT, $page, "wikiactions", "", get_string("action", "wiki"), "", "", false);   
 }
 
-function wiki_print_administration_actions($cmid, $userid, $groupid, $wikipage, $noeditor) {
+function wiki_print_administration_actions($wiki, $cmid, $userid, $groupid, $wikipage, $noeditor, $course) {
 /// Displays actions which can be performed on the page
   global $ME;        
 
@@ -952,12 +953,14 @@ function wiki_print_administration_actions($cmid, $userid, $groupid, $wikipage, 
 
   
   $action=array(
-            "removepages"  => get_string("removepages", "wiki"),
-            "strippages"  => get_string("strippages", "wiki"),
             "setpageflags" => get_string("setpageflags", "wiki"),
-            "revertpages" => get_string("revertpages", "wiki"),
           );
   // We cannot do certain things if html is used !
+  if($wiki->wtype=="student" || isteacher($course->id)) {          
+    $action["removepages"]  = get_string("removepages", "wiki");
+    $action["strippages"]  = get_string("strippages", "wiki");
+    $action["revertpages"] = get_string("revertpages", "wiki");
+  }
   if($noeditor) {
     $action["checklinks"]=get_string("checklinks", "wiki");
   }
@@ -1258,7 +1261,7 @@ function wiki_admin_checklinks($pagetocheck) {
      $get = ewiki_database("GET", array("id" => $pagetocheck));
      $content = $get["content"];
      
-     preg_match_all('_(http://[^\s"\'<>#,;]+[^\s"\'<>#,;.])_', $content, $links);
+     preg_match_all('_(http.?://[^\s"\'<>#,;]+[^\s"\'<>#,;.])_', $content, $links);
      $badlinks = array();
      if(!$links[1]) {
        $ret = get_string("nolinksfound","wiki")."<br><br>";
