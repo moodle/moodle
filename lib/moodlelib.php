@@ -1756,6 +1756,12 @@ function isteacheredit($courseid, $userid=0) {
     }
 
     if (!$userid) {
+        if (empty($USER) or empty($USER->id)) {     // not logged in so can't be a teacher
+            return false;
+        }
+        if (empty($USER->teacheredit)) {            // we are relying on session cache
+            return false;
+        }
         return !empty($USER->teacheredit[$courseid]);
     }
 
