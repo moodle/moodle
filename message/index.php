@@ -56,18 +56,23 @@
     echo '<table cellspacing="2" cellpadding="2" border="0" align="center" width="95%">';
     echo '<tr>';
 
-/// Print out all tabs with labels and colours
-    $tabs = array('contacts','search','settings');
-    foreach ($tabs as $thistab) {
-        $classname = ($tab == $thistab) ? 'generaltabselected' : 'generaltab';
-        echo '<th class="'.$classname.'"><a href="'.$CFG->wwwroot.'/message/index.php?tab='.$thistab.'">';
-        echo get_string($thistab,'message');
-        echo '</a></th>';
-    }
+/// Print out the tabs
+    echo '<td>';
+    $tabrow = array();
+    $tabrow[] = new tabobject('contacts', $CFG->wwwroot.'/message/index.php?tab=contacts', 'contacts');
+    $tabrow[] = new tabobject('search', $CFG->wwwroot.'/message/index.php?tab=search', 'search');
+    $tabrow[] = new tabobject('settings', $CFG->wwwroot.'/message/index.php?tab=settings', 'settings');
+    $tabrows = array($tabrow);
+
+    print_tabs($tabrows, $tab);
+    
+    echo '</td>';
+
+
     echo '</tr><tr>';
 
 /// Print out contents of the tab
-    echo '<td colspan="3"">';
+    echo '<td>';
 
 /// a print function is associated with each tab
     $tabprintfunction = 'message_print_'.$tab;
