@@ -1111,10 +1111,14 @@ function helpbutton ($page, $title="", $module="moodle", $image=true, $linktext=
 }
 
 function notice ($message, $link="") {
-    global $THEME;
+    global $CFG, $THEME;
 
     if (!$link) {
-        $link = $_SERVER["HTTP_REFERER"];
+        if (!empty($_SERVER["HTTP_REFERER"])) {
+            $link = $_SERVER["HTTP_REFERER"];
+        } else {
+            $link = $CFG->wwwroot;
+        }
     }
 
     echo "<BR>";
