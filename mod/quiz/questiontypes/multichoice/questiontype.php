@@ -210,8 +210,7 @@ class quiz_multichoice_qtype extends quiz_default_questiontype {
             echo "<input $readonly $name $checked $type  value=\"$answer->id\" />";
            
             echo "</td>";
-            if ($readonly and $quiz->correctanswers || $quiz->feedback
-                    and !empty($correctanswers[$nameprefix.$aid])) {
+            if ($readonly and $quiz->correctanswers and !empty($correctanswers[$nameprefix.$aid])) {
                 echo '<td valign="top" class="highlight">'.format_text("$qnumchar. $answer->answer").'</td>';
             } else {
                 echo '<td valign="top">'.format_text("$qnumchar. $answer->answer").'</td>';
