@@ -790,7 +790,7 @@ function dialogue_show_other_conversations($dialogue, $conversation) {
                     // print_user_picture($otheruser->id, $course->id, $otheruser->picture);
                     echo "<b>".get_string("dialoguewith", "dialogue", 
                         fullname($otheruser))."</b></td>";
-                    echo "<td bgcolor=\"$THEME->cellheading2\" valign=\"top\"><i>$otherconversation->subject&nbsp;</i></td></tr>";
+                    echo "<td bgcolor=\"$THEME->cellheading2\" valign=\"top\"><i>".clean_text($otherconversation->subject)."&nbsp;</i></td></tr>";
                     if ($entries = get_records_select("dialogue_entries", 
                             "conversationid = $otherconversation->id", "id")) {
                         foreach ($entries as $entry) {
