@@ -63,8 +63,8 @@
                         $href_tag_begin = "<a class=\"autolink\" title=\"$title\" href=\"$CFG->wwwroot/mod/glossary/view.php?id=$cm->id&tab=1&cat=$concept->id\">";
                     } else {
                         $title = strip_tags("$glossary->name: $concept->concept");
-                        $href_tag_begin = "<a target=\"entry\" class=\"autolink\" title=\"$title\" href=\"$CFG->wwwroot/mod/glossary/showentry.php?courseid=$courseid&concept=$concept->concept\" ".
-                             "onClick=\"return openpopup('/mod/glossary/showentry.php?courseid=$courseid\&concept=$concept->concept', 'entry', 'menubar=0,location=0,scrollbars,resizable,width=600,height=450', 0);\">";
+                        $href_tag_begin = "<a target=\"entry\" class=\"autolink\" title=\"$title\" href=\"$CFG->wwwroot/mod/glossary/showentry.php?courseid=$courseid&concept=".urlencode($concept->concept)."\" ".
+                             "onClick=\"return openpopup('/mod/glossary/showentry.php?courseid=$courseid\&concept=".urlencode($concept->concept)."', 'entry', 'menubar=0,location=0,scrollbars,resizable,width=600,height=450', 0);\">";
                     }
 
                     $currentconcept = str_replace("|", "\|", $concept->concept);
