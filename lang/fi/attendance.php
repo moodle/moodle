@@ -1,0 +1,71 @@
+<?PHP // $Id$ 
+      // attendance.php - created with Moodle 1.2 development (2004010900)
+
+
+$string['absentlong'] = 'Puuttuva';
+$string['absentshort'] = 'A';
+$string['addingmultiple'] = 'Läsnäololistojen lisääminen';
+$string['addmultiple'] = 'Lisää läsnäololistat';
+$string['allmodulename'] = 'Kaikki läsnäololistat';
+$string['auto'] = 'Automaattinen';
+$string['autoattend'] = 'Määrittele läsnäolo automaattisesti tapahtumalokien pohjalta';
+$string['autoattendmulti'] = 'Määrittele läsnäolo kaikkiin listoihin automaattisesti tapahtumalokien pohjalta';
+$string['autoattendshort'] = 'Automaattisesti lokeista';
+$string['choosedays'] = 'Viikottainen läsnöolo';
+$string['dayofroll'] = 'Päiväys jolta lista laaditaan';
+$string['defaultautoattend'] = 'Määrittele oletuksena läsnäolo tapahtumalokien pohjalta';
+$string['defaultdynamicsection'] = 'Siirrä oletuksena läsnäolotlistat oikealle viikolle';
+$string['defaultgrade'] = 'Tee oletuksena läsnäololistoista arvioitavia';
+$string['defaulthoursinclass'] = 'Montako tuntia on oletuksena läsnäololistassa';
+$string['defaultmaxgrade'] = 'Mikä on maksimi arvosana täydelle läsnäololle';
+$string['defaultstudentstatus'] = 'Opiskelijan oletus tila uusissa läsnäololistoissa.';
+$string['downloadexcelfull'] = 'Lataa täysi excel-taulukko';
+$string['downloadexceltotals'] = 'Lataa yhteenveto excel-taulukko';
+$string['downloadtextfull'] = 'Lataa täysi teksti raportti';
+$string['downloadtexttotals'] = 'Lataa yhteenveto teksti raportti';
+$string['dynamicsection'] = 'Selvitä läsnäolo viikottainen ko. olevan pävän mukaan';
+$string['dynamicsectionmulti'] = 'Sijoita listat viikolle automattisesti';
+$string['dynsectionshort'] = 'Siirtyy dynaamisesti sektioon';
+$string['endbeforestart'] = 'Päättymispäivä on ennen lopetus päivää';
+$string['endmulti'] = 'Päiväys viimeiselle läsnäololistalle';
+$string['for'] = '--';
+$string['friday'] = 'Pe';
+$string['gradeshort'] = 'Arvosteltu';
+$string['gradevalue'] = 'Tee tästä listasta arvioitava';
+$string['gradevaluemulti'] = 'Tee näistä listoista arvioitavat';
+$string['hoursinclass'] = 'Tuntien määrä luokka aikana';
+$string['hoursineachclass'] = 'Tuntien määrä jokaisena luokka aikana';
+$string['hoursinfullreport'] = 'Maksimäärä läsnäolotunteja joka näytetään raportin yhdellä sivulla';
+$string['maxgradeshort'] = 'Maksimi arviointi';
+$string['maxgradevalue'] = 'Maksimi arviointi täydelle läsnäololle';
+$string['modulename'] = 'Koulunkäynti';
+$string['modulenameplural'] = 'Läsnäololistat';
+$string['monday'] = 'Ma';
+$string['norolls'] = 'Tällä kurssilla ei ole läsnäololistoja';
+$string['notes'] = 'Poikkeavat tiedot';
+$string['notesfor'] = 'Poikkeavat tiedot :';
+$string['noviews'] = 'Pahus, sinun tunnuksellesi ei ole tietoja.';
+$string['of'] = '&nbsp;/&nbsp;';
+$string['pages'] = 'Sivut';
+$string['presentlong'] = 'Nykyinen';
+$string['presentshort'] = 'P';
+$string['saturday'] = 'La';
+$string['startafterend'] = 'Aloituspäivä on lopetuspäivän jälkeen';
+$string['startmulti'] = 'Ensimmäisen läsnäololistan päiväys.';
+$string['sunday'] = 'Su';
+$string['takeroll'] = 'Hea tämän päivän lista?';
+$string['tardiesperabsence'] = 'Kuinka monta myöhästymistä lasketaan poissaoloksi';
+$string['tardylong'] = 'Myöhästyminen';
+$string['tardyshort'] = 'T';
+$string['thursday'] = 'To';
+$string['tuesday'] = 'Ti';
+$string['viewall'] = 'Katsele kaikkia läsnäololistoja';
+$string['viewmulti'] = 'Katsele raporttia useina sivuina';
+$string['viewone'] = 'Katsele kaikkia raportti sivuja';
+$string['viewsection'] = 'Katsele kaikkia tämän osaston läsnäololistoja';
+$string['viewtable'] = 'Katsele raporttia yhdellä taulukolla';
+$string['viewweek'] = 'Katsele kaikkia viikon läsnäololistoja';
+$string['wednesday'] = 'Ke';
+$string['weekmodulename'] = 'Kaikki viimeviikon läsnäololistat';
+
+?>

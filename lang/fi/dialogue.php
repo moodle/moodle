@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // dialogue.php - created with Moodle 1.2 development (2003120700)
+      // dialogue.php - created with Moodle 1.2 development (2004010900)
 
 
 $string['addmynewentries'] = 'Lisää viestini';
@@ -41,11 +41,13 @@ $string['notstarted'] = 'Et ole aloittanut tätä vuoropuhelua vielä';
 $string['notyetseen'] = 'Avaamatta';
 $string['numberofentries'] = 'Viestien määrä';
 $string['numberofentriesadded'] = '$a :n merkinnät';
+$string['of'] = '/';
 $string['onwrote'] = '$a kirjoitti';
 $string['onyouwrote'] = '$a kirjoitit';
 $string['open'] = 'Avaa';
 $string['openadialoguewith'] = 'Avaa vuoropuhelu';
 $string['opendialogue'] = 'Avaa vuoropuhelu';
+$string['opendialogueentries'] = 'Avaa vuoropuhelu merkinnät';
 $string['pane0'] = 'Avaa vuoropuhelu';
 $string['pane1'] = '$a odottaa vastauksiasi';
 $string['pane1one'] = '1 odottaa vastaustasi';
