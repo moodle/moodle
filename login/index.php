@@ -55,12 +55,7 @@
 
         $errormsg = get_string("cookiesnotenabled");
 
-    } else if ($frm) {                            // Login WITH cookies
-
-        if (get_moodle_cookie() == '') {
-            error('Cookies not working!');
-            die;
-        }
+    } else if ($frm) {                             // Login WITH cookies
 
         $frm->username = trim(moodle_strtolower($frm->username));
 
