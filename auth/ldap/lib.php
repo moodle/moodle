@@ -279,6 +279,25 @@ function auth_sync_users () {
         } else {
            //update username
            set_field('user', 'username', $user->username , 'auth', 'ldap', 'guid', $user->guid);
+           //no id-information in ldap so get now
+           $userid = get_field('user', 'id', 'auth', 'ldap', 'guid', $user->guid);
+
+           if (auth_iscreator($user->username)) {
+                 if (! record_exists("user_coursecreators", "userid", $userid)) {
+                      $cdata['userid']=$userid;
+                      $creator = insert_record("user_coursecreators",$cdata);
+                      if (! $creator) {
+                          error("Cannot add user to course creators.");
+                      }
+                  }
+            } else {
+                 if ( record_exists("user_coursecreators", "userid", $userid)) {
+                      $creator = delete_records("user_coursecreators", "userid", $userid);
+                      if (! $creator) {
+                          error("Cannot remove user from course creators.");
+                      }
+                 }
+            }
         }
     }    
     
