@@ -48,8 +48,14 @@ $logging = "yes";
 $cookiepath = "/";
 
 # set $use_firewall to "1" if behind a proxy
-$use_firewall="";
-$firewall_host="localhost";
-$firewall_port=3128;
+if ($CFG->proxyhost and $CFG->proxyport) {
+    $use_firewall="1";
+    $firewall_host=$CFG->proxyhost;
+    $firewall_port=$CFG->proxyport;
+} else {
+    $use_firewall="";
+    $firewall_host="localhost";
+    $firewall_port=3128;
+}
 
 ?>
