@@ -157,16 +157,12 @@ function print_simple_box_start($align="", $width="", $color="#FFFFFF", $padding
     }
     if ($width) {
         $tablewidth = "WIDTH=\"$width\"";
-        $innertablewidth = "WIDTH=\"100%\"";
     }
-    echo "<TABLE $tablealign $tablewidth BORDER=0 CELLPADDING=\"$border\" CELLSPACING=0>";
-    echo "<TR><TD BGCOLOR=\"$THEME->borders\">\n";
-    echo "<TABLE $innertablewidth BORDER=0 CELLPADDING=\"$padding\" CELLSPACING=0><TR><TD BGCOLOR=\"$color\">";
+    echo "<table $tablealign $tablewidth class=\"generalbox\" border=\"0\" cellpadding=\"$padding\" cellspacing=\"0\"><tr><td bgcolor=\"$color\">";
 }
 
 function print_simple_box_end() {
-    echo "</TD></TR></TABLE>";
-    echo "</TD></TR></TABLE>";
+    echo "</td></tr></table>";
 }
 
 function print_single_button($link, $options, $label="OK") {
@@ -183,7 +179,7 @@ function print_spacer($height=1, $width=1, $br=true) {
     global $CFG;
     echo "<IMG HEIGHT=\"$height\" WIDTH=\"$width\" SRC=\"$CFG->wwwroot/pix/spacer.gif\" ALT=\"\">";
     if ($br) {
-        echo "<BR>\n";
+        echo "<BR \>\n";
     }
 }
 

@@ -76,10 +76,9 @@
 
 /// Start main column
     echo "</TD><TD WIDTH=\"*\">";
-    print_heading_block(get_string("weeklyoutline"));
+    print_heading_block(get_string("weeklyoutline"), "100%", "outlineheadingblock");
 
-    echo "<TABLE BORDER=0 CELLPADDING=8 CELLSPACING=0 WIDTH=100%>";
-
+    echo "<table class=\"weeklyoutline\" border=\"0\" cellpadding=\"8\" cellspacing=\"0\" width=\"100%\">";
 
 /// Print Week 0 with general activities
 
@@ -203,24 +202,21 @@
         // Print all the news items.
 
         if ($news) {
-            print_heading_block(get_string("latestnews"));
-            print_simple_box_start("CENTER", "100%", $THEME->cellcontent, 3, 0);
-            echo "<FONT SIZE=1>";
+            print_side_block_start(get_string("latestnews"), 210, "sideblocklatestnews");
+            echo "<FONT SIZE=\"-1\">";
             forum_print_latest_discussions($news->id, $course->newsitems, "minimal", "DESC", false);
             echo "</FONT>";
-            print_simple_box_end();
-            echo "<BR \>";
+            print_side_block_end();
         }
         
         // Print all the recent activity
         if ($course->showrecent) {
-            print_heading_block(get_string("recentactivity"));
-            print_simple_box_start("CENTER", "100%", $THEME->cellcontent, 3, 0);
+            print_side_block_start(get_string("recentactivity"), 210, "sideblockrecentactivity");
             print_recent_activity($course);
-            print_simple_box_end();
+            print_side_block_end();
         }
     
-        echo "<BR \><IMG SRC=\"../pix/spacer.gif\" WIDTH=210 HEIGHT=1>";
+        print_spacer(1, 120, true);
     }
 
     echo "</TD></TR></TABLE>\n";

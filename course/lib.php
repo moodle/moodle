@@ -527,16 +527,12 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
     echo "</TD></TR></TABLE><BR>\n\n";
 }
 
-function print_heading_block($heading, $width="100%") {
+function print_heading_block($heading, $width="100%", $class="headingblock") {
     global $THEME;
 
-    echo "<table width=\"$width\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\">";
-    echo "<tr>";
-    echo "<td bgcolor=\"$THEME->borders\">";
-    echo "<table class=\"headingblockouter\" width=\"100%\" border=\"0\" cellspacing=\"1\" cellpadding=\"5\">";
-    echo "<tr><td bgcolor=\"$THEME->cellheading\" class=\"headingblockinner\">";
+    echo "<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"5\">";
+    echo "<tr><td bgcolor=\"$THEME->cellheading\" class=\"$class\">";
     echo stripslashes($heading);
-    echo "</td></tr></table>";
     echo "</td></tr></table>";
 }
 
@@ -546,44 +542,51 @@ function print_side_block($heading="", $content="", $list=NULL, $icons=NULL, $fo
     
     global $THEME;
 
-    echo "<table width=\"$width\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\">";
-    echo "<tr>";
-    echo "<td bgcolor=\"$THEME->borders\">";
-    echo "<table class=\"sideblock\" width=\"100%\" border=\"0\" cellspacing=\"1\" cellpadding=\"5\">";
+    print_side_block_start($heading, $width);
+
+    if ($content) {
+        echo "$content";
+    } else {
+        echo "<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"2\">";
+        foreach ($list as $key => $string) {
+            echo "<tr bgcolor=\"$THEME->cellcontent2\">";
+            if ($icons) {
+                echo "<td class=\"sideblocklinks\" valign=\"top\" width=\"16\">".$icons[$key]."</td>";
+            }
+            echo "<td class=\"sideblocklinks\" valign=\"top\" width=\"*\"><font size=\"-1\">$string</font></td>";
+            echo "</tr>";
+        }
+        if ($footer) {
+            echo "<tr bgcolor=\"$THEME->cellcontent2\">";
+            if ($icons) {
+                echo "<td class=\"sideblocklinks\" valign=\"top\" width=\"16\">&nbsp;</td>";
+            }
+            echo "<td class=\"sideblocklinks\"><font size=\"-1\">$footer</td>";
+            echo "</tr>";
+        }
+        echo "</table>";
+    }
+
+    print_side_block_end();
+}
+
+function print_side_block_start($heading="", $width=180, $class="sideblockmain") {
+// Starts a nice side block with an optional header.
+    
+    global $THEME;
+
+    echo "<table class=\"sideblock\" width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"5\">";
     if ($heading) {
         echo "<tr>";
         echo "<td class=\"sideblockheading\" bgcolor=\"$THEME->cellheading\">$heading</td>";
         echo "</tr>";
     }
-    if ($content) {
-        echo "<tr>";
-        echo "<td class=\"sideblockmain\" bgcolor=\"$THEME->cellcontent2\">$content</td>";
-        echo "</tr>";
-    } else {
-        echo "<tr><td class=\"sideblocklinks\" bgcolor=\"$THEME->cellcontent2\">";
-        echo "<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"2\">";
-        foreach ($list as $key => $string) {
-            echo "<tr class=\"sideblockmain\" bgcolor=\"$THEME->cellcontent2\">";
-            if ($icons) {
-                echo "<td valign=\"top\" width=\"16\">".$icons[$key]."</td>";
-            }
-            echo "<td valign=\"top\" width=\"*\"><font size=\"-1\">$string</font></td>";
-            echo "</tr>";
-        }
-        if ($footer) {
-            echo "<tr class=\"sideblockmain\" bgcolor=\"$THEME->cellcontent2\">";
-            if ($icons) {
-                echo "<td valign=\"top\" width=\"16\">&nbsp;</td>";
-            }
-            echo "<td><font size=\"-1\">$footer</td>";
-            echo "</tr>";
-        }
-        echo "</table>";
-        echo "</td></tr>";
-    }
+    echo "<tr>";
+    echo "<td class=\"$class\" bgcolor=\"$THEME->cellcontent2\">";
+}
 
-    echo "</table></td>";
-    echo "</tr>";
+function print_side_block_end() {
+    echo "</td></tr>";
     echo "</table><br \>";
 }
 
