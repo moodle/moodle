@@ -256,7 +256,7 @@ function record_exists($table, $field1="", $value1="", $field2="", $value2="", $
 */
 function record_exists_sql($sql) {
 
-    global $db;
+    global $CFG, $db;
 
     if (!$rs = $db->Execute($sql)) {
         if (isset($CFG->debug) and $CFG->debug > 7) {
@@ -328,7 +328,7 @@ function count_records_select($table, $select="") {
 */
 function count_records_sql($sql) {
 
-    global $db;
+    global $CFG, $db;
 
     $rs = $db->Execute("$sql");
     if (!$rs) {
@@ -648,7 +648,7 @@ function get_records_select_menu($table, $select="", $sort="", $fields="*") {
 */
 function get_records_sql_menu($sql) {
 
-    global $db;
+    global $CFG, $db;
 
     if (!$rs = $db->Execute($sql)) {
         if (isset($CFG->debug) and $CFG->debug > 7) {
