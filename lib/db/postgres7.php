@@ -452,6 +452,7 @@ function main_upgrade($oldversion=0) {
     if ($oldversion < 2004022200) {     /// Final renaming I hope.  :-)
         if (!empty($CFG->textfilters)) {
             $CFG->textfilters = str_replace("/filter.php", "", $CFG->textfilters);
+            $CFG->textfilters = str_replace("mod/glossary/dynalink.php", "mod/glossary", $CFG->textfilters);
             $textfilters = explode(',', $CFG->textfilters);
             foreach ($textfilters as $key => $textfilter) {
                 $textfilters[$key] = trim($textfilter);
