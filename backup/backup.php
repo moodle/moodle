@@ -74,6 +74,11 @@
     //Print form     
     print_heading("$strcoursebackup: $course->fullname ($course->shortname)");
     print_simple_box_start("center", "", "$THEME->cellheading");
+
+    //Adjust some php variables to the execution of this script
+    ini_set("max_execution_time","300");
+    ini_set("memory_limit","56M");
+
     //Call the form, depending the step we are
     if (!$launch) {
         include_once("backup_form.html");
@@ -88,4 +93,3 @@
     print_footer();
 
 ?>
-

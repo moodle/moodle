@@ -38,7 +38,12 @@
     }
     
     //Check backup_version
-    upgrade_backup_db($backup_version,$backup_release,"restore.php");
+    if ($file) {
+        $linkto = "restore.php?file=".$file;
+    } else {
+        $linkto = "restore.php";
+    }
+    upgrade_backup_db($backup_version,$backup_release,$linkto);
 
     //Get strings
     $strcourserestore = get_string("courserestore");
@@ -72,6 +77,10 @@
     //Print form
     print_heading("$strcourserestore: ".basename($file));
     print_simple_box_start("center", "", "$THEME->cellheading");
+    
+    //Adjust some php variables to the execution of this script
+    ini_set("max_execution_time","300");
+    ini_set("memory_limit","56M");
 
     //Call the form, depending the step we are
     if (!$launch) {
@@ -89,4 +98,3 @@
     print_footer();
 
 ?>
-
