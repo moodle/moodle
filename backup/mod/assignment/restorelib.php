@@ -22,7 +22,7 @@
     //-----------------------------------------------------------
 
     //This function executes all the backup procedure about this mod
-    function assignment_restore_mods($bf,$preferences) {
+    function aassignment_restore_mods($bf,$preferences) {
 
         global $CFG;
 

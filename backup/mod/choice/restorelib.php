@@ -21,7 +21,7 @@
     //
     //-----------------------------------------------------------
 
-    function choice_restore_mods($bf,$preferences) {
+    function cchoice_restore_mods($bf,$preferences) {
         
         global $CFG;
 
