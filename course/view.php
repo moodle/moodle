@@ -47,10 +47,6 @@
             $courseformat = 0;
     }
 
-    //We *always* need to get active blocks (perhaps this should be cached
-    //in a session object and updated in when editing = true ????
-    $recblocks = get_records('blocks','visible','1');
-
     // Doing this now so we can pass the results to block_action()
     // and dodge the overhead of doing the same work twice.
 
@@ -75,7 +71,7 @@
         $leftblocks = explode(',', $leftpart);
         $rightblocks = explode(',', $rightpart);
     }
-    
+
     if (!isset($USER->editing)) {
         $USER->editing = false;
     }
@@ -94,11 +90,11 @@
         $editing = $USER->editing;
 
         if (isset($hide)) {
-            set_section_visible($course->id, $hide, "0");
+            set_section_visible($course->id, $hide, '0');
         }
 
         if (isset($show)) {
-            set_section_visible($course->id, $show, "1");
+            set_section_visible($course->id, $show, '1');
         }
 
         if (isset($_GET['blockaction'])) {
@@ -111,6 +107,8 @@
         $allblocks = array_merge($leftblocks, $rightblocks);
 
         $missingblocks = array();
+        $recblocks = get_records('blocks','visible','1');
+
         if($editing && $recblocks) {
             foreach($recblocks as $recblock) {
                 // If it's not hidden or displayed right now...
@@ -123,7 +121,6 @@
                 }
             }
         }
-
 
         if (!empty($section)) {
             if (!empty($move)) {
@@ -171,11 +168,25 @@
         }
     }
 
-    //Calculate left and right width. This has to be calculated *always*. Perhaps
-    //we could cache it in a session variable and update it only when editing=true ????
-    //This caused some display problems (100 width) in student mode.
-    $preferred_width_left = blocks_preferred_width($leftblocks, $recblocks);
-    $preferred_width_right = blocks_preferred_width($rightblocks, $recblocks);
+    // If the block width cache is not set, set it
+    if(!isset($SESSION->blockcache->width->{$course->id}) || $editing) {
+
+        // This query might be optimized away if we 're in editing mode
+        if(!isset($recblocks)) {
+            $recblocks = get_records('blocks','visible','1');
+        }
+        $preferred_width_left = blocks_preferred_width($leftblocks, $recblocks);
+        $preferred_width_right = blocks_preferred_width($rightblocks, $recblocks);
+
+        // This may be kind of organizational overkill, granted...
+        // But is there any real need to simplify the structure?
+        $SESSION->blockcache->width->{$course->id}->left = $preferred_width_left;
+        $SESSION->blockcache->width->{$course->id}->right = $preferred_width_right;
+    }
+    else {
+        $preferred_width_left = $SESSION->blockcache->width->{$course->id}->left;
+        $preferred_width_right = $SESSION->blockcache->width->{$course->id}->right;
+    }
 
     require("$CFG->dirroot/course/format/$course->format/format.php");  // Include the actual course format
 
