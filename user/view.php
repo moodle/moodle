@@ -124,6 +124,18 @@
         print_row("icq:","<a href=\"http://web.icq.com/wwp?uin=$user->icq\">$user->icq <img src=\"http://web.icq.com/whitepages/online?icq=$user->icq&img=5\" width=18 height=18 border=0></a>");
     }
 
+    if (isteacher($course->id)) {
+        if ($mycourses = get_my_courses($user->id)) {
+            $courselisting = '';
+            foreach ($mycourses as $mycourse) {
+                if ($mycourse->visible) {
+                    $courselisting .= "<a href=\"$CFG->wwwroot/course/view.php?id=$mycourse->id\">$mycourse->fullname</a>, ";
+                }
+            }
+            print_row(get_string('courses').':', rtrim($courselisting,', '));
+        }
+    }
+
     if ($user->lastaccess) {
         $datestring = userdate($user->lastaccess)."&nbsp (".format_time(time() - $user->lastaccess).")";
     } else {
