@@ -482,6 +482,10 @@
 
         $status = true;
 
+        if (!isset($info['#']['ANSWERS'])) {    // No answers in this question (eg random)
+            return $status;
+        }
+
         //Get the answers array
         $answers = $info['#']['ANSWERS']['0']['#']['ANSWER'];
 
