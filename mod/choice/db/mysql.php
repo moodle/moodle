@@ -60,7 +60,7 @@ function choice_upgrade($oldversion) {
         if (execute_sql("CREATE TABLE {$CFG->prefix}choice_options (
                              `id` int(10) unsigned NOT NULL auto_increment, 
                              `choiceid` int(10) unsigned NOT NULL default '0', 
-                             `answer` TEXT, 
+                             `text` TEXT, 
                              `timemodified` int(10) NOT NULL default '0', 
                              PRIMARY KEY  (id), 
                              UNIQUE KEY id (id), 
@@ -79,8 +79,8 @@ function choice_upgrade($oldversion) {
                 foreach ($choices as $choice) {
                     for ($i=1; $i<=6; $i++) {      // We used to have six columns
                         $option = new stdClass;
-                        $option->choiceid = $choice->id;
-                        $option->answer = $choice->{'answer'.$i};
+                        $option->choiceid     = $choice->id;
+                        $option->text         = $choice->{'answer'.$i};
                         $option->timemodified = $choice->timemodified;
                         if ($option->id = insert_record('choice_options', $option)) { 
                             /// Update all the user answers to fit the new value
