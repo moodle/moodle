@@ -6,7 +6,9 @@ This documment shows the current status of the backup/restore option.
 Backup:  WORKING. COMPLETED but only assignments, resources,
                   choices and surveys.
 
-Restore: NOT WORKING. No comments.
+Restore: WORKING. NOT COMPLETED. Only course, users, user_files and 
+                  course_files. No logs, mods or final checks !!!!
+                  
 
 ========== ========== ========== ========== ========== ==========
 
@@ -106,7 +108,7 @@ Restore Details:
    - Delete old entries at restore start........................DONE
       - From database...........................................DONE
       - From filesystem.........................................DONE
-   - Restore FrontEnd...........................................IN PROGRESS
+   - Restore FrontEnd...........................................DONE
         - Check Security........................................DONE
         - Select File to Restore................................DONE
         - Uncompress the backup (unzip).........................DONE
@@ -177,8 +179,9 @@ Restore Details:
                  + course data..................................NO EXISTS
                  + user data....................................NO EXISTS
                  + files........................................NO EXISTS
-   - User files from temp.......................................IN PROGRESS
-   - Course files from temp.....................................NO EXISTS
+   - User files from temp.......................................DONE
+   - Course files from temp.....................................DONE
+   - Log entries................................................NO EXISTS
    - Readjust instance in course_modules........................NO EXISTS
    - Readjust modinfo in course (serialize).....................NO EXISTS
    - Delete old entries at restore end.  .......................NO EXISTS   
