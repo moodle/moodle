@@ -198,7 +198,7 @@
             if ($message and confirm_sesskey()) {   /// Current user has just sent a message
 
             /// Save it to the database...
-                message_post_message($USER, $user, $message, $format, 'direct');
+                $messageid = message_post_message($USER, $user, $message, $format, 'direct');
 
             /// Format the message as HTML
                 $options = NULL;
@@ -220,7 +220,7 @@
                 $date = usergetdate($message->timecreated);
                 $datestring = $date['year'].$date['mon'].$date['mday'];
 
-                add_to_log(SITEID, 'message', 'write', 'history.php?user1='.$user->id.'&amp;user2='.$USER->id.'#'.$datestring, $user->id);
+                add_to_log(SITEID, 'message', 'write', 'history.php?user1='.$user->id.'&amp;user2='.$USER->id.'#m'.$messageid, $user->id);
             } else {
                 $script  = '';
             }

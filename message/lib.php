@@ -478,7 +478,7 @@ function message_print_search_results($frm) {
                 echo '<td class="message_summary">'.message_get_fragment($message->message, $keywords);
                 echo '<br /><div class="message_summary_link">';
                 message_history_link($message->useridto, $message->useridfrom, false, 
-                                     $keywordstring, $datestring, $strcontext);
+                                     $keywordstring, 'm'.$message->id, $strcontext);
                 echo '</div>';
                 echo '</td>';
                 echo '<td class="message_date">'.userdate($message->timecreated, $dateformat).'</td>';
@@ -913,7 +913,7 @@ function message_format_message(&$message, &$user, $format='', $keywords='') {
     if ($keywords) {
         $messagetext = highlight($keywords, $messagetext);
     }
-    return '<p><font size="-1"><strong>'.s($user->firstname).'</strong> ['.$time.']: '.
+    return '<p><a name="m'.$message->id.'"></a><font size="-1"><strong>'.s($user->firstname).'</strong> ['.$time.']: '.
             $messagetext.'</font></p>';
 }
 
@@ -935,7 +935,7 @@ function message_post_message($userfrom, $userto, $message, $format, $messagetyp
     $savemessage->timecreated   = time();
     $savemessage->messagetype   = 'direct';
 
-    if (!insert_record('message', $savemessage)) {
+    if (!$savemessage->id = insert_record('message', $savemessage)) {
         return false;
     }
 
@@ -967,7 +967,7 @@ function message_post_message($userfrom, $userto, $message, $format, $messagetyp
         }
     }
 
-    return true;
+    return $savemessage->id;
 }
 
 ?>
