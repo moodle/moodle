@@ -115,7 +115,7 @@
                                   "border=0 alt=\"$streditsummary\"></a></p>";
         }
     
-        echo text_to_html($thissection->summary);
+        echo format_text($thissection->summary);
     
         print_section($course, $thissection, $mods, $modnamesused);
 
@@ -206,7 +206,7 @@
                       "<img src=\"$CFG->pixpath/t/edit.gif\" height=11 width=11 border=0></a></p>";
             }
 
-            echo text_to_html($thissection->summary);
+            echo format_text($thissection->summary);
 
             print_section($course, $thissection, $mods, $modnamesused);
 
