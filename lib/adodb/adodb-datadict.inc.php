@@ -1,7 +1,7 @@
 <?php
 
 /**
-  V4.20 22 Feb 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
+  V4.50 6 July 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -16,6 +16,10 @@
 /*
 	Test script for parser
 */
+
+// security - hide paths
+if (!defined('ADODB_DIR')) die();
+
 function Lens_ParseTest()
 {
 $str = "`zcol ACOL` NUMBER(32,2) DEFAULT 'The \"cow\" (and Jim''s dog) jumps over the moon' PRIMARY, INTI INT AUTO DEFAULT 0";
@@ -257,7 +261,7 @@ class ADODB_DataDict {
 				$rez = 1;
 			}
 		}
-		return 2;
+		return $rez;
 	}
 	
 	/*
@@ -645,10 +649,13 @@ class ADODB_DataDict {
 	*/
 	function ChangeTableSQL($tablename, $flds, $tableoptions = false)
 	{
-		if ( !is_array($cols = &$this->MetaColumns($tablename)) ) {
+		// check table exists
+		$cols = &$this->MetaColumns($tablename);
+		if ( empty($cols)) { 
 			return $this->CreateTableSQL($tablename, $flds, $tableoptions);
 		}
 		
+		// already exists, alter table instead
 		list($lines,$pkey) = $this->_GenFields($flds);
 		$alter = 'ALTER TABLE ' . $this->TableName($tablename);
 		$sql = array();

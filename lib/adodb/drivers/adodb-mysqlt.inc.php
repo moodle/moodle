@@ -1,7 +1,7 @@
 <?php
 
 /*
-V4.20 22 Feb 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
+V4.50 6 July 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -13,6 +13,8 @@ V4.20 22 Feb 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights rese
   Requires mysql client. Works on Windows and Unix.
 */
 
+// security - hide paths
+if (!defined('ADODB_DIR')) die();
 
 include_once(ADODB_DIR."/drivers/adodb-mysql.inc.php");
 
@@ -21,6 +23,7 @@ class ADODB_mysqlt extends ADODB_mysql {
 	var $databaseType = 'mysqlt';
 	var $ansiOuter = true; // for Version 3.23.17 or later
 	var $hasTransactions = true;
+	var $autoRollback = true; // apparently mysql does not autorollback properly 
 	
 	function BeginTrans()
 	{	  

@@ -1,7 +1,7 @@
 <?php
 
 /** 
- * @version V4.20 22 Feb 2004 (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
+ * @version V4.50 6 July 2004 (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
  * Released under both BSD license and Lesser GPL library license. 
  * Whenever there is any discrepancy between the two licenses, 
  * the BSD license will take precedence. 
@@ -57,7 +57,7 @@ function rs2tabout(&$rs,$addtitles=true)
 {
 	$fp = fopen('php://stdout','wb');
 	_adodb_export($rs,"\t",' ',true,$addtitles);
-	fclose($fp);
+	if ($fp) fclose($fp);
 }
 
 function _adodb_export(&$rs,$sep,$sepreplace,$fp=false,$addtitles=true,$quote = '"',$escquote = '"',$replaceNewLine = ' ')

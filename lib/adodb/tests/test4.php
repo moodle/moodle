@@ -1,7 +1,7 @@
 <?php
 
 /** 
- * @version V4.20 22 Feb 2004 (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
+ * @version V4.50 6 July 2004 (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
  * Released under both BSD license and Lesser GPL library license. 
  * Whenever there is any discrepancy between the two licenses, 
  * the BSD license will take precedence. 
@@ -31,10 +31,13 @@ FROM ADOXYZ WHERE id = -1";
 // Select an empty record from the database 
 
 $conn = &ADONewConnection("mysql");  // create a connection
+$conn->PConnect("localhost", "root", "", "test"); // connect to MySQL, testdb
+
+//$conn =& ADONewConnection('oci8');
+//$conn->Connect('','scott','natsoft');
 //$ADODB_FETCH_MODE = ADODB_FETCH_ASSOC;
 
 $conn->debug=1;
-$conn->PConnect("localhost", "root", "", "test"); // connect to MySQL, testdb
 $conn->Execute("delete from adoxyz where lastname like 'Smith%'");
 
 $rs = $conn->Execute($sql); // Execute the query and get the empty recordset
@@ -53,6 +56,8 @@ $insertSQL = $conn->GetInsertSQL($rs, $record);
 
 $conn->Execute($insertSQL); // Insert the record into the database
 
+$insertSQL2 = $conn->GetInsertSQL($table='ADOXYZ', $record);
+if ($insertSQL != $insertSQL2) echo "<p><b>Walt's new stuff failed</b>: $insertSQL2</p>";
 //==========================
 // This code tests an update
 
@@ -62,7 +67,7 @@ FROM ADOXYZ WHERE lastname=".$conn->qstr($record['lastname']);
 // Select a record to update 
 
 $rs = $conn->Execute($sql); // Execute the query and get the existing record to update
-if (!$rs) print "<p>No record found!</p>";
+if (!$rs) print "<p><b>No record found!</b></p>";
 
 $record = array(); // Initialize an array to hold the record data to update
 
@@ -78,7 +83,7 @@ $record['num'] = 3921;
 $updateSQL = $conn->GetUpdateSQL($rs, $record);
 
 $conn->Execute($updateSQL); // Update the record in the database
-print "<p>Rows Affected=".$conn->Affected_Rows()."</p>";
+if ($conn->Affected_Rows() != 1)print "<p><b>Error</b>: Rows Affected=".$conn->Affected_Rows().", should be 1</p>";
 
 $rs = $conn->Execute("select * from adoxyz where lastname like 'Smith%'");
 adodb_pr($rs);

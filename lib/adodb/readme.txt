@@ -22,8 +22,9 @@ We hope more people will contribute drivers to support other databases.
 
 >> Documentation and Examples
 
-Refer to readme.htm for full documentation and examples. There is also a 
-tutorial tute.htm that contrasts ADODB code with mysql code.
+Refer to the adodb/docs directory for full documentation and examples. 
+There is also a  tutorial tute.htm that contrasts ADODB code with 
+mysql code.
 
 
 >>> Files

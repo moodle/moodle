@@ -1,7 +1,7 @@
 <?php
 /*
 
-  V4.20 22 Feb 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
+  V4.50 6 July 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -13,7 +13,7 @@
 error_reporting(E_ALL);
 include_once('../adodb.inc.php');
 
-foreach(array('sybase','mysql','access','oci8','postgres','odbc_mssql','odbc','sybase','firebird','informix','db2') as $dbType) {
+foreach(array('sybase','mysqlt','access','oci8','postgres','odbc_mssql','odbc','sybase','firebird','informix','db2') as $dbType) {
 	echo "<h3>$dbType</h3><p>";
 	$db = NewADOConnection($dbType);
 	$dict = NewDataDictionary($db);
@@ -21,7 +21,7 @@ foreach(array('sybase','mysql','access','oci8','postgres','odbc_mssql','odbc','s
 	if (!$dict) continue;
 	$dict->debug = 1;
 	
-	$opts = array('REPLACE','mysql' => 'TYPE=ISAM', 'oci8' => 'TABLESPACE USERS');
+	$opts = array('REPLACE','mysql' => 'TYPE=INNODB', 'oci8' => 'TABLESPACE USERS');
 	
 /*	$flds = array(
 		array('id',	'I',								

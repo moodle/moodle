@@ -1,18 +1,21 @@
 <?php
 /*
-V4.20 22 Feb 2004  (c) 2000-2004 John Lim. All rights reserved.
+V4.50 6 July 2004  (c) 2000-2004 John Lim. All rights reserved.
   Released under both BSD license and Lesser GPL library license.
   Whenever there is any discrepancy between the two licenses,
   the BSD license will take precedence.
   Set tabs to 4 for best viewing.
 
-  Latest version is available at http://php.weblogs.com/
+  Latest version is available at http://adodb.sourceforge.net
 
   Informix port by Mitchell T. Young (mitch@youngfamily.org)
 
   Further mods by "Samuel CARRIERE" <samuel_carriere@hotmail.com>
 
 */
+
+// security - hide paths
+if (!defined('ADODB_DIR')) die();
 
 if (!defined('IFX_SCROLL')) define('IFX_SCROLL',1);
 
@@ -26,13 +29,21 @@ class ADODB_informix72 extends ADOConnection {
 	var $hasAffectedRows = true;
 	var $upperCase = 'upper';
     var $substr = 'substr';
-	var $metaTablesSQL="select tabname from systables";
-	var $metaColumnsSQL = 
-"select c.colname, c.coltype, c.collength, d.default 
-	from syscolumns c, systables t,sysdefaults d 
-	where c.tabid=t.tabid and d.tabid=t.tabid and d.colno=c.colno and tabname='%s'";
+	var $metaTablesSQL="select tabname from systables where tabtype!=' ' and owner!='informix'"; //Don't get informix tables and pseudo-tables
 
-//	var $metaColumnsSQL = "select colname, coltype, collength from syscolumns c, systables t where c.tabid=t.tabid and tabname='%s'";
+
+	var $metaColumnsSQL = 
+		"select c.colname, c.coltype, c.collength, d.default,c.colno
+		from syscolumns c, systables t,outer sysdefaults d
+		where c.tabid=t.tabid and d.tabid=t.tabid and d.colno=c.colno
+		and tabname='%s' order by c.colno";
+
+	var $metaPrimaryKeySQL =
+		"select part1,part2,part3,part4,part5,part6,part7,part8 from
+		systables t,sysconstraints s,sysindexes i where t.tabname='%s'
+		and s.tabid=t.tabid and s.constrtype='P'
+		and i.idxname=s.idxname";
+
 	var $concat_operator = '||';
 
 	var $lastQuery = false;
@@ -149,12 +160,14 @@ class ADODB_informix72 extends ADOConnection {
 			if (isset($savem)) $this->SetFetchMode($savem);
 			$ADODB_FETCH_MODE = $save;
 			if ($rs === false) return false;
+			$rspkey = $this->Execute(sprintf($this->metaPrimaryKeySQL,$table)); //Added to get primary key colno items
 
 			$retarr = array();
 			while (!$rs->EOF) { //print_r($rs->fields);
 				$fld = new ADOFieldObject();
 				$fld->name = $rs->fields[0];
 				$fld->type = $rs->fields[1];
+				$fld->primary_key=$rspkey->fields && array_search($rs->fields[4],$rspkey->fields); //Added to set primary key flag
 				$fld->max_length = $rs->fields[2];
 				if (trim($rs->fields[3]) != "AAAAAA 0") {
 	                    		$fld->has_default = 1;
@@ -194,7 +207,7 @@ class ADODB_informix72 extends ADOConnection {
 	// returns true or false
    function _connect($argHostname, $argUsername, $argPassword, $argDatabasename)
 	{
-		if (!function_exists('ifx_connect')) return false;
+		if (!function_exists('ifx_connect')) return null;
 		
 		$dbs = $argDatabasename . "@" . $argHostname;
 		if ($argHostname) putenv("INFORMIXSERVER=$argHostname"); 
@@ -208,7 +221,7 @@ class ADODB_informix72 extends ADOConnection {
 	// returns true or false
    function _pconnect($argHostname, $argUsername, $argPassword, $argDatabasename)
 	{
-		if (!function_exists('ifx_connect')) return false;
+		if (!function_exists('ifx_connect')) return null;
 		
 		$dbs = $argDatabasename . "@" . $argHostname;
 		putenv("INFORMIXSERVER=".trim($argHostname)); 

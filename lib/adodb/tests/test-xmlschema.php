@@ -1,6 +1,6 @@
 <?PHP
 
-// V4.20 22 Feb 2004
+// V4.50 6 July 2004
 
 error_reporting(E_ALL);
 
@@ -31,4 +31,21 @@ print "</pre>\n";
 // Finally, clean up after the XML parser
 // (PHP won't do this for you!)
 //$schema->Destroy();
+
+
+$db2 = ADONewConnection('mssql');
+$db2->Connect('localhost','sa','natsoft','northwind') || die("Fail 2");
+
+$db2->Execute("drop table simple_table");
+
+$schema = new adoSchema( $db2 );
+$sql = $schema->ParseSchema( "xmlschema-mssql.xml" );
+
+print "Here's the SQL to do the build:\n<pre>";
+print_r( $sql );
+print "</pre>\n";
+
+$db2->debug=1;
+
+$db2->Execute($sql[0]);
 ?>

@@ -1,18 +1,21 @@
 <?php
 /* 
-V4.20 22 Feb 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
+V4.50 6 July 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. 
 Set tabs to 4 for best viewing.
   
-  Latest version is available at http://php.weblogs.com/
+  Latest version is available at http://adodb.sourceforge.net
   
   Native mssql driver. Requires mssql client. Works on Windows. 
   To configure for Unix, see 
    	http://phpbuilder.com/columns/alberto20000919.php3
 	
 */
+
+// security - hide paths
+if (!defined('ADODB_DIR')) die();
 
 //----------------------------------------------------------------
 // MSSQL returns dates with the format Oct 13 2002 or 13 Oct 2002
@@ -435,7 +438,7 @@ order by constraint_name, referenced_table_name, keyno";
 	// returns true or false
 	function _connect($argHostname, $argUsername, $argPassword, $argDatabasename)
 	{
-		if (!function_exists('mssql_pconnect')) return false;
+		if (!function_exists('mssql_pconnect')) return null;
 		$this->_connectionID = mssql_connect($argHostname,$argUsername,$argPassword);
 		if ($this->_connectionID === false) return false;
 		if ($argDatabasename) return $this->SelectDB($argDatabasename);
@@ -446,7 +449,7 @@ order by constraint_name, referenced_table_name, keyno";
 	// returns true or false
 	function _pconnect($argHostname, $argUsername, $argPassword, $argDatabasename)
 	{
-		if (!function_exists('mssql_pconnect')) return false;
+		if (!function_exists('mssql_pconnect')) return null;
 		$this->_connectionID = mssql_pconnect($argHostname,$argUsername,$argPassword);
 		if ($this->_connectionID === false) return false;
 		
@@ -771,7 +774,7 @@ class ADORecordset_mssql extends ADORecordSet {
 					$this->fields = @mssql_fetch_assoc($this->_queryID);
 				else {
 					$this->fields = @mssql_fetch_array($this->_queryID);
-					if (is_array($$this->fields)) {
+					if (@is_array($$this->fields)) {
 						$fassoc = array();
 						foreach($$this->fields as $k => $v) {
 							if (is_integer($k)) continue;

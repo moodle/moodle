@@ -1,15 +1,18 @@
 <?php
 /* 
-V4.20 22 Feb 2004  (c) 2000-2004 John Lim (jlim#natsoft.com.my). All rights reserved.
+V4.50 6 July 2004  (c) 2000-2004 John Lim (jlim#natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. 
 Set tabs to 4 for best viewing.
   
-  Latest version is available at http://php.weblogs.com/
+  Latest version is available at http://adodb.sourceforge.net
   
   Requires ODBC. Works on Windows and Unix.
 */
+// security - hide paths
+if (!defined('ADODB_DIR')) die();
+
   define("_ADODB_ODBC_LAYER", 2 );
 	 
 /*--------------------------------------------------------------------------------------
@@ -157,15 +160,15 @@ class ADODB_odbc extends ADOConnection {
 	{
 	global $php_errormsg;
 		
-		if (!function_exists('odbc_connect')) return false;
+		if (!function_exists('odbc_connect')) return null;
 		
-		if ($this->debug && $argDatabasename) {
+		if ($this->debug && $argDatabasename && $this->databaseType != 'vfp') {
 			ADOConnection::outp("For odbc Connect(), $argDatabasename is not used. Place dsn in 1st parameter.");
 		}
-		$php_errormsg = '';
+		if (isset($php_errormsg)) $php_errormsg = '';
 		if ($this->curmode === false) $this->_connectionID = odbc_connect($argDSN,$argUsername,$argPassword);
 		else $this->_connectionID = odbc_connect($argDSN,$argUsername,$argPassword,$this->curmode);
-		$this->_errorMsg = $php_errormsg;
+		$this->_errorMsg = isset($php_errormsg) ? $php_errormsg : '';
 		if (isset($this->connectStmt)) $this->Execute($this->connectStmt);
 		
 		//if ($this->_connectionID) odbc_autocommit($this->_connectionID,true);
@@ -177,9 +180,10 @@ class ADODB_odbc extends ADOConnection {
 	{
 	global $php_errormsg;
 	
-		if (!function_exists('odbc_connect')) return false;
+		if (!function_exists('odbc_connect')) return null;
 		
-		$php_errormsg = '';
+		if (isset($php_errormsg)) $php_errormsg = '';
+		$this->_errorMsg = isset($php_errormsg) ? $php_errormsg : '';
 		if ($this->debug && $argDatabasename) {
 			ADOConnection::outp("For odbc PConnect(), $argDatabasename is not used. Place dsn in 1st parameter.");
 		}
@@ -187,7 +191,7 @@ class ADODB_odbc extends ADOConnection {
 		if ($this->curmode === false) $this->_connectionID = odbc_connect($argDSN,$argUsername,$argPassword);
 		else $this->_connectionID = odbc_pconnect($argDSN,$argUsername,$argPassword,$this->curmode);
 		
-		$this->_errorMsg = $php_errormsg;
+		$this->_errorMsg = isset($php_errormsg) ? $php_errormsg : '';
 		if ($this->_connectionID && $this->autoRollback) @odbc_rollback($this->_connectionID);
 		if (isset($this->connectStmt)) $this->Execute($this->connectStmt);
 		
@@ -466,7 +470,7 @@ class ADODB_odbc extends ADOConnection {
 	function _query($sql,$inputarr=false) 
 	{
 	GLOBAL $php_errormsg;
-		$php_errormsg = '';
+		if (isset($php_errormsg)) $php_errormsg = '';
 		$this->_error = '';
 		
 		if ($inputarr) {
@@ -476,7 +480,7 @@ class ADODB_odbc extends ADOConnection {
 				$stmtid = odbc_prepare($this->_connectionID,$sql);
 	
 				if ($stmtid == false) {
-					$this->_errorMsg = $php_errormsg;
+					$this->_errorMsg = isset($php_errormsg) ? $php_errormsg : '';
 					return false;
 				}
 			}
@@ -518,13 +522,13 @@ class ADODB_odbc extends ADOConnection {
 				$this->_errorMsg = '';
 				$this->_errorCode = 0;
 			} else
-				$this->_errorMsg = $php_errormsg;
+				$this->_errorMsg = isset($php_errormsg) ? $php_errormsg : '';
 		} else {
 			if ($this->_haserrorfunctions) {
 				$this->_errorMsg = odbc_errormsg();
 				$this->_errorCode = odbc_error();
 			} else
-				$this->_errorMsg = $php_errormsg;
+				$this->_errorMsg = isset($php_errormsg) ? $php_errormsg : '';
 		}
 		return $stmtid;
 	}

@@ -1,15 +1,19 @@
 <?php
+
+// security - hide paths
+if (!defined('ADODB_DIR')) die();
+
 global $ADODB_INCLUDED_CSV;
 $ADODB_INCLUDED_CSV = 1;
 
 /* 
-  V4.20 22 Feb 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
+  V4.50 6 July 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. See License.txt. 
   Set tabs to 4 for best viewing.
   
-  Latest version is available at http://php.weblogs.com/
+  Latest version is available at http://adodb.sourceforge.net
   
   Library for CSV serialization. This is used by the csv/proxy driver and is the 
   CacheExecute() serialization format. 
@@ -42,31 +46,30 @@ $ADODB_INCLUDED_CSV = 1;
 			
 			$text = "====-1,0,$sql\n";
 			return $text;
-		} else {
-			$tt = ($rs->timeCreated) ? $rs->timeCreated : time();
-			$line = "====0,$tt,$sql\n";
 		}
-		// column definitions
-		for($i=0; $i < $max; $i++) {
-			$o = $rs->FetchField($i);
-			$line .= urlencode($o->name).':'.$rs->MetaType($o->type,$o->max_length,$o).":$o->max_length,";
-		}
-		$text = substr($line,0,strlen($line)-1)."\n";
+		$tt = ($rs->timeCreated) ? $rs->timeCreated : time();
 		
+		## changed format from ====0 to ====1
+		$line = "====1,$tt,$sql\n";
 		
-		// get data
 		if ($rs->databaseType == 'array') {
-			$text .= serialize($rs->_array);
+			$rows =& $rs->_array;
 		} else {
 			$rows = array();
 			while (!$rs->EOF) {	
 				$rows[] = $rs->fields;
 				$rs->MoveNext();
 			} 
-			$text .= serialize($rows);
 		}
-		$rs->MoveFirst();
-		return $text;
+		
+		for($i=0; $i < $max; $i++) {
+			$o =& $rs->FetchField($i);
+			$flds[] = $o;
+		}
+		
+		$rs =& new ADORecordSet_array();
+		$rs->InitArrayFields($rows,$flds);
+		return $line.serialize($rs);
 	}
 
 	
@@ -84,7 +87,7 @@ $ADODB_INCLUDED_CSV = 1;
 	function &csv2rs($url,&$err,$timeout=0)
 	{
 		$err = false;
-		$fp = @fopen($url,'r');
+		$fp = @fopen($url,'rb');
 		if (!$fp) {
 			$err = $url.' file/URL not found';
 			return false;
@@ -93,9 +96,9 @@ $ADODB_INCLUDED_CSV = 1;
 		$arr = array();
 		$ttl = 0;
 		
-		if ($meta = fgetcsv ($fp, 32000, ",")) {
+		if ($meta = fgetcsv($fp, 32000, ",")) {
 			// check if error message
-			if (substr($meta[0],0,4) === '****') {
+			if (strncmp($meta[0],'****',4) === 0) {
 				$err = trim(substr($meta[0],4,1024));
 				fclose($fp);
 				return false;
@@ -104,7 +107,7 @@ $ADODB_INCLUDED_CSV = 1;
 			// $meta[0] is -1 means return an empty recordset
 			// $meta[1] contains a time 
 	
-			if (substr($meta[0],0,4) ===  '====') {
+			if (strncmp($meta[0], '====',4) === 0) {
 			
 				if ($meta[0] == "====-1") {
 					if (sizeof($meta) < 5) {
@@ -120,26 +123,35 @@ $ADODB_INCLUDED_CSV = 1;
 					}
 					$rs->fields = array();
 					$rs->timeCreated = $meta[1];
-					$rs = new ADORecordSet($val=true);
+					$rs =& new ADORecordSet($val=true);
 					$rs->EOF = true;
 					$rs->_numOfFields=0;
 					$rs->sql = urldecode($meta[2]);
 					$rs->affectedrows = (integer)$meta[3];
 					$rs->insertid = $meta[4];	
 					return $rs;
-				}
+				} 
 			# Under high volume loads, we want only 1 thread/process to _write_file
 			# so that we don't have 50 processes queueing to write the same data.
-			# Would require probabilistic blocking write 
+			# We use probabilistic timeout, ahead of time.
 			#
-			# -2 sec before timeout, give processes 1/16 chance of writing to file with blocking io
-			# -1 sec after timeout give processes 1/4 chance of writing with blocking
-			# +0 sec after timeout, give processes 100% chance writing with blocking
+			# -4 sec before timeout, give processes 1/32 chance of timing out
+			# -2 sec before timeout, give processes 1/16 chance of timing out
+			# -1 sec after timeout give processes 1/4 chance of timing out
+			# +0 sec after timeout, give processes 100% chance of timing out
 				if (sizeof($meta) > 1) {
 					if($timeout >0){ 
-						$tdiff = $meta[1]+$timeout - time();
+						$tdiff = (integer)( $meta[1]+$timeout - time());
 						if ($tdiff <= 2) {
 							switch($tdiff) {
+							case 4:
+							case 3:
+								if ((rand() & 31) == 0) {
+									fclose($fp);
+									$err = "Timeout 3";
+									return false;
+								}
+								break;
 							case 2: 
 								if ((rand() & 15) == 0) {
 									fclose($fp);
@@ -164,8 +176,30 @@ $ADODB_INCLUDED_CSV = 1;
 					}// (timeout>0)
 					$ttl = $meta[1];
 				}
+				//================================================
+				// new cache format - use serialize extensively...
+				if ($meta[0] === '====1') {
+					// slurp in the data
+					$MAXSIZE = 128000;
+					
+					$text = fread($fp,$MAXSIZE);
+					if (strlen($text)) {
+						while ($txt = fread($fp,$MAXSIZE)) {
+							$text .= $txt;
+						}
+					}
+					fclose($fp);
+					$rs = unserialize($text);
+					if (is_object($rs)) $rs->timeCreated = $ttl;
+					else {
+						$err = "Unable to unserialize recordset";
+						//echo htmlspecialchars($text),' !--END--!<p>';
+					}
+					return $rs;
+				}
+				
 				$meta = false;
-				$meta = fgetcsv($fp, 16000, ",");
+				$meta = fgetcsv($fp, 32000, ",");
 				if (!$meta) {
 					fclose($fp);
 					$err = "Unexpected EOF 1";
@@ -182,7 +216,7 @@ $ADODB_INCLUDED_CSV = 1;
 					$flds = false;
 					break;
 				}
-				$fld = new ADOFieldObject();
+				$fld =& new ADOFieldObject();
 				$fld->name = urldecode($o2[0]);
 				$fld->type = $o2[1];
 				$fld->max_length = $o2[2];
@@ -203,14 +237,14 @@ $ADODB_INCLUDED_CSV = 1;
 		}
 			
 		fclose($fp);
-		$arr = @unserialize($text);
+		@$arr = unserialize($text);
 		//var_dump($arr);
 		if (!is_array($arr)) {
 			$err = "Recordset had unexpected EOF (in serialized recordset)";
 			if (get_magic_quotes_runtime()) $err .= ". Magic Quotes Runtime should be disabled!";
 			return false;
 		}
-		$rs = new ADORecordSet_array();
+		$rs =& new ADORecordSet_array();
 		$rs->timeCreated = $ttl;
 		$rs->InitArrayFields($arr,$flds);
 		return $rs;

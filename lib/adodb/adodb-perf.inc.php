@@ -1,12 +1,12 @@
 <?php
 /* 
-V4.20 22 Feb 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
+V4.50 6 July 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. See License.txt. 
   Set tabs to 4 for best viewing.
   
-  Latest version is available at http://php.weblogs.com/
+  Latest version is available at http://adodb.sourceforge.net
   
   Library for basic performance monitoring and tuning.
   
@@ -19,6 +19,12 @@ V4.20 22 Feb 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights rese
 if (!defined(ADODB_DIR)) include_once(dirname(__FILE__).'/adodb.inc.php');
 include_once(ADODB_DIR.'/tohtml.inc.php');
 
+
+// avoids localization problems where , is used instead of .
+function adodb_round($n,$prec)
+{
+	return number_format($n, $prec, '.', '');
+}
 
 /* return microtime value as a float */
 function adodb_microtime()
@@ -89,8 +95,8 @@ global $HTTP_SERVER_VARS;
 		
 		if (is_array($sql)) $sql = $sql[0];
 		$arr = array('b'=>trim(substr($sql,0,230)),
-					'c'=>substr($sql,0,3900), 'd'=>$params,'e'=>$tracer,'f'=>round($time,6));
-
+					'c'=>substr($sql,0,3900), 'd'=>$params,'e'=>$tracer,'f'=>adodb_round($time,6));
+		//var_dump($arr);
 		$saved = $conn->debug;
 		$conn->debug = 0;
 		
@@ -402,7 +408,7 @@ Committed_AS:   348732 kB
 					$suffix = ' ... <i>String too long for GET parameter: '.strlen($prefix).'</i>';
 					$prefix = '';
 				}
-				$s .= "<tr><td>".round($rs->fields[0],6)."<td align=right>".$rs->fields[2]."<td><font size=-1>".$prefix.htmlspecialchars($sql).$suffix."</font>".
+				$s .= "<tr><td>".adodb_round($rs->fields[0],6)."<td align=right>".$rs->fields[2]."<td><font size=-1>".$prefix.htmlspecialchars($sql).$suffix."</font>".
 					"<td>".$rs->fields[3]."<td>".$rs->fields[4]."</tr>";
 				$rs->MoveNext();
 			}
@@ -478,7 +484,7 @@ Committed_AS:   348732 kB
 					$prefix = '';
 					$suffix = '';
 				}
-				$s .= "<tr><td>".round($rs->fields[0],6)."<td align=right>".$rs->fields[2]."<td><font size=-1>".$prefix.htmlspecialchars($sql).$suffix."</font>".
+				$s .= "<tr><td>".adodb_round($rs->fields[0],6)."<td align=right>".$rs->fields[2]."<td><font size=-1>".$prefix.htmlspecialchars($sql).$suffix."</font>".
 					"<td>".$rs->fields[3]."<td>".$rs->fields[4]."</tr>";
 				$rs->MoveNext();
 			}
@@ -597,7 +603,7 @@ Committed_AS:   348732 kB
 	if (!isset($_SESSION['ADODB_PERF_SQL'])) $nsql = $_SESSION['ADODB_PERF_SQL'] = 10;
 	else  $nsql = $_SESSION['ADODB_PERF_SQL'];
 	
-	$app .= '<font size=-1>'.$info['description'].'</font>';
+	$app .= $info['description'];
 	
 	
 	if (isset($HTTP_GET_VARS['do'])) $do = $HTTP_GET_VARS['do'];
@@ -616,10 +622,10 @@ Committed_AS:   348732 kB
 	
 	if  (empty($HTTP_GET_VARS['hidem']))
 	echo "<table border=1 width=100% bgcolor=lightyellow><tr><td colspan=2>
-	<b><a href=http://php.weblogs.com/adodb?perf=1>ADOdb</a> Performance Monitor</b> for $app</tr><tr><td>
-	<a href=?do=stats>Performance Stats</a> &nbsp; <a href=?do=viewsql>View SQL</a>
-	 &nbsp; <a href=?do=tables>View Tables</a> &nbsp; <a href=?do=poll>Poll Stats</a>",
-	 $allowsql ? ' &nbsp; <a href=?do=dosql>Run SQL</a>' : '',
+	<b><a href=http://php.weblogs.com/adodb?perf=1>ADOdb</a> Performance Monitor</b> <font size=1>for $app</font></tr><tr><td>
+	<a href=?do=stats><b>Performance Stats</b></a> &nbsp; <a href=?do=viewsql><b>View SQL</b></a>
+	 &nbsp; <a href=?do=tables><b>View Tables</b></a> &nbsp; <a href=?do=poll><b>Poll Stats</b></a>",
+	 $allowsql ? ' &nbsp; <a href=?do=dosql><b>Run SQL</b></a>' : '',
 	 "$form",
 	 "</tr></table>";
 
@@ -628,7 +634,7 @@ Committed_AS:   348732 kB
 		default:
 		case 'stats':
 			echo $this->HealthCheck();
-			$this->conn->debug=1;
+			//$this->conn->debug=1;
 			echo $this->CheckMemory();
 			break;
 		case 'poll':

@@ -1,7 +1,7 @@
 <?php
 
 /**
-  V4.20 22 Feb 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
+  V4.50 6 July 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -10,12 +10,16 @@
  
 */
 
+// security - hide paths
+if (!defined('ADODB_DIR')) die();
+
 class ADODB2_oci8 extends ADODB_DataDict {
 	
 	var $databaseType = 'oci8';
 	var $seqField = false;
 	var $seqPrefix = 'SEQ_';
 	var $dropTable = "DROP TABLE %s CASCADE CONSTRAINTS";
+	var $trigPrefix = 'TRIG_';
 	
 	function MetaType($t,$len=-1)
 	{
@@ -129,8 +133,12 @@ class ADODB2_oci8 extends ADODB_DataDict {
 	
 	function DropColumnSQL($tabname, $flds)
 	{
-		if ($this->debug) ADOConnection::outp("DropColumnSQL not supported for Oracle");
-		return array();
+		if (!is_array($flds)) $flds = explode(',',$flds);
+		$sql = array();
+		$s = "ALTER TABLE $tabname DROP(";
+		$s .= implode(',',$flds).') CASCADE COSTRAINTS';
+		$sql[] = $s;
+		return $sql;
 	}
 	
 	function _DropAutoIncrement($t)
@@ -178,14 +186,20 @@ end;
 			if ($t !== false) $tab = substr($tabname,$t+1);
 			else $tab = $tabname;
 			$seqname = $this->schema.'.'.$this->seqPrefix.$tab;
-			$trigname = $this->schema.'.TRIG_'.$this->seqPrefix.$tab;
+			$trigname = $this->schema.'.'.$this->trigPrefix.$this->seqPrefix.$tab;
 		} else {
 			$seqname = $this->seqPrefix.$tabname;
-			$trigname = "TRIG_$seqname";
+			$trigname = $this->trigPrefix.$seqname;
 		}
 		if (isset($tableoptions['REPLACE'])) $sql[] = "DROP SEQUENCE $seqname";
-		$sql[] = "CREATE SEQUENCE $seqname";
-		$sql[] = "CREATE OR REPLACE TRIGGER $trigname BEFORE insert ON $tabname FOR EACH ROW BEGIN select $seqname.nextval into :new.$this->seqField from dual; END;";
+		$seqCache = '';
+		if (isset($tableoptions['SEQUENCE_CACHE'])){$seqCache = $tableoptions['SEQUENCE_CACHE'];}
+		$seqIncr = '';
+		if (isset($tableoptions['SEQUENCE_INCREMENT'])){$seqIncr = ' INCREMENT BY '.$tableoptions['SEQUENCE_INCREMENT'];}
+		$seqStart = '';
+		if (isset($tableoptions['SEQUENCE_START'])){$seqIncr = ' START WITH '.$tableoptions['SEQUENCE_START'];}
+		$sql[] = "CREATE SEQUENCE $seqname $seqStart $seqIncr $seqCache";
+		$sql[] = "CREATE OR REPLACE TRIGGER $trigname BEFORE insert ON $tabname FOR EACH ROW WHEN (NEW.$this->seqField IS NULL OR NEW.$this->seqField = 0) BEGIN select $seqname.nextval into :new.$this->seqField from dual; END;";
 		
 		$this->seqField = false;
 		return $sql;

@@ -1,7 +1,7 @@
 <?php
 
 /**
-  V4.20 22 Feb 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
+  V4.50 6 July 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -9,6 +9,9 @@
   Set tabs to 4 for best viewing.
  
 */
+
+// security - hide paths
+if (!defined('ADODB_DIR')) die();
 
 class ADODB2_mssql extends ADODB_DataDict {
 	var $databaseType = 'mssql';
@@ -224,6 +227,24 @@ CREATE TABLE
 		$sql[] = $s;
 		
 		return $sql;
+	}
+	
+	
+	function _GetSize($ftype, $ty, $fsize, $fprec)
+	{
+		switch ($ftype) {
+		case 'INT':
+		case 'SMALLINT':
+		case 'TINYINT':
+		case 'BIGINT':
+			return $ftype;
+		}
+		if (strlen($fsize) && $ty != 'X' && $ty != 'B' && strpos($ftype,'(') === false) {
+			$ftype .= "(".$fsize;
+			if (strlen($fprec)) $ftype .= ",".$fprec;
+			$ftype .= ')';
+		}
+		return $ftype;
 	}
 }
 ?>
