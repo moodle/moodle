@@ -468,11 +468,13 @@ function resource_redirect_tags($text, $url, $tagtoparse, $keytoparse,$prefix = 
 }
 
 function resource_is_url($path) {
-    if (strpos($path, '://')) {
+    if (strpos($path, '://')) {     // eg http:// https:// ftp://  etc
         return true;
-    } else {
-        return false;
     }
+    if (strpos($path, '/') === 0) { // Starts with slash
+        return true;
+    }
+    return false;
 }
 
 ?>
