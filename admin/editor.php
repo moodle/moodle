@@ -8,10 +8,10 @@
         error("Only admins can access this page");
     }
 
-    if($data = data_submitted()) {
+    if ($data = data_submitted()) {
 
         // do we want default values?
-        if(isset($data->resettodefaults)) {
+        if (isset($data->resettodefaults)) {
             if(!(reset_to_defaults())) {
                 error("Editor settings could not be restored!");
             }
@@ -95,6 +95,7 @@ function editor_update_config ($data) {
 
     // make array of values to update
     $updatedata = array();
+    $updatedata['htmleditor'] = $data->htmleditor;
     $updatedata['editorbackgroundcolor'] = !empty($data->backgroundcolor) ? $data->backgroundcolor : "#ffffff";
     $updatedata['editorfontfamily'] = !empty($data->fontfamily) ? str_replace($nochars,"",$data->fontfamily) : "Times New Roman, Times";
     $updatedata['editorfontsize'] = !empty($data->fontsize) ? $data->fontsize : "";
@@ -117,6 +118,7 @@ function reset_to_defaults () {
 
     $updatedata = array();
 
+    $updatedata['htmleditor'] = $defaults['htmleditor'];
     $updatedata['editorbackgroundcolor'] = $defaults['editorbackgroundcolor'];
     $updatedata['editorfontfamily'] = $defaults['editorfontfamily'];
     $updatedata['editorfontsize'] = $defaults['editorfontsize'];
