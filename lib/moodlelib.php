@@ -27,6 +27,11 @@ function print_header ($title="", $heading="", $navigation="", $focus="", $meta=
         $styles = "$CFG->wwwroot/theme/standard/styles.css";
     }
 
+    if ($navigation == "home") {
+        $home = true;
+        $navigation = "";
+    }
+
     if (!$button and $navigation) {
         if (isset($USER->id)) {
             $button = "<FONT SIZE=2><A HREF=\"$CFG->wwwroot/login/logout.php\">".get_string("logout")."</A></FONT>";
@@ -52,13 +57,7 @@ function print_footer ($course=NULL) {
 
     if ($course) {
         if ($course == "home") {   // special case for site home page - please do not remove
-            if (!$dversion = get_field("config", "value", "name", "version")) {
-                $dversion = "xxx";
-            }
-            if (!$drelease = get_field("config", "value", "name", "release")) {
-                $drelease = "xxx";
-            }
-            $homelink  = "<P ALIGN=center><A TITLE=\"Moodle $drelease ($dversion)\" HREF=\"http://moodle.com/\">";
+            $homelink  = "<P ALIGN=center><A TITLE=\"Moodle $CFG->release ($CFG->version)\" HREF=\"http://moodle.com/\">";
             $homelink .= "<BR><IMG WIDTH=130 HEIGHT=19 SRC=\"pix/madewithmoodle2.gif\" BORDER=0></A></P>";
         } else {
             $homelink = "<A TARGET=_top HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A>";
@@ -789,6 +788,17 @@ function set_field($table, $field, $newvalue, $selector, $value) {
     return $db->Execute("UPDATE $table SET $field = '$newvalue' WHERE $selector = '$value'");
 }
 
+function set_config($name, $value) {
+// No need for get_config because they are usually always available in $CFG
+
+    if (get_field("config", "value", "name", $name)) {
+        return set_field("config", "value", $value, "name", $name);
+    } else {
+        $config->name = $name;
+        $config->value = $value;
+        return insert_record("config", $config);
+    }
+}
 
 function delete_records($table, $selector, $value) {
 // Delete one or more records from a table
@@ -1751,8 +1761,8 @@ function moodle_needs_upgrading() {
     global $CFG;
 
     include_once("$CFG->dirroot/version.php");  # defines $version and upgrades
-    if ($dversion = get_field("config", "value", "name", "version")) { 
-        if ($version > $dversion) {
+    if ($CFG->version) { 
+        if ($version > $CFG->version) {
             return true;
         }
         if ($mods = get_list_of_plugins("mod")) {
