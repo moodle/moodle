@@ -5,16 +5,18 @@
 <TD align=top>
 <P><B><? print_string("summaryof", "", "$sectionname $form->section") ?></B></P>
 </TD>
-<TD align=top width=200>
+<TD align=top width=100>
 &nbsp;
 </TD>
 <TD align=top>
 <FONT SIZE=-1>
-     <? if ($usehtmleditor) { ?>
-        <? helpbutton("richtext", get_string("helprichtext"), "moodle", true, true) ?>
-     <? } else { ?>
-        <? helpbutton("text", get_string("helptext"), "moodle", true, true) ?>
-     <? } ?>
+     <? helpbutton("summaries", get_string("helpsummaries"), "moodle", true, true);
+        if ($usehtmleditor) { 
+           helpbutton("richtext", get_string("helprichtext"), "moodle", true, true);
+        } else {   
+           helpbutton("text", get_string("helptext"), "moodle", true, true);   
+        } 
+     ?>
 </FONT>
 </TD>
 </TR></TABLE>

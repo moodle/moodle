@@ -227,6 +227,7 @@ $string['helppicture'] = "How to upload a picture";
 $string['helpreading'] = "Read carefully";
 $string['helptext'] = "How to write text";
 $string['helprichtext'] = "About Richtext editor";
+$string['helpsummaries'] = "About these summaries";
 $string['helpquestions'] = "Ask good questions";
 $string['helpwriting'] = "Write carefully";
 $string['hide'] = "Hide";
