@@ -130,7 +130,6 @@ function set_config($name, $value) {
  * @uses $USER
  */
 function reload_user_preferences() {
-/// Refresh current USER with all their current preferences
 
     global $USER;
 
@@ -157,21 +156,19 @@ function reload_user_preferences() {
  * @todo Add inline links to $USER and user functions in above line.
  * @return boolean
  */
-function set_user_preference($name, $value, $user=NULL) {
-/// Sets a preference for the current user
-/// Optionally, can set a preference for a different user object
+function set_user_preference($name, $value, $userid=NULL) {
 
     global $USER;
 
-    if (empty($user)){ 
-        $user = $USER;
+    if (empty($userid)){ 
+        $userid = $USER->id;
     }
 
     if (empty($name)) {
         return false;
     }
 
-    if ($preference = get_record('user_preferences', 'userid', $user->id, 'name', $name)) {
+    if ($preference = get_record('user_preferences', 'userid', $userid, 'name', $name)) {
         if (set_field('user_preferences', 'value', $value, 'id', $preference->id)) {
             $user->preference[$name] = $value;
             return true;
@@ -180,7 +177,7 @@ function set_user_preference($name, $value, $user=NULL) {
         }
 
     } else {
-        $preference->userid = $user->id;
+        $preference->userid = $userid;
         $preference->name   = $name;
         $preference->value  = (string)$value;
         if (insert_record('user_preferences', $preference)) {
@@ -197,11 +194,16 @@ function set_user_preference($name, $value, $user=NULL) {
  * @param array $prefarray An array of key/value pairs to be set
  * @return boolean
  */
-function set_user_preferences($prefarray) {
-/// Sets a whole array of preferences for the current user
+function set_user_preferences($prefarray, $userid=NULL) {
+
+    global $USER;
 
     if (!is_array($prefarray) or empty($prefarray)) {
         return false;
+    }
+
+    if (empty($userid)){ 
+        $userid = $USER->id;
     }
 
     $return = true;
@@ -209,7 +211,7 @@ function set_user_preferences($prefarray) {
         // The order is important; if the test for return is done first,
         // then if one function call fails all the remaining ones will
         // be "optimized away"
-        $return = set_user_preference($name, $value) and $return;
+        $return = set_user_preference($name, $value, $userid) and $return;
     }
     return $return;
 }
@@ -226,25 +228,33 @@ function set_user_preferences($prefarray) {
  * @uses $USER
  * @return string
  */
-function get_user_preferences($name=NULL, $default=NULL) {
-/// Without arguments, returns all the current user preferences
-/// as an array.  If a name is specified, then this function
-/// attempts to return that particular preference value.  If
-/// none is found, then the optional value $default is returned,
-/// otherwise NULL.
+function get_user_preferences($name=NULL, $default=NULL, $userid=NULL) {
 
     global $USER;
 
-    if (empty($USER->preference)) {
-        return $default;              // Default value (or NULL)
+    if (empty($userid)) {   // assume current user
+        if (empty($USER->preference)) {
+            return $default;              // Default value (or NULL)
+        }
+        if (empty($name)) {
+            return $USER->preference;     // Whole array
+        }
+        if (!isset($USER->preference[$name])) {
+            return $default;              // Default value (or NULL)
+        }
+        return $USER->preference[$name];  // The single value
+
+    } else {
+        $preference = get_records_menu('user_preferences', 'userid', $userid, 'name', 'name,value');
+
+        if (empty($name)) {
+            return $preference;
+        }
+        if (!isset($preference[$name])) {
+            return $default;              // Default value (or NULL)
+        }
+        return $preference[$name];        // The single value
     }
-    if (empty($name)) {
-        return $USER->preference;     // Whole array
-    }
-    if (!isset($USER->preference[$name])) {
-        return $default;              // Default value (or NULL)
-    }
-    return $USER->preference[$name];  // The single value
 }
 
 
@@ -544,7 +554,7 @@ function require_login($courseid=0, $autologinguest=true) {
 
     // check whether the user should be changing password
     reload_user_preferences();
-    if (isset($USER->preference['auth_forcepasswordchange'])){
+    if (!empty($USER->preference['auth_forcepasswordchange'])){
         if (is_internal_auth() || $CFG->{'auth_'.$USER->auth.'_stdchangepassword'}){
             redirect($CFG->wwwroot .'/login/change_password.php');
         } elseif($CFG->changepassword) {
@@ -1028,17 +1038,26 @@ function get_moodle_cookie() {
  */
 function is_internal_auth($auth='') {
 /// Returns true if an internal authentication method is being used.
-/// if method not specified then, global default is assumed
+/// If auth not specified then global default is assumed
 
     global $CFG;
 
-    $method = $CFG->auth;
-
-    if (!empty($auth)) {
-        $method = $auth;
+    if (empty($auth)) {
+        $auth = $CFG->auth;
     }
 
-    return ($method == 'email' || $method == 'none' || $method == 'manual');
+    return ($auth == "email" || $auth == "none" || $auth == "manual");
+}
+
+function get_user_fieldnames() {
+/// Returns an array of user fields
+
+    global $CFG, $db;
+
+    $fieldarray = $db->MetaColumnNames($CFG->prefix.'user');
+    unset($fieldarray['ID']);
+
+    return $fieldarray;
 }
 
 /**

@@ -90,6 +90,7 @@
             $user = $usernew;
 
         } else {
+        $db->debug = true;
             $timenow = time();
 
             if (!$usernew->picture = save_profile_image($user->id,$um,'users')) {
@@ -108,7 +109,7 @@
                     $usernew->password = md5($usernew->newpassword);
                     // update external passwords
                     if (!empty($CFG->{'auth_'. $user->auth.'_stdchangepassword'})) {
-                        if(function_exists('auth_user_update_password')){
+                        if (function_exists('auth_user_update_password')){
                             if (!auth_user_update_password($user->username, $usernew->newpassword)){
                                 error('Failed to update password on external auth: ' . $user->auth .
                                         '. See the server logs for more details.');
@@ -117,10 +118,12 @@
                             error('Your external authentication module is misconfigued!'); 
                         }
                     }
-                    // store forcepasswordchange in user's preferences
-                    if (isset($usernew->forcepasswordchange)){
-                        set_user_preference('auth_forcepasswordchange', 1, $user);
-                    }
+                }
+                // store forcepasswordchange in user's preferences
+                if (isset($usernew->forcepasswordchange)){
+                    set_user_preference('auth_forcepasswordchange', 1, $user->id);
+                } else {
+                    set_user_preference('auth_forcepasswordchange', 0, $user->id);
                 }
             } else {
                 if (isset($usernew->newpassword)) {
@@ -209,12 +212,32 @@
     }
 
     print_simple_box_start("center", "", "$THEME->cellheading");
+
     if (!empty($err)) {
         echo "<center>";
         notify(get_string("someerrorswerefound"));
         echo "</center>";
     }
+
     include("edit.html");
+
+    if (!isadmin()) {      /// Lock all the locked fields using Javascript
+        $fields = get_user_fieldnames();
+
+        echo '<script type="text/javascript">'."\n";
+        echo '<!--'."\n";
+
+        foreach ($fields as $field) {
+            $configvariable = 'auth_user_'.$field.'_editlock';
+            if (!empty($CFG->$configvariable)) {
+                echo "eval('document.form.$field.disabled=true');\n";
+            }
+        }
+
+        echo '-->'."\n";
+        echo '</script>'."\n";
+    }
+
     print_simple_box_end();
 
     if (!isset($USER->newadminuser)) {
@@ -286,45 +309,22 @@ function find_form_errors(&$user, &$usernew, &$err, &$um) {
             $err["email"] = $error;
         }
     }
+
     if (!$um->preprocess_files()) {
         $err['imagefile'] = $um->notify;
     }
 
-    if ($CFG->auth_user_firstname_editlock && !($user->firstname === $usernew->firstname)){
-        $err["firstname"] = get_string("editlock");
-    }
-    if ($CFG->auth_user_lastname_editlock && !($user->lastname === $usernew->lastname)){
-        $err["lastname"] = get_string("editlock");
-    }
-    if ($CFG->auth_user_email_editlock && !($user->email === $usernew->email)){
-        $err["email"] = get_string("editlock");
-    }
-    if ($CFG->auth_user_phone1_editlock && !($user->phone1 === $usernew->phone1)){
-        $err["phone1"] = get_string("editlock");
-    }
-    if ($CFG->auth_user_phone2_editlock && !($user->phone2 === $usernew->phone2)){
-        $err["phone2"] = get_string("editlock");
-    }
-    if ($CFG->auth_user_department_editlock && !($user->department === $usernew->department)){
-        $err["department"] = get_string("editlock");
-    }
-    if ($CFG->auth_user_address_editlock && !($user->address === $usernew->address)){
-        $err["address"] = get_string("editlock");
-    }
-    if ($CFG->auth_user_city_editlock && !($user->city === $usernew->city)){
-        $err["city"] = get_string("editlock");
-    }
-    if ($CFG->auth_user_description_editlock && !($user->description === $usernew->description)){
-        $err["description"] = get_string("editlock");
-    }
-    if ($CFG->auth_user_idnumber_editlock && !($user->idnumber === $usernew->idnumber)){
-        $err["idnumber"] = get_string("editlock");
-    }
-    if ($CFG->auth_user_lang_editlock && !($user->lang === $usernew->lang)){
-        $err["lang"] = get_string("editlock");
-    }
-    if ($CFG->auth_user_guid_editlock && !($user->guid === $usernew->guid)){
-        $err["guid"] = get_string("editlock");
+    if (!isadmin()) {      /// Make sure that locked fields are not being edited
+        $fields = get_user_fieldnames();
+
+        foreach ($fields as $field) {
+            $configvariable = 'auth_user_'.$field.'_editlock';
+            if (!empty($CFG->$configvariable)) {
+                if ($user->$field !== $usernew->$field) {
+                    $err[$field] = get_string("editlock");
+                }
+            }
+        }
     }
 
     $user->email = $usernew->email;

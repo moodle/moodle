@@ -11,7 +11,7 @@
 
 ?>
 
-<form method="post" enctype="multipart/form-data" action="edit.php">
+<form method="post" name="form" enctype="multipart/form-data" action="edit.php">
 <table cellpadding="9" cellspacing="0" >
 <?php
 if (isadmin()) {
@@ -47,8 +47,10 @@ if (isadmin()) {
         echo "<tr valign=\"top\">";
         echo "<td align=\"right\"> ".get_string("newpassword").": </td>";
         echo "<td> <input type=\"text\" name=\"newpassword\" size=\"20\" value=\"";
-        if (isset($user->newpassword)) p($user->newpassword);
-            echo "\" />";
+        if (isset($user->newpassword)) {
+            p($user->newpassword);
+        }
+        echo "\" />";
         if (isset($err["newpassword"])) {
             formerr($err["newpassword"]);
         } else if (empty($user->newpassword)) {
@@ -56,12 +58,17 @@ if (isadmin()) {
         }
         echo " </td>";
         echo "</tr>\n";
-        if(!$adminself && (isset($CFG->{'auth_'.$user->auth.'_stdchangepassword'}) || $CFG->changepassword)){
+        if (!$adminself && ($CFG->{'auth_'.$user->auth.'_stdchangepassword'} || $CFG->changepassword)){
+             if (get_user_preferences('auth_forcepasswordchange', NULL, $user->id)) {
+                 $checked = ' checked="checked" ';
+             } else {
+                 $checked = '';
+             }
              echo "<tr>";
-             echo '<td align=right><p>'.get_string('forcechangepassword', 'auth').':</td>';
-             echo '<td><input type="checkbox" name="forcepasswordchange" />'.get_string('forcechangepassword_help','auth').'</td>';            
+             echo '<td align=right><p>'.get_string('forcepasswordchange').':</td>';
+             echo '<td><input type="checkbox" name="forcepasswordchange "'.$checked.' /> '.get_string('forcepasswordchangehelp').'</td>';            
              echo "</tr>";
-         }
+        }
                  
         echo "<tr><td colspan=\"2\"><hr /></td></tr>";
     }
@@ -71,36 +78,21 @@ if (isadmin()) {
 <tr valign="top">
     <td align="right"><?php print_string("firstname") ?>:</td>
     <td>
-    <?php if (isset($CFG->auth_user_firstname_editlock)){ ?>
-    <input type="hidden" name="firstname" value="<?php p($user->firstname) ?>" />
-    <?php p($user->firstname) ?>
-    <?php } else { ?>
     <input type="text" name="firstname" size="30" maxlength="20" value="<?php p($user->firstname) ?>" />
-    <?php } ?>
     <?php if (isset($err["firstname"])) formerr($err["firstname"]); ?>
     </td>
 </tr>
 <tr valign="top">
     <td align="right"><?php print_string("lastname") ?>:</td>
     <td>
-    <?php if(isset($CFG->auth_user_lastname_editlock)){ ?>
-    <input type="hidden" name="lastname" value="<?php p($user->lastname) ?>" />
-    <?php p($user->lastname) ?>
-    <?php } else { ?>
     <input type="text" name="lastname" size="30" maxlength="20" value="<?php p($user->lastname) ?>" />
-    <?php } ?>
     <?php if (isset($err["lastname"])) formerr($err["lastname"]); ?>
     </td>
 </tr>
 <tr valign="top">
     <td align="right"><p><?php print_string("email") ?>:</td>
     <td>
-    <?php if(isset($CFG->auth_user_email_editlock)){ ?>
-    <input type="hidden" name="email" value="<?php p($user->email) ?>" />
-    <?php p($user->email) ?>
-    <?php } else { ?>
     <input type="text" name="email" size="30" maxlength="100" value="<?php p($user->email) ?>" />
-    <?php } ?>
     <?php if (isset($err["email"])) formerr($err["email"]); ?>
     </td>
 </tr>
@@ -165,12 +157,7 @@ if (isadmin()) {
 <tr valign="top">
     <td align="right"> <?php print_string("city") ?>:</td>
     <td>
-    <?php if(isset($CFG->auth_user_city_editlock)){ ?>
-    <input type="hidden" name="city" value="<?php p($user->city) ?>" />
-    <?php p($user->city) ?>
-    <?php } else { ?>
     <input type="text" name="city" size="25" maxlength="20" value="<?php p($user->city) ?>" />
-    <?php } ?>
     <?php if (isset($err["city"])) formerr($err["city"]); ?>
     </td>
 </tr>
@@ -183,13 +170,8 @@ if (isadmin()) {
         $user->country = $CFG->country;
     }
 
-    if(isset($CFG->auth_user_country_editlock)){ ?>
-        <input type="hidden" name="country" value="<?php p($user->country); ?>" />
-        <?php p($user->country); 
-    } else { 
-        choose_from_menu(get_list_of_countries(), "country", $user->country, get_string("selectacountry")."...", "", "");
-    }
-     ?>
+    choose_from_menu(get_list_of_countries(), "country", $user->country, get_string("selectacountry")."...", "", "");
+    ?>
     <?php if (isset($err["country"])) formerr($err["country"]); ?>
      </td>
 </tr>
@@ -199,12 +181,7 @@ if (isadmin()) {
                if (!$user->lang) {
                    $user->lang = $CFG->lang;
                }
-               if(isset($CFG->auth_user_lang_editlock)){ ?>
-                   <input type="hidden" name="lang" value="<?php p($user->lang) ?>" />
-                   <?php p($user->lang);
-               } else { 
-                   choose_from_menu ($languages, "lang", $user->lang, "", "", "");
-               }
+               choose_from_menu ($languages, "lang", $user->lang, "", "", "");
            }
            if (isset($err["lang"])) formerr($err["lang"]);
         ?>
@@ -239,22 +216,14 @@ if (isadmin()) {
 </tr>
 <tr valign="top">
     <td align="right"> <?php print_string("userdescription") ?>: </td>
-    <td><?php if (isset($err["description"])) {
-               formerr($err["description"]);
-               echo "<br />";
-           } ?>
-    <?php if(isset($CFG->auth_user_description_editlock)){ ?>
-        <input type="hidden" name="description" value="<?php p($user->description) ?>" />
-        <?php print format_text($user->description, FORMAT_MOODLE); 
-    } else { 
+    <td><?php 
         if (isset($err["description"])) {
             formerr($err["description"]);
             echo "<br />";
         }
         print_textarea(false, 10, 50, 50, 10, 'description', "$user->description");
         helpbutton("text", get_string("helptext"));
-        
-    } ?>
+    ?>
     </td>
 </tr>
 <tr>
@@ -317,12 +286,7 @@ if (isadmin()) {
 <tr valign="top">
     <td align="right"> <?php print_string("idnumber") ?>: </td>
     <td>
-    <?php if(isset($CFG->auth_user_idnumber_editlock)){ ?>
-    <input type="hidden" name="idnumber" value="<?php p($user->idnumber) ?>" />
-    <?php p($user->idnumber) ?>
-    <?php } else { ?>    
     <input type="text" name="idnumber" size="25" maxlength="12" value="<?php p($user->idnumber) ?>" /> <?php p($teacheronly) ?>
-    <?php } ?>
     <?php if (isset($err["idnumber"])) formerr($err["idnumber"]); ?>
      </td>
 </tr>
@@ -335,48 +299,28 @@ if (isadmin()) {
 <tr valign="top">
     <td align="right"> <?php print_string("department") ?>: </td>
     <td>
-    <?php if(isset( $CFG->auth_user_department_editlock)){ ?>
-    <input type="hidden" name="department" value="<?php p($user->department) ?>" />
-    <?php p($user->department) ?>
-    <?php } else { ?>       
     <input type="text" name="department" size="25" maxlength="30" value="<?php p($user->department) ?>" /> <?php p($teacheronly) ?>
-    <?php } ?>
     </td>
 </tr>
 <?php } ?>
 <tr valign="top">
     <td align="right"> <?php print_string("phone") ?> 1: </td>
     <td>
-    <?php if(isset($CFG->auth_user_phone1_editlock)){ ?>
-    <input type="hidden" name="phone1" value="<?php p($user->phone1) ?>" />
-    <?php p($user->phone1) ?>
-    <?php } else { ?>  
     <input type="text" name="phone1" size="25" maxlength="20" value="<?php p($user->phone1) ?>" /> <?php p($teacheronly) ?>
-    <?php } ?>
     <?php if (isset($err["phone1"])) formerr($err["phone1"]); ?>
      </td>
 </tr>
 <tr valign="top">
     <td align="right"> <?php print_string("phone") ?> 2: </td>
     <td>
-    <?php if(isset($CFG->auth_user_phone2_editlock)){ ?>
-    <input type="hidden" name="phone2" value="<?php p($user->phone2) ?>" />
-    <?php p($user->phone2) ?>
-    <?php } else { ?>  
     <input type="text" name="phone2" size="25" maxlength="20" value="<?php p($user->phone2) ?>" /> <?php p($teacheronly) ?>
-    <?php } ?>
     <?php if (isset($err["phone2"])) formerr($err["phone2"]); ?>
      </td>
 </tr>
 <tr valign="top">
     <td align="right"> <?php print_string("address") ?>: </td>
     <td>
-    <?php if(isset($CFG->auth_user_address_editlock)){ ?>
-    <input type="hidden" name="address" value="<?php p($user->address) ?>" />
-    <?php p($user->address) ?>
-    <?php } else { ?>  
     <input type="text" name="address" size="25" maxlength="70" value="<?php p($user->address) ?>" /> <?php p($teacheronly) ?>
-    <?php } ?>
     <?php if (isset($err["address"])) formerr($err["address"]); ?>
      </td>
 </tr>
