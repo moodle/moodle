@@ -46,6 +46,14 @@
             $journal->assessed = backup_todb($info['MOD']['#']['ASSESSED']['0']['#']);
             $journal->timemodified = backup_todb($info['MOD']['#']['TIMEMODIFIED']['0']['#']);
 
+            //We have to recode the assessed field if it is <0 (scale)
+            if ($journal->assessed < 0) {
+                $scale = backup_getid($restore->backup_unique_code,"scale",abs($journal->assessed));
+                if ($scale) {
+                    $journal->assessed = -($scale->new_id);
+                }
+            }
+
             //The structure is equal to the db, so insert the journal
             $newid = insert_record ("journal",$journal);
 
