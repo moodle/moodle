@@ -479,7 +479,7 @@ function scorm_endElement($parser, $name) {
 
 function scorm_characterData($parser, $data) {
     global $datacontent;
-    $datacontent = utf_decode($data);
+    $datacontent = utf8_decode($data);
 }
 
 function scorm_parse($basedir,$file,$scorm_id) {
