@@ -509,6 +509,9 @@ function setup($form) {
             $form->reference = $CFG->resource_defaulturl;
         }
     }
+    if (empty($form->reference)) {
+        $form->reference = $CFG->resource_defaulturl;
+    }
 
 
 /// set the 5 parameter defaults
