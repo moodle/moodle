@@ -873,6 +873,7 @@ $string['uploadthisfile'] = 'Upload this file';
 $string['uploadusers'] = 'Upload users';
 $string['user'] = 'User';
 $string['userconfirmed'] = 'Confirmed $a';
+$string['userdata'] = 'User Data';
 $string['userdeleted'] = 'This user account has been deleted';
 $string['userdescription'] = 'Description';
 $string['userfiles'] = 'User Files';
