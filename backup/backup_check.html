@@ -126,28 +126,26 @@
     //Calculate the backup unique code to allow simultaneus backups (to define
     //the temp-directory name and records in backup temp tables
     $backup_unique_code = time();
-    //Add as hidden name
-    echo "<input type=\"hidden\" name=\"backup_unique_code\" value=\"".$backup_unique_code."\">";
 
     if (empty($to)) {
         //Now print the Backup Name tr
         echo "<tr>";
-        echo "<td align=\"right\"><P><B>";
+        echo "<td align=\"right\"><b>";
         echo get_string("name").":";
-        echo "</B></td><td>";
+        echo "</b></td><td>";
         //Add as text field
-        echo "<input type=\"text\" name=\"backup_name\" size=\"40\" value=\"".$backup_name."\">";
+        echo "<input type=\"text\" name=\"backup_name\" size=\"40\" value=\"".$backup_name."\" />";
         echo "</td></tr>";
     
         //Line
-        echo "<tr><td colspan=\"2\"><hr noshade size=\"1\"></td></tr>";
+        echo "<tr><td colspan=\"2\"><hr /></td></tr>";
         
         //Now print the To Do list
         echo "<tr>";    
-        echo "<td colspan=\"2\" align=\"center\"><p><b>";
+        echo "<td colspan=\"2\" align=\"center\"><b>";
 
     } else {
-        echo '<input type="hidden" name="backup_name" value="'.$backup_name.'" />';
+        echo '<input type="hidden" name="backup_name" value="'.$backup_name.'" /></b>';
     }
 
 
@@ -173,12 +171,12 @@
         $backup_logs = 0;
         }
         print_simple_box("<font color=\"red\">".get_string("backupnoneusersinfo")."</font>","center", "70%", '', "20", "noticebox");
-        echo "<hr noshade size=\"1\">";
+        echo "<hr />";
     }
 
     if (empty($to)) {
         echo get_string("backupdetails").":";
-        echo "</td></tr>";
+        echo "</b></td></tr>";
     }
 
     //This is tha align to every ingo table                
@@ -191,25 +189,25 @@
             //If exists the lib & function
             $var = "exists_".$modname;
             if (isset($$var) && $$var) {
-                //Add hidden fields
-                $var = "backup_".$modname;
-                echo "<input type=\"hidden\" name=\"".$var."\" value=\"".$$var."\">";
-                $var = "backup_user_info_".$modname;
-                echo "<input type=\"hidden\" name=\"".$var."\" value=\"".$$var."\">";
                 $var = "backup_".$modname;
                 //Only if selected
                 if ($$var == 1) {
                     //Print the full tr
                     echo "<tr>";
-                    echo "<td colspan=\"2\"><p><b>";
+                    echo "<td colspan=\"2\">";
+                    //Add hidden fields
+                    $var = "backup_".$modname;
+                    echo "<input type=\"hidden\" name=\"".$var."\" value=\"".$$var."\" />";
+                    $var = "backup_user_info_".$modname;
+                    echo "<input type=\"hidden\" name=\"".$var."\" value=\"".$$var."\" />";
                     //Print the mod name
-                    echo "<li>".get_string("include")." ".get_string("modulenameplural",$modname)." ";
+                    echo "<b>".get_string("include")." ".get_string("modulenameplural",$modname)." ";
                     //Now look for user-data status
                     $backup_user_options[0] = get_string("withoutuserdata"); 
                     $backup_user_options[1] = get_string("withuserdata");
                     $var = "backup_user_info_".$modname;
                     //Print the user info
-                    echo $backup_user_options[$$var]."<p>";
+                    echo $backup_user_options[$$var]."</b>";
                     //Call the check function to show more info
                     $modcheckbackup = $modname."_check_backup_mods";
                     $table->data = $modcheckbackup($id,$$var,$backup_unique_code);
@@ -219,72 +217,68 @@
             }
         }
         
-        //Write metacourse hidden field
-        echo "<input type=\"hidden\" name=\"backup_metacourse\" value=\"".$backup_metacourse."\">";
 
         if (empty($to)) {
             //Line
-            echo "<tr><td colspan=\"2\"><hr noshade size=\"1\"></td></tr>";
+            echo "<tr><td colspan=\"2\"><hr /></td></tr>";
 
             //Now print the Users tr
             echo "<tr>";
-            echo "<td colspan=\"2\"><p><b>";
+            echo "<td colspan=\"2\"><b>";
             $user_options[0] = get_string("includeallusers");
             $user_options[1] = get_string("includecourseusers");
             $user_options[2] = get_string("includenoneusers");
-            echo "<li>".$user_options[$backup_users]."<p>";
+            echo $user_options[$backup_users].'</b>';
             //Print info
             $table->data = user_check_backup($id,$backup_unique_code,$backup_users);  
             print_table($table); 
             echo "</td></tr>";
             
         }
-        //Add as hidden name
-        echo "<input type=\"hidden\" name=\"backup_users\" value=\"".$backup_users."\">";
         
         //Now print the Logs tr conditionally
         if ($backup_logs && empty($to)) {
             echo "<tr>";
-            echo "<td colspan=\"2\"><p><b>";
-            echo "<li>".get_string("includelogentries")."<p>";
+            echo "<td colspan=\"2\"><b>";
+            echo get_string("includelogentries").'</b>';
             //Print info
             $table->data = log_check_backup($id);
             print_table($table);
             echo "</td></tr>";
         }
-        //Add as hidden name
-        echo "<input type=\"hidden\" name=\"backup_logs\" value=\"".$backup_logs."\">";
 
         //Now print the User Files tr conditionally
         if ($backup_user_files) {
             echo "<tr>";
-            echo "<td colspan=\"2\"><p><b>";
-            echo "<li>".get_string("includeuserfiles")."<p>";
+            echo "<td colspan=\"2\"><b>";
+            echo get_string("includeuserfiles").'</b>';
             //Print info
             $table->data = user_files_check_backup($id,$backup_unique_code);
             print_table($table);
             echo "</td></tr>";
         }
-        //Add as hidden name
-        echo "<input type=\"hidden\" name=\"backup_user_files\" value=\"".$backup_user_files."\">";
 
         //Now print the Course Files tr conditionally
        if ($backup_course_files) {
             echo "<tr>";
-            echo "<td colspan=\"2\"><p><b>";
-            echo "<li>".get_string("includecoursefiles")."<p>";
+            echo "<td colspan=\"2\"><b>";
+            echo get_string("includecoursefiles").'</b>';
             //Print info
             $table->data = course_files_check_backup($id,$backup_unique_code);
             print_table($table);
             echo "</td></tr>";
         }
-        //Add as hidden name
-        echo "<input type=\"hidden\" name=\"backup_course_files\" value=\"".$backup_course_files."\">";
     }
 ?>
 </table>
 <br />
 <center>
+<input type="hidden" name="backup_unique_code" value="<?php p($backup_unique_code) ?>" />
+<input type="hidden" name="backup_metacourse" value="<?php p($backup_metacourse) ?>" />
+<input type="hidden" name="backup_users" value="<?php p($backup_users) ?>" />
+<input type="hidden" name="backup_logs" value="<?php p($backup_logs) ?>" />
+<input type="hidden" name="backup_user_files" value="<?php p($backup_user_files) ?>" />
+<input type="hidden" name="backup_course_files" value="<?php p($backup_course_files) ?>" />
 <input type="hidden" name="to"     value="<?php p($to) ?>" />
 <input type="hidden" name="id"     value="<?php  p($id) ?>" />
 <input type="hidden" name="launch" value="execute" />
