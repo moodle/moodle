@@ -4,7 +4,7 @@
 
 $string['allowupdate'] = 'Allow choice to be updated';
 $string['answered'] = 'Answered';
-$string['choice'] = 'Choice $a';
+$string['choice'] = 'Choice';
 $string['choiceclose'] = 'Until';
 $string['choicename'] = 'Choice name';
 $string['choiceopen'] = 'Open';
@@ -29,5 +29,8 @@ $string['timerestrict'] = 'Restrict answering to this time period';
 $string['savemychoice'] = 'Save my choice';
 $string['showunanswered'] = 'Show column for unanswered';
 $string['viewallresponses'] = 'View $a responses';
-
+$string['addmorechoices'] = 'Add more choices';
+$string['displaymode'] = 'Display Mode';
+$string['displayhorizontal'] = 'Display horizontally';
+$string['displayvertical'] = 'Display vertically';
 ?>
