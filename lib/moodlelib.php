@@ -352,10 +352,18 @@ function usertime($date, $timezone=99) {
 function usergetmidnight($date, $timezone=99) {
 // Given a time, return the GMT timestamp of the most recent midnight
 // for the current user.
-
     global $USER;
 
+    if ($timezone == 99) {
+        $timezone = (float)$USER->timezone;
+    }
+
     $userdate = usergetdate($date, $timezone);
+
+    if (abs($timezone) > 12) {
+        return mktime(0, 0, 0, $userdate["mon"], $userdate["mday"], $userdate["year"]);
+    }
+
     $timemidnight = gmmktime (0, 0, 0, $userdate["mon"], $userdate["mday"], $userdate["year"]);
     return usertime($timemidnight, $timezone); // Time of midnight of this user's day, in GMT
 
