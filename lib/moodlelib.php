@@ -949,20 +949,23 @@ function authenticate_user_login($username, $password) {
         }
 
         if (function_exists('auth_iscreator')) {    // Check if the user is a creator
-            if (auth_iscreator($username)) {
-                if (! record_exists("user_coursecreators", "userid", $user->id)) {
-                    $cdata->userid = $user->id;
-                    if (! insert_record("user_coursecreators", $cdata)) {
-                        error("Cannot add user to course creators.");
+            $useriscreator=auth_iscreator($username);            
+            if(!is_null($useriscreator)) {
+                if ($useriscreator) {
+                    if (! record_exists("user_coursecreators", "userid", $user->id)) {
+                        $cdata->userid = $user->id;
+                        if (! insert_record("user_coursecreators", $cdata)) {
+                            error("Cannot add user to course creators.");
+                        }
+                    }
+                } else {
+                    if ( record_exists("user_coursecreators", "userid", $user->id)) {
+                        if (! delete_records("user_coursecreators", "userid", $user->id)) {
+                            error("Cannot remove user from course creators.");
+                        }
                     }
                 }
-            } else {
-                if ( record_exists("user_coursecreators", "userid", $user->id)) {
-                    if (! delete_records("user_coursecreators", "userid", $user->id)) {
-                        error("Cannot remove user from course creators.");
-                    }
-                }
-            }
+            }    
         }
         return $user;
 
