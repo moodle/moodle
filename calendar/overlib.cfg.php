@@ -1,4 +1,4 @@
-ol_delay = 300;
+ol_delay = 350;
 ol_fgcolor = '#ffffff';
 ol_fgclass = 'cal_popup_fg';
 ol_bgclass = 'cal_popup_bg';
@@ -7,5 +7,5 @@ ol_captionfontclass = 'cal_popup_caption';
 ol_noclose = true;
 ol_sticky = true;
 ol_close = 'X';
-ol_offsety = -20;
+ol_offsety = -1;
 ol_mouseoff = 1;
