@@ -1063,11 +1063,8 @@ function get_directory_list($rootdir, $excludefile="", $descend=true) {
 /// If excludefile is defined, then that file/directory is ignored
 
     $dirs = array();
-   
-    $dir = opendir($rootdir);
 
-    if (!$dir) {
-        notify("Error: unable to read this directory! : $rootdir");
+    if (!$dir = opendir($rootdir)) {
         return $dirs;
     }
 
