@@ -45,7 +45,9 @@
     or <A HREF="http://www.easyphp.org/">EasyPHP</A> which will install Apache, 
     PHP, and MySQL for you. Make sure you enable the GD module so Moodle can process 
     images - you may have to edit php.ini and remove the comment (;) from this 
-    line: 'extension=php_gd.dll'.</p>
+    line: 'extension=php_gd.dll'. You may also have to fix the directory for 
+    session.save_path - instead of the default "/tmp" use a Windows directory 
+    like "c:/temp".</p>
 
   <p>On Mac OS X I highly recommend the <a href="http://fink.sourceforge.net/">fink</a> 
     project as a way to download easily-maintainable packages for all of this.  If you are less

@@ -11,6 +11,14 @@
         die;
     }
 
+/// Check that sessions are supported
+
+    if (!is_readable(ini_get('session.save_path'))) {
+        $sessionpath = ini_get('session.save_path');
+        notify("Warning: It appears your server does not support sessions (session.save_path = '$sessionpath')");
+    }
+
+
 /// Check that config.php has been edited
 
     if ($CFG->wwwroot == "http://example.com/moodle") {
