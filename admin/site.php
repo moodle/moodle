@@ -98,6 +98,13 @@
         print_heading($strsitesettings);
     }
 
+    $defaultformat = FORMAT_HTML;
+    if ($usehtmleditor = can_use_richtext_editor()) {
+        $onsubmit = "onsubmit=\"copyrichtext(form.summary);\"";
+    } else {
+        $onsubmit = "";
+    }
+
     print_simple_box_start("center", "", "$THEME->cellheading");
     include("site.html");
     print_simple_box_end();

@@ -1,4 +1,4 @@
-<form method="post" action="site.php" name="form">
+<form method="post" action="site.php" name="form" <?php echo $onsubmit ?>>
 <table cellpadding=9 cellspacing=0 >
 <tr valign=top>
     <td align=right><P><?php print_string("fullsitename") ?>:</td>
@@ -15,13 +15,21 @@
 <tr valign=top>
     <td align=right><P><?php print_string("frontpagedescription") ?>:</P><br />
      <font size=1>
-     <?php helpbutton("writing", get_string("helpwriting"), "moodle", true, true) ?><br />
-     <?php helpbutton("html", get_string("helphtml"), "moodle", true, true) ?><br />
+     <?PHP
+        helpbutton("writing", get_string("helpwriting"), "moodle", true, true);
+        echo "<br />";
+        if ($usehtmleditor) {
+           helpbutton("richtext", get_string("helprichtext"), "moodle", true, true);
+        } else {
+           helpbutton("html", get_string("helphtml"), "moodle", true, true);
+           echo "<br />";
+           emoticonhelpbutton("theform", "text");
+        } 
+        echo "<br />";
+      ?>
      </font>
     </td>
-    <td><textarea name=summary cols=50 rows=10 wrap=virtual><?php p($form->summary) ?></textarea>
-    <?php if (isset($err["summary"])) formerr($err["summary"]); ?>
-    </td>
+    <td><? print_textarea($usehtmleditor, 10, 50, 600, 400, "summary", $form->summary); ?></td>
 </tr>
 <tr valign=top>
         <td align=right><P><?php print_string("frontpageformat") ?>:</td>
@@ -90,3 +98,9 @@
 <input type="hidden" name="category" value="<?php p($form->category) ?>">
 <input type="hidden" name="format" value="<?php p($form->format) ?>">
 </form>
+
+<?php 
+   if ($usehtmleditor) { 
+       print_richedit_javascript("form", "summary", "no");
+   }
+?>
