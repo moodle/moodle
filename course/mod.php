@@ -48,6 +48,11 @@
 
         switch ($mod->mode) {
             case "update":
+
+                if (trim($mod->name) == '') {
+                    unset($mod->name);
+                }
+
                 $return = $updateinstancefunction($mod);
                 if (!$return) {
                     if (file_exists($moderr)) {
@@ -72,6 +77,11 @@
                 break;
 
             case "add":
+
+                if (trim($mod->name) == '') {
+                    $mod->name = get_string("modulename", $mod->modulename);
+                }
+
                 $return = $addinstancefunction($mod);
                 if (!$return) {
                     if (file_exists($moderr)) {
