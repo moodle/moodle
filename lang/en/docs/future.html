@@ -16,44 +16,36 @@
   and their status can be found at <a target=_top href="http://moodle.org/bugs/">moodle.org/bugs</a>. 
   Your <a href="?file=credits.html">contributions</a> in the form of ideas, code, 
   feedback and promotion are all very welcome - see the <a href="?file=developer.html">Developers 
-  manual</a> for more details.</p>
-  <p>Here is our current vision of the future, though this always changes depending on what developers want to work on.
-</p>
-  <h3>Version 1.3 - May 2004</h3>
+  manual</a> for more details. You can also pay to have certain features developed sooner- see <a href="http://moodle.com/development/" target="_top">moodle.com/development</a> for information and a quote. </p>
+  <p>Here is our current vision of the future, though this is always subject to change depending on sponsors and developers. </p>
+  <h3>Version 1.4 - August 31st </h3>
   <blockquote>
-    <p>Coming only weeks after Moodle 1.2, the main purpose of this release is to add the recently developed support for calendars and events into the main distribution.</p>
-  </blockquote>
-
-  <h3>Version 2.0  - Later in 2004</h3>
-  <blockquote>
-    <p>This major release will include some major changes in internal structure
-    designed to add flexibility and scalability in many areas.  Among the major 
-    targets are:</p>
+    <p>This release contains a lot of structural improvements and refactoring in key modules. It also includes many interface improvements. Some highlights include:</p>
     <ul>
-      <li> Completely rewritten display layer using XHTML-compatible code and complete implementation 
-           of templates for increased standards-compliance, flexibility and accessibility </li>
-      <li> Wider use of PHP classes in key areas of the Moodle code, to make some 
-           things easier for programmers writing new modules or integrating with 
-           external systems</li>
-      <li>New architecture for Enrolments with plugins (similar to the 
-        existing Authentication architecture) so that
-        external systems (eg Student Records, Paypal, LDAP etc) 
-        can control student and teacher access within courses</li>
+      <li>New <strong>Enrolments</strong> architecture allows all manner of new automated enrolment processes. Included are a Paypal system (for paid courses) with instant access, arbitrary external database usage, parsing of flatfiles dumped from legay systems and so on.</li>
+      <li>Improved <strong>Resource</strong> handling with a new one step process and better control over display format. New resource types can be developed as plugins. </li>
+      <li>Refactored <strong>Quiz</strong> module allows new question types as plugins. A new question type called Calculated Questions allows questions to be presented uniquely to each student.</li>
+      <li><strong>Chat</strong> module now supports an optional chat daemon as a backend, providing near-instant response to hundreds of users. </li>
+      <li>Improved <strong>Glossary</strong> module makes it easier to develop new glossary formats. </li>
+      <li>Improved Backup handles the translation of user content (such as links) better than ever. </li>
+      <li>Improved SCORM module handling an ever-wider range of SCORM content. </li>
+      <li>Improved interfaces for adding students, course creators and administrators. </li>
     </ul>
   </blockquote>
-  <h3>Version 2.1</h3>
+  <h3>Version 1.5  - Later in 2004</h3>
   <blockquote>
-    <p>This  release will start to take advantage of the new structuring and add new features such as:</p>
+    <p>This  release will focus mainly on the display layer and making Moodle fully compliant with important web accessibility standards such as WAI (W3C), SENDA (UK) and Section 508 (US). </p>
     <ul>
-      <li>New access-control system allowing finely-defined roles and rights
-</li>
-      <li> Stronger pedagogical support for both teachers and students </li>
-      <li>Basic support for  standard learning objects (SCORM content packages)</li>
-      <li>Better integration of Moodle with moodle.org (for teachers to share and collaborate)</li>
+      <li> Completely rewritten display layer that completely separates presentation from application logic </li>
+      <li>Templating system with templates conforming to XHTML 1.0 for accessibility</li>
+      <li>Powerful system of Cascading Style Sheets designed for cross-platform compatibility.</li>
     </ul>
   </blockquote>
-  <p align="CENTER">&nbsp;</p>
-</blockquote>
+  <h3>Version 2.0</h3>
+  <blockquote>
+    <p>This major release will contain some exciting developments in making Moodle more network-aware, with a natural evolution of Moodle's focus on collaboration. More on this here later. </p>
+  </blockquote>
+  </blockquote>
 <p align="CENTER">&nbsp;</p>
 <p align="CENTER"><font size="1"><a href="." target="_top">Moodle Documentation</a></font></p>
 <p align="CENTER"><font size="1">Version: $Id$</font></p>
