@@ -324,7 +324,7 @@ function popup_form ($common, $options, $formname, $selected="", $nothing="choos
     }
 
     $startoutput = "<form target=\"{$CFG->framename}\" name=$formname>";
-    $output = "<select name=popup onchange=\"top.location=document.$formname.popup.options[document.$formname.popup.selectedindex].value\">\n";
+    $output = "<select name=popup onchange=\"top.location=document.$formname.popup.options[document.$formname.popup.selectedIndex].value\">\n";
 
     if ($nothing != "") {
         $output .= "   <option value=\"javascript:void(0)\">$nothing</option>\n";
