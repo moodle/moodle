@@ -1,5 +1,12 @@
-<?php
+<?php // $Id$
+      // Contains special functions that are particularly useful to filters
 
+
+/**
+ * This is just a little object to define a phrase and some instructions 
+ * for how to process it.  Filters can create an array of these to pass 
+ * to the filter_phrases function below.
+ **/
 class filterobject {
     var $phrase;
     var $hreftagbegin;
@@ -8,8 +15,12 @@ class filterobject {
     var $fullmatch;
 
     /// a constructor just because I like constructing
-    function filterobject($phrase, $hreftagbegin='<span class="highlight">', $hreftagend='</span>', $casesensitive=false, $fullmatch=false) {
-        $this->phrase =       $phrase;
+    function filterobject($phrase, $hreftagbegin='<span class="highlight">', 
+                                   $hreftagend='</span>', 
+                                   $casesensitive=false, 
+                                   $fullmatch=false) {
+
+        $this->phrase        = $phrase;
         $this->hreftagbegin  = $hreftagbegin;
         $this->hreftagend    = $hreftagend;
         $this->casesensitive = $casesensitive;
@@ -19,11 +30,13 @@ class filterobject {
 
 
 /**
- param  text             the text that we are filtering
- param  link_array       an array of filterobjects
- param  ignoretagsopen   an array of opening tags that we should ignore while filtering
- param  ignoretagsclose  an array of corresponding closing tags
-**/
+ * Process phrases intelligently found within a HTML text (such as adding links)
+ *
+ * param  text             the text that we are filtering
+ * param  link_array       an array of filterobjects
+ * param  ignoretagsopen   an array of opening tags that we should ignore while filtering
+ * param  ignoretagsclose  an array of corresponding closing tags
+ **/
 function filter_phrases ($text, $link_array, $ignoretagsopen=NULL, $ignoretagsclose=NULL) {
 
 /// A list of open/close tags that we should not replace within
@@ -37,7 +50,6 @@ function filter_phrases ($text, $link_array, $ignoretagsopen=NULL, $ignoretagscl
     $filterinvalidsuffixes  = '([a-zA-Z0-9])';
 
 
-
 /// Add the user defined ignore tags to the default list
 /// Unless specified otherwise, we will not replace within <a></a> tags
     if ( $ignoretagsopen === NULL ) {
@@ -46,11 +58,9 @@ function filter_phrases ($text, $link_array, $ignoretagsopen=NULL, $ignoretagscl
     }
     
     if ( is_array($ignoretagsopen) ) {
-    
         $filterignoretagsopen  += $ignoretagsopen; // gotta love PHP's array handling!
         $filterignoretagsclose += $ignoretagsclose;
     }
-
 
 
 /// Remove everything enclosed by the ignore tags from $text
@@ -139,11 +149,8 @@ function filter_phrases ($text, $link_array, $ignoretagsopen=NULL, $ignoretagscl
         }
 
 
-
     /// Finally we do our highlighting
         $text = preg_replace('/('.$linkobject->phrase.')/'.$modifiers, $linkobject->hreftagbegin.'$1'.$linkobject->hreftagend, $text);
-
-
 
 
     /// Replace the not full matches before cycling to next link object
@@ -191,6 +198,5 @@ function filter_phrases ($text, $link_array, $ignoretagsopen=NULL, $ignoretagscl
     return $text;
 
 }
-
 
 ?>
