@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.3 development (2004041800)
+      // quiz.php - created with Moodle 1.3 (2004052500)
 
 
 $string['acceptederror'] = 'Akzeptierter Fehler';
@@ -25,6 +25,7 @@ $string['attemptlast'] = 'Letzter Versuch';
 $string['attemptquiznow'] = 'Test jetzt probieren';
 $string['attempts'] = 'Versuche';
 $string['attemptsallowed'] = 'Erlaubte Versuche';
+$string['attemptsexist'] = 'Dieser Test wurde bereits von Ihnen durchgeführt.';
 $string['attemptsunlimited'] = 'Unbegrenzte Versuche';
 $string['backtoquiz'] = 'Zurück zur Testbearbeitung';
 $string['bestgrade'] = 'Bestnote';
@@ -121,6 +122,7 @@ $string['noquestions'] = 'Es wurden noch keine Fragen eingetragen';
 $string['noresponse'] = 'Keine Rückantwort';
 $string['noreview'] = 'Sie dürfen diesen Test nicht überprüfen';
 $string['noreviewuntil'] = 'Sie dürfen diesen Test bis $a nicht überprüfen';
+$string['notenoughanswers'] = 'Diese Art von Fragen erfordert zumindest $a Antworten';
 $string['notenoughsubquestions'] = 'Nicht genügend Unter-Fragen wurden definiert\'<br>
 
 Möchten Sie zurück gehen und diese Frage korrigieren?';
@@ -140,6 +142,7 @@ $string['quizclosed'] = 'Dieser Test schließt am $a';
 $string['quizcloses'] = 'Test endet';
 $string['quiznotavailable'] = 'Dieser Test ist nicht verfügbar bis: $a';
 $string['quizopen'] = 'Ein Test beginnen';
+$string['quizopens'] = 'Test hat begonnen';
 $string['random'] = 'Zufällig setzen';
 $string['randomcreate'] = 'Eine Zufallsfrage erstellen';
 $string['randomsamatch'] = 'Zufällige Kurzantwort-Zuordnungsfrage';
