@@ -1,0 +1,71 @@
+<?PHP // $Id$ 
+      // attendance.php - created with Moodle 1.2 development (2003121500)
+
+
+$string['absentlong'] = 'Afwezig';
+$string['absentshort'] = '-';
+$string['addingmultiple'] = 'Meerdere aanwezigheidslijsten toevoegen';
+$string['addmultiple'] = 'Voeg meerdere aanwezigheidslijsten toe';
+$string['allmodulename'] = 'Alle aanwezigheidslijsten';
+$string['auto'] = 'auto';
+$string['autoattend'] = 'Neem automatisch aanwezigheden op basis van de logbestanden van gebruikersactiviteit';
+$string['autoattendmulti'] = 'Neem automatisch aanwezigheden voor alle aanwezigheidslijsten op basis van de logbestanden van gebruikersactiviteit';
+$string['autoattendshort'] = 'Automatisch uit logbestanden';
+$string['choosedays'] = 'Dagen van de week om aanwezigheden te nemen';
+$string['dayofroll'] = 'Datum voor de lijst';
+$string['defaultautoattend'] = 'Aanwezigheden nemen, gebaseerd op logbestanden van gebruikersactiviteit als stanaard instellen';
+$string['defaultdynamicsection'] = 'Aanwezigheidslijsten standaard naar de juiste week verplaatsen';
+$string['defaultgrade'] = 'Aanwezigheidslijsten standaard op punten zetten';
+$string['defaulthoursinclass'] = 'Standaard aantal uur in een aanwezigheidslijst';
+$string['defaultmaxgrade'] = 'Maximumcijfer voor iemand die altijd aanwezig was';
+$string['defaultstudentstatus'] = 'De standaard status van een leerling op aanwezigheidslijsten';
+$string['downloadexcelfull'] = 'Download volledig Excell-blad';
+$string['downloadexceltotals'] = 'Download samenvattend Excell-blad';
+$string['downloadtextfull'] = 'Download volledig tekstrapport';
+$string['downloadtexttotals'] = 'Download samenvattend tekstrapport';
+$string['dynamicsection'] = 'De week voor het nemen van aanwezigheden baseren op vandaag';
+$string['dynamicsectionmulti'] = 'Plaats de aanwezigheidslijsten automatisch in de juiste weeksectie';
+$string['dynsectionshort'] = 'Dynamisch verplaatst naar sectie';
+$string['endbeforestart'] = 'De einddatum is voor de startdatum';
+$string['endmulti'] = 'Datum voor de laatste aanwezigheidslijst';
+$string['for'] = 'voor';
+$string['friday'] = 'Vr';
+$string['gradeshort'] = 'Punten gegeven';
+$string['gradevalue'] = 'Zet deze lijst op punten';
+$string['gradevaluemulti'] = 'zet deze lijsten op punten';
+$string['hoursinclass'] = 'Aantal uren in een lesperiode';
+$string['hoursineachclass'] = 'Aantal uren in elke lesperiode';
+$string['hoursinfullreport'] = 'Het maximum aantal uren aanwezigheid dat op een afzonderlijke pagina van het een rapport moet staan';
+$string['maxgradeshort'] = 'Maximum cijfer';
+$string['maxgradevalue'] = 'Maximale cijferwaarde voor volledige aanwezigheid';
+$string['modulename'] = 'Aanwezigheid';
+$string['modulenameplural'] = 'Aanwezigheidslijsten';
+$string['monday'] = 'Ma';
+$string['norolls'] = 'Er zijn geen aanwezigheidslijsten in dit vak';
+$string['notes'] = 'Uitzonderingsinformatie';
+$string['notesfor'] = 'Uitzonderingsinformatie voor';
+$string['noviews'] = 'Sorry, er zijn hier geen gegevens voor je account';
+$string['of'] = 'van';
+$string['pages'] = 'Pagina&quot;';
+$string['presentlong'] = 'Aanwezig';
+$string['presentshort'] = 'A';
+$string['saturday'] = 'Za';
+$string['startafterend'] = 'De begindatum is na het einde van het vak';
+$string['startmulti'] = 'Datum voor de eerste aanwezigheidslijst';
+$string['sunday'] = 'Zo';
+$string['takeroll'] = 'Maak een aanwezigheidslijst op deze dag?';
+$string['tardiesperabsence'] = 'Hoe dikwijls te laat komen telt als één afwezigheid?';
+$string['tardylong'] = 'Te laat';
+$string['tardyshort'] = 'L';
+$string['thursday'] = 'Do';
+$string['tuesday'] = 'Di';
+$string['viewall'] = 'Toon alle aanwezigheidslijsten';
+$string['viewmulti'] = 'Toon het rapport als meerdere pagina&quot;s';
+$string['viewone'] = 'Toon alle pagina&quot;s van het rapport';
+$string['viewsection'] = 'Toon alle aanwezigheidslijsten van deze sectie';
+$string['viewtable'] = 'Toon het raport als één tabel';
+$string['viewweek'] = 'Toon alle aanwezigheidslijsten van de kalenderweek';
+$string['wednesday'] = 'Wo';
+$string['weekmodulename'] = 'Alle aanwezigheidslijsten van de laatste week';
+
+?>
