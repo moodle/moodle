@@ -98,8 +98,8 @@
 
     if ($thistopic->summary or $thistopic->sequence or isediting($course->id)) {
         echo "<TR>";
-        echo "<TD NOWRAP BGCOLOR=\"$THEME->cellheading\" VALIGN=top WIDTH=20>&nbsp;</TD>";
-        echo "<TD VALIGN=top BGCOLOR=\"$THEME->cellcontent\" WIDTH=\"100%\">";
+        echo "<TD NOWRAP BGCOLOR=\"$THEME->cellheading\" class=\"topicsoutlineside\" VALIGN=top WIDTH=20>&nbsp;</TD>";
+        echo "<TD VALIGN=top BGCOLOR=\"$THEME->cellcontent\" class=\"topicsoutlinecontent\" WIDTH=\"100%\">";
     
         if (isediting($course->id)) {
             $thistopic->summary .= "&nbsp;<A TITLE=\"$streditsummary\" ".
@@ -119,7 +119,7 @@
         }
     
         echo "</TD>";
-        echo "<TD NOWRAP BGCOLOR=\"$THEME->cellheading\" VALIGN=top ALIGN=CENTER WIDTH=10>&nbsp;";
+        echo "<TD NOWRAP BGCOLOR=\"$THEME->cellheading\" class=\"topicsoutlineside\" VALIGN=top ALIGN=CENTER WIDTH=10>&nbsp;";
         echo "</TD>";
         echo "</TR>";
         echo "<TR><TD COLSPAN=3><IMG SRC=\"../pix/spacer.gif\" WIDTH=1 HEIGHT=1></TD></TR>";
@@ -144,17 +144,17 @@
         $currenttopic = ($course->marker == $section);
 
         if ($currenttopic) {
-            $highlightcolor = $THEME->cellheading2;
+            $highlightcolor = "bgcolor=\"$THEME->cellheading2\" class=\"topicsoutlinesidehighlight\"";
         } else {
-            $highlightcolor = $THEME->cellheading;
+            $highlightcolor = "bgcolor=\"$THEME->cellheading\" class=\"topicsoutlineside\"";
         }
 
         echo "<TR>";
-        echo "<TD NOWRAP BGCOLOR=\"$highlightcolor\" VALIGN=top WIDTH=20>";
+        echo "<TD NOWRAP $highlightcolor VALIGN=top WIDTH=20>";
         echo "<P ALIGN=CENTER><FONT SIZE=3><B>$section</B></FONT></P>";
         echo "</TD>";
 
-        echo "<TD VALIGN=top BGCOLOR=\"$THEME->cellcontent\" WIDTH=\"100%\">";
+        echo "<TD VALIGN=top BGCOLOR=\"$THEME->cellcontent\" class=\"topicsoutlinecontent\" WIDTH=\"100%\">";
 
         if (! $thissection = $sections[$section]) {
             $thissection->course = $course->id;   // Create a new section structure
@@ -181,7 +181,7 @@
         }
 
         echo "</TD>";
-        echo "<TD NOWRAP BGCOLOR=\"$highlightcolor\" VALIGN=top ALIGN=CENTER WIDTH=10>";
+        echo "<TD NOWRAP $highlightcolor VALIGN=top ALIGN=CENTER WIDTH=10>";
         echo "<FONT SIZE=1>";
         if (isset($USER->topic)) {
             $strshowalltopics = get_string("showalltopics");

@@ -88,8 +88,8 @@
 
     if ($thisweek->summary or $thisweek->sequence or isediting($course->id)) {
         echo "<TR>";
-        echo "<TD NOWRAP BGCOLOR=\"$THEME->cellheading\" VALIGN=top WIDTH=20>&nbsp;</TD>";
-        echo "<TD VALIGN=top BGCOLOR=\"$THEME->cellcontent\" WIDTH=\"100%\">";
+        echo "<TD NOWRAP BGCOLOR=\"$THEME->cellheading\" class=\"weeklyoutlineside\" VALIGN=top WIDTH=20>&nbsp;</TD>";
+        echo "<TD VALIGN=top BGCOLOR=\"$THEME->cellcontent\" class=\"weeklyoutlinecontent\" WIDTH=\"100%\">";
 
         if (isediting($course->id)) {
             $thisweek->summary .= "&nbsp;<A TITLE=\"$streditsummary\" ".
@@ -109,7 +109,7 @@
         }
 
         echo "</TD>";
-        echo "<TD NOWRAP BGCOLOR=\"$THEME->cellheading\" VALIGN=top ALIGN=CENTER WIDTH=10>";
+        echo "<TD NOWRAP BGCOLOR=\"$THEME->cellheading\" class=\"weeklyoutlineside\" VALIGN=top ALIGN=CENTER WIDTH=10>";
         echo "</TD>";
         echo "</TR>";
         echo "<TR><TD COLSPAN=3><IMG SRC=\"../pix/spacer.gif\" WIDTH=1 HEIGHT=1></TD></TR>";
@@ -141,17 +141,17 @@
         $endweekday = userdate($weekdate+518400, " %d %B");
 
         if ($thisweek) {
-            $highlightcolor = $THEME->cellheading2;
+            $highlightcolor = "bgcolor=\"$THEME->cellheading2\" class=\"weeklyoutlinesidehighlight\"";
         } else {
-            $highlightcolor = $THEME->cellheading;
+            $highlightcolor = "bgcolor=\"$THEME->cellheading\" class=\"weeklyoutlineside\"";
         }
 
         echo "<TR>";
-        echo "<TD NOWRAP BGCOLOR=\"$highlightcolor\" VALIGN=top WIDTH=20>";
+        echo "<TD NOWRAP $highlightcolor VALIGN=top WIDTH=20>";
         echo "<P ALIGN=CENTER><FONT SIZE=3><B>$week</B></FONT></P>";
         echo "</TD>";
 
-        echo "<TD VALIGN=top BGCOLOR=\"$THEME->cellcontent\" WIDTH=\"100%\">";
+        echo "<TD VALIGN=top BGCOLOR=\"$THEME->cellcontent\" class=\"weeklyoutlinecontent\" WIDTH=\"100%\">";
         echo "<P><FONT SIZE=3 COLOR=\"$THEME->cellheading2\">$weekday - $endweekday</FONT></P>";
 
         if (! $thisweek = $sections[$week]) {
@@ -179,7 +179,7 @@
         }
 
         echo "</TD>";
-        echo "<TD NOWRAP BGCOLOR=\"$highlightcolor\" VALIGN=top ALIGN=CENTER WIDTH=10>";
+        echo "<TD NOWRAP $highlightcolor VALIGN=top ALIGN=CENTER WIDTH=10>";
         echo "<FONT SIZE=1>";
         if (isset($USER->section)) {
             $strshowallweeks = get_string("showallweeks");
