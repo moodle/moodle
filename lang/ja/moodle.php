@@ -269,6 +269,7 @@ $string['help'] = "ヘルプ";
 $string['helpemoticons'] = "感情アイコンを使う";
 $string['helpformatting'] = "テキストフォーマットに関して";
 $string['helphtml'] = "htmlの書き方";
+$string['helpindex'] = "ヘルプファイルインデックス";
 $string['helppicture'] = "写真のアップロード方法";
 $string['helpquestions'] = "適切な質問をする";
 $string['helpreading'] = "十分に読む";
