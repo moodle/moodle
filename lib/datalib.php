@@ -2321,7 +2321,7 @@ function get_courses_search($searchterms, $sort='fullname ASC', $page=0, $record
  */
 function get_categories($parent='none', $sort='sortorder ASC') {
 
-    if ($parent == 'none') {
+    if ($parent === 'none') {
         $categories = get_records('course_categories', '', '', $sort);
     } else {
         $categories = get_records('course_categories', 'parent', $parent, $sort);
@@ -2370,6 +2370,10 @@ function fix_course_sortorder($categoryid=0, $n=0, $safe=0) {
         $count = $info->count;
         $min   = $info->min;
         unset($info);
+    }
+
+    if ($categoryid > 0 && $n==0) { // only passed category so don't shift it
+        $n = $min;
     }
 
     // $hasgap flag indicates whether there's a gap in the sequence
@@ -2424,8 +2428,11 @@ function fix_course_sortorder($categoryid=0, $n=0, $safe=0) {
     }
     set_field('course_categories', 'coursecount', $count, 'id', $categoryid);
 
-    // $n could need updating 
-    $n = get_field_sql("SELECT MAX(sortorder) from {$CFG->prefix}course WHERE category=$categoryid");
+    // $n could need updating     
+    $max = get_field_sql("SELECT MAX(sortorder) from {$CFG->prefix}course WHERE category=$categoryid");
+    if ($max > $n) {
+        $n = $max;
+    }
 
     if ($categories = get_categories($categoryid)) {
         foreach ($categories as $category) {
