@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.2 development (2003111400)
+      // assignment.php - created with Moodle 1.2 development (2004021000)
 
 
 $string['allowresubmit'] = 'Permettere di sottomettere più volte';
@@ -18,6 +18,7 @@ $string['description'] = 'Descrizione';
 $string['duedate'] = 'Data di scadenza';
 $string['duedateno'] = 'Senza scadenza';
 $string['early'] = '$a anticipo';
+$string['existingfiledeleted'] = 'Il file esistente è stato cancellato: $a';
 $string['failedupdatefeedback'] = 'Aggiornamento delle risposte alle consegne dell\'utente $a non riuscito';
 $string['feedback'] = 'Risposte';
 $string['feedbackupdated'] = 'Risposte alle consegne aggiornate per $a utenti';
