@@ -1285,6 +1285,50 @@ function format_float($num, $places=0) {
     return sprintf("%.$places"."f", $num);
 }
 
+function swapshuffle($array) {
+/// Given a simple array, this shuffles it up just like shuffle()
+/// Unlike PHP's shuffle() ihis function works on any machine.
+
+    srand ((double) microtime() * 10000000);
+    $last = count($array) - 1;
+    for ($i=0;$i<=$last;$i++) {
+        $from = rand(0,$last);
+        $curr = $array[$i];
+        $array[$i] = $array[$from];
+        $array[$from] = $curr;
+    }  
+    return $array;
+}
+
+function draw_rand_array($array, $draws) {
+/// Given an arbitrary array, and a number of draws, 
+/// this function returns an array with that amount 
+/// of items.  The indexes are retained.
+
+    srand ((double) microtime() * 10000000);
+
+    $return = array();
+
+    $last = count($array);
+
+    if ($draws > $last) {
+        $draws = $last;
+    }
+
+    while ($draws > 0) {
+        $last--;
+
+        $keys = array_keys($array);
+        $rand = rand(0, $last);
+
+        $return[$keys[$rand]] = $array[$keys[$rand]];
+        unset($array[$keys[$rand]]);
+  
+        $draws--;
+    }
+
+    return $return;
+} 
 
 
 ?>
