@@ -120,12 +120,6 @@ form {
     border-style: solid;
 }
 
-.forumpostheader {
-}
-
-.forumpostheadertopic {
-}
-
 .forumpostpicture {
 }
 
@@ -205,3 +199,22 @@ a.dimmed:hover {
     text-decoration: underline;
     color: red;
 }
+
+.forumpostheader {
+}
+
+.forumpostheaderpicture {
+}
+
+.forumpostheadername {
+    font-size: small;
+}
+
+.forumpostheaderreplies {
+    font-size: small;
+}
+
+.forumpostheaderdate {
+    font-size: small;
+}
+

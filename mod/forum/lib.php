@@ -29,7 +29,7 @@ define("FORUM_SHORT_POST", 300);  // Less non-HTML characters than this is short
 
 define("FORUM_LONG_POST", 600);   // More non-HTML characters than this is long
 
-define("FORUM_MANY_DISCUSSIONS", 10);
+define("FORUM_MANY_DISCUSSIONS", 3);
 
 
 /// STANDARD FUNCTIONS ///////////////////////////////////////////////////////////
@@ -573,7 +573,7 @@ function forum_count_unrated_posts($discussionid, $userid) {
     }
 }
 
-function forum_get_discussions($forum="0", $forum_sort="DESC", $user=0) {
+function forum_get_discussions($forum="0", $forumsort="d.timemodified DESC", $user=0) {
 /// Get all discussions in a forum
     global $CFG;
 
@@ -582,7 +582,10 @@ function forum_get_discussions($forum="0", $forum_sort="DESC", $user=0) {
     } else {
         $userselect = "";
     }
-    return get_records_sql("SELECT p.*, u.firstname, u.lastname, u.email, u.picture
+    if (empty($forumsort)) {
+        $forumsort = "d.timemodified DESC";
+    }
+    return get_records_sql("SELECT p.*, d.timemodified, u.firstname, u.lastname, u.email, u.picture
                               FROM {$CFG->prefix}forum_discussions d, 
                                    {$CFG->prefix}forum_posts p, 
                                    {$CFG->prefix}user u 
@@ -590,7 +593,7 @@ function forum_get_discussions($forum="0", $forum_sort="DESC", $user=0) {
                                AND p.discussion = d.id 
                                AND p.parent= 0 
                                AND p.userid = u.id $userselect
-                          ORDER BY p.created $forum_sort");
+                          ORDER BY $forumsort");
 }
 
 
@@ -909,49 +912,43 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
 }
 
 
-function forum_print_post_header(&$post, $courseid, $ownpost=false, $reply=false, $link=false, $rate=false, $footer="") {
+function forum_print_discussion_header(&$post, $courseid, $ownpost=false, $reply=false, $link=false, $rate=false, $footer="") {
     global $THEME, $USER, $CFG;
 
-    if ($post->parent) {
-        echo "<TABLE BORDER=0 CELLPADDING=3 CELLSPACING=0 CLASS=\"forumpost\">";
-    } else {
-        echo "<TABLE BORDER=0 CELLPADDING=3 CELLSPACING=0 CLASS=\"forumpost\" WIDTH=100%>";
-    }
+    echo "<tr class=\"forumpostheader\">";
 
-    echo "<TR><TD BGCOLOR=\"$THEME->cellcontent2\" CLASS=\"forumpostpicture\" WIDTH=35 VALIGN=TOP>";
+    // Topic
+    echo "<td bgcolor=\"$THEME->cellheading2\" class=\"forumpostheadertopic\" valign=top width=\"100%\">";
+    echo "<a href=\"$CFG->wwwroot/mod/forum/discuss.php?d=$post->discussion\">$post->subject</a>";
+    echo "</td>\n";
+
+    // Picture
+    echo "<td bgcolor=\"$THEME->cellcontent2\" class=\"forumpostheaderpicture\" width=35>";
     print_user_picture($post->userid, $courseid, $post->picture);
-    echo "</TD>";
+    echo "</td>\n";
 
-    if ($post->parent) {
-        echo "<TD NOWRAP BGCOLOR=\"$THEME->cellheading\" CLASS=\"forumpostheader\">";
-    } else {
-        echo "<TD NOWRAP BGCOLOR=\"$THEME->cellheading2\" CLASS=\"forumpostheadertopic\">";
-    }
-    echo "<P>";
-    echo "<FONT SIZE=3><B>$post->subject</B></FONT><BR>";
-    echo "<FONT SIZE=2>";
-    $by->name = "<A HREF=\"$CFG->wwwroot/user/view.php?id=$post->userid&course=$courseid\">$post->firstname $post->lastname</A>";
-    $by->date = userdate($post->modified);
-    print_string("bynameondate", "forum", $by);
-    echo "</FONT></P></TD>";
+    // User name
+    echo "<td bgcolor=\"$THEME->cellcontent2\" class=\"forumpostheadername\" align=left nowrap>";
+    echo "<a href=\"$CFG->wwwroot/user/view.php?id=$post->userid&course=$courseid\">$post->firstname $post->lastname</a>";
+    echo "</td>\n";
 
-    if ($post->parent) {
-        echo "<TD VALIGN=BOTTOM BGCOLOR=\"$THEME->cellheading\" CLASS=\"forumpostheader\">";
-    } else {
-        echo "<TD VALIGN=BOTTOM BGCOLOR=\"$THEME->cellheading2\" CLASS=\"forumpostheadertopic\">";
-    }
-    echo "<P ALIGN=right><FONT SIZE=-1>";
-
+    // Replies
+    echo "<td bgcolor=\"$THEME->cellcontent2\" class=\"forumpostheaderreplies\" align=center nowrap>";
     if ($link) {
-        if ($post->replies == 1) {
-            $replystring = get_string("repliesone", "forum", $post->replies);
-        } else {
-            $replystring = get_string("repliesmany", "forum", $post->replies);
-        }
-        echo "<A HREF=\"$CFG->wwwroot/mod/forum/discuss.php?d=$post->discussion\"><B>".get_string("discussthistopic", "forum")."</B></A> ($replystring)&nbsp;&nbsp;";
+        echo "<a href=\"$CFG->wwwroot/mod/forum/discuss.php?d=$post->discussion\">$post->replies</a>";
     }
-    echo "</P>";
-    echo "</TD></TR>\n</TABLE>\n\n";
+    echo "</td>\n";
+
+    echo "<td bgcolor=\"$THEME->cellcontent2\" class=\"forumpostheaderdate\" align=right nowrap>";
+    if (!empty($post->timemodified)) {
+        echo userdate($post->timemodified);
+    } else {
+        echo userdate($post->modified);
+    }
+    echo "</td>\n";
+
+    echo "</tr>\n";
+
 }
 
 
@@ -1222,6 +1219,9 @@ function forum_add_new_post($post) {
     if ($post->attachment = forum_add_attachment($post, $newfile)) {
         set_field("forum_posts", "attachment", $post->attachment, "id", $post->id);
     }
+
+    // Update discussion modified date
+    set_field("forum_discussions", "timemodified", $post->modified, "id", $post->discussion);
     
     return $post->id;
 }
@@ -1233,11 +1233,16 @@ function forum_update_post($post) {
     if (!$post->parent) {   // Post is a discussion starter - update discussion title too
         set_field("forum_discussions", "name", $post->subject, "id", $post->discussion);
     }
+
     if ($newfilename = forum_add_attachment($post, $post->attachment)) {
         $post->attachment = $newfilename;
     } else {
         unset($post->attachment);
     }
+
+    // Update discussion modified date
+    set_field("forum_discussions", "timemodified", $post->modified, "id", $post->discussion);
+
     return update_record("forum_posts", $post);
 }
 
@@ -1396,7 +1401,7 @@ function forum_unsubscribe($userid, $forumid) {
 
 
 function forum_user_has_posted_discussion($forumid, $userid) {
-    if ($discussions = forum_get_discussions($forumid, "DESC", $userid)) {
+    if ($discussions = forum_get_discussions($forumid, "", $userid)) {
         return true;
     } else {
         return false;
@@ -1437,7 +1442,7 @@ function forum_user_can_post($forum, $user=NULL) {
 }
 
 
-function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5, $forum_style="plain", $forum_sort="DESC") {
+function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5, $forum_style="plain", $forum_sort="") {
     global $CFG, $USER;
     
     if ($forum_id) {
@@ -1471,7 +1476,6 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5, $f
     if (! $discussions = forum_get_discussions($forum->id, $forum_sort) ) {
         echo "<P ALIGN=CENTER><B>(".get_string("nodiscussions", "forum").")</B></P>";
         return;
-
     }
     
     if ((!$forum_numdiscussions) && ($forum_style == "plain") && (count($discussions) > FORUM_MANY_DISCUSSIONS) ) { 
@@ -1487,6 +1491,16 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5, $f
     if ($forum_style == "minimal") {
         $strftimerecent = get_string("strftimerecent");
         $strmore = get_string("more", "forum");
+    }
+
+    if ($forum_style == "header") {
+        echo "<table width=\"100%\" border=0 cellpadding=3 cellspacing=1 class=\"forumpost\">";
+        echo "<tr>";
+        echo "<th>".get_string("subject", "forum")."</th>"; 
+        echo "<th colspan=2>".get_string("startedby", "forum")."</th>";
+        echo "<th>".get_string("replies", "forum")."</th>";
+        echo "<th>".get_string("lastpost", "forum")."</th>";
+        echo "</tr>";
     }
 
     foreach ($discussions as $discussion) {
@@ -1516,7 +1530,7 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5, $f
                 echo "</P>\n";
             break;
             case "header":
-                forum_print_post_header($discussion, $forum->course, $ownpost, $reply=0, $link=1, $assessed=false);
+                forum_print_discussion_header($discussion, $forum->course, $ownpost, $reply=0, $link=1, $assessed=false);
             break;
             default:
                 if ($canreply or $discussion->replies) {
@@ -1528,6 +1542,10 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5, $f
                 echo "<BR>\n";
             break;
         }
+    }
+
+    if ($forum_style == "header") {
+        echo "</table>";
     }
 }
 
