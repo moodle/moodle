@@ -7,11 +7,11 @@ $string['modulenameplural'] = "Spørsmål";
 
 $string['answered'] = "Svart";
 $string['choice'] = "Spørsmål \$a";
-$string['choicename'] = "Spørsmål navn";
-$string['choicetext'] = "Spørsmål tekst";
-$string['notanswered'] = "Ikke svart ennå";
+$string['choicename'] = "Spørsmålsnavn";
+$string['choicetext'] = "Spørsmålstekst";
+$string['notanswered'] = "Ikke svart enda";
 $string['responses'] = "Svar";
 $string['responsesto'] = "Svar til \$a";
-$string['savemychoice'] = "Lagre mitt spørsmål";
+$string['savemychoice'] = "Lagre mitt svar";
 $string['viewallresponses'] = "Vis \$a svar";
 ?>

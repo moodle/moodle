@@ -1,0 +1,111 @@
+<HEAD>
+    <TITLE>Moodle Docs: Upgrading</TITLE>
+	<LINK REL="stylesheet" HREF="../theme/standard/styles.php" TYPE="TEXT/CSS">
+    <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF">
+<H2>Å oppgradere Moodle</H2>
+
+<p>Moodle er laget slik at det er enkelt å oppgradere fra hvilken som helst 
+gammel versjon til en nyere versjon.&nbsp; </p>
+<p>Når du oppgraderer Moodle bør du følge disse stegene:</p>
+<h2>1. Ta sikkerhetskopi av viktig data</h2>
+<blockquote> 
+  <p>Selv om det ikke er helt nødvendig er det alltid lurt å ta sikkerhetskopi 
+  av slike systemer før du gjør en større oppgradering, i tilfelle du likevel må 
+  gå tilbake til den gamle versjonen av en eller annen grunn. Det er en god idé 
+  å autumatisere serveren din slik at den tar sikkerhetskopi av Moodle hver dag. 
+  Da kan du hoppe over dette steget.</p>
+  <p>Det er tre områder som trenger sikkerhetskopi:</p>
+  <blockquote> 
+    <p><strong>1. Moodles programkatalog</strong></p>
+    <blockquote> 
+      <p>Lag en separat kopi av disse filene før oppgraderingen. Slik kan du få 
+      tak i config.php og alle andre moduler du har lagt til som temaer, språk 
+        etc.<strong><br>
+        </strong></p>
+    </blockquote>
+    <p><strong>2. Datakatalogen.</strong></p>
+    <blockquote> 
+      <p>Her ligger alt opplastet innhold (slik som ressurser og 
+      studentinnleveringer i fagene) så det er svært viktig å ha kopi av disse 
+      filene i alle fall. Noen ganger kan oppgraderingen flytte eller gi nytt 
+      navn til kataloger i denne katalogen. </p>
+    </blockquote>
+    <p><strong>3. Databasen</strong></p>
+    <blockquote> 
+      <p>De fleste oppgraderingene av Moodle vil endre databasetabellene med å 
+      legge til eller å endre felter. Hver database har ulike måter for å ta 
+      sikkerhetskopi. En måte å ta kopi av en MySQL-database er å 'dumpe' den 
+      til en enkelt SQL-fil. Det følgende eksempelet viser kommandoer i Unix for 
+      å 'dumpe' databasen som heter &quot;moodle&quot;:</p>
+      <blockquote>
+        <p><font face="Courier New, Courier, mono">mysqldump moodle &gt; moodle-backup-2002-10-26.sql</font></p>
+      </blockquote>
+      <p>Du kan også bruke funksjonen &quot;Export&quot; i Moodles &quot;Manage 
+        Database&quot; for å gjøre det samme på alle plattformer. </p>
+    </blockquote>
+  </blockquote>
+</blockquote>
+<h2>&nbsp;</h2>
+<h2>2. Installer den nye versjonen av Moodle</h2>
+<blockquote> 
+  <p><strong>Med et nedlastet arkiv</strong></p>
+  <blockquote> 
+    <p>Ikke overskriv en gammel versjon hvis du ikke vet hva du gjør. Noen 
+    ganger kan gamle elementer lage problemer i nye installasjoner. Det beste er 
+    å gi den gamle Moodlekatalogen et nytt navn. Deretter pakker du ut den nye 
+    versjonen til den gamle katalogen (det gamle katalognavnet). </p>
+    <blockquote> 
+      <p><font face="Courier New, Courier, mono">mv moodle moodle.backup<br>
+        tar xvzf moodle-1.0.6.tgz</font></p>
+      </blockquote>
+    <p>Deretter kopierer du på kryss og tvers i config.php og alt annet du har 
+    endret som temaer:</p>
+    <blockquote>
+      <p><font face="Courier New, Courier, mono">cp moodle.backup/config.php moodle<br>
+        cp -pr moodle.backup/theme/mytheme moodle/theme/mytheme</font></p>
+    </blockquote>
+  </blockquote>
+  <p><strong>Med CVS</strong></p>
+  <blockquote> 
+    <p>Hvis du bruker CVS går du bare til hovedkatalogen i Moodle og oppdaterer 
+    til de nye filene:</p>
+    <blockquote> 
+      <p><font face="Courier New, Courier, mono">cvs update -dP</font></p>
+    </blockquote>
+    <p>Pass på parameteren &quot;d&quot; for å lage nye kataloger hvis 
+    nødvendig, og parameteren &quot;P&quot; for å fjerne tomme kataloger.</p>
+    <p>Hvis du har redigert filer i Moodle må du følge nøye med på skjermen. 
+    Følg med beskjedene du får om mulige konflikter. Alle dine egne temaer og 
+    ikke standard plugins forblir urørt. </p>
+  </blockquote>
+  <p>&nbsp;</p>
+</blockquote>
+<h2>3. Gjør ferdig oppgraderingen</h2>
+<blockquote> 
+  <p>Det siste steget er å starte oppgraderingen i selve Moodle.</p>
+  <p>For å gjøre dette går du til <a target=_top href="../admin/index.php">adminsiden 
+  i din 
+    installasjon</a>.</p>
+  <blockquote> 
+    <p><font face="Courier New, Courier, mono">http://example.com/moodle/admin</font></p>
+  </blockquote>
+  <p>Det spiller ingen rolle om du er logget inn som administrator eller ikke.</p>
+  <p> Moodle oppdager automatisk den nye versjonen og utfører alle 
+  oppgraderingene som behøves i databasen og filsystemet. Hvis det er noe det 
+  ikke klarer selv (svært sjelden) vil du få beskjed om hva du må gjøre. </p>
+</blockquote>
+<p>&nbsp; </p>
+<p> Dersom alt går bra (ingen feilmeldinger) kan du starte å bruke den nye 
+versjonen av Moodle og nyte de nye funksjonene!</p>
+<p>Hvis du har problemer med oppgraderingen, besøk <a target=_top href="http://moodle.com/">
+moodle.</a><a href="http://moodle.com/">org</a> og send innlegg i forumet <a target=_top href="http://moodle.com/mod/forum/view.php?id=28">Installation 
+  Support Forum</a>.</p>
+<p>&nbsp;</p>
+<P>&nbsp;</P>
+<P ALIGN="CENTER"><FONT SIZE="1"><A HREF="." TARGET="_top">Dokumentasjon om Moodle</A></FONT></P>
+<P ALIGN="CENTER"><FONT SIZE="1">Versjon: $Id$</FONT></P>
+
+</BODY>
