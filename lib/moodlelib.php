@@ -1767,6 +1767,7 @@ function get_string_from_file($identifier, $langfile, $destination) {
     static $strings;    // Keep the strings cached in memory.
 
     if (empty($strings[$langfile])) {
+        $string = array();
         include ($langfile);
         $strings[$langfile] = $string;
     } else {
