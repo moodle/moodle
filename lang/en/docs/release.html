@@ -10,7 +10,7 @@
 <BODY BGCOLOR="#FFFFFF">
 <H2>Release notes</H2>
 
-<H3>  New in Moodle 1.0.8 (due for release soon)   </H3>
+<H3>  New in Moodle 1.0.8 (due for release 6th January)   </H3>
 <UL><DL>
 <DT> Databases</DT>
 <DD> Moodle now has complete native support support for <B>PostgreSQL 7</B> databases (thanks 
@@ -62,7 +62,9 @@
 <DD> The database module now supports databases that contain md5-encrypted passwords, 
      which means it should now be compatible with systems like PostNuke. When using 
      external authorisation students are now forced to fully fill-out their information
-     before they can enter any course.</DD>
+     before they can enter any course.  An ADOdb bug was also causing some mischief 
+     when the external database type was the same as the Moodle database.  
+     Overall it's now quite usable.</DD>
 
 <DT> Administration </DT>
 <DD> The admin can now assign other people to also be admins.</DD>
@@ -85,6 +87,7 @@
      <LI> Usernames can now contain "." and "-" characters.
      <LI> Cookies now use table prefixes for unique naming, so that many 
           different moodle sites can be run on the same web site and database.
+     <LI> Site news forum heading can now be changed (edit the forum).
      <LI> Some small performance improvements here and there
      <LI> Many little code clean-ups.
 </DD>
