@@ -170,7 +170,7 @@ $string['grades'] = "Beoordelingen";
 
 $string['guestsno'] = "Sorry, gasten kunnen testen niet bekijken noch een poging wagen";
 
-$string['imagedisplay'] = "Weer te geven plaatje";
+$string['imagedisplay'] = "Weer te geven afbeelding";
 
 $string['importquestions'] = "Importeer vragen uit een bestand";
 

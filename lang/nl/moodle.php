@@ -113,7 +113,7 @@ $string['configerrorlevel'] = "Kies hoeveel PHP waarschuwingen je wilt dat Moodl
 $string['configframename'] = "Als je Moodle in een webframe opneemt (embed), zet de naam van het frame dan hier. In alle andere gevallen moet de waarde '_top' blijven staan.";
 $string['configgdversion'] = "Geef aan welke versie van GD geïnstalleerd is. De versie die standaard getoond wordt is automatisch gevonden. Verander dit niet tenzij je echt weet wat je aan het doen bent.
 ";
-$string['confightmleditor'] = "Kies of je het gebruik van de ingebouwde HTML tekst editor wilt toestaan. Zelfs als je het toe staat zal deze editor alleen verschijnen als de gebruiker een geschikte browser gebruikt (IE 5.5 of later). Gebruikers kunnen er ook voor kiezen de editor niet te gebruiken.";
+$string['confightmleditor'] = "Kies of je het gebruik van de ingebouwde HTML teksteditor wilt toestaan. Zelfs als je het toe staat zal deze editor alleen verschijnen als de gebruiker een geschikte browser gebruikt (IE 5.5 of later). Gebruikers kunnen er ook voor kiezen de editor niet te gebruiken.";
 $string['configidnumber'] = "De mogelijk specificeert of (a) de gebruikers helemaal niet worden gevraagd om een leerlingnummer, (b) gebruikers wel worden gevraagd om een leerlingnummer maar deze leeg kunnen laten of (c) gebruikers worden gevraag om het leerlingnummer en kunnen dit niet leeg laten. Als het leerlingnummer wordt opgegeven dan wordt deze getoond in het profiel.";
 $string['configintro'] = "Op deze pagina kun je een aantal variabelen voor de configuratie instellen die Moodle kunnen helpen zodat het goed kan werken op jouw server. Maak je er niet teveel zorgen over, de standaardwaarden werken meestal prima en je kunt later altijd nog op deze pagina terugkomen en deze instellingen opnieuw wijzigen.";
 $string['configintroadmin'] = "Op deze pagina configureer je de account van de beheerder die de volledige controle over de site zal hebben. Geef de beheerder een veilige gebruikersnaam en wachtwoord en een geldig e-mailadres. Je kunt later beheerderaccounts bijmaken.";
@@ -126,12 +126,12 @@ $string['configlangmenu'] = "Kies of je de gebruiker een taalkeuze wil laten mak
 $string['configlocale'] = "Kies een sitebrede 'locale' - dit zal de opmaak en taal van data beïnvloeden. Deze 'locale' moet al geïnstalleerd zijn op je besturingssysteem. (Bijvoorbeeld en_US of es_ES). Laat het leeg als je niet weet wat je moet kiezen.
 ";
 $string['configloglifetime'] = "Dit specificeert de lengte van de periode waarin statistieken van gebruikers-activiteit worden bewaard. Statistieken die ouder zijn dan deze leeftijd worden automatisch verwijderd. Het is verstandig om de statistieken zo lang mogelijk te bewaren, je kunt ze immers altijd nog nodig hebben. Maar als je een zeer drukke server hebt en prestatieproblemen ondervindt, kun je de periode misschien beter minder lang maken.";
-$string['configlongtimenosee'] = "Als het heel lang geleden is dat een leerling heeft ingelogd wordt hij/zij automatisch uit de vakken verwijderd. Deze parameter bepaald deze tijd limiet.";
-$string['configmaxeditingtime'] = "Dit bepaalt hoe lang mensen de tijd hebben om hun forum bijdrage, logboek, feedback en dergelijke te wijzigen. Meestal is 30 minuten een goede tijd.";
+$string['configlongtimenosee'] = "Als het heel lang geleden is dat een leerling heeft ingelogd wordt hij/zij automatisch uit de vakken verwijderd. Deze parameter bepaalt deze tijd limiet.";
+$string['configmaxeditingtime'] = "Dit bepaalt hoe lang mensen de tijd hebben om hun forumbijdrage, logboek, feedback en dergelijke te wijzigen. Meestal is 30 minuten een goede tijd.";
 $string['configproxyhost'] = "Als deze <B>server</B> een proxy computer (zoals bijvoorbeeld een firewall) nodig heeft om op het Internet te komen vul hier dan de hostname en de poort van de proxy in. Laat het leeg als dit niet het geval is.";
 $string['configsecureforms'] = "Moodle kan een extra beveiliging toepassen wanneer het gegevens aanneemt van webformulieren. Als je dit inschakelt, dan wordt de HTTP_REFERER variabele vergeleken met het huidige formulieradres. In zeldzame gevallen kan dit problemen veroorzaken als de gebruiker een firewall gebruikt (zoals Zonealarm) die geconfigureerd is om HTTP_REFERER uit het webverkeer te filteren. Het symptoom is: vastgeraken op een formulier. Als je gebruikers problemen hebben met de login-pagina (bijvoorbeeld) dan zou je kunnen overwegen om deze instelling uit te zetten, Hoewel dit je site meer blootstelt aan brute kracht-aanvallen op je wachtwoord. Bij twijfel laat je deze instelling op 'ja' staan.";
 $string['configsessiontimeout'] = "Als mensen die ingelogd zijn op deze site voor een lange tijd niets doen (ze laden geen nieuwe pagina's) worden ze automatisch uitgelogd (hun sessie is beëindigd). Deze variabele geeft aan hoe lang deze tijd moet zijn. ";
-$string['configslasharguments'] = "Bestanden (plaatjes, uploads en dergelijke) worden via een script aangeleverd dat gebruik maakt van 'slash arguments' (hier de tweede optie). Deze methode zorgt ervoor dat bestanden makkelijker in web browsers, proxy servers en dergelijke kunnen worden gecached. Helaas staan sommige PHP servers deze methode niet toe. Dus kies de eerste optie als je problemen hebt met het bekijken van geuploade bestanden of plaatjes (bijvoorbeeld plaatjes van gebruikers).";
+$string['configslasharguments'] = "Bestanden (afbeeldingen, uploads en dergelijke) worden via een script aangeleverd dat gebruik maakt van 'slash arguments' (hier de tweede optie). Deze methode zorgt ervoor dat bestanden makkelijker in web browsers, proxy servers en dergelijke kunnen worden gecached. Helaas staan sommige PHP servers deze methode niet toe. Dus kies de eerste optie als je problemen hebt met het bekijken van geuploade bestanden of afbeeldingen (bijvoorbeeld afbeeldingen van gebruikers).";
 $string['configsmtphosts'] = "Geef de volledige naam van één of meerdere lokale SMTP servers die Moodle moet gebruiken om mail te versturen (bijvoorbeeld: 'mail.a.com' of 'mail.a.com;mail.b.com'). Als je dit leeg laat gebruikt Moodle de standaard PHP methode voor het versturen van mail.";
 $string['configsmtpuser'] = "Als je hierboven een SMTP server hebt ingevuld en deze server authenticatie nodig heeft, vul hier dan de gebruikersnaam en het wachtwoord in.";
 $string['configteacherassignteachers'] = "Zouden gewone docenten in staat moeten zijn om andere docenten aan te wijzen binnen de vakken die zij doceren? Als je dit op 'nee' zet, dan kunnen alleen vak-aanmakers en beheerders docenten aanwijzen.";
@@ -278,11 +278,11 @@ $string['emailpasswordsent'] = "Bedankt voor de bevestiging van de wijziging van
 <p>Er is een e-mail met je nieuw wachtwoord naar <b>\$a->email</b> gestuurd.
 <p>Het nieuwe wachtwoord werd automatisch gegenereerd. Misschien wil je het <a href=\$a->link>wachtwoord veranderen</a> in iets wat je gemakkelijker kunt onthouden.";
 $string['enrolmentconfirmation'] = "Je staat op het punt jezelf aan te melden als lid van dit vak.<br />Weet je zeker dat je dit wilt doen?";
-$string['enrolmentkey'] = "Vak sleutel";
-$string['enrolmentkeyfrom'] = "Dit vak vereist een 'Vak sleutel' een eenmalig<BR>
+$string['enrolmentkey'] = "Vaksleutel";
+$string['enrolmentkeyfrom'] = "Dit vak vereist een 'Vaksleutel' een eenmalig<BR>
 wachtwoord dat je moet hebben gekregen van \$a
 ";
-$string['enrolmentkeyhint'] = "Die 'Vak sleutel' was niet correct. Probeer het nog eens.<BR>
+$string['enrolmentkeyhint'] = "Die 'Vaksleutel' was niet correct. Probeer het nog eens.<BR>
 (Hier een hint: het begint met '\$a')";
 $string['entercourse'] = "Klik om dit vak binnen te gaan";
 $string['enteremailaddress'] = "Typ je e-mail adres om je wachtwoord te resetten en via e-mail een nieuw wachtwoord naar je toegestuurd te krijgen.";
@@ -351,7 +351,7 @@ $string['helpemoticons'] = "Gebruik emoticons";
 $string['helpformatting'] = "Over tekstopmaak";
 $string['helphtml'] = "Hoe je HTML kunt schrijven";
 $string['helpindex'] = "Index  helpbestanden";
-$string['helppicture'] = "Hoe je een plaatje kunt uploaden";
+$string['helppicture'] = "Hoe je een afbeelding kunt uploaden";
 $string['helpquestions'] = "Hoe je vragen kunt stellen";
 $string['helpreading'] = "Lees zorgvuldig";
 $string['helprichtext'] = "Over de Richtext HTML editor";
@@ -412,14 +412,14 @@ $string['loginas'] = "Log in als";
 $string['loginguest'] = "Inloggen als gast";
 $string['loginsite'] = "Op de site inloggen";
 $string['loginsteps'] = "Hallo! Om volledige toegang tot de vakken te krijgen moet je even de tijd nemen om een nieuwe account voor jezelf aan te maken op deze website. 
-Elk vak kan ook een eenmalige &quot;Vak sleutel&quot; hebben die je pas later nodig hebt. Hier zijn de stappen die je moet volgen:
+Elk vak kan ook een eenmalige &quot;Vaksleutel&quot; hebben die je pas later nodig hebt. Hier zijn de stappen die je moet volgen:
 <OL size=2>
 <LI>Vul het <A HREF=\$a>Nieuwe account</A> formulier in.
 <LI>Er wordt meteen een e-mail verstuurd naar je e-mail adres.
 <LI>Lees de e-mail en klik op de link die erin staat.
 <LI>Je account wordt bevestigd en je bent dan ingelogd.
 <LI>Kies nu het vak dat je wilt volgen.
-<LI>Als je wordt gevraagd om een &quot;Vak sleutel&quot;, gebruik dan de sleutel die je van je docent gekregen hebt. Dit zorgt ervoor dat je lid wordt van het vak.
+<LI>Als je wordt gevraagd om een &quot;Vaksleutel&quot;, gebruik dan de sleutel die je van je docent gekregen hebt. Dit zorgt ervoor dat je lid wordt van het vak.
 <LI>Je hebt nu toegang tot het hele vak. Vanaf nu hoef je alleen nog maar je gebruikersnaam en wachtwoord in het formulier op deze pagina in te vullen om in te loggen en toegang te krijgen tot de vakken waar je lid van bent.
 </OL>
 ";
@@ -428,7 +428,7 @@ $string['loginto'] = "Log in op \$a";
 $string['loginusing'] = "Log hier in met gebruik van je gebruikersnaam en wachtwoord";
 $string['logout'] = "Log uit";
 $string['logs'] = "Statistieken";
-$string['mainmenu'] = "Hoofd menu  ";
+$string['mainmenu'] = "Hoofdmenu  ";
 $string['makeafolder'] = "Maak een map";
 $string['makeeditable'] = "Als je '\$a' bewerkbaar maakt door de het proces op de web server (bijv. apache) dan kun je dit bestand rechtstreeks vanuit deze pagina bewerken";
 $string['managedatabase'] = "Beheer de database";
@@ -528,7 +528,7 @@ $string['noexistingteachers'] = "Nog geen docenten";
 $string['nofilesselected'] = "Er zijn geen bestanden geselecteerd om terug te zetten";
 $string['nofilesyet'] = "Er zijn nog geen bestanden naar deze cursus geüpload";
 $string['nograde'] = "Nog geen cijfer";
-$string['noimagesyet'] = "Er zijn nog geen plaatjes naar dit vak geüpload";
+$string['noimagesyet'] = "Er zijn nog geen afbeeldingen naar dit vak geüpload";
 $string['nomorecourses'] = "Er kunnen geen passende vakken meer worden gevonden";
 $string['none'] = "Geen";
 $string['nopotentialadmins'] = "Geen mogelijke beheerders";
@@ -612,7 +612,7 @@ $string['removeteacher'] = "Verwijder docent";
 $string['rename'] = "Hernoem";
 $string['renamefileto'] = "Hernoem <b>\$a</b> naar";
 $string['required'] = "Verplicht";
-$string['requireskey'] = "Dit vak vereist een 'Vak sleutel'.";
+$string['requireskey'] = "Dit vak vereist een 'Vaksleutel'.";
 $string['resortcoursesbyname'] = "Hersorteer de vakken op naam";
 $string['resources'] = "Bronnen";
 $string['restore'] = "Terug zetten";
