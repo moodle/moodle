@@ -1,4 +1,19 @@
-<tr valign="top">
+<?php
+   if (!isset($config->shib_wayf_url)) {
+       $config->shib_wayf_url = '';
+   }
+   if (!isset($config->shib_logout_url)) {
+       $config->shib_logout_url = '';
+   }
+   if (!isset($config->shib_user_attribute)) {
+       $config->shib_user_attribute = '';
+   }
+   if (!isset($config->auth_user_guid)) {
+       $config->auth_user_guid = '';
+   }
+
+?>
+<tr valign="top" class="required">
     <td align="right">Shibboleth WAYF URL:</td>
     <td>
         <input name=shib_wayf_url type=text size=30 value="<?php echo $config->shib_wayf_url?>">
@@ -7,7 +22,7 @@
     <td>
     </td>
 </tr>
-<tr>
+<tr class="required">
     <td align="right">Shibboleth logout URL:</td>
     <td>
     <input name="shib_logout_url" type="text" size="30" value="<?php echo $config->shib_logout_url?>">

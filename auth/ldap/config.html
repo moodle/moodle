@@ -74,8 +74,8 @@ if (!function_exists('ldap_connect')){ // Is php4-ldap really there?
    </td>
 </tr>
 
-<tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
-    <td align="right"><P>ldap_host_url:</td>
+<tr valign="top" class="required">
+    <td align="right">ldap_host_url:</td>
     <td>
         <input name="ldap_host_url" type="text" size="30" value="<?php echo $config->ldap_host_url?>">
     <?php  if (isset($err["ldap_host_url"])) formerr($err["ldap_host_url"]); ?>
@@ -85,8 +85,8 @@ if (!function_exists('ldap_connect')){ // Is php4-ldap really there?
     </td>
 </tr>
 
-<tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
-    <td align="right"><P>ldap_version:</td>
+<tr valign="top" class="required">
+    <td align="right">ldap_version:</td>
     <td>
     <?php
        $versions[2] = "2";
@@ -106,8 +106,8 @@ if (!function_exists('ldap_connect')){ // Is php4-ldap really there?
    </td>
 </tr>
 
-<tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
-    <td align="right"><P>ldap_bind_dn:</td>
+<tr valign="top" class="required">
+    <td align="right">ldap_bind_dn:</td>
     <td>
     <input name="ldap_bind_dn" type="text" size="30" value="<?php echo $config->ldap_bind_dn?>">
     <?php  if (isset($err["ldap_bind_dn"])) formerr($err["ldap_bind_dn"]); ?>
@@ -116,8 +116,8 @@ if (!function_exists('ldap_connect')){ // Is php4-ldap really there?
     </td>
 </tr>
 
-<tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
-    <td align="right"><P>ldap_bind_pw:</td>
+<tr valign="top" class="required">
+    <td align="right">ldap_bind_pw:</td>
     <td>
     <input name="ldap_bind_pw" type="password" size="30" value="<?php echo $config->ldap_bind_pw?>">
     <?php  if (isset($err["ldap_bind_pw"])) formerr($err["ldap_bind_pw"]); ?>
@@ -132,8 +132,8 @@ if (!function_exists('ldap_connect')){ // Is php4-ldap really there?
    </td>
 </tr>
 
-<tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
-    <td align="right"><P>ldap_user_type:</td>
+<tr valign="top" class="required">
+    <td align="right">ldap_user_type:</td>
     <td>
     <?php choose_from_menu(auth_ldap_suppported_usertypes(), "ldap_user_type", $config->ldap_user_type, ""); ?>
     <?php  if (isset($err["ldap_user_type"])) formerr($err["ldap_user_type"]); ?>
@@ -143,8 +143,8 @@ if (!function_exists('ldap_connect')){ // Is php4-ldap really there?
     </td>
 </tr>
 
-<tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
-    <td align="right"><P>ldap_contexts:</td>
+<tr valign="top" class="required">
+    <td align="right">ldap_contexts:</td>
     <td>
     <input name="ldap_contexts" type="text" size="30" value="<?php echo $config->ldap_contexts?>">
     <?php  if (isset($err["ldap_contexts"])) formerr($err["ldap_contexts"]); ?>
@@ -154,8 +154,8 @@ if (!function_exists('ldap_connect')){ // Is php4-ldap really there?
     </td>
 </tr>
 
-<tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
-    <td align="right"><P>ldap_search_sub:</td>
+<tr valign="top" class="required">
+    <td align="right">ldap_search_sub:</td>
     <td>
     <input name="ldap_search_sub" type="text" size="1" value="<?php echo $config->ldap_search_sub?>">
     <?php  if (isset($err["ldap_search_sub"])) formerr($err["ldap_search_sub"]); ?>
@@ -164,8 +164,8 @@ if (!function_exists('ldap_connect')){ // Is php4-ldap really there?
     <?php  print_string("auth_ldap_search_sub","auth") ?>
     </td>
 </tr>
-<tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
-    <td align="right"><P>ldap_opt_deref:</td>
+<tr valign="top" class="required">
+    <td align="right">ldap_opt_deref:</td>
     <td>
     <?php
        $opt_deref[LDAP_DEREF_NEVER] = get_string("no");
@@ -181,8 +181,8 @@ if (!function_exists('ldap_connect')){ // Is php4-ldap really there?
 
 
 
-<tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
-    <td align="right"><P>ldap_user_attribute:</td>
+<tr valign="top" class="required">
+    <td align="right">ldap_user_attribute:</td>
     <td>
     <input name="ldap_user_attribute" type="text" size="30" value="<?php echo $config->ldap_user_attribute?>">
     <?php  if (isset($err["ldap_user_attribute"])) formerr($err["ldap_user_attribute"]); ?>
@@ -192,8 +192,8 @@ if (!function_exists('ldap_connect')){ // Is php4-ldap really there?
     </td>
 </tr>
 
-<tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
-        <td align="right"><P>ldap_memberattribute:</td>
+<tr valign="top" class="required">
+        <td align="right">ldap_memberattribute:</td>
         <td>
     <input name="ldap_memberattribute" type="text" size="30" value="<?php echo $config->ldap_memberattribute?>">
     <?php  if (isset($err["ldap_memberattribute"])) formerr($err["ldap_memberattribute"]); ?>
@@ -202,8 +202,8 @@ if (!function_exists('ldap_connect')){ // Is php4-ldap really there?
     </td>
 </tr>
 
-<tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
-    <td align="right"><P>ldap_objectclass:</td>
+<tr valign="top" class="required">
+    <td align="right">ldap_objectclass:</td>
     <td>
     <input name="ldap_objectclass" type="text" size="30" value="<?php echo $config->ldap_objectclass?>">
     <?php  if (isset($err["ldap_objectclass"])) formerr($err["ldap_objectclass"]); ?>
@@ -219,8 +219,8 @@ if (!function_exists('ldap_connect')){ // Is php4-ldap really there?
    </td>
 </tr>
 
-<tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>" >
-    <td align="right" valign="top"><P><?php  print_string('forcechangepassword', 'auth') ?>:</P></td>
+<tr valign="top" class="required">
+    <td align="right" valign="top"><?php  print_string('forcechangepassword', 'auth') ?>:</td>
     <td>
  
     <select name="auth_ldap_forcechangepassword">
@@ -232,12 +232,12 @@ if (!function_exists('ldap_connect')){ // Is php4-ldap really there?
  
     </td>
     <td align="left" valign="top">
-        <P><?php  print_string('forcechangepasswordfirst_help', 'auth') ?></P>
+        <p><?php  print_string('forcechangepasswordfirst_help', 'auth') ?></p>
     </td>
 </tr>
 
-<tr valign="top"  bgcolor="<?php echo $THEME->cellheading2 ?>" >
-    <td align="right" valign="top"><P><?php  print_string('stdchangepassword', 'auth') ?>:</P></td>
+<tr valign="top"  class="required">
+    <td align="right" valign="top"><?php  print_string('stdchangepassword', 'auth') ?>:</td>
     <td>
  
     <select name="auth_ldap_stdchangepassword">
@@ -249,8 +249,8 @@ if (!function_exists('ldap_connect')){ // Is php4-ldap really there?
 
     </td>
     <td align="left" valign="top">
-        <P><?php  print_string('stdchangepassword_expl', 'auth') ?></P>
-        <P><?php  print_string('stdchangepassword_explldap', 'auth') ?></P>
+        <p><?php  print_string('stdchangepassword_expl', 'auth') ?></p>
+        <p><?php  print_string('stdchangepassword_explldap', 'auth') ?></p>
     </td>
 </tr>
 
@@ -260,8 +260,8 @@ if (!function_exists('ldap_connect')){ // Is php4-ldap really there?
    </td>
 </tr>
 
-<tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
-    <td align="right"><P>ldap_expiration:</td>
+<tr valign="top" class="required">
+    <td align="right">ldap_expiration:</td>
     <td>
     <?php
        $expiration['0'] = "No";
@@ -276,8 +276,8 @@ if (!function_exists('ldap_connect')){ // Is php4-ldap really there?
 </tr>
 
 
-<tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
-    <td align="right"><P>ldap_expiration_warning:</td>
+<tr valign="top" class="required">
+    <td align="right">ldap_expiration_warning:</td>
     <td>
     <input name="ldap_expiration_warning" type="text" size="2" value="<?php echo $config->ldap_expiration_warning?>">
     <?php   if (isset($err["ldap_expiration_warning"])) formerr($err["ldap_expiration_warning"]); 
@@ -288,8 +288,8 @@ if (!function_exists('ldap_connect')){ // Is php4-ldap really there?
     </td>
 </tr>
 
-<tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
-    <td align="right"><P>ldap_exprireattr:</td>
+<tr valign="top" class="required">
+    <td align="right">ldap_exprireattr:</td>
     <td>
     <input name="ldap_expireattr" type="text" size="30" value="<?php echo $config->ldap_expireattr?>">
     <?php  if (isset($err["ldap_expireattr"])) formerr($err["ldap_expireattr"]); 
@@ -300,8 +300,8 @@ if (!function_exists('ldap_connect')){ // Is php4-ldap really there?
     </td>
 </tr>
 
-<tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
-    <td align="right"><P>ldap_gracelogins:</td>
+<tr valign="top" class="required">
+    <td align="right">ldap_gracelogins:</td>
     <td>
     <?php
        $grace['0'] = get_string("no");
@@ -315,8 +315,8 @@ if (!function_exists('ldap_connect')){ // Is php4-ldap really there?
     </td>
 </tr>
 
-<tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
-    <td align="right"><P>ldap_graceattr:</td>
+<tr valign="top" class="required">
+    <td align="right">ldap_graceattr:</td>
     <td>
     <input name="ldap_graceattr" type="text" size="30" value="<?php echo $config->ldap_graceattr?>">
     <?php   if (isset($err["ldap_graceattr"])) formerr($err["ldap_graceattr"]); 
@@ -336,8 +336,8 @@ if (!function_exists('ldap_connect')){ // Is php4-ldap really there?
 </tr>
 
 </tr>
-<tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
-    <td align="right"><P>ldap_create_context:</td>
+<tr valign="top" class="required">
+    <td align="right">ldap_create_context:</td>
     <td>
     <input name="ldap_create_context" type="text" size="30" value="<?php echo $config->ldap_create_context?>">
     <?php  if (isset($err["ldap_create_context"])) formerr($err["ldap_create_context"]); ?>
@@ -353,8 +353,8 @@ if (!function_exists('ldap_connect')){ // Is php4-ldap really there?
    </td>
 </tr>
 
-<tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
-        <td align="right"><P>ldap_creators:</td>
+<tr valign="top" class="required">
+        <td align="right">ldap_creators:</td>
         <td>
     <input name="ldap_creators" type="text" size="30" value="<?php echo $config->ldap_creators?>">
     <?php  if (isset($err["ldap_creators"])) formerr($err["ldap_creators"]); ?>
@@ -371,8 +371,8 @@ if (!function_exists('ldap_connect')){ // Is php4-ldap really there?
 </tr>
 
 
-<tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
-    <td align="right"><P><?php  print_string("firstname") ?>:</td>
+<tr valign="top" class="required">
+    <td align="right"><?php  print_string("firstname") ?>:</td>
     <td>
     <input name="auth_user_firstname" type="text" size="30" value="<?php echo $config->auth_user_firstname?>">
     <div align="right">
@@ -409,8 +409,8 @@ if (!function_exists('ldap_connect')){ // Is php4-ldap really there?
     </td>
 </tr>
 
-<tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
-    <td align="right"><P><?php  print_string("lastname") ?>:</td>
+<tr valign="top" class="required">
+    <td align="right"><?php  print_string("lastname") ?>:</td>
     <td>
     <input name="auth_user_lastname" type="text" size="30" value="<?php echo $config->auth_user_lastname?>">
     <div align="right">
@@ -439,8 +439,8 @@ if (!function_exists('ldap_connect')){ // Is php4-ldap really there?
     </td>
 </tr>
 
-<tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
-    <td align="right"><P><?php  print_string("email") ?>:</td>
+<tr valign="top" class="required">
+    <td align="right"><?php  print_string("email") ?>:</td>
     <td>
     <input name="auth_user_email" type="text" size="30" value="<?php echo $config->auth_user_email?>">
     <div align="right">
@@ -469,8 +469,8 @@ if (!function_exists('ldap_connect')){ // Is php4-ldap really there?
     </td>
 </tr>
 
-<tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
-    <td align="right"><P><?php  print_string("phone") ?> 1:</td>
+<tr valign="top" class="required">
+    <td align="right"><?php  print_string("phone") ?> 1:</td>
     <td>
     <input name="auth_user_phone1" type="text" size="30" value="<?php echo $config->auth_user_phone1?>">
     <div align="right">
@@ -499,8 +499,8 @@ if (!function_exists('ldap_connect')){ // Is php4-ldap really there?
     </td>
 </tr>
 
-<tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
-    <td align="right"><P><?php  print_string("phone") ?> 2:</td>
+<tr valign="top" class="required">
+    <td align="right"><?php  print_string("phone") ?> 2:</td>
     <td>
     <input name="auth_user_phone2" type="text" size="30" value="<?php echo $config->auth_user_phone2?>">
     <div align="right">
@@ -529,8 +529,8 @@ if (!function_exists('ldap_connect')){ // Is php4-ldap really there?
     </td>
 </tr>
 
-<tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
-    <td align="right"><P><?php  print_string("department") ?>:</td>
+<tr valign="top" class="required">
+    <td align="right"><?php  print_string("department") ?>:</td>
     <td>
     <input name="auth_user_department" type="text" size="30" value="<?php echo $config->auth_user_department?>">
     <div align="right">
@@ -559,8 +559,8 @@ if (!function_exists('ldap_connect')){ // Is php4-ldap really there?
     </td>
 </tr>
 
-<tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
-    <td align="right"><P><?php  print_string("address") ?>:</td>
+<tr valign="top" class="required">
+    <td align="right"><?php  print_string("address") ?>:</td>
     <td>
     <input name="auth_user_address" type="text" size="30" value="<?php echo $config->auth_user_address?>">
     <div align="right">
@@ -589,8 +589,8 @@ if (!function_exists('ldap_connect')){ // Is php4-ldap really there?
     </td>
 </tr>
 
-<tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
-    <td align="right"><P><?php  print_string("city") ?>:</td>
+<tr valign="top" class="required">
+    <td align="right"><?php  print_string("city") ?>:</td>
     <td>
     <input name="auth_user_city" type="text" size="30" value="<?php echo $config->auth_user_city?>">
     <div align="right">
@@ -619,8 +619,8 @@ if (!function_exists('ldap_connect')){ // Is php4-ldap really there?
     </td>
 </tr>
 
-<tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
-    <td align="right"><P><?php  print_string("country") ?>:</td>
+<tr valign="top" class="required">
+    <td align="right"><?php  print_string("country") ?>:</td>
     <td>
     <input name="auth_user_country" type="text" size="30" value="<?php echo $config->auth_user_country?>">
     <div align="right">
@@ -649,8 +649,8 @@ if (!function_exists('ldap_connect')){ // Is php4-ldap really there?
     </td>
 </tr>
 
-<tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
-    <td align="right"><P><?php  print_string("description") ?>:</td>
+<tr valign="top" class="required">
+    <td align="right"><?php  print_string("description") ?>:</td>
     <td>
     <input name="auth_user_description" type="text" size="30" value="<?php echo $config->auth_user_description?>">
     <div align="right">
@@ -679,8 +679,8 @@ if (!function_exists('ldap_connect')){ // Is php4-ldap really there?
     </td>
 </tr>
 
-<tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
-    <td align="right"><P><?php  print_string("idnumber") ?>:</td>
+<tr valign="top" class="required">
+    <td align="right"><?php  print_string("idnumber") ?>:</td>
     <td>
     <input name="auth_user_idnumber" type="text" size="30" value="<?php echo $config->auth_user_idnumber?>">
     <div align="right">
@@ -709,8 +709,8 @@ if (!function_exists('ldap_connect')){ // Is php4-ldap really there?
     </td>
 </tr>
 
-<tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
-    <td align="right"><P><?php  print_string("language") ?>:</td>
+<tr valign="top" class="required">
+    <td align="right"><?php  print_string("language") ?>:</td>
     <td>
     <input name="auth_user_lang" type="text" size="30" value="<?php echo $config->auth_user_lang?>">
     <div align="right">
@@ -740,8 +740,8 @@ if (!function_exists('ldap_connect')){ // Is php4-ldap really there?
 </tr>
 
 
-<tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
-    <td align="right"><P><?php  print_string("instructions", "auth") ?>:</td>
+<tr valign="top" class="required">
+    <td align="right"><?php  print_string("instructions", "auth") ?>:</td>
     <td>
     <textarea name="auth_instructions" cols="30" rows="10" wrap="virtual"><?php  p($config->auth_instructions) ?></textarea> 
     </td>

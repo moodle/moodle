@@ -27,7 +27,7 @@
         $config->auth_dbpasstype = "plaintext";
     }
 ?>
-<tr valign="top"  bgcolor="<?php echo $THEME->cellheading2 ?>">
+<tr valign="top" class="required">
 	<td align="right">auth_dbhost:</td>
 	<td>
         <input name="auth_dbhost" type="text" size="30" value="<?php echo $config->auth_dbhost?>" />
@@ -38,7 +38,7 @@
     </td>
 </tr>
 
-<tr valign="top"  bgcolor="<?php echo $THEME->cellheading2 ?>">
+<tr valign="top" class="required">
 	<td align="right">auth_dbtype:</td>
 	<td>
     <?php  $dbtypes = array("access","ado_access", "ado", "ado_mssql", "borland_ibase", "csv", "db2", "fbsql", "firebird", "ibase", "informix72", "informix", "mssql", "mysql", "mysqlt", "oci805", "oci8", "oci8po", "odbc", "odbc_mssql", "odbc_oracle", "oracle", "postgres64", "postgres7", "postgres", "proxy", "sqlanywhere", "sybase", "vfp");
@@ -54,7 +54,7 @@
     </td>
 </tr>
 
-<tr valign="top"  bgcolor="<?php echo $THEME->cellheading2 ?>">
+<tr valign="top" class="required">
 	<td align="right">auth_dbname:</td>
 	<td>
     <input name="auth_dbname" type="text" size="30" value="<?php echo $config->auth_dbname?>" />
@@ -65,7 +65,7 @@
     </td>
 </tr>
 
-<tr valign="top"  bgcolor="<?php echo $THEME->cellheading2 ?>">
+<tr valign="top" class="required">
 	<td align="right">auth_dbuser:</td>
 	<td>
     <input name="auth_dbuser" type="text" size="30" value="<?php echo $config->auth_dbuser?>" />
@@ -76,7 +76,7 @@
     </td>
 </tr>
 
-<tr valign="top"  bgcolor="<?php echo $THEME->cellheading2 ?>">
+<tr valign="top" class="required">
 	<td align="right">auth_dbpass:</td>
 	<td>
     <input name="auth_dbpass" type="text" size="30" value="<?php echo $config->auth_dbpass?>" />
@@ -87,7 +87,7 @@
     </td>
 </tr>
 
-<tr valign="top"  bgcolor="<?php echo $THEME->cellheading2 ?>">
+<tr valign="top" class="required">
 	<td align="right">auth_dbtable:</td>
 	<td>
     <input name="auth_dbtable" type="text" size="30" value="<?php echo $config->auth_dbtable?>" />
@@ -98,7 +98,7 @@
     </td>
 </tr>
 
-<tr valign="top"  bgcolor="<?php echo $THEME->cellheading2 ?>">
+<tr valign="top" class="required">
 	<td align="right">auth_dbfielduser:</td>
 	<td>
     <input name="auth_dbfielduser" type="text" size="30" value="<?php echo $config->auth_dbfielduser?>" />
@@ -109,7 +109,7 @@
     </td>
 </tr>
 
-<tr valign="top"  bgcolor="<?php echo $THEME->cellheading2 ?>">
+<tr valign="top" class="required">
 	<td align="right">auth_dbfieldpass:</td>
 	<td>
     <input name="auth_dbfieldpass" type="text" size="30" value="<?php echo $config->auth_dbfieldpass?>" />
@@ -120,10 +120,11 @@
     </td>
 </tr>
 
-<tr valign="top"  bgcolor="<?php echo $THEME->cellheading2 ?>">
+<tr valign="top" class="required">
 	<td align="right">auth_dbpasstype:</td>
 	<td>
-    <?php  $passtype["plaintext"] = get_string("plaintext", "auth");
+    <?php  
+       $passtype["plaintext"] = get_string("plaintext", "auth");
        $passtype["md5"]       = get_string("md5", "auth");
        choose_from_menu($passtype, "auth_dbpasstype", $config->auth_dbpasstype, "");
     ?>

@@ -9,7 +9,7 @@
         $config->auth_imapport = "143";
     }
 ?>
-<tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
+<tr valign="top" class="required">
 	<td align="right">auth_imaphost:</td>
 	<td>
         <input name="auth_imaphost" type="text" size="30" value="<?php echo $config->auth_imaphost?>" />
@@ -21,7 +21,7 @@
     </td>
 </tr>
 
-<tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
+<tr valign="top" class="required">
 	<td align="right">auth_imaptype:</td>
 	<td>
     <?php  $imaptypes = array("imap","imapssl", "imapcert", "imaptls");
@@ -36,7 +36,7 @@
     </td>
 </tr>
 
-<tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
+<tr valign="top" class="required">
 	<td align="right">auth_imapport:</td>
 	<td>
     <input name="auth_imapport" type="text" size="6" value="<?php echo $config->auth_imapport?>" />
