@@ -961,7 +961,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
     }
     if ($ismoving) {
         echo "<tr><td><a title=\"$strmovefull\"".
-             " href=\"mod.php?movetosection=$section->id\">".
+             " href=\"$CFG->wwwroot/course/mod.php?movetosection=$section->id\">".
              "<img height=\"16\" width=\"80\" src=\"$CFG->pixpath/movehere.gif\" ".
              " alt=\"$strmovehere\" border=\"0\"></a></td></tr>\n";
     }
