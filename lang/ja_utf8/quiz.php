@@ -73,6 +73,7 @@ $string['datasetdefinitions'] = 'カテゴリ $a の再利用可能なデータ�
 $string['datasetnumber'] = 'No.';
 $string['daysavailable'] = '日利用可能';
 $string['decimalformat'] = '小数点';
+$string['decimalpoints'] = '小数点';
 $string['decimals'] = '小数点以下 $a 桁';
 $string['default'] = 'デフォルト';
 $string['defaultgrade'] = '評点の初期値';
