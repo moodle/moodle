@@ -43,7 +43,7 @@ function choice_upgrade($oldversion) {
         modify_database("", "UPDATE prefix_choice SET publish = publish - 1 WHERE publish > 0;");
     }
 
-    if ($oldversion < 2004111200){ 
+    if ($oldversion < 2004070103){ 
         modify_database('','ALTER TABLE prefix_choice ADD INDEX course (course);');
         modify_database('','ALTER TABLE prefix_choice_answers ADD INDEX choice (choice);');
         modify_database('','ALTER TABLE prefix_choice_answers ADD INDEX userid (userid);');
