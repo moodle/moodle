@@ -1877,13 +1877,14 @@ function update_course_icon($courseid) {
 
 function update_module_button($moduleid, $courseid, $string) {
 // Prints the editing button on a module "view" page
-    global $CFG;
+    global $CFG, $USER;
 
     if (isteacheredit($courseid)) {
         $string = get_string("updatethis", "", $string);
         return "<form target=\"$CFG->framename\" method=\"get\" action=\"$CFG->wwwroot/course/mod.php\">".
                "<input type=\"hidden\" name=\"update\" value=\"$moduleid\" />".
                "<input type=\"hidden\" name=\"return\" value=\"true\" />".
+               "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />".
                "<input type=\"submit\" value=\"$string\" /></form>";
     } else {
         return "";
