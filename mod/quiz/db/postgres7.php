@@ -136,17 +136,6 @@ function quiz_upgrade($oldversion) {
         }
     }
 
-    if ($oldversion < 2004020500) {
-        if ($quizzes = get_records("quiz")) {
-            foreach ($quizzes as $quiz) {
-                if ($cm = get_coursemodule_from_instance("quiz", $quiz->id, $quiz->course)) {
-                    execute_sql("UPDATE {$CFG->prefix}log SET cmid = '$cm->id' 
-                                 WHERE module = 'quiz' AND url = 'view.php?id=$cm->id'");
-                }
-            }
-        }
-    }
-
     return true;
 }
 
