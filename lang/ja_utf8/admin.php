@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // admin.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005021700)
+      // admin.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005030501)
 
 
 $string['adminseesallevents'] = '管理者に全てのイベントを表示';
@@ -10,6 +10,7 @@ $string['cachetext'] = 'テキストキャッシュ保存時間';
 $string['calendarsettings'] = 'カレンダー';
 $string['change'] = '変更';
 $string['configallowcoursethemes'] = 'この設定を「Yes」に設定した場合、コースに独自のテーマを設定することができます。コーステーマは他の全てのテーマ ( サイト、ユーザ、セッションテーマ ) を上書きします。';
+$string['configallowemailaddresses'] = '受信する新しいメールを特定ドメインのみに制限したい場合は、この欄にスペースで区切って入力してください。他のドメインから送信されるメールは全て拒否されます。例 <strong>ourcollege.edu.au .gov.au</strong>';
 $string['configallowunenroll'] = 'この設定を「Yes」に設定した場合、学生はいつでも好きな時にコースの参加を取り消すことができます。\'No\'に設定した場合、学生は参加取消しを行うことはできず、参加に関する全てを教師および管理者がコントロールします。';
 $string['configallowuserblockhiding'] = 'サイト全体においてユーザにブロックの表示/非表示を許可しますか? この機能では、折りたたみ可能なブロックの状態を記憶するために、Javaスクリプトとクッキーを使用します。また、ブロックの表示/非表示はユーザ自身の使用にのみ影響します。';
 $string['configallowuserthemes'] = 'この設定を「Yes」に設定した場合、ユーザは自分のテーマを設定することができます。サイトテーマはユーザテーマに上書きされます ( コーステーマは上書きされません ) 。';
@@ -23,6 +24,7 @@ $string['configcountry'] = 'ここで国を設定した場合、新規アカウ�
 $string['configdbsessions'] = 'この設定を「Yes」にした場合、現在のセッション情報はデータベースに保存されます。これは特に規模の大きい/アクセス数の多いサイト、またはクラスタサーバに構築されたサイトに向いています。ほとんどのサイトでは、セッションの保存をサーバディスクに行うように、この設定を「No」のままにしてください。この設定を変更すると、現在のユーザ ( あなたも含めて ) がログアウトされます。';
 $string['configdebug'] = 'この設定を「Yes」にした場合、PHPのエラーレポートが増加して、より多くの警告が表示されるようになります。開発者向けの設定です。';
 $string['configdeleteunconfirmed'] = 'メールによる承認を利用している場合、この値はユーザからの返答を受け付ける期間を指します。この期間の終了後、古い未承認のアカウントは削除されます。';
+$string['configdenyemailaddresses'] = '特定ドメインから送信される新しいメールを拒否したい場合は、この欄にスペースで区切って入力してください。他のドメインから送信されるメールは全て受信されます。例  <strong>hotmail.com yahoo.co.uk</strong> ';
 $string['configdigestmailtime'] = 'メール送信する選択をしたユーザに、投稿内容を要約したメールが毎日送信されます。ここでは1日の内で何時に要約メールを送信するかを設定します ( 次のcronがここで設定した時間の後に実行されます )。';
 $string['configdisplayloginfailures'] = 'ここではログイン失敗情報を選択したユーザに表示します。';
 $string['configenablerssfeeds'] = 'ここではRSSフィードの設定を行います。RSSフィードを使用するためには、管理画面のモジュール管理にてRSSモジュールを使用可にする必要があります。';

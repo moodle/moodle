@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005022400)
+      // quiz.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005030501)
 
 
 $string['acceptederror'] = 'エラー範囲';
@@ -10,6 +10,7 @@ $string['addquestionstoquiz'] = '現在の小テストに問題を追加';
 $string['addrandom1'] = '追加';
 $string['addrandom2'] = 'ランダム問題';
 $string['addselectedtoquiz'] = '選択したものを小テストに追加';
+$string['addtoquiz'] = '小テストに追加';
 $string['affectedstudents'] = '影響を受ける $a';
 $string['aiken'] = 'Aikenフォーマット';
 $string['allinone'] = '無制限';

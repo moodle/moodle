@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005022400)
+      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005030501)
 
 
 $string['action'] = '操作';
@@ -65,6 +65,7 @@ $string['advanced'] = '高度な';
 $string['advancedfilter'] = '検索オプション';
 $string['advancedsettings'] = '高度な設定';
 $string['again'] = 'もう一度';
+$string['aimid'] = 'AIM ID';
 $string['all'] = '全て';
 $string['allactivities'] = '全ての活動';
 $string['alldays'] = '全ての日付';
@@ -134,6 +135,7 @@ $string['category'] = 'カテゴリ';
 $string['categoryadded'] = '「 $a 」 が追加されました。';
 $string['categorydeleted'] = '「 $a 」 が削除されました。';
 $string['categoryduplicate'] = '「$a」は既に登録されています! ';
+$string['censorbadwords'] = 'shit,fucked,fucker,fuck,dickhead,dick,cockhead,cock,cunt,asshole,arsehole,prick,bitch,jism,whore,slut,wanker,wank,bastard,dildo,masturbate,orgasm,penis,nigger,pussy,vagina';
 $string['changedpassword'] = '変更済みパスワード';
 $string['changepassword'] = 'パスワードを変更する';
 $string['changessaved'] = '変更が保存されました';
@@ -288,6 +290,7 @@ $string['doyouagree'] = 'これらの要件を読んで理解できましたか?
 $string['duplicate'] = '複写';
 $string['duplicatinga'] = '複写: $a';
 $string['duplicatingain'] = '$a->in の $a->what を複写';
+$string['edhelpaspellpath'] = 'エディタでスペルチェックを利用するには <strong>aspell 0.50</strong> またはそれ以上をサーバにインストールしてください。また、aspellバイナリの正しいパスを指定する必要があります。Unix/Linux システムでは、通常このパスは <strong>/usr/bin/aspell</strong> となりますが他のパスになる場合もあります。';
 $string['edhelpbgcolor'] = '編集領域の背景色を設定します。<br />正しい値の例: #ffffff　または　white';
 $string['edhelpcleanword'] = 'ここでは、Word特有のフォーマットをフィルタするか否かを設定します。';
 $string['edhelpenablespelling'] = 'スペルチェックを行うか否かを設定します。スペルチェックを行う場合、<strong>aspell</strong>が自動的にサーバにインストールされます。';
@@ -674,6 +677,7 @@ $string['moveright'] = '右へ';
 $string['moveselectedcoursesto'] = '選択したコースの移動 ...';
 $string['movetoanotherfolder'] = '他のフォルダへ移動する';
 $string['moveup'] = '上へ';
+$string['msnid'] = 'MSN ID';
 $string['mustchangepassword'] = '新しいパスワードは現在のパスワードと異なるものを指定してください。';
 $string['mustconfirm'] = 'ログイン情報を確認してください。';
 $string['mycourses'] = 'マイ　コース';
@@ -919,6 +923,7 @@ $string['sizeb'] = 'バイト';
 $string['sizegb'] = 'GB';
 $string['sizekb'] = 'KB';
 $string['sizemb'] = 'MB';
+$string['skypeid'] = 'Skype ID';
 $string['socialheadline'] = '一般フォーラム - 最新トピック';
 $string['someallowguest'] = 'いくつかのコースはゲストで利用できます。';
 $string['someerrorswerefound'] = 'いくつかの情報が未入力または間違っています。再度ご確認ください。';
@@ -1094,6 +1099,7 @@ $string['writingmoduleinfo'] = 'モジュール情報の書き出し';
 $string['writingscalesinfo'] = '評価尺度情報の書き出し';
 $string['writinguserinfo'] = 'ユーザ情報の書き出し';
 $string['wrongpassword'] = 'パスワードが間違っています。';
+$string['yahooid'] = 'Yahoo ID';
 $string['yes'] = 'Yes';
 $string['youareabouttocreatezip'] = '下記のファイルを含んだzipファイルを作成します。';
 $string['youaregoingtorestorefrom'] = 'リストア対象：';
