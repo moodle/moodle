@@ -219,7 +219,7 @@
     if (!$courses) {
         print_heading(get_string("nocoursesyet"));
 
-    } else if ($numcourses <= COURSE_MAX_SUMMARIES_PER_PAGE and !$creatorediting) {
+    } else if ($numcourses <= COURSE_MAX_SUMMARIES_PER_PAGE and !$page and !$creatorediting) {
         print_courses($category, "80%");
 
     } else { 
