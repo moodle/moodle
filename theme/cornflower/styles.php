@@ -3,23 +3,23 @@
 /// We use PHP so we can do value substitutions into the styles
 
     $nomoodlecookie = true;
-    require_once("../../config.php"); 
+    require_once("../../config.php");
     $themeurl = style_sheet_setup(filemtime("styles.php"), 300, $themename);
 
-/// From here on it's nearly a normal stylesheet. 
-/// First are some CSS definitions for normal tags, 
+/// From here on it's nearly a normal stylesheet.
+/// First are some CSS definitions for normal tags,
 /// then custom tags follow.
 ///
 /// New classes always get added to the end of the file.
-/// 
+///
 /// Note that a group of standard colours are all
 /// defined in config.php in this directory.  The
 /// reason for this is because Moodle uses the same
 /// colours to provide oldstyle formatting for
 /// browsers without CSS.
-/// 
+///
 /// You can hardcode colours in this file if you
-/// don't care about this. 
+/// don't care about this.
 
 ?>
 
@@ -34,25 +34,25 @@ th {
 }
 
 a:link {
-    color: #003399; 
-    text-decoration: none; 
+    color: #003399;
+    text-decoration: none;
     font-variant: normal; font-weight: bold;
 }
 
 a:visited {
-    color: #003399; 
-    text-decoration: none; 
+    color: #003399;
+    text-decoration: none;
     font-variant: normal; font-weight: bold;
 }
 
 a:hover {
-    color: #FFFFFF; 
-    background: #006699; 
-    text-decoration: none; 
+    color: #FFFFFF;
+    background: #006699;
+    text-decoration: none;
     font-variant: normal; font-weight: bold;
 }
 
-form { 
+form {
     margin-bottom: 0;
 }
 
@@ -177,7 +177,7 @@ form {
 
 .weeklydatetext {
     font-size: medium;
-    font-weight: bold; 
+    font-weight: bold;
     color: <?PHP echo $THEME->cellheading2?>;
 }
 
@@ -264,7 +264,7 @@ form {
 }
 
 a.dimmed:link {
-    text-decoration: none; 
+    text-decoration: none;
     color: <?PHP echo $THEME->hidden?>;
 }
 
@@ -449,3 +449,253 @@ a.autolink:hover {
     border-top: 0px;
 }
 
+.headingblockcontent {
+}
+
+TABLE.calendarmini {
+	width: 100%;
+    border-width: 1px;
+    border-color: <?PHP echo $THEME->borders?>;
+    border-style: solid;
+    font-size: .7em;
+    margin: 0px;
+    padding: 2px;
+    -moz-border-radius: 10px;
+}
+
+TABLE.calendarmonth {
+	width: 100%;
+    border-width: 1px;
+    border-color: <?PHP echo $THEME->borders?>;
+    border-style: solid;
+    margin: 0px;
+    padding: 2px;
+    -moz-border-radius: 10px;
+}
+
+TABLE.calendarmini TBODY TD {
+    text-align: center;
+    vertical-align: center;
+    width: 14%;
+    border-width: 2px;
+    border-color: <?PHP echo $THEME->cellcontent2?>;
+    border-style: solid;
+    -moz-border-radius: 4px;
+}
+
+TABLE.calendarmonth TBODY TD {
+    width: 14%;
+    border-width: 2px;
+    border-color: <?PHP echo $THEME->cellcontent2?>;
+    border-style: solid;
+    vertical-align: top;
+}
+
+.cal_event_global {
+	background-color: #99cc99;
+	border: 2px #99cc99 solid !important;
+}
+
+.cal_event_course {
+	background-color: #ff9966;
+	border: 2px #ff9966 solid !important;
+}
+
+.cal_event_group {
+	background-color: orange;
+	border: 2px orange solid !important;
+}
+
+.cal_event_user {
+	background-color: #ffcc99;
+	border: 2px #ffcc99 solid !important;
+}
+
+.cal_duration_global {
+	border-top: 2px #99cc99 solid !important;
+	border-bottom: 2px #99cc99 solid !important;
+}
+
+.cal_duration_course {
+	border-top: 2px #ff9966 solid !important;
+	border-bottom: 2px #ff9966 solid !important;
+}
+
+.cal_duration_user {
+	border-top: 2px #ffcc99 solid !important;
+	border-bottom: 2px #ffcc99 solid !important;
+}
+
+.cal_duration_group {
+	border-top: 2px orange solid !important;
+	border-bottom: 2px orange solid !important;
+}
+
+.cal_weekend {
+    color: red;
+}
+
+.cal_today {
+	border: 2px black solid !important;
+}
+
+TABLE.calendarmonth TBODY TD TABLE {
+	margin-top: 0px;
+	margin-left: 0px;
+	font-size: 0.75em;
+	line-height: 1.2em;
+}
+
+TABLE.calendarmonth TBODY TD TABLE TD {
+    border: none;
+}
+
+TABLE.calendarmonth TBODY TD DIV {
+	margin-top: 0px;
+	margin-left: 0px;
+	font-size: 0.75em;
+	line-height: 1.2em;
+}
+
+TABLE.calendarmini THEAD TD {
+    font-size: .95em;
+    text-align: center;
+    vertical-align: center;
+}
+
+TABLE.calendarmonth THEAD TD {
+	text-align: center;
+    vertical-align: center;
+    padding-bottom: 3px;
+    border-bottom: 2px <?PHP echo $THEME->borders?> solid;
+}
+
+.sideblockmain .cal_event {
+	font-size: 0.8em;
+	font-weight: bold;
+}
+.sideblockmain .cal_event_date {
+	font-size: 0.6em;
+}
+
+.mycalendar {
+	-moz-border-radius-bottomleft: 20px;
+    -moz-border-radius-bottomright: 20px;
+}
+
+.mycalendar .cal_event {
+	font-weight: bold;
+}
+.mycalendar .cal_event_date {
+	font-size: 0.8em;
+}
+
+.mycalendar TABLE.cal_filters {
+	width: 100%;
+    border-width: 1px;
+    border-color: <?PHP echo $THEME->borders?>;
+    border-style: solid;
+    margin: 0px;
+    padding: 2px;
+    -moz-border-radius: 10px;
+}
+
+.mycalendar .cal_filters THEAD TD {
+	border-bottom: 2px <?PHP echo $THEME->borders?> solid;
+    margin: 0px;
+    padding: 2px;
+}
+
+
+.mycalendar .cal_event_table {
+	width: 100%;
+    border-width: 1px;
+    border-color: <?PHP echo $THEME->borders?>;
+    border-style: solid;
+    margin: 0px;
+    padding: 2px;
+    -moz-border-radius: 10px;
+}
+
+.mycalendar .cal_event_table THEAD {
+	background-color: <?PHP echo $THEME->cellcontent?>;
+	text-align: center;
+	font-weight: bold;
+}
+
+.sideblockmain HR {
+	height: 1px;
+	border: none;
+	border-top: 1px #999 solid;
+	margin-top: 4px;
+	margin-bottom: 4px;
+}
+
+.mycalendar HR {
+	height: 1px;
+	border: none;
+	border-top: 1px #999 solid;
+	margin-top: 4px;
+	margin-bottom: 4px;
+}
+
+.calendarexpired {
+	color: red;
+	font-weight: bold;
+}
+
+.calendarreferer {
+	font-weight: bold;
+}
+
+TD.cal_event_description {
+	width: 80%;
+	border-left: 2px <?php echo $THEME->borders?> solid;
+	vertical-align: top;
+	padding: 5px;
+}
+
+.cal_popup_fg {
+	background-color: <?php echo $THEME->cellcontent?>;
+	font-size: 75%;
+	font-family: Courier;
+	padding: 0px;
+	margin: 0px;
+}
+
+.cal_popup_bg {
+	border-top: 2px #ffcc66 solid;
+	border-left: 2px #ffcc66 solid;
+	border-right: 2px #663300 solid;
+border-bottom: 2px #663300 solid;
+	background-image: url(<?PHP echo "$themeurl"?>/gradient.jpg);
+	padding: 0px;
+	margin: 0px;
+}
+
+.cal_popup_caption {
+	font-size: 75%;
+	font-weight: bold;
+	font-family: sans-serif;
+	margin: 5px;
+}
+
+.cal_popup_close {
+	font-size: 75%;
+	font-weight: bold;
+	font-family: Tahoma, Helvetica, sans-serif;
+	margin-right: 5px;
+}
+
+.sideblock .cal_controls {
+	text-align: center;
+	font-size: 9px;
+}
+
+A IMG {
+	border: none;
+}
+
+TABLE.formtable TD {
+	padding: 9px;
+}
