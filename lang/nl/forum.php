@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.1 Beta + (2003082300)
+      // forum.php - created with Moodle 1.2 development (2003092900)
 
 
 $string['addanewdiscussion'] = "Voeg een nieuw onderwerp voor discussie toe";
@@ -14,6 +14,7 @@ $string['bynameondate'] = "door  \$a->name  - \$a->date";
 $string['configdisplaymode'] = "De standaard manier voor het weergeven van discussies als er geen methode is ingesteld.";
 $string['configlongpost'] = "Elke bijdrage die langer is dan deze waarde (niet inclusief de HTML) wordt als lang beschouwd.";
 $string['configmanydiscussions'] = "Maximale aantal discussies van een forum die per pagina getoond worden";
+$string['configmaxbytes'] = "Standaard maximum grootte voor alle forum bijlagen op deze site (afhankelijk van vak limieten en andere locale instellingen)";
 $string['configshortpost'] = "Elke bijdrage die korter is dan deze waarde (niet inclusief de HTML) wordt als kort beschouwd.";
 $string['couldnotadd'] = "Het was niet mogelijk om je bijdrage toe te voegen door een onbekende fout.";
 $string['couldnotdeleteratings'] = "Helaas, dat kan niet worden verwijderd omdat het al geclassificeerd door anderen.";
@@ -50,6 +51,7 @@ $string['introsocial'] = "Een open forum om te chatten over wat je maar wilt";
 $string['introteacher'] = "Een forum alleen bestemd voor discussies en aantekeningen van docenten";
 $string['lastpost'] = "Laatste bericht";
 $string['learningforums'] = "Leer forums";
+$string['maxattachmentsize'] = "Maximum grootte voor bijlagen";
 $string['maxtimehaspassed'] = "Helaas is de maximale tijd voor het wijzigen van deze bijdrage (\$a) verstreken!";
 $string['message'] = "Bijdrage";
 $string['modeflatnewestfirst'] = "Laat de antwoorden in één lijst zien, met de nieuwste eerst";
@@ -82,7 +84,8 @@ $string['olderdiscussions'] = "Oudere discussies";
 $string['openmode0'] = "Geen nieuwe discussies, geen bijdragen";
 $string['openmode1'] = "Geen nieuwe discussies, maar bijdragen zijn toegestaan";
 $string['openmode2'] = "Nieuwe discussies en bijdragen zijn toegestaan";
-$string['parentofthispost'] = "'Moeder' van deze bijdrage";
+$string['parent'] = "Toon discussiestart";
+$string['parentofthispost'] = "Discussiestart van deze bijdrage";
 $string['postadded'] = "Je bijdrage is met succes toegevoegd.<p> Je hebt \$a de tijd om deze bijdrage te wijzigen als je iets wilt veranderen.";
 $string['postincontext'] = "Bekijk deze bijdrage in zijn context";
 $string['postmailinfo'] = "Dit is een kopie van een bijdrage die is toegevoegd op de \$a website.
