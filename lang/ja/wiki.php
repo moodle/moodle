@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // wiki.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005031000)
+      // wiki.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005033100)
 
 
 $string['action'] = '-- アクション --';
@@ -19,9 +19,9 @@ $string['browse'] = '閲覧';
 $string['canceledit'] = 'キャンセル';
 $string['cannotchangepage'] = 'このページは更新できません。';
 $string['changes'] = '$a 変更';
-$string['changesfield'] = '最後の更新から何時間前';
+$string['changesfield'] = '最後の更新から何時間以内';
 $string['changesfielderror'] = '正しい時間を入力してください。';
-$string['checklinks'] = 'リンクをチェックする';
+$string['checklinks'] = 'リンクのチェック';
 $string['checklinkscheck'] = '本当にこのページのリンクをチェックしますか:';
 $string['checklinksnotice'] = 'しばらくお待ちください。';
 $string['chooseadministration'] = '-- 管理 --';
@@ -77,7 +77,7 @@ $string['flagwr'] = 'WR';
 $string['forbidden'] = 'このページにアクセスする権限がありません。';
 $string['groups'] = 'グループ';
 $string['hits'] = '$a ヒット';
-$string['howtooperate'] = '操作方法';
+$string['howtooperate'] = '処理内容';
 $string['howtowiki'] = 'wikiの使い方';
 $string['html'] = 'HTMLフォーマット';
 $string['htmlmode'] = 'HTMLモード';
@@ -86,8 +86,8 @@ $string['index'] = 'index';
 $string['infoaboutpage'] = 'ページの情報';
 $string['initialcontent'] = '初期ページの選択';
 $string['invalidroot'] = '現在のルートページにアクセスする権限が無いため、サイトマップは作成できません。';
-$string['lastchanged'] = '最終更新: $a';
-$string['lastmodified'] = '最終更新';
+$string['lastchanged'] = '最終更新日時: $a';
+$string['lastmodified'] = '最終更新日時';
 $string['linkdead'] = 'DEAD';
 $string['linkok'] = 'OK';
 $string['linkschecked'] = 'チェック済みリンク';
@@ -128,13 +128,16 @@ $string['plaintext'] = 'プレインテキスト';
 $string['preview'] = 'プレビュー';
 $string['readonly'] = '読み取り専用ページ';
 $string['refs'] = 'リファレンス';
+$string['removenotice'] = 'ここには閲覧されていないページのみが表示されています。ewikiエンジンのチェック機能が限定されているため、閲覧されたページがここに表示される場合もあります。<br />最初にページを空にした場合も、ここに表示されます。同時に他の様々なデータベース診断が行われます。';
 $string['removepagecheck'] = '本当にこれらのページを削除してもよろしいですか?';
 $string['removepages'] = 'ページの削除';
 $string['removeselectedpages'] = '選択したページを削除';
+$string['revertallsince'] = 'バージョンを戻す、更新されたページも削除';
 $string['revertchanges'] = '変更を元に戻す';
 $string['revertlastonly'] = '最新の更新のみ元に戻す';
 $string['revertpages'] = '変更の大量取消し';
 $string['revertpagescheck'] = '本当に次の変更を元に戻してもよろしいですか:';
+$string['revertthe'] = 'バージョンを戻す、影響のあるページだけ削除';
 $string['safehtml'] = 'セーフHTML';
 $string['save'] = '保存';
 $string['searchwiki'] = 'Wikiの検索';
