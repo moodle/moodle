@@ -1,9 +1,9 @@
 <!-- No doctype yet - we are slowly migrating towards XHTML transitional 1.0 -->
 <html<?php echo $direction ?>>
 <head>
+<?php echo $meta ?>
 <title><?php echo $title ?></title>
 <meta name="keywords" content="moodle, <?php echo $title ?> ">
-<?php echo $meta ?>
 <link rel="stylesheet" type="text/css" href="<?php echo $styles ?>">
 <link rel="shortcut icon" href="<?php echo "$CFG->wwwroot/theme/$CFG->theme" ?>/favicon.ico">
 <?php include("$CFG->javascript"); ?>
