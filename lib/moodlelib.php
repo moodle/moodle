@@ -1373,7 +1373,7 @@ function get_directory_list($rootdir, $excludefile="") {
         if ($file != "." and $file != ".." and $file != $excludefile) {
             $fullfile = $rootdir."/".$file;
             if (filetype($fullfile) == "dir") {
-                $subdirs = get_directory_list($fullfile);
+                $subdirs = get_directory_list($fullfile, $excludefile);
                 foreach ($subdirs as $subdir) {
                     $dirs[] = $file."/".$subdir;
                 }

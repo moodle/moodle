@@ -188,7 +188,8 @@
     $table->align = array ("CENTER", "CENTER", "CENTER");
     $table->data[0][0] = "<P><A HREF=\"site.php\">".get_string("sitesettings")."</A></P>".
                          "<P><A HREF=\"../course/log.php?id=$site->id\">".get_string("sitelogs")."</A></P>".
-                         "<P><A HREF=\"../theme/index.php\">".get_string("choosetheme")."</A></P>";
+                         "<P><A HREF=\"../theme/index.php\">".get_string("choosetheme")."</A></P>".
+                         "<P><A HREF=\"lang.php\">".get_string("checklanguage")."</A></P>";
     $table->data[0][1] = "<P><A HREF=\"../course/edit.php\">".get_string("addnewcourse")."</A></P>".
                          "<P><A HREF=\"../course/teacher.php\">".get_string("assignteachers")."</A></P>".
                          "<P><A HREF=\"../course/delete.php\">".get_string("deletecourse")."</A></P>";
