@@ -17,7 +17,7 @@
 <body bgcolor="#FFFFFF">
 <h1>Latest Release notes</h1>
 
-<h3>Moodle 1.4.3 (17 November, 2004)</h3>
+<h3>Moodle 1.4.3 (17 December, 2004)</h3>
 
 <p>(Because this release contains important security fixes, we highly advise that sites using any 
     previous version of Moodle upgrade to this version as soon as possible.)</p>
@@ -34,9 +34,9 @@
         <li>Added protection against directory traversal</li>
         <li>Fix for variable $FULLME necessary for cron</li>
         <li>Prevention against internal libraries being called directly.</li>
-        <li>Hide viewing glossary if it's a hidden activity</li>
+        <li>Prevent viewing of glossary if it's a hidden activity</li>
         <li>Hidden sections hidden from students in recent activity</li>
-        <li>Fixed problem with guest user being able to see all events in the calendar</li>
+        <li>Fixed problem with guest user being able to see  events in the calendar</li>
         <li>Fixed encoding of TEX expressions</li>
       </ul>
     </dd>
@@ -45,76 +45,76 @@
     <dd>
       <ul>
         <li>Enforced enrolment uniqueness, this is also a performance fix.</li>
-        <li>Added transaction support for databases that support it.</li>
-        <li>Logging in and logging out are now logged.</li>
+        <li>Added transaction support for PostgreSQL </li>
+        <li>Logging in and logging out are now logged</li>
         <li>Wiki and SCORM now both use new zipping code - this fixes reported SCORM issues</li>
         <li>New paging system for glossary</li>
         <li>User info from LDAP truncated for insertion into moodle to prevent data loss</li>
-        <li>Added caching for pages that benefit from it</li>
         <li>Updated pclzip to new version</li>
         <li>Memory_limit can be overriden by higher config settings from php.ini, commandline,  httpd.conf, .htaccess</li>
         <li>New Maori language translation pack</li>
-        <li>Many additions to the Arabic language pack.</li>
-        <li>Teachers can now always try quizzes, even if they're not open yet.</li>
+        <li>Many additions to other language packs</li>
+        <li>Teachers can now always try quizzes, even if they're not open yet</li>
         <li>Glossary print view is now different for each format.</li>
-        <li>New short syntax for multilang filter</li>
+        <li>Vastly improved multilang filter with more forgiving syntax </li>
+      </ul>
+    </dd>
+	
+   <dt>Performance improvements</dt>
+    <dd>
+      <ul>
+        <li>Better caching headers mean improved performance on all pages when using back button</li>
+        <li>Database indexes added in many places to enhance performance in large scale deployments</li>
+        <li>Performance improvements  throughout moodle where courses were being listed.</li>
+        <li>Various optimizations by removing unnecessary database retrievals and sorting.</li>
       </ul>
     </dd>
 
-    <dt>Bug fixes!</dt>
+    <dt>Other bug fixes</dt>
     <dd>
       <ul>
         <li>Fixed restoring into a new course generating duplicate course idnumbers</li>
-        <li>Fixed many postgres incompatibilities</li>
+        <li>Fixed many small Postgres issues </li>
         <li>Fixed unnecessary notices when debug mode on</li>
-        <li>Fixed PHP5 Notices</li>
+        <li>Fixed some more PHP5 Notices</li>
         <li>Fixed support for apostrophes, quotes and backslashes in LDAP user data</li>
-        <li>Fix for pagination of search course results for postgres</li>
+        <li>Fix for pagination of search course results for Postgres </li>
         <li>Fixed bug with whitespace in user search</li>
         <li>Fixed chatroom bug where all chat users listed in multiple chatrooms </li>
         <li>Fix for installation script bug</li>
-        <li>Case sensitive usernames in bulk user import fixed.</li>
-        <li>Fixed bug in redirection after rating forum post.</li>
+        <li>Case sensitive usernames in bulk user import fixed</li>
+        <li>Fixed bug in redirection after rating forum post</li>
         <li>Fixed bug in quiz with matching questions</li>
         <li>Fixed bug in quiz preview</li>
-        <li>Fixed bug in language editing.</li>
+        <li>Fixed bug in language editing</li>
         <li>Multiple small fixes in SCORM module</li>
         <li>SCORM module shows user pictures properly</li>
-        <li>Activity names sorted by name in activity filter.</li>
+        <li>Activity names sorted by name in activity filter</li>
         <li>Glossary search will search aliases as well</li>
         <li>Any RSS errors will result in a valid RSS error file rather than invalid RSS.</li>
         <li>Fixed problem with SCORM package validation and PHP5</li>
         <li>Fixed problem with backup/restore and empty categories</li>
         <li>Better XHTML in wiki</li>
-        <li>Bug fix in chat reports for first chat session.</li>
-        <li>Fixed a problem with SCORM when deleting a lot of files, or very large files.</li>
+        <li>Bug fix in chat reports for first chat session</li>
+        <li>Fixed a problem with SCORM when deleting a lot of files, or very large files</li>
         <li>Fixed some problems with encyclopedia format in glossary</li>
-        <li>Fixed bug in SCORM integration with zipping code.</li>
+        <li>Fixed bug in SCORM integration with zipping code</li>
         <li>Fixed bug in dialogue plain text email notifications</li>
         <li>Fixed missing sesskey variables in social activity block </li>
-        <li>Excess sections for a course are now hidden in the navmenu.</li>
-        <li>Added daylight savings time fixes for the calendar.</li>
-        <li>First quiz edit in a new course has a default category assigned.</li>
+        <li>Excess sections for a course are now hidden in the navmenu</li>
+        <li>Added daylight savings time fixes for the calendar</li>
+        <li>First quiz edit in a new course has a default category assigned</li>
         <li>Fixed bug in paypal module when accepting payment amount</li>
         <li>Fixed bug in course files with loss of choose mode	</li>
       </ul>
     </dd>
 
-    <dt>Performance fixes</dt>
-    <dd>
-      <ul>
-        <li>Database indexes added in many places to enhance performance in large scale deployments</li>
-        <li>Performance fixes all throughout moodle where courses were being selected.</li>
-        <li>Many optimizations where unnecessary data was being returned from the database or results were being ordered unnecessarily</li>
-        <li>Optimization for course sort order resulting in much faster ordering and reordering of courses.</li>
-      </ul>
-    </dd>
+ 
 
   </dl>
 </ul>
 
 <p>&nbsp;</p>
-
 
 
 <h3> Moodle 1.4.2   (5th November, 2004)</h3>
