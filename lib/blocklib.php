@@ -931,8 +931,9 @@ function blocks_get_config_default ($cformat='') {
         if (!empty($CFG->defaultblocks_site)) {
             return $CFG->defaultblocks_site;
         }
+        /// Failsafe - in case nothing was defined.
         else {
-            return $CFG->defaultblocks;
+            return 'site_main_menu,admin,course_list:course_summary,calendar_month';
         }
     }
     /// Return the appropriate block string for the format.
@@ -947,8 +948,12 @@ function blocks_get_config_default ($cformat='') {
         if (!empty($format['defaultblocks'])) {
             return $format['defaultblocks'];
         }
-        else {
+        else if (!empty($CFG->defaultblocks)){
             return $CFG->defaultblocks;
+        }
+        /// Failsafe - in case nothing was defined.
+        else {
+            return 'participants,activity_modules,search_forums,admin,course_list:news_items,calendar_upcoming,recent_activity';
         }
     }
 }
