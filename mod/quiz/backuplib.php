@@ -662,7 +662,7 @@
             //Iterate over each question_version
             foreach ($quiz_question_versions as $que_ver) {
                 //Start question version
-                $status =fwrite ($bf,start_tag("QUESTION_VERSIONS",5,true));
+                $status =fwrite ($bf,start_tag("QUESTION_VERSION",5,true));
                 //Print question_version contents
                 fwrite ($bf,full_tag("ID",6,false,$que_ver->id));
                 fwrite ($bf,full_tag("OLDQUESTION",6,false,$que_ver->oldquestion));
@@ -670,7 +670,7 @@
                 fwrite ($bf,full_tag("USERID",6,false,$que_ver->userid));
                 fwrite ($bf,full_tag("TIMESTAMP",6,false,$que_ver->timestamp));
                 //End question version
-                $status =fwrite ($bf,end_tag("QUESTION_VERSIONS",5,true));
+                $status =fwrite ($bf,end_tag("QUESTION_VERSION",5,true));
             }
             //Write end tag
             $status =fwrite ($bf,end_tag("QUESTION_VERSIONS",4,true));
