@@ -1,8 +1,9 @@
-<?php
+<?PHP //$Id$
     require_once ("../config.php");
     require_once ("backup_scheduled.php");
     require_once ("lib.php");
     require_once ("backuplib.php");
+    require_once ("$CFG->libdir/blocklib.php");
 
     require_login();
 
