@@ -723,7 +723,7 @@ $string[''] = "";
     }
     print("</tr>\n");
 
-    //display a row for each possible multiple choice with $max_choices being highest row,$table_colcount is the width
+    //display a row for each possible separate response with $max_choices being highest row,$table_colcount is the width
     for ($i = 1; $i<= $max_choices;$i++){
         print("<tr valign=top><th colspan=2 align=right>&nbsp;M/C #$i</td>");
         //display answer tallies
@@ -739,7 +739,8 @@ $string[''] = "";
     //Display the total percent correct
     print("<tr valign=top><th align=right colspan=2>$strpercentcorrect:</th>");
     for ($i = 0; $i< $table_colcount;$i++){
-        print ("<th>{$pct_correct[$i]}%</th> ");
+        $nowpct = $pct_correct[$i] * 100;
+        print ("<th>$nowpct%</th> ");
     }
     print("</tr>\n");
     //Finally display the itemanalysis
@@ -932,7 +933,7 @@ function qr_make_footers(){
 function qr_make_pct($this_correct,$totusers){
     global  $qs_in_order,$qtally,$quests,$total_user_count;
     if($this_correct>0 and $totusers > 0){
-        $pct_cor =(floor(($this_correct/$totusers)*10)/10);
+        $pct_cor =(floor(($this_correct/$totusers)*1000)/1000);
     } else {
         $pct_cor = 0;
     }
