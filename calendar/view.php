@@ -41,10 +41,11 @@
 //  Display the calendar page.
 
     require_once('../config.php');
-    require_once('lib.php');
     require_once('../course/lib.php');
 
     require_login();
+
+    require_once('lib.php');
 
     optional_variable($_GET['view'], 'upcoming');
     optional_variable($_GET['course'], 0);
