@@ -16,6 +16,33 @@
 <body bgcolor="#FFFFFF">
 
 <h1>Nieuwste Release notes</h1>
+ <h3> Nieuw in Moodle 1.3.3  (16 Juli, 2004)</h3>
+ <ul>
+   <dl>
+     <dt>Updates</dt>
+     <dd>
+       <ul>
+         <li>De ADOdb library is geupgraded naar een versie die compatibel is met PHP 5.0</li>
+         <li>Verbeteringen aan de detectie en conversie van URLs in backups</li>
+       </ul>
+     </dd>
+     <dt>Herstelde fouten</dt>
+     <dd> 
+       <ul>
+         <li>Een mogelijke kwetsbaarheid door het bestand help.php is hersteld</li>
+         <li>Een mogelijke kwetsbaarheid door de taalinstelling is hersteld</li>
+         <li>Herstellingen voor het bewerken van taalstrings met dubbele aanhalingstekens</li>
+         <li>Verschillende kleine problemen hersteld in de woordenlijst</li>
+         <li>Wat kleinigheden hersteld in de scormmodule</li>
+       </ul>
+     </dd>
+   </dl>
+ </ul>
+ 
+ <br />
+ 
+ 
+
 <h3> Nieuw in Moodle 1.3.2  (9 Juli, 2004)</h3>
 <ul>
   <dl>
@@ -30,13 +57,13 @@
     <dt>Herstelde fouten</dt>
     <dd> 
       <ul>
-        <li>Een mogelijke kwetsbaarheid van de startpagina bij Moodle op servers met een oude versie van PHP is hersteld. Als je een versie ouder dan 4.3 gebruikt is het misschien een goed idee om naar deze versie van Moodle te upgraden.</li>
-        <li>Belangrijke herstellingen aan de logica achter de forums wanneer je ze gebruikt als groepsactiviteit.</li>
+        <li>Een mogelijke kwetsbaarheid van de startpagina bij Moodle op servers met een oude versie van PHP is hersteld. Als je een versie ouder dan 4.3 gebruikt is het misschien een goed idee om naar deze versie van Moodle te upgraden</li>
+        <li>Belangrijke herstellingen aan de logica achter de forums wanneer je ze gebruikt als groepsactiviteit</li>
         <li>De profielen van de leraars die het vak beheren zijn nu zihtbaar, zelfs al zijn ze ingedeeld bij een andere gescheiden groep van de klas.</li>
-        <li>De onderwerpregels in multibyte talen in recente activiteit wordt niet meer afgebroken.</li>
+        <li>De onderwerpregels in multibyte talen in recente activiteit wordt niet meer afgebroken</li>
         <li>Enkele problemen met export/import in de woordenlijst zijn hersteld</li>
-        <li>De Backupfunctie behandelt nu z'n tijdelijke bestanden beter.</li>
-        <li>En nog heel wat andere kleine herstellingen hier en daar.</li>
+        <li>De Backupfunctie behandelt nu z'n tijdelijke bestanden beter</li>
+        <li>En nog heel wat andere kleine herstellingen hier en daar</li>
       </ul>
     </dd>
   </dl>
@@ -76,8 +103,8 @@
         <li>Nieuwe <strong>kalender</strong> mogelijkheid (dank aan Jon Papaioannou en de <a target="_blank" href="http://www.sch.gr/">Greek School Network</a>!)</li>
         <li>Nieuwe <strong>Blokken </strong>mogelijkheid, waarmee je blokken kunt toevoegen en verplaatsen rond een vakpagina (dank aan Jon Papaioannou, Eloy Lafuente en anderen!)</li>
         <li>Nieuw <strong>RSS Systeem</strong> waarmee je Forums en Woordenlijsten (en later andere modules) kunt publiceren via RSS feeds (Dank aan Eloy!)</li>
-        <li>De <strong>Mediaplugin</strong> filter ondersteunt nu auto-embedding van Quicktime, Flash, and Windows Media files.</li>
-        <li>Een nieuwe <strong>Activiteitnaam</strong> filter die nu automatisch hyperlinks toevoegt aan andere activiteiten in hetzelfde vak wanneer hun naam gebruikt wordt.</li>
+        <li>De <strong>Mediaplugin</strong> filter ondersteunt nu auto-embedding van Quicktime, Flash, and Windows Media files</li>
+        <li>Een nieuwe <strong>Activiteitnaam</strong> filter die nu automatisch hyperlinks toevoegt aan andere activiteiten in hetzelfde vak wanneer hun naam gebruikt wordt</li>
       </ul>
     </dd>
     <dt>Andere nieuwe mogelijkheden</dt>
@@ -86,11 +113,11 @@
         <li>Nieuw type bron &quot;Map&quot; toont een hele map met geüploade bestanden (inclusief submappen)</li>
         <li>Bij bronnen die bestanden zijn (geüpload of websites) wordt nu een relevant icoon getoond op de vakpagina</li>
         <li>De meeste interne HTML links binnen forums en bronnen worden nu behouden tijdens backup en restore</li>
-        <li>Het is nu mogelijk om gewone http arguments door te geven aan bestanden in de bestandenlijst. Hiermee kun je meer comlexiteit bereiken met Flash- en HTML-bronnen.</li>
+        <li>Het is nu mogelijk om gewone http arguments door te geven aan bestanden in de bestandenlijst. Hiermee kun je meer comlexiteit bereiken met Flash- en HTML-bronnen</li>
         <li>$CFG-&gt;forceloginforprofiles kan ingesteld worden om gasten (en Google) te verhinderen om gebruikersprofielen op site-niveau te bekijken.</li>
-        <li>Wanneer toegang door Google is ingeschakeld, dan werkt de Google vertalingsfunctie nu ook.</li>
+        <li>Wanneer toegang door Google is ingeschakeld, dan werkt de Google vertalingsfunctie nu ook</li>
         <li>Sessies worden nu bewaard in de Moodle data map - hierdoor werkt Moodle beter op serverclusters en worden sommige sessie-time out problemen opgelost als Moodle op een gedeelde web host staat.</li>
-        <li>Gebruikers foto's kunnen nu gemakkelijk verwijderd worden van de profiel bewerken pagina.</li>
+        <li>Gebruikers foto's kunnen nu gemakkelijk verwijderd worden van de profiel bewerken pagina.\</li>
         <li>Chatten wordt nu gelogd.</li>
         <li>Verborgen secties kunnen nu volledig verborgen worden voor de leerlingen (vakinstelling)</li>                      <li>Verbeteringen aan teksten in grafieken voor sommige niet-Engelse talen die unicode lettertypes gebruiken.</li>
         <li>Verbeterde interface voor het beheer van schalen, ook in meertalige sites</li>
@@ -100,7 +127,7 @@
         <li>Feedbackopmerken voor een verborgen opdracht worden niet meer gemaild tot de opdracht zichtbaar gemaakt wordt.</li>
         <li>Betere ondersteuning voor het importeren van Blackboard testen</li>
         <li>Het cron script kan nu lopen door gebruik te maken van een PHP binary vanuit elke map</li>
-        <li>De HTML editor is verder verbeterd en meer aangepast.</li>
+        <li>De HTML editor is verder verbeterd en meer aangepast</li>
         <li>Het standaard recente activiteiten scherm wordt nu berekend vanuit de laatste toegang tot het vak in (of twee dagen, afhankelijk van wat het meest recente is)T. Vroeger werd het berekend van de laatste aanmelding op de site.</li>
         <li>Bevestigingsmails zijn nu in HTML en in tekst, om het afbreken van de bevestigingslink te verhinderen.</li>
         <li><b>Nieuwe vertalingen</b>: Farsi, Latvian, Noors voor basisscholen, Unicode versie van Traditioneel Chinees.</li>
