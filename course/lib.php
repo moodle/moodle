@@ -1781,18 +1781,18 @@ function course_in_meta ($course) {
  * Print standard form elements on module setup forms in mod/.../mod.html
  */
 function print_standard_coursemodule_settings($form) {
-    print_groupmode_setting($form);
-    print_visible_setting($form);
+    if (! $course = get_record('course', 'id', $form->course)) {
+        error("This course doesn't exist");
+    }
+    print_groupmode_setting($form, $course);
+    print_visible_setting($form, $course);
 }
 
 /**
  * Print groupmode form element on module setup forms in mod/.../mod.html
  */
-function print_groupmode_setting($form) {
+function print_groupmode_setting($form, $course) {
 
-    if (! $course = get_record('course', 'id', $form->course)) {
-        error("This course doesn't exist");
-    }
     if ($form->coursemodule) {
         if (! $cm = get_record('course_modules', 'id', $form->coursemodule)) {
             error("This course module doesn't exist");
@@ -1818,7 +1818,7 @@ function print_groupmode_setting($form) {
 /**
  * Print visibility setting form element on module setup forms in mod/.../mod.html
  */
-function print_visible_setting($form) {
+function print_visible_setting($form, $course) {
 
     if ($form->coursemodule) {
         $visible = get_field('course_modules', 'visible', 'id', $form->coursemodule);
@@ -1836,11 +1836,11 @@ function print_visible_setting($form) {
     }
     
     echo '<tr valign="top">';
-    echo '<td align="right"><b>'.get_string('showimmediately').':</b></td>';
+    echo '<td align="right"><b>'.get_string('hidefromstudents','',moodle_strtolower($course->students)).':</b></td>';
     echo '<td>';
     unset($choices);
-    $choices[1] = get_string('yes');
-    $choices[0] = get_string('no');
+    $choices[1] = get_string('no');
+    $choices[0] = get_string('yes');
     choose_from_menu($choices, 'visible', $visible, '', '', 0, false, $hiddensection);
     echo '</td></tr>';
 } 
