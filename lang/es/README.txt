@@ -16,6 +16,7 @@ David Delgado (davidds@aprend-d.com)
 Raúl Vernengo 
 Sergio Zúñiga Sánchez (szuniga@vtr.net)
 Ricardo Dalton (moodle@avmed.com.ar)
+Facundo Ortiz (facundooz@fibertel.com.ar)
 
 
 Si desea contribuir puede hacerlo de diferentes maneras:
