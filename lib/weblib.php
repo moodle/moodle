@@ -1944,7 +1944,9 @@ function print_continue($link) {
         $link = $_SERVER['HTTP_REFERER'];
     }
 
-    print_heading('<a target="'. $CFG->framename .'" href="'. $link .'">'. get_string('continue').'</a>');
+    echo '<div class="continuebutton">';
+    print_single_button($link, NULL, get_string('continue'), 'post', $CFG->framename);
+    echo '</div>'."\n";
 }
 
 /**
@@ -3234,7 +3236,7 @@ function notice ($message, $link='') {
 
     echo '<br />';
     print_simple_box($message, 'center', '50%', '', '20', 'noticebox');
-    print_heading('<a href="'. $link .'">'. get_string('continue') .'</a>');
+    print_continue($link);
     print_footer(get_site());
     die;
 }
@@ -3248,17 +3250,19 @@ function notice ($message, $link='') {
  */
 function notice_yesno ($message, $linkyes, $linkno) {
 
+    global $CFG;
+
     $message = clean_text($message);
     $linkyes = clean_text($linkyes);
     $linkno = clean_text($linkno);
 
-    print_simple_box_start('center', '60%');
-    echo '<p align="center"><font size="3">'. $message .'</font></p>';
-    echo '<p align="center"><font size="3"><strong>';
-    echo '<a href="'. $linkyes .'">'. get_string('yes') .'</a>';
-    echo '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-    echo '<a href="'. $linkno .'">'. get_string('no') .'</a>';
-    echo '</strong></font></p>';
+    print_simple_box_start('center', '60%', '', 5, 'noticebox', 'notice');
+    echo '<p align="center">'. $message .'</p>';
+    echo '<table align="center" cellpadding="20"><tr><td>';
+    print_single_button($linkyes, NULL, get_string('yes'), 'post', $CFG->framename);
+    echo '</td><td>';
+    print_single_button($linkno, NULL, get_string('no'), 'post', $CFG->framename);
+    echo '</td></tr></table>';
     print_simple_box_end();
 }
 
@@ -3305,14 +3309,18 @@ function redirect($url, $message='', $delay='0') {
  * Print a bold message in an optional color.
  *
  * @param string $message The message to print out
- * @param string $color Optional color to display message text in
- * @param string $align Paragraph alignment option
+ * @param string $style Optional style to display message text in
+ * @param string $align Alignment option
  */
-function notify ($message, $color='red', $align='center') {
+function notify ($message, $style='notifyproblem', $align='center') {
+
+    if ($style == 'green') {
+        $style = 'notifysuccess';  // backward compatible with old color system
+    }
 
     $message = clean_text($message);
 
-    echo '<p align="'. $align .'"><strong><font color="'. $color .'">'. $message .'</font></strong></p>' . "\n";
+    echo '<div class="'.$style.'" align="'. $align .'">'. $message .'</div>' . "\n";
 }
 
 

@@ -56,7 +56,7 @@ function execute_sql($command, $feedback=true) {
 
     if ($result) {
         if ($feedback) {
-            echo '<p><font color="green"><strong>'. get_string('success') .'</strong></font></p>';
+            notify(get_string('success'), 'notifysuccess');
         }
         return true;
     } else {

@@ -84,7 +84,7 @@ function upgrade_enrol_plugins($return) {
                     $db->debug=false;
                     // OK so far, now update the modules record
                     set_config($moduleversion, $module->version);
-                    notify(get_string('modulesuccess', '', $module->name), 'green');
+                    notify(get_string('modulesuccess', '', $module->name), 'notifysuccess');
                     echo '<hr />';
                 } else {
                     $db->debug=false;
@@ -180,7 +180,7 @@ function upgrade_activity_modules($return) {
                         if (! update_record('modules', $module)) {
                             error('Could not update '. $module->name .' record in modules table!');
                         }
-                        notify(get_string('modulesuccess', '', $module->name), 'green');
+                        notify(get_string('modulesuccess', '', $module->name), 'notifysuccess');
                         echo '<hr />';
                     } else {
                         $db->debug=false;
@@ -204,7 +204,7 @@ function upgrade_activity_modules($return) {
             if (modify_database($fullmod .'/db/'. $CFG->dbtype .'.sql')) {
                 $db->debug = false;
                 if ($module->id = insert_record('modules', $module)) {
-                    notify(get_string('modulesuccess', '', $module->name), 'green');
+                    notify(get_string('modulesuccess', '', $module->name), 'notifysuccess');
                     echo '<hr />';
                 } else {
                     error($module->name .' module could not be added to the module list!');
