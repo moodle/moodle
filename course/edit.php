@@ -84,7 +84,9 @@
             $form->fullname = get_string("defaultcoursefullname");
             $form->shortname = get_string("defaultcourseshortname");
             $form->teacher = get_string("defaultcourseteacher");
+            $form->teachers = get_string("defaultcourseteachers");
             $form->student = get_string("defaultcoursestudent");
+            $form->students = get_string("defaultcoursestudents");
             $form->summary = get_string("defaultcoursesummary");
             $form->format = "weeks";
             $form->numsections = 10;

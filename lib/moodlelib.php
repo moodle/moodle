@@ -1164,7 +1164,7 @@ function get_course_students($courseid, $sort="u.lastaccess DESC") {
 }
 
 function get_course_teachers($courseid, $sort="t.authority ASC") {
-    return get_records_sql("SELECT u.*,t.authority FROM user u, user_teachers t
+    return get_records_sql("SELECT u.*,t.authority,t.role FROM user u, user_teachers t
                             WHERE t.course = '$courseid' AND t.user = u.id 
                             ORDER BY $sort");
 }

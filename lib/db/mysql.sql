@@ -37,7 +37,9 @@ CREATE TABLE `course` (
   `format` enum('weeks','social','topics') NOT NULL default 'weeks',
   `newsitems` smallint(5) unsigned NOT NULL default '1',
   `teacher` varchar(100) NOT NULL default 'Teacher',
+  `teachers` varchar(100) NOT NULL default 'Teachers',
   `student` varchar(100) NOT NULL default 'Student',
+  `students` varchar(100) NOT NULL default 'Students',
   `guest` tinyint(2) unsigned NOT NULL default '0',
   `startdate` int(10) unsigned NOT NULL default '0',
   `numsections` smallint(5) unsigned NOT NULL default '1',
@@ -214,7 +216,8 @@ CREATE TABLE `user_teachers` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `user` int(10) unsigned NOT NULL default '0',
   `course` int(10) unsigned NOT NULL default '0',
-  `authority` tinyint(3) NOT NULL default '3',
+  `authority` int(10) NOT NULL default '3',
+  `role` varchar(40) NOT NULL default '',
   PRIMARY KEY  (`id`),
   UNIQUE KEY `id` (`id`)
 ) TYPE=MyISAM COMMENT='One record per teacher per course';

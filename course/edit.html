@@ -105,9 +105,21 @@
 	</td>
 </tr>
 <tr valign=top>
+	<td><P><? print_string("wordforteachers") ?>:</td>
+	<td><input type="text" name="teachers" size=25 value="<? p($form->teachers) ?>">
+	(<? print_string("wordforteacherseg") ?>) <? formerr($err["teachers"]) ?>
+	</td>
+</tr>
+<tr valign=top>
 	<td><P><? print_string("wordforstudent") ?>:</td>
 	<td><input type="text" name="student" size=25 value="<? p($form->student) ?>">
 	(<? print_string("wordforstudenteg") ?>) <? formerr($err["student"]) ?>
+	</td>
+</tr>
+<tr valign=top>
+	<td><P><? print_string("wordforstudents") ?>:</td>
+	<td><input type="text" name="students" size=25 value="<? p($form->students) ?>">
+	(<? print_string("wordforstudentseg") ?>) <? formerr($err["students"]) ?>
 	</td>
 </tr>
 <tr>

@@ -221,7 +221,10 @@ function print_course($course) {
         echo "<P><FONT SIZE=1>\n";
         foreach ($teachers as $teacher) {
             if ($teacher->authority > 0) {
-                echo "$course->teacher: <A HREF=\"$CFG->wwwroot/user/view.php?id=$teacher->id&course=$site->id\">$teacher->firstname $teacher->lastname</A><BR>";
+                if (!$teacher->role) {
+                    $teacher->role = $course->teacher;
+                }
+                echo "$teacher->role: <A HREF=\"$CFG->wwwroot/user/view.php?id=$teacher->id&course=$site->id\">$teacher->firstname $teacher->lastname</A><BR>";
             }
         }
         echo "</FONT></P>";
@@ -531,28 +534,35 @@ function print_admin_links ($siteid, $width=180) {
     echo "<IMG SRC=\"$CFG->wwwroot/pix/spacer.gif\" WIDTH=\"$width\" HEIGHT=1><BR>";
 }
 
-function print_course_admin_links($courseid, $width=180) {
+function print_course_admin_links($course, $width=180) {
     global $THEME, $CFG;
 
     echo "<BR>";
     $adminicon[]="<IMG SRC=\"$CFG->wwwroot/pix/i/edit.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";
-    if (isediting($courseid)) {
-        $admindata[]="<A HREF=\"view.php?id=$courseid&edit=off\">".get_string("turneditingoff")."</A>";
+    if (isediting($course->id)) {
+        $admindata[]="<A HREF=\"view.php?id=$course->id&edit=off\">".get_string("turneditingoff")."</A>";
     } else {
-        $admindata[]="<A HREF=\"view.php?id=$courseid&edit=on\">".get_string("turneditingon")."</A>";
+        $admindata[]="<A HREF=\"view.php?id=$course->id&edit=on\">".get_string("turneditingon")."</A>";
     }
-    $admindata[]="<A HREF=\"edit.php?id=$courseid\">".get_string("settings")."...</A>";
+    $admindata[]="<A HREF=\"edit.php?id=$course->id\">".get_string("settings")."...</A>";
     $adminicon[]="<IMG SRC=\"$CFG->wwwroot/pix/i/settings.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";
-    $admindata[]="<A HREF=\"log.php?id=$courseid\">".get_string("logs")."...</A>";
+    if (!$course->teachers) {
+        $course->teachers = get_string("defaultcourseteachers");
+    }
+    $admindata[]="<A HREF=\"teachers.php?id=$course->id\">$course->teachers...</A>";
+    $adminicon[]="<IMG SRC=\"$CFG->wwwroot/pix/i/settings.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";
+
+    $admindata[]="<A HREF=\"log.php?id=$course->id\">".get_string("logs")."...</A>";
     $adminicon[]="<IMG SRC=\"$CFG->wwwroot/pix/i/log.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";
-    $admindata[]="<A HREF=\"$CFG->wwwroot/files/index.php?id=$courseid\">".get_string("files")."...</A>";
+    $admindata[]="<A HREF=\"$CFG->wwwroot/files/index.php?id=$course->id\">".get_string("files")."...</A>";
     $adminicon[]="<IMG SRC=\"$CFG->wwwroot/files/pix/files.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";
 
-    $admindata[]="<A HREF=\"$CFG->wwwroot/doc/view.php?id=$courseid&file=teacher.html\">".get_string("help")."...</A>";
+    $admindata[]="<A HREF=\"$CFG->wwwroot/doc/view.php?id=$course->id&file=teacher.html\">".get_string("help")."...</A>";
     $adminicon[]="<IMG SRC=\"$CFG->wwwroot/mod/reading/icon.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";
 
-    if ($teacherforum = forum_get_course_forum($courseid, "teacher")) {
-        $admindata[]="<A HREF=\"$CFG->wwwroot/mod/forum/view.php?f=$teacherforum->id\">".get_string("teacherforum")."</A>";
+
+    if ($teacherforum = forum_get_course_forum($course->id, "teacher")) {
+        $admindata[]="<A HREF=\"$CFG->wwwroot/mod/forum/view.php?f=$teacherforum->id\">".get_string("nameteacher", "forum")."</A>";
         $adminicon[]="<IMG SRC=\"$CFG->wwwroot/mod/forum/icon.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";
     }
 

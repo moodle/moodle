@@ -34,7 +34,7 @@
     $string->fullprofile = get_string("fullprofile");
 
     if ( $teachers = get_course_teachers($course->id)) {
-        echo "<H2 align=center>".$course->teacher."s</H2>";
+        echo "<H2 align=center>$course->teachers</H2>";
         foreach ($teachers as $teacher) {
             if ($teacher->authority > 0) {    // Don't print teachers with no authority
                 print_user($teacher, $course, $string);
@@ -43,7 +43,7 @@
     }
 
     if ($students = get_course_students($course->id)) {
-        echo "<H2 align=center>".$course->student."s</H2>";
+        echo "<H2 align=center>$course->students</H2>";
         foreach ($students as $student) {
             print_user($student, $course, $string);
         }
