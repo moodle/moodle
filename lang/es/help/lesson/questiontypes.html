@@ -1,0 +1,127 @@
+<p align="center"><b>Tipos de Preguntas</b></p>
+
+<p>Los tipos de preguntas actualmente soportados por el módulo lección son:
+
+<ol>
+<li><p><b>Opción Múltiple</b> Éste es el tipo de pregunta predeterminado. Las preguntas de opción múltiple son preguntas en las que se pide al estudiante que escoja una respuesta de entre las posibles alternativas. La respuesta correcta hace avanzar al estudiante en la lección, las erróneas no. Las respuestas incorrectas a veces se llaman &quot;distractores&quot; y la utilidad de estas preguntas a menudo tiene más que ver con la calidad del distractor que con las propias preguntas o sus respuestas correctas.</p>
+
+  <p> Cada respuesta puede tener opcionalmente un comentario. Si no se incluye 
+    ninguno, el comentario por defecto &quot;Respuesta Correcta&quot; o &quot;Respuesta 
+    Incorrecta&quot; se muestra al alumno.</p>
+
+  <p>Es posible tener m&aacute;s de una respuesta correcta en una pregunta de 
+    opci&oacute;n m&uacute;ltiple. Las diferentes respuestas correctas pueden 
+    dar a los alumnos diferentes comentarios y saltar a p&aacute;ginas diferentes 
+    (avanzar) en la lecci&oacute;n pero no variar sus calificaciones, (es decir, 
+    algunas respuestas <strong>no</strong> son m&aacute;s correctas que otras, 
+    al menos en t&eacute;rminos de calificaci&oacute;n.) Es posible que todas 
+    las respuestas sean correctas y que lleven a los alumnos a partes diferentes 
+    de la lecci&oacute;n en funci&oacute;n de cu&aacute;l hayan escogido.</p>
+
+  <p>Hay una variante de las preguntas de m&uacute;ltiple opci&oacute;n llamadas 
+    preguntas <b>&quot;Multiopci&oacute;n Multirespuesta&quot;</b>. Estas preguntas 
+    requieren que el alumno seleccione todas las respuestas correctas de entre 
+    todas las respuestas posibles. La pregunta puede o no decirle al alumno cuantas 
+    respuestas correctas hay. Por ejemplo &quot;&iquest;Cu&aacute;les de los siguientes 
+    fueron Presidentes de los Estados Unidos?&quot; no lo hace, mientras que "Seleccione 
+    los dos Presidentes de Estados Unidos de la siguiente lista&quot; s&iacute;. 
+    El n&uacute;mero actual de respuestas correctas puede ir desde <strong>uno</strong> 
+    hasta el n&uacute;mero de opciones. (Una pregunta Multiopci&oacute;n Multirespuesta 
+    con una respuesta correcta es diferente de una pregunta Multiopci&oacute;n 
+    ya que aqu&eacute;lla permite al alumno la posibilidad de escoger m&aacute;s 
+    de una respuesta mientras que esta &uacute;ltima no).</p>
+
+  <p>De nuevo las respuestas correctas son recompensadas con saltos hacia adelante 
+    mientras que las incorrectas hacen permanecer en la misma p&aacute;gina o 
+    volver atr&aacute;s. Cuando hay m&aacute;s de una respuesta correcta los saltos 
+    deber&iacute;an llevar a la misma p&aacute;gina, de la misma forma que las 
+    respuestas err&oacute;neas. Si no se hace as&iacute; se da un aviso al profesor 
+    en la lecci&oacute;n. El comentario correcto, si se requiere, se deber&iacute;a 
+    dar en la primera respuesta correcta mientras que el comentario incorrecto, 
+    si se requiere, se deber&iacute;a dar en la primera respuesta incorrecta. 
+    Se ignoran los comentarios en las otras respuestas (sin aviso). </p>
+</li>
+
+<li>
+  <p><b>Respuesta Corta</b> El alumno ha de introducir un texto corto. &Eacute;ste 
+    es comprobado contra una o m&aacute;s respuestas. Las respuestas pueden ser 
+    bien correctas o incorrectas. Cada respuesta puede opcionalmente tener un 
+    comentario. Si no se introduce ninguno para una respuesta se muestra al alumno 
+    el comentario por defecto &quot;Respuesta Correcta&quot; o &quot;Respuesta 
+    Incorrecta&quot;. Si el texto introducido no se corresponde con ninguna de 
+    las respuestas, la pregunta es incorrecta mostr&aacute;ndose al alumno el 
+    comentario incorrecto por defecto. </p>
+
+  <p>De forma predeterminada se ignora en la comparaci&oacute;n si el texto est&aacute; 
+    en may&uacute;sculas o min&uacute;sculas. Hay una opci&oacute;n para hacer 
+    que la comparaci&oacute;n sea sensible a ellas.</p>
+</li>
+
+<li><b>Verdadero/Falso</b> La respuesta a este tipo de pregunta solo tiene dos 
+  opciones, verdadero o falso. Se pide al alumno que determine cual es la opci&oacute;n 
+  correcta. Este tipo de pregunta es b&aacute;sicamente una pregunta de opci&oacute;n 
+  m&uacute;ltiple con s&oacute;lo dos opciones.</p></li>
+
+<li>
+  <p><b>Emparejando</b> &Eacute;stas son unas preguntas muy poderosas y flexibles. 
+    Consisten en una lista de nombres o enunciados que deben ser correctamente 
+    emparejados con otra lista de nombres o enunciados. Por ejemplo &quot;Empareje 
+    la capital con el pais&quot; con las dos listas Jap&oacute;n, Canad&aacute;, 
+    Italia y Tokyo, Ottawa, Roma. Es posible tener repetidas entradas en una de 
+    las listas pero se debe tener cuidado con hacer las repeticiones id&eacute;nticas. 
+    Por ejemplo &quot;Identique el tipo de estas criaturas&quot; con las listas 
+    Gorri&oacute;n, Vaca, Hormiga, Perro y P&aacute;jaro, Animal, Insecto, Animal. 
+  </p>
+
+  <p>Al crear este tipo de pregunta los datos de la primera lista van el el apartado 
+    Respuesta y los datos para la segunda lista en el apartado Respuesta correcta. 
+    Cuando el alumno empareja correctamente los datos se utiliza el salto de la 
+    primera respuesta. Una respuesta incorrecta salta a la p&aacute;gina de la 
+    segunda respuesta. La pregunta no permite respuestas correctas personalizadas, 
+    al alumno se le dice cuantos emparejamientos son correctos o si todos ellos 
+    son correctos.</p>
+
+  <p>De forma diferente a la pregunta Multiopci&oacute;n donde las opciones se 
+    mostraban en un orden aleatorio, la primera lista de datos no es barajada 
+    sino mostrada en el mismo orden en que fue introducida. Esto permite construir 
+    preguntas<b> &quot;Ordenadas&quot;</b>. Considere la pregunta &quot;Pon lo 
+    que sigue en el orden en que nacieron, los m&aacute;s j&oacute;venes primero&quot; 
+    con las listas 1., 2., 3., 4. y Longfellow, Lawrence, Lowell, Larkin. La segunda 
+    lista es barajada antes de ser usada en la pregunta.</p>
+</li>
+
+<li>
+  <p><b>Num&eacute;rica</b> Este tipo de pregunta requiere un n&uacute;mero como 
+    respuesta. En su forma m&aacute;s simple requiere de s&oacute;lo una respuesta. 
+    Por ejemplo &quot;&iquest;Cu&aacute;nto es 2 m&aacute;s 2?&quot; con las respuesta 
+    4 dando un salto hacia adelante.Sin embargo, es mejor especificar un rango 
+    de n&uacute;meros. As&iacute;, si la pregunta fuera &quot;&iquest;Cu&aacute;nto 
+    es 10 dividido por 3&quot; ser&iacute;a necesario dar la respuesta como <b>&quot;Minimo:Maximo&quot;</b>, 
+    que es <b>dos</b> valores separados por dos puntos (:). As&iacute; si se da 
+    3.33:3.34 como el rango aceptable para la respuesta, las respuestas 3.33, 
+    3.333, 3.3333... ser&aacute;n todas ellas tomadas como respuestas correctas. 
+    Las respuestas &quot;Incorrectas&quot; incluir&iacute;an 3.3 (menos del m&iacute;nimo) 
+    y 3.4 (mayor que el m&iacute;nimo).</p>
+
+  <p>Se permite m&aacute;s de una respuesta correcta y las respuestas pueden ser 
+    un &uacute;nico valor o un par de valores. Note que el orden en que las respuestas 
+    son comprobadas es Respuesta 1, Respuesta 2... as&iacute; que hay que tener 
+    cuidado si la contestaci&oacute;n deseada tiene que aparecer. Por ejemplo 
+    la pregunta &quot;&iquest;Cu&aacute;ndo naci&oacute; Larkin?&quot; deber&iacute;a 
+    tener el &uacute;nico valor de 1922, la respuesta exacta, y el par de valores 
+    1920:1929, los 20's, como respuestas menos exactas. El orden en el que estos 
+    valores deber&iacute;an ser comprobados es, obviamente, 1922 despu&eacute;s 
+    1920:1929. La primera respuesta deber&iacute;a tener el comentario &quot;Es 
+    correcto&quot; mientras que el comentario a la otra respuesta deber&iacute;a 
+    ser &quot;Est&aacute; cerca, ha puesto la d&eacute;cada correcta&quot;.</p>
+    
+  <p>Se pueden incluir respuestas incorrectas, pero dependiendo de su rango actual 
+    se deber&iacute;a de tener cuidado de colocarlas despu&eacute;s de las respuestas 
+    correctas. Por ejemplo, al a&ntilde;adir la respuesta incorrecta 3:4 a la 
+    pregunta &quot;10 dividido por 3&quot; necesita ir despu&eacute;s de la respuesta 
+    correcta. Es decir las respuestas son ordenadas 3.33:3.34 (la respuesta&quot;correcta&quot;) 
+    despu&eacute;s 3:4 (la respuesta &quot;incorrecta&quot;, pero no absolutamente 
+    incorrecta).</p>
+</li>
+</ul>
+

@@ -27,10 +27,28 @@
   Estos programas pueden ser complicados de configurar por un usuario medio, por 
   lo que esta página se ha escrito para intentar hacer este proceso lo más simple 
   posible para diferentes plataformas.</p>
-
-<p> </p>
-
-<h3 class="sectionheading">Mac OS X</h3>
+<ul>
+  <li><a href="#host" class="questionlink">Servicio de alojamiento (hosting)</a></li>
+  <li><a href="#mac" class="questionlink">Mac OS X</a></li>
+  <li><a href="#redhat" class="questionlink">Redhat Linux</a></li>
+  <li><a href="#windows" class="questionlink">Windows</a></li>
+</ul>
+<p class="questionlink"> </p>
+<h3 class="sectionheading"><a name="host" id="host"></a>Servicio de alojamiento 
+  (hosting) </h3>
+<blockquote> 
+  <p>Por desgracia, los servicios de alojamiento var&iacute;an bastante en su 
+    forma de trabajar. Algunos incluso le instalar&aacute;n Moodle.</p>
+  <p>La mayor&iacute;a ofrecen un panel de control basado en web para controlar 
+    su sitio, crear bases de datos y configurar el cron. Algunos incluso ofrecen 
+    acceso de terminal mediante ssh, de tal forma que usted pueda usar el int&eacute;rprete 
+    de comandos para hacer cosas.</p>
+  <p>Deber&iacute;a seguir los pasos de la <a href="./?file=install.html">Gu&iacute;a 
+    de instalaci&oacute;n</a> y seguirla paso a paso. Consulte a su proveedor 
+    de alojamiento si tiene problemas.</p>
+  <p>&nbsp;</p>
+</blockquote>
+<h3 class="sectionheading"><a name="mac" id="mac"></a>Mac OS X</h3>
 
 <blockquote>
 <p>La forma más fácil de hacerlo es usar el
@@ -54,13 +72,12 @@ las vamos a repetir aquí:</p>
 estándar de Moodle debería ser suficiente para
 realizar su instalación.</p>
 
-<p>Se añadirán más detalles aquí
-posteriormente ...</p>
+  <p>Puede consultar una gu&iacute;a m&aacute;s detallada aqu&iacute;: <a href="http://moodle.org/wiki/index.php/InstallingMoodle">http://moodle.org/wiki/index.php/InstallingMoodle</a></p>
 
 <p> </p>
 </blockquote>
 
-<h3 class="sectionheading">Redhat Linux</h3>
+<h3 class="sectionheading"><a name="redhat"></a>Redhat Linux</h3>
 
 <blockquote>
   <p>Debería instalar todos los paquetes RPM disponibles para Apache, PHP y MySQL. 
@@ -72,13 +89,12 @@ posteriormente ...</p>
 estándar de Moodle debería ser suficiente para
 realizar su instalación.</p>
 
-<p>Se añadirán más detalles aquí
-posteriormente ...</p>
+  <p>Puede consultar una gu&iacute;a m&aacute;s detallada aqu&iacute;: <a href="http://moodle.org/wiki/index.php/InstallingMoodle">http://moodle.org/wiki/index.php/InstallingMoodle</a></p>
 </blockquote>
 
 <p> </p>
 
-<h3 class="sectionheading">Windows</h3>
+<h3 class="sectionheading"><a name="windows" id="windows"></a>Windows</h3>
 
 <blockquote>
 <p>La forma más fácil de hacerlo es usar <a href=
@@ -92,9 +108,8 @@ son todos los pasos necesarios:</p>
       y asegúrese de borrar <strong>c:\my.cnf</strong> y <strong>c:\windows\my.ini</strong>. 
       Debería, además, buscar y borrar CUALQUIER archivo llamado <strong>my.cnf</strong> 
       o <strong>my.ini</strong>.</li>
-    <li>Si ya había instalado PHP antes borre cualquier archivo llamado 
-      <strong>php4ts.dll</strong> del directorio Windows, además de cualquier 
-      archivo llamado <strong>php.ini</strong>.</li>
+    <li>Si ya había instalado PHP antes borre cualquier archivo llamado <strong>php4ts.dll</strong> 
+      del directorio Windows, además de cualquier archivo llamado <strong>php.ini</strong>.</li>
     <li>Descargue EasyPHP desde aquí: <a href=
 "http://www.easyphp.org/telechargements/dn.php?F=easyphp1-6.php3"
 target=
@@ -119,7 +134,7 @@ target=
     <li>Si se le pregunta por un nombre de usuario, use"root" con una contraseña 
       vacía. Debería ver la página web de phpMyAdmin, que le permitirá crear una 
       nueva base de datos y cuentas de usuario.</li>
-    <li>crée una nueva base de datos escribiendo "moodle" dentro del campo y haciendo 
+    <li>Crée una nueva base de datos escribiendo "moodle" dentro del campo y haciendo 
       click en el botón "Create". &iexcl;Así de fácil!</li>
     <li>También puede, si lo désea, crear un nuevo usuario para acceder a su base 
       de datos. Esto puede ser un poco complicado para un usuario que lo utilice 
@@ -129,7 +144,7 @@ target=
       desde <a href=
 "http://moodle.org/download" target=
 "_blank">http://moodle.org/download</a>, y descomprima el archivo.</li>
-    <li>Copie los archivos de Moodle en <strong>C:\Program Files\EasyPHP\www.</strong> 
+    <li>Copie los archivos de Moodle en <strong>C:\Archivos de programa\EasyPHP\www.</strong> 
       Puede, o bien copiar todo el directorio moodle (por ejemplo C:\Program Files\EasyPHP\www\moodle) 
       o bien copiar todos los <em>contenidos</em> del directorio moodle. Si escoge 
       esta segunda opción podrá acceder a la página de inicio de moodle usando 
@@ -162,6 +177,13 @@ target=
 "http://localhost/moodle/admin/" target=
 "_blank">http://localhost/moodle/admin/</a> con su navegador para continuar la 
       instalación a través de éste.</li>
+    <li>Para usar archivos zip en Moodle (por ejemplo, las copias de seguridad 
+      usan zip) debe activar &quot;zlib&quot;. Puede hacerlo yendo a su directorio 
+      EasyPHP (<strong>C:\Archivos de programa\EasyPHP</strong>), y ejecutando 
+      el programa phpini.exe all&iacute;. Marque la casilla al lado de &quot;zlib.dll&quot;. 
+      Cierre esa ventana, luego vaya a la E negra en su barra de tareas y haga 
+      clic con el bot&oacute;n derecho del rat&oacute;n en ella para desplegar 
+      un men&uacute; - seleccione &quot;Restart&quot; en ese men&uacute;.</li>
     <li>Por último, necesita configurar alguna clase de "cron" (tareas cuya realización 
       se configura automáticamente para ser ejecutadas cada cierto tiempo). Consulte 
       la <a href="./?file=install.html">Guía de instalación</a> para más detalles 
@@ -172,21 +194,23 @@ target=
     para asegurarse de que su PHP está correctamente instalado y evitar los problemas 
     habituales:</p>
 
-<ul>
+  <ul>
     <li>Asegúrese de habilitar el módulo GD de forma que Moodle pueda procesar 
       imágenes - puede que tenga que editar el archivo php.ini y quitar el comentario 
       (el ;) de la línea: 'extension=php_gd2.dll'.</li>
-
+    <li>Aseg&uacute;rese de que el m&oacute;dulo Zlib est&aacute; activado para 
+      que pueda crear y descomprimir archivos zip en Moodle.</li>
     <li>Asegúrese de que las sesiones están permitidas - puede que tenga que editar 
       php.ini y fijar el directorio para <strong>session.save_path</strong> - 
       en lugar del directorio por defecto "/tmp" use un directorio Windows como 
       "c:/temp".</li>
-</ul>
+  </ul>
 </blockquote>
 
 <h3> </h3>
 
 <p align="center"><a href="." target="_top"><font size="1">Documentación de Moodle</font></a></p>
-<p align="center"><font size="1">Version: $Id$</font></p>
+<p align="center"><font size="1">Version: $Id: installamp.html,v 1.4 2003/08/29 
+  01:40:25 moodler Exp $</font></p>
 
 </body>

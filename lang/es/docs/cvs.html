@@ -31,7 +31,10 @@
     en un servidor central (en este caso, en <a target="_top"
 
  href="http://www.sf.net/">Sourceforge</a>).</p>
-
+  <p>Si lo &uacute;nico que quiere es acceder a la versi&oacute;n actual de Moodle 
+    en CVS con acceso de s&oacute;lo lectura, entonces no necesita leer esta p&aacute;gina 
+    - siga las instrucciones para usar el CVS de la <a target="_top" href="http://moodle.org/download">p&aacute;gina 
+    de descarga de Moodle</a>, que son m&aacute;s sencillas.</p>
   <p>Para usar el <a target="_top" href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/moodle/moodle/">Repositorio 
     CVS de Moodle</a> (como <a
 
@@ -42,14 +45,14 @@
     Para los ejemplos que presentamos en esta página vamos a asumir que su nombre 
     de usuario (<span lang="en">username</span>) es <strong
 
- style="color: rgb(153, 0, 0); background-color: transparent;">nombre</strong> 
+ style="color: rgb(153, 0, 0); background-color: transparent;">usuario</strong> 
     y que su contraseña es <strong
 
  style="color: rgb(153, 0, 0); background-color: transparent;">contraseña</strong>. 
     Fíjese especialmente en las instrucciones de Sourforge para <a target="_top" href="http://sourceforge.net/docman/display_doc.php?docid=768&group_id=1#develhomedir">crear 
     su directorio principal CVS</a> - una cosa que tiene que hacer con cada nueva 
-    cuenta para habilitarla en el CVS. Básicamente tendrá que usar 
-    ssh para conectar de forma interactiva con cvs.sourforge.net.</p>
+    cuenta para habilitarla en el CVS. Básicamente tendrá que usar ssh para conectar 
+    de forma interactiva con cvs.sourforge.net.</p>
   <p>Una vez que tenga su cuenta de Sourceforge, entre en contacto conmigo (<a
 
  href="http://dougiamas.com/">Martin Dougiamas</a>) para que pueda darle su acceso 
@@ -97,7 +100,7 @@ siguiente (todo en una línea): </p>
 
 <blockquote>
 
-  <pre><strong>cvs -z3 -d:ext:myusername@cvs.sourceforge.net:/cvsroot/moodle co moodle</strong></pre>
+      <pre><strong>cvs -z3 -d:ext:usuario@cvs.moodle.sourceforge.net:/cvsroot/moodle co moodle</strong></pre>
 
 </blockquote>
 
@@ -194,7 +197,8 @@ ejemplo, el mío contiene:</p>
           4. Copie este texto en el campo CVSROOT (&iexcl;utilizando su propio 
           nombre de usuario!):</p>
         <blockquote> 
-          <pre> :ext:<font color="#990000">myusername</font>@cvs.sourceforge.net:/cvsroot/moodle</pre>
+          
+        <pre> :ext:<font color="#990000">usuario</font>@cvs.moodle.sourceforge.net:/cvsroot/moodle</pre>
         </blockquote>
         <p><br>
           5. Presione el botón: &quot;<strong>Fetch list...</strong>&quot;.<br>
@@ -228,19 +232,20 @@ ejemplo, el mío contiene:</p>
           <br>
           3. Haga clic en &quot;OK&quot;. Los cambios serán enviados al 
           servidor.<br>
-        </p>
+      </p>
     </blockquote>
     <p>&nbsp;</p>
+ </blockquote>
+</div>
     <p align="center">&iexcl;Buena suerte!</p>
-    <p>&nbsp;</p>
-
-  </blockquote>
-
+    
 <p>&nbsp;</p>
 
-</div>
+
+
 <p align="CENTER"><font size="1"><a href="." target="_top">Documentación 
   de Moodle</a></font></p>
-<p align="CENTER"><font size="1">Version: $Id$</font></p>
+<p align="CENTER"><font size="1">Version: $Id: cvs.html,v 1.9 2003/06/21 08:25:15 
+  moodler Exp $</font></p>
 </body>
 </html>

@@ -29,8 +29,7 @@
 
 ahorrará tiempo después.</p>
 
-<h3>Secciones de este documento</h3>
-
+Secciones de este documento: 
 <ol>
   <li><a href="#requirements">Requisitos</a></li>
   <li><a href="#downloading">Descarga</a></li>
@@ -56,24 +55,26 @@ ahorrará tiempo después.</p>
   <p>Los requisitos de Moodle son:</p>
 
   <ol>
-    <li>Un servidor web. La mayoría de la gente usa Apache, pero Moodle 
-      debe funcionar bien en cualquier servidor web que soporte PHP, como el IIS 
-      de las plataformas Windows.</li>
+    <li>Un servidor web. La mayoría de la gente usa <a href="http://www.apache.org/" target="_blank">Apache</a>, 
+      pero Moodle debe funcionar bien en cualquier servidor web que soporte PHP, 
+      como el IIS de las plataformas Windows.</li>
     <li>Una instalación de <a href="http://www.php.net/">PHP</a> que esté funcionando 
       (versión 4.1.0 o posterior), con las siguientes características: 
       <ul>
         <li><a href="http://www.boutell.com/gd/" target="_blank">GD library</a> 
           activada, con soporte para los formatos JPG y PNG.</li>
+        <li>Librer&iacute;a Zlib activada (si desea usar la copia de seguridad 
+          y la restauraci&oacute;n en Windows)</li>
         <li>Soporte para sesiones (sessions) activado.</li>
         <li>Habilitada la posibilidad de enviar (upload) archivos.</li>
-        <li>Modo seguro (safe mode) desactivado (consulte los foros en moodle.org 
-          para ver problemas causados por el &quot;safe mode&quot;).</li>
+        <li>Modo seguro (Safe Mode) desactivado (consulte los foros en moodle.org 
+          para ver problemas causados por el &quot;Safe Mode&quot;).</li>
       </ul>
     </li>
     <li>Una base de datos funcionando: Se recomiendan <a href="http://www.mysql.com/" target="_blank">MySQL</a> 
       o <a href="http://www.postgresql.org/" target="_blank">PostgreSQL</a> , 
-      que están completamente soportadas en Moodle 1.1. El resto de las 
-      bases de datos serán soportadas en futuras versiones.</li>
+      que están completamente soportadas en Moodle 1.1. El resto de las bases 
+      de datos serán soportadas en la pr&oacute;xima versi&oacute;n.</li>
   </ol>
 
   <p>La mayoría de los servicios de alojamiento web (hosting) soportan 
@@ -309,12 +310,11 @@ están definidas en el archivo de configuración de PHP
 (normalmente llamado php.ini):</p>
 <blockquote>
     <pre>
-	magic_quotes_gpc = On
-	magic_quotes_runtime = Off
-	file_uploads = On
-	short_open_tag = On
-	session.auto_start = Off
-	session.bug_compat_warn = Off
+magic_quotes_gpc = On    (preferible, pero no es necesario)
+magic_quotes_runtime = Off    (necesario)
+file_uploads = On
+session.auto_start = Off
+session.bug_compat_warn = Off
 </pre>
 </blockquote>
 <p>Si usted no tiene acceso en su servidor a httpd.conf o php.ini, o
@@ -330,11 +330,9 @@ opciones por defecto.</p>
     opciones. Esto sólo funciona para servidores Apache y solo cuando están permitidas 
     las anulaciones (overrides).</p>
 
-<blockquote>
-
-  <pre>DirectoryIndex index.php index.html index.htm<br>&lt;IfDefine APACHE2&gt;<br>     <strong>AcceptPathInfo</strong> on<br>&lt;/IfDefine&gt;<br><br>php_value magic_quotes_gpc On<br>php_value magic_quotes_runtime Off<br>php_value file_uploads On<br>php_value short_open_tag On<br>php_value session.auto_start Off<br>php_value session.bug_compat_warn Off</pre>
-
-</blockquote>
+  <blockquote> 
+    <pre>DirectoryIndex index.php index.html index.htm<br>&lt;IfDefine APACHE2&gt;<br>     <strong>AcceptPathInfo</strong> on<br>&lt;/IfDefine&gt;<br><br>php_flag magic_quotes_gpc On<br>php_flag magic_quotes_runtime Off<br>php_flag file_uploads On<br>php_flag session.auto_start Off<br>php_flag session.bug_compat_warn Off</pre>
+  </blockquote>
 
 	
 
@@ -521,10 +519,10 @@ necesarias para acceder a la página de administración en
 
 el futuro.</strong></p>
 
-  <p>(Si por alguna razón se interrumpe su instalación, o hay un 
-    error del sistema de algún tipo que le impida entrar usando la cuenta 
-    de admininstrador, normalmente podrá entrar usando el usuario &quot;admin&quot;, 
-    con contraseña &quot;admin&quot;.)</p>
+  <p>(Si por alguna razón se interrumpe su instalación, o hay un error del sistema 
+    de algún tipo que le impida entrar usando la cuenta de admininstrador, normalmente 
+    podrá entrar usando el usuario &quot;<strong>admin</strong>&quot;, con contraseña 
+    &quot;<strong>admin</strong>&quot;.)</p>
   <p>Una vez conseguido esto usted puede volver a la página principal de su sitio. 
     &Eacute;sta contiene una serie de enlaces dispuestos en un menú que aparece 
     en la parte izquierda de la página (estos elementos también aparecen 
@@ -654,10 +652,13 @@ añada una línea como la siguiente:</p>
     presionando ESC. Se guardan los cambios y se sale tecleando &quot;:wq&quot;, 
     se puede salir también sin guardar usando &quot;:q!&quot; (sin las 
     comillas).</p>
-  <p><b>En sistemas Windows</b>: La manera más sencilla es usar esta pequeá 
-    aplicación <a href="http://moodle.org/download/moodle-cron-for-windows.zip" title="Haga clic para descargar esta aplicación(150k)" target="_blank">moodle-cron-for-windows.zip</a> 
+  <p><b>En sistemas Windows</b>: La manera más sencilla es usar esta pequeá aplicación 
+    <a href="http://moodle.org/download/moodle-cron-for-windows.zip" title="Haga clic para descargar esta aplicación(150k)" target="_blank">moodle-cron-for-windows.zip</a> 
     que hace todo esto de forma muy sencilla. También puede probar a usar la aplicación 
     integrada en Windows "Tareas programadas".</p>
+  <p>En los servidores de alojamiento web (<em>hosting</em>). Su panel de control 
+    web puede tener una p&aacute;gina web que le permita configurar este proceso 
+    de cron. Consulte a su administrador para obtener detalles sobre su funcionamiento.</p>
   <p></p>
 </div>
 <h3 class="sectionheading"><a name="course"></a>10. Crear un nuevo curso</h3>
@@ -700,6 +701,7 @@ vea el "<a href="./?file=teacher.html">Manual del Profesor</a>"</p>
 </div>
 
 <p align="CENTER"><font size="1"><a href="." target="_top">Documentación de Moodle</a></font></p>
-<p align="CENTER"><font size="1">Version: $Id$</font></p>
+<p align="CENTER"><font size="1">Version: $Id: install.html,v 1.16 2003/09/09 
+  16:33:56 moodler Exp $</font></p>
 
 </body>
