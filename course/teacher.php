@@ -17,7 +17,7 @@
     }
 
     if (!(isteacheredit($course->id) and iscreator()) and 
-        !(isteacheredit($course->id) and !empty($CFG->teacheraddteachers) ) ) {
+        !(isteacheredit($course->id) and !empty($CFG->teacherassignteachers) ) ) {
         error("You must be an administrator or course creator to use this page.");
     }
 
