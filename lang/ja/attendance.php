@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // attendance.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004121600)
+      // attendance.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005021800)
 
 
 $string['absentlong'] = '欠席';
@@ -19,10 +19,10 @@ $string['defaultgrade'] = 'デフォルトで出席簿を評価する';
 $string['defaulthoursinclass'] = 'デフォルトの出席簿では何時間出席する必要があるか';
 $string['defaultmaxgrade'] = '皆勤の場合のデフォルト最大評価';
 $string['defaultstudentstatus'] = '出席簿のデフォルト学生出席状態';
-$string['downloadexcelfull'] = 'フル・エクセルシートをダウンロードする';
-$string['downloadexceltotals'] = 'サマリー・エクセルシートをダウンロードする';
-$string['downloadtextfull'] = 'フル・テキストレポートをダウンロードする';
-$string['downloadtexttotals'] = 'サマリー・テキストレポートをダウンロードする';
+$string['downloadexcelfull'] = 'エクセルシートのダウンロード';
+$string['downloadexceltotals'] = 'エクセルシート ( 概要 ) のダウンロード';
+$string['downloadtextfull'] = 'テキストレポートのダウンロード';
+$string['downloadtexttotals'] = 'テキストレポート ( 概要 ) のダウンロード';
 $string['dynamicsection'] = '日付を元に週を決定';
 $string['dynamicsectionmulti'] = '出席簿を週に自動的に設置する';
 $string['dynsectionshort'] = '自動設置';
