@@ -929,7 +929,7 @@ function calendar_session_vars() {
         $SESSION->cal_show_course = true;
     }
     if(!isset($SESSION->cal_show_user)) {
-        $SESSION->cal_show_user = $USER->id;
+        $SESSION->cal_show_user = isset($USER->id) ? $USER->id : false;
     }
     if(empty($SESSION->cal_courses_shown)) {
         $SESSION->cal_courses_shown = calendar_get_default_courses(true);
@@ -1072,6 +1072,10 @@ function calendar_get_default_courses($ignoreref = false) {
 
     if(!empty($SESSION->cal_course_referer) && !$ignoreref) {
         return array($SESSION->cal_course_referer => 1);
+    }
+
+    if(empty($USER)) {
+        return array();
     }
 
     $courses = array();
