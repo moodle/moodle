@@ -785,7 +785,7 @@ function print_course_admin_links($course, $width=180) {
         $adminicon[]="<img src=\"$pixpath/i/backup.gif\" height=16 width=16 alt=\"\">";
         
         //Only showed if "backupdata" dir exists
-        if (is_dir($CFG->dataroot."/".$course->id."/".backupdata)) {
+        if (is_dir("$CFG->dataroot/$course->id/backupdata")) {
             $admindata[]="<a href=\"$CFG->wwwroot/files/index.php?id=$course->id&wdir=/backupdata\">".get_string("restore")."...</a>";
             $adminicon[]="<img src=\"$pixpath/i/restore.gif\" height=16 width=16 alt=\"\">";
         }
