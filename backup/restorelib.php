@@ -125,7 +125,6 @@
         }
 
         $formatwiki = FORMAT_WIKI;
-        $typewiki = WIKITEXT;
  
         //FORUM: Decode every POST (message) in the course
         //Check we are restoring forums
@@ -176,12 +175,13 @@
         //Check we are restoring resources
         if ($restore->mods['resource']->restore == 1) {
             echo "<li>".get_string("from")." ".get_string("modulenameplural","resource");
-            //Get all course resources of type=8 WIKITEXT being restored
+            //Get all course resources of type='text' and options=FORMAT_WIKI being restored
             if ($resources = get_records_sql ("SELECT r.id, r.alltext
                                        FROM {$CFG->prefix}resource r,
                                             {$CFG->prefix}backup_ids b
                                        WHERE r.course = $restore->course_id AND
-                                             r.type = $typewiki AND
+                                             r.type = 'text' AND
+                                             r.options = $formatwiki AND
                                              b.backup_code = $restore->backup_unique_code AND
                                              b.table_name = 'resource' AND
                                              b.new_id = r.id")) {

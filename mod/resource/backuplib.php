@@ -36,6 +36,8 @@
                 fwrite ($bf,full_tag("REFERENCE",4,false,$resource->reference));
                 fwrite ($bf,full_tag("SUMMARY",4,false,$resource->summary));
                 fwrite ($bf,full_tag("ALLTEXT",4,false,$resource->alltext));
+                fwrite ($bf,full_tag("POPUP",4,false,$resource->popup));
+                fwrite ($bf,full_tag("OPTIONS",4,false,$resource->options));
                 fwrite ($bf,full_tag("TIMEMODIFIED",4,false,$resource->timemodified));
                 //End mod
                 $status = fwrite ($bf,end_tag("MOD",3,true));

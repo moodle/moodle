@@ -40,7 +40,31 @@
             $resource->reference = backup_todb($info['MOD']['#']['REFERENCE']['0']['#']);
             $resource->summary = backup_todb($info['MOD']['#']['SUMMARY']['0']['#']);
             $resource->alltext = backup_todb($info['MOD']['#']['ALLTEXT']['0']['#']);
+            $resource->popup = backup_todb($info['MOD']['#']['POPUP']['0']['#']);
+            $resource->options = backup_todb($info['MOD']['#']['OPTIONS']['0']['#']);
             $resource->timemodified = $info['MOD']['#']['TIMEMODIFIED']['0']['#'];
+
+            //To mantain compatibility, in 1.4 the type and alltext meaning has changed and
+            //two new fields have arrived (popup and options). We have to modify somethigs
+            //if the popup field isn't present in the backup file to be upwards compatible.
+            if (! isset($info['MOD']['#']['POPUP']['0']['#'])) { //It's a pre-14 backup file
+                //Move alltext to popup in 3 and 5 resource types
+                if ($resource->type == 3 || $resource->type == 5) {
+                    $resource->popup = $resource->alltext;
+                    $resource->alltext = '';
+                }
+                //Reencode the type field to its new values and fill the options field as needed
+                //Array 1-9 of new types
+                $types = array ('','reference','file','file','text','file',
+                                   'html','file','text','directory');
+                //Array 1-9 of corresponding options
+                $options = array ('','','frame','','0','',
+                                     '','','3','');
+                //Make the conversion
+                $oldtype = $resource->type;
+                $resource->type = $types[$oldtype];
+                $resource->options = $options[$oldtype];
+            }
  
             //The structure is equal to the db, so insert the resource
             $newid = insert_record ("resource",$resource);
