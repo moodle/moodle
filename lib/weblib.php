@@ -1270,6 +1270,7 @@ function make_table($table) {
 
 function print_textarea($richedit, $rows, $cols, $width, $height, $name, $value="", $courseid=0) {
 /// Prints a richtext field or a normal textarea
+
     global $CFG, $THEME, $course;
 
     if (empty($courseid)) {
@@ -1279,18 +1280,41 @@ function print_textarea($richedit, $rows, $cols, $width, $height, $name, $value=
     }
 
     if ($richedit) {
-        $richediturl = "$CFG->wwwroot/lib/rte/richedit.html";
-        if (!empty($courseid) and isteacher($courseid)) {
-            $richediturl = "$CFG->wwwroot/lib/rte/richedit.php?id=$courseid";
-        }
+        if (!empty($CFG->useneweditor)) {   /// Use the new HTMLarea editor
 
-        echo "<object id=\"richedit\" style=\"background-color: buttonface\"";
-        echo " data=\"$richediturl\"";
-        echo " width=\"$width\" height=\"$height\" ";
-        echo " type=\"text/x-scriptlet\" VIEWASTEXT=\"true\"></object>\n";
-        echo "<textarea style=\"display:none\" name=\"$name\" rows=\"1\" cols=\"1\">";
-        p($value);
-        echo "</textarea>\n";
+            if (!empty($courseid) and isteacher($courseid)) {
+                echo "<script type=\"text/javascript\" src=\"$CFG->wwwroot/lib/editor/htmlarea.php?id=$courseid\"></script>\n";
+            } else {
+                echo "<script type=\"text/javascript\" src=\"$CFG->wwwroot/lib/editor/htmlarea.php\"></script>\n";
+            }
+            echo "<script type=\"text/javascript\" src=\"$CFG->wwwroot/lib/editor/dialog.js\"></script>\n";
+            echo "<script type=\"text/javascript\" src=\"$CFG->wwwroot/lib/editor/lang/en.php\"></script>\n";
+            echo "<script type=\"text/javascript\" src=\"$CFG->wwwroot/lib/editor/popupwin.js\"></script>\n";
+            echo "<style type=\"text/css\">@import url($CFG->wwwroot/lib/editor/htmlarea.css);</style>\n";
+            if ($rows < 20) {
+                $rows = 20;  /// Minimum rows
+            }
+            if ($cols < 65) {
+                $cols = 65;  /// Minimum columns
+            }
+            echo "<textarea id=\"TA\" name=\"$name\" rows=\"$rows\" cols=\"$cols\" wrap=\"virtual\">";
+            p($value);
+            echo "</textarea>\n";
+
+        } else {                            /// Use the old Richtext editor
+            $richediturl = "$CFG->wwwroot/lib/rte/richedit.html";
+            if (!empty($courseid) and isteacher($courseid)) {
+                $richediturl = "$CFG->wwwroot/lib/rte/richedit.php?id=$courseid";
+            }
+    
+            echo "<object id=\"richedit\" style=\"background-color: buttonface\"";
+            echo " data=\"$richediturl\"";
+            echo " width=\"$width\" height=\"$height\" ";
+            echo " type=\"text/x-scriptlet\" VIEWASTEXT=\"true\"></object>\n";
+            echo "<textarea style=\"display:none\" name=\"$name\" rows=\"1\" cols=\"1\">";
+            p($value);
+            echo "</textarea>\n";
+        }
     } else {
         echo "<textarea name=\"$name\" rows=\"$rows\" cols=\"$cols\" wrap=\"virtual\">";
         p($value);
@@ -1299,10 +1323,25 @@ function print_textarea($richedit, $rows, $cols, $width, $height, $name, $value=
 }
 
 function print_richedit_javascript($form, $name, $source="no") {
-    echo "<script language=\"javascript\" event=\"onload\" for=\"window\">\n";
-    echo "   document.richedit.options = \"history=no;source=$source\";";
-    echo "   document.richedit.docHtml = $form.$name.innerText;";
-    echo "</script>";
+    global $CFG;
+
+    if (!empty($CFG->useneweditor)) {   /// Use the new HTMLarea editor
+        echo "<script language=\"javascript\" type=\"text/javascript\" defer=\"1\">\n";
+        echo "var editor = null;\n";
+        echo "function initEditor() {\n";
+        echo "  editor = new HTMLArea(\"TA\");\n";
+        echo "  editor.generate();\n";
+        echo "  return false;\n";
+        echo "}\n";
+        echo "initEditor();\n";
+        echo "</script>\n";
+
+    } else {                            /// Use the old Richtext editor
+        echo "<script language=\"javascript\" event=\"onload\" for=\"window\">\n";
+        echo "   document.richedit.options = \"history=no;source=$source\";";
+        echo "   document.richedit.docHtml = $form.$name.innerText;";
+        echo "</script>";
+    }
 }
 
 
@@ -1629,7 +1668,7 @@ function redirect($url, $message="", $delay="0") {
 // Uses META tags to redirect the user, after printing a notice
 
     if (empty($message)) {
-        echo "<meta http-equiv=\"refresh\" content=\"$delay; url=$url\" />";
+        echo "<html><head><meta http-equiv=\"refresh\" content=\"$delay; url=$url\" /></head></html>";
     } else {
         if (empty($delay)) {  
             $delay = 3;  // There's no point having a message with no delay

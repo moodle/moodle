@@ -1512,22 +1512,51 @@ function check_browser_version($brand="MSIE", $version=5.5) {
 /// Checks to see if is a browser matches the specified
 /// brand and is equal or better version.
 
-    if (empty($_SERVER["HTTP_USER_AGENT"])) {
+    $agent = $_SERVER["HTTP_USER_AGENT"];
+
+    if (empty($agent)) {
         return false;
     }
-    $string = explode(";", $_SERVER["HTTP_USER_AGENT"]);
-    if (!isset($string[1])) {
-        return false;
+
+    switch ($brand) {
+
+      case "Gecko":   /// Gecko based browsers
+
+          if (substr_count($agent, "Camino")) {     // MacOS X Camino not supported.
+              return false;
+          }
+
+          // the proper string - Gecko/CCYYMMDD Vendor/Version
+          if (ereg("^([a-zA-Z]+)/([0-9]+\.[0-9]+) \((.*)\) (.*)$", $agent, $match)) {
+              if (ereg("^([Gecko]+)/([0-9]+)",$match[4], $reldate)) {
+                  if ($reldate[2] > $version) {
+                      return true;
+                  }
+              }
+          }
+          break;
+
+
+      case "MSIE":   /// Internet Explorer
+
+          $string = explode(";", $agent);
+          if (!isset($string[1])) {
+              return false;
+          }
+          $string = explode(" ", trim($string[1]));
+          if (!isset($string[0]) and !isset($string[1])) {
+              return false;
+          }
+          if ($string[0] == $brand and (float)$string[1] >= $version ) {
+              return true;
+          }
+          break;
+
     }
-    $string = explode(" ", trim($string[1]));
-    if (!isset($string[0]) and !isset($string[1])) {
-        return false;
-    }
-    if ($string[0] == $brand and (float)$string[1] >= $version ) {
-        return true;
-    }
+
     return false;
 }
+
 
 function ini_get_bool($ini_get_arg) {
 /// This function makes the return value of ini_get consistent if you are
@@ -1545,10 +1574,17 @@ function ini_get_bool($ini_get_arg) {
 }
 
 function can_use_richtext_editor() {
-/// Is the richedit editor enabled?
+/// Is the HTML editor enabled?  This depends on site and user
+/// settings, as well as the current browser being used.
+
     global $USER, $CFG;
+
     if (!empty($USER->htmleditor) and !empty($CFG->htmleditor)) {
-        return check_browser_version("MSIE", 5.5);
+        if (check_browser_version("MSIE", 5.5)) {
+            return true;
+        } else if (check_browser_version("Gecko", 20030516) and !empty($CFG->useneweditor) ) {
+            return true;
+        }
     }
     return false;
 }
