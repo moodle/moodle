@@ -1,6 +1,4 @@
 <?PHP // $Id$ 
-      // choice.php - created with Moodle 1.1 Beta + (2003082100)
-
 
 $string['answered'] = "Répondu";
 $string['choice'] = "Proposition \$a";
@@ -16,6 +14,7 @@ $string['publishnot'] = "Ne pas publier les résultats pour les étudiants";
 $string['responses'] = "Réponses";
 $string['responsesto'] = "Réponses à \$a";
 $string['savemychoice'] = "Enregistrer mon vote";
+$string['showunanswered'] = "Afficher la colonne des « sans réponse »";
 $string['viewallresponses'] = "Voir les \$a réponses";
 
 ?>

@@ -1,39 +1,57 @@
-<?PHP 
+<?PHP // $Id$ 
 
-#------------------------------------------------------------
-$string['modulename'] = "Présences";
+$string['absentlong'] = "Absent";
+$string['absentshort'] = "A";
+$string['addingmultiple'] = "Ajout de plusieurs listes de présence";
+$string['addmultiple'] = "Ajouter plusieurs listes de présence";
 $string['allmodulename'] = "Toutes les listes de présence";
-$string['modulenameplural'] = "Listes de présence";
-#------------------------------------------------------------
-
-
-$string['takeroll'] = "Contrôle des présences de ce jour ?";
-$string['for'] = "pour";
+$string['choosedays'] = "Jour de la semaine pour le contrôle des absences";
 $string['dayofroll'] = "Date du contrôle des présences";
+$string['defaulthoursinclass'] = "Nombres d'heures par défaut dans une liste de présence";
+$string['defaultmaxgrade'] = "Note maximale lors d'une assiduité totale";
+$string['defaultstudentstatus'] = "Statut par défaut des étudiants dans les nouvelles listes de présence";
+$string['downloadexcelfull'] = "Télécharger en format Excel (complet)";
+$string['downloadexceltotals'] = "Télécharger en format Excel (résumé)";
+$string['downloadtextfull'] = "Télécharger en format texte (complet)";
+$string['downloadtexttotals'] = "Télécharger en format texte (résumé)";
+$string['dynamicsection'] = "La présence à cette date détermine la présence hebdomadaire";
+$string['endbeforestart'] = "La date de fin est antérieure à la date du début";
+$string['for'] = "pour";
+$string['friday'] = "Ve";
+$string['gradeshort'] = "Noté";
+$string['hoursinclass'] = "Nombre d'heures dans cette période de classe";
+$string['hoursineachclass'] = "Nombre d'heures dans chaque période de classe";
+$string['hoursinfullreport'] = "Nombre maximal d'heures de présence à afficher sur une page de rapport";
+$string['maxgradeshort'] = "Note maximale";
+$string['maxgradevalue'] = "Note maximale pour une assiduité totale";
+$string['modulename'] = "Présences";
+$string['modulenameplural'] = "Listes de présence";
+$string['monday'] = "Lu";
+$string['norolls'] = "Il n'a a pas de liste de présence dans ce cours";
 $string['notes'] = "Information exceptionnelle";
 $string['notesfor'] = "Information exceptionnelle pour";
-$string['hoursinclass'] = "Nombre d'heures dans cette période de classe";
-$string['presentshort'] = "P";
-$string['tardyshort'] = "R";
-$string['absentshort'] = "A";
-$string['presentlong'] = "Présent";
-$string['tardylong'] = "En retard";
-$string['absentlong'] = "Absent";
-$string['dynamicsection'] = "La présence à cette date détermine la présence hebdomadaire";
-$string['defaultdynamicsection'] = "Whether to move attendance rolls to the correct week by default";
-$string['defaulthoursinclass'] = "Nombres d'heures par défaut dans une liste de présence";
-$string['tardiesforabsence'] = "Nombre de retards comptant pour une absence";
-$string['hoursinfullreport'] = "The maximum number of hours of attendance that should be displayed on a single page of a report";
-$string['previous'] = "Précédente";
-$string['pages'] = "Pages";
+$string['noviews'] = "Désolé, il n'y a ici pas de données vous concernant.";
 $string['of'] = "sur";
+$string['pages'] = "Pages";
+$string['presentlong'] = "Présent";
+$string['presentshort'] = "P";
+$string['saturday'] = "Sa";
+$string['startafterend'] = "La date du début est postérieure à la date de fin";
+$string['startmulti'] = "Date de la première liste de présence";
+$string['sunday'] = "Di";
+$string['takeroll'] = "Contrôle des présences de ce jour ?";
+$string['tardiesperabsence'] = "Nombre de retards comptant pour une absence";
+$string['tardylong'] = "En retard";
+$string['tardyshort'] = "R";
+$string['thursday'] = "Je";
+$string['tuesday'] = "Ma";
 $string['viewall'] = "Afficher toutes les listes de présence";
-$string['viewone'] = "Afficher toutes les pages du rapport";
-$string['viewtable'] = "Afficher le rapport dans un tableau";
 $string['viewmulti'] = "Afficher le rapport sur plusieurs pages";
-$string['noviews'] = "Sorry, there is no data for your account here";
-
-
-
+$string['viewone'] = "Afficher toutes les pages du rapport";
+$string['viewsection'] = "Afficher toutes les listes de présence de cette section";
+$string['viewtable'] = "Afficher le rapport dans un tableau";
+$string['viewweek'] = "Afficher toutes les listes de présence du calendrier hebdomadaire";
+$string['wednesday'] = "Me";
+$string['weekmodulename'] = "Listes de présence de la semaine passée";
 
 ?>

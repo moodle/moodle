@@ -1,5 +1,4 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.1.1 (2003091111)
 
 
 $string['addanewdiscussion'] = "Ajouter un nouveau sujet de discussion";
@@ -84,32 +83,9 @@ $string['parent'] = "Afficher le niveau supérieur de cet article";
 $string['parentofthispost'] = "Niveau supérieur de cet article";
 $string['postadded'] = "Votre message a été enregistré.<p>Il vous est possible de le modifier pendant \$a.";
 $string['postincontext'] = "Voir ce message dans son contexte";
-$string['postingtip'] = "<B>Conseils de rédaction</B><BR><BR>
-
-Avant de répondre :
-
-<UL>
-
-<LI>lire l'article calmement et avec attention
-
-<LI>identifier les points sur lesquels vous pouvez répondre
-
-</UL>
-
-
-
-Lors de la rédaction :
-
-<UL>
-
-<LI>gardez votre réponse courte et dans le sujet
-
-<LI>expliquez vos idées clairement
-
-<LI>pensez aux questions que vous pouvez poser
-
-</UL>";
 $string['postmailinfo'] = "Ceci est une copie du message posté sur le site \$a.
+
+
 
 Pour ajouter une réponse sur le site, cliquer sur ce lien:";
 $string['postrating1'] = "Globalement non pertinent";
@@ -123,6 +99,8 @@ $string['rating'] = "Notation";
 $string['ratingeveryone'] = "Tout le monde peut évaluer les messages";
 $string['ratingno'] = "Pas d'évaluation";
 $string['ratingonlyteachers'] = "Seul \$a peut évaluer les messages";
+$string['ratingpublic'] = "\$a peut voir les évaluations de tous";
+$string['ratingpublicnot'] = "\$a ne peut voir que ses propres évaluations";
 $string['ratings'] = "Évaluations";
 $string['ratingssaved'] = "Évaluations enregistrées";
 $string['ratingsuse'] = "Évaluation des messages";
