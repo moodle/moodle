@@ -114,7 +114,17 @@
     $choices["0"] = get_string("no");
     $choices["1"] = get_string("yes");
     choose_from_menu ($choices, "showrecent", $form->showrecent, "");
-    helpbutton("courserecent", get_string("showrecent")); ?>
+    helpbutton("courserecent", get_string("recentactivity")); ?>
+	</td>
+</tr>
+<tr valign=top>
+	<td><P><? print_string("showgrades") ?>:</td>
+	<td><?
+    unset($choices);
+    $choices["0"] = get_string("no");
+    $choices["1"] = get_string("yes");
+    choose_from_menu ($choices, "showgrades", $form->showgrades, "");
+    helpbutton("coursegrades", get_string("grades")); ?>
 	</td>
 </tr>
 <tr valign=top>

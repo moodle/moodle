@@ -234,6 +234,10 @@ function main_upgrade($oldversion=0) {
         table_column("course_categories", "courseorder", "coursecount", "integer", "10", "unsigned", "0");
     }
 
+    if ($oldversion < 2003082001) {
+        table_column("course", "", "showgrades", "integer", "2", "unsigned", "1", "", "format");
+    }
+
     return $result;
 }
 ?>    

@@ -423,6 +423,7 @@
             fwrite ($bf,full_tag("SHORTNAME",3,false,$course->shortname));
             fwrite ($bf,full_tag("SUMMARY",3,false,$course->summary));
             fwrite ($bf,full_tag("FORMAT",3,false,$course->format));
+            fwrite ($bf,full_tag("SHOWGRADES",3,false,$course->showgrades));
             fwrite ($bf,full_tag("NEWSITEMS",3,false,$course->newsitems));
             fwrite ($bf,full_tag("TEACHER",3,false,$course->teacher));
             fwrite ($bf,full_tag("TEACHERS",3,false,$course->teachers));

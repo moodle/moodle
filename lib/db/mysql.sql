@@ -36,6 +36,7 @@ CREATE TABLE `prefix_course` (
   `shortname` varchar(15) NOT NULL default '',
   `summary` text NOT NULL,
   `format` varchar(10) NOT NULL default 'topics',
+  `showgrades` smallint(2) unsigned NOT NULL default '1',
   `modinfo` text NOT NULL,
   `newsitems` smallint(5) unsigned NOT NULL default '1',
   `teacher` varchar(100) NOT NULL default 'Teacher',

@@ -791,9 +791,11 @@ function print_course_admin_links($course, $width=180) {
             $adminicon[]="<img src=\"$modpixpath/forum/icon.gif\" height=16 width=16 alt=\"\">";
         }
 
-    } else {
-        $admindata[]="<a href=\"grade.php?id=$course->id\">".get_string("grades")."...</a>";
-        $adminicon[]="<img src=\"$pixpath/i/grades.gif\" height=16 width=16 alt=\"\">";
+    } else {  // Students menu
+        if ($course->usegrades) {
+            $admindata[]="<a href=\"grade.php?id=$course->id\">".get_string("grades")."...</a>";
+            $adminicon[]="<img src=\"$pixpath/i/grades.gif\" height=16 width=16 alt=\"\">";
+        }
     } 
 
     if (!empty($admindata)) {

@@ -290,6 +290,7 @@
             $course->shortname = addslashes($course_header->course_shortname);
             $course->summary = addslashes($course_header->course_summary);
             $course->format = addslashes($course_header->course_format);
+            $course->showgrades = addslashes($course_header->course_showgrades);
             $course->newsitems = addslashes($course_header->course_newsitems);
             $course->teacher = addslashes($course_header->course_teacher);
             $course->teachers = addslashes($course_header->course_teachers);
@@ -1177,6 +1178,9 @@
                             break;
                         case "FORMAT":
                             $this->info->course_format = $this->getContents();
+                            break;
+                        case "SHOWGRADES":
+                            $this->info->course_showgrades = $this->getContents();
                             break;
                         case "NEWSITEMS":
                             $this->info->course_newsitems = $this->getContents();
