@@ -9,6 +9,9 @@ function auth_user_login ($username, $password) {
 
     switch ($CFG->auth_pop3type) {
         case "pop3":
+            $host = "{".$CFG->auth_pop3host.":$CFG->auth_pop3port/pop3}INBOX";
+        break;
+        case "pop3notls":
             $host = "{".$CFG->auth_pop3host.":$CFG->auth_pop3port/pop3/notls}INBOX";
         break;
         case "pop3cert":
