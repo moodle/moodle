@@ -312,21 +312,16 @@
                 fclose($fileptr);
 
                 if (mimeinfo("type", $file) == "text/html") {
-                    if ($usehtmleditor = can_use_richtext_editor()) {
-                        $onsubmit = "onsubmit=\"copyrichtext(document.form.text);\"";
-                    } else {
-                        $onsubmit = "";
-                    }
+                    $usehtmleditor = can_use_html_editor();
                 } else {
                     $usehtmleditor = false;
-                    $onsubmit = "";
                 }
                 $usehtmleditor = false;    // Always keep it off for now
 
                 print_heading("$streditfile");
 
                 echo "<table><tr><td colspan=\"2\">";
-                echo "<form action=\"".$ME."\" method=\"post\" name=\"form\" $onsubmit>";
+                echo "<form action=\"".$ME."\" method=\"post\" name=\"form\">";
                 echo " <input type=\"hidden\" name=\"id\" value=\"$id\" />";
                 echo " <input type=\"hidden\" name=\"wdir\" value=\"$wdir\" />";
                 echo " <input type=\"hidden\" name=\"file\" value=\"$file\" />";
@@ -345,8 +340,8 @@
                 echo "</form>";
                 echo "</td></tr></table>";
 
-                if ($usehtmleditor) {
-                    print_richedit_javascript("form", "text", "yes");
+                if ($usehtmleditor) { 
+                    use_html_editor();
                 }
 
 
