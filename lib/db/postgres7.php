@@ -172,6 +172,10 @@ function main_upgrade($oldversion=0) {
         table_column("course", "", "visible", "integer", "1", "unsigned", "1", "", "marker");
     }
 
+    if ($oldversion < 2003072101) {
+        table_column("course_sections", "sequence", "sequence", "text", "", "", "", "", "");
+    }
+
     return $result;
 }
 ?>    
