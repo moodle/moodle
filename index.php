@@ -31,7 +31,7 @@
     } else {
         $currlang = current_language();
         $langs = get_list_of_languages();
-        $langmenu = popup_form ("$CFG->wwwroot/?lang=", $langs, "chooselang", $currlang, "", "", "", true);
+        $langmenu = popup_form ("$CFG->wwwroot/index.php?lang=", $langs, "chooselang", $currlang, "", "", "", true);
     }
 
     print_header(strip_tags($site->fullname), "$site->fullname", "home", "",
