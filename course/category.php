@@ -3,16 +3,19 @@
       // In editing mode, allows the admin to edit a category, 
       // and rearrange courses
 
-	require_once("../config.php");
-	require_once("lib.php");
+    require_once("../config.php");
+    require_once("lib.php");
 
     require_variable($id);    // Category id
     optional_variable($page, "0");     // which page to show
     optional_variable($perpage, "20"); // how many per page
 
-
     if (!$site = get_site()) {
         error("Site isn't defined!");
+    }
+
+    if ($CFG->forcelogin) {
+        require_login();
     }
 
     if (!$category = get_record("course_categories", "id", $id)) {

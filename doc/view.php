@@ -7,6 +7,10 @@
 
     $file = clean_filename($file);
 
+    if ($CFG->forcelogin) {
+        require_login();
+    }
+
     if ($id) {
         if (! $course = get_record("course", "id", $id)) {
             error("Course is misconfigured");

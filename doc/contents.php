@@ -6,6 +6,10 @@
         error("404 - File Not Found");
     }
 
+    if ($CFG->forcelogin) {
+        require_login();
+    }
+
     include($info->filepath);
 
     print_header();

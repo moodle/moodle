@@ -23,6 +23,10 @@
 
     $site = get_site();
 
+    if ($CFG->forcelogin) {
+        require_login();
+    }
+
     $displaylist = array();
     $parentlist = array();
     make_categories_list($displaylist, $parentlist, "");

@@ -24,6 +24,10 @@
 
     $site = get_site();
 
+    if ($CFG->forcelogin) {
+        require_login();
+    }
+
     if (empty($THEME->custompix)) {
         $pixpath = "$CFG->wwwroot/pix";
     } else {

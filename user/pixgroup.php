@@ -9,6 +9,10 @@
 
     $lifetime = 86400;
 
+    if ($CFG->forcelogin) {
+        require_login();
+    }
+
     if (isset($file)) {     // workaround for situations where / syntax doesn't work
         $pathinfo = $file;
 

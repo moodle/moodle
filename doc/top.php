@@ -2,6 +2,10 @@
 
     require("../config.php");
 
+    if ($CFG->forcelogin) {
+        require_login();
+    }
+
     if (empty($CFG->langmenu)) {
         $langmenu = "";
     } else {

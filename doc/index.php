@@ -7,6 +7,10 @@
     optional_variable($sub, "");      // sub-section (named anchor)
     optional_variable($lang, "");     // override current language
 
+    if ($CFG->forcelogin) {
+        require_login();
+    }
+
     if (!empty($lang)) {
         $SESSION->lang = $lang;
     }
