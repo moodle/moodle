@@ -17,19 +17,19 @@
     
     print_header("$site->fullname:Error", "$site->fullname: Error 404", "", "form.text");
 
-    print_simple_box("An unusual error occurred (tried to reach a page that doesn't exist).<P align=center>$REDIRECT_URL", "center", "", "$THEME->cellheading");
+    print_simple_box("An unusual error occurred (tried to reach a page that doesn't exist).<p align="center">$REDIRECT_URL", "center", "", "$THEME->cellheading");
   
 ?>
   
-  <CENTER>
-  <P>If you have time, please let us know what you were trying 
+  <center>
+  <p>If you have time, please let us know what you were trying 
      to do when the error occurred:
-  <P><FORM action="<?php echo $CFG->wwwroot ?>/error/index.php" name=form method=post>
-     <TEXTAREA ROWS=3 COLS=50 NAME=text></TEXTAREA><BR>
-     <INPUT TYPE=hidden NAME=referer VALUE="<?php echo $HTTP_REFERER ?>">
-     <INPUT TYPE=hidden NAME=requested VALUE="<?php echo $REQUEST_URI ?>">
-     <INPUT TYPE=submit VALUE="Send this off">
-     </FORM>
+  <p><form action="<?php echo $CFG->wwwroot ?>/error/index.php" name="form" method="post">
+     <textarea rows="3" cols="50" name="text"></textarea><br>
+     <input type="hidden" name="referer" value="<?php echo $HTTP_REFERER ?>">
+     <input type="hidden" name="requested" value="<?php echo $REQUEST_URI ?>">
+     <input type="submit" value="Send this off">
+     </form>
 <?php
 
   print_footer();

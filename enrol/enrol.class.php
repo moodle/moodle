@@ -169,7 +169,7 @@ function print_entry($course) {
     }
 
 
-    print_header($strloginto, $course->fullname, "<A HREF=\".\">$strcourses</A> -> $strloginto", "form.password");
+    print_header($strloginto, $course->fullname, "<a href=\".\">$strcourses</a> -> $strloginto", "form.password");
 
     print_course($course);
 
