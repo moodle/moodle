@@ -14,23 +14,29 @@
 
     if ($post = data_submitted()) {
 
+        if (empty($SESSION->fromurl)) {
+            $errordestination = "$CFG->wwwroot/mod/forum/view.php?f=$post->forum";
+        } else {
+            $errordestination = $SESSION->fromurl;
+        }
+
         $post->subject = strip_tags($post->subject);  // Strip all tags
         $post->message = clean_text($post->message, $post->format);   // Clean up any bad tags
 
         $post->attachment = $_FILES["attachment"];
 
-        if (!$post->subject and !$post->message) {
-            error(get_string("emptymessage", "forum"));
-        }
+        if (!$post->subject or !$post->message) {
+            $post->error = get_string("emptymessage", "forum");
 
-        if ($post->edit) {           // Updating a post
+        } else if ($post->edit) {           // Updating a post
             $post->id = $post->edit;
             if (forum_update_post($post)) {
                 add_to_log($post->course, "forum", "update post", "discuss.php?d=$post->discussion&parent=$post->id", "$post->id");
                 redirect(forum_go_back_to("discuss.php?d=$post->discussion"), get_string("postupdated", "forum"), 1);
             } else {
-                error(get_string("couldnotupdate", "forum")); 
+                error(get_string("couldnotupdate", "forum"), $errordestination); 
             }
+            exit;
 
         } else if ($post->discussion) { // Adding a new post to an existing discussion
             if ($post->id = forum_add_new_post($post)) {
@@ -42,8 +48,10 @@
                 redirect(forum_go_back_to("discuss.php?d=$post->discussion"), 
                          get_string("postadded", "forum", format_time($CFG->maxeditingtime)), 2);
             } else {
-                error(get_string("couldnotadd", "forum")); 
+                error(get_string("couldnotadd", "forum"), $errordestination); 
             }
+            exit;
+
         } else {                     // Adding a new discussion
             $discussion = $post;
             $discussion->name  = $post->subject;
@@ -56,10 +64,10 @@
                 redirect(forum_go_back_to("view.php?f=$post->forum"), 
                          get_string("postadded", "forum", format_time($CFG->maxeditingtime)), 3);
             } else {
-                error(get_string("couldnotadd", "forum")); 
+                error(get_string("couldnotadd", "forum"), $errordestination); 
             }
+            exit;
         }
-        die;
     }
 
     if ($usehtmleditor = can_use_richtext_editor()) {
@@ -71,7 +79,31 @@
     }
 
 
-    if (isset($forum)) {      // User is starting a new discussion in a forum
+    if (isset($post->error)) {     // User is re-editing a failed posting
+
+        // Set up all the required objects again, and reuse the same $post
+
+        if (! $forum = get_record("forum", "id", $post->forum)) {
+            error("The forum number was incorrect ($post->forum)");
+        }
+
+        if (! $course = get_record("course", "id", $forum->course)) {
+            error("The course number was incorrect ($forum->course)");
+        }
+
+        if (!empty($post->parent)) {
+            if (! $parent = forum_get_post_full($post->parent)) {
+                error("Parent post ID was incorrect ($post->parent)");
+            }
+        }
+
+        if (!empty($post->discussion)) {
+            if (! $discussion = get_record("forum_discussions", "id", $post->discussion)) {
+                error("This post is not part of a discussion! ($post->discussion)");
+            }
+        }
+
+    } else if (isset($forum)) {      // User is starting a new discussion in a forum
 
         $SESSION->fromurl = $_SERVER["HTTP_REFERER"];
 
@@ -79,7 +111,7 @@
             error("The forum number was incorrect ($forum)");
         }
         if (! $course = get_record("course", "id", $forum->course)) {
-            error("The course number was incorrect ($forum)");
+            error("The course number was incorrect ($forum->course)");
         }
 
         if (! forum_user_can_post_discussion($forum)) {
@@ -296,11 +328,14 @@
     }
 
     echo "<CENTER>";
-    if (isset($parent)) {
+    if (!empty($parent)) {
         forum_print_post($parent, $course->id, $ownpost=false, $reply=false, $link=false);
         echo "<H2>".get_string("yourreply", "forum").":</H2>";
     } else {
         echo "<H2>".get_string("yournewtopic", "forum")."</H2>";
+    }
+    if (!empty($post->error)) {
+        notify($post->error);
     }
     echo "</CENTER>";
 
