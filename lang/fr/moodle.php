@@ -924,6 +924,7 @@ $string['scalesstandard'] = 'Barèmes standard';
 $string['scalestip'] = 'Pour créer des barêmes personnalisés, utilisez le liens « Barêmes... » dans le menu d\'administration de votre cours.';
 $string['schedule'] = 'Planification';
 $string['scheduledbackupstatus'] = 'Statut de la sauvegarde planifiée';
+$string['screenshot'] = 'Copie d\'écran';
 $string['search'] = 'Rechercher';
 $string['searchagain'] = 'Rechercher de nouveau';
 $string['searchcourses'] = 'Rechercher des cours';
