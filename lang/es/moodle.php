@@ -150,12 +150,12 @@ $string['clamdeletedfile'] = 'El archivo ha sido eliminado';
 $string['clamdeletedfilefailed'] = 'El archivo no ha podido eliminarse';
 $string['clamemailsubject'] = '$a :: Notificación Clam AV';
 $string['clamfailed'] = 'Clam AV no se ha ejecutado. El mensaje de error de retorno es $a. Éste es el output de Clam:';
-$string['clamlost'] = 'Moodle está configurado para ejecutar el clam al cargar un archivo, pero la ruta para Clam AV, $a, no es válida.';
-$string['clamlostandactinglikevirus'] = 'Además, Moodle está configurado de modo que si clam no funciona, los archivos son tratados como si fueran virus. Esto, en esencia, significa que ningún estudiante puede subir archivos hasta que el problema se solucione.';
+$string['clamlost'] = 'Moodle está configurado para ejecutar Clam al cargar un archivo, pero la ruta para Clam AV, $a, no es válida.';
+$string['clamlostandactinglikevirus'] = 'Además, Moodle está configurado de modo que si Clam no funciona, los archivos son tratados como si fueran virus. Esto, en esencia, significa que ningún estudiante puede subir archivos hasta que el problema se solucione.';
 $string['clammovedfile'] = 'El archivo ha sido movido al directorio de cuarentena que usted ha especificado, y su nueva ubicación es $a';
 $string['clammovedfilebasic'] = 'El archivo ha sido trasladado al directorio de cuarentena.';
 $string['clamquarantinedirfailed'] = 'No se ha podido trasladar el archivo al directorio de cuarentena $a que usted ha especificado. Necesita corregir esto puesto que los archivos deben eliminarse si están infectados.';
-$string['clamunknownerror'] = 'Se ha producido un error desconocido con clam.';
+$string['clamunknownerror'] = 'Se ha producido un error desconocido con Clam.';
 $string['cleaningtempdata'] = 'Borrando archivos temporales';
 $string['clicktochange'] = 'haga clic para cambiar';
 $string['closewindow'] = 'Cerrar esta ventana';
@@ -167,6 +167,7 @@ $string['configautologinguests'] = '¿Deberían los visitantes acceder como invita
 $string['configcachetext'] = 'Para sitios grandes, o que usan filtros de texto, esta configuración puede acelerar las cosas. Las copias de los textos permanecerán en su formulario durante el tiempo aquí especificado. Si el lapso es muy pequeño el proceso puede enlentecerse ligeramente, pero si es muy grande es posible que se requiera mucho tiempo para actualizar los textos (con nuevos enlaces, por ejemplo).';
 $string['configclamactlikevirus'] = 'Tratar archivos como virus';
 $string['configclamdonothing'] = 'Tratar archivos como correctos';
+$string['configclamfailureonupload'] = 'Si usted ha configurado Clam para escanear los archivos subidos, pero está configurado incorrectamente o no funciona por alguna razón desconocida, ¿cómo debería comportarse? Si elige \'Tratar archivos como virus\', se trasladarán al área de cuarentena, o serán eliminados. Si elige \'Tratar los archivos como correctos\', serán trasladados al directorio de destino como cualquier archivo normal. En cualquier caso, los administradores serán alertados de que Clam ha fallado. Si elige \'Tratar archivos como virus\' y por alguna razón Clam no funciona (normalmente debido a que usted ha introducido un pathtoclam no válido), TODOS los archivos subidos serán trasladados al área de cuarentena, o eliminados. Sea cuidadoso al fijar este ajuste.';
 $string['configcountry'] = 'Si selecciona un país, entonces ese país estará seleccionado por defecto en las nuevas cuentas de usuario. Para forzar a los usuarios a elegir un país, deje el campo en blanco.';
 $string['configdebug'] = 'Si esta opción está activada, se mostrarán advertencias sobre errores PHP. Esta opción es útil sólo para desarrolladores.';
 $string['configdeleteunconfirmed'] = 'Si usted está utilizando la autenticación por email, éste es el período dentro del cual los usuarios han de aceptar una respuesta. Después de ese período, las cuentas antiguas no confirmadas se eliminarán.';
@@ -201,10 +202,10 @@ $string['confignoreplyaddress'] = 'En ocasiones los correos electrónicos son env
 $string['confignotifyloginfailures'] = 'Si se han registrado fallos en el acceso, se pueden enviar notificaciones por correo. ¿Quién debería ver esas notificaciones?';
 $string['confignotifyloginthreshold'] = 'Si están activas las notificaciones de accesos fallidos, ¿cuántos intentos fallidos de acceso de un usuario o una dirección IP son necesarios para realizar la notificación?';
 $string['configopentogoogle'] = 'Si habilita esta opción Google podrá entrar en su sitio como invitado. Además, las personas que entren a su sitio mediante una búsqueda de Google ingresarán automáticamente como invitados. Observe que esto posibilita el acceso solamente  a los cursos en los que se permite el acceso de invitados.';
-$string['configpathtoclam'] = 'Ruta a clam AV. Probablemente algo parecido a /usr/bin/clamscan o a /usr/bin/clamdscan. Esta ruta es necesaria para que clam AV funcione.';
+$string['configpathtoclam'] = 'Ruta a Clam AV. Probablemente algo parecido a /usr/bin/clamscan o a /usr/bin/clamdscan. Esta ruta es necesaria para que Clam AV funcione.';
 $string['configproxyhost'] = 'Si este <B>servidor</B> necesita proxy (por ejemplo, un cortafuegos) para acceder a Internet, proporcione el nombre del proxy y el puerto. En otro caso, déjelo en blanco.';
-$string['configquarantinedir'] = 'Si desea que clam AV traslade los archivos infectados a un directorio de cuarentena, escríablo aquí. Debe ser escribible por el servidor web. Si lo deja en blanco, o si introduce un directorio inexistente o no escribible, los archivos infectados serán destruídos. No incluya una barra de cola.';
-$string['configrunclamonupload'] = '¿Ejecutar clam AV al subir un archivo? Para que esto funcione, necesita una ruta correcta en pathtoclam. (Clam AV es un escáner de virus gratuito que puede conseguir en http://www.clamav.net/)';
+$string['configquarantinedir'] = 'Si desea que Clam AV traslade los archivos infectados a un directorio de cuarentena, escríablo aquí. Debe ser escribible por el servidor web. Si lo deja en blanco, o si introduce un directorio inexistente o no escribible, los archivos infectados serán destruídos. No incluya una barra de cola.';
+$string['configrunclamonupload'] = '¿Ejecutar Clam AV al subir un archivo? Para que esto funcione, necesita una ruta correcta en pathtoclam. (Clam AV es un escáner de virus gratuito que puede conseguir en http://www.clamav.net/)';
 $string['configsecureforms'] = 'Moodle puede utilizar un nivel adicional de seguridad para aceptar datos de formularios web. Si esta variable está habilitada, la variable HTTP_REFERER de su navegador será contrastada con la dirección del formulario. En algunos casos esto puede provocar problemas con los cortafuegos (por ej.: Zonealarm) si están configurados para quitar el HTTP_REFERER de su tráfico web. Si los usuarios experimentan problemas con la página de entrada (login) es posible que ésta sea la causa, aunque desactivando esta opción el sitio quede más expuesto a ataques de fuerza bruta de contraseñas. Ante la duda déjela activada.';
 $string['configsessioncookie'] = 'Esta variable define el nombre de la cookie que Moodle utiliza para sus sesiones. Su definición es opcional, y sólo útil cuando existe más de una copia de Moodle instalada en el mismo sitio web.';
 $string['configsessiontimeout'] = 'Todo usuario dentro del sitio que se mantenga inactivo por un largo tiempo (sin cargar páginas) será desactivado automáticamente. Muy útil para computadoras compartidas. Esta variable especifica el tiempo de espera.';
@@ -1056,7 +1057,24 @@ $string['usingexistingcourse'] = 'Usando un curso existente';
 $string['version'] = 'Versión';
 $string['view'] = 'Vista';
 $string['virusfound'] = '¡Atención, administrador! Clam AV ha encontrado un virus en el archivo subido por el usuario $a->user en el curso $a->course. Éste es el output de clamscan:';
+$string['virusfoundlater'] = 'Un archivo que usted subió el $a->date denominado $a->filename en el curso $a->course contiene un virus. He aquí un resumen de lo que ha ocurrido con el archivo:
+
+$a->action
+
+Si se trata de un trabajo enviado, reenvíelo para que su tutor pueda verlo.';
+$string['virusfoundlateradmin'] = '¡Atención, administrador! Un archivo subido el $a->date denominado $a->filename en el curso $a->course por el usuario $a->user contiene un virus. He aquí un resumen de lo que ha ocurrido con el archivo:
+
+$a->action
+
+El usuario ha sido también avisado';
+$string['virusfoundlateradminnolog'] = '¡Atención, administrador! Un archivo subido denominado $a->filename contiene un virus. Moodole ha sido incapaz de devolver este archivo al usuario que lo subió.
+
+He aquí un resumen de lo que ha ocurrido con el archivo:
+
+$a->action';
 $string['virusfoundsubject'] = '$a: ¡Se ha encontrado un virus!';
+$string['virusfounduser'] = 'El archivo subido, $a->filename, ha sido escaneado por un antivirus y está infectado. NO se ha podido subir.';
+$string['virusplaceholder'] = 'El archivo subido contenía un virus y ha sido trasladado o eliminado. Se ha comunicado al usuario.';
 $string['webpage'] = 'Página web';
 $string['week'] = 'Semana';
 $string['weekhide'] = 'Ocultar esta semada a $a';
