@@ -278,8 +278,9 @@
 	ksort($ewiki_plugins["init"]);
 	if ($pf_a = $ewiki_plugins["init"]) foreach ($pf_a as $pf) {
            // Binary Handling starts here
-           if(headers_sent($file,$line)) {
-             print $file.":".$line."<br>";
+           #### MOODLE CHANGE TO BE COMPATIBLE WITH PHP 4.1
+           if(headers_sent()) {
+             error("Headers already sent");
            }
            $pf($GLOBALS);
         }
