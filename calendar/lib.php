@@ -358,7 +358,7 @@ function calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxeve
                 $modulename = get_string('modulename', $event->modulename);
                 $eventtype = get_string($event->eventtype, $event->modulename);
                 $icon = $CFG->modpixpath.'/'.$event->modulename.'/icon.gif';
-                $output[$outkey]->referer = '<a href="'.$CFG->wwwroot.'/mod/'.$event->modulename.'/view.php?id='.$module->id.'">'.$module->name.'</a>';
+                $output[$outkey]->referer = '<a href="'.$CFG->wwwroot.'/mod/'.$event->modulename.'/view.php?id='.$module->id.'">'.$event->name.'</a>';
                 $output[$outkey]->icon = '<img src="'.$icon.'" title="'.$modulename.'" style="vertical-align: middle;" />';
                 $output[$outkey]->name = $event->name;
                 $output[$outkey]->time = $eventtime;
