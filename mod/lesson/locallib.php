@@ -616,7 +616,7 @@ function lesson_cluster_jump($lesson, $user, $pageid) {
 			// store the endofcluster page's jump
 			$exitjump = get_field("lesson_answers", "jumpto", "pageid", $pages[$count][0], "lessonid", $lesson);
 			if ($exitjump == LESSON_NEXTPAGE) {
-				$exitjump = $pages[$count][2];
+				$exitjump = $lessonpages[$pageid]->nextpageid;
 			}
 			if ($exitjump == 0) {
 				$exitjump = LESSON_EOL;
