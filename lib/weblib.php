@@ -790,7 +790,7 @@ function cleanAttributes2($htmlTag){
     $elem = $matches[2];	//the element name
     $attrlist = $matches[3]; // the list of attributes as a string
 
-    $allowed_protocols = array('http', 'https', 'ftp', 'news', 'mailto');
+    $allowed_protocols = array('http', 'https', 'ftp', 'news', 'mailto', 'teamspeak', 'gopher');
     $attrArray =  kses_hair($attrlist, $allowed_protocols) ;
 
     $attStr = '';  
