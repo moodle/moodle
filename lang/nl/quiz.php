@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.2 development (2004021700)
+      // quiz.php - created with Moodle 1.2.1 beta (2004032200)
 
 
 $string['acceptederror'] = 'Geaccepteerde fout';
@@ -63,14 +63,14 @@ $string['discrimination'] = 'Discrim. Index';
 $string['eachattemptbuildsonthelast'] = 'Elke poging bouwt voort op de vorige';
 $string['editcategories'] = 'Bewerk de categorieën ';
 $string['editingdescription'] = 'Een beschrijving bewerken';
-$string['editingmatch'] = 'Een paren vraag bewerken';
+$string['editingmatch'] = 'Een kKoppelvraag bewerken';
 $string['editingmultianswer'] = 'Ingebedde antwoorden (Cloze) bewerken';
 $string['editingmultichoice'] = 'Een meerkeuzevraag bewerken';
 $string['editingnumerical'] = 'Een numerieke vraag bewerken';
 $string['editingquestion'] = 'Een vraag bewerken';
 $string['editingquiz'] = 'Bewerk test';
-$string['editingrandom'] = 'Een willekeurige vraag bewerken';
-$string['editingrandomsamatch'] = 'Een willekeurige vraag met kort antwoord bewerken';
+$string['editingrandom'] = 'Een willekeurige set bewerken';
+$string['editingrandomsamatch'] = 'Een willekeurige kort antwoord koppelvraag bewerken';
 $string['editingshortanswer'] = 'Een vraag met kort antwoord bewerken';
 $string['editingtruefalse'] = 'Een waar/onwaar vraag bewerken';
 $string['editquestions'] = 'Bewerk vragen';
@@ -101,7 +101,7 @@ $string['itemanal'] = 'Analyse van de reacties op de items';
 $string['listitems'] = 'Lijst van items in de test';
 $string['marks'] = 'Punten';
 $string['match'] = 'Koppelen';
-$string['matchanswer'] = 'Gepaarde antwoord';
+$string['matchanswer'] = 'Koppel antwoord';
 $string['missinganswer'] = 'Te weinig :ANSWER, :Lx, Rx stellingen voor de vraag op lijn $a. Je moet minstens twee mogelijke antwoorden opgeven';
 $string['missingcorrectanswer'] = 'Het goede antwoord moet worden aangegeven';
 $string['missingname'] = 'Naam voor de vraag ontbreekt';
@@ -118,8 +118,8 @@ $string['noattempts'] = 'Er zijn geen pogingen geweest om deze test te maken';
 $string['nomoreattempts'] = 'Een nieuwe poging is niet meer toegestaan';
 $string['noquestions'] = 'Er zijn nog geen vragen toegevoegd';
 $string['noresponse'] = 'Geen reactie';
-$string['noreview'] = 'Het is niet toegestaan om de antwoorden na te lezen en te verbeteren';
-$string['noreviewuntil'] = 'Het is niet toegestaan om deze test na te lezen tot $a';
+$string['noreview'] = 'Je mag deze test niet opniew bekijken';
+$string['noreviewuntil'] = 'Tot $a mag je deze test niet opnieuw bekijken';
 $string['notenoughsubquestions'] = 'Er zijn onvoldoende deelvragen gedefinieerd!<br>Wil je teruggaan en deze vraag herstellen?';
 $string['numerical'] = 'Numeriek';
 $string['paragraphquestion'] = 'Vraagparagraaf niet ondersteund op lijn $a. De vraag wordt genegeerd';
@@ -137,12 +137,12 @@ $string['quizclosed'] = 'Deze test  wordt op $a gesloten';
 $string['quizcloses'] = 'Test gaat dicht';
 $string['quiznotavailable'] = 'De test zal nog niet beschikbaar zijn tot :  $a  ';
 $string['quizopen'] = 'Open de test ';
-$string['random'] = 'Willekeurige set';
+$string['random'] = 'Willekeurige set  vragen';
 $string['randomcreate'] = 'Maak willekeurige vragen aan';
-$string['randomsamatch'] = 'Willekeurig korte antwoorden paren';
-$string['randomsamatchcreate'] = 'Maak willekeurige korte antwoorden paren vragen aan';
-$string['randomsamatchintro'] = 'Selecteer voor elk van de volgende vragen een passend antwoord (als paar) uit het menu.';
-$string['randomsamatchnumber'] = 'Aan te selecteren vragen';
+$string['randomsamatch'] = 'Willekeurig korte antwoorden koppelen';
+$string['randomsamatchcreate'] = 'Maak uit willekeurige korte antwoorden koppelvragen aan';
+$string['randomsamatchintro'] = 'Selecteer voor elk van de volgende vragen een passend antwoord uit het menu.';
+$string['randomsamatchnumber'] = 'Aantal te selecteren vragen';
 $string['readytosend'] = 'Je staat op het punt om de test in te sturen zodat hij beoordeeld kan worden. Weet je zeker dat je door wilt gaan?';
 $string['recentlyaddedquestion'] = 'Recent toegevoegde vraag!';
 $string['regrade'] = 'Herbereken alle pogingen';
