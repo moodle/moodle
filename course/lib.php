@@ -243,7 +243,7 @@ function print_recent_activity($course) {
     $users = get_recent_enrolments($course->id, $timestart);
 
     if ($users) {
-        echo "<p>":
+        echo "<p>";
         foreach ($users as $user) {
             if (! $heading) {
                 print_headline(get_string("newusers").":");
@@ -252,7 +252,7 @@ function print_recent_activity($course) {
             }
             echo "<font size=1><a href=\"../user/view.php?id=$user->id&course=$course->id\">$user->firstname $user->lastname</a></font><br />";
         }
-        echo "</p>":
+        echo "</p>";
     }
 
     // Next, have there been any modifications to the course structure?
