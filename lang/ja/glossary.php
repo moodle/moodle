@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.2 development (2004020903)
+      // glossary.php - created with Moodle 1.2 development (2004021700)
 
 
 $string['addcomment'] = 'コメントの追加';
@@ -28,8 +28,20 @@ $string['categories'] = 'カテゴリ';
 $string['category'] = 'カテゴリ';
 $string['categorydeleted'] = 'カテゴリが削除されました';
 $string['categoryview'] = 'カテゴリ順';
-$string['cnfallowcomments'] = '用語集のエントリーへのコメントをデフォルトで許可する場合に設定';
-$string['cnfallowdupentries'] = '用語集のエントリーをデフォルトで複写を許可する場合に設定';
+$string['cnfallowcomments'] = '用語集のエントリーへのコメントをデフォルトで許可する場合に設定します。';
+$string['cnfallowdupentries'] = '用語集のエントリーをデフォルトで複写を許可する場合に設定します。';
+$string['cnfapprovalstatus'] = '学生による投稿のデフォルト認証ステータスを設定';
+$string['cnfcasesensitive'] = 'エントリーがリンクの場合、大文字小文字の区別をするかを設定します。';
+$string['cnfdefaulthook'] = '用語集が表示される時のデフォルトセクションを選択してください。';
+$string['cnfdefaultmode'] = '用語集が表示される時のデフォルトフレームを選択してください。';
+$string['cnffullmatch'] = 'エントリーがリンクの場合、ターゲットテキストと文字の大きさを合わせるべきか否かを設定します。';
+$string['cnflinkentry'] = 'デフォルトで自動的にエントリーがリンク付けられるか否かを設定します。';
+$string['cnflinkglossaries'] = 'デフォルトで自動的に用語集がリンク付けられるか否かを設定します。';
+$string['cnfrelatedview'] = '自動リンク及びエントリー表示における表示形式を選択してください。';
+$string['cnfshowgroup'] = 'グループ区切りを表示するか否か指定してください。';
+$string['cnfsortkey'] = 'デフォルトの並び替えキーを選択してください。';
+$string['cnfsortorder'] = 'デフォルトの並び替え順を選択してください。';
+$string['cnfstudentcanpost'] = 'デフォルトで学生がポスト出来るか否かを設定します。';
 $string['comment'] = 'コメント';
 $string['commentdeleted'] = 'コメントが削除されました。';
 $string['comments'] = 'コメント';
@@ -70,8 +82,11 @@ $string['entrydeleted'] = 'エントリーが削除されました。';
 $string['entryexported'] = 'エントリーが正常にエクスポートされました。';
 $string['entryishidden'] = '(このエントリーは現在非表示です)';
 $string['entryusedynalink'] = 'エントリーを自動的にリンクさせる';
+$string['explainaddentry'] = '用語集にアｔらしいエントリーを追加します。<br>概念と定義は必須入力項目です。';
 $string['explainall'] = '全てのエントリーを1ページに表示';
 $string['explainalphabet'] = 'インデックスを利用して閲覧する';
+$string['explainexport'] = 'ファイルが生成されました。<br>ファイルをダウンロードして安全に保管してください。いつでも必要な時に、このコースまたは他のコースにインポートすることが出来ます。';
+$string['explainimport'] = 'インポートするファイル及び処理方法を指定してください。<p>実行後、結果を検証してください。';
 $string['explainspecial'] = '１文字で始まらないエントリーを表示します';
 $string['exportedentry'] = 'エクスポートされたエントリー';
 $string['exportedfile'] = 'エクスポートされたファイル';

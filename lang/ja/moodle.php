@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.2 development (2004020903)
+      // moodle.php - created with Moodle 1.2 development (2004021700)
 
 
 $string['action'] = '操作';
@@ -121,6 +121,7 @@ $string['closewindow'] = 'ウィンドウを閉じる';
 $string['comparelanguage'] = '言語の比較・編集';
 $string['complete'] = '完全な';
 $string['configallowunenroll'] = '\'Yes\'に設定した場合、学生はいつでも好きな時にコースの参加を取り消すことが出来ます。\'No\'に設定した場合、学生は参加取消しを行うことは出来ず、参加に関する全てを教師及び管理者がコントロールします。';
+$string['configcachetext'] = '大きなサイトまたはテキストフィルターを使用しているサイトでは、この設定を行うことで処理速度を上げることが出来ます。テキストのコピーは、処理に適した形で一定時間保持されます。この数値を小さくし過ぎると処理速度を若干落とすことになりますが、大きすぎるとリフレッシュするまでのテキストの保持が長くなりすぎます(例 新しいリンク)。';
 $string['configcountry'] = 'ここで国を設定した場合、新規アカウントのユーザに初期値として表示されます。ユーザに国を選ばせる場合は何も選択しないでください。
 ';
 $string['configdebug'] = 'この設定を Yes にした場合、PHPのエラーレポートが増加して、より多くの警告が表示されるようになります。開発者向けの設定です。';
@@ -146,6 +147,7 @@ $string['configloglifetime'] = 'ここではユーザの活動に関するログの保持期間を設定
 $string['configlongtimenosee'] = 'もし学生が長期間ログインしていない場合は、自動的にコースから削除されます。この値は削除期限を決定します。';
 $string['configmaxbytes'] = 'ここではサイト全体でアップロード出来るファイルの最大サイズを設定します。この設定はPHP設定のupload_max_filesize及びApache設定のLimitRequestBodyに制限されます。maxbytesはコースレベルまたはモジュールレベルで選択するサイズ幅を制限します。';
 $string['configmaxeditingtime'] = 'ここではフォーラムの投稿や日誌等を編集可能な時間を設定します。通常30分が適切な値です。';
+$string['configopentogoogle'] = 'この設定を行った場合、Googleはあなたのサイトにゲストとして入ることが出来ます。加えて、Googleがゲストとして自動的に記録したデータを元に、他の人があなたのサイトにアクセス出来ます。これは既にゲストアクセスを許可している場合の透過アクセスのみを提供します。';
 $string['configproxyhost'] = '<B>サーバ</B>のインターネットアクセスにプロクシ(例 ファイアーウォール)が必要な場合は、プロクシのホスト名とポート番号を入力してください。必要でない場合は空白にしてください。';
 $string['configsecureforms'] = 'Moodlでは、フォームデータを受入れる場合の追加的なレベルのセキュリティーを使用することが出来ます。この設定をYesにした場合、ブラウザのHTTP_REFERER変数とフォーム設置のアドレスが照合されます。 ユーザがファイアーウォールソフト(例 Zonealarm)を使用してトラフィックからHTTP_REFERERを取除く設定をしている場合、稀に問題が発生する場合があります。 これはフォーム使用時に画面が固まる現象です。ユーザがログインページ(例えば)で問題を抱えている場合はこの設定をNoにしてください。しかしこの設定ではブルートフォース・パスワードアタックに対して無防備な状態になります。分からない場合は、この設定をYesのままにしてください。';
 $string['configsessioncookie'] = 'ここではMoodleのセッションで使用されるクッキーの名前を設定します。この設定は1つ以上のMoodleが同じウェブサイトで稼動している場合に、クッキーが混乱するのを防ぐ為だけに任意でお使いください。';
@@ -155,6 +157,8 @@ $string['configsmtphosts'] = 'Moodleでメールを送信するときに使用する1つ以上のSMT
 $string['configsmtpuser'] = '上記でSMTPサーバを設定して尚且つ認証が必要な場合はユーザ名とパスワードを設定してください。';
 $string['configteacherassignteachers'] = '一般の教師は他の教師をコース内に割当てる必要がありますか?もし「いいえ」の場合、コース作成者及び管理者のみが教師の割当てを行うことが出来ます。
 ';
+$string['configtextfilters'] = 'テキストフィルタはテキストを様々な方法で処理します。テキストフィルタへの相対パスを、適用したい順番でカンマで区切って指定してください。(例 mod/glossary/dynalink.php, filter/censor/censor.php)';
+$string['configtimezone'] = 'ここではデフォルトタイムゾーンの設定を行うことが出来ます。これは日付表示の為のデフォルトタイムゾーンを設定するのみで、各ユーザはプロフィールの設定により、この設定を変更することが出来ます。ここで設定する「サーバ時間」はオペレーティングシステムに対するMoodleのデフォルト設定です。これに対してユーザプロフィールの「サーバ時間」ではユーザが独自のデフォルトタイムゾーン設定を行います。';
 $string['configunzip'] = 'UNZIPプログラムの場所を指定してください(Unixのみ、任意)。指定した場合、zipファイルを解凍に使用されます。空白にした場合、Moodleは内部ルーチンを使用します。';
 $string['configuration'] = '設定';
 $string['configvariables'] = '詳細設定';
@@ -389,6 +393,7 @@ $string['groupremovemembers'] = '選択したメンバーを削除する';
 $string['groups'] = 'グループ';
 $string['groupsnone'] = 'グループ無し';
 $string['groupsseparate'] = '分離グループ';
+$string['groupsvisible'] = '可視グループ';
 $string['guestskey'] = 'キーを持っているゲストを許可する';
 $string['guestsno'] = 'ゲストを許可しない';
 $string['guestsnotallowed'] = '\'$a\' さん申し訳ございません。ゲストでの入室は許可されていません。';
@@ -409,6 +414,7 @@ $string['helptext'] = 'テキストの書き方';
 $string['helpwiki'] = 'Wikiテキストの書き方';
 $string['helpwriting'] = '慎重に書く';
 $string['hide'] = '非表示';
+$string['hidepicture'] = '写真を隠す';
 $string['hits'] = 'アクセス';
 $string['hitsoncourse'] = '$a->username による $a->coursename　へのアクセス';
 $string['hitsoncoursetoday'] = '$a->username による今日の $a->coursename へのアクセス';
@@ -605,6 +611,7 @@ $string['numberweeks'] = '週/トピックの表示数';
 $string['numdays'] = '$a 日';
 $string['numhours'] = '$a 時間';
 $string['numminutes'] = '$a 分';
+$string['numseconds'] = '$a 秒';
 $string['numviews'] = '$a 閲覧';
 $string['numweeks'] = '$a 週';
 $string['numwords'] = '$a 語';
