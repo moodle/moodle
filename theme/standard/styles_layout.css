@@ -269,19 +269,7 @@ body#admin-config .confighelp {
     vertical-align: middle;
 }
 
-/* block_rss_client.php */
-.rssclientlink {
-    padding-bottom:5px;
-    border-top:1px solid;
-}
 
-.rssclientdescription {
-    padding-left:10px;
-    padding-bottom:8px;
-}
-
-
-/* sideblock */
 .sideblock .content h3,
 .sideblock .content h2 {
     text-align: left;
