@@ -132,7 +132,7 @@ CREATE TABLE prefix_glossary_displayformats (
 #
 
 CREATE TABLE prefix_glossary_ratings (
-  id int4 SERIAL,
+  id SERIAL,
   userid int4 NOT NULL default '0',
   entryid int4 NOT NULL default '0',
   time int4 NOT NULL default '0',
