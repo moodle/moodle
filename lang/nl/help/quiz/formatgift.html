@@ -2,7 +2,7 @@
 
 
 <p>GIFT is het meest begrijpelijke importformaat voor het importeren van testen vanuit tekstbestanden
- in Moodle.  Het ondersteunt multiple choice, waar/onwaar, kort antwoord en numerieke vragen en eveneens het invoeren van
+ in Moodle.  Het ondersteunt multiple choice, waar/onwaar, kort antwoord, koppelvragen en numerieke vragen en eveneens het invoeren van
 een _______ voor het gatentekstformaat. Verschillende types vragen kunnen gemengd worden in een enkel tekstbestand
 en de opmaak ondersteunt ook commentaar, namen voor de vragen, feedback en gewogen cijfers.</p>
 
@@ -46,6 +46,23 @@ en de opmaak ondersteunt ook commentaar, namen voor de vragen, feedback en gewog
         <pre>     Grant is begraven in de tombe van Grant.{F}
 
      De zon komt op in het oosten.{T}</pre>
+
+         <p><u>Koppelvragen:</u><br />
+        Koppelparen beginnen met een gelijkheidsteken (=) en worden gescheiden door dit symbool "->". Er moeten minstens drie koppels gegeven worden.</p>
+ 
+ <pre>     Koppelvraag. {
+          =subvraag1 -> subantwoord1
+          =subvraag2 -> subantwoord2
+          =subvraag3 -> subantwoord3
+          }
+      
+      Koppel volgende landen aan hun hoofdsteden. {
+          =Canada -> Ottawa
+          =Italië  -> Rome
+          =Japan  -> Tokyo
+          =Indië  -> New Delhi
+          }</pre>
+ <p>Koppelvragen ondersteunen geen feedback of procentuele weging per antwoord.</p>
 
         <p><u>Numeriek:</u><br>
            Het antwoordgedeelte voor numerieke vragen moet beginnen met een spoorwegteken (#). Numerieke antwoorden kunnen een foutenmarge bevatten, die onmiddellijk achter het juiste antwoord geschreven wordt, gescheiden door een komma. Als het juiste voorbeeld bijvoorbeeld ligt tussen de 1.5 en 2.5, dan schrijf je het als volgt <u>{#2:0.5}</u>. Dit geeft aan dat 2 met een foutenmarge van 0.5 juist is (het bereik van 1.5 tot 2.5). Als er geen foutenmarge gespecifieerd wordt, dan wordt er vanuitgegaan dat die 0 is.<br><I>Nota van de vertaler: let op het gebruik van de komma -> als wiskundig teken moet een punt (.) gebruikt worden.</I></p>
@@ -103,9 +120,9 @@ Procentuele weging is beschikbaar voor multiple choice en voor kort antwoord vra
      =%25%Bethlehem#Hij was daar geboren, maar niet opgegroeid}</pre>
 <p>Merk op dat de laatste twee voorbeelden nagenoeg dezelfde vragen zijn, eerst als multiple choice, dam als kort antwoord.</p>
 
-<p><small>Note that it is possible to specify percentage answer weights that are NOT available through the browser interface. Such answer-weights will calculate correctly (according to the value assigned when imported), and will appear normal to students taking the test. But such answer-weights will not display correctly to teachers when editing them through Moodle's Edit Question interface. The pull-down menu only allows certain fixed values, and if the answer-weight does not exactly match one of those predetermined values, then it will not display correctly. If you edit such a question through the browser interface, the answer weight will change to that displayed.</small></p>
+<p><font size="-1">Merk op dat het mogelijk is om procentuele wegingen te specifiëren die NIET mogelijk zijn via de grafisch gebruikersinterface. Zulke antwoordweging zal toch juist berekend worden (overeenkomend met de waarde die ingegeven is bij het importeren), en zal normaal verschijnen wanneer de leerling zijn test doet. Maar zulke antwoord-weging zal niet juist getoond worden aan de leraar, waneer de test achteraf via de interface om vragen te bewerken van Moodle bewerkt wordt. Het uitschuifmenu toont enkel enkele vastgelegde waarden. Wanneer de antwoord-weging niet juist overeenkomt met één van die vooraf gedefinieerde waarden, dan zullen ze niet juist getoond worden.Als je zo een vraag via de grafische interface bewerk, dan zal de antwoord-weging wijzigen in dat wat getoond wordt.</font></p>
 
-<p><u>MMeerdere antwoorden mogelijk:</u><br />
+<p><u>Meerdere antwoorden mogelijk:</u><br />
 De meerdere antwoorden mogelijk-optie wordt gebruikt voor multiple choice vragen wanneer twee of meer antwoorden gekozen moeten worden om alle punten te krijgen. De meerdere antwoorden mogelijk-optie wordt ingescakeld door een even grote deelwaarde toe te kennen aan meerdere antwoorden, terwijl geen enkel antwoord het maximumcijfer oplevert.</p>
 <pre>     Welke twee mensen liggen in de tombe van Grant? {
           ~Niemand
@@ -132,4 +149,4 @@ De meerdere antwoorden mogelijk-optie wordt gebruikt voor multiple choice vragen
 <h3>KREDIETEN</h3>
 <p>Deze filter is geschreven door de samenwerking van vele leden van de Moodlegemeenschap. Het was oorspronkelijk 
 gebaseerd op de filter van Gatentekst, die code van Martin Dougiamas, Thomas Robb en anderen bevat. Paul Tsuchido Shew schreef deze filter in December 2003 met daarin suggesties van de gemeenschap voor een meer robuust vragenformaat. De naam is samengesteld als een acroniem voor &quot;General Import Format Technology&quot; of iets dat er op lijkt, maar het is te lang voor een eenvoudige filter zoals dit, daarom gewoon GIFT.</p>
-        <p><small>GIFT documentatie door Paul Tsuchido Shew, 10 Jan 2004.</small></p>
+        <p><font size="-1">GIFT documentatie door Paul Tsuchido Shew, 10 Jan 2004.</font></p>
