@@ -36,7 +36,7 @@
     }
 
     print_header("$course->shortname: Journals", "$course->fullname",
-                 "<A HREF=/course/view.php?id=$course->id>$course->shortname</A> ->
+                 "<A HREF=../../course/view.php?id=$course->id>$course->shortname</A> ->
                   <A HREF=index.php?id=$course->id>Journals</A> ->
                   <A HREF=view.php?id=$cm->id>$journal->name</A> -> Responses", "",
                   "", true);
