@@ -160,6 +160,123 @@ function resource_get_coursemodule_info($coursemodule) {
 
    return false;
 }
+ 
+function resource_fetch_remote_file ($url, $headers = "" ) {
+	// Snoopy is an HTTP client in PHP
+	$client = new Snoopy();
+	$client->agent = MAGPIE_USER_AGENT;
+	$client->read_timeout = MAGPIE_FETCH_TIME_OUT;
+	$client->use_gzip = MAGPIE_USE_GZIP;
+	if (is_array($headers) ) {
+		$client->rawheaders = $headers;
+	}
+	
+	@$client->fetch($url);
+    
+    $tags = array("A"      => "href=",
+                  "IMG"    => "src=",
+                  "LINK"   => "href=",
+                  "AREA"   => "href=",
+                  "FRAME"  => "src=",
+                  "IFRAME" => "src=",
+                  "FORM"   => "action=");
 
+    foreach ($tags as $tag => $key) {
+        $prefix = "fetch.php?id=$cm->id&url=";
+        if ( $tag == "IMG" or $tag == "LINK" or $tag == "FORM") {
+            $prefix = "";
+        }
+        $client->results = resource_redirect_tags($client->results, $url, $tag, $key,$prefix);
+    }
+	return $client;
+}
+
+function resource_redirect_tags($text, $url, $tagtoparse, $keytoparse,$prefix = "" ) {
+    $valid = 0;
+    if ( strpos($url,"?") == FALSE ) {
+        $valid = 1;
+    }
+    if ( $valid ) {
+        $lastpoint = strrpos($url,".");
+        $lastslash = strrpos($url,"/");
+        if ( $lastpoint > $lastslash ) {
+            $root = substr($url,0,$lastslash+1);
+        } else {
+            $root = $url;
+        }
+        if ( $root == "http://" or 
+             $root == "https://") {
+            $root = $url;
+        }
+        if ( substr($root,strlen($root)-1) == '/' ) {
+            $root = substr($root,0,-1);
+        }
+        
+        $mainroot = $root;
+        $lastslash = strrpos($mainroot,"/");
+        while ( $lastslash > 9) {
+            $mainroot = substr($mainroot,0,$lastslash);
+        
+            $lastslash = strrpos($mainroot,"/");
+        }
+
+        $regex = "/<$tagtoparse (.+?)>/is";    
+        $count = preg_match_all($regex, $text, $hrefs);    
+        for ( $i = 0; $i < $count; $i++) {
+            $tag = $hrefs[1][$i];
+            
+            $poshref = strpos(strtolower($tag),strtolower($keytoparse));
+            $start = $poshref + strlen($keytoparse);
+            $left = substr($tag,0,$start);
+            if ( $tag[$start] == '"' ) {
+                $left .= '"';
+                $start++;
+            }
+            $posspace   = strpos($tag," ", $start+1);
+            $right = "";
+            if ( $posspace != FALSE) {
+                $right = substr($tag, $posspace);
+            }
+            $end = strlen($tag)-1;
+            if ( $tag[$end] == '"' ) {
+                $right = '"' . $right;
+            }
+            $finalurl = substr($tag,$start,$end-$start+$diff);
+            // Here, we could have these possible values for $finalurl:
+            //     file.ext                             Add current root dir
+            //     http://(domain)                      don't care
+            //     http://(domain)/                     don't care
+            //     http://(domain)/folder               don't care
+            //     http://(domain)/folder/              don't care
+            //     http://(domain)/folder/file.ext      don't care
+            //     folder/                              Add current root dir
+            //     folder/file.ext                      Add current root dir
+            //     /folder/                             Add main root dir
+            //     /folder/file.ext                     Add main root dir
+
+            // Special case: If finalurl contains a ?, it won't be parsed
+            $valid = 0;
+
+            if ( strpos($finalurl,"?") == FALSE ) {
+                $valid = 1;
+            }
+            if ( $valid ) {
+                if ( $finalurl[0] == "/" ) {
+                    $finalurl = $mainroot . $finalurl;
+                } elseif ( strtolower(substr($finalurl,0,7)) != "http://" and 
+                           strtolower(substr($finalurl,0,8)) != "https://") {
+                     if ( $finalurl[0] == "/") {
+                        $finalurl = $mainroot . $finalurl;
+                     } else {
+                        $finalurl = "$root/$finalurl";
+                     }
+                }
+    
+                $text = str_replace($tag,"$left$prefix$finalurl$right",$text);
+            }
+        }
+    }
+    return $text;
+}
 
 ?>
