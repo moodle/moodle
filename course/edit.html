@@ -1,39 +1,39 @@
 <FORM METHOD="post" action="edit.php" NAME="form">
 <table cellpadding=9 cellspacing=0 >
 <tr valign=top>
-	<td><P>Full name:</td>
+	<td><P><? print_string("fullname") ?>:</td>
 	<td><input type="text" name="fullname" size=50 value="<? p($form->fullname) ?>">
 	<? formerr($err["fullname"]) ?>
 	</td>
 </tr>
 <tr valign=top>
-	<td><P>Short name:</td>
+	<td><P><? print_string("shortname") ?>:</td>
 	<td><input type="text" name="shortname" size=10 value="<? p($form->shortname) ?>">
 	<? formerr($err["shortname"]) ?>
 	</td>
 </tr>
 <tr valign=top>
-	<td><P>Summary:</td>
+	<td><P><? print_string("summary") ?>:</td>
 	<td><TEXTAREA NAME=summary COLS=50 ROWS=10 WRAP=virtual><? p($form->summary) ?></TEXTAREA>
 	<? formerr($err["summary"]) ?>
 	</td>
 </tr>
 <tr valign=top>
-	<td><P>Enrolment Key:</td>
+	<td><P><? print_string("enrolmentkey") ?>:</td>
 	<td><input type="text" name="password" size=25 value="<? p($form->password) ?>">
 	<? formerr($err["password"]) ?>
 	</td>
 </tr>
 <tr valign=top>
-	<td><P>Open to guests?:</td>
+	<td><P><? print_string("opentoguests") ?>:</td>
 	<td><?
-    $choices["0"] = "No, only students are allowed";
-    $choices["1"] = "Yes, allow \"guest\" student in";
+    $choices["0"] = get_string("guestsno");
+    $choices["1"] = get_string("guestsyes");
     choose_from_menu ($choices, "guest", $form->guest, "") ?>
 	</td>
 </tr>
 <tr valign=top>
-	<td><P>Category:</td>
+	<td><P><? print_string("category") ?>:</td>
 	<td><? 
            choose_from_menu ($form->categories, "category", "$form->category");
 	       formerr($err["category"]);
@@ -41,7 +41,7 @@
 	</td>
 </tr>
 <tr valign=top>
-	<td><P>Format:</td>
+	<td><P><? print_string("format") ?>:</td>
 	<td><? 
            choose_from_menu ($FORMATS, "format", "$form->format");
 	       formerr($err["format"]);
@@ -49,19 +49,22 @@
 	</td>
 </tr>
 <tr valign=top>
-    <td><P>News items to show:</td>
+    <td><P><? print_string("newsitemsnumber") ?>:</td>
     <td><? 
-       $options = array("0" => "0 news items",
-                        "1" => "1 news item",
-                        "2" => "2 news items",
-                        "3" => "3 news items",
-                        "4" => "4 news items",
-                        "5" => "5 news items",
-                        "6" => "6 news items",
-                        "7" => "7 news items",
-                        "8" => "8 news items",
-                        "9" => "9 news items",
-                        "10" => "10 news items");
+       $newsitem = get_string("newsitem");
+       $newsitems = get_string("newsitems");
+
+       $options = array("0" => "0 $newsitems",
+                        "1" => "1 $newsitem",
+                        "2" => "2 $newsitems",
+                        "3" => "3 $newsitems",
+                        "4" => "4 $newsitems",
+                        "5" => "5 $newsitems",
+                        "6" => "6 $newsitems",
+                        "7" => "7 $newsitems",
+                        "8" => "8 $newsitems",
+                        "9" => "9 $newsitems",
+                        "10" => "10 $newsitems");
        choose_from_menu ($options, "newsitems", "$form->newsitems");
        formerr($err["newsitems"]);
     ?>
@@ -69,19 +72,19 @@
 </tr>
 
 <tr valign=top>
-	<td><P>Word for teacher:</td>
+	<td><P><? print_string("wordforteacher") ?>:</td>
 	<td><input type="text" name="teacher" size=25 value="<? p($form->teacher) ?>">
-	(eg Teacher, Tutor, Facilitator etc) <? formerr($err["teacher"]) ?>
+	(<? print_string("wordforteachereg") ?>) <? formerr($err["teacher"]) ?>
 	</td>
 </tr>
 <tr valign=top>
-	<td><P>Word for student:</td>
+	<td><P><? print_string("wordforstudent") ?>:</td>
 	<td><input type="text" name="student" size=25 value="<? p($form->student) ?>">
-	(eg Student, Participant etc) <? formerr($err["student"]) ?>
+	(<? print_string("wordforstudenteg") ?>) <? formerr($err["student"]) ?>
 	</td>
 </tr>
 <tr valign=top>
-	<td><P>Start date:</td>
+	<td><P><? print_string("startdate") ?>:</td>
 	<td><?
            choose_from_menu ($form->days, "startday", "$form->startday");
            choose_from_menu ($form->months, "startmonth", "$form->startmonth");
@@ -90,7 +93,7 @@
 	?></td>
 </tr>
 <tr valign=top>
-	<td><P>Number of weeks/topics:</td>
+	<td><P><? print_string("numberweeks") ?>:</td>
 	<td><?
            for ($i=1; $i<=20; $i++) {
               $sectionmenu[$i] = "$i";
@@ -101,7 +104,7 @@
 </tr>
 <tr>
 	<td></td>
-	<td><input type="submit" value="Update this course"></td>
+	<td><input type="submit" value="<? print_string("updatethiscourse") ?>"></td>
 </TABLE>
 <INPUT type="hidden" name="id" value="<?=$course->id ?>">
 </FORM>

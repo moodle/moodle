@@ -60,7 +60,7 @@
                     $section->id = insert_record("course_sections", $section);
 
                     add_to_log($newid, "course", "new", "view.php?id=$newid", "");
-		            redirect("$CFG->wwwroot/admin/teacher.php?id=$newid", "Changes saved");
+		            redirect("$CFG->wwwroot/admin/teacher.php?id=$newid", get_string("changessaved"));
                 } else {
                     error("Serious Error! Could not create the new course!");
                 }
@@ -116,10 +116,12 @@
 
     //$form->owners   = get_records_sql_menu("SELECT u.id, CONCAT(u.firstname, " ", u.lastname) FROM users u, teachers t WHERE t.user = u.id");
 
+    $editcoursesettings = get_string("editcoursesettings");
+
     if (isset($course)) {
-	    print_header("Edit course settings", "$course->fullname", 
+	    print_header($editcoursesettings, "$course->fullname", 
                      "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> 
-                      -> Edit course settings", $focus);
+                      -> $editcoursesettings", $focus);
     } else {
         print_header("Admin: Creating a new course", "$site->shortname: Administration",
                      "<A HREF=\"$CFG->wwwroot/admin/\">Admin</A> 
@@ -127,7 +129,7 @@
     }
 
     print_simple_box_start("center", "", "$THEME->cellheading");
-    print_heading("Editing course settings");
+    print_heading($editcoursesettings);
 	include("edit.html");
     print_simple_box_end();
 

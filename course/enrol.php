@@ -22,6 +22,13 @@
                 if (! enrol_student_in_course($USER->id, $course->id)) {
                     error("An error occurred while trying to enrol you.");
                 }
+
+                $subject = get_string("welcometocourse", "", $course->fullname);
+                $message = get_string("welcometocoursetext", "", $course->fullname,
+                                      "$CFG->wwwroot/user/view.php?id=$USER->id&course=$course->id");
+
+                email_to_user($USER,  get_teacher($course->id), $subject, $message);
+
                 add_to_log($course->id, "course", "enrol", "view.php?id=$course->id", "$USER->id");
             }
 

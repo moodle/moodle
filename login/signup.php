@@ -24,7 +24,9 @@
 	
             $emailconfirm = get_string("emailconfirm");
 	        print_header($emailconfirm, $emailconfirm, $emailconfirm);
+            echo "<CENTER>";
             print_string("emailconfirmsent", "", $user->email);
+            echo "</CENTER>";
             print_footer();
 			exit;
 		}

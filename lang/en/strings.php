@@ -10,8 +10,10 @@ $string[allfieldsrequired] = "All fields are required";
 $string[alphanumerical] = "Can only contain alphabetical letters or numbers";
 $string[alreadyconfirmed] = "Registration has already been confirmed";
 $string[availablecourses] = "Available Courses";
+$string[category] = "Category";
 $string[changepassword] = "Change password";
 $string[changedpassword] = "Changed password";
+$string[changessaved] = "Changes saved";
 $string[city] = "City/town";
 $string[confirmed] = "Your registration has been confirmed";
 $string[contributions] = "Contributions";
@@ -50,13 +52,18 @@ Cheers from the '\$a->sitename' administrator,
 
 $string[emailexists] = "This email address is already registered.";
 $string[emailmustbereal] = "Note: your email address must be a real one";
+$string[enrolmentkey] = "Enrolment key";
 $string[entercourse] = "Click to enter this course";
 $string[enteremailaddress] = "Enter in your email address to reset your 
    password and have the new password sent to you via email.";
 $string[firstname] = "First name";
 $string[firsttime] = "Is this your first time here?";
 $string[forgotten] = "Forgotten your username or password?";
+$string[format] = "Format";
 $string[fullprofile] = "Full profile";
+$string[fullname] = "Full name";
+$string[guestsno] = "No, do not allow guests in";
+$string[guestsyes] = "Yes, allow 'guest' student in";
 $string[home] = "Home";
 $string[htmlformat] = "Pretty HTML format";
 $string[icqnumber] = "ICQ number";
@@ -127,9 +134,14 @@ Cheers from the '\$a->sitename' administrator,
 \$a->signoff\n";
 
 $string[newpicture] = "New picture";
+$string[newsitem] = "news item";
+$string[newsitems] = "news items";
+$string[newsitemsnumber] = "News items to show";
 $string[nosuchemail] = "No such email address";
 $string[notenrolled] = "\$a is not enrolled in this course.";
+$string[numberweeks] = "Number of weeks/topics";
 $string[ok] = "OK";
+$string[opentoguests] = "Open to guests?";
 $string[optional] = "optional";
 $string[participants] = "Participants";
 $string[password] = "Password";
@@ -147,11 +159,14 @@ $string[returningtosite] = "Returning to this web site?";
 $string[selectacountry] = "Select a country";
 $string[senddetails] = "Send my details via email";
 $string[serverlocaltime] = "Server's local time";
+$string[shortname] = "Short name";
 $string[sitelogs] = "Site logs";
 $string[sitenews] = "Site news";
 $string[sitesettings] = "Site settings";
 $string[someallowguest] = "Some courses may allow guest access";
+$string[startdate] = "Course start date";
 $string[startsignup] = "Start now by creating a new account!";
+$string[summary] = "Summary";
 $string[supplyinfo] = "Please supply some information about yourself";
 $string[teacheronly] = "for the \$a only";
 $string[textformat] = "Plain text format";
@@ -162,11 +177,23 @@ $string[unenrol] = "Unenrol";
 $string[unenrolme] = "Unenrol me from \$a";
 $string[update] = "Update";
 $string[updatemyprofile] = "Update my profile";
+$string[updatethiscourse] = "Update this course";
 $string[userdescription] = "Description";
 $string[username] = "Username";
 $string[usernameexists] = "This username already exists, choose another";
 $string[userprofilefor] = "User profile for \$a";
 $string[webpage] = "Web page";
+$string[welcometocourse] = "Welcome to \$a";
+$string[welcometocoursetext] = "Welcome to \$a!
+
+One of the first things you should do is edit your profile page
+within the course so that we can learn more about you:
+
+  \$b";
+$string[wordforteacher] = "Your word for Teacher";
+$string[wordforteachereg] = "eg Teacher, Tutor, Facilitator etc";
+$string[wordforstudent] = "Your word for Student";
+$string[wordforstudenteg] = "eg Student, Participant etc";
 $string[wrongpassword] = "Incorrect password for this username";
 
 ?>

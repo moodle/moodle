@@ -13,7 +13,7 @@
 				    print_header(get_string("alreadyconfirmed"), get_string("alreadyconfirmed"), "", "");
 				    echo "<CENTER><H3>".get_string("thanks").", ". $USER->firstname ." ". $USER->lastname . "</H3>\n";
         		    echo "<H4>".get_string("alreadyconfirmed")."</H4>\n";
-        		    echo "<H3><A HREF=\"$CFG->wwwroot/course/\">".get_string("courses")."</A></H3>\n";
+        		    echo "<H3> -> <A HREF=\"$CFG->wwwroot/course/\">".get_string("courses")."</A></H3>\n";
 				    print_footer();
                     exit;
                 }
@@ -42,7 +42,7 @@
 				print_header(get_string("confirmed"), get_string("confirmed"), "", "");
 				echo "<CENTER><H3>".get_string("thanks").", ". $USER->firstname ." ". $USER->lastname . "</H3>\n";
         		echo "<H4>".get_string("confirmed")."</H4>\n";
-        		echo "<H3><A HREF=\"$CFG->wwwroot/course/\">".get_string("courses")."</A></H3>\n";
+        		echo "<H3> -> <A HREF=\"$CFG->wwwroot/course/\">".get_string("courses")."</A></H3>\n";
 				print_footer();
 
 			} else {
