@@ -65,7 +65,7 @@
 	    //
     	    unlink ($tempdir."/".basename($form->reference));
     	    if ($form->mode == "update") {
-	    	$fp = fopen($basedir."/".$form->reference,"r");
+	    	$fp = fopen($coursedir."/".$form->reference,"r");
 		$fstat = fstat($fp);
 		fclose($fp);
 		if (get_field("scorm","timemodified","id",$form->instance) < $fstat["mtime"])
