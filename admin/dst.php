@@ -43,7 +43,11 @@
                 // First delete the preset
                 delete_records('dst_preset', 'id', $presetid);
                 // And then disable DST for all users who had selected that preset
-                execute_sql('UPDATE '.$CFG->prefix.'user_preferences SET value = 0 WHERE name = \'calendar_dstpreset\' AND value = '.$presetid, false);
+                execute_sql('UPDATE '.$CFG->prefix.'user SET dstpreset = 0 WHERE dstpreset = '.$presetid, false);
+                // If it's forced for everyone, release them...
+                if($CFG->calendar_dstforusers == $presetid) {
+                    set_config('calendar_dstforusers', 0);
+                }
             }
         break;
     }

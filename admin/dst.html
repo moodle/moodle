@@ -42,8 +42,10 @@
 <!--
     var DSTPresetInfo = new Array();
     <?php
-        foreach($presetdescriptions as $id => $desc) {
-            echo 'DSTPresetInfo['.$id.'] = "'.$desc.'";';
+        if(!empty($presetdescriptions)) {
+            foreach($presetdescriptions as $id => $desc) {
+                echo 'DSTPresetInfo['.$id.'] = "'.$desc.'";';
+            }
         }
     ?>
 
