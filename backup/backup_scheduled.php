@@ -307,6 +307,9 @@ function schedule_backup_course_configure($course,$starttime = 0) {
         if (!isset($backup_config->backup_sche_withuserdata)) {
             $backup_config->backup_sche_withuserdata = 1;
         }
+        if (!isset($backup_config->backup_sche_metacourse)) {
+            $backup_config->backup_sche_metacourse = 1;
+        }
         if (!isset($backup_config->backup_sche_users)) {
             $backup_config->backup_sche_users = 1;
         }
@@ -381,6 +384,7 @@ function schedule_backup_course_configure($course,$starttime = 0) {
     
     //Convert other parameters
     if ($status) {
+        $preferences->backup_metacourse = $backup_config->backup_sche_metacourse;
         $preferences->backup_users = $backup_config->backup_sche_users;
         $preferences->backup_logs = $backup_config->backup_sche_logs;
         $preferences->backup_user_files = $backup_config->backup_sche_userfiles;
@@ -556,6 +560,12 @@ function schedule_backup_course_execute($preferences,$starttime = 0) {
         //Prints course start (tag and general info)
         if ($status) {
             $status = backup_course_start($backup_file,$preferences);
+        }
+
+        //Metacourse information
+        if ($status && $preferences->backup_metacourse) {
+            schedule_backup_log($starttime,$preferences->backup_course,"      metacourse info");
+            $status = backup_course_metacourse($backup_file,$preferences);
         }
 
         //Block info

@@ -495,6 +495,12 @@
             //Print the end
             fwrite ($bf,end_tag("MOD",3,true));
         }
+        //The metacourse in backup
+        if ($preferences->backup_metacourse == 1) {
+            fwrite ($bf,full_tag("METACOURSE",3,false,"true"));
+        } else {
+            fwrite ($bf,full_tag("METACOURSE",3,false,"false"));
+        }
         //The user in backup
         if ($preferences->backup_users == 1) {
             fwrite ($bf,full_tag("USERS",3,false,"course"));
@@ -586,7 +592,14 @@
             fwrite ($bf,full_tag("VISIBLE",3,false,$course->visible));
             fwrite ($bf,full_tag("HIDDENSECTIONS",3,false,$course->hiddensections));
             fwrite ($bf,full_tag("TIMECREATED",3,false,$course->timecreated));
-            $status = fwrite ($bf,full_tag("TIMEMODIFIED",3,false,$course->timemodified));
+            fwrite ($bf,full_tag("TIMEMODIFIED",3,false,$course->timemodified));
+            //If not selected, force metacourse to 0
+            if (!$preferences->backup_metacourse) {
+                $status = fwrite ($bf,full_tag("METACOURSE",3,false,'0'));
+            //else, export the field as is in DB
+            } else {
+                $status = fwrite ($bf,full_tag("METACOURSE",3,false,$course->metacourse));
+            }
             //Print header end
             fwrite ($bf,end_tag("HEADER",2,true));
         } else { 
@@ -606,7 +619,66 @@
 
     }
 
-    //Prints course's sections info (table block_instance)
+    //Prints course's metacourse info (table course_meta)
+    function backup_course_metacourse ($bf,$preferences) {
+
+        global $CFG;
+
+        $status = true;
+
+        //Get info from meta
+        $parents = get_records_sql ("SELECT m.*, c.idnumber, c.shortname
+                                     FROM {$CFG->prefix}course_meta m,
+                                          {$CFG->prefix}course c
+                                          WHERE m.child_course = '$preferences->backup_course' AND
+                                                m.parent_course = c.id");
+        $childs =  get_records_sql ("SELECT m.*, c.idnumber, c.shortname
+                                     FROM {$CFG->prefix}course_meta m,
+                                          {$CFG->prefix}course c
+                                          WHERE m.parent_course = '$preferences->backup_course' AND
+                                                m.child_course = c.id");
+
+        if ($parents || $childs) {
+            //metacourse open tag
+            fwrite ($bf,start_tag("METACOURSE",2,true));
+            if ($parents) {
+                fwrite($bf, start_tag("PARENTS",3,true));
+                //Iterate over every parent    
+                foreach ($parents as $parent) {
+                    //Begin parent
+                    fwrite ($bf,start_tag("PARENT",4,true));
+                    fwrite ($bf,full_tag("ID",5,false,$parent->parent_course));
+                    fwrite ($bf,full_tag("IDNUMBER",5,false,$parent->idnumber));
+                    fwrite ($bf,full_tag("SHORTNAME",5,false,$parent->shortname));
+                    //End parent
+                    fwrite ($bf,end_tag("PARENT",4,true));
+                }
+                fwrite ($bf,end_tag("PARENTS",3,true));
+            }
+            if ($childs) {
+                fwrite($bf, start_tag("CHILDS",3,true));
+                //Iterate over every child    
+                foreach ($childs as $child) {
+                    //Begin parent
+                    fwrite ($bf,start_tag("CHILD",4,true));
+                    fwrite ($bf,full_tag("ID",5,false,$child->child_course));
+                    fwrite ($bf,full_tag("IDNUMBER",5,false,$child->idnumber));
+                    fwrite ($bf,full_tag("SHORTNAME",5,false,$child->shortname));
+                    //End parent
+                    fwrite ($bf,end_tag("CHILD",4,true));
+                }
+                fwrite ($bf,end_tag("CHILDS",3,true));
+            }
+            //metacourse close tag
+            $status = fwrite ($bf,end_tag("METACOURSE",3,true));
+        }
+
+        return $status;
+
+    }
+
+
+    //Prints course's blocks info (table block_instance)
     function backup_course_blocks ($bf,$preferences) {
 
         global $CFG;

@@ -20,6 +20,9 @@
     if (!isset($backup_config->backup_sche_withuserdata)) {
         $backup_config->backup_sche_withuserdata = 1;
     }
+    if (!isset($backup_config->backup_sche_metacourse)) {
+        $backup_config->backup_sche_metacourse = 1;
+    }
     if (!isset($backup_config->backup_sche_users)) {
         $backup_config->backup_sche_users = 1;
     }
@@ -96,6 +99,15 @@
     </td>
     <td>
     <?php print_string("backupincludemoduleshelp") ?>
+    </td>
+</tr>
+<tr valign="top">
+    <td align="right"><p><?php print_string("metacourse") ?>:</td>
+    <td>
+    <?php choose_from_menu($yesno_array, "backup_sche_metacourse", $backup_config->backup_sche_metacourse, "") ?>
+    </td>
+    <td>
+    <?php print_string("backupmetacoursehelp") ?>  
     </td>
 </tr>
 <tr valign="top">

@@ -66,6 +66,11 @@
     }
 
     //Check other parameters
+    if (!isset($backup_metacourse)) {
+        $backup_metacourse = 1;
+    }
+    $preferences->backup_metacourse = $backup_metacourse;
+   
     if (!isset($backup_users)) {
         $backup_users = 1;
     }
@@ -173,6 +178,13 @@
         if ($status) {
             if (!$status = backup_course_start($backup_file,$preferences)) {
                 notify("An error occurred while backing up course start");
+            }
+        }
+        //Metacourse information
+        if ($status && $preferences->backup_metacourse) {
+            echo "<li>".get_string("metacourse");
+            if (!$status = backup_course_metacourse($backup_file,$preferences)) {
+                notify("An error occurred while backing up metacourse info");
             }
         }
         echo "<li>".get_string("blocks");

@@ -36,10 +36,10 @@ Now I show the specific detailed status of every item in the process:
           mimic it.
 22. TODO: Review the wiki module fully (if possible, try to make binary
           uploaded contents to work).
-23. TODO: Add support for metacourses in backup and restore. Show a new option
+23. PROG: Add support for metacourses in backup and restore. Show a new option
           to decide what to do (ignore, process).
 24. DONE: Take out THEME from backup directory.
 25. TODO: Add support for forum_read table in backup and restore.
-26. TODO: chat_users->course and chat_users->lang.
+26. DONE: chat_users->course and chat_users->lang. No changes required!
 Eloy (stronk7)
 23-01-2004
