@@ -1056,13 +1056,8 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
     $output .= "a.autolink:hover {text-decoration: underline; color: red}\n";
     $output .= "--> </style>\n\n";
 
-    if ($post->parent) {
-        $output .= '<table border="0" cellpadding="1" cellspacing="1"><tr><td bgcolor="#888888">';
-        $output .= '<table border="0" cellpadding="3" cellspacing="0">';
-    } else {
-        $output .= '<table border="0" cellpadding="1" cellspacing="1" width="100%"><tr><td bgcolor="#888888">';
-        $output .= '<table border="0" cellpadding="3" cellspacing="0" width="100%">';
-    }
+    $output .= '<table border="0" cellpadding="1" cellspacing="1"><tr><td bgcolor="'.$THEME->borders.'">';
+    $output .= '<table border="0" cellpadding="3" cellspacing="0">';
 
     $output .= "<tr><td bgcolor=\"$THEME->cellcontent2\" width=\"35\" valign=\"top\">";
     $output .= print_user_picture($user->id, $course->id, $user->picture, false, true);
