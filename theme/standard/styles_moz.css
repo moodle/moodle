@@ -1,3 +1,46 @@
+/*******************************************************************
+styles_moz.css
+    
+This CSS file contains all mozilla specific definitions.
+
+Styles are organised into the following sections:
+    core
+    header
+    footer
+
+    admin
+    blocks
+    calendar
+    course
+    doc
+    login
+    message
+    tabs
+    user
+
+    modules
+        assignment
+        chat
+        choice
+        forum
+        glossary
+        journal
+        label
+        lesson
+        quiz
+        resource
+        scorm
+        survey
+        wiki
+        workshop
+
+*******************************************************************/
+
+
+
+/*******************************************************************
+*** Core
+*******************************************************************/
 
 .headingblock {
     -moz-border-radius:3px;
@@ -10,16 +53,6 @@
 .notifysuccess {
     -moz-border-radius:10px;
 }
-
-.sideblock {
-    -moz-border-radius-bottomleft:20px;
-    -moz-border-radius-bottomright:20px;
-}
-
-.sideblock.hidden {
-    -moz-border-radius: 0px;
-}
-
 .generalbox {
     -moz-border-radius-topleft:3px;
     -moz-border-radius-topright:3px;
@@ -51,18 +84,27 @@
     -moz-border-radius-bottomleft:15px;
     -moz-border-radius-bottomright:15px;
 }
-
-.userinfobox {
-    -moz-border-radius-bottomleft:20px;
-    -moz-border-radius-bottomright:20px;
+.sitetopic {
+    -moz-border-radius:15px;
 }
 
-.groupinfobox {
-    -moz-border-radius-bottomleft:20px;
-    -moz-border-radius-bottomright:20px;
+.sitetopiccontent {
+    -moz-border-radius:15px;
+}
+
+.headingblock {
+    -moz-border-radius:3px;
+}
+
+.categoryboxcontent, .courseboxcontent {
+    -moz-border-radius:20px;
 }
 
 
+
+
+/* kept for backward compatibility with some non-standard modules
+   which use these classes for various things */
 .generaltab, .generaltabinactive{
     -moz-border-radius-topleft:15px;
     -moz-border-radius-topright:15px;
@@ -72,37 +114,52 @@
     -moz-border-radius-topleft:15px;
     -moz-border-radius-topright:15px;
 }
-.categoryheader {
-    -moz-border-radius-topleft:15px;
-    -moz-border-radius-topright:15px;
-}
-.glossaryformatheader {
-    -moz-border-radius-topleft:15px;
-    -moz-border-radius-topright:15px;
+
+
+/*******************************************************************
+*** Header
+*******************************************************************/
+
+/*******************************************************************
+*** Footer
+*******************************************************************/
+
+/*******************************************************************
+*** Admin
+*******************************************************************/
+
+/*******************************************************************
+*** Blocks
+*******************************************************************/
+.sideblock {
+    -moz-border-radius-bottomleft:20px;
+    -moz-border-radius-bottomright:20px;
 }
 
-.entryboxheader {
-    -moz-border-radius-topleft:10px;
-    -moz-border-radius-topright:10px;
+.sideblock.hidden {
+    -moz-border-radius: 0px;
 }
 
-.entrybox {
-    -moz-border-radius-bottomleft:10px;
-    -moz-border-radius-bottomright:10px;
+.sideblock {
+    -moz-border-radius-bottomleft:20px;
+    -moz-border-radius-bottomright:20px;
 }
 
-.glossarypost {
-    -moz-border-radius-bottomleft:15px;
-    -moz-border-radius-bottomright:15px;
+.sideblock .content {
+    -moz-border-radius-bottomleft:20px;
+    -moz-border-radius-bottomright:20px;
 }
 
-.glossarypost .side {
-    -moz-border-radius-bottomleft:15px;
-}
-.encyclopedia .entrylowersection {
-    -moz-border-radius-bottomright:15px;
+
+.block_course_summary, .block_course_summary .content {
+    -moz-border-radius:20px;
 }
 
+
+
+/*******************************************************************
+*** Calendar
+*******************************************************************/
 
 #calendar .eventlist .event {
     -moz-border-radius-bottomleft:15px;
@@ -139,32 +196,72 @@ table.minicalendar td {
     -moz-border-radius:4px;
 }
 
-.block_course_summary, .block_course_summary .content {
+/*******************************************************************
+*** Course
+*******************************************************************/
+body#course-user .section {
     -moz-border-radius:20px;
 }
 
-.sitetopic {
-    -moz-border-radius:15px;
-}
 
-.sitetopiccontent {
-    -moz-border-radius:15px;
-}
+/*******************************************************************
+*** Doc
+*******************************************************************/
 
-.headingblock {
-    -moz-border-radius:3px;
-}
-
-.sideblock {
+/*******************************************************************
+*** Login
+*******************************************************************/
+.loginbox {
     -moz-border-radius-bottomleft:20px;
     -moz-border-radius-bottomright:20px;
 }
 
-.sideblock .content {
+.loginbox .content.left {
+    -moz-border-radius-bottomleft:20px;
+}
+.loginbox .content.right {
+    -moz-border-radius-bottomright:20px;
+}
+
+/*******************************************************************
+*** Message
+*******************************************************************/
+
+/*******************************************************************
+*** Tabs
+*******************************************************************/
+
+/*******************************************************************
+*** User
+*******************************************************************/
+.userinfobox {
     -moz-border-radius-bottomleft:20px;
     -moz-border-radius-bottomright:20px;
 }
 
+.groupinfobox {
+    -moz-border-radius-bottomleft:20px;
+    -moz-border-radius-bottomright:20px;
+}
+#user-view .left {
+    -moz-border-radius-bottomleft:20px;
+}
+
+/*******************************************************************
+*** Modules: Assignment
+*******************************************************************/
+
+/*******************************************************************
+*** Modules: Chat
+*******************************************************************/
+
+/*******************************************************************
+*** Modules: Choice
+*******************************************************************/
+
+/*******************************************************************
+*** Modules: Forum
+*******************************************************************/
 .forumpost {
     -moz-border-radius-bottomleft:20px;
     -moz-border-radius-bottomright:20px;
@@ -178,18 +275,46 @@ table.minicalendar td {
     -moz-border-radius-bottomright:20px;
 }
 
-#user-view .left {
-    -moz-border-radius-bottomleft:20px;
-}
-
-.categoryboxcontent, .courseboxcontent {
-    -moz-border-radius:20px;
-}
-
 .forumpostmessage {
     -moz-border-radius-bottomright:20px;
 }
 
+
+/*******************************************************************
+*** Modules: Glossary
+*******************************************************************/
+.categoryheader {
+    -moz-border-radius-topleft:15px;
+    -moz-border-radius-topright:15px;
+}
+
+.glossaryformatheader {
+    -moz-border-radius-topleft:15px;
+    -moz-border-radius-topright:15px;
+}
+
+.entryboxheader {
+    -moz-border-radius-topleft:10px;
+    -moz-border-radius-topright:10px;
+}
+
+.entrybox {
+    -moz-border-radius-bottomleft:10px;
+    -moz-border-radius-bottomright:10px;
+}
+
+.glossarypost {
+    -moz-border-radius-bottomleft:15px;
+    -moz-border-radius-bottomright:15px;
+}
+
+.glossarypost .side {
+    -moz-border-radius-bottomleft:15px;
+}
+
+.encyclopedia .entrylowersection {
+    -moz-border-radius-bottomright:15px;
+}
 .glossarycomment {
     -moz-border-radius-bottomleft:20px;
     -moz-border-radius-bottomright:20px;
@@ -203,18 +328,41 @@ table.minicalendar td {
     -moz-border-radius-bottomright:20px;
 }
 
-.loginbox {
-    -moz-border-radius-bottomleft:20px;
-    -moz-border-radius-bottomright:20px;
-}
 
-.loginbox .content.left {
-    -moz-border-radius-bottomleft:20px;
-}
-.loginbox .content.right {
-    -moz-border-radius-bottomright:20px;
-}
 
-body#course-user .section {
-    -moz-border-radius:20px;
-}
+/*******************************************************************
+*** Modules: Journal
+*******************************************************************/
+
+/*******************************************************************
+*** Modules: Label
+*******************************************************************/
+
+/*******************************************************************
+*** Modules: Lesson
+*******************************************************************/
+
+/*******************************************************************
+*** Modules: Quiz
+*******************************************************************/
+
+/*******************************************************************
+*** Modules: Resource
+*******************************************************************/
+
+/*******************************************************************
+*** Modules: Scorm
+*******************************************************************/
+
+/*******************************************************************
+*** Modules: Survey
+*******************************************************************/
+
+/*******************************************************************
+*** Modules: Wiki
+*******************************************************************/
+
+/*******************************************************************
+*** Modules: Workshop
+*******************************************************************/
+

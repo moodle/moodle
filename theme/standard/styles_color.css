@@ -165,7 +165,6 @@ table.formtable tbody th {
    which use these classes for various things */
 .generaltab, .generaltabinactive {
     background-color:#BBBBBB;
-    
 }
 .generaltabselected {
     background-color:#DDDDDD;
