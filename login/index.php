@@ -52,20 +52,20 @@
 
             set_moodle_cookie($USER->username);
 
+            unset($SESSION->lang);
+            save_session("SESSION");
+
             if (user_not_fully_set_up($USER)) {
                 $site = get_site();
                 session_write_close();
                 header("Location: $CFG->wwwroot/user/edit.php?id=$USER->id&course=$site->id");
 
             } else if (empty($SESSION->wantsurl)) {
-                unset($SESSION->lang);
-                save_session("SESSION");
                 session_write_close();
                 header("Location: $CFG->wwwroot");
 
             } else {
                 $wantsurl = $SESSION->wantsurl;
-                unset($SESSION->lang);
                 unset($SESSION->wantsurl);
                 save_session("SESSION");
                 session_write_close();
