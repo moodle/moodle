@@ -2336,14 +2336,16 @@ function print_table($table) {
             if (!isset($align[$key])) {
                 $align[$key] = '';
             }
-            echo '<th valign="top" '. $align[$key].$size[$key] .' nowrap="nowrap" class="generaltableheader">'. $heading .'</th>';
+            echo '<th valign="top" '. $align[$key].$size[$key] .' nowrap="nowrap" class="generaltableheader c'.$key.'">'. $heading .'</th>';
         }
         echo '</tr>'."\n";
     }
 
     if (!empty($table->data)) {
-        foreach ($table->data as $row) {
-            echo '<tr valign="top">';
+        $oddeven = 1;
+        foreach ($table->data as $key => $row) {
+            $oddeven = $oddeven ? 0 : 1;
+            echo '<tr class="r'.$oddeven.'">'."\n";
             if ($row == 'hr' and $countcols) {
                 echo '<td colspan="'. $countcols .'"><div class="tabledivider"></div></td>';
             } else {  /// it's a normal row of data
@@ -2357,7 +2359,7 @@ function print_table($table) {
                     if (!isset($wrap[$key])) {
                         $wrap[$key] = '';
                     }
-                    echo '<td '. $align[$key].$size[$key].$wrap[$key] .' class="generaltablecell">'. $item .'</td>';
+                    echo '<td '. $align[$key].$size[$key].$wrap[$key] .' class="generaltablecell c'.$key.'">'. $item .'</td>';
                 }
             }
             echo '</tr>'."\n";
