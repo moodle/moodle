@@ -56,7 +56,7 @@
             $newid = insert_record ("choice",$choice);
 
             //Do some output     
-            echo "<ul><li>Choice \"".$choice->name."\"<br>";
+            echo "<ul><li>".get_string("modulename","choice")." \"".$choice->name."\"<br>";
             backup_flush(300);
 
             if ($newid) {

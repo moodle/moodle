@@ -50,7 +50,7 @@
             $newid = insert_record ("journal",$journal);
 
             //Do some output
-            echo "<ul><li>Journal \"".$journal->name."\"<br>";
+            echo "<ul><li>".get_string("modulename","journal")." \"".$journal->name."\"<br>";
             backup_flush(300);
 
             if ($newid) {

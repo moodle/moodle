@@ -53,7 +53,7 @@
             $newid = insert_record ("survey",$survey);
 
             //Do some output
-            echo "<ul><li>Survey \"".$survey->name."\"<br>";
+            echo "<ul><li>".get_string("modulename","survey")." \"".$survey->name."\"<br>";
             backup_flush(300);
 
             if ($newid) {

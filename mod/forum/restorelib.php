@@ -61,7 +61,7 @@
             $newid = insert_record ("forum",$forum);
 
             //Do some output
-            echo "<ul><li>Forum \"".$forum->name."\"<br>";
+            echo "<ul><li>".get_string("modulename","forum")." \"".$forum->name."\"<br>";
             backup_flush(300);
 
             if ($newid) {

@@ -54,7 +54,7 @@
             $newid = insert_record ("assignment",$assignment);
 
             //Do some output     
-            echo "<ul><li>Assignment \"".$assignment->name."\"<br>";
+            echo "<ul><li>".get_string("modulename","assignment")." \"".$assignment->name."\"<br>";
             backup_flush(300);
 
             if ($newid) {

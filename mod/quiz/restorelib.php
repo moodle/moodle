@@ -685,7 +685,7 @@
             $newid = insert_record ("quiz",$quiz);
 
             //Do some output
-            echo "<ul><li>Quiz \"".$quiz->name."\"<br>";
+            echo "<ul><li>".get_string("modulename","quiz")." \"".$quiz->name."\"<br>";
             backup_flush(300);
 
             if ($newid) {

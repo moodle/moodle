@@ -46,7 +46,7 @@
             $newid = insert_record ("resource",$resource);
 
             //Do some output     
-            echo "<ul><li>Resource \"".$resource->name."\"<br>";
+            echo "<ul><li>".get_string("modulename","resource")." \"".$resource->name."\"<br>";
             backup_flush(300);
 
             if ($newid) {
