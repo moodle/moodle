@@ -1,4 +1,4 @@
-Ad<?PHP //$Id$
+<?PHP //$Id$
 
 class CourseBlock_course_list extends MoodleBlock {
     function CourseBlock_course_list ($course) {
