@@ -52,6 +52,7 @@
 
     if ($site and empty($form)) {
         $form = $site;
+        $course = $site;
         $firsttime = false;
     } else {
         $form->fullname = "";
