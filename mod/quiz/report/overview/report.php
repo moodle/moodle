@@ -6,7 +6,7 @@ class quiz_report extends quiz_default_report {
 
     function display($quiz, $cm, $course) {     /// This function just displays the report
 
-        global $CFG;
+        global $CFG, $QUIZ_GRADE_METHOD;
 
         if (!$grades = quiz_get_grade_records($quiz)) {
             return;
@@ -14,7 +14,7 @@ class quiz_report extends quiz_default_report {
 
         $strname  = get_string("name");
         $strattempts  = get_string("attempts", "quiz");
-        $strbestgrade  = get_string("bestgrade", "quiz");
+        $strbestgrade  = $QUIZ_GRADE_METHOD[$quiz->grademethod];
 
         $table->head = array("&nbsp;", $strname, $strattempts, "$strbestgrade /$quiz->grade");
         $table->align = array("center", "left", "left", "center");
