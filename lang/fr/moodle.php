@@ -357,6 +357,7 @@ $string['enrolmentnew'] = 'Nouvelle inscription dans $a';
 $string['enrolmentnointernal'] = 'L\'inscription manuelle n\'est actuellement pas activée';
 $string['entercourse'] = 'Cliquer pour entrer dans le cours';
 $string['enteremailaddress'] = 'Entrez votre adresse de courriel afin qu\'un nouveau mot de passe vous soit envoyé par courriel';
+$string['entries'] = 'Article';
 $string['error'] = 'Erreur';
 $string['errortoomanylogins'] = 'Désolé, le nombre maximum de tentatives a été atteint. Veuillez redémarrer votre navigateur Web.';
 $string['errorwhenconfirming'] = 'Votre inscription n\'a pas pu être confirmée en raison d\'une erreur. Si vous avez cliqué sur un lien dans un courriel pour parvenir à cette page, assurez-vous que la ligne de ce message n\'a pas été coupée. Il vous sera peut-être nécessaire de couper et coller pour reconstruire correctement le lien.';
