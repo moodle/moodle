@@ -1,7 +1,8 @@
 <?PHP // $Id$ 
-      // error.php - created with Moodle 1.4 (2004083100)
+      // error.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004100800)
 
 
+$string['confirmsesskeybad'] = 'Je mi líto, ale klíèi va¹eho sezení (session) nebylo povoleno vykonat tuto akci. Toto bezpeènostní opatøení zabraòuje nahodilému nebo zákeønému spoustìní dùle¾itých funkcí pod va¹ím jménem. Prosím, ujistìte se, ¾e opravdu chcete spustit tuto funkci. ';
 $string['coursegroupunknown'] = 'Nebyl urèen kurz odpovídající skupinì $a';
 $string['erroronline'] = 'Chyba na øádku $a';
 $string['fieldrequired'] = '$a je povinné pole';

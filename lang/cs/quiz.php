@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.4 (2004083100)
+      // quiz.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004100800)
 
 
 $string['acceptederror'] = 'Pøijatelná chyba';
@@ -49,6 +49,7 @@ $string['close'] = 'Zavøít náhled';
 $string['confirmstartattempt'] = 'Tento test má èasový limit. Jste si jistí, ¾e chcete teï zaèít?';
 $string['correctanswer'] = 'Správná odpovìï';
 $string['correctanswerformula'] = 'Vzorec správné odpovìdi';
+$string['correctanswerlength'] = 'Významné údaje';
 $string['correctanswers'] = 'Správné odpovìdi';
 $string['corrresp'] = 'Správná odezva';
 $string['countdown'] = 'Odpoèítávání';

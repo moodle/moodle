@@ -1,12 +1,15 @@
 <?PHP // $Id$ 
-      // lesson.php - created with Moodle 1.4 (2004083100)
+      // lesson.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004100800)
 
 
 $string['actionaftercorrectanswer'] = 'Akce po správné odpovìdi';
 $string['addabranchtable'] = 'Pøidat rozcestník';
 $string['addanendofbranch'] = 'Pøidat konec vìtve';
 $string['addaquestionpage'] = 'Pøidat stránku s otázkou';
+$string['addcluster'] = 'Pøidat seskupení';
+$string['addendofcluster'] = 'Pøidat konec seskupení';
 $string['answer'] = 'Odpovìï';
+$string['answeredcorrectly'] = 'zodpovìzeno správnì.';
 $string['answersfornumerical'] = 'Odpovìdi na numerické otázky by mìl tvoøit pár nejmen¹í a nejvìt¹í mo¾né hodnoty';
 $string['attempt'] = 'Pokus: $a';
 $string['attempts'] = 'Pokusù';
@@ -47,7 +50,6 @@ $string['multipleanswer'] = 'Vícenásobná odpovìï';
 $string['nextpage'] = 'Dal¹í stránka';
 $string['noanswer'] = 'Nebyla dána ¾ádná odpovìï';
 $string['noattemptrecordsfound'] = 'Nenalezeny ¾ádné záznamy o pokusech: nebodováno';
-$string['nobranchtablefound'] = 'Nenalezen ¾ádný rozcestník';
 $string['normal'] = 'Normální - následuj plán pøedná¹ky';
 $string['notdefined'] = 'Není definováno';
 $string['notitle'] = 'Bez názvu';

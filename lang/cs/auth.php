@@ -1,7 +1,9 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.4 (2004083100)
+      // auth.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004100800)
 
 
+$string['auth_common_settings'] = 'Spoleèné nastavení';
+$string['auth_data_mapping'] = 'Mapování dat';
 $string['auth_dbdescription'] = 'Tato metoda pou¾ívá tabulku v externí databázi ke kontrole, zda zadané u¾ivatelské jméno a heslo je platné.  Pøi vytváøení nového úètu mohou být informace z dal¹ích polí zkopírovány do databáze Moodle.';
 $string['auth_dbextrafields'] = 'Tato pole jsou volitelná. Mù¾ete si zvolit pøednastavení nìkterých informací o u¾ivateli na základì hodnot v <B>polích externí databáze</B>, která urèíte zde.<P>Necháte-li tato pole prázdná, budou pou¾ity implicitní hodnoty.<P>Tak jako tak si u¾ivatel po pøihlá¹ení mù¾e tato pole mìnit.';
 $string['auth_dbfieldpass'] = 'Název pole, které obsahuje hesla';
@@ -14,6 +16,8 @@ $string['auth_dbtable'] = 'Název tabulky v databázi';
 $string['auth_dbtitle'] = 'Pou¾ití externí databáze';
 $string['auth_dbtype'] = 'Typ databáze (Viz <A HREF=../lib/adodb/readme.htm#drivers>ADOdb dokumentaci</A>)';
 $string['auth_dbuser'] = 'U¾ivatelské jméno s právy èíst externí databázi';
+$string['auth_editlock'] = 'Uzamknout hodnotu';
+$string['auth_editlock_expl'] = '<p><b>Uzamknout hodnotu:</b> Je-li povoleno, zabrání u¾ivatelùm i správcùm mìnit toto pole pøímo. Pou¾ijte tuto volbu, pokud udr¾ujete data v externím systému.</p>';
 $string['auth_emaildescription'] = 'Potvrzení emailem je pøednastavená metoda ovìøování. Pøi registraci si u¾ivatel vybere vlastní u¾ivatelské jméno a heslo. Poté je na jeho adresu odeslán email obsahující zabezpeèený odkaz na stránku, kde potvrdí zadané údaje. Pøi dal¹ím pøihlá¹ení se ji¾ ovìøuje pouze zadané u¾ivatelské jméno a heslo proti hodnotì ulo¾ené v databázi Moodle.';
 $string['auth_emailtitle'] = 'Ovìøení na základì emailu';
 $string['auth_fccreators'] = 'Seznam skupin, jejich¾ èlenové jsou oprávnìni vytváøet nové kurzy. Skupiny oddìlujte støedníkem. Názvy musí být zadány pøesnì jako na FirstClass serveru a zále¾í na malých/VELKÝCH písmenech.';
@@ -30,6 +34,7 @@ $string['auth_imaptitle'] = 'Pou¾ití IMAP serveru';
 $string['auth_imaptype'] = 'Typ IMAP serveru.  IMAP servery mohou mít rùzné typy ovìøování a vyjednávání (IMAP authentication and negotiation).';
 $string['auth_ldap_bind_dn'] = 'Chcete-li pou¾ívat metodu bind-user k vyhledání u¾ivatelù, specifikujte ji zde. Pøíklad: \'cn=ldapuser,ou=public,o=org\'';
 $string['auth_ldap_bind_pw'] = 'Heslo pro bind-user';
+$string['auth_ldap_bind_settings'] = 'Nastavení bind';
 $string['auth_ldap_contexts'] = 'Seznam kontextù, ve kterých se nacházejí u¾ivatelé. Jednotlivé kontexty oddìlujte støedníkem. Pøíklad: \'ou=uzivatele,o=naseskola; ou=dalsi,o=naseskola\'';
 $string['auth_ldap_create_context'] = 'Povolíte-li vytváøení u¾ivatelù (po ovìøení emailem), urèete kontext, ve kterém budou noví u¾ivatelé vytváøeni. Tento kontext by mìl být z bezpeènostních dùvodù odli¹ný od kontextu ostatních u¾ivatelù. Není tøeba pøidávat tento kontext do promìnné auth_ldap_contexts, Moodle automaticky hledá u¾ivatele i v tomto kontextu.';
 $string['auth_ldap_creators'] = 'Seznam skupin, jejich¾ èlenové jsou oprávnìni vytváøet nové kurzy. Jednotlivé skupiny oddìlujte støedníkem. Pøíklad: \'cn=ucitele,ou=zamestnanci,o=naseskola\'';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // install.php - created with Moodle 1.4 (2004083100)
+      // install.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004100800)
 
 
 $string['admindirerror'] = 'Adresáø správy (admin) není urèen správnì';
@@ -85,6 +85,7 @@ na hodnotu blízkou 16M. Nemáte-li taková práva, po¾ádejte va¹eho správce webovéh
 <p><blockquote>php_value memory_limit 16M</blockquote></p>
 <p>Bohu¾el, na nìkterých serverech tímto vyøadíte z provozu <b>v¹echny</b> PHP stránky (pøi jejich prohlí¾ení uvidíte chybové zprávy), tak¾e budete muset soubor .htaccess odstranit.
 </ol>';
+$string['mysqlextensionisnotpresentinphp'] = 'PHP nebylo korektnì nakonfigurováno pro komunikaci v MySQL. Zkontrolujte vá¹ php.ini nebo pøekompilujte PHP.';
 $string['pass'] = 'Pro¹lo';
 $string['phpversion'] = 'Verze PHP';
 $string['phpversionerror'] = 'Verze PHP musí být alespoò 4.1.0 nebo vy¹¹í';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // dialogue.php - created with Moodle 1.2 Beta (2004022400)
+      // dialogue.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004100800)
 
 
 $string['addmynewentries'] = 'Pøidat mé nové pøíspìvky';
@@ -28,6 +28,7 @@ $string['everybody'] = 'Mezi kýmkoliv';
 $string['furtherinformation'] = 'Dal¹í informace';
 $string['lastentry'] = 'Poslední pøíspìvek';
 $string['maildefault'] = 'Implicitnì zasílat emailem';
+$string['mailnotification'] = 'Upozornìní emailem';
 $string['modulename'] = 'Rozhovor';
 $string['modulenameplural'] = 'Rozhovory';
 $string['namehascloseddialogue'] = '$a rozhovor uzavøel';

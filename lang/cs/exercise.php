@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // exercise.php - created with Moodle 1.4 (2004083100)
+      // exercise.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004100800)
 
 
 $string['absent'] = 'Chybí';
@@ -53,6 +53,7 @@ $string['edit'] = 'Upravit';
 $string['editingassessmentelements'] = 'Úprava polo¾ek hodnocení';
 $string['element'] = 'Polo¾ka';
 $string['elementweight'] = 'Váha polo¾ky';
+$string['enterpassword'] = 'Vlo¾te heslo';
 $string['entriessaved'] = 'Záznamy ulo¾eny';
 $string['errorbanded'] = 'Mno¾ství chyb';
 $string['excellent'] = 'Výbornì';
@@ -108,6 +109,7 @@ $string['numberofnegativeresponses'] = 'Poèet záporných odpovìdí';
 $string['onesubmission'] = 'Jedno øe¹ení';
 $string['optionaladjustment'] = 'Volitelné nastavení';
 $string['overallgrade'] = 'Celkový poèet bodù';
+$string['passwordprotectedexercise'] = 'Heslem chránìné cvièení';
 $string['phase'] = 'Fáze';
 $string['phase1'] = 'Nastavení cvièení';
 $string['phase1short'] = 'Nastavit';
@@ -182,6 +184,7 @@ $string['unassessed'] = '$a nehodnoceno';
 $string['ungradedstudentassessments'] = '$a Nebodovaných studentských hodnocení';
 $string['usemaximum'] = 'Pou¾ít maximum';
 $string['usemean'] = 'Pou¾ít prùmìr';
+$string['usepassword'] = 'Pou¾ít heslo';
 $string['verylax'] = 'Velmi nedbalý';
 $string['verypoor'] = 'Velmi slabý';
 $string['verystrict'] = 'Velmi pøesný';
@@ -194,6 +197,7 @@ $string['weightforteacherassessments'] = 'Váha pro hodnocení od $a';
 $string['weights'] = 'Váhy';
 $string['weightssaved'] = 'Váhy ulo¾eny';
 $string['weightsusedforoverallgrade'] = 'Váhy pou¾ité pro celkové bodování';
+$string['wrongpassword'] = 'Neplatné heslo k tomuto cvièení';
 $string['yourassessment'] = 'Va¹e hodnocení';
 $string['yourfeedbackgoeshere'] = 'Va¹e vyjádøení pøijde SEM';
 $string['yoursubmission'] = 'Va¹e odevzdané úkoly';
