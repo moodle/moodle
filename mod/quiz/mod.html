@@ -554,8 +554,10 @@
 <input type="hidden" name="mode"          value="<?php p($form->mode) ?>" />
 <input type="submit" value="<?php  print_string("savechanges") ?>" />
 <!-- provide an additional button to edit questions -->
+<?php if ($form->instance) { ?>
 <input type="hidden" name="redirecturl" value="<?php p("$CFG->wwwroot/mod/quiz/edit.php?quizid=$form->instance") ?>" />
 <input type="submit" name="redirect" value="<?php print_string('saveandedit', 'quiz') ?>" />
+<?php } ?>
 <input type="submit" name="cancel" value="<?php  print_string("cancel") ?>" />
 </center>
 </form>
