@@ -411,7 +411,7 @@ function scorm_startElement($parser, $name, $attrs) {
         $level++;
         $parent[$level] = $attrs['IDENTIFIER'];
     	$organization = $attrs['IDENTIFIER'];
-    }
+    break;
     case 'MANIFEST':
     	$manifest = $attrs['IDENTIFIER'];
     break;
@@ -421,6 +421,7 @@ function scorm_startElement($parser, $name, $attrs) {
     	}
     	$defaultorg = $attrs['DEFAULT'];
     break;
+    }
 }
 
 function scorm_endElement($parser, $name) {
