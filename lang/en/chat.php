@@ -19,6 +19,7 @@ $string['messageexit'] = "\$a has left this chat";
 $string['neverdeletemessages'] = "Never delete messages";
 $string['savemessages'] = "Save messages";
 $string['sessions'] = "Chat sessions";
+$string['seesession'] = "See this session";
 $string['strftimemessage'] = "%%H:%%M";
 $string['studentseereports'] = "Everyone can see past sessions";
 $string['viewreport'] = "View past chat sessions";

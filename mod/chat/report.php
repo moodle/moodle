@@ -36,6 +36,7 @@
     $strchats = get_string("modulenameplural", "chat");
     $strchat  = get_string("modulename", "chat");
     $strchatreport  = get_string("chatreport", "chat");
+    $strseesession  = get_string("seesession", "chat");
 
 /// Print a session if once has been specified
 
@@ -126,7 +127,7 @@
                     }
                 }
 
-                echo "<p align=\"right\"><a href=\"report.php?id=$chat->id&start=$sessionstart&end=$sessionend\">see chat</a>";
+                echo "<p align=\"right\"><a href=\"report.php?id=$chat->id&start=$sessionstart&end=$sessionend\">$strseesession</a>";
                 print_simple_box_end();
             }
 
