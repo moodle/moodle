@@ -16,10 +16,13 @@
 
     require_login($course->id);
 
-
-    if ($group and (isteacheredit($course->id) or $course->groupmode == VISIBLEGROUPS)) {
-        if (! $group = get_record("groups", "id", $group)) {
-            error('Specified group could not be found!', "groups.php?id=$course->id");
+    if ($group) {
+        if (isteacheredit($course->id) or $course->groupmode == VISIBLEGROUPS) {
+            if (! $group = get_record("groups", "id", $group)) {
+                error('Specified group could not be found!', "groups.php?id=$course->id");
+            }
+        } else {
+            error('Sorry, you don\'t have access to view this group', "view.php?id=$course->id");
         }
     } else if (! $group = get_current_group($course->id, 'full')) {
         error('You are not currently in a group!', "view.php?id=$course->id");
