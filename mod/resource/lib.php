@@ -24,6 +24,14 @@ if (!isset($CFG->resource_popup)) {
     set_config("resource_popup", "");
 }  
 
+if (!isset($CFG->resource_windowsettings)) {
+    set_config("resource_windowsettings", "0");
+}  
+
+if (!isset($CFG->resource_parametersettings)) {
+    set_config("resource_parametersettings", "0");
+}  
+
 $RESOURCE_WINDOW_OPTIONS = array("resizable", "scrollbars", "directories", "location", 
                                  "menubar", "toolbar", "status", "height", "width");
 

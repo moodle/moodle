@@ -82,6 +82,34 @@
           echo "</tr>";
       }
 ?>
+<tr valign=top>
+	<td align=right><p>resource_windowsettings:</td>
+	<td>
+    <?php
+        unset($choices);
+        $choices["0"] = get_string("hidesettings");
+        $choices["1"] = get_string("showsettings");
+        choose_from_menu ($choices, "resource_windowsettings", $CFG->resource_windowsettings, "");
+    ?>
+    </td>
+    <td>
+    <?php print_string("configwindowsettings", "resource") ?>
+    </td>
+</tr>
+<tr valign=top>
+	<td align=right><p>resource_parametersettings:</td>
+	<td>
+    <?php
+        unset($choices);
+        $choices["0"] = get_string("hidesettings");
+        $choices["1"] = get_string("showsettings");
+        choose_from_menu ($choices, "resource_parametersettings", $CFG->resource_parametersettings, "");
+    ?>
+    </td>
+    <td>
+    <?php print_string("configparametersettings", "resource") ?>
+    </td>
+</tr>
 <tr>
     <td colspan=3 align=center>
 	<input type="submit" value="<?php print_string("savechanges") ?>"></td>

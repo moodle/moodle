@@ -49,7 +49,7 @@
     <td>
         <input type="button" value="hide settings" id="windowsettingsbutton" onClick="javascript: return showhide('windowsettings');" />
         <input type="hidden" name="windowsettingspref" id="windowsettingspref" 
-               value="<?php echo get_user_preferences('resource_windowsettingspref', 0); ?>" />
+               value="<?php echo get_user_preferences('resource_windowsettingspref', $CFG->resource_windowsettings); ?>" />
     </td>
 </tr>
 <tr><td colspan="2">
@@ -133,7 +133,7 @@
     <td>
         <input type="button" value="hide settings" id="parametersettingsbutton" onClick="javascript: return showhide('parametersettings');" />
         <input type="hidden" name="parametersettingspref" id="parametersettingspref" 
-               value="<?php echo get_user_preferences('resource_parametersettingspref', 0); ?>" />
+               value="<?php echo get_user_preferences('resource_parametersettingspref', $CFG->resource_parametersettings); ?>" />
         <?php helpbutton("parameters", get_string("parameters", "resource"), "resource", true) ?>
     </td>
 </tr>
