@@ -7,6 +7,13 @@
 
     require_login();
 
+    if (isset($SESSION->modform)) {   // Variables are stored in the session
+        $mod = $SESSION->modform;
+        unset($SESSION->modform);
+    } else {
+        $mod = (object)$_POST;
+    }
+
     if (isset($cancel)) {  
         if (!empty($SESSION->returnpage)) {
             $return = $SESSION->returnpage;
@@ -19,13 +26,6 @@
 
 
     if (isset($_POST["course"])) {    // add or update form submitted
-
-        if (isset($SESSION->modform)) {   // Variables are stored in the session
-            $mod = $SESSION->modform;
-            unset($SESSION->modform);
-        } else {
-            $mod = (object)$_POST;
-        }
 
         if (!isteacher($mod->course)) {
             error("You can't modify this course!");
