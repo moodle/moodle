@@ -224,14 +224,14 @@
         //Iteratere while the name exists
         do {
             if ($counter) {
-                $suffixfull = get_string("copy")." ".$counter;
-                $suffixshort = $counter;
+                $suffixfull = " ".get_string("copy")." ".$counter;
+                $suffixshort = "-".$counter;
             } else {
                 $suffixfull = "";
                 $suffixshort = "";
             }
-            $currentfullname = $fullname." ".$suffixfull;
-            $currentshortname = $shortname."-".$suffixshort;
+            $currentfullname = $fullname.$suffixfull;
+            $currentshortname = $shortname.$suffixshort;
             $course = get_record("course","fullname",addslashes($currentfullname));
             $counter++;
         } while ($course);
