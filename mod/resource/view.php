@@ -2,7 +2,6 @@
 
     require_once("../../config.php");
     require_once("lib.php");
-    require_once("../../lib/snoopy/Snoopy.class.inc");
  
     require_variable($id);    // Course Module ID
     optional_variable($frameset, "");
@@ -56,7 +55,7 @@
             break;
 
         case WEBLINK:
-            if ( $CFG->filterexternalpages ) {
+            if ($CFG->resource_filterexternalpages) {
                 $url = "fetch.php?id=$cm->id&url=$resource->reference";
             } else {
                 $url = "$resource->reference";
@@ -74,7 +73,7 @@
                 echo "<center><font size=-1>".text_to_html($resource->summary, true, false)."</font></center>";
 
             } else {
-                if ( $CFG->filterexternalpages ) {
+                if ($CFG->resource_filterexternalpages) {
                     $url = "fetch.php?id=$cm->id&url=$resource->reference";
                 } else {
                     $url = "$resource->reference";
@@ -92,7 +91,7 @@
             require_once("../../files/mimetypes.php");
             $inpopup = !empty($_GET["inpopup"]);
 
-            if ( $CFG->filterexternalpages ) {
+            if ($CFG->resource_filterexternalpages) {
                 if ($inpopup) {
                     $fetchingprefix = "$CFG->wwwroot/mod/resouce/fetch.php?id=$cm->id&url=";
                 } else {
@@ -161,7 +160,7 @@
                     echo "<br />";
                     echo "<center><img class=\"resourceimage\" src=\"$fullurl\"></center>";
                     echo "<br />";
-                } elseif ( $resourcehtml and $CFG->filterexternalpages ) {
+                } else if ($resourcehtml and $CFG->resource_filterexternalpages) {
                     echo "<br />";
                     
                     $content = resource_fetch_remote_file("$fetchingprefix$fullurl");
@@ -184,7 +183,7 @@
                     $fullurl = "$CFG->wwwroot/file.php?file=/$course->id/$resource->reference";
                 }
 
-                if ( $resourcehtml  and $CFG->filterexternalpages ) {
+                if ($resourcehtml  and $CFG->resource_filterexternalpages) {
                     echo "<frame src=\"fetch.php?id=$cm->id&url=$fetchingprefix$fullurl\">";
                 } else {
                     echo "<frame src=\"$fullurl\">";

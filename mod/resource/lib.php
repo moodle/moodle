@@ -28,7 +28,11 @@ if (!isset($CFG->resource_websearch)) {
 
 if (!isset($CFG->resource_defaulturl)) {
     set_config("resource_defaulturl", "http://");
-} 
+}  
+
+if (!isset($CFG->resource_filterexternalpages)) {
+    set_config("resource_filterexternalpages", false);
+}  
 
 $RESOURCE_WINDOW_OPTIONS = array("resizable", "scrollbars", "directories", "location", 
                                  "menubar", "toolbar", "status", "height", "width");
@@ -162,7 +166,12 @@ function resource_get_coursemodule_info($coursemodule) {
 }
  
 function resource_fetch_remote_file ($cm, $url, $headers = "" ) {
-	// Snoopy is an HTTP client in PHP
+/// Snoopy is an HTTP client in PHP
+
+    global $CFG;
+
+    require_once("$CFG->libdir/snoopy/Snoopy.class.inc");
+
 	$client = new Snoopy();
 	$client->agent = MAGPIE_USER_AGENT;
 	$client->read_timeout = MAGPIE_FETCH_TIME_OUT;

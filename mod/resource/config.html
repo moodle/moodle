@@ -28,6 +28,20 @@
     <?php print_string("configdefaulturl", "resource") ?>
     </td>
 </tr>
+<tr valign=top>
+	<td align=right><p>resource_filterexternalpages:</td>
+	<td>
+    <?php
+        unset($choices);
+        $choices["0"] = get_string("no");
+        $choices["1"] = get_string("yes");
+        choose_from_menu ($choices, "resource_filterexternalpages", $CFG->resource_filterexternalpages, "");
+    ?>
+    </td>
+    <td>
+    <?php print_string("configfilterexternalpages", "resource") ?>
+    </td>
+</tr>
 <tr>
     <td colspan=3 align=center>
 	<input type="submit" value="<?php print_string("savechanges") ?>"></td>

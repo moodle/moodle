@@ -2,7 +2,6 @@
 
     require_once("../../config.php");
     require_once("lib.php");
-    require_once("../../lib/snoopy/Snoopy.class.inc");
  
     require_variable($id);    // Course Module ID
     require_variable($url);   // url to fetch
