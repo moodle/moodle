@@ -1074,8 +1074,8 @@
                         case "GUEST":
                             $this->info->course_guest = $this->getContents();
                             break;
-                        case "STARDATE":
-                            $this->info->course_stardate = $this->getContents();
+                        case "STARTDATE":
+                            $this->info->course_startdate = $this->getContents();
                             break;
                         case "NUMSECTIONS":
                             $this->info->course_numsections = $this->getContents();
