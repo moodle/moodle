@@ -788,6 +788,7 @@ function require_login($courseid=0, $autologinguest=true) {
     // Check that the user has agreed to a site policy if there is one
     if (!empty($CFG->sitepolicy)) {
         if (!$USER->policyagreed) {
+            $SESSION->wantsurl = $FULLME;
             redirect($CFG->wwwroot .'/user/policy.php');
             die;
         }

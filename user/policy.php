@@ -10,11 +10,20 @@
     }
 
     if ($agree == 1 and confirm_sesskey()) {        // User has agreed
-        if (!set_field('user', 'policyagreed', 1, 'id', $USER->id)) {
-            error('Could not save your agreement');
+        if ($USER->username != 'guest') {           // Don't remember guests
+            if (!set_field('user', 'policyagreed', 1, 'id', $USER->id)) {
+                error('Could not save your agreement');
+            }
         }
         $USER->policyagreed = 1;
-        redirect($CFG->wwwroot);
+
+        if (!empty($SESSION->wantsurl)) {
+            $wantsurl = $SESSION->wantsurl;
+            unset($SESSION->wantsurl);
+            redirect($wantsurl);
+        } else {
+            redirect($CFG->wwwroot.'/');
+        }
         exit;
     }
 
