@@ -161,12 +161,20 @@ function auth_user_create ($userobject,$plainpass) {
     }
     
     //Following sets all mandatory and other forced attribute values
-    //MODIFY following to suite your enviroment
-    $newuser['objectClass']= array("inetOrgPerson","organizationalPerson","person","top");
-    $newuser['uniqueId']= $userobject->username;
-    $newuser['logindisabled']="TRUE";
-    $newuser['userpassword']=$plainpass;
-        
+    //User should be creted as login disabled untill email confirmation is processed
+    //Feel free to add your user type and send patches to paca@sci.fi to add them 
+    //Moodle distribution
+
+    switch ($CFG->ldap_user_type)  {
+        case 'edir':
+           $newuser['objectClass']= array("inetOrgPerson","organizationalPerson","person","top");
+           $newuser['uniqueId']= $userobject->username;
+           $newuser['logindisabled']="TRUE";
+           $newuser['userpassword']=$plainpass;
+        default:
+           error('auth: ldap auth_user_create() does not support selected usertype (..yet)');
+    }
+
     $uadd = ldap_add($ldapconnection, $CFG->ldap_user_attribute."=$userobject->username,".$CFG->ldap_create_context, $newuser);
 
     ldap_close($ldapconnection);
@@ -318,7 +326,7 @@ function auth_sync_users ($firstsync=0, $unsafe_optimizations = false, $bulk_ins
     // these are only populated if we managed to find added/removed users
     $add_users    = false;
     $remove_users = false;
-    
+     
     if($unsafe_optimizations){
         // create a temp table
         if(strtolower($CFG->dbtype) === 'mysql'){
@@ -450,9 +458,12 @@ function auth_user_activate ($username) {
     $ldapconnection = auth_ldap_connect();
 
     $userdn = auth_ldap_find_userdn($ldapconnection, $username);
-    
-    $newinfo['loginDisabled']="FALSE";
-
+    switch ($CFG->ldap_user_type)  {
+         case 'edir':
+            $newinfo['loginDisabled']="FALSE";
+         default;
+            error ('auth: ldap auth_user_activate() does not support selected usertype (..yet)');    
+    }    
     $result = ldap_modify($ldapconnection, $userdn, $newinfo);
     ldap_close($ldapconnection);
     return $result;
@@ -472,8 +483,12 @@ function auth_user_disable ($username) {
     $ldapconnection = auth_ldap_connect();
 
     $userdn = auth_ldap_find_userdn($ldapconnection, $username);
-    $newinfo['loginDisabled']="TRUE";
-
+    switch ($CFG->ldap_user_type)  {
+        case 'edir':
+            $newinfo['loginDisabled']="TRUE";
+        default:
+            error ('auth: ldap auth_user_disable() does not support selected usertype (..yet)');    
+    }    
     $result = ldap_modify($ldapconnection, $userdn, $newinfo);
     ldap_close($ldapconnection);
     return $result;
