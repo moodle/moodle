@@ -258,8 +258,12 @@ function record_exists_sql($sql) {
 
     global $db;
 
-    $rs = $db->Execute($sql);
-    if (empty($rs)) return false;
+    if (!$rs = $db->Execute($sql)) {
+        if ($CFG->debug > 7) {
+            notify($db->ErrorMsg()."<br /><br />$sql");
+        }
+        return false;
+    }
 
     if ( $rs->RecordCount() ) {
         return true;
@@ -327,7 +331,12 @@ function count_records_sql($sql) {
     global $db;
 
     $rs = $db->Execute("$sql");
-    if (empty($rs)) return 0;
+    if (!$rs) {
+        if ($CFG->debug > 7) {
+            notify($db->ErrorMsg()."<br /><br />$sql");
+        }
+        return 0;
+    }
 
     return $rs->fields[0];
 }
@@ -387,9 +396,7 @@ function get_record_sql($sql) {
 
     if (!$rs = $db->Execute("$sql$limit")) {
         if ($CFG->debug > 7) {    // Debugging mode - print checks
-            $db->debug=true;
-            $db->Execute("$sql$limit");
-            $db->debug=false;
+            notify( $db->ErrorMsg() . "<br /><br />$sql$limit" );
         }
         return false;
     }
@@ -556,10 +563,14 @@ function get_records_list($table, $field="", $values="", $sort="", $fields="*") 
 */
 function get_records_sql($sql) {
 
-    global $db;
+    global $CFG,$db;
 
-    $rs = $db->Execute("$sql");
-    if (empty($rs)) return false;
+    if (!$rs = $db->Execute($sql)) {
+        if ($CFG->debug > 7) {
+            notify($db->ErrorMsg()."<br /><br />$sql");
+        }
+        return false;
+    }
 
     if ( $rs->RecordCount() > 0 ) {
         if ($records = $rs->GetAssoc(true)) {
@@ -639,8 +650,12 @@ function get_records_sql_menu($sql) {
 
     global $db;
 
-    $rs = $db->Execute("$sql");
-    if (empty($rs)) return false;
+    if (!$rs = $db->Execute($sql)) {
+        if ($CFG->debug > 7) {
+            notify($db->ErrorMsg()."<br /><br />$sql");
+        }
+        return false;
+    }
 
     if ( $rs->RecordCount() > 0 ) {
         while (!$rs->EOF) {
@@ -675,7 +690,12 @@ function get_field($table, $return, $field1, $value1, $field2="", $value2="", $f
     }
 
     $rs = $db->Execute("SELECT $return FROM $CFG->prefix$table $select");
-    if (empty($rs)) return false;
+    if (!$rs) {
+        if ($CFG->debug > 7) {
+            notify($db->ErrorMsg()."<br /><br />SELECT $return FROM $CFG->prefix$table $select");
+        }
+        return false;
+    }
 
     if ( $rs->RecordCount() == 1 ) {
         return $rs->fields["$return"];
@@ -777,6 +797,9 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
                                                                                                                 
 /// Run the SQL statement
     if (!$rs = $db->Execute($insertSQL)) {
+        if ($CFG->debug > 7) {
+            notify($db->ErrorMsg()."<br /><br />$insertSQL");
+        }
         return false;
     }
                                                                                                                 
@@ -848,6 +871,9 @@ function update_record($table, $dataobject) {
     if ($rs = $db->Execute("UPDATE $CFG->prefix$table SET $update WHERE id = '$dataobject->id'")) {
         return true;
     } else {
+        if ($CFG->debug > 7) {
+            notify($db->ErrorMsg()."<br /><br />UPDATE $CFG->prefix$table SET $update WHERE id = '$dataobject->id'");
+        }
         return false;
     }
 }
