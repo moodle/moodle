@@ -100,6 +100,7 @@ $string['filetoimport'] = 'Archivo a importar';
 $string['fillfields'] = 'Los campos Concepto y Definición son obligatorios.';
 $string['filtername'] = 'Auto-enlace de glosario';
 $string['fullmatch'] = 'Sólo enlazar palabras completas';
+$string['globalglossary'] = 'Glosario global';
 $string['glossaryleveldefaultsettings'] = 'Ajustes por defecto del nivel de glosario';
 $string['glossarytype'] = 'Tipo de glosario';
 $string['glosssaryexported'] = 'Glosario exportado';
