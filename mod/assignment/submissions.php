@@ -134,9 +134,9 @@
     print_simple_box_start("CENTER", "50%");
     echo "<P align=\"CENTER\">";
     print_string("order");
-    echo ": <A HREF=\"$ME?id=$assignment->id&sort=lastname&dir=ASC\">".get_string("name")."</a> - ";
-    echo "<A HREF=\"$ME?id=$assignment->id\">".get_string("lastmodified")."</a> - ";
-    echo "<A HREF=\"$ME?id=$assignment->id&sort=grade\">".get_string("feedback")."</a>";
+    echo ": <A HREF=\"submissions.php?id=$assignment->id&sort=lastname&dir=ASC\">".get_string("name")."</a> - ";
+    echo "<A HREF=\"submissions.php?id=$assignment->id\">".get_string("lastmodified")."</a> - ";
+    echo "<A HREF=\"submissions.php?id=$assignment->id&sort=grade\">".get_string("feedback")."</a>";
     echo "</P>";
     print_simple_box_end();
     print_spacer(8,1);

@@ -10,7 +10,7 @@
     }
 ?>
 
-<form name="form" method="post" action="<?php echo $ME ?>">
+<form name="form" method="post" <?php echo $onsubmit ?> action="mod.php">
 <table cellpadding=5>
 <tr valign=top>
     <td align=right><p><b><?php print_string("journalname", "journal") ?>:</b></p></td>
