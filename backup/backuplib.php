@@ -576,6 +576,7 @@
             fwrite ($bf,full_tag("GROUPMODE",3,false,$course->groupmode));
             fwrite ($bf,full_tag("GROUPMODEFORCE",3,false,$course->groupmodeforce));
             fwrite ($bf,full_tag("LANG",3,false,$course->lang));
+            fwrite ($bf,full_tag("COST",3,false,$course->cost));
             fwrite ($bf,full_tag("MARKER",3,false,$course->marker));
             fwrite ($bf,full_tag("VISIBLE",3,false,$course->visible));
             fwrite ($bf,full_tag("HIDDENSECTIONS",3,false,$course->hiddensections));

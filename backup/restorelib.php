@@ -547,6 +547,7 @@
             $course->groupmode = addslashes($course_header->course_groupmode);
             $course->groupmodeforce = addslashes($course_header->course_groupmodeforce);
             $course->lang = addslashes($course_header->course_lang);
+            $course->cost = addslashes($course_header->course_cost);
             $course->marker = addslashes($course_header->course_marker);
             $course->visible = addslashes($course_header->course_visible);
             $course->hiddensections = addslashes($course_header->course_hiddensections);
@@ -2217,6 +2218,9 @@
                             break;
                         case "LANG":
                             $this->info->course_lang = $this->getContents();
+                            break;
+                        case "COST":
+                            $this->info->course_cost = $this->getContents();
                             break;
                         case "MARKER":
                             $this->info->course_marker = $this->getContents();
