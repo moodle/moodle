@@ -61,6 +61,11 @@ function backup_upgrade($oldversion=0) {
                          MODIFY `info` TEXT");
     } 
 
+    if ($oldversion < 2003061100 and $result) {
+        $result = execute_sql("ALTER TABLE `{$CFG->prefix}backup_ids`
+                         MODIFY `info` MEDIUMTEXT");
+    } 
+
     //Finally, return result
     return $result;
 
