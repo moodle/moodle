@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // workshop.php - created with Moodle 1.1 Beta +++ (2003082702)
+      // workshop.php - created with Moodle 1.2 development (2003101700)
 
 
 $string['absent'] = "·çÀÊ";
@@ -69,6 +69,7 @@ $string['gradeforstudentsassessment'] = "³ØÀ¸¤ÎÉ¾²Á¤ËÂÐ¤¹¤ëÉ¾²Á";
 $string['gradeofsubmission'] = "Äó½ÐÊª¤ÎÉ¾²Á¡§ \$a";
 $string['gradingstrategy'] = "É¾²ÁÊýË¡";
 $string['hidegradesbeforeagreement'] = "Æ±°Õ¤ÎÁ°¤ËÉ¾²Á¤ò±£¤¹";
+$string['hidenamesfromstudents'] = "\$a ¤è¤êÌ¾Á°¤ò±£¤¹";
 $string['includeteachersgrade'] = "¶µ»Õ¤ÎºÎÅÀ¤ò´Þ¤à";
 $string['incorrect'] = "ÉÔÀµ²ò";
 $string['leaguetable'] = "Äó½ÐÊª¤Î¥ê¡¼¥°¥Æ¡¼¥Ö¥ë";
@@ -87,6 +88,7 @@ $string['maximumsize'] = "ºÇÂç¥µ¥¤¥º";
 $string['modulename'] = "¥ï¡¼¥¯¥·¥ç¥Ã¥×";
 $string['modulenameplural'] = "¥ï¡¼¥¯¥·¥ç¥Ã¥×";
 $string['movingtophase'] = "¥Õ¥§¡¼¥º \$a ¤Ë°ÜÆ°";
+$string['namesnotshowntostudents'] = "Ì¾Á°¤Ï \$a ¤ËÉ½¼¨¤µ¤ì¤Þ¤»¤ó";
 $string['newassessments'] = "¿·¤·¤¤¥ï¡¼¥¯¥·¥ç¥Ã¥×¤ÎÉ¾²Á";
 $string['newgradings'] = "¿·¤·¤¤ºÎÅÀ";
 $string['newsubmissions'] = "¿·¤·¤¤¥ï¡¼¥¯¥·¥ç¥Ã¥×¤ÎÄó½ÐÊª";
@@ -112,6 +114,7 @@ $string['numberofassessmentelements'] = "¥³¥á¥ó¥È¿ô¡¢É¾²ÁÍ×ÁÇ¿ô¡¢É¾²Á¤ÎÉý¡¢´ð½à¿
 $string['numberofassessments'] = "É¾²Á¿ô";
 $string['numberofassessmentsofstudentsubmissions'] = "³ØÀ¸¤ÎÄó½ÐÊª¤ËÂÐ¤¹¤ëÉ¾²Á¿ô";
 $string['numberofassessmentsofteachersexamples'] = "¶µ»Õ¤ÎÌÏÈÏ²òÅú¤ËÂÐ¤¹¤ëÉ¾²Á¿ô";
+$string['numberofentries'] = "¥¨¥ó¥È¥ê¿ô";
 $string['on'] = "\$a";
 $string['openassignment'] = "²ÝÂê¤ò³«¤¯";
 $string['optionforpeergrade'] = "Áê¸ßÉ¾²Á¥ª¥×¥·¥ç¥ó";
@@ -180,6 +183,7 @@ $string['view'] = "É½¼¨";
 $string['viewassessmentofteacher'] = "\$a ·ï¤ÎÉ¾²Á¤òÉ½¼¨¤¹¤ë";
 $string['viewotherassessments'] = "Â¾¤ÎÉ¾²Á¤òÉ½¼¨¤¹¤ë";
 $string['warningonamendingelements'] = "·Ù¹ð¡§É¾²Á¤¬ÅÐÏ¿¤µ¤ì¤Æ¤¤¤Þ¤¹¡£<BR>Í×ÁÇ¿ô¡¢É¾²Á¥¿¥¤¥×¡¢Í×ÁÇÈæ½Å¤òÊÑ¹¹¤·¤Ê¤¤¤Ç¤¯¤À¤µ¤¤¡£";
+$string['weight'] = "Èæ½Å";
 $string['weightederrorcount'] = "Èæ½Å¥¨¥é¡¼¥«¥¦¥ó¥È¡§ \$a";
 $string['weightforbias'] = "¥Ð¥¤¥¢¥¹¤ËÂÐ¤¹¤ëÈæ½Å";
 $string['weightforgradingofassessments'] = "É¾²ÁÀ®ÀÓ¤ËÂÐ¤¹¤ëÈæ½Å";

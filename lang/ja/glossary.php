@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.2 development (2003101200)
+      // glossary.php - created with Moodle 1.2 development (2003101700)
 
 
 $string['addcomment'] = "コメントの追加";
@@ -8,11 +8,12 @@ $string['allcategories'] = "全てのカテゴリ";
 $string['allentries'] = "全て";
 $string['allowcomments'] = "エントリーへのコメントを許可する";
 $string['allowduplicatedentries'] = "重複エントリーを許可する";
-$string['alphabet'] = "あ|か|さ|た|な|は|ま|や|ら|わ|A|B|C|D|E|F|G|H|I|J|K|L|M|N|O|P|Q|R|S|T|U|V|W|X|Y|Z";
+$string['alphabet'] = "A|B|C|D|E|F|G|H|I|J|K|L|M|N|O|P|Q|R|S|T|U|V|W|X|Y|Z";
 $string['areyousuredelete'] = "本当にこのエントリーを削除しても宜しいですか?";
 $string['areyousuredeletecomment'] = "本当にこのコメントを削除しても宜しいですか?";
 $string['attachment'] = "添付";
 $string['back'] = "戻る";
+$string['casesensitive'] = "大文字小文字の区別を行う";
 $string['categories'] = "カテゴリ";
 $string['category'] = "カテゴリ";
 $string['categorydeleted'] = "カテゴリが削除されました";
@@ -33,7 +34,7 @@ $string['displayformat'] = "フォーマットを表示";
 $string['displayformat1'] = "フル、作者無し";
 $string['displayformat2'] = "フル、作者有り";
 $string['displayformat3'] = "百科事典";
-$string['displayformatdefault'] = "シンプルディレクトリスタイル";
+$string['displayformatdefault'] = "シンプル、ディレクトリスタイル";
 $string['editcategories'] = "カテゴリの編集";
 $string['editentry'] = "エントリーの編集";
 $string['editingcomment'] = "コメントの編集";
@@ -43,31 +44,34 @@ $string['entry'] = "エントリー";
 $string['entryalreadyexist'] = "エントリーが既に登録されています。";
 $string['entrydeleted'] = "エントリーが削除されました。";
 $string['entryexported'] = "エントリーが正常にエクスポートされました。";
+$string['entryusedynalink'] = "エントリを自動的にリンクさせる";
 $string['explainall'] = "全てのエントリを1ページに表示";
 $string['explainalphabet'] = "インデックスを利用して閲覧する";
 $string['explainspecial'] = "１文字で始まらないエントリーを表示します";
 $string['exportedentry'] = "エクスポートされたエントリ";
-$string['exporttomainglossary'] = "メイングロッサリーのエクスポート";
-$string['glossarytype'] = "グロッサリータイプ";
-$string['mainglossary'] = "メイングロッサリー";
+$string['exporttomainglossary'] = "メイン用語集のエクスポート";
+$string['fullmatch'] = "全ての単語を一致させる><small>(自動的にリンクさせる場合)</small>";
+$string['glossarytype'] = "用語集タイプ";
+$string['mainglossary'] = "メイン用語集";
 $string['maxtimehaspassed'] = "申し訳ございません、このコメントの最大編集回数(\$a)を超えました!";
-$string['modulename'] = "グロッサリー";
-$string['modulenameplural'] = "グロッサリー";
-$string['newglossaryentries'] = "新規グロッサリーエントリ";
+$string['modulename'] = "用語集";
+$string['modulenameplural'] = "用語集";
+$string['newglossaryentries'] = "新規用語集エントリ";
 $string['nocomment'] = "コメントが見つかりません";
 $string['nocomments'] = "(このエントリにはコメントがありません)";
 $string['noentries'] = "このセクションにはエントリーがありません";
 $string['noentry'] = "エントリーが見つかりませんでした。";
 $string['notcategorised'] = "カテゴリ無し";
 $string['searchindefinition'] = "定義も検索する";
-$string['secondaryglossary'] = "サブグロッサリー";
+$string['secondaryglossary'] = "サブ用語集";
 $string['showall'] = "全てのリンクを表示";
 $string['showalphabet'] = "アルファベットを表示";
 $string['showspecial'] = "特別リンクを表示";
 $string['special'] = "特別";
-$string['standardview'] = "スタンダードビュー";
-$string['studentcanpost'] = "学生はエントリーを追加出来る";
-$string['warningstudentcapost'] = "(グロッサリーがメインで無い場合に適用)";
+$string['standardview'] = "アルファベット順に表示";
+$string['studentcanpost'] = "学生のエントリー追加を許可する";
+$string['usedynalink'] = "用語集と他のモジュールを自動的にリンクする";
+$string['warningstudentcapost'] = "(用語集がメインで無い場合に適用)";
 $string['writtenby'] = "作成";
 $string['youarenottheauthor'] = "あなたはこのコメントの作者ではありません。編集は出来ません。";
 

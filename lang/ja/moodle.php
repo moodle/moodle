@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.2 development (2003101200)
+      // moodle.php - created with Moodle 1.2 development (2003101700)
 
 
 $string['action'] = "操作";
@@ -737,10 +737,10 @@ $string['unzip'] = "展開";
 $string['unzippingbackup'] = "バックアップの展開";
 $string['update'] = "更新";
 $string['updated'] = "\$a を更新しました";
-$string['updatemyprofile'] = "プロフィールを更新する";
-$string['updatesevery'] = "\$a 秒毎に更新する";
-$string['updatethis'] = "\$a を更新する";
-$string['updatethiscourse'] = "このコースを更新する";
+$string['updatemyprofile'] = "プロフィールの更新";
+$string['updatesevery'] = "\$a 秒毎に更新";
+$string['updatethis'] = "\$a の更新";
+$string['updatethiscourse'] = "このコースを更新";
 $string['updatinga'] = "\$a を更新中";
 $string['updatingain'] = "\$a->in の \$a->what を更新中";
 $string['upload'] = "アップロード";
