@@ -8,22 +8,105 @@
   
 <H2>Features</H2>
  
-Here is a big list of some of the features in Moodle 1.0: 
-<UL><LI>Supports a social constructionist pedagogy (collaboration, activities, critical reflection, etc)</LI><LI>Suitable for 100% online classes as well as supplementing face-to-face learning<LI>Simple, lightweight, browser-compatible interface</LI><LI>Plug-in "themes" allow you to customise the colours, fonts, layout etc</LI><LI>Easy to install on most platforms</LI><LI>Easy administration - students can create their own accounts.  Email addresses are verified.</LI><LI>One account works for the whole server</LI><LI>Security - teachers can add an "enrolment key" to their courses to keep out non-students.  They can give out this key face-to-face or via personal email etc</LI><LI>Students are encouraged to build an online profile including photos, description etc</LI><LI>Every user can specify their own timezone, and every date in Moodle is translated to that timezone (eg posting dates, assignment due dates etc)</LI><LI>Choice of course formats such as by week, by topic or a discussion-focussed social format</LI><LI>Flexible array of course modules - Forums, Journals, Resources, Choices, Surveys, Assignments.</LI><LI>New modules can be written and plugged in to existing Moodle installations</LI><LI>The code is clearly-written PHP under a GPL license - easy to modify and localise</LI><LI>Full database abstraction supports all major brands of database (except for initial table definition)</LI><LI>Ready for internationalisation - supports plug-in languages and locale-based date formats etc</LI><LI>Mail integration - copies of forum posts, teacher feedback etc can be mailed in HTML or plain text.</LI><LI>Recent changes to the course since the last login are displayed on the course home page</LI><LI>Full user logging and tracking - activity reports for each student are available with graphs and details about each module (last access, number of times read) as well as a detailed "story" of each students involvement including postings, journal entries etc on one page.</LI>
+Here is a big list of some of the features in Moodle: 
+<UL>
+  <LI>Supports a social constructionist pedagogy (collaboration, activities, critical 
+    reflection, etc)</LI>
+  <LI>Suitable for 100% online classes as well as supplementing face-to-face learning
+  <LI>Simple, lightweight, browser-compatible interface</LI>
+  <LI>Plug-in "themes" allow you to customise the colours, fonts, layout etc</LI>
+  <LI>Easy to install on most platforms</LI>
+  <LI>Easy administration - students can create their own accounts. Email addresses 
+    are verified.</LI>
+  <LI>Plug-in authentication modules are supported (eg LDAP) for integration with 
+    existing user databases</LI>
+  <LI>One account works for all courses on a server</LI>
+  <LI>Security - teachers can add an "enrolment key" to their courses to keep 
+    out non-students. They can give out this key face-to-face or via personal 
+    email etc</LI>
+  <LI>Students are encouraged to build an online profile including photos, description 
+    etc</LI>
+  <LI>Every user can specify their own timezone, and every date in Moodle is translated 
+    to that timezone (eg posting dates, assignment due dates etc)</LI>
+  <LI>Choice of course formats such as by week, by topic or a discussion-focussed 
+    social format</LI>
+  <LI>Flexible array of course modules - Forums, Journals, Quizzes, Resources, 
+    Choices, Surveys, Assignments.</LI>
+  <LI>Most text entry areas (resources, forum postings, journal entries etc) can 
+    be edited using an embedded WYSIWYG HTML editor</LI>
+  <LI>All grades for Forums, Journals, Quizzes and Assignments can be viewed on 
+    one page (and downloaded as a spreadsheet file)</LI>
+  <LI>New modules can be written and plugged in to existing Moodle installations</LI>
+  <LI>The code is clearly-written PHP under a GPL license - easy to modify and 
+    localise</LI>
+  <LI>Moodle code uses encryption, data validation and careful design to be as 
+    secure from hackers as possible</LI>
+  <LI>Full database abstraction supports all major brands of database (except 
+    for initial table definition)</LI>
+  <LI>Ready for internationalisation - supports plug-in languages and locale-based 
+    date formats etc</LI>
+  <LI>Mail integration - copies of forum posts, teacher feedback etc can be mailed 
+    in HTML or plain text.</LI>
+  <LI>Recent changes to the course since the last login are displayed on the course 
+    home page</LI>
+  <LI>Full user logging and tracking - activity reports for each student are available 
+    with graphs and details about each module (last access, number of times read) 
+    as well as a detailed "story" of each students involvement including postings, 
+    journal entries etc on one page.</LI>
 </UL>
-<B>Forum Module</B>
+<B>Assignment Module</B> 
+<UL>
+  <LI>Assignments can be specified with a due date and a maximum grade.</LI>
+  <LI>Students can upload their assignments (any file format) to the server - 
+    they are date-stamped.</LI>
+  <LI>Late assignments are allowed, but the amount of lateness is shown clearly 
+    to the teacher</LI>
+  <LI>For each particular assignment, the whole class can be assessed (grade and 
+    comment) on one page in one form.</LI>
+  <LI>Teacher feedback is appended to the assignment page for each student, and 
+    notification is mailed out.</LI>
+</UL>
+<P><B>Choice Module</B> </P>
+<UL>
+  <LI>Like a poll. Can either be used to vote on something, or to get feedback 
+    from every student (eg research consent)</LI>
+</UL>
+<B></B>
+<P><B>Forum Module</B> </P>
 <UL><LI>Different types of forums are available, such as teacher-only, course news, open-to-all, and one-thread-per-user.</LI><LI>All postings have the authors photo attached.</LI><LI>Discussions can be viewed nested, flat or threaded, oldest or newest first.</LI><LI>Individual forums can be subscribed to by each person so that copies are forwarded via email, or the teacher can force subscription for all</LI>
 </UL>
-<B>Survey Module</B>
+<B>Journal Module</B> 
+<UL>
+  <LI>Journals are private between student and teacher.</LI>
+  <LI>Each journal entry can be directed by an open question.</LI>
+  <LI>For each particular journal entry, the whole class can be assessed on one 
+    page in one form.</LI>
+  <LI>Teacher feedback is appended to the journal entry page, and notification 
+    is mailed out.</LI>
+</UL>
+<P><B>Quiz Module</B> </P>
+<UL>
+  <LI>Teachers can define a database of questions for re-use in different quizzes</LI>
+  <LI>Quizzes are automatically graded, and can be re-graded if questions are 
+    modified </LI>
+  <LI>Quizzes can have a limited time window outside of which they are not available</LI>
+  <LI>At the teacher's option, quizzes can be attempted multiple times, and can 
+    show feedback and correct answers</LI>
+  <LI>Questions allow HTML and images</LI>
+  <LI>Multiple-choice questions supporting single or multiple answers</LI>
+  <LI>Short Answer questions (words or phrases)</LI>
+  <LI>True-False questions </LI>
+</UL>
+<P><B>Resource Module</B> </P>
+<UL>
+  <LI>Supports display of any electronic content</LI>
+  <LI>Files can be uploaded and managed on the server, or created on the fly using 
+    web forms (text or HTML)</LI>
+  <LI>External content on the web can be linked to or seamlessly included within 
+    the course interface.</LI>
+</UL>
+<B></B><B>Survey Module</B> 
 <UL><LI>Built-in surveys (COLLES, ATTLS) have been proven as instruments for analysing online classes</LI><LI>Online survey reports always available, including many graphs.  Data is downloadable as an Excel spreadsheet or CSV text file.</LI><LI>Survey interface prevents partly-finished surveys.</LI><LI>Feedback is provided to the student of their results compared to the class averages</UL>
-<B>Resource Module</B>
-<UL><LI>Supports display of any electronic content</LI><LI>Files can be uploaded and managed on the server, or created on the fly using web forms (text or HTML)</LI><LI>External content on the web can be linked to or seamlessly included within the course interface.</LI></UL>
-<B>Choice Module</B>
-<UL><LI>Like a poll.  Can either be used to vote on something, or to get feedback from every student (eg research consent)</LI></UL>
-<B>Journal Module</B>
-<UL><LI>Journals are private between student and teacher.</LI><LI>Each journal entry can be directed by an open question.</LI><LI>For each particular journal entry, the whole class can be assessed on one page in one form.</LI><LI>Teacher feedback is appended to the journal entry page, and notification is mailed out.</LI></UL>
-<B>Assignment Module</B>
-<UL><LI>Assignments can be specified with a due date and a maximum grade.</LI><LI>Students can upload their assignments (any file format) to the server - they are date-stamped.</LI><LI>Late assignments are allowed, but the amount of lateness is shown clearly to the teacher</LI><LI>For each particular assignment, the whole class can be assessed (grade and comment) on one page in one form.</LI><LI>Teacher feedback is appended to the assignment page for each student, and notification is mailed out.</LI></UL>
 <P>&nbsp;</P>
 
 <P ALIGN="CENTER"><FONT SIZE="1"><A HREF="index.html" TARGET="_top">Moodle Documentation</A></FONT></P>
