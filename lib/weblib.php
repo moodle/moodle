@@ -1855,7 +1855,7 @@ function navmenu($course, $cm=NULL, $targetwindow="self") {
     $menu = array();
     $strjumpto = get_string('jumpto');
 
-    $sectionrecs = get_records("course_sections","course","$course->id","section","section,visible");
+    $sections = get_records('course_sections','course',$course->id,'section',"section,visible,summary");
 
     foreach ($modinfo as $mod) {
         if ($mod->mod == "label") {
@@ -1863,9 +1863,19 @@ function navmenu($course, $cm=NULL, $targetwindow="self") {
         }
 
         if ($mod->section > 0 and $section <> $mod->section) {
-            //Only add if visible or collapsed or teacher or course format = weeks
-            if ($sectionrecs[$mod->section]->visible or !$course->hiddensections or $isteacher) {
-                $menu[] = "-------------- $strsection $mod->section --------------";
+            $thissection = $sections[$mod->section];
+
+            if ($thissection->visible or !$course->hiddensections or $isteacher) {
+                $thissection->summary = strip_tags($thissection->summary);
+                if ($course->format == 'weeks' or empty($thissection->summary)) {
+                    $menu[] = "-------------- $strsection $mod->section --------------";
+                } else {
+                    if (strlen($thissection->summary) < 47) {
+                        $menu[] = '-- '.$thissection->summary;
+                    } else {
+                        $menu[] = '-- '.substr($thissection->summary, 0, 50).'...';
+                    }
+                }
             }
         }
 
