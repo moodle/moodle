@@ -1,0 +1,115 @@
+<!-- This page defines the form to create or edit an instance of this module -->
+<!-- It is used from /course/mod.php.  The whole instance is available as $form. -->
+
+<? include_once("$CFG->dirroot/mod/quiz/lib.php") ?>
+
+<H1 ALIGN=CENTER><FONT COLOR=RED>This module is not ready for use</FONT></H1>
+<FORM name="form" method="post" action="<?=$ME ?>">
+<CENTER>
+<TABLE cellpadding=5>
+<TR valign=top>
+    <TD align=right><P><B><? print_string("name") ?>:</B></P></TD>
+    <TD>
+        <INPUT type="text" name="name" size=40 value="<? p($form->name) ?>">
+    </TD>
+</TR>
+<TR valign=top>
+    <TD align=right><P><B><? print_string("introduction", "quiz") ?>:</B></P></TD>
+    <TD>
+        <textarea name="intro" rows=4 cols=50 wrap="virtual"><? p($form->intro) ?></textarea>
+        <? helpbutton("text", get_string("helptext")); ?>
+    </TD>
+</TR>
+<TR valign=top>
+    <TD align=right><P><B><? print_string("daysavailable", "quiz") ?>:</B></P></TD>
+    <TD>
+    <?
+        $options = array();
+        $options[0] = get_string("alwaysavailable", "quiz");
+        for ($i=1;$i<=13;$i++) {
+            $options[$i] = get_string("numdays", "", $i);
+        }
+        for ($i=2;$i<=16;$i++) {
+            $days = $i * 7;
+            $options[$days] = get_string("numweeks", "", $i);
+        }
+        $options[365] = get_string("numweeks", "", 52);
+        if ($form->days == "") {
+            $form->days == "14";
+        }
+        choose_from_menu($options, "days", "$form->days", "");
+     ?>
+    </TD>
+</TR>
+<TR valign=top>
+    <TD align=right><P><B><? print_string("attemptsallowed", "quiz") ?>:</B></P></TD>
+    <TD>
+    <?
+        $options = array();
+        $options[0] = get_string("attemptsunlimited", "quiz");
+        $options[1] = "1 ".strtolower(get_string("attempt", "quiz"));
+        for ($i=2;$i<=6;$i++) {
+            $options[$i] = "$i ".strtolower(get_string("attempts", "quiz"));
+        }
+        choose_from_menu($options, "attempts", "$form->attempts", "");
+     ?>
+    </TD>
+</TR>
+<TR valign=top>
+    <TD align=right><P><B><? print_string("grademethod", "quiz") ?>:</B></P></TD>
+    <TD>
+    <?
+        $options = array();
+        $options[1] = get_string("gradehighest", "quiz");
+        $options[2] = get_string("gradeaverage", "quiz");
+        $options[3] = get_string("attemptfirst", "quiz");
+        $options[4] = get_string("attemptlast", "quiz");
+        choose_from_menu($QUIZ_GRADE_METHOD, "grademethod", "$form->grademethod", "");
+     ?>
+    </TD>
+</TR>
+<TR valign=top>
+    <TD align=right><P><B><? print_string("showfeedback", "quiz") ?>:</B></P></TD>
+    <TD>
+    <?
+        $options = array();
+        $options[0] = get_string("no");
+        $options[1] = get_string("yes");
+        choose_from_menu($options, "feedback", "$form->feedback", "");
+     ?>
+    </TD>
+</TR>
+<TR valign=top>
+    <TD align=right><P><B><? print_string("showcorrectanswer", "quiz") ?>:</B></P></TD>
+    <TD>
+    <?
+        $options = array();
+        $options[0] = get_string("no");
+        $options[1] = get_string("yes");
+        choose_from_menu($options, "correctanswers", "$form->correctanswers", "");
+     ?>
+    </TD>
+</TR>
+<TR valign=top>
+    <TD align=right><P><B><? print_string("maximumgrade") ?>:</B></P></TD>
+    <TD>
+    <?
+        for ($i=100; $i>=0; $i--) {
+            $grades[$i] = $i;
+        }
+        choose_from_menu($grades, "grade", "$form->grade", "");
+     ?>
+    </TD>
+</TR>
+</TABLE>
+<!-- These hidden variables are always the same -->
+<INPUT type="hidden" name=course        value="<? p($form->course) ?>">
+<INPUT type="hidden" name=coursemodule  value="<? p($form->coursemodule) ?>">
+<INPUT type="hidden" name=section       value="<? p($form->section) ?>">
+<INPUT type="hidden" name=module        value="<? p($form->module) ?>">
+<INPUT type="hidden" name=modulename    value="<? p($form->modulename) ?>">
+<INPUT type="hidden" name=instance      value="<? p($form->instance) ?>">
+<INPUT type="hidden" name=mode          value="<? p($form->mode) ?>">
+<INPUT type="submit" value="<? print_string("savechanges") ?>">
+</CENTER>
+</FORM>
