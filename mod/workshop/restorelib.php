@@ -285,67 +285,69 @@
 
         $status = true;
 
-        //Get the assessments array
-        $assessments = $info['#']['ASSESSMENTS']['0']['#']['ASSESSMENT'];
+        //Get the assessments array (if any)
+        if (isset($info['#']['ASSESSMENTS']['0']['#']['ASSESSMENT'])) {
+            $assessments = $info['#']['ASSESSMENTS']['0']['#']['ASSESSMENT'];
 
-        //Iterate over assessments
-        for($i = 0; $i < sizeof($assessments); $i++) {
-            $ass_info = $assessments[$i];
-            //traverse_xmlize($ass_info);                                                                 //Debug
-            //print_object ($GLOBALS['traverse_array']);                                                  //Debug
-            //$GLOBALS['traverse_array']="";                                                              //Debug
+            //Iterate over assessments
+            for($i = 0; $i < sizeof($assessments); $i++) {
+                $ass_info = $assessments[$i];
+                //traverse_xmlize($ass_info);                                                                 //Debug
+                //print_object ($GLOBALS['traverse_array']);                                                  //Debug
+                //$GLOBALS['traverse_array']="";                                                              //Debug
 
-            //We'll need this later!!
-            $oldid = backup_todb($ass_info['#']['ID']['0']['#']);
-            $olduserid = backup_todb($ass_info['#']['USERID']['0']['#']);
+                //We'll need this later!!
+                $oldid = backup_todb($ass_info['#']['ID']['0']['#']);
+                $olduserid = backup_todb($ass_info['#']['USERID']['0']['#']);
 
-            //Now, build the WORKSHOP_ASSESSMENTS record structure
-            $assessment->workshopid = $new_workshop_id;
-            $assessment->submissionid = $new_submission_id;
-            $assessment->userid = backup_todb($ass_info['#']['USERID']['0']['#']);
-            $assessment->timecreated = backup_todb($ass_info['#']['TIMECREATED']['0']['#']);
-            $assessment->timegraded = backup_todb($ass_info['#']['TIMEGRADED']['0']['#']);
-            $assessment->timeagreed = backup_todb($ass_info['#']['TIMEAGREED']['0']['#']);
-            $assessment->grade = backup_todb($ass_info['#']['GRADE']['0']['#']);
-            $assessment->gradinggrade = backup_todb($ass_info['#']['GRADINGGRADE']['0']['#']);
-            $assessment->resubmission = backup_todb($ass_info['#']['RESUBMISSION']['0']['#']);
-            $assessment->mailed = backup_todb($ass_info['#']['MAILED']['0']['#']);
-            $assessment->generalcomment = backup_todb($ass_info['#']['GENERALCOMMENT']['0']['#']);
-            $assessment->teachercomment = backup_todb($ass_info['#']['TEACHERCOMMENT']['0']['#']);
+                //Now, build the WORKSHOP_ASSESSMENTS record structure
+                $assessment->workshopid = $new_workshop_id;
+                $assessment->submissionid = $new_submission_id;
+                $assessment->userid = backup_todb($ass_info['#']['USERID']['0']['#']);
+                $assessment->timecreated = backup_todb($ass_info['#']['TIMECREATED']['0']['#']);
+                $assessment->timegraded = backup_todb($ass_info['#']['TIMEGRADED']['0']['#']);
+                $assessment->timeagreed = backup_todb($ass_info['#']['TIMEAGREED']['0']['#']);
+                $assessment->grade = backup_todb($ass_info['#']['GRADE']['0']['#']);
+                $assessment->gradinggrade = backup_todb($ass_info['#']['GRADINGGRADE']['0']['#']);
+                $assessment->resubmission = backup_todb($ass_info['#']['RESUBMISSION']['0']['#']);
+                $assessment->mailed = backup_todb($ass_info['#']['MAILED']['0']['#']);
+                $assessment->generalcomment = backup_todb($ass_info['#']['GENERALCOMMENT']['0']['#']);
+                $assessment->teachercomment = backup_todb($ass_info['#']['TEACHERCOMMENT']['0']['#']);
 
-            //We have to recode the userid field
-            $user = backup_getid($restore->backup_unique_code,"user",$olduserid);
-            if ($user) {
-                $assessment->userid = $user->new_id;
-            }
-
-            //The structure is equal to the db, so insert the workshop_assessment
-            $newid = insert_record ("workshop_assessments",$assessment);
-
-            //Do some output
-            if (($i+1) % 50 == 0) {
-                echo ".";
-                if (($i+1) % 1000 == 0) {
-                    echo "<br>";
+                //We have to recode the userid field
+                $user = backup_getid($restore->backup_unique_code,"user",$olduserid);
+                if ($user) {
+                    $assessment->userid = $user->new_id;
                 }
-                backup_flush(300);
-            }
 
-            if ($newid) {
-                //We have the newid, update backup_ids
-                backup_putid($restore->backup_unique_code,"workshop_assessments",$oldid,
-                             $newid);
+                //The structure is equal to the db, so insert the workshop_assessment
+                $newid = insert_record ("workshop_assessments",$assessment);
 
-                //Now we need to restore workshop_comments (user level table)
-                if ($status) {
-                    $status = workshop_comments_restore_mods ($new_workshop_id, $newid,$ass_info,$restore);
+                //Do some output
+                if (($i+1) % 50 == 0) {
+                    echo ".";
+                    if (($i+1) % 1000 == 0) {
+                        echo "<br>";
+                    }
+                    backup_flush(300);
                 }
-                //Now we need to restore workshop_grades (user level table)   
-                if ($status) {
-                    $status = workshop_grades_restore_mods ($new_workshop_id, $newid,$ass_info,$restore);   
+
+                if ($newid) {
+                    //We have the newid, update backup_ids
+                    backup_putid($restore->backup_unique_code,"workshop_assessments",$oldid,
+                            $newid);
+
+                    //Now we need to restore workshop_comments (user level table)
+                    if ($status) {
+                        $status = workshop_comments_restore_mods ($new_workshop_id, $newid,$ass_info,$restore);
+                    }
+                    //Now we need to restore workshop_grades (user level table)   
+                    if ($status) {
+                        $status = workshop_grades_restore_mods ($new_workshop_id, $newid,$ass_info,$restore);   
+                    }
+                } else {
+                    $status = false;
                 }
-            } else {
-                $status = false;
             }
         }
 
