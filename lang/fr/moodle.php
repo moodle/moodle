@@ -358,7 +358,7 @@ $string['followingoptional'] = 'Les éléments suivants sont facultatifs';
 $string['followingrequired'] = 'Les éléments suivants sont requis';
 $string['force'] = 'Imposer ';
 $string['forcelanguage'] = 'Imposer la langue';
-$string['forcedmode'] = 'mode imposŽ';
+$string['forcedmode'] = 'mode imposé';
 $string['forceno'] = 'Ne pas imposer';
 $string['forgotten'] = 'Vous avez oublié votre nom d\'utilisateur et/ou votre mot de passe';
 $string['format'] = 'Format du cours';
@@ -495,42 +495,28 @@ $string['listofallpeople'] = 'Liste de tous les utilisateurs inscrits';
 $string['livelogs'] = 'Événements survenus durant l\'heure passée';
 $string['locale'] = 'fr_FR';
 $string['location'] = 'Emplacement';
-$string['loggedinas'] = '« $a » connecté';
+$string['loggedinas'] = 'ConnectŽ sous le nom « $a »';
 $string['loggedinnot'] = 'Non connecté.';
 $string['login'] = 'Connexion';
-$string['loginas'] = 'Connecté sous le nom';
+$string['loginas'] = 'Se connecter sous ce nom';
 $string['loginguest'] = 'Connecté en tant que visiteur anonyme';
 $string['loginsite'] = 'Se connecter sur le site';
-$string['loginsteps'] = 'Bonjour. Pour un accès complet aux cours, prenez une minute pour vous créer un compte personnel sur ce site.<br>
-
-Chaque cours peut également nécessiter une clef d\'inscription à usage unique dont vous n\'avez pas besoin pour l\'instant.<br>
-
+$string['loginsteps'] = 'Bonjour. Pour un accès complet aux cours, prenez une minute pour vous créer un compte personnel sur ce site.<br />
+Chaque cours peut également nécessiter une clef d\'inscription à usage unique dont vous n\'avez pas besoin pour l\'instant.<br />
 Voici les étapes à suivre :
-
    <ol size=\"2\">
-
-   <li>Remplir le formulaire <a href=\"$a\">nouveau compte</a>.
-
-   <li>Un message vous sera immédiatement adressé par courriel.
-
-   <li>Récupérer ce message et cliquer sur le lien Web qu\'il contient.
-
-   <li>Votre inscription sera alors confirmée et vous serez connecté.
-
-   <li>Vous pourrez ensuite choisir le cours auquel vous souhaitez vous inscrire.
-
-   <li>Si une clef d\'inscription vous est demandée, utilisez celle que votre professeur vous aura communiquée.
-
-   <li>Vous aurez alors un accès au cours complet. À votre prochaine visite il vous suffira d\'entrer votre nom d\'utilisateur et mot de passe (dans le formulaire ci-contre) afin de vous connecter et d\'accéder à tous les cours auxquels vous serez inscrit.
-
+   <li>Remplir le formulaire <a href=\"$a\">nouveau compte</a>.</li>
+   <li>Un message vous sera immédiatement adressé par courriel.</li>
+   <li>Récupérer ce message et cliquer sur le lien Web qu\'il contient.</li>
+   <li>Votre inscription sera alors confirmée et vous serez connecté.</li>
+   <li>Vous pourrez ensuite choisir le cours auquel vous souhaitez vous inscrire.</li>
+   <li>Si une clef d\'inscription vous est demandée, utilisez celle que votre professeur vous aura communiquée.</li>
+   <li>Vous aurez alors un accès au cours complet. À votre prochaine visite il vous suffira d\'entrer votre nom d\'utilisateur et mot de passe (dans le formulaire ci-contre) afin de vous connecter et d\'accéder à tous les cours auxquels vous serez inscrit.</li>
    </ol>';
-$string['loginstepsnone'] = 'Bonjour !<p>
-
-Pour un accès complet aux cours vous devez vous créer un compte.<p>
-
-Pour cela, vous avez seulement besoin de choisir un nom d\'utilisateur et un mot de passe à entrer dans le formulaire de cette page.<p>
-
-Si ce nom d\'utilisateur est déjà utilisé, il vous sera demandé d\'en choisir un autre.';
+$string['loginstepsnone'] = '<p>Bonjour !</p>
+<p>Pour un accès complet aux cours vous devez vous créer un compte.</p>
+<p>Pour cela, vous avez seulement besoin de choisir un nom d\'utilisateur et un mot de passe à entrer dans le formulaire de cette page.</p>
+<p>Si ce nom d\'utilisateur est déjà utilisé, il vous sera demandé d\'en choisir un autre.</p>';
 $string['loginto'] = 'Se connecter sur $a';
 $string['loginusing'] = 'Connectez-vous ici en utilisant votre nom d\'utilisateur<br />et mot de passe';
 $string['logout'] = 'Déconnexion';
@@ -689,11 +675,9 @@ $string['passwordconfirmchange'] = 'Confirmer le changement de mot de passe';
 $string['passwordrecovery'] = 'Oui, j\'ai besoin d\'aide pour me connecter';
 $string['passwordsdiffer'] = 'Les mots de passe ne correspondent pas';
 $string['passwordsent'] = 'Le mot de passe a été envoyé';
-$string['passwordsenttext'] = '<p>Un message vous a été envoyé à cette adresse : $a->email.
-
-<p><b>Merci de lire ce message afin de connaître votre nouveau mot de passe</b>
-
-<p>Ce nouveau mot de passe a été généré automatiquement. Vous voudrez sans doute<br /> le <a href=\"$a->link\">modifier</a> afin qu\'il vous soit plus facile de vous en souvenir.';
+$string['passwordsenttext'] = '<p>Un message vous a été envoyé à cette adresse : $a->email.</p>
+<p><b>Merci de lire ce message afin de connaître votre nouveau mot de passe</b></p>
+<p>Ce nouveau mot de passe a été généré automatiquement. Vous voudrez sans doute<br /> le <a href=\"$a->link\">modifier</a> afin qu\'il vous soit plus facile de vous en souvenir.</p>';
 $string['people'] = 'La classe';
 $string['personalprofile'] = 'Fiche personnelle';
 $string['phone'] = 'Téléphone';
@@ -719,11 +703,8 @@ $string['recentactivity'] = 'Activité récente';
 $string['registration'] = 'Enregistrement de Moodle';
 $string['registrationemail'] = 'Notifications par courriel';
 $string['registrationinfo'] = '<p>Cette page vous permet d\'enregistrer votre site Moodle sur moodle.org. L\'enregistrement est gratuit. Le principal avantage de l\'enregistrement est l\'inscription à une liste de distribution courriel utilisée pour d\'importantes informations telles que des alertes de sécurité et des mises à jour de Moodle.</p>
-
 <p>Vos données seront conservées confidentiellement, et ne seront jamais vendues ou divulguées à quiconque. Ces informations ne sont recueillies que pour l\'assistance techniques et à des fins de statistique au sujet de la communauté Moodle.</p>
-
 <p>Si vous le désirez, le nom de votre site, votre pays et URL peuvent être ajoutés à la liste publique des sites Moodle.</p>
-
 <p>Les nouveaux enregistrements sont vérifiés manuellement avant d\'être ajoutés à la liste. Toutefois, une fois dans cette liste, vous pouvez modifier votre enregistrement en tout temps en remplissant et validant à nouveau ce formulaire.</p>';
 $string['registrationno'] = 'Non, je ne désire pas recevoir de courriels';
 $string['registrationsend'] = 'Envoyer les informations d\'enregistrement à moodle.org';
@@ -760,12 +741,9 @@ $string['scheduledbackupstatus'] = 'Statut de la sauvegarde planifiée';
 $string['search'] = 'Rechercher';
 $string['searchagain'] = 'Rechercher de nouveau';
 $string['searchcourses'] = 'Rechercher des cours';
-$string['searchhelp'] = 'Vous pouvez introduire plusieurs termes comme critères de recherche.<p>
-
-terme : rechercher toutes les occurences du terme dans le texte.<br />
-
+$string['searchhelp'] = '<p>Vous pouvez introduire plusieurs termes comme critères de recherche.</p>
+<p>terme : rechercher toutes les occurences du terme dans le texte.<br />
 +terme : seules les correspondances exactes du terme (mot entier) seront trouvées.<br />
-
 -terme : ne pas inclure les résultats contenant ce terme.</p>';
 $string['searchresults'] = 'Résultats de la recherche';
 $string['sec'] = 'sec';
