@@ -164,6 +164,7 @@
             require_once($CFG->dirroot.'/lib/uploadlib.php');
                 
             if (!empty($save) and confirm_sesskey()) {
+                $course->maxbytes = 0;  // We are ignoring course limits
                 $um = new upload_manager('userfile',false,false,$course,false,0);
                 $dir = "$basedir$wdir";
                 if ($um->process_file_uploads($dir)) {
@@ -172,7 +173,7 @@
                 // um will take care of error reporting.
                 displaydir($wdir);
             } else {
-                $upload_max_filesize = get_max_upload_file_size($CFG->maxbytes);  // Restricted by site setting
+                $upload_max_filesize = get_max_upload_file_size($CFG->maxbytes);
                 $filesize = display_size($upload_max_filesize);
 
                 $struploadafile = get_string("uploadafile");
@@ -188,7 +189,7 @@
                 echo " <input type=\"hidden\" name=\"wdir\" value=\"$wdir\" />";
                 echo " <input type=\"hidden\" name=\"action\" value=\"upload\" />";
                 echo " <input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />";
-                upload_print_form_fragment(1,array('userfile'),null,false,null,$course->maxbytes,0,false);
+                upload_print_form_fragment(1,array('userfile'),null,false,null,$upload_max_filesize,0,false);
                 echo " </td><tr><td width=\"10\">";
                 echo " <input type=\"submit\" name=\"save\" value=\"$struploadthisfile\" />";
                 echo "</form>";
@@ -812,6 +813,7 @@ function displaydir ($wdir) {
     echo "<table border=\"0\" cellspacing=\"2\" cellpadding=\"2\" width=\"640\">";    
     echo "<tr><td>";
     echo "<input type=\"hidden\" name=\"id\" value=\"$id\" />";
+    echo '<input type="hidden" name="choose" value="'.$choose.'">';
     echo "<input type=\"hidden\" name=\"wdir\" value=\"$wdir\" /> ";
     echo "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />";
     $options = array (
@@ -846,6 +848,7 @@ function displaydir ($wdir) {
     echo "</td>";
     echo "<td align=\"right\">";
         echo "<form action=\"index.php\" method=\"get\">";
+        echo ' <input type="hidden" name="choose" value="'.$choose.'">';
         echo " <input type=\"hidden\" name=\"id\" value=\"$id\" />";
         echo " <input type=\"hidden\" name=\"wdir\" value=\"$wdir\" />";
         echo " <input type=\"hidden\" name=\"action\" value=\"upload\" />";
