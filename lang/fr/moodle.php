@@ -158,7 +158,7 @@ $string['cookiesenabled'] = 'Votre navigateur doit supporter les cookies';
 $string['copy'] = 'copie';
 $string['copyingcoursefiles'] = 'Copie des fichiers de cours';
 $string['copyinguserfiles'] = 'Copie des fichiers utilisateurs';
-$string['copyingzipfile'] = 'Copie du fichier compacté';
+$string['copyingzipfile'] = 'Copie du fichier compacté (zip)';
 $string['copyrightnotice'] = 'Copyright';
 $string['country'] = 'Pays';
 $string['course'] = 'Cours';
@@ -180,7 +180,7 @@ $string['create'] = 'Créer';
 $string['createaccount'] = 'Créer mon compte';
 $string['createfolder'] = 'Créer un dossier dans $a';
 $string['createuserandpass'] = 'Créer un nouveau compte pour vous connecter';
-$string['createziparchive'] = 'Créer une archive zip';
+$string['createziparchive'] = 'Créer une archive compactŽe zip';
 $string['creatingcategoriesandquestions'] = 'Création des catégories et des questions';
 $string['creatingcoursemodules'] = 'Création des modules de cours';
 $string['creatinglogentries'] = 'Création des entrées du journal';
@@ -889,8 +889,8 @@ $string['unknowncategory'] = 'Discipline inconnue';
 $string['unpacking'] = 'Décompactage de $a';
 $string['unsafepassword'] = 'Ce mot de passe n\'est pas sûr. Essayez-en un autre.';
 $string['unusedaccounts'] = 'Les comptes qui n\'ont pas été utilisés depuis $a jours sont automatiquement désinscrits.';
-$string['unzip'] = 'Décompacter';
-$string['unzippingbackup'] = 'Décompactage de la sauvegarde';
+$string['unzip'] = 'Décompacter (zip)';
+$string['unzippingbackup'] = 'Décompactage (zip) de la sauvegarde';
 $string['update'] = 'Mettre à jour';
 $string['updated'] = '$a mis à jour';
 $string['updatemyprofile'] = 'Enregistrer mon profil';
@@ -934,7 +934,7 @@ Pour commencer, veuillez modifier votre profil dans ce cours afin que nous nous 
 
 
 $a->profileurl';
-$string['whattocallzip'] = 'Quel nom voulez-vous donner au fichier compacté ?';
+$string['whattocallzip'] = 'Quel nom voulez-vous donner au fichier compacté (zip) ?';
 $string['withchosenfiles'] = 'Avec les fichiers choisis';
 $string['withoutuserdata'] = 'sans les données de l\'utilisateur';
 $string['withuserdata'] = 'avec les données de l\'utilisateur';
@@ -957,11 +957,11 @@ $string['writingscalesinfo'] = 'Écriture des informations des barèmes   ';
 $string['writinguserinfo'] = 'Écriture des informations des utilisateurs';
 $string['wrongpassword'] = 'Mot de passe incorrect pour cet utilisateur';
 $string['yes'] = 'Oui';
-$string['youareabouttocreatezip'] = 'Vous allez créer un fichier compacté contenant';
+$string['youareabouttocreatezip'] = 'Vous allez créer un fichier compacté (zip) contenant';
 $string['youaregoingtorestorefrom'] = 'Vous allez restaurer depuis';
 $string['yourlastlogin'] = 'Votre dernière connexion';
 $string['yourself'] = 'vous';
 $string['yourteacher'] = 'votre $a';
-$string['zippingbackup'] = 'Compactage de la sauvegarde';
+$string['zippingbackup'] = 'Compactage (zip) de la sauvegarde';
 
 ?>
