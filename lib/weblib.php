@@ -839,6 +839,8 @@ function print_header ($title="", $heading="", $navigation="", $focus="", $meta=
         $direction = " xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"$currentlanguage\" $direction";
     }
 
+    $title = str_replace('"', '&quot;', $title);
+
     include ("$CFG->dirroot/theme/$CFG->theme/header.html");
 }
 
