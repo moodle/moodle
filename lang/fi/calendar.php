@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // calendar.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004101900)
+      // calendar.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004112900)
 
 
 $string['calendar'] = 'Kalenteri';
@@ -56,7 +56,7 @@ $string['oneevent'] = '1 tapahtuma';
 $string['pref_lookahead'] = 'Tulevien tapahtumien tarkastelu';
 $string['pref_maxevents'] = 'Tulevien tapahtumien listan maksimikoko';
 $string['pref_startwday'] = 'Viikon ensimmäinen päivä';
-$string['pref_timeformat'] = 'Aikojen muoto';
+$string['pref_timeformat'] = 'Ajan osoitus tapa';
 $string['preferences'] = 'Asetukset';
 $string['preferences_available'] = 'Henkilökohtaiset asetuksesi';
 $string['repeatnone'] = 'Ei toistoja';
@@ -68,9 +68,6 @@ $string['shown'] = 'näkyvissä';
 $string['spanningevents'] = 'Tapahtumia käynnissä parhaillaan';
 $string['sun'] = 'Su';
 $string['sunday'] = 'Sunnuntai';
-$string['thischarset'] = 'iso-8859-1';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Suomi';
 $string['thu'] = 'To';
 $string['thursday'] = 'Torstai';
 $string['timeformat_12'] = '12-tuntinen (AP/IP)';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // install.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004110200)
+      // install.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004112900)
 
 
 $string['admindirerror'] = 'Yll‰pitohakemisto on m‰‰ritetty v‰‰rin';
@@ -27,8 +27,8 @@ $string['datarooterror'] = '\"Datahakemistoa\", jonka m‰‰rittelit, ei voitu lˆyt
 $string['dbconnectionerror'] = 'Emme pystyneet kytkeytym‰‰n tiedokantaan, jonka m‰‰rittelit. Tarkista tietokanta asetuksesi.';
 $string['dbcreationerror'] = 'Tietokannan luomisvirhe. Ei pystytty luomaan annettua tietokannan nime‰ tarjotuilla asetuksilla.';
 $string['dbhost'] = 'Palvelin';
-$string['dbpass'] = 'salasana';
-$string['dbprefix'] = 'taulukon etumerkki';
+$string['dbpass'] = 'Salasana';
+$string['dbprefix'] = 'Taulukon etumerkki';
 $string['dbtype'] = 'Tyyppi';
 $string['directorysettings'] = '<p>Varmista t‰m‰n Moodle asennuksen paikka.</p>
 
@@ -106,9 +106,6 @@ $string['sessionautostarterror'] = 'T‰m‰n pit‰isi olla pois p‰‰lt‰';
 $string['sessionautostarthelp'] = '<p>Moodle vaatii istuntotukea, eik‰ toimi ilman sit‰.</p>
 
 <p>istunto voidaan mahdollistaa php.ini tiedostossa... Etsi istuntoa varten.auto_start parameter.</p>';
-$string['thischarset'] = 'iso-8859-1';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Suomi';
 $string['wwwroot'] = 'Web-osoite';
 $string['wwwrooterror'] = 'Web-osoite ei n‰ytt‰isi olevan voimassa- t‰m‰ Moodle asennus ei n‰ytt‰isi olevan siell‰.';
 

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // wiki.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004101900)
+      // wiki.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004112900)
 
 
 $string['action'] = '-- Toiminto --';
@@ -13,7 +13,7 @@ $string['author'] = 'Kirjoittaja';
 $string['authorfieldpattern'] = 'Kirjoittajan ';
 $string['authorfieldpatternerror'] = 'Anna kirjoittaja ole hyv‰.';
 $string['backlinks'] = 'Viittaavat linkit';
-$string['binimgtoolarge'] = 'Kuva on liian iso.';
+$string['binimgtoolarge'] = 'Kuva on liian iso!';
 $string['binnoimg'] = 'T‰t‰ tiedostomuotoa ei hyv‰ksyt‰.';
 $string['browse'] = 'Selaa';
 $string['canceledit'] = 'Peruuta';
@@ -49,7 +49,7 @@ $string['editform2'] = 'Muokkaa varovasti ja muista ett‰ kaikki muokkaustapahtum
 $string['editthispage'] = 'Muokkataan sivua';
 $string['emptypage'] = 'Tyhj‰ sivu';
 $string['errorbinandtxt'] = 'Virhe: Sivu on tyypilt‰‰n BIN JA TXT';
-$string['errorhtml'] = 'Sivu tyyppi‰ HTML';
+$string['errorhtml'] = 'Sivu tyyppi‰: HTML';
 $string['errornotype'] = 'Virhe: Sivu ei ole tyypi‰  BIN EIKƒ TXT';
 $string['errororreason'] = 'Virhe tai syy';
 $string['errorroandwr'] = 'Virhe: Sivu on Muokattava ja Kirjoitussuojattu';
@@ -75,7 +75,7 @@ $string['flagsset'] = 'Liput muutettu';
 $string['flagtxt'] = 'TXT';
 $string['flagwr'] = 'WR';
 $string['for'] = '->';
-$string['forbidden'] = 'Sinulla ei ole oikeutta t‰h‰n sivuun.';
+$string['forbidden'] = 'Sinulla ei ole oikeutta tulla t‰lle sivulle.';
 $string['groups'] = 'Ryhm‰t';
 $string['hits'] = '$a osumaa';
 $string['howtooperate'] = 'Kuinka toimia';
@@ -91,7 +91,7 @@ $string['lastchanged'] = 'Muokattu $a';
 $string['lastmodified'] = 'Viimeisin muokkaus';
 $string['linkdead'] = 'DEAD';
 $string['linkok'] = 'OK';
-$string['linkschecked'] = 'Linkki‰ tarkastettu';
+$string['linkschecked'] = 'Linkit tarkastettu';
 $string['listall'] = 'Listaa kaikki';
 $string['listcandidates'] = 'Listaa ehdokkaat';
 $string['meta'] = 'Meta tiedot';
@@ -106,7 +106,7 @@ $string['nocandidatestoremove'] = 'Ei ehdotettavia sivuja poistettavaksi, valits
 $string['nochangestorevert'] = 'Ei muutoksia peruttavaksi';
 $string['nohtml'] = 'Ei HTML';
 $string['nolinksfound'] = 'Sivulta ei lˆytynyt linkkej‰';
-$string['noregexp'] = 'Asetuksen  pit‰‰ olla t‰ysi merkkijono, et voi k‰ytt‰‰ * tai s‰‰nnˆllisi‰ lausekkeita (regex). Lis‰‰ t‰h‰n konee IP-osoite tai koneen nimi, mutta ‰l‰ porttia ( se vaihtuu aina joka yhteydess‰)';
+$string['noregexp'] = 'Asetuksen  pit‰‰ olla t‰ysi merkkijono, et voi k‰ytt‰‰ * tai s‰‰nnˆllisi‰ lausekkeita (regex). Lis‰‰ t‰h‰n koneen IP-osoite tai koneen nimi, mutta ‰l‰ porttia ( se vaihtuu aina joka yhteydess‰)';
 $string['notadministratewiki'] = 'Sinulla ei ole t‰m‰n wikin yll‰pito-oikeuksia.';
 $string['nothingtostrip'] = 'Ei sivuja joilla olisi useampi kuin yksi versio';
 $string['nowikicreated'] = 'T‰h‰n wikiin ei ole luotu sivuja';
@@ -157,9 +157,6 @@ $string['tabinfo'] = 'Historia';
 $string['tablinks'] = 'Linkit';
 $string['tabview'] = 'Katso';
 $string['thanksforcontribution'] = 'Kiitokset osallistumisesta';
-$string['thischarset'] = 'iso-8859-1';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Suomi';
 $string['thispageisntlinkedfromanywhereelse'] = 'T‰t‰ sivua ei ole linkitetty minnek‰‰n';
 $string['updatedpages'] = 'P‰ivitetyt sivut';
 $string['uplerror'] = 'Pahus, jotain meni pieleen tiedoston l‰hett‰misess‰';

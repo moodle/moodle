@@ -1,8 +1,8 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004101900)
+      // assignment.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004112900)
 
 
-$string['allowresubmit'] = 'Salli uudelleenl‰hetys';
+$string['allowresubmit'] = 'Salli uudelleenpalautus';
 $string['assignmentdetails'] = 'Teht‰v‰n tiedot';
 $string['assignmentmail'] = '$a->teacher on antanut sinulle palautetta teht‰v‰st‰ \'$a->assignment\'
 
@@ -22,7 +22,7 @@ $string['duedate'] = 'Palautettava viimeist‰‰n';
 $string['duedateno'] = 'Ei palautusp‰iv‰m‰‰r‰‰';
 $string['early'] = '$a ajoissa';
 $string['existingfiledeleted'] = 'Tiedosto on poistettu: $a';
-$string['failedupdatefeedback'] = 'Palautteen tallentaminen ep‰onnistui k‰ytt‰j‰lle $a';
+$string['failedupdatefeedback'] = 'Palautteen tallentaminen k‰ytt‰j‰lle $a ep‰onnistui';
 $string['feedback'] = 'Palaute';
 $string['feedbackupdated'] = 'Vastausten palautteet p‰ivitetty $a oppilaalle';
 $string['late'] = '$a myˆh‰ss‰';
@@ -39,9 +39,6 @@ $string['submissionfeedback'] = 'Palaute teht‰v‰st‰';
 $string['submissions'] = 'Palautukset';
 $string['submitassignment'] = 'Palauta teht‰v‰si k‰ytt‰en t‰t‰ lomaketta';
 $string['submitted'] = 'Palautettu';
-$string['thischarset'] = 'iso-8859-1';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Suomi';
 $string['typeoffline'] = 'Offline-teht‰v‰';
 $string['typeuploadsingle'] = 'L‰het‰ yksi tiedosto';
 $string['uploadbadname'] = 'Tiedostonimess‰ on tuntemattomia merkkej‰. Tiedostoa ei voida l‰hett‰‰.';

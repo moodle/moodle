@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // exercise.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004101900)
+      // exercise.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004112900)
 
 
 $string['absent'] = 'Puuttuva';
@@ -44,6 +44,7 @@ $string['element'] = 'Arvosteluperuste';
 $string['elementweight'] = 'Arvosteluperusteen painoarvo';
 $string['enterpassword'] = 'Anna salasana';
 $string['entriessaved'] = 'Tietueet tallennettu';
+$string['errorbanded'] = 'Virheistä vähentävä';
 $string['excellent'] = 'Erinomainen';
 $string['exerciseassessments'] = 'Oppimistehtävän arvioinnit';
 $string['exercisefeedback'] = 'Oppimistehtävän palaute';
@@ -62,12 +63,12 @@ $string['handlingofmultiplesubmissions'] = 'Useiden palautusten hallinta';
 $string['hidenamesfromstudents'] = 'Piilota nimet oppilailta';
 $string['incorrect'] = 'Virheellinen';
 $string['late'] = 'Myöhässä';
-$string['lax'] = 'Heikko';
+$string['lax'] = 'Rento';
 $string['leaguetable'] = 'Palautetut työt';
 $string['mail1'] = 'Palautuksesi \'$a\' on arvosteltu ';
 $string['mail2'] = 'Kommentit ja arvosana näkyvät oppimistehtävän arvioinnissa $a';
 $string['mail3'] = 'Voit nähdä sen oppimistehtävän arvioinnissasi';
-$string['mail6'] = 'Arviosi tehtävästä $a on arvosteltu';
+$string['mail6'] = 'Arviosi tehtävästä \'$a\' on arvosteltu';
 $string['mail7'] = '$a:n kommentit voit nähdä oppimistehtävän arvioinnissa';
 $string['managingassignment'] = 'Oppimistehtävän hallinta';
 $string['maximum'] = 'Maksimi';
@@ -155,22 +156,19 @@ $string['theexercise'] = 'Oppimistehtävä';
 $string['theexerciseandthesubmissionby'] = 'Oppimistehtävä ja $a:n palautus';
 $string['thegradeis'] = 'Arvosana on $a';
 $string['thereisfeedbackfromthe'] = 'Palautetta $a:lta';
-$string['thischarset'] = 'iso-8859-1';
-$string['thisdirection'] = 'ltr';
 $string['thisisaresubmission'] = 'Tämä on a$:n palautus uudelleen.<br />Uuden palautuksen katsomisen jälkeen päivitä tämä arviointi<br />ja klikkaa yhtä sivun alalaidan painikkeista.';
-$string['thislanguage'] = 'Suomi';
 $string['title'] = 'Otsikko';
 $string['typeofscale'] = 'Asteikon tyyppi';
-$string['unassessed'] = '$a itsearviointi';
+$string['unassessed'] = '$a arvioimatonta';
 $string['ungradedstudentassessments'] = '$a arvioimatonta oppilasarviointia';
-$string['usemaximum'] = 'Käytä maksimi';
+$string['usemaximum'] = 'Käytä suurinta';
 $string['usemean'] = 'Käytä keskiarvoa';
 $string['usepassword'] = 'käytä salasanaa';
-$string['verylax'] = 'erittäin höllä';
+$string['verylax'] = 'erittäin rento';
 $string['verypoor'] = 'Erittäin heikkotasoinen';
 $string['verystrict'] = 'erittäin tiukka';
-$string['view'] = 'Katsele';
-$string['viewteacherassessment'] = 'katsele $a arviota';
+$string['view'] = 'Näytä';
+$string['viewteacherassessment'] = 'Näytä $a :n arvio.';
 $string['warningonamendingelements'] = 'VAROITUS: Palautettuja arviointeja ei ole. <br />ÄLÄ muuta arvosteluperusteiden määrää, asteikkotyyppejä tai arvosteluperusteiden painoarvoja.';
 $string['weightederrorcount'] = 'Painotettu virheiden määrä';
 $string['weightforgradingofassessments'] = 'Arviointien arvostelun painoarvo';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // appointment.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004101900)
+      // appointment.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004112900)
 
 
 $string['allowresubmit'] = 'Salli uudelleenlähetys';
@@ -13,28 +13,25 @@ $string['failedupdatefeedback'] = 'Palautteen tallentaminen käyttäjälle $a epäon
 $string['feedback'] = 'Palaute';
 $string['feedbackupdated'] = 'Palaute päivitetty $a henkilölle';
 $string['late'] = '$a myöhässä';
-$string['maximumgrade'] = 'Maksimi arvo';
-$string['maximumsize'] = 'Minimi koko';
+$string['maximumgrade'] = 'Suurin arvo';
+$string['maximumsize'] = 'Pienin koko';
 $string['modulename'] = 'Tapaaminen';
 $string['modulenameplural'] = 'Tapaamiset';
 $string['newsubmissions'] = 'Tapaamiset lähetetty';
 $string['notgradedyet'] = 'Arvioimatta';
 $string['notsubmittedyet'] = 'Lähettämättä';
-$string['overwritewarning'] = 'Varoitus: Uudelleen lähetys KORVAA aiemman lähetyksen ';
+$string['overwritewarning'] = 'Varoitus: Uudelleen lähetys KORVAA aiemman lähetyksesi';
 $string['saveallfeedback'] = 'Tallenna kaikki palautteet';
-$string['submissionfeedback'] = 'tarkastettavaksi jätetty palaute';
-$string['submissions'] = 'tarkastettavaksi jätetyt';
+$string['submissionfeedback'] = 'Lähetysten palaute';
+$string['submissions'] = 'Lähetetyt';
 $string['submitappointment'] = 'Lähetä tapaamiset tällä lomakkeella';
 $string['submitted'] = 'Lähetetty';
-$string['thischarset'] = 'iso-8859-1';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Suomi';
 $string['timeend'] = 'Tapaamisen loppu';
 $string['timestart'] = 'Tapaamisen alku';
 $string['typeoffline'] = 'Offline aktiviteetti';
 $string['typeuploadsingle'] = 'Lähetä yksitiedosto';
 $string['uploadbadname'] = 'Tiedostonimi sisältää outoja merkkejä eikä sitä voitu vastaanottaa';
-$string['uploadedfiles'] = 'Lähetetyt tiedostot';
+$string['uploadedfiles'] = 'lähetetyt tiedostot';
 $string['uploaderror'] = 'Tiedoston tallentamisessa tapahtui virhe';
 $string['uploadfailnoupdate'] = 'Tiedosto vastaanotettiin mutta lähetyksen kirjaaminen ei onnistunut!';
 $string['uploadfiletoobig'] = 'Pahus, tiedosto on liian suuri (Raja on $a tavua).';

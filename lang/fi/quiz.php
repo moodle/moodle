@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004101900)
+      // quiz.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004112900)
 
 
 $string['acceptederror'] = 'Hyväksyttävä virhe';
@@ -28,6 +28,7 @@ $string['attempts'] = 'Yritykset';
 $string['attemptsallowed'] = 'Yritystä sallittu';
 $string['attemptsexist'] = 'Tätä tenttiä on jo yritetty';
 $string['attemptsunlimited'] = 'Rajattomasti yrityksiä';
+$string['back'] = 'Takaisin esikatseluun';
 $string['backtoquiz'] = 'Takaisin tenttien muokkaukseen';
 $string['bestgrade'] = 'Paras arviointi';
 $string['blackboard'] = 'Blackboard';
@@ -51,6 +52,7 @@ $string['correctanswer'] = 'Oikea vastaus';
 $string['correctanswerformula'] = 'Oikea ratkaisukaava';
 $string['correctanswerlength'] = 'Merkitsevät arvot';
 $string['correctanswers'] = 'Oikeat vastaukset';
+$string['correctanswershows'] = 'Näytä oikea vastaus';
 $string['corrresp'] = 'Oikea vastaus';
 $string['countdown'] = 'Laskenta';
 $string['countdownfinished'] = 'Tentti sulkeutuu, lähetä vastauksesi heti.';
@@ -62,6 +64,7 @@ $string['custom'] = 'Mukautettu muoto';
 $string['datasetdefinitions'] = 'Uudelleenkäytettävät tietojen määritykset kategoriassa $a';
 $string['datasetnumber'] = 'Numero';
 $string['daysavailable'] = 'Päivää esillä';
+$string['decimalformat'] = 'desimaaleja';
 $string['decimals'] = '$a :n kanssa';
 $string['default'] = 'Oletus';
 $string['defaultgrade'] = 'Oletusarviointi kysymyksille';
@@ -158,6 +161,7 @@ $string['newlocal2'] = 'Tiedosto uudesta tiedostojen sarjasta, jota käyttää vain
 $string['newlocal3'] = 'Linkki uudesta linkkien sarjasta, jota käyttää vain tämä kysymys.';
 $string['noanswers'] = 'Vastausta ei ole valittu!';
 $string['noattempts'] = 'Kukaan ei ole yrittänyt tätä tenttiä.';
+$string['nodataset'] = 'tyhjää - ei ole jokerimerkki';
 $string['nominal'] = 'Nimellinen';
 $string['nomoreattempts'] = 'Enempää yrityksiä ei sallita';
 $string['nopossibledatasets'] = 'Ei mahdollisia tietoja';
@@ -237,9 +241,6 @@ $string['shufflequestions'] = 'Sekoita kysymykset';
 $string['significantfigures'] = '$a:n kanssa';
 $string['subneterror'] = 'Tämä tentti on saatavilla vain tietystä osoitteista. Tietokoneesi osoiteei ole sallitujn osoitteiden joukossa.';
 $string['substitutedby'] = 'korvataan';
-$string['thischarset'] = 'iso-8859-1';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Suomi';
 $string['time'] = 'Aika';
 $string['timecompleted'] = 'Suoritettu';
 $string['timeleft'] = 'Aikaa jäljellä';

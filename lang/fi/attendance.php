@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // attendance.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004101900)
+      // attendance.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004112900)
 
 
 $string['absentlong'] = 'Puuttuva';
@@ -35,7 +35,7 @@ $string['gradevalue'] = 'Tee tästä listasta arvioitava';
 $string['gradevaluemulti'] = 'Tee näistä listoista arvioitavat';
 $string['hoursinclass'] = 'Tuntien määrä opetuskokonaisuudessa';
 $string['hoursineachclass'] = 'Tuntien määrä jokaisessa opetuskokonaisuudessa';
-$string['hoursinfullreport'] = 'Maksimäärä läsnäolotunteja, joka näytetään raportin yhdellä sivulla';
+$string['hoursinfullreport'] = 'Suurin määrä läsnäolotunteja, jotka näytetään raportin yhdellä sivulla';
 $string['maxgradeshort'] = 'Suurin arvosana';
 $string['maxgradevalue'] = 'Suurin arvosana täydelle läsnäololle';
 $string['modulename'] = 'Läsnäolo';
@@ -50,7 +50,7 @@ $string['pages'] = 'Sivut';
 $string['presentlong'] = 'Nykyinen';
 $string['presentshort'] = 'N';
 $string['saturday'] = 'La';
-$string['startafterend'] = 'Aloituspäivä on lopetuspäivän jälkeen';
+$string['startafterend'] = 'Aloituspäivä on kurssin lopetuspäivän jälkeen';
 $string['startmulti'] = 'Ensimmäisen läsnäololistan päiväys.';
 $string['sunday'] = 'Su';
 $string['takeroll'] = 'Hae tämän päivän lista?';
@@ -58,9 +58,6 @@ $string['tardiesperabsence'] = 'Kuinka monta myöhästymistä lasketaan poissaoloks
 $string['tardylong'] = 'Myöhästyminen';
 $string['tardyshort'] = 'M';
 $string['teacheredit'] = 'Osallistu';
-$string['thischarset'] = 'iso-8859-1';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Suomi';
 $string['thursday'] = 'To';
 $string['tuesday'] = 'Ti';
 $string['viewall'] = 'Katsele kaikkia läsnäololistoja';

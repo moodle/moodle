@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004101900)
+      // glossary.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004112900)
 
 
 $string['addcomment'] = 'Lisää kommentti';
@@ -114,7 +114,7 @@ $string['importentries'] = 'Tuo tietueita';
 $string['isglobal'] = 'Globaali sanasto?';
 $string['linkcategory'] = 'Linkitä tämä kategoria automaattisesti';
 $string['mainglossary'] = 'Pääsanasto';
-$string['maxtimehaspassed'] = 'Tämän kommentin ($a) sallittu muokkausaika ylittynyt.';
+$string['maxtimehaspassed'] = 'Kommentin ($a) sallittu muokkausaika on ylittynyt.';
 $string['modulename'] = 'Sanasto';
 $string['modulenameplural'] = 'Sanastot';
 $string['newentries'] = 'Uudet sanaston tietueet';
@@ -149,16 +149,13 @@ $string['sendinratings'] = 'Lähetä viimeisimmät arvioni';
 $string['showall'] = 'Näytä \'Kaikki\'';
 $string['showalphabet'] = 'Näytä aakkosittain';
 $string['showspecial'] = 'Näytä \'Erikoiset\'';
-$string['sortby'] = 'Lajittele';
+$string['sortby'] = 'Lajittele...';
 $string['sortbycreation'] = 'Luontipäiväyksen mukaan';
 $string['sortbylastupdate'] = 'Viimeisen päivityksen mukaan';
 $string['sortchronogically'] = 'Lajittele kronologisesti';
 $string['special'] = 'Erikoiset';
 $string['standardview'] = 'Selaa aakkosjärjestyksessä';
 $string['studentcanpost'] = 'Opiskelijat voivat lisätä tietueita';
-$string['thischarset'] = 'iso-8859-1';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Suomi';
 $string['totalentries'] = 'Hakusanojen kokonaismäärä';
 $string['usedynalink'] = 'Linkitä sanaston tietueet automaattisesti';
 $string['waitingapproval'] = 'Odotetaan hyväksyntää';

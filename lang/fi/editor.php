@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004110200)
+      // editor.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004112900)
 
 
 $string['about'] = 'Tietoja editorista';
@@ -13,7 +13,7 @@ $string['anchors'] = 'Ankkurit';
 $string['baseline'] = 'Baseline';
 $string['bold'] = 'Lihavoitu';
 $string['borderthickness'] = 'Reunan paksuus';
-$string['bottom'] = 'Alas';
+$string['bottom'] = 'Pohja';
 $string['browse'] = 'Selaa';
 $string['cancel'] = 'Peruuta';
 $string['cellpadding'] = 'Solun täyttö';
@@ -75,7 +75,7 @@ $string['path'] = 'Polku';
 $string['percent'] = 'Prosenttia';
 $string['pixels'] = 'Pikseliä';
 $string['popupeditor'] = 'Suurenna editori';
-$string['preformatted'] = 'Muotoiltu (pre)';
+$string['preformatted'] = 'Esimuotoiltu';
 $string['preview'] = 'Esikatsele';
 $string['properties'] = 'Ominaisuudet';
 $string['redo'] = 'Palauta viimeinen toiminto';
@@ -95,13 +95,10 @@ $string['superscript'] = 'Ylädeksi';
 $string['textindicator'] = 'Nykyinen tyyli';
 $string['textmode'] = 'Olet tekstitilassa.  Käytä [<>] painiketta palataksesi takaisin WYSIWYG -tilaan.';
 $string['texttop'] = 'Texttop';
-$string['thischarset'] = 'iso-8859-1';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Suomi';
 $string['top'] = 'Ylös';
 $string['type'] = 'Tyyppi';
 $string['underline'] = 'Alleviivattu';
-$string['undo'] = 'Peruuta viimeinen toiminto';
+$string['undo'] = 'Peruuta viimeisin toiminto';
 $string['unorderedlist'] = 'Luettelomerkit';
 $string['upload'] = 'Lataa';
 $string['vertical'] = 'Pysty';
