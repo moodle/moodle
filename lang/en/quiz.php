@@ -73,6 +73,7 @@ $string['datasetdefinitions'] = 'Reusable dataset definitions for category $a';
 $string['datasetnumber'] = 'Number';
 $string['daysavailable'] = 'Days available';
 $string['decimalformat'] = 'decimals';
+$string['decimalpoints'] = 'Decimal points';
 $string['decimals'] = ' with $a ';
 $string['default'] = 'Default';
 $string['defaultgrade'] = 'Default question grade';
