@@ -302,3 +302,20 @@ a.dimmed:hover {
 .coursename {
 }
 
+a.autolink:link {
+    text-decoration: none;
+    color: #000000;
+    background-color: <?PHP echo $THEME->autolink?>;
+}
+
+a.autolink:visited {
+    text-decoration: none;
+    color: #000000;
+    background-color: <?PHP echo $THEME->autolink?>;
+}
+
+a.autolink:hover {
+    text-decoration: underline;
+    color: red;
+}
+
