@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.3 development (2004050500)
+      // moodle.php - created with Moodle 1.3 (2004052500)
 
 
 $string['action'] = 'Acció';
@@ -94,9 +94,11 @@ $string['backupfilename'] = 'backup';
 $string['backupfinished'] = 'La còpia de seguretat s\'ha completat amb èxit';
 $string['backupincludemoduleshelp'] = 'Trieu si voleu incloure els mòduls del curs, amb o sense dades dels usuaris, a les còpies de seguretat automàtiques.';
 $string['backupkeephelp'] = 'Quantes còpies de seguretat recents de cada curs voleu conservar? (les més velles s\'esborraran automàticament).';
+$string['backuplogdetailed'] = 'Registre d\'execució detallat';
 $string['backuploglaststatus'] = 'Registre de la darrera execució';
 $string['backuplogshelp'] = 'Si habiliteu aquesta opció, les còpies de seguretat automàtiques inclouran els registres d\'activitat del curs.';
 $string['backupnameformat'] = '%%Y%%m%%d-%%H%%M';
+$string['backupnoneusersinfo'] = 'Nota: heu seleccionat no incloure cap usuari en la còpia de seguretat, de manera que tots els mòduls s\'han commutat al mode \"sense dades d\'usuari\". Si us plau teniu en compte que els mòduls \"Exercici\" i \"Taller\" no són compatibles amb aquest tipus de còpia i s\'han desactivat completament.';
 $string['backuporiginalname'] = 'Nom de la còpia';
 $string['backupsavetohelp'] = 'Camí complet del directori on voleu desar els fitxers de còpies de seguretat<br />(deixeu en blanc per desar-los al directori per defecte del curs)';
 $string['backupuserfileshelp'] = 'Trieu si voleu que els fitxers dels usuaris (p. e. la imatge del perfil) s\'incloguin a les còpies de seguretat automàtiques';
@@ -145,8 +147,10 @@ $string['configdeleteunconfirmed'] = 'Si esteu utilitzant autenticació per corre
 $string['configenablerssfeeds'] = 'Aquest commutador habilitarà l\'RSS en tot el lloc. Per veure realment cap canvi haureu d\'habilitar també l\'RSS en cada mòdul: aneu als paràmetres dels mòduls en el menú de configuració.';
 $string['configenablerssfeedsdisabled'] = 'No està disponible perquè l\'RSS està inhabilitat en tot el lloc. Per habilitar-lo, aneu a les variables en el menú de configuració.';
 $string['configerrorlevel'] = 'Trieu la quantitat d\'avisos de PHP que voleu visualitzar. La millor elecció sol ser Normal.';
+$string['configextendedusernamechars'] = 'Si habiliteu aquest paràmetre, els estudiants podran utilitzar qualsevol caràcter en els seus noms d\'usuari (això no afectarà els seus noms actuals). Per defecte no està habilitat, de manera que només es poden utilitzar caràcters alfanumèrics.';
 $string['configfilteruploadedfiles'] = 'Habilitar aquest paràmetre farà que Moodle processi amb els filtres, abans de visualitzar-los, tots els fitxers de text i fitxers HTML que es pengin al servidor.';
 $string['configforcelogin'] = 'Normalment la gent pot veure la pàgina inicial del lloc i les llistes de cursos (no els cursos) sense autenticar-se. Si voleu imposar que la gent s\'autentiqui abans que pugui fer RES, aleshores heu d\'habilitar aquest paràmetre.';
+$string['configforceloginforprofiles'] = 'Habiliteu aquest paràmetre per obligar la gent a connectar-se amb un compte real (no com a visitants) abans que no se\'ls permeti veure les pàgines dels perfils d\'usuari. Per defecte està inhabilitat, de manera que els estudiants puguin informar-se sobre els professors de cada curs abans d\'inscriure-s\'hi, però això vol dir que els motors de cerca del web (com ara Google) també poden entrar-hi. ';
 $string['configframename'] = 'Si esteu incrustant Moodle dins d\'un marc (<i>frame</i>), poseu aquí el nom del marc. En cas contrari deixeu el valor \'_top\'';
 $string['configfullnamedisplay'] = 'Això defineix com es mostren els noms quan es visualitzen complets. Per a la majoria de llocs monolingües el paràmetre més eficient és el de \"Noms + cognoms\" que hi ha per defecte, però podeu triar d\'amagar totalment els cognoms, o deixar que ho decideixi el paquet actual d\'idioma (hi ha llengües que tenen convencions diferents).';
 $string['configgdversion'] = 'Indiqueu la versió de GD instal·lada. La versió mostrada per defecte és la que s\'ha detectat automàticament. No la canvieu si no sabeu el que esteu fent.';
@@ -278,6 +282,7 @@ $string['downloadtext'] = 'Baixa en format text';
 $string['doyouagree'] = 'Heu llegit aquestes condicions i les enteneu?';
 $string['edit'] = 'Edita $a';
 $string['editcoursesettings'] = 'Edita els paràmetres del curs';
+$string['editfiles'] = 'Edita fitxers';
 $string['editgroupprofile'] = 'Edita el perfil del grup';
 $string['editinga'] = 'S\'està editant $a';
 $string['editmyprofile'] = 'Edita el perfil';
@@ -423,6 +428,7 @@ $string['grades'] = 'Qualificacions';
 $string['group'] = 'Grup';
 $string['groupadd'] = 'Afegeix nou grup';
 $string['groupaddusers'] = 'Afegeix la selecció al grup ';
+$string['groupfor'] = 'per al grup';
 $string['groupinfo'] = 'Informació sobre el grup seleccionat';
 $string['groupinfomembers'] = 'Informació sobre els membres seleccionats';
 $string['groupinfopeople'] = 'Informació sobre les persones seleccionades';
@@ -488,6 +494,7 @@ $string['included'] = 'Inclòs';
 $string['includelogentries'] = 'Inclou les entrades del registre';
 $string['includemodules'] = 'Inclou Mòduls';
 $string['includeneededusers'] = 'Inclou els usuaris necessaris';
+$string['includenoneusers'] = 'No incloguis cap usuari';
 $string['includeuserfiles'] = 'Inclou els fitxers dels usuaris';
 $string['institution'] = 'Institució';
 $string['invalidemail'] = 'L\'adreça de correu no és vàlida';
@@ -879,6 +886,7 @@ $string['uploadnotallowed'] = 'No es permet penjar fitxers';
 $string['uploadproblem'] = 'S\'ha esdevingut un problema desconegut mentre es penjava el fitxer \'$a\' (potser era massa gran?)';
 $string['uploadthisfile'] = 'Penja aquest fitxer';
 $string['uploadusers'] = 'Carrega els usuaris';
+$string['usedinnplaces'] = 'Utilitzat en $a llocs';
 $string['user'] = 'Usuari';
 $string['userconfirmed'] = '$a confirmat';
 $string['userdata'] = 'Dades d\'usuari';

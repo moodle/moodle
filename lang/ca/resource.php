@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.3 development (2004050500)
+      // resource.php - created with Moodle 1.3 (2004052500)
 
 
 $string['addresource'] = 'Afegeix un recurs';
@@ -28,6 +28,7 @@ $string['fetchclienterror'] = 'Ha sorgit un error quan s\'intentava recuperar la
 $string['fetcherror'] = 'Ha sorgit un error quan s\'intentava recuperar la pàgina web.';
 $string['fetchservererror'] = 'Ha sorgit un error quan s\'intentava recuperar la pàgina web (probablement un error de programa).</p>';
 $string['filename'] = 'Nom del fitxer';
+$string['filtername'] = 'Enllaços automàtics a recursos';
 $string['fulltext'] = 'Text complet';
 $string['htmlfragment'] = 'Fragment HTML';
 $string['maindirectory'] = 'Directori principal';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.2 Beta (2004022400)
+      // quiz.php - created with Moodle 1.3 (2004052500)
 
 
 $string['acceptederror'] = 'Error acceptat';
@@ -25,6 +25,7 @@ $string['attemptlast'] = 'Darrer intent';
 $string['attemptquiznow'] = 'Contesta el qüestionari ara';
 $string['attempts'] = 'Intents';
 $string['attemptsallowed'] = 'Intents permesos';
+$string['attemptsexist'] = 'Ja heu provat aquest qüestionari';
 $string['attemptsunlimited'] = 'Intents il·limitats';
 $string['backtoquiz'] = 'Torna a l\'edició del qüestionari';
 $string['bestgrade'] = 'Millor nota';
@@ -134,6 +135,7 @@ $string['quizclosed'] = 'Aquest qüestionari es va tancar el $a';
 $string['quizcloses'] = 'El qüestionari es tanca';
 $string['quiznotavailable'] = 'Aquest qüestionari estarà disponible a partir de: $a';
 $string['quizopen'] = 'Obre el qüestionari';
+$string['quizopens'] = 'S\'obre el qüestionari';
 $string['random'] = 'Pregunta aleatòria';
 $string['randomcreate'] = 'Crea preguntes aleatòries';
 $string['randomsamatch'] = 'Aparellaments aleatoris de resposta breu';
