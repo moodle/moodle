@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005030501)
+      // forum.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005031000)
 
 
 $string['addanewdiscussion'] = 'ディスカッショントピックを追加';
@@ -55,6 +55,7 @@ $string['forcesubscribeq'] = 'ユーザを強制的にメール通知登録し�
 $string['forum'] = 'フォーラム';
 $string['forumintro'] = 'フォーラム紹介';
 $string['forumname'] = 'フォーラム名';
+$string['forumposts'] = 'フォーラム投稿';
 $string['forums'] = 'フォーラム';
 $string['forumtype'] = 'フォーラムタイプ';
 $string['generalforum'] = '標準フォーラム';
