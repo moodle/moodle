@@ -37,8 +37,17 @@
                   update_module_icon($cm->id, $course->id));
 
     if (isteacher($course->id)) {
-        echo "<P align=right><A HREF=\"report.php?id=$cm->id\">".get_string("viewallentries","journal")."</A></P>";
     }
+    if (isteacher($course->id)) {
+        if ($allentries = get_records("journal_entries", "journal", $journal->id)) {
+            $entrycount = count($allentries);
+        } else {
+            $entrycount = 0;
+        }
+        echo "<P align=right><A HREF=\"report.php?id=$cm->id\">".get_string("viewallentries","journal", $entrycount)."</A></P>";
+    }
+
+    print_simple_box( text_to_html($choice->text) , "center");
 
     echo "<CENTER>\n";
     

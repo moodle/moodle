@@ -24,6 +24,6 @@ $string['noratinggiven'] = "No rating given";
 $string['overallrating'] = "Overall rating";
 $string['rate'] = "Rate";
 $string['startoredit'] = "Start or edit my journal entry";
-$string['viewallentries'] = "View all journal entries";
+$string['viewallentries'] = "View \$a journal entries";
 
 ?>
