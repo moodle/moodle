@@ -56,7 +56,8 @@
 /// Check version of Moodle code on disk compared with database
 /// and upgrade if possible.
 
-    include_once("$CFG->dirroot/version.php");  # defines $version and upgrades
+    include_once("$CFG->dirroot/version.php");              # defines $version 
+    include_once("$CFG->dirroot/lib/db/$CFG->dbtype.php");  # defines upgrades
 
     if ($CFG->version) { 
         if ($version > $CFG->version) {  // upgrade
