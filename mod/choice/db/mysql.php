@@ -38,6 +38,7 @@ function choice_upgrade($oldversion) {
         table_column("choice", "", "allowupdate", "integer", "2", "unsigned", "0", "", "release");
     }
     if ($oldversion < 2004070102) {
+        modify_database("", "UPDATE prefix_choice SET allowupdate = '1' WHERE publish = 0;");
         modify_database("", "UPDATE prefix_choice SET release = '1' WHERE publish > 0;");
         modify_database("", "UPDATE prefix_choice SET publish = publish - 1 WHERE publish > 0;");
     }
