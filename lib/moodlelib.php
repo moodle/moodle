@@ -911,7 +911,7 @@ function isadmin($userid=0) {
     return record_exists_sql("SELECT * FROM user_admins WHERE user='$userid'");
 }
 
-function isteacher($course, $userid=0) {
+function isteacher($courseid, $userid=0) {
     global $USER;
 
     if (isadmin($userid)) {  // admins can do anything the teacher can
@@ -919,23 +919,23 @@ function isteacher($course, $userid=0) {
     }
 
     if (!$userid) {
-        return $USER->teacher[$course];
+        return $USER->teacher[$courseid];
     }
 
-    return record_exists_sql("SELECT * FROM user_teachers WHERE user='$userid' AND course='$course'");
+    return record_exists_sql("SELECT * FROM user_teachers WHERE user='$userid' AND course='$courseid'");
 }
 
 
-function isstudent($course, $userid=0) {
+function isstudent($courseid, $userid=0) {
     global $USER;
 
     if (!$userid) {
-        return $USER->student[$course];
+        return $USER->student[$courseid];
     }
 
     $timenow = time();   // todo:  add time check below
 
-    return record_exists_sql("SELECT * FROM user_students WHERE user='$userid' AND course='$course'");
+    return record_exists_sql("SELECT * FROM user_students WHERE user='$userid' AND course='$courseid'");
 }
 
 function isguest($userid=0) {
@@ -948,6 +948,24 @@ function isguest($userid=0) {
     return record_exists_sql("SELECT * FROM user WHERE user='$userid' AND username = 'guest' ");
 }
 
+function get_course_students($courseid, $sort="u.lastaccess DESC") {
+    return get_records_sql("SELECT u.* FROM user u, user_students s
+                            WHERE s.course = '$courseid' AND s.user = u.id
+                            ORDER BY $sort");
+}
+
+function get_course_teachers($courseid, $sort="t.authority ASC") {
+    return get_records_sql("SELECT u.* FROM user u, user_teachers t
+                            WHERE t.course = '$courseid' AND t.user = u.id
+                            ORDER BY $sort");
+}
+
+function get_course_participants($courseid, $sort="u.lastaccess DESC") {
+    return get_records_sql("SELECT u.* FROM user u, user_students s, user_teachers t
+                            WHERE (s.course = '$courseid' AND s.user = u.id) OR 
+                                  (t.course = '$courseid' AND t.user = u.id)
+                            ORDER BY $sort");
+}
 
 function reset_login_count() {
     global $SESSION;
