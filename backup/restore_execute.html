@@ -10,6 +10,10 @@
         $restore = $SESSION->restore;
     }
 
+    //Add info->original_wwwroot to $restore to be able to use it in all the restore process
+    //(mainly when decoding internal links)
+    $restore->original_wwwroot = $info->original_wwwroot;
+
     //Check login
     require_login();
 

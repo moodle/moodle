@@ -1946,6 +1946,9 @@
                         case "DATE":
                             $this->info->backup_date = $this->getContents();
                             break;
+                        case "ORIGINAL_WWWROOT":
+                            $this->info->original_wwwroot = $this->getContents();
+                            break;
                     }
                 }
                 if ($this->tree[3] == "DETAILS") {
