@@ -134,9 +134,8 @@ function get_qtype( $type_id ) {
 function writetext( $raw ) {
     // generates <text></text> tags, processing raw text therein 
 
-    // for now, don't allow any additional tags in text 
-    // otherwise xml rules would probably get broken
-    $raw = strip_tags( $raw );
+    // encode the text to 'disguise' HTML content 
+    $raw = htmlspecialchars( $raw );
 
     return "<text>$raw</text>\n";
 }
