@@ -53,7 +53,7 @@
     if ($user->id == $USER->id) {
         $strunenrolsure  = get_string("unenrolsure", "", get_string("yourself"));
     } else {
-        $strunenrolsure = get_string("unenrolsure", "", "$user->firstname $user->lastname");
+        $strunenrolsure = get_string("unenrolsure", "", fullname($user, true));
     }
 
     notice_yesno ($strunenrolsure, "unenrol.php?id=$id&user=$user->id&confirm=yes", "$HTTP_REFERER");
