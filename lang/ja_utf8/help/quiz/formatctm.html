@@ -46,14 +46,14 @@ ODBCソケットサーバのインストール手順に<b>従わないで</b>く
 <b>管理</b>を選択、次に<b>サービスとアプリケーション-&gt;サービス</b>を選択して右側のパネルにてサービスマネージャーを開いてください。
 または、スタート-&gt;ファイル名を... 画面で<b>services.msc</b>と入力することで、サービスマネージャーを開くことができます。</li>
 
-<li>In the Service manager, right-click the ODBC Socket Server item and choose the <b>Start</b> item.  It's status 
-should change to "started" when you do this. Note that you may stop and/or disable this service completely after
-you've completed the import process.</li>
+<li>サービスマネージャーで、ODBC Socket Serverを選んでマウスの右ボタンをクリックして、<b>開始</b>を選択してください。
+ODBC Socket Serverの状態が「開始」に変わります。インポート作業が完了した後に、このサービスを停止または無効にしてください。</li>
 
-<li>Make sure that the system.mda and ctm.mdb access data files are on the machine, 
-and that the MS Access ODBC driver is present.  It is installed in a standard Windows installation.  You can
-determine if it installed by opening the "Data Sources" item in "Administrative Tools" and referring to the "Drivers"
-tab.  You're going to have to determine where CTM is installed and locate the system.mda file and the ctm.mdb database 
+<li>system.mdaとctm.mdbのAccessデータファイルがWindowsマシン内にあり、MS Access ODBCドライバがインストールされていることを
+確認してください。これは、通常のWindowsにインストールされています。「管理ツール」の「データ ソース (ODBC)」を開いて「ドライバ」タブで、
+MS Access ODBCドライバがインストールされているか確認することができます。
+
+You're going to have to determine where CTM is installed and locate the system.mda file and the ctm.mdb database 
 or databases you're interested in importing data from.  Make note of the full local paths to these files as well 
 as the IP address or hostname of the Windows server.  You're going to need this information for the import process.</li>
 
