@@ -290,9 +290,9 @@ function print_user_table($users, $isteacher) {
 
             $table->data[] = array ($picture,
                 "<b><a href=\"$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$course->id\">$fullname</a></b>",
-                "<font size=\"2\">$user->city</font>",
-                "<font size=\"2\">$user->country</font>",
-                "<font size=\"2\">$lastaccess</font>");
+                $user->city,
+                $user->country,
+                $lastaccess);
         }
         print_table($table);
 }
