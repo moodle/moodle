@@ -572,6 +572,11 @@ function main_upgrade($oldversion=0) {
         set_field('user', 'auth', 'manual', 'username', 'guest');
     }
 
+    if ($oldversion < 2004083127) {  // Update any users/courses using wrongly-named lang pack
+        execute_sql("UPDATE {$CFG->prefix}user SET lang = 'mi_nt' WHERE lang = 'ma_nt'");
+        execute_sql("UPDATE {$CFG->prefix}course SET lang = 'mi_nt' WHERE lang = 'ma_nt'");
+    }
+
     return $result;
 
 }
