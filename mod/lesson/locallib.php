@@ -913,21 +913,25 @@ function lesson_print_tree_link_menu($page, $id, $showpages=false) {
 	// set up some variables  NoticeFix  changed whole function
 	$output = "";
 	$close = false;
-	$title=$page->title;  //CDC Chris Berri took out parsing of title in left menu on 6/11
 	$link="id=$id&amp;action=navigation&amp;pageid=".$page->id;
+	
+	$output = "<li>";
 	
 	if (isset($_REQUEST['pageid'])) {
 		if($page->id == $_REQUEST['pageid']) { 
 			$close=true; 
-			$output.="<strong>"; 
+			$output.="<em>"; 
 		} 
 	}
 	
-	$output .= "<li><a href=\"view.php?id=$id&amp;action=navigation&amp;pageid=$page->id\">".$title."</a></li>\n"; 
+	$output .= "<a href=\"view.php?id=$id&amp;action=navigation&amp;pageid=$page->id\">".$page->title."</a>\n"; 
 	
 	if($close) {
-		$output.="</strong>";
-	}
+		$output.="</em>";
+	}	
+	$output .= "</li>";
+	
+	
 	echo $output;
 
 } 
@@ -935,6 +939,7 @@ function lesson_print_tree_link_menu($page, $id, $showpages=false) {
 /*******************************************************************/
 function lesson_print_tree($pageid, $lessonid, $cmid, $pixpath) {
 // this function prints out the tree view list
+	global $USER;
 
 	if(!$pages = get_records_select("lesson_pages", "lessonid = $lessonid")) {
 		error("Error: could not find lesson pages");
@@ -982,9 +987,9 @@ function lesson_print_tree($pageid, $lessonid, $cmid, $pixpath) {
 			echo "<a title=\"move\" href=\"lesson.php?id=$cmid&action=move&pageid=".$pages[$pageid]->id."\">\n".
 				"<img src=\"$pixpath/t/move.gif\" hspace=\"2\" height=11 width=11 alt=\"move\" border=0></a>\n"; //CDC alt text added.
 		}
-		echo "<a title=\"update\" href=\"lesson.php?id=$cmid&action=editpage&pageid=".$pages[$pageid]->id."\">\n".
+		echo "<a title=\"update\" href=\"lesson.php?id=$cmid&amp;action=editpage&amp;pageid=".$pages[$pageid]->id."\">\n".
 			"<img src=\"$pixpath/t/edit.gif\" hspace=\"2\" height=11 width=11 alt=\"edit\" border=0></a>\n".
-			"<a title=\"delete\" href=\"lesson.php?id=$cmid&action=confirmdelete&pageid=".$pages[$pageid]->id."\">\n".
+			"<a title=\"delete\" href=\"lesson.php?id=$cmid&amp;sesskey=".$USER->sesskey."&amp;action=confirmdelete&amp;pageid=".$pages[$pageid]->id."\">\n".
 			"<img src=\"$pixpath/t/delete.gif\" hspace=\"2\" height=11 width=11 alt=\"delete\" border=0></a>\n"; //CDC alt text added.
 
 		echo "</tr></td>";
@@ -1102,7 +1107,7 @@ function lesson_qtype_menu($qtypes, $selected="", $link="", $onclick="") {
 	foreach ($qtypes as $value => $label) {
 		if ($value == $selected) {
 			$output .= "<b>$label</b>";
-			$output .= "<input type=\"hidden\" name=\"qtype\" value=\"$value\"> \n";
+			$output .= "<input type=\"hidden\" name=\"qtype\" value=\"$value\" /> \n";
 		} else {
 			$output .= "<a onClick=\"$onclick\" href=\"$link"."&qtype=$value\">$label</a>";
 		}
@@ -1137,20 +1142,20 @@ function lesson_clean_data_submitted() {
 // this function runs through all post/get data submitted to a page
 // and runs clean_param on each
 // returns an object
-	
+
 	// get the data
-	$form = data_submitted();
-	
-	// run through and clean each form value
-	  // detect arrays as well and process them accordingly
-	foreach ($form as $valuename => $formvalue) {
-		if (is_array($formvalue)) {
-			foreach ($formvalue as $index => $formsubvalue) {
-				$formvalue[$index] = clean_param($formsubvalue, PARAM_CLEAN);
+	if ($form = data_submitted()) {
+		// run through and clean each form value
+		  // detect arrays as well and process them accordingly
+		foreach ($form as $valuename => $formvalue) {
+			if (is_array($formvalue)) {
+				foreach ($formvalue as $index => $formsubvalue) {
+					$formvalue[$index] = clean_param($formsubvalue, PARAM_CLEAN);
+				}
+				$form->$valuename = $formvalue;
+			} else {
+				$form->$valuename = clean_param($formvalue, PARAM_CLEAN);
 			}
-			$form->$valuename = $formvalue;
-		} else {
-			$form->$valuename = clean_param($formvalue, PARAM_CLEAN);
 		}
 	}
 	
