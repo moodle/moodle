@@ -1728,21 +1728,21 @@ function forum_print_posts_threaded($parent, $course, $depth, $assessed, $reply)
     if ($posts = forum_get_child_posts($parent)) {
         foreach ($posts as $post) {
 
-            echo "<UL>";
+            echo "<ul>";
             if ($depth > 0) {
                 $ownpost = ($USER->id == $post->userid);
                 forum_print_post($post, $course, $ownpost, $reply, $link, $assessed);  // link=true?
-                echo "<BR>";
+                echo "<br />";
             } else {
                 $by->name = "$post->firstname $post->lastname";
                 $by->date = userdate($post->modified);
-                echo "<LI><P><FONT SIZE=-1><B><A HREF=\"discuss.php?d=$post->discussion&parent=$post->id\">$post->subject</A></B> ";
+                echo "<li><p><a name=\"$post->id\"></a><font size=-1><b><a href=\"discuss.php?d=$post->discussion&parent=$post->id\">$post->subject</a></b> ";
                 print_string("bynameondate", "forum", $by);
-                echo "</FONT></P></LI>";
+                echo "</font></p></li>";
             }
 
             forum_print_posts_threaded($post->id, $course, $depth-1, $assessed, $reply);
-            echo "</UL>\n";
+            echo "</ul>\n";
         }
     } else {
         return;
