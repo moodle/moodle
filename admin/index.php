@@ -37,12 +37,12 @@
 
     $dirroot = dirname(realpath("../config.php"));
     if ($dirroot != $CFG->dirroot) {
-        $dirroot = addslashes($dirroot);
         error("Please fix your settings in config.php:
               <P>You have:
-              <P>\$CFG->dirroot = \"$CFG->dirroot\";
+              <P>\$CFG->dirroot = \"".addslashes($CFG->dirroot)."\";
               <P>but it should be:
-              <P>\$CFG->dirroot = \"$dirroot\";");
+              <P>\$CFG->dirroot = \"".addslashes($dirroot)."\";",
+              "./");
     }
 
 
