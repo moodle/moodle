@@ -16,7 +16,7 @@
 
 ?>
 body {
-    background-color: <?PHP echo $THEME->body?>;
+    background-color:#FFFFFF;
 }
 
 h1, h2, h3 {
