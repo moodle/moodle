@@ -3,8 +3,8 @@
 
 
 $string['action'] = "Toiminta";
-$string['activities'] = "Tapahtumat";
-$string['activity'] = "Tapahtuma";
+$string['activities'] = "Toiminnot";
+$string['activity'] = "Toiminto";
 $string['activityreport'] = "Tapahtuma raportti";
 $string['add'] = "Lis‰‰";
 $string['added'] = "Lis‰tty \$a";
