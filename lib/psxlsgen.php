@@ -54,7 +54,7 @@ if( !defined( "PHP_SIMPLE_XLS_GEN" ) ) {
          $this->dirsep =  "/";
        }
        // begin of the excel file header
-       $this->xls_data = pack( "ssssss", 0x809, 0x08, 0x00,0x10, 0x0, 0x0 );
+       $this->xls_data = pack( "vvvvvv", 0x809, 0x08, 0x00,0x10, 0x0, 0x0 );
        // check header text
        if ( $this->header ) {
          $this->Header();
@@ -76,7 +76,7 @@ if( !defined( "PHP_SIMPLE_XLS_GEN" ) ) {
      // end of the excel file
      function End()
      {
-       $this->xls_data .= pack("sssssssC", 0x7D, 11, 3, 4, 25600,0,0,0);
+       $this->xls_data .= pack("vvvvvvvC", 0x7D, 11, 3, 4, 25600,0,0,0);
        $this->xls_data .= pack( "ss", 0x0A, 0x00 );
        return;
      }
@@ -84,7 +84,7 @@ if( !defined( "PHP_SIMPLE_XLS_GEN" ) ) {
      // write a Number (double) into row, col
      function WriteNumber_pos( $row, $col, $value )
      {
-       $this->xls_data .= pack( "sssss", 0x0203, 14, $row, $col, 0x00 );
+       $this->xls_data .= pack( "vvvvv", 0x0203, 14, $row, $col, 0x00 );
        $this->xls_data .= pack( "d", $value );
        return;
      }
