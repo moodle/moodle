@@ -973,7 +973,7 @@ function forum_get_child_posts($parent) {
 }
 
 
-function forum_search_posts($searchterms, $courseid, $page=0, $recordsperpage=50, &$totalcount, $groupid=0) {
+function forum_search_posts($searchterms, $courseid, $page=0, $recordsperpage=50, &$totalcount, $groupid=0, $extrasql='') {
 /// Returns a list of posts found using an array of search terms
 /// eg   word  +word -word
 ///
@@ -1043,7 +1043,7 @@ function forum_search_posts($searchterms, $courseid, $page=0, $recordsperpage=50
                AND p.userid = u.id
                AND p.discussion = d.id
                AND d.course = '$courseid'
-               AND d.forum = f.id $notteacherforum $onlyvisible $selectgroup";
+               AND d.forum = f.id $notteacherforum $onlyvisible $selectgroup $extrasql";
 
     $totalcount = count_records_sql("SELECT COUNT(*) FROM $selectsql");
 
@@ -1267,6 +1267,7 @@ function forum_get_discussions($forum="0", $forumsort="d.timemodified DESC",
 
 function forum_get_user_discussions($courseid, $userid, $groupid=0) {
 /// Get all discussions started by a particular user in a course (or group)
+/// This function no longer used ...
     global $CFG;
 
     if ($groupid) {
@@ -2345,92 +2346,6 @@ function forum_delete_post($post) {
    return false;
 }
 
-
-function forum_print_user_discussions($courseid, $userid, $groupid=0) {
-    global $CFG, $USER;
-
-    $maxdiscussions = 10;
-    $countdiscussions = 0;
-
-    $visible = array();
-
-    $course = get_record("course", "id", $courseid);
-
-    $currentgroup = get_current_group($courseid);
-    $isteacheredit = isteacheredit($courseid);
-
-    if ($discussions = forum_get_user_discussions($courseid, $userid, $groupid=0)) {
-
-        $user    = get_record("user", "id", $userid);
-        $fullname = fullname($user, isteacher($courseid));
-
-        $replies = forum_count_discussion_replies(0,$courseid,$userid);
-
-        echo "<hr />";
-
-        print_heading( get_string("discussionsstartedbyrecent", "forum", $fullname) );
-
-        echo '<p align="center" class="allposts">';
-        echo '(<a href="'.$CFG->wwwroot.'/mod/forum/search.php?id='.$courseid.'&amp;userid='.$userid.'">';
-        echo get_string('seeallposts', 'forum');
-        echo '</a>)';
-        echo '</p>';
-
-        foreach ($discussions as $discussion) {
-            $countdiscussions++;
-            if ($countdiscussions > $maxdiscussions) {
-                break;
-            }
-            if (($discussion->forumtype == "teacher") and !isteacher($courseid)) {
-                continue;
-            }
-            if(!isset($visible[$discussion->forumid])) {
-                $mod = New stdClass;
-                $mod->course = $courseid;
-                $mod->id = $discussion->forumid;
-                $visible[$discussion->forumid] = instance_is_visible('forum', $mod);
-            }
-            if(!$visible[$discussion->forumid] && !isteacheredit($courseid, $USER->id)) {
-                continue;
-            }
-
-            /// Check whether this is belongs to a discussion in a group that
-            /// should NOT be accessible to the current user
-
-            if (!$isteacheredit and $discussion->groupid != -1) {   /// Editing teachers or open discussions
-                if (!isset($cm[$discussion->forumid])) {
-                    $cm[$discussion->forumid] = get_coursemodule_from_instance("forum", $discussion->forumid, $courseid);
-                    $groupmode[$discussion->forumid] = groupmode($course, $cm[$discussion->forumid]);
-                }
-                if ($groupmode[$discussion->forumid] == SEPARATEGROUPS) {
-                    if ($currentgroup != $discussion->groupid) {
-                        continue;
-                    }
-                }
-            }
-
-            if (!empty($replies[$discussion->discussion])) {
-                $discussion->replies = $replies[$discussion->discussion]->replies;
-            } else {
-                $discussion->replies = 0;
-            }
-            $inforum = get_string("inforum", "forum", "<a href=\"$CFG->wwwroot/mod/forum/view.php?f=$discussion->forumid\">$discussion->forumname</a>");
-            $discussion->subject .= " ($inforum)";
-            if (!empty($USER->id)) {
-                $ownpost = ($discussion->userid == $USER->id);
-            } else {
-                $ownpost = false;
-            }
-            forum_print_post($discussion, $courseid, $ownpost, $reply=0, $link=1, $assessed=false);
-        }
-    } else {
-        echo '<p align="center" class="allposts">';
-        echo '<a href="'.$CFG->wwwroot.'/mod/forum/search.php?id='.$courseid.'&amp;userid='.$userid.'">';
-        echo get_string('seeallposts', 'forum');
-        echo '</a>';
-        echo '</p>';
-    }
-}
 
 function forum_forcesubscribe($forumid, $value=1) {
     return set_field("forum", "forcesubscribe", $value, "id", $forumid);
