@@ -773,7 +773,7 @@ function forum_print_discussion($course, $discussion, $post, $mode) {
     }
 
     if ($discussion->assessed && $USER->id) {
-        echo "<CENTER><P ALIGN=center><INPUT TYPE=submit VALUE=\"Send in my latest ratings\"></P></CENTER>";
+        echo "<CENTER><P ALIGN=center><INPUT TYPE=submit VALUE=\"".get_string("sendinratings", "forum")."\"></P></CENTER>";
         echo "</FORM>";
     }
 }
@@ -821,7 +821,11 @@ function forum_print_posts_threaded($parent, $course, $depth, $assessed) {
                 forum_print_post($post, $course, $ownpost, $reply, $link, $assessed);  // link=true?
                 echo "<BR>";
             } else {
-                echo "<LI><P><B><A HREF=\"discuss.php?d=$post->discussion&parent=$post->id\">$post->subject</A></B> by $post->firstname $post->lastname, ".userdate($post->created)."</P>";
+                $by->name = "$post->firstname $post->lastname";
+                $by->date = userdate($post->created);
+                echo "<LI><P><FONT SIZE=-1><B><A HREF=\"discuss.php?d=$post->discussion&parent=$post->id\">$post->subject</A></B> ";
+                print_string("bynameondate", "forum", $by);
+                echo "</FONT></P></LI>";
             }
 
             forum_print_posts_threaded($post->id, $course, $depth-1, $assessed);
