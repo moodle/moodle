@@ -6,6 +6,7 @@
         error("404 - File Not Found");
     }
 
+    $string = array();
     if ($CFG->forcelogin) {
         require_login();
     }
@@ -14,13 +15,22 @@
 
     print_header();
 
+    $ulopen = false;
+
     foreach ($string as $file => $filename) {
         if (substr($file,0,1) == "-") {
-            echo '<p style="font-size:small;margin-bottom:0px;font-family:Trebuchet MS, Verdana, Arial, Helvetica, sans-serif;">'.
-                  $filename.'</p>';
+            if($ulopen) {
+                echo '</ul>';
+            }
+            echo '<h1>'.$filename.'</h1><ul>';
+            $ulopen = true;
         } else {
-            echo "<li style=\"font-size:small\"><a target=\"main\" href=\"$CFG->wwwroot/doc/?file=$file\">$filename</a></li>";
+            echo '<li><a target="main" href="'.$CFG->wwwroot.'/doc/?file='.$file.'">'.$filename.'</a></li>';
         }
     }
+    if($ulopen) {
+        echo '</ul>';
+    }
+
     
 ?>
