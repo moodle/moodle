@@ -301,7 +301,7 @@ function chat_force_language($lang) {
     if(!empty($CFG->locale)) {
         unset($CFG->locale);
     }
-    $CFG->lang = clean_filename($lang);
+    $CFG->lang = $lang;
     moodle_setlocale();
 }
 
@@ -359,7 +359,7 @@ function chat_get_latest_message($chatid, $groupid=0) {
 
 function chat_login_user($chatid, $version, $groupid, $course) {
     global $USER;
-    if ($chatuser = get_record_select('chat_users', "chatid='$chatid' AND userid='$USER->id' AND groupid='$groupid'")) {
+    if (($version != 'sockets') and $chatuser = get_record_select('chat_users', "chatid='$chatid' AND userid='$USER->id' AND groupid='$groupid'")) {
         $chatuser->version  = $version;
         $chatuser->ip       = $USER->lastIP;
         $chatuser->lastping = time();
@@ -411,13 +411,7 @@ function chat_delete_old_users() {
 
     global $CFG;
 
-    if ($CFG->chat_method == 'sockets') {
-        // delete very outdated users not deleted by chatd,
-        // let normal deleting to chatd, because it needs to output the message
-        $timeold = time() - ($CFG->chat_old_ping * 3);
-    } else {
-        $timeold = time() - $CFG->chat_old_ping;
-    }
+    $timeold = time() - $CFG->chat_old_ping;
 
     $query = "lastping < '$timeold'";
 
@@ -479,41 +473,14 @@ function chat_update_chat_times($chatid=0) {
 }
 
 
-
-function chat_language_override($language) {
-    // Override the highest-ranking language variable from current_language()
-    // And save it so we can restore it again afterwards
-    global $CFG;
-
-    $oldlang = empty($CFG->courselang) ? NULL : $CFG->courselang;
-    $CFG->courselang = $language;
-
-    return $oldlang;
-}
-
-function chat_language_restore($language = NULL) {
-    // Restore the highest-ranking language variable from current_language()
-    global $CFG;
-
-    if(!empty($language)) {
-        $CFG->courselang = $language;
-    }
-}
-
-function chat_format_message_manually($message, $courseid, $sender, $currentuser, $language = NULL) {
+function chat_format_message_manually($message, $courseid, $sender, $currentuser) {
     global $CFG;
 
     $output = New stdClass;
     $output->beep = false;       // by default
     $output->refreshusers = false; // by default
 
-    if(empty($language)) {
-        $language = current_language();
-    }
-
-    $oldcfglang = chat_language_override($language);
-
-    // Get some additional info now that the language has been correctly set
+    // Get some additional info
 
     // But before that :-) let's override get_user_timezone() for this call... messy stuff...
     $tz = ($currentuser->timezone == 99) ? $CFG->timezone : $currentuser->timezone;
@@ -536,10 +503,6 @@ function chat_format_message_manually($message, $courseid, $sender, $currentuser
             $output->refreshusers = true; //force user panel refresh ASAP
         }
 
-        // Don't forget to reset the language before returning!!!
-        if(!empty($oldcfglang)) {
-            $CFG->courselang = $oldcfglang;
-        }
         return $output;
     }
 
@@ -601,9 +564,6 @@ function chat_format_message_manually($message, $courseid, $sender, $currentuser
         $output->html .= ": $outmain";
     }
     $output->html .= "</font></td></tr></table>";
-
-    // Don't forget to reset the language before returning!!!
-    chat_language_restore($oldcfglang);
 
     return $output;
 }

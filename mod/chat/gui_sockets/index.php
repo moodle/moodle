@@ -50,13 +50,14 @@
         error('Could not log in to chat room!!');
     }
 
-    $params = "chat_sid=$chat_sid&amp;groupid=$groupid";
+    $params = "chat_sid=$chat_sid";
 
 ?>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
 <html>
  <head>
+  <meta http-equiv="content-type" content="text/html; charset=<?php echo get_string('thischarset'); ?>" />
   <title>
    <?php echo "$strchat: $course->shortname: $chat->name$groupname" ?>
   </title>

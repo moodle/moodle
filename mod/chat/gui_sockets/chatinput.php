@@ -6,7 +6,6 @@
     require('../lib.php');
 
     $chat_sid = required_param('chat_sid', PARAM_ALPHANUM);
-    $groupid = optional_param('groupid', 0, PARAM_INT);
 
     if (!$chatuser = get_record('chat_users', 'sid', $chat_sid)) {
         error('Not logged in!');
@@ -14,19 +13,8 @@
 
     chat_force_language($chatuser->lang);
 
-?>
-
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
-<html>
-<head>
-<meta http-equiv="content-type" content="text/html; charset=<?php echo get_string('thischarset'); ?>" />
-<title>Message Input</title>
-
-<?php
-    $focus = '';
-    include("$CFG->javascript");
-?>
-
+    ob_start();
+    ?>
 <script type="text/javascript">
 <!--
 
@@ -36,8 +24,8 @@ function empty_field_and_submit() {
     var inpf = document.getElementById('inputform');
     cf.chat_msgidnr.value = parseInt(cf.chat_msgidnr.value) + 1;
     cf.chat_message.value = inpf.chat_message.value;
-    cf.submit();
     inpf.chat_message.value='';
+    cf.submit();
     inpf.chat_message.focus();
     return false;
 }
@@ -59,22 +47,26 @@ function reloadusers() {
 }
 // -->
 </script>
-</head>
+    <?php
 
-<body bgcolor="<?php echo $THEME->body ?>" onload="document.getElementById('inputform').chat_message.focus(); prepareusers();">
+    $meta = ob_get_clean();
+    // TODO: there will be two onload in body tag, does it matter?
+    print_header('', '', '', 'inputform.chat_message', $meta, false, '&nbsp;', '', false, 'onload="setfocus(); prepareusers();"');
 
-<form action="../empty.php" method="get" target="empty" id="inputform" onsubmit="return empty_field_and_submit();">
-&gt;&gt; <input type="text" name="chat_message" size="60" value="" />
-<?php helpbutton("chatting", get_string("helpchatting", "chat"), "chat", true, false); ?>
-</form>
+?>
 
-<form action="<?php echo "http://$CFG->chat_serverhost:$CFG->chat_serverport/"; ?>" method="get" target="empty" id="sendform">
-    <input type="hidden" name="win" value="message" />
-    <input type="hidden" name="chat_message" value="" />
-    <input type="hidden" name="chat_msgidnr" value="0" />
-    <input type="hidden" name="chat_sid" value="<?php echo $chat_sid ?>" />
-    <input type="hidden" name="groupid" value="<?php echo $groupid ?>" />
-</form>
+    <form action="../empty.php" method="get" target="empty" id="inputform"
+          onsubmit="return empty_field_and_submit();">
+        &gt;&gt;<input type="text" name="chat_message" size="60" value="" />
+        <?php helpbutton("chatting", get_string("helpchatting", "chat"), "chat", true, false); ?>
+    </form>
+    
+    <form action="<?php echo "http://$CFG->chat_serverhost:$CFG->chat_serverport/"; ?>" method="get" target="empty" id="sendform">
+        <input type="hidden" name="win" value="message" />
+        <input type="hidden" name="chat_message" value="" />
+        <input type="hidden" name="chat_msgidnr" value="0" />
+        <input type="hidden" name="chat_sid" value="<?php echo $chat_sid ?>" />
+    </form>
 </body>
 
 </html>

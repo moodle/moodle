@@ -23,8 +23,9 @@ echo 'Moodle chat daemon v1.0 on PHP '.$phpversion." (\$Id$)\n\n";
 
 /// $CFG variables are now defined in database by chat/lib.php
 
-$_SERVER['PHP_SELF']    = 'dummy';
-$_SERVER['SERVER_NAME'] = 'dummy';
+$_SERVER['PHP_SELF']        = 'dummy';
+$_SERVER['SERVER_NAME']     = 'dummy';
+$_SERVER['HTTP_USER_AGENT'] = 'dummy';
 
 include('../../config.php');
 include('lib.php');
@@ -221,7 +222,7 @@ class ChatDaemon {
         static $str;
 
         $info = &$this->sets_info[$sessionid];
-        $oldlang = chat_language_override($info['lang']);
+        chat_force_language($info['lang']);
 
         $timenow = time();
 
@@ -274,7 +275,7 @@ class ChatDaemon {
             echo fullname($userinfo['user'])."<br />";
             echo "<font color=\"#888888\">$str->idle: ".format_time($lastping, $str)."</font> ";
             echo '<a target="empty" href="http://'.$CFG->chat_serverhost.':'.$CFG->chat_serverport.'/?win=beep&amp;beep='.$userinfo['user']->id.
-                 '&chat_sid='.$sessionid.'&amp;groupid='.$this->sets_info[$sessionid]['groupid'].'">'.$str->beep."</a>\n";
+                 '&chat_sid='.$sessionid.'">'.$str->beep."</a>\n";
             echo "</font></p>";
             echo "<td></tr>";
         }
@@ -286,7 +287,6 @@ class ChatDaemon {
 
         echo "</body>\n</html>\n";
 
-        chat_language_restore($oldlang);
         return ob_get_clean();
 
     }
@@ -373,7 +373,7 @@ class ChatDaemon {
                 // The refresh value is 2 seconds higher than the configuration variable because we are doing JS refreshes all the time.
                 // However, if the JS doesn't work for some reason, we still want to refresh once in a while.
                 $header .= "Refresh: ".(intval($CFG->chat_refresh_userlist) + 2)."; url=http://$CFG->chat_serverhost:$CFG->chat_serverport/?win=users&".
-                           "chat_sid=".$sessionid."&groupid=".$this->sets_info[$sessionid]['groupid']."\n";
+                           "chat_sid=".$sessionid."\n";
                 $header .= "\n";
 
                 // That's enough headers for one lousy dummy response
@@ -458,7 +458,7 @@ class ChatDaemon {
         socket_close($handle);
     }
 
-    function promote_final($sessionid, $groupid, $customdata) {
+    function promote_final($sessionid, $customdata) {
         if(isset($this->conn_sets[$sessionid])) {
             $this->trace('Set cannot be finalized: Session '.$sessionid.' is already active');
             return false;
@@ -488,18 +488,6 @@ class ChatDaemon {
 
         global $CHAT_HTMLHEAD_JS, $CFG;
 
-        // A really sad thing, to have to do this by hand.... :-(
-        $lang = NULL;
-        if(empty($lang) && !empty($course->lang)) {
-            $lang = $course->lang;
-        }
-        if(empty($lang) && !empty($user->lang)) {
-            $lang = $user->lang;
-        }
-        if(empty($lang)) {
-            $lang = $CFG->lang;
-        }
-
         $this->conn_sets[$sessionid] = $this->conn_half[$sessionid];
 
         // This whole thing needs to be purged of redundant info, and the
@@ -512,8 +500,8 @@ class ChatDaemon {
             'chatid'    => $chat->id,
             'user'      => $user,
             'userid'    => $user->id,
-            'groupid'   => $groupid,
-            'lang'      => $lang,
+            'groupid'   => $chatuser->groupid,
+            'lang'      => $chatuser->lang,
             'quirks'    => $customdata['quirks']
         );
 
@@ -530,14 +518,14 @@ class ChatDaemon {
 
         $this->dismiss_half($sessionid, false);
         $this->write_data($this->conn_sets[$sessionid][CHAT_CONNECTION_CHANNEL], $CHAT_HTMLHEAD_JS);
-        $this->trace('Connection accepted: '.$this->conn_sets[$sessionid][CHAT_CONNECTION_CHANNEL].', SID: '.$sessionid.' UID: '.$chatuser->userid.' GID: '.intval($groupid), E_USER_WARNING);
+        $this->trace('Connection accepted: '.$this->conn_sets[$sessionid][CHAT_CONNECTION_CHANNEL].', SID: '.$sessionid.' UID: '.$chatuser->userid.' GID: '.$chatuser->groupid, E_USER_WARNING);
 
         // Finally, broadcast the "entered the chat" message
 
         $msg = &New stdClass;
         $msg->chatid = $chatuser->chatid;
         $msg->userid = $chatuser->userid;
-        $msg->groupid = 0;
+        $msg->groupid = $chatuser->groupid;
         $msg->system = 1;
         $msg->message = 'enter';
         $msg->timestamp = time();
@@ -548,7 +536,7 @@ class ChatDaemon {
         return true;
     }
 
-    function promote_ufo($handle, $type, $sessionid, $groupid, $customdata) {
+    function promote_ufo($handle, $type, $sessionid, $customdata) {
         if(empty($this->conn_ufo)) {
             return false;
         }
@@ -590,7 +578,7 @@ class ChatDaemon {
                     $this->conn_half[$sessionid][$type] = $handle;
 
                     // Do the bookkeeping
-                    $this->promote_final($sessionid, $groupid, $customdata);
+                    $this->promote_final($sessionid, $customdata);
 
                     // It's not an UFO anymore
                     $this->dismiss_ufo($handle, false);
@@ -712,7 +700,8 @@ class ChatDaemon {
             {
 
                 // Simply give them the message
-                $output = chat_format_message_manually($message, $info['courseid'], $sender, $info['user'], $info['lang']);
+                chat_force_language($info['lang']);
+                $output = chat_format_message_manually($message, $info['courseid'], $sender, $info['user']);
                 $this->trace('Delivering message "'.$output->text.'" to '.$this->conn_sets[$sessionid][CHAT_CONNECTION_CHANNEL]);
 
                 if($output->beep) {
@@ -740,7 +729,7 @@ class ChatDaemon {
         $msg = &New stdClass;
         $msg->chatid = $info['chatid'];
         $msg->userid = $info['userid'];
-        $msg->groupid = 0;
+        $msg->groupid = $info['groupid'];
         $msg->system = 1;
         $msg->message = 'exit';
         $msg->timestamp = time();
@@ -984,7 +973,7 @@ while(true) {
                     continue;
                 }
 
-                if(!ereg('win=(chat|users|message|beep).*&chat_sid=([a-zA-Z0-9]*)&groupid=([0-9]*) HTTP', $data, $info)) {
+                if(!ereg('win=(chat|users|message|beep).*&chat_sid=([a-zA-Z0-9]*) HTTP', $data, $info)) {
                     // Malformed data
                     $DAEMON->trace('UFO with '.$handle.': Request with malformed data; connection closed', E_USER_WARNING);
                     $DAEMON->dismiss_ufo($handle, true, 'Request with malformed data; connection closed');
@@ -993,7 +982,6 @@ while(true) {
 
                 $type      = $info[1];
                 $sessionid = $info[2];
-                $groupid   = $info[3];
 
                 $customdata = array();
 
@@ -1039,7 +1027,7 @@ while(true) {
                 }
 
                 // OK, now we know it's something good... promote it and pass it all the data it needs
-                $DAEMON->promote_ufo($handle, $type, $sessionid, $groupid, $customdata);
+                $DAEMON->promote_ufo($handle, $type, $sessionid, $customdata);
                 continue;
             }
         }
