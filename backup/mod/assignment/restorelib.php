@@ -55,6 +55,11 @@
 
             //The structure is equal to the db, so insert the assignment
             $newid = insert_record ("assignment",$assignment);
+
+            //Do some output     
+            echo "<ul><li>Assignment ".$assignment->name."<br>";
+            backup_flush(300);
+
             if ($newid) {
                 //We have the newid, update backup_ids
                 backup_putid($restore->backup_unique_code,$mod->modtype,
@@ -67,6 +72,9 @@
             } else {
                 $status = false;
             }
+
+            //Finalize ul        
+            echo "</ul>";
         
         } else {
             $status = false;
@@ -122,6 +130,16 @@
 
             //The structure is equal to the db, so insert the assignment_submission
             $newid = insert_record ("assignment_submissions",$submission);
+
+            //Do some output
+            if ($newid % 50 == 0) {
+                echo ".";
+                if ($newid % 1000 == 0) {
+                    echo "<br>";
+                }
+                backup_flush(300);
+            }
+
             if ($newid) {
                 //We have the newid, update backup_ids
                 backup_putid($restore->backup_unique_code,"assignment_submission",$oldid,

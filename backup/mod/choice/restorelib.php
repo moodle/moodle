@@ -57,6 +57,11 @@
 
             //The structure is equal to the db, so insert the choice
             $newid = insert_record ("choice",$choice);
+
+            //Do some output     
+            echo "<ul><li>Choice ".$choice->name."<br>";
+            backup_flush(300);
+
             if ($newid) {
                 //We have the newid, update backup_ids
                 backup_putid($restore->backup_unique_code,$mod->modtype,
@@ -69,6 +74,9 @@
             } else {
                 $status = false;
             }
+
+            //Finalize ul        
+            echo "</ul>";
 
         } else {
             $status = false;
@@ -112,6 +120,16 @@
 
             //The structure is equal to the db, so insert the choice_answers
             $newid = insert_record ("choice_answers",$answer);
+
+            //Do some output
+            if ($newid % 50 == 0) {
+                echo ".";
+                if ($newid % 1000 == 0) {
+                    echo "<br>";
+                }
+                backup_flush(300);
+            }
+
             if ($newid) {
                 //We have the newid, update backup_ids
                 backup_putid($restore->backup_unique_code,"choice_answers",$oldid,

@@ -54,6 +54,11 @@
 
             //The structure is equal to the db, so insert the survey
             $newid = insert_record ("survey",$survey);
+
+            //Do some output
+            echo "<ul><li>Survey ".$survey->name."<br>";
+            backup_flush(300);
+
             if ($newid) {
                 //We have the newid, update backup_ids
                 backup_putid($restore->backup_unique_code,$mod->modtype,
@@ -70,6 +75,9 @@
             } else {
                 $status = false;
             }
+
+            //Finalize ul
+            echo "</ul>";
 
         } else {
             $status = false;
@@ -115,6 +123,16 @@
 
             //The structure is equal to the db, so insert the survey_answers
             $newid = insert_record ("survey_answers",$answer);
+
+            //Do some output
+            if ($newid % 50 == 0) {
+                echo ".";
+                if ($newid % 1000 == 0) {
+                    echo "<br>";
+                }
+                backup_flush(300);
+            }
+
             if ($newid) {
                 //We have the newid, update backup_ids
                 backup_putid($restore->backup_unique_code,"survey_answers",$oldid,
@@ -161,6 +179,16 @@
 
             //The structure is equal to the db, so insert the survey_analysis
             $newid = insert_record ("survey_analysis",$analys);
+
+            //Do some output
+            if ($newid % 50 == 0) {
+                echo ".";       
+                if ($newid % 1000 == 0) {
+                    echo "<br>";
+                }
+                backup_flush(300);
+            }
+
             if ($newid) {
                 //We have the newid, update backup_ids
                 backup_putid($restore->backup_unique_code,"survey_analysis",$oldid,

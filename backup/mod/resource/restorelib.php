@@ -35,7 +35,7 @@
             //traverse_xmlize($info);                                                                     //Debug
             //print_object ($GLOBALS['traverse_array']);                                                  //Debug
             //$GLOBALS['traverse_array']="";                                                              //Debug
-           
+          
             //Now, build the RESOURCE record structure
             $resource->course = $restore->course_id;
             $resource->name = backup_todb($info['MOD']['#']['NAME']['0']['#']);
@@ -47,6 +47,11 @@
  
             //The structure is equal to the db, so insert the resource
             $newid = insert_record ("resource",$resource);
+
+            //Do some output     
+            echo "<ul><li>Resource ".$resource->name."<br>";
+            backup_flush(300);
+
             if ($newid) {
                 //We have the newid, update backup_ids
                 backup_putid($restore->backup_unique_code,$mod->modtype,
@@ -55,6 +60,10 @@
             } else {
                 $status = false;
             }
+
+            //Finalize ul        
+            echo "</ul>";
+
         } else {
             $status = false;
         }
