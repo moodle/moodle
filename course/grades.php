@@ -3,9 +3,7 @@
 
 	require("../config.php");
 	require("lib.php");
-    require("$CFG->libdir/psxlsgen.php");
-
-
+    require("../lib/psxlsgen.php");
 
     require_variable($id);              // course id
     optional_variable($download, "");   // to download data 
@@ -29,6 +27,9 @@
 /// Get a list of all students
 
     if (!$students = get_course_students($course->id)) {
+	    print_header("$course->shortname: $strgrades", "$course->fullname", 
+                     "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> 
+                      -> $strgrades");
         print_heading(get_string("nostudentsyet"));
         print_footer($course);
         exit;
@@ -131,7 +132,7 @@
             $myxls->InsertNumber($totals[$student->id]);
         }
 
-        $myxls->SendFile("$course->shortname $strgrades");
+        $myxls->SendFileName("$course->shortname $strgrades");
 
         exit;
 

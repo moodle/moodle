@@ -139,7 +139,7 @@ if( !defined( "PHP_SIMPLE_XLS_GEN" ) ) {
      }
 
      // send generated xls as stream file
-     function SendFile( $filename )
+     function SendFileName( $filename )
      {
         $this->filename = $filename;
         $this->SendFile();
@@ -171,7 +171,7 @@ if( !defined( "PHP_SIMPLE_XLS_GEN" ) ) {
      }
 
      // Save generated xls file
-     function SaveFile( $filename )
+     function SaveFileName( $filename )
      {
         $this->filename = $filename;
         $this->SaveFile();

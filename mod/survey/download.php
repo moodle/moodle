@@ -161,7 +161,7 @@
                 }
             }
         }
-        $myxls->SendFile("surveyreport");
+        $myxls->SendFileName("$survey->name");
 
         exit;
     }
@@ -171,7 +171,7 @@
 // Print header to force download
 
     header("Content-Type: application/download\n"); 
-    header("Content-Disposition: attachment; filename=\"$survey->name results.txt\"");
+    header("Content-Disposition: attachment; filename=\"$survey->name.txt\"");
 
 // Print names of all the fields
 
