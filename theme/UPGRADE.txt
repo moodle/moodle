@@ -145,3 +145,7 @@ a.autolink:hover {}
 .courseboxinfo {}
 .courseboxsummary {}
 
+
+/* Specific style for listing discussions (formerly re-used forumpost)*/
+
+.forumheaderlist {}

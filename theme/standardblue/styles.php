@@ -425,3 +425,9 @@ a.autolink:hover {
     -moz-border-radius-topright: 15px;
 }
 
+.forumheaderlist {
+    border-width: 1px;
+    border-color: <?PHP echo $THEME->borders?>;
+    border-style: solid;
+}
+
