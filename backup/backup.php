@@ -3,29 +3,22 @@
 
     //Define some globals for all the script
 
-    //MUST CHANGE WITH FINAL BACKUP LOCATION !! WITHOUT TRAILING SLASH !!
-    //ALL RELATIVE FROM THE LOCATION OF THE backup.php SCRIPT !!!
-
-    $moodle_home = "..";
-    $mods_home = "../mod";
-
-    //END MUST CHANGE
-
-    //Units used
-    require_once ("$moodle_home/config.php");
-    require_once ("$moodle_home/version.php");
+    require_once ("../config.php");
     require_once ("lib.php");
     require_once ("backuplib.php");
 
-    //Optional variables    
     optional_variable($id);       // course id
 
-    //Check login       
     require_login();
 
-    //Check admin
-    if (!isadmin()) {
-        error("You need to be an admin user to use this page.", "$CFG->wwwroot/login/index.php");
+    if (!empty($id)) {
+        if (!isteacher($id)) {
+            error("You need to be a teacher or admin user to use this page.", "$CFG->wwwroot/login/index.php");
+        }
+    } else {
+        if (!isadmin()) {
+            error("You need to be an admin user to use this page.", "$CFG->wwwroot/login/index.php");
+        }
     }
 
     //Check site
@@ -46,7 +39,7 @@
     //If no course has been selected or cancel button pressed
     if (!$id or $cancel) {
         print_header("$site->shortname: $strcoursebackup", $site->fullname,
-                     "<A HREF=\"$moodle_home/$CFG->admin/index.php\">$stradministration</A> -> $strcoursebackup");
+                     "<A HREF=\"$CFG->wwwroot/$CFG->admin/index.php\">$stradministration</A> -> $strcoursebackup");
 
         if ($courses = get_courses()) {
             print_heading(get_string("choosecourse"));
@@ -57,7 +50,7 @@
             print_simple_box_end();
         } else {
             print_heading(get_string("nocoursesyet"));
-            print_continue("$moodle_home/$CFG->admin/index.php");
+            print_continue("$CFG->wwwroot/$CFG->admin/index.php");
         }
         print_footer();
         exit;
@@ -67,10 +60,17 @@
     if (! $course = get_record("course", "id", $id)) {
         error("Course ID was incorrect (can't find it)");
     }
+
     //Print header
-    print_header("$site->shortname: $strcoursebackup", $site->fullname,
-                 "<A HREF=\"$moodle_home/$CFG->admin/index.php\">$stradministration</A> ->
-                  <A HREF=\"backup.php\">$strcoursebackup</A> -> $course->fullname ($course->shortname)");
+    if (isadmin()) {
+        print_header("$site->shortname: $strcoursebackup", $site->fullname,
+                     "<a href=\"$CFG->wwwroot/$CFG->admin/index.php\">$stradministration</a> ->
+                      <a href=\"backup.php\">$strcoursebackup</a> -> $course->fullname ($course->shortname)");
+    } else {
+        print_header("$site->shortname: $strcoursebackup", $site->fullname,
+                     "<a href=\"$CFG->wwwroot/$CFG->admin/index.php\">$stradministration</a> ->
+                      <a href=\"backup.php\">$strcoursebackup</a> -> $course->fullname ($course->shortname)");
+    }
 
     //Print form     
     print_heading("$strcoursebackup: $course->fullname ($course->shortname)");

@@ -845,7 +845,7 @@
     //The zipped file is created in the backup directory and named with
     //the "oficial" name of the backup
     //It uses "pclzip" if available or system "zip" (unix only)
-    function backup_zip ($preferences,$moodle_home) {
+    function backup_zip ($preferences) {
     
         global $CFG;
 
@@ -869,7 +869,7 @@
                 //Include into array
                 $files[] = $basedir."/".$file;
             }
-            include_once($moodle_home."/lib/pclzip/pclzip.lib.php");
+            include_once("$CFG->dirroot/lib/pclzip/pclzip.lib.php");
             $archive = new PclZip("$basedir/$name");
             if (($list = $archive->create($files,PCLZIP_OPT_REMOVE_PATH,$basedir)) == 0) {
                 error($archive->errorInfo(true));

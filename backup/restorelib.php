@@ -3,14 +3,14 @@
    
     //This function unzips a zip file in the same directory that it is
     //It automatically uses pclzip or command line unzip
-    function restore_unzip ($file,$moodle_home) {
+    function restore_unzip ($file) {
         
         global $CFG;
 
         $status = true;
 
         if (empty($CFG->unzip)) {    // Use built-in php-based unzip function
-            include_once($moodle_home."/lib/pclzip/pclzip.lib.php");
+            include_once("$CFG->wwwroot/lib/pclzip/pclzip.lib.php");
             $archive = new PclZip($file);
             if (!$list = $archive->extract(dirname($file))) {
                 $status = false;

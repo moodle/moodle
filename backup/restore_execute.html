@@ -28,7 +28,7 @@
     if ($allmods = get_records("modules") ) {
         foreach ($allmods as $mod) {
             $modname = $mod->name;
-            $modfile = "$mods_home/$modname/restorelib.php";
+            $modfile = "$CFG->dirroot/mod/$modname/restorelib.php";
             //If file exists and we have selected to restore that type of module
             if ((file_exists($modfile)) and ($restore->mods[$modname]->restore)) {
                include_once($modfile);
@@ -236,6 +236,6 @@
 
     //Print final message
     print_simple_box(get_string("restorefinished"),"CENTER");
-    print_continue($moodle_home."/course/view.php?id=".$restore->course_id);
+    print_continue("$CFG->wwwroot/course/view.php?id=".$restore->course_id);
 
 ?>

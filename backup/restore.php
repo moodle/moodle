@@ -3,14 +3,10 @@
 
     //Define some globals for all the script
 
-    $moodle_home = "..";
-    $mods_home = "../mod";
-
     //Units used
-    require_once ("$moodle_home/config.php");
-    require_once ("$moodle_home/version.php");
-    require_once ("$moodle_home/lib/xmlize.php");
-    require_once ("$moodle_home/course/lib.php");
+    require_once ("../config.php");
+    require_once ("../lib/xmlize.php");
+    require_once ("../course/lib.php");
     require_once ("lib.php");
     require_once ("restorelib.php");
 
@@ -49,9 +45,9 @@
     //If no file has been selected from the FileManager, inform and end
     if (!$file) {
         print_header("$site->shortname: $strcourserestore", $site->fullname,
-                     "<A HREF=\"$moodle_home/$CFG->admin/index.php\">$stradministration</A> -> $strcourserestore");
+                     "<A HREF=\"$CFG->wwwroot/$CFG->admin/index.php\">$stradministration</A> -> $strcourserestore");
         print_heading(get_string("nofilesselected"));
-        print_continue("$moodle_home/$CFG->admin/index.php");
+        print_continue("$CFG->wwwroot/$CFG->admin/index.php");
         print_footer();
         exit;
     }
@@ -59,9 +55,9 @@
     //If cancel has been selected, inform and end
     if ($cancel) {
         print_header("$site->shortname: $strcourserestore", $site->fullname,
-                     "<A HREF=\"$moodle_home/$CFG->admin/index.php\">$stradministration</A> -> $strcourserestore");
+                     "<A HREF=\"$CFG->wwwroot/$CFG->admin/index.php\">$stradministration</A> -> $strcourserestore");
         print_heading(get_string("restorecancelled"));
-        print_continue("$moodle_home/$CFG->admin/index.php");
+        print_continue("$CFG->wwwroot/$CFG->admin/index.php");
         print_footer();
         exit;
     }
@@ -69,7 +65,7 @@
     //We are here, so me have a file.
     //Print header
     print_header("$site->shortname: $strcourserestore", $site->fullname,
-                 "<A HREF=\"$moodle_home/$CFG->admin/index.php\">$stradministration</A> ->
+                 "<A HREF=\"$CFG->wwwroot/$CFG->admin/index.php\">$stradministration</A> ->
                   $strcourserestore -> ".basename($file));
     //Print form
     print_heading("$strcourserestore: ".basename($file));

@@ -20,7 +20,7 @@
     if ($allmods = get_records("modules") ) {
         foreach ($allmods as $mod) {
             $modname = $mod->name;
-            $modfile = "$mods_home/$modname/backuplib.php";
+            $modfile = "$CFG->dirroot/mod/$modname/backuplib.php";
             $modbackup = $modname."_backup_mods";
             $modcheckbackup = $modname."_check_backup_mods";
             if (file_exists($modfile)) {
@@ -90,10 +90,10 @@
     $preferences->backup_unique_code = $backup_unique_code;
 
     //Another Info
-    $preferences->moodle_version = $version;
-    $preferences->moodle_release = $release;
-    $preferences->backup_version = $backup_version;
-    $preferences->backup_release = $backup_release;
+    $preferences->moodle_version = $CFG->version;
+    $preferences->moodle_release = $CFG->release;
+    $preferences->backup_version = $CFG->backup_version;
+    $preferences->backup_release = $CFG->backup_release;
 
     if ($count == 0) {
         notice("No backupable modules are installed!");
@@ -249,7 +249,7 @@
     //Now, zip all the backup directory contents
     if ($status) {
         echo "<li>".get_string("zippingbackup");
-        $status = backup_zip ($preferences,$moodle_home);
+        $status = backup_zip ($preferences);
     }
 
     //Now, copy the zip file to course directory
@@ -279,6 +279,6 @@
 
     //Print final message
     print_simple_box(get_string("backupfinished"),"CENTER");
-    print_continue($moodle_home."/files/index.php?id=".$preferences->backup_course."&wdir=/".get_string("backupdir"));    
+    print_continue("$CFG->wwwroot/files/index.php?id=".$preferences->backup_course."&wdir=/".get_string("backupdir"));    
 
 ?>

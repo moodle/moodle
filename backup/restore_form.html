@@ -36,7 +36,7 @@
     if ($allmods = get_records("modules") ) {
         foreach ($allmods as $mod) {
             $modname = $mod->name;
-            $modfile = "$mods_home/$modname/restorelib.php";
+            $modfile = "$CFG->dirroot/mod/$modname/restorelib.php";
             $modrestore = $modname."_restore_mods";
             if (file_exists($modfile)) {
                include_once($modfile);

@@ -68,7 +68,7 @@
     //Now unzip the file
     if ($status) {
         echo "<li>".get_string("unzippingbackup");
-        $status = restore_unzip ($CFG->dataroot."/temp/backup/".$backup_unique_code."/".basename($file),$moodle_home);
+        $status = restore_unzip ($CFG->dataroot."/temp/backup/".$backup_unique_code."/".basename($file));
     }
 
     //Now check for the moodle.xml file

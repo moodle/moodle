@@ -20,7 +20,7 @@
     if ($allmods = get_records("modules") ) {
         foreach ($allmods as $mod) {
             $modname = $mod->name;
-            $modfile = "$mods_home/$modname/backuplib.php";
+            $modfile = "$CFG->dirroot/mod/$modname/backuplib.php";
             $modbackup = $modname."_backup_mods";
             $modcheckbackup = $modname."_check_backup_mods";
             if (file_exists($modfile)) {
