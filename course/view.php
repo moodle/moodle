@@ -32,6 +32,17 @@
 
     require_login($course->id);
 
+    //If course is hosted on an external server, redirect to corresponding
+    //url with appropriate authentication attached as parameter 
+    if (file_exists($CFG->dirroot ."/course/externservercourse.php")) {
+        include $CFG->dirroot ."/course/externservercourse.php";
+        if (function_exists(extern_server_course)) {
+            if ($extern_url = extern_server_course($course)) {
+                redirect($extern_url);
+            }
+        }
+    }
+
     require_once($CFG->dirroot.'/calendar/lib.php');    /// This is after login because it needs $USER
 
     add_to_log($course->id, "course", "view", "view.php?id=$course->id", "$course->id");
