@@ -168,12 +168,12 @@
             } else {
                 html_header($course, $wdir);
                 if (setfilelist($_POST)) {
-                    echo "<P ALIGN=CENTER>You are about to delete:</P>";
+                    echo "<p align=center>".get_string("deletecheckwarning").":</p>";
                     print_simple_box_start("center");
                     printfilelist($USER->filelist);
                     print_simple_box_end();
-                    echo "<BR>";
-                    notice_yesno ("Are you sure you want to delete these?", 
+                    echo "<br />";
+                    notice_yesno (get_string("deletecheckfiles"), 
                                 "index.php?id=$id&wdir=$wdir&action=delete&confirm=1",
                                 "index.php?id=$id&wdir=$wdir&action=cancel");
                 } else {
@@ -188,7 +188,9 @@
             if ($count = setfilelist($_POST)) {
                 $USER->fileop     = $action;
                 $USER->filesource = $wdir;
-                echo "<P align=center>$count files selected for moving. Now go to the destination and press \"Move files to here\".</P>";
+                echo "<p align=center>";
+                print_string("selectednowmove", "moodle", $count);
+                echo "</p>";
             }
             displaydir($wdir);
             html_footer();
@@ -515,7 +517,7 @@
         case "restore":
             html_header($course, $wdir);
             if (!empty($file)) {
-                echo "<P ALIGN=CENTER>".get_string("youaregoingtorestorefrom")."</P>";
+                echo "<p align=center>".get_string("youaregoingtorestorefrom").":</p>";
                 print_simple_box_start("center");
                 echo $file;
                 print_simple_box_end();
@@ -764,7 +766,7 @@ function displaydir ($wdir) {
         }
     }
     echo "</TABLE>";
-    echo "<HR WIDTH=640 ALIGN=CENTER NOSHADE SIZE=1>";
+    echo "<hr width=640 align=center noshade size=1>";
 
     if (empty($wdir)) {
         $wdir = "/";
