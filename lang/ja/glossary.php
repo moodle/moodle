@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.4 development (2004070800)
+      // glossary.php - created with Moodle 1.4 development (2004072500)
 
 
 $string['addcomment'] = 'コメントの追加';
@@ -52,7 +52,7 @@ $string['concepts'] = '概念';
 $string['configenablerssfeeds'] = 'このスイッチは用語集全てにおいてRSSフィードを設置可能にします。更にそれぞれの用語集でRSSフィードを手動設定する必要があります。';
 $string['currentglossary'] = '現在の用語集';
 $string['dateview'] = '日付順';
-$string['defaultapproval'] = 'デフォルト承認状態';
+$string['defaultapproval'] = 'デフォルトの承認状態';
 $string['definition'] = '定義';
 $string['definitions'] = '定義';
 $string['deleteentry'] = 'エントリーの削除';
@@ -60,14 +60,14 @@ $string['deletingcomment'] = 'コメントを削除しています';
 $string['deletingnoneemptycategory'] = '空でないカテゴリが削除された場合、関係するエントリーも同時に削除されます。エントリーを削除したい場合は、手動で行ってください。';
 $string['descending'] = '(昇順)';
 $string['destination'] = 'インポート先';
-$string['displayformat'] = 'フォーマットを表示';
-$string['displayformat2'] = 'フル、作者有り';
-$string['displayformat3'] = '百科事典';
-$string['displayformat4'] = 'FAQ';
-$string['displayformat5'] = 'フル、作者無し';
-$string['displayformat6'] = 'エントリーリスト';
+$string['displayformat'] = '表示フォーマット';
 $string['displayformatcontinuous'] = '連続、作者無し';
-$string['displayformatdefault'] = 'シンプル、ディレクトリスタイル';
+$string['displayformatdictionary'] = 'シンプル、辞書スタイル';
+$string['displayformatencyclopedia'] = '百科事典';
+$string['displayformatentrylist'] = 'エントリーリスト';
+$string['displayformatfaq'] = 'FAQ';
+$string['displayformatfullwithauthor'] = 'フル、著者あり';
+$string['displayformatfullwithoutauthor'] = 'フル、著者無し';
 $string['displayformats'] = '表示フォーマット';
 $string['displayformatssetup'] = '表示フォーマット設定';
 $string['duplicateentry'] = 'エントリーを複写する';
@@ -136,7 +136,7 @@ $string['ratingonlyteachers'] = '$a のみがエントリーを評価出来る';
 $string['ratings'] = '評価';
 $string['ratingssaved'] = '評価が保存されました';
 $string['ratingsuse'] = '評価を使用する';
-$string['ratingtime'] = 'この範囲のエントリーの評価を制限する:';
+$string['ratingtime'] = '下記の期間のエントリー評価を制限する:';
 $string['rejectedentries'] = '拒否されたエントリ';
 $string['rejectionrpt'] = '拒否レポート';
 $string['rsssubscriberss'] = '\'$a\' 概念のRSSフィードを表示';
@@ -154,7 +154,7 @@ $string['special'] = '特別';
 $string['standardview'] = 'アルファベットに表示';
 $string['studentcanpost'] = '学生のエントリー追加を許可する';
 $string['totalentries'] = 'エントリー合計';
-$string['usedynalink'] = '用語集と他のモジュールを自動的にリンクする';
+$string['usedynalink'] = 'エントリーを自動的にリンクする';
 $string['waitingapproval'] = '承認待ち';
 $string['warningstudentcapost'] = '(用語集がメインで無い場合に適用)';
 $string['withauthor'] = '概念(著者有り)';
