@@ -49,6 +49,7 @@
         if (!$cm = get_coursemodule_from_instance("glossary", $glossary->id, $course->id)) {
             error("Could not determine which course module this belonged to!");
         }
+        $id = $cm->id;
     } else {
         error("Must specify glossary ID or course module ID");
     }
