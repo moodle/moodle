@@ -2,7 +2,7 @@
 
 // Graph size
 $GHEIGHT = 500;
-$GWIDTH  = 800;
+$GWIDTH  = 900;
 
 $QTYPE = array (
         "-3" => "Virtual Actual and Preferred",
