@@ -22,10 +22,6 @@
         }
     }
 
-    if (! $course->category) {      // This course is not a real course.
-        redirect("$CFG->wwwroot");
-    }
-
     require_login($id);
 
     add_to_log($course->id, "course", "view", "view.php?id=$course->id", "$course->id");
@@ -46,6 +42,11 @@
 
     $SESSION->fromdiscussion = "$CFG->wwwroot/course/view.php?id=$course->id";
     save_session("SESSION");
+
+    if (! $course->category) {      // This course is not a real course.
+        redirect("$CFG->wwwroot/");
+    }
+
 
     $courseword = get_string("course");
 
