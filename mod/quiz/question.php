@@ -123,6 +123,8 @@
             switch ($question->qtype) {
                 case SHORTANSWER:
                     // Delete all the old answers
+                    // FIXME - instead of deleting, update existing answers
+                    //         so as not to break existing references to them
                     delete_records("quiz_answers", "question", $question->id);
                     delete_records("quiz_shortanswer", "question", $question->id);
     
@@ -164,6 +166,8 @@
                     }
                 break;
                 case TRUEFALSE:
+                    // FIXME - instead of deleting, update existing answers
+                    //         so as not to break existing references to them
                     delete_records("quiz_answers", "question", $question->id);
                     delete_records("quiz_truefalse", "question", $question->id);
     
@@ -192,6 +196,8 @@
                     }
                 break;
                 case MULTICHOICE:
+                    // FIXME - instead of deleting, update existing answers
+                    //         so as not to break existing references to them
                     delete_records("quiz_answers", "question", $question->id);
                     delete_records("quiz_multichoice", "question", $question->id);
     
