@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.0.9 development (2003041400)
+      // moodle.php - created with Moodle 1.0.9 development (2003042104)
 
 
 $string['action'] = "操作";
@@ -54,7 +54,7 @@ $string['choosetheme'] = "テーマの選択";
 $string['chooseuser'] = "ユーザを選択する";
 $string['city'] = "都道府県";
 $string['closewindow'] = "ウィンドウを閉じる";
-$string['comparelanguage'] = "言語の比較及び編集";
+$string['comparelanguage'] = "言語の比較・編集";
 $string['complete'] = "完全な";
 $string['configcountry'] = "ここで国を設定した場合、新規アカウントのユーザに初期値として表示されます。ユーザに国を選ばせる場合は何も選択しないでください。
 ";

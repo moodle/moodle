@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.0.9 development (2003032500)
+      // forum.php - created with Moodle 1.0.9 development (2003042104)
 
 
 $string['addanewdiscussion'] = "トピックを追加";
@@ -41,6 +41,7 @@ $string['inforum'] = "\$a";
 $string['intronews'] = "ニュースとお知らせ";
 $string['introsocial'] = "投稿制限無しフォーラム";
 $string['introteacher'] = "教師専用フォーラム";
+$string['lastpost'] = "最新の投稿";
 $string['learningforums'] = "学習フォーラム";
 $string['maxtimehaspassed'] = "申し訳ございません、この投稿(\$a)に対する最大編集回数を超えました!";
 $string['message'] = "メッセージ";
@@ -68,8 +69,8 @@ $string['openmode0'] = "ディスカッション不許可、返信不許可";
 $string['openmode1'] = "ディスカッション不許可、返信許可";
 $string['openmode2'] = "ディスカッションと返信を許可";
 $string['parentofthispost'] = "この投稿の親記事";
-$string['postadded'] = "投稿が追加されました<P>変更したい場合は \$a 編集可能です";
-$string['postincontext'] = "この投稿の状態を見る";
+$string['postadded'] = "投稿が追加されました。<P>更新したい場合は \$a 編集出来ます。";
+$string['postincontext'] = "関連した投稿を見る";
 $string['postmailinfo'] = "これは \$a ウェブサイトに投稿された投稿のコピーです。返信をウェブサイト経由で追加する場合は、このリックをクリックしてください:";
 $string['postrating1'] = "主に分離認識の傾向がある";
 $string['postrating2'] = "分離認識と関連認識を同等に持っている";
@@ -81,6 +82,7 @@ $string['ratings'] = "評価";
 $string['ratingssaved'] = "評価が保存されました";
 $string['re'] = "Re:";
 $string['readtherest'] = "残りのトピックを読む";
+$string['replies'] = "返事";
 $string['repliesmany'] = "\$a 件の返信があります";
 $string['repliesone'] = "\$a 件の返信があります";
 $string['reply'] = "返信";
@@ -90,6 +92,7 @@ $string['searchresults'] = "検索結果";
 $string['sendinratings'] = "最新のレーティングを送信する";
 $string['showsubscribers'] = "参加者を表示";
 $string['singleforum'] = "単一ディスカッション";
+$string['startedby'] = "ディスカッションの開始";
 $string['subject'] = "題名";
 $string['subscribe'] = "このフォーラムに参加する";
 $string['subscribed'] = "参加";
