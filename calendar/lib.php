@@ -50,6 +50,8 @@ define ('SECS_IN_DAY', 86400);
 define ('CALENDAR_UPCOMING_DAYS', 14);
 define ('CALENDAR_UPCOMING_MAXEVENTS', 10);
 define ('CALENDAR_URL', $CFG->wwwroot.'/calendar/');
+define ('CALENDAR_TF_24', '%H:%M');
+define ('CALENDAR_TF_12', '%I:%M %p');
 
 function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_year = false) {
     global $CFG, $USER;
@@ -674,7 +676,13 @@ function calendar_day_representation($tstamp, $now = false, $usecommonwords = tr
 }
 
 function calendar_time_representation($time) {
-    return userdate($time, '%H:%M');
+    static $langtimeformat = NULL;
+    if($langtimeformat === NULL) {
+        $langtimeformat = get_string('strftimetime');
+    }
+    $timeformat = get_user_preferences('calendar_timeformat');
+    // The ? is needed because the preference might be present, but empty
+    return userdate($time, empty($timeformat) ? $langtimeformat : $timeformat);
 }
 
 function calendar_get_link_href($linkbase, $d, $m, $y) {
@@ -1160,6 +1168,7 @@ function calendar_preferences_array() {
         'startwday' => get_string('pref_startwday', 'calendar'),
         'maxevents' => get_string('pref_maxevents', 'calendar'),
         'lookahead' => get_string('pref_lookahead', 'calendar'),
+        'timeformat' => get_string('pref_timeformat', 'calendar'),
     );
 }
 

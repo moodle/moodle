@@ -66,6 +66,18 @@
 
     if($_GET['commit']) {
         switch($_GET['edit']) {
+            case 'timeformat':
+                if($_GET['timeformat'] == '12') {
+                    $timeformat = CALENDAR_TF_12;
+                }
+                else if($_GET['timeformat'] == '24') {
+                    $timeformat = CALENDAR_TF_24;
+                }
+                else {
+                    $timeformat = '';
+                }
+                set_user_preference('calendar_'.$_GET['edit'], $timeformat);
+            break;
             case 'startwday':
                 $day = intval($_GET[$_GET['edit']]);
                 if($day < 0 || $day > 6) {
@@ -192,6 +204,24 @@
     }
 
     switch($_GET['edit']) {
+        case 'timeformat':
+            $sel = array('default' => ' selected="selected"', '12' => '', '24' => '');
+            switch(get_user_preferences('calendar_timeformat', '')) {
+                case CALENDAR_TF_12:
+                    $sel['12'] = $sel['default'];
+                    $sel['default'] = '';
+                break;
+                case CALENDAR_TF_24:
+                    $sel['24'] = $sel['default'];
+                    $sel['default'] = '';
+                break;
+            }
+            echo '<td><select name="timeformat">';
+            echo '<option value="default"'.$sel['default'].'>'.get_string('default', 'calendar').'</option>';
+            echo '<option value="12"'.$sel['12'].'>'.get_string('timeformat_12', 'calendar').'</option>';
+            echo '<option value="24"'.$sel['24'].'>'.get_string('timeformat_24', 'calendar').'</option>';
+            echo '</select></td>';
+        break;
         case 'startwday':
             echo '<td>';
             $days = array(
@@ -227,6 +257,17 @@
                 get_string('thursday', 'calendar'), get_string('friday', 'calendar'),
                 get_string('saturday', 'calendar'));
             $values['startwday'] = $days[$values['startwday']];
+            switch($values['timeformat']) {
+                case '':
+                    $values['timeformat'] = get_string('default', 'calendar');
+                break;
+                case CALENDAR_TF_12:
+                    $values['timeformat'] = get_string('timeformat_12', 'calendar');
+                break;
+                case CALENDAR_TF_24:
+                    $values['timeformat'] = get_string('timeformat_24', 'calendar');
+                break;
+            }
 
             // OK, display them
             foreach($prefs as $name => $description) {
