@@ -65,6 +65,17 @@ function print_heading($text, $align="CENTER", $size=3) {
     echo "<P ALIGN=\"$align\"><FONT SIZE=\"$size\"><B>$text</B></FONT></P>";
 }
 
+function print_continue($link) {
+    global $HTTP_REFERER;
+
+    if (!$link) {
+        $link = $HTTP_REFERER;
+    }
+
+    print_heading("<A HREF=\"$link\">".get_string("continue")."</A>");
+}
+
+
 function print_simple_box($message, $align="", $width="", $color="#FFFFFF", $padding=5, $border=1) {
     print_simple_box_start($align, $width, $color, $padding, $border);
     echo "<P>$message</P>";
@@ -93,8 +104,10 @@ function print_simple_box_end() {
 
 function print_single_button($link, $options, $label="OK") {
     echo "<FORM ACTION=\"$link\" METHOD=GET>";
-    foreach ($options as $name => $value) {
-        echo "<INPUT TYPE=hidden NAME=\"$name\" VALUE=\"$value\">";
+    if ($options) {
+        foreach ($options as $name => $value) {
+            echo "<INPUT TYPE=hidden NAME=\"$name\" VALUE=\"$value\">";
+        }
     }
     echo "<INPUT TYPE=submit VALUE=\"$label\"></FORM>";
 }
@@ -353,7 +366,7 @@ function error ($message, $link="") {
             $link = "$CFG->wwwroot";
         }
     }
-    print_heading("<A HREF=\"$link\">Continue</A>");
+    print_continue($link);
     print_footer();
     die;
 }
