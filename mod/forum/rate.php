@@ -20,31 +20,35 @@
 
     if ($data = data_submitted("$CFG->wwwroot/mod/forum/discuss.php")) {    // form submitted
 
-        foreach ($data as $post => $rating) {
-            if ($post == "id") {
+        foreach ($data as $postid => $rating) {
+            if ($postid == "id") {
                 continue;
             }
-            if ($oldrating = get_record("forum_ratings", "userid", $USER->id, "post", $post)) {
+            if ($oldrating = get_record("forum_ratings", "userid", $USER->id, "post", $postid)) {
                 if ($rating != $oldrating->rating) {
                     $oldrating->rating = $rating;
                     $oldrating->time = time();
                     if (! update_record("forum_ratings", $oldrating)) {
-                        error("Could not update an old rating ($post = $rating)");
+                        error("Could not update an old rating ($postid = $rating)");
                     }
                 }
             } else if ($rating) {
                 unset($newrating);
                 $newrating->userid = $USER->id;
                 $newrating->time = time();
-                $newrating->post = $post;
+                $newrating->post = $postid;
                 $newrating->rating = $rating;
 
                 if (! insert_record("forum_ratings", $newrating)) {
-                    error("Could not insert a new rating ($post = $rating)");
+                    error("Could not insert a new rating ($postid = $rating)");
                 }
             }
         }
-        redirect($_SERVER["HTTP_REFERER"], get_string("ratingssaved", "forum"));
+        if ($post = get_record('forum_posts', 'id', $postid)) {
+            redirect("$CFG->wwwroot/mod/forum/discuss.php?d=$post->discussion", get_string("ratingssaved", "forum"));
+        } else {
+            redirect($_SERVER["HTTP_REFERER"], get_string("ratingssaved", "forum"));
+        }
 
     } else {
         error("This page was not accessed correctly");
