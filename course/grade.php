@@ -25,6 +25,7 @@
     $grades = array();      // Collect all grades in this array
     $maxgrades = array();   // Collect all max grades in this array
     $totalgrade = 0;
+    $totalmaxgrade = 0;
 
 
 /// Collect modules data
@@ -55,14 +56,20 @@
                                 $columnhtml[] = "$image ".
                                              "<A HREF=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\">".
                                              "$instance->name".
-                                             "</A>$maxgrade";
+                                             "</A>";
     
-                                $grades[]  = $modgrades->grades[$USER->id]; // may be empty, that's ok
-
-                                $maxgrades[] = $modgrades->maxgrade;
-
-                                if (!empty($modgrades->maxgrade)) {
+                                if (empty($modgrades->grades[$USER->id])) {
+                                    $grades[]  = "";
+                                } else {
+                                    $grades[]  = $modgrades->grades[$USER->id];
                                     $totalgrade += (float)$modgrades->grades[$USER->id];
+                                }
+
+                                if (empty($modgrades->maxgrade)) {
+                                    $maxgrades[] = "";
+                                } else {
+                                    $maxgrades[]    = $modgrades->maxgrade;
+                                    $totalmaxgrade += $modgrades->maxgrade;
                                 }
                             }
                         }
@@ -88,7 +95,7 @@
         $table->data[] = array($columnhtml[$key], $maxgrades[$key], $grade);
     }
 
-    $table->data[] = array("", get_string("total"), $totalgrade);
+    $table->data[] = array(get_string("total"), $totalmaxgrade, $totalgrade);
 
     print_table($table);
 
