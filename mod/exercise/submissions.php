@@ -242,6 +242,9 @@
 			print_footer($course);
 			exit;
 			}
+		if (!isteacher($course->id)) {
+			error("Only teachers can look at this page");
+			}
 		exercise_list_unassessed_student_submissions($exercise, $USER);
 		print_continue("view.php?id=$cm->id");
 		

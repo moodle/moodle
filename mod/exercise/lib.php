@@ -1067,8 +1067,9 @@ function exercise_get_student_submission($exercise, $user) {
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
-function exercise_get_student_submissions($exercise, $order = "title") {
+function exercise_get_student_submissions($exercise, $order = "") {
 // Return all  ENROLLED student submissions
+// if order can grade|title|name|nothing, nothing is oldest first, youngest last
 	global $CFG;
 	
 	if ($order == "grade") {
@@ -1081,22 +1082,24 @@ function exercise_get_student_submissions($exercise, $order = "title") {
 								AND a.submissionid = s.id
 							GROUP BY s.id
 							ORDER BY a.grade DESC");
-		}
+	}
 
 	if ($order == "title") {
 		$order = "s.title";
-		}
-	if ($order == "name") {
+	} elseif ($order == "name") {
 		$order = "a.firstname, a.lastname";
-		}
-	return get_records_sql("SELECT s.* FROM {$CFG->prefix}exercise_submissions s, {$CFG->prefix}user_students u,
-							{$CFG->prefix}user a 
+	} else {
+        $order = "s.timecreated";
+    }
+    
+	return get_records_sql("SELECT s.* FROM {$CFG->prefix}exercise_submissions s, 
+                            {$CFG->prefix}user_students u, {$CFG->prefix}user a 
                             WHERE u.course = $exercise->course
                               AND s.userid = u.userid
 							  AND a.id = u.userid
                               AND s.exerciseid = $exercise->id
 							  AND s.timecreated > 0
-							ORDER BY $order, timecreated DESC");
+							ORDER BY $order");
 }
 
 
@@ -1626,7 +1629,7 @@ function exercise_list_unassessed_student_submissions($exercise, $user) {
 	
 	if (! $course = get_record("course", "id", $exercise->course)) {
         error("Course is misconfigured");
-        }
+    }
 	if (! $cm = get_coursemodule_from_instance("exercise", $exercise->id, $course->id)) {
 		error("Course Module ID was incorrect");
 	}
@@ -1638,6 +1641,7 @@ function exercise_list_unassessed_student_submissions($exercise, $user) {
 	$table->cellpadding = 2;
 	$table->cellspacing = 0;
 
+    // get all the submissions, oldest first, youngest last
 	if ($submissions = exercise_get_student_submissions($exercise)) {
 		foreach ($submissions as $submission) {
 			// only consider "cold" submissions
@@ -1649,11 +1653,11 @@ function exercise_list_unassessed_student_submissions($exercise, $user) {
 					// it's the student's first submission, get their assessment
 					if (!$assessments = exercise_get_user_assessments($exercise, $submissionowner)) {
 						error("List Unassessed Student submission: student's assessment record not found");
-						}
+					}
 					foreach ($assessments as $assessment) {
 						$studentassessment = $assessment;
 						break; // there should only be one!
-						}
+					}
 					// now see if the teacher has already assessed this submission
 					$teacherassessed = false;
 					$warm = false;
@@ -1663,25 +1667,25 @@ function exercise_list_unassessed_student_submissions($exercise, $user) {
 								$teacherassessed = true;
 								if ($assessment->timecreated > $timenow -$CFG->maxeditingtime) {
 									$warm = true;
-									}
-								break;  // no need to look further
 								}
+								break;  // no need to look further
 							}
 						}
+					}
 					if ($teacherassessed and $warm) {
 						// last chance salon
 						$action = "<A HREF=\"assessments.php?action=teacherassessment&id=$cm->id&aid=$studentassessment->id&sid=$submission->id\">".
 							get_string("edit", "exercise")."</A>";
 						$table->data[] = array(exercise_print_submission_title($exercise, $submission), 
 							$submissionowner->firstname." ".$submissionowner->lastname, $action, $comment);
-						}
+					}
 					if(!$teacherassessed) {
 						$action = "<A HREF=\"assessments.php?action=teacherassessment&id=$cm->id&aid=$studentassessment->id&sid=$submission->id\">".
 							get_string("assess", "exercise")."</A>";
 						$table->data[] = array(exercise_print_submission_title($exercise, $submission), 
 							$submissionowner->firstname." ".$submissionowner->lastname, $action, $comment);
-						}
 					}
+				}
 				// this is student's second... submission
 				else {
 					$teacherassessed = false;
@@ -1692,33 +1696,33 @@ function exercise_list_unassessed_student_submissions($exercise, $user) {
 								$teacherassessed = true;
 								if ($assessment->timecreated > $timenow - $CFG->maxeditingtime) {
 									$warm = true;
-									}
-								break; // no need to look further
 								}
+								break; // no need to look further
 							}
 						}
+					}
 					if ($teacherassessed and $warm) {
 						// last chance salon
 						$action = "<A HREF=\"assessments.php?action=assessresubmission&id=$cm->id&sid=$submission->id\">".
 							get_string("edit", "exercise")."</A>";
 						$table->data[] = array(exercise_print_submission_title($exercise, $submission), 
 							$submissionowner->firstname." ".$submissionowner->lastname, $action, $comment);
-						}
+					}
 					if (!$teacherassessed) { 
 						// no teacher's assessment
 						$action = "<A HREF=\"assessments.php?action=assessresubmission&id=$cm->id&sid=$submission->id\">".
 							get_string("assess", "exercise")."</A>";
 						$table->data[] = array(exercise_print_submission_title($exercise, $submission), 
 							$submissionowner->firstname." ".$submissionowner->lastname, $action, $comment);
-						}
 					}
 				}
 			}
+		}
 		if (isset($table->data)) {
 			print_table($table);
-			}
 		}
 	}
+}
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
