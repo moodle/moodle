@@ -30,7 +30,6 @@ $string['eventkind'] = 'Είδος γεγονότος';
 $string['eventname'] = 'Όνομα';
 $string['eventrepeat'] = 'Επαναλήψεις';
 $string['eventsfor'] = 'Γεγονότα: $a';
-$string['eventsfromcourse'] = 'Γεγονότα από το μάθημα';
 $string['eventstarttime'] = 'Έναρξη';
 $string['eventtime'] = 'Ώρα';
 $string['eventview'] = 'Λεπτομέρειες γεγονότος';
