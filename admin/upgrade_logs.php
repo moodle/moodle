@@ -12,10 +12,17 @@
         error("This script does not work with this old version of Moodle");
     }
 
+/// Turn off time limits, sometimes upgrades can be slow.
+
+    set_time_limit(0);
+
+
+/// Print header
+
     print_header("Upgrading old logs", "Upgrading old logs");
 
 
-    /// try and extract as many cmids as possible from the existing logs
+/// Try and extract as many cmids as possible from the existing logs
 
     if ($coursemodules = get_records_sql("SELECT cm.*, m.name 
                                             FROM {$CFG->prefix}course_modules cm, 
