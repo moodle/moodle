@@ -1205,8 +1205,6 @@ function calendar_human_readable_dst($preset) {
     $options->deactivate_month   = date('F', mktime(0, 0, 0, $preset->deactivate_month, 1, 2000));
 
     return get_string('dsthumanreadable', 'calendar', $options);
-    //print_string('dstonthe', 'calendar')
-    //return 'ID '.$preset->id.': DST is activated on the X of X.';
 }
 
 function calendar_print_month_selector($name, $selected) {

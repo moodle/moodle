@@ -20,12 +20,6 @@
         print_header();
         foreach ($form as $preference => $value) {
             switch ($preference) {
-                case 'dstpreset':
-                    $value = intval($value);
-                    if($value == 0 || get_record('dst_preset', 'id', $value)) {
-                        set_user_preference('calendar_dstpreset', $value);
-                    }
-                break;
                 case 'timeformat':
                     if ($value != CALENDAR_TF_12 and $value != CALENDAR_TF_24) {
                         $value = '';
@@ -79,7 +73,6 @@
 
     print_simple_box_start("center");
 
-    $prefs->dstpreset  = get_user_preferences('calendar_dstpreset', 0);
     $prefs->timeformat = get_user_preferences('calendar_timeformat', '');
     $prefs->startwday  = get_user_preferences('calendar_startwday', CALENDAR_STARTING_WEEKDAY);
     $prefs->maxevents  = get_user_preferences('calendar_maxevents', CALENDAR_UPCOMING_MAXEVENTS);
