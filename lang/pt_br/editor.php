@@ -1,0 +1,76 @@
+<?PHP // $Id$ 
+      // editor.php - created with Moodle 1.1 development (2003072800)
+
+
+$string['about'] = 'Informações sobre este editor';
+$string['absbottom'] = 'Embaixo';
+$string['absmiddle'] = 'No meio';
+$string['address'] = 'Endereço';
+$string['alignment'] = 'Alinhamento';
+$string['alternatetext'] = 'Texto alternativo';
+$string['baseline'] = 'Linha da base';
+$string['bold'] = 'Negrito';
+$string['borderthickness'] = 'Espessura das bordas';
+$string['bottom'] = 'Fundo';
+$string['browse'] = 'Procurar';
+$string['cancel'] = 'Cancelar';
+$string['cellpadding'] = 'Distáncia entre o texto e as bordas';
+$string['cellspacing'] = 'distância entre células ';
+$string['choosechar'] = 'Escolher caractere';
+$string['chooseicon'] = 'Escolher imagem para inserir';
+$string['close'] = 'Fechar';
+$string['cols'] = 'Cols';
+$string['copy'] = 'Copiar elemento selecionado';
+$string['createlink'] = 'Inserir link web';
+$string['cut'] = 'Cortar elemento selecionado';
+$string['forecolor'] = 'Cor das letras';
+$string['heading'] = 'Titolo';
+$string['hilitecolor'] = 'Cor do fundo';
+$string['horizontal'] = 'Horizontal';
+$string['horizontalrule'] = 'Linha Horizontal';
+$string['htmlmode'] = 'Passar ao codigo html';
+$string['imageurl'] = 'Url da imagem';
+$string['indent'] = 'Aumentar distância da margem';
+$string['insertchar'] = 'Inserir caractere especial';
+$string['insertimage'] = 'Inserir imagem';
+$string['insertsmile'] = 'Inserir carinha';
+$string['inserttable'] = 'Inserir tabela';
+$string['italic'] = 'itálico';
+$string['justifycenter'] = 'justificar ao centro';
+$string['justifyfull'] = 'justificar completamente';
+$string['justifyleft'] = 'justificar à esquerda';
+$string['justifyright'] = 'justificar à direita';
+$string['layout'] = 'Layout';
+$string['left'] = 'Esquerda';
+$string['middle'] = 'Centro';
+$string['normal'] = 'Normal';
+$string['notset'] = 'Não definido';
+$string['ok'] = 'OK';
+$string['orderedlist'] = 'Listas Numeradas';
+$string['outdent'] = 'Reduzir distância da margem';
+$string['paste'] = 'Colar';
+$string['path'] = 'Caminho';
+$string['percent'] = 'Porcentagem';
+$string['pixels'] = 'Pixels';
+$string['popupeditor'] = 'Aumentar o editor';
+$string['preformatted'] = 'Formato predefinido';
+$string['preview'] = 'Ver';
+$string['redo'] = 'Repetir a última ação';
+$string['right'] = 'Direita';
+$string['rows'] = 'Linhas';
+$string['showhelp'] = 'Ajuda para utilizar o editor';
+$string['spacing'] = 'Distância';
+$string['strikethrough'] = 'Riscado';
+$string['subscript'] = 'Índice';
+$string['superscript'] = 'Expoente';
+$string['textindicator'] = 'Estilo atual';
+$string['textmode'] = 'Você está usando a modalidae TEXT. Use o botão [<>] para retornar à modalidade WYSIWYG.';
+$string['texttop'] = 'Topo do texto';
+$string['top'] = 'Topo';
+$string['underline'] = 'Sublinhar';
+$string['undo'] = 'Cancelar a última ação';
+$string['unorderedlist'] = 'Lista con marcadores (bullet)';
+$string['vertical'] = 'Vertical';
+$string['width'] = 'Largura';
+
+?>

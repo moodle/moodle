@@ -1,0 +1,71 @@
+<?PHP // $Id$ 
+      // attendance.php - created with Moodle 1.1 development (2003072800)
+
+
+$string['absentlong'] = 'Ausente';
+$string['absentshort'] = 'A';
+$string['addingmultiple'] = 'Adicionando listas de presença múltiplas';
+$string['addmultiple'] = 'Adicionar listas de presença múltiplas';
+$string['allmodulename'] = 'Todas as listas de presença';
+$string['auto'] = 'auto';
+$string['autoattend'] = 'Registrar a presença automaticamente baseando-se nos dados de atividade do usuário (logs)';
+$string['autoattendmulti'] = 'Registrar a presença automaticamente, em todas as listas, baseando-se nos dados de atividade do usuário (logs)';
+$string['autoattendshort'] = 'Automatico a partir dos logs';
+$string['choosedays'] = 'Dias de cada semana em que a presença deve ser registrada';
+$string['dayofroll'] = 'Data de referência da lista';
+$string['defaultautoattend'] = 'Se a configuração predefinida registra as presenças com base nos relatórios de atividade (logs)';
+$string['defaultdynamicsection'] = 'Se a configuração predefinida move a lista de presenças para a semana justa';
+$string['defaultgrade'] = 'Se a configuração predefinida permite a avaliação das listas';
+$string['defaulthoursinclass'] = 'O número de oras predefinido em uma lista de presnça';
+$string['defaultmaxgrade'] = 'O valor máximo da avaliação da presença total predefinido';
+$string['defaultstudentstatus'] = 'Status predefinido do estudante nas novas listas de presença';
+$string['downloadexcelfull'] = 'Baixar planilha excel completa';
+$string['downloadexceltotals'] = 'Baixar planilha excel resumida';
+$string['downloadtextfull'] = 'Baixar o texto completo do relatório';
+$string['downloadtexttotals'] = 'Baixar o texto do relatório resumido';
+$string['dynamicsection'] = 'Definir a semana de referimento para a presença baseando-se nesta data';
+$string['dynamicsectionmulti'] = 'Colocar automaticamente as listas nas suas sessões semanais';
+$string['dynsectionshort'] = 'mudado dinamicamente para a sessão';
+$string['endbeforestart'] = 'A data final é anterior à data inicial';
+$string['endmulti'] = 'Data da última lista de presenças';
+$string['for'] = 'para';
+$string['friday'] = '6a';
+$string['gradeshort'] = 'Avaliado';
+$string['gradevalue'] = 'permitir a avaliação desta lista';
+$string['gradevaluemulti'] = 'Permitir a avaliação destas listas';
+$string['hoursinclass'] = 'Número de horas no período de uma classe';
+$string['hoursineachclass'] = 'Número de horas no período de cada classe';
+$string['hoursinfullreport'] = 'O número máximo de oras de presença que devem ser mostrados em uma página de relatório';
+$string['maxgradeshort'] = 'Nota máxima';
+$string['maxgradevalue'] = 'Valor máximo para a avaliação da presença';
+$string['modulename'] = 'Presença';
+$string['modulenameplural'] = 'Listas de presença';
+$string['monday'] = '2a';
+$string['norolls'] = 'Não há nenhuma lista de presenças neste curso';
+$string['notes'] = 'Informação excepcional';
+$string['notesfor'] = 'Informação excepcional para';
+$string['noviews'] = 'Sinto muito, esta conta não contém dados';
+$string['of'] = 'de';
+$string['pages'] = 'Páginas';
+$string['presentlong'] = 'Presente';
+$string['presentshort'] = 'P';
+$string['saturday'] = 'sab';
+$string['startafterend'] = 'A data inicial é posterio à data final do curso';
+$string['startmulti'] = 'Data da primeira lista de presença';
+$string['sunday'] = 'dom';
+$string['takeroll'] = 'Listar neste dia?';
+$string['tardiesperabsence'] = 'Quantos atrazos contam como uma ausência?';
+$string['tardylong'] = 'Tardio';
+$string['tardyshort'] = 'T';
+$string['thursday'] = '5a';
+$string['tuesday'] = '3a';
+$string['viewall'] = 'Ver todas as listas de presença';
+$string['viewmulti'] = 'Ver relatório em páginas múltiplas';
+$string['viewone'] = 'Ver todas as páginas do relatório';
+$string['viewsection'] = 'Ver todas as listas de presença desta sessão';
+$string['viewtable'] = 'Ver relatório como tabela';
+$string['viewweek'] = 'Ver todas as listas de presnça da semana (do calendário)';
+$string['wednesday'] = '4a';
+$string['weekmodulename'] = 'Todas as listas de presença da última semana';
+
+?>
