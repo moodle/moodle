@@ -365,9 +365,11 @@ function display() {
             echo "<param name=movie value=\"$CFG->wwwroot/lib/mp3player/mp3player.swf?src=$fullurl&autostart=yes\">";
             echo '<param name=quality value=high>';
             echo '<param name=bgcolor value="#333333">';
-            echo "<embed src=\"$CFG->wwwroot/lib/mp3player/mp3player.swf?src=$fullurl&autostart=yes\" ";
+            echo '<param name="flashvars" value="&buffer=10&autoPlay=yes&">';
+            echo "<embed src=\"$CFG->wwwroot/lib/mp3player/mp3player.swf?src=$fullurl\" ";
             echo " quality=high bgcolor=\"#333333\" width=\"600\" height=\"70\" name=\"mp3player\" ";
             echo ' type="application/x-shockwave-flash" ';
+            echo ' flashvars="&buffer=10&autoPlay=yes&"';
             echo ' pluginspage="http://www.macromedia.com/go/getflashplayer">';
             echo '</embed>';
             echo '</object>';
