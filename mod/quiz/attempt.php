@@ -117,8 +117,8 @@
 
     $timelimit = $quiz->timelimit * 60;
 
+    $unattempt = quiz_get_user_attempt_unfinished($quiz->id, $USER->id);
     if($timelimit > 0) {
-        $unattempt = quiz_get_user_attempt_unfinished($quiz->id, $USER->id);
         $timestart = $unattempt->timestart;
         if($timestart) {
             $timesincestart = time() - $timestart;
@@ -153,28 +153,16 @@
             error("No questions found!");
         }
 
-        foreach ($rawanswers as $key => $value) {       // Parse input for question -> answers
+        foreach ($rawanswers as $key => $value) { // Parse input for question->response
 
-            if (ereg('^q([0-9]+)$', $key, $keyregs)) { // It's a real question number, not a coded one
-                $questions[$keyregs[1]]->answer[] = trim($value);
-
-            } else if (ereg('^q([0-9]+)rq([0-9]+)$', $key, $keyregs)) { // Random Question information
-                $questions[$keyregs[1]]->random = $keyregs[2];
-
-            } else if (ereg('^q([0-9]+)a([0-9]+)$', $key, $keyregs)) { // Checkbox style multiple answers
-                $questions[$keyregs[1]]->answer[] = $keyregs[2];
-
-            } else if (ereg('^q([0-9]+)r([0-9]+)$', $key, $keyregs)) { // Random-style answers
-                $questions[$keyregs[1]]->answer[] = "$keyregs[2]-$value";
-
-            } else if (ereg('^q([0-9]+)ma([0-9]+)$', $key, $keyregs)) { // Multi-answer questions
-                $questions[$keyregs[1]]->answer[] = "$keyregs[2]-$value";
+            if ($postedquestionid = quiz_extract_posted_id($key)) {
+                $questions[$postedquestionid]->response[$key] = trim($value);
 
             } else if ('shuffleorder' == $key) {
                 $shuffleorder = explode(",", $value);   // Actual order questions were given in
 
             } else {  // Useful for debugging new question types.  Must be last.
-                error("Answer received for non-existent question ($key -> $value)");
+                error("Unrecognizable input has been posted ($key -> $value)");
             }
         }
 
@@ -184,7 +172,15 @@
             }
         }
 
-        if (!$result = quiz_grade_attempt_results($quiz, $questions)) {
+        /// Retrieve ->maxgrade for all questions
+        If (!($grades = quiz_get_question_grades($quiz->id, $quiz->questions))) {
+            $grades = array();
+        }
+        foreach ($grades as $qid => $grade) {
+            $questions[$qid]->maxgrade = $grade->grade;
+        }
+
+        if (!$result = quiz_grade_responses($quiz, $questions)) {
             error("Could not grade your quiz attempt!");
         }
 
@@ -213,7 +209,7 @@
 
         if ($quiz->feedback) {
             $quiz->shuffleanswers = false;       // Never shuffle answers in feedback
-            quiz_print_quiz_questions($quiz, $result, $questions, $shuffleorder);
+            quiz_print_quiz_questions($quiz, $questions, $result, $shuffleorder);
             print_continue("view.php?id=$cm->id");
         }
 
@@ -233,13 +229,14 @@
 
 /// Actually seeing the questions marks the start of an attempt
 
-    if (!$unfinished = quiz_get_user_attempt_unfinished($quiz->id, $USER->id)) {
-        if ($newattemptid = quiz_start_attempt($quiz->id, $USER->id, $attemptnumber)) {
-            add_to_log($course->id, "quiz", "attempt",
-                       "review.php?id=$cm->id&attempt=$newattemptid", "$quiz->id", $cm->id);
-        } else {
-            error("Sorry! Could not start the quiz (could not save starting time)");
-        }
+    if (isset($unattempt) && $unattempt) {
+        $attempt = $unattempt;
+
+    } else if ($attempt = quiz_start_attempt($quiz->id, $USER->id, $attemptnumber)) {
+        add_to_log($course->id, "quiz", "attempt", 
+                "review.php?id=$cm->id&attempt=$attempt->id", "$quiz->id", $cm->id);
+    } else {
+        error("Sorry! Could not start the quiz (could not save starting time)");
     }
 
 /// First print the headings and so on
@@ -266,58 +263,32 @@
 
     echo "<br />";
 
-    $result = NULL;     // Default
-    $questions = NULL;  // Default
-    if ($quiz->attemptonlast && !empty($attempts)) {
-        $latestfinishedattempt->attempt = 0;
-        foreach ($attempts as $attempt) {
-            if ($attempt->timefinish
-                && $attempt->attempt > $latestfinishedattempt->attempt)
-            {
-                $latestfinishedattempt = $attempt;
-            }
-        }
-        if ($latestfinishedattempt->attempt > 0
-            and $questions =
-                    quiz_get_attempt_responses($latestfinishedattempt))
-        {
-            // An previous attempt to continue on is found:
-            quiz_remove_unwanted_questions($questions, $quiz); // In case the quiz has been changed
-
-            if (!($result = quiz_grade_attempt_results($quiz, $questions))) {
-                // No results, reset to defaults:
-                $questions = NULL;
-                $result = NULL;
-
-            } else {
-                // We're on, latest attempt responses are to be included.
-                // In order to have this accomplished by
-                // the method quiz_print_quiz_questions we need to
-                // temporarilly change some of the $quiz attributes
-                // and remove some of the information from result.
-
-                $quiz->correctanswers = false; // Not a good idea to show them, huh?
-                $result->feedback = array(); // Not to be printed
-                $result->attemptbuildsonthelast = true;
-            }
-
-        } else {
-            // No latest attempt, or latest attempt was empty - Reset to defaults
-            $questions = NULL;
-        }
+    $questions = quiz_get_attempt_questions($quiz, $attempt, true);
+    if ($quiz->attemptonlast && $attemptnumber >= 2 and
+            $quiz->attempts == 0 || !unattempt) {
+        // There are unlimited attempts or it is a new attempt.
+        // As the attempt also builds on the last, we can here
+        // have the student see the scores of the pre-entered
+        // responses that we here will have graded:
+        $result = quiz_grade_responses($quiz, $questions);
+        $result->attemptbuildsonthelast = true;
+    } else {
+        $result = NULL;
     }
-    if (! quiz_print_quiz_questions($quiz, $result, $questions)) {
+    
+    // We do not show feedback or correct answers during an attempt:
+    $quiz->feedback = $quiz->correctanswers = false;
+    
+    if (!quiz_print_quiz_questions($quiz, $questions, $result)) {
         print_continue("view.php?id=$cm->id");
     }
 
-/// BEGIN EDIT if quiz is available and time limit is set
-/// include floating timer.
+/// If quiz is available and time limit is set include floating timer.
 
-    if($available and $timelimit > 0) {
+    if ($available and $timelimit > 0) {
         require('jstimer.php');
     }
-/// END EDIT
-/// Finish the page
+
     print_footer($course);
 
 ?>

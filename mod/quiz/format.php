@@ -59,7 +59,9 @@ class quiz_default_format {
 
             // Now to save all the answers and type-specific options
 
-            $result = quiz_save_question_options($question);
+            global $QUIZ_QTYPES;
+            $result = $QUIZ_QTYPES[$question->qtype]
+                    ->save_question_options($question);
 
             if (!empty($result->error)) {
                 notify($result->error);

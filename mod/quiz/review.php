@@ -85,20 +85,11 @@
     print_heading($quiz->name);
 
 
-    if (! $questions = quiz_get_attempt_responses($attempt)) {
-        if ($user = get_record("user", "id", $attempt->userid)) {
-            $fullname = fullname($user);
-        } else {
-            $fullname = "????";
-        }
-        print_heading(get_string("attemptincomplete", "quiz", $fullname));
-        print_footer($course);
-        exit;
+    if (!($questions = quiz_get_attempt_questions($quiz, $attempt))) {
+        error("Unable to get questions from database for quiz $quiz->id attempt $attempt->id number $attempt->attempt");
     }
 
-    quiz_remove_unwanted_questions($questions, $quiz);
-
-    if (!$result = quiz_grade_attempt_results($quiz, $questions)) {
+    if (!$result = quiz_grade_responses($quiz, $questions)) {
         error("Could not re-grade this quiz attempt!");
     }
 
@@ -128,7 +119,7 @@
     $quiz->correctanswers = true;
     $quiz->shuffleanswers = false;
     $quiz->shufflequestions = false;
-    quiz_print_quiz_questions($quiz, $result, $questions);
+    quiz_print_quiz_questions($quiz, $questions, $result);
 
     if (isteacher($course->id)) {
         print_continue("report.php?q=$quiz->id");

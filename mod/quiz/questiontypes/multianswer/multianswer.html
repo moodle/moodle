@@ -1,0 +1,114 @@
+<FORM name="theform" method="post" <?php echo $onsubmit ?> action="question.php">
+
+<CENTER>
+
+<TABLE cellpadding=5>
+
+<TR valign=top>
+
+    <TD align=right><P><B><?php  print_string("category", "quiz") ?>:</B></P></TD>
+
+    <TD>
+
+    <?php   quiz_category_select_menu($course->id, true, true ); ?>
+
+    </TD>
+
+</TR>
+
+<TR valign=top>
+
+    <TD align=right><P><B><?php  print_string("questionname", "quiz") ?>:</B></P></TD>
+
+    <TD>
+
+        <INPUT type="text" name="name" size=40 value="<?php  p($question->name) ?>">
+
+        <?php  if (isset($err["name"])) formerr($err["name"]); ?>
+
+    </TD>
+
+</TR>
+
+<TR valign=top>
+
+    <TD align=right><P><B><?php  print_string("question", "quiz") ?>:</B></P></TD>
+
+    <TD>
+
+        <?php  if (isset($err["questiontext"])) {
+
+               formerr($err["questiontext"]); 
+
+               echo "<BR />";
+
+           }
+
+           print_textarea($usehtmleditor, 15, 60, 630, 300, "questiontext", $question->questiontext);
+
+           if ($usehtmleditor) {
+
+               helpbutton("richtext", get_string("helprichtext"), "moodle");
+
+           } else {
+
+               helpbutton("text", get_string("helptext"), "moodle");
+
+           }
+
+        ?>
+
+    </TD>
+
+</TR>
+
+<TR valign=top>
+
+    <TD align=right><P><B><?php  print_string("imagedisplay", "quiz") ?>:</B></P></TD>
+
+    <TD>
+
+    <?php   if (empty($images)) {
+
+            print_string("noimagesyet");
+
+        } else {
+
+            choose_from_menu($images, "image", "$question->image", get_string("none"),"","");
+
+        }
+
+    ?>
+
+    </TD>
+
+</TR>
+
+</TABLE>
+
+
+
+<INPUT type="hidden" name=id value="<?php  p($question->id) ?>">
+
+<INPUT type="hidden" name=qtype value="<?php  p($question->qtype) ?>">
+
+<INPUT type="hidden" name=defaultgrade value="<?php  p($question->defaultgrade) ?>">
+
+<INPUT type="submit" value="<?php  print_string("savechanges") ?>">
+
+
+
+</CENTER>
+
+</FORM>
+
+<?php  
+
+   if ($usehtmleditor) { 
+
+       print_richedit_javascript("theform", "questiontext", "no");
+
+   }
+
+?>
+
