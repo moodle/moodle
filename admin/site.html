@@ -37,7 +37,9 @@
                             "2"  =>  get_string("frontpagecategorynames"));
            if (count_records("course") > 200) {
                unset($options[1]);
-               $form->frontpage = 2;
+               if ($form->frontpage == 1) {
+                   $form->frontpage = 2;
+               }
            }
            choose_from_menu ($options, "frontpage", "$form->frontpage", "");
         ?>
