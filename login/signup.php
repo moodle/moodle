@@ -81,7 +81,7 @@ function validate_form($user, &$err) {
         $err->email = get_string("invalidemail");
 	
     else if (record_exists("user", "email", $user->email)) 
-		$err->email = get_string("emailexists")."<A HREF=forgot_password.php>".get_string("newpassword")."</A>";
+		$err->email = get_string("emailexists")." <A HREF=forgot_password.php>".get_string("newpassword")."?</A>";
 
 
 	if (empty($user->city)) 
