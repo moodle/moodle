@@ -395,6 +395,10 @@ CourseBlock_course_list	blocks/course_list/block_course_list.php	/^    function 
 CourseBlock_course_list	blocks/course_list/block_course_list.php	/^class CourseBlock_course_list extends MoodleBlock {$/;"	c
 CourseBlock_course_summary	blocks/course_summary/block_course_summary.php	/^    function CourseBlock_course_summary ($course) {$/;"	f
 CourseBlock_course_summary	blocks/course_summary/block_course_summary.php	/^class CourseBlock_course_summary extends MoodleBlock {$/;"	c
+CourseBlock_instant_message	blocks/instant_message/block_instant_message.php	/^    function CourseBlock_instant_message ($course) {$/;"	f
+CourseBlock_instant_message	blocks/instant_message/block_instant_message.php	/^class CourseBlock_instant_message extends MoodleBlock {$/;"	c
+CourseBlock_layout	blocks/layout/block_layout.php	/^    function CourseBlock_layout($course) {$/;"	f
+CourseBlock_layout	blocks/layout/block_layout.php	/^class CourseBlock_layout extends MoodleBlock {$/;"	c
 CourseBlock_login	blocks/login/block_login.php	/^    function CourseBlock_login ($course) {$/;"	f
 CourseBlock_login	blocks/login/block_login.php	/^class CourseBlock_login extends MoodleBlock {$/;"	c
 CourseBlock_news_items	blocks/news_items/block_news_items.php	/^    function CourseBlock_news_items ($course) {$/;"	f
@@ -536,6 +540,8 @@ Explain	lib/adodb/perf/perf-postgres.inc.php	/^	function Explain($sql,$partial=f
 ExtractSchema	lib/adodb/adodb-xmlschema.inc.php	/^	function ExtractSchema( $data = FALSE ) {$/;"	f
 FailTrans	lib/adodb/adodb-connection.inc.php	/^	function FailTrans()$/;"	f
 FailTrans	lib/adodb/adodb.inc.php	/^	function FailTrans()$/;"	f
+FakeQuiz	mod/quiz/preview.php	/^        function FakeQuiz() {$/;"	f
+FakeQuiz	mod/quiz/preview.php	/^    class FakeQuiz {$/;"	c
 FetchField	lib/adodb/adodb-recordset.inc.php	/^	function &FetchField($fieldoffset) $/;"	f
 FetchField	lib/adodb/adodb.inc.php	/^		function &FetchField($fieldOffset = -1) $/;"	f
 FetchField	lib/adodb/adodb.inc.php	/^	function &FetchField($fieldoffset) $/;"	f
@@ -872,6 +878,7 @@ OutParameter	lib/adodb/adodb.inc.php	/^	function OutParameter(&$stmt,&$var,$name
 PConnect	lib/adodb/adodb-connection.inc.php	/^	function PConnect($argHostname = "", $argUsername = "", $argPassword = "", $argDatabaseName = "")$/;"	f
 PConnect	lib/adodb/adodb.inc.php	/^	function PConnect($argHostname = "", $argUsername = "", $argPassword = "", $argDatabaseName = "")$/;"	f
 PGA	lib/adodb/perf/perf-oci8.inc.php	/^	function PGA()$/;"	f
+PHPMailer	lib/phpmailer/class.phpmailer.php	/^    function PHPMailer () {$/;"	f
 PHPMailer	lib/phpmailer/class.phpmailer.php	/^class PHPMailer$/;"	c
 PO_Insert_ID	lib/adodb/adodb-connection.inc.php	/^		function PO_Insert_ID($table="", $id="") $/;"	f
 PO_Insert_ID	lib/adodb/adodb.inc.php	/^	function PO_Insert_ID($table="", $id="") $/;"	f
@@ -894,7 +901,7 @@ ParseSchemaFile	lib/adodb/adodb-xmlschema.inc.php	/^	function ParseSchemaFile( $
 ParseSchemaString	lib/adodb/adodb-xmlschema.inc.php	/^	function ParseSchemaString( $xmlstring, $returnSchema = FALSE ) {$/;"	f
 Parser	lib/excel/Parser.php	/^  function Parser($byte_order = 0)$/;"	f
 Parser	lib/excel/Parser.php	/^class Parser$/;"	c
-PclZip	lib/pclzip/pclzip.lib.php	/^  class PclZip$/;"	c
+PclZip	lib/pclzip/pclzip.lib.php	/^   class PclZip$/;"	c
 PclZip	lib/pclzip/pclzip.lib.php	/^  function PclZip($p_zipname)$/;"	f
 PclZipUtilCopyBlock	lib/pclzip/pclzip.lib.php	/^  function PclZipUtilCopyBlock($p_src, $p_dest, $p_size, $p_mode=0)$/;"	f
 PclZipUtilOptionText	lib/pclzip/pclzip.lib.php	/^  function PclZipUtilOptionText($p_option)$/;"	f
@@ -1151,8 +1158,6 @@ Workbook	lib/excel/Workbook.php	/^class Workbook extends BIFFwriter$/;"	c
 Worksheet	lib/excel/Worksheet.php	/^    function Worksheet($name,$index,&$activesheet,&$firstsheet,&$url_format,&$parser)$/;"	f
 Worksheet	lib/excel/Worksheet.php	/^class Worksheet extends BIFFwriter$/;"	c
 WrapText	lib/phpmailer/class.phpmailer.php	/^    function WrapText($message, $length, $qp_mode = false) {$/;"	f
-XMLParser	filter/multilang/filter.php	/^  function XMLParser($data) {$/;"	f
-XMLParser	filter/multilang/filter.php	/^class XMLParser { $/;"	c
 _BlobDecode	lib/adodb/drivers/adodb-ibase.inc.php	/^	function _BlobDecode( $blob ) $/;"	f
 _CPULoad	lib/adodb/adodb-perf.inc.php	/^	function _CPULoad()$/;"	f
 _CloseOnEsc	lib/editor/popups/fullscreen.php	/^function _CloseOnEsc(ev) {$/;"	f
@@ -1729,7 +1734,7 @@ assignment_get_all_submissions	mod/assignment/lib.php	/^function assignment_get_
 assignment_get_participants	mod/assignment/lib.php	/^function assignment_get_participants($assignmentid) {$/;"	f
 assignment_get_recent_mod_activity	mod/assignment/lib.php	/^function assignment_get_recent_mod_activity(&$activities, &$index, $sincetime, $courseid, $assignment="0", $user="", $groupid="")  {$/;"	f
 assignment_get_submission	mod/assignment/lib.php	/^function assignment_get_submission($assignment, $user) {$/;"	f
-assignment_get_unmailed_submissions	mod/assignment/lib.php	/^function assignment_get_unmailed_submissions($cutofftime) {$/;"	f
+assignment_get_unmailed_submissions	mod/assignment/lib.php	/^function assignment_get_unmailed_submissions($starttime, $endtime) {$/;"	f
 assignment_get_user_file	mod/assignment/lib.php	/^function assignment_get_user_file($assignment, $user) {$/;"	f
 assignment_get_users_done	mod/assignment/lib.php	/^function assignment_get_users_done($assignment) {$/;"	f
 assignment_grades	mod/assignment/lib.php	/^function assignment_grades($assignmentid) {$/;"	f
@@ -1886,6 +1891,7 @@ backup_quiz_grades	mod/quiz/backuplib.php	/^    function backup_quiz_grades ($bf
 backup_quiz_question_grades	mod/quiz/backuplib.php	/^    function backup_quiz_question_grades ($bf,$preferences,$quiz) {$/;"	f
 backup_quiz_responses	mod/quiz/backuplib.php	/^    function backup_quiz_responses ($bf,$preferences,$attempt) {$/;"	f
 backup_required_functions	backup/lib.php	/^    function backup_required_functions() {$/;"	f
+backup_reservation_requests	mod/reservation/backuplib.php	/^    function backup_reservation_requests ($bf,$preferences,$reservation) {$/;"	f
 backup_scales_info	backup/backuplib.php	/^    function backup_scales_info($bf,$preferences) {$/;"	f
 backup_scorm_files	mod/scorm/backuplib.php	/^    function backup_scorm_files($bf,$preferences) {$/;"	f
 backup_scorm_sco_users	mod/scorm/backuplib.php	/^    function backup_scorm_sco_users ($bf,$preferences,$scorm) {$/;"	f
@@ -1909,6 +1915,7 @@ backup_workshop_rubrics	mod/workshop/backuplib.php	/^    function backup_worksho
 backup_workshop_submissions	mod/workshop/backuplib.php	/^    function backup_workshop_submissions ($bf,$preferences,$workshop) {$/;"	f
 backup_zip	backup/backuplib.php	/^    function backup_zip ($preferences) {$/;"	f
 bar	lib/graphlib.php	/^function bar($x, $y, $type, $size, $colour, $offset, $index, $yoffset) {$/;"	f
+begin_sql	lib/datalib.php	/^function begin_sql() {$/;"	f
 block_action	lib/blocklib.php	/^function block_action(&$course, &$leftblocks, &$rightblocks, $blockaction, $blockid) {$/;"	f
 block_find	lib/blocklib.php	/^function block_find($blockid, $leftblocks, $rightblocks) {$/;"	f
 block_get_id_by_name	lib/blocklib.php	/^function block_get_id_by_name ($blockname) {$/;"	f
@@ -1981,7 +1988,6 @@ center_vertically	lib/excel/Worksheet.php	/^    function center_vertically($cent
 changeSco	mod/scorm/scormAPI.php	/^function changeSco(direction) {$/;"	f
 changecolor	mod/quiz/jstimer.php	/^function changecolor(col) {$/;"	f
 characterData	backup/restorelib.php	/^        function characterData($parser, $data) {$/;"	f
-characterData	filter/multilang/filter.php	/^  function characterData($parser, $data) {$/;"	f
 chat_add_instance	mod/chat/lib.php	/^function chat_add_instance($chat) {$/;"	f
 chat_backup_mods	mod/chat/backuplib.php	/^    function chat_backup_mods($bf,$preferences) {$/;"	f
 chat_browser_detect	mod/chat/lib.php	/^function chat_browser_detect($HTTP_USER_AGENT) {$/;"	f
@@ -2017,6 +2023,7 @@ check_and_create_backup_dir	backup/lib.php	/^    function check_and_create_backu
 check_and_create_course_files_dir	backup/backuplib.php	/^    function check_and_create_course_files_dir($backup_unique_code) {$/;"	f
 check_and_create_moddata_dir	backup/backuplib.php	/^    function check_and_create_moddata_dir($backup_unique_code) {$/;"	f
 check_and_create_user_files_dir	backup/backuplib.php	/^    function check_and_create_user_files_dir($backup_unique_code) {$/;"	f
+check_before_renaming	lib/uploadlib.php	/^    function check_before_renaming($destination, $nametocheck, $file) {$/;"	f
 check_browser_version	lib/moodlelib.php	/^function check_browser_version($brand="MSIE", $version=5.5) {$/;"	f
 check_dir_exists	backup/lib.php	/^    function check_dir_exists($dir,$create=false) {$/;"	f
 check_entry	enrol/database/enrol.php	/^function check_entry($form, $course) {$/;"	f
@@ -2054,10 +2061,18 @@ choice_upgrade	mod/choice/db/postgres7.php	/^function choice_upgrade($oldversion
 choice_user_complete	mod/choice/lib.php	/^function choice_user_complete($course, $user, $mod, $choice) {$/;"	f
 choice_user_outline	mod/choice/lib.php	/^function choice_user_outline($course, $user, $mod, $choice) {$/;"	f
 choose_from_menu	lib/weblib.php	/^function choose_from_menu ($options, $name, $selected="", $nothing="choose", $script="", $nothingvalue="0", $return=false) {$/;"	f
+clam_change_log	lib/uploadlib.php	/^function clam_change_log($oldpath, $newpath, $update=true) {$/;"	f
+clam_handle_infected_file	lib/uploadlib.php	/^function clam_handle_infected_file($file, $userid=0, $basiconly=false) {$/;"	f
+clam_log_infected	lib/uploadlib.php	/^function clam_log_infected($oldfilepath='', $newfilepath='', $userid=0) {$/;"	f
+clam_log_upload	lib/uploadlib.php	/^function clam_log_upload($newfilepath, $course=null, $nourl=false) {$/;"	f
+clam_mail_admins	lib/uploadlib.php	/^function clam_mail_admins($notice) {$/;"	f
+clam_replace_infected_file	lib/uploadlib.php	/^function clam_replace_infected_file($file) {$/;"	f
+clam_scan_file	lib/uploadlib.php	/^function clam_scan_file(&$file, $course) {$/;"	f
 cleanAttributes	lib/weblib.php	/^function cleanAttributes($str){$/;"	f
 cleanAttributes2	lib/weblib.php	/^function cleanAttributes2($htmlTag){$/;"	f
 cleanStr	entities.php	/^		function cleanStr($text, $resolveEntities=True){$/;"	f
 clean_filename	lib/moodlelib.php	/^function clean_filename($string) {$/;"	f
+clean_param	lib/moodlelib.php	/^function clean_param($param, $options) {$/;"	f
 clean_temp_data	backup/lib.php	/^    function clean_temp_data ($preferences) {$/;"	f
 clean_text	lib/weblib.php	/^function clean_text($text, $format=FORMAT_MOODLE) {$/;"	f
 clear	lib/smarty/Config_File.class.php	/^    function clear($file_name = NULL)$/;"	f
@@ -2069,12 +2084,9 @@ clear_backup_dir	backup/lib.php	/^    function clear_backup_dir($backup_unique_c
 clear_cache	lib/smarty/Smarty.class.php	/^    function clear_cache($tpl_file = null, $cache_id = null, $compile_id = null, $exp_time = null)$/;"	f
 clear_compiled_tpl	lib/smarty/Smarty.class.php	/^    function clear_compiled_tpl($tpl_file = null, $compile_id = null, $exp_time = null)$/;"	f
 clear_config	lib/smarty/Smarty.class.php	/^    function clear_config($var = null)$/;"	f
+cleardoubleslashes	lib/moodlelib.php	/^function cleardoubleslashes ($path) {$/;"	f
 clearfilelist	files/index.php	/^function clearfilelist() {$/;"	f
 clearfilelist	lib/editor/coursefiles.php	/^function clearfilelist() {$/;"	f
-clearfilelist	lib/editor/courseimages.php	/^function clearfilelist() {$/;"	f
-clearfilelist	mod/resource/coursefiles.php	/^function clearfilelist() {$/;"	f
-clearfilelist	mod/scorm/coursefiles.php	/^function clearfilelist() {$/;"	f
-clearfilelist	mod/wiki/wikifiles.php	/^function clearfilelist() {$/;"	f
 cli_switch	mod/chat/chatd.php	/^    function cli_switch($switch, $param = NULL) {$/;"	f
 clob	lib/adodb/session/adodb-session.php	/^	function clob($clob = null) {$/;"	f
 cloneObject	lib/editor/popups/fullscreen.php	/^function cloneObject(obj) {$/;"	f
@@ -2091,13 +2103,16 @@ comment_header	mod/quiz/questiontypes/datasetdependent/abstractqtype.php	/^    f
 comment_on_datasetitems	mod/quiz/questiontypes/calculated/questiontype.php	/^    function comment_on_datasetitems($question, $data, $number) {$/;"	f
 comment_on_datasetitems	mod/quiz/questiontypes/datasetdependent/abstractqtype.php	/^    function comment_on_datasetitems($question, $data, $number) {$/;"	f
 commentparser	mod/quiz/format/gift/format.php	/^    function commentparser(&$answer) {$/;"	f
+commit_sql	lib/datalib.php	/^function commit_sql() {$/;"	f
 compare_activities_by_time_asc	course/recent.php	/^function compare_activities_by_time_asc($a, $b) {$/;"	f
 compare_activities_by_time_desc	course/recent.php	/^function compare_activities_by_time_desc($a, $b) {$/;"	f
+comparemodulenamesbylength	filter/activitynames/filter.php	/^    function comparemodulenamesbylength($a, $b)  {$/;"	f
 config_form	enrol/database/enrol.php	/^function config_form($frm) {$/;"	f
 config_form	enrol/enrol.class.php	/^function config_form($page) {$/;"	f
 config_form	enrol/flatfile/enrol.php	/^function config_form($frm) {$/;"	f
 config_form	enrol/paypal/enrol.php	/^function config_form($frm) {$/;"	f
 config_load	lib/smarty/Smarty.class.php	/^    function config_load($file, $section = null, $scope = 'global')$/;"	f
+confirm_sesskey	lib/moodlelib.php	/^function confirm_sesskey($sesskey=NULL) {$/;"	f
 conn_accept	mod/chat/chatd.php	/^    function conn_accept() {$/;"	f
 conn_activity_ufo	mod/chat/chatd.php	/^    function conn_activity_ufo (&$handles) {$/;"	f
 connect	lib/adodb/adodb-pear.inc.php	/^	function &connect($dsn, $options = false)$/;"	f
@@ -2178,6 +2193,8 @@ dbTable	lib/adodb/adodb-xmlschema-0.0.1-snap20030511/adodb-xmlschema.inc.php	/^	
 dbTable	lib/adodb/adodb-xmlschema-0.0.1-snap20030511/adodb-xmlschema.inc.php	/^class dbTable {$/;"	c
 dbTable	lib/adodb/adodb-xmlschema.inc.php	/^	function dbTable( &$parent, $attributes = NULL ) {$/;"	f
 dbTable	lib/adodb/adodb-xmlschema.inc.php	/^class dbTable extends dbObject {$/;"	c
+db_lowercase	lib/datalib.php	/^function db_lowercase() {$/;"	f
+db_uppercase	lib/datalib.php	/^function db_uppercase() {$/;"	f
 debug	lib/adodb/session/adodb-session.php	/^	function debug($debug = null) {$/;"	f
 default_export_filename	mod/quiz/lib.php	/^function default_export_filename($course,$category) {$/;"	f
 deldir	mod/wiki/ewiki/plugins/moodle/moodle_wikidump.php	/^function deldir($dir)$/;"	f
@@ -2189,6 +2206,7 @@ delete_dir_contents	backup/lib.php	/^    function delete_dir_contents ($dir,$exc
 delete_event	lib/moodlelib.php	/^function delete_event($id) {$/;"	f
 delete_instance	mod/resource/lib.php	/^function delete_instance($id) {$/;"	f
 delete_mod_from_section	course/lib.php	/^function delete_mod_from_section($mod, $section) {$/;"	f
+delete_other_files	lib/uploadlib.php	/^    function delete_other_files($destination, $exceptions=null) {$/;"	f
 delete_records	lib/datalib.php	/^function delete_records($table, $field1="", $value1="", $field2="", $value2="", $field3="", $value3="") {$/;"	f
 delete_records_select	lib/datalib.php	/^function delete_records_select($table, $select="") {$/;"	f
 delete_subdirectories	admin/delete.php	/^function delete_subdirectories($rootdir) {$/;"	f
@@ -2257,10 +2275,6 @@ display	mod/resource/type/text/resource.class.php	/^function display() {$/;"	f
 display_size	lib/moodlelib.php	/^function display_size($size) {$/;"	f
 displaydir	files/index.php	/^function displaydir ($wdir) {$/;"	f
 displaydir	lib/editor/coursefiles.php	/^function displaydir ($wdir) {$/;"	f
-displaydir	lib/editor/courseimages.php	/^function displaydir ($wdir) {$/;"	f
-displaydir	mod/resource/coursefiles.php	/^function displaydir ($wdir) {$/;"	f
-displaydir	mod/scorm/coursefiles.php	/^function displaydir ($wdir) {$/;"	f
-displaydir	mod/wiki/wikifiles.php	/^function displaydir ($wdir) {$/;"	f
 do_list	lib/wiki.php	/^  function do_list( $line, $blank=false ) {$/;"	f
 do_replace	lib/wiki.php	/^  function do_replace( $line, $mark, $tag ) {$/;"	f
 do_replace_sub	lib/wiki.php	/^  function do_replace_sub( $line, $mark, $tag ) {$/;"	f
@@ -2292,6 +2306,7 @@ drop_blobvar	lib/adodb/drivers/adodb-sqlanywhere.inc.php	/^  function drop_blobv
 duplicate	lib/pclzip/pclzip.lib.php	/^  function duplicate($p_archive)$/;"	f
 editor_convert_to_array	admin/editor.php	/^function editor_convert_to_array ($string) {$/;"	f
 editor_update_config	admin/editor.php	/^function editor_update_config ($data) {$/;"	f
+ehide	blocks/instant_message/view_message.php	/^function ehide(divname) {$/;"	f
 email_is_not_allowed	lib/moodlelib.php	/^function email_is_not_allowed($email) {$/;"	f
 email_paypal_error_to_admin	enrol/paypal/ipn.php	/^function email_paypal_error_to_admin($subject, $data) {$/;"	f
 email_to_user	lib/moodlelib.php	/^function email_to_user($user, $from, $subject, $messagetext, $messagehtml="", $attachment="", $attachname="", $usetrueaddress=true) {$/;"	f
@@ -2301,7 +2316,6 @@ empty_field_and_submit	mod/chat/gui_header_js/chatinput.php	/^function empty_fie
 empty_field_and_submit	mod/chat/gui_sockets/chatinput.php	/^function empty_field_and_submit() {$/;"	f
 encryptionKey	lib/adodb/session/adodb-session.php	/^	function encryptionKey($encryption_key = null) {$/;"	f
 endElement	backup/restorelib.php	/^        function endElement($parser, $tagName) {$/;"	f
-endElement	filter/multilang/filter.php	/^  function endElement($parser, $tag) { $/;"	f
 endElementCourseHeader	backup/restorelib.php	/^        function endElementCourseHeader($parser, $tagName) {$/;"	f
 endElementEvents	backup/restorelib.php	/^        function endElementEvents($parser, $tagName) {$/;"	f
 endElementGroups	backup/restorelib.php	/^        function endElementGroups($parser, $tagName) {$/;"	f
@@ -2331,6 +2345,7 @@ error_handler	mod/chat/chatd.php	/^    function error_handler ($errno, $errmsg, 
 escape_quote	lib/speller/server-scripts/spellchecker.php	/^function escape_quote( $str ) {$/;"	f
 escapedchar_post	mod/quiz/format/gift/format.php	/^    function escapedchar_post($string) {$/;"	f
 escapedchar_pre	mod/quiz/format/gift/format.php	/^    function escapedchar_pre($string) {$/;"	f
+eshow	blocks/instant_message/view_message.php	/^function eshow(divname) {$/;"	f
 ewiki_action_attachments	mod/wiki/ewiki/plugins/moodle/downloads.php	/^function ewiki_action_attachments($id, $data, $action=EWIKI_ACTION_ATTACHMENTS) {$/;"	f
 ewiki_add_title	mod/wiki/ewiki/ewiki.php	/^function ewiki_add_title(&$html, $id, &$data, $action, $go_action="links") {$/;"	f
 ewiki_array	mod/wiki/ewiki/ewiki.php	/^function ewiki_array($array, $key=false, $am=1, $ci=EWIKI_CASE_INSENSITIVE) {$/;"	f
@@ -2581,7 +2596,7 @@ find_form_errors	user/edit.php	/^function find_form_errors(&$user, &$usernew, &$
 find_range	lib/graphlib.php	/^function find_range($data, $min, $max, $resolution) {$/;"	f
 findfile	mod/quiz/format/coursetestmanager/format.php	/^    function findfile($filename) { $/;"	f
 fit_to_pages	lib/excel/Worksheet.php	/^    function fit_to_pages($width, $height)$/;"	f
-fix_course_sortorder	lib/datalib.php	/^function fix_course_sortorder($categoryid=0, $n=0) {$/;"	f
+fix_course_sortorder	lib/datalib.php	/^function fix_course_sortorder($categoryid=0, $n=0, $safe=0) {$/;"	f
 form_table	install.php	/^function form_table($nextstage = 0, $formaction = "install.php") {$/;"	f
 format	lib/wiki.php	/^  function format( $content, $courseid ) {$/;"	f
 format_float	lib/moodlelib.php	/^function format_float($num, $places=1) {$/;"	f
@@ -2692,11 +2707,7 @@ frmchecked	lib/weblib.php	/^function frmchecked(&$var, $true_value = "checked", 
 full_tag	backup/backuplib.php	/^    function full_tag($tag,$level=0,$endline=true,$content,$to_utf=true) {$/;"	f
 fulldelete	files/index.php	/^function fulldelete($location) { $/;"	f
 fulldelete	lib/editor/coursefiles.php	/^function fulldelete($location) {$/;"	f
-fulldelete	lib/editor/courseimages.php	/^function fulldelete($location) { $/;"	f
 fulldelete	mod/quiz/format/coursetestmanager/format.php	/^		function fulldelete($location) { $/;"	f
-fulldelete	mod/resource/coursefiles.php	/^function fulldelete($location) {$/;"	f
-fulldelete	mod/scorm/coursefiles.php	/^function fulldelete($location) { $/;"	f
-fulldelete	mod/wiki/wikifiles.php	/^function fulldelete($location) { $/;"	f
 fullname	lib/moodlelib.php	/^function fullname($user, $override=false) {$/;"	f
 gc	lib/adodb/session/adodb-session.php	/^	function gc($maxlifetime) {$/;"	f
 generate_dataset_item	mod/quiz/questiontypes/calculated/questiontype.php	/^    function generate_dataset_item($options) {$/;"	f
@@ -2739,6 +2750,7 @@ get_attendance_for_section	mod/attendance/lib.php	/^function get_attendance_for_
 get_attendance_for_week	mod/attendance/lib.php	/^function get_attendance_for_week($id, $courseid) {$/;"	f
 get_boundaryBox	lib/graphlib.php	/^function get_boundaryBox($message) {$/;"	f
 get_categories	lib/datalib.php	/^function get_categories($parent="none", $sort="sortorder ASC") {$/;"	f
+get_clam_error_code	lib/uploadlib.php	/^function get_clam_error_code($returncode) {$/;"	f
 get_class_constructor	lib/blocklib.php	/^function get_class_constructor($classname) {$/;"	f
 get_config_vars	lib/smarty/Smarty.class.php	/^    function &get_config_vars($name=null)$/;"	f
 get_content	blocks/activity_modules/block_activity_modules.php	/^    function get_content() {$/;"	f
@@ -2747,6 +2759,8 @@ get_content	blocks/calendar_month/block_calendar_month.php	/^    function get_co
 get_content	blocks/calendar_upcoming/block_calendar_upcoming.php	/^    function get_content() {$/;"	f
 get_content	blocks/course_list/block_course_list.php	/^    function get_content() {$/;"	f
 get_content	blocks/course_summary/block_course_summary.php	/^    function get_content() {$/;"	f
+get_content	blocks/instant_message/block_instant_message.php	/^    function get_content() {$/;"	f
+get_content	blocks/layout/block_layout.php	/^    function get_content() {$/;"	f
 get_content	blocks/login/block_login.php	/^    function get_content () {$/;"	f
 get_content	blocks/moodleblock.class.php	/^    function get_content() {$/;"	f
 get_content	blocks/news_items/block_news_items.php	/^    function get_content() {$/;"	f
@@ -2771,11 +2785,14 @@ get_current_group	lib/moodlelib.php	/^function get_current_group($courseid, $ful
 get_data	lib/excel/Worksheet.php	/^    function get_data()$/;"	f
 get_directory_list	lib/moodlelib.php	/^function get_directory_list($rootdir, $excludefile="", $descend=true, $getdirs=false, $getfiles=true) {$/;"	f
 get_directory_size	lib/moodlelib.php	/^function get_directory_size($rootdir, $excludefile="") {$/;"	f
+get_errors	lib/uploadlib.php	/^    function get_errors() {$/;"	f
 get_exp_answer	mod/quiz/lib.php	/^function get_exp_answer( $id ) {$/;"	f
 get_exp_answers	mod/quiz/lib.php	/^function get_exp_answers( $question_num ) {$/;"	f
 get_field	lib/datalib.php	/^function get_field($table, $return, $field1, $value1, $field2="", $value2="", $field3="", $value3="") {$/;"	f
 get_field_sql	lib/datalib.php	/^function get_field_sql($sql) {$/;"	f
+get_file_argument	lib/weblib.php	/^function get_file_argument($scriptname) {$/;"	f
 get_file_names	lib/smarty/Config_File.class.php	/^    function get_file_names()$/;"	f
+get_file_upload_error	lib/uploadlib.php	/^    function get_file_upload_error(&$file) {$/;"	f
 get_font	lib/excel/Format.php	/^    function get_font()$/;"	f
 get_font_key	lib/excel/Format.php	/^    function get_font_key()$/;"	f
 get_group_students	lib/datalib.php	/^function get_group_students($groupid, $sort="u.lastaccess DESC") {$/;"	f
@@ -2802,7 +2819,10 @@ get_moodle_cookie	lib/moodlelib.php	/^function get_moodle_cookie() {$/;"	f
 get_multianswers	mod/quiz/questiontypes/multianswer/questiontype.php	/^    function get_multianswers($questionid) {$/;"	f
 get_my_courses	lib/datalib.php	/^function get_my_courses($userid, $sort="visible DESC,sortorder ASC") {$/;"	f
 get_name	lib/excel/Worksheet.php	/^    function get_name()$/;"	f
+get_new_filename	lib/uploadlib.php	/^    function get_new_filename() {$/;"	f
+get_new_filepath	lib/uploadlib.php	/^    function get_new_filepath() {$/;"	f
 get_null_size	lib/graphlib.php	/^function get_null_size() {$/;"	f
+get_original_filename	lib/uploadlib.php	/^    function get_original_filename() {$/;"	f
 get_position_multianswer	mod/quiz/questiontypes/multianswer/questiontype.php	/^    function get_position_multianswer($questionid, $positionkey) {$/;"	f
 get_qtype	mod/quiz/format/xml/format.php	/^function get_qtype( $type_id ) {$/;"	f
 get_question_data	mod/quiz/lib.php	/^function get_question_data( $question ) {$/;"	f
@@ -2889,6 +2909,7 @@ glossary_get_entries	mod/glossary/lib.php	/^function glossary_get_entries($gloss
 glossary_get_entries_by_category	mod/glossary/lib.php	/^function glossary_get_entries_by_category($glossary, $hook, $where="", $orderby="", $pivot = "") {$/;"	f
 glossary_get_entries_search	mod/glossary/lib.php	/^function glossary_get_entries_search($concept, $courseid) {$/;"	f
 glossary_get_entries_sorted	mod/glossary/lib.php	/^function glossary_get_entries_sorted($glossary, $where="", $orderby="", $pivot = "") {$/;"	f
+glossary_get_paging_bar	mod/glossary/lib.php	/^function glossary_get_paging_bar($totalcount, $page, $perpage, $baseurl, $maxpageallowed=99999, $maxdisplay=20, $separator="&nbsp;", $specialtext="", $specialvalue=-1, $previousandnext = true) {$/;"	f
 glossary_get_participants	mod/glossary/lib.php	/^function glossary_get_participants($glossaryid) {$/;"	f
 glossary_get_ratings	mod/glossary/lib.php	/^function glossary_get_ratings($entryid, $sort="u.firstname ASC") {$/;"	f
 glossary_get_ratings_mean	mod/glossary/lib.php	/^function glossary_get_ratings_mean($entryid, $scale, $ratings=NULL) {$/;"	f
@@ -2913,13 +2934,22 @@ glossary_print_author_menu	mod/glossary/lib.php	/^function glossary_print_author
 glossary_print_categories_menu	mod/glossary/lib.php	/^function glossary_print_categories_menu($cm, $glossary, $hook, $category) {$/;"	f
 glossary_print_comment	mod/glossary/lib.php	/^function glossary_print_comment($course, $cm, $glossary, $entry, $comment) {$/;"	f
 glossary_print_dynaentry	mod/glossary/lib.php	/^function glossary_print_dynaentry($courseid, $entries, $displayformat = -1) {$/;"	f
-glossary_print_entry	mod/glossary/lib.php	/^function glossary_print_entry($course, $cm, $glossary, $entry, $mode="",$hook="",$printicons = 1, $displayformat  = -1, $ratings = NULL) {$/;"	f
+glossary_print_entry	mod/glossary/lib.php	/^function glossary_print_entry($course, $cm, $glossary, $entry, $mode="",$hook="",$printicons = 1, $displayformat  = -1, $ratings = NULL, $printview = false) {$/;"	f
+glossary_print_entry_TEMPLATE	mod/glossary/formats/TEMPLATE/TEMPLATE_format.php	/^function glossary_print_entry_TEMPLATE($course, $cm, $glossary, $entry, $mode="", $hook="", $printicons=1, $ratings=NULL) {$/;"	f
 glossary_print_entry_aliases	mod/glossary/lib.php	/^function  glossary_print_entry_aliases($course, $cm, $glossary, $entry,$mode="",$hook="", $type = 'print') {$/;"	f
 glossary_print_entry_approval	mod/glossary/lib.php	/^function  glossary_print_entry_approval($cm, $entry, $mode,$align="right",$insidetable=true) {$/;"	f
 glossary_print_entry_attachment	mod/glossary/lib.php	/^function glossary_print_entry_attachment($entry,$format=NULL,$align="right",$insidetable=true) {$/;"	f
 glossary_print_entry_commentslink	mod/glossary/lib.php	/^function glossary_print_entry_commentslink($course, $cm, $glossary, $entry,$mode,$hook, $type = 'print') {$/;"	f
 glossary_print_entry_concept	mod/glossary/lib.php	/^function  glossary_print_entry_concept($entry) {$/;"	f
+glossary_print_entry_continuous	mod/glossary/formats/continuous/continuous_format.php	/^function glossary_print_entry_continuous($course, $cm, $glossary, $entry, $mode="", $hook="", $printicons=1, $ratings=NULL) {$/;"	f
+glossary_print_entry_default	mod/glossary/lib.php	/^function glossary_print_entry_default ($entry) {$/;"	f
 glossary_print_entry_definition	mod/glossary/lib.php	/^function glossary_print_entry_definition($entry) {$/;"	f
+glossary_print_entry_dictionary	mod/glossary/formats/dictionary/dictionary_format.php	/^function glossary_print_entry_dictionary($course, $cm, $glossary, $entry, $mode="", $hook="", $printicons=1, $ratings=NULL) {$/;"	f
+glossary_print_entry_encyclopedia	mod/glossary/formats/encyclopedia/encyclopedia_format.php	/^function glossary_print_entry_encyclopedia($course, $cm, $glossary, $entry, $mode="", $hook="", $printicons=1, $ratings=NULL) {$/;"	f
+glossary_print_entry_entrylist	mod/glossary/formats/entrylist/entrylist_format.php	/^function glossary_print_entry_entrylist($course, $cm, $glossary, $entry, $mode="", $hook="", $printicons=1, $ratings=NULL) {$/;"	f
+glossary_print_entry_faq	mod/glossary/formats/faq/faq_format.php	/^function glossary_print_entry_faq($course, $cm, $glossary, $entry, $mode="", $hook="", $printicons=1, $ratings=NULL) {$/;"	f
+glossary_print_entry_fullwithauthor	mod/glossary/formats/fullwithauthor/fullwithauthor_format.php	/^function glossary_print_entry_fullwithauthor($course, $cm, $glossary, $entry, $mode="", $hook="", $printicons=1, $ratings=NULL) {$/;"	f
+glossary_print_entry_fullwithoutauthor	mod/glossary/formats/fullwithoutauthor/fullwithoutauthor_format.php	/^function glossary_print_entry_fullwithoutauthor($course, $cm, $glossary, $entry, $mode="", $hook="", $printicons=1, $ratings=NULL) {$/;"	f
 glossary_print_entry_icons	mod/glossary/lib.php	/^function glossary_print_entry_icons($course, $cm, $glossary, $entry,$mode="",$hook="", $type = 'print') {$/;"	f
 glossary_print_entry_lower_section	mod/glossary/lib.php	/^function  glossary_print_entry_lower_section($course, $cm, $glossary, $entry, $mode, $hook,$printicons,$ratings,$aliases=true) {$/;"	f
 glossary_print_entry_ratings	mod/glossary/lib.php	/^function  glossary_print_entry_ratings($course, $entry, $ratings = NULL) {$/;"	f
@@ -2945,14 +2975,14 @@ glossary_rss_newstuff	mod/glossary/rsslib.php	/^    function glossary_rss_newstu
 glossary_scale_used	mod/glossary/lib.php	/^function glossary_scale_used ($glossaryid,$scaleid) {$/;"	f
 glossary_search	mod/glossary/lib.php	/^function glossary_search($course, $searchterms, $extended = 0, $glossary = NULL) {$/;"	f
 glossary_search_entries	mod/glossary/lib.php	/^function glossary_search_entries($searchterms, $glossary, $extended) {$/;"	f
-glossary_show_entry_TEMPLATE	mod/glossary/formats/TEMPLATE/TEMPLATE_format.php	/^function glossary_show_entry_TEMPLATE($course, $cm, $glossary, $entry, $mode="",$hook="",$printicons=1,$ratings=NULL) {$/;"	f
-glossary_show_entry_continuous	mod/glossary/formats/continuous/continuous_format.php	/^function glossary_show_entry_continuous($course, $cm, $glossary, $entry, $mode="",$hook="",$printicons=1,$ratings=NULL) {$/;"	f
-glossary_show_entry_dictionary	mod/glossary/formats/dictionary/dictionary_format.php	/^function glossary_show_entry_dictionary($course, $cm, $glossary, $entry, $mode="",$hook="",$printicons=1,$ratings=NULL) {$/;"	f
-glossary_show_entry_encyclopedia	mod/glossary/formats/encyclopedia/encyclopedia_format.php	/^function glossary_show_entry_encyclopedia($course, $cm, $glossary, $entry, $mode="",$hook="",$printicons=1,$ratings=NULL) {$/;"	f
-glossary_show_entry_entrylist	mod/glossary/formats/entrylist/entrylist_format.php	/^function glossary_show_entry_entrylist($course, $cm, $glossary, $entry, $mode="",$hook="",$printicons=1,$ratings=NULL) {$/;"	f
-glossary_show_entry_faq	mod/glossary/formats/faq/faq_format.php	/^function glossary_show_entry_faq($course, $cm, $glossary, $entry, $mode="",$hook="",$printicons=1,$ratings=NULL) {$/;"	f
-glossary_show_entry_fullwithauthor	mod/glossary/formats/fullwithauthor/fullwithauthor_format.php	/^function glossary_show_entry_fullwithauthor($course, $cm, $glossary, $entry, $mode="",$hook="",$printicons=1,$ratings=NULL) {$/;"	f
-glossary_show_entry_fullwithoutauthor	mod/glossary/formats/fullwithoutauthor/fullwithoutauthor_format.php	/^function glossary_show_entry_fullwithoutauthor($course, $cm, $glossary, $entry, $mode="",$hook="",$printicons=1,$ratings=NULL) {$/;"	f
+glossary_show_entry_TEMPLATE	mod/glossary/formats/TEMPLATE/TEMPLATE_format.php	/^function glossary_show_entry_TEMPLATE($course, $cm, $glossary, $entry, $mode="", $hook="", $printicons=1, $ratings=NULL, $aliases=true) {$/;"	f
+glossary_show_entry_continuous	mod/glossary/formats/continuous/continuous_format.php	/^function glossary_show_entry_continuous($course, $cm, $glossary, $entry, $mode="", $hook="", $printicons=1, $ratings=NULL, $aliases=false) {$/;"	f
+glossary_show_entry_dictionary	mod/glossary/formats/dictionary/dictionary_format.php	/^function glossary_show_entry_dictionary($course, $cm, $glossary, $entry, $mode="", $hook="", $printicons=1, $ratings=NULL, $aliases=true) {$/;"	f
+glossary_show_entry_encyclopedia	mod/glossary/formats/encyclopedia/encyclopedia_format.php	/^function glossary_show_entry_encyclopedia($course, $cm, $glossary, $entry, $mode="",$hook="",$printicons=1,$ratings=NULL, $aliases=true) {$/;"	f
+glossary_show_entry_entrylist	mod/glossary/formats/entrylist/entrylist_format.php	/^function glossary_show_entry_entrylist($course, $cm, $glossary, $entry, $mode="", $hook="", $printicons=1, $ratings=NULL, $aliases=true) {$/;"	f
+glossary_show_entry_faq	mod/glossary/formats/faq/faq_format.php	/^function glossary_show_entry_faq($course, $cm, $glossary, $entry, $mode="", $hook="", $printicons=1, $ratings=NULL, $aliases=true) {$/;"	f
+glossary_show_entry_fullwithauthor	mod/glossary/formats/fullwithauthor/fullwithauthor_format.php	/^function glossary_show_entry_fullwithauthor($course, $cm, $glossary, $entry, $mode="", $hook="", $printicons=1, $ratings=NULL, $aliases=true) {$/;"	f
+glossary_show_entry_fullwithoutauthor	mod/glossary/formats/fullwithoutauthor/fullwithoutauthor_format.php	/^function glossary_show_entry_fullwithoutauthor($course, $cm, $glossary, $entry, $mode="", $hook="", $printicons=1, $ratings=NULL, $aliases=true) {$/;"	f
 glossary_sort_entries	mod/glossary/lib.php	/^function glossary_sort_entries ( $entry0, $entry1 ) {$/;"	f
 glossary_sort_entries_by_lenght	mod/glossary/filter.php	/^    function glossary_sort_entries_by_lenght ( $entry0, $entry1 ) {$/;"	f
 glossary_start_tag	mod/glossary/lib.php	/^function glossary_start_tag($tag,$level=0,$endline=false) {$/;"	f
@@ -2978,19 +3008,24 @@ graph	lib/graphlib.php	/^function graph() {$/;"	f
 groupmode	lib/moodlelib.php	/^function groupmode($course, $cm=null) {$/;"	f
 guest_user	lib/moodlelib.php	/^function guest_user() {$/;"	f
 handle_config	blocks/course_list/block_course_list.php	/^    function handle_config($config) {$/;"	f
+handle_config	blocks/instant_message/block_instant_message.php	/^    function handle_config($config) {$/;"	f
 handle_config	blocks/moodleblock.class.php	/^    function handle_config() {$/;"	f
 handle_config	blocks/online_users/block_online_users.php	/^    function handle_config($config) {$/;"	f
+handle_filename_collision	lib/uploadlib.php	/^    function handle_filename_collision($destination, &$file, $format='%s_%d.%s') {$/;"	f
 hasMore	lib/adodb/adodb-iterator.inc.php	/^	function hasMore()$/;"	f
 has_config	blocks/course_list/block_course_list.php	/^    function has_config() {$/;"	f
+has_config	blocks/instant_message/block_instant_message.php	/^    function has_config() {return true;}$/;"	f
 has_config	blocks/moodleblock.class.php	/^    function has_config() {$/;"	f
 has_config	blocks/online_users/block_online_users.php	/^    function has_config() {return true;}$/;"	f
 helpbutton	lib/weblib.php	/^function helpbutton ($page, $title="", $module="moodle", $image=true, $linktext=false, $text="", $return=false) {$/;"	f
 hex	lib/editor/htmlarea.php	/^    function hex(d) {$/;"	f
 hex	lib/editor/htmlarea_bak.php	/^    function hex(d) {$/;"	f
+hide	blocks/instant_message/view_message.php	/^function hide(divname) {$/;"	f
 hide_course_module	course/lib.php	/^function hide_course_module($mod) {$/;"	f
 hide_event	lib/moodlelib.php	/^function hide_event($event) {$/;"	f
 hide_gridlines	lib/excel/Worksheet.php	/^    function hide_gridlines()$/;"	f
 hide_header	blocks/course_summary/block_course_summary.php	/^    function hide_header() {$/;"	f
+hide_header	blocks/layout/block_layout.php	/^    function hide_header() {$/;"	f
 hide_header	blocks/moodleblock.class.php	/^    function hide_header() {$/;"	f
 highlight	lib/weblib.php	/^function highlight($needle, $haystack, $case=0,$/;"	f
 highlightfast	lib/weblib.php	/^function highlightfast($needle, $haystack) {$/;"	f
@@ -3001,16 +3036,8 @@ html2text	lib/html2text.php	/^function html2text( $badStr ) {$/;"	f
 html_attributes	blocks/moodleblock.class.php	/^    function html_attributes() {$/;"	f
 html_footer	files/index.php	/^    function html_footer() {$/;"	f
 html_footer	lib/editor/coursefiles.php	/^    function html_footer() {$/;"	f
-html_footer	lib/editor/courseimages.php	/^    function html_footer() {$/;"	f
-html_footer	mod/resource/coursefiles.php	/^    function html_footer() {$/;"	f
-html_footer	mod/scorm/coursefiles.php	/^    function html_footer() {$/;"	f
-html_footer	mod/wiki/wikifiles.php	/^    function html_footer() {$/;"	f
 html_header	files/index.php	/^    function html_header($course, $wdir, $formfield=""){$/;"	f
 html_header	lib/editor/coursefiles.php	/^    function html_header($course, $wdir, $formfield=""){$/;"	f
-html_header	lib/editor/courseimages.php	/^    function html_header($course, $wdir, $formfield=""){$/;"	f
-html_header	mod/resource/coursefiles.php	/^    function html_header($course, $wdir, $formfield=""){$/;"	f
-html_header	mod/scorm/coursefiles.php	/^    function html_header($course, $wdir, $formfield=""){$/;"	f
-html_header	mod/wiki/wikifiles.php	/^    function html_header($course, $wdir, $formfield=""){$/;"	f
 html_to_text	lib/weblib.php	/^function html_to_text($html) {$/;"	f
 identify_modifier_markdown	lib/markdown.php	/^function identify_modifier_markdown() {$/;"	f
 importpostprocess	mod/lesson/format.php	/^    function importpostprocess() {$/;"	f
@@ -3029,7 +3056,6 @@ ini_get_bool	lib/compatible.php	/^function ini_get_bool($ini_get_arg) {$/;"	f
 ini_get_bool	lib/moodlelib.php	/^function ini_get_bool($ini_get_arg) {$/;"	f
 init	lib/editor/popups/fullscreen.php	/^function init() {$/;"	f
 init	lib/graphlib.php	/^function init() {$/;"	f
-initIframe	lib/editor/htmlarea.php	/^    function initIframe() {$/;"	f
 initIframe	lib/editor/htmlarea_bak.php	/^    function initIframe() {$/;"	f
 init_colours	lib/graphlib.php	/^function init_colours() {$/;"	f
 init_data	lib/graphlib.php	/^function init_data() {$/;"	f
@@ -3043,12 +3069,16 @@ init_x_ticks	lib/graphlib.php	/^function init_x_ticks() {$/;"	f
 init_y_axis	lib/graphlib.php	/^function init_y_axis() {$/;"	f
 init_y_ticks	lib/graphlib.php	/^function init_y_ticks() {$/;"	f
 insert	lib/editor/popups/dlg_ins_smile.php	/^function insert(img,text) {$/;"	f
+insertLeft	blocks/layout/layout.php	/^    function insertLeft() {$/;"	f
+insertMain	blocks/layout/layout.php	/^    function insertMain() {$/;"	f
+insertRight	blocks/layout/layout.php	/^    function insertRight() {$/;"	f
 insert_bitmap	lib/excel/Worksheet.php	/^    function insert_bitmap($row, $col, $bitmap, $x = 0, $y = 0, $scale_x = 1, $scale_y = 1)$/;"	f
 insert_category_ids	backup/backuplib.php	/^    function insert_category_ids ($course,$backup_unique_code) {$/;"	f
 insert_record	lib/datalib.php	/^function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {$/;"	f
 inserttext	lib/javascript.php	/^function inserttext(text) {$/;"	f
 install_helpbutton	install.php	/^function install_helpbutton($url, $title='') {$/;"	f
 instance_is_visible	lib/datalib.php	/^function instance_is_visible($moduletype, $module) {$/;"	f
+instant_msg_upgrade	blocks/instant_message/db/mysql.php	/^function instant_msg_upgrade($oldversion=0) {$/;"	f
 isError	lib/adodb/adodb-pear.inc.php	/^	function isError($value)$/;"	f
 isMemberOf	auth/fc/fcFPP.php	/^    function isMemberOf($userid, $groups){$/;"	f
 isWarning	lib/adodb/adodb-pear.inc.php	/^	function isWarning($value)$/;"	f
@@ -3135,6 +3165,7 @@ label_upgrade	mod/label/db/mysql.php	/^function label_upgrade($oldversion) {$/;"
 label_upgrade	mod/label/db/postgres7.php	/^function label_upgrade($oldversion) {$/;"	f
 lang_decode	lang/el/fonts/lang_decode.php	/^function lang_decode($s) {$/;"	f
 lang_save_file	admin/lang.php	/^function lang_save_file($path, $file, $strings) {$/;"	f
+layout_upgrade	blocks/layout/db/mysql.php	/^function layout_upgrade($oldversion=0) {$/;"	f
 lesson_add_instance	mod/lesson/lib.php	/^function lesson_add_instance($lesson) {$/;"	f
 lesson_answers_restore	mod/lesson/restorelib.php	/^    function lesson_answers_restore($lessonid,$pageid,$info,$restore) {$/;"	f
 lesson_attempts_ids_by_course	mod/lesson/backuplib.php	/^    function lesson_attempts_ids_by_course ($course) {$/;"	f
@@ -3200,6 +3231,7 @@ mediaplugin_filter	filter/mediaplugin/filter.php	/^function mediaplugin_filter($
 merge	lib/pclzip/pclzip.lib.php	/^  function merge($p_archive_to_add)$/;"	f
 merge_cells	lib/excel/Worksheet.php	/^    function merge_cells($first_row, $first_col, $last_row, $last_col)$/;"	f
 message_broadcast	mod/chat/chatd.php	/^    function message_broadcast($message, $sender) {$/;"	f
+message_ikon	blocks/instant_message/block_instant_message.php	/^function message_ikon() {$/;"	f
 microtime_diff	lib/moodlelib.php	/^function microtime_diff($a, $b) {$/;"	f
 mime_content_type	lib/adodb/tohtml.inc.php	/^				  function mime_content_type ($file) {$/;"	f
 mimeinfo	files/mimetypes.php	/^function mimeinfo($element, $filename) {$/;"	f
@@ -3211,11 +3243,21 @@ moodle_ewiki_page_wiki_dump	mod/wiki/ewiki/plugins/moodle/moodle_wikidump.php	/^
 moodle_needs_upgrading	lib/moodlelib.php	/^function moodle_needs_upgrading() {$/;"	f
 moodle_setlocale	lib/moodlelib.php	/^function moodle_setlocale($locale='') {$/;"	f
 moodle_strtolower	lib/moodlelib.php	/^function moodle_strtolower ($string, $encoding='') {$/;"	f
+move	blocks/layout/layout.php	/^    function move(divname,top) {   \/\/ need this for moving sections$/;"	f
+moveUpLeft	blocks/layout/layout.php	/^    function moveUpLeft(idx) {$/;"	f
+moveUpMain	blocks/layout/layout.php	/^    function moveUpMain(idx) {$/;"	f
+moveUpRight	blocks/layout/layout.php	/^    function moveUpRight(idx) {$/;"	f
 move_module	course/lib.php	/^function move_module($cm, $move) {$/;"	f
 move_section	course/lib.php	/^function move_section($course, $section, $move) {$/;"	f
 moveto_module	course/lib.php	/^function moveto_module($mod, $section, $beforemod=NULL) {$/;"	f
 mtrace	lib/moodlelib.php	/^function mtrace($string, $eol="\\n") {$/;"	f
 multilang_filter	filter/multilang/filter.php	/^function multilang_filter($courseid, $text) {$/;"	f
+my_DragFunc	blocks/instant_message/view_message.php	/^function my_DragFunc()$/;"	f
+my_DragFunc	blocks/layout/layout.php	/^    function my_DragFunc()$/;"	f
+my_DropFunc	blocks/instant_message/view_message.php	/^function my_DropFunc()$/;"	f
+my_DropFunc	blocks/layout/layout.php	/^    function my_DropFunc()$/;"	f
+my_PickFunc	blocks/instant_message/view_message.php	/^function my_PickFunc()$/;"	f
+my_PickFunc	blocks/layout/layout.php	/^    function my_PickFunc()$/;"	f
 my_file_get_contents	admin/uploaduser.php	/^function my_file_get_contents($filename, $use_include_path = 0) {$/;"	f
 mygroupid	lib/moodlelib.php	/^function mygroupid($courseid) {$/;"	f
 name	blocks/moodleblock.class.php	/^    function name() {$/;"	f
@@ -3242,6 +3284,7 @@ news_items_upgrade	blocks/news_items/db/postgres7.php	/^function news_items_upgr
 next	lib/adodb/adodb-iterator.inc.php	/^    function next() $/;"	f
 nextId	lib/adodb/adodb-connection.inc.php	/^	function nextId($seq_name)$/;"	f
 nextId	lib/adodb/adodb.inc.php	/^	function nextId($seq_name)$/;"	f
+not_found	rss/file.php	/^    function not_found() {$/;"	f
 notice	lib/weblib.php	/^function notice ($message, $link="") {$/;"	f
 notice_yesno	lib/weblib.php	/^function notice_yesno ($message, $linkyes, $linkno) {$/;"	f
 notify	lib/weblib.php	/^function notify ($message, $color="red", $align="center") {$/;"	f
@@ -3267,12 +3310,15 @@ onOK	lib/editor/popups/link_std.php	/^function onOK() {$/;"	f
 onPreview	lib/editor/popups/insert_image.php	/^function onPreview() {$/;"	f
 onPreview	lib/editor/popups/insert_image_std.php	/^function onPreview() {$/;"	f
 onTargetChanged	lib/editor/popups/link_std.php	/^function onTargetChanged() {$/;"	f
+online_users_upgrade	blocks/instant_message/db/postgres7.php	/^function online_users_upgrade($oldversion=0) {$/;"	f
+online_users_upgrade	blocks/layout/db/postgres7.php	/^function online_users_upgrade($oldversion=0) {$/;"	f
 online_users_upgrade	blocks/online_users/db/mysql.php	/^function online_users_upgrade($oldversion=0) {$/;"	f
 online_users_upgrade	blocks/online_users/db/postgres7.php	/^function online_users_upgrade($oldversion=0) {$/;"	f
 open	auth/fc/fcFPP.php	/^    function open()$/;"	f
 open	lib/adodb/session/adodb-session.php	/^	function open($save_path, $session_name, $persist = null) {$/;"	f
 openpopup	lib/javascript.php	/^function openpopup(url,name,options,fullscreen) {$/;"	f
 optimize	lib/adodb/session/adodb-session.php	/^	function optimize($optimize = null) {$/;"	f
+optional_param	lib/moodlelib.php	/^function optional_param($varname, $default=NULL, $options=PARAM_CLEAN) {$/;"	f
 optional_variable	lib/moodlelib.php	/^function optional_variable(&$var, $default=0) {$/;"	f
 outp	lib/adodb/adodb-connection.inc.php	/^	function outp($msg,$newline=true)$/;"	f
 outp	lib/adodb/adodb.inc.php	/^	function outp($msg,$newline=true)$/;"	f
@@ -3280,7 +3326,6 @@ output	lib/graphlib.php	/^function output() {$/;"	f
 outputText	filter/algebra/algebradebug.php	/^function outputText($texexp) {$/;"	f
 outputText	filter/tex/texdebug.php	/^    function outputText($texexp) {$/;"	f
 p	lib/weblib.php	/^function p($var) {$/;"	f
-parameter	lib/moodlelib.php	/^function parameter($varname, $default=NULL) {$/;"	f
 parse	lib/excel/Parser.php	/^  function parse($formula)$/;"	f
 parseDSN	lib/adodb/adodb-pear.inc.php	/^	function parseDSN($dsn)$/;"	f
 parse_contents	lib/smarty/Config_File.class.php	/^    function parse_contents($contents)$/;"	f
@@ -3316,6 +3361,7 @@ preferred_width	blocks/moodleblock.class.php	/^    function preferred_width() {$
 prefix	lib/adodb/adodb-xmlschema.inc.php	/^	function prefix( $name = '' ) {$/;"	f
 prefixQuery	lib/adodb/adodb-xmlschema.inc.php	/^	function prefixQuery( $regex, $query, $prefix = NULL ) {$/;"	f
 prepareusers	mod/chat/gui_sockets/chatinput.php	/^function prepareusers() {$/;"	f
+preprocess_files	lib/uploadlib.php	/^    function preprocess_files() {$/;"	f
 presave_process	mod/quiz/format.php	/^    function presave_process( $content ) {$/;"	f
 presave_process	mod/quiz/format/xml/format.php	/^function presave_process( $content ) {$/;"	f
 print_TTF	lib/graphlib.php	/^function print_TTF($message) {$/;"	f
@@ -3325,13 +3371,10 @@ print_category_edit	course/index.php	/^function print_category_edit($category, $
 print_category_info	course/lib.php	/^function print_category_info($category, $depth) {$/;"	f
 print_cell	files/index.php	/^function print_cell($alignment="center", $text="&nbsp;") {$/;"	f
 print_cell	lib/editor/coursefiles.php	/^function print_cell($alignment="center", $text="&nbsp;") {$/;"	f
-print_cell	lib/editor/courseimages.php	/^function print_cell($alignment="center", $text="&nbsp;") {$/;"	f
-print_cell	mod/resource/coursefiles.php	/^function print_cell($alignment="center", $text="&nbsp;") {$/;"	f
-print_cell	mod/scorm/coursefiles.php	/^function print_cell($alignment="center", $text="&nbsp;") {$/;"	f
-print_cell	mod/wiki/wikifiles.php	/^function print_cell($alignment="center", $text="&nbsp;") {$/;"	f
 print_checker_results	lib/speller/server-scripts/spellchecker.php	/^function print_checker_results() {$/;"	f
 print_compatibility_row	install.php	/^function print_compatibility_row($success, $testtext, $errormessage, $helpfield='', $caution=false) {$/;"	f
 print_config	blocks/course_list/block_course_list.php	/^    function print_config() {$/;"	f
+print_config	blocks/instant_message/block_instant_message.php	/^    function print_config() {$/;"	f
 print_config	blocks/moodleblock.class.php	/^    function print_config() {$/;"	f
 print_config	blocks/online_users/block_online_users.php	/^    function print_config() {$/;"	f
 print_continue	lib/weblib.php	/^function print_continue($link) {$/;"	f
@@ -3410,6 +3453,7 @@ print_textindex_decl	lib/speller/server-scripts/spellchecker.php	/^function prin
 print_textinputs_var	lib/speller/server-scripts/spellchecker.php	/^function print_textinputs_var() {$/;"	f
 print_time_selector	lib/weblib.php	/^function print_time_selector($hour, $minute, $currenttime=0, $step=5) {$/;"	f
 print_timer_selector	lib/weblib.php	/^function print_timer_selector($timelimit = 0, $unit = "") {$/;"	f
+print_upload_log	lib/uploadlib.php	/^    function print_upload_log($return=false) {$/;"	f
 print_user	lib/weblib.php	/^function print_user($user, $course) {$/;"	f
 print_user_picture	lib/weblib.php	/^function print_user_picture($userid, $courseid, $picture, $large=false, $returnstring=false, $link=true) {$/;"	f
 print_version	lib/phpmailer/mailerc.php	/^function print_version()$/;"	f
@@ -3417,19 +3461,17 @@ print_whole_category_list	course/lib.php	/^function print_whole_category_list($c
 print_words_elem	lib/speller/server-scripts/spellchecker.php	/^function print_words_elem( $word, $index, $text_input_idx ) {$/;"	f
 printfilelist	files/index.php	/^function printfilelist($filelist) {$/;"	f
 printfilelist	lib/editor/coursefiles.php	/^function printfilelist($filelist) {$/;"	f
-printfilelist	lib/editor/courseimages.php	/^function printfilelist($filelist) {$/;"	f
-printfilelist	mod/resource/coursefiles.php	/^function printfilelist($filelist) {$/;"	f
-printfilelist	mod/scorm/coursefiles.php	/^function printfilelist($filelist) {$/;"	f
-printfilelist	mod/wiki/wikifiles.php	/^function printfilelist($filelist) {$/;"	f
 printsqla	lib/adodb/tests/test-datadict.php	/^function printsqla($dbType,$sqla)$/;"	f
 privAdd	lib/pclzip/pclzip.lib.php	/^  function privAdd($p_list, &$p_result_list, $p_add_dir, $p_remove_dir, $p_remove_all_dir, &$p_options)$/;"	f
 privAddFile	lib/pclzip/pclzip.lib.php	/^  function privAddFile($p_filename, &$p_header, $p_add_dir, $p_remove_dir, $p_remove_all_dir, &$p_options)$/;"	f
 privAddFileList	lib/pclzip/pclzip.lib.php	/^  function privAddFileList($p_list, &$p_result_list, $p_add_dir, $p_remove_dir, $p_remove_all_dir, &$p_options)$/;"	f
 privAddList	lib/pclzip/pclzip.lib.php	/^  function privAddList($p_list, &$p_result_list, $p_add_dir, $p_remove_dir, $p_remove_all_dir, &$p_options)$/;"	f
+privCheckFileHeaders	lib/pclzip/pclzip.lib.php	/^  function privCheckFileHeaders(&$p_local_header, &$p_central_header)$/;"	f
 privCheckFormat	lib/pclzip/pclzip.lib.php	/^  function privCheckFormat($p_level=0)$/;"	f
 privCloseFd	lib/pclzip/pclzip.lib.php	/^  function privCloseFd()$/;"	f
 privConvertHeader2FileInfo	lib/pclzip/pclzip.lib.php	/^  function privConvertHeader2FileInfo($p_header, &$p_info)$/;"	f
 privCreate	lib/pclzip/pclzip.lib.php	/^  function privCreate($p_list, &$p_result_list, $p_add_dir, $p_remove_dir, $p_remove_all_dir, &$p_options)$/;"	f
+privDecrypt	lib/pclzip/pclzip.lib.php	/^  function privDecrypt($p_encryption_header, &$p_buffer, $p_size, $p_crc)$/;"	f
 privDeleteByRule	lib/pclzip/pclzip.lib.php	/^  function privDeleteByRule(&$p_result_list, &$p_options)$/;"	f
 privDirCheck	lib/pclzip/pclzip.lib.php	/^  function privDirCheck($p_dir, $p_is_dir=false)$/;"	f
 privDuplicate	lib/pclzip/pclzip.lib.php	/^  function privDuplicate($p_archive_filename)$/;"	f
@@ -3438,10 +3480,11 @@ privErrorReset	lib/pclzip/pclzip.lib.php	/^  function privErrorReset()$/;"	f
 privExtractByRule	lib/pclzip/pclzip.lib.php	/^  function privExtractByRule(&$p_file_list, $p_path, $p_remove_path, $p_remove_all_path, &$p_options)$/;"	f
 privExtractFile	lib/pclzip/pclzip.lib.php	/^  function privExtractFile(&$p_entry, $p_path, $p_remove_path, $p_remove_all_path, &$p_options)$/;"	f
 privExtractFileAsString	lib/pclzip/pclzip.lib.php	/^  function privExtractFileAsString(&$p_entry, &$p_string)$/;"	f
+privExtractFileInOutput	lib/pclzip/pclzip.lib.php	/^  function privExtractFileInOutput(&$p_entry, &$p_options)$/;"	f
 privList	lib/pclzip/pclzip.lib.php	/^  function privList(&$p_list)$/;"	f
 privMerge	lib/pclzip/pclzip.lib.php	/^  function privMerge(&$p_archive_to_add)$/;"	f
 privOpenFd	lib/pclzip/pclzip.lib.php	/^  function privOpenFd($p_mode)$/;"	f
-privParseOptions	lib/pclzip/pclzip.lib.php	/^  function privParseOptions(&$p_options_list, $p_size, &$v_result_list, $v_requested_options)$/;"	f
+privParseOptions	lib/pclzip/pclzip.lib.php	/^  function privParseOptions(&$p_options_list, $p_size, &$v_result_list, $v_requested_options=false)$/;"	f
 privReadCentralFileHeader	lib/pclzip/pclzip.lib.php	/^  function privReadCentralFileHeader(&$p_header)$/;"	f
 privReadEndCentralDir	lib/pclzip/pclzip.lib.php	/^  function privReadEndCentralDir(&$p_central_dir)$/;"	f
 privReadFileHeader	lib/pclzip/pclzip.lib.php	/^  function privReadFileHeader(&$p_header)$/;"	f
@@ -3453,6 +3496,7 @@ process_config	enrol/enrol.class.php	/^function process_config($config) {$/;"	f
 process_config	enrol/flatfile/enrol.php	/^function process_config($config) {$/;"	f
 process_config	enrol/paypal/enrol.php	/^function process_config($config) {$/;"	f
 process_fib	mod/quiz/format/blackboard/format.php	/^function process_fib($xml, &$questions) {$/;"	f
+process_file_uploads	lib/uploadlib.php	/^    function process_file_uploads($destination) {$/;"	f
 process_ma	mod/quiz/format/blackboard/format.php	/^function process_ma($xml, &$questions) {$/;"	f
 process_matching	mod/quiz/format/blackboard/format.php	/^function process_matching($xml, &$questions) {$/;"	f
 process_mc	mod/quiz/format/blackboard/format.php	/^function process_mc($xml, &$questions) {$/;"	f
@@ -3629,6 +3673,7 @@ quiz_xmldata	mod/quiz/format/coursetestmanager/format.php	/^	function quiz_xmlda
 quiz_xmlend	mod/quiz/format/coursetestmanager/format.php	/^	function quiz_xmlend($parser, $name) {$/;"	f
 quiz_xmlstart	mod/quiz/format/coursetestmanager/format.php	/^	function quiz_xmlstart($parser, $name, $attribs) { $/;"	f
 qvar	lib/phpmailer/mailerc.php	/^    function qvar($qarray, $data) {$/;"	f
+raise_memory_limit	lib/moodlelib.php	/^function raise_memory_limit ($newlimit) {$/;"	f
 random_string	lib/moodlelib.php	/^function random_string ($length=15) {$/;"	f
 rc4decrypt	lib/moodlelib.php	/^function rc4decrypt($data) {$/;"	f
 rc4encrypt	lib/moodlelib.php	/^function rc4encrypt($data) {$/;"	f
@@ -3661,6 +3706,7 @@ recent_activity_upgrade	blocks/recent_activity/db/postgres7.php	/^function recen
 record_exists	lib/datalib.php	/^function record_exists($table, $field1="", $value1="", $field2="", $value2="", $field3="", $value3="") {$/;"	f
 record_exists_sql	lib/datalib.php	/^function record_exists_sql($sql) {$/;"	f
 redirect	lib/weblib.php	/^function redirect($url, $message="", $delay="0") {$/;"	f
+redrawSections	blocks/layout/layout.php	/^    function redrawSections() {$/;"	f
 refineTeX	filter/algebra/algebradebug.php	/^function refineTeX($texexp) {$/;"	f
 refresh_content	blocks/moodleblock.class.php	/^    function refresh_content() {$/;"	f
 register_block	lib/smarty/Smarty.class.php	/^    function register_block($block, $block_impl, $cacheable=true, $cache_attrs=null)$/;"	f
@@ -3674,6 +3720,7 @@ register_prefilter	lib/smarty/Smarty.class.php	/^    function register_prefilter
 register_resource	lib/smarty/Smarty.class.php	/^    function register_resource($type, $functions)$/;"	f
 reload_user_preferences	lib/moodlelib.php	/^function reload_user_preferences() {$/;"	f
 reloadusers	mod/chat/gui_sockets/chatinput.php	/^function reloadusers() {$/;"	f
+removeFromSection	blocks/layout/layout.php	/^    function removeFromSection(Sectidx,Modidx) {          \/\/ remove this module from section$/;"	f
 remove_admin	lib/moodlelib.php	/^function remove_admin($userid) {$/;"	f
 remove_course_contents	lib/moodlelib.php	/^function remove_course_contents($courseid, $showfeedback=true) {$/;"	f
 remove_course_userdata	lib/moodlelib.php	/^function remove_course_userdata($courseid, $showfeedback=true,$/;"	f
@@ -3689,10 +3736,30 @@ replace_smilies	lib/weblib.php	/^function replace_smilies(&$text) {$/;"	f
 require_course_login	lib/moodlelib.php	/^function require_course_login($course, $autologinguest=true) {$/;"	f
 require_login	lib/moodlelib.php	/^function require_login($courseid=0, $autologinguest=true) {$/;"	f
 require_variable	lib/moodlelib.php	/^function require_variable($var) {$/;"	f
+required_param	lib/moodlelib.php	/^function required_param($varname, $options=PARAM_CLEAN) {$/;"	f
+reservation_add_instance	mod/reservation/lib.php	/^function reservation_add_instance($reservation) {$/;"	f
+reservation_backup_mods	mod/reservation/backuplib.php	/^    function reservation_backup_mods($bf,$preferences) {$/;"	f
+reservation_check_backup_mods	mod/reservation/backuplib.php	/^   function reservation_check_backup_mods($course,$user_data=false,$backup_unique_code) {$/;"	f
+reservation_cron	mod/reservation/lib.php	/^function reservation_cron () {$/;"	f
+reservation_delete_instance	mod/reservation/lib.php	/^function reservation_delete_instance($id) {$/;"	f
+reservation_get_requests	mod/reservation/lib.php	/^function reservation_get_requests($reservation,$view="clean") {$/;"	f
+reservation_grades	mod/reservation/lib.php	/^function reservation_grades($reservationid) {$/;"	f
+reservation_ids	mod/reservation/backuplib.php	/^    function reservation_ids ($course) {$/;"	f
+reservation_print_recent_activity	mod/reservation/lib.php	/^function reservation_print_recent_activity($course, $isteacher, $timestart) {$/;"	f
+reservation_refresh_events	mod/reservation/lib.php	/^function reservation_refresh_events($courseid = 0) {$/;"	f
+reservation_request_ids_by_course	mod/reservation/backuplib.php	/^    function reservation_request_ids_by_course ($course) {$/;"	f
+reservation_request_restore_mods	mod/reservation/restorelib.php	/^    function reservation_request_restore_mods($reservation_id,$info,$restore) {$/;"	f
+reservation_restore_logs	mod/reservation/restorelib.php	/^    function reservation_restore_logs($restore,$log) {$/;"	f
+reservation_restore_mods	mod/reservation/restorelib.php	/^    function reservation_restore_mods($mod,$restore) {$/;"	f
+reservation_update_instance	mod/reservation/lib.php	/^function reservation_update_instance($reservation) {$/;"	f
+reservation_upgrade	mod/reservation/db/mysql.php	/^function reservation_upgrade($oldversion) {$/;"	f
+reservation_user_complete	mod/reservation/lib.php	/^function reservation_user_complete($course, $user, $mod, $reservation) {$/;"	f
+reservation_user_outline	mod/reservation/lib.php	/^function reservation_user_outline($course, $user, $mod, $reservation) {$/;"	f
 reset_login_count	lib/moodlelib.php	/^function reset_login_count() {$/;"	f
 reset_password_and_mail	lib/moodlelib.php	/^function reset_password_and_mail($user) {$/;"	f
 reset_to_defaults	admin/editor.php	/^function reset_to_defaults () {$/;"	f
 reset_value	lib/editor/coursefiles.php	/^        function reset_value() {$/;"	f
+resize	blocks/layout/layout.php	/^    function resize(divname,newHeight) {   \/\/ need this for resizing sections$/;"	f
 resize_editor	lib/editor/popups/fullscreen.php	/^function resize_editor() {  \/\/ resize editor to fix window$/;"	f
 resolve_htmlentities	entities.php	/^		function resolve_htmlentities ($string)  {$/;"	f
 resource_add_instance	mod/resource/lib.php	/^function resource_add_instance($resource) {$/;"	f
@@ -3766,6 +3833,7 @@ restore_refresh_events	backup/restorelib.php	/^    function restore_refresh_even
 restore_unzip	backup/restorelib.php	/^    function restore_unzip ($file) {$/;"	f
 restore_user_files	backup/restorelib.php	/^    function restore_user_files($restore) {$/;"	f
 rewind	lib/adodb/adodb-iterator.inc.php	/^    function rewind() $/;"	f
+rewrite_div	blocks/instant_message/view_message.php	/^function rewrite_div(divname,newtxt) {$/;"	f
 rs2csv	lib/adodb/toexport.inc.php	/^function rs2csv(&$rs,$addtitles=true)$/;"	f
 rs2csvfile	lib/adodb/toexport.inc.php	/^function rs2csvfile(&$rs,$fp,$addtitles=true)$/;"	f
 rs2csvout	lib/adodb/toexport.inc.php	/^function rs2csvout(&$rs,$addtitles=true)$/;"	f
@@ -3778,12 +3846,14 @@ rss_end_tag	rss/rsslib.php	/^function rss_end_tag($tag,$level=0,$endline=true) {
 rss_file_name	rss/rsslib.php	/^function rss_file_name($modname, $mod) {$/;"	f
 rss_full_tag	rss/rsslib.php	/^function rss_full_tag($tag,$level=0,$endline=true,$content,$to_utf=true) {$/;"	f
 rss_get_link	rss/rsslib.php	/^function rss_get_link($courseid, $userid, $modulename, $id, $tooltiptext="") {$/;"	f
+rss_geterrorxmlfile	rss/rsslib.php	/^function rss_geterrorxmlfile() {$/;"	f
 rss_print_link	rss/rsslib.php	/^function rss_print_link($courseid, $userid, $modulename, $id, $tooltiptext="") {$/;"	f
 rss_save_file	rss/rsslib.php	/^function rss_save_file ($modname,$mod,$result) {$/;"	f
 rss_standard_footer	rss/rsslib.php	/^function rss_standard_footer($title = NULL, $link = NULL, $description = NULL) {$/;"	f
 rss_standard_header	rss/rsslib.php	/^function rss_standard_header($title = NULL, $link = NULL, $description = NULL) {$/;"	f
 rss_start_tag	rss/rsslib.php	/^function rss_start_tag($tag,$level=0,$endline=false) {$/;"	f
 s	lib/weblib.php	/^function s($var) {$/;"	f
+save_files	lib/uploadlib.php	/^    function save_files($destination) {$/;"	f
 save_profile_image	lib/gdlib.php	/^function save_profile_image($id, $filename, $dir="users") {$/;"	f
 save_question	mod/quiz/lib.php	/^    function save_question($question, $form, $course) {$/;"	f
 save_question	mod/quiz/questiontypes/datasetdependent/abstractqtype.php	/^    function save_question($question, $form, $course, $subtypeoptions=false) {$/;"	f
@@ -3814,7 +3884,7 @@ scorm_characterData	mod/scorm/lib.php	/^function scorm_characterData($parser, $d
 scorm_check_backup_mods	mod/scorm/backuplib.php	/^   function scorm_check_backup_mods($course,$user_data=false,$backup_unique_code) {$/;"	f
 scorm_cron	mod/scorm/lib.php	/^function scorm_cron () {$/;"	f
 scorm_datadir	mod/scorm/lib.php	/^function scorm_datadir($strPath, $existingdir='', $prefix = 'SCORM')$/;"	f
-scorm_delete_files	mod/scorm/lib.php	/^function scorm_delete_files($directory)$/;"	f
+scorm_delete_files	mod/scorm/lib.php	/^function scorm_delete_files($directory) {$/;"	f
 scorm_delete_instance	mod/scorm/lib.php	/^function scorm_delete_instance($id) {$/;"	f
 scorm_endElement	mod/scorm/lib.php	/^function scorm_endElement($parser, $name) {$/;"	f
 scorm_external_link	mod/scorm/lib.php	/^function scorm_external_link($link) {$/;"	f
@@ -3828,6 +3898,7 @@ scorm_remove_spaces	mod/scorm/lib.php	/^function scorm_remove_spaces($sourcestr)
 scorm_restore_files	mod/scorm/restorelib.php	/^    function scorm_restore_files ($packagedir, $restore) {$/;"	f
 scorm_restore_logs	mod/scorm/restorelib.php	/^    function scorm_restore_logs($restore,$log) {$/;"	f
 scorm_restore_mods	mod/scorm/restorelib.php	/^    function scorm_restore_mods($mod,$restore) {$/;"	f
+scorm_scandir	mod/scorm/lib.php	/^function scorm_scandir($directory) {$/;"	f
 scorm_sco_users_ids_by_course	mod/scorm/backuplib.php	/^    function scorm_sco_users_ids_by_course ($course) {$/;"	f
 scorm_sco_users_restore_mods	mod/scorm/restorelib.php	/^    function scorm_sco_users_restore_mods($scorm_id,$info,$restore) {$/;"	f
 scorm_scoes_restore_mods	mod/scorm/restorelib.php	/^    function scorm_scoes_restore_mods($scorm_id,$info,$restore) {$/;"	f
@@ -3848,6 +3919,8 @@ select	lib/excel/Worksheet.php	/^    function select()$/;"	f
 send2server	lib/adodb/tests/client.php	/^ function &send2server($url,$sql)$/;"	f
 send_confirmation_email	lib/moodlelib.php	/^function send_confirmation_email($user) {$/;"	f
 send_data	mod/quiz/jstimer.php	/^function send_data() {$/;"	f
+send_file	files/mimetypes.php	/^function send_file($path, $filename, $lifetime=86400 , $filter=false, $pathisstring=false) {$/;"	f
+send_message	blocks/instant_message/send_message.php	/^function send_message() {$/;"	f
 send_message	lib/phpmailer/mailerc.php	/^function send_message($filePath)$/;"	f
 send_password_change_confirmation_email	lib/moodlelib.php	/^function send_password_change_confirmation_email($user) {$/;"	f
 setBlockSize	lib/adodb/session/adodb-compress-bzip2.php	/^	function setBlockSize($block_size) {$/;"	f
@@ -3917,18 +3990,11 @@ set_underline	lib/excel/Format.php	/^    function set_underline($underline)$/;"	
 set_user_preference	lib/moodlelib.php	/^function set_user_preference($name, $value) {$/;"	f
 set_user_preferences	lib/moodlelib.php	/^function set_user_preferences($prefarray) {$/;"	f
 set_v_pagebreaks	lib/excel/Worksheet.php	/^    function set_v_pagebreaks($breaks)$/;"	f
+set_value	files/index.php	/^            function set_value(txt) {$/;"	f
 set_value	lib/editor/coursefiles.php	/^        function set_value(params) {$/;"	f
-set_value	lib/editor/courseimages.php	/^	    function set_value(url) {$/;"	f
-set_value	mod/resource/coursefiles.php	/^	    function set_value(txt) {$/;"	f
-set_value	mod/scorm/coursefiles.php	/^	    function set_value(txt) {$/;"	f
-set_value	mod/wiki/wikifiles.php	/^	    function set_value(txt) {$/;"	f
 set_zoom	lib/excel/Worksheet.php	/^    function set_zoom($scale = 100)$/;"	f
 setfilelist	files/index.php	/^function setfilelist($VARS) {$/;"	f
 setfilelist	lib/editor/coursefiles.php	/^function setfilelist($VARS) {$/;"	f
-setfilelist	lib/editor/courseimages.php	/^function setfilelist($VARS) {$/;"	f
-setfilelist	mod/resource/coursefiles.php	/^function setfilelist($VARS) {$/;"	f
-setfilelist	mod/scorm/coursefiles.php	/^function setfilelist($VARS) {$/;"	f
-setfilelist	mod/wiki/wikifiles.php	/^function setfilelist($VARS) {$/;"	f
 setup	mod/resource/lib.php	/^function setup(&$form) {$/;"	f
 setup	mod/resource/type/directory/resource.class.php	/^function setup($form) {$/;"	f
 setup	mod/resource/type/file/resource.class.php	/^function setup($form) {$/;"	f
@@ -3938,10 +4004,16 @@ setup_and_print_groups	lib/moodlelib.php	/^function setup_and_print_groups($cour
 setup_end	mod/resource/lib.php	/^function setup_end() {$/;"	f
 seturl	lib/editor/popups/link_std.php	/^function seturl() {$/;"	f
 sheets	lib/excel/Workbook.php	/^    function sheets()$/;"	f
+show	blocks/instant_message/view_message.php	/^function show(divname) {$/;"	f
+showMessages	blocks/instant_message/view_message.php	/^function showMessages() {$/;"	f
+showSent	blocks/instant_message/view_message.php	/^function showSent() {$/;"	f
+showUsers	blocks/instant_message/view_message.php	/^function showUsers() {$/;"	f
 show_course_module	course/lib.php	/^function show_course_module($mod) {$/;"	f
 show_event	lib/moodlelib.php	/^function show_event($event) {$/;"	f
+showcontact	blocks/instant_message/view_message.php	/^function showcontact ( msg ) {$/;"	f
+showmessage	blocks/instant_message/view_message.php	/^function showmessage ( msg ) {$/;"	f
 showtime	mod/quiz/jsclock.php	/^function showtime() {$/;"	f
-site_scale_used	lib/moodlelib.php	/^function site_scale_used($scaleid) {$/;"	f
+site_scale_used	lib/moodlelib.php	/^function site_scale_used($scaleid,&$courses) {$/;"	f
 size_col	lib/excel/Worksheet.php	/^    function size_col($col)$/;"	f
 size_row	lib/excel/Worksheet.php	/^    function size_row($row)$/;"	f
 smarty_block_textformat	lib/smarty/plugins/block.textformat.php	/^function smarty_block_textformat($params, $content, &$smarty)$/;"	f
@@ -4024,7 +4096,6 @@ sp_who	lib/adodb/perf/perf-mssql.inc.php	/^	function sp_who()$/;"	f
 spellcheck	lib/wiki.php	/^  function spellcheck( $line,$pspell_link ) {$/;"	f
 speller_enable	lib/speller/lib.php	/^function speller_enable (&$CFG) {$/;"	f
 startElement	backup/restorelib.php	/^        function startElement($parser, $tagName, $attrs) {$/;"	f
-startElement	filter/multilang/filter.php	/^  function startElement($parser, $tag, $attributeList) {$/;"	f
 startElementCourseHeader	backup/restorelib.php	/^        function startElementCourseHeader($parser, $tagName, $attrs) {$/;"	f
 startElementEvents	backup/restorelib.php	/^        function startElementEvents($parser, $tagName, $attrs) {$/;"	f
 startElementGroups	backup/restorelib.php	/^        function startElementGroups($parser, $tagName, $attrs) {$/;"	f
@@ -4122,6 +4193,7 @@ tpear	lib/adodb/tests/tmssql.php	/^function tpear()$/;"	f
 trace	mod/chat/chatd.php	/^    function trace($message, $level = E_USER_NOTICE) {$/;"	f
 traverse_xmlize	lib/xmlize.php	/^function traverse_xmlize($array, $arrName = "array", $level = 0) {$/;"	f
 trigger_error	lib/smarty/Smarty.class.php	/^    function trigger_error($error_msg, $error_type = E_USER_WARNING)$/;"	f
+truncate_userinfo	lib/moodlelib.php	/^function truncate_userinfo($info) {$/;"	f
 undomq	lib/adodb/adodb-perf.inc.php	/^	function undomq(&$m) $/;"	f
 undomq	lib/adodb/server.php	/^function undomq(&$m) $/;"	f
 unenrol_student	lib/moodlelib.php	/^function unenrol_student($userid, $courseid=0) {$/;"	f
@@ -4136,6 +4208,11 @@ unregister_outputfilter	lib/smarty/Smarty.class.php	/^    function unregister_ou
 unregister_postfilter	lib/smarty/Smarty.class.php	/^    function unregister_postfilter($function)$/;"	f
 unregister_prefilter	lib/smarty/Smarty.class.php	/^    function unregister_prefilter($function)$/;"	f
 unregister_resource	lib/smarty/Smarty.class.php	/^    function unregister_resource($type)$/;"	f
+unzip_cleanfilename	lib/moodlelib.php	/^function unzip_cleanfilename ($p_event, &$p_header) {$/;"	f
+unzip_file	lib/moodlelib.php	/^function unzip_file ($zipfile, $destination = '', $showstatus = true) {$/;"	f
+unzip_show_status	lib/moodlelib.php	/^function unzip_show_status ($list,$removepath) {$/;"	f
+updateHidden	blocks/layout/layout.php	/^    function updateHidden() {    \/\/ save effect of javascript into two hidden inputs$/;"	f
+updateHiddenSection	blocks/layout/layout.php	/^    function updateHiddenSection() {    \/\/ save effect of javascript into two hidden inputs$/;"	f
 update_boundaryBox	lib/graphlib.php	/^function update_boundaryBox(&$boundaryBox, $coords) {$/;"	f
 update_categories_button	lib/weblib.php	/^function update_categories_button() {$/;"	f
 update_category_button	lib/weblib.php	/^function update_category_button($categoryid) {$/;"	f
@@ -4160,6 +4237,9 @@ upgrade_backup_db	backup/lib.php	/^    function upgrade_backup_db($continueto) {
 upgrade_blocks_db	lib/blocklib.php	/^function upgrade_blocks_db($continueto) {$/;"	f
 upgrade_blocks_plugins	lib/blocklib.php	/^function upgrade_blocks_plugins($continueto) {$/;"	f
 upgrade_enrol_plugins	lib/adminlib.php	/^function upgrade_enrol_plugins($return) {$/;"	f
+upload_manager	lib/uploadlib.php	/^    function upload_manager($inputname='', $deleteothers=false, $handlecollisions=false, $course=null, $recoverifmultiple=false, $modbytes=0, $silent=false, $allownull=false) {$/;"	f
+upload_manager	lib/uploadlib.php	/^class upload_manager {$/;"	c
+upload_print_form_fragment	lib/uploadlib.php	/^function upload_print_form_fragment($numfiles=1, $names=null, $descriptions=null, $uselabels=false, $labelnames=null, $coursebytes=0, $modbytes=0, $return=false) {$/;"	f
 use_html_editor	lib/weblib.php	/^function use_html_editor($name="") {$/;"	f
 user	lib/adodb/session/adodb-session.php	/^	function user($user = null) {$/;"	f
 user_check_backup	backup/backuplib.php	/^    function user_check_backup($course,$backup_unique_code,$backup_users) {$/;"	f
@@ -4178,6 +4258,7 @@ uses_quizfile	mod/quiz/questiontypes/datasetdependent/abstractqtype.php	/^    fu
 valid	lib/adodb/adodb-iterator.inc.php	/^	function valid() $/;"	f
 valid_uploaded_file	lib/moodlelib.php	/^function valid_uploaded_file($newfile) {$/;"	f
 validate_email	lib/weblib.php	/^function validate_email ($address) {$/;"	f
+validate_file	lib/uploadlib.php	/^    function validate_file(&$file) {$/;"	f
 validate_form	admin/auth.php	/^function validate_form(&$form, &$err) {$/;"	f
 validate_form	admin/config.php	/^function validate_form(&$form, &$err) {$/;"	f
 validate_form	admin/site.php	/^function validate_form(&$form, &$err) {$/;"	f
@@ -4186,6 +4267,7 @@ validate_form	course/edit.php	/^function validate_form($course, &$form, &$err) {
 validate_form	login/change_password.php	/^function validate_form($frm, &$err) {$/;"	f
 validate_form	login/forgot_password.php	/^function validate_form($frm, &$err) {$/;"	f
 validate_form	login/signup.php	/^function validate_form($user, &$err) {$/;"	f
+view_message	blocks/instant_message/view_message.php	/^function view_message() {$/;"	f
 wiki_add_entry	mod/wiki/lib.php	/^function wiki_add_entry(&$wiki, &$course, $userid=0, $groupid=0) {$/;"	f
 wiki_add_instance	mod/wiki/lib.php	/^function wiki_add_instance($wiki) {$/;"	f
 wiki_admin_checklinks	mod/wiki/lib.php	/^function wiki_admin_checklinks($pagetocheck) {$/;"	f
@@ -4360,6 +4442,7 @@ write_blank	lib/excel/Worksheet.php	/^    function write_blank($row, $col, $form
 write_data	mod/chat/chatd.php	/^    function write_data($connection, $text) {$/;"	f
 write_formula	lib/excel/Worksheet.php	/^    function write_formula($row, $col, $formula, $format = 0)$/;"	f
 write_header	lib/excel/OLEwriter.php	/^    function write_header()$/;"	f
+write_message	blocks/instant_message/write_message.php	/^function write_message() {$/;"	f
 write_note	lib/excel/Worksheet.php	/^    function write_note($row, $col, $note)$/;"	f
 write_number	lib/excel/Worksheet.php	/^    function write_number($row, $col, $num, $format = 0)$/;"	f
 write_string	lib/excel/Worksheet.php	/^    function write_string($row, $col, $str, $format = 0)$/;"	f
@@ -4373,3 +4456,4 @@ xMetaForeignKeys	lib/adodb/drivers/adodb-postgres7.inc.php	/^    function xMetaF
 xml_depth	lib/xmlize.php	/^function xml_depth($vals, &$i) {$/;"	f
 xmlize	lib/xmlize.php	/^function xmlize($data, $WHITE=1, $encoding='UTF-8') {$/;"	f
 xslt_error_handler	lib/adodb/adodb-xmlschema.inc.php	/^	function xslt_error_handler( $parser, $errno, $level, $fields ) {$/;"	f
+zip_files	lib/moodlelib.php	/^function zip_files ($originalfiles, $destination) {$/;"	f
