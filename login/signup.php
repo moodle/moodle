@@ -88,7 +88,7 @@ function validate_form($user, &$err) {
         if (record_exists("user", "username", $user->username)){
             $err->username = get_string("usernameexists");
         } else {
-            $string = eregi_replace("[^(-\.[:alnum:])]", "", $user->username);
+            $string = eregi_replace("[^(-\.[:alnum:][À-ÖØ-öø-ÿ])]", "", $user->username);
             if (strcmp($user->username, $string)) {
                 $err->username = get_string("alphanumerical");
             }
