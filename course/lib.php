@@ -966,7 +966,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
         $groupbuttonslink = (!$course->groupmodeforce);
         $isteacher = isteacher($course->id);
         $isediting = isediting($course->id);
-        $ismoving = ismoving($course->id);
+        $ismoving = $isediting && ismoving($course->id);
         if ($ismoving) {
             $strmovehere = get_string("movehere");
             $strmovefull = strip_tags(get_string("movefull", "", "'$USER->activitycopyname'"));
@@ -1652,131 +1652,6 @@ function moveto_module($mod, $section, $beforemod=NULL) {
 
     return true;
 
-}
-
-
-
-function move_module($cm, $move) {
-/// Moves an activity module up and down within the course
-
-    if (!$move) {
-        return true;
-    }
-
-    if (! $thissection = get_record("course_sections", "id", $cm->section)) {
-        error("This course section doesn't exist");
-    }
-
-    $mods = explode(",", $thissection->sequence);
-
-    $len = count($mods);
-    $pos = array_keys($mods, $cm->id);
-    $thepos = $pos[0];
-
-    if ($len == 0 || count($pos) == 0 ) {
-        error("Very strange. Could not find the required module in this section.");
-    }
-
-    if ($len == 1) {
-        $first = true;
-        $last = true;
-    } else {
-        $first = ($thepos == 0);
-        $last  = ($thepos == $len - 1);
-    }
-
-    if ($move < 0) {    // Moving the module up
-
-        if ($first) {
-            if ($thissection->section == 0) {  // First section, do nothing
-                return true;
-
-            } else {               // Push onto end of previous section
-                $prevsectionnumber = $thissection->section - 1;
-                if (! $prevsection = get_record("course_sections", "course", "$thissection->course",
-                                                                   "section", "$prevsectionnumber")) {
-                    error("Previous section ($prevsection->id) doesn't exist");
-                }
-
-                if (!empty($prevsection->sequence)) {
-                    $newsequence = "$prevsection->sequence,$cm->id";
-                } else {
-                    $newsequence = "$cm->id";
-                }
-
-                if (! set_field("course_sections", "sequence", $newsequence, "id", $prevsection->id)) {
-                    error("Previous section could not be updated");
-                }
-
-                if (! set_field("course_modules", "section", $prevsection->id, "id", $cm->id)) {
-                    error("Module could not be updated");
-                }
-
-                array_splice($mods, 0, 1);
-                $newsequence = implode(",", $mods);
-                if (! set_field("course_sections", "sequence", $newsequence, "id", $thissection->id)) {
-                    error("Module could not be updated");
-                }
-
-                return true;
-
-            }
-        } else {        // move up within this section
-            $swap = $mods[$thepos-1];
-            $mods[$thepos-1] = $mods[$thepos];
-            $mods[$thepos] = $swap;
-
-            $newsequence = implode(",", $mods);
-            if (! set_field("course_sections", "sequence", $newsequence, "id", $thissection->id)) {
-                error("This section could not be updated");
-            }
-            return true;
-        }
-
-    } else {            // Moving the module down
-
-        if ($last) {
-            $nextsectionnumber = $thissection->section + 1;
-            if ($nextsection = get_record("course_sections", "course", "$thissection->course",
-                                                               "section", "$nextsectionnumber")) {
-
-                if (!empty($nextsection->sequence)) {
-                    $newsequence = "$cm->id,$nextsection->sequence";
-                } else {
-                    $newsequence = "$cm->id";
-                }
-
-                if (! set_field("course_sections", "sequence", $newsequence, "id", $nextsection->id)) {
-                    error("Next section could not be updated");
-                }
-
-                if (! set_field("course_modules", "section", $nextsection->id, "id", $cm->id)) {
-                    error("Module could not be updated");
-                }
-
-                array_splice($mods, $thepos, 1);
-                $newsequence = implode(",", $mods);
-                if (! set_field("course_sections", "sequence", $newsequence, "id", $thissection->id)) {
-                    error("This section could not be updated");
-                }
-                return true;
-
-            } else {        // There is no next section, so just return
-                return true;
-
-            }
-        } else {      // move down within this section
-            $swap = $mods[$thepos+1];
-            $mods[$thepos+1] = $mods[$thepos];
-            $mods[$thepos] = $swap;
-
-            $newsequence = implode(",", $mods);
-            if (! set_field("course_sections", "sequence", $newsequence, "id", $thissection->id)) {
-                error("This section could not be updated");
-            }
-            return true;
-        }
-    }
 }
 
 function make_editing_buttons($mod, $absolute=false, $moveselect=true, $indent=-1) {

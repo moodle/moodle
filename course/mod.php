@@ -172,31 +172,7 @@
         exit;
     }
 
-
-    if (isset($_GET['move']) and confirm_sesskey()) {  
-
-        require_variable($id);   
-
-        if (! $cm = get_record("course_modules", "id", $id)) {
-            error("This course module doesn't exist");
-        }
-
-        if (!isteacheredit($cm->course)) {
-            error("You can't modify this course!");
-        }
-    
-        move_module($cm, $_GET['move']);
-
-        rebuild_course_cache($cm->course);
-
-        if (SITEID == $cm->course) {
-            redirect($CFG->wwwroot);
-        } else {
-            redirect("view.php?id=$cm->course");
-        }
-        exit;
-
-    } else if ((isset($_GET['movetosection']) or isset($_GET['moveto'])) and confirm_sesskey()) {  
+    if ((isset($_GET['movetosection']) or isset($_GET['moveto'])) and confirm_sesskey()) {  
         
         if (! $cm = get_record("course_modules", "id", $USER->activitycopy)) {
             error("The copied course module doesn't exist!");
