@@ -267,6 +267,13 @@ function quiz_upgrade($oldversion) {
         modify_database('','CREATE INDEX prefix_quiz_responses_question_idx ON prefix_quiz_responses (question);');
     }
 
+    if ($oldversion < 2004112300) { //try and clean up an old mistake - try and bring us up to what is in postgres7.sql today.
+        execute_sql("ALTER TABLE {$CFG->prefix}quiz_attemptonlast_datasets DROP CONSTRAINT category;",false);
+        execute_sql("ALTER TABLE {$CFG->prefix}quiz_attemptonlast_datasets DROP CONSTRAINT {$CFG->prefix}quiz_attemptonlast_datasets_category_userid;",false);
+        execute_sql("ALTER TABLE {$CFG->prefix}quiz_attemptonlast_datasets DROP CONSTRAINT {$CFG->prefix}quiz_category_userid_unique;",false);
+        modify_database('','ALTER TABLE prefix_quiz_attemptonlast_datasets ADD CONSTRAINT prefix_quiz_category_userid_unique UNIQUE (category,userid);');
+    }
+
     return true;
 }
 
