@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.0.8 (2003010601)
+      // forum.php - created with Moodle 1.0.8 (2003010604)
 
 
 $string['addanewdiscussion'] = "ตั้งกระทู้";
@@ -36,11 +36,12 @@ $string['forumname'] = "ชื่อกระดาน";
 $string['forums'] = "กระดานทั้งหมด";
 $string['forumtype'] = "ประเภทของกระดาน";
 $string['generalforum'] = "กระดานทั่วไป";
-$string['generalforums'] = "กระดานทั่วไปทั้งหมด";
+$string['generalforums'] = "กระดานทั่วไป";
 $string['inforum'] = "ใน \$a";
 $string['intronews'] = "ข่าว และ ประกาศ";
 $string['introsocial'] = "กระดานเสวนา แบบเปิด สามารถคุยกันได้ทุกเรื่อง";
 $string['introteacher'] = "กระดานสำหรับครูเท่านั้น เพื่อปรึกษาเรื่องการเรียนการสอน";
+$string['lastpost'] = "ตอบครั้งสุดท้าย";
 $string['learningforums'] = "กระดานการเรียนการสอน";
 $string['maxtimehaspassed'] = "ขออภัยค่ะ เวลาที่ใช้ในการแก้ไขหมดแล้ว  (\$a) ผ่านไป";
 $string['message'] = "ข้อความ";
@@ -82,6 +83,7 @@ $string['ratings'] = "คะแนนที่ได้";
 $string['ratingssaved'] = "บันทึกคะแนนแล้ว";
 $string['re'] = "Re:";
 $string['readtherest'] = "อ่านที่เหลือทั้งหมด ในหัวข้อนี้";
+$string['replies'] = "ตอบ";
 $string['repliesmany'] = "\$a คำตอบ";
 $string['repliesone'] = "\$a คำตอบ";
 $string['reply'] = "ตอบ";
@@ -91,6 +93,7 @@ $string['searchresults'] = "ผลการค้นหา";
 $string['sendinratings'] = "ส่งคะแนนที่ให้ล่าสุด";
 $string['showsubscribers'] = "แสดงสมาชิกกระดาน";
 $string['singleforum'] = "กระดานหัวข้อเดียวอย่างง่าย";
+$string['startedby'] = "ถาม";
 $string['subject'] = "หัวข้อ";
 $string['subscribe'] = "สมัครเป็นสมาชิกกระดาน";
 $string['subscribed'] = "เป็นสมาชิกเรียบร้อย";
