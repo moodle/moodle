@@ -89,7 +89,7 @@
     print_heading_block(get_string("topicoutline"), "100%", "outlineheadingblock");
     print_spacer(8, 1, true);
 
-    echo "<table class=\"weeklyoutline\" border=\"0\" cellpadding=\"8\" cellspacing=\"0\" width=\"100%\">";
+    echo "<table class=\"topicsoutline\" border=\"0\" cellpadding=\"8\" cellspacing=\"0\" width=\"100%\">";
 
 /// Print Section 0 
 
