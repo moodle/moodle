@@ -92,7 +92,7 @@ function print_recent_selector_form($course, $advancedfilter=0, $selecteduser=0,
                     $activities["section/$mod->section"] = "-------------- $strsection $mod->section --------------";
                 }
                 $section = $mod->section;
-                $mod->name = strip_tags(urldecode($mod->name));
+                $mod->name = strip_tags(format_string(urldecode($mod->name),true));
                 if (strlen($mod->name) > 55) {
                     $mod->name = substr($mod->name, 0, 50)."...";
                 }

@@ -272,7 +272,7 @@
                    echo "<ul><h4>$image " . $activity->content->modfullname .
                         " <a href=\"$CFG->wwwroot/mod/" . $activity->content->modname . "/view.php?" .
                         "id=" . $activity->content->modid . "\" $linkformat>" .
-                        $activity->name . "</a></h4></ul>";
+                        format_string($activity->name,true) . "</a></h4></ul>";
                }
 
             } else {
