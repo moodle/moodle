@@ -3,7 +3,7 @@
 
 
 $string['absent'] = "Ausente";
-$string['accumulative'] = "Acumulativo";
+$string['accumulative'] = "Acumulativa";
 $string['action'] = "Acción";
 $string['addacomment'] = "Añadir un comentario";
 $string['afterdeadline'] = "Después de fecha límite: \$a";
