@@ -3848,5 +3848,145 @@ function print_maintenance_message () {
 }
 
 
+
+/// Some code to print tabs
+
+/// A class for tabs
+class tabobject {
+    var $id;
+    var $link;
+    var $text;
+
+    /// A constructor just because I like constructors
+    function tabobject ($id, $link='', $text='') {
+        $this->id   = $id;
+        $this->link = $link;
+        $this->text = $text;
+    }
+
+    
+    /// a method to look after the messy business of setting up a tab cell
+    /// with all the appropriate classes and things
+    function createtab ($selected=false, $inactive=false, $last=false) {
+        $str  = '';
+        $astr = '';
+        $cstr = '';
+
+    /// The text and anchor for this tab
+        if ($inactive) {
+            $astr .= $this->text;
+        } else {
+            $astr .= '<a href="'.$this->link.'" title="'.$this->text.'">'.$this->text.'</a>';
+        }
+
+    /// There's an IE bug with background images in <a> tags
+    /// so we put a div around so that we can add a background image
+        $astr = '<div class="tablink">'.$astr.'</div>';
+
+    /// Set the class for inactive cells
+        if ($inactive) {
+            $cstr .= ' inactive';
+          
+    /// Set the class for the selected cell
+        } else if ($selected) {
+            $cstr .= ' selected';
+        }
+            
+            
+    /// Are we on the last tab in this row?
+        if ($last) {
+            $cstr .= ' last';
+            $astr = '<span>'.$astr.'</span>';
+        }
+          
+    /// Lets set up the tab cell
+        $str .= '<td';
+        if (!empty($cstr)) {
+            $str .= ' class="'.ltrim($cstr).'"';
+        }
+        $str .= '>';
+        $str .= $astr;
+        $str .= '</td>';
+
+        return $str;
+    }
+
+}
+
+
+
+/**
+ * Returns a string containing a table with tabs inside and formatted with
+ * CSS styles.
+ *
+ * @param array $tabrows An array of rows where each row is an array of tab objects
+ * @param string $selected  The id of the selected tab
+ * @param array $inactive  Ids of inactive tabs
+**/
+function print_tabs($tabrows, $selected=NULL, $inactive=NULL) {
+    global $CFG;
+
+/// Bring the row with the selected tab to the front
+    if (!empty($CFG->tabselectedtofront) and ($selected !== NULL) ) {
+        $found = false;
+        $frontrows = array();
+        $rearrows  = array();
+        foreach ($tabrows as $row) {
+            if ($found) {
+                $rearrows[] = $row;
+            } else {
+                foreach ($row as $tab) {
+                    if ($found) {
+                        continue;
+                    }
+                    $found = ($selected == $tab->id);
+                }
+                $frontrows[] = $row;
+            }
+        }
+        $tabrows = array_merge($rearrows,$frontrows);
+    }
+    
+/// $inactive must be an array
+    if (!is_array($inactive)) {
+        $inactive = array();
+    }
+
+/// A table to encapsulate the tabs    
+    $str = '<table class="tabs" cellspacing="0">';
+    
+/// Cycle through the tab rows
+    foreach ($tabrows as $row) {
+    
+        $str .= '<tr><td>';
+        $str .= '<table class="tabrow" cellspacing="0">';
+        $str .= '<tr>';
+        
+        $numberoftabs = count($row);
+        $currenttab   = 0;
+        $cstr         = '';
+        $astr         = '';
+        
+        
+    /// Cycle through the tabs
+        foreach ($row as $tab) {
+            $currenttab++;
+
+            $str .= $tab->createtab( ($selected == $tab->id), 
+                                     (in_array($tab->id, $inactive)),
+                                     ($currenttab == $numberoftabs) );
+        }
+        
+        $str .= '</tr>';
+        $str .= '</table>';
+        $str .= '</td></tr>';
+        $str .= '</table>';
+    }
+    
+    return $str;
+
+}
+
+
 // vim:autoindent:expandtab:shiftwidth=4:tabstop=4:tw=140:
 ?>
