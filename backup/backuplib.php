@@ -39,7 +39,7 @@
 
         $count_users = 0;
         
-        //Calculate needed users (calling every xxxx_get_participants function)
+        //Calculate needed users (calling every xxxx_get_participants function + scales users)
         $needed_users = backup_get_needed_users($course);
 
         //Calculate enrolled users (students + teachers)
@@ -115,7 +115,8 @@
     }
 
     //Returns every needed user (participant) in a course
-    //It uses the xxxx_get_participants() function.
+    //It uses the xxxx_get_participants() function
+    //plus users needed to backup scales.
     //WARNING: It returns only NEEDED users, not every 
     //   every student and teacher in the course, so it
     //must be merged with backup_get_enrrolled_users !!
@@ -149,6 +150,21 @@
                         }
                     }
                  }            
+            }
+        }
+
+        //Now, add scales users (from site and course scales)
+        //Get users
+        $scaleusers = get_records_sql("SELECT DISTINCT userid,userid
+                                       FROM {$CFG->prefix}scale
+                                       WHERE courseid = '0' or courseid = '$courseid'");
+        //Add scale users to results
+        if ($scaleusers) {
+            foreach ($scaleusers as $scaleuser) {
+                //If userid != 0
+                if ($scaleuser->userid != 0) {
+                    $result[$scaleuser->userid]->id = $scaleuser->userid;
+                }
             }
         }
     
