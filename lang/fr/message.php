@@ -19,7 +19,7 @@ $string['formorethan'] = 'Depuis plus de';
 $string['includeblockedusers'] = 'Inclure les utilisateurs bloqués';
 $string['incomingcontacts'] = 'Contacts arrivant ($a)';
 $string['keywords'] = 'Mots clefs';
-$string['keywordssearchresults'] = 'Résultats de recherche&nbsp;: $a messages trouvés';
+$string['keywordssearchresults'] = 'Résultats de recherche&nbsp;: $a message(s) trouvé(s)';
 $string['maxmessages'] = 'Nombre maximal de messages à afficher dans l\'historique des discussions';
 $string['message'] = 'Message';
 $string['messagehistory'] = 'Historique du message';
@@ -54,6 +54,6 @@ $string['timesent'] = 'Heure d\'envoi';
 $string['unblockcontact'] = 'Débloquer ce contact';
 $string['unreadmessages'] = '$a messages non lus';
 $string['userisblockingyou'] = 'Cet utisateur vous a retiré le droit de lui envoyer des messages';
-$string['userssearchresults'] = 'Résultats de recherche&nbsp;: $a utilisateurs trouvés';
+$string['userssearchresults'] = 'Résultats de recherche&nbsp;: $a utilisateur(s) trouvé(s)';
 
 ?>
