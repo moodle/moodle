@@ -193,10 +193,9 @@
      file (usually called php.ini):</p>
   <blockquote>
 
-<pre>magic_quotes_gpc = 1
-magic_quotes_runtime = 0
+<pre>magic_quotes_gpc = 1    (preferred but not necessary)
+magic_quotes_runtime = 0    (necessary)
 file_uploads = 1
-short_open_tag = 1
 session.auto_start = 0
 session.bug_compat_warn = 0
 </pre>
@@ -217,7 +216,6 @@ DirectoryIndex index.php index.html index.htm
 php_flag magic_quotes_gpc 1
 php_flag magic_quotes_runtime 0
 php_flag file_uploads 1
-php_flag short_open_tag 1
 php_flag session.auto_start 0
 php_flag session.bug_compat_warn 0</pre></blockquote>
      <p>You can also do things like define the maximum size for uploaded files:
