@@ -106,7 +106,7 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
     $display->tstart = gmmktime(0, 0, 0, $m, 1, $y); // This is GMT
     $display->tend = gmmktime(23, 59, 59, $m, $display->maxdays, $y); // GMT
 
-    $startwday = gmdate('w', $display->tstart); // $display->tstart is already GMT, so don't use date(): messes with server's TZ
+    $startwday = dayofweek(1, $m, $y);
 
     // Align the starting weekday to fall in our display range
     // This is simple, not foolproof.
@@ -115,6 +115,7 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
     }
 
     // Get the events matching our criteria. Don't forget to offset the timestamps for the user's TZ!
+    // TODO: usertime() doesn't compensate for DST. Thus the line below is wrong.
     $whereclause = calendar_sql_where(usertime($display->tstart), usertime($display->tend), $users, $groups, $courses);
 
     if($whereclause === false) {
@@ -1070,17 +1071,15 @@ function calendar_edit_event_allowed($event) {
 
     if (isadmin($USER->id)) return true; // Admins are allowed anything
 
-    if ($event->courseid != 0) {
-        // Course event, only editing teachers may... edit :P
-        if(isteacheredit($event->courseid)) {
-            return true;
-        }
-
+    if ($event->courseid != 0 && isteacher($event->courseid)) {
+        return true;
     } else if($event->courseid == 0 && $event->groupid != 0) {
         // Group event
         $group = get_record('groups', 'id', $event->groupid);
-        if($group === false) return false;
-        if(isteacheredit($group->courseid)) {
+        if($group === false) {
+            return false;
+        }
+        if(isteacher($group->courseid)) {
             return true;
         }
 
@@ -1202,7 +1201,8 @@ function calendar_human_readable_dst($preset) {
     $options->activate_weekday   = ($preset->activate_day < 0) ? get_string('day', 'calendar') : get_string($weekdays[$preset->activate_day], 'calendar');
     $options->activate_month     = date('F', mktime(0, 0, 0, $preset->activate_month, 1, 2000));
     $options->offset             = abs($preset->apply_offset);
-    $options->direction          = $preset->apply_offset > 0 ? get_string('timeforward', 'calendar') : get_string('timerewind', 'calendar');
+    //$options->direction          = $preset->apply_offset > 0 ? get_string('timeforward', 'calendar') : get_string('timerewind', 'calendar');
+    $options->direction          = get_string('timeforward', 'calendar');
     $options->deactivate_index   = ($preset->deactivate_index == -1) ? get_string('last', 'calendar') : get_string('nth', 'calendar', $preset->deactivate_index);
     $options->deactivate_weekday = ($preset->deactivate_day < 0) ? get_string('day', 'calendar') : get_string($weekdays[$preset->deactivate_day], 'calendar');
     $options->deactivate_month   = date('F', mktime(0, 0, 0, $preset->deactivate_month, 1, 2000));
