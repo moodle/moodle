@@ -747,13 +747,19 @@ function print_course_admin_links($course, $width=180) {
             }
             $admindata[]="<a href=\"edit.php?id=$course->id\">".get_string("settings")."...</a>";
             $adminicon[]="<img src=\"$pixpath/i/settings.gif\" height=16 width=16 alt=\"\">";
-            if (!$course->teachers) {
-                $course->teachers = get_string("defaultcourseteachers");
+
+            if (iscreator() or !empty($CFG->teacherassignteachers)) {
+                if (!$course->teachers) {
+                    $course->teachers = get_string("defaultcourseteachers");
+                }
+                $admindata[]="<a href=\"teacher.php?id=$course->id\">$course->teachers...</a>";
+                $adminicon[]="<img src=\"$pixpath/i/users.gif\" height=16 width=16 alt=\"\">";
             }
-            $admindata[]="<a href=\"teacher.php?id=$course->id\">$course->teachers...</a>";
-            $adminicon[]="<img src=\"$pixpath/i/users.gif\" height=16 width=16 alt=\"\">";
         }
 
+        if (!$course->teachers) {
+            $course->teachers = get_string("defaultcourseteachers");
+        }
         $admindata[]="<a href=\"student.php?id=$course->id\">$course->students...</a>";
         $adminicon[]="<img src=\"$pixpath/i/users.gif\" height=16 width=16 alt=\"\">";
 
@@ -779,7 +785,6 @@ function print_course_admin_links($course, $width=180) {
         $admindata[]="<a href=\"$CFG->wwwroot/files/index.php?id=$course->id\">".get_string("files")."...</a>";
         $adminicon[]="<img src=\"$pixpath/i/files.gif\" height=16 width=16 alt=\"\">";
 
-    
         $admindata[]="<a href=\"$CFG->wwwroot/doc/view.php?id=$course->id&file=teacher.html\">".get_string("help")."...</a>";
         $adminicon[]="<img src=\"$modpixpath/resource/icon.gif\" height=16 width=16 alt=\"\">";
 

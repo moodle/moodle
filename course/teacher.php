@@ -3,7 +3,7 @@
 
 	require_once("../config.php");
 
-    define("MAX_USERS_PER_PAGE", 30);
+    define("MAX_USERS_PER_PAGE", 40);
 
     require_variable($id);         // course id
     optional_variable($add, "");
@@ -16,7 +16,8 @@
         error("Course ID was incorrect (can't find it)");
     }
 
-    if (!isteacheredit($course->id)) {
+    if (!(isteacheredit($course->id) and iscreator()) and 
+        !(isteacheredit($course->id) and !empty($CFG->teacheraddteachers) ) ) {
         error("You must be an administrator or course creator to use this page.");
     }
 
