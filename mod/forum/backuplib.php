@@ -129,6 +129,7 @@
                 fwrite ($bf,full_tag("NAME",6,false,$for_dis->name));
                 fwrite ($bf,full_tag("FIRSTPOST",6,false,$for_dis->firstpost));
                 fwrite ($bf,full_tag("USERID",6,false,$for_dis->userid));
+                fwrite ($bf,full_tag("GROUPID",6,false,$for_dis->groupid));
                 fwrite ($bf,full_tag("ASSESSED",6,false,$for_dis->assessed));
                 fwrite ($bf,full_tag("TIMEMODIFIED",6,false,$for_dis->timemodified));
                 //Now print posts to xml

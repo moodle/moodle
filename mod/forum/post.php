@@ -138,6 +138,7 @@
         $post->parent = 0;
         $post->subject = "";
         $post->userid = $USER->id;
+        $post->groupid = get_current_group($course->id);
         $post->message = "";
         $post->format = $defaultformat;
 
@@ -161,6 +162,15 @@
         if (! forum_user_can_post($forum)) {
             error("Sorry, but you can not post in this forum.");
         }
+
+        if ($cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
+            if (groupmode($course, $cm) and !isteacheredit($course->id)) {   // Make sure user can post here
+                if (mygroupid($course->id) != $discussion->groupid) {
+                    error("Sorry, but you can not post in this discussion.");
+                }
+            }
+        }
+
         // Load up the $post variable.
 
         $post->course  = $course->id;

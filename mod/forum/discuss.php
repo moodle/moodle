@@ -102,17 +102,10 @@
     $groupmode = groupmode($course, $cm);
 
     if ($groupmode and !isteacheredit($course->id)) {   // Groups must be kept separate
-        if (!$toppost = get_record("forum_posts", "id", $discussion->firstpost)) {
-            error("Could not find the top post of the discussion");
-        }
-        if (!$group = user_group($course->id, $toppost->userid)) {   // Find the topic's group
-            error("Could not find the appropriate group of this discussion");
-        }
-
         if ($groupmode == SEPARATEGROUPS) {
             require_login();
 
-            if (mygroupid($course->id) == $group->id) {
+            if (mygroupid($course->id) == $discussion->groupid) {
                 $canreply = true;
             } else {
                 print_heading("Sorry, you can't see this discussion because you are not in this group");
@@ -121,9 +114,7 @@
             }
 
         } else if ($groupmode == VISIBLEGROUPS) {
-            if (mygroupid($course->id) == $group->id) {
-                $canreply = true;
-            }
+            $canreply = (mygroupid($course->id) == $discussion->groupid);
         }
     }
 

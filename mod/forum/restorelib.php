@@ -200,6 +200,7 @@
             $discussion->name = backup_todb($dis_info['#']['NAME']['0']['#']);
             $discussion->firstpost = backup_todb($dis_info['#']['FIRSTPOST']['0']['#']);
             $discussion->userid = backup_todb($dis_info['#']['USERID']['0']['#']);
+            $discussion->groupid = backup_todb($dis_info['#']['GROUPID']['0']['#']);
             $discussion->assessed = backup_todb($dis_info['#']['ASSESSED']['0']['#']);
             $discussion->timemodified = backup_todb($dis_info['#']['TIMEMODIFIED']['0']['#']);
 

@@ -897,6 +897,11 @@ function forum_get_discussions($forum="0", $forumsort="d.timemodified DESC",
     } else {
         $userselect = "";
     }
+    if ($currentgroup) {
+        $groupselect = " AND d.groupid = '$currentgroup' ";
+    } else  {
+        $groupselect = "";
+    }
     if (empty($forumsort)) {
         $forumsort = "d.timemodified DESC";
     }
@@ -905,18 +910,11 @@ function forum_get_discussions($forum="0", $forumsort="d.timemodified DESC",
     } else {
         $postdata = "p.*";
     }
-    if ($currentgroup) {
-        $grouptable = ", {$CFG->prefix}groups_members gm ";
-        $groupselect = " AND gm.groupid = '$currentgroup' AND u.id = gm.userid ";
-    } else  {
-        $grouptable = "";
-        $groupselect = "";
-    }
 
     return get_records_sql("SELECT $postdata, d.timemodified, u.firstname, u.lastname, u.email, u.picture
                               FROM {$CFG->prefix}forum_discussions d, 
                                    {$CFG->prefix}forum_posts p,
-                                   {$CFG->prefix}user u $grouptable
+                                   {$CFG->prefix}user u 
                              WHERE d.forum = '$forum' 
                                AND p.discussion = d.id 
                                AND p.parent = 0 
@@ -1144,12 +1142,12 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
     if ($ownpost) {
         $output .= "<a href=\"$CFG->wwwroot/mod/forum/post.php?delete=$post->id\">".get_string("delete", "forum")."</a>";
         if ($reply) {
-            $output .= " | <a target=\"_blank\" href=\"$CFG->wwwroot/mod/forum/post.php?reply=$post->id\">".get_string("reply", "forum")."</a>";
+            $output .= " | <a target=\"_blank\" href=\"$CFG->wwwroot/mod/forum/post.php?reply=$post->id\">".get_string("replyforum", "forum")."</a>";
         }
         $output .= "&nbsp;&nbsp;";
     } else {
         if ($reply) {
-            $output .= "<a target=\"_blank\" href=\"$CFG->wwwroot/mod/forum/post.php?reply=$post->id\">".get_string("reply", "forum")."</a>&nbsp;&nbsp;";
+            $output .= "<a target=\"_blank\" href=\"$CFG->wwwroot/mod/forum/post.php?reply=$post->id\">".get_string("replyforum", "forum")."</a>&nbsp;&nbsp;";
         }
     }
 
@@ -1840,7 +1838,8 @@ function forum_add_discussion($discussion) {
         set_field("forum_posts", "attachment", $post->attachment, "id", $post->id); //ignore errors
     }
 
-    // Now do the real module entry
+    // Now do the main entry for the discussion, 
+    // linking to this first post
 
     $discussion->firstpost    = $post->id;
     $discussion->timemodified = $timenow;
