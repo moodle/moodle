@@ -56,6 +56,7 @@ $string['coursetestmanager'] = 'Course Test Manager format';
 $string['createmultiple'] = 'Create multiple questions';
 $string['createnewquestion'] = 'Create new question';
 $string['custom'] = 'Custom format';
+$string['datasetdefinitions'] = 'Reusable dataset definitions for category $a';
 $string['datasetnumber'] = 'Number';
 $string['daysavailable'] = 'Days available';
 $string['decimals'] = ' with $a ';
@@ -96,6 +97,7 @@ $string['exportnameformat'] = '%%Y%%m%%d-%%H%%M';
 $string['exportquestions'] = 'Export questions to file';
 $string['false'] = 'False';
 $string['feedback'] = 'Feedback';
+$string['file'] = 'File';
 $string['fileformat'] = 'File format';
 $string['filloutoneanswer'] = 'You must fill out at least one possible answer.  Answers left blank will not be used.';
 $string['filloutthreequestions'] = 'You must fill out at least three questions.  Questions left blank will not be used.';
@@ -122,6 +124,7 @@ $string['importquestions'] = 'Import questions from file';
 $string['indivresp'] = 'Responses of Individuals to Each Item';
 $string['introduction'] = 'Introduction';
 $string['itemanal'] = 'Item Response Analysis';
+$string['itemdefinition'] = 'Definition';
 $string['keptcategory'] = 'a '
         // The use of ) and ( below should really not be necessary but
         // because of some sort of PHP bug it is better to keep'em
@@ -136,7 +139,9 @@ $string['keptlocal'] = 'a '
     .' from the same question private set of '
     .'".(1==$a ? \'literals\' :(2==$a ? \'files\' : (3==$a ? \'links\' : $a)))."'
     .' as before';
+$string['link'] = 'Link';
 $string['listitems'] = 'Listing of Items in Quiz';
+$string['literal'] = 'Literal';
 $string['loguniform'] = 'digits, from a loguniform distribution';
 $string['marks'] = 'Marks';
 $string['match'] = 'Matching';
