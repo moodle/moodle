@@ -4,11 +4,11 @@ require_once($CFG->libdir.'/lexer.php');
 
 // Constants for the various types of tokens
 
-define("T_USER","0");
-define("T_META","1");
-define("T_EXACT","2");
-define("T_NEGATE","3");
-define("T_STRING","4");
+define("TOKEN_USER","0");
+define("TOKEN_META","1");
+define("TOKEN_EXACT","2");
+define("TOKEN_NEGATE","3");
+define("TOKEN_STRING","4");
 
 // Class to hold token/value pairs after they're parsed.
 
@@ -120,89 +120,92 @@ class search_lexer extends Lexer{
 // one exception being getParseArray() which returns the result.
 
 class search_parser {
-  var $tokens;
-
- 
- // This function is called by the code that's interested in the result of the parse operation.
-  function get_parsed_array(){
-    return $this->tokens;
-  }
-
-  /*
-   * Functions below this are part of the state machine for the parse
-   * operation and should not be called directly.
-   */
-
-  // Base state. No output emitted.
-  function accept() {
-    return true;
-  }
-  
- 
-  // State for handling user:foo constructs. Potentially emits a token.
-  function inusername($content){
-    if(strlen($content) < 6) // State exit or missing parameter.
-      return true;
-    // Strip off the user: part and add the reminder to the parsed token array
-    $param = trim(substr($content,5));
-    $this->tokens[] = new search_token(T_USER,$param);
-    return true;
-  }
+    var $tokens;
 
 
-  // State for handling meta:foo constructs. Potentially emits a token.
-  function inmeta($content){   
-    if(strlen($content) < 9) // Missing parameter.
-      return true;
-    // Strip off the meta: part and add the reminder to the parsed token array.
-    $param = trim(substr($content,8));
-    $this->tokens[] = new search_token(T_META,$param);
-    return true;
-  }
+    // This function is called by the code that's interested in the result of the parse operation.
+    function get_parsed_array(){
+        return $this->tokens;
+    }
 
-  
-  // State entered when we've seen a required string (+foo). Potentially
-  // emits a token.
-  function inrequired($content){
-    if(strlen($content) < 2) // State exit or missing parameter, don't emit.
-      return true;
-    // Strip off the + sign and add the reminder to the parsed token array.
-    $this->tokens[] = new search_token(T_EXACT,substr($content,1));
-    return true;
+    /*
+     * Functions below this are part of the state machine for the parse
+     * operation and should not be called directly.
+     */
+
+    // Base state. No output emitted.
+    function accept() {
+        return true;
+    }
+
+
+    // State for handling user:foo constructs. Potentially emits a token.
+    function inusername($content){
+        if (strlen($content) < 6) { // State exit or missing parameter.
+            return true;
+        }
+        // Strip off the user: part and add the reminder to the parsed token array
+        $param = trim(substr($content,5));
+        $this->tokens[] = new search_token(TOKEN_USER,$param);
+        return true;
+    }
+
+
+    // State for handling meta:foo constructs. Potentially emits a token.
+    function inmeta($content){   
+        if (strlen($content) < 9) { // Missing parameter.
+            return true;
+        }
+        // Strip off the meta: part and add the reminder to the parsed token array.
+        $param = trim(substr($content,8));
+        $this->tokens[] = new search_token(TOKEN_META,$param);
+        return true;
+    }
+
+
+    // State entered when we've seen a required string (+foo). Potentially
+    // emits a token.
+    function inrequired($content){
+        if (strlen($content) < 2) { // State exit or missing parameter, don't emit.
+            return true;
+        }
+        // Strip off the + sign and add the reminder to the parsed token array.
+        $this->tokens[] = new search_token(TOKEN_EXACT,substr($content,1));
+        return true;
     } 
- 
-  // State entered when we've seen an excluded string (-foo). Potentially 
-  // emits a token.
-  function inexcluded($content){
-    if(strlen($content) < 2) // State exit or missing parameter.
-      return true;
-    // Strip off the -sign and add the reminder to the parsed token array.
-    $this->tokens[] = new search_token(T_NEGATE,substr($content,1));
-    return true;
-  } 
+
+    // State entered when we've seen an excluded string (-foo). Potentially 
+    // emits a token.
+    function inexcluded($content){
+        if (strlen($content) < 2) { // State exit or missing parameter.
+            return true;
+        }
+        // Strip off the -sign and add the reminder to the parsed token array.
+        $this->tokens[] = new search_token(TOKEN_NEGATE,substr($content,1));
+        return true;
+    } 
 
 
-  // State entered when we've seen a quoted string. Potentially emits a token.
-  function inquotedstring($content){
-    if(strlen($content) < 2) // State exit or missing parameter.
-      return true;
-    // Strip off the opening quote and add the reminder to the parsed token array.
-    $this->tokens[] = new search_token(T_STRING,substr($content,1));
-    return true;
-  } 
+    // State entered when we've seen a quoted string. Potentially emits a token.
+    function inquotedstring($content){
+        if (strlen($content) < 2) { // State exit or missing parameter.
+            return true;
+        }
+        // Strip off the opening quote and add the reminder to the parsed token array.
+        $this->tokens[] = new search_token(TOKEN_STRING,substr($content,1));
+        return true;
+    } 
 
-  // State entered when we've seen an ordinary, non-quoted word. Potentially
-  // emits a token.
-  function plainstring($content){
-    if(ctype_space($content)) // State exit
-      return true;
-    // Add the string to the parsed token array.
-    $this->tokens[] = new search_token(T_STRING,$content);
-    return true;
-  } 
-
-
-
+    // State entered when we've seen an ordinary, non-quoted word. Potentially
+    // emits a token.
+    function plainstring($content){
+        if (ctype_space($content)) { // State exit
+            return true;
+        }
+        // Add the string to the parsed token array.
+        $this->tokens[] = new search_token(TOKEN_STRING,$content);
+        return true;
+    } 
 }
 
 
@@ -213,9 +216,11 @@ class search_parser {
 // search_lexer/search_parser combination. 
 // Other fields are database table names to search.
 
-function search_generate_SQL($parsetree,$datafield,$metafield,$mainidfield,$useridfield,$userfirstnamefield,$userlastnamefield){
-  global $CFG;
- if ($CFG->dbtype == "postgres7") {
+function search_generate_SQL($parsetree, $datafield, $metafield, $mainidfield, $useridfield,
+                             $userfirstnamefield, $userlastnamefield) {
+    global $CFG;
+
+    if ($CFG->dbtype == "postgres7") {
         $LIKE = "ILIKE";   // case-insensitive
         $NOTLIKE = "NOT ILIKE";   // case-insensitive
         $REGEXP = "~*";
@@ -227,35 +232,45 @@ function search_generate_SQL($parsetree,$datafield,$metafield,$mainidfield,$user
         $NOTREGEXP = "NOT REGEXP";
     }
 
-  $ntokens = count($parsetree);
-  if($ntokens == 0)
-    return "";
+    $ntokens = count($parsetree);
+    if ($ntokens == 0) {
+        return "";
+    }
 
-  for($i = 0; $i < $ntokens; $i++){
-    if($i > 0) // We have more than one clause, need to tack on AND
-      $SQLString .= " AND ";
-     
-    $type = $parsetree[$i]->getType();
-    $value = $parsetree[$i]->getValue();
-    switch($type){
-    case T_STRING  : $SQLString .= "(($datafield $LIKE '%$value%') OR ($metafield $LIKE '%$value%') )";
-      break;
-    case T_EXACT: 
-      $SQLString .= "(($datafield $REGEXP '[[:<:]]".$value."[[:>:]]') OR ($metafield $REGEXP '[[:<:]]".$value."[[:>:]]'))";
-      break; 
-    case T_META  : if($metafield != "")
-      $SQLString .= "($metafield $LIKE '%$value%')";
-      break;
-    case T_USER  : $SQLString .= "(($mainidfield = $useridfield) AND (($userfirstnamefield $LIKE '%$value%') OR ($userlastnamefield $LIKE '%$value%')))";
-      break; 
-    case T_NEGATE: $SQLString .= "(NOT (($datafield  $LIKE '%$value%') OR ($metafield  $LIKE '%$value%')))";
-      break; 
-    default:
-      return "";
-	
+    $SQLString = '';
+
+    for ($i=0; $i<$ntokens; $i++){
+        if ($i > 0) {// We have more than one clause, need to tack on AND
+            $SQLString .= ' AND ';
+        }
+
+        $type = $parsetree[$i]->getType();
+        $value = $parsetree[$i]->getValue();
+
+        switch($type){
+            case TOKEN_STRING: 
+                $SQLString .= "(($datafield $LIKE '%$value%') OR ($metafield $LIKE '%$value%') )";
+                break;
+            case TOKEN_EXACT: 
+                $SQLString .= "(($datafield $REGEXP '[[:<:]]".$value."[[:>:]]') OR ($metafield $REGEXP '[[:<:]]".$value."[[:>:]]'))";
+                break; 
+            case TOKEN_META: 
+                if ($metafield != '') {
+                    $SQLString .= "($metafield $LIKE '%$value%')";
+                }
+                break;
+            case TOKEN_USER: 
+                $SQLString .= "(($mainidfield = $useridfield) AND (($userfirstnamefield $LIKE '%$value%') OR ($userlastnamefield $LIKE '%$value%')))";
+                break; 
+            case TOKEN_NEGATE: 
+                $SQLString .= "(NOT (($datafield  $LIKE '%$value%') OR ($metafield  $LIKE '%$value%')))";
+                break; 
+            default:
+                return '';
+
+        } 
     } 
-  } 
-  return $SQLString;
+    return $SQLString;
 }
 
 
