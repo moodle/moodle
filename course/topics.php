@@ -148,7 +148,9 @@
             $thissection->course = $course->id;   // Create a new section structure
             $thissection->section = $section;
             $thissection->summary = "";
-            $thissection->id = insert_record("course_sections", $thissection);
+            if (!$thissection->id = insert_record("course_sections", $thissection)) {
+                notify("Error inserting new topic!");
+            }
         }
 
         if (isediting($course->id)) {
