@@ -96,12 +96,12 @@
                  $subtext = get_string("subscribe", "forum");
              }
              $headertext = "<TABLE BORDER=0 WIDTH=100% CELLPADDING=0 CELLSPACING=0><TR>
-                            <TD>".get_string("sitenews")."</TD>
+                            <TD>$newsforum->name</TD>
                             <TD ALIGN=RIGHT><FONT SIZE=1>
                             <A HREF=\"mod/forum/subscribe.php?id=$newsforum->id\">$subtext</A>
                             </TD></TR></TABLE>";
          } else {
-             $headertext = get_string("sitenews");
+             $headertext = $newsforum->name;
          }
          print_heading_block($headertext);
          print_spacer(8,1);
