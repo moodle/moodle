@@ -95,7 +95,7 @@
                         $first = false;
                         $somethingfound = true;
                     }
-                    echo "$"."string[$key] = \"$value\";<BR>";
+                    echo "$"."string['$key'] = \"$value\";<BR>";
                 }
             }
         }
@@ -261,7 +261,9 @@ function lang_save_file($path, $file, $strings) {
 
     foreach ($strings as $key => $value) {
         list($id, $stringname) = explode("-",$key);
-        $value = str_replace("\\","",$value);               // Delete all slashes
+        if ($CFG->lang != "zh_hk") {  // Some MB languages include backslash bytes
+            $value = str_replace("\\","",$value);           // Delete all slashes
+        }
         $value = str_replace("$"."a", "\\$"."a", $value);   // Add slashes for $a
         $value = str_replace("\"", "\\\"", $value);         // Add slashes for "
         $value = str_replace("%","%%",$value);              // Escape % characters
