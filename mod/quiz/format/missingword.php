@@ -1,4 +1,6 @@
 <?PHP  // $Id$ 
+/// Modified by Tom Robb 12 June 2003 to include percentage and comment insertion
+/// facility.
 
 ////////////////////////////////////////////////////////////////////////////
 /// MISSING WORD FORMAT
@@ -13,9 +15,16 @@
 /// Each answer is separated with a tilde ~, and the correct answer is 
 /// prefixed with an equals sign =
 ///
+/// Percentage weights can be included by following the tilde with the
+/// desired percent.  Comments can be included for each choice by following
+/// the comment with a hash mark ("#") and the comment.  Example:
+///
+///    This is {=the best answer#comment on the best answer ~75%a good
+///    answer#comment on the good answer ~a wrong one#comment on the bad answer}
+///
 ////////////////////////////////////////////////////////////////////////////
 
-require("default.php");
+require("./default.php");
 
 class quiz_file_format extends quiz_default_format {
 
@@ -25,7 +34,8 @@ class quiz_file_format extends quiz_default_format {
     /// object suitable for processing and insertion into Moodle.
 
         $question = NULL;
-
+        ///$comment added by T Robb
+        $comment = NULL;
         $text = implode($lines, " ");
 
         /// Find answer section
@@ -92,16 +102,48 @@ class quiz_file_format extends quiz_default_format {
             default:
                 $question->qtype = MULTICHOICE;
 
+                #$answers = swapshuffle($answers); 
                 foreach ($answers as $key => $answer) {
                     $answer = trim($answer);
+
+                    // Tom's addition starts here
+                    $answeight = 0;
+                    if (strspn($answer,"1234567890%") > 0){
+                        //Make sure that the percent sign is the last in the span
+                        if (strpos($answer,"%") == strspn($answer,"1234567890%")) {
+                            $answeight0 = substr($answer,0,strspn($answer,"1234567890%"));
+                            $answeight = round(($answeight0/100),2);
+                            $answer = substr($answer,(strspn($answer,"1234567890%")));
+                        }
+                    } 
+                    if ($answer[0] == "="){
+                        $answeight = 1;
+                    }
+                    //remove the protective underscore for leading numbers in answers
+                    if ($answer[0] == "_"){
+                        $answer = substr($answer, 1);
+                    }
+                    $answer = trim($answer);
+
+                    if (strpos($answer,"#") > 0){
+                        $hashpos = strpos($answer,"#");
+                        $comment = addslashes(substr(($answer),$hashpos+1));
+                        $answer  = substr($answer,0,$hashpos);
+                    } else {
+                        $comment = "";
+                    }
+                    // End of Tom's addition
+
                     if ($answer[0] == "=") {
-                        $question->fraction[$key] = 1;
+#                       $question->fraction[$key] = 1;
+                        $question->fraction[$key] = $answeight;
                         $answer = substr($answer, 1);
                     } else {
-                        $question->fraction[$key] = 0;
+#                       $question->fraction[$key] = 0;
+                        $question->fraction[$key] = $answeight;
                     }
                     $question->answer[$key]   = addslashes($answer);
-                    $question->feedback[$key] = "";
+                    $question->feedback[$key] = $comment;
                 }
     
                 $question->defaultgrade = 1; 
@@ -110,7 +152,6 @@ class quiz_file_format extends quiz_default_format {
                 return $question;
         }
     }
-
 }
 
 ?>
