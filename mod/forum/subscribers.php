@@ -51,6 +51,8 @@
             echo "$user->firstname $user->lastname";
             echo "</TD><TD BGCOLOR=\"$THEME->cellcontent\">";
             echo "$user->email";
+            echo "</TD><TD>";
+            echo "<FONT SIZE=1><A HREF=\"subscribe.php?id=$forum->id&user=$user->id\">unsubscribe</A></FONT>";
             echo "</TD></TR>";
         }
         echo "</TABLE>";

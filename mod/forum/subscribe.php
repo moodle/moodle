@@ -7,6 +7,7 @@
 
     require_variable($id);      // The forum to subscribe or unsubscribe to
     optional_variable($force);  // Force everyone to be subscribed to this forum?
+    optional_variable($user);  // Force everyone to be subscribed to this forum?
 
     if (isguest()) {
         error("Guests are not allowed to subscribe to posts.", $HTTP_REFERER);
@@ -18,6 +19,17 @@
 
     if (! $course = get_record("course", "id", $forum->course)) {
         error("Forum doesn't belong to a course!");
+    }
+
+    if ($user) {
+        if (!isteacher($course->id)) {
+            error("Only teachers can subscribe/unsubscribe other people!");
+        }
+        if (! $user = get_record("user", "id", $user)) {
+            error("User ID was incorrect");
+        }
+    } else {
+        $user = $USER;
     }
 
     if ($course->category) {
@@ -48,18 +60,21 @@
         redirect($returnto, get_string("everyoneissubscribed", "forum"), 1);
     }
 
-    if ( forum_is_subscribed($USER->id, $forum->id) ) {
-        if (forum_unsubscribe($USER->id, $forum->id) ) {
+    $info->name  = "$user->firstname $user->lastname";
+    $info->forum = $forum->name;
+
+    if ( forum_is_subscribed($user->id, $forum->id) ) {
+        if (forum_unsubscribe($user->id, $forum->id) ) {
             add_to_log($course->id, "forum", "unsubscribe", "view.php?f=$forum->id", "$forum->id");
-            redirect($returnto, get_string("nownotsubscribed", "forum", "$forum->name"), 1);
+            redirect($returnto, get_string("nownotsubscribed", "forum", $info), 1);
         } else {
             error("Could not unsubscribe you from that forum", "$HTTP_REFERER");
         }
         
     } else { // subscribe
-        if (forum_subscribe($USER->id, $forum->id) ) {
+        if (forum_subscribe($user->id, $forum->id) ) {
             add_to_log($course->id, "forum", "subscribe", "view.php?f=$forum->id", "$forum->id");
-            redirect($returnto, get_string("nowsubscribed", "forum", "$forum->name"), 1);
+            redirect($returnto, get_string("nowsubscribed", "forum", $info), 1);
         } else {
             error("Could not subscribe you to that forum", "$HTTP_REFERER");
         }
