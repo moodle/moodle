@@ -702,7 +702,7 @@ HTMLArea.prototype.generate = function () {
 
     if (HTMLArea.is_ie) {  // http://moodle.org/mod/forum/discuss.php?d=8555
         // tricky! set src to local url to turn off SSL security alert
-        iframe.src = this.config.popupURL+"blank.html";
+        iframe.src = _editor_url + this.config.popupURL+"blank.html";
     }
 
     htmlarea.appendChild(iframe);
