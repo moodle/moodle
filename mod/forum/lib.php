@@ -420,12 +420,16 @@ function forum_search_posts($search, $courseid, $page=0, $recordsperpage=50) {
         $notteacherforum = "";
     }
 
-    if ($CFG->dbtype == "mysql") {
-        $limit = "LIMIT $page,$recordsperpage";
-    } else {
-        $limit = "LIMIT $recordsperpage,$page";
+    switch ($CFG->dbtype) {
+        case "mysql":
+             $limit = "LIMIT $page,$recordsperpage";
+             break;
+        case "postgres7":
+             $limit = "LIMIT $recordsperpage OFFSET ".($page * $recordsperpage);
+             break;
+        default: 
+             $limit = "LIMIT $recordsperpage,$page";
     }
-
 
     return get_records_sql("SELECT p.*,u.firstname,u.lastname,u.email,u.picture
                             FROM {$CFG->prefix}forum_posts p,  
