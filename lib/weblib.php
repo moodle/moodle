@@ -1188,7 +1188,7 @@ function notice ($message, $link="") {
     }
 
     echo "<br>";
-    print_simple_box($message, "center", "50%", "$THEME->cellheading", "", "noticebox");
+    print_simple_box($message, "center", "50%", "$THEME->cellheading", "20", "noticebox");
     print_heading("<a href=\"$link\">".get_string("continue")."</a>");
     print_footer(get_site());
     die;
