@@ -78,6 +78,7 @@
     # Check for dangerous events (hacking) !
     if(in_array($action,array("removepages","strippages","revertpages"))) {
       if(!($wiki->wtype=="student" || isteacher($course->id))) {
+        add_to_log($course->id, "wiki", "hack", "", $wiki->name.": Tried to trick admin.php with $action.");
         error("Hack attack detected !");
       }          
     }
@@ -131,7 +132,26 @@
     if ($form = data_submitted()) {
       check_for_restricted_user($USER->username, "$CFG->wwwroot/course/view.php?id=$course->id");
       /// Moodle Log
-      add_to_log($course->id, "wiki", $action, "admin.php?id=$id");
+      /// Get additional info
+      $addloginfo="";
+      switch($action) {
+        case "removepages": 
+          $addloginfo=@join(", ", $form->pagestodelete);
+        break; 
+        case "strippages":
+          $addloginfo=@join(", ", $form->pagestostrip);
+        break;
+        case "checklinks":
+          $addloginfo=$form->pagetocheck;
+        break;
+        case "setpageflags":
+          // No additional info
+        break;
+        case "revertpages":
+          // No additional info
+        break;
+      }
+      add_to_log($course->id, "wiki", $action, "admin.php?action=$action&userid=$userid&groupid=$groupid&id=$id", $wiki->name.($addloginfo?" ".$addloginfo:""));
       $link="admin.php?action=$action&userid=$userid&groupid=$groupid&id=$id&wikipage=$wikipage";            
       switch($action) {
         case "removepages": 

@@ -230,7 +230,8 @@ function ewiki_page_wiki_dump_send($exportbinaries=0, $exportformats=0, $withvir
       if(isteacher($course->id)) {
         $exportdir=$CFG->dataroot."/".$course->id."/".$exportdestinations;
       } else {
-        die("Hack attack identified !!!");
+        add_to_log($course->id, "wiki", "hack", "", $wiki->name.": Tried to export a wiki as non-teacher into $exportdestinations.");
+        error("You are not a teacher !");
       }
     } else {
         $exportbasedir=tempnam("/tmp","WIKIEXPORT");

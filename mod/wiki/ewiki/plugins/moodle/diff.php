@@ -74,15 +74,27 @@
        }
        $i2 = $i;
        while ($rm = $diff0[$i2++]) {          
-          $o .= "<b>-</b><font color=\"#990000\"><tt>$rm</tt></font><br>\n";
+          if($wiki->htmlmode == 2) {
+            $o .= "<br><b>-</b><font color=\"#990000\">$rm</font><br>\n";
+          } else {
+            $o .= "<b>-</b><font color=\"#990000\"><tt>$rm</tt></font><br>\n";
+          }
           unset($diff0[$i2-1]);
        }
 
        if (in_array($line, $diff2)) {
-          $o .= "<b>+</b><font color=\"#009900\"> <tt>$line</tt></font><br>\n";
+          if($wiki->htmlmode == 2) {
+            $o .= "<br><b>+</b><font color=\"#009900\">$line</font>\n";
+          } else {
+            $o .= "<b>+</b><font color=\"#009900\"><tt>$line</tt></font><br>\n";
+          }
        }
        else {
-          $o .= "&nbsp; $line<br>\n";
+          if($wiki->htmlmode == 2) {
+            $o .= "$line\n";
+          } else {
+            $o .= "&nbsp; $line<br>\n";
+          }
        }
 
     }
