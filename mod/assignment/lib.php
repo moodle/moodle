@@ -384,7 +384,7 @@ function assignment_scale_used ($assignmentid,$scaleid) {
 
     $rec = get_record("assignment","id","$assignmentid","grade","-$scaleid");
 
-    if (!empty($rec)) {
+    if (!empty($rec) && !empty($scaleid)) {
         $return = true;
     }
 

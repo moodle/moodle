@@ -369,7 +369,7 @@ function glossary_scale_used ($glossaryid,$scaleid) {
 
     $rec = get_record("glossary","id","$glossaryid","scale","-$scaleid");
 
-    if (!empty($rec)) {
+    if (!empty($rec)  && !empty($scaleid)) {
         $return = true;               
     }                            
     

@@ -299,7 +299,7 @@ function journal_scale_used ($journalid,$scaleid) {
                                  
     $rec = get_record("journal","id","$journalid","assessed","-$scaleid");
 
-    if (!empty($rec)) {
+    if (!empty($rec) && !empty($scaleid)) {
         $return = true;
     }
 

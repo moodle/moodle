@@ -2397,6 +2397,51 @@ function make_grades_menu($gradingtype) {
     return $grades;
 }
 
+function course_scale_used($courseid,$scaleid) {
+////This function returns the nummber of activities
+////using scaleid in a courseid
+
+    global $CFG;
+    
+    $return = 0;
+
+    if (!empty($scaleid)) {
+        if ($cms = get_course_mods($courseid)) {
+            foreach ($cms as $cm) {
+                //Check cm->name/lib.php exists
+                if (file_exists($CFG->dirroot.'/mod/'.$cm->modname.'/lib.php')) {
+                    include_once($CFG->dirroot.'/mod/'.$cm->modname.'/lib.php');
+                    $function_name = $cm->modname.'_scale_used';
+                    if (function_exists($function_name)) {
+                        if ($function_name($cm->instance,$scaleid)) {
+                            $return++;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return $return;
+}
+
+function site_scale_used($scaleid) {
+////This function returns the nummber of activities 
+////using scaleid in the entire site
+
+    global $CFG;
+
+    $return = 0;
+
+    if (!empty($scaleid)) {
+        if ($courses = get_courses()) {
+            foreach ($courses as $course) {
+                $return += course_scale_used($course->id,$scaleid);
+            }
+        }
+    }
+    return $return;
+}
+
 function make_unique_id_code($extra="") {
 
     $hostname = "unknownhost";

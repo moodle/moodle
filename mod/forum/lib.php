@@ -591,7 +591,7 @@ function forum_scale_used ($forumid,$scaleid) {
                                  
     $rec = get_record("forum","id","$forumid","scale","-$scaleid");
         
-    if (!empty($rec)) { 
+    if (!empty($rec)  && !empty($scaleid)) { 
         $return = true;
     }
     
