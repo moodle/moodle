@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // workshop.php - created with Moodle 1.0.9 Beta 1 + (2003052300)
+      // workshop.php - created with Moodle 1.1 development (2003072101)
 
 
 $string['accumulative'] = "累積方式";
@@ -71,6 +71,8 @@ $string['modulename'] = "ワークショップ";
 $string['modulenameplural'] = "ワークショップ";
 $string['movedtophase'] = "段階 \$a に移動";
 $string['moveonto'] = "移動";
+$string['newassessments'] = "新しいワークショップの評価";
+$string['newsubmissions'] = "新しいワークショップの提出物";
 $string['noassessmentsdone'] = "評価されていません";
 $string['nosubmissionsavailableforassessment'] = "評価すべき提出物はありません";
 $string['notavailable'] = "利用できません";

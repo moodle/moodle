@@ -1,13 +1,15 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.1 development (2003070400)
+      // moodle.php - created with Moodle 1.1 development (2003072101)
 
 
 $string['action'] = "操作";
 $string['activities'] = "活動";
 $string['activity'] = "活動";
+$string['activityclipboard'] = "この活動を移動する:<b>\$a</b>";
 $string['activityiscurrentlyhidden'] = "申し訳ございません、この活動は現在非表示にされています";
 $string['activitymodule'] = "活動モジュール";
 $string['activityreport'] = "活動報告";
+$string['activityselect'] = "移動するためにこの活動を選択する";
 $string['activitysince'] = "\$a 以来の活動";
 $string['add'] = "追加";
 $string['addadmin'] = "管理者を追加";
@@ -43,6 +45,7 @@ $string['authentication'] = "認証オプション";
 $string['autosubscribe'] = "フォーラムに自動登録";
 $string['autosubscribeno'] = "いいえ：フォーラムに自動登録しません";
 $string['autosubscribeyes'] = "はい：投稿した場合、フォーラムに登録します";
+$string['availability'] = "利用可能";
 $string['availablecourses'] = "コース一覧";
 $string['backup'] = "バックアップ";
 $string['backupdate'] = "バックアップデータ";
@@ -110,6 +113,8 @@ $string['cookiesenabled'] = "ブラウザのクッキーの設定を有効にしてください";
 $string['copyrightnotice'] = "著作権表示";
 $string['country'] = "国";
 $string['course'] = "コース";
+$string['courseavailable'] = "このコースは学生が利用出来ます";
+$string['courseavailablenot'] = "このコースは学生は利用出来ません";
 $string['coursebackup'] = "コースバックアップ";
 $string['coursefiles'] = "コースファイル";
 $string['courseformats'] = "コースフォーマット";
@@ -390,8 +395,11 @@ $string['modulesetup'] = "Moodleのテーブルを設定する";
 $string['modulesuccess'] = "\$a テーブルが正常に設定されました";
 $string['moodleversion'] = "Moodleバージョン";
 $string['mostrecently'] = "直近の";
+$string['move'] = "移動";
 $string['movedown'] = "下へ";
 $string['movefilestohere'] = "ファイルをここに移動する";
+$string['movefull'] = "\$a をこの場所に移動する";
+$string['movehere'] = "ここに移動する";
 $string['movetoanotherfolder'] = "他のフォルダへ移動する";
 $string['moveup'] = "上へ";
 $string['mustconfirm'] = "ログインを確認してください";
