@@ -4,7 +4,7 @@
     //    course: the course id
     //    user: the user id
     //    name: the name of the module (forum...)
-    //    id: the id of the module (forumid...)
+    //    id: the id (instance) of the module (forumid...)
     //If the course has a password or it doesn't
     //allow guest access then the user field is 
     //required to see that the user is enrolled
@@ -45,16 +45,34 @@
     }
 
     $courseid = (integer)$args[0];
+    $userid = (integer)$args[1];
+    $modulename = $args[2];
+    $instance = (integer)$args[3];
+
     if (! $course = get_record("course", "id", $courseid)) {
         $error = true;
     }
 
+    //Get course_module to check it's visible
+    if (! $cm = get_coursemodule_from_instance($modulename,$instance,$courseid)) {
+        $error = true;
+    }
+    $cmvisible = $cm->visible;
+
+    $isstudent = isstudent($courseid,$userid);
+    $isteacher = isteacher($courseid,$userid);
+
     //Check for "security" if !course->guest or course->password
     if (!$course->guest || $course->password) {
-        $allowed = (isstudent($course->id,$args[1]) || isteacher($course->id,$args[1])); 
+        $allowed = ($isstudent || $isteacher); 
     }
 
-    $pathname = $CFG->dataroot."/rss/".$args[2]."/".$args[3].".xml";
+    //Check for "security" if the course is hidden or the activity is hidden 
+    if ($allowed && (!$course->visible || !$cmvisible)) {
+        $allowed = $isteacher;
+    }
+
+    $pathname = $CFG->dataroot."/rss/".$modulename."/".$instance.".xml";
     $filename = $args[$numargs-1];
 
     //If the file exists and its allowed for me, download it!
