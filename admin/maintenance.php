@@ -12,6 +12,11 @@
         error('You need to be admin to use this page');
     }
 
+    //Check folder exists
+    if (! make_upload_directory(SITEID)) {   // Site folder
+            error("Could not create site folder.  The site administrator needs to fix the file permissions");
+        }
+
     $filename = $CFG->dataroot.'/1/maintenance.html';
 
     if ($form = data_submitted()) {
