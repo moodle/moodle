@@ -166,14 +166,14 @@ function scorm_user_outline($course, $user, $mod, $scorm) {
 /// $return->time = the time they did it
 /// $return->info = a short text description
 
-    return $return;
+    return true;   // TO FIX
 }
 
 function scorm_user_complete($course, $user, $mod, $scorm) {
 /// Print a detailed representation of what a  user has done with 
 /// a given particular instance of this module, for user activity reports.
 
-    return true;
+    return true;   // TO FIX
 }
 
 function scorm_print_recent_activity(&$logs, $isteacher=false) {
