@@ -24,7 +24,5 @@
         echo "</BLOCKQUOTE>";
     }
 
-    print_footer($course);
-
 ?>
 
