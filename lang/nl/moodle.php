@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.3 - (2004052400)
+      // moodle.php - created with Moodle 1.4 development (2004060100)
 
 
 $string['action'] = 'Actie';
@@ -143,6 +143,7 @@ $string['configcachetext'] = 'Deze instelling kan de snelheid vergroten voor gro
 $string['configcountry'] = 'Als je hier een land invult zal dit land als standaard worden geselecteerd bij nieuwe gebruikersaccounts. Laat dit veld gewoon leeg om gebruikers te dwingen een land te kiezen.';
 $string['configdebug'] = 'Als je dit aan zet zullen er meer PHP-fouten op het scherm worden weergegeven. Dit is alleen maar handig voor ontwikkelaars van de applicatie.';
 $string['configdeleteunconfirmed'] = 'Als je met e-mail authenticatie werkt dan is dit de periode waarbinnen gebruikers moeten reageren op de bevestigingsmail voor de nieuwe account. Na deze periode zullen oude, niet-bevestigde accounts verwijderd worden.';
+$string['configdigestmailtime'] = 'Gebruikers die er voor kiezen dat de e-mails hun als samenvatting toegezonden worden, zullen dagelijks een e-mail ontvangen. Deze instelling controleert op welk moment van de dag dat deze dagelijkse mail verzonden wordt (de mail wordt verstuurd door de cron die volgt op het uur dat hier gekozen wordt)';
 $string['configenablerssfeeds'] = 'Met deze instelling maak je RSS feeds mogelijk voor heel de site. Om ze echt te kunnen gebruiken, moet je de RSS feeds nog inschakelen voor elke module afzonderlijk - ga naar \'Beheer van de modules\' onder Beheer, Configuratie.';
 $string['configenablerssfeedsdisabled'] = 'Dit is niet beschikbaar omdat RSS voor heel de site is uitgeschakeld. Om RSS in te schakelen ga je naar Configureer variablen onder Beheer Configuratie.';
 $string['configerrorlevel'] = 'Kies hoeveel PHP waarschuwingen je wilt dat Moodle laat zien. \'Normaal\' is meestal de beste keuze.
@@ -284,6 +285,9 @@ $string['down'] = 'Omlaag';
 $string['downloadexcel'] = 'Download in Excel formaat';
 $string['downloadtext'] = 'Download in tekst formaat';
 $string['doyouagree'] = 'Heb je deze voorwaarden gelezen en begrepen?';
+$string['duplicate'] = 'Dupliceer';
+$string['duplicatinga'] = '$a aan het dupliceren';
+$string['duplicatingain'] = '$a-<what in $a->in aan het dupliceren';
 $string['edit'] = '$a bewerken';
 $string['editcoursesettings'] = 'Wijzig vakinstellingen';
 $string['editfiles'] = 'Bewerk bestanden';
@@ -315,6 +319,10 @@ $string['emailconfirmationsubject'] = '$a: Bevestiging van de account';
 $string['emailconfirmsent'] = '<P>Als het goed is, is er een e-mail verzonden naar <B>$a</B>
 <P>Daarin staan eenvoudige instructies voor het voltooien van de registratie.
 <P>Indien je blijft moeilijkheden ondervinden, neem dan contact op met je site-beheerder.';
+$string['emaildigest'] = 'Type samenvattende e-mail';
+$string['emaildigestcomplete'] = 'Volledige samenvatting  (dagelijkse e-mail met alle berichten)';
+$string['emaildigestoff'] = 'Geen samenvatting (voor elk forumbericht een e-mail)';
+$string['emaildigestsubjects'] = 'Onderwerpe (dagelijkse e-mail met alleen de onderwerpen van de berichten)';
 $string['emaildisable'] = 'Dit e-mailadres is uitgeschakeld';
 $string['emaildisplay'] = 'E-mail weergave';
 $string['emaildisplaycourse'] = 'Laat mijn e-mail adres alleen maar zien aan andere leden van dit vak';
