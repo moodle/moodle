@@ -26,7 +26,7 @@
 
 /// Get a list of all students
 
-    if (!$students = get_course_students($course->id)) {
+    if (!$students = get_course_students($course->id, "u.lastname ASC")) {
 	    print_header("$course->shortname: $strgrades", "$course->fullname", 
                      "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> 
                       -> $strgrades");
@@ -64,7 +64,7 @@
                         if (function_exists($gradefunction)) {   // Skip modules without grade function
                             if ($modgrades = $gradefunction($mod->instance)) {
 
-                                if ($modgrades->maxgrade) {
+                                if (!empty($modgrades->maxgrade)) {
                                     $maxgrade = "<BR>$strmax: $modgrades->maxgrade";
                                 } else {
                                     $maxgrade = "";
@@ -78,12 +78,16 @@
                                              "<A HREF=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\">".
                                              "$instance->name".
                                              "</A>$maxgrade";
-                                $columns[] = "$mod->modfullname: $instance->name - $modgrades->maxgrade";
+                                $columns[] = "$mod->modfullname: $instance->name - $maxgrade";
     
                                 foreach ($students as $student) {
-                                    $grades[$student->id][] = $modgrades->grades[$student->id]; // may be empty, that's ok
-                                    if ($modgrades->maxgrade) {
-                                        $totals[$student->id] = (float)($totals[$student->id]) + (float)($modgrades->grades[$student->id]);
+                                    if (!empty($modgrades->grades[$student->id])) {
+                                        $grades[$student->id][] = $currentstudentgrade = $modgrades->grades[$student->id];
+                                    } else {
+                                        $grades[$student->id][] = $currentstudentgrade = "";
+                                    }
+                                    if (!empty($modgrades->maxgrade)) {
+                                        $totals[$student->id] = (float)($totals[$student->id]) + (float)($currentstudentgrade);
                                     } else {
                                         $totals[$student->id] = (float)($totals[$student->id]) + 0;
                                     }
@@ -175,9 +179,9 @@
     
         print_heading($strgrades);
 
-        $table->head  = array_merge(array ("", get_string("name")), $columnhtml, get_string("total"));
+        $table->head  = array_merge(array ("", get_string("firstname"), get_string("lastname")), $columnhtml, get_string("total"));
         $table->width = array(35, "");
-        $table->align = array("LEFT", "LEFT");
+        $table->align = array("LEFT", "RIGHT", "LEFT");
         foreach ($columns as $column) {
             $table->width[] = "";
             $table->align[] = "CENTER";
@@ -185,10 +189,10 @@
         $table->width[] = "";
         $table->align[] = "CENTER";
     
-        foreach ($grades as $studentid => $studentgrades) {
-            $student = $students[$studentid];
+        foreach ($students as $key => $student) {
+            $studentgrades = $grades[$student->id];
             $picture = print_user_picture($student->id, $course->id, $student->picture, false, true);
-            $name = array ("$picture", "<A TITLE=\"$stractivityreport\" HREF=\"user.php?id=$course->id&user=$student->id\">$student->firstname&nbsp;$student->lastname</A>");
+            $name = array ("$picture", "$student->firstname", "$student->lastname");
             $total = array ($totals[$student->id]);
     
             $table->data[] = array_merge($name, $studentgrades, $total);
