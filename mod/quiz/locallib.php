@@ -1247,6 +1247,7 @@ function quiz_print_question_list($questionlist, $grades, $allowdelete=true, $qu
     $strgrade = get_string("grade");
     $strremove = get_string('remove', 'quiz');
     $stredit = get_string("edit");
+    $straction = get_string("action");
     $strmoveup = get_string("moveup");
     $strmovedown = get_string("movedown");
     $strsavegrades = get_string("savegrades", "quiz");
@@ -1259,7 +1260,7 @@ function quiz_print_question_list($questionlist, $grades, $allowdelete=true, $qu
     echo "<form method=\"post\" action=\"edit.php\">";
     echo "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\">";
     echo "<table border=\"0\" cellpadding=\"5\" cellspacing=\"2\" width=\"100%\">\n";
-    echo "<tr><th width=\"*\" colspan=\"3\" nowrap=\"nowrap\">$strorder</th><th align=\"left\" width=\"100%\" nowrap=\"nowrap\">$strquestionname</th><th width=\"*\" nowrap=\"nowrap\">$strtype</th><th width=\"*\" nowrap=\"nowrap\">$strgrade</th><th align=\"center\" width=\"60\" nowrap=\"nowrap\">$stredit</th></tr>\n";
+    echo "<tr><th width=\"*\" colspan=\"3\" nowrap=\"nowrap\">$strorder</th><th align=\"left\" width=\"100%\" nowrap=\"nowrap\">$strquestionname</th><th width=\"*\" nowrap=\"nowrap\">$strtype</th><th width=\"*\" nowrap=\"nowrap\">$strgrade</th><th align=\"center\" width=\"60\" nowrap=\"nowrap\">$straction</th></tr>\n";
     foreach ($order as $qnum) {
         if (empty($questions[$qnum])) {
             continue;
