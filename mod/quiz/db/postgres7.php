@@ -10,6 +10,12 @@ function quiz_upgrade($oldversion) {
         execute_sql(" ALTER TABLE {$CFG->prefix}quiz ADD review integer DEFAULT '0' NOT NULL AFTER `grademethod` ");
     }
 
+    if ($oldversion < 2003010301) {
+        table_column("quiz_truefalse", "true", "trueanswer", "INTEGER", "UNSIGNED", "0", "NOT NULL", "");
+        table_column("quiz_truefalse", "false", "falseanswer", "INTEGER", "UNSIGNED", "0", "NOT NULL", "");
+        table_column("quiz_questions", "type", "qtype", "INTEGER", "UNSIGNED", "0", "NOT NULL", "");
+    }
+
     return true;
 }
 

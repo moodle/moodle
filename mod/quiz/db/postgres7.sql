@@ -124,7 +124,7 @@ CREATE TABLE prefix_quiz_questions (
   name varchar(255) NOT NULL default '',
   questiontext text NOT NULL default '',
   image varchar(255) NOT NULL default '',
-  type integer NOT NULL default '0'
+  qtype integer NOT NULL default '0'
 );
 # --------------------------------------------------------
 
@@ -161,8 +161,8 @@ CREATE INDEX question_prefix_quiz_shortanswer_idx ON prefix_quiz_shortanswer (qu
 CREATE TABLE prefix_quiz_truefalse (
   id SERIAL PRIMARY KEY,
   question integer NOT NULL default '0',
-  "true" integer NOT NULL default '0',
-  "false" integer NOT NULL default '0'
+  trueanswer integer NOT NULL default '0',
+  falseanswer integer NOT NULL default '0'
 );
 CREATE INDEX question_prefix_quiz_truefalse_idx ON prefix_quiz_truefalse (question);
 

@@ -132,7 +132,7 @@ CREATE TABLE `prefix_quiz_questions` (
   `name` varchar(255) NOT NULL default '',
   `questiontext` text NOT NULL,
   `image` varchar(255) NOT NULL default '',
-  `type` smallint(6) NOT NULL default '0',
+  `qtype` smallint(6) NOT NULL default '0',
   PRIMARY KEY  (`id`)
 ) TYPE=MyISAM COMMENT='The quiz questions themselves';
 # --------------------------------------------------------
@@ -172,8 +172,8 @@ CREATE TABLE `prefix_quiz_shortanswer` (
 CREATE TABLE `prefix_quiz_truefalse` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `question` int(10) unsigned NOT NULL default '0',
-  `true` int(10) unsigned NOT NULL default '0',
-  `false` int(10) unsigned NOT NULL default '0',
+  `trueanswer` int(10) unsigned NOT NULL default '0',
+  `falseanswer` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`),
   KEY `question` (`question`)
 ) TYPE=MyISAM COMMENT='Options for True-False questions';

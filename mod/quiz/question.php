@@ -7,7 +7,7 @@
 
     optional_variable($id);
 
-    optional_variable($type);
+    optional_variable($qtype);
     optional_variable($category);
 
     if ($id) {
@@ -22,7 +22,7 @@
             error("This question category doesn't belong to a valid course!");
         }
 
-        $type = $question->type;
+        $qtype = $question->qtype;
 
 
     } else if ($category) {
@@ -34,7 +34,7 @@
         }
 
         $question->category = $category->id;
-        $question->type     = $type;
+        $question->qtype     = $qtype;
 
     } else {
         error("Must specify question id or category");
@@ -116,7 +116,7 @@
     
             // Now to save all the answers and type-specific options
     
-            switch ($question->type) {
+            switch ($question->qtype) {
                 case SHORTANSWER:
                     // Delete all the old answers
                     delete_records("quiz_answers", "question", $question->id);
@@ -180,9 +180,9 @@
                     }
     
                     unset($options);
-                    $options->question = $question->id;
-                    $options->true     = $true->id;
-                    $options->false    = $false->id;
+                    $options->question    = $question->id;
+                    $options->trueanswer  = $true->id;
+                    $options->falseanswer = $false->id;
                     if (!insert_record("quiz_truefalse", $options)) {
                         error("Could not insert quiz truefalse options!");
                     }
@@ -298,7 +298,7 @@
     }
 
 
-    switch ($type) {
+    switch ($qtype) {
         case SHORTANSWER:
             if (!empty($question->id)) {
                 $options = get_record("quiz_shortanswer", "question", $question->id);
@@ -326,14 +326,14 @@
             if (!empty($question->id)) {
                 $options = get_record("quiz_truefalse", "question", "$question->id");
             }
-            if (!empty($options->true)) {
-                $true    = get_record("quiz_answers", "id", "$options->true");
+            if (!empty($options->trueanswer)) {
+                $true    = get_record("quiz_answers", "id", $options->trueanswer);
             } else {
                 $true->fraction = 1;
                 $true->feedback = "";
             }
-            if (!empty($options->false)) {
-                $false   = get_record("quiz_answers", "id", "$options->false");
+            if (!empty($options->falseanswer)) {
+                $false   = get_record("quiz_answers", "id", "$options->falseanswer");
             } else {
                 $false->fraction = 0;
                 $false->feedback = "";

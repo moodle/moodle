@@ -240,7 +240,7 @@ function quiz_get_grade_records($quiz) {
 function quiz_get_answers($question) {
 // Given a question, returns the correct answers and grades
     global $CFG;
-    switch ($question->type) {
+    switch ($question->qtype) {
         case SHORTANSWER;       // Could be multiple answers
             return get_records_sql("SELECT a.*, sa.usecase, g.grade
                                       FROM {$CFG->prefix}quiz_shortanswer sa,  
@@ -285,7 +285,7 @@ function quiz_get_attempt_responses($attempt) {
 // for regrading using quiz_grade_attempt_results()
     global $CFG;
    
-    if (!$responses = get_records_sql("SELECT q.id, q.type, r.answer 
+    if (!$responses = get_records_sql("SELECT q.id, q.qtype, r.answer 
                                         FROM {$CFG->prefix}quiz_responses r, 
                                              {$CFG->prefix}quiz_questions q
                                        WHERE r.attempt = '$attempt->id' 
@@ -324,8 +324,8 @@ function quiz_print_question_icon($question) {
 
     global $QUIZ_QUESTION_TYPE;
 
-    echo "<A HREF=\"question.php?id=$question->id\" TITLE=\"".$QUIZ_QUESTION_TYPE[$question->type]."\">";
-    switch ($question->type) {
+    echo "<A HREF=\"question.php?id=$question->id\" TITLE=\"".$QUIZ_QUESTION_TYPE[$question->qtype]."\">";
+    switch ($question->qtype) {
         case SHORTANSWER:
             echo "<IMG BORDER=0 HEIGHT=16 WIDTH=16 SRC=\"pix/sa.gif\">";
             break;
@@ -350,6 +350,10 @@ function quiz_print_question($number, $questionid, $grade, $courseid,
         notify("Error: Question not found!");
     }
 
+    if (empty($actualgrade)) {
+        $actualgrade = 0;
+    }
+
     $stranswer = get_string("answer", "quiz");
     $strmarks  = get_string("marks", "quiz");
 
@@ -363,7 +367,7 @@ function quiz_print_question($number, $questionid, $grade, $courseid,
     print_spacer(1,100);
     echo "</TD><TD VALIGN=TOP>";
 
-    switch ($question->type) {
+    switch ($question->qtype) {
        case SHORTANSWER: 
            if (!$options = get_record("quiz_shortanswer", "question", $question->id)) {
                notify("Error: Missing question options!");
@@ -374,6 +378,8 @@ function quiz_print_question($number, $questionid, $grade, $courseid,
            }
            if ($response) {
                $value = "VALUE=\"$response[0]\"";
+           } else {
+               $value = "";
            }
            echo "<P ALIGN=RIGHT>$stranswer: <INPUT TYPE=TEXT NAME=q$question->id SIZE=20 $value></P>";
            if ($feedback) {
@@ -389,10 +395,10 @@ function quiz_print_question($number, $questionid, $grade, $courseid,
            if (!$options = get_record("quiz_truefalse", "question", $question->id)) {
                notify("Error: Missing question options!");
            }
-           if (!$true = get_record("quiz_answers", "id", $options->true)) {
+           if (!$true = get_record("quiz_answers", "id", $options->trueanswer)) {
                notify("Error: Missing question answers!");
            }
-           if (!$false = get_record("quiz_answers", "id", $options->false)) {
+           if (!$false = get_record("quiz_answers", "id", $options->falseanswer)) {
                notify("Error: Missing question answers!");
            }
            if (!$true->answer) {
@@ -406,18 +412,24 @@ function quiz_print_question($number, $questionid, $grade, $courseid,
                print_file_picture($question->image, $courseid, 200);
            }
 
-           if ($response[$true->id]) {
+           $truechecked = "";
+           $falsechecked = "";
+
+           if (!empty($response[$true->id])) {
                $truechecked = "CHECKED";
                $feedbackid = $true->id;
-           } else if ($response[$false->id]) {
+           } else if (!empty($response[$false->id])) {
                $falsechecked = "CHECKED";
                $feedbackid = $false->id;
            }
+
+           $truecorrect = "";
+           $falsecorrect = "";
            if ($correct) {
-               if ($correct[$true->id]) {
+               if (!empty($correct[$true->id])) {
                    $truecorrect = "CLASS=highlight";
                }
-               if ($correct[$false->id]) {
+               if (!empty($correct[$false->id])) {
                    $falsecorrect = "CLASS=highlight";
                }
            }
@@ -751,7 +763,7 @@ function quiz_print_cat_question_list($categoryid) {
 
     echo "<FORM METHOD=GET ACTION=question.php>"; 
     echo "<B>$strquestion:</B>&nbsp;";
-    choose_from_menu($QUIZ_QUESTION_TYPE, "type", "", "");
+    choose_from_menu($QUIZ_QUESTION_TYPE, "qtype", "", "");
     echo "<INPUT TYPE=hidden NAME=category VALUE=\"$category->id\">";
     echo "<INPUT TYPE=submit NAME=new VALUE=\"$strcreatenewquestion\">";
     helpbutton("questiontypes", $strcreatenewquestion, "quiz");
@@ -1001,7 +1013,7 @@ function quiz_grade_attempt_results($quiz, $questions) {
         $feedback = array();
         $response = array();
 
-        switch ($question->type) {
+        switch ($question->qtype) {
             case SHORTANSWER:
                 if ($question->answer) {
                     $question->answer = trim($question->answer[0]);
@@ -1009,9 +1021,11 @@ function quiz_grade_attempt_results($quiz, $questions) {
                     $question->answer = "";
                 }
                 $response[0] = $question->answer;
+                $bestshortanswer = 0;
                 foreach($answers as $answer) {  // There might be multiple right answers
                     if ($answer->fraction > $bestshortanswer) {
                         $correct[$answer->id] = $answer->answer;
+                        $bestshortanswer = $answer->fraction;
                     }
                     if (!$answer->usecase) {       // Don't compare case
                         $answer->answer = strtolower($answer->answer);
