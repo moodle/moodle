@@ -78,6 +78,7 @@ class quiz_file_format extends quiz_default_format {
                 $question->feedback[] = "";
     
                 $question->usecase = 0;  // Ignore case
+                $question->defaultgrade = 1; 
                 $question->image = "";   // No images with this format
                 return $question;
 
@@ -97,6 +98,7 @@ class quiz_file_format extends quiz_default_format {
                     $question->feedback[$key] = "";
                 }
     
+                $question->defaultgrade = 1; 
                 $question->single = 1;   // Only one answer is allowed
                 $question->image = "";   // No images with this format
                 return $question;

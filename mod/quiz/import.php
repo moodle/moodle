@@ -86,17 +86,19 @@
 
             if (!empty($form->createrandom)) {   /// Create a number of random questions
 
+                $rm->choose = 4;                 /// Always 4, for now.
                 $rm->category = $category->id;
                 $rm->questiontext =  get_string("randommatchintro", "quiz");
                 $rm->image = "";
                 $rm->qtype =  RANDOMMATCH;
-                $rm->choose = 4;                 /// Always 4, for now.
+                $rm->defaultgrade = $rm->choose; 
 
                 echo "<hr>";
 
                 for ($i=1; $i<=$form->createrandom; $i++) {
                     $rm->name =  get_string("randommatch", "quiz") . " $i ($rm->choose $strquestions)";
 
+                    $db->debug = true;
                     if (!$rm->id = insert_record("quiz_questions", $rm)) {
                         error("Could not insert new question!");
                     }

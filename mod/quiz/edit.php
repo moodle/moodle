@@ -91,7 +91,13 @@
                     }
                 }
                 $questions[] = $key;
-                $modform->grades[$key] = QUIZ_DEFAULT_SCORE; 
+
+                $questionrecord = get_record("quiz_questions", "id", $key);
+                if (!empty($questionrecord->defaultgrade)) {
+                    $modform->grades[$key] = $questionrecord->defaultgrade; 
+                } else {
+                    $modform->grades[$key] = 1; 
+                }
             }
         }
         if (!empty($questions)) {

@@ -23,6 +23,9 @@ function quiz_upgrade($oldversion) {
                                   choose integer NOT NULL default '4',
                               );");
     }
+    if ($oldversion < 2003030302) {
+        table_column("quiz_questions", "", "defaultgrade", "INTEGER", "6", "UNSIGNED", "1", "NOT NULL", "image");
+    }
 
     return true;
 }

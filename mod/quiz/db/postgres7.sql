@@ -124,6 +124,7 @@ CREATE TABLE prefix_quiz_questions (
   name varchar(255) NOT NULL default '',
   questiontext text NOT NULL default '',
   image varchar(255) NOT NULL default '',
+  defaultgrade integer NOT NULL default '1'
   qtype integer NOT NULL default '0'
 );
 # --------------------------------------------------------
