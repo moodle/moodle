@@ -25,7 +25,6 @@ function journal_user_outline($course, $user, $mod, $journal) {
 
 
 function journal_user_complete($course, $user, $mod, $journal) {
-    global $CFG, $THEME;
 
     if ($entry = get_record_sql("SELECT * FROM journal_entries 
                              WHERE user='$user->id' AND journal='$journal->id'")) {
@@ -38,34 +37,12 @@ function journal_user_complete($course, $user, $mod, $journal) {
             echo text_to_html($entry->text);
         }
         if ($entry->teacher) {
-            $teacher = get_record("user", "id", $entry->teacher);
-    
-            echo "\n<BR CLEAR=ALL>";
-            echo "<TABLE><TR>";
-            echo "<TD WIDTH=35 VALIGN=TOP>";
-            print_user_picture($entry->teacher, $course->id, $teacher->picture);
-            echo "<TD BGCOLOR=\"$THEME->cellheading\">".$RATING[$entry->rating];
-            if ($entry->timemarked) {
-                echo "&nbsp;&nbsp;<FONT SIZE=1>".userdate($entry->timemarked)."</FONT>";
-            }
-            echo "<P ALIGN=RIGHT><FONT SIZE=-1><I>";
-            if ($RATING[$entry->rating]) {
-                echo "Overall rating: ";
-                echo $RATING[$entry->rating];
-            } else {
-                echo "No rating given";
-            }
-            echo "</I></FONT></P>";
-
-            echo "<BR><FONT COLOR=#000055>";
-            echo text_to_html($entry->comment);
-            echo "</FONT><BR>";
-            echo "</TD></TR></TABLE>";
+            journal_print_feedback($course, $entry);
         }
         print_simple_box_end();
 
     } else {
-        echo "No entry";
+        print_string("noentry", "journal");
     }
 }
 

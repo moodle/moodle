@@ -55,6 +55,55 @@ function assignment_delete_instance($id) {
     return $result;
 }
 
+function assignment_user_outline($course, $user, $mod, $assignment) {
+    if ($submission = assignment_get_submission($assignment, $user)) {
+        if ($basedir = assignment_file_area($assignment, $user)) {
+            if ($files = get_directory_list($basedir)) {
+                $countfiles = count($files)." ".get_string("uploadedfiles", "assignment");
+                foreach ($files as $file) {
+                    $countfiles .= "; $file";
+                }
+            }
+        }
+        $result->info = $countfiles;
+        $result->time = $submission->timemodified;
+        return $result;
+    }
+    return NULL;
+}
+
+function assignment_user_complete($course, $user, $mod, $assignment) {
+    if ($submission = assignment_get_submission($assignment, $user)) {
+        if ($basedir = assignment_file_area($assignment, $user)) {
+            if ($files = get_directory_list($basedir)) {
+                $countfiles = count($files)." ".get_string("uploadedfiles", "assignment");
+                foreach ($files as $file) {
+                    $countfiles .= "; $file";
+                }
+            }
+        }
+
+        print_simple_box_start();
+        echo "<P><FONT SIZE=1>";
+        echo get_string("lastmodified").": ";
+        echo userdate($submission->timemodified);
+        echo assignment_print_difference($assignment->timedue - $submission->timemodified);
+        echo "</FONT></P>";
+
+        assignment_print_user_files($assignment, $user);
+
+        echo "<BR>";
+
+        assignment_print_feedback($course, $submission);
+
+        print_simple_box_end();
+
+    } else {
+        print_string("notsubmittedyet", "assignment");
+    }
+}
+
+
 function assignment_cron () {
 // Function to be run periodically according to the moodle cron
 // Finds all assignment notifications that have yet to be mailed out, and mails them

@@ -494,7 +494,7 @@ function forum_user_complete($course, $user, $mod, $forum) {
                 $footer = "";
             }
 
-            print_post($post, $course->id, $ownpost=false, $reply=false, $link=false, $rate=false, $footer);
+            forum_print_post($post, $course->id, $ownpost=false, $reply=false, $link=false, $rate=false, $footer);
         }
 
     } else {
