@@ -135,7 +135,8 @@
                                       FROM {$CFG->prefix}glossary_entries e,
                                            {$CFG->prefix}user u
                                       WHERE e.glossaryid = '$glossary->id' AND
-                                            u.id = e.userid
+                                            u.id = e.userid AND
+                                            e.approved = 1
                                       ORDER BY e.timecreated desc")) {
             //Iterate over each entry to get glossary->rssarticles records
             $articlesleft = $glossary->rssarticles;
@@ -180,7 +181,8 @@
                                       FROM {$CFG->prefix}glossary_entries e,
                                            {$CFG->prefix}user u
                                       WHERE e.glossaryid = '$glossary->id' AND
-                                            u.id = e.userid
+                                            u.id = e.userid AND
+                                            e.approved = 1
                                       ORDER BY e.timecreated desc")) {
             //Iterate over each entry to get glossary->rssarticles records
             $articlesleft = $glossary->rssarticles;
