@@ -8,7 +8,7 @@
         error("Course ID is incorrect");
     }
 
-    require_course_login($course);
+    require_course_login($course->id, false, $cm);
 
     add_to_log($course->id, "scorm", "view all", "index.php?id=$course->id", "");
 

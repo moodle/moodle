@@ -56,10 +56,10 @@ function scorm_add_instance($scorm) {
     $scorm->timemodified = time();
 
     # May have to add extra stuff in here #
-    global $SCORM_WINDOW_OPTIONS;
+    global $CFG,$SCORM_WINDOW_OPTIONS;
     
     $scorm->popup = '';
-    
+
     $optionlist = array();
     foreach ($SCORM_WINDOW_OPTIONS as $option) {
         if (isset($scorm->$option)) {
@@ -73,8 +73,19 @@ function scorm_add_instance($scorm) {
     	$scorm->popup .= ',location=0,menubar=0,toolbar=0';
     	$scorm->auto = '0';
     }
+    $id = insert_record('scorm', $scorm);
     
-    return insert_record('scorm', $scorm);
+    //
+    // Parse scorm manifest
+    //
+    if ($scorm->launch == 0) {
+	$basedir = $CFG->dataroot."/".$scorm->course;
+       	$scormdir = "/moddata/scorm";
+	$scorm->launch = scorm_parse($basedir,$scormdir.$scorm->datadir."/imsmanifest.xml",$id);
+	set_field("scorm","launch",$scorm->launch,"id",$id);
+    }
+    
+    return $id;
 }
 
 
@@ -87,7 +98,7 @@ function scorm_update_instance($scorm) {
     $scorm->id = $scorm->instance;
 
     # May have to add extra stuff in here #
-    global $SCORM_WINDOW_OPTIONS;
+    global $CFG,$SCORM_WINDOW_OPTIONS;
     
     $scorm->popup = '';
     
@@ -103,7 +114,20 @@ function scorm_update_instance($scorm) {
     	$scorm->popup .= ',location=0,menubar=0,toolbar=0';
     	$scorm->auto = '0';
     }
-    return update_record('scorm', $scorm);
+    
+    $id = update_record('scorm', $scorm);
+    
+    //
+    // Check if scorm manifest needs to be reparsed
+    //
+    if ($scorm->launch == 0) {
+	$basedir = $CFG->dataroot."/".$scorm->course;
+       	$scormdir = "/moddata/scorm";
+	$scorm->launch = scorm_parse($basedir,$scormdir.$scorm->datadir."/imsmanifest.xml",$id);
+	set_field("scorm","launch",$scorm->launch,"id",$id);
+    }
+    
+    return $id;
 }
 
 
@@ -112,7 +136,7 @@ function scorm_delete_instance($id) {
 /// this function will permanently delete the instance 
 /// and any data that depends on it.  
     
-    global $CFG;
+    require('../config.php');
 
     if (! $scorm = get_record('scorm', 'id', $id)) {
         return false;
@@ -144,8 +168,6 @@ function scorm_user_outline($course, $user, $mod, $scorm) {
 /// Used for user activity reports.
 /// $return->time = the time they did it
 /// $return->info = a short text description
-
-    $return = NULL;
 
     return $return;
 }

@@ -32,7 +32,7 @@
         }
     }
 
-    require_login($course->id, false);
+    require_login($course->id, false, $cm);
 
     if (!isteacher($course->id)) {
         error("You are not allowed to use this script");

@@ -61,6 +61,20 @@
           echo "</tr>";
       }
 ?>
+<tr valign="top">
+    <td align="right"><p>scorm_windowsettings:</td>
+    <td>
+    <?php
+        unset($choices);
+        $choices[""] = get_string("no");
+        $choices["checked"] = get_string("yes");
+        choose_from_menu ($choices, "scorm_windowsettings", $CFG->scorm_windowsettings, "");
+    ?>
+    </td>
+    <td>
+    <?php print_string("windowsettings", "scorm") ?>
+    </td>
+</tr>
 <tr>
     <td colspan="3" align="center">
 	<input type="submit" value="<?php print_string("savechanges") ?>" />
