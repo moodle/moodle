@@ -163,22 +163,11 @@
                 $tries = $studentdata[$student->id];
                 $studentname = "{$student->lastname},&nbsp;$student->firstname";
                 foreach ($tries as $try) {
-                    // start of the longest link i have ever made ;)
-                    //  link looks intense, but saves me from having to recalc all these numbers on detailed view of each try
-                    //   and I dont have to pass 4 hidden vars per attempt which im sure helps to speed up .... something!?
-
-                    // start to build up a big javascript action link.  What the link does is set a hidden form variable
-                    // userid to the userid which was clicked, and sets hidden form variables try, timetotake, completed, and grade
-                    $temp = "<a href=\"javascript: document.forms['overview'].elements['userid'].value = '".$try["userid"]."'; ".
-                            "document.forms['overview'].elements['try'].value = '".$try["try"]."'; ";
+					// start to build up the link
+					$temp = "<a href=\"report.php?id=$cm->id&amp;action=detail&amp;userid=".$try["userid"]."&amp;try=".$try["try"]."\">";
                     if ($try["grade"] != NULL) { // if NULL then not done yet
                         // this is what the link does when the user has completed the try
                         $timetotake = $try["timeend"] - $try["timestart"];
-
-                        $temp .= "document.forms['overview'].elements['timetotake'].value = '$timetotake'; ".
-                                "document.forms['overview'].elements['completed'].value = '".$try["timeend"]."'; ".
-                                "document.forms['overview'].elements['grade'].value = '".$try["grade"]."'; ".
-                                "document.overview.submit();\">";
 
                         $temp .= $try["grade"]."%";
                         $bestgradefound = true;
@@ -189,13 +178,8 @@
                         $temp .= ",&nbsp;(".format_time($timetotake).")</a>";
                     } else {
                         // this is what the link does/looks like when the user has not completed the try
-                        $temp .= "document.forms['overview'].elements['timetotake'].value = '-1'; ".
-                                "document.forms['overview'].elements['completed'].value = '-1'; ".
-                                "document.forms['overview'].elements['grade'].value = '-1'; ".
-                                "document.overview.submit();\">";
-
                         $temp .= get_string("notcompleted", "lesson");
-                        $temp .= "&nbsp;".userdate($try["timestart"]);
+                        $temp .= "&nbsp;".userdate($try["timestart"])."</a>";
                         $timetotake = NULL;
                     }
                     // build up the attempts array
@@ -226,16 +210,8 @@
                 $table->data[] = array($studentname, $attempts, $bestgrade."%");
             }
         }
-
-        // this is the form and the hidden values that get changed when a try link is clicked
-        echo "<form name=\"overview\" action=\"report.php?id=$cm->id&amp;action=detail\" method=\"post\">";
-        echo "<input type=\"hidden\" name=\"userid\">";
-        echo "<input type=\"hidden\" name=\"timetotake\">";
-        echo "<input type=\"hidden\" name=\"completed\">";
-        echo "<input type=\"hidden\" name=\"grade\">";
-        echo "<input type=\"hidden\" name=\"try\">";
+		// print it all out !
         print_table($table);
-        echo "</form>";
 
         // some stat calculations
         if ($numofattempts == 0) {
@@ -303,6 +279,7 @@
         if (! $pageid = get_field("lesson_pages", "id", "lessonid", $lesson->id, "prevpageid", 0)) {
             error("Could not find first page");
         }
+
         if (!empty($userid)) {
             // print out users name
             $headingobject->lastname = $students[$userid]->lastname;
@@ -413,6 +390,8 @@
             $pageid = $page->nextpageid;
         }
 
+
+
         $answerpages = array();
         $answerpage = "";
         $pageid = $firstpageid;
@@ -498,7 +477,6 @@
                 $answerdata->response = NULL;
 
             }
-
             // build up the answer data
             if ($answers = get_records("lesson_answers", "pageid", $page->id, "id")) {
                 $i = 0;
@@ -801,8 +779,8 @@
                     }
                 }
                 $answerpages[] = $answerpage;
-                $pageid = $page->nextpageid;
             }
+			$pageid = $page->nextpageid;
         }
 
         /// actually start printing something
@@ -817,9 +795,18 @@
             $table->align = array("right", "left");
             $table->size = array("*", "*");
 
-            optional_variable($timetotake);
-            optional_variable($completed);
-            optional_variable($grade);
+		    if (!$grades = get_records_select("lesson_grades", "lessonid = $lesson->id and userid = $userid", "completed", "*", $try, 1)) {
+    	        $grade = -1;
+	        } else {
+				$grade = current($grades);
+				$grade = $grade->grade;
+			}
+			if (!$times = get_records_select("lesson_timer", "lessonid = $lesson->id and userid = $userid", "starttime", "*", $try, 1)) {
+    	        $timetotake = -1;
+	        } else {
+            	$timetotake = current($times);
+				$timetotake = $timetotake->lessontime - $timetotake->starttime;
+			}
 
             if ($timetotake == -1 || $completed == -1 || $grade == -1) {
                 $table->align = array("center");
