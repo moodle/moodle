@@ -80,10 +80,10 @@ function journal_cron () {
 
     $cutofftime = time() - $CFG->maxeditingtime;
 
-    if ($entries = get_records_sql("SELECT e.*, j.course, j.name 
+    if ($entries = get_records_sql("SELECT e.*, j.course, j.name
                                      FROM   journal_entries e, journal j
-                                     WHERE  e.mailed = '0' AND 
-                                     e.timemarked < '$cutofftime' AND e.timemarked > 0
+                                     WHERE  e.mailed = '0' 
+                                     AND e.timemarked < '$cutofftime' AND e.timemarked > 0
                                      AND e.journal = j.id")) {
         $timenow = time();
 
@@ -96,15 +96,20 @@ function journal_cron () {
                 continue;
             }
 
+            if (! $course = get_record("course", "id", "$entry->course")) {
+                echo "Could not find course $entry->course\n";
+                continue;
+            }
+
+            if (! isstudent($course->id, $user->id) and !isteacher($course->id, $user->id)) {
+                continue;  // Not an active participant
+            }
+
             if (! $teacher = get_record("user", "id", "$entry->teacher")) {
                 echo "Could not find teacher $entry->teacher\n";
                 continue;
             }
 
-            if (! $course = get_record("course", "id", "$entry->course")) {
-                echo "Could not find course $entry->course\n";
-                continue;
-            }
 
             if (! $mod = get_coursemodule_from_instance("journal", $entry->journal, $course->id)) {
                 echo "Could not find course module for journal id $entry->journal\n";
