@@ -1,6 +1,12 @@
 <?PHP // $Id$
 
 
+if (!isset($CFG->journal_showrecentactivity)) {
+    set_config("journal_showrecentactivity", true);
+} 
+
+
+
 // STANDARD MODULE FUNCTIONS /////////////////////////////////////////////////////////
 
 function journal_user_outline($course, $user, $mod, $journal) {
@@ -173,6 +179,10 @@ function journal_cron () {
 
 function journal_print_recent_activity($course, $isteacher, $timestart) {
     global $CFG;
+
+    if (empty($CFG->journal_showrecentactivity)) {    // Don't even bother
+        return false;
+    }
 
     $content = false;
     $journals = NULL;
