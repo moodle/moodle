@@ -207,7 +207,6 @@ class quiz_report extends quiz_default_report {
                 $table->add_data($row);
             }
 
-            echo '<script type="text/javascript" src="'.$CFG->wwwroot.'/mod/quiz/report/overview/utility.js"></script>';
             echo '<div id="tablecontainer">';
             echo '<form id="attemptsform" method="post" action="report.php" onsubmit="var menu = document.getElementById(\'actionmenu\'); return confirm_if(menu.options[menu.selectedIndex].value == \'delete\', \''.$strreallydel.'\');">';
             echo '<input type="hidden" name="id" value="'.$cm->id.'" />';
@@ -219,8 +218,8 @@ class quiz_report extends quiz_default_report {
         if(!empty($attempts)) {
             echo '<table id="commands">';
             echo '<tr><td>';
-            echo '<a href="javascript:select_all();">'.get_string('selectall', 'quiz').'</a> / ';
-            echo '<a href="javascript:deselect_all();">'.get_string('selectnone', 'quiz').'</a> ';
+            echo '<a href="javascript:select_all_in(\'DIV\', null, \'tablecontainer\');">'.get_string('selectall', 'quiz').'</a> / ';
+            echo '<a href="javascript:deselect_all_in(\'DIV\', null, \'tablecontainer\');">'.get_string('selectnone', 'quiz').'</a> ';
             echo '</td><td style="text-align: right;">';
             $options = array('dummy' => ' ', 'delete' => get_string('delete'));
             $menu = str_replace('<select', '<select id="actionmenu"', choose_from_menu($options, 'action', '', get_string('selectedattempts', 'quiz'), 'if(this.selectedIndex > 1) submitFormById(\'attemptsform\');', '', true));
