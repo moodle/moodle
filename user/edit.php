@@ -91,7 +91,7 @@
                     // Copy data into $USER session variable
                     $usernew = (array)$usernew;
                     foreach ($usernew as $variable => $value) {
-                        $USER->$variable = $value;
+                        $USER->$variable = stripslashes($value);
                     }
                     if (isset($USER->newadminuser)) {
                         unset($USER->newadminuser);
