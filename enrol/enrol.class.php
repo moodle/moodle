@@ -238,7 +238,10 @@ function check_entry($form, $course) {
 *
 * @param    page  an object containing all the data for this page
 */
-function print_config($page) {
+function config_form($page) {
+
+    return "";
+
 }
 
 
@@ -250,6 +253,9 @@ function print_config($page) {
 * @param    config  all the configuration data as entered by the admin
 */
 function process_config($config) {
+
+    return true;
+
 }
 
 
