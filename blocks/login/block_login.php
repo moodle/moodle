@@ -73,6 +73,7 @@ class block_login extends block_base {
                                        // And keep the self test happy by
                                        // passing empty string!
         }
+        $this->content->footer = '';
         return $this->content;
     }
 }
