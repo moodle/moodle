@@ -34,8 +34,8 @@ $string['notopenuntil'] = "Aquest diari no s'obrirà fins";
 $string['notstarted'] = "Encara no heu començat aquest diari";
 $string['overallrating'] = "Valoració global";
 $string['rate'] = "Valoració";
-$string['saveallfeedback'] = "Guardar tots els meus comentaris";
-$string['startoredit'] = "Començar o editar l'entrada del diari";
+$string['saveallfeedback'] = "Desa tots els meus comentaris";
+$string['startoredit'] = "Comença o edita l'entrada del diari";
 $string['viewallentries'] = "Veure totes les entrades del diari";
 
 ?>

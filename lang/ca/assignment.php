@@ -2,15 +2,15 @@
       // assignment.php - created with Moodle 1.1 development (2003081500)
 
 
-$string['allowresubmit'] = "Permetre de tornar a enviar";
+$string['allowresubmit'] = "Permet tornar a enviar";
 $string['assignmentdetails'] = "Detalls de la tasca";
-$string['assignmentmail'] = "\$a->teacher ha posat alguns comentaris sobre la teva tasca '\$a->assignment'
+$string['assignmentmail'] = "\$a->teacher ha posat alguns comentaris sobre la vostra tasca '\$a->assignment'
 
-Els comentaris s'han adjuntat a la teva tasca:
+Els comentaris s'han adjuntat a la vostra tasca:
 
     \$a->url";
-$string['assignmentmailhtml'] = "\$a->teacher ha posat alguns comentaris sobre la teva tasca '<i>\$a->assignment</i>'<br /><br />
-Els comentaris s'han adjuntat a la teva <a href=\\\"\$a->url\\\">tasca</a>.";
+$string['assignmentmailhtml'] = "\$a->teacher ha posat alguns comentaris sobre la vostra tasca '<i>\$a->assignment</i>'<br /><br />
+Els comentaris s'han adjuntat a la vostra <a href=\\\"\$a->url\\\">tasca</a>.";
 $string['assignmentname'] = "Nom de la tasca";
 $string['assignmenttype'] = "Tipus de tasca";
 $string['description'] = "Descripció";
@@ -28,7 +28,7 @@ $string['newsubmissions'] = "Tasques enviades";
 $string['notgradedyet'] = "No puntuada encara";
 $string['notsubmittedyet'] = "No enviada encara";
 $string['overwritewarning'] = "Advertiment: si torneu a pujar el fitxer REEMPLAÇAREU el que hi ha";
-$string['saveallfeedback'] = "Guardar els meus comentaris";
+$string['saveallfeedback'] = "Desa els meus comentaris";
 $string['submissionfeedback'] = "Comentaris sobre l'enviament";
 $string['submissions'] = "Enviaments";
 $string['submitassignment'] = "Envieu la tasca per mitjà d'aquest formulari";
@@ -45,6 +45,6 @@ $string['uploadnotregistered'] = "'\$a' s'ha penjat correctament, però no s'ha p
 $string['uploadsuccess'] = "'\$a' penjat correctament";
 $string['viewfeedback'] = "Veure les qualificacions de les tasques i els comentaris";
 $string['viewsubmissions'] = "Veure \$a tasques enviades";
-$string['yoursubmission'] = "El teu enviament";
+$string['yoursubmission'] = "El vostre enviament";
 
 ?>

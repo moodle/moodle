@@ -653,9 +653,9 @@ per rebre les notificacions més importants, com ara alertes de seguretat o l'apa
    de tota la comunitat Moodle.
 <p>Si així ho trieu s'afegirà a la llista pública de llocs Moodle el nom del vostre lloc, el país i l'adreça web.
 <p>Tots el registres nous són verificats manualment abans d'afegir-se a la llista, però un cop afegits podeu modificar el vostre registre i les dades de la llista pública en el moment en què ho desitgeu tot reenviant aquest formulari.";
-$string['registrationno'] = "No vull rebre correu electrònic";
+$string['registrationno'] = "No voleu rebre correu electrònic";
 $string['registrationsend'] = "Envia la informació de registre a moodle.org";
-$string['registrationyes'] = "Vull rebre notificacions sobre aspectes importants";
+$string['registrationyes'] = "Voleu rebre notificacions sobre aspectes importants";
 $string['removeadmin'] = "Elimina administrador";
 $string['removecreator'] = "Elimina creador de cursos";
 $string['removestudent'] = "Elimina estudiant";
