@@ -1,3 +1,98 @@
+2002-08-17 Saturday 22:44  martin
+
+	* course/edit.html, lang/en/help/coursecategory.html,
+	lang/en/help/coursefullname.html,
+	lang/en/help/coursenewsitems.html,
+	lang/en/help/coursenumsections.html,
+	lang/en/help/courseshortname.html,
+	lang/en/help/coursestartdate.html, lang/en/help/enrolmentkey.html,
+	lang/en/help/guestaccess.html: 
+	
+	Added more popup help for course settings page
+
+2002-08-17 Saturday 21:01  martin
+
+	* config-dist.php, admin/index.php, course/lib.php,
+	lang/en/moodle.php, lib/moodlelib.php, lib/setup.php,
+	theme/index.php: 
+	
+	Changes related to new way of setting and recalling themes.
+	
+	The CFG->theme variable is now obsolete in config.php - use the
+	admin page to set themes interactively.
+
+2002-08-17 Saturday 19:32  martin
+
+	* mod/assignment/index.php: 
+	
+	Fixed some missing language strings
+
+2002-08-17 Saturday 19:32  martin
+
+	* lang/en/assignment.php: 
+	
+	Additions for index.php
+
+2002-08-17 Saturday 16:59  martin
+
+	* lang/en/assignment.php, mod/assignment/mod.html,
+	mod/journal/mod.html: 
+	
+	Some more missed language strings
+
+2002-08-17 Saturday 16:38  martin
+
+	* admin/index.php, lang/en/moodle.php: 
+	
+	Added a GPL license agreement as the very first step.
+
+2002-08-17 Saturday 15:53  martin
+
+	* lang/en/forum.php, mod/forum/subscribe.php,
+	mod/forum/subscribers.php: 
+	
+	Teachers can now unsubscribe anyone from the "list of subscribers"
+	list.  Made the feedback display when subscribing/unsubscribing a
+	little more generic.
+
+2002-08-17 Saturday 15:02  martin
+
+	* index.php, lib/moodlelib.php: 
+	
+	Changes to add login/logout button to the right-hand top corner of
+	every page ... this is to help encourage people to log out after a
+	session, especially on shared or public terminals.
+
+2002-08-17 Saturday 11:03  martin
+
+	* README, README.txt, UPGRADING, UPGRADING.txt: 
+	
+	Added .txt to these files to make them double-clickable
+
+2002-08-17 Saturday 11:01  martin
+
+	* README: 
+	
+	Better introduction to installation
+
+2002-08-16 Friday 16:33  martin
+
+	* doc/install.html: 
+	
+	Added link to moodle-cron-for-windows.zip
+
+2002-08-16 Friday 11:10  martin
+
+	* lang/en/help/waysofknowing.html: 
+	
+	tweak
+
+2002-08-16 Friday 01:44  martin
+
+	* CHANGES: 
+	
+	Changes up to Moodle 1.0 Beta 5
+
 2002-08-16 Friday 01:41  martin
 
 	* lang/en/forum.php, lang/en/moodle.php,
