@@ -393,18 +393,43 @@ function auth_sync_users ($firstsync=0, $unsafe_optimizations = false, $bulk_ins
         
         //update local users
         foreach ($updateusers as $user) {
-            update_record('user', $user);
+            if (update_record('user', $user)) {
+                echo 'Updated user record'.$user->username;
+            } else {
+                echo 'Cannot update user recordi'.$user->username;
+            }    
         }    
 
         //add new users
         foreach ($updateusers as $user) {
-            insert_user_record();
+            if (insert_record('user', $user, $false)) {
+                echo 'Inserted user record'.$user->username;
+            } else {
+                echo 'Cannot insert user record'.$user->username;
+            }
         }    
 
         //remove old users
         foreach ($moodleldapusers as $remove) {
-            
+            //following is copy pasted from admin/user.php
+            //maybe this should moved to function in lib/datalib.php
+            unset($updateuser);
+            $remove->id = $user->id;
+            $remove->deleted = "1";
+            $remove->username = "$user->email.".time();  // Remember it just in case
+            $remove->email = "";               // Clear this field to free it up
+            $remove->timemodified = time();
+            if (update_record("user", $remove)) {
+                 unenrol_student($remove->id);  // From all courses
+                 remove_teacher($remove->id);   // From all courses
+                 remove_admin($remove->id);
+                 notify(get_string("deletedactivity", "", fullname($remove, true)) );
+             } else {
+                 notify(get_string("deletednot", "", fullname($remove, true)));
+             }
+             //copy pasted part ends
         }    
+
         //NORMAL SYNRONIZATION ROUTINE ENDS
     } else {
         //UNSAFE OPTIMIZATIONS STARTS
@@ -511,12 +536,12 @@ function auth_sync_users ($firstsync=0, $unsafe_optimizations = false, $bulk_ins
                 $updateuser->email = "";               // Clear this field to free it up
                 $updateuser->timemodified = time();
                 if (update_record("user", $updateuser)) {
-                    unenrol_student($user->id);  // From all courses
-                    remove_teacher($user->id);   // From all courses
-                    remove_admin($user->id);
-                    notify(get_string("deletedactivity", "", fullname($user, true)) );
+                    unenrol_student($updateuser->id);  // From all courses
+                    remove_teacher($updateuser->id);   // From all courses
+                    remove_admin($iupdateuser->id);
+                    notify(get_string("deletedactivity", "", fullname($updateuser, true)) );
                 } else {
-                    notify(get_string("deletednot", "", fullname($user, true)));
+                    notify(get_string("deletednot", "", fullname($updateuser, true)));
                 }
                 //copy pasted part ends
             }     
