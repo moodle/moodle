@@ -107,6 +107,7 @@ $string['deletedcourse'] = "\$a has been completely deleted";
 $string['deletednot'] = "Could not delete \$a !";
 $string['deletingcourse'] = "Deleting \$a";
 $string['description'] = "Description";
+$string['displayingusers'] = "Displaying users \$a->start to \$a->end";
 $string['documentation'] = "Moodle Documentation";
 $string['downloadexcel'] = "Download in Excel format";
 $string['downloadtext'] = "Download in text format";
