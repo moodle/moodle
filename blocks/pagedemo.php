@@ -31,7 +31,7 @@
     define('BLOCK_POS_CENTERDOWN', 'cd');
 
     // The actual Page derived class
-    class MoodlePage_Test extends MoodlePage {
+    class page_test extends page_base {
 
         // Mandatory; should return our identifier.
         function get_type() {

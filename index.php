@@ -55,7 +55,7 @@
         $langmenu = popup_form ($CFG->wwwroot .'/index.php?lang=', $langs, 'chooselang', $currlang, '', '', '', true);
     }
 
-    $PAGE = MoodlePage::create_object(MOODLE_PAGE_COURSE, SITEID);
+    $PAGE = page_base::create_object(MOODLE_PAGE_COURSE, SITEID);
 
     print_header(strip_tags($site->fullname), $site->fullname, 'home', '',
                  '<meta name="description" content="'. s(strip_tags($site->summary)) .'" />',

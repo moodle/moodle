@@ -1,8 +1,8 @@
 <?php //$Id$
 
 /**
- * This file contains the parent class for moodle pages, MoodlePage, 
- * as well as the MoodlePage_Course subclass.
+ * This file contains the parent class for moodle pages, page_base, 
+ * as well as the page_course subclass.
  * A page is defined by its page type (ie. course, blog, activity) and its page id
  * (courseid, blogid, activity id, etc).
  *
@@ -24,10 +24,10 @@ define('MOODLE_PAGE_COURSE',    'course');
  *
  * @author Jon Papaioannou
  * @package pages
- * @todo This parent class is very messy still. Please for the moment ignore it [except maybe create_object()] and move on to the derived class MoodlePage_Course to see the comments there.
+ * @todo This parent class is very messy still. Please for the moment ignore it [except maybe create_object()] and move on to the derived class page_course to see the comments there.
  */
 
-class MoodlePage {
+class page_base {
     /**
      * The string identifier for the type of page being described.
      * @var string $type
@@ -164,15 +164,15 @@ class MoodlePage {
 
     // DO NOT TOUCH! NEVER! SECTION
 
-    // Factory method MoodlePage::create_object(). Called with a pagetype identifier and possibly with
-    // its numeric ID. Returns a fully constructed MoodlePage subclass you can work with.
+    // Factory method page_base::create_object(). Called with a pagetype identifier and possibly with
+    // its numeric ID. Returns a fully constructed page_base subclass you can work with.
     function create_object($type, $id = NULL) {
 
         $data = new stdClass;
         $data->pagetype = $type;
         $data->pageid   = $id;
 
-        $classname = MoodlePage::map_page_type($type);
+        $classname = page_base::map_page_type($type);
 
         $object = &new $classname;
         // TODO: subclassing check here
@@ -190,7 +190,7 @@ class MoodlePage {
     // Use it to associate the textual identifier of your Page with the actual class name that has to be instantiated.
     function map_page_type($type, $classname = NULL) {
         static $mappings = array(
-            MOODLE_PAGE_COURSE => 'MoodlePage_Course'
+            MOODLE_PAGE_COURSE => 'page_course'
         );
 
         if(!empty($type) && !empty($classname)) {
@@ -217,7 +217,7 @@ class MoodlePage {
  * @package pages
  */
 
-class MoodlePage_Course extends MoodlePage {
+class page_course extends page_base {
 
     // Any data we might need to store specifically about ourself should be declared here.
     // After init_full() is called for the first time, ALL of these variables should be
