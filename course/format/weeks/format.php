@@ -104,10 +104,7 @@
         print_section($course, $thissection, $mods, $modnamesused);
 
         if (isediting($course->id)) {
-            echo "<div align=right>";
-            popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&amp;section=$section&add=",
-                        $modnames, "section$section", "", "$stradd...", "mods", $stractivities);
-            echo "</div>";
+            print_section_add_menus($course, $section, $modnames);
         }
 
         echo "</td>";
@@ -201,10 +198,7 @@
                 print_section($course, $thissection, $mods, $modnamesused);
     
                 if (isediting($course->id)) {
-                    echo "<div align=right>";
-                    popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&amp;section=$section&add=",
-                                $modnames, "section$section", "", "$stradd...");
-                    echo "</div>";
+                    print_section_add_menus($course, $section, $modnames);
                 }
     
                 echo "</td>";

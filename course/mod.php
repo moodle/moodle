@@ -60,6 +60,9 @@
                 if (is_string($return)) {
                     error($return, "view.php?id=$course->id");
                 }
+
+                $SESSION->returnpage = "$CFG->wwwroot/mod/$mod->modulename/view.php?id=$mod->coursemodule";
+
                 add_to_log($course->id, "course", "update mod", 
                            "../mod/$mod->modulename/view.php?id=$mod->coursemodule", 
                            "$mod->modulename $mod->instance"); 
@@ -104,6 +107,9 @@
                 if (! set_field("course_modules", "section", $sectionid, "id", $mod->coursemodule)) {
                     error("Could not update the course module with the correct section");
                 }   
+
+                $SESSION->returnpage = "$CFG->wwwroot/mod/$mod->modulename/view.php?id=$mod->coursemodule";
+                
                 add_to_log($course->id, "course", "add mod", 
                            "../mod/$mod->modulename/view.php?id=$mod->coursemodule", 
                            "$mod->modulename $mod->instance"); 
@@ -112,49 +118,6 @@
                            "$mod->instance", $mod->coursemodule); 
                 break;
                 
-            case "add":
-                $return = $addinstancefunction($mod);
-                if (!$return) {
-                    if (file_exists($moderr)) {
-                        $form = $mod;
-                        include_once($moderr);
-                        die;
-                    }
-                    error("Could not add a new instance of $mod->modulename", "view.php?id=$course->id");
-                }
-                if (is_string($return)) {
-                    error($return, "view.php?id=$course->id");
-                }
-
-                $mod->groupmode = $course->groupmode;  /// Default groupmode the same as course
-
-                $mod->instance = $return;
-                // course_modules and course_sections each contain a reference 
-                // to each other, so we have to update one of them twice.
-
-                if (! $mod->coursemodule = add_course_module($mod) ) {
-                    error("Could not add a new course module");
-                }
-                if (! $sectionid = add_mod_to_section($mod) ) {
-                    error("Could not add the new course module to that section");
-                }
-                //We get the section's visible field status
-                $visible = get_field("course_sections","visible","id",$sectionid);
-
-                if (! set_field("course_modules", "visible", $visible, "id", $mod->coursemodule)) {
-                    error("Could not update the course module with the correct visibility");
-                }   
-
-                if (! set_field("course_modules", "section", $sectionid, "id", $mod->coursemodule)) {
-                    error("Could not update the course module with the correct section");
-                }   
-                add_to_log($course->id, "course", "add mod", 
-                           "../mod/$mod->modulename/view.php?id=$mod->coursemodule", 
-                           "$mod->modulename $mod->instance"); 
-                add_to_log($course->id, $mod->modulename, "add", 
-                           "view.php?id=$mod->coursemodule", 
-                           "$mod->instance", $mod->coursemodule); 
-                break;
             case "delete":
                 if (! $deleteinstancefunction($mod->instance)) {
                     notify("Could not delete the $mod->modulename (instance)");
@@ -577,6 +540,9 @@
         $form->instance   = "";
         $form->coursemodule = "";
         $form->mode       = "add";
+        if (isset($_GET['type'])) {
+            $form->type = $_GET['type'];
+        }
 
         $sectionname    = get_string("name$course->format");
         $fullmodulename = get_string("modulename", $module->name);
@@ -624,6 +590,7 @@
 
         if ($usehtmleditor = can_use_html_editor()) {
             $defaultformat = FORMAT_HTML;
+            $editorfields = '';
         } else {
             $defaultformat = FORMAT_MOODLE;
         }
@@ -636,7 +603,7 @@
         print_simple_box_end();
 
         if ($usehtmleditor and empty($nohtmleditorneeded)) { 
-            use_html_editor();
+            use_html_editor($editorfields);
         }
 
     } else {

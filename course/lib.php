@@ -302,7 +302,15 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate="today"
                 $selectedactivity = "$mod->cm";
             }
         }
+	
+	if (isadmin() && !$course->category) {
+	    $activities["site_errors"] = get_string("siteerrors");
+	    if ($modid === "site_errors") {
+		$selectedactivity = "site_errors";
+	    }
+	}
     }
+    
 
     $strftimedate = get_string("strftimedate");
     $strftimedaydate = get_string("strftimedaydate");
@@ -369,20 +377,19 @@ function make_log_url($module, $url) {
     }
 }
 
-
 function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $perpage=100,
                    $url="", $modname="", $modid=0, $modaction="") {
 
-// It is assumed that $date is the GMT time of midnight for that day,
-// and so the next 86400 seconds worth of logs are printed.
+    // It is assumed that $date is the GMT time of midnight for that day,
+    // and so the next 86400 seconds worth of logs are printed.
 
     global $CFG, $db;
 
-    if ($course->category) {
-        $selector = "l.course='$course->id' AND l.userid = u.id";
+    $joins = array();
 
+    if ($course->category) {
+        $joins[] = "l.course='$course->id'"; 
     } else {
-        $selector = "l.userid = u.id";  // Show all courses
         if ($ccc = get_courses("all", "c.id ASC", "c.id,c.shortname")) {
             foreach ($ccc as $cc) {
                 $courses[$cc->id] = "$cc->shortname";
@@ -391,25 +398,32 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
     }
 
     if ($modname) {
-        $selector .= " AND l.module = '$modname'";
+        $joins[] = "l.module = '$modname'";
     }
 
-    if ($modid) {
-        $selector .= " AND l.cmid = '$modid'";
+    if ($modid && is_int($modid)) {
+        $joins[] = "l.cmid = '$modid'";
+    } else if ($modid == "site_errors") {
+        $joins[] = "l.action='error'";
     }
 
     if ($modaction) {
-        $selector .= " AND l.action = '$modaction'";
+        $joins[] = "l.action = '$modaction'";
     }
 
     if ($user) {
-        $selector .= " AND l.userid = '$user'";
+        $joins[] = "l.userid = '$user'";
     }
 
     if ($date) {
         $enddate = $date + 86400;
-        $selector .= " AND l.time > '$date' AND l.time < '$enddate'";
+        $joins[] = "l.time > '$date' AND l.time < '$enddate'";
     }
+
+    for ($i = 0; $i < count($joins); $i++) {
+        $selector .= $joins[$i] . (($i == count($joins)-1) ? " " : " AND ");
+    }
+
 
     $totalcount = 0;  // Initialise
 
@@ -677,7 +691,7 @@ function get_all_mods($courseid, &$mods, &$modnames, &$modnamesplural, &$modname
 // Returns a number of useful structures for course displays
 
     $mods          = NULL;    // course modules indexed by id
-    $modnames      = NULL;    // all course module names
+    $modnames      = NULL;    // all course module names (except resource!)
     $modnamesplural= NULL;    // all course module names (plural form)
     $modnamesused  = NULL;    // course module names used
 
@@ -705,6 +719,9 @@ function get_all_mods($courseid, &$mods, &$modnames, &$modnamesplural, &$modname
             asort($modnamesused);
         }
     }
+
+    unset($modnames['resource']);
+    unset($modnames['label']);
 }
 
 
@@ -872,6 +889,32 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
     echo "</table>\n\n";
 }
 
+
+function print_section_add_menus($course, $section, $modnames) {
+// Prints the menus to add activities and resources
+
+    static $straddactivity, $straddresource, $resources;
+
+    if (!isset($straddactivity)) {
+        $straddactivity = get_string('addactivity');
+        $straddresource = get_string('addresource');
+        $resourcetypes = get_list_of_plugins('mod/resource/type');
+        foreach ($resourcetypes as $resourcetype) {
+            $resources["resource&type=$resourcetype"] = get_string("resourcetype$resourcetype", 'resource');
+        }
+        asort($resources);
+        $resources['label'] = get_string('resourcetypelabel', 'resource');
+    }
+
+    echo '<div align="right"><table align="right"><tr><td>';
+    popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&amp;section=$section&add=",
+                $resources, "ressection$section", "", $straddresource);
+    echo '</td><td>';
+    popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&amp;section=$section&add=",
+                $modnames, "section$section", "", $straddactivity);
+    echo '</td></tr></table>';
+    echo '</div>';
+}
 
 function rebuild_course_cache($courseid=0) {
 // Rebuilds the cached list of course activities stored in the database
