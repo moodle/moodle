@@ -13,7 +13,7 @@
     <td width="<?php echo $leftwidth?>" valign="top"> 
       <?php 
       $moddata[]="<a title=\"".get_string("listofallpeople")."\" href=\"../user/index.php?id=$course->id\">".get_string("participants")."</a>";
-      $modicon[]="<img src=\"$pixpath/i/users.gif\" height=16 width=16 alt=\"\">";
+      $modicon[]="<img src=\"$CFG->pixpath/i/users.gif\" height=16 width=16 alt=\"\">";
       $editmyprofile = "<a title=\"$USER->firstname $USER->lastname\" href=\"../user/edit.php?id=$USER->id&course=$course->id\">".
                         get_string("editmyprofile")."</A>";
       if ($USER->description) {
@@ -21,7 +21,7 @@
       } else {
           $moddata[]= $editmyprofile." <blink>*</blink>";
       }
-      $modicon[]="<img src=\"$pixpath/i/user.gif\" height=16 width=16 alt=\"\">";
+      $modicon[]="<img src=\"$CFG->pixpath/i/user.gif\" height=16 width=16 alt=\"\">";
       print_side_block(get_string("people"), "", $moddata, $modicon, "", $leftwidth);
 
       

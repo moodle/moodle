@@ -60,14 +60,6 @@
         redirect("$CFG->wwwroot/");
     }
 
-    if (empty($THEME->custompix)) {
-        $pixpath = "../pix";
-        $modpixpath = "../mod";
-    } else {
-        $pixpath = "../theme/$CFG->theme/pix";
-        $modpixpath = "../theme/$CFG->theme/pix/mod";
-    }
-
     $courseword = get_string("course");
 
     $loggedinas = "<p class=\"logininfo\">".user_login_string($course, $USER)."</p>";

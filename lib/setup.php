@@ -116,6 +116,14 @@
     $CFG->header      = "$CFG->dirroot/theme/$CFG->theme/header.html";
     $CFG->footer      = "$CFG->dirroot/theme/$CFG->theme/footer.html";
 
+    if (empty($THEME->custompix)) {
+        $CFG->pixpath = "$CFG->wwwroot/pix";
+        $CFG->modpixpath = "$CFG->wwwroot/mod";
+    } else {
+        $CFG->pixpath = "$CFG->wwwroot/theme/$CFG->theme/pix";
+        $CFG->modpixpath = "$CFG->wwwroot/theme/$CFG->theme/pix/mod";
+    }
+
 
 /// A hack to get around magic_quotes_gpc being turned off
 

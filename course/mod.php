@@ -433,7 +433,9 @@
 
     if (file_exists($modform)) {
 
-        print_heading_with_help($pageheading, "mods", $module->name);
+        $icon = "<img align=absmiddle height=16 width=16 src=\"$CFG->modpixpath/$module->name/icon.gif\">&nbsp;";
+
+        print_heading_with_help($pageheading, "mods", $module->name, $icon);
         print_simple_box_start("center", "", "$THEME->cellheading");
         include_once($modform);
         print_simple_box_end();

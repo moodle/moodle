@@ -42,14 +42,14 @@
 
 /// Links to people
     $moddata[]="<a title=\"".get_string("listofallpeople")."\" href=\"../user/index.php?id=$course->id\">".get_string("participants")."</a>";
-    $modicon[]="<img src=\"$pixpath/i/users.gif\" height=16 width=16 alt=\"\">";
+    $modicon[]="<img src=\"$CFG->pixpath/i/users.gif\" height=16 width=16 alt=\"\">";
     $editmyprofile = "<a title=\"$USER->firstname $USER->lastname\" href=\"../user/edit.php?id=$USER->id&course=$course->id\">".get_string("editmyprofile")."</a>";
     if ($USER->description) {
         $moddata[]= $editmyprofile;
     } else {
         $moddata[]= $editmyprofile." <blink>*</blink>";
     }
-    $modicon[]="<img src=\"$pixpath/i/user.gif\" height=16 width=16 alt=\"\">";
+    $modicon[]="<img src=\"$CFG->pixpath/i/user.gif\" height=16 width=16 alt=\"\">";
     print_side_block(get_string("people"), "", $moddata, $modicon);
 
 
@@ -58,8 +58,10 @@
     $modicon = array();
     if ($modnamesused) {
         foreach ($modnamesused as $modname => $modfullname) {
-            $moddata[] = "<a href=\"../mod/$modname/index.php?id=$course->id\">".$modnamesplural[$modname]."</a>";
-            $modicon[] = "<img src=\"$modpixpath/$modname/icon.gif\" height=16 width=16 alt=\"\">";
+            if ($modname != "label") {
+                $moddata[] = "<a href=\"../mod/$modname/index.php?id=$course->id\">".$modnamesplural[$modname]."</a>";
+                $modicon[] = "<img src=\"$CFG->modpixpath/$modname/icon.gif\" height=16 width=16 alt=\"\">";
+            }
         }
     }
     print_side_block($stractivities, "", $moddata, $modicon);
@@ -109,7 +111,7 @@
 
         if (isediting($course->id)) {
             $thissection->summary .= " <a title=\"$streditsummary\" ".
-                                  "href=\"editsection.php?id=$thissection->id\"><img height=11 width=11 src=\"$pixpath/t/edit.gif\" ".
+                                  "href=\"editsection.php?id=$thissection->id\"><img height=11 width=11 src=\"$CFG->pixpath/t/edit.gif\" ".
                                   "border=0 alt=\"$streditsummary\"></a></p>";
         }
     
@@ -201,7 +203,7 @@
 
             if (isediting($course->id)) {
                 $thissection->summary .= " <a title=\"$streditsummary\" href=\"editsection.php?id=$thissection->id\">".
-                      "<img src=\"$pixpath/t/edit.gif\" height=11 width=11 border=0></a></p>";
+                      "<img src=\"$CFG->pixpath/t/edit.gif\" height=11 width=11 border=0></a></p>";
             }
 
             echo text_to_html($thissection->summary);
@@ -222,30 +224,30 @@
 
         if ($displaysection == $section) { 
             echo "<a href=\"view.php?id=$course->id&week=all\" title=\"$strshowallweeks\">".
-                 "<img src=\"$pixpath/i/all.gif\" height=25 width=16 border=0></a><br />";
+                 "<img src=\"$CFG->pixpath/i/all.gif\" height=25 width=16 border=0></a><br />";
         } else {
             $strshowonlyweek = get_string("showonlyweek", "", $section);
             echo "<a href=\"view.php?id=$course->id&week=$section\" title=\"$strshowonlyweek\">".
-                 "<img src=\"$pixpath/i/one.gif\" height=16 width=16 border=0></a><br />";
+                 "<img src=\"$CFG->pixpath/i/one.gif\" height=16 width=16 border=0></a><br />";
         }
 
         if (isediting($course->id)) {
             if ($thissection->visible) {        // Show the hide/show eye
                 echo "<a href=\"view.php?id=$course->id&hide=$section\" title=\"$strweekhide\">".
-                     "<img src=\"$pixpath/i/hide.gif\" vspace=3 height=16 width=16 border=0></a><br />";
+                     "<img src=\"$CFG->pixpath/i/hide.gif\" vspace=3 height=16 width=16 border=0></a><br />";
             } else {
                 echo "<a href=\"view.php?id=$course->id&show=$section\" title=\"$strweekshow\">".
-                     "<img src=\"$pixpath/i/show.gif\" vspace=3 height=16 width=16 border=0></a><br />";
+                     "<img src=\"$CFG->pixpath/i/show.gif\" vspace=3 height=16 width=16 border=0></a><br />";
             }
 
             if ($section > 1) {                       // Add a arrow to move section up
                 echo "<a href=\"view.php?id=$course->id&section=$section&move=-1\" title=\"$strmoveup\">".
-                     "<img src=\"$pixpath/t/up.gif\" vspace=3 height=11 width=11 border=0></a><br />";
+                     "<img src=\"$CFG->pixpath/t/up.gif\" vspace=3 height=11 width=11 border=0></a><br />";
             }
 
             if ($section < $course->numsections) {    // Add a arrow to move section down
                 echo "<a href=\"view.php?id=$course->id&section=$section&move=1\" title=\"$strmovedown\">".
-                     "<img src=\"$pixpath/t/down.gif\" vspace=3 height=11 width=11 border=0></a><br />";
+                     "<img src=\"$CFG->pixpath/t/down.gif\" vspace=3 height=11 width=11 border=0></a><br />";
             }
 
         }

@@ -23,12 +23,6 @@
 
     $site = get_site();
 
-    if (empty($THEME->custompix)) {
-        $pixpath = "$CFG->wwwroot/pix";
-    } else {
-        $pixpath = "$CFG->wwwroot/theme/$CFG->theme/pix";
-    }
-
     $displaylist = array();
     $parentlist = array();
     make_categories_list($displaylist, $parentlist, "");

@@ -261,6 +261,11 @@ function print_recent_activity($course) {
     if ($logs) {
         foreach ($logs as $key => $log) {
             $info = split(" ", $log->info);
+
+            if ($info[0] == "label") {     // Labels are special activities
+                continue;
+            }
+
             $modname = get_field($info[0], "name", "id", $info[1]);
             //Create a temp valid module structure (course,id)
             $tempmod->course = $log->course;
@@ -384,6 +389,11 @@ function get_array_of_activities($courseid) {
                                                    $mod[$seq]->cm.
                                                    "','resource$resource->id','$resource->alltext');\"");
                            }
+                       }
+                   }
+                   if ($mod[$seq]->mod == "label") {
+                       if ($label = get_record("label", "id", $rawmods[$seq]->instance)) {
+                           $mod[$seq]->extra = urlencode($label->content);
                        }
                    }
                }
@@ -512,12 +522,7 @@ function print_section_block($heading, $course, $section, $mods, $modnames, $mod
             $strmovefull = get_string("movefull", "", "'$USER->activitycopyname'");
             $stractivityclipboard = $USER->activitycopyname;
             $strcancel= get_string("cancel");
-            if (empty($THEME->custompix)) {
-                $pixpath = "$CFG->wwwroot/pix";
-            } else {
-                $pixpath = "$CFG->wwwroot/theme/$CFG->theme/pix";
-            }
-            $modicon[] = "&nbsp;<img align=bottom src=\"$pixpath/t/move.gif\" height=\"11\" width=\"11\">";
+            $modicon[] = "&nbsp;<img align=bottom src=\"$CFG->pixpath/t/move.gif\" height=\"11\" width=\"11\">";
             $moddata[] = "$USER->activitycopyname&nbsp;(<a href=\"$CFG->wwwroot/course/mod.php?cancelcopy=true\">$strcancel</a>)";
         }
 
@@ -548,11 +553,16 @@ function print_section_block($heading, $course, $section, $mods, $modnames, $mod
                     $extra = "";
                 }
 
-                $modicon[] = "<img src=\"$CFG->wwwroot/mod/$mod->modname/icon.gif\"".
-                             " height=\"16\" width=\"16\" alt=\"$mod->modfullname\">";
-                $moddata[] = "<a title=\"$mod->modfullname\" $linkcss $extra".
-                             "href=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\">$instancename</a>".
-                             "$editbuttons";
+                if ($mod->modname == "label") {
+                    $modicon[] = "";
+                    $moddata[] = format_text($extra, FORMAT_HTML).$editbuttons;
+                } else {
+                    $modicon[] = "<img src=\"$CFG->wwwroot/mod/$mod->modname/icon.gif\"".
+                                 " height=\"16\" width=\"16\" alt=\"$mod->modfullname\">";
+                    $moddata[] = "<a title=\"$mod->modfullname\" $linkcss $extra".
+                                 "href=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\">$instancename</a>".
+                                 "$editbuttons";
+                }
             }
         }
     }
@@ -599,7 +609,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
 
     $modinfo = unserialize($course->modinfo);
 
-    echo "<table width=\"$width\"><tr><td>\n";
+    echo "<table width=\"$width\" cellpadding=3 cellspacing=0>\n";
     if (!empty($section->sequence)) {
 
         $sectionmods = explode(",", $section->sequence);
@@ -609,7 +619,9 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                 continue;
             }
             $mod = $mods[$modnumber];
+
             if ($mod->visible or $isteacher) {
+                echo "<tr><td class=\"activity$mod->modname\">";
                 if ($ismoving) {
                     if ($mod->id == $USER->activitycopy) {
                         continue;
@@ -618,31 +630,38 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                          " href=\"mod.php?moveto=$mod->id\">$strmovehere</a></font><br />\n";
                 }
                 $instancename = urldecode($modinfo[$modnumber]->name);
+
                 if (!empty($modinfo[$modnumber]->extra)) {
                     $extra = urldecode($modinfo[$modnumber]->extra);
                 } else {
                     $extra = "";
                 }
-                $linkcss = $mod->visible ? "" : " class=\"dimmed\" ";
-                echo "<img src=\"$CFG->wwwroot/mod/$mod->modname/icon.gif\"".
-                     " height=16 width=16 alt=\"$mod->modfullname\">".
-                     " <font size=2><a title=\"$mod->modfullname\" $linkcss $extra".
-                     " href=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\">$instancename</a></font>";
-            }
-            if (isediting($course->id)) {
-                echo "&nbsp;&nbsp;";
-                echo make_editing_buttons($mod->id, $absolute, $mod->visible);
-            }
-            if ($mod->visible or $isteacher) {
-                echo "<br />\n";
+
+                if ($mod->modname == "label") {
+                    echo format_text($extra, FORMAT_HTML);
+
+                } else { // Normal activity
+                    $linkcss = $mod->visible ? "" : " class=\"dimmed\" ";
+                    echo "<img src=\"$CFG->wwwroot/mod/$mod->modname/icon.gif\"".
+                         " height=16 width=16 alt=\"$mod->modfullname\">".
+                         " <font size=2><a title=\"$mod->modfullname\" $linkcss $extra".
+                         " href=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\">$instancename</a></font>";
+                }
+                echo "</td>";
+                if ($isediting) {
+                    echo "<td align=\"right\" valign=\"top\" nowrap=\"nowrap\" class=\"activityeditbuttons\">";
+                    echo make_editing_buttons($mod->id, $absolute, $mod->visible);
+                    echo " </td>";
+                }
+                echo "</tr>";
             }
         }
     }
     if ($ismoving) {
-        echo "<font size=\"2\"> -> <a title=\"$strmovefull\"".
-             " href=\"mod.php?movetosection=$section->id\">$strmovehere</a></font><br />\n";
+        echo "<tr><td><font size=\"2\"> -> <a title=\"$strmovefull\"".
+             " href=\"mod.php?movetosection=$section->id\">$strmovehere</a></font></td></tr>\n";
     }
-    echo "</td></tr></table><br />\n\n";
+    echo "</table>\n\n";
 }
 
 
@@ -734,37 +753,31 @@ function print_side_block_end() {
 function print_admin_links ($siteid, $width=180) {
     global $CFG, $THEME;
     
-    if (empty($THEME->custompix)) {
-        $pixpath = "$CFG->wwwroot/pix";
-    } else {
-        $pixpath = "$CFG->wwwroot/theme/$CFG->theme/pix";
-    }
-
     if (isadmin()) {
 	    $moddata[]="<a href=\"$CFG->wwwroot/$CFG->admin/configure.php\">".get_string("configuration")."</a>...";
-		$modicon[]="<img src=\"$pixpath/i/admin.gif\" height=16 width=16 alt=\"\" />";
+		$modicon[]="<img src=\"$CFG->pixpath/i/admin.gif\" height=16 width=16 alt=\"\" />";
 
 	    $moddata[]="<a href=\"$CFG->wwwroot/$CFG->admin/users.php\">".get_string("users")."</a>...";
-		$modicon[]="<img src=\"$pixpath/i/users.gif\" height=16 width=16 alt=\"\" />";
+		$modicon[]="<img src=\"$CFG->pixpath/i/users.gif\" height=16 width=16 alt=\"\" />";
     }
 
     if (iscreator()) {
 	    $moddata[]="<a href=\"$CFG->wwwroot/course/index.php?edit=on\">".get_string("courses")."</a>";
-		$modicon[]="<img src=\"$pixpath/i/course.gif\" height=16 width=16 alt=\"\" />";
+		$modicon[]="<img src=\"$CFG->pixpath/i/course.gif\" height=16 width=16 alt=\"\" />";
         $fulladmin = "";
     }
 
     if (isadmin()) {
 		$moddata[]="<a href=\"$CFG->wwwroot/course/log.php?id=$siteid\">".get_string("logs")."</a>";
-		$modicon[]="<img src=\"$pixpath/i/log.gif\" height=16 width=16 alt=\"\" />";
+		$modicon[]="<img src=\"$CFG->pixpath/i/log.gif\" height=16 width=16 alt=\"\" />";
 
 		$moddata[]="<a href=\"$CFG->wwwroot/files/index.php?id=$siteid\">".get_string("sitefiles")."</a>";
-		$modicon[]="<img src=\"$pixpath/i/files.gif\" height=16 width=16 alt=\"\" />";
+		$modicon[]="<img src=\"$CFG->pixpath/i/files.gif\" height=16 width=16 alt=\"\" />";
 
 		if (file_exists("$CFG->dirroot/$CFG->admin/$CFG->dbtype")) {
             $moddata[]="<a href=\"$CFG->wwwroot/$CFG->admin/$CFG->dbtype/frame.php\">".
                         get_string("managedatabase")."</a>";
-		    $modicon[]="<img src=\"$pixpath/i/settings.gif\" height=16 width=16 alt=\"\" />";
+		    $modicon[]="<img src=\"$CFG->pixpath/i/settings.gif\" height=16 width=16 alt=\"\" />";
 		}
         $fulladmin = "<p><a href=\"$CFG->wwwroot/$CFG->admin/\">".get_string("admin")."</a>...";
     }
@@ -780,30 +793,23 @@ function print_course_admin_links($course, $width=180) {
     if (isguest()) {
         return true;
     }
-    if (empty($THEME->custompix)) {
-        $pixpath = "$CFG->wwwroot/pix";
-        $modpixpath = "$CFG->wwwroot/mod";
-    } else {
-        $pixpath = "$CFG->wwwroot/theme/$CFG->theme/pix";
-        $modpixpath = "$CFG->wwwroot/theme/$CFG->theme/pix/mod";
-    }
     if (isteacher($course->id)) {
         if (isteacheredit($course->id)) {
-            $adminicon[]="<img src=\"$pixpath/i/edit.gif\" height=16 width=16 alt=\"\">";
+            $adminicon[]="<img src=\"$CFG->pixpath/i/edit.gif\" height=16 width=16 alt=\"\">";
             if (isediting($course->id)) {
                 $admindata[]="<a href=\"view.php?id=$course->id&edit=off\">".get_string("turneditingoff")."</a>";
             } else {
                 $admindata[]="<a href=\"view.php?id=$course->id&edit=on\">".get_string("turneditingon")."</a>";
             }
             $admindata[]="<a href=\"edit.php?id=$course->id\">".get_string("settings")."...</a>";
-            $adminicon[]="<img src=\"$pixpath/i/settings.gif\" height=16 width=16 alt=\"\">";
+            $adminicon[]="<img src=\"$CFG->pixpath/i/settings.gif\" height=16 width=16 alt=\"\">";
 
             if (iscreator() or !empty($CFG->teacherassignteachers)) {
                 if (!$course->teachers) {
                     $course->teachers = get_string("defaultcourseteachers");
                 }
                 $admindata[]="<a href=\"teacher.php?id=$course->id\">$course->teachers...</a>";
-                $adminicon[]="<img src=\"$pixpath/i/users.gif\" height=16 width=16 alt=\"\">";
+                $adminicon[]="<img src=\"$CFG->pixpath/i/users.gif\" height=16 width=16 alt=\"\">";
             }
         }
 
@@ -811,47 +817,47 @@ function print_course_admin_links($course, $width=180) {
             $course->students = get_string("defaultcoursestudents");
         }
         $admindata[]="<a href=\"student.php?id=$course->id\">$course->students...</a>";
-        $adminicon[]="<img src=\"$pixpath/i/users.gif\" height=16 width=16 alt=\"\">";
+        $adminicon[]="<img src=\"$CFG->pixpath/i/users.gif\" height=16 width=16 alt=\"\">";
 
         if (isteacheredit($course->id)) {
             $admindata[]="<a href=\"$CFG->wwwroot/backup/backup.php?id=$course->id\">".get_string("backup")."...</a>";
-            $adminicon[]="<img src=\"$pixpath/i/backup.gif\" height=16 width=16 alt=\"\">";
+            $adminicon[]="<img src=\"$CFG->pixpath/i/backup.gif\" height=16 width=16 alt=\"\">";
         
             $admindata[]="<a href=\"$CFG->wwwroot/files/index.php?id=$course->id&wdir=/backupdata\">".get_string("restore")."...</a>";
-            $adminicon[]="<img src=\"$pixpath/i/restore.gif\" height=16 width=16 alt=\"\">";
+            $adminicon[]="<img src=\"$CFG->pixpath/i/restore.gif\" height=16 width=16 alt=\"\">";
             $admindata[]="<a href=\"scales.php?id=$course->id\">".get_string("scales")."...</a>";
-            $adminicon[]="<img src=\"$pixpath/i/scales.gif\" height=16 width=16 alt=\"\">";
+            $adminicon[]="<img src=\"$CFG->pixpath/i/scales.gif\" height=16 width=16 alt=\"\">";
         }
     
         $admindata[]="<a href=\"grades.php?id=$course->id\">".get_string("grades")."...</a>";
-        $adminicon[]="<img src=\"$pixpath/i/grades.gif\" height=16 width=16 alt=\"\">";
+        $adminicon[]="<img src=\"$CFG->pixpath/i/grades.gif\" height=16 width=16 alt=\"\">";
     
         $admindata[]="<a href=\"log.php?id=$course->id\">".get_string("logs")."...</a>";
-        $adminicon[]="<img src=\"$pixpath/i/log.gif\" height=16 width=16 alt=\"\">";
+        $adminicon[]="<img src=\"$CFG->pixpath/i/log.gif\" height=16 width=16 alt=\"\">";
 
         $admindata[]="<a href=\"$CFG->wwwroot/files/index.php?id=$course->id\">".get_string("files")."...</a>";
-        $adminicon[]="<img src=\"$pixpath/i/files.gif\" height=16 width=16 alt=\"\">";
+        $adminicon[]="<img src=\"$CFG->pixpath/i/files.gif\" height=16 width=16 alt=\"\">";
 
         $admindata[]="<a href=\"$CFG->wwwroot/doc/view.php?id=$course->id&file=teacher.html\">".get_string("help")."...</a>";
-        $adminicon[]="<img src=\"$modpixpath/resource/icon.gif\" height=16 width=16 alt=\"\">";
+        $adminicon[]="<img src=\"$CFG->modpixpath/resource/icon.gif\" height=16 width=16 alt=\"\">";
 
         if ($teacherforum = forum_get_course_forum($course->id, "teacher")) {
             $admindata[]="<a href=\"$CFG->wwwroot/mod/forum/view.php?f=$teacherforum->id\">$teacherforum->name</a>";
-            $adminicon[]="<img src=\"$modpixpath/forum/icon.gif\" height=16 width=16 alt=\"\">";
+            $adminicon[]="<img src=\"$CFG->modpixpath/forum/icon.gif\" height=16 width=16 alt=\"\">";
         }
 
     } else if (!isguest()) {  // Students menu
         if ($course->showgrades) {
             $admindata[]="<a href=\"grade.php?id=$course->id\">".get_string("grades")."...</a>";
-            $adminicon[]="<img src=\"$pixpath/i/grades.gif\" height=16 width=16 alt=\"\">";
+            $adminicon[]="<img src=\"$CFG->pixpath/i/grades.gif\" height=16 width=16 alt=\"\">";
         }
         if ($CFG->auth == "email" or $CFG->auth == "none" or $CFG->auth == "manual") {
             $admindata[]="<a href=\"$CFG->wwwroot/login/change_password.php?id=$course->id\">".
                           get_string("changepassword")."...</a>";
-            $adminicon[]="<img src=\"$pixpath/i/user.gif\" height=16 width=16 alt=\"\">";
+            $adminicon[]="<img src=\"$CFG->pixpath/i/user.gif\" height=16 width=16 alt=\"\">";
         } else if ($CFG->changepassword) {
             $admindata[]="<a href=\"$CFG->changepassword\">".get_string("changepassword")."...</a>";
-            $adminicon[]="<img src=\"$pixpath/i/user.gif\" height=16 width=16 alt=\"\">";
+            $adminicon[]="<img src=\"$CFG->pixpath/i/user.gif\" height=16 width=16 alt=\"\">";
         }
     } 
 
@@ -941,15 +947,10 @@ function print_category_info($category, $depth) {
         $strsummary = get_string("summary");
     }
 
-    if (empty($THEME->custompix)) {
-        $pixpath = "$CFG->wwwroot/pix";
-    } else {
-        $pixpath = "$CFG->wwwroot/theme/$CFG->theme/pix";
-    }
     $catlinkcss = $category->visible ? "" : " class=\"dimmed\" ";
 
     if ($CFG->frontpage == FRONTPAGECOURSELIST) {
-        $catimage = "<img src=\"$pixpath/i/course.gif\" width=16 height=16 border=0>";
+        $catimage = "<img src=\"$CFG->pixpath/i/course.gif\" width=16 height=16 border=0>";
     } else {
         $catimage = "&nbsp";
     }
@@ -985,22 +986,22 @@ function print_category_info($category, $depth) {
                 echo "</td>\n<td align=\"right\" valign=\"top\" nowrap class=\"coursename\">";
                 if ($course->guest ) {
                     echo "<a title=\"$strallowguests\" href=\"$CFG->wwwroot/course/view.php?id=$course->id\">";
-                    echo "<img hspace=1 alt=\"\" height=16 width=16 border=0 src=\"$pixpath/i/user.gif\"></a>";
+                    echo "<img hspace=1 alt=\"\" height=16 width=16 border=0 src=\"$CFG->pixpath/i/user.gif\"></a>";
                 } else {
-                    echo "<img alt=\"\" height=16 width=18 border=0 src=\"$pixpath/spacer.gif\">";
+                    echo "<img alt=\"\" height=16 width=18 border=0 src=\"$CFG->pixpath/spacer.gif\">";
                 }
                 if ($course->password) {
                     echo "<a title=\"$strrequireskey\" href=\"$CFG->wwwroot/course/view.php?id=$course->id\">";
-                    echo "<img hspace=1 alt=\"\" height=16 width=16 border=0 src=\"$pixpath/i/key.gif\"></a>";
+                    echo "<img hspace=1 alt=\"\" height=16 width=16 border=0 src=\"$CFG->pixpath/i/key.gif\"></a>";
                 } else {
-                    echo "<img alt=\"\" height=16 width=18 border=0 src=\"$pixpath/spacer.gif\">";
+                    echo "<img alt=\"\" height=16 width=18 border=0 src=\"$CFG->pixpath/spacer.gif\">";
                 }
                 if ($course->summary) {
                     link_to_popup_window ("/course/info.php?id=$course->id", "courseinfo", 
-                                          "<img hspace=1 alt=\"info\" height=16 width=16 border=0 src=\"$pixpath/i/info.gif\">", 
+                                          "<img hspace=1 alt=\"info\" height=16 width=16 border=0 src=\"$CFG->pixpath/i/info.gif\">", 
                                            400, 500, $strsummary);
                 } else {
-                    echo "<img alt=\"\" height=16 width=18 border=0 src=\"$pixpath/spacer.gif\">";
+                    echo "<img alt=\"\" height=16 width=18 border=0 src=\"$CFG->pixpath/spacer.gif\">";
                 }
                 echo "</td></tr>\n";
             }
@@ -1120,12 +1121,6 @@ function print_course($course, $width="100%") {
         error("Could not find a site!");
     }
 
-    if (empty($THEME->custompix)) {
-        $pixpath = "$CFG->wwwroot/pix";
-    } else {
-        $pixpath = "$CFG->wwwroot/theme/$CFG->theme/pix";
-    }
-
     print_simple_box_start("center", "$width");
 
     $linkcss = $course->visible ? "" : " class=\"dimmed\" ";
@@ -1150,12 +1145,12 @@ function print_course($course, $width="100%") {
     if ($course->guest) {
         $strallowguests = get_string("allowguests");
         echo "<a title=\"$strallowguests\" href=\"$CFG->wwwroot/course/view.php?id=$course->id\">";
-        echo "<img vspace=4 alt=\"$strallowguests\" height=16 width=16 border=0 src=\"$pixpath/i/user.gif\"></a>&nbsp;&nbsp;";
+        echo "<img vspace=4 alt=\"$strallowguests\" height=16 width=16 border=0 src=\"$CFG->pixpath/i/user.gif\"></a>&nbsp;&nbsp;";
     }
     if ($course->password) {
         $strrequireskey = get_string("requireskey");
         echo "<a title=\"$strrequireskey\" href=\"$CFG->wwwroot/course/view.php?id=$course->id\">";
-        echo "<img vspace=4 alt=\"$strrequireskey\" height=16 width=16 border=0 src=\"$pixpath/i/key.gif\"></a>";
+        echo "<img vspace=4 alt=\"$strrequireskey\" height=16 width=16 border=0 src=\"$CFG->pixpath/i/key.gif\"></a>";
     }
 
 

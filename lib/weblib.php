@@ -581,7 +581,7 @@ function replace_smilies(&$text) {
      if ($runonce == false){
         foreach ($emoticons as $emoticon => $image){
             $e[] = $emoticon;
-            $img[] = "<img alt=\"$emoticon\" width=15 height=15 src=\"$CFG->wwwroot/pix/s/$image\">";
+            $img[] = "<img alt=\"$emoticon\" width=15 height=15 src=\"$CFG->pixpath/s/$image\">";
         }
         $runonce = true;
     }
@@ -871,9 +871,10 @@ function print_heading($text, $align="center", $size=3) {
     echo "<p align=\"$align\"><font size=\"$size\"><b>".stripslashes_safe($text)."</b></font></p>";
 }
 
-function print_heading_with_help($text, $helppage, $module="moodle") {
+function print_heading_with_help($text, $helppage, $module="moodle", $icon="") {
 // Centered heading with attached help button (same title text)
-    echo "<p align=\"center\"><font size=\"3\"><b>".stripslashes_safe($text);
+// and optional icon attached
+    echo "<p align=\"center\"><font size=\"3\">$icon<b>".stripslashes_safe($text);
     helpbutton($helppage, $text, $module);
     echo "</b></font></p>";
 }
@@ -985,14 +986,8 @@ function print_user_picture($userid, $courseid, $picture, $large=false, $returns
                        " border=\"0\" width=\"$size\" height=\"$size\" alt=\"\">";
         }
     } else {         // Print default user pictures (use theme version if available)
-        if (empty($THEME->custompix)) {
-            $output .= "<img align=\"absmiddle\" src=\"$CFG->wwwroot/pix/u/$file.png\"".
-                       " border=\"0\" width=\"$size\" height=\"$size\" alt=\"\">";
-        } else {
-            $output .= "<img align=\"absmiddle\" src=\"$CFG->wwwroot/theme/$CFG->theme/pix/u/$file.png\"".
-                       " border=\"0\" width=\"$size\" height=\"$size\" alt=\"\">";
-        }
-
+        $output .= "<img align=\"absmiddle\" src=\"$CFG->pixpath/u/$file.png\"".
+                   " border=\"0\" width=\"$size\" height=\"$size\" alt=\"\">";
     }
     if ($link) {
         $output .= "</a>";
@@ -1399,7 +1394,7 @@ function print_grade_menu($courseid, $name, $current, $includenograde=true) {
 /// Prints a grade menu (as part of an existing form) with help
 /// Showing all possible numerical grades and scales
 
-    global $CFG, $THEME;
+    global $CFG;
 
     $strscale = get_string("scale");
     $strscales = get_string("scales");
@@ -1416,11 +1411,7 @@ function print_grade_menu($courseid, $name, $current, $includenograde=true) {
     }
     choose_from_menu($grades, "$name", "$current", "");
 
-    if (empty($THEME->custompix)) {
-        $helpicon = "$CFG->wwwroot/pix/help.gif";
-    } else {
-        $helpicon = "$CFG->wwwroot/theme/$CFG->theme/pix/help.gif";
-    }
+    $helpicon = "$CFG->pixpath/help.gif";
     $linkobject = "<img align=\"absmiddle\" border=0 height=17 width=22 alt=\"$strscales\" src=\"$helpicon\">";
     link_to_popup_window ("/course/scales.php?id=$courseid&list=true", "ratingscales", 
                           $linkobject, 400, 500, $strscales);
@@ -1430,15 +1421,11 @@ function print_scale_menu($courseid, $name, $current) {
 /// Prints a scale menu (as part of an existing form) including help button
 /// Just like print_grade_menu but without the numerical grades
 
-    global $CFG, $THEME;
+    global $CFG;
 
     $strscales = get_string("scales");
     choose_from_menu(get_scales_menu($courseid), "$name", $current, "");
-    if (empty($THEME->custompix)) {
-        $helpicon = "$CFG->wwwroot/pix/help.gif";
-    } else {
-        $helpicon = "$CFG->wwwroot/theme/$CFG->theme/pix/help.gif";
-    }
+    $helpicon = "$CFG->pixpath/help.gif";
     $linkobject = "<img align=\"absmiddle\" border=0 height=17 width=22 alt=\"$strscales\" src=\"$helpicon\">";
     link_to_popup_window ("/course/scales.php?id=$courseid&list=true", "ratingscales", 
                           $linkobject, 400, 500, $strscales);
@@ -1449,14 +1436,10 @@ function print_scale_menu_helpbutton($courseid, $scale) {
 /// Prints a help button about a scale
 /// scale is an object
 
-    global $CFG, $THEME;
+    global $CFG;
 
     $strscales = get_string("scales");
-    if (empty($THEME->custompix)) {
-        $helpicon = "$CFG->wwwroot/pix/help.gif";
-    } else {
-        $helpicon = "$CFG->wwwroot/theme/$CFG->theme/pix/help.gif";
-    }
+    $helpicon = "$CFG->pixpath/help.gif";
     $linkobject = "<img align=\"absmiddle\" border=0 height=17 width=22 alt=\"$scale->name\" src=\"$helpicon\">";
     link_to_popup_window ("/course/scales.php?id=$courseid&list=true&scale=$scale->id", "ratingscale", 
                           $linkobject, 400, 500, $scale->name);
@@ -1496,13 +1479,8 @@ function helpbutton ($page, $title="", $module="moodle", $image=true, $linktext=
         $module = "moodle";
     }
 
-    if (empty($THEME->custompix)) {
-        $icon = "$CFG->wwwroot/pix/help.gif";
-    } else {
-        $icon = "$CFG->wwwroot/theme/$CFG->theme/pix/help.gif";
-    }
-
     if ($image) {
+        $icon = "$CFG->pixpath/help.gif";
         if ($linktext) {
             $linkobject = "$title<img align=\"absmiddle\" border=0 height=17 width=22 alt=\"\" src=\"$icon\">";
         } else {
@@ -1526,7 +1504,11 @@ function emoticonhelpbutton($form, $field) {
     $SESSION->inserttextform = $form;
     $SESSION->inserttextfield = $field;
     helpbutton("emoticons", get_string("helpemoticons"), "moodle", false, true);
-    echo "&nbsp;<img src=\"$CFG->wwwroot/pix/s/smiley.gif\" align=\"absmiddle\" width=15 height=15></a>";
+    echo "&nbsp;";
+    link_to_popup_window ("/help.php?module=moodle&file=emoticons.html", "popup", 
+                          "<img src=\"$CFG->pixpath/s/smiley.gif\" border=0 align=\"absmiddle\" width=15 height=15>", 
+                           400, 500, get_string("helpemoticons"));
+    echo "<br />";
 }
 
 function notice ($message, $link="") {

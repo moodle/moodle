@@ -15,14 +15,6 @@
 
     add_to_log($course->id, "course", "recent", "recent.php?id=$course->id", "$course->id");
 
-    if (empty($THEME->custompix)) {
-        $pixpath = "../pix";
-        $modpixpath = "../mod";
-    } else {
-        $pixpath = "../theme/$CFG->theme/pix";
-        $modpixpath = "../theme/$CFG->theme/pix/mod";
-    }
-
     $strrecentactivity = get_string("recentactivity");
 
     $loggedinas = "<p class=\"logininfo\">".user_login_string($course, $USER)."</p>";
@@ -78,7 +70,7 @@
                         require_once($libfile);
                         $print_recent_instance_activity = $mod->modname."_print_recent_instance_activity";
                         if (function_exists($print_recent_instance_activity)) {
-                            $image = "<img src=\"$modpixpath/$mod->modname/icon.gif\" ".
+                            $image = "<img src=\"$CFG->modpixpath/$mod->modname/icon.gif\" ".
                                      "height=16 width=16 alt=\"$mod->modfullname\">";
                             echo "<h4>$image $mod->modfullname: ".
                                  "<a href=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\">".
