@@ -252,7 +252,7 @@ print_header_simple(strip_tags("$glossary->name"), "",
               <A HREF=\"view.php?id=$cm->id\">$glossary->name</A> -> $stredit", "",
               "", true, "", navmenu($course, $cm));
 
-$ineditperiod = ((time() - $newentry->timemodified <  $CFG->maxeditingtime) || $glossary->editalways);
+$ineditperiod = ((time() - $newentry->timecreated <  $CFG->maxeditingtime) || $glossary->editalways);
 if ( (!$ineditperiod  || $USER->id != $newentry->userid) and !isteacher($course->id) and $e) {
                 if ( $USER->id != $newentry->userid ) {
                     error("You can't edit other people's entries!");

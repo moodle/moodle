@@ -710,7 +710,7 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry,$mode="",$ho
         //Decide if an entry is editable:
         // -It isn't a imported entry (so nobody can edit a imported (from secondary to main) entry)) and
         // -The user is teacher or he is a student with time permissions (edit period or editalways defined).
-        $ineditperiod = ((time() - $entry->timemodified <  $CFG->maxeditingtime) || $glossary->editalways);
+        $ineditperiod = ((time() - $entry->timecreated <  $CFG->maxeditingtime) || $glossary->editalways);
         if ( !$importedentry and ($isteacher or ($entry->userid == $USER->id and $ineditperiod))) {
             $return .= " <a title=\"" . get_string("delete") . "\" href=\"deleteentry.php?id=$cm->id&mode=delete&entry=$entry->id&prevmode=$mode&hook=$hook\"><img src=\"";
             $return .= $icon;
