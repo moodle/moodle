@@ -38,6 +38,8 @@
         global $CFG;
         global $db;
 
+$db->debug=true;
+
         $count_users = 0;
         
         //Select all users from user
@@ -94,6 +96,7 @@
         $info[0][0] = get_string("users");
         $info[0][1] = $count_users;
 
+$db->debug=false;
         return $info;
     }
 
