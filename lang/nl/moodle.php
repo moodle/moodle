@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.0.9 Beta 1 + (2003052000)
+      // moodle.php - created with Moodle 1.0.9 Beta 1 + (2003052300)
 
 
 $string['action'] = "Actie";
@@ -39,6 +39,9 @@ $string['assignadmins'] = "Wijs beheerders aan";
 $string['assigncreators'] = "Wijs vak-aanmakers aan";
 $string['assignteachers'] = "Wijs docenten aan";
 $string['authentication'] = "Authenticatie";
+$string['autosubscribe'] = "Automatisch inschrijven op het forum";
+$string['autosubscribeno'] = "Neen: schrijf me niet automatisch in op forums";
+$string['autosubscribeyes'] = "Ja: schrijf me automatisch in op forums wanneer ik er een bericht in post";
 $string['availablecourses'] = "Beschikbare vakken";
 $string['backup'] = "Reservekopie";
 $string['backupdate'] = "Datum reservekopie";
@@ -99,6 +102,7 @@ $string['configvariables'] = "Configureer variabelen";
 $string['configzip'] = "Geef de locatie van je ZIP programma (alleen voor UNIX). Dit is nodig om ZIP archieven op de server te maken.
 ";
 $string['confirmed'] = "Je registratie is bevestigd";
+$string['confirmednot'] = "Je registratie is nog niet bevestigd !";
 $string['continue'] = "Ga door";
 $string['cookiesenabled'] = "Cookies moeten aan staan in je browser";
 $string['copyrightnotice'] = "Auteursrecht verklaring";

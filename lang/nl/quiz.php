@@ -1,7 +1,10 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.0.9 development (2003051200)
+      // quiz.php - created with Moodle 1.0.9 Beta 1 + (2003052300)
 
 
+$string['addingquestions'] = "Aan deze kant van de pagina kun je je vragenlijst beheren. De vragen worden bewaard per categorie om je te helpen ze te ordenen. Ze kunnen gebruikt worden in elke test van je vak of zelfs in andere vakken als je ze wil 'publiceren'.
+<br /><br />Pas wanneer je een categorie gekozen of gemaakt hebt, kun je vragen maken of bewerken.
+Je kunt gelijk welke van die vragen selecteren om ze toe te voegen bij je test aan de andere kant van deze pagina.";
 $string['addquestions'] = "Voeg vragen toe";
 $string['addquestionstoquiz'] = "Voeg vragen aan de huidige test toe";
 $string['addselectedtoquiz'] = "Voeg het geselecteerde toe aan de test";
