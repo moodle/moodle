@@ -1852,8 +1852,8 @@ function quiz_print_recent_mod_activity($activity, $course, $detail=false) {
         $export_name .= strtolower($export_categoryname)."-";
         //The date format
         $export_name .= userdate(time(),$export_date_format,99,false);
-        //The extension
-        $export_name .= ".txt";
+        //The extension - no extension, supplied by format
+        // $export_name .= ".txt";
 
         return $export_name;
     }
