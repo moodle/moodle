@@ -57,7 +57,7 @@
         print_header("$course->shortname: $quiz->name", "$course->fullname",
                      "$navigation <A HREF=index.php?id=$course->id>$strquizzes</A> 
                       -> <a href=\"view.php?id=$cm->id\">$quiz->name</a> -> $strreport", 
-                     "", "", true);
+                     "", "", true, update_module_button($cm->id, $course->id, $strquiz), navmenu($course, $cm));
     
         print_heading($quiz->name);
     
