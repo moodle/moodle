@@ -2255,8 +2255,8 @@ function quiz_save_multianswer_alternatives
 // otherwise the ids of the answers.
 
     if (empty($oldalternativeids)
-        or $oldalternatives =
-            get_records_list('quiz_answers', 'id', $oldalternativeids))
+        or !($oldalternatives =
+                get_records_list('quiz_answers', 'id', $oldalternativeids)))
     {
         $oldalternatives = array();
     }
@@ -2280,7 +2280,7 @@ function quiz_save_multianswer_alternatives
             $alt->answer = $altdata->answer;
             $alt->fraction = $altdata->fraction;
             $alt->feedback = $altdata->feedback;
-            if (! $alt->id = insert_record("quiz_answers", $alt)) {
+            if (!($alt->id = insert_record("quiz_answers", $alt))) {
                 return false;
             }
         }
@@ -2319,7 +2319,7 @@ function quiz_save_multianswer_alternatives
         delete_records("quiz_answers", "id", $altobsolete->id);
         
         // Possibly obsolute numerical options are also to be deleted:
-        delete_records("quiz_numerical", 'answer', $alt->id);
+        delete_records("quiz_numerical", 'answer', $altobsolete->id);
     }
 
     // Common alternative options and removal of obsolete options
