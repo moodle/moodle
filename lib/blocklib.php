@@ -72,7 +72,7 @@ function block_instance($blockname, $instance = NULL) {
     $classname = 'block_'.$blockname;
     $retval = new $classname;
     if($instance !== NULL) {
-        $retval->load_instance($instance);
+        $retval->_load_instance($instance);
     }
     return $retval;
 }
@@ -221,16 +221,16 @@ function blocks_print_group(&$page, &$instances) {
             // allows instance configuration (multiple instances override that one). It doesn't have anything to do with what the
             // administrator has allowed for this block in the site admin options.
             $options |= BLOCK_CONFIGURE * ( $obj->instance_allow_multiple() || $obj->instance_allow_config() );
-            $obj->add_edit_controls($options);
+            $obj->_add_edit_controls($options);
         }
 
         if(!$instance->visible) {
             if($isediting) {
-                $obj->print_shadow();
+                $obj->_print_shadow();
             }
         }
         else {
-            $obj->print_block();
+            $obj->_print_block();
         }
     }
 }

@@ -6,7 +6,7 @@
         background-color: #ffeece;
         font-family: Verdana, Arial, serif;
         font-size: 90%;
-        padding: 10px 20px;
+        padding: 10px 30px;
     }
     h2 {
         border: 1px black solid;
@@ -20,13 +20,20 @@
     pre {
         font-family: Lucida Console, courier;
     }
+    .footer {
+        border: 1px black solid;
+        background-color: #FFD991;
+        padding: 5px;
+        margin: 4em;
+        -moz-border-radius: 25px;
+    }
     .header {
         border: 1px black solid;
         background-color: #fff;
         padding: 10px;
         -moz-border-radius: 25px;
     }
-    .header h1 {
+    .header h1, .footer h1 {
         text-align: center;
         font-size: 2em;
     }
@@ -73,6 +80,7 @@
     }
     a.function_title, a.variable_title, a.named_constant {
         cursor: help;
+        border: none !important;
     }
     a, a:visited, a:active {
         text-decoration: none;
@@ -85,6 +93,23 @@
         padding: 10px;
         border: 1px #999 dotted;
         background-color: #FFD991;
+    }
+    ul#methods_reference, ul#variables_reference, ul#constants_reference {
+        list-style-type: decimal;
+    }
+    ul#methods_reference ul, ul#variables_reference, ul#constants_reference {
+        border-left: 10px rgb(245, 180, 90) solid;
+        list-style-type: none;
+        margin: 0px;
+        margin-bottom: 3em;
+        padding: 0px 20px;
+    }
+    ul#methods_reference h3 {
+        margin-top: 2em;
+    }
+    ul#methods_reference ul li .function_title, ul#variables_reference .variable_title, ul#constants_reference .named_constant {
+        margin: 2em 0px 1em 0px;
+        border-bottom: 2px #666 dotted;
     }
 </style>
 </head>
@@ -175,7 +200,7 @@
 
 </li>
 
-<li>
+<li id="section_configure_that_out">
 
     <h3>Configure That Out</h3>
 
@@ -329,7 +354,7 @@ function instance_allow_multiple() {
 
 </li>
 
-<li>
+<li id="section_effects_of_globalization">
 
     <h3>The Effects of Globalization</h3>
 
@@ -542,13 +567,13 @@ function get_content() {
 
 <h2 id="appendix_a">Appendix A: Reference</h2>
 
-<p>This Appendix will discuss the base class block_base from which all other block classes derive, and present each and every method that can be overridden by block developers in detail. Methods that should NOT be overridden are explicitly referred to as such. After reading this Appendix, you will have a clear understanding of every method which you should or could override to implement functionality for your block.</p>
+<p>This Appendix will discuss the base class <strong>block_base</strong> from which all other block classes derive, and present each and every method that can be overridden by block developers in detail. Methods that should <strong>not</strong> be overridden are explicitly referred to as such. After reading this Appendix, you will have a clear understanding of every method which you should or could override to implement functionality for your block.</p>
 
-<p>The methods are divided into three categories: those you may use and override in your block, those that you may NOT override but might want to use, and those that should NEITHER be used NOR overridden. In each category, methods are presented in alphabetical order.</p>
+<p>The methods are divided into three categories: those you may use and override in your block, those that you may <strong>not</strong> override but might want to use, and those internal methods that should <strong>neither</strong> be used <strong>nor</strong> overridden. In each category, methods are presented in alphabetical order.</p>
 
-<ul>
+<ul id="methods_reference">
 
-<li>Methods you can freely use and override:
+<li><h3>Methods you can freely use and override:</h3>
 
 <ul>
 
@@ -562,9 +587,11 @@ function applicable_formats() {
     return array('all' => true);
 }</pre>
 
-    <p>This method allows you to control which formats your block can be added to. Currently "formats" refers to course formats only, but in the future it may also include other kinds of pages than courses as Moodle is developed. You should return an array with keys being course format names and values being boolean true or false, denoting if your block is to be allowed in each specific format.</p>
+    <p>This method allows you to control which formats your block can be added to. Currently "formats" refers to course formats only, but in the future it may also include other kinds of pages than courses as Moodle is developed. You should return an array with the keys being page format names and the values being booleans (true or false). Your block is only allowed to appear in those formats where the value is true.</p>
 
     <p>Valid options for format names are: "social", "topics", "weeks" (referring to the three standard course formats), "site" (referring to the front page) and "all" (this will be used for those formats you have not explicitly allowed or disallowed).</p>
+
+    <p>If a format does not appear at all in the array keys and there is no "all" key either, then your block will <strong>not</strong> be allowed in that format.</p>
 
 </li>
 
@@ -586,11 +613,11 @@ function config_print() {
     return true;
 }</pre>
 
-    <p>This method allows you to choose how to display the global configuration screen for your block. Override it if you need something much more complex than the default implementation allows you to do. However, keep these points in mind:</p>
+    <p>This method allows you to choose how to display the global configuration screen for your block. This is the screen that the administrator is presented with when he chooses "Settings..." for a specific block. Override it if you need something much more complex than the default implementation allows you to do. However, keep these points in mind:</p>
 
     <ol>
     <li>If you save your configuration options in $CFG, you will probably need to use global $CFG; before including any HTML configuration screens.</li>
-    <li>Whatever you do output from <a class="function_title" href="#method_config_print">config_print</a>, it will be enclosed in a HTML form automatically. You only need to provide a way to submit that form.</li>
+    <li>The HTML &lt;input&gt; elements that you include in your method's output will be automatically enclosed in a &lt;form&gt; element. You do not need to worry about where and how that form is submitted; however, you <strong>must</strong> provide a way to submit it (i.e., an &lt;input type="submit" /&gt;.</li>
     </ol>
 
     <p>You should return a boolean value denoting the success or failure of your method's actions.</p>
@@ -613,7 +640,7 @@ function config_save($data) {
 
     <p>This method allows you to override the storage mechanism for your global configuration data. The received argument is an associative array, with the keys being setting names and the values being setting values. The default implementation saves everything as Moodle $CFG variables.</p>
 
-    <p>Note that what you receive as an argument will NOT be all of the POST data; Moodle will automatically strip out some bits it added itself (such as "sesskey"), so it's quite safe to save everything you receive.</p>
+    <p>Note that $data does not hold all of the submitted POST data because Moodle adds some hidden fields to the form in order to be able to process it. However, before calling this method it strips the hidden fields from the received data and so when this method is called only the "real" configuration data remain.</p>
 
     <p>You should return a boolean value denoting the success or failure of your method's actions.</p>
 
@@ -631,13 +658,15 @@ function get_content() {
 
     <p>This method should, when called, populate the <a class="variable_title" href="#variable_content">$this->content</a> variable of your block. Populating the variable means:
 
-    <p><strong>EITHER</strong><br />defining $this->content->text and $this->content->footer if your block is of type <a class="named_constant" href="#constant_block_type_text">BLOCK_TYPE_TEXT</a>. Both of these should be strings which can contain arbitrary HTML.</p>
+    <p><strong>EITHER</strong><br />defining $this->content->text and $this->content->footer if your block is of type <a class="named_constant" href="#constant_block_type_text">BLOCK_TYPE_TEXT</a>. Both of these should be strings, and can contain arbitrary HTML.</p>
 
-    <p><strong>OR</strong><br />defining $this->content->items, $this->content->icons and $this->content->footer if your block is of type <a class="named_constant" href="#constant_block_type_list">BLOCK_TYPE_LIST</a>. The first two should be numerically indexed arrays with the same number of elements. $this->content->items can contain arbitrary HTML while $this->content->icons should only contain fully-qualified HTML img tags. $this->content->footer is a string, as above.</p>
+    <p><strong>OR</strong><br />defining $this->content->items, $this->content->icons and $this->content->footer if your block is of type <a class="named_constant" href="#constant_block_type_list">BLOCK_TYPE_LIST</a>. The first two should be numerically indexed arrays having the exact same number of elements. $this->content->items is an array of strings that can contain arbitrary HTML while $this->content->icons also contains should strings, but those must be fully-qualified HTML &lt;img&gt; tags <strong>and nothing else</strong>. $this->content->footer is a string, as above.</p>
 
-    <p>If you set ALL of these variables to their default "empty" values (empty arrays for the arrays and empty strings for the strings), the block will NOT be displayed at all except to editing users. This is a good way of having your block NOT displayed if there is no reason for it.</p>
+    <p>If you set <em>all</em> of these variables to their default "empty" values (empty arrays for the arrays and empty strings for the strings), the block will <strong>not</strong> be displayed at all except to editing users. This is a good way of having your block hide itself to unclutter the screen if there is no reason to have it displayed.</p>
 
-    <p>Your function should return the fully constructed <a class="variable_title" href="#variable_content">$this->content</a> variable. You should also include a check that, if this variable is not exactly equal to NULL, returns the existing value instead of calculating it once more. If you fail to do this, Moodle will suffer a performance hit.</p>
+    <p>Before starting to populate <a class="variable_title" href="#variable_content">$this->content</a>, you should also include a simple caching check. If <a class="variable_title" href="#variable_content">$this->content</a> is exactly equal to NULL then proceed as normally, while if it is not, return the existing value instead of calculating it once more. If you fail to do this, Moodle will suffer a performance hit.</p>
+    
+    <p>In any case, your method should return the fully constructed <a class="variable_title" href="#variable_content">$this->content</a> variable.</p>
 
 </li>
 
@@ -650,8 +679,9 @@ function has_config() {
     return false;
 }</pre>
 
-    <p>This method should return a boolean value taht denotes whether your block wants to present a configuration interface to site admins or not. The configuration that this interface offers will impact all instances of the block equally. To fully implement this configuration you will need to take some additional steps apart from overriding this method; refer to the full guide for more information.</p>
-
+    <p>This method should return a boolean value that denotes whether your block wants to present a configuration interface to site admins or not. The configuration that this interface offers will impact all instances of the block equally.</p>
+    
+    <p>To actually implement the configuration interface, you will either need to rely on the default <a class="function_title" href="#method_instance_config_print">config_print</a> method or override it. The full guide contains <a href="#section_effects_of_globalization">more information on this</a>.</p>
 </li>
 
 <li id="method_hide_header">
@@ -664,7 +694,7 @@ function hide_header() {
     return false;
 }</pre>
 
-    <p>This method should return a boolean value that denotes whether your block wants to hide its title part. Thus, if you override it to return true, your block will not display a title unless the current user is in editing mode.</p>
+    <p>This method should return a boolean value that denotes whether your block wants to hide its header (or title). Thus, if you override it to return true, your block will not display a title unless the current user is in editing mode.</p>
 
 </li>
 
@@ -678,7 +708,17 @@ function html_attributes() {
     return array('id' => 'block_'. $this->name());
 }</pre>
 
-    <p>This method should return an associative array of HTML attributes that will be given to your block's container element when Moodle sends the page to the user's browser. No sanitization will be performed in these elements at all. You should always include those attributes that the default implementation sets, but this is not strictly obligatory and you can choose to ignore it if there is reason to (is there?).</p>
+    <p>This method should return an associative array of HTML attributes that will be given to your block's container element when Moodle constructs the output HTML. No sanitization will be performed in these elements at all.</p>
+    
+    <p>If you intend to override this method, you should return the default attributes as well as those you add yourself. The recommended way to do this is:</p>
+
+    <pre class="code">
+function html_attributes() {
+    $attrs = parent::html_attributes();
+    // Add your own attributes here, e.g.
+    // $attrs['width'] = '50%';
+    return $attrs;
+}</pre>
 
 </li>
 
@@ -693,7 +733,9 @@ function init() {
     $this->version = 2004111200;
 }</pre>
 
-    <p>This method must be implemented for all blocks. It has to assign meaningful values to the object variables <a class="variable_title" href="#variable_title">$this->title</a>, <a class="variable_title" href="#variable_content_type">$this->content_type</a> (which must be either <a class="named_constant" href="#constant_block_type_text">BLOCK_TYPE_TEXT</a> or <a class="named_constant" href="#constant_block_type_list">BLOCK_TYPE_LIST</a>) and <a class="variable_title" href="#variable_version">$this->version</a> (which is used by Moodle for performing automatic updates when available). No return value is expected.</p>
+    <p>This method must be implemented for all blocks. It has to assign meaningful values to the object variables <a class="variable_title" href="#variable_title">$this->title</a>, <a class="variable_title" href="#variable_content_type">$this->content_type</a> (which must be either <a class="named_constant" href="#constant_block_type_text">BLOCK_TYPE_TEXT</a> or <a class="named_constant" href="#constant_block_type_list">BLOCK_TYPE_LIST</a>) and <a class="variable_title" href="#variable_version">$this->version</a> (which is used by Moodle for performing automatic updates when available).</p>
+
+    <p>No return value is expected from this method.</p>
 
 </li>
 
@@ -706,9 +748,9 @@ function instance_allow_config() {
     return false;
 }</pre>
 
-    <p>This method should return a boolean value. True indicates that your block wants to have per-instance configuration, while false means it does not. If you do want to implement instance configuration, you will need to take some additional steps apart from overriding this method; refer to the full guide for more information.</p>
+    <p>This method should return a boolean value. True indicates that your block wants to have per-instance configuration, while false means it does not. If you do want to implement instance configuration, you will need to take some additional steps apart from overriding this method; refer to the full guide for <a href="#section_configure_that_out">more information</a>.</p>
 
-    <p>This method's return value is irrelevant if instance_allow_multiple() returns true; it is assumed that if you want multiple instances then each instance needs its own configuration.</p>
+    <p>This method's return value is irrelevant if <a class="function_title" href="#method_instance_allow_multiple">instance_allow_multiple</a> returns true; it is assumed that if you want multiple instances then each instance needs its own configuration.</p>
 
 </li>
 
@@ -723,7 +765,7 @@ function instance_allow_multiple() {
     return false;
 }</pre>
 
-    <p>This method should return a boolean value, indicating whether you want to allow multiple instances of this block in a single course or not. If you do allow multiple instances, it is assumed that you will also be providing per-instance configuration for the block. Thus, you will need to take some additional steps apart from overriding this method; refer to the full guide for more information.</p>
+    <p>This method should return a boolean value, indicating whether you want to allow multiple instances of this block in the same page or not. If you do allow multiple instances, it is assumed that you will also be providing per-instance configuration for the block. Thus, you will need to take some additional steps apart from overriding this method; refer to the full guide for <a href="#section_configure_that_out">more information</a>.</p>
 
 </li>
 
@@ -745,7 +787,8 @@ function instance_config_print() {
         include($CFG->dirroot .'/blocks/'. $this->name() .'/config_instance.html');
         print_simple_box_end();
     } else {
-        notice(get_string('blockconfigbad'), str_replace('blockaction=', 'dummy=', qualified_me()));
+        notice(get_string('blockconfigbad'),
+               str_replace('blockaction=', 'dummy=', qualified_me()));
     }
     
     return true;
@@ -771,7 +814,7 @@ function instance_config_save($data) {
 
     <p>The configuration must be stored in the "configdata" field of your instance record in the database so that Moodle can auto-load it when your block is constructed. However, you may still want to override this method if you need to take some additional action apart from saving the data. In that case, you really should do what data processing you want and then call parent::instance_config_save($data) with your new $data array. This will keep your block from becoming broken if the default implementation of instance_config_save changes in the future.</p>
 
-    <p>Note that what you receive as an argument will <em>not</em> be all of the POST data; Moodle will automatically strip out some bits it added itself (such as "sesskey"), so it's quite safe to save everything you receive.</p>
+    <p>Note that $data does not hold all of the submitted POST data because Moodle adds some hidden fields to the form in order to be able to process it. However, before calling this method it strips the hidden fields from the received data and so when this method is called only the "real" configuration data remain.</p>
 
     <p>You should return a boolean value denoting the success or failure of your method's actions.</p>
 
@@ -787,7 +830,7 @@ function preferred_width() {
     return 180;
 }</pre>
 
-    <p>This method should return an integer value, which is the number of pixels of width your block wants to take up when displayed. Moodle will try to honor your request, but as this is actually up to the implementation of the format of the page your block is being displayed in, there is no guarantee. You might actually get exactly what you want or any other width.</p>
+    <p>This method should return an integer value, which is the number of pixels of width your block wants to take up when displayed. Moodle will try to honor your request, but this is actually up to the implementation of the format of the page your block is being displayed in and therefore no guarantee is given. You might get exactly what you want or any other width the format decides to give you, although obviously an effort to accomodate your block will be made.</p>
 
     <p>Most display logic at this point allocates the maximum width requested by the blocks that are going to be displayed, bounding it both downwards and upwards to avoid having a bad-behaving block break the format.</p>
 
@@ -804,7 +847,7 @@ function refresh_content() {
     return $this->get_content();
 }</pre>
 
-    <p>This method should cause your block to recalculate its content immediately. If you follow the guidelines for get_content, which say to respect the current content value unless it is NULL, then the default implementation will do the job just fine.</p>
+    <p>This method should cause your block to recalculate its content immediately. If you follow the guidelines for <a class="function_title" href="#get_content">get_content</a>, which say to respect the current content value unless it is NULL, then the default implementation will do the job just fine.</p>
 
     <p>You should return the new value of <a class="variable_title" href="#variable_content">$this->content</a> after refreshing it.</p>
 
@@ -821,94 +864,209 @@ function specialization() {
 
     <p>This method is automatically called by the framework immediately after your instance data (which includes the page type and id and all instance configuration data) is loaded from the database. If there is some action that you need to take as soon as this data becomes available and which cannot be taken earlier, you should override this method.</p>
 
+    <p>The instance data will be available in the variables <a class="variable_title" href="#variable_instance">$this->instance</a> and <a class="variable_title" href="#variable_config">$this->config</a>.</p>
+
     <p>This method should not return anything at all.</p>
 
 </li>
 
 </ul>
 
-<li>Methods which you should NOT override but may want to use:
+<li><h3>Methods which you should <em>not</em> override but may want to use:</h3>
 
 <ul>
 
 <li id="method_get_content_type">
     <div class="function_title">get_content_type</div>
+    <pre class="code">
+function get_content_type() {
+    return $this->content_type;
+}</pre>
+
+    <p>This method returns the value of <a class="variable_title" href="#variable_content_type">$this->content_type</a>, and is the preferred way of accessing that variable. It is guaranteed to always work, now and forever. Directly accessing the variable is <strong>not recommended</strong>; future library changes may break compatibility with code that does so.</p>
+    
 </li>
 <li id="method_get_title">
     <div class="function_title">get_title</div>
+    <pre class="code">
+function get_title() {
+    return $this->title;
+}</pre>
+
+    <p>This method returns the value of <a class="variable_title" href="#variable_title">$this->title</a>, and is the preferred way of accessing that variable. It is guaranteed to always work, now and forever. Directly accessing the variable is <strong>not recommended</strong>; future library changes may break compatibility with code that does so.</p>
+
 </li>
 <li id="method_get_version">
     <div class="function_title">get_version</div>
+    <pre class="code">
+function get_version() {
+    return $this->version;
+}</pre>
+
+    <p>This method returns the value of <a class="variable_title" href="#variable_version">$this->version</a>, and is the preferred way of accessing that variable. It is guaranteed to always work, now and forever. Directly accessing the variable is <strong>not recommended</strong>; future library changes may break compatibility with code that does so.</p>
+
 </li>
 <li id="method_name">
     <div class="function_title">name</div>
+    <pre class="code">
+function name() {
+    static $myname;
+    if ($myname === NULL) {
+        $myname = strtolower(get_class($this));
+        $myname = substr($myname, strpos($myname, '_') + 1);
+    }
+    return $myname;
+}</pre>
+
+    <p>This method returns the internal name of your block inside Moodle, without the <strong>block_</strong> prefix. Obtaining the name of a block object is sometimes useful because it can be used to write code that is agnostic to the actual block's name (and thus more generic and reusable). For an example of this technique, see the <a class="function_title" href="#method_config_print">config_print</a> method.</p>
 </li>
 
 </ul>
 
 </li>
 
-<li>Methods which you should NOT override and NOT use at all:
+<li><h3>Methods which you should <em>not</em> override and <em>not</em> use at all:</h3>
   <ul>
   <li id="method__self_test">
     <div class="function_title">_self_test</div>
+    <p>This is a private method; no description is given.</p>
   </li>
-  <li id="method_add_edit_controls">
-    <div class="function_title">add_edit_controls</div>
+  <li id="method__add_edit_controls">
+    <div class="function_title">_add_edit_controls</div>
+    <p>This is a private method; no description is given.</p>
   </li>
-  <li id="method_load_instance">
-    <div class="function_title">load_instance</div>
+  <li id="method__load_instance">
+    <div class="function_title">_load_instance</div>
+    <p>This is a private method; no description is given.</p>
   </li>
-  <li id="method_print_block">
-    <div class="function_title">print_block</div>
+  <li id="method__print_block">
+    <div class="function_title">_print_block</div>
+    <p>This is a private method; no description is given.</p>
   </li>
-  <li id="method_print_shadow">
-    <div class="function_title">print_shadow</div>
+  <li id="method__print_shadow">
+    <div class="function_title">_print_shadow</div>
+    <p>This is a private method; no description is given.</p>
   </li>
   </ul>
 </li>
 
 </ul>
 
-<p>The class block_base also has a few standard member variables which its methods manipulate. These variables and their uses are explained hereafter:</p>
+<p>The class <strong>block_base</strong> also has a few standard member variables which its methods manipulate. These variables, the purpose of each and the type of data they are expected to hold is explained in the next section of this Appendix.</p>
 
-<ul>
-  <li id="variable_title">
-    <div class="variable_title">$this->title</div>
-    <p>This variable should be a string that contains the human-readable name of the block. It is used to refer to blocks of that type everywhere, for example in the administrator's block configuration screen. The variable is expected to have a valid value after the framework calls the <a class="function_title" href="#method_init">init</a> method for each block.</p>
-    <p>In the case of blocks which may want to configure their title dynamically through instance configuration, it is still essential to provide a valid title inside <a class="function_title" href="#method_init">init</a>. This title may then be overridden when the <a class="function_title" href="#method_specialization">specialization</a> method is called by the framework.</p>
-  </li>
-  <li id="variable_content_type">
-    <div class="variable_title">$this->content_type</div>
-    <p>This variable instructs Moodle on what type of content it should assume the block provides. It is essential that it has a meaningful value, as Moodle depends on this for correctly displaying the block on screen. Consequently, this variable is closely tied with the varaible <a class="variable_title" href="#variable_content">$this->content</a>. The variable is expected to have a valid value after the framework calls the <a class="function_title" href="#method_init">init</a> method for each block.</p>
-    <p>The only valid values for this variable are the two named constants <a class="named_constant" href="#constant_block_type_text">BLOCK_TYPE_TEXT</a> and <a class="named_constant" href="#constant_block_type_list">BLOCK_TYPE_LIST</a>.</p>
-  </li>
-  <li id="variable_content">
-    <div class="variable_title">$this->content</div>
-    <p>!!!UNFINISHED!!! This variable instructs Moodle on what type of content it should assume the block provides. It is essential that it has a meaningful value, as Moodle depends on this for correctly displaying the block on screen. Consequently, this variable is closely tied with the varaible <a class="variable_title" href="#variable_content">$this->content</a>. The variable is expected to have a valid value after the framework calls the <a class="function_title" href="#method_init">init</a> method for each block.</p>
-    <p>The only valid values for this variable are the two named constants <a class="named_constant" href="#constant_block_type_text">BLOCK_TYPE_TEXT</a> and <a class="named_constant" href="#constant_block_type_list">BLOCK_TYPE_LIST</a>.</p>
-  </li>
-  <li id="variable_version">
-    <div class="variable_title">$this->version</div>
-    <p>This variable should hold each block's version number in the form YYYYMMDDXX, as per the convention throughout Moodle. The version number is used by Moodle to detect when a block has been upgraded and it consequently needs to run the block's upgrade code to bring the "old" version of the block's data up to date. The variable is expected to have a valid value after the framework calls the <a class="function_title" href="#method_init">init</a> method for each block.</p>
-    <p>Most blocks do not keep complex data of their own in the database the way that modules do, so in most cases nothing actually happens during a block version upgrade. However, the version number is displayed in the administration interface for blocks. It is good practice therefore to change your block's version number when it gains new functionality or receives important bug fixes, to enable site administrators to easily see if they have the latest version or they need to upgrade.</p>
-  </li>
+<h3>Class variables:</h3>
+
+<ul id="variables_reference">
+
   <li id="variable_config">
+
     <div class="variable_title">$this->config</div>
-    <p>UNFINISHED!!!</p>
+
+    <p>This variable holds all the specialized instance configuration data that have been provided for this specific block instance (object). It is an object of type stdClass, with member variables directly corresponding to the HTML &lt;input&gt; elements in the block's <span class="filename">config_instance.html</span> file.</p>
+
+    <p>The variable is initialized just after the block object is constructed, immediately before <a class="function_title" href="#method_specialization">specialization</a> is called for the object. It is possible that the block has no instance configuration, in which case the variable will be NULL.</p>
+
+    <p>It is obvious that there is a direct relationship between this variable and the configdata field in the mdl_block_instance table. However, it is <em>strongly</em> advised that you refrain from acessing the configdata field yourself. If you absolutely must update its value at any time, it is recommended that you call the method <a class="function_title" href="#method_instance_config_save">instance_config_save</a> to do the actual work.</p>
+
   </li>
+
+  <li id="variable_content_type">
+
+    <div class="variable_title">$this->content_type</div>
+
+    <p>This variable instructs Moodle on what type of content it should assume the block has. It is essential that it has a meaningful value, as Moodle depends on this for correctly displaying the block on screen. Consequently, this variable is closely tied with the varaible <a class="variable_title" href="#variable_content">$this->content</a>. The variable is expected to have a valid value after the framework calls the <a class="function_title" href="#method_init">init</a> method for each block.</p>
+
+    <p>The only valid values for this variable are the two named constants <a class="named_constant" href="#constant_block_type_text">BLOCK_TYPE_TEXT</a> and <a class="named_constant" href="#constant_block_type_list">BLOCK_TYPE_LIST</a>.</p>
+  </li>
+
+  <li id="variable_content">
+
+    <div class="variable_title">$this->content</div>
+
+    <p>This variable holds all the actual content that is displayed inside each block. Valid values for it are either NULL or an object of class stdClass, which must have specific member variables set as explained below. Normally, it begins life with a value of NULL and it becomes fully constructed (i.e., an object) when the <a class="function_title" href="#method_get_content">get_content</a> is called.</p>
+
+    <p>After it is fully constructed, this object is expected to have certain properties, depending on the value of <a class="variable_title" href="#variable_content_type">$this->content_type</a>. Specifically:
+
+    <ul>
+
+      <li>
+      If <a class="variable_title" href="#variable_content_type">$this->content_type</a> is <a class="named_constant" href="#constant_block_type_text">BLOCK_TYPE_TEXT</a>, then <a class="variable_title" href="#variable_content">$this->content</a> is expected to have the following member variables:
+
+      <ul>
+        <li><div><strong>text</strong></div>This is a string of arbitrary length and content. It is displayed inside the main area of the block, and can contain HTML.</li>
+        <li><div><strong>footer</strong></div>This is a string of arbitrary length and contents. It is displayed below the text, using a smaller font size. It can also contain HTML.</li>
+      </ul>
+      </li>
+
+      <li>If <a class="variable_title" href="#variable_content_type">$this->content_type</a> is <a class="named_constant" href="#constant_block_type_list">BLOCK_TYPE_LIST</a>, then <a class="variable_title" href="#variable_content">$this->content</a> is expected to have the following member variables:
+      <ul>
+        <li><div><strong>items</strong></div>This is a numerically indexed array of strings which holds the title for each item in the list that will be displayed in the block's area. Since usually such lists function like menus, the title for each item is normally a fully qualified HTML &lt;a&gt; tag.</li>
+        <li><div><strong>icons</strong></div>This is a numerically indexed array of strings which represent the images displayed before each item of the list. It therefore follows that it should have the exact number of elements as the items member variable. Each item in this array should be a fully qualified HTML &lt;img&gt; tag.</li>
+        <li><div><strong>footer</strong></div>This is a string of arbitrary length and contents. It is displayed below the text, using a smaller font size. It can also contain HTML.</li>
+      </ul>
+      </li>
+
+    </ul>
+    </p>
+
+  </li>
+
+  <li id="variable_instance">
+
+    <div class="variable_title">$this->instance</div>
+
+    <p>This member variable holds all the specific information that differentiates one block instance (i.e., the PHP object that embodies it) from another. It is an object of type stdClass retrieved by calling get_record on the table mdl_block_instance. Its member variables, then, directly correspond to the fields of that table. It is initialized immediately after the block object itself is constructed.</p>
+
+  </li>
+
+  <li id="variable_title">
+
+    <div class="variable_title">$this->title</div>
+
+    <p>This variable is a string that contains the human-readable name of the block. It is used to refer to blocks of that type throughout Moodle, for example in the administrator's block configuration screen and in the editing teacher's add block menu. It is also the title that is printed when the block is displayed on screen, although blocks can specifically change this title to something else if they wish (see below). The variable is expected to have a valid value after the framework calls the <a class="function_title" href="#method_init">init</a> method for each object.</p>
+
+    <p>In the case of blocks which may want to configure their title dynamically through instance configuration, it is still essential to provide a valid title inside <a class="function_title" href="#method_init">init</a>. This title may then be overridden when the <a class="function_title" href="#method_specialization">specialization</a> method is called by the framework:</p>
+
+    <pre class="code">
+function specialization() {
+    // At this point, $this->instance and $this->config are available
+    // for use. We can now change the title to whatever we want.
+    $this->title = $this->config->variable_holding_the_title;
+}</pre>
+
+  </li>
+
+  <li id="variable_version">
+
+    <div class="variable_title">$this->version</div>
+
+    <p>This variable should hold each block's version number in the form <strong>YYYYMMDDXX</strong>, as per the convention throughout Moodle. The version number is used by Moodle to detect when a block has been upgraded and it consequently needs to run the block's upgrade code to bring the "old" version of the block's data up to date. The variable is expected to have a valid value after the framework calls the <a class="function_title" href="#method_init">init</a> method for each block.</p>
+
+    <p>Most blocks do not keep complex data of their own in the database the way that modules do, so in most cases nothing actually happens during a block version upgrade. However, the version number is displayed in the administration interface for blocks. It is good practice therefore to change your block's version number when it gains new functionality or receives important bug fixes, to enable site administrators to easily identify the exact version of the block they are working with.</p>
+
+  </li>
+
 </ul>
 
 <p>Appearing throughout the code related to the Blocks API, there is a number of predefined constants that are utilized to avoid the use of "magic numbers" in the code. These constants are:</p>
 
-<ul>
+<h3>Named constants:</h3>
+
+<ul id="constants_reference">
   <li id="constant_block_type_list">
+
     <div class="named_constant">BLOCK_TYPE_LIST</div>
-    <p>This variable should be a string that contains the human-readable name of the block. It is used to refer to blocks of that type everywhere, for example in the administrator's block configuration screen. The variable is expected to have a valid value after the framework calls the <a class="function_title" href="#method_init">init</a> method for each block.</p>
+
+    <p>This is one of the two valid values for the <a class="variable_title" href="#variable_content_type">$this->content_type</a> member variable of every block. Its value specifies the exact requirements that Moodle will then have for <a class="variable_title" href="#variable_content">$this->content</a>.</p>
+    
   </li>
+
   <li id="constant_block_type_text">
+
     <div class="named_constant">BLOCK_TYPE_TEXT</div>
-    <p>This variable should be a string that contains the human-readable name of the block. It is used to refer to blocks of that type everywhere, for example in the administrator's block configuration screen. The variable is expected to have a valid value after the framework calls the <a class="function_title" href="#method_init">init</a> method for each block.</p>
+
+    <p>This is one of the two valid values for the <a class="variable_title" href="#variable_content_type">$this->content_type</a> member variable of every block. Its value specifies the exact requirements that Moodle will then have for <a class="variable_title" href="#variable_content">$this->content</a>.</p>
+
   </li>
 </ul>
 
@@ -922,13 +1080,13 @@ function specialization() {
 
     <h3>Class naming conventions changed</h3>
     
-    <p>In Moodle 1.4, all block classes were required to have a name like <strong>CourseBlock_something</strong> and the base class from which the derived was <strong>MoodleBlock</strong>. This has changed in Moodle 1.5, to bring the naming conventions in line with other object-oriented aspects of Moodle (for example there are classes enrolment_base, resource_base etc). The new block classes should instead be named like <strong>block_something</strong> and derive from <strong>block_base</strong>. This means that in order to make a block compatible with Moodle 1.5, you need to change the class definition
+    <p>In Moodle 1.4, all block classes were required to have a name like <strong>CourseBlock_something</strong> and the base class from which the derived was <strong>MoodleBlock</strong>. This has changed in Moodle 1.5, to bring the naming conventions in line with other object-oriented aspects of Moodle (for example there are classes enrolment_base, resource_base etc). The new block classes should instead be named like <strong>block_something</strong> and derive from <strong>block_base</strong>. This means that in order to make a block compatible with Moodle 1.5, you need to change the class definition</p>
     
     <pre class="code">
 class CourseBlock_online_users extends MoodleBlock { ... }
 </pre>
 
-<p>to</p>
+    <p>to</p>
 
     <pre class="code">
 class block_online_users extends block_base { ... }
@@ -983,14 +1141,19 @@ class block_online_users extends block_base { ... }
 
     <p>In Moodle 1.4, blocks could only have what are now (in Moodle 1.5) called "global configuration" options, to differentiate from the new "instance configuration" options. If your block has support for configuration, you will need to take these steps:</p>
 
-    <ol>
-        <li>Rename your config.html file to config_global.html</li>
-        <li>Edit the newly renamed file and REMOVE the &lt;form&gt; tag (Moodle now wraps your configuration in a form automatically)</li>
-        <li>If you are using any HTML &lt;input&gt; tags other than those that directly affect your configuration (for example, "sesskey"), REMOVE those too (Moodle will add them automatically as required)</li>
-        <li>If you have overridden print_config(), rename your method to config_print()</li>
-        <li>If you have overridden handle_config(), rename your method to config_save()</li>
+    <ol style="list-style-type: lower-alpha;">
+        <li>Rename your <span class="filename">config.html</span> file to <span class="filename">config_global.html</span>.</li>
+        <li>Edit the newly renamed file and completely remove the &lt;form&gt; tag (Moodle now wraps your configuration in a form automatically).</li>
+        <li>If you are using any HTML &lt;input&gt; tags other than those that directly affect your configuration (for example, "sesskey"), REMOVE those too (Moodle will add them automatically as required).</li>
+        <li>If you have overridden <strong>print_config</strong>, rename your method to <strong>config_print</strong>.</li>
+        <li>If you have overridden <strong>handle_config</strong>, rename your method to <strong>config_save</strong>.</li>
     </ol>
 
     <p>That's everything; your block will now be ready for use in Moodle 1.5!</p>
+
+</li>
+</ol>
+
+<div class="footer"><h1>The End</h1></div>
 
 </body>
