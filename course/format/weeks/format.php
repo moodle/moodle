@@ -61,7 +61,7 @@
     }
 
 /// Start main column
-    echo "</td><td width=\"*\">";
+    echo "<td width=\"*\">";
     print_heading_block(get_string("weeklyoutline"), "100%", "outlineheadingblock");
     print_spacer(8, 1, true);
 
