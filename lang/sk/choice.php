@@ -1,5 +1,5 @@
-<?PHP // $Id$ 
-      // choice.php - created with Moodle 1.0.9 (2003052900)
+<?PHP // $Id$ Radik Kalakay - 2003-09-05 12:00 ver 1.1.a
+      // choice.php - created with Moodle 1.1 (2003082800)
 
 
 $string['answered'] = "Zodpovedané";

@@ -2,7 +2,7 @@
 <P ALIGN=CENTER><B>O  "Richtextovom" HTML editore</B></P>
 
 <P>Dostupnos»: <B>
-<?php  if (!$CFG->htmleditor) {
+<? if (!$CFG->htmleditor) {
        print_string("htmleditordisabledadmin");
    } else if (!$USER->htmleditor) {
        print_string("htmleditordisabled");

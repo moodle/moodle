@@ -1,5 +1,5 @@
-<?PHP // $Id$ 
-      // journal.php - created with Moodle 1.0.9 (2003052900)
+<?PHP // $Id$ Radik Kalakay - 2003-09-05 12:00 ver 1.1.a
+      // journal.php - created with Moodle 1.1 (2003082800)
 
 
 $string['alwaysopen'] = "Otvori» v¾dy";
@@ -7,32 +7,38 @@ $string['blankentry'] = "Voµný vstup";
 $string['daysavailable'] = "Dostupné dni";
 $string['editingended'] = "Èas na úpravu vypr¹al";
 $string['editingends'] = "Koniec èasového limitu na úpravu";
-$string['entries'] = "vstupy";
-$string['feedbackupdated'] = "Spätná väzba aktualizovaná u \$a vstupov";
-$string['journalmail'] = "\$a->teacher poslal istú odozvu na vá¹ ¾urnálový príspevok pre '\$a->journal'
+$string['entries'] = "Vstupy";
+$string['feedbackupdated'] = "Odpoveï aktualizovaná u \$a vstupov";
+$string['journalmail'] = "\$a->teacher poslal odpoveï na va¹u písomnú prácu '\$a->journal'
 
-Mô¾ete ju vidie» pridanú k vásmu príspevku:
+
+
+Nájdete ju pripojenú k písomnej práci:
+
+
 
 \$a->url";
-$string['journalmailhtml'] = "\$a->teacher poslal istú odozvu na vá¹ ¾urnálový príspevok pre '<i>\$a->journal</i>'<br /><br />
-Mô¾ete ju vidie» pridanú k vá¹mu
-<a href=\\\"\$a->url\\\">¾urnálovému príspevku</a>.";
-$string['journalname'] = "Názov spisu";
-$string['journalquestion'] = "Otázka spisu";
-$string['journalrating1'] = "Neuspokojivé";
-$string['journalrating2'] = "Uspokojivé";
-$string['journalrating3'] = "Výborné";
-$string['modulename'] = "Spis";
-$string['modulenameplural'] = "Spisy";
-$string['newjournalentries'] = "Nové vstupy do spisu ";
-$string['noentry'] = "®iaden vstup";
-$string['noratinggiven'] = "®iadne udané hodnotenia";
-$string['notopenuntil'] = "Tento spis nebude otvorený a¾ do";
-$string['notstarted'] = "E¹te ste nezaèali tento spis";
+$string['journalmailhtml'] = "\$a->teacher poslal odpoveï na va¹u písomnú prácu '<i>\$a->journal</i>'<br /><br />
+
+Nájdete ju pripojenú k 
+
+<a href=\\\"\$a->url\\\">písomnej práci</a>.";
+$string['journalname'] = "Názov písomnej práce";
+$string['journalquestion'] = "Téma písomnej práce";
+$string['journalrating1'] = "Neuspokojivá";
+$string['journalrating2'] = "Uspokojivá";
+$string['journalrating3'] = "Výborna";
+$string['modulename'] = "Písomná práca";
+$string['modulenameplural'] = "Písomné práce";
+$string['newjournalentries'] = "Nový záznam písomnej práce";
+$string['noentry'] = "®iaden záznam";
+$string['noratinggiven'] = "Nehodnotené";
+$string['notopenuntil'] = "Táto práca nebude prístupná a¾ do";
+$string['notstarted'] = "E¹te ste nezaèali pracova» na tejto práci";
 $string['overallrating'] = "Celkové hodnotenie";
 $string['rate'] = "Hodnoti»";
-$string['saveallfeedback'] = "Ulo¾i» v¹etky moje spätné väzby";
-$string['startoredit'] = "Zaèa» alebo zapísa» môj denníkový vstup";
-$string['viewallentries'] = "Ukáza» \$a vstupy do spisu";
+$string['saveallfeedback'] = "Ulo¾i» v¹etky moje odpovede";
+$string['startoredit'] = "Zaèa» alebo upravi» moju písomnú prácu";
+$string['viewallentries'] = "Ukáza» \$a záznam/-y/-ov písomných prác";
 
 ?>

@@ -1,0 +1,11 @@
+Radik Kalakay, Projekt VECIT 9-2003 - ISO-8859-2
+
+01-09-2003
+* zacinam prerabat verziu od palojacko v1.3 na verziu pre Moodle 1.1
+
+05-09-2003
+* zmena kodovania na windows-1250 v dosledku pouzitej databazy
+* ukoncene preklady vo vsetkych moduloch verzie 1.1
+* niektore casti este potrebuju vylepsit
+* oznacovanie verzii zavadzam podla aktualnej verzie Moodla (napr. v1.1 pre verziu Moodle 1.1)
+* niektoré výrazy z povodnej verzie Moodle je nutné zmeni» - nejednotnos»

@@ -1,5 +1,5 @@
-<?PHP // $Id$ 
-      // survey.php - created with Moodle 1.0.9 (2003052900)
+<?PHP // $Id$ Radik Kalakay - 2003-09-05 12:00 ver 1.1.a
+      // survey.php - created with Moodle 1.1 (2003082800)
 
 
 $string['actual'] = "Aktuálny";
@@ -7,7 +7,7 @@ $string['actualclass'] = "ostatný aktuálny";
 $string['actualstudent'] = "\$a aktuálny";
 $string['allquestions'] = "V¹etky otázky v poradí, v¹etci ¹tudenti";
 $string['allscales'] = "V¹etky ¹kály, v¹etci ¹tudenti";
-$string['alreadysubmitted'] = "U¾ ste zaslali tento prieskum";
+$string['alreadysubmitted'] = "U¾ ste zaslali túto anketu";
 $string['analysisof'] = "Analýzy  \$a";
 $string['answers'] = "Odpovede";
 $string['attls1'] = "Pri hodnotení toho, èo niekto hovorí, sa zameriavam na silu jeho argumentov, a nie na èloveka, ktorý ich prezentuje.";
@@ -50,14 +50,16 @@ $string['attls8'] = "V¾dy rád poznávam, preèo µudia hovoria a veria v isté veci.
 $string['attls8short'] = "vedie» preèo to µudia robia";
 $string['attls9'] = "Èasto sa pristihnem, ¾e sa hádam s autormi kníh, ktoré èítam a sna¾ím sa logicky zisti», preèo sa mýlia.";
 $string['attls9short'] = "háda» sa s autormi";
-$string['attlsintro'] = "Cieµom tohoto dotazníka je pomôc» nám vyhodnoti» va¹e postoje k mysleniu a vzdelávaniu.
+$string['attlsintro'] = "Cieµom tejto ankety je pomôc» nám vyhodnoti» va¹e postoje k mysleniu a vzdelávaniu.
+
+
 
 Nie sú tu 'správne' alebo 'nesprávne' odpovede; zaujíma nás iba vá¹ názor. Buïte si vedomý, ¾e s va¹imi odpoveïami budeme pracova» dôverne a neovplyvnia va¹e hodnotenie.";
 $string['attlsm1'] = "Postoje k mysleniu a vzdelávaniu sa";
 $string['attlsm2'] = "Spojené vzdelávanie";
 $string['attlsm3'] = "Oddelené vzdelávanie";
 $string['attlsmintro'] = "V diskusii...";
-$string['attlsname'] = "ATTLS (20 item verzia)";
+$string['attlsname'] = "ATTLS (20 polo¾ková verzia)";
 $string['ciq1'] = "V ktorom momente v kurze ste boli najviac zaanga¾ovaný ako uèiteµ (ten, èo uèí)?";
 $string['ciq2'] = "V ktorom momente v kurze ste boli najviac duchom vzdialený uèiteµstvu?";
 $string['ciq3'] = "Ktorú akciu od niekoho vo fóre pova¾ujete za najviac presvedèivú alebo naju¾itoènej¹iu? ";
@@ -115,26 +117,42 @@ $string['colles8'] = "Kriticky uva¾ujem o my¹lienkach v zadanom èítaní.";
 $string['colles8short'] = "som kritický k preèítanemu";
 $string['colles9'] = "Vysvetµujem svoje my¹lienky ostatným ¹tudentom.";
 $string['colles9short'] = "Vysvetµujem svoje my¹lienky";
-$string['collesaintro'] = "Cieµom tohoto dotazníka je pomôc» nám aby sme pochopili, ako vám online doruèovanie tohto kurzu umo¾nilo vzdeláva» sa.
+$string['collesaintro'] = "Cieµom tejto ankety je zisti», ako vám online vzdelávanie vyhovovalo.
+
+
 
 Ka¾dá z nasledovných 24 otázok sa pýta na va¹e skúsenosti s týmto kurzom.
 
-Nie sú tu 'správne' alebo 'nesprávne' odpovede; zaujíma nás iba vá¹ názor. Buïte si vedomý, ¾e s va¹imi odpoveïami budeme pracova» dôverne a neovplyvnia va¹e hodnotenie.
 
-Va¹e dobre zvá¾ené odpovede nám pomô¾u zlep¹i» spôsob online prezentácie tohoto kurzu v budúcnosti.
-
-Veµmi pekne ïakujeme.";
-$string['collesaname'] = "COLLES (Aktuálny)";
-$string['collesapintro'] = "Cieµom tohoto dotazníka je pomôc» nám aby sme pochopili, ako vám online doruèovanie tohto kurzu umo¾nilo vzdeláva» sa. 
-
-Ka¾dá z nasledujúcich 24 otázok vy¾aduje, aby ste porovnali va¹e <B>uprednostòované</B> (ideálne) a <B>aktuálne</B> skúsenosti v tomo kurze.
 
 Nie sú tu 'správne' alebo 'nesprávne' odpovede; zaujíma nás iba vá¹ názor. Buïte si vedomý, ¾e s va¹imi odpoveïami budeme pracova» dôverne a neovplyvnia va¹e hodnotenie.
 
+
+
 Va¹e dobre zvá¾ené odpovede nám pomô¾u zlep¹i» spôsob online prezentácie tohoto kurzu v budúcnosti.
 
+
+
 Veµmi pekne ïakujeme.";
-$string['collesapname'] = "COLLES (Uprednostòovaný a aktuálny)";
+$string['collesaname'] = "COLLES (Aktuálne skúsenosti)";
+$string['collesapintro'] = "Cieµom tejto ankety je zisti», ako vám online vzdelávanie vyhovovalo. 
+
+
+
+Ka¾dá z nasledujúcich 24 otázok vy¾aduje, aby ste porovnali va¹e <B>preferované</B> (ideálne) a <B>aktuálne</B> skúsenosti v tomo kurze.
+
+
+
+Nie sú tu 'správne' alebo 'nesprávne' odpovede; zaujíma nás iba vá¹ názor. Buïte si vedomý, ¾e s va¹imi odpoveïami budeme pracova» dôverne a neovplyvnia va¹e hodnotenie.
+
+
+
+Va¹e dobre zvá¾ené odpovede nám pomô¾u zlep¹i» spôsob online prezentácie tohoto kurzu v budúcnosti.
+
+
+
+Veµmi pekne ïakujeme.";
+$string['collesapname'] = "COLLES (Preferované a aktuálne skúsenosti)";
 $string['collesm1'] = "Záva¾nos»";
 $string['collesm1short'] = "Záva¾nos»";
 $string['collesm2'] = "Reflektujúce myslenie";
@@ -148,45 +166,53 @@ $string['collesm5short'] = "Podpora rovesníkov";
 $string['collesm6'] = "Interpretácia";
 $string['collesm6short'] = "Interpretácia";
 $string['collesmintro'] = "V tomto online kurze...";
-$string['collespintro'] = "Cieµom tohoto dotazníka je pomôc» nám aby sme pochopili, èo oceòujete na online vzdelávaní.
+$string['collespintro'] = "Cieµom tejto ankety je pomôc» nám aby sme pochopili, èo oceòujete na online vzdelávaní.
+
+
 
 Ka¾dá z nasledujúcich 24 otázok sa pýta na va¹e <B>uprednostòované</B> (ideálne) skúsenosti v tomto kurze.
 
+
+
 Nie sú tu 'správne' alebo 'nesprávne' odpovede; zaujíma nás iba vá¹ názor. Buïte si vedomý, ¾e s va¹imi odpoveïami budeme pracova» dôverne a neovplyvnia va¹e hodnotenie.
+
+
 
 Va¹e dobre zvá¾ené odpovede nám pomô¾u zlep¹i» spôsob online prezentácie tohoto kurzu v budúcnosti.
 
+
+
 Veµmi pekne ïakujeme.";
-$string['collespname'] = "COLLES (Uprednostòovaný)";
+$string['collespname'] = "COLLES (Preferované skúsenosti)";
 $string['done'] = "Urobené";
 $string['download'] = "Stiahnu»";
 $string['downloadexcel'] = "Stiahnu» údaje ako Excelový tabuµkový súbor";
 $string['downloadinfo'] = "Mô¾ete stiahnu» kompletné nespracované údaje pre tento dotazník vo forme vhodnej pre analýzu v Exceli, SPSS alebo iných programoch.";
 $string['downloadtext'] = "Stiahnu» údaje ako èisto textový súbor";
-$string['editingasurvey'] = "Editovanie prieskumu";
+$string['editingasurvey'] = "Upravi» anketu";
 $string['guestsnotallowed'] = "Hos»om nie je dovolené posiela» dotazníky";
-$string['helpsurveys'] = "Pomoc pri rozlièných typoch prieskumov";
-$string['howlong'] = "Ako dlho vám trvalo vyplnenie prieskumu?";
+$string['helpsurveys'] = "Pomoc pri rozlièných typoch ankiet";
+$string['howlong'] = "Ako dlho vám trvalo vyplnenie ankety?";
 $string['howlongoptions'] = "menej ako 1 min,1-2 min,2-3 min,3-4 min,4-5 min,5-10 min,viac ne¾ 10 min.";
 $string['ifoundthat'] = "Zistil som, ¾e";
 $string['introtext'] = "Úvodný text";
 $string['ipreferthat'] = "Uprednostòujem, keï";
-$string['modulename'] = "Prieskum";
-$string['modulenameplural'] = "Prieskumy";
+$string['modulename'] = "Anketa";
+$string['modulenameplural'] = "Ankety";
 $string['name'] = "Meno";
-$string['newsurveyresponses'] = "Nové odpovede na prieskum ";
-$string['nobodyyet'] = "E¹te nikto neukonèil tento prieskum";
+$string['newsurveyresponses'] = "Nové odpovede na anketu";
+$string['nobodyyet'] = "E¹te nikto neukonèil túto anketu";
 $string['notdone'] = "Nedokonèené";
 $string['notes'] = "Va¹a súkromná analýza a poznámky";
 $string['othercomments'] = "Máte ïal¹ie postrehy?";
-$string['peoplecompleted'] = "\$a µudí zatiaµ ukonèilo tento prieskum";
+$string['peoplecompleted'] = "\$a µudí zatiaµ ukonèilo túto anketu";
 $string['preferred'] = "Preferované";
 $string['preferredclass'] = "Preferovaná trieda";
 $string['preferredstudent'] = "\$a preferovaných";
 $string['question'] = "Otázka";
 $string['questions'] = "Otázky";
 $string['questionsnotanswered'] = "Niekoµko otázok s mo¾nos»ou výberu odpovede nebolo zodpovedaných.";
-$string['report'] = "Správa z prieskumu";
+$string['report'] = "Správa z ankety";
 $string['savednotes'] = "Va¹e poznámky boli ulo¾ené";
 $string['scaleagree5'] = "Výrazne nesúhlasí,Èiastoène nesúhlasí,Nie je proti,ale ani nie za,Èiastoène súhlasí, Úplne súhlasí";
 $string['scales'] = "©kály";
@@ -194,12 +220,12 @@ $string['scaletimes5'] = "Skoro vôbec,Zriedkavo,Niekedy,Èasto,Skoro v¾dy";
 $string['seemoredetail'] = "Zobrazi» viac detailov, kliknite tu";
 $string['selectedquestions'] = "Vybrané otázky zo ¹kály, v¹etci ¹tudenti";
 $string['summary'] = "Zhrnutie";
-$string['surveycompleted'] = "Dokonèili ste tento prieskum. Nasledovný graf znázoròuje zhrnutie va¹ich výsledkov v porovnaní s priemerom triedy.";
-$string['surveyname'] = "Názov prieskumu";
-$string['surveysaved'] = "Prieskum ulo¾ený";
-$string['surveytype'] = "Typ prieskumu";
-$string['thanksforanswers'] = "Ïakujeme za zodpovedanie tohoto prieskumu, \$a";
+$string['surveycompleted'] = "Dokonèili ste túto anketu. Nasledovný graf znázoròuje zhrnutie va¹ich výsledkov v porovnaní s priemerom triedy.";
+$string['surveyname'] = "Názov ankety";
+$string['surveysaved'] = "Anketa ulo¾ená";
+$string['surveytype'] = "Typ ankety";
+$string['thanksforanswers'] = "Ïakujeme za zodpovedanie tejto ankety, \$a";
 $string['time'] = "Èas";
-$string['viewsurveyresponses'] = "Zobrazi» \$a odpovedí z prieskumu";
+$string['viewsurveyresponses'] = "Zobrazi» \$a odpovedí z ankety";
 
 ?>

@@ -1,7 +1,8 @@
-<?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.0.9 (2003052900)
+<?PHP // $Id$ Radik Kalakay - 2003-09-05 12:00 ver 1.1.a
+      // quiz.php - created with Moodle 1.1 (2003082800)
 
 
+$string['acceptederror'] = "Akceptovaná chyba";
 $string['addingquestions'] = "Toto je &#269;as&#357; stránky, kde si vediete databázu va&#353;ich otázok. Aby bolo otázky mo&#382;né udr&#382;a&#357; usporiadané a aby mohli by&#357; pou&#382;ité v &#318;ubovo&#318;nom teste vo va&#353;om kurze, alebo dokonca aj inými kurzami, ak sa rozhodnete publikova&#357; ich,sú ulo&#382;ené v kategóriách.<br /><br />Ke&#271; vyberiete alebo vytvoríte kategóriu otázok, budete môc&#357; tvori&#357; alebo meni&#357; otázky. Mô&#382;ete vybra&#357; ktorúko&#318;vek z týchto otázok a prida&#357; ju do vá&#353;ho testu na ostatných &#269;astiach tejto stránky.";
 $string['addquestions'] = "Prida» otázky";
 $string['addquestionstoquiz'] = "Prida» otázky do testu";
@@ -13,6 +14,7 @@ $string['answer'] = "Odpoveï";
 $string['answerhowmany'] = "Jedna, alebo viacero odpovedí?";
 $string['answersingleno'] = "Povolené viacero odpovedí";
 $string['answersingleyes'] = "Iba jedna odpoveï";
+$string['answerswithacceptederrormarginmustbenumeric'] = "Odpovede s akceptovanými chybami musia by» èíslované";
 $string['attempt'] = "Pokus \$a";
 $string['attemptfirst'] = "Prvý pokus";
 $string['attemptlast'] = "Posledný pokus";
@@ -35,6 +37,9 @@ $string['choice'] = "Mo¾nos»";
 $string['choices'] = "Dostupné mo¾nosti";
 $string['correctanswer'] = "Správna odpoveï";
 $string['correctanswers'] = "Správne odpovede";
+$string['countdown'] = "Odpoèítavanie";
+$string['countdownfinished'] = "Test sa uzatvára, teraz mo¾ete zasiela» svoje odpovede. ";
+$string['countdowntenminutes'] = "Test sa uzavrie o 10 minút.";
 $string['createmultiple'] = "Vytvori» viacero otázok";
 $string['createnewquestion'] = "Vytvori» novú otázku";
 $string['custom'] = "U¾ívateµský formát";
@@ -43,9 +48,14 @@ $string['default'] = "Východiskové nastavenie";
 $string['defaultgrade'] = "Prednastavená hodnota známky";
 $string['defaultinfo'] = "Nastavená kategória pre otázky.";
 $string['deletequestioncheck'] = "Ste si úplne istý, ¾e chcete vymaza» '\$a'?";
-$string['editcategories'] = "Zapísa» kategórie";
+$string['description'] = "Opis";
+$string['eachattemptbuildsonthelast'] = "Ka¾dý pokus je posavený na minulom";
+$string['editcategories'] = "Upravi» kategórie";
+$string['editingdescription'] = "Upravi» popis";
 $string['editingmatch'] = "Editova» zodpovedajúcu otázku";
+$string['editingmultianswer'] = "Upravi» test s mo¾nos»ou výberu odpovedí";
 $string['editingmultichoice'] = "Zapisovanie otázky s viacerými mo¾nos»ami výberu";
+$string['editingnumerical'] = "Upravi» èíslované otázky";
 $string['editingquestion'] = "Zapisovanie otázky";
 $string['editingquiz'] = "Zapisovanie testu";
 $string['editingrandom'] = "Editova» náhodnú otázku";
@@ -59,10 +69,14 @@ $string['filloutoneanswer'] = "Musíte vyplni» aspoò jednu mo¾nú odpoveï. Nevypln
 $string['filloutthreequestions'] = "Musíte vyplni» aspoò tri otázky. Nevyplnené otázky nebudú pou¾ité.";
 $string['fillouttwochoices'] = "Musíte uvies» aspoò dve mo¾nosti. Nevyplnené mo¾nosti nebudú pou¾ité.";
 $string['fractionsaddwrong'] = "Kladné známky, ktoré ste uviedli nemajú súèet 100%%
+
 <BR>ale ich súèet je \$a%%
+
 <BR>Chcete ís» spä» a opravi» túto otázku?";
 $string['fractionsnomax'] = "Jedna z odpovedí musí by» 100%%, aby bolo
+
 <BR>mo¾né získa» plný poèet za túto otázku.
+
 <BR>Chcete ís» spä» a opravi» túto otázku?";
 $string['gradeaverage'] = "Priemerná známka";
 $string['gradehighest'] = "Najvy¹¹ia známka";
@@ -75,11 +89,13 @@ $string['introduction'] = "Úvod";
 $string['marks'] = "Známky";
 $string['match'] = "Zodpovedajúci";
 $string['matchanswer'] = "Zodpovedajúca odpoveï";
+$string['missingcorrectanswer'] = "Musíte oznaèi»  správnu odpoveï";
 $string['missingname'] = "Chýba názov otázky";
 $string['missingquestiontext'] = "Chýba text otázky";
 $string['missingword'] = "Chýba formát slova";
 $string['modulename'] = "Test";
 $string['modulenameplural'] = "Testy";
+$string['multianswer'] = "S mo¾nos»ou výberu odpovedí";
 $string['multichoice'] = "Viaceré mo¾nosti";
 $string['noanswers'] = "Neboli vybraté ¾iadne odpovede!";
 $string['noattempts'] = "Nikto sa nepokúsil urobi» tento test";
@@ -88,7 +104,9 @@ $string['noquestions'] = "Zatiaµ neboli pridané otázky";
 $string['noreview'] = "Nemáte oprávnenie prehliada» tento test";
 $string['noreviewuntil'] = "Nemáte oprávnenie prehliada» tento test do \$a";
 $string['notenoughsubquestions'] = "Nebolo definované dos» podotázok (mo¾ností).<br>
+
 Chcete sa vráti» a opravi» túto otázku?";
+$string['numerical'] = "Poradový";
 $string['publish'] = "Publikova»";
 $string['qti'] = "Formát IMS QTI";
 $string['question'] = "Otázka";
@@ -98,6 +116,7 @@ $string['questions'] = "Otázky";
 $string['quizavailable'] = "Test je dostupný do: \$a";
 $string['quizclose'] = "Zatvori» test";
 $string['quizclosed'] = "Tento test bol zatvorený \$a";
+$string['quizcloses'] = "Test je uzatvorený";
 $string['quiznotavailable'] = "Test nebude dostupný do: \$a";
 $string['quizopen'] = "Otvori» test";
 $string['random'] = "Náhodná otázka";
@@ -107,11 +126,16 @@ $string['randomsamatchcreate'] = "Vytvori» náhodné zodpovedajúce otázky s krátky
 $string['randomsamatchintro'] = "Pre ka¾dú z nasledujúcich otázok vyberte zodpovedajúcu odpoveï z menu.";
 $string['randomsamatchnumber'] = "Poèet otázok, ktoré chcete vybra»";
 $string['readytosend'] = "Pripravujete sa na posielanie celého vá¹ho testu na ohodnotenie. Ste si istý, ¾e chcete pokraèova»?";
+$string['recentlyaddedquestion'] = "Nedávno pridaná otázka!";
 $string['regrade'] = "Preznámkova» v¹etky pokusy";
 $string['regradecomplete'] = "V¹etky pokusy boli preznámkované";
 $string['regradecount'] = "\$a->changed z \$a->attempt boli zmenené známky";
 $string['rename'] = "Premenova»";
-$string['report'] = "Správy";
+$string['report'] = "Zápisy";
+$string['reportoverview'] = "Celkový prehµad";
+$string['reportregrade'] = "Preznámhova» pokusy";
+$string['reportsimplestat'] = "Jednoduchá ¹tatistika";
+$string['review'] = "Prehµad";
 $string['save'] = "Ulo¾i»";
 $string['savegrades'] = "Ulo¾i» známky";
 $string['savemyanswers'] = "Ulo¾i» moje odpovede";
@@ -134,6 +158,7 @@ $string['true'] = "Správne";
 $string['truefalse'] = "Správne/Nesprávne";
 $string['type'] = "Typ";
 $string['viewallanswers'] = "Zobrazi» \$a celých testov";
+$string['viewallreports'] = "Prezrie» zápisy \$a pokusov";
 $string['webct'] = "Formát WebCT";
 $string['yourfinalgradeis'] = "Va¹a koneèná známka za tento test je \$a";
 
