@@ -32,11 +32,8 @@
         $data = backup_getid($restore->backup_unique_code,$mod->modtype,$mod->id);
 
         if ($data) {
-            //We have info, get and unserialize info
-            //First strip slashes
-            $temp = stripslashes($data->info);
             //Now get completed xmlized object
-            $info = unserialize($temp);
+            $info = $data->info;
             //traverse_xmlize($info);                                                                     //Debug
             //print_object ($GLOBALS['traverse_array']);                                                  //Debug
             //$GLOBALS['traverse_array']="";                                                              //Debug
@@ -59,7 +56,7 @@
             $newid = insert_record ("choice",$choice);
 
             //Do some output     
-            echo "<ul><li>Choice ".$choice->name."<br>";
+            echo "<ul><li>Choice \"".$choice->name."\"<br>";
             backup_flush(300);
 
             if ($newid) {
@@ -122,9 +119,9 @@
             $newid = insert_record ("choice_answers",$answer);
 
             //Do some output
-            if ($newid % 50 == 0) {
+            if (($i+1) % 50 == 0) {
                 echo ".";
-                if ($newid % 1000 == 0) {
+                if (($i+1) % 1000 == 0) {
                     echo "<br>";
                 }
                 backup_flush(300);

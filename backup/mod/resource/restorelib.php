@@ -27,11 +27,8 @@
         $data = backup_getid($restore->backup_unique_code,$mod->modtype,$mod->id);
 
         if ($data) {
-            //We have info, get and unserialize info
-            //First strip slashes
-            $temp = stripslashes($data->info);
             //Now get completed xmlized object
-            $info = unserialize($temp);
+            $info = $data->info;
             //traverse_xmlize($info);                                                                     //Debug
             //print_object ($GLOBALS['traverse_array']);                                                  //Debug
             //$GLOBALS['traverse_array']="";                                                              //Debug
@@ -49,7 +46,7 @@
             $newid = insert_record ("resource",$resource);
 
             //Do some output     
-            echo "<ul><li>Resource ".$resource->name."<br>";
+            echo "<ul><li>Resource \"".$resource->name."\"<br>";
             backup_flush(300);
 
             if ($newid) {
