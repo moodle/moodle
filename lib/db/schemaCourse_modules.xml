@@ -39,13 +39,13 @@
   <sql>
     <descr>Insert 1 row for testing only...comment out later</descr>
     <query platform="postgres|postgres7">
-      insert into course_modules values (1,1,1,1,1,1,1,1,1,1)
+      insert into course_modules values (1,1,1,1,1,1,1,1,1,1,1)
     </query>
     <query platform="mysql">
-      insert into course_modules values (1,1,1,1,1,1,1,1,1,1)
+      insert into course_modules values (1,1,1,1,1,1,1,1,1,1,1)
     </query>
     <query platform="oci8po">
-      insert into course_modules values (1,1,1,1,1,1,1,1,1,1)
+      insert into course_modules values (1,1,1,1,1,1,1,1,1,1,1)
     </query>
   </sql>
 </schema>
