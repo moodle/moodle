@@ -43,7 +43,7 @@
 
     $errors = NULL;
 
-    if ($action == 'sendform') {
+    if ($action == 'sendform' and confirm_sesskey()) {
         if ($form = data_submitted()) {
             if (empty($form->name)) {
                 $errors[$scaleid]->name = true;
@@ -124,6 +124,9 @@
 
     //If action is edit or new, show the form
     if ($action == "edit" || $action == "new") {
+
+        $sesskey = !empty($USER->id) ? $USER->sesskey : '';
+
         //Check for teacher edit
         if (! isteacheredit($course->id)) {
             error("Only editing teachers can modify scales !");
@@ -216,6 +219,7 @@
         echo "<tr>";
         echo "<td colspan=2 align=\"center\">";
         echo "<input type=\"hidden\" name=\"id\" value=\"$course->id\">";
+        echo "<input type=\"hidden\" name=\"sesskey\" value=\"$sesskey\">";
         echo "<input type=\"hidden\" name=\"courseid\" value=\"$scale->courseid\">";
         echo "<input type=\"hidden\" name=\"scaleid\" value=\"$scale->id\">";
         echo "<input type=\"hidden\" name=\"action\" value=\"sendform\">";
@@ -230,7 +234,7 @@
     }
 
     //If action is delete, do it
-    if ($action == "delete") {
+    if ($action == "delete" and confirm_sesskey()) {
         //Check for teacher edit
         if (! isteacheredit($course->id)) {
             error("Only editing teachers can delete scales !");
@@ -263,7 +267,7 @@
     }
 
     //If action is down or up, do it
-    if ($action == "down" || $action == "up" ) {
+    if (($action == "down" || $action == "up") and confirm_sesskey()) {
         //Check for teacher edit
         if (! isadmin()) {
             error("Only administrators can move scales",$CFG->wwwroot.'/course/scales.php?id='.$course->id);
@@ -449,14 +453,14 @@
                 $buttons .= "<a title=\"$stredit\" href=\"$path/scales.php?id=$course->id&scaleid=$scale->id&action=edit\"><img".
                             " src=\"$pixpath/t/edit.gif\" hspace=2 height=11 width=11 border=0></a> ";
                 if ($incustom && isadmin()) {
-                    $buttons .= "<a title=\"$strdown\" href=\"$path/scales.php?id=$course->id&scaleid=$scale->id&action=down\"><img".
+                    $buttons .= "<a title=\"$strdown\" href=\"$path/scales.php?id=$course->id&scaleid=$scale->id&action=down&amp;sesskey=$USER->sesskey\"><img".
                                 " src=\"$pixpath/t/down.gif\" hspace=2 height=11 width=11 border=0></a> ";
                 }
                 if (!$incustom && isadmin()) {
-                    $buttons .= "<a title=\"$strup\" href=\"$path/scales.php?id=$course->id&scaleid=$scale->id&action=up\"><img".
+                    $buttons .= "<a title=\"$strup\" href=\"$path/scales.php?id=$course->id&scaleid=$scale->id&action=up&amp;sesskey=$USER->sesskey\"><img".
                                 " src=\"$pixpath/t/up.gif\" hspace=2 height=11 width=11 border=0></a> ";
                 }
-                $buttons .= "<a title=\"$strdelete\" href=\"$path/scales.php?id=$course->id&scaleid=$scale->id&action=delete\"><img".
+                $buttons .= "<a title=\"$strdelete\" href=\"$path/scales.php?id=$course->id&scaleid=$scale->id&action=delete&amp;sesskey=$USER->sesskey\"><img".
                             " src=\"$pixpath/t/delete.gif\" hspace=2 height=11 width=11 border=0></a> ";
             }
             $line[] = $buttons;
