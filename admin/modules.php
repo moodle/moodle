@@ -145,16 +145,16 @@
 /// Print the table of all modules
 
     $table->head  = array ($stractivitymodule, $stractivities, $strversion, "$strhide/$strshow", $strdelete, $strsettings);
-    $table->align = array ("LEFT", "RIGHT", "LEFT", "CENTER", "CENTER", "CENTER");
-    $table->wrap = array ("NOWRAP", "", "", "", "","");
-    $table->size = array ("100%", "10", "10", "10", "10","12");
+    $table->align = array ("left", "right", "left", "center", "center", "center");
+    $table->wrap  = array ("nowrap", "", "", "", "","");
+    $table->size  = array ("100%", "10", "10", "10", "10","12");
     $table->width = "100";
 
     foreach ($modulebyname as $modulename => $module) {
 
         $icon = "<img src=\"$CFG->modpixpath/$module->name/icon.gif\" hspace=\"10\" height=\"16\" width=\"16\" border=\"0\" alt=\"\" />";
 
-        $delete = "<a href=\"modules.php?delete=$module->name&sesskey=$USER->sesskey\">$strdelete</a>";
+        $delete = "<a href=\"modules.php?delete=$module->name&amp;sesskey=$USER->sesskey\">$strdelete</a>";
 
         if (file_exists("$CFG->dirroot/mod/$module->name/config.html")) {
             $settings = "<a href=\"module.php?module=$module->name\">$strsettings</a>";
@@ -178,7 +178,7 @@
             $visible = "";
             $class = "";
         }
-        $table->data[] = array ("<p $class>$icon $modulename</p>", $count, $module->version, $visible, $delete, $settings);
+        $table->data[] = array ("<span $class>$icon $modulename</span>", $count, $module->version, $visible, $delete, $settings);
     }
     print_table($table);
 
