@@ -94,6 +94,7 @@ $string['nownotsubscribed'] = 'Les messages du forum « $a->forum » NE seront PAS
 $string['nowsubscribed'] = 'Les messages du forum « $a->forum » seront envoyés à $a->name.';
 $string['numposts'] = '$a messages';
 $string['olderdiscussions'] = 'Discussions antérieures';
+$string['oldertopics'] = 'Sujets antérieurs';
 $string['openmode0'] = 'Aucune discussion, aucune réponse';
 $string['openmode1'] = 'Aucune discussion, mais les réponses sont autorisées';
 $string['openmode2'] = 'Discussions et réponses';
