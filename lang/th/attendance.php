@@ -1,0 +1,71 @@
+<?PHP // $Id$ 
+      // attendance.php - created with Moodle 1.2 Beta (2004022400)
+
+
+$string['absentlong'] = 'ขาดเรียน';
+$string['absentshort'] = 'ขาด';
+$string['addingmultiple'] = 'กำลังเพิ่มหลายรายการเช็คชื่อ';
+$string['addmultiple'] = 'เพิ่มหลายรายการเช็คชื่อ';
+$string['allmodulename'] = 'รายการขานชื่อทั้งหมด';
+$string['auto'] = 'อัตโนมัติ';
+$string['autoattend'] = 'เช็คชื่อผู้เข้าเรียนอัตโนมัติโดยดูจากการล็อคอินของผู้ใช้';
+$string['autoattendmulti'] = 'เช็คชื่อผู้เข้าเรียนอัตโนมัติโดยดูจากการล็อคอินของผู้ใช้ในของทุกรายการชื่อ';
+$string['autoattendshort'] = 'อัตโนมัติการรายการล็อคอิน';
+$string['choosedays'] = 'วันของแต่ละอาทิตย์ที่จะทำการเช็คชื่อ';
+$string['dayofroll'] = 'วันที่ที่จะทำการเช็คชื่อ';
+$string['defaultautoattend'] = 'เลือกเพื่อที่จะให้การเช็คชื่อด้วยล็อคอินเป็นค่ามาตรฐาน';
+$string['defaultdynamicsection'] = 'เลือกเพื่อที่จะให้ระบบย้ายรายการเรียกชื่อไปยังอาทิตย์ที่ถูกต้อง';
+$string['defaultgrade'] = 'เลือกเพื่อที่จะวัดเกรดการเรียกชื่ออัตโนมัติ';
+$string['defaulthoursinclass'] = 'กี่ชั่วโมงที่คุณต้องการในการเรียกชื่ออัตโนมัติ';
+$string['defaultmaxgrade'] = 'เกรดสูงสุดของผู้เข้าเรียนที่เข้าเรียนทุกครั้ง';
+$string['defaultstudentstatus'] = 'ค่ามาตรฐานบนสถานะนักเรียนใหม่';
+$string['downloadexcelfull'] = 'ดาวน์โหลดเอ็กเซลล์ทั้งหมด';
+$string['downloadexceltotals'] = 'ดาวน์โหลดแผ่นเอ็กเซลล์ที่สรุปผล';
+$string['downloadtextfull'] = 'ดาวน์โหลดรายงานเต็มแบบตัวอักษร';
+$string['downloadtexttotals'] = 'ดาวน์โหลดรายงานสรุปแบบตัวอักษร';
+$string['dynamicsection'] = 'ตั้งค่าของอาทิตย์โดยใช้วันนี้เป็นหลัก';
+$string['dynamicsectionmulti'] = 'ทำการเช็คชื่อในทุกอาทิตย์อัตโนมัติ';
+$string['dynsectionshort'] = 'ย้ายส่วนนี้';
+$string['endbeforestart'] = 'วันสิ้นสุดมาก่อนวันเริ่มต้นไม่ได้';
+$string['endmulti'] = 'วันที่ที่มีการเช็คชื่อครั้งสุดท้าย';
+$string['for'] = 'เพื่อ';
+$string['friday'] = 'ศุกร์';
+$string['gradeshort'] = 'ให้เกรด';
+$string['gradevalue'] = 'เลือกให้สามารถเกรดรายชื่อได้';
+$string['gradevaluemulti'] = 'เลือกให้สามารถเกรดรายชื่อเหล่านี้ได้';
+$string['hoursinclass'] = 'จำนวนชั่วโมงในห้องเรียน';
+$string['hoursineachclass'] = 'จำนวนชั่วโมงในแต่ละคาบเรียน';
+$string['hoursinfullreport'] = 'จำนวนชั่วโมงเข้าเรียนสูงสุดที่จะให้เสนอต่อหนึ่งหน้าของรายงาน';
+$string['maxgradeshort'] = 'เกรดสูงสุด';
+$string['maxgradevalue'] = 'เกรดสูงสุดสำหรับนักเรียนเข้าเรียนทุกครั้ง';
+$string['modulename'] = 'จำนวนการเข้าเรียน';
+$string['modulenameplural'] = 'รายการเช็คชื่อ';
+$string['monday'] = 'จันทร์';
+$string['norolls'] = 'ไม่มีคนเข้ามาเรียนในคอร์สนี้';
+$string['notes'] = 'ข้อมูลน่าสนใจ';
+$string['notesfor'] = 'ข้อมูลน่าสนใจสำหรัย';
+$string['noviews'] = 'ขออภัย ไม่มีข้อมูลของคุณที่นี่';
+$string['of'] = 'จาก';
+$string['pages'] = 'หน้า';
+$string['presentlong'] = 'เข้าเรียน';
+$string['presentshort'] = 'เข้า';
+$string['saturday'] = 'เสาร์';
+$string['startafterend'] = 'วันเริ่มต้นมาก่อนวันที่เริ่มเปิดคอร์ส';
+$string['startmulti'] = 'วันที่ที่มีการเช็คชื่อครั้งแรก';
+$string['sunday'] = 'อาทิตย์';
+$string['takeroll'] = 'เช็คชื่อวันนี้';
+$string['tardiesperabsence'] = 'การเข้าเรียนสายกี่ครั้งจึงจะนับเป็นขาดเรียน';
+$string['tardylong'] = 'เข้าสาย';
+$string['tardyshort'] = 'สาย';
+$string['thursday'] = 'พฤหัส';
+$string['tuesday'] = 'อังคาร';
+$string['viewall'] = 'ดูรายการการเช็คชื่อทั้งหมด';
+$string['viewmulti'] = 'ดูรายงานในหลายหน้า';
+$string['viewone'] = 'ดูรายงานทุกหน้า';
+$string['viewsection'] = 'ดูรายการเช็คชื่อทั้งหมดจากส่วนนี้';
+$string['viewtable'] = 'ดูรายงานในรูปแบบตาราง';
+$string['viewweek'] = 'ดูรายงานการเช็คชื่อเป็นรายอาทิตย์';
+$string['wednesday'] = 'พุธ';
+$string['weekmodulename'] = 'รายการเช็คชื่อทั้งหมดอาทิตย์ที่ผ่านมา';
+
+?>
