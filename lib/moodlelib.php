@@ -1234,7 +1234,15 @@ function save_session($VAR) {
 
 function create_user_record($username, $password) {
 // Creates a bare-bones user record 
-    global $REMOTE_ADDR;
+    global $REMOTE_ADDR, $CFG;
+
+    if ($CFG->auth_update_userinfo and function_exists(auth_get_userinfo)) {
+        if ($newinfo = auth_get_userinfo($username)) {
+            foreach ($newinfo as $key=>$value){
+                $newuser->$key = $value;
+            }
+        }
+    }
 
     $newuser->username = $username;
     $newuser->password = md5($password);
@@ -1262,7 +1270,7 @@ function authenticate_user_login($username, $password) {
         $CFG->auth = "email";    // Default authentication module
     }
 
-    require("$CFG->dirroot/auth/$CFG->auth/lib.php");
+    require_once("$CFG->dirroot/auth/$CFG->auth/lib.php");
 
     if (auth_user_login($username, $password)) {  // Successful authentication
 
