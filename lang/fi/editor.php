@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.3 development (2004032800)
+      // editor.php - created with Moodle 1.3 Nearly Ready (2004052000)
 
 
 $string['about'] = 'Tietoja editorista';
@@ -27,6 +27,7 @@ $string['cut'] = 'Leikkaa';
 $string['delete'] = 'Poista';
 $string['filebrowser'] = 'Tiedostoselain';
 $string['forecolor'] = 'Tekstin väri';
+$string['fullscreen'] = 'Täysdenruudun editori';
 $string['heading'] = 'Otsikko';
 $string['height'] = 'Korkeus';
 $string['hilitecolor'] = 'Taustan väri';
@@ -47,6 +48,7 @@ $string['justifyleft'] = 'Tasaa vasemmat reunat';
 $string['justifyright'] = 'Tasaa oikeat reunat';
 $string['layout'] = 'Ulkoasu';
 $string['left'] = 'Vasen';
+$string['lefttoright'] = 'Suunta vesemmalta oikealle';
 $string['linkproperties'] = 'Linkin ominaisuudet';
 $string['linktarget'] = 'Linkin kohde';
 $string['linktargetblank'] = 'Uuteen ikkunaan';
@@ -57,6 +59,7 @@ $string['linktargettop'] = 'Samaan ikkunaan';
 $string['linktitle'] = 'Otsikko';
 $string['linkurl'] = 'URL';
 $string['middle'] = 'Keskitä';
+$string['minimize'] = 'Pienennä editori';
 $string['move'] = 'Siirrä';
 $string['normal'] = 'Normaali';
 $string['notimage'] = 'Valittu tiedosto ei ollut kuva. Valitse kuvatiedosto!';
@@ -76,7 +79,9 @@ $string['redo'] = 'Palauta viimeinen toiminto';
 $string['removelink'] = 'Poista linkki';
 $string['rename'] = 'Nimeä uudelleen';
 $string['right'] = 'Oikea';
+$string['righttoleft'] = 'Suunta oikealta vesemmalle';
 $string['rows'] = 'Rivit';
+$string['selectcolor'] = 'Valitse väri';
 $string['selection'] = 'Valinta';
 $string['showhelp'] = 'Ohje';
 $string['size'] = 'Koko';
@@ -95,6 +100,7 @@ $string['unorderedlist'] = 'Luettelomerkit';
 $string['upload'] = 'Lataa';
 $string['vertical'] = 'Pysty';
 $string['width'] = 'Leveys';
+$string['wordclean'] = 'Puhdista Word HTML';
 $string['zip'] = 'Zip';
 
 ?>

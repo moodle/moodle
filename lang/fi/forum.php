@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.3 development (2004050200)
+      // forum.php - created with Moodle 1.3 Nearly Ready (2004052000)
 
 
 $string['addanewdiscussion'] = 'Lisää uusi keskustelu';
@@ -12,6 +12,7 @@ $string['anyfile'] = 'Mikä tahansa tiedosto';
 $string['attachment'] = 'Liite';
 $string['bynameondate'] = '$a->name - $a->date';
 $string['configdisplaymode'] = 'Oletusasetus keskustelujen näyttämiselle, jos sellaista ei ole asetettu.';
+$string['configenablerssfeeds'] = 'Tämä mahdollistaa RSS syötteet eri  keskustelualueilta. Sinun pitää vielä erikseen kytkeä RSS päälle niiden keskustelualueiden asetuksesta jolla haluat käyttää RSS syötteitä.';
 $string['configlongpost'] = 'Tätä pitemmät keskustelut ovat pitkiä (HTML koodia ei lasketa mukaan).';
 $string['configmanydiscussions'] = 'Samalla sivulla näytettävien keskustelujen suurin määrä';
 $string['configmaxbytes'] = 'Oletusasetus liitetiedoston maksimikoolle koko sivustolla.';
@@ -111,6 +112,8 @@ $string['repliesmany'] = '$a vastausta tähän mennessä';
 $string['repliesone'] = '$a vastaus tähän mennessä';
 $string['reply'] = 'Vastaa';
 $string['replyforum'] = 'Vastaa keskustelualueelle';
+$string['rsssubscriberssdiscussions'] = 'Näytä RSS syöte $a keskusteluille';
+$string['rsssubscriberssposts'] = 'Näytä RSS syöte $a viesteille';
 $string['search'] = 'Etsi';
 $string['searchforums'] = 'Etsi keskustelualueilta';
 $string['searcholderposts'] = 'Selaa vanhoja viestejä';

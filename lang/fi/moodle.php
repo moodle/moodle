@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.3 development (2004050200)
+      // moodle.php - created with Moodle 1.3 Nearly Ready (2004052000)
 
 
 $string['action'] = 'Tapahtuma';
@@ -94,17 +94,23 @@ $string['backupfilename'] = 'varmuuskopio';
 $string['backupfinished'] = 'Varmuuskopio tehty menestyksekkäästi';
 $string['backupincludemoduleshelp'] = 'Valitse, halutko sisällyttää kurssimodulit - tiedostojen kanssa tai ilman - automaattiseen varmuuskopiointiin';
 $string['backupkeephelp'] = 'Montako varmuuskopiota haluat säilyttää? Vanhimmat niistä poistetaan automaattisesti.';
+$string['backuplogdetailed'] = 'Tarkka suoritusloki';
+$string['backuploglaststatus'] = 'Viimeisin suoritusloki';
 $string['backuplogshelp'] = 'Jos asetus on päällä, kurssin tapahtumalokit tulevat mukaan varmuuskopioihin.';
 $string['backupnameformat'] = '%%Y%%m%%d-%%H%%M';
+$string['backupnoneusersinfo'] = 'Huomaa: Et ole valinnut käyttäjiä varmuuskopioitavaksi, täten kaikki modulivarmuuskopiot on muutettu \"Ilman käyttäjien tiedostoja\" muotoon. Huomaa että oppimistehtävä ja työryhmä modulit eivät ole yhteensopivia tämän tämän tyypisen varmuuskopioinnin kanssa ja kyseisiä moduleita ei varmuuskopioida.';
 $string['backuporiginalname'] = 'Varmuuskopion nimi';
 $string['backupsavetohelp'] = 'Koko polku hakemistoon, johon haluat tallentaa varmuuskopiotiedostot.<br /> (Jätä tämä tyjäksi jos haluat tallentaa kurssin oletushakemistoon.)';
 $string['backupuserfileshelp'] = 'Valitse, haluatko sisällyttää käyttäjätiedostot (omat kuvat) automaattiseen varmuuskopiointiin';
 $string['backupusershelp'] = 'Haluatko varmuuskopioida kaikki käyttäjät vai vain tarvittavat käyttäjät kurssia kohden';
 $string['backupversion'] = 'Varmuuskopion versio';
+$string['blockdeleteconfirm'] = 'Olet poistamassa lopullisesti lohkon \'$a\'. Tämä poistaa kaikki lohkoon liittyvät tiedost tietokannasta. Oletko varma että haluat jatkaa?';
+$string['blockdeletefiles'] = 'Kaikki lohkoon \'$a->block\' liityvä tieto on poistettu tietokannasta. Viimestelläksesi poiston ( ja esääksesi lohkoa asentumasta uudelleen) poista seuraavaksi hakemisto $a->dirrectory palvelimelta';
 $string['blocks'] = 'Lohkot';
 $string['blocksetup'] = 'Asetetaan lohkojen taulut';
 $string['blocksuccess'] = '$a taulut on asetettu';
 $string['bycourseorder'] = 'Kurssin mukaan';
+$string['byname'] = '$a :n mukaan';
 $string['cancel'] = 'Peruuta';
 $string['categories'] = 'Kurssikategoriat';
 $string['category'] = 'Kategoria';
@@ -138,6 +144,8 @@ Mikäli asetat tähän liian pienen arvon, palvelimen toiminta saattaa hieman hidas
 $string['configcountry'] = 'Jos asetat maan tässä, valinnasta tulee oletusasetus kaikille käyttäjille. Pakottaaksesi käyttäjät valitsemaan maansa itse, jätä tämä kohta tyhjäksi.';
 $string['configdebug'] = 'Jos valitset virheenkorjaustilan päälle, PHP:n error_reporting arvo nousee ja useampia virheilmoituksia tulostuu näytölle. Tästä asetuksesta on hyötyä vain Moodlen kehittäjille.';
 $string['configdeleteunconfirmed'] = 'Jos käytät autentikointia sähköpostin kautta, tämän ajan kuluessa käyttäjän vahvistusviesti hyväksytään. Tämän ajan jälkeen vahvistamattomat tunnukset poistetaan.';
+$string['configenablerssfeeds'] = 'Tämä mahdollistaa RSS sytteet koko sivustolta. Jotta syötteet toimisivat pitää RSS syötteet  aktivoida jokaiselta modulilta erikseen. KAtso \"Modulien asetukset\"';
+$string['configenablerssfeedsdisabled'] = 'Ei ole valittavissa koska sisvuston RSS sytteet on poissa käytöstä. Voit kytkeä RSS syöteet päälle ylläpito asetusten \"Muuttujat\" sivulta.';
 $string['configerrorlevel'] = 'PHP virheilmoitusten määrä. Normal on yleensä hyvä valinta.';
 $string['configfilteruploadedfiles'] = 'Tämän kohdan asettaminen pakottaa Moodlen prosessoimaan kaikki Moodleen ladattavat HTML- ja tekstitiedostot tekstisuotimilla ennen niiden näyttämistä.';
 $string['configforcelogin'] = 'Normaalisti sivuston etusivu ja kurssilistaukset ovat kaikkien nähtävillä. Jos haluat, että käyttäjien pitää kirjaantua ennen kuin he voivat tehdä mitään sivustollasi, sinun pitää määritellä tämä asetus.';
@@ -235,6 +243,7 @@ $string['datemostrecentfirst'] = 'Päiväys - viimeisin ensin';
 $string['datemostrecentlast'] = 'Päiväys - viimeisin viimeisenä';
 $string['day'] = 'päivä';
 $string['days'] = 'päivää';
+$string['decodinginternallinks'] = 'Dekoodaa sisäiset linkit';
 $string['defaultcoursefullname'] = 'Kurssin koko nimi';
 $string['defaultcourseshortname'] = 'KK101';
 $string['defaultcoursestudent'] = 'Opiskelija';
@@ -273,6 +282,7 @@ $string['downloadtext'] = 'Lataa tekstimuodossa';
 $string['doyouagree'] = 'Oletko lukenut käyttöoikeuslisenssin ja ymmärtänyt sen?';
 $string['edit'] = 'Muokkaa $a';
 $string['editcoursesettings'] = 'Muokkaa kurssin asetuksia';
+$string['editfiles'] = 'Muokkaa tiedostoja';
 $string['editgroupprofile'] = 'Muokkaa ryhmän profiilia';
 $string['editinga'] = 'Muokataan $a';
 $string['editmyprofile'] = 'Muokkaa tietoja';
@@ -330,8 +340,8 @@ Uusi salasanasi on lähetty sähköpostilla osoitteeseen $a->email.
 
 ';
 $string['enable'] = 'Ota käyttöön';
-$string['enrolledincourse'] = 'Kirjattu kurssille \"$a\"';
-$string['enrolledincoursenot'] = 'Ei kirjattu kurssille  \"$a\"';
+$string['enrolledincourse'] = 'Kirjattu kurssille ';
+$string['enrolledincoursenot'] = 'Ei kirjattu kurssille  ';
 $string['enrolmentconfirmation'] = 'Olet aikeissa liittää itsesi tälle kurssille. Oletko varma, että haluat tehdä tämän?';
 $string['enrolmentkey'] = 'Avain';
 $string['enrolmentkeyfrom'] = 'Tämä kurssi vaatii \'avaimen\' - kertaluontoisen salasanan,<br />
@@ -412,6 +422,7 @@ $string['grades'] = 'Arvioinnit';
 $string['group'] = 'Ryhmä';
 $string['groupadd'] = 'Lisää ryhmä';
 $string['groupaddusers'] = 'Lisää valitut ryhmään';
+$string['groupfor'] = 'ryhmälle';
 $string['groupinfo'] = 'Tietoa valitusta ryhmästä';
 $string['groupinfomembers'] = 'Tietoa valitusta käyttäjistä';
 $string['groupinfopeople'] = 'Tietoa valituista henkilöistä';
@@ -477,6 +488,7 @@ $string['included'] = 'Otettu mukaan';
 $string['includelogentries'] = '...  tapahtuma loki';
 $string['includemodules'] = '...  modulit';
 $string['includeneededusers'] = '...  tarvittavat käyttäjät';
+$string['includenoneusers'] = '...  ei käyttäjiä';
 $string['includeuserfiles'] = '...  käyttäjien tiedostot';
 $string['institution'] = 'Instituutio';
 $string['invalidemail'] = 'Virheellinen sähköpostiosoite';
@@ -509,14 +521,14 @@ $string['loginas'] = 'Kirjaudu toisena';
 $string['loginguest'] = 'Kirjaudu vieraana';
 $string['loginsite'] = 'Kirjaudu sivustoon';
 $string['loginsteps'] = 'Hei! Käytä hetki aikaa luodaksesi itsellesi käyttäjätunnus ja salasana sivustoon. Tämä mahdollistaa sivuston vapaan käytön.
-   Jotkut kurssit saattavat myös vaatia kertakäyttöisen &quot;avaimen&quot;, jonka saat myöhemmin. Luodaksesi tunnuksen itsellesi sinun pitää:
+   Jotkut kurssit saattavat myös vaatia kertakäyttöisen \"avaimen\", jonka saat myöhemmin. Luodaksesi tunnuksen itsellesi sinun pitää:
    <ol size=\"2\">
    <li>Täyttää  <a href=\"$a\">uusi tunnus</a> lomake henkilötiedoillasi.</li>
    <li>Sähköposti lähetetään antamaasi osoitteeseen.</li>
    <li>Lue postisi ja klikkaa linkkiä viestissä</li>
    <li>Tunnuksesi vahvistetaan ja sinut kirjataan sisään.</li>
    <li>Valitse kurssit, mihin haluat.</li>
-   <li>Jos kurssi vaatii  &quot;avaimen&quot;, käytä sitä, jonka sait opettajaltasi.</li>
+   <li>Jos kurssi vaatii  \"avaimen\", käytä sitä, jonka sait opettajaltasi.</li>
    <li>Nyt voit käyttää järjestelmää vapaasti. Vastaisuudessa kirjaudut vain antamalla käyttäjätunnuksen ja salasanan vieressä oleviin kenttiin.</li>
    </ol>';
 $string['loginstepsnone'] = 'Hei! 
@@ -730,6 +742,8 @@ $string['restoreto'] = 'Palauta kohtaan';
 $string['returningtosite'] = 'Jos sinulla on jo tunnus:';
 $string['revert'] = 'Peruuta';
 $string['role'] = 'Rooli';
+$string['rssarticles'] = 'Viimeisinpien RSS artikkelien määrä';
+$string['rsstype'] = 'RSS syöte tastä aktiviteetista';
 $string['savechanges'] = 'Tallenna muutokset';
 $string['saveto'] = 'Tallenna';
 $string['scale'] = 'Asteiko';
@@ -798,6 +812,7 @@ $string['strftimedateshort'] = '%%d %%B';
 $string['strftimedatetime'] = '%%d %%B %%Y, %%H:%%M';
 $string['strftimedaydate'] = '%%A, %%d %%B %%Y';
 $string['strftimedaydatetime'] = '%%A, %%d %%B %%Y, %%H:%%M';
+$string['strftimedayshort'] = '%%A, %%d %%B';
 $string['strftimemonthyear'] = '%%B %%Y';
 $string['strftimerecent'] = '%%d %%b, %%H:%%M';
 $string['strftimerecentfull'] = '%%a, %%d %%b %%Y, %%H:%%M';
@@ -866,6 +881,7 @@ $string['uploadnotallowed'] = 'Tiedostojen latausta sivustolle ei sallita.';
 $string['uploadproblem'] = 'Tuntematon virhe tallennettaessa tiedostoa \'$a\'. (Ehkä se oli liian suuri?)';
 $string['uploadthisfile'] = 'Lähetä tämä tiedosto';
 $string['uploadusers'] = 'Lähetä käyttäjät';
+$string['usedinnplaces'] = 'KÄytössä $a paikassa';
 $string['user'] = 'Käyttäjä';
 $string['userconfirmed'] = 'Vahvistettu $a';
 $string['userdata'] = 'Käyttäjän tiedot';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // attendance.php - created with Moodle 1.2 Beta +++ (2004031300)
+      // attendance.php - created with Moodle 1.3 Nearly Ready (2004052000)
 
 
 $string['absentlong'] = 'Puuttuva';
@@ -45,7 +45,7 @@ $string['norolls'] = 'Tällä kurssilla ei ole läsnäololistoja';
 $string['notes'] = 'Poikkeavat tiedot';
 $string['notesfor'] = 'Poikkeavat tiedot :';
 $string['noviews'] = 'Valitettavasti tunnuksellesi ei ole tietoja.';
-$string['of'] = '&nbsp;/&nbsp;';
+$string['of'] = ' / ';
 $string['pages'] = 'Sivut';
 $string['presentlong'] = 'Nykyinen';
 $string['presentshort'] = 'N';
@@ -57,6 +57,7 @@ $string['takeroll'] = 'Hae tämän päivän lista?';
 $string['tardiesperabsence'] = 'Kuinka monta myöhästymistä lasketaan poissaoloksi';
 $string['tardylong'] = 'Myöhästyminen';
 $string['tardyshort'] = 'M';
+$string['teacheredit'] = 'Osallistu';
 $string['thursday'] = 'To';
 $string['tuesday'] = 'Ti';
 $string['viewall'] = 'Katsele kaikkia läsnäololistoja';
