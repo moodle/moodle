@@ -18,7 +18,6 @@
 
             if ($form->id) {
                 if (update_record("course", $form)) {
-                    add_to_log("Updated site settings", $course->id);
 		            redirect("$CFG->wwwroot/admin/", "Changes saved");
                 } else {
                     error("Serious Error! Could not update the course record! (id = $form->id)");
@@ -27,7 +26,6 @@
                 if ($newid = insert_record("course", $form)) {
                     $cat->name = "General";
                     if (insert_record("course_categories", $cat)) {
-                        add_to_log("Inserted a new course # $newid", $newid);
 		                redirect("$CFG->wwwroot/admin/", "Changes saved", "1");
                     } else {
                         error("Serious Error! Could not set up the default categories!");

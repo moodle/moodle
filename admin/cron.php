@@ -23,7 +23,6 @@
     }
 
     if ($p <> $CFG->cronpassword) {
-        add_to_log("Error: bad cron password!");
         echo "Error: bad password.\n";
         die;
     }
