@@ -423,7 +423,7 @@
             fwrite ($bf,full_tag("STUDENT",3,false,$course->student));
             fwrite ($bf,full_tag("STUDENTS",3,false,$course->students));
             fwrite ($bf,full_tag("GUEST",3,false,$course->guest));
-            fwrite ($bf,full_tag("STARDATE",3,false,$course->stardate));
+            fwrite ($bf,full_tag("STARTDATE",3,false,$course->startdate));
             fwrite ($bf,full_tag("NUMSECTIONS",3,false,$course->numsections));
             fwrite ($bf,full_tag("SHOWRECENT",3,false,$course->showrecent));
             fwrite ($bf,full_tag("MARKER",3,false,$course->marker));
