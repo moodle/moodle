@@ -12,7 +12,9 @@ $COURSE_SECTION = array (
              "topics" => "topic"
            );
 
-$COURSE_MAX_LOG_DISPLAY = 150;  // days
+$COURSE_MAX_LOG_DISPLAY = 150;     // days
+
+$COURSETEACHERCOLOR = "#990000";   // To hilight certain items
 
 
 function print_log_selector_form($course, $selecteduser=0, $selecteddate="today") {
@@ -257,7 +259,7 @@ function print_recent_activity($course) {
     // This function trawls through the logs looking for 
     // anything new since the user's last login
 
-    global $CFG, $USER;
+    global $CFG, $USER, $COURSETEACHERCOLOR;
 
     if (! $USER->lastlogin ) {
         echo "<P>Welcome to the course! Here you will find a list of what's new since your last login.</P>";
@@ -359,7 +361,7 @@ function print_recent_activity($course) {
                         if (!isteacher($course->id)) {
                             continue;
                         } else {
-                            $teacherpost = "COLOR=#666666";
+                            $teacherpost = "COLOR=$COURSETEACHERCOLOR";
                         }
                     }
                 }
