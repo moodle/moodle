@@ -542,8 +542,10 @@ function print_section_block($heading, $course, $section, $mods, $modnames, $mod
                         continue;
                     }
                     $modicon[] = "";
-                    $moddata[] = "<font size=\"2\"> -> <a title=\"$strmovefull\"".
-                                 " href=\"$CFG->wwwroot/course/mod.php?moveto=$mod->id\"><b>$strmovehere</b></a></font>";
+                    $moddata[] = "<a title=\"$strmovefull\"".
+                                 " href=\"$CFG->wwwroot/course/mod.php?moveto=$mod->id\">".
+                                 "<img height=\"16\" width=\"80\" src=\"$CFG->pixpath/movehere.gif\" ".
+                                 " alt=\"$strmovehere\" border=\"0\"></a>";
                 }
                 $instancename = urldecode($modinfo[$modnumber]->name);
                 $linkcss = $mod->visible ? "" : " class=\"dimmed\" ";
@@ -568,8 +570,10 @@ function print_section_block($heading, $course, $section, $mods, $modnames, $mod
     }
     if ($ismoving) {
         $modicon[] = "";
-        $moddata[] = "<font size=\"2\"> -> <a title=\"$strmovefull\"".
-                     " href=\"$CFG->wwwroot/course/mod.php?movetosection=$section->id\"><b>$strmovehere</b></a></font>";
+        $moddata[] = "<a title=\"$strmovefull\"".
+                     " href=\"$CFG->wwwroot/course/mod.php?movetosection=$section->id\">".
+                     "<img height=\"16\" width=\"80\" src=\"$CFG->pixpath/movehere.gif\" ".
+                     " alt=\"$strmovehere\" border=\"0\"></a>";
     }
     if ($isediting) {
         $editmenu = popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&amp;section=$section->section&add=", 
@@ -626,8 +630,10 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                     if ($mod->id == $USER->activitycopy) {
                         continue;
                     }
-                    echo "<font size=\"2\"> -> <a title=\"$strmovefull\"".
-                         " href=\"mod.php?moveto=$mod->id\">$strmovehere</a></font><br />\n";
+                    echo "<a title=\"$strmovefull\"".
+                         " href=\"mod.php?moveto=$mod->id\">".
+                         "<img height=\"16\" width=\"80\" src=\"$CFG->pixpath/movehere.gif\" ".
+                         " alt=\"$strmovehere\" border=\"0\"></a><br />\n";
                 }
                 $instancename = urldecode($modinfo[$modnumber]->name);
 
@@ -667,8 +673,10 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
         }
     }
     if ($ismoving) {
-        echo "<tr><td><font size=\"2\"> -> <a title=\"$strmovefull\"".
-             " href=\"mod.php?movetosection=$section->id\">$strmovehere</a></font></td></tr>\n";
+        echo "<tr><td><a title=\"$strmovefull\"".
+             " href=\"mod.php?movetosection=$section->id\">".
+             "<img height=\"16\" width=\"80\" src=\"$CFG->pixpath/movehere.gif\" ".
+             " alt=\"$strmovehere\" border=\"0\"></a></td></tr>\n";
     }
     echo "</table>\n\n";
 }
