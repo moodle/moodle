@@ -1,3 +1,7 @@
+<?php
+    // The following is a hack to fix bug 1488
+    $course = get_record('course', 'id', ($form->courseid) ? $form->courseid : $site->id);
+?>
 <form method="post" action="event.php" name="new">
 <table cellpadding=5>
   <tr>
