@@ -880,9 +880,9 @@ function forum_get_course_forum($courseid, $type) {
     $forum->type = "$type";
     switch ($forum->type) {
         case "news":
-            $forum->name  = get_string("namenews", "forum");
+            $forum->name  = addslashes(get_string("namenews", "forum"));
+            $forum->intro = addslashes(get_string("intronews", "forum"));
             $forum->forcesubscribe = 1;
-            $forum->intro = get_string("intronews", "forum");
             $forum->open = 1;   // 0 - no, 1 - posts only, 2 - discuss and post
             $forum->assessed = 0;
             if ($site = get_site()) {
@@ -893,15 +893,15 @@ function forum_get_course_forum($courseid, $type) {
             }
             break;
         case "social":
-            $forum->name  = get_string("namesocial", "forum");
-            $forum->intro = get_string("introsocial", "forum");
+            $forum->name  = addslashes(get_string("namesocial", "forum"));
+            $forum->intro = addslashes(get_string("introsocial", "forum"));
             $forum->open = 2;   // 0 - no, 1 - posts only, 2 - discuss and post
             $forum->assessed = 0;
             $forum->forcesubscribe = 0;
             break;
         case "teacher":
-            $forum->name  = get_string("nameteacher", "forum");
-            $forum->intro = get_string("introteacher", "forum");
+            $forum->name  = addslashes(get_string("nameteacher", "forum"));
+            $forum->intro = addslashes(get_string("introteacher", "forum"));
             $forum->open = 0;   // 0 - no, 1 - posts only, 2 - discuss and post
             $forum->assessed = 0;
             $forum->forcesubscribe = 0;
