@@ -1,7 +1,7 @@
 <?PHP  // $Id$
 
 
-include("$CFG->dirroot/mod/discuss/lib.php");
+include_once("$CFG->dirroot/mod/discuss/lib.php");
 
 // These are non-special forum types ie the ones that aren't automatically created
 $FORUM_TYPE   = array ("general"    => "General Forum",

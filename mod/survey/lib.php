@@ -98,11 +98,13 @@ function get_template_name($templateid) {
     }
 }
 
+
 function update_survey_analysis($survey, $user, $notes) {
     global $db;
 
     return $db->Execute("UPDATE survey_analysis SET notes='$notes' WHERE survey='$survey' and user='$user'");
 }
+
 
 function add_survey_analysis($survey, $user, $notes) {
     global $db;
@@ -111,5 +113,34 @@ function add_survey_analysis($survey, $user, $notes) {
 }
 
 
+function survey_user_summary($course, $user, $mod, $survey) {
+    global $CFG;
+}
+
+
+function survey_user_outline($course, $user, $mod, $survey) {
+    if ($answers = get_records_sql("SELECT * FROM survey_answers WHERE survey='$survey->id' AND user='$user->id'")) {
+
+        $lastanswer = array_pop($answers);
+
+        $result->info = "Done";
+        $result->time = $lastanswer->time;
+        return $result;
+
+    }
+    return NULL;
+}
+
+
+function survey_user_complete($course, $user, $mod, $survey) {
+    global $CFG, $THEME;
+
+    if (survey_already_done($survey->id, $user->id)) {
+        echo "<IMG SRC=\"$CFG->wwwroot/mod/survey/graph.php?id=$mod->id&sid=$user->id&type=student.png\">";
+    } else {
+        echo "Not done yet";
+    }
+}
 
 ?>
+
