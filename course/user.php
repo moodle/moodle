@@ -116,6 +116,11 @@
                                 continue;
                             }
                             $mod = $mods[$sectionmod];
+
+                            if (empty($mod->visible)) {
+                                continue;
+                            }
+
                             $instance = get_record("$mod->modname", "id", "$mod->instance");
                             $libfile = "$CFG->dirroot/mod/$mod->modname/lib.php";
 
