@@ -87,6 +87,7 @@
     				$row[] = "<a href=\"$CFG->wwwroot/user/view.php?id=$data->userid&course=$course->id\">".
     					 "$data->firstname $data->lastname</a>";
     				foreach ($user_data as $data) {
+    				    $scoreview = "";
     				    if ($data->cmi_core_score_raw > 0)
     				    	$scoreview = "<br />".get_string("score","scorm").":&nbsp;".$data->cmi_core_score_raw;
         		    	    $row[]="<img src=\"pix/".scorm_remove_spaces($data->cmi_core_lesson_status).".gif\" 

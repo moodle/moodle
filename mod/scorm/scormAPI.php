@@ -4,6 +4,8 @@
 
     optional_variable($id);    // Course Module ID, or
     optional_variable($a);     // scorm ID
+    optional_variable($scoid); // sco ID
+    optional_variable($mode);
 
     if ($id) {
 	if (! $cm = get_record("course_modules", "id", $id)) {
@@ -33,15 +35,15 @@
     require_login($course->id);
 
     if ( $scoes_user = get_records_select("scorm_sco_users","userid = ".$USER->id." AND scormid = ".$scorm->id,"scoid ASC") ) {
-	if ($_GET["scoid"]) {
-	    $sco = get_record("scorm_scoes","id",$_GET["scoid"]);
+	if ($scoid) {
+	    $sco = get_record("scorm_scoes","id",$scoid);
 	} else {
 	    foreach ( $scoes_user as $sco_user ) {
 		if (($sco_user->cmi_core_lesson_status != "completed") && ($sco_user->cmi_core_lesson_status != "passed") && ($sco_user->cmi_core_lesson_status != "failed")) {
 		    $sco = get_record("scorm_scoes","id",$sco_user->scoid);
 		    break;
 		} else {
-		    if ($_GET["mode"] == "review") {
+		    if ($mode == "review") {
 			$sco = get_record("scorm_scoes","id",$sco_user->scoid);
 			break;
 		    }
@@ -68,8 +70,8 @@
 		}
 	    }
 	    $sco = $first;
-	    if ($_GET["scoid"]) {
-		if ($sco = get_record("scorm_scoes","id",$_GET["scoid"]))
+	    if ($scoid) {
+		if ($sco = get_record("scorm_scoes","id",$scoid))
 		    unset($first);
 	    }
 	}
@@ -78,6 +80,10 @@
     // Get first, last, prev and next scoes
     //
     $scoes = get_records("scorm_scoes","scorm",$scorm->id,"id ASC");
+    $min = 0;
+    $max = 0;
+    $prevsco = 0;
+    $nextsco = 0;
     foreach ($scoes as $fsco) {
 	if ($fsco->launch != "") {
 	    if (!$min || ($min > $fsco->id))
@@ -92,6 +98,8 @@
 	    }
 	}
     }
+    $first = NULL;
+    $last = NULL;
     if ($sco->id == $min)
 	$first = $sco;
     if ($sco->id == $max)
@@ -124,7 +132,7 @@ function SCOInitialize() {
 	print "\ttop.nav.document.navform.next.style.display = 'none';\n";
     }
 ?>
-	top.main.location="<?php echo $result ?>";
+	top.main.location="<?php echo $result; ?>";
 	for (i=0;i<top.nav.document.navform.courseStructure.options.length;i++) {
 	    if ( top.nav.document.navform.courseStructure.options[i].value == <?php echo $sco->id; ?> )
 	    	top.nav.document.navform.courseStructure.options[i].selected = true;
@@ -133,10 +141,10 @@ function SCOInitialize() {
 
 function changeSco(direction) {
 	if (direction == "prev")
-	    top.nav.document.navform.scoid.value="<?php echo $prevsco ?>";
+	    top.nav.document.navform.scoid.value="<?php echo $prevsco; ?>";
 	else
-	    top.nav.document.navform.scoid.value="<?php echo $nextsco ?>";
+	    top.nav.document.navform.scoid.value="<?php echo $nextsco; ?>";
 	    
-	//alert ("Prev: <?php echo $prevsco ?>\nNext: <?php echo $nextsco ?>\nNew SCO: "+top.nav.document.navform.scoid.value);
+	//alert ("Prev: <?php echo $prevsco; ?>\nNext: <?php echo $nextsco; ?>\nNew SCO: "+top.nav.document.navform.scoid.value);
 	top.nav.document.navform.submit();
 }   

@@ -83,7 +83,7 @@
 	    echo "    <tr><td align=\"center\" colspan=\"2\" nowrap><p><b>".get_string("trackingloose","scorm")."</b></p></td></tr>\n";
     	echo "</table>\n";
     	if ($result == "regular") {
-	    echo "<form name=\"theform\" method=\"post\" $onsubmit action=\"$form->destination\">\n";
+	    echo "<form name=\"theform\" method=\"post\" action=\"$form->destination\">\n";
 ?>
         <input type="hidden" name="reference"	value="<?php p($form->reference) ?>">
         <input type="hidden" name="datadir"	value="<?php p(substr($tempdir,strlen($scormdir))) ?>">

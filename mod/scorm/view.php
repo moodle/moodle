@@ -94,6 +94,7 @@
     	echo "<table>\n";
     	echo "  <tr><th>".get_string("coursestruct","scorm")."</th></tr>\n";
     	echo "  <tr><td nowrap>\n<ul compact class=\"scormlist\"'>\n";
+    	$incomplete = false;
     	if ($scoes = get_records_select("scorm_scoes","scorm='$scorm->id' order by id ASC")){
     	    $level=0;
     	    $sublist=0;
@@ -111,11 +112,12 @@
     		}
     		echo "    <li>\n";
     		$nextsco = next($scoes);
-    		if (($nextsco !== false) && ($sco->parent != $nextsco->parent) && ($nextsco->parent != $parents[$level-1])) {
+    		if (($nextsco !== false) && ($sco->parent != $nextsco->parent) && (($level==0) || (($level>0) && ($nextsco->parent != $parents[$level-1])))) {
     		    $sublist++;
     		    echo "      <img src=\"pix/minus.gif\" onClick='expandCollide(this,".$sublist.");'/>\n";
-    		} else
+    		} else {
     		    echo "      <img src=\"pix/spacer.gif\" />\n";
+    		}
     		if ($sco->launch) {
     		    if ($sco_user=get_record("scorm_sco_users","scoid",$sco->id,"userid",$USER->id)) {
     		    	if ( $sco_user->cmi_core_lesson_status == "")
@@ -141,7 +143,7 @@
     	echo "<table align=\"CENTER\">\n<tr>\n<td align=\"center\">";
     	print_string("mode","scorm");
         echo ": <input type=\"radio\" id=\"b\" name=\"mode\" value=\"browse\" /><label for=\"b\">".get_string("browse","scorm")."</label>\n";
-        if ($incomplete) {
+        if ($incomplete === true) {
             echo "<input type=\"radio\" id=\"n\" name=\"mode\" value=\"normal\" checked /><label for=\"n\">".get_string("normal","scorm")."</label>\n";
         } else {
             echo "<input type=\"radio\" id=\"r\" name=\"mode\" value=\"review\" checked /><label for=\"r\">".get_string("review","scorm")."</label>\n";

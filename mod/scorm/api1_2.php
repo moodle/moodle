@@ -5,11 +5,11 @@
 	
 	cmi.core = new Object();
 	cmi.core._children = "student_id,student_name,lesson_location,credit,lesson_status,exit,entry,session_time,total_time,lesson_mode,score,suspend_data,launch_data";
-	cmi.core.student_id = "<?php echo $USER->username ?>";
-	cmi.core.student_name = "<?php echo $USER->firstname." ".$USER->lastname ?>";
-	cmi.core.lesson_location = "<?php echo $sco_user->cmi_core_lesson_location ?>";
+	cmi.core.student_id = "<?php echo $USER->username; ?>";
+	cmi.core.student_name = "<?php echo $USER->firstname." ".$USER->lastname; ?>";
+	cmi.core.lesson_location = "<?php echo $sco_user->cmi_core_lesson_location; ?>";
 	cmi.core.credit = "credit";
-	cmi.core.lesson_status = "<?php echo $sco_user->cmi_core_lesson_status ?>";
+	cmi.core.lesson_status = "<?php echo $sco_user->cmi_core_lesson_status; ?>";
 	cmi.core.exit = "<?php echo $sco_user->cmi_core_exit ?>";
 	cmi.core.entry = "<?php if ($sco_user->cmi_core_lesson_status=="not attempted") 
 				    echo 'ab-initio'; 
@@ -18,15 +18,15 @@
 					echo 'resume'; 
 				    else 
 					echo '';?>";
-	cmi.core.session_time = "<?php echo $sco_user->cmi_core_session_time ?>";
-	cmi.core.total_time = "<?php echo $sco_user->cmi_core_total_time ?>";
-	cmi.core.lesson_mode = "<?php echo $_GET["mode"] ?>";
+	cmi.core.session_time = "<?php echo $sco_user->cmi_core_session_time; ?>";
+	cmi.core.total_time = "<?php echo $sco_user->cmi_core_total_time; ?>";
+	cmi.core.lesson_mode = "<?php echo $mode; ?>";
 	
 	cmi.core.score = new Object();
 	cmi.core.score._children = "raw";
-	cmi.core.score.raw = "<?php echo $sco_user->cmi_core_score_raw ?>";
-	cmi.suspend_data = "<?php echo $sco_user->cmi_suspend_data ?>";
-	cmi.launch_data = "<?php echo $sco_user->cmi_launch_data ?>";
+	cmi.core.score.raw = "<?php echo $sco_user->cmi_core_score_raw; ?>";
+	cmi.suspend_data = "<?php echo $sco_user->cmi_suspend_data; ?>";
+	cmi.launch_data = "<?php echo $sco_user->cmi_launch_data; ?>";
 /*	cmi.interactions = new Object();
 	cmi.interactions._children = "id,objectives,time,type,correct_responses,weighting,student_response,result,latency";
 	cmi.interactions._count = 0;
@@ -180,7 +180,7 @@ function SCORMapi() {
 	if (Initialized) {
 	    if (top.nav.cmi.document.theform) {
 		cmiform = top.nav.cmi.document.forms[0];
-		cmiform.scoid.value = "<?php echo  $sco->id ?>";
+		cmiform.scoid.value = "<?php echo $sco->id; ?>";
 		cmiform.cmi_core_lesson_location.value = cmi.core.lesson_location;
 		cmiform.cmi_core_lesson_status.value = cmi.core.lesson_status;
 		cmiform.cmi_core_exit.value = cmi.core.exit;

@@ -8,6 +8,7 @@
 
     optional_variable($id);    // Course Module ID, or
     optional_variable($a);     // scorm ID
+    optional_variable($frameset, "");
 
     if ($id) {
         if (! $cm = get_record("course_modules", "id", $id)) {
@@ -54,7 +55,7 @@
                      update_module_button($cm->id, $course->id, $strscorm), navmenu($course, $cm));
         notice(get_string("activityiscurrentlyhidden"));
     }
-    if ($frameset) {
+    if ($frameset == "top") {
     	add_to_log($course->id, "scorm", "view", "playscorm.php?id=$cm->id", "$scorm->id");
 	//
 	// Print the page header
