@@ -141,6 +141,8 @@ function print_log($course, $user=0, $date=0, $order="ORDER BY l.time ASC") {
         $selector .= " AND l.time > '$date' AND l.time < '$enddate'";
     }
 
+    $order = $order." LIMIT ".COURSE_MAX_LOGS_PER_PAGE;   // To keep it manageable
+
     if (!$logs = get_logs($selector, $order)) {
         notify("No logs found!");
         print_footer($course);
@@ -150,47 +152,40 @@ function print_log($course, $user=0, $date=0, $order="ORDER BY l.time ASC") {
     $count=0;
     $tt = getdate(time());
     $today = mktime (0, 0, 0, $tt["mon"], $tt["mday"], $tt["year"]);
-    if (($totalcountlogs = count($logs)) > COURSE_MAX_LOGS_PER_PAGE) {
-        $totalcountlogs = COURSE_MAX_LOGS_PER_PAGE."/$totalcountlogs";
+    if (($totalcountlogs = count($logs)) == COURSE_MAX_LOGS_PER_PAGE) {
+        $totalcountlogs = "$totalcountlogs (+)";
     }
 
     $strftimedatetime = get_string("strftimedatetime");
 
-    echo "<P ALIGN=CENTER>";
+    echo "<p align=center>";
     print_string("displayingrecords", "", $totalcountlogs);
-    echo "</P>";
+    echo "</p>";
 
-    $countlogs = 0;
-    echo "<TABLE BORDER=0 ALIGN=center CELLPADDING=3 CELLSPACING=3>";
+    echo "<table border=0 align=center cellpadding=3 cellspacing=3>";
     foreach ($logs as $log) {
-
-        $countlogs++;
-
-        if ($countlogs > COURSE_MAX_LOGS_PER_PAGE) {
-            break;
-        }
 
         if ($ld = get_record("log_display", "module", "$log->module", "action", "$log->action")) {
             $log->info = get_field($ld->mtable, $ld->field, "id", $log->info);
         }
 
-        echo "<TR NOWRAP>";
+        echo "<tr nowrap>";
         if (! $course->category) {
-            echo "<TD NOWRAP><FONT SIZE=2><A HREF=\"view.php?id=$log->course\">".$courses[$log->course]."</A></TD>";
+            echo "<td nowrap><font size=2><a href=\"view.php?id=$log->course\">".$courses[$log->course]."</a></td>";
         }
-        echo "<TD NOWRAP ALIGN=right><FONT SIZE=2>".userdate($log->time, "%A")."</TD>";
-        echo "<TD NOWRAP><FONT SIZE=2>".userdate($log->time, $strftimedatetime)."</TD>";
+        echo "<td nowrap align=right><font size=2>".userdate($log->time, "%a")."</td>";
+        echo "<td nowrap><font size=2>".userdate($log->time, $strftimedatetime)."</td>";
         echo "<TD NOWRAP><FONT SIZE=2>";
         link_to_popup_window("/lib/ipatlas/plot.php?address=$log->ip&user=$log->userid", "ipatlas","$log->ip", 400, 700);
-        echo "</TD>";
-        echo "<TD NOWRAP><FONT SIZE=2><A HREF=\"../user/view.php?id=$log->userid&course=$log->course\"><B>$log->firstname $log->lastname</B></TD>";
-        echo "<TD NOWRAP><FONT SIZE=2>";
+        echo "</td>";
+        echo "<td nowrap><font size=2><a href=\"../user/view.php?id=$log->userid&course=$log->course\"><b>$log->firstname $log->lastname</b></td>";
+        echo "<td nowrap><font size=2>";
         link_to_popup_window( make_log_url($log->module,$log->url), "fromloglive","$log->module $log->action", 400, 600);
-        echo "</TD>";
-        echo "<TD NOWRAP><FONT SIZE=2>$log->info</TD>";
-        echo "</TR>";
+        echo "</td>";
+        echo "<td nowrap><font size=2>$log->info</td>";
+        echo "</tr>";
     }
-    echo "</TABLE>";
+    echo "</table>";
 }
 
 
