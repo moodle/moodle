@@ -32,9 +32,23 @@ function quiz_add_instance($quiz) {
 
     $quiz->timemodified = time();
 
-    # May have to add extra stuff in here #
+    if (!$quiz->id = insert_record("quiz", $quiz)) {
+        return false;  // some error occurred
+    }
+
+    // The grades for each question in this quiz are stored in an array
+    if ($quiz->grades) {
+        foreach ($quiz->grades as $question => $grade) {
+            $questiongrade->quiz = $quiz->id;
+            $questiongrade->question = $question;
+            $questiongrade->grade = $grade;
+            if (!insert_record("quiz_question_grades", $questiongrade)) {
+                return false;
+            }
+        }
+    }
     
-    return insert_record("quiz", $quiz);
+    return $quiz->id;
 }
 
 
@@ -46,9 +60,37 @@ function quiz_update_instance($quiz) {
     $quiz->timemodified = time();
     $quiz->id = $quiz->instance;
 
-    # May have to add extra stuff in here #
+    if (!update_record("quiz", $quiz)) {
+        return false;  // some error occurred
+    }
 
-    return update_record("quiz", $quiz);
+
+    // The grades for each question in this quiz are stored in an array
+    // Insert or update records as appropriate
+
+    $existing = get_records("quiz_question_grades", "quiz", $quiz->id, "", "question,grade,id");
+
+    if ($quiz->grades) {
+        foreach ($quiz->grades as $question => $grade) {
+            $questiongrade->quiz = $quiz->id;
+            $questiongrade->question = $question;
+            $questiongrade->grade = $grade;
+            if (isset($existing[$question])) {
+                if ($existing[$question]->grade != $grade) {
+                    $questiongrade->id = $existing[$question]->id;
+                    if (!update_record("quiz_question_grades", $questiongrade)) {
+                        return false;
+                    }
+                }
+            } else {
+                if (!insert_record("quiz_question_grades", $questiongrade)) {
+                    return false;
+                }
+            }
+        }
+    }
+    
+    return true;
 }
 
 
@@ -281,8 +323,32 @@ function quiz_print_category_form($course, $current) {
 }
 
 
-function quiz_print_question_list($questionlist) {
+function quiz_get_all_question_grades($questionlist, $quizid) {
+// Given a list of question IDs, finds grades or invents them to 
+// create an array of matching grades
+
+    $questions = get_records_sql("SELECT * FROM quiz_question_grades 
+                                  WHERE quiz = '$quizid' 
+                                    AND question IN ($questionlist)");
+
+    $list = explode(",", $questionlist);
+    $grades = array();
+
+    foreach ($list as $qid) {
+        if (isset($questions[$qid])) {
+            $grades[$qid] = $questions[$qid]->grade;
+        } else {
+            $grades[$qid] = 1;
+        }
+    }
+    return $grades;
+}
+
+
+function quiz_print_question_list($questionlist, $grades) {
 // Prints a list of quiz questions in a small layout form with knobs
+// $questionlist is comma-separated list
+// $grades is an array of corresponding grades
 
     global $THEME;
 
@@ -295,8 +361,7 @@ function quiz_print_question_list($questionlist) {
 
     $order = explode(",", $questionlist);
 
-    if (!$questions = get_records_sql("SELECT q.*, qg.grade FROM quiz_questions q, quiz_question_grades qg
-                                       WHERE q.id in ($questionlist) and qg.question = q.id")) {
+    if (!$questions = get_records_list("quiz_questions", "id", $questionlist)) {
         error("No questions were found!");
     }
 
@@ -310,7 +375,7 @@ function quiz_print_question_list($questionlist) {
     $strsavegrades = get_string("savegrades", "quiz");
 
     for ($i=100; $i>=0; $i--) {
-        $grades[$i] = $i;
+        $gradesmenu[$i] = $i;
     }
     $count = 0;
     $sumgrade = 0;
@@ -336,7 +401,7 @@ function quiz_print_question_list($questionlist) {
         echo "</TD>";
         echo "<TD>".$questions[$qnum]->name."</TD>";
         echo "<TD>";
-        choose_from_menu($grades, "q$qnum", $questions[$qnum]->grade, "");
+        choose_from_menu($gradesmenu, "q$qnum", $grades[$qnum], "");
         echo "<TD>";
             echo "<A TITLE=\"$strdelete\" HREF=\"edit.php?delete=$qnum\"><IMG 
                  SRC=\"../../pix/t/delete.gif\" BORDER=0></A>&nbsp;";
@@ -344,7 +409,7 @@ function quiz_print_question_list($questionlist) {
                  SRC=\"../../pix/t/edit.gif\" BORDER=0></A>";
         echo "</TD>";
 
-        $sumgrade += $questions[$qnum]->grade;
+        $sumgrade += $grades[$qnum];
     }
     echo "<TR><TD COLSPAN=3><TD ALIGN=right>";
     echo "<INPUT TYPE=submit VALUE=\"$strsavegrades:\">";

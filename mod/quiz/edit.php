@@ -35,6 +35,11 @@
         error("You can't modify this course!");
     }
 
+    if (! $modform->grades) {  // Construct an array to hold all the grades.
+        $modform->grades = quiz_get_all_question_grades($modform->questions, $modform->instance);
+    }
+
+
     // Now, check for commands on this page and modify variables as necessary
 
     if ($up) { //------------------------------------------------------------
@@ -79,7 +84,7 @@
                     }
                 }
                 $questions[] = $key;
-                $newgrade->quiz = $quiz->id;
+                $modform->grades[$key] = 1;
             }
         }
         $modform->questions = implode(",", $questions);
@@ -90,9 +95,7 @@
         foreach ($questions as $key => $question) {
             if ($question == $delete) {
                 unset($questions[$key]);
-                $db->debug=true;
-                execute_sql("DELETE FROM quiz_question_grades WHERE quiz='$quiz->id' and question='$question'");
-                $db->debug=false;
+                unset($modform->grades[$question]);
             }
         }
         $modform->questions = implode(",", $questions);
@@ -103,7 +106,7 @@
         foreach ($rawgrades as $key => $value) {    // Parse input for question -> grades
             if (substr($key, 0, 1) == "q") {
                 $key = substr($key,1);
-                set_field("quiz_question_grades", "grade", $value, "id", $key);
+                $modform->grades[$key] = $value;
             }
         }
     }
@@ -120,10 +123,8 @@
         }
     }
 
-
     $SESSION->modform = $modform;
     save_session("SESSION");
-
 
 
     $strediting = get_string("editingquiz", "quiz");
@@ -138,7 +139,7 @@
     echo "<TR><TD WIDTH=50%>";
         print_simple_box_start("CENTER", "100%", $THEME->body);
         print_heading($modform->name);
-        quiz_print_question_list($modform->questions); 
+        quiz_print_question_list($modform->questions, $modform->grades); 
         ?>
         <CENTER>
         <P>&nbsp;</P>
