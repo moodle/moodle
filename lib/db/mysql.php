@@ -849,6 +849,11 @@ function main_upgrade($oldversion=0) {
     if ($oldversion < 2004082900) {  // Make sure guest is "manual" too.
         set_field('user', 'auth', 'manual', 'username', 'guest');
     }
+    
+    if ($oldversion < 2004090300) { // Add guid-field used in user syncronization
+        table_column('user', '', 'guid', 'varchar', '128', '', '', '', 'auth');
+        execute_sql("ALTER TABLE {$CFG->prefix}user ADD INDEX authguid (auth, guid)");
+    }
 
     return $result;
 

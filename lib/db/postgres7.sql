@@ -198,6 +198,7 @@ CREATE INDEX prefix_cache_text_md5key_idx ON prefix_cache_text (md5key);
 CREATE TABLE prefix_user (
    id SERIAL PRIMARY KEY,
    auth varchar(20) NOT NULL default 'manual',
+   guid varchar(128) default NULL,
    confirmed integer NOT NULL default '0',
    deleted integer NOT NULL default '0',
    username varchar(100) NOT NULL default '',
@@ -234,6 +235,8 @@ CREATE TABLE prefix_user (
    timemodified integer NOT NULL default '0',
    CONSTRAINT prefix_user_username_uk UNIQUE (username)
 );
+
+CREATE INDEX prefix_user_auth_guid_idx ON prefix_user (auth, guid);
 
 CREATE TABLE prefix_user_admins (
    id SERIAL PRIMARY KEY,

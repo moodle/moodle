@@ -584,6 +584,11 @@ function main_upgrade($oldversion=0) {
         set_field('user', 'auth', 'manual', 'username', 'guest');
     }
 
+    if ($oldversion < 2004090300) { // Add guid-field used in user syncronization
+            table_column('user', '', 'guid', 'varchar', '128', '', '', '', 'auth');
+            execute_sql("CREATE INDEX {$CFG->prefix}user_auth_guid_idx ON {$CFG->prefix}user (auth, guid)"); 
+    }
+
     return $result;
 
 }
