@@ -86,7 +86,7 @@
                 die;
             }
 
-            if (!$course = get_record('user', 'id', $data->courseid)) { // Check that course exists
+            if (!$course = get_record('course', 'id', $data->courseid)) { // Check that course exists
                 email_paypal_error_to_admin("Course $data->courseid doesn't exist", $data);;
                 die;
             }
@@ -119,7 +119,7 @@
 
                 if (!empty($CFG->enrol_paypalmailstudents)) {
                     $a->coursename = "$course->fullname";
-                    $a->profileurl = "$CFG->wwwroot/user/view.php?id=$USER->id";
+                    $a->profileurl = "$CFG->wwwroot/user/view.php?id=$user->id";
                     email_to_user($user, $teacher, get_string("enrolmentnew"), get_string('welcometocoursetext', '', $a));
                 }
 
