@@ -794,7 +794,7 @@ function print_admin_links ($siteid, $width=180) {
 		if (file_exists("$CFG->dirroot/$CFG->admin/$CFG->dbtype")) {
             $moddata[]="<a href=\"$CFG->wwwroot/$CFG->admin/$CFG->dbtype/frame.php\">".
                         get_string("managedatabase")."</a>";
-		    $modicon[]="<img src=\"$CFG->pixpath/i/settings.gif\" height=16 width=16 alt=\"\" />";
+		    $modicon[]="<img src=\"$CFG->pixpath/i/db.gif\" height=16 width=16 alt=\"\" />";
 		}
         $fulladmin = "<p><a href=\"$CFG->wwwroot/$CFG->admin/\">".get_string("admin")."</a>...";
     }
