@@ -125,7 +125,7 @@
                 }
                 assignment_print_feedback($course, $submission, $assignment);
             }
-            if (!$submission->timemarked or $assignment->resubmit) {
+            if (empty($submission->timemarked) or (!empty($assignment->resubmit))) {
                 if ($submission and $submission->timemodified) {
                     echo "<p align=\"center\">".get_string("overwritewarning", "assignment")."</p>";
                 }
