@@ -61,6 +61,7 @@
 
     require_login($course->id);
 
+    $navigation = "";
     if ($course->category) {
         $navigation = "<A HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> ->";
     }
