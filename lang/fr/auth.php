@@ -1,5 +1,7 @@
 <?php // $Id$ 
 
+$string['auth_cas_logincas'] = 'Accès par connexion sécurisée';
+$string['auth_cas_invalidcaslogin'] = 'Désolé, la connexion a échoué&nbsp;! Vous n\'êtes pas autorisé à vous connecter à la plateforme.';
 $string['auth_cas_server_settings'] = 'Configuration du serveur CAS';
 $string['auth_castitle'] = 'Utiliser un serveur CAS (SSO)';
 $string['auth_cas_hostname'] = 'Nom d\'hôte du serveur,<br />par exemple&nbsp;: «&nbsp;host.domaine.fr&nbsp;»';
