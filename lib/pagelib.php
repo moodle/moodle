@@ -55,8 +55,6 @@ function page_map_class($type, $classname = NULL) {
         $mappings = array(
             MOODLE_PAGE_COURSE => 'page_course'
         );
-        print_object('Debug info - initial mappings:');
-        var_dump($mappings);
     }
 
     if(!empty($type) && !empty($classname)) {
@@ -67,14 +65,6 @@ function page_map_class($type, $classname = NULL) {
     }
 
     if(!class_exists($mappings[$type])) {
-        print_object('Debug info - type:');
-        var_dump($type);
-        print_object('Debug info - classname:');
-        var_dump($classname);
-        print_object('Debug info - mappings:');
-        print_object($mappings);
-        print_object('Debug_backtrace():');
-        print_object(debug_backtrace());
         error('Page class mapping for id "'.$type.'" exists but class "'.$mappings[$type].'" is not defined');
     }
 
