@@ -354,7 +354,7 @@ class block_base {
 
         $formats = $this->applicable_formats();
         if (empty($formats) || array_sum($formats) === 0) {
-            $errors[] = 'no_course_formats';
+            $errors[] = 'no_formats';
             $correct = false;
         }
 
@@ -418,8 +418,8 @@ class block_base {
      * @todo finish documenting this function
      */
     function applicable_formats() {
-        // Default case: the block can be used in all course types and not in quizzes
-        return array('all' => true, 'quiz' => false);
+        // Default case: the block can be used in all course types but not in activities
+        return array('all' => true, 'mod' => false);
     }
     
 

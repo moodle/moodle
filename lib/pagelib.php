@@ -249,9 +249,9 @@ class page_base {
         return $this->id;
     }
 
-    // "Sensible default" case here. Don't trigger any error.
+    // "Sensible default" case here. Take it from the body id.
     function get_format_name() {
-        return NULL;
+        return $this->body_id;
     }
 
     // Returns $this->body_class
@@ -388,7 +388,10 @@ class page_course extends page_base {
     // the format_name might be that activity's name etc.
     function get_format_name() {
         $this->init_full();
-        return $this->courserecord->format;
+        if($this->id == SITEID) {
+            return parent::get_format_name();
+        }
+        return $this->body_id.'-'.$this->courserecord->format;
     }
 
     // This should return a fully qualified path to the URL which is responsible for displaying us.
@@ -608,13 +611,6 @@ class page_quiz extends page_base {
     // Also, it doubles as a way to let others inquire about our type.
     function get_type() {
         return PAGE_QUIZ_VIEW;
-    }
-
-    // This is like the "category" of a page of this "type". For example, if the type is PAGE_COURSE_VIEW
-    // the format_name is the actual name of the course format. If the type were PAGE_ACTIVITY_VIEW, then
-    // the format_name might be that activity's name etc.
-    function get_format_name() {
-        return 'quiz';
     }
 
     // This should return a fully qualified path to the URL which is responsible for displaying us.

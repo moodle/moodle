@@ -8,7 +8,7 @@ class block_social_activities extends block_base {
     }
 
     function applicable_formats() {
-        return array('social' => true);
+        return array('course-view-social' => true);
     }
 
     function get_content() {

@@ -103,8 +103,20 @@ function blocks_get_missing(&$page, &$pageblocks) {
             if($block->visible && (!blocks_find_block($block->id, $pageblocks) || $block->multiple)) {
                 // And if it's applicable for display in this format...
                 $formats = block_method_result($block->name, 'applicable_formats');
-                if(isset($formats[$pageformat]) ? $formats[$pageformat] : !empty($formats['all'])) {
-                    // Add it to the missing blocks
+                $accept  = NULL;
+                foreach($formats as $format => $allowed) {
+                    $thisformat = '^'.str_replace('*', '[^-]*', $format).'.*$';
+                    if(ereg($thisformat, $pageformat)) {
+                        $accept = $allowed;
+                        break;
+                    }
+                }
+                if($accept === NULL) {
+                    // ...or in all pages...
+                    $accept = !empty($formats['all']);
+                }
+                if(!empty($accept)) {
+                    // ...add it to the missing blocks
                     $missingblocks[] = $block->id;
                 }
             }
@@ -128,12 +140,19 @@ function blocks_remove_inappropriate($page) {
         foreach($position as $instance) {
             $block = blocks_get_record($instance->blockid);
             $formats = block_method_result($block->name, 'applicable_formats');
-            if(! (isset($formats[$pageformat]) ? $formats[$pageformat] : !empty($formats['all']))) {
-                // Translation: if the course format is explicitly accepted/rejected, use
-                // that setting. Otherwise, fallback to the 'all' format. The empty() test
-                // uses the trick that empty() fails if 'all' is either !isset() or false.
-
-                blocks_delete_instance($instance);
+            $accept  = NULL;
+            foreach($formats as $format => $allowed) {
+                $thisformat = '^'.str_replace('*', '[^-]*', $format).'.*$';
+                if(ereg($thisformat, $pageformat)) {
+                    $accept = $allowed;
+                    break;
+                }
+            }
+            if($accept === NULL) {
+                $accept = !empty($formats['all']);
+            }
+            if(empty($accept)) {
+               blocks_delete_instance($instance);
             }
         }
     }

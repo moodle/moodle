@@ -23,7 +23,7 @@ class block_section_links extends block_base {
     }
 
     function applicable_formats() {
-        return (array('weeks' => true, 'topics' => true));
+        return (array('course-view-weeks' => true, 'course-view-topics' => true));
     }
 
     function get_content() {
