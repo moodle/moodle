@@ -67,20 +67,21 @@
         } else {
             require_once($CFG->dirroot.'/lib/uploadlib.php');
 
-            $um = new upload_manager('imagefile',false,false,null,false,0,false, true);
+            $um = new upload_manager('imagefile',false,false,null,false,0,true,true);
             if ($um->preprocess_files()) {
                 require_once("$CFG->libdir/gdlib.php");
-                $group->picture = save_profile_image($group->id, $um, 'groups');
+                if (save_profile_image($group->id, $um, 'groups')) {
+                    $group->picture = 1;
+                }
             }
             $group->name        = $form->name;
             $group->description = $form->description;
             $group->hidepicture = $form->hidepicture;
             $group->password    = $form->password;
             if (!update_record("groups", $group)) {
-                notify("A strange error occurred while trying to save ");
+                redirect("group.php?id=$course->id&amp;group=$group->id", "A strange error occurred while trying to save ");
             } else {
-                notify(get_string('changessaved'));
-                print_continue("group.php?id=$course->id&amp;group=$group->id");
+                redirect("group.php?id=$course->id&amp;group=$group->id", get_string('changessaved'));
             }
         }
     }
