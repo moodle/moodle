@@ -40,6 +40,10 @@
     if (! $grades = get_records('lesson_grades', 'lessonid', $lesson->id, 'completed')) {
         $grades = array();
     }
+	
+    if (! $times = get_records('lesson_timer', 'lessonid', $lesson->id, 'starttime')) {
+        $times = array();
+    }
 
 // make sure people are where they should be
     require_login($course->id, false);
@@ -56,6 +60,7 @@
     }
     $button = '<form target="'. $CFG->framename .'" method="get" action="'. $CFG->wwwroot .'/course/mod.php">'.
            '<input type="hidden" name="update" value="'. $cm->id .'" />'.
+           '<input type="hidden" name="sesskey" value="'. $USER->sesskey .'" />'.
            '<input type="hidden" name="return" value="true" />'.
            '<input type="submit" value="'. get_string('editlessonsettings', 'lesson') .'" /></form>';
 
@@ -85,7 +90,8 @@
             if (!array_key_exists($attempt->userid, $studentdata) || !array_key_exists($attempt->retry, $studentdata[$attempt->userid])) {
                 // restore/setup defaults
                 $n = 0;
-                $timeend = NULL;
+				$timestart = 0;
+                $timeend = 0;
                 $usergrade = NULL;
 
                 // search for the grade record for this try. if not there, the nulls defined above will be used.
@@ -95,31 +101,46 @@
                         // see if n is = to the retry
                         if ($n == $attempt->retry) {
                             // get grade info
-                            $timeend = $grade->completed;
                             $usergrade = $grade->grade;
                             break;
                         }
                         $n++; // if not equal, then increment n
                     }
                 }
+				$n = 0;
+                // search for the time record for this try. if not there, the nulls defined above will be used.
+                foreach($times as $time) {
+                    // check to see if the grade matches the correct user
+                    if ($time->userid == $attempt->userid) {
+                        // see if n is = to the retry
+                        if ($n == $attempt->retry) {
+                            // get grade info
+                            $timeend = $time->lessontime;
+                            $timestart = $time->starttime;
+                            break;
+                        }
+                        $n++; // if not equal, then increment n
+                    }
+                }
+
                 // build up the array.
                 // this array represents each student and all of their tries at the lesson
-                $studentdata[$attempt->userid][$attempt->retry] = array( "timestart" => $attempt->timeseen,
+                $studentdata[$attempt->userid][$attempt->retry] = array( "timestart" => $timestart,
                                                                         "timeend" => $timeend,
                                                                         "grade" => $usergrade,
                                                                         "try" => $attempt->retry,
                                                                         "userid" => $attempt->userid);
             }
         }
-        // set all the stats variables to 0
+        // set all the stats variables
         $numofattempts = 0;
-        $avescore = 0;
-        $avetime = 0;
-        $highscore = 0;
-        $lowscore = 1000000000000;  // silly, but should work
-        $hightime = 0;
-        $lowtime = 1000000000000;  // :)
-        $table = new stdClass;
+        $avescore      = 0;
+        $avetime       = 0;
+        $highscore     = NULL;
+        $lowscore      = NULL;
+        $hightime      = NULL;
+        $lowtime       = NULL;
+        $table         = new stdClass;
 
         // set up the table object
         $table->head = array(get_string('studentname', 'lesson', $course->student), get_string('attempts', 'lesson'), get_string('highscore', 'lesson'));
@@ -150,7 +171,7 @@
                     // userid to the userid which was clicked, and sets hidden form variables try, timetotake, completed, and grade
                     $temp = "<a href=\"javascript: document.forms['overview'].elements['userid'].value = '".$try["userid"]."'; ".
                             "document.forms['overview'].elements['try'].value = '".$try["try"]."'; ";
-                    if ($try["grade"] != NULL && $try["timeend"] != NULL) { // basically, both will be set, or both will be null.  Both are based on same thing
+                    if ($try["grade"] != NULL) { // if NULL then not done yet
                         // this is what the link does when the user has completed the try
                         $timetotake = $try["timeend"] - $try["timestart"];
 
@@ -185,16 +206,16 @@
                         $numofattempts++;
                         $avescore += $try["grade"];
                         $avetime += $timetotake;
-                        if ($try["grade"] > $highscore) {
+                        if ($try["grade"] > $highscore || $highscore == NULL) {
                             $highscore = $try["grade"];
                         }
-                        if ($try["grade"] < $lowscore) {
+                        if ($try["grade"] < $lowscore || $lowscore == NULL) {
                             $lowscore = $try["grade"];
                         }
-                        if ($timetotake > $hightime) {
+                        if ($timetotake > $hightime || $hightime == NULL) {
                             $hightime = $timetotake;
                         }
-                        if ($timetotake < $lowtime) {
+                        if ($timetotake < $lowtime || $lowtime == NULL) {
                             $lowtime = $timetotake;
                         }
                     }
@@ -217,11 +238,33 @@
         echo "</form>";
 
         // some stat calculations
-        $avescore = format_float($avescore/$numofattempts, 2, ".", ",");
-        $avetime = format_float($avetime/$numofattempts, 0, ".", ",");
-        $avetime = format_time($avetime);
-        $hightime = format_time($hightime);
-        $lowtime = format_time($lowtime);
+        if ($numofattempts == 0) {
+			$avescore = get_string("notcompleted", "lesson");
+		} else {
+			$avescore = format_float($avescore/$numofattempts, 2, ".", ",");
+		}
+		if ($avetime == NULL) {
+			$avetime = get_string("notcompleted", "lesson");
+		} else {
+        	$avetime = format_float($avetime/$numofattempts, 0, ".", ",");
+			$avetime = format_time($avetime);
+		}
+        if ($hightime == NULL) {
+        	$hightime = get_string("notcompleted", "lesson");
+        } else {
+			$hightime = format_time($hightime);
+		}
+		if ($lowtime == NULL) {
+        	$lowtime = get_string("notcompleted", "lesson");
+        } else {
+			$lowtime = format_time($lowtime);
+		}
+		if ($highscore == NULL) {
+			$highscore = get_string("notcompleted", "lesson");
+		}
+		if ($lowscore == NULL) {
+			$lowscore = get_string("notcompleted", "lesson");
+		}
 
         // output the stats
         print_heading(get_string('lessonstats', 'lesson'));
