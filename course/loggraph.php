@@ -7,7 +7,7 @@
     require_variable($id);    // Course ID
     require_variable($type);  // Graph Type
     optional_variable($user);  // Student ID
-    optional_variable($date);  // Midnight of a date
+    optional_variable($date);  // A time of a day (in GMT)
 
     if (! $course = get_record("course", "id", $id)) {
         error("Course is misconfigured");

@@ -497,12 +497,12 @@ function print_side_block($heading="", $list=NULL, $footer="", $icons=NULL) {
     echo "</TABLE><BR>\n\n";
 }
 
-function print_admin_links () {
+function print_admin_links ($siteid) {
     global $THEME, $CFG;
     
     print_simple_box(get_string("administration"), $align="CENTER", $width="100%", $color="$THEME->cellheading");
     $icon = "<IMG SRC=\"$CFG->wwwroot/pix/i/settings.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";
-    $moddata[]="<A HREF=\"$CFG->wwwroot/course/log.php?id=$site->id\">".get_string("sitelogs")."</A>";
+    $moddata[]="<A HREF=\"$CFG->wwwroot/course/log.php?id=$siteid\">".get_string("sitelogs")."</A>";
     $modicon[]=$icon;
     $moddata[]="<A HREF=\"$CFG->wwwroot/admin/site.php\">".get_string("sitesettings")."</A>";
     $modicon[]=$icon;

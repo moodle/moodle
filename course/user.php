@@ -64,7 +64,7 @@
     switch ($mode) {
         case "todaylogs" :
             echo "<HR><CENTER>";
-            print_log_graph($course, $user->id, "userday.png", time() );
+            print_log_graph($course, $user->id, "userday.png");
             echo "</CENTER>";
             print_log($course, $user->id, usergetmidnight(time()), "ORDER BY l.time DESC");
             break;
