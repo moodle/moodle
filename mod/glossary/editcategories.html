@@ -2,14 +2,13 @@
 	global $CFG, $THEME;
     require_once("../../config.php");
 ?>
-
 <center>
 <FORM name="form" method="post" action="editcategories.php">
 <table  class=generalbox cellpadding=5 bgcolor="<?php p($THEME->cellheading)?>">
 <tr valign=top>
     <td align=right><p><b><?php echo get_string("name") ?>:</b></p></td>
     <td>
-        <INPUT type="text" name="name" size=30 value="<?php ($name) ?>">
+        <INPUT type="text" name="name" size=30 value="<?php p($name) ?>">
     </td>
 </tr>
 <tr valign=top>
