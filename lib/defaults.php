@@ -6,6 +6,7 @@
    $defaults = array (
        "theme"          => "standard",
        "lang"           => "en",
+       "langdir"        => "LTR",
        "locale"         => "en",
        "auth"           => "email",
        "smtphosts"      => "",

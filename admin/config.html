@@ -29,6 +29,20 @@
     </TD>
 </TR>
 <TR VALIGN=TOP>
+	<TD ALIGN=RIGHT><P>langdir:</TD>
+	<TD>
+    <? unset($options);
+       $options["LTR"] = get_string("langltr");
+       $options["RTL"] = get_string("langrtl");
+
+       choose_from_menu ($options, "langdir", $config->langdir, "", "", "");
+    ?>
+    </TD>
+    <TD>
+    <? print_string("configlangdir") ?>
+    </TD>
+</TR>
+<TR VALIGN=TOP>
 	<TD ALIGN=RIGHT><P>locale:</TD>
 	<TD>
     <INPUT NAME=locale TYPE=text SIZE=10 VALUE="<?=$config->locale?>">
@@ -51,14 +65,14 @@
 <TR VALIGN=TOP>
 	<TD ALIGN=RIGHT><P>gdversion:</TD>
 	<TD>
-    <? $options[0] = get_string("gdnot");
+    <? unset($options);
+       $options[0] = get_string("gdnot");
        $options[1] = get_string("gd1");
        $options[2] = get_string("gd2");
 
        $installed  = check_gd_version();
 
        choose_from_menu ($options, "gdversion", $installed, "", "", "");
-       unset($options);
     ?>
     </TD>
     <TD>

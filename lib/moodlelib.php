@@ -46,6 +46,12 @@ function print_header ($title="", $heading="", $navigation="", $focus="", $meta=
     } else {
         $meta .= "<META HTTP-EQUIV=\"Content-Type\" CONTENT=\"text/html; charset=".get_string("thischarset")."\">\n";
     }
+
+    if ($CFG->langdir == "RTL") {
+        $direction = " DIR=\"RTL\"";
+    } else {
+        $direction = " DIR=\"LTR\"";
+    }
  
     if (!$cache) {   // Do everything we can to prevent clients and proxies caching
         @header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
