@@ -558,6 +558,8 @@ within the course so that we can learn more about you:
 
   \$a->profileurl";
 $string['withchosenfiles'] = "With chosen files";
+$string['withoutuserdata'] = "without user data";
+$string['withuserdata'] = "with user data";
 $string['wordforteacher'] = "Your word for Teacher";
 $string['wordforteachereg'] = "eg Teacher, Tutor, Facilitator etc";
 $string['wordforteachers'] = "Your word for Teachers";
