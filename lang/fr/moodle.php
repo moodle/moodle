@@ -1,10 +1,10 @@
 <?PHP // $Id$ 
+      // moodle.php - created with Moodle 1.2 development (2004010900)
 
 
 $string['action'] = 'Action';
 $string['activities'] = 'Activités';
 $string['activity'] = 'Activité';
-$string['activityclipboard'] = 'Activité en cours de déplacement: <b>$a</b>';
 $string['activityiscurrentlyhidden'] = 'Désolé, cette activitée n\'est pas visible actuellement';
 $string['activitymodule'] = 'Module d\'activité';
 $string['activityreport'] = 'Journal d\'activité';
@@ -29,8 +29,8 @@ $string['adminhelpassignadmins'] = 'Les administrateurs peuvent tout faire et al
 $string['adminhelpassigncreators'] = 'Les responsables de cours peuvent créer de nouveaux cours et y enseigner';
 $string['adminhelpassignstudents'] = 'Choisissez un cours et ajoutez des étudiants (menu Administration)';
 $string['adminhelpassignteachers'] = 'Choisissez un cours et ajoutez des enseignants à l\'aide de l\'icône';
-$string['adminhelpbackup'] = 'Configuration de la copie de sauvegarde';
 $string['adminhelpauthentication'] = 'Il est possible d\'utiliser des comptes internes ou ceux d\'une base de données externe';
+$string['adminhelpbackup'] = 'Configuration de la copie de sauvegarde';
 $string['adminhelpconfiguration'] = 'Configurer l\'aspect et le fonctionnement du site';
 $string['adminhelpconfigvariables'] = 'Configurer les paramètres réglant le fonctionnement général du site';
 $string['adminhelpcourses'] = 'Définir les cours et les disciplines, et assigner des utilisateurs à ces cours';
@@ -112,8 +112,7 @@ $string['configcountry'] = 'Si vous choisissez un pays ici, il sera sélectionné 
 $string['configdebug'] = 'Si vous activez cette option, le paramètre PHP « error_reporting » sera augmenté afin que les avertissements soient affichés. Ceci est utile essentiellement pour les développeurs.';
 $string['configerrorlevel'] = 'Choisir la quantité d\'avertissement PHP que vous souhaitez voir afficher. « Normal » est généralement le meilleur choix.';
 $string['configframename'] = 'Si vous intégrez Moodle dans un cadre (frame), inscrivez ici le nom de ce cadre. Dans le cas contraire, cette valeur doit rester « _top »';
-$string['configfullnamedisplay'] = 'Ce réglage définit comment les noms sont affichés en format complet. Pour la plupart des sites monolingues, le réglage le plus efficace est le réglage par défaut « Prénom + Nom », mais vous pouvez choisir de cacher les noms de familles, ou de laisser le choix au fichier de la langue d\'affichage (certaines langues ont des conventions différentes).';
-$string['configmaxbytes'] = 'Taille maximale de l\'ensemble des fichiers déposés dans le site. Cette valeur est limitée par le réglage PHP upload_max_filesize et par le réglage Apache LimitRequestBody. Le réglage maxbytes limite quant à lui la taille au niveau des cours ou des thèmes.';
+$string['configfullnamedisplay'] = 'Ce réglage définit comment les noms sont affichés en format complet. Pour la plupart des sites monolingues, le réglage le plus efficace est le réglage par défaut « Prénom + Nom », mais vous pouvez choisir de cacher les noms de familles, ou de laisser le choix au fichier de la langue d\'affichage (certaines langues ont des conventions différentes).';
 $string['configgdversion'] = 'Indiquer la version de la librairie GD qui est installée. La version selectionnée par défaut est celle qui a été détectée. Ne pas modifier cette valeur à moins de savoir réellement ce qu\'il en découle.';
 $string['confightmleditor'] = 'Choisir d\'autoriser ou non l\'utilisation de l\'éditeur HTML intégré. Cependant, même s\'il est activé, il n\'apparaît que si l\'utilisateur utilise un navigateur compatible Internet Explorer 5.5 ou plus. Chaque utilisateur peut également choisir de ne pas l\'activer.';
 $string['configidnumber'] = 'Cette option précise si (a) les utilisateurs doivent indiquer un numéro de connexion non vide ; (b) les utilisateurs doivent indiquer un numéro de connexion qui peut être vide ; (c) les utilisateurs n\'ont pas besoin d\'indiquer de numéro de connexion. Le cas échéant, le numéro de connexion est affiché dans le profil de l\'utilisateur.';
@@ -166,7 +165,7 @@ $string['courseinfo'] = 'Informations du cours';
 $string['courserestore'] = 'Restauration du cours';
 $string['courses'] = 'Cours';
 $string['courseupdates'] = 'Modifications du cours';
-$string['courseuploadlimit'] = 'Taille maximale des fichiers dŽposŽs dans le cours';
+$string['courseuploadlimit'] = 'Taille maximale des fichiers d&#65533;pos&#65533;s dans le cours';
 $string['create'] = 'Créer';
 $string['createaccount'] = 'Créer mon compte';
 $string['createfolder'] = 'Créer un dossier dans $a';
@@ -286,7 +285,7 @@ $string['emailpasswordconfirmsent'] = 'Un message a été envoyé à votre adresse d
 En cas de difficulté, veuillez contacter l\'administrateur du site.';
 $string['emailpasswordsent'] = 'Merci pour votre confirmation.
 <p>Un message avec votre nouveau mot de passe a été envoyé à votre adresse <b>$a->email</b>.
-<p>Le nouveau mot de passe a été généré automatiquement. Vous pouvez <a href="$a->link">le modifier</a> pour le rendre plus facile à retenir.';
+<p>Le nouveau mot de passe a été généré automatiquement. Vous pouvez <a href=\"$a->link\">le modifier</a> pour le rendre plus facile à retenir.';
 $string['enrolmentconfirmation'] = 'Vous allez vous inscrire comme participant à ce cours.<br />Êtes-vous sûr de vouloir le faire ?';
 $string['enrolmentkey'] = 'Clef d\'inscription';
 $string['enrolmentkeyfrom'] = 'Ce cours nécessite une clef d\'inscription, un mot de passe à usage unique que vous devez obtenir de $a';
@@ -432,7 +431,7 @@ Chaque cours peut également nécessiter une clef d\'inscription à usage unique do
 Voici les étapes à suivre :
 
    <OL size=2>
-   <LI>Remplir le formulaire <a href="$a">nouveau compte</A>.
+   <LI>Remplir le formulaire <a href=\"$a\">nouveau compte</A>.
    <LI>Un message vous sera immédiatement adressé par courriel.
    <LI>Récupérer ce message et cliquer sur le lien Web qu\'il contient.
    <LI>Votre inscription sera alors confirmée et vous serez connecté.
@@ -588,7 +587,6 @@ $string['order'] = 'Ordre';
 $string['other'] = 'Autre';
 $string['outline'] = 'Outline';
 $string['page'] = 'Page';
-$string['parentlanguage'] = '';
 $string['participants'] = 'Participants';
 $string['password'] = 'Mot de passe';
 $string['passwordchanged'] = 'Le mot de passe a été changé';
@@ -598,7 +596,7 @@ $string['passwordsdiffer'] = 'Les mots de passe ne correspondent pas';
 $string['passwordsent'] = 'Le mot de passe a été envoyé';
 $string['passwordsenttext'] = '<p>Un message vous a été envoyé à cette adresse : $a->email.
 <P><B>Merci de lire ce message afin de connaître votre nouveau mot de passe</B>
-<P>Ce nouveau mot de passe a été généré automatiquement. Vous voudrez sans doute<br /> le <a href="$a->link">modifier</a> afin qu\'il vous soit plus facile de vous en souvenir.';
+<P>Ce nouveau mot de passe a été généré automatiquement. Vous voudrez sans doute<br /> le <a href=\"$a->link\">modifier</a> afin qu\'il vous soit plus facile de vous en souvenir.';
 $string['people'] = 'La classe';
 $string['personalprofile'] = 'Fiche personnelle';
 $string['phone'] = 'Téléphone';
