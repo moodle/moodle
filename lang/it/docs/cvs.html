@@ -37,7 +37,7 @@
     <P>Il cvs di sourceforge usa un livello di trasporto ssh per sicurezza, dovrete quindi impostare questa variabile d'ambiente CVS_RHS sulla vostra shell unix:</P>
     <BLOCKQUOTE><PRE><STRONG>setenv CVS_RSH ssh</STRONG> (for csh, tcsh etc)</PRE><PRE><STRONG>export CVS_RSH=ssh</STRONG> (for sh, bash etc)</PRE></BLOCKQUOTE>
     <P>La cosa miglore &egrave; inserire queste righe nel file .bashrc o .cshrc per non doverle riscrive tutte le volte; dopodich&eacute; collegatevi a moodle usando questo comando (tutto in una riga, ovviamente):</P>
-    <BLOCKQUOTE><PRE><STRONG>cvs -z3 -d:ext:myusername@cvs.moodle.sourceforge.net:/cvsroot/moodle co moodle</STRONG></PRE></BLOCKQUOTE>
+    <BLOCKQUOTE><PRE><STRONG>cvs -z3 -d:ext:myusername@cvs.sourceforge.net:/cvsroot/moodle co moodle</STRONG></PRE></BLOCKQUOTE>
     <P>Non provate a eseguire questo primo comando cvs in una directory di moodle preesistente, iniziate con una nuova.</P>
     <P>Nota: vi verr&agrave; chiesta la password ad ogni comando se non avete impostato una <A href="http://sourceforge.net/account/editsshkeys.php" 
     target=_top>chiave autorizzata</A></P>
@@ -67,7 +67,7 @@ update -dP</STRONG> </PRE></BLOCKQUOTE>
       <P>02. Cercate o create una cartella da qualche parte dove volete che venga scaricato moodle</P>
       <P>03. Click col tasto destro sulla cartella scelta e scegliete '<STRONG>CVS Checkout</STRONG>' dal menu, dovrebbe comparire una finestra</P>
       <P>04. Copiate questo testo nel campo CVSROOT (usando il vostro nome utente!):</P>
-      <BLOCKQUOTE><PRE> :ext:<FONT color=#990000>myusername</FONT>@cvs.moodle.sourceforge.net:/cvsroot/moodle</PRE></BLOCKQUOTE>
+      <BLOCKQUOTE><PRE> :ext:<FONT color=#990000>myusername</FONT>@cvs.sourceforge.net:/cvsroot/moodle</PRE></BLOCKQUOTE>
       <P>05. Premete il pulsante '<STRONG>Fetch list...</STRONG>'.</P>
       <P>06. Alla destra del pulsante dovreste vedere una serie di moduli, scegliete '<STRONG>moodle</STRONG>' dalla lista.</P>
       <P>07. Premete il pulsante '<strong>OK</strong>' e dovrebbe venire scaricato il tutto..<BR>
