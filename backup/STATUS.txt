@@ -126,9 +126,9 @@ Backup Details:
       - Modify the backup frontend..............................NOT EXISTS
       - Modify the backup of course_sections and course_modules.NOT EXISTS
       - Modify every module backuplib to work properly..........NOT EXISTS
-   - Encode every possible internal link........................IN PROGRESS
+   - Encode every possible internal link........................DONE
       - Links to forums.........................................DONE
-      - Links to resources......................................NOT EXISTS
+      - Links to resources......................................DONE
 Restore Details:
 ===============
    - Delete old entries at restore start........................DONE
@@ -245,11 +245,17 @@ Restore Details:
       - From database...........................................DONE
       - From filesystem.........................................DONE
    - Upload backup files........................................DONE
-   - Decode every possible internal link........................IN PROGRESS
-      - Links to forums.........................................IN PROGRESS
+   - Decode every possible internal link........................DONE
+      - Links to forums.........................................DONE
          - From forums (post->message)..........................DONE
+         - From forums (forum->intro)...........................DONE
+         - From resources (resource->summary)...................DONE
          - From resources (resource->alltext)...................DONE
-      - Links to resources......................................NOT EXISTS
+      - Links to resources......................................DONE
+         - From forums (post->message)..........................DONE
+         - From forums (forum->intro)...........................DONE
+         - From resources (resource->summary)...................DONE
+         - From resources (resource->alltext)...................DONE
 
 ========== ========== ========== =========== =========== =========== ===
 

@@ -57,10 +57,24 @@
         return $info;
     }
 
+    //Return a content encoded to support interactivities linking. Every module
+    //should have its own. They are called automatically from the backup procedure.
+    function resource_encode_content_links ($content,$preferences) {
 
+        global $CFG;
 
+        $base = preg_quote($CFG->wwwroot,"/");
 
+        //Link to the list of resources
+        $buscar="/(".$base."\/mod\/resource\/index.php\?id\=)([0-9]+)/";
+        $result= preg_replace($buscar,'$@RESOURCEINDEX*$2@$',$content);
 
+        //Link to resource view by moduleid
+        $buscar="/(".$base."\/mod\/resource\/view.php\?id\=)([0-9]+)/";
+        $result= preg_replace($buscar,'$@RESOURCEVIEWBYID*$2@$',$result);
+
+        return $result;
+    }
 
     // INTERNAL FUNCTIONS. BASED IN THE MOD STRUCTURE
 
