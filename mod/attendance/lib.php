@@ -391,4 +391,21 @@ function attendance_get_records($table, $field1="", $value1="", $field2="", $val
     return get_records_sql("SELECT $fields FROM $CFG->prefix$table $select $sort $limit");
 }
 
+function attendance_get_participants($attendanceid) {
+//Returns the users with data in one attendance
+//(users with records in attendance_roll, students)
+
+    global $CFG;
+
+    //Get students
+    $students = get_records_sql("SELECT DISTINCT u.*
+                                 FROM {$CFG->prefix}user u,
+                                      {$CFG->prefix}attendance_roll a
+                                 WHERE a.dayid = '$attendanceid' and
+                                       u.id = a.userid");
+
+    //Return students array (it contains an array of unique users)
+    return ($students);
+}
+
 ?>
