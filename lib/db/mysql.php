@@ -226,7 +226,7 @@ function main_upgrade($oldversion=0) {
     }
 
     if ($oldversion < 2002122301) {
-        if (! record_exists_select("log_display", "", "user", "", "view")) {
+        if (! record_exists("log_display", "module", "user", "action", "view")) {
             execute_sql("INSERT INTO {$CFG->prefix}log_display VALUES ('user', 'view', 'user', 'CONCAT(firstname,' ',lastname)') ");
         }
     }
