@@ -424,6 +424,17 @@ function quiz_get_attempt_responses($attempt) {
 }
 
 
+function get_list_of_questions($questionlist) {
+/// Returns an ordered list of questions, including course for each
+
+    global $CFG;
+
+    return get_records_sql("SELECT q.*,c.course 
+                              FROM {$CFG->prefix}quiz_questions q,
+                                   {$CFG->prefix}quiz_categories c
+                             WHERE q.id in ($questionlist)
+                               AND q.category = c.id");
+}
 
 //////////////////////////////////////////////////////////////////////////////////////
 /// Any other quiz functions go here.  Each of them must have a name that 
@@ -1215,7 +1226,7 @@ function quiz_print_question_list($questionlist, $grades) {
 
     $order = explode(",", $questionlist);
 
-    if (!$questions = get_records_list("quiz_questions", "id", $questionlist)) {
+    if (!$questions = get_list_of_questions($questionlist)) {
         echo "<p align=\"center\">";
         print_string("noquestions", "quiz");
         echo "</p>";
@@ -1244,6 +1255,7 @@ function quiz_print_question_list($questionlist, $grades) {
             continue;
         }
         $question = $questions[$qnum];
+        $canedit = isteacheredit($question->course);
         $count++;
         echo "<tr bgcolor=\"$THEME->cellcontent\">";
         echo "<td>$count</td>";
@@ -1261,7 +1273,7 @@ function quiz_print_question_list($questionlist, $grades) {
         echo "</td>";
         echo "<td>$question->name</td>";
         echo "<td align=\"center\">";
-        quiz_print_question_icon($question);
+        quiz_print_question_icon($question, $canedit);
         echo "</td>";
         echo "<td>";
         if ($question->qtype == DESCRIPTION) {
@@ -1273,8 +1285,10 @@ function quiz_print_question_list($questionlist, $grades) {
         echo "<td>";
             echo "<a title=\"$strdelete\" href=\"edit.php?delete=$qnum\"><img 
                  src=\"../../pix/t/delete.gif\" border=\"0\"></a>&nbsp;";
-            echo "<a title=\"$stredit\" href=\"question.php?id=$qnum\"><img 
-                 src=\"../../pix/t/edit.gif\" border=\"0\"></a>\n";
+            if ($canedit) {
+                echo "<a title=\"$stredit\" href=\"question.php?id=$qnum\"><img 
+                     src=\"../../pix/t/edit.gif\" border=\"0\"></a>\n";
+            }
         echo "</td>";
 
         $sumgrade += $grades[$qnum];
@@ -1389,7 +1403,7 @@ function quiz_print_cat_question_list($categoryid, $quizselected=true) {
         }
         echo "<td>".$question->name."</td>\n";
         echo "<td align=\"center\">\n";
-        quiz_print_question_icon($question);
+        quiz_print_question_icon($question, $canedit);
         echo "</td>\n";
         if ($canedit) {
             echo "<td>\n";
