@@ -127,7 +127,7 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
     if ($ownpost) {
         $output .= "<A HREF=\"$CFG->wwwroot/mod/forum/post.php?delete=$post->id\">".get_string("delete", "forum")."</A>";
         if ($reply) {
-            $output .= "| <A HREF=\"$CFG->wwwroot/mod/forum/post.php?reply=$post->id\">".get_string("reply", "forum")."</A>";
+            $output .= " | <A HREF=\"$CFG->wwwroot/mod/forum/post.php?reply=$post->id\">".get_string("reply", "forum")."</A>";
         }
         $output .= "&nbsp;&nbsp;";
     } else {

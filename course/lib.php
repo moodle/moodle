@@ -197,7 +197,7 @@ function print_all_courses($cat=1, $style="full", $maxcount=999) {
         }
 
     } else {
-        echo "<H3>No courses have been defined yet</H3>";
+        echo "<H3>".get_string("nocoursesyet")."</H3>";
     }
 }
 

@@ -7,7 +7,7 @@
     require("lib.php");
 
     if (isguest()) {
-        error("Guests are not allowed to post.", $HTTP_REFERER);
+        error(get_string("noguestpost", "forum"), $HTTP_REFERER);
     }
 
     if (match_referer() && isset($HTTP_POST_VARS)) {    // form submitted
@@ -19,7 +19,7 @@
         $post->attachment = $HTTP_POST_FILES["attachment"];
 
         if (!$post->subject and !$post->message) {
-            error("Something was wrong with your post.  Perhaps you left it blank, or the attachment was too big.  Your changes have NOT been saved.");
+            error(get_string("emptymessage", "forum"));
         }
 
         require_login();
@@ -28,9 +28,9 @@
             $post->id = $post->edit;
             if (forum_update_post($post)) {
                 add_to_log($post->course, "forum", "update post", "discuss.php?d=$post->discussion&parent=$post->id", "$post->id");
-                redirect(forum_go_back_to("discuss.php?d=$post->discussion"), "Your post was updated", 1);
+                redirect(forum_go_back_to("discuss.php?d=$post->discussion"), get_string("postupdated", "forum"), 1);
             } else {
-                error("Could not update your post due to an unknown error"); 
+                error(get_string("couldnotupdate", "forum")); 
             }
 
         } else if ($post->discussion) { // Adding a new post to an existing discussion
@@ -41,9 +41,9 @@
 
                 add_to_log($post->course, "forum", "add post", "discuss.php?d=$post->discussion&parent=$post->id", "$post->id");
                 redirect(forum_go_back_to("discuss.php?d=$post->discussion"), 
-                         "Your post was successfully added.<P>You have ".format_time($CFG->maxeditingtime)." to edit it if you want to make any changes.", 3);
+                         get_string("postadded", "forum", format_time($CFG->maxeditingtime)), 3);
             } else {
-                error("Could not add the post due to an unknown error"); 
+                error(get_string("couldnotadd", "forum")); 
             }
         } else {                     // Adding a new discussion
             $discussion = $post;
@@ -55,9 +55,9 @@
                 }
                 add_to_log($post->course, "forum", "add discussion", "discuss.php?d=$discussion->id", "$discussion->id");
                 redirect(forum_go_back_to("view.php?f=$post->forum"), 
-                         "Your post was successfully added.<P>You have ".format_time($CFG->maxeditingtime)." to edit it if you want to make any changes.", 5);
+                         get_string("postadded", "forum", format_time($CFG->maxeditingtime)), 3);
             } else {
-                error("Could not insert the new discussion.");
+                error(get_string("couldnotadd", "forum")); 
             }
         }
         die;
@@ -117,8 +117,9 @@
         $post->user = $USER->id;
         $post->message = "";
 
-        if (!(substr($post->subject, 0, 3) == "Re:")) {
-            $post->subject = "Re: ".$post->subject;
+        $strre = get_string("re", "forum");
+        if (!(substr($post->subject, 0, 3) == $strre)) {
+            $post->subject = "$strre $post->subject";
         }
 
         forum_set_return();
@@ -132,7 +133,7 @@
             error("You can't edit other people's posts!");
         }
         if ((time() - $post->created) > $CFG->maxeditingtime) {
-            error("Sorry, but the maximum time for editing this post (".format_time($CFG->maxeditingtime).") has passed!");
+            error( get_string("maxtimehaspassed", "forum", format_time($CFG->maxeditingtime)) );
         }
         if ($post->parent) {
             if (! $parent = forum_get_post_full($post->parent)) {
@@ -177,12 +178,11 @@
         if (isset($confirm)) {    // User has confirmed the delete
 
             if ($post->totalscore) {
-                notice("Sorry, that cannot be deleted as people have already rated it", 
+                notice(get_string("couldnotdeleteratings", "forum"), 
                         forum_go_back_to("discuss.php?d=$post->discussion"));
 
             } else if (record_exists("forum_posts", "parent", $delete)) {
-                error("Sorry, that cannot be deleted as people have 
-                        already responded to it", 
+                error(get_string("couldnotdeletereplies", "forum"),
                         forum_go_back_to("discuss.php?id=$post->discussion"));
 
             } else {
@@ -195,13 +195,13 @@
 
                     add_to_log($discussion->course, "forum", "delete discussion", "view.php?id=$discussion->forum", "$post->id");
                     redirect("view.php?f=$discussion->forum", 
-                             "The discussion topic has been deleted", 1);
+                             get_string("deleteddiscussion", "forum"), 1);
 
                 } else if (forum_delete_post($post)) {
 
                     add_to_log($discussion->course, "forum", "delete post", "discuss.php?d=$post->discussion", "$post->id");
                     redirect(forum_go_back_to("discuss.php?d=$post->discussion"), 
-                             "The post has been deleted", 1);
+                             get_string("deletedpost", "forum"), 1);
                 } else {
                     error("An error occurred while deleting record $post->id");
                 }
@@ -213,7 +213,7 @@
             forum_set_return();
 
             print_header();
-            notice_yesno("Are you sure you want to delete this post?", 
+            notice_yesno(get_string("deletesure", "forum"), 
                          "post.php?delete=$delete&confirm=$delete",
                          $HTTP_REFERER);
                          
@@ -245,7 +245,7 @@
             error("Could not find top parent of post $post->id");
         }
     } else {
-        $toppost->subject = "New discussion topic";
+        $toppost->subject = get_string("yournewtopic", "forum");
     }
 
     if ($post->subject) {
@@ -255,12 +255,14 @@
     }
 
     if ($post->parent) {
-        $navtail = "<A HREF=\"discuss.php?d=$discussion->id\">$toppost->subject</A> -> Editing";
+        $navtail = "<A HREF=\"discuss.php?d=$discussion->id\">$toppost->subject</A> -> ".get_string("editing", "forum");
     } else {
         $navtail = "$toppost->subject";
     }
 
-    $navmiddle = "<A HREF=\"../forum/index.php?id=$course->id\">Forums</A> -> <A HREF=\"view.php?f=$forum->id\">$forum->name</A>";
+    $strforums = get_string("modulenameplural", "forum");
+
+    $navmiddle = "<A HREF=\"../forum/index.php?id=$course->id\">$strforums</A> -> <A HREF=\"view.php?f=$forum->id\">$forum->name</A>";
 
     if ($course->category) {
         print_header("$course->shortname: $discussion->name: $toppost->subject", "$course->fullname",
@@ -275,9 +277,9 @@
     echo "<CENTER>";
     if (isset($parent)) {
         forum_print_post($parent, $course->id, $ownpost=false, $reply=false, $link=false);
-        echo "<H2>Your reply:</H2>";
+        echo "<H2>".get_string("yourreply", "forum").":</H2>";
     } else {
-        echo "<H2>Your new discussion topic:</H2>";
+        echo "<H2>".get_string("yournewtopic", "forum")."</H2>";
     }
     echo "</CENTER>";
 

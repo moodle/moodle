@@ -65,7 +65,7 @@
                   "<A HREF=\"$CFG->wwwroot/admin/\">$stradmin</A> -> $strsitesettings", "$focus");
 
     print_simple_box_start("center", "", "$THEME->cellheading");
-    print_heading("Editing site settings");
+    print_heading($strsitesettings);
 	include("site.html");
     print_simple_box_end();
     print_footer();
