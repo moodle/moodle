@@ -3112,6 +3112,7 @@ function navmenu($course, $cm=NULL, $targetwindow='self') {
     } else {
         $strsection = get_string('topic');
     }
+    $strjumpto = get_string('jumpto');
 
     if (!$modinfo = unserialize($course->modinfo)) {
         return '';
@@ -3127,12 +3128,12 @@ function navmenu($course, $cm=NULL, $targetwindow='self') {
     $logslink = NULL;
     $flag = false;
     $menu = array();
-    $strjumpto = get_string('jumpto');
 
     $sections = get_records('course_sections','course',$course->id,'section','section,visible,summary');
 
     if (!empty($THEME->makenavmenulist)) {   /// A hack to produce an XHTML navmenu list for use in themes
-        $THEME->navmenulist = navmenulist($course, $sections, $modinfo, $isteacher, $strsection, $width, $cm);
+        $THEME->navmenulist = navmenulist($course, $sections, $modinfo, 
+                                          $isteacher, $strsection, $strjumpto, $width, $cm);
     }
 
     foreach ($modinfo as $mod) {
@@ -3226,7 +3227,7 @@ function navmenu($course, $cm=NULL, $targetwindow='self') {
  * @return string
  * @todo Finish documenting this function
  */
-function navmenulist($course, $sections, $modinfo, $isteacher, $strsection, $width=50, $cmid=0) {
+function navmenulist($course, $sections, $modinfo, $isteacher, $strsection, $strjumpto, $width=50, $cmid=0) {
 
     global $CFG;
 
@@ -3241,7 +3242,7 @@ function navmenulist($course, $sections, $modinfo, $isteacher, $strsection, $wid
     $flag = false;
     $menu = array();
 
-    $menu[] = '<ul class="floatnav"><li><span class="list-title section">Direkt zu...</span><ul>';
+    $menu[] = '<ul class="navmenulist"><li class="jumpto section">'.$strjumpto.'<ul>';
     foreach ($modinfo as $mod) {
         if ($mod->mod == 'label') {
             continue;
@@ -3260,12 +3261,12 @@ function navmenulist($course, $sections, $modinfo, $isteacher, $strsection, $wid
                     $menu[] = '</ul></li>';
                 }
                 if ($course->format == 'weeks' or empty($thissection->summary)) {
-                    $menu[] = '<li><span class="section">'. $strsection ." ". $mod->section . '</span>';
+                    $menu[] = '<li class="section">'. $strsection ." ". $mod->section;
                 } else {
                     if (strlen($thissection->summary) < ($width-3)) {
-                        $menu[] = '<li><span class="section">'.$thissection->summary . '</span>';
+                        $menu[] = '<li class="section">'.$thissection->summary;
                     } else {
-                        $menu[] = '<li><span class="section">'.substr($thissection->summary, 0, $width).'...' . '</span>';
+                        $menu[] = '<li class="section">'.substr($thissection->summary, 0, $width).'...';
                     }
                 }
                 $menu[] = '<ul>';
@@ -3289,8 +3290,11 @@ function navmenulist($course, $sections, $modinfo, $isteacher, $strsection, $wid
             if (!$mod->visible) {
                 $mod->name = '('.$mod->name.')';
             }
-            $class = ($cmid == $mod->cm) ? ' class="selected"' : '';
-            $menu[] = '<li><a'.$class.' href="'.$CFG->wwwroot.'/mod/'.$url.'">'.$mod->name.'</a></li>';
+            $class = 'activity '.$mod->mod;
+            $class .= ($cmid == $mod->cm) ? ' selected' : '';
+            $menu[] = '<li class="'.$class.'">'.
+                      '<img src="'.$CFG->modpixpath.'/'.$mod->mod.'/icon.gif" border="0">'.
+                      '<a href="'.$CFG->wwwroot.'/mod/'.$url.'">'.$mod->name.'</a></li>';
             $previousmod = $mod;
         }
     }
