@@ -5,6 +5,10 @@
 
     if ($user = data_submitted()) {
 
+        $user->firstname = strip_tags($user->firstname);
+        $user->lastname = strip_tags($user->lastname);
+        $user->email = strip_tags($user->email);
+
         validate_form($user, $err);
         $user->username= trim(moodle_strtolower($user->username));
 
