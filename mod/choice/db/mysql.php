@@ -44,9 +44,9 @@ function choice_upgrade($oldversion) {
     }
 
     if ($oldversion < 2004111200){  // drop first to avoid conflicts when upgrading from 1.4+
-        execute_sql('ALTER TABLE prefix_choice DROP INDEX course;',false);
-        execute_sql('ALTER TABLE prefix_choice_answers DROP INDEX choice;',false);
-        execute_sql('ALTER TABLE prefix_choice_answers DROP INDEX userid;',false);
+        execute_sql("ALTER TABLE {$CFG->prefix}choice DROP INDEX course;",false);
+        execute_sql("ALTER TABLE {$CFG->prefix}choice_answers DROP INDEX choice;",false);
+        execute_sql("ALTER TABLE {$CFG->prefix}choice_answers DROP INDEX userid;",false);
 
         modify_database('','ALTER TABLE prefix_choice ADD INDEX course (course);');
         modify_database('','ALTER TABLE prefix_choice_answers ADD INDEX choice (choice);');

@@ -30,9 +30,9 @@ function choice_upgrade($oldversion) {
     }
 
     if ($oldversion < 2004111200) { // drop first to avoid conflicts when upgrading from 1.4+
-        execute_sql('DROP INDEX prefix_choice_course_idx;',false);
-        execute_sql('DROP INDEX prefix_choice_answers_choice_idx;',false);
-        execute_sql('DROP INDEX prefix_choice_answers_userid_idx;',false);
+        execute_sql("DROP INDEX {$CFG->prefix}choice_course_idx;",false);
+        execute_sql("DROP INDEX {$CFG->prefix}choice_answers_choice_idx;",false);
+        execute_sql("DROP INDEX {$CFG->prefix}choice_answers_userid_idx;",false);
 
         modify_database('','CREATE INDEX prefix_choice_course_idx ON prefix_choice (course);');
         modify_database('','CREATE INDEX prefix_choice_answers_choice_idx ON prefix_choice_answers (choice);');
