@@ -478,7 +478,7 @@ function check_for_restricted_user($username=NULL, $redirect="") {
     if (!empty($CFG->restrictusers)) {
         $names = explode(',', $CFG->restrictusers);
         if (in_array($username, $names)) {
-            error(get_string("restricteduser"), $redirect);
+            error(get_string("restricteduser", "error"), $redirect);
         }
     }
 }
