@@ -4,9 +4,8 @@
 
 	require_once("../config.php");
 
-    # sanity checks
-    assert("!ereg('[^0-9]', \$_REQUEST['add'])");
-    assert("!ereg('[^0-9]', \$_REQUEST['remove'])");
+    optional_variable($add, "");
+    optional_variable($remove, "");
 
     if (! $site = get_site()) {
         redirect("$CFG->wwwroot/admin/");
