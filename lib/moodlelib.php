@@ -3829,7 +3829,7 @@ function get_list_of_themes() {
             continue;
         }
         unset($THEME);    // Note this is not the global one!!  :-)
-        include_once("$CFG->dirroot/theme/$theme/config.php");
+        include("$CFG->dirroot/theme/$theme/config.php");
         if (!isset($THEME->sheets)) {   // Not a valid 1.5 theme
             continue;
         }
