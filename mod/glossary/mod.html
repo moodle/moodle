@@ -95,7 +95,7 @@ if (!isset($form->assesstimefinish)) {
 <tr valign="top">
     <td align="right"><b><?php echo get_string("entbypage", "glossary") ?>:</b></td>
     <td align="left">
-		<input name="entbypage" type="text" size="2" value="<?php p($form->entbypage) ?>" /> <?php helpbutton("entbypage", get_string("entbypage", "glossary"), "glossary") ?>
+    <input name="entbypage" type="text" size="2" value="<?php p($form->entbypage) ?>" /> <?php helpbutton("entbypage", get_string("entbypage", "glossary"), "glossary") ?>
     </td>
 </tr>
 
@@ -147,7 +147,7 @@ if (!$mainglossary or $mainglossary->id == $form->instance ) {
 </tr>
 <?php
 } else {
-	echo "<input type=\"hidden\" name=\"mainglossary\" value=\"0\" />";
+  echo "<input type=\"hidden\" name=\"mainglossary\" value=\"0\" />";
 }
 ?>
 <tr valign="top">
@@ -498,6 +498,7 @@ if (!$mainglossary or $mainglossary->id == $form->instance ) {
         ?>
     </td>
 </tr>
+<?php print_visible_setting($form); ?>
 </table>
 <!-- These hidden variables are always the same -->
 <input type="hidden" name="course"        value="<?php p($form->course) ?>" />

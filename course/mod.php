@@ -67,6 +67,20 @@
                 if (is_string($return)) {
                     error($return, "view.php?id=$course->id");
                 }
+                
+                // to deal with pre-1.5 modules
+                if (!isset($mod->visible)) {
+                    //We get the section's visible field status
+                    $mod->visible = get_field("course_sections","visible","id",$sectionid);
+                }
+                if (!isset($mod->groupmode)) {
+                    $course = get_record('course', 'id', $mod->course);
+                    $cm = get_record('course_modules', 'id', $mod->coursemodule);
+                    $mod->groupmode = groupmode($course, $cm);
+                }
+                
+                set_coursemodule_visible($mod->coursemodule, $mod->visible);
+                set_coursemodule_groupmode($mod->coursemodule, $mod->groupmode);
 
                 if (isset($mod->redirect)) {
                     $SESSION->returnpage = $mod->redirecturl;
@@ -113,12 +127,18 @@
                 if (! $sectionid = add_mod_to_section($mod) ) {
                     error("Could not add the new course module to that section");
                 }
-                //We get the section's visible field status
-                $visible = get_field("course_sections","visible","id",$sectionid);
-
-                if (! set_field("course_modules", "visible", $visible, "id", $mod->coursemodule)) {
-                    error("Could not update the course module with the correct visibility");
-                }   
+                
+                // to deal with pre-1.5 modules
+                if (!isset($mod->visible)) {
+                    //We get the section's visible field status
+                    $mod->visible = get_field("course_sections","visible","id",$sectionid);
+                }
+                if (!isset($mod->groupmode)) {
+                    $mod->groupmode = get_field('course', 'groupmode', 'id', $mod->course);
+                }
+                
+                set_coursemodule_visible($mod->coursemodule, $mod->visible);
+                set_coursemodule_groupmode($mod->coursemodule, $mod->groupmode);
 
                 if (! set_field("course_modules", "section", $sectionid, "id", $mod->coursemodule)) {
                     error("Could not update the course module with the correct section");
@@ -250,7 +270,7 @@
             error("You can't modify this course!");
         }
    
-        hide_course_module($cm->id);
+        set_coursemodule_visible($cm->id, 0);
 
         rebuild_course_cache($cm->course);
 
@@ -280,7 +300,7 @@
         }
 
         if ($module->visible and ($section->visible or (SITEID == $cm->course))) {
-            show_course_module($cm->id);
+            set_coursemodule_visible($cm->id, 1);
             rebuild_course_cache($cm->course);
         }
 
@@ -301,7 +321,7 @@
             error("You can't modify this course!");
         }
    
-        set_groupmode_for_module($cm->id, $_GET['groupmode']);
+        set_coursemodule_groupmode($cm->id, $_GET['groupmode']);
 
         rebuild_course_cache($cm->course);
 

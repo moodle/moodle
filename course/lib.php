@@ -934,11 +934,7 @@ function set_section_visible($courseid, $sectionnumber, $visibility) {
         if (!empty($section->sequence)) {
             $modules = explode(",", $section->sequence);
             foreach ($modules as $moduleid) {
-                if ($visibility) {
-                    show_course_module($moduleid);
-                } else {
-                    hide_course_module($moduleid);
-                }
+                set_coursemodule_visible($moduleid, $visibility);
             }
         }
         rebuild_course_cache($courseid);
@@ -1534,34 +1530,35 @@ function add_mod_to_section($mod, $beforemod=NULL) {
     }
 }
 
-function set_groupmode_for_module($id, $groupmode) {
+function set_coursemodule_groupmode($id, $groupmode) {
     return set_field("course_modules", "groupmode", $groupmode, "id", $id);
 }
 
-function hide_course_module($mod) {
-    $cm = get_record('course_modules', 'id', $mod);
+function set_coursemodule_visible($id, $visible) {
+    $cm = get_record('course_modules', 'id', $id);
     $modulename = get_field('modules', 'name', 'id', $cm->module);
     if ($events = get_records_select('event', "instance = '$cm->instance' AND modulename = '$modulename'")) {
         foreach($events as $event) {
-            hide_event($event);
+            if ($visible) {
+                show_event($event);
+            } else {
+                hide_event($event);
+            }
         }
     }
-    return set_field("course_modules", "visible", 0, "id", $mod);
+    return set_field("course_modules", "visible", $visible, "id", $id);
 }
 
-function show_course_module($mod) {
-    $cm = get_record('course_modules', 'id', $mod);
+function delete_course_module($id) {
+    $cm = get_record('course_modules', 'id', $id);
     $modulename = get_field('modules', 'name', 'id', $cm->module);
     if ($events = get_records_select('event', "instance = '$cm->instance' AND modulename = '$modulename'")) {
         foreach($events as $event) {
-            show_event($event);
+            delete_event($event);
         }
     }
-    return set_field("course_modules", "visible", 1, "id", $mod);
-}
-
-function delete_course_module($mod) {
-    return set_field("course_modules", "deleted", 1, "id", $mod);
+    return set_field("course_modules", "visible", 0, "id", $id);
+    return set_field("course_modules", "deleted", 1, "id", $id);
 }
 
 function delete_mod_from_section($mod, $section) {
@@ -1634,9 +1631,12 @@ function moveto_module($mod, $section, $beforemod=NULL) {
 
     if ($mod->section != $section->id) {
         $mod->section = $section->id;
-
         if (!update_record("course_modules", $mod)) {
             return false;
+        }
+        // if moving to a hidden section then hide module
+        if (!$section->visible) {
+            set_coursemodule_visible($mod->id, 0);
         }
     }
 
@@ -1775,5 +1775,74 @@ function course_format_name ($course,$max=100) {
 function course_in_meta ($course) {
     return record_exists("course_meta","child_course",$course->id);
 }
+
+
+/**
+ * Print standard form elements on module setup forms in mod/.../mod.html
+ */
+function print_standard_coursemodule_settings($form) {
+    print_groupmode_setting($form);
+    print_visible_setting($form);
+}
+
+/**
+ * Print groupmode form element on module setup forms in mod/.../mod.html
+ */
+function print_groupmode_setting($form) {
+
+    if (! $course = get_record('course', 'id', $form->course)) {
+        error("This course doesn't exist");
+    }
+    if ($form->coursemodule) {
+        if (! $cm = get_record('course_modules', 'id', $form->coursemodule)) {
+            error("This course module doesn't exist");
+        }
+    } else {
+        $cm = null;
+    }
+    $groupmode = groupmode($course, $cm);
+    if ($course->groupmode or (!$course->groupmodeforce)) {
+        echo '<tr valign="top">';
+        echo '<td align="right"><b>'.get_string('groupmode').':</b></td>';
+        echo '<td>';
+        unset($choices);
+        $choices[NOGROUPS] = get_string('groupsnone');
+        $choices[SEPARATEGROUPS] = get_string('groupsseparate');
+        $choices[VISIBLEGROUPS] = get_string('groupsvisible');
+        choose_from_menu($choices, 'groupmode', $groupmode, '', '', 0, false, $course->groupmodeforce);
+        helpbutton('groupmode', get_string('groupmode'));
+        echo '</td></tr>';
+    }
+}
+
+/**
+ * Print visibility setting form element on module setup forms in mod/.../mod.html
+ */
+function print_visible_setting($form) {
+
+    if ($form->coursemodule) {
+        $visible = get_field('course_modules', 'visible', 'id', $form->coursemodule);
+    } else {
+        $visible = true;
+    }
+
+    if ($form->mode == 'add') { // in this case $form->section is the section number, not the id
+        $hiddensection = !get_field('course_sections', 'visible', 'section', $form->section, 'course', $form->course);
+    } else {
+        $hiddensection = !get_field('course_sections', 'visible', 'id', $form->section);
+    }
+    if ($hiddensection) {
+        $visible = false;
+    }
+    
+    echo '<tr valign="top">';
+    echo '<td align="right"><b>'.get_string('showimmediately').':</b></td>';
+    echo '<td>';
+    unset($choices);
+    $choices[1] = get_string('yes');
+    $choices[0] = get_string('no');
+    choose_from_menu($choices, 'visible', $visible, '', '', 0, false, $hiddensection);
+    echo '</td></tr>';
+} 
 
 ?>

@@ -48,9 +48,9 @@ print_heading_with_help(get_string("furtherinformation", "dialogue"), "info", "d
     <td align="right"><p><b><?php print_string("deleteafter", "dialogue") ?>:</b></p></td>
     <td>
     <?php
-		require("$CFG->dirroot/mod/dialogue/lib.php");
-		choose_from_menu($DIALOGUE_DAYS, "deleteafter", $form->deleteafter, "");
-		helpbutton("deleteafter", get_string("deleteafter", "dialogue"), "dialogue");
+    require("$CFG->dirroot/mod/dialogue/lib.php");
+    choose_from_menu($DIALOGUE_DAYS, "deleteafter", $form->deleteafter, "");
+    helpbutton("deleteafter", get_string("deleteafter", "dialogue"), "dialogue");
      ?>
     </td>
 </tr>
@@ -91,7 +91,7 @@ print_heading_with_help(get_string("furtherinformation", "dialogue"), "info", "d
     ?>
     </td>
 </tr>
-
+<?php print_standard_coursemodule_settings($form); ?>
 
 </table>
 <center>

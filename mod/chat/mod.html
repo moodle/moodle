@@ -61,8 +61,8 @@
     ?></td>
 </tr>
 <tr valign="top">
-	<td align="right"><b><?php print_string('savemessages', 'chat')?>:</b></td>
-	<td>
+  <td align="right"><b><?php print_string('savemessages', 'chat')?>:</b></td>
+  <td>
     <?php 
        unset($options);
        $options[0]    = get_string('neverdeletemessages', 'chat');
@@ -83,8 +83,8 @@
     </td>
 </tr>
 <tr valign="top">
-	<td align="right"><b><?php print_string('studentseereports', 'chat')?>:</b></td>
-	<td>
+  <td align="right"><b><?php print_string('studentseereports', 'chat')?>:</b></td>
+  <td>
     <?php 
        unset($options);
        $options[0]    = get_string('no');
@@ -93,7 +93,7 @@
     ?>
     </td>
 </tr>
-
+<?php print_standard_coursemodule_settings($form); ?>
 </table>
 <center>
 <input type="hidden" name="course"     value="<?php  p($form->course) ?>" />
@@ -107,4 +107,4 @@
 <input type="submit" value="<?php  print_string('savechanges') ?>" />
 <input type="submit" name="cancel" value="<?php  print_string('cancel') ?>" />
 </center>
-</form>
+</form> 

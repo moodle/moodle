@@ -916,6 +916,7 @@ $string['showalltopics'] = 'Show all topics';
 $string['showallusers'] = 'Show all users';
 $string['showallweeks'] = 'Show all weeks';
 $string['showgrades'] = 'Show grades';
+$string['showimmediately'] = 'Show immediately';
 $string['showlistofcourses'] = 'Show list of courses';
 $string['showonlytopic'] = 'Show only topic $a';
 $string['showonlyweek'] = 'Show only week $a';

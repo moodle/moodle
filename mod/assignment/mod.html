@@ -111,11 +111,11 @@
 </tr>
 <tr valign="top">
     <td align="right"><b><?php print_string("maximumsize", "assignment") ?>:</b></td>
-	<td><?php
+  <td><?php
     $choices = get_max_upload_sizes($CFG->maxbytes, $course->maxbytes);
     choose_from_menu ($choices, "maxbytes", $form->maxbytes, "");
     ?>
-	</td>
+  </td>
 </tr>
 <tr valign="top">
     <td align="right"><b><?php print_string("duedate", "assignment") ?>:</b></td>
@@ -125,6 +125,7 @@
            print_time_selector("duehour", "dueminute", $form->timedue);
     ?></td>
 </tr>
+<?php print_standard_coursemodule_settings($form); ?>
 </table>
 <br />
 <center>

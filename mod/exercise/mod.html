@@ -1,12 +1,12 @@
 <?php
-	require("$CFG->dirroot/mod/exercise/lib.php");  // for parameter arrays
-	// ...and fill the form if needed
+  require("$CFG->dirroot/mod/exercise/lib.php");  // for parameter arrays
+  // ...and fill the form if needed
     if (empty($form->name)) {
         $form->name = "";
     }
     if (!isset($form->gradingstrategy)) {
-		$form->gradingstrategy = 1;
-	}
+    $form->gradingstrategy = 1;
+  }
     if (empty($form->usemaximum)) {
         $form->usemaximum = 0;
     }
@@ -28,7 +28,7 @@
     if (empty($form->deadline)) {
         $form->deadline = "";
     }
-	if (!isset($form->usepassword)) {
+  if (!isset($form->usepassword)) {
         $form->usepassword = 0;
     }
     if (empty($form->showleaguetable)) {
@@ -54,7 +54,7 @@
     <td align="right"><b><?php  print_string("description", "exercise") ?>:</b></td>
     <td>
     <?php  
-	echo get_string("descriptionofexercise", "exercise", $course->students);
+  echo get_string("descriptionofexercise", "exercise", $course->students);
     ?>
     </td>
 </tr>
@@ -120,10 +120,10 @@
     <td align="right"><b><?php print_string("comparisonofassessments", "exercise") ?>:</b></td>
     <td>
         <?php
-		// set up comparison names
+    // set up comparison names
         foreach ($EXERCISE_ASSESSMENT_COMPS as $KEY => $COMPARISON) {
             $COMPARISONS[] = $COMPARISON['name'];
-		}
+    }
         choose_from_menu($COMPARISONS, "assessmentcomps", $form->assessmentcomps, "");
         helpbutton("comparisonofassessments", get_string("comparisonofassessments", "exercise"), "exercise");
     ?>
@@ -135,7 +135,7 @@
     <td>
     <?php 
         $options[0] = get_string("no"); $options[1] = get_string("yes");
-		choose_from_menu($options, "usepassword", $form->usepassword, "");
+    choose_from_menu($options, "usepassword", $form->usepassword, "");
         helpbutton("usepassword", get_string("usepassword", "exercise"), "exercise");
     ?>
     </td>
@@ -145,7 +145,7 @@
     <td align="right"><b><?php  print_string("password"); ?>:</b></td>
     <td>
         <input type="text" name="password" size="10" value="" alt="<?php  print_string("password"); ?>" /> <?php echo " (".get_string("leavetokeep").")"; ?>
-		<?php helpbutton("password", get_string("password"), "exercise"); ?>
+    <?php helpbutton("password", get_string("password"), "exercise"); ?>
     </td>
 </tr>
 
@@ -208,7 +208,7 @@
         ?>
     </td>
 </tr>
-
+<?php print_standard_coursemodule_settings($form); ?>
 <tr>
     <td colspan="2">
 

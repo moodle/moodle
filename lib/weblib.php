@@ -600,19 +600,18 @@ function close_window_button() {
  * @param    type description
  * @todo Finish documenting this function
  */
-function choose_from_menu ($options, $name, $selected='', $nothing='choose', $script='', $nothingvalue='0', $return=false) {
+function choose_from_menu ($options, $name, $selected='', $nothing='choose', $script='', $nothingvalue='0', $return=false, $disabled=false) {
 
     if ($nothing == 'choose') {
         $nothing = get_string('choose') .'...';
     }
 
-    if ($script) {
-        $javascript = 'onchange="'. $script .'"';
-    } else {
-        $javascript = '';
+    $attributes = ($script) ? 'onchange="'. $script .'"' : '';
+    if ($disabled) {
+        $attributes .= ' disabled="disabled"';
     }
 
-    $output = '<select name="'. $name .'" '. $javascript .'>' . "\n";
+    $output = '<select name="'. $name .'" '. $attributes .'>' . "\n";
     if ($nothing) {
         $output .= '   <option value="'. $nothingvalue .'"'. "\n";
         if ($nothingvalue === $selected) {
