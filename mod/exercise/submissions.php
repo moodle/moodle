@@ -111,7 +111,7 @@
         
         add_to_log($course->id, "exercise", "late flag cleared", "view.php?id=$cm->id", "submission $submission->id");
         
-        print_continue("submissions.php?id=$cm->id&action=adminlist");
+        redirect("submissions.php?id=$cm->id&action=adminlist");
     }
     
 
@@ -131,6 +131,10 @@
         if (isteacher($course->id, $submission->userid)) {
             if (!isteacheredit($course->id)) {
                 error("Only teacher with editing permissions can delete teacher submissions.");
+            }
+            if ($assessments = exercise_get_assessments($submission)) {
+                echo "<p align=\"center\">".get_string("deletesubmissionwarning", "exercise", count($assessments)).
+                    "</p>\n";
             }
         }
         notice_yesno(get_string("confirmdeletionofthisitem","exercise", get_string("submission", "exercise")), 
@@ -218,12 +222,13 @@
         if (set_field("exercise_submissions", "title", $_POST['title'], "id", $_POST['sid'])) {
             print_heading(get_string("amendtitle", "exercise")." ".get_string("ok"));
             }
-        print_continue("submissions.php?id=$cm->id&action=adminlist");
+        redirect("submissions.php?id=$cm->id&action=adminlist");
         }
     
 
     /*************** display final grades (by teacher) ***************************/
     elseif ($action == 'displayfinalgrades') {
+        $groupid = get_current_group($course->id);
         // Get all the students
         if (!$users = get_course_students($course->id, "u.lastname, u.firstname")) {
             print_heading(get_string("nostudentsyet"));
@@ -231,9 +236,6 @@
             exit;
         }
         
-        // get the final weights from the database
-        $teacherweight = get_field("exercise","teacherweight", "id", $exercise->id);
-        $gradingweight = get_field("exercise","gradingweight", "id", $exercise->id);
         // show the final grades as stored in the tables...
         print_heading_with_help(get_string("displayoffinalgrades", "exercise"), "finalgrades", "exercise");
         echo "<center><table border=\"1\" width=\"90%\"><tr>\n";
@@ -243,12 +245,19 @@
         echo "<td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>".get_string("gradeforsubmission", "exercise")."</b></td>";
         echo "<td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>".get_string("overallgrade", "exercise")."</b></td></TR>\n";
         // now the weights
-        echo "<tr><td bgcolor=\"$THEME->cellheading2\"><b>".get_string("weights", "exercise")."</b></td>";
+        echo "<tr><td bgcolor=\"$THEME->cellheading2\"><b>".get_string("maximumgrade")."</b></td>";
         echo "<td bgcolor=\"$THEME->cellheading2\"><b>&nbsp;</b></td>\n";
-        echo "<td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>$EXERCISE_FWEIGHTS[$gradingweight]</b></td>\n";
-        echo "<td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>$EXERCISE_FWEIGHTS[$teacherweight]</b></td>\n";
+        echo "<td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>$exercise->gradinggrade</b></td>\n";
+        echo "<td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>$exercise->grade</b></td>\n";
         echo "<td bgcolor=\"$THEME->cellheading2\"><b>&nbsp;</b></td></tr>\n";
         foreach ($users as $user) {
+            // check group membership, if necessary
+            if ($groupid) {
+                // check user's group
+                if (!ismember($groupid, $user->id)) {
+                    continue; // skip this user
+                }
+            }
             // first get user's own assessment reord, it should contain their grading grade
             if ($ownassessments = exercise_get_user_assessments($exercise, $user)) {
                 foreach ($ownassessments as $ownassessment) {
@@ -262,19 +271,18 @@
                 foreach ($submissions as $submission) {
                     if ($assessments = exercise_get_assessments($submission)) {
                         foreach ($assessments as $assessment) { // (normally there should only be one
+                            $gradinggrade = number_format($ownassessment->gradinggrade * $exercise->gradinggrade /
+                                    100.0, 1);
                             $grade = number_format($assessment->grade * $exercise->grade / 100.0, 1);
-                            $overallgrade = number_format(((($assessment->grade * 
-                                $EXERCISE_FWEIGHTS[$teacherweight] / 100.0) + 
-                                ($ownassessment->gradinggrade * $EXERCISE_FWEIGHTS[$gradingweight]/
-                                COMMENTSCALE )) * $exercise->grade) / ($EXERCISE_FWEIGHTS[$teacherweight] + 
-                                $EXERCISE_FWEIGHTS[$gradingweight]), 1);
+                            $overallgrade = number_format(($assessment->grade * $exercise->grade / 100.0) + 
+                                ($ownassessment->gradinggrade * $exercise->gradinggrade / 100.0), 1);
                             if ($submission->late) {
                                 $grade = "<font color=\"red\">(".$grade.")</font>";
                                 $overallgrade = "<font color=\"red\">(".$overallgrade.")</font>";
                             }
                             echo "<tr><td>$user->firstname $user->lastname</td>\n";
                             echo "<td>".exercise_print_submission_title($exercise, $submission)."</td>\n";
-                            echo "<td align=\"center\">".number_format($ownassessment->gradinggrade * $exercise->grade / COMMENTSCALE, 1)."</td>";
+                            echo "<td align=\"center\">$gradinggrade</td>";
                             echo "<td align=\"center\">$grade</td>";
                             echo "<td align=\"center\">$overallgrade</td></tr>\n";
                         }
@@ -287,7 +295,7 @@
             exercise_print_league_table($exercise);
             echo "<br />\n";
         }
-        print_string("allgradeshaveamaximumof", "exercise", $exercise->grade)."\n";
+        echo get_string("maximumgrade").": $exercise->grade\n";
         print_continue("view.php?id=$cm->id");
     }
 

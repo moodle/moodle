@@ -10,13 +10,13 @@ CREATE TABLE prefix_exercise (
   phase INT  NOT NULL default '0',
   gradingstrategy INT  NOT NULL default '1',
   usemaximum INT  NOT NULL default '0',
+  assessmentcomps INT  NOT NULL default '2',
   anonymous INT  NOT NULL default '0',
   maxbytes INT8  NOT NULL default '100000',
   deadline INT8  NOT NULL default '0',
-  grade INT NOT NULL default '0',
   timemodified INT8  NOT NULL default '0',
-  teacherweight INT  NOT NULL default '5',
-  gradingweight INT  NOT NULL default '5',
+  grade INT NOT NULL default '0',
+  gradinggrade INT  NOT NULL default '0',
   showleaguetable INT  NOT NULL default '0'
 );
 # --------------------------------------------------------

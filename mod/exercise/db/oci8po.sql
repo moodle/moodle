@@ -11,6 +11,7 @@ CREATE TABLE prefix_exercise (
   phase number(3) default '0' not null,
   gradingstrategy number(3) default '1' not null,
   usemaximum number(3) default '0' not null,
+  assessmentcomps number(3) default '2' not null,
   anonymous number(3) default '0' not null,
   maxbytes number(10) default '100000' not null,
   deadline number(10) default '0' not null,

@@ -10,13 +10,13 @@ CREATE TABLE `prefix_exercise` (
   `phase` tinyint(3) unsigned NOT NULL default '0',
   `gradingstrategy` tinyint(3) unsigned NOT NULL default '1',
   `usemaximum` tinyint(3) unsigned NOT NULL default '0',
-  `anonymous` tinyint(3) unsigned NOT NULL default '0',
+  `assessmentcomps` tinyint(3) unsigned NOT NULL default '2',
+  `anonymous` tinyint(3) unsigned NOT NULL default '1',
   `maxbytes` int(10) unsigned NOT NULL default '100000',
   `deadline` int(10) unsigned NOT NULL default '0',
-  `grade` tinyint(3) NOT NULL default '0',
   `timemodified` int(10) unsigned NOT NULL default '0',
-  `teacherweight` tinyint(3) unsigned NOT NULL default '5',
-  `gradingweight` tinyint(3) unsigned NOT NULL default '5',
+  `grade` tinyint(3) NOT NULL default '0',
+  `gradinggrade` tinyint(3) NOT NULL default '0',
   `showleaguetable` tinyint(3) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`)
 ) COMMENT='Defines exercise';

@@ -4,14 +4,20 @@
     if (empty($form->name)) {
         $form->name = "";
     }
-	if (empty($form->gradingstrategy)) {
+    if (!isset($form->gradingstrategy)) {
 		$form->gradingstrategy = 1;
 	}
     if (empty($form->usemaximum)) {
         $form->usemaximum = 0;
     }
+    if (!isset($form->assessmentcomps)) {
+        $form->assessmentcomps = 2;
+    }
     if (!isset($form->grade)) {
         $form->grade = 100;
+    }
+    if (!isset($form->gradinggrade)) {
+        $form->gradinggrade = 100;
     }
     if (!isset($form->nelements)) {
         $form->nelements = 1;
@@ -21,6 +27,12 @@
     }
     if (empty($form->deadline)) {
         $form->deadline = "";
+    }
+    if (empty($form->showleaguetable)) {
+        $form->showleaguetable = "";
+    }
+    if (empty($form->anonymous)) {
+        $form->anonymous = 0;
     }
 
     $nohtmleditorneeded = true;
@@ -44,14 +56,24 @@
 </tr>
 
 <tr valign=top>
-    <td align=right><P><B><?php  print_string("maximumgrade") ?>:</B></P></TD>
+    <td align=right><P><B><?php  print_string("gradeforstudentsassessment", "exercise", $course->student) ?>:</B></P></TD>
     <td>
         <?php
         for ($i=100; $i>=0; $i--) {
             $grades[$i] = $i;
         }
+        choose_from_menu($grades, "gradinggrade", "$form->gradinggrade", "");
+        helpbutton("gradinggrade", get_string("gradinggrade", "exercise"), "exercise");
+        ?>
+    </td>
+</tr>
+
+<tr valign=top>
+    <td align=right><P><B><?php  print_string("gradeforsubmission", "exercise") ?>:</B></P></TD>
+    <td>
+        <?php
         choose_from_menu($grades, "grade", "$form->grade", "");
-        helpbutton("grade", get_string("maximumgrade", "exercise"), "exercise");
+        helpbutton("grade", get_string("gradeforsubmission", "exercise"), "exercise");
         ?>
     </td>
 </tr>
@@ -90,8 +112,22 @@
     </td>
 </tr>
 
+<tr>
+    <td align=right><P><B><?php print_string("comparisonofassessments", "exercise") ?>:</B></P></TD>
+    <td>
+        <?php
+		// set up comparison names
+        foreach ($EXERCISE_ASSESSMENT_COMPS as $KEY => $COMPARISON) {
+            $COMPARISONS[] = $COMPARISON['name'];
+		}
+        choose_from_menu($COMPARISONS, "assessmentcomps", $form->assessmentcomps, "");
+        helpbutton("comparisonofassessments", get_string("comparisonofassessments", "exercise"), "exercise");
+    ?>
+    </td>
+</tr>
+
 <tr valign=top>
-    <td align=right><P><B><?php  print_string("maximumsize", "exercise") ?>:</B></P></TD>
+    <td align=right><p><b><?php  print_string("maximumsize", "exercise") ?>:</b></p></td>
     <td>
         <?php
         $sizelist = array("10Kb", "50Kb", "100Kb", "500Kb", "1Mb", "2Mb", "5Mb", "10Mb", "20Mb", "50Mb");
@@ -117,7 +153,7 @@
 </tr>
 
 <tr valign=top>
-    <td align=right><P><B><?php  print_string("deadline", "exercise") ?>:</B></td>
+    <td align=right><p><b><?php  print_string("deadline", "exercise") ?>:</b></p></td>
     <td><?php
            print_date_selector("deadlineday", "deadlinemonth", "deadlineyear", $form->deadline);
            echo "&nbsp;-&nbsp;";
@@ -125,9 +161,34 @@
     ?></td>
 </tr>
 
+<tr valign=top>
+    <td align=right><p><b><?php print_string("numberofentriesinleaguetable", "exercise") ?>:</b></p></td>
+    <td><?php
+        unset($numbers);
+        $numbers[22] = 'All';
+        $numbers[21] = 50;
+        for ($i=20; $i>=0; $i--) {
+            $numbers[$i] = $i;
+        }
+        choose_from_menu($numbers, "showleaguetable", "$form->showleaguetable", "");
+        helpbutton("leaguetable", get_string("numberofentriesinleaguetable", "exercise"), "exercise");
+        ?>
+    </td>
+</tr>
+
+<tr valign=top>>
+    <td align=right><p><b><?php print_string("hidenamesfromstudents", "exercise", $course->students) ?>:</b></p></td>
+    <td><?php
+        $options[0] = get_string("no"); $options[1] = get_string("yes");
+        choose_from_menu($options, "anonymous", $form->anonymous, "");
+        helpbutton("leaguetablenames", get_string("hidenamesfromstudents", "exercise", $course->students), "exercise");
+        ?>
+    </td>
+</tr>
+
 </table>
-<BR>
-<CENTER>
+<br />
+<center>
 <input type="hidden" name=course     value="<?php  p($form->course) ?>">
 <input type="hidden" name=coursemodule  value="<?php  p($form->coursemodule) ?>">
 <input type="hidden" name=section       value="<?php  p($form->section) ?>">

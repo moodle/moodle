@@ -84,12 +84,8 @@
 	/****************** display final grade (for students) ************************************/
     if ($action == 'displayfinalgrade' ) {
 
-		// get the final weights from the database
-		$teacherweight = get_field("exercise","teacherweight", "id", $exercise->id);
-		$gradingweight = get_field("exercise","gradingweight", "id", $exercise->id);
-		
 		// show the final grades as stored in the tables...
-		print_heading_with_help(get_string("displayoffinalgrades", "exercise"), "finalgrades", "exercise");
+		print_heading(get_string("displayoffinalgrades", "exercise"));
 		if ($submissions = exercise_get_user_submissions($exercise, $USER)) { // any submissions from user?
 			echo "<center><table border=\"1\" width=\"90%\"><tr>";
 			echo "<td bgcolor=\"$THEME->cellheading2\"><b>".get_string("submissions", "exercise")."</b></td>";
@@ -97,9 +93,9 @@
 			echo "<td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>".get_string("gradeforsubmission", "exercise", $course->teacher)."</b></td>";
 			echo "<td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>".get_string("overallgrade", "exercise")."</b></td></TR>\n";
 			// now the weights
-			echo "<TR><td bgcolor=\"$THEME->cellheading2\"><b>".get_string("weights", "exercise")."</b></td>";
-			echo "<td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>$EXERCISE_FWEIGHTS[$gradingweight]</b></td>\n";
-			echo "<td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>$EXERCISE_FWEIGHTS[$teacherweight]</b></td>\n";
+			echo "<TR><td bgcolor=\"$THEME->cellheading2\"><b>".get_string("maximumgrade")."</b></td>";
+			echo "<td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>$exercise->gradinggrade</b></td>\n";
+			echo "<td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>$exercise->grade</b></td>\n";
 			echo "<td bgcolor=\"$THEME->cellheading2\"><b>&nbsp;</b></td></TR>\n";
 			// first get user's own assessment reord, it should contain their grading grade
 			if ($ownassessments = exercise_get_user_assessments($exercise, $USER)) {
@@ -113,17 +109,17 @@
 			foreach ($submissions as $submission) {
 				if ($assessments = exercise_get_assessments($submission)) {
 					foreach ($assessments as $assessment) { // (normally there should only be one
+                        $gradinggrade = number_format($ownassessment->gradinggrade * $exercise->gradinggrade / 100.0,
+                                1);
                         $grade = number_format($assessment->grade * $exercise->grade / 100.0, 1);
-                        $overallgrade = number_format(((($assessment->grade * 
-                                $EXERCISE_FWEIGHTS[$teacherweight] / 100.0) + ($ownassessment->gradinggrade *
-                                $EXERCISE_FWEIGHTS[$gradingweight] / COMMENTSCALE )) * $exercise->grade) / 
-							    ($EXERCISE_FWEIGHTS[$teacherweight] + $EXERCISE_FWEIGHTS[$gradingweight]), 1);
+                        $overallgrade = number_format(($assessment->grade * $exercise->grade / 100.0) + 
+                            ($ownassessment->gradinggrade * $exercise->gradinggrade / 100.0 ), 1);
                         if ($submission->late) {
                             $grade = "<font color=\"red\">(".$grade.")</font>";
                             $overallgrade = "<font color=\"red\">(".$overallgrade.")</font>";
                         }
 						echo "<TR><td>".exercise_print_submission_title($exercise, $submission)."</td>\n";
-						echo "<td align=\"center\">".number_format($ownassessment->gradinggrade * $exercise->grade / COMMENTSCALE, 1)."</td>";
+						echo "<td align=\"center\">$gradinggrade</td>";
 						echo "<td align=\"center\">$grade</td>";
 						echo "<td align=\"center\">$overallgrade</td></TR>\n";
 					}
@@ -134,7 +130,7 @@
 		if ($exercise->showleaguetable) {
             exercise_print_league_table($exercise);
         }
-	    echo "<br />".get_string("allgradeshaveamaximumof", "exercise", $exercise->grade)."<br />\n";
+	    echo "<br />".get_string("maximumgrade").": $exercise->grade<br />\n";
 	}
 
 
@@ -238,7 +234,7 @@
 	}
 
 
-	/****************** student's view could be in 1 of 4 stages ***********************/
+	/****************** student's view could be in 1 of 3 stages ***********************/
 	elseif ($action == 'studentsview') {
 		exercise_print_assignment_info($exercise);
 		// in Stage 1 - the student must make an assessment (linked to the teacher's exercise/submission
@@ -302,8 +298,21 @@
 			error("Only teachers can look at this page");
 		}
 
-		print_heading_with_help(get_string("managingassignment", "exercise"), "managing", "exercise");
+        /// Check to see if groups are being used in this exercise
+        /// and if so, set $currentgroup to reflect the current group
+        $changegroup = isset($_GET['group']) ? $_GET['group'] : -1;  // Group change requested?
+        $groupmode = groupmode($course, $cm);   // Groups are being used?
+        $currentgroup = get_and_set_current_group($course, $groupmode, $changegroup);
+        
+        /// Allow the teacher to change groups (for this session)
+        if ($groupmode) {
+            if ($groups = get_records_menu("groups", "courseid", $course->id, "name ASC", "id,name")) {
+                print_group_menu($groups, $groupmode, $currentgroup, "view.php?id=$cm->id");
+            }
+        }
 		
+        print_heading_with_help(get_string("managingassignment", "exercise"), "managing", "exercise");
+	
 		exercise_print_assignment_info($exercise);
 		$tabs->names = array("1. ".get_string("phase1", "exercise"), 
             "2. ".get_string("phase2", "exercise", $course->student), 

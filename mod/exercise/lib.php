@@ -26,14 +26,14 @@ $EXERCISE_SCALES = array(
                     9 => array( 'name' => get_string("scale100", "exercise"), 'type' => 'selection', 'size' => 100)); 
 
 $EXERCISE_EWEIGHTS = array(  0 => -4.0, 1 => -2.0, 2 => -1.5, 3 => -1.0, 4 => -0.75, 5 => -0.5,  6 => -0.25, 
-                                            7 => 0.0, 8 => 0.25, 9 => 0.5, 10 => 0.75, 11=> 1.0, 12 => 1.5, 13=> 2.0, 14 => 4.0); 
+                             7 => 0.0, 8 => 0.25, 9 => 0.5, 10 => 0.75, 11=> 1.0, 12 => 1.5, 13=> 2.0, 14 => 4.0); 
 
-$EXERCISE_FWEIGHTS = array(  0 => 0, 1 => 0.1, 2 => 0.25, 3 => 0.5, 4 => 0.75, 5 => 1.0,  6 => 1.5, 
-                                            7 => 2.0, 8 => 3.0, 9 => 5.0, 10 => 7.5, 11=> 10.0); 
-
-if (!defined("COMMENTSCALE")) {
-    define("COMMENTSCALE", 20);
-    }
+$EXERCISE_ASSESSMENT_COMPS = array (
+                          0 => array('name' => get_string("verylax", "exercise"), 'value' => 1),
+                          1 => array('name' => get_string("lax", "exercise"), 'value' => 0.6),
+                          2 => array('name' => get_string("fair", "exercise"), 'value' => 0.4),
+                          3 => array('name' => get_string("strict", "exercise"), 'value' => 0.33),
+                          4 => array('name' => get_string("verystrict", "exercise"), 'value' => 0.2) );
 
 /*** Standard Moodle functions ******************
 function exercise_add_instance($exercise) 
@@ -114,7 +114,7 @@ function exercise_choose_from_menu ($options, $name, $selected="", $nothing="cho
 
 
 /*******************************************************************/
-function exercise_cron () {
+function exercise_cron() {
 // Function to be run periodically according to the moodle cron
 // Finds all exercise notifications that have yet to be mailed out, and mails them
 
@@ -127,8 +127,11 @@ function exercise_cron () {
         $timenow = time();
 
         foreach ($assessments as $assessment) {
-
             echo "Processing exercise assessment $assessment->id\n";
+            // switch on mailed
+            if (! set_field("exercise_assessments", "mailed", "1", "id", "$assessment->id")) {
+                echo "Could not update the mailed field for id $assessment->id\n";
+                }
             if (! $submission = get_record("exercise_submissions", "id", "$assessment->submissionid")) {
                 echo "Could not find submission $assessment->submissionid\n";
                 continue;
@@ -160,6 +163,11 @@ function exercise_cron () {
                 continue;  // Not an active participant
             }
     
+            // if the submission belongs to a teacher it's a student assessment. No need to email anything.
+            if (isteacher($course->id, $submissionowner->id)) { 
+                continue;
+            }
+
             $strexercises = get_string("modulenameplural", "exercise");
             $strexercise  = get_string("modulename", "exercise");
     
@@ -194,92 +202,10 @@ function exercise_cron () {
     
             if (!$teacher = get_teacher($course->id)) {
                 echo "Error: can not find teacher for course $course->id!\n";
-                }
+            }
                 
             if (! email_to_user($sendto, $teacher, $postsubject, $posttext, $posthtml)) {
                 echo "Error: exercise cron: Could not send out mail for id $submission->id to user $sendto->id ($sendto->email)\n";
-                }
-            if (! set_field("exercise_assessments", "mailed", "1", "id", "$assessment->id")) {
-                echo "Could not update the mailed field for id $assessment->id\n";
-                }
-            }
-        }
-        
-    // look for new gradings
-    if ($assessments = exercise_get_unmailed_graded_assessments($cutofftime)) {
-        $timenow = time();
-
-        foreach ($assessments as $assessment) {
-
-            echo "Processing exercise assessment $assessment->id (graded)\n";
-
-            if (! $submission = get_record("exercise_submissions", "id", "$assessment->submissionid")) {
-                echo "Could not find submission $assessment->submissionid\n";
-                continue;
-            }
-            if (! $exercise = get_record("exercise", "id", $submission->exerciseid)) {
-                echo "Could not find exercise record for id $submission->exerciseid\n";
-                continue;
-            }
-            if (! $course = get_record("course", "id", "$exercise->course")) {
-                echo "Could not find course $exercise->course\n";
-                continue;
-            }
-            if (! $cm = get_coursemodule_from_instance("exercise", $exercise->id, $course->id)) {
-                error("Course Module ID was incorrect");
-                continue;
-            }
-
-            if (! $assessmentowner = get_record("user", "id", "$assessment->userid")) {
-                echo "Could not find user $assessment->userid\n";
-                continue;
-            }
-
-            if (! isstudent($course->id, $assessmentowner->id) and !isteacher($course->id, $assessmentowner->id)) {
-                continue;  // Not an active participant
-            }
-
-            $strexercises = get_string("modulenameplural", "exercise");
-            $strexercise  = get_string("modulename", "exercise");
-
-            // it's a grading tell the assessment owner
-            $USER->lang = $assessmentowner->lang;
-            $sendto = $assessmentowner;
-            // Your assessment of the assignment \"$submission->title\" has by reviewed
-            $msg = get_string("mail6", "exercise", $submission->title).".\n";
-            // The comments given by the $course->teacher can be seen in the exercise Assignment 
-            $msg .= get_string("mail7", "exercise", $course->teacher)." '$exercise->name'.\n\n";
-
-            $postsubject = "$course->shortname: $strexercises: $exercise->name";
-            $posttext  = "$course->shortname -> $strexercises -> $exercise->name\n";
-            $posttext .= "---------------------------------------------------------------------\n";
-            $posttext .= $msg;
-            // "You can see it in your exercise assignment"
-            $posttext .= get_string("mail3", "exercise").":\n";
-            $posttext .= "   $CFG->wwwroot/mod/exercise/view.php?id=$cm->id\n";
-            $posttext .= "---------------------------------------------------------------------\n";
-            if ($sendto->mailformat == 1) {  // HTML
-                $posthtml = "<P><FONT FACE=sans-serif>".
-                    "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> ->".
-                    "<A HREF=\"$CFG->wwwroot/mod/exercise/index.php?id=$cm->id\">$strexercises</A> ->".
-                    "<A HREF=\"$CFG->wwwroot/mod/exercise/view.php?a=$exercise->id\">$exercise->name</A></FONT></P>";
-                $posthtml .= "<HR><FONT FACE=sans-serif>";
-                $posthtml .= "<P>$msg</P>";
-                $posthtml .= "<P>".get_string("mail3", "exercise").
-                    " <A HREF=\"$CFG->wwwroot/mod/exercise/view.php?id=$cm->id\">$exercise->name</A>.</P></FONT><HR>";
-            } else {
-              $posthtml = "";
-            }
-
-            if (!$teacher = get_teacher($course->id)) {
-                echo "Error: can not find teacher for course $course->id!\n";
-                }
-                
-            if (! email_to_user($sendto, $teacher, $postsubject, $posttext, $posthtml)) {
-                echo "Error: exercise cron: Could not send out mail for id $submission->id to user $sendto->id ($sendto->email)\n";
-            }
-            if (! set_field("exercise_assessments", "mailed", "1", "id", "$assessment->id")) {
-                echo "Could not update the mailed field for id $assessment->id\n";
             }
         }
     }
@@ -331,7 +257,6 @@ function exercise_delete_instance($id) {
 /*******************************************************************/
 function exercise_grades($exerciseid) {
 /// Must return an array of grades, indexed by user, and a max grade.
-global $EXERCISE_FWEIGHTS;
     
     if (!$exercise = get_record("exercise", "id", $exerciseid)) {
         error("Exercise record not found");
@@ -339,28 +264,23 @@ global $EXERCISE_FWEIGHTS;
     if (! $course = get_record("course", "id", $exercise->course)) {
         error("Course is misconfigured");
     }
-    if (!$return->maxgrade = $exercise->grade) {
+    if (!$return->maxgrade = ($exercise->grade + $exercise->gradinggrade)) {
         return NULL;
     }
 
-    // calculate scaling factor
-    $scaling = $exercise->grade / (100.0 * ($EXERCISE_FWEIGHTS[$exercise->gradingweight] +
-        $EXERCISE_FWEIGHTS[$exercise->teacherweight]));
     // how to handle multiple submissions?
     if ($exercise->usemaximum) {
         // first get the teacher's grade for the best submission
         if ($bestgrades = exercise_get_best_submission_grades($exercise)) {
             foreach ($bestgrades as $grade) {
-                $usergrade[$grade->userid] = $grade->grade * 
-                    $EXERCISE_FWEIGHTS[$exercise->teacherweight] * $scaling;
+                $usergrade[$grade->userid] = $grade->grade * $exercise->grade / 100.0;
             }
         }
     }
     else { // use mean values
         if ($meangrades = exercise_get_mean_submission_grades($exercise)) {
             foreach ($meangrades as $grade) {
-                $usergrade[$grade->userid] = $grade->grade * 
-                    $EXERCISE_FWEIGHTS[$exercise->teacherweight] * $scaling;
+                $usergrade[$grade->userid] = $grade->grade * $exercise->grade / 100.0;
             }
         }
     }
@@ -369,8 +289,7 @@ global $EXERCISE_FWEIGHTS;
         foreach ($assessments as $assessment) {
             // add the grading grade if the student's work has been assessed
             if (isset($usergrade[$assessment->userid])) {
-                $usergrade[$assessment->userid] += $assessment->gradinggrade * 
-                    $EXERCISE_FWEIGHTS[$exercise->gradingweight] * $scaling * 100.0 / COMMENTSCALE;
+                $usergrade[$assessment->userid] += $assessment->gradinggrade * $exercise->gradinggrade / 100.0;
             }
         }
     }
@@ -650,7 +569,7 @@ function exercise_get_best_grade($submission) {
 // Returns the best grade of students' submission (there may, occassionally be more than one assessment)
     global $CFG;
     
-    return get_record_sql("SELECT MAX(a.grade) grade FROM 
+    return get_record_sql("SELECT MAX(a.grade) AS grade FROM 
                         {$CFG->prefix}exercise_assessments a 
                             WHERE a.submissionid = $submission->id
                               GROUP BY a.submissionid");
@@ -686,7 +605,7 @@ function exercise_get_mean_submission_grades($exercise) {
     global $CFG;
     
     $timenow = time();
-    $grades = get_records_sql("SELECT DISTINCT u.userid, AVG(a.grade) grade FROM 
+    $grades = get_records_sql("SELECT DISTINCT u.userid, AVG(a.grade) AS grade FROM 
                         {$CFG->prefix}exercise_submissions s, 
                         {$CFG->prefix}exercise_assessments a, {$CFG->prefix}user_students u 
                             WHERE u.course = $exercise->course
@@ -735,25 +654,11 @@ function exercise_get_teacher_submission_assessments($exercise) {
 function exercise_get_unmailed_assessments($cutofftime) {
     /// Return list of (ungraded) assessments that have not been mailed out
     global $CFG;
-    return get_records_sql("SELECT a.*, g.course, g.name
-                              FROM {$CFG->prefix}exercise_assessments a, {$CFG->prefix}exercise g
+    return get_records_sql("SELECT a.*, e.course, e.name
+                              FROM {$CFG->prefix}exercise_assessments a, {$CFG->prefix}exercise e
                              WHERE a.mailed = 0 
-                               AND a.timegraded = 0
                                AND a.timecreated < $cutofftime 
-                               AND g.id = a.exerciseid");
-}
-
-
-///////////////////////////////////////////////////////////////////////////////////////////////
-function exercise_get_unmailed_graded_assessments($cutofftime) {
-    /// Return list of graded assessments that have not been mailed out
-    global $CFG;
-    return get_records_sql("SELECT a.*, g.course, g.name
-                              FROM {$CFG->prefix}exercise_assessments a, {$CFG->prefix}exercise g
-                             WHERE a.mailed = 0 
-                               AND a.timegraded < $cutofftime 
-                               AND a.timegraded > 0
-                               AND g.id = a.exerciseid");
+                               AND e.id = a.exerciseid");
 }
 
 

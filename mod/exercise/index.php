@@ -78,48 +78,46 @@
                         switch ($exercise->phase) {
                             case 1: $phase = get_string("phase1short", "exercise");
                                     break;
-                            case 2: $phase = get_string("phase2short", "exercise");
+                            case 2: $phase = get_string("phase2short", "exercise")." [".
+                                        get_string("unassessed", "exercise", 
+                                        exercise_count_unassessed_student_submissions($exercise))."]";
                                     break;
-                            case 3: $phase = get_string("phase3short", "exercise");
+                            case 3: $phase = get_string("phase3short", "exercise")." [".
+                                        get_string("unassessed", "exercise", 
+                                        exercise_count_unassessed_student_submissions($exercise))."]";
                                     break;
                         }
 					    $table->data[] = array ($exercise->section, $link, $title, $phase, 
                                 $submitted, $due);
-                    } else {
-                        $assessed = false; 
-                        if ($exercise->usemaximum) {
-                            $maximum = exercise_get_best_grade($submission);
-                            if (isset($maximum)) {
-                                $grade = $maximum->grade;
-                                $assessed = true;
+                    } else { // it's a student
+                        if ($assessments = exercise_get_user_assessments($exercise, $USER)) { // should be only one...
+                            foreach ($assessments as $studentassessment) {
+                                break;
                             }
-                        }else { // use mean value
-                            $mean = exercise_get_mean_grade($submission);
-                            if (isset($mean->grade)) {
-                                $grade = $mean->grade;
-                                $assessed = true;
-                            }
-                        }
-                        if ($assessed) {
-                            $actualgrade = number_format($grade * $exercise->grade / 100.0, 1);
-                            if ($submission->late) {
-                                $actualgrade = "<font color=\"red\">(".$actualgrade.")<font color=\"red\">";
+                            if ($studentassessment->timegraded) { // it's been assessed
+                                if ($teacherassessment = exercise_get_submission_assessment($submission)) {
+                                    $actualgrade = number_format(($studentassessment->gradinggrade * 
+                                        $exercise->gradinggrade / 100.0) + ($teacherassessment->grade * 
+                                        $exercise->grade / 100.0), 1);
+                                    if ($submission->late) {
+                                        $actualgrade = "<font color=\"red\">(".$actualgrade.")<font color=\"red\">";
+                                    }
+                                    $actualgrade .= " (".get_string("maximumshort").": ".
+                                        number_format($exercise->gradinggrade + $exercise->grade, 0).")";
+                                    $table->data[] = array ($exercise->section, $link, $title, $actualgrade, 
+                                        $submitted, $due);
+                                }
                             } else {
-                            }
-    					    $table->data[] = array ($exercise->section, $link, $title, 
-                                    $actualgrade, $submitted, $due);
-                        } else {
-    					    $table->data[] = array ($exercise->section, $link, $title, 
+    	    				    $table->data[] = array ($exercise->section, $link, $title, 
                                     "-", $submitted, $due);
+                            }
                         }
 					} 
-                }
-				else {
+                } else {
 					$table->data[] = array ($link, $submitted, $due);
 				}
 			}
-		}
-		else {
+		} else {
             $submitted = get_string("no");
 			$title = '';
 			$link = "<A HREF=\"view.php?id=$exercise->coursemodule\">$exercise->name</A>";
