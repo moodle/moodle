@@ -160,7 +160,7 @@
                     echo "<br />";
                     echo "<center><img class=\"resourceimage\" src=\"$fullurl\"></center>";
                     echo "<br />";
-                } else if ($resourcehtml and $CFG->resource_filterexternalpages) {
+                } else if ($resourcehtml and $fetchingprefix) {
                     echo "<br />";
                     
                     $content = resource_fetch_remote_file("$fetchingprefix$fullurl");
@@ -183,7 +183,7 @@
                     $fullurl = "$CFG->wwwroot/file.php?file=/$course->id/$resource->reference";
                 }
 
-                if ($resourcehtml  and $CFG->resource_filterexternalpages) {
+                if ( $resourcehtml  and $fetchingprefix ) {
                     echo "<frame src=\"fetch.php?id=$cm->id&url=$fetchingprefix$fullurl\">";
                 } else {
                     echo "<frame src=\"$fullurl\">";
