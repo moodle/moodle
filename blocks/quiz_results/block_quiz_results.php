@@ -66,6 +66,11 @@ class block_quiz_results extends block_base {
             return $this->content;
         }
 
+        if(empty($this->config->showbest) && empty($this->config->showworst)) {
+            $this->content->text = get_string('configuredtoshownothing', 'block_quiz_results');
+            return $this->content;
+        }
+
         $groupmode = NOGROUPS;
         $best      = array();
         $worst     = array();
