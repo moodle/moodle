@@ -49,6 +49,8 @@
         }
         //restoreto
         require_variable($restore_restoreto);
+        //restore_metacourse
+        require_variable($restore_metacourse);
         //restore_users
         require_variable($restore_users);
         //restore_logs
@@ -79,6 +81,7 @@
             }
         }
         $restore->restoreto=$restore_restoreto;
+        $restore->metacourse=$restore_metacourse;
         $restore->users=$restore_users;
         $restore->logs=$restore_logs;
         $restore->user_files=$restore_user_files;
@@ -94,7 +97,7 @@
     //We have the object with data, put it in the session
     $SESSION->restore = $restore;
 
-    //From here to the wnd of the script, only use the $restore object
+    //From here to the end of the script, only use the $restore object
 
     //Check login
     require_login();

@@ -150,7 +150,6 @@
         }
     }
 
-
     //Now create users as needed 
     if ($status and ($restore->users == 0 or $restore->users == 1)) {
         echo "<li>".get_string("creatingusers")."<br />";
@@ -205,6 +204,18 @@
             }
         }
     }
+
+    //Now create metacourse info
+    if ($status and $restore->metacourse) {
+        //Only to new courses!
+        if ($restore->restoreto == 2) {
+            echo "<li>".get_string("creatingmetacoursedata");
+            if (!$status = restore_create_metacourse($restore,$xml_file)) {
+                notify("Error creating metacourse in the course.");
+            }
+        }
+    }
+
 
     //Now create categories and questions as needed (STEP1)
     if ($status and ($restore->mods['quiz']->restore)) {

@@ -270,6 +270,15 @@
         return $info;
     }
     
+    //This function read the xml file and store its data from the metacourse in a object
+    function restore_read_xml_metacourse ($xml_file) {
+
+        //We call the main read_xml function, with todo = METACOURSE
+        $info = restore_read_xml ($xml_file,"METACOURSE",false);
+
+        return $info;
+    }
+
     //This function read the xml file and store its data from the users in 
     //backup_ids->info db (and user's id in $info)
     function restore_read_xml_users ($restore,$xml_file) {
@@ -387,6 +396,14 @@
                 }
                 $elem++;
             }
+            //Metacourse info
+            $tab[$elem][0] = "<b>".get_string("metacourse").":</b>";
+            if ($info->backup_metacourse == "true") {
+                $tab[$elem][1] = get_string("yes");
+            } else {
+                $tab[$elem][1] = get_string("no");
+            }
+            $elem++;
             //Users info
             $tab[$elem][0] = "<b>".get_string("users").":</b>";
             $tab[$elem][1] = get_string($info->backup_users);
@@ -552,6 +569,7 @@
             $course->hiddensections = addslashes($course_header->course_hiddensections);
             $course->timecreated = addslashes($course_header->course_timecreated);
             $course->timemodified = addslashes($course_header->course_timemodified);
+            $course->metacourse = addslashes($course_header->course_metacourse);
             //Calculate sortorder field
             $sortmax = get_record_sql('SELECT MAX(sortorder) AS max
                                        FROM ' . $CFG->prefix . 'course
@@ -566,6 +584,11 @@
             //Now, recode some languages (Moodle 1.5)
             if ($course->lang == 'ma_nt') {
                 $course->lang = 'mi_nt';
+            }
+
+            //Disable course->metacourse if avoided in restore config
+            if (!$restore->metacourse) {
+                $course->metacourse = 0;
             }
 
             //Now insert the record
@@ -823,6 +846,95 @@
             }
         } else {
             $status = false;
+        }
+        return $status;
+    }
+
+    //This function creates all the metacourse data from xml, notifying 
+    //about each incidence
+    function restore_create_metacourse($restore,$xml_file) {
+
+        global $CFG,$db;
+
+        $status = true;
+        //Check it exists
+        if (!file_exists($xml_file)) {
+            $status = false;
+        }
+        //Get info from xml
+        if ($status) {
+            //Load data from XML to info
+            $info = restore_read_xml_metacourse($xml_file);
+        }
+
+        //Process info about metacourse
+        if ($status and $info) {
+            //Process child records
+            if ($info->childs) {
+                foreach ($info->childs as $child) {
+                    $dbcourse = false;
+                    $dbmetacourse = false;
+                    //Check if child course exists in destination server
+                    //(by id in the same server or by idnumber and shortname in other server)
+                    if (!$restore->original_wwwroot == $CFG->wwwroot) {
+                        //Same server, lets see by id
+                        $dbcourse = get_record('course','id',$child->id);
+                    } else {
+                        //Different server, lets see by idnumber and shortname, and only ONE record
+                        $dbcount = count_records('course','idnumber',$child->idnumber,'shortname',$child->shortname);
+                        if ($dbcount == 1) {
+                            $dbcourse = get_record('course','idnumber',$child->idnumber,'shortname',$child->shortname);
+                        }
+                    }
+                    //If child course has been found, insert data
+                    if ($dbcourse) {
+                        $dbmetacourse->child_course = $dbcourse->id;
+                        $dbmetacourse->parent_course = $restore->course_id;
+                        $status = insert_record ('course_meta',$dbmetacourse);
+                    } else {
+                        //Child course not found, notice!
+                        echo '<ul><li>'.get_string ('childcoursenotfound').' ('.$child->id.'/'.$child->idnumber.'/'.$child->shortname.')</li></ul>';
+                    }
+                }
+                //Now, recreate student enrolments...
+                sync_metacourse($restore->course_id);
+            }
+            //Process parent records
+            if ($info->parents) {
+                foreach ($info->parents as $parent) {
+                    $dbcourse = false;
+                    $dbmetacourse = false;
+                    //Check if parent course exists in destination server
+                    //(by id in the same server or by idnumber and shortname in other server)
+                    if (!$restore->original_wwwroot == $CFG->wwwroot) {
+                        //Same server, lets see by id
+                        $dbcourse = get_record('course','id',$parent->id);
+                    } else {
+                        //Different server, lets see by idnumber and shortname, and only ONE record
+                        $dbcount = count_records('course','idnumber',$parent->idnumber,'shortname',$parent->shortname);
+                        if ($dbcount == 1) {
+                            $dbcourse = get_record('course','idnumber',$parent->idnumber,'shortname',$parent->shortname);
+                        }
+                    }
+                    //If parent course has been found, insert data if it is a metacourse
+                    if ($dbcourse) {
+                        if ($dbcourse->metacourse) {
+                            $dbmetacourse->parent_course = $dbcourse->id;
+                            $dbmetacourse->child_course = $restore->course_id;
+                            $status = insert_record ('course_meta',$dbmetacourse);
+                            //Now, recreate student enrolments in parent course
+                            sync_metacourse($dbcourse->id);
+                        } else {
+                        //Parent course isn't metacourse, notice!
+                        echo '<ul><li>'.get_string ('parentcoursenotmetacourse').' ('.$parent->id.'/'.$parent->idnumber.'/'.$parent->shortname.')</li></ul>';
+                        }
+                    } else {
+                        //Parent course not found, notice!
+                        echo '<ul><li>'.get_string ('parentcoursenotfound').' ('.$parent->id.'/'.$parent->idnumber.'/'.$parent->shortname.')</li></ul>';
+                    }
+                }
+            }
+
         }
         return $status;
     }
@@ -2075,6 +2187,22 @@
             //if ($this->tree[3] == "SECTIONS")                                                         //Debug
             //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br />\n";   //Debug
         }
+
+        //This is the startTag handler we use where we are reading the metacourse zone (todo="METACOURSE")
+        function startElementMetacourse($parser, $tagName, $attrs) {
+
+            //Refresh properties     
+            $this->level++;
+            $this->tree[$this->level] = $tagName;   
+            
+            //Output something to avoid browser timeouts...
+            backup_flush();
+
+            //Check if we are into METACOURSE zone
+            //if ($this->tree[3] == "METACOURSE")                                                         //Debug
+            //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br />\n";   //Debug
+        }
+        
         
         //This is the startTag handler we use where we are reading the user zone (todo="USERS")
         function startElementUsers($parser, $tagName, $attrs) {
@@ -2301,6 +2429,9 @@
                 if ($this->tree[3] == "DETAILS") {
                     if ($this->level == 4) {
                         switch ($tagName) {
+                            case "METACOURSE":
+                                $this->info->backup_metacourse = $this->getContents();
+                                break;
                             case "USERS":
                                 $this->info->backup_users = $this->getContents();
                                 break;
@@ -2446,6 +2577,9 @@
                             break;
                         case "TIMEMODIFIED":
                             $this->info->course_timemodified = $this->getContents();
+                            break;
+                        case "METACOURSE":
+                            $this->info->course_metacourse = $this->getContents();
                             break;
                     }
                 }
@@ -2632,6 +2766,57 @@
                 $this->finished = true;
             }
         }
+
+        //This is the endTag handler we use where we are reading the metacourse zone (todo="METACOURSE")
+        function endElementMetacourse($parser, $tagName) {
+            //Check if we are into METACOURSE zone
+            if ($this->tree[3] == 'METACOURSE') {
+                //if (trim($this->content))                                                                     //Debug
+                //    echo "C".str_repeat("&nbsp;",($this->level+2)*2).$this->getContents()."<br />\n";           //Debug
+                //echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;/".$tagName."&gt;<br />\n";          //Debug
+                //Dependig of different combinations, do different things
+                if ($this->level == 5) {
+                    switch ($tagName) {
+                        case 'CHILD':
+                            //We've finalized a child, get it
+                            $this->info->childs[] = $this->info->tempmeta;
+                            unset($this->info->tempmeta);
+                            break;
+                        case 'PARENT':
+                            //We've finalized a parent, get it
+                            $this->info->parents[] = $this->info->tempmeta;
+                            unset($this->info->tempmeta);
+                            break;
+                        default:
+                            die($tagName);
+                    }
+                }
+                if ($this->level == 6) {
+                    switch ($tagName) {
+                        case 'ID':
+                            $this->info->tempmeta->id = $this->getContents();
+                            break;
+                        case 'IDNUMBER':
+                            $this->info->tempmeta->idnumber = $this->getContents();
+                            break;
+                        case 'SHORTNAME':
+                            $this->info->tempmeta->shortname = $this->getContents();
+                            break;
+                    }
+                }
+            }
+            //Clear things
+            $this->tree[$this->level] = '';
+            $this->level--;
+            $this->content = "";
+
+            //Stop parsing if todo = METACOURSE and tagName = METACOURSE (en of the tag, of course)
+            //Speed up a lot (avoid parse all)
+            if ($this->tree[3] == 'METACOURSE' && $tagName == 'METACOURSE') {
+                $this->finished = true;
+            }
+        }
+
         
         //This is the endTag handler we use where we are reading the users zone (todo="USERS")
         function endElementUsers($parser, $tagName) {
@@ -3218,6 +3403,9 @@
         } else if ($todo == "SECTIONS") {
             //Define handlers to that zone
             xml_set_element_handler($xml_parser, "startElementSections", "endElementSections");
+        } else if ($todo == "METACOURSE") {
+            //Define handlers to that zone
+            xml_set_element_handler($xml_parser, "startElementMetacourse", "endElementMetacourse");
         } else if ($todo == "USERS") {
             //Define handlers to that zone
             xml_set_element_handler($xml_parser, "startElementUsers", "endElementUsers");
