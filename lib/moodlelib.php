@@ -704,6 +704,7 @@ function userdate($date, $format='', $timezone=99, $fixday = true) {
     }
 
     if(!empty($gmdateformat)) {
+        $date += dst_offset_on($date);
         if (abs($timezone) > 13) {
             $date += floatval(date('O')) * HOURSECS;
         }
@@ -876,7 +877,7 @@ function get_user_dst_preset() {
     global $CFG, $USER;
     static $preset = NULL;
 
-    if(!empty($preset)) {
+    if($preset !== NULL) {
         return $preset;
     }
 
@@ -891,7 +892,8 @@ function get_user_dst_preset() {
     }
 
     $preset = get_record('dst_preset', 'id', $presetid);
-    if(time() >= $preset->next_change) {
+
+    if(!empty($preset) && time() >= $preset->next_change || time() < $preset->last_change) {
         $preset = dst_update_preset($preset);
         update_record('dst_preset', $preset);
     }
@@ -964,6 +966,7 @@ function dst_changes_for_year($year, $dstpreset) {
 // $time must NOT be compensated at all, it has to be a pure timestamp
 function dst_offset_on($time) {
     $preset = get_user_dst_preset();
+
     if(empty($preset)) {
         return 0;
     }
