@@ -18,9 +18,9 @@
     require_once($CFG->dirroot .'/mod/resource/lib.php');
     require_once($CFG->dirroot .'/mod/forum/lib.php');
 
-    optional_param('blockaction');
-    optional_param('instanceid', 0, PARAM_INT);
-    optional_param('blockid',    0, PARAM_INT);
+    $blockaction = optional_param('blockaction');
+    $instanceid  = optional_param('instanceid', 0, PARAM_INT);
+    $blockid     = optional_param('blockid',    0, PARAM_INT);
 
     if (! $site = get_site()) {
         redirect($CFG->wwwroot .'/'. $CFG->admin .'/index.php');
@@ -58,10 +58,6 @@
 
     $PAGE = page_create_object(MOODLE_PAGE_COURSE, SITEID);
 
-    print_header(strip_tags($site->fullname), $site->fullname, 'home', '',
-                 '<meta name="description" content="'. s(strip_tags($site->summary)) .'" />',
-                 true, '', $loginstring . '<br />' . $langmenu);
-
     echo '<div id="entry-page" class="entry">';  // entry wrapper start
 
     $editing = $PAGE->user_is_editing();
@@ -92,6 +88,10 @@
     $preferred_width_left = max($preferred_width_left, BLOCK_L_MIN_WIDTH);
     $preferred_width_right = min($preferred_width_right, BLOCK_R_MAX_WIDTH);
     $preferred_width_right = max($preferred_width_right, BLOCK_R_MIN_WIDTH);
+
+    print_header(strip_tags($site->fullname), $site->fullname, 'home', '',
+                 '<meta name="description" content="'. s(strip_tags($site->summary)) .'" />',
+                 true, '', $loginstring . '<br />' . $langmenu);
 
 ?>
 
