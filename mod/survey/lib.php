@@ -454,7 +454,7 @@ function survey_print_graph($url) {
         echo "(".get_string("gdneed").")";
 
     } else {
-        echo "<img height=\"$survey_gheight\" width=\"$survey_gwidth\" border=\"1\"".
+        echo "<img height=\"$SURVEY_GHEIGHT\" width=\"$SURVEY_GWIDTH\" border=\"1\"".
              " src=\"$CFG->wwwroot/mod/survey/graph.php?$url\">";
     }
 }
