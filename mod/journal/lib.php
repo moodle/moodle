@@ -154,7 +154,7 @@ function journal_cron () {
             $postsubject = "$course->shortname: Journal feedback: $entry->name";
             $posttext  = "$course->shortname -> Journals -> $entry->name\n";
             $posttext .= "---------------------------------------------------------------------\n";
-            $posttext .= get_string("journalmail", "journal", $journalinfo);
+            $posttext .= get_string("journalmail", "journal", $journalinfo)."\n";
             $posttext .= "---------------------------------------------------------------------\n";
             if ($user->mailformat == 1) {  // HTML
                 $posthtml = "<p><font face=\"sans-serif\">".
