@@ -504,7 +504,7 @@ function glossary_get_entries_search($concept, $courseid) {
 
     $conceptupper = strtoupper(trim($concept));
 
-    return get_records_sql("SELECT e.*, g.name as glossaryname
+    return get_records_sql("SELECT e.*, g.name as glossaryname, cm.id as cmid, cm.course as courseid
                             FROM {$CFG->prefix}glossary_entries e, 
                                  {$CFG->prefix}glossary g,
                                  {$CFG->prefix}course_modules cm,

@@ -161,4 +161,5 @@ INSERT INTO prefix_log_display VALUES ('glossary', 'add comment', 'glossary', 'n
 INSERT INTO prefix_log_display VALUES ('glossary', 'update comment', 'glossary', 'name');
 INSERT INTO prefix_log_display VALUES ('glossary', 'delete comment', 'glossary', 'name');
 INSERT INTO prefix_log_display VALUES ('glossary', 'approve entry', 'glossary', 'name');
+INSERT INTO prefix_log_display VALUES ('glossary', 'view entry', 'glossary_entries', 'concept');
 

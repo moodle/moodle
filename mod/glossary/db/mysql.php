@@ -397,6 +397,10 @@ function glossary_upgrade($oldversion) {
           }
       }
   }
+
+  if ($oldversion < 2005031001) {
+      modify_database('',"INSERT INTO prefix_log_display VALUES ('glossary', 'view entry', 'glossary_entries', 'concept');");
+  }
     
   return true;
 }
