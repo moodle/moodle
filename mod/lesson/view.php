@@ -23,7 +23,6 @@
     }
 
     require_login($course->id);
-	$SESSION->sesskey = !empty($USER->id) ? $USER->sesskey : '';
 
 /// Print the page header
 
@@ -75,7 +74,7 @@
     if (isteacheredit($course->id)) {
         $button = '<table><tr><td>';
         $button .= '<form target="'. $CFG->framename .'" method="get" action="'. $CFG->wwwroot .'/course/mod.php">'.
-               '<input type="hidden" name="sesskey" value="'. $SESSION->sesskey .'" />'.		
+               '<input type="hidden" name="sesskey" value="'. $USER->sesskey .'" />'.		
                '<input type="hidden" name="update" value="'. $cm->id .'" />'.
                '<input type="hidden" name="return" value="true" />'.
                '<input type="submit" value="'. get_string('editlessonsettings', 'lesson') .'" /></form>';
