@@ -28,6 +28,7 @@ $string['prev'] = 'Precedente';
 $string['regular'] = 'Manifest corretto';
 $string['report'] = 'Report';
 $string['review'] = 'Rivedi';
+$string['scoes'] = 'Sco';
 $string['score'] = 'Voto';
 $string['trackingloose'] = 'ATTENZIONE: I dati di tracciamento esistenti saranno cancellati!';
 $string['validateascorm'] = 'Controllo pacchetto scorm';
