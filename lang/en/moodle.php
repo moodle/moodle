@@ -663,7 +663,6 @@ $string['selectacountry'] = "Select a country";
 $string['selectednowmove'] = "\$a files selected for moving. Now go to the destination and press 'Move files to here'";
 $string['senddetails'] = "Send my details via email";
 $string['separateandconnected'] = "Separate and Connected ways of knowing";
-$string['separateandconnecteddescription'] = "";
 $string['serverlocaltime'] = "Server's local time";
 $string['settings'] = "Settings";
 $string['shortname'] = "Short name";
