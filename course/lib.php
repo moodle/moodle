@@ -1059,11 +1059,13 @@ function print_course($course, $width="100%") {
 
     print_simple_box_start("center", "$width");
 
+    $linkcss = $course->visible ? "" : " class=\"dimmed\" ";
+
     echo "<table width=\"100%\">";
     echo "<tr valign=top>";
     echo "<td valign=top width=50%>";
     echo "<p><font size=3><b><a title=\"".get_string("entercourse")."\" 
-              href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->fullname</a></b></font></p>";
+              $linkcss href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->fullname</a></b></font></p>";
     if ($teachers = get_course_teachers($course->id)) {
         echo "<p><font size=\"1\">\n";
         foreach ($teachers as $teacher) {
