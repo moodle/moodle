@@ -3,7 +3,7 @@
 
     require_once("../config.php");
     require_once("lib.php");
-        require_once("$CFG->libdir/blocklib.php");
+    require_once("$CFG->libdir/blocklib.php");
 
     optional_variable($id, 0);   // course id
     optional_variable($category, 0);   // category id
@@ -124,6 +124,8 @@
             $form->password = "";
             $form->guest = 0;
             $form->numsections = 10;
+            $form->idnumber = '';
+            $form->cost = '';
             $form->newsitems = 5;
             $form->showgrades = 1;
             $form->groupmode = 0;
