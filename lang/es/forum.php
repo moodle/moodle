@@ -82,10 +82,11 @@ $string['parentofthispost'] = "Anterior a este mensaje";
 $string['postadded'] = "Su mensaje se ha colocado con éxito.<P>Tiene \$a para hacer cualquier cambio.";
 $string['postincontext'] = "Ver el mensaje en su contexto";
 $string['postmailinfo'] = "Esta es una copia del mensaje publicado en \$a.
+
 Para responder a este mensaje diríjase a:";
-$string['postrating1'] = "Atinado";
-$string['postrating2'] = "Indiferente";
-$string['postrating3'] = "Desatinado";
+$string['postrating1'] = "Conocimiento principalmente desconectado";
+$string['postrating2'] = "Conocimiento conectado y desconectado";
+$string['postrating3'] = "Conocimiento principalmente conectado";
 $string['posts'] = "Mensajes";
 $string['postupdated'] = "Su mensaje se ha actualizado";
 $string['processingpost'] = "Procesando \$a";
