@@ -1,0 +1,200 @@
+<p align="center"><b>&Eacute;crire des pages en texte Wiki</b></p>
+
+<p>Le format texte Wiki offre un outil pour formater du texte &agrave; l'aide
+  de commandes de formatage intuitives et lisibles. Ces commandes sont
+  automatiquement traduites en XHTML lors de l'affichage. Vous n'avez
+  ainsi pas besoin d'apprendre le langage HTML pour produire des
+  formats relativement complexes, et le texte que vous &eacute;crivez s'affiche
+  <i>correctement m&ecirc;me avant</i> son affichage d&eacute;finitif. Ce format offre
+  une r&eacute;elle alternative &agrave; l'enregistrement en HTML de fichiers Word,
+  en permettant la modification en ligne de la ressource.</p>
+
+<p>Sur le principe, vous tapez simplement du texte. Un certain
+  nombre de caract&egrave;res <i>sp&eacute;ciaux</i> vous permettent d'agir
+  sur le format de ce texte.</p>
+
+<h3>Formatage des paragraphes</h3>
+
+<p>Les paragraphes sont s&eacute;par&eacute;s par une ligne vide au moins. Pour
+  changer le format d'un paragraphe, il suffit taper comme
+  premier(s) caract&egrave;re(s) de la premi&egrave;re ligne du paragraphe
+  l'un des codes suivants, suivi d'un espace.</p>
+<table>
+  <tr><th>Code</th><th>Type de paragraphe</th></tr>
+  <tr><td>Aucun</td><td>Paragraphe normal</td></tr>
+  <tr><td>&gt;</td><td>Citation</td></tr>
+  <tr><td>Espace</td><td>Texte pr&eacute;format&eacute; (police monospace)</td></tr>
+  <tr><td>%</td><td>Texte pr&eacute;format&eacute; <em>et</em> le
+    formatage Wiki est ignor&eacute;</td></tr>
+  <tr><td>!#</td><td>Titre - o&ugrave; # est un chiffre de 1 &agrave; 6,
+    le niveau du titre (1 est le plus &eacute;lev&eacute;)</td></tr>
+  <tr><td>Q.</td><td>Question - un formatage est ajout&eacute; au paragraphe
+    pour am&eacute;liorer la pr&eacute;sentation des questions/r&eacute;ponses</td></tr>
+  <tr><td>A.</td><td>R&eacute;ponse - comme ci-dessus, mais pour une r&eacute;ponse</td></tr>
+</table>
+
+<h3>Formatage des listes</h3>
+
+<p>De simples listes peuvent &ecirc;tre construites facilement en pla&ccedil;ant
+  un caract&egrave;re sp&eacute;cial au d&eacute;but de chaque ligne de la liste, suivi
+  par un espace. La liste est termin&eacute;e par une ligne vide. Les listes
+  peuvent &ecirc;tre imbriqu&eacute;es, et les listes imbriqu&eacute;es peuvent
+  &ecirc;tre de types diff&eacute;rents. Les listes et les paragraphes peuvent
+  &ecirc;tre combin&eacute;es pour obtenir le r&eacute;sultat d&eacute;sir&eacute;.
+  Les caract&egrave;res sp&eacute;ciaux sont les suivants.</p>
+
+<table>
+  <tr><th>Caract&egrave;re</th><th>Type de liste</th></tr>
+  <tr><td>*</td><td>Liste non ordonn&eacute;e (puces)</td></tr>
+  <tr><td>#</td><td>Liste ordonn&eacute;e(1, 2, 3, etc.)</td></tr>
+  <tr><td>: (deux-point)</td><td>Liste descriptive, terme &agrave; d&eacute;finir</td></tr>
+  <tr><td>; (point-virgule)</td><td>Liste descriptive, d&eacute;finition</td></tr>
+</table>  
+
+<p>Exemple de liste imbriqu&eacute;e&nbsp;:</p>
+<p><pre>
+  * Premi&egrave;re puce
+  * Deuxi&egrave;me puce
+  ## Ligne num&eacute;rot&eacute;e 1
+  ## Ligne num&eacute;rot&eacute;e 2
+  * Troisi&egrave;me puce
+</pre></p>
+<p>produira&nbsp;:
+<ul>
+  <li>Premi&egrave;re puce</li>
+  <li>Deuxi&egrave;me puce</li>
+  <ol>
+    <li>Ligne num&eacute;rot&eacute;e 1</li>
+    <li>Ligne num&eacute;rot&eacute;e 2</li>
+  </ol>
+  <li>Troisi&egrave;me puce</li>
+</ul></p>
+
+<h3>Formatage du texte</h3>
+
+<p>Le formatage du texte permet de marquer une partie d'une ligne
+  dans un style diff&eacute;rent. Les caract&egrave;res sp&eacute;ciaux utilis&eacute;s pour
+  cela peuvent se placer n'importe o&ugrave; sur une ligne, mais ne peut
+  chevaucher plusieurs lignes. Voici ces caract&egrave;res.</p>
+
+<table>
+  <tr><th>Exemple</th><th>R&eacute;sultat</th><th>Description</th></tr>
+  <tr><td>*il fait beau*</td><td><strong>il fait beau</strong></td><td>Gras</td></tr>
+  <tr><td>/il fait beau/</td><td><em>il fait beau</em></td><td>Italique</td></tr>
+  <tr><td>+il fait beau+</td><td><ins>il fait beau</ins></td><td>Texte ins&eacute;r&eacute;</td></tr>
+  <tr><td>-il fait beau-</td><td><del>il fait beau</del></td><td>Texte supprim&eacute;</td></tr>
+  <tr><td>il fait ~world~</td><td>il fait <sub>beau</sub></td><td>Indice</td></tr>
+  <tr><td>il fait ^world^</td><td>il fait <sup>beau</sup></td><td>Exposant</td></tr>
+  <tr><td>"il fait beau"</td><td>&#8220;il fait beau&#8221;</td><td>Entre guillemets</td></tr>
+  <tr><td>%il fait beau%</td><td><code>il fait beau</code></td><td>Police monospace</td></tr>
+  <tr><td>@il fait beau@</td><td><cite>il fait beau</cite></td><td>Citation</td></tr>
+</table>  
+
+<h3>Acronymes</h3>
+
+<p>La composition d'acronymes s'obtient en pla&ccedil;ant l'acronyme en
+  lettres capitales, suivies de la description entre parenth&egrave;ses.
+  Il ne doit y avoir aucun espace entre l'acronyme et la parenth&egrave;se.
+  Voici un exemple&nbsp;:</p>
+
+<table>
+  <tr><th>Exemple</th><th>R&eacute;sultat</th></tr>
+  <tr><td>HTML(Hypertext Markup Language)</td><td><acronym title="Hypertext Markup Language">HTML</acronym></td></tr>
+</table>  
+
+<h3>Hyperliens</h3>
+
+<p>Les liens peuvent &ecirc;tre &eacute;crits directement dans le texte,
+  et suivi (sans espace) par le texte &agrave; afficher sur le lien. Les liens
+  pour les adresses de courriel se traitent de la m&ecirc;me mani&egrave;re.</p>
+
+<table>
+  <tr><th>Exemple</th><th>R&eacute;sultat</th></tr>
+  <tr><td>http://www.google.fr/(Rechercher)</td><td><a href="http://www.google.fr/">Rechercher</a></td></tr>
+  <tr><td>nobody@exemple.net(Utilisateur bidon)</td><td><a href="mailto:nobody@exemple.net">Utilisateur bidon</a></td></tr>
+</table>  
+
+<h3>Liens vers des modules de Moodle</h3>
+
+<p>Si vous connaissez le num&eacute;ro identifiant et le type d'un module
+  dans Moodle, vous pouvez le lier directement en suivant la
+  syntaxe <b>TypeDuModule:nn(Texte descriptif)</b> comme dans l'exemple
+  ci-dessous. Le type de module doit &ecirc;tre &eacute;crit suivant sa d&eacute;nomitation
+  originale en anglais.</p>
+
+<table>
+  <tr><th>Exemple</th></tr>
+  <tr><td>resource:36(Ma nouvelle page)</td></tr>
+  <tr><td>forum:10(Jump to forum)</td></tr>
+</table>  
+
+<h3>Liens vers des images de Moodle</h3>
+
+<p>Des images peuvent &ecirc;tre plac&eacute;es dans les pages en texte Wiki. Il
+  vous suffit de d&eacute;poser l'image sur le site et de noter son
+  chemin d'acc&egrave;s dans la zone des fichiers d&eacute;pos&eacute;s. Vous
+  utiliserez ensuite la syntaxe <b>/chemin/d/acc&egrave;s/au/fichier(Texte
+  alternatif)</b>.
+
+<table>
+  <tr><th>Exemple</th></tr>
+  <tr><td>/photos/groupe.jpg(Photo du personnel)</td></tr>
+  <tr><td>/images/fr/menu.gif(Menu en fran&ccedil;ais)</td></tr>
+</table>  
+
+<h3>Liens vers des fichiers de Moodle</h3>
+
+<p>De la m&ecirc;me fa&ccedil;on que les images, les fichiers
+  pr&eacute;alablement d&eacute;pos&eacute;s dans Moodle peuvent &ecirc;tre li&eacute;s sur les
+  pages en texte Wiki. La syntaxe est <b>file:/chemin/d/acc&egrave;s/au/fichier(Texte
+  du lien)</b>.
+
+<table>
+  <tr><th>Exemple</th></tr>
+  <tr><td>file:/textes/moodle.pdf(Manuel de Moodle)</td></tr>
+  <tr><td>file:/media/movies/navette.mov(D&eacute;collage de la navette)</td></tr>
+</table>  
+
+<h3>Formatage automatique</h3>
+
+<p>De nombreux textes sont automatiquement convertis en leur
+  &eacute;quivalent XHTML. Les principaux sont les suivants&nbsp;:</p>
+
+<ul>
+  <li>Les liens HTTP sont convertis en liens actifs</li>
+  <li>(R), (TM), (C), 1/4, 1/2, 3/4 sont tous transform&eacute;s dans
+    le caract&egrave;re correct correspondant</li>
+  <li>123 x 456 affiche un symbole de multiplication correct</li>
+  <li>Toute ligne commen&ccedil;ant par au moins 4 tirets est convertie 
+    une ligne horizontale</li>
+</ul>  
+
+<h3>Correcteur orthographique (experimental)</h3>
+
+<p>Le moteur Wiki de Moodle peut &ecirc;tre plac&eacute; en mode correcteur
+orthographique. Si vous placez une ligne de la forme suivante,
+tout ce qui sera &eacute;crit ensuite sera v&eacute;rifi&eacute;.
+
+<pre>
+!SPELL:language_code:language_variant
+</pre>
+
+Exemples&nbsp;:
+<pre>
+!SPELL:en:british
+!SPELL:fr
+</pre>
+
+<p>Le &laquo;&nbsp;language_code&nbsp;&raquo; doit &ecirc;tre remplac&eacute; par le code ad&eacute;quat (en, fr, de,
+  etc.), &laquo;&nbsp;language_variant&nbsp;&raquo; et les deux-points qui le suivent sont
+  facultatifs et peuvent &ecirc;tre &laquo;&nbsp;american&nbsp;&raquo;, &laquo;&nbsp;british&nbsp;&raquo; ou
+  &laquo;&nbsp;canadian&nbsp;&raquo;, dans le cas o&ugrave; le code de langue est en.</p>
+
+<p>Les mots non reconnus sont mis en surbrillance et vous pouvez
+  voir les suggestions en pla&ccedil;ant le pointeur sur le mot.</p>
+
+<p><em>Remarque&nbsp;: le correcteur utilise les librairies
+  <strong>pspell</strong>. Celles-ci doivent &ecirc;tre install&eacute;es sur le
+  serveur, en compagnie des dictionnaires, pour que le correcteur
+  fonctionne. Notamment, le syst&egrave;me d'exploitation Windows
+  n'est pas support&eacute;.</em></p>
