@@ -18,6 +18,7 @@
 
     $strdeletecourse = get_string("deletecourse");
     $stradministration = get_string("administration");
+    $strcoursemanagement = get_string("coursemanagement");
 
     if (!$id) {
 	    print_header("$site->shortname: $strdeletecourse", $site->fullname, 
@@ -46,12 +47,13 @@
         $strdeletecheck = get_string("deletecheck", "", $course->shortname);
         $strdeletecoursecheck = get_string("deletecoursecheck");
 	    print_header("$site->shortname: $strdeletecheck", $site->fullname, 
-                     "<A HREF=\"../$CFG->admin/index.php\">$stradministration</A> -> 
-                      <A HREF=\"delete.php\">$strdeletecourse</A> -> $strdeletecheck");
+                     "<a href=\"../$CFG->admin/index.php\">$stradministration</a> -> ".
+                     "<a href=\"category.php?id=$course->category\">$strcoursemanagement</a> -> ".
+                     "$strdeletecheck");
 
         notice_yesno("$strdeletecoursecheck<BR><BR>$course->fullname ($course->shortname)", 
                      "delete.php?id=$course->id&delete=".md5($course->timemodified), 
-                     "delete.php");
+                     "category.php?id=$course->category");
         exit;
     }
 
@@ -63,8 +65,9 @@
     $strdeletingcourse = get_string("deletingcourse", "", $course->shortname);
 
 	print_header("$site->shortname: $strdeletingcourse", $site->fullname, 
-                 "<A HREF=\"../$CFG->admin/index.php\">$stradministration</A> -> 
-                  <A HREF=\"delete.php\">$strdeletecourse</A> -> $strdeletingcourse");
+                 "<a href=\"../$CFG->admin/index.php\">$stradministration</a> -> ".
+                 "<a href=\"category.php?id=$course->category\">$strcoursemanagement</a> -> ".
+                 "$strdeletingcourse");
 
     print_heading($strdeletingcourse);
 
@@ -78,7 +81,7 @@
 
     print_heading( get_string("deletedcourse", "", $course->shortname) );
 
-    print_continue("delete.php");
+    print_continue("category.php?id=$course->category");
 
     print_footer();
 
