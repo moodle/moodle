@@ -501,13 +501,13 @@ function replace_smilies($text) {
         '}-]'  => 'evil.gif',
         );
 
-    if($runonce == false):
+    if($runonce == false){
         foreach ($emoticons as $emoticon => $image){
             $e[] = $emoticon;
             $img[] = "<IMG ALT=\"$emoticon\" WIDTH=15 HEIGHT=15 SRC=\"{$CFG->wwwroot}/pix/s/{$image}\">";
         }
         $runonce = true;
-    endif;
+    }
 
     return str_replace($e, $img, $text);
 }
