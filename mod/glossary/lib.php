@@ -293,7 +293,7 @@ function glossary_print_entry_definition($entry) {
     echo format_text($definition, $entry->format);
 }
 
-function glossary_print_entry_attachment($entry,$format,$align) {
+function glossary_print_entry_attachment($entry,$format=NULL,$align="right") {
 ///   valid format values: html  : Return the HTML link for the attachment as an icon
 ///                        text  : Return the HTML link for tha attachment as text
 ///                        blank : Print the output to the screen
@@ -366,7 +366,7 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry,$tab="",$cat
     }
     echo "</font>";
     if ( $glossary->allowcomments and !isguest()) {
-        echo " <a href=\"comment.php?id=$cm->id&eid=$entry->id\"><img  alt=\"" . get_string("addcomment","glossary") . "\" src=\"comment.gif\" height=16 width=16 border=0></a> ";
+        echo " <a title=\"" . get_string("addcomment","glossary") . "\" href=\"comment.php?id=$cm->id&eid=$entry->id\"><img src=\"comment.gif\" height=16 width=16 border=0></a> ";
     }
 
     if ($isteacher or $glossary->studentcanpost and $entry->userid == $USER->id) {
@@ -375,7 +375,7 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry,$tab="",$cat
             $mainglossary = get_record("glossary","mainglossary",1,"course",$course->id);
             if ( $mainglossary ) {  // if there is a main glossary defined, allow to export the current entry
 
-                echo " <a href=\"exportentry.php?id=$cm->id&entry=$entry->id&tab=$tab&cat=$cat\"><img  alt=\"" . get_string("exporttomainglossary","glossary") . "\"src=\"export.gif\" height=11 width=11 border=0></a> ";
+                echo " <a title=\"" . get_string("exporttomainglossary","glossary") . "\" href=\"exportentry.php?id=$cm->id&entry=$entry->id&tab=$tab&cat=$cat\"><img src=\"export.gif\" height=11 width=11 border=0></a> ";
 
             }
         }
@@ -388,11 +388,11 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry,$tab="",$cat
 
         // Exported entries can be updated/deleted only by teachers in the main glossary
         if ( !$importedentry and ($isteacher or !$ismainglossary) ) {
-            echo " <a href=\"deleteentry.php?id=$cm->id&mode=delete&entry=$entry->id&tab=$tab&cat=$cat\"><img  alt=\"" . get_string("delete") . "\"src=\"";
+            echo " <a title=\"" . get_string("delete") . "\" href=\"deleteentry.php?id=$cm->id&mode=delete&entry=$entry->id&tab=$tab&cat=$cat\"><img src=\"";
             echo $icon;
             echo "\" height=11 width=11 border=0></a> ";
             
-            echo " <a href=\"edit.php?id=$cm->id&e=$entry->id&tab=$tab&cat=$cat\"><img  alt=\"" . get_string("edit") . "\" src=\"../../pix/t/edit.gif\" height=11 width=11 border=0></a>";
+            echo " <a title=\"" . get_string("edit") . "\" href=\"edit.php?id=$cm->id&e=$entry->id&tab=$tab&cat=$cat\"><img src=\"../../pix/t/edit.gif\" height=11 width=11 border=0></a>";
         } elseif ( $importedentry ) {
             echo " <font size=-1>" . get_string("exportedentry","glossary") . "</font>";
         }
@@ -1065,5 +1065,161 @@ function glossary_print_dynaentry($courseid, $entries) {
     }
     echo "</td>";
     echo "</tr></table></center>";
+}
+
+function glossary_generate_export_file($glossary) {
+global $CFG;
+    glossary_check_moddata_dir($glossary);
+    $h = glossary_open_xml($glossary);
+
+    $status = fwrite ($h,glossary_start_tag("INFO",1,true));
+        fwrite ($h,glossary_full_tag("NAME",2,false,$glossary->name));
+        fwrite ($h,glossary_full_tag("INTRO",2,false,$glossary->intro));
+        fwrite ($h,glossary_full_tag("STUDENTCANPOST",2,false,$glossary->studentcanpost));
+        fwrite ($h,glossary_full_tag("ALLOWDUPLICATEDENTRIES",2,false,$glossary->allowduplicatedentries));
+        fwrite ($h,glossary_full_tag("SHOWSPECIAL",2,false,$glossary->showspecial));
+        fwrite ($h,glossary_full_tag("SHOWALPHABET",2,false,$glossary->showalphabet));
+        fwrite ($h,glossary_full_tag("SHOWALL",2,false,$glossary->showall));
+        fwrite ($h,glossary_full_tag("ALLOWCOMMENTS",2,false,$glossary->allowcomments));
+        fwrite ($h,glossary_full_tag("USEDYNALINK",2,false,$glossary->usedynalink));
+        fwrite ($h,glossary_full_tag("DEFAULTAPPROVAL",2,false,$glossary->defaultapproval));
+        fwrite ($h,glossary_full_tag("GLOBALGLOSSARY",2,false,$glossary->globalglossary));
+    $status =fwrite ($h,glossary_end_tag("INFO",1,true));
+
+    if ( $entries = get_records("glossary_entries","glossaryid",$glossary->id) ) {
+        $status = fwrite ($h,glossary_start_tag("ENTRIES",1,true));
+        foreach ($entries as $entry) {
+            if ( $entry->approved ) {
+                $status = fwrite($h,glossary_start_tag("ENTRY",2,true));
+                    fwrite($h,glossary_full_tag("ID",3,false,$entry->id));
+                    fwrite($h,glossary_full_tag("CONCEPT",3,false,$entry->concept));
+                    fwrite($h,glossary_full_tag("DEFINITION",3,false,$entry->definition));
+                    fwrite($h,glossary_full_tag("FORMAT",3,false,$entry->format));
+                    fwrite($h,glossary_full_tag("ATTACHMENT",3,false,$entry->attachment));
+                    fwrite($h,glossary_full_tag("USEDYNALINK",3,false,$entry->usedynalink));
+                    fwrite($h,glossary_full_tag("CASESENSITIVE",3,false,$entry->casesensitive));
+                    fwrite($h,glossary_full_tag("FULLMATCH",3,false,$entry->fullmatch));
+                $status =fwrite($h,glossary_end_tag("ENTRY",2,true));
+            }
+        }
+        $status =fwrite ($h,glossary_end_tag("ENTRIES",1,true));
+    }
+
+    if ( $categories = get_records("glossary_categories","glossaryid",$glossary->id) ) {
+        $status = fwrite ($h,glossary_start_tag("CATEGORIES",1,true));
+        foreach ($categories as $category) {
+            $status = fwrite ($h,glossary_start_tag("CATEGORY",2,true));
+            fwrite($h,glossary_full_tag("NAME",3,false,$category->name));
+            if ( $catentries = get_records("glossary_entries_categories","categoryid",$category->id) ) {
+                $count = 0;
+                foreach ($catentries as $catentry) {
+                    fwrite($h,glossary_full_tag("ENTRYID$count",3,false,$catentry->entryid));
+                    $count++;
+                }
+            }
+            $status = fwrite($h,glossary_end_tag("CATEGORY",2,true));
+        }
+        $status = fwrite($h,glossary_end_tag("CATEGORIES",1,true));
+    }
+    $h = glossary_close_xml($h);
+}
+// Functions designed by Eloy Lafuente
+//
+//Function to create, open and write header of the xml file
+function glossary_open_xml($glossary) {
+
+        global $CFG;
+        
+        $status = true;
+
+        //Open for writing
+
+        $file = $CFG->dataroot."/$glossary->course/glossary/". clean_filename($glossary->name) ."/glossary.xml";
+        $h = fopen($file,"w");
+        //Writes the header
+        $status = fwrite ($h,"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+        if ($status) {
+            $status = fwrite ($h,glossary_start_tag("GLOSSARY",0,true));
+        }
+        if ($status) {
+            return $h;
+        } else {
+            return false;
+        }
+}
+
+//Close the file
+function glossary_close_xml($h) {
+        $status = fwrite ($h,glossary_end_tag("GLOSSARY",0,true));
+        return fclose($h);
+}
+
+//Return the xml start tag 
+function glossary_start_tag($tag,$level=0,$endline=false) {
+        if ($endline) {
+           $endchar = "\n";
+        } else {
+           $endchar = "";
+        }
+        return str_repeat(" ",$level*2)."<".strtoupper($tag).">".$endchar;
+}
+    
+//Return the xml end tag 
+function glossary_end_tag($tag,$level=0,$endline=true) {
+        if ($endline) {
+           $endchar = "\n";
+        } else {
+           $endchar = "";
+        }
+        return str_repeat(" ",$level*2)."</".strtoupper($tag).">".$endchar;
+}
+    
+//Return the start tag, the contents and the end tag
+function glossary_full_tag($tag,$level=0,$endline=true,$content,$to_utf=true) {
+        $st = glossary_start_tag($tag,$level,$endline);
+        $co="";
+        if ($to_utf) {
+            $co = preg_replace("/\r\n|\r/", "\n", utf8_encode(htmlspecialchars($content)));
+        } else {
+            $co = preg_replace("/\r\n|\r/", "\n", htmlspecialchars($content));
+        }
+        $et = glossary_end_tag($tag,0,true);
+        return $st.$co.$et;
+}
+
+    //Function to check and create the needed moddata dir to
+    //save all the mod backup files. We always name it moddata
+    //to be able to restore it, but in restore we check for
+    //$CFG->moddata !!
+function glossary_check_moddata_dir($glossary) {
+  
+    global $CFG;
+
+    $status = glossary_check_dir_exists($CFG->dataroot."/$glossary->course",true);
+    if ( $status ) {
+        $status = glossary_check_dir_exists($CFG->dataroot."/$glossary->course/glossary",true);
+        if ( $status ) {
+            $status = glossary_check_dir_exists($CFG->dataroot."/$glossary->course/glossary/". clean_filename($glossary->name),true);
+        }
+    }
+    return $status;
+}
+
+//Function to check if a directory exists
+//and, optionally, create it
+function glossary_check_dir_exists($dir,$create=false) {
+
+    global $CFG; 
+
+    $status = true;
+    if(!is_dir($dir)) {
+        if (!$create) {
+            $status = false;
+        } else {
+            umask(0000);
+            $status = mkdir ($dir,$CFG->directorypermissions);
+        }
+    }
+    return $status;
 }
 ?>

@@ -196,6 +196,7 @@ print_header(strip_tags("$course->shortname: $glossary->name"), "$course->fullna
 
 print_heading($glossary->name);
 
+
 include("edit.html");
 
 print_footer($course);

@@ -4,7 +4,6 @@
     require_once("lib.php");
     
     require_variable($id);           // Course Module ID
-    optional_variable($eid);         // Entry ID
 
     optional_variable($tab,GLOSSARY_APPROVAL_VIEW);
     optional_variable($l,"ALL");
@@ -25,14 +24,8 @@
     if (!isteacher($course->id)) {
         error("You must be a teacher to use this page.");
     } 
-    $newentry->id = $eid;
-    $newentry->approved = 1;
 
-    if (! update_record("glossary_entries", $newentry)) {
-        error("Could not update your glossary");
-    } else {
-        add_to_log($course->id, "glossary", "approve entry", "showentry.php?id=$cm->id&eid=$eid", "$eid");
-    }
-    redirect("view.php?id=$cm->id&tab=$tab&l=$l",get_string("entryapproved","glossary"),1);
+    glossary_generate_export_file($glossary);
+    redirect("view.php?id=$cm->id&tab=$tab&l=$l",get_string("glosssaryexported","glossary"),1);
     die;
 ?>

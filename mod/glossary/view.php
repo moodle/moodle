@@ -134,9 +134,11 @@
         "", "", true, update_module_button($cm->id, $course->id, $strglossary),
         navmenu($course, $cm));
     
-    print_heading($glossary->name);
-    
-    
+    echo '<p align="center"><font size="3"><b>' . stripslashes_safe($glossary->name);
+    echo ' <a title ="' . get_string("printerfriendly","glossary") . '" target="_blank" href="print.php?id=' . $cm->id . '&tab=' . $tab . '&sortkey=' . $sortkey . '&sortorder=' . $sortorder . '">';
+    echo '<img border=0 src="print.gif"/></a>';
+    echo '</b></font></p>';
+
 /// Info box
 
     if ( $glossary->intro ) {
@@ -145,16 +147,25 @@
         print_simple_box_end();
     }
 
-/// Add button
+/// Add buttons
+
     if (!isguest()) {
         if ( isteacher($course->id) or $glossary->studentcanpost  ) {
+            unset($options);
             $options = array ("id" => "$cm->id");
             echo '<center><p>';
             print_single_button("edit.php", $options, $straddentry);
             echo '</p></center>';
         }
     } 
-    echo '<p>';
+
+/*
+    unset($options);
+    $options = array ("id" => "$cm->id");
+    echo '<center><p>';
+    print_single_button("export.php", $options, get_string("exportglossary","glossary"));
+    echo '</p></center>';
+*/
 
 /// Search box
 

@@ -42,7 +42,7 @@
     $strglossary     = get_string("modulename", "glossary");
 
     print_header(strip_tags("$course->shortname: $glossary->name"), "$course->fullname",
-                 "$navigation <A HREF=index.php?id=$course->id>$strglossaries</A> -> <A HREF=view.php?id=$cm->id&currentview=categories>$glossary->name</a> -> " . get_string("categories","glossary"),
+                 "$navigation <A HREF=index.php?id=$course->id>$strglossaries</A> -> <A HREF=view.php?id=$cm->id&tab=GLOSSARY_CATEGORY_VIEW>$glossary->name</a> -> " . get_string("categories","glossary"),
                   "", "", true, update_module_button($cm->id, $course->id, $strglossary),
                   navmenu($course, $cm));
 
