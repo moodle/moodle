@@ -147,6 +147,7 @@ function me() {
 
     } else {
         notify("Warning: Could not find any of these web server variables: \$REQUEST_URI, \$PHP_SELF or \$SCRIPT_NAME");
+        return false;
     }
 }
 
@@ -162,6 +163,7 @@ function qualified_me() {
         $hostname = $_ENV["SERVER_NAME"];
     } else {
         notify("Warning: could not find the name of this server!");
+        return false;
     }
 
     $protocol = (isset($_SERVER["HTTPS"]) and $_SERVER["HTTPS"] == "on") ? "https://" : "http://";
@@ -425,8 +427,8 @@ function get_slash_arguments($file="file.php") {
 
     $pathinfo = explode($file, $string);
     
-    if (!empty($path_info[1])) {
-        return $path_info[1];
+    if (!empty($pathinfo[1])) {
+        return $pathinfo[1];
     } else {
         return false;
     }
