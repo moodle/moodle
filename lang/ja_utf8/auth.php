@@ -1,5 +1,5 @@
 <?php // $Id$ 
-      // auth.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004101900)
+      // auth.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004111000)
 
 
 $string['auth_common_settings'] = '一般設定';
@@ -49,6 +49,7 @@ $string['auth_ldap_host_url'] = 'LDAPホストのURLを下記のように明示�
 $string['auth_ldap_login_settings'] = 'ログイン設定';
 $string['auth_ldap_memberattribute'] = 'ユーザがグループに属性している場合、ユーザの属性を特定してください。通常は\'member\'です。';
 $string['auth_ldap_objectclass'] = 'フィルタはユーザ名検索時に使用されます。通常は、objectClass=posixAccountのように設定します。デフォルトのobjectClass=*は全てのオブジェクトをLDAPより返します。';
+$string['auth_ldap_opt_deref'] = '検索時にエイリアスがどのように扱われるか決定してください。次の値から選択してください:  「No」 (LDAP_DEREF_NEVER) または 「Yes」 (LDAP_DEREF_ALWAYS)';
 $string['auth_ldap_passwdexpire_settings'] = 'LDAPパスワード有効期限設定';
 $string['auth_ldap_search_sub'] = 'サブコンテキストからユーザを検索する場合は、  <> 0 のように入力してください。';
 $string['auth_ldap_server_settings'] = 'LDAPサーバ設定';
