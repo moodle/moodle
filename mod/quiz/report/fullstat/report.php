@@ -4,6 +4,7 @@
 //  Instance delete function implemented
 // Version 2.4 2003/12/17 -- Error when Short Answers are blank fixed.  Delete function removed (in favor of Overview module)
 //   Excel worksheet 3 now reports percent correct for M/C and T/F items
+// Version 2.5 2003/12/18 --Percentages calculated and displayed a different way.
 
 /// This report shows the specific responses made by each student for each question.
 /// and provides an analysis of the responses for each item
@@ -341,6 +342,9 @@ $string[''] = "";
         $formatc->set_align('center');
         $formatb =& $workbook->add_format();
         $formatb->set_bold(1);
+        $formatbpct =& $workbook->add_format();
+        $formatbpct->set_bold(1);
+        $formatbpct->set_num_format('0.0%');
         $formatbc =& $workbook->add_format();
         $formatbc->set_bold(1);
         $formatbc->set_align('center');
@@ -492,16 +496,16 @@ $string[''] = "";
 
         //Output the total percent correct
         $row++;
-        $myxls->write_string($row,1,"Percent Correct:",$formatbrt);
+        $myxls->write_string($row,0,"Percent Correct:",$formatbrt);
         for ($i = 1; $i<= $table_colcount;$i++){
-            $myxls->write_string($row,$i,$pct_correct[$i],$formatbc);
+            $myxls->write_number($row,$i,$pct_correct[$i],$formatbpct);
         }
 
     //Finally display the itemanalysis
         $row++;
-        $myxls->write_string($row,0,"Discrimination Index",$formatbc);
-        $myxls->write_string($row+1,0,"Top third",$formatbc);
-        $myxls->write_string($row+2,0,"Bottom third",$formatbc);
+        $myxls->write_number($row,0,"Discrimination Index",$formatbc);
+        $myxls->write_number($row+1,0,"Top third",$formatbc);
+        $myxls->write_number($row+2,0,"Bottom third",$formatbc);
         for ($i = 1; $i<= $table_colcount;$i++){
             if($bott_scores[$i] > 0) {
                 $val = round(($top_scores[$i]/$bott_scores[$i]),1);
@@ -539,10 +543,9 @@ $string[''] = "";
                     $row++;
                     $label = "A-$thischoice[choiceno]";
                     $nowstat =  $analysis[$cno][$itemcount];
-                    $pct_cor = qr_make_pct($nowstat,$total_user_count);
-                    $nowstatpct = $nowstat . " ($pct_cor)";
-                    $myxls->write_string($row,1,$nowstatpct,$formatb);
-                    $myxls->write_string($row,2,$label,$formatb);
+                    $pct = qr_make_pct($nowstat,$total_user_count);
+                    $myxls->write_number($row,1,$nowstat,$formatb);
+                    $myxls->write_number($row,2,$pct,$formatbpct);
                     $myxls->write_string($row,3,$thischoice[answer],$formatb);
                 }
             }
@@ -551,16 +554,18 @@ $string[''] = "";
                 $row++;
                 $nowstat =  $analysis[1][$qcount];
                 $nowresp = substr($nowstat,5);
-                $pct_cor = qr_make_pct($nowresp,$total_user_count);
-                $myxls->write_string($row,1,$pct_cor,$formatb);
-                $myxls->write_string($row,2,'True',$formatb);
+                $pct = qr_make_pct($nowresp,$total_user_count);
+                $myxls->write_number($row,1,$nowresp,$formatb);
+                $myxls->write_number($row,2,$pct,$formatbpct);
+                $myxls->write_string($row,3,'True',$formatb);
                 //"False" responses
                 $row++;
-                $nowstat =  $analysis[2][$qcount];
+                $nowstat =  $analysis[1][$qcount];
                 $nowresp = substr($nowstat,6);
-                $pct_cor = qr_make_pct($nowresp,$total_user_count);
-                $myxls->write_string($row,1,$pct_cor,$formatb);
-                $myxls->write_string($row,2,'True',$formatb);
+                $pct = qr_make_pct($nowresp,$total_user_count);
+                $myxls->write_number($row,1,$nowresp,$formatb);
+                $myxls->write_number($row,2,$pct,$formatbpct);
+                $myxls->write_string($row,3,'False',$formatb);
             }
         }
 
@@ -734,7 +739,7 @@ $string[''] = "";
     //Display the total percent correct
     print("<tr valign=top><th align=right colspan=2>$strpercentcorrect:</th>");
     for ($i = 0; $i< $table_colcount;$i++){
-        print ("<th>{$pct_correct[$i]}</th> ");
+        print ("<th>{$pct_correct[$i]}%</th> ");
     }
     print("</tr>\n");
     //Finally display the itemanalysis
@@ -770,8 +775,8 @@ $string[''] = "";
             foreach($nowchoices as $thischoice){
                 $cno = $thischoice['choiceno'];
                 $nowstat =  $analysis[$cno][$itemcount];
-                $pct_cor = qr_make_pct($nowstat,$total_user_count);
-                print("<tr valign=top><td align='right' width='10%'>$nowstat ($pct_cor)&nbsp;</td>");
+                $pct_cor = qr_make_pct($nowstat,$total_user_count) *100;
+                print("<tr valign=top><td align='right' width='10%'>$nowstat ($pct_cor%)&nbsp;</td>");
                 print("<td width='5%' align='center'><b>A-$cno</b></td><td>{$thischoice['answer']}</td></tr>\n");
             }
         }
@@ -780,15 +785,15 @@ $string[''] = "";
             $nowstat =  $analysis[1][$qcount];
             $colpos = strpos($nowstat,":");
             $nowresp = substr($nowstat,$colpos+1);
-            $pct_cor = qr_make_pct($nowresp,$total_user_count);
-            print("<tr valign=top><td align='right'>$nowresp ($pct_cor)&nbsp;</td>");
+            $pct_cor = qr_make_pct($nowresp,$total_user_count) *100;
+            print("<tr valign=top><td align='right'>$nowresp ($pct_cor%)&nbsp;</td>");
             print("<td colspan=2 align=left>True</td></tr>\n");
             //"False" responses
             $nowstat =  $analysis[2][$qcount];
             $colpos = strpos($nowstat,":");
             $nowresp = substr($nowstat,$colpos+1);
-            $pct_cor = qr_make_pct($nowresp,$total_user_count);
-            print("<tr valign=top><td align='right'>$nowresp ($pct_cor)&nbsp;</td>");
+            $pct_cor = qr_make_pct($nowresp,$total_user_count) *100;
+            print("<tr valign=top><td align='right'>$nowresp ($pct_cor%)&nbsp;</td>");
             print("<td colspan=2 align=left>False</td></tr>\n");
         }
     }
@@ -927,12 +932,11 @@ function qr_make_footers(){
 function qr_make_pct($this_correct,$totusers){
     global  $qs_in_order,$qtally,$quests,$total_user_count;
     if($this_correct>0 and $totusers > 0){
-//        $pct_cor =round((($this_correct/$totusers)*100),1);
-        $pct_cor =(floor(($this_correct/$totusers)*1000)/10);
+        $pct_cor =(floor(($this_correct/$totusers)*10)/10);
     } else {
         $pct_cor = 0;
     }
-    return $pct_cor ."%";
+    return $pct_cor;
 }
 
 function qr_answer_lookup($qid,$thisanswer){
