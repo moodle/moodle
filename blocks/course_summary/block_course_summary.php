@@ -2,7 +2,7 @@
 
 class CourseBlock_course_summary extends MoodleBlock {
     function CourseBlock_course_summary ($course) {
-        if (empty($course->category)) {   // Site level
+        if(!empty($course) && $course->id == SITEID) {   // Site level
             $this->title = get_string('frontpagedescription');
         } else {
             $this->title = get_string('blockname','block_course_summary');
@@ -26,13 +26,13 @@ class CourseBlock_course_summary extends MoodleBlock {
         $this->content = New stdClass;
         $options->noclean = true;    // Don't clean Javascripts etc
         $this->content->text = format_text($this->course->summary, FORMAT_HTML, $options);
-        if (isediting($this->course->id)) {
-            if (empty($this->course->category)) {
+        if(isediting($this->course->id)) {
+            if($this->course->id == SITEID) {
                 $editpage = $CFG->wwwroot.'/admin/site.php';
             } else {
                 $editpage = $CFG->wwwroot.'/course/edit.php?id='.$this->course->id;
             }
-            $this->content->text .= "<div align=\"right\"><a href=\"$editpage\"><img src=\"$CFG->pixpath/t/edit.gif\" /></a></div>";
+            $this->content->text .= '<div style="text-align: right;"><a href="'.$editpage.'"><img src="'.$CFG->pixpath.'/t/edit.gif" /></a></div>';
         }
         $this->content->footer = '';
 
