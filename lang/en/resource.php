@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.2 development (2003111400)
+      // resource.php - created with Moodle 1.2 development (2003120700)
 
 
 $string['addresource'] = 'Add resource';
@@ -7,6 +7,16 @@ $string['chooseafile'] = 'Choose or upload a file';
 $string['configdefaulturl'] = 'This value is used to prefill the URL form when creating a new URL-based resource.';
 $string['configfilterexternalpages'] = 'Enabling this setting will cause all external resources (web pages, uploaded HTML files) to be processed by the currently defined site filters (such as glossary autolinks, for example).  Turning this option on may cause your course pages to slow down significantly - use with caution and only if you really need it.';
 $string['configframesize'] = 'When a web page or an uploaded file is displayed within a frame, this value is the size (in pixels) of the top frame (which contains the navigation).';
+$string['configpopup'] = 'When adding a new resource which is able to be shown in a popup window, should this option be enabled by default?';
+$string['configpopupdirectories'] = 'Should popup windows show directory links by default?';
+$string['configpopupheight'] = 'What height should be the default height for new popup windows?';
+$string['configpopuplocation'] = 'Should popup windows show the location bar by default?';
+$string['configpopupmenubar'] = 'Should popup windows show the menu bar by default?';
+$string['configpopupresizable'] = 'Should popup windows be resizable by default?';
+$string['configpopupscrollbars'] = 'Should popup windows be scrollable by default?';
+$string['configpopupstatus'] = 'Should popup windows show the status bar by default?';
+$string['configpopuptoolbar'] = 'Should popup windows show the tool bar by default?';
+$string['configpopupwidth'] = 'What width should be the default width for new popup windows?';
 $string['configwebsearch'] = 'When adding a URL as a webpage or weblink, this location is offered as a site to help the user search for the URL they want.';
 $string['editingaresource'] = 'Editing a resource';
 $string['example'] = 'Example';
