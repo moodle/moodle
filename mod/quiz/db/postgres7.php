@@ -136,6 +136,10 @@ function quiz_upgrade($oldversion) {
         }
     }
 
+    if ($oldversion < 2004021300) {
+        table_column("quiz_questions", "", "questiontextformat", "integer", "2", "", "0", "not null", "questiontext");
+    }
+
     return true;
 }
 

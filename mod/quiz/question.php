@@ -102,8 +102,9 @@
 
         // First, save the basic question itself
 
-        $question->name         = $form->name;
-        $question->questiontext = $form->questiontext;
+        $question->name               = $form->name;
+        $question->questiontext       = $form->questiontext;
+        $question->questiontextformat = $form->questiontextformat;
 
         if (empty($form->image)) {
             $question->image = "";

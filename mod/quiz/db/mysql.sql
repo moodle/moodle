@@ -168,6 +168,7 @@ CREATE TABLE `prefix_quiz_questions` (
   `category` int(10) NOT NULL default '0',
   `name` varchar(255) NOT NULL default '',
   `questiontext` text NOT NULL,
+  `questiontextformat` tinyint(2) NOT NULL default '0',
   `image` varchar(255) NOT NULL default '',
   `defaultgrade` INT UNSIGNED DEFAULT '1' NOT NULL,
   `qtype` smallint(6) NOT NULL default '0',

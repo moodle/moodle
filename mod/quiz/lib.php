@@ -515,7 +515,7 @@ function quiz_print_question($number, $question, $grade, $quizid,
 
     if ($question->qtype == DESCRIPTION) {  // Special case question - has no answers etc
         echo '<p align="center">';
-        echo format_text($question->questiontext, FORMAT_HTML, NULL, $courseid);
+        echo format_text($question->questiontext, $question->questiontextformat, NULL, $courseid);
         quiz_print_possible_question_image($quizid, $question);
         echo '</p>';
         return true;
@@ -563,7 +563,7 @@ function quiz_print_question($number, $question, $grade, $quizid,
 
        case SHORTANSWER: 
        case NUMERICAL:
-           echo format_text($question->questiontext, FORMAT_HTML, NULL, $courseid);
+           echo format_text($question->questiontext, $question->questiontextformat, NULL, $courseid);
            quiz_print_possible_question_image($quizid, $question);
            if ($response) {
                $value = "value=\"$response[0]\"";
@@ -596,7 +596,7 @@ function quiz_print_question($number, $question, $grade, $quizid,
            if (!$false->answer) {
                $false->answer = get_string("false", "quiz");
            }
-           echo format_text($question->questiontext, FORMAT_HTML, NULL, $courseid);
+           echo format_text($question->questiontext, $question->questiontextformat, NULL, $courseid);
            quiz_print_possible_question_image($quizid, $question);
 
            $truechecked = "";
@@ -639,7 +639,7 @@ function quiz_print_question($number, $question, $grade, $quizid,
            if (!$answers = get_records_list("quiz_answers", "id", $options->answers)) {
                notify("Error: Missing question answers!");
            }
-           echo format_text($question->questiontext, FORMAT_HTML, NULL, $courseid);
+           echo format_text($question->questiontext, $question->questiontextformat, NULL, $courseid);
            quiz_print_possible_question_image($quizid, $question);
            echo "<table align=\"right\">";
            echo "<tr><td valign=\"top\">$stranswer:&nbsp;&nbsp;</td><td>";
@@ -692,7 +692,7 @@ function quiz_print_question($number, $question, $grade, $quizid,
                notify("Error: Missing subquestions for this question!");
            }
            if (!empty($question->questiontext)) {
-               echo format_text($question->questiontext, FORMAT_HTML, NULL, $courseid);
+               echo format_text($question->questiontext, $question->questiontextformat, NULL, $courseid);
            }
            quiz_print_possible_question_image($quizid, $question);
 
@@ -741,7 +741,7 @@ function quiz_print_question($number, $question, $grade, $quizid,
            if (!$options = get_record("quiz_randomsamatch", "question", $question->id)) {
                notify("Error: Missing question options!");
            }
-           echo format_text($question->questiontext, FORMAT_HTML, NULL, $courseid);
+           echo format_text($question->questiontext, $question->questiontextformat, NULL, $courseid);
            quiz_print_possible_question_image($quizid, $question);
 
            /// First, get all the questions available
@@ -826,7 +826,7 @@ function quiz_print_question($number, $question, $grade, $quizid,
            // For this question type, we better print the image on top:
            quiz_print_possible_question_image($quizid, $question);
 
-            $qtextremaining = format_text($question->questiontext, FORMAT_HTML, NULL, $courseid);
+            $qtextremaining = format_text($question->questiontext, $question->questiontextformat, NULL, $courseid);
             // The regex will recognize text snippets of type {#X} where the X can be any text not containg } or white-space characters.
             while (ereg('\{#([^[:space:]}]*)}', $qtextremaining, $regs)) {
 
