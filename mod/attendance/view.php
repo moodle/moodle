@@ -2,7 +2,7 @@
 /// This page prints a particular instance of attendance
     require_once("../../config.php");
     require_once("lib.php" );
-/// @include_once("$CFG->dirroot/mod/attendance/lib.php"); 
+/// @include_once("$CFG->dirroot/mod/attendance/lib.php"); teachered
 // error_reporting(E_ALL);
     optional_variable($id);    // Course Module ID, or
     optional_variable($a);     // attendance ID
@@ -40,6 +40,7 @@
 
     $strattendances = get_string("modulenameplural", "attendance");
     $strattendance  = get_string("modulename", "attendance");
+    $strteacheredit = get_string("teacheredit", "attendance");
 
     print_header("$course->shortname: $attendance->name", "$course->fullname",
                  "$navigation <A HREF=index.php?id=$course->id>$strattendances</A> -> $attendance->name", 
@@ -73,12 +74,12 @@
    // put it in the array for use in the attendance table
 	$strviewall = get_string("viewall", "attendance");
  	$strviewweek = get_string("viewweek", "attendance");
-	echo "<table align=\"right\" width=\"50%\"".
-         "border=\"0\" cellpadding=\"0\" cellspacing=\"0\">";
-  echo "<tr><td align=\"right\"><a href=\"viewall.php?id=".$course->id."\">";
-  echo "$strviewall</a></td></tr>";
-  echo "<tr><td align=\"right\"><a href=\"viewweek.php?scope=week&id=".$attendance->id."\">";
-  echo "$strviewweek</a></td></tr></table><br /> <br />";
+	echo "<p align=\"right\">";
+  if (isteacher($course->id)) {
+    echo "<a href=\"teacheredit.php?update=".$cm->id."&return=true\">$strteacheredit</a><br/>";
+  }
+  echo "<a href=\"viewall.php?id=".$course->id."\">$strviewall</a><br/>";
+  echo "<a href=\"viewweek.php?scope=week&id=".$attendance->id."\">$strviewweek</a><br/></p>";
 
   // this is the wrapper table
   echo "<table align=\"center\" width=\"80\" class=\"generalbox\"".
