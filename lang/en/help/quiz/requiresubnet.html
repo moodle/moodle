@@ -1,0 +1,27 @@
+<p align=center><b>Require network addresses</b></p>
+
+<p>This field is optional.</p>
+
+<p>You can restrict access for a quiz to particular subnets 
+   on the LAN or Internet by specifying a comma-separated list of 
+   partial or full IP address numbers.</p>
+
+<p>This is especially useful for a proctored quiz, where you want 
+   to be sure that only people in a certain room are able to 
+   access the quiz.</p>
+
+<p>For example:  <b>192.168. , 231.54.211.0/20, 231.3.56.211</b></p>
+
+<p>There are three types of numbers you can use (you can not use 
+   text based domain names like example.com):
+<ol>
+<li>Full IP addresses, such as <b>192.168.10.1</b> which will match 
+    a single computer (or proxy).</li>
+<li>Partial addresses, such as <b>192.168</b> which will match anything 
+    starting with those numbers.</li>
+<li>CIDR notation, such as <b>231.54.211.0/20</b> which allows you to specify
+    more detailed subnets.</li>
+</ol>
+</p>
+
+<p>Spaces are ignored.</p>
