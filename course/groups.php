@@ -58,6 +58,7 @@
             $isteacheredit = isteacheredit($course->id);
             foreach ($groups as $group) {
                 $t = $group;
+                $t->description = format_text($group->description);
                 $t->picture = print_group_picture($group, $course->id, true, true, true);
                 if ($t->users = get_users_in_group($group->id, 'u.lastname ASC')) {
                     foreach ($t->users as $key => $user) {
