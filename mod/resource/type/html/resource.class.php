@@ -104,6 +104,7 @@ function display() {
             print_header();
             print_simple_box(format_text($resource->alltext, FORMAT_HTML, $formatoptions, $course->id), 
                                          "center", "", "$THEME->cellcontent", "20");
+            print_footer($course);
         } else {                           /// Make a page and a pop-up window
 
             print_header($pagetitle, $course->fullname, "$navigation {$resource->name}", 
@@ -132,7 +133,6 @@ function display() {
             print_footer($course);
         }
     } else {    /// not a popup at all
-        die;
 
         add_to_log($course->id, "resource", "view", "view.php?id={$this->cm->id}", $resource->id, $this->cm->id);
         print_header($pagetitle, $course->fullname, "$navigation {$resource->name}",
