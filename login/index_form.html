@@ -1,38 +1,38 @@
-<table width="90%" border="0" cellspacing="10" cellpadding="5" align="center">
-  <tr>
+<table width="90%" border="0" cellspacing="10" cellpadding="5" align="center" class="loginbox">
 <?php if ($show_instructions) { ?>
-    <td width="50%" class="headingblock">
-      <p align="center"><b><font size="3"><?php  print_string("returningtosite") ?></font></b></p>
-    </td>
-    <td width="50%" class="headingblock">
-      <p align="center"><b><font size="3"><?php  print_string("firsttime") ?></font></b></p>
-    </td>
-<?php } ?>
-  </tr>
   <tr>
-    <td width="50%" align="center" valign="top" class="generalbox">
+    <th width="50%" class="header left">
+      <?php  print_string("returningtosite") ?>
+    </th>
+    <th width="50%" class="header right">
+      <?php  print_string("firsttime") ?>
+    </th>
+  </tr>
+<?php } ?>
+  <tr>
+    <td width="50%" align="center" valign="top" class="content left">
       <p><?php print_string("loginusing") ?>:<br />
         (<?php print_string("cookiesenabled");?>) 
          <?php helpbutton("cookies", get_string("cookiesenabled"))?><br /><?php formerr($errormsg) ?>
       </p>
       <form action="index.php" method="post" name="login" id="login">
-        <table border="0" align="center" style="font-size: small">
+        <table border="0" align="center">
         <tr>
           <td width="80%">
-            <table align="center" style="font-size: small">
-              <tr> 
-                <td align="right">
+            <table align="center" class="loginform">
+              <tr class="username"> 
+                <td align="right" class="c0">
                   <?php print_string("username") ?>:
                 </td>
-                <td>
+                <td class="c1">
                   <input type="text" name="username" size="15" value="<?php p($frm->username) ?>" alt="<?php print_string("username") ?>" /> 
                 </td>
               </tr>
-              <tr> 
-                <td align="right">
+              <tr class="password"> 
+                <td align="right" class="c0">
                   <?php print_string("password") ?>:
                 </td>
-                <td>
+                <td class="c1">
                   <input type="password" name="password" size="15" value="" alt="<?php print_string("password") ?>" />
                 </td>
               </tr>
@@ -74,7 +74,7 @@
     </td>
 
 <?php if ($show_instructions) { ?>
-    <td width="50%" valign="top" class="generalbox">
+    <td width="50%" valign="top" class="content right">
 <?php     switch ($CFG->auth) {
               case "email":
                  print_string("loginsteps", "", "signup.php");
