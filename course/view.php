@@ -86,20 +86,7 @@
         }
     }
 
-
-    switch ($course->format) {
-        case "weeks":
-            include("weeks.php");
-            break;
-        case "social":
-            include("social.php");
-            break;
-        case "topics":
-            include("topics.php");
-            break;
-        default:
-            error("Course format not defined yet!");
-    }
+    require("format/$course->format.php");  // Include the actual course format
 
     print_footer();
 
