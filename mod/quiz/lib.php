@@ -422,10 +422,15 @@ function quiz_update_instance($quiz) {
         }
     }
 
-    delete_records('event', 'modulename', 'quiz', 'instance', $quiz->id);  // Delete old and add new
-
-    $event = NULL;
-    $event->name        = $quiz->name;
+    // currently this code deletes all existing events and adds new ones
+    // this should be improved to update existing events only
+    if ($events = get_records_select('event', "modulename = 'quiz' and instance = '$quiz->id'")) {
+        foreach($events as $event) {
+            delete_event($event->id);
+        }
+    }
+    
+    unset($event);
     $event->description = $quiz->intro;
     $event->courseid    = $quiz->course;
     $event->groupid     = 0;
@@ -438,20 +443,22 @@ function quiz_update_instance($quiz) {
     $event->timeduration = ($quiz->timeclose - $quiz->timeopen);
 
     if ($event->timeduration > QUIZ_MAX_EVENT_LENGTH) {  /// Long durations create two events
-        $event2 = $event;
 
-        $event->name         .= ' ('.get_string('quizopens', 'quiz').')';
+        $event->name          = $quiz->name.' ('.get_string('quizopens', 'quiz').')';
         $event->timeduration  = 0;
+        add_event($event);
 
-        $event2->timestart    = $quiz->timeclose;
-        $event2->eventtype    = 'close';
-        $event2->timeduration = 0;
-        $event2->name        .= ' ('.get_string('quizcloses', 'quiz').')';
-
-        add_event($event2);
+        $event->timestart    = $quiz->timeclose;
+        $event->eventtype    = 'close';
+        $event->name         = $quiz->name.' ('.get_string('quizcloses', 'quiz').')';
+        unset($event->id);
+        add_event($event);
+    } else { // single event with duration
+        $event->name        = $quiz->name;
+        add_event($event);
     }
 
-    add_event($event);
+    
 
     return true;
 }
@@ -492,8 +499,10 @@ function quiz_delete_instance($id) {
         $result = false;
     }
 
-    if (! delete_records('event', 'modulename', 'quiz', 'instance', $quiz->id)) {
-        $result = false;
+    if ($events = get_records_select('event', "modulename = 'quiz' and instance = '$quiz->id'")) {
+        foreach($events as $event) {
+            delete_event($event->id);
+        }
     }
 
     return $result;
@@ -1933,9 +1942,9 @@ function get_questions_category( $category ) {
 // ->single many or just one correct answer
 // ->answers    array of answer objects
 // ----NUMERIC
-// ->min	minimum answer span
-// ->max	maximum answer span
-// ->answer	single answer
+// ->min  minimum answer span
+// ->max  maximum answer span
+// ->answer single answer
 // ----MATCH
 // ->subquestions array of sub questions
 // ---->questiontext
