@@ -9,37 +9,60 @@ information in files called version.php.  There is
 one of these for the main tables (in this directory)
 and one for each module.
 
-When upgrading from any previous version of Moodle, 
-all you normally will need to do is this:
 
-1)  Make a backup of your current Moodle installation 
-    in the unlikely case that something goes wrong and 
-    you need to restore the older version.
+Before the upgrade
+------------------
 
-2a) If you are using CVS, just go the root directory
-    and type "cvs update -d" (or whatever the equivalent
-    is on your non-Unix server).
+Before upgrading any version of Moodle, I recommend
+making a backup copy of the moodle directory, your 
+data directory and your database, to guard against 
+the very unlikely event that something in the upgrade 
+goes wrong.
 
-                       OR
+At the very least, save a copy of your config.php 
+file and any custom themes or plug-ins you have developed.
 
-2b) Remove the current installation, and then unpack 
-    the new tar or zip file in the same location.
-    Make sure you copy the config.php file from your 
-    old installion to the new installation (or make a 
-    new one by editing config-dist.php).  If you have 
-    created new themes or other plug-ins then make sure
-    you copy those across too.
 
-3)  Visit the home page of your installation while logged
-    in as an admin.  Moodle will automatically detect the 
-    new version and perform any database upgrades that 
-    might be necessary.
+Upgrading the files using CVS
+--------------------------------
+
+If you are using CVS, just go to the Moodle root 
+directory and type "cvs update -d".  If you have been
+editing your files watch the messages very closely 
+for possible conflicts.
+
+
+Upgrading the files using a downloaded archive
+-------------------------------------------------
+
+Remove the current installation directory
+and then unpack the new tar or zip file into the same 
+location.   (Overwriting an old installation will 
+usually work, but I can't guarantee that).
+
+Next, copy the config.php file from your old installation
+into the new installation (or make a new one by editing 
+config-dist.php).  If you have created new themes or 
+other plug-ins then make sure you copy those back too.
+
+
+Finishing the upgrade
+---------------------
+
+Visit the admin page of your installation to complete 
+the upgrade (eg http://example.com/moodle/admin).  it 
+doesn't matter if you are logged in as admin or not.
+
+Moodle will automatically detect the new version 
+and perform any database upgrades that might be 
+necessary.
 
 If all goes well (no error messages) then you can just 
-go on using Moodle normally.
+go on using Moodle normally!
+
 
 If you have problems with this procedure, let me know.
 
-Cheers,
+Cheers, and have fun!
 Martin
 
