@@ -8,6 +8,7 @@
     require_once("../../config.php");
 
     $CFG->algebrafilterdir = "filter/algebra";
+    $CFG->texfilterdir = "filter/tex";
     $CFG->algebraimagedir = "filter/algebra";
 
     error_reporting(E_ALL);
@@ -48,16 +49,16 @@
             $texexp = '\Large ' . $texexp;
             switch (PHP_OS) {
                 case "Linux":
-                    system("$CFG->dirroot/$CFG->algebrafilterdir/mimetex.linux -e $pathname ". escapeshellarg($texexp) );
+                    system("$CFG->dirroot/$CFG->texfilterdir/mimetex.linux -e $pathname ". escapeshellarg($texexp) );
                 break;
                 case "WINNT":
                 case "WIN32":
                 case "Windows":
                     $texexp = str_replace('"','\"',$texexp);
-                    system("$CFG->dirroot/$CFG->algebrafilterdir/mimetex.exe -e  $pathname \"$texexp\"");
+                    system("$CFG->dirroot/$CFG->texfilterdir/mimetex.exe -e  $pathname \"$texexp\"");
                 break;
                 case "Darwin":
-                    system("$CFG->dirroot/$CFG->algebrafilterdir/mimetex.darwin -e $pathname ". escapeshellarg($texexp) );
+                    system("$CFG->dirroot/$CFG->texfilterdir/mimetex.darwin -e $pathname ". escapeshellarg($texexp) );
                 break;
             }
         }
