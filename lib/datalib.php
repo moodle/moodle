@@ -358,11 +358,12 @@ function get_record_select($table, $select="", $fields="*") {
 }
 
 
-function get_records($table, $field="", $value="", $sort="", $fields="*") {
+function get_records($table, $field="", $value="", $sort="", $fields="*", $limitfrom="", $limitnum="") {
 /// Get a number of records as an array of objects
 /// Can optionally be sorted eg "time ASC" or "time DESC"
 /// If "fields" is specified, only those fields are returned
 /// The "key" is the first column returned, eg usually "id"
+/// limitfrom and limitnum must both be specified or not at all
 
     global $CFG;
 
@@ -372,11 +373,26 @@ function get_records($table, $field="", $value="", $sort="", $fields="*") {
         $select = "";
     }
 
+    if ($limitfrom) {
+        switch ($CFG->dbtype) {
+            case "mysql":
+                 $limit = "LIMIT $limitfrom,$limitnum";
+                 break;
+            case "postgres7":
+                 $limit = "LIMIT $limitnum OFFSET $limitfrom";
+                 break;
+            default: 
+                 $limit = "LIMIT $limitnum,$limitfrom";
+        }
+    } else {
+        $limit = "";
+    }
+
     if ($sort) {
         $sort = "ORDER BY $sort";
     }
 
-    return get_records_sql("SELECT $fields FROM $CFG->prefix$table $select $sort");
+    return get_records_sql("SELECT $fields FROM $CFG->prefix$table $select $sort $limit");
 }
 
 function get_records_select($table, $select="", $sort="", $fields="*") {
