@@ -1,3 +1,411 @@
+2002-08-07 Wednesday 01:23  martin
+
+	* index.php, admin/user.php, course/enrol.php, course/loginas.php,
+	course/mod.php, course/social.php, course/topics.php,
+	course/unenrol.php, course/view.php, course/weeks.php,
+	doc/install.html, lib/moodlelib.php, lib/setup.php,
+	login/change_password.php, login/confirm.php, login/index.php,
+	login/logout.php, mod/forum/discuss.php, mod/forum/index.php,
+	mod/forum/lib.php, mod/forum/post.php, mod/forum/rate.php,
+	mod/forum/search.php, mod/forum/subscribers.php,
+	mod/forum/view.php, user/edit.php, user/lib.php: 
+	Widespread changes throughout Moodle to make sure it works on
+	servers that have register_globals turned off (this is the default
+	setting on newer version of PHP).
+	
+	In fact it's partly a hack that globalises all GET, POST, FILES AND
+	COOKIE variables.  Unfortunately though the SESSION and USER global
+	session variables are only available as $_SESSION["USER"] and
+	$_SESSION["SESSION"], which is cumbersome to use.
+	
+	So, for every request I now make a copy of these two session
+	variables into $USER and $SESSION.  Whenever I update them
+	thoughout Moodle I now have to call save_session("USER") which
+	copies them back to the session variable.  This seems to be working
+	well now.
+	
+	Because I'm using $_SESSION etc now this will raise the required
+	minimum version of PHP to 4.1.0
+
+2002-08-06 Tuesday 20:58  martin
+
+	* config-dist.php: Made it a bit clearer.
+
+2002-08-06 Tuesday 20:17  martin
+
+	* admin/site.php: Close wide-open hacking hole!  This script wasn't
+	checking for admin user in the case where the site has been defined
+	already.  Oops. Fixed now.
+
+2002-08-06 Tuesday 17:36  martin
+
+	* user/: edit.html, edit.php: Can now edit own firstname and
+	lastname, and some tidying
+
+2002-08-06 Tuesday 17:24  martin
+
+	* course/social.php, course/topics.php, course/weeks.php,
+	lang/en/forum.php, mod/forum/lib.php: Better looking search boxes
+
+2002-08-06 Tuesday 17:23  martin
+
+	* mod/assignment/upload.php: Changed a variable name for clarity
+
+2002-08-06 Tuesday 17:21  martin
+
+	* user/: index.php, lib.php: Performance enhancement for user
+	listing (caching of language strings)
+
+2002-08-06 Tuesday 14:23  martin
+
+	* mod/forum/lib.php: Bug in rated posts counting
+
+2002-08-06 Tuesday 14:17  martin
+
+	* mod/forum/lib.php: Whoops ... make sure rated posts still show
+	ratings!  :-)
+
+2002-08-06 Tuesday 14:09  martin
+
+	* mod/forum/lib.php: forum_print_discussion now checks to see
+	whether there are any ratings that haven't been done yet on a
+	discussion.  If not, then it won't print the ratings form.  This
+	avoids a slight confusion about the interface that existed
+	previously.
+
+2002-08-06 Tuesday 12:21  martin
+
+	* mod/forum/view.php: Better wording for eachuser forum
+
+2002-08-06 Tuesday 12:17  martin
+
+	* mod/forum/lib.php: Whoops ... more forum->assessed
+
+2002-08-06 Tuesday 12:04  martin
+
+	* mod/forum/: discuss.php, lib.php, view.php: Whoops ... using
+	forum->assessed to determine whether discussions should be
+	assessable now
+
+2002-08-06 Tuesday 00:12  martin
+
+	* login/: change_password.php, forgot_password.php: Don't allow
+	guest user to change or reset password
+
+2002-08-05 Monday 17:48  martin
+
+	* mod/forum/: lib.php, post.php: A teacher can now delete any post
+	(as long as it doesn't have replies).
+
+2002-08-05 Monday 16:57  martin
+
+	* admin/cron.php: Needed to delete forum_subscriptions as well.
+
+2002-08-05 Monday 16:43  martin
+
+	* admin/cron.php: More efficiency when deleting enrolments
+
+2002-08-05 Monday 16:40  martin
+
+	* admin/cron.php, mod/journal/lib.php: Cron tidy-ups
+
+2002-08-05 Monday 15:59  martin
+
+	* config-dist.php: New config variable longtimenosee
+
+2002-08-05 Monday 15:59  martin
+
+	* admin/cron.php: Code to unenrol old students and delete
+	unconfirmed users
+
+2002-08-05 Monday 02:19  martin
+
+	* mod/journal/view.php: WHoops - typo on function call
+
+2002-08-05 Monday 01:24  martin
+
+	* mod/: assignment/lib.php, journal/lib.php: More tweaks to
+	feedback display (consistency with forum posts)
+
+2002-08-05 Monday 01:13  martin
+
+	* lang/en/assignment.php, lang/en/journal.php,
+	mod/assignment/lib.php, mod/forum/lib.php, mod/journal/lib.php:
+	Fixes in display of standard user_complete and user_outline
+	functions for journal, forum and assignments
+
+2002-08-05 Monday 00:44  martin
+
+	* mod/assignment/view.php: Formatting tweak
+
+2002-08-05 Monday 00:42  martin
+
+	* mod/: choice/version.php, forum/version.php, journal/version.php,
+	reading/version.php, survey/version.php: Updated version numbers
+
+2002-08-05 Monday 00:20  martin
+
+	* files/index.php, lang/en/forum.php, lib/moodlelib.php,
+	mod/journal/lib.php, mod/journal/report.php: Misc small changes
+	while I was working on assignments
+
+2002-08-05 Monday 00:19  martin
+
+	* lang/en/assignment.php, lang/en/moodle.php,
+	mod/assignment/README, mod/assignment/icon.gif,
+	mod/assignment/index.php, mod/assignment/lib.php,
+	mod/assignment/mod.html, mod/assignment/submissions.php,
+	mod/assignment/upload.php, mod/assignment/version.php,
+	mod/assignment/view.php, mod/assignment/db/mysql.sql: New
+	assignment module finally complete!
+
+2002-08-04 Sunday 21:27  martin
+
+	* course/lib.php: More monir tweaks
+
+2002-08-04 Sunday 21:25  martin
+
+	* course/lib.php: Minor formatting tweaks
+
+2002-08-04 Sunday 21:14  martin
+
+	* mod/forum/index.php: Get a string from moodle.php instead of
+	forum.php
+
+2002-08-04 Sunday 21:13  martin
+
+	* mod/forum/lib.php: Added FORUM_SHORT_POST
+
+2002-08-04 Sunday 15:06  martin
+
+	* mod/journal/: lib.php, view.php: Moved a function to lib.php
+
+2002-08-04 Sunday 10:55  martin
+
+	* index.php: Admin link looks better at the bottom
+
+2002-08-04 Sunday 10:39  martin
+
+	* lib/moodlelib.php: In email_to_user, change AddBCC back to
+	AddAddress  ... this was a hangover from the old bulk-email method,
+	but now we just send one email at a time, so it makes sense for the
+	address to be visible again
+
+2002-08-04 Sunday 10:13  martin
+
+	* index.php: Added a direct admin link
+
+2002-08-04 Sunday 10:10  martin
+
+	* course/delete.php, course/edit.php, course/editsection.html,
+	course/editsection.php, course/enrol.html, course/enrol.php,
+	lang/en/moodle.php: MOre language updates
+
+2002-08-04 Sunday 10:08  martin
+
+	* version.php, course/lib.php, lib/db/mysql.sql: Fixes to two
+	database fields  log_display(table -> mtable) and
+	user_teachers(authority from varchar -> int)
+
+2002-08-03 Saturday 20:26  martin
+
+	* index.php: Tiny tweak to spacer image for IE browsers
+
+2002-08-03 Saturday 19:58  martin
+
+	* course/: social.php, view.php: Customisable section 0 on social
+	forum
+
+2002-08-03 Saturday 19:45  martin
+
+	* index.php: Better spacing in case with admin-only
+
+2002-08-03 Saturday 16:40  martin
+
+	* index.php: put main menu up top
+
+2002-08-03 Saturday 16:38  martin
+
+	* index.php: Spacing again
+
+2002-08-03 Saturday 16:37  martin
+
+	* index.php: Ugh fixing spacing
+
+2002-08-03 Saturday 16:33  martin
+
+	* index.php: 
+	Adjusted sizes of front page columns
+
+2002-08-03 Saturday 16:16  martin
+
+	* index.php, admin/index.php, admin/site.html, admin/site.php,
+	course/edit.php, course/lib.php, course/topics.php,
+	course/user.php, course/view.php, course/weeks.php,
+	lang/en/forum.php, lang/en/moodle.php, mod/choice/index.php,
+	mod/choice/view.php, mod/forum/discuss.php, mod/forum/index.php,
+	mod/forum/search.php, mod/forum/view.php, mod/journal/index.php,
+	mod/journal/view.php, mod/reading/index.php, mod/reading/view.php,
+	mod/survey/index.php, mod/survey/view.php, pix/i/course.gif: Lots
+	of work on site display, over many files.  Improved front page and
+	display of site modules.
+
+2002-08-03 Saturday 12:57  martin
+
+	* admin/: index.php, user.php: More admin cleanups - improved user
+	listing
+
+2002-08-03 Saturday 12:44  martin
+
+	* admin/index.php, admin/teacher.php, course/delete.php,
+	course/teacher.php, lang/en/moodle.php: 
+	Cleaned up the admin pages (and moved some files) and added ability
+	to completely delete courses
+
+2002-08-03 Saturday 12:43  martin
+
+	* lib/moodlelib.php: print_continue() to print continue
+
+2002-08-03 Saturday 10:29  martin
+
+	* course/mod.php, mod/README, mod/assignment/lib.php,
+	mod/assignment/mod.php, mod/choice/lib.php, mod/choice/mod.php,
+	mod/forum/lib.php, mod/forum/mod.php, mod/journal/lib.php,
+	mod/journal/mod.php, mod/reading/lib.php, mod/reading/mod.php,
+	mod/survey/lib.php, mod/survey/mod.php: Moved all mod.php functions
+	from modules into lib.php, and updated course/mod.php to use them
+	there.	No longer need module/mod.php
+
+2002-08-03 Saturday 03:01  martin
+
+	* mod/forum/lib.php: Just a couple of changes
+
+2002-08-03 Saturday 03:01  martin
+
+	* lang/en/forum.php: tweaks
+
+2002-08-03 Saturday 01:42  martin
+
+	* version.php, lib/db/mysql.sql, mod/assignment/version.php,
+	mod/choice/version.php, mod/forum/version.php,
+	mod/journal/version.php, mod/reading/version.php,
+	mod/survey/version.php: Removed fullname and search fields from
+	modules table.	Fullname is now derived from the string
+	'modulename' in the lang files for each module.
+
+2002-08-03 Saturday 01:41  martin
+
+	* admin/index.php: No change (just a comment)
+
+2002-08-03 Saturday 01:41  martin
+
+	* lib/moodlelib.php: get_course_users was buggy when teachers or
+	students was empty.  The SQL looked good to me, but I had to do it
+	another way to make it work.
+
+2002-08-03 Saturday 01:38  martin
+
+	* course/: lib.php, mod.php, topics.php, user.php, view.php,
+	weeks.php: Lots of changes related to module info used in course
+	listings and activity reports.	Module names are now from lang
+	files, not from the modules table.  Cleanups.
+
+2002-08-03 Saturday 01:36  martin
+
+	* lang/en/: assignment.php, choice.php, forum.php, journal.php,
+	moodle.php, reading.php, survey.php: Addition of modulename and
+	modulenameplural strings as a standard to every module file.
+
+2002-08-03 Saturday 01:35  martin
+
+	* mod/forum/report.php: bugfixes and clean up
+
+2002-08-03 Saturday 01:34  martin
+
+	* mod/forum/lib.php: SOme major bugfixes to forum_cron() and lots
+	of translating
+
+2002-08-02 Friday 17:50  martin
+
+	* course/social.php, course/topics.php, course/weeks.php,
+	mod/forum/index.php, mod/forum/lib.php, mod/forum/mod.html,
+	mod/forum/search.php: Fixed up some forum functions and constants
+	(consistency)
+
+2002-08-02 Friday 17:24  martin
+
+	* lang/README, lang/en/README, lang/en/assignment.php,
+	lang/en/choice.php, lang/en/forum.php, lang/en/journal.php,
+	lang/en/moodle.php, lang/en/reading.php, lang/en/strings.php,
+	lang/en/survey.php, lib/moodlelib.php: Language files have been
+	moved to keep them altogether under /lang This should make it
+	easier on translators.
+
+2002-08-02 Friday 17:20  martin
+
+	* admin/teacher.php: Rmove guest from list of possible teachers
+
+2002-08-02 Friday 17:19  martin
+
+	* mod/forum/: discuss.php, index.php, lib.php: Changes related to
+	language strings and clean up
+
+2002-08-02 Friday 17:19  martin
+
+	* mod/forum/delete.php: This file is not linked to or used by
+	anything yet, but I've found it useful to delete forums properly
+	while testing stuff.
+
+2002-08-01 Thursday 23:48  martin
+
+	* admin/index.php, admin/user.php, course/edit.html,
+	course/editsection.php, course/lib.php, course/loggraph.php,
+	course/mod.php, mod/forum/db/mysql.sql: Misc changes to improve
+	performance on a brand-new installation
+
+2002-08-01 Thursday 17:38  martin
+
+	* mod/forum/lib.php: Centered new topic link
+
+2002-08-01 Thursday 17:36  martin
+
+	* mod/forum/lib.php: Changed the ratings to new separate/connected
+	system - just for testing
+
+2002-08-01 Thursday 15:09  martin
+
+	* course/loginas.php: Make sure we still log the fact that the
+	teacher logged in as someone though.  Also, make the "realuser" the
+	teacher's id, in case we want to use it later
+
+2002-08-01 Thursday 15:05  martin
+
+	* lib/moodlelib.php: DOn't add to logs when teacher is "logged in
+	as" a student
+
+2002-08-01 Thursday 15:04  martin
+
+	* course/loginas.php: Added "realuser" to USER variable to identify
+	imposters
+
+2002-08-01 Thursday 14:16  martin
+
+	* course/loginas.php: removed TABS and changed wording (your ->
+	this)
+
+2002-08-01 Thursday 14:15  martin
+
+	* user/index.php: Slight rearrangement
+
+2002-08-01 Thursday 13:55  martin
+
+	* index.php, course/social.php: Fixed use of reading functions (it
+	had changed name)
+
+2002-08-01 Thursday 13:45  martin
+
+	* CHANGES: Changes
+
 2002-08-01 Thursday 13:44  martin
 
 	* UPGRADING: Reworded this file to make it clearer
@@ -125,8 +533,7 @@
 	mod/forum/post.php, mod/forum/rate.php, mod/forum/report.php,
 	mod/forum/search.php, mod/forum/subscribe.php,
 	mod/forum/subscribers.php, mod/forum/version.php,
-	mod/forum/view.php, mod/forum/db/mysql.sql,
-	mod/forum/lang/en/strings.php, mod/journal/module.php,
+	mod/forum/view.php, mod/forum/db/mysql.sql, mod/journal/module.php,
 	mod/journal/version.php, mod/reading/module.php,
 	mod/reading/version.php, mod/survey/module.php,
 	mod/survey/version.php, user/view.php: OK, some massive changes
@@ -497,8 +904,8 @@
 
 2002-07-14 Sunday 21:32  martin
 
-	* mod/forum/: subscribers.php, view.php, lang/en/strings.php: Added
-	ability for teacher to see subscribers for each forum
+	* mod/forum/: subscribers.php, view.php: Added ability for teacher
+	to see subscribers for each forum
 
 2002-07-12 Friday 21:29  martin
 
@@ -533,10 +940,6 @@
 2002-07-10 Wednesday 23:17  martin
 
 	* course/weeks.php: Fixed week zooming
-
-2002-07-08 Monday 20:37  martin
-
-	* mod/reading/lang/en/strings.php: Added language strings
 
 2002-07-06 Saturday 14:34  martin
 
@@ -596,11 +999,8 @@
 
 2002-07-02 Tuesday 15:09  martin
 
-	* help.php, index.php, lang/en/strings.php,
-	mod/assignment/lang/en/strings.php, mod/choice/lang/en/strings.php,
-	mod/forum/lang/en/strings.php, mod/journal/lang/en/strings.php,
-	mod/reading/lang/en/strings.php, mod/survey/lang/en/strings.php:
-	Further internationalisation
+	* help.php, index.php, lang/en/strings.php: Further
+	internationalisation
 
 2002-07-02 Tuesday 15:02  martin
 
@@ -1952,9 +2352,6 @@
 	mod/survey/login_form.html, mod/survey/mod.html,
 	mod/survey/mod.php, mod/survey/module.php, mod/survey/report.php,
 	mod/survey/save.php, mod/survey/test.php, mod/survey/view.php,
-	mod/survey/docs/days.html, mod/survey/docs/intro.html,
-	mod/survey/docs/name.html, mod/survey/docs/password.html,
-	mod/survey/docs/surveytype.html, mod/survey/docs/url.html,
 	pix/b.gif, pix/madewithmoodle.gif, pix/madewithmoodle1.gif,
 	pix/madewithmoodle2.gif, pix/poo.html, pix/spacer.gif,
 	pix/webding.png, pix/i/ICONS-16x16, pix/i/email.gif, pix/i/log.gif,
@@ -2021,9 +2418,6 @@
 	mod/survey/login_form.html, mod/survey/mod.html,
 	mod/survey/mod.php, mod/survey/module.php, mod/survey/report.php,
 	mod/survey/save.php, mod/survey/test.php, mod/survey/view.php,
-	mod/survey/docs/days.html, mod/survey/docs/intro.html,
-	mod/survey/docs/name.html, mod/survey/docs/password.html,
-	mod/survey/docs/surveytype.html, mod/survey/docs/url.html,
 	pix/b.gif, pix/madewithmoodle.gif, pix/madewithmoodle1.gif,
 	pix/madewithmoodle2.gif, pix/poo.html, pix/spacer.gif,
 	pix/webding.png, pix/i/ICONS-16x16, pix/i/email.gif, pix/i/log.gif,
