@@ -619,7 +619,7 @@ class quiz_category_object {
                 $this->initialize();
                 $categorystrings = $this->categorystrings;
                 unset ($categorystrings[$category->id]);
-                echo "<p><div align=\"center\"><form action=category.php method=get>";
+                echo "<p><div align=\"center\"><form action=\"category.php\" method=\"get\">";
                 echo "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\">";
                 echo "<input type=\"hidden\" name=\"id\" value=\"{$this->course->id}\" />";
                 echo "<input type=\"hidden\" name=\"delete\" value=\"$category->id\" />";
