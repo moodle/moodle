@@ -51,6 +51,7 @@ $string['daysavailable'] = 'Days available';
 $string['default'] = 'Default';
 $string['defaultgrade'] = 'Default question grade';
 $string['defaultinfo'] = 'The default category for questions.';
+$string['deleteattemptcheck'] = 'Are you absolutely sure you want to completely delete these attempts?';
 $string['deletequestioncheck'] = 'Are you absolutely sure you want to delete \'$a\'?';
 $string['description'] = 'Description';
 $string['discrimination'] = "Discrim. Index";
