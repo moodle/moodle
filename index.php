@@ -110,9 +110,5 @@
   </TR>
 </TABLE>
 
-<? include("$CFG->dirroot/theme/$CFG->theme/footer.html"); ?>
-
-<P ALIGN=center>
-<A WIDTH=85 HEIGHT=25 HREF="http://moodle.com/"><IMG SRC="pix/madewithmoodle.gif" BORDER=0></A>
-</P>
+<? print_footer("home") ?>
 

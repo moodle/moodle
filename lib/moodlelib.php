@@ -43,9 +43,17 @@ function print_footer ($course=NULL) {
     global $USER, $CFG, $THEME;
 
     if ($course) {
-        $homelink = "<A TARGET=_top HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A>";
+        if ($course == "home") {   // special case for site home page
+            if (!$dversion = get_field("config", "value", "name", "version")) {
+                $dversion = "unknown!";
+            }
+            $homelink  = "<P ALIGN=center><A TITLE=\"Version $dversion: Click to visit moodle.com\" HREF=\"http://moodle.com/\">";
+            $homelink .= "<IMG WIDTH=85 HEIGHT=25 SRC=\"pix/madewithmoodle.gif\" BORDER=0></A></P>";
+        } else {
+            $homelink = "<A TARGET=_top HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A>";
+        }
     } else {
-        $homelink = "<A TARGET=_top HREF=\"$CFG->wwwroot\">Home</A>";
+        $homelink = "<A TARGET=_top HREF=\"$CFG->wwwroot\">".get_string("home")."</A>";
     }
     if ($USER->realuser) {
         if ($realuser = get_record("user", "id", $USER->realuser)) {
