@@ -49,11 +49,13 @@ function scorm_upgrade($oldversion) {
 	
 	$oldScoesData = get_records_select("scorm_scoes",null,"id ASC");
 	table_column("scorm_scoes", "type", "scormtype", "VARCHAR", "5", "", "", "NOT NULL");
-	foreach ($oldScoesData as $sco) {
-	    $sco->scormtype = $sco->type;
-	    unset($sco->type);
-	    update_record("scorm_scoes",$sco);
-	}
+	if(!empty($oldScoesData)) {
+    	foreach ($oldScoesData as $sco) {
+    	    $sco->scormtype = $sco->type;
+    	    unset($sco->type);
+    	    update_record("scorm_scoes",$sco);
+    	}
+    }
 	
 	execute_sql("CREATE TABLE prefix_scorm_scoes_track (
 			id SERIAL,
@@ -70,8 +72,10 @@ function scorm_upgrade($oldversion) {
 		     
 	$oldTrackingData = get_records_select("scorm_sco_users",null,"id ASC");
 	$oldElementArray = array ('cmi_core_lesson_location','cmi_core_lesson_status','cmi_core_exit','cmi_core_total_time','cmi_core_score_raw','cmi_suspend_data');
-	foreach ($oldTrackingData as $oldTrack) {
-	    $newTrack = '';
+
+    if(!empty($oldTrackingData)) {
+    	foreach ($oldTrackingData as $oldTrack) {
+    	    $newTrack = '';
        	    $newTrack->userid = $oldTrack->userid;
        	    $newTrack->scormid = $oldTrack->scormid;
        	    $newTrack->scoid = $oldTrack->scoid;
@@ -84,7 +88,9 @@ function scorm_upgrade($oldversion) {
        	    	}
        	    	insert_record("scorm_scoes_track",$newTrack,false);
        	    }
-	}
+    	}
+    }
+
 	modify_database('',"DROP TABLE prefix_scorm_sco_users");
 	modify_database('',"INSERT INTO prefix_log_display VALUES ('resource', 'review', 'resource', 'name')");
     }
