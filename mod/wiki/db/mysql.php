@@ -38,6 +38,14 @@ function wiki_upgrade($oldversion) {
         }
     }
 
+    if ($oldversion < 2004061300) {
+        execute_sql('ALTER TABLE `'.$CFG->prefix.'wiki`'
+                    .' ADD `setpageflags` TINYINT DEFAULT \'1\' NOT NULL AFTER `ewikiacceptbinary`,'
+                    .' ADD `strippages` TINYINT DEFAULT \'1\' NOT NULL AFTER `setpageflags`,'
+                    .' ADD `removepages` TINYINT DEFAULT \'1\' NOT NULL AFTER `strippages`,'
+                    .' ADD `revertchanges` TINYINT DEFAULT \'1\' NOT NULL AFTER `removepages`');
+    }
+
     return true;
 }
 

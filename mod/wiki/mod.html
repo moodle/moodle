@@ -28,8 +28,23 @@
     if (!isset($form->ewikiacceptbinary)) {
         $form->ewikiacceptbinary = 0;
     }
+    if (!isset($form->setpageflags)) {
+        $form->setpageflags = 0;
+    }
+    if (!isset($form->strippages)) {
+        $form->strippages = 0;
+    }
+    if (!isset($form->removepages)) {
+        $form->removepages = 0;
+    }
+    if (!isset($form->revertchanges)) {
+        $form->revertchanges = 0;
+    }
     if (!isset($form->initialcontent)) {
         $form->initialcontent = '';
+    }
+    if (!isset($form->pagename)) {
+        $form->pagename = '';
     }
 
     /// If updating an existing wiki, find out if it has entries.
@@ -100,6 +115,28 @@
        </select>
     </TD>
 </TR>
+
+<tr valign="top">
+    <td align="right">
+    <?php helpbutton('studentadminoptions', get_string('studentadminoptions', 'wiki'), 'wiki') ?>
+    <b> <?php print_string('studentadminoptions', 'wiki') ?>:</b></td>
+    <td>
+        <table cellpadding="0" cellspacing="0" border="0" width="100%"><tr>
+        <td width="50%">
+        <input type="checkbox" name="setpageflags" value="1" <?php echo $form->setpageflags?"CHECKED":""; ?> />
+            Allow 'set page flags'<br />
+        <input type="checkbox" name="strippages" value="1" <?php echo $form->strippages?"CHECKED":""; ?> />
+            Allow 'strip pages'<br />
+        </td>
+        <td width="50%">
+        <input type="checkbox" name="removepages" value="1" <?php echo $form->removepages?"CHECKED":""; ?> />
+            Allow 'remove pages'<br />
+        <input type="checkbox" name="revertchanges" value="1" <?php echo $form->revertchanges?"CHECKED":""; ?> />
+            Allow 'revert mass changes'<br />
+        </td>
+        </tr></table>
+    </td>
+</tr>
 
 <tr valign="top">
     <td align="right"><b> Optional: </b></td>

@@ -2,6 +2,8 @@
 /// Extended by Michael Schneider
 /// This page prints a particular instance of wiki
 
+    global $CFG;
+
     require_once("../../config.php");
     require_once("lib.php");
 #    require_once("$CFG->dirroot/course/lib.php"); // For side-blocks
@@ -52,37 +54,20 @@
     /// Add the course module 'groupmode' to the wiki object, for easy access.
     $wiki->groupmode = $cm->groupmode;
 
-    /// If the wiki entry doesn't exist, can this user create it?
-
-    if (($wiki_entry = wiki_get_entry($wiki, $course, $userid, $groupid)) === false) {
-
-        if (wiki_can_add_entry($wiki, $USER, $course, $userid, $groupid)) {
-            wiki_add_entry($wiki, $course, $userid, $groupid);
-            if (($wiki_entry = wiki_get_entry($wiki, $course, $userid, $groupid)) === false) {
-                error("Could not add wiki entry.");
-            }
-        }
-        else {
-            $wiki_entry_text = '<div align="center">'.get_string('nowikicreated', 'wiki').'</div>';
-        }
-    }
-
-    /// How shall we display the wiki-page ?
+    /// Default format:
     $moodle_format=FORMAT_MOODLE;
 
     ### SAVE ID from Moodle
     $moodleID=@$_REQUEST["id"];
-    if ($wiki_entry) {
-        
+
+    if (($wiki_entry = wiki_get_default_entry($wiki, $course, $userid, $groupid))) {
+
+///     ################# EWIKI Part ###########################
 ///     The wiki_entry->pagename is set to the specified value of the wiki,
 ///     or the default value in the 'lang' file if the specified value was empty.
         define("EWIKI_PAGE_INDEX",$wiki_entry->pagename);
 
         $wikipage = ($wikipage === false) ?  EWIKI_PAGE_INDEX: $wikipage;
-//////
-
-
-///     ################# EWIKI Part ###########################
 
 ///     ### Prevent ewiki getting id as PageID...
         unset($_REQUEST["id"]);
@@ -195,10 +180,10 @@
             $ewiki_use_editor=1;
             $ewiki_config["htmlentities"]=array(); // HTML is allowed
             $ewiki_config["wiki_link_regex"] = "\007 [!~]?(
-            			\#?\[[^<>\[\]\n]+\] |
-            			\^[-".EWIKI_CHARS_U.EWIKI_CHARS_L."]{3,} |
-            			\b([\w]{3,}:)*([".EWIKI_CHARS_U."]+[".EWIKI_CHARS_L."]+){2,}\#?[\w\d]* |
-            			\w[-_.+\w]+@(\w[-_\w]+[.])+\w{2,}	) \007x";
+                        \#?\[[^<>\[\]\n]+\] |
+                        \^[-".EWIKI_CHARS_U.EWIKI_CHARS_L."]{3,} |
+                        \b([\w]{3,}:)*([".EWIKI_CHARS_U."]+[".EWIKI_CHARS_L."]+){2,}\#?[\w\d]* |
+                        \w[-_.+\w]+@(\w[-_\w]+[.])+\w{2,}   ) \007x";
         }
 
         global $ewiki_author, $USER;
@@ -211,7 +196,7 @@
 ///     ################# EWIKI Part ###########################
     }
     else {
-        $content = $wiki_entry_text;
+        $content = '<div align="center">'.get_string('nowikicreated', 'wiki').'</div>';
     }
 
 

@@ -15,11 +15,14 @@ CREATE TABLE `prefix_wiki` (
   `ewikiprinttitle` tinyint(4) NOT NULL default '1',
   `htmlmode` tinyint(4) NOT NULL default '0',
   `ewikiacceptbinary` tinyint(4) NOT NULL default '0',
+  `setpageflags` tinyint(4) NOT NULL default '1',
+  `strippages` tinyint(4) NOT NULL default '1',
+  `removepages` tinyint(4) NOT NULL default '1',
+  `revertchanges` tinyint(4) NOT NULL default '1',
   `initialcontent` varchar(255) default NULL,
   `timemodified` int(10) NOT NULL default '0',
   PRIMARY KEY  (`id`)
 ) TYPE=MyISAM COMMENT='Main wiki table';
-
 
 
 #

@@ -23,6 +23,13 @@ function wiki_add_instance($wiki) {
 
     /// Determine the pagename for this wiki and save.
     $wiki->pagename = wiki_page_name($wiki);
+
+    /// Check 'check boxes'. The variables won't be set at all of they were deselected.
+    $wiki->setpageflags = (isset($wiki->setpageflags)) ? 1 : 0;
+    $wiki->removepages = (isset($wiki->removepages)) ? 1 : 0;
+    $wiki->strippages = (isset($wiki->strippages)) ? 1 : 0;
+    $wiki->revertchanges = (isset($wiki->revertchanges)) ? 1 : 0;
+
     return insert_record("wiki", $wiki);
 }
 
@@ -34,6 +41,12 @@ function wiki_update_instance($wiki) {
 
     /// Determine the pagename for this wiki.
     $wiki->pagename = wiki_page_name($wiki);
+
+    /// Check 'check boxes'. The variables won't be set at all of they were deselected.
+    $wiki->setpageflags = (isset($wiki->setpageflags)) ? 1 : 0;
+    $wiki->removepages = (isset($wiki->removepages)) ? 1 : 0;
+    $wiki->strippages = (isset($wiki->strippages)) ? 1 : 0;
+    $wiki->revertchanges = (isset($wiki->revertchanges)) ? 1 : 0;
 
     $wiki->timemodified = time();
     $wiki->id = $wiki->instance;
@@ -241,6 +254,16 @@ function wiki_content_dir(&$wiki) {
     return $contentdir;
 }
 
+function wiki_get_course_wikis($courseid, $wtype='*') {
+/// Returns all wikis for the specified course and optionally of the specified type.
+
+    $select = 'course = '.$courseid;
+    if ($wtype != '*') {
+        $select .= ' AND wtype = \''.$wtype.'\'';
+    }
+    return get_records_select('wiki', $select, 'id');
+}
+
 function wiki_has_entries(&$wiki) {
 /// Returns true if wiki already has wiki entries; otherwise false.
 
@@ -263,6 +286,27 @@ function wiki_get_entries(&$wiki, $byindex=NULL) {
     else {
         return get_records('wiki_entries', 'wikiid', $wiki->id);
     }
+}
+
+function wiki_get_default_entry(&$wiki, &$course, $userid=0, $groupid=0) {
+/// Returns the wiki entry according to the wiki type.
+/// Optionally, will return wiki entry for $userid student wiki, or
+/// $groupid group or teacher wiki.
+/// Creates one if it needs to and it can.
+
+    global $USER;
+
+    /// If the wiki entry doesn't exist, can this user create it?
+    if (($wiki_entry = wiki_get_entry($wiki, $course, $userid, $groupid)) === false) {
+
+        if (wiki_can_add_entry($wiki, $USER, $course, $userid, $groupid)) {
+            wiki_add_entry($wiki, $course, $userid, $groupid);
+            if (($wiki_entry = wiki_get_entry($wiki, $course, $userid, $groupid)) === false) {
+                error("Could not add wiki entry.");
+            }
+        }
+    }
+    return $wiki_entry;
 }
 
 function wiki_get_entry(&$wiki, &$course, $userid=0, $groupid=0) {
@@ -948,16 +992,24 @@ function wiki_print_administration_actions($wiki, $cmid, $userid, $groupid, $wik
   if (isset($wikipage)) $ewscript .= '&wikipage='.$wikipage;
   $ewscript.="&action=";
 
-  
-  $action=array(
-            "setpageflags" => get_string("setpageflags", "wiki"),
-          );
-  // We cannot do certain things if html is used !
-  if($wiki->wtype=="student" || isteacher($course->id)) {          
-    $action["removepages"]  = get_string("removepages", "wiki");
-    $action["strippages"]  = get_string("strippages", "wiki");
-    $action["revertpages"] = get_string("revertpages", "wiki");
-  }
+
+    /// Build that action array according to wiki flags.
+    $action = array();
+    $isteacher = isteacher($course->id);
+
+    if ($wiki->setpageflags or $isteacher) {
+        $action['setpageflags'] = get_string('setpageflags', 'wiki');
+    }
+    if ($wiki->removepages or $isteacher) {
+        $action['removepages']  = get_string('removepages', 'wiki');
+    }
+    if ($wiki->strippages or $isteacher) {
+        $action['strippages']  = get_string('strippages', 'wiki');
+    }
+    if ($wiki->revertchanges or $isteacher) {
+        $action['revertpages'] = get_string('revertpages', 'wiki');
+    }
+
   if($noeditor) {
     $action["checklinks"]=get_string("checklinks", "wiki");
   }

@@ -27,7 +27,7 @@
         }
 
 //      Get all wikis for this course.
-        $wikis = get_records('wiki', 'course', $courseid);
+        $wikis = wiki_get_course_wikis($courseid);
         if (empty($wikis)) {
             return $text;
         }
