@@ -574,9 +574,18 @@ table.generaltable th.header,
 .tabs {
     width: auto;
 }
-.tabs td {
-    background-color: white;
+
+body#mod-quiz-report .tabs .side {
+    border-style: solid;
+    border-width: 0px 0px 1px 0px;
+    border-color: #AAAAAA;
+    width: 50%;
 }
+
+body#mod-quiz-report .tabs {
+    margin-bottom: 15px;
+}
+
 .tabrow {
     border-collapse:collapse;
     width:100%;
