@@ -118,6 +118,7 @@ $string['phase2short'] = 'Disponible';
 $string['phase3'] = 'Afficher les notes finales et le tableau des travaux';
 $string['phase3short'] = 'Affichage';
 $string['pleasegradetheassessment'] = 'Veuillez donner une note à l\'évaluation par $a de ce travail';
+$string['pleasemakeyourownassessment'] = 'Veuillez effectuer l\'évaluation du travail de $a.<br />Notez que le formulaire d\'évaluation est affiché initialement avec les valeurs de l\'évaluation de l\'étudiant.<br />Faites toutes les modifications que vous jugerez nécessaires et cliquez ensuite<br />sur l\'un des boutons au bas de la page.';
 $string['pleasesubmityourwork'] = 'Veuillez remettre votre travail à l\'aide de ce formulaire';
 $string['pleaseusethisform'] = 'Veuillez compléter ce formulaire<br />
 	après avoir terminé les tâches de l\'exercice ci-dessous.';
