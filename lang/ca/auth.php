@@ -74,10 +74,10 @@ $string['authinstructions'] = 'Aquí podeu posar instruccions per als vostres usu
 $string['changepassword'] = 'URL de canvi de contrasenya';
 $string['changepasswordhelp'] = 'Aquí podeu especificar una adreça en la qual els usuaris puguin recuperar o canviar la seua contrasenya si se n\'han oblidat. Aquesta opció apareixerà en forma de botó a la pàgina d\'entrada. Si la deixeu en blanc no apareixerà el botó.';
 $string['chooseauthmethod'] = 'Trieu un mètode d\'autenticació: ';
-$string['guestloginbutton'] = 'Botó d\'entrada d\'invitats';
+$string['guestloginbutton'] = 'Botó d\'entrada de visitants';
 $string['instructions'] = 'Instruccions';
 $string['md5'] = 'Xifratge MD5';
 $string['plaintext'] = 'Text net';
-$string['showguestlogin'] = 'Podeu ocultar o mostrar el botó d\'entrada com a invitat a la pàgina d\'entrada.';
+$string['showguestlogin'] = 'Podeu ocultar o mostrar el botó d\'entrada com a visitant a la pàgina d\'entrada.';
 
 ?>

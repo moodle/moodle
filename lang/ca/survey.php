@@ -155,7 +155,7 @@ $string['downloadexcel'] = 'Descarregar com a full de càlcul';
 $string['downloadinfo'] = 'Pots descarregar la informació completa en un format que pugui ser analitzat per un programa de fulls de càlcul';
 $string['downloadtext'] = 'Descarregar com a text';
 $string['editingasurvey'] = 'S\'està editant la informació';
-$string['guestsnotallowed'] = 'Els invitats no poden participar en les enquestes';
+$string['guestsnotallowed'] = 'Els visitants no poden participar en les enquestes';
 $string['helpsurveys'] = 'Ajuda sobre els diferents tipus d’informació';
 $string['howlong'] = '¿Quant de temps t’ha portat completar aquest questionari?';
 $string['howlongoptions'] = 'menys de 1 <abbr title=minuto>min.</abbr>, 1-2 <abbr title=minuto>min.</abbr>,  2-3 <abbr title=minuto>min.</abbr>,  3-4 <abbr title=minuto>min.</abbr>,  4-5 <abbr title=minuto>min.</abbr>,  5-10 <abbr title=minuto>min.</abbr>, més de 10 minuts.';
