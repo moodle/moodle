@@ -349,7 +349,7 @@ function rss_get_feed($rssid, $url, $type) {
     $writetofile = false;
     $errorstring = '';
 
-    $urlfailurestring = '<p>Failed to open remote news feed at: ' . $url .'</p><p>To troubleshoot this problem please ensure that the setting <strong>allow_url_fopen</strong> is <strong>On</strong> in the php.ini. For more details on why this setting is needed for this file wrapper call to work please refer to <a href="http://us2.php.net/filesystem">http://us2.php.net/filesystem</a>';
+    $urlfailurestring = '<p>Failed to open remote news feed at: ' . $url .'</p><ul>Troubleshooting suggestions:<li> Ensure that the setting <strong>allow_url_fopen</strong> is <strong>On</strong> in the php.ini. For more details on why this setting is needed for this file wrapper call to work please refer to <a href="http://us2.php.net/filesystem">http://us2.php.net/filesystem</a></li><li>Ensure that you do not have a proxy enabled between your server and the remote site. If it is possible for you to launch a web browser on your server then you can test this by load the remote URL on the server itself.</li></ul>';
     $filefailurestring = 'Could not open the file located at: ';
     $secs = $CFG->block_rss_timeout * 60;
 
