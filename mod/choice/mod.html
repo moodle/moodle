@@ -33,16 +33,8 @@
         $form->showunanswered = 0;
     }
 
-    if ($usehtmleditor = can_use_richtext_editor()) {
-        $defaultformat = FORMAT_HTML;
-        $onsubmit = "onsubmit=\"copyrichtext(document.form.text);\"";
-    } else {
-        $defaultformat = FORMAT_MOODLE;
-        $onsubmit = "";
-    }
-
 ?>
-<form name="form" method="post" <?php echo $onsubmit ?> action="mod.php">
+<form name="form" method="post" action="mod.php">
 
 <table cellpadding=5>
 
@@ -74,15 +66,19 @@
     <?php 
        print_textarea($usehtmleditor, 20, 60, 680, 400, "text", $form->text);
     
-       echo "<p align=right>";
-       helpbutton("textformat", get_string("formattexttype"));
-       print_string("formattexttype");
-       echo ":&nbsp;";
-       if (!$form->format) {
-           $form->format = $defaultformat;
+       if ($usehtmleditor) {
+           echo '<input type="hidden" name="format" value="'.FORMAT_HTML.'" />';
+       } else {
+           echo "<p align=right>";
+           helpbutton("textformat", get_string("formattexttype"));
+           print_string("formattexttype");
+           echo ":&nbsp;";
+           if (!$form->format) {
+               $form->format = $defaultformat;
+           }
+           choose_from_menu(format_text_menu(), "format", $form->format, ""); 
+           echo "</p>";
        }
-       choose_from_menu(format_text_menu(), "format", $form->format, ""); 
-       echo "</p>";
     ?>
     </td>
 </tr>
@@ -167,9 +163,3 @@
 <input type="submit" name=cancel value="<?php print_string("cancel") ?>">
 </center>
 </form>
-
-<?php
-   if ($usehtmleditor) { 
-       print_richedit_javascript("form", "text", "yes");
-   }
-?>

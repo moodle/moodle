@@ -95,7 +95,7 @@
         include('group-edit.html');
 
         if ($usehtmleditor) {
-            use_html_editor();
+            use_html_editor("description");
         }
 
         print_footer();

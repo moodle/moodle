@@ -451,7 +451,7 @@
         </form>
 <?php
         if ($usehtmleditor and $form->type == HTML) {
-            use_html_editor();
+            use_html_editor("alltext");
         }
         print_simple_box_end();
         print_footer($course);

@@ -1,4 +1,4 @@
-<?PHP //$Id
+<?PHP //$Id$
     //This file returns the required rss feeds
     //The URL format MUST include:
     //    course: the course id

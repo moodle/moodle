@@ -214,6 +214,8 @@
     print_header(get_string('calendar', 'calendar').': '.$title, $site->fullname, $nav.' -> '.$title,
                  $focus, '', true, '', '<p class="logininfo">'.user_login_string($site).'</p>');
 
+    echo calendar_overlib_html();
+
     echo '<table border="0" cellpadding="3" cellspacing="0" width="100%"><tr valign="top">';
     echo '<td valign="top" width="100%">';
 
@@ -281,7 +283,7 @@
             include('event_edit.html');
             print_side_block_end();
             if ($usehtmleditor) {
-                use_html_editor();
+                use_html_editor("description");
             }
         break;
 
@@ -425,7 +427,7 @@
             else {
                 include('event_new.html');
                 if ($usehtmleditor) {
-                    use_html_editor();
+                    use_html_editor("description");
                 }
             }
             print_side_block_end();
@@ -437,7 +439,6 @@
     echo '<td style="vertical-align: top; width: 180px;">';
 
     $defaultcourses = calendar_get_default_courses();
-    echo calendar_overlib_html();
     calendar_set_filters($courses, $groups, $users, $defaultcourses, $defaultcourses);
 
     print_side_block_start(get_string('monthlyview', 'calendar'));

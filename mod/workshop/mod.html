@@ -1,12 +1,4 @@
 <?php
-	// set the defaults...
-    if ($usehtmleditor = can_use_richtext_editor()) {
-        $defaultformat = FORMAT_HTML;
-        $onsubmit = "onsubmit=\"copyrichtext(document.form.description);\"";
-    } else {
-        $defaultformat = FORMAT_MOODLE;
-        $onsubmit = "";
-    }
 	// ...and fill the form if needed
     if (empty($form->name)) {
         $form->name = "";
@@ -49,7 +41,7 @@
     }
 ?>
 
-<form name="form" method="post" <?php echo $onsubmit ?> action="mod.php">
+<form name="form" method="post" action="mod.php">
 <table cellpadding=5>
 <tr valign=top>
     <td align=right><P><B><?php  print_string("title", "workshop") ?>:</B></P></TD>
@@ -58,25 +50,39 @@
     </td>
 </tr>
 <tr valign=top>
-    <td align=right><P><B><?php  print_string("description", "workshop") ?>:</B></P></TD>
+    <td align=right><p><b><?php  print_string("description", "workshop") ?>:</b></p>
+    <font size="1">
+     <?php
+        helpbutton("writing", get_string("helpwriting"), "moodle", true, true);
+        echo "<br />";
+        if ($usehtmleditor) {
+           helpbutton("richtext", get_string("helprichtext"), "moodle", true, true);
+        } else {
+           helpbutton("text", get_string("helptext"), "moodle", true, true);
+           echo "<br />";
+           emoticonhelpbutton("form", "description", "moodle", true, true);
+           echo "<br />";
+        } 
+      ?>
+      <br />
+    </font>
     <td>
     <?php  
        print_textarea($usehtmleditor, 20, 60, 595, 400, "description", $form->description);
     
-       if ($usehtmleditor) { 
-           helpbutton("richtext", get_string("helprichtext"));
-       } else { 
-           helpbutton("text", get_string("helptext"));
+       if ($usehtmleditor) {
+           echo '<input type="hidden" name="format" value="'.FORMAT_HTML.'" />';
+       } else {
+           echo '<p align="right">';
+           helpbutton("textformat", get_string("formattexttype"));
+           print_string("formattexttype");
+           echo ':&nbsp;';
+           if (!$form->format) {
+               $form->format = $defaultformat;
+           }
+           choose_from_menu(format_text_menu(), "format", $form->format, ""); 
+           echo '</p>';
        }
-       echo "<P align=right>";
-       print_string("formattexttype");
-       echo ":&nbsp;";
-       if (!$form->format) {
-           $form->format = $defaultformat;
-       }
-       choose_from_menu(format_text_menu(), "format", $form->format, ""); 
-       helpbutton("textformat", get_string("formattexttype"));
-       echo "</P>";
     ?>
     </td>
 </tr>
@@ -242,10 +248,3 @@
 
 </CENTER>
 </FORM>
-
-<?php  
-   if ($usehtmleditor) { 
-       print_richedit_javascript("form", "description", "no");
-   }
-?>
-

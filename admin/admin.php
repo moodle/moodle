@@ -102,7 +102,7 @@
             if ($primaryadmin->id == $admin->id){
                 print_spacer(10, 9, false);
             } else {
-                echo "<a href=\"{$_SERVER['PHP_SELF']}?remove=$admin->id\"
+                echo "<a href=\"admin.php?remove=$admin->id\"
                 title=\"$strremoveadmin\"><img src=\"../pix/t/right.gif\"
                 border=0></A>";
             }
@@ -136,14 +136,14 @@
         }
 
         foreach ($users as $user) {
-            echo "<p align=left><a href=\"{$_SERVER['PHP_SELF']}?add=$user->id\"".
+            echo "<p align=left><a href=\"admin.php?add=$user->id\"".
                    "title=\"$straddadmin\"><img src=\"../pix/t/left.gif\"".
                    "border=0></a>&nbsp;&nbsp;".fullname($user).", $user->email";
         }
     }
 
     if ($search or $usercount > MAX_USERS_PER_PAGE) {
-        echo "<form action={$_SERVER['PHP_SELF']} method=post>";
+        echo "<form action=admin.php method=post>";
         echo "<input type=text name=search size=20>";
         echo "<input type=submit value=\"$searchstring\">";
         echo "</form>";

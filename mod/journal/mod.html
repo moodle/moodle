@@ -1,10 +1,4 @@
 <?php
-    if ($usehtmleditor = can_use_richtext_editor()) {
-        $defaultformat = FORMAT_HTML;
-    } else {
-        $defaultformat = FORMAT_MOODLE;
-    }
-
     if (!isset($form->name)) {
         $form->name = "";
     }
@@ -23,7 +17,7 @@
     }
 ?>
 
-<form name="form" method="post" <?php echo $onsubmit ?> action="mod.php">
+<form name="form" method="post" action="mod.php">
 <table cellpadding=5>
 <tr valign=top>
     <td align=right><p><b><?php print_string("journalname", "journal") ?>:</b></p></td>
@@ -53,15 +47,19 @@
     <?php
        print_textarea($usehtmleditor, 20, 60, 680, 400, "intro", $form->intro);
 
-       echo "<p align=right>";
-       helpbutton("textformat", get_string("formattexttype"));
-       print_string("formattexttype");
-       echo ":&nbsp;";
-       if (!$form->introformat) {
-           $form->introformat = $defaultformat;
+       if ($usehtmleditor) {
+           echo '<input type="hidden" name="format" value="'.FORMAT_HTML.'" />';
+       } else {
+           echo "<p align=right>";
+           helpbutton("textformat", get_string("formattexttype"));
+           print_string("formattexttype");
+           echo ":&nbsp;";
+           if (!$form->introformat) {
+               $form->introformat = $defaultformat;
+           }
+           choose_from_menu(format_text_menu(), "introformat", $form->introformat, "");
+           echo "</p>";
        }
-       choose_from_menu(format_text_menu(), "introformat", $form->introformat, "");
-       echo "</p>";
     ?>
     </td>
 </tr>
@@ -107,11 +105,3 @@
 <input type="submit" name=cancel value="<?php print_string("cancel") ?>">
 </form>
 </center>
-
-
-<?php 
-   if ($usehtmleditor) { 
-       print_richedit_javascript("form", "intro", "yes");
-   }
-?>
-

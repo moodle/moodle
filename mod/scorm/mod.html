@@ -52,7 +52,7 @@
      	  	</font>
 	    </td>
 	    <td>
-		<textarea name="summary" rows=5 cols=50 wrap="virtual"><?php p($form->summary) ?></textarea>
+        <?php print_textarea($usehtmleditor, 20, 50, 680, 400, "summary", $form->summary); ?>
 	    </td>
 	</tr>
 	<tr valign=top>

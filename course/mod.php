@@ -622,12 +622,22 @@
 
     if (file_exists($modform)) {
 
+        if ($usehtmleditor = can_use_html_editor()) {
+            $defaultformat = FORMAT_HTML;
+        } else {
+            $defaultformat = FORMAT_MOODLE;
+        }
+
         $icon = "<img align=absmiddle height=16 width=16 src=\"$CFG->modpixpath/$module->name/icon.gif\">&nbsp;";
 
         print_heading_with_help($pageheading, "mods", $module->name, $icon);
         print_simple_box_start("center", "", "$THEME->cellheading");
         include_once($modform);
         print_simple_box_end();
+
+        if ($usehtmleditor and empty($nohtmleditorneeded)) { 
+            use_html_editor();
+        }
 
     } else {
         notice("This module cannot be added to this course yet! (No file found at: $modform)", "$CFG->wwwroot/course/view.php?id=$course->id");

@@ -1654,11 +1654,11 @@ function use_html_editor($name="") {
 
     echo "<script language=\"javascript\" type=\"text/javascript\" defer=\"1\">\n";
     if (empty($name)) {
-        echo "HTMLArea.replaceAll();";
+        echo "HTMLArea.replaceAll();\n";
     } else {
-        echo "HTMLArea.replace('$name')";
+        echo "HTMLArea.replace('$name');\n";
     }
-    echo "</script>";
+    echo "</script>\n";
 }
 
 
