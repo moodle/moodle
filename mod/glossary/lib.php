@@ -837,6 +837,14 @@ function glossary_print_addentry_menu($cm, $glossary, $l, $sortkey, $sortorder =
     echo '<center>' . get_string("explainaddentry","glossary") . '<p>';
 }
 
+function glossary_print_import_menu($cm, $glossary, $l, $sortkey, $sortorder = "", $tab=GLOSSARY_STANDARD_VIEW) {
+    echo '<center>' . get_string("explainimport","glossary") . '<p>';
+}
+
+function glossary_print_export_menu($cm, $glossary, $l, $sortkey, $sortorder = "", $tab=GLOSSARY_STANDARD_VIEW) {
+    echo '<center>' . get_string("explainexport","glossary") . '<p>';
+}
+
 function glossary_print_alphabet_menu($cm, $glossary, $l, $sortkey, $sortorder = "", $tab=GLOSSARY_STANDARD_VIEW) {
     if ( $tab != GLOSSARY_DATE_VIEW ) {
         if ($glossary->showalphabet and $glossary->displayformat != GLOSSARY_FORMAT_CONTINUOUS) {
@@ -1096,7 +1104,7 @@ function glossary_print_dynaentry($courseid, $entries) {
     echo "</tr></table></center>";
 }
 
-function glossary_generate_export_file($glossary) {
+function glossary_generate_export_file($glossary,$l, $cat) {
 global $CFG;
     glossary_check_moddata_dir($glossary);
     $h = glossary_open_xml($glossary);
@@ -1113,43 +1121,42 @@ global $CFG;
         fwrite ($h,glossary_full_tag("USEDYNALINK",2,false,$glossary->usedynalink));
         fwrite ($h,glossary_full_tag("DEFAULTAPPROVAL",2,false,$glossary->defaultapproval));
         fwrite ($h,glossary_full_tag("GLOBALGLOSSARY",2,false,$glossary->globalglossary));
-    $status =fwrite ($h,glossary_end_tag("INFO",1,true));
 
-    if ( $entries = get_records("glossary_entries","glossaryid",$glossary->id) ) {
-        $status = fwrite ($h,glossary_start_tag("ENTRIES",1,true));
-        foreach ($entries as $entry) {
-            if ( $entry->approved ) {
-                $status = fwrite($h,glossary_start_tag("ENTRY",2,true));
-                    fwrite($h,glossary_full_tag("ID",3,false,$entry->id));
-                    fwrite($h,glossary_full_tag("CONCEPT",3,false,$entry->concept));
-                    fwrite($h,glossary_full_tag("DEFINITION",3,false,$entry->definition));
-                    fwrite($h,glossary_full_tag("FORMAT",3,false,$entry->format));
-                    fwrite($h,glossary_full_tag("ATTACHMENT",3,false,$entry->attachment));
-                    fwrite($h,glossary_full_tag("USEDYNALINK",3,false,$entry->usedynalink));
-                    fwrite($h,glossary_full_tag("CASESENSITIVE",3,false,$entry->casesensitive));
-                    fwrite($h,glossary_full_tag("FULLMATCH",3,false,$entry->fullmatch));
-                $status =fwrite($h,glossary_end_tag("ENTRY",2,true));
-            }
-        }
-        $status =fwrite ($h,glossary_end_tag("ENTRIES",1,true));
-    }
+        if ( $entries = get_records("glossary_entries","glossaryid",$glossary->id) ) {
+            $status = fwrite ($h,glossary_start_tag("ENTRIES",2,true));
+            foreach ($entries as $entry) {
+                if ( $entry->approved ) {
+                    $status = fwrite($h,glossary_start_tag("ENTRY",3,true));
+                    fwrite($h,glossary_full_tag("CONCEPT",4,false,$entry->concept));
+                    fwrite($h,glossary_full_tag("DEFINITION",4,false,$entry->definition));
+                    fwrite($h,glossary_full_tag("FORMAT",4,false,$entry->format));
+                    fwrite($h,glossary_full_tag("USEDYNALINK",4,false,$entry->usedynalink));
+                    fwrite($h,glossary_full_tag("CASESENSITIVE",4,false,$entry->casesensitive));
+                    fwrite($h,glossary_full_tag("FULLMATCH",4,false,$entry->fullmatch));
+                    fwrite($h,glossary_full_tag("TEACHERENTRY",4,false,$entry->teacherentry));
 
-    if ( $categories = get_records("glossary_categories","glossaryid",$glossary->id) ) {
-        $status = fwrite ($h,glossary_start_tag("CATEGORIES",1,true));
-        foreach ($categories as $category) {
-            $status = fwrite ($h,glossary_start_tag("CATEGORY",2,true));
-            fwrite($h,glossary_full_tag("NAME",3,false,$category->name));
-            if ( $catentries = get_records("glossary_entries_categories","categoryid",$category->id) ) {
-                $count = 0;
-                foreach ($catentries as $catentry) {
-                    fwrite($h,glossary_full_tag("ENTRYID$count",3,false,$catentry->entryid));
-                    $count++;
+                    if ( $catentries = get_records("glossary_entries_categories","entryid",$entry->id) ) {
+                        $status = fwrite ($h,glossary_start_tag("CATEGORIES",4,true));
+                        foreach ($catentries as $catentry) {
+                            $category = get_record("glossary_categories","id",$catentry->categoryid);
+
+                            $status = fwrite ($h,glossary_start_tag("CATEGORY",5,true));
+                                fwrite($h,glossary_full_tag("NAME",6,false,$category->name));
+                            $status = fwrite($h,glossary_end_tag("CATEGORY",5,true));
+                        }
+                        $status = fwrite($h,glossary_end_tag("CATEGORIES",4,true));
+                    }
+
+                    $status =fwrite($h,glossary_end_tag("ENTRY",3,true));
                 }
             }
-            $status = fwrite($h,glossary_end_tag("CATEGORY",2,true));
+            $status =fwrite ($h,glossary_end_tag("ENTRIES",2,true));
+
         }
-        $status = fwrite($h,glossary_end_tag("CATEGORIES",1,true));
-    }
+
+
+    $status =fwrite ($h,glossary_end_tag("INFO",1,true));
+
     $h = glossary_close_xml($h);
 }
 // Functions designed by Eloy Lafuente
@@ -1177,6 +1184,19 @@ function glossary_open_xml($glossary) {
         }
 }
 
+function glossary_read_imported_file($file) {
+require_once "../../lib/xmlize.php";
+    $h = fopen($file,"r");
+    $line = '';
+    if ($h) {
+        while ( !feof($h) ) {
+		   $char = fread($h,1024);
+           $line .= $char;
+        }
+        fclose($h);
+	}
+    return xmlize($line);
+}
 //Close the file
 function glossary_close_xml($h) {
         $status = fwrite ($h,glossary_end_tag("GLOSSARY",0,true));

@@ -23,8 +23,8 @@
         $data[GLOSSARY_IMPORT_VIEW]->caption = "Import Entries";
         $data[GLOSSARY_EXPORT_VIEW]->caption = "Export Entries";
 
-//        $data[GLOSSARY_IMPORT_VIEW]->link = "import.php?id=$cm->id&tab=$tab";
-//        $data[GLOSSARY_EXPORT_VIEW]->link = "export.php?id=$cm->id&tab=$tab";
+        $data[GLOSSARY_IMPORT_VIEW]->link = "import.php?id=$cm->id";
+        $data[GLOSSARY_EXPORT_VIEW]->link = "export.php?id=$cm->id&l=$l&cat=$cat&tab=".GLOSSARY_CATEGORY_VIEW;
     }
 
     $data[GLOSSARY_DATE_VIEW]->link = "view.php?id=$id&tab=".GLOSSARY_DATE_VIEW;
@@ -64,6 +64,16 @@
             $search = "";
             $l = "";
             glossary_print_addentry_menu($cm, $glossary, $l, $sortkey, $sortorder,$tab);
+        break;
+        case GLOSSARY_IMPORT_VIEW:
+            $search = "";
+            $l = "";
+            glossary_print_import_menu($cm, $glossary, $l, $sortkey, $sortorder,$tab);
+        break;
+        case GLOSSARY_EXPORT_VIEW:
+            $search = "";
+            $l = "";
+            glossary_print_export_menu($cm, $glossary, $l, $sortkey, $sortorder,$tab);
         break;
         case GLOSSARY_DATE_VIEW:
             if (!$sortkey) {

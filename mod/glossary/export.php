@@ -2,11 +2,12 @@
 
     require_once("../../config.php");
     require_once("lib.php");
+    global $CFG, $USER;
     
     require_variable($id);           // Course Module ID
 
-    optional_variable($tab,GLOSSARY_STANDARD_VIEW);
     optional_variable($l,"ALL");
+    optional_variable($cat,0);
 
     if (! $cm = get_record("course_modules", "id", $id)) {
         error("Course Module ID was incorrect");
@@ -25,7 +26,42 @@
         error("You must be a teacher to use this page.");
     } 
 
-    glossary_generate_export_file($glossary);
-    redirect("view.php?id=$cm->id&tab=$tab&l=$l",get_string("glosssaryexported","glossary"),1);
-    die;
+    $strglossaries = get_string("modulenameplural", "glossary");
+    $strglossary = get_string("modulename", "glossary");
+    $strallcategories = get_string("allcategories", "glossary");
+    $straddentry = get_string("addentry", "glossary");
+    $strnoentries = get_string("noentries", "glossary");
+    $strsearchconcept = get_string("searchconcept", "glossary");
+    $strsearchindefinition = get_string("searchindefinition", "glossary");
+    $strsearch = get_string("search");
+    
+    print_header(strip_tags("$course->shortname: $glossary->name"), "$course->fullname",
+        "$navigation <A HREF=index.php?id=$course->id>$strglossaries</A> -> $glossary->name",
+        "", "", true, update_module_button($cm->id, $course->id, $strglossary),
+        navmenu($course, $cm));
+    
+    echo '<p align="center"><font size="3"><b>' . stripslashes_safe($glossary->name);
+    echo '</b></font></p>';
+
+/// Info box
+
+    if ( $glossary->intro ) {
+        print_simple_box_start('center','70%');
+        echo format_text($glossary->intro);
+        print_simple_box_end();
+    }
+
+/// Tabbed browsing sections
+    $tab = GLOSSARY_EXPORT_VIEW;
+    include("tabs.html");
+
+    glossary_generate_export_file($glossary,$l,$cat);
+    print_string("glosssaryexported","glossary");
+
+    if ($CFG->slasharguments) {
+        $ffurl = "../../file.php/$course->id/glossary/" . clean_filename($glossary->name) ."/glossary.xml";
+    } else {
+        $ffurl = "../../file.php?file=/$course->id/glossary/" . clean_filename($glossary->name) ."/glossary.xml";
+    }
+    echo '<p><center><a href="' . $ffurl . '" target=_blank>' . get_string("exportedfile","glossary") .  '</a></center><p>'
 ?>
