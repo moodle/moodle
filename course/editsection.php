@@ -43,10 +43,18 @@
         $form = $section;
     }
 
+    if ($usehtmleditor = can_use_richtext_editor()) {
+        $onsubmit = "onsubmit=\"copyrichtext(theform.summary);\"";
+    } else {
+        $onsubmit = "";
+    }
+
     $sectionname = get_string("name$course->format");
     $stredit = get_string("edit", "", " $sectionname $section->section");
 
-    print_header($stredit, $stredit, "", "form.summary");
+	print_header("$course->shortname: $stredit", "$course->fullname", 
+                 "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> 
+                  -> $stredit", "form.summary");
 
     include("editsection.html");
 

@@ -1,7 +1,24 @@
 <BLOCKQUOTE>
-<FORM name="form" method="post" action="editsection.php">
+<FORM name="theform" method="post" <?=$onsubmit ?> action="editsection.php">
+<TABLE BORDER=0 cellpadding=0 cellspacing=0>
+<TR>
+<TD align=top>
 <P><B><? print_string("summaryof", "", "$sectionname $form->section") ?></B></P>
-<TEXTAREA NAME=summary COLS=60 ROWS=4 WRAP=virtual><?=$form->summary ?></TEXTAREA>
+</TD>
+<TD align=top width=200>
+&nbsp;
+</TD>
+<TD align=top>
+<FONT SIZE=-1>
+     <? if ($usehtmleditor) { ?>
+        <? helpbutton("richtext", get_string("helprichtext"), "moodle", true, true) ?>
+     <? } else { ?>
+        <? helpbutton("text", get_string("helptext"), "moodle", true, true) ?>
+     <? } ?>
+</FONT>
+</TD>
+</TR></TABLE>
+<? print_textarea($usehtmleditor, 4, 60, 595, 200, "summary", $form->summary); ?>
 <P>
 <INPUT type="hidden" name=id value="<?=$form->id ?>">
 <INPUT type="submit" value="<? print_string("savechanges") ?>">
@@ -9,3 +26,8 @@
 </P>
 </FORM>
 </BLOCKQUOTE>
+<? 
+   if ($usehtmleditor) { 
+       print_richedit_javascript("theform", "summary", "no");
+   }
+?>
