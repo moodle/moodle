@@ -340,7 +340,9 @@ function userdate($date, $format="", $timezone=99) {
         $format = "%A, %e %B %Y, %I:%M %p";
     }
     if ($timezone == 99) {
-        $timezone = (float)$USER->timezone;
+        if (isset($USER->timezone)) {
+            $timezone = (float)$USER->timezone;
+        }
     }
     if (abs($timezone) > 12) {
         return strftime("$format", $date);
