@@ -2138,12 +2138,16 @@ function forum_get_participants($forumid) {
                                          u.id = r.userid");
 
     //Add st_posts to st_subscriptions
-    foreach ($st_posts as $st_post) {
-        $st_subscriptions[$st_post->id] = $st_post;
+    if ($st_posts) {
+        foreach ($st_posts as $st_post) {
+            $st_subscriptions[$st_post->id] = $st_post;
+        }
     }
     //Add st_ratings to st_subscriptions
-    foreach ($st_ratings as $st_rating) { 
-        $st_subscriptions[$st_rating->id] = $st_rating;
+    if ($st_ratings) {
+        foreach ($st_ratings as $st_rating) { 
+            $st_subscriptions[$st_rating->id] = $st_rating;
+        }
     }
     //Return st_subscriptions array (it contains an array of unique users)
     return ($st_subscriptions);

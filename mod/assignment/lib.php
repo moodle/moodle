@@ -520,8 +520,10 @@ function assignment_get_participants($assignmentid) {
                                        u.id = a.teacher");
 
     //Add teachers to students
-    foreach ($teachers as $teacher) {
-        $students[$teacher->id] = $teacher;
+    if ($teachers) {
+        foreach ($teachers as $teacher) {
+            $students[$teacher->id] = $teacher;
+        }
     }
     //Return students array (it contains an array of unique users)
     return ($students);
