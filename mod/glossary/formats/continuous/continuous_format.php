@@ -4,9 +4,9 @@ function glossary_show_entry_continuous($course, $cm, $glossary, $entry, $mode="
 
     global $USER;
 
-    echo "\n<table border=\"0\" width=\"95%\" cellspacing=\"0\" cellpadding=\"0\" align=\"center\">\n";
+    echo '<table class="glossarypost continuous" align="center">';
     echo "<tr valign=\"top\">\n";
-    echo "<td width=\"100%\" valign=\"top\"\n";
+    echo '<td width="100%" valign="top" class="entry">';
     glossary_print_entry_approval($cm, $entry, $mode);
     glossary_print_entry_attachment($entry,"html","right");
     echo "<b>";

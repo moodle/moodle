@@ -4,9 +4,9 @@ function glossary_show_entry_dictionary($course, $cm, $glossary, $entry, $mode='
 
     global $CFG, $USER;
 
-    echo '<table border="0" width="95%" cellspacing="0" cellpadding="3" class="forumpost" align="center">';
+    echo '<table class="glossarypost dictionary" align="center">';
     echo '<tr valign="top">';
-    echo '<td width="100%" valign="top" bgcolor="#FFFFFF">';
+    echo '<td width="100%" valign="top" class="entry">';
     glossary_print_entry_approval($cm, $entry, $mode);
     glossary_print_entry_attachment($entry,'html','right');
     echo '<b>';

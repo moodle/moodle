@@ -441,14 +441,25 @@ dialouge, exercise, forum, lesson, quiz */
     white-space: nowrap;
 }
 
-.glossaryentryheader {
+.entryboxheader {
     border-width: 1px 1px 0px 1px;
     border-style: solid;
 }
 
-.glossaryentry {
+.entrybox {
     border-width: 0px 1px 1px 1px;
     border-style: solid;
+}
+
+.glossarypost {
+    width: 95%;
+    border-width:1px;
+    border-style:solid;
+    border-collapse:separate;
+}
+
+.glossarypost .entry {
+    padding: 3px;
 }
 
 

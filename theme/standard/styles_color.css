@@ -327,13 +327,14 @@ th {
     color:#CCCCCC;
 }
 
-.glossaryentryheader {
+.entryboxheader {
     border-color: #BBBBBB;
 }
 
-.glossaryentry {
+.entrybox {
     border-color: #BBBBBB;
 }
+
 
 
 /* lang, forum */

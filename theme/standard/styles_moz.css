@@ -70,12 +70,14 @@
     -moz-border-radius-topright:15px;
 }
 
-.glossaryentryheader {
+.entryboxheader {
     -moz-border-radius-topleft:10px;
     -moz-border-radius-topright:10px;
 }
 
-.glossaryentry {
+.entrybox {
+    -moz-border-radius-bottomleft:10px;
+    -moz-border-radius-bottomright:10px;
 }
 
 #calendar .eventlist .eventfull {

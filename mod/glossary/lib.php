@@ -1276,10 +1276,10 @@ for ($row = 0; $row < $numrows; $row++) {
       </td>
     </tr>
     <tr>
-      <td width="100%" class="glossaryentryheader"><hr /></td>
+      <td width="100%" class="entryboxheader"><hr /></td>
     </tr>
     <tr>
-      <td width="100%" class="glossaryentry">
+      <td width="100%" class="entrybox">
           <center>
 <?php
 }
