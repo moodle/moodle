@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.0.9 development (2003042801)
+      // quiz.php - created with Moodle 1.0.9 development version (2003050700)
 
 
 $string['addquestions'] = "添加题目";
@@ -21,6 +21,7 @@ $string['attemptsallowed'] = "允许多次尝试";
 $string['attemptsunlimited'] = "不限尝试次数";
 $string['backtoquiz'] = "回到测验编辑";
 $string['bestgrade'] = "最高得分";
+$string['blackboard'] = "黑板";
 $string['caseno'] = "不,大小写无所谓";
 $string['casesensitive'] = "区分大小写";
 $string['caseyes'] = "是的,大小写必须正确";
@@ -33,6 +34,7 @@ $string['choice'] = "选择";
 $string['choices'] = "现有选项";
 $string['correctanswer'] = "正确答案";
 $string['correctanswers'] = "正确答案";
+$string['createmultiple'] = "创建多个题目";
 $string['createnewquestion'] = "新建题目";
 $string['custom'] = "自定义格式";
 $string['daysavailable'] = "可用天数";
@@ -68,6 +70,7 @@ $string['fractionsnomax'] = "一个答案得分应该有 100%%，
 $string['gradeaverage'] = "平均得分";
 $string['gradehighest'] = "最高得分";
 $string['grademethod'] = "评分办法";
+$string['grades'] = "得分";
 $string['guestsno'] = "抱歉，访客不能看更不能做测验";
 $string['imagedisplay'] = "要显示的图片";
 $string['importquestions'] = "从文件导入题目";

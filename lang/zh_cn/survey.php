@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // survey.php - created with Moodle 1.0.8 dev (2002121200)
+      // survey.php - created with Moodle 1.0.9 development version (2003050700)
 
 
 $string['actual'] = "实际的";
@@ -9,6 +9,7 @@ $string['allquestions'] = "所有问题按序排列，所有学生";
 $string['allscales'] = "所有量表，所有学生";
 $string['alreadysubmitted'] = "你已经提交了这份问卷调查";
 $string['analysisof'] = "\$a 的分析结果";
+$string['answers'] = "回答";
 $string['attls1'] = "在评价某人的说法，我就事论事，只关心言谈的质量，而不管是谁说的。";
 $string['attls10'] = "在分析事情时尽量保持客观态度，这对我很重要。";
 $string['attls10short'] = "保持客观态度";
@@ -59,6 +60,13 @@ $string['attlsm2'] = "情景型学习";
 $string['attlsm3'] = "独立型学习";
 $string['attlsmintro'] = "在讨论中……";
 $string['attlsname'] = "学习与思考态度问卷调查（20项）";
+$string['ciq1'] = "什么时候你学习最投入？";
+$string['ciq2'] = "什么时候你学习最不投入？";
+$string['ciq3'] = "论坛上的人们的何种行为最让你感觉值得确信或有帮助？";
+$string['ciq4'] = "论坛上的人们的何种行为最让你感觉困惑。";
+$string['ciq5'] = "什么事件让你最吃惊？";
+$string['ciqintro'] = "想想本班上周发生的事情，回答以下问题。";
+$string['ciqname'] = "关键事件";
 $string['clicktocontinue'] = "点击这里继续";
 $string['clicktocontinuecheck'] = "点击这里检查并继续";
 $string['colles1'] = "我只学让我感兴趣的东西。";
@@ -182,6 +190,7 @@ $string['downloadexcel'] = "以Excel电子表格形式下载数据";
 $string['downloadinfo'] = "你可以以适于Excel、SPSS或其它软件包分析的形式下载完整的原始数据。";
 $string['downloadtext'] = "以纯文本形式下载数据";
 $string['editingasurvey'] = "编辑问卷调查";
+$string['guestsnotallowed'] = "访客不允许提交问卷";
 $string['helpsurveys'] = "不同类型问卷的帮助文档";
 $string['howlong'] = "你完成这份问卷花了多长时间？";
 $string['howlongoptions'] = "1分钟之内,1-2分钟,2-3分钟,3-4分钟,4-5分钟,5-10分钟,超过10分钟";

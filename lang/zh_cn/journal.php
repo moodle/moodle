@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // journal.php - created with Moodle 1.0.9 development (2003042801)
+      // journal.php - created with Moodle 1.0.9 development version (2003050700)
 
 
 $string['alwaysopen'] = "总是开放";
@@ -7,6 +7,7 @@ $string['blankentry'] = "空白条目";
 $string['daysavailable'] = "可看天数";
 $string['editingended'] = "编辑期已经结束";
 $string['editingends'] = "编辑期结束";
+$string['entries'] = "条目";
 $string['feedbackupdated'] = "已更新 \$a 条反馈";
 $string['journalname'] = "杂志名称";
 $string['journalquestion'] = "杂志问题";

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.0.8 dev (2002121200)
+      // resource.php - created with Moodle 1.0.9 development version (2003050700)
 
 
 $string['addresource'] = "添加资源";
@@ -24,5 +24,7 @@ $string['resourcetype3'] = "上载的文件";
 $string['resourcetype4'] = "纯文本";
 $string['resourcetype5'] = "网页链接";
 $string['resourcetype6'] = "HTML文本";
+$string['resourcetype7'] = "程序";
+$string['resourcetype8'] = "Wiki文本";
 
 ?>

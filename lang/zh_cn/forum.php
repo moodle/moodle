@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.0.9 development (2003042801)
+      // forum.php - created with Moodle 1.0.9 development version (2003050700)
 
 
 $string['addanewdiscussion'] = "添加一个新的讨论话题";
@@ -85,6 +85,7 @@ $string['postmailinfo'] = "这是一份来自 \$a 网站的贴子。
 $string['postrating1'] = "极端独立型";
 $string['postrating2'] = "独立型与情景型兼备";
 $string['postrating3'] = "极端情况型";
+$string['posts'] = "帖子";
 $string['postupdated'] = "你的贴子已经更新";
 $string['processingpost'] = "正在处理贴子 \$a";
 $string['rate'] = "评价";
@@ -108,6 +109,7 @@ $string['subscribe'] = "订阅该讨论区";
 $string['subscribed'] = "订阅";
 $string['subscribers'] = "订阅者";
 $string['subscribersto'] = "订阅‘ \$a ’者";
+$string['subscriptions'] = "订阅";
 $string['unsubscribe'] = "不再订阅该讨论区";
 $string['youratedthis'] = "你对此评分";
 $string['yournewtopic'] = "你的新讨论话题";

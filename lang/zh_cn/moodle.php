@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.0.9 development (2003042801)
+      // moodle.php - created with Moodle 1.0.9 development version (2003050700)
 
 
 $string['action'] = "¶¯×÷";
@@ -36,6 +36,9 @@ $string['assigncreators'] = "ÈÎÃü¿Î³Ì´´½¨Õß";
 $string['assignteachers'] = "ÈÎÃü½ÌÊ¦";
 $string['authentication'] = "Éí·İÑéÖ¤";
 $string['availablecourses'] = "ÏÖÓĞµÄ¿Î³Ì";
+$string['backup'] = "±¸·İ";
+$string['backupdetails'] = "±¸·İÏ¸½Ú";
+$string['backupnameformat'] = "%%Y%%m%%d-%%H%%M";
 $string['cancel'] = "È¡Ïû";
 $string['categories'] = "¿Î³ÌÀà±ğ";
 $string['category'] = "Àà±ğ";
@@ -63,8 +66,12 @@ $string['configframename'] = "Èç¹ûÄã°Ñ±¾ÏµÍ³Ç¶ÈëÓÚÍøÒ³¿ò¼Ü(frame)ÖĞ£¬ÄÇÃ´ÔÚ´ËÌîÈ
 $string['configgdversion'] = "Ö¸Ã÷ÒÑ°²×°µÄGD°æ±¾¡£Ä¬ÈÏÏÔÊ¾µÄ°æ±¾ºÅÊÇ×Ô¶¯Ì½²âµÄ½á¹û¡£²»ÒªÇáÒ×¸Ä±äËü£¬³ı·ÇÄãÇå³şÄãÔÚ×öÊ²Ã´¡£";
 $string['confightmleditor'] = "Ñ¡ÔñÊÇ·ñÔÊĞíÊ¹ÓÃÇ¶ÈëÊ½ÎÄ±¾±à¼­Æ÷¡£¼´Ê¹ÄãÑ¡ÔñÔÊĞí£¬Ò²Ö»ÄÜÔÚIE5.5ÒÔÉÏ°æ±¾Ê¹ÓÃ¡£ÓÃ»§Ò²¿ÉÒÔÑ¡Ôñ²»ÓÃ¡£";
 $string['configintro'] = "´ËÒ³ÄãÄÜÉèÖÃĞí¶à±äÁ¿ÈÃ¸ÃÏµÍ³¸üºÃµØÔËĞĞÔÚÄãµÄ·şÎñÆ÷ÉÏ¡£²»±Ø¹ı¶àÓÇÂÇ¡ª¡ªÄ¬ÈÏµÄÉèÖÃÒÑÄÜºÜºÃµØÔËĞĞ£¬¶øÇÒÄãÒÔºóÒ²¿ÉÒÔ»Øµ½ÕâÀï¸Ä±äÉèÖÃ¡£";
+$string['configintroadmin'] = "´ËÒ³ÄãÄÜÉèÖÃ¾ßÓĞÍêÈ«¿ØÖÆ±¾Õ¾µÄÖ÷Òª¹ÜÀíÔ±¡£È·ÈÏÄã¸øÁËËû°²È«µÄÓÃ»§ÃûºÍÃÜÂëÒÔ¼°ÓĞĞ§emailµØÖ·¡£ÄãÒ²¿ÉÒÔÔÚÒÔºó´´½¨¸ü¶àµÄ¹ÜÀíÔ±ÕÊºÅ¡£";
+$string['configintrosite'] = "´ËÒ³ÄãÄÜÉèÖÃĞÂÕ¾µãµÄÊ×Ò³¼°Õ¾µãÃû³Æ¡£ÄãÒ²¿ÉÒÔÔÚÒÔºóÍ¨¹ıÖ÷Ò³ÖĞµÄ¡°Õ¾µãÉèÖÃ¡±Á´½Ó»Øµ½ÕâÀï¸Ä±äÕâĞ©ÉèÖÃ¡£";
 $string['configlang'] = "Îª¸ÃÕ¾µãÑ¡ÔñÒ»¸öÄ¬ÈÏµÄÓïÑÔ¡£ÒÔºóÓÃ»§Ò²¿ÉÒÔÑ¡Ôñ×Ô¼ºµÄÓïÑÔ";
 $string['configlangdir'] = "¶àÊıÓïÑÔµÄ´òÓ¡Ë³ĞòÊÇ´Ó×óµ½ÓÒ£¬µ«ÓĞĞ©ÓïÑÔÏó°¢À­²®ÎÄ¡¢Ï£²®À´ÎÄÊÇ´ÓÓÒµ½×óµÄ¡£";
+$string['configlanglist'] = "´Ë´¦Áô¿Õ½«ÔÊĞíÓÃ»§´ÓÄãËùÓĞÒÑ°²×°µÄÓïÑÔÖÖÀàÖĞÈÎÑ¡Ò»ÖÖ¡£µ±È»Èç¹ûÄãÒªËõ¶ÌÓïÑÔÑ¡Ôñ²Ëµ¥£¬ÄÇÃ´¿ÉÒÔÔÚ´ËÌîÈëÓïÑÔ´úÂë£¬ÒÔ¶ººÅ¸ô¿ª¡£ÀıÈç£ºen,it,zh_cn";
+$string['configlangmenu'] = "Ñ¡ÔñÒª²»ÒªÔÚÖ÷Ò³¡¢µÇÂ¼Ò³ÏÔÊ¾Í¨ÓÃµÄÓïÑÔ²Ëµ¥¡£Õâ²¢²»Ó°ÏìÓÃ»§ÔÚËûÃÇµÄ¸öÈË×ÊÁÏÖĞÑ¡ÔñÆ«°®µÄÓïÑÔ¡£";
 $string['configlocale'] = "Ñ¡ÔñÕ¾µãµÄµØÇøÉèÖÃ¡ª¡ªÕâ½«Ó°Ïìµ½ÈÕÆÚµÄ¸ñÊ½ºÍÓïÑÔ¡£µ«ÄãµÄ²Ù×÷ÏµÍ³ÉÏ±ØĞë°²×°ÕâÖÖµØÇøÉèÖÃ£¨±ÈÈçen_US»òzh_CN£©¡£Èç¹û²»ÖªÈçºÎÑ¡Ôñ£¬Áô¿Õ¡£";
 $string['configloglifetime'] = "ÔÚ´ËÖ¸¶¨±£´æÓÃ»§»î¶¯ÈÕÖ¾µÄÊ±¼ä³¤¶Ì¡£ÔÚ´Ë¶ÎÊ±¼äÖ®Ç°µÄÈÕÖ¾½«±»×Ô¶¯É¾³ı¡£µ±È»ÈÕÖ¾±£´æÊ±¼äÔ½³¤Ô½ºÃ£¬µ«Èç¹ûÄãµÄ·şÎñÆ÷ºÜÃ¦£¬ÔËĞĞĞ§ÂÊºÜµÍ£¬ÕâÊ±Äã¿ÉÄÜĞèÒªËõ¶ÌÈÕÖ¾Ê±¼ä¡£";
 $string['configlongtimenosee'] = "Èç¹ûÑ§ÉúºÜ³¤Ê±¼äÃ»ÓĞµÇÂ¼£¬ËûÃÇ½«×Ô¶¯´ÓÏµÍ³ÖĞ³ıÃû¡£¸Ã²ÎÊıÖ¸¶¨Õâ¸öÆÚÏŞ¡£";
@@ -83,6 +90,8 @@ $string['cookiesenabled'] = "ÄãµÄä¯ÀÀÆ÷µÄCookiesÉèÖÃ±ØĞë´ò¿ª";
 $string['copyrightnotice'] = "°æÈ¨ÉùÃ÷";
 $string['country'] = "¹ú¼Ò";
 $string['course'] = "¿Î³Ì";
+$string['coursebackup'] = "¿Î³Ì±¸·İ";
+$string['coursefiles'] = "¿Î³ÌÎÄ¼ş";
 $string['courseformats'] = "¿Î³Ì¸ñÊ½";
 $string['courses'] = "¿Î³Ì";
 $string['courseupdates'] = "¿Î³Ì¸üĞÂ";
@@ -91,6 +100,8 @@ $string['createuserandpass'] = "´´½¨Ò»¸öĞÂµÄÓÃ»§ÃûºÍÃÜÂëÓÃÀ´µÇÂ¼";
 $string['createziparchive'] = "´´½¨zipÑ¹ËõÎÄ¼ş";
 $string['currentlanguage'] = "µ±Ç°ÓïÑÔÖÖÀà";
 $string['currentlocaltime'] = "ÄãµÄµ±µØÊ±¼ä";
+$string['currentrelease'] = "µ±Ç°·¢²¼ĞÅÏ¢";
+$string['currentversion'] = "µ±Ç°°æ±¾";
 $string['databasechecking'] = "°ÑÊı¾İ¿â´Ó \$a->oldversion °æÉı¼¶µ½ \$a->newversion °æ...";
 $string['databasesetup'] = "ÕıÔÚ°²×°Êı¾İ¿â";
 $string['databasesuccess'] = "Êı¾İ¿âÉı¼¶³É¹¦";
@@ -117,6 +128,7 @@ $string['deletednot'] = "ÎŞ·¨É¾³ı \$a £¡";
 $string['deletingcourse'] = "ÕıÔÚÉ¾³ı \$a";
 $string['department'] = "Ïµ²¿";
 $string['description'] = "ÃèÊö";
+$string['displayingfirst'] = "Ö»ÏÔÊ¾µÚÒ»¸ö \$a->count \$a->things ";
 $string['displayingrecords'] = "ÏÔÊ¾ \$a Ìõ¼ÇÂ¼";
 $string['displayingusers'] = "´Ó \$a->start µ½ \$a->end ÏÔÊ¾ÓÃ»§";
 $string['documentation'] = "°ïÖúÎÄµµ";
@@ -133,17 +145,95 @@ $string['edituser'] = "±à¼­ÓÃ»§ÕÊºÅ";
 $string['email'] = "EmailµØÖ·";
 $string['emailconfirm'] = "È·ÈÏÄãµÄÕÊºÅ";
 $string['emailconfirmation'] = "\$a->lastname £º<br>
+
+
+
+
+
+
+
 &nbsp;&nbsp;&nbsp;&nbsp;ÄãºÃ£¡<br>
+
+
+
+
+
+
+
 &nbsp;&nbsp;&nbsp;&nbsp;¸Õ²ÅÄãÓÃÄãµÄµç×ÓÓÊÏäµØÖ·ÔÚ¡® \$a->sitename ¡¯ÉÏÉêÇëÁËÒ»¸öĞÂÕÊºÅ¡£
+
+
+
+
+
+
+
 &nbsp;&nbsp;&nbsp;&nbsp;Èç¹ûÒªÈ·ÈÏÄãµÄĞÂÕÊºÅ£¬Çëµã»÷ÒÔÏÂÁ´½Ó£º<br>
+
+
+
+
+
+
+
   \$a->link
+
+
+
+
+
+
+
 <br>&nbsp;&nbsp;&nbsp;&nbsp;ÔÚ¶àÊıµÄÓÊ¼şÈí¼şÖĞ£¬Õâ¸öµØÖ·Ó¦¸ÃÏÔÊ¾ÎªÀ¶É«µÄÁ´½Ó¡£Èç¹û²»ÊÇÕâÑù£¬Çë½«ÒÔÉÏµØÖ·¸´ÖÆÕ³Ìùµ½ÍøÒ³ä¯ÀÀÆ÷£¨±ÈÈçIE»ònetscapeµÈ£©µÄµØÖ·À¸£¬´ò¿ªÕâ¸öÍøÒ³¡£<br>
+
+
+
+
+
+
+
 ÖÂ
+
+
+
+
+
+
+
 &nbsp;&nbsp;&nbsp;&nbsp;¾´Àñ£¡
+
+
+
+
+
+
+
 <P align=right>¡® \$a->sitename ¡¯¹ÜÀíÔ±<br>
+
+
+
+
+
+
+
 \$a->admin </P>";
+$string['emailconfirmationsubject'] = "\$a £ºÕÊºÅÈ·ÈÏ";
 $string['emailconfirmsent'] = "   <P>Ò»·âµç×ÓÓÊ¼şÒÑ¾­·¢ËÍµ½ÄãµÄµØÖ· <B> \$a </B>¡£
+
+
+
+
+
+
+
    <P>Õâ·âÓÊ¼ş¼òÒªËµÃ÷ÁËÄãÈçºÎÍê³É×¢²á¡£
+
+
+
+
+
+
+
    <P>Èç¹ûÄã»¹Óöµ½Ê²Ã´À§ÄÑ£¬ÇëºÍÍøÕ¾¹ÜÀíÔ±ÁªÏµ¡£";
 $string['emaildisplay'] = "EmailÏÔÊ¾";
 $string['emaildisplaycourse'] = "Ö»ÔÊĞí²Î¼ÓÍ¬Ò»¿Î³ÌµÄÆäËû³ÉÔ±¿´¼ûÎÒµÄemailµØÖ·";
@@ -152,13 +242,118 @@ $string['emaildisplayyes'] = "ÔÊĞíÈÎºÎÈË¿´¼ûÎÒµÄÆğ³õemailµØÖ·";
 $string['emailexists'] = "Õâ¸öemailµØÖ·ÒÑ¾­×¢²á¹ıÁË¡£";
 $string['emailformat'] = "Email¸ñÊ½";
 $string['emailmustbereal'] = "×¢Òâ£ºÄãµÄemailµØÖ·±ØĞëÊÇÕæÊµµÄ";
+$string['emailpasswordconfirmation'] = "\$a->firstname £º
+
+
+
+
+
+
+
+&nbsp;&nbsp;&nbsp;&nbsp;ÄãºÃ!<br>
+
+
+
+
+
+
+
+&nbsp;&nbsp;&nbsp;&nbsp;ÓĞÈË(ºÜ¿ÉÄÜÊÇÄã×Ô¼º)ÎªÄãÔÚ¡° \$a->sitename ¡±ÉÏµÄÕÊºÅÉêÇëÁËĞÂµÄÃÜÂë¡£<br>
+
+
+
+
+
+
+
+&nbsp;&nbsp;&nbsp;&nbsp;Èç¹ûÄãÒªÈ·ÈÏÉêÇë£¬²¢Ï£ÍûÍ¨¹ıemail»ñÈ¡ĞÂÃÜÂë£¬Çëµã»÷ÒÔÏÂÁ´½Ó£º<br>
+
+
+
+
+
+
+
+\$a->link <br>
+
+
+
+
+
+
+
+&nbsp;&nbsp;&nbsp;&nbsp;ÔÚ¶àÊıÓÊ¼şÈí¼ş(Èçoutlook)ÖĞ¸ÃÁ´½ÓÓ¦¸ÃÏÔÏÖÎªÀ¶É«µÄÁ´½Ó£¬ÄãÖ»Ğèµã»÷Ëü¡£Èç¹ûËü²»ÄÜÕı³£¹¤×÷£¬ÄÇÃ´ÇëÄã¸´ÖÆ¸ÃµØÖ·£¬È»ºóÕ³Ìùµ½ÍøÒ³ä¯ÀÀÆ÷µÄµØÖ·À¸ÖĞ£¬°´»Ø³µ¼ü£¬¾Í¿ÉÒÔµ½´ï¡£<br>
+
+
+
+
+
+
+
+&nbsp;&nbsp;&nbsp;&nbsp;Èç¹ûÄãĞèÒª°ïÖú£¬ÇëÁªÏµ¹ÜÀíÔ± \$a->admin ¡£
+
+
+
+
+
+
+
+";
+$string['emailpasswordconfirmationsubject'] = "\$a £ºÈ·ÈÏ¸ü¸ÄÃÜÂë";
+$string['emailpasswordconfirmsent'] = "Ò»·âemailÒÑ¾­·¢ËÍµ½ÄãµÄÓÊÏä<b>\$a</b>¡£
+
+
+
+
+
+
+
+<p>ÆäÖĞÓĞ¹ØÓÚÈçºÎÈ·ÈÏ²¢Íê³É±¾´ÎÃÜÂë¸ü¸ÄµÄ¼òµ¥ËµÃ÷¡£
+
+
+
+
+
+
+
+Èç¹ûÄã»¹ÊÇÓĞÀ§ÄÑ£¬ÇëÁªÏµ¹ÜÀíÔ±¡£";
+$string['emailpasswordsent'] = "Ğ»Ğ»Äã¶Ô¸ü¸ÄÃÜÂë×öÁËÈ·ÈÏ¡£
+
+
+
+<p>ÄãµÄĞÂÃÜÂëÒÑ¾­Í¨¹ıemail·¢ËÍµ½ÄãµÄÓÊÏä£º<b>\$a->email</b>
+
+
+
+<P>Õâ¸öĞÂÃÜÂëÊÇ×Ô¶¯Éú³ÉµÄ¡ª¡ªÄã×îºÃµ½<a href=\$a->link>ÕâÀï</a>¸Ä³ÉÄã×Ô¼ºÈİÒ×¼ÇµÄÃÜÂë¡£";
 $string['enrolmentkey'] = "Ñ¡¿ÎÃÜÔ¿";
 $string['enrolmentkeyfrom'] = "¸Ã¿Î³ÌĞèÒª¡®Ñ¡¿ÎÃÜÔ¿¡¯¡ª¡ª<BR>
+
+
+
+
+
+
+
 Ò»¸ö´Ó \$a »ñµÃµÄÒ»´ÎĞÔÃÜÂë";
 $string['enrolmentkeyhint'] = "Õâ¸öÑ¡¿ÎÃÜÔ¿²»ÕıÈ·£¬ÇëÔÙÊÔÒ»´Î<BR>
+
+
+
+
+
+
+
 £¨ÌáÊ¾£ºÒÔ'\$a'¿ªÍ·£©";
 $string['entercourse'] = "µã»÷½øÈë¸Ã¿Î³Ì";
 $string['enteremailaddress'] = "ÊäÈëÄãµÄemailµØÖ·ÒÔÖØÉèÃÜÂë£¬
+
+
+
+
+
+
+
 ĞÂÃÜÂë½«ËÍµ½ÄãµÄĞÅÏäÖĞ¡£";
 $string['error'] = "´íÎó";
 $string['errortoomanylogins'] = "±§Ç¸£¬ÄãÒÑ³¬¹ıÔÊĞíµÄ×î´óµÇÂ¼³¢ÊÔ´ÎÊı¡£ÇëÖØÆôÄãµÄä¯ÀÀÆ÷¡£";
@@ -182,6 +377,7 @@ $string['formattext'] = "Moodle ×Ô¶¯¸ñÊ½";
 $string['formattexttype'] = "¸ñÊ½";
 $string['formattopics'] = "Ö÷Ìâ¸ñÊ½";
 $string['formatweeks'] = "ĞÇÆÚ¸ñÊ½";
+$string['formatwiki'] = "Wiki¸ñÊ½";
 $string['frontpagedescription'] = "Ê×Ò³ËµÃ÷";
 $string['frontpageformat'] = "Ê×Ò³¸ñÊ½";
 $string['fulllistofcourses'] = "ËùÓĞ¿Î³Ì";
@@ -193,11 +389,32 @@ $string['gd2'] = "GD 2.xÒÑ¾­°²×°";
 $string['gdneed'] = "Òª¿´µ½¸ÃÍ¼±ØĞë°²×°GD";
 $string['gdnot'] = "GDÃ»ÓĞ°²×°";
 $string['gpl'] = "°æÈ¨ËùÓĞ (C) 2001-2002  Martin Dougiamas  (http://dougiamas.com)
+
+
+
+
+
+
+
 ¸ÃÏµÍ³ÊÇ×ÔÓÉÈí¼ş£»Äã¿ÉÒÔ°´ÕÕ×ÔÓÉÈí¼ş»ù½ğ»áËù¹«²¼µÄGNUÍ¨ÓÃ¹«¹²Ğí¿ÉÖ¤£¨GPL£©½øĞĞĞŞ¸Ä»òÖØĞÂ·¢²¼£»Ğí¿ÉÖ¤¿ÉÒÔÊÇµÚ2°æ»ò¸üĞÂµÄ°æ±¾¡£
+
+
+
+
+
+
+
 ·¢²¼¸ÃÈí¼şÊÇÏ£ÍûËüÓĞÓÃÓĞÒæ£¬µ«²»Ìá¹©ÈÎºÎĞÎÊ½µÄµ£±££¬²»ÂÛÊÇÃ÷È·µÄ»¹ÊÇÒşº¬µÄ£¬°üÀ¨µ«²»ÏŞÓÚ¿ÉÏúÊÛºÍÊÊºÏÌØ¶¨ÓÃÍ¾µÄÒşº¬±£Ö¤¡£Ïê¼ûGNUÍ¨ÓÃ¹«¹²Ğí¿ÉÖ¤£º
+
+
+
+
+
+
+
 http://www.gnu.org/copyleft/gpl.html";
-$string['grade'] = "Äê¼¶";
-$string['grades'] = "Äê¼¶";
+$string['grade'] = "µÃ·Ö";
+$string['grades'] = "µÃ·Ö";
 $string['guestskey'] = "ÔÊĞíÓĞÃÜÔ¿µÄ·Ã¿Í½øÈë";
 $string['guestsno'] = "²»ÔÊĞí·Ã¿Í½øÈë";
 $string['guestsnotallowed'] = "±§Ç¸£¡ '\$a' ²»ÔÊĞí·Ã¿Í½øÈë¡£";
@@ -230,6 +447,13 @@ $string['htmleditordisabledbrowser'] = "¸»ÎÄ±¾¸ñÊ½±à¼­Æ÷²»¿ÉÓÃ£¬ÒòÎªÄãµÄä¯ÀÀÆ÷²»
 $string['htmlformat'] = "ÃÀ»¯µÄHTML¸ñÊ½";
 $string['icqnumber'] = "ICQºÅÂë";
 $string['idnumber'] = "IDºÅÂë";
+$string['include'] = "°üÀ¨";
+$string['includeallusers'] = "°üÀ¨ËùÓĞÓÃ»§";
+$string['includecoursefiles'] = "°üÀ¨¿Î³ÌÎÄ¼ş";
+$string['includecourseusers'] = "°üÀ¨¿Î³ÌÓÃ»§";
+$string['includelogentries'] = "°üÀ¨ÈÕÖ¾ÌõÄ¿";
+$string['includeneededusers'] = "°üÀ¨ĞèÒªµÄÓÃ»§";
+$string['includeuserfiles'] = "°üÀ¨ÓÃ»§µÄÎÄ¼ş";
 $string['invalidemail'] = "emailµØÖ·ÎŞĞ§";
 $string['invalidlogin'] = "µÇÂ¼ÎŞĞ§£¬ÇëÖØÊÔ";
 $string['jumpto'] = "ÌøÖÁ¡­¡­";
@@ -257,14 +481,77 @@ $string['loginas'] = "µÇÂ¼Îª";
 $string['loginguest'] = "×÷Îª·Ã¿ÍµÇÂ¼";
 $string['loginsite'] = "µÇÂ¼¸ÃÕ¾";
 $string['loginsteps'] = "àË£¬ÄãºÃ£¡ÎªÁËÍêÈ«·ÃÎÊËùÓĞ¿Î³Ì£¬Äã±ØĞë»¨Ò»Á½·ÖÖÓÊ±¼äÉêÇëÒ»¸öĞÂÕÊºÅ¡£¸÷¸ö¿Î³Ì¿ÉÄÜ»¹ĞèÒªÒ»¸öÒ»´ÎĞÔµÄ¡°Ñ¡¿ÎÃÜÔ¿¡±£¬ÓÃ¹ıÒ»´ÎÒÔºó¾Í²»ÔÙĞèÒª¡£Çë°´ÒÔÏÂ²½Öè£º
+
+
+
+
+
+
+
    <OL size=2>
+
+
+
+
+
+
+
    <LI>ÌîĞ´<A HREF= \$a >×¢²áĞÂÕÊºÅ</A>ÉÏµÄ¹ØÓÚ¸öÈËÇé¿öµÄ±íµ¥¡£
+
+
+
+
+
+
+
    <LI>Ò»·âemail»áÂíÉÏ·¢ËÍµ½ÄãµÄemailĞÅÏäÖĞ¡£
+
+
+
+
+
+
+
    <LI>ÔÄ¶ÁÕâ·âemail£¬µã»÷ĞÅÖĞ°üº¬µÄÍøÒ³Á´½Ó¡£
+
+
+
+
+
+
+
    <LI>ÄãµÄÕÊºÅ»áÂíÉÏµÃµ½È·ÈÏ£¬¶øÄãÒ²½«µÇÂ¼µ½±¾Õ¾ÖĞ¡£
+
+
+
+
+
+
+
    <LI>È»ºó£¬Ñ¡ÔñÄãÏëÑ¡ĞŞµÄ¿Î³Ì¡£
+
+
+
+
+
+
+
    <LI>Èç¹ûÏµÍ³ÌáÊ¾¡°Ñ¡¿ÎÃÜÔ¿¡±£¬ÇëÓÃÄãµÄÀÏÊ¦Ìá¹©¸øÄãµÄÃÜÔ¿¡£ÕâÑù²ÅÄÜ×¢²áµ½¸Ã¿Î³ÌÖĞ¡£
+
+
+
+
+
+
+
    <LI>ÕâÊ±Äã¿ÉÒÔÍêÈ«·ÃÎÊ¿Î³Ì¡£´Ó´ËºóÄãÖ»ĞèÊäÈëÄã¸öÈËµÄÓÃ»§ÃûºÍÃÜÂë£¨ÔÚ±¾Ò³ÃæµÄ±íµ¥ÖĞ£©ÒÔµÇÂ¼²¢½øÈëÈÎÒ»¸öÄãÒÑ×¢²áµÄ¿Î³Ì¡£
+
+
+
+
+
+
+
    </OL>";
 $string['loginstepsnone'] = "àË£¡<P>ÎªÁËÍêÈ«·ÃÎÊ¿Î³ÌÄã±ØĞëÉêÇëÒ»¸öĞÂÕÊºÅ¡£<P>ÄãËùĞèÒª×öµÄÊÇ´´½¨Ò»¸öÓÃ»§ÃûºÍÃÜÂë£¬²¢ÔÚ±¾Ò³ÃæÖĞÊ¹ÓÃ¡£<P>Èç¹û±ğÈËÒÑ¾­ÉêÇëÁËÏàÍ¬µÄÓÃ»§Ãû£¬Ö»ºÃÇëÄãÎ¯ÇüÒ»ÏÂÓÃ±ğµÄÓÃ»§ÃûÖØÊÔ¡£";
 $string['loginto'] = "µÇÂ¼µ½ \$a";
@@ -275,9 +562,10 @@ $string['mainmenu'] = "Ö÷²Ëµ¥";
 $string['makeafolder'] = "ĞÂ½¨Ò»¸öÎÄ¼ş¼Ğ";
 $string['makeeditable'] = "Èç¹ûÄãÉèÖÃ' \$a 'ÎªWeb·şÎñÆ÷£¨ÀıÈçapache£©¿ÉĞ´£¬ÄÇÃ´Äã¿ÉÒÔÔÚ´ËÒ³ÖĞÖ±½Ó±à¼­¸ÃÎÄ¼ş";
 $string['managedatabase'] = "¹ÜÀíÊı¾İ¿â";
+$string['markedthistopic'] = "¸Ã»°Ìâ×÷Îªµ±Ç°»°ÌâÍ»³öÏÔÊ¾";
 $string['markthistopic'] = "±ê¼Ç¸Ã»°ÌâÎªµ±Ç°»°Ìâ";
 $string['maximumchars'] = "×î¶à \$a ¸ö×Ö·û";
-$string['maximumgrade'] = "×î¸ßµÈ¼¶";
+$string['maximumgrade'] = "×î¸ßµÃ·Ö";
 $string['maximumshort'] = "×î´ó";
 $string['maxsize'] = "´óĞ¡ÏŞÖÆ£º \$a";
 $string['min'] = "·ÖÖÓ";
@@ -316,24 +604,116 @@ $string['name'] = "Ãû³Æ";
 $string['namesocial'] = "section";
 $string['nametopics'] = "»°Ìâ";
 $string['nameweeks'] = "ĞÇÆÚ";
+$string['needed'] = "ĞèÒªµÄ";
 $string['never'] = "´ÓÎ´";
 $string['neverdeletelogs'] = "´Ó²»É¾³ıÈÕÖ¾";
 $string['new'] = "ĞÂ";
 $string['newaccount'] = "ĞÂÕÊºÅ";
 $string['newpassword'] = "ĞÂÃÜÂë";
 $string['newpasswordtext'] = "\$a->lastname £º<br>
+
+
+
+
+
+
+
 &nbsp;&nbsp;&nbsp;&nbsp;ÄãºÃ£¡ 
+
+
+
+
+
+
+
 <br>&nbsp;&nbsp;&nbsp;&nbsp;ÄãÔÚ¡® \$a->sitename ¡¯ÉÏµÄÕÊºÅÃÜÂëÒÑ±»ÖØÉè£¬ÕâÊÇÄãĞÂµÄÁÙÊ±ÃÜÂë¡£
+
+
+
+
+
+
+
 <br>&nbsp;&nbsp;&nbsp;&nbsp;ÏÖÔÚÄãµÄµÇÂ¼ĞÅÏ¢ÊÇ£º
+
+
+
+
+
+
+
 <br>&nbsp;&nbsp;&nbsp;&nbsp;   ÓÃ»§Ãû£º \$a->username
+
+
+
+
+
+
+
 <br>&nbsp;&nbsp;&nbsp;&nbsp;   ÃÜÂë£º \$a->newpassword
+
+
+
+
+
+
+
 <br>&nbsp;&nbsp;&nbsp;&nbsp;Çëµ½ÕâÀï¸ü¸ÄÄãµÄÃÜÂë£º
+
+
+
+
+
+
+
    \$a->link
+
+
+
+
+
+
+
 <br>&nbsp;&nbsp;&nbsp;&nbsp;ÔÚ¶àÊıµÄÓÊ¼şÈí¼şÖĞ£¬Õâ¸öµØÖ·Ó¦¸ÃÏÔÊ¾ÎªÀ¶É«µÄÁ´½Ó¡£Èç¹û²»ÊÇÕâÑù£¬Çë½«ÒÔÉÏµØÖ·¸´ÖÆÕ³Ìùµ½ÍøÒ³ä¯ÀÀÆ÷£¨±ÈÈçIE»ònetscapeµÈ£©µÄµØÖ·À¸£¬´ò¿ªÕâ¸öÍøÒ³¡£<br>
+
+
+
+
+
+
+
 ÖÂ
+
+
+
+
+
+
+
 <br>&nbsp;&nbsp;&nbsp;&nbsp;¾´Àñ£¡
+
+
+
+
+
+
+
 <P align=right>'\$a->sitename'¹ÜÀíÔ±<br>
+
+
+
+
+
+
+
 \$a->signoff
+
+
+
+
+
+
+
 </P>";
 $string['newpicture'] = "ĞÂÕÕÆ¬";
 $string['newsitem'] = "ĞÂÎÅÌõÄ¿";
@@ -347,7 +727,7 @@ $string['noexistingadmins'] = "Ã»ÓĞ¹ÜÀíÔ±,ÕâÊÇ¸öÑÏÖØµÄ´íÎó,ÄãÓ¦¸Ã²»»á¿´µ½ÕâÌõĞÅÏ
 $string['noexistingcreators'] = "Ã»ÓĞ´´½¨Õß";
 $string['noexistingteachers'] = "Ã»ÓĞ½ÌÊ¦";
 $string['nofilesyet'] = "ÄãµÄ¿Î³ÌÉĞÎ´ÉÏÔØÈÎºÎÎÄ¼ş";
-$string['nograde'] = "²»·Ö¼¶";
+$string['nograde'] = "²»ÆÀ·Ö";
 $string['noimagesyet'] = "ÄãµÄ¿Î³ÌÉĞÎ´ÉÏÔØÈÎºÎÍ¼Æ¬";
 $string['none'] = "ÎŞ";
 $string['nopotentialadmins'] = "Ã»ÓĞºòÑ¡¹ÜÀíÔ±";
@@ -356,6 +736,7 @@ $string['nopotentialteachers'] = "Ã»ÓĞºòÑ¡½ÌÊ¦";
 $string['normal'] = "Õı³£";
 $string['nostudentsyet'] = "ÉĞÎŞÑ§ÉúÑ¡ĞŞ´Ë¿Î³Ì";
 $string['nosuchemail'] = "Ã»ÓĞÕâÑùµÄemailµØÖ·";
+$string['notavailable'] = "²»¿ÉµÃ";
 $string['noteachersyet'] = "´Ë¿Î³ÌÉĞÎŞ½ÌÊ¦";
 $string['notenrolled'] = "\$a Ã»ÓĞÑ¡ĞŞ¸Ã¿Î³Ì¡£";
 $string['nothingnew'] = "×Ô´ÓÄãÉÏ´ÎµÇÂ¼ÒÔÀ´ÉĞÎŞĞÂ¶«Î÷";
@@ -378,12 +759,34 @@ $string['outline'] = "¸ÅÒª";
 $string['participants'] = "Ê¦ÉúÃûÂ¼";
 $string['password'] = "ÃÜÂë";
 $string['passwordchanged'] = "ÃÜÂëÒÑ±»¸ü¸Ä";
+$string['passwordconfirmchange'] = "È·ÈÏÃÜÂë¸ü¸Ä";
 $string['passwordrecovery'] = "ÊÇµÄ£¬°ïÎÒµÇÂ¼°É";
 $string['passwordsdiffer'] = "ÕâĞ©ÃÜÂë²»¶Ô";
 $string['passwordsent'] = "ÃÜÂëÒÑ±»·¢ËÍ";
 $string['passwordsenttext'] = "   <P>Ò»·âemailÒÑ¾­ËÍµ½ÄãµÄÓÊÏä \$a->email¡£
+
+
+
+
+
+
+
    <P><B>Çë²éÊÕÄãµÄemailÒÔ»ñÈ¡ÃÜÂë¡£</B>
+
+
+
+
+
+
+
    <P>Õâ¸öĞÂÃÜÂëÊÇ×Ô¶¯Éú³ÉµÄ£¬ËùÒÔÄã¿ÉÄÜĞèÒªµã»÷
+
+
+
+
+
+
+
    <A HREF= \$a->link >ÕâÀï</A>¸Ä³ÉÄã×Ô¼ºÈİÒ×¼ÇµÄÃÜÂë¡£";
 $string['people'] = "ÈËÎï";
 $string['personalprofile'] = "¸öÈË×ÊÁÏ";
@@ -472,7 +875,9 @@ $string['today'] = "½ñÌì";
 $string['todaylogs'] = "½ñÌìµÄÈÕÖ¾";
 $string['toomanytoshow'] = "ÒªÏÔÊ¾µÄÓÃ»§Ì«¶à";
 $string['topic'] = "Ö÷Ìâ";
+$string['topichide'] = "´Ó \$a Òş²Ø¸Ã»°Ìâ";
 $string['topicoutline'] = "Ö÷ÌâÄ¿Â¼";
+$string['topicshow'] = "ÏÔÊ¾¸Ã»°ÌâÓÚ \$a";
 $string['total'] = "×Ü¼Æ";
 $string['turneditingoff'] = "¹Øµô±à¼­Æ÷";
 $string['turneditingon'] = "´ò¿ª±à¼­Æ÷";
@@ -498,20 +903,40 @@ $string['uploadedfileto'] = "ÉÏÔØ \$a->file µ½ \$a->directory";
 $string['uploadnofilefound'] = "ÕÒ²»µ½ÎÄ¼ş¡ª¡ªÄãÄÜÈ·¶¨ÒÑ¾­Ñ¡ÔñÁËÒ»¸öÎÄ¼şÉÏÔØÂğ£¿";
 $string['uploadproblem'] = "ÉÏÔØÎÄ¼ş '\$a' Ê±ÓĞÒ»¸öÎ´Öª´íÎó·¢Éú£¨Ò²ĞíÊÇËüÌ«´ó£¿£©";
 $string['uploadthisfile'] = "ÉÏÔØÕâ¸öÎÄ¼ş";
+$string['user'] = "ÓÃ»§";
 $string['userdeleted'] = "¸ÃÓÃ»§ÕÊºÅÒÑ±»É¾³ı";
 $string['userdescription'] = "×ÔÊö";
+$string['userfiles'] = "ÓÃ»§µÄÎÄ¼ş";
 $string['username'] = "ÓÃ»§Ãû";
 $string['usernameexists'] = "Õâ¸öÓÃ»§ÃûÒÑ¾­´æÔÚ£¬ÓÃ±ğµÄ°É";
 $string['userprofilefor'] = "ÓÃÓÚ \$a µÄÓÃ»§¸öÈË×ÊÁÏ";
 $string['users'] = "ÓÃ»§";
 $string['webpage'] = "ÍøÒ³";
 $string['week'] = "ĞÇÆÚ";
+$string['weekhide'] = "´Ó \$a Òş²ØÕâ¸öĞÇÆÚ";
 $string['weeklyoutline'] = "Ã¿ÖÜ¸ÅÒª";
+$string['weekshow'] = "ÏÔÊ¾Õâ¸öĞÇÆÚÓÚ \$a";
 $string['welcometocourse'] = "»¶Ó­À´µ½ \$a";
 $string['welcometocoursetext'] = "»¶Ó­ÄãÀ´ \$a->coursename£¡
+
+
+
+
+
+
+
 ÄãÊ×ÏÈÒª×öµÄÒ»¼şÊÂÇéÊÇ±à¼­ÄãµÄ¸öÈËĞÅÏ¢£¬ÒÔ±ãÎÒÃÇ¸üºÃµØÁË½âÄã£º
+
+
+
+
+
+
+
   \$a->profileurl";
 $string['withchosenfiles'] = "ÓÃÑ¡ÖĞµÄÎÄ¼ş";
+$string['withoutuserdata'] = "²»ÓÃÓÃ»§×ÊÁÏ";
+$string['withuserdata'] = "ÓÃÓÃ»§×ÊÁÏ";
 $string['wordforstudent'] = "ÄãÓÃÓÚ³ÆºôÑ§ÉúµÄ×Ö´Ê";
 $string['wordforstudenteg'] = "ÀıÈçÑ§Éú¡¢²ÎÓëÕßµÈµÈ";
 $string['wordforstudents'] = "ÄãÓÃÓÚ³Æºô¶à¸öÑ§ÉúµÄ×Ö´Ê";
