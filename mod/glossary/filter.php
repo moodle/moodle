@@ -18,6 +18,8 @@
                 break;
         }
 
+        $conceptlist = array();
+
         $glossarieslist = get_records_sql ("SELECT g.* 
                                             FROM {$CFG->prefix}glossary g,
                                                  {$CFG->prefix}course_modules cm,
@@ -35,8 +37,8 @@
                 $glossaries .= "$glossary->id,";
             }
             $glossaries=substr($glossaries,0,-1);
-///         sorting by the lenght of the concept in order to assure that large concepts
-///            could be linked first, if they exist in the text to parse
+///         sorting by the length of the concept in order to assure that large concepts
+///         are linked first, if they exist in the text to parse
             switch ($CFG->dbtype) {
                 case "postgres7":
                 case "mysql":
@@ -92,11 +94,6 @@
                     }
                     $currentconcept = $concept->concept;
                     if ( $currentconcept = trim(strip_tags($currentconcept)) ) {
-                        //Avoid integers < 1000 to be linked. See bug 1446.
-                        $intcurrent = intval($currentconcept);
-                        if (!empty($intcurrent) && strval($intcurrent) == $currentconcept && $intcurrent < 1000) {
-                            $currentconcept = '';
-                        }
                         if ( !$concept->category ) {
                             if ( $aliases = get_records("glossary_alias","entryid",$concept->id, "alias") ) {
                                 foreach ($aliases as $alias) {
@@ -105,137 +102,27 @@
                                     $intcurrent = intval($currentalias);
                                     if (!(!empty($intcurrent) && strval($intcurrent) == $currentalias && $intcurrent < 1000)) {
                                         if ( $currentalias != '' ) {
-                                            $currentconcept .= "|" . $currentalias;
+                                            $conceptlist[] = new filterobject($currentalias, $href_tag_begin, '</a>', $concept->casesensitive, $concept->fullmatch);
                                         }
                                     }
                                 }
                             }
                         }
                         if ($currentconcept) {
-                            $text = glossary_link_concepts($text,$currentconcept,$href_tag_begin, "</a>",$concept->casesensitive,$concept->fullmatch);
+                            $conceptlist[] = new filterobject($currentconcept, $href_tag_begin, '</a>', $concept->casesensitive, $concept->fullmatch);
                         }
                     }
                 }
             }
         }
 
-        return $text;
+        //return $text;
+        return filter_phrases($text, $conceptlist);
     }
 
-    function glossary_link_concepts($text,$concept,$href_tag_begin,$href_tag_end = "</a>",$casesensitive,$fullmatch) {
-
-        $list_of_words_cp = strip_tags($concept);
-
-        $list_of_words_cp = trim($list_of_words_cp,'|');
-
-        $list_of_words_cp = trim($list_of_words_cp);
-
-        $list_of_words_cp = preg_quote($list_of_words_cp,'/');
-
-        //Take out scaped pipes
-        $list_of_words_cp = str_replace('\|','|',$list_of_words_cp);
-
-        if ($fullmatch) {
-            $invalidprefixs = "([a-zA-Z0-9])";
-            $invalidsufixs  = "([a-zA-Z0-9])";
-
-            //Avoid seaching in the string if it's inside invalidprefixs and invalidsufixs
-            $words = array();
-            $regexp = '/'.$invalidprefixs.'('.$list_of_words_cp.')|('.$list_of_words_cp.')'.$invalidsufixs.'/is';
-
-            preg_match_all($regexp,$text,$list_of_words);
-
-            if ($list_of_words) {
-                foreach (array_unique($list_of_words[0]) as $key=>$value) {
-                    $words['<*'.$key.'*>'] = $value;
-                }
-                if (!empty($words)) {
-                    $text = str_replace($words,array_keys($words),$text);
-                }
-            }
-        }
-
-        //Avoid searching within the document head
-        $head = array();
-        preg_match_all('/<head>(.+?)<\/head>/is',$text,$list_of_heads);
-        foreach (array_unique($list_of_heads[0]) as $key=>$value) {
-            $head['<~'.$key.'~>'] = $value;
-        }
-        if (!empty($head)) {
-            $text = str_replace($head,array_keys($head),$text);
-        }
-        
-
-        //Now avoid searching inside the <nolink>tag
-        $excludes = array();
-        preg_match_all('/<nolink>(.+?)<\/nolink>/is',$text,$list_of_excludes);
-        foreach (array_unique($list_of_excludes[0]) as $key=>$value) {
-            $excludes['<+'.$key.'+>'] = $value;
-        }
-        if (!empty($excludes)) {
-            $text = str_replace($excludes,array_keys($excludes),$text);
-        }
-
-        //Now avoid searching inside the <span class="nolink">tag
-        // This style doesn't break in editor. See bug #2428
-        $nolinkspan = array();
-        preg_match_all('/<span class=\"nolink\">(.+?)<\/span>/is',$text,$list_of_span);
-        foreach (array_unique($list_of_span[0]) as $key=>$value) {
-            $nolinkspan['<%'.$key.'%>'] = $value;
-        }
-
-        if (!empty($nolinkspan)) {
-            $text = str_replace($nolinkspan,array_keys($nolinkspan),$text);
-        }
-
-        //Now avoid searching inside links
-        $links = array();
-        preg_match_all('/<a[\s](.+?)>(.+?)<\/A>/is',$text,$list_of_links);
-        foreach (array_unique($list_of_links[0]) as $key=>$value) {
-            $links['<@'.$key.'@>'] = $value;
-        }
-        if (!empty($links)) {
-            $text = str_replace($links,array_keys($links),$text);
-        }
-
-        //Now avoid searching inside every tag
-        $final = array();
-        preg_match_all('/<(.+?)>/is',$text,$list_of_tags);
-        foreach (array_unique($list_of_tags[0]) as $key=>$value) {
-            $final['<|'.$key.'|>'] = $value;
-        }
-        if (!empty($final)) {
-            $text = str_replace($final,array_keys($final),$text);
-        }
 
 
-        if ($casesensitive) {
-            $text = preg_replace('/('.$list_of_words_cp.')/s', $href_tag_begin.'$1'.$href_tag_end, $text);
-        } else {
-            $text = preg_replace('/('.$list_of_words_cp.')/is', $href_tag_begin.'$1'.$href_tag_end, $text);
-        }
 
-        //Now rebuild excluded areas
-        if (!empty($final)) {
-            $text = str_replace(array_keys($final),$final,$text);
-        }
-        if (!empty($links)) {
-            $text = str_replace(array_keys($links),$links,$text);
-        }
-        if (!empty( $nolinkspan)) {
-            $text = str_replace(array_keys($nolinkspan),$nolinkspan,$text);
-        }
-        if (!empty( $excludes)) {
-            $text = str_replace(array_keys($excludes),$excludes,$text);
-        }
-        if (!empty( $head)) {
-            $text = str_replace(array_keys($head),$head,$text);
-        }
-        if ($fullmatch and !empty($words)) {
-            $text = str_replace(array_keys($words),$words,$text);
-        }
-        return $text;
-    }
 
     function glossary_sort_entries_by_length ( $entry0, $entry1 ) {
         if ( strlen(trim($entry0->concept)) < strlen(trim($entry1->concept)) ) {
@@ -255,4 +142,5 @@
         }
         return $text;
     }
+
 ?>
