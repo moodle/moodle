@@ -1,8 +1,9 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.1 Beta + (2003082100)
+      // resource.php - created with Moodle 1.2 development (2003102200)
 
 
 $string['addresource'] = "リソースを追加する";
+$string['chooseafile'] = "ファイルの選択またはアップロード";
 $string['configframesize'] = "フレーム内にウェブページやアップロードしたファイルが表示される場合のトップフレーム(ナビゲーションを含む)のサイズ(ピクセル)です。";
 $string['editingaresource'] = "リソースを編集する";
 $string['example'] = "例";
