@@ -1,3 +1,155 @@
+2002-11-21 Thursday 18:26  moodler
+
+	* mod/assignment/submissions.php: 
+	
+	Fixed a bug from reusing newsubmission variable
+
+2002-11-21 Thursday 18:23  moodler
+
+	* user/lib.php: 
+	
+	Error checking on image writes
+
+2002-11-21 Thursday 18:17  moodler
+
+	* user/: edit.php, lib.php: 
+	
+	Small bugfix with uploading new user images
+
+2002-11-21 Thursday 16:26  paca70
+
+	* lang/fi/: assignment.php, auth.php, choice.php, moodle.php,
+	quiz.php, resource.php, survey.php: 
+	
+	some updates
+
+2002-11-21 Thursday 15:53  moodler
+
+	* version.php, admin/auth.php, lang/en/auth.php: 
+	
+	Updated version (authentication tweaks)
+
+2002-11-21 Thursday 15:37  moodler
+
+	* admin/auth.php, auth/db/config.html, auth/db/lib.php,
+	auth/imap/config.html, auth/ldap/config.html,
+	auth/nntp/config.html, auth/pop3/config.html, lang/en/auth.php,
+	lang/en/moodle.php, lib/moodlelib.php: 
+	
+	Tweaks to authentication system.  Database method now allows other
+	fields to be specified so that things like email, names etc can be
+	pulled in from external database when new Moodle accounts are
+	created
+
+2002-11-21 Thursday 10:51  moodler
+
+	* lib/weblib.php, user/pix.php: 
+	
+	Slight improvements to file security (scan for more bad characters)
+
+2002-11-20 Wednesday 23:24  moodler
+
+	* course/: social.php, topics.php, weeks.php: 
+	
+	Fixed background colours of recent activity and news
+
+2002-11-20 Wednesday 23:17  moodler
+
+	* version.php, doc/release.html: 
+	
+	Update version slightly
+
+2002-11-20 Wednesday 23:16  moodler
+
+	* lib/defaults.php: 
+	
+	Forgot a comma
+
+2002-11-20 Wednesday 23:04  moodler
+
+	* lib/defaults.php: 
+	
+	Added guestloginbutton as default
+
+2002-11-20 Wednesday 23:03  moodler
+
+	* lib/db/mysql.php: 
+	
+	Make sure guestloginbutton is set to 1 as a default
+
+2002-11-20 Wednesday 23:01  moodler
+
+	* lang/en/moodle.php: 
+	
+	New string for general form errors
+
+2002-11-20 Wednesday 22:58  moodler
+
+	* lib/moodlelib.php, user/view.php: 
+	
+	User pictures no longer are links on main view page
+
+2002-11-20 Wednesday 22:52  moodler
+
+	* user/: edit.html, edit.php, lib.php: 
+	
+	Made the user profile a little more robust.
+	
+	Uploaded images are now saved even if the rest of the form has
+	errors.
+	
+	If errors are found in the form then a message is printed up the
+	top to make it clearer that they need to fix something.
+
+2002-11-20 Wednesday 17:41  moodler
+
+	* course/lib.php: 
+	
+	Er.. aligned center works better  ;-)
+
+2002-11-20 Wednesday 15:18  moodler
+
+	* course/lib.php: 
+	
+	Fixed alignment on category boxes in some circumstances
+
+2002-11-20 Wednesday 00:16  moodler
+
+	* doc/release.html: 
+	
+	Spacing
+
+2002-11-20 Wednesday 00:15  moodler
+
+	* version.php: 
+	
+	New version before release
+
+2002-11-20 Wednesday 00:14  moodler
+
+	* doc/release.html: 
+	
+	New features and fixes
+
+2002-11-19 Tuesday 23:54  moodler
+
+	* lang/pt_br/help/: courserecent.html, assignment/resubmit.html: 
+	
+	New files (not translated yet)
+
+2002-11-19 Tuesday 23:52  moodler
+
+	* lang/pt_br/: assignment.php, forum.php, journal.php, moodle.php,
+	quiz.php, survey.php: 
+	
+	Checking in new updates from Fabricio
+
+2002-11-19 Tuesday 23:07  moodler
+
+	* CHANGES: 
+	
+	Daily changes
+
 2002-11-19 Tuesday 22:35  moodler
 
 	* config-dist.php: 
