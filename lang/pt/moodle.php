@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004110200)
+      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004112200)
 
 
 $string['action'] = 'Acção';
@@ -117,7 +117,6 @@ $string['backupusershelp'] = 'Escolha se quer que sejam incluidos todos os utili
 $string['backupversion'] = 'Versão da cópia de segurança';
 $string['blockconfiga'] = 'Configurando um bloco $a';
 $string['blockconfigbad'] = 'Este bloco não tem uma interface de configuração, por não ter sido implementado correctamente.';
-$string['blockconfigin'] = 'Disciplina: Configurando um bloco em $a';
 $string['blockdeleteconfirm'] = 'Está a ponto de apagar completamente o bloco \'$a\'. Isso faz com que todos os dados relacionados com esse bloco sejam eliminados da base de dados. Tem a certeza que quer continuar?';
 $string['blockdeletefiles'] = 'Todos os dados associados ao bloco \'$a->block\' foram eliminados da base de dados. Para completar o processo de limpeza (e evitar que que o bloco se re-instale), devera agora apagar o seguinte directório no seu servidor: $a->directory ';
 $string['blocks'] = 'Blocos';
@@ -300,6 +299,7 @@ $string['defaultcourseteacher'] = 'Professor';
 $string['defaultcourseteachers'] = 'Professores';
 $string['delete'] = 'Apagar';
 $string['deleteall'] = 'Apague todos(as)';
+$string['deletecategorycheck'] = 'Tem certeza absoluta que quer apagar completamtene esta categoria <b>\'$a\'</b>?<br />As disciplinas nessa categoria serão deslocadas para a categoria superior, se existir, ou para a categoria Geral.';
 $string['deletecheck'] = 'Apagar $a ?';
 $string['deletecheckfiles'] = 'Tem a certeza que pretende eliminar estes ficheiros?';
 $string['deletecheckfull'] = 'Tem certeza absoluta que quer apagar completamente $a ?';
@@ -600,9 +600,9 @@ $string['langrtl'] = 'Direcção de idioma da direita para a esquerda';
 $string['language'] = 'Língua';
 $string['languagegood'] = 'Este pacote linguístico está em dia! : -)';
 $string['lastaccess'] = 'Último acesso';
-$string['lastedited'] = 'Últimos editados';
+$string['lastedited'] = 'Última edição';
 $string['lastlogin'] = 'Último acesso';
-$string['lastmodified'] = 'Últimos modificados';
+$string['lastmodified'] = 'Última alteração';
 $string['lastname'] = 'Apelido';
 $string['latestlanguagepack'] = 'Verificar o pacote linguístico mais recente em moodle.org';
 $string['latestnews'] = 'Últimas notícias';
@@ -656,7 +656,7 @@ $string['markedthistopic'] = 'Este tópico está marcado como o tópico actual';
 $string['markthistopic'] = 'Marque este tópico como o tópico actual';
 $string['maximumchars'] = 'Máximo de $a caracteres';
 $string['maximumgrade'] = 'Nota máxima';
-$string['maximumshort'] = 'Máximo';
+$string['maximumshort'] = 'Máx';
 $string['maximumupload'] = 'Tamanho máximo do upload';
 $string['maxsize'] = 'Tamanho máximo: $a';
 $string['min'] = 'minuto';
@@ -799,6 +799,7 @@ $string['order'] = 'Ordem';
 $string['other'] = 'Outro';
 $string['outline'] = 'Esboço';
 $string['page'] = 'Página';
+$string['pageheaderconfigablock'] = 'Configurando um bloco em %%fullname%%';
 $string['participants'] = 'Participantes';
 $string['password'] = 'Palavra chave';
 $string['passwordchanged'] = 'Palavra chave modificada';
@@ -974,7 +975,7 @@ $string['themes'] = 'Temas';
 $string['themesaved'] = 'O novo tema foi gravado';
 $string['thischarset'] = 'iso-8859-1';
 $string['thisdirection'] = 'carta';
-$string['thislanguage'] = 'Portugu&#234;s - Portugal';
+$string['thislanguage'] = 'Português - Portugal';
 $string['time'] = 'Hora';
 $string['timezone'] = 'Zona horária';
 $string['to'] = 'Para';
@@ -987,6 +988,7 @@ $string['topichide'] = 'Esconda este tópico de $a';
 $string['topicoutline'] = 'Lista de tópicos';
 $string['topicshow'] = 'Mostre este tópico a $a';
 $string['total'] = 'Total';
+$string['trysearching'] = 'Tente melhor fazer uma pesquisa.';
 $string['turneditingoff'] = 'Desactivar modo edição';
 $string['turneditingon'] = 'Activar modo edição';
 $string['undecided'] = 'Indeciso';
@@ -1051,6 +1053,21 @@ $string['usingexistingcourse'] = 'Usando a disciplina existente';
 $string['version'] = 'Versão';
 $string['view'] = 'Ver';
 $string['virusfound'] = 'Atenção Sr. administrador! O antivírus Clam detectou a presença dum vírus num ficheiro enviado por $a->user para a disciplina $a->course. Segue-se a mensagem de saída do clamscan:';
+$string['virusfoundlater'] = 'No ficheiro  $a->filename que enviou em $a->date, para a disciplina $a->course, foi posteriormente encontrado um vírus. Segue-se um sumário do que tem sido feito do ficheiro:
+
+$a->action
+
+Se o ficheiro fazia parte de algum trabalho, será melhor enviá-lo novamente para que o docente possa vê-lo.';
+$string['virusfoundlateradmin'] = 'Atenção Sr. administrador! Encontrou-se um vírus num  ficheiro que foi enviado em $a->date, com o nome $a->filename, para a disciplina $a->course, pelo utilizador $a->user. Segue-se um sumário do que foi feito do ficheiro:
+
+$a->action
+
+foi também enviada uma notificação para o utilizador. ';
+$string['virusfoundlateradminnolog'] = 'Atenção Sr. administrador! Encontrou-se um vírus num  ficheiro que foi enviado com o nome $a->filename. Moodle não conseguiu determinar qual foi o utilizador que enviou o ficheiro.
+
+Segue-se um sumário do que foi feito do ficheiro:
+
+$a->action';
 $string['virusfoundsubject'] = '$a: Detectado um vírus!';
 $string['webpage'] = 'Página Web';
 $string['week'] = 'Semana';
