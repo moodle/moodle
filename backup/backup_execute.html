@@ -166,6 +166,13 @@
                 notify("An error occurred while backing up course start");
             }
         }
+        echo "<li>".get_string("blocks");
+        //Blocks information
+        if ($status) {
+            if (!$status = backup_course_blocks($backup_file,$preferences)) {
+                notify("An error occurred while backing up course blocks");
+            }
+        }
         echo "<li>".get_string("sections");
         //Section info
         if ($status) {

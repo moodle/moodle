@@ -259,6 +259,7 @@ $string['createaccount'] = 'Create my new account';
 $string['createfolder'] = 'Create a folder in $a';
 $string['createuserandpass'] = 'Create a new username and password to log in with';
 $string['createziparchive'] = 'Create zip archive';
+$string['creatingblocks'] = 'Creating blocks';
 $string['creatingcategoriesandquestions'] = 'Creating categories and questions';
 $string['creatingcoursemodules'] = 'Creating course modules';
 $string['creatingevents'] = 'Creating events';

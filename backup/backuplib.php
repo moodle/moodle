@@ -521,6 +521,8 @@
         } else {
             fwrite ($bf,full_tag("COURSEFILES",3,false,"false"));
         }
+        //The mode of writing the block data
+        fwrite ($bf,full_tag('BLOCKFORMAT',3,false,'instances'));
 
         fwrite ($bf,end_tag("DETAILS",2,true));
 
@@ -564,7 +566,6 @@
             fwrite ($bf,full_tag("SUMMARY",3,false,$course->summary));
             fwrite ($bf,full_tag("FORMAT",3,false,$course->format));
             fwrite ($bf,full_tag("SHOWGRADES",3,false,$course->showgrades));
-            fwrite ($bf,full_tag("BLOCKINFO",3,false,blocks_get_block_names($course->blockinfo)));
             fwrite ($bf,full_tag("NEWSITEMS",3,false,$course->newsitems));
             fwrite ($bf,full_tag("TEACHER",3,false,$course->teacher));
             fwrite ($bf,full_tag("TEACHERS",3,false,$course->teachers));
@@ -601,6 +602,51 @@
         //Course end tag
         $status = fwrite ($bf,end_tag("COURSE",1,true)); 
     
+        return $status;
+
+    }
+
+    //Prints course's sections info (table block_instance)
+    function backup_course_blocks ($bf,$preferences) {
+
+        global $CFG;
+
+        $status = true;
+
+        // Read all of the block table
+        $blocks = blocks_get_record();
+
+        $page = new stdClass;
+        $page->id   = $preferences->backup_course;
+        $page->type = MOODLE_PAGE_COURSE;
+
+        if ($instances = blocks_get_by_page($page)) {
+            //Blocks open tag
+            fwrite ($bf,start_tag('BLOCKS',2,true));
+            //Iterate over every block
+            foreach ($instances as $position) {
+                foreach ($position as $instance) {
+                    //If we somehow have a block with an invalid id, skip it
+                    if(empty($blocks[$instance->blockid]->name)) {
+                        continue;
+                    }
+                    //Begin Block
+                    fwrite ($bf,start_tag('BLOCK',3,true));
+                    fwrite ($bf,full_tag('NAME',4,false,$blocks[$instance->blockid]->name));
+                    fwrite ($bf,full_tag('PAGEID',4,false,$instance->pageid));
+                    fwrite ($bf,full_tag('PAGETYPE',4,false,$instance->pagetype));
+                    fwrite ($bf,full_tag('POSITION',4,false,$instance->position));
+                    fwrite ($bf,full_tag('WEIGHT',4,false,$instance->weight));
+                    fwrite ($bf,full_tag('VISIBLE',4,false,$instance->visible));
+                    fwrite ($bf,full_tag('CONFIGDATA',4,false,$instance->configdata));
+                    //End Block
+                    fwrite ($bf,end_tag('BLOCK',3,true));
+                }
+            }
+            //Blocks close tag
+            $status = fwrite ($bf,end_tag('BLOCKS',2,true));
+        }
+
         return $status;
 
     }

@@ -253,6 +253,15 @@
     }
 
     //This function read the xml file and store its data from the sections in a object
+    function restore_read_xml_blocks ($xml_file) {
+
+        //We call the main read_xml function, with todo = BLOCKS
+        $info = restore_read_xml ($xml_file,'BLOCKS',false);
+
+        return $info;
+    }
+
+    //This function read the xml file and store its data from the sections in a object
     function restore_read_xml_sections ($xml_file) {
 
         //We call the main read_xml function, with todo = SECTIONS
@@ -521,7 +530,6 @@
             $course->summary = restore_decode_absolute_links(addslashes($course_header->course_summary));
             $course->format = addslashes($course_header->course_format);
             $course->showgrades = addslashes($course_header->course_showgrades);
-            $course->blockinfo = addslashes($course_header->blockinfo);
             $course->newsitems = addslashes($course_header->course_newsitems);
             $course->teacher = addslashes($course_header->course_teacher);
             $course->teachers = addslashes($course_header->course_teachers);
@@ -543,20 +551,6 @@
             $course->hiddensections = addslashes($course_header->course_hiddensections);
             $course->timecreated = addslashes($course_header->course_timecreated);
             $course->timemodified = addslashes($course_header->course_timemodified);
-            //Adjust blockinfo field.
-            //If the info doesn't exist in backup, we create defaults, else we recode it 
-            //to current site blocks.
-            if (!$course->blockinfo) {
-                //Create blockinfo default content
-                if ($course->format == "social") {
-                    $course->blockinfo = blocks_get_default_blocks (NULL,"participants,search_forums,calendar_month,calendar_upcoming,social_activities,recent_activity,admin,course_list");
-                } else {
-                    //For topics and weeks formats (default built in the function)
-                    $course->blockinfo = blocks_get_default_blocks();
-                }
-            } else {
-                $course->blockinfo = blocks_get_block_ids($course->blockinfo);
-            }
             //Now insert the record
             $newid = insert_record("course",$course);
             if ($newid) {
@@ -566,6 +560,65 @@
                 $course_header->course_id = $newid;
             } else {
                 $status = false;
+            }
+        }
+
+        return $status;
+    }
+
+    //This function creates all the block_instances from xml when restoring in a
+    //new course
+    function restore_create_block_instances($restore,$xml_file) {
+
+        $status = true;
+        //Check it exists
+        if (!file_exists($xml_file)) {
+            $status = false;
+        }
+        //Get info from xml
+        if ($status) {
+            $info = restore_read_xml_blocks($xml_file);
+        }
+
+        $maxweights = array();
+
+        if(!empty($info->instances)) {
+
+            $blocks = get_records_select('block', '', '', 'name, id, multiple');
+
+            foreach($info->instances as $instance) {
+                if(!isset($blocks[$instance->name])) {
+                    //We are trying to restore a block we don't have...
+                    continue;
+                }
+                //If its the first block we add to a new position, start weight counter equal to 0.
+                if(empty($maxweights[$instance->position])) {
+                    $maxweights[$instance->position] = 0;
+                }
+                //If the instance weight is greater than the weight counter (we skipped some earlier
+                //blocks most probably), bring it back in line.
+                if($instance->weight > $maxweights[$instance->position]) {
+                    $instance->weight = $maxweights[$instance->position];
+                }
+
+                //If we have already added this block once and multiples aren't allowed, disregard it
+                if(!empty($blocks[$instance->name]->added)) {
+                    continue;
+                }
+
+                //Add this instance
+                $instance->blockid = $blocks[$instance->name]->id;
+                $instance->pageid  = $restore->course_id;
+                if(!insert_record('block_instance', $instance)) {
+                    $status = false;
+                    break;
+                }
+
+                //Now we can increment the weight counter
+                ++$maxweights[$instance->position];
+
+                //Keep track of block types we have already added
+                $blocks[$instance->name]->added = true;
             }
         }
 
@@ -1875,6 +1928,20 @@
             //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br />\n";   //Debug
         }
 
+        //This is the startTag handler we use where we are reading the blocks zone (todo="BLOCKS")
+        function startElementBlocks($parser, $tagName, $attrs) {
+            //Refresh properties     
+            $this->level++;
+            $this->tree[$this->level] = $tagName;   
+            
+            //Output something to avoid browser timeouts...
+            backup_flush();
+
+            //Check if we are into BLOCKS zone
+            //if ($this->tree[3] == "BLOCKS")                                                         //Debug
+            //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br />\n";   //Debug
+        }
+
         //This is the startTag handler we use where we are reading the sections zone (todo="SECTIONS")
         function startElementSections($parser, $tagName, $attrs) {
             //Refresh properties     
@@ -2126,6 +2193,9 @@
                             case "COURSEFILES":
                                 $this->info->backup_course_files = $this->getContents();
                                 break;
+                            case 'BLOCKFORMAT':
+                                $this->info->backup_block_format = $this->getContents();
+                                break;
                         }
                     }
                     if ($this->level == 5) {
@@ -2281,6 +2351,65 @@
             //Stop parsing if todo = COURSE_HEADER and tagName = HEADER (en of the tag, of course)
             //Speed up a lot (avoid parse all)
             if ($tagName == "HEADER") {
+                $this->finished = true;
+            }
+        }
+
+        //This is the endTag handler we use where we are reading the sections zone (todo="SECTIONS")
+        function endElementBlocks($parser, $tagName) {
+            //Check if we are into BLOCKS zone
+            if ($this->tree[3] == 'BLOCKS') {
+                //if (trim($this->content))                                                                     //Debug
+                //    echo "C".str_repeat("&nbsp;",($this->level+2)*2).$this->getContents()."<br />\n";           //Debug
+                //echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;/".$tagName."&gt;<br />\n";          //Debug
+                //Dependig of different combinations, do different things
+                if ($this->level == 4) {
+                    switch ($tagName) {
+                        case 'BLOCK':
+                            //We've finalized a block, get it
+                            $this->info->instances[] = $this->info->tempinstance;
+                            unset($this->info->tempinstance);
+                            break;
+                        default:
+                            die($tagName);
+                    }
+                }
+                if ($this->level == 5) {
+                    switch ($tagName) {
+                        case 'NAME':
+                            $this->info->tempinstance->name = $this->getContents();
+                            break;
+                        case 'PAGEID':
+                            $this->info->tempinstance->pageid = $this->getContents();
+                            break;
+                        case 'PAGETYPE':
+                            $this->info->tempinstance->pagetype = $this->getContents();
+                            break;
+                        case 'POSITION':
+                            $this->info->tempinstance->position = $this->getContents();
+                            break;
+                        case 'WEIGHT':
+                            $this->info->tempinstance->weight = $this->getContents();
+                            break;
+                        case 'VISIBLE':
+                            $this->info->tempinstance->visible = $this->getContents();
+                            break;
+                        case 'CONFIGDATA':
+                            $this->info->tempinstance->configdata = $this->getContents();
+                            break;
+                    }
+                }
+            }
+            //Clear things
+            $this->tree[$this->level] = '';
+            $this->level--;
+            $this->content = "";
+
+            //Stop parsing if todo = BLOCKS and tagName = BLOCKS (en of the tag, of course)
+            //Speed up a lot (avoid parse all)
+            //WARNING: ONLY EXIT IF todo = BLOCKS (thus tree[3] = "BLOCKS") OTHERWISE
+            //         THE BLOCKS TAG IN THE HEADER WILL TERMINATE US!
+            if ($this->tree[3] == 'BLOCKS' && $tagName == 'BLOCKS') {
                 $this->finished = true;
             }
         }
@@ -2957,6 +3086,9 @@
         } else if ($todo == "COURSE_HEADER") {
             //Define handlers to that zone
             xml_set_element_handler($xml_parser, "startElementCourseHeader", "endElementCourseHeader");
+        } else if ($todo == 'BLOCKS') {
+            //Define handlers to that zone
+            xml_set_element_handler($xml_parser, "startElementBlocks", "endElementBlocks");
         } else if ($todo == "SECTIONS") {
             //Define handlers to that zone
             xml_set_element_handler($xml_parser, "startElementSections", "endElementSections");
