@@ -9,7 +9,7 @@
 
     require_variable($id);       // course id
     require_variable($user);     // user id
-    optional_variable($mode, "outline");
+    optional_variable($mode, "todaylogs");
 
     require_login();
 
