@@ -112,7 +112,7 @@ function print_course($course) {
     echo "<P><FONT SIZE=3><B><A HREF=\"view.php?id=$course->id\">$course->fullname</A></B></FONT></P>";
     if ($teachers = get_records_sql("SELECT u.* FROM user u, user_teachers t 
                                      WHERE u.id = t.user AND t.course = '$course->id' 
-                                     ORDER BY t.authority DESC")) {
+                                     ORDER BY t.authority ASC")) {
 
         echo "<P><FONT SIZE=1>\n";
         foreach ($teachers as $teacher) {
