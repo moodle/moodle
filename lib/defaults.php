@@ -12,6 +12,7 @@
        "debug"            =>  7,
        "deleteunconfirmed" => 168,
        "enablerssfeeds"   => 0,
+       "enrol"            => 'internal',
        "extendedusernamechars"   => false,
        "filteruploadedfiles"  =>  true,
        "forcelogin"       =>  false,
