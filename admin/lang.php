@@ -24,33 +24,31 @@
     switch ($mode) {
         case "missing":
             $navigation = "<A HREF=\"lang.php\">$strchecklanguage</A> -> $strmissingstrings";
+            $title = $strmissingstrings;
             break;
         case "compare":
             $navigation = "<A HREF=\"lang.php\">$strchecklanguage</A> -> $strcomparelanguage";
+            $title = $strcomparelanguage;
             break;
         default:
             $navigation = $strchecklanguage;
             break;
     }
 
-    print_header("$site->fullname", "$site->fullname",
+    print_header("$site->fullname: $title", "$site->fullname",
                  "<A HREF=\"index.php\">$stradministration</A> -> $navigation");
 
     if (!$mode) {
-        print_heading("$strcurrentlanguage: $CFG->lang");
+        print_heading("$strcurrentlanguage: $USER->lang - ".get_string("thislanguage"));
         print_heading("<A HREF=\"lang.php?mode=missing\">$strmissingstrings</A>");
         print_heading("<A HREF=\"lang.php?mode=compare\">$strcomparelanguage</A>");
         print_footer();
         exit;
     }
 
-    if ($CFG->lang == "en") {
-        notice("Nothing to check - you are using the English language pack!", "lang.php");
-    }
-
     // Get a list of all the root files in the English directory
 
-    $langdir = "$CFG->dirroot/lang/$CFG->lang";
+    $langdir = "$CFG->dirroot/lang/$USER->lang";
     $enlangdir = "$CFG->dirroot/lang/en";
 
     if (! $stringfiles = get_directory_list($enlangdir, "", false)) {
@@ -93,7 +91,6 @@
                 }
             }
         }
-        closedir($dir);
     
         if (! $files = get_directory_list("$CFG->dirroot/lang/en/help", "CVS")) {
             error("Could not find English language help files!");
@@ -126,7 +123,19 @@
 
     } else if ($mode == "compare") {
 
+        if (isset($HTTP_POST_VARS['file'])){   // Save a file
+            $newstrings = $HTTP_POST_VARS;
+            $file = $newstrings['file'];
+            unset($newstrings['file']);
+            if (lang_save_file($langdir, $file, $newstrings)) {
+                notify(get_string("changessaved")." ($langdir/$file)");
+            } else {
+                error("Could not save the file '$file'!", "lang.php?mode=compare");
+            }
+        }
+
         foreach ($stringfiles as $file) {
+
             print_heading("$file", "LEFT", 4);
 
             if (!file_exists("$langdir/$file")) {
@@ -134,29 +143,71 @@
                 continue;
             }
     
+            error_reporting(0);
+            if ($f = fopen("$langdir/$file","r+")) {
+                $editable = true;
+            } else {
+                $editable = false;
+                echo "<P><FONT SIZE=1>".get_string("makeeditable", "", "$langdir/$file")."</FONT></P>";
+            }
+            error_reporting(7);
+
+
             unset($string);
             include("$enlangdir/$file");
             $enstring = $string;  
+            ksort($enstring);
     
             unset($string);
             include("$langdir/$file");
-    
-            echo "<TABLE WIDTH=\"100%\" BORDER=1>";
-            foreach ($enstring as $key => $value) {
-                $value = htmlentities($value);
-                $value = str_replace("$"."a", "\\$"."a", $value);
+
+            if ($editable) {
+                echo "<FORM NAME=\"$file\" ACTION=\"lang.php\" METHOD=\"POST\">";
+            }
+            echo "<TABLE WIDTH=\"100%\" CELLPADDING=2 CELLSPACING=3 BORDER=0>";
+            foreach ($enstring as $key => $envalue) {
+                $envalue = nl2br(htmlentities($envalue));
+                $envalue = str_replace("$"."a", "\\$"."a", $envalue);
                 echo "<TR>";
-                echo "<TD WIDTH=20% BGCOLOR=white NOWRAP VALIGN=TOP>$key</TD>";
-                echo "<TD WIDTH=40% VALIGN=TOP>$value</TD>";
-                if (isset($string[$key])) {
-                    $value = htmlentities($string[$key]);
-                    $value = str_replace("$"."a", "\\$"."a", $value);
-                    echo "<TD WIDTH=40% BGCOLOR=white VALIGN=TOP>$value</TD>";
+                echo "<TD WIDTH=20% BGCOLOR=\"$THEME->cellheading\" NOWRAP VALIGN=TOP>$key</TD>";
+                echo "<TD WIDTH=40% BGCOLOR=\"$THEME->cellheading\" VALIGN=TOP>$envalue</TD>";
+
+                $value = htmlentities($string[$key]);
+                $value = str_replace("$"."a", "\\$"."a", $value);
+                if ($editable) {
+                    echo "<TD WIDTH=40% VALIGN=TOP>";
+                    if (isset($string[$key])) {
+                        $valuelen = strlen($value);
+                    } else {
+                        $valuelen = strlen($envalue);
+                    }
+                    $cols=50;
+                    if (strstr($value, "\r") or strstr($value, "\n") or $valuelen > $cols) {
+                        $rows = ceil($valuelen / $cols);
+                        echo "<TEXTAREA NAME=\"string-$key\" cols=\"$cols\" rows=\"$rows\">$value</TEXTAREA>";
+                    } else {
+                        $cols = $valuelen + 2;
+                        echo "<INPUT TYPE=\"TEXT\" NAME=\"string-$key\" VALUE=\"$value\" SIZE=\"$cols\"></TD>";
+                    }
+                    echo "</TD>";
+
                 } else {
-                    echo "<TD WIDTH=40% BGCOLOR=white ALIGN=CENTER VALIGN=TOP>-</TD>";
+                    if (isset($string[$key])) {
+                        echo "<TD WIDTH=40% BGCOLOR=white VALIGN=TOP>$value</TD>";
+                    } else {
+                        echo "<TD WIDTH=40% BGCOLOR=white ALIGN=CENTER VALIGN=TOP>-</TD>";
+                    }
                 }
             }
+            if ($editable) {
+                echo "<TR><TD COLSPAN=2>&nbsp;<TD>";
+                echo "    <INPUT TYPE=\"hidden\" NAME=\"file\" VALUE=\"$file\">";
+                echo "    <INPUT TYPE=\"hidden\" NAME=\"mode\" VALUE=\"compare\">";
+                echo "    <INPUT TYPE=\"submit\" NAME=\"update\" VALUE=\"".get_string("savechanges").": $file\">";
+                echo "</TD></TR>";
+            }
             echo "</TABLE>";
+            echo "</FORM>";
         }
 
         print_continue("lang.php");
@@ -164,5 +215,42 @@
     }
 
     print_footer();
+
+//////////////////////////////////////////////////////////////////////
+
+function lang_save_file($path, $file, $strings) {
+// Thanks to Petri Asikainen for the original version of code 
+// used to save language files.
+//
+// $path is a full pathname to the file
+// $file is the file to overwrite.
+// $strings is an array of strings to write
+
+    global $CFG;
+
+    error_reporting(0);
+    if (!$f = fopen("$path/$file","w")) {
+        return false;
+    }
+    error_reporting(7);
+
+
+    fwrite($f, "<?PHP // \$Id\$ \n");
+    fwrite($f, "      // $file - created with Moodle $CFG->release ($CFG->version)\n\n\n");
+
+    ksort($strings);
+
+    foreach ($strings as $key => $value) {
+        list($id, $stringname) = explode("-",$key);
+        $value = str_replace("\\\\","\\",$value);
+        if ($id == "string"){
+            fwrite($f,"\$string['$stringname'] = \"$value\";\n");
+        }
+    }
+    fwrite($f,"\n?>\n");
+    fclose($f);
+
+    return true;
+}
 
 ?>
