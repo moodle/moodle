@@ -1,16 +1,16 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.0.5 dev (2002092300)
+      // assignment.php - created with Moodle 1.1 (2003082800)
 
 
 $string['allowresubmit'] = "Laat her-inlewering toe";
 $string['assignmentdetails'] = "Opdrag beskrywing";
-$string['assignmentmail'] = "\$a->teacher het kommentaar gelewer op jou opdrag van '\$a->assignment'
-
-Kommentaar is aangeheg by jou opdrag:
-
+$string['assignmentmail'] = "\$a->teacher het kommentaar gelewer op jou opdrag van '\$a->assignment'
+
+Kommentaar is aangeheg by jou opdrag:
+
     \$a->url";
-$string['assignmentmailhtml'] = "\$a->teacher het kommentaar gelewer op jou opdrag van 
-'<i>\$a->assignment</i>'<br /><br />
+$string['assignmentmailhtml'] = "\$a->teacher het kommentaar gelewer op jou opdrag van 
+'<i>\$a->assignment</i>'<br /><br />
 Dit is aangeheg by jou <a href=\\\"\$a->url\\\"> opdrag</a>.";
 $string['assignmentname'] = "Opdrag naam";
 $string['assignmenttype'] = "Opdrag tipe";
@@ -26,6 +26,7 @@ $string['maximumsize'] = "Maksimum groote";
 $string['modulename'] = "Opdrag";
 $string['modulenameplural'] = "Opdragte";
 $string['newsubmissions'] = "Opdragte in gelewer";
+$string['notgradedyet'] = "Nog nie gemerk nie";
 $string['notsubmittedyet'] = "Nog nie in gehandig";
 $string['overwritewarning'] = "Waarskuwing: her-inlewering sal jou huidige opdrag VERVANG";
 $string['saveallfeedback'] = "Stoor my terugvoer";
