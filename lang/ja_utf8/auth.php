@@ -1,5 +1,5 @@
 <?php // $Id$ 
-      // auth.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
+      // auth.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004101900)
 
 
 $string['auth_common_settings'] = '一般設定';
@@ -52,7 +52,7 @@ $string['auth_ldap_objectclass'] = 'フィルタはユーザ名検索時に使�
 $string['auth_ldap_passwdexpire_settings'] = 'LDAPパスワード有効期限設定';
 $string['auth_ldap_search_sub'] = 'サブコンテキストからユーザを検索する場合は、  <> 0 のように入力してください。';
 $string['auth_ldap_server_settings'] = 'LDAPサーバ設定';
-$string['auth_ldap_update_userinfo'] = 'LDAPよりMoodleの情報(名前、名字、住所等)を更新します。マッピング情報に関しては /auth/ldap/attr_mappings をご覧ください。';
+$string['auth_ldap_update_userinfo'] = 'LDAPよりMoodleの情報(名、姓、住所等)を更新します。マッピング情報に関しては /auth/ldap/attr_mappings をご覧ください。';
 $string['auth_ldap_user_attribute'] = 'name/searchユーザに使われる属性です。通常は\'cn\'です。';
 $string['auth_ldap_user_settings'] = 'ユーザlookup設定';
 $string['auth_ldap_user_type'] = 'ユーザがどのようにLDAPに保存されるか選択してください。この設定では、有効期限、猶予ログイン、ユーザ作成がどのようになされるのかも指定します。';
