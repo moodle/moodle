@@ -376,10 +376,19 @@ a.dimmed:hover {
 }
 
 .courseboxinfo {
+    font-size: normal;
 }
 
 .courseboxsummary {
     font-size: small;
+}
+
+.courseboxteachers {
+    font-size: smaller;
+}
+
+.courseboxcost {
+    font-size: smaller;
 }
 
 a.autolink:link {
