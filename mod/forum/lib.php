@@ -600,9 +600,9 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
         // Print shortened version
         echo format_text(forum_shorten_post($post->message), $post->format);
         $numwords = count_words(strip_tags($post->message));
-        echo "<A HREF=\"$CFG->wwwroot/mod/forum/discuss.php?d=$post->discussion\">";
+        echo "<P><A HREF=\"$CFG->wwwroot/mod/forum/discuss.php?d=$post->discussion\">";
         echo get_string("readtherest", "forum");
-        echo "</A> (".get_string("numwords", "", $numwords).")...";
+        echo "</A> (".get_string("numwords", "", $numwords).")...</P>";
     } else {
         // Print whole message
         echo format_text($post->message, $post->format);
@@ -736,7 +736,7 @@ function forum_shorten_post($message) {
            default:
                if (!$tag) {
                    if ($stopzone) {
-                       if ($char == " " or $char == ".") {
+                       if ($char == ".") {
                            $truncate = $i+1;
                            break 2;
                        }
@@ -756,7 +756,7 @@ function forum_shorten_post($message) {
        $truncate = $i;
    }
 
-   return substr($message, 0, $truncate)."<BR>";
+   return substr($message, 0, $truncate);
 }
 
 
