@@ -1,0 +1,205 @@
+<head>
+    
+<title>Moodle Docs: Current Release notes</title>
+	
+<link rel="stylesheet" href="docstyles.css" type="TEXT/CSS">
+    
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    
+<style type="text/css">
+<!--       dt {font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif; font-weight: bold;}
+       dd {margin-bottom:1em;} 
+-->
+</style>
+</head>
+
+<body bgcolor="#FFFFFF">
+<h1>Nieuwste release notes</h1>
+<h3> Nieuw in Moodle 1.2 (20 Maart 2004)</h3>
+<ul>
+ <dl>
+   <dt>Belangrijke nieuwe features </dt>
+   <dd>
+<ul>
+<li>Nieuwe ondersteuning voor <strong>groepen</strong> en cohorten in vakken (met veel opties).</li>
+<li><strong>Tekst filters</strong> laten het arbitrair verwerken van alle tekst in Moodle toe, inclusief <strong>automatisch linken</strong>, <strong>wiskundig ondersteuning</strong>, <strong>meertalige inhoud</strong> en oneindig meer mogelijkheden.</li>
+<li>Een fantastische nieuwe <strong>Woordenlijst module</strong> (dankzij Williams Castillo!) met veel verschillende manieren om leeractiviteiten te construeren rondom het verzamelen van definities. </li>
+<li>Een geweldige nieuwe <strong>Les module</strong> (dankzij Ray Kingdon!) creëert gemakkelijk actieve inhoud met routes en multipe-choice vragen.</li>
+<li>Een nieuwe <strong>Label module</strong> maakt HTML in de vakpagina mogelijk. </li>
+<li>Een verbeterde <strong>WYSIWYG editor</strong>, sneller en beter bruikbaar op verschillende platforms dan de oude. </li>
+<li><strong>Automatische backups</strong> kunnen door de beheerder gepland worden voor alle vakken tegelijk.</li>
+</ul></dd>
+<dt>Vakken</dt>
+<dd>
+<ul>
+<li>Activiteiten kunnen ingesprongen worden in het vakoverzicht, wat zorgt voor meer structuur. </li>
+<li>Een nieuw rapport voor Recente Activiteiten maakt het makkelijker om te zien wat er recent is gebeurd. </li>
+<li>Een nieuwe statistiekenknop bij elke activiteitenlink verwijst naar de statistieken pagina om de statistieken per activiteit te tonen. </li>
+<li>Terugzettenknop nu altijd functioneel.</li>
+<li>Verbeterde "index" uiterlijk voor alle modules. </li>
+<li>Verbeteringen aan weergave van deelnemers, inclusief verdeling in pagina's en zoeken op initialen. </li>
+<li>Excel downloads zijn meer congruent met verschillende operating systems.</li>
+<li>Betere fout berichtgeving bij het toevoegen of het bijwerken van activiteiten. </li>
+<li>Zoekveld  auto-focused niet meer (het veroorzaakte vervelende auto-scrolling in lange vakken).</li>
+<li> Een link in de vakpagina voor leerlingen om hun lidmaatschap zelf op te zeggen.  </li>
+<li>Een link in de vakpagina voor leerlingen om hun wachtwoord te wijzigen.  </li>
+<li>Leerlingen kan het bekijken van hun eigen activiteitenrapporten  toegestaan worden (vakinstelling). </li>
+<li>Docenten kunnen door vakbestanden bladeren op zoek naar afbeeldingen wanneer ze gebruik maken van de nieuwe editor. </li>
+<li>Nieuwe afbeelding van een lege cel als bestemming bij het verplaatsen van activiteiten. </li>
+<li>Binnenkomsten worden nu geregistreerd per vak, zodat de deelnemers lijsten meer betekenis hebben. </li>
+<li>De activiteitennavigatiebalk heeft nu knoppen voor vorige en volgende activiteit. </li>
+<li>De data van bestanden waren niet juist op sommige systemen, dit is nu opgelost. </li>
+<li>Oude chatgebruikers worden niet langer weergegeven in de recente activiteiten. </li>
+</ul></dd>
+<dt>Site beheer</dt>
+<dd>
+<ul>
+<li>Een belangrijke veiligheidsaanpassing welke voorkomt dat docenten inloggen als beheerders die leerling zijn in hun vak. </li>
+<li>Nieuwe instelling  "verplichtlogin" kan mensen dwingen in te loggen voor ze maar iets van de site kunnen zien. </li>
+<li>Nieuwe instelling "toegangvoorgoogle" laat Google en mensen die doorverwezen zijn door Google toe binnen te gaan als gast.</li>
+<li>Nieuwe instelling "tijdzone" laat het instellen van een standaard tijdzone voor de hele site toe.  </li>
+<li>Nieuwe instelling "verwijderonbevestigd" specificeert de tijd dat we wachten op de bevestiging van emailaccounts.  </li>
+<li>Nieuwe instelling "stauitschrijventoe" stelt leerlingen in staat of juist niet om het lidmaatschap voor vakken op te zeggen.  </li>
+<li>Nieuwe instelling "volledigenaamweergave" laat het overschrijven van de opmaak van de volledige naam van gebruikers toe zodat leerlingen alleen "voornaam achternaam", "achternaam voornaam" of "voornaam" kunnen zien.</li>
+<li>De docent of beheerder kan het emailadres van individuele gebruikers uitschakelen (bruikbaar bij het behandelen van mail accounts die afstuiten). </li>
+<li>Upload grootte kan nu worden beheerd door heel Moodle door gebruik van "maxbytes". Er is een site limiet (begrensd door de huidige PHP limieten), welke op zichzelf de bovenste grens is voor vakken limieten, welke de bovenste grens is voor activiteiten limieten.  </li>
+<li>Moodle cookies kunnen aangepast worden (helpt als meerdere Moodles op een site worden gebruikt). </li>
+<li>Ingevoegd script voor de analyse van de database functionering (admin/dbperformance.php).</li>
+<li>Ingevoegd standalone script om een server te checken op Moodle congruentie(lib/compatible.php)</li> 
+<li>Als een bestand genaamd cronextra.php bestaat in de dataroot zal de cron deze ook uitvoeren. Dit staat sites toe "speciale" onderhouds voorzieningen te hebben.  </li>
+<li>De opmaak van vakken zijn nu meer als plug-ins in verschillende mappen.</li>
+<li>Gebruikers kunnen nu geüpload worden vanuit tekstbestanden. </li> 
+<li>Als $CFG->disableuserimages is gedefenieerd (in config.php) dan kunnen gebruikers afbeeldingen niet verander worden. </li>
+<li>Als $CFG->admineditalways is gedefinieerd kan de beheerder een bijdrage ten alle tijde bewerken.  </li>
+<li>Als $CFG->filterall is gedefinieerd dan zullen zelfs kleine dingen als forum onderwerpen en activiteitennamen gefilterd worden. </li>
+<li>Ondersteuning voor beperkte demo gebruikers (bijvoorbeeld de  teacher demo op Moodle.org) - gebruikersnamen kunnen toegevoegd worden aan een lijst met namen in config.php. bijv.$CFG->restrictusers = 'teacher,fred'; </li>
+</ul>
+</dd>
+<dt>Thema's </dt>
+<dd><ul>
+<li>Aanpassingen voor Internet Explorer maken het gebruik van het style sheet stabieler.  </li>
+<li>Allerlei aanpassingen en verbeteringen aan thema's. Aangepaste thema's vereisen upgrading! </li>
+</ul>
+</dd>
+<dt>Vertalingen </dt>
+<dd> 
+<ul>
+<li>Nieuwe talen: Galego en Litouws. </li>
+<li>Verbeterde taal bewerkings interface. Het laat toe de huidige taal te kiezen en laat het afzonderlijk bewerken van elk bestand toe. </li>
+<li>De lijst met landennamen kan nu vertaald worden, zoals ook de editor knoppen, de namen van smilies en de bestand groottes (Mb, Gb etc) </li>
+<li>Taal pakketten kunnen nu de taalrichting definiëren (van rechts naar links of van links naar rechts).  </li>
+<li>Taalpakketten kunnen nu de volgorde definiëren in welke de namen van personen weergegeven zouden moeten worden. </li>
+<li>Taalbestanden zijn nu geschreven gebruik makend van enigszins meer efficiënte PHP code.  </li>
+<li>Eindelijk af van de onzinnige linefeeds in de strings met meerdere regels.  </li>
+<li>Vakken kunnen een taal voor alle gebruikers afdwingen. </li>
+</ul>
+</dd>
+<dt>
+Backup / Terug zetten </dt>
+<dd>
+<ul>
+<li>Automatische backups kunnen door de beheerder gepland worden voor alle vakken tegelijk.</li>
+<li>Statistieken kunnen volledig worden teruggezet. </li>
+<li>Alle benodigde gebruikers worden nu in de vak backups ingevoegd  (zelfs als ze niet meer ingeschreven zijn) </li>
+<li>Allerlei aanpassingen en verbeteringen.</li>
+</ul>
+</dd>
+<dt>Tekst Filters en Formatting </dt><DD>
+<ul>
+<li>Waarschuwing: de nieuwe tekst filter kan de belasting op je server verhogen, vooral wanneer complexe filters worden gebruikt. Gebruik ze voorzichtig.  </li>
+<li>De nieuwe  woordenlijst filter kan links creëren naar woordenlijst items van overeenkomstige worden door de gehele Moodle. </li>
+<li>De nieuwe TeX filter kan TeX code die waar ook in Moodle gevonden word omzetten in werkelijke wiskundige notaties (GIF formaat afbeelding). Er is ook een algebra filter met een makkelijker input formaat (meer als rekenmachines). </li>
+<li>De nieuwe censuur filter kan ingeschakeld worden om vieze woorden uit te filteren. </li>
+<li>De nieuwe multilang filter staat toe om tekst in meerdere talen in te voeren en alleen de beste wordt getoond aan elke gebruiker (afhankelijk van hun taal instelling). </li>
+<li>De <nolink> tag kan gebruikt worden om autolinken te voorkomen in een tekstpassage.  </li>
+<li>Meerdere tags zijn nu toegestaan, inclusief <acronym> en alle  <math> tags. </li>
+<li>Sommige gebieden waar tekst niet juist gefilterd werd (veiligheids risoco) zijn nu aangepast. </li>
+</ul>
+</dd>
+<dt>Developer API</dt><dd> 
+<ul>
+<li>Een nieuwe Coding guide is beschikbaar.  </li>
+<li>Een nieuwe Philosophy guide is beschikbaar ;-)</li> 
+<li>Verbeteringen aan het template voor nieuwe modules.</li>  
+<li>Modules zouden nu de minimale versie van Moodle moeten specificeren waarmee zij congruent zijn. </li>
+<li>Scripts kunnen naar print_header() specificeren of de pagina pure XML is.  </li>
+<li>Elke module kan gebruikers voorkeuren opslaan en terughalen die tussen logins blijven bestaan.  </li>
+</ul>
+</dd>
+<dt>Chats </dt><dd>
+<ul>
+<li>Chat sessies kunnen nu verwijderd worden.  </li>
+<li>Geplande chattijden laten de tijdszone zien ter verduidelijking. </li>
+</ul>
+</dd>
+<dt>Forums </dt><dd>
+<ul>
+<li>Voorkeuren voor de forum weergave worden onthouden tussen logins. </li>
+<li>"Toon discussiestart" link in alle bijdragen voor snellere navigatie door forums. </li>
+<li>Anchor tags kunnen naar indivuele bijdragen refereren in alle weergaven.</li>
+<li>Verbeteringen aan de cron taak wanneer deze handmatig wordt uitgevoerd, zowel als logging en mail fouten. </li>
+<li>Alleen print de resultaten knop als er resultaten behaald kunnen worden. </li>
+<li>Grote verbeteringen aan de email tekst versies van HTML forum bijdragen.  </li>
+<li>Als er geantwoord wordt, wordt een beeld van andere antwoorden getoond.  </li>
+<li>Als de HTML editor wordt gebruikt voor bijdragen, worden geen andere opmaak opties getoond.  </li>
+</ul>
+</dd>
+<dt>Logboeken</dt><dd> 
+<ul>
+<li>Logboek vragen kunnen nu gebruik maken van de HTMLeditor. </li>
+<li>Een aantal aanpassingen in de rapport pagina als logboek bijdragen gewaardeerd worden.  </li>
+</ul>
+</dd>
+<dt>Testen</dt><dd> 
+<ul>
+<li>Vragen en categoriën kunnen nu bewerkt worden zonder een test te openenen. </li>
+<li>Alle vragen kunnen nu elk van de mogelijke Moodle opmaken  gebruiken. </li>
+<li>Nieuw importeer opmaak: GIFT opmaak (dit is de nieuwe standaard opmaak) </li>
+<li>Nieuw importeer opmaak: Course Test Manager </li>
+<li>Nieuw importeer opmaak: WebCT opmaak  </li>
+<li>Nieuw importeer opmaak: Aiken opmaak </li>
+<li>Korte antwoord vragen kunnen nu wildcards gebruiken voor overeenkomsten bijvoorbeeld wild*rds.</li>
+<li>Afbeelding werken nu in vragen uit extern gepubliceerde categorieën.</li>
+<li>Het overzichtsrapport is verbeterd door meer informatie te laten zien en het verwijderen van pogingen toe te staan. </li>
+<li>Een nieuwe gedetailleerd testrapport voor statistische analyses.  </li>
+<li>Alle vraagtypes kunnen nu maximaal 10 antwoorden hebben. </li>
+<li>Menu's in test bewerken hebben geen submit knoppen meer nodig  (gewoon selecteren vanuit het menu) </li>
+<li>Opgeloste bug die zich voordeed bij het herberekenen van sommige testen die willekeurige vragen bevatten.</li>
+<li>Opgeloste bug die zich voordeed in backups van testen die willekeurige vragen bevatten.  </li>
+<li>Vele andere kleine bugs opgelost. </li>
+</ul>
+</dd>
+<dt>Bronnen </dt><dd>
+<ul>
+<li>Docenten kunnen veel directer door bestanden bladeren als ze een geüpload bestand creëren. </li>
+<li>Nieuwe instellingen die een standaard URL toelaten, een standaard zoekpagina en standaard popup instellingen. </li>
+<li>Geüploade bestanden kunnen ook in popups verschijnen. </li>
+<li>Veel betere weergave van popups wanneer de navigatiebar gebruikt wordt om daar te komen.</li>
+<li> MP3 bestanden worden nu gestreamd gebruik makend van een ingebouwde Flash MP3 speler.</li>
+<li>Video bestanden (Media player, Quicktime) zijn ingebed gebruik makend van lokale plugins. </li>
+</ul>
+</dd>
+<dt>Workshops </dt><dd>
+<ul>
+<li>Veranderingen in het omgaan met leerlingevaluaties.  </li>
+<li>Nieuwe evaluatie fase. </li>
+<li>Nieuwe opties voor de overzichtstabel voor ingezonden werk. </li>
+</ul>
+</dd>
+<dt>Allerlei </dt><dd>
+<ul>
+<li>Moodle negeert alle folders die Frontpage mogelijk heeft toegevoegd.  (_vti_cnf). </li>
+<li>Verbeterde HTML -> XHTML op veel plaatsen. </li>
+<li>Veel verbeterigen voor non-MySQL databases </li>
+<li>Een aantal hard gecodeerde tekst strings in Moodle zijn vertaalbaar gemaakt.  </li>
+<li>Data in het gebruikersprofiel wordt nu correct opgeschoond. </li>
+<li>Verbeteringen wanneer Moodle is ingebed in een frame (bijvoorbeeld  in Postnuke) </li>
+<li>Bug aanpassingen in de Wiki modus. </li>
+<li>Beheerder kan niet langer externe accounts bewerken. </li>
+<li>Qmail gebruikers kunnen "qmail" in het smtphosts veld gebruiken voor betere resultaten.  </li>
+<li>Meerdere methodes voor doorverwijzen, om om sommige browser bugs heen te werken. </li>
+<li>Kleine verbeteringen aan de weergave van cijfers in de cijferlijsten.</li>
+<li>Meer studenten profiel velden kunnen bewerkt worden zoals afdeling en instituut en deze kunnen ook bijgeschreven worden in cijfer lijsten in tekst of Excel. </li>
+<li>Als een leerling wordt toegevoegd als docent, worden ze automatisch als leerling uitgeschreven. </li>
+<li>Upgraded ADOdb (database layer) </li>
+</ul>
