@@ -21,15 +21,15 @@ function chat_upgrade($oldversion) {
     }
 
     if ($oldversion < 2004111200) { //drop them first to avoid collisions with upgrades from 1.4.2+
-        execute_sql('DROP INDEX prefix_chat_course_idx;',false);
-        execute_sql('DROP INDEX prefix_chat_messages_chatid_idx;',false); 
-        execute_sql('DROP INDEX prefix_chat_messages_userid_idx;',false); 
-        execute_sql('DROP INDEX prefix_chat_messages_groupid_idx;',false);
-        execute_sql('DROP INDEX prefix_chat_messages_timemodifiedchatid_idx;',false); 
-        execute_sql('DROP INDEX prefix_chat_users_chatid_idx;',false); 
-        execute_sql('DROP INDEX prefix_chat_users_userid_idx;',false); 
-        execute_sql('DROP INDEX prefix_chat_users_groupid_idx;',false); 
-        execute_sql('DROP INDEX prefix_chat_users_lastping_idx;',false);
+        execute_sql("DROP INDEX {$CFG->prefix}chat_course_idx;",false);
+        execute_sql("DROP INDEX {$CFG->prefix}chat_messages_chatid_idx;",false); 
+        execute_sql("DROP INDEX {$CFG->prefix}chat_messages_userid_idx;",false); 
+        execute_sql("DROP INDEX {$CFG->prefix}chat_messages_groupid_idx;",false);
+        execute_sql("DROP INDEX {$CFG->prefix}chat_messages_timemodifiedchatid_idx;",false); 
+        execute_sql("DROP INDEX {$CFG->prefix}chat_users_chatid_idx;",false); 
+        execute_sql("DROP INDEX {$CFG->prefix}chat_users_userid_idx;",false); 
+        execute_sql("DROP INDEX {$CFG->prefix}chat_users_groupid_idx;",false); 
+        execute_sql("DROP INDEX {$CFG->prefix}chat_users_lastping_idx;",false);
 
         modify_database('','CREATE INDEX prefix_chat_course_idx ON prefix_chat(course);');
         modify_database('','CREATE INDEX prefix_chat_messages_chatid_idx ON prefix_chat_messages (chatid);');
