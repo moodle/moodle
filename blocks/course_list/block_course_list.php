@@ -71,7 +71,9 @@ class CourseBlock_course_list extends MoodleBlock {
                 }
                 $this->title = get_string('mycourses');
                 $this->content->footer = "<a href=\"$CFG->wwwroot/course/index.php\">".get_string("fulllistofcourses")."</a>...";
-                return $this->content;
+                if ($this->content->items) { // make sure we don't return an empty list
+                    return $this->content;
+                }
             }
         }
 
