@@ -1,0 +1,60 @@
+<p align=center><b>Importazione di files di domande in formato "WebCT"</b></p>
+
+<p>Il filtro di importazione è in sviluppo e non supporta ancora tutti i tipi di domande WebCT.</p>
+
+<p>Attualmente sono gestite solo le Domande a scelta multipla e le Domande a risposta breve.</p>
+
+<p>Seguono alcuni esempi di queste domande in un file di testo:</p>
+
+<pre>
+# Inizio della domanda: Domanda a Risposta Breve
+:TYPE:S:
+:TITLE:Domanda a Risposta Breve
+:QUESTION:H
+Come si chiama il Learning Hub WebCT?
+&lt;br /> 
+:IMAGE:dotcomLogoc.gif
+:ANSWERS:1
+:CASE:0
+:ANSWER1:WebCT.com:100:0:20:0
+:FEEDBACK1:H
+Visitate il Learning Hub\: www.WebCT.com
+:CAT:Default
+# Fine della domanda: Domanda a Risposta Breve
+
+
+
+# Inizio della domanda: Domanda a Scelta Multipla
+:TYPE:MC:1:0:C
+:TITLE:Domanda a Scelta Multipla
+:FEEDBACK
+Darwin inventò la teoria dell'evoluzione e creò il darwinismo.
+:QUESTION:H
+Dove è il Centro Ricerche Darwin?
+:IMAGE:
+:LAYOUT:vertical
+:ANSWER1:0:H
+Menlo Park, California
+:REASON1:H
+Spiacente!
+:ANSWER2:0:H
+Vancouver, Canada
+:REASON2:H
+Spiacente!
+:ANSWER3:100:H
+Galapagos Islands, Ecuador
+:REASON3:H
+Giusto!
+:ANSWER4:0:H
+London, England
+:REASON4:H
+Spiacente!
+:ANSWER5:0:H
+Sidney, Australia
+:REASON5:H
+Spiacente!
+:CAT:Default
+# Fine della domanda: Domanda a Scelta Multipla
+
+</pre>
+

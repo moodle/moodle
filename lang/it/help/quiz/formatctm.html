@@ -1,0 +1,49 @@
+<p align=center><b>Importazione di files di domande in formato "Course Test Manager"</b></p>
+
+<p>Course Test Manager è un package software della Course Technology "in fin di vita".
+Non è più sviluppato dal produttore ed è stato rimpiazzato da un nuovo software per la gestione dei test chiamato 
+ExamView.  Comunque non c'è mai un sistema di migrazione per permettere di esportare i test dal formato CTM ad altri formati più comuni. Questo è il motivo per cui questo modulo è stato scritto.</p>
+
+<p>Per importare domande da CTM, bisogna avere questo sistema installato su una macchina Windows, e avere accesso ai files MS Access sulla stessa macchina. Due sono i files richiesti:</p>
+<ul><li>System.mda - Questo file è nella directory principale dell'installazione CTM e, nel gergo MS Access si chiama "System Database".</li>
+<li>ctm.mdb - questo è il database che contiene le domande. C'è un database di questo tipo per ogni corso installato in CTM. Si trova in una directory un livello al disotto di quella di installazione di CTM.</li>
+</ul>
+
+</p>Il processo di importazione è leggermente differente a seconda che Moodle gira in ambiente Windows oppure Linux.
+Indipendentemente dalla piattaforma su cui gira Moodle, bisogna disporre di un sistema Windows (Windows 2000 o Windows XP) sulla stessa rete su cui è presente Moodle in modo tale da accedere al databse Access durante l'importazione delle domande.</p>
+
+<p>Il processo è un pò più semplice su un sistema Moodle <B>basato su Windows</B>. Quello che si deve fare per utilizzare la classe di importazione di CTM è:</p>
+
+<ol><li>Caricare il database system.mda su Moodle usando il file manager. Non importa su quale corso si carica il file. Moodle lo troverà indipendentemente.</li>
+<li>Creare un quiz e utilizzare la funzione "importa domande da file".  Caricare il file ctm.mdb scelto come file di domande da importare. Se si è operato correttamente, si vedrà un altra schermata che permetterà di scegliere la sotto-categoria di domande da importare dal database. Il motivo di questo passo è che CTM spesso contiene un gran numero di domande suddivise per categoria, basate sui capitoli di un libro o le sezioni di un corso.</li>
+</ol>
+
+<p>Il processo su un sistema Moodle <B>basato su Linux</B> necessita di una componente software di terze parti chiamata
+<a href="http://odbcsock.sourceforge.net/" target="_new"><b>ODBC Socket Server</b></a>.  Per importare un database CTM su Linux, bisogna prima scaricare e installare questo piccolo programma di rete sul sistema Windows che ospita il database CTM.
+<B>Non seguire</B> le istruzioni definite per l'installazione del ODBC Socket Server.  Sono molto più complicate di quello che serve! Invece seguire le seguenti indicazioni:</P>
+
+<ol><li>Su Windows, Unzip del file di installazione scaricato da
+<a href="http://odbcsock.sourceforge.net/" target="_new">questo sito</a>.</li>
+<li>Copiare il file eseguibile ODBCSocketServer.exe sulla directory di sistema (probabilmente C:\WINNT\ o C:\Windows) o sulla directory Program Files .</li> 
+
+<li>Installare il ODBC Socket Server come un Servizio sul sistema, con questo comando:<br />
+<b>&lt;path in cui è stato copiato il file nel passo precedente&gt;ODBCSocketServer.exe /Service</b><br />
+Quasto può essere fatto scrivendo suddetto comando nella finestra di dialogo che si apre con Start-&gt;Esegui oppure dal prompt di comandi.</li>
+
+<li>Aprire il Gestore dei Servizi o attraverso
+Start-&gt;Impostazioni-&gt;Pannello di controllo-&gt;Strumenti di Amministrazione-&gt;Servizi oppure cliccando col tasto destro del mouse su
+<b>Risorse del Computer</b>, scegliendo<b>Gestisci</b>, scegliendo poi<B>Servizi e Applicazioni-&gt;Servizi</b> dal pannello che si apre.  Si può anche accedere al Gestore dei Servizi tramite il comando <b>services.msc</b> nella finestra di dialogo Start-&gt;Esegui...</li>
+
+<li>Nel gestore dei Servizi, cliccare col tasto destro del mouse sull'item ODBC Socket Server e scegliere <b>Start</b>. Appena fatto, lo stato dovrebbe cambiare in "started". Da notare che si può stoppare o disabilitare completamente questo servizio dopo aver completato il processo di importazione.</li>
+
+<li>Bisogna essere sicuri che i file dati system.mda e ctm.mdb siano sulla macchina e che il driver ODBC per MS Access sia presente. In una installazione standard di Windows dovrebbe esserci. Si può comunque controllare che sia installato aprendo "Origine Dati (ODBC)" in "Strumenti di Amministrazione" del Pannello di Controllo e selezionando la sezione "Driver".
+Bisogna poi determinare dove è installato CTM e localizzare il file system.mda e il database ctm.mdb o i database dei quali si è interessati a importare i dati. Prendere nota dei path completi di questi file e del IP address o hostname del server Windows. Queste informazioni saranno necessarie nella procedura di importazione.</li>
+
+<li>Ora si può passare all'importazione del o dei database delle domande dentro Moodle. Creare un proprio quiz ed attivare la funzione "importa domande da file". <B>Qui è dove le cose sono differenti per Linux</B>: bisogna specificare un file dummy nel campo di caricamento perché la procedura di importazione parta. Questo file <B>non sarà elaborato</B>. E' solo un simbolo per il pannello di importazione. Successivamente dovranno essere specificate le informazioni sul server Windows.
+Ci sarà una schermata in cui definire l'hostname della macchina con il Windows ODBC Socket Server e i paths dei database di sistema e delle domande da importare.
+Scrivere le informazioni individuate nello step precedente a questo e cliccare su "Connect to Server". Se ogni cosa è stata fatto correttamente, si arriverà ad un altro pannello in cui scegliere la sottocategoria di domande da importare dal databse. Il motivo di questo passo è che CTM spesso contiene un gran numero di domande suddivise per categoria, basate sui capitoli di un libro o le sezioni di un corso. Se questo step viene eseguito senza messaggi di errore, vuol dire che il Socket Server  è stato impostato correttamente e si possono importare le domande dentro Moodle!</li>
+</ol>
+
+<P>Se sono usciti messaggi di errore durante questa procedura, possono essere utili le seguenti informazioni tecniche.
+L'ODBC Socket server usa la porta 9628 per aprire un socket, inviare una query XML e ricevere i risultati della query in una XML result table. La classe di importazione analizza questa tabella e la usa per prendere i dati da importare. 
+</p>
