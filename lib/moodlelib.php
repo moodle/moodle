@@ -5194,7 +5194,7 @@ function address_in_subnet($addr, $subnetstr) {
         }
 
         if ($found) {
-            continue;
+            break;
         }
     }
 
@@ -5471,9 +5471,9 @@ function unzip_show_status ($list,$removepath) {
  * @return string The remote IP address
  */
  function getremoteaddr() {
-    if (getenv('HTTP_CLIENT_IP')) $ip = getenv('HTTP_CLIENT_IP');
-    else if(getenv('HTTP_X_FORWARDED_FOR')) $ip = getenv('HTTP_X_FORWARDED_FOR');
-    else if(getenv('REMOTE_ADDR')) $ip = getenv('REMOTE_ADDR');
+    if (!empty($_SERVER['HTTP_CLIENT_IP'])) $ip = $_SERVER['HTTP_CLIENT_IP'];
+    else if(!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+    else if(!empty($_SERVER['REMOTE_ADDR'])) $ip = $_SERVER['REMOTE_ADDR'];
     else $ip = false; //just in case
     return $ip;
 }
