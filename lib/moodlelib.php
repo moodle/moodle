@@ -1082,7 +1082,7 @@ function authenticate_user_login($username, $password) {
     }
 
     if (empty($user->auth)) {      // For some reason it isn't set yet
-        if (isadmin($user->id) or isguest($user->id)) {
+        if (!empty($user->id) && (isadmin($user->id) || isguest($user->id))) {
             $auth = 'manual';    // Always assume these guys are internal
         } else {
             $auth = $CFG->auth;  // Normal users default to site method
