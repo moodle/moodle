@@ -91,7 +91,7 @@
             }
 
             //Do some output
-            echo "<li>".get_string("modulename","forum")." \"".$forum->name."\"</li>";
+            echo "<li>".get_string("modulename","forum")." \"".format_string(stripslashes($forum->name),true)."\"";
             backup_flush(300);
 
             if ($newid) {

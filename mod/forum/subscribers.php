@@ -44,7 +44,7 @@
     $strforums      = get_string("forums", "forum");
 
     $navigation = "<a href=\"index.php?id=$course->id\">$strforums</a> ->
-       <a href=\"view.php?f=$forum->id\">$forum->name</a> -> $strsubscribers";
+       <a href=\"view.php?f=$forum->id\">".format_string($forum->name,true)."</a> -> $strsubscribers";
 
     print_header_simple("$strsubscribers", "", "$navigation",
         "", "", true, forum_update_subscriptions_button($course->id, $id), true);
@@ -64,7 +64,7 @@
 
         } else {
 
-            print_heading(get_string("subscribersto","forum", "'$forum->name'"));
+            print_heading(get_string("subscribersto","forum", "'".format_string($forum->name)."'"));
 
             echo '<table align="center" cellpadding="5" cellspacing="5">';
             foreach ($users as $user) {

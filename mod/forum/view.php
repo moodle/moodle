@@ -72,8 +72,8 @@
         add_to_log($course->id, "forum", "view forum", "view.php?f=$forum->id", "$forum->id");
     }
 
-    print_header_simple("$forum->name", "",
-                 "$navigation $forum->name", "", "", true, $buttontext, navmenu($course, $cm));
+    print_header_simple(format_string($forum->name), "",
+                 "$navigation ".format_string($forum->name), "", "", true, $buttontext, navmenu($course, $cm));
 
     if (empty($cm->visible) and !isteacher($course->id)) {
         notice(get_string("activityiscurrentlyhidden"));
@@ -161,9 +161,9 @@
         $CFG->enablerssfeeds && $CFG->forum_enablerssfeeds && $forum->rsstype and $forum->rssarticles) {
         echo '</tr><tr><td align="right">';
         if ($forum->rsstype == 1) {
-            $tooltiptext = get_string("rsssubscriberssdiscussions","forum",$forum->name);
+            $tooltiptext = get_string("rsssubscriberssdiscussions","forum",format_string($forum->name));
         } else {
-            $tooltiptext = get_string("rsssubscriberssposts","forum",$forum->name);
+            $tooltiptext = get_string("rsssubscriberssposts","forum",format_string($forum->name));
         }
         if (empty($USER->id)) {
             $userid = 0;

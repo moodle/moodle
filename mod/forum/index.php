@@ -143,9 +143,9 @@
             $forum->intro = "<span style=\"font-size:x-small;\">$forum->intro</span>";;
 
             if ($forum->visible) {
-                $forumlink = "<a href=\"view.php?f=$forum->id\">$forum->name</a>";
+                $forumlink = "<a href=\"view.php?f=$forum->id\">".format_string($forum->name,true)."</a>";
             } else {
-                $forumlink = "<a class=\"dimmed\" href=\"view.php?f=$forum->id\">$forum->name</a>";
+                $forumlink = "<a class=\"dimmed\" href=\"view.php?f=$forum->id\">".format_string($forum->name,true)."</a>";
             }
 
             //If this forum has RSS activated, calculate it
@@ -154,9 +154,9 @@
                 if ($forum->rsstype and $forum->rssarticles) {
                     //Calculate the tolltip text
                     if ($forum->rsstype == 1) {
-                        $tooltiptext = get_string("rsssubscriberssdiscussions","forum",$forum->name);
+                        $tooltiptext = get_string("rsssubscriberssdiscussions","forum",format_string($forum->name));
                     } else {
-                        $tooltiptext = get_string("rsssubscriberssposts","forum",$forum->name);
+                        $tooltiptext = get_string("rsssubscriberssposts","forum",format_string($forum->name));
                     }
                     if (empty($USER->id)) {
                         $userid = 0;
@@ -174,7 +174,7 @@
                 } else {
                     if ($groupmode and !isteacheredit($course->id) and !mygroupid($course->id)) {
                         $sublink = get_string("no");   // Can't subscribe to a group forum (not in a group)
-                        $forumlink = $forum->name;
+                        $forumlink = format_string($forum->name,true);
                     } else {
                         if (forum_is_subscribed($USER->id, $forum->id)) {
                             $subscribed = get_string("yes");
@@ -277,9 +277,9 @@
                 }
 
                 if ($forum->visible) {
-                    $forumlink = "<a href=\"view.php?f=$forum->id\">$forum->name</a>";
+                    $forumlink = "<a href=\"view.php?f=$forum->id\">".format_string($forum->name,true)."</a>";
                 } else {
-                    $forumlink = "<a class=\"dimmed\" href=\"view.php?f=$forum->id\">$forum->name</a>";
+                    $forumlink = "<a class=\"dimmed\" href=\"view.php?f=$forum->id\">".format_string($forum->name,true)."</a>";
                 }
 
                 //If this forum has RSS activated, calculate it
@@ -288,9 +288,9 @@
                     if ($forum->rsstype and $forum->rssarticles) {
                         //Calculate the tolltip text
                         if ($forum->rsstype == 1) {
-                            $tooltiptext = get_string("rsssubscriberssdiscussions","forum",$forum->name);
+                            $tooltiptext = get_string("rsssubscriberssdiscussions","forum",format_string($forum->name));
                         } else {
-                            $tooltiptext = get_string("rsssubscriberssposts","forum",$forum->name);
+                            $tooltiptext = get_string("rsssubscriberssposts","forum",format_string($forum->name));
                         }
                         if (empty($USER->id)) {
                             $userid = 0;
@@ -309,7 +309,7 @@
                         if ($groupmode and !isteacheredit($course->id) and !mygroupid($course->id)) {
                             $sublink = get_string("no");   // Can't subscribe to a group forum (not in a group)
                             if ($groupmode == SEPARATEGROUPS) {
-                                $forumlink = $forum->name;
+                                $forumlink = format_string($forum->name,true);
                             }
                         } else {
                             if (forum_is_subscribed($USER->id, $forum->id)) {

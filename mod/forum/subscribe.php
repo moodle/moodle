@@ -51,11 +51,11 @@
             print_header($course->shortname, $course->fullname,
                  "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->
                   <a href=\"../forum/index.php?id=$course->id\">$strforums</a> -> 
-                  <a href=\"view.php?f=$forum->id\">$forum->name</a>", '', '', true, "", navmenu($course, $cm));
+                  <a href=\"view.php?f=$forum->id\">".format_string($forum->name,true)."</a>", '', '', true, "", navmenu($course, $cm));
         } else {
             print_header($course->shortname, $course->fullname,
                  "<a href=\"../forum/index.php?id=$course->id\">$strforums</a> -> 
-                  <a href=\"view.php?f=$forum->id\">$forum->name</a>", '', '', true, "", navmenu($course, $cm));
+                  <a href=\"view.php?f=$forum->id\">".format_string($forum->name,true)."</a>", '', '', true, "", navmenu($course, $cm));
         }
         notice_yesno(get_string('noguestsubscribe', 'forum').'<br /><br />'.get_string('liketologin'),
                      $wwwroot, $_SERVER['HTTP_REFERER']);
@@ -86,7 +86,7 @@
     }
 
     $info->name  = fullname($user);
-    $info->forum = $forum->name;
+    $info->forum = format_string($forum->name);
 
     if ( forum_is_subscribed($user->id, $forum->id) ) {
         if (forum_unsubscribe($user->id, $forum->id) ) {

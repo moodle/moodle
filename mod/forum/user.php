@@ -75,7 +75,7 @@
                 error("Could not find forum $discussion->forum");
             }
     
-            $fullsubject = "<a href=\"view.php?f=$forum->id\">$forum->name</a>";
+            $fullsubject = "<a href=\"view.php?f=$forum->id\">".format_string($forum->name,true)."</a>";
             if ($forum->type != 'single') {
                 $fullsubject .= " -> <a href=\"discuss.php?d=$discussion->id\">$discussion->name</a>";
                 if ($post->parent != 0) {

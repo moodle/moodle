@@ -39,11 +39,11 @@
             print_header($course->shortname, $course->fullname,
                  "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->
                   <a href=\"../forum/index.php?id=$course->id\">$strforums</a> ->
-                  <a href=\"view.php?f=$forum->id\">$forum->name</a>", '', '', true, "", navmenu($course, $cm));
+                  <a href=\"view.php?f=$forum->id\">".format_string($forum->name,true)."</a>", '', '', true, "", navmenu($course, $cm));
         } else {
             print_header($course->shortname, $course->fullname,
                  "<a href=\"../forum/index.php?id=$course->id\">$strforums</a> ->
-                  <a href=\"view.php?f=$forum->id\">$forum->name</a>", '', '', true, "", navmenu($course, $cm));
+                  <a href=\"view.php?f=$forum->id\">".format_string($forum->name)."</a>", '', '', true, "", navmenu($course, $cm));
         }
         notice_yesno(get_string('noguestpost', 'forum').'<br /><br />'.get_string('liketologin'),
                      $wwwroot, $_SERVER['HTTP_REFERER']);
@@ -467,7 +467,7 @@
             $strforums = get_string("modulenameplural", "forum");
             print_header_simple("$discussion->name: $post->subject", "",
                          "<a href=\"../forum/index.php?id=$course->id\">$strforums</a> ->
-                          <a href=\"view.php?f=$forum->id\">$forum->name</a> ->
+                          <a href=\"view.php?f=$forum->id\">".format_string($forum->name,true)."</a> ->
                           <a href=\"discuss.php?d=$discussion->id\">$post->subject</a> -> ".
                           get_string("prune", "forum"), '', "", true, "", navmenu($course, $cm));
 
@@ -528,7 +528,7 @@
     $strforums = get_string("modulenameplural", "forum");
 
 
-    $navmiddle = "<a href=\"../forum/index.php?id=$course->id\">$strforums</a> -> <a href=\"view.php?f=$forum->id\">$forum->name</a>";
+    $navmiddle = "<a href=\"../forum/index.php?id=$course->id\">$strforums</a> -> <a href=\"view.php?f=$forum->id\">".format_string($forum->name,true)."</a>";
 
     if (empty($discussion->name)) {
         $discussion->name = $forum->name;

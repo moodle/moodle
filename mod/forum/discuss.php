@@ -107,7 +107,7 @@
         $navtail = "<a href=\"discuss.php?d=$discussion->id\">$discussion->name</a> -> $post->subject";
     }
 
-    $navmiddle = "<a href=\"../forum/index.php?id=$course->id\">".get_string("forums", "forum")."</a> -> <a href=\"../forum/view.php?f=$forum->id\">$forum->name</a>";
+    $navmiddle = "<a href=\"../forum/index.php?id=$course->id\">".get_string("forums", "forum")."</a> -> <a href=\"../forum/view.php?f=$forum->id\">".format_string($forum->name,true)."</a>";
 
     $searchform = forum_search_form($course);
 
@@ -182,7 +182,7 @@
                 $section = $courseforum->section;
                 if ($courseforum->id != $forum->id) {
                     $url = "discuss.php?d=$discussion->id&amp;move=$courseforum->id";
-                    $forummenu[$url] = $courseforum->name;
+                    $forummenu[$url] = format_string($courseforum->name,true);
                 }
             }
             if (!empty($forummenu)) {
@@ -196,7 +196,7 @@
     echo "</td></tr></table>";
 
     if (isset($discussionmoved)) {
-        notify(get_string("discussionmoved", "forum", $forum->name));
+        notify(get_string("discussionmoved", "forum", format_string($forum->name,true)));
     }
 
 

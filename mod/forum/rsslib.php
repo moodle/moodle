@@ -48,7 +48,7 @@
                             continue;
                         }
 
-                        mtrace("Updating RSS feed for $forum->name, ID: $forum->id");
+                        mtrace("Updating RSS feed for ".format_string($forum->name,true).", ID: $forum->id");
 
                         //Some debug...
                         if ($CFG->debug > 7) {
@@ -124,7 +124,7 @@
                 //Now, if items, we begin building the structure
                 if (!empty($items)) {
                     //First all rss feeds common headers
-                    $header = rss_standard_header($forum->name,
+                    $header = rss_standard_header(format_string($forum->name,true),
                                                   $CFG->wwwroot."/mod/forum/view.php?f=".$forum->id,
                                                   $forum->intro);
                     //Now all the rss items

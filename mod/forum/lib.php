@@ -475,7 +475,7 @@ function forum_cron () {
                     $posttext .= "\n \n";
                     $posttext .= '=====================================================================';
                     $posttext .= "\n \n";
-                    $posttext .= "$course->shortname -> $strforums -> $forum->name";
+                    $posttext .= "$course->shortname -> $strforums -> ".format_string($forum->name,true);
                     if ($discussion->name != $forum->name) {
                         $posttext  .= " -> $discussion->name";
                     }
@@ -484,7 +484,7 @@ function forum_cron () {
                     $posthtml .= "<p><font face=\"sans-serif\">".
                     "<a target=\"_blank\" href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> -> ".
                     "<a target=\"_blank\" href=\"$CFG->wwwroot/mod/forum/index.php?id=$course->id\">$strforums</a> -> ".
-                    "<a target=\"_blank\" href=\"$CFG->wwwroot/mod/forum/view.php?f=$forum->id\">$forum->name</a>";
+                    "<a target=\"_blank\" href=\"$CFG->wwwroot/mod/forum/view.php?f=$forum->id\">".format_string($forum->name,true)."</a>";
                     if ($discussion->name == $forum->name) {
                         $posthtml .= "</font></p>";
                     } else {
@@ -618,7 +618,7 @@ function forum_make_mail_text($course, $forum, $discussion, $post, $userfrom, $u
     $posttext = '';
 
     if(!$bare) {
-        $posttext  = "$course->shortname -> $strforums -> $forum->name";
+        $posttext  = "$course->shortname -> $strforums -> ".format_string($forum->name,true);
 
         if ($discussion->name != $forum->name) {
             $posttext  .= " -> $discussion->name";
@@ -673,7 +673,7 @@ function forum_make_mail_html($course, $forum, $discussion, $post, $userfrom, $u
         $posthtml .= "<p><font face=\"sans-serif\">".
         "<a target=\"_blank\" href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> &raquo; ".
         "<a target=\"_blank\" href=\"$CFG->wwwroot/mod/forum/index.php?id=$course->id\">$strforums</a> &raquo; ".
-        "<a target=\"_blank\" href=\"$CFG->wwwroot/mod/forum/view.php?f=$forum->id\">$forum->name</a>";
+        "<a target=\"_blank\" href=\"$CFG->wwwroot/mod/forum/view.php?f=$forum->id\">".format_string($forum->name,true)."</a>";
         if ($discussion->name == $forum->name) {
             $posthtml .= "</font></p>";
         } else {
@@ -1549,9 +1549,6 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
         echo '<td class="topic starter">';
     }
 
-    if (!empty($CFG->filterall)) {      /// Put the subject through the filters
-        $post->subject = filter_text('<span class="nolink">'.$post->subject.'</span>', $courseid);
-    }
     echo '<div class="subject">'.$post->subject.'</div>';
 
     echo '<div class="author">';
