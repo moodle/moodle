@@ -3,6 +3,7 @@
     require("../config.php");
 
     optional_variable($file, "");    // docs file to view
+    optional_variable($frame, "");    // docs file to view
     optional_variable($lang, "");    // override current language
 
     if (!empty($lang)) {
@@ -12,7 +13,11 @@
 
     if (empty($file)) {
         $include = false;
-        $file = "intro.html";
+        if (empty($frame)) {
+            $file = "intro.html";
+        } else {
+            $file = $frame;
+        }
     } else {
         $include = true;
     }
