@@ -410,7 +410,59 @@
 
             print_footer($course);
             break;
- 
+
+        case DIRECTORY:
+            require_once("../../files/mimetypes.php");
+
+            add_to_log($course->id, "resource", "view", "view.php?id=$cm->id", $resource->id, $cm->id);
+            print_header($pagetitle, "$course->fullname", "$navigation $resource->name",
+                "", "", true, update_module_button($cm->id, $course->id, $strresource), navmenu($course, $cm));
+
+            if (trim($resource->summary)) {
+                print_simple_box(text_to_html($resource->summary), "center");
+                print_spacer(10,10);
+            }
+
+            print_simple_box_start("center", "", "$THEME->cellcontent", "20" );
+
+            if ($resource->reference) {
+                $relativepath = "$course->id/$resource->reference";
+            } else {
+                $relativepath = "$course->id";
+            }
+
+            $files = get_directory_list("$CFG->dataroot/$relativepath", 'moddata', false);
+            $strftime = get_string('strftimedatetime');
+
+            echo '<table cellpadding="4">';
+            foreach ($files as $file) {
+                $icon = mimeinfo("icon", $file);
+
+                if ($CFG->slasharguments) {
+                    $relativeurl = "/file.php/$course->id/$resource->reference/$file";
+                } else {
+                    $relativeurl = "/file.php?file=/$course->id/$resource->reference/$file";
+                }
+
+                echo '<tr>';
+                echo '<td>';
+                echo "<img src=\"$CFG->pixpath/f/$icon\" width=\"16\" height=\"16\">";
+                echo '</td>';
+                echo '<td nowrap="nowrap"><p>';
+                link_to_popup_window($relativeurl, "resourceedirectory$resource->id", "$file", 450, 600, '');
+                echo '</p></td>';
+                echo '<td>&nbsp;</td>';
+                echo '<td align="right" nowrap="nowrap"><p><font size="-1">';
+                echo userdate(filectime("$CFG->dataroot/$course->id/$resource->reference/$file"), $strftime);
+                echo '</font></p></td>';
+                echo '</tr>';
+            }
+            echo '</table>';
+
+            print_simple_box_end();
+
+            print_footer($course);
+            break;
 
         default:
             print_header($pagetitle, "$course->fullname", "$navigation $resource->name",

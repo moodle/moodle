@@ -396,6 +396,34 @@
                 <?php
                 break;
 
+            case DIRECTORY:
+                $rawdirs = get_directory_list("$CFG->dataroot/$course->id", 'moddata', true, true);
+                $dirs = array();
+                foreach ($rawdirs as $rawdir) {
+                   $dirs[$rawdir] = $rawdir;
+                }
+                $strdirectoryinfo = get_string("directoryinfo", "resource");
+                $strmaindirectory = get_string("maindirectory", "resource");
+                ?>
+                <tr valign="top">
+                    <td align="right" nowrap>
+                        <p><b><?php echo $strtypename?>:</b></p>
+                    </td>
+                    <td>
+                        <?php choose_from_menu($dirs, "reference", $form->reference, $strmaindirectory, '', '') ?>
+                    </td>
+                </tr>
+                <tr valign="top">
+                    <td align="right" nowrap>&nbsp;
+                    </td>
+                    <td>
+                        <p><?php echo "$strdirectoryinfo" ?></p>
+                    </td>
+                </tr>
+
+                <?php
+                break;
+
             default:
                 error(get_string("notypechosen", "resource"), $_SERVER["HTTP_REFERER"]);
                 break;

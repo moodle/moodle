@@ -8,6 +8,7 @@ define("WEBLINK",     "5");
 define("HTML",        "6");
 define("PROGRAM",     "7");
 define("WIKITEXT",    "8");
+define("DIRECTORY",   "9");
 
 $RESOURCE_TYPE = array (REFERENCE    => get_string("resourcetype1", "resource"),
                         WEBPAGE      => get_string("resourcetype2", "resource"),
@@ -16,7 +17,8 @@ $RESOURCE_TYPE = array (REFERENCE    => get_string("resourcetype1", "resource"),
                         WEBLINK      => get_string("resourcetype5", "resource"),
                         HTML         => get_string("resourcetype6", "resource"),
                         PROGRAM      => get_string("resourcetype7", "resource"),
-                        WIKITEXT     => get_string("resourcetype8", "resource") );
+                        WIKITEXT     => get_string("resourcetype8", "resource"),
+                        DIRECTORY    => get_string("resourcetype9", "resource") );
 
 if (!isset($CFG->resource_framesize)) {
     set_config("resource_framesize", 130);

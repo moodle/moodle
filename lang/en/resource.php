@@ -19,6 +19,7 @@ $string['configpopuptoolbar'] = 'Should popup windows show the tool bar by defau
 $string['configpopupwidth'] = 'What width should be the default width for new popup windows?';
 $string['configwebsearch'] = 'When adding a URL as a webpage or weblink, this location is offered as a site to help the user search for the URL they want.';
 $string['directlink'] = 'Direct link to this file';
+$string['directoryinfo'] = 'All the files in the chosen directory will be displayed.';
 $string['editingaresource'] = 'Editing a resource';
 $string['example'] = 'Example';
 $string['examplereference'] = 'Tobin, K. & Tippins, D (1993) Constructivism as a Referent for Teaching and Learning. In: K. Tobin (Ed) The Practice of Constructivism in Science Education, pp 3-21, Lawrence-Erlbaum, Hillsdale, NJ.';
@@ -29,6 +30,7 @@ $string['fetchservererror'] = 'An error was found with the remote server while t
 $string['filename'] = 'File name';
 $string['fulltext'] = 'Full text';
 $string['htmlfragment'] = 'HTML fragment';
+$string['maindirectory'] = 'Main files directory';
 $string['modulename'] = 'Resource';
 $string['modulenameplural'] = 'Resources';
 $string['neverseen'] = 'Never seen';
@@ -58,5 +60,6 @@ $string['resourcetype5'] = 'Web Link';
 $string['resourcetype6'] = 'HTML text';
 $string['resourcetype7'] = 'Program';
 $string['resourcetype8'] = 'Wiki text';
+$string['resourcetype9'] = 'Directory';
 
 ?>
