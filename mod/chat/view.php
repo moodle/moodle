@@ -80,14 +80,15 @@
 
     print_heading($chat->name);
 
-    print_simple_box( text_to_html($chat->intro) , "center");
-
-    print_spacer(20,20);
 
     print_simple_box_start("center");
     link_to_popup_window ("/mod/chat/gui_$chatversion/index.php?id=$chat->id", 
                           "chat$course->id$chat->id", "$strenterchat", 500, 700, $strchat);
     print_simple_box_end();
+
+    print_spacer(20,20);
+
+    print_simple_box( text_to_html($chat->intro) , "center");
 
     if ($chatusers = chat_get_users($chat->id)) {
         $timenow = time();
