@@ -981,6 +981,12 @@
                 $ncorrect = 0;
                 $i = 0;
                 foreach ($answers as $answer) {
+					if ($i == 0 || $i == 1) {
+						// ignore first two answers, they are correct response
+						// and wrong response
+						$i++;
+						continue;
+					}
                     if ($answer->response == $response[$answer->id]) {
                         $ncorrect++;
                     }
@@ -994,7 +1000,7 @@
                     }
                     $i++;
                 }
-                if ($ncorrect == count($answers)) {
+                if ($ncorrect == count($answers)-2) {  // dont count correct/wrong responses in the total.
                    	$response = get_string("thatsthecorrectanswer", "lesson");
 					foreach ($answers as $answer) {
 						if ($answer->response == NULL && $answer->answer != NULL) {
@@ -2007,6 +2013,10 @@
 				error("Insert Page: answer record $i not inserted");
 			}
 		} else {
+			if ($form->qtype == LESSON_MATCHING) {
+				// need to add two to offset correct response and wrong response
+				$lesson->maxanswers = $lesson->maxanswers + 2;
+			}
 			for ($i = 0; $i < $lesson->maxanswers; $i++) {
 				if (trim(strip_tags($form->answer[$i]))) { // strip_tags because the HTML editor adds <p><br />...
 					$newanswer->lessonid = $lesson->id;
@@ -2253,6 +2263,10 @@
             }
         } else {
             // it's an "ordinary" page
+			if ($form->qtype == LESSON_MATCHING) {
+				// need to add two to offset correct response and wrong response
+				$lesson->maxanswers = $lesson->maxanswers + 2;
+			}
             for ($i = 0; $i < $lesson->maxanswers; $i++) {
                 // strip tags because the editor gives <p><br />...
                 // also save any answers where the editor is (going to be) used
