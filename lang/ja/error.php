@@ -1,7 +1,8 @@
 <?php // $Id$ 
-      // error.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
+      // error.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004100800)
 
 
+$string['confirmsesskeybad'] = '申し訳ございません、あなたのセッションキーは、このアクションを実行するための確認をできませんでした。このセキュリティ機能は、あなたのユーザ名で重要な機能が不測または悪意により実行されることを防ぎます。本当にこの機能を実行したいか確認してください。';
 $string['coursegroupunknown'] = 'コースに関連するグループ $a が指定されていません。';
 $string['erroronline'] = '$a 行にエラーがあります。';
 $string['fieldrequired'] = '「 $a 」 は必須項目です。';
