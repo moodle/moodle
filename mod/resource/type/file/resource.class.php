@@ -184,7 +184,7 @@ function update_instance($resource) {
 * @param    CFG     global object
 */
 function display() {
-    global $CFG;
+    global $CFG, $THEME;
 
 /// Set up generic stuff first, including checking for access
     parent::display();
@@ -364,20 +364,32 @@ function display() {
             echo "</p></center>";
 
         } else if ($resourcetype == "mp3") {
-            echo "<center><p>";
+            if (!empty($THEME->resource_mp3player_colors)) {
+                $c = $THEME->resource_mp3player_colors;   // You can set this up in your theme/xxx/config.php
+            } else {
+                $c = 'bgColour=000000&btnColour=ffffff&btnBorderColour=cccccc&iconColour=000000&'.
+                     'iconOverColour=00cc00&trackColour=cccccc&handleColour=ffffff&loaderColour=ffffff&'.
+                     'font=Arial&fontColour=3333FF&buffer=10&waitForPlay=no&autoPlay=yes&'.
+                     'volText='.get_string('vol', 'resource').'&panText='.get_string('pan','resource');
+            }
+            $c = htmlentities($c);
+            echo '<div class="mp3player" align="center">';
             echo '<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000"';
             echo '        codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,0,0" ';
             echo '        width="600" height="70" id="mp3player" align="">';
-            echo "<param name=\"movie\" value=\"$CFG->wwwroot/lib/mp3player/mp3player.swf?src=$fullurl&amp;autostart=yes\">";
+            echo '<param name="movie" value="'.$CFG->wwwroot.'/lib/mp3player/mp3player.swf?src='.$fullurl.'">';
             echo '<param name="quality" value="high">';
             echo '<param name="bgcolor" value="#333333">';
-            echo "<embed src=\"$CFG->wwwroot/lib/mp3player/mp3player.swf?src=$fullurl&amp;autostart=yes\" ";
-            echo " quality=\"high\" bgcolor=\"#333333\" width=\"600\" height=\"70\" name=\"mp3player\" ";
+            echo '<param name="flashvars" value="'.$c.'&amp;" />';
+            echo '<embed src="'.$CFG->wwwroot.'/lib/mp3player/mp3player.swf?src='.$fullurl.'" ';
+            echo ' quality="high" bgcolor="#333333" width="600" height="70" name="mp3player" ';
             echo ' type="application/x-shockwave-flash" ';
+            echo ' flashvars="'.$c.'&amp;" ';
             echo ' pluginspage="http://www.macromedia.com/go/getflashplayer">';
             echo '</embed>';
             echo '</object>';
-            echo "</p></center>";
+            echo '</div>';
+
 
         } else if ($resourcetype == "mediaplayer") {
             echo "<center><p>";
