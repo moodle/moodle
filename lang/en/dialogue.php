@@ -21,7 +21,7 @@ You can see it appended to your dialogue entry:
     $a->url';
 $string['dialoguemailhtml'] = '$a->userfrom has posted a new entry in your
 dialogue entry for \'<i>$a->dialogue</i>\'<br /><br />
-You can see it appended to your <a href="$a->url">dialogue</a>.';
+You can see it appended to your <a href=\"$a->url\">dialogue</a>.';
 $string['dialoguename'] = 'Dialogue name';
 $string['dialogueopened'] = 'Dialogue opened with $a';
 $string['dialoguewith'] = 'Dialogue with $a';
