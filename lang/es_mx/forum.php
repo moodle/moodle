@@ -1,6 +1,6 @@
 <?PHP // $Id$ 
       // forum.php - created with Moodle 1.0.9 Beta 1 + (2003051700)
-//Traducción de Claudio Tavares (claudio@enlaceacademico.com)
+
 
 $string['addanewdiscussion'] = "Colocar un mensaje aquí";
 $string['allowchoice'] = "Permitir a todos escoger";
@@ -103,6 +103,8 @@ $string['subscribe'] = "Inscribirse en este foro";
 $string['subscribed'] = "Inscrito";
 $string['subscribers'] = "Suscriptores";
 $string['subscribersto'] = "Suscriptores de '\$a'";
+$string['subscribestart'] = "Deseo recibir copias de este foro por correo";
+$string['subscribestop'] = "No deseo recibir copias de este foro por correo";
 $string['subscription'] = "Suscripción";
 $string['subscriptions'] = "Suscripciones";
 $string['unsubscribe'] = " (Borrarse de este foro)";

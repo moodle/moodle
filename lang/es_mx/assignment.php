@@ -1,6 +1,6 @@
 <?PHP // $Id$ 
       // assignment.php - created with Moodle 1.0.9 Beta 1 + (2003051700)
-//Traducción de Claudio Tavares (claudio@enlaceacademico.com)
+
 
 $string['allowresubmit'] = "Permitir corrección";
 $string['assignmentdetails'] = "Detalles de la tarea";

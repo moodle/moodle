@@ -1,6 +1,6 @@
 <?PHP // $Id$ 
       // quiz.php - created with Moodle 1.0.9 Beta 1 + (2003051700)
-//Traducción de Claudio Tavares (claudio@enlaceacademico.com)
+
 
 $string['addquestions'] = "Agregar preguntas";
 $string['addquestionstoquiz'] = "Agregar preguntas al presente cuestionario";

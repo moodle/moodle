@@ -1,8 +1,6 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.0.9 development (2003032602)
-			//Traducción de Claudio Tavares (claudio@enlaceacademico.com)
-	  // Revisi&oacute;n de la traducci&oacute;n al espa&ntilde;ol:
-	  // Emmanuelle Guti&eacute;rrez y Restrepo (emmanuelle@sidar.org)
+      // auth.php - created with Moodle 1.0.9 Beta 1 + (2003051700)
+
 
 $string['auth_dbdescription'] = "Este método utiliza una tabla de una base de datos externa para comprobar si un determinado usuario y contraseña son válidos. Si la cuenta es nueva, la información de otros campos puede también ser copiada en Moodle.";
 $string['auth_dbextrafields'] = "Estos campos son opcionales. Usted puede elegir pre-rellenar algunos campos del usuario de Moodle con información desde los <strong>campos de la base de datos externa</strong> que especifique aquí. <p>Si deja esto en blanco, se tomarán los valores por defecto</p>.<p>En ambos casos, el usuario podrá editar todos estos campos después de entrar</p>.";
@@ -37,6 +35,8 @@ $string['auth_ldapdescription'] = "Este método proporciona autenticación contra 
 Si el nombre de usuario y contraseña facilitados son válidos, Moodle crea una nueva entrada para el usuario en su base de datos. Este módulo puede leer atributos de usuario desde LDAP y prerrellenar los campos requeridos en Moodle. Para las entradas sucesivas sólo se comprueba el usuario y la contraseña.";
 $string['auth_ldapextrafields'] = "Estos campos son opcionales. Usted puede elegir pre-rellenar algunos campos de usuario en Moodle con información de los <strong>campos LDAP</strong> que especifique aquí. <p>Si deja estos campos en blanco, entonces no se transferirá nada desde LDAP y se usará el sistema predeterminado en Moodle.</p><p>En ambos casos, los usuarios podrán editar todos estos campos después de entrar.</p>";
 $string['auth_ldaptitle'] = "Usar un servidor LDAP";
+$string['auth_manualdescription'] = "Este método impide la creación automatizada de usuarios. Cada usuario debe ser creado por el administrador.";
+$string['auth_manualtitle'] = "Sólo cuantas manuales";
 $string['auth_nntpdescription'] = "Este método usa un servidor NNTP para comprobar si el nombre de usuario y contraseña facilitados son válidos.";
 $string['auth_nntphost'] = "La dirección del servidor NNTP. Usar el número IP, no el nombre DNS.";
 $string['auth_nntpport'] = "Puerto del Servidor (119 es el más habitual)";

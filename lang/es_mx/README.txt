@@ -5,7 +5,6 @@ Claudio Tavares (claudio@enlaceacademico.com)
 
 Participantes: 
 
-(por orden de antigüedad en el proyecto)
 Claudio Tavares (claudio@enlaceacademico.com)
 Antonio Navarro (anavarro@sextaisla.com)
 Emmanuelle Gutiérrez y Restrepo (emmanuelle@mi.madritel.es)

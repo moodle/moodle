@@ -1,6 +1,6 @@
 <?PHP // $Id$ 
       // choice.php - created with Moodle 1.0.8 (2003010600)
-//Traducción de Claudio Tavares (claudio@enlaceacademico.com)
+
 
 $string['answered'] = "Contestado";
 $string['choice'] = "Opción \$a";
