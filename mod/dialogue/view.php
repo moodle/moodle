@@ -14,11 +14,11 @@
         error("Course is misconfigured");
     }
 
-    require_login($course->id);
-
     if (! $dialogue = get_record("dialogue", "id", $cm->instance)) {
         error("Course module is incorrect");
     }
+
+    require_login($course->id);
 
     add_to_log($course->id, "dialogue", "view", "view.php?id=$cm->id", $dialogue->id, $cm->id);
 
@@ -26,6 +26,9 @@
         error("Course module is incorrect");
     }
 
+    // set up some general variables
+    $usehtmleditor = can_use_html_editor();
+ 
     if ($course->category) {
         $navigation = "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->";
     }
@@ -133,13 +136,9 @@
         			echo "<tr><td valign=\"top\" align=\"right\">\n";
 		        	helpbutton("writing", get_string("helpwriting"), "dialogue", true, true);
         			echo "<br />";
-        			$showemoticon = false;
-		        	if ($showemoticon) {
-				        emoticonhelpbutton("replies", "firstentry");
-	        		}
 			        echo "</td><td>\n";
-			        echo "<textarea name=\"firstentry\" rows=\"5\" cols=\"60\" wrap=\"virtual\">";
-        			echo "</textarea>\n";
+                    print_textarea($usehtmleditor, 20, 75, 630, 300, "firstentry");
+                    use_html_editor();
 		        	echo "</td></tr>";
         			echo "<tr><td colspan=\"2\" align=\"center\"><input type=\"submit\" value=\"".
                         get_string("opendialogue","dialogue")."\"></td></tr>\n";

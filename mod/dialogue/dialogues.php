@@ -28,14 +28,15 @@
         error("Course is misconfigured");
     }
 
-    require_login($course->id);
-
     if (! $dialogue = get_record("dialogue", "id", $cm->instance)) {
         error("Course module dialogue is incorrect");
     }
 
 	require_login($course->id);
 	
+    // set up some general variables
+    $usehtmleditor = can_use_html_editor();
+ 
     $navigation = "";
     if ($course->category) {
         $navigation = "<A HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> ->";

@@ -338,11 +338,12 @@ function dialogue_list_conversations_self($dialogue) {
     if (! $cm = get_coursemodule_from_instance("dialogue", $dialogue->id, $course->id)) {
         error("Course Module ID was incorrect");
     }
-	
+    
+    // set up some general variables
+    $usehtmleditor = can_use_html_editor();
+
 	$timenow = time();
 	$showbutton = false;
-	$showemoticon = false;  // never show emoticons for now - need to close or reload the  popup 
-                            // window to get the focus into the correct textarea on the second time round
 	
 	echo "<form name=\"replies\" method=\"post\" action=\"dialogues.php\">\n";
 	echo "<input type=\"hidden\" name=\"action\" value=\"insertentries\">\n";
@@ -395,7 +396,8 @@ function dialogue_list_conversations_self($dialogue) {
 			}
 			echo "<div></td></tr>";
 		
-			if ($entries = get_records_select("dialogue_entries", "conversationid = $conversation->id", "id")) {
+			if ($entries = get_records_select("dialogue_entries", "conversationid = $conversation->id", 
+                    "id")) {
 				foreach ($entries as $entry) {
 					if ($entry->userid == $USER->id) {
 						echo "<tr><td colspan=\"2\" bgcolor=\"#FFFFFF\">\n";
@@ -424,23 +426,19 @@ function dialogue_list_conversations_self($dialogue) {
 			echo "<tr><td valign=\"top\" align=\"right\">\n";
 			helpbutton("writing", get_string("helpwriting"), "dialogue", true, true);
 			echo "<br />";
-			if ($showemoticon) {
-				emoticonhelpbutton("replies", "reply$conversation->id");
-				$showemoticon = false;
-			}				
 			echo "</td><td>\n";
-			// use a cumbersome name on the textarea as the emoticonhelp doesn't like an "array" name 
-			echo "<textarea name=\"reply$conversation->id\" rows=\"5\" cols=\"60\" wrap=\"virtual\">";
-			echo "</textarea>\n";
+			// use a cumbersome name on the textarea is just historical :-) 
+            print_textarea($usehtmleditor, 20, 75, 630, 300, "reply$conversation->id");
 			echo "</td></tr>";
 			echo "</table></center><br />\n";
 		}
 		print_simple_box_end();
-	if ($showbutton) {
-		echo "<hr />\n";
-		echo "<br /><input type=\"submit\" value=\"".get_string("addmynewentries", "dialogue")."\">\n";
-	}
-	echo "</form>\n";
+        use_html_editor();
+    	if ($showbutton) {
+	    	echo "<hr />\n";
+		    echo "<br /><input type=\"submit\" value=\"".get_string("addmynewentries", "dialogue")."\">\n";
+	    }
+	    echo "</form>\n";
 	}
 }
 
@@ -459,8 +457,6 @@ function dialogue_print_conversation($dialogue, $conversation) {
 	
 	$timenow = time();
 	$showbutton = false;
-	$showemoticon = false;  // never show emoticons for now - need to close or reload the  popup 
-                            // window to get the focus into the correct textarea on the second time round
 	
 	echo "<form name=\"replies\" method=\"post\" action=\"dialogues.php\">\n";
 	echo "<input type=\"hidden\" name=\"action\" value=\"insertentries\">\n";
@@ -520,14 +516,11 @@ function dialogue_print_conversation($dialogue, $conversation) {
     echo "<tr><td valign=\"top\" align=\"right\">\n";
     helpbutton("writing", get_string("helpwriting"), "dialogue", true, true);
     echo "<br />";
-    if ($showemoticon) {
-        emoticonhelpbutton("replies", "reply$conversation->id");
-        $showemoticon = false;
-    }
     echo "</td><td>\n";
-    // use a cumbersome name on the textarea as the emoticonhelp doesn't like an "array" name 
-    echo "<textarea name=\"reply$conversation->id\" rows=\"5\" cols=\"60\" wrap=\"virtual\">";
-    echo "</textarea>\n";
+    // use a cumbersome name on the textarea for historical reasons :-) 
+    $usehtmleditor = can_use_html_editor();
+    print_textarea($usehtmleditor, 20, 75, 630, 300, "reply$conversation->id");
+    use_html_editor();
     echo "</td></tr>";
     echo "</table></center><br />\n";
 	print_simple_box_end();
