@@ -889,6 +889,46 @@ function get_categories($parent="none", $sort="sortorder ASC") {
     return $categories;
 }
 
+function fix_category_courses($categoryid) {
+/// Given a category, this function makes sure the courseorder 
+/// variable reflects the real world.
+
+    if (!$category = get_record("course_categories", "id", $categoryid)) {
+        return false;
+    }
+
+    $catcourseschanged = false;
+
+    if (trim($category->courseorder)) {
+        $catcourses = explode(',', $category->courseorder);
+    } else {
+        $catcourses = array();
+    }
+    $courses = get_records("course", "category", $category->id);
+
+    if ($catcourses) {
+        foreach ($catcourses as $key => $catcourse) {  // Look for missing courses
+            if (!isset($courses[$catcourse])) {
+                $catcourseschanged = true;
+                unset($catcourses[$key]);
+            }
+        }
+    }
+    if ($courses) {
+        foreach ($courses as $course) {
+            if (!in_array($course->id, $catcourses)) {
+                $catcourseschanged = true;
+                $catcourses[] = $course->id;
+            }
+        }
+    }
+    if ($catcourseschanged) {
+        $category->courseorder = implode(',', $catcourses);
+        return set_field("course_categories", "courseorder", $category->courseorder, "id", $category->id);
+    }
+    return true;
+}
+
 
 function get_guest() {
     return get_user_info_from_db("username", "guest");
