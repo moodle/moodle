@@ -73,8 +73,6 @@
 
       case "menu":
         print_header();
-        //echo "<FONT FACE=\"Verdana,Arial,Helvetica,sans-serif\">";
-        //echo "<P><B>Survey Report</B></P>"; 
         echo "<P><FONT SIZE=2><A TARGET=reportmain HREF=\"report.php?action=summary&id=$id\">$strsummary</A></FONT></P>";
         echo "<P><FONT SIZE=2><A TARGET=reportmain HREF=\"report.php?action=scales&id=$id\">$strscales</A></FONT></P>";
         echo "<P><FONT SIZE=2><A TARGET=reportmain HREF=\"report.php?action=questions&id=$id\">$strquestions</A></FONT></P>";
