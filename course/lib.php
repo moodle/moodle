@@ -1052,7 +1052,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                 }
 
                 if ($isediting) {
-                    if ($groupbuttons) {
+                    if ($groupbuttons and $mod->modname != 'label' and $mod->modname != 'resource') {
                         if (! $mod->groupmodelink = $groupbuttonslink) {
                             $mod->groupmode = $course->groupmode;
                         }
