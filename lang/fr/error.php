@@ -1,5 +1,4 @@
-<?PHP // $Id$ 
-
+<?php // $Id$ 
 
 $string['coursegroupunknown'] = 'Cours correspondant au groupe $a non indiqué';
 $string['erroronline'] = 'Erreur à la ligne $a';
@@ -14,5 +13,6 @@ $string['restricteduser'] = 'Désolé, votre compte utilisateur « $a » ne vous per
 $string['unknowncourse'] = 'Le cours « $a » est inconnu';
 $string['usernotaddederror'] = 'L\'utilisateur « $a » n\'a pas été ajouté - erreur inconnue';
 $string['usernotaddedregistered'] = 'L\'utilisateur « $a » n\'a pas été ajouté - il est déjà référencé';
+$string['usernotavailable'] = 'Vous n\'avez pas l\'autorisation de consulter les coordonnées de cet utilisateur.';
 
 ?>
