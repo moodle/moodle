@@ -2783,7 +2783,7 @@ function forum_print_posts_threaded($parent, $courseid, $depth, $ratings, $reply
     if ($posts = forum_get_child_posts($parent)) {
         foreach ($posts as $post) {
 
-            echo '<div class="forumpostindent">';
+            echo '<div class="indent">';
             if ($depth > 0) {
                 $ownpost = ($USER->id == $post->userid);
 
@@ -2837,7 +2837,7 @@ function forum_print_posts_nested($parent, $courseid, $ratings, $reply, &$user_r
     if ($posts = forum_get_child_posts($parent)) {
         foreach ($posts as $post) {
 
-            echo '<div class="forumpostindent">';
+            echo '<div class="indent">';
             if (empty($USER->id)) {
                 $ownpost = false;
             } else {
