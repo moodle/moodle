@@ -1,8 +1,9 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.0.9 (2003052900)
+      // forum.php - created with Moodle 1.1 development (2003081700)
 
 
 $string['addanewdiscussion'] = "Aggiungi un nuovo argomento di discussione";
+$string['addanewtopic'] = "Aggiungi un nuovo argomento";
 $string['allowchoice'] = "Scegli";
 $string['allowdiscussions'] = "Può \$a dare inizio a delle nuove discussioni?";
 $string['allowratings'] = "Permettere la valutazione degli interventi (posts)?";
@@ -22,6 +23,7 @@ $string['discussion'] = "Discussione";
 $string['discussionmoved'] = "Questa discussione é stata spostata in '\$a'";
 $string['discussions'] = "Discussioni";
 $string['discussionsstartedby'] = "Discussione iniziata da \$a";
+$string['discussionsstartedbyrecent'] = "Discussione ultimamente iniziata da \$a";
 $string['discussthistopic'] = "Discuti questo argomento";
 $string['eachuserforum'] = "Ciascuna persona può postare una discussione";
 $string['edit'] = "Edita";
@@ -60,6 +62,8 @@ $string['nameteacher'] = "Forum Insegnanti";
 $string['newforumposts'] = "Nuovi messaggi nel forum";
 $string['nodiscussions'] = "Non ci sono ancora argomenti di discussione in questo forum";
 $string['noguestpost'] = "Spiacenti, agli ospiti non è concesso postare.";
+$string['nomorepostscontaining'] = "Non sono stati trovati altri post contenenti '\$a'";
+$string['nonews'] = "Nessuna news é stata ancora spedita";
 $string['noposts'] = "Niente posts";
 $string['nopostscontaining'] = "Nessun messaggio contenente '\$a' è stato trovato";
 $string['nosubscribers'] = "Non ci sono ancora iscritti per questo forum";
@@ -82,6 +86,10 @@ $string['posts'] = "Posts";
 $string['postupdated'] = "Il tuo post è stato aggiornato";
 $string['processingpost'] = "Trattamento del post \$a";
 $string['rate'] = "Vota";
+$string['rating'] = "Valutazione";
+$string['ratingeveryone'] = "Tutti possono valutare i post";
+$string['ratingno'] = "Nessuna valutazione";
+$string['ratingonlyteachers'] = "Solo \$a può valutare i post";
 $string['ratings'] = "Voti";
 $string['ratingssaved'] = "Voti archiviati";
 $string['re'] = "Re:";
@@ -92,6 +100,7 @@ $string['repliesone'] = "\$a risposta al momento";
 $string['reply'] = "Rispondi";
 $string['search'] = "Cerca";
 $string['searchforums'] = "Cerca nei forums";
+$string['searcholderposts'] = "Cerca vecchi post...";
 $string['searchresults'] = "Risultati delle ricerche";
 $string['sendinratings'] = "Aggiungi alle mie ultime valutazioni";
 $string['showsubscribers'] = "Mostra chi è iscritto";

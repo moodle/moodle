@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.0.9 Beta 1 (2003051600)
+      // assignment.php - created with Moodle 1.1 development (2003081700)
 
 
 $string['allowresubmit'] = "Permettere di sottomettere più volte";
@@ -25,6 +25,7 @@ $string['maximumsize'] = "Dimensione massima";
 $string['modulename'] = "Compito";
 $string['modulenameplural'] = "Compiti";
 $string['newsubmissions'] = "Compiti consegnati";
+$string['notgradedyet'] = "Non ancora valutato";
 $string['notsubmittedyet'] = "Non ancora inviato";
 $string['overwritewarning'] = "Attenzione: trasferendo ulteriori allegati essi SOSTITUIRANNO quelli attualmente presenti.";
 $string['saveallfeedback'] = "Salva tutte le mie risposte";
@@ -34,9 +35,6 @@ $string['submitassignment'] = "Presenta il tuo compito usando questo form";
 $string['submitted'] = "Consegnato";
 $string['typeoffline'] = "Attività non in rete";
 $string['typeuploadsingle'] = "Trasferire un singolo file
-
-
-
 attibuibile per un valore compreso fra 0 e 100 punti";
 $string['uploadbadname'] = "Questo file contiene caratteri non conformi e non può essere trasferito.";
 $string['uploadedfiles'] = "files trasferiti";

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.0.9 Beta 1 (2003051600)
+      // resource.php - created with Moodle 1.1 development (2003081700)
 
 
 $string['addresource'] = "Aggiungi risorsa";
@@ -19,6 +19,18 @@ $string['htmlfragment'] = "Codice html";
 $string['modulename'] = "Risorsa";
 $string['modulenameplural'] = "Risorse";
 $string['neverseen'] = "Mai visto";
+$string['newdirectories'] = "Mostra i collegamenti alla directory";
+$string['newfullscreen'] = "Tutto schermo";
+$string['newheight'] = "Altezza standard della finestra (in pixel)";
+$string['newlocation'] = "Mostra barra indirizzo";
+$string['newmenubar'] = "Mostra barra menu";
+$string['newresizable'] = "Permetti che la finestra sia minimizzata";
+$string['newscrollbars'] = "Permetti lo scorrimento della finestra";
+$string['newstatus'] = "Mostra barra di stato";
+$string['newtoolbar'] = "Mostra pulsanti";
+$string['newwidth'] = "Larghezza standard della finestra (in pixel)";
+$string['newwindow'] = "Nuova finestra";
+$string['newwindowopen'] = "Visualizza questa risorsa in una nuova finestra";
 $string['note'] = "Nota";
 $string['notefile'] = "Per trasferire altri files nell'archivio del
 
