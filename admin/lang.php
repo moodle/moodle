@@ -20,7 +20,8 @@
     $strlanguage = get_string("language");
     $strcurrentlanguage = get_string("currentlanguage");
     $strmissingstrings = get_string("missingstrings");
-    $strcomparelanguage = get_string("comparelanguage");
+    $streditstrings = get_string("editstrings", 'admin');
+    $stredithelpdocs = get_string("edithelpdocs", 'admin');
     $strthislanguage = get_string("thislanguage");
 
     switch ($mode) {
@@ -29,11 +30,11 @@
             $title = $strmissingstrings;
             $button = '<form target="'.$CFG->framename.'" method="get" action="'.$CFG->wwwroot.'/'.$CFG->admin.'/lang.php">'.
                       '<input type="hidden" name="mode" value="compare" />'.
-                      '<input type="submit" value="'.$strcomparelanguage.'" /></form>';
+                      '<input type="submit" value="'.$streditstrings.'" /></form>';
             break;
         case "compare":
-            $navigation = "<a href=\"lang.php\">$strlanguage</a> -> $strcomparelanguage";
-            $title = $strcomparelanguage;
+            $navigation = "<a href=\"lang.php\">$strlanguage</a> -> $streditstrings";
+            $title = $streditstrings;
             $button = '<form target="'.$CFG->framename.'" method="get" action="'.$CFG->wwwroot.'/'.$CFG->admin.'/lang.php">'.
                       '<input type="hidden" name="mode" value="missing" />'.
                       '<input type="submit" value="'.$strmissingstrings.'" /></form>';
@@ -59,13 +60,13 @@
         echo "<b>$strcurrentlanguage:</b>";
         echo "</td><td>";
         echo popup_form ("$CFG->wwwroot/$CFG->admin/lang.php?lang=", $langs, "chooselang", $currlang, "", "", "", true);
-        echo "</td></tr></table>";
-        print_heading("<a href=\"lang.php?mode=missing\">$strmissingstrings</a>");
-        print_heading("<a href=\"lang.php?mode=compare\">$strcomparelanguage</a>");
-        echo "<center><hr noshade=\"noshade\" size=\"1\" />";
+        echo '</tr><td colspan="2">';
         $options["lang"] = $currentlang;
         print_single_button("http://moodle.org/download/lang/", $options, get_string("latestlanguagepack"));
-        echo "</center>";
+        echo "</td></tr></table>";
+        print_heading("<a href=\"lang.php?mode=missing\">$strmissingstrings</a>");
+        print_heading("<a href=\"lang.php?mode=compare\">$streditstrings</a>");
+        print_heading("<a href=\"langdoc.php\">$stredithelpdocs</a>");
         print_footer();
         exit;
     }
@@ -166,7 +167,7 @@
             }
         }
 
-        print_heading_with_help($strcomparelanguage, "langedit");
+        print_heading_with_help($streditstrings, "langedit");
 
         print_simple_box_start("center", "80%");
         echo '<center><font size="2">';
