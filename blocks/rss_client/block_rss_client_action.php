@@ -2,6 +2,7 @@
 
     require_once('../../config.php');
     require_once($CFG->dirroot .'/rss/rsslib.php');
+    require_once(MAGPIE_DIR .'rss_fetch.inc');
     global $USER, $CFG;
     
     require_login();
@@ -46,12 +47,23 @@
     } else if ($act == 'updfeed') {
         require_variable($url);
         
-        $rss = rss_get_feed($rssid, $url, $rsstype);
-            
+        // By capturing the output from fetch_rss this way
+        // error messages do not display and clutter up the moodle interface
+        // however, we do lose out on seeing helpful messages like "cache hit", etc.
+        ob_start();
+        $rss = fetch_rss($url);
+        $rsserror = ob_get_contents();
+        ob_end_clean();
+        
         $dataobject->id = $rssid;
         $dataobject->type = $rsstype;
-        $dataobject->description = addslashes($rss->channel['description']);
-        $dataobject->title = addslashes($rss->channel['title']);
+        if ($rss === false) {
+            $dataobject->description = addslashes($rss->channel['description']);
+            $dataobject->title = addslashes($rss->channel['title']);
+        } else {
+            $dataobject->description = '';
+            $dataobject->title = '';
+        }
         $dataobject->url = addslashes($url);
             
         if (!update_record('block_rss_client', $dataobject)) {
@@ -78,26 +90,30 @@
             error('There was an error trying to add a new rss feed:'. $url);
         }
             
-        $rss = rss_get_feed($rssid, $url, $rsstype);
-
-        if (empty($rss)) {
-            print 'There was an error loading this rss feed. You may want to verify the url you have specified before using it.';
-        }
+        // By capturing the output from fetch_rss this way
+        // error messages do not display and clutter up the moodle interface
+        // however, we do lose out on seeing helpful messages like "cache hit", etc.
+        ob_start();
+        $rss = fetch_rss($rss_record->url);
+        $rsserror = ob_get_contents();
+        ob_end_clean();
         
-        $dataobject->id = $rssid;
-        if (!empty($rss->channel['description'])) {
-            $dataobject->description = addslashes($rss->channel['description']);
+        if ($rss === false) {
+            print 'There was an error loading this rss feed. You may want to verify the url you have specified before using it.'; //Daryl Hawes note: localize this line
+        } else {
+        
+            $dataobject->id = $rssid;
+            if (!empty($rss->channel['description'])) {
+                $dataobject->description = addslashes($rss->channel['description']);
+            } else if (!empty($rss->channel['title'])) {
+                $dataobject->title = addslashes($rss->channel['title']);
+            } 
+            if (!update_record('block_rss_client', $dataobject)) {
+                error('There was an error trying to update rss feed with id:'. $rssid);
+            }
+            print '<strong>'. get_string('block_rss_feed_added', 'block_rss_client') .'</strong>';
         }
-        if (!empty($rss->channel['title'])) {
-            $dataobject->title = addslashes($rss->channel['title']);
-        } 
-
-        if (!update_record('block_rss_client', $dataobject)) {
-            error('There was an error trying to update rss feed with id:'. $rssid);
-        }
-            
         rss_display_feeds();
-        print '<strong>'. get_string('block_rss_feed_added', 'block_rss_client') .'</strong>';
         rss_get_form($act, $url, $rssid, $rsstype);
             
     } else if ( $act == 'rss_edit') {
@@ -132,9 +148,14 @@
         if (!$rss_record->id){
             print '<strong>'. get_string('block_rss_could_not_find_feed', 'block_rss_client') .': '. $rssid .'</strong>';
         } else {
-            //                  echo 'rssid = '. $rssid .', url ='. $rss_record->url .', type = '. $rss_record->type;
-            $rss = rss_get_feed($rssid, $rss_record->url, $rss_record->type);
-            //                  echo print_object($rss);
+            // By capturing the output from fetch_rss this way
+            // error messages do not display and clutter up the moodle interface
+            // however, we do lose out on seeing helpful messages like "cache hit", etc.
+            ob_start();
+            $rss = fetch_rss($url);
+            $rsserror = ob_get_contents();
+            ob_end_clean();
+            
             print '<table align=\"center\" width=\"50%\" cellspacing=\"1\">'."\n";
             print '<tr><td colspan=\"2\"><strong>'. $rss->channel['title'] .'</strong></td></tr>'."\n";
             for($y=0; $y < count($rss->items); $y++) {
