@@ -51,6 +51,7 @@ $string['administrator'] = 'Administrator';
 $string['administrators'] = 'Administrators';
 $string['again'] = 'again';
 $string['all'] = 'All';
+$string['allactivities'] = 'All activities';
 $string['alldays'] = 'All days';
 $string['allfieldsrequired'] = 'All fields are required';
 $string['alllogs'] = 'All logs';
