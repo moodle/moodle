@@ -230,15 +230,14 @@ function message_print_settings() {
     global $USER;
     
     if ($frm = data_submitted()) {
+
         $pref = array();
         $pref['message_showmessagewindow'] = (isset($frm->showmessagewindow)) ? '1' : '0';
         $pref['message_beepnewmessage'] = (isset($frm->beepnewmessage)) ? '1' : '0';
-        $pref['message_maxmessages'] = ((int)$frm->maxmessages > 0) ? (int)$frm->maxmessages : '20';
-        $pref['message_deletemessagesdays'] = ((int)($frm->deletemessagesdays) > 0) ? (int)$frm->deletemessagesdays : '30';
         $pref['message_emailmessages'] = (isset($frm->emailmessages)) ? '1' : '0';
+        $pref['message_emailtimenosee'] = ((int)$frm->emailtimenosee > 0) ? (int)$frm->emailtimenosee : '10';
         $pref['message_emailaddress'] = (!empty($frm->emailaddress)) ? $frm->emailaddress : $USER->email;
         $pref['message_emailformat'] = (isset($frm->emailformat)) ? $frm->emailformat : FORMAT_PLAIN;
-        $pref['message_emailtimenosee'] = ((int)$frm->emailtimenosee > 0) ? (int)$frm->emailtimenosee : '10';
 
         set_user_preferences($pref);
         
@@ -247,8 +246,6 @@ function message_print_settings() {
 
     $cbshowmessagewindow = (get_user_preferences('message_showmessagewindow', 1) == '1') ? 'checked="checked"' : '';
     $cbbeepnewmessage = (get_user_preferences('message_beepnewmessage', 0) == '1') ? 'checked="checked"' : '';
-    $txmaxmessages = get_user_preferences('message_maxmessages', 20);
-    $txdeletemessagesdays = get_user_preferences('message_deletemessagesdays', 30);
     $cbemailmessages = (get_user_preferences('message_emailmessages', 1) == '1') ? 'checked="checked"' : '';
     $txemailaddress = get_user_preferences('message_emailaddress', $USER->email);
     $txemailtimenosee = get_user_preferences('message_emailtimenosee', 10);
