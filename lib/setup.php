@@ -245,6 +245,9 @@
                 if (strpos($_SERVER['HTTP_USER_AGENT'], 'Googlebot') !== false ) {
                     $USER = guest_user();
                 }
+                if (strpos($_SERVER['HTTP_USER_AGENT'], 'google.com') !== false ) {
+                    $USER = guest_user();
+                }
             }
             if (empty($_SESSION['USER']) and !empty($_SERVER['HTTP_REFERER'])) {
                 if (strpos($_SERVER['HTTP_REFERER'], 'google') !== false ) {
