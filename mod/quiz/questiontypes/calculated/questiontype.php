@@ -15,7 +15,7 @@ class quiz_calculated_qtype extends quiz_dataset_dependent_questiontype {
     function get_answers($question) {
         global $CFG;
         return get_records_sql(
-            "SELECT a.*, c.tolerance, c.tolerancetype, c.correctanswerlength, c.correctanswerformat, c.id calcid
+            "SELECT a.*, c.tolerance, c.tolerancetype, c.correctanswerlength, c.correctanswerformat, c.id as calcid
                FROM {$CFG->prefix}quiz_answers a,
                     {$CFG->prefix}quiz_calculated c
               WHERE c.question = $question->id AND a.id = c.answer");
