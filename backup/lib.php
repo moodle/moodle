@@ -163,7 +163,7 @@
     }
 
     //Calculate the number of course files to backup
-    //under $CFG->dataroot/$course, except $CFG->moddata
+    //under $CFG->dataroot/$course, except $CFG->moddata, and get_string("backupdir)
     //and put them (their path) in backup_ids
     //Return an array of info (name,value)
     function course_files_check_backup($course,$backup_unique_code) {
@@ -175,11 +175,14 @@
         if (is_dir($rootdir)) {
             $coursedirs = get_directory_list($rootdir,$CFG->moddata);
             foreach ($coursedirs as $dir) {
-                //Insert them into backup_files
-                $status = execute_sql("INSERT INTO {$CFG->prefix}backup_files
-                                              (backup_code, file_type, path)
-                                       VALUES
-                                          ('$backup_unique_code','course','$dir')",false);
+                //Check it isn't backupdir
+                if (dirname($dir) !== get_string("backupdir")) {
+                    //Insert them into backup_files
+                    $status = execute_sql("INSERT INTO {$CFG->prefix}backup_files
+                                                  (backup_code, file_type, path)
+                                           VALUES
+                                              ('$backup_unique_code','course','$dir')",false);
+                }
             }
         }
 
@@ -1081,10 +1084,10 @@
         if (true) {
             //Now delete from tables
             $status = execute_sql("DELETE FROM {$CFG->prefix}backup_ids
-                                   WHERE backup_code < '$preferences->backup_unique_code'",false);
+                                   WHERE backup_code = '$preferences->backup_unique_code'",false);
             if ($status) {
                 $status = execute_sql("DELETE FROM {$CFG->prefix}backup_files
-                                       WHERE backup_code < '$preferences->backup_unique_code'",false);
+                                       WHERE backup_code = '$preferences->backup_unique_code'",false);
             }
             //Now, delete temp directory (if exists)
             $file_path = $CFG->dataroot."/temp/backup/".$preferences->backup_unique_code;
