@@ -864,6 +864,7 @@ function create_user_record($username, $password, $auth='') {
 
     if (function_exists('auth_get_userinfo')) {
         if ($newinfo = auth_get_userinfo($username)) {
+            $newinfo = truncate_userinfo($newinfo);
             foreach ($newinfo as $key => $value){
                 $newuser->$key = addslashes(stripslashes($value)); // Just in case
             }
@@ -890,6 +891,38 @@ function create_user_record($username, $password, $auth='') {
     return false;
 }
 
+
+function truncate_userinfo($info) {
+/// will truncate userinfo as it comes from auth_get_userinfo (from external auth)
+/// which may have large fields
+
+    // define the limits
+    $limit = array(
+                    'username'    => 100,
+                    'idnumber'    =>  12,
+                    'firstname'   =>  20,
+                    'lastname'    =>  20,
+                    'email'       => 100,
+                    'icq'         =>  15,
+                    'phone1'      =>  20,
+                    'phone2'      =>  20,
+                    'institution' =>  40,
+                    'department'  =>  30,
+                    'address'     =>  70,
+                    'city'        =>  20,
+                    'country'     =>   2,
+                    'url'         => 255,
+                    );
+    
+    // apply where needed
+    foreach (array_keys($info) as $key) {
+        if (!empty($limit[$key])) {
+            $info[$key] = substr($info[$key],0, $limit[$key]);
+        } 
+    }
+    
+    return $info;
+}
 
 function guest_user() {
     global $CFG;
