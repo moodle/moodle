@@ -453,7 +453,7 @@ function print_section($courseid, $section, $mods, $modnamesused, $absolute=fals
     global $CFG;
 
 
-    echo "<P>";
+    echo "<TABLE WIDTH=100%><TR><TD>\n";
     if ($section->sequence) {
 
         $sectionmods = explode(",", $section->sequence);
@@ -462,15 +462,38 @@ function print_section($courseid, $section, $mods, $modnamesused, $absolute=fals
             $mod = $mods[$modnumber];
             $instancename = get_field("$mod->modname", "name", "id", "$mod->instance");
             echo "<IMG SRC=\"$CFG->wwwroot/mod/$mod->modname/icon.gif\" HEIGHT=16 WIDTH=16 ALT=\"$mod->modfullname\">";
-            echo " <A TITLE=\"$mod->modfullname\"";
-            echo "   HREF=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\">$instancename</A>";
+            echo " <FONT SIZE=2><A TITLE=\"$mod->modfullname\"";
+            echo "   HREF=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\">$instancename</A></FONT>";
             if (isediting($courseid)) {
                 echo make_editing_buttons($mod->id, $absolute);
             }
             echo "<BR>\n";
         }
     }
-    echo "</P>\n";
+    echo "</TD></TR></TABLE>\n";
+}
+
+function print_side_block($heading="", $list=NULL, $footer="", $icons=NULL) {
+    
+    echo "<TABLE WIDTH=100%>\n";
+    echo "<TR><TD COLSPAN=2><P><B><FONT SIZE=2>$heading</TD></TR>\n";
+    if ($list) {
+        foreach($list as $key => $string) {
+            echo "<TR><TD VALIGN=top WIDTH=12>";
+            if ($icons[$key]) {
+                echo $icons[$key];
+            } else {
+                echo "";
+            }
+            echo "</TD>\n<TD WIDTH=100% VALIGN=top>";
+            echo "<P><FONT SIZE=2>$string</FONT></P>";
+            echo "</TD></TR>\n";
+        }
+    }
+    if ($footer) {
+        echo "<TR><TD></TD><TD ALIGN=left><P><FONT SIZE=2>$footer</TD></TR>\n";
+    }
+    echo "</TABLE><BR>\n\n";
 }
 
 
@@ -718,29 +741,6 @@ function make_editing_buttons($moduleid, $absolute=false) {
              SRC=".$path."../pix/t/down.gif BORDER=0 ALT=\"$movedown\"></A>
           <A HREF=\"".$path."mod.php?update=$moduleid\"><IMG 
              SRC=".$path."../pix/t/edit.gif BORDER=0 ALT=\"$update\"></A>";
-}
-
-function print_side_block($heading="", $list=NULL, $footer="", $icons=NULL) {
-    
-    echo "<TABLE WIDTH=100%>\n";
-    echo "<TR><TD COLSPAN=2><P><B><FONT SIZE=2>$heading</TD></TR>\n";
-    if ($list) {
-        foreach($list as $key => $string) {
-            echo "<TR><TD VALIGN=top WIDTH=12>";
-            if ($icons[$key]) {
-                echo $icons[$key];
-            } else {
-                echo "";
-            }
-            echo "</TD>\n<TD WIDTH=100% VALIGN=top>";
-            echo "<P><FONT SIZE=2>$string</FONT></P>";
-            echo "</TD></TR>\n";
-        }
-    }
-    if ($footer) {
-        echo "<TR><TD></TD><TD ALIGN=left><P><FONT SIZE=2>$footer</TD></TR>\n";
-    }
-    echo "</TABLE><BR>\n\n";
 }
 
 ?>
