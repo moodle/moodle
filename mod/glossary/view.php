@@ -238,7 +238,7 @@
     echo '<p align="center"><font size="3"><b>' . stripslashes_safe($glossary->name);
     if ( $isuserframe and $mode != 'search') {
     /// the "Print" icon
-        echo " <a title =\"". get_string("printerfriendly","glossary") . "\" target=\"printview\" href=\"print.php?id=$cm->id&amp;mode=$mode&amp;hook=$hook&amp;sortkey=$sortkey&amp;sortorder=$sortorder&amp;offset=$offset\">";
+        echo " <a title =\"". get_string("printerfriendly","glossary") . "\" target=\"printview\" href=\"print.php?id=$cm->id&amp;mode=$mode&amp;hook=$hook&amp;sortkey=$sortkey&amp;sortorder=$sortorder&amp;offset=$offset\">\n";
         echo '<img border="0" src="print.gif" alt="" /></a>';
     }
     echo '</b></font></p>';
@@ -251,7 +251,7 @@
     }
 
 /// Search box
-//    echo '<p>';
+    echo '<br />';
 
     echo '<form method="post" action="view.php">';
 
@@ -277,11 +277,12 @@
     print_simple_box_end();    
     
     echo '</form>';
+    echo '<br />';
 
     include("tabs.html");
 
     include_once("sql.php");
-
+    
 /// printing the entries
     $entriesshown = 0;
     $currentpivot = '';
@@ -371,6 +372,7 @@
         print_simple_box('<center>' . get_string("noentries","glossary") . '</center>',"center","95%");
     }
 
+
     if ($ratingsmenuused) {
         echo "<p><center><input type=\"submit\" value=\"".get_string("sendinratings", "glossary")."\" />";
         if ($glossary->scale < 0) {
@@ -388,7 +390,7 @@
         echo $paging;
         echo '</div>';
     }
-    echo '<p>';
+    echo '<br />';
     echo '</center>';
     glossary_print_tabbed_table_end();
     if ( $debug and isadmin() ) {
