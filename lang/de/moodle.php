@@ -113,6 +113,7 @@ $string['deletedcourse'] = "\$a wurde erfolgreich gelöscht";
 $string['deletednot'] = "Kann \$a nicht löschen!";
 $string['deletingcourse'] = "Lösche \$a";
 $string['description'] = "Beschreibung";
+$string['documentation'] = "Moodle Dokumentation";
 $string['downloadexcel'] = "Im Excel-Format herunterladen";
 $string['downloadtext'] = "Im Text-Format herunterladen";
 $string['doyouagree'] = "Haben Sie diese Bedingungen gelesen und verstanden?";
