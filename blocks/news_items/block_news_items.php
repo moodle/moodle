@@ -31,7 +31,7 @@ class block_news_items extends block_base {
             $news = forum_get_course_forum($this->instance->pageid, 'news');
             // Slightly hacky way to do it but...
             ob_start();
-            forum_print_latest_discussions($news->id, $course->newsitems, "minimal", "", get_current_group($this->instance->pageid));
+            forum_print_latest_discussions($news->id, $course->newsitems, 'minimal', '', get_current_group($this->instance->pageid));
             $this->content->text = ob_get_contents();
             ob_end_clean();
         }
