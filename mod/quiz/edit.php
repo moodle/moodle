@@ -175,8 +175,8 @@
         if (!$tocategory = get_record('quiz_categories', 'id', $_REQUEST['category'])) {
             error('Invalid category');
         }
-        if (!isteacheredit($category->course)) {
-            error(get_string('categorynoedit', 'quiz', $tocategory->name), edit.php);
+        if (!isteacheredit($tocategory->course)) {
+            error(get_string('categorynoedit', 'quiz', $tocategory->name), 'edit.php');
         }
         $rawquestions = $_POST;
         foreach ($rawquestions as $key => $value) {    // Parse input for question ids
