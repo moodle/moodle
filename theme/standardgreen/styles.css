@@ -13,6 +13,8 @@ td   {font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;}
 
 li   {font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;}
 
+form { margin-bottom: 0 ; }
+
 .highlight {
     background-color: #FFAAAA;
 }

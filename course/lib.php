@@ -384,6 +384,42 @@ function print_recent_activity($course) {
 }
 
 
+function get_array_of_activities($courseid) {
+// For a given course, returns an array of course activity objects 
+// Each item in the array contains he following properties:
+//  cm - course module id
+//  mod - name of the module (eg forum)
+//  section - the number of the section (eg week or topic)
+//  name - the name of the instance
+
+    $mod = array();
+
+    if (!$rawmods = get_records_sql("SELECT cm.*, m.name as modname
+                                     FROM modules m, course_modules cm
+                                     WHERE cm.course = '$courseid' 
+                                       AND cm.deleted = '0'
+                                       AND cm.module = m.id ") ) {
+        return NULL;
+    }
+
+    if ($sections = get_records("course_sections", "course", $courseid, "section ASC")) {
+       foreach ($sections as $section) {
+           if ($section->sequence) {
+               $sequence = explode(",", $section->sequence);
+               foreach ($sequence as $seq) {
+                   $mod[$seq]->cm = $rawmods[$seq]->id;
+                   $mod[$seq]->mod = $rawmods[$seq]->modname;
+                   $mod[$seq]->section = $section->section;
+                   $mod[$seq]->name = urlencode(get_field($rawmods[$seq]->modname, "name", "id", $rawmods[$seq]->instance));
+               }
+            }
+        }
+    }
+    return $mod;
+}
+
+
+
 
 function get_all_mods($courseid, &$mods, &$modnames, &$modnamesplural, &$modnamesused) {
 // Returns a number of useful structures for course displays
@@ -429,7 +465,7 @@ function get_all_categories() {
     return get_records_sql("SELECT * FROM course_categories ORDER by name");
 }
 
-function print_section($courseid, $section, $mods, $modnamesused, $absolute=false, $width="100%") {
+function print_section($course, $section, $mods, $modnamesused, $absolute=false, $width="100%") {
     global $CFG;
 
 
@@ -444,7 +480,7 @@ function print_section($courseid, $section, $mods, $modnamesused, $absolute=fals
             echo "<IMG SRC=\"$CFG->wwwroot/mod/$mod->modname/icon.gif\" HEIGHT=16 WIDTH=16 ALT=\"$mod->modfullname\">";
             echo " <FONT SIZE=2><A TITLE=\"$mod->modfullname\"";
             echo "   HREF=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\">$instancename</A></FONT>";
-            if (isediting($courseid)) {
+            if (isediting($course->id)) {
                 echo make_editing_buttons($mod->id, $absolute);
             }
             echo "<BR>\n";

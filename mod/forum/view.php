@@ -58,7 +58,7 @@
     add_to_log($course->id, "forum", "view forum", "view.php?f=$forum->id", "$forum->id");
 
     print_header("$course->shortname: $forum->name", "$course->fullname",
-                 "$navigation $forum->name", "", "", true, $buttontext);
+                 "$navigation $forum->name", "", "", true, $buttontext, navmenu($course, $cm));
 
     if ($USER) {
         $SESSION->fromdiscussion = "$FULLME";

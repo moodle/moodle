@@ -10,14 +10,15 @@
 
 /// STANDARD WEB PAGE PARTS ///////////////////////////////////////////////////
 
-function print_header ($title="", $heading="", $navigation="", $focus="", $meta="", $cache=true, $button="") {
+function print_header ($title="", $heading="", $navigation="", $focus="", $meta="", $cache=true, $button="", $menu="") {
 // $title - appears top of window
 // $heading - appears top of page
 // $navigation - premade navigation string
 // $focus - indicates form element eg  inputform.password
 // $meta - meta tags in the header
 // $cache - should this page be cacheable?
-// $button - code for a button in the top-right
+// $button - HTML code for a button (usually for module editing)
+// $menu - HTML code for a popup menu 
     global $USER, $CFG, $THEME;
 
     if (file_exists("$CFG->dirroot/theme/$CFG->theme/styles.css")) {
@@ -31,11 +32,11 @@ function print_header ($title="", $heading="", $navigation="", $focus="", $meta=
         $navigation = "";
     }
 
-    if (!$button and $navigation) {
+    if (!$menu and $navigation) {
         if (isset($USER->id)) {
-            $button = "<FONT SIZE=2><A TARGET=_parent HREF=\"$CFG->wwwroot/login/logout.php\">".get_string("logout")."</A></FONT>";
+            $menu = "<FONT SIZE=2><A TARGET=_parent HREF=\"$CFG->wwwroot/login/logout.php\">".get_string("logout")."</A></FONT>";
         } else {
-            $button = "<FONT SIZE=2><A TARGET=_parent HREF=\"$CFG->wwwroot/login/index.php\">".get_string("login")."</A></FONT>";
+            $menu = "<FONT SIZE=2><A TARGET=_parent HREF=\"$CFG->wwwroot/login/index.php\">".get_string("login")."</A></FONT>";
         }
     }
 
@@ -386,6 +387,46 @@ function update_module_button($moduleid, $courseid, $string) {
 }
 
 
+function navmenu($course, $cm) {
+// Given a course and a (current) coursemodule
+// This function returns a small popup menu with all the 
+// course activity modules in it, as a navigation menu
+// The data is taken from the serialised array stored in 
+// the course record
+
+    global $CFG;
+
+    if ($course->format = 'weeks') {
+        $strsection = get_string("week");
+    } else {
+        $strsection = get_string("topic");
+    }
+
+    if (!$array = unserialize($course->modinfo)) {
+        return "";
+    }
+    $section = -1;
+    $selected = "";
+    foreach ($array as $mod) {
+        if ($mod->section > 0 and $section <> $mod->section) {
+            $menu[] = "-------------- $strsection $mod->section --------------";
+        }
+        $section = $mod->section;
+        $url = "$mod->mod/view.php?id=$mod->cm";
+        if ($cm->id == $mod->cm) {
+            $selected = $url;
+        }
+        $mod->name = urldecode($mod->name);
+        if (strlen($mod->name) > 55) {
+            $mod->name = substr($mod->name, 0, 50)."...";
+        }
+        $menu[$url] = $mod->name; 
+    }
+
+    return popup_form("$CFG->wwwroot/mod/", $menu, "navmenu", $selected, get_string("jumpto"), "", "", true);
+}   
+
+
 function print_date_selector($day, $month, $year, $currenttime=0) {
 // Currenttime is a default timestamp in GMT
 // Prints form items with the names $day, $month and $year
@@ -432,6 +473,7 @@ function make_timestamp($year, $month=1, $day=1, $hour=0, $minute=0, $second=0) 
 
    return mktime((int)$hour,(int)$minute,(int)$second,(int)$month,(int)$day,(int)$year);
 }
+
 
 function format_time($totalsecs, $str=NULL) {
 // Given an amount of time in seconds, prints it 
@@ -1658,6 +1700,11 @@ function get_directory_list($rootdir, $excludefile="", $descend=true) {
     $dirs = array();
    
     $dir = opendir($rootdir);
+
+    if (!$dir) {
+        notify("Error: unable to read this directory! : $rootdir");
+        return $dirs;
+    }
 
     while ($file = readdir($dir)) {
         if ($file != "." and $file != ".." and $file != "CVS" and $file != $excludefile) {

@@ -223,6 +223,7 @@ $string['htmleditordisabledbrowser'] = "The Richtext editor is unavailable becau
 $string['htmlformat'] = "Pretty HTML format";
 $string['icqnumber'] = "ICQ number";
 $string['idnumber'] = "ID number";
+$string['jumpto'] = "Jump to...";
 $string['leavetokeep'] = "Leave blank to keep current password";
 $string['invalidlogin'] = "Invalid login, please try again";
 $string['invalidemail'] = "Invalid email address";

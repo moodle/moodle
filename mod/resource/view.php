@@ -33,7 +33,7 @@
         case 1:  // Reference (eg Journal or Book etc)
             add_to_log($course->id, "resource", "view", "view.php?id=$cm->id", "$resource->id");
             print_header("$course->shortname: $resource->name", "$course->fullname", "$navigation $resource->name",
-                         "", "", true, update_module_button($cm->id, $course->id, $strresource));
+                         "", "", true, update_module_button($cm->id, $course->id, $strresource), navmenu($course, $cm));
 
             print_simple_box($resource->reference, "center");
             echo "<CENTER><P>";
@@ -54,7 +54,7 @@
             if ($frameset) {
                 print_header("$course->shortname: $resource->name", "$course->fullname", 
                 "$navigation <A TARGET=_top HREF=\"$resource->reference\" TITLE=\"$resource->reference\">$resource->name</A>",
-                "", "", true, update_module_button($cm->id, $course->id, $strresource));
+                "", "", true, update_module_button($cm->id, $course->id, $strresource), navmenu($course, $cm));
                 echo "<CENTER><FONT SIZE=-1>".text_to_html($resource->summary, true, false)."</FONT></CENTER>";
 
             } else {
@@ -70,7 +70,7 @@
         case 3:  // Uploaded File
             if ($frameset) {
                 print_header("$course->shortname: $resource->name", "$course->fullname", "$navigation $resource->name",
-                         "", "", true, update_module_button($cm->id, $course->id, $strresource));
+                         "", "", true, update_module_button($cm->id, $course->id, $strresource), navmenu($course, $cm));
                 echo "<CENTER><FONT SIZE=-1>".text_to_html($resource->summary, true, false)."</FONT></CENTER>";
 
             } else {
@@ -91,7 +91,7 @@
         case 4:  // Plain text
             add_to_log($course->id, "resource", "view", "view.php?id=$cm->id", "$resource->id");
             print_header("$course->shortname: $resource->name", "$course->fullname", "$navigation $resource->name",
-                         "", "", true, update_module_button($cm->id, $course->id, $strresource));
+                         "", "", true, update_module_button($cm->id, $course->id, $strresource), navmenu($course, $cm));
 
             print_simple_box(text_to_html($resource->alltext), "CENTER", "", "$THEME->cellcontent", "20");
 
@@ -103,7 +103,7 @@
         case 6:  // HTML text
             add_to_log($course->id, "resource", "view", "view.php?id=$cm->id", "$resource->id");
             print_header("$course->shortname: $resource->name", "$course->fullname", "$navigation $resource->name",
-                         "", "", true, update_module_button($cm->id, $course->id, $strresource));
+                         "", "", true, update_module_button($cm->id, $course->id, $strresource), navmenu($course, $cm));
 
             print_simple_box_start("CENTER", "", "$THEME->cellcontent", "20");
 
@@ -118,7 +118,7 @@
 
         default:
             print_header("$course->shortname: $resource->name", "$course->fullname", "$navigation $resource->name",
-                         "", "", true, update_module_button($cm->id, $course->id, $strresource));
+                         "", "", true, update_module_button($cm->id, $course->id, $strresource), navmenu($course, $cm));
             print_heading($resource->name);
 
             print_simple_box("Error: unknown type of resource", "center");

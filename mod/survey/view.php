@@ -28,7 +28,7 @@
 
     print_header("$course->shortname: $survey->name", "$course->fullname",
                  "$navigation <A HREF=index.php?id=$course->id>$strsurveys</A> -> $survey->name", "", "", true,
-                  update_module_button($cm->id, $course->id, $strsurvey));
+                  update_module_button($cm->id, $course->id, $strsurvey), navmenu($course, $cm));
 
     if (isteacher($course->id)) {
         $numusers = survey_count_responses($survey->id);

@@ -27,7 +27,7 @@
 
 /// Then, print all the available resources (Section 0)
       print_simple_box(get_string("resources"), $align="CENTER", $width="100%", $color="$THEME->cellheading");
-      print_section($course->id, $sections[0], $mods, $modnamesused, true);
+      print_section($course, $sections[0], $mods, $modnamesused, true);
 
       if (isediting($course->id)) {
           echo "<DIV ALIGN=right>";

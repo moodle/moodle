@@ -273,7 +273,7 @@ function choose_from_menu ($options, $name, $selected="", $nothing="choose", $sc
     }
 }   
 
-function popup_form ($common, $options, $formname, $selected="", $nothing="choose", $help="", $helptext="") {
+function popup_form ($common, $options, $formname, $selected="", $nothing="choose", $help="", $helptext="", $return=false) {
 ///  Implements a complete little popup form
 ///  $common   = the URL up to the point of the variable that changes
 ///  $options  = A list of value-label pairs for the popup list
@@ -287,29 +287,39 @@ function popup_form ($common, $options, $formname, $selected="", $nothing="choos
         $nothing = get_string("choose")."...";
     }
 
-    echo "<FORM NAME=$formname>";
-    echo "<SELECT NAME=popup onChange=\"window.location=document.$formname.popup.options[document.$formname.popup.selectedIndex].value\">\n";
+    $output = "<FORM NAME=$formname>";
+    $output .= "<SELECT NAME=popup onChange=\"window.location=document.$formname.popup.options[document.$formname.popup.selectedIndex].value\">\n";
 
     if ($nothing != "") {
-        echo "   <OPTION VALUE=\"javascript:void(0)\">$nothing</OPTION>\n";
+        $output .= "   <OPTION VALUE=\"javascript:void(0)\">$nothing</OPTION>\n";
     }
 
     foreach ($options as $value => $label) {
-        echo "   <OPTION VALUE=\"$common$value\"";
-        if ($value == $selected) {
-            echo " SELECTED";
+        if (substr($label,0,1) == "-") {
+            $output .= "   <OPTION VALUE=\"\"";
+        } else {
+            $output .= "   <OPTION VALUE=\"$common$value\"";
+            if ($value == $selected) {
+                $output .= " SELECTED";
+            }
         }
         if ($label) {
-            echo ">$label</OPTION>\n";
+            $output .= ">$label</OPTION>\n";
         } else {
-            echo ">$value</OPTION>\n";
+            $output .= ">$value</OPTION>\n";
         }
     }
-    echo "</SELECT>";
-    if ($help) {
+    $output .= "</SELECT>";
+    if (!$return and $help) {
         helpbutton($help, $helptext);
     }
-    echo "</FORM>\n";
+    $output .= "</FORM>\n";
+
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
+    }
 }
 
 

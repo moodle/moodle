@@ -44,7 +44,7 @@
 
     print_header("$course->shortname: $assignment->name", "$course->fullname",
                  "$navigation <A HREF=index.php?id=$course->id>$strassignments</A> -> $assignment->name", 
-                  "", "", true, update_module_button($cm->id, $course->id, $strassignment));
+                  "", "", true, update_module_button($cm->id, $course->id, $strassignment), navmenu($course, $cm));
 
     if (isteacher($course->id)) {
         if ($assignment->type == OFFLINE) {

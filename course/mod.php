@@ -86,6 +86,12 @@
 
         }
 
+        $modinfo = serialize(get_array_of_activities($mod->course));
+
+        if (!set_field("course", "modinfo", $modinfo, "id", $mod->course)) {
+            error("Could not cache module information!");
+        }
+
         if ($SESSION->returnpage) {
             $return = $SESSION->returnpage;
             unset($SESSION->returnpage);

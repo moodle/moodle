@@ -34,7 +34,7 @@
 
     print_header("$course->shortname: $journal->name", "$course->fullname",
                  "$navigation <A HREF=index.php?id=$course->id>$strjournals</A> -> $journal->name", "", "", true,
-                  update_module_button($cm->id, $course->id, $strjournal));
+                  update_module_button($cm->id, $course->id, $strjournal), navmenu($course, $cm));
 
     if (isteacher($course->id)) {
         if ($allentries = get_records("journal_entries", "journal", $journal->id)) {

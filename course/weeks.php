@@ -25,6 +25,10 @@
     if ($course->newsitems) {
         $news = forum_get_course_forum($course->id, "news");
     }
+    
+    $streditsummary = get_string("editsummary");
+    $stradd         = get_string("add");
+    $stractivities  = get_string("activities");
 
 
 /// Layout the whole page as three big columns.
@@ -57,7 +61,7 @@
             $modicon[] = "<IMG SRC=\"../mod/$modname/icon.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";
         }
     }
-    print_simple_box(get_string("activities"), $align="CENTER", $width="100%", $color="$THEME->cellheading");
+    print_simple_box($stractivities, $align="CENTER", $width="100%", $color="$THEME->cellheading");
     print_side_block("", $moddata, "", $modicon);
 
 /// Print a form to search forums
@@ -77,9 +81,6 @@
     echo "</TD><TD WIDTH=\"*\">";
 
     print_simple_box(get_string("weeklyoutline"), $align="CENTER", $width="100%", $color="$THEME->cellheading");
-    
-    $streditsummary = get_string("editsummary");
-    $stradd         = get_string("add");
 
     echo "<TABLE BORDER=0 CELLPADDING=8 CELLSPACING=0 WIDTH=100%>";
 
@@ -102,12 +103,12 @@
     
         echo text_to_html($thisweek->summary);
     
-        print_section($course->id, $thisweek, $mods, $modnamesused);
+        print_section($course, $thisweek, $mods, $modnamesused);
 
         if (isediting($course->id)) {
             echo "<DIV ALIGN=right>";
             popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&section=$week&add=", 
-                        $modnames, "section$week", "", "$stradd...", "mods", get_string("activities"));
+                        $modnames, "section$week", "", "$stradd...", "mods", $stractivities);
             echo "</DIV>";
         }
 
@@ -172,12 +173,12 @@
 
         echo text_to_html($thisweek->summary);
 
-        print_section($course->id, $thisweek, $mods, $modnamesused);
+        print_section($course, $thisweek, $mods, $modnamesused);
 
         if (isediting($course->id)) {
             echo "<DIV ALIGN=right>";
             popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&section=$week&add=", 
-                        $modnames, "section$week", "", "$stradd...", "mods", get_string("activities"));
+                        $modnames, "section$week", "", "$stradd...", "mods", $stractivities);
             echo "</DIV>";
         }
 
