@@ -39,17 +39,17 @@
 /// Set number for next attempt:
 
     if ($attempts = quiz_get_user_attempts($quiz->id, $USER->id)) {
-        $numattempts = 2;
+        $attemptnumber = 2;
         foreach ($attempts as $attempt) {
-            if ($attempt->attempt >= $numattempts) {
-                $numattempts = $attempt->attempt + 1;
+            if ($attempt->attempt >= $attemptnumber) {
+                $attemptnumber = $attempt->attempt + 1;
             }
         }
     } else {
-        $numattempts = 1;
+        $attemptnumber = 1;
     }
 
-    $strattemptnum = get_string("attempt", "quiz", $numattempts);
+    $strattemptnum = get_string("attempt", "quiz", $attemptnumber);
 
 
 // Print the page header
@@ -68,7 +68,7 @@
 
 /// Check availability
 
-    if ($quiz->attempts and count($attempts) >= $quiz->attempts) {
+    if ($quiz->attempts and $attempts and count($attempts) >= $quiz->attempts) {
         error("Sorry, you've had $quiz->attempts attempts already.", "view.php?id=$cm->id");
     }
 
@@ -123,7 +123,7 @@
             error("Could not grade your quiz attempt!");
         }
 
-        if (! $attempt = quiz_save_attempt($quiz, $questions, $result, $numattempts)) {
+        if (! $attempt = quiz_save_attempt($quiz, $questions, $result, $attemptnumber)) {
             notice(get_string("alreadysubmitted", "quiz"), "view.php?id=$cm->id");
             print_footer($course);
             exit;
@@ -167,7 +167,7 @@
 /// Actually seeing the questions marks the start of an attempt
  
     if (!$unfinished = quiz_get_user_attempt_unfinished($quiz->id, $USER->id)) {
-        if (! quiz_start_attempt($quiz->id, $USER->id, $numattempts)) {
+        if (! quiz_start_attempt($quiz->id, $USER->id, $attemptnumber)) {
             error("Sorry! Could not start the quiz (could not save starting time)");
         }
     }
@@ -180,7 +180,7 @@
         error("Sorry, this quiz is not available", "view.php?id=$cm->id");
     }
 
-    print_heading(get_string("attempt", "quiz", $numattempts));
+    print_heading(get_string("attempt", "quiz", $attemptnumber));
     print_simple_box(text_to_html($quiz->intro), "CENTER");
 
 
