@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // install.php - created with Moodle 1.5 unstable development (2004083000)
+      // install.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004092700)
 
 
 $string['admindirerror'] = 'El directorio especificado para admin es incorrecto';
@@ -83,6 +83,7 @@ a, digamos, 16M. Si no lo tiene, pida a su administrador que lo haga por usted.
 <p>Sin embargo, en algunos servidores esto hace que <b>todas</b> las páginas PHP dejen de funcionar
 (podrá ver los errores cuando mire las páginas) de modo que tendrá que eliminar el archivo .htaccess.
 </ol>';
+$string['mysqlextensionisnotpresentinphp'] = 'PHP no ha sido adecuadamente configurado con la extensión MySQL de modo que pueda comunicarse con MySQL. Por favor, compruebe el archivo php.ini o recompile PHP.';
 $string['pass'] = 'Pass';
 $string['phpversion'] = 'Versión PHP';
 $string['phpversionerror'] = 'La versión PHP debe ser 4.1.0 o superior';

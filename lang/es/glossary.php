@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.4 alpha (2004081500)
+      // glossary.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004092700)
 
 
 $string['addcomment'] = 'Agregar comentario';
@@ -85,6 +85,8 @@ $string['entrydeleted'] = 'Entrada borrada';
 $string['entryexported'] = 'Entrada exportada con éxito';
 $string['entryishidden'] = '(esta entrada está oculta)';
 $string['entryleveldefaultsettings'] = 'Ajustes por defecto del nivel de entrada';
+$string['entrysaved'] = 'Esta entrada ha sido guardada';
+$string['entryupdated'] = 'Esta entrada ha sido actualizada';
 $string['entryusedynalink'] = 'Esta entrada será enlazada automáticamente';
 $string['explainaddentry'] = 'Agregar una nueva entrada al glosario actual.<br />Concepto y Definición son campos obligatorios.';
 $string['explainall'] = 'Muestra TODAS las entradas en una página.';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // exercise.php - created with Moodle 1.5 unstable development (2004083000)
+      // exercise.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004092700)
 
 
 $string['absent'] = 'Ausente';
@@ -45,6 +45,7 @@ $string['edit'] = 'Editar';
 $string['editingassessmentelements'] = 'Edición de los elementos de evaluación';
 $string['element'] = 'Elemento';
 $string['elementweight'] = 'Peso del elemento';
+$string['enterpassword'] = 'Escriba la contraseña';
 $string['entriessaved'] = 'Entradas guardadas';
 $string['errorbanded'] = 'Franja de error';
 $string['excellent'] = 'Excelente';
@@ -108,6 +109,7 @@ $string['numberofnegativeresponses'] = 'Número de respuestas negativas';
 $string['onesubmission'] = 'Un envío';
 $string['optionaladjustment'] = 'Ajuste opcional';
 $string['overallgrade'] = 'Calificación general';
+$string['passwordprotectedexercise'] = 'Ejercicio protegido por contraseña';
 $string['phase'] = 'Fase';
 $string['phase1'] = 'Configurar ejercicio';
 $string['phase1short'] = 'Configuración';
@@ -180,6 +182,7 @@ $string['unassessed'] = '$a no evaluados';
 $string['ungradedstudentassessments'] = '$a evaluaciones de los estudiantes no calificadas';
 $string['usemaximum'] = 'Usar el máximo';
 $string['usemean'] = 'Usar el promedio';
+$string['usepassword'] = 'Usar contraseña';
 $string['verylax'] = 'Muy laxo';
 $string['verypoor'] = 'Muy pobre';
 $string['verystrict'] = 'Muy estricto';
@@ -192,6 +195,7 @@ $string['weightforteacherassessments'] = 'Ponderación para las evaluaciones de $
 $string['weights'] = 'Pesos';
 $string['weightssaved'] = 'Pesos guardados';
 $string['weightsusedforoverallgrade'] = 'Pesos usados para la calificación general';
+$string['wrongpassword'] = 'Contraseña incorrecta para este ejercicio';
 $string['yourassessment'] = 'Su evaluación';
 $string['yourfeedbackgoeshere'] = 'Su respuesta aquí';
 $string['yoursubmission'] = 'Su envío';
