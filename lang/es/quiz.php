@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.0.9 Beta 1 + (2003051700)
+      // quiz.php - created with Moodle 1.1 Beta (2003082001)
 
 
 $string['acceptederror'] = "Margen de error";
@@ -111,8 +111,8 @@ $string['quiznotavailable'] = "Este cuestionario no estará disponible hasta el \
 $string['quizopen'] = "Abrir cuestionario";
 $string['random'] = "Organizado al azar";
 $string['randomcreate'] = "Crear preguntas al azar";
-$string['randomsamatch'] = "Hacer juego al azar";
-$string['randomsamatchcreate'] = "Crear preguntas que hagan juego al azar";
+$string['randomsamatch'] = "Emparejamiento aleatorio de respuestas cortas";
+$string['randomsamatchcreate'] = "Crear preguntas de emparejamiento aleatorio de respuestas cortas";
 $string['randomsamatchintro'] = "Para cada una de las siguientes preguntas seleccione la respuesta que haga juego del menú.";
 $string['randomsamatchnumber'] = "Número de preguntas seleccionadas";
 $string['readytosend'] = "Está a punto de enviar su cuestionario para que sea evaluado. ¿Está seguro de que desea continuar?";

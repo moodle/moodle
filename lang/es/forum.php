@@ -82,9 +82,6 @@ $string['parentofthispost'] = "Anterior a este mensaje";
 $string['postadded'] = "Su mensaje se ha colocado con éxito.<P>Tiene \$a para hacer cualquier cambio.";
 $string['postincontext'] = "Ver el mensaje en su contexto";
 $string['postmailinfo'] = "Esta es una copia del mensaje publicado en \$a.
-
-
-
 Para responder a este mensaje diríjase a:";
 $string['postrating1'] = "Atinado";
 $string['postrating2'] = "Indiferente";
@@ -99,6 +96,8 @@ $string['ratingno'] = "Sin calificación";
 $string['ratingonlyteachers'] = "Sólo \$a puede calificar los mensajes";
 $string['ratings'] = "Calificaciones";
 $string['ratingssaved'] = "Calificación guardada.";
+$string['ratingsuse'] = "Usar calificaciones";
+$string['ratingtime'] = "Restringir las calificaciones a mensajes colocados en este período:";
 $string['re'] = "Re:";
 $string['readtherest'] = "Ver el resto del tema";
 $string['replies'] = "Respuestas";

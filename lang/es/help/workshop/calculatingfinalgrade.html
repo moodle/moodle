@@ -1,58 +1,64 @@
-<h2>Cálculo de las Calificaciones Finales</h2>
+<P ALIGN=CENTER><B>Cálculo de las Calificaciones Finales</B></P>
 
-<p>La tabla en esta pantalla muestra cómo se calculan las calificaciones 
-finales de los estudiantes. Las calificaciones finales son una suma ponderada 
-de hasta cinco componentes. </p>
-<p>1.- La calificación del profesor a la tarea que ha enviado. Esto es opcional 
-y será usado si el profesor en realidad evalúa el trabajo del estudiante. Si el 
-estudiante envía más de una parte de trabajo se utilizará &quot;la mejor&quot; calificación. 
-Aquí, mejor significa el resultado de la combinación ponderada más alta 
-de la calificación del profesor y la calificación de los compañeros.</p>
-<p>2.- El promedio de las calificaciones de sus compañeros para la tarea que ha 
-enviado. Otra vez si el estudiante envia más de una parte del trabajo se tomará 
-&quot;la mejor&quot; calificación. La calificación de un compañero opcionalmente 
-puede incluir la calificación del profesor. Esta calificación sería incluida si 
-el número de calificaciones de compañeros es muy bajo, si se piensa que las 
-calificaciones de los compañeros son sospechosas (por lo general muy altas) o no 
-son confiables. De ser incluida, la calificación del profesor es tratada de la 
-misma manera que una calificación de los compañeros en el cálculo del 
-promedio. </p>
-<p>3.- La tendencia del estudiante en la clasificación del trabajo de 
-compañeros. Esto pasa en la medida que el estudiante califica los trabajos 
-demasiado alto o demasiado bajo. Esto no es una medida absoluta ya que
-está basada en la diferencia entre la calificación del estudiante y los 
-promedios de los compañeros para cada uno de los envíos que ellos evaluaron. En 
-general no debería darse una valoración a este componente. </p>
-<p>4.- La fiabilidad del estudiante en clasificar el trabajo de sus compañeros. Esto 
-es una medida de cómo califican los estudiantes obtenida de la comparación con el 
-promedio que obtuvieron las partes de los trabajos que ellos evaluaron. La 
-medida analiza la tendencia del estudiante y saca un promedio 
-de las diferencias absolutas entre sus calificaciones y las calificaciones 
-promedio de los compañeros. En teoría, si los estudiantes dan altas 
-calificaiones a quienes han realizado bien su parte del trabajo y bajas a los 
-trabajos malos su fiabilidad será alta. Si se sospecha que los 
-estudiantes en general asesoran pobremente, entonces las 
-calificaciones del profesor deberían ser incluidas en los promedios de los 
-compañeros, esto debería hacer que la fiabilidad valorara más 
-significativamente. </p>
-<p>5.- La Calificación promedio dada por el profesor para las evaluaciones del 
-estudiante. Esto incluye tanto evaluaciones preliminares hechas por el 
-estudiante sobre las partes de ejemplo del trabajo como cualquier 
-calificación que el profesor hace sobre la evaluación producida durante 
-la evaluación de sus compañeros en la fase de tarea. En general este 
-componente es probablemente el más importante, tanto o más que la Tendencia o 
-los componentes de Fiabilidad. De estar disponible debería ser 
-ponderada más que los demás. </p>
-<p>Estos cinco elementos pueden ser ponderados como se considere apropiado 
-para la tarea. Por ejemplo, la calificación del profesor podría tener una 
-ponderación mayor si la parte de la tarea calificada por los compañeros se 
-considera como menor dentro del conjunto de la tarea. Alternativamente, si no 
-hay calificación por parte del profesor debe dársele un peso de cero a la 
-calificación del profesor. Si para toda la tarea sólo los estudiantes actúan como 
-jueces y son ellos los que proporcionan los comentarios, entonces los dos primeros 
-componentes puede fijarse en cero y las habilidades de los estudiantes al 
-calificar dominarán las calificaciones finales.</p>
-<p>Considere que esta pantalla es usada interactivamente y las calificaciones 
-finales normalmente no estarán disponibles para los estudiantes hasta la fase final 
-de la tarea. Una vez que el profesor está satisfecho con las calificaciones finales y 
-sus valoraciones éstas quedan disponibles para los estudiantes. </p>
+<P>La tabla de esta pantalla muestra cómo se calculan las calificaciones 
+   finales de los estudiantes. Las calificaciones finales son una suma ponderada 
+   de hasta cinco componentes.
+	
+<OL>
+<LI>La calificación que profesor da a la tarea enviada. Esto es opcional 
+   y será usado si es el profesor quien realmente evalúa el trabajo del estudiante. Si el 
+   estudiante envía más de una parte de trabajo se utilizará &quot;la mejor&quot; 
+   calificación. Aquí, <I>mejor</I> equivale al resultado de la combinación 
+   ponderada más alta de la calificación del profesor y la calificación de los compañeros.
+<LI>El promedio de las calificaciones que los compañeros han dado a la tarea 
+   enviada. Otra vez si el estudiante envia más de una parte del trabajo se tomará 
+   &quot;la mejor&quot; calificación. La calificación de un compañero opcionalmente 
+   puede incluir la calificación del profesor. Esta calificación sería incluida si 
+   el número de calificaciones de los compañeros es muy bajo, si se piensa que las 
+   calificaciones de los compañeros son sospechosas (por lo general muy altas) o no 
+   son fiables. De ser incluida, la calificación del profesor es tratada de la 
+   misma manera que una calificación de los compañeros en el cálculo del 
+   promedio.
+<LI>Los sesgos del estudiante en la calificación del trabajo de sus 
+   compañeros. Esto tiene lugar cuando el estudiante califica los trabajos 
+   demasiado alto o demasiado bajo. Los sesgos no son una medida absoluta ya que
+   se basan en la diferencia entre la calificación del estudiante y los 
+   promedios de los compañeros para cada uno de los envíos evaluados. En 
+   general no debería darse una ponderación elevada a este componente.
+<LI>La fiabilidad del estudiante en calificar el trabajo de sus compañeros. Esto 
+   es una medida de hasta qué punto las calificaciones otorgadas por un estudiante 
+   se ajustan al promedio de las calificaciones que los compañeros han dado a los 
+   trabajos evaluados. La medida resta los sesgos y obtiene el promedio de las 
+   diferencias absolutas entre sus calificaciones y las calificaciones 
+   promedio de los compañeros. En teoría, si los estudiantes dan  
+   calificaciones altas a quienes han realizado bien los trabajos y bajas a los 
+   trabajos malos, su fiabilidad será alta. Si se sospecha que los 
+   estudiantes en general son malos evaluadores, entonces deberían incluirse las 
+   calificaciones del profesor en los promedios de los compañeros, lo que 
+   redundaría en una mejora de la fiabilidad.
+<LI>La calificación promedio dada por el profesor a las evaluaciones del 
+   estudiante. Esto incluye tanto evaluaciones preliminares hechas por el 
+   estudiante sobre los trabajos de prueba como cualquier calificación que 
+   el profesor haga sobre las evaluaciones producidas durante la fase de la 
+   tarea dedicada a la evaluación de compañeros. En general este componente es 
+   probablemente el más importante, tanto o más que los componentes de Sesgo o 
+   Fiabilidad. De estar disponible debería ser ponderada más que los demás.
+</OL>
+
+<P>Estos cinco componentes pueden ponderarse como se considere apropiado 
+   para la tarea. Por ejemplo, la calificación del profesor podría tener una 
+   ponderación mayor si la parte de la tarea calificada por los compañeros se 
+   considera como menos importante dentro del conjunto de la tarea. 
+   Alternativamente, si el profesor únicamente calificara una parte escasa 
+   de los trabajos, podrían pasarse por alto tales calificaciones y dar una 
+   ponderación cero. Si únicamente los estudiantes son los encargados de 
+   juzgar la tarea completa y de proporcionar retroalimentación sobre ella, 
+   entonces los primeros dos componentes se ponderarán como cero (o se les 
+   dará una ponderación baja) y serán las habilidades de calificación de los 
+   estudiantes las que determinarán las calificaciones finales.
+
+<P>Advierta que esta pantalla es usada de forma iterativa y que habitualmente 
+   los estudiantes no dispondrán de las calificaciones finales hasta la fase final 
+   de la tarea. Una vez que el profesor está satisfecho con las calificaciones finales y 
+   sus ponderaciones, los estudiantes podrán acceder a ellas.
+</P>
