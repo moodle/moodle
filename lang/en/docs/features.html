@@ -34,6 +34,8 @@
     for initial table definition)</li>
   <li>Course listing shows descriptions for every course on the server, including 
     accessibility to guests.</li>
+  <li>Courses can be categorised and searched - one Moodle site can support thousands 
+    of courses</li>
   <li>Emphasis on strong security throughout. Forms are all checked, data validated, 
     cookies encrypted etc</li>
   <li>Most text entry areas (resources, forum postings, journal entries etc) can 
@@ -47,7 +49,7 @@
   <li>Plug-in activity modules can be added to existing Moodle installations</li>
   <li>Plug-in language packs allow full localisation to any language. These can 
     be edited using a built-in web-based editor. Currently there are language 
-    packs for more than <a href="http://moodle.com/download/lang/" target="_top">28 
+    packs for over <a href="http://moodle.org/download/lang/" target="_top">34 
     languages</a>.</li>
   <li>The code is clearly-written PHP under a GPL license - easy to modify to 
     suit your needs</li>
@@ -70,9 +72,14 @@
     can have different access</li>
   <li>An admin account controls the creation of courses and creates teachers by 
     assigning users to courses</li>
+  <li>A course creator account is only allowed to create courses and teach in 
+    them</li>
+  <li>Teachers may have editing privileges removed so that they can't modify the 
+    course (eg for part-time tutors)</li>
   <li>Security - teachers can add an "enrolment key" to their courses to keep 
     out non-students. They can give out this key face-to-face or via personal 
     email etc</li>
+  <li>Teachers can enrol students manually if desired</li>
   <li>Teachers can unenrol students manually if desired, otherwise they are automatically 
     unenrolled after a certain period of inactivity (set by the admin)</li>
   <li>Students are encouraged to build an online profile including photos, description. 
@@ -84,11 +91,12 @@
 </ul>
 <h3 class="sectionheading">Course management</h3>
 <ul>
-  <li>Teacher has full control over all settings for a course</li>
+  <li>A full teacher has full control over all settings for a course, including 
+    restricting other teachers</li>
   <li>Choice of course formats such as by week, by topic or a discussion-focussed 
     social format</li>
   <li>Flexible array of course activities - Forums, Journals, Quizzes, Resources, 
-    Choices, Surveys, Assignments.</li>
+    Choices, Surveys, Assignments, Chats, Workshops</li>
   <li>Recent changes to the course since the last login can be displayed on the 
     course home page - helps give sense of community</li>
   <li>Most text entry areas (resources, forum postings, journal entries etc) can 
@@ -101,6 +109,10 @@
     journal entries etc on one page.</li>
   <li>Mail integration - copies of forum posts, teacher feedback etc can be mailed 
     in HTML or plain text.</li>
+  <li>Custom scales - teachers can define their own scales to be used for grading 
+    forums, assignments and journals</li>
+  <li>Courses can be packaged as a single zip file using the Backup function. 
+    These can be restored on any Moodle server.</li>
 </ul>
 <h3 class="sectionheading">Assignment Module</h3>
 <ul>
@@ -115,6 +127,14 @@
     notification is mailed out.</li>
   <li>The teacher can choose to allow resubmission of assignments after grading 
     (for regrading)</li>
+</ul>
+<h3 class="sectionheading">Chat Module</h3>
+<ul>
+  <li>Allows smooth, synchronous text interaction</li>
+  <li>Includes profile pictures in the chat window</li>
+  <li>Supports URLs, smilies, embedded HTML, images etc</li>
+  <li>All sessions are logged for later viewing, and these can also be made available 
+    to students</li>
 </ul>
 <h3 class="sectionheading">Choice Module</h3>
 <ul>
@@ -134,6 +154,8 @@
   <li>The teacher can choose not to allow replies (eg for an announcements-only 
     forum)</li>
   <li>Discussion threads can be easily moved between forums by the teacher</li>
+  <li>Attached images are shown inline</li>
+  <li>If forum ratings are being used, these can be restricted to a range of dates</li>
 </ul>
 <h3 class="sectionheading">Journal Module</h3>
 <ul>
@@ -158,11 +180,17 @@
   <li>Quiz questions and quiz answers can be shuffled (randomised) to reduce cheating</li>
   <li>Questions allow HTML and images</li>
   <li>Questions can be imported from external text files</li>
+  <li>Quizzes can be attempted multiple times, if desired</li>
+  <li>Attempts can be cumulative, if desired, and finished over several sessions</li>
   <li>Multiple-choice questions supporting single or multiple answers</li>
   <li>Short Answer questions (words or phrases)</li>
   <li>True-False questions </li>
   <li>Matching questions</li>
   <li>Random questions</li>
+  <li>Numerical questions (with allowable ranges)</li>
+  <li>Embedded-answer questions (cloze style) with answers within passages of 
+    text </li>
+  <li>Embedded descriptive text and graphics</li>
 </ul>
 <h3 class="sectionheading">Resource Module</h3>
 <ul>
@@ -177,6 +205,14 @@
 <h3 class="sectionheading">Survey Module</h3>
 <ul><li>Built-in surveys (COLLES, ATTLS) have been proven as instruments for analysing online classes</li><li>Online survey reports always available, including many graphs.  Data is downloadable as an Excel spreadsheet or CSV text file.</li><li>Survey interface prevents partly-finished surveys.</li><li>Feedback is provided to the student of their results compared to the class averages</ul>
 
+<h3 class="sectionheading">Workshop Module</h3>
+<ul>
+  <li>Allows peer assessement of documents, and the teacher can manage and grade 
+    the assessment.</li>
+  <li>Supports a wide range of possible grading scales</li>
+  <li>Teacher can provide sample documents for students to practice grading</li>
+  <li>Very flexible with many options.</li>
+</ul>
 <p>&nbsp;</p>
 
 <p align="CENTER"><font size="1"><a href="." target="_top">Moodle Documentation</a></font></p>

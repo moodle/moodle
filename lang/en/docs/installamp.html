@@ -23,33 +23,51 @@
   you must have a working PHP installation and a working database to turn your 
   computer into a functional web server platform. These packages can be tricky 
   to set up for average computer users, so this page has been written to try to 
-  make this process as simple as possible for different platforms.</p>
-<p>&nbsp;</p>
-<h3 class="sectionheading">Mac OS X</h3>
+  make this process as simple as possible for different platforms:</p>
+<ul>
+  <li><a href="#host" class="questionlink">Hosting Service</a></li>
+  <li><a href="#mac" class="questionlink">Mac OS X</a></li>
+  <li><a href="#redhat" class="questionlink">Redhat Linux</a></li>
+  <li><a href="#windows" class="questionlink">Windows</a></li>
+</ul>
+<p class="questionlink">&nbsp;</p>
+<h3 class="sectionheading"><a name="host" id="host"></a>Hosting Service</h3>
+<blockquote> 
+  <p>Unfortunately hosting services vary quite a lot in the way they work. Some 
+    will even install Moodle for you.</p>
+  <p>Most will offer a web-based control panel to control your site, create databases 
+    and set up cron. Some may also offer terminal access via ssh, so that you 
+    can use the command shell to do things.</p>
+  <p>You should work your way through the <a href="./?file=install.html">Installation 
+    guide</a> and take each step at a time. Ask your hosting provider if you get 
+    stuck. </p>
+  <p>&nbsp;</p>
+</blockquote>
+<h3 class="sectionheading"><a name="mac" id="mac"></a>Mac OS X</h3>
 <blockquote> 
   <p>The easiest way to do this is use the Apache server that Apple provides, 
     and add PHP and MySQL using Marc Liyanage's packages. Both of the pages below 
     come with good instructions that we won't duplicate here:</p>
-  <blockquote>
+  <blockquote> 
     <p><strong>PHP</strong>: Download from here: <a href="http://www.entropy.ch/software/macosx/php/" target="_top">http://www.entropy.ch/software/macosx/php/</a></p>
     <p><strong>MySQL</strong>: Download here: <a href="http://www.entropy.ch/software/macosx/mysql/" target="_top">http://www.entropy.ch/software/macosx/mysql/</a></p>
   </blockquote>
   <p>Once these are installed the standard <a href="./?file=install.html">Installation 
     guide</a> should be fairly straightforward.</p>
-  <p>More details might be added here later ...</p>
+  <p>A more detailed walkthrough is here: <a href="http://moodle.org/wiki/index.php/InstallingMoodle">http://moodle.org/wiki/index.php/InstallingMoodle</a></p>
   <p>&nbsp;</p>
 </blockquote>
-<h3 class="sectionheading">Redhat Linux</h3>
+<h3 class="sectionheading"><a name="redhat"></a>Redhat Linux</h3>
 <blockquote> 
   <p>You should install all available RPM packages for Apache, PHP and MySQL. 
     One package that people frequently forget is the php-mysql package which is 
     necessary for PHP to talk to MySQL.</p>
   <p>Once these are installed the standard <a href="./?file=install.html">Installation 
     guide</a> should be fairly straightforward.</p>
-  <p>More details might be added here later ...</p>
+  <p>A more detailed walkthrough is here: <a href="http://moodle.org/wiki/index.php/InstallingMoodle">http://moodle.org/wiki/index.php/InstallingMoodle</a></p>
 </blockquote>
 <p>&nbsp;</p>
-<h3 class="sectionheading">Windows</h3>
+<h3 class="sectionheading"><a name="windows" id="windows"></a>Windows</h3>
 <blockquote> 
   <p>The easiest way to do this is use <a href="http://www.easyphp.org/" target="_blank">EasyPHP</a>, 
     a package that bundles all the software you need into a single Windows application. 
@@ -127,7 +145,7 @@
     your PHP is set up correctly and avoid common problems:</p>
   <ul>
     <li>Make sure you enable the GD module so Moodle can process images - you 
-      may have to edit php.ini and remove the comment (;) from this line: 'extension=php_gd.dll'. 
+      may have to edit php.ini and remove the comment (;) from this line: 'extension=php_gd2.dll'. 
     </li>
     <li>Make sure sessions is turned on - you may have to edit php.ini and fix 
       the directory for <strong>session.save_path</strong> - instead of the default 
@@ -139,3 +157,4 @@
 <p align="CENTER"><font size="1">Version: $Id$</font></p>
 
 </body>
+</html>
