@@ -30,9 +30,9 @@
     add_to_log($course->id, "choice", "report", "report.php?id=$cm->id", "$choice->id");
 
     print_header("$course->shortname: $choice->name: $strresponses", "$course->fullname",
-                 "<A HREF=/course/view.php?id=$course->id>$course->shortname</A> ->
-                  <A HREF=index.php?id=$course->id>$strchoices</A> ->
-                  <A HREF=view.php?id=$cm->id>$choice->name</A> -> $strresponses", "");
+                 "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> ->
+                  <A HREF=\"index.php?id=$course->id\">$strchoices</A> ->
+                  <A HREF=\"view.php?id=$cm->id\">$choice->name</A> -> $strresponses", "");
 
 
     if (! $users = get_course_users($course->id, "u.firstname ASC")) {
