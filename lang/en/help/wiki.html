@@ -33,7 +33,7 @@ can add to insert formatting</p>
 <h3>List Formatting</h3>
 
 <p>Simple lists can be constructed easily by placing a special character at the start of each line in the list followed by a space.
-The list is terminated by a blank line. At present lists cannot be intermixed or nested. Definition list
+The list is terminated by a blank line. Lists may be freely nested - and nested lists may change list type. Definition list
 definitions and text types may be freely intermixed to obtain the desired effect. The special characters
 are as follows...</p>
 
@@ -44,6 +44,22 @@ are as follows...</p>
   <tr><td>:</td><td>Definition list, definition</td></tr>
   <tr><td>;</td><td>Definition list, text</td></tr>
 </table>  
+
+<p>Nested lists example:</p>
+<p><pre>
+  * First Bullet
+  * Second Bullet
+  ## nested line 1
+  ## nested line 2
+  * Third Bullet
+</pre></p>
+<p>Produces:
+<ul><li>First Bullet</li>
+  <li>Second Bullet</li>
+  <ol><li>nested line 1</li>
+    <li>nested line 2</li></ol>
+  <li>Third Bullet
+</ul></p>
 
 <h3>Inline formatting</h3>
 
@@ -83,6 +99,14 @@ the module name, you can link directly to that resource using the syntax:</p>
 
 <p>ModuleName:nn(Description Text)</p>
 <p>eg, <em>resource:36(My New Page)</em>   <em>forum:10(Jump to forum)</em></p>
+
+<h3>Moodle Picture Links</h3>
+
+<p>Inline graphics can be placed on wiki pages. You need to upload the graphic and note its path within the file upload area. The syntax is:</p>
+
+<p>/<em>..path to file..</em>(alt text)</p>
+
+<p>for example,  /mypics/graphic.jpg(Staff picture)</p>
 
 <h3>Automatic reformating</h3>
 
