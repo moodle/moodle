@@ -8,7 +8,7 @@
     require_variable($eid);            // Entry ID
     optional_variable($cid,0);         // Comment ID
 
-    optional_variable($action,"edit");     // Action to perform
+    optional_variable($action,"add");     // Action to perform
     optional_variable($confirm,0);     // Confirm the action
 
     $action = strtolower($action);
@@ -57,8 +57,8 @@
             $straction = get_string("deletingcomment","glossary");
             break;
         default:
-            $action = "edit";
-            $straction = get_string("editingcomment","glossary");
+            $action = "add";
+            $straction = get_string("addingcomment","glossary");
             break;
     }
     $strglossaries = get_string("modulenameplural", "glossary");
@@ -78,6 +78,9 @@
         if (($comment->userid <> $USER->id) and !isteacher($glossary->course)) {
             error("You can't delete other people's comments!");
         }
+        if (!$glossary->allowcomments && !isteacher($glossary->course)) {
+                error("You can't delete comments in this glossary!");
+            }
         if ( $confirm ) {
             delete_records("glossary_comments","id", $cid);             
 
@@ -111,12 +114,20 @@
             print_simple_box_end();
         }
     } else {
+        if (!$glossary->allowcomments && !isteacher($glossary->course)) {
+            error("You can't add/edit comments in this glossary!");
+        }
         if ( $action == "edit" ) {
-            $ineditperiod = ((time() - $comment->timemodified <  $CFG->maxeditingtime) || $glossary->editalways);
-            if ( (!$ineditperiod || $USER->id != $comment->userid) and !isteacher($course->id) ) {
+            if (!isset($comment->timemodified)) {
+                $timetocheck = 0;
+            } else {
+                $timetocheck = $comment->timemodified;
+            }
+            $ineditperiod = ((time() - $timetocheck <  $CFG->maxeditingtime) || $glossary->editalways);
+            if ( (!$ineditperiod || $USER->id != $comment->userid) and !isteacher($course->id) and $cid) {
                 if ( $USER->id != $comment->userid ) {
                     error("You can't edit other people's comments!");
-                } elseif (time() - $comment->timemodified >= $CFG->maxeditingtime ) {
+                } elseif (!$ineditperiod) {
                     error("You can't edit this. Time expired!");
                 }
                 die;
