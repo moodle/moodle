@@ -4,7 +4,7 @@
 	require("../user/lib.php");
     require("../lib/countries.php");
 
-    $recordsperpage = 100;
+    $recordsperpage = 30;
 
     optional_variable($newuser, "");
     optional_variable($delete, "");
