@@ -11,6 +11,8 @@
 // eg   wget -q -O /dev/null 'http://moodle.somewhere.edu/admin/cron.php'
 // or   php /web/moodle/admin/cron.php 
 
+    $FULLME = "we don't care";
+
     require("../config.php");
 
     echo "<PRE>\n";
