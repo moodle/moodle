@@ -1,0 +1,117 @@
+<p align="center"><b>Preguntas calculadas</b></p>
+Las preguntas calculadas ofrecen una manera de crear preguntas num&eacute;ricas 
+individuales para el uso de comodines que son sustituidos por valores concretos 
+cuando se realiza el cuestionario.<br/>
+Abajo aparece la p&aacute;gina de edici&oacute;n principal con algunas entradas 
+de ejemplo:<br/>
+
+<table><tbody>
+<tr valign="top">
+    <td align="right"><p><b>Pregunta:</b></p>
+    </td>
+    <td>
+        <textarea id="questiontext" name="questiontext" rows="5" cols="40" wrap="virtual">How much is {a} + {b} ?</textarea>
+</td>
+</tr>
+<tr valign="top">
+    <td align="right"><p><b>Imagen para mostrar:</b></p></td>
+    <td>
+    <select name="image"><option value="" selected="selected">None</option><option value="grevture.gif">grevture.gif</option></select>
+    </td>
+</tr>
+
+<tr valign="top">
+<td align="right"><p><b>F&oacute;rmula de la Respuesta Correcta:</b></p></td>
+    <td>
+    <input align="left" type="text" id="formula0" name="answer[]" size="20" value="{a} + {b}">&nbsp;&nbsp;
+    <input type="hidden" name="fraction[]" value="1.0">
+    </td>
+</tr>
+<tr valign="top">
+    <td align="right"><p><b>Tolerancia:</b></p></td>
+    <td>
+    <input align="left" type="text" id="tolerance0&quot;" name="tolerance[]" size="15" value="0.01">±
+    </td>
+</tr>
+<tr valign="top">
+<td align="right"><p><b>Tipo de Tolerance:</b></p></td>
+    <td>
+    <select name="tolerancetype[]"><option value="1" selected="selected">Relative</option><option value="2">Nominal</option><option value="3">Geometric</option></select>
+    </td>
+</tr>
+<tr valign="top">
+<td align="right"><p><b>Cifras Significativas:</b></p></td>
+    <td>
+    <select name="correctanswerlength[]"><option value="1">1</option><option value="2" selected="selected">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option></select>
+    </td>
+</tr>
+</tbody></table>
+
+<br/>
+En el texto de entrada de la pregunta y en "F&oacute;rmula de la Respuesta Correcta" 
+{a} y {b} se pueden ver. Estos y cualquier otro {nombre} pueden ser usados como 
+un comod&iacute;n que es sustituido por alg&uacute;n valor cuando se realiza el 
+cuestionario. Adem&aacute;s, la respuesta correcta es calculada cuando el cuestionario 
+es enviado usando la expresi&oacute;n contenida en "F&oacute;rmula de la Respuesta 
+Correcta", la cual se calcula como una expresi&oacute;n num&eacute;rica despu&eacute;s 
+de la sustituci&oacute;n de los comodines. Los posibles valores comod&iacute;n 
+se ponen o se generan en una p&aacute;gina posterior en &quot;asistente de edici&oacute;n" 
+para preguntas calculadas... <br/>
+La f&oacute;rmula del ejemplo usa el operador +. Otros operadores aceptados son 
+-*/ y % donde % es el m&oacute;dulo operador. Tambi&eacute;n es posible utilizar 
+algunas funciones matem&aacute;ticas de PHP. Entre ellas hay 24 funciones de un 
+solo argumento:<br/>
+<b>
+abs, acos, acosh, asin, asinh, atan, atanh, ceil, cos, cosh, deg2rad, exp, expm1, floor, log, log10, log1p, rad2deg, round, sin, sinh, sprt, tan, tanh
+</b><br/>
+y dos funciones de dos argumentos<br/>
+<b>
+atan2, pow
+</b><br/>
+y las funciones <b>min</b> y <b>max</b> que pueden tener dos o m&aacute;s argumentos. 
+Tambi&eacute;n es posible usar la funci&oacute;n <b>pi</b> que no toma ning&uacute;n 
+argumento pero no olvide utilizar los par&eacute;ntesis - el uso correcto es <b>pi()</b>. 
+De forma similar el resto de funciones deben tener su(s) argumento(s) entre par&eacute;ntesis. 
+Un posible uso es por ejemplo <b>sin({a}) + cos({b}) * 2</b>. No deber&iacute;a 
+haber ning&uacute;n problema en anidar funciones dentro de otras como <b>cos(deg2rad({a} 
++ 90))</b> etc. <br/>
+M&aacute;s detalles sobre c&oacute;mo usar estas funciones de PHP se puede encontrar 
+en la <a target="phpmathdoc" href="http://www.php.net/manual/en/ref.math.php">documentaci&oacute;n 
+del sitio web de PHP</a> <br/>
+<br/>
+Al igual que para las preguntas num&eacute;ricas es posible permitir un margen 
+dentro del cual todas las respuestas son aceptadas como correctas. El campo "Tolerancia" 
+se usa para esto. Sin embargo, hay tres tipos diferentes de tolerancias:<b> Relativa, 
+Nominal and Geom&eacute;trica</b>. Si decimos que la respuesta correcta es 200 
+y la tolerancia es establecida en 0.5 entonces los diferentes tipos de tolerancia 
+funcionan como sigue: <br/>
+<br/>
+<b>Relativa:</b> Un intervalo de tolerancia es calculado multiplicando la respuesta 
+por 0.5, con lo que en este caso tenemos una tolerancia de 100 de forma que la 
+respuesta correcta debe estar entre 100 and 300. (200 ± 100)<br/>
+Esto es &uacute;til si la magnitud de la respuesta correcta puede diferir de forma 
+notable entre los diferentes valores comod&iacute;n.<br/>
+<br/>
+<b>Nominal:</b> Este es el tipo de tolerancia m&aacute;s simple pero no es muy 
+potente. La respuesta correcta debe estar entre 199.5 y 200.5 (200 ± 0.5)<br/>
+Este tipo de tolerancia puede ser &uacute;til si las diferencias entre diferentes 
+respuestas correctas son peque&ntilde;as. <br/>
+<br/>
+<b>Geom&eacute;trica:</b> El l&iacute;mite superior del intervalo de tolerancia 
+es calculado como 200 + 0.5*200 y es el mismo que para la tolerancia relativa. 
+El l&iacute;mite inferior es calculado como 200/(1 + 0.5). La respuesta correcta 
+debe entonces estar entre 133.33 y 300.<br/>
+Esto es &uacute;til para c&aacute;lculos complejos que deben tener elevadas tolerancias 
+donde las tolerancias relativas de 1 o m&aacute;s ser&iacute;a &uacute;til para 
+el l&iacute;mite superior pero claramente no aceptable para el l&iacute;mite inferior 
+que podr&iacute;a hacer que cero fuera una respuesta correcta para todos los casos. 
+<br/>
+<br/>
+El campo <b>Cifras Significativas</b> se refiere a la forma en que la respuesta 
+correcta deber&iacute;a presentarse en la revisi&oacute;n o los informes. Ejemplos: 
+Si se establece en 3 entonces la respuesta correcta 13.333 se deber&iacute;a presentar 
+como 13.3; 1236 se deber&iacute;a presentar como 1240; 23 se deber&iacute;a presentar 
+como 23.0 etc. <br/>
+<br/>
+El campo de comentario y los campos opcionales de unidad funcionan igual que para 
+las preguntas num&eacute;ricas. <br/>
