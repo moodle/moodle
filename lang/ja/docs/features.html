@@ -23,7 +23,7 @@
     <li>コース一覧では、ゲストアクセスの可否も含めて、サーバ上の全コースの説明を表示します。</li>
     <li>コースをカテゴリ分け、検索することが出来ます。一つのMoodleサイトは数千のコースをサポートします。</li>
     <li>Moodleでは、サイト全体にわたる強固なセキュリティを重要視しています。フォームに関して、全てのチェック、データの正当性確認、クッキーの暗号化処理等が行われます。</li>
-    <li>殆どのテキストエリア (リソース、フォーラム投稿欄、日誌エントリー等)は、実装済みのWYSIWYG HTMLエディタで編集することが出来ます。</li>
+    <li>殆どのテキストエリア (リソース、フォーラム投稿欄、日誌エントリ等)は、実装済みのWYSIWYG HTMLエディタで編集することが出来ます。</li>
   </ul>
   <h3 >サイト管理</h3>
   <ul>
@@ -38,14 +38,10 @@
     <li>ユーザ管理のゴールは、高度なセキュリティを保ったまま、管理者の負担を減らすことです。</li>
     <li>既存のシステムに簡単に統合することが可能な認証モジュールプラグインにより、様々な認証手段をサポートします。</li>
     <li>標準的なメールによる認証: 学生は自分のアカウントを作成することが出来ます。アカウント確定時に、メールアドレスが確認されます。</li>
-    <li>LDAPを使用した認証: account logins can be checked against an LDAP server. Admin 
-    can specify which fields to use.</li>
-    <li>IMAP、POP3、NNTPを使用した認証: account logins are checked against a mail or news server. 
-    SSL, certificates and TLS are supported.</li>
-    <li>外部データベースを使用した認証: any database containing at least two fields can be used 
-    as an external authentication source.</li>
-    <li>Each person requires only one account for the whole server - each account 
-    can have different access</li>
+    <li>LDAPを使用した認証: LDAPサーバに対してアカウントのログインを照会することが出来ます。管理者は、どのフィールドを使用するか指定出来ます。</li>
+    <li>IMAP、POP3、NNTPを使用した認証: メールサーバ又はニュースサーバに対してアカウントのログインが照会されます。SSL認証及びTLS認証がサポートされます。</li>
+    <li>外部データベースを使用した認証: 少なくとも2つのフィールドを持つデータベースを外部認証用のデータベースとして使用出来ます。</li>
+    <li>それぞれユーザは、サーバ全体で1つのアカウントのみ必要です。各アカウントは異なるアクセス権限を持つことが出来ます。</li>
     <li>An admin account controls the creation of courses and creates teachers by 
     assigning users to courses</li>
     <li>A course creator account is only allowed to create courses and teach in 

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // wiki.php - created with Moodle 1.4 aiming-for-beta-soon (2004082100)
+      // wiki.php - created with Moodle 1.5 unstable development (2004090600)
 
 
 $string['action'] = '-- アクション --';
@@ -85,7 +85,7 @@ $string['nohtml'] = 'HTML無し';
 $string['nolinksfound'] = 'ページにリンクは見つかりませんでした。';
 $string['notadministratewiki'] = 'このwikiの管理を許可されていません!';
 $string['nothingtostrip'] = '1つのバージョン以外にページがありません。';
-$string['nowikicreated'] = 'このwikiにはエントリーがありません。';
+$string['nowikicreated'] = 'このwikiにはエントリがありません。';
 $string['offline'] = 'オフライン';
 $string['orphanedpage'] = '迷子ページ';
 $string['orphanedpages'] = '迷子ページ';
@@ -145,7 +145,7 @@ $string['wikiexport'] = 'ページのエクスポート';
 $string['wikilinkoptions'] = 'Wiki自動リンクオプション';
 $string['wikilinks'] = 'Wikiリンク';
 $string['wikiname'] = 'ページ名';
-$string['wikistartederror'] = '既にエントリーが存在します - 変更出来ません。';
+$string['wikistartederror'] = '既にエントリが存在します - 変更出来ません。';
 $string['wikitype'] = 'タイプ';
 $string['wikiusage'] = 'Wiki使用法';
 $string['withbinaries'] = 'バイナリコンテンツを含む';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // exercise.php - created with Moodle 1.5 unstable development (2004090402)
+      // exercise.php - created with Moodle 1.5 unstable development (2004090600)
 
 
 $string['absent'] = '欠席';
@@ -34,7 +34,7 @@ $string['edit'] = '編集';
 $string['editingassessmentelements'] = '評価要素の編集';
 $string['element'] = '要素';
 $string['elementweight'] = '要素比重';
-$string['entriessaved'] = 'エントリーが保存されました';
+$string['entriessaved'] = 'エントリが保存されました';
 $string['errorbanded'] = '減点方式';
 $string['excellent'] = '素晴らしい';
 $string['exerciseassessments'] = 'エクササイズ評価';
@@ -65,8 +65,8 @@ $string['nosubmissions'] = '提出物無し';
 $string['notassessedyet'] = '未評価';
 $string['notavailable'] = '利用不可';
 $string['notgraded'] = '評価無し';
-$string['numberofentries'] = 'エントリー数';
-$string['numberofentriesinleaguetable'] = '成績表のエントリー数';
+$string['numberofentries'] = 'エントリ数';
+$string['numberofentriesinleaguetable'] = '成績表のエントリ数';
 $string['overallgrade'] = '総合評価';
 $string['phase'] = 'フェーズ';
 $string['phase1'] = 'エクササイズの設定';
@@ -80,7 +80,7 @@ $string['present'] = '出席';
 $string['reassess'] = '再評価';
 $string['rubric'] = '到達基準方式';
 $string['savedok'] = '保存完了';
-$string['saveentries'] = 'エントリーの保存';
+$string['saveentries'] = 'エントリの保存';
 $string['savemyassessment'] = '評価の保存';
 $string['saveweights'] = '比重の保存';
 $string['scale10'] = '10点中の得点';
