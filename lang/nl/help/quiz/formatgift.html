@@ -13,7 +13,7 @@ en de opmaak ondersteunt ook commentaar, namen voor de vragen, feedback en gewog
         wordt voorafgegaan door een gelijkheidsteken (=).</p>
         <pre>     Wie is begraven in de tombe van Grant?{~Grant ~Jefferson =niemand}</pre>
         <p>Het  <b>Gatentekst</b> formaat voegt automatisch een invullijn toe (zoals deze _____) in het midden van
-        de zin. Om het Gatentekstformaat te gebruiken plaats je de antwoorden op de plaats waar in de zin je de lijn
+        de zin. Om het Gatentekstformaat te gebruiken plaats je de antwoorden op de plaats waar je in de zin de lijn
         wil laten verschijnen.</p>
         <pre>     Grant is {~begraven =ter aarde besteld ~leeft} in Grant's tombe.</pre>
         <p>Als de antwoorden vóór het leesteken van het einde van de zin komen, dan zal er een invullijntje ingevoegd
@@ -135,6 +135,25 @@ De meerdere antwoorden mogelijk-optie wordt gebruikt voor multiple choice vragen
           ~%50%Grant
           ~%50%Grant's vrouw
           ~%-50%Grant's vader }</pre>
+
+<p><u>Speciale tekens ~ = # { } :</u><br />
+    Deze symbolen <b> ~ = # { } </b> besturen deze filter en kunnen in de vragen niet als normale tekst gebruikt worden. Omdat deze tekens een speciale rol in het bepalen van de werking van deze filter hebben, worden ze "controletekens" genoemd. Het zou kunnen dat je één van deze tekens wil gebruiken in je vragen, zoals bijvoorbeeld in wiskundige formules. De manier om aan dit probleem te ontsnappen is deze karakters te "escapen". Je doet dit door een backslash (\) voor een controleteken te plaatsten zodat de filter weet dat je dit karakter letterlijk wil gebruiken en niet als controleteken.
+    Bijvoorbeeld:</p>
+    <pre>     Welk antwoord is gelijk aan 5? {
+          ~ \= 2 + 2
+          = \= 2 + 3
+          ~ \= 2 + 4  }
+
+     ::GIFT Controle karacters::
+     Welk van de onderstaande is GEEN controleteken voor het GIFT import formaat? {
+        ~ \~     # \~ is een controleteken.
+        ~ \=     # \= is een controleteken.
+        ~ \#     # \# is een controleteken.
+        ~ \{     # \{ is een controleteken.
+        ~ \}     # \} is een controleteken.
+        = \     # Juist! \ (backslash) is geen controleteken. MAAR, het wordt gebruikt om de controletekens te esacpen.
+     }</pre>
+    <p>Wanneer de vraag geïmporteerd wordt, dan wordt de backslash verwijderd en niet bewaard in Moodle.</p>
 
         <p><u>Andere opties:</u><br />
         Andere opties zijn mogelijk door het bewerken van de import filter <b>gift/format.php</b>. </p>
