@@ -49,6 +49,8 @@ function Init() {
         target_select.appendChild(opt);
         opt.selected = true;
       }
+  } else {
+      document.getElementById("f_href").value = "http://";
   }
   var opt = document.createElement("option");
   opt.value = "_other";

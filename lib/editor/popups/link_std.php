@@ -1,8 +1,8 @@
 <?php // $Id$
-	include("../../../config.php");
-	
+    include("../../../config.php");
+
     $id = $_GET['id'];
-    
+
     require_variable($id);
 
     if (!$course = get_record("course", "id", $id)) {
@@ -49,6 +49,8 @@ function Init() {
         target_select.appendChild(opt);
         opt.selected = true;
       }
+  } else {
+      document.getElementById("f_href").value = "http://";
   }
   var opt = document.createElement("option");
   opt.value = "_other";
@@ -138,7 +140,7 @@ border-bottom: 1px solid black; letter-spacing: 2px;
     <td class="label"><?php print_string("linktarget","editor");?>:</td>
     <td><select id="f_target">
       <option value=""><?php print_string("linktargetnone","editor");?></option>
-	  <option value="_blank"><?php print_string("linktargetblank","editor");?></option>
+      <option value="_blank"><?php print_string("linktargetblank","editor");?></option>
       <option value="_self"><?php print_string("linktargetself","editor");?></option>
       <option value="_top"><?php print_string("linktargettop","editor");?></option>
     </select>
