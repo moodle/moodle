@@ -334,7 +334,7 @@ function update_user_login_times() {
 }
 
 function user_not_fully_set_up($user) {
-    return (empty($user->firstname) or empty($user->lastname) or empty($user->email));
+    return ($user->username != "guest" and (empty($user->firstname) or empty($user->lastname) or empty($user->email)));
 }
 
 function update_login_count() {
@@ -371,7 +371,7 @@ function isadmin($userid=0) {
 /// Is the user an admin?
     global $USER;
 
-    if (empty($USER)) {
+    if (empty($USER->id)) {
         return false;
     }
 
