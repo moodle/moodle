@@ -20,7 +20,7 @@
 
     $blockaction = optional_param('blockaction');
 
-    if (! $site = get_site()) {
+    if (empty($SITE)) {
         redirect($CFG->wwwroot .'/'. $CFG->admin .'/index.php');
     }
 
@@ -42,7 +42,7 @@
         }
         $loginstring = "<font size=\"2\"><a href=\"$wwwroot/login/index.php\">".get_string('login').'</a></font>';
     } else {
-        $loginstring = '<font size="1">'. user_login_string($site) .'</font>';
+        $loginstring = '<font size="1">'. user_login_string($SITE) .'</font>';
         add_to_log(SITEID, 'course', 'view', 'view.php?id='.SITEID, SITEID);
     }
 
@@ -68,8 +68,8 @@
     $preferred_width_left  = bounded_number(BLOCK_L_MIN_WIDTH, blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]),  BLOCK_L_MAX_WIDTH);
     $preferred_width_right = bounded_number(BLOCK_R_MIN_WIDTH, blocks_preferred_width($pageblocks[BLOCK_POS_RIGHT]), BLOCK_R_MAX_WIDTH);
 
-    print_header(strip_tags($site->fullname), $site->fullname, 'home', '',
-                 '<meta name="description" content="'. s(strip_tags($site->summary)) .'" />',
+    print_header(strip_tags($SITE->fullname), $SITE->fullname, 'home', '',
+                 '<meta name="description" content="'. s(strip_tags($SITE->summary)) .'" />',
                  true, '', $loginstring . '<br />' . $langmenu);
 
 ?>
@@ -89,11 +89,11 @@
 
 
 /// Print Section
-    if ($site->numsections > 0) {
+    if ($SITE->numsections > 0) {
         print_simple_box_start('center', '100%', '', 5, 'sitetopic');
 
         /// If currently moving a file then show the current clipboard
-        if (ismoving($site->id)) {
+        if (ismoving($SITE->id)) {
             $stractivityclipboard = strip_tags(get_string('activityclipboard', '', addslashes($USER->activitycopyname)));
             echo '<p><font size="2">';
             echo "$stractivityclipboard&nbsp;&nbsp;(<a href=\"course/mod.php?cancelcopy=true\">". get_string('cancel') .'</a>)';
@@ -101,9 +101,9 @@
         }
 
 
-        if (!$section = get_record('course_sections', 'course', $site->id, 'section', 1)) {
-            delete_records('course_sections', 'course', $site->id, 'section', 1); // Just in case
-            $section->course = $site->id;
+        if (!$section = get_record('course_sections', 'course', $SITE->id, 'section', 1)) {
+            delete_records('course_sections', 'course', $SITE->id, 'section', 1); // Just in case
+            $section->course = $SITE->id;
             $section->section = 1;
             $section->summary = '';
             $section->visible = 1;
@@ -119,11 +119,11 @@
                  " height=\"11\" width=\"11\" border=\"0\" alt=\"$streditsummary\" /></a><br /><br />";
         }
 
-        get_all_mods($site->id, $mods, $modnames, $modnamesplural, $modnamesused);
-        print_section($site, $section, $mods, $modnamesused, true);
+        get_all_mods($SITE->id, $mods, $modnames, $modnamesplural, $modnamesused);
+        print_section($SITE, $section, $mods, $modnamesused, true);
 
         if ($editing) {
-            print_section_add_menus($site, $section->section, $modnames);
+            print_section_add_menus($SITE, $section->section, $modnames);
         }
         print_simple_box_end();
         print_spacer(10);
@@ -131,7 +131,7 @@
 
     switch ($CFG->frontpage) {     /// Display the main part of the front page.
         case FRONTPAGENEWS:
-            if (! $newsforum = forum_get_course_forum($site->id, 'news')) {
+            if (! $newsforum = forum_get_course_forum($SITE->id, 'news')) {
                 error('Could not find or create a main news forum for the site');
             }
 
@@ -151,10 +151,10 @@
                 $headertext = $newsforum->name;
             }
 
-            if ($site->newsitems) { //print forums only when needed
+            if ($SITE->newsitems) { //print forums only when needed
                 print_heading_block($headertext);
                 print_spacer(8,1);
-                forum_print_latest_discussions($newsforum->id, $site->newsitems);
+                forum_print_latest_discussions($newsforum->id, $SITE->newsitems);
             }
         break;
 
@@ -193,7 +193,7 @@
     if(blocks_have_content($pageblocks[BLOCK_POS_RIGHT]) || $editing || isadmin()) {
         echo '<td style="width: '.$preferred_width_right.'px;" id="right-column">';
         if (isadmin()) {
-            echo '<div align="center">'.update_course_icon($site->id).'</div>';
+            echo '<div align="center">'.update_course_icon($SITE->id).'</div>';
             echo '<br />';
         }
         blocks_print_group($PAGE, $pageblocks[BLOCK_POS_RIGHT]);
