@@ -45,11 +45,16 @@
                   "", "", true, update_module_button($cm->id, $course->id, $strglossary), 
                   navmenu($course, $cm));
 
+    $entry = get_record("glossary_entries","id", $entry);
+
+    if (($entry->userid <> $USER->id) and !isteacher($course->id)) {
+        error("You can't delete other people's entries!");
+    }
+
 /// If data submitted, then process and store.
     
     if ($confirm) { // the operation was confirmed.
         // if it is an imported entry, just delete the relation
-        $entry = get_record("glossary_entries","id", $entry);
 
         if ( $entry->sourceglossaryid ) {
             $entry->glossaryid = $entry->sourceglossaryid;
@@ -74,7 +79,7 @@
     } else {        // the operation has not been confirmed yet so ask the user to do so
 
         notice_yesno("<b>$entryfields->concept</b><p>$strareyousuredelete</p>",
-                      "deleteentry.php?id=$cm->id&mode=delete&confirm=1&entry=".s($entry)."&prevmode=$prevmode&hook=$hook",
+                      "deleteentry.php?id=$cm->id&mode=delete&confirm=1&entry=".s($entry->concept)."&prevmode=$prevmode&hook=$hook",
                       "view.php?id=$cm->id&mode=$prevmode&hook=$hook");
 
     }

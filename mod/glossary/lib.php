@@ -710,8 +710,8 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry,$mode="",$ho
         //Decide if an entry is editable:
         // -It isn't a imported entry (so nobody can edit a imported (from secondary to main) entry)) and
         // -The user is teacher or he is a student with time permissions (edit period or editalways defined).
-        $ineditperiod = (time() - $entry->timemodified <  $CFG->maxeditingtime);
-        if ( !$importedentry and ($isteacher or ($entry->userid == $USER->id and ($glossary->editalways or $ineditperiod)))) {
+        $ineditperiod = ((time() - $entry->timemodified <  $CFG->maxeditingtime) || $glossary->editalways);
+        if ( !$importedentry and ($isteacher or ($entry->userid == $USER->id and $ineditperiod))) {
             $return .= " <a title=\"" . get_string("delete") . "\" href=\"deleteentry.php?id=$cm->id&mode=delete&entry=$entry->id&prevmode=$mode&hook=$hook\"><img src=\"";
             $return .= $icon;
             $return .= "\" height=11 width=11 border=0></a> ";
@@ -1556,7 +1556,8 @@ function glossary_print_comment($course, $cm, $glossary, $entry, $comment) {
     echo format_text($comment->comment, $comment->format);
 
     echo "<div align=right><p align=right>";
-    if ( (time() - $comment->timemodified <  $CFG->maxeditingtime and $USER->id == $comment->userid)  or isteacher($course->id) ) {
+    $ineditperiod = ((time() - $comment->timemodified <  $CFG->maxeditingtime) || $glossary->editalways);
+    if ( ($ineditperiod && $USER->id == $comment->userid)  or isteacher($course->id) ) {
         echo "<a href=\"comment.php?id=$cm->id&eid=$entry->id&cid=$comment->id&action=edit\"><img  
                alt=\"" . get_string("edit") . "\" src=\"$CFG->pixpath/t/edit.gif\" height=11 width=11 border=0></a> ";
     }

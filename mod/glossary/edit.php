@@ -192,6 +192,8 @@ if ( $confirm ) {
         $newentry->casesensitive = $form->casesensitive;
         $newentry->fullmatch = $form->fullmatch;
         $newentry->aliases = "";
+        $newentry->userid = $form->userid;
+        $newentry->timemodified = $form->timemodified;
 
         if ( $aliases = get_records("glossary_alias","entryid",$e) ) {
             foreach ($aliases as $alias) {
@@ -232,6 +234,9 @@ if (!isset($newentry->fullmatch)) {
 if (!isset($newentry->definition)) {
     $newentry->definition = "";
 }
+if (!isset($newentry->timemodified)) {
+    $newentry->timemodified = 0;
+}
 $strglossary = get_string("modulename", "glossary");
 $strglossaries = get_string("modulenameplural", "glossary");
 $stredit = get_string("edit");
@@ -246,6 +251,16 @@ print_header_simple(strip_tags("$glossary->name"), "",
              "<A HREF=\"index.php?id=$course->id\">$strglossaries</A> ->
               <A HREF=\"view.php?id=$cm->id\">$glossary->name</A> -> $stredit", "",
               "", true, "", navmenu($course, $cm));
+
+$ineditperiod = ((time() - $newentry->timemodified <  $CFG->maxeditingtime) || $glossary->editalways);
+if ( (!$ineditperiod  || $USER->id != $newentry->userid) and !isteacher($course->id) and $e) {
+                if ( $USER->id != $newentry->userid ) {
+                    error("You can't edit other people's entries!");
+                } elseif (!$ineditperiod) {
+                    error("You can't edit this. Time expired!");
+                }
+                die;
+            }
 
     echo '<p align="center"><font size="3"><b>' . stripslashes_safe($glossary->name);
     echo '</b></font></p>';

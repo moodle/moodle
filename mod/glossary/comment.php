@@ -71,6 +71,9 @@
 /// Input section
 
     if ( $action == "delete" ) {
+        if (($comment->userid <> $USER->id) and !isteacher($glossary->course)) {
+            error("You can't delete other people's comments!");
+        }
         if ( $confirm ) {
             delete_records("glossary_comments","id", $cid);             
 
@@ -105,16 +108,13 @@
         }
     } else {
         if ( $action == "edit" ) {
-            if ( (time() - $comment->timemodified >= $CFG->maxeditingtime or 
-                  $USER->id != $comment->userid) and !isteacher($course->id) ) {
-                echo "<center><strong>";
+            $ineditperiod = ((time() - $comment->timemodified <  $CFG->maxeditingtime) || $glossary->editalways);
+            if ( (!$ineditperiod || $USER->id != $comment->userid) and !isteacher($course->id) ) {
                 if ( $USER->id != $comment->userid ) {
-                    echo get_string("youarenottheauthor","glossary",$CFG->maxeditingtime);
+                    error("You can't edit other people's comments!");
                 } elseif (time() - $comment->timemodified >= $CFG->maxeditingtime ) {
-                    echo get_string("maxtimehaspassed","glossary",$CFG->maxeditingtime);
+                    error("You can't edit this. Time expired!");
                 }
-                echo "</strong></center>";
-                print_footer($course);
                 die;
             }
         }
