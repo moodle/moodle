@@ -165,7 +165,7 @@
         $delete = "<a href=\"modules.php?delete=$module->name\">$strdelete</a>";
 
         if (file_exists("$CFG->dirroot/mod/$module->name/config.html")) {
-            $settings = "<a href=\"module.php?module=$module->name\">$strsettings</a>";
+            $settings = "<a href=\"module.php?module=$module->name&sesskey=$USER->sesskey\">$strsettings</a>";
         } else {
             $settings = "";
         }

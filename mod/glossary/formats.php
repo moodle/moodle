@@ -32,7 +32,7 @@
             }
             update_record("glossary_formats",$displayformat);
         }
-        redirect("../../admin/module.php?module=glossary#formats");
+        redirect("../../admin/module.php?sesskey=$USER->sesskey&module=glossary#formats");
         die;
     } elseif ( $mode == 'edit' and $form) {
         
@@ -44,7 +44,7 @@
         $displayformat->sortorder   = $form->sortorder;
         
         update_record("glossary_formats",$displayformat);
-        redirect("../../admin/module.php?module=glossary#formats");
+        redirect("../../admin/module.php?sesskey=$USER->sesskey&module=glossary#formats");
         die;
     }
     
@@ -57,7 +57,7 @@
     print_header("$strmodulename: $strconfiguration", $site->fullname,
                   "<a href=\"../../admin/index.php\">$stradmin</a> -> ".
                   "<a href=\"../../admin/configure.php\">$strconfiguration</a> -> ".
-                  "<a href=\"../../admin/modules.php\">$strmanagemodules</a> -> <a href=\"../../admin/module.php?module=glossary\">$strmodulename</a> -> $strdisplayformats");
+                  "<a href=\"../../admin/modules.php\">$strmanagemodules</a> -> <a href=\"../../admin/module.php?module=glossary&sesskey=$USER->sesskey\">$strmodulename</a> -> $strdisplayformats");
 
     print_heading($strmodulename . ': ' . get_string("displayformats","glossary"));
 
