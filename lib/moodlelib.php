@@ -406,12 +406,12 @@ function navmenu($course, $cm=NULL) {
         $strsection = get_string("topic");
     }
 
-    if (!$array = unserialize($course->modinfo)) {
+    if (!$modinfo = unserialize($course->modinfo)) {
         return "";
     }
     $section = -1;
     $selected = "";
-    foreach ($array as $mod) {
+    foreach ($modinfo as $mod) {
         if ($mod->section > 0 and $section <> $mod->section) {
             $menu[] = "-------------- $strsection $mod->section --------------";
         }
