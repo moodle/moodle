@@ -84,7 +84,14 @@
 
 
     if (! $questions = quiz_get_attempt_responses($attempt)) {
-        error("Could not reconstruct quiz results for attempt $attempt->id!");
+        if ($user = get_record("user", "id", $attempt->userid)) {
+            $fullname = fullname($user);
+        } else {
+            $fullname = "????";
+        }
+        print_heading(get_string("attemptincomplete", "quiz", $fullname));
+        print_footer($course);
+        exit;
     }
 
     quiz_remove_unwanted_questions($questions, $quiz);
