@@ -527,6 +527,9 @@ function main_upgrade($oldversion=0) {
         execute_sql('UPDATE '.$CFG->prefix.'course SET idnumber = shortname');   // By default
     }
 
+    if ($oldversion < 2004062600) {
+        table_column('course', '', 'cost', 'varchar', '10', '', '', 'not null', 'lang');
+    }
 
     return $result;
 

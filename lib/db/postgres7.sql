@@ -34,6 +34,7 @@ CREATE TABLE prefix_course (
    groupmode integer NOT NULL default '0',
    groupmodeforce integer NOT NULL default '0',
    lang varchar(10) NOT NULL default '',
+   cost varchar(10) NOT NULL default '',
    timecreated integer NOT NULL default '0',
    timemodified integer NOT NULL default '0'
 );

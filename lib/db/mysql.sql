@@ -56,6 +56,7 @@ CREATE TABLE `prefix_course` (
   `groupmode` int(4) unsigned NOT NULL default '0',
   `groupmodeforce` int(4) unsigned NOT NULL default '0',
   `lang` varchar(10) NOT NULL default '',
+  `cost` varchar(10) NOT NULL default '',
   `timecreated` int(10) unsigned NOT NULL default '0',
   `timemodified` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`),
