@@ -17,7 +17,7 @@ class enrolment_plugin extends enrolment_base {
 function get_student_courses(&$user) {
     global $CFG;
 
-    parent::get_student_records($user);
+    parent::get_student_courses($user);
 
 
     // This is a hack to workaround what seems to be a bug in ADOdb with accessing 
