@@ -98,7 +98,7 @@ function chat_print_recent_activity($course, $isteacher, $timestart) {
 
     global $CFG;
 
-    if (!$chatusers = get_records_sql("SELECT cu.chatid, u.firstname, u.lastname
+    if (!$chatusers = get_records_sql("SELECT u.id, cu.chatid, u.firstname, u.lastname
                                         FROM {$CFG->prefix}chat_users as cu,
                                              {$CFG->prefix}user as u
                                        WHERE cu.userid = u.id 
