@@ -1,10 +1,10 @@
 <?PHP // $Id$ 
-      // pix.php - created with Moodle 1.2 development (2004021000)
+      // pix.php - created with Moodle 1.3 development (2004032800)
 
 
 $string['angry'] = 'enfadat';
 $string['approve'] = 'd\'acord';
-$string['biggrin'] = 'riallada';
+$string['biggrin'] = 'rialla';
 $string['blackeye'] = 'ull tapat';
 $string['blush'] = 'avergonyit';
 $string['clown'] = 'pallasso';
@@ -15,11 +15,11 @@ $string['kiss'] = 'petó';
 $string['mixed'] = 'indecís';
 $string['sad'] = 'trist';
 $string['shy'] = 'tímid';
-$string['sleepy'] = 'adormit';
+$string['sleepy'] = 'somnolent';
 $string['smiley'] = 'somriure';
 $string['surprise'] = 'sorprès';
 $string['thoughtful'] = 'pensarós';
-$string['tongueout'] = 'treure la llengua';
+$string['tongueout'] = 'burleta';
 $string['wideeyes'] = 'ulls oberts';
 $string['wink'] = 'fer l\'ullet';
 
