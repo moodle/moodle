@@ -57,6 +57,8 @@ define('PARAM_HOST',    0x0040);  // FQDN or IPv4 dotted quad
 define('PARAM_URL',     0x0080);  
 define('PARAM_LOCALURL',0x0180);  // NOT orthogonal to the others! Implies PARAM_URL!
 define('PARAM_CLEANFILE',0x0200);
+define('PARAM_ALPHANUM',0x0400);  //numbers or letters only
+define('PARAM_BOOL',    0x0800);  //convert to value 1 or 0 using empty()
 
 /// PARAMETER HANDLING ////////////////////////////////////////////////////
 
@@ -114,6 +116,14 @@ function clean_param($param, $options) {
 
     if ($options & PARAM_ALPHA) {        // Remove everything not a-z
         $param = eregi_replace('[^a-z]', '', $param);
+    }
+
+    if ($options & PARAM_ALPHANUM) {     // Remove everything not a-zA-Z0-9
+        $param = eregi_replace('[^A-Za-z0-9]', '', $param);
+    }
+
+    if ($options & PARAM_BOOL) {         // Convert to 1 or 0
+        $param = empty($param) ? 0 : 1;
     }
 
     if ($options & PARAM_NOTAGS) {       // Strip all tags completely
