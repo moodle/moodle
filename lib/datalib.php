@@ -1364,14 +1364,10 @@ function get_users_unconfirmed($cutofftime=2000000000) {
 */
 function get_users_longtimenosee($cutofftime) {
     global $CFG;
-
-    $db->debug = true;
-    return get_records_sql("SELECT DISTINCT u.* 
-                              FROM {$CFG->prefix}user u, 
-                                   {$CFG->prefix}user_students s
-                             WHERE u.lastaccess > '0' 
-                               AND u.lastaccess < '$cutofftime' 
-                               AND u.id = s.userid ");
+    return get_records_sql("SELECT DISTINCT *
+                              FROM {$CFG->prefix}user_students
+                             WHERE timeaccess > '0' 
+                               AND timeaccess < '$cutofftime' ");
 }
 
 

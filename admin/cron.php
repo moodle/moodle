@@ -54,10 +54,10 @@
 
         if ($CFG->longtimenosee) { // value in days
             $longtime = $timenow - ($CFG->longtimenosee * 3600 * 24);
-            if ($users = get_users_longtimenosee($longtime)) {
-                foreach ($users as $user) {
-                    if (unenrol_student($user->id)) {
-                        echo "Deleted student enrolment for $user->firstname $user->lastname ($user->id)\n";
+            if ($students = get_users_longtimenosee($longtime)) {
+                foreach ($students as $student) {
+                    if (unenrol_student($student->userid, $student->course)) {
+                        echo "Deleted student enrolment for user $student->userid from course $student->course\n";
                     }
                 }
             }
