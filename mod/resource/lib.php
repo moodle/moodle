@@ -32,18 +32,18 @@ if (!isset($CFG->resource_parametersettings)) {
     set_config("resource_parametersettings", "0");
 }  
 
-$RESOURCE_WINDOW_OPTIONS = array("resizable", "scrollbars", "directories", "location", 
-                                 "menubar", "toolbar", "status", "height", "width");
+$RESOURCE_WINDOW_OPTIONS = array('resizable', 'scrollbars', 'directories', 'location', 
+                                 'menubar', 'toolbar', 'status', 'height', 'width');
 
 foreach ($RESOURCE_WINDOW_OPTIONS as $popupoption) {
     $popupoption = "resource_popup$popupoption";
     if (!isset($CFG->$popupoption)) {
-        if ($popupoption == "resource_popupheight") {
+        if ($popupoption == 'resource_popupheight') {
             set_config($popupoption, 450);
-        } else if ($popupoption == "resource_popupwidth") {
+        } else if ($popupoption == 'resource_popupwidth') {
             set_config($popupoption, 620);
         } else {
-            set_config($popupoption, "checked");
+            set_config($popupoption, 'checked');
         }
     }  
 }

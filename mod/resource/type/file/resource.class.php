@@ -491,17 +491,22 @@ function setup($form) {
                 $option = explode('=', trim($rawoption));
                 $optionname = $option[0];
                 $optionvalue = $option[1];
-                if ($optionname == "height" or $optionname == "width") {
+                if ($optionname == 'height' or $optionname == 'width') {
                     $window->$optionname = $optionvalue;
                 } else if ($optionvalue) {
-                    $window->$optionname = "checked=\"checked\"";
+                    $window->$optionname = 'checked="checked"';
                 }
             }
         }
     } else {
         foreach ($RESOURCE_WINDOW_OPTIONS as $optionname) {
             $defaultvalue = "resource_popup$optionname";
-            $window->$optionname = $CFG->$defaultvalue;
+
+            if ($optionname == 'height' or $optionname == 'width') {
+                $window->$optionname = $CFG->$defaultvalue;
+            } else if ($CFG->$defaultvalue) {
+                $window->$optionname = 'checked="checked"';
+            }
         }
 
         $windowtype = ($CFG->resource_popup) ? 'popup' : 'page';

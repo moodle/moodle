@@ -31,12 +31,12 @@
 </script>
 
 
-        <p><b><?php echo $strfilename ?>:</b></p>
+        <b><?php echo $strfilename ?>:</b>
     </td>
     <td>
     <?php
-        echo "<input name=\"reference\" size=\"90\" value=\"$form->reference\" alt=\"reference\" /><br />";
-        button_to_popup_window ("/files/index.php?id=$form->course&choose=form.reference", "coursefiles", $strchooseafile, 500, 750, $strchooseafile);
+        echo "<input type=\"text\" name=\"reference\" size=\"90\" value=\"$form->reference\" alt=\"reference\" /><br />";
+        button_to_popup_window ("/files/index.php?id=$form->course&amp;choose=form.reference", "coursefiles", $strchooseafile, 500, 750, $strchooseafile);
         echo "<input type=\"button\" name=\"searchbutton\" value=\"$strsearch ...\" ".
              "onclick=\"return window.open('$CFG->resource_websearch', 'websearch', 'menubar=1,location=1,directories=1,toolbar=1,scrollbars,resizable,width=800,height=600');\" />\n";
     ?>
@@ -46,7 +46,7 @@
 <tr><td colspan="2"><hr /></td></tr>
 
 <tr>
-    <td align="right"><p><b><?php print_string("display", "resource") ?>:</b></p></td>
+    <td align="right"><b><?php print_string("display", "resource") ?>:</b></td>
     <td>
         <input type="button" value="hide settings" id="windowsettingsbutton" onclick="javascript: return showhide('windowsettings');" />
         <input type="hidden" name="windowsettingspref" id="windowsettingspref" 
@@ -130,7 +130,7 @@
 </td></tr>
 
 <tr>
-    <td align="right"><p><b><?php print_string("parameters", "resource") ?>:</b></p></td>
+    <td align="right"><b><?php print_string("parameters", "resource") ?>:</b></td>
     <td>
         <input type="button" value="hide settings" id="parametersettingsbutton" onclick="javascript: return showhide('parametersettings');" />
         <input type="hidden" name="parametersettingspref" id="parametersettingspref" 
@@ -145,8 +145,8 @@
 <table align="center">
 
         <tr>
-            <td align="center"><p><?php print_string("parameter", "resource") ?></p></td>
-            <td align="center"><p><?php print_string("variablename", "resource") ?></p></td>
+            <td align="center"><?php print_string("parameter", "resource") ?></td>
+            <td align="center"><?php print_string("variablename", "resource") ?></td>
         </tr>
 
 <?php
