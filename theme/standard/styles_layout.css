@@ -221,6 +221,10 @@ table.formtable td {
     margin-left: 30px;
 }
 
+.unread {
+    padding-right:2px;
+} 
+
 
 /* calendar, course, weblib,php, attandance
 dialouge, exercise, forum, lesson, quiz */
