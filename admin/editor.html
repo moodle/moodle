@@ -1,4 +1,4 @@
-<form method="post" action="<?php print($_SERVER['PHP_SELF']);?>">
+<form method="post" action="<?php print($GLOBALS['ME']);?>">
 <table border="0" cellpadding="4" cellspacing="2">
 <tr valign=top>
     <td align=right><p>htmleditor:</td>
@@ -75,7 +75,7 @@
 </table>
 </form>
 
-<form method="post" action="<?php print($_SERVER['PHP_SELF']);?>">
+<form method="post" action="<?php print($GLOBALS['ME']);?>">
 <center>
 <input type="submit" name="resettodefaults" value="<?php print_string('editorresettodefaults') ?>" />
 </center>
