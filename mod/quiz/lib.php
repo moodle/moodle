@@ -186,8 +186,11 @@ function quiz_cron () {
 }
 
 function quiz_grades($quizid) {
-/// Must return an array of grades, indexed by user.  The grade is called "grade".
-    return get_records("quiz_grades", "quiz", $quizid, "user ASC", "user,grade");
+/// Must return an array of grades, indexed by user, and a max grade.
+
+    $return->grades = get_records_sql_menu("SELECT user,grade FROM quiz_grades WHERE quiz = '$quizid'");
+    $return->maxgrade = get_field("quiz", "grade", "id", "$quizid");
+    return $return;
 }
 
 

@@ -218,9 +218,11 @@ function assignment_print_recent_activity(&$logs, $isteacher=false) {
 }
 
 function assignment_grades($assignmentid) {
-/// Must return an array of grades, indexed by user.  The grade is called "grade".
+/// Must return an array of grades, indexed by user, and a max grade.
 
-    return get_records("assignment_submissions", "assignment", $assignmentid, "user ASC", "user,grade");
+    $return->grades = get_records_sql_menu("SELECT user,grade FROM assignment_submissions WHERE assignment = '$assignmentid'");
+    $return->maxgrade = get_field("assignment", "grade", "id", "$assignmentid");
+    return $return;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////

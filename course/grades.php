@@ -18,6 +18,7 @@
 
     $strgrades = get_string("grades");
     $strgrade = get_string("grade");
+    $strmax = get_string("maximumshort");
 
 
 /// Otherwise fill and print the form.
@@ -56,6 +57,14 @@
                         require_once($libfile);
                         $gradefunction = $mod->modname."_grades";
                         if (function_exists($gradefunction)) {   // Skip modules without grade function
+                            $modgrades = $gradefunction($mod->instance);
+
+                            if ($modgrades->maxgrade) {
+                                $maxgrade = "<BR>$strmax: $modgrades->maxgrade";
+                            } else {
+                                $maxgrade = "";
+                            }
+
                             $image = "<A HREF=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\"".
                                      "   TITLE=\"$mod->modfullname\">".
                                      "<IMG BORDER=0 VALIGN=absmiddle SRC=\"../mod/$mod->modname/icon.gif\" ".
@@ -63,12 +72,10 @@
                             $columns[] = "$image ".
                                          "<A HREF=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\">".
                                          "$instance->name".
-                                         "</A>";
-                            
-                            $modgrades = $gradefunction($mod->instance);
+                                         "</A>$maxgrade";
 
                             foreach ($students as $student) {
-                                $grades[$student->id][] = $modgrades[$student->id]->grade; // may be empty, that's ok
+                                $grades[$student->id][] = $modgrades->grades[$student->id]; // may be empty, that's ok
                             }
                         }
                     }
@@ -90,6 +97,8 @@
         $student = $students[$studentid];
         $picture = print_user_picture($student->id, $course->id, $student->picture, false, true);
         $name = array ("$picture", "$student->firstname&nbsp;$student->lastname");
+
+        
         $table->data[] = array_merge($name, $gradelist);
     }
 
