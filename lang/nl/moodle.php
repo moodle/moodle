@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004101900)
+      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004111000)
 
 
 $string['action'] = 'Actie';
@@ -118,7 +118,6 @@ $string['backupusershelp'] = 'Selecteer als je alle gebruikers op de server of a
 $string['backupversion'] = 'Versie backup';
 $string['blockconfiga'] = 'Een $a blok configureren';
 $string['blockconfigbad'] = 'Dit blok is niet juist geïmplementeerd en kan dus geen configuratie-interface tonen.Vak: ';
-$string['blockconfigin'] = 'Vak: een blok in $a configureren';
 $string['blockdeleteconfirm'] = 'Je gaat het blok \'$a\' volledig verwijderen. Hiermee zal alles in de databank dat met dit blok geassocieerd is verwijderd worden. Ben je ZEKER dat je hiermee verder wil gaan?';
 $string['blockdeletefiles'] = 'Alle gegevens die met het blok \'$a->block\' geassocieerd zijn, zijn verwijderd uit de databank. Om het verwijderen af te ronden (en om te verhinderen dat het blok zich opnieuw zou installeren), moet je de map $a->directory van je server verwijderen';
 $string['blocks'] = 'Blokken';
@@ -612,7 +611,7 @@ $string['loginsite'] = 'Op de site inloggen';
 $string['loginsteps'] = 'Hallo! Om volledige toegang tot de vakken te krijgen moet je even de tijd nemen om een nieuwe account voor jezelf aan te maken op deze website. 
 Elk vak kan ook een eenmalige \"Vaksleutel\" hebben die je pas later nodig hebt. Hier zijn de stappen die je moet volgen:
 <ol>
-<li>Vul het formulier <a href=\"=$a\">Nieuwe account</a> in.</li>
+<li>Vul het formulier <a href=\"$a\">Nieuwe account</a> in.</li>
 <li>Er wordt meteen een e-mail verstuurd naar je e-mailadres.<li>
 <li>Lees de e-mail en klik op de link die erin staat.</li>
 <li>Je account wordt bevestigd en je bent dan ingelogd.</li>
