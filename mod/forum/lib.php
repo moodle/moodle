@@ -307,6 +307,9 @@ function forum_user_complete($course, $user, $mod, $forum) {
 }
 
 function forum_print_recent_activity($course, $isteacher, $timestart) {
+/// Given a course and a date, prints a summary of all the new 
+/// messages posted in the course since that date
+
     global $CFG;
 
     $heading = false;
