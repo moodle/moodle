@@ -133,6 +133,7 @@ $string['configcountry'] = 'Als je hier een land invult zal dit land als standaa
 $string['configdebug'] = 'Als je dit aan zet zullen er meer PHP-fouten op het scherm worden weergegeven. Dit is alleen maar handig voor ontwikkelaars van de applicatie.';
 $string['configerrorlevel'] = 'Kies hoeveel PHP waarschuwingen je wilt dat Moodle laat zien. \'Normaal\' is meestal de beste keuze.
 ';
+$string['configfilteruploadedfiles'] = 'Door deze optie in te schakelen gaat Moodle alle geüploade HTML en tekstbestanden door de gekozen filters halen voor ze getoond worden';
 $string['configforcelogin'] = 'Standaard kunnen de startpagina van de site en de lijst van de vakken (maar niet de vakken zelf) bekeken worden door iedereen, zonder zich aan te melden op de site. Als je wil afdwingen dat er moet aangemeld worden voor er maar iets van de site te zien is, dan kan dat door deze instelling aan te zetten.';
 $string['configframename'] = 'Als je Moodle in een webframe opneemt (embed), zet de naam van het frame dan hier. In alle andere gevallen moet de waarde \'_top\' blijven staan.';
 $string['configfullnamedisplay'] = 'Deze instelling bepaalt hoe de volledige namen getoond worden. Voor de meeste enkeltalige sites is de beste instelling de standaardinstelling, nl \"voornaam + achternaam\", maar je kunt er voor kiezen de achternaam te verbergen of de gekozen taalinstelling te volgen (sommige talen gebruiken een andere volgorde).';
