@@ -1367,7 +1367,11 @@ function quiz_grade_attempt_results($quiz, $questions) {
             if (!$question = get_record("quiz_questions", "id", $question->random)) {
                 error("Could not find the real question behind this random question!");
             }
-            $question->answer = $randomquestion->answer;
+            if (isset($randomquestion->answer)) {
+                $question->answer = $randomquestion->answer;
+            } else {
+                $question->answer = "";
+            }
             $question->grade = $grades[$randomquestion->id];
         } else {
             $question->grade = $grades[$question->id];
