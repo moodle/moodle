@@ -67,12 +67,8 @@
         }
     
     
-        /// Delete users who haven't confirmed within seven days
+        /// Delete users who haven't confirmed within required period
 
-        if (empty($CFG->deleteunconfirmed)) { // value in hours
-            $CFG->deleteunconfirmed = 168;  
-        }
-    
         $oneweek = $timenow - ($CFG->deleteunconfirmed * 3600);
         if ($users = get_users_unconfirmed($oneweek)) {
             foreach ($users as $user) {

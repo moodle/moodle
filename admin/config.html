@@ -178,6 +178,30 @@
     </td>
 </tr>
 <tr valign=top>
+	<td align=right><p>deleteunconfirmed:</td>
+	<td>
+    <?php 
+       unset($options);
+       $options[0]    = get_string("never");
+       $options[168]  = get_string("numdays", "", 7);
+       $options[144]  = get_string("numdays", "", 6);
+       $options[120]  = get_string("numdays", "", 5);
+       $options[96]   = get_string("numdays", "", 4);
+       $options[72]   = get_string("numdays", "", 3);
+       $options[48]   = get_string("numdays", "", 2);
+       $options[24]   = get_string("numdays", "", 1);
+       $options[12]   = get_string("numhours", "", 12);
+       $options[6]    = get_string("numhours", "", 6);
+       $options[1]    = get_string("numhours", "", 1);
+
+       choose_from_menu ($options, "deleteunconfirmed", $config->deleteunconfirmed, "", "", "");
+    ?>
+    </td>
+    <td>
+    <?php print_string("configdeleteunconfirmed") ?>
+    </td>
+</tr>
+<tr valign=top>
 	<td align=right><p>loglifetime:</td>
 	<td>
     <?php 
