@@ -264,42 +264,44 @@
         $status = true;
 
         //Get the answers array
-        $answers = $info['#']['ANSWERS']['0']['#']['ANSWER'];
+        if (isset($info['#']['ANSWERS']['0']['#']['ANSWER'])) {
+            $answers = $info['#']['ANSWERS']['0']['#']['ANSWER'];
 
-        //Iterate over answers
-        for($i = 0; $i < sizeof($answers); $i++) {
-            $ans_info = $answers[$i];
-            //traverse_xmlize($ans_info);                                                                 //Debug
-            //print_object ($GLOBALS['traverse_array']);                                                  //Debug
-            //$GLOBALS['traverse_array']="";                                                              //Debug
-
-            //We'll need this later!!
-            $oldid = backup_todb($ans_info['#']['ID']['0']['#']);
-
-            //Now, build the QUIZ_ANSWERS record structure
-            $answer->question = $new_question_id;
-            $answer->answer = backup_todb($ans_info['#']['ANSWER_TEXT']['0']['#']);
-            $answer->fraction = backup_todb($ans_info['#']['FRACTION']['0']['#']);
-            $answer->feedback = backup_todb($ans_info['#']['FEEDBACK']['0']['#']);
-
-            //The structure is equal to the db, so insert the quiz_answers
-            $newid = insert_record ("quiz_answers",$answer);
-
-            //Do some output
-            if (($i+1) % 50 == 0) {
-                echo ".";
-                if (($i+1) % 1000 == 0) {
-                    echo "<br>";
+            //Iterate over answers
+            for($i = 0; $i < sizeof($answers); $i++) {
+                $ans_info = $answers[$i];
+                //traverse_xmlize($ans_info);                                                                 //Debug
+                //print_object ($GLOBALS['traverse_array']);                                                  //Debug
+                //$GLOBALS['traverse_array']="";                                                              //Debug
+    
+                //We'll need this later!!
+                $oldid = backup_todb($ans_info['#']['ID']['0']['#']);
+    
+                //Now, build the QUIZ_ANSWERS record structure
+                $answer->question = $new_question_id;
+                $answer->answer = backup_todb($ans_info['#']['ANSWER_TEXT']['0']['#']);
+                $answer->fraction = backup_todb($ans_info['#']['FRACTION']['0']['#']);
+                $answer->feedback = backup_todb($ans_info['#']['FEEDBACK']['0']['#']);
+    
+                //The structure is equal to the db, so insert the quiz_answers
+                $newid = insert_record ("quiz_answers",$answer);
+    
+                //Do some output
+                if (($i+1) % 50 == 0) {
+                    echo ".";
+                    if (($i+1) % 1000 == 0) {
+                        echo "<br>";
+                    }
+                    backup_flush(300);
                 }
-                backup_flush(300);
-            }
-
-            if ($newid) {
-                //We have the newid, update backup_ids
-                backup_putid($restore->backup_unique_code,"quiz_answers",$oldid,
-                             $newid);
-            } else {
-                $status = false;
+    
+                if ($newid) {
+                    //We have the newid, update backup_ids
+                    backup_putid($restore->backup_unique_code,"quiz_answers",$oldid,
+                                 $newid);
+                } else {
+                    $status = false;
+                }
             }
         }
 
