@@ -62,10 +62,10 @@ $string['popupresourcelink'] = 'Si no, haga clic aquí: $a';
 $string['resourcetype'] = 'Tipo de recurso';
 $string['resourcetypedirectory'] = 'Mostrar un directorio';
 $string['resourcetypefile'] = 'Enlazar con un archivo o un sitio web';
-$string['resourcetypehtml'] = 'Componer una nueva página web';
+$string['resourcetypehtml'] = 'Componer una página web';
 $string['resourcetypelabel'] = 'Insertar una etiqueta';
 $string['resourcetypereference'] = 'Enviar una referencia';
-$string['resourcetypetext'] = 'Componer una nueva página de texto';
+$string['resourcetypetext'] = 'Componer una página de texto';
 $string['searchweb'] = 'Buscar una página web';
 $string['variablename'] = 'Nombre de la variable';
 
