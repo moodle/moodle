@@ -1,0 +1,233 @@
+
+<meta http-equiv="content-type" content="text/html;charset=EUC-JP">
+<p align=center><b>"GIFT" フォーマットのインポート</b></p>
+<p>GIFTは、Moodleのテスト・クイズ問題をテキストからインポートするフォーマットとして、
+幅広く利用できるものです。GIFTにおいては、多肢選択式問題、正誤選択問題（○×問題）、
+記述式問題、組み合わせ問題や数値問題を利用することができます。また各問題の中で、
+穴埋め式のフォーマットを利用することが出来ます。一つのテキストファイルの中で、
+複数の問題形式を用いることも出来ます。さらにこのフォーマットにおいては、
+問題に関するコメント・メモや各問題のタイトルを加えたり、解答に対するフィードバックを行ったり、
+解答に対して部分得点（%）を設定することも出来ます。</p>
+
+<p>テキストファイルを作成する時のエンコーディングは、各自のムードルで使用しているもの
+と同じである必要があります。テスト・クイズのテキストファイルの例は、
+<a href="../../../../mod/quiz/format/gift/examples.txt">gift/examples.txt</a>
+で見ることが出来ます。</p>
+
+<h3>問題形式</h3>
+
+<p><u>多肢選択式問題（と一般の説明）：</u><br />
+    多肢選択式問題を作成する時は、解答部分（{  }で囲まれている部分）に選択肢となる項目を記し、
+    それらの選択肢中の誤っている項目の前に(~)を、正しい項目の前に(=)を付けます。</p>
+    <pre>     Who's buried in Grant's tomb?{~Grant ~Jefferson =no one}</pre>
+
+    <p>作成する問題の中で<b>穴埋め式</b>を用いる時は、文章中の空欄の部分（解答部分）に自動的に下線が引かれます（このような_____下線です）。
+    穴埋め式を使用するためには、解答が埋め込まれる部分（下線を引きたい部分）に解答部分を設定し、答えを記入して下さい。</p>
+    <pre>     Grant is {~buried =entombed ~living} in Grant's tomb.</pre>
+
+    <p>文章の中に解答を挿入するような形の問題の場合には、この穴埋め式を用いて下線を作成することが出来ます。
+    どの問題形式で問題を作成するでも、穴埋め式を用いることが出来ます。</p>
+
+    <p>質問項目と質問項目の間は、一行空ける必要があります（２回改行を押す）。
+    各質問項目の選択肢にはそれぞれ一行ずつ用い、またそれらをインデントして表示をすると、
+    整ったフォーマットになります。下の例を見て下さい。</p>
+    <pre>     The American holiday of Thanksgiving is celebrated on the {
+         ~second
+         ~third
+         =fourth
+     } Thursday of November.
+     
+     Japanese characters originally came from what country? {
+         ~India
+         =China
+         ~Korea
+         ~Egypt}</pre>
+
+<p><u>記述式問題：</u><br />
+    記述式問題において、解答となる全ての項目の前に(=)を付けます。
+    そうすることで、これらの全てが正しい答えになるということを示します。
+    この問題形式では(~)の記号は使いません。</p>
+    <pre>     Who's buried in Grant's tomb?{=no one =nobody}
+
+     Two plus two equals {=four =4}.</pre>
+    <p>記述式問題への解答として、正解が<u>一つしかない場合</u>は、
+    (=)記号を付けずにそのまま答えを書くこともできますが、
+    正誤選択式問題（○×問題）と混乱しないように気をつける必要があります。</p>
+
+<p><u>正誤選択問題（○×問題）：:</u><br />
+    この問題形式では、問題として記されている文章が正しいか誤っているかを選択するものです。
+    問題を作成する時は、各文章の最後に{TRUE} {FALSE}、もしくは短縮して{T} {F}を記します。</p>
+    <pre>     Grant is buried in Grant's tomb.{F}
+
+     The sun rises in the east.{T}</pre>
+
+<p><u>組み合わせ式問題：</u><br />
+    二つの項目を組み合わせるために、まず(=)で始め、それぞれの項目を <b>-></b> の記号で分けます。
+    １つの問題の解答として、少なくとも３つの組み合わせが出来るようにする必要があります。</p>
+    <pre>     Matching Question. {
+         =subquestion1 -> subanswer1
+         =subquestion2 -> subanswer2
+         =subquestion3 -> subanswer3
+         }
+     
+     Match the following countries with their corresponding capitals. {
+         =Canada -> Ottawa
+         =Italy  -> Rome
+         =Japan  -> Tokyo
+         =India  -> New Delhi
+         }</pre>
+    <p>M組み合わせ問題では、解答へのフィードバックや部分得点の設定のオプションはありません。</p>
+
+<p><u>数値式問題：</u><br />
+    解答が数値である問題作成の場合は、解答部分の先頭に # を記入します。
+    これらの数値式問題には、正しい解答として認められる誤差の範囲を設定することができます。
+    その場合、正しい答えの後にコロン(：)を記入して設定します。
+    例えば、1.5から2.5までの範囲が正解として認められるのであれば、<u>{#2:0.5}</u>と記します。
+    これは、２からそれぞれ0.5の誤差（つまり1.5から2.5）を正解として認めるということを意味します。
+    誤差の許容範囲が設定されない場合は、許容範囲が0であると判断されます。</p>
+    <pre>     When was Ulysses S. Grant born? {#1822}
+
+     What is the value of pi (to 3 decimal places)? {#3.1415:0.0005}.</pre>
+
+     <p>また、数値式問題の解答は、<u>{#<i>最小値</i>..<i>最大値</i>}</u> と範囲を設定して書くことも出来ます。</p>
+    <pre>     What is the value of pi (to 3 decimal places)? {#3.141..3.142}.</pre>
+
+    <p>ムードルのブラウザーのインターフェイスでは、数値式問題で複数の解答を持つことをサポートしていませんが、
+    ムードルのコードやGIFTではそうすることが可能です。ここでは複数の数値の範囲を設定でき、
+    部分得点の設定なども行うことができます。数値式問題で複数の解答を用いる時は、記述式の問題のように(=)記号で区別します。</p>
+    <pre>     When was Ulysses S. Grant born? {#
+         =1822:0
+         =%50%1822:2}</pre>
+
+    <p>ここで注意なければならないのは、ムードルのブラウザーが数値式問題の複数の解答をサポートしていないので、
+    これらをムードルを通して見たり編集したりすることが出来ない点です。
+    複数の数値の解答のある問題を変更する唯一の方法は、
+    問題を削除してから再度インポートする（もしくは、phpMyAdmin等を利用する）ことです。</p>
+
+
+<h3>OPTIONS オプション</h3>
+
+    <p>GIFTのフィルターでは、これまで説明してきた基本的な問題形式に加え、
+    コメント・メモを加える、問題のタイトルを設定する、解答へのフィードバックを設定する、
+    部分得点を設定する等のオプションを利用することも出来ます。</p>
+
+<p><u>コメント・メモを加える：</u><br />
+    GIFTのフィルターでは、ムードルにはインポートされないコメントやメモを
+    同じテキストファイルに挿入することが出来ます。このオプション機能は、
+    ヘッダーとして用いたり、問題についての詳しい情報やメモを記入することを可能とします。
+    <u>//</u>で始まる文章（タブはスペースは数えません）はすべてフィルターに無視されます。
+
+    <pre>     // Subheading: Numerical questions below
+     What's 2 plus 2? {#4}</pre>
+
+<p><u>問題のタイトルを設定する</u><br />
+    各問題のタイトルはダブル・コロン <u>::</u> で始めダブル・コロン <u>::</u> で閉じます。</p>
+    <pre>     ::Kanji Origins::Japanese characters originally
+     came from what country? {=China}
+
+     ::Thanksgiving Date::The American holiday of Thanksgiving is 
+     celebrated on the {~second ~third =fourth} Thursday of November.</pre>
+    <p>問題のタイトルが設定されていない場合、ディフォルトとして問題文全体がタイトルとして用いられます。</p>
+
+<p><u>解答へのフィードバックを設定する</u><br />
+    それぞれの解答の後に[#]記号を記入してからコメントを記入することで、解答へのフィードバックを設定することが出来ます。</p>
+    <pre>     What's the answer to this multiple-choice question?{
+     ~wrong answer#feedback comment on the wrong answer
+     ~another wrong answer#feedback comment on this wrong answer
+     =right answer#Very good!}
+     
+     Who's buried in Grant's tomb?{
+     =no one#excellent answer!
+     =nobody#excellent answer!}
+     
+     Grant is buried in Grant's tomb.{FALSE#No one is buried in Grant's tomb.}</pre>
+
+    <p>多肢選択式問題では、生徒が選択した選択肢へのフィードバックのみが表示されます。
+    記述式問題では、生徒が正しい答えを記入した時のみフィードバックが表示されます。
+    正誤選択問題では、生徒が間違った時にフィードバックが表示されます。
+    従って、上記の最後の例では、生徒・学生が「正しい」と答えた時にフィードバックが表示されることになります。</p>
+
+<p><u>部分得点を設定する</u><br />
+    部分得点は、多肢選択式問題と記述式問題において利用することができ、
+    正解（100%）に対して何%の得点を割り当てるかを設定することで部分得点をできます。
+    多肢選択式問題においては、[~]記号の後、記述式問題においては[=]の後に、
+    ％記号で希望する割合の数字を囲んで設定します（例：%50%）。
+    このオプションは、解答へのフィードバックと一緒に使うことが出来ます。</p>
+    <pre>     Difficult question.{~wrong answer ~%50%half credit answer =full credit answer}
+          
+     ::Jesus' hometown::Jesus Christ was from {
+     ~Jerusalem#This was an important city, but the wrong answer.
+     ~%25%Bethlehem#He was born here, but not raised here.
+     ~%50%Galilee#You need to be more specific.
+     =Nazareth#Yes! That's right!}.
+     
+     ::Jesus' hometown:: Jesus Christ was from {
+     =Nazareth#Yes! That's right!
+     =%75%Nazereth#Right, but misspelled.
+     =%25%Bethlehem#He was born here, but not raised here.}</pre>
+    <p>上記の最後の二つの例は、基本的に同じ問題ですが、一つ目は多肢選択式問題であり、二つ目は記述式問題になっています。</p>
+
+    <p><font size="-1">ブラウザーからは見ることができない形で、部分得点の設定をすることが可能です。
+    そのような場合は、インポートした時に設定されている数値によって得点が計算されますが、
+    テストを受けている生徒・学生には普通にしか見えません。
+    しかし、そのような形で部分得点を設定した場合、教師がムードルによって問題の編集などを行う時に正しく表示されません。
+    プルダウンメニューは特定の値しか表示しないため、それらの値に部分得点の設定が一致していない場合は正しく表示されません。
+    ブラウザーのインターフェイスを使って問題の編集をする場合、部分得点の設定は、ブラウザーに表示されているものに変更されます。</font></p>
+
+<p><u>複数解答：</u><br />
+    複数解答のオプションは、多肢選択式問題において、二つ以上の選択肢を選択することで正解とする場合に用いられます。
+    複数解答のオプションを利用するためには、それぞれの答えに部分得点を設定します。
+    そうすることで、一つの項目を選択しただけでは、正解としての得点を得られなくなります。</p>
+    <pre>     What two people are entombed in Grant's tomb? {
+          ~No one
+          ~%50%Grant
+          ~%50%Grant's wife
+          ~Grant's father }</pre>
+
+    <p>上の例の場合に、(=)がどの項目にも用いられていない点と全項目の得点の合計が100%以下になっている点に注意して下さい。
+    そうではない場合は、Moodleは、エラーとして扱います。生徒・学生が、全項目選ぶことで100%を得ることがないように、
+    誤っている解答の項目にはマイナスを付けて-50%を設定しておくと良いでしょう。</p>
+
+    <pre>     What two people are entombed in Grant's tomb? {
+          ~%-50%No one
+          ~%50%Grant
+          ~%50%Grant's wife
+          ~%-50%Grant's father }</pre>
+<p><u>特別な記号 ~ = { } ：</u><br>
+    GIFTのフィルターはこの(<b> ~ = { } </b>)特別のコントロール記号を使います。
+    従って、普通の文字として、文章中に用いることが出来ません。
+    しかし、HTML Entitiesとして書けば、この文字を表示することが可能となります。
+    HTML Entities（コード）を使用することによって、これらのコントロール記号を直接
+    入力しなくても、ブラウザーで表示させることが出来ます。例えば、<u>&amp;#061;</u>を入力すれば、
+    ブラウザーで見る時には、イコール記号(=)が表示します。問題の例を見て下さい。</p>
+    <pre>    Which answer equals 5? {
+          ~&amp;#061; 2 + 2
+          =&amp;#061; 2 + 3
+          ~&amp;#061; 2 + 4  }</pre>
+    <p>これらの答えは <u>= 2 + 2</u>、<u>= 2 + 3</u>、<u>= 2 + 4</u>として表示します。
+    この方法を利用して、HTMLコードをコードとして表示することも可能となります。
+    以下のリストはこれらのコントロール記号のHTML Entitiesのコードが記されています。</p>
+    <pre>     記号       コード
+       ~        &amp;#126;
+       =        &amp;#061;
+       {        &amp;#123;
+       }        &amp;#125;
+       &lt;        &amp;lt;
+       &gt;        &amp;gt;</pre>
+
+<p><u>その他のオプション：</u><br />
+    記述式問題において、大文字、小文字の認識をするように設定することができます。その場合、以下のラインの中で、 0 を 1 に変更することで設定できます。<br />
+    <tt>$question-&gt;usecase = 0;  // Ignore case</tt></p>
+    <p>その他のオプションは、<b>gift/format.php</b>のインポートフィルターの編集において入手することが出来ます。</p>
+
+<p></p>
+<h3>CREDITS</h3>
+    <p>このGIFTのフィルターは、ムードル・コミュニティーの多くの方々の力を合わせて書かれたものです。
+    始めは穴埋め式フォーマットに基づいたものであり、これはMartin DougiamasやThomas Robb、その他にも
+    多くの人々によって作成されたコードを用いたものです。Paul Tsuchido Shewは2003年12月に、
+    コミュニティーからのアドバイスなどを統合し、さらに幅広いフォーマットとして、
+    このフィルターを作成しました。この「GIFT」という名前は、「General Import Format Technology」の
+    頭文字をとり名付けられたと思われますが、このようにシンプルなフィルターには、短く「GIFT」で良いと思います。
+
+    <p><font size="-1">GIFTドキュメンテーションの著者：Paul Tsuchido Shew http://ac.shew.jp. 日本語訳も同著者。<br/>
+     この翻訳の最新編集：2004.02.21.</font></p>
