@@ -37,6 +37,12 @@
  * @param string  $password
  *
 */
+
+// LDAP functions are reused by other auth libs
+if (!defined('AUTH_LDAP_NAME')) {
+    define('AUTH_LDAP_NAME', 'ldap');
+}
+
 function auth_user_login ($username, $password) {
 
     global $CFG;
@@ -288,7 +294,7 @@ function auth_get_users($filter='*', $dontlistcreated=false) {
             //quick way to get around binarystrings
             $user->guid=bin2hex($user->guid);
             //add authentication source stamp 
-            $user->auth='ldap';
+            $user->auth = AUTH_LDAP_NAME;
             $fresult[$user->username]=$user;
 
         }
@@ -568,7 +574,7 @@ function auth_sync_users ($bulk_insert_records = 1000, $do_updates=1) {
             // prep a few params
             $user->modified  = time();
             $user->confirmed = 1;
-            $user->auth      = 'ldap';
+            $user->auth      = AUTH_LDAP_NAME;
             
             // insert it
             $old_debug=$CFG->debug; 
