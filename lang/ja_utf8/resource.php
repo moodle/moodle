@@ -1,5 +1,5 @@
-<?php // $Id$ 
-      // resource.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005021000)
+<?PHP // $Id$ 
+      // resource.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005021800)
 
 
 $string['addresource'] = 'リソースを追加する';
@@ -78,6 +78,7 @@ $string['resourcetypehtml'] = 'ウェブページの作成';
 $string['resourcetypelabel'] = 'ラベルの挿入';
 $string['resourcetypetext'] = 'テキストページの作成';
 $string['searchweb'] = 'ウェブページを検索';
+$string['serverurl'] = '$CFG->wwwroot';
 $string['variablename'] = '変数名';
 
 ?>
