@@ -115,7 +115,7 @@
         }
         foreach ($order as $key => $qid) {
             $question = $questions["$qid"];
-            if ($question->type == "0" || $question->type == "1" || $question->type == "3")  {
+            if ($question->type == "0" || $question->type == "1" || $question->type == "3" || $question->type == "-1")  {
                 $myxls->InsertText("$question->text");
             }
             if ($question->type == "2" || $question->type == "3")  {
@@ -147,7 +147,7 @@
     
             foreach ($order as $key => $qid) {
                 $question = $questions["$qid"];
-                if ($question->type == "0" || $question->type == "1" || $question->type == "3")  {
+                if ($question->type == "0" || $question->type == "1" || $question->type == "3" || $question->type == "-1")  {
                     $myxls->InsertText( $results["$user"]["$qid"]["answer1"] );
                 }
                 if ($question->type == "2" || $question->type == "3")  {
@@ -172,7 +172,7 @@
     echo "surveyid    surveyname    userid    firstname    lastname    email    idnumber    time    ";
     foreach ($order as $key => $qid) {
         $question = $questions["$qid"];
-        if ($question->type == "0" || $question->type == "1" || $question->type == "3")  {
+        if ($question->type == "0" || $question->type == "1" || $question->type == "3" || $question->type == "-1")  {
             echo "$question->text    ";
         }
         if ($question->type == "2" || $question->type == "3")  {
@@ -198,7 +198,7 @@
 
         foreach ($order as $key => $qid) {
             $question = $questions["$qid"];
-            if ($question->type == "0" || $question->type == "1" || $question->type == "3")  {
+            if ($question->type == "0" || $question->type == "1" || $question->type == "3" || $question->type == "-1")  {
                 echo $results["$user"]["$qid"]["answer1"]."    ";
             }
             if ($question->type == "2" || $question->type == "3")  {
