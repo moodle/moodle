@@ -262,8 +262,15 @@ function print_recent_activity($course) {
     global $CFG, $USER, $COURSETEACHERCOLOR;
 
     if (! $USER->lastlogin ) {
-        echo "<P>Welcome to the course! Here you will find a list of what's new since your last login.</P>";
+        echo "<P ALIGN=CENTER><FONT SIZE=1>";
+        print_string("welcometocourse");
+        echo "</FONT></P>";
         return;
+    } else {
+        echo "<P ALIGN=CENTER><FONT SIZE=1>";
+        echo get_string("yourlastlogin").":<BR>"; 
+        echo userdate($USER->lastlogin, "%A, %e %b %Y, %H:%M");
+        echo "</FONT></P>";
     }
 
     if (! $logs = get_records_sql("SELECT * FROM log WHERE time > '$USER->lastlogin' AND course = '$course->id' ORDER BY time ASC")) {
@@ -278,7 +285,7 @@ function print_recent_activity($course) {
     foreach ($logs as $log) {
         if ($log->module == "course" and $log->action == "enrol") {
             if (! $heading) {
-                print_headline("New users:");
+                print_headline(get_string("newusers").":");
                 $heading = true;
                 $content = true;
             }
@@ -297,18 +304,21 @@ function print_recent_activity($course) {
             
                 switch ($log->action) {
                     case "add mod":
-                       $changelist["$log->info"] = array ("operation" => "add", "text" => "Added a ".$info[0].":<BR><A HREF=\"$CFG->wwwroot/course/$log->url\">$modname</A>");
+                       $stradded = get_string("addeda", "", get_string("modulename", $info[0]));
+                       $changelist["$log->info"] = array ("operation" => "add", "text" => "$stradded:<BR><A HREF=\"$CFG->wwwroot/course/$log->url\">$modname</A>");
                     break;
                     case "update mod":
+                       $strupdated = get_string("updatedthe", "", get_string("modulename", $info[0]));
                        if (! $changelist["$log->info"]) {
-                           $changelist["$log->info"] = array ("operation" => "update", "text" => "Updated the ".$info[0].":<BR><A HREF=\"$CFG->wwwroot/course/$log->url\">$modname</A>");
+                           $changelist["$log->info"] = array ("operation" => "update", "text" => "$strupdated:<BR><A HREF=\"$CFG->wwwroot/course/$log->url\">$modname</A>");
                        }
                     break;
                     case "delete mod":
                        if ($changelist["$log->info"]["operation"] == "add") {
                            $changelist["$log->info"] = NULL;
                        } else {
-                           $changelist["$log->info"] = array ("operation" => "delete", "text" => "Deleted a ".$info[0]);
+                           $strdeleted = get_string("deleteda", "", get_string("modulename", $info[0]));
+                           $changelist["$log->info"] = array ("operation" => "delete", "text" => $strdeleted);
                        }
                     break;
                 }
@@ -323,7 +333,7 @@ function print_recent_activity($course) {
             }
         }
         if (count($changes) > 0) {
-            print_headline("Course changes:");
+            print_headline(get_string("courseupdates").":");
             $content = true;
             foreach ($changes as $changeinfo => $change) {
                 echo "<P><FONT SIZE=1>".$change["text"]."</FONT></P>";
@@ -366,7 +376,7 @@ function print_recent_activity($course) {
                     }
                 }
                 if (! $heading) {
-                    print_headline("Discussion Posts:");
+                    print_headline(get_string("newforumposts").":");
                     $heading = true;
                     $content = true;
                 }
