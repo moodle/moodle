@@ -949,6 +949,28 @@ function main_upgrade($oldversion=0) {
         execute_sql('UPDATE `'.$CFG->prefix.'user` SET timezonename = \'\'');
     }
 
+    if ($oldversion < 2005032600) {
+        execute_sql('DROP TABLE '.$CFG->prefix.'dst_preset', false);
+        modify_database('',"CREATE TABLE prefix_timezone (
+                              id SERIAL PRIMARY KEY,
+                              name varchar(100) NOT NULL default '',
+                              year integer NOT NULL default '0',
+                              rule varchar(20) NOT NULL default '',
+                              gmtoff integer NOT NULL default '0',
+                              dstoff integer NOT NULL default '0',
+                              dst_month integer NOT NULL default '0',
+                              dst_startday integer NOT NULL default '0',
+                              dst_weekday integer NOT NULL default '0',
+                              dst_skipweeks integer NOT NULL default '0',
+                              dst_time varchar(5) NOT NULL default '00:00',
+                              std_month integer NOT NULL default '0',
+                              std_startday integer NOT NULL default '0',
+                              std_weekday integer NOT NULL default '0',
+                              std_skipweeks integer NOT NULL default '0',
+                              std_time varchar(5) NOT NULL default '00:00'
+                            );");
+    }
+
     return $result;
 }
 

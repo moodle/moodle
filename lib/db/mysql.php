@@ -1230,6 +1230,29 @@ function main_upgrade($oldversion=0) {
         execute_sql('UPDATE `'.$CFG->prefix.'user` SET timezonename = \'\'');
     }
 
+    if ($oldversion < 2005032600) {
+        execute_sql('DROP TABLE '.$CFG->prefix.'dst_preset', false);
+        modify_database('',"CREATE TABLE `prefix_timezone` (
+                              `id` int(10) NOT NULL auto_increment,
+                              `name` varchar(100) NOT NULL default '',
+                              `year` int(11) NOT NULL default '0',
+                              `rule` varchar(20) NOT NULL default '',
+                              `gmtoff` int(11) NOT NULL default '0',
+                              `dstoff` int(11) NOT NULL default '0',
+                              `dst_month` tinyint(2) NOT NULL default '0',
+                              `dst_startday` tinyint(3) NOT NULL default '0',
+                              `dst_weekday` tinyint(3) NOT NULL default '0',
+                              `dst_skipweeks` tinyint(3) NOT NULL default '0',
+                              `dst_time` varchar(5) NOT NULL default '00:00',
+                              `std_month` tinyint(2) NOT NULL default '0',
+                              `std_startday` tinyint(3) NOT NULL default '0',
+                              `std_weekday` tinyint(3) NOT NULL default '0',
+                              `std_skipweeks` tinyint(3) NOT NULL default '0',
+                              `std_time` varchar(5) NOT NULL default '00:00',
+                              PRIMARY KEY (`id`)
+                            ) TYPE=MyISAM COMMENT='Rules for calculating local wall clock time for users';");
+    }
+
     return $result;
 }
 
