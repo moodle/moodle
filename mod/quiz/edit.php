@@ -108,10 +108,13 @@
         
         // add question to quiz->questions
         $key = $_REQUEST['addquestion'];
+        $questions = array();
         if (!empty($modform->questions)) {
             $questions = explode(",", $modform->questions);
         }
-        $questions[] = $key;
+        if (!in_array($key, $questions)) {
+            $questions[] = $key;
+        }
         $modform->questions = implode(",", $questions);
         if (!set_field('quiz', 'questions', $modform->questions, 'id', $modform->instance)) {
             error('Could not save question list');
