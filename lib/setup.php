@@ -69,6 +69,33 @@ global $THEME;
         die;
     }
 
+/// Time to start counting
+    $PERF = new Object;
+    if(!empty($CFG->perfdebug)) {
+
+        if (function_exists('microtime')) {
+            $PERF->starttime = microtime();
+        }
+        if (function_exists('memory_get_usage')) {
+            $PERF->startmemory = memory_get_usage();
+        }
+        if (function_exists('posix_times')) {
+            $PERF->startposixtimes = posix_times();  
+        }
+        // Grab the load average for the last minute
+        // /proc will only work under some linux configurations
+        // while uptime is there under MacOSX/Darwin and other unices
+        if (is_readable('/proc/loadavg') && $loadavg = @file('/proc/loadavg')) {
+            list($PERF->server_load) = explode(' ', $loadavg[0]);
+            unset($loadavg);
+        } else if ( is_executable('/usr/bin/uptime') && $loadavg = `/usr/bin/uptime` ) {
+            if (preg_match('/load averages?: (\d+:\d+)/', $loadavg, $matches)) {
+                $PERF->server_load = $matches[1];
+            } else {
+                trigger_error('Could not parse uptime output!');
+            }
+        }
+    }
 
 /// If there are any errors in the standard libraries we want to know!
     error_reporting(E_ALL);
