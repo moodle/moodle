@@ -124,7 +124,9 @@ $CFG->admin = 'admin';
 // ALL DONE!  To continue installation, visit your main page with a browser
 //=========================================================================
 
-if (! @include_once("$CFG->dirroot/lib/setup.php"))  {       // Do not edit
+if (file_exists("$CFG->dirroot/lib/setup.php"))  {       // Do not edit
+    include_once("$CFG->dirroot/lib/setup.php");
+} else {
     if ($CFG->dirroot == dirname(__FILE__)) {
         echo "<p>Could not find this file: $CFG->dirroot/lib/setup.php</p>";
         echo "<p>Are you sure all your files have been uploaded?</p>";
@@ -135,6 +137,7 @@ if (! @include_once("$CFG->dirroot/lib/setup.php"))  {       // Do not edit
     }
     die;
 }
+
 
 // MAKE SURE WHEN YOU EDIT THIS FILE THAT THERE ARE NO SPACES, BLANK LINES, 
 // RETURNS, OR ANYTHING ELSE AFTER THE TWO CHARACTERS ON THE NEXT LINE.
