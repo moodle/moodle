@@ -49,6 +49,7 @@ CREATE TABLE `prefix_course` (
   `showrecent` smallint(5) unsigned NOT NULL default '1',
   `marker` int(10) unsigned NOT NULL default '0',
   `maxbytes` int(10) unsigned NOT NULL default '0',
+  `showreports` int(4) unsigned NOT NULL default '0',
   `visible` int(10) unsigned NOT NULL default '1',
   `timecreated` int(10) unsigned NOT NULL default '0',
   `timemodified` int(10) unsigned NOT NULL default '0',

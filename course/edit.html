@@ -128,6 +128,16 @@
 	</td>
 </tr>
 <tr valign=top>
+	<td><P><?php  print_string("showreports") ?>:</td>
+	<td><?php
+    unset($choices);
+    $choices["0"] = get_string("no");
+    $choices["1"] = get_string("yes");
+    choose_from_menu ($choices, "showreports", $form->showreports, "");
+    helpbutton("coursereports", get_string("activityreport")); ?>
+	</td>
+</tr>
+<tr valign=top>
 	<td><P><?php  print_string("maximumupload") ?>:</td>
 	<td><?php
     $choices = get_max_upload_sizes($CFG->maxbytes);

@@ -692,6 +692,7 @@ $string['showlistofcourses'] = "Show list of courses";
 $string['showonlytopic'] = "Show only topic \$a";
 $string['showonlyweek'] = "Show only week \$a";
 $string['showrecent'] = "Show recent activity";
+$string['showreports'] = "Show activity reports";
 $string['showtheselogs'] = "Show these logs";
 $string['showallcourses'] = "Show all courses";
 $string['site'] = "Site";

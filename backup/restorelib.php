@@ -318,6 +318,7 @@
             $course->numsections = addslashes($course_header->course_numsections);
             $course->showrecent = addslashes($course_header->course_showrecent);
             $course->maxbytes = addslashes($course_header->course_maxbytes);
+            $course->showreports = addslashes($course_header->course_showreports);
             $course->marker = addslashes($course_header->course_marker);
             $course->visible = addslashes($course_header->course_visible);
             $course->timecreated = addslashes($course_header->course_timecreated);
@@ -1263,6 +1264,9 @@
                             break;
                         case "MAXBYTES":
                             $this->info->course_maxbytes = $this->getContents();
+                            break;
+                        case "SHOWREPORTS":
+                            $this->info->course_showreports = $this->getContents();
                             break;
                         case "MARKER":
                             $this->info->course_marker = $this->getContents();

@@ -16,10 +16,8 @@
 
     require_login($course->id);
 
-    if (!isteacher($course->id)) {
-        if (! ($type == "usercourse.png" and $user == $USER->id) ) {
-            error("Sorry, you aren't allowed to see this.");
-        }
+    if (! (isteacher($course->id) or ($course->showreports and $USER->id == $user))) {
+        error("Sorry, you aren't allowed to see this.");
     }
 
     if ($user) {

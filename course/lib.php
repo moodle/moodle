@@ -868,6 +868,10 @@ function print_course_admin_links($course, $width=180) {
             $admindata[]="<a href=\"grade.php?id=$course->id\">".get_string("grades")."...</a>";
             $adminicon[]="<img src=\"$CFG->pixpath/i/grades.gif\" height=16 width=16 alt=\"\">";
         }
+        if ($course->showreports) {
+            $admindata[]="<a href=\"user.php?id=$course->id&user=$USER->id\">".get_string("activityreport")."...</a>";
+            $adminicon[]="<img src=\"$CFG->pixpath/i/report.gif\" height=16 width=16 alt=\"\">";
+        }
         if ($CFG->auth == "email" or $CFG->auth == "none" or $CFG->auth == "manual") {
             $admindata[]="<a href=\"$CFG->wwwroot/login/change_password.php?id=$course->id\">".
                           get_string("changepassword")."...</a>";
@@ -878,8 +882,8 @@ function print_course_admin_links($course, $width=180) {
         }
         if ($CFG->allowunenroll) {
             $admindata[]="<a href=\"unenrol.php?id=$course->id\">".get_string("unenrolme", "", $course->shortname)."...</a>";
+            $adminicon[]="<img src=\"$CFG->pixpath/i/user.gif\" height=16 width=16 alt=\"\">";
         }
-        $adminicon[]="<img src=\"$CFG->pixpath/i/user.gif\" height=16 width=16 alt=\"\">";
     } 
 
     if (!empty($admindata)) {

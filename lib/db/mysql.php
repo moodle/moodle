@@ -556,6 +556,10 @@ function main_upgrade($oldversion=0) {
         $db->debug = true;
     }
 
+    if ($oldversion < 2003103100) {
+        table_column("course", "", "showreports", "integer", "4", "unsigned", "0", "", "maxbytes");
+    }
+
     return $result;
 
 }

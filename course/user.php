@@ -19,7 +19,7 @@
         error("Course id is incorrect.");
     }
 
-    if (!isteacher($course->id)) {
+    if (! (isteacher($course->id) or ($course->showreports and $USER->id == $user))) {
         error("You are not allowed to look at this page");
     }
 
