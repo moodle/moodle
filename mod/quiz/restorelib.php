@@ -139,6 +139,12 @@
             } else {
                 //Exists, so get its id
                 $newid = $cat->id;
+                //If the existing category course and $restore->course_id are different,
+                //we must publish the existing category
+                if ($cat->course != $restore->course_id and $cat->publish == 0) {
+                    $cat->publish = 1;
+                    update_record("quiz_categories",$cat);
+                }
             }
 
             //Do some output
@@ -190,8 +196,23 @@
             $question->defaultgrade = backup_todb($que_info['#']['DEFAULTGRADE']['0']['#']);
             $question->qtype = backup_todb($que_info['#']['QTYPE']['0']['#']);
 
-            //The structure is equal to the db, so insert the quiz_questions
-            $newid = insert_record ("quiz_questions",$question);
+            //Check if the question exists
+            //by category,questiontext and qtype
+            $question_exists = get_record ("quiz_questions","category",$question->category,
+                                                            "questiontext",$question->questiontext,
+                                                            "qtype",$question->qtype);
+            //If the question exists, only record its id
+            if ($question_exists) {
+                $newid = $question_exists->id;
+                echo $question->name." exists";
+                $creatingnewquestion = false;
+            //Else, create a new question
+            } else {
+                //The structure is equal to the db, so insert the quiz_questions
+                $newid = insert_record ("quiz_questions",$question);
+                echo $question->name." not exists";
+                $creatingnewquestion = true;
+            }
 
             //Do some output
             if (($i+1) % 2 == 0) {
@@ -201,11 +222,14 @@
                 }
                 backup_flush(300);
             }
-
+            //Save newid to backup tables
             if ($newid) {
                 //We have the newid, update backup_ids
                 backup_putid($restore->backup_unique_code,"quiz_questions",$oldid,
                              $newid);
+            }
+            //If it's a new question in the DB, restore it
+            if ($creatingnewquestion) {
                 //Now, restore every quiz_answers in this question
                 $status = quiz_restore_answers($oldid,$newid,$que_info,$restore);
                 //Now, depending of the type of questions, invoke different functions
@@ -226,11 +250,8 @@
                 } else if ($question->qtype == "8") {
                     $status = quiz_restore_numerical($oldid,$newid,$que_info,$restore);
                 }
-            } else {
-                $status = false;
             }
         }
-
         return $status;
     }
 
