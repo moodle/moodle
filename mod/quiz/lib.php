@@ -33,7 +33,8 @@ $QUIZ_FILE_FORMAT = array ( "custom"   => get_string("custom", "quiz"),
                             "aon" => "AON"
                             );
 
-define("QUIZ_PICTURE_DEFAULT_HEIGHT", "200");
+define("QUIZ_PICTURE_MAX_HEIGHT", "600");   // Not currently implemented
+define("QUIZ_PICTURE_MAX_WIDTH",  "600");   // Not currently implemented
 
 define("QUIZ_MAX_NUMBER_ANSWERS", "8");
 
@@ -421,7 +422,7 @@ function quiz_print_question($number, $question, $grade, $courseid,
            }
            echo text_to_html($question->questiontext);
            if ($question->image) {
-               print_file_picture($question->image, $courseid, QUIZ_PICTURE_DEFAULT_HEIGHT);
+               print_file_picture($question->image, $courseid);
            }
            if ($response) {
                $value = "VALUE=\"$response[0]\"";
@@ -456,7 +457,7 @@ function quiz_print_question($number, $question, $grade, $courseid,
            }
            echo text_to_html($question->questiontext);
            if ($question->image) {
-               print_file_picture($question->image, $courseid, QUIZ_PICTURE_DEFAULT_HEIGHT);
+               print_file_picture($question->image, $courseid);
            }
 
            $truechecked = "";
@@ -501,7 +502,7 @@ function quiz_print_question($number, $question, $grade, $courseid,
            }
            echo text_to_html($question->questiontext);
            if ($question->image) {
-               print_file_picture($question->image, $courseid, QUIZ_PICTURE_DEFAULT_HEIGHT);
+               print_file_picture($question->image, $courseid);
            }
            echo "<TABLE ALIGN=right>";
            echo "<TR><TD valign=top>$stranswer:&nbsp;&nbsp;</TD><TD>";
@@ -557,7 +558,7 @@ function quiz_print_question($number, $question, $grade, $courseid,
                echo text_to_html($question->questiontext);
            }
            if (!empty($question->image)) {
-               print_file_picture($question->image, $courseid, QUIZ_PICTURE_DEFAULT_HEIGHT);
+               print_file_picture($question->image, $courseid);
            }
 
            if ($shuffleanswers) {
@@ -607,7 +608,7 @@ function quiz_print_question($number, $question, $grade, $courseid,
            }
            echo text_to_html($question->questiontext);
            if ($question->image) {
-               print_file_picture($question->image, $courseid, QUIZ_PICTURE_DEFAULT_HEIGHT);
+               print_file_picture($question->image, $courseid);
            }
 
            /// First, get all the questions available
@@ -1066,9 +1067,12 @@ function quiz_print_cat_question_list($categoryid) {
     $strcreatemultiple = get_string("createmultiple", "quiz");
 
     if (!$categoryid) {
-        echo "<P align=center>";
+        echo "<p align=center><b>";
         print_string("selectcategoryabove", "quiz");
-        echo "</P>";
+        echo "</b></p>";
+        echo "<p>";
+        print_string("addingquestions", "quiz");
+        echo "</p>";
         return;
     }
 
