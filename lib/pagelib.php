@@ -545,12 +545,14 @@ class page_quiz extends page_base {
     // When is a user said to have "editing rights" in this page? This would have something
     // to do with roles, in the future.
     function user_allowed_editing() {
+        $this->init_full();
         return isteacheredit($this->modulerecord->course);
     }
 
     // Is the user actually editing this page right now? This would have something
     // to do with roles, in the future.
     function user_is_editing() {
+        $this->init_full();
         return isediting($this->modulerecord->course);
     }
 
