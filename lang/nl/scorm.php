@@ -1,8 +1,10 @@
 <?PHP // $Id$ 
-      // scorm.php - created with Moodle 1.4 development (2004060400)
+      // scorm.php - created with Moodle 1.4 development (2004072901)
 
 
+$string['attr_error'] = 'Foute waarde voor attribuut ($a->attr) in tag $a->tag.';
 $string['autocontinue'] = 'Ga automatisch verder';
+$string['badmanifest'] = 'Enkele belangrijke fouten: zie foutenlogboek';
 $string['browse'] = 'Bladeren';
 $string['browsed'] = 'Gebladerd';
 $string['browsemode'] = 'Blader modus';
@@ -18,9 +20,20 @@ $string['configpopupwidth'] = 'Welke breedte wil je als standaardwaarde voor nie
 $string['coursepacket'] = 'Cursuspakket';
 $string['coursestruct'] = 'cursusstructuur';
 $string['datadir'] = 'Fout van het bestandssysteem: de gegevensfolder van de cursus kan niet gemaakt worden';
+$string['domxml'] = 'DOMXML externe bibliotheek';
 $string['entercourse'] = 'Voeg een SCORM cursus toe';
+$string['errorlogs'] = 'Foutenlogboek';
 $string['failed'] = 'Mislukt';
+$string['found'] = 'Manifest gevonden';
+$string['gradeaverage'] = 'Gemiddeld cijfer';
+$string['gradehighest'] = 'Hoogste cijfer';
+$string['grademethod'] = 'Beoordelingsmethode';
+$string['gradescoes'] = 'situatie van de scoes';
+$string['gradesum'] = 'Totaalcijfer';
+$string['guestsno'] = 'Gasten kunnen SCORM-lessen niet bekijken';
 $string['incomplete'] = 'Onvolledig';
+$string['missing_attribute'] = 'Attribuut ontbreekt $a->attr in tag $a->tag';
+$string['missing_tag'] = 'Ontbrekende tag $a->tag';
 $string['mode'] = 'Modus';
 $string['modulename'] = 'Scorm';
 $string['modulenameplural'] = 'Scorms';
@@ -32,21 +45,32 @@ $string['newwidth'] = 'Standaard vensterbreedte (in pixels)';
 $string['newwindow'] = 'Nieuw venster';
 $string['newwindowopen'] = 'Toon dit scormpakket in een nieuw popupscherm';
 $string['next'] = 'Ga verder';
+$string['no_attributes'] = 'Tag $a->tag moet attributen hebben';
+$string['no_children'] = 'Tag $a->tag moet children hebben';
 $string['nomanifest'] = 'Manifest niet gevonden';
 $string['noreports'] = 'Er is geen rapport om te tonen';
 $string['normal'] = 'Normaal';
+$string['not_corr_type'] = 'Typfout voor tag $a->tag';
 $string['notattempted'] = 'Niet geprobeerd';
 $string['packagedir'] = 'Fout van het bestandssysteem: kan geen map voor het pakket maken';
 $string['passed'] = 'Geslaagd';
+$string['php5'] = 'PHP 5 (DOMXML native library)';
+$string['position_error'] = 'De $a->tag kan geen child zijn van $a->parent tag';
 $string['prev'] = 'Vorige';
 $string['regular'] = 'Normaal manifest';
 $string['report'] = 'Rapport';
 $string['review'] = 'Herzien';
 $string['scoes'] = 'Scoes';
 $string['score'] = 'Score';
+$string['syntax'] = 'Syntaxfout';
+$string['tag_error'] = 'Onbekende tag ($a->tag) met deze inhoud: $a->value';
+$string['too_many_attributes'] = 'Tag $a->tag heeft te veel attributen';
+$string['too_many_children'] = 'Tag $a->tag heeft teveel children';
 $string['trackingloose'] = 'WAARSCHUWING: de gegevens voor opvolging van dit SCORM-pakket zullen verloren gaan';
 $string['validateascorm'] = 'Bevestig een SCORM-pakket';
 $string['validation'] = 'Bevestigingsresultaat';
+$string['validationtype'] = 'Deze instelling maakt dat de DOMXML-bibliotheek gebruikt wordt voor de validatie van het SCORM MAnifest. Als je twijfelt laat dan de geselecteerde keuze staan.';
+$string['versionwarning'] = 'De versie van het Manifest is ouder dan 1.3, waarschuwing bij tag $a->tag';
 $string['viewallreports'] = 'Bekijk de rapporten voor $a pogingen';
 
 ?>

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.3 Beta + (2004051600)
+      // resource.php - created with Moodle 1.4 development (2004072901)
 
 
 $string['addresource'] = 'Voeg bron toe';
@@ -21,6 +21,7 @@ $string['configwebsearch'] = 'Wanneer je een URL als webpagina of link toevoegt,
 $string['directlink'] = 'Rechtstreekse link naar dit bestand';
 $string['directoryinfo'] = 'Alle bestanden in de gekozen map zullen getoond worden.';
 $string['editingaresource'] = 'Bewerk een bron';
+$string['encryptedcode'] = 'Geëncrypteerde code';
 $string['example'] = 'Voorbeeld';
 $string['examplereference'] = 'Koers, Diane (1999) <I>Visuele leermethode Office 2000</I>, A.W. Bruna multimedia, ISBN 9022943046.';
 $string['exampleurl'] = 'http://www.voorbeeld.nl/eenmap/eenbestand.html';
@@ -29,6 +30,7 @@ $string['fetcherror'] = 'Er is een fout gevonden tijdens het ophalen van de webp
 $string['fetchservererror'] = 'Er is een fout gevonden bij de webserver terwijl je probeerde een webpagina op te halen (waarschijnlijk een programmafout).</p>';
 $string['filename'] = 'Bestandsnaam';
 $string['filtername'] = 'Automatisch linken van bronnen';
+$string['frameifpossible'] = 'Toon de bron in een frame, zodat de navigatie zichtbaar blijft';
 $string['fulltext'] = 'Volledige tekst';
 $string['htmlfragment'] = 'HTML fragment';
 $string['maindirectory'] = 'Hoofdmap';
@@ -50,17 +52,20 @@ $string['newwindowopen'] = 'Toon deze bron in een popup venster';
 $string['note'] = 'Aantekening';
 $string['notefile'] = 'Gebruik <A HREF=$a>Bestandsbeheer</A> om meer bestanden naar de cursus te uploaden (zodat ze in deze lijst verschijnen).';
 $string['notypechosen'] = 'Je moet een soort kiezen. Gebruik de \'Back\'-knop om terug te gaan en het opnieuw te proberen.';
+$string['pagedisplay'] = 'Toon deze bron in het huidige venster';
+$string['pagewindow'] = 'Zelfde venster';
+$string['parameter'] = 'Parameter';
+$string['parameters'] = 'Parameters';
 $string['popupresource'] = 'Deze bron zou moeten in een popup venster verschijnen';
 $string['popupresourcelink'] = 'Als ze dat niet deed, klik hier: $a';
 $string['resourcetype'] = 'Soort bron';
-$string['resourcetype1'] = 'Verwijzing';
-$string['resourcetype2'] = 'Website (binnen deze site)';
-$string['resourcetype3'] = 'Geüpload bestand';
-$string['resourcetype4'] = 'Platte tekst';
-$string['resourcetype5'] = 'Weblink (nieuw venster)';
-$string['resourcetype6'] = 'HTML tekst';
-$string['resourcetype7'] = 'Programma';
-$string['resourcetype8'] = 'Wiki tekst';
-$string['resourcetype9'] = 'Map';
+$string['resourcetypedirectory'] = 'Toon een map';
+$string['resourcetypefile'] = 'Link aan een bestand of website';
+$string['resourcetypehtml'] = 'Maak een webpagina';
+$string['resourcetypelabel'] = 'Voeg een label toe';
+$string['resourcetypereference'] = 'Plaats een referentie';
+$string['resourcetypetext'] = 'Maak een tekstpagina';
+$string['searchweb'] = 'Zoek webpagina\'s';
+$string['variablename'] = 'Variable naam';
 
 ?>

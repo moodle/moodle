@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.4 development (2004060400)
+      // glossary.php - created with Moodle 1.4 development (2004072901)
 
 
 $string['addcomment'] = 'Voeg commentaar toe';
@@ -61,13 +61,13 @@ $string['deletingnoneemptycategory'] = 'Door deze categorie te verwijderen zulle
 $string['descending'] = '(aflopend)';
 $string['destination'] = 'Bestemming';
 $string['displayformat'] = 'Kies opmaak';
-$string['displayformat2'] = 'Toon bijhorende gegevens, met auteur';
-$string['displayformat3'] = 'Encyclopedie';
-$string['displayformat4'] = 'FAQ';
-$string['displayformat5'] = 'Toon bijhorende gegevens, zonder auteur';
-$string['displayformat6'] = 'Itemlijst';
 $string['displayformatcontinuous'] = 'Volledige lijst zonder auteur';
-$string['displayformatdefault'] = 'Eenvoudig, stijl woordenboek';
+$string['displayformatdictionary'] = 'Gewone, woordenboekstijl';
+$string['displayformatencyclopedia'] = 'Encyclopedie';
+$string['displayformatentrylist'] = 'Lijst met items';
+$string['displayformatfaq'] = 'FAQ';
+$string['displayformatfullwithauthor'] = 'Volledig met auteur';
+$string['displayformatfullwithoutauthor'] = 'Volledig zonder auteur';
 $string['displayformats'] = 'Bekijk opmaakmogelijkheden';
 $string['displayformatssetup'] = 'Instellingen van de opmaakmogelijkheden';
 $string['duplicateentry'] = 'Dupliceer item';
@@ -100,6 +100,7 @@ $string['filetoimport'] = 'Te importeren bestand';
 $string['fillfields'] = 'Concept en definitie zijn verplichte velden.';
 $string['filtername'] = 'Automatisch links maken van de woordenlijst';
 $string['fullmatch'] = 'Alleen volledige woorden gebruiken<br><small>(wanneer automatisch gelinkt)</small>';
+$string['globalglossary'] = 'Globale woordenlijst';
 $string['glossaryleveldefaultsettings'] = 'Standaard instellingen woordenlijst';
 $string['glossarytype'] = 'Type woordenlijst';
 $string['glosssaryexported'] = 'De woordenlijst is geëxporteerd';
