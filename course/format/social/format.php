@@ -46,6 +46,9 @@
       $searchform = "<div align=\"center\">$searchform</div>";
       print_side_block(get_string("search","forum"), $searchform, "", "", "", $leftwidth);
 
+/// Print the calendar
+      calendar_print_side_blocks();
+
 
 /// Then, print all the available resources (Section 0)
       print_section_block(get_string("activities"), $course, $sections[0], 

@@ -4,6 +4,7 @@
 
     require_once("../config.php");
     require_once("lib.php");
+    require_once('../calendar/lib.php');
 
     optional_variable($id);
     optional_variable($name);

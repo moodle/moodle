@@ -94,6 +94,9 @@
     }
     print_side_block($stractivities, "", $moddata, $modicon);
 
+/// Print the calendar
+    calendar_print_side_blocks();
+
 /// Print a form to search forums
     $searchform = forum_print_search_form($course, "", true);
     $searchform = "<div align=\"center\">$searchform</div>";
