@@ -481,4 +481,125 @@
         return $status;
     }
 
+//This function returns a log record with all the necessay transformations
+    //done. It's used by restore_log_module() to restore modules log.
+    function chat_restore_logs($restore,$log) {
+                    
+        $status = false;
+                    
+        //Depending of the action, we recode different things
+        switch ($log->action) {
+        case "add":
+            if ($log->cmid) {
+                //Get the new_id of the module (to recode the info field)
+                $mod = backup_getid($restore->backup_unique_code,$log->module,$log->info);
+                if ($mod) {
+                    $log->url = "view.php?id=".$log->cmid;
+                    $log->info = $mod->new_id;
+                    $status = true;
+                }
+            }
+            break;
+        case "update":
+            if ($log->cmid) {
+                //Get the new_id of the module (to recode the info field)
+                $mod = backup_getid($restore->backup_unique_code,$log->module,$log->info);
+                if ($mod) {
+                    $log->url = "view.php?id=".$log->cmid;
+                    $log->info = $mod->new_id;
+                    $status = true;
+                }
+            }
+            break;
+        case "view forum":
+            if ($log->cmid) {
+                //Get the new_id of the module (to recode the info field)
+                $mod = backup_getid($restore->backup_unique_code,$log->module,$log->info);
+                if ($mod) {
+                    $log->url = "view.php?id=".$log->cmid;
+                    $log->info = $mod->new_id;
+                    $status = true;
+                }
+            }
+            break;
+        case "view forums":
+            $log->url = "index.php?id=".$log->course;
+            $status = true;
+            break;
+        case "subscribe":
+            if ($log->cmid) {
+                //Get the new_id of the module (to recode the info and url field)
+                $mod = backup_getid($restore->backup_unique_code,$log->module,$log->info);
+                if ($mod) {
+                    $log->url = "view.php?f=".$mod->new_id;
+                    $log->info = $mod->new_id;
+                    $status = true;
+                }
+            }
+            break;
+        case "view subscriber":
+            if ($log->cmid) {
+                //Get the new_id of the module (to recode the info and field)
+                $mod = backup_getid($restore->backup_unique_code,$log->module,$log->info);
+                if ($mod) {
+                    $log->url = "subscribers.php?id=".$mod->new_id;
+                    $log->info = $mod->new_id;
+                    $status = true;
+                }
+            }
+            break;
+        case "unsubscribe":
+            if ($log->cmid) {
+                //Get the new_id of the module (to recode the info and url field)
+                $mod = backup_getid($restore->backup_unique_code,$log->module,$log->info);
+                if ($mod) {
+                    $log->url = "view.php?f=".$mod->new_id;
+                    $log->info = $mod->new_id;
+                    $status = true;
+                }
+            }
+            break;
+        case "add discussion":
+            if ($log->cmid) {
+                //Get the new_id of the discussion (to recode the info and url field)
+                $dis = backup_getid($restore->backup_unique_code,"forum_discussions",$log->info);
+                if ($dis) {
+                    $log->url = "discuss.php?d=".$dis->new_id;
+                    $log->info = $dis->new_id;
+                    $status = true;
+                }
+            }
+            break;
+        case "view discussion":
+            if ($log->cmid) {
+                //Get the new_id of the discussion (to recode the info and url field)
+                $dis = backup_getid($restore->backup_unique_code,"forum_discussions",$log->info);
+                if ($dis) {
+                    $log->url = "discuss.php?d=".$dis->new_id;
+                    $log->info = $dis->new_id;
+                    $status = true;
+                }
+            }
+            break;
+        case "move discussion":
+            if ($log->cmid) {
+                //Get the new_id of the discussion (to recode the info and url field)
+                $dis = backup_getid($restore->backup_unique_code,"forum_discussions",$log->info);
+                if ($dis) {
+                    $log->url = "discuss.php?d=".$dis->new_id;
+                    $log->info = $dis->new_id;
+                    $status = true;
+                }
+            }
+            break;
+        default:
+            echo "action (".$log->module."-".$log->action.") unknow. Not restored<br>";                 //Debug
+            break;
+        }
+
+        if ($status) {
+            $status = $log;
+        }
+        return $status;
+    }
 ?>

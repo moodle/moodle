@@ -277,7 +277,7 @@
                     forum_delete_discussion($discussion);
 
                     add_to_log($discussion->course, "forum", "delete discussion", 
-                               "view.php?id=$discussion->forum", "$post->id", $cm->id);
+                               "view.php?id=$discussion->forum", "$discussion->id", $cm->id);
 
                     redirect("view.php?f=$discussion->forum", 
                              get_string("deleteddiscussion", "forum"), 1);
