@@ -1,6 +1,6 @@
 <?php //$Id$
 /***
- *** olson_simple_parser($filename)
+ *** olson_simple_rule_parser($filename)
  ***
  *** Parses the olson files for DST rules.
  *** It's a simple implementation that captures the 
@@ -48,9 +48,11 @@ function olson_simple_rule_parser ($filename) {
         
     }
 
+    fclose($file);
+
     $months = array('jan' => 1, 'feb' => 2, 'mar' => 3, 'apr' =>  4, 'may' =>  5, 'jun' =>  6,
                     'jul' => 7, 'aug' => 8, 'sep' => 9, 'oct' => 10, 'nov' => 11, 'dec' => 12);
-    $days = array('sun' => 0, 'mon' => 1, 'tue' => 2, 'wed' => 3, 'thu' => 4, 'fri' => 5, 'sat' => 6);
+
 
     // now reformat it a bit to match Moodle's DST table
     $moodle_rules = array();
@@ -90,11 +92,10 @@ function olson_simple_rule_parser ($filename) {
     
             list($hours, $mins) = explode(':', $save);
             $save = $hours * 60 + $mins;
-            list($hours, $mins) = explode(':', $at);
-            $at = sprintf('%02d:%02d', $hours, $mins);
+            $at = olson_parse_at($at);
             $in = strtolower($in);
             if(!isset($months[$in])) {
-                error('Unknown month: '.$in);
+                trigger_error('Unknown month: '.$in);
             }
     
             $moodle_rule['family'] = $name;
@@ -105,37 +106,10 @@ function olson_simple_rule_parser ($filename) {
             $moodle_rule['activate_time']  = $at; // the time
 
             // Encode index and day as per Moodle's specs
-            if(is_numeric($on)) {
-                $moodle_rule['activate_index'] = $on;
-                $moodle_rule['activate_day']   = -1;
-            }
-            else {
-                $on = strtolower($on);
-                if(substr($on, 0, 4) == 'last') {
-                    // e.g. lastSun
-                    if(!isset($days[substr($on, 4)])) {
-                        error('Unknown last weekday: '.substr($on, 4));
-                    }
-                    else {
-                        $moodle_rule['activate_index'] = -1;
-                        $moodle_rule['activate_day']   = $days[substr($on, 4)];
-                    }
-                }
-                else if(substr($on, 3, 2) == '>=') {
-                    // e.g. Sun>=8
-                    if(!isset($days[substr($on, 0, 3)])) {
-                        error('Unknown last weekday: '.substr($on, 0, 3));
-                    }
-                    else {
-                        $moodle_rule['activate_index'] = substr($on, 5);
-                        $moodle_rule['activate_day']   = $days[substr($on, 0, 3)];
-                    }
-                }
-                else {
-                    error('unknown on '.$on);
-                }
-            }
-
+            $on = olson_parse_on($on);
+            $moodle_rule['activate_index'] = $on['index'];
+            $moodle_rule['activate_day']   = $on['day'];
+            
             // and now the "deactivate" data
             list($discard,
                  $name,
@@ -148,55 +122,254 @@ function olson_simple_rule_parser ($filename) {
                  $save,
                  $letter) = $rulesthisyear['reset'];
     
-            list($hours, $mins) = explode(':', $at);
-            $at = sprintf('%02d:%02d', $hours, $mins);
+            $at = olson_parse_at($at);
             $in = strtolower($in);
             if(!isset($months[$in])) {
-                error('Unknown month: '.$in);
+                trigger_error('Unknown month: '.$in);
             }
 
             $moodle_rule['deactivate_month'] = $months[$in]; // the month
             $moodle_rule['deactivate_time']  = $at; // the time
     
             // Encode index and day as per Moodle's specs
-            if(is_numeric($on)) {
-                $moodle_rule['deactivate_index'] = $on;
-                $moodle_rule['deactivate_day']   = -1;
-            }
-            else {
-                $on = strtolower($on);
-                if(substr($on, 0, 4) == 'last') {
-                    // e.g. lastSun
-                    if(!isset($days[substr($on, 4)])) {
-                        error('Unknown last weekday: '.substr($on, 4));
-                    }
-                    else {
-                        $moodle_rule['deactivate_index'] = -1;
-                        $moodle_rule['deactivate_day']   = $days[substr($on, 4)];
-                    }
-                }
-                else if(substr($on, 3, 2) == '>=') {
-                    // e.g. Sun>=8
-                    if(!isset($days[substr($on, 0, 3)])) {
-                        error('Unknown last weekday: '.substr($on, 0, 3));
-                    }
-                    else {
-                        $moodle_rule['deactivate_index'] = substr($on, 5);
-                        $moodle_rule['deactivate_day']   = $days[substr($on, 0, 3)];
-                    }
-                }
-                else {
-                    error('unknown on '.$on);
-                }
-            }
-    
+            $on = olson_parse_on($on);
+
+            $moodle_rule['deactivate_index'] = $on['index'];
+            $moodle_rule['deactivate_day']   = $on['day'];
+                
             $moodle_rules[] = $moodle_rule;
-            print_object($moodle_rule);
+            //print_object($moodle_rule);
         }
 
     }
 
     return $moodle_rules;
 }
+
+/***
+ *** olson_simple_zone_parser($filename)
+ ***
+ *** Parses the olson files for zone info
+ ***
+ *** Returns a multidimensional array, or false on error
+ ***
+ */
+function olson_simple_zone_parser ($filename) {
+
+    $file = fopen($filename, 'r', 0); 
+
+    if (empty($file)) {
+        return false;
+    }
+    
+    $zones = array();
+    $lastzone = NULL;
+
+    while ($line = fgets($file)) {
+        // skip obvious non-zone lines
+        if (preg_match('/^(?:#|Rule|Link|Leap)/',$line)) {
+            $lastzone = NULL; // reset lastzone
+            continue;
+        }
+        
+        /*** Notes
+         ***
+         *** By splitting on space, we are only keeping the
+         *** year of the UNTIL field -- that's on purpose.
+         ***
+         *** The Zone lines are followed by continuation lines
+         *** were we reuse the info from the last one seen.
+         ***
+         *** We are transforming "until" fields into "from" fields
+         *** which make more sense from the Moodle perspective, so
+         *** each initial Zone entry is "from" 1970, and for the 
+         *** continuation lines, we shift the "until" from the previous field
+         *** into this line's "from".
+         ***
+         *** We remove "until" from the data we keep, but preserve 
+         *** it in $lastzone
+         */
+        if (preg_match('/^Zone/', $line)) { // a new zone
+            $line = trim($line);
+            $line = preg_split('/\s+/', $line);
+            $zone = array();
+            list( $discard, // 'Zone'
+                  $zone['name'],
+                  $zone['gmtoff'],
+                  $zone['rule'],
+                  $discard // format
+                  ) = $line;
+            // the things we do to avoid warnings
+            if (!empty($line[5])) { 
+                $zone['until'] = $line[5];
+            }
+            $zone['from'] = '1970';
+
+
+        } else if (!empty($lastzone) && preg_match('/^\s+/', $line)){ 
+            // looks like a credible continuation line  
+            $line = trim($line);
+            $line = preg_split('/\s+/', $line);
+            if (count($line) < 3) {
+                $lastzone = NULL;
+                continue;
+            }
+            // retrieve info from the lastzone
+            $zone = $lastzone;
+            $zone['from'] = $zone['until'];
+            // overwrite with current data
+            list(
+                  $zone['gmtoff'],
+                  $zone['rule'],
+                  $discard // format
+                  ) = $line;
+            // the things we do to avoid warnings
+            if (!empty($line[3])) { 
+                $zone['until'] = $line[3];
+            }
+
+        } else {
+            $lastzone = NULL;
+            continue;
+        }
+
+        // tidy up, we're done 
+        // perhaps we should insert in the DB at this stage?
+        $lastzone = $zone;
+        unset($zone['until']);
+        $zone['gmtoff'] = olson_parse_offset($zone['gmtoff']);
+        if ($zone['rule'] === '-') { // cleanup empty rules
+            $zone['rule'] = '';
+        }
+        
+        $zones[] = $zone;
+    }
+
+    return $zones;
+}
+
+/***
+ *** olson_parse_offset($offset)
+ ***
+ *** parses time offsets from the GMTOFF and SAVE
+ *** fields into +/-MINUTES 
+ */
+function olson_parse_offset ($offset) {
+    $offset = trim($offset);
+    
+    // perhaps it's just minutes
+    if (preg_match('/^(-?)(\d*)$/', $offset)) {
+        return $offset;
+    }
+    // (-)hours:minutes(:seconds) 
+    if (preg_match('/^(-?)(\d*):(\d+)/', $offset, $matches)) {
+        // we are happy to discard the seconds
+        $sign    = $matches[1];
+        $hours   = (int)$matches[2];
+        $seconds = (int)$matches[3];
+        $offset  = $sign . ($hours*60 + $seconds);
+        return $offset;
+    } 
+
+    trigger_error('Strange time format in olson_parse_offset() ' .$offset);
+    return 0;
+
+}
+
+
+/***
+ *** olson_parse_on_($on)
+ ***
+ *** see `man zic`. This function translated the following formats 
+ *** 5        the fifth of the month
+ *** lastSun  the last Sunday in the month
+ *** lastMon  the last Monday in the month
+ *** Sun>=8   first Sunday on or after the eighth
+ *** Sun<=25  last Sunday on or before the 25th
+ ***
+ *** to a moodle friendly format. Returns
+ *** array(index =>$index, day =>$day)
+ ***
+ */
+function olson_parse_on ($on) {
+    
+    $rule = array();
+    $days = array('sun' => 0, 'mon' => 1, 'tue' => 2, 'wed' => 3, 'thu' => 4, 'fri' => 5, 'sat' => 6);
+
+    if(is_numeric($on)) {
+        $rule['index'] = $on;
+        $rule['day']   = -1;
+    }
+    else {
+        $on = strtolower($on);
+        if(substr($on, 0, 4) == 'last') {
+            // e.g. lastSun
+            if(!isset($days[substr($on, 4)])) {
+                trigger_error('Unknown last weekday: '.substr($on, 4));
+            }
+            else {
+                $rule['index'] = -1;
+                $rule['day']   = $days[substr($on, 4)];
+            }
+        }
+        else if(substr($on, 3, 2) == '>=') {
+            // e.g. Sun>=8
+            if(!isset($days[substr($on, 0, 3)])) {
+                trigger_error('Unknown last weekday: '.substr($on, 0, 3));
+            }
+            else {
+                $rule['index'] = substr($on, 5);
+                $rule['day']   = $days[substr($on, 0, 3)];
+            }
+        }
+        else {
+            trigger_error('unknown on '.$on);
+        }
+    }    
+    return $rule;
+}
+
+
+/***
+ *** olson_parse_at($on)
+ ***
+ *** see `man zic`. This function translates
+ ***
+ ***      2        time in hours
+ ***      2:00     time in hours and minutes
+ ***     15:00     24-hour format time (for times after noon)
+ ***      1:28:14  time in hours, minutes, and seconds
+ ***
+ ***  Any of these forms may be followed by the letter w if the given
+ ***  time is local "wall clock" time, s if the given time  is  local
+ ***  "standard"  time, or u (or g or z) if the given time is univer-
+ ***  sal time; in the absence of an indicator, wall  clock  time  is
+ ***  assumed.
+ ***
+ *** returns a moodle friendly $at
+ */
+function olson_parse_at ($at, $set = 'set') {
+
+    list($hours, $mins) = explode(':', $at);
+
+    if ( !empty($matches[0]) && (   $matches[0] === 'u'
+                                 || $matches[0] === 'g'
+                                 || $matches[0] === 'z'    )) {
+        return sprintf('%02d:%02d', $hours, $mins);
+    }
+
+    // try and fetch the trailing alpha char if present
+    if (empty($matches[0]) || $matches[0] === 'w') { 
+        // wall clock
+        if ($set !== 'set'){ // wall clock is on DST, assume by 1hr
+            $hours = $hours-1;
+        } 
+        trigger_error('TOOD turn this time to gmt');
+        return sprintf('%02d:%02d', $hours, $mins);
+    }
+
+    trigger_error('unhandled case - AT flag is ' .  $matches[0]);
+}
+
 
 ?>
