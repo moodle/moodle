@@ -1,0 +1,104 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+</head>
+<body>
+<p align="center"><b>Question &agrave; r&eacute;ponses
+incorpor&eacute;es<br>
+</b></p>
+<p>Ce type de question est tr&egrave;s flexible. Les questions se
+composent d'un texte (dans le format de Moodle) auquel on peut
+incorporer des r&eacute;ponses &agrave; choix multiples, des
+r&eacute;ponses courtes ou des r&eacute;ponses num&eacute;riques.</p>
+<p>Il n'y a pr&eacute;sentement aucune interface graphique pour
+cr&eacute;er ces questions - vous devez les &eacute;crire directement
+dans la bo&icirc;te de texte ou en l'important &agrave; partir d'un
+fichier externe. </p>
+<p>Voici un exemple de texte qui illustre comment inclure les
+diff&eacute;rents types de r&eacute;ponses attendues&nbsp;:</p>
+<form>
+  <center><textarea wrap="virtual" cols="60" rows="15">Cette question
+comporte du texte auquel on a directement incorpor&eacute; des
+r&eacute;ponses &agrave; choix multiples {1:MULTICHOICE:Mauvaise
+r&eacute;ponse#R&eacute;troaction pour cette mauvaise
+r&eacute;ponse~Une autre mauvaise r&eacute;ponse#R&eacute;troaction
+pour cette autre mauvaise r&eacute;ponse~=Bonne
+r&eacute;ponse#R&eacute;troaction pour cette bonne
+r&eacute;ponse~%50%R&eacute;ponse qui donne la moiti&eacute; des
+points#R&eacute;troaction pour la question qui donne la moiti&eacute;
+de points} et vous devez maintenant r&eacute;pondre &agrave; une
+question courte{1:SHORTANSWER:Mauvaise
+r&eacute;ponse#R&eacute;troaction pour cette mauvaise
+r&eacute;ponse~=Bonne r&eacute;ponse#R&eacute;troaction pour cette
+bonne r&eacute;ponse~%50%R&eacute;ponse qui donne la moiti&eacute; des
+points#R&eacute;troaction pour la question qui donne la moiti&eacute;
+des points} et finalement nous avons une question qui demande une
+r&eacute;ponse num&eacute;rique avec point d&eacute;cimal
+{2:NUMERICAL:=23.8:0.1#R&eacute;troaction pour la bonne r&eacute;ponse
+23.8~%50%N/A#R&eacute;troaction pour la r&eacute;ponse qui donne la
+moiti&eacute; des points}.
+Notez que les adresses URL comme www.moodle.org et les binettes :-)
+sont correctement interpr&eacute;t&eacute;es: a) Est-ce bien?
+{:MULTICHOICE:=Oui#Bonne r&eacute;ponse~Non#Notre opignon
+diff&egrave;re!} b) Quelle note d&eacute;sirez-vous? {3:NUMERICAL:=3:2}
+  </textarea></center>
+</form>
+<p>Cet exemple appara&icirc;tra ainsi aux &eacute;tudiants:</p>
+<form>
+  <table cellspacing="0" cellpadding="5" border="0" class="generalbox"
+ width="90%" align="center">
+    <tbody>
+      <tr>
+        <td class="generalboxcontent" bgcolor="#ffffff">
+        <table cellspacing="10" width="100%">
+          <tbody>
+            <tr>
+              <td valign="top" width="100" nowrap="nowrap">
+              <p align="center"><b>3</b></p>
+              <p align="center"><font size="1">8 points</font></p>
+              <img alt="" src="pix/spacer.gif" width="100" height="1"><br>
+              </td>
+              <td valign="top">
+              <p>Cette question comporte du texte auquel on a
+directement incorpor&eacute; des r&eacute;ponses &agrave; choix
+multiples
+              <select name="q4ma1">
+              <option></option>
+              <option value="4">Mauvaise r&eacute;ponse</option>
+              <option value="5">Une autre mauvaise r&eacute;ponse</option>
+              <option value="6">Bonne r&eacute;ponse</option>
+              <option value="7">R&eacute;ponse qui donne la
+moiti&eacute; des points</option>
+              </select>
+et vous devez maintenant r&eacute;pondre &agrave; une question courte <input
+ size="8" type="text" value="" name="q4ma2"> et finalement nous avons
+une question qui demande une r&eacute;ponse num&eacute;rique avec point
+d&eacute;cimal <input size="8" type="text" value="" name="q4ma3"> .<br>
+              <br>
+Notez que les adresses URL comme <a target="newpage"
+ href="http://www.moodle.org">www.moodle.org</a> et les binettes <img
+ src="http://server.dougiamas.net/moodle/pix/s/smiley.gif" height="15"
+ width="15" alt=":-)"> sont correctement interpr&eacute;t&eacute;es:<br>
+a) Est-ce bien?
+              <select name="q4ma4">
+              <option></option>
+              <option value="13">Yes</option>
+              <option value="14">No</option>
+              </select>
+              <br>
+b) Quelle note d&eacute;sirez-vous? <input size="8" type="text"
+ value="" name="q4ma5"> <br>
+              <br>
+              </p>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</form>
+<br>
+</body>
+</html>

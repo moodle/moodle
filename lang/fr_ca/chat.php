@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // chat.php - created with Moodle 1.1 Beta + (2003082300)
+      // chat.php - created with Moodle 1.1.1 (2003091111)
 
 
 $string['beep'] = "bip";
@@ -25,7 +25,7 @@ $string['messages'] = "Messages";
 $string['modulename'] = "Clavardage";
 $string['modulenameplural'] = "Clavardages";
 $string['neverdeletemessages'] = "Ne jamais effacer les messages";
-$string['nextsession'] = "Prochaiane session prévue";
+$string['nextsession'] = "Prochaine session prévue";
 $string['nomessages'] = "Pas encore de messages";
 $string['repeatdaily'] = "À la même heure chaque jour";
 $string['repeatnone'] = "Aucune répétition - afficher le moment prévu seulement";

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.1 Beta + (2003082300)
+      // forum.php - created with Moodle 1.1.1 (2003091111)
 
 
 $string['addanewdiscussion'] = "Ajouter un nouveau sujet de discussion";
@@ -54,7 +54,7 @@ $string['maxtimehaspassed'] = "Désolé mais le délai maximum pour modifier ce mes
 $string['message'] = "Message";
 $string['modeflatnewestfirst'] = "Afficher les réponses en ligne, la plus récente en premier";
 $string['modeflatoldestfirst'] = "Afficher les réponses en ligne, la plus ancienne en premier";
-$string['modenested'] = "Emboîter les réponse pour l'affichage";
+$string['modenested'] = "Emboîter les réponses pour l'affichage";
 $string['modethreaded'] = "Afficher les réponses en fils de discussions";
 $string['modulename'] = "Forum";
 $string['modulenameplural'] = "Forums";

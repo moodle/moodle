@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // choice.php - created with Moodle 1.0.9 development (2003041600)
+      // choice.php - created with Moodle 1.1.1 (2003091111)
 
 
 $string['answered'] = "Répondu";
@@ -16,6 +16,6 @@ $string['publishnot'] = "Les étudiants ne peuvent consulter les résultats";
 $string['responses'] = "Réponses";
 $string['responsesto'] = "Réponses à \$a";
 $string['savemychoice'] = "Enregistrer ma réponse";
-$string['viewallresponses'] = "Voire les \$a réponses";
+$string['viewallresponses'] = "Voir les \$a réponses";
 
 ?>

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.1 Beta + (2003082300)
+      // assignment.php - created with Moodle 1.1.1 (2003091111)
 
 
 $string['allowresubmit'] = "Accepter de nouvelles soumissions";
@@ -13,7 +13,7 @@ Elles ont été ajoutées à votre: <a href\\\"\$a->url\\\">devoir<a>.";
 $string['assignmentname'] = "Titre du devoir";
 $string['assignmenttype'] = "Type de devoir";
 $string['description'] = "Description";
-$string['duedate'] = "À rendre le";
+$string['duedate'] = "À rendre avant le";
 $string['early'] = "\$a en avance";
 $string['failedupdatefeedback'] = "Impossible d'enregistrer la rétroaction pour \$a";
 $string['feedback'] = "Rétroaction";
