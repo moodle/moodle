@@ -71,7 +71,7 @@
 
 /// setting the default values for the display mode of the current glossary
 /// only if the glossary is viewed by the first time
-    if ( $dp = get_record('glossary_formats','name', $glossary->displayformat) ) {
+    if ( $dp = get_record('glossary_formats','name', addslashes($glossary->displayformat)) ) {
         $printpivot = $dp->showgroup;
         if ( $mode == '' and $hook == '' and $show == '') {
             $mode      = $dp->defaultmode;

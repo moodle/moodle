@@ -75,7 +75,11 @@ function glossary_add_instance($glossary) {
     $glossary->timecreated = time();
     $glossary->timemodified = $glossary->timecreated;
 
-    # May have to add extra stuff in here #
+    //Check displayformat is a valid one
+    $formats = get_list_of_plugins('mod/glossary/formats','TEMPLATE');
+    if (!in_array($glossary->displayformat, $formats)) {
+        error("This format doesn't exist!");
+    }  
 
     return insert_record("glossary", $glossary);
 }
@@ -108,6 +112,12 @@ global $CFG;
     } else {
         $glossary->assesstimestart  = 0;
         $glossary->assesstimefinish = 0;
+    }
+
+    //Check displayformat is a valid one
+    $formats = get_list_of_plugins('mod/glossary/formats','TEMPLATE');
+    if (!in_array($glossary->displayformat, $formats)) {
+        error("This format doesn't exist!");
     }
 
     $return = update_record("glossary", $glossary);
