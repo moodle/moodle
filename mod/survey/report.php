@@ -89,9 +89,7 @@
         break;
 
       case "summary":
-        print_header("$survey->name: $strsummary", "$strsummary");
-
-        print_heading($strallscales);
+        print_header("$survey->name: $strsummary", "$strsummary - $strallscales");
 
         if (survey_count_responses($survey->id)) {
             echo "<P ALIGN=CENTER><A HREF=\"report.php?action=scales&id=$id\"><IMG HEIGHT=$SURVEY_GHEIGHT WIDTH=$SURVEY_GWIDTH tail\" BORDER=1 SRC=\"graph.php?id=$id&type=overall.png\"></A>";
@@ -102,9 +100,7 @@
         break;
 
       case "scales":
-        print_header("$survey->name: $strscales", "$strscales");
-
-        print_heading($strallscales);
+        print_header("$survey->name: $strscales", "$strallscales");
 
         $questions = get_records_sql("SELECT * FROM survey_questions WHERE id in ($survey->questions)");
         $questionorder = explode(",", $survey->questions);
@@ -134,25 +130,23 @@
         break;
 
       case "questions":
-        print_header("$survey->name: $strquestions", "$strquestions");
 
         if ($qid) {     // just get one multi-question
             $questions = get_records_sql("SELECT * FROM survey_questions WHERE id in ($qid)");
             $questionorder = explode(",", $qid);
 
-            print_heading($strselectedquestions);
-
             if ($scale = get_records("survey_questions", "multi", "$qid")) {
                 $scale = array_pop($scale);
-                echo "<HR>";
-                print_heading($scale->text);
+                print_header("$survey->name: $strquestions", "$scale->text - $strselectedquestions");
+            } else {
+                print_header("$survey->name: $strquestions", "$strselectedquestions");
             }
 
         } else {        // get all top-level questions
             $questions = get_records_sql("SELECT * FROM survey_questions WHERE id in ($survey->questions)");
             $questionorder = explode(",", $survey->questions);
 
-            print_heading($strallquestions);
+            print_header("$survey->name: $strquestions", "$strallquestions");
         }
 
         foreach ($questionorder as $key => $val) {
@@ -209,9 +203,7 @@
 
         $answers =  explode(",", $question->options);
 
-        print_header("$survey->name: $strquestion", "$strquestion");
-
-        print_heading("$question->text");
+        print_header("$survey->name: $strquestion", "$strquestion: $question->text");
 
         $aaa = get_records_sql("SELECT sa.*,u.firstname,u.lastname,u.picture FROM survey_answers sa, user u WHERE sa.survey = '$survey->id' AND sa.question = $question->id AND u.id = sa.user ORDER by sa.answer1,sa.answer2 ASC");
 
