@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.2 development (2004021000)
+      // moodle.php - created with Moodle 1.2 development (2004021201)
 
 
 $string['action'] = 'Actie';
@@ -157,6 +157,7 @@ $string['configsmtphosts'] = 'Geef de volledige naam van één of meerdere lokale 
 $string['configsmtpuser'] = 'Als je hierboven een SMTP server hebt ingevuld en deze server authenticatie nodig heeft, vul hier dan de gebruikersnaam en het wachtwoord in.';
 $string['configteacherassignteachers'] = 'Zouden gewone docenten in staat moeten zijn om andere docenten aan te wijzen binnen de vakken die zij doceren? Als je dit op \'nee\' zet, dan kunnen alleen vak-aanmakers en beheerders docenten aanwijzen.';
 $string['configtextfilters'] = 'Tekstfilters verwerken teksten op verschillende manieren. Plaats hier de tekstfilters die je wil gebruiken met hun relatief pad en in de volgorde dat je wil dat ze toegepast worden op je tekst. Ze moeten gescheiden worden door komma\'s. (Bijvoorbeeld mod/glossary/dynalink.php, filter/censor/censor.php)';
+$string['configtimezone'] = 'Hier kun je de standaard tijdzone instellen. Dit is slechts de STANDAARD tijdzone voor het tonen van datums - elke gebruiker kan deze instelling voor zichzelf wijzigen in zijn profiel. Op deze plaats zal de optie \"Servertijd\" de standaardtijd in Moodle gelijkzetten met de tijd van het besturingssysteem van de server, maar in het profiel van de gebruikers zal de instelling \"Servertijd\" de hier ingestelde tijdzone zijn.';
 $string['configunzip'] = 'Geef de locatie van je UNZIP programma (alleen voor UNIX). Dit is nodig om ZIP archieven op de server uit te pakken.';
 $string['configuration'] = 'Configuratie';
 $string['configvariables'] = 'Configureer variabelen';
