@@ -59,6 +59,7 @@ $string['displayformat2']  = "Full with author";
 $string['displayformat3']  = "Encyclopedia";
 $string['displayformat4']  = "FAQ";
 $string['displayformat5'] = "Full without author";
+$string['displayformat6'] = "Entry list";
 $string['duplicateentry'] = "Duplicate entry";
 $string['editcategories'] = "Edit categories";
 $string['editentry'] = "Edit entry";

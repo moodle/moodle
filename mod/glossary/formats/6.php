@@ -1,0 +1,28 @@
+<?PHP  // $Id$
+
+function glossary_print_entry_by_format($course, $cm, $glossary, $entry,$mode="",$hook="",$printicons=1) {
+    global $THEME, $USER;
+
+    $colour = "#FFFFFF";
+
+    echo "\n<table class=\"generalbox\" border=0 cellspacing=0 width=95% valign=top cellpadding=10>";
+
+    echo "\n<tr>";
+    echo "<td width=100% bgcolor=\"$colour\">";
+    if ($entry) {
+        echo "<b><a href=\"view.php?id=$cm->id&mode=entry&hook=$entry->id&displayformat=0\">";
+
+        glossary_print_entry_concept($entry);
+        echo '</a></b><br />';
+    } else {
+        echo "<center>";
+        print_string("noentry", "glossary");
+        echo "</center>";
+    }
+    echo "</td></tr>";
+
+    echo "</table>\n";
+
+}
+
+?>
