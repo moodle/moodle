@@ -98,11 +98,12 @@
                 }
             }
 
+            $usernew->auth = $user->auth;
             $user = $usernew;
 
         } else {
             $timenow = time();
-
+            
             if (!$usernew->picture = save_profile_image($user->id,$um,'users')) {
                 if (!empty($usernew->deletepicture)) {
                     set_field('user', 'picture', 0, 'id', $user->id);  /// Delete picture
@@ -145,9 +146,11 @@
             }
 
             if (update_record("user", $usernew)) {
-                if (function_exists("auth_user_update")){ 
-                    auth_user_update($user, $usernew);
-                }
+                if (function_exists("auth_user_update")){
+                    // pass a true $userold here 
+                    auth_user_update($userold, $usernew);
+                };
+
                 add_to_log($course->id, "user", "update", "view.php?id=$user->id&course=$course->id", "");
 
                 if ($user->id == $USER->id) {
