@@ -1769,11 +1769,10 @@ function current_theme() {
  * @param int $lastmodified ?
  * @param int $lifetime ?
  * @param string $thename ?
- * @todo Finish documenting this function
  */
-function style_sheet_setup($lastmodified=0, $lifetime=300, $themename='') {
+function style_sheet_setup($lastmodified=0, $lifetime=300, $themename='', $forceconfig='') {
 
-    global $CFG;
+    global $CFG, $THEME;
 
     header('Last-Modified: ' . gmdate("D, d M Y H:i:s", $lastmodified) . ' GMT');
     header('Expires: ' . gmdate("D, d M Y H:i:s", time() + $lifetime) . ' GMT');
@@ -1781,15 +1780,67 @@ function style_sheet_setup($lastmodified=0, $lifetime=300, $themename='') {
     header('Pragma: ');
     header('Content-type: text/css');  // Correct MIME type
 
-    if (!empty($themename)) {
-        $CFG->theme = $themename;
+    $DEFAULT_SHEET_LIST = array('styles_layout', 'styles_fonts', 'styles_color', 'styles_moz');
+
+    if (empty($themename)) {
+        $themename = current_theme();  // So we have something.  Normally not needed.
     }
 
-    return $CFG->wwwroot .'/theme/'. $CFG->theme;
+    if (!empty($forceconfig)) {        // Page wants to use the config from this theme instead
+        unset($THEME);
+        include($CFG->dirroot.'/theme/'.$forceconfig.'/'.'config.php');
+    }
 
+/// If this is the standard theme calling us, then find out what sheets we need
+
+    if ($themename == 'standard') {
+        if (!isset($THEME->standardsheets) or $THEME->standardsheets === true) { // Use all the sheets we have
+            $THEME->sheets = $DEFAULT_SHEET_LIST;
+        } else if (empty($THEME->standardsheets)) {                              // We can stop right now!
+            echo "/***** Nothing required from this stylesheet by main theme *****/\n\n";
+            exit;
+        } else {                                                                 // Use the provided subset only
+            $THEME->sheets = $THEME->standardsheets;
+        }
+
+/// If we are a parent theme, then check for parent definitions
+
+    } else if (!empty($THEME->parent) && $themename == $THEME->parent) {
+        if (!isset($THEME->parentsheets) or $THEME->parentsheets === true) {     // Use all the sheets we have
+            $THEME->sheets = $DEFAULT_SHEET_LIST;
+        } else if (empty($THEME->parentsheets)) {                                // We can stop right now!
+            echo "/***** Nothing required from this stylesheet by main theme *****/\n\n";
+            exit;
+        } else {                                                                 // Use the provided subset only
+            $THEME->sheets = $THEME->parentsheets;
+        }
+    }
+
+/// Work out the last modified date for this theme
+
+    foreach ($THEME->sheets as $sheet) {
+        if (file_exists($CFG->dirroot.'/theme/'.$themename.'/'.$sheet.'.css')) {
+            $sheetmodified = filemtime($CFG->dirroot.'/theme/'.$themename.'/'.$sheet.'.css');
+            if ($sheetmodified > $lastmodified) {
+                $lastmodified = $sheetmodified;
+            }
+        }
+    }
+
+
+/// Print out the entire style sheet
+
+    foreach ($THEME->sheets as $sheet) {
+        echo "/***** $sheet.css start *****/\n\n";
+        @include_once($CFG->dirroot.'/theme/'.$themename.'/'.$sheet.'.css');
+        echo "\n\n/***** $sheet.css end *****/\n\n";
+    }
+
+    return $CFG->wwwroot.'/theme/'.$themename;   // Only to help old themes (1.4 and earlier)
 }
 
-function theme_setup($theme = '', $extraparams='') {
+
+function theme_setup($theme = '', $params=NULL) {
 /// Sets up global variables related to themes
 
     global $CFG, $THEME;
@@ -1797,17 +1848,25 @@ function theme_setup($theme = '', $extraparams='') {
     if (empty($theme)) {
         $theme = current_theme();
     }
-    if (empty($extraparams)) {
-        $params = '';
-        $paramsparent = '?parent=true';
+
+/// Put together the parameters
+    if (!$params) {
+        $params = array();
+    }
+    if (!empty($CFG->coursetheme) and !empty($CFG->allowcoursethemes)) {  // Course theme can override all others
+        $params[] = 'forceconfig='.$CFG->coursetheme;
+    }
+    if ($params) {
+        $paramstring = '?'.implode('&amp;', $params);
     } else {
-        $params = '?'.$extraparams;
-        $paramsparent = '?parent=true&amp;'.$extraparams;
+        $paramstring = '';
     }
 
-    $THEME = null;
-    include($CFG->dirroot .'/theme/'. $theme .'/config.php');
+/// Load up the theme config
+    $THEME = NULL;   // Just to be sure
+    include($CFG->dirroot .'/theme/'. $theme .'/config.php');  // Main config for current theme
 
+/// Set up image paths
     if (empty($CFG->custompix)) {    // Could be set in the above file
         $CFG->pixpath = $CFG->wwwroot .'/pix';
         $CFG->modpixpath = $CFG->wwwroot .'/mod';
@@ -1816,17 +1875,19 @@ function theme_setup($theme = '', $extraparams='') {
         $CFG->modpixpath = $CFG->wwwroot .'/theme/'. $theme .'/pix/mod';
     }
 
+/// Header and footer paths
     $CFG->header = $CFG->dirroot .'/theme/'. $theme .'/header.html';
     $CFG->footer = $CFG->dirroot .'/theme/'. $theme .'/footer.html';
 
+/// Define stylesheet loading order
     $CFG->stylesheets = array();
     if ($theme != 'standard') {    /// The standard sheet is always loaded first
-        $CFG->stylesheets[] = $CFG->wwwroot.'/theme/standard/styles.php'.$params;
+        $CFG->stylesheets[] = $CFG->wwwroot.'/theme/standard/styles.php'.$paramstring;
     }
     if (!empty($THEME->parent)) {  /// Parent stylesheets are loaded next
-        $CFG->stylesheets[] = $CFG->wwwroot.'/theme/'.$THEME->parent.'/styles.php'.$paramsparent;
+        $CFG->stylesheets[] = $CFG->wwwroot.'/theme/'.$THEME->parent.'/styles.php'.$paramstring;
     }
-    $CFG->stylesheets[] = $CFG->wwwroot.'/theme/'.$theme.'/styles.php'.$params;
+    $CFG->stylesheets[] = $CFG->wwwroot.'/theme/'.$theme.'/styles.php'.$paramstring;
 
 }
 

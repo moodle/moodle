@@ -20,7 +20,7 @@
 
     $CFG->theme = $preview;
 
-    theme_setup($CFG->theme, 'localconfig=true&amp;themename='.$CFG->theme);
+    theme_setup($CFG->theme, array('forceconfig='.$CFG->theme));
 
     $stradministration = get_string("administration");
     $strconfiguration = get_string("configuration");
