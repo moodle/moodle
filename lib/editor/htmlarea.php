@@ -15,6 +15,11 @@
 	if (empty($lang)) {
 		$lang = "en";
 	}
+
+    $strheading = get_string("heading", "editor");
+    $strnormal = get_string("normal", "editor");
+    $straddress = get_string("address", "editor");
+    $strpreformatted = get_string("preformatted", "editor");
 ?>
 
 //
@@ -122,10 +127,10 @@ HTMLArea.Config = function () {
 		"Arial":	   'arial,helvetica,sans-serif',
 		"Courier New":	   'courier new,courier,monospace',
 		"Georgia":	   'georgia,times new roman,times,serif',
+		"Impact":	   'impact',
 		"Tahoma":	   'tahoma,arial,helvetica,sans-serif',
 		"Times New Roman": 'times new roman,times,serif',
 		"Verdana":	   'verdana,arial,helvetica,sans-serif',
-		"impact":	   'impact',
 		"WingDings":	   'wingdings'
 	};
 
@@ -140,15 +145,15 @@ HTMLArea.Config = function () {
 	};
 
 	this.formatblock = {
-		"Heading 1": "h1",
-		"Heading 2": "h2",
-		"Heading 3": "h3",
-		"Heading 4": "h4",
-		"Heading 5": "h5",
-		"Heading 6": "h6",
-		"Normal": "p",
-		"Address": "address",
-		"Formatted": "pre"
+		"<?php echo $strheading ?> 1": "h1",
+		"<?php echo $strheading ?> 2": "h2",
+		"<?php echo $strheading ?> 3": "h3",
+		"<?php echo $strheading ?> 4": "h4",
+		"<?php echo $strheading ?> 5": "h5",
+		"<?php echo $strheading ?> 6": "h6",
+		"<?php echo $strnormal ?>": "p",
+		"<?php echo $straddress ?>": "address",
+		"<?php echo $strpreformatted ?>": "pre"
 	};
 
 	this.customSelects = {};
@@ -197,7 +202,7 @@ HTMLArea.Config = function () {
 		outdent: [ "Decrease Indent", "ed_indent_less.gif", false, function(e) {e.execCommand("outdent");} ],
 		indent: [ "Increase Indent", "ed_indent_more.gif", false, function(e) {e.execCommand("indent");} ],
 		forecolor: [ "Font Color", "ed_color_fg.gif", false, function(e) {e.execCommand("forecolor");} ],
-		hilitecolor: [ "Background Color", "ed_color_bg.gif", false, function(e) {e.execCommand("hilitecolor");} ],
+		hilitecolor: [ "Background Colorxxx", "ed_color_bg.gif", false, function(e) {e.execCommand("hilitecolor");} ],
 		inserthorizontalrule: [ "Horizontal Rule", "ed_hr.gif", false, function(e) {e.execCommand("inserthorizontalrule");} ],
 		createlink: [ "Insert Web Link", "ed_link.gif", false, function(e) {e.execCommand("createlink", true);} ],
 		insertimage: [ "Insert Image", "ed_image.gif", false, function(e) {e.execCommand("insertimage");} ],
