@@ -380,7 +380,7 @@
                 //If all is OK, go with associated mods
                 if ($status) {
                     //If we have mods in the section
-                    if ($sect->mods) {
+                    if (!empty($sect->mods)) {
                         //For each mod inside section
                         foreach ($sect->mods as $keym => $mod) {
                             //Check if we've to restore this module
@@ -471,16 +471,19 @@
             foreach ($info->users as $userid) {
                 $rec = backup_getid($restore->backup_unique_code,"user",$userid); 
                 $user = $rec->info;
+
+                //Check if it's admin and coursecreator
+                $is_admin =         !empty($user->roles['admin']);
+                $is_coursecreator = !empty($user->roles['coursecreator']);
+
+                //Check if it's teacher and student
+                $is_teacher = !empty($user->roles['teacher']);
+                $is_student = !empty($user->roles['student']);
+
                 //Calculate if it is a course user
                 //Has role teacher or student or admin or coursecreator
-                $is_course_user = ($user->roles[teacher] or $user->roles[student] or
-                                   $user->roles[admin] or $user->roles[coursecreator]);
-                //Check if it's admin and coursecreator
-                $is_admin = ($user->roles[admin]);
-                $is_coursecreator = ($user->roles[coursecreator]);
-                //Check if it's teacher and student
-                $is_teacher = ($user->roles[teacher]);
-                $is_student = ($user->roles[student]);
+                $is_course_user = ($is_teacher or $is_student);
+
                 //To store new ids created
                 $newid=null;
                 //check if it exists (by username) and get its id
@@ -537,22 +540,27 @@
                     $currinfo = $data->info.",";
                     //Now, depending of the role, create records in user_studentes and user_teacher 
                     //and/or mark it in backup_ids
-                    if ($is_admin) {
-                        //If the record (user_admins) doesn't exists
-                        if (!record_exists("user_admins","userid",$newid)) {
-                            //Only put status in backup_ids
-                            $currinfo = $currinfo."admin,";
-                            $status = backup_putid($restore->backup_unique_code,"user",$userid,$newid,$currinfo);
-                        }
-                    } 
-                    if ($is_coursecreator) {
-                        //If the record (user_coursecreators) doesn't exists
-                        if (!record_exists("user_coursecreators","userid",$newid)) {
-                            //Only put status in backup_ids
-                            $currinfo = $currinfo."coursecreator,";
-                            $status = backup_putid($restore->backup_unique_code,"user",$userid,$newid,$currinfo);
-                        }
-                    } 
+                    //
+                    // Martin commented this out 25/8/03 ... I don't think it makes sense to 
+                    // recreate admins and course creators when restoring a course - this could 
+                    // be a security problem when restoring courses from one site to another...
+                    //
+                    //if ($is_admin) {
+                    //    //If the record (user_admins) doesn't exists
+                    //    if (!record_exists("user_admins","userid",$newid)) {
+                    //        //Only put status in backup_ids
+                    //        $currinfo = $currinfo."admin,";
+                    //        $status = backup_putid($restore->backup_unique_code,"user",$userid,$newid,$currinfo);
+                    //    }
+                    //} 
+                    //if ($is_coursecreator) {
+                    //    //If the record (user_coursecreators) doesn't exists
+                    //    if (!record_exists("user_coursecreators","userid",$newid)) {
+                    //        //Only put status in backup_ids
+                    //        $currinfo = $currinfo."coursecreator,";
+                    //        $status = backup_putid($restore->backup_unique_code,"user",$userid,$newid,$currinfo);
+                    //    }
+                    //} 
                     if ($is_teacher) {
                         //If the record (teacher) doesn't exists
                         if (!record_exists("user_teachers","userid",$newid,"course", $restore->course_id)) {
@@ -560,11 +568,11 @@
                             $currinfo = $currinfo."teacher,";
                             $status = backup_putid($restore->backup_unique_code,"user",$userid,$newid,$currinfo);
                             //Set course and user
-                            $user->roles[teacher]->course = $restore->course_id;
-                            $user->roles[teacher]->userid = $newid;
+                            $user->roles['teacher']->course = $restore->course_id;
+                            $user->roles['teacher']->userid = $newid;
                             //Insert data in user_teachers
                             //The structure is exactly as we need
-                            $status = insert_record("user_teachers",$user->roles[teacher]);
+                            $status = insert_record("user_teachers",$user->roles['teacher']);
                         }
                     } 
                     if ($is_student) {
@@ -574,11 +582,11 @@
                             $currinfo = $currinfo."student,";
                             $status = backup_putid($restore->backup_unique_code,"user",$userid,$newid,$currinfo);
                             //Set course and user
-                            $user->roles[student]->course = $restore->course_id;
-                            $user->roles[student]->userid = $newid;
+                            $user->roles['student']->course = $restore->course_id;
+                            $user->roles['student']->userid = $newid;
                             //Insert data in user_students
                             //The structure is exactly as we need
-                            $status = insert_record("user_students",$user->roles[student]);
+                            $status = insert_record("user_students",$user->roles['student']);
                         }
                     }
                     if (!$is_course_user) {
@@ -1018,8 +1026,13 @@
             //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br>\n";   //Debug
 
             //If we are under a QUESTION_CATEGORY tag under a QUESTION_CATEGORIES zone, accumule it
-            if (($this->tree[4] == "QUESTION_CATEGORY") and ($this->tree[3] == "QUESTION_CATEGORIES")) {
-                $this->temp .= "<".$tagName.">";
+            if (isset($this->tree[4]) and isset($this->tree[3])) {
+                if (($this->tree[4] == "QUESTION_CATEGORY") and ($this->tree[3] == "QUESTION_CATEGORIES")) {
+                    if (!isset($this->temp)) {
+                        $this->temp = "";
+                    }
+                    $this->temp .= "<".$tagName.">";
+                }
             }
         }
 
@@ -1041,8 +1054,13 @@
             //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br>\n";   //Debug
 
             //If we are under a SCALE tag under a SCALES zone, accumule it
-            if (($this->tree[4] == "SCALE") and ($this->tree[3] == "SCALES")) {
-                $this->temp .= "<".$tagName.">";
+            if (isset($this->tree[4]) and isset($this->tree[3])) {
+                if (($this->tree[4] == "SCALE") and ($this->tree[3] == "SCALES")) {
+                    if (!isset($this->temp)) {
+                        $this->temp = "";
+                    }
+                    $this->temp .= "<".$tagName.">";
+                }
             }
         }
 
@@ -1064,8 +1082,13 @@
             //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br>\n";   //Debug
 
             //If we are under a MOD tag under a MODULES zone, accumule it
-            if (($this->tree[4] == "MOD") and ($this->tree[3] == "MODULES")) {
-                $this->temp .= "<".$tagName.">";
+            if (isset($this->tree[4]) and isset($this->tree[3])) {
+                if (($this->tree[4] == "MOD") and ($this->tree[3] == "MODULES")) {
+                    if (!isset($this->temp)) {
+                        $this->temp = "";
+                    }
+                    $this->temp .= "<".$tagName.">";
+                }
             }
         }
 
@@ -1266,10 +1289,7 @@
                     switch ($tagName) {
                         case "SECTION":
                             //We've finalized a section, get it
-                            $this->info->sections[$this->info->tempsection->id]->number = $this->info->tempsection->number;
-                            $this->info->sections[$this->info->tempsection->id]->summary = $this->info->tempsection->summary;
-                            $this->info->sections[$this->info->tempsection->id]->visible = $this->info->tempsection->visible;
-                            $this->info->sections[$this->info->tempsection->id]->mods = $this->info->tempsection->mods;
+                            $this->info->sections[$this->info->tempsection->id] = $this->info->tempsection;
                             unset($this->info->tempsection);
                     }
                 }
@@ -1485,20 +1505,7 @@
                     switch ($tagName) {
                         case "ROLE":
                             //We've finalized a role, get it
-                            $this->info->tempuser->roles[$this->info->temprole->type]->authority =
-                                $this->info->temprole->authority;
-                            $this->info->tempuser->roles[$this->info->temprole->type]->tea_role =
-                                $this->info->temprole->tea_role;
-                            $this->info->tempuser->roles[$this->info->temprole->type]->editall =
-                                $this->info->temprole->editall;
-                            $this->info->tempuser->roles[$this->info->temprole->type]->timemodified =
-                                $this->info->temprole->timemodified;
-                            $this->info->tempuser->roles[$this->info->temprole->type]->timestart =
-                                $this->info->temprole->timestart;
-                            $this->info->tempuser->roles[$this->info->temprole->type]->timeend =
-                                $this->info->temprole->timeend;
-                            $this->info->tempuser->roles[$this->info->temprole->type]->time =
-                                $this->info->temprole->time;
+                            $this->info->tempuser->roles[$this->info->temprole->type] = $this->info->temprole;
                             unset($this->info->temprole);
                             break;
                     }
@@ -1555,6 +1562,9 @@
                 //echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;/".$tagName."&gt;<br>\n";          //Debug
                 //Acumulate data to info (content + close tag)
                 //Reconvert: strip htmlchars again and trim to generate xml data
+                if (!isset($this->temp)) {
+                    $this->temp = "";
+                }
                 $this->temp .= htmlspecialchars(trim($this->content))."</".$tagName.">";
                 //If we've finished a mod, xmlize it an save to db
                 if (($this->level == 4) and ($tagName == "QUESTION_CATEGORY")) {
@@ -1602,6 +1612,9 @@
                 //echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;/".$tagName."&gt;<br>\n";          //Debug
                 //Acumulate data to info (content + close tag)
                 //Reconvert: strip htmlchars again and trim to generate xml data
+                if (!isset($this->temp)) {
+                    $this->temp = "";
+                }
                 $this->temp .= htmlspecialchars(trim($this->content))."</".$tagName.">";
                 //If we've finished a scale, xmlize it an save to db
                 if (($this->level == 4) and ($tagName == "SCALE")) {
@@ -1649,6 +1662,9 @@
                 //echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;/".$tagName."&gt;<br>\n";          //Debug
                 //Acumulate data to info (content + close tag)
                 //Reconvert: strip htmlchars again and trim to generate xml data
+                if (!isset($this->temp)) {
+                    $this->temp = "";
+                }
                 $this->temp .= htmlspecialchars(trim($this->content))."</".$tagName.">";
                 //If we've finished a mod, xmlize it an save to db
                 if (($this->level == 4) and ($tagName == "MOD")) {
