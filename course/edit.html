@@ -11,7 +11,7 @@
 <table cellpadding=9 cellspacing=0 >
 <tr valign=top>
     <td align="right"><P><?php  print_string("category") ?>:</td>
-    <td><?php  
+    <td><?php
            $displaylist = array();
            $parentlist = array();
            make_categories_list($displaylist, $parentlist);
@@ -36,16 +36,16 @@
 </tr>
 <tr valign=top>
     <td align="right"><P><?php  print_string("summary") ?>:</td>
-    <td><?php 
+    <td><?php
         print_textarea($usehtmleditor, 10, 50, 660, 200, "summary", $form->summary);
         helpbutton("text", get_string("helptext"));
-        if (isset($err["summary"])) formerr($err["summary"]); 
+        if (isset($err["summary"])) formerr($err["summary"]);
     ?>
     </td>
 </tr>
 <tr valign=top>
     <td align="right"><P><?php  print_string("format") ?>:</td>
-    <td><?php  
+    <td><?php
            choose_from_menu ($form->courseformats, "format", "$form->format", "");
            helpbutton("courseformats", get_string("courseformats"));
         ?>
@@ -128,7 +128,7 @@
 </tr>
 <tr valign=top>
     <td align="right"><P><?php  print_string("newsitemsnumber") ?>:</td>
-    <td><?php  
+    <td><?php
        $newsitem = get_string("newsitem");
        $newsitems = get_string("newsitems");
 
@@ -146,16 +146,6 @@
        choose_from_menu ($options, "newsitems", "$form->newsitems", "");
        helpbutton("coursenewsitems", get_string("newsitemsnumber"));
     ?>
-    </td>
-</tr>
-<tr valign=top>
-    <td align="right"><P><?php  print_string("showrecent") ?>:</td>
-    <td><?php
-    unset($choices);
-    $choices["0"] = get_string("no");
-    $choices["1"] = get_string("yes");
-    choose_from_menu ($choices, "showrecent", $form->showrecent, "");
-    helpbutton("courserecent", get_string("recentactivity")); ?>
     </td>
 </tr>
 <tr valign=top>
@@ -189,7 +179,7 @@
 <tr valign=top>
     <td align="right"><P><?php  print_string("wordforteacher") ?>:</td>
     <td><input type="text" name="teacher" maxlength="100" size=25 value="<?php  p($form->teacher) ?>">
-    (<?php  print_string("wordforteachereg") ?>) 
+    (<?php  print_string("wordforteachereg") ?>)
     <?php  if (isset($err["teacher"])) formerr($err["teacher"]); ?>
     </td>
 </tr>
@@ -203,24 +193,24 @@
 <tr valign=top>
     <td align="right"><P><?php  print_string("wordforstudent") ?>:</td>
     <td><input type="text" name="student" maxlength="100" size=25 value="<?php  p($form->student) ?>">
-    (<?php  print_string("wordforstudenteg") ?>) 
+    (<?php  print_string("wordforstudenteg") ?>)
     <?php  if (isset($err["student"])) formerr($err["student"]); ?>
     </td>
 </tr>
 <tr valign=top>
     <td align="right"><P><?php  print_string("wordforstudents") ?>:</td>
     <td><input type="text" name="students" maxlength="100" size=25 value="<?php  p($form->students) ?>">
-    (<?php  print_string("wordforstudentseg") ?>) 
+    (<?php  print_string("wordforstudentseg") ?>)
     <?php  if (isset($err["students"])) formerr($err["students"]); ?>
     </td>
 </tr>
 <tr valign=top>
     <td align="right"><P><?php  print_string("forcelanguage") ?>:</td>
 	<td>
-    <?php 
+    <?php
         $languages[''] = get_string("forceno");
         $languages += get_list_of_languages();
-        choose_from_menu ($languages, "lang", $form->lang, "", "", ""); 
+        choose_from_menu ($languages, "lang", $form->lang, "", "", "");
     ?>
     </td>
 </tr>

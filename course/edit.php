@@ -80,7 +80,7 @@
                         redirect("teacher.php?id=$newcourseid", get_string("changessaved"));
 
                     } else {         // Add current teacher and send to course
-                        
+
                         $newteacher = NULL;
                         $newteacher->userid = $USER->id;
                         $newteacher->course = $newcourseid;
@@ -106,7 +106,7 @@
             foreach ($err as $key => $value) {
                 $focus = "form.$key";
             }
-            
+
         }
 	}
 
@@ -125,7 +125,6 @@
             $form->guest = 0;
             $form->numsections = 10;
             $form->newsitems = 5;
-            $form->showrecent = 1;
             $form->showgrades = 1;
             $form->groupmode = 0;
             $form->groupmodeforce = 0;
@@ -168,8 +167,8 @@
     $strcategories = get_string("categories");
 
     if (!empty($course)) {
-	    print_header($streditcoursesettings, "$course->fullname", 
-                     "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> 
+	    print_header($streditcoursesettings, "$course->fullname",
+                     "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a>
                       -> $streditcoursesettings", $focus);
     } else {
         print_header("$site->shortname: $straddnewcourse", "$site->fullname",
@@ -184,7 +183,7 @@
 
     print_footer($course);
 
-    if ($usehtmleditor) { 
+    if ($usehtmleditor) {
         use_html_editor();
     }
 
