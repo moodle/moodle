@@ -1,6 +1,32 @@
 <P ALIGN=CENTER><B>Kies opmaak</B></P>
 
 <P>Met deze instelling kun je kiezen op welke manier de woordenlijst aan de leerlingen getoond wordt.</p>
-<p>Als de leerlingen definities kunnen toevoegen aan de woordenlijst, dan is het misschien interessant te
-tonen wie de definitie gemaakt heeft. Als alleen de leraren woorden toevoegen aan de lijst, dan heeft
-het weinig zin de auteur te tonen.</p>
+De standaard opmaakmogelijkheden zijn:</p>
+<blockquote>
+<dl>
+<dt><b>Woordenboek</b>:</dt>
+<dd>Ziet er uit als een gewoon woordenboek met gescheiden items. De auteurs worden niet getoond en bijlagen 
+worden getoond als links.</dd>
+<dt><b>Volledige lijst zonder auteur</b>:</dt>
+<dd>Toont alle items met hun definitie onder elkaar zonder enig scheidingsteken buiten het bewerken icoon.</dd>
+<dt><b>Toon bijhorende gegevens met auteur</b>:</dt>
+<dd>Een forumachtige beeldopmaak met de gegevens van de auteur. Bijlagen worden als links getoond.</dd>
+<dt><b>Toon bijhorende gegevens zonder auteur</b>:</dt>
+<dd>Een forumachtige beeldopmaak zonder de gegevens van de auteur. Bijlagen worden als links getoond.</dd>
+<dt><b>Encyclopedie</b>:</dt>
+<dd>Zoals 'Toon bijhorende gegevens met auteur' maar afbeeldingen in bijlage worden in de tekst getoond.</dd>
+<dt><b>FAQ</b>:</dt>
+<dd>Nuttig om een lijst met veel gestelde vragen te publiceren.
+Er wordt automatisch het woord VRAAG en ANTWOORD toegevoegd, respectievelijk in het item en in de definitie.</dd>
+</dl>
+</blockquote>
+
+<hr>
+<p>Moodle Beheerders kunnen als volgt nieuwe opmaakprofielen maken:
+<ol>
+<li> Kijk in mod/glossary/formats ... je ziet een genummerd bestand voor elk bestaand opmaakprofiel.
+<li> Kopieer één er van en geef het volgend nummer N (let op: 0 en 1 zijn gereserveerd).
+<li> Bewerk dit bestand om je eigen opmaak te maken (wat PHP-kennis is vereist).
+<li> Voeg ten slotte een nieuw item toe in elk taalpakket dat je gebruikt, noem het <b>displayformatN</b>,
+ en geef het een korte maar betekenisvolle naam.
+</ol>
