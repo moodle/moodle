@@ -50,7 +50,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <html style="height: 270px;">
 <head>
-<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta http-equiv="content-type" content="text/html; <?php print_string("thischarset");?>">
 <style type="text/css">
 body {
   background: ButtonFace;
