@@ -699,6 +699,12 @@ HTMLArea.prototype.generate = function () {
 
     // create the IFRAME
     var iframe = document.createElement("iframe");
+
+    if (HTMLArea.is_ie) {  // http://moodle.org/mod/forum/discuss.php?d=8555
+        // tricky! set src to local url to turn off SSL security alert
+        iframe.src = this.config.popupURL+"blank.html";
+    }
+
     htmlarea.appendChild(iframe);
 
     this._iframe = iframe;
