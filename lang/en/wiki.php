@@ -73,6 +73,7 @@ $string['errorbinandtxt'] = 'Flag error: Page of type BIN and TXT';
 $string['errornotype'] = 'Flag error: Neither BIN nor TXT';
 $string['errorhtml'] = 'Page of type HTML';
 $string['readonly'] = 'Read only page';
+$string['ownerunknown'] = 'unknown';
 $string['errorroandwr'] = 'Flag error: Page is Writeable and Read only';
 $string['errorsize'] = 'Page size bigger than 64k';
 $string['emptypage'] = 'Empty page';
@@ -173,6 +174,17 @@ $string['smfor']="Sitemap for";
 $string['invalidroot']="You are not authorized to access the current root page so no sitemap can be created.";
 $string['thispageisntlinkedfromanywhereelse'] = 'This page isn\'t linked from anywhere else.';
 
-$string['wikidump']='Here you can tailor your WikiDump to your needs. When you are ready, click the "Export" button.';
-$string['export']='Export.';
+$string['wikiexportcomment']='Here you can configure the export to your needs.';
+$string['wikiexport']='Export pages';
+$string['exportformats']='Export formats';
+$string['export']='Export';
+$string['withbinaries']='Include binary content';
+$string['withvirtualpages']='Include Wiki-Links';
+$string['plaintext']='Plain Text';
+$string['html']='HTML-Format';
+$string['downloadaszip']='Downloadable zip archive';
+$string['moduledirectory']='Module Directory';
+$string['exportto']='Export to';
+$string['exportsuccessful']='Export successful.';
+$string['index']='Index';
 ?>
