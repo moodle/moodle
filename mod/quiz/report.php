@@ -52,7 +52,7 @@
     $strreport  = get_string("report", "quiz");
     $strname  = get_string("name");
     $strattempts  = get_string("attempts", "quiz");
-    $strgrade  = get_string("grade", "quiz");
+    $strgrade  = get_string("grade");
 
     print_header("$course->shortname: $quiz->name", "$course->fullname",
                  "$navigation <A HREF=index.php?id=$course->id>$strquizzes</A> 
@@ -74,10 +74,7 @@
         $picture = print_user_picture($grade->user, $course->id, $grade->picture, false, true);
 
         if ($attempts = quiz_get_user_attempts($quiz->id, $grade->user)) {
-            foreach ($attempts as $attempt) {
-                $userattempts[] = ($attempt->sumgrades / $quiz->sumgrades) * $quiz->grade;
-            }
-            $userattempts = implode(",", $userattempts);
+            $userattempts = quiz_get_user_attempts_string($quiz, $attempts, $grade->grade);
         }
 
         $table->data[] = array ($picture, 

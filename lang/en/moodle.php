@@ -192,6 +192,7 @@ GNU General Public License for more details:
 
 http://www.gnu.org/copyleft/gpl.html";
 $string['grade'] = "Grade";
+$string['grades'] = "Grades";
 $string['guestskey'] = "Allow guests who have the key";
 $string['guestsno'] = "Do not allow guests in";
 $string['guestsnotallowed'] = "Sorry, '\$a' does not allow guests to enter.";

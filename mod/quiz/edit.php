@@ -108,8 +108,9 @@
         $modform->questions = implode(",", $questions);
     }
 
-    if ($grade) { /// The grades have been updated, so update our internal list
+    if ($setgrades) { /// The grades have been updated, so update our internal list
         $rawgrades = $HTTP_POST_VARS;
+        unset($modform->grades);
         foreach ($rawgrades as $key => $value) {    // Parse input for question -> grades
             if (substr($key, 0, 1) == "q") {
                 $key = substr($key,1);

@@ -92,34 +92,45 @@
     if ($quiz->attempts > 1) {
         echo "<P ALIGN=CENTER>".get_string("attemptsallowed", "quiz").": $quiz->attempts</P>";
         echo "<P ALIGN=CENTER>".get_string("grademethod", "quiz").": ".$QUIZ_GRADE_METHOD[$quiz->grademethod]."</P>";
+    } else {
+        echo "<BR>";
     }
+
+    $strattempt = get_string("attempt", "quiz");
+    $strtime = get_string("time", "quiz");
+    $strgrade = get_string("grade");
+
     if ($numattempts) { 
-        $table->head = array("Attempt", "Time", "Grade");
+        $table->head = array($strattempt, $strtime, "$strgrade / $quiz->grade");
         $table->align = array("CENTER", "LEFT", "RIGHT");
         foreach ($attempts as $attempt) {
             $table->data[] = array( $attempt->attempt, 
                                     userdate($attempt->timemodified), 
-                                    ($attempt->sumgrades/$quiz->sumgrades)*$quiz->grade );
+                                    format_float(($attempt->sumgrades/$quiz->sumgrades)*$quiz->grade) );
         }
         print_table($table);
     }
 
     $mygrade = quiz_get_best_grade($quiz->id, $USER->id);
 
-    if ($numattempts < $quiz->attempts or !$quiz->attempts) { 
-        if ($available) {
-            $options["id"] = $cm->id;
-            if ($numattempts) {
-                print_heading("Your best grade so far is $mygrade / $quiz->grade.");
-            }
-            echo "<BR>";
-            echo "<DIV align=CENTER>";
-            print_single_button("attempt.php", $options, $label="Attempt quiz now");
-            echo "</P>";
-        }
+    if (!$quiz->questions) {
+        print_heading(get_string("noquestions", "quiz"));
     } else {
-        print_heading(get_string("nomoreattempts", "quiz"));
-        print_heading(get_string("yourfinalgradeis", "quiz", "$mygrade / $quiz->grade"));
+        if ($numattempts < $quiz->attempts or !$quiz->attempts) { 
+            if ($available) {
+                $options["id"] = $cm->id;
+                if ($numattempts) {
+                    print_heading("Your best grade so far is $mygrade / $quiz->grade.");
+                }
+                echo "<BR>";
+                echo "<DIV align=CENTER>";
+                print_single_button("attempt.php", $options, $label="Attempt quiz now");
+                echo "</P>";
+            }
+        } else {
+            print_heading(get_string("nomoreattempts", "quiz"));
+            print_heading(get_string("yourfinalgradeis", "quiz", "$mygrade / $quiz->grade"));
+        }
     }
 
 

@@ -40,16 +40,20 @@
     $strname  = get_string("name");
     $strweek  = get_string("week");
     $strtopic  = get_string("topic");
+    $strgrades  = get_string("grades");
 
     if ($course->format == "weeks") {
-        $table->head  = array ($strweek, $strname);
+        $table->head  = array ($strweek, $strname, $strgrades);
         $table->align = array ("CENTER", "LEFT");
+        $table->width = array (10, "*", 10);
     } else if ($course->format == "topics") {
-        $table->head  = array ($strtopic, $strname);
+        $table->head  = array ($strtopic, $strname, $strgrades);
         $table->align = array ("CENTER", "LEFT", "LEFT", "LEFT");
+        $table->width = array (10, "*", 10);
     } else {
-        $table->head  = array ($strname);
-        $table->align = array ("LEFT", "LEFT", "LEFT");
+        $table->head  = array ($strname, $strgrades);
+        $table->align = array ("LEFT", "LEFT");
+        $table->width = array ("*", 10);
     }
 
     foreach ($quizzes as $quiz) {

@@ -117,7 +117,11 @@
             error("Sorry! Could not calculate your best grade!");
         }
 
-        print_heading(get_string("grade", "quiz").": $result->grade/$quiz->grade  ($result->sumgrades / $quiz->sumgrades = $result->percentage %)");
+        $strgrade = get_string("grade");
+        $strscore = get_string("score", "quiz");
+
+        print_heading("$strscore: $result->sumgrades/$quiz->sumgrades ($result->percentage %)");
+        print_heading("$strgrade: $result->grade/$quiz->grade");
 
         print_continue("view.php?id=$cm->id");
 

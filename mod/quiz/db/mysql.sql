@@ -3,7 +3,7 @@
 # http://www.phpmyadmin.net/ (download page)
 #
 # Host: localhost
-# Generation Time: Oct 13, 2002 at 03:11 PM
+# Generation Time: Oct 15, 2002 at 08:22 PM
 # Server version: 3.23.49
 # PHP Version: 4.2.3
 # Database : `moodle`
@@ -40,10 +40,9 @@ CREATE TABLE `quiz_answers` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `question` int(10) unsigned NOT NULL default '0',
   `answer` varchar(255) NOT NULL default '',
-  `fraction` float NOT NULL default '0',
+  `fraction` varchar(10) NOT NULL default '0.0',
   `feedback` varchar(255) NOT NULL default '',
   PRIMARY KEY  (`id`)
-
 ) TYPE=MyISAM COMMENT='Answers, with a fractional grade (0-1) and feedback';
 # --------------------------------------------------------
 
@@ -56,7 +55,7 @@ CREATE TABLE `quiz_attempts` (
   `quiz` int(10) unsigned NOT NULL default '0',
   `user` int(10) unsigned NOT NULL default '0',
   `attempt` smallint(6) NOT NULL default '0',
-  `sumgrades` float NOT NULL default '0',
+  `sumgrades` int(10) NOT NULL default '0',
   `timemodified` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`)
 ) TYPE=MyISAM COMMENT='Stores various attempts on a quiz';
@@ -84,7 +83,7 @@ CREATE TABLE `quiz_grades` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `quiz` int(10) unsigned NOT NULL default '0',
   `user` int(10) unsigned NOT NULL default '0',
-  `grade` float NOT NULL default '0',
+  `grade` int(10) NOT NULL default '0',
   `timemodified` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`)
 ) TYPE=MyISAM COMMENT='Final quiz grade (may be best of several attempts)';
@@ -126,7 +125,7 @@ CREATE TABLE `quiz_questions` (
   `id` int(10) NOT NULL auto_increment,
   `category` int(10) NOT NULL default '0',
   `name` varchar(255) NOT NULL default '',
-  `question` text NOT NULL,
+  `questiontext` text NOT NULL,
   `image` varchar(255) NOT NULL default '',
   `type` smallint(6) NOT NULL default '0',
   PRIMARY KEY  (`id`)
@@ -142,7 +141,7 @@ CREATE TABLE `quiz_responses` (
   `attempt` int(10) unsigned NOT NULL default '0',
   `question` int(10) unsigned NOT NULL default '0',
   `answer` varchar(255) NOT NULL default '',
-  `grade` float NOT NULL default '0',
+  `grade` int(10) NOT NULL default '0',
   PRIMARY KEY  (`id`)
 ) TYPE=MyISAM COMMENT='Stores user responses to a quiz, and percentage grades';
 # --------------------------------------------------------
@@ -154,8 +153,8 @@ CREATE TABLE `quiz_responses` (
 CREATE TABLE `quiz_shortanswer` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `question` int(10) unsigned NOT NULL default '0',
-  `answer` int(10) NOT NULL default '0',
-  `case` tinyint(4) NOT NULL default '0',
+  `answers` varchar(255) NOT NULL default '',
+  `usecase` tinyint(2) NOT NULL default '0',
   PRIMARY KEY  (`id`),
   KEY `question` (`question`)
 ) TYPE=MyISAM COMMENT='Options for short answer questions';

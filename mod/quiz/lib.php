@@ -16,9 +16,9 @@ $QUIZ_GRADE_METHOD = array ( GRADEHIGHEST => get_string("gradehighest", "quiz"),
 define("SHORTANSWER", "1");
 define("TRUEFALSE",   "2");
 define("MULTICHOICE", "3");
-$QUIZ_QUESTION_TYPE = array ( SHORTANSWER => get_string("shortanswer", "quiz"),
+$QUIZ_QUESTION_TYPE = array ( MULTICHOICE => get_string("multichoice", "quiz"),
                               TRUEFALSE   => get_string("truefalse", "quiz"),
-                              MULTICHOICE => get_string("multichoice", "quiz"));
+                              SHORTANSWER => get_string("shortanswer", "quiz") );
 
 
 
@@ -39,11 +39,14 @@ function quiz_add_instance($quiz) {
     // The grades for every question in this quiz are stored in an array
     if ($quiz->grades) {
         foreach ($quiz->grades as $question => $grade) {
-            $questiongrade->quiz = $quiz->id;
-            $questiongrade->question = $question;
-            $questiongrade->grade = $grade;
-            if (!insert_record("quiz_question_grades", $questiongrade)) {
-                return false;
+            if ($question and $grade) {
+                unset($questiongrade);
+                $questiongrade->quiz = $quiz->id;
+                $questiongrade->question = $question;
+                $questiongrade->grade = $grade;
+                if (!insert_record("quiz_question_grades", $questiongrade)) {
+                    return false;
+                }
             }
         }
     }
@@ -72,19 +75,22 @@ function quiz_update_instance($quiz) {
 
     if ($quiz->grades) {
         foreach ($quiz->grades as $question => $grade) {
-            $questiongrade->quiz = $quiz->id;
-            $questiongrade->question = $question;
-            $questiongrade->grade = $grade;
-            if (isset($existing[$question])) {
-                if ($existing[$question]->grade != $grade) {
-                    $questiongrade->id = $existing[$question]->id;
-                    if (!update_record("quiz_question_grades", $questiongrade)) {
+            if ($question and $grade) {
+                unset($questiongrade);
+                $questiongrade->quiz = $quiz->id;
+                $questiongrade->question = $question;
+                $questiongrade->grade = $grade;
+                if (isset($existing[$question])) {
+                    if ($existing[$question]->grade != $grade) {
+                        $questiongrade->id = $existing[$question]->id;
+                        if (!update_record("quiz_question_grades", $questiongrade)) {
+                            return false;
+                        }
+                    }
+                } else {
+                    if (!insert_record("quiz_question_grades", $questiongrade)) {
                         return false;
                     }
-                }
-            } else {
-                if (!insert_record("quiz_question_grades", $questiongrade)) {
-                    return false;
                 }
             }
         }
@@ -328,6 +334,13 @@ function quiz_print_category_form($course, $current) {
         }
         $categories[$category->id] = $category->name;
     }
+    foreach ($categories as $key => $category) {
+       if ($category->publish) {
+           if ($course = get_record_sql("course", "id", $category->course)) {
+               $categories[$key]->name .= " ($course->shortname)";
+           }
+       }
+    }
     $strcategory = get_string("category", "quiz");
     $strshow = get_string("show", "quiz");
     $stredit = get_string("edit");
@@ -423,7 +436,7 @@ function quiz_print_question_list($questionlist, $grades) {
         echo "</TD>";
         echo "<TD>".$questions[$qnum]->name."</TD>";
         echo "<TD>";
-        choose_from_menu($gradesmenu, "q$qnum", $grades[$qnum], "");
+        choose_from_menu($gradesmenu, "q$qnum", (string)$grades[$qnum], "");
         echo "<TD>";
             echo "<A TITLE=\"$strdelete\" HREF=\"edit.php?delete=$qnum\"><IMG 
                  SRC=\"../../pix/t/delete.gif\" BORDER=0></A>&nbsp;";
@@ -435,7 +448,7 @@ function quiz_print_question_list($questionlist, $grades) {
     }
     echo "<TR><TD COLSPAN=3><TD ALIGN=right>";
     echo "<INPUT TYPE=submit VALUE=\"$strsavegrades:\">";
-    echo "<INPUT TYPE=hidden NAME=grade VALUE=\"save\">";
+    echo "<INPUT TYPE=hidden NAME=setgrades VALUE=\"save\">";
     echo "<TD ALIGN=LEFT BGCOLOR=\"$THEME->cellcontent\">";
     echo "<B>$sumgrade</B>";
     echo "</TD><TD></TD></TR>";
@@ -473,6 +486,7 @@ function quiz_print_cat_question_list($categoryid) {
         return;
     }
     echo "<P><B>$strcategory:</B> $category->name</P>\n";
+    echo "<CENTER>";
     echo text_to_html($category->info);
 
     echo "<FORM METHOD=GET ACTION=question.php>"; 
@@ -481,6 +495,7 @@ function quiz_print_cat_question_list($categoryid) {
     echo "<INPUT TYPE=hidden NAME=category VALUE=\"$category->id\">";
     echo "<INPUT TYPE=submit NAME=new VALUE=\"$strcreatenewquestion\">";
     echo "</FORM>";
+    echo "</CENTER>";
 
     if (!$questions = get_records("quiz_questions", "category", $category->id)) {
         echo "<P align=center>";
@@ -526,6 +541,23 @@ function quiz_print_cat_question_list($categoryid) {
 function quiz_get_user_attempts($quizid, $userid) {
 // Returns a list of all attempts by a user
     return get_records_sql("SELECT * FROM quiz_attempts WHERE quiz = '$quizid' and user = '$userid' ORDER by attempt ASC");
+}
+
+
+function quiz_get_user_attempts_string($quiz, $attempts, $bestgrade) {
+/// Returns a simple little comma-separated list of all attempts, 
+/// with the best grade bolded
+
+    $bestgrade = format_float($bestgrade);
+    foreach ($attempts as $attempt) {
+        $attemptgrade = format_float(($attempt->sumgrades / $quiz->sumgrades) * $quiz->grade);
+        if ($attemptgrade == $bestgrade) {
+            $userattempts[] = "<B>$attemptgrade</B>";
+        } else {
+            $userattempts[] = "$attemptgrade";
+        }
+    }
+    return implode(",", $userattempts);
 }
 
 function quiz_get_best_grade($quizid, $userid) {
@@ -702,9 +734,6 @@ function quiz_grade_attempt_results($quiz, $questions) {
     
     $result->sumgrades = 0;
 
-    global $db;
-    $db->debug=true;
-
     foreach ($questions as $question) {
         if (!$answers = quiz_get_answers($question)) {
             error("No answers defined for question id $question->id!");
@@ -777,8 +806,9 @@ function quiz_grade_attempt_results($quiz, $questions) {
         $result->feedback[$question->id] = $feedback;
     }
 
-    $result->percentage = ($result->sumgrades / $quiz->sumgrades);
-    $result->grade      = $result->percentage * $quiz->grade;
+    $fraction = (float)($result->sumgrades / $quiz->sumgrades);
+    $result->percentage = format_float($fraction * 100.0);
+    $result->grade      = format_float($fraction * $quiz->grade);
 
     return $result;
 }
