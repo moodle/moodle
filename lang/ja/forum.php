@@ -37,6 +37,7 @@ $string['forums'] = "フォーラム";
 $string['forumtype'] = "フォーラムタイプ";
 $string['generalforum'] = "標準フォーラム";
 $string['generalforums'] = "総合フォーラム";
+$string['helpreading'] = "十分に読む";
 $string['inforum'] = "\$a";
 $string['intronews'] = "ニュースとお知らせ";
 $string['introsocial'] = "投稿制限無しフォーラム";
