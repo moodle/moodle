@@ -485,12 +485,6 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL) {
             if (!isset($options->para)) {
                 $options->para=true;
             }
-            if (!empty($CFG->librarypath)) {
-                if (file_exists("$CFG->dirroot/$CFG->librarypath/librarylib.php")) {
-                    include_once("$CFG->dirroot/$CFG->librarypath/librarylib.php");
-                    $text = librarytexttohtml($text);
-                }
-            }
             return text_to_html($text, $options->smiley, $options->para);
             break;
     }
@@ -597,6 +591,8 @@ function text_to_html($text, $smiley=true, $para=true) {
 /// Given plain text, makes it into HTML as nicely as possible.
 /// May contain HTML tags already
 
+    global $CFG;
+
 /// Remove any whitespace that may be between HTML tags
     $text = eregi_replace(">([[:space:]]+)<", "><", $text);
 
@@ -608,6 +604,14 @@ function text_to_html($text, $smiley=true, $para=true) {
 
 /// Make returns into HTML newlines.
     $text = nl2br($text);
+
+/// Insert links to library pages if Library is being used
+    if (!empty($CFG->librarypath)) {
+        if (file_exists("$CFG->dirroot/$CFG->librarypath/librarylib.php")) {
+            include_once("$CFG->dirroot/$CFG->librarypath/librarylib.php");
+            $text = librarytexttohtml($text);
+        }       
+    }       
 
 /// Turn smileys into images.
     if ($smiley) {
