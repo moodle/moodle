@@ -297,7 +297,7 @@ function require_login($courseid=0) {
             if (isset($USER->realuser)) {   // Make sure the REAL person can also access this course
                 if (!isteacher($courseid, $USER->realuser)) {
                     print_header();
-                    notice(get_string("studentnotallowed", "", "$USER->firstname $USER->lastname"), $CFG->wwwroot);
+                    notice(get_string("studentnotallowed", "", fullname($USER, true)), $CFG->wwwroot);
                 }
 
             } else {  // just update their last login time
@@ -310,7 +310,7 @@ function require_login($courseid=0) {
         }
         if (!$course->visible) {
             print_header();
-            notice(get_string("studentnotallowed", "", "$USER->firstname $USER->lastname"), $CFG->wwwroot);
+            notice(get_string("studentnotallowed", "", fullname($USER, true)), $CFG->wwwroot);
         }
         if ($USER->username == "guest") {
             switch ($course->guest) {
@@ -905,10 +905,10 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml="", $a
     $mail->Sender   = "$adminuser->email";
 
     $mail->From     = "$from->email";
-    $mail->FromName = "$from->firstname $from->lastname";
+    $mail->FromName = fullname($from);
     $mail->Subject  =  stripslashes($subject);
 
-    $mail->AddAddress("$user->email", "$user->firstname $user->lastname"); 
+    $mail->AddAddress("$user->email", fullname($user) ); 
 
     $mail->WordWrap = 70;                               // set word wrap
 
@@ -924,7 +924,7 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml="", $a
 
     if ($attachment && $attachname) {
         if (ereg( "\\.\\." ,$attachment )) {    // Security check for ".." in dir path
-            $mail->AddAddress("$adminuser->email", "$adminuser->firstname $adminuser->lastname");
+            $mail->AddAddress("$adminuser->email", fullname($adminuser) );
             $mail->AddStringAttachment("Error in attachment.  User attempted to attach a filename with a unsafe name.", "error.txt", "8bit", "text/plain");
         } else {
             include_once("$CFG->dirroot/files/mimetypes.php");
@@ -961,7 +961,7 @@ function reset_password_and_mail($user) {
     $a->username = $user->username;
     $a->newpassword = $newpassword;
     $a->link = "$CFG->wwwroot/login/change_password.php";
-    $a->signoff = "$from->firstname $from->lastname ($from->email)";
+    $a->signoff = fullname($from, true)." ($from->email)";
 
     $message = get_string("newpasswordtext", "", $a);
 
@@ -981,7 +981,7 @@ function send_confirmation_email($user) {
     $data->firstname = $user->firstname;
     $data->sitename = $site->fullname;
     $data->link = "$CFG->wwwroot/login/confirm.php?p=$user->secret&s=$user->username";
-    $data->admin = "$from->firstname $from->lastname ($from->email)";
+    $data->admin = fullname($from)." ($from->email)";
 
     $message = get_string("emailconfirmation", "", $data);
     $subject = get_string("emailconfirmationsubject", "", $site->fullname);
@@ -1000,7 +1000,7 @@ function send_password_change_confirmation_email($user) {
     $data->firstname = $user->firstname;
     $data->sitename = $site->fullname;
     $data->link = "$CFG->wwwroot/login/forgot_password.php?p=$user->secret&s=$user->username";
-    $data->admin = "$from->firstname $from->lastname ($from->email)";
+    $data->admin = fullname($from)." ($from->email)";
 
     $message = get_string("emailpasswordconfirmation", "", $data);
     $subject = get_string("emailpasswordconfirmationsubject", "", $site->fullname);
