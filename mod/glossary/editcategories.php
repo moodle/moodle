@@ -34,7 +34,7 @@
         error("You must be a teacher to use this page.");
      }
 
-//    add_to_log($course->id, "glossary", "edit categories", "view.php?id=$cm->id", "$glossary->id");
+//    add_to_log($course->id, "glossary", "edit categories", "view.php?id=$cm->id", "$glossary->id", $cm->id);
 
     if ($course->category) {
         $navigation = "<A HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> ->";
@@ -62,7 +62,7 @@
      				    error("Weird error. The category was not updated.");
      				    redirect("editcategories.php?id=$cm->id");
                     } else {
-                        add_to_log($course->id, "glossary", "edit category", "editcategories.php?id=$cm->id", $hook);
+                        add_to_log($course->id, "glossary", "edit category", "editcategories.php?id=$cm->id", $hook,$cm->id);
                     }
                } else {
                     echo "<p align=\"center\">" . get_string("edit"). " " . get_string("category","glossary") . "<font size=\"3\">";
@@ -86,7 +86,7 @@
 				
          			print_footer($course);
 
-                    add_to_log($course->id, "glossary", "delete category", "editcategories.php?id=$cm->id", $hook);
+                    add_to_log($course->id, "glossary", "delete category", "editcategories.php?id=$cm->id", $hook,$cm->id);
                     
      			    redirect("editcategories.php?id=$cm->id");
                } else {
@@ -149,7 +149,7 @@
               			
           			    redirect("editcategories.php?id=$cm->id");
                     } else {
-                        add_to_log($course->id, "glossary", "add category", "editcategories.php?id=$cm->id", $cat->id);
+                        add_to_log($course->id, "glossary", "add category", "editcategories.php?id=$cm->id", $cat->id,$cm->id);
                     }
              }
           } else {
