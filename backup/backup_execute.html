@@ -145,17 +145,20 @@
         echo "<li>Sections";
         //Section info
         if ($status) {
-            $status = backup_sections($backup_file,$preferences);
+            $status = backup_course_sections($backup_file,$preferences);
         }
 
-        //Module info
+        //End course contents (close ul)
+        echo "</ul>";
 
+        echo "<li>Writing users info";
         //User info
-        //if ($status) {
-        //    $status = backup_user_info($backup_file,$preferences);
-        //}
+        if ($status) {
+            $status = backup_user_info($backup_file,$preferences);
+        }
    
 
+        //Module info
 
 
 
@@ -175,9 +178,6 @@
         if ($backup_file) {
             backup_close_xml($backup_file);
         }
-
-        //End course contents (close ul)
-        echo "</ul>";
 
         //End xml contents (close ul)
         echo "</ul>";

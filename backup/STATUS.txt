@@ -3,7 +3,8 @@ STATUS $Id$
 
 This documment shows the current status of the backup/restore option.
 
-Backup:  WORKING. Only xml generation into temp dir. Header & Info.
+Backup:  WORKING. Only xml generation into temp dir. Header, info,
+                  course data, sections and user data.
 
 Restore: NOT WORKING. No comments.
 
@@ -31,24 +32,22 @@ Backup Details:
    - Backup Items:..............................................IN PROGRESS
         - Backup Info data......................................DONE
         - Course................................................IN PROGRESS
-           - Course Summary Data................................IN PROGRESS
+           - Course Summary Data................................DONE
               x course info.....................................DONE
-              x sections info...................................IN PROGRESS
-              x mods info.......................................IN PROGRESS
-           - User Accounts Info.................................NO EXISTS
-              x teachers........................................NO EXISTS
-                 - Needed.......................................NO EXISTS
-                 - Course.......................................NO EXISTS
-                 - All..........................................NO EXISTS 
-              x creators........................................NO EXISTS
-                 - Needed.......................................NO EXISTS
-                 - Course.......................................NO EXISTS
-                 - All..........................................NO EXISTS 
-              x students........................................NO EXISTS
-                 - Needed.......................................NO EXISTS
-                 - Course.......................................NO EXISTS
-                 - All..........................................NO EXISTS 
-           - Mods Info..........................................NO EXISTS
+              x sections info...................................DONE
+              x mods info.......................................DONE
+           - User Accounts Info.................................DONE
+              x admins..........................................DONE
+                 - All..........................................DONE 
+              x course creators.................................DONE
+                 - All..........................................DONE 
+              x teachers........................................DONE
+                 - Course.......................................DONE
+                 - All..........................................DONE 
+              x students........................................DONE
+                 - Course.......................................DONE
+                 - All..........................................DONE 
+           - Mods Info..........................................IN PROGRESS
               x assignments.....................................IN PROGRESS
                  + course data..................................NO EXISTS
                  + user data....................................NO EXISTS

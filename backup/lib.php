@@ -36,41 +36,60 @@
         //              2-->needed-->NOT IMPLEMEMTED
 
         global $CFG;
+        global $db;
 
-        if ($backup_users == 0) {
-            //Insert all users (from user)
-            $sql_insert = "INSERT INTO {$CFG->prefix}backup_ids
-                               (backup_code, table_name, old_id)
-                           SELECT DISTINCT '$backup_unique_code','user',u.id
-                           FROM {$CFG->prefix}user u";
-        } else {
-            //Insert only course users (from user_students and user_teachers)
-            $sql_insert = "INSERT INTO {$CFG->prefix}backup_ids
-                               (backup_code, table_name, old_id)
-                           SELECT DISTINCT '$backup_unique_code','user',u.id
-                           FROM {$CFG->prefix}user u,
-                                {$CFG->prefix}user_students s,
-                                {$CFG->prefix}user_teachers t
-                           WHERE s.course = '$course' AND
-                                 t.course = s.course AND
-                                 (s.userid = u.id OR t.userid = u.id)";
+        $count_users = 0;
+        
+        //Select all users from user
+        $users = get_records ("user");
+        //Iterate over users putting their roles
+        foreach ($users as $user) {
+               $user->info = "";
+            //Is Admin in tables (not is_admin()) !!
+            if (record_exists("user_admins","userid",$user->id)) {
+                $user->info .= "admin";
+                $user->role_admin = true;
+            }
+            //Is Course Creator in tables (not is_coursecreator()) !!
+            if (record_exists("user_coursecreators","userid",$user->id)) {
+                $user->info .= "coursecreator";
+                $user->role_coursecreator = true;
+            }
+            //Is Teacher in tables (not is_teacher()) !!
+            if (record_exists("user_teachers","course",$course,"userid",$user->id)) {
+                $user->info .= "teacher";
+                $user->role_teacher = true;
+            }
+            //Is Student in tables (not is_student()) !!
+            if (record_exists("user_students","course",$course,"userid",$user->id)) {
+                $user->info .= "student";
+                $user->role_student = true;
+            }
+            //Now create the backup_id record
+            $backupids_rec->backup_code = $backup_unique_code;
+            $backupids_rec->table_name = "user";
+            $backupids_rec->old_id = $user->id;
+            $backupids_rec->info = $user->info;
+
+            //Insert the record id. backup_users decide it.
+            //When all users
+            if ($backup_users == 0) { 
+                $status = insert_record("backup_ids",$backupids_rec,false);
+                $count_users++;
+            //When course users
+            } else if ($backup_users == 1) {
+                 //Only if user has any role
+                if ($backupids_rec->info) {
+                    $status = insert_record("backup_ids",$backupids_rec,false);
+                    $count_users++;
+                }
+            }
         }
-        //Execute the insert
-        $status = execute_sql($sql_insert,false);
-
-        //Now execute the select
-        $ids = get_records_sql("SELECT DISTINCT u.old_id,u.table_name
-                                FROM {$CFG->prefix}backup_ids u
-                                WHERE backup_code = '$backup_unique_code' AND
-                                      table_name ='user'");
-    
+        
+        //Prepare Info
         //Gets the user data
         $info[0][0] = get_string("users");
-        if ($ids) {
-            $info[0][1] = count($ids);      
-        } else {
-            $info[0][1] = 0;
-        }
+        $info[0][1] = $count_users;
 
         return $info;
     }
@@ -217,10 +236,16 @@
             $file_path = $CFG->dataroot."/temp/backup/".$file;
             $moddate = filemtime($file_path);
             if ($status and $moddate < $delete_from) {
-                $status = delete_dir_contents($file_path);
-                //There is nothing, delete the directory itself
-                if ($status) {
-                    $status = rmdir($file_path);
+                //If directory, recurse
+                if (is_dir($file_path)) {
+                    $status = delete_dir_contents($file_path);
+                    //There is nothing, delete the directory itself
+                    if ($status) {
+                        $status = rmdir($file_path);
+                    }
+                //If file
+                } else {
+                    unlink("$file_path");
                 }
             }
         }
@@ -313,6 +338,7 @@
         $status = true;
 
         //Open for writing
+
         $file = $CFG->dataroot."/temp/backup/".$backup_unique_code."/moodle.xml";
         $backup_file = fopen($file,"w");
         //Writes the header
@@ -505,7 +531,7 @@
     }
 
     //Prints course's sections info (table course_sections)
-    function backup_sections ($bf,$preferences) {
+    function backup_course_sections ($bf,$preferences) {
 
         global $CFG;
 
@@ -525,11 +551,223 @@
                 fwrite ($bf,full_tag("NUMBER",4,false,$section->section));
                 fwrite ($bf,full_tag("SUMMARY",4,false,$section->summary));
                 fwrite ($bf,full_tag("VISIBLE",4,false,$section->visible));
+                //Now print the mods in section 
+                backup_course_modules ($bf,$preferences,$section);
                 //End section
-                fwrite ($bf,start_tag("/SECTION",3,true));
+                fwrite ($bf,end_tag("SECTION",3,true));
             }
             //Section close tag
             $status = fwrite ($bf,end_tag("SECTIONS",2,true));
+        }
+
+        return $status;
+
+    }
+
+    //Prints course's modules info (table course_modules)
+    //Only for selected mods in preferences
+    function backup_course_modules ($bf,$preferences,$section) {
+
+        global $CFG;
+
+        $status = true;
+
+        $first_record = true;
+
+        //Now print the mods in section
+        //Extracts mod id from sequence
+        $tok = strtok($section->sequence,",");
+        while ($tok) {
+           //Get module's type
+           $moduletype = get_module_type ($preferences->backup_course,$tok);
+           //Check if we've selected to backup that type
+           if ($moduletype and $preferences->mods[$moduletype]->backup) {
+               $selected = true;
+           } else {
+               $selected = false;
+           }
+
+           if ($selected) {
+               //Gets course_module data from db
+               $course_module = get_records ("course_modules","id",$tok);
+               //If it's the first, pring MODS tag
+               if ($first_record) {
+                   fwrite ($bf,start_tag("MODS",4,true));
+                   $first_record = false;
+               }
+               //Print mod info from course_modules
+               fwrite ($bf,start_tag("MOD",5,true));
+               //Save neccesary info to backup_ids
+               fwrite ($bf,full_tag("ID",6,false,$tok));
+               fwrite ($bf,full_tag("TYPE",6,false,$moduletype));
+               fwrite ($bf,full_tag("INSTANCE",6,false,$course_module[$tok]->instance));
+               fwrite ($bf,full_tag("DELETED",6,false,$course_module[$tok]->deleted));
+               fwrite ($bf,full_tag("SCORE",6,false,$course_module[$tok]->score));
+               fwrite ($bf,full_tag("VISIBLE",6,false,$course_module[$tok]->visible));
+               fwrite ($bf,end_tag("MOD",5,true));
+            }
+           //check for next
+           $tok = strtok(",");
+        }
+
+        //Si ha habido modulos, final de MODS
+        if (!$first_record) {
+            $status =fwrite ($bf,end_tag("MODS",4,true));
+        }
+
+        return $status;
+    }
+
+    //Returns the module type of a course_module's id in a course 
+    function get_module_type ($courseid,$moduleid) {
+
+        global $CFG;
+
+        $results = get_records_sql ("SELECT cm.id, m.name
+                                    FROM {$CFG->prefix}course_modules cm,
+                                         {$CFG->prefix}modules m
+                                    WHERE cm.course = '$courseid' AND
+                                          cm.id = '$moduleid' AND
+                                          m.id = cm.module");
+
+        if ($results) {
+            $name = $results[$moduleid]->name;
+        } else {
+            $name = false;
+        }
+
+
+      return $name;
+    }
+
+    //Print users to xml
+    //Only users previously calculated in backup_ids will output
+    //
+    function backup_user_info ($bf,$preferences) {
+    
+        global $CFG;
+
+        $status = true;
+
+        $users = get_records_sql("SELECT u.old_id, u.table_name,u.info
+                              FROM {$CFG->prefix}backup_ids u
+                              WHERE u.backup_code = '$preferences->backup_unique_code' AND
+                                    u.table_name = 'user'");
+
+        //If we have users to backup
+        if ($users) {
+            //Begin Users tag
+            fwrite ($bf,start_tag("USERS",2,true));
+            //With every user
+            foreach ($users as $user) {
+                //Get user data from table
+                $user_data = get_record("user","id",$user->old_id);
+                //Begin User tag
+                fwrite ($bf,start_tag("USER",3,true));
+                //Output all user data
+                fwrite ($bf,full_tag("ID",4,false,$user_data->id));
+                fwrite ($bf,full_tag("CONFIRMED",4,false,$user_data->confirmed));
+                fwrite ($bf,full_tag("DELETED",4,false,$user_data->deleted));
+                fwrite ($bf,full_tag("USERNAME",4,false,$user_data->username));
+                fwrite ($bf,full_tag("PASSWORD",4,false,$user_data->password));
+                fwrite ($bf,full_tag("IDNUMBER",4,false,$user_data->idnumber));
+                fwrite ($bf,full_tag("FIRSTNAME",4,false,$user_data->firsname));
+                fwrite ($bf,full_tag("LASTNAME",4,false,$user_data->lastname));
+                fwrite ($bf,full_tag("EMAIL",4,false,$user_data->email));
+                fwrite ($bf,full_tag("ICQ",4,false,$user_data->icq));
+                fwrite ($bf,full_tag("PHONE1",4,false,$user_data->phone1));
+                fwrite ($bf,full_tag("PHONE2",4,false,$user_data->phone2));
+                fwrite ($bf,full_tag("INSTITUTION",4,false,$user_data->institution));
+                fwrite ($bf,full_tag("DEPARTMENT",4,false,$user_data->department));
+                fwrite ($bf,full_tag("ADDRESS",4,false,$user_data->address));
+                fwrite ($bf,full_tag("CITY",4,false,$user_data->city));
+                fwrite ($bf,full_tag("COUNTRY",4,false,$user_data->country));
+                fwrite ($bf,full_tag("LANG",4,false,$user_data->lang));
+                fwrite ($bf,full_tag("TIMEZONE",4,false,$user_data->timezone));
+                fwrite ($bf,full_tag("FIRSTACCESS",4,false,$user_data->firstaccess));
+                fwrite ($bf,full_tag("LASTACCESS",4,false,$user_data->lastaccess));
+                fwrite ($bf,full_tag("LASTLOGIN",4,false,$user_data->lastlogin));
+                fwrite ($bf,full_tag("CURRENTLOGIN",4,false,$user_data->currentlogin));
+                fwrite ($bf,full_tag("LASTIP",4,false,$user_data->lastIP));
+                fwrite ($bf,full_tag("SECRET",4,false,$user_data->secret));
+                fwrite ($bf,full_tag("PICTURE",4,false,$user_data->picture));
+                fwrite ($bf,full_tag("URL",4,false,$user_data->url));
+                fwrite ($bf,full_tag("DESCRIPTION",4,false,$user_data->description));
+                fwrite ($bf,full_tag("MAILFORMAT",4,false,$user_data->mailformat));
+                fwrite ($bf,full_tag("MAILDISPLAY",4,false,$user_data->maildisplay));
+                fwrite ($bf,full_tag("HTMLEDITOR",4,false,$user_data->htmleditor));
+                fwrite ($bf,full_tag("TIMEMODIFIED",4,false,$user_data->timemodified));
+
+                //Output every user role (with its associated info) 
+                $user->isadmin = strpos($user->info,"admin");
+                $user->iscoursecreator = strpos($user->info,"coursecreator");
+                $user->isteacher = strpos($user->info,"teacher");
+                $user->isstudent = strpos($user->info,"student");
+                if ($user->isadmin!==false or 
+                    $user->iscoursecreator!==false or 
+                    $user->isteacher!==false or 
+                    $user->isstudent!==false) {
+                    //Begin ROLES tag
+                    fwrite ($bf,start_tag("ROLES",4,true));
+                    //PRINT ROLE INFO
+                    //Admins
+                    if ($user->isadmin!==false) {
+                        //Print ROLE start
+                        fwrite ($bf,start_tag("ROLE",5,true));
+                        //Print Role info
+                        fwrite ($bf,full_tag("TYPE",6,false,"admin"));
+                        //Print ROLE end
+                        fwrite ($bf,end_tag("ROLE",5,true));
+                    }
+                    //CourseCreator
+                    if ($user->iscoursecreator!==false) {
+                        //Print ROLE start 
+                        fwrite ($bf,start_tag("ROLE",5,true)); 
+                        //Print Role info 
+                        fwrite ($bf,full_tag("TYPE",6,false,"coursecreator"));
+                        //Print ROLE end
+                        fwrite ($bf,end_tag("ROLE",5,true));   
+                    }
+                    //Teacher
+                    if ($user->isteacher!==false) {
+                        //Print ROLE start 
+                        fwrite ($bf,start_tag("ROLE",5,true)); 
+                        //Print Role info 
+                        fwrite ($bf,full_tag("TYPE",6,false,"teacher"));
+                        //Get specific info for teachers
+                        $tea = get_record("user_teachers","userid",$user->old_id,"course",$preferences->backup_course);
+                        fwrite ($bf,full_tag("AUTHORITY",6,false,$tea->authority));
+                        fwrite ($bf,full_tag("TEA_ROLE",6,false,$tea->role));
+                        //Print ROLE end
+                        fwrite ($bf,end_tag("ROLE",5,true));   
+                    }
+                    //Student
+                    if ($user->isstudent!==false) {
+                        //Print ROLE start 
+                        fwrite ($bf,start_tag("ROLE",5,true)); 
+                        //Print Role info 
+                        fwrite ($bf,full_tag("TYPE",6,false,"student"));
+                        //Get specific info for students
+                        $stu = get_record("user_students","userid",$user->old_id,"course",$preferences->backup_course);
+                        fwrite ($bf,full_tag("TIMESTART",6,false,$stu->timestart));
+                        fwrite ($bf,full_tag("TIMEEND",6,false,$stu->timeend));
+                        fwrite ($bf,full_tag("TIME",6,false,$stu->time));
+                        //Print ROLE end
+                        fwrite ($bf,end_tag("ROLE",5,true));   
+                    }
+
+
+                    //End ROLES tag
+                    fwrite ($bf,end_tag("ROLES",4,true));
+                }
+                //End User tag
+                fwrite ($bf,end_tag("USER",3,true));
+            }
+            //End Users tag
+            fwrite ($bf,end_tag("USERS",2,true));
+        } else {
+            //There isn't users. Impossible !!
+            $status = false;
         }
 
         return $status;
