@@ -243,8 +243,6 @@ function auth_get_users($filter='*', $dontlistcreated=false) {
                     $user->$key=$users[$ldapuser][$value][0];
                 }
             }    
-            //quick way to get around binarystrings
-            $user->guid=bin2hex($user->guid);
             //add authentication source stamp 
             $user->auth='ldap';
             $fresult[$user->username]=$user;
@@ -321,24 +319,42 @@ function auth_sync_users ($firstsync=0, $unsafe_optimizations = false, $bulk_ins
     global $CFG ;
     auth_ldap_init();
     $ldapusers     = auth_get_users('*', true); //list all but created users from ldap
+
     if (!$unsafe_optimizations) { 
         //NORMAL SYNRONIZATION ROUTINE STARTS
         
         if ($firstsync) {
-            //fill idnumbers (firstsync)
+            //fill idnumbers 
             $users = get_records(user, 'auth', 'ldap', '', 'id, username', '');
             //to be continued later....... 
+            foreach ( $ldapusers as $user) {
+                print_r($user);
+                if (record_exists('user', 'auth', 'ldap', 'username', $user[$CFG->ldap_user_attribute][0])) {
+                    if (isset($user[$CFG->auth_user_idnumber])) {
+                        if (set_field('user', 'idnumber', $user[$CFG->auth_user_idnumber], 'username', $user[$CFG->ldap_user_attribute][0], 'auth', 'ldap' )) {
+                            echo 'Filled idnumber for user '.$user[$CFG->ldap_user_attribute][0]."\n";
+                        } else {
+                            echo 'Cannot fill idnumber for user ' .$user[$CFG->ldap_user_attribute][0]. 'Problem updating database..'."\n";
+                        }    
+                    } else {    
+                        echo 'Cannot fill idnumber for user '.$user[$CFG->ldap_user_attribute][0].'idnumber does not exist in ldap.'."\n";
+                    }    
+                }    
+            }    
+            
         } 
 
         //Build existing userinformation
         $users = get_records(user, 'auth', 'ldap'); //get all user objects from db
-        //Create array whre idnumbers are keys
+        
+        //Create array where idnumbers are keys
+        //make information available with idnumber
         $moodleldapusers = array(); //all users in moodle db
 
-        //make information available with idnumber
-        foreach ($useris as $key=>$value){
+        foreach ($users as $key=>$value){
             $moodleldapusers[$value->idnumber]= $value;
         }    
+
         unset($users); //not needed anymore
         
         //get attributemappings
@@ -387,25 +403,25 @@ function auth_sync_users ($firstsync=0, $unsafe_optimizations = false, $bulk_ins
 
             } else {
                //cannot sync remoteuser  without idumber
-               echo 'Cannot sync remote user to moodle '.$user->dn.' without idnumber field';
+               echo 'Cannot sync remote user to moodle '.$user->dn." without idnumber field\n";
             }   
         }            
         
         //update local users
         foreach ($updateusers as $user) {
             if (update_record('user', $user)) {
-                echo 'Updated user record'.$user->username;
+                echo 'Updated user record'.$user->username."\n";
             } else {
-                echo 'Cannot update user recordi'.$user->username;
+                echo 'Cannot update user recordi'.$user->username."\n";
             }    
         }    
 
         //add new users
         foreach ($updateusers as $user) {
             if (insert_record('user', $user, $false)) {
-                echo 'Inserted user record'.$user->username;
+                echo 'Inserted user record'.$user->username."\n";
             } else {
-                echo 'Cannot insert user record'.$user->username;
+                echo 'Cannot insert user record'.$user->username."\n";
             }
         }    
 
@@ -752,6 +768,37 @@ function auth_ldap_suppported_usertypes (){
 }    
 
 /**
+ * return binaryfields of selected usertype
+ *
+ *
+ * @return array
+ */
+
+function auth_ldap_getbinaryfields () {
+    global $CFG;
+    $binaryfields = array (
+                        'edir' => array('guid'),
+                        'rfc2703' => array(),
+                        'rfc2703bis' => array(),
+                        'samba' => array(),
+                        'ad' => array(),
+                        'default' => '*'
+                        );
+    if (!empty($CFG->ldap_user_type)) {
+        return $binaryfields[$CFG->ldap_user_type];   
+    } else {
+        return $binaryfields['default'];
+    }    
+}   
+
+function auth_ldap_isbinary ($field) {
+    if (!isset($field)) {
+        return null ;
+    }    
+    return array_search($field, auth_ldap_getbinaryfields());
+}    
+    
+/**
  * initializes needed variables for ldap-module
  *
  * Uses names defined in auth_ldap_supported_usertypes.
@@ -1092,7 +1139,7 @@ function auth_ldap_get_userlist($filter="*") {
  * return entries from ldap
  *
  * Returns values like ldap_get_entries but is
- * binary compatible
+ * binary compatible and return all attributes as array
  *
  * @return array ldap-entries
  */
@@ -1108,7 +1155,11 @@ function auth_ldap_get_entries($conn, $searchresult){
         $attributes = ldap_get_attributes($conn, $entry);
         for($j=0; $j<$attributes['count']; $j++) {
             $values = ldap_get_values_len($conn, $entry,$attributes[$j]);
-            $fresult[$i][$attributes[$j]] = $values;
+            if (is_array($values)) {
+                $fresult[$i][$attributes[$j]] = $values;
+            } else {
+                $fresult[$i][$attributes[$j]] = array($values);
+            }
         }         
         $i++;               
         $count++;
