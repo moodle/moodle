@@ -184,7 +184,7 @@
                 if ($key) {
                     echo "<th width=\"$tablewidth%\">";
                 } else {
-                    echo "<th bgcolor=\"$theme->body\" width=\"$tablewidth%\">";
+                    echo "<th bgcolor=\"$THEME->body\" width=\"$tablewidth%\">";
                 }
                 echo choice_get_answer($choice, $key);
                 echo "</th>";

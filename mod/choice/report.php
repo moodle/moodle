@@ -75,7 +75,7 @@
         if ($key) {
             echo "<th width=\"$tablewidth%\">";
         } else {
-            echo "<th bgcolor=\"$theme->body\" width=\"$tablewidth%\">";
+            echo "<th bgcolor=\"$THEME->body\" width=\"$tablewidth%\">";
         }
         echo choice_get_answer($choice, $key);
         echo "</th>";
@@ -84,9 +84,9 @@
 
     foreach ($useranswer as $key => $answer) {
         if ($key) {
-            echo "<td width=\"$tablewidth%\" valign=top nowrap bgcolor=\"$theme->cellcontent\">";
+            echo "<td width=\"$tablewidth%\" valign=top nowrap bgcolor=\"$THEME->cellcontent\">";
         } else {
-            echo "<td width=\"$tablewidth%\" valign=top nowrap bgcolor=\"$theme->body\">";
+            echo "<td width=\"$tablewidth%\" valign=top nowrap bgcolor=\"$THEME->body\">";
         }
 
         echo "<table width=\"100%\">";
