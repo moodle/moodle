@@ -53,13 +53,6 @@ if (isset($_GET['beep'])) {
 
 chat_delete_old_users();
 
- 
-/// Get list of users
-
-if (!$chatusers = chat_get_users($chatuser->chatid)) {
-    error("Could not find any users!");
-}
-
 
 /// Print headers
 
@@ -84,6 +77,14 @@ $str->min   = get_string("min");
 $str->mins  = get_string("mins");
 $str->sec   = get_string("sec");
 $str->secs  = get_string("secs");
+
+/// Get list of users
+
+if (!$chatusers = chat_get_users($chatuser->chatid)) {
+    print_string("errornousers");
+    exit;
+}
+
 
 echo "<table width=\"100%\">";
 foreach ($chatusers as $chatuser) {

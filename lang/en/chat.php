@@ -12,6 +12,7 @@ $string['chatreport'] = "Chat sessions";
 $string['currentchats'] = "Active chat sessions";
 $string['currentusers'] = "Current users";
 $string['enterchat'] = "Click here to enter the chat";
+$string['errornousers'] = "Could not find any users!";
 $string['idle'] = "Idle";
 $string['messagebeepseveryone'] = "\$a beeps everyone!";
 $string['messagebeepsyou'] = "\$a has just beeped you!";
