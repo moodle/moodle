@@ -39,6 +39,8 @@
         $strtopicshow = get_string("topicshow", "", $strstudents);
         $strmarkthistopic = get_string("markthistopic");
         $strmarkedthistopic = get_string("markedthistopic");
+        $strmoveup = get_string("moveup");
+        $strmovedown = get_string("movedown");
     }
 
 
@@ -224,12 +226,12 @@
             }
 
             if ($section > 1) {                       // Add a arrow to move section up
-                echo "<a href=\"view.php?id=$course->id&section=$section&move=-1\" title=\"$strtopicup\">".
+                echo "<a href=\"view.php?id=$course->id&section=$section&move=-1\" title=\"$strmoveup\">".
                      "<img src=\"$pixpath/i/up.gif\" vspace=3 height=11 width=11 border=0></a><br />";
             }
 
             if ($section < $course->numsections) {    // Add a arrow to move section down
-                echo "<a href=\"view.php?id=$course->id&section=$section&move=1\" title=\"$strtopicdown\">".
+                echo "<a href=\"view.php?id=$course->id&section=$section&move=1\" title=\"$strmovedown\">".
                      "<img src=\"$pixpath/i/down.gif\" vspace=3 height=11 width=11 border=0></a><br />";
             }
 
