@@ -12,17 +12,17 @@
     static $glossary;    //    even when dealing with the same glossary
     
         if ( !$glossary and !$glossaryid ) {
-            $PermissionGranted = 1;   // if it is the first call and no glossary was specify
+            $permissiongranted = 1;   // if it is the first call and no glossary was specify
         } elseif ( $glossaryid ) {
             if ( $glossary ) {   // if it is not the first call
                 if ( $glossary->id != $glossaryid ) {   // ...and the specified glossary is different from the previous call
-                    $PermissionGranted = 1;
+                    $permissiongranted = 1;
                 }
             } else {
-                $PermissionGranted = 1;   // if it is the first call and a glossary was specify
+                $permissiongranted = 1;   // if it is the first call and a glossary was specify
             }
         }
-        if ( $PermissionGranted ) {
+        if ( $permissiongranted ) {
             if ( !$glossaryid ) {  // If no glossary was specify, fetch the main glossary of the course
                 $glossary = get_record("glossary","course",$courseid,"mainglossary",1);
             } else {               // if a glossary as specify, fetch this one
