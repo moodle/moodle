@@ -5,6 +5,7 @@
 	require_once("lib.php");
 
     optional_variable($id, 0);   // course id
+    optional_variable($category, 0);   // category id
 
     require_login();
 
@@ -116,7 +117,7 @@
             $form->numsections = 10;
             $form->newsitems = 5;
             $form->showrecent = 1;
-            $form->category = 0;
+            $form->category = $category;
             $form->id = "";
             $form->visible = 1;
         }
@@ -137,15 +138,16 @@
     $streditcoursesettings = get_string("editcoursesettings");
     $straddnewcourse = get_string("addnewcourse");
     $stradministration = get_string("administration");
+    $strcategories = get_string("categories");
 
     if (!empty($course)) {
 	    print_header($streditcoursesettings, "$course->fullname", 
-                     "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> 
+                     "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> 
                       -> $streditcoursesettings", $focus);
     } else {
         print_header("$site->shortname: $straddnewcourse", "$site->fullname",
-                     "<A HREF=\"../$CFG->admin/index.php\">$stradministration</A> 
-                      -> $straddnewcourse", $focus);
+                     "<a href=\"../$CFG->admin/index.php\">$stradministration</a> -> ".
+                     "<a href=\"index.php\">$strcategories</a> -> $straddnewcourse", $focus);
     }
 
     print_heading($streditcoursesettings);

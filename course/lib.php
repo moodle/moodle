@@ -715,8 +715,6 @@ function print_admin_links ($siteid, $width=180) {
     if (iscreator()) {
 	    $moddata[]="<a href=\"$CFG->wwwroot/course/index.php?edit=on\">".get_string("coursemanagement")."</a>";
 		$modicon[]=$icon;
-	    $moddata[]="<a href=\"$CFG->wwwroot/course/edit.php\">".get_string("addnewcourse")."</a>";
-		$modicon[]=$icon;
         $fulladmin = "";
     }
     if (isadmin()) {

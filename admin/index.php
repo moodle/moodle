@@ -360,7 +360,6 @@
             $table->data[0][0] .= "<p><a href=\"$CFG->dbtype/frame.php\">".get_string("managedatabase")."</a></p>";
 		}
 		$table->data[0][1] = "<p><a href=\"../course/index.php?edit=on\">".get_string("coursemanagement")."</a></p>".
-                             "<p><a href=\"../course/edit.php\">".get_string("addnewcourse")."</a></p>";
         $table->data[0][1] .= "<p><a href=\"../files/index.php?id=$site->id\">".get_string("courserestore")."</a></p>";
         if ($CFG->auth == "email" || $CFG->auth == "none" || $CFG->auth == "manual") {
 		    $table->data[0][2] = "<p><a href=\"user.php?newuser=true\">".get_string("addnewuser")."</a></p>";

@@ -3,7 +3,7 @@
 
 	require_once("../config.php");
 
-    optional_variable($id);       // course id
+    require_variable($id);       // course id
     optional_variable($delete);   // delete confirmation
 
     require_login();
@@ -18,37 +18,23 @@
 
     $strdeletecourse = get_string("deletecourse");
     $stradministration = get_string("administration");
-    $strcoursemanagement = get_string("coursemanagement");
-
-    if (!$id) {
-	    print_header("$site->shortname: $strdeletecourse", $site->fullname, 
-                     "<A HREF=\"../$CFG->admin/index.php\">$stradministration</A> -> $strdeletecourse");
-
-        if ($courses = get_courses()) {
-            print_heading(get_string("choosecourse"));
-            print_simple_box_start("CENTER");
-            foreach ($courses as $course) {
-                echo "<A HREF=\"delete.php?id=$course->id\">$course->fullname ($course->shortname)</A><BR>";
-            }
-            print_simple_box_end();
-        } else {
-            print_heading(get_string("nocoursesyet"));
-            print_continue("../$CFG->admin/index.php");
-        }
-        print_footer();
-        exit;
-    }
+    $strcategories = get_string("categories");
 
     if (! $course = get_record("course", "id", $id)) {
         error("Course ID was incorrect (can't find it)");
     }
 
+    $category = get_record("course_categories", "id", $course->category);
+
     if (! $delete) {
         $strdeletecheck = get_string("deletecheck", "", $course->shortname);
         $strdeletecoursecheck = get_string("deletecoursecheck");
+
+        
 	    print_header("$site->shortname: $strdeletecheck", $site->fullname, 
                      "<a href=\"../$CFG->admin/index.php\">$stradministration</a> -> ".
-                     "<a href=\"category.php?id=$course->category\">$strcoursemanagement</a> -> ".
+                     "<a href=\"index.php\">$strcategories</a> -> ".
+                     "<a href=\"category.php?id=$course->category\">$category->name</a> -> ".
                      "$strdeletecheck");
 
         notice_yesno("$strdeletecoursecheck<BR><BR>$course->fullname ($course->shortname)", 
@@ -66,7 +52,8 @@
 
 	print_header("$site->shortname: $strdeletingcourse", $site->fullname, 
                  "<a href=\"../$CFG->admin/index.php\">$stradministration</a> -> ".
-                 "<a href=\"category.php?id=$course->category\">$strcoursemanagement</a> -> ".
+                 "<a href=\"index.php\">$strcategories</a> -> ".
+                 "<a href=\"category.php?id=$course->category\">$category->name</a> -> ".
                  "$strdeletingcourse");
 
     print_heading($strdeletingcourse);

@@ -59,14 +59,13 @@
     $strcategories = get_string("categories");
     $strcategory = get_string("category");
     $strcourses = get_string("courses");
-    $strcoursemanagement = get_string("coursemanagement");
     $stredit = get_string("edit");
     $strdelete = get_string("delete");
     $straction = get_string("action");
     $straddnewcategory = get_string("addnewcategory");
 
 	print_header("$site->shortname: $strcategories", "$site->fullname", 
-                 "<a href=\"../$CFG->admin/index.php\">$stradministration</a> -> $strcoursemanagement",
+                 "<a href=\"../$CFG->admin/index.php\">$stradministration</a> -> $strcategories",
                  "addform.addcategory", "", true, update_categories_button());
 
     print_heading($strcategories);
@@ -221,14 +220,12 @@
 
 /// Print form for creating new categories
 
-    print_simple_box_start("center");
     echo "<center>";
     echo "<form name=\"addform\" action=\"index.php\" method=\"post\">";
     echo "<input type=\"text\" size=30 name=\"addcategory\">";
     echo "<input type=\"submit\" value=\"$straddnewcategory\">";
     echo "</form>";
     echo "</center>";
-    print_simple_box_end();
 
     echo "<br />";
 
@@ -255,7 +252,15 @@
     print_category_edit(NULL, $displaylist, $parentlist);
 
     echo "</table>";
+    echo "<br />";
 
+    echo "<center>";
+    /// Print link to create a new course
+    unset($options);
+    $option["category"] = $category->id;
+    print_single_button("edit.php", $options, get_string("addnewcourse"), "get");
+    echo "<br />";
+    echo "</center>";
 
     print_footer();
 

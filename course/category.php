@@ -54,13 +54,12 @@
     $strcategories = get_string("categories");
     $strcategory = get_string("category");
     $strcourses = get_string("courses");
-    $strcoursemanagement = get_string("coursemanagement");
 
     if ($creatorediting) {
         if ($adminediting) {
 	        print_header("$site->shortname: $category->name", "$site->fullname", 
                          "<a href=\"../$CFG->admin/index.php\">$stradministration</a> -> ".
-                         "<a href=\"index.php\">$strcoursemanagement</a> -> $category->name",
+                         "<a href=\"index.php\">$strcategories</a> -> $category->name",
                          "", "", true, $updatebutton);
         } else {
 	        print_header("$site->shortname: $category->name", "$site->fullname", 
@@ -90,18 +89,30 @@
 
     /// Move a specified course to a new category 
 
-        if (isset($move) and isset($moveto)) {
-            if (! $course  = get_record("course", "id", $move)) {
-                notify("Error finding the course");
-            } else if (! $destcategory = get_record("course_categories", "id", $moveto)) {
-                notify("Error finding the category");
-            } else {
-                if (!set_field("course", "category", $destcategory->id, "id", $course->id)) {
-                    notify("An error occurred - course not moved!");
+        if ($data = data_submitted()) {   // Some courses are being moved
+
+            if (! $destcategory = get_record("course_categories", "id", $data->moveto)) {
+                error("Error finding the category");
+            }
+
+            unset($data->moveto);
+            unset($data->id);
+
+            if ($data) {
+                foreach ($data as $code => $junk) {
+                    $courseid = substr($code, 1);
+
+                    if (! $course  = get_record("course", "id", $courseid)) {
+                        notify("Error finding course $courseid");
+                    } else {
+                        if (!set_field("course", "category", $destcategory->id, "id", $course->id)) {
+                            notify("An error occurred - course not moved!");
+                        }
+                        fix_course_sortorder($destcategory->id);
+                        fix_course_sortorder($category->id);
+                        $category = get_record("course_categories", "id", $category->id);
+                    }
                 }
-                fix_course_sortorder($destcategory->id);
-                fix_course_sortorder($category->id);
-                $category = get_record("course_categories", "id", $category->id);
             }
         }
 
@@ -187,7 +198,7 @@
     } else {
 
         $strcourses  = get_string("courses");
-        $strmovecourseto = get_string("movecourseto");
+        $strmove     = get_string("move");
         $stredit     = get_string("edit");
         $strdelete   = get_string("delete");
         $strbackup   = get_string("backup");
@@ -205,12 +216,13 @@
         }
 
     
+        echo "<form action=category.php method=post>";
         echo "<table align=\"center\" border=0 cellspacing=2 cellpadding=4 class=\"generalbox\"><tr>";
         echo "<th>$strcourses</th>";
         if ($creatorediting) {
             echo "<th>$stredit</th>";
             if ($adminediting) {
-                echo "<th>$strmovecourseto</th>";
+                echo "<th>$strmove</th>";
             }
         }
         echo "</tr>";
@@ -218,6 +230,7 @@
 
         $numcourses = count($courses);
         $count = 0;
+        $abletomovecourses = false;  // for now
 
         foreach ($courses as $course) {
             $count++;
@@ -257,34 +270,52 @@
                     }
     
                     echo "</td>";
-                    echo "<td>";
-                    popup_form ("category.php?id=$category->id&move=$course->id&moveto=", $displaylist, 
-                                "moveform$course->id", "$course->category", "", "", "", false);
+                    echo "<td align=\"center\">";
+                    echo "<input type=\"checkbox\" name=\"c$course->id\">";
+                    $abletomovecourses = true;
+
                  } else if (isteacher($course->id)) {
+                    echo "<td>";
                     echo "<a title=\"$strassignteachers\" href=\"$CFG->wwwroot/$CFG->admin/teacher.php?id=$course->id\"><img".
                          " src=\"$pixpath/t/user.gif\" height=11 width=11 border=0></a> ";
                  }
-                echo "</td>";
+                 echo "</td>";
             }
             echo "</tr>";
         }
+
+        if ($abletomovecourses) {
+            echo "<tr><td colspan=3 align=right>";
+            echo "<br />";
+            choose_from_menu ($displaylist, "moveto", "", get_string("moveselectedcoursesto"), "");
+            echo "<input type=\"hidden\" name=\"id\" value=\"$category->id\">";
+            echo "<input type=\"submit\" value=\"".get_string("move")."\">";
+            echo "</td></tr>";
+        }
     
         echo "</table>";
+        echo "</form>";
         echo "<br />";
     }
 
+
     if ($adminediting) {
-    /// First print form to rename the category
-        $strrename= get_string("rename");
-        print_simple_box_start("center");
         echo "<center>";
+
+    /// Print link to create a new course
+        unset($options);
+        $option["category"] = $category->id;
+        print_single_button("edit.php", $options, get_string("addnewcourse"), "get");
+        echo "<br />";
+
+    /// Print form to rename the category
+        $strrename= get_string("rename");
         echo "<form name=\"renameform\" action=\"category.php\" method=\"post\">";
         echo "<input type=\"hidden\" name=\"id\" value=\"$category->id\">";
         echo "<input type=\"text\" size=30 name=\"rename\" value=\"$category->name\">";
         echo "<input type=\"submit\" value=\"$strrename\">";
         echo "</form>";
         echo "</center>";
-        print_simple_box_end();
         echo "<br />";
     }
 
