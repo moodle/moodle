@@ -1,0 +1,41 @@
+<table cellpadding="9" cellspacing="0">
+<tr valign="top">
+    <td align="right"><p>block_rss_client_num_entries:</td>
+    <td>
+    <input name="block" type="hidden" value="<?php echo intval($_REQUEST['block']); ?>" />
+    <input name="block_rss_client_num_entries" type="text" size="5" value="<?php 
+        if(isset($CFG->block_rss_client_num_entries)) {
+            p($CFG->block_rss_client_num_entries);
+        } else {
+            p(5);
+        } ?>" />
+    </td>
+    <td>
+        <?php print_string('block_rss_client_num_entries', 'block_rss_client') ?>
+    </td>
+</tr>
+<tr valign="top">
+    <td align="right"><p>block_rss_client_submitters:</td>
+    <td>
+        <?php if (!empty($CFG->block_rss_client_submitters)) {
+                        $selected = $CFG->block_rss_client_submitters;
+                } else {
+                       $selected = '0';
+                       $CFG->block_rss_client_submitters = 0;
+                }
+                $options = array ( '0' => 'All members',
+                      '1' => 'Admins only',
+                      '2' => 'Admins and teachers');
+
+                choose_from_menu ($options, 'block_rss_client_submitters', $selected);
+        ?>
+    </td>
+    <td>
+        <?php print_string('block_rss_submitters', 'block_rss_client') ?>
+    </td>
+</tr>
+<tr>
+    <td colspan="3" align="center">
+    <input type="submit" value="<?php print_string('savechanges') ?>"></td>
+</tr>
+</table>

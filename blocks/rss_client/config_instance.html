@@ -1,0 +1,73 @@
+<table cellpadding="9" cellspacing="0">
+<tr valign="top">
+    <td align="right">
+        <?php print_string('block_rss_display_description', 'block_rss_client') ?>
+    </td>
+    <td>
+            <?php 
+                if(! isset($CFG->block_rss_client_display_description) ) {
+                    $CFG->block_rss_client_display_description = '0';
+                }
+                $selected = $CFG->block_rss_client_display_description;
+                if (isset($this->config) && isset($this->config->display_description)) {
+                    $selected = $this->config->display_description;
+                }
+                $options[0] = get_string('no');
+                $options[1] = get_string('yes');
+                choose_from_menu ($options, 'display_description', $selected);
+            ?>
+    </td>
+</tr>
+<tr valign="top">
+    <td align="right">
+        <?php print_string('block_rss_shownumentries', 'block_rss_client') ?>
+    </td>
+    <td>
+        <input name="shownumentries" type="text" size="5" value="<?php
+            if(! isset($CFG->block_rss_client_num_entries) ) {
+                $CFG->block_rss_client_num_entries = '5';
+            }
+            $numentries = $CFG->block_rss_client_num_entries;
+            if (isset($this->config) && isset($this->config->shownumentries)) {
+                $numentries = intval($this->config->shownumentries);
+            }
+
+            p($numentries);
+        ?>" />
+    </td>
+</tr>
+<tr valign="top">
+    <td>
+        <?php print_string('block_rss_choose_feed', 'block_rss_client') ?>
+    </td>
+    <td>
+        <?php 
+            $selected = '';
+            if (isset($this->config) && isset($this->config->rssid)) {
+                $selected = $this->config->rssid;
+            }
+            if ($rssfeeds = get_records('block_rss_client')) {
+                foreach($rssfeeds as $rssfeed){
+                    $feedoptions[$rssfeed->id] = $rssfeed->title;
+                }
+                choose_from_menu ($feedoptions, 'rssid', $selected);
+            } else {
+                print_string('block_rss_no_feeds', 'block_rss_client');
+                if ( isadmin() ){
+                    print '&nbsp;<a href="'. $CFG->wwwroot .'/blocks/rss_client/block_rss_client_action.php"> '. get_string('block_rss_edit_news_feeds', 'block_rss_client') .'</a><br />';
+                }
+            }
+        ?>
+    </td>
+</tr>
+<tr valign="top">
+    <td align="right"><p><?php print_string('block_rss_word_title', 'block_rss_client'); ?>:</td>
+    <td><input type="text" name="title" size="30" value="<?php echo $this->config->title; ?>" />
+    </td>
+</tr>
+<tr>
+    <td colspan="2" align="center">
+        <input type="submit" value="<?php print_string('savechanges') ?>">
+    </td>
+</tr>
+</table>
