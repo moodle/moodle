@@ -1,92 +1,82 @@
 <head>
-
-<TITLE>Moodle Docs: インストール</TITLE>
-
+    
+<title>Moodle Docs: インストール</title>
+  
 <link rel="stylesheet" href="docstyles.css" type="TEXT/CSS">
-
+    
 <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=euc-jp">
-
 </head>
 
-
-
-<BODY BGCOLOR="#FFFFFF">
-
+<body bgcolor="#FFFFFF">
 <h1>Moodleのインストール</h1>
-
-<P>このガイドは最初にMoodleをインストールする方法に関して説明したものです。ウェブサーバの広範囲に渡る細かな違いをカバーするために、詳細に関して述べてある部分もあります。このことで読むのを投げ出さないでください。普段、私は数分でMoodleをインストールしていますから！</P>
-
-<P>時間をかけてこの文書を読んでください。注意深く読むことで後の作業時間を節約することが出来ます。</P>
-
-<P>文書の項目:</P>
-
-<OL>
-  <LI><A HREF="#requirements">必要条件</A></LI>
-  <LI><A HREF="#downloading">ダウンロード</A></LI>
-  <LI><A HREF="#site">サイト構成</A></LI>
-  <LI><A HREF="#data">データディレクトリの作成</A></LI>
-  <LI><A HREF="#database">データベースの作成</A></LI>
-  <LI><A HREF="#webserver">ウェブサーバ設定の確認</A></LI>
-  <LI><A HREF="#config">config.phpの編集</A></LI>
-  <LI><A HREF="#admin">管理ページに進む</A></LI>
-  <LI><A HREF="#cron">cronの設定</A></LI>
-  <LI><A HREF="#course">新しいコースの作成</A></LI>
-</OL>
-
-<H3><A NAME="requirements"></A>1. 必要条件</H3>
-
 <blockquote>
-
-  <p>Moodleは主としてPHP、Apache、MySQLを使用したLinux環境で開発しています。定期的にPostgreSQL、WindowsXP、Mac OS Xの環境でテストしています。</p>
-
-  <p>あたなが必要なものは:</p>
-
-<OL>
-<LI>下記の項目が利用可能にされている、動作可能な<A HREF="http://www.php.net/">PHP</A>(バージョン4.1.0 以上)、(最近では殆どのPHPがこれらの条件を満たしています。):
-      <UL>
-      <LI>JPGとPNGフォーマットをサポートする<A HREF="http://www.boutell.com/gd/">GDライブラリ</A></LI>
-      <LI>セッションサポート</LI>
-      <LI>ファイルのアップロード可</LI>
-      </UL>
-</LI>
-
-    <LI>動作可能なデータベースサーバ: <A HREF="http://www.mysql.com/">MySQL</A> または <A HREF="http://www.postgresql.org/">PostgreSQL</A> 推奨。 (MSSQL、 Oracle、 Interbase、 Foxpro、 Access、 ADO、 Sybase、 DB2、ODBC でも理論的には動作しますが、データベーステーブルを手動設定する必要があります。)</LI>
-</OL>
-
-  <p>Windowsプラットフォームで、これらの条件を満たす一番早い方法は<A HREF="http://www.foxserv.net/">FoxServ</A>または<A HREF="http://www.easyphp.org/">EasyPHP</A>をダウンロードすることです。これらのソフトでApache、PHP、MySQLをインストールすることが出来ます。Moodleが画像処理を行えるようにGDモジュールを使えるようにしてください。 - php.iniを編集して次のコメント(;)を取り除く必要があります。: 'extension=php_gd.dll'. またsession.save_pathのディレクトリをデフォルトの"/tmp"から"c:/temp"のようにWindowsのディレクトリを使用するように変更する必要があります。</p>
-
-  <p>Mac OS Xに関しては、これら全てを簡単でメンテナンス可能なパッケージとしてダウンロード出来る<a href="http://fink.sourceforge.net/">fink</a> projectを強くお勧めします。 もしコマンドラインに自信がないのでしたら<A HREF="http://www.entropy.ch/software/macosx/php/">Marc Liyanage's PHP Apache Module</A>の使用が新しいMac OS X上で、PHPをダウンロードして稼動させる最も簡単な方法です。</p>
-
-  <p>もしLinuxまたはその他のUnixをお使いでしたら、これらに関する全てのことをお分かりでしょう;-) </p>
+  <p>このガイドは最初にMoodleをインストールする方法に関して説明したものです。ウェブサーバの広範囲に渡る細かな違いをカバーするために、詳細に関して述べてある部分もあります。このことで読むのを投げ出さないでください。普段、私は数分でMoodleをインストールしていますから！</p>
+  <p>時間をかけてこの文書を読んでください。注意深く読むことで後の作業時間を節約することが出来ます。</p>
+  <p>文書の項目:</p>
+  <ol>
+    <li><a href="#requirements">システム必要条件</a></li>
+    <li><a href="#downloading">ダウンロード</a></li>
+    <li><a href="#site">サイト構成</a></li>
+    <li><a href="#data">データディレクトリの作成</a></li>
+    <li><a href="#database">データベースの作成</a></li>
+    <li><a href="#webserver">ウェブサーバ設定の確認</a></li>
+    <li><a href="#config">config.phpの編集</a></li>
+    <li><a href="#admin">管理ページに進む</a></li>
+    <li><a href="#cron">cronの設定</a></li>
+    <li><a href="#course">新しいコースの作成</a></li>
+  </ol>
+  <p>&nbsp;</p>
 </blockquote>
-
-<P>&nbsp;</P>
-
-<H3><A NAME="downloading"></A>2. ダウンロード</H3>
-
+<h3 class="sectionheading"><a name="requirements"></a>1. システム必要条件</h3>
+<blockquote> 
+  <p>Moodleは主としてPHP、Apache、MySQLを使用したLinux環境(LAMPプラットフォームとも呼ばれます)で開発を行っています。 しかし、定期的にPostgreSQL、WindowsXP、Mac OS X、Netware 6の環境でテストしています。</p>
+  <p>Moodleのシステム必要条件は下記の通りです:</p>
+  <ol>
+    <li>ウェブサーバソフトウェア。殆どのユーザは、<a href="http://www.apache.org/" target="_blank">Apache</a>を使用していますが、MoodleはWindowsプラットフォームにおけるIISのように、PHPをサポートするあらゆるウェブサーバで動作します。</li>
+    <li>下記の設定を行った<A HREF="http://www.php.net/">PHP</A>(バージョン4.1.0 以上):
+      <ul>
+        <li><a href="http://www.boutell.com/gd/" target="_blank">GDライブラリ</a> 使用可、JPG及びPNGフォーマットをサポート</li>
+        <li>zlibライブラリ 使用可 (Windowsでバックアップ/リストア機能を使用する場合)</li>
+        <li>セッションサポート 使用可</li>
+        <li>ファイルアップロード 使用可</li>
+        <li>セーフモード 使用しない (セーフモードの使用によるトラブルに関してはmoodle.orgのフォーラムをご覧ください。)</li>
+      </ul>
+    </li>
+    <li>動作可能なデータベースサーバ: Moodle 1.1は、<a href="http://www.mysql.com/" target="_blank">MySQL</a> 又は <a href="http://www.postgresql.org/" target="_blank">PostgreSQL</a>を完全にサポートしています。これらのデータベースサーバの使用を推奨します。また、将来的なリリースではその他のデータベースも完全にサポートされる予定です。</li>
+  </ol>
+  <p>殆どのウェブホスト会社では、これらの機能をサポートしています。もし、あなたが契約した会社が、これらの機能をサポートしない数少ない会社である場合、何故そうなのか尋ねて、他の会社と契約することを考慮してください。</p>
+  <p>自分のコンピュータでMoodleを動かしたくても、少々取り付きにくいと考えている方は、私たちのガイド<a href="http://moodle.org/doc/?file=installamp.html">Apache、MySQL、PHPのインストール</a>をご覧ください。人気のある殆どのプラットーフォームに、これらをインストールする為のステップバイステップの方法が記されています。 </p>
+  <p>&nbsp;</p>
+</blockquote>
+<h3 class="sectionheading"><a name="downloading"></a>2. Download</h3>
 <blockquote>
-
-<p>Moodleを入手するには圧縮パッケージをダウンロードする方法とCVS経由で入手する方法の二つの方法があります。 これらに関する説明はダウンロードページ<A HREF="http://moodle.com/">http://moodle.com/</A>に掲載されています。</p>
-
-<p>パッケージをダウンロードして解凍、またはCVS経由でチェックアウトした後に多くのファイルとフォルダが含まれた&quot;moodle&quotという名称のフォルダが現れます。</p>
-
-  <p>moodleフォルダを丸ごとウェブサーバのドキュメントディレクトリに入れることが出来ます。この場合は<B>http://yourwebserver.com/moodle</B>というような配置になります。またはmoodleフォルダ内の全フォルダ・ファイルをウェブサーバのドキュメントディレクトリに直接入れることも出来ます。この場合は<B>http://yourwebserver.com</B>というような配置になります。</p>
-
+  <p>Moodleを入手するには圧縮パッケージをダウンロードする方法とCVS経由で入手する方法の二つの方法があります。これらに関する説明はダウンロードページ<a href="http://moodle.org/download/" target="_blank">http://moodle.org/download/</a>に掲載されています。</p>
+  <p>パッケージをダウンロードして解凍、またはCVS経由でチェックアウトした後、「moodle」という名称の多くのファイルとフォルダが含まれたフォルダが現れます。</p>
+  <p>moodleフォルダを丸ごとウェブサーバのドキュメントディレクトリに入れることが出来ます。この場合、<b>http://yourwebserver.com/moodle</b>というような配置になります。または、moodleフォルダ内の全フォルダ・ファイルをウェブサーバのドキュメントディレクトリに直接入れることも出来ます。この場合、シンプルに<b>http://yourwebserver.com</b>というような配置になります。</p>
 </blockquote>
-
-<P>&nbsp;</P>
-
-<H3><A NAME="site"></A>3. サイト構成</H3>
-
-<BLOCKQUOTE>
-
+<p>&nbsp;</p>
+<h3 class="sectionheading"><a name="site"></a>3. サイト構成</h3>
+<blockquote>
   <p>より深い理解のための、Moodleフォルダ構成に関する概要説明です:</p>
-
   <blockquote>
-
-    <p>config.php - インストールするために編集する必要のある唯一のファイルです。<br>
-      version.php - Moodleコードの現バージョンを定義しています。<br>
-      index.php - Moodleサイトの表紙です。</p>
+    <p><table><tr>
+      <td width="130" valign="top">config-dist.php</td>
+      <td valign="top">-</td>
+      <td valign="top">
+        このファイルをコピーしてconfig.phpという名称で保存してください。
+        インストール時に編集する必要のある唯一のファイルです。
+      </td></tr>
+      <tr><td valign="top">version.php</td>
+      <td valign="top">-</td>
+      <td valign="top">
+        Moodleコードの現バージョンを定義しています。
+      </td></tr>
+      <tr><td valign="top">index.php</td>
+      <td valign="top">-</td>
+      <td valign="top">
+         Moodleサイトの表紙です。
+      </td></tr></table>
+    </p>
     <ul>
       <li>admin/ - 全サーバを管理するコードです。</li>
       <li>auth/ - ユーザ認証のためのプラグインモジュールです。</li>
@@ -101,373 +91,203 @@
       <li>theme/ - Moodleサイトのデザインを変更するためのテーマ/スキンです。</li>
       <li>user/ - ユーザを表示・管理するためのコードです。</li>
     </ul>
-
     <p>&nbsp;</p>
-
   </blockquote>
-
-</BLOCKQUOTE>
-
-<H3><A NAME="data"></A>4. データディレクトリの作成</H3>
-
-<blockquote>
-
-<p>Moodleでは、コース文書やユーザ写真のようなアップロードしたファイルを保存するためのスペースをハードディスクの中に必要とします。 </p>
-
-<p>この目的のためにディレクトリを作成してください。セキュリティ上の理由で、ウェブ経由のアクセスが出来ないディレクトリが良いでしょう。最も簡単な方法はウェブディレクトリの外にこのディレクトリを置くことです。または、データディレクトリの中に下記の行を含む.htaccessと呼ばれるファイルを作成することでディレクトリを保護することが出来ます。
-
-  <blockquote>
-
-     <PRE>deny from all</PRE>
-
-  </blockquote>
-
-<p>Moodleがアップロードファイルをこのディレクトリに書き込めるように、ウェブサーバソフトウェア(例 Apache)がこのディレクトリに書き込む許可を行っていることを確認してください。Unixマシンではディレクトリのオーナーが&quot;nobody&quot; または &quot;apache&quot;のようになっていることを意味します。</p>
-
-<p>多くの共有サーバーでは、他の顧客があなたのファイルを閲覧したり変更するのを避けるために、あなたが属している「グループ」のアクセスを制限する必要があるでしょう。しかし、ウェブサーバがあなたのファイルにアクセス出来るように全ての人にフルread/writeアクセスを提供する必要があります。もし確実にこの設定をすることが出来ない場合は、あなたのサーバの管理者にお問合わせください。</p>
-
 </blockquote>
-
-<P>&nbsp;</P>
-
-<H3><A NAME="database"></A>5. データベースの作成</H3>
-
+<h3 class="sectionheading"><a name="data"></a>4. データディレクトリの作成</h3>
 <blockquote>
-
-<p>空のデータベース(例 Moodle)及び特別なユーザ(例 moodleuser)を作成する必要があります。このユーザは作成したデータベースにのみアクセスするためのユーザです。rootユーザも使えますがシステムにとってお勧めできるものではありません。もしハッカーがパスワードを発見したら、1つのデータベースだけではなく全てのデータシステムが危険に晒されることになります。</p>
-
+  <p>Moodleでは、コース文書やユーザ写真のようなアップロードしたファイルを保存するためのスペースをハードディスクの中に必要とします。 </p>
+  <p>この目的のために、ディレクトリを作成してください。セキュリティ上の理由で、ウェブ経由のアクセスが出来ないディレクトリが良いでしょう。最も簡単な方法はウェブディレクトリの外にこのディレクトリを置くことです。または、データディレクトリの中に下記の行を含む.htaccessと呼ばれるファイルを作成することで、ディレクトリを保護することが出来ます。
+  <blockquote>
+     
+    <pre>deny from all</pre>
+  </blockquote>
+  <p>Moodleがアップロードファイルをこのディレクトリに書き込めるように、ウェブサーバソフトウェア(例 Apache)がこのディレクトリに書き込む許可を行っていることを確認してください。Unixマシンではディレクトリのオーナーが&quot;nobody&quot; または &quot;apache&quot;のようになっていることを意味します。</p>
+  <p>多くの共有サーバーでは、他の顧客があなたのファイルを閲覧したり変更するのを避けるために、あなたが属している「グループ」のアクセスを制限する必要があるでしょう。しかし、ウェブサーバがあなたのファイルにアクセス出来るように全ての人に完全なread/writeアクセスを提供する必要があります。もし、確実にこの設定をすることが出来ない場合は、あなたのサーバの管理者にお問合わせください。</p>
+</blockquote>
+<p>&nbsp;</p>
+<h3 class="sectionheading"><a name="database"></a>5. データベースの作成</h3>
+<blockquote>
+  <p>空のデータベース(例 Moodle)及び特別なユーザ(例 moodleuser)を作成する必要があります。このユーザは作成したデータベースにのみアクセスするためのユーザです。rootユーザも使えますがシステムにとってお勧めできるものではありません。もしハッカーがパスワードを発見したら、1つのデータベースだけではなく全てのデータシステムが危険に晒されることになります。</p>
   <p>MySQLのコマンドライン例: </p>
-
-  <PRE>
-
+  <pre>
    # mysql -u root -p
-
    > CREATE DATABASE moodle; 
-
    > GRANT SELECT,INSERT,UPDATE,DELETE,CREATE,DROP,INDEX,ALTER ON moodle.* 
-
            TO moodleuser@localhost IDENTIFIED BY 'yourpassword'; 
-
    > quit 
-
    # mysqladmin -p reload
-
-</PRE>
-
+</pre>
   <p>PostgreSQLのコマンドライン例: </p>
-
-  <PRE>
-
+  <pre>
    # su - postgres
-
    > psql -c "create user moodleuser createdb;" template1
-
    > psql -c "create database moodle;" -U moodleuser template1
-
    > psql -c "alter user moodleuser nocreatedb;" template1
-
-</PRE>
-
-  <p>(MySQLの場合、データベース管理のために<a href="http://phpmyadmin.sourceforge.net/">phpMyAdmin</a>
-  を使われることを強くお勧めします。)</p>
-
-<p>バージョン 1.0.8現在、Moodleはテーブルプリフィックスをサポートしていますので、他のアプリケーションのテーブルとデータベースを安全に共有することが出来ます。</p>
-
+</pre>
+  <p>(MySQLの場合、データベース管理のために<a href="http://phpmyadmin.sourceforge.net/">phpMyAdmin</a>を使われることを強くお勧めします。)</p>
+  <p>バージョン 1.0.8現在、Moodleはテーブル接頭辞をサポートしていますので、安全に他のアプリケーションのテーブルとデータベースを共有することが出来ます。</p>
 </blockquote>
-
-<P>&nbsp;</P>
-
-<H3><A NAME="webserver" id="webserver"></A>6. ウェブサーバ設定の確認</H3>
-
+<p>&nbsp;</p>
+<h3 class="sectionheading"><a name="webserver" id="webserver"></a>6. ウェブサーバ設定の確認</h3>
 <blockquote>
-
   <p>最初に、あなたのウェブサーバでindex.phpがデフォルトページに設定されていることを確認してください。(その他に恐らくindex.html、default.htm等が設定されていることでしょう)</p>
-
-  <p>Apacheではhttpd.confファイルの中のDirectoryIndexパラメータで設定します。私のは通常このようになっています:</p>
-
+  <p>Apacheではhttpd.confファイルの中のDirectoryIndexパラメータで設定します。私の設定は通常下記のようになっています:</p>
   <blockquote>
-
     <pre><strong>DirectoryIndex</strong> index.php index.html index.htm </pre>
-
   </blockquote>
-
   <p>index.phpがリストの中にあることを確認してください。(効率を考えますとリストの最初に  あった方が良いでしょう)</p>
-
-  <p>2番目に、あなたがApache2を使っているのでしたら、<i>AcceptPathInfo</i>変数を有効にしてください。この設定は、スクリプトがhttp://server/file.php/arg1/arg2のような参照を行えるようにします。この設定は、あなたのサイトに対して相対的リンクの使用を許可し、Moodleウェブサイトを利用するユーザにレスポンス向上をもたらすために必要です。下記の行をhttpd.confファイルに追加することで、この設定を有効に出来ます。</p>
-
-<blockquote>
-
-<pre>magic_quotes_gpc = On
-
-magic_quotes_runtime = Off
-
-file_uploads = On
-
-short_open_tag = On
-
-session.auto_start = Off
-
-session.bug_compat_warn = Off
-
-</pre>
-
-</blockquote>
-
+  <p>2番目に、あなたがApache2を使っているのでしたら、<i>AcceptPathInfo</i>変数を有効にしてください。この設定は、スクリプトがhttp://server/file.php/arg1/arg2のような参照を行えるようにします。この設定は、あなたのサイトに対して相対リンクの使用を許可し、Moodleウェブサイトを利用するユーザにレスポンス向上をもたらすために必要です。下記の行をhttpd.confファイルに追加することで、この設定を有効に出来ます。</p>
+  <blockquote>
+    <pre><strong>AcceptPathInfo</strong> on </pre>
+  </blockquote>
   <p>3番目に、Moodleが動作するために、多くのPHPの設定をアクティブにする必要があります。<B>多くのサーバでは下記の設定は既にデフォルトセッティングとなっています。</B>しかし、いくつかのPHPサーバ(そして、最新のPHPバージョン)では設定内容が異なっているでしょう。これらの設定はPHPの設定ファイル(通常はphp.iniと呼ばれます)に定義されています:</p>
-
   <blockquote>
 
-<pre>file_uploads = 1
-
-magic_quotes_gpc = 1
-
-short_open_tag = 1
-
+    <pre>magic_quotes_gpc = 1    (preferred but not necessary)
+magic_quotes_runtime = 0    (necessary)
+file_uploads = 1
 session.auto_start = 0
-
+session.bug_compat_warn = 0
 </pre>
-
   </blockquote>
-
-<p>あなたがサーバ内のhttpd.confやphp.iniにアクセスできない場合や、他のアプリケーションで異なる設定をする必要がある場合は、全てのデフォルトセッティングを上書きすることが出来ます。
-
-<p>これを行うには、下記の設定を定義した<B>.htaccess</B>という名称のファイルをMoodleのメインディレクトリに置く必要があります。これは上書きが許可されたApacheサーバのみで動作します。
-
-     <BLOCKQUOTE><PRE>
-
+  <p>あなたがサーバ内のhttpd.confやphp.iniにアクセスできない場合や、他のアプリケーションで異なる設定をする必要がある場合は、全てのデフォルトセッティングを上書きすることが出来ます。
+  <p>これを行うには、下記の設定を定義した<B>.htaccess</B>という名称のファイルをMoodleのメインディレクトリに置く必要があります。これは、設定の上書きが許可されたApacheサーバのみで動作します。
+     
+  <blockquote>
+    <pre>
 DirectoryIndex index.php index.html index.htm
 
-
-
 &lt;IfDefine APACHE2>
-
      <b>AcceptPathInfo</b> on
-
 &lt;/IfDefine>
 
-
-
-php_flag magic_quotes_gpc On
-
-php_flag magic_quotes_runtime Off
-
-php_flag file_uploads On
-
-php_flag short_open_tag On
-
-php_flag session.auto_start Off
-
-php_flag session.bug_compat_warn Off</BLOCKQUOTE></PRE>
-
-<P>アップロードファイルの最大サイズを下記のように設定することも出来ます:
-
-     <BLOCKQUOTE><PRE>
-
+php_flag magic_quotes_gpc 1
+php_flag magic_quotes_runtime 0
+php_flag file_uploads 1
+php_flag session.auto_start 0
+php_flag session.bug_compat_warn 0</pre>
+  </blockquote>
+  <p>アップロードファイルの最大サイズを下記のように設定することも出来ます:</p>
+     
+  <blockquote>
+    <pre>
+LimitRequestBody 0
 php_value upload_max_filesize 2M
-
 php_value post_max_size 2M
-
-     </BLOCKQUOTE></PRE>
-
-<p>最も簡単な方法はlib/htaccessよりサンプルファイルをコピーしてあなたの目的に適うように編集する方法です。このファイルには、より詳しい説明が含まれています。例えばUnixのシェルで:
+     </pre>
+  </blockquote>
+  <p>最も簡単な方法はlib/htaccessよりサンプルファイルをコピーしてあなたの目的に適うように編集する方法です。このファイルには、より詳しい説明が含まれています。Unixシェルの例:
   <blockquote>
-
     <pre>cp lib/htaccess .htaccess</pre>
-
   </blockquote>
-
 </blockquote>
-
 <p>&nbsp;</p>
-
-<H3><A NAME="config"></A>7. config.phpの編集</H3>
-
+<h3 class="sectionheading"><a name="config"></a>7. config.phpの編集</h3>
 <blockquote>
-
-<p>これであなたは設定ファイル、<strong>config.php</strong>をテキストエディタで編集することが出来ます。このファイルはMoodle内の全てのファイルで使用されます。</p>
-
-<p>まず最初にconfig-dist.phpをコピーしてconfig.phpという名称にリネームしてください。後でMoodleをアップグレードした時にconfig.phpが上書きされないように、このような作業を行います。</p>
-
-<p>あなたが定義したデータベースの詳細(テーブルプリフィックスを含む - PostgreSQLでは必須です)を明示するためにconfig.phpを編集してください。同様にサイトのアドレス、ファイルシステムのディレクトリ、データディレクトリを明示します。 この定義ファイルには詳細な説明文が含まれています。</p>
-
-<p>このインストール文書の残りの部分では、あなたのサイトが下記に位置していることを前提に説明します: 
-
-    <u>http://example.com/moodle</u></p>
-
+  <p>これであなたは設定ファイル、<strong>config.php</strong>をテキストエディタで編集することが出来ます。このファイルはMoodle内の全てのファイルで使用されます。</p>
+  <p>まず最初にconfig-dist.phpをコピーしてconfig.phpという名称にリネームしてください。後でMoodleをアップグレードした時にconfig.phpが上書きされないように、このような作業を行います。</p>
+  <p>あなたが定義したデータベースの詳細(テーブルプリフィックスを含む - PostgreSQLでは必須です)を明示するためにconfig.phpを編集してください。同様にサイトのアドレス、ファイルシステムのディレクトリ、データディレクトリを明示します。 この定義ファイルには詳細な説明文が含まれています。</p>
+  <p>このインストール文書の残りの部分では、あなたのサイトが下記に位置していることを前提に説明します: <u>http://example.com/moodle</u></p>
 </blockquote>
-
-<P>&nbsp;</P>
-
-<H3><A NAME="admin"></A>8. 管理ページに進む</H3>
-
+<p>&nbsp;</p>
+<h3 class="sectionheading"><a name="admin"></a>8. 管理ページに進む</h3>
 <blockquote> 
-
-<p>管理ページは<u>http://example.com/moodle/admin</u>で動作していることでしょう。あなたのサイトの表紙にアクセスすれば自動的に管理ページが表示されます。あなたが最初に管理ページにアクセスした時は、セットアップを続けるために同意する必要があるGPL同意書が表示されます。 </p>
-
-<P>(同時にMoodleからあなたのブラウザにいくつかのcookieが設定されます。もし、ブラウザの設定でcookieを受け入れるか否か設定できるようでしたらMoodleのcookieを受け入れるようにする<B>必要があります</B>。そのようにしない場合、Moodleは正常に動作しません。)
-
-<p>Moodleはデータベースのセッティングを開始して、データを保存するためのテーブルを作成します。最初にメインのデータベーステーブルが作成されます。下記のようなSQL文の次にステータスメッセージ(緑色または赤色)が表示されます:</p>
-
+  <p>管理ページは<u>http://example.com/moodle/admin</u>で動作していることでしょう。あなたのサイトの表紙にアクセスすれば自動的に管理ページが表示されます。あなたが最初に管理ページにアクセスした時は、セットアップを続けるために同意する必要があるGPL同意書が表示されます。 </p>
+  <P>(同時にMoodleからあなたのブラウザにいくつかのcookieが設定されます。もし、ブラウザの設定でcookieを受け入れるか否か設定できるようでしたらMoodleのcookieを受け入れるようにする<B>必要があります</B>。そのようにしない場合、Moodleは正常に動作しません。)
+  <p>Moodleはデータベースのセッティングを開始して、データを保存するためのテーブルを作成します。最初にメインのデータベーステーブルが作成されます。下記のようなSQL文の次にステータスメッセージ(緑色または赤色)が表示されます:</p>
   <blockquote> 
-
     <p>CREATE TABLE course ( id int(10) unsigned NOT NULL auto_increment, category 
-
       int(10) unsigned NOT NULL default '0', password varchar(50) NOT NULL default 
-
       '', fullname varchar(254) NOT NULL default '', shortname varchar(15) NOT 
-
       NULL default '', summary text NOT NULL, format tinyint(4) NOT NULL default 
-
       '1', teacher varchar(100) NOT NULL default 'Teacher', startdate int(10) 
-
       unsigned NOT NULL default '0', enddate int(10) unsigned NOT NULL default 
-
       '0', timemodified int(10) unsigned NOT NULL default '0', PRIMARY KEY (id)) 
-
       TYPE=MyISAM</p>
-
-    <p><FONT COLOR="#006600">SUCCESS</FONT></p>
-
-    <p>...等のメッセージが表示された後: <FONT COLOR="#FF0000">Main databases set up 
-
-      successfully</FONT>. </p>
-
+    <p><font color="#006600">SUCCESS</font></p>
+    <p>...and so on, followed by: <font color="#006600">Main databases set up 
+      successfully.</font> </p>
   </blockquote>
-
-<p>もし、このような表示がなされない場合は、データベースまたは、あなたがconfig.phpで定義した設定に問題があるはずです。PHPが制限された「セーフモード」(商用ウェブホストでは時々セーフモードに設定されています)に設定されていないか確認してください。PHPの変数を&lt? phpinfo() ?&gtを含んだ小さなファイルを作成することでブラウザを通して確認出来ます。 これらのことを全てチェックして、管理ページを再度表示させてください。</p>
-
-<p>ページの最後までスクロールして&quot;続ける&quotをクリックしてください;</p>
-
-<p>次に、各Moodleモジュールで必要とされる全テーブルの設定内容が前ページと同様な形式で表示されます。前ページと同じように全てが緑色でなければなりません。</p>
-
-<p>ページの最後までスクロールして&quot;続ける&quotをクリックしてください;</p>
-
-<p>更に使用言語、SMTPホスト等の設定変数を定義するためのフォームが表示されます。全ての設定を正しくしなければならないと心配しないでください - 常に、前に戻って管理画面からこれらの設定を変更することが出来ます。ページの最後までスクロールして&quot;Save&quotをクリックしてください;</p>
-
-<p>もし(もし、の時だけ)このページまたは、次のページで引っ掛かって次に進めない場合、恐らくあなたのサーバには私が"buggy referrer"と呼んでいる問題があります。 これは簡単に直すことが出来ます: config.phpを編集してbuggy_referrer変数を<i>true</i>にした後に、このページを再度表示させてください。</p>
-
-<p>次のページは、名称、フォーマット、説明等のMoodleサイトに関するパラメータと表紙の定義を行うフォームです。必要事項を入力して(いつでも戻って変更することが出来ます)&quot;設定を保存する&quot;をクリックしてください。</p>
-
-<p>最後に、管理ページにアクセスするための最高管理者の作成を求められます。あなたの名前、メールアドレス等の詳細データを入れて&quot;設定を保存する&quot;をクリックしてください。 全ての項目に入力する必要はありませんが、重要な項目が空白の場合、再入力を求められます。 
-
-  </p>
-
+  <p>もし、このような表示がなされない場合は、データベースまたは、あなたがconfig.phpで定義した設定に問題があるはずです。PHPが制限された「セーフモード」(商用ウェブホストでは時々セーフモードに設定されています)に設定されていないか確認してください。PHPの変数を&lt? phpinfo() ?&gtを含んだ小さなファイルを作成することでブラウザを通して確認出来ます。 これらのことを全てチェックして、管理ページを再度表示させてください。</p>
+  <p>ページの最後までスクロールして&quot;続ける&quotをクリックしてください;</p>
+  <p>次に、各Moodleモジュールで必要とされる全テーブルの設定内容が前ページと同様な形式で表示されます。前ページと同じように全てが緑色でなければなりません。</p>
+  <p>ページの最後までスクロールして&quot;続ける&quotをクリックしてください;</p>
+  <p>更に使用言語、SMTPホスト等の設定変数を定義するためのフォームが表示されます。全ての設定を正しくしなければならないと心配しないでください - 常に、前に戻って管理画面からこれらの設定を変更することが出来ます。ページの最後までスクロールして&quot;Save&quotをクリックしてください;</p>
+  <p>もし(もし、の時だけ)このページまたは、次のページで引っ掛かって次に進めない場合、恐らくあなたのサーバには私が"buggy referrer"と呼んでいる問題があります。 これは簡単に直すことが出来ます: config.phpを編集してbuggy_referrer変数を<i>true</i>にした後に、このページを再度表示させてください。</p>
+  <p>次のページは、名称、フォーマット、説明等のMoodleサイトに関するパラメータと表紙の定義を行うフォームです。必要事項を入力して(いつでも戻って変更することが出来ます)&quot;設定を保存する&quot;をクリックしてください。</p>
+  <p>最後に、管理ページにアクセスするための最高管理者の作成を求められます。あなたの名前、メールアドレス等の詳細データを入れて&quot;設定を保存する&quot;をクリックしてください。 全ての項目に入力する必要はありませんが、重要な項目が空白の場合、再入力を求められます。</p>
   <blockquote> 
-
-<p><strong>後で管理ページにアクセスする時に必要な管理者のユーザ名とパスワードを忘れないでください</strong>。</p>
-
+    <blockquote> 
+      <blockquote> 
+        <blockquote> 
+          <blockquote> 
+            <p><strong>後で管理ページにアクセスする時に必要な管理者のユーザ名とパスワードを忘れないでください</strong>。</p>
+          </blockquote>
+        </blockquote>
+      </blockquote>
+    </blockquote>
   </blockquote>
-
-<p>正常に終了すると、メニュー形式に並んだリンクを含んだ管理ページ(管理者としてサイトにログインするとこれらの項目が表示されます)に戻ります。全てのMoodleに関する管理は、これらのメニューを利用して下記のような管理をすることが出来ます:</p>
-
+  <p>(いかなる理由でも、インストールが中断された場合やログイン出来ないようなシステムエラーが発生した場合、通常はユーザ名「<strong>admin</strong>」、パスワード「<strong>admin</strong>」でログインすることが出来ます。</p>
+  <p>正常に終了すると、メニュー形式に並んだリンクを含んだ管理ページ(管理者としてサイトにログインするとこれらの項目が表示されます)に戻ります。全てのMoodleに関する管理は、これらのメニューを利用して下記のような管理をすることが出来ます:</p>
   <ul>
-
     <li>コースの作成と削除</li>
-
     <li>ユーザアカウントの作成と編集</li>
-
     <li>教師アカウントの管理</li>
-
     <li>テーマ等のサイト全体に渡る設定の変更</li>
-
   </ul>
-
 </blockquote>
-
-<P>&nbsp;</P>
-
-<H3><A NAME="cron"></A>9. cronの設定</H3>
-
+<p>&nbsp;</p>
+<h3 class="sectionheading"><a name="cron"></a>9. cronの設定</h3>
 <blockquote> 
-
-<p>いくつかのMoodleモジュールはタスクを動作させるための継続的なチェックを必要とします。例えば、Moodleは投稿者に投稿のコピーをメール送信するために、ディスカッションフォーラムのチェックを必要とします。</p>
-
-<p>これらの作業を行うスクリプトはcron.phpと呼ばれ、adminディレクトリに置かれます。しかし、これ自体では動作しませんので、定期的(例えば5分おき)に動作するように設定を行う必要があります。これは各モジュールで定義された機能が動作出来るように「心臓の鼓動」を提供します。</p>
-
-<P>Cronを動作させるマシンは<B>Moodleが動作しているマシンと同じマシンである必要はありません</B>。例えば、あなたがcronを使えないウェブホスティングサービスを利用している場合、cronを他のサーバや自宅のパソコンで動かすことが出来るでしょう。大切なことはcron.phpを5分毎のように定期的に動かすことです。 </p>
-
-<p>最初に下記のスクリプトが直接ブラウザで動くか確認してください:</p>
-
+  <p>いくつかのMoodleモジュールはタスクを動作させるための継続的なチェックを必要とします。例えば、Moodleは投稿者に投稿のコピーをメール送信するために、ディスカッションフォーラムのチェックを必要とします。</p>
+  <p>これらの作業を行うスクリプトはcron.phpと呼ばれ、adminディレクトリに置かれます。しかし、これ自体では動作しませんので、定期的(例えば5分毎又は10分毎)に動作するように設定を行う必要があります。これは各モジュールで定義された機能が動作出来るように「心臓の鼓動」を提供します。</p>
+  <p>Cronを動作させるマシンは<B>Moodleが動作しているマシンと同じマシンである必要はありません</B>。例えば、あなたがcronを使えないウェブホスティングサービスを利用している場合、cronを他のサーバや自宅のパソコンで動かすことが出来るでしょう。大切なことはcron.phpを定期的に動かすことです。 </p>
+  <p>スクリプトのロードはそれほど高くありませんので、通常は5分毎の設定が妥当でしょう。間隔を短くすることが心配な場合は、15又は30分に設定してください。メールの遅延によりコースの活動が阻害されますので、Cronの動作間隔を長くし過ぎないことが大切です。</p>
+  <p>最初に下記のスクリプトが直接ブラウザで動くか確認してください:</p>
   <blockquote> 
-
-    <PRE>http://example.com/moodle/admin/cron.php</PRE>
-
+    <pre>http://example.com/moodle/admin/cron.php</pre>
   </blockquote>
-
-<p>次に、このスクリプトが自動的に且つ定期的に動作するように設定する必要があります。</p>
-
-<H4>スクリプトをコマンドラインより実行する</H4>
-
-<p>コマンドラインからcron.phpを上記例のように実行させることが出来ます。例えば「wget」のようなUnixユーティリティを利用することが出来ます:</p>
-
+  <p>次に、このスクリプトが自動的に且つ定期的に動作するように設定する必要があります。</p>
+  <h4>スクリプトをコマンドラインより実行する</h4>
+  <p>コマンドラインからcron.phpを上記例のように実行させることが出来ます。例えば「wget」のようなUnixユーティリティを利用することが出来ます:</p>
   <blockquote>
-
-    <PRE>wget -q -O /dev/null http://example.com/moodle/admin/cron.php</PRE>
-
+    <pre>wget -q -O /dev/null http://example.com/moodle/admin/cron.php</pre>
   </blockquote>
-
-<p>この例の場合、出力は抑制(/dev/null)されます。</p>
-
-<p>同じことをlynxで行うと:</p>
-
+  <p>この例の場合、出力は抑制(/dev/null)されます。</p>
+  <p>同じことをlynxで行うと:</p>
   <blockquote>
-
     <pre>lynx -dump http://example.com/moodle/admin/cron.php &gt; /dev/null</pre>
-
   </blockquote>
-
-<p>代替手段として、コマンドラインで動作するスタンドアロンバージョンのPHPを使う方法もあります。この場合の利点はあなたのウェブサーバがcron.phpに対する定期的な要求に関するログが残らないことです。欠点はコマンドラインバージョンのPHPを扱わなければならないことです。</p>
-
+  <p>代替手段として、コマンドラインで動作するスタンドアロンバージョンのPHPを使う方法もあります。この場合の利点はあなたのウェブサーバがcron.phpに対する定期的な要求に関するログが残らないことです。欠点はコマンドラインバージョンのPHPを扱わなければならないことです。</p>
   <blockquote>
+    <pre>/opt/bin/php /web/moodle/admin/cron.php
 
-    <PRE>/opt/bin/php /web/moodle/admin/cron.php
 
 (Windows) C:\apache\php\php.exe C:\apache\htdocs\moodle\admin\cron.php
 
-
-
-</PRE>
-
+</pre>
   </blockquote>
-
-<h4>自動的に5分毎にスクリプトを実行する</h4>
-
-  <p>Unixシステムの場合: <B>cron</B>を使ってください。 cron設定の編集を行うため、コマンドラインから&quot;crontab -e&quot;と入力して、次のように1行を追加します:</p>
-
+  <h4>自動的に5分毎にスクリプトを実行する</h4>
+  <p><b>Unixシステムの場合</b>: <B>cron</B>を使ってください。 cron設定の編集を行うため、コマンドラインから&quot;crontab -e&quot;と入力して、次のように1行を追加します:</p>
   <blockquote>
-
-    <PRE>*/5 * * * * wget -q -O /dev/null http://example.com/moodle/admin/cron.php</PRE>
-
+    <pre>*/5 * * * * wget -q -O /dev/null http://example.com/moodle/admin/cron.php</pre>
   </blockquote>
-
-<p>Windowsシステムの場合: 一番簡単な方法は全ての作業を簡単に行う、私のパッケージ<A TITLE="Click to download this package (150k)" HREF="http://moodle.com/download/moodle-cron-for-windows.zip">moodle-cron-for-windows.zip</A>を利用することです。Windows組込みの「タスク」を試してみても良いでしょう。</p>
-
-  </p>
-
+  <p>通常、「crontab」コマンドはviエディタで入力することが出来ます。キーボードの「i」を押して「挿入モード」にして上記の行を入力します。その後、ESCキーを押して「挿入モード」から抜けます。「:wq」を押して保存・終了するか、「:q!」を押して保存せずに終了します。</p>
+  <p><b>Windowsシステムの場合</b>: 一番簡単な方法は全ての作業を簡単に行う、私のパッケージ<A TITLE="Click to download this package (150k)" HREF="http://moodle.com/download/moodle-cron-for-windows.zip">moodle-cron-for-windows.zip</A>を利用することです。Windows組込みの「タスク」を試してみても良いでしょう。</p>
+  <p>ウェブホストの場合: ウェブベースのコントロールパネルに、このcronジョブを設定出来るようになっていることでしょう。詳細は管理者にお尋ねください。</p>
+  <p></p>
 </blockquote>
-
-<H3><A NAME="course"></A>10. 新しいコースの作成</H3>
-
+<h3 class="sectionheading"><a name="course"></a>10. 新しいコースの作成</h3>
 <blockquote>
-
-<p>Moodleは正常に動作して、あなたはコースの作成を行うことが出来ます。</p>
-
-<p>管理ページ(またはホームページにある管理メニュー)より&quot;コースの追加&quot;を選択してください。</p>
-
-<p>コースフォーマットに、十分注意しながら必要項目を入力してください。この段階では、細かな点を必要以上に心配する必要はありません。全ての設定は後で教師によって変更することが出来ます。</p>
-
-<p>&quot;設定を保存する&quot;をクリックすると、新たな教師の割当てを行うページが表示されます。実際に存在しているアカウントのみをここで追加出来ます - もし、新たに教師アカウントを作成したい場合は、教師自身でアカウントを作成するように依頼するか(ログインページを見てください)、管理ページで&quot;ユーザの追加&quot;を使ってアカウントを作成してください。</p>
-
-<p>この作業が完了するとコースはカスタマイズ可能になり、ホームページの&quot;コース&quot;リンクよりアクセス出来ます。</p>
-
-<p>コース作成に関する詳細は&quot;<A HREF="./?file=teacher.html">教師用マニュアル</A>&quot;をご覧ください。</p>
-
+  <p>Moodleは正常に動作して、あなたはコースの作成を行うことが出来ます。</p>
+  <p>管理ページ(またはホームページにある管理メニュー)より「コースの追加」を選択してください。</p>
+  <p>コースフォーマットに、十分注意しながら必要項目を入力してください。この段階では、細かな点を必要以上に心配する必要はありません。全ての設定は後で教師によって変更することが出来ます。</p>
+  <p>「設定を保存する」をクリックすると、新たな教師の割当てを行うページが表示されます。実際に存在しているアカウントのみをここで追加出来ます - もし、新たに教師アカウントを作成したい場合は、教師自身でアカウントを作成するように依頼するか(ログインページを見てください)、管理ページで&quot;ユーザの追加&quot;を使ってアカウントを作成してください。</p>
+  <p>この作業が完了するとコースはカスタマイズ可能になり、ホームページの「コース」リンクよりアクセス出来ます。</p>
+  <p>コース作成に関する詳細は「<A HREF="./?file=teacher.html">教師マニュアル</A>」をご覧ください。</p>
 </blockquote>
-
-<P>&nbsp;</P>
-
-<P ALIGN="CENTER"><FONT SIZE="1"><A HREF="." TARGET="_top">Moodle文書</A></FONT></P>
-
-<P ALIGN="CENTER"><FONT SIZE="1">Version: $Id$</FONT></P>
-
-</BODY>
+<p>&nbsp;</p>
+<p align="CENTER"><font size="1"><a href="." target="_top">Moodle Documentation</a></font></p>
+<p align="CENTER"><font size="1">Version: $Id$</font></p>
+</body>
