@@ -1036,7 +1036,7 @@ global $CFG, $THEME;
      echo '<tr>';
 
      echo '<td align=center width=20%>';
-     if ( isteacher($course->id) ) {
+     if ( isteacher($glossary->course) ) {
              $options['id'] = $cm->id;
              $options['mode'] = 'cat';
              $options['hook'] = $hook;
