@@ -685,12 +685,40 @@ function userdate($date, $format='', $timezone=99, $fixday = true) {
         $format = get_string('strftimedaydatetime');
     }
 
+    $timezone = get_user_timezone($timezone);
+
+    // Super special hack while moving from strftime to gmdate -- credits to MD :P
+    $flags_strftime = array('%a', '%A', '%b', '%B', '%c', '%d', '%D',    '%e', '%g', '%G', '%h', '%H', '%I', '%j', '%m', '%M', '%n', '%p', '%r',    '%R',  '%S', '%t', '%T',    '%V', '%W', '%w', '%x',    '%X',    '%y', '%Y', '%Z', '%%');
+    $flags_gmdate   = array('D',  'l',  'M',  'F',  'r',  'd',  'm/d/Y', 'j',  'y',  'Y',  'M',  'H',  'h',  'z',  'm',  'i',  "\n", 'A',  'g:i a', 'H:i', 's',  "\t", 'H:i:s', 'W',  'W',  'w',  'd/m/Y', 'H:i:s', 'y',  'Y',  'Z',  '%');
+    
+    if($fixday) {
+        $flags_gmdate[5] = 'j';
+    }
+
+    $gmdateformat   = '';
+    if(substr($format, 0, 1) == '#') {
+        $gmdateformat = substr($format, 1);
+    }
+    else {
+        print_object('Format was "'.$format.'"');
+        $gmdateformat = str_replace($flags_strftime, $flags_gmdate, $format);
+        print_object('Format became "'.$gmdateformat.'"');
+    }
+
+    if(!empty($gmdateformat)) {
+        if (abs($timezone) > 13) {
+            $date += floatval(date('O')) * HOURSECS;
+        }
+        else {
+            $date += floatval($timezone) * HOURSECS;
+        }
+        $gmdatestring = gmdate($gmdateformat, $date);
+    }
+
     $formatnoday = str_replace('%d', 'DD', $format);
     if ($fixday) {
         $fixday = ($formatnoday != $format);
     }
-
-    $timezone = get_user_timezone($timezone);
 
     if (abs($timezone) > 13) {
         if ($fixday) {
@@ -709,6 +737,11 @@ function userdate($date, $format='', $timezone=99, $fixday = true) {
         } else {
             $datestring = gmstrftime($format, $date);
         }
+    }
+
+    if(!empty($gmdatestring) && substr($format, 0, 1) != '#' && $gmdatestring !== str_replace('  ', ' ', $datestring)) {
+        print_object('Mismatch: "'.$datestring.'" vs "'.$gmdatestring.'"');
+        die();
     }
 
     return $datestring;
@@ -731,10 +764,10 @@ function usergetdate($time, $timezone=99) {
     $time += dst_offset_on($time);
 
     if (abs($timezone) > 13) {
-        $time += intval(date('O')) * HOURSECS;
+        $time += floatval(date('O')) * HOURSECS;
     }
     else {
-        $time += (intval($timezone) * HOURSECS);
+        $time += floatval($timezone) * HOURSECS;
     }
 
     // This is independent of the server's TZ settings,
