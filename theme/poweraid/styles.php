@@ -171,9 +171,6 @@ form {
 	background-image: url(<?PHP echo "$themeurl"?>/images/gradient.jpg);
 }
 
-.forumpostheadertopic {
-}
-
 .forumpostpicture {
 }
 
@@ -181,6 +178,24 @@ form {
 }
 
 .forumpostmessage {
+}
+
+.forumpostheadertopic {
+}
+
+.forumpostheaderpicture {
+}
+
+.forumpostheadername {
+    font-size: small;
+}
+
+.forumpostheaderreplies {
+    font-size: small;
+}
+
+.forumpostheaderdate {
+    font-size: small;
 }
 
 input {

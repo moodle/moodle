@@ -128,12 +128,6 @@ form {
     border-style: solid;
 }
 
-.forumpostheader {
-}
-
-.forumpostheadertopic {
-}
-
 .forumpostpicture {
 }
 
@@ -257,6 +251,9 @@ a.dimmed:hover {
 }
 
 .forumpostheader {
+}
+
+.forumpostheadertopic {
 }
 
 .forumpostheaderpicture {

@@ -26,6 +26,7 @@ a.dimmed:hover {}
 
 /* Styles used when listing discussions in a forum: */
 
+.forumpostheadertopic {}
 .forumpostheaderpicture {}
 .forumpostheadername {}
 .forumpostheaderreplies {}

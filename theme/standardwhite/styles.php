@@ -237,6 +237,9 @@ a.dimmed:hover {
 .forumpostheader {
 }
 
+.forumpostheadertopic {
+}
+
 .forumpostheaderpicture {
 }
 
