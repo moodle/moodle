@@ -20,3 +20,7 @@ th   {font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
 td   {font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;}
 
 li   {font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;}
+
+.highlight {
+    background-color: #AAFFAA;
+}
