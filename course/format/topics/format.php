@@ -57,20 +57,20 @@
 
 
 /// Layout the whole page as three big columns.
-    echo "<table border=\"0\" cellpadding=\"3\" cellspacing=\"0\" width=\"100%\">";
+    echo "<table border=\"0\" cellpadding=\"3\" cellspacing=\"0\" width=\"100%\" id=\"layout-table\">";
 
     echo "<tr valign=\"top\">\n";
 
 /// The left column ...
 
     if(blocks_have_content($pageblocks[BLOCK_POS_LEFT]) || $editing) {
-        echo '<td style="vertical-align: top; width: '.$preferred_width_left.'px;">';
+        echo '<td style="vertical-align: top; width: '.$preferred_width_left.'px;" id="left-column">';
         blocks_print_group($PAGE, $pageblocks[BLOCK_POS_LEFT]);
         echo '</td>';
     }
 
 /// Start main column
-    echo '<td valign="top">';
+    echo '<td valign="top" width="*" id="middle-column">';
 
     print_heading_block(get_string("topicoutline"), "100%", "outlineheadingblock");
     print_spacer(8, 1, true);
@@ -271,7 +271,7 @@
 
     // The right column
     if(blocks_have_content($pageblocks[BLOCK_POS_RIGHT]) || $editing) {
-        echo '<td style="vertical-align: top; width: '.$preferred_width_right.'px;">';
+        echo '<td style="vertical-align: top; width: '.$preferred_width_right.'px;" id="right-column">';
         blocks_print_group($PAGE, $pageblocks[BLOCK_POS_RIGHT]);
         if ($editing && !empty($missingblocks)) {
             blocks_print_adminblock($PAGE, $missingblocks);

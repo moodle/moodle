@@ -48,20 +48,20 @@
 
 
 /// Layout the whole page as three big columns.
-    echo "<table border=\"0\" cellpadding=\"3\" cellspacing=\"0\" width=\"100%\">";
+    echo "<table border=\"0\" cellpadding=\"3\" cellspacing=\"0\" width=\"100%\" id=\"layout-table\">";
 
     echo "<tr valign=\"top\">\n";
 
 /// The left column ...
 
     if(blocks_have_content($pageblocks[BLOCK_POS_LEFT]) || $editing) {
-        echo '<td style="vertical-align: top; width: '.$preferred_width_left.'px;">';
+        echo '<td style="vertical-align: top; width: '.$preferred_width_left.'px;" id="left-column">';
         blocks_print_group($PAGE, $pageblocks[BLOCK_POS_LEFT]);
         echo '</td>';
     }
 
 /// Start main column
-    echo '<td valign="top">';
+    echo '<td valign="top" width="*" id="middle-column">';
     print_heading_block(get_string("weeklyoutline"), "100%", "outlineheadingblock");
     print_spacer(8, 1, true);
 
@@ -172,33 +172,33 @@
             echo "<td nowrap=\"nowrap\" $colorsides valign=\"top\" width=\"20\">";
             echo "<p align=\"center\"><font size=\"3\"><a name=\"$section\">$section</a></font></p>";
             echo "</td>";
-    
+
             echo "<td valign=\"top\" $colormain width=\"100%\">";
-    
+
             if (!isteacher($course->id) and !$thissection->visible) {   // Hidden for students
                 echo "<p class=\"weeklydatetext\">$weekday - $endweekday ";
                 echo "(".get_string("notavailable").")";
                 echo "</p>";
                 echo "</td>";
-    
+
             } else {
-    
+
                 echo "<p class=\"weeklydatetext\">$weekday - $endweekday</p>";
-    
+
                 $summaryformatoptions->noclean = true;
                 echo format_text($thissection->summary, FORMAT_HTML, $summaryformatoptions);
-    
+
                 if (isediting($course->id)) {
                     echo " <a title=\"$streditsummary\" href=\"editsection.php?id=$thissection->id\">".
                          "<img src=\"$CFG->pixpath/t/edit.gif\" height=\"11\" width=\"11\" border=\"0\" /></a><br /><br />";
                 }
-    
+
                 print_section($course, $thissection, $mods, $modnamesused);
-    
+
                 if (isediting($course->id)) {
                     print_section_add_menus($course, $section, $modnames);
                 }
-    
+
                 echo "</td>";
             }
             echo "<td nowrap=\"nowrap\" $colorsides valign=\"top\" align=\"center\" width=\"10\">";
@@ -212,7 +212,7 @@
                 echo "<a href=\"view.php?id=$course->id&amp;week=$section\" title=\"$strshowonlyweek\">".
                      "<img src=\"$CFG->pixpath/i/one.gif\" height=\"16\" width=\"16\" border=\"0\" alt=\"\" /></a><br />";
             }
-    
+
             if (isediting($course->id)) {
                 if ($thissection->visible) {        // Show the hide/show eye
                     echo "<a href=\"view.php?id=$course->id&amp;hide=$section&amp;sesskey=$USER->sesskey\" title=\"$strweekhide\">".
@@ -221,19 +221,19 @@
                     echo "<a href=\"view.php?id=$course->id&amp;show=$section&amp;sesskey=$USER->sesskey\" title=\"$strweekshow\">".
                          "<img src=\"$CFG->pixpath/i/show.gif\" vspace=\"3\" height=\"16\" width=\"16\" border=\"0\" alt=\"\" /></a><br />";
                 }
-    
+
                 if ($section > 1) {                       // Add a arrow to move section up
                     echo "<a href=\"view.php?id=$course->id&amp;section=$section&amp;move=-1&amp;sesskey=$USER->sesskey\" title=\"$strmoveup\">".
                          "<img src=\"$CFG->pixpath/t/up.gif\" vspace=\"3\" height=\"11\" width=\"11\" border=\"0\" alt=\"\" /></a><br />";
                 }
-    
+
                 if ($section < $course->numsections) {    // Add a arrow to move section down
                     echo "<a href=\"view.php?id=$course->id&amp;section=$section&amp;move=1&amp;sesskey=$USER->sesskey\" title=\"$strmovedown\">".
                          "<img src=\"$CFG->pixpath/t/down.gif\" vspace=\"3\" height=\"11\" width=\"11\" border=\"0\" alt=\"\" /></a><br />";
                 }
-    
+
             }
-   
+
             echo "</font>";
             echo "</td>";
             echo "</tr>";
@@ -257,7 +257,7 @@
 
     // The right column
     if(blocks_have_content($pageblocks[BLOCK_POS_RIGHT]) || $editing) {
-        echo '<td style="vertical-align: top; width: '.$preferred_width_right.'px;">';
+        echo '<td style="vertical-align: top; width: '.$preferred_width_right.'px;" id="right-column">';
         blocks_print_group($PAGE, $pageblocks[BLOCK_POS_RIGHT]);
         if ($editing && !empty($missingblocks)) {
             blocks_print_adminblock($PAGE, $missingblocks);
