@@ -47,6 +47,7 @@ function mimeinfo($element, $filename) {
         "pic"  => array ("type"=>"image/pict", "icon"=>"image.gif"),
         "pict" => array ("type"=>"image/pict", "icon"=>"image.gif"),
         "png"  => array ("type"=>"image/png", "icon"=>"image.gif"),
+        "pps"  => array ("type"=>"application/vnd.ms-powerpoint", "icon"=>"powerpoint.gif"),
         "ppt"  => array ("type"=>"application/vnd.ms-powerpoint", "icon"=>"powerpoint.gif"),
         "ps"   => array ("type"=>"application/postscript", "icon"=>"pdf.gif"),
         "qt"   => array ("type"=>"video/quicktime", "icon"=>"video.gif"),
