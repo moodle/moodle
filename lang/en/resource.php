@@ -78,5 +78,6 @@ $string['resourcetypehtml'] = 'Compose a web page';
 $string['resourcetypelabel'] = 'Insert a label';
 $string['resourcetypetext'] = 'Compose a text page';
 $string['searchweb'] = 'Search for web page';
+$string['serverurl'] = '$CFG->wwwroot';
 $string['variablename'] = 'Variable name';
 ?>
