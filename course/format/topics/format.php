@@ -84,7 +84,7 @@
         echo "<tr>";
         echo "<td colspan=\"3\" valign=\"top\" bgcolor=\"$THEME->cellcontent\" class=\"topicoutlineclip\" width=\"100%\">";
         echo "<p><font size=\"2\">";
-        echo "$stractivityclipboard&nbsp;&nbsp;(<a href=\"mod.php?cancelcopy=true\">$strcancel</a>)";
+        echo "$stractivityclipboard&nbsp;&nbsp;(<a href=\"mod.php?cancelcopy=true&amp;sesskey=$USER->sesskey\">$strcancel</a>)";
         echo "</font></p>";
         echo "</td>";
         echo "</tr>";
