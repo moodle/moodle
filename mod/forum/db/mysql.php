@@ -127,6 +127,10 @@ function forum_upgrade($oldversion) {
                               ) TYPE=MyISAM COMMENT='For keeping track of posts that will be mailed in digest form';");
   }
 
+  if ($oldversion < 2004070700) {    // This may be redoing it from STABLE but that's OK
+      table_column("forum_discussions", "groupid", "groupid", "integer", "10", "", "0", "");
+  }
+
   return true;
 
 }

@@ -159,9 +159,13 @@
         $post->parent = 0;
         $post->subject = "";
         $post->userid = $USER->id;
-        $post->groupid = get_current_group($course->id);
         $post->message = "";
         $post->format = $defaultformat;
+
+        $post->groupid = get_current_group($course->id);
+        if (isteacheredit($course->id) and $post->groupid == 0) {
+            $post->groupid = -1;
+        }
 
         forum_set_return();
 

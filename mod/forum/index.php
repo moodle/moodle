@@ -113,7 +113,7 @@
             }
                 
             if ($groupmode == SEPARATEGROUPS and !isteacheredit($course->id)) {
-                $count = count_records("forum_discussions", "forum", "$forum->id", "groupid", $currentgroup);
+                $count = count_records_select("forum_discussions", "forum = '$forum->id' AND (groupid = '$currentgroup' OR groupid = '-1')");
             } else {
                 $count = count_records("forum_discussions", "forum", "$forum->id");
             }

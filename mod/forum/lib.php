@@ -251,7 +251,7 @@ function forum_cron () {
 
             $groupmode = false;
             if ($cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
-                if ($groupmode = groupmode($course, $cm)) {                  // Groups are being used
+                if ($groupmode = groupmode($course, $cm) and $discussion->groupid > 0) {   // Groups are being used
                     if (!$group = get_record("groups", "id", $discussion->groupid)) {   // Can't find group
                         continue;                                            // Be safe and don't send it to anyone
                     }
@@ -267,8 +267,10 @@ function forum_cron () {
                 foreach ($users as $userto) {
                     if ($groupmode) {    // Look for a reason not to send this email
                         if (!isteacheredit($course->id, $userto->id)) {
-                            if (!ismember($group->id, $userto->id)) {
-                                continue;
+                            if (!empty($group->id)) {
+                                if (!ismember($group->id, $userto->id)) {
+                                    continue;
+                                }
                             }
                         }
                     }
@@ -634,7 +636,7 @@ function forum_print_recent_activity($course, $isteacher, $timestart) {
                 /// Check whether this is belongs to a discussion in a group that
                 /// should NOT be accessible to the current user
 
-                if (!$isteacheredit) {   /// Because editing teachers can see everything anyway
+                if (!$isteacheredit and $post->groupid != -1) {   /// Editing teachers or open discussions
                     if (!isset($cm[$post->forum])) {
                         $cm[$forum->id] = get_coursemodule_from_instance("forum", $forum->id, $course->id);
                         $groupmode[$forum->id] = groupmode($course, $cm[$forum->id]);
@@ -1069,7 +1071,7 @@ function forum_count_unrated_posts($discussionid, $userid) {
 }
 
 function forum_get_discussions($forum="0", $forumsort="d.timemodified DESC",
-                               $user=0, $fullpost=true, $currentgroup=0) {
+                               $user=0, $fullpost=true, $visiblegroups=-1) {
 /// Get all discussions in a forum
     global $CFG;
 
@@ -1078,11 +1080,14 @@ function forum_get_discussions($forum="0", $forumsort="d.timemodified DESC",
     } else {
         $userselect = "";
     }
-    if ($currentgroup) {
-        $groupselect = " AND d.groupid = '$currentgroup' ";
-    } else  {
+
+    
+    if ($visiblegroups == -1) {
         $groupselect = "";
+    } else  {
+        $groupselect = " AND (d.groupid = '$visiblegroups' OR d.groupid = '-1') ";
     }
+
     if (empty($forumsort)) {
         $forumsort = "d.timemodified DESC";
     }
@@ -1116,7 +1121,7 @@ function forum_get_user_discussions($courseid, $userid, $groupid=0) {
         $groupselect = "";
     }
 
-    return get_records_sql("SELECT p.*, u.firstname, u.lastname, u.email, u.picture,
+    return get_records_sql("SELECT p.*, d.groupid, u.firstname, u.lastname, u.email, u.picture,
                                    f.type as forumtype, f.name as forumname, f.id as forumid
                               FROM {$CFG->prefix}forum_discussions d,
                                    {$CFG->prefix}forum_posts p,
@@ -1744,7 +1749,7 @@ function forum_print_search_form($course, $search="", $return=false, $type="") {
         $output = "<table border=0 cellpadding=0 cellspacing=0><tr><td nowrap>";
         $output .= "<form name=search action=\"$CFG->wwwroot/mod/forum/search.php\">";
         $output .= "<font size=\"-1\">";
-        $output .= "<input name=search type=text size=20 value=\"$search\">";
+        $output .= "<input name=search type=text size=15 value=\"$search\">";
         $output .= "<input value=\"".get_string("searchforums", "forum")."\" type=submit>";
         $output .= "</font>";
         $output .= "<input name=id type=hidden value=\"$course->id\">";
@@ -1754,7 +1759,7 @@ function forum_print_search_form($course, $search="", $return=false, $type="") {
         $output = "<table border=0 cellpadding=10 cellspacing=0><tr><td align=center>";
         $output .= "<form name=search action=\"$CFG->wwwroot/mod/forum/search.php\">";
         $output .= "<font size=\"-1\">";
-        $output .= "<input name=search type=text size=20 value=\"$search\"><br>";
+        $output .= "<input name=search type=text size=15 value=\"$search\"><br>";
         $output .= "<input value=\"".get_string("searchforums", "forum")."\" type=submit>";
         $output .= "</font>";
         $output .= "<input name=id type=hidden value=\"$course->id\">";
@@ -2106,12 +2111,22 @@ function forum_print_user_discussions($courseid, $userid, $groupid=0) {
 
     $visible = array();
 
+    $course = get_record("course", "id", $courseid);
+
+    $currentgroup = get_current_group($courseid);
+    $isteacheredit = isteacheredit($courseid);
+
     if ($discussions = forum_get_user_discussions($courseid, $userid, $groupid=0)) {
-        $user = get_record("user", "id", $userid);
-        echo "<hr />";
+
+        $user    = get_record("user", "id", $userid);
         $fullname = fullname($user, isteacher($courseid));
-        print_heading( get_string("discussionsstartedbyrecent", "forum", $fullname) );
+
         $replies = forum_count_discussion_replies();
+
+        echo "<hr />";
+
+        print_heading( get_string("discussionsstartedbyrecent", "forum", $fullname) );
+
         foreach ($discussions as $discussion) {
             $countdiscussions++;
             if ($countdiscussions > $maxdiscussions) {
@@ -2129,6 +2144,22 @@ function forum_print_user_discussions($courseid, $userid, $groupid=0) {
             if(!$visible[$discussion->forumid] && !isteacheredit($courseid, $USER->id)) {
                 continue;
             }
+
+            /// Check whether this is belongs to a discussion in a group that
+            /// should NOT be accessible to the current user
+
+            if (!$isteacheredit and $discussion->groupid != -1) {   /// Editing teachers or open discussions
+                if (!isset($cm[$discussion->forum])) {
+                    $cm[$discussion->forum] = get_coursemodule_from_instance("forum", $discussion->forum, $courseid);
+                    $groupmode[$discussion->forum] = groupmode($course, $cm[$discussion->forum]);
+                }
+                if ($groupmode[$discussion->forum] == SEPARATEGROUPS) {
+                    if ($currentgroup != $discussion->groupid) {
+                        continue;
+                    }
+                }
+            }
+
             if (!empty($replies[$discussion->discussion])) {
                 $discussion->replies = $replies[$discussion->discussion]->replies;
             } else {
@@ -2253,7 +2284,7 @@ function forum_user_can_post($forum, $user=NULL) {
 
 function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5,
                                         $forum_style="plain", $forum_sort="",
-                                        $currentgroup=0) {
+                                        $currentgroup=0, $groupmode=-1) {
     global $CFG, $USER;
 
     if ($forum_id) {
@@ -2276,6 +2307,15 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5,
             error("Could not find or create a main forum in this course (id $course->id)");
         }
     }
+
+    if ($groupmode == -1) {    /// We need to reconstruct groupmode because none was given
+        if ($cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
+            $groupmode = groupmode($course, $cm);
+        } else {
+            $groupmode = SEPARATEGROUPS;
+        }
+    }
+    
 
     if (forum_user_can_post_discussion($forum, $currentgroup)) {
         echo "<p align=center>";
@@ -2301,7 +2341,18 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5,
         $fullpost = true;
     }
 
-    if (! $discussions = forum_get_discussions($forum->id, $forum_sort, 0, $fullpost, $currentgroup) ) {
+
+/// Decides if current user is allowed to see ALL the current discussions or not
+
+    if (!$currentgroup and ($groupmode != SEPARATEGROUPS or isteacheredit($forum->course)) ) {
+        $visiblegroups = -1;
+    } else {
+        $visiblegroups = $currentgroup;
+    }
+
+/// Get all the recent discussions we're allowed to see
+
+    if (! $discussions = forum_get_discussions($forum->id, $forum_sort, 0, $fullpost, $visiblegroups) ) {
         if ($forum->type == "news") {
             echo "<p align=center><b>(".get_string("nonews", "forum").")</b></p>";
         } else {
@@ -2555,14 +2606,14 @@ function forum_print_posts_nested($parent, $course, $ratings, $reply) {
     return $ratingsmenuused;
 }
 
-function forum_get_recent_mod_activity(&$activities, &$index, $sincetime, $courseid, $forum="0", $user="", $groupid="") {
+function forum_get_recent_mod_activity(&$activities, &$index, $sincetime, $courseid, $cmid="0", $user="", $groupid="") {
 // Returns all forum posts since a given time.  If forum is specified then
 // this restricts the results
 
     global $CFG;
 
-    if ($forum) {
-        $forumselect = " AND cm.id = '$forum'";
+    if ($cmid) {
+        $forumselect = " AND cm.id = '$cmid'";
     } else {
         $forumselect = "";
     }
@@ -2583,39 +2634,44 @@ function forum_get_recent_mod_activity(&$activities, &$index, $sincetime, $cours
                               WHERE p.modified > '$sincetime' $forumselect
                                 AND p.userid = u.id $userselect
                                 AND d.course = '$courseid'
-                                AND p.discussion = d.id $groupselect
+                                AND p.discussion = d.id 
                                 AND cm.instance = f.id
                                 AND cm.course = d.course
                                 AND cm.course = f.course
                                 AND f.id = d.forum
                               ORDER BY d.id");
 
-    if (empty($posts))
-      return;
+    if (empty($posts)) {
+        return;
+    }
+
+    $isteacheredit = isteacheredit($courseid);
 
     foreach ($posts as $post) {
 
-        if (empty($groupid) || ismember($groupid, $post->userid)) {
-            $tmpactivity->type = "forum";
-            $tmpactivity->defaultindex = $index;
-            $tmpactivity->instance = $post->instance;
-            $tmpactivity->name = $post->name;
-            $tmpactivity->section = $post->section;
-
-            $tmpactivity->content->id = $post->id;
-            $tmpactivity->content->discussion = $post->discussion;
-            $tmpactivity->content->subject = $post->subject;
-            $tmpactivity->content->parent = $post->parent;
-
-            $tmpactivity->user->userid = $post->userid;
-            $tmpactivity->user->fullname = fullname($post);
-            $tmpactivity->user->picture = $post->picture;
-
-            $tmpactivity->timestamp = $post->modified;
-            $activities[] = $tmpactivity;
-
-            $index++;
+        if ($groupid and ($post->groupid != -1 and $groupid != $post->groupid and !$isteacheredit)) {
+            continue;
         }
+
+        $tmpactivity->type = "forum";
+        $tmpactivity->defaultindex = $index;
+        $tmpactivity->instance = $post->instance;
+        $tmpactivity->name = $post->name;
+        $tmpactivity->section = $post->section;
+
+        $tmpactivity->content->id = $post->id;
+        $tmpactivity->content->discussion = $post->discussion;
+        $tmpactivity->content->subject = $post->subject;
+        $tmpactivity->content->parent = $post->parent;
+
+        $tmpactivity->user->userid = $post->userid;
+        $tmpactivity->user->fullname = fullname($post);
+        $tmpactivity->user->picture = $post->picture;
+
+        $tmpactivity->timestamp = $post->modified;
+        $activities[] = $tmpactivity;
+
+        $index++;
     }
 
     return;
