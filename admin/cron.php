@@ -66,13 +66,18 @@
         }
     }
 
+
+/// Delete old queued mail that didn't get sent within 30 minutes
+
+    $oldmailtime = $timenow - 1800;
+    delete_records_select("mail_queue", "timecreated < '$oldmailtime'");
+
+
 /// Delete old logs to save space (this might need a timer to slow it down...)
 
     if (!empty($CFG->loglifetime)) {  // value in days
         $loglifetime = $timenow - ($CFG->loglifetime * 3600 * 24);
-        if (!delete_records_select("log", "time < '$loglifetime'")) {
-            echo "Error occurred while deleting old logs! (before $loglifetime)";
-        }
+        delete_records_select("log", "time < '$loglifetime'");
     }
 
     echo "Cron script completed correctly\n";
