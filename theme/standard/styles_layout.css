@@ -332,6 +332,9 @@ body#admin-config .confighelp {
     margin-right: 6px;
 }
 
+.sideblock .head {
+    margin-top: 5px;
+}
 
 
 
