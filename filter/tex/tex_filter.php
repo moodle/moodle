@@ -32,103 +32,77 @@
 // You will then need to edit your moodle/config.php to invoke tex_filter.php
 //-------------------------------------------------------------------------
 
-
-/// Edit these lines to correspond to your installation
-// File path to the directory where mathml_filter.php resides
-    $CFG->filterDirectory = "$CFG->dirroot/filter/tex";
-// File paths to the echo binary executable
-    $CFG->echo = "/bin/echo";
-// Frequency with which cache cleanup code is called: 119 means once in 119 times
-// that the filter is invoked
-    $CFG->cacheCleanFreq = 119;
-// Time in seconds after which image gifs which haven't been viewed are considered stale
-// and are scheduled for deletion
-    $CFG->cacheCleanTime = 14*24*3600;
-// Command used to list the oldest cached gif files to be scheduled for deletion, in
-// conjunction with the value of cacheCleanTime
-    $CFG->cleanFiles = "cd ".  $CFG->dataroot . "/1/tex_files;/bin/ls -tr | /usr/bin/head -20";
-
+$CFG->texfilterdir = "filter/tex";
 
 /// These lines are important - the variable must match the name 
 /// of the actual function below
-    $textfilter_function='tex_filter';
+$textfilter_function='tex_filter';
 
-    if (function_exists($textfilter_function)) {
-        return;
+if (function_exists($textfilter_function)) {
+    return;
+}
+
+
+function string_file_picture_tex($imagefile, $tex= "", $height="", $width="") {
+    // Given the path to a picture file in a course, or a URL,
+    // this function includes the picture in the page.
+    global $CFG;
+
+    $output = "";
+    if ($tex) {
+        $tex = str_replace('&','&amp;',$tex);
+        $tex = str_replace('<','&lt;',$tex);
+        $tex = str_replace('>','&gt;',$tex);
+        $tex = str_replace('"','&quot;',$tex);
+        $tex = str_replace("\'",'&#39;',$tex);
+        $title = "title=\"$tex\"";
     }
-
-
-function string_file_picture($path, $courseid=0, $height="", $width="", $link="") {
-  // Given the path to a picture file in a course, or a URL,
-  // this function includes the picture in the page.
-  global $CFG;
-  $output = "";
-  if ($height) {
-    $height = "height=\"$height\"";
-  }
-  if ($width) {
-    $width = "width=\"$width\"";
-  }
-  if ($link) {
-    $output .= "<a href=\"$link\">";
-  }
-  if (substr(strtolower($path), 0, 7) == "http://") {
-    $output .= "<img border=\"0\" $height $width src=\"$path\" />";
-
-  } else if ($courseid) {
-    $output .= "<img border=\"0\" $height $width src=\"";
-    if ($CFG->slasharguments) {        // Use this method if possible for better caching
-      $output .= "$CFG->wwwroot/file.php/$courseid/$path";
+    if ($height) {
+        $height = "height=\"$height\"";
+    }
+    if ($width) {
+        $width = "width=\"$width\"";
+    }
+    if ($imagefile) {
+        $output .= "<img border=\"0\" $title $height $width src=\"";
+        if ($CFG->slasharguments) {        // Use this method if possible for better caching
+            $output .= "$CFG->wwwroot/$CFG->texfilterdir/pix.php/$imagefile";
+        } else {
+            $output .= "$CFG->wwwroot/$CFG->texfilterdir/pix.php?file=$imagefile";
+        }
+        $output .= "\" />";
     } else {
-      $output .= "$CFG->wwwroot/file.php?file=/$courseid/$path";
+        $output .= "Error: must pass URL or course";
     }
-    $output .= "\" />";
-  } else {
-    $output .= "Error: must pass URL or course";
-  }
-  if ($link) {
-    $output .= "</a>";
-  }
-  return $output;
+    return $output;
 }
 
 function tex_filter ($courseid, $text) {
 
     global $CFG;
-    $filterDirectory = $CFG->filterDirectory;
 
-    
-    /// Do a quick check using stripos to avoid unnecessary wor
-    if (!preg_match('/<tex/i',$text) && !strstr($text,'$$')) {
+    /// Do a quick check using stripos to avoid unnecessary work
+    if (!preg_match('/<tex/i',$text) and !strstr($text,'$$')) {
         return $text;
     }
-    
-    $old_umask = umask();
 
-    if (!file_exists($CFG->dataroot . "/1/")) {
-        mkdir($CFG->dataroot . "/1/",0775);
-    }
+#    //restrict filtering to forum 130 (Maths Tools on moodle.org)
+#    $scriptname = $_SERVER['SCRIPT_NAME'];
+#    if (!strstr($scriptname,'/forum/')) {
+#        return $text;
+#    }
+#    if (strstr($scriptname,'post.php')) {
+#        $parent = forum_get_post_full($_GET['reply']);
+#        $discussion = get_record("forum_discussions","id",$parent->discussion);
+#    } else if (strstr($scriptname,'discuss.php')) {
+#        $discussion = get_record("forum_discussions","id",$_GET['d'] );
+#    } else {
+#        return $text;
+#    }
+#    if ($discussion->forum != 130) {
+#        return $text;
+#    }
 
-    if (!file_exists($CFG->dataroot . "/1/tex_files/")) {
-      mkdir($CFG->dataroot . "/1/tex_files/",0775);
-    }
-    umask($old_umask);
-    echo "\n<!--$CFG->cleanFiles-->\n";
-    if (isadmin()) { error_reporting (E_ALL); }; //for debugging
-    $timenow = time();
-    if (!($timenow % $CFG->cacheCleanFreq)) {
-      $cleanFiles = explode("\n",`$CFG->cleanFiles`);
-      foreach ($cleanFiles as $cleanFile) {
-        $pathname = $CFG->dataroot . "/1/tex_files/" . $cleanFile;
-        if ($timenow - filemtime($pathname)>$CFG->cacheCleanTime) {
-          unlink($pathname);
-        } else {
-          break;
-        }
-      }
-    }
-
-    
     $text .= ' ';
     preg_match_all('/\$(\$\$+?)([^\$])/s',$text,$matches);
     for ($i=0;$i<count($matches[0]);$i++) {
@@ -137,33 +111,27 @@ function tex_filter ($courseid, $text) {
     }
 
     if (isadmin()) { error_reporting (E_ALL); }; //for debugging
-     
+
     // <tex> TeX expression </tex>
     // or $$ TeX expression $$
 
     preg_match_all('/<tex>(.+?)<\/tex>|\$\$(.+?)\$\$/is', $text, $matches);  
     for ($i=0; $i<count($matches[0]); $i++) {
         $texexp = $matches[1][$i] . $matches[2][$i];
-        $filename = "tex_files/". md5($texexp) . ".gif";
-        $pathname = $CFG->dataroot . "/1/" . $filename;
-        
-        if (file_exists($pathname)) {
-           touch($pathname);
-           $text = str_replace( $matches[0][$i], string_file_picture($filename, 1), $text);
-        } else {
-           $texexp = str_replace('&lt;','<',$texexp);
-           $texexp = str_replace('&gt;','>',$texexp);
-           $texexp = preg_replace('!\r\n?!',' ',$texexp);
-
-           $texexp = '\Large'.$texexp;
-
-           system("QUERY_STRING=;export QUERY_STRING;$filterDirectory/mimetex -d ". escapeshellarg($texexp) . "  >$pathname");
-	   $text = str_replace( $matches[0][$i], string_file_picture($filename, 1), $text);
+        $md5 = md5($texexp);
+        if (! $texcache = get_record("cache_filters","filter","tex", "md5key", $md5)) {
+            $texcache->filter = 'tex';
+            $texcache->version = 1;
+            $texcache->md5key = $md5;
+            $texcache->rawtext = addslashes($texexp);
+            $texcache->timemodified = time();
+            insert_record("cache_filters",$texcache);
         }
-         
+        $filename = $md5 . ".gif";
+        $text = str_replace( $matches[0][$i], string_file_picture_tex($filename, $texexp), $text);
     }
     return $text; 
-};
+}
 
 
 ?>
