@@ -248,8 +248,7 @@ CREATE TABLE prefix_user (
    maildisplay integer NOT NULL default '2',
    htmleditor integer NOT NULL default '1',
    autosubscribe integer NOT NULL default '1',
-   timemodified integer NOT NULL default '0',
-   CONSTRAINT prefix_user_username_uk UNIQUE (username)
+   timemodified integer NOT NULL default '0'
 );
 
 CREATE UNIQUE INDEX prefix_user_username_uk ON prefix_user (username);
