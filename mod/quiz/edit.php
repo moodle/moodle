@@ -195,9 +195,17 @@
             if ($question == $delete) {
                 unset($questions[$key]);
                 unset($modform->grades[$question]);
-                if (!(delete_records('quiz_question_grades', 'quiz', $modform->instance, 'question', $question)
-                      and delete_records('quiz_responses', 'question', $question))) {
-                    error("Could not delete question responses");
+                // Delete all responses associated with all attempts for this question in the quiz.
+                if ($attempts = get_records('quiz_attempts', 'quiz', $modform->instance)) {
+                    foreach ($attempts as $attempt) {
+                        if (!delete_records('quiz_responses', 'question', $question, 'attempt', $attempt->id)) {
+                            error('Could not delete all responses for this question');
+                        }
+                    }
+                }
+                // Delete question from quiz_question_grades table
+                if (!delete_records('quiz_question_grades', 'quiz', $modform->instance, 'question', $question)) {
+                    error('Could not delete the question from this quiz');
                 }
             }
         }
