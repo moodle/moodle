@@ -1578,7 +1578,7 @@ function send_password_change_confirmation_email($user) {
 /// FILE HANDLING  /////////////////////////////////////////////
 
 
-function make_upload_directory($directory) {
+function make_upload_directory($directory, $shownotices=true) {
 /// $directory = a string of directory names under $CFG->dataroot
 /// eg  stuff/assignment/1
 /// Returns full directory if successful, false if not
@@ -1591,7 +1591,9 @@ function make_upload_directory($directory) {
 
     if (!file_exists($currdir)) {
         if (! mkdir($currdir, $CFG->directorypermissions)) {
-            notify("ERROR: You need to create the directory $currdir with web server write access");
+            if ($shownotices) {
+                notify("ERROR: You need to create the directory $currdir with web server write access");
+            }
             return false;
         }
     }
@@ -1602,7 +1604,9 @@ function make_upload_directory($directory) {
         $currdir = "$currdir/$dir";
         if (! file_exists($currdir)) {
             if (! mkdir($currdir, $CFG->directorypermissions)) {
-                notify("ERROR: Could not find or create a directory ($currdir)");
+                if ($shownotices) {
+                    notify("ERROR: Could not find or create a directory ($currdir)");
+                }
                 return false;
             }
             @chmod($currdir, $CFG->directorypermissions);  // Just in case mkdir didn't do it
