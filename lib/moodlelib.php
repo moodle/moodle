@@ -516,7 +516,7 @@ function isadmin($userid=0) {
     }
 }
 
-function isteacher($courseid, $userid=0, $includeadmin=true) {
+function isteacher($courseid=0, $userid=0, $includeadmin=true) {
 /// Is the user a teacher or admin?
     global $USER;
 
@@ -526,6 +526,10 @@ function isteacher($courseid, $userid=0, $includeadmin=true) {
 
     if (!$userid) {
         return !empty($USER->teacher[$courseid]);
+    }
+
+    if (!$courseid) {
+        return record_exists("user_teachers","userid",$userid);
     }
 
     return record_exists("user_teachers", "userid", $userid, "course", $courseid);
@@ -791,7 +795,11 @@ function authenticate_user_login($username, $password) {
          }
 
         return $user;
+
     } else {
+        add_to_log(0, "login", "error", $_SERVER['HTTP_REFERER'], $username);
+        $date = date('Y-m-d H:i:s');
+        error_log("$date\tfailed login\t".$_SERVER['REMOTE_ADDR']."\t".$_SERVER['HTTP_USER_AGENT']."\t$username");
         return false;
     }
 }
@@ -1853,6 +1861,15 @@ function get_string_from_file($identifier, $langfile, $destination) {
     return "$destination = sprintf(\"".$string[$identifier]."\");";
 }
 
+function get_strings($array, $module='') {
+/// Converts an array of strings
+
+   $string = NULL;
+   foreach ($array as $item) {
+       $string->$item = get_string($item, $module);
+   }
+   return $string;
+}
 
 function get_list_of_languages() {
 /// Returns a list of language codes and their full names
@@ -2347,6 +2364,85 @@ function moodle_needs_upgrading() {
 
 
 /// MISCELLANEOUS ////////////////////////////////////////////////////////////////////
+
+function notify_login_failures() {
+    global $CFG;
+
+    // notify admin users or admin user of any failed logins (since last notification).
+    switch ($CFG->notifyloginfailures) {
+        case 'mainadmin' :
+            $recip = array(get_admin());
+            break;
+        case 'alladmins':
+            $recip = get_admins();
+            break;
+    }
+    
+    if (empty($CFG->lastnotifyfailure)) {
+        $CFG->lastnotifyfailure=0;
+    }
+    
+    // we need to deal with the threshold stuff first. 
+    if (empty($CFG->notifythreshold)) {
+        $CFG->notifythreshold = 10; // default to something sensible.
+    }
+
+    $notifyipsrs = $db->Execute("SELECT ip FROM {$CFG->prefix}log WHERE time > {$CFG->lastnotifyfailure} 
+                          AND module='login' AND action='error' GROUP BY ip HAVING count(*) > $CFG->notifythreshold");
+
+    $notifyusersrs = $db->Execute("SELECT info FROM {$CFG->prefix}log WHERE time > {$CFG->lastnotifyfailure} 
+                          AND module='login' AND action='error' GROUP BY info HAVING count(*) > $CFG->notifythreshold");
+    
+    if ($notifyipsrs) {
+        while ($row = $notifyipsrs->FetchRow()) {
+            $ipstr .= "'".$row['ip']."',";
+        }
+        $ipstr = substr($ipstr,0,strlen($ipstr)-1);
+    }
+    if ($notifyusersrs) {
+        while ($row = $notifyusersrs->FetchRow()) {
+            $userstr .= "'".$row['info']."',";
+        }
+        $userstr = substr($userstr,0,strlen($userstr)-1);
+    }
+
+    if (strlen($userstr) > 0 || strlen($ipstr) > 0) {
+        $count = 0;
+        $logs = get_logs("time > {$CFG->lastnotifyfailure} AND module='login' AND action='error' "
+                 .((strlen($ipstr) > 0 && strlen($userstr) > 0) ? " AND ( ip IN ($ipstr) OR info IN ($userstr) ) "
+                 : ((strlen($ipstr) != 0) ? " AND ip IN ($ipstr) " : " AND info IN ($userstr) ")),"l.time DESC","","",$count);
+        
+        // if we haven't run in the last hour and we have something useful to report and we are actually supposed to be reporting to somebody
+        if (is_array($recip) and count($recip) > 0 and (($timenow - (60 * 60)) > $CFG->lastnotifyfailure) 
+            and is_array($logs) and count($logs) > 0) {
+        
+            $site = get_site();
+            $subject = get_string('notifyloginfailuressubject','',$site->fullname);
+            $message .= get_string('notifyloginfailuresmessagestart','',$CFG->wwwroot)
+                 .(($CFG->lastnotifyfailure != 0) ? '('.userdate($CFG->lastnotifyfailure).')' : '')."\n\n";
+            foreach ($logs as $log) {
+                $message .= userdate($log->time) .get_string('notifyloginfailuresmessagefromip').$log->ip 
+                 .get_string('notifyloginfailuresmessagewithuser').$log->info."\n";
+            }
+            $message .= "\n\n".get_string('notifyloginfailuresmessageend','',$CFG->wwwroot)."\n\n";
+            foreach ($recip as $admin) {
+                echo "Emailing $admin->username about ".count($logs)." failed login attempts\n";
+                email_to_user($admin,get_admin(),$subject,$message);
+            }
+            $conf->name = "lastnotifyfailure";
+            $conf->value = time();
+            if ($current = get_record("config", "name", "lastnotifyfailure")) {
+                $conf->id = $current->id;
+                if (! update_record("config", $conf)) {
+                    echo "Could not update last notify time";
+                }
+
+            } else if (! insert_record("config", $conf)) {
+                echo "Could not set last notify time";
+            }
+        }
+    }
+}
 
 function moodle_setlocale($locale='') {
 
