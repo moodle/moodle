@@ -14,7 +14,8 @@ CREATE TABLE `prefix_assignment` (
   `timedue` int(10) unsigned NOT NULL default '0',
   `grade` int(10) NOT NULL default '0',
   `timemodified` int(10) unsigned NOT NULL default '0',
-  PRIMARY KEY  (`id`)
+  PRIMARY KEY  (`id`),
+  KEY `course` (`course`)
 ) COMMENT='Defines assignments';
 # --------------------------------------------------------
 
@@ -34,7 +35,11 @@ CREATE TABLE `prefix_assignment_submissions` (
   `teacher` int(10) unsigned NOT NULL default '0',
   `timemarked` int(10) unsigned NOT NULL default '0',
   `mailed` tinyint(1) unsigned NOT NULL default '0',
-  PRIMARY KEY  (`id`)
+  PRIMARY KEY  (`id`),
+  KEY `assignment` (`assignment`),
+  KEY `userid` (`userid`),
+  KEY `mailed` (`mailed`),
+  KEY `timemarked` (`timemarked`)
 ) COMMENT='Info about submitted assignments';
 # --------------------------------------------------------
 

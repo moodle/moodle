@@ -99,6 +99,20 @@ function assignment_upgrade($oldversion) {
         assignment_refresh_events();
     }
 
+    if ($oldversion < 2004111200) { 
+        execute_sql('ALTER TABLE prefix_assignment DROP INDEX course;',false);
+        execute_sql('ALTER TABLE prefix_assignment_submissions DROP INDEX assignment;',false);
+        execute_sql('ALTER TABLE prefix_assignment_submissions DROP INDEX userid;',false);
+        execute_sql('ALTER TABLE prefix_assignment_submissions DROP INDEX mailed;',false);
+        execute_sql('ALTER TABLE prefix_assignment_submissions DROP INDEX timemarked;',false);
+
+        modify_database('','ALTER TABLE prefix_assignment ADD INDEX course (course);');
+        modify_database('','ALTER TABLE prefix_assignment_submissions ADD INDEX assignment(assignment);');
+        modify_database('','ALTER TABLE prefix_assignment_submissions ADD INDEX userid (userid);');
+        modify_database('','ALTER TABLE prefix_assignment_submissions ADD INDEX mailed (mailed);');
+        modify_database('','ALTER TABLE prefix_assignment_submissions ADD INDEX timemarked (timemarked);');
+    }
+
     return true;
 }
 
