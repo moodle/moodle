@@ -667,9 +667,15 @@ function popup_form($common, $options, $formname, $selected='', $nothing='choose
         $output .= "   <option value=\"javascript:void(0)\">$nothing</option>\n";
     }
 
+    $inoptgroup = false;
     foreach ($options as $value => $label) {
         if (substr($label,0,2) == '--') {
-            $output .= '   <optgroup label="'. $label .'"></optgroup>';   // Plain labels
+            if ($inoptgroup) {
+                $output .= '   </optgroup>';
+            } else {
+                $inoptgroup = true;
+            }
+            $output .= '   <optgroup label="'. $label .'">';   // Plain labels
             continue;
         } else {
             $output .= '   <option value="'. $common . $value .'"';
@@ -682,6 +688,9 @@ function popup_form($common, $options, $formname, $selected='', $nothing='choose
         } else {
             $output .= '>'. $value .'</option>' . "\n";
         }
+    }
+    if ($inoptgroup) {
+        $output .= '    </optgroup>';
     }
     $output .= '</select>';
     $output .= '</form>' . "\n";
