@@ -59,6 +59,7 @@ global $CFG;
         if(!empty($records)) {
             foreach($records as $block) {
                 $block->multiple = 0;
+                unset($block->id);
                 insert_record('block', $block);
             }
         }
