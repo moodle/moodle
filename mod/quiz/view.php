@@ -68,26 +68,7 @@
         }
     }
 
-    $strquizzes = get_string("modulenameplural", "quiz");
-    $strquiz  = get_string("modulename", "quiz");
-    $stredit = get_string('editquestions', 'quiz');
-    if ($PAGE->user_allowed_editing()) {
-        $buttons = "<table><tr><td><form target=\"$CFG->framename\" method=\"get\" action=\"edit.php\">".
-               "<input type=\"hidden\" name=\"quizid\" value=\"$quiz->id\" />".
-               "<input type=\"submit\" value=\"$stredit\" /></form></td><td>".
-               update_module_button($cm->id, $course->id, $strquiz).
-               '</td>'.
-               '<td><form target="'.$CFG->framename.'" method="get" action="view.php">'.
-               '<input type="hidden" name="id" value="'.$cm->id.'" />'.
-               '<input type="hidden" name="edit" value="'.($PAGE->user_is_editing()?'off':'on').'" />'.
-               '<input type="submit" value="'.get_string($PAGE->user_is_editing()?'turneditingoff':'blocksaddedit').'" /></form></td></tr></table>';
-    } else {
-        $buttons = '';
-    }
-
-    print_header_simple("$quiz->name", "",
-                 "<a href=\"index.php?id=$course->id\">$strquizzes</a> -> $quiz->name", 
-                 "", "", true, $buttons, navmenu($course, $cm));
+    $PAGE->print_header($course->shortname.': %fullname%');
 
     echo '<table border="0" cellpadding="3" cellspacing="0" width="100%" id=\"layout-table\">';
     echo '<tr valign="top">';
