@@ -1,30 +1,27 @@
 <center>
 <form name="theform" method="post" action="editsection.php">
-<table border=0 cellpadding=0 cellspacing=0>
-<tr>
-<td align=top>
-<p><b><?php print_string("summaryof", "", "$sectionname $form->section") ?></b></p>
-</td>
-<td align=top width=100>
-&nbsp;
-</td>
-<td align=top>
-<font size=-1>
+<table cellpadding=5>
+<tr valign=top>
+    <td align=right><p><b><?php print_string("summary") ?>:</b></p>
+    <br />
+    <font size="1">
      <?php helpbutton("summaries", get_string("helpsummaries"), "moodle", true, true);
+        echo "<br />";
         if ($usehtmleditor) { 
            helpbutton("richtext", get_string("helprichtext"), "moodle", true, true);
         } else {   
            helpbutton("text", get_string("helptext"), "moodle", true, true);   
         } 
      ?>
-</font>
-</td>
-</tr></table>
-<?php print_textarea($usehtmleditor, 4, 60, 660, 200, "summary", $form->summary); ?>
-<p>
+      <br />
+    </font>
+    </td>
+    <td>
+      <?php print_textarea($usehtmleditor, 4, 60, 660, 200, "summary", $form->summary); ?>
+    </td>
+</tr>
+</table>
 <input type="hidden" name=id value="<?php echo $form->id ?>">
 <input type="submit" value="<?php print_string("savechanges") ?>">
-<input type="reset" value="<?php print_string("revert") ?>">
-</p>
 </form>
 </center>

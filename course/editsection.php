@@ -52,7 +52,10 @@
                  "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> 
                   -> $stredit");
 
+    print_heading(get_string("summaryof", "", "$sectionname $form->section"));
+    print_simple_box_start("center", "", "$THEME->cellheading");
     include("editsection.html");
+    print_simple_box_end();
 
     if ($usehtmleditor) { 
         use_html_editor();
