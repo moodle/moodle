@@ -29,7 +29,7 @@ function mediaplugin_filter($courseid, $text) {
     global $CFG;
 
     if (empty($CFG->filter_mediaplugin_ignore_mp3)) {
-        $search = '/<a(.*?)href=\"(.*?)\.mp3\"([^>]*)>(.*?)<\/a>/i';
+        $search = '/<a(.*?)href=\"([^<]+)\.mp3\"([^>]*)>(.*?)<\/a>/i';
 
         $replace  = '\\0&nbsp;<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000"';
         $replace .= ' codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,0,0" ';
@@ -48,7 +48,7 @@ function mediaplugin_filter($courseid, $text) {
     }
 
     if (empty($CFG->filter_mediaplugin_ignore_swf)) {
-        $search = '/<a(.*?)href=\"(.*?)\.swf\"([^>]*)>(.*?)<\/a>/i';
+        $search = '/<a(.*?)href=\"([^<]+)\.swf\"([^>]*)>(.*?)<\/a>/i';
 
         $replace  = '\\0<p class="mediaplugin"><object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000"';
         $replace .= ' codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,0,0" ';
@@ -66,7 +66,7 @@ function mediaplugin_filter($courseid, $text) {
     }
 
     if (empty($CFG->filter_mediaplugin_ignore_mov)) {
-        $search = '/<a(.*?)href=\"(.*?)\.mov\"([^>]*)>(.*?)<\/a>/i';
+        $search = '/<a(.*?)href=\"([^<]+)\.mov\"([^>]*)>(.*?)<\/a>/i';
 
         $replace  = '\\0<p class="mediaplugin"><object classid="CLSID:02BF25D5-8C17-4B23-BC80-D3488ABDDC6B"';
         $replace .= '        codebase="http://www.apple.com/qtactivex/qtplugin.cab" ';
@@ -88,7 +88,7 @@ function mediaplugin_filter($courseid, $text) {
     }
 
     if (empty($CFG->filter_mediaplugin_ignore_wmv)) {
-        $search = '/<a(.*?)href=\"(.*?)\.wmv\"([^>]*)>(.*?)<\/a>/i';
+        $search = '/<a(.*?)href=\"([^<]+)\.wmv\"([^>]*)>(.*?)<\/a>/i';
 
         $replace  = '\\0<p class="mediaplugin"><object classid="CLSID:22D6f312-B0F6-11D0-94AB-0080C74C7E95"';
         $replace .= ' codebase="http://activex.microsoft.com/activex/controls/mplayer/en/nsmp2inf.cab#Version=5,1,52,701" ';
