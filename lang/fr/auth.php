@@ -33,6 +33,7 @@ $string['auth_ldap_create_context'] = 'Lors de l\'utilisation de la création d\'
 $string['auth_ldap_creators'] = 'Liste des groupes dont les membres ont le droit de créer des cours. Les groupes (en général, de la forme « cn=teachers,ou=staff,o=myorg ») sont séparés par des « ; ».';
 $string['auth_ldap_host_url'] = 'Indiquer le serveur LDAP sous form d\'URL comme ceci :<br>« ldap://ldap.organisation.fr/ »<br>ou :<br>« ldaps://ldap.organisation.fr/ »';
 $string['auth_ldap_memberattribute'] = 'Indiquer l\'attribut d\'appartenance à un groupe. D\'habitude cet attribut est « member ».';
+$string['auth_ldap_objectclass'] = 'Le filtre utilisé pour rechercher/renommer des utilisateurs. On y mettra d\'habitude quelque chose comme objectClass=posixAccount. La valeur par défaut est objectClass=*, ce que retournera tous les objets du serveur LDAP.';
 $string['auth_ldap_search_sub'] = 'Mettre une valeur différente de 0 pour rechercher les enregistrements dans les sous-noeuds.';
 $string['auth_ldap_update_userinfo'] = 'Mettre à jour les données des utilisateurs (prénom, nom, adresse, etc.) de Moodle depuis l\'annuaire LDAP. Lire « /auth/ldap/attr_mappings.php » pour avoir des informations sur la correspondance.';
 $string['auth_ldap_user_attribute'] = 'L\'attribut utilisé pour nommer et rechercher les utilisateurs. Habituellement « cn ».';
@@ -42,7 +43,7 @@ $string['auth_ldapextrafields'] = 'Ces zones sont facultatives. Il vous est poss
 $string['auth_ldaptitle'] = 'Utiliser un serveur LDAP';
 $string['auth_manualdescription'] = 'Cette méthode supprime pour les utilisateurs le droit de créer eux-mêmes leur compte. Tous les comptes doivent être créés par l\'administrateur.';
 $string['auth_manualtitle'] = 'Création manuelle de comptes';
-$string['auth_multiplehosts'] = 'Vous pouvez indiquer ici plusieurs hôtes SMTP (par exemple host1.com;host2.com;host3.com)';
+$string['auth_multiplehosts'] = 'Vous pouvez indiquer ici plusieurs hôtes ou adresses SMTP (par exemple host1.com;host2.com;host3.com ou 192.168.1.100;172.23.92.1)';
 $string['auth_nntpdescription'] = 'Cette méthode utilise un serveur NNTP pour vérifier qu\'un nom d\'utilisateur et son mot de passe sont valides.';
 $string['auth_nntphost'] = 'L\'adresse du serveur NNTP. Utiliser l\'adresse IP et non le nom de la machine.';
 $string['auth_nntpport'] = 'Numéro de port du serveur NNTP. Il s\'agit généralement de 119.';
@@ -51,7 +52,8 @@ $string['auth_nonedescription'] = 'Les utilisateurs peuvent s\'enregistrer et cr
 $string['auth_nonetitle'] = 'Pas d\'authentification';
 $string['auth_pop3description'] = 'Cette méthode utilise un serveur POP3 pour vérifier qu\'un nom d\'utilisateur et son mot de passe sont valides.';
 $string['auth_pop3host'] = 'L\'adresse du serveur POP3. Utiliser l\'adresse IP et non le nom de la machine.';
-$string['auth_pop3port'] = 'Numéro de port du serveur POP3. Il s\'agit habituellement de 110.';
+$string['auth_pop3mailbox'] = 'Nom de la boîte aux lettres vers laquelle tenter la connexion, d\'habitude « INBOX ».';
+$string['auth_pop3port'] = 'Numéro de port du serveur POP3. Il s\'agit habituellement du port 110, et lors de l\'utilisation de SSL du port 995.';
 $string['auth_pop3title'] = 'Utiliser un serveur POP3';
 $string['auth_pop3type'] = 'Type de serveur. Si le serveur POP3 utilise « certificate security », choisir « pop3cert ».';
 $string['auth_user_create'] = 'Activer la création des utilisateurs';
