@@ -28,10 +28,10 @@ function SCORMapi() {
 	    cmi.core.credit = "credit";
 	    cmi.core.lesson_status = "<?php echo $sco_user->cmi_core_lesson_status; ?>";
 	    cmi.core.exit = "<?php echo $sco_user->cmi_core_exit ?>";
-	    cmi.core.entry = "<?php if ($sco_user->cmi_core_lesson_status=="not attempted") 
+	    cmi.core.entry = "<?php if ($sco_user->cmi_core_lesson_status=='not attempted') 
 					echo 'ab-initio'; 
 				    else 
-					if ($sco_user->cmi_core_lesson_status!="completed") 
+					if ($sco_user->cmi_core_lesson_status!='completed') 
 					    echo 'resume'; 
 				    	else 
 					    echo '';?>";
@@ -211,10 +211,10 @@ function SCORMapi() {
             <?php
 		 if ($scorm->auto) {
 		     if ($sco != $last) {
-	                 print "setTimeout('".$navObj."document.navform.next.click();',500);\n";
+	                 echo "setTimeout('".$navObj."document.navform.next.click();',500);\n";
 		     } else {
-			 print "exitloc = '".$CFG->wwwroot."/mod/scorm/view.php?id=$cm->id';\n";
-			 print "setTimeout('top.location = exitloc;',500);\n";
+			 echo "exitloc = '".$CFG->wwwroot."/mod/scorm/view.php?id=".$cm->id."';\n";
+			 echo "setTimeout('top.location = exitloc;',500);\n";
 		     }
 		} 
 	    ?>

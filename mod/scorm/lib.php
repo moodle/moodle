@@ -46,10 +46,12 @@ function scorm_add_instance($scorm) {
         }
     }
     $scorm->popup = implode(',', $optionlist);
-    $scorm->auto = '0';
+    
 
-    if ($scorm->popup != "")
+    if ($scorm->popup != "") {
     	$scorm->popup .= ',location=0,menubar=0,toolbar=0';
+    	$scorm->auto = '0';
+    }
     
     return insert_record("scorm", $scorm);
 }
@@ -75,11 +77,11 @@ function scorm_update_instance($scorm) {
         }
     }
     $scorm->popup = implode(',', $optionlist);
-    $scorm->auto = '0';
 
-    if ($scorm->popup != "")
+    if ($scorm->popup != "") {
     	$scorm->popup .= ',location=0,menubar=0,toolbar=0';
-
+    	$scorm->auto = '0';
+    }
     return update_record("scorm", $scorm);
 }
 
