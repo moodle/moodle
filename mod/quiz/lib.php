@@ -961,7 +961,13 @@ function quiz_print_quiz_questions($quiz, $results=NULL, $questions=NULL, $shuff
 
     $strconfirmattempt = addslashes(get_string("readytosend", "quiz"));
 
-    echo "<FORM METHOD=POST ACTION=attempt.php onsubmit=\"return confirm('$strconfirmattempt');\">";
+    if (empty($quiz->grade)) {
+        $onsubmit = "";
+    } else {
+        $onsubmit = "onsubmit=\"return confirm('$strconfirmattempt');\"";
+    }
+
+    echo "<FORM METHOD=POST ACTION=attempt.php $onsubmit>";
     echo "<INPUT TYPE=hidden NAME=q VALUE=\"$quiz->id\">";
 
     $count = 0;
