@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // calendar.php - created with Moodle 1.2 Beta + (2004030702)
+      // calendar.php - created with Moodle 1.3 development (2004032800)
 
 
 $string['april'] = 'Aprile';
@@ -8,10 +8,13 @@ $string['calendar'] = 'Calendario';
 $string['calendarheading'] = '$a Calendario';
 $string['clickhide'] = 'clicca per nascondere';
 $string['clickshow'] = 'clicca per mostrare';
+$string['confirmeventdelete'] = 'Sei sicuro di voler cancellare questo evento?';
 $string['courseevents'] = 'Eventi del corso';
 $string['dayview'] = 'Vista gionaliera';
 $string['daywithnoevents'] = 'Non ci sono eventi questo giorno';
 $string['december'] = 'Dicembre';
+$string['default'] = 'Impostazione base';
+$string['deleteevent'] = 'Cancella evento';
 $string['detailedmonthview'] = 'Vista mensile dettagliata';
 $string['durationnone'] = 'Senza durata';
 $string['durationuntil'] = 'Fino al';
@@ -32,13 +35,15 @@ $string['eventstarttime'] = 'Ora d\'inizio';
 $string['eventtime'] = 'Ora';
 $string['eventview'] = 'Dettagli evento';
 $string['expired'] = 'Terminato';
+$string['explain_lookahead'] = 'Questa preferenza imposta il numero (massimo) di giorni nel futuro per il quale un evento deve iniziare viene mostrato come un prossimo evento. Gli eventi che iniziano successivamente non saranno mostrati come prossimi. Prego nota che <strong>non c\'è garanzia</strong> che tutti gli eventi che iniziano in questo lasso di tempo vengano mostrati; se sono troppi (più della preferenza \"Massimo prossimi eventi\") gli eventi più lontani non saranno mostrati.';
+$string['explain_maxevents'] = 'Questa preferenza imposta il massimo numero di prossimi eventi che possono essere mostrati. Se usi, qui, un numero grande, è possibile che la visualizzazione dei prossimi eventi occupi molto spazio sul tuo schermo.';
+$string['explain_startwday'] = 'Questa preferenza imposta il modo in cui tutti i calendari mensili vengono visualizzati. Utilizzalo per farli visulizzare nel modo che preferisci.';
 $string['february'] = 'Febbraio';
 $string['fri'] = 'Ven';
 $string['friday'] = 'Venerdì';
 $string['globalevents'] = 'Eventi generali';
 $string['groupevents'] = 'Eventi di gruppo';
 $string['hidden'] = 'Nascosto';
-$string['hide'] = 'Nascondi';
 $string['january'] = 'Gennaio';
 $string['july'] = 'Luglio';
 $string['june'] = 'Giugno';
@@ -52,10 +57,14 @@ $string['newevent'] = 'Nuovo evento';
 $string['november'] = 'Novembre';
 $string['october'] = 'Ottobre';
 $string['oneevent'] = '1 evento';
+$string['pref_lookahead'] = 'Cerca prossimi eventi';
+$string['pref_maxevents'] = 'Massimo prossimi eventi';
+$string['pref_startwday'] = 'Primo giorno della settimana';
+$string['preferences'] = 'Preferenze';
+$string['preferences_available'] = 'Le tue preferenze';
 $string['sat'] = 'Sab';
 $string['saturday'] = 'Sabato';
 $string['september'] = 'Settembre';
-$string['show'] = 'mostra';
 $string['shown'] = 'Mostrato';
 $string['sun'] = 'Dom';
 $string['sunday'] = 'Domenica';
@@ -63,6 +72,7 @@ $string['thu'] = 'Gio';
 $string['thursday'] = 'Giovedi';
 $string['today'] = 'Oggi';
 $string['tomorrow'] = 'Domani';
+$string['tt_deleteevent'] = 'Cancella evento';
 $string['tt_editevent'] = 'Modifica evento';
 $string['tt_hidecourse'] = 'Gli eventi del corso sono mostrati (clicca per nascondere)';
 $string['tt_hideglobal'] = 'Gli eventi generali sono mostrati (clicca per nascondere)';

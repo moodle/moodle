@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.2.1 (2004032500)
+      // moodle.php - created with Moodle 1.3 development (2004032800)
 
 
 $string['action'] = 'Azione';
@@ -875,6 +875,7 @@ $string['upload'] = 'Trasferire sul server';
 $string['uploadafile'] = 'Trasferisci un file sul server';
 $string['uploadedfileto'] = 'File $a->file salvato nella directory $a->directory';
 $string['uploadnofilefound'] = 'Non è stato trovato alcun file. Sei sicuro di averne selezionato un per l\'upload?';
+$string['uploadnotallowed'] = 'Invio file non permesso';
 $string['uploadproblem'] = 'Un problema sconosciuto si è verificato salvando il file \'$a\' (può essere troppo grande?)';
 $string['uploadthisfile'] = 'Trasferisci questo file';
 $string['uploadusers'] = 'Trasferisci utenti';
