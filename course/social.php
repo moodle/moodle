@@ -48,6 +48,7 @@
       echo "<TABLE CELLPADDING=4 CELLSPACING=0><TR><TD>";
       print_recent_activity($course);
       echo "</TD></TR></TABLE>";
+      echo "<BR>";
 
       // Print Admin links for teachers and admin.
       if (isteacher($USER->id) || isadmin()) {
