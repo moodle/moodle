@@ -29,7 +29,7 @@ $string['savemychoice'] = 'Bewaar mijn antwoord';
 $string['showunanswered'] = 'Toon een kolom voor onbeantwoord';
 $string['thischarset'] = 'iso-8859-1';
 $string['thisdirection'] = 'ltr';
-$string['thislanguage'] = '﻿nl';
+$string['thislanguage'] = 'Nederlands';
 $string['timerestrict'] = 'Beperk het beantwoorden tot deze periode';
 $string['viewallresponses'] = 'Bekijk $a antwoorden';
 

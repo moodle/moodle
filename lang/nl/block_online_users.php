@@ -7,6 +7,6 @@ $string['configtimetosee'] = 'Aantal minuten na activiteit dat een gebruiker als
 $string['periodnminutes'] = 'laatste $a minuten';
 $string['thischarset'] = 'iso-8859-1';
 $string['thisdirection'] = 'ltr';
-$string['thislanguage'] = '﻿nl';
+$string['thislanguage'] = 'Nederlands';
 
 ?>

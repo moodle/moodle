@@ -10,6 +10,6 @@ $string['really'] = 'Wil je echt alle resultaten van deze test wissen?';
 $string['strattemptlabel'] = 'Pogingen: Score, Datum Tijd (Duur), [strafpunten]';
 $string['thischarset'] = 'iso-8859-1';
 $string['thisdirection'] = 'ltr';
-$string['thislanguage'] = '﻿nl';
+$string['thislanguage'] = 'Nederlands';
 
 ?>

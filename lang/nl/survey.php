@@ -205,7 +205,7 @@ $string['surveytype'] = 'Soort onderzoek';
 $string['thanksforanswers'] = 'Bedankt voor het invullen van dit onderzoek, $a';
 $string['thischarset'] = 'iso-8859-1';
 $string['thisdirection'] = 'ltr';
-$string['thislanguage'] = '﻿nl';
+$string['thislanguage'] = 'Nederlands';
 $string['time'] = 'Tijd';
 $string['viewsurveyresponses'] = 'Bekijk $a ingevulde onderzoeken';
 

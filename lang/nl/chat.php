@@ -52,7 +52,7 @@ $string['strftimemessage'] = '%%H:%%M';
 $string['studentseereports'] = 'Iedereen kan voorbije chatsessies bekijken';
 $string['thischarset'] = 'iso-8859-1';
 $string['thisdirection'] = 'ltr';
-$string['thislanguage'] = '﻿nl';
+$string['thislanguage'] = 'Nederlands';
 $string['viewreport'] = 'Bekijk voorbije chatsessies';
 
 ?>

@@ -10,6 +10,6 @@ $string['description'] = 'Dit is de standaard manier van aanmelden. Er zijn twee
 $string['enrolname'] = 'Interne aanmelding';
 $string['thischarset'] = 'iso-8859-1';
 $string['thisdirection'] = 'ltr';
-$string['thislanguage'] = '﻿nl';
+$string['thislanguage'] = 'Nederlands';
 
 ?>

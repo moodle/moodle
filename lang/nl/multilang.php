@@ -5,6 +5,6 @@
 $string['filtername'] = 'Meertalige inhoud';
 $string['thischarset'] = 'iso-8859-1';
 $string['thisdirection'] = 'ltr';
-$string['thislanguage'] = '﻿nl';
+$string['thislanguage'] = 'Nederlands';
 
 ?>

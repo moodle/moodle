@@ -104,6 +104,6 @@ $string['stdchangepassword_expl'] = 'Zet dit op ja als het externe systeem toela
 $string['stdchangepassword_explldap'] = 'Merk op: het is aan te raaden om LDAP te gebruiken met een SSL geëncrypteerde tunnel (ldaps://) als de LDAP-server op afstand staat.';
 $string['thischarset'] = 'iso-8859-1';
 $string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'ï»¿nl';
+$string['thislanguage'] = 'Nederlands';
 
 ?>

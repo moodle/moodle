@@ -8,6 +8,6 @@ $string['enrolname'] = 'Paypal';
 $string['sendpaymentbutton'] = 'Stuur betaling via Paypal';
 $string['thischarset'] = 'iso-8859-1';
 $string['thisdirection'] = 'ltr';
-$string['thislanguage'] = '﻿nl';
+$string['thislanguage'] = 'Nederlands';
 
 ?>

@@ -32,7 +32,7 @@ $string['saveallfeedback'] = 'Bewaar al mijn feedback';
 $string['startoredit'] = 'Begin of wijzig mijn logboek bijdrage';
 $string['thischarset'] = 'iso-8859-1';
 $string['thisdirection'] = 'ltr';
-$string['thislanguage'] = '﻿nl';
+$string['thislanguage'] = 'Nederlands';
 $string['viewallentries'] = 'Bekijk $a logboek bijdragen';
 
 ?>

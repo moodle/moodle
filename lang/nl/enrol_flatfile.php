@@ -19,6 +19,6 @@ $string['mailadmin'] = 'Verwittig de beheerder met e-mail';
 $string['mailusers'] = 'Verwittig de gebruikers met e-mail';
 $string['thischarset'] = 'iso-8859-1';
 $string['thisdirection'] = 'ltr';
-$string['thislanguage'] = '﻿nl';
+$string['thislanguage'] = 'Nederlands';
 
 ?>
