@@ -171,6 +171,7 @@ $string['PE'] = 'Pérou';
 $string['PH'] = 'Philippines';
 $string['PN'] = 'Pitcairn';
 $string['PL'] = 'Pologne';
+$string['PS'] = 'Palestine';
 $string['PT'] = 'Portugal';
 $string['PR'] = 'Porto Rico';
 $string['QA'] = 'Qatar';
