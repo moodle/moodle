@@ -68,8 +68,16 @@
         $newdata->userid = $USER->id;
         $newdata->survey = $survey->id;
         $newdata->question = $key;
-        $newdata->answer1 = $val[0];
-        $newdata->answer2 = $val[1];
+        if (!empty($val[0])) {
+            $newdata->answer1 = $val[0];
+        } else {
+            $newdata->answer1 = "";
+        }
+        if (!empty($val[1])) {
+            $newdata->answer2 = $val[1];
+        } else {
+            $newdata->answer2 = "";
+        }
 
         if (! insert_record("survey_answers", $newdata)) {
             error("Encountered a problem trying to store your results. Sorry.");
