@@ -418,7 +418,7 @@
         $strdeletecheck = get_string("deletecheck", "", "$form->fullmodulename");
         $strdeletecheckfull = get_string("deletecheckfull", "", "$form->fullmodulename '$form->instancename'");
 
-        print_header_simple("$strdeletecheck", "$",
+        print_header_simple("$strdeletecheck", "",
                      "$strdeletecheck");
 
         print_simple_box_start("center", "60%", "#FFAAAA", 20, "noticebox");
