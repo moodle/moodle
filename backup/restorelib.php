@@ -1668,6 +1668,11 @@
             $log->info = "";
             $toinsert = true;
             break;
+        case "recent":
+            $log->url = "recent.php?id=".$log->course;
+            $log->info = "";
+            $toinsert = true;
+            break;
         default:
             echo "action (".$log->module."-".$log->action.") unknow. Not restored<br>";                 //Debug
             break;
