@@ -364,8 +364,8 @@ function forum_cron () {
 
                 /// Override the language and timezone of the "current" user, so that
                 /// mail is customised for the receiver.
-                $USER->lang     = $userto->lang;
-                $USER->timezone = $userto->timezone;
+                $USER->lang     = empty($userto->lang) ? $CFG->lang : $userto->lang;
+                $USER->timezone = get_user_timezone($userto->timezone);
 
 
                 $postsubject = get_string('digestmailsubject', 'forum', $site->shortname);
