@@ -17,9 +17,25 @@
         error("Moodle has not been configured yet.  You need to to edit config.php first.");
     }
 
-/// Check databases and modules and install as needed.
-    if (! $db->Metatables() ) { 
+/// Check if the main tables have been installed yet or not.
 
+    if (! $tables = $db->Metatables() ) {    // No tables yet at all.
+        $maintables = false;
+
+    } else {                                 // Check for missing main tables
+        $maintables = true;
+        $mtables = array("config", "course", "course_categories", "course_modules", 
+                         "course_sections", "log", "log_display", "modules", 
+                         "user", "user_admins", "user_students", "user_teachers");
+        foreach ($mtables as $mtable) {
+            if (!in_array($CFG->prefix.$mtable, $tables)) { 
+                $maintables = false;
+                break;
+            }
+        }
+    }
+
+    if (! $maintables) {
         if (!$agreelicence) {
             $strlicense = get_string("license");
             print_header($strlicense, $strlicense, $strlicense);
