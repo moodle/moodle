@@ -18,25 +18,28 @@
 <h1>Latest Release notes</h1>
 
 
-<h3> Moodle 1.4.2   (1st October, 2004)</h3>
+<h3> Moodle 1.4.2   (5th November, 2004)</h3>
+
+<p>(Because this release contains important security fixes, we highly advise that sites using any 
+    previous version of Moodle upgrade to this version as soon as possible.)</p>
 
 <ul>
   <dl>
+    <dt>Some important security fixes</dt>
+    <dd> 
+      <ul>
+        <li>Better checking/cleaning of script parameters used in quite a few areas 
+            throughout Moodle (a BIG thanks to Petr Skoda for his recent security audit!)</li>
+        <li>Quoted some SQL parameters in the glossary module to prevent possible injection</li>
+      </ul>
+    </dd>
+
     <dt>A few small new things</dt>
     <dd> 
       <ul>
         <li>New PAM authentication module for direct authentication on Unix/Linux</li>
         <li>Course creators can now restore to new or existing courses</li>
         <li>Forum posts now include detailed headers to allow correct threading in mail clients</li>
-      </ul>
-    </dd>
-
-    <dt>Some important security fixes</dt>
-    <dd> 
-      <ul>
-        <li>Better checking/cleaning of script parameters used in quite a few areas 
-            within Moodle (a big thanks to Petr Skoda for his recent security audit!)</li>
-        <li>Quoted some SQL parameters in the glossary module to prevent possible injection</li>
       </ul>
     </dd>
 
