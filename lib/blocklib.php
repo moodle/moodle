@@ -366,7 +366,7 @@ function blocks_execute_action($page, &$pageblocks, $blockaction, $instanceorid)
                 // The block is the first one, so a move "up" probably means it changes position
                 // Where is the instance going to be moved?
                 $newpos = $page->blocks_move_position($instance, BLOCK_MOVE_UP);
-                $newweight = (empty($pageblocks[$newpos]) ? 0 : max(array_keys($pageblocks[$newpos]))) + 1;
+                $newweight = (empty($pageblocks[$newpos]) ? 0 : max(array_keys($pageblocks[$newpos])) + 1);
 
                 blocks_execute_repositioning($instance, $newpos, $newweight);
             }
@@ -395,7 +395,7 @@ function blocks_execute_action($page, &$pageblocks, $blockaction, $instanceorid)
                 // The block is the last one, so a move "down" probably means it changes position
                 // Where is the instance going to be moved?
                 $newpos = $page->blocks_move_position($instance, BLOCK_MOVE_DOWN);
-                $newweight = (empty($pageblocks[$newpos]) ? 0 : max(array_keys($pageblocks[$newpos]))) + 1;
+                $newweight = (empty($pageblocks[$newpos]) ? 0 : max(array_keys($pageblocks[$newpos])) + 1);
 
                 blocks_execute_repositioning($instance, $newpos, $newweight);
             }
@@ -422,7 +422,7 @@ function blocks_execute_action($page, &$pageblocks, $blockaction, $instanceorid)
 
             // Where is the instance going to be moved?
             $newpos = $page->blocks_move_position($instance, BLOCK_MOVE_LEFT);
-            $newweight = (empty($pageblocks[$newpos]) ? 0 : max(array_keys($pageblocks[$newpos]))) + 1;
+            $newweight = (empty($pageblocks[$newpos]) ? 0 : max(array_keys($pageblocks[$newpos])) + 1);
 
             blocks_execute_repositioning($instance, $newpos, $newweight);
         break;
@@ -433,7 +433,7 @@ function blocks_execute_action($page, &$pageblocks, $blockaction, $instanceorid)
 
             // Where is the instance going to be moved?
             $newpos    = $page->blocks_move_position($instance, BLOCK_MOVE_RIGHT);
-            $newweight = (empty($pageblocks[$newpos]) ? 0 : max(array_keys($pageblocks[$newpos]))) + 1;
+            $newweight = (empty($pageblocks[$newpos]) ? 0 : max(array_keys($pageblocks[$newpos])) + 1);
 
             blocks_execute_repositioning($instance, $newpos, $newweight);
         break;
