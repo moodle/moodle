@@ -1281,7 +1281,7 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml="", $a
 
     $mail->AddAddress("$user->email", fullname($user) );
 
-    $mail->WordWrap = 70;                               // set word wrap
+    $mail->WordWrap = 79;                               // set word wrap
 
     if (!empty($from->precedence)) {
         $mail->Precedence = $from->precedence;          // set precedence level eg "bulk" "list" or "junk"
@@ -1361,7 +1361,9 @@ function send_confirmation_email($user) {
     $message = get_string("emailconfirmation", "", $data);
     $subject = get_string("emailconfirmationsubject", "", $site->fullname);
 
-    return email_to_user($user, $from, $subject, $message);
+    $messagehtml = text_to_html($message, false, false, true);
+
+    return email_to_user($user, $from, $subject, $message, $messagehtml);
 
 }
 
