@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.2 development (2004020300)
+      // assignment.php - created with Moodle 1.4.1 (2004083101)
 
 
 $string['allowresubmit'] = 'Accepter de nouvelles soumissions';
@@ -30,11 +30,13 @@ $string['newsubmissions'] = 'Devoirs soumis';
 $string['notgradedyet'] = 'Pas encore corrigé';
 $string['notsubmittedyet'] = 'Pas encore soumis';
 $string['overwritewarning'] = 'Attention: Si vous envoyez de nouveau votre devoir, ce dernier remplacera le devoir déjà remis';
+$string['parentlanguage'] = 'fr';
 $string['saveallfeedback'] = 'Enregistrer tous mes commentaires';
 $string['submissionfeedback'] = 'Rétroactions sur le devoir';
 $string['submissions'] = 'Devoirs soumis';
 $string['submitassignment'] = 'Envoyer votre devoir en utilisant ce formulaire';
 $string['submitted'] = 'Soumis';
+$string['thisdirection'] = 'ltr';
 $string['typeoffline'] = 'Activité hors ligne';
 $string['typeuploadsingle'] = 'Téléverser un fichier unique';
 $string['uploadbadname'] = 'Le nom de ce fichier contient des caractères invalides : il ne peut être téléversé.';

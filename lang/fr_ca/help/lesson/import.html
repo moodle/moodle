@@ -1,0 +1,97 @@
+<!-- $Id$ -->
+
+<p align="center"><b>Importer de nouvelles questions</b></p>
+
+<p>Cette fonction vous permet d'importer des questions depuis des fichiers texte externes, d&eacute;pos&eacute;s dans Moodle &agrave; l'aide d'un formulaire.</p>
+
+<p>Plusieurs formats de fichier sont support&eacute;s&nbsp;:</p>
+
+<p><b>Format GIFT format</b></p>
+<ul>
+<p>Le format GIFT est le format le plus complet disponible pour l'importation de questions de tests dans Moodle. Il a &eacute;t&eacute; con&ccedil;u pour permettre aux enseignants d'&eacute;crire facilement des questions dans un fichier texte. Il supporte les questions &agrave; Choix multiples, Vrai-Faux, &agrave; R&eacute;ponse courte, d'Appariement, Num&eacute;riques, ainsi que l'insertion de _____ pour le format Mot manquant. Ces diff&eacute;rents types de questions peuvent &ecirc;tre m&eacute;lang&eacute;s dans un m&ecirc;me fichier texte, et le format permet en outre des lignes de commentaires, des noms pour les questions, les feedbacks et les notes pond&eacute;r&eacute;es (en %). Voici quelques exemples&nbsp;:</p>
+
+<pre>
+Quelle &eacute;tait la couleur de la jument blanche de Napol&eacute;on ?{~Verte ~Noire =Blanche}
+
+La monture de Napol&eacute;on &eacute;tait {=une jument ~un &eacute;talon ~un mulet}.
+
+La jument de Napol&eacute;on &eacute;tait verte.{FALSE}
+
+Quelle &eacute;tait la nationalit&eacute; de Napol&eacute;on ?{=Corse =Fran&ccedil;aise}
+
+En quelle ann&eacute;e Napol&eacute;on est-il mort ?{#1821}
+</pre>
+
+<p align="right"><a href="help.php?file=formatgift.html&amp;module=quiz">Plus d'informations sur le format GIFT</a></p>
+</ul>
+
+<p><b>Format Aiken</b></p>
+<ul>
+<p>Le format Aiken fournit une mani&egrave;re tr&egrave;s simple
+de cr&eacute;er des questions &agrave; choix multiples dans un
+format facile &agrave; lire. Voici un exemple de ce
+format&nbsp;:</p>
+<pre>
+Quelle est la r&eacute;ponse correcte &agrave; cette question&nbsp;?
+A. Celle-ci ?
+B. Peut-&ecirc;tre cette r&eacute;ponse ?
+C. Ou celle-ci ?
+D. Voil&agrave; la bonne !
+ANSWER: D
+</pre>
+
+<p align="right"><a href="help.php?file=formataiken.html&amp;module=quiz">Plus d'informations sur le format Aiken</a></p>
+</ul>
+
+
+<p><b>Format &laquo;&nbsp;Mots manquants&nbsp;&raquo;</b></p>
+<ul>
+<p>Ce format ne supporte que les questions &agrave; choix multiples. Chaque r&eacute;ponse propos&eacute;e est pr&eacute;fix&eacute;e par un tilde (~), et la r&eacute;ponse correcte est pr&eacute;fix&eacute;e par un signe &eacute;gal (=). Voici un exemple&nbsp;:</p>
+
+<p><tt>D&egrave;s le moment o&ugrave;, enfants, nous explorons notre corps, nous devenons des &eacute;tudiants en {=anatomie et physiologie ~r&eacute;flexologie ~science ~exp&eacute;rimentation}, et dans un sens nous restons des &eacute;tudiants pour toute notre vie.
+</tt></p>
+
+<p align="right"><a href="help.php?file=formatmissingword.html&amp;module=quiz">Plus d'informations sur le format &laquo;&nbsp;Mots manquants&nbsp;&raquo;</a></p>
+</ul>
+
+
+<p><b>Format AON</b></p>
+<ul>
+<p>Ce format est identique au format &laquo;&nbsp;Mots manquants&nbsp;&raquo;, mais lors de l'importation, les questions &agrave; r&eacute;ponse courte sont 4 par 4 converties en questions d'appariement.</p>
+
+<p>En outre, les r&eacute;ponses sont m&eacute;lang&eacute;es al&eacute;atoirement durant l'importation.</p>
+
+<p>Le nom de ce format provient de l'institution qui a parrain&eacute; le d&eacute;veloppement de nombreuses fonctionnalit&eacute; des tests.</p>
+</ul>
+
+
+<p><b>Format Blackboard</b></p>
+<ul>
+<p>Les questions export&eacute;es en format Blackboard peuvent &eacute;galement &ecirc;tre import&eacute;es, gr&acirc;ce aux fonctions XML int&eacute;gr&eacute;es dans PHP.</p>
+
+<p align="right"><a href="help.php?file=formatblackboard.html&amp;module=quiz">Plus d'informations sur le format Blackboard</a></p>
+</ul>
+
+<p><b>Format CTM (Course Test Manager)</b></p>
+<ul>
+<p>Les questions en format CTM peuvent &eacute;galement &ecirc;tre import&eacute;es, pour autant que votre Moodle puisse avoir acc&egrave;s &agrave; la base de donn&eacute;es Access qui les contient. La proc&eacute;dure d'importation d&eacute;pend du serveur sur lequel tourne votre Moodle.</p>
+
+<p>Sous Windows, la base Access peut &ecirc;tre directement import&eacute;e comme n'importe quelle autre fichier.</p>
+
+<p>Avec Linux, vous devez configurer dans le m&ecirc;me r&eacute;seau que votre serveur un ordinateur Windows avec la base de donn&eacute;es CTM et le logiciel ODBC Socket Server, qui utilisera XML pour transf&eacute;rer les donn&eacute;es sur le moodle de votre serveur Linux.</p>
+
+<p>Veuillez SVP lire attentivement le fichier d'aide ci-dessous avant d'utiliser cette importation.</p>
+
+<p align="right"><a href="help.php?file=formatctm.html&amp;module=quiz">Plus d'informations sur le format CTM</a></p>
+</ul>
+
+<p><b>Format personnalis&eacute;</b></p>
+<ul>
+<p>Si vous d&eacute;sirez importer votre propre format, vous pouvez l'impl&eacute;menter directement en modifiant le fichier mod/quiz/format/custom.php.</p>
+
+<p>Il y a peu de code &agrave; &eacute;crire, juste de quoi extraire une simple question &agrave; partir d'un texte donn&eacute;.</p>
+
+<p align="right"><a href="help.php?file=formatcustom.html&amp;module=quiz">Plus d'informations sur le format personnalis&eacute;.</a></p>
+</ul>
+
+<p>D'autres formats seront bient&ocirc;t disponibles pour l'importation, notamment WebCT, IMS QTI et tout ceux que les utilisateurs de Moodle pourront apporter&nbsp;!</p>

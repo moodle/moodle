@@ -1,7 +1,9 @@
 <?PHP // $Id$ 
-      // mediaplugin.php - created with Moodle 1.2 Beta (2004022400)
+      // mediaplugin.php - created with Moodle 1.4.1 (2004083101)
 
 
 $string['filtername'] = 'Extensions multimédia';
+$string['parentlanguage'] = 'fr';
+$string['thisdirection'] = 'ltr';
 
 ?>

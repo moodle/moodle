@@ -1,0 +1,30 @@
+<!-- $Id$ -->
+
+<p align="center"><b>Exporter les questions d'une cat&eacute;gorie</b></p>
+
+<p>Cette fonction vous permet d'exporter la totalit&eacute; des questions d'une cat&eacute;gorie vers un fichier texte.</p>
+
+<p>Veuillez toutefois noter que pour certains formats de questions, lors de l'exportation, des informations sont perdues, car ces formats ne permettent pas toutes les possibilit&eacute;s offertes par Moodle dans les tests. Il faut donc s'attendre &agrave; des diff&eacute;rences lors de l'exportation et de la r&eacute;importation de questions dans Moodle. Certains types de questions ne pourront pas du tout &ecirc;tre export&eacute;s. Nous vous conseillons de v&eacute;rifier les donn&eacute;es export&eacute;es avant de les utiliser dans un environnement de production.</p>
+
+<p>Le seul format support&eacute; pour l'instant est&nbsp;:</p>
+
+<p><b>Format GIFT</b></p>
+<ul>
+<p>Le format GIFT est le format le plus complet disponible pour l'importation et l'exportation de questions de tests dans Moodle. Il a &eacute;t&eacute; con&ccedil;u pour permettre aux enseignants d'&eacute;crire facilement des questions dans un fichier texte. Il supporte les questions &agrave; Choix multiples, Vrai-Faux, &agrave; R&eacute;ponse courte, d'Appariement, Num&eacute;riques, ainsi que l'insertion de _____ pour le format Mot manquant. Il est &agrave; noter que le format Cloze n'est actuellement pas support&eacute;. Les diff&eacute;rents types de questions peuvent &ecirc;tre m&eacute;lang&eacute;s dans un m&ecirc;me fichier texte, et le format permet en outre des lignes de commentaires, des noms pour les questions, les feedbacks et les notes pond&eacute;r&eacute;es (en %). Voici quelques exemples&nbsp;:</p>
+
+<pre>
+Quelle &eacute;tait la couleur de la jument blanche de Napol&eacute;on ?{~Verte ~Noire =Blanche}
+
+La monture de Napol&eacute;on &eacute;tait {=une jument ~un &eacute;talon ~un mulet}.
+
+La jument de Napol&eacute;on &eacute;tait verte.{FALSE}
+
+Quelle &eacute;tait la nationalit&eacute; de Napol&eacute;on ?{=Corse =Fran&ccedil;aise}
+
+En quelle ann&eacute;e Napol&eacute;on est-il mort ?{#1821}
+</pre>
+
+<p align="right"><a href="help.php?file=formatgift.html&amp;module=quiz">Plus d'informations sur le format GIFT</a></p>
+</ul>
+
+<p>D'autres formats seront bient&ocirc;t disponibles pour l'exportation, notamment WebCT, IMS QTI et tout ceux que les utilisateurs de Moodle pourront apporter&nbsp;!</p>

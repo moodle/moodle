@@ -1,0 +1,74 @@
+<?PHP // $Id$ 
+      // attendance.php - created with Moodle 1.4.1 (2004083101)
+
+
+$string['absentlong'] = 'Absent';
+$string['absentshort'] = 'A';
+$string['addingmultiple'] = 'Ajout de plusieurs listes de présence';
+$string['addmultiple'] = 'Ajouter plusieurs listes de présence';
+$string['allmodulename'] = 'Toutes les listes de présence';
+$string['auto'] = 'auto';
+$string['autoattend'] = 'Effectuer le contrôle des présences à partir des historiques';
+$string['autoattendmulti'] = 'Effectuer le contrôle des présences de toutes les listes à partir des historiques';
+$string['autoattendshort'] = 'Automatiquement (historiques)';
+$string['choosedays'] = 'Jour de la semaine pour le contrôle des absences';
+$string['dayofroll'] = 'Date du contrôle des présences';
+$string['defaultautoattend'] = 'Effectuer par défaut le contrôle des présences à partir des historiques';
+$string['defaultdynamicsection'] = 'Déplacer par défaut les listes de présence dans la semaine adéquate';
+$string['defaultgrade'] = 'Rendre par défaut les listes de présence évaluables';
+$string['defaulthoursinclass'] = 'Nombres d\'heures par défaut dans une liste de présence';
+$string['defaultmaxgrade'] = 'Note maximale lors d\'une assiduité totale';
+$string['defaultstudentstatus'] = 'Statut par défaut des étudiants dans les nouvelles listes de présence';
+$string['downloadexcelfull'] = 'Télécharger en format Excel (complet)';
+$string['downloadexceltotals'] = 'Télécharger en format Excel (résumé)';
+$string['downloadtextfull'] = 'Télécharger en format texte (complet)';
+$string['downloadtexttotals'] = 'Télécharger en format texte (résumé)';
+$string['dynamicsection'] = 'La présence à cette date détermine la présence hebdomadaire';
+$string['dynamicsectionmulti'] = 'Placer les listes automatiquement dans leur semaine';
+$string['dynsectionshort'] = 'Déplacé automatiquement dans la section';
+$string['endbeforestart'] = 'La date de fin est antérieure à la date du début';
+$string['endmulti'] = 'Date de la dernière liste de présences';
+$string['for'] = 'pour';
+$string['friday'] = 'Ven';
+$string['gradeshort'] = 'Noté';
+$string['gradevalue'] = 'Rendre cette liste évaluable';
+$string['gradevaluemulti'] = 'Rendre ces listes évaluables';
+$string['hoursinclass'] = 'Nombre d\'heures dans cette période de classe';
+$string['hoursineachclass'] = 'Nombre d\'heures dans chaque période de classe';
+$string['hoursinfullreport'] = 'Nombre maximal d\'heures de présence à afficher sur une page de rapport';
+$string['maxgradeshort'] = 'Note maximale';
+$string['maxgradevalue'] = 'Note maximale pour une assiduité totale';
+$string['modulename'] = 'Présences';
+$string['modulenameplural'] = 'Listes de présence';
+$string['monday'] = 'Lun';
+$string['norolls'] = 'Il n\'a a pas de liste de présence dans ce cours';
+$string['notes'] = 'Information exceptionnelle';
+$string['notesfor'] = 'Information exceptionnelle pour';
+$string['noviews'] = 'Désolé, il n\'y a ici pas de données vous concernant.';
+$string['of'] = 'sur';
+$string['pages'] = 'Pages';
+$string['parentlanguage'] = 'fr';
+$string['presentlong'] = 'Présent';
+$string['presentshort'] = 'P';
+$string['saturday'] = 'Sam';
+$string['startafterend'] = 'La date du début est postérieure à la date de fin';
+$string['startmulti'] = 'Date de la première liste de présence';
+$string['sunday'] = 'Dim';
+$string['takeroll'] = 'Contrôle des présences de ce jour ?';
+$string['tardiesperabsence'] = 'Nombre de retards comptant pour une absence';
+$string['tardylong'] = 'En retard';
+$string['tardyshort'] = 'R';
+$string['teacheredit'] = 'Contrôler les présences';
+$string['thisdirection'] = 'ltr';
+$string['thursday'] = 'Jeu';
+$string['tuesday'] = 'Mar';
+$string['viewall'] = 'Afficher toutes les listes de présence';
+$string['viewmulti'] = 'Afficher le rapport sur plusieurs pages';
+$string['viewone'] = 'Afficher toutes les pages du rapport';
+$string['viewsection'] = 'Afficher toutes les listes de présence de cette section';
+$string['viewtable'] = 'Afficher le rapport dans un tableau';
+$string['viewweek'] = 'Afficher toutes les listes de présence du calendrier hebdomadaire';
+$string['wednesday'] = 'Mer';
+$string['weekmodulename'] = 'Listes de présence de la semaine passée';
+
+?>

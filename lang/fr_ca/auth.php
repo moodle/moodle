@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.2 Beta (2004022400)
+      // auth.php - created with Moodle 1.4.1 (2004083101)
 
 
 $string['auth_dbdescription'] = 'Cette méthode utilise une base de données externe afin de vérifier qu\'un nom d\'utilisateur et son mot de passe sont valides. Si le compte est nouveau, il est possible de copier des données provenant de certains champs vers Moodle.';
@@ -16,6 +16,13 @@ $string['auth_dbtype'] = 'Type de la base de données (voir la <a href=../lib/ado
 $string['auth_dbuser'] = 'Compte avec accès en lecture à la base de données';
 $string['auth_emaildescription'] = 'La confirmation par courriel est la méthode d\'authentification par défaut. Lorsqu\'un utilisateur s\'enregistre en choisissant ses nom d\'utilisateur et mot de passe, un message de confirmation est envoyé à son adresse de courriel. Ce message contient un lien sécurisé vers une page Web où il peut confirmer son inscription. Lors des connexions suivantes, le nom d\'utilisateur et son mot de passe sont vérifiés à partir de ces informations qui sont enregistrées dans la base de données de Moodle.';
 $string['auth_emailtitle'] = 'Authentification par courriel';
+$string['auth_fccreators'] = 'Liste des groupes dont les membres ont l\'autorisation de créer de nouveaux cours. Séparez les différents groupes par des points-virgules (;). Les nom doivent être transcrits exactement tels qu\'ils sont sur le serveur FirstClass. La casse des caractères doit être respectée.';
+$string['auth_fcdescription'] = 'Cette méthode utilise un serveur FisrtClass pour vérifier la validité d\'un nom d\'utilisateur et d\'un mot de passe donnés.';
+$string['auth_fcfppport'] = 'Port du serveur (la plupart du temps 3333)';
+$string['auth_fchost'] = 'L\'adresse du serveur FirstClass. Indiquez l\'adresse IP numérique ou un nom de domaine DNS.';
+$string['auth_fcpasswd'] = 'Mot de passe du compte FirstClass ayant le privilège « Subadministrator ».';
+$string['auth_fctitle'] = 'Utilisation d\'un serveur FirstClass';
+$string['auth_fcuserid'] = 'Numéro d\'identification du compte FirstClass ayant le privilège « Subadministrator ».';
 $string['auth_imapdescription'] = 'Cette méthode utilise un serveur IMAP pour vérifier qu\'un nom d\'utilisateur et son mot de passe sont valides.';
 $string['auth_imaphost'] = 'L\'adresse du serveur IMAP. Utiliser l\'adresse IP et non le nom de l\'ordinateur.';
 $string['auth_imapport'] = 'Numéro de port du serveur IMAP. Il s\'agit généralement de 143 ou 993.';
@@ -26,11 +33,13 @@ $string['auth_ldap_bind_pw'] = 'Mot de passe pour cette connexion';
 $string['auth_ldap_contexts'] = 'Liste des noeuds (contextes) de l\'annuaire LDAP, séparés par « ; », où les enregistrements des utilisateurs sont situés. Par exemple : « ou=Étudiants, o=Organisation, c=FR; ou=Professeurs, o=Organisation, c=FR ».';
 $string['auth_ldap_create_context'] = 'Si vous avez activé la création d\'utilisateur avec confirmation par courriel, vous devez spécifiez le contexte dans lequel ces utilisateurs seront créés.   Ces contextes doivent être différents des autres utilisateurs pour éviter des failles de sécurité. Vous n\'avez pas à ajouter ce contexte à ldap_context-variable, Moodle cherchera automatiquement les utilisateurs dans ce contexte.';
 $string['auth_ldap_creators'] = 'Liste des groupes dont les membres peuvent créer des cours. Il faut séparer les groupes par «,». Par exemple, «cn=professeurs,ou=personnel,o=college».';
-$string['auth_ldap_host_url'] = 'Indiquer le serveur LDAP sous form d\'URL comme ceci :<br />« ldap://ldap.organisation.fr/ »<br />ou :<br />« ldaps://ldap.organisation.fr/ »';
+$string['auth_ldap_host_url'] = 'Indiquer le serveur LDAP sous form d\'URL comme ceci :<br>« ldap://ldap.organisation.fr/ »<br>ou :<br>« ldaps://ldap.organisation.fr/ »';
 $string['auth_ldap_memberattribute'] = 'Caractériser les membres du groupe lorsque les utilisateurs font parti d\'un groupe. Par exemple : «membre».';
+$string['auth_ldap_objectclass'] = 'Le filtre utilisé pour rechercher/renommer des utilisateurs. On y mettra d\'habitude quelque chose comme objectClass=posixAccount. La valeur par défaut est objectClass=*, ce que retournera tous les objets du serveur LDAP.';
 $string['auth_ldap_search_sub'] = 'Mettre une valeur différente de 0 pour rechercher les enregistrements dans les sous-noeuds (sous-contextes).';
 $string['auth_ldap_update_userinfo'] = 'Mettre-à-jour les données des utilisateurs (prénom, nom, addresse, etc.) de Moodle depuis l\'annuaire LDAP. Lire « /auth/ldap/attr_mappings.php » pour avoir des informations sur la correspondance.';
 $string['auth_ldap_user_attribute'] = 'L\'attribut utilisé pour nommer et rechercher les utilisateurs. Habituellement « cn ».';
+$string['auth_ldap_version'] = 'La version du protocole LDAP que votre serveur utilise.';
 $string['auth_ldapdescription'] = 'Cette méthode permet l\'authentification auprès d\'un annuaire LDAP externe. Si les nom d\'utilisateur et mot de passe sont corrects, Moodle créera un nouvel enregistrement pour cet utilisateur dans sa base de données. Ce module peut récupérer les attributs de l\'enregistrement LDAP de l\'utilisateur afin de remplir certains champs dans Moodle. Lors des connexions suivantes, seuls les nom d\'utilisateur et mot de passe sont vérifiés.';
 $string['auth_ldapextrafields'] = 'Ces champs sont optionnels. Il vous est possible de remplir certains champs de Moodle avec des données provenant des <b>attributs de l\'annuaire LDAP</b>.<p>Si vous laissez ces champs vides, aucune donnée ne sera récupérée de l\'annuaire LDAP et les valeurs par défaut de Moodle seront utilisées. <p>Dans tous les cas, l\'utilisateur a la possibilité de modifier tous ces champs une fois connecté.';
 $string['auth_ldaptitle'] = 'Utiliser un serveur LDAP';
@@ -45,6 +54,7 @@ $string['auth_nonedescription'] = 'Les utilisateurs peuvent s\'enregistrer et cr
 $string['auth_nonetitle'] = 'Pas d\'authentification';
 $string['auth_pop3description'] = 'Cette méthode utilise un serveur POP3 pour vérifier qu\'un nom d\'utilisateur et son mot de passe sont valides.';
 $string['auth_pop3host'] = 'L\'adresse du serveur POP3. Utiliser l\'adresse IP et non le nom de la machine.';
+$string['auth_pop3mailbox'] = 'Nom de la boîte aux lettres vers laquelle Moodle tentera de connecter, d\'habitude « INBOX ».';
 $string['auth_pop3port'] = 'Numéro de port du serveur NNTP. Il s\'agit généralement de 110.';
 $string['auth_pop3title'] = 'Utiliser un serveur POP3';
 $string['auth_pop3type'] = 'Type de serveur. Si le serveur POP3 utilise « certificate security », choisir « pop3cert ».';
@@ -59,6 +69,7 @@ $string['chooseauthmethod'] = 'Choisir une méthode d\'authentification';
 $string['guestloginbutton'] = 'Bouton pour visiteur anonyme';
 $string['instructions'] = 'Instructions';
 $string['md5'] = 'Cryptage MD5';
+$string['parentlanguage'] = 'fr';
 $string['plaintext'] = 'Texte en clair';
 $string['showguestlogin'] = 'Vous pouvez choisir de montrer ou non le bouton de connexion en tant que visiteur anonyme sur la page de connexion.';
 
