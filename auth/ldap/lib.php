@@ -51,6 +51,11 @@ function auth_user_login ($username, $password) {
         return false;
     }
  
+    // CAS-supplied auth tokens override LDAP auth
+    if (AUTH_LDAP_NAME === 'cas' && $CFG->use_cas == 1) {
+        return cas_ldap_auth_user_login($username, $password);
+    }
+
     $ldapconnection = auth_ldap_connect();
 
     if ($ldapconnection) {
