@@ -54,7 +54,10 @@
                 $href_tag_begin = "<a class=\"autolink\" title=\"$title\" href=\"$CFG->wwwroot/mod/resource/view.php?id=$cm->id\">";
                 $currentname = $resource->name;                    
                 if ($currentname = trim($currentname)) {
-                    $text = resource_link_names($text,$currentname,$href_tag_begin, "</a>");
+                    //Only if the term is >2 lenght
+                    if (strlen($currentname) >2) {
+                        $text = resource_link_names($text,$currentname,$href_tag_begin, "</a>");
+                    }
                 }
             }
         }
