@@ -326,6 +326,11 @@ function cron() {
     
     if ($students = get_records_select('user_students', $select)) {
         foreach ($students as $student) {
+            if ($course = get_record('course', 'id', $student->course)) {
+                if (empty($course->enrolperiod)) {   // This overrides student timeend
+                    continue;
+                }
+            }
             unenrol_student($student->userid, $student->course);
         }
     }
