@@ -78,6 +78,9 @@
         foreach ($generalforums as $forum) {
             $count = count_records("forum_discussions", "forum", "$forum->id");
 
+            $forum->intro = forum_shorten_post($forum->intro);
+            replace_smilies($forum->intro);
+
             if ($forum->visible) {
                 $forumlink = "<a href=\"view.php?f=$forum->id\">$forum->name</a>";
             } else {
@@ -123,7 +126,8 @@
             foreach ($learningforums as $forum) {
                 $count = count_records("forum_discussions", "forum", "$forum->id");
     
-                $forum->intro = format_text(forum_shorten_post($forum->intro));
+                $forum->intro = forum_shorten_post($forum->intro);
+                replace_smilies($forum->intro);
     
                 if (!$forum->section) {     // some forums are in the "0" section
                     $forum->section = "";
