@@ -1568,6 +1568,7 @@ function print_header ($title='', $heading='', $navigation='', $focus='', $meta=
         }
     }
 
+
 /// Add the required stylesheets
     $stylesheetshtml = '';
     foreach ($CFG->stylesheets as $stylesheet) {
@@ -1582,6 +1583,13 @@ function print_header ($title='', $heading='', $navigation='', $focus='', $meta=
     } else {
         $home = false;
     }
+
+/// This is another ugly hack to make navigation elements available to print_footer later
+    $THEME->title      = $title;
+    $THEME->heading    = $heading;
+    $THEME->navigation = $navigation;
+    $THEME->button     = $button;
+    $THEME->menu       = $menu;
 
     if ($button == '') {
         $button = '&nbsp;';
@@ -1763,26 +1771,36 @@ function print_header_simple($title='', $heading='', $navigation='', $focus='', 
  * @todo Finish documenting this function
  */
 function print_footer($course=NULL, $usercourse=NULL) {
-    global $USER, $CFG;
+    global $USER, $CFG, $THEME;
 
 /// Course links
     if ($course) {
         if ($course == 'none') {          // Don't print any links etc
             $homelink = '';
             $loggedinas = '';
+            $home  = false;
         } else if ($course == 'home') {   // special case for site home page - please do not remove
             $course = get_site();
             $homelink  = '<a title="moodle '. $CFG->release .' ('. $CFG->version .')" href="http://moodle.org/" target="_blank">';
             $homelink .= '<br /><img width="100" height="30" src="pix/moodlelogo.gif" border="0" alt="moodlelogo" /></a>';
-            $homepage  = true;
+            $home  = true;
         } else {
             $homelink = '<a target="'.$CFG->framename.'" href="'.$CFG->wwwroot.
                         '/course/view.php?id='.$course->id.'">'.$course->shortname.'</a>';
+            $home  = false;
         }
     } else {
         $course = get_site();  // Set course as site course by default
         $homelink = '<a target="'.$CFG->framename.'" href="'.$CFG->wwwroot.'/">'.get_string('home').'</a>';
+        $home  = false;
     }
+
+/// Set up some other navigation links (passed from print_header by ugly hack)
+    $menu       = isset($THEME->menu) ? $THEME->menu : '';
+    $title      = isset($THEME->title) ? $THEME->title : '';
+    $button     = isset($THEME->button) ? $THEME->button : '';
+    $heading    = isset($THEME->heading) ? $THEME->heading : '';
+    $navigation = isset($THEME->navigation) ? $THEME->navigation : '';
 
 /// Set the user link if necessary
     if (!$usercourse and is_object($course)) {
@@ -1792,6 +1810,11 @@ function print_footer($course=NULL, $usercourse=NULL) {
     if (!isset($loggedinas)) {
         $loggedinas = user_login_string($usercourse, $USER);
     }
+
+    if ($loggedinas == $menu) {
+        $loggedinas = '';
+    }
+
 
 /// Include the actual footer file
 
