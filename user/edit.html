@@ -48,8 +48,11 @@ if (isadmin()) {
 	<td><P><? print_string("newpicture") ?>:</td>
 	<td>
     <INPUT type="hidden" name="MAX_FILE_SIZE" value="4000000">
-    <input type="file" name="imagefile" size=40> ( .jpg / .png ) <? helpbutton("picture", get_string("helppicture") ) ?>
-	<? formerr($err["imagefile"]) ?>
+    <input type="file" name="imagefile" size=40>
+    <? helpbutton("picture", get_string("helppicture"));
+       print_string("maxsize", "", display_size(get_max_upload_file_size())); 
+	   formerr($err["imagefile"]);
+    ?>
 	</td>
 </tr>
 <tr valign=top>

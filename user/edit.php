@@ -43,7 +43,6 @@
             $user = $usernew;
 
         } else {
-
 		    $timenow = time();
 
             if ($filename = valid_uploaded_file($imagefile)) { 
