@@ -1,18 +1,18 @@
 <p align="center"><b>Generalidades</b>
 
 <ol>
-	<LI>Una lección se compone de un número de <B>páginas</B>. 
+	<LI>Una lección se compone de un número de <B>páginas</B> y, opcionalmente, <B>tablas de rama</B>. 
 	<LI>Cada página contiene algún tipo de <B>contenido</B> y, por lo general, 
 	termina con una <B>pregunta</B>.
 	<LI>Cada página ofrece, por lo general, un número de <B>respuestas</B>. 
 	<LI>Cada respuesta puede contener un fragmento de texto que se despliega en el
 	caso de que se escoga esa opción. Este fragmento de texto se llama <B>resultado</B>.
 	<LI>Asociado a cada opción hay un <B>salto</B>. Este salto puede ser relativo 
-	--esta página, siguiente página-- o absoluto --especificando una de las páginas 
-	de la lección o el final de la lección.
+	-esta página, siguiente página- o absoluto -especificando una de las páginas 
+	de la lección o el final de la lección-.
 	<LI>Por defecto, la primera respuesta (desde el punto de vista del profesor) 
 	conduce a la <B>página siguiente</B> de la lección. Las otras respuestas conducen 
-	a la misma página. Es decir que si no escoge la primera respuesta, el alumno 
+	a la misma página. Es decir, que si no escoge la primera respuesta, el alumno 
 	regresa a la misma página de la lección.
 	<LI>La siguiente página es determinada por el <B>orden lógico</B> de la lección. 
 	Este orden se determina según el criterio del profesor. Para alterar este orden 
@@ -27,7 +27,7 @@
 	Es decir, la respuesta que el profesor ve en primer lugar no es necesariamente 
 	la que aparece en el primer lugar de la lista que ve el alumno. (Además, cada vez 
 	que se muestra un conjunto de respuestas, estas aparecen en diferente orden).
-	<LI>El número de respuestas varía de una página a otra. Por ejemplo, una página	
+	<LI>El número de respuestas puede variar de una página a otra. Por ejemplo, una página	
 	puede terminar con una pregunta del tipo verdadero/falso, mientras otras pueden 
 	tener preguntas donde aparece una respuesta correcta y tres distractoras.
 	<LI>Es posible crear páginas sin respuestas. Al estudiante se le muestra un 
@@ -37,13 +37,47 @@
 	respuestas <B>incorrectas</B> son las que conducen a la misma página, 
 	o a la página <I>anterior</I> en el orden lógico. Así, si <I>no</I> se cambian 
 	los saltos, la primera respuesta sería la correcta y las otras serían las incorrectas.
-	
 	<LI>Una pregunta puede tener más de una respuesta correcta. Por ejemplo: si dos 
 	de las respuestas conducen a la página siguiente, ambas respuestas se consideran 
 	correctas. (Aunque se muestra la misma página destino a los estudiantes, el texto 
 	del resultado puede ser diferente para cada una de las respuestas.)
 	<LI>El profesor ve la lección con las respuestas correctas subrayadas 
 	y con su Etiqueta de Respuesta.
+
+<li>Las <b>Tablas de rama</b> son simplemente páginas que tienen un conjunto de enlaces
+    a otras páginas de la lección. Normalmente una lección comienza con una tabla de rama
+	que actúa como <B>Tabla de Contenidos</B>.
+<li>Cada enlace de una tabla de rama tiene dos componentes: una descripción y el título
+    de la página de destino.
+<li>Una tabla de rama divide la lección en un conjunto de <B>ramas</B> (o secciones). Cada
+    rama puede contener varias páginas (usualmente referidas todas al mismo tema). El final
+	de una rama normalmente se señala con una página <B>Final de Rama</B>. Ésta es una página
+	especial que, por defecto, hace que el estudiante regrese a la tabla de rama precedente.
+	El &quot;retorno&quot; en una página Final de Rama puede modificarse, si así se desea,
+	editando la página.)
+<li>En una lección puede haber más de una tabla de rama. Por ejemplo, una lección podría
+    estructurarse de forma útil de modo que los puntos especializados fueran sub-ramas de las
+	ramas principales.
+<li>Es importante dar a los estudiantes un medio de terminar la lección. Esto puede hacerse
+    incluyendo un enlace de &quot;Finalizar Lección&quot; en la tabla de rama principal. Esta
+	acción saltaría a la página (imaginaria) <B>Final de Lección</B>. Otra opción consiste en usar
+	la última rama de la lección (aquí, el término &quot;última&quot; se usa en el sentido
+	de orden lógico) simplemente continuando hasta el fin de la lección, esto es, la lección
+	<I>no</I> termina con una página de Fin de Rama.
+<li>Cuando una lección incluye una o más tablas de rama, conviene ajustar el &quot;Número mínimo
+    de preguntas&quot; a un valor razonable. Así se ajusta el límite más bajo del número de
+	páginas vistas cuando se calcula la calificación. Si no se ajusta este parámetro, el estudiante
+	podría visitar una sola rama de la lección, contestar a todas las preguntas correctamente y
+	abandonar la lección habiendo obtenido la calificación máxima.
+<li>Además, cuando está presente una tabla de rama, el estudiante tiene la oportunidad de
+    volver a visitar la misma rama más de una vez. Sin embargo, la calificación se calcula
+	utilizando el número de respuestas <I>únicas</I> contestadas, de modo que contestar
+	repetidamente al mismo conjunto de preguntas no aumenta la calificación. (En realidad,
+	ocurre lo contrario: la calificación baja en la medida en que el número de páginas vistas
+	se utiliza como denominador cuando el cálculo de la calificación incluye las repeticiones).
+	Con el fin de proporcionar a los estudiantes una idea clara de su progreso en la lección,
+	se les muestran detalles de cuántas preguntas han contestado correctamente, el número de
+	páginas vistas y su calificación actual en cada página.
 	<LI>Se llega al <B>fin de la lección</B> saltando en forma explícita hasta allí, 
 	o saltando a la página siguiente desde la última página (orden lógico) de la lección.
 	Cuando el alumno llega al fin de la lección recibe un mensaje de felicitaciones 
