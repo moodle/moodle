@@ -731,7 +731,7 @@ function usergetdate($time, $timezone=99) {
     $timezone = get_user_timezone($timezone);
 
     if (abs($timezone) > 13) {    // Server time
-        return getdate($date);
+        return getdate($time);
     } 
     
     // There is no gmgetdate so we use gmdate instead
