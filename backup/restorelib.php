@@ -595,7 +595,7 @@
             //Calculate sortorder field
             $sortmax = get_record_sql('SELECT MAX(sortorder) AS max
                                        FROM ' . $CFG->prefix . 'course
-                                       WHERE category=' . $course->category) || 1000;
+                                       WHERE category=' . $course->category);
             if (!empty($sortmax->max)) {
                 $course->sortorder = $sortmax->max + 1;
                 unset($sortmax);
