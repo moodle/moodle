@@ -889,7 +889,7 @@ function ismember($groupid, $userid=0) {
         return !empty($USER->groupmember[$groupid]);
     }
 
-    return record_exists("group_members", "groupid", $groupid, "userid", $userid);
+    return record_exists("groups_members", "groupid", $groupid, "userid", $userid);
 }
 
 /**
@@ -937,7 +937,7 @@ function get_current_group($courseid, $full=false) {
     }
 
     if ($full) {
-        return get_record('group', 'id', $SESSION->currentgroup[$courseid]);
+        return get_record('groups', 'id', $SESSION->currentgroup[$courseid]);
     } else {
         return $SESSION->currentgroup[$courseid];
     }

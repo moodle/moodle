@@ -945,9 +945,9 @@ function get_user_info_from_db($field, $value) {
         }
     }
 
-    if ($groups = get_records("group_members", "userid", $user->id)) {
+    if ($groups = get_records("groups_members", "userid", $user->id)) {
         foreach ($groups as $group) {
-            $courseid = get_field("group", "courseid", "id", $group->id);
+            $courseid = get_field("groups", "courseid", "id", $group->id);
             $user->groupmember[$courseid] = $group->id;
         }
     }
@@ -1440,8 +1440,8 @@ function get_groups($courseid, $userid=0) {
     }
 
     return get_records_sql("SELECT DISTINCT g.*
-                              FROM {$CFG->prefix}group g,
-                                   {$CFG->prefix}group_members m 
+                              FROM {$CFG->prefix}groups g,
+                                   {$CFG->prefix}groups_members m 
                              WHERE g.courseid = '$courseid' $userselect ");
 }
 
@@ -1455,7 +1455,7 @@ function get_users_in_group($groupid) {
     global $CFG;
     return get_records_sql("SELECT DISTINCT u.*
                               FROM {$CFG->prefix}user u,
-                                   {$CFG->prefix}group_members m 
+                                   {$CFG->prefix}groups_members m 
                              WHERE m.groupid = '$groupid'
                                AND m.userid = u.id");
 }
@@ -1480,8 +1480,8 @@ function user_group($courseid, $userid) {
     global $CFG;
 
     return get_record_sql("SELECT g.*
-                             FROM {$CFG->prefix}group g,
-                                  {$CFG->prefix}group_members m
+                             FROM {$CFG->prefix}groups g,
+                                  {$CFG->prefix}groups_members m
                              WHERE g.courseid = '$courseid'
                                AND g.id = m.groupid
                                AND m.userid = '$userid'");

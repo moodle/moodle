@@ -311,7 +311,7 @@ function main_upgrade($oldversion=0) {
 
 
     if ($oldversion < 2003121600) {
-        execute_sql("CREATE TABLE {$CFG->prefix}group (
+        execute_sql("CREATE TABLE {$CFG->prefix}groups (
                         id SERIAL PRIMARY KEY,
                         courseid integer NOT NULL default '0',
                         name varchar(255) NOT NULL default '',
@@ -322,16 +322,16 @@ function main_upgrade($oldversion=0) {
                         timemodified integer NOT NULL default '0'
                      )");
     
-        execute_sql("CREATE INDEX {$CFG->prefix}group_idx ON {$CFG->prefix}group (courseid) ");
+        execute_sql("CREATE INDEX {$CFG->prefix}groups_idx ON {$CFG->prefix}groups (courseid) ");
     
-        execute_sql("CREATE TABLE {$CFG->prefix}group_members (
+        execute_sql("CREATE TABLE {$CFG->prefix}groups_members (
                         id SERIAL PRIMARY KEY,
                         groupid integer NOT NULL default '0',
                         userid integer NOT NULL default '0',
                         timeadded integer NOT NULL default '0'
                      )");
       
-        execute_sql("CREATE INDEX {$CFG->prefix}group_members_idx ON {$CFG->prefix}group_members (groupid) ");
+        execute_sql("CREATE INDEX {$CFG->prefix}groups_members_idx ON {$CFG->prefix}groups_members (groupid) ");
     }
 
     if ($oldversion < 2003122600) {

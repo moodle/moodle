@@ -136,7 +136,7 @@ CREATE TABLE `prefix_course_sections` (
 # Table structure for table `group`
 #
 
-CREATE TABLE `prefix_group` (
+CREATE TABLE `prefix_groups` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `courseid` int(10) unsigned NOT NULL default '0',
   `name` varchar(254) NOT NULL default '',
@@ -154,7 +154,7 @@ CREATE TABLE `prefix_group` (
 # Table structure for table `group_members`
 #
 
-CREATE TABLE `prefix_group_members` (
+CREATE TABLE `prefix_groups_members` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `groupid` int(10) unsigned NOT NULL default '0',
   `userid` int(10) unsigned NOT NULL default '0',

@@ -561,7 +561,7 @@ function main_upgrade($oldversion=0) {
     }
 
     if ($oldversion < 2003121600) {
-        modify_database("", "CREATE TABLE `prefix_group` (
+        modify_database("", "CREATE TABLE `prefix_groups` (
                                 `id` int(10) unsigned NOT NULL auto_increment,
                                 `courseid` int(10) unsigned NOT NULL default '0',
                                 `name` varchar(254) NOT NULL default '',
@@ -574,7 +574,7 @@ function main_upgrade($oldversion=0) {
                                 KEY `courseid` (`courseid`)
                               ) TYPE=MyISAM COMMENT='Each record is a group in a course.'; ");
 
-        modify_database("", "CREATE TABLE `prefix_group_members` (
+        modify_database("", "CREATE TABLE `prefix_groups_members` (
                                 `id` int(10) unsigned NOT NULL auto_increment,
                                 `groupid` int(10) unsigned NOT NULL default '0',
                                 `userid` int(10) unsigned NOT NULL default '0',

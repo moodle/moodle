@@ -79,7 +79,7 @@ CREATE TABLE prefix_course_sections (
    visible integer NOT NULL default '1'
 );
 
-CREATE TABLE prefix_group (
+CREATE TABLE prefix_groups (
    id SERIAL PRIMARY KEY,
    courseid integer NOT NULL default '0',
    name varchar(255) NOT NULL default '',
@@ -90,16 +90,16 @@ CREATE TABLE prefix_group (
    timemodified integer NOT NULL default '0'
 );
 
-CREATE INDEX prefix_group_idx ON prefix_group (courseid);
+CREATE INDEX prefix_groups_idx ON prefix_groups (courseid);
 
-CREATE TABLE prefix_group_members (
+CREATE TABLE prefix_groups_members (
    id SERIAL PRIMARY KEY,
    groupid integer NOT NULL default '0',
    userid integer NOT NULL default '0',
    timeadded integer NOT NULL default '0'
 );
 
-CREATE INDEX prefix_group_members_idx ON prefix_group_members (groupid);
+CREATE INDEX prefix_groups_members_idx ON prefix_groups_members (groupid);
 
 CREATE TABLE prefix_log (
    id SERIAL PRIMARY KEY,
