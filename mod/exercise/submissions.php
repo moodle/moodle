@@ -143,19 +143,13 @@
 
 		if (!isteacher($course->id)) {
 			error("Only teachers can look at this page");
-			}
-		if (empty($_GET['order'])) {
-			$order = "name";
-			}
-		else {
-			$order = $_GET['order'];
-			}
-		
+		}
+	
         echo "<p><small>Exercise Version-> $module->version</small></p>";
-		exercise_list_submissions_for_admin($exercise, $order);
+		exercise_list_submissions_for_admin($exercise);
 		print_continue("view.php?id=$cm->id");
 		
-		}
+	}
 	
 
 	/******************* admin update title ************************************/

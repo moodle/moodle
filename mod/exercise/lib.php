@@ -626,7 +626,7 @@ function exercise_get_user_assessments($exercise, $user) {
 function exercise_get_user_submissions($exercise, $user) {
 
 function exercise_list_all_ungraded_assessments($exercise) {
-function exercise_list_submissions_for_admin($exercise, $order) {
+function exercise_list_submissions_for_admin($exercise) {
 function exercise_list_teacher_assessments($exercise, $user) {
 function exercise_list_teacher_submissions($exercise, $user, $reassess) {
 function exercise_list_unassessed_student_submissions($exercise, $user) {
@@ -1330,7 +1330,7 @@ function exercise_list_all_ungraded_assessments($exercise) {
 	
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
-function exercise_list_submissions_for_admin($exercise, $order) {
+function exercise_list_submissions_for_admin($exercise) {
 	// list the teacher sublmissions first
 	global $CFG, $EXERCISE_FWEIGHTS, $THEME, $USER;
 	
@@ -1482,73 +1482,67 @@ function exercise_list_submissions_for_admin($exercise, $order) {
 			print_table($table);
 			echo "<p align=\"center\">".get_string("noteonstudentassessments", "exercise")."</p>\n";
 		}
-	}
+    $elapsed = time() - $timenow;
+	echo "<p>Elapsed time: $elapsed\n";
+    }
 
 	// now the sudent submissions
 	unset($table);
-	switch ($order) {
-		case "title" :
-			$table->head = array("<a href=\"submissions.php?action=adminlist&id=$cm->id&order=name\">".
-				 get_string("submittedby", "exercise")."</a>", get_string("title", "exercise"), 
-                 get_string("submitted", "exercise"), get_string("action", "exercise"));
-			break;
-		case "name" :
-			$table->head = array (get_string("submittedby", "exercise"), 
-				"<a href=\"submissions.php?action=adminlist&id=$cm->id&order=title\">".
-				get_string("title", "exercise")."</a>", get_string("submitted", "exercise"), 
-                get_string("action", "exercise"));
-			break;
-		}
-	$table->align = array ("left", "left", "left", "left");
-	$table->size = array ("*", "*", "*", "*");
-	$table->cellpadding = 2;
-	$table->cellspacing = 0;
+	if ($users) {
+        $table->head = array (get_string("submittedby", "exercise"), get_string("title", "exercise"),
+            get_string("submitted", "exercise"), get_string("action", "exercise"));
+        $table->align = array ("left", "left", "left", "left");
+        $table->size = array ("*", "*", "*", "*");
+        $table->cellpadding = 2;
+        $table->cellspacing = 0;
 
-	if ($submissions = exercise_get_student_submissions($exercise, $order)) {
-		foreach ($submissions as $submission) {
-			if (!$user = get_record("user", "id", $submission->userid)) {
-				error("exercise_list_submissions_for_admin: failure to get user record");
-				}
-			$action = "<a href=\"submissions.php?action=adminamendtitle&id=$cm->id&sid=$submission->id\">".
-				get_string("amendtitle", "exercise")."</a>";
-			// has teacher already assessed this submission
-			if ($assessment = get_record_select("exercise_assessments", "submissionid = $submission->id
-					AND userid = $USER->id")) {
-				$curtime = time();
-				if (($curtime - $assessment->timecreated) > $CFG->maxeditingtime) {
-					$action .= " | <a href=\"assessments.php?action=assesssubmission&id=$cm->id&sid=$submission->id\">".
-						get_string("reassess", "exercise")."</a>";
-					}
-				else { // there's still time left to edit...
-					$action .= " | <a href=\"assessments.php?action=assesssubmission&id=$cm->id&sid=$submission->id\">".
-						get_string("edit", "exercise")."</a>";
-					}
-				}
-			else { // user has not assessed this submission
-				$action .= " | <a href=\"assessments.php?action=assesssubmission&id=$cm->id&sid=$submission->id\">".
-					get_string("assess", "exercise")."</a>";
-				}
-			if ($nassessments = exercise_count_assessments($submission)) {
-				$action .= " | <a href=\"assessments.php?action=adminlist&id=$cm->id&sid=$submission->id\">".
-					get_string("view", "exercise")." ($nassessments)</a>";
-				}
-			$action .= " | <a href=\"submissions.php?action=adminconfirmdelete&id=$cm->id&sid=$submission->id\">".
-				get_string("delete", "exercise")."</a>";
-			$title = $submission->title;
-			if ($submission->resubmit) {
-				$title .= "*";
-				}
-			$table->data[] = array("$user->firstname $user->lastname", $title.
-				" ".exercise_print_submission_assessments($exercise, $submission), 
-                userdate($submission->timecreated), $action);
-			}
-		print_heading(get_string("studentsubmissions", "exercise", $course->student)." [".
-                count($submissions)."]", "center");
-		print_table($table);
-		echo "<center><p>".get_string("resubmitnote", "exercise", $course->student)."</p>\n";
-		echo "<p>".get_string("allgradeshaveamaximumof", "exercise", $exercise->grade)."</p></center>\n";
-		}
-	}
+        foreach ($users as $user) {
+            if ($submissions = exercise_get_user_submissions($exercise, $user)) {
+                foreach ($submissions as $submission) {
+                    $action = "<a href=\"submissions.php?action=adminamendtitle&id=$cm->id&sid=$submission->id\">".
+                        get_string("amendtitle", "exercise")."</a>";
+                    // has teacher already assessed this submission
+                    if ($assessment = get_record_select("exercise_assessments", 
+                                "submissionid = $submission->id AND userid = $USER->id")) {
+                        $curtime = time();
+                        if (($curtime - $assessment->timecreated) > $CFG->maxeditingtime) {
+                            $action .= " | <a href=\"assessments.php?action=assesssubmission&id=$cm->id&sid=$submission->id\">".
+                                get_string("reassess", "exercise")."</a>";
+                        }
+                        else { // there's still time left to edit...
+                            $action .= " | <a href=\"assessments.php?action=assesssubmission&id=$cm->id&sid=$submission->id\">".
+                                get_string("edit", "exercise")."</a>";
+                        }
+                    }
+                    else { // user has not assessed this submission
+                        $action .= " | <a href=\"assessments.php?action=assesssubmission&id=$cm->id&sid=$submission->id\">".
+                            get_string("assess", "exercise")."</a>";
+                    }
+                    if ($nassessments = exercise_count_assessments($submission)) {
+                        $action .= " | <a href=\"assessments.php?action=adminlist&id=$cm->id&sid=$submission->id\">".
+                            get_string("view", "exercise")." ($nassessments)</a>";
+                    }
+                    $action .= " | <a href=\"submissions.php?action=adminconfirmdelete&id=$cm->id&sid=$submission->id\">".
+                        get_string("delete", "exercise")."</a>";
+                    $title = $submission->title;
+                    if ($submission->resubmit) {
+                        $title .= "*";
+                    }
+                    $table->data[] = array("$user->firstname $user->lastname", $title.
+                            " ".exercise_print_submission_assessments($exercise, $submission), 
+                            userdate($submission->timecreated), $action);
+                }
+            }
+        }
+        print_heading(get_string("studentsubmissions", "exercise", $course->student)." [".
+                  count($submissions)."]", "center");
+        print_table($table);
+        echo "<center><p>".get_string("resubmitnote", "exercise", $course->student)."</p>\n";
+        echo "<p>".get_string("allgradeshaveamaximumof", "exercise", $exercise->grade)."</p></center>\n";
+    }
+	$elapsed = time() - $timenow;
+	echo "<p>Elapsed time: $elapsed\n";
+}
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////

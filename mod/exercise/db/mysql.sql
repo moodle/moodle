@@ -36,7 +36,7 @@ CREATE TABLE `prefix_exercise_submissions` (
   `mailed` tinyint(3) unsigned NOT NULL default '0',
   `isexercise` tinyint(3) unsigned NOT NULL default '0',
    PRIMARY KEY  (`id`),
-  INDEX `title` (`title`) 
+   INDEX `userid` (`userid`) 
 ) COMMENT='Info about submitted work from teacher and students';
 # --------------------------------------------------------
 
@@ -56,7 +56,9 @@ CREATE TABLE `prefix_exercise_assessments` (
   `mailed` tinyint(2) unsigned NOT NULL default '0',
   `generalcomment` text NOT NULL,
   `teachercomment` text NOT NULL,
-  PRIMARY KEY  (`id`)
+   PRIMARY KEY  (`id`),
+   INDEX (`submissionid`),
+   INDEX (`userid`) 
   ) COMMENT='Info about assessments by teacher and students';
 # --------------------------------------------------------
 
@@ -102,7 +104,8 @@ CREATE TABLE `prefix_exercise_grades` (
   `elementno` int(10) unsigned NOT NULL default '0',
   `feedback` text NOT NULL default '',
   `grade` tinyint(3) NOT NULL default '0',
-  PRIMARY KEY  (`id`)
+  PRIMARY KEY  (`id`),
+  INDEX (`assessmentid`)
 ) COMMENT='Info about individual grades given to each element';
 # --------------------------------------------------------
 

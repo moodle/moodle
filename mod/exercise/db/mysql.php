@@ -6,6 +6,13 @@ function exercise_upgrade($oldversion) {
 
     global $CFG;
 
+    if ($oldversion < 2003111400) {
+		execute_sql(" ALTER TABLE `{$CFG->prefix}exercise_submissions` ADD INDEX (`userid`)");
+		execute_sql(" ALTER TABLE `{$CFG->prefix}exercise_submissions` DROP INDEX `title`");
+		execute_sql(" ALTER TABLE `{$CFG->prefix}exercise_assessments` ADD INDEX (`submissionid`)");
+		execute_sql(" ALTER TABLE `{$CFG->prefix}exercise_submissions` ADD INDEX (`userid`)");
+		execute_sql(" ALTER TABLE `{$CFG->prefix}exercise_grades` ADD INDEX (`assessmentid`)");
+		}
  		
     return true;
 }
