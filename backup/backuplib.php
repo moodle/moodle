@@ -560,6 +560,8 @@
             fwrite ($bf,full_tag("SHOWRECENT",3,false,$course->showrecent));
             fwrite ($bf,full_tag("MAXBYTES",3,false,$course->maxbytes));
             fwrite ($bf,full_tag("SHOWREPORTS",3,false,$course->showreports));
+            fwrite ($bf,full_tag("GROUPMODE",3,false,$course->groupmode));
+            fwrite ($bf,full_tag("GROUPMODEFORCE",3,false,$course->groupmodeforce));
             fwrite ($bf,full_tag("MARKER",3,false,$course->marker));
             fwrite ($bf,full_tag("VISIBLE",3,false,$course->visible));
             fwrite ($bf,full_tag("TIMECREATED",3,false,$course->timecreated));
