@@ -97,7 +97,9 @@
     $strsavechanges = get_string("savechanges");
     $strbacktoquiz = get_string("backtoquiz", "quiz");
 
-    $streditingquiz = get_string("editingquiz", "quiz");
+    $streditingquiz = get_string(isset($modform->instance) ? "editingquiz"
+                                                           : "editquestions",
+                                 "quiz");
     $strcreatemultiple = get_string("createmultiple", "quiz");
 
     print_header("$course->shortname: $strcreatemultiple", "$course->shortname: $strcreatemultiple",

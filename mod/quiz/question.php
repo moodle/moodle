@@ -48,7 +48,9 @@
         error("You can't modify these questions!");
     }
 
-    $streditingquiz = get_string("editingquiz", "quiz");
+    $streditingquiz = get_string(isset($modform->instance) ? "editingquiz"
+                                                           : "editquestions",
+                                 "quiz");
     $streditingquestion = get_string("editingquestion", "quiz");
 
     print_header("$course->shortname: $streditingquestion", "$course->shortname: $streditingquestion",

@@ -1273,7 +1273,7 @@ function quiz_print_question_list($questionlist, $grades) {
 }
 
 
-function quiz_print_cat_question_list($categoryid) {
+function quiz_print_cat_question_list($categoryid, $quizselected=true) {
 // Prints a form to choose categories
 
     global $THEME, $QUIZ_QUESTION_TYPE;
@@ -1297,9 +1297,11 @@ function quiz_print_cat_question_list($categoryid) {
         echo "<p align=center><b>";
         print_string("selectcategoryabove", "quiz");
         echo "</b></p>";
-        echo "<p>";
-        print_string("addingquestions", "quiz");
-        echo "</p>";
+        if ($quizselected) {
+            echo "<p>";
+            print_string("addingquestions", "quiz");
+            echo "</p>";
+        }
         return;
     }
 
@@ -1343,20 +1345,26 @@ function quiz_print_cat_question_list($categoryid) {
         return;
     }
 
-    $canedit = isteacher($category->course);
+    $canedit = isteacheredit($category->course);
 
     echo "<FORM METHOD=post ACTION=edit.php>";
     echo "<TABLE BORDER=0 CELLPADDING=5 CELLSPACING=2 WIDTH=\"100%\">";
-    echo "<TR><TH width=\"*\" NOWRAP>$strselect</TH><TH width=\"100%\" align=left NOWRAP>$strquestionname</TH><TH WIDTH=\"*\" NOWRAP>$strtype</TH>";
+    echo "<TR>";
+    if ($quizselected) {
+        echo "<TH width=\"*\" NOWRAP>$strselect</TH>";
+    }
+    echo "<TH width=\"100%\" align=left NOWRAP>$strquestionname</TH><TH WIDTH=\"*\" NOWRAP>$strtype</TH>";
     if ($canedit) {
         echo "<TH width=\"*\" NOWRAP>$stredit</TH>";
     }
     echo "</TR>";
     foreach ($questions as $question) {
         echo "<TR BGCOLOR=\"$THEME->cellcontent\">";
-        echo "<TD ALIGN=CENTER>";
-        echo "<INPUT TYPE=CHECKBOX NAME=q$question->id VALUE=\"1\">";
-        echo "</TD>";
+        if ($quizselected) {
+            echo "<TD ALIGN=CENTER>";
+            echo "<INPUT TYPE=CHECKBOX NAME=q$question->id VALUE=\"1\">";
+            echo "</TD>";
+        }
         echo "<TD>".$question->name."</TD>";
         echo "<TD ALIGN=CENTER>";
         quiz_print_question_icon($question);
@@ -1371,11 +1379,13 @@ function quiz_print_cat_question_list($categoryid) {
         }
         echo "</TR>";
     }
-    echo "<TR><TD COLSPAN=3>";
-    echo "<INPUT TYPE=submit NAME=add VALUE=\"<< $straddselectedtoquiz\">";
-    //echo "<INPUT TYPE=submit NAME=delete VALUE=\"XX Delete selected\">";
-    echo "<INPUT type=button onclick=\"checkall()\" value=\"$strselectall\">";
-    echo "</TD></TR>";
+    if ($quizselected) {
+        echo "<TR><TD COLSPAN=3>";
+        echo "<INPUT TYPE=submit NAME=add VALUE=\"<< $straddselectedtoquiz\">";
+        //echo "<INPUT TYPE=submit NAME=delete VALUE=\"XX Delete selected\">";
+        echo "<INPUT type=button onclick=\"checkall()\" value=\"$strselectall\">";
+        echo "</TD></TR>";
+    }
     echo "</TABLE>";
     echo "</FORM>";
 }

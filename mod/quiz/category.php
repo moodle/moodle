@@ -34,7 +34,9 @@
     $strsavechanges = get_string("savechanges");
     $strbacktoquiz = get_string("backtoquiz", "quiz");
 
-    $streditingquiz = get_string("editingquiz", "quiz");
+    $streditingquiz = get_string(isset($modform->instance) ? "editingquiz"
+                                                           : "editquestions",
+                                 "quiz");
     $streditcategories = get_string("editcategories", "quiz");
 
     print_header("$course->shortname: $streditcategories", "$course->shortname: $streditcategories",

@@ -19,14 +19,23 @@
 // Print the header
 
     $strquizzes = get_string("modulenameplural", "quiz");
+    $streditquestions = isteacheredit($course->id)
+                        ? "<form target=\"_parent\" method=\"get\" "
+                           ." action=\"$CFG->wwwroot/mod/quiz/edit.php\">"
+                           ."<input type=\"hidden\" name=\"courseid\" "
+                           ." value=\"$course->id\" />"
+                           ."<input type=\"submit\" "
+                           ." value=\"".get_string("editquestions", "quiz")."\" /></form>"
+
+                        : "";
     $strquiz  = get_string("modulename", "quiz");
 
     if ($course->category) {
         $navigation = "<A HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> ->";
     }
 
-    print_header("$course->shortname: $strquizzes", "$course->fullname", "$navigation $strquizzes", 
-                 "", "", true, "", navmenu($course));
+    print_header("$course->shortname: $strquizzes", "$course->fullname", "$navigation $strquizzes",
+                 "", "", true, $streditquestions, navmenu($course));
 
 // Get all the appropriate data
 

@@ -21,7 +21,9 @@
         error("Only the teacher can import quiz questions!");
     }
 
-    $streditingquiz = get_string("editingquiz", "quiz");
+    $streditingquiz = get_string(isset($modform->instance) ? "editingquiz"
+                                                           : "editquestions",
+                                 "quiz");
     $strimportquestions = get_string("importquestions", "quiz");
     $strquestions = get_string("questions", "quiz");
 

@@ -64,6 +64,7 @@ $string['editingrandom'] = 'Editing a Random Question';
 $string['editingrandomsamatch'] = 'Editing a Random Short-Answer Matching question';
 $string['editingshortanswer'] = 'Editing a Short-Answer question';
 $string['editingtruefalse'] = 'Editing a True/False question';
+$string['editquestions'] = 'Edit questions';
 $string['false'] = 'False';
 $string['feedback'] = 'Feedback';
 $string['fileformat'] = 'File format';

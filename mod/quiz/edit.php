@@ -5,6 +5,8 @@
 
     require_login();
 
+    optional_variable($courseid);
+
     if (empty($destination)) {
         $destination = "";
     }
@@ -16,6 +18,12 @@
         if (empty($modform->name) or empty($modform->intro)) {
             error(get_string("filloutallfields"), $_SERVER["HTTP_REFERER"]);
         }
+
+        $SESSION->modform = $modform;    // Save the form in the current session
+
+    } else if ($courseid) { // Page retrieve through "Edit Questions" link - no quiz selected
+        $modform->course = $courseid;
+        unset($modform->instance);
 
         $SESSION->modform = $modform;    // Save the form in the current session
 
@@ -34,11 +42,13 @@
 
     require_login($course->id);
 
-    if (!isteacher($course->id)) {
+    if (!isteacheredit($course->id)) {
         error("You can't modify this course!");
     }
 
-    if (empty($modform->grades)) {  // Construct an array to hold all the grades.
+    if (isset($modform->instance)
+        && empty($modform->grades))  // Construct an array to hold all the grades.
+    {
         $modform->grades = quiz_get_all_question_grades($modform->questions, $modform->instance);
     }
 
@@ -149,7 +159,9 @@
 
     $SESSION->modform = $modform;
 
-    $strediting = get_string("editingquiz", "quiz");
+    $strediting = get_string(isset($modform->instance) ? "editingquiz"
+                                                       : "editquestions",
+                             "quiz");
     $strname    = get_string("name");
 
     print_header("$course->shortname: $strediting", "$course->shortname: $strediting",
@@ -159,21 +171,23 @@
 
     echo "<TABLE BORDER=0 WIDTH=\"100%\" CELLPADDING=2 CELLSPACING=0>";
     echo "<TR><TD WIDTH=50% VALIGN=TOP>";
-        print_simple_box_start("CENTER", "100%", $THEME->cellcontent2);
-        print_heading($modform->name);
-        quiz_print_question_list($modform->questions, $modform->grades); 
-        ?>
-        <CENTER>
-        <P>&nbsp;</P>
-        <FORM  NAME=theform METHOD=post ACTION=<?php echo $modform->destination ?>>
-        <INPUT TYPE="hidden" NAME=course  VALUE="<?php  p($modform->course) ?>">
-        <INPUT TYPE="submit" VALUE="<?php  print_string("savequiz", "quiz") ?>">
-        <INPUT type="submit" name=cancel value="<?php  print_string("cancel") ?>">
-        </FORM>
-        </CENTER>
-        <?php
-        print_simple_box_end();
-    echo "</TD><TD VALIGN=top WIDTH=50%>";
+        if (isset($modform->instance)) {
+            print_simple_box_start("CENTER", "100%", $THEME->cellcontent2);        
+            print_heading($modform->name);
+            quiz_print_question_list($modform->questions, $modform->grades); 
+            ?>
+            <CENTER>
+            <P>&nbsp;</P>
+            <FORM  NAME=theform METHOD=post ACTION=<?php echo $modform->destination ?>>
+            <INPUT TYPE="hidden" NAME=course  VALUE="<?php  p($modform->course) ?>">
+            <INPUT TYPE="submit" VALUE="<?php  print_string("savequiz", "quiz") ?>">
+            <INPUT type="submit" name=cancel value="<?php  print_string("cancel") ?>">
+            </FORM>
+            </CENTER>
+            <?php
+            print_simple_box_end();
+            echo "</TD><TD VALIGN=top WIDTH=50%>";
+        }
         print_simple_box_start("CENTER", "100%", $THEME->cellcontent2);
         quiz_print_category_form($course, $modform->category);
         print_simple_box_end();
@@ -181,10 +195,15 @@
         print_spacer(5,1);
 
         print_simple_box_start("CENTER", "100%", $THEME->cellcontent2);
-        quiz_print_cat_question_list($modform->category);
+        quiz_print_cat_question_list($modform->category,
+                                     isset($modform->instance));
         print_simple_box_end();
     echo "</TD></TR>";
     echo "</TABLE>";
+
+    if (false == isset($modform->instance)) {
+        print_continue("index.php?id=$modform->course");
+    }
 
     print_footer($course);
 ?>
