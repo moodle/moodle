@@ -174,7 +174,7 @@
                 if (get_user_preferences('message_beepnewmessage', 0)) {
                     $playbeep = true;
                 }
-                echo 'parent.messages.scroll(1,5000000);\\n';
+                echo 'parent.messages.scroll(1,5000000);'."\n";
             }
 
             // Update the info pane, but only if the data there is getting too old
