@@ -119,6 +119,10 @@ Backup Details:
       - Build a configuration inteface..........................DONE
       - Create the script.......................................IN PROGRESS
       - Integrate it in cron....................................NOT EXISTS
+   - Select manually the desired activities to backup...........NOT EXISTS
+      - Modify the backup frontend..............................NOT EXISTS
+      - Modify the backup of course_sections and course_modules.NOT EXISTS
+      - Modify every module backuplib to work properly..........NOT EXISTS
 
 Restore Details:
 ===============
