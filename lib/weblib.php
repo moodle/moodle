@@ -395,7 +395,7 @@ function choose_from_menu ($options, $name, $selected="", $nothing="choose", $sc
     if ($nothing) {
         $output .= "   <option value=\"$nothingvalue\"\n";
         if ($nothingvalue === $selected) {
-            $output .= " selected=\"true\"";
+            $output .= " selected=\"selected\"";
         }
         $output .= ">$nothing</option>\n";
     }
@@ -403,7 +403,7 @@ function choose_from_menu ($options, $name, $selected="", $nothing="choose", $sc
         foreach ($options as $value => $label) {
             $output .= "   <option value=\"$value\"";
             if ($value == $selected) {
-                $output .= " selected=\"true\"";
+                $output .= " selected=\"selected\"";
             }
             if ($label === "") {
                 $output .= ">$value</option>\n";

@@ -22,31 +22,31 @@ if (isadmin()) {
     if ($adminself || is_internal_auth($user->auth) ){
         echo "<td><input type=\"text\" name=\"username\" size=\"20\" value=\"";
         p($user->username);
-        echo "\"/>";
+        echo "\" />";
         if (isset($err["username"])) formerr($err["username"]);
     } else {
         echo "<td>";
         p($user->username);
         echo "<input type=\"hidden\" name=\"username\" value=\"";
         p($user->username);
-        echo "\"/>";
+        echo "\" />";
     }
     echo "</td>";
-    echo "</tr>";
+    echo "</tr>\n";
 
     if ($adminself || is_internal_auth($user->auth) ){
         echo "<tr valign=\"top\">";
         echo "<td align=\"right\"><p>".get_string("newpassword").":</p></td>";
         echo "<td><input type=\"text\" name=\"newpassword\" size=\"20\" value=\"";
         if (isset($user->newpassword)) p($user->newpassword);
-            echo "\"/>";
+            echo "\" />";
         if (isset($err["newpassword"])) {
             formerr($err["newpassword"]);
         } else if (empty($user->newpassword)) {
             echo " (".get_string("leavetokeep").")";
         }
         echo "</td>";
-        echo "</tr>";
+        echo "</tr>\n";
         echo "<tr><td colspan=\"2\"><hr /></td></tr>";
     }
 }

@@ -147,14 +147,14 @@
             print_header("$course->shortname: $streditmyprofile", "$course->fullname: $streditmyprofile",
                         "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> 
                         -> <a href=\"index.php?id=$course->id\">$strparticipants</a>
-                        -> <a href=\"view.php?id=$user->id&course=$course->id\">$userfullname</a> 
+                        -> <a href=\"view.php?id=$user->id&amp;course=$course->id\">$userfullname</a> 
                         -> $streditmyprofile", "");
         } else {
             if (isset($USER->newadminuser)) {
                 print_header();
             } else {
                 print_header("$course->shortname: $streditmyprofile", "$course->fullname",
-                             "<a href=\"view.php?id=$user->id&course=$course->id\">$userfullname</a> 
+                             "<a href=\"view.php?id=$user->id&amp;course=$course->id\">$userfullname</a> 
                               -> $streditmyprofile", "");
             }
         }
