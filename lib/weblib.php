@@ -1813,7 +1813,7 @@ function print_footer($course=NULL, $usercourse=NULL) {
     }
 
     if ($loggedinas == $menu) {
-        $loggedinas = '';
+        $menu = '';
     }
 
 
