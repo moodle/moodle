@@ -595,6 +595,20 @@ function create_user_record($username, $password) {
     return false;
 }
 
+
+function guest_user() {
+    global $CFG;
+
+    if ($newuser = get_record("user", "username", "guest")) {
+        $newuser->loggedin = true;
+        $newuser->confirmed = 1;
+        $newuser->site = $CFG->wwwroot;
+        $newuser->lang = $CFG->lang;
+    }
+
+    return $newuser;
+}
+
 function authenticate_user_login($username, $password) {
 /// Given a username and password, this function looks them 
 /// up using the currently selected authentication mechanism,
