@@ -62,6 +62,10 @@ th {
     background-color:#AAFFAA; /* highlight */
 }
 
+.highlight2 {
+    color:#AA0000; /* highlight missing terms in forum search */
+}
+
 /* Alternate rows even */
 .r0 {  
 }
