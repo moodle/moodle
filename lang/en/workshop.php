@@ -129,6 +129,7 @@ $string['newgradings'] = 'New Gradings';
 $string['newsubmissions'] = 'New Submissions';
 $string['noassessments'] = 'No Assessments';
 $string['noassessmentsdone'] = 'No Assessments Done';
+$string['noattachments'] = 'No Attachments';
 $string['nosubmission'] = 'No Submission';
 $string['nosubmissionsavailableforassessment'] = 'No Submissions available for assessment';
 $string['notavailable'] = 'Not Available';
