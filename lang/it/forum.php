@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.0.8.1 (2003011200)
+      // forum.php - created with Moodle 1.0.9 Beta 1 (2003051600)
 
 
 $string['addanewdiscussion'] = "Aggiungi un nuovo argomento di discussione";
@@ -19,6 +19,7 @@ $string['deleteddiscussion'] = "L'argomento di discussione è stato cancellato.";
 $string['deletedpost'] = "Il post è stato cancellato.";
 $string['deletesure'] = "Sei sicuro di voler cancellare questo post?";
 $string['discussion'] = "Discussione";
+$string['discussionmoved'] = "Questa discussione é stata spostata in '\$a'";
 $string['discussions'] = "Discussioni";
 $string['discussionsstartedby'] = "Discussione iniziata da \$a";
 $string['discussthistopic'] = "Discuti questo argomento";
@@ -41,6 +42,7 @@ $string['inforum'] = "in \$a";
 $string['intronews'] = "Annunci e news di carattere generale";
 $string['introsocial'] = "Un forum aperto per dialogare su qualsiasi argomento di tuo interesse.";
 $string['introteacher'] = "Un forum per insegnanti solo per annotazioni e discussioni.";
+$string['lastpost'] = "Ultimo post";
 $string['learningforums'] = "Forum per l'apprendimento";
 $string['maxtimehaspassed'] = "Spiacenti ma il tempo massimo concesso per editare questo post (\$a) è trascorso!";
 $string['message'] = "Messaggio";
@@ -51,6 +53,7 @@ $string['modethreaded'] = "Mostra le repliche in formato per oggetto";
 $string['modulename'] = "Forum";
 $string['modulenameplural'] = "Forums";
 $string['more'] = "ancora";
+$string['movethisdiscussionto'] = "Sposta la discussione in...";
 $string['namenews'] = "Forum formato News";
 $string['namesocial'] = "Forum formato Relazionale";
 $string['nameteacher'] = "Forum Insegnanti";
@@ -70,12 +73,12 @@ $string['openmode2'] = "Discussioni e risposte sono permesse";
 $string['parentofthispost'] = "Relativo a questo post";
 $string['postadded'] = "Il tuo messaggio è stato aggiunto con successo.<P>Hai \$a per editarlo se desideri apportare delle modifiche.";
 $string['postincontext'] = "Vedi questo messaggio nel contesto";
-$string['postmailinfo'] = "Questa è una copia del messaggio postato su \$a .
-
+$string['postmailinfo'] = "Questa è una copia del messaggio postato su \$a .
 Per aggiungere la tua risposta via internet, clicca su questo link:";
 $string['postrating1'] = "Le esposizioni in genere, sono INDIPENDENTI dai saperi";
 $string['postrating2'] = "Equamente indipendenti e connesse";
 $string['postrating3'] = "Le esposizioni in genere, sono CONNESSE ai saperi";
+$string['posts'] = "Posts";
 $string['postupdated'] = "Il tuo post è stato aggiornato";
 $string['processingpost'] = "Trattamento del post \$a";
 $string['rate'] = "Vota";
@@ -83,6 +86,7 @@ $string['ratings'] = "Voti";
 $string['ratingssaved'] = "Voti archiviati";
 $string['re'] = "Re:";
 $string['readtherest'] = "Leggi il resto dell'argomento";
+$string['replies'] = "Repliche";
 $string['repliesmany'] = "\$a risposte al momento";
 $string['repliesone'] = "\$a risposta al momento";
 $string['reply'] = "Rispondi";
@@ -92,12 +96,16 @@ $string['searchresults'] = "Risultati delle ricerche";
 $string['sendinratings'] = "Aggiungi alle mie ultime valutazioni";
 $string['showsubscribers'] = "Mostra chi è iscritto";
 $string['singleforum'] = "Una singola discussione semplice";
+$string['startedby'] = "Iniziato da";
 $string['subject'] = "Soggetto";
 $string['subscribe'] = "Iscriviti a questo forum";
 $string['subscribed'] = "Iscritto";
 $string['subscribers'] = "Iscritti";
 $string['subscribersto'] = "Iscritti a '\$a'";
+$string['subscription'] = "Iscrizione";
+$string['subscriptions'] = "Iscrizioni";
 $string['unsubscribe'] = "Cancella la tua iscrizione da questo forum";
+$string['unsubscribed'] = "Iscrizione cancellata";
 $string['youratedthis'] = "Hai già votato questo";
 $string['yournewtopic'] = "Il tuo nuovo argomento di discussione";
 $string['yourreply'] = "La tua risposta";

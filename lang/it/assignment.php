@@ -1,9 +1,16 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.0.8.1 (2003011200)
+      // assignment.php - created with Moodle 1.0.9 Beta 1 (2003051600)
 
 
 $string['allowresubmit'] = "Permettere di sottomettere più volte";
 $string['assignmentdetails'] = "Dettaglio compiti";
+$string['assignmentmail'] = "\$a->teacher ha corretto il tuo compito per l'esercizio '\$a->assignment'.
+
+Puoi vedere la valutazione allegata al tuo compito:
+
+\$a->url ";
+$string['assignmentmailhtml'] = "\$a->teacher ha corretto il tuo compito per l'esercizio '<i>\$a->assignment'</i>.<br /><br />
+Puoi vedere la valutazione allegata al tuo <a href=\\\"\$a->url\\\">compito</a>";
 $string['assignmentname'] = "Titolo del compito";
 $string['assignmenttype'] = "Tipo di compito";
 $string['description'] = "Descrizione";
@@ -26,8 +33,7 @@ $string['submissions'] = "Consegne";
 $string['submitassignment'] = "Presenta il tuo compito usando questo form";
 $string['submitted'] = "Consegnato";
 $string['typeoffline'] = "Attività non in rete";
-$string['typeuploadsingle'] = "Trasferire un singolo file
-
+$string['typeuploadsingle'] = "Trasferire un singolo file
 attibuibile per un valore compreso fra 0 e 100 punti";
 $string['uploadbadname'] = "Questo file contiene caratteri non conformi e non può essere trasferito.";
 $string['uploadedfiles'] = "files trasferiti";
