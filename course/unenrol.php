@@ -28,7 +28,7 @@
         error("You are not allowed to unenroll");
     }
 
-    if (isset($confirm)) {
+    if (isset($confirm) and confirm_sesskey()) {
 
         if (! unenrol_student($user->id, $course->id)) {
             error("An error occurred while trying to unenrol you.");
@@ -56,7 +56,7 @@
         $strunenrolsure = get_string("unenrolsure", "", fullname($user, true));
     }
 
-    notice_yesno ($strunenrolsure, "unenrol.php?id=$id&user=$user->id&confirm=yes", "$HTTP_REFERER");
+    notice_yesno ($strunenrolsure, "unenrol.php?id=$id&user=$user->id&confirm=yes&sesskey=$USER->sesskey", "$HTTP_REFERER");
 
     print_footer();
 
