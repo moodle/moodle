@@ -16,7 +16,7 @@
     //Gets all the information from backup_config table
     function backup_get_config() {
         $backup_config = null;
-        if ($configs = get_records('backup_config')) {
+        if ($configs = get_records("backup_config")) {
             foreach ($configs as $config) {
                 $backup_config[$config->name] = $config->value;
             }

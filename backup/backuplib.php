@@ -1110,30 +1110,40 @@
     
         global $CFG;
 
+        $status = true;
+
         //Define zip location (from)
         $from_zip_file = $CFG->dataroot."/temp/backup/".$preferences->backup_unique_code."/".$preferences->backup_name;
 
-        //Define zip destination (course dir)
-        $to_zip_file = $CFG->dataroot."/".$preferences->backup_course;
+        //Initialise $to_zip_file
+        $to_zip_file="";
 
-        //echo "<p>From: ".$from_zip_file."<br>";                                              //Debug
+        //If $preferences->backup_destination isn't empty, then copy to custom directory
+        if (!empty($preferences->backup_destination)) {
+            $to_zip_file = $preferences->backup_destination."/".$preferences->backup_name;
+        } else {
+            //Define zip destination (course dir)
+            $to_zip_file = $CFG->dataroot."/".$preferences->backup_course;
+    
+            //echo "<p>From: ".$from_zip_file."<br>";                                              //Debug
+    
+            //echo "<p>Checking: ".$to_zip_file."<br>";                                          //Debug
+    
+            //Checks course dir exists
+            $status = check_dir_exists($to_zip_file,true);
+    
+            //Define zip destination (backup dir)
+            $to_zip_file = $to_zip_file."/backupdata";
+    
+            //echo "<p>Checking: ".$to_zip_file."<br>";                                          //Debug
+    
+            //Checks backup dir exists
+            $status = check_dir_exists($to_zip_file,true);
 
-        //echo "<p>Checking: ".$to_zip_file."<br>";                                          //Debug
+            //Define zip destination (zip file)
+            $to_zip_file = $to_zip_file."/".$preferences->backup_name;
+        }
 
-        //Checks course dir exists
-        $status = check_dir_exists($to_zip_file,true);
-
-        //Define zip destination (backup dir)
-        $to_zip_file = $to_zip_file."/backupdata";
-
-        //echo "<p>Checking: ".$to_zip_file."<br>";                                          //Debug
-
-        //Checks backup dir exists
-        $status = check_dir_exists($to_zip_file,true);
-
-        //Define zip destination (zip file)
-        $to_zip_file = $to_zip_file."/".$preferences->backup_name;
-        
         //echo "<p>To: ".$to_zip_file."<br>";                                              //Debug
 
         //Copy zip file
