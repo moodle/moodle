@@ -1,0 +1,5 @@
+<?
+
+$string[addreading] = "Add reading";
+
+?>

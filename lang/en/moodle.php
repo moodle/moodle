@@ -142,6 +142,7 @@ $string[newpicture] = "New picture";
 $string[newsitem] = "news item";
 $string[newsitems] = "news items";
 $string[newsitemsnumber] = "News items to show";
+$string[no] = "No";
 $string[nosuchemail] = "No such email address";
 $string[notenrolled] = "\$a is not enrolled in this course.";
 $string[numberweeks] = "Number of weeks/topics";
@@ -203,5 +204,6 @@ $string[wordforteachereg] = "eg Teacher, Tutor, Facilitator etc";
 $string[wordforstudent] = "Your word for Student";
 $string[wordforstudenteg] = "eg Student, Participant etc";
 $string[wrongpassword] = "Incorrect password for this username";
+$string[yes] = "Yes";
 
 ?>

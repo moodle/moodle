@@ -1204,18 +1204,17 @@ function get_string($identifier, $module="", $a=NULL) {
         $lang = $CFG->lang;
     }
 
-    if ($module == "" or $module == "moodle") {
-        $langpath = "$CFG->dirroot/lang";
-    } else {
-        $langpath = "$CFG->dirroot/mod/$module/lang";
+    if ($module == "") {
+        $module = "moodle";
     }
 
-    $langfile = "$langpath/$lang/strings.php";
+    $langpath = "$CFG->dirroot/lang";
+    $langfile = "$langpath/$lang/$module.php";
 
     if (!file_exists($langfile)) {                // try English instead
-        $langfile = "$langpath/en/strings.php";
+        $langfile = "$langpath/en/$module.php";
         if (!file_exists($langfile)) {
-            return "ERROR: No lang file";
+            return "ERROR: No lang file ($langpath/en/$module.php)!";
         }
     }
 
@@ -1229,9 +1228,9 @@ function get_string($identifier, $module="", $a=NULL) {
             return "ERROR: '$identifier' is missing!";
 
         } else {   // Try looking in the english file.
-            $langfile = "$langpath/en/strings.php";
+            $langfile = "$langpath/en/$module.php";
             if (!file_exists($langfile)) {
-                return "ERROR: No lang file";
+                return "ERROR: No lang file ($langpath/en/$module.php)!";
             }
             if ($result = get_string_from_file($identifier, $langfile, "\$resultstring")) {
                 eval($result);

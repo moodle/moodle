@@ -1,0 +1,20 @@
+README FOR LANGUAGE PLUGIN
+--------------------------
+
+This directory contains all the strings and texts needed
+to render a Moodle site in a particular language.
+
+The default language is English.  If a string is missing 
+for any reason from another language, then the English 
+version will be used.
+
+Note that each installed module should have a file here,
+as well as the main file which is called "moodle.php".
+
+Whole pages written in HTML are stored in the "pages" directory.
+
+If you are thinking of translating Moodle to another language,
+please contact me so I can help you!
+
+Cheers,
+Martin
