@@ -119,8 +119,6 @@ global $THEME;
     require_once($CFG->libdir .'/datalib.php');         // Functions for accessing databases
     require_once($CFG->libdir .'/moodlelib.php');       // Other general-purpose functions
 
-    require_once($CFG->libdir .'/filterlib.php');       // Classes and functions used by filters
-
 
 /// Increase memory limits if possible
 
