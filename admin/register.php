@@ -22,6 +22,14 @@
         $admin->country = $CFG->country;
     }
 
+    if (!$admin->secret) {    // secret field hasn't been set yet
+        $admin->secret = random_string(15);
+    
+        if (!set_field("user", "secret", $admin->secret, "id", $admin->id)) {
+            error("Could not set admin's secret string!");
+        }
+    }
+
 
 /// Print headings
 
@@ -37,91 +45,93 @@
     print_simple_box($strregistrationinfo, "center", "70%");
     echo "<br />";
 
+
 /// Print the form
 
     print_simple_box_start("center", "", "$THEME->cellheading");
 
-    echo "<form name=\"form\" action=\"http://moodle.org/register/\" method=post>";
+    echo "<form name=\"form\" action=\"http://moodle.org/register/\" method=post>\n";
     echo "<table cellpadding=9 border=0>\n";
 
-    echo "<tr valign=top>";
-    echo "<td align=right><p>Moodle URL:</td>";
-    echo "<td><p>$CFG->wwwroot</td>";
-    //// The following hidden variables are to help prevent fake entries being sent.
-    //// Together they form a key.  If any of these change between updates then the entry 
-    //// is flagged as a new entry and will be manually checked by the list maintainer
-    echo "<input type=\"hidden\" name=\"url\" value=\"$CFG->wwwroot\">";
-    echo "<input type=\"hidden\" name=\"secret\" value=\"$admin->password\">";
-    echo "<input type=\"hidden\" name=\"host\" value=\"".$_SERVER["HTTP_HOST"]."\">";
-    echo "<input type=\"hidden\" name=\"lang\" value=\"".current_language()."\">";
+    echo "<tr valign=top>\n";
+    echo "<td align=right><p>Moodle URL:</td>\n";
+    echo "<td><p>$CFG->wwwroot</td>\n";
+    echo "<!-- The following hidden variables are to help prevent fake entries being sent. -->\n";
+    echo "<!-- Together they form a key.  If any of these change between updates then the entry  -->\n";
+    echo "<!-- is flagged as a new entry and will be manually checked by the list maintainer -->\n";
+   
+    echo "<input type=\"hidden\" name=\"url\" value=\"$CFG->wwwroot\">\n";
+    echo "<input type=\"hidden\" name=\"secret\" value=\"$admin->secret\">\n";
+    echo "<input type=\"hidden\" name=\"host\" value=\"".$_SERVER["HTTP_HOST"]."\">\n";
+    echo "<input type=\"hidden\" name=\"lang\" value=\"".current_language()."\">\n";
     echo "</td></tr>\n";
 
-    echo "<tr valign=top>";
-    echo "<td align=right><p>".get_string("currentversion").":</td>";
-    echo "<td><p>$CFG->release ($CFG->version)</td>";
-    echo "<input type=\"hidden\" name=\"version\" value=\"$CFG->version\">";
-    echo "<input type=\"hidden\" name=\"release\" value=\"$CFG->release\">";
+    echo "<tr valign=top>\n";
+    echo "<td align=right><p>".get_string("currentversion").":</td>\n";
+    echo "<td><p>$CFG->release ($CFG->version)</td>\n";
+    echo "<input type=\"hidden\" name=\"version\" value=\"$CFG->version\">\n";
+    echo "<input type=\"hidden\" name=\"release\" value=\"$CFG->release\">\n";
     echo "</td></tr>\n";
 
-    echo "<tr valign=top>";
-    echo "<td align=right><p>".get_string("fullsitename").":</td>";
-    echo "<td><p><input size=50 type=\"text\" name=\"sitename\" value=\"$site->fullname\"></td>";
+    echo "<tr valign=top>\n";
+    echo "<td align=right><p>".get_string("fullsitename").":</td>\n";
+    echo "<td><p><input size=50 type=\"text\" name=\"sitename\" value=\"$site->fullname\"></td>\n";
     echo "</tr>\n";
 
-    echo "<tr valign=top>";
-    echo "<td align=right><p>".get_string("country").":</td>";
+    echo "<tr valign=top>\n";
+    echo "<td align=right><p>".get_string("country").":</td>\n";
     echo "<td><p>";
     choose_from_menu ($COUNTRIES, "country", $admin->country, get_string("selectacountry")."...", "", "");
-    echo "</td>";
+    echo "</td>\n";
     echo "</tr>\n";
 
-    echo "<tr valign=top>";
-    echo "<td align=right><p><a href=\"http://moodle.org/sites\" title=\"See the current list of sites\" target=_blank>".get_string("publicdirectory")."</a>:</td>";
+    echo "<tr valign=top>\n";
+    echo "<td align=right><p><a href=\"http://moodle.org/sites\" title=\"See the current list of sites\" target=_blank>".get_string("publicdirectory")."</a>:</td>\n";
     echo "<td><p>";
     $options[0] = get_string("publicdirectory0");
     $options[1] = get_string("publicdirectory1");
     $options[2] = get_string("publicdirectory2");
     choose_from_menu ($options, "public", "2", "", "", "");
     unset($options);
-    echo "</td>";
+    echo "</td>\n";
     echo "</tr>\n";
 
-    echo "<tr valign=top>";
-    echo "<td colspan=2><hr size=1 noshade>";
+    echo "<tr valign=top>\n";
+    echo "<td colspan=2><hr size=1 noshade>\n";
     echo "</tr>\n";
 
-    echo "<tr valign=top>";
-    echo "<td align=right><p>".get_string("administrator").":</td>";
-    echo "<td><p><input size=50 type=\"text\" name=\"adminname\" value=\"$admin->firstname $admin->lastname\"></td>";
+    echo "<tr valign=top>\n";
+    echo "<td align=right><p>".get_string("administrator").":</td>\n";
+    echo "<td><p><input size=50 type=\"text\" name=\"adminname\" value=\"$admin->firstname $admin->lastname\"></td>\n";
     echo "</tr>\n";
 
-    echo "<tr valign=top>";
-    echo "<td align=right><p>".get_string("email").":</td>";
-    echo "<td><p><input size=50 type=\"text\" name=\"adminemail\" value=\"$admin->email\"></td>";
+    echo "<tr valign=top>\n";
+    echo "<td align=right><p>".get_string("email").":</td>\n";
+    echo "<td><p><input size=50 type=\"text\" name=\"adminemail\" value=\"$admin->email\"></td>\n";
     echo "</tr>\n";
 
-    echo "<tr valign=top>";
-    echo "<td align=right><p>".get_string("registrationemail")."</a>:</td>";
-    echo "<td><p>";
+    echo "<tr valign=top>\n";
+    echo "<td align=right><p>".get_string("registrationemail")."</a>:</td>\n";
+    echo "<td><p>\n";
     $options[0] = get_string("registrationno");
     $options[1] = get_string("registrationyes");
     choose_from_menu ($options, "mailme", "1", "", "", "");
     unset($options);
-    echo "</td>";
+    echo "</td>\n";
     echo "</tr>\n";
 
-    echo "<tr valign=top>";
-    echo "<td align=right>&nbsp;</td>";
-    echo "<td><p><input type=\"submit\" value=\"".get_string("registrationsend")."\"></td>";
+    echo "<tr valign=top>\n";
+    echo "<td align=right>&nbsp;</td>\n";
+    echo "<td><p><input type=\"submit\" value=\"".get_string("registrationsend")."\"></td>\n";
     echo "</tr>\n";
 
 
-    echo "</table>";
+    echo "</table>\n";
     echo "</form>\n";
 
     print_simple_box_end();
 
-    echo "<br />";
+    echo "<br />\n";
 
     print_footer();
 
