@@ -30,7 +30,7 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate="today"
     asort($users);
 
     // Get all the possible dates
-    $tt = getdate(time());
+    $tt = usergetdate(time());
     $timemidnight = $today = mktime (0, 0, 0, $tt["mon"], $tt["mday"], $tt["year"]);
     $dates = array("$today" => "Today, ".userdate($today, "j F Y") );
 
@@ -104,7 +104,7 @@ function print_log($course, $user=0, $date=0, $order="ORDER BY l.time ASC") {
         echo "<TR>";
         echo "<TD ALIGN=right><FONT SIZE=2>".userdate($log->time, "l")."</TD>";
         echo "<TD><FONT SIZE=2>".userdate($log->time, "j M Y, h:i A")."</TD>";
-        echo "<TD><FONT SIZE=2><B>$log->firstname $log->lastname</B></TD>";
+        echo "<TD><FONT SIZE=2><A TITLE=\"$log->ip\" HREF=\"../user/view.php?id=$log->user&course=$log->course\"><B>$log->firstname $log->lastname</B></TD>";
         echo "<TD><FONT SIZE=2>";
         link_to_popup_window( make_log_url($log->module,$log->url), "fromloglive","$log->module $log->action", 400, 600);
         echo "</TD>";

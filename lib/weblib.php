@@ -149,10 +149,10 @@ function link_to_popup_window ($url, $name="popup", $linkname="click here", $hei
 
 	echo "\n<SCRIPT language=\"Javascript\">";
     echo "\n<!--";
-	echo "\ndocument.write('<A HREF=javascript:openpopup(\"$url\",\"$name\",\"$height\",\"$width\") >$linkname</A>');";
+	echo "\ndocument.write('<A TITLE=\"Popup\" HREF=javascript:openpopup(\"$url\",\"$name\",\"$height\",\"$width\") >$linkname</A>');";
     echo "\n//-->";
    	echo "\n</SCRIPT>";
-   	echo "\n<NOSCRIPT>\n<A TARGET=\"$name\" HREF=\"$url\">$linkname</A>\n</NOSCRIPT>\n";
+   	echo "\n<NOSCRIPT>\n<A TARGET=\"$name\" TITLE=\"Popup\" HREF=\"$url\">$linkname</A>\n</NOSCRIPT>\n";
 
 }
 

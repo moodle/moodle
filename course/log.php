@@ -31,7 +31,7 @@
             $dateinfo = userdate($date, "l, j F Y");
         }
 
-        print_header("$course->shortname: Logs", "$course->shortname : Logs", 
+        print_header("$course->shortname: Logs", "$course->fullname", 
                      "<A HREF=\"view.php?id=$course->id\">$course->shortname</A> ->
                       <A HREF=\"log.php?id=$course->id\">Logs</A> -> Logs for $userinfo, $dateinfo", "");
         
@@ -43,7 +43,7 @@
 
 
     } else {
-        print_header("$course->shortname: Logs", "$course->shortname : Logs", 
+        print_header("$course->shortname: Logs", "$course->fullname", 
                  "<A HREF=\"view.php?id=$course->id\">$course->shortname</A> -> Logs", "");
 
         print_heading("Choose which logs you want to look at");
