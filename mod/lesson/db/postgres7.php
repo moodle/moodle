@@ -39,6 +39,18 @@ function lesson_upgrade($oldversion) {
     if ($oldversion < 2004032700) {
 		table_column("lesson_answers", "", "flags", "INTEGER", "4", "UNSIGNED", "0", "NOT NULL", "grade");
     }
+
+    if ($oldversion < 2004060401) {
+        modify_database('','CREATE INDEX prefix_lesson_course_idx ON prefix_lesson (course);');
+        modify_database('','CREATE INDEX prefix_lesson_answers_lessonid_idx ON prefix_lesson_answers (lessonid);');
+        modify_database('','CREATE INDEX prefix_lesson_answers_pageid_idx ON prefix_lesson_answers (pageid);');
+        modify_database('','CREATE INDEX prefix_lesson_attempts_lessonid_idx ON prefix_lesson_attempts (lessonid);');
+        modify_database('','CREATE INDEX prefix_lesson_attempts_pageid_idx ON prefix_lesson_attempts (pageid);');
+        modify_database('','CREATE INDEX prefix_lesson_attempts_userid_idx ON prefix_lesson_attempts (userid);');
+        modify_database('','CREATE INDEX prefix_lesson_grades_lessonid_idx ON prefix_lesson_grades (lessonid);');
+        modify_database('','CREATE INDEX prefix_lesson_grades_userid_idx ON prefix_lesson_grades (userid);');
+        modify_database('','CREATE INDEX prefix_lesson_pages_lessonid_idx ON prefix_lesson_pages (lessonid);');
+    }
      
     return true;
 }

@@ -19,7 +19,8 @@ CREATE TABLE `prefix_lesson` (
   `available` int(10) unsigned NOT NULL default '0',
   `deadline` int(10) unsigned NOT NULL default '0',
   `timemodified` int(10) unsigned NOT NULL default '0',
-   PRIMARY KEY  (`id`)
+   PRIMARY KEY  (`id`),
+   KEY `course` (`course`)
 ) COMMENT='Defines lesson';
 # --------------------------------------------------------
 
@@ -34,7 +35,8 @@ CREATE TABLE `prefix_lesson_pages` (
   `timemodified` int(10) unsigned NOT NULL default '0',
   `title` varchar(255) NOT NULL default '',
   `contents` text NOT NULL default '',
-  PRIMARY KEY  (`id`)
+  PRIMARY KEY  (`id`),
+  KEY `lessonid` (`lessonid`)
 ) COMMENT='Defines lesson_pages';
 # --------------------------------------------------------
 
@@ -50,7 +52,8 @@ CREATE TABLE `prefix_lesson_answers` (
   `answer` text NOT NULL default '',
   `response` text NOT NULL default '',
   PRIMARY KEY  (`id`),
-  KEY (`pageid`)
+  KEY (`pageid`),
+  KEY `lessonid` (`lessonid`) 
 ) COMMENT='Defines lesson_answers';
 # --------------------------------------------------------
 
@@ -64,7 +67,9 @@ CREATE TABLE `prefix_lesson_attempts` (
   `correct` int(10) unsigned NOT NULL default '0',
   `timeseen` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`),
-  KEY (`userid`)
+  KEY (`userid`),
+  KEY `lessonid` (`lessonid`),
+  KEY `pageid` (`pageid`)
 ) COMMENT='Defines lesson_attempts';
 # --------------------------------------------------------
 
@@ -75,7 +80,9 @@ CREATE TABLE `prefix_lesson_grades` (
   `grade` int(3) unsigned NOT NULL default '0',
   `late` int(3) unsigned NOT NULL default '0',
   `completed` int(10) unsigned NOT NULL default '0',
-  PRIMARY KEY  (`id`)
+  PRIMARY KEY  (`id`),
+  KEY `lessonid` (`lessonid`), 
+  KEY `userid` (`userid`)
 ) COMMENT='Defines lesson_grades';
 # --------------------------------------------------------
 

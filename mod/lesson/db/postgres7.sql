@@ -19,6 +19,9 @@ CREATE TABLE prefix_lesson (
   deadline INT8  NOT NULL default '0',
   timemodified INT8  NOT NULL default '0'
 );
+
+CREATE INDEX prefix_lesson_course_idx ON prefix_lesson (course);
+
 # --------------------------------------------------------
 
 CREATE TABLE prefix_lesson_pages (
@@ -33,6 +36,9 @@ CREATE TABLE prefix_lesson_pages (
   title varchar(255) NOT NULL default '',
   contents text NOT NULL default ''
 ); 
+
+CREATE INDEX prefix_lesson_pages_lessonid_idx ON prefix_lesson_pages (lessonid);
+
 # COMMENT='Defines lesson_pages';
 # --------------------------------------------------------
 
@@ -48,6 +54,10 @@ CREATE TABLE prefix_lesson_answers (
   answer text NOT NULL default '',
   response text NOT NULL default ''
 );
+
+CREATE INDEX prefix_lesson_answers_lessonid_idx ON prefix_lesson_answers (lessonid);
+CREATE INDEX prefix_lesson_answers_pageid_idx ON prefix_lesson_answers (pageid);
+
 # COMMENT='Defines lesson_answers';
 # --------------------------------------------------------
 
@@ -61,6 +71,11 @@ CREATE TABLE prefix_lesson_attempts (
   correct INT8  NOT NULL default '0',
   timeseen INT8  NOT NULL default '0'
 ); 
+
+CREATE INDEX prefix_lesson_attempts_lessonid_idx ON prefix_lesson_attempts (lessonid);
+CREATE INDEX prefix_lesson_attempts_pageid_idx ON prefix_lesson_attempts (pageid);
+CREATE INDEX prefix_lesson_attempts_userid_idx ON prefix_lesson_attempts (userid);
+
 #COMMENT='Defines lesson_attempts';
 # --------------------------------------------------------
 
@@ -72,6 +87,10 @@ CREATE TABLE prefix_lesson_grades (
   late INT  NOT NULL default '0',
   completed INT8  NOT NULL default '0'
 );
+
+CREATE INDEX prefix_lesson_grades_lessonid_idx ON prefix_lesson_grades (lessonid);
+CREATE INDEX prefix_lesson_grades_userid_idx ON prefix_lesson_grades (userid);
+
 # COMMENT='Defines lesson_grades';
 # --------------------------------------------------------
 

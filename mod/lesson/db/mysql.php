@@ -39,6 +39,16 @@ function lesson_upgrade($oldversion) {
     if ($oldversion < 2004032700) {
 		table_column("lesson_answers", "", "flags", "INTEGER", "4", "UNSIGNED", "0", "NOT NULL", "grade");
     }
+
+    if ($oldversion < 2004060401) {
+        modify_database('','ALTER TABLE prefix_lesson ADD INDEX course (course);');
+        modify_database('','ALTER TABLE prefix_lesson_answers ADD INDEX lessonid (lessonid);');
+        modify_database('','ALTER TABLE prefix_lesson_attempts ADD INDEX lessonid (lessonid);');
+        modify_database('','ALTER TABLE prefix_lesson_attempts ADD INDEX pageid (pageid);');
+        modify_database('','ALTER TABLE prefix_lesson_grades ADD INDEX lessonid (lessonid);');
+        modify_database('','ALTER TABLE prefix_lesson_grades ADD INDEX userid (userid);');
+        modify_database('','ALTER TABLE prefix_lesson_pages ADD INDEX lessonid (lessonid);');
+    }
      
     return true;
 }
