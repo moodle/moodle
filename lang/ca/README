@@ -7,8 +7,8 @@ La traducció de Moodle al català és obra de la comunitat "Moodle en català"
 Centre d'Educació i Noves Tecnologies de la Universitat Jaume I de Castelló, 
 que hi continua donant suport tècnic.
 
-Per actualitzar la traducció de Moodle al català en la vostra instal·lació, 
-descomprimiu aquest fitxer ca.zip dins del directori lang.
+Per actualitzar la traducció de Moodle al català en la vostra instal·lació
+de Moodle, descomprimiu aquest fitxer ca.zip dins del directori lang.
 
 Teniu en compte que la traducció no és completa al 100%.  Podeu col·laborar 
 enviant suggeriments, comentaris o correccions, o fent-vos càrrec de la 
@@ -27,54 +27,15 @@ Si us voleu fer càrrec d'un mòdul, els únics requisits són aquests:
 
 3. Que sigueu (o penseu ser) usuaris habituals del mòdul en qüestió.
 
-La traducció dels mòduls següents ha estat assumida pel CENT i s'actualitza 
-regularment:
+La llista de mòduls i de persones que se'n fan càrrec, i els mòduls encara
+no assignats a ningú, es poden consultar en aquesta pàgina:
 
-admin.php
-auth.php
-block_*.php
-enrol_*.php
-calendar.php
-countries.php
-editor.php
-error.php
-moodle.php
-pix.php
-
-assignment.php
-chat.php
-choice.php
-dialogue.php
-forum.php
-journal.php
-resource.php
-scheduler.php
-scorm.php
-wiki.php
-
-Dels mòduls següents, se n'han fet càrrec diversos membres de la comunitat
-"Moodle en català":
-
-attendance.php (Àngels Mustienes)
-exercise.php (Àngels Mustienes)
-hotpot.php (Àngels Mustienes)
-questionnaire.php (Àngels Mustienes)
-lesson.php (Joan Queralt)
-
-Finalment, aquests no han estat assignats encara a ningú. Entre parèntesis 
-figura el percentatge de missatges i de fitxers d'ajuda traduïts actualment: 
-
-glossary.php (100% help 96%)
-quiz.php (77% help 72%)
-survey.php (83% help 100%)
-workshop.php (84% help 74%)
-
-docs/
+http://moodle.org/mod/resource/view.php?id=2945
 
 
 ----
-Centre d'Educació i Noves Tecnologies (CENT) de la Universitat Jaume I 
-de Castelló
+Centre d'Educació i Noves Tecnologies (CENT)
+de la Universitat Jaume I de Castelló
 http://cent.uji.es
 mailto:cent@uji.es
 
