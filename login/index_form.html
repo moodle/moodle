@@ -12,7 +12,7 @@
   <tr>
     <td width="50%" valign="top" bgcolor="<?php p($THEME->cellcontent2) ?>" class="generalbox"> <font size="2"> 
         <p align="center"><?php print_string("loginusing") ?>:<br />
-          (<?php print_string("cookiesenabled") ?>)<br />
+          (<?php print_string("cookiesenabled") ?><?php helpbutton("cookies", get_string("cookiesenabled"))?> )<br />
 	  <?php formerr($errormsg) ?>
       </p></font>
       <form action="index.php" method="post" name="form" id="form">
