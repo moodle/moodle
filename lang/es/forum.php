@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.4 development (2004062600)
+      // forum.php - created with Moodle 1.4 alpha (2004081500)
 
 
 $string['addanewdiscussion'] = 'Colocar un nuevo tema de discusión aquí';
@@ -43,6 +43,7 @@ $string['editing'] = 'Editando';
 $string['emptymessage'] = 'Algo está mal con su mensaje. Tal vez tenga algún campo en blanco o el archivo adjunto, si lo hay, es demasiado grande. Sus cambios NO se han guardado.';
 $string['everyonecanchoose'] = 'Todos pueden suscribirse';
 $string['everyoneissubscribed'] = 'Todos están suscritos a este foro';
+$string['existingsubscribers'] = 'Suscriptores existentes';
 $string['forcesubscribe'] = 'Suscribir a todos';
 $string['forcesubscribeq'] = '¿Forzar la suscripción de todos?';
 $string['forum'] = 'Foro';
@@ -101,6 +102,7 @@ $string['postrating3'] = 'Muy comunicativo';
 $string['posts'] = 'Mensajes';
 $string['posttoforum'] = 'Enviar al foro';
 $string['postupdated'] = 'Su mensaje se ha actualizado';
+$string['potentialsubscribers'] = 'Suscriptores potenciales';
 $string['processingdigest'] = 'Procesando el resumen por correo para el usuario $a';
 $string['processingpost'] = 'Procesando $a';
 $string['prune'] = 'Partir';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.3 Nearly Ready (2004052000)
+      // glossary.php - created with Moodle 1.4 alpha (2004081500)
 
 
 $string['addcomment'] = 'Agregar comentario';
@@ -61,16 +61,17 @@ $string['deletingnoneemptycategory'] = 'Eliminar una categoría no eliminará las 
 $string['descending'] = '(descendente)';
 $string['destination'] = 'Destino';
 $string['displayformat'] = 'Formato de muestra de entradas';
-$string['displayformat2'] = 'Completo con autor';
-$string['displayformat3'] = 'Enciclopedia';
-$string['displayformat4'] = 'FAQ';
-$string['displayformat5'] = 'Completo sin autor';
-$string['displayformat6'] = 'Lista de entradas';
 $string['displayformatcontinuous'] = 'Continuo sin autor';
-$string['displayformatdefault'] = 'Simple, estilo diccionario';
+$string['displayformatdictionary'] = 'Simple, estilo diccionario';
+$string['displayformatencyclopedia'] = 'Enciclopedia';
+$string['displayformatentrylist'] = 'Lista de entradas';
+$string['displayformatfaq'] = 'FAQ';
+$string['displayformatfullwithauthor'] = 'Completo con autor';
+$string['displayformatfullwithoutauthor'] = 'Completo sin autor';
 $string['displayformats'] = 'Formatos de visualización';
 $string['displayformatssetup'] = 'Ajustar formatos de visualización';
 $string['duplicateentry'] = 'Entrada duplicada';
+$string['editalways'] = 'Editar siempre';
 $string['editcategories'] = 'Editar categorías';
 $string['editentry'] = 'Editar entrada';
 $string['editingcomment'] = 'Editando un comentario';

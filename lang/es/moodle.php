@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.4 development (2004072500)
+      // moodle.php - created with Moodle 1.4 alpha (2004081500)
 
 
 $string['action'] = 'Acción';
@@ -372,6 +372,7 @@ $string['emailpasswordsent'] = 'Gracias por confirmar el cambio de contraseña.
 <p>La nueva contraseña ha sido generada automáticamente.
 Le recomendamos que <a href=$a->link>cambie su contraseña</a> por otra más fácil de recordar.';
 $string['enable'] = 'Habilitar';
+$string['encryptedcode'] = 'Código encriptado';
 $string['enrolledincourse'] = 'Inscritos en el curso ';
 $string['enrolledincoursenot'] = 'No inscritos en el curso ';
 $string['enrolmentconfirmation'] = 'Está a punto de inscribirse como alumno de este curso <br />¿Está seguro de que desea hacerlo?';
@@ -382,7 +383,9 @@ $string['enrolmentkeyhint'] = 'La contraseña de acceso es incorrecta. Por favor,
 (Una pista: comienza con \'$a\')';
 $string['enrolmentnew'] = 'Nueva matriculación en $a';
 $string['enrolmentnointernal'] = 'Las matriculaciones manuales no están actualmente habilitadas';
+$string['enrolmentnotyet'] = 'Lo sentimos, no puede acceder a este curso hasta <br /> $a';
 $string['enrolments'] = 'Matriculaciones';
+$string['enrolperiod'] = 'Período de matriculación';
 $string['entercourse'] = 'Haga clic aquí para entrar al curso';
 $string['enteremailaddress'] = 'Escriba su dirección de correo electrónico.
 Le enviaremos una nueva contraseña.';
@@ -403,6 +406,7 @@ $string['existingteachers'] = 'Profesores existentes';
 $string['failedloginattempts'] = '$a->attempts accesos fallidos desde su último acceso';
 $string['failedloginattemptsall'] = '$a->attempts accesos fallisod para las cuentas $a->accounts';
 $string['feedback'] = 'Respuesta';
+$string['file'] = 'Archivo';
 $string['filemissing'] = 'No se encuentra $a';
 $string['files'] = 'Archivos';
 $string['filesfolders'] = 'Archivos/directorios';
@@ -420,6 +424,7 @@ $string['forceno'] = 'No forzar';
 $string['forgotten'] = '¿Olvidó su nombre de usuario o contraseña?';
 $string['format'] = 'Formato';
 $string['formathtml'] = 'Formato HTML';
+$string['formatmarkdown'] = 'Formado Markdown';
 $string['formatplain'] = 'Formato de texto plano';
 $string['formatsocial'] = 'Formato Social';
 $string['formattext'] = 'Formato automático';
@@ -711,10 +716,10 @@ $string['noteachersyet'] = 'Aún no hay profesores en este curso';
 $string['notenrolled'] = '$a no está matriculado en este curso.';
 $string['noteuserschangednonetocourse'] = 'Nota: Los alumnos de los cursos deben ser restaurados cuando se restauran los datos. Esta configuración ha sido cambiada para usted.';
 $string['nothingnew'] = 'Sin novedades desde el último acceso';
+$string['noticenewerbackup'] = 'Esta copia de seguridad ha sido creada con Moodle $a->backuprelease ($a->backupversion) y es más reciente que la versión instalada de Moodle $a->serverrelease ($a->serverversion). Esto podría ocasionar algunas inconsistencias debido a que no se puede garantizar la compatibilidad retrospectiva de las copias de seguridad.';
+$string['notifyloginfailuresmessage'] = '$a->time, IP: $a->ip, Usuario: $a->info';
 $string['notifyloginfailuresmessageend'] = 'Puede ver estos registros en $a/course/log.php?id=1&chooselog=1&modid=site_errors.';
-$string['notifyloginfailuresmessagefromip'] = 'desde la dirección IP';
 $string['notifyloginfailuresmessagestart'] = 'Listado de intentos fallidos de acceso a $a desde que se le envió la última notificación';
-$string['notifyloginfailuresmessagewithuser'] = 'con nombre de usuario';
 $string['notifyloginfailuressubject'] = '$a :: Notificación de accesos fallidos';
 $string['notincluded'] = 'No incluido';
 $string['notingroup'] = 'Lo sentimos, para ver esta actividad necesita ser miembro del grupo.';
@@ -810,6 +815,7 @@ $string['restoreto'] = 'Restaurar a ';
 $string['returningtosite'] = '¿Ha estado antes en este sitio?';
 $string['revert'] = 'Revertir';
 $string['role'] = 'Papel';
+$string['rss'] = 'RSS';
 $string['rssarticles'] = 'Número de artículos recientes RSS';
 $string['rsstype'] = 'Canal RSS para esta actividad';
 $string['savechanges'] = 'Guardar cambios';
@@ -874,6 +880,7 @@ $string['socialheadline'] = 'Foro social, últimos temas';
 $string['someallowguest'] = 'Algunos cursos permiten el acceso de invitados';
 $string['someerrorswerefound'] = 'Falta alguna información o es incorrecta. Abajo aparecen más detalles.';
 $string['sortby'] = 'Ordenar por';
+$string['specifyname'] = 'Debe especificar un nombre.';
 $string['startdate'] = 'Fecha de inicio del curso';
 $string['startsignup'] = 'Comience ahora creando una cuenta';
 $string['state'] = 'Estado/Municipio';
@@ -930,6 +937,7 @@ $string['unenrolallstudentssure'] = '¿Está seguro de que desea dar de baja a tod
 $string['unenrolme'] = 'Desmatricular en $a';
 $string['unenrolsure'] = '¿Está seguro de que desea dar de baja a $a de este curso?';
 $string['unknowncategory'] = 'Categoría desconocida';
+$string['unlimited'] = 'Sin límite';
 $string['unpacking'] = 'Abriendo $a';
 $string['unsafepassword'] = 'Esta contraseña no es segura, intente otra';
 $string['unusedaccounts'] = 'Las personas que no entren al curso durante $a días se darán de baja automáticamente. Su cuenta seguirá existiendo y podrán reinscribirse en cualquier momento.';
