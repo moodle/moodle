@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.0.9 development (2003011600)
+      // moodle.php - created with Moodle 1.0.9 development (2003012000)
 
 
 $string['action'] = "Toiminta";
@@ -188,7 +188,7 @@ $string['fullprofile'] = "Kaikki henkilötiedot";
 $string['fullsitename'] = "Koko sivuston nimi";
 $string['gd1'] = "GD 1.x asennetuna";
 $string['gd2'] = "GD 2.x asennettuna";
-$string['gdneed'] = "GD-kirjato pitää olaa asennetuna jotta kuvat näkyy";
+$string['gdneed'] = "GD-kirjaston pitää olla asennetuna jotta kuvat näkyy";
 $string['gdnot'] = "GD 3.0 asennettuna";
 $string['gpl'] = "Copyright (C) 2001-2002  Martin Dougiamas  (http://dougiamas.com)
 
@@ -370,6 +370,7 @@ $string['nousersyet'] = "Ei vielä käyttäjiä";
 $string['now'] = "nyt";
 $string['numberweeks'] = "Viikkojen/Aiheiden määrä";
 $string['numdays'] = "\$a päivää";
+$string['numhours'] = "\$a tuntia";
 $string['numminutes'] = "\$a minuuttia";
 $string['numviews'] = "\$a näkymiä";
 $string['numweeks'] = "\$a viikkoa";
