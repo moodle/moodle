@@ -68,12 +68,12 @@ if ( $confirm ) {
         $newentry->approved = 1;
     }
 
+    $strglossary = get_string("modulename", "glossary");
+    $strglossaries = get_string("modulenameplural", "glossary");
+    $stredit = get_string("edit");
+
     if ($form->concept == '' or trim($form->text) == '' ) {
         $errors = get_string('fillfields','glossary');
-        $strglossary = get_string("modulename", "glossary");
-        $strglossaries = get_string("modulenameplural", "glossary");
-        $stredit = get_string("edit");
-
         if ($usehtmleditor = can_use_richtext_editor()) {
             $defaultformat = FORMAT_HTML;
         } else {
