@@ -250,7 +250,7 @@
         do {
             if ($counter) {
                 $suffixfull = " ".get_string("copy")." ".$counter;
-                $suffixshort = "-".$counter;
+                $suffixshort = "_".$counter;
             } else {
                 $suffixfull = "";
                 $suffixshort = "";
