@@ -433,6 +433,7 @@ $string['sitenews'] = "Site news";
 $string['sitesettings'] = "Site settings";
 $string['size'] = "Size";
 $string['someallowguest'] = "Some courses may allow guest access";
+$string['someerrorswerefound'] = "Some information was missing or incorrect. Look below for details.";
 $string['startdate'] = "Course start date";
 $string['startsignup'] = "Start now by creating a new account!";
 $string['status'] = "Status";
