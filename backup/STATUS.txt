@@ -1,0 +1,112 @@
+This documment shows the current status of the backup/restore option.
+
+Backup:  NOT WORKING. No comments.
+
+Restore: NOT WORKING. No comments.
+
+========== ========== ========== ========== ========== ==========
+
+Now I show the specific detailed status of every item in the process:
+
+Backup Details:
+===============
+   - Backup FrontEnd............................................NO EXISTS
+        - Check Security........................................NO EXISTS
+        - Select Info to Backup.(from mods).....................NO EXISTS
+        - Launch Backup.........................................NO EXISTS
+        - Show progress.........................................NO EXISTS
+   - Backup Items:..............................................NO EXISTS
+        - Backup Info data......................................NO EXISTS
+        - Course................................................NO EXISTS
+           - Course Summary Data................................NO EXISTS
+           - User Accounts Info.................................NO EXISTS
+              x teacherras......................................NO EXISTS
+              x creators........................................NO EXISTS
+              x students........................................NO EXISTS
+           - Mods Info..........................................NO EXISTS
+              x assignments.....................................NO EXISTS
+                 + course data..................................NO EXISTS
+                 + user data....................................NO EXISTS
+              x choices.........................................NO EXISTS
+                 + course data..................................NO EXISTS
+                 + user data....................................NO EXISTS
+              x forums..........................................NO EXISTS
+                 + course data..................................NO EXISTS
+                 + user data....................................NO EXISTS
+              x journals........................................NO EXISTS
+                 + course data..................................NO EXISTS
+                 + user data....................................NO EXISTS
+              x peer graded assignments.........................NO EXISTS
+                 + course data..................................NO EXISTS
+                 + user data....................................NO EXISTS
+              x quizzes.........................................NO EXISTS
+                 + course data..................................NO EXISTS
+                 + user data....................................NO EXISTS
+              x resources.......................................NO EXISTS
+                 + course data..................................NO EXISTS
+                 + user data....................................NO EXISTS
+              x surveys.........................................NO EXISTS
+                 + course data..................................NO EXISTS
+                 + user data....................................NO EXISTS
+   - Compress the backup (zip)..................................NO EXISTS
+      - XML File................................................NO EXISTS
+      - Course Files............................................NO EXISTS
+      - User Files..............................................NO EXISTS
+   - Browse backup files........................................NO EXISTS
+   - Obtain info about backup files.............................NO EXISTS
+   - Download backup files......................................NO EXISTS
+   - Delete backup files........................................NO EXISTS
+   - Program automatic backups..................................NO EXISTS
+
+Restore Details:
+===============
+   - Restore FrontEnd...........................................NO EXISTS
+        - Check Security........................................NO EXISTS
+        - Select Info to Restore (from backup)..................NO EXISTS
+        - Launch Restore........................................NO EXISTS
+        - Show progress.........................................NO EXISTS
+   - Restore Items:.............................................NO EXISTS
+        - Course................................................NO EXISTS
+           - Course Summary Data................................NO EXISTS
+           - User Accounts Info.................................NO EXISTS
+              x teacheras. .....................................NO EXISTS
+              x creators........................................NO EXISTS
+              x students........................................NO EXISTS
+           - Mods Info..........................................NO EXISTS
+              x assignments.....................................NO EXISTS
+                 + course data..................................NO EXISTS
+                 + user data....................................NO EXISTS
+              x choices.........................................NO EXISTS
+                 + course data..................................NO EXISTS
+                 + user data....................................NO EXISTS
+              x forums..........................................NO EXISTS
+                 + course data..................................NO EXISTS
+                 + user data....................................NO EXISTS
+              x journals........................................NO EXISTS
+                 + course data..................................NO EXISTS
+                 + user data....................................NO EXISTS
+              x peer graded assignments.........................NO EXISTS
+                 + course data..................................NO EXISTS
+                 + user data....................................NO EXISTS
+              x quizzes.........................................NO EXISTS
+                 + course data..................................NO EXISTS
+                 + user data....................................NO EXISTS
+              x resources.......................................NO EXISTS
+                 + course data..................................NO EXISTS
+                 + user data....................................NO EXISTS
+              x surveys.........................................NO EXISTS
+                 + course data..................................NO EXISTS
+                 + user data....................................NO EXISTS
+   - Uncompress the backup (unzip)..............................NO EXISTS
+      - XML File................................................NO EXISTS
+      - Course Files............................................NO EXISTS
+      - User Files..............................................NO EXISTS
+   - Obtain info about backup files.............................NO EXISTS
+   - Upload backup files........................................NO EXISTS
+
+========== ========== ========== =========== =========== =========== ===
+
+This is all. It's no a little thing !!!  :-)
+
+Eloy (stronk7)
+29-04-2003
