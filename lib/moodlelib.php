@@ -1386,8 +1386,14 @@ function make_upload_directory($directory) {
             return false;
         }
     }
+    $currdir = mdl_mkdir($currdir, $directory); 
+    return $currdir;
+}
 
-    $dirarray = explode("/", $directory);
+function mdl_mkdir($currdir, $directory) {
+//Makes directory (or multiple directorys at once)
+
+    $dirarray = explode("/", $directory); 
 
     foreach ($dirarray as $dir) {
         $currdir = "$currdir/$dir";
@@ -1402,7 +1408,6 @@ function make_upload_directory($directory) {
 
     return $currdir;
 }
-
 function make_mod_upload_directory($courseid) {
 /// Makes an upload directory for a particular module
     global $CFG;

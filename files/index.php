@@ -14,14 +14,31 @@
     optional_variable($wdir, "");
     optional_variable($action, "");
 
-    if (! $course = get_record("course", "id", $id) ) {
-        error("That's an invalid course id");
-    }
+    if (! is_numeric($id)) {
+       	// editing language
+        if (! isadmin()) {
+            error ("You must be site administrator to edit translations");
+        }    
+        
+        //$activelangs = get_list_of_languages();
+        //if (! in_array($id, $activelangs)) {
+        //    error("Selected translation is inactive. $activelangs");
+        //}
 
-    require_login($course->id);
+        // Create "fake" course 
+        $course = new object;
+        $course->id = $id;
+        
+    } else {
+    	if (! $course = get_record("course", "id", $id) ) {
+            error("That's an invalid course id");
+    	}
 
-    if (! isteacheredit($course->id) ) {
-        error("You need to be a teacher with editing privileges");
+        require_login($course->id);
+
+        if (! isteacheredit($course->id) ) {
+            error("You need to be a teacher with editing privileges");
+        }
     }
 
     function html_footer() {
@@ -40,6 +57,8 @@
 
         if ($course->id == $site->id) {
             $strfiles = get_string("sitefiles");
+        } else if (! is_numeric($course->id)){
+            $strfiles = $course->id;
         } else {
             $strfiles = get_string("files");
         }
@@ -76,8 +95,13 @@
         echo "<tr>";
         echo "<td colspan=\"2\">";
     }
-
-    if (! $basedir = make_upload_directory("$course->id")) {
+    
+    if (is_numeric($id)) {
+        $fileroot = $CFG->dataroot ;
+    } else {
+        $fileroot = $CFG->dirroot."/lang";
+    }    
+    if (! $basedir = mdl_mkdir($fileroot, "$course->id")) {
         error("The site administrator needs to fix the file permissions");
     }
 
@@ -657,9 +681,15 @@ function displaydir ($wdir) {
 
     $fullpath = $basedir.$wdir;
 
+    $dontshow = array ("." , "..");
+
+    if (! is_numeric($id)) { //editing language files
+        array_push($dontshow, "CVS");
+    }
+
     $directory = opendir($fullpath);             // Find all files
     while ($file = readdir($directory)) {
-        if ($file == "." || $file == "..") {
+        if (in_array($file , $dontshow)) {
             continue;
         }
         
