@@ -12,7 +12,9 @@
         error("Course ID was incorrect");
     }
 
-    require_login($course->id);
+    if ($course->category) {
+        require_login($course->id);
+    }
 
     if ($return and $USER->realuser) {
         $USER = get_user_info_from_db("id", $USER->realuser);
