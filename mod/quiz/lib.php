@@ -837,70 +837,82 @@ function quiz_print_question($number, $question, $grade, $quizid,
            // For this question type, we better print the image on top:
            quiz_print_possible_question_image($quizid, $question);
 
-            $qtextremaining = format_text($question->questiontext, $question->questiontextformat, NULL, $courseid);
-            // The regex will recognize text snippets of type {#X} where the X can be any text not containg } or white-space characters.
-            while (ereg('\{#([^[:space:]}]*)}', $qtextremaining, $regs)) {
+           $qtextremaining = format_text($question->questiontext, $question->questiontextformat, NULL, $courseid);
 
-                $qtextsplits = explode($regs[0], $qtextremaining, 2);
-                echo $qtextsplits[0];
-                $qtextremaining = $qtextsplits[1];
+           // The regex will recognize text snippets of type {#X} 
+           // where the X can be any text not containg } or white-space characters.
 
-                $multianswer = get_record('quiz_multianswers',
-                                          'question', $question->id,
-                                          'positionkey', $regs[1]);
-                
-                $inputname= " name=\"q{$realquestion->id}ma$multianswer->id\" ";
-                
-                if (!empty($response)
-                    && ereg('(.[^-]*)-(.+)', array_shift($response), $responseitems))
-                {
-                    $responsefractiongrade = (float)$responseitems[1];
-                    $actualresponse = $responseitems[2];
+           while (ereg('\{#([^[:space:]}]*)}', $qtextremaining, $regs)) {
+               $qtextsplits = explode($regs[0], $qtextremaining, 2);
+               echo $qtextsplits[0];
+               $qtextremaining = $qtextsplits[1];
 
-                    if (1.0 == $responsefractiongrade) {
-                        $style = 'style="background-color:lime"';
-                    } else if (0.0 < $responsefractiongrade) {
-                        $style = 'style="background-color:yellow"';
-                    } else if ('' != $actualresponse) {
-                        // The response must have been totally wrong:
-                        $style = 'style="background-color:red"';
-                    } else { 
-                        // There was no response given
-                        $style = '';
-                    }
-                } else {
-                    $responsefractiongrade = 0.0;
-                    $actualresponse = '';
-                    $style = '';
-                }
+               $multianswer = get_record('quiz_multianswers', 'question', $question->id, 'positionkey', $regs[1]);
 
-                switch ($multianswer->answertype) {
-                    case SHORTANSWER:
-                    case NUMERICAL:
-                        echo " <input $style $inputname value=\"$actualresponse\" type=\"text\" size=\"8\" /> ";
-                    break;
-                    case MULTICHOICE:
-                        echo (" <select $style $inputname>");
-                        $answers = get_records_list("quiz_answers", "id", $multianswer->answers);
-                        echo ('<option></option>'); // Default empty option 
-                        foreach ($answers as $answer) {
-                            if ($answer->id == $actualresponse) {
-                                $selected = 'selected';
-                            } else {
-                                $selected = '';
-                            }
-                            echo "<option value=\"$answer->id\" $selected>$answer->answer</option>";
-                        }
-                        echo ("</select> ");
-                    break;
-                    default:
-                        error("Unable to recognized answertype $answer->answertype");
-                    break;
-                }
-            }
-            // Print the final piece of question text:
-            echo $qtextremaining;
-            break;
+               $inputname= " name=\"q{$realquestion->id}ma$multianswer->id\" ";
+
+               if (!empty($response) && ereg('(.[^-]*)-(.+)', array_shift($response), $responseitems)) {
+                   $responsefractiongrade = (float)$responseitems[1];
+                   $actualresponse = $responseitems[2];
+
+                   if (1.0 == $responsefractiongrade) {
+                       $style = 'style="background-color:lime"';
+                   } else if (0.0 < $responsefractiongrade) {
+                       $style = 'style="background-color:yellow"';
+                   } else if ('' != $actualresponse) {
+                       // The response must have been totally wrong:
+                       $style = 'style="background-color:red"';
+                   } else { 
+                       // There was no response given
+                       $style = '';
+                   }
+               } else {
+                   $responsefractiongrade = 0.0;
+                   $actualresponse = '';
+                   $style = '';
+               }
+
+               $feedbackitem = '';
+               switch ($multianswer->answertype) {
+                   case SHORTANSWER:
+                   case NUMERICAL:
+                       if (isset($feedback[$regs[1]-1])) {
+                           $title = " title=\"".s($feedback[$regs[1]-1])."\" ";
+                       } else {
+                           $title = "";
+                       }
+                       echo " <input $style $title $inputname value=\"$actualresponse\" type=\"text\" size=\"12\" /> ";
+                       break;
+                   case MULTICHOICE:
+                       $outputoptions = '';
+                       $answers = get_records_list("quiz_answers", "id", $multianswer->answers);
+                       $outputoptions .= '<option></option>'; // Default empty option 
+                       foreach ($answers as $answer) {
+                           if ($answer->id == $actualresponse) {
+                               $selected = 'selected';
+                               $feedbackitem = $answer->feedback;
+                           } else {
+                               $selected = '';
+                           }
+                           $outputoptions .= "<option value=\"$answer->id\" $selected>$answer->answer</option>";
+                       }
+                       if ($feedbackitem) {
+                           echo "<select title=\"".s($feedbackitem)."\" $style $inputname>";
+                       } else {
+                           echo "<select $style $inputname>";
+                       }
+                       echo $outputoptions;
+                       echo '</select>';
+                       break;
+                   default:
+                       error("Unable to recognized answertype $answer->answertype");
+                       break;
+               }
+           }
+
+           // Print the final piece of question text:
+           echo $qtextremaining;
+           break;
 
        case RANDOM:
            // This can only happen if it is a recently added question
@@ -1047,7 +1059,6 @@ function quiz_print_quiz_questions($quiz, $results=NULL, $questions=NULL, $shuff
                 $grades[$question->id]->grade = $grades[$randomquestion->id]->grade;
             }
         }
-
 
         print_simple_box_start("center", "90%");
         quiz_print_question($count, $question, $grades[$question->id]->grade, $quiz->id, 
@@ -1687,6 +1698,7 @@ function quiz_grade_attempt_question_result($question,
                     $grade = $potentialgrade;
                 }
             }
+
             break;
 
         case NUMERICAL:
@@ -1831,11 +1843,11 @@ function quiz_grade_attempt_question_result($question,
                     if ($multianswer->id == $qarr[0]) {
                         $subquestion->qtype = $multianswer->answertype;
                         $subquestion->grade = $multianswer->norm;
-                        $subresult = quiz_grade_attempt_question_result
-                                ($subquestion, $multianswer->subanswers, true);
+                        $subresult = quiz_grade_attempt_question_result($subquestion, $multianswer->subanswers, true);
                         break;
                     }
                 }
+
 
                 // Summarize subquestion results:
                 $grade += $subresult->grade;
