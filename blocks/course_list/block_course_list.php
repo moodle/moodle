@@ -5,7 +5,7 @@ class CourseBlock_course_list extends MoodleBlock {
         $this->title = get_string('courses');
         $this->content_type = BLOCK_TYPE_LIST;
         $this->course = $course;
-        $this->version = 2005052600;
+        $this->version = 2004081200;
     }
     
     function has_config() {

@@ -5,7 +5,7 @@ class CourseBlock_admin extends MoodleBlock {
         $this->title = get_string('administration');
         $this->content_type = BLOCK_TYPE_LIST;
         $this->course = $course;
-        $this->version = 2005052800;
+        $this->version = 2004081200;
     }
 
     function applicable_formats() {

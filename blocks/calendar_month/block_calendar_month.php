@@ -5,7 +5,7 @@ class CourseBlock_calendar_month extends MoodleBlock {
         $this->title = get_string('calendar', 'calendar');
         $this->content_type = BLOCK_TYPE_TEXT;
         $this->course = $course;
-        $this->version = 2005052600;
+        $this->version = 2004081200;
     }
 
     function applicable_formats() {

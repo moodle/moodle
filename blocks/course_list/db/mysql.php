@@ -24,6 +24,11 @@ function course_list_upgrade($oldversion=0) {
     
     $result = true;
 
+    if ($oldversion == 2005052600) {  /// Fix a buggy date
+        $oldversion = 2004081200;
+        set_field();
+    }
+
     if ($oldversion < 2004041000 and $result) {
         $result = true; //Nothing to do
     }

@@ -801,6 +801,13 @@ function main_upgrade($oldversion=0) {
         }
     }
 
+    if ($oldversion < 2004081200) {  // Fixing version errors in some blocks
+        set_field('blocks', 'version', 2004081200, 'name', 'admin');
+        set_field('blocks', 'version', 2004081200, 'name', 'calendar_month');
+        set_field('blocks', 'version', 2004081200, 'name', 'course_list');
+    }
+
+
     return $result;
 
 }
