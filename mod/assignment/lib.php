@@ -132,7 +132,8 @@ function assignment_cron () {
             }
 
             if (! isstudent($course->id, $user->id) and !isteacher($course->id, $user->id)) {
-                continue;  // Not an active participant
+                echo "$user->firstname $user->lastname not an active participant in $course->shortname\n";
+                continue;
             }
 
             if (! $teacher = get_record("user", "id", "$submission->teacher")) {
