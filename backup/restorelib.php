@@ -875,7 +875,7 @@
                             $newid = insert_record ("groups",$gro);
                         } else { 
                             //get current group id
-                            $newid = $group_db->id;
+                            $newid = $gro_db->id;
                         }
                         if ($newid) {
                             //We have the newid, update backup_ids
@@ -1015,6 +1015,9 @@
 
                             //The structure is equal to the db, so insert the event
                             $newid = insert_record ("event",$eve);
+                        } else {
+                            //get current event id
+                            $newid = $eve_db->id;
                         }
                         if ($newid) {
                             //We have the newid, update backup_ids
