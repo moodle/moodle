@@ -55,3 +55,12 @@ LimitRequestBody 0
 ### about 404 errors (URL not found).
 
 #ErrorDocument 404 http://example.org/moodle/error/index.php
+
+
+### People have reported that these can help in some cases
+### (unusual) when you see errors about undefined functions
+
+#php_value auto_prepend_file none
+#php_value include_path .
+
+
