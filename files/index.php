@@ -502,9 +502,7 @@
                 echo $file;
                 print_simple_box_end();
                 echo "<BR>";
-                //MODIFY RELATIVE PATH TO restore.php
-                $restore_path = "../contrib/stronk7/backup/restore.php";
-                //END MODIFY
+                $restore_path = "../backup/restore.php";
                 notice_yesno (get_string("areyousuretorestorethis"),
                                 $restore_path."?file=".$id.$wdir."/".$file,
                                 "index.php?id=$id&wdir=$wdir&action=cancel");
