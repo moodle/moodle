@@ -1096,14 +1096,15 @@ function valid_uploaded_file($newfile) {
 
 function get_max_upload_file_size($sitebytes=0, $coursebytes=0, $modulebytes=0) {
 /// Returns the maximum size for uploading files
-/// There are six possible upload limits:
+/// There are seven possible upload limits:
 ///
 /// 1) in Apache using LimitRequestBody (no way of checking or changing this)
 /// 2) in php.ini for 'upload_max_filesize' (can not be changed inside PHP)
 /// 3) in .htaccess for 'upload_max_filesize' (can not be changed inside PHP)
-/// 4) by the Moodle admin in $CFG->maxbytes
-/// 5) by the teacher in the current course $course->maxbytes
-/// 6) by the teacher for the current module, eg $assignment->maxbytes
+/// 4) in php.ini for 'post_max_size' (can not be changed inside PHP)
+/// 5) by the Moodle admin in $CFG->maxbytes
+/// 6) by the teacher in the current course $course->maxbytes
+/// 7) by the teacher for the current module, eg $assignment->maxbytes
 ///
 /// These last two are passed to this function as arguments (in bytes).
 /// Anything defined as 0 is ignored.
@@ -1113,6 +1114,13 @@ function get_max_upload_file_size($sitebytes=0, $coursebytes=0, $modulebytes=0) 
         $filesize = "5M";
     }
     $minimumsize = get_real_size($filesize);
+
+    if ($postsize = ini_get("post_max_size")) {
+        $postsize = get_real_size($postsize);
+        if ($postsize < $minimumsize) {
+            $minimumsize = $postsize;
+        }
+    }
 
     if ($sitebytes and $sitebytes < $minimumsize) {
         $minimumsize = $sitebytes;
