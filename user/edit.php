@@ -3,16 +3,12 @@
     require_once("../config.php");
     require_once("$CFG->libdir/gdlib.php");
 
-    $id     = optional_param('id',     PARAM_INT);   // user id
-    $course = optional_param('course', PARAM_INT);   // course id
+    $id     = optional_param('id',     0,      PARAM_INT);   // user id
+    $course = optional_param('course', SITEID, PARAM_INT);   // course id (defaults to Site)
 
     if (empty($id)) {         // See your own profile by default
         require_login();
         $id = $USER->id;
-    }
-
-    if (empty($course)) {     // See it at site level by default
-        $course = SITEID;
     }
 
     if (! $user = get_record("user", "id", $id)) {
