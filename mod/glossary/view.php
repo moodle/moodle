@@ -259,10 +259,12 @@
 
 /// Search box
 //    echo '<p>';
+
+    echo '<form method="post" action="view.php">';
+
     echo '<table align="center" width="70%" bgcolor="' . $THEME->cellheading .'" class="generalbox"><tr><td align="center">';
     
     echo '<p align="center">';
-    echo '<form method="POST" action="view.php">';
     echo '<input type="submit" value="'.$strsearch.'" name="searchbutton" /> ';
     if ($mode == 'search') {
         echo '<input type="text" name="hook" size="20" value="'.$hook.'" /> ';
@@ -278,9 +280,10 @@
     echo '<input type="hidden" name="mode" value="search" />';
     echo '<input type="hidden" name="id" value="'.$cm->id.'" />';
     echo $strsearchindefinition;
-    echo '</form>';
     echo '</p>';
     print_simple_box_end();    
+    
+    echo '</form>';
 
     include("tabs.html");
 
