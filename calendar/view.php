@@ -162,16 +162,16 @@
     list($nextmon, $nextyr) = calendar_add_month($mon, $yr);
     $getvars = 'cal_d='.$day.'&amp;cal_m='.$mon.'&amp;cal_y='.$yr; // For filtering
     echo calendar_filter_controls($_GET['view'], $getvars);
-    echo '<p>';
+    echo '<div style="margin: 10px 0px;">';
     echo calendar_top_controls('display', array('m' => $prevmon, 'y' => $prevyr));
     echo calendar_get_mini($courses, $groups, $users, $prevmon, $prevyr);
-    echo '</p><p>';
+    echo '</div><div style="margin: 10px 0px;">';
     echo calendar_top_controls('display', array('m' => $mon, 'y' => $yr));
     echo calendar_get_mini($courses, $groups, $users, $mon, $yr);
-    echo '</p><p>';
+    echo '</div><div style="margin: 10px 0px;">';
     echo calendar_top_controls('display', array('m' => $nextmon, 'y' => $nextyr));
     echo calendar_get_mini($courses, $groups, $users, $nextmon, $nextyr);
-    echo '</p>';
+    echo '</div>';
     print_side_block_end();
     print_spacer(1, 180);
     echo '</td>';
@@ -213,7 +213,7 @@ function calendar_show_day($d, $m, $y, $courses, $groups, $users) {
     }
 
     print_side_block_start($text, array('class' => 'mycalendar'));
-    echo '<p>'.calendar_top_controls('day', array('d' => $d, 'm' => $m, 'y' => $y)).'</p>';
+    echo '<div>'.calendar_top_controls('day', array('d' => $d, 'm' => $m, 'y' => $y)).'</div>';
 
     if (empty($events)) {
         // There is nothing to display today.
@@ -505,7 +505,7 @@ function calendar_show_month_detailed($m, $y, $courses, $groups, $users) {
         echo "</tr>\n";
     }
 
-    echo '<tbody></table><br />';
+    echo '</tbody></table><br />';
     print_side_block_end();
 }
 

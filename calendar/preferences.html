@@ -2,14 +2,14 @@
 
 <table cellpadding="9" cellspacing="0">
 <tr valign="top">
-	<td nowrap="nowrap" align="right"><p><?php print_string('pref_timeformat', 'calendar')?>:</td>
+	<td nowrap="nowrap" align="right"><?php print_string('pref_timeformat', 'calendar')?>:</td>
 	<td>
-    <?php 
+    <?php
         $options = NULL;
         $options['0']  = get_string('default', 'calendar');
         $options[CALENDAR_TF_12] = get_string('timeformat_12', 'calendar');
         $options[CALENDAR_TF_24] = get_string('timeformat_24', 'calendar');
-        choose_from_menu ($options, "timeformat", $prefs->timeformat, "", "", ""); 
+        choose_from_menu ($options, "timeformat", $prefs->timeformat, "", "", "");
     ?>
     </td>
     <td>
@@ -18,9 +18,9 @@
 </tr>
 
 <tr valign="top">
-	<td nowrap="nowrap" align="right"><p><?php print_string('pref_startwday', 'calendar')?>:</td>
+	<td nowrap="nowrap" align="right"><?php print_string('pref_startwday', 'calendar')?>:</td>
 	<td>
-    <?php 
+    <?php
         $options = NULL;
         $options[0] = get_string('sunday', 'calendar');
         $options[1] = get_string('monday', 'calendar');
@@ -38,14 +38,14 @@
 </tr>
 
 <tr valign="top">
-	<td nowrap="nowrap" align="right"><p><?php print_string('pref_maxevents', 'calendar')?>:</td>
+	<td nowrap="nowrap" align="right"><?php print_string('pref_maxevents', 'calendar')?>:</td>
 	<td>
-    <?php 
+    <?php
         $options = NULL;
         for ($i=1; $i<=20; $i++) {
             $options[$i] = $i;
         }
-        choose_from_menu ($options, "maxevents", $prefs->maxevents, "", "", ""); 
+        choose_from_menu ($options, "maxevents", $prefs->maxevents, "", "", "");
     ?>
     </td>
     <td>
@@ -54,14 +54,14 @@
 </tr>
 
 <tr valign="top">
-	<td nowrap="nowrap" align="right"><p><?php print_string('pref_lookahead', 'calendar')?>:</td>
+	<td nowrap="nowrap" align="right"><?php print_string('pref_lookahead', 'calendar')?>:</td>
 	<td>
-    <?php 
+    <?php
         $options = NULL;
         for ($i=1; $i<=200; $i++) {
             $options[$i] = $i;
         }
-        choose_from_menu ($options, "lookahead", $prefs->lookahead, "", "", ""); 
+        choose_from_menu ($options, "lookahead", $prefs->lookahead, "", "", "");
     ?>
     </td>
     <td>
@@ -71,7 +71,7 @@
 
 <tr>
     <td colspan="3" align="center">
-	<input type="submit" value="<?php print_string("savechanges") ?>"></td>
+	<input type="submit" value="<?php print_string("savechanges") ?>" /></td>
 </tr>
 </table>
 

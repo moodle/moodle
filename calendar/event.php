@@ -452,16 +452,16 @@
     list($nextmon, $nextyr) = calendar_add_month($mon, $yr);
 
     echo calendar_filter_controls('event', 'action='.$_REQUEST['action'].'&amp;type='.$_REQUEST['type'].'&amp;id='.$_REQUEST['id']);
-    echo '<p>';
+    echo '<div>';
     echo calendar_top_controls('display', array('m' => $prevmon, 'y' => $prevyr));
     echo calendar_get_mini($courses, $groups, $users, $prevmon, $prevyr);
-    echo '</p><p>';
+    echo '</div><div>';
     echo calendar_top_controls('display', array('m' => $mon, 'y' => $yr));
     echo calendar_get_mini($courses, $groups, $users, $mon, $yr);
-    echo '</p><p>';
+    echo '</div><div>';
     echo calendar_top_controls('display', array('m' => $nextmon, 'y' => $nextyr));
     echo calendar_get_mini($courses, $groups, $users, $nextmon, $nextyr);
-    echo '</p>';
+    echo '</div>';
     print_side_block_end();
     print_spacer(1, 180);
     echo '</td>';
