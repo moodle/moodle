@@ -437,11 +437,14 @@ function get_records_sql($sql) {
     if (!$rs) return false;
 
     if ( $rs->RecordCount() > 0 ) {
-        $records = $rs->GetAssoc(true);
-        foreach ($records as $key => $record) {
-            $objects[$key] = (object) $record;
+        if ($records = $rs->GetAssoc(true)) {
+            foreach ($records as $key => $record) {
+                $objects[$key] = (object) $record;
+            }
+            return $objects;
+        } else {
+            return false;
         }
-        return $objects;
     } else {
         return false;
     }
@@ -555,7 +558,7 @@ function update_record($table, $dataobject) {
 
     global $db;
 
-    if (! $dataobject->id) {
+    if (! isset($dataobject->id) ) {
         return false;
     }
 
@@ -565,7 +568,7 @@ function update_record($table, $dataobject) {
 
     // Pull out data matching these fields
     foreach ($columns as $column) {
-        if ($column->name <> "id" && $data[$column->name] ) {
+        if ($column->name <> "id" && isset($data[$column->name]) ) {
             $ddd[$column->name] = $data[$column->name];
         }
     }
