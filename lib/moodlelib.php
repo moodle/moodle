@@ -57,6 +57,20 @@ function optional_variable(&$var, $default=0) {
     }
 }
 
+function parameter($varname, $default=NULL) {
+/// This function will replace both of the above two functions over time.
+/// It returns a value for a given variable name.
+
+    if (isset($_POST[$varname])) {       // POST has precedence
+        return $_POST[$varname];
+    }
+
+    if (isset($_GET[$varname])) {
+        return $_GET[$varname];
+    }
+    
+    return $default;
+}
 
 function set_config($name, $value) {
 /// No need for get_config because they are usually always available in $CFG
