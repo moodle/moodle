@@ -122,7 +122,7 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
 
     $morehref = '';
     if(!empty($courses)) {
-        $courses = array_diff($courses, array(1));
+        $courses = array_diff($courses, array(SITEID));
         if(count($courses) == 1) {
             $morehref = '&amp;course='.reset($courses);
         }
@@ -308,7 +308,7 @@ function calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxeve
 
     $morehref = '';
     if(!empty($courses)) {
-        $courses = array_diff($courses, array(1));
+        $courses = array_diff($courses, array(SITEID));
         if(count($courses) == 1) {
             $morehref = '&amp;course='.reset($courses);
         }
@@ -727,9 +727,7 @@ function calendar_days_in_month($month, $year) {
    return intval(date('t', mktime(0, 0, 0, $month, 1, $year)));
 }
 
-function calendar_get_sideblock_upcoming($courses, $groups, $users, $daysinfuture, $maxevents) {
-    $events = calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxevents);
-
+function calendar_get_sideblock_upcoming($events, $linkhref = NULL) {
     $content = '';
     $lines = count($events);
     if (!$lines) {
@@ -742,7 +740,14 @@ function calendar_get_sideblock_upcoming($courses, $groups, $users, $daysinfutur
             // That's an activity event, so let's provide the hyperlink
             $content .= $events[$i]->referer;
         } else {
-            $content .= $events[$i]->name;
+            if(!empty($linkhref)) {
+                $ed = usergetdate($events[$i]->timestart);
+                $href = calendar_get_link_href(CALENDAR_URL.$linkhref, $ed['mday'], $ed['mon'], $ed['year']);
+                $content .= '<a href="'.$href.'">'.$events[$i]->name.'</a>';
+            }
+            else {
+                $content .= $events[$i]->name;
+            }
         }
         $events[$i]->time = str_replace('->', '<br />->', $events[$i]->time);
         $content .= '</div><div class="cal_event_date" style="text-align:right;">'.$events[$i]->time.'</div>';
@@ -941,10 +946,10 @@ function calendar_set_filters(&$courses, &$group, &$user, $courseeventsfrom = NU
         else if(is_array($courseeventsfrom)) {
             $courses = array_keys($courseeventsfrom);
         }
-        $courses = array_diff($courses, array(1));
+        $courses = array_diff($courses, array(SITEID));
     }
     else if($SESSION->cal_show_global) {
-        $courses = array(1);
+        $courses = array(SITEID);
     }
     else {
         $courses = false;

@@ -44,8 +44,9 @@ class CourseBlock_calendar_upcoming extends MoodleBlock {
         // Correct formatting is [courseid] => 1 to be concise with moodlelib.php functions.
 
         calendar_set_filters($courses, $group, $user, $filtercourse, $filtercourse, false);
+        $events = calendar_get_upcoming($courses, $group, $user, get_user_preferences('calendar_lookahead', CALENDAR_UPCOMING_DAYS), get_user_preferences('calendar_maxevents', CALENDAR_UPCOMING_MAXEVENTS));
 
-        $this->content->text = calendar_get_sideblock_upcoming($courses, $group, $user, get_user_preferences('calendar_lookahead', CALENDAR_UPCOMING_DAYS), get_user_preferences('calendar_maxevents', CALENDAR_UPCOMING_MAXEVENTS));
+        $this->content->text = calendar_get_sideblock_upcoming($events, 'view.php?view=day&amp;course='.$this->course->id.'&amp;');
 
         if(empty($this->content->text)) {
             $this->content->text = '<div style="font-size: 0.8em; text-align: center;">'.get_string('noupcomingevents', 'calendar').'</div>';
