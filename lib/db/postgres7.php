@@ -208,6 +208,18 @@ function main_upgrade($oldversion=0) {
         }
     }
 
+    if ($oldversion < 2003081502) {
+        execute_sql(" CREATE TABLE {$CFG->prefix}scale (
+                         id SERIAL PRIMARY KEY,
+                         courseid integer NOT NULL default '0',
+                         userid integer NOT NULL default '0',
+                         name varchar(255) NOT NULL default '',
+                         scale text,
+                         description text,
+                         timemodified integer NOT NULL default '0'
+                      )");
+    }
+
 
     return $result;
 }

@@ -103,6 +103,16 @@ CREATE TABLE prefix_modules (
    visible integer NOT NULL default '1'
 );
 
+CREATE TABLE prefix_scale (
+   id SERIAL PRIMARY KEY,
+   courseid integer NOT NULL default '0',
+   userid integer NOT NULL default '0',
+   name varchar(255) NOT NULL default '',
+   scale text,
+   description text,
+   timemodified integer NOT NULL default '0'
+);
+
 CREATE TABLE prefix_user (
    id SERIAL PRIMARY KEY,
    confirmed integer NOT NULL default '0',
