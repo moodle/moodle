@@ -1,29 +1,22 @@
 <?PHP  // $Id$
-require_once("lib.php");
 
-function glossary_print_entry_by_format($course, $cm, $glossary, $entry,$currentview="",$cat="") {
+function glossary_print_entry_by_format($course, $cm, $glossary, $entry, $currentview="",$cat="") {
     global $THEME, $CFG, $USER;
 
-//    if ($entry->timemarked < $entry->modified) {
-        $colour = $THEME->cellheading2;
-//    } else {
-//        $colour = $THEME->cellheading;
-//    }
+    $colour = $THEME->cellheading2;
 
     $user = get_record("user", "id", $entry->userid);
-    $strby = get_string("writtenby","glossary");
+    $strby = get_string("writtenby", "glossary");
 
-    echo "<table width=95% border=0><tr><td>";
+    echo "\n<table border=0 width=95% cellspacing=0 valign=top cellpadding=3 class=forumpost align=center>";
 
-    echo "\n<TABLE BORDER=1 CELLSPACING=0 valign=top cellpadding=10>";
-
-    echo "\n<TR>";
-    echo "\n<TD ROWSPAN=2 BGCOLOR=\"$colour\" WIDTH=35 VALIGN=TOP>";
+    echo "\n<tr>";
+    echo "\n<td rowspan=2 bgcolor=\"$colour\" width=35 valign=top class=\"forumpostpicture\">";
     if ($entry) {
-          print_user_picture($user->id, $course->id, $user->picture);
+        print_user_picture($user->id, $course->id, $user->picture);
     }
-    echo "</TD>";
-    echo "<TD NOWRAP WIDTH=100% BGCOLOR=\"$THEME->cellheading\">";
+    echo "</td>";
+    echo "<td nowrap width=100% bgcolor=\"$THEME->cellheading\" class=\"forumpostheader\">";
     if ($entry->attachment) {
           $entry->course = $glossary->course;
           echo "<table border=0 align=right><tr><td>";
@@ -31,27 +24,26 @@ function glossary_print_entry_by_format($course, $cm, $glossary, $entry,$current
           echo "</td></tr></table>";
     }
     if ($entry) {
-    	     echo "<b>$entry->concept</b><br><FONT SIZE=2>$strby $user->firstname $user->lastname</font>";
-          echo "&nbsp;&nbsp;<FONT SIZE=1>(".get_string("lastedited").": ".userdate($entry->timemodified).")</FONT></small>";
+        echo "<b>$entry->concept</b><br />";
+        echo "<font size=\"2\">$strby $user->firstname $user->lastname</font>";
+        echo "&nbsp;&nbsp;<font size=1>(".get_string("lastedited").": ".
+             userdate($entry->timemodified).")</font>";
     }
-    echo "</TR>";
+    echo "</tr>";
 
-    echo "\n<TR><TD WIDTH=100% BGCOLOR=\"$THEME->cellcontent\">";
+    echo "\n<tr><td width=100% bgcolor=\"$THEME->cellcontent\" class=\"forumpostmessage\">";
     if ($entry) {
-	  echo format_text($entry->definition, $entry->format);
-
-	  glossary_print_entry_icons($course, $cm, $glossary, $entry,$currentview,$cat);
+        echo format_text($entry->definition, $entry->format);
+        glossary_print_entry_icons($course, $cm, $glossary, $entry,$currentview,$cat);
 
     } else {
-	  echo "<center>";
+        echo "<center>";
         print_string("noentry", "glossary");
-	  echo "</center>";
+        echo "</center>";
     }
-    echo "</TD></TR>";
+    echo "</td></tr>";
 
-    echo "</TABLE>\n";
-
-    echo "</td></tr></table>";
+    echo "</table>\n";
 }
 
 ?>

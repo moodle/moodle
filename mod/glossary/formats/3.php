@@ -1,5 +1,4 @@
 <?PHP  // $Id$
-require_once("lib.php");
 
 function glossary_print_entry_by_format($course, $cm, $glossary, $entry, $currentview="",$cat="") {
     global $THEME, $CFG, $USER;
@@ -21,7 +20,8 @@ function glossary_print_entry_by_format($course, $cm, $glossary, $entry, $curren
     if ($entry) {
         echo "<b>$entry->concept</b><br />";
         echo "<font size=\"2\">$strby $user->firstname $user->lastname</font>";
-        echo "&nbsp;&nbsp;<font size=1>(".get_string("lastedited").": ".userdate($entry->timemodified).")</font></small>";
+        echo "&nbsp;&nbsp;<font size=1>(".get_string("lastedited").": ".
+             userdate($entry->timemodified).")</font>";
     }
     echo "</tr>";
 
@@ -38,14 +38,14 @@ function glossary_print_entry_by_format($course, $cm, $glossary, $entry, $curren
             echo glossary_print_attachments($entry);
             echo "</td></tr></table>";
         }
-	  echo format_text($entry->definition, $entry->format);
+        echo format_text($entry->definition, $entry->format);
 
-	  glossary_print_entry_icons($course, $cm, $glossary, $entry,$currentview,$cat);
+        glossary_print_entry_icons($course, $cm, $glossary, $entry,$currentview,$cat);
 
     } else {
-	  echo "<center>";
+        echo "<center>";
         print_string("noentry", "glossary");
-	  echo "</center>";
+        echo "</center>";
     }
     echo "</td></tr>";
 

@@ -3,45 +3,38 @@
 function glossary_print_entry_by_format($course, $cm, $glossary, $entry,$currentview="",$cat="") {
     global $THEME, $USER;
 
-//    if ($entry->timemarked < $entry->modified) {
-        $colour = $THEME->cellheading2;
-//    } else {
-//        $colour = $THEME->cellheading;
-//    }
-    echo "<table width=95% border=0><tr><td>";
+    $colour = $THEME->cellheading2;
 
-    echo "\n<TABLE BORDER=1 CELLSPACING=0 width=100% valign=top cellpadding=10>";
+    echo "\n<table border=1 cellspacing=0 width=95% valign=top cellpadding=10>";
 
-    echo "\n<TR>";
-    echo "<TD WIDTH=100% BGCOLOR=\"$colour\">";
+    echo "\n<tr>";
+    echo "<td width=100% bgcolor=\"$colour\">";
     if ($entry->attachment) {
-          $entry->course = $course->id;
-          echo "<table border=0 align=right><tr><td>";
-          echo glossary_print_attachments($entry, "html");
-          echo "</td></tr></table>";
+        $entry->course = $course->id;
+        echo "<table border=0 align=right><tr><td>";
+        echo glossary_print_attachments($entry, "html");
+        echo "</td></tr></table>";
     }
     echo "<b>$entry->concept</b><br>";
     if ($entry) {
-        echo "&nbsp;&nbsp;<FONT SIZE=1>".get_string("lastedited").": ".userdate($entry->timemodified)."</FONT>";
+        echo "&nbsp;&nbsp;<font size=1>".get_string("lastedited").": ".userdate($entry->timemodified)."</font>";
     }
-    echo "</TR>";
+    echo "</tr>";
 
-    echo "\n<TR><TD WIDTH=100% BGCOLOR=\"$THEME->cellcontent\">";
+    echo "\n<tr><td width=100% bgcolor=\"$THEME->cellcontent\">";
     if ($entry) {
-	  echo format_text($entry->definition, $entry->format);
+        echo format_text($entry->definition, $entry->format);
 
-	  glossary_print_entry_icons($course, $cm, $glossary, $entry,$currentview,$cat);
+        glossary_print_entry_icons($course, $cm, $glossary, $entry, $currentview, $cat);
 
     } else {
-	  echo "<center>";
+        echo "<center>";
         print_string("noentry", "glossary");
-	  echo "</center>";
+        echo "</center>";
     }
-    echo "</TD></TR>";
+    echo "</td></tr>";
 
-    echo "</TABLE>\n";
-    
-    echo "</td></tr></table>";
+    echo "</table>\n";
 
 }
 
