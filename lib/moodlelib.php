@@ -1620,7 +1620,7 @@ function clean_filename($string) {
 ///    alphanumeric _ - . 
 
     $string = eregi_replace("\.\.+", "", $string);
-    $string = preg_replace('/[^\.\w-]/','_', $string ); // only allowed chars
+    $string = preg_replace('/[^\.a-zA-Z\d\_-]/','_', $string ); // only allowed chars
     $string = eregi_replace("_+", "_", $string);
     return    $string;
 }
