@@ -97,6 +97,10 @@ if ($form->mode == "add") {
 	if (!isset($form->lessondefault)) {
 		$form->lessondefault = 0;
 	}
+	if (!isset($form->modattempts)) {
+		$form->modattempts = 0;
+	}
+
 	
 	$form->deleteattempts = "";
 
@@ -122,6 +126,17 @@ if ($form->mode == "add") {
         $options[0] = get_string("no"); $options[1] = get_string("yes");
 		choose_from_menu($options, "practice", $form->practice, "");
         helpbutton("practice", get_string("practice", "lesson"), "lesson");
+    ?>
+    </td>
+</tr>
+
+<tr>
+    <td align=right><p><b><?php  print_string("modattempts", "lesson"); ?>:</b></p></td>
+    <td>
+    <?PHP 
+        $options[0] = get_string("no"); $options[1] = get_string("yes");
+		choose_from_menu($options, "modattempts", $form->modattempts, "");
+        helpbutton("modattempts", get_string("modattempts", "lesson"), "lesson");
     ?>
     </td>
 </tr>
