@@ -1,3 +1,798 @@
+2002-12-10 Tuesday 01:08  moodler
+
+	* version.php: 
+	
+	Increment
+
+2002-12-10 Tuesday 00:21  moodler
+
+	* theme/standardblue/config.php: 
+	
+	Fixed blue a little
+
+2002-12-10 Tuesday 00:10  moodler
+
+	* theme/: index.php, standard/config.php, standard/gradient.jpg,
+	standard/header.html, standard/styles.css, standard/styles.php,
+	standardblue/config.php, standardblue/gradient.jpg,
+	standardblue/header.html, standardblue/styles.css,
+	standardblue/styles.php, standardgreen/config.php,
+	standardgreen/gradient.jpg, standardgreen/header.html,
+	standardgreen/styles.css, standardgreen/styles.php,
+	standardlogo/config.php, standardlogo/gradient.jpg,
+	standardlogo/header.html, standardlogo/styles.css,
+	standardlogo/styles.php, standardred/config.php,
+	standardred/gradient.jpg, standardred/header.html,
+	standardred/styles.css, standardred/styles.php: 
+	
+	Changes for new styles and scheme
+
+2002-12-09 Monday 22:07  moodler
+
+	* course/: social.php, weeks.php: 
+	
+	More fixes for course formats
+
+2002-12-09 Monday 21:53  moodler
+
+	* lang/ja/: assignment.php, auth.php, choice.php, forum.php,
+	journal.php, moodle.php, quiz.php, resource.php, survey.php,
+	help/coursecategory.html, help/courseformats.html,
+	help/coursefullname.html, help/coursenewsitems.html,
+	help/coursenumsections.html, help/courserecent.html,
+	help/courseshortname.html, help/coursestartdate.html,
+	help/enrolmentkey.html, help/guestaccess.html, help/html.html,
+	help/langedit.html, help/mods.html, help/picture.html,
+	help/questions.html, help/richtext.html, help/surveys.html,
+	help/teachers.html, help/text.html, help/textformat.html,
+	help/assignment/assignmenttype.html, help/assignment/resubmit.html,
+	help/choice/options.html, help/forum/allowdiscussions.html,
+	help/forum/attachment.html, help/forum/forumtype.html,
+	help/forum/ratings.html, help/forum/subscription.html,
+	help/quiz/attempts.html, help/quiz/categories.html,
+	help/quiz/correctanswers.html, help/quiz/feedback.html,
+	help/quiz/grademethod.html, help/quiz/maxgrade.html,
+	help/quiz/multichoice.html, help/quiz/questiontypes.html,
+	help/quiz/random.html, help/quiz/shortanswer.html,
+	help/quiz/timeopen.html, help/quiz/truefalse.html,
+	help/resource/resourcetype.html, help/resource/summary.html: 
+	
+	Latest Japanese files from Mits.  This is now a COMPLETE
+	TRANSLATION!
+	
+	Well done, Mits.   That's LOTS of work.
+
+2002-12-09 Monday 21:48  moodler
+
+	* lib/moodlelib.php: 
+	
+	Tweak to etxt in box
+
+2002-12-09 Monday 21:45  moodler
+
+	* course/topics.php: 
+	
+	Fix typo
+
+2002-12-09 Monday 21:40  moodler
+
+	* course/: topics.php, weeks.php: 
+	
+	Font size tweaks
+
+2002-12-09 Monday 21:36  moodler
+
+	* lib/moodlelib.php, course/lib.php, course/topics.php,
+	course/weeks.php: 
+	
+	More styles
+
+2002-12-09 Monday 20:12  moodler
+
+	* lib/moodlelib.php: 
+	
+	testing wrong thing
+
+2002-12-09 Monday 20:09  moodler
+
+	* index.php, lib/moodlelib.php, lib/setup.php, course/lib.php,
+	course/weeks.php, login/index_form.html, login/signup_form.php: 
+	
+	More style and layout tweaking
+
+2002-12-09 Monday 18:49  moodler
+
+	* mod/forum/lib.php: 
+	
+	Slight alteration of colouring on printed posts
+
+2002-12-09 Monday 18:48  moodler
+
+	* lang/en_us/quiz.php: 
+	
+	New string readytosend
+
+2002-12-09 Monday 17:03  moodler
+
+	* course/topics.php: 
+	
+	Finish off topics display
+
+2002-12-09 Monday 16:53  moodler
+
+	* course/lib.php: 
+	
+	Slight changes
+
+2002-12-09 Monday 16:20  moodler
+
+	* lang/en/quiz.php, mod/quiz/lib.php: 
+	
+	Add a javascript confirmation when submitting a quiz attempt
+
+2002-12-09 Monday 15:52  moodler
+
+	* course/lib.php: 
+	
+	Allow print_all_courses to have width
+
+2002-12-09 Monday 15:51  moodler
+
+	* index.php: 
+	
+	Allow course listing to have specified width
+
+2002-12-09 Monday 15:48  moodler
+
+	* index.php: 
+	
+	Slightly adjust column width
+
+2002-12-09 Monday 15:45  moodler
+
+	* index.php, doc/release.html, theme/standard/config.php: 
+	
+	Slight changes
+
+2002-12-09 Monday 15:36  moodler
+
+	* version.php: 
+	
+	Updated version
+
+2002-12-09 Monday 15:35  moodler
+
+	* index.php, course/index.php, course/lib.php, course/social.php,
+	course/topics.php, course/weeks.php, mod/forum/lib.php,
+	theme/standard/config.php: 
+	
+	Various little tweaks to improve the display of course home pages
+	and front page ... still have some work to do though
+
+2002-12-09 Monday 14:35  moodler
+
+	* course/edit.php: 
+	
+	Default with showrecent ON
+
+2002-12-09 Monday 11:25  moodler
+
+	* lang/en_us/help/: enrolmentkey.html, guestaccess.html: 
+	
+	Fixed US spelling
+
+2002-12-09 Monday 11:10  moodler
+
+	* lang/: es_es/moodle.php, fr/moodle.php: 
+	
+	Restored "locale" string
+
+2002-12-09 Monday 11:00  moodler
+
+	* lang/fr/: README, assignment.php, auth.php, choice.php,
+	forum.php, journal.php, moodle.php, quiz.php, resource.php,
+	survey.php, help/coursecategory.html, help/courseformats.html,
+	help/guestaccess.html, help/questions.html,
+	help/assignment/assignmenttype.html,
+	help/forum/allowdiscussions.html, help/forum/attachment.html,
+	help/forum/forumtype.html, help/forum/subscription.html,
+	help/resource/resourcetype.html, help/resource/summary.html: 
+	
+	Latest changes in French, from Sebastien Namèche
+
+2002-12-09 Monday 10:39  moodler
+
+	* lang/es_es/: README.txt, assignment.php, auth.php, forum.php,
+	moodle.php, survey.php: 
+	
+	CHanges from Antonio Navarro
+
+2002-12-09 Monday 10:12  moodler
+
+	* lib/: makeclass.php, setup.php: 
+	
+	Changes to make makeClassFromFile() in makeclass.php work better
+
+2002-12-09 Monday 01:32  moodler
+
+	* lang/: es_mx/moodle.php, id/moodle.php: 
+	
+	Fixed some names
+
+2002-12-09 Monday 01:26  moodler
+
+	* lib/setup.php: 
+	
+	New code to use locale information from language packs if necessary
+
+2002-12-09 Monday 01:21  moodler
+
+	* user/edit.php: 
+	
+	Use language string for "changes saved"
+
+2002-12-09 Monday 01:16  moodler
+
+	* lang/en_us/moodle.php: 
+	
+	Fixed name
+
+2002-12-09 Monday 01:01  moodler
+
+	* lang/: ar/moodle.php, ca/moodle.php, de/moodle.php,
+	en/moodle.php, es_es/moodle.php, es_mx/moodle.php, fi/moodle.php,
+	fr/moodle.php, id/moodle.php, it/moodle.php, ja/moodle.php,
+	no/moodle.php, pt_br/moodle.php: 
+	
+	Added locale codes to all languages
+
+2002-12-09 Monday 00:49  moodler
+
+	* lang/en_us/: README, assignment.php, auth.php, choice.php,
+	forum.php, journal.php, moodle.php, quiz.php, resource.php,
+	survey.php, docs/module_files.txt, help/coursecategory.html,
+	help/courseformats.html, help/coursefullname.html,
+	help/coursenewsitems.html, help/coursenumsections.html,
+	help/courserecent.html, help/courseshortname.html,
+	help/coursestartdate.html, help/enrolmentkey.html,
+	help/guestaccess.html, help/html.html, help/langedit.html,
+	help/mods.html, help/picture.html, help/questions.html,
+	help/richtext.html, help/surveys.html, help/teachers.html,
+	help/text.html, help/textformat.html,
+	help/assignment/assignmenttype.html, help/assignment/resubmit.html,
+	help/choice/options.html, help/forum/allowdiscussions.html,
+	help/forum/attachment.html, help/forum/forumtype.html,
+	help/forum/ratings.html, help/forum/subscription.html,
+	help/quiz/attempts.html, help/quiz/categories.html,
+	help/quiz/correctanswers.html, help/quiz/feedback.html,
+	help/quiz/grademethod.html, help/quiz/maxgrade.html,
+	help/quiz/multichoice.html, help/quiz/questiontypes.html,
+	help/quiz/random.html, help/quiz/shortanswer.html,
+	help/quiz/timeopen.html, help/quiz/truefalse.html,
+	help/resource/resourcetype.html, help/resource/summary.html: 
+	
+	US flavor of English to keep the yanks happy.  ;-)
+
+2002-12-08 Sunday 19:28  moodler
+
+	* doc/credits.html: 
+	
+	Added Mitsuhiro's credit for Japanese
+
+2002-12-08 Sunday 11:45  moodler
+
+	* doc/release.html: 
+	
+	Updates for 1.0.7 and better-looking throughout
+
+2002-12-08 Sunday 00:19  moodler
+
+	* lang/ja/: assignment.php, auth.php, choice.php, forum.php,
+	journal.php, moodle.php, quiz.php, resource.php, survey.php: 
+	
+	More changes from Mits.
+
+2002-12-07 Saturday 16:53  moodler
+
+	* version.php: 
+	
+	Going back to simpler version numbers!
+
+2002-12-07 Saturday 16:44  moodler
+
+	* lib/moodlelib.php: 
+	
+	Small changes to help display of Japanese and on Netscape
+
+2002-12-07 Saturday 16:39  moodler
+
+	* mod/quiz/category.php, mod/quiz/lib.php, course/categories.php: 
+	
+	Small changes to tables to make them display better with Japanese
+
+2002-12-07 Saturday 15:27  moodler
+
+	* lib/setup.php: 
+	
+	If the database doesn't work then just die before anything else
+
+2002-12-07 Saturday 15:27  moodler
+
+	* index.php: 
+	
+	get rid of short_open_tags
+
+2002-12-07 Saturday 15:19  moodler
+
+	* doc/install.html: 
+	
+	Some info about forcetables
+
+2002-12-07 Saturday 12:37  moodler
+
+	* lib/makeclass.php: 
+	
+	Updated the dox
+
+2002-12-07 Saturday 12:31  moodler
+
+	* lib/: makeclass.php, class.moodlelib.php: 
+	
+	General purpose function to produce a class based on a library of
+	simple functions.  Can be used to provide a class interface to
+	Moodle functions.
+	
+	Thanks to Greg Barnett!
+
+2002-12-07 Saturday 12:24  moodler
+
+	* files/mimetypes.php: 
+	
+	Added php mime type
+
+2002-12-07 Saturday 12:20  moodler
+
+	* mod/assignment/mod.html: 
+	
+	Removed the "zero" value altogether
+
+2002-12-07 Saturday 12:00  moodler
+
+	* mod/assignment/mod.html: 
+	
+	Better checking of existing value, in case it's not in the list
+
+2002-12-06 Friday 20:22  moodler
+
+	* lang/ja/: README, auth.php, moodle.php, quiz.php: 
+	
+	More changes from Mits!
+
+2002-12-06 Friday 19:36  moodler
+
+	* lib/class.moodlelib.php: 
+	
+	Fixed up CVS Id tag
+
+2002-12-06 Friday 19:23  moodler
+
+	* lib/class.moodlelib.php: 
+	
+	Wrapper file to make moodlelib.php functions accessible as a class
+	called moodlelib.  Based on idea from Greg Barnett:
+	http://moodle.com/mod/forum/discuss.php?d=356
+
+2002-12-05 Thursday 21:50  moodler
+
+	* lang/ja/: README, assignment.php, auth.php, choice.php,
+	forum.php, journal.php, moodle.php, quiz.php, resource.php,
+	survey.php, docs/module_files.txt, help/coursecategory.html,
+	help/courseformats.html, help/coursefullname.html,
+	help/coursenewsitems.html, help/coursenumsections.html,
+	help/courserecent.html, help/courseshortname.html,
+	help/coursestartdate.html, help/enrolmentkey.html,
+	help/guestaccess.html, help/html.html, help/langedit.html,
+	help/mods.html, help/picture.html, help/questions.html,
+	help/richtext.html, help/surveys.html, help/teachers.html,
+	help/text.html, help/textformat.html,
+	help/assignment/assignmenttype.html, help/assignment/resubmit.html,
+	help/choice/options.html, help/forum/allowdiscussions.html,
+	help/forum/attachment.html, help/forum/forumtype.html,
+	help/forum/ratings.html, help/forum/subscription.html,
+	help/quiz/attempts.html, help/quiz/categories.html,
+	help/quiz/correctanswers.html, help/quiz/feedback.html,
+	help/quiz/grademethod.html, help/quiz/maxgrade.html,
+	help/quiz/multichoice.html, help/quiz/questiontypes.html,
+	help/quiz/random.html, help/quiz/shortanswer.html,
+	help/quiz/timeopen.html, help/quiz/truefalse.html,
+	help/resource/resourcetype.html, help/resource/summary.html: 
+	
+	First version of Japanese translation by Mitsuhiro Yoshida !
+	
+	Still missing quiz.php, survey.php, auth.php and the help files
+	
+	Helpers wanted!
+
+2002-12-02 Monday 09:35  moodler
+
+	* lib/moodlelib.php: 
+	
+	Improved removal of leading zeroes, but with some efficiency lost
+
+2002-12-02 Monday 09:13  moodler
+
+	* course/weeks.php, lib/moodlelib.php: 
+	
+	Slight change to get rid of leading zeroes in dates
+
+2002-12-02 Monday 09:12  moodler
+
+	* index.php: 
+	
+	These includes are actually required
+
+2002-11-30 Saturday 21:23  moodler
+
+	* lib/adodb/: adodb-cryptsession.php, adodb-csvlib.inc.php,
+	adodb-errorhandler.inc.php, adodb-errorpear.inc.php,
+	adodb-lib.inc.php, adodb-pager.inc.php, adodb-pear.inc.php,
+	adodb-session.php, adodb.inc.php, crypt.inc.php, license.txt,
+	pivottable.inc.php, readme.htm, readme.txt, rsfilter.inc.php,
+	server.php, tips_portable_sql.htm, toexport.inc.php,
+	tohtml.inc.php, tute.htm, drivers/adodb-access.inc.php,
+	drivers/adodb-ado.inc.php, drivers/adodb-ado_access.inc.php,
+	drivers/adodb-ado_mssql.inc.php,
+	drivers/adodb-borland_ibase.inc.php, drivers/adodb-csv.inc.php,
+	drivers/adodb-db2.inc.php, drivers/adodb-fbsql.inc.php,
+	drivers/adodb-firebird.inc.php, drivers/adodb-ibase.inc.php,
+	drivers/adodb-informix.inc.php, drivers/adodb-informix72.inc.php,
+	drivers/adodb-mssql.inc.php, drivers/adodb-mssqlpo.inc.php,
+	drivers/adodb-mysql.inc.php, drivers/adodb-mysqlt.inc.php,
+	drivers/adodb-oci8.inc.php, drivers/adodb-oci805.inc.php,
+	drivers/adodb-oci8po.inc.php, drivers/adodb-odbc.inc.php,
+	drivers/adodb-odbc_mssql.inc.php,
+	drivers/adodb-odbc_oracle.inc.php, drivers/adodb-oracle.inc.php,
+	drivers/adodb-postgres.inc.php, drivers/adodb-postgres64.inc.php,
+	drivers/adodb-postgres7.inc.php, drivers/adodb-proxy.inc.php,
+	drivers/adodb-sqlanywhere.inc.php, drivers/adodb-sybase.inc.php,
+	drivers/adodb-vfp.inc.php, tests/benchmark.php, tests/client.php,
+	tests/test.php, tests/test2.php, tests/test3.php, tests/test4.php,
+	tests/test5.php, tests/testcache.php, tests/testdatabases.inc.php,
+	tests/testgenid.php, tests/testmssql.php, tests/testoci8.php,
+	tests/testoci8cursor.php, tests/testpaging.php, tests/testpear.php,
+	tests/testsessions.php: 
+	
+	Upgraded ADOdb to 2.50 because it fixes some bugs with PHP 4.3.0
+
+2002-11-30 Saturday 20:04  moodler
+
+	* doc/future.html: 
+	
+	IMS/SCORM
+
+2002-11-30 Saturday 20:00  moodler
+
+	* doc/future.html: 
+	
+	Revised
+
+2002-11-29 Friday 23:17  moodler
+
+	* lang/it/: LEGGIMI, assignment.php, choice.php, forum.php,
+	journal.php, moodle.php, quiz.php, resource.php, survey.php,
+	docs/module_files.txt, help/coursecategory.html,
+	help/courseformats.html, help/coursefullname.html,
+	help/coursenewsitems.html, help/coursenumsections.html,
+	help/courseshortname.html, help/coursestartdate.html,
+	help/enrolmentkey.html, help/guestaccess.html, help/html.html,
+	help/mods.html, help/picture.html, help/questions.html,
+	help/richtext.html, help/surveys.html, help/teachers.html,
+	help/text.html, help/textformat.html, help/choice/options.html,
+	help/forum/allowdiscussions.html, help/forum/attachment.html,
+	help/forum/forumtype.html, help/forum/ratings.html,
+	help/forum/subscription.html, help/quiz/attempts.html,
+	help/quiz/categories.html, help/quiz/correctanswers.html,
+	help/quiz/feedback.html, help/quiz/grademethod.html,
+	help/quiz/maxgrade.html, help/quiz/multichoice.html,
+	help/quiz/questiontypes.html, help/quiz/random.html,
+	help/quiz/shortanswer.html, help/quiz/timeopen.html,
+	help/quiz/truefalse.html, help/resource/resourcetype.html,
+	help/resource/summary.html: 
+	
+	New version of Italian translation - compatible with 1.0.6.3
+
+2002-11-29 Friday 22:22  moodler
+
+	* course/lib.php: 
+	
+	Some colour difference for my courses .... I'm not sure about it
+	...
+
+2002-11-29 Friday 22:17  moodler
+
+	* course/lib.php: 
+	
+	Some improvements to the layout of courses when there are
+	categories and they are on the front page
+
+2002-11-29 Friday 13:12  moodler
+
+	* doc/cvs.html: 
+	
+	Slight fix
+
+2002-11-29 Friday 13:02  moodler
+
+	* doc/credits.html: 
+	
+	Added credit for Indonesian - Arfan Hidayat
+
+2002-11-29 Friday 12:58  moodler
+
+	* lang/id/: README, assignment.php, auth.php, choice.php,
+	forum.php, journal.php, moodle.php, quiz.php, resource.php,
+	survey.php, docs/module_files.txt, help/coursecategory.html,
+	help/courseformats.html, help/coursefullname.html,
+	help/coursenewsitems.html, help/coursenumsections.html,
+	help/courserecent.html, help/courseshortname.html,
+	help/coursestartdate.html, help/enrolmentkey.html,
+	help/guestaccess.html, help/html.html, help/langedit.html,
+	help/mods.html, help/picture.html, help/questions.html,
+	help/richtext.html, help/surveys.html, help/teachers.html,
+	help/text.html, help/textformat.html,
+	help/assignment/assignmenttype.html, help/assignment/resubmit.html,
+	help/choice/options.html, help/forum/allowdiscussions.html,
+	help/forum/attachment.html, help/forum/forumtype.html,
+	help/forum/ratings.html, help/forum/subscription.html,
+	help/quiz/attempts.html, help/quiz/categories.html,
+	help/quiz/correctanswers.html, help/quiz/feedback.html,
+	help/quiz/grademethod.html, help/quiz/maxgrade.html,
+	help/quiz/multichoice.html, help/quiz/questiontypes.html,
+	help/quiz/random.html, help/quiz/shortanswer.html,
+	help/quiz/timeopen.html, help/quiz/truefalse.html,
+	help/resource/resourcetype.html, help/resource/summary.html: 
+	
+	Complete new Indonesian translation!
+	
+	Thanks to Arfan Hidayat, http://www.kursusmaya.com,
+	ivanh@telkom.net!
+
+2002-11-28 Thursday 22:39  moodler
+
+	* version.php: 
+	
+	Update version
+
+2002-11-28 Thursday 20:31  moodler
+
+	* lang/en/auth.php, user/view.php: 
+	
+	With external authentication, the change password button on the
+	user page now does the same thing as the one on the login page.  It
+	takes you to the specified URL is it exists, and just doesn't
+	appear if there is no URL
+
+2002-11-28 Thursday 17:10  moodler
+
+	* mod/forum/search.php: 
+	
+	Highlight matches in post subject and discussion name too
+
+2002-11-28 Thursday 17:04  moodler
+
+	* mod/forum/search.php: 
+	
+	Add searching of subjects as well as messages
+
+2002-11-28 Thursday 11:05  moodler
+
+	* doc/cvs.html: 
+	
+	First quick version of help on CVS
+
+2002-11-28 Thursday 10:53  moodler
+
+	* doc/features.html: 
+	
+	Fixed heading
+
+2002-11-28 Thursday 10:47  moodler
+
+	* doc/: developer.html, features.html: 
+	
+	Updates
+
+2002-11-28 Thursday 10:41  moodler
+
+	* lib/moodlelib.php, mod/assignment/mod.html: 
+	
+	Fixes to increase the number of options available to limit
+	assignment upload size, and also to limit the list based on PHP
+	limits
+
+2002-11-27 Wednesday 21:11  moodler
+
+	* theme/: standard/footer.html, standardblue/footer.html,
+	standardgreen/footer.html, standardlogo/footer.html,
+	standardred/footer.html: 
+	
+	Added missing </BODY> and </HTML> tags
+
+2002-11-26 Tuesday 18:10  carlesbellver
+
+	* lang/ca/: assignment.php, moodle.php: 
+	
+	[no log message]
+
+2002-11-26 Tuesday 11:19  moodler
+
+	* doc/install.html: 
+	
+	More info about database user
+
+2002-11-26 Tuesday 11:07  moodler
+
+	* doc/install.html: 
+	
+	Additions and clean ups
+
+2002-11-26 Tuesday 10:36  moodler
+
+	* course/grades.php: 
+	
+	Fix display of grades when there aren't any grades
+
+2002-11-26 Tuesday 10:29  moodler
+
+	* mod/journal/lib.php: 
+	
+	For the case when there are forums using ratings, but no ratings,
+	and the teacher is looking at grades, don't try and loop on an
+	empty array
+
+2002-11-26 Tuesday 10:11  moodler
+
+	* lib/moodlelib.php: 
+	
+	Strip slashes from filenames
+
+2002-11-25 Monday 14:45  compuproggy
+
+	* lang/de/: auth.php, moodle.php: 
+	
+	[no log message]
+
+2002-11-24 Sunday 23:59  moodler
+
+	* doc/release.html: 
+	
+	More fixes
+
+2002-11-24 Sunday 23:44  moodler
+
+	* doc/release.html: 
+	
+	More tweaks
+
+2002-11-24 Sunday 23:40  moodler
+
+	* doc/release.html: 
+	
+	Yet more details
+
+2002-11-24 Sunday 23:30  moodler
+
+	* version.php: 
+	
+	Updated versionm, ready for 1.0.6.4
+
+2002-11-24 Sunday 23:22  moodler
+
+	* doc/release.html: 
+	
+	More tweaks
+
+2002-11-24 Sunday 23:20  moodler
+
+	* doc/release.html: 
+	
+	More fixes
+
+2002-11-24 Sunday 23:16  moodler
+
+	* doc/release.html: 
+	
+	More details
+
+2002-11-23 Saturday 01:28  moodler
+
+	* lang/en/moodle.php, user/index.php: 
+	
+	New message about users being automatically unenrolled
+
+2002-11-23 Saturday 01:27  moodler
+
+	* admin/lang.php: 
+	
+	
+	ALL LANGUAGE EDITORS PLEASE NOTICE THIS CHECKIN
+	
+	I've changed htmlentities to htmlspecialchars in this file, to fix
+	bugs with editing multibyte languages (ie Japanese).  Please be
+	cautious and let me know if this causes any problems when editing
+	your language (it shouldn't, but I don't want to spoil your day!)
+
+2002-11-22 Friday 18:00  moodler
+
+	* version.php: 
+	
+	Update for kicks
+
+2002-11-22 Friday 17:59  moodler
+
+	* user/view.php: 
+	
+	Hide password and unenrolment buttons from guest users
+
+2002-11-22 Friday 17:38  moodler
+
+	* lib/moodlelib.php: 
+	
+	Tidy up some of the dox
+
+2002-11-22 Friday 16:43  moodler
+
+	* admin/auth.php, auth/imap/config.html, auth/pop3/config.html,
+	doc/release.html, lang/en/auth.php, lang/en/moodle.php,
+	lib/moodlelib.php, login/index_form.html: 
+	
+	Changes to allow admin to control the "forgot password" function
+	and a bug fix for set_config
+
+2002-11-22 Friday 15:39  compuproggy
+
+	* lang/de/auth.php: 
+	
+	Suche noch Lernwillige und Tutoren für http://www.selaction.de
+	
+	Auch Mithelfer sind gerne gesehen wie Übersetzer oder Moderatoren.
+
+2002-11-22 Friday 15:37  compuproggy
+
+	* lang/de/moodle.php: 
+	
+	Suche noch Lernwillige und Tutoren für http://www.selaction.de
+
+2002-11-22 Friday 02:40  paca70
+
+	* auth/ldap/lib.php: 
+	
+	Fixed some typos
+
+2002-11-22 Friday 00:59  moodler
+
+	* version.php: 
+	
+	Updated version
+
+2002-11-22 Friday 00:58  moodler
+
+	* CHANGES: 
+	
+	Moodle CVS is exactly 1 year old. :-)
+
+2002-11-22 Friday 00:19  moodler
+
+	* course/loggraph.php: 
+	
+	For long courses reduce the text printed on x axis
+
+2002-11-22 Friday 00:07  moodler
+
+	* course/loggraph.php: 
+	
+	Reduce errorlevel reporting
+
 2002-11-22 Friday 00:00  moodler
 
 	* README.txt: 
@@ -26,7 +821,12 @@
 2002-11-21 Thursday 20:17  paca70
 
 	* lang/fi/help/: courserecent.html, langedit.html, mods.html,
-	richtext.html, textformat.html: 
+	richtext.html, textformat.html, assignment/assignmenttype.html,
+	assignment/resubmit.html, quiz/attempts.html, quiz/categories.html,
+	quiz/correctanswers.html, quiz/feedback.html,
+	quiz/grademethod.html, quiz/maxgrade.html, quiz/multichoice.html,
+	quiz/questiontypes.html, quiz/random.html, quiz/shortanswer.html,
+	quiz/timeopen.html, quiz/truefalse.html: 
 	
 	New files for translation
 
