@@ -38,7 +38,11 @@
 //  Check the survey hasn't already been filled out.
 
     if (survey_already_done($survey->id, $USER->id)) {
-        notice("You've already done this survey, $USER->firstname!", $HTTP_REFERER);
+        print_heading("You've completed this survey.  The graph below shows a summary of your results compared to the class averages.");
+        echo "<CENTER>";
+        echo "<IMG SRC=\"$CFG->wwwroot/mod/survey/graph.php?id=$cm->id&sid=$USER->id&type=student.png\">";
+        echo "</CENTER>";
+        print_footer($course);
         exit;
     }
 

@@ -5,6 +5,8 @@
     require("lib.php");
 
     require_variable($id);    // Course Module ID
+    require_variable($type);  // Graph Type
+    optional_variable($sid);  // Student ID
 
     if (! $cm = get_record("course_modules", "id", $id)) {
         error("Course Module ID was incorrect");
@@ -16,8 +18,10 @@
 
     require_login($course->id);
 
-    if (!isteacher($course->id)) {
-        error("Sorry, only teachers can see this.");
+    if (!isteacher($course->id) && !isadmin()) {
+        if (! ($type == "student.png" && $sid == $USER->id) ) {
+            error("Sorry, you aren't allowed to see this.");
+        }
     }
 
     if (! $survey = get_record("survey", "id", $cm->instance)) {
