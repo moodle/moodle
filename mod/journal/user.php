@@ -40,9 +40,6 @@ function user_journal_outline($course, $user, $mod, $journal) {
 function user_journal_complete($course, $user, $mod, $journal) {
     global $CFG, $THEME;
 
-    echo "<H3>Journal: <A HREF=\"$CFG->wwwroot/mod/journal/view.php?id=$mod->id\">$journal->name</A></H3>";
-    echo "<UL>";
-
     if ($entry = get_record_sql("SELECT * FROM journal_entries 
                              WHERE user='$user->id' AND journal='$journal->id'")) {
 
@@ -74,7 +71,6 @@ function user_journal_complete($course, $user, $mod, $journal) {
     } else {
         echo "No entry";
     }
-    echo "</UL>";
 }
 
 ?>

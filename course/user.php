@@ -53,7 +53,10 @@
 
     switch ($mode) {
         case "summary" :
-            echo "<P>Not supported yet</P>";
+            echo "<P>Not done yet</P>";
+            echo "<P>Graph goes here that shows accesses by day over the course</P>";
+            echo "<HR>";
+            echo "<P>Table goes here that summarises all activity by this student by module. eg 3/7 journals done, 3/3 surveys, 12 posts in all discussions. Each of these are links so that you can drill down to see all the surveys on one page, or all the posts, or all their journals.";
             break;
 
         case "outline" :
@@ -93,7 +96,15 @@
                                     $output = include($userfile);
                                     print_outline_row($mod, $instance, $output);
                                 } else {
+                                    
+                                    $image = "<IMG SRC=\"../mod/$mod->modname/icon.gif\" ".
+                                             "HEIGHT=16 WIDTH=16 ALT=\"$mod->modfullname\">";
+                                    echo "<H3>$image $mod->modfullname: ".
+                                         "<A HREF=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\">".
+                                         "$instance->name</A></H3>";
+                                    echo "<UL>";
                                     include($userfile);
+                                    echo "</UL>";
                                 }
                             }
                         }
