@@ -888,7 +888,7 @@ function get_user_timezone_preset() {
             for($i = 1970; $i < 2030; ++$i) {
                 $changes = dst_changes_for_year($i, $preset);
                 if($changes['activate'] != 0) {
-                    $USER->dstoffsets[$changes['activate']] = dst_offset_for_year($i, $preset);
+                    $USER->dstoffsets[$changes['activate']] = $preset->dstoff * MINSECS;
                 }
                 if($changes['deactivate'] != 0) {
                     $USER->dstoffsets[$changes['deactivate']] = 0;
@@ -900,10 +900,6 @@ function get_user_timezone_preset() {
         }
     }
     return $preset;
-}
-
-function dst_offset_for_year($year, $dstpreset) {
-    return $dstpreset->apply_offset * MINSECS;
 }
 
 function dst_changes_for_year($year, $dstpreset) {
