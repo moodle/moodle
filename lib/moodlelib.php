@@ -1794,6 +1794,7 @@ function display_size($size) {
 }
 
 function clean_filename($string) {
+    $string = stripslashes($string);
     $string = eregi_replace("\.\.", "", $string);
     $string = eregi_replace("[^([:alnum:]|\.)]", "_", $string);
     return    eregi_replace("_+", "_", $string);
