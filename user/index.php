@@ -32,6 +32,8 @@
     $string->unenrol     = get_string("unenrol");
     $string->loginas     = get_string("loginas");
     $string->fullprofile = get_string("fullprofile");
+    $string->role        = get_string("role");
+    $string->never       = get_string("never");
 
     if ( $teachers = get_course_teachers($course->id)) {
         echo "<H2 align=center>$course->teachers</H2>";

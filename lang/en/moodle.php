@@ -281,6 +281,7 @@ $string[newusers] = "New users";
 $string[newsitem] = "news item";
 $string[newsitems] = "news items";
 $string[newsitemsnumber] = "News items to show";
+$string[never] = "Never";
 $string[no] = "No";
 $string[nocoursesyet] = "There are no courses yet";
 $string[noexistingteachers] = "No existing teachers";

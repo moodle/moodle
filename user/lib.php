@@ -58,12 +58,19 @@ function print_user($user, $course, $string) {
     echo "<FONT SIZE=-1>";
     echo "<FONT SIZE=3><B>$user->firstname $user->lastname</B></FONT>";
     echo "<P>";
+    if ($user->role and ($user->role <> $course->teacher)) {
+        echo "$string->role: $user->role<BR>";
+    }
     if ($user->maildisplay == 1 or ($user->maildisplay == 2 and $course->category) or isteacher($course->id)) {
         echo "$string->email: <A HREF=\"mailto:$user->email\">$user->email</A><BR>";
     }
     echo "$string->location: $user->city, ".$COUNTRIES["$user->country"]."<BR>";
-    echo "$string->lastaccess: ".userdate($user->lastaccess);
-    echo "&nbsp (".format_time(time() - $user->lastaccess).")";
+    if ($user->lastaccess) {
+        echo "$string->lastaccess: ".userdate($user->lastaccess);
+        echo "&nbsp (".format_time(time() - $user->lastaccess).")";
+    } else {
+        echo "$string->lastaccess: $string->never";
+    }
     echo "</TD><TD VALIGN=bottom BGCOLOR=#FFFFFF NOWRAP>";
 
     echo "<FONT SIZE=1>";
