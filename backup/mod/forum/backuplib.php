@@ -48,7 +48,7 @@
                 fwrite ($bf,full_tag("MODTYPE",4,false,"forum"));
                 fwrite ($bf,full_tag("TYPE",4,false,$forum->type));
                 fwrite ($bf,full_tag("NAME",4,false,$forum->name));
-                fwrite ($bf,full_tag("INTRO",4,false,$forum->introo));
+                fwrite ($bf,full_tag("INTRO",4,false,$forum->intro));
                 fwrite ($bf,full_tag("OPEN",4,false,$forum->open));
                 fwrite ($bf,full_tag("ASSESSED",4,false,$forum->assessed));
                 fwrite ($bf,full_tag("FORCESUBSCRIBE",4,false,$forum->forcesubscribe));
