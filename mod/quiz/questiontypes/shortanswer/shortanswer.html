@@ -85,17 +85,28 @@
 <tr valign="top">
     <td align="right"><b><?php  echo get_string("answer", "quiz")." $i";  ?>:</b></td>
     <td>
-        <input type="text" name="answer[]" size="50" value="<?php  p($answers[$i-1]->answer) ?>" alt="<?php  echo get_string("answer", "quiz")." $i";  ?>" />&nbsp;&nbsp;
+        <?php
+            if (empty($answers[$i-1]->answer)) {
+                $answertext   = '';
+                $fractionval  = 0;
+                $feedbacktext = '';
+            } else {
+                $answertext   = $answers[$i-1]->answer;
+                $fractionval  = $answers[$i-1]->fraction;
+                $feedbacktext = $answers[$i-1]->feedback;
+            }
+        ?>
+        <input type="text" name="answer[]" size="50" value="<?php p($answertext) ?>" alt="<?php  echo get_string("answer", "quiz")." $i";  ?>" />&nbsp;&nbsp;
         <?php  print_string("grade");
            echo ":&nbsp;";
-           choose_from_menu($gradeoptions, "fraction[]", $answers[$i-1]->fraction,""); ?>
+           choose_from_menu($gradeoptions, "fraction[]", $fractionval,""); ?>
         <br />
     </td>
 </tr>
 <tr valign="top">
     <td align="right"><b><?php  print_string("feedback", "quiz") ?>:</b></td>
     <td>
-        <textarea name="feedback[]" rows="2" cols="50"><?php  p($answers[$i-1]->feedback) ?></textarea>
+        <textarea name="feedback[]" rows="2" cols="50"><?php  p($feedbacktext) ?></textarea>
     </td>
 </tr>
 <tr valign="top">
