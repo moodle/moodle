@@ -13,8 +13,8 @@ $string['journalmail'] = '$a->teacher hat einen Feedback zu Ihrem  Journal \'$a-
 
 $a->url';
 $string['journalmailhtml'] = '$a->teacher hat ein Feedback zu Ihrem  <i>$a->journal </i>\' abgegeben<br /><br /> Sie können diesen angehängt an Ihren <a href=\"$a->url\"> Journaleintrag</a> einsehen.';
-$string['journalname'] = 'Name des Journals';
-$string['journalquestion'] = 'Journal-Frage';
+$string['journalname'] = 'Link (Kursseite)';
+$string['journalquestion'] = 'Zusammenfassung';
 $string['journalrating1'] = 'nicht zufriedenstellend';
 $string['journalrating2'] = 'zufriedenstellend';
 $string['journalrating3'] = 'hervorragend';

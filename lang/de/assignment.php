@@ -12,10 +12,10 @@ $a->url';
 $string['assignmentmailhtml'] = '$a->teacher hat einen Kommentar zu Ihrer abgegebenen Aufgabe verfasst.</i>\'<i>$a->assignment</i>\'<br /><br />
 Sie finden diesen im Anhang Ihrer 
 <a href=\"$a->url\">eingereichten Aufgabe</a>:.';
-$string['assignmentname'] = 'Aufgabenname';
+$string['assignmentname'] = 'Link (Kursseite)';
 $string['assignmenttype'] = 'Aufgabentyp';
 $string['configmaxbytes'] = 'Voreingestellte maximale Größe für alle Einstellungen auf dieser Seite';
-$string['description'] = 'Beschreibung ';
+$string['description'] = 'Zusammenfassung';
 $string['duedate'] = 'Abgabedatum';
 $string['duedateno'] = 'Kein Abgabedatum';
 $string['early'] = '$a früh';

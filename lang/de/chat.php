@@ -3,8 +3,8 @@
 
 
 $string['beep'] = 'Signalton';
-$string['chatintro'] = 'Einführungstext';
-$string['chatname'] = 'Name des Chat-Raums';
+$string['chatintro'] = 'Zusammenfassung';
+$string['chatname'] = 'Link (Kursseite)';
 $string['chatreport'] = 'Chat-Sitzungen';
 $string['chattime'] = 'Nächste Chat-Sitzung';
 $string['configmethod'] = 'In der Standardeinstellung fragen die Clients auf dem Server nach Aktualisierungen nach. Dazu ist keine Konfiguration erforderlich. Das Verfahren funktioniert immer. Es führt jedoch zu einer hohen Belastung des Servers durch dauernde Anfragen. Die Verwendung des Server Daemon erfordert einen Shell-Zugang zu Unix, es führt jedoch zu einem schnelleren Chatablauf.';

@@ -12,17 +12,17 @@ $string['closed'] = 'geschlossen';
 $string['confirmclosure'] = 'Sie wollen diesen Dialog mit $a schließen. Geschlossene Dialoge können nicht wieder bearbeitet werden. Wenn Sie einen Dialog schließen, können Sie ihn weiterhin ansehen, aber nichts mehr hinzufügen. Sie müssen einen neuen Dialog beginnen, wenn Sie weiter mit dieser Person den Dialog führen wollen.<br /><br /> Sind Sie sicher, dass Sie diesen Dialog beenden möchten ?';
 $string['deleteafter'] = 'Geschlossenen Dialoge nach (Tagen) löschen';
 $string['dialogueclosed'] = 'Der Dialog wurde geschlossen.';
-$string['dialogueintro'] = 'Dialog Einführung';
+$string['dialogueintro'] = 'Zusammenfassung';
 $string['dialoguemail'] = '$a->userfrom hat einen neuen Beitrag im Dialog \'$a->dialogue\' geschrieben<p>
 Sie können diesen Beitrag ansehen unter: <p>
 $a->url';
 $string['dialoguemailhtml'] = '$a->userfrom hat einen neuen Beitrag geschrieben im Dialog\'<i>$a->dialogue</i>\'<br /><br />
 Sie können diesen Beitrag ansehen unter <a href=\"$a->url\">dialogue</a>.';
-$string['dialoguename'] = 'Bezeichnung des Dialogs';
+$string['dialoguename'] = 'Link (Kursseite)';
 $string['dialogueopened'] = 'Dialog mit $a begonnen.';
 $string['dialoguewith'] = 'Dialog mit $a';
 $string['everybody'] = 'Jedermann';
-$string['furtherinformation'] = 'Weitere Informationen';
+$string['furtherinformation'] = 'Weitere Informationen zum Dialog';
 $string['lastentry'] = 'Letzter Eintrag';
 $string['maildefault'] = 'Standard E-Mail';
 $string['mailnotification'] = 'E-Mailbenachrichtigung';
