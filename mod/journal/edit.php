@@ -32,10 +32,13 @@
 
 		$timenow = time();
 
+        $text = clean_text($text, $format);
+
 		if ($entry) {
             $newentry->id = $entry->id;
             $newentry->text = $text;
             $newentry->modified = $timenow;
+            $newentry->format = $format;
 			if (! update_record("journal_entries", $newentry)) {
 				error("Could not update your journal");
 			}
@@ -45,6 +48,7 @@
             $newentry->journal = $journal->id;
             $newentry->modified = $timenow;
             $newentry->text = $text;
+            $newentry->format = $format;
 			if (! $newentry->id = insert_record("journal_entries", $newentry)) {
 				error("Could not insert a new journal entry");
 			}
@@ -61,8 +65,16 @@
     $strjournals = get_string("modulenameplural", "journal");
     $stredit = get_string("edit");
 
+    if ($usehtmleditor = can_use_richtext_editor()) {
+        $defaultformat = FORMAT_HTML;
+        $onsubmit = "onsubmit=\"copyrichtext(theform.text);\"";
+    } else {
+        $defaultformat = FORMAT_MOODLE;
+    }
+
     if (! $entry ) {
         $entry->text = "";
+        $entry->format = $defaultformat;
     }
 
     print_header("$course->shortname: $journal->name", "$course->fullname",

@@ -86,7 +86,7 @@
             if (empty($entry->text)) {
                 echo "<P ALIGN=center><B>".get_string("blankentry","journal")."</B></P>";
             } else {
-                echo text_to_html($entry->text);
+                echo format_text($entry->text, $entry->format);
             }
             
         } else {

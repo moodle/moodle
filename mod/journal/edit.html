@@ -1,10 +1,37 @@
-<BLOCKQUOTE>
-<FORM name="form" method="post" action="edit.php">
-<TEXTAREA NAME=text COLS=60 ROWS=10 WRAP="virtual"><? p($entry->text) ?></TEXTAREA>
-<P>
+<FORM name="theform" method="post" <?=$onsubmit ?> action="edit.php">
+    <? if ($usehtmleditor) { ?>
+        <object id="richedit" style="BACKGROUND-COLOR: buttonface" data="../../lib/rte/richedit.html"
+            width="595" height="400" type="text/x-scriptlet" VIEWASTEXT>
+        </object>
+        <TEXTAREA style="display:none" NAME="text" ROWS=1 COLS=50><? p($entry->text) ?></TEXTAREA>
+     <? } else { ?>
+        <TEXTAREA NAME=text COLS=60 ROWS=20 WRAP="virtual"><? p($entry->text) ?></TEXTAREA>
+     <? } ?>
+
+<? if ($usehtmleditor) { 
+       helpbutton("richtext", get_string("helprichtext"));
+   } else { 
+       helpbutton("text", get_string("helptext"));
+   }
+?>
+
+<P align=center>
+<? print_string("formattexttype");
+   echo ":&nbsp;";
+   choose_from_menu(format_text_menu(), "format", $entry->format, ""); ?>
+</P>
+
+<P align=center>
 <INPUT type="hidden" name=id value="<?=$cm->id ?>">
 <INPUT type="submit" value="<? print_string("savechanges") ?>">
 <INPUT type="reset" value="<? print_string("revert") ?>">
 </P>
 </FORM>
-</BLOCKQUOTE>
+
+<? if ($usehtmleditor) { ?>
+    <SCRIPT language="JavaScript" event="onload" for="window">
+        document.richedit.options = "history=no;source=no";
+        document.richedit.docHtml = theform.text.innerText;
+    </SCRIPT>
+<? } ?>
+

@@ -36,6 +36,7 @@ CREATE TABLE journal_entries (
   user int(10) unsigned NOT NULL default '0',
   modified int(10) unsigned NOT NULL default '0',
   text text NOT NULL,
+  format tinyint(2) NOT NULL default '0',
   rating tinyint(4) default '0',
   comment text,
   teacher int(10) unsigned NOT NULL default '0',
