@@ -6,6 +6,10 @@
 
     require_login();
 
+    if (isguest()) {
+        redirect($CFG->wwwroot);
+    }
+
     if (empty($CFG->messaging)) {
         error("Messaging is disabled on this site");
     }

@@ -301,7 +301,7 @@
         echo "<input type=\"submit\" value=\"".get_string("loginas")."\" />";
         echo "</form></td>";
     }
-    if (!empty($CFG->messaging)) {
+    if (!empty($CFG->messaging) and !isguest()) {
         if ($USER->id == $user->id) {
             if ($countmessages = count_records('message', 'useridto', $user->id)) {
                 $messagebuttonname = get_string("messages", "message")."($countmessages)";

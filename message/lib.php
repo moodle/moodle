@@ -182,6 +182,7 @@ function message_print_contacts() {
     echo '</table>';
 
     echo '<p align="center" class="message_small_note">'.get_string('pagerefreshes', 'message', $CFG->message_contacts_refresh).'</p>';
+
 }
 
 
