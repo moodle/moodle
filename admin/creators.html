@@ -46,9 +46,11 @@
                   }
                   echo "</optgroup>\n";
               }
-              foreach ($users as $user) {
-                  $fullname = fullname($user, true);
-                  echo "<option value=\"$user->id\">".$fullname.", ".$user->email."</option>\n";
+              if (!empty($users)) {
+                  foreach ($users as $user) {
+                      $fullname = fullname($user, true);
+                      echo "<option value=\"$user->id\">".$fullname.", ".$user->email."</option>\n";
+                  }
               }
           ?>
          </select>
