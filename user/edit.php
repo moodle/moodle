@@ -17,12 +17,16 @@
 
 	require_login($course->id);
 
-    if ($USER->id <> $user->id) {
+    if ($USER->id <> $user->id and !isadmin()) {
         error("You can only edit your own information");
     }
 
     if (isguest()) {
         error("The guest user cannot edit their profile.");
+    }
+
+    if (isguest($user->id)) {
+        error("Sorry, the guest user cannot be edited.");
     }
 
 
@@ -32,7 +36,13 @@
 
         $usernew = (object)$HTTP_POST_VARS;
 
-        if (!find_form_errors($user, $usernew, $err) ) {
+        $usernew->firstname = strip_tags($usernew->firstname);
+        $usernew->lastname  = strip_tags($usernew->lastname);
+
+        if (find_form_errors($user, $usernew, $err) ) {
+            $user = $usernew;
+
+        } else {
 
 		    $timenow = time();
 
@@ -69,8 +79,8 @@
                         $badpermissions = true;
                     }
                 }
-                if (!file_exists("$CFG->dataroot/users/$USER->id")) {
-                    if (! mkdir("$CFG->dataroot/users/$USER->id", 0777)) {
+                if (!file_exists("$CFG->dataroot/users/$user->id")) {
+                    if (! mkdir("$CFG->dataroot/users/$user->id", 0777)) {
                         $badpermissions = true;
                     }
                 }
@@ -94,8 +104,8 @@
                     ImageLine ($im2, 34, 34, 34, 0, $black2);
                     ImageLine ($im2, 34, 0, 0, 0, $black2);
                 
-                    ImageJpeg($im1, "$CFG->dataroot/users/$USER->id/f1.jpg", 90);
-                    ImageJpeg($im2, "$CFG->dataroot/users/$USER->id/f2.jpg", 95);
+                    ImageJpeg($im1, "$CFG->dataroot/users/$user->id/f1.jpg", 90);
+                    ImageJpeg($im2, "$CFG->dataroot/users/$user->id/f2.jpg", 95);
                     $usernew->picture = "1";
                 }
             } else {
@@ -104,18 +114,30 @@
     
             $usernew->timemodified = time();
 
-
+            if (isadmin()) {
+                if ($usernew->newpassword) {
+                    $usernew->password = md5($usernew->newpassword);
+                }
+            } else {
+                if (isset($usernew->newpassword)) {
+                    error("You can not change the password like that");
+                }
+            }
 
             if (update_record("user", $usernew)) {
                 add_to_log($course->id, "user", "update", "view.php?id=$user->id&course=$course->id", "");
 
-                // Copy data into $USER session variable
-                $usernew = (array)$usernew;
-                foreach ($usernew as $variable => $value) {
-                    $USER->$variable = $value;
+                if ($user->id == $USER->id) {
+                    // Copy data into $USER session variable
+                    $usernew = (array)$usernew;
+                    foreach ($usernew as $variable => $value) {
+                        $USER->$variable = $value;
+                    }
+                    save_session("USER");
+		            redirect("view.php?id=$user->id&course=$course->id", "Changes saved");
+                } else {
+		            redirect("../admin/user.php", "Changes saved");
                 }
-                save_session("USER");
-		        redirect("view.php?id=$user->id&course=$course->id", "Changes saved");
             } else {
                 error("Could not update the user record ($user->id)");
             }
@@ -131,16 +153,18 @@
 	    print_header($editmyprofile, $editmyprofile, 
                     "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> 
                     -> <A HREF=\"index.php?id=$course->id\">$participants</A>
-                    -> <A HREF=\"view.php?id=$USER->id&course=$course->id\">$USER->firstname $USER->lastname</A> 
+                    -> <A HREF=\"view.php?id=$user->id&course=$course->id\">$user->firstname $user->lastname</A> 
                     -> $editmyprofile", "");
     } else {
 	    print_header($editmyprofile, $editmyprofile,
-                     "<A HREF=\"view.php?id=$USER->id&course=$course->id\">$USER->firstname $USER->lastname</A> 
+                     "<A HREF=\"view.php?id=$user->id&course=$course->id\">$user->firstname $user->lastname</A> 
                       -> $editmyprofile", "");
     }
 
     $teacher = strtolower($course->teacher);
-    $teacheronly = "(".get_string("teacheronly", "", $teacher).")";
+    if (!isadmin()) {
+        $teacheronly = "(".get_string("teacheronly", "", $teacher).")";
+    }
 
     print_simple_box_start("center", "", "$THEME->cellheading");
     print_heading( get_string("userprofilefor", "", "$user->firstname $user->lastname") );
@@ -155,8 +179,19 @@
 
 function find_form_errors(&$user, &$usernew, &$err) {
 
+    if (isadmin()) {
+        if (empty($usernew->username))
+            $err["username"] = get_string("missingusername");
+
+        if (empty($usernew->newpassword) and empty($user->password))
+            $err["newpassword"] = get_string("missingpassword");
+    }
+
     if (empty($usernew->email))
         $err["email"] = get_string("missingemail");
+
+    if (empty($usernew->description))
+        $err["description"] = get_string("missingdescription");
 
     if (empty($usernew->city))
         $err["city"] = get_string("missingcity");
@@ -170,7 +205,7 @@ function find_form_errors(&$user, &$usernew, &$err) {
     if (empty($usernew->country))
         $err["country"] = get_string("missingcountry");
 
-    else if (! validate_email($usernew->email))
+    if (! validate_email($usernew->email))
         $err["email"] = get_string("invalidemail");
 
     else if ($otheruser = get_record("user", "email", $usernew->email)) {

@@ -1,13 +1,30 @@
 <FORM METHOD="post" ENCTYPE="multipart/form-data" action="edit.php">
 <table cellpadding=9 cellspacing=0 >
-<tr valign=top>
-	<td><P><? print_string("newpicture") ?>:</td>
-	<td>
-    <INPUT type="hidden" name="MAX_FILE_SIZE" value="4000000">
-    <input type="file" name="imagefile" size=40> ( .jpg / .png ) <? helpbutton("picture", get_string("helppicture") ) ?>
-	<? formerr($err["imagefile"]) ?>
-	</td>
-</tr>
+<?
+if (isadmin()) {
+    echo "<tr valign=top>";
+	echo "<td><P>".get_string("username").":</td>";
+	echo "<td><input type=text name=username size=20 value=\"";
+    p($user->username);
+    echo "\">";
+	echo formerr($err["username"]);
+	echo "</td>";
+    echo "</tr>";
+
+    echo "<tr valign=top>";
+	echo "<td><P>".get_string("newpassword").":</td>";
+	echo "<td><input type=text name=newpassword size=20 value=\"";
+    p($user->newpassword);
+    echo "\">";
+	if (isset($err["newpassword"])) {
+        formerr($err["newpassword"]);
+    } else if (empty($user->newpassword)) {
+	    echo "(".get_string("leavetokeep").")";
+    }
+	echo "</td>";
+    echo "</tr>";
+}
+?>
 <tr valign=top>
 	<td><P><? print_string("firstname") ?>:</td>
 	<td><input type="text" name="firstname" size=30 value="<? p($user->firstname) ?>">
@@ -24,6 +41,15 @@
 	<td><P><? print_string("userdescription") ?>:</td>
 	<td><TEXTAREA NAME=description COLS=50 ROWS=10 WRAP=virtual><? p($user->description) ?></TEXTAREA> 
     <? helpbutton("text", get_string("helptext")) ?>
+	<? formerr($err["description"]) ?>
+	</td>
+</tr>
+<tr valign=top>
+	<td><P><? print_string("newpicture") ?>:</td>
+	<td>
+    <INPUT type="hidden" name="MAX_FILE_SIZE" value="4000000">
+    <input type="file" name="imagefile" size=40> ( .jpg / .png ) <? helpbutton("picture", get_string("helppicture") ) ?>
+	<? formerr($err["imagefile"]) ?>
 	</td>
 </tr>
 <tr valign=top>

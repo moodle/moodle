@@ -17,7 +17,7 @@
         $strdelete = get_string("deletecourse");
 	    print_header($strdelete, $strdelete, "<A HREF=\"$CFG->wwwroot/admin\">$stradmin</A> -> $strdelete");
         if ($courses = get_records_sql("SELECT * from course WHERE category > 0 ORDER BY fullname")) {
-            print_heading("choosecourse");
+            print_heading(get_string("choosecourse"));
             print_simple_box_start("CENTER");
             foreach ($courses as $course) {
                 echo "<A HREF=\"delete.php?id=$course->id\">$course->fullname</A><BR>";

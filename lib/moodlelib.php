@@ -993,7 +993,7 @@ function isguest($userid=0) {
         return ($USER->username == "guest");
     }
 
-    return record_exists_sql("SELECT * FROM user WHERE user='$userid' AND username = 'guest' ");
+    return record_exists_sql("SELECT * FROM user WHERE id='$userid' AND username = 'guest' ");
 }
 
 function isediting($courseid, $user=NULL) {

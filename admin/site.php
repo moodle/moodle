@@ -2,12 +2,12 @@
 
 	require("../config.php");
 
-    if ($course = get_site()) {
+    if ($site = get_site()) {
         if (!isadmin()) {
             error("You need to be admin to edit this page");
         }
     }
-    $course->format = "social";   // override
+    $site->format = "social";   // override
 
 /// If data submitted, then process and store.
 
@@ -25,7 +25,7 @@
                 if (update_record("course", $form)) {
 		            redirect("$CFG->wwwroot/admin/", "Changes saved");
                 } else {
-                    error("Serious Error! Could not update the course record! (id = $form->id)");
+                    error("Serious Error! Could not update the site record! (id = $form->id)");
                 }
             } else {
                 if ($newid = insert_record("course", $form)) {
@@ -50,11 +50,12 @@
 
 /// Otherwise fill and print the form.
 
-    if ($course && !$form) {
-        $form = $course;
+    if ($site && !$form) {
+        $form = $site;
     } else {
         $form->category = 0;
         $form->format = "social";
+        $form->newsitems = 0;
     }
 
     print_header("Admin: Setting up site", "Administration: Setting up site",

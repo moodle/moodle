@@ -165,14 +165,15 @@
     $stradministration = get_string("administration");
     print_header("$site->fullname: $stradministration","$site->fullname: $stradministration", "$stradministration");
 
-    $table->head  = array ("Site Management", "Course Setup", "Other");
+    $table->head  = array (get_string("site"), get_string("courses"), get_string("users"));
     $table->align = array ("CENTER", "CENTER", "CENTER");
     $table->data[0][0] = "<P><A HREF=\"site.php\">".get_string("sitesettings")."</A></P>".
                          "<P><A HREF=\"../course/log.php?id=$site->id\">".get_string("sitelogs")."</A></P>";
     $table->data[0][1] = "<P><A HREF=\"../course/edit.php\">".get_string("addnewcourse")."</A></P>".
                          "<P><A HREF=\"../course/teacher.php\">".get_string("assignteachers")."</A></P>".
                          "<P><A HREF=\"../course/delete.php\">".get_string("deletecourse")."</A></P>";
-    $table->data[0][2] = "<P><A HREF=\"user.php\">".get_string("edituser")."</A></P>";
+    $table->data[0][2] = "<P><A HREF=\"user.php?newuser=true\">".get_string("addnewuser")."</A></P>".
+                         "<P><A HREF=\"user.php\">".get_string("edituser")."</A></P>";
 
     print_table($table);
 

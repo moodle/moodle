@@ -1,3 +1,43 @@
+2002-08-08 Thursday 13:06  martin
+
+	* doc/future.html: Updated this page (because now bugs.moodle.org
+	exists)
+
+2002-08-08 Thursday 10:11  martin
+
+	* config-dist.php: Slightly clearer explanations ...
+
+2002-08-07 Wednesday 16:46  martin
+
+	* mod/assignment/: version.php, db/mysql.sql: Missing
+	'auto_increment' on assignment_submissions table, for 'id'
+
+2002-08-07 Wednesday 16:26  martin
+
+	* lib/moodlelib.php: get_real_size() for translating text to byte
+	sizes (eg 2M)
+
+2002-08-07 Wednesday 16:24  martin
+
+	* files/index.php: Now properly sets and checks limits on file
+	sizes
+
+2002-08-07 Wednesday 11:45  martin
+
+	* files/index.php: Upload works again ...
+
+2002-08-07 Wednesday 01:41  martin
+
+	* index.php: Whoops ... typo in save_session
+
+2002-08-07 Wednesday 01:29  martin
+
+	* doc/install.html: Updated requirements.
+
+2002-08-07 Wednesday 01:24  martin
+
+	* CHANGES: Changes
+
 2002-08-07 Wednesday 01:23  martin
 
 	* index.php, admin/user.php, course/enrol.php, course/loginas.php,
