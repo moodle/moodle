@@ -11,7 +11,7 @@ dd {margin-bottom:1em;}
 </head>
 <body bgcolor="#FFFFFF">
 <h1>Notes de mise &agrave; jour actuelles</h1>
-<h3>Nouveaut&eacute;s de Moodle 1.2 (14 mars 2004)</h3> 
+<h3>Nouveaut&eacute;s de Moodle 1.2 (20 mars 2004)</h3> 
 <ul>
 <dl>
 <dt>
@@ -109,22 +109,31 @@ dd {margin-bottom:1em;}
 <dd>
 	<ul>
 		<li>
-			Un trou de s&eacute;curit&eacute; permettant aux enseignants de se connecter en tant qu'administrateurs a &eacute;t&eacute; corrig&eacute;
-		</li>
-		<li>
-			Les noms des utilisateurs peuvent &ecirc;tre configur&eacute;s de fa&ccedil;on &agrave; ce que les &eacute;tudiants ne puissent voir que &laquo;&nbsp;Pr&eacute;nom Nom&nbsp;&raquo;, &laquo;&nbsp;Nom Pr&eacute;nom&nbsp;&raquo; ou &laquo;&nbsp;Pr&eacute;nom&nbsp;&raquo;
-		</li>
-		<li>
-			Les adresses de courriel des utilisateurs peuvent &ecirc;tre d&eacute;sactiv&eacute;es par l'enseignant ou l'administrateur (par exemple pour traiter les adresses non valides qui produisent des rebonds)
+			Un trou de s&eacute;curit&eacute; permettant aux enseignants de se connecter sous le nom d'administrateurs inscrits comme &eacute;tudiants dans leurs cours a &eacute;t&eacute; corrig&eacute;
 		</li>
 		<li>
 			Un nouveau r&eacute;glage &laquo;&nbsp;forcelogin&nbsp;&raquo; peut obliger les visiteurs &agrave; se connecter avant de voir quoi que ce soit sur le site
 		</li>
 		<li>
-			La taille des fichiers envoy&eacute;s peut &ecirc;tre contr&ocirc;l&eacute;e dans Moodle &agrave; l'aide du param&egrave;tre &laquo;&nbsp;maxbytes&nbsp;&raquo;. Il y a une limite valable pour tout le site (born&eacute;e par les limites de PHP), qui est elle-m&ecirc;me la limite sup&eacute;rieure pour celle des cours, celle-ci &eacute;tant la borne sup&eacute;rieure pour la taille des fichiers des activit&eacute;s
+			Un nouveau r&eacute;glage &laquo;&nbsp;opentogoogle&nbsp;&raquo; permet &agrave; Google ainsi qu'aux visiteurs arrivant sur le site par l'interm&eacute;diaire de Google de se connecter comme utilisateurs invit&eacute;s
 		</li>
 		<li>
-			Il est possible de permettre ou d'interdire l'auto-inscription des &eacute;tudiants &agrave; des cours
+			Un nouveau r&eacute;glage &laquo;&nbsp;timezone&nbsp;&raquo; permet de d&eacute;finir un fuseau horaire par d&eacute;faut pour tout le site
+		</li>
+		<li>
+			Un nouveau r&eacute;glage &laquo;&nbsp;deleteunconfirmed&nbsp;&raquo; permet de sp&eacute;cifier combien de temps attendre jusqu'&agrave; la confirmation des comptes cr&eacute;&eacute;s par courriel
+		</li>
+		<li>
+			Un nouveau r&eacute;glage &laquo;&nbsp;allowunenroll&nbsp;&raquo; permet ou interdit aux &eacute;tudiants de se d&eacute;sinscrire eux-m&ecirc;mes des cours auxquels ils participent
+		</li>
+		<li>
+			Un nouveau r&eacute;glage &laquo;&nbsp;fullnamedisplay&nbsp;&raquo; permet de fixer l'affichage des noms des utilisateurs de fa&ccedil;on &agrave; ce que les &eacute;tudiants ne puissent voir que &laquo;&nbsp;Pr&eacute;nom Nom&nbsp;&raquo;, &laquo;&nbsp;Nom Pr&eacute;nom&nbsp;&raquo; ou &laquo;&nbsp;Pr&eacute;nom&nbsp;&raquo;
+		</li>
+		<li>
+			Les adresses de courriel des utilisateurs peuvent &ecirc;tre d&eacute;sactiv&eacute;es par l'enseignant ou l'administrateur (par exemple pour traiter les adresses non valides qui produisent des rebonds)
+		</li>
+		<li>
+			La taille des fichiers envoy&eacute;s peut &ecirc;tre contr&ocirc;l&eacute;e dans Moodle &agrave; l'aide du param&egrave;tre &laquo;&nbsp;maxbytes&nbsp;&raquo;. Il y a une limite valable pour tout le site (born&eacute;e par les limites de PHP), qui est elle-m&ecirc;me la limite sup&eacute;rieure pour celle des cours, celle-ci &eacute;tant la borne sup&eacute;rieure pour la taille des fichiers des activit&eacute;s
 		</li>
 		<li>
 			Les cookies de Moodle peuvent &ecirc;tre personnalis&eacute;s, ce qui est utile si plusieurs Moodles tournent sur le m&ecirc;me site)
@@ -145,19 +154,16 @@ dd {margin-bottom:1em;}
 			On peut importer des utilisateurs de fichiers texte
 		</li>
 		<li>
-			Si $CFG-&gt;disableuserimages est activ&eacute;, les utilisateurs ne peuvent pas changer leur avatar
+			Si $CFG->disableuserimages est d&eacute;fini (dans config.php), les utilisateurs ne peuvent pas changer leur avatar
 		</li>
 		<li>
-			Si $CFG-&gt;opentogoogle est activ&eacute;, Google peut se connecter comme utilisateur invit&eacute;, et les visiteurs depuis Google peuvent aussi se connecter de cette fa&ccedil;on
+			Si $CFG->admineditalways est d&eacute;fini, l'administrateur peut modifier TOUS les messages &agrave; n'importe quel moment
 		</li>
 		<li>
-			Si $CFG-&gt;admineditalways est activ&eacute;, l'administrateur peut modifier TOUS les messages n'importe quand
+			Si $CFG->filterall est d&eacute;fini, les noms des activit&eacute;s, sujets des forums, etc. sont &eacute;galement filtr&eacute;s
 		</li>
 		<li>
-			Si $CFG-&gt;filterall est d&eacute;fini, m&ecirc;me les noms des activit&eacute;s, sujets des forums, etc. sont filtr&eacute;s
-		</li>
-		<li>
-			Support d'utilisateurs de d&eacute;monstration - les noms de tels utilisateurs sont plac&eacute;s dans une liste dans config.php, par exemple $CFG-&gt;restrictusers = 'demo,test,bidon';
+			Support d'utilisateurs de d&eacute;monstration - les noms de tels utilisateurs sont plac&eacute;s dans une liste dans config.php, par exemple $CFG->restrictusers = 'demo,test,bidon';
 		</li>
 	</ul>
 </dd>
@@ -170,7 +176,7 @@ dd {margin-bottom:1em;}
 			Correctifs permettant &agrave; Internet Explorer une utilisation plus robuste des feuilles de styles
 		</li>
 		<li>
-			Diverses am&eacute;liorations et corrections - les th&egrave;mes personnalis&eacute;s doivent &ecirc;tre mis &agrave; jour
+			Diverses am&eacute;liorations et corrections - <b>les th&egrave;mes personnalis&eacute;s doivent &ecirc;tre mis &agrave; jour&nbsp;!</b>
 		</li>
 	</ul>
 </dd>
@@ -199,6 +205,9 @@ dd {margin-bottom:1em;}
 		</li>
 		<li>
 			Le bogue qui ajoutait des lignes vides dans les cha&icirc;nes de caract&egrave;res de plusieurs lignes est enfin &eacute;radiqu&eacute;
+		</li>
+		<li>
+		    Les cours peuvent maintenant &laquo;&nbsp;imposer&nbsp;&raquo; l'emploi d'une langue sp&eacute;cifique &agrave; tous les utilisateurs
 		</li>
 	</ul>
 </dd>
@@ -230,7 +239,7 @@ dd {margin-bottom:1em;}
 			Le nouveau filtre <strong>glossaire</strong> permet de cr&eacute;er automatiquement des liens vers les entr&eacute;es de glossaire dans tous le Moodle
 		</li>
 		<li>
-			Le nouveau filtre <strong>TeX</strong> convertit le code TeX &eacute;crit dans Moodle en une v&eacute;ritable notation math&eacute;matique (images GIF)
+			Le nouveau filtre <strong>TeX</strong> convertit le code TeX &eacute;crit dans Moodle en une v&eacute;ritable notation math&eacute;matique (images GIF). Un filtre <strong>algebra</strong> est aussi disponible, avec un format de saisie plus simple (ressemblant &agrave; celui des calculatrices)
 		</li>
 		<li>
 			Le nouveau filtre <strong>censure</strong> permet de filtrer automatiquement les mots inad&eacute;quats
@@ -239,13 +248,13 @@ dd {margin-bottom:1em;}
 			Le nouveau filtre <strong>contenus multi-lingues</strong> permet de de saisir des textes en plusieurs langues. Seul le texte correspondant &agrave; la langue choisie par l'utilisateur (d'apr&egrave;s son profil) sera affich&eacute;.
 		</li>
 		<li>
-			La balise &lt;nolink&gt; peut &ecirc;tre utilis&eacute;e pour &eacute;viter la liaison automatique d'un texte
+			La balise <nolink> peut &ecirc;tre utilis&eacute;e pour &eacute;viter la liaison automatique d'un texte
 		</li>
 		<li>
-			Plus de balises HTML sont maintenant accept&eacute;e, notamment &lt;acronym&gt; et toutes les balises &lt;math&gt;
+			Plus de balises HTML sont maintenant accept&eacute;e, notamment <acronym> et toutes les balises <math>
 		</li>
 		<li>
-			Le texte est maintenant filtr&eacute; l&agrave; o&ugrave; ce n'&eacute;tait pas le cas auparavant pour des raisons de s&eacute;curit&eacute;
+			Le texte est maintenant correctement filtr&eacute; l&agrave; o&ugrave; ce n'&eacute;tait pas le cas auparavant (pour des raisons de s&eacute;curit&eacute;)
 		</li>
 	</ul>
 </dd>
@@ -433,7 +442,7 @@ dd {margin-bottom:1em;}
 			Moodle ignore d&eacute;sormais tous les dossiers que Frontpage lui a ajout&eacute;s (_vti_cnf)
 		</li>
 		<li>
-			Am&eacute;liorations HTML -&gt; XHTML en de nombreux endroits
+			Am&eacute;liorations HTML -> XHTML en de nombreux endroits
 		</li>
 		<li>
 			Nombreux correctifs pour les bases de donn&eacute;es non MySQL
