@@ -14,8 +14,8 @@
             //include_once("$CFG->dirroot/lib/pclzip/pclerror.lib.php");    //Debug
             //include_once("$CFG->dirroot/lib/pclzip/pcltrace.lib.php");    //Debug
             //PclTraceOn(2);                                          //Debug
-            $archive = new PclZip($file);
-            if (!$list = $archive->extract(dirname($file))) {
+            $archive = new PclZip(cleardoubleslashes($file));
+            if (!$list = $archive->extract(PCLZIP_OPT_PATH, cleardoubleslashes(dirname($file)))) {
                 $status = false;
             }
             //PclTraceDisplay();                                       //Debug

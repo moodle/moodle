@@ -1,4 +1,4 @@
-<?PHP //$Id$
+<?php //$Id$
     //This file contains all the function needed in the backup utility
     //except the mod-related funtions that are into every backuplib.php inside
     //every mod directory
@@ -1263,7 +1263,7 @@
         $status = true;
 
         //Base dir where everything happens
-        $basedir = $CFG->dataroot."/temp/backup/".$preferences->backup_unique_code;
+        $basedir = cleardoubleslashes($CFG->dataroot."/temp/backup/".$preferences->backup_unique_code);
         //Backup zip file name
         $name = $preferences->backup_name;
         //List base_dir files and directories
@@ -1280,14 +1280,14 @@
                 //}
                 //Include into array
                 //echo "<br />Adding file/dir ".$file;                       //Debug
-                $files[] = $basedir."/".$file;
+                $files[] = cleardoubleslashes($basedir."/".$file);
             }
             include_once("$CFG->dirroot/lib/pclzip/pclzip.lib.php");
             //include_once("$CFG->dirroot/lib/pclzip/pclerror.lib.php");   //Debug
             //include_once("$CFG->dirroot/lib/pclzip/pcltrace.lib.php");   //Debug
             //PclTraceOn(2);                                               //Debug
-            $archive = new PclZip("$basedir/$name");
-            if (($list = $archive->create($files,PCLZIP_OPT_REMOVE_PATH,$basedir)) == 0) {
+            $archive = new PclZip(cleardoubleslashes("$basedir/$name"));
+            if (($list = $archive->create($files,PCLZIP_OPT_REMOVE_PATH,rtrim(cleardoubleslashes($basedir), "/"))) == 0) {
                 error($archive->errorInfo(true));
                 $status = false;
             } 
