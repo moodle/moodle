@@ -55,7 +55,7 @@
         $table->align = array ("LEFT", "CENTER");
     }
 
-    $can_subscribe = (isstudent($course->id) or isteacher($course->id) or isadmin());
+    $can_subscribe = (isstudent($course->id) or isteacher($course->id) or isadmin() or $course->id == SITEID);
 
     if ($show_rss = ($can_subscribe && isset($CFG->enablerssfeeds) && isset($CFG->glossary_enablerssfeeds) &&
                      $CFG->enablerssfeeds && $CFG->glossary_enablerssfeeds)) {
