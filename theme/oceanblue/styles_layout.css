@@ -379,6 +379,12 @@ table.userinfobox {
     text-align:right;
 }
 
+.forumpost .link {
+    padding-top: 0.5em;
+    text-align:right;
+}
+
+
 .forumpost .left {
     width: 35px;
     padding: 4px;
@@ -388,6 +394,10 @@ table.userinfobox {
 
 .forumpostindent {
     margin-left: 30px;
+}
+
+body#user-view .forumpost {
+    width: 100%;
 }
 
 body#mod-forum-search .c0 {
@@ -829,6 +839,10 @@ table.calendar-controls .next
     margin-top: 0.3em;
 }
 
+.sideblock .heading .title {
+    float: left;
+}
+
 .sideblock .heading .commands a {
     margin: 0px 2px;
 }
@@ -869,6 +883,11 @@ table.calendar-controls .next
     margin-top:4px;
 }
 
+.sideblock .heading .icon.hide,
+.sideblock .heading .icon.edit {
+    margin-right: 6px;
+}
+
 /* sideblock weblib.php */
 .block_course_summary .content {
     padding:10px;
@@ -906,6 +925,10 @@ table.calendar-controls .next
 ******************************/
 
 /* contents.php */
+
+.cell {  /* Very generic table cell*/
+    vertical-align: top;
+}
 
 body#doc-contents h1 {
     font-size: 1em;
