@@ -14,10 +14,27 @@
         error("Site isn't defined!");
     }
 
+    //Initialise error variables
+    $error = false;
+    $sche_destination_error = "";
 
-/// If data submitted, then process and store.
+    /// If data submitted, then process and store.
 
     if ($config = data_submitted()) {
+
+        //First of all we check that everything is correct
+        //Check for trailing slash and backslash in backup_sche_destination
+        if (!empty($backup_sche_destination) and 
+            (substr($backup_sche_destination,-1) == "/" or substr($backup_sche_destination,-1) == "\\")) {
+            $error = true;
+            $sche_destination_error = get_string("pathslasherror");
+        //Now check that backup_sche_destination dir exists
+        } else if (!empty($backup_sche_destination) and
+            !is_dir($backup_sche_destination)) {
+            $error = true;
+            $sche_destination_error = get_string("pathnotexists");
+        }
+
         //We need to do some weekdays conversions prior to continue
         $i = 0;
         $temp = "";
@@ -40,8 +57,10 @@
         foreach ($config as $name => $value) {
             backup_set_config($name, $value);
         }
-        redirect("$CFG->wwwroot/$CFG->admin/index.php", get_string("changessaved"), 1);
-        exit;
+        if (!$error) {
+            redirect("$CFG->wwwroot/$CFG->admin/index.php", get_string("changessaved"), 1);
+            exit;
+        }
     }
 
 /// Otherwise print the form.
