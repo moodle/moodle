@@ -631,8 +631,8 @@ TABLE.calendarmonth THEAD TD {
 }
 
 .cal_event_group {
-	background-color: orange !important;
-	border: 2px orange solid !important;
+	background-color: #FFCC00 !important;
+	border: 2px #FFCC00 solid !important;
 }
 
 .cal_event_user {
@@ -656,8 +656,8 @@ TABLE.calendarmonth THEAD TD {
 }
 
 .cal_duration_group {
-	border-top: 2px orange solid !important;
-	border-bottom: 2px orange solid !important;
+	border-top: 2px #FFCC00 solid !important;
+	border-bottom: 2px #FFCC00 solid !important;
 }
 
 .cal_weekend {
