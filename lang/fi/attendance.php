@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // attendance.php - created with Moodle 1.2 development (2004010900)
+      // attendance.php - created with Moodle 1.2 development (2004012900)
 
 
 $string['absentlong'] = 'Puuttuva';
@@ -38,7 +38,7 @@ $string['hoursineachclass'] = 'Tuntien määrä jokaisena luokka aikana';
 $string['hoursinfullreport'] = 'Maksimäärä läsnäolotunteja joka näytetään raportin yhdellä sivulla';
 $string['maxgradeshort'] = 'Maksimi arviointi';
 $string['maxgradevalue'] = 'Maksimi arviointi täydelle läsnäololle';
-$string['modulename'] = 'Koulunkäynti';
+$string['modulename'] = 'Läsnäolo';
 $string['modulenameplural'] = 'Läsnäololistat';
 $string['monday'] = 'Ma';
 $string['norolls'] = 'Tällä kurssilla ei ole läsnäololistoja';
