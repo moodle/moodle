@@ -268,7 +268,7 @@
         //Error, cannot locate category
         } else {
             $course_header->category->id = 0;
-            $course_header->category->name = getstring("unknowcategory");
+            $course_header->category->name = get_string("unknowncategory");
             $status = false;
         }
 
