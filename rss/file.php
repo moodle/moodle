@@ -1,4 +1,4 @@
-<?PHP //$Id$
+<?php //$Id$
     //This file returns the required rss feeds
     //The URL format MUST include:
     //    course: the course id
@@ -48,6 +48,12 @@
     $userid = (integer)$args[1];
     $modulename = $args[2];
     $instance = (integer)$args[3];
+
+    //Check name of module
+    $mods = get_list_of_plugins("mod");
+    if (!in_array(strtolower($modulename), $mods)) {
+        error("This module doesn't exist!");
+    }
 
     if (! $course = get_record("course", "id", $courseid)) {
         $error = true;
