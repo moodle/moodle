@@ -37,6 +37,23 @@ if (!isset($CFG->resource_filterexternalpages)) {
 $RESOURCE_WINDOW_OPTIONS = array("resizable", "scrollbars", "directories", "location", 
                                  "menubar", "toolbar", "status", "height", "width");
 
+if (!isset($CFG->resource_popup)) {
+    set_config("resource_popup", "");
+}  
+
+foreach ($RESOURCE_WINDOW_OPTIONS as $popupoption) {
+    $popupoption = "resource_popup$popupoption";
+    if (!isset($CFG->$popupoption)) {
+        if ($popupoption == "resource_popupheight") {
+            set_config($popupoption, 450);
+        } else if ($popupoption == "resource_popupwidth") {
+            set_config($popupoption, 620);
+        } else {
+            set_config($popupoption, "checked");
+        }
+    }  
+}
+
 function resource_add_instance($resource) {
 // Given an object containing all the necessary data, 
 // (defined by the form in mod.html) this function 

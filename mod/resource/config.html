@@ -42,6 +42,37 @@
     <?php print_string("configfilterexternalpages", "resource") ?>
     </td>
 </tr>
+<tr valign=top>
+	<td align=right><p>resource_popup:</td>
+	<td>
+    <?php
+        unset($choices);
+        $choices[""] = get_string("no");
+        $choices["checked"] = get_string("yes");
+        choose_from_menu ($choices, "resource_popup", $CFG->resource_popup, "");
+    ?>
+    </td>
+    <td>
+    <?php print_string("configpopup", "resource") ?>
+    </td>
+</tr>
+<?php foreach ($RESOURCE_WINDOW_OPTIONS as $optionname) {
+          $defaultvalue = "resource_popup$optionname";
+          echo "<tr valign=top>";
+	      echo "<td align=right><p>$defaultvalue:</td>";
+	      echo "<td>";
+          if ($optionname == "height" or $optionname == "width") {
+              echo "<input name=$defaultvalue type=text size=5 value=\"".$CFG->$defaultvalue."\">";
+          } else {
+              choose_from_menu ($choices, $defaultvalue, $CFG->$defaultvalue, "");
+          }
+          echo "</td>";
+          echo "<td>";
+          print_string("configpopup$optionname", "resource");
+          echo "</td>";
+          echo "</tr>";
+      }
+?>
 <tr>
     <td colspan=3 align=center>
 	<input type="submit" value="<?php print_string("savechanges") ?>"></td>

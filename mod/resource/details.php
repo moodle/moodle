@@ -113,20 +113,15 @@
                 foreach ($RESOURCE_WINDOW_OPTIONS as $optionname) {
                     $stringname = "str$optionname";
                     $$stringname = get_string("new$optionname", "resource");
-                    $window->$optionname = "";
+                    $defaultvalue = "resource_popup$optionname";
+                    $window->$optionname = $CFG->$defaultvalue;
                     $jsoption[] = "\"$optionname\"";
                 }
                 $alljsoptions = implode(",", $jsoption);
 
                 if ($form->instance) {     // Re-editing
                     if (!$form->alltext) {
-                        $newwindow = "";
-                        $window->resizable = "checked";  // Defaults
-                        $window->scrollbars = "checked";
-                        $window->status = "checked";
-                        $window->location = "checked";
-                        $window->width = 620;
-                        $window->height = 450;
+                        $newwindow = "";   // Disable the new window
                     } else {
                         $newwindow = "checked";
                         $rawoptions = explode(',', $form->alltext); 
@@ -142,13 +137,7 @@
                         }
                     }
                 } else {
-                    $newwindow = "checked";
-                    $window->resizable = "checked";
-                    $window->scrollbars = "checked";
-                    $window->status = "checked";
-                    $window->location = "checked";
-                    $window->width = 620;
-                    $window->height = 450;
+                    $newwindow = $CFG->resource_popup;
                 }
 
                 echo $alloptions;
@@ -173,7 +162,7 @@
                     <td align="right" nowrap>&nbsp;
                     </td>
                     <td>
-                        <p><?php echo "($strexample) $strexampleurl" ?></p>
+                        <p><font size="-1"><?php echo "($strexample) $strexampleurl" ?></font></p>
                     </td>
                 </tr>
                 <tr valign="top">
@@ -233,20 +222,15 @@
                 foreach ($RESOURCE_WINDOW_OPTIONS as $optionname) {
                     $stringname = "str$optionname";
                     $$stringname = get_string("new$optionname", "resource");
-                    $window->$optionname = "";
+                    $defaultvalue = "resource_popup$optionname";
+                    $window->$optionname = $CFG->$defaultvalue;
                     $jsoption[] = "\"$optionname\"";
                 }
                 $alljsoptions = implode(",", $jsoption);
 
                 if ($form->instance) {     // Re-editing
                     if (!$form->alltext) {
-                        $newwindow = "";
-                        $window->resizable = "checked";  // Defaults
-                        $window->scrollbars = "checked";
-                        $window->status = "checked";
-                        $window->location = "checked";
-                        $window->width = 620;
-                        $window->height = 450;
+                        $newwindow = "";   // Disable the new window
                     } else {
                         $newwindow = "checked";
                         $rawoptions = explode(',', $form->alltext); 
@@ -262,13 +246,7 @@
                         }
                     }
                 } else {
-                    $newwindow = "checked";
-                    $window->resizable = "checked";
-                    $window->scrollbars = "checked";
-                    $window->status = "checked";
-                    $window->location = "checked";
-                    $window->width = 620;
-                    $window->height = 450;
+                    $newwindow = $CFG->resource_popup;
                 }
 
                 echo $alloptions;
