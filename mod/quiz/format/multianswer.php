@@ -46,7 +46,7 @@ define("NUMERICAL_ABS_ERROR_MARGIN", 6);
 
 // Remaining ANSWER regexes
 define("ANSWER_TYPE_DEF_REGEX",
-       '(NUMERICAL)|(MULTICHOICE)|(SHORTANSWER)');
+       '(NUMERICAL|NM)|(MULTICHOICE|MC)|(SHORTANSWER|SA|MW)');
 define("ANSWER_START_REGEX",
        '\{([0-9]*):(' . ANSWER_TYPE_DEF_REGEX . '):');
 
