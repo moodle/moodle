@@ -289,7 +289,10 @@ function glossary_grades($glossaryid) {
                             $total += $ra;
                             $count ++;
                         }
-                        $return->grades[$currentuser] = format_float($total/$count, 2);
+                        $return->grades[$currentuser] = (string) format_float($total/$count, 2);
+                        if ( count($ratingsuser) > 1 ) {
+                            $return->grades[$currentuser] .= " (" . count($ratingsuser) . ")";
+                        }
                     }
                 } else {
                     $return->grades[$currentuser] = "";
@@ -310,7 +313,11 @@ function glossary_grades($glossaryid) {
                     $total += $ra;
                     $count ++;
                 }
-                $return->grades[$currentuser] = format_float((float)$total/(float)$count, 2);
+                $return->grades[$currentuser] = (string) format_float((float)$total/(float)$count, 2);
+                
+                if ( count($ratingsuser) > 1 ) {
+                    $return->grades[$currentuser] .= " (" . count($ratingsuser) . ")";
+                }
             }
         } else {
             $return->grades[$currentuser] = "";
@@ -403,6 +410,7 @@ global $CFG;
 
 function glossary_print_entry($course, $cm, $glossary, $entry, $mode="",$hook="",$printicons = 1, $displayformat  = -1, $ratings = NULL) {
     global $THEME, $USER, $CFG;
+    $return = false;
     if ( $displayformat < 0 ) {
         $displayformat = $glossary->displayformat;
     }
@@ -425,18 +433,19 @@ function glossary_print_entry($course, $cm, $glossary, $entry, $mode="",$hook=""
         }
     
         if ( !$basicformat and $permissiongranted or $displayformat >= 2) {
-            return glossary_print_entry_by_format($course, $cm, $glossary, $entry,$mode,$hook,$printicons,$ratings);
+            $return = glossary_print_entry_by_format($course, $cm, $glossary, $entry,$mode,$hook,$printicons,$ratings);
         } else {
             switch ( $displayformat ) {
             case GLOSSARY_FORMAT_SIMPLE:
-                return glossary_print_entry_by_default($course, $cm, $glossary, $entry,$mode,$hook,$printicons,$ratings);
+                $return = glossary_print_entry_by_default($course, $cm, $glossary, $entry,$mode,$hook,$printicons,$ratings);
             break;
             case GLOSSARY_FORMAT_CONTINUOUS:
-                return glossary_print_entry_continuous($course, $cm, $glossary, $entry,$mode,$hook,$printicons,$ratings);
+                $return = glossary_print_entry_continuous($course, $cm, $glossary, $entry,$mode,$hook,$printicons,$ratings);
             break;
             }
         }
     }
+        return $return;
 }
 function  glossary_print_entry_concept($entry) {
     echo $entry->concept;
@@ -663,11 +672,20 @@ function glossary_print_entry_continuous($course, $cm, $glossary, $entry,$mode="
         echo " ";
         
         glossary_print_entry_definition($entry);
+        
+        $icons = '';
         if ( $printicons ) {
-            $icons   = glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode, $hook,"html");        
-            echo "($icons)";
+            $icons = glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode, $hook,"html");        
+        }        
+
+        echo '(';
+        if ( $icons ) {
+            echo $icons;
         }
         $return = glossary_print_entry_ratings($course, $entry, $ratings);
+        
+        echo ')<br>';
+
     }
     return $return;
 }
@@ -1694,8 +1712,9 @@ function glossary_print_ratings_mean($entryid, $scale) {
             $strratings = get_string("ratings", "glossary");
         }
 
-        echo "$strratings: ";
+        echo "<font size=-1>$strratings: ";
         link_to_popup_window ("/mod/glossary/report.php?id=$entryid", "ratings", $mean, 400, 600);
+        echo "</font>";
     }
 }
 

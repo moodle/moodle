@@ -281,15 +281,15 @@
             if ($ratings->scale = make_grades_menu($glossary->scale)) {
                 $ratings->assesstimestart = $glossary->assesstimestart;
                 $ratings->assesstimefinish = $glossary->assesstimefinish;
-                if ($glossary->assessed == 2 and !isteacher($course->id)) {
-                    $ratings->allow = false;
-                } else {
-                    $ratings->allow = true;
-                }
-
-                echo "<form name=form method=post action=rate.php>";
-                echo "<input type=hidden name=id value=\"$course->id\">";
             }
+            if ($glossary->assessed == 2 and !isteacher($course->id)) {
+                $ratings->allow = false;
+            } else {
+                $ratings->allow = true;
+            }
+
+            echo "<form name=form method=post action=rate.php>";
+            echo "<input type=hidden name=id value=\"$course->id\">";
         }
 
         foreach ($allentries as $entry) {
@@ -384,7 +384,7 @@
                 
                 if ( !$tableisopen ) {
                     if ($glossary->displayformat == GLOSSARY_FORMAT_CONTINUOUS OR 
-                        $glossary->displayformat == GLOSSARY_FORMAT_SIMPLE) {
+                        $glossary->displayformat == GLOSSARY_FORMAT_SIMPLE or $mode == 'entry') {
                         print_simple_box_start("center","95%","#ffffff","5","generalbox");
                         $tableisopen = 1;
                     }
@@ -400,6 +400,7 @@
                 } 
 
                 /// and finally print the entry.
+                
                 if ( glossary_print_entry($course, $cm, $glossary, $entry, $mode, $hook,1,$displayformat,$ratings) ) {
                     $ratingsmenuused = true;
                 }
@@ -409,7 +410,7 @@
         }
         if ( $tableisopen ) {
             if ($glossary->displayformat == GLOSSARY_FORMAT_CONTINUOUS OR 
-                $glossary->displayformat == GLOSSARY_FORMAT_SIMPLE ) {
+                $glossary->displayformat == GLOSSARY_FORMAT_SIMPLE or $mode == 'entry') {
                 print_simple_box_end();
                 $tableisopen = 0;
             }
@@ -420,7 +421,7 @@
     }
 
     if ($ratingsmenuused) {
-        echo "<center><input type=\"submit\" value=\"".get_string("sendinratings", "glossary")."\">";
+        echo "<p><center><input type=\"submit\" value=\"".get_string("sendinratings", "glossary")."\">";
         if ($glossary->scale < 0) {
             if ($scale = get_record("scale", "id", abs($glossary->scale))) {
                 print_scale_menu_helpbutton($course->id, $scale );
