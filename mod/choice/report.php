@@ -30,13 +30,19 @@
     add_to_log($course->id, "choice", "report", "report.php?id=$cm->id", "$choice->id");
 
     print_header("$course->shortname: $choice->name: $strresponses", "$course->fullname",
-                 "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> ->
-                  <A HREF=\"index.php?id=$course->id\">$strchoices</A> ->
-                  <A HREF=\"view.php?id=$cm->id\">$choice->name</A> -> $strresponses", "");
+                 "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> ->
+                  <a href=\"index.php?id=$course->id\">$strchoices</a> ->
+                  <a href=\"view.php?id=$cm->id\">$choice->name</a> -> $strresponses", "");
 
 
-    if (! $users = get_course_users($course->id, "u.firstname ASC")) {
-        error("No users found (very strange)");
+    if ($course->category) {
+        if (! $users = get_course_users($course->id, "u.firstname ASC")) {
+            error("No users found (very strange)");
+        }
+    } else {
+        if (! $users = get_site_users("u.firstname ASC")) {
+            error("No users found (very strange)");
+        }
     }
 
     if ( $allanswers = get_records("choice_answers", "choice", $choice->id)) {
@@ -69,39 +75,39 @@
 
     $tablewidth = (int) (100.0 / count($useranswer));
 
-    echo "<TABLE CELLPADDING=5 CELLSPACING=10 ALIGN=CENTER>";
-    echo "<TR>";
+    echo "<table cellpadding=\"5\" cellspacing=\"10\" align=\"center\">";
+    echo "<tr>";
     foreach ($useranswer as $key => $answer) {
         if ($key) {
-            echo "<TH WIDTH=\"$tablewidth%\">";
+            echo "<th width=\"$tablewidth%\">";
         } else {
-            echo "<TH BGCOLOR=\"$THEME->body\" WIDTH=\"$tablewidth%\">";
+            echo "<th bgcolor=\"$theme->body\" width=\"$tablewidth%\">";
         }
         echo choice_get_answer($choice, $key);
-        echo "</TH>";
+        echo "</th>";
     }
-    echo "</TR><TR>";
+    echo "</tr><tr>";
 
     foreach ($useranswer as $key => $answer) {
         if ($key) {
-            echo "<TD WIDTH=\"$tablewidth%\" VALIGN=TOP NOWRAP BGCOLOR=\"$THEME->cellcontent\">";
+            echo "<td width=\"$tablewidth%\" valign=top nowrap bgcolor=\"$theme->cellcontent\">";
         } else {
-            echo "<TD WIDTH=\"$tablewidth%\" VALIGN=TOP NOWRAP BGCOLOR=\"$THEME->body\">";
+            echo "<td width=\"$tablewidth%\" valign=top nowrap bgcolor=\"$theme->body\">";
         }
 
-        echo "<TABLE WIDTH=100%>";
+        echo "<table width=\"100%\">";
         foreach ($answer as $user) {
-            echo "<TR><TD WIDTH=10 NOWRAP>";
+            echo "<tr><td width=\"10\" nowrap>";
             print_user_picture($user->id, $course->id, $user->picture);
-            echo "</TD><TD WIDTH=100% NOWRAP>";
-            echo "<P>$user->firstname $user->lastname</P>";
-            echo "</TD></TR>";
+            echo "</td><td width=\"100%\" nowrap>";
+            echo "<p>$user->firstname $user->lastname</p>";
+            echo "</td></tr>";
         }
-        echo "</TABLE>";
+        echo "</table>";
 
-        echo "</TD>";
+        echo "</td>";
     }
-    echo "</TR></TABLE>";
+    echo "</tr></table>";
 
     print_footer($course);
 
