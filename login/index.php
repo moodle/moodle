@@ -43,10 +43,22 @@
 
 
     $frm = false;
+    $user = false;
     if ((!empty($SESSION->wantsurl) and strstr($SESSION->wantsurl,"username=guest")) or $loginguest) {
         /// Log in as guest automatically (idea from Zbigniew Fiedorowicz)
         $frm->username = "guest";
         $frm->password = "guest";
+    } else if (!empty($SESSION->wantsurl) && file_exists($CFG->dirroot . "/login/weblinkauth.php")) {
+        //Handles the case of another Moodle site linking into a page on this site
+        include $CFG->dirroot . "/login/weblinkauth.php";
+        if (function_exists(weblink_auth)) {
+        	$user = weblink_auth($SESSION->wantsurl);
+        }
+        if ($user) {
+        	$frm->username = $user->username;
+        } else {
+            $frm = data_submitted();
+        }
     } else {
         $frm = data_submitted();
     }
@@ -62,7 +74,7 @@
         if (($frm->username == 'guest') and empty($CFG->guestloginbutton)) {
             $user = false;    /// Can't log in as guest if guest button is disabled
             $frm = false;
-        } else {
+        } else if (!$user) {
             $user = authenticate_user_login($frm->username, $frm->password);
         }
         update_login_count();
