@@ -893,46 +893,46 @@ function update_record($table, $dataobject) {
 */
 function get_user_info_from_db($field, $value) {
 
+    global $CFG;
+
     if (!$field or !$value) {
         return false;
     }
+
+/// Get all the basic user data
 
     if (! $user = get_record_select("user", "$field = '$value' AND deleted <> '1'")) {
         return false;
     }
 
-    // Add membership information
-
-    if ($site = get_site()) { // Everyone is always a member of the top course
-        $user->student[$site->id] = true;
-    }
-
-    if ($students = get_records("user_students", "userid", $user->id)) {
-        foreach ($students as $student) {
-            if (get_field("course", "visible", "id", $student->course)) {
-                $user->student[$student->course] = true;
-            }
-            $user->timeaccess[$student->course] = $student->timeaccess;
-        }
-    }
-
-    if ($teachers = get_records("user_teachers", "userid", $user->id)) {
-        foreach ($teachers as $teacher) {
-            $user->teacher[$teacher->course] = true;
-            if ($teacher->editall) {
-                $user->teacheredit[$teacher->course] = true;
-            }
-            $user->timeaccess[$teacher->course] = $teacher->timeaccess;
-        }
-    }
+/// Add membership information
 
     if ($admins = get_records("user_admins", "userid", $user->id)) {
         $user->admin = true;
     }
 
+    if ($site = get_site()) { // Everyone is always a member of the top course
+        $user->student[$site->id] = true;
+    }
+
+/// Determine enrolments based on current enrolment module
+
+    require_once("$CFG->dirroot/enrol/$CFG->enrol/enrol.php");
+    $enrol = new enrolment_plugin();
+    $enrol->get_student_courses($user);
+    $enrol->get_teacher_courses($user);
+
+/// Get various settings and preferences
+
     if ($displays = get_records("course_display", "userid", $user->id)) {
         foreach ($displays as $display) {
             $user->display[$display->course] = $display->display;
+        }
+    }
+
+    if ($preferences = get_records('user_preferences', 'userid', $user->id)) {
+        foreach ($preferences as $preference) {
+            $user->preference[$preference->name] = $preference->value;
         }
     }
 
@@ -943,11 +943,6 @@ function get_user_info_from_db($field, $value) {
         }
     }
 
-    if ($preferences = get_records('user_preferences', 'userid', $user->id)) {
-        foreach ($preferences as $preference) {
-            $user->preference[$preference->name] = $preference->value;
-        }
-    }
 
     return $user;
 }
