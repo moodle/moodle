@@ -326,25 +326,36 @@ function print_recent_activity($course) {
             $post = NULL;
 
             if ($log->action == "add post") {
-                $post = get_record_sql("SELECT p.*, u.firstname, u.lastname, 
+                $post = get_record_sql("SELECT p.*, d.forum, u.firstname, u.lastname, 
                                                u.email, u.picture, u.id as userid
-                                        FROM discuss_posts p, user u 
-                                        WHERE p.id = '$log->info' AND p.user = u.id");
+                                        FROM discuss d, discuss_posts p, user u 
+                                        WHERE p.id = '$log->info' AND d.id = p.discuss AND p.user = u.id");
 
             } else if ($log->action == "add") {
-                $post = get_record_sql("SELECT p.*, u.firstname, u.lastname, 
+                $post = get_record_sql("SELECT p.*, d.forum, u.firstname, u.lastname, 
                                                u.email, u.picture, u.id as userid
                                         FROM discuss d, discuss_posts p, user u 
                                         WHERE d.id = '$log->info' AND d.firstpost = p.id AND p.user = u.id");
             }
 
             if ($post) {
+
+                $teacherpost = "";
+                if ($forum = get_record("forum", "id", $post->forum) ) {
+                    if ($forum->type == "teacher") {
+                        if (!isteacher($course->id)) {
+                            continue;
+                        } else {
+                            $teacherpost = "COLOR=#666666";
+                        }
+                    }
+                }
                 if (! $heading) {
                     print_headline("Discussion Posts:");
                     $heading = true;
                     $content = true;
                 }
-                echo "<P><FONT SIZE=1>$post->firstname $post->lastname:<BR>";
+                echo "<P><FONT SIZE=1 $teacherpost>$post->firstname $post->lastname:<BR>";
                 echo "\"<A HREF=\"$CFG->wwwroot/mod/discuss/$log->url\">";
                 if ($log->action == "add") {
                     echo "<B>$post->subject</B>";
