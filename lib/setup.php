@@ -296,9 +296,15 @@ global $THEME;
 
 
 /// Load up theme variables (colours etc)
+
+    if (!isset($CFG->themedir)) {
+        $CFG->themedir = $CFG->dirroot.'/theme/';
+        $CFG->themewww = $CFG->wwwroot.'/theme/';
+    }
+
     if (isset($_GET['theme'])) {
         if ($CFG->allowthemechangeonurl || confirm_sesskey()) {
-            if (!detect_munged_arguments($_GET['theme'], 0) and file_exists($CFG->dirroot .'/theme/'. $_GET['theme'])) {
+            if (!detect_munged_arguments($_GET['theme'], 0) and file_exists($CFG->themedir. $_GET['theme'])) {
                 $SESSION->theme = $_GET['theme'];
             }
         }
