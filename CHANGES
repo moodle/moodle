@@ -1,3 +1,88 @@
+2002-08-26 Monday 17:48  martin
+
+	* CHANGES, config-dist.php, file.php, index.php, files/index.php,
+	lib/moodlelib.php, mod/assignment/lib.php, mod/reading/view.php: 
+	
+	Changes to use a new configuration variable: CFG->slasharguments
+	
+	If true, then display of user pictures or filenames will use the
+	method of providing arguments as "slash" arguments - this is much
+	better for caching, proxies, search engines etc.  Unfortunately it
+	doesn't seem to work on some PHP installations.
+	
+	If false (the default), then a more compatible method is used (ie
+	usual way of passing parameters to scripts)
+
+2002-08-26 Monday 17:28  martin
+
+	* course/lib.php: 
+	
+	Slightly bigger window
+
+2002-08-26 Monday 17:25  martin
+
+	* course/lib.php, lib/ipatlas/plot.php: 
+	
+	Nicer display of earth plot now contains user's name as well
+
+2002-08-26 Monday 17:16  martin
+
+	* lib/ipatlas/: MOODLECHANGES, plot.php: 
+	
+	Fixes to use Moodle background colour
+
+2002-08-26 Monday 17:05  martin
+
+	* doc/credits.html: 
+	
+	Added IP-Atlas to credits
+
+2002-08-26 Monday 17:00  martin
+
+	* course/lib.php: 
+	
+	Added popup links for IP addresses in logs (display IP location on
+	world map)
+
+2002-08-26 Monday 16:59  martin
+
+	* lib/ipatlas/: COPYING, README, countries.txt, earth_620.jpg,
+	footer.inc, hr.gif, ip-atlas.css, ip-atlas_prefs.php, plot.inc,
+	plot.php, plotconf.inc, plotimage.php, plotlog.txt, reddot.gif,
+	translate.inc, yellowdot.gif, languages/messages.blank.inc,
+	languages/messages.it.inc: 
+	
+	Adding IP-Atlas 1.0 to this distribution.  I use it to provide maps
+	for IP addresses (in the logs).
+
+2002-08-26 Monday 16:35  martin
+
+	* mod/forum/lib.php: 
+	
+	Forums with many discussions (> 10) become abbreviated to a shorter
+	display
+
+2002-08-26 Monday 10:49  martin
+
+	* admin/site.php: 
+	
+	More direct link to index.php just in case they don't have
+	index.php set as a default page
+
+2002-08-23 Friday 11:55  martin
+
+	* index.php, course/lib.php, course/weeks.php, lib/moodlelib.php,
+	mod/forum/lib.php: 
+	
+	Changes to improve layout and formatting on old Netscape (eg
+	version 4)
+
+2002-08-23 Friday 10:14  martin
+
+	* lib/: moodlelib.php, setup.php: 
+	
+	Check that PHP is a recent enough version (ie 4.1.0 or later)
+
 2002-08-22 Thursday 16:31  martin
 
 	* lib/weblib.php: 
