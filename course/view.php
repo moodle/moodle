@@ -12,7 +12,7 @@
         error("Must specify course id or short name");
     }
 
-    if ($name) {
+    if (!empty($_GET['name'])) {
         if (! $course = get_record("course", "shortname", $name) ) {
             error("That's an invalid short course name");
         }
