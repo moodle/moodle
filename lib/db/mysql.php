@@ -250,6 +250,10 @@ function main_upgrade($oldversion=0) {
         insert_record("log_display", $new);
     }
 
+    if ($oldversion < 2003012200) {
+        execute_sql(" ALTER TABLE `log_display` CHANGE `module` `module` VARCHAR( 20 ) NOT NULL ");
+    }
+
     return true;
 }
 
