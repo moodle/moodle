@@ -521,7 +521,7 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
             $ld = get_record('log_display', 'module', $log->module, "action", $log->action);
             $ldcache[$log->module][$log->action] = $ld;
         }
-        if ($ld) {
+        if ($ld && !empty($log->info)) {
             $log->info = get_field($ld->mtable, $ld->field, 'id', $log->info);
         }
 
