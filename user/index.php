@@ -69,6 +69,7 @@ function print_user($user, $course, $teacherlinks) {
     echo "<FONT SIZE=-1>";
     echo "<FONT SIZE=3><B>$user->firstname $user->lastname</B></FONT>";
     echo "<P>Email: <A HREF=\"mailto:$user->email\">$user->email</A><BR>";
+    echo "Location: $user->city, $user->country<BR>";
     echo "Last access: ".userdate($user->lastaccess);
     echo "&nbsp (".format_time(time() - $user->lastaccess).")";
     echo "</TD><TD VALIGN=bottom BGCOLOR=#FFFFFF NOWRAP>";
