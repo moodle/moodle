@@ -12,11 +12,15 @@ $string['block_rss_feed_deleted'] = 'News feed deleted';
 
 $string['block_rss_client_num_entries'] = 'The default number of entries to show per feed.';
 $string['block_rss_submitters'] = 'Who will be allowed to define new rss feeds? Defined feeds are available for any page on your site.';
-$string['block_rss_choose_feed'] = 'Choose the feeds which you would like to make available in this block:';
+$string['block_rss_choose_feed_label'] = 'Choose the feeds which you would like to make available in this block:';
+$string['block_rss_client_show_channel_link_label'] = 'Should a link to the original site (channel link) be displayed? (Note that if no feed link is supplied in the news feed then no link will be shown) :';
+$string['block_rss_client_channel_link'] = 'Source site...';
+$string['block_rss_custom_title_label'] = 'Custom title (leave blank to use title supplied by feed):';
+$string['validate_feed'] = 'Validate feed';
 $string['block_rss_no_feeds'] = 'There are no RSS feeds defined for this site.';
 $string['block_rss_edit_news_feeds'] = 'Edit news feeds';
-$string['block_rss_shownumentries'] = 'Max number entries to show per block.';
-$string['block_rss_display_description'] = 'Display each link\'s description?';
+$string['block_rss_shownumentries_label'] = 'Max number entries to show per block.';
+$string['block_rss_display_description_label'] = 'Display each link\'s description?';
 
 $string['block_rss_could_not_find_feed'] = 'Could not find feed with id';
 $string['block_rss_feed'] = 'Feed';
