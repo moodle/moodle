@@ -21,7 +21,6 @@ function ewiki_view_append_attachments($id, $data, $action) {
 
    $o = '<hr><h4><a href="' . ewiki_script(EWIKI_ACTION_ATTACHMENTS, $id) .
         '">' . ewiki_t("ATTACHMENTS") . '</a></h4>';
-   return($o);   // We don't want to show all the attachment listing in Moodle, just a link
 
    $scan = 's:7:"section";' . serialize($id);
    $result = ewiki_database("SEARCH", array("meta" => $scan));

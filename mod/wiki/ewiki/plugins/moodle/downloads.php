@@ -343,7 +343,6 @@ function ewiki_entry_downloads($row, $show_section=0, $fullinfo=false) {
    $info->title = $p_title;
    $info->comment = $p_comment;
 
-   
    if ($fullinfo) {
         $o .= '<a href="'.$info->url.'">'.$info->icon.$info->title.'</a>'.$info->size.'<br>'.
             get_string("uploadedon","wiki").": ".$info->time.", ".
