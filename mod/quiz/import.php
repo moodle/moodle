@@ -47,8 +47,10 @@
 
         if (is_array($newfile)) { // either for file already on server or just uploaded file.
 
+            $form->format = clean_filename($form->format);
+
             if (! is_readable("format/$form->format/format.php")) {
-                error("Format not known ($form->format)");
+                error('Format not known ('.clean_text($form->format).')');
             }
 
             require("format.php");  // Parent class
