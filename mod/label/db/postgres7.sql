@@ -5,3 +5,6 @@ CREATE TABLE prefix_label (
   content text,
   timemodified integer NOT NULL default '0'
 );
+
+INSERT INTO prefix_log_display VALUES ('label', 'add', 'quiz', 'name');
+INSERT INTO prefix_log_display VALUES ('label', 'update', 'quiz', 'name');

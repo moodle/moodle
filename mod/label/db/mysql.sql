@@ -6,3 +6,6 @@ CREATE TABLE `prefix_label` (
   `timemodified` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`)
 ) COMMENT='Defines labels';
+
+INSERT INTO prefix_log_display VALUES ('label', 'add', 'quiz', 'name');
+INSERT INTO prefix_log_display VALUES ('label', 'update', 'quiz', 'name');
