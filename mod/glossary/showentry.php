@@ -18,8 +18,8 @@
 
         $colour = $THEME->cellheading2;
 
-        echo "\n<center><table width=95% border=0><TR>";
-        echo "<TD WIDTH=100% BGCOLOR=\"#FFFFFF\">";
+        echo "\n<center><table width=95% border=0><tr>";
+        echo "<td width=100%\">";
         if ( $entries ) {
             foreach ( $entries as $entry ) {
 
@@ -37,7 +37,7 @@
             }
         }
         echo "</td>";
-        echo "</TR></table></center>";
+        echo "</tr></table></center>";
     }
 
 ?>
