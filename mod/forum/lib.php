@@ -582,7 +582,7 @@ function forum_make_mail_text($course, $forum, $discussion, $post, $userfrom, $u
 }
 
 function forum_make_mail_html($course, $forum, $discussion, $post, $userfrom, $userto) {
-    global $CFG;
+    global $CFG, $THEME;
 
     if ($userto->mailformat == 1) {  // HTML
 
