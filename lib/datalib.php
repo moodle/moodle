@@ -64,19 +64,21 @@ function modify_database($sqlfile) {
 }
 
 
-function record_exists($table, $field="", $value="", $field2="", $value2="", $field3="", $value3="") {
+function record_exists($table, $field1="", $value1="", $field2="", $value2="", $field3="", $value3="") {
 /// Returns true or false depending on whether the specified record exists
 
     global $CFG;
 
-    if ($field) {
-        $select = "WHERE $field = '$value'";
+    if ($field1) {
+        $select = "WHERE $field1 = '$value1'";
         if ($field2) {
             $select .= " AND $field2 = '$value2'";
             if ($field3) {
                 $select .= " AND $field3 = '$value3'";
             }
         }
+    } else {
+        $select = "";
     }
 
     return record_exists_sql("SELECT * FROM $CFG->prefix$table $select LIMIT 1");
@@ -100,19 +102,21 @@ function record_exists_sql($sql) {
 }
 
 
-function count_records($table, $field="", $value="", $field2="", $value2="", $field3="", $value3="") {
+function count_records($table, $field1="", $value1="", $field2="", $value2="", $field3="", $value3="") {
 /// Get all the records and count them
 
     global $CFG;
 
-    if ($field) {
-        $select = "WHERE $field = '$value'";
+    if ($field1) {
+        $select = "WHERE $field1 = '$value1'";
         if ($field2) {
             $select .= " AND $field2 = '$value2'";
             if ($field3) {
                 $select .= " AND $field3 = '$value3'";
             }
         }
+    } else {
+        $select = "";
     }
 
     return count_records_sql("SELECT COUNT(*) FROM $CFG->prefix$table $select");
@@ -143,12 +147,12 @@ function count_records_sql($sql) {
     return $rs->fields[0];
 }
 
-function get_record($table, $field, $value, $field2="", $value2="", $field3="", $value3="") {
+function get_record($table, $field1, $value1, $field2="", $value2="", $field3="", $value3="") {
 /// Get a single record as an object
 
     global $CFG;
 
-    $select = "WHERE $field = '$value'";
+    $select = "WHERE $field1 = '$value1'";
 
     if ($field2) {
         $select .= " AND $field2 = '$value2'";
@@ -186,12 +190,15 @@ function get_records($table, $field="", $value="", $sort="", $fields="*") {
 
     if ($field) {
         $select = "WHERE $field = '$value'";
-    }
-    if ($sort) {
-        $sortorder = "ORDER BY $sort";
+    } else {
+        $select = "";
     }
 
-    return get_records_sql("SELECT $fields FROM $CFG->prefix$table $select $sortorder");
+    if ($sort) {
+        $sort = "ORDER BY $sort";
+    }
+
+    return get_records_sql("SELECT $fields FROM $CFG->prefix$table $select $sort");
 }
 
 function get_records_select($table, $select="", $sort="", $fields="*") {
@@ -202,15 +209,17 @@ function get_records_select($table, $select="", $sort="", $fields="*") {
 
     global $CFG;
 
-    if ($sort) {
-        $sortorder = "ORDER BY $sort";
-    }
-
     if ($select) {
         $select = "WHERE $select";
+    } else {
+        $select = "";
     }
 
-    return get_records_sql("SELECT $fields FROM $CFG->prefix$table $select $sortorder");
+    if ($sort) {
+        $sort = "ORDER BY $sort";
+    }
+
+    return get_records_sql("SELECT $fields FROM $CFG->prefix$table $select $sort");
 }
 
 
@@ -225,12 +234,15 @@ function get_records_list($table, $field="", $values="", $sort="", $fields="*") 
 
     if ($field) {
         $select = "WHERE $field in ($values)";
-    }
-    if ($sort) {
-        $sortorder = "ORDER BY $sort";
+    } else {
+        $select = "";
     }
 
-    return get_records_sql("SELECT $fields FROM $CFG->prefix$table $select $sortorder");
+    if ($sort) {
+        $sort = "ORDER BY $sort";
+    }
+
+    return get_records_sql("SELECT $fields FROM $CFG->prefix$table $select $sort");
 }
 
 
@@ -269,12 +281,15 @@ function get_records_menu($table, $field="", $value="", $sort="", $fields="*") {
 
     if ($field) {
         $select = "WHERE $field = '$value'";
-    }
-    if ($sort) {
-        $sortorder = "ORDER BY $sort";
+    } else {
+        $select = "";
     }
 
-    return get_records_sql_menu("SELECT $fields FROM $CFG->prefix$table $select $sortorder");
+    if ($sort) {
+        $sort = "ORDER BY $sort";
+    }
+
+    return get_records_sql_menu("SELECT $fields FROM $CFG->prefix$table $select $sort");
 }
 
 function get_records_select_menu($table, $select="", $sort="", $fields="*") {
@@ -285,15 +300,15 @@ function get_records_select_menu($table, $select="", $sort="", $fields="*") {
 
     global $CFG;
 
-    if ($sort) {
-        $sortorder = "ORDER BY $sort";
-    }
-
     if ($select) {
         $select = "WHERE $select";
     }
 
-    return get_records_sql_menu("SELECT $fields FROM $CFG->prefix$table $select $sortorder");
+    if ($sort) {
+        $sort = "ORDER BY $sort";
+    }
+
+    return get_records_sql_menu("SELECT $fields FROM $CFG->prefix$table $select $sort");
 }
 
 
@@ -344,19 +359,21 @@ function set_field($table, $newfield, $newvalue, $field, $value) {
 }
 
 
-function delete_records($table, $field="", $value="", $field2="", $value2="", $field3="", $value3="") {
+function delete_records($table, $field1="", $value1="", $field2="", $value2="", $field3="", $value3="") {
 /// Delete one or more records from a table
 
     global $db, $CFG;
 
-    if ($field) {
-        $select = "WHERE $field = '$value'";
+    if ($field1) {
+        $select = "WHERE $field1 = '$value1'";
         if ($field2) {
             $select .= " AND $field2 = '$value2'";
             if ($field3) {
                 $select .= " AND $field3 = '$value3'";
             }
         }
+    } else {
+        $select = "";
     }
 
     return $db->Execute("DELETE FROM $CFG->prefix$table $select");
