@@ -1055,7 +1055,12 @@ function calendar_set_filters(&$courses, &$group, &$user, $defaultcourses = NULL
     }
 
     if($SESSION->cal_show_user) {
-        $user = $SESSION->cal_show_user;
+        // This ignores the "which user to see" setting
+        // The functionality to do that does exist, but this was
+        // the most painless way to solve bug 1323. And anyway,
+        // it wasn't being used anywhere.
+        $user = $USER->id;
+        //$user = $SESSION->cal_show_user;
     }
     else {
         $user = false;
