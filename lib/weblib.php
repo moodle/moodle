@@ -193,21 +193,23 @@ function stripslashes_safe($string) {
     return $string;
 }
 
-function stri_replace($find, $replace, $string ) {
-/// This does a search and replace, ignoring case
-/// This function is only here because one doesn't exist yet in PHP
-/// Unlike str_replace(), this only works on single values (not arrays)
-
-    $parts = explode(strtolower($find), strtolower($string));
-
-    $pos = 0;
-
-    foreach ($parts as $key => $part) {
-        $parts[$key] = substr($string, $pos, strlen($part));
-        $pos += strlen($part) + strlen($find);
+if (!function_exists('str_ireplace')) {
+    function str_ireplace($find, $replace, $string ) {
+    /// This does a search and replace, ignoring case
+    /// This function is only here because one doesn't exist yet in PHP
+    /// Unlike str_replace(), this only works on single values (not arrays)
+    
+        $parts = explode(strtolower($find), strtolower($string));
+    
+        $pos = 0;
+    
+        foreach ($parts as $key => $part) {
+            $parts[$key] = substr($string, $pos, strlen($part));
+            $pos += strlen($part) + strlen($find);
+        }
+    
+        return (join($replace, $parts));
     }
-
-    return (join($replace, $parts));
 }
 
 function read_template($filename, &$var) {
@@ -514,7 +516,7 @@ function clean_text($text, $format) {
         case FORMAT_WIKI:
             $text = strip_tags($text, $ALLOWED_TAGS);
             foreach ($JAVASCRIPT_TAGS as $tag) {
-                $text = stri_replace($tag, "", $text);
+                $text = str_ireplace($tag, "", $text);
             }
             return $text;
 
