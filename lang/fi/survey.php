@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // survey.php - created with Moodle 1.0.9 development (2003050400)
+      // survey.php - created with Moodle 1.1 (2003082800)
 
 
 $string['actual'] = "Toteutunut";
@@ -152,8 +152,6 @@ $string['collesmintro'] = "Tällä kurssilla ...";
 $string['collespintro'] = "Tämän tutkimuksen tarkoituksena on selvitää mitä asiaoita arvostat online-oppimisympäristössä.
 
 Jokainen seuraavasta 24 kysymyksestä kysyy sinun  odotuksistasi tältä kurssilta.
-
-
 Ei ole olemassa oikeata tai vääriä vastauksia, tahdomme sinun mielipiteesi asioista. Muista että vastaukset käsitellään luottamuksellisesti, eivätkä ne vaikuta arvosteluun.
 
 Vastaamalla huolellisesti ja ajatuksella autat meitä parantamaan tätä kurssia tulevaisuudessa.
@@ -166,6 +164,7 @@ $string['downloadexcel'] = "Lataa tiedot Excel-taulukkona";
 $string['downloadinfo'] = "Voit ladata kaikki tutkimuksen tiedot analysointia varten. Voit käyttää tietoja Excel-, SPPS- tai muussa ohjelmissa.";
 $string['downloadtext'] = "Lataa tiedot tekstitiedostona.";
 $string['editingasurvey'] = "Tutkimuksen muokkaus";
+$string['guestsnotallowed'] = "Tutkimus ei ole tarkoitettu vieraille";
 $string['helpsurveys'] = "Opastus eri tutkimustyyppeihin";
 $string['howlong'] = "Kauanko sinulta meni aikaa tutkimukseen vastaamiseen?";
 $string['howlongoptions'] = "alle 1 min,1-2 min,2-3 min,3-4 min,4-5-min,5-10 min,yli 10 min";

@@ -1,9 +1,20 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.0.9 development (2003021600)
+      // assignment.php - created with Moodle 1.1 (2003082800)
 
 
 $string['allowresubmit'] = "Salli uudelleenlähetys";
 $string['assignmentdetails'] = "Tehtävän tiedot";
+$string['assignmentmail'] = "\$a->teacher on lähettänyt sinulle palautetta tehtävästä '\$a->assignment'
+
+Voit nähdä sen osoitteessa:
+
+\$a->url
+";
+$string['assignmentmailhtml'] = "\$a->teacher on lähettänyt sinulle palautetta tehtävästä '<i>\$a->assignment</i>'<br /><br />
+
+Voit nähdä sen osoitteessa:
+
+<a href=\\\"\$a->url\\\">Tehtävän palautus</a>.";
 $string['assignmentname'] = "Tehtävän nimi";
 $string['assignmenttype'] = "Tehtävän tyyppi";
 $string['description'] = "Kuvaus";
@@ -18,6 +29,7 @@ $string['maximumsize'] = "Maksimikoko";
 $string['modulename'] = "Tehtävä";
 $string['modulenameplural'] = "Tehtävät";
 $string['newsubmissions'] = "Palautetut tehtävät";
+$string['notgradedyet'] = "Ei vielä arvioitu";
 $string['notsubmittedyet'] = "Ei vielä palautettu";
 $string['overwritewarning'] = "Varoitus: uudelleen lähettäminen korvaa aiemman vastauksesi";
 $string['saveallfeedback'] = "Tallenna palaute";

@@ -1,8 +1,9 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.0.9 development (2003050400)
+      // resource.php - created with Moodle 1.1 (2003082800)
 
 
 $string['addresource'] = "Lisää aineisto";
+$string['configframesize'] = "Kun www-sivu tai serverille tallennettu tiedosto on osa framea, tämä arvo on yläframen koko pikseleinä (sisältää navigointipalkit).";
 $string['editingaresource'] = "Aineiston muokkaus";
 $string['example'] = "Esimerkki";
 $string['examplereference'] = "Tobin, K. & Tippins, D (1993) Constructivism as a Referent for Teaching and Learning. In: K. Tobin (Ed) The Practice of Constructivism in Science Education, pp 3-21, Lawrence-Erlbaum, Hillsdale, NJ.";
@@ -13,6 +14,18 @@ $string['htmlfragment'] = "HTML";
 $string['modulename'] = "Aineisto";
 $string['modulenameplural'] = "Aineistot";
 $string['neverseen'] = "Lukematta";
+$string['newdirectories'] = "Näytä linkkirivi";
+$string['newfullscreen'] = "Täytä koko ruutu";
+$string['newheight'] = "Oletus ikkunan korkeus pikseleinä";
+$string['newlocation'] = "Näytä osoiterivi";
+$string['newmenubar'] = "Näytä valikkorivi";
+$string['newresizable'] = "Salli ikkunan koon muutos";
+$string['newscrollbars'] = "Näytä vierityspalkki";
+$string['newstatus'] = "Näytä tilarivi";
+$string['newtoolbar'] = "Näytä työkalurivi";
+$string['newwidth'] = "Oletus ikkunan leveys pikseleinä";
+$string['newwindow'] = "Uusi ikkuna";
+$string['newwindowopen'] = "Näytä linkki uudessa ikkunassa";
 $string['note'] = "Huomaa";
 $string['notefile'] = "Lisätäksesi tiedostoja kurssille (jotta ne näkysivät tässä listassa) käytä 
 <A HREF=\$a >Tiedostot-</A>työkalua.";
