@@ -70,7 +70,7 @@ function print_user($user, $course, $string) {
     echo "$string->location: $user->city, ".$COUNTRIES["$user->country"]."<BR>";
     if ($user->lastaccess) {
         echo "$string->lastaccess: ".userdate($user->lastaccess);
-        echo "&nbsp (".format_time(time() - $user->lastaccess).")";
+        echo "&nbsp (".format_time(time() - $user->lastaccess, $string).")";
     } else {
         echo "$string->lastaccess: $string->never";
     }

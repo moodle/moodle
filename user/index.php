@@ -37,6 +37,14 @@
     $string->role        = get_string("role");
     $string->never       = get_string("never");
     $string->name        = get_string("name");
+    $string->day         = get_string("day");
+    $string->days        = get_string("days");
+    $string->hour        = get_string("hour");
+    $string->hours       = get_string("hours");
+    $string->min         = get_string("min");
+    $string->mins        = get_string("mins");
+    $string->sec         = get_string("sec");
+    $string->secs        = get_string("secs");
 
     if ( $teachers = get_course_teachers($course->id)) {
         echo "<H2 align=center>$course->teachers</H2>";
@@ -101,7 +109,7 @@
             
             foreach ($students as $student) {
                 if ($student->lastaccess) {
-                    $lastaccess = format_time(time() - $student->lastaccess);
+                    $lastaccess = format_time(time() - $student->lastaccess, $string);
                 } else {
                     $lastaccess = $string->never;
                 }

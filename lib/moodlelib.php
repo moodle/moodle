@@ -339,28 +339,39 @@ function make_timestamp($year, $month=1, $day=1, $hour=0, $minute=0, $second=0) 
    return mktime((int)$hour,(int)$minute,(int)$second,(int)$month,(int)$day,(int)$year);
 }
 
-function format_time($totalsecs) {
+function format_time($totalsecs, $str=NULL) {
 // Given an amount of time in seconds, prints it 
 // nicely as months, days, hours etc as needed
 
     $totalsecs = abs($totalsecs);
 
-    $days  = floor($totalsecs/86400);
+    if (!$str) {  // Create the str structure the slow way
+        $str->day   = get_string("day");
+        $str->days  = get_string("days");
+        $str->hour  = get_string("hour");
+        $str->hours = get_string("hours");
+        $str->min   = get_string("min");
+        $str->mins  = get_string("mins");
+        $str->sec   = get_string("sec");
+        $str->secs  = get_string("secs");
+    }
+
+    $days      = floor($totalsecs/86400);
     $remainder = $totalsecs - ($days*86400);
-    $hours = floor($remainder/3600);
+    $hours     = floor($remainder/3600);
     $remainder = $remainder - ($hours*3600);
-    $mins  = floor($remainder/60);
-    $secs = $remainder - ($mins*60);
+    $mins      = floor($remainder/60);
+    $secs      = $remainder - ($mins*60);
 
-    if ($secs  != 1) $ss = "s";
-    if ($mins  != 1) $ms = "s";
-    if ($hours != 1) $hs = "s";
-    if ($days  != 1) $ds = "s";
+    $ss = ($secs == 1)  ? $str->sec  : $str->secs;
+    $sm = ($mins == 1)  ? $str->min  : $str->mins;
+    $sh = ($hours == 1) ? $str->hour : $str->hours;
+    $sd = ($days == 1)  ? $str->day  : $str->days;
 
-    if ($days)  $odays  = "$days day$ds";
-    if ($hours) $ohours = "$hours hr$hs";
-    if ($mins)  $omins  = "$mins min$ms";
-    if ($secs)  $osecs  = "$secs sec$ss";
+    if ($days)  $odays  = "$days $sd";
+    if ($hours) $ohours = "$hours $sh";
+    if ($mins)  $omins  = "$mins $sm";
+    if ($secs)  $osecs  = "$secs $ss";
 
     if ($days)  return "$odays $ohours";
     if ($hours) return "$ohours $omins";
