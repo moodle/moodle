@@ -7,12 +7,12 @@
     include("mod/forum/lib.php");
 
     if (! $site = get_site()) {
-        redirect("$CFG->wwwroot/admin/");
+        redirect("$CFG->wwwroot/admin/index.php");
     }
 
     if (isadmin()) {
         if (moodle_needs_upgrading()) {
-            redirect("$CFG->wwwroot/admin/");
+            redirect("$CFG->wwwroot/admin/index.php");
         }
         $headerbutton = update_course_icon($site->id);
     } else {
