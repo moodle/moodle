@@ -118,9 +118,9 @@
     echo "<table border=\"0\" width=\"100%\" cellpadding=\"4\">";
 
     require_once("$CFG->dirroot/auth/$auth/config.html");
-    echo "<tr><td colspan=\"2\"><h2>";
-    print_string("auth_common_settings", "auth");
-    echo "</h2><td/></tr>";
+    echo '<tr><td colspan="3">';
+    print_heading(get_string('auth_common_settings', 'auth'));
+    echo '</h2><td/></tr>';
     
     if ($auth != "email" and $auth != "none" and $auth != "manual") {
         echo "<tr valign=\"top\">";
@@ -148,21 +148,21 @@
     echo "</td></tr>";
 
     if (function_exists('auth_user_create')){    
-    echo "<tr valign=\"top\">";
-    echo "<td align=\"right\" nowrap=\"nowrap\">";
-    print_string("auth_user_create", "auth");
-    echo ":</td>";
-    echo "<td>";
-    choose_from_menu($createoptions, "auth_user_create", $config->auth_user_create, "");
-    echo "</td>";
-    echo "<td>";
-    print_string("auth_user_creation","auth");
-    echo "</td></tr>";
+        echo "<tr valign=\"top\">";
+        echo "<td align=\"right\" nowrap=\"nowrap\">";
+        print_string("auth_user_create", "auth");
+        echo ":</td>";
+        echo "<td>";
+        choose_from_menu($createoptions, "auth_user_create", $config->auth_user_create, "");
+        echo "</td>";
+        echo "<td>";
+        print_string("auth_user_creation","auth");
+        echo "</td></tr>";
     }
 
-    echo "</table><center><input type=\"submit\" value=\"";
-    print_string("savechanges");
-    echo "\"></center></form>";
+    echo '</table>';
+    echo '<p align="center"><input type="submit" value="'.get_string('savechanges').'"></p>';
+    echo '</form>';
 
     print_simple_box_end(); 
 
