@@ -700,19 +700,25 @@ function clean_text($text, $format=FORMAT_MOODLE) {
     global $ALLOWED_TAGS;
 
     switch ($format) {
-        case FORMAT_MOODLE:
-        case FORMAT_HTML:
-        case FORMAT_WIKI:
+        case FORMAT_PLAIN:
+            return $text;
+
+        default:
+
         /// Remove tags that are not allowed
             $text = strip_tags($text, $ALLOWED_TAGS);
+
         /// Munge javascript: label
             $text = str_ireplace("javascript:", "Xjavascript:", $text);
+            $text = str_ireplace("vbscript:", "Xvbscript:", $text);
+
         /// Remove script events
             $text = eregi_replace("([^a-z])language([[:space:]]*)=", "\\1Xlanguage=", $text);
             $text = eregi_replace("([^a-z])on([a-z]+)([[:space:]]*)=", "\\1Xon\\2=", $text);
-            return $text;
 
-        case FORMAT_PLAIN:
+        /// Remove Javascript entities
+            $text = eregi_replace("&{([^};]*)};", "\\1", $text);
+
             return $text;
     }
 }
