@@ -1,5 +1,5 @@
 <?php // $Id$ 
-      // quiz.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
+      // quiz.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004112400)
 
 
 $string['acceptederror'] = 'エラー範囲';
@@ -28,6 +28,7 @@ $string['attempts'] = '受験';
 $string['attemptsallowed'] = '受験回数';
 $string['attemptsexist'] = 'この小テストは既に受験されています。';
 $string['attemptsunlimited'] = '制限無し';
+$string['back'] = '問題のプレビューに戻る';
 $string['backtoquiz'] = '小テストの編集に戻る';
 $string['bestgrade'] = '最高評点';
 $string['blackboard'] = 'ブラックボード';
