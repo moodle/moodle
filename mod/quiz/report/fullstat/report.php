@@ -11,8 +11,9 @@ class quiz_report extends quiz_default_report {
     function display($quiz, $cm, $course) {     /// This function just displays the report
 
     global $CFG;
-    global $download, $quests,$qtally,$table_colcount,$max_choices, $analysis,$qs_in_order,$total_user_count,$match_number, $thismin,$thismax,$myxls,$match_qs,$formatbc,$workbook,$strquestion;
+    global $download, $quests,$qtally,$table_colcount,$max_choices, $analysis,$qs_in_order,$total_user_count,$match_number, $thismin,$thismax,$myxls,$match_qs,$formatbc,$workbook,$strquestion,$showtext,$debug;
     optional_variable($download, "");
+    optional_variable($debug, "");
 //$debug = 1;
 
 /*
@@ -24,6 +25,8 @@ $string['itemanal'] = "Item Response Analysis";
 $string['listitems'] = "Listing of Items in This Quiz";
 $string['noresponse'] = "No Response";
 $string['percentcorrect'] = "Percent Correct";
+$string['question'] = "Question";
+$string['withsummary'] = "with Summary Statistics";
 $string['discrimination'] = "Discrim. Index";
 $string[''] = "";
 */
@@ -41,6 +44,7 @@ $string[''] = "";
         $strdiscrimination = get_string("discrimination", "quiz");
 //        $str = get_string("qr", "quiz");
 
+    //Get the question ids
     //$showtext causes M/C text to whos in top table.  This could be made into a user toggle if we want to complicate matters
     $showtext = 1;
     $containsMCTF = 0;  //used to toggle title in final listing
@@ -895,7 +899,8 @@ function qr_make_footers(){
 function qr_make_pct($this_correct,$totusers){
     global  $qs_in_order,$qtally,$quests,$total_user_count;
     if($this_correct>0 and $totusers > 0){
-        $pct_cor =round((($this_correct/$totusers)*100),1);
+//        $pct_cor =round((($this_correct/$totusers)*100),1);
+        $pct_cor =(floor(($this_correct/$totusers)*1000)/10);
     } else {
         $pct_cor = 0;
     }
