@@ -1178,104 +1178,35 @@ $currentrow           = ( $currenttab - ( $currenttab % $tabsperrow) ) / $tabspe
 
 $numrows              = (int) ( $tabs / $tabsperrow ) + 1;
 
+
+/// Following lines are to create a tab object so that
+/// we can use the new tab objects and functions
+$tabrows = array();
+$tabnumber = 0;
+$row = array();
+$inactive = array();
+foreach ($data as $tab) {
+    $row[] = new tabobject($tabnumber, $tab->link, $tab->caption);
+    if (empty($tab->link)) {
+        $inactive[] = $tabnumber;
+    }
+    $tabnumber++;
+    if (($tabnumber % $tabsperrow) == 0) {
+        $tabrows[] = $row;
+        unset($row);
+        $row = array();
+    }
+}
+
+
 ?>
   <table cellspacing="0" class="glossarydisplay">
     <tr>
       <td width="100%">
 
-      <table cellspacing="0" class="tabs" width="100%">
+<?php echo print_tabs($tabrows, $currenttab, $inactive);
 
-<?php
-$tabproccessed = 0;
-for ($row = 0; $row < $numrows; $row++) {
-     echo "<tr>\n";
-     if ( $row != $currentrow ) {
-          for ($col = 0; $col < $tabsperrow; $col++) {
-               if ( $tabproccessed < $tabs ) {
-                    if ( $col == 0 ) {
-                        echo '<td class="separator">&nbsp;</td>';
-                    }
-                    if ($tabproccessed == $currenttab) {
-                         $currentstyle = 'selected';
-                    } elseif ( !$data[$tabproccessed]->link ) {
-                         $currentstyle = 'inactive';
-                    } else {
-                         $currentstyle = 'general';
-                    }
-                    
-                    echo "<td class=\"$currentstyle\" width=\"$tabwidth%\" align=\"center\"><b>";
-                    if ($tabproccessed != $currenttab and $data[$tabproccessed]->link) {
-                        echo "<a href=\"" . $data[$tabproccessed]->link . "\">";
-                    }
-
-                    echo $data[$tabproccessed]->caption;
-
-                    if ($tabproccessed != $currenttab and $data[$tabproccessed]->link) {
-                        echo "</a>";
-                    }
-                    echo "</b></td>";
-                    
-                    if ( $col < $tabsperrow ) {
-                        echo '<td class="separator">&nbsp;</td>';
-                    }
-               } else {
-                    echo "<td colspan=\"".(2* $tabsperrow)."\"></td>\n";
-               }
-               $tabproccessed++;
-          }
-     } else {
-          $firsttabincurrentrow = $tabproccessed;
-          $tabproccessed += $tabsperrow;
-          echo "<td colspan=\"".(2* $tabsperrow)."\"></td>\n";
-     }
-     echo "</tr><tr><td colspan=\"" . (2* $tabsperrow) . "\" height=\"1\"></td></tr>\n";
-}
-     echo "<tr>\n";
-          $tabproccessed = $firsttabincurrentrow;
-          for ($col = 0; $col < $tabsperrow; $col++) {
-               if ( $tabproccessed < $tabs ) {
-                    if ( $col == 0 ) {
-                        echo '<td class="separator">&nbsp;</td>';
-                    }
-                    
-                    if ($tabproccessed == $currenttab) {
-                         $currentstyle = 'generaltabselected';
-                         
-                    } elseif ( !$data[$tabproccessed]->link ) {
-                         $data[$tabproccessed]->link = NULL;
-                         $currentstyle = 'generaltabinactive';
-                         
-                    } else {
-                         $currentstyle = 'generaltab';
-                    }
-
-
-                    echo "<td class=\"$currentstyle\" width=\"$tabwidth%\" align=\"center\"><b>";
-                    if ($tabproccessed != $currenttab and $data[$tabproccessed]->link) {
-                        echo "<a href=\"" . $data[$tabproccessed]->link . "\">";
-                    }
-
-                    echo $data[$tabproccessed]->caption;
-
-                    if ($tabproccessed != $currenttab and $data[$tabproccessed]->link) {
-                        echo "</a>";
-                    }
-                    echo "</b></td>";
-
-                    if ($col < $tabsperrow) {
-                         echo '<td class="separator">&nbsp;</td>';                    }
-               } else {
-                    echo "<td colspan = " . (2 * ($tabsperrow - $col)) . " align=\"center\">";
-                    echo "</td>";
-
-                    $col = $tabsperrow;
-               }
-               $tabproccessed++;
-          }
-     echo "</tr>\n";
-     ?>
-
-      </table>
+?>
       </td>
     </tr>
     <tr>
