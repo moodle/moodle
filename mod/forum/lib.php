@@ -458,12 +458,11 @@ function forum_print_recent_activity($course, $isteacher, $timestart) {
 }
 
 
-
-function forum_print_recent_instance_activity($forum, $timestart, $detail=false) {
+function forum_print_recent_instance_activity($forum, $timestart, $user="") {
 
     global $CFG, $THEME;
 
-    if (!$posts = forum_get_recent_posts($timestart, $forum->id)) {
+    if (!$posts = forum_get_recent_posts($timestart, $forum->id, $user)) {
         return false;
     }
 
@@ -957,7 +956,7 @@ function forum_subscribed_users($course, $forum) {
                           ORDER BY u.email ASC");
 }
 
-function forum_get_recent_posts($sincetime, $forum="0") {
+function forum_get_recent_posts($sincetime, $forum="0", $user="") {
 // Returns all forum posts since a given time.  If forum is specified then 
 // this restricts the results
 
@@ -968,13 +967,18 @@ function forum_get_recent_posts($sincetime, $forum="0") {
     } else {
         $forumselect = "";
     }
+    if ($user) {
+        $userselect = " AND u.id = '$user'";
+    } else {
+        $userselect = "";
+    }
 
     return get_records_sql("SELECT p.*, d.name, u.firstname, u.lastname, u.picture, d.course
                               FROM {$CFG->prefix}forum_posts p, 
                                    {$CFG->prefix}forum_discussions d,
                                    {$CFG->prefix}user u
                              WHERE p.modified > '$sincetime' $forumselect
-                               AND p.userid = u.id
+                               AND p.userid = u.id $userselect
                                AND p.discussion = d.id
                              ORDER BY p.modified ASC");
 }
