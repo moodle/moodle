@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.2 development (2003120700)
+      // forum.php - created with Moodle 1.2 development (2004010900)
 
 
 $string['addanewdiscussion'] = 'Colocar un mensaje aquí';
@@ -98,6 +98,8 @@ $string['rating'] = 'Calificación';
 $string['ratingeveryone'] = 'Todos pueden calificar los mensajes';
 $string['ratingno'] = 'Sin calificación';
 $string['ratingonlyteachers'] = 'Sólo $a puede calificar los mensajes';
+$string['ratingpublic'] = '$a puede ver las calificaciones de todos';
+$string['ratingpublicnot'] = '$a sólo puede ver sus propias calificaciones';
 $string['ratings'] = 'Calificaciones';
 $string['ratingssaved'] = 'Calificación guardada.';
 $string['ratingsuse'] = 'Usar calificaciones';

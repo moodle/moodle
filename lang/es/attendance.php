@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // attendance.php - created with Moodle 1.2 development (2003120700)
+      // attendance.php - created with Moodle 1.2 development (2004010900)
 
 
 $string['absentlong'] = 'Ausente';
@@ -10,6 +10,7 @@ $string['allmodulename'] = 'Todos los registros de asistencia';
 $string['auto'] = 'auto';
 $string['autoattend'] = 'Tomar automáticamente las asistencias de los registros de actividades.';
 $string['autoattendmulti'] = 'Tomar automáticamente todas las asistencias de los registros de actividades.';
+$string['autoattendshort'] = 'Automático de los registros';
 $string['choosedays'] = 'Días de la semana para registrar asistencia';
 $string['dayofroll'] = 'Fecha para tomar el registro';
 $string['defaultautoattend'] = 'Tomar las asistencias de los registros de actividades.';
@@ -24,15 +25,18 @@ $string['downloadtextfull'] = 'Descargar todo en formato de texto';
 $string['downloadtexttotals'] = 'Descargar un resumen en formato de texto';
 $string['dynamicsection'] = 'Determinar la semana para asistencia basándose en esta fecha';
 $string['dynamicsectionmulti'] = 'Colocar automáticamente los registros en su sección semanal';
+$string['dynsectionshort'] = 'Movido automáticamente a la sección';
 $string['endbeforestart'] = 'La fecha de cierre es anterior a la fecha de inicio';
 $string['endmulti'] = 'Fecha para el último registro de asistencia';
 $string['for'] = 'para';
 $string['friday'] = 'vie';
+$string['gradeshort'] = 'Calificado';
 $string['gradevalue'] = 'Hacer este registro calificable';
 $string['gradevaluemulti'] = 'Hacer estos registros calificables';
 $string['hoursinclass'] = 'Número de horas en un período de clase';
 $string['hoursineachclass'] = 'Número de horas en cada período de clases';
 $string['hoursinfullreport'] = 'El número máximo de horas de asistencia que debería mostrarse en una sola página de informe';
+$string['maxgradeshort'] = 'Calificación máxima';
 $string['maxgradevalue'] = 'Valor de la máxima calificación para asistencia total';
 $string['modulename'] = 'Asistencia';
 $string['modulenameplural'] = 'Registros de asistencia';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // dialogue.php - created with Moodle 1.2 development (2003120700)
+      // dialogue.php - created with Moodle 1.2 development (2004010900)
 
 
 $string['addmynewentries'] = 'Agregar mis nuevas entradas';
@@ -44,6 +44,7 @@ $string['onyouwrote'] = 'Acerca de $a usted escribió';
 $string['open'] = 'Abierto';
 $string['openadialoguewith'] = 'Charla abierta con';
 $string['opendialogue'] = 'Iniciar charla';
+$string['opendialogueentries'] = 'Abrir entradas de la charla';
 $string['pane0'] = 'Iniciar una charla';
 $string['pane1'] = '$a charlas esperan tu respuesta';
 $string['pane1one'] = 'Una charla espera tu respuesta';
