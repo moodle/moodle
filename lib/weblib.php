@@ -1000,7 +1000,7 @@ function print_date_selector($day, $month, $year, $currenttime=0) {
         $days[$i] = "$i";
     }
     for ($i=1; $i<=12; $i++) {
-        $months[$i] = date("F", mktime(0,0,0,$i,1,2000));
+        $months[$i] = userdate(mktime(0,0,0,$i,1,2000), "%B");
     }
     for ($i=2000; $i<=2010; $i++) {
         $years[$i] = $i;
