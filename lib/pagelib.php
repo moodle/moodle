@@ -70,8 +70,7 @@ function page_map_class($type, $classname = NULL) {
     if ($mappings === NULL) {
         $mappings = array(
             PAGE_COURSE_VIEW => 'page_course',
-            PAGE_QUIZ_VIEW   => 'page_quiz',
-            PAGE_CHAT_VIEW   => 'page_chat',
+            PAGE_QUIZ_VIEW   => 'page_quiz'
         );
     }
 
