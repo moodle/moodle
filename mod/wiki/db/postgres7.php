@@ -52,6 +52,15 @@ function wiki_upgrade($oldversion) {
         modify_database('','CREATE INDEX prefix_wiki_entries_course_idx ON prefix_wiki_entries (course);');
         modify_database('','CREATE INDEX prefix_wiki_entries_pagename_idx ON prefix_wiki_entries (pagename);');
     }
+
+
+    if ($oldversion < 2004112400) {
+        execute_sql("ALTER TABLE {$CFG->prefix}wiki_pages DROP CONSTRAINT id;",false); 
+        execute_sql("ALTER TABLE {$CFG->prefix}wiki_pages DROP CONSTRAINT {$CFG->prefix}wiki_pages_id;",false); 
+        execute_sql("ALTER TABLE {$CFG->prefix}wiki_pages DROP CONSTRAINT {$CFG->prefix}wiki_pages_pagename_version_wiki_unique;",false);
+        modify_database("", "ALTER TABLE ONLY prefix_wiki_pages 
+                            ADD CONSTRAINT prefix_wiki_pages_pagename_version_wiki_unique PRIMARY KEY (pagename, \"version\", wiki);"); 
+    }
     
     return true;
 }
