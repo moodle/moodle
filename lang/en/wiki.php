@@ -7,7 +7,7 @@ $string['modulenameplural'] = 'Wikis';
 
 $string['wikiname'] = 'Page Name';
 $string['wikitype'] = 'Type';
-$string['ewikiprinttitle'] = 'Print the title on every Wiki-Page';
+$string['ewikiprinttitle'] = 'Print the wiki name on every page.';
 $string['htmlmode'] = 'HTML Mode';
 $string['ewikiacceptbinary'] = 'Allow binary files';
 $string['initialcontent'] = 'Choose an Initial Page';
