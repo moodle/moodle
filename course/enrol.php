@@ -23,6 +23,27 @@
 
     $enrol = new enrolment_plugin();
 
+/// Refreshing enrolment data in the USER session
+    $enrol->get_student_courses($USER);
+    $enrol->get_teacher_courses($USER);
+
+
+/// Double check just in case they are actually enrolled already 
+/// This might occur if they were enrolled during this session
+
+    if ( $USER->student[$course->id] or $USER->teacher[$course->id] ) {
+
+        if ($SESSION->wantsurl) {
+            $destination = $SESSION->wantsurl;
+            unset($SESSION->wantsurl);
+        } else {
+            $destination = "$CFG->wwwroot/course/view.php?id=$course->id";
+        }
+
+        redirect($destination);
+    }
+
+
 /// Check the submitted enrollment key if there is one
 
     if ($form = data_submitted()) {

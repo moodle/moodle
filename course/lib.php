@@ -1102,9 +1102,17 @@ function print_course($course, $width="100%") {
 
     global $CFG, $THEME;
 
+    static $enrol;
+
+    if (empty($enrol)) {
+        require_once("$CFG->dirroot/enrol/$CFG->enrol/enrol.php");
+        $enrol = new enrolment_plugin;
+    }
+
     if (! $site = get_site()) {
         error("Could not find a site!");
     }
+
 
     print_simple_box_start("center", "$width", $THEME->cellcontent, 5, "coursebox");
 
@@ -1128,17 +1136,8 @@ function print_course($course, $width="100%") {
         }
         echo "</font></p>";
     }
-    if ($course->guest) {
-        $strallowguests = get_string("allowguests");
-        echo "<a title=\"$strallowguests\" href=\"$CFG->wwwroot/course/view.php?id=$course->id\">";
-        echo "<img vspace=4 alt=\"$strallowguests\" height=16 width=16 border=0 src=\"$CFG->pixpath/i/guest.gif\"></a>&nbsp;&nbsp;";
-    }
-    if ($course->password) {
-        $strrequireskey = get_string("requireskey");
-        echo "<a title=\"$strrequireskey\" href=\"$CFG->wwwroot/course/view.php?id=$course->id\">";
-        echo "<img vspace=4 alt=\"$strrequireskey\" height=16 width=16 border=0 src=\"$CFG->pixpath/i/key.gif\"></a>";
-    }
 
+    echo $enrol->get_access_icons($course);
 
     echo "</td><td valign=top width=\"50%\" class=\"courseboxsummary\">";
     echo "<p><font size=2>".filter_text(text_to_html($course->summary), $course->id)."</font></p>";
