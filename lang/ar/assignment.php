@@ -1,15 +1,25 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.0.7 (2002121000)
+      // assignment.php - created with Moodle 1.2 development (2003102900)
 
 
 $string['allowresubmit'] = "ÇáÓãÇÍ ÈÅÚÇÏÉ ÇáÊÓáíã";
 $string['assignmentdetails'] = "ÊİÇÕíá ÇáãåãÉ";
+$string['assignmentmail'] = "a->ŞÇã ÇáãÏÑÓ ÈÈÚÖ ÇáÊÕÍíÍÇÊ áãåãÊß ÇáãÓáãå'\$a->'
+
+ÓÊáÇÍÙåÇ ãÑæİŞÉ ãÚ ãåãÊß:
+
+\$a->url";
+$string['assignmentmailhtml'] = "a->ŞÇã ÇáãÏÑÓ ÈÈÚÖ ÇáÊÕÍíÍÇÊ áãåãÊß ÇáãÓáãå'<i>\$a->assignment</i>'<br /><br />
+ÓÊáÇÍÙåÇ ãÑæİŞÉ áß İí <a href=\\\"\$a->url\\\">assignment submission</a>.";
 $string['assignmentname'] = "ÇÓã ÇáãåãÉ";
 $string['assignmenttype'] = "äæÚ ÇáãåãÉ";
+$string['configmaxbytes'] = "ÇáÍÌã ÇáãåãÉ ÇáÇİÊÑÇÖí áÌãíÚ ÇáãåãÇÊ İí ÇáãæŞÚ (ÎÇÖÚ áãÍÏæÏíÉ ÇáãåäÌ ÇáÏÑÇÓí æÈÚÖ ÇáÅÚÏÇÏÇÊ)";
 $string['description'] = "ÇáæÕİ";
 $string['duedate'] = "ÊÇÑíÎ ÇáÅäåÇÁ";
+$string['duedateno'] = "áÇ íæÌÏ ãæÚÏ ááÊÓáíã";
 $string['early'] = "\$a ÊÈßíÑ";
 $string['failedupdatefeedback'] = "ÊÚĞÑ ÊÍÏíË ÊÚáíŞ ÇáãÓÊÎÏã Úáì ÇáÑÓÇáÉ \$a";
+$string['feedback'] = "ÊÕÍíÍ";
 $string['feedbackupdated'] = "ÊÍÏíË ÇáÊÚáíŞÇÊ\$a people";
 $string['late'] = "\$a ÊÃÎíÑ";
 $string['maximumgrade'] = "ÇáäåÇíÉ ÇáßÈÑì";
@@ -17,8 +27,10 @@ $string['maximumsize'] = "ÍÌã Çáãáİ";
 $string['modulename'] = "ãåãÉ";
 $string['modulenameplural'] = "ãåÇã";
 $string['newsubmissions'] = "ãåÇã Êã ÊÓáíãåÇ";
+$string['notgradedyet'] = "áã ÊÚØì ÏÑÌÉ ÈÚÏ";
 $string['notsubmittedyet'] = "áã ÊÓáã ÈÚÏ";
 $string['overwritewarning'] = "ÊÍĞíÑ: ÇáÊÍãíá ãÑÉ ÃÎÑì íáÛí ÇáÍÇáí";
+$string['saveallfeedback'] = "ÇÍİÙ ÌãíÚ ÊÕÍíÍÇÊí";
 $string['submissionfeedback'] = "ÊÚáíŞ ÇáÑÓÇáÉ ÇáãÓáãÉ";
 $string['submissions'] = "ÑÓÇáÇÊ ãÓáãÉ";
 $string['submitassignment'] = "Şã ÈÊÓáíã ãåãÊß ÈÇÓÊÎÏÇã åĞÇ ÇáäãæĞÌ";
