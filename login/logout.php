@@ -3,7 +3,7 @@
 
     require_once("../config.php");
 
-    if (ini_get("register_globals")) {
+    if (ini_get_bool("register_globals")) {
         // This method is to try to avoid silly warnings from PHP 4.3.0
         session_unregister("SESSION");
         session_unregister("USER");
