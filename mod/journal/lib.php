@@ -137,7 +137,7 @@ function journal_cron () {
             }
 
             unset($journalinfo);
-            $journalinfo->teacher = "$teacher->firstname $teacher->lastname";
+            $journalinfo->teacher = fullname($teacher);
             $journalinfo->journal = "$entry->name";
             $journalinfo->url = "$CFG->wwwroot/mod/journal/view.php?id=$mod->id";
 
@@ -209,7 +209,7 @@ function journal_print_recent_activity($course, $isteacher, $timestart) {
         print_headline(get_string("newjournalentries", "journal").":");
         foreach ($journals as $journal) {
             $date = userdate($journal->time, $strftimerecent);
-            echo "<p><font size=1>$date - $journal->firstname $journal->lastname<br>";
+            echo "<p><font size=1>$date - ".fullname($journal)."<br \>";
             echo "\"<a href=\"$CFG->wwwroot/mod/journal/$journal->url\">";
             echo "$journal->name";
             echo "</a>\"</font></p>";
@@ -350,7 +350,7 @@ function journal_print_user_entry($course, $user, $entry, $teachers, $grades) {
     echo "\n<TD ROWSPAN=2 BGCOLOR=\"$THEME->body\" WIDTH=35 VALIGN=TOP>";
     print_user_picture($user->id, $course->id, $user->picture);
     echo "</TD>";
-    echo "<TD NOWRAP WIDTH=100% BGCOLOR=\"$colour\">$user->firstname $user->lastname";
+    echo "<TD NOWRAP WIDTH=100% BGCOLOR=\"$colour\">".fullname($user);
     if ($entry) {
         echo "&nbsp;&nbsp;<FONT SIZE=1>".get_string("lastedited").": ".userdate($entry->modified)."</FONT>";
     }
@@ -447,7 +447,7 @@ function journal_print_feedback($course, $entry, $grades) {
     echo "\n<TD ROWSPAN=3 BGCOLOR=\"$THEME->body\" WIDTH=35 VALIGN=TOP>";
     print_user_picture($teacher->id, $course->id, $teacher->picture);
     echo "</TD>";
-    echo "<TD NOWRAP WIDTH=100% BGCOLOR=\"$THEME->cellheading\">$teacher->firstname $teacher->lastname";
+    echo "<TD NOWRAP WIDTH=100% BGCOLOR=\"$THEME->cellheading\">".fullname($teacher);
     echo "&nbsp;&nbsp;<FONT SIZE=2><I>".userdate($entry->timemarked)."</I>";
     echo "</TR>";
 
