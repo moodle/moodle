@@ -18,6 +18,12 @@
 
     $strassignments = get_string("modulenameplural", "assignment");
     $strassignment = get_string("modulename", "assignment");
+    $strweek = get_string("week");
+    $strtopic = get_string("topic");
+    $strname = get_string("name");
+    $strduedate = get_string("duedate", "assignment");
+    $strsubmitted = get_string("submitted", "assignment");
+
 
     print_header("$course->shortname: $strassignments", "$course->fullname", "$navigation $strassignments", "");
 
@@ -29,13 +35,13 @@
     $timenow = time();
 
     if ($course->format == "weeks") {
-        $table->head  = array ("Week", "Name", "Due", "Submitted");
+        $table->head  = array ($strweek, $strname, $strduedate, $strsubmitted);
         $table->align = array ("CENTER", "LEFT", "LEFT", "LEFT");
     } else if ($course->format == "topics") {
-        $table->head  = array ("Topic", "Name", "Due", "Submitted");
+        $table->head  = array ($strtopic, $strname, $strduedate, $strsubmitted);
         $table->align = array ("CENTER", "LEFT", "LEFT", "LEFT");
     } else {
-        $table->head  = array ("Name", "Due", "Submitted");
+        $table->head  = array ($strname, $strduedate, $strsubmitted);
         $table->align = array ("LEFT", "LEFT", "LEFT");
     }
 
