@@ -121,5 +121,26 @@ between 36 and 40 students - two classes</hint>
 				<option correct="no">38.4 km</option>
 			</answer>
 		</question>
+		<question type="multianswerchoice">
+			<text>Which of the following are features of a Virtual Learning Environment? (Select all that apply)</text>
+			<hint />
+			<answer>
+				<option correct="yes" award="1" deduct="0">course resources are available from home and from college</option>
+				<option correct="yes" award="1" deduct="0">forums enable collaborative work</option>
+				<option correct="yes" award="1" deduct="0">assessments can give instant feedback</option>
+				<option correct="yes" award="1" deduct="0">course progress is recorded</option>
+				<option correct="no" award="1" deduct="0">kettle is put on automatically for tea/coffee</option>
+			</answer>
+		</question>
+		<question type="multianswerchoice">
+			<text>Which of the following may a Virtual Learning Environment be used for? (Select all that apply)</text>
+			<hint />
+			<answer>
+				<option correct="yes" award="1" deduct="1">delivering a course online</option>
+				<option correct="yes" award="1" deduct="1">supporting face-to-face teaching</option>
+				<option correct="no" award="1" deduct="0">as a complete replacement for teachers</option>
+			</answer>
+		</question>
+	</questions>
 	</questions>
 </activityset>
