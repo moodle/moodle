@@ -117,3 +117,24 @@ form { margin-bottom: 0; }
 
 .topicsoutline {
 }
+
+.forumpost {
+    border-width: 1px;
+    border-color: <?PHP echo $THEME->borders?>;
+    border-style: solid;
+}
+
+.forumpostheader {
+}
+
+.forumpostheadertopic {
+}
+
+.forumpostpicture {
+}
+
+.forumpostside {
+}
+
+.forumpostmessage {
+}

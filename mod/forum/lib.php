@@ -568,21 +568,19 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
     global $THEME, $USER, $CFG;
 
     if ($post->parent) {
-        echo "<TABLE BORDER=0 CELLPADDING=1 CELLSPACING=1><TR><TD BGCOLOR=#888888>";
-        echo "<TABLE BORDER=0 CELLPADDING=3 CELLSPACING=0>";
+        echo "<TABLE BORDER=0 CELLPADDING=3 CELLSPACING=0 CLASS=\"forumpost\">";
     } else {
-        echo "<TABLE BORDER=0 CELLPADDING=1 CELLSPACING=1 WIDTH=100%><TR><TD BGCOLOR=#888888>";
-        echo "<TABLE BORDER=0 CELLPADDING=3 CELLSPACING=0 WIDTH=100%>";
+        echo "<TABLE BORDER=0 CELLPADDING=3 CELLSPACING=0 CLASS=\"forumpost\" WIDTH=100%>";
     }
 
-    echo "<TR><TD BGCOLOR=\"$THEME->cellcontent2\" WIDTH=35 VALIGN=TOP>";
+    echo "<TR><TD BGCOLOR=\"$THEME->cellcontent2\" CLASS=\"forumpostpicture\" WIDTH=35 VALIGN=TOP>";
     print_user_picture($post->userid, $courseid, $post->picture);
     echo "</TD>";
 
     if ($post->parent) {
-        echo "<TD NOWRAP BGCOLOR=\"$THEME->cellheading\" WIDTH=\"100%\">";
+        echo "<TD NOWRAP BGCOLOR=\"$THEME->cellheading\" CLASS=\"forumpostheader\" WIDTH=\"100%\">";
     } else {
-        echo "<TD NOWRAP BGCOLOR=\"$THEME->cellheading2\" WIDTH=\"100%*\">";
+        echo "<TD NOWRAP BGCOLOR=\"$THEME->cellheading2\" CLASS=\"forumpostheadertopic\" WIDTH=\"100%*\">";
     }
     echo "<P>";
     echo "<FONT SIZE=3><B>$post->subject</B></FONT><BR>";
@@ -591,9 +589,9 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
     $by->date = userdate($post->created);
     print_string("bynameondate", "forum", $by);
     echo "</FONT></P></TD></TR>";
-    echo "<TR><TD BGCOLOR=\"$THEME->cellcontent2\" WIDTH=10>";
+    echo "<TR><TD BGCOLOR=\"$THEME->cellcontent2\" CLASS=\"forumpostside\" WIDTH=10>";
     echo "&nbsp;";
-    echo "</TD><TD BGCOLOR=\"$THEME->cellcontent\">\n";
+    echo "</TD><TD BGCOLOR=\"$THEME->cellcontent\" CLASS=\"forumpostmessage\">\n";
 
     if ($post->attachment) {
         $post->course = $courseid;
@@ -664,7 +662,6 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
         echo "<P>$footer</P>";
     }
     echo "</DIV>";
-    echo "</TD></TR></TABLE>";
     echo "</TD></TR>\n</TABLE>\n\n";
 }
 
@@ -673,21 +670,19 @@ function forum_print_post_header(&$post, $courseid, $ownpost=false, $reply=false
     global $THEME, $USER, $CFG;
 
     if ($post->parent) {
-        echo "<TABLE BORDER=0 CELLPADDING=1 CELLSPACING=1><TR><TD BGCOLOR=#888888>";
-        echo "<TABLE BORDER=0 CELLPADDING=3 CELLSPACING=0>";
+        echo "<TABLE BORDER=0 CELLPADDING=3 CELLSPACING=0 CLASS=\"forumpost\">";
     } else {
-        echo "<TABLE BORDER=0 CELLPADDING=1 CELLSPACING=1 WIDTH=100%><TR><TD BGCOLOR=#888888>";
-        echo "<TABLE BORDER=0 CELLPADDING=3 CELLSPACING=0 WIDTH=100%>";
+        echo "<TABLE BORDER=0 CELLPADDING=3 CELLSPACING=0 CLASS=\"forumpost\" WIDTH=100%>";
     }
 
-    echo "<TR><TD BGCOLOR=\"$THEME->cellcontent2\" WIDTH=35 VALIGN=TOP>";
+    echo "<TR><TD BGCOLOR=\"$THEME->cellcontent2\" CLASS=\"forumpostpicture\" WIDTH=35 VALIGN=TOP>";
     print_user_picture($post->userid, $courseid, $post->picture);
     echo "</TD>";
 
     if ($post->parent) {
-        echo "<TD NOWRAP BGCOLOR=\"$THEME->cellheading\">";
+        echo "<TD NOWRAP BGCOLOR=\"$THEME->cellheading\" CLASS=\"forumpostheader\">";
     } else {
-        echo "<TD NOWRAP BGCOLOR=\"$THEME->cellheading2\">";
+        echo "<TD NOWRAP BGCOLOR=\"$THEME->cellheading2\" CLASS=\"forumpostheadertopic\">";
     }
     echo "<P>";
     echo "<FONT SIZE=3><B>$post->subject</B></FONT><BR>";
@@ -698,9 +693,9 @@ function forum_print_post_header(&$post, $courseid, $ownpost=false, $reply=false
     echo "</FONT></P></TD>";
 
     if ($post->parent) {
-        echo "<TD VALIGN=BOTTOM BGCOLOR=\"$THEME->cellheading\">";
+        echo "<TD VALIGN=BOTTOM BGCOLOR=\"$THEME->cellheading\" CLASS=\"forumpostheader\">";
     } else {
-        echo "<TD VALIGN=BOTTOM BGCOLOR=\"$THEME->cellheading2\">";
+        echo "<TD VALIGN=BOTTOM BGCOLOR=\"$THEME->cellheading2\" CLASS=\"forumpostheadertopic\">";
     }
     echo "<P ALIGN=right><FONT SIZE=-1>";
 
@@ -713,7 +708,6 @@ function forum_print_post_header(&$post, $courseid, $ownpost=false, $reply=false
         echo "<A HREF=\"$CFG->wwwroot/mod/forum/discuss.php?d=$post->discussion\"><B>".get_string("discussthistopic", "forum")."</B></A> ($replystring)&nbsp;&nbsp;";
     }
     echo "</P>";
-    echo "</TD></TR></TABLE>";
     echo "</TD></TR>\n</TABLE>\n\n";
 }
 
