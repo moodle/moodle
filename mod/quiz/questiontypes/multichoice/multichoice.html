@@ -84,6 +84,11 @@
 
 <?PHP 
     for ($i=1; $i<=QUIZ_MAX_NUMBER_ANSWERS; $i++) {
+       if (!isset($answers[$i-1]->fraction)) {
+           $answers[$i-1]->answer = '';
+           $answers[$i-1]->fraction = 0;
+           $answers[$i-1]->feedback = ''; 
+       }
 ?>
 <TR valign=top>
     <TD align=right><P><B><?php  echo get_string("choice", "quiz")." $i";  ?>:</B></P></TD>
