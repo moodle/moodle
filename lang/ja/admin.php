@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // admin.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004121600)
+      // admin.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005011000)
 
 
 $string['adminseesallevents'] = '管理者に全てのイベントを表示';
@@ -12,6 +12,7 @@ $string['change'] = '変更';
 $string['confirmation'] = '確認';
 $string['confirmdeletedst'] = 'プリセット <strong>$a</strong> を削除すると即座に全てのユーザのDST ( 夏時間 ) プリセットを停止することになります。プリセットの削除によりユーザの認識している時間を警告無しに変更する可能性があります。本当に続けてもよろしいですか?';
 $string['confirmdeletedstdefault'] = '<strong>プリセット $a はこのサイトの全てのユーザが使用しています!</strong> プリセットの削除によりユーザの認識している時間を警告無しに変更する可能性があります。本当に続けてもよろしいですか?';
+$string['cronwarning'] = 'メンテナンススクリプト cron.php が稼動していません ( 少なくとも24時間 )。<br>まだ設定していない場合は、インストールマニュアルの<em>cronの設定</em>をご覧ください。';
 $string['dstisapreference'] = '各ユーザは使用するプリセットを選択できます。';
 $string['dstisforcedto'] = 'ユーザに次のプリセットの使用を強制します。';
 $string['dstpresets'] = 'DST ( 夏時間 ) プリセット';
