@@ -145,6 +145,7 @@ update -dP</strong> </pre>
         </ol>
       </ol>
     </ol>
+    <p>&nbsp;</p>
   </blockquote>
   <h2><a name="4" id="4"></a>4. Working with Branches</h2>
   <blockquote>
@@ -154,8 +155,9 @@ update -dP</strong> </pre>
     <blockquote>
       <pre><strong>cvs status -v index.php</strong></pre>
     </blockquote>
-    <p>Tags and branches should ALWAYS be applied to the <strong>entire module</strong> (all of Moodle). Don't tag individual files or directories. <br />	
+    <p>Tags and branches should ALWAYS be applied to the <strong>entire module</strong> (all of Moodle). Don't tag individual files or directories. <br />
     </p>
+    <p>&nbsp;</p>
     <h3><a name="4.1" id="4.1"></a>4.1 Trunk development</h3>
     <blockquote>
       <p>The Trunk of CVS is the main development version of Moodle. In CVS it is also known as the <span class="style4">HEAD</span>, or default branch.</p>
@@ -183,22 +185,22 @@ update -dP</strong> </pre>
           <li>Get out the very latest trunk version.<br>
             <br>
             <strong>cvs update -dPA</strong><br>
-  </li>
+          </li>
           <li>Merge everything on the branch since the last merge, into your trunk version <strong><br>
-                <br>
-          cvs update -j MOODLE_13_MERGED -j MOODLE_13_STABLE<br>
-                  </strong></li>
+            <br>
+            cvs update -j MOODLE_13_MERGED -j MOODLE_13_STABLE<br>
+            </strong></li>
           <li>Check the merged copy back into CVS trunk version <span class="style1"><strong><br>
-                  <br>
+            <br>
             </strong></span><strong>cvs commit </strong><span class="style1"><strong><br>
             </strong></span></li>
           <li>Go back to the branch version <br>
-              <br>
-              <strong>cvs update -dPr MOODLE_13_STABLE<br>
-                        </strong></li>
+            <br>
+            <strong>cvs update -dPr MOODLE_13_STABLE<br>
+            </strong></li>
           <li>Update the floating merge tag so that this process can be repeated next time <br>
             <p><strong>cvs tag -RF MOODLE_13_MERGED</strong></p>
-              </li>
+          </li>
         </ol>
       </ol>
       <p><br>
@@ -217,24 +219,22 @@ update -dP</strong> </pre>
           <li>Discuss with other developers to make sure it's necessary!</li>
           <li>Make a new tag on the <strong>trunk</strong> (for all of moodle) called <strong>MOODLE_XX_WIDGET_PRE<br>
             <br>
-            cvs tag -R MOODLE_XX_WIDGET_PRE
-            <br>
-  </strong></li>
+            cvs tag -R MOODLE_XX_WIDGET_PRE <br>
+            </strong></li>
           <li>Create your branch called <span class="style1"><strong>MOODLE_XX_WIDGET<br>
             <br>
             </strong></span><strong>cvs tag -Rb <span class="style1">MOODLE_XX_WIDGET</span></strong><span class="style1"><strong> <br>
-  </strong></span></li>
+            </strong></span></li>
           <li>Work in that branch until the feature is reasonably stable. Commit as necessary.<br>
             <br>
-            <strong>cvs commit
-            <br>
-  </strong></li>
+            <strong>cvs commit <br>
+            </strong></li>
           <li>When ready, merge the whole branch into the trunk, commit it to the trunk and then abandon the branch.<br>
             <p><strong>cvs update -dPA</strong></p>
             <p><strong>cvs update -j <span class="style1">MOODLE_XX_WIDGET</span></strong></p>
             <p><strong>cvs commit </strong></p>
           </li>
-          </ol>
+        </ol>
       </ol>
     </ol>
     <blockquote>
