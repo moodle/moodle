@@ -698,6 +698,7 @@ $string['moveright'] = 'Déplacer à droite';
 $string['moveselectedcoursesto'] = 'Déplacer les cours sélectionné vers...';
 $string['movetoanotherfolder'] = 'Déplacer vers un autre dossier';
 $string['moveup'] = 'Monter';
+$string['mustchangepassword'] = 'Le nouveau mot de passe doit être différent du mot de passe actuel';
 $string['mustconfirm'] = 'Vous devez confirmer votre enregistrement';
 $string['mycourses'] = 'Mes cours';
 $string['name'] = 'Nom';
