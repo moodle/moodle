@@ -144,6 +144,7 @@
         foreach ($sections as $section) {
 
             if ($i <= $course->numsections) {
+                $activity = new Object;
                 $activity->type = "section";
                 if ($i) {
                     $activity->name = $sectiontitle . " $i";
@@ -194,6 +195,7 @@
                     $get_recent_mod_activity = $coursemod->name."_get_recent_mod_activity";
 
                     if (function_exists($get_recent_mod_activity)) {
+                        $activity = new Object;
                         $activity->type = "activity";
                         $activity->name = $instance->name;
                         $activity->visible = $coursemod->visible;
