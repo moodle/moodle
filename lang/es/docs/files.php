@@ -1,10 +1,4 @@
 <?PHP // $Id$
-      // * Es importante mantener las versiones de los archivos (tanto .php como .html)
-	  // * iguales a las originales en inglés. Así sabremos lo que falta por actualizar
-      // Names of the documentation files
-	  // Traducción al español: Emmanuelle Gutiérrez
-	  // (emmanuelle@sidar.org), Claudio Tavares (claudio@enlaceacademico.com)	  
-	  // y David Delgado (davidds@apren-d.com)
 
 $string['intro.html'] = "Introducción";
 $string['background.html'] = "Antecedentes";
@@ -21,6 +15,5 @@ $string['future.html'] = "Futuro";
 $string['credits.html'] = "Créditos";
 $string['licence.html'] = "Licencia";
 $string['other.html'] = "Documentación adicional";
-
 
 ?>

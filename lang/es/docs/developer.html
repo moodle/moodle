@@ -1,5 +1,5 @@
 <head>
-    <title>Documentaci&oacute;n de Moodle: Manual del desarrollador</title>
+    <title>Documentación de Moodle: Manual del desarrollador</title>
 	<link rel="stylesheet" href="../theme/standard/styles.php" type="TEXT/CSS">
     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 	<style type="text/css">
@@ -21,8 +21,8 @@
 <h2>Manual del Desarrollador</h2>
 
 <p>Este documento describe un poco el diseño de Moodle y cómo se puede contribuir.</p>
-<p>Actuamente es un tanto escueto - &iexcl;con el tiempo se ir&aacute; mejorando 
-  la documentaci&oacute;n!</p>
+<p>Actuamente es un tanto escueto - &iexcl;con el tiempo se irá mejorando 
+  la documentación!</p>
 <p>Secciones de este documento:</p>
 <ol>
 
@@ -70,7 +70,7 @@ posible variedad de plataformas</strong><br>
     La plataforma de aplicaciones Web que funciona en la mayoría de las plataformas 
     es PHP combinada con MySQL, y este es el entorno en el que Moodle ha sido 
     desarrollado (sobre Linux, Windows, y Mac OS X). Moodle también usa la librería 
-    ADOdb para la abstracci&oacute;n de bases de datos, lo que significa que Moodle 
+    ADOdb para la abstracción de bases de datos, lo que significa que Moodle 
     puede usar <a href="http://php.weblogs.com/ADOdb_manual#drivers">más de diez 
     marcas diferentes de bases de datos</a> (desafortunadamente, a pesar de ello, 
     no puede aún <em><strong>crear tablas</strong></em> en todas esas bases de 
@@ -109,7 +109,7 @@ modificar</strong><br>
 versión a la siguiente</strong><br>
 
     <br>
-    Moodle sabe cu&aacute;l es su versión (así como las versiones de todos los 
+    Moodle sabe cuál es su versión (así como las versiones de todos los 
     módulos) y se ha construido un mecanismo interno para que Moodle pueda actualizarse 
     a sí mismo de forma apropiada a las nuevas versiones (por ejemplo, puede renombrar 
     las tablas de las bases de datos o añadir nuevos campos). Usando CVS en Unix, 
@@ -218,7 +218,7 @@ instancias en un curso</li>
   <li>view.php: una página para ver una instancia en particular</li>
 
     <li>lib.php: cualquiera/todas las funciones definidas para el módulo deben 
-      estar aquí. Si el m&oacute;dulo se llama "chisme", entonces las funciones 
+      estar aquí. Si el módulo se llama "chisme", entonces las funciones 
       requeridas incluyen: 
       <ul>
 
@@ -520,8 +520,8 @@ y dentro del subdirectorio <strong>db</strong> de cada módulo.</p>
 
   <p>Actualmente, sólo se soportan totalmente de esta manera, MySQL y PostgreSQL 
     (nadie ha escrito esquemas para otras marcas).</p>
-  <p>Moodle 1.1 usar&aacute; un nuevo m&eacute;todo de esquemas XML independientes 
-    de la base de datos que har&aacute; que todo &eacute;sto no sea necesario.</p>
+  <p>Moodle 1.1 usará un nuevo método de esquemas XML independientes 
+    de la base de datos que hará que todo ésto no sea necesario.</p>
   <p>&nbsp;</p>
 
 </div>
