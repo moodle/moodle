@@ -493,7 +493,7 @@ function print_recent_activity($course) {
     echo '<center><font size="1">';
     echo get_string("activitysince", "", userdate($timestart));
 
-    echo '<p><a href="recent.php?id='.$course->id.'">'.get_string('recentactivityreport').'</a></p>';
+    echo '<p><a href="'.$CFG->wwwroot.'/course/recent.php?id='.$course->id.'">'.get_string('recentactivityreport').'</a></p>';
 
     echo '</font></center>';
 
@@ -514,7 +514,7 @@ function print_recent_activity($course) {
                 $content = true;
             }
             $fullname = fullname($user, $isteacher);
-            echo "<font size=1><a href=\"../user/view.php?id=$user->id&course=$course->id\">$fullname</a></font><br />";
+            echo '<font size=1><a href="'.$CFG->wwwroot."/user/view.php?id=$user->id&course=$course->id\">$fullname</a></font><br />";
         }
         echo "</p>";
     }
