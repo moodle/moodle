@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.0.9 (2003052900)
+      // moodle.php - created with Moodle 1.1 development (2003073000)
 
 
 $string['action'] = "Akcja";
@@ -46,7 +46,6 @@ $string['availablecourses'] = "Dostêpne kursy";
 $string['backup'] = "Kopia zapasowa";
 $string['backupdate'] = "Data kopii zapasowej";
 $string['backupdetails'] = "Szczegó³owe informacje o kopii zapasowej";
-$string['backupdir'] = "Dane kopii zapasowej";
 $string['backupnameformat'] = "%%Y%%m%%d-%%H%%M";
 $string['backuporiginalname'] = "Nazw kopii zapasowej";
 $string['backupversion'] = "Wersja kopii zapasowej";
@@ -473,14 +472,14 @@ $string['startdate'] = "Data rozpoczêcia kursu";
 $string['startsignup'] = "Zacznij teraz od utworzenia nowego konta!";
 $string['state'] = "Stan/prowincja";
 $string['status'] = "Status";
-$string['strftimedate'] = "%%d de %%B de %%Y"; 
-$string['strftimedateshort'] = " %%d de %%B "; 
-$string['strftimedatetime'] = " %%d de %%B de %%Y, %%H:%%M "; 
-$string['strftimedaydate'] = " %%A, %%d de %%B de %%Y "; 
-$string['strftimedaydatetime'] = " %%A, %%d de %%B de %%Y, %%H:%%M "; 
-$string['strftimerecent'] = " %%d de %%b, %%H:%%M "; 
-$string['strftimerecentfull'] = " %%a, %%d de %%b de %%Y, %%H:%%M "; 
-$string['strftimetime'] = " %%H:%%M "; 
+$string['strftimedate'] = "%%d  %%B  %%Y";
+$string['strftimedateshort'] = " %%d %%B ";
+$string['strftimedatetime'] = " %%d  %%B  %%Y, %%H:%%M ";
+$string['strftimedaydate'] = " %%A, %%d  %%B  %%Y ";
+$string['strftimedaydatetime'] = " %%A, %%d  %%B  %%Y, %%H:%%M ";
+$string['strftimerecent'] = " %%d de %%b, %%H:%%M ";
+$string['strftimerecentfull'] = " %%a, %%d  %%b de %%Y, %%H:%%M ";
+$string['strftimetime'] = " %%H:%%M ";
 $string['stringsnotset'] = "Nastêpuj±ce ³añcuchy znaków nie s± zdefiniowane w \$a";
 $string['studentnotallowed'] = "Przykro nam, ale nie mo¿esz przyst±piæ do kursu jako '\$a'";
 $string['success'] = "Gotowe";
