@@ -11,6 +11,12 @@
     //                        |                                       |
     //                  glossary_entries -------------- glossary_entries_categories
     //         (UL,pk->id, fk->glossaryid, files)      (UL, [pk->categoryid,entryid]
+    //                        |
+    //                        |
+    //                        |
+    //                  glossary_comments
+    //              (UL,pk->id, fk->entryid)
+    //
     //
     // Meaning: pk->primary key field of the table
     //          fk->foreign key to link with parent
@@ -65,7 +71,6 @@
                 //We have the newid, update backup_ids
                 backup_putid($restore->backup_unique_code,$mod->modtype,
                              $mod->id, $newid);
-                //Now check if want to restore user data and do it.
                 //Restore glossary_entries
                 $status = glossary_entries_restore_mods($mod->id,$newid,$info,$restore);
                 //Restore glossary_categories and glossary_category_entries
@@ -146,6 +151,8 @@
                 if ($newid) {
       	            //We have the newid, update backup_ids
 	            backup_putid($restore->backup_unique_code,"glossary_entries",$oldid,$newid);
+                    //Now restore glossary_comments
+                    $status = glossary_comments_restore_mods($oldid,$newid,$ent_info,$restore);
                     //Now copy moddata associated files if needed
                     if ($entry->attachment) {
                         $status = glossary_restore_files ($old_glossary_id, $new_glossary_id,
@@ -154,6 +161,56 @@
                 } else {
       	            $status = false;
 	        }
+            }
+        }
+
+        return $status;
+    }
+
+    //This function restores the glossary_comments
+    function glossary_comments_restore_mods($old_entry_id,$new_entry_id,$info,$restore) {
+
+        global $CFG;
+
+        $status = true;    
+
+        //Get the comments array
+        $comments = $info['#']['COMMENTS']['0']['#']['COMMENT'];
+
+        //Iterate over comments
+        for($i = 0; $i < sizeof($comments); $i++) {
+            $com_info = $comments[$i];
+            traverse_xmlize($com_info);                                                                 //Debug
+            print_object ($GLOBALS['traverse_array']);                                                  //Debug
+            $GLOBALS['traverse_array']="";                                                              //Debug
+
+            //Now, build the GLOSSARY_COMMENTS record structure
+            $comment->entryid = $new_entry_id;
+            $comment->userid = backup_todb($com_info['#']['USERID']['0']['#']);
+            $comment->comment = backup_todb($com_info['#']['COMMENT']['0']['#']);
+            $comment->timemodified = backup_todb($com_info['#']['TIMEMODIFIED']['0']['#']);
+            $comment->format = backup_todb($com_info['#']['FORMAT']['0']['#']);
+
+            //We have to recode the userid field
+            $user = backup_getid($restore->backup_unique_code,"user",$comment->userid);
+            if ($user) {
+                $comment->userid = $user->new_id;
+            }
+
+            //The structure is equal to the db, so insert the glossary_comments
+            $newid = insert_record ("glossary_comments",$comment);
+
+            //Do some output
+            if (($i+1) % 50 == 0) {
+                echo ".";
+                if (($i+1) % 1000 == 0) {
+                    echo "<br>";
+                }
+                backup_flush(300);
+            }
+
+            if (!$newid) {
+                $status = false;
             }
         }
 
@@ -199,7 +256,7 @@
                 //We have the newid, update backup_ids
                 backup_putid($restore->backup_unique_code,"glossary_categories",$oldid,$newid);
                 //Now restore glossary_entries_categories
-                $status = glossary_entries_categories_restore_mods($old,$newid,$cat_info,$restore);
+                $status = glossary_entries_categories_restore_mods($oldid,$newid,$cat_info,$restore);
             } else {
                 $status = false;
             }
