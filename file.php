@@ -24,6 +24,10 @@
     }
 
     $numargs = count($args);
+    if ($numargs < 2 or empty($args[1])) {
+        error("No valid arguments supplied");
+    }
+
     $courseid = (integer)$args[0];
 
     $course = get_record("course", "id", $courseid);
