@@ -70,8 +70,6 @@
             $pageblocks = blocks_get_by_page($PAGE);
         }
 
-        $missingblocks = blocks_get_missing($PAGE, $pageblocks);
-
         if (!empty($section)) {
             if (!empty($move) and confirm_sesskey()) {
                 if (!move_section($course, $section, $move)) {
