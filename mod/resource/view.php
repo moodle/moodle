@@ -55,12 +55,43 @@
             break;
 
         case WEBLINK:
+            add_to_log($course->id, "resource", "view", "view.php?id=$cm->id", "$resource->id");
+
+            $inpopup = !empty($_GET["inpopup"]);
+
+            if ($resource->alltext and !$inpopup) {    /// Make a page and a pop-up window
+                print_header($pagetitle, "$course->fullname", "$navigation $resource->name", "", "", true, 
+                             update_module_button($cm->id, $course->id, $strresource), navmenu($course, $cm));
+
+                echo "\n<script language=\"Javascript\">";
+                echo "\n<!--\n";
+                echo "openpopup('/mod/resource/view.php?inpopup=true&id=$cm->id',".
+                     "'resource$resource->id','$resource->alltext');\n";
+                echo "\n-->\n";
+                echo '</script>';
+
+                if (trim($resource->summary)) {
+                    print_simple_box(text_to_html($resource->summary), "center");
+                }
+
+                $link = "<a href=\"$CFG->wwwroot/mod/resource/view.php?inpopup=true&id=$cm->id\" target=\"resource$resource->id\" onClick=\"return openpopup('/mod/resource/view.php?inpopup=true&id=$cm->id', 'resource$resource->id','$resource->alltext');\">$resource->name</a>";
+
+                echo "<p>&nbsp</p>";
+                echo '<p align="center">';
+                print_string('popupresource', 'resource');
+                echo '<br />';
+                print_string('popupresourcelink', 'resource', $link);
+                echo "</p>";
+
+                print_footer($course);
+                die;
+            }
+
             if ($CFG->resource_filterexternalpages) {
                 $url = "fetch.php?id=$cm->id&url=$resource->reference";
             } else {
                 $url = "$resource->reference";
             }
-            add_to_log($course->id, "resource", "view", "view.php?id=$cm->id", "$resource->id");
             redirect($url, "", 0);
             break;
 
@@ -101,12 +132,12 @@
             $resourcetype = "";
             $embedded = false;
 
-            $imagetypes = array('image/gif','image/jpg','image/png');
-            if (in_array(mimeinfo("type", $fullurl), $imagetypes)) {  // It's an image
+            $imagetypes = array('image/gif','image/jpeg','image/png');
+            if (in_array(mimeinfo("type", $resource->reference), $imagetypes)) {  // It's an image
                 $embedded = true;
                 $resourcetype = "image";
 
-            } else if (mimeinfo("icon", $fullurl) == "html.gif") {    // It's a web page
+            } else if (mimeinfo("icon", $resource->reference) == "html.gif") {    // It's a web page
                 $resourcetype = "html";
             }
 
@@ -116,13 +147,46 @@
             $inpopup = !empty($_GET["inpopup"]);
 
             if ($CFG->slasharguments) {
-                $fullurl = "$CFG->wwwroot/file.php/$course->id/$resource->reference";
+                $relativeurl = "/file.php/$course->id/$resource->reference";
             } else {
-                $fullurl = "$CFG->wwwroot/file.php?file=/$course->id/$resource->reference";
+                $relativeurl = "/file.php?file=/$course->id/$resource->reference";
             }
+            $fullurl = "$CFG->wwwroot$relativeurl";
 
             if ($CFG->resource_filterexternalpages and $resourcetype == "html") {
                 $fullurl = "$CFG->wwwroot/mod/resource/fetch.php?id=$cm->id&url=$fullurl";
+            }
+
+
+            /// Check whether this is supposed to be a popup, but was called directly
+
+            if ($resource->alltext and !$inpopup) {    /// Make a page and a pop-up window
+                add_to_log($course->id, "resource", "view", "view.php?id=$cm->id", "$resource->id");
+
+                print_header($pagetitle, "$course->fullname", "$navigation $resource->name", "", "", true, 
+                             update_module_button($cm->id, $course->id, $strresource), navmenu($course, $cm));
+
+                echo "\n<script language=\"Javascript\">";
+                echo "\n<!--\n";
+                echo "openpopup('$relativeurl','resource$resource->id','$resource->alltext');\n";
+                echo "\n-->\n";
+                echo '</script>';
+
+                if (trim($resource->summary)) {
+                    print_simple_box(text_to_html($resource->summary), "center");
+                }
+
+                $link = "<a href=\"$fullurl\" target=\"resource$resource->id\" onClick=\"return openpopup('$relativeurl', 'resource$resource->id','$resource->alltext');\">$resource->name</a>";
+
+                echo "<p>&nbsp</p>";
+                echo '<p align="center">';
+                print_string('popupresource', 'resource');
+                echo '<br />';
+                print_string('popupresourcelink', 'resource', $link);
+                echo "</p>";
+
+                print_footer($course);
+                exit;
             }
 
 
@@ -177,6 +241,7 @@
                 if (!$inpopup) {
                     print_footer($course);
                 }
+
             } else {              // Display the resource on it's own
                 redirect($fullurl);
             }

@@ -46,6 +46,8 @@ $string['newwindowopen'] = 'Display this resource in a new popup window';
 $string['note'] = 'Note';
 $string['notefile'] = 'To upload more files into the course (so they appear in this list) use the <a href=\"$a\">File Manager</a>.';
 $string['notypechosen'] = 'You need to choose a type.  Use your back button to go back and retry.';
+$string['popupresource'] = 'This resource should appear in a popup window.';
+$string['popupresourcelink'] = 'If it didn\'t, click here: $a';
 $string['resourcetype'] = 'Type of resource';
 $string['resourcetype1'] = 'Reference';
 $string['resourcetype2'] = 'Web Page';
