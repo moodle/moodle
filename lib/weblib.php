@@ -1669,7 +1669,8 @@ function redirect($url, $message="", $delay="0") {
 
     if (empty($message)) {
         sleep($delay);
-        header("Location: $url");
+        @header("Location: $url");
+        echo "<script>location.replace('$url');</script>";   // To cope with Mozilla bug
     } else {
         if (empty($delay)) {  
             $delay = 3;  // There's no point having a message with no delay
