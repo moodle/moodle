@@ -1,8 +1,11 @@
 <?php // $Id$ 
-      // admin.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
+      // admin.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004101900)
 
 
+$string['blockinstances'] = 'インスタンス';
+$string['blockmultiple'] = '複数';
 $string['cachetext'] = 'テキストキャッシュ保存時間';
+$string['change'] = '変更';
 $string['filteruploadedfiles'] = 'アップロードファイルをフィルタする';
 $string['thischarset'] = 'UTF-8';
 $string['thisdirection'] = 'ltr';

@@ -1,5 +1,5 @@
 <?php // $Id$ 
-      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004100800)
+      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004101900)
 
 
 $string['action'] = '操作';
@@ -115,6 +115,9 @@ $string['backuptakealook'] = '次のバックアップログをご覧ください: $a';
 $string['backupuserfileshelp'] = '自動バックアップにユーザファイル(例 プロフィール写真)を含めるか否か選択してください。';
 $string['backupusershelp'] = 'サーバ内の全ユーザを含めるか、各コースに必要なユーザのみを含めるか選択してください。';
 $string['backupversion'] = 'バックアップバージョン';
+$string['blockconfiga'] = '$a ブロックの設定';
+$string['blockconfigbad'] = 'このブロックは正常に組み込まれていませんので、設定インターフェースを表示することができません。';
+$string['blockconfigin'] = 'コース: $a のブロックを設定';
 $string['blockdeleteconfirm'] = '「 $a 」ブロックを完全に削除しようとしています。削除することでデータベース内の関連するデータ全てが完全に削除されます。本当に削除してもよろしいですか?';
 $string['blockdeletefiles'] = '「 $a->block 」に関連する全てのデータがデータベースより削除されました。削除を完了するため(ブロックが再インストールされることを防ぐため)に、次のディレクトリをサーバより削除してください: $a->directory';
 $string['blocks'] = 'ブロック';
