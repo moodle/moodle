@@ -1846,25 +1846,33 @@ function quiz_grade_attempt_question_result($question,
                     $correct[] = $answer->answer;
                 }
                 if (!$answer->usecase) {       // Don't compare case
-                    $answer->answer = strtolower($answer->answer);
-                    $question->answer = strtolower($question->answer);
+                    $answer->answer = moodle_strtolower($answer->answer);
+                    $question->answer = moodle_strtolower($question->answer);
                 }
 
                 $potentialgrade = (float)$answer->fraction * $question->grade;
 
-                if ($potentialgrade >= $grade and (strpos(' '.$answer->answer, '*'))) {
-                    $answer->answer = str_replace('\*','@@@@@@',$answer->answer);
-                    $answer->answer = str_replace('*','.*',$answer->answer);
-                    $answer->answer = str_replace('@@@@@@', '\*',$answer->answer);
-                    $answer->answer = str_replace('+', '\+',$answer->answer);
-                    if (eregi('^'.$answer->answer.'$', $question->answer)) {
+                if ($potentialgrade >= $grade) {
+                    if ((strpos(' '.$answer->answer, '*'))) {
+                        $search = array('\\', '+', '(', ')', '[', ']', '-');
+                        $replace = array('\\\\', '\+', '\(', '\)', '\[', '\]', '\-');
+    
+                        $answer->answer = str_replace('\*','@@@@@@',$answer->answer);
+                        $answer->answer = str_replace('*','.*',$answer->answer);
+                        
+                        $answer->answer = str_replace($search, $replace, $answer->answer);
+
+                        $answer->answer = str_replace('@@@@@@', '\*',$answer->answer);
+                        
+                        if (eregi('^'.$answer->answer.'$', $question->answer)) {
+                            $feedback[0] = $answer->feedback;
+                            $grade = $potentialgrade;
+                        }
+
+                    } else if ($answer->answer == $question->answer) {
                         $feedback[0] = $answer->feedback;
                         $grade = $potentialgrade;
                     }
-
-                } else if ($answer->answer == $question->answer) {
-                    $feedback[0] = $answer->feedback;
-                    $grade = $potentialgrade;
                 }
             }
 
