@@ -1685,6 +1685,27 @@ function make_grades_menu($gradingtype) {
     return $grades;
 }
 
+function make_unique_id_code($version=1) {
+
+    $hostname = "unknownhost";
+    if (!empty($_SERVER["HTTP_HOST"])) {
+        $hostname = $_SERVER["HTTP_HOST"];
+    } else if (!empty($_ENV["HTTP_HOST"])) {
+        $hostname = $_ENV["HTTP_HOST"];
+    } else if (!empty($_SERVER["SERVER_NAME"])) {
+        $hostname = $_SERVER["SERVER_NAME"];
+    } else if (!empty($_ENV["SERVER_NAME"])) {
+        $hostname = $_ENV["SERVER_NAME"];
+    }
+
+    $date = date("ymdHis");
+
+    $random =  random_string(6);
+
+    return "$hostname+$date+$random+$version";
+    
+}
+
 
 // vim:autoindent:expandtab:shiftwidth=4:tabstop=4:tw=140:
 ?>
