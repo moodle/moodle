@@ -389,26 +389,35 @@ function blocks_execute_action($page, &$pageblocks, $blockaction, $instanceorid)
             if(empty($instance))  {
                 error('Invalid block instance for '. $blockaction);
             }
-            $other = $pageblocks[$instance->position][$instance->weight - 1];
+            // This configuration will make sure that even if somehow the weights
+            // become not continuous, block move operations will eventually bring
+            // the situation back to normal without printing any warnings.
+            if(!empty($pageblocks[$instance->position][$instance->weight - 1])) {
+                $other = $pageblocks[$instance->position][$instance->weight - 1];
+            }
             if(!empty($other)) {
-                --$instance->weight;
                 ++$other->weight;
-                update_record('block_instance', $instance);
                 update_record('block_instance', $other);
             }
+            --$instance->weight;
+            update_record('block_instance', $instance);
         break;
         case 'movedown':
             if(empty($instance))  {
                 error('Invalid block instance for '. $blockaction);
             }
-            $other = $pageblocks[$instance->position][$instance->weight + 1];
+            // This configuration will make sure that even if somehow the weights
+            // become not continuous, block move operations will eventually bring
+            // the situation back to normal without printing any warnings.
+            if(!empty($pageblocks[$instance->position][$instance->weight + 1])) {
+                $other = $pageblocks[$instance->position][$instance->weight + 1];
+            }
             if(!empty($other)) {
-                ++$instance->weight;
                 --$other->weight;
-                update_record('block_instance', $instance);
                 update_record('block_instance', $other);
             }
-
+            ++$instance->weight;
+            update_record('block_instance', $instance);
         break;
         case 'moveleft':
             if(empty($instance))  {
@@ -460,6 +469,11 @@ function blocks_execute_action($page, &$pageblocks, $blockaction, $instanceorid)
 
             if(!$block->visible) {
                 // Only allow adding if the block is enabled
+                return false;
+            }
+
+            if(!$block->multiple && blocks_find_block($blockid, $pageblocks) !== false) {
+                // If no multiples are allowed and we already have one, return now
                 return false;
             }
 
@@ -726,7 +740,7 @@ function upgrade_blocks_plugins($continueto) {
 
         if ( @is_dir($fullblock .'/db/')) {
             if ( @is_readable($fullblock .'/db/'. $CFG->dbtype .'.php')) {
-                include_once($fullblock .'/db'. $CFG->dbtype .'.php');  // defines upgrading function
+                include_once($fullblock .'/db/'. $CFG->dbtype .'.php');  // defines upgrading function
             } else {
                 $notices[] ='Block '. $blockname .': '. $fullblock .'/db/'. $CFG->dbtype .'.php was not readable';
                 continue;
@@ -891,192 +905,5 @@ function upgrade_blocks_plugins($continueto) {
         die;
     }
 }
-
-//This function returns the id of the block, searching it by name
-function block_get_id_by_name ($blockname) {
-
-    if ($block = get_record('block','name',$blockname)) {
-        return $block->id;
-    } else {
-        return 0;
-    }
-}
-
-//This function returns the name of the block, searching it by id
-function block_get_name_by_id ($blockid) {
-
-    if ($block = get_record('block','id',$blockid)) {
-        return $block->name;
-    } else {
-        return NULL;
-    }
-}
-
-//This function return the necessary contents to update course->blockinfo
-//with default values. It accepts a list of block_names as parameter. They
-//will be converted to their blockids equivalent. If a course is specified
-//then the function will update the field too!
-
-function blocks_get_default_blocks ($courseid = NULL, $blocknames = '') {
-
-    global $CFG;
-
-    if (empty($blocknames)) {
-        if (!empty($CFG->defaultblocks_override)) {
-            $blocknames = $CFG->defaultblocks_override;
-        } else {
-            $blocknames = $CFG->defaultblocks;
-        }
-    }
-
-    // Make up and store the blockinfo field
-}
-
-// This function returns the appropriate block default configuration string
-// according to the $format argument. It will return the site override defined
-// in the site config, a format override defined in the site config, a specific
-// config defined in the course format config, or the site default.
-// To request the site format, leave $format blank.
-function blocks_get_config_default ($cformat='') {
-
-    global $CFG;
-
-    /// If the site override has been defined, it is the only valid one.
-    if (!empty($CFG->defaultblocks_override)) {
-        return $CFG->defaultblocks_override;
-    }
-    /// If not format is specified, return the site default.
-    else if ($cformat == '' || $cformat == 'site') {
-        if (!empty($CFG->defaultblocks_site)) {
-            return $CFG->defaultblocks_site;
-        }
-        /// Failsafe - in case nothing was defined.
-        else {
-            return 'site_main_menu,admin,course_list:course_summary,calendar_month';
-        }
-    }
-    /// Return the appropriate block string for the format.
-    else if (!empty($CFG->{'defaultblocks_'.$cformat})) {
-        return $CFG->{'defaultblocks_'.$cformat};
-    }
-    else {
-        $format_config = $CFG->dirroot.'/course/format/'.$cformat.'/config.php';
-        if (@is_file($format_config) && is_readable($format_config)) {
-            require($format_config);
-        }
-        if (!empty($format['defaultblocks'])) {
-            return $format['defaultblocks'];
-        }
-        else if (!empty($CFG->defaultblocks)){
-            return $CFG->defaultblocks;
-        }
-        /// Failsafe - in case nothing was defined.
-        else {
-            return 'participants,activity_modules,search_forums,admin,course_list:news_items,calendar_upcoming,recent_activity';
-        }
-    }
-}
-
-//This function will return the names representation of the blockinfo field.
-//It's used to include that info in backups. To restore we'll use the
-//blocks_get_block_ids() function. It makes the opposite conversion
-//(from names to ids)
-function blocks_get_block_names ($blockinfo) {
-
-    //Calculate left and right blocks
-    $blocksn = $blockinfo;
-    $delimpos = strpos($blocksn, ':');
-
-    if($delimpos === false) {
-        // No ':' found, we have all left blocks
-        $leftblocksn = explode(',', $blocksn);
-        $rightblocksn = array();
-    } else if($delimpos === 0) {
-        // ':' at start of string, we have all right blocks
-        $blocksn = substr($blocksn, 1);
-        $leftblocksn = array();
-        $rightblocksn = explode(',', $blocksn);
-    }
-    else {
-        // Both left and right blocks
-        $leftpartn = substr($blocksn, 0, $delimpos);
-        $rightpartn = substr($blocksn, $delimpos + 1);
-        $leftblocksn = explode(',', $leftpartn);
-        $rightblocksn = explode(',', $rightpartn);
-    }
-
-    //Now I have blocks separated
-
-    $leftblocks = array();
-    $rightblocks = array();
-
-    if ($leftblocksn) {
-        foreach($leftblocksn as $leftblockn) {
-            //Convert id to blockname
-            $leftblock = block_get_name_by_id(abs($leftblockn));
-            if ($leftblock) {
-                //Check it's visible
-                if($block = get_record('block','name',$leftblock,'visible','1')) {
-                    //Check if it's hidden oe no in the course
-                    if($leftblockn<0) {
-                        $leftblocks[] = '-'.$leftblock;
-                    } else {
-                        $leftblocks[] = $leftblock;
-                    }
-                }
-            }
-        }
-    }
-
-    if ($rightblocksn) {
-        foreach($rightblocksn as $rightblockn) {
-            //Convert id to blockname
-            $rightblock = block_get_name_by_id(abs($rightblockn));
-            if ($rightblock) {
-                //Check it's visible
-                if($block = get_record('block', 'name', $rightblock, 'visible', '1')) {
-                    //Check if it's hidden oe no in the course
-                    if($rightblockn<0) {
-                        $rightblocks[] = '-'.$rightblock;
-                    } else {
-                        $rightblocks[] = $rightblock;
-                    }
-                }
-            }
-        }
-    }
-
-    //Calculate the blockinfo field
-    if ($leftblocks || $rightblocks) {
-        $blockinfo = '';
-        if ($leftblocks) {
-            $blockinfo .= implode(',', $leftblocks);
-        }
-        if ($rightblocks) {
-            $blockinfo .= ':'. implode(',',$rightblocks);
-        }
-    } else {
-        $blockinfo = '';
-    }
-
-    //Returns the blockinfo
-    return $blockinfo;
-}
-
-//This function will return the ids representation of the blockinfo field.
-//It's used to load that info from backups.  This function is the opposite
-//to the blocks_get_block_names() used in backup
-function blocks_get_block_ids ($blockinfo) {
-
-    //Just call this with the appropiate parammeters.
-    return blocks_get_default_blocks(NULL,$blockinfo);
-}
-
-function blocks_print_blocks($page, $position) {
-    $blocks = get_records('block_instance', 'pageid', $page->id, 'pagetype', $page->type, 'visible', '1');
-    echo "blocks_print_blocks()<br />";
-    print_object($blocks);
-}
-
 
 ?>
