@@ -1,7 +1,7 @@
 <P ALIGN=CENTER><B>關於線上編輯器</B></P>
 
 <P>你的瀏覽器: <B>
-<? if (!$CFG->htmleditor) {
+<?php  if (!$CFG->htmleditor) {
        print_string("htmleditordisabledadmin");
    } else if (!$USER->htmleditor) {
        print_string("htmleditordisabled");

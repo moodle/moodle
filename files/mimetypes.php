@@ -1,4 +1,4 @@
-<? // $Id$
+<?php  // $Id$
 
 function mimeinfo($element, $filename) {
     $mimeinfo = array (

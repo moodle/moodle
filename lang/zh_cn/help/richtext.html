@@ -1,7 +1,7 @@
 <P ALIGN=CENTER><B>关于富文本格式HTML编辑器</B></P>
 
 <P>可用不可用： <B>
-<? if (!$CFG->htmleditor) {
+<?php  if (!$CFG->htmleditor) {
        print_string("htmleditordisabledadmin");
    } else if (!$USER->htmleditor) {
        print_string("htmleditordisabled");

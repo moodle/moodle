@@ -2,7 +2,7 @@
 
 <P>Moodle ประกอบไปด้วยกิจกรรมต่างๆ ที่สามารถใช้ในคอร์สได้ดังต่อไปนี้c</P>
 
-<P><IMG VALIGN=absmiddle SRC="<?=$CFG->wwwroot?>/mod/forum/icon.gif">&nbsp;<B>กระดานเสวนา</B></P>
+<P><IMG VALIGN=absmiddle SRC="<?php echo $CFG->wwwroot?>/mod/forum/icon.gif">&nbsp;<B>กระดานเสวนา</B></P>
 <UL>
 <P>เท่าที่ผ่านมา.. ส่วน กระดานเสวนา นี้เห็นจะเป็นส่วนที่สำคัญที่สุดเพราะการสนทนาแลกเปลี่ยน
 จะเกิดขึ้นในส่วนนี้ เมื่อท่านเพิ่มส่วน กระดานเสวนา เข้าใน คอร์ส ท่านจะต้องเลือกชนิดของ 
@@ -10,7 +10,7 @@
  (single-topic discussion) แบบเปิด (free-for-all general forum) หรือ แบบหนึ่งหัวข้อสนทนาต่อหนึ่งผู้ใช้ 
 (one-discussion-thread-per-user) </UL>
 
-<P><IMG VALIGN=absmiddle SRC="<?=$CFG->wwwroot?>/mod/journal/icon.gif">&nbsp;<B>วารสาร</B></P>
+<P><IMG VALIGN=absmiddle SRC="<?php echo $CFG->wwwroot?>/mod/journal/icon.gif">&nbsp;<B>วารสาร</B></P>
 <UL>
 <P>ส่วนวารสาร นี้เป็น รายการหนึ่งในวารสารรวมของ คอร์ส โดยในแต่ละรายการ 
 ท่านสามารถตั้งคำถามเปิดประเด็นนำให้กับนักเรียนและกำหนดช่วงเวลาเปิดให้เขียนบันทึก
@@ -20,13 +20,13 @@
 อีเมล์แจ้งผลให้นักเรียนทราบโดยอัตโนมัติ</P>
 </UL>
 
-<P><IMG VALIGN=absmiddle SRC="<?=$CFG->wwwroot?>/mod/resource/icon.gif">&nbsp;<B>แหล่งข้อมูล</B></P>
+<P><IMG VALIGN=absmiddle SRC="<?php echo $CFG->wwwroot?>/mod/resource/icon.gif">&nbsp;<B>แหล่งข้อมูล</B></P>
 <UL>
 <P>แหล่งข้อมูล- คือส่วนเนื้อหาของ คอร์ส ของท่าน ซึ่งจะเป็น ไฟล์ ชนิดใดก็ได้ที่ท่าน 
 อัพโหลด หรือ ลิงค์ ไป ท่านสามารถสร้างรายการอย่างง่ายๆได้ด้วยการพิมพ์ลงแบบฟอร์มโดยตรง </P>
 </UL>
 
-<P><IMG VALIGN=absmiddle SRC="<?=$CFG->wwwroot?>/mod/assignment/icon.gif">&nbsp;<B>การบ้าน</B></P>
+<P><IMG VALIGN=absmiddle SRC="<?php echo $CFG->wwwroot?>/mod/assignment/icon.gif">&nbsp;<B>การบ้าน</B></P>
 <UL>
 <P>การบ้าน - เป็นส่วนที่ท่านให้การบ้านแก่นักเรียน กำหนดวันส่งและเกรดสูงสุดที่สามารถได้รับ 
 นักเรียนส่งงานโดย อัพโหลดไฟล์ การบ้านสู่เซิร์ฟเวอร์ระบบจะทำการบันทึกวันที่นักเรียน 
@@ -36,7 +36,7 @@
 ชิ้นนั้นๆเพื่อแจ้งให้ทราบว่างานที่ส่งได้รับการตรวจแล้ว พร้อมที่จะให้นักเรียน log in กลับมาดูผลได้</P>
 </UL>
 
-<P><IMG VALIGN=absmiddle SRC="<?=$CFG->wwwroot?>/mod/quiz/icon.gif">&nbsp;<B>แบบทดสอบ</B></P>
+<P><IMG VALIGN=absmiddle SRC="<?php echo $CFG->wwwroot?>/mod/quiz/icon.gif">&nbsp;<B>แบบทดสอบ</B></P>
 <UL>
 <P>ส่วนนี้เป็นส่วนที่ท่านสามารถทำแบบทดสอบแบบต่างๆ เช่น แบบปรนัย ถูกผิด หรือแบบอัตนัย 
 แบบทดสอบที่ท่านทำขึ้นนี้จะถูกเก็บไว้ในฐานข้อมูลและสามารถนำมาใช้ใหม่ได้ต่อไป 
@@ -45,7 +45,7 @@
 ที่จะให้คำแนะนำหรือให้คำตอบที่ถูกแก่นักเรียน ส่วน แบบทดสอบ นี้สามารถให้คะแนนได้ด้วย.</P>
 </UL>
 
-<P><IMG VALIGN=absmiddle SRC="<?=$CFG->wwwroot?>/mod/choice/icon.gif">&nbsp;<B>ตัวเลือก</B></P>
+<P><IMG VALIGN=absmiddle SRC="<?php echo $CFG->wwwroot?>/mod/choice/icon.gif">&nbsp;<B>ตัวเลือก</B></P>
 <UL>
 <P>เป็นส่วนที่ให้ท่านตั้งคำถามแบบปรนัยให้นักเรียนตอบ โดยเมื่อนักเรียนทำการเลือกคำตอบเสร็จแล้ว 
 โปรแกรมจะมีหน้ารายงานผลให้ท่านดูได้ ท่านสามารถใช้ส่วน ตัวเลือก นี้ในการทำโพลสำรวจหยั่งเสียง
@@ -53,7 +53,7 @@
 
 </UL>
 
-<P><IMG VALIGN=absmiddle SRC="<?=$CFG->wwwroot?>/mod/survey/icon.gif">&nbsp;<B>แบบสำรวจ</B></P>
+<P><IMG VALIGN=absmiddle SRC="<?php echo $CFG->wwwroot?>/mod/survey/icon.gif">&nbsp;<B>แบบสำรวจ</B></P>
 <UL>
 <P>ส่วนแบบสำรวจนี้ประกอบด้วยแบบสำรวจสำหรับวัดระดับความรู้และความเข้าใจของนักเรียน 
 โดยในเวอร์ชั่นนี้ของ โปรแกรม มีแบบสำรวจสองแบบให้เลือกใช้อคือแบบ COLLES และ ATTLS 

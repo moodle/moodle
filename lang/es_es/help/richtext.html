@@ -3,7 +3,7 @@
 <p style="text-align: center;"><strong>Sobre el editor Richtext HTML</strong></p>
 
 <p>Disponibilidad: <strong>
-<? if (!$cfg->htmleditor) {
+<?php  if (!$cfg->htmleditor) {
        print_string("htmleditordisabledadmin");
    } else if (!$USER->htmleditor) {
        print_string("htmleditordisabled");

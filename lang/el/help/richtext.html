@@ -1,7 +1,7 @@
 <P ALIGN=CENTER><B>Για τον εμπλουτισμένο κειμενογράφο της HTML</B></P>
 
 <P>Διαθεσιμότητα: <B>
-<? if (!$CFG->htmleditor) {
+<?php  if (!$CFG->htmleditor) {
        print_string("htmleditordisabledadmin");
    } else if (!$USER->htmleditor) {
        print_string("htmleditordisabled");
