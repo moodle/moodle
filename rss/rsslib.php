@@ -393,10 +393,10 @@ function rss_get_feed($rssid, $url, $type) {
                     $errorstring = $urlfailurestring .'<br /><br />'. $errorstring .'<br />';
                 }
                 $xml = load_feed_from_file($file);
-                if (!empty($xml) && !empty($xml->xml) && empty($xml->ERROR)) {
+                if (!empty($xml) && empty($xml->xml) && !empty($xml->ERROR)) {
                     // Failed to load from cache as well!
                     if ($CFG->debug) {
-                        if (isset($xml) && isset($xml->ERROR)) {
+                        if (!empty($xml) && !empty($xml->ERROR)) {
                            $errorstring = $xml->ERROR . $errorstring;
                         }
                         $errorstring = $filefailurestring . $file .'<br /><br />'. $errorstring .'<br />';
@@ -408,10 +408,10 @@ function rss_get_feed($rssid, $url, $type) {
         } else {
             // Cached file has not expired. Attempt to read from cached file.
             $xml = load_feed_from_file($file);
-            if (!empty($xml) && !empty($xml->xml) && empty($xml->ERROR)) {
+            if (!empty($xml) && empty($xml->xml) && !empty($xml->ERROR)) {
                 // Failed to load from cache, attempt to read from source
                 if ($CFG->debug) {
-                    if (isset($xml) && isset($xml->ERROR)) {
+                    if (!empty($xml) && !empty($xml->ERROR)) {
                        $errorstring = $xml->ERROR . $errorstring .'<br />';
                     }
                     $errorstring = $filefailurestring . $file .'<br /><br />'. $errorstring .'<br />';
@@ -454,7 +454,7 @@ function rss_get_feed($rssid, $url, $type) {
         }
     }
     
-    // echo 'DEBUG: feed\'s raw xml was loaded:<br />';//debug
+    // echo 'DEBUG: raw xml was loaded successfully:<br />';//debug
     //print_object($xml); //debug
     
     //implode xml file. in some cases this operation may fail, capture failure info to errorstring.
