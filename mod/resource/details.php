@@ -399,7 +399,7 @@
                 break;
 
             case DIRECTORY:
-                $rawdirs = get_directory_list("$CFG->dataroot/$course->id", 'moddata', true, true);
+                $rawdirs = get_directory_list("$CFG->dataroot/$course->id", 'moddata', true, true, false);
                 $dirs = array();
                 foreach ($rawdirs as $rawdir) {
                    $dirs[$rawdir] = $rawdir;

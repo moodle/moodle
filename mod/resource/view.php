@@ -5,6 +5,7 @@
  
     require_variable($id);    // Course Module ID
     optional_variable($frameset, "");
+    optional_variable($subdir, "");
 
     if (!empty($CFG->forcelogin)) {
         require_login();
@@ -419,8 +420,41 @@
             require_once("../../files/mimetypes.php");
 
             add_to_log($course->id, "resource", "view", "view.php?id=$cm->id", $resource->id, $cm->id);
-            print_header($pagetitle, "$course->fullname", "$navigation $resource->name",
-                "", "", true, update_module_button($cm->id, $course->id, $strresource), navmenu($course, $cm));
+
+            if ($resource->reference) {
+                $relativepath = "$course->id/$resource->reference";
+            } else {
+                $relativepath = "$course->id";
+            }
+            
+            if ($subdir) {
+                if (detect_munged_arguments($subdir)) {
+                    error("The value for 'subdir' contains illegal characters!");
+                }
+                $relativepath = "$relativepath$subdir";
+
+                $subs = explode('/', $subdir);
+                array_shift($subs);
+                $countsubs = count($subs);
+                $count = 0;
+                $subnav = "<a href=\"view.php?id=$cm->id\">$resource->name</a>";
+                $backsub = '';
+                foreach ($subs as $sub) {
+                    $count++;
+                    if ($count < $countsubs) {
+                        $backsub .= "/$sub";
+                        $subnav  .= " -> <a href=\"view.php?id=$cm->id&subdir=$backsub\">$sub</a>";
+                    } else {
+                        $subnav .= " -> $sub";
+                    }
+                }
+            } else {
+                $subnav = $resource->name;
+            }
+
+            print_header($pagetitle, "$course->fullname", "$navigation $subnav",
+                         "", "", true, update_module_button($cm->id, $course->id, $strresource), 
+                         navmenu($course, $cm));
 
             if (trim($resource->summary)) {
                 print_simple_box(text_to_html($resource->summary), "center");
@@ -429,13 +463,7 @@
 
             print_simple_box_start("center", "", "$THEME->cellcontent", '0' );
 
-            if ($resource->reference) {
-                $relativepath = "$course->id/$resource->reference";
-            } else {
-                $relativepath = "$course->id";
-            }
-
-            $files = get_directory_list("$CFG->dataroot/$relativepath", 'moddata', false);
+            $files = get_directory_list("$CFG->dataroot/$relativepath", 'moddata', false, true, true);
             $strftime = get_string('strftimedatetime');
             $strname = get_string("name");
             $strsize = get_string("size");
@@ -447,28 +475,39 @@
                      "<th align=\"right\">$strmodified</th>".
                  "</tr>";
             foreach ($files as $file) {
-                $icon = mimeinfo("icon", $file);
+                if (is_dir("$CFG->dataroot/$relativepath/$file")) {          // Must be a directory
+                    $icon = "folder.gif";
+                    $relativeurl = "/view.php?blah";
+                    $filesize = display_size(get_directory_size("$CFG->dataroot/$relativepath/$file"));
 
-                if ($CFG->slasharguments) {
-                    $relativeurl = "/file.php/$relativepath/$file";
                 } else {
-                    $relativeurl = "/file.php?file=/$relativepath/$file";
+                    $icon = mimeinfo("icon", $file);
+
+                    if ($CFG->slasharguments) {
+                        $relativeurl = "/file.php/$relativepath/$file";
+                    } else {
+                        $relativeurl = "/file.php?file=/$relativepath/$file";
+                    }
+                    $filesize = display_size(filesize("$CFG->dataroot/$relativepath/$file"));
                 }
-                $filesize = display_size(filesize("$CFG->dataroot/$course->id/$resource->reference/$file"));
 
                 echo '<tr>';
                 echo '<td>';
                 echo "<img src=\"$CFG->pixpath/f/$icon\" width=\"16\" height=\"16\">";
                 echo '</td>';
                 echo '<td nowrap="nowrap"><p>';
-                link_to_popup_window($relativeurl, "resourceedirectory$resource->id", "$file", 450, 600, '');
+                if ($icon == 'folder.gif') {
+                    echo "<a href=\"view.php?id=$cm->id&subdir=$subdir/$file\">$file</a>";
+                } else {
+                    link_to_popup_window($relativeurl, "resourceedirectory$resource->id", "$file", 450, 600, '');
+                }
                 echo '</p></td>';
                 echo '<td>&nbsp;</td>';
                 echo '<td align="right" nowrap="nowrap"><p><font size="-1">';
                 echo $filesize;
                 echo '</font></p></td>';
                 echo '<td align="right" nowrap="nowrap"><p><font size="-1">';
-                echo userdate(filectime("$CFG->dataroot/$course->id/$resource->reference/$file"), $strftime);
+                echo userdate(filectime("$CFG->dataroot/$relativepath/$file"), $strftime);
                 echo '</font></p></td>';
                 echo '</tr>';
             }

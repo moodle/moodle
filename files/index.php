@@ -715,13 +715,14 @@ function displaydir ($wdir) {
             $filename = $fullpath."/".$dir;
             $fileurl  = rawurlencode($wdir."/".$dir);
             $filesafe = rawurlencode($dir);
+            $filesize = display_size(get_directory_size("$fullpath/$dir"));
             $filedate = userdate(filemtime($filename), "%d %b %Y, %I:%M %p");
     
             echo "<TR>";
 
             print_cell("center", "<INPUT TYPE=checkbox NAME=\"file$count\" VALUE=\"$fileurl\">");
             print_cell("left", "<A HREF=\"index.php?id=$id&wdir=$fileurl\"><IMG SRC=\"$CFG->pixpath/f/folder.gif\" HEIGHT=16 WIDTH=16 BORDER=0 ALT=\"Folder\"></A> <A HREF=\"index.php?id=$id&wdir=$fileurl\">".htmlspecialchars($dir)."</A>");
-            print_cell("right", "-");
+            print_cell("right", "<b>$filesize</b>");
             print_cell("right", $filedate);
             print_cell("right", "<A HREF=\"index.php?id=$id&wdir=$wdir&file=$filesafe&action=rename\">$strrename</A>");
     

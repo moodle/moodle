@@ -1526,19 +1526,25 @@ function get_max_upload_sizes($sitebytes=0, $coursebytes=0, $modulebytes=0) {
     return $filesize;
 }
 
-function get_directory_list($rootdir, $excludefile="", $descend=true, $justdirs=false) {
+function get_directory_list($rootdir, $excludefile="", $descend=true, $getdirs=false, $getfiles=true) {
 /// Returns an array with all the filenames in
 /// all subdirectories, relative to the given rootdir.
 /// If excludefile is defined, then that file/directory is ignored
-/// If justdirs is defined, then only subdirectories are listed, otherwise just files
+/// If getdirs is true, then (sub)directories are included in the output
+/// If getfiles is true, then files are included in the output
+/// (at least one of these must be true!)
 
     $dirs = array();
 
-    if (!is_dir($rootdir)) {
+    if (!$getdirs and !$getfiles) {   // Nothing to show
         return $dirs;
     }
 
-    if (!$dir = opendir($rootdir)) {
+    if (!is_dir($rootdir)) {          // Must be a directory
+        return $dirs;
+    }
+
+    if (!$dir = opendir($rootdir)) {  // Can't open it for some reason
         return $dirs;
     }
 
@@ -1549,16 +1555,16 @@ function get_directory_list($rootdir, $excludefile="", $descend=true, $justdirs=
         }
         $fullfile = "$rootdir/$file";
         if (filetype($fullfile) == "dir") {
-            if ($justdirs) {
+            if ($getdirs) {
                 $dirs[] = $file;
             }
             if ($descend) {
-                $subdirs = get_directory_list($fullfile, $excludefile, $descend, $justdirs);
+                $subdirs = get_directory_list($fullfile, $excludefile, $descend, $getdirs, $getfiles);
                 foreach ($subdirs as $subdir) {
                     $dirs[] = "$file/$subdir";
                 }
             }
-        } else if (!$justdirs) {
+        } else if ($getfiles) {
             $dirs[] = $file;
         }
     }
@@ -1567,6 +1573,36 @@ function get_directory_list($rootdir, $excludefile="", $descend=true, $justdirs=
     asort($dirs);
 
     return $dirs;
+}
+
+function get_directory_size($rootdir, $excludefile="") {
+/// Adds up all the files in a directory and works out the size
+
+    $size = 0;
+
+    if (!is_dir($rootdir)) {          // Must be a directory
+        return $dirs;
+    }
+
+    if (!$dir = opendir($rootdir)) {  // Can't open it for some reason
+        return $dirs;
+    }
+
+    while (false !== ($file = readdir($dir))) {
+        $firstchar = substr($file, 0, 1);
+        if ($firstchar == "." or $file == "CVS" or $file == $excludefile) {
+            continue;
+        }
+        $fullfile = "$rootdir/$file";
+        if (filetype($fullfile) == "dir") {
+            $size += get_directory_size($fullfile, $excludefile);
+        } else {
+            $size += filesize($fullfile);
+        }
+    }
+    closedir($dir);
+
+    return $size;
 }
 
 function get_real_size($size=0) {
