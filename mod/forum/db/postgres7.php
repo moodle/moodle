@@ -118,7 +118,7 @@ function forum_upgrade($oldversion) {
 
     /// Enter initial read records for all posts older than 1 day.
 
-    require $CFG->dirroot.'/mod/forum/lib.php';
+    require_once($CFG->dirroot.'/mod/forum/lib.php');
     /// Timestamp for old posts (and therefore considered read).
     $dateafter = time() - ($CFG->forum_oldpostdays*24*60*60);
     /// Timestamp for one day ago.
