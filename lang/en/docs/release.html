@@ -10,7 +10,7 @@
 <BODY BGCOLOR="#FFFFFF">
 <H2>Release notes</H2>
 
-<H3>  New in Moodle 1.0.8 (due 1st January, 2003):   </H3>
+<H3>  New in Moodle 1.0.8 (due for release soon)   </H3>
 <UL><DL>
 <DT> Databases</DT>
 <DD> Moodle now has complete native support support for <B>PostgreSQL 7</B> databases (thanks 
@@ -37,7 +37,12 @@
 <DT> Resources</DT>
 <DD> A new type of resource has been added, called "Program", which allows 
      Moodle to cooperate with external web applications by passing information
-     about the current user and session to them.</DD>
+     about the current user and session to them.
+     Uploaded HTML files can now be edited using the WYSIWYG HTML editor. </DD>
+
+<DT> Choices</DT>
+<DD> Results can now be "published" (either with names or anonymously) so that 
+     everyone can see the statistics.  Choice text can be edited using HTML editor.</DD>
 
 <DT> Layout</DT>
 <DD> A number of small improvements have been in the layout (such as the forum posting
@@ -45,16 +50,40 @@
      now have specific help items alongside them (depending on the pedagogical 
      focus). The forums now have a quick search form available on every page.</DD>
 
-<DT> Other things</DT>
-<DD> <UL>
-     <LI> The admin can now assign other people to also be admins.
-     <LI> Unpacked template module is ignored by Moodle.
-     <LI> View source button in Richtext editor was missing with some languages
-     <LI> Some small performance improvements here and there
-     </UL>
-</DD>
+<DT> Grades</DT>
+<DD> Students can now see all their grades for a course on one page, accessible
+     from the course home page.</DD>
 
-<DT> More to come ....</DT>
+<DT> Authorisation </DT>
+<DD> The database module now supports databases that contain md5-encrypted passwords, 
+     which means it should now be compatible with systems like PostNuke. When using 
+     external authorisation students are now forced to fully fill-out their information
+     before they can enter any course.</DD>
+
+<DT> Administration </DT>
+<DD> The admin can now assign other people to also be admins.</DD>
+
+<DT> Debugging mode </DT>
+<DD> Admins/developers can use a "debugging mode" which prints more information 
+     and warning messages about unset variables and so on - making it easier to 
+     find bugs.  To make this work a LOT of cleaning up has been done on existing 
+     Moodle code to make it more robust.</DD>
+
+<DT> Other things</DT>
+<DD> 
+     <LI> Unpacked template module is ignored by Moodle.
+     <LI> A default country can be set by the admin
+     <LI> View source button in Richtext editor was missing with some languages
+     <LI> A bug affecting grades page on some installations was fixed.
+     <LI> Some minor problems with the display of logs has been fixed.
+     <LI> Improved GD detection that works with PHP 4.3.0
+     <LI> A bug causing the wrong display of the date has been fixed.
+     <LI> Usernames can now contain "." and "-" characters.
+     <LI> Cookies now use table prefixes for unique naming, so that many 
+          different moodle sites can be run on the same web site and database.
+     <LI> Some small performance improvements here and there
+     <LI> Many little code clean-ups.
+</DD>
 
 </DL></UL>
 
