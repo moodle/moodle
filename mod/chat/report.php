@@ -6,7 +6,7 @@
     require_once("lib.php");
 
     require_variable($id);          // Course module ID
-    optional_variable($group, "");  // Start of period
+    optional_variable($groupid, "");  // Group
     optional_variable($start, "");  // Start of period
     optional_variable($end, "");    // End of period
     optional_variable($deletesession, "");    // Delete a session
@@ -50,6 +50,14 @@
 
     if ($start and $end and !$confirmdelete) {   // Show a full transcript
 
+        if ($groupid) {
+            $groupselect = " AND groupid = '$currentgroup'";
+            $groupparam = "&groupid=$currentgroup";
+        } else {
+            $groupselect = "";
+            $groupparam = "";
+        }
+
         print_header("$course->shortname: $chat->name: $strchatreport", "$course->fullname",
                      "$navigation <a href=\"index.php?id=$course->id\">$strchats</a> -> 
                      <a href=\"view.php?id=$cm->id\">$chat->name</a> -> 
@@ -58,13 +66,13 @@
 
         if ($deletesession and $isteacheredit) {
             notice_yesno(get_string("deletesessionsure", "chat"), 
-                         "report.php?id=$cm->id&deletesession=1&confirmdelete=1&start=$start&end=$end", 
+                         "report.php?id=$cm->id&deletesession=1&confirmdelete=1&start=$start&end=$end$groupparam", 
                          "report.php?id=$cm->id");
         }
 
         if (!$messages = get_records_select("chat_messages", "chatid = $chat->id AND 
                                                               timestamp >= '$start' AND 
-                                                              timestamp <= '$end'", "timestamp ASC")) {
+                                                              timestamp <= '$end' $groupselect", "timestamp ASC")) {
             print_heading(get_string("nomessages", "chat"));
 
         } else {
@@ -106,7 +114,7 @@
 
     if ($currentgroup) {
         $groupselect = " AND groupid = '$currentgroup'";
-        $groupparam = "&group=$currentgroup";
+        $groupparam = "&groupid=$currentgroup";
     } else {
         $groupselect = "";
         $groupparam = "";
