@@ -45,7 +45,7 @@
 
     echo "<center>\n";
     
-    print_simple_box( text_to_html($journal->intro,  $journal->introformat) , "center");
+    print_simple_box( format_text($journal->intro,  $journal->introformat) , "center");
 
     echo "<br />";
 

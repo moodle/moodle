@@ -471,7 +471,7 @@ function journal_print_feedback($course, $entry, $grades) {
     }
     echo "</I></FONT></P>";
 
-    echo text_to_html($entry->comment);
+    echo format_text($entry->comment);
     echo "</TD></TR></TABLE>";
     echo "</TD></TR></TABLE>";
 }
