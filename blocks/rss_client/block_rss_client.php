@@ -48,11 +48,9 @@ class block_rss_client extends block_base {
 
         if (!empty($this->config)) {
             if (!empty($this->config->rssid)) {
-                if (is_array($this->config->rssid)) {
-                    // rssid is an array of rssids
+                if (is_array($this->config->rssid)) { 
                     $rssidarray = $this->config->rssid;
-                } else {
-                    // rssid is a single rssid
+                } else {     // Make an array of the single value 
                     $rssidarray = array($this->config->rssid);
                 }
             }
@@ -111,7 +109,6 @@ class block_rss_client extends block_base {
         $rss_record = get_record('block_rss_client', 'id', $rssid);
         if (isset($rss_record) && isset($rss_record->id)) {
             $rss = rss_get_feed($rss_record->id, $rss_record->url, $rss_record->type);
-    //      print_object($rss); //debug	
             if (empty($rss)) {
                 // There was a failure in loading the rss feed
                 return;
@@ -132,14 +129,13 @@ class block_rss_client extends block_base {
                     $rss->items[$y]['link'] = $rss->items[$y]['guid'];
                 }
 
-                $returnstring .= '<a href="'. $rss->items[$y]['link'] .'" target=_new>'. $rss->items[$y]['title'] . '</a><br />' ."\n";
+                $returnstring .= '<div class="rssclientlink"><a href="'. $rss->items[$y]['link'] .'" target="_new">'. $rss->items[$y]['title'] . '</a></div>' ."\n";
                 
                 if ($display_description && !empty($rss->items[$y]['description'])){
-                    $returnstring .= $rss->items[$y]['description'] . '<br />' ."\n";
+                    $returnstring .= '<div class="rssclientdescription">'.clean_text($rss->items[$y]['description']) . '</div>' ."\n";
                 }
             }
 
-    //      print_object($rss); //debug            
             if ( isset($rss->channel['link']) && isset($rss->channel['title']) ) {
                 $feedtitle = '<a href="'. $rss->channel['link'] .'">'. $rss->channel['title'] .'</a>';
             }
