@@ -359,10 +359,11 @@
                 error('Could not create new discussion');
             }
             
-            $post->parent = 0;
-            $post->subject = $name;
+            $newpost->id = $post->id;
+            $newpost->parent = 0;
+            $newpost->subject = $name;
 
-            if (!update_record("forum_posts", $post)) {
+            if (!update_record("forum_posts", $newpost)) {
                 error('Could not update the original post');
             }
 
