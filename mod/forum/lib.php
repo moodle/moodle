@@ -569,7 +569,7 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
         echo "</DIV>";
     }
 
-    if ($link && (strlen(strip_tags($post->message)) > $FORUM_LONG_POST)) {
+    if ($link && (strlen($post->message) > $FORUM_LONG_POST)) {
         // Print shortened version
         echo format_text(forum_shorten_post($post->message), $post->format);
         $numwords = count_words($post->message);
@@ -687,9 +687,8 @@ function forum_print_post_header(&$post, $courseid, $ownpost=false, $reply=false
 function forum_shorten_post($message) {
     global $FORUM_LONG_POST, $FORUM_SHORT_POST;
 
-    if (strlen(strip_tags($message)) > $FORUM_LONG_POST) {
+    if (strlen($message) > $FORUM_LONG_POST) {
         // Look for the first return between $FORUM_SHORT_POST and $FORUM_LONG_POST
-        // XXXX
         $shortmessage = substr($message, $FORUM_SHORT_POST, $FORUM_LONG_POST);
         if ($pos = strpos($shortmessage, "\n")) {
             return substr($message, 0, $FORUM_SHORT_POST + $pos);
