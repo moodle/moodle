@@ -1,9 +1,6 @@
-<?PHP // $Id$
+<?PHP // $Id$ 
+      // forum.php - created with Moodle 1.0.8 dev (2002121200)
 
-#------------------------------------------------------------
-$string['modulename'] = "Forum";
-$string['modulenameplural'] = "Forums";
-#------------------------------------------------------------
 
 $string['addanewdiscussion'] = "Add a new discussion topic";
 $string['allowchoice'] = "Allow everyone to choose";
@@ -47,10 +44,12 @@ $string['introteacher'] = "A forum for teacher-only notes and discussion";
 $string['learningforums'] = "Learning forums";
 $string['maxtimehaspassed'] = "Sorry, but the maximum time for editing this post (\$a) has passed!";
 $string['message'] = "Message";
-$string['modeflatoldestfirst'] = "Display replies flat, with oldest first";
 $string['modeflatnewestfirst'] = "Display replies flat, with newest first";
+$string['modeflatoldestfirst'] = "Display replies flat, with oldest first";
 $string['modenested'] = "Display replies in nested form";
 $string['modethreaded'] = "Display replies in threaded form";
+$string['modulename'] = "Forum";
+$string['modulenameplural'] = "Forums";
 $string['more'] = "more";
 $string['namenews'] = "News forum";
 $string['namesocial'] = "Social forum";
@@ -73,21 +72,6 @@ $string['postadded'] = "Your post was successfully added.<P>You have \$a to edit
 $string['postincontext'] = "See this post in context";
 $string['postmailinfo'] = "This is a copy of a message posted on the \$a website.
 To add your reply via the website, click on this link:";
-
-$string['postingtip'] = "<B>Posting tips:</B>
-When replying:
-<UL>
-<LI>read their post carefully and empathically
-<LI>look for things you can comment on
-</UL>
-
-While writing:
-<UL>
-<LI>keep your posts short and on-topic
-<LI>explain your own ideas clearly
-<LI>think of questions you can ask
-</UL>";
-
 $string['postrating1'] = "Shows mostly SEPARATE knowing";
 $string['postrating2'] = "Equally separate and connected";
 $string['postrating3'] = "Shows mostly CONNECTED knowing";
@@ -95,14 +79,14 @@ $string['postupdated'] = "Your post was updated";
 $string['processingpost'] = "Processing post \$a";
 $string['rate'] = "Rate";
 $string['ratings'] = "Ratings";
+$string['re'] = "Re:";
 $string['readtherest'] = "Read the rest of this topic";
-$string['re'] = "Re:";    // Put in front of subjects that are replies to another post
 $string['repliesmany'] = "\$a replies so far";
 $string['repliesone'] = "\$a reply so far";
 $string['reply'] = "Reply";
 $string['search'] = "Search";
-$string['searchresults'] = "Search results";
 $string['searchforums'] = "Search forums";
+$string['searchresults'] = "Search results";
 $string['sendinratings'] = "Send in my latest ratings";
 $string['showsubscribers'] = "Show subscribers";
 $string['singleforum'] = "A single simple discussion";
