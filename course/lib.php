@@ -1268,7 +1268,8 @@ function print_course($course, $width="100%") {
                     $teacher->role = $course->teacher;
                 }
                 $fullname = fullname($teacher, isteacher($course->id)); // is the USER a teacher of that course
-                echo "$teacher->role: <a href=\"$CFG->wwwroot/user/view.php?id=$teacher->id&course=".SITEID."\">$fullname</a><br />";
+                echo $teacher->role.': <a href="'.$CFG->wwwroot.'/user/view.php?id='.$teacher->id.
+                     '&amp;course='.SITEID.'">'.$fullname.'</a><br />';
             }
         }
         echo "</font></p>";
