@@ -718,7 +718,7 @@ function print_footer ($course=NULL) {
     if ($course) {
         if ($course == "home") {   // special case for site home page - please do not remove
             $homelink  = "<p align=\"center\"><a title=\"moodle $CFG->release ($CFG->version)\" href=\"http://moodle.org/\" target=\"_blank\">";
-            $homelink .= "<br><img width=\"130\" height=\"19\" src=\"pix/madewithmoodle2.gif\" border=0></a></p>";
+            $homelink .= "<br><img width=\"130\" height=\"19\" src=\"pix/madewithmoodle.gif\" border=0></a></p>";
             $course = get_site();
             $homepage = true;
         } else {
@@ -873,7 +873,7 @@ function print_file_picture($path, $courseid=0, $height="", $width="", $link="")
 }
 
 function print_user_picture($userid, $courseid, $picture, $large=false, $returnstring=false, $link=true) {
-    global $CFG;
+    global $CFG, $THEME;
 
     if ($link) {
         $output = "<a href=\"$CFG->wwwroot/user/view.php?id=$userid&course=$courseid\">";
@@ -881,20 +881,29 @@ function print_user_picture($userid, $courseid, $picture, $large=false, $returns
         $output = "";
     }
     if ($large) {
-        $file = "f1.jpg";
+        $file = "f1";
         $size = 100;
     } else {
-        $file = "f2.jpg";
+        $file = "f2";
         $size = 35;
     }
-    if ($picture) {
+    if ($picture) {  // Print custom user picture
         if ($CFG->slasharguments) {        // Use this method if possible for better caching
-            $output .= "<img align=absmiddle src=\"$CFG->wwwroot/user/pix.php/$userid/$file\" border=0 width=$size height=$size alt=\"\">";
+            $output .= "<img align=\"absmiddle\" src=\"$CFG->wwwroot/user/pix.php/$userid/$file.jpg\"".
+                       " border=\"0\" width=\"$size\" height=\"$size\" alt=\"\">";
         } else {
-            $output .= "<img align=absmiddle src=\"$CFG->wwwroot/user/pix.php?file=/$userid/$file\" border=0 width=$size height=$size alt=\"\">";
+            $output .= "<img align=\"absmiddle\" src=\"$CFG->wwwroot/user/pix.php?file=/$userid/$file.jpg\"".
+                       " border=\"0\" width=\"$size\" height=\"$size\" alt=\"\">";
         }
-    } else {
-        $output .= "<img align=absmiddle src=\"$CFG->wwwroot/user/default/$file\" border=0 width=$size height=$size alt=\"\">";
+    } else {         // Print default user pictures (use theme version if available)
+        if (empty($THEME->custompix)) {
+            $output .= "<img align=\"absmiddle\" src=\"$CFG->wwwroot/pix/u/$file.png\"".
+                       " border=\"0\" width=\"$size\" height=\"$size\" alt=\"\">";
+        } else {
+            $output .= "<img align=\"absmiddle\" src=\"$CFG->wwwroot/theme/$CFG->theme/pix/u/$file.png\"".
+                       " border=\"0\" width=\"$size\" height=\"$size\" alt=\"\">";
+        }
+
     }
     if ($link) {
         $output .= "</a>";

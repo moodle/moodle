@@ -24,8 +24,10 @@
         $userid = (integer)$args[0];
         $image  = $args[1];
         $pathname = "$CFG->dataroot/users/$userid/$image";
+        $filetype = "image/jpeg";
     } else {
-        $pathname = "$CFG->dirroot/user/default/f1.jpg";
+        $pathname = "$CFG->dirroot/pix/u/f1.png";
+        $filetype = "image/png";
     }
 
     $lastmodified = filemtime($pathname);
@@ -37,7 +39,7 @@
         header("Pragma: ");
         header("Content-disposition: inline; filename=$image");
         header("Content-length: ".filesize($pathname));
-        header("Content-type: image/jpeg");
+        header("Content-type: $filetype");
         readfile("$pathname");
     }
 
