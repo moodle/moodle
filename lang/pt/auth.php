@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.2 development (2003122600)
+      // auth.php - created with Moodle 1.2 Beta (2004022400)
 
 
 $string['auth_dbdescription'] = 'Este método usa uma tabela numa base de dados externa para verificar se um nome de utilizador e palavra chave são válidos. Se for uma conta nova, a informação de outros campos pode ser também transferida para Moodle.';
@@ -37,6 +37,7 @@ $string['auth_ldapextrafields'] = '<p>Estes campos são optativos. Pode optar por
 $string['auth_ldaptitle'] = 'Use um servidor LDAP';
 $string['auth_manualdescription'] = 'Este método elimina qualquer hipótese de os utilizadores poderem criar as suas próprias contas. Todas as contas terão que ser manualmente criadas pelo administrador.';
 $string['auth_manualtitle'] = 'Apenas contas manuais';
+$string['auth_multiplehosts'] = 'Podem ser especificados vários servidores (p.e. host1.com;host2.com;host3.com)';
 $string['auth_nntpdescription'] = 'Este método usa um servidor NNTP para verificar se um nome de utilizador e palavra chave são válidos.';
 $string['auth_nntphost'] = 'Endereço do servidor NNTP. Use o NÚMERO IP e não o nome no DNS.';
 $string['auth_nntpport'] = 'Porta do servidor NNTP (normalmente 119)';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // chat.php - created with Moodle 1.2 development (2003122600)
+      // chat.php - created with Moodle 1.2 Beta (2004022400)
 
 
 $string['beep'] = 'chamar';
@@ -12,6 +12,8 @@ $string['configrefreshroom'] = 'Com quê frequência (segundos) deverá ser actuali
 $string['configrefreshuserlist'] = 'Com quê frequência deverá ser actualizada a lista de utilizadores? (em segundos)';
 $string['currentchats'] = 'Sessões de chat activas';
 $string['currentusers'] = 'Utilizadores actuais';
+$string['deletesession'] = 'Apagar esta sessão';
+$string['deletesessionsure'] = 'Tem a certeza que deseja apagar esta sessão?';
 $string['donotusechattime'] = 'Não publicite horas de chat';
 $string['enterchat'] = 'Clique aqui para entrar no chat';
 $string['errornousers'] = 'Não encontrei nenhum utilizador!';
