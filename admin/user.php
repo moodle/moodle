@@ -10,6 +10,9 @@
     optional_variable($dir, "ASC");
     optional_variable($page, 0);
     optional_variable($search, "");
+    if (!empty($search)) {
+        $search=trim($search);
+    }
     optional_variable($lastinitial, "");     // only show students with this last initial
     optional_variable($firstinitial, "");    // only show students with this first initial
     optional_variable($perpage, "30");       // how many per page
