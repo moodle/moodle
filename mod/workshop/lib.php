@@ -1686,8 +1686,19 @@ function workshop_get_unmailed_resubmissions($cutofftime) {
 
 //////////////////////////////////////////////////////////////////////////////////////
 function workshop_get_user_assessments($workshop, $user) {
-	// Return all the  user's assessments, newest first, oldest last
+// Return all the  user's assessments, newest first, oldest last (hot, warm and cold ones)
 	return get_records_select("workshop_assessments", "workshopid = $workshop->id AND userid = $user->id", 
+				"timecreated DESC");
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////
+function workshop_get_user_assessments_done($workshop, $user) {
+// Return all the  user's assessments, newest first, oldest last (warm and cold ones only)
+// ignores maxeditingtime
+    $timenow = time();
+	return get_records_select("workshop_assessments", "workshopid = $workshop->id AND userid = $user->id
+                AND timecreated < $timenow", 
 				"timecreated DESC");
 }
 
@@ -2220,7 +2231,8 @@ function workshop_list_submissions_for_admin($workshop, $order) {
 		$table->cellpadding = 2;
 		$table->cellspacing = 0;
 		foreach ($users as $user) {
-			if ($assessments = workshop_get_user_assessments($workshop, $user)) {
+            // list the assessments which have been done (exclude the hot ones)
+			if ($assessments = workshop_get_user_assessments_done($workshop, $user)) {
 				$title ='';
 				foreach ($assessments as $assessment) {
 					if (!$submission = get_record("workshop_submissions", "id", $assessment->submissionid)) {

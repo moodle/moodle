@@ -21,6 +21,7 @@
     $strweek = get_string("week");
     $strtopic = get_string("topic");
     $strname = get_string("name");
+    $strphase = get_string("phase", "workshop");
     $strdeadline = get_string("deadline", "workshop");
 	$strsubmitted = get_string("submitted", "assignment");
 
@@ -34,17 +35,32 @@
     $timenow = time();
 
     if ($course->format == "weeks") {
-        $table->head  = array ($strweek, $strname, $strsubmitted, $strdeadline);
-        $table->align = array ("CENTER", "LEFT", "LEFT", "LEFT");
+        $table->head  = array ($strweek, $strname, $strphase, $strsubmitted, $strdeadline);
+        $table->align = array ("CENTER", "LEFT", "LEFT", "LEFT", "LEFT");
     } elseif ($course->format == "topics") {
-        $table->head  = array ($strtopic, $strname, $strsubmitted, $strdeadline);
-        $table->align = array ("CENTER", "LEFT", "LEFT", "LEFT");
+        $table->head  = array ($strtopic, $strname, $strphase, $strsubmitted, $strdeadline);
+        $table->align = array ("CENTER", "LEFT", "left", "LEFT", "LEFT");
     } else {
-        $table->head  = array ($strname, $strsubmitted, $strdeadline);
-        $table->align = array ("LEFT", "LEFT", "LEFT");
+        $table->head  = array ($strname, $strphase, $strsubmitted, $strdeadline);
+        $table->align = array ("LEFT", "LEFT", "LEFT", "LEFT");
     }
 
     foreach ($workshops as $workshop) {
+        switch ($workshop->phase) {
+            case 0:
+            case 1: $phase = get_string("phase1short", "workshop");
+                    break;
+            case 2: $phase = get_string("phase2short", "workshop");
+                    break;
+            case 3: $phase = get_string("phase3short", "workshop");
+                    break;
+            case 4: $phase = get_string("phase4short", "workshop");
+                    break;
+            case 5: $phase = get_string("phase5short", "workshop");
+                    break;
+            case 6: $phase = get_string("phase6short", "workshop");
+                    break;
+        }
         if ($submissions = workshop_get_user_submissions($workshop, $USER)) {
 			foreach ($submissions as $submission) {
 				if ($submission->timecreated <= $workshop->deadline) {
@@ -64,10 +80,10 @@
 					    "($submission->title)";
                 }
 				if ($course->format == "weeks" or $course->format == "topics") {
-					$table->data[] = array ($workshop->section, $link, $submitted, $due);
+					$table->data[] = array ($workshop->section, $link, $phase, $submitted, $due);
 	    		} 
 				else {
-		    		$table->data[] = array ($link, $submitted, $due);
+		    		$table->data[] = array ($link, $phase, $submitted, $due);
 				}
 			}
 		}
@@ -82,10 +98,10 @@
                 $link = "<A HREF=\"view.php?id=$workshop->coursemodule\">$workshop->name</A>";
             }
 			if ($course->format == "weeks" or $course->format == "topics") {
-	    			$table->data[] = array ($workshop->section, $link, $submitted, $due);
+	    			$table->data[] = array ($workshop->section, $link, $phase, $submitted, $due);
 			} 
 			else {
-				$table->data[] = array ($link, $submitted, $due);
+				$table->data[] = array ($link, $phase, $submitted, $due);
 			}
 		}
 	}

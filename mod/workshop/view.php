@@ -3,10 +3,12 @@
 /*************************************************
 	ACTIONS handled are:
 
-	close workshop( for teachers)
+	allowassessments (for teachers)
+    allowboth (for teachers)
+    allowsubmissions (for teachers)
+    close workshop( for teachers)
 	displayfinalgrade (for students)
 	notavailable (for students)
-	open workshop (for teachers)
 	setupassignment (for teachers)
 	studentsview
 	submitassignment 
@@ -85,9 +87,10 @@
 			case 0 :
 			case 1 : $action = 'notavailable'; break;
 			case 2 :
-			case 3: $action = 'studentsview'; break;
-			case 4 : $action = 'notavailable'; break;
-			case 5 : $action = 'displayfinalgrade';
+			case 3 :
+			case 4 : $action = 'studentsview'; break;
+			case 5 : $action = 'notavailable'; break;
+			case 6 : $action = 'displayfinalgrade';
 		}
 	}
 	else { // it's a guest, oh no!
@@ -95,22 +98,8 @@
 	}
 	
 	
-	/************** allow peer assessments (move to phase 3) (for teachers)**/
-	if ($action == 'allowpeerassessments') {
-
-		if (!isteacher($course->id)) {
-			error("Only teachers can look at this page");
-		}
-
-		// move to phase 3
-		set_field("workshop", "phase", 3, "id", "$workshop->id");
-		add_to_log($course->id, "workshop", "assessments", "view.php?id=$cm->id", "$workshop->id");
-		redirect("view.php?a=$workshop->id", get_string("movingtophase", "workshop", 3));
-	}
-	
-
-	/****************** close workshop for student assessments/submissions (move to phase 4) (for teachers)**/
-	elseif ($action == 'closeworkshop') {
+	/************** allow (peer) assessments only (move to phase 4) (for teachers)**/
+	if ($action == 'allowassessments') {
 
 		if (!isteacher($course->id)) {
 			error("Only teachers can look at this page");
@@ -118,8 +107,56 @@
 
 		// move to phase 4
 		set_field("workshop", "phase", 4, "id", "$workshop->id");
-		add_to_log($course->id, "workshop", "close", "view.php?id=$cm->id", "$workshop->id");
+		add_to_log($course->id, "workshop", "assessments only", "view.php?id=$cm->id", "$workshop->id");
 		redirect("view.php?a=$workshop->id", get_string("movingtophase", "workshop", 4));
+	}
+	
+
+	/************** allow both (submissions and assessments) (move to phase 3) (for teachers)**/
+	if ($action == 'allowboth') {
+
+		if (!isteacher($course->id)) {
+			error("Only teachers can look at this page");
+		}
+
+		// move to phase 3
+		set_field("workshop", "phase", 3, "id", "$workshop->id");
+		add_to_log($course->id, "workshop", "allow both", "view.php?id=$cm->id", "$workshop->id");
+		redirect("view.php?a=$workshop->id", get_string("movingtophase", "workshop", 3));
+	}
+	
+
+	/************** allow submissions only (move to phase 2) (for teachers)**/
+	if ($action == 'allowsubmissions') {
+
+		if (!isteacher($course->id)) {
+			error("Only teachers can look at this page");
+		}
+
+        // move to phase 2, check that teacher has made enough submissions
+		if (workshop_count_teacher_submissions($workshop) < $workshop->ntassessments) {
+			redirect("view.php?id=$cm->id", get_string("notenoughexamplessubmitted", "workshop", 
+                        $course->teacher));
+		}
+		else {
+			set_field("workshop", "phase", 2, "id", "$workshop->id");
+			add_to_log($course->id, "workshop", "submissions", "view.php?id=$cm->id", "$workshop->id");
+			redirect("view.php?id=$cm->id", get_string("movingtophase", "workshop", 2));
+		}
+	}
+	
+
+	/****************** close workshop for student assessments/submissions (move to phase 5) (for teachers)**/
+	elseif ($action == 'closeworkshop') {
+
+		if (!isteacher($course->id)) {
+			error("Only teachers can look at this page");
+		}
+
+		// move to phase 5
+		set_field("workshop", "phase", 5, "id", "$workshop->id");
+		add_to_log($course->id, "workshop", "close", "view.php?id=$cm->id", "$workshop->id");
+		redirect("view.php?a=$workshop->id", get_string("movingtophase", "workshop", 5));
 	}
 	
 
@@ -244,41 +281,22 @@
 	}
 
 
-	/****************** make final grades available (for teachers only)**************/
+	/****************** make final grades available (go to phase 6) (for teachers only)********/
 	elseif ($action == 'makefinalgradesavailable') {
 
 		if (!isteacher($course->id)) {
 			error("Only teachers can look at this page");
 		}
 
-		set_field("workshop", "phase", 5, "id", "$workshop->id");
-		add_to_log($course->id, "workshop", "display", "view.php?id=$cm->id", "$workshop->id");
-		redirect("view.php?a=$workshop->id", get_string("movingtophase", "workshop", 5));
+		set_field("workshop", "phase", 6, "id", "$workshop->id");
+		add_to_log($course->id, "workshop", "display grades", "view.php?id=$cm->id", "$workshop->id");
+		redirect("view.php?a=$workshop->id", get_string("movingtophase", "workshop", 6));
 	}
 	
 	
 	/****************** assignment not available (for students)***********************/
 	elseif ($action == 'notavailable') {
 		print_heading(get_string("notavailable", "workshop"));
-	}
-
-
-	/****************** open workshop for student assessments (move to phase 2) (for teachers)**/
-	elseif ($action == 'openworkshop') {
-
-		if (!isteacher($course->id)) {
-			error("Only teachers can look at this page");
-		}
-
-		// move to phase 2, check that teacher has made enough submissions
-		if (workshop_count_teacher_submissions($workshop) < $workshop->ntassessments) {
-			redirect("view.php?id=$cm->id", get_string("notenoughexamplessubmitted", "workshop", $course->teacher));
-		}
-		else {
-			set_field("workshop", "phase", 2, "id", "$workshop->id");
-			add_to_log($course->id, "workshop", "submissions", "view.php?id=$cm->id", "$workshop->id");
-			redirect("view.php?id=$cm->id", get_string("movingtophase", "workshop", 2));
-		}
 	}
 
 
@@ -313,11 +331,16 @@
                             $course->teacher));
 				workshop_list_teacher_submissions($workshop, $USER);
 			}
+            // has user submitted anything yet? (only allowed in phases 2 and 3)
 			if (!workshop_get_user_submissions($workshop, $USER)) {
-				// print upload form
-				print_heading(get_string("submitassignmentusingform", "workshop").":");
-				workshop_print_upload_form($workshop);
-				}
+				if ($workshop->phase < 4) {
+                    // print upload form
+				    print_heading(get_string("submitassignmentusingform", "workshop").":");
+				    workshop_print_upload_form($workshop);
+				} else {
+                    print_heading(get_string("submissionsnolongerallowed", "workshop"));
+                }
+            }   
 			// in stage 3? - grade other student's submissions, resubmit and list all submissions
 			else {
 				// list any assessments by teachers
@@ -331,7 +354,7 @@
 					workshop_list_self_assessments($workshop, $USER);
 				}
 				// if peer assessments are being done and workshop is in phase 3 then show some  to assess...
-				if ($workshop->nsassessments and ($workshop->phase == 3)) {  
+				if ($workshop->nsassessments and ($workshop->phase > 2)) {  
 					workshop_list_student_submissions($workshop, $USER);
 				}
 				// ..and any they have already done (and have gone cold)...
@@ -347,8 +370,8 @@
 				// list previous submissions
 				print_heading(get_string("submissions", "workshop"));
 				workshop_list_user_submissions($workshop, $USER);
-				// are resubmissions allowed?
-                if ($workshop->resubmit) {
+				// are resubmissions allowed and the workshop is in submission phases (2 and 3)?
+                if ($workshop->resubmit and ($workshop->phase < 4)) {
 					// see if there are any cold (warm included as well) assessments of the last submission
                     // if there are then print upload form
                     if ($submissions = workshop_get_user_submissions($workshop, $USER)) {
@@ -411,12 +434,14 @@
 		
 		$tabs->names = array("1. ".get_string("phase1", "workshop"), 
                         "2. ".get_string("phase2", "workshop", $course->student), 
-			            "3. ".get_string("phase3", "workshop"), 
-                        "4. ".get_string("phase4", "workshop"), 
-                        "5. ".get_string("phase5", "workshop"));
+			            "3. ".get_string("phase3", "workshop", $course->student), 
+                        "4. ".get_string("phase4", "workshop", $course->student), 
+                        "5. ".get_string("phase5", "workshop"),
+                        "6. ".get_string("phase6", "workshop"));
 		$tabs->urls = array("view.php?id=$cm->id&action=setupassignment", 
-			"view.php?id=$cm->id&action=openworkshop",
-			"view.php?id=$cm->id&action=allowpeerassessments",
+			"view.php?id=$cm->id&action=allowsubmissions",
+			"view.php?id=$cm->id&action=allowboth",
+			"view.php?id=$cm->id&action=allowassessments",
 			"view.php?id=$cm->id&action=closeworkshop",
 			"view.php?id=$cm->id&action=makefinalgradesavailable");
 		if ($workshop->phase) { // phase 1 or more
@@ -449,6 +474,7 @@
 					
 				case 2: // submissions and assessments
 				case 3:
+                case 4:
 					if ($workshop->ntassessments) { // if teacher example show student assessments link
 						echo "<p><b><a href=\"assessments.php?id=$cm->id&action=listungradedteachersubmissions\">".
 						  get_string("ungradedassessmentsofteachersubmissions", "workshop", 
@@ -468,7 +494,7 @@
                             get_string("studentsubmissionsforassessment", "workshop"), "workshop");
 					break;
 					
-				case 4: // calculate final grades
+				case 5: // calculate final grades
 					if ($workshop->ntassessments) { // if teacher example show student assessments link
 						echo "<p><b><a href=\"assessments.php?id=$cm->id&action=listungradedteachersubmissions\">".
 						  get_string("ungradedassessmentsofteachersubmissions", "workshop", 
@@ -490,7 +516,7 @@
 						  get_string("calculationoffinalgrades", "workshop")."</a>");
 					break;
 					
-				case 5: // show final grades
+				case 6: // show final grades
 					print_heading("<A HREF=\"submissions.php?id=$cm->id&action=displayfinalgrades\">".
 						  get_string("displayoffinalgrades", "workshop")."</A>");
 		}
