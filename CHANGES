@@ -1,3 +1,24 @@
+2002-10-26 Saturday 13:37  moodler
+
+	* RELEASE.html, admin/index.php, doc/contents.html,
+	doc/release.html: 
+	
+	One more thing - I' moved the RELEASE.html into the other
+	documentation to make it easier to find later on.
+
+2002-10-26 Saturday 13:32  moodler
+
+	* doc/release.html: 
+	
+	Moving ../RELEASE.html to here
+
+2002-10-26 Saturday 13:26  moodler
+
+	* CHANGES, RELEASE.html: 
+	
+	
+	TIME TO CUT THE CORD, GENTLEMEN.   THIS IS 1.0.6.
+
 2002-10-26 Saturday 13:17  moodler
 
 	* mod/quiz/lib.php: 
