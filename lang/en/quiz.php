@@ -184,5 +184,13 @@ $string['webct'] = 'WebCT format';
 $string['withsummary'] = 'with Summary Statistics';
 $string['wronggrade'] = 'Wrong grade (after line $a) : ';
 $string['yourfinalgradeis'] = 'Your final grade for this quiz is $a';
-
+$string['quiztimer'] = 'Quiz Timer';
+$string['timelimit'] = 'Time limit';
+$string['quiztimelimit'] = 'Time limit: $a';
+$string['minutes'] = 'Minutes';
+$string['noscript'] = 'JavaScript must be enabled to continue!';
+$string['timeleft'] = 'Time Remaining';
+$string['timesup'] = 'Time is up!';
+$string['timelimitexeeded'] = 'Sorry! Quiz time limit exeeded!';
+$string['confirmstartattempt'] = 'The Quiz has a time limit. Are you sure that you wish to start?';
 ?>
