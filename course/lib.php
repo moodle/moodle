@@ -524,7 +524,7 @@ function print_section_block($heading, $course, $section, $mods, $modnames, $mod
 
         if ($ismoving) {
             $strmovehere = get_string("movehere");
-            $strmovefull = get_string("movefull", "", "'$USER->activitycopyname'");
+            $strmovefull = strip_tags(get_string("movefull", "", "'$USER->activitycopyname'"));
             $stractivityclipboard = $USER->activitycopyname;
             $strcancel= get_string("cancel");
             $modicon[] = "&nbsp;<img align=bottom src=\"$CFG->pixpath/t/move.gif\" height=\"11\" width=\"11\">";
@@ -613,7 +613,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
     }
     if ($ismoving) {
         $strmovehere = get_string("movehere");
-        $strmovefull = get_string("movefull", "", "'$USER->activitycopyname'");
+        $strmovefull = strip_tags(get_string("movefull", "", "'$USER->activitycopyname'"));
     }
 
     $modinfo = unserialize($course->modinfo);
