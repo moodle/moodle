@@ -53,7 +53,7 @@ if ( $confirm ) {
     $newentry->course = $glossary->course;
     $newentry->glossaryid = $glossary->id;
 
-    $newentry->concept = trim($form->concept);
+    $newentry->concept = clean_text(trim($form->concept));
     $newentry->definition = $form->text;
     $newentry->format = $form->format;
     $newentry->usedynalink = $form->usedynalink;
@@ -184,7 +184,7 @@ if ( $confirm ) {
         }
     }
     if ( isset($form->aliases) ) {
-        if ( $aliases = explode("\n",$form->aliases) ) {
+        if ( $aliases = explode("\n",clean_text($form->aliases)) ) {
             foreach ($aliases as $alias) {
                 $alias = trim($alias);
                 if ($alias) {
