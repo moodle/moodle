@@ -231,6 +231,7 @@ $COUNTRIES = array (
 "VN" => "Vietnam",
 "VG" => "Virgin Islands (British)",
 "VI" => "Virgin Islands (U.S.)",
+"WA" => "Wales",
 "WF" => "Wallis And Futuna Islands",
 "EH" => "Western Sahara",
 "YE" => "Yemen",
