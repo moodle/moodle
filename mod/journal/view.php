@@ -113,9 +113,10 @@
             echo userdate($timefinish)."</P>";
         }
 
-        if ($entry->comment || $entry->rating) {
+        if ($entry->comment or $entry->rating) {
+            $grades = make_grades_menu($journal->assessed);
             print_heading(get_string("feedback"));
-            journal_print_feedback($course, $entry);
+            journal_print_feedback($course, $entry, $grades);
         }
 
 

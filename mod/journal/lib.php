@@ -1,10 +1,5 @@
 <?PHP // $Id$
 
-$JOURNAL_RATING = array ("3" => get_string("journalrating3", "journal"),
-                         "2" => get_string("journalrating2", "journal"),
-                         "1" => get_string("journalrating1", "journal") );
-
-
 
 // STANDARD MODULE FUNCTIONS /////////////////////////////////////////////////////////
 
@@ -170,18 +165,33 @@ function journal_print_recent_activity($course, $isteacher, $timestart) {
 
 function journal_grades($journalid) {
 /// Must return an array of grades, indexed by user, and a max grade.
-    global $JOURNAL_RATING;
 
-    if ($return->grades = get_records_menu("journal_entries", "journal", $journalid, "", "userid,rating")) {
-        foreach ($return->grades as $key => $value) {
-            if ($value) {
-                $return->grades[$key] = $JOURNAL_RATING[$value];
-            } else {
-                $return->grades[$key] = "-";
+    if (!$journal = get_record("journal", "id", $journalid)) {
+        return NULL;
+    }
+
+    $grades = get_records_menu("journal_entries", "journal", 
+                               $journal->id, "", "userid,rating");
+
+    if ($journal->assessed > 0) {
+        $return->grades = $grades;
+        $return->maxgrade = $journal->assessed;
+
+    } else if ($journal->assessed == 0) {
+        $return->grades = NULL;
+        $return->maxgrade = 0;
+
+    } else {
+        if ($scale = get_record("scale", "id", - $journal->assessed)) {
+            $scalegrades = make_menu_from_list($scale->scale);
+            foreach ($grades as $key => $grade) {
+                $grades[$key] = $scalegrades[$grade];
             }
         }
+        $return->grades = $grades;
         $return->maxgrade = "";
     }
+
     return $return;
 }
 
@@ -228,7 +238,7 @@ function journal_log_info($log) {
 
 
 
-function journal_print_user_entry($course, $user, $entry, $teachers, $ratings) {
+function journal_print_user_entry($course, $user, $entry, $teachers, $grades) {
     global $THEME, $USER;
 
     if ($entry->timemarked < $entry->modified) {
@@ -265,7 +275,7 @@ function journal_print_user_entry($course, $user, $entry, $teachers, $ratings) {
         }
         print_user_picture($entry->teacher, $course->id, $teachers[$entry->teacher]->picture);
         echo "<TD BGCOLOR=\"$colour\">".get_string("feedback").":";
-        choose_from_menu($ratings, "r$entry->id", $entry->rating, get_string("rate", "journal")."...");
+        choose_from_menu($grades, "r$entry->id", $entry->rating, get_string("nograde")."...");
         if ($entry->timemarked) {
             echo "&nbsp;&nbsp;<FONT SIZE=1>".userdate($entry->timemarked)."</FONT>";
         }
@@ -326,8 +336,8 @@ function journal_delete_instance($id) {
 }
 
 
-function journal_print_feedback($course, $entry) {
-    global $CFG, $THEME, $JOURNAL_RATING;
+function journal_print_feedback($course, $entry, $grades) {
+    global $CFG, $THEME;
 
     if (! $teacher = get_record("user", "id", $entry->teacher)) {
         error("Weird journal error");
@@ -347,11 +357,11 @@ function journal_print_feedback($course, $entry) {
     echo "\n<TR><TD WIDTH=100% BGCOLOR=\"$THEME->cellcontent\">";
 
     echo "<P ALIGN=RIGHT><FONT SIZE=-1><I>";
-    if ($JOURNAL_RATING[$entry->rating]) {
-        echo get_string("overallrating", "journal").": ";
-        echo $JOURNAL_RATING[$entry->rating];
+    if ($grades[$entry->rating]) {
+        echo get_string("grade").": ";
+        echo $grades[$entry->rating];
     } else {
-        print_string("noratinggiven", "journal");
+        print_string("nograde");
     }
     echo "</I></FONT></P>";
 

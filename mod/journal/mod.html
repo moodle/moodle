@@ -5,6 +5,9 @@
     if (!isset($form->intro)) {
         $form->intro = "";
     }
+    if (!isset($form->assessed)) {
+        $form->assessed = "0";
+    }
     if (!isset($form->days)) {
         $form->days = "14";
     }
@@ -34,6 +37,14 @@
     </TD>
     <td>
         <textarea name="intro" rows=15 cols=30 wrap="virtual"><?php p($form->intro) ?></textarea>
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><p><b><?php print_string("grade") ?>:</b></p></td>
+    <td>
+        <?php
+        print_grade_menu($course->id, "assessed", "$form->assessed");
+        ?>
     </td>
 </tr>
 <tr valign=top>

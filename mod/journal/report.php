@@ -84,25 +84,29 @@
         add_to_log($course->id, "journal", "view responses", "report.php?id=$cm->id", "$journal->id");
     }
 
+/// Print out the journal entries
 
-    $teachers = get_course_teachers($course->id);
     if (! $users = get_course_users($course->id)) {
         print_heading(get_string("nousersyet"));
 
     } else {
+
+        $grades = make_grades_menu($journal->assessed);
+        $teachers = get_course_teachers($course->id);
+
         echo "<FORM ACTION=report.php METHOD=post>\n";
 
         if ($usersdone = journal_get_users_done($journal)) {
             foreach ($usersdone as $user) {
                 $entry = $entrybyuser[$user->id];
-                journal_print_user_entry($course, $user, $entry, $teachers, $JOURNAL_RATING);
+                journal_print_user_entry($course, $user, $entry, $teachers, $grades);
             }
         }
 
         foreach ($users as $user) {
             if (empty($usersdone[$user->id])) {
                 $entry = NULL;
-                journal_print_user_entry($course, $user, $entry, $teachers, $JOURNAL_RATING);
+                journal_print_user_entry($course, $user, $entry, $teachers, $grades);
             }
         }
 

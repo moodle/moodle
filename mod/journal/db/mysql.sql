@@ -20,7 +20,7 @@ CREATE TABLE prefix_journal (
   name varchar(255) default NULL,
   intro text,
   days smallint(5) unsigned NOT NULL default '7',
-  assessed tinyint(1) NOT NULL default '1',
+  assessed int(10) NOT NULL default '0',
   timemodified int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (id)
 ) TYPE=MyISAM;
@@ -37,7 +37,7 @@ CREATE TABLE prefix_journal_entries (
   modified int(10) unsigned NOT NULL default '0',
   text text NOT NULL,
   format tinyint(2) NOT NULL default '0',
-  rating tinyint(4) default '0',
+  rating int(10) default '0',
   comment text,
   teacher int(10) unsigned NOT NULL default '0',
   timemarked int(10) unsigned NOT NULL default '0',

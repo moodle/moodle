@@ -20,7 +20,7 @@ CREATE TABLE prefix_journal (
   name varchar(255) default NULL,
   intro text,
   days integer NOT NULL default '7',
-  assessed integer NOT NULL default '1',
+  assessed integer NOT NULL default '0',
   timemodified integer NOT NULL default '0'
 );
 # --------------------------------------------------------
