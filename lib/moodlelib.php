@@ -3225,7 +3225,7 @@ function zip_files ($originalfiles, $destination) {
     return true;
 }
 
-function unzip_file ($zipfile, $destination = '') {
+function unzip_file ($zipfile, $destination = '', $showstatus = true) {
 //Unzip one zip file to a destination dir
 //Both parameters must be FULL paths
 //If destination isn't specified, it will be the
@@ -3296,7 +3296,9 @@ function unzip_file ($zipfile, $destination = '') {
     }
 
     //Display some info about the unzip execution
-    unzip_show_status($list,$destpath);
+    if ($showstatus) {
+        unzip_show_status($list,$destpath);
+    }
   
     return true;
 }
