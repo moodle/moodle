@@ -39,6 +39,7 @@ $string['hidden'] = 'hidden';
 $string['manyevents'] = '$a events';
 $string['monthlyview'] = 'Monthly View';
 $string['newevent'] = 'New Event';
+$string['noupcomingevents'] = 'There are no upcoming events';
 $string['oneevent'] = '1 event';
 $string['pref_lookahead'] = 'Upcoming events look-ahead';
 $string['pref_maxevents'] = 'Maximum upcoming events';

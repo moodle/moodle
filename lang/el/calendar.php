@@ -39,6 +39,7 @@ $string['hidden'] = 'δεν φαίνονται';
 $string['manyevents'] = '$a γεγονότα';
 $string['monthlyview'] = 'Ημερολόγιο μήνα';
 $string['newevent'] = 'Νέο γεγονός';
+$string['noupcomingevents'] = 'Δεν υπάρχουν γεγονότα στο άμεσο μέλλον';
 $string['oneevent'] = '1 γεγονός';
 $string['pref_lookahead'] = 'Μέρες στο μέλλον';
 $string['pref_maxevents'] = 'Επικείμενα γεγονότα';
