@@ -87,6 +87,7 @@ function groupWindow(selectgroup) {
         <form name="form1" id="form1" method="post" action="groups.php">
           <input type="hidden" name="id" value="<?php p($course->id) ?>" />
           <input type="hidden" name="groupid" value="<?php p($selectedgroup) ?>" />
+          <input type="hidden" name="sesskey" value="<?php p($sesskey) ?>">
           <select name="nonmembers[]" size="15" multiple="multiple">
             <?php 
                 if (!empty($nonmembers)) {
@@ -113,6 +114,7 @@ function groupWindow(selectgroup) {
       <td class="generalboxcontent"><p>
         <form name="form2" id="form2" method="post" action="groups.php">
           <input type="hidden" name="id" value="<?php p($course->id) ?>" />
+          <input type="hidden" name="sesskey" value="<?php p($sesskey) ?>">
           <select name="groups" size="15" onChange="updateMembers(this)">
             <?php 
                 if (!empty($listgroups)) {
@@ -146,6 +148,7 @@ function groupWindow(selectgroup) {
         <form name="form3" id="form3" method="post" action="groups.php">
           <input type="hidden" name="id" value="<?php p($course->id) ?>" />
           <input type="hidden" name="groupid" value="<?php p($selectedgroup) ?>" />
+          <input type="hidden" name="sesskey" value="<?php p($sesskey) ?>">
           <select name="members[]" size="15" multiple="multiple">
             <?php 
                 if (!empty($members)) {
