@@ -69,6 +69,7 @@ global $THEME;
         die;
     }
 
+
 /// If there are any errors in the standard libraries we want to know!
     error_reporting(E_ALL);
 
@@ -128,6 +129,9 @@ global $THEME;
     require_once($CFG->libdir .'/datalib.php');         // Functions for accessing databases
     require_once($CFG->libdir .'/moodlelib.php');       // Other general-purpose functions
 
+
+/// Launch any performance monitoring
+    collect_performance_info();
 
 /// Increase memory limits if possible
 

@@ -5625,5 +5625,30 @@ function bounded_number($min, $value, $max) {
     return $value;
 }
 
+
+function collect_performance_info() {
+    global $CFG;
+
+    $CFG->startpagetime = microtime();
+}
+
+function get_performance_info() {
+    global $CFG;
+
+    $info = '';
+    if (function_exists('memory_get_usage')) {
+        $info .= '<span class="memoryused">'.$_SERVER['REQUEST_URI'].' RAM: '.memory_get_usage().'</span>';
+    }
+    if (isset($CFG->startpagetime)) {
+        $info .= '<span class="timeused">'.microtime_diff($CFG->startpagetime, microtime()).' secs</span>';
+    }
+
+    if ($info) {
+        return '<div class="performanceinfo">'.$info.'</div>';
+    }
+
+    return $info;
+}
+
 // vim:autoindent:expandtab:shiftwidth=4:tabstop=4:tw=140:
 ?>

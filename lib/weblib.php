@@ -1833,15 +1833,19 @@ function print_footer($course=NULL, $usercourse=NULL) {
         $menu = '';
     }
 
+/// Provide some performance info if required
+
+    if ($CFG->debug > 7) {
+        $performanceinfo = get_performance_info();
+    } else {
+        $performanceinfo = '';
+    }
+
 
 /// Include the actual footer file
 
     include ($CFG->themedir.$CFG->theme.'/footer.html');
 
-    if (!empty($CFG->perfdebug) && function_exists('memory_get_usage')) {
-        error_log("Page $_SERVER[REQUEST_URI] completed. Memory allocated: "
-                  . memory_get_usage());
-    }
 }
 
 /**
