@@ -481,9 +481,9 @@
         return $status;
     }
 
-//This function returns a log record with all the necessay transformations
+    //This function returns a log record with all the necessay transformations
     //done. It's used by restore_log_module() to restore modules log.
-    function chat_restore_logs($restore,$log) {
+    function forum_restore_logs($restore,$log) {
                     
         $status = false;
                     
@@ -591,6 +591,63 @@
                     $status = true;
                 }
             }
+            break;
+        case "delete discussi":
+            if ($log->cmid) {
+                //Get the new_id of the module (to recode the info field)
+                $mod = backup_getid($restore->backup_unique_code,$log->module,$log->info);
+                if ($mod) {
+                    $log->url = "view.php?id=".$log->cmid;
+                    $log->info = $mod->new_id;
+                    $status = true;
+                }
+            }
+            break;
+        case "add post":
+            if ($log->cmid) {
+                //Get the new_id of the post (to recode the url and info field)
+                $pos = backup_getid($restore->backup_unique_code,"forum_posts",$log->info);
+                if ($pos) {
+                    //Get the post record from database
+                    $dbpos = get_record("forum_posts","id","$pos->new_id");
+                    if ($dbpos) {
+                        $log->url = "discuss.php?d=".$dbpos->discussion."&parent=".$pos->new_id;
+                        $log->info = $pos->new_id;
+                        $status = true;
+                    }
+                }
+            }
+            break;
+        case "update post":
+            if ($log->cmid) {
+                //Get the new_id of the post (to recode the url and info field)
+                $pos = backup_getid($restore->backup_unique_code,"forum_posts",$log->info);
+                if ($pos) {
+                    //Get the post record from database
+                    $dbpos = get_record("forum_posts","id","$pos->new_id");
+                    if ($dbpos) {
+                        $log->url = "discuss.php?d=".$dbpos->discussion."&parent=".$pos->new_id;
+                        $log->info = $pos->new_id;
+                        $status = true;
+                    }
+                }
+            }   
+            break;
+        case "delete post":
+            if ($log->cmid) {
+                //Extract the discussion id from the url field
+                $disid = substr(strrchr($log->url,"="),1);
+                //Get the new_id of the discussion (to recode the url field)
+                $dis = backup_getid($restore->backup_unique_code,"quiz_discussions",$disid);
+                if ($dis) {
+                    $log->url = "discuss.php?d=".$dis->new_id;
+                    $status = true;
+                }
+            }
+            break;
+        case "search":
+            $log->url = "search.php?id=".$log->course."&search=".urlencode($log->info);
+            $status = true;
             break;
         default:
             echo "action (".$log->module."-".$log->action.") unknow. Not restored<br>";                 //Debug
