@@ -390,6 +390,7 @@ $string['enrolmentnointernal'] = 'L\'inscription manuelle n\'est actuellement pa
 $string['enrolmentnotyet'] = 'Désolé, vous ne pouvez pas accéder à ce cours avant le<br />$a';
 $string['enrolments'] = 'Inscriptions';
 $string['enrolperiod'] = 'Durée d\'inscription';
+$string['enrollfirst'] = 'Vous devez vous inscrire à un cours avant de pouvoir utiliser les activités du site';
 $string['entercourse'] = 'Cliquer pour entrer dans le cours';
 $string['enteremailaddress'] = 'Entrez votre adresse de courriel afin qu\'un nouveau mot de passe vous soit envoyé par courriel';
 $string['entries'] = 'Article';
