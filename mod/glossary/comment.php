@@ -74,28 +74,14 @@
 /// Info boxes
 
     if ( $glossary->intro ) {
-	    print_simple_box_start("center","70%");
-        echo '<p>';
-        echo $glossary->intro;
-        echo '</p>';
-        print_simple_box_end();
+	    print_simple_box(format_text($glossary->intro), "center","70%");
+        echo "<br />";
     }
 
-    echo "<p align=center>";
-    echo "<table class=\"generalbox\" width=\"70%\" align=\"center\" border=\"0\" cellpadding=\"5\" cellspacing=\"0\">";
-    echo "<tr bgcolor=$THEME->cellheading2><td align=center>";
-        echo "<b>$entry->concept</b>";
-    echo "</td></tr>";
-    echo "<tr><TD WIDTH=100% BGCOLOR=\"#FFFFFF\">";
-    if ($entry->attachment) {
-          $entry->course = $course->id;
-          echo "<table border=0 align=right><tr><td>";
-          echo glossary_print_attachments($entry,"html");
-          echo "</td></tr></table>";
-    }
-    echo format_text($entry->definition, $entry->format);
-    echo "</td>";
-    echo "</TR></table><p align=center>";
+    glossary_print_entry($course, $cm, $glossary, $entry);
+
+    echo "<center>";
+    echo "<br />";
 
 /// Input section
     if ( $action == "delete" ) {
