@@ -1,13 +1,5 @@
 <?php
 	require("$CFG->dirroot/mod/exercise/lib.php");  // for parameter arrays
-	// set the defaults...
-    if ($usehtmleditor = can_use_richtext_editor()) {
-        $defaultformat = FORMAT_HTML;
-        $onsubmit = "onsubmit=\"copyrichtext(document.form.description);\"";
-    } else {
-        $defaultformat = FORMAT_MOODLE;
-        $onsubmit = "";
-    }
 	// ...and fill the form if needed
     if (empty($form->name)) {
         $form->name = "";
@@ -32,7 +24,7 @@
     }
 ?>
 
-<form name="form" method="post" <?php echo $onsubmit ?> action="mod.php">
+<form name="form" method="post" action="mod.php">
 <table cellpadding=5>
 <tr valign=top>
     <td align=right width=\"50%\"><P><B><?php  print_string("title", "exercise") ?>:</B></P></TD>
@@ -147,11 +139,4 @@
 <p><?PHP notify(get_string("noteonassessmentelements", "exercise")); ?>
 
 </CENTER>
-</FORM>
-
-<?php  
-   if ($usehtmleditor) { 
-       print_richedit_javascript("form", "description", "no");
-   }
-?>
 
