@@ -58,10 +58,6 @@ function forum_add_instance($forum) {
     $forum->timemodified = time();
     $forum->intro = clean_text($forum->intro);
 
-    if (! $forum->id = insert_record("forum", $forum)) {
-        return false;
-    }
-
     if (!$forum->userating) {
         $forum->assessed = 0;
     }
@@ -74,6 +70,10 @@ function forum_add_instance($forum) {
     } else {
         $forum->assesstimestart  = 0;
         $forum->assesstimefinish = 0;
+    }
+
+    if (! $forum->id = insert_record("forum", $forum)) {
+        return false;
     }
 
     if ($forum->type == "single") {  // Create related discussion.
