@@ -23,6 +23,7 @@ CREATE TABLE prefix_scorm_scoes (
   launch varchar(255) NOT NULL default '',
   type varchar(5) NOT NULL default '',
   title varchar(255) NOT NULL default '',
+  datafromlms text NOT NULL default ''
   next integer NOT NULL default '0',
   previous integer NOT NULL default '0'
 );
@@ -38,8 +39,7 @@ CREATE TABLE prefix_scorm_sco_users (
   cmi_core_total_time varchar(13) NOT NULL default '00:00:00',
   cmi_core_session_time varchar(13) NOT NULL default '00:00:00',
   cmi_core_score_raw real NOT NULL default '0',
-  cmi_suspend_data text NOT NULL default '',
-  cmi_launch_data text NOT NULL default ''
+  cmi_suspend_data text NOT NULL default ''
 );
 
 #

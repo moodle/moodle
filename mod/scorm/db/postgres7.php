@@ -14,6 +14,10 @@ function scorm_upgrade($oldversion) {
     	table_column("scorm", "", "popup", "varchar", "255", "", "", "NOT NULL", "auto");
     	table_column("scorm", "reference", "reference", "varchar", "255", "", "", "NOT NULL");
     }
+    if ($oldversion < 2004070800) {
+    	table_column("scorm_scoes", "", "datafromlms", "TEXT", "", "", "", "NOT NULL", "title");
+    	modify_database("", "ALTER TABLE `{$CFG->prefix}scorm_sco_users` DROP `cmi_launch_data`;");
+    }
     return true;
 }
 

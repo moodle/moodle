@@ -52,8 +52,11 @@
 	} else {
 	    $result = "datadir";
 	}
-	
+	$errorlogs = '';
 	if ($result != "regular") {
+	    /*foreach ($error_array as $errormsg) {
+	    	$errorlogs .= get_string($errormsg->type,"scorm",$errormsg->data) . "\n";
+	    }*/
 	    //
 	    // Delete files and temporary directory
 	    //
@@ -79,6 +82,10 @@
     	echo "<table cellpadding=\"5\" align=\"center\">\n";
     	echo "    <tr><td align=\"right\" nowrap><p><b>$strname:</b></p></td><td><p>$form->name</p></a></td></tr>\n";
     	echo "    <tr><td align=\"right\" nowrap><p><b>".get_string("validation","scorm").":</b></p></td><td><p>".get_string($result,"scorm")."</p></a></td></tr>\n";
+    	if ($errorlogs != '') {
+    	    //$lines = round(count($error_array)/4);
+    	    //echo "    <tr><td align=\"right\" nowrap><p><b>".get_string("errorlogs","scorm").":</b></p></td><td><textarea rows=\"".$lines."\" readonly>".$errorlogs."</textarea></a></td></tr>\n";
+    	}
     	if (($form->mode == "update") && ($form->launch == 0) && (get_records("scorm_sco_users","scormid",$form->instance)))
 	    echo "    <tr><td align=\"center\" colspan=\"2\" nowrap><p><b>".get_string("trackingloose","scorm")."</b></p></td></tr>\n";
     	echo "</table>\n";

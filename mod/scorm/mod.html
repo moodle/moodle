@@ -48,21 +48,10 @@
 		    echo "<br \>";
 		    helpbutton("text", get_string("helptext"), "moodle", true, true);
      		?>
-     		   <br />
      	  	</font>
 	    </td>
 	    <td>
         <?php print_textarea($usehtmleditor, 20, 50, 680, 400, "summary", $form->summary); ?>
-	    </td>
-	</tr>
-	<tr valign=top>
-	    <td align=right><p><b><?php print_string("autocontinue","scorm") ?>:</b></p></td>
-	    <td>
-	    <?php
-	    	$options[]=get_string("no");
-	    	$options[]=get_string("yes");
-	        choose_from_menu ($options, "auto", $form->auto);
-	    ?>
 	    </td>
 	</tr>
     </table>
