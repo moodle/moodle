@@ -78,13 +78,15 @@
                         switch ($exercise->phase) {
                             case 1: $phase = get_string("phase1short", "exercise");
                                     break;
-                            case 2: $phase = get_string("phase2short", "exercise")." [".
-                                        get_string("unassessed", "exercise", 
-                                        exercise_count_unassessed_student_submissions($exercise))."]";
+                            case 2: $phase = get_string("phase2short", "exercise");
+                                    if ($num = exercise_count_unassessed_student_submissions($exercise)) {
+                                        $phase .= " [".get_string("unassessed", "exercise", $num)."]";
+                                    }
                                     break;
-                            case 3: $phase = get_string("phase3short", "exercise")." [".
-                                        get_string("unassessed", "exercise", 
-                                        exercise_count_unassessed_student_submissions($exercise))."]";
+                            case 3: $phase = get_string("phase3short", "exercise");
+                                    if ($num = exercise_count_unassessed_student_submissions($exercise)) {
+                                        $phase .= " [".get_string("unassessed", "exercise", $num)."]";
+                                    }
                                     break;
                         }
 					    $table->data[] = array ($exercise->section, $link, $title, $phase, 

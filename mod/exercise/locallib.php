@@ -123,7 +123,7 @@ function exercise_compare_assessments($exercise, $assessment1, $assessment2) {
     // convert to a sensible grade (always out of 100)
     $COMP = (object)$EXERCISE_ASSESSMENT_COMPS[$exercise->assessmentcomps];
     $factor = $COMP->value;
-    $gradinggrade = (($factor - ($sumdiffs / $sumweights)) / $factor) *100;
+    $gradinggrade = (($factor - ($sumdiffs / $sumweights)) / $factor) * 100;
     if ($gradinggrade < 0) {
         $gradinggrade = 0;
     }
@@ -776,11 +776,50 @@ function exercise_list_submissions_for_admin($exercise) {
             }
         }
         if (isset($table->data)) {
-            print_heading(get_string("studentassessments", "exercise", $course->student)." [$nassessments]");
+            if ($groupid) {
+                if (!$group = get_record("groups", "id", $groupid)) {
+                    error("List unassessed student submissions: group not found");
+                }
+                print_heading("$group->name ".get_string("studentassessments", "exercise", $course->student).
+                        " [$nassessments]");
+            } else {
+                print_heading(get_string("studentassessments", "exercise", $course->student)." [$nassessments]");
+            }
             print_table($table);
             echo "<p align=\"center\">".get_string("noteonstudentassessments", "exercise");
             echo "<br />{".get_string("maximumgrade").": $exercise->grade / ".
                 get_string("maximumgrade").": $exercise->gradinggrade}</p>\n";
+            // grading grade analysis
+            unset($table);
+            $table->head = array (get_string("count", "exercise"), get_string("mean", "exercise"),
+                get_string("standarddeviation", "exercise"), get_string("maximum", "exercise"), 
+                get_string("minimum", "exercise"));
+            $table->align = array ("center", "center", "center", "center", "center");
+            $table->size = array ("*", "*", "*", "*", "*");
+            $table->cellpadding = 2;
+            $table->cellspacing = 0;
+            if ($groupid) {
+                $stats = get_record_sql("SELECT COUNT(*) as count, AVG(gradinggrade) AS mean, 
+                        STDDEV(gradinggrade) AS stddev, MIN(gradinggrade) AS min, MAX(gradinggrade) AS max 
+                        FROM {$CFG->prefix}groups_members g, {$CFG->prefix}exercise_assessments a 
+                        WHERE g.groupid = $groupid AND a.userid = g.userid AND a.timegraded > 0 
+                        AND a.exerciseid = $exercise->id");
+            } else { // no group/all participants
+                $stats = get_record_sql("SELECT COUNT(*) as count, AVG(gradinggrade) AS mean, 
+                        STDDEV(gradinggrade) AS stddev, MIN(gradinggrade) AS min, MAX(gradinggrade) AS max 
+                        FROM {$CFG->prefix}exercise_assessments a 
+                        WHERE a.timegraded > 0 AND a.exerciseid = $exercise->id");
+            }   
+            $table->data[] = array($stats->count, number_format($stats->mean * $exercise->gradinggrade / 100.0, 1), 
+                    number_format($stats->stddev * $exercise->gradinggrade / 100.0, 1), 
+                    number_format($stats->max * $exercise->gradinggrade / 100.0, 1), 
+                    number_format($stats->min * $exercise->gradinggrade / 100.0, 1));
+            print_heading(get_string("gradinggrade", "exercise")." ".get_string("analysis", "exercise"));
+            print_table($table);
+            echo "<p align=\"center\"><a href=\"assessments.php?id=$cm->id&action=regradestudentassessments\">".
+                    get_string("regradestudentassessments", "exercise")."</a> ";
+            helpbutton("regrading", get_string("regradestudentassessments", "exercise"), "exercise");
+            echo "</p>\n";
         }
     }
 
@@ -850,12 +889,48 @@ function exercise_list_submissions_for_admin($exercise) {
             }
         }
         if (isset($table->data)) {
-            print_heading(get_string("studentsubmissions", "exercise", $course->student)." [$nsubmissions]",
-                "center");
+            if ($groupid) {
+                if (!$group = get_record("groups", "id", $groupid)) {
+                    error("List unassessed student submissions: group not found");
+                }
+                print_heading("$group->name ".get_string("studentsubmissions", "exercise", $course->student).
+                        " [$nsubmissions]");
+            } else {
+                print_heading(get_string("studentsubmissions", "exercise", $course->student)." [$nsubmissions]",
+                    "center");
+            }
             print_table($table);
             echo "<p align=\"center\">[] - ".get_string("gradeforsubmission", "exercise");
             echo "<br />".get_string("maximumgrade").": $exercise->grade</p>\n";
             echo "<p align=\"center\">".get_string("resubmitnote", "exercise", $course->student)."</p>\n";
+            // grade analysis
+            unset($table);
+            $table->head = array (get_string("count", "exercise"), get_string("mean", "exercise"),
+                get_string("standarddeviation", "exercise"), get_string("maximum", "exercise"), 
+                get_string("minimum", "exercise"));
+            $table->align = array ("center", "center", "center", "center", "center");
+            $table->size = array ("*", "*", "*", "*", "*");
+            $table->cellpadding = 2;
+            $table->cellspacing = 0;
+            if ($groupid) {
+                $stats = get_record_sql("SELECT COUNT(*) as count, AVG(grade) AS mean, 
+                        STDDEV(grade) AS stddev, MIN(grade) AS min, MAX(grade) AS max 
+                        FROM {$CFG->prefix}groups_members g, {$CFG->prefix}exercise_assessments a, 
+                        {$CFG->prefix}exercise_submissions s, {$CFG->prefix}user_teachers t  
+                        WHERE g.groupid = $groupid AND s.userid = g.userid AND a.submissionid = s.id 
+                        AND a.userid = t.userid AND a.exerciseid = $exercise->id");
+            } else { // no group/all participants
+                $stats = get_record_sql("SELECT COUNT(*) as count, AVG(grade) AS mean, 
+                        STDDEV(grade) AS stddev, MIN(grade) AS min, MAX(grade) AS max 
+                        FROM {$CFG->prefix}exercise_assessments a, {$CFG->prefix}user_teachers t 
+                        WHERE a.userid = t.userid AND a.exerciseid = $exercise->id");
+            }   
+            $table->data[] = array($stats->count, number_format($stats->mean * $exercise->grade / 100.0, 1), 
+                    number_format($stats->stddev * $exercise->grade / 100.0, 1), 
+                    number_format($stats->max * $exercise->grade / 100.0, 1), 
+                    number_format($stats->min * $exercise->grade / 100.0, 1));
+            print_heading(get_string("grade")." ".get_string("analysis", "exercise"));
+            print_table($table);
         }
     }
 }
@@ -1064,6 +1139,12 @@ function exercise_list_unassessed_student_submissions($exercise, $user) {
     // get all the submissions, oldest first, youngest last
     // exercise_get_student_submissions is group aware
     $groupid = get_current_group($course->id);
+    if ($groupid) {
+        if (!$group = get_record("groups", "id", $groupid)) {
+            error("List unassessed student submissions: group not found");
+        }
+        print_heading(get_string("studentsubmissionsforassessment", "exercise", $group->name));
+    }
     if ($submissions = exercise_get_student_submissions($exercise, "time", $groupid)) {
         foreach ($submissions as $submission) {
             // only consider "cold" submissions

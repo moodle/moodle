@@ -17,6 +17,7 @@
 	listungradedstudentsubmissions (for teachers)
 	listungradedstudentassessments (for teachers)
 	listteachersubmissions
+    regradestudentassessments (for teachers)
 	teacherassessment (for teachers)
     teachertable
 	updateassessment
@@ -592,6 +593,39 @@
 		print_continue("view.php?id=$cm->id");
 	}
 
+
+	/******************* regrade student assessments ************************************/
+    elseif ($action == 'regradestudentassessments' ) {
+
+		if (!isteacher($course->id)) {
+			error("Only teachers can look at this page");
+        }
+        // get all the student assessments
+		if ($assessments = exercise_get_teacher_submission_assessments($exercise)) {
+            foreach ($assessments as $studentassessment) {
+                if ($studentassessment->timegraded > 0) {
+                    if (!$submissions = get_records_select("exercise_submissions", 
+                           "userid = $studentassessment->userid AND exerciseid = $exercise->id", "timecreated ASC")) {
+                        error("Regrade student assessments: student submission not found");
+                    }
+                    foreach ($submissions as $submission) { // only the first one is relavant
+                        if (!$teacherassessments = get_records("exercise_assessments", "submissionid", 
+                                    $submission->id, "timecreated ASC")) {
+                            error("Regrade student assessments: teacher assessment(s) not found");
+                        }
+                        foreach ($teacherassessments as $teacherassessment) { // only the first one is relavent
+                            $newgrade = exercise_compare_assessments($exercise, $studentassessment, $teacherassessment);
+                            set_field("exercise_assessments", "gradinggrade", $newgrade, "id", $studentassessment->id);
+                            break;
+                        } 
+                        break;
+                    }
+                }
+            }
+        }
+		redirect("submissions.php?id=$cm->id&action=adminlist");
+	}
+	
 
 	/****************** teacher assessment : grading of assessment and submission (from student) ************/
 	elseif ($action == 'teacherassessment') {
