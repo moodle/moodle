@@ -474,7 +474,7 @@ function forum_get_child_posts($parent) {
 }
 
 
-function forum_search_posts($search, $courseid, $page=0, $recordsperpage=50) {
+function forum_search_posts($search, $courseid, $page=0, $recordsperpage=50, $wholewords=true) {
 /// Returns a list of posts that were found
     global $CFG;
 
@@ -495,11 +495,13 @@ function forum_search_posts($search, $courseid, $page=0, $recordsperpage=50) {
              $limit = "LIMIT $recordsperpage,$page";
     }
 
-    //to allow caseinsensitive search for postgesql
-    if($CFG->dbtype == "postgres7") {
-       $LIKE = "ILIKE";
+    /// Some differences in syntax for PostgreSQL
+    if ($CFG->dbtype == "postgres7") {
+       $LIKE = "ILIKE";   // case-insensitive
+       $REGEXP = "~";
     } else {
        $LIKE = "LIKE";
+       $REGEXP = "REGEXP";
     }
 
     $messagesearch = "";
@@ -511,12 +513,17 @@ function forum_search_posts($search, $courseid, $page=0, $recordsperpage=50) {
         if ($messagesearch) {
             $messagesearch .= " AND ";
         }
-        $messagesearch .= " p.message $LIKE '%$searchterm%' ";
-
         if ($subjectsearch) {
             $subjectsearch .= " AND ";
         }
-        $subjectsearch .= " p.subject $LIKE '%$searchterm%' ";
+
+        if ($wholewords) {
+            $messagesearch .= " p.message $REGEXP '(^|[^a-zA-Z0-9])$searchterm([^a-zA-Z0-9]|$)' ";
+            $subjectsearch .= " p.subject $REGEXP '(^|[^a-zA-Z0-9])$searchterm([^a-zA-Z0-9]|$)' ";
+        } else {
+            $messagesearch .= " p.message $LIKE '%$searchterm%' ";
+            $subjectsearch .= " p.subject $LIKE '%$searchterm%' ";
+        }
     }
 
 
@@ -533,6 +540,7 @@ function forum_search_posts($search, $courseid, $page=0, $recordsperpage=50) {
                               $notteacherforum
                          ORDER BY p.modified DESC $limit");
 }
+
 
 function forum_get_ratings($postid, $sort="u.firstname ASC") {
 /// Returns a list of ratings for a particular post - sorted.
