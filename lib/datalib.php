@@ -114,7 +114,7 @@ function table_column($table, $oldfield, $field, $type="integer", $size="10",
         case "postgres7":        // From Petri Asikainen
             //Check db-version
             $dbinfo = $db->ServerInfo();
-            $dbver = substr($dbinfo[version],0,3);
+            $dbver = substr($dbinfo['version'],0,3);
             
             $field = "$field";
             //to prevent conflicts with reserved words
