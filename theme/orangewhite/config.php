@@ -14,7 +14,13 @@ $THEME->custompix = false;
 /// for all the activity modules.
 ////////////////////////////////////////////////////////////////////////////////
 
-// $THEME->standardsheets = array('styles_layout', 'styles_fonts', 'styles_color');
+$THEME->subsheets = array('styles_layout', 'styles_font', 'styles_color');
+
+/// This array specifies the names of .css files from the current 
+/// directory that you want to be loaded for this theme.
+////////////////////////////////////////////////////////////////////////////////
+
+
 $THEME->standardsheets = false;
 
 /// This variable can be set to an array containing
