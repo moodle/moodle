@@ -69,34 +69,42 @@
         if (forum_is_forcesubscribed($forum->id)) {
             $streveryoneissubscribed = get_string("everyoneissubscribed", "forum");
             $strallowchoice = get_string("allowchoice", "forum");
+            echo "<div align=right>";
+            helpbutton("subscription", $streveryoneissubscribed, "forum");
+            echo "<font size=1>";
             if (isteacher($course->id)) {
-                echo "<DIV ALIGN=RIGHT><FONT SIZE=1>";
-                echo "<A TITLE=\"$strallowchoice\" HREF=\"subscribe.php?id=$forum->id&force=no\">$streveryoneissubscribed</A>";
-                echo "</FONT></DIV>";
+                echo "<a title=\"$strallowchoice\" href=\"subscribe.php?id=$forum->id&force=no\">$streveryoneissubscribed</a>";
             } else {
-                echo "<DIV ALIGN=RIGHT><FONT SIZE=1>$streveryoneissubscribed</FONT></DIV>";
+                echo $streveryoneissubscribed;
             }
+            echo "</font></div>";
 
         } else {
             $streveryonecanchoose = get_string("everyonecanchoose", "forum");
             $strforcesubscribe = get_string("forcesubscribe", "forum");
             $strshowsubscribers = get_string("showsubscribers", "forum");
+
+            echo "<div align=right>";
+            helpbutton("subscription", $streveryonecanchoose, "forum");
+            echo "<font size=1>";
+
             if (isteacher($course->id)) {
-                echo "<DIV ALIGN=RIGHT><FONT SIZE=1>";
-                echo "<A TITLE=\"$strforcesubscribe\" HREF=\"subscribe.php?id=$forum->id&force=yes\">$streveryonecanchoose</A>";
-                echo "</FONT></DIV>";
-                $subtext = "<A HREF=\"subscribers.php?id=$forum->id\">$strshowsubscribers</A>";
-                echo "<DIV ALIGN=RIGHT><FONT SIZE=1>$subtext</FONT></DIV>";
+                echo "<a title=\"$strforcesubscribe\" href=\"subscribe.php?id=$forum->id&force=yes\">$streveryonecanchoose</a>";
+                echo "</font></div><div align=right><font size=1>";
+                echo "<a href=\"subscribers.php?id=$forum->id\">$strshowsubscribers</a>";
             } else {
-                echo "<DIV ALIGN=RIGHT><FONT SIZE=1>$streveryonecanchoose</FONT></DIV>";
+                echo $streveryonecanchoose;
             }
+            echo "</font></div>";
+
             if (forum_is_subscribed($USER->id, $forum->id)) {
                 $subtext = get_string("unsubscribe", "forum");
             } else {
                 $subtext = get_string("subscribe", "forum");
             }
-            $subtext = "<A HREF=\"subscribe.php?id=$forum->id\">$subtext</A>";
-            echo "<DIV ALIGN=RIGHT><FONT SIZE=1>$subtext</FONT></DIV>";
+            echo "<div align=right>";
+            echo "<font size=1><a href=\"subscribe.php?id=$forum->id\">$subtext</a></font>";
+            echo "</div>";
         }
     }
 
