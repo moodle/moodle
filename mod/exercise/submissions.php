@@ -182,7 +182,7 @@
 			print_heading(get_string("nostudentsyet"));
 			print_footer($course);
 			exit;
-			}
+		}
 		
 		// get the final weights from the database
 		$teacherweight = get_field("exercise","teacherweight", "id", $exercise->id);
@@ -206,11 +206,11 @@
 			if ($ownassessments = exercise_get_user_assessments($exercise, $user)) {
 				foreach ($ownassessments as $ownassessment) {
 					break; // there should only be one
-					}
 				}
+			}
 			else {
 				$ownassessment->gradinggrade = 0;
-				}
+			}
 			if ($submissions = exercise_get_user_submissions($exercise, $user)) {
 				foreach ($submissions as $submission) {
 					if ($assessments = exercise_get_assessments($submission)) {
@@ -224,16 +224,19 @@
 								/ COMMENTSCALE )) * $exercise->grade) / 
 								($EXERCISE_FWEIGHTS[$teacherweight] + $EXERCISE_FWEIGHTS[$gradingweight]), 1).
 								"</td></tr>\n";
-							}
 						}
 					}
 				}
 			}
-		echo "</table><br clear=\"all\">\n";
-		exercise_print_league_table($exercise);
-		echo "<br \>".get_string("allgradeshaveamaximumof", "exercise", $exercise->grade)."%\n";
-		print_continue("view.php?id=$cm->id");
 		}
+		echo "</table><br clear=\"all\">\n";
+		if ($exercise->showleaguetable) {
+            exercise_print_league_table($exercise);
+		    echo "<br \>\n";
+        }
+        print_string("allgradeshaveamaximumof", "exercise", $exercise->grade)."%\n";
+		print_continue("view.php?id=$cm->id");
+	}
 
 
 	/******************* list for assessment student (submissions) ************************************/
@@ -265,7 +268,31 @@
 		}
 	
 
-	/*************** save weights (by teacher) ***************************/
+	/****************** save league table entries and anonimity setting (by teacher) **************/
+	elseif ($action == 'saveleaguetable') {
+
+		$form = (object)$_POST;
+		
+		if (!isteacher($course->id)) {
+			error("Only teachers can look at this page");
+			}
+
+		// save the number of league table entries from the form...
+		if ($form->nentries == 'All') {
+            $nentries = 99;
+        } else {
+            $nentries = $form->nentries;
+        }
+		// ...and save it 
+		set_field("exercise", "showleaguetable", $nentries, "id", "$exercise->id");
+		
+		// ...and save the anonimity setting 
+		set_field("exercise", "anonymous", $form->anonymous, "id", "$exercise->id");
+	
+		redirect("submissions.php?id=$cm->id&action=adminlist", get_string("entriessaved", "exercise"));
+		}
+				
+		/*************** save weights (by teacher) ***************************/
 	elseif ($action == 'saveweights') {
 
 		$form = (object)$_POST;

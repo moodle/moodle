@@ -141,7 +141,10 @@
 			}
 		}
 		echo "</TABLE><BR CLEAR=ALL>\n";
-		exercise_print_league_table($exercise);
+		if ($exercise->showleaguetable) {
+            exercise_print_league_table($exercise);
+        }
+	    echo "<br />".get_string("allgradeshaveamaximumof", "exercise", $exercise->grade)."%<br />\n";
 	}
 
 

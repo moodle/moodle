@@ -1360,22 +1360,57 @@ function exercise_list_submissions_for_admin($exercise, $order) {
 
 	// now show the weights used in the grades
 	echo "<TABLE WIDTH=\"50%\" BORDER=\"1\">\n";
-	echo "<TR><td COLSPAN=\"2\" bgcolor=\"$THEME->cellheading2\"><CENTER><B>".
-		get_string("weightsusedforoverallgrade", "exercise")."</B></CENTER></TD></TR>\n";
+	echo "<tr><td colspan=\"2\" bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>".
+		get_string("weightsusedforoverallgrade", "exercise")."</b></td></tr>\n";
 	echo "<TR><TD ALIGN=\"right\">".get_string("weightforgradingofassessments", "exercise").":</TD>\n";
 	echo "<TD>";
 	exercise_choose_from_menu($EXERCISE_FWEIGHTS, "gradingweight", $gradingweight, "");
 	echo "</TD></TR>\n";
-	echo "<tr><td align=\"right\">".get_string("weightforteacherassessments", "exercise", $course->teacher).":</td>\n";
-	echo "<TD>";
+	echo "<tr><td align=\"right\">".get_string("weightforteacherassessments", "exercise", 
+            $course->teacher).":</td>\n";
+	echo "<td>";
 	exercise_choose_from_menu($EXERCISE_FWEIGHTS, "teacherweight", $teacherweight, "");
-	echo "</TD></TR>\n";
+	echo "</td></tr>\n";
 	echo "</TABLE>\n";
 	echo "<INPUT TYPE=submit VALUE=\"".get_string("saveweights", "exercise")."\">\n";
+	echo "</CENTER><br />";
+	echo "</FORM>\n";
+
+   	?>
+	<form name="leagueform" method="post" action="submissions.php">
+	<INPUT TYPE="hidden" NAME="id" VALUE="<?PHP echo $cm->id ?>">
+	<input type="hidden" name="action" value="saveleaguetable">
+	<CENTER>
+	<?PHP
+
+    echo "<TABLE WIDTH=\"50%\" BORDER=\"1\">\n";
+    echo "<tr><td align=\"center\" colspan=\"2\" bgcolor=\"$THEME->cellheading2\"><b>".
+        get_string("leaguetable", "exercise")."</b></td></tr>\n";
+    echo "<tr><td align=\"right\">".get_string("numberofentries", "exercise").":</td>\n";
+    echo "<TD>";
+    $numbers[22] = 'All';
+    $numbers[21] = 50;
+    for ($i=20; $i>=0; $i--) {
+        $numbers[$i] = $i;
+    }
+    $nentries = $exercise->showleaguetable;
+    if ($nentries == 99) {
+        $nentries = 'All';
+    }
+    choose_from_menu($numbers, "nentries", "$nentries", "");
+    echo "</td></tr>\n";
+    echo "<tr><td align=right><p>".get_string("hidenamesfromstudents", "exercise", 
+            $course->students)."</p></td><td>\n";
+    $options[0] = get_string("no"); $options[1] = get_string("yes");
+    choose_from_menu($options, "anonymous", $exercise->anonymous, "");
+    echo "</td></tr>\n";
+    echo "</table>\n";
+   	echo "<INPUT TYPE=submit VALUE=\"".get_string("saveentries", "exercise")."\">\n";
 	echo "</CENTER>";
 	echo "</FORM>\n";
 
-	// list any teacher submissions
+ 
+    // list any teacher submissions
 	$table->head = array (get_string("title", "exercise"), get_string("submitted", "exercise"), get_string("action", "exercise"));
 	$table->align = array ("left", "left", "left");
 	$table->size = array ("*", "*", "*");
@@ -1785,14 +1820,10 @@ function exercise_list_unassessed_student_submissions($exercise, $user) {
             			if (!$submissions = exercise_get_user_submissions($exercise, $submissionowner)) {
 			            	error("List unassessed student submissions: submission records not found");
 				        }
-                        // get the last but one submission (prevsubmission)
-            			$n = 0;
+                        // get the oldest submission, exercise_get_user_submissions returns that first
 			            foreach ($submissions as $tempsubmission) {
-            				if ($n == 1) {
-                                $prevsubmission = $tempsubmission;
-		        		    	break;
-				    	    }
-    				        $n++;
+                            $prevsubmission = $tempsubmission;
+		        		    break;
 				        }
             			// get the teacher's assessment of the student's previous submission
 		            	if ($assessments = get_records("exercise_assessments", "submissionid", 
@@ -3546,26 +3577,47 @@ function exercise_print_league_table($exercise) {
 	if (! $course = get_record("course", "id", $exercise->course)) {
 		error("Print league table: Course is misconfigured");
 	}
-	$table->head = array (get_string("title", "exercise"),  get_string("name"), get_string("grade"));
-	$table->align = array ("left", "left", "center");
-	$table->size = array ("*", "*", "*");
-	$table->cellpadding = 2;
-	$table->cellspacing = 0;
+	$nentries = $exercise->showleaguetable;
+	if ($nentries == 99) {
+		$nentries = 999999; // a large number
+		}
+
+	if ($exercise->anonymous and isstudent($course->id)) {
+        $table->head = array (get_string("title", "exercise"), get_string("grade"));
+        $table->align = array ("left", "center");
+        $table->size = array ("*", "*");
+    } else { // show names
+        $table->head = array (get_string("title", "exercise"),  get_string("name"), get_string("grade"));
+        $table->align = array ("left", "left", "center");
+        $table->size = array ("*", "*", "*");
+    }
+    $table->cellpadding = 2;
+    $table->cellspacing = 0;
 
 	if ($submissions = exercise_get_student_submissions($exercise, "grade")) {
+        $n = 1;
 		foreach ($submissions as $submission) {
 			if (empty($done[$submission->userid])) {
 				if (!$user = get_record("user", "id", $submission->userid)) {
 					error("Print league table: user not found");
 					}
-				$table->data[] = array(exercise_print_submission_title($exercise, $submission), $user->firstname." ".
-					$user->lastname, number_format($submission->grade * $exercise->grade / 100.0, 1)) ;
-				$done[$submission->userid] = 'ok';
+	            if ($exercise->anonymous and isstudent($course->id)) {
+    				$table->data[] = array(exercise_print_submission_title($exercise, $submission),
+                            number_format($submission->grade * $exercise->grade / 100.0, 1));
+                } else {
+    				$table->data[] = array(exercise_print_submission_title($exercise, $submission), 
+                            $user->firstname." ".$user->lastname, 
+                            number_format($submission->grade * $exercise->grade / 100.0, 1));
+                }
+				$n++;
+                if ($n > $nentries) {
+                    break;
+                }
+                $done[$submission->userid] = 'ok';
 				}
 			}
 		print_heading(get_string("leaguetable", "exercise"));
 		print_table($table);
-		echo "<br />".get_string("allgradeshaveamaximumof", "exercise", $exercise->grade)."%<br />\n";
 		}
 	}
 	
