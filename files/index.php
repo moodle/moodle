@@ -408,10 +408,6 @@
         case "unzip":
             html_header($course, $wdir);
             if (!empty($file)) {
-                $strname = get_string("name");
-                $strsize = get_string("size");
-                $strmodified = get_string("modified");
-                $strstatus = get_string("status");
                 $strok = get_string("ok");
                 $strunpacking = get_string("unpacking", "", $file);
 
