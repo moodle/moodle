@@ -14,6 +14,7 @@ $string['block_rss_client_num_entries'] = 'The default number of entries to show
 $string['block_rss_submitters'] = 'Who will be allowed to define new rss feeds? Defined feeds are available for any page on your site.';
 $string['block_rss_choose_feed_label'] = 'Choose the feeds which you would like to make available in this block:';
 $string['block_rss_client_show_channel_link_label'] = 'Should a link to the original site (channel link) be displayed? (Note that if no feed link is supplied in the news feed then no link will be shown) :';
+$string['block_rss_client_show_image_label'] = 'Show channel image if available :';
 $string['block_rss_client_channel_link'] = 'Source site...';
 $string['block_rss_custom_title_label'] = 'Custom title (leave blank to use title supplied by feed):';
 $string['validate_feed'] = 'Validate feed';
