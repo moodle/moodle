@@ -1,0 +1,125 @@
+<?PHP // $Id$
+      // forum.php - created with Moodle 1.0.6 (2002102600)
+// Traducido por Claudio Tavares Mastrangelo
+// enlaceacademico.com
+$string['addanewdiscussion'] = "Añadir un nuevo tema de debate";
+$string['allowchoice'] = "Permitir a todos escoger";
+$string['allowdiscussions'] = "¿Puede un \$a poner mensages en este foro?";
+$string['allowratings'] = "¿Permitir la calificación de los mensajes?";
+$string['allowsdiscussions'] = "Este foro está abierto a todos";
+$string['anyfile'] = "Cualquier archivo";
+$string['attachment'] = "Archivo adjunto";
+$string['bynameondate'] = "de \$a->name - \$a->date";
+$string['couldnotadd'] = "No se pudo añadir su mensaje debido a un error desconocido.";
+$string['couldnotdeleteratings'] = "Lo sentimos, no es posible borrar este ítem debido a que ha sido calificado.";
+$string['couldnotdeletereplies'] = "Lo sentimos, no es posible borrar este ítem debido a que tiene respuestas.";
+$string['couldnotupdate'] = "No se pudo actualizar su mensage debido a un error desconocido.";
+$string['delete'] = "Borrar ";
+$string['deleteddiscussion'] = "El tema de debate ha sido eliminado";
+$string['deletedpost'] = "El mensaje ha sido eliminado";
+$string['deletesure'] = "¿Está seguro de que desea borrar este mensaje?";
+$string['discussion'] = "Debate";
+$string['discussions'] = "Debates";
+$string['discussionsstartedby'] = "Debate comenzado por \$a";
+$string['discussthistopic'] = "Debatir este tema";
+$string['eachuserforum'] = "Cada persona plantea un debate";
+$string['edit'] = "Editar";
+$string['editing'] = "Editando";
+$string['emptymessage'] = "Algo falló en su mensaje. Quizá lo dejó en blanco o el archivo adjunto era demasiado grande. Sus cambios no se han guardado.";
+$string['everyonecanchoose'] = "Todos pueden suscribirse";
+$string['everyoneissubscribed'] = "Todos están suscritos a este foro";
+$string['forcesubscribe'] = "Inscribir a todos obligatoriamente";
+$string['forcesubscribeq'] = "¿Obligar la incripción de todos?";
+$string['forum'] = "Foro";
+$string['forumintro'] = "Introducción al Foro";
+$string['forumname'] = "Nombre del foro";
+$string['forums'] = "Foros";
+$string['forumtype'] = "Tipo de foro";
+$string['generalforum'] = "Foro para uso general";
+$string['generalforums'] = "Foro general";
+$string['inforum'] = "en \$a";
+$string['intronews'] = "Novedades y anuncios";
+$string['introsocial'] = "Un foro abierto a todos los temas que quiera";
+$string['introteacher'] = "Un foro exclusivo para profesores";
+$string['learningforums'] = "Foros de aprendizaje";
+$string['maxtimehaspassed'] = "Lo sentimos, pero el tiempo máximo para editar (\$a) ha acabado.";
+$string['message'] = "Mensaje";
+$string['modeflatnewestfirst'] = "Ordenar desde el más reciente";
+$string['modeflatoldestfirst'] = "Ordenar desde el más antiguo";
+$string['modenested'] = "Mostrar respuestas en forma anidada";
+$string['modethreaded'] = "Mostrar respuestas en forma de fila";
+$string['modulename'] = "Foro";
+$string['modulenameplural'] = "Foros";
+$string['more'] = "más";
+$string['namenews'] = "Foro de Noticias";
+$string['namesocial'] = "Foro de debate";
+$string['nameteacher'] = "Foro de profesores";
+$string['newforumposts'] = "Nuevos mensajes";
+$string['nodiscussions'] = "No hay temas de debate aún en este foro";
+$string['noguestpost'] = "Lo sentimos, los invitados no pueden poner mensages aquí";
+$string['noposts'] = "No hay mensajes";
+$string['nosubscribers'] = "Nadie se ha inscrito aún en este foro";
+$string['nownotsubscribed'] = "\$a->name no recibirá copias de '\$a->forum' por email.";
+$string['nowsubscribed'] = "\$a->name recibirá copias de '\$a->forum' por email.";
+$string['numposts'] = "\$a mensajes";
+$string['olderdiscussions'] = "Debates anteriores";
+$string['openmode0'] = "No permitir debates ni respuestas";
+$string['openmode1'] = "No permitir debates, pero sí respuestas";
+$string['openmode2'] = "Permitir debates y respuestas";
+$string['parentofthispost'] = "Anterior a este mensaje";
+$string['postadded'] = "Su mensaje se ha colocado con éxito.<P>Tiene \$a para editarlo si quiere hacer cualquier cambio.";
+$string['postingtip'] = "<B>Recomendaciones</B><BR>
+
+Cuando responda:
+
+<UL>
+
+<LI>lea el mensaje con cuidado y atención
+
+<LI>busque cosas que pueda comentar
+
+</UL>
+
+
+Cuando escriba:
+
+<UL>
+
+<LI>mantenga sus mensajes cortos y centrados sobre el tema
+
+<LI>explique sus propias ideas con claridad
+
+<LI>piense en cuestiones que pueda preguntar
+
+</UL>";
+$string['postmailinfo'] = "Esta es una copia del mensaje publicado en \$a .
+
+Para responder a este mensaje, haga clic en este enlace:";
+$string['postrating1'] = "Pertinente";
+$string['postrating2'] = "Ambos";
+$string['postrating3'] = "No pertinente";
+$string['postupdated'] = "Su mensaje se ha actualizado";
+$string['processingpost'] = "Procesando mensage \$a";
+$string['rate'] = "Calificar";
+$string['ratings'] = "Calificaciones";
+$string['re'] = "Re:";
+$string['readtherest'] = "Ver el resto del tema";
+$string['repliesmany'] = "\$a respuestas";
+$string['repliesone'] = "\$a respuesta";
+$string['reply'] = "Responder";
+$string['search'] = "Buscar";
+$string['searchforums'] = "Buscar foros";
+$string['sendinratings'] = "Enviar mis últimas calificaciones";
+$string['showsubscribers'] = "Mostrar participantes";
+$string['singleforum'] = "Un debate sencillo";
+$string['subject'] = "Asunto";
+$string['subscribe'] = "Inscribirse en este foro";
+$string['subscribed'] = "Inscrito";
+$string['subscribers'] = "Suscriptores";
+$string['subscribersto'] = "Suscriptores de '\$a'";
+$string['unsubscribe'] = "Borrarse de este foro";
+$string['youratedthis'] = "Usted calificó esto";
+$string['yournewtopic'] = "Su nuevo tema de debate";
+$string['yourreply'] = "Su respuesta";
+
+?>
