@@ -9,6 +9,10 @@ information in files called version.php.  There is
 one of these for the main tables (in this directory)
 and one for each module.
 
+In the following instructions I will include some 
+sample Unix shell commands - there are obviously
+graphical ways to do the same things. 
+
 
 Before the upgrade
 ------------------
@@ -28,25 +32,35 @@ Upgrading the files using CVS
 --------------------------------
 
   If you are using CVS, just go to the Moodle root 
-  directory and type "cvs update -d".  
+  directory and update the files:
+
+     cvs update -d
   
   If you have been editing Moodle files watch the 
   messages very closely for possible conflicts 
-  (and consider sending your changes in to me as patches!)
+  (and consider sending your fixes in to me as patches :)
 
 
 Upgrading the files using a downloaded archive
 -------------------------------------------------
 
-  Remove the current installation directory
-  and then unpack the new tar or zip file into the same 
+  Rename the current installation directory (as backup)
+
+     mv moodle moodle.backup
+
+  and then unpack the new tar or zip file into the old
   location.   (Overwriting an old installation usually 
   works fine, but I can't guarantee that it always will).
+
+     tar xvzf moodle-1.0.5.tgz 
 
   Next, copy the config.php file from your old installation
   into the new installation (or make a new one by editing 
   config-dist.php).  If you have created new themes or 
   other plug-ins then make sure you copy those back too.
+
+     cp moodle.backup/config.php moodle
+     cp -pr moodle.backup/theme/mytheme moodle/theme/mytheme
   
 
 Finishing the upgrade
