@@ -18,7 +18,8 @@
             if (isguest()) {
                 add_to_log($course->id, "course", "guest", "view.php?id=$course->id", "$REMOTE_ADDR, $REMOTE_HOST");
 
-            } else {
+            } else if (!record_exists("user_students", "userid", $USER->id, "course", $course->id)) {
+
                 if (! enrol_student($USER->id, $course->id)) {
                     error("An error occurred while trying to enrol you.");
                 }
