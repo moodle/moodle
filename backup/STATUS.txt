@@ -6,8 +6,8 @@ This documment shows the current status of the backup/restore option.
 Backup:  WORKING. COMPLETED but only assignments, resources,
                   choices and surveys.
 
-Restore: WORKING. COMPLETED but only assignments, resources 
-                  and choices.
+Restore: WORKING. COMPLETED but only assignments, resources, 
+                  choices and surveys.
                   
 
 ========== ========== ========== ========== ========== ==========
