@@ -235,9 +235,30 @@ function assignment_print_recent_activity($course, $isteacher, $timestart) {
 function assignment_grades($assignmentid) {
 /// Must return an array of grades, indexed by user, and a max grade.
 
-    $return->grades = get_records_menu("assignment_submissions", "assignment", 
-                                       $assignmentid, "", "userid,grade");
-    $return->maxgrade = get_field("assignment", "grade", "id", "$assignmentid");
+
+    if (!$assignment = get_record("assignment", "id", $assignmentid)) {
+        return NULL;
+    }
+
+    $grades = get_records_menu("assignment_submissions", "assignment", 
+                               $assignment->id, "", "userid,grade");
+
+    if ($assignment->grade >= 0) {
+        $return->grades = $grades;
+        $return->maxgrade = get_field("assignment", "grade", "id", "$assignmentid");
+
+    } else {
+        $scaleid = - ($assignment->grade);
+        if ($scale = get_record("scale", "id", $scaleid)) {
+            $scalegrades = make_menu_from_list($scale->scale);
+            foreach ($grades as $key => $grade) {
+                $grades[$key] = $scalegrades[$grade];
+            }
+        }
+        $return->grades = $grades;
+        $return->maxgrade = "";
+    }
+
     return $return;
 }
 
