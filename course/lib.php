@@ -12,7 +12,7 @@ define('COURSE_MAX_LOGS_PER_PAGE', 1000);    // records
 
 define('COURSE_LIVELOG_REFRESH', 60);        // Seconds
 
-define('COURSE_MAX_RECENT_PERIOD', 60480);   // A week, in seconds
+define('COURSE_MAX_RECENT_PERIOD', 604800);   // A week, in seconds
 
 
 
@@ -321,7 +321,7 @@ function print_recent_activity($course) {
         $timestart = time() - COURSE_MAX_RECENT_PERIOD;
     }
 
-    if (! $logs = get_records_select("log", "time > '$USER->lastlogin' AND course = '$course->id'", "time ASC")) {
+    if (! $logs = get_records_select("log", "time > '$timestart' AND course = '$course->id'", "time ASC")) {
         return;
     }
 
