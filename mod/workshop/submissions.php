@@ -168,7 +168,6 @@
 			$order = $_GET['order'];
 			}
 			
-		print_heading(get_string("listofallsubmissions", "workshop").":", "center");
 		workshop_list_submissions_for_admin($workshop, $order);
 		print_continue("view.php?id=$cm->id");
 		

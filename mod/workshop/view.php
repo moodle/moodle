@@ -1,4 +1,4 @@
-<?PHP  // $Id: view.php, v1.1 22 Aug 2003
+<?PHP  // $Id: view.php, v1.1 23 Aug 2003
 
 /*************************************************
 	ACTIONS handled are:
@@ -247,10 +247,15 @@
 			error("Only teachers can look at this page");
 			}
 
-		// move to phase 2
-		set_field("workshop", "phase", 2, "id", "$workshop->id");
-		redirect("view.php?id=$cm->id", get_string("movingtophase", "workshop", 2));
-		add_to_log($course->id, "workshop", "open", "view.php?a=$workshop->id", "$workshop->id");
+		// move to phase 2, check that teacher has made enough submissions
+		if (workshop_count_teacher_submissions($workshop) < $workshop->ntassessments) {
+			redirect("view.php?id=$cm->id", get_string("notenoughexamplessubmitted", "workshop", $course->teacher));
+			}
+		else {
+			set_field("workshop", "phase", 2, "id", "$workshop->id");
+			redirect("view.php?id=$cm->id", get_string("movingtophase", "workshop", 2));
+			add_to_log($course->id, "workshop", "open", "view.php?a=$workshop->id", "$workshop->id");
+			}
 		}
 
 
@@ -369,15 +374,18 @@
 		print_simple_box_end();
 		echo "<BR>";
 		
-		workshop_list_teacher_submissions($workshop, $USER);
-		echo "<HR SIZE=1 NOSHADE>";
-		echo "<BR>";
-		
-		workshop_list_student_submissions($workshop, $USER);
-		echo "<HR SIZE=1 NOSHADE>";
-		echo "<BR>";
-		
-		// list previous submissions
+		// only list teacher and (other) student submissions if it's a student
+		if (isstudent($course->id)) {
+			workshop_list_teacher_submissions($workshop, $USER);
+			echo "<HR SIZE=1 NOSHADE>";
+			echo "<BR>";
+			
+			workshop_list_student_submissions($workshop, $USER);
+			echo "<HR SIZE=1 NOSHADE>";
+			echo "<BR>";
+			}
+			
+		// list previous submissions from this user (could be a teacher or a student)
 		workshop_list_user_submissions($workshop, $USER);
 	
 		echo "<HR SIZE=1 NOSHADE>";

@@ -1,4 +1,4 @@
-<?PHP  // $Id: lib.php,v 1.1 22 Aug 2003
+<?PHP  // $Id: lib.php,v 1.1 23 Aug 2003
 
 include_once("$CFG->dirroot/files/mimetypes.php");
 
@@ -254,15 +254,17 @@ function workshop_cron () {
 			// it's an assessment, tell the submission owner
 			$USER->lang = $submissionowner->lang;
 			$sendto = $submissionowner;
-			$msg = "Your assignment \"$submission->title\" has been assessed.\n".
-				"The comments and grade can be seen in ".
-				"the workshop assignment '$workshop->name'\n\n";
+			// "Your assignment \"$submission->title\" has been assessed."
+			$msg = get_string("mail1", "workshop", $submission->title)."\n".
+			// "The comments and grade can be seen in the workshop assignment '$workshop->name'
+			$msg .= get_string("mail2", "workshop", $workshop->name)."\n\n";
 	
 			$postsubject = "$course->shortname: $strworkshops: $workshop->name";
 			$posttext  = "$course->shortname -> $strworkshops -> $workshop->name\n";
 			$posttext .= "---------------------------------------------------------------------\n";
 			$posttext .= $msg;
-			$posttext .= "You can see it in your workshop assignment:\n";
+			// "You can see it in your workshop assignment
+			$posttext .= get_string("mail3", "workshop").":\n";
 			$posttext .= "   $CFG->wwwroot/mod/workshop/view.php?a=$workshop->id\n";
 			$posttext .= "---------------------------------------------------------------------\n";
 			if ($sendto->mailformat == 1) {  // HTML
@@ -1583,7 +1585,31 @@ function workshop_list_submissions_for_admin($workshop, $order) {
     if (! $course = get_record("course", "id", $workshop->course)) {
         error("Course is misconfigured");
         }
-	
+    if (! $cm = get_coursemodule_from_instance("workshop", $workshop->id, $course->id)) {
+        error("Course Module ID was incorrect");
+    }
+
+	// print standard assignment "header"
+	$strdifference = format_time($workshop->deadline - time());
+	if (($workshop->deadline - time()) < 0) {
+		$strdifference = "<FONT COLOR=RED>$strdifference</FONT>";
+	}
+	$strduedate = userdate($workshop->deadline)." ($strdifference)";
+	print_simple_box_start("CENTER");
+	print_heading($workshop->name, "CENTER");
+	print_simple_box_start("CENTER");
+	echo "<B>".get_string("duedate", "assignment")."</B>: $strduedate<BR>";
+	echo "<B>".get_string("maximumgrade")."</B>: $workshop->grade<BR>";
+	echo "<B>".get_string("detailsofassessment", "workshop")."</B>: 
+		<A HREF=\"assessments.php?id=$cm->id&action=displaygradingform\">".
+		get_string("specimenassessmentform", "workshop")."</A><BR>";
+	print_simple_box_end();
+	echo "<BR>";
+	echo format_text($workshop->description, $workshop->format);
+	print_simple_box_end();
+	echo "<BR>";
+
+	// list any teacher submissions
 	$table->head = array (get_string("title", "workshop"), get_string("submittedby", "workshop"), get_string("action", "workshop"));
 	$table->align = array ("left", "left", "left");
 	$table->size = array ("*", "*", "*");
@@ -1619,6 +1645,7 @@ function workshop_list_submissions_for_admin($workshop, $order) {
 					get_string("delete", "workshop")."</a>";
 			$table->data[] = array(workshop_print_submission_title($workshop, $submission), $course->teacher, $action);
 			}
+		print_heading(get_string("studentsubmissions", "workshop", $course->teacher), "center");
 		print_table($table);
 		}
 
@@ -1663,11 +1690,12 @@ function workshop_list_submissions_for_admin($workshop, $order) {
 				$table->data[] = array("$user->firstname $user->lastname", $title, $action);
 				}
 			}
-		print_table($table);
+		if (isset($table->data)) {
+			print_table($table);
+			}
 		}
 
 	// now the sudent submissions
-	echo "<CENTER><P><B>".get_string("studentsubmissions", "workshop", $course->student)."</B></CENTER><BR>\n";
 	unset($table);
 	switch ($order) {
 		case "title" :
@@ -1719,6 +1747,7 @@ function workshop_list_submissions_for_admin($workshop, $order) {
 				" ".workshop_print_submission_assessments($workshop, $submission, "teacher").
 				" ".workshop_print_submission_assessments($workshop, $submission, "student"), $action);
 			}
+		print_heading(get_string("studentsubmissions", "workshop", $course->student), "center");
 		print_table($table);
 		}
 	}
