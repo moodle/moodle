@@ -147,6 +147,10 @@
                     $quizlist[$grade->quiz] = $grade->quiz;
                 }
             }
+            
+            if (isset($form->makecopy)) { // explicitly requested copies should be unhidden
+                $question->hidden = 0;
+            }
 
             // Logic to determine whether old version should be overwritten
             $makecopy     = isset($form->makecopy) || (!$form->id); unset($form->makecopy);

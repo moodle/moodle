@@ -10,6 +10,9 @@
     $page     = optional_param('page', 0);
     $perpage  = optional_param('perpage', 20);
 
+    $strquizzes = get_string('modulenameplural', 'quiz');
+    $strediting = get_string('editquestions', "quiz");
+
     if ($modform = data_submitted() and !empty($modform->course)) { // data submitted
 
         $SESSION->modform = $modform;    // Save the form in the current session
@@ -165,7 +168,25 @@
         quiz_questiongrades_update($modform->grades, $modform->instance);
     }
 
-    if (isset($_REQUEST['delete']) and confirm_sesskey()) { /// Delete a question from the list
+    if (isset($_REQUEST['move']) and confirm_sesskey()) { /// Move selected questions to new category
+        if (!$tocategory = get_record('quiz_categories', 'id', $_REQUEST['category'])) {
+            error('Invalid category');
+        }
+        if (!isteacheredit($category->course)) {
+            error(get_string('categorynoedit', 'quiz', $tocategory->name), edit.php);
+        }
+        $rawquestions = $_POST;
+        foreach ($rawquestions as $key => $value) {    // Parse input for question ids
+            if (substr($key, 0, 1) == "q") {
+                $key = substr($key,1);
+                if (!set_field('quiz_questions', 'category', $tocategory->id, 'id', $key)) {
+                    error('Could not update category field');
+                }
+            }
+        }
+    }
+
+    if (isset($_REQUEST['delete']) and confirm_sesskey()) { /// Remove a question from the quiz
         $questions = explode(",", $modform->questions);
         foreach ($questions as $key => $question) {
             if ($question == $delete) {
@@ -180,6 +201,70 @@
         $modform->questions = implode(",", $questions);
         if (!set_field('quiz', 'questions', $modform->questions, 'id', $modform->instance)) {
             error('Could not save question list');
+        }
+    }
+
+    if (isset($_REQUEST['deleteselected'])) { // delete selected questions from the category
+
+        if (isset($confirm) and confirm_sesskey()) { // teacher has already confirmed the action
+            if ($confirm == md5($deleteselected)) {
+                if ($questionlist = explode(',', $deleteselected)) {
+                    // for each question either hide it if it is in use or delete it
+                    foreach ($questionlist as $questionid) {
+                        if (record_exists('quiz_responses', 'question', $questionid) or 
+                            record_exists('quiz_responses', 'originalquestion', $questionid) or
+                            record_exists('quiz_question_grades', 'question', $questionid)) {
+                            if (!set_field('quiz_questions', 'hidden', 1, 'id', $questionid)) {
+                                error('Was not able to hide question');
+                            }
+                        } else {
+                            if (!delete_records("quiz_questions", "id", $questionid)) {
+                                error("An error occurred trying to delete question (id $questionid)");
+                            }
+                        }
+                    }
+                }
+                redirect("edit.php");
+            } else {
+                error("Confirmation string was incorrect");
+            }
+            
+        } else { // teacher still has to confirm
+            // make a list of all the questions that are selected
+            $rawquestions = $_POST;
+            $questionlist = '';  // comma separated list of ids of questions to be deleted
+            $questionnames = ''; // string with names of questions separated by <br /> with
+                                 // an asterix in front of those that are in use
+            $inuse = false;      // set to true if at least one of the questions is in use
+            foreach ($rawquestions as $key => $value) {    // Parse input for question ids
+                if (substr($key, 0, 1) == "q") {
+                    $key = substr($key,1);
+                    $questionlist .= $key.',';
+                    if (record_exists('quiz_responses', 'question', $key) or 
+                            record_exists('quiz_responses', 'originalquestion', $key) or
+                            record_exists('quiz_question_grades', 'question', $key)) {
+                        $questionnames .= '* ';
+                        $inuse = true;
+                    }
+                    $questionnames .= get_field('quiz_questions', 'name', 'id', $key).'<br />';
+                }
+            }
+            if (!$questionlist) { // no questions were selected
+                redirect('edit.php');
+            }
+            $questionlist = rtrim($questionlist, ',');
+
+            // Add an explanation about questions in use
+            if ($inuse) { 
+                $questionnames .= get_string('questionsinuse', 'quiz');
+            }
+            print_header_simple($strediting, '',
+                 "<a href=\"index.php?id=$course->id\">$strquizzes</a>".
+                 " -> $strediting");
+            notice_yesno(get_string("deletequestionscheck", "quiz", $questionnames), 
+                        "edit.php?sesskey=$USER->sesskey&amp;deleteselected=$questionlist&amp;confirm=".md5($questionlist), "edit.php");
+            print_footer($course);
+            exit;
         }
     }
 
@@ -221,9 +306,6 @@
     }
 
     $SESSION->modform = $modform;
-
-    $strquizzes = get_string('modulenameplural', 'quiz');
-    $strediting = get_string('editquestions', "quiz");
 
     // Print basic page layout.
 
@@ -293,7 +375,7 @@
     print_spacer(5,1);
     // continues with list of questions
     print_simple_box_start("center", "100%");
-    quiz_print_cat_question_list($modform->category,
+    quiz_print_cat_question_list($course, $modform->category,
                                  isset($modform->instance), $modform->recurse, $page, $perpage, $modform->showhidden);
     print_simple_box_end();
     if (!isset($modform->instance)) {

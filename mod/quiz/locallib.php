@@ -1321,7 +1321,7 @@ function quiz_print_question_list($questionlist, $grades, $allowdelete=true) {
 }
 
 
-function quiz_print_cat_question_list($categoryid, $quizselected=true, $recurse=1, $page, $perpage, $showhidden=false) {
+function quiz_print_cat_question_list($course, $categoryid, $quizselected=true, $recurse=1, $page, $perpage, $showhidden=false) {
 // Prints the table of questions in a category with interactions
 
     global $QUIZ_QUESTION_TYPE, $USER;
@@ -1334,9 +1334,11 @@ function quiz_print_cat_question_list($categoryid, $quizselected=true, $recurse=
     $strnoquestions = get_string("noquestions", "quiz");
     $strselect = get_string("select", "quiz");
     $strselectall = get_string("selectall", "quiz");
+    $strselectnone = get_string("selectnone", "quiz");
     $strcreatenewquestion = get_string("createnewquestion", "quiz");
     $strquestionname = get_string("questionname", "quiz");
     $strdelete = get_string("delete");
+    $strdeleteselected = get_string("deleteselected", 'quiz');
     $stredit = get_string("edit");
     $straction = get_string("action");
     $strrestore = get_string('restore');
@@ -1416,7 +1418,7 @@ function quiz_print_cat_question_list($categoryid, $quizselected=true, $recurse=
     echo "<table border=\"0\" cellpadding=\"5\" cellspacing=\"2\" width=\"100%\">";
     echo "<tr>";
     if ($canedit) {
-        echo "<th width=\"100\" nowrap=\"nowrap\">$straction</th>";
+        echo "<th width=\"95\" nowrap=\"nowrap\">$straction</th>";
     }
     echo "<th width=\"100%\" align=\"left\" nowrap=\"nowrap\">$strquestionname</th><th width=\"*\" nowrap=\"nowrap\">$strtype</th>";
     echo "</tr>\n";
@@ -1443,9 +1445,7 @@ function quiz_print_cat_question_list($categoryid, $quizselected=true, $recurse=
                     echo "<a title=\"$strdelete\" href=\"question.php?id=$question->id&amp;delete=$question->id\"><img
                          src=\"../../pix/t/delete.gif\" border=\"0\" alt=\"$strdelete\" /></a>";
                 }
-                if ($quizselected) {
-                    echo "&nbsp;<input title=\"$strselect\" type=\"checkbox\" name=\"q$question->id\" value=\"1\" />";
-                }
+                echo "&nbsp;<input title=\"$strselect\" type=\"checkbox\" name=\"q$question->id\" value=\"1\" />";
             echo "</td>\n";
         }
         if ($question->hidden) {
@@ -1458,22 +1458,29 @@ function quiz_print_cat_question_list($categoryid, $quizselected=true, $recurse=
         echo "</td>\n";
         echo "</tr>\n";
     }
+    echo "</table>\n";
+    
+    echo "<input type=\"button\" onclick=\"checkall()\" value=\"$strselectall\" />\n";
+    echo "<input type=\"button\" onclick=\"checknone()\" value=\"$strselectnone\" />\n";
+    echo "&nbsp;<input type=\"submit\" name=\"deleteselected\" value=\"$strdeleteselected\" />\n";
+    echo "<br />";
+    
+    echo '<table><tr><td>';
+    if ($quizselected) {
+        echo "<input type=\"submit\" name=\"add\" value=\"<< $straddselectedtoquiz\" />\n";
+        echo '</td><td>';
+    }
+    echo '<input type="submit" name="move" value="'.get_string('moveto', 'quiz')."\" />\n";
+    quiz_category_select_menu($course->id, false, true, $category->id);
+    echo "</td></tr></table>";
+
     $numquestions = count_records_select('quiz_questions', "category IN ($categorylist) AND qtype != '".RANDOM."'");
     echo '<tr><td colspan="3">';
     print_paging_bar($numquestions, $page, $perpage,
                 "edit.php?perpage=$perpage&amp;");
-    echo '</td></tr>';
 
-    if ($quizselected) {
-        echo "<tr>\n<td colspan=\"3\">";
-        echo "<input type=\"submit\" name=\"add\" value=\"<< $straddselectedtoquiz\" />\n";
-        // echo "<input type=\"submit\" name=\"delete\" value=\"XX Delete selected\">";
-        echo "<input type=\"button\" onclick=\"checkall()\" value=\"$strselectall\" />\n";
-        echo "</td></tr>";
-    }
-    echo "</table>\n";
     echo "</form>\n";
-    if ($quizselected and isteacheredit($category->course)) {
+    if ($quizselected) {
         for ($i=1;$i<=10; $i++) {
             $randomcount[$i] = $i;
         }
