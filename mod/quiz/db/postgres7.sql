@@ -33,7 +33,9 @@ CREATE TABLE prefix_quiz (
   grade integer NOT NULL default '0',
   timecreated integer NOT NULL default '0',
   timemodified integer NOT NULL default '0',
-  timelimit integer NOT NULL default '0'
+  timelimit integer NOT NULL default '0',
+  password varchar(255) NOT NULL default '',
+  subnet varchar(255) NOT NULL default ''
 );
 # --------------------------------------------------------
 

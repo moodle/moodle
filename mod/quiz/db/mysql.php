@@ -199,6 +199,11 @@ function quiz_upgrade($oldversion) {
         execute_sql(" ALTER TABLE {$CFG->prefix}quiz ADD timelimit INT(2) UNSIGNED DEFAULT '0' NOT NULL ");
     }
 
+    if ($oldversion < 2004070700) {
+        table_column("quiz", "", "password", "varchar", "255", "", "", "not null", "");
+        table_column("quiz", "", "subnet", "varchar", "255", "", "", "not null", "");
+    }
+    
     return true;
 }
 
