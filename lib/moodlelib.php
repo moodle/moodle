@@ -458,7 +458,11 @@ function get_moodle_cookie() {
 
     $cookiename = "MOODLEID{$CFG->prefix}"; 
 
-    return rc4decrypt($_COOKIE[$cookiename]);
+    if (empty($_COOKIE[$cookiename])) {
+        return "";
+    } else {
+        return rc4decrypt($_COOKIE[$cookiename]);
+    }
 }
 
 
@@ -1192,6 +1196,10 @@ function moodle_needs_upgrading() {
             foreach ($mods as $mod) {
                 $fullmod = "$CFG->dirroot/mod/$mod";
                 unset($module);
+                if (!is_readable("$fullmod/version.php")) {
+                    notify("Module '$mod' is not readable - check permissions");
+                    continue;
+                }
                 include_once("$fullmod/version.php");  # defines $module with version etc
                 if ($currmodule = get_record("modules", "name", $mod)) {
                     if ($module->version > $currmodule->version) {

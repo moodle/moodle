@@ -155,8 +155,20 @@
 
         unset($module);
 
-        include_once("$fullmod/version.php");  # defines $module with version etc
-        include_once("$fullmod/db/$CFG->dbtype.php");  # defines upgrading function
+        if ( is_readable("$fullmod/version.php")) {
+            include_once("$fullmod/version.php");  # defines $module with version etc
+        } else {
+            notify("Module $mod: $fullmod/version.php was not readable");
+            continue;
+        }
+
+        if ( is_readable("$fullmod/db/$CFG->dbtype.php")) {
+            include_once("$fullmod/db/$CFG->dbtype.php");  # defines upgrading function
+        } else {
+            notify("Module $mod: $fullmod/db/$CFG->dbtype.php was not readable");
+            continue;
+        }
+
 
         if (!isset($module)) {
             continue;
