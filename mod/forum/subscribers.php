@@ -38,11 +38,17 @@
 
     print_header("$course->shortname: $strsubscribers", "$course->fullname", "$navigation");
 
-    if (! $users = get_course_users($course->id)) {
-        print_heading("No users yet");
+    if ($course->category) {
+        $users = get_course_users($course->id);
+    } else {
+        $users = get_records_sql("SELECT * from user");
+    }
+
+    if (! $users) {
+        print_heading(get_string("nousersyet"));
 
     } else {
-        print_heading("Subscribers to '$forum->name'");
+        print_heading(get_string("subscribersto","forum", "'$forum->name'"));
         echo "<TABLE ALIGN=CENTER>";
         $count = 0;
         foreach ($users as $user) {
@@ -56,7 +62,7 @@
             }
         }
         if (!$count) {
-            echo "<TR><TD>No subscribers yet</TD></TR>";
+            echo "<TR><TD>".get_string("nosubscribers", "forum")."</TD></TR>";
         }
         echo "</TABLE>";
     }

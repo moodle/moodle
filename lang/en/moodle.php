@@ -235,6 +235,7 @@ $string[nosuchemail] = "No such email address";
 $string[noteachersyet] = "No teachers in this course yet";
 $string[notenrolled] = "\$a is not enrolled in this course.";
 $string[nothingnew] = "Nothing new since your last login";
+$string[nousersyet] = "There are no users yet";
 $string[now] = "now";
 $string[numberweeks] = "Number of weeks/topics";
 $string[numdays] = "\$a days";
