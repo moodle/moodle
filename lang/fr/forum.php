@@ -41,6 +41,7 @@ $string['discussionsstartedbyrecent'] = 'Discussions récentes commencées par $a'
 $string['discussthistopic'] = 'Discuter sur ce sujet';
 $string['eachuserforum'] = 'Chaque personne commence une discussion';
 $string['edit'] = 'Modifier';
+$string['editedby'] = 'Modifié par $a->name -  $a->date';
 $string['editing'] = 'Modification';
 $string['emptymessage'] = 'Il y a eu un problème avec votre message. Peut-être est-il vide ou alors la taille de l\'annexe est trop grande. Vos modifications n\'ont pas été enregistrées.';
 $string['everyonecanchoose'] = 'Tout le monde peut s\'abonner';
