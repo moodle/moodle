@@ -174,18 +174,16 @@
             }
         }
 
-        if($timelimit > 0) {
-            if(($timelimit + 60) <= $timesincestart) {
-                $quiz->timesincestart = $timesincestart;
-            }
-        }
-
         /// Retrieve ->maxgrade for all questions
         If (!($grades = quiz_get_question_grades($quiz->id, $quiz->questions))) {
             $grades = array();
         }
         foreach ($grades as $qid => $grade) {
             $questions[$qid]->maxgrade = $grade->grade;
+        }
+
+        if (isset($timesincestart)) {
+            $quiz->timesincestart = $timesincestart;   // To pass it on to quiz_grade_responses
         }
 
         if (!$result = quiz_grade_responses($quiz, $questions, $unattempt->id)) {
