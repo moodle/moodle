@@ -82,7 +82,7 @@
 
 /// We are in editing mode.  First, process any inputs there may be.
 
-    if ($data = data_submitted()) {
+    if ($data = data_submitted() and confirm_sesskey()) {
 
         if (!empty($data->nonmembersadd)) {            /// Add people to a group
             if (!empty($data->nonmembers) and !empty($data->groupid)) {
@@ -218,6 +218,8 @@
     } else {
         $members = $listmembers[$selectedgroup];
     }
+
+    $sesskey = !empty($USER->id) ? $USER->sesskey : '';
 
 /// Print out the complete form
 
