@@ -538,7 +538,7 @@ body.calendar #calendar table.calendarmonth {
 }
 
 TABLE.minicalendar {
-	width:100%;
+	  width:100%;
     margin:0px;
     padding:0px;
     border-width:1px;
@@ -546,7 +546,7 @@ TABLE.minicalendar {
 }
 
 TABLE.calendarmonth {
-	width:100%;
+	  width:100%;
     margin:0px;
     padding:0px;
     border-width:1px;
@@ -735,7 +735,7 @@ table.calendar-controls .next
     float:right;
 }
 
-.sideblock .heading  .hide-show img.hide-show-image {
+.sideblock .heading .hide-show img.hide-show-image {
     height:11px;
     width:11px;
     padding-top:0.35em;
@@ -749,12 +749,17 @@ table.calendar-controls .next
     background:url('../../pix/t/switch_plus.gif') no-repeat bottom;
 }
 
+.sideblock .heading .title {
+    float:left;
+    width:auto;
+}
+
 .sideblock.hidden .content {
     display:none;
 }
 
 .sideblock .heading .commands {
-    float: right;
+    float:right;
     padding-left:0.2em;
 }
 
@@ -768,7 +773,7 @@ table.calendar-controls .next
 }
 
 .sideblock .list {
-    width: 100%;
+    width:100%;
 }
 
 .sideblockmain HR {
@@ -800,20 +805,19 @@ table.calendar-controls .next
     margin:1em 0em 0.5em;
 }
 
-
 /* glossary random */
-#block_glossary_random .sideblockheading,
-#block_glossary_random .sideblockmain br,
-#block_glossary_random .sideblockmain b {
+.block_glossary_random .sideblockheading,
+.block_glossary_random .sideblockmain br,
+.block_glossary_random .sideblockmain b {
     display:none;
 }
 
-#block_glossary_random .sideblockmain {
+.block_glossary_random .sideblockmain {
     text-align:center;
 }
 
 
 /* course summary */
-#block_course_summary .sideblockmain {
+.block_course_summary .sideblockmain {
     padding:10px;
 }
