@@ -256,7 +256,6 @@ function require_login($courseid=0) {
     global $CFG, $SESSION, $USER, $FULLME, $HTTP_REFERER, $PHPSESSID;
       
     // First check that the user is logged in to the site.
-
     if (! (isset($USER->loggedin) and $USER->confirmed and ($USER->site == $CFG->wwwroot)) ) { // They're not
         $SESSION->wantsurl = $FULLME;
         $SESSION->fromurl  = $HTTP_REFERER;
@@ -268,6 +267,13 @@ function require_login($courseid=0) {
         } else {
             redirect("$CFG->wwwroot/login/index.php");
         }
+        die;
+    }
+
+    // Check that the user account is properly set up
+    if (user_not_fully_set_up($USER)) {
+        $site = get_site();
+        redirect("$CFG->wwwroot/user/edit.php?id=$USER->id&course=$site->id");
         die;
     }
     
@@ -327,6 +333,9 @@ function update_user_login_times() {
     return update_record("user", $user);
 }
 
+function user_not_fully_set_up($user) {
+    return (empty($user->firstname) or empty($user->lastname) or empty($user->email));
+}
 
 function update_login_count() {
 /// Keeps track of login attempts
