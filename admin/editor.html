@@ -2,7 +2,7 @@
 <input type="hidden" name="sesskey" value="<?php echo $USER->sesskey ?>" />
 <table border="0" cellpadding="4" cellspacing="2">
 <tr>
-    <td align="right" valign="top"><p>htmleditor:</p></td>
+    <td align="right" valign="top">htmleditor:</td>
     <td>
     <?php
        unset($options);
@@ -16,22 +16,22 @@
     </td>
 </tr>
 <tr>
-    <td align="right" valign="top"><p>editorbackgroundcolor:</p></td>
+    <td align="right" valign="top">editorbackgroundcolor:</td>
     <td valign="top"><input type="text" name="backgroundcolor" size="10" value="<?php print($CFG->editorbackgroundcolor);?>" /></td>
     <td valign="top"><?php print_string("edhelpbgcolor");?></td>
 </tr>
 <tr>
-    <td align="right" valign="top"><p>editorfontfamily:</p></td>
+    <td align="right" valign="top">editorfontfamily:</td>
     <td valign="top"><input type="text" name="fontfamily" size="30" value="<?php print($CFG->editorfontfamily);?>" /></td>
     <td valign="top"><?php print_string("edhelpfontfamily");?></td>
 </tr>
 <tr>
-    <td align="right" valign="top"><p>editorfontsize:</p></td>
+    <td align="right" valign="top">editorfontsize:</td>
     <td valign="top"><input type="text" name="fontsize" size="10" value="<?php print($CFG->editorfontsize);?>" /></td>
     <td valign="top"><?php print_string("edhelpfontsize");?></td>
 </tr>
 <tr>
-    <td align="right" valign="top"><p>editorkillword:</p></td>
+    <td align="right" valign="top">editorkillword:</td>
     <td valign="top"><select name="killword">
     <option value="1"<?php print(!$CFG->editorkillword)?"":" selected=\"selected\"";?>><?php print_string("yes");?></option>
     <option value="0"<?php print(!$CFG->editorkillword)?" selected=\"selected\"":"";?>><?php print_string("no");?></option>
@@ -39,7 +39,7 @@
     <td valign="top"><?php print_string("edhelpcleanword");?></td>
 </tr>
 <tr>
-    <td align="right" valign="top"><p>editorspelling:</p></td>
+    <td align="right" valign="top">editorspelling:</td>
     <td valign="top"><select name="spelling"<?php
     if (empty($CFG->aspellpath)) {
         echo " disabled=\"disabled\"";
@@ -58,7 +58,7 @@
         ?>
 <tr>
     <td>&nbsp;</td>
-    <td colspan="2"><input type="text" name="fontname[]" size="15" value="<?php print($fontkey);?>" />
+    <td colspan="2"><input type="text" name="fontname[]" size="15" value="<?php print($fontkey);?>">
     <input type="text" name="fontnamevalue[]" size="30" value="<?php print($fontvalue);?>" /></td>
 </tr>
     <?php
@@ -71,7 +71,7 @@
     <input type="text" name="fontnamevalue[]" size="30" value="" /></td>
 </tr>
 <tr>
-    <td valign="top" align="right"><p>editorhidebuttons:</p></td>
+    <td valign="top" align="right">editorhidebuttons:</td>
     <td colspan="2">
     <?php
     $buttons = explode(chr(32), $CFG->editorhidebuttons);
@@ -176,4 +176,3 @@
 <input type="submit" name="resettodefaults" value="<?php print_string('editorresettodefaults') ?>" />
 </center>
 </form>
-
