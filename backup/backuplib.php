@@ -891,7 +891,7 @@
                         fwrite ($bf,full_tag("USERID",4,false,$log->userid));
                         fwrite ($bf,full_tag("IP",4,false,$log->ip));
                         fwrite ($bf,full_tag("MODULE",4,false,$log->module));
-                        fwrite ($bf,full_tag("CMID",4,false,$log->module));
+                        fwrite ($bf,full_tag("CMID",4,false,$log->cmid));
                         fwrite ($bf,full_tag("ACTION",4,false,$log->action));
                         fwrite ($bf,full_tag("URL",4,false,$log->url));
                         fwrite ($bf,full_tag("INFO",4,false,$log->info));
