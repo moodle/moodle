@@ -444,7 +444,7 @@ class configvarrss extends configvar {
 
 /// smtppass
     $mail['smtppass'] = new configvar ('',
-        '<input name="smtppass" type="text" size="10" value="'.s($config->smtppass).'" alt="smtppass" />' );
+        '<input name="smtppass" type="password" size="10" value="'.s($config->smtppass).'" alt="smtppass" />' );
 
 /// noreplyaddress
     $mail['noreplyaddress'] = new configvar (get_string('confignoreplyaddress', 'admin'),
