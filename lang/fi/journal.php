@@ -23,7 +23,7 @@ $string['notstarted'] = "Et ole aloittanut tätä tehtävää vielä";
 $string['overallrating'] = "Yleinen arviointi";
 $string['rate'] = "Arviointi";
 $string['saveallfeedback'] = "Tallenna kaikki palautteeni";
-$string['startoredit'] = "Aloita tai muokkaa vastustustani";
+$string['startoredit'] = "Aloita tai muokkaa vastaustani";
 $string['viewallentries'] = "Katso kaikki vastaukset";
 
 ?>
