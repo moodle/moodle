@@ -72,10 +72,8 @@
 
      if ($firstcolumn) {
          echo "</TD>";
-         echo "<TD WIDTH=70% VALIGN=TOP>";
-     } else {
-         echo "<TD WIDTH=100% VALIGN=TOP>";
      }
+     echo "<TD WIDTH=70% VALIGN=TOP>";
 
      if ($site->newsitems == 0 ) {
          print_simple_box(get_string("availablecourses"), "CENTER", "100%", "$THEME->cellheading");
