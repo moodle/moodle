@@ -418,15 +418,22 @@ function iscreator ($userid=0) {
     return record_exists("user_coursecreators", "userid", $userid);
 }
 
-function ismainteacher ($course, $userid){
-///is user the main teacher of course
-global $USER;
+function ismainteacher ($courseid, $userid=0){
+/// Is user the main teacher of course
+    global $USER;
 
     if (isadmin($userid)) {  // admins can do anything the teacher can
         return true;
     }
+
+	if (empty($userid)) {
+        if (empty($USER->id)) {
+            return false;
+        }
+        $userid = $USER->id;
+    }
     
-    return record_exists("user_teachers", "userid", $userid, "course", $course, "authority","1");
+    return record_exists("user_teachers", "userid", $userid, "course", $courseid, "authority", "1");
 }
 
 function isstudent($courseid, $userid=0) {
@@ -564,24 +571,25 @@ function authenticate_user_login($username, $password) {
 
     if (auth_user_login($username, $password)) {  // Successful authentication
         if ($user = get_user_info_from_db("username", $username)) {
-          if (function_exists('auth_iscreator')) {
-             if (auth_iscreator($username)) {
-                 if (! record_exists("user_coursecreators", "userid", $user->id)) {
-                     $cdata['userid']=$user->id;
-                     $creator = insert_record("user_coursecreators",$cdata);
-                     if (! $creator) {
-                         error("Cannot add user to course creators.");
-                     }
-                 }
-             } else {
-                 if ( record_exists("user_coursecreators", "userid", $user->id)) {
-                    $creator = delete_record("user_coursecreators", "userid", $user->id);
-                    if (! $creator) {
-                         error("Cannot remove user from course creators.");
+
+            if (function_exists('auth_iscreator')) {    // Check if the user is a creator
+                if (auth_iscreator($username)) {
+                    if (! record_exists("user_coursecreators", "userid", $user->id)) {
+                        $cdata['userid']=$user->id;
+                        $creator = insert_record("user_coursecreators",$cdata);
+                        if (! $creator) {
+                            error("Cannot add user to course creators.");
+                        }
                     }
-                 }
+                } else {
+                    if ( record_exists("user_coursecreators", "userid", $user->id)) {
+                        $creator = delete_record("user_coursecreators", "userid", $user->id);
+                        if (! $creator) {
+                            error("Cannot remove user from course creators.");
+                        }
+                    }
+                }
             }
-          }
 
             if ($md5password <> $user->password) {   // Update local copy of password for reference
                 set_field("user", "password", $md5password, "username", $username);
