@@ -1787,8 +1787,6 @@ function get_courses($categoryid="all", $sort="c.sortorder ASC", $fields="c.*") 
         $selectsql = "{$CFG->prefix}course c $teachertable";
     }
 
-    $courses = get_records_sql("SELECT $fields FROM $selectsql ORDER BY $sort");
-
     return get_records_sql("SELECT ".((!empty($teachertable)) ? " DISTINCT " : "")." $fields FROM $selectsql ".((!empty($sort)) ? "ORDER BY $sort" : ""));
 }
 
@@ -1964,7 +1962,7 @@ function get_courses_search($searchterms, $sort="fullname ASC", $page=0, $record
 
     $totalcount = count_records_sql("SELECT COUNT(*) FROM $selectsql");
 
-    $courses = get_records_sql("SELECT * FROM $selectsql ORDER BY $sort $limit");
+    $courses = get_records_sql("SELECT * FROM $selectsql ".((!empty($sort)) ? "ORDER BY $sort" : "")." $limit");
 
     if ($courses) {  /// Remove unavailable courses from the list
         foreach ($courses as $key => $course) {
