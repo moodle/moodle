@@ -2338,7 +2338,6 @@ function forum_delete_post($post) {
    return false;
 }
 
-
 function forum_forcesubscribe($forumid, $value=1) {
     return set_field("forum", "forcesubscribe", $value, "id", $forumid);
 }
@@ -2910,6 +2909,8 @@ function forum_get_recent_mod_activity(&$activities, &$index, $sincetime, $cours
         if ($groupid and ($post->groupid != -1 and $groupid != $post->groupid and !$isteacheredit)) {
             continue;
         }
+
+        $tmpactivity = new Object;
 
         $tmpactivity->type = "forum";
         $tmpactivity->defaultindex = $index;

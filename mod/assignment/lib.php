@@ -716,6 +716,8 @@ function assignment_get_recent_mod_activity(&$activities, &$index, $sincetime, $
 
     foreach ($assignments as $assignment) {
         if (empty($groupid) || ismember($groupid, $assignment->userid)) {
+
+          $tmpactivity = new Object;
     
           $tmpactivity->type = "assignment";
           $tmpactivity->defaultindex = $index;
