@@ -174,6 +174,22 @@
         }
     
 
+    /******************* confirm remove attachments ************************************/
+    elseif ($action == 'confirmremoveattachments' ) {
+
+        if (empty($_GET['sid'])) {
+            error("Admin confirm delete: submission id missing");
+            }
+        if (!$submission = get_record("workshop_submissions", "id", $_GET['sid'])) {
+            error("Admin delete: can not get submission record");
+            }
+
+        notice_yesno(get_string("confirmremoveattachments","workshop"), 
+             "submissions.php?action=removeattachments&amp;id=$cm->id&amp;sid=$_GET[sid]", 
+             "view.php?id=$cm->id");
+        }
+    
+
 	/*************** display final grades (by teacher) ***************************/
 	elseif ($action == 'displayfinalgrades') {
 
@@ -350,6 +366,31 @@
 		
 		}
 	
+
+    /******************* remove (all) attachments ************************************/
+    elseif ($action == 'removeattachments' ) {
+
+        $form = data_submitted();
+        
+        if (empty($form->sid)) {
+            error("Update submission: submission id missing");
+            }
+        $submission = get_record("workshop_submissions", "id", $form->sid);
+        // amend title... just in case they were modified
+        // check existence of title
+        if (empty($form->title)) {
+            notify(get_string("notitlegiven", "workshop"));
+        } else {
+            set_field("workshop_submissions", "title", $form->title, "id", $submission->id);
+            set_field("workshop_submissions", "description", trim($form->description), "id", $submission->id);
+        } 
+        print_string("removeallattachments", "workshop");
+        workshop_delete_submitted_files($workshop, $submission);
+        add_to_log($course->id, "workshop", "removeattachments", "view.php?id=$cm->id", "submission $submission->id");
+        
+        print_continue("view.php?id=$cm->id");
+        }
+    
 
     /******************* show submission ************************************/
     elseif ($action == 'showsubmission' ) {
