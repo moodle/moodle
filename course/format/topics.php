@@ -92,6 +92,21 @@
 
     echo "<table class=\"topicsoutline\" border=\"0\" cellpadding=\"8\" cellspacing=\"0\" width=\"100%\">";
 
+/// If currently moving a file then show the current clipboard
+    if (ismoving($course->id)) {
+        $stractivityclipboard = get_string("activityclipboard", "", addslashes($USER->activitycopyname));
+        $strcancel= get_string("cancel");
+        echo "<tr>";
+        echo "<td colspan=3 valign=top bgcolor=\"$THEME->cellcontent\" class=\"topicoutlineclip\" width=\"100%\">";
+        echo "<p><font size=2>";
+        echo "$stractivityclipboard&nbsp;&nbsp;(<a href=\"mod.php?cancelcopy=true\">$strcancel</a>)";
+        echo "</font></p>";
+        echo "</td>";
+        echo "</tr>";
+        echo "<tr><td colspan=3><img src=\"../pix/spacer.gif\" width=1 height=1></td></tr>";
+    }
+
+
 /// Print Section 0 
 
     $section = 0;

@@ -6,9 +6,11 @@ $string['thischarset'] = "iso-8859-1";  // The best charset to use for this lang
 $string['action'] = "Action";
 $string['activities'] = "Activities";
 $string['activity'] = "Activity";
+$string['activityclipboard'] = "Moving this activity: <b>\$a</b>";
 $string['activityiscurrentlyhidden'] = "Sorry, this activity is currently hidden";
 $string['activitymodule'] = "Activity module";
 $string['activityreport'] = "Activity report";
+$string['activityselect'] = "Select this activity to be moved elsewhere";
 $string['activitysince'] = "Activity since \$a";
 $string['add'] = "Add";
 $string['added'] = "Added \$a";
@@ -411,7 +413,10 @@ $string['modulesetup'] = "Setting up module tables";
 $string['modulesuccess'] = "\$a tables have been set up correctly";
 $string['moodleversion'] = "Moodle Version";
 $string['mostrecently'] = "most recently";
+$string['move'] = "Move";
 $string['movedown'] = "Move down";
+$string['movefull'] = "Move \$a to this location";
+$string['movehere'] = "Move to here";
 $string['moveup'] = "Move up";
 $string['movetoanotherfolder'] = "Move to another folder";
 $string['movefilestohere'] = "Move files to here";
@@ -676,5 +681,7 @@ $string['youaregoingtorestorefrom'] = "You are going to restore from:";
 $string['yourlastlogin'] = "Your last login was";
 $string['yourself'] = "yourself";
 $string['yourteacher'] = "your \$a";
+
+
 
 ?>

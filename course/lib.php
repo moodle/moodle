@@ -579,15 +579,12 @@ function print_section_block($heading, $course, $section, $mods, $modnames, $mod
             }
             $mod = $mods[$modnumber];
             if ($isediting) {
-                $editbuttons = make_editing_buttons($mod->id, $absolute, $mod->visible);
+                $editbuttons = make_editing_buttons($mod->id, $absolute, $mod->visible, false);
             }
             if ($mod->visible or $isteacher) {
                 $instancename = urldecode($modinfo[$modnumber]->name);
-                if ($mod->visible) {
-                    $link_css = "";
-                } else {
-                    $link_css = " class=\"dimmed\" ";
-                }
+                $link_css = $mod->visible ? "" : " class=\"dimmed\" ";
+
                 $modicon[] = "<img src=\"$CFG->wwwroot/mod/$mod->modname/icon.gif\"".
                              " height=\"16\" width=\"16\" alt=\"$mod->modfullname\">";
                 $moddata[] = "<a title=\"$mod->modfullname\" $link_css ".
@@ -610,15 +607,26 @@ function print_section_block($heading, $course, $section, $mods, $modnames, $mod
 
 function print_section($course, $section, $mods, $modnamesused, $absolute=false, $width="100%") {
 /// Prints a section full of activity modules
-    global $CFG;
+    global $CFG, $USER;
+
     static $isteacher;
     static $isediting;
+    static $ismoving;
+    static $strmovehere;
+    static $strmovefull;
 
     if (!isset($isteacher)) {
         $isteacher = isteacher($course->id);
     }
     if (!isset($isediting)) {
         $isediting = isediting($course->id);
+    }
+    if (!isset($ismoving)) {
+        $ismoving = ismoving($course->id);
+    }
+    if ($ismoving) {
+        $strmovehere = get_string("movehere");
+        $strmovefull = get_string("movefull", "", "'$USER->activitycopyname'");
     }
 
     $modinfo = unserialize($course->modinfo);
@@ -634,12 +642,15 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
             }
             $mod = $mods[$modnumber];
             if ($mod->visible or $isteacher) {
-                $instancename = urldecode($modinfo[$modnumber]->name);
-                if ($mod->visible) {
-                    $link_css = "";
-                } else {
-                    $link_css = " class=\"dimmed\" ";
+                if ($ismoving) {
+                    if ($mod->id == $USER->activitycopy) {
+                        continue;
+                    }
+                    echo "<font size=\"2\"> -> <a title=\"$strmovefull\"".
+                         " href=\"mod.php?moveto=$mod->id\">$strmovehere</a></font><br />\n";
                 }
+                $instancename = urldecode($modinfo[$modnumber]->name);
+                $link_css = $mod->visible ? "" : " class=\"dimmed\" ";
                 echo "<img src=\"$CFG->wwwroot/mod/$mod->modname/icon.gif\"".
                      " height=16 width=16 alt=\"$mod->modfullname\">".
                      " <font size=2><a title=\"$mod->modfullname\" $link_css ".
@@ -653,6 +664,10 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                 echo "<br />\n";
             }
         }
+    }
+    if ($ismoving) {
+        echo "<font size=\"2\"> -> <a title=\"$strmovefull\"".
+             " href=\"mod.php?movetosection=$section->id\">$strmovehere</a></font><br />\n";
     }
     echo "</td></tr></table><br />\n\n";
 }
@@ -961,16 +976,36 @@ function add_course_module($mod) {
     return insert_record("course_modules", $mod);
 }
 
-function add_mod_to_section($mod) {
-// Returns the course_sections ID where the mod is inserted
-    GLOBAL $db;
+function add_mod_to_section($mod, $beforemod=NULL) {
+/// Given a full mod object with section and course already defined
+/// If $before is specified, then this is an existing ID which we
+/// will insert the new module before
+///
+/// Returns the course_sections ID where the mod is inserted
 
     if ($section = get_record("course_sections", "course", "$mod->course", "section", "$mod->section")) {
-        if (!empty($section->sequence)) {
-            $newsequence = "$section->sequence,$mod->coursemodule";
-        } else {
+
+        $section->sequence = trim($section->sequence);
+
+        if (empty($section->sequence)) {
             $newsequence = "$mod->coursemodule";
+
+        } else if ($beforemod) {
+            $modarray = explode(",", $section->sequence);
+
+            if ($key = array_keys ($modarray, $beforemod->id)) {
+                $insertarray = array($mod->id, $beforemod->id);
+                array_splice($modarray, $key[0], 1, $insertarray);
+                $newsequence = implode(",", $modarray);
+
+            } else {  // Just tack it on the end anyway
+                $newsequence = "$section->sequence,$mod->coursemodule";
+            }
+
+        } else {
+            $newsequence = "$section->sequence,$mod->coursemodule";
         }
+        
         if (set_field("course_sections", "sequence", $newsequence, "id", $section->id)) {
             return $section->id;     // Return course_sections ID that was used.
         } else {
@@ -1012,9 +1047,8 @@ function delete_mod_from_section($mod, $section) {
             return false;
         }
        
-    } else {  
-        return false;
     }
+    return false;
 }
 
 function move_section($course, $section, $move) {
@@ -1048,6 +1082,43 @@ function move_section($course, $section, $move) {
         return false;
     }
     return true;
+}
+
+
+function moveto_module($mod, $section, $beforemod=NULL) {
+/// All parameters are objects
+/// Move the module object $mod to the specified $section
+/// If $beforemod exists then that is the module
+/// before which $modid should be inserted
+
+/// Remove original module from original section
+
+    if (! delete_mod_from_section($mod->id, $mod->section)) {
+        notify("Could not delete module from existing section");
+    }
+
+/// Update module itself if necessary
+
+    if ($mod->section != $section->id) {
+        $mod->section = $section->id; 
+
+        if (!update_record("course_modules", $mod)) {
+            return false;
+        }
+    }
+
+/// Add the module into the new section
+
+    $mod->course       = $section->course;
+    $mod->section      = $section->section;  // need relative reference
+    $mod->coursemodule = $mod->id;
+
+    if (! add_mod_to_section($mod, $beforemod)) {
+        return false;
+    }
+
+    return true;
+
 }
 
 
@@ -1175,7 +1246,7 @@ function move_module($cm, $move) {
     }
 }
 
-function make_editing_buttons($moduleid, $absolute=false, $visible=true) {
+function make_editing_buttons($moduleid, $absolute=false, $visible=true, $moveselect=true) {
     global $CFG, $THEME;
 
     static $str = '';
@@ -1186,6 +1257,7 @@ function make_editing_buttons($moduleid, $absolute=false, $visible=true) {
         $str->update   = get_string("update");
         $str->hide     = get_string("hide");
         $str->show     = get_string("show");
+        $str->move     = get_string("move");
     }
 
     if ($absolute) {
@@ -1201,21 +1273,26 @@ function make_editing_buttons($moduleid, $absolute=false, $visible=true) {
     }
 
     if ($visible) {
-        $hideshow = " <a title=\"$str->hide\" href=\"$path/mod.php?hide=$moduleid\"><img 
-                        src=\"$pixpath/t/hide.gif\" hspace=2 height=11 width=11 border=0></a>";
+        $hideshow = "<a title=\"$str->hide\" href=\"$path/mod.php?hide=$moduleid\"><img".
+                    " src=\"$pixpath/t/hide.gif\" hspace=2 height=11 width=11 border=0></a> ";
     } else {
-        $hideshow = " <a title=\"$str->show\" href=\"$path/mod.php?show=$moduleid\"><img 
-                        src=\"$pixpath/t/show.gif\" hspace=2 height=11 width=11 border=0></a>";
+        $hideshow = "<a title=\"$str->show\" href=\"$path/mod.php?show=$moduleid\"><img".
+                    " src=\"$pixpath/t/show.gif\" hspace=2 height=11 width=11 border=0></a> ";
     }
 
-    return "<a title=\"$str->delete\" href=\"$path/mod.php?delete=$moduleid\"><img 
-             src=\"$pixpath/t/delete.gif\" height=11 width=11 border=0></a>
-          <a title=\"$str->moveup\" href=\"$path/mod.php?id=$moduleid&move=-1\"><img 
-             src=\"$pixpath/t/up.gif\" height=11 width=11 border=0></a>
-          <a title=\"$str->movedown\" href=\"$path/mod.php?id=$moduleid&move=1\"><img 
-             src=\"$pixpath/t/down.gif\" height=11 width=11 border=0></a>
-          <a title=\"$str->update\" href=\"$path/mod.php?update=$moduleid\"><img 
-             src=\"$pixpath/t/edit.gif\" height=11 width=11 border=0></a> $hideshow";
+    if ($moveselect) {
+        $move =     "<a title=\"$str->move\" href=\"$path/mod.php?copy=$moduleid\"><img".
+                    " src=\"$pixpath/t/move.gif\" height=\"11\" width=\"11\" border=\"0\"></a> ";
+    }
+
+    return "<a title=\"$str->delete\" href=\"$path/mod.php?delete=$moduleid\"><img".
+           " src=\"$pixpath/t/delete.gif\" height=11 width=11 border=0></a> ".
+           "<a title=\"$str->moveup\" href=\"$path/mod.php?id=$moduleid&move=-1\"><img".
+           " src=\"$pixpath/t/up.gif\" height=11 width=11 border=0></a> ".
+           "<a title=\"$str->movedown\" href=\"$path/mod.php?id=$moduleid&move=1\"><img".
+           " src=\"$pixpath/t/down.gif\" height=11 width=11 border=0></a> $move".
+           "<a title=\"$str->update\" href=\"$path/mod.php?update=$moduleid\"><img".
+           " src=\"$pixpath/t/edit.gif\" height=11 width=11 border=0></a> $hideshow";
 }
 
 ?>

@@ -15,7 +15,7 @@
         } else {
             redirect("view.php?id=$mod->course");
         }
-    } 
+    }
 
 
     if (isset($_POST["course"])) {    // add or update form submitted
@@ -127,6 +127,50 @@
         }
         exit;
 
+    } else if (isset($movetosection) or isset($moveto)) {  
+        
+        if (! $cm = get_record("course_modules", "id", $USER->activitycopy)) {
+            error("The copied course module doesn't exist!");
+        }
+
+        if (isset($movetosection)) {
+            if (! $section = get_record("course_sections", "id", $movetosection)) {
+                error("This section doesn't exist");
+            }
+            $beforecm = NULL;
+
+        } else {                      // normal moveto
+            if (! $beforecm = get_record("course_modules", "id", $moveto)) {
+                error("The destination course module doesn't exist");
+            }
+            if (! $section = get_record("course_sections", "id", $beforecm->section)) {
+                error("This section doesn't exist");
+            }
+        }
+
+        if (!isteacher($section->course)) {
+            error("You can't modify this course!");
+        }
+
+        if (!ismoving($section->course)) {
+            error("You need to copy something first!");
+        }
+
+        moveto_module($cm, $section, $beforecm);
+
+        unset($USER->activitycopy);
+        unset($USER->activitycopycourse);
+        unset($USER->activitycopyname);
+
+        rebuild_course_cache($section->course);
+
+        $site = get_site();
+        if ($site->id == $section->course) {
+            redirect($CFG->wwwroot);
+        } else {
+            redirect("view.php?id=$section->course");
+        }
+
     } else if (isset($hide)) {
 
         if (! $cm = get_record("course_modules", "id", $hide)) {
@@ -180,6 +224,44 @@
             redirect("view.php?id=$cm->course");
         }
         exit;
+
+    } else if (isset($copy)) { // value = course module
+
+        if (! $cm = get_record("course_modules", "id", $copy)) {
+            error("This course module doesn't exist");
+        }
+
+        if (!isteacher($cm->course)) {
+            error("You can't modify this course!");
+        }
+
+        if (! $section = get_record("course_sections", "id", $cm->section)) {
+            error("This module doesn't exist");
+        }
+
+        if (! $module = get_record("modules", "id", $cm->module)) {
+            error("This module doesn't exist");
+        }
+
+        if (! $instance = get_record($module->name, "id", $cm->instance)) {
+            error("Could not find the instance of this module");
+        }
+
+        $USER->activitycopy = $copy;
+        $USER->activitycopycourse = $cm->course;
+        $USER->activitycopyname = $instance->name;
+
+        redirect("view.php?id=$cm->course");
+
+    } else if (isset($cancelcopy)) { // value = course module
+
+        $courseid = $USER->activitycopycourse;
+
+        unset($USER->activitycopy);
+        unset($USER->activitycopycourse);
+        unset($USER->activitycopyname);
+
+        redirect("view.php?id=$courseid");
 
     } else if (isset($delete)) {   // value = course module
 

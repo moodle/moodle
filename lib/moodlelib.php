@@ -468,6 +468,16 @@ function isediting($courseid, $user=NULL) {
     return ($user->editing and isteacher($courseid, $user->id));
 }
 
+function ismoving($courseid) {
+/// Is the current user currently moving an activity?
+    global $USER;
+
+    if (!empty($USER->activitycopy)) {
+        return ($USER->activitycopycourse == $courseid);
+    }
+    return false;
+}
+
 
 function set_moodle_cookie($thing) {
 /// Sets a moodle cookie with an encrypted string
