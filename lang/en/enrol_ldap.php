@@ -17,7 +17,7 @@ $string['description'] = '<p>You can use an LDAP server to control your enrolmen
                           Authentication.</p>
                           <p>Enrolments will be updated when the user logs in. You
                            can also run a script to keep enrolments in synch. Look in 
-                          <em>enrol/ldap/enrol_ldap_sync.php</em>.<p>
+                          <em>enrol/ldap/enrol_ldap_sync.php</em>.</p>
                           <p>This plugin can also be set to automatically create new 
                           courses when new groups appear in LDAP.</p>';
 $string['enrol_ldap_server_settings'] = 'LDAP Server Settings';
@@ -60,7 +60,7 @@ $string['enrol_ldap_editlock']    = 'Lock value';
 
 $string['enrol_ldap_course_idnumber'] = 'Map to the unique identifier in LDAP, usually
                                          <em>cn</em> or <em>uid</em>. It is 
-                                         ecommended to lock the value if you are using 
+                                         recommended to lock the value if you are using 
                                          automatic course creation.';
 $string['enrol_ldap_course_shortname'] = 'Optional: LDAP field to get the shortname from.';
 $string['enrol_ldap_course_fullname']  = 'Optional: LDAP field to get the full name from.';
