@@ -775,7 +775,7 @@ function insert_record($table, $dataobject, $returnid=true) {
             if ($rs = $db->Execute("SELECT id FROM $CFG->prefix$table WHERE oid = $oid")) {
                 // every table needs to have a primary field named 'id' for this to work
                 if ($rs->RecordCount() == 1) {
-                    return $rs->fields[0];
+                    return (integer) $rs->fields[0]; // id field is integer, but this somehow needed??
                 }
             }
             return false;
