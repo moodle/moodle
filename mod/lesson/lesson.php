@@ -555,9 +555,6 @@
             error("Moveit: unable to update link");
         }
 
-        echo "<p>\$newfirstpageid: $newfirstpageid";
-        echo "<p>\$after: $after";
-        
         // third step. remove the page to be moved
         if (!$prevpageid = get_field("lesson_pages", "prevpageid", "id", $pageid)) {
             error("Moveit: prevpageid not found");
@@ -600,6 +597,7 @@
         if (!set_field("lesson_pages", "nextpageid", 0, "id", $newlastpageid)) {
                 error("Moveit: unable to update link");
         }
+   	    redirect("view.php?id=$cm->id", get_string("ok"));
     }
 	
 
