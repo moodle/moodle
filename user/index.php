@@ -63,7 +63,7 @@
             echo "<h2 align=\"center\">$course->teachers</h2>";
             foreach ($teachers as $teacher) {
                 if ($isseparategroups) {
-                    if ($teacher->editall or ismember($currentgroup, $teacher->id)) {
+                    if (($teacher->editall or ismember($currentgroup, $teacher->id)) and ($teacher->authority > 0)) {
                         print_user($teacher, $course);
                         $exceptions .= "$teacher->id,";
                     }
