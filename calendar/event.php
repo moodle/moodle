@@ -379,10 +379,20 @@
 
     // START: Last column (3-month display)
     echo '<td valign="top" width="'.$side.'">';
+
+    // [pj] There is a whole class of problems with minimonths in event.php, which
+    // was why there were no minimonths before... I fixed them as best I could for now.
+
+    // These were left out, and the whole thing was simply broken
+    $defaultcourses = calendar_get_default_courses();
+    echo calendar_overlib_html();
+    calendar_set_filters($courses, $groups, $users, $defaultcourses, $defaultcourses);
+
     print_side_block_start(get_string('monthlyview', 'calendar'), '', 'sideblockmain');
     list($prevmon, $prevyr) = calendar_sub_month($mon, $yr);
     list($nextmon, $nextyr) = calendar_add_month($mon, $yr);
-    echo calendar_filter_controls($_GET['view']);
+    // This is also broken; set.php doesn't know how to redirect back to event.php
+    // echo calendar_filter_controls('event');
     echo '<p>';
     echo calendar_top_controls('display', array('m' => $prevmon, 'y' => $prevyr));
     echo calendar_get_mini($courses, $groups, $users, $prevmon, $prevyr);
