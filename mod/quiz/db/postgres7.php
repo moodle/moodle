@@ -224,6 +224,10 @@ function quiz_upgrade($oldversion) {
 
         modify_database ( "", "COMMIT;");
     }
+
+    if ($oldversion < 2004101700) {
+        table_column("quiz_answers", "answer", "answer", "text", "", "", "", "not null");
+    }
     
     return true;
 }
