@@ -163,14 +163,14 @@
             $newsince = "";
         }
 
-        if ($recs = get_records_sql ("SELECT d.id discussionid,
-                                             d.name discussionname,
-                                             u.id userid,
-                                             u.firstname userfirstname,
-                                             u.lastname userlastname,
-                                             p.message postmessage,
-                                             p.created postcreated,
-                                             p.format postformat
+        if ($recs = get_records_sql ("SELECT d.id AS discussionid, 
+                                             d.name AS discussionname, 
+                                             u.id AS userid, 
+                                             u.firstname AS userfirstname,
+                                             u.lastname AS userlastname,
+                                             p.message AS postmessage,
+                                             p.created AS postcreated,
+                                             p.format AS postformat
                                       FROM {$CFG->prefix}forum_discussions d,
                                            {$CFG->prefix}forum_posts p,
                                            {$CFG->prefix}user u
@@ -223,15 +223,15 @@
             $newsince = "";
         }
 
-        if ($recs = get_records_sql ("SELECT p.id postid,
-                                             d.id discussionid,
-                                             u.id userid,
-                                             u.firstname userfirstname,
-                                             u.lastname userlastname,
-                                             p.subject postsubject,
-                                             p.message postmessage,
-                                             p.created postcreated,
-                                             p.format postformat
+        if ($recs = get_records_sql ("SELECT p.id AS postid,
+                                             d.id AS discussionid,
+                                             u.id AS userid,
+                                             u.firstname AS userfirstname,
+                                             u.lastname AS userlastname,
+                                             p.subject AS postsubject,
+                                             p.message AS postmessage,
+                                             p.created AS postcreated,
+                                             p.format AS postformat
                                       FROM {$CFG->prefix}forum_discussions d,
                                            {$CFG->prefix}forum_posts p,
                                            {$CFG->prefix}user u

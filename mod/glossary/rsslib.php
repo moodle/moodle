@@ -163,14 +163,14 @@
             $newsince = "";
         }
 
-        if ($recs = get_records_sql ("SELECT e.id entryid,
-                                             e.concept entryconcept,
-                                             e.definition entrydefinition,
-                                             e.format entryformat,
-                                             e.timecreated entrytimecreated,
-                                             u.id userid,
-                                             u.firstname userfirstname,
-                                             u.lastname userlastname
+        if ($recs = get_records_sql ("SELECT e.id AS entryid, 
+                                             e.concept AS entryconcept, 
+                                             e.definition AS entrydefinition, 
+                                             e.format AS entryformat, 
+                                             e.timecreated AS entrytimecreated, 
+                                             u.id AS userid, 
+                                             u.firstname AS userfirstname,
+                                             u.lastname AS userlastname
                                       FROM {$CFG->prefix}glossary_entries e,
                                            {$CFG->prefix}user u
                                       WHERE e.glossaryid = '$glossary->id' AND
@@ -220,14 +220,14 @@
             $newsince = "";
         }
 
-        if ($recs = get_records_sql ("SELECT e.id entryid,
-                                             e.concept entryconcept,
-                                             e.definition entrydefinition,
-                                             e.format entryformat,
-                                             e.timecreated entrytimecreated,
-                                             u.id userid,
-                                             u.firstname userfirstname,
-                                             u.lastname userlastname
+        if ($recs = get_records_sql ("SELECT e.id AS entryid,
+                                             e.concept AS entryconcept,
+                                             e.definition AS entrydefinition,
+                                             e.format AS entryformat,
+                                             e.timecreated AS entrytimecreated,
+                                             u.id AS userid,
+                                             u.firstname AS userfirstname,
+                                             u.lastname AS userlastname
                                       FROM {$CFG->prefix}glossary_entries e,
                                            {$CFG->prefix}user u
                                       WHERE e.glossaryid = '$glossary->id' AND
