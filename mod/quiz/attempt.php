@@ -55,6 +55,7 @@
 // Print the page header
 
     if (!empty($quiz->popup)) {
+        define('MESSAGE_WINDOW', true);  // This prevents the message window coming up
         print_header("$course->shortname: $quiz->name", '', '', '', '', false, '', '', false, '');
         
     } else {
