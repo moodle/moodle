@@ -449,7 +449,7 @@ function helpbutton ($page, $title="", $module="moodle", $image=true, $text="") 
     if ($text) {
         $url = "/help.php?module=$module&text=$text";
     } else {
-        $url = "/help.php?module=$module&file=help.$page.php";
+        $url = "/help.php?module=$module&file=$page.html";
     }
     link_to_popup_window ($url, "popup", $linkobject, 400, 500, $title);
 }
