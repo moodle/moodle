@@ -47,7 +47,7 @@
 </tr>
 <tr valign=top>
 	<td><P>Phone number:</td>
-	<td><input type="text" name="phone" size=25 value="<? pv($user->phone) ?>">
+	<td><input type="text" name="phone" size=25 value="<? pv($user->phone) ?>"> (optional)
 	<? formerr($err->phone) ?>
 	</td>
 </tr>
@@ -59,7 +59,7 @@
 </tr>
 <tr valign=top>
 	<td><P>Country:</td>
-	<td><? print_country_menu($user->country) ?>
+	<td><? choose_from_menu ($COUNTRIES, "country", $user->country, "Select a country...", "", "") ?>
 	<? formerr($err->country) ?>
 	</td>
 </tr>

@@ -1,7 +1,7 @@
 <?PHP // $Id$
 
 	require("../config.php");
-	require("countries.php");
+	require("../lib/countries.php");
 
 	if (match_referer() && isset($HTTP_POST_VARS)) {
 		$user = (object) $HTTP_POST_VARS;
@@ -79,9 +79,6 @@ function validate_form($user, &$err) {
     else if (record_exists("user", "email", $user->email)) 
 		$err->email = "Email address already registered. <A HREF=forgot_password.php>New password?</A>";
 
-
-	if (empty($user->phone)) 
-		$err->phone = "Missing phone number";
 
 	if (empty($user->city)) 
 		$err->city = "Missing city";
