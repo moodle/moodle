@@ -325,6 +325,7 @@ $string[people] = "People";
 $string[personalprofile] = "Personal profile";
 $string[phone] = "Phone";
 $string[potentialteachers] = "Potential teachers";
+$string[preferredlanguage] = "Preferred language";
 $string[preview] = "Preview";
 $string[previeworchoose] = "Preview or choose a theme";
 $string[question] = "Question";

@@ -1517,6 +1517,23 @@ function get_string_from_file($identifier, $langfile, $destination) {
 }
 
 
+function get_list_of_languages() {
+/// Returns a list of language codes and their full names
+    global $CFG;
+
+    if (!$langdirs = get_list_of_plugins("lang")) {
+        return false;
+    }
+
+    foreach ($langdirs as $lang) {
+        include("$CFG->dirroot/lang/$lang/moodle.php");
+        $languages[$lang] = $string["thislanguage"]." ($lang)";
+        unset($string);
+    }
+    return $languages;
+}
+
+
 /// ENCRYPTION  ////////////////////////////////////////////////
 
 function rc4encrypt($data) {

@@ -127,6 +127,18 @@ if (isadmin()) {
 	</td>
 </tr>
 <tr valign=top>
+	<td><P><? print_string("preferredlanguage") ?>:</td>
+	<td><? if ($languages = get_list_of_languages()) {
+               if (!$user->lang) {
+                   $user->lang = "en";
+               }
+               choose_from_menu ($languages, "lang", $user->lang, "", "", "");
+           }
+	       formerr($err["lang"]);
+        ?>
+	</td>
+</tr>
+<tr valign=top>
 	<td><P><? print_string("timezone") ?>:</td>
 	<td><?
        if (abs($user->timezone) > 12) {
