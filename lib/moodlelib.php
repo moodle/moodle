@@ -674,11 +674,11 @@ function error ($message, $link="") {
     die;
 }
 
-function helpbutton ($page, $title="", $module="moodle", $image=true, $text="") {
+function helpbutton ($page, $title="", $module="moodle", $image=true, $linktext=false, $text="") {
     // $page = the keyword that defines a help page
     // $title = the title of links, rollover tips, alt tags etc
     // $module = which module is the page defined in
-    // $image = use a help image for the link?  (otherwise uses text)
+    // $image = use a help image for the link?  (true/false/"both")
     // $text = if defined then this text is used in the page, and 
     //         the $page variable is ignored.
     global $CFG;
@@ -686,13 +686,18 @@ function helpbutton ($page, $title="", $module="moodle", $image=true, $text="") 
     if ($module == "") {
         $module = "moodle";
     }
+
     if ($image) {
-        $linkobject = "<IMG BORDER=0 HEIGHT=17 WIDTH=22 ALT=\"$title\" SRC=\"$CFG->wwwroot/pix/help.gif\">";
+        if ($linktext) {
+            $linkobject = "$title<IMG align=\"absmiddle\" BORDER=0 HEIGHT=17 WIDTH=22 ALT=\"\" SRC=\"$CFG->wwwroot/pix/help.gif\">";
+        } else {
+            $linkobject = "<IMG align=\"absmiddle\" BORDER=0 HEIGHT=17 WIDTH=22 ALT=\"$title\" SRC=\"$CFG->wwwroot/pix/help.gif\">";
+        }
     } else {
         $linkobject = $title;
     }
     if ($text) {
-        $url = "/help.php?module=$module&text=$text";
+        $url = "/help.php?module=$module&text=".htmlentities(urlencode($text));
     } else {
         $url = "/help.php?module=$module&file=$page.html";
     }

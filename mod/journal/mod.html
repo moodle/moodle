@@ -7,7 +7,13 @@
     </td>
 </tr>
 <tr valign=top>
-    <td align=right><P><B><? print_string("journalquestion", "journal") ?>:</B></P></TD>
+    <td align=right><P><B><? print_string("journalquestion", "journal") ?>:</B></P>
+    <font SIZE="1">
+     <? helpbutton("writing", get_string("helpwriting"), "moodle", true, true) ?><br \>
+     <? helpbutton("questions", get_string("helpquestions"), "moodle", true, true) ?><br \>
+     </font>
+    
+    </TD>
     <td>
         <textarea name="intro" rows=15 cols=30 wrap="virtual"><? p($form->intro) ?></textarea>
     </td>

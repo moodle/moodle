@@ -17,16 +17,21 @@
     </td>
 </tr>
 <tr valign=top>
-    <td align=right><P><B><? print_string("description", "assignment") ?>:</B></P></TD>
+    <td align=right><P><B><? print_string("description", "assignment") ?>:</B></P>
+    <font SIZE="1">
+     <? helpbutton("writing", get_string("helpwriting"), "moodle", true, true) ?><br \>
+     <? helpbutton("questions", get_string("helpquestions"), "moodle", true, true) ?><br \>
+     <? if ($usehtmleditor) { ?>
+        <? helpbutton("richtext", get_string("helprichtext"), "moodle", true, true) ?>
+     <? } else { ?>
+        <? helpbutton("text", get_string("helptext"), "moodle", true, true) ?>
+     <? } ?><br \>
+     </font>
+    </td>
     <td>
     <? 
        print_textarea($usehtmleditor, 20, 60, 595, 400, "description", $form->description);
     
-       if ($usehtmleditor) { 
-           helpbutton("richtext", get_string("helprichtext"));
-       } else { 
-           helpbutton("text", get_string("helptext"));
-       }
        echo "<P align=right>";
        print_string("formattexttype");
        echo ":&nbsp;";

@@ -1,12 +1,19 @@
 <FORM name="theform" method="post" <?=$onsubmit ?> action="edit.php">
-    <? print_textarea($usehtmleditor, 20, 60, 595, 400, "text", $entry->text); ?>
+<table><tr>
+    <td align=right>
+    <font SIZE="1">
+     <? helpbutton("reading", get_string("helpreading"), "moodle", true, true) ?><br \>
+     <? helpbutton("writing", get_string("helpwriting"), "moodle", true, true) ?><br \>
+     <? if ($usehtmleditor) { ?>
+        <? helpbutton("richtext", get_string("helprichtext"), "moodle", true, true) ?>
+     <? } else { ?>
+        <? helpbutton("text", get_string("helptext"), "moodle", true, true) ?>
+     <? } ?><br \>
+    </font>
+    </td>
+</tr></table>
 
-<? if ($usehtmleditor) { 
-       helpbutton("richtext", get_string("helprichtext"));
-   } else { 
-       helpbutton("text", get_string("helptext"));
-   }
-?>
+<? print_textarea($usehtmleditor, 20, 60, 595, 400, "text", $entry->text); ?>
 
 <P align=center>
 <? print_string("formattexttype");

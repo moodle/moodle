@@ -129,8 +129,11 @@
                 ?>
                 <TR VALIGN=top>
                     <TD ALIGN=right NOWRAP>
-                        <P><B><?=$strfulltext?>:</B></P>
-                        <BR><? helpbutton("text", get_string("helptext")) ?>
+                        <P><B><?=$strfulltext?>:</B></P><br \>
+                        <font SIZE="1">
+                        <? helpbutton("writing", get_string("helpwriting"), "moodle", true, true) ?><br \>
+                        <? helpbutton("text", get_string("helptext"), "moodle", true, true) ?> <br \>
+                        </font>
                     </TD>
                     <TD>
                         <TEXTAREA NAME="alltext" ROWS=20 COLS=50 WRAP="virtual"><? p($form->alltext) ?></TEXTAREA>
@@ -144,12 +147,15 @@
                 ?>
                 <TR VALIGN=top>
                     <TD ALIGN=right NOWRAP>
-                        <P><B><?=$strhtmlfragment?>:</B></P>
-                        <? if ($usehtmleditor) { ?>
-                            <BR><? helpbutton("richtext", get_string("helprichtext")) ?>
-                        <? } else { ?>
-                            <BR><? helpbutton("html", get_string("helphtml")) ?>
-                        <? } ?>
+                        <P><B><?=$strhtmlfragment?>:</B></P><br \>
+                        <font SIZE="1">
+                        <? helpbutton("writing", get_string("helpwriting"), "moodle", true, true) ?><br \>
+                        <? if ($usehtmleditor) {
+                            helpbutton("richtext", get_string("helprichtext"), "moodle", true, true);
+                           } else {   
+                            helpbutton("html", get_string("helphtml"), "moodle", true, true);
+                           } ?><br \>
+                        </font>
                     </TD>
                     <TD>
                         <? print_textarea($usehtmleditor, 20, 50, 680, 400, "alltext", $form->alltext); ?>

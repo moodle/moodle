@@ -1,63 +1,68 @@
 <form name="theform" method="post" action="post.php" <?=$onsubmit ?> enctype="multipart/form-data">
-<table cellpadding=5>
-<tr valign=top>
-    <td align=right><P><B><? print_string("subject", "forum"); ?>:</B></P></TD>
+<table border="0" cellpadding="5">
+<tr valign="top">
+    <td align=right><p><b><? print_string("subject", "forum"); ?>:</b></p></td>
     <td>
         <input type="text" name="subject" size=60 value="<? p($post->subject) ?>">
     </td>
-    <td>
-    &nbsp;
-    </td>
 </tr>
-<tr valign=top>
-    <td align=right><P><B><? print_string("message", "forum"); ?>:</B>
-     <? if ($usehtmleditor) { ?>
-        <BR><BR><? helpbutton("richtext", get_string("helprichtext")) ?></P>
-     <? } else { ?>
-        <BR><BR><? helpbutton("text", get_string("helptext")) ?></P>
-     <? } ?>
-    </TD>
-    <td>
+<tr valign="top">
+    <td align=right><p><b>
+     <? print_string("message", "forum"); ?>:
+     </b></p></td>
+    <td align=left rowspan=2>
     <? print_textarea($usehtmleditor, 15, 50, 595, 400, "message", $post->message); ?>
     </td>
-    <td rowspan=2>
-    <FONT SIZE=1>
-    <? print_string("postingtip", "forum"); ?>
-    <DIV ALIGN=RIGHT><? helpbutton("questions", get_string("helpquestions"), "moodle", false) ?></DIV>
-    </FONT>
+</tr>
+<tr valign="top">
+    <td align="right" valign="center" nowrap>
+
+    <font SIZE="1">
+     <? helpbutton("reading", get_string("helpreading"), "moodle", true, true) ?><br \>
+     <? helpbutton("writing", get_string("helpwriting"), "moodle", true, true) ?><br \>
+     <? helpbutton("questions", get_string("helpquestions"), "moodle", true, true) ?><br \>
+     <? if ($usehtmleditor) { ?>
+        <? helpbutton("richtext", get_string("helprichtext"), "moodle", true, true) ?>
+     <? } else { ?>
+        <? helpbutton("text", get_string("helptext"), "moodle", true, true) ?>
+     <? } ?><br \>
+     </font>
+
     </td>
 </tr>
 <tr valign=top>
-    <td align=right><P><B><? print_string("formattexttype"); ?>:</B></P></TD>
+    <td align=right><p><b><? print_string("formattexttype"); ?>:</b></p></td>
     <td>
     <? choose_from_menu(format_text_menu(), "format", $post->format, ""); ?>
     <? helpbutton("textformat", get_string("formattexttype")) ?>
-    </td>
-    <td>
-    &nbsp;
+
     </td>
 </tr>
 <tr valign=top>
-	<td><P><B><? print_string("attachment", "forum") ?>:<BR>(<? print_string("optional") ?>)</B></P></td>
-	<td>
-    <INPUT type="hidden" name="MAX_FILE_SIZE" value="<? echo get_max_upload_file_size() ?>">
+    <td align=right><p><b><? print_string("attachment", "forum") ?><br \>(<? print_string("optional") ?>):</b></p></td>
+    <td>
+    <input type="hidden" name="MAX_FILE_SIZE" value="<? echo get_max_upload_file_size() ?>">
     <input type="file" name="attachment" size=40> 
-    <? helpbutton("attachment", get_string("attachment", "forum"), "forum" ); 
+    <? helpbutton("attachment", get_string("attachment", "forum"), "forum"); 
        print_string("maxsize", "", display_size(get_max_upload_file_size())); 
     ?>
-	<BR><BR>
-	<input type="hidden" name=course     value="<? p($post->course) ?>">
-	<input type="hidden" name=forum      value="<? p($post->forum) ?>">
-	<input type="hidden" name=discussion value="<? p($post->discussion) ?>">
-	<input type="hidden" name=parent     value="<? p($post->parent) ?>">
-	<input type="hidden" name=user       value="<? p($post->user) ?>">
-	<input type="hidden" name=edit       value="<? p($post->edit) ?>">
-    <input type="submit" value="<? print_string("savechanges"); ?>">
-	</td>
+    </td>
+
 </tr>
-<tr valign=top>
+<tr>
+    <td align=center colspan=2>
+    <input type="hidden" name=course     value="<? p($post->course) ?>">
+    <input type="hidden" name=forum      value="<? p($post->forum) ?>">
+    <input type="hidden" name=discussion value="<? p($post->discussion) ?>">
+    <input type="hidden" name=parent     value="<? p($post->parent) ?>">
+    <input type="hidden" name=user       value="<? p($post->user) ?>">
+    <input type="hidden" name=edit       value="<? p($post->edit) ?>">
+    <input type="submit" value="<? print_string("savechanges"); ?>">
+    </td>
+
+</tr>
 </table>
-</FORM>
+</form>
 
 <? 
    if ($usehtmleditor) { 

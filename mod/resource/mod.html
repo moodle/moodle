@@ -22,10 +22,15 @@
     </td>
 </tr>
 <tr valign=top>
-    <td align=right><P><B><? print_string("summary") ?>:</B></P></TD>
+    <td align=right><P><B><? print_string("summary") ?>:</B></P>
+     <font SIZE="1">
+     <? helpbutton("summary", get_string("summary"), "resource", true, true); ?><br \>
+     <? helpbutton("writing", get_string("helpwriting"), "moodle", true, true) ?><br \>
+     <? helpbutton("text", get_string("helptext"), "moodle", true, true) ?><br \>
+     </font>
+    </td>
     <td>
         <textarea name="summary" rows=5 cols=50 wrap="virtual"><? p($form->summary) ?></textarea>
-        <? helpbutton("summary", get_string("summary"), "resource"); ?>
     </td>
 </tr>
 </table>

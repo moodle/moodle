@@ -10,10 +10,15 @@
 </tr>
 
 <tr valign=top>
-    <td align=right><P><B><? print_string("choicetext","choice") ?>:</B></P></TD>
+    <td align=right><P><B><? print_string("choicetext","choice") ?>:</B></P>
+    <font SIZE="1">
+     <? helpbutton("writing", get_string("helpwriting"), "moodle", true, true) ?><br \>
+     <? helpbutton("questions", get_string("helpquestions"), "moodle", true, true) ?><br \>
+     <? helpbutton("text", get_string("helptext"), "moodle", true, true) ?><br \>
+     </font>
+    </td>
     <td>
         <textarea name="text" rows=20 cols=40 wrap="virtual"><? p($form->text) ?></textarea>
-        <? helpbutton("text", get_string("helptext")); ?>
     </td>
 </tr>
 
