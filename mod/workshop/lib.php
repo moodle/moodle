@@ -997,6 +997,23 @@ function workshop_get_participants($workshopid) {
 }
 
 
+//////////////////////////////////////////////////////////////////////////////////////
+// Non-standard workshop functions
+//////////////////////////////////////////////////////////////////////////////////////
+function workshop_file_area($workshop, $submission) {
+    return make_upload_directory( workshop_file_area_name($workshop, $submission) );
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////
+function workshop_file_area_name($workshop, $submission) {
+//  Creates a directory file name, suitable for make_upload_directory()
+    global $CFG;
+
+    return "$workshop->course/$CFG->moddata/workshop/$submission->id";
+}
+
+
 ///////////////////////////////////////////////////////////////////////////////////////////////
 function workshop_get_agree_logs($course, $timestart) {
     // get the "agree" entries for this user (the assessment owner and add the first and last names 
@@ -1087,6 +1104,19 @@ function workshop_get_grade_logs($course, $timestart) {
                                 AND l.course = $course->id AND l.module = 'workshop'    AND l.action = 'grade'
                                 AND a.id = l.info AND s.id = a.submissionid AND a.userid = $USER->id
                                 AND u.id = s.userid AND e.id = a.workshopid");
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////
+function workshop_get_student_submission($workshop, $user) {
+// Return a submission for a particular user
+    global $CFG;
+
+    $submission = get_record("workshop_submissions", "workshopid", $workshop->id, "userid", $user->id);
+    if (!empty($submission->timecreated)) {
+        return $submission;
+    }
+    return NULL;
 }
 
 

@@ -27,14 +27,14 @@ workshop_count_user_submissions($workshop, $user) {
 workshop_delete_submitted_files($workshop, $submission) {
 workshop_delete_user_files($workshop, $user, $exception) {
 
-workshop_file_area($workshop, $submission) {
-workshop_file_area_name($workshop, $submission) {
+workshop_file_area($workshop, $submission) { <--- in lib.php
+workshop_file_area_name($workshop, $submission) { <--- in lib.php
 
 workshop_get_assessments($submission) {
 workshop_get_comments($assessment) {
 workshop_get_participants($workshopid) {
 workshop_get_student_assessments($workshop, $user) {
-workshop_get_student_submission($workshop, $user) {
+workshop_get_student_submission($workshop, $user) { <--- in lib.php
 workshop_get_student_submission_assessments($workshop) {
 workshop_get_student_submissions($workshop) { <--- in lib.php
 workshop_get_submission_assessment($submission, $user) {
@@ -475,21 +475,6 @@ function workshop_delete_user_files($workshop, $user, $exception) {
 
 
 //////////////////////////////////////////////////////////////////////////////////////
-function workshop_file_area($workshop, $submission) {
-    return make_upload_directory( workshop_file_area_name($workshop, $submission) );
-}
-
-
-//////////////////////////////////////////////////////////////////////////////////////
-function workshop_file_area_name($workshop, $submission) {
-//  Creates a directory file name, suitable for make_upload_directory()
-    global $CFG;
-
-    return "$workshop->course/$CFG->moddata/workshop/$submission->id";
-}
-
-
-//////////////////////////////////////////////////////////////////////////////////////
 function workshop_get_assessments($submission, $all = '') {
     // Return assessments for this submission ordered oldest first, newest last
     // new assessments made within the editing time are NOT return unless the
@@ -531,19 +516,6 @@ function workshop_get_student_assessments($workshop, $user) {
                               AND a.submissionid = s.id
                               AND a.userid = $user->id
                               ORDER BY a.timecreated DESC");
-}
-
-
-//////////////////////////////////////////////////////////////////////////////////////
-function workshop_get_student_submission($workshop, $user) {
-// Return a submission for a particular user
-    global $CFG;
-
-    $submission = get_record("workshop_submissions", "workshopid", $workshop->id, "userid", $user->id);
-    if (!empty($submission->timecreated)) {
-        return $submission;
-    }
-    return NULL;
 }
 
 
