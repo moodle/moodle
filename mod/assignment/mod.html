@@ -1,0 +1,35 @@
+<form name="form" method="post" action="<?=$ME ?>">
+<table cellpadding=5>
+<tr valign=top>
+    <td align=right><P><B>Assignment Name:</B></P></TD>
+    <td>
+        <input type="text" name="name" size=30 value="<? p($form->name) ?>">
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><P><B>Description:</B></P></TD>
+    <td>
+        <textarea name="description" rows=15 cols=30 wrap="virtual"><? p($form->description) ?></textarea>
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><P><B>Due date:</B></td>
+    <td><?
+           print_date_selector("dueday", "duemonth", "dueyear", $form->dueday, $form->duemonth, $form->dueyear);
+           echo "-";
+           print_time_selector("duehour", "dueminute", $form->duehour, $form->dueminute);
+           formerr($err["duedate"]);
+    ?></td>
+</tr>
+</table>
+<CENTER>
+<input type="hidden" name=course     value="<? p($form->course) ?>">
+<input type="hidden" name=coursemodule  value="<? p($form->coursemodule) ?>">
+<input type="hidden" name=section       value="<? p($form->section) ?>">
+<input type="hidden" name=module     value="<? p($form->module) ?>">
+<input type="hidden" name=modulename value="<? p($form->modulename) ?>">
+<input type="hidden" name=instance   value="<? p($form->instance) ?>">
+<input type="hidden" name=mode       value="<? p($form->mode) ?>">
+<input type="submit" value="Save these settings">
+</CENTER>
+</FORM>
