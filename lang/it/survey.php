@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // survey.php - created with Moodle 1.2 development (2003111400)
+      // survey.php - created with Moodle 1.3 development (2004040500)
 
 
 $string['actual'] = 'Attuale';
@@ -50,7 +50,7 @@ $string['attls8'] = 'Sono sempre interessato a conoscere perché le persone dicon
 $string['attls8short'] = 'Sapere perché le persone fanno';
 $string['attls9'] = 'Spesso mi ritrovo a discutere con gli autori dei libri che leggo, provando a immaginare logicamente perché sono sbagliati.';
 $string['attls9short'] = 'discutere con gli autori';
-$string['attlsintro'] = 'Lo scopo di questo questionario è aiutarci a valutare i vostri atteggiamenti nei confronti del pensare e dell\'imparare.
+$string['attlsintro'] = 'Lo scopo di questo questionario è aiutarci a valutare il vostro atteggiamento nei confronti del pensare e dell\'imparare.
 
 Non ci sono risposte \'giuste\' o risposte \'errate\'; siamo interessati soltanto al vostro parere.  Vi assicuriamo che le vostre risposte saranno trattate con riservatezza e non influiranno sulla vostra valutazione.';
 $string['attlsm1'] = 'Atteggiamenti nei Confronti del Pensare e dell\'Imparare';
@@ -115,9 +115,9 @@ $string['colles8'] = 'penso in modo critico alle idee nelle letture.';
 $string['colles8short'] = 'sono critico delle letture';
 $string['colles9'] = 'spiego le mie idee agli altri studenti.';
 $string['colles9short'] = 'spiego le mie idee';
-$string['collesaintro'] = 'L\'obiettivo di questo questionario è di aiutare a comprendere come le consegne di questa unità di apprendimento ti aiutano ad apprendere.
+$string['collesaintro'] = 'L\'obiettivo di questo questionario è di aiutarci a comprendere come le attività proposte da questo ambiente di apprendimento ti siano state utili.
 
-Ciascuna delle seguenti 24 domende chiedono della tua esperienza in questa unità.
+Ciascuna delle seguenti 24 domande riguardano tua esperienza in questo ambiente.
 
 Non ci sono domande \'giuste\' o \'sbagliate\'; noi siamo interessati solo alla tua opinione. Assicuriamo che le tue risposte saranno trattate con il massimo grado di riservatezza e non influenzeranno la tua valutazione.
 
@@ -125,9 +125,9 @@ Le tue risposte saranno considerate con attenzione e ci aiuteranno a migliorare 
 
 Molte Grazie.';
 $string['collesaname'] = 'COLLES (Attuale)';
-$string['collesapintro'] = 'Lo scopo di questo questionario è aiutarci a capire come il servizio online di questa unità vi ha permesso di imparare.
+$string['collesapintro'] = 'Lo scopo di questo questionario è aiutarci a capire come il servizio online di questo ambiente vi ha permesso di imparare.
 
-Ogni una delle 24 dichiarazioni sotto vi chiede di confrontare la vostra esperienza <B>preferita</B>(ideale) e quella <B>attuale</B> di questa unità.
+Ogni una delle 24 affermazioni sotto vi chiede di confrontare la vostra esperienza <B>preferita</B>(ideale) e quella <B>attuale</B> di questa unità.
 
 Non ci sono risposte \'giuste\' o risposte \'errate\'; siamo interessati soltanto al vostro parere. Non ci sono domande \'giuste\' o \'sbagliate\'; noi siamo interessati solo alla vostra opinione. Assicuriamo che le vostre risposte saranno trattate con il massimo grado di riservatezza e non influenzeranno la vostra valutazione.
 
@@ -135,22 +135,22 @@ Pensate con attenzione alle vostre risposte perché ci aiuteranno, in avvenire, a
 
 Molte grazie.';
 $string['collesapname'] = 'COLLES (Preferito e Attuale)';
-$string['collesm1'] = 'Rilevanza';
-$string['collesm1short'] = 'Rilevanza';
-$string['collesm2'] = 'Pensiero riflessivo';
-$string['collesm2short'] = 'Pensiero riflessivo';
+$string['collesm1'] = 'Pertinenza';
+$string['collesm1short'] = 'Pertinenza';
+$string['collesm2'] = 'Senso critico';
+$string['collesm2short'] = 'Senso critico';
 $string['collesm3'] = 'Interattività';
 $string['collesm3short'] = 'Interattività';
-$string['collesm4'] = 'Tutoraggio';
+$string['collesm4'] = 'Sostengno da parte del Tutor';
 $string['collesm4short'] = 'Tutoraggio';
-$string['collesm5'] = 'Supporto alla pari';
-$string['collesm5short'] = 'Supporto alla pari';
-$string['collesm6'] = 'Intrepretazione';
-$string['collesm6short'] = 'Interpretazione';
+$string['collesm5'] = 'Sostegno da parte dei colleghi';
+$string['collesm5short'] = 'Supporto da colleghi';
+$string['collesm6'] = 'Comunicazione';
+$string['collesm6short'] = 'Cumunicazione';
 $string['collesmintro'] = 'In questa unità online...';
 $string['collespintro'] = 'Lo scopo di questa indagine é aiutarci a capire che cosa preferite in un\'esperienza di apprendimento online.
 
-Ogni una delle 24 dichiarazioni sotto vi chiede di confrontare la vostra esperienza <B>preferita</B>(ideale) e quella <B>attuale</B> di questa unità.
+Ogni una delle 24 affermazioni sotto vi chiede di confrontare la vostra esperienza <B>preferita</B>(ideale) e quella <B>attuale</B> di questo ambiente.
 
 Non ci sono risposte \'giuste\' o risposte \'errate\'; siamo interessati soltanto al vostro parere. Non ci sono domande \'giuste\' o \'sbagliate\'; noi siamo interessati solo alla vostra opinione. Assicuriamo che le vostre risposte saranno trattate con il massimo grado di riservatezza e non influenzeranno la vostra valutazione.
 

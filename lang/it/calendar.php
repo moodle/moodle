@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // calendar.php - created with Moodle 1.3 development (2004032800)
+      // calendar.php - created with Moodle 1.3 development (2004040500)
 
 
 $string['april'] = 'Aprile';
@@ -66,6 +66,7 @@ $string['sat'] = 'Sab';
 $string['saturday'] = 'Sabato';
 $string['september'] = 'Settembre';
 $string['shown'] = 'Mostrato';
+$string['spanningevents'] = 'Eventi in corso';
 $string['sun'] = 'Dom';
 $string['sunday'] = 'Domenica';
 $string['thu'] = 'Gio';

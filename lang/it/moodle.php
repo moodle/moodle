@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.3 development (2004032800)
+      // moodle.php - created with Moodle 1.3 development (2004040500)
 
 
 $string['action'] = 'Azione';
@@ -881,6 +881,7 @@ $string['uploadthisfile'] = 'Trasferisci questo file';
 $string['uploadusers'] = 'Trasferisci utenti';
 $string['user'] = 'Utente';
 $string['userconfirmed'] = 'Confermato da $a';
+$string['userdata'] = 'Dati utente';
 $string['userdeleted'] = 'Questo account è stato cancellato';
 $string['userdescription'] = 'Descrizione';
 $string['userfiles'] = 'File utente';
