@@ -1,10 +1,10 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.2 development (2004013101)
+      // auth.php - created with Moodle 1.2 development (2004020300)
 
 
 $string['auth_dbdescription'] = 'Diese Methode benutzt eine externe Datenbank-Tabelle, um die Gültigkeit eines angegebenen Nutzernamens und Kennwort zu überprüfen, Wenn der Zugang neu ist, werden die Informationen der übrigen Felder ebenso zu Moodle hinüberkopiert.';
 $string['auth_dbextrafields'] = 'Diese Felder sind optional. Sie können auswählen, einige Moodle Nutzer-Felder mit Informationen des <b>externen Datenbank-Feldes</b> vorauszufüllen, das Sie hier angeben.
-<p>Wenn Sie dieses leer lassen, dann werden Standardwerte benutzt.<P>Im anderen Fall wird der/die Nutzer/in befähigt, alle diese Felder nach der Anmeldung zu bearbeiten.';
+<p>Wenn Sie dieses leer lassen, werden Standardwerte benutzt.<P>Im anderen Fall muß der/die Nutzer/in alle Felder nach der Anmeldung ausfüllen.';
 $string['auth_dbfieldpass'] = 'Name des Feldes, das das Passwort enthält';
 $string['auth_dbfielduser'] = 'Name des Feldes, das den Nutzernamen enthält';
 $string['auth_dbhost'] = 'Der Computer, der die Datenbank bereitstellt';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.2 development (2004013101)
+      // resource.php - created with Moodle 1.2 development (2004020300)
 
 
 $string['addresource'] = 'Material hinzufügen';
@@ -14,25 +14,24 @@ $string['configpopuplocation'] = 'Sollen Popup-Fenster das Adressmenu zeigen (Vo
 $string['configpopupmenubar'] = 'Sollen Popup-Fenster das Menu zeigen (Voreinstellung)?';
 $string['configpopupresizable'] = 'Soll  die Größe von Popup-Fenstern veränderbar sein (Voreinstellung)?';
 $string['configpopupscrollbars'] = 'Sollen Popup-Fenster scrollbar sein (Voreinstellung)?';
-$string['configpopupstatus'] = 'Sollen Popup-Fednster eine Statusanzeige haben (Voreinstellung)?';
+$string['configpopupstatus'] = 'Sollen Popup-Fenster eine Statusanzeige haben (Voreinstellung)?';
 $string['configpopuptoolbar'] = 'Sollen Popup-Fenster die Toolbar anzeigen (Voreinstellung)?';
 $string['configpopupwidth'] = 'Welche Breite sollen Popup-Fenster haben (Voreinstellung)?';
-$string['configwebsearch'] = 'Wenn eine URL als Webseite oder Link eingefügt wird,    
-soll diese Seite dem Benutzer bei der Suche nach einer URL unterstützen.';
+$string['configwebsearch'] = 'Wenn eine URL als Webseite oder Link eingefügt wird soll diese Seite dem Benutzer bei der Suche nach einer URL unterstützen.';
 $string['directlink'] = 'Direkter Link zu dieser Datei';
 $string['editingaresource'] = 'Material bearbeiten';
 $string['example'] = 'Beispiel';
 $string['examplereference'] = 'Tobin, K. & Tippins, D (1993) Constructivism as a Referent for Teaching and Learning. In: K. Tobin (Ed) The Practice of Constructivism in Science Education, pp 3-21, Lawrence-Erlbaum, Hillsdale, NJ.';
-$string['exampleurl'] = 'http://www.beispiel.de/Beispielverzeichnis/Beisieldatei,html';
+$string['exampleurl'] = 'http://www.beispiel.de/Beispielverzeichnis/Beispieldatei.html';
 $string['fetchclienterror'] = 'Ein Fehler ist beim Aufruf der Seite aufgetreten (evtl. eine falsche Web-Adresse).';
 $string['fetcherror'] = 'Ein Fehler ist beim Aufruf der Seite aufgetreten.
 ';
-$string['fetchservererror'] = 'Ein Fehler (evtl. ein Programmfehler) ist beim Remoteserver aufgeteten . </p>';
+$string['fetchservererror'] = 'Ein Fehler (evtl. ein Programmfehler) ist beim Remoteserver aufgetreten . </p>';
 $string['filename'] = 'Dateiname';
 $string['fulltext'] = 'Voller Text';
 $string['htmlfragment'] = 'HTML-Teil';
-$string['modulename'] = 'Unterlagen';
-$string['modulenameplural'] = 'Arbeitsunterlagen';
+$string['modulename'] = 'Arbeitsmaterial';
+$string['modulenameplural'] = 'Arbeitsmaterialien';
 $string['neverseen'] = 'Nie gelesen';
 $string['newdirectories'] = 'Die Verzeichnis-Verknüpfungen anzeigen';
 $string['newfullscreen'] = 'Den ganzen Bildschirm ausfüllen';
@@ -47,8 +46,7 @@ $string['newwidth'] = 'Standard Fensterbreite (in Pixeln)';
 $string['newwindow'] = 'Neues Fenster';
 $string['newwindowopen'] = 'Dieses Quelle in einem neuen Popup-Fenster anzeigen';
 $string['note'] = 'Anmerkung';
-$string['notefile'] = 'Um mehr als eine Datei für diesen Kurs hochzuladen (damit dieses in der Liste erscheinen) benutzen Sie bitte den
-
+$string['notefile'] = 'Um mehr als eine Datei für diesen Kurs hochzuladen (damit dieses in der Liste erscheinen) benutzen Sie bitte den 
 <A HREF=$a >Datei-Manager</A>.';
 $string['notypechosen'] = 'Sie müssen einen Typ auswählen. Verwenden Sie den Zurück-Knopf und probieren Sie es erneut';
 $string['popupresource'] = 'Diese Quelle erscheint in einem Pop-Up-Fenster';

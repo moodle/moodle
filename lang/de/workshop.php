@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // workshop.php - created with Moodle 1.2 development (2004013101)
+      // workshop.php - created with Moodle 1.2 development (2004020300)
 
 
 $string['absent'] = 'Abwesend';
@@ -13,9 +13,9 @@ $string['allowresubmit'] = 'Mehrfaches Abgeben erlauben';
 $string['alreadyinphase'] = 'Schon in Phase $a';
 $string['amendassessmentelements'] = 'Bewertungskriterien ändern';
 $string['amendtitle'] = 'Titel ändern';
-$string['analysisofassessments'] = 'Anaylse der Bewertungen';
+$string['analysisofassessments'] = 'Analyse der Bewertungen';
 $string['assess'] = 'Bewerte';
-$string['assessedon'] = 'Bewertet von $a';
+$string['assessedon'] = 'Bewertet am $a';
 $string['assessment'] = 'Bewertung';
 $string['assessmentby'] = 'Bewertung von $a';
 $string['assessmentdropped'] = 'Herausgefallene Bewertungen';
@@ -27,7 +27,7 @@ $string['assessments'] = 'Bewertungen';
 $string['assessmentsareok'] = 'Bewertungen sind OK';
 $string['assessmentsby'] = 'Bewertungen von $a';
 $string['assessmentsdone'] = 'Bewertungen erledigt';
-$string['assessmentsexcluded'] = 'Zahl der Bewertungen, die nicht berücksichtigt wurden  für $a';
+$string['assessmentsexcluded'] = 'Zahl der Bewertungen, die nicht berücksichtigt wurden für $a';
 $string['assessmentsmustbeagreed'] = 'Bewertungen muss zugestimmt werden';
 $string['assessmentwasagreedon'] = 'Bewertung wurde zugestimmt von $a';
 $string['assessor'] = 'Bewerter';
@@ -78,7 +78,7 @@ $string['gradeforsubmission'] = 'Note für Arbeit';
 $string['gradeofsubmission'] = 'Note des Beitrages: $a';
 $string['gradetable'] = 'Bewertungstabelle';
 $string['gradingstrategy'] = 'Benotungsstrategie';
-$string['hidegradesbeforeagreement'] = 'Noten vor Zustimmung verbergen';
+$string['hidegradesbeforeagreement'] = 'Noten vor der Zustimmung verbergen';
 $string['hidenamesfromstudents'] = 'Namen von $a verbergen';
 $string['includeteachersgrade'] = 'Note des/der Trainer/in einbeziehen';
 $string['incorrect'] = 'Falsch';
@@ -86,7 +86,7 @@ $string['iteration'] = 'Wiederholung $a abgeschlossen';
 $string['leaguetable'] = 'Notenübersicht';
 $string['listassessments'] = 'Liste der Bewertungen';
 $string['listofallsubmissions'] = 'Liste aller Beiträge';
-$string['liststudentsassessments'] = 'Bewertung des/der Kursteilnehmer/in auflisten';
+$string['liststudentsassessments'] = 'Bewertung des/der Kursteilnehmers/in auflisten';
 $string['loadingforteacherassessments'] = 'Laden von $a\'s Bewertungen';
 $string['mail1'] = 'Ihr Beitrag \'$a\' wurde bewertet von';
 $string['mail10'] = 'Sie können es in Ihrer Workshopaufgabe bewerten';
@@ -103,7 +103,7 @@ $string['maximumsize'] = 'Maximale Größe';
 $string['modulename'] = 'Workshop';
 $string['modulenameplural'] = 'Workshops';
 $string['movingtophase'] = 'Verschieben zu Phase $a';
-$string['namesnotshowntostudents'] = 'Nmaen werde $a nicht angezeigt';
+$string['namesnotshowntostudents'] = 'Namen werde $a nicht angezeigt';
 $string['newassessments'] = 'Neue Workshopbewertung';
 $string['newgradings'] = 'Neue Benotungen';
 $string['newsubmissions'] = 'Neue Workshop Einreichung';
@@ -115,7 +115,7 @@ $string['notavailable'] = 'Nicht verfügbar';
 $string['noteonassessmentelements'] = 'Beachten Sie, dass die Benotung in mehrere \'Bewertungskriterien\' aufgeteilt ist.<br>
 Dies macht die Benotung einfacher und plausibler. Als Kursleiter müssen Sie diese<br>
 Kriterien hinzufügen, bevor Sie die Aufgabe dem Kursteilnehmer zugänglich machen. Dies geschieht durch das <br>Klicken auf die Aufgabe im Kurs. Sofern keine Kriterien vorhanden sind, werden Sie gefragt<br>diese hinzuzufügen. Sie können die Anzahl der Kriterien ändern, indem Sie die Seite der Aufgabenbearbeitung benutzen.<br>
-Die Kriterien selbst können über die Seite &quot;Aufgabenverwaltung&quot; bearbeitet werden';
+Die Kriterien selbst können über die Seite &quot;Aufgabenverwaltung&quot; bearbeitet werden.';
 $string['notgraded'] = 'Nicht benotet';
 $string['notitlegiven'] = 'Kein Titel angegeben';
 $string['numberofassessmentelements'] = 'Anzahl der Kommentare, Bewertungskriterien, Fehlersumme oder Kriterien in einer Rubrik';
@@ -202,7 +202,7 @@ $string['submittedby'] = 'Eingereicht von';
 $string['suggestedgrade'] = 'Vorgeschlagene Note';
 $string['teacherassessments'] = '$a Aufgaben des/der Kursleiter/in';
 $string['teacherscomment'] = 'Kommentar des/der Kursleiter/in';
-$string['teachersgrade'] = 'Note des Kursleiters';
+$string['teachersgrade'] = 'Note der/des Kursleiters/in';
 $string['teachersubmissionsforassessment'] = '$a Beiträge des/der Trainer/in zur Bewertung';
 $string['thegradeis'] = 'Die Note ist $a';
 $string['thereisfeedbackfromtheteacher'] = 'Es gibt eine Rückmeldung von $a';

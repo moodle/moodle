@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // journal.php - created with Moodle 1.2 development (2003120700)
+      // journal.php - created with Moodle 1.2 development (2004020300)
 
 
 $string['alwaysopen'] = 'Immer offen';
@@ -9,10 +9,10 @@ $string['editingended'] = 'Bearbeitungszeitraum ist abgelaufen';
 $string['editingends'] = 'Bearbeitungszeitraum endet';
 $string['entries'] = 'Einträge';
 $string['feedbackupdated'] = 'Mitteilung für Eintrag $a aktualisiert';
-$string['journalmail'] = '$a->Trainer/in hat einen Kommentar zu Ihrem eingereichten Journal \'$a->Journal\' abgegeben. Sie können dieses angehängt an Ihr eingereichtes Journal sehen:
+$string['journalmail'] = '$a->Trainer/in hat einen Kommentar zu Ihrem  Journal \'$a->Journal\' abgegeben. Sie können dieses angehängt an Ihr  Journal sehen:
 
 $a->url';
-$string['journalmailhtml'] = '$a->Trainer/in hat einen Kommentar zu Ihrem eingereichten <i>->Journal </i>\' abgegeben<br /><br /> Sie können diesen angehängt an Ihr <a href=\"$a->url\">eingereichtes Journal</a> sehen.';
+$string['journalmailhtml'] = '$a->Trainer/in hat einen Kommentar zu Ihrem  <i>->Journal </i>\' abgegeben<br /><br /> Sie können diesen angehängt an Ihr <a href=\"$a->url\"> Journal</a> sehen.';
 $string['journalname'] = 'Name des Journals';
 $string['journalquestion'] = 'Journal-Frage';
 $string['journalrating1'] = 'nicht zufriedenstellend';
@@ -24,7 +24,7 @@ $string['newjournalentries'] = 'Neue Journal-Einträge';
 $string['noentry'] = 'Kein Eintrag';
 $string['noratinggiven'] = 'Keine Beurteilung abgegeben';
 $string['notopenuntil'] = 'Diese Journal wird geschlossen sein bis';
-$string['notstarted'] = 'Sie haben dieses Journal noch nicht begonnen';
+$string['notstarted'] = 'Sie haben mit Ihrem Journal noch nicht begonnen';
 $string['overallrating'] = 'Allgemeine Beurteilung';
 $string['rate'] = 'Beurteilung';
 $string['saveallfeedback'] = 'Alle meine Mitteilungen speichern';

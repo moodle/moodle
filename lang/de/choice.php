@@ -1,13 +1,13 @@
 <?PHP // $Id$ 
-      // choice.php - created with Moodle 1.2 development (2004020300)
+      // choice.php - created with Moodle 1.2 development (2004021700)
 
 
 $string['answered'] = 'Beantwortet';
-$string['choice'] = 'Wahl  $a';
-$string['choicename'] = 'Wahlname';
-$string['choicetext'] = 'Wahltext';
-$string['modulename'] = 'Wahl ';
-$string['modulenameplural'] = 'Wahlen ';
+$string['choice'] = 'Abstimmung  $a';
+$string['choicename'] = 'Abstimmung';
+$string['choicetext'] = 'Beschreibung der Abstimmung';
+$string['modulename'] = 'Abstimmung';
+$string['modulenameplural'] = 'Abstimmungen';
 $string['mustchooseone'] = 'Sie müssen zuerst eine Antwort auswählen bevor Sie speichern. Es wurde noch nicht gespeichert.';
 $string['notanswered'] = 'Noch nicht beantwortet';
 $string['publish'] = 'Ergebnisse veröffentlichen';
@@ -16,7 +16,7 @@ $string['publishnames'] = 'Ergebnisse vollständig veröffentlichen, Namen und der
 $string['publishnot'] = 'Keine Ergebnisse veröffentlichen';
 $string['responses'] = 'Antworten ';
 $string['responsesto'] = 'Antworten zu  $a';
-$string['savemychoice'] = 'Meine Wahl speichern';
+$string['savemychoice'] = 'Meine Abstimmung speichern';
 $string['showunanswered'] = 'Zeige Spalte für Unbeantwortete';
 $string['viewallresponses'] = 'Zeige $a Antworten';
 

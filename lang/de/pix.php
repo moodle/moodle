@@ -1,10 +1,10 @@
 <?PHP // $Id$ 
-      // pix.php - created with Moodle 1.2 development (2003111400)
+      // pix.php - created with Moodle 1.2 development (2004020300)
 
 
 $string['angry'] = 'ärgerlich';
 $string['approve'] = 'anerkennend';
-$string['biggrin'] = 'Breite Grinsen';
+$string['biggrin'] = 'Breites Grinsen';
 $string['blackeye'] = 'Schwarzauge';
 $string['blush'] = 'errötend';
 $string['clown'] = 'Clown';

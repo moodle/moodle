@@ -1,12 +1,12 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.2 development (2004013101)
+      // quiz.php - created with Moodle 1.2 development (2004021700)
 
 
 $string['acceptederror'] = 'Akzeptierter Fehler';
-$string['addingquestions'] = 'Diese Spalte der Seite ist zum Verwalten von Quizfragen. Fragen werden in Kategorien gespeichert, um sie besser organisieren zu können, und können von jedem Quiz Ihres Kurses oder sogar von anderen Kursen (Wenn man \'veröffentlichen\' ausgewählt hat) benutzt werden. <br /><br />Nachdem Sie eine Kategorie erzeugt haben, können Sie Fragen erzeugen oder bearbeiten. Sie können jede dieser Fragen auswählen und Ihrem Quiz in der anderen Spalte hinzufügen.';
+$string['addingquestions'] = 'Diese Spalte der Seite ist zum Verwalten von Testfragen. Fragen werden in Kategorien gespeichert, um sie besser organisieren zu können, und können von jedem Test Ihres Kurses oder sogar von anderen Kursen (Wenn man \'veröffentlichen\' ausgewählt hat) benutzt werden. <br /><br />Nachdem Sie eine Kategorie erzeugt haben, können Sie Fragen erzeugen oder bearbeiten. Sie können jede dieser Fragen auswählen und Ihrem Test in der anderen Spalte hinzufügen.';
 $string['addquestions'] = 'Fragen hinzufügen';
-$string['addquestionstoquiz'] = 'Frage zu aktuellem Quiz hinzufügen';
-$string['addselectedtoquiz'] = 'Auswahl zum Quiz hinzufügen';
+$string['addquestionstoquiz'] = 'Frage zu aktuellem Test hinzufügen';
+$string['addselectedtoquiz'] = 'Auswahl zum Test hinzufügen';
 $string['aiken'] = 'Aiken Format';
 $string['allowreview'] = 'Bericht erlauben';
 $string['alreadysubmitted'] = 'Es sieht so aus, als hätten Sie diesen Versuch schon eingetragen';
@@ -20,13 +20,14 @@ $string['answertoolong'] = 'Die Antwort ist nach Zeile $a zu lang (Sie können bi
 $string['aon'] = 'AON Format';
 $string['attempt'] = 'Versuch $a';
 $string['attemptfirst'] = 'Erster Versuch';
+$string['attemptincomplete'] = 'Dieser Versuch von $a ist noch nicht vollständig abgeschlossen.';
 $string['attemptlast'] = 'Letzter Versuch';
-$string['attemptquiznow'] = 'Quiz jetzt probieren';
+$string['attemptquiznow'] = 'Test jetzt probieren';
 $string['attempts'] = 'Versuche';
 $string['attemptsallowed'] = 'Erlaubte Versuche';
 $string['attemptsunlimited'] = 'Unbegrenzte Versuche';
-$string['backtoquiz'] = 'Zurück zur Quiz-Bearbeitung';
-$string['bestgrade'] = 'Höchstnote';
+$string['backtoquiz'] = 'Zurück zur Testbearbeitung';
+$string['bestgrade'] = 'Bestnote';
 $string['blackboard'] = 'Blackboard (Lernmanagementsystem)';
 $string['calculatedquestion'] = 'Die berechnete Frage in Zeile $a wird nicht unterstützt. Die Frage wird ignoriert.';
 $string['caseno'] = 'Nein, Schreibweise ist unwichtig';
@@ -43,8 +44,8 @@ $string['correctanswer'] = 'Richtige Antwort';
 $string['correctanswers'] = 'Richtige Antworten';
 $string['corrresp'] = 'richtige Rückantwort';
 $string['countdown'] = 'Countdown';
-$string['countdownfinished'] = 'Das Quiz ist beendet, Sie sollten Ihre Antworten jetzt absenden.';
-$string['countdowntenminutes'] = 'Das Quiz endet in 10 Minuten.';
+$string['countdownfinished'] = 'Das Test ist beendet, Sie sollten Ihre Antworten jetzt absenden.';
+$string['countdowntenminutes'] = 'Das Test endet in 10 Minuten.';
 $string['coursetestmanager'] = 'Kurstest Managerformat';
 $string['createmultiple'] = 'Mehrere Fragen erstellen';
 $string['createnewquestion'] = 'Eine neue Frage anlegen';
@@ -65,7 +66,7 @@ $string['editingmultianswer'] = 'Eine Frage mit Lückentext bearbeiten';
 $string['editingmultichoice'] = 'Eine Frage mit Mehrfachauswahl bearbeiten';
 $string['editingnumerical'] = 'Eine numerische Frage bearbeiten';
 $string['editingquestion'] = 'Eine Frage bearbeiten';
-$string['editingquiz'] = 'Ein Quiz bearbeiten';
+$string['editingquiz'] = 'Einen Test bearbeiten';
 $string['editingrandom'] = 'Eine zufällige Frage bearbeiten';
 $string['editingrandomsamatch'] = 'Eine zufällige Kurzantwort-Zuordnung bearbeiten ';
 $string['editingshortanswer'] = 'Kurzantwort der Frage bearbeiten';
@@ -79,23 +80,27 @@ $string['filloutoneanswer'] = 'Sie müssen mindestens eine mögliche Antwort geben
 $string['filloutthreequestions'] = 'Sie müssen mindestens 3 Fragen auswählen. Leere Fragen werden nicht verwendet';
 $string['fillouttwochoices'] = 'Sie müssen mindestens zwei mögliche Antwort geben. Leere Antworten werden ignoriert.';
 $string['fractionsaddwrong'] = 'Ihre positiven gewählten Punktzahlen ergeben keine 100%%
+
 <BR>Statt dessen ergeben Sie $a%%
+
 <BR>Möchten Sie zurück gehen und diese Frage korrigieren?';
 $string['fractionsnomax'] = 'Eine dieser Antworten sollte 100%% sein, so dass
+
 <br>es möglich ist, die volle Punktzahl für diese Frage zu bekommen.
+
 <br>Möchten Sie zurück gehen und diese Frage korrigieren?';
 $string['gift'] = 'GIFT Format';
 $string['gradeaverage'] = 'Durchschnittsnote';
 $string['gradehighest'] = 'Beste Note';
 $string['grademethod'] = 'Bewertungsschema';
-$string['guestsno'] = 'Entschuldigung, aber Gäste können das Quiz nicht sehen oder probieren.';
+$string['guestsno'] = 'Entschuldigung, aber Gäste können den Test nicht sehen oder probieren.';
 $string['imagedisplay'] = 'Bild für die Anzeige';
 $string['imagemissing'] = 'Bild in Zeile $a nicht verfügbar. Der Dateiname wird ignoriert';
 $string['importquestions'] = 'Eine Frage aus einer Datei importieren';
 $string['indivresp'] = 'Rückantwort für jeden zu jeder Position';
 $string['introduction'] = 'Einleitung';
 $string['itemanal'] = 'Antwortanalyse des Elements';
-$string['listitems'] = 'Liste der Elementes des Quiz';
+$string['listitems'] = 'Liste der Elementes des Tests';
 $string['marks'] = 'Punkte';
 $string['match'] = 'Zuordnung';
 $string['matchanswer'] = 'zugeordnete Antwort';
@@ -105,23 +110,24 @@ $string['missingname'] = 'Der Name der Frage fehlt';
 $string['missingquestion'] = 'Fehlendes Fragezeichen nach Zeile $a';
 $string['missingquestiontext'] = 'Der Text der Frage fehlt';
 $string['missingword'] = 'Das Wortformat fehlt';
-$string['modulename'] = 'Quiz';
-$string['modulenameplural'] = 'Quiz';
+$string['modulename'] = 'Test';
+$string['modulenameplural'] = 'Tests';
 $string['multianswer'] = 'Lückentext';
 $string['multichoice'] = 'Mehrfachauswahl';
 $string['name'] = 'Name';
 $string['noanswers'] = 'Es wurden keine Antworten ausgewählt!';
-$string['noattempts'] = 'Dieses Quiz hat keiner ausgefüllt';
+$string['noattempts'] = 'Diesen Test hat keiner ausgefüllt';
 $string['nomoreattempts'] = 'Kein Versuch mehr zugelassen';
 $string['noquestions'] = 'Es wurden noch keine Fragen eingetragen';
-$string['noresponse'] = 'keine Rückantwort';
-$string['noreview'] = 'Sie dürfen dieses Quiz nicht überprüfen';
-$string['noreviewuntil'] = 'Sie dürfen dieses Quiz bis $a nicht überprüfen';
+$string['noresponse'] = 'Keine Rückantwort';
+$string['noreview'] = 'Sie dürfen diesen Test nicht überprüfen';
+$string['noreviewuntil'] = 'Sie dürfen diesen Test bis $a nicht überprüfen';
 $string['notenoughsubquestions'] = 'Nicht genügend Unter-Fragen wurden definiert\'<br>
+
 Möchten Sie zurück gehen und diese Frage korrigieren?';
 $string['numerical'] = 'Numerisch';
 $string['paragraphquestion'] = 'Fragezeichen in Zeile $a wird nicht unterstützt. Die Frage wird ignoriert.';
-$string['percentcorrect'] = 'richtig in Prozent';
+$string['percentcorrect'] = 'Richtig in Prozent';
 $string['publish'] = 'Veröffentlichen';
 $string['qti'] = 'IMS QTI Format';
 $string['question'] = 'Frage';
@@ -129,29 +135,29 @@ $string['questioninuse'] = 'Die Frage \'$a\' wird momentan benutzt:';
 $string['questionname'] = 'Titel der Frage';
 $string['questionnametoolong'] = 'Bezeichnung der Frage in Zeile $a ist zu lang (max 255 Zeichen). Er wurde gekürzt.';
 $string['questions'] = 'Fragen';
-$string['quizavailable'] = 'Dieses Quiz ist verfügbar bis: $a';
-$string['quizclose'] = 'Dieses Quiz schließen';
-$string['quizclosed'] = 'Dieses Quiz schließt am $a';
-$string['quizcloses'] = 'Quiz endet';
-$string['quiznotavailable'] = 'Dieses Quiz ist nicht verfügbar bis: $a';
-$string['quizopen'] = 'Ein Quiz beginnen';
+$string['quizavailable'] = 'Dieser Test ist verfügbar bis: $a';
+$string['quizclose'] = 'Diesen Test schließen';
+$string['quizclosed'] = 'Dieser Test schließt am $a';
+$string['quizcloses'] = 'Test endet';
+$string['quiznotavailable'] = 'Dieser Test ist nicht verfügbar bis: $a';
+$string['quizopen'] = 'Ein Test beginnen';
 $string['random'] = 'Zufällig setzen';
 $string['randomcreate'] = 'Eine Zufallsfrage erstellen';
 $string['randomsamatch'] = 'Zufällige Kurzantwort-Zuordnungsfrage';
 $string['randomsamatchcreate'] = 'Erzeuge zufällige Kurzantwort-Zuordnungsfragen';
 $string['randomsamatchintro'] = 'Wählen Sie für jede der folgenden Fragen die passende Antwort aus dem Menü aus';
 $string['randomsamatchnumber'] = 'Nummer auszuwählender Fragen';
-$string['readytosend'] = 'Sie sind dabei, Ihr ganzes Quiz zu senden, um benotet zu werden.  Sind Sie sicher, dass Sie weitermachen wollen?';
+$string['readytosend'] = 'Sie sind dabei, Ihr ganzes Test zu senden, um benotet zu werden.  Sind Sie sicher, dass Sie weitermachen wollen?';
 $string['recentlyaddedquestion'] = 'Aktuell hinzugefügte Frage!';
 $string['regrade'] = 'Alle Versuche zurücksetzen';
 $string['regradecomplete'] = 'Alle Versuche wurden zurückgesetzt';
 $string['regradecount'] = '$a->changed von $a->attempt Noten wurden geändert';
 $string['rename'] = 'Umbenennen';
 $string['report'] = 'Berichte';
-$string['reportfullstat'] = 'ausführliche Statistik';
-$string['reportmulti_percent'] = 'mehrere Prozentsätze';
-$string['reportmulti_q_x_student'] = 'mehrere Teilnehmer/innen Auswahl';
-$string['reportmulti_resp'] = 'individuelle Rückantwort';
+$string['reportfullstat'] = 'Ausführliche Statistik';
+$string['reportmulti_percent'] = 'Mehrere Prozentsätze';
+$string['reportmulti_q_x_student'] = 'Mehrere Teilnehmer/innen Auswahl';
+$string['reportmulti_resp'] = 'Individuelle Rückantwort';
 $string['reportoverview'] = 'Übersicht';
 $string['reportregrade'] = 'Versuche zurücksetzen';
 $string['reportsimplestat'] = 'Einfache Statistik';
@@ -159,7 +165,7 @@ $string['review'] = 'Bericht';
 $string['save'] = 'Speichern';
 $string['savegrades'] = 'Noten speichern';
 $string['savemyanswers'] = 'Meine Antworten auswerten';
-$string['savequiz'] = 'Dieses gesamte Quiz speichern';
+$string['savequiz'] = 'Dieses gesamte Test speichern';
 $string['score'] = 'Grobe Punktzahl';
 $string['select'] = 'Auswählen';
 $string['selectall'] = 'Alles auswählen';
@@ -178,12 +184,12 @@ $string['true'] = 'Wahr';
 $string['truefalse'] = 'Wahr/Falsch';
 $string['type'] = 'Typ';
 $string['unknowntype'] = 'Fragentyp in Zeile $a wird nicht unterstützt. Die Frage wird ignoriert.';
-$string['viewallanswers'] = 'Zeige $a ausgefüllte Quiz';
+$string['viewallanswers'] = 'Zeige $a ausgefüllte Test';
 $string['viewallreports'] = 'Berichte ansehen für $a Versuche';
 $string['warningsdetected'] = '$a Warnung(en) entdeckt';
 $string['webct'] = 'WebCT Format';
 $string['withsummary'] = 'mit zusammfassender Statistik';
 $string['wronggrade'] = 'Falsche Bewertung (nach Zeile $a):';
-$string['yourfinalgradeis'] = 'Ihre Gesamtnote für dieses Quiz ist $a';
+$string['yourfinalgradeis'] = 'Ihre Gesamtnote für diesen Test ist $a';
 
 ?>

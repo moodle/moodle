@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // appointment.php - created with Moodle 1.2 development (2003120700)
+      // appointment.php - created with Moodle 1.2 development (2004020300)
 
 
 $string['allowresubmit'] = 'Wiederholung zulassen';
@@ -30,15 +30,15 @@ $string['timeend'] = 'Ende des Termins';
 $string['timestart'] = 'Anfang des Termins';
 $string['typeoffline'] = 'Offline Aktivität';
 $string['typeuploadsingle'] = 'Eine einzelne Datei hochladen';
-$string['uploadbadname'] = 'Dieser Dateiname enthält unzulässige Zeichen. Sie kann nicht hocheladen werden';
+$string['uploadbadname'] = 'Dieser Dateiname enthält unzulässige Zeichen. Sie kann nicht hochgeladen werden';
 $string['uploadedfiles'] = 'Hochgeladene Dateien';
 $string['uploaderror'] = 'Es ist ein Fehler beim Speichern auf dem Server aufgetreten';
-$string['uploadfailnoupdate'] = 'Datei wurde hochgealden, konnte aber die vorliegende Arbeit nicht aktualisieren';
-$string['uploadfiletoobig'] = 'Sorry, aber diese Dtaei ist zu groß (Die Datei kann max. $a Byte groß sein)';
-$string['uploadnofilefound'] = 'Es wurde keine Datei gefunden. Sind Sie sicher, dass Sie eine Datei ausgewählt haben';
-$string['uploadnotregistered'] = '\'$a\' wurde vollständig hochgeladen. Die Arbeit wurde jedoch nicht registriert!';
+$string['uploadfailnoupdate'] = 'Datei wurde hochgeladen, konnte aber die vorliegende Arbeit nicht aktualisieren';
+$string['uploadfiletoobig'] = 'Sorry, aber diese Datei ist zu groß (Die Datei kann max. $a Byte groß sein)';
+$string['uploadnofilefound'] = 'Es wurde keine Datei gefunden. Sind Sie sicher, dass Sie die richtige Datei ausgewählt haben';
+$string['uploadnotregistered'] = '\'$a\' wurde vollständig hochgeladen. Die Arbeit wurde jedoch nicht registriert! Bitte wiederholen.';
 $string['uploadsuccess'] = 'Upload \'$a\' erfolgreich';
-$string['viewfeedback'] = 'Zeigt Bewertungen und feedback an';
+$string['viewfeedback'] = 'Zeigt Bewertungen und Feedback an';
 $string['viewsubmissions'] = 'Zeigt $a eingereichte Termine';
 $string['yoursubmission'] = 'Ihre Einreichungen';
 
