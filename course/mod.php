@@ -5,6 +5,18 @@
     require("../config.php");
     require("lib.php");
 
+    if (isset($cancel)) {  
+        if ($SESSION->returnpage) {
+            $return = $SESSION->returnpage;
+            unset($SESSION->returnpage);
+            save_session("SESSION");
+            redirect($return);
+        } else {
+            redirect("view.php?id=$mod->course");
+        }
+    } 
+
+
     if (isset($course) && isset($HTTP_POST_VARS)) {    // add or update form submitted
 
         if (isset($SESSION->modform)) {   // Variables are stored in the session
@@ -85,10 +97,6 @@
         exit;
     }
 
-    if (isset($return)) {  
-        $SESSION->returnpage = $HTTP_REFERER;
-        save_session("SESSION");
-    }
 
     if (isset($move)) {  
 
@@ -166,6 +174,11 @@
         
         if (! $cw = get_record("course_sections", "id", $cm->section)) {
             error("This course section doesn't exist");
+        }
+
+        if (isset($return)) {  
+            $SESSION->returnpage = "$CFG->wwwroot/mod/$module->name/view.php?id=$cm->id";
+            save_session("SESSION");
         }
 
         $form->coursemodule = $cm->id;

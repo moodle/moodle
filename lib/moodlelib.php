@@ -357,22 +357,23 @@ function update_course_icon($courseid) {
             $string = get_string("turneditingon");
             $edit = "on";
         }
-        return "<FORM TARGET=_parent METHOD=GET ACTION=\"$CFG->wwwroot/course/view.php\">
-                <INPUT TYPE=hidden NAME=id VALUE=\"$courseid\">
-                <INPUT TYPE=hidden NAME=edit VALUE=\"$edit\">
-                <INPUT TYPE=submit VALUE=\"$string\"></FORM>";
+        return "<FORM TARGET=_parent METHOD=GET ACTION=\"$CFG->wwwroot/course/view.php\">".
+               "<INPUT TYPE=hidden NAME=id VALUE=\"$courseid\">".
+               "<INPUT TYPE=hidden NAME=edit VALUE=\"$edit\">".
+               "<INPUT TYPE=submit VALUE=\"$string\"></FORM>";
     }
 }
 
-function update_module_icon($moduleid, $courseid) {
-// Used to be an icon, but it's now a simple form button
+function update_module_button($moduleid, $courseid, $string) {
+// Prints the editing button on a module "view" page
     global $CFG;
 
     if (isteacher($courseid)) {
-        return "<FORM TARGET=_parent METHOD=GET ACTION=\"$CFG->wwwroot/course/mod.php\">
-                <INPUT TYPE=hidden NAME=update VALUE=\"$moduleid\">
-                <INPUT TYPE=hidden NAME=return VALUE=\"true\">
-                <INPUT TYPE=submit VALUE=\"".get_string("editthisactivity")."\"></FORM>";
+        $string = get_string("updatethis", "", $string);
+        return "<FORM TARGET=_parent METHOD=GET ACTION=\"$CFG->wwwroot/course/mod.php\">".
+               "<INPUT TYPE=hidden NAME=update VALUE=\"$moduleid\">".
+               "<INPUT TYPE=hidden NAME=return VALUE=\"true\">".
+               "<INPUT TYPE=submit VALUE=\"$string\"></FORM>";
     }
 }
 
@@ -2013,7 +2014,10 @@ function check_browser_version($brand="MSIE", $version=5.5) {
 
 function can_use_richtext_editor() {
     global $USER, $CFG;
-    return (check_browser_version("MSIE", 5.5) and $USER->htmleditor and $CFG->htmleditor);
+    if ($USER->htmleditor and $CFG->htmleditor) {
+        return check_browser_version("MSIE", 5.5);
+    }
+    return false;
 }
 
 

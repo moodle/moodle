@@ -454,6 +454,7 @@ $string['updatesevery'] = "Updates every \$a seconds";
 $string['updatethiscourse'] = "Update this course";
 $string['updatinga'] = "Updating a \$a";
 $string['updatingain'] = "Updating a \$a->what in \$a->in";
+$string['updatethis'] = "Update this \$a";
 $string['upload'] = "Upload";
 $string['uploadafile'] = "Upload a file";
 $string['uploadthisfile'] = "Upload this file";
