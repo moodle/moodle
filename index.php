@@ -19,8 +19,6 @@
     require_once($CFG->dirroot .'/mod/forum/lib.php');
 
     $blockaction = optional_param('blockaction');
-    $instanceid  = optional_param('instanceid', 0, PARAM_INT);
-    $blockid     = optional_param('blockid',    0, PARAM_INT);
 
     if (! $site = get_site()) {
         redirect($CFG->wwwroot .'/'. $CFG->admin .'/index.php');
@@ -56,34 +54,19 @@
         $langmenu = popup_form ($CFG->wwwroot .'/index.php?lang=', $langs, 'chooselang', $currlang, '', '', '', true);
     }
 
-    $PAGE = page_create_object(PAGE_COURSE_VIEW, SITEID);
-
-    $editing = $PAGE->user_is_editing();
-
+    $PAGE       = page_create_object(PAGE_COURSE_VIEW, SITEID);
     $pageblocks = blocks_get_by_page($PAGE);
+    $editing    = $PAGE->user_is_editing();
 
-    if($editing) {
-        if (!empty($blockaction) && confirm_sesskey()) {
-            if (!empty($blockid)) {
-                blocks_execute_action($PAGE, $pageblocks, strtolower($blockaction), intval($blockid));
-
-            }
-            else if (!empty($instanceid)) {
-                $instance = blocks_find_instance($instanceid, $pageblocks);
-                blocks_execute_action($PAGE, $pageblocks, strtolower($blockaction), $instance);
-            }
-            // This re-query could be eliminated by judicious programming in blocks_execute_action(),
-            // but I'm not sure if it's worth the complexity increase...
-            $pageblocks = blocks_get_by_page($PAGE);
-        }
+    if (!empty($blockaction)) {
+        blocks_execute_url_action($PAGE, $pageblocks);
+        // This re-query could be eliminated by judicious programming in blocks_execute_action(),
+        // but I'm not sure if it's worth the complexity increase...
+        $pageblocks = blocks_get_by_page($PAGE);
     }
 
-    optional_variable($preferred_width_left,  blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]));
-    optional_variable($preferred_width_right, blocks_preferred_width($pageblocks[BLOCK_POS_RIGHT]));
-    $preferred_width_left = min($preferred_width_left, BLOCK_L_MAX_WIDTH);
-    $preferred_width_left = max($preferred_width_left, BLOCK_L_MIN_WIDTH);
-    $preferred_width_right = min($preferred_width_right, BLOCK_R_MAX_WIDTH);
-    $preferred_width_right = max($preferred_width_right, BLOCK_R_MIN_WIDTH);
+    $preferred_width_left  = bounded_number(BLOCK_L_MIN_WIDTH, blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]),  BLOCK_L_MAX_WIDTH);
+    $preferred_width_right = bounded_number(BLOCK_R_MIN_WIDTH, blocks_preferred_width($pageblocks[BLOCK_POS_RIGHT]), BLOCK_R_MAX_WIDTH);
 
     print_header(strip_tags($site->fullname), $site->fullname, 'home', '',
                  '<meta name="description" content="'. s(strip_tags($site->summary)) .'" />',
