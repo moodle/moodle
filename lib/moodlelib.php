@@ -1321,6 +1321,16 @@ function swapshuffle($array) {
     return $array;
 }
 
+function swapshuffle_assoc($array) {
+/// Like swapshuffle, but works on associative arrays
+
+    $newkeys = swapshuffle(array_keys($array));
+    foreach ($newkeys as $newkey) {
+        $newarray[$newkey] = $array[$newkey];
+    }
+    return $newarray;
+}
+
 function draw_rand_array($array, $draws) {
 /// Given an arbitrary array, and a number of draws, 
 /// this function returns an array with that amount 
