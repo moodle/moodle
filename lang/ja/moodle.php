@@ -819,6 +819,7 @@ $string['readinginfofrombackup'] = 'バックアップより情報を読取り中';
 $string['readme'] = 'READMEファイル';
 $string['recentactivity'] = '最近の活動';
 $string['recentactivityreport'] = '最近の活動詳細...';
+$string['recreatedcategory'] = '再作成カテゴリ $a';
 $string['refreshingevents'] = 'イベントの更新';
 $string['registration'] = 'Moodle登録';
 $string['registrationemail'] = 'メール通知';
