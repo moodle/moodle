@@ -1,3 +1,19 @@
+<script language="javascript">
+    function showhide (id) {
+        divobj = document.getElementById(id);
+        butobj = document.getElementById(id+'button');
+        if (divobj.style.display != 'none') {
+            divobj.style.display = 'none';
+            butobj.value = '<?php print_string("showsettings") ?>';
+        } else {
+            divobj.style.display = 'block';
+            butobj.value = '<?php print_string("hidesettings") ?>';
+        }
+    }
+</script>
+
+
+
 <tr valign="top">
     <td align="right" nowrap>
         <p><b><?php print_string("fulltext", "resource") ?>:</b></p><br />
@@ -24,30 +40,40 @@
 
 <tr><td colspan="2"><hr /></td></tr>
 
-<tr valign="top">
-    <td align="right" nowrap>
-        <p><b><?php print_string("pagewindow", "resource") ?>:</b></p>
-    </td>
 
+<tr>
+    <td align="right"><p><b><?php print_string("display", "resource") ?>:</b></p></td>
     <td>
+        <input type="button" value="hide settings" id="windowsettingsbutton" onClick="javascript: return showhide('windowsettings');" />
+    </td>
+</tr>   
+<tr><td colspan="2">
+
+    <div id="windowsettings">
+        
+<table align="center">
+        
+
+<tr valign="top">
+
+    <td colspan="2">
         <script>
             var popupitems = [<?php echo $popupoptions; ?>];
             var allitems = [<?php echo $alloptions; ?>];
         </script>
         <input type="radio" name="windowpopup" value=0 <?php echo ($windowtype != "popup") ? "checked" : "" ?> 
         onClick="return lockoptions('form', 'windowpopup[1]', popupitems);">
+        <b title="<?php print_string("pagedisplay", "resource") ?>"><?php print_string("pagewindow", "resource") ?></b>
         <?php print_string("pagedisplay", "resource") ?>
     </td>
 </tr>
 
 <tr valign="top">
-    <td align="right" nowrap>
-        <p><b><?php p($strnewwindow) ?>:</b></p>
-    </td>
     
-    <td>
+    <td colspan="2">
         <input name="windowpopup" type=radio value=1 <?php echo ($windowtype == "popup") ? "checked" : "" ?>
         onclick=" return lockoptions('form', 'windowpopup[1]', popupitems);">
+        <b title="<?php p($strnewwindowopen) ?>"><?php p($strnewwindow) ?></b>
         <?php p($strnewwindowopen) ?>
         <ul>
         <?php
@@ -79,4 +105,15 @@
         </ul>
     </td>
 </tr>
+
+</table>
+
+    </div>
+
+</td></tr>
+
+
+<script language="javascript">
+    showhide('windowsettings');
+</script>
 
