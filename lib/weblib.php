@@ -3260,15 +3260,15 @@ function navmenulist($course, $width=50) {
             if ($thissection->visible or !$course->hiddensections or $isteacher) {
                 $thissection->summary = strip_tags(format_string($thissection->summary,true));
                 if (!empty($doneheading)) {
-                    $menu[] = '</ul>';
+                    $menu[] = '</ul></li>';
                 }
                 if ($course->format == 'weeks' or empty($thissection->summary)) {
-                    $menu[] = '<li>'. $strsection ." ". $mod->section .'</li>';
+                    $menu[] = '<li>'. $strsection ." ". $mod->section;
                 } else {
                     if (strlen($thissection->summary) < ($width-3)) {
-                        $menu[] = '<li>'.$thissection->summary.'</li>';
+                        $menu[] = '<li>'.$thissection->summary;
                     } else {
-                        $menu[] = '<li>'.substr($thissection->summary, 0, $width).'...</li>';
+                        $menu[] = '<li>'.substr($thissection->summary, 0, $width).'...';
                     }
                 }
                 $menu[] = '<ul>';
@@ -3295,6 +3295,9 @@ function navmenulist($course, $width=50) {
             $menu[] = '<li><a href="'.$CFG->wwwroot.'/mod/'.$url.'">'.$mod->name.'</a></li>';
             $previousmod = $mod;
         }
+    }
+    if ($doneheading) {
+        $menu[] = '</ul>';
     }
     $menu[] = '</ul>';
 
