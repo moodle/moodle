@@ -49,6 +49,7 @@ $string['backupdir'] = "backupdata";
 $string['backupdate'] = "Backup Date";
 $string['backupdetails'] = "Backup Details";
 $string['backupfilename'] = "backup";
+$string['backupfinished'] = "Backup completed successfully";
 $string['backupnameformat'] = "%%Y%%m%%d-%%H%%M";
 $string['backuporiginalname'] = "Backup Name";
 $string['backupversion'] = "Backup Version";
