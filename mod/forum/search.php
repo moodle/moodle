@@ -118,7 +118,7 @@
 
         print_header_simple("$strsearchresults", "",
                 "<a href=\"index.php?id=$course->id\">$strforums</a> ->
-                <a href=\"search.php?id=$course->id\">$strsearch</a> -> ".stripslashes($search), 'search.words',
+                <a href=\"search.php?id=$course->id\">$strsearch</a> -> ".s($search), 'search.words',
                 "", "", "&nbsp;", navmenu($course));
         print_heading(get_string("nopostscontaining", "forum", $search));
 
@@ -132,7 +132,7 @@
 
     print_header_simple("$strsearchresults", "",
             "<a href=\"index.php?id=$course->id\">$strforums</a> ->
-            <a href=\"search.php?id=$course->id\">$strsearch</a> -> ".stripslashes($search), '',
+            <a href=\"search.php?id=$course->id\">$strsearch</a> -> ".s($search), '',
             "", "",  $searchform, navmenu($course));
 
     print_heading("$strsearchresults: $totalcount");
