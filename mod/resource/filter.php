@@ -63,7 +63,7 @@
     
     function resource_link_names($text,$name,$href_tag_begin,$href_tag_end = "</a>") {
 
-        $list_of_words_cp = $name;
+        $list_of_words_cp = strip_tags($name);
 
         $list_of_words_cp = trim($list_of_words_cp,'|');
 
