@@ -1114,6 +1114,8 @@
     /*******************teacher view **************************************/
     elseif ($action == 'teacherview') {
         print_heading_with_help($lesson->name, "overview", "lesson");		
+        print_heading("<a href=\"view.php?id=$cm->id&amp;action=navigation\">".get_string("checknavigation",
+                        "lesson")."</a>\n");
         // get number of pages
         if ($page = get_record_select("lesson_pages", "lessonid = $lesson->id AND prevpageid = 0")) {
             $npages = 1;

@@ -208,7 +208,7 @@
             if(!$newanswerid = insert_record("lesson_answers", $newanswer)) {
                 error("Add end of branch: answer record not inserted");
             }
-            redirect("view.php?id=$cm->id", get_string("ok"));
+            redirect("view.php?id=$cm->id", get_string('addedanendofbranch', 'lesson'));
         } else {
             notice(get_string("nobranchtablefound", "lesson"), "view.php?id=$cm->id");
         }
@@ -278,7 +278,7 @@
 		if(!$newanswerid = insert_record("lesson_answers", $newanswer)) {
 			error("Add cluster: answer record not inserted");
 		}
-		redirect("view.php?id=$cm->id", get_string("ok"));
+		redirect("view.php?id=$cm->id", get_string('addedcluster', 'lesson'));
 	}
 /// CDC-FLAG ///	
 
@@ -332,7 +332,7 @@
 		if(!$newanswerid = insert_record("lesson_answers", $newanswer)) {
 			error("Add end of cluster: answer record not inserted");
 		}
-		redirect("view.php?id=$cm->id", get_string("ok"));
+		redirect("view.php?id=$cm->id", get_string('addedendofcluster', 'lesson'));
 	}
 /// CDC-FLAG ///
 	
@@ -1444,7 +1444,7 @@
                 error("Delete: unable to set prev link");
             }
         }
-   		redirect("view.php?id=$cm->id", get_string("ok"));
+		redirect("view.php?id=$cm->id", get_string('deletedpage', 'lesson'));
 	}
 	
 
@@ -2111,7 +2111,7 @@
 			}
 		}
 		/// CDC-FLAG ///
-   	    redirect("view.php?id=$cm->id", get_string("ok"));
+		redirect("view.php?id=$cm->id", get_string('insertedpage', 'lesson'));
 	}
 	
 
@@ -2254,7 +2254,7 @@
         if (!set_field("lesson_pages", "nextpageid", 0, "id", $newlastpageid)) {
                 error("Moveit: unable to update link");
         }
-   	    redirect("view.php?id=$cm->id", get_string("ok"));
+		redirect("view.php?id=$cm->id", get_string('movedpage', 'lesson'));
     }
 	
 
@@ -2400,7 +2400,7 @@
         if ($form->redisplay) {
             redirect("lesson.php?id=$cm->id&amp;action=editpage&amp;pageid=$page->id");
         } else {
-       		redirect("view.php?id=$cm->id", get_string("ok"));
+		    redirect("view.php?id=$cm->id", get_string('updatedpage', 'lesson'));
         }
     }
 	
@@ -2412,4 +2412,3 @@
 	print_footer($course);
  
 ?>
-
