@@ -15,7 +15,7 @@
             redirect("$CFG->wwwroot/admin/");
         }
         $headerbutton = update_course_icon($site->id);
-    } else {
+    } else if (!isset($USER->id)) {
         $headerbutton = "<FONT SIZE=2><A HREF=\"login/\">".get_string("login")."</A></FONT>";
     }
     print_header("$site->fullname", "$site->fullname", "", "",
