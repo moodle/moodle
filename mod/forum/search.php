@@ -28,14 +28,14 @@
         require_login($course->id);
     }
 
-    add_to_log($course->id, "forum", "search", "search.php?id=$course->id&search=$search", "$search"); 
+    add_to_log($course->id, "forum", "search", "search.php?id=$course->id&search=".urlencode(s($search)), "$search"); 
 
     $strforums = get_string("modulenameplural", "forum");
     $strsearch = get_string("search", "forum");
     $strsearchresults = get_string("searchresults", "forum");
     $strpage = get_string("page");
 
-    $searchform = forum_print_search_form($course, $search, true, "plain");
+    $searchform = forum_print_search_form($course, s($search), true, "plain");
 
     if (!$search) {
         print_header("$course->shortname: $strsearch", "$course->fullname",
@@ -55,7 +55,12 @@
     }
 
     if ($search) {
+
+        $search = s($search);
+
         if (!$posts = forum_search_posts($searchterms, $course->id, $page*$perpage, $perpage, $totalcount)) {
+
+
             print_header("$course->shortname: $strsearchresults", "$course->fullname",
                      "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> -> 
                       <a href=\"index.php?id=$course->id\">$strforums</a> -> 
@@ -117,7 +122,7 @@
         }
 
         echo "<center>";
-        print_paging_bar($totalcount, $page, $perpage, "search.php?search=$search&id=$course->id&perpage=$perpage&");
+        print_paging_bar($totalcount, $page, $perpage, "search.php?search=".urlencode($search)."&id=$course->id&perpage=$perpage&");
         echo "</center>";
     }
 
