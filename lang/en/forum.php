@@ -34,7 +34,6 @@ $string[namesocial] = "Social forum";
 $string[nameteacher] = "Teacher forum";
 $string[nodiscussions] = "There are no discussion topics yet in this forum";
 $string[noposts] = "No posts";
-$string[numwords] = "\$a words";
 $string[numposts] = "\$a posts";
 $string[olderdiscussions] = "Older discussions";
 $string[parentofthispost] = "Parent of this post";

@@ -183,7 +183,7 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
         $numwords = count_words($post->message);
         echo "<A HREF=\"$CFG->wwwroot/mod/forum/discuss.php?d=$post->discussion\">";
         echo get_string("readtherest", "forum");
-        echo "</A> (".get_string("numwords", "forum", $numwords).")...";
+        echo "</A> (".get_string("numwords", "", $numwords).")...";
     } else {
         // Print whole message
         echo text_to_html($post->message);

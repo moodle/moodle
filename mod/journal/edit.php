@@ -57,14 +57,18 @@
 
 /// Otherwise fill and print the form.
 
+    $strjournal = get_string("modulename", "journal");
+    $strjournals = get_string("modulenameplural", "journal");
+    $stredit = get_string("edit");
+
     if (! $entry ) {
         $entry->text = "";
     }
 
     print_header("$course->shortname: $journal->name", "$course->fullname",
                  "<A HREF=/course/view.php?id=$course->id>$course->shortname</A> -> 
-                  <A HREF=/mod/journal/index.php?id=$course->id>Journals</A> -> 
-                  <A HREF=\"view.php?id=$cm->id\">$journal->name</A> -> Edit", "form.text");
+                  <A HREF=/mod/journal/index.php?id=$course->id>$strjournals</A> -> 
+                  <A HREF=\"view.php?id=$cm->id\">$journal->name</A> -> $stredit", "form.text");
 
     echo "<CENTER>\n";
 

@@ -94,14 +94,14 @@
         if ($usersdone = journal_get_users_done($journal)) {
             foreach ($usersdone as $user) {
                 $entry = $entrybyuser[$user->id];
-                journal_print_user_entry($course, $user, $entry, $teachers, $RATING);
+                journal_print_user_entry($course, $user, $entry, $teachers, $JOURNAL_RATING);
             }
         }
 
         foreach ($users as $user) {
             if (! $usersdone[$user->id]) {
                 $entry = NULL;
-                journal_print_user_entry($course, $user, $entry, $teachers, $RATING);
+                journal_print_user_entry($course, $user, $entry, $teachers, $JOURNAL_RATING);
             }
         }
         echo "<CENTER>";

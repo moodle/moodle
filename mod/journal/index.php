@@ -16,7 +16,16 @@
         $navigation = "<A HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> ->";
     }
 
-    print_header("$course->shortname: Journals", "$course->fullname", "$navigation Journals", "");
+    $strjournal = get_string("modulename", "journal");
+    $strjournals = get_string("modulenameplural", "journal");
+    $stredit = get_string("edit");
+    $strview = get_string("view");
+    $strweek = get_string("week");
+    $strtopic = get_string("topic");
+    $strquestion = get_string("question");
+    $stranswer = get_string("answer");
+
+    print_header("$course->shortname: $strjournals", "$course->fullname", "$navigation $strjournals", "");
 
 
     if (! $journals = get_all_instances_in_course("journal", $course->id, "cw.section ASC")) {
@@ -27,13 +36,13 @@
     $timenow = time();
 
     if ($course->format == "weeks") {
-        $table->head  = array ("Week", "Question", "Answer");
+        $table->head  = array ($strweek, $strquestion, $stranswer);
         $table->align = array ("CENTER", "LEFT", "LEFT");
     } else if ($course->format == "topics") {
-        $table->head  = array ("Topic", "Question", "Answer");
+        $table->head  = array ($strtopic, $strquestion, $stranswer);
         $table->align = array ("CENTER", "LEFT", "LEFT");
     } else {
-        $table->head  = array ("Name", "Answer");
+        $table->head  = array ($strquestion, $stranswer);
         $table->align = array ("LEFT", "LEFT");
     }
 
@@ -68,10 +77,10 @@
     }
 
     echo "<BR>";
+
     print_table($table);
 
     print_footer($course);
-
  
 ?>
 

@@ -28,12 +28,16 @@
     if ($course->category) {
         $navigation = "<A HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> ->";
     }
+
+    $strjournal = get_string("modulename", "journal");
+    $strjournals = get_string("modulenameplural", "journal");
+
     print_header("$course->shortname: $journal->name", "$course->fullname",
-                 "$navigation <A HREF=index.php?id=$course->id>Journals</A> -> $journal->name", "", "", true,
+                 "$navigation <A HREF=index.php?id=$course->id>$strjournals</A> -> $journal->name", "", "", true,
                   update_module_icon($cm->id, $course->id));
 
     if (isteacher($course->id)) {
-        echo "<P align=right><A HREF=\"report.php?id=$cm->id\">View all responses</A></P>";
+        echo "<P align=right><A HREF=\"report.php?id=$cm->id\">".get_string("viewallentries","journal")."</A></P>";
     }
 
     echo "<CENTER>\n";
@@ -65,7 +69,7 @@
         if ($timenow < $timefinish) {
             $options = array ("id" => "$cm->id");
             echo "<CENTER>";
-            print_single_button("edit.php", $options, "Start or edit my journal entry");
+            print_single_button("edit.php", $options, get_string("startoredit","journal"));
             echo "</CENTER>";
         }
 
@@ -73,41 +77,41 @@
                                      WHERE user='$USER->id' AND journal='$journal->id'")) {
 
             if (empty($entry->text)) {
-                echo "<P ALIGN=center><B>Blank entry</B></P>";
+                echo "<P ALIGN=center><B>".get_string("blankentry","journal")."</B></P>";
             } else {
                 echo text_to_html($entry->text);
             }
             
         } else {
-            echo "<B><I>You have not started this journal yet.</I></B>";
+            echo "<B><I>".get_string("notstarted","journal")."</I></B>";
         }
 
         print_simple_box_end();
 
         if ($timenow < $timefinish) {
             if ($entry->modified) {
-                echo "<P><FONT SIZE=-2><B>Last edited:</B> ";
+                echo "<P><FONT SIZE=-2><B>".get_string("lastedited").":</B> ";
                 echo userdate($entry->modified);
-                echo " (".count_words($entry->text)." words)";
+                echo " (".get_string("numwords", "", count_words($entry->text)).")";
                 echo "</FONT></P>";
             }
             if ($journal->days) {
-                echo "<P><FONT SIZE=-2><B>Editing period ends:</B> ";
+                echo "<P><FONT SIZE=-2><B>".get_string("editingends", "journal").":</B> ";
                 echo userdate($timefinish)."</FONT></P>";
             }
         } else {
-            echo "<P><FONT SIZE=-2><B>Editing period has ended:</B> ";
+            echo "<P><FONT SIZE=-2><B>".get_string("editingended", "journal").":</B> ";
             echo userdate($timefinish)."</P>";
         }
 
         if ($entry->comment || $entry->rating) {
-            print_heading("Feedback");
+            print_heading(get_string("feedback"));
             journal_print_feedback($course, $entry);
         }
 
 
     } else {
-        echo "<P><B>This journal won't be open until: ";
+        echo "<P><B>".get_string("notopenuntil", "journal").": ";
         echo userdate($timestart)."</B></P>";
     }
 

@@ -1,13 +1,9 @@
 <?PHP // $Id$
 
-$RATING = array ("3" => "Outstanding",
-                 "2" => "Satisfactory",
-                 "1" => "Not satisfactory");
+$JOURNAL_RATING = array ("3" => get_string("journalrating3", "journal"),
+                         "2" => get_string("journalrating2", "journal"),
+                         "1" => get_string("journalrating1", "journal") );
 
-
-function journal_user_summary($course, $user, $mod, $journal) {
-    global $CFG;
-}
 
 
 function journal_user_outline($course, $user, $mod, $journal) {
@@ -16,7 +12,7 @@ function journal_user_outline($course, $user, $mod, $journal) {
 
         $numwords = count(preg_split("/\w\b/", $entry->text)) - 1;
 
-        $result->info = "$numwords words";
+        $result->info = get_string("numwords", "", $numwords);
         $result->time = $entry->modified;
         return $result;
     }
@@ -31,7 +27,7 @@ function journal_user_complete($course, $user, $mod, $journal) {
 
         print_simple_box_start();
         if ($entry->modified) {
-            echo "<P><FONT SIZE=1>Last edited: ".userdate($entry->modified)."</FONT></P>";
+            echo "<P><FONT SIZE=1>".get_string("lastedited").": ".userdate($entry->modified)."</FONT></P>";
         }
         if ($entry->text) {
             echo text_to_html($entry->text);
@@ -144,7 +140,7 @@ function journal_print_user_entry($course, $user, $entry, $teachers, $ratings) {
     echo "</TD>";
     echo "<TD NOWRAP WIDTH=100% BGCOLOR=\"$THEME->cellheading\">$user->firstname $user->lastname";
     if ($entry) {
-        echo "&nbsp;&nbsp;<FONT SIZE=1>Last edited: ".userdate($entry->modified)."</FONT>";
+        echo "&nbsp;&nbsp;<FONT SIZE=1>".get_string("lastedited").": ".userdate($entry->modified)."</FONT>";
     }
     echo "</TR>";
 
@@ -152,7 +148,7 @@ function journal_print_user_entry($course, $user, $entry, $teachers, $ratings) {
     if ($entry) {
         echo text_to_html($entry->text);
     } else {
-        echo "No entry";
+        print_string("noentry", "journal");
     }
     echo "</TD></TR>";
 
@@ -163,8 +159,8 @@ function journal_print_user_entry($course, $user, $entry, $teachers, $ratings) {
             $entry->teacher = $USER->id;
         }
         print_user_picture($entry->teacher, $course->id, $teachers[$entry->teacher]->picture);
-        echo "<TD BGCOLOR=\"$THEME->cellheading\">Teacher Feedback:";
-        choose_from_menu($ratings, "r$entry->id", $entry->rating, "Rate...");
+        echo "<TD BGCOLOR=\"$THEME->cellheading\">".get_string("feedback").":";
+        choose_from_menu($ratings, "r$entry->id", $entry->rating, get_string("rate", "journal")."...");
         if ($entry->timemarked) {
             echo "&nbsp;&nbsp;<FONT SIZE=1>".userdate($entry->timemarked)."</FONT>";
         }
@@ -226,7 +222,7 @@ function journal_delete_instance($id) {
 
 
 function journal_print_feedback($course, $entry) {
-    global $CFG, $THEME, $RATING;
+    global $CFG, $THEME, $JOURNAL_RATING;
 
     if (! $teacher = get_record("user", "id", $entry->teacher)) {
         error("Weird journal error");
@@ -246,11 +242,11 @@ function journal_print_feedback($course, $entry) {
     echo "\n<TR><TD WIDTH=100% BGCOLOR=\"$THEME->cellcontent\">";
 
     echo "<P ALIGN=RIGHT><FONT SIZE=-1><I>";
-    if ($RATING[$entry->rating]) {
-        echo "Overall rating: ";
-        echo $RATING[$entry->rating];
+    if ($JOURNAL_RATING[$entry->rating]) {
+        echo get_string("overallrating", "journal").": ";
+        echo $JOURNAL_RATING[$entry->rating];
     } else {
-        echo "No rating given";
+        print_string("noratinggiven");
     }
     echo "</I></FONT></P>";
 
