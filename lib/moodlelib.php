@@ -1393,6 +1393,9 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml="", $a
 ///  attachname  - the name of the file (extension indicates MIME)
 ///  usetrueaddress - determines whether $from email address should be sent out.
 ///                   Will be overruled by user profile setting for maildisplay
+///
+///  Returns "true" if mail was sent OK, "emailstop" if email was blocked by user
+///  and "false" if there was another sort of error.
 
     global $CFG, $_SERVER;
 
@@ -1408,7 +1411,7 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml="", $a
     }
 
     if (!empty($user->emailstop)) {
-        return false;
+        return 'emailstop';
     }
 
     $mail = new phpmailer;
