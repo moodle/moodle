@@ -29,6 +29,7 @@ CREATE TABLE `prefix_workshop` (
   `biasweight` tinyint(3) unsigned NOT NULL default '5',
   `reliabilityweight` tinyint(3) unsigned NOT NULL default '5',
   `gradingweight` tinyint(3) unsigned NOT NULL default '5',
+  `showleaguetable` tinyint(3) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`)
 ) COMMENT='Defines workshop';
 # --------------------------------------------------------
@@ -90,6 +91,21 @@ CREATE TABLE `prefix_workshop_elements` (
   `weight` float NOT NULL default '1.0',
   PRIMARY KEY  (`id`)
 ) COMMENT='Info about marking scheme of assignment';
+# --------------------------------------------------------
+
+
+#
+# Table structure for table `workshop_rubrics`
+#
+
+CREATE TABLE `prefix_workshop_rubrics` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `workshopid` int(10) unsigned NOT NULL default '0',
+  `elementid` int(10) unsigned NOT NULL default '0',
+  `rubricno` tinyint(3) unsigned NOT NULL default '0',
+  `description` text NOT NULL,
+  PRIMARY KEY  (`id`)
+) COMMENT='Info about the rubrics marking scheme';
 # --------------------------------------------------------
 
 #

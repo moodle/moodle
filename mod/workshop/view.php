@@ -78,9 +78,9 @@
 			}
 		}
 	elseif (!isguest()) { // it's a student then
-        if (!$cm->visible) {
-            notice(get_string("activityiscurrentlyhidden"));
-        }
+		if (!$cm->visible) {
+			notice(get_string("activityiscurrentlyhidden"));
+			}
 		switch ($workshop->phase) {
 			case 0 :
 			case 1 : $action = 'notavailable'; break;
@@ -314,70 +314,70 @@
 		// print standard assignment heading
 		$strdifference = format_time($workshop->deadline - time());
 		if (($workshop->deadline - time()) < 0) {
-			$strdifference = "<FONT COLOR=RED>$strdifference</FONT>";
+			$strdifference = "<font color=\"red\">$strdifference</font>";
 		}
 		$strduedate = userdate($workshop->deadline)." ($strdifference)";
 		print_simple_box_start("CENTER");
 		print_heading($workshop->name, "CENTER");
 		print_simple_box_start("CENTER");
-		echo "<B>".get_string("duedate", "assignment")."</B>: $strduedate<BR>";
-		echo "<B>".get_string("maximumgrade")."</B>: $workshop->grade<BR>";
-		echo "<B>".get_string("detailsofassessment", "workshop")."</B>: 
-			<A HREF=\"assessments.php?id=$cm->id&action=displaygradingform\">".
-			get_string("specimenassessmentform", "workshop")."</A><BR>";
+		echo "<b>".get_string("duedate", "assignment")."</b>: $strduedate<br />";
+		echo "<b>".get_string("maximumgrade")."</b>: $workshop->grade<br />";
+		echo "<b>".get_string("detailsofassessment", "workshop")."</b>: 
+			<a href=\"assessments.php?id=$cm->id&action=displaygradingform\">".
+			get_string("specimenassessmentform", "workshop")."</a><br />";
 		print_simple_box_end();
-		echo "<BR>";
+		echo "<br />";
 		echo format_text($workshop->description, $workshop->format);
 		print_simple_box_end();
-		echo "<BR>";
+		echo "<br />";
 		// in Stage 1? - assess teacher's submissions to a satisfactory level
 		if (!workshop_test_user_assessments($workshop, $USER)) {
-			echo "<CENTER><B>".get_string("pleaseassesstheseexamplesfromtheteacher", "workshop", $course->teacher)."</B></CENTER><BR>\n";
+			print_heading(get_string("pleaseassesstheseexamplesfromtheteacher", "workshop", $course->teacher));
+			print_heading(get_string("theseasessmentsaregradedbytheteacher", "workshop", $course->teacher), "center", 5);
 			workshop_list_teacher_submissions($workshop, $USER);
-			echo "<CENTER><B>".get_string("theseasessmentsaregradedbytheteacher", "workshop", $course->teacher)."</B></CENTER><BR>\n";
 			}
 		// in stage 2? - submit own first attempt
 		else {
 			if ($workshop->ntassessments) { // display message if student had to assess the teacher's examples
-				echo "<P><CENTER><B><A HREF=\"assessments.php?action=listteachersubmissions&id=$cm->id\">".
-					get_string("assessmentsareok", "workshop")."</A></B></CENTER>\n";
+				print_heading("<a href=\"assessments.php?action=listteachersubmissions&id=$cm->id\">".
+					get_string("assessmentsareok", "workshop")."</a>");
 				}
 			if (!workshop_get_user_submissions($workshop, $USER)) {
 				// print upload form
-				print_heading(get_string("submitassignment", "assignment").":", "CENTER");
+				print_heading(get_string("submitassignment", "assignment").":");
 				workshop_print_upload_form($workshop);
 				}
 			// in stage 3? - grade other student's submissions, resubmit and list all submissions
 			else {
 				// list any assessments by teachers
 				if (workshop_count_teacher_assessments($workshop, $USER)) {
-					echo "<P><CENTER><B>".get_string("assessmentsby", "workshop", $course->teachers)."</B></CENTER><BR>\n";
+					print_heading(get_string("assessmentsby", "workshop", $course->teachers));
 					workshop_list_teacher_assessments($workshop, $USER);
 					}
 				// if student assessments show any to assess...
 				if ($workshop->nsassessments) { // if there are student assessments display them... 
 					workshop_list_student_submissions($workshop, $USER);
 					// ..and any they have already done...
-					echo "<P><CENTER><B>".get_string("yourassessments", "workshop")."</B></CENTER><BR>\n";
+					print_heading(get_string("yourassessments", "workshop"));
 					workshop_list_assessed_submissions($workshop, $USER);
 					// ... and show peer assessments
 					if (workshop_count_peer_assessments($workshop, $USER)) {
-						echo "<P><CENTER><B>".get_string("assessmentsby", "workshop", $course->students)."</B></CENTER><BR>\n";
+						print_heading(get_string("assessmentsby", "workshop", $course->students));
 						workshop_list_peer_assessments($workshop, $USER);
 						}
 					}
 				// list previous submissions
-				echo "<P><CENTER><B>".get_string("submissions", "workshop")."</B></CENTER><BR>\n";
+				print_heading(get_string("submissions", "workshop"));
 				workshop_list_user_submissions($workshop, $USER);
 				echo "<HR SIZE=1 NOSHADE>";
 				if ($workshop->resubmit) {
 					// if resubmissions allowed print upload form
-					print_heading(get_string("submitassignment", "assignment").":", "CENTER");
+					print_heading(get_string("submitassignment", "assignment").":");
 					workshop_print_upload_form($workshop);
 					echo "<HR SIZE=1 NOSHADE>";
 					}
-				echo "<CENTER><B><A HREF=\"submissions.php?action=listallsubmissions&id=$cm->id\">".
-					get_string("listofallsubmissions", "workshop")."</A></B></CENTER>\n";
+				print_heading("<A HREF=\"submissions.php?action=listallsubmissions&id=$cm->id\">".
+					get_string("listofallsubmissions", "workshop"));
 				}
 			}
 		}

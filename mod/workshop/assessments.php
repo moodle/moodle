@@ -112,7 +112,7 @@
 
 
 	/******************* admin confirm delete ************************************/
-	if ($action == 'adminconfirmdelete' ) {
+	elseif ($action == 'adminconfirmdelete' ) {
 
 		if (!isteacher($course->id)) {
 			error("Only teachers can look at this page");
@@ -183,6 +183,11 @@
 	elseif ($action == 'assesssubmission') {
 
 		require_variable($sid);
+		
+		optional_variable($allowcomments);
+		if (!isset($allowcomments)) {
+			$allowcomments = false;
+			}
 	
 		if (! $submission = get_record("workshop_submissions", "id", $sid)) {
 			error("assess submission is misconfigured");
@@ -205,7 +210,8 @@
 		
 		print_heading_with_help(get_string("assessthissubmission", "workshop"), "grading", "workshop");
 		
-		workshop_print_assessment($workshop, $assessment, TRUE, TRUE);
+		// show assessment and allow changes
+		workshop_print_assessment($workshop, $assessment, true, $allowcomments);
 		}
 
 
@@ -448,9 +454,10 @@
 			echo "<P><CENTER><B>".get_string("teachersassessment", "workshop")."</B></CENTER>\n";
 			workshop_print_assessment($workshop, $teachersassessment);
 			}
-		// now the student's assessment
-		echo "<P><CENTER><B>".get_string("studentsassessment", "workshop")."</B></CENTER>\n";
-		workshop_print_assessment($workshop, $assessment, true);
+		// now the student's assessment (don't allow changes)
+		$user = get_record("user", "id", $assessment->userid);
+		echo "<P><CENTER><B>".get_string("assessmentby", "workshop", $user->firstname." ".$user->lastname)."</B></CENTER>\n";
+		workshop_print_assessment($workshop, $assessment);
 		
 		?>
 		<FORM NAME="gradingform" ACTION="assessments.php" METHOD="post">
@@ -743,13 +750,16 @@
 			
 		// update the time of the assessment record (may be re-edited)...
 		set_field("workshop_assessments", "timecreated", $timenow, "id", $assessment->id);
-		// if the workshop does NOT have allow peer agreement or it's self assessment then set timeagreed
+		
 		if (!$submission = get_record("workshop_submissions", "id", $assessment->submissionid)) {
 			error ("Updateassessment: submission record not found");
 			}
-		if (!$workshop->agreeassessments or ($submission->userid == $USER->id)) {
+		
+		// if the workshop does need peer agreement AND it's self assessment then set timeagreed
+		if ($workshop->agreeassessments and ($submission->userid == $assessment->userid)) {
 			set_field("workshop_assessments", "timeagreed", $timenow, "id", $assessment->id);
 			}
+		
 		set_field("workshop_assessments", "grade", $grade, "id", $assessment->id);
 		// ...and clear any grading of this assessment
 		set_field("workshop_assessments", "timegraded", 0, "id", $assessment->id);
@@ -853,12 +863,19 @@
 
 	/*********************** view assessment ***********************/
 	elseif ($action == 'viewassessment') {
+
+		optional_variable($allowcomments);
+		if (!isset($allowcomments)) {
+			$allowcomments = false;
+			}
+	
 		// get the assessment record
 		if (!$assessment = get_record("workshop_assessments", "id", $_GET['aid'])) {
 			error("Assessment record not found");
 			}		
 
-		workshop_print_assessment($workshop, $assessment, true);
+		// show assessment but don't allow changes
+		workshop_print_assessment($workshop, $assessment, false, $allowcomments);
 		
 		print_continue("view.php?a=$workshop->id");
 		}

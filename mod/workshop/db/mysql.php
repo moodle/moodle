@@ -28,6 +28,23 @@ function workshop_upgrade($oldversion) {
         ");
         
 		}
+
+	if ($oldversion < 2003051400) {
+
+		execute_sql(" ALTER TABLE `{$CFG->prefix}workshop` ADD `showleaguetable` TINYINT(3) UNSIGNED NOT NULL  DEFAULT '0' AFTER `gradingweight`");
+
+		execute_sql("
+		CREATE TABLE `{$CFG->prefix}workshop_rubrics` (
+		  `id` int(10) unsigned NOT NULL auto_increment,
+		  `workshopid` int(10) unsigned NOT NULL default '0',
+		  `elementid` int(10) unsigned NOT NULL default '0',
+		  `rubricno` tinyint(3) unsigned NOT NULL default '0',
+		  `description` text NOT NULL,
+		  PRIMARY KEY  (`id`)
+		) COMMENT='Info about the rubrics marking scheme'
+        ");
+        
+		}
     return true;
 }
 

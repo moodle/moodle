@@ -14,7 +14,12 @@ Cron function should email something to the assessor when an assessment is
 Self assessments may need special handling, remove duplication in student 
 	view
 
+Add student names to assessments and submissions for teachers.
+
+Add a league table of submissions in the final phase for students.
+
+
 Ray Kingdon
-13 May 2003
+17 June 2003
 
 

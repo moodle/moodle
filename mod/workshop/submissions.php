@@ -73,7 +73,40 @@
 
 
 	/******************* admin confirm delete ************************************/
-	if ($action == 'adminconfirmdelete' ) {
+	if ($action == 'adminamendtitle' ) {
+
+		if (!isteacher($course->id)) {
+			error("Only teachers can look at this page");
+			}
+		if (empty($_GET['sid'])) {
+			error("Admin Amend Title: submission id missing");
+			}
+		
+		$submission = get_record("workshop_submissions", "id", $_GET['sid']);
+		print_heading(get_string("amendtitle", "workshop"));
+		?>
+		<form name="amendtitleform" action="submissions.php" method="post">
+		<input type="hidden" name="action" value="adminupdatetitle">
+		<input type="hidden" name="id" value="<?PHP echo $cm->id ?>">
+		<input type="hidden" name="sid" value="<?PHP echo $_REQUEST['sid'] ?>">
+		<center>
+		<table celpadding="5" border="1">
+		<?PHP
+
+		// now get the comment
+		echo "<tr valign=\"top\">\n";
+		echo "	<td align=\"right\"><P><B>". get_string("title", "workshop").":</b></p></td>\n";
+		echo "	<td>\n";
+		echo "		<input type=\"text\" name=\"title\" size=\"60\" maxlength=\"100\" value=\"$submission->title\">\n";
+		echo "	</td></tr></table>\n";
+		echo "<input type=submit VALUE=\"".get_string("amendtitle", "workshop")."\">\n";
+		echo "</center></form>\n";
+
+		}
+	
+
+	/******************* admin confirm delete ************************************/
+	elseif ($action == 'adminconfirmdelete' ) {
 
 		if (!isteacher($course->id)) {
 			error("Only teachers can look at this page");
@@ -138,6 +171,23 @@
 		workshop_list_submissions_for_admin($workshop, $order);
 		print_continue("view.php?id=$cm->id");
 		
+		}
+	
+
+	/******************* admin update title ************************************/
+	elseif ($action == 'adminupdatetitle' ) {
+
+		if (!isteacher($course->id)) {
+			error("Only teachers can look at this page");
+			}
+		if (empty($_POST['sid'])) {
+			error("Admin Update Title: submission id missing");
+			}
+	
+		if (set_field("workshop_submissions", "title", $_POST['title'], "id", $_POST['sid'])) {
+			print_heading(get_string("amendtitle", "workshop")." ".get_string("ok"));
+			}
+		print_continue("submissions.php?id=$cm->id&action=adminlist");
 		}
 	
 
@@ -716,7 +766,7 @@
 		}
 
 		if ($workshop->phase != 3) { // is this at the expected phase?
-			echo "<CENTER><B>".get_string("assignmentnotinthecorrectphase", "workshop")."</B></CENTER>\n";
+			print_heading(get_string("assignmentnotinthecorrectphase", "workshop"));
 			print_continue("view.php?a=$workshop->id");
 			}
 		else {

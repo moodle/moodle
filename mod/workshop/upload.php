@@ -53,7 +53,7 @@
 					$newsubmission->title  = $title;
 					$newsubmission->timecreated  = time();
 					if (!$newsubmission->id = insert_record("workshop_submissions", $newsubmission)) {
-						error("Failure to create new submission record!");
+						error("Workshop upload: Failure to create new submission record!");
 						}
 					if (! $dir = workshop_file_area($workshop, $newsubmission)) {
 						error("Sorry, an error in the system prevents you from uploading files: contact your teacher or system administrator");
