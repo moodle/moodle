@@ -254,8 +254,11 @@ $string['formattexttype'] = "Formatierung";
 $string['formattopics'] = "Themen-Format";
 $string['formatweeks'] = "Wöchentliches Format";
 $string['formatwiki'] = "Wiki-Format";
+$string['frontpagecategorynames'] = "Kategorienliste anzeigen";
+$string['frontpagecourselist'] = "Kursliste anzeigen";
 $string['frontpagedescription'] = "Beschreibung auf Eingangsseite";
 $string['frontpageformat'] = "Format der Eingangsseite";
+$string['frontpagenews'] = "News anzeigen";
 $string['fulllistofcourses'] = "Alle Kurse";
 $string['fullname'] = "Bezeichnung";
 $string['fullprofile'] = "Ganzes Profil";
@@ -662,5 +665,4 @@ $string['youaregoingtorestorefrom'] = "Sie stellen wieder her vom:";
 $string['yourlastlogin'] = "Ihre letzte Anmeldung war";
 $string['yourself'] = "selbst";
 $string['yourteacher'] = "Ihr \$a";
-
 ?>
