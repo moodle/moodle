@@ -1556,6 +1556,7 @@ global $CFG;
         fwrite ($h,glossary_full_tag("INTRO",2,false,$glossary->intro));
         fwrite ($h,glossary_full_tag("STUDENTCANPOST",2,false,$glossary->studentcanpost));
         fwrite ($h,glossary_full_tag("ALLOWDUPLICATEDENTRIES",2,false,$glossary->allowduplicatedentries));
+        fwrite ($h,glossary_full_tag("DISPLAYFORMAT",2,false,$glossary->displayformat));
         fwrite ($h,glossary_full_tag("SHOWSPECIAL",2,false,$glossary->showspecial));
         fwrite ($h,glossary_full_tag("SHOWALPHABET",2,false,$glossary->showalphabet));
         fwrite ($h,glossary_full_tag("SHOWALL",2,false,$glossary->showall));
