@@ -524,7 +524,7 @@ function get_record_select($table, $select='', $fields='*') {
  * @param string $fields A comma separated list of fields to be returned from the chosen table.
  * @param int $limitfrom ?
  * @param int $limitnum ?
- * @return array | false An associative array with the results from the SQL call or false if error.
+ * @return array|false An associative array with the results from the SQL call or false if error.
  * @todo Finish documenting this function
  */
 function get_records($table, $field='', $value='', $sort='', $fields='*', $limitfrom='', $limitnum='') {
@@ -574,7 +574,7 @@ function get_records($table, $field='', $value='', $sort='', $fields='*', $limit
  * @param string $fields A comma separated list of fields to be returned from the chosen table.
  * @param int $limitfrom ?
  * @param int $limitnum ?
- * @return array | false An associative array with the results from the SQL call or false if error.
+ * @return array|false An associative array with the results from the SQL call or false if error.
  * @todo Finish documenting this function
  */
 function get_records_select($table, $select='', $sort='', $fields='*', $limitfrom='', $limitnum='') {
@@ -622,7 +622,7 @@ function get_records_select($table, $select='', $sort='', $fields='*', $limitfro
  * @param string $values ?
  * @param string $sort ?
  * @param string $fields A comma separated list of fields to be returned from the chosen table.
- * @return array| false An associative array with the results from the SQL call or false if error.
+ * @return array|false An associative array with the results from the SQL call or false if error.
  * @todo Finish documenting this function
  */
 function get_records_list($table, $field='', $values='', $sort='', $fields='*') {
@@ -653,7 +653,7 @@ function get_records_list($table, $field='', $values='', $sort='', $fields='*') 
  * @uses $CFG
  * @uses $db
  * @param string $sql The SQL string you wish to be executed.
- * @return array | false Returns an associative array with found records or false if no records or error occured.
+ * @return array|false Returns an associative array with found records or false if no records or error occured.
  */
 function get_records_sql($sql) {
 
@@ -794,7 +794,7 @@ function get_records_sql_menu($sql) {
  * @param string $value2 The value to match if field2 is specified.
  * @param string $field3 The third table field to be checked for a given value. 
  * @param string $value3 The value to match if field3 is specified.
- * @return mixed | false Returns the value return from the SQL statment or false if an error occured.
+ * @return mixed|false Returns the value return from the SQL statment or false if an error occured.
  * @todo Finish documenting this function
  */
 function get_field($table, $return, $field1, $value1, $field2='', $value2='', $field3='', $value3='') {
@@ -832,7 +832,7 @@ function get_field($table, $return, $field1, $value1, $field2='', $value2='', $f
  * @uses $CFG
  * @uses $db
  * @param string $sql The SQL string you wish to be executed.
- * @return mixed | false Returns the value return from the SQL statment or false if an error occured.
+ * @return mixed|false Returns the value return from the SQL statment or false if an error occured.
  * @todo Finish documenting this function
  */
 function get_field_sql($sql) {
@@ -952,7 +952,7 @@ function delete_records_select($table, $select='') {
  * @param array $dataobject An associative array with contents equal to fieldname=>fieldvalue. Must have an entry for 'id' to map to the table specified.
  * @param boolean $returnid Should the id of the newly created record entry be returned? If this option is not requested then true/false is returned.
  * @param string $primarykey Defaults to 'id'. The primary key to use against the specified table when inserting the contents of $dataobject.
- * @return int | false Returns the id for the new record created or false if an error occured.
+ * @return int|false Returns the id for the new record created or false if an error occured.
  * @todo Finish documenting this function. Dataobject is actually an associateive array, correct?
  */
 function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
@@ -1223,7 +1223,7 @@ function get_creators() {
  *
  * @uses $CFG
  * @param int $courseid The course in question.
- * @return array | false An associative array representing the user record of the main teacher for the specified course or false if error.
+ * @return array|false An associative array representing the user record of the main teacher for the specified course or false if error.
  * @todo Finish documenting this function
  */
 function get_teacher($courseid) {
@@ -1248,7 +1248,7 @@ function get_teacher($courseid) {
  *
  * @uses $CFG
  * @param int $courseid The course in question.
- * @return array | false An associative array with the results from the SQL call or false if error.
+ * @return array|false An associative array with the results from the SQL call or false if error.
  * @todo Finish documenting this function
  */
 function get_recent_enrolments($courseid, $timestart) {
@@ -1582,9 +1582,9 @@ function search_users($courseid, $groupid, $searchtext, $sort='', $exceptions=''
  * Obsolete, just calls get_course_users(SITEID)
  *
  * @uses SITEID
- * @deprecated use {@link get_course_users()} instead.
+ * @deprecated Use {@link get_course_users()} instead.
  * @param string $fields A comma separated list of fields to be returned from the chosen table.
- * @return array | false An associative array with the results from the SQL call or false if error.
+ * @return array|false An associative array with the results from the SQL call or false if error.
  * @todo Finish documenting this function. The return type need to be better defined.
  */
 function get_site_users($sort='u.lastaccess DESC', $fields='*', $exceptions='') {
@@ -1607,7 +1607,7 @@ function get_site_users($sort='u.lastaccess DESC', $fields='*', $exceptions='') 
  * @param string $page ?
  * @param string $recordsperpage ?
  * @param string $fields A comma separated list of fields to be returned from the chosen table.
- * @return array | false | int An associative array with the results from the SQL call unless get is true in which case the integer count of the records found is returned. False is returned if an error is encountered.
+ * @return array|false|int An associative array with the results from the SQL call unless get is true in which case the integer count of the records found is returned. False is returned if an error is encountered.
  * @todo Finish documenting this function. The return type needs to be better defined.
  */
 function get_users($get=true, $search='', $confirmed=false, $exceptions='', $sort='firstname ASC',
