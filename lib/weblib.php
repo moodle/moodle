@@ -2,9 +2,18 @@
 
 // weblib.php
 //
-// Library of useful PHP functions related to web pages.
+// Library of useful PHP functions and constants related to web pages.
 //
 //
+
+/// Constants
+
+// Define text formatting types ... eventually we can add Wiki, BBcode etc
+define("FORMAT_MOODLE", "0");
+define("FORMAT_HTML", "1");
+
+
+/// Functions
 
 function s($var) {
 // returns $var with HTML characters (like "<", ">", etc.) properly quoted,
@@ -259,13 +268,45 @@ function get_slash_arguments($i=0) {
     }
 }
 
+function format_text_menu() {
+    return array (FORMAT_MOODLE => get_string("formattext"), 
+                  FORMAT_HTML   => get_string("formathtml") );
+}
 
-function cleantext($text) {
+function format_text($text, $format, $options=NULL) {
+// Given text in a variety of format codings, this function returns 
+// the text as safe HTML.
+//
+// $text is raw text (originally from a user)
+// $format is one of the format constants, defined above
+
+    switch ($format) {
+        case FORMAT_MOODLE:
+            return text_to_html($text, $options->smiley, $options->para);
+            break;
+
+        case FORMAT_HTML:
+            return $text;   // Is re-cleaning needed?
+            break;
+    }
+}
+
+
+function clean_text($text, $format) {
 // Given raw text (eg typed in by a user), this function cleans it up 
 // and removes any nasty tags that could mess up Moodle pages.
 
-    return strip_tags($text, '<b><i><u><font><ol><ul><dl><li><dt><dd><h1><h2><h3><hr>');
+    switch ($format) {
+        case FORMAT_MOODLE:
+            return strip_tags($text, '<b><i><u><font><ol><ul><dl><li><dt><dd><h1><h2><h3><hr>');
+            break;
+
+        case FORMAT_HTML:
+            return $text;   // XX May want to add some cleaning on this. 
+            break;
+    }
 }
+
 
 
 function text_to_html($text, $smiley=true, $para=true) {

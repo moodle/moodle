@@ -8,7 +8,6 @@
 // Martin Dougiamas, 2000
 //
 
-
 /// STANDARD WEB PAGE PARTS ///////////////////////////////////////////////////
 
 function print_header ($title="", $heading="", $navigation="", $focus="", $meta="", $cache=true, $button="") {
@@ -769,8 +768,26 @@ function get_record_sql($sql) {
     }
 }
 
-function get_records($table, $selector, $value, $sort="") {
+function get_records($table, $selector, $value, $sort="", $fields="*") {
 // Get a number of records as an array of objects
+// Can optionally be sorted eg "time ASC" or "time DESC"
+// If "fields" is specified, only those fields are returned
+// The "key" is the first column returned, eg usually "id"
+    global $db;
+
+    if ($sort) {
+        $sortorder = "ORDER BY $sort";
+    }
+    $sql = "SELECT $fields FROM $table WHERE $selector = '$value' $sortorder";
+
+    return get_records_sql($sql);
+}
+
+
+function get_records_list($table, $selector, $values, $sort="", $fields="*") {
+// Get a number of records as an array of objects
+// Differs from get_records() in that the values variable 
+// can be a comma-separated list of values eg  "4,5,6,10"
 // Can optionally be sorted eg "time ASC" or "time DESC"
 // The "key" is the first column returned, eg usually "id"
     global $db;
@@ -778,10 +795,11 @@ function get_records($table, $selector, $value, $sort="") {
     if ($sort) {
         $sortorder = "ORDER BY $sort";
     }
-    $sql = "SELECT * FROM $table WHERE $selector = '$value' $sortorder";
+    $sql = "SELECT $fields FROM $table WHERE $selector in ($values) $sortorder";
 
     return get_records_sql($sql);
 }
+
 
 function get_records_sql($sql) {
 // Get a number of records as an array of objects
@@ -1928,6 +1946,33 @@ function check_php_version($version="4.1.0") {
     return ($curversion >= $minversion);
 }
 
+function check_browser_version($brand="MSIE", $version=5.5) {
+// Checks to see if is a browser matches the specified
+// brand and is equal or better version.
+    global $HTTP_USER_AGENT;
+
+    if (!$HTTP_USER_AGENT) {
+        return false;
+    }
+    $string = explode(";", $HTTP_USER_AGENT);
+    if (!isset($string[1])) {
+        return false;
+    }
+    $string = explode(" ", trim($string[1]));
+    if (!isset($string[0]) and !isset($string[1])) {
+        return false;
+    }
+    if ($string[0] == $brand and (float)$string[1] >= $version ) {
+        return true;
+    }
+    return false;
+}
+
+function can_use_richtext_editor() {
+    global $USER, $CFG;
+    return (check_browser_version("MSIE", 5.5) and $USER->htmleditor and $CFG->htmleditor);
+}
+
 
 function check_gd_version() {
     ob_start();
@@ -1951,5 +1996,7 @@ function check_gd_version() {
 
     return $gdversion;   // 1, 2 or 0
 }
+
+
 
 ?>

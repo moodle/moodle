@@ -66,6 +66,20 @@
     </TD>
 </TR>
 <TR VALIGN=TOP>
+    <TD ALIGN=RIGHT><P>htmleditor:</TD>
+    <TD>
+    <? unset($options);
+       $options[0] = get_string("allownot");
+       $options[1] = get_string("allow");
+       choose_from_menu ($options, "htmleditor", $config->htmleditor, "", "", "");
+       formerr($err["htmleditor"]);
+    ?>
+    </TD>
+    <TD>
+    <? print_string("confightmleditor") ?>
+    </TD>
+</TR>
+<TR VALIGN=TOP>
 	<TD ALIGN=RIGHT><P>maxeditingtime:</TD>
 	<TD>
     <? $options[3600] = get_string("numminutes", "", 60);

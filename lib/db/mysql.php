@@ -74,6 +74,9 @@ function upgrade_moodle($oldversion=0) {
     if ($oldversion < 2002092100) {
         execute_sql(" ALTER TABLE `user` ADD `deleted` TINYINT(1) UNSIGNED DEFAULT '0' NOT NULL AFTER `confirmed` ");
     }
+    if ($oldversion < 2002101001) {
+        execute_sql(" ALTER TABLE `user` ADD `htmleditor` TINYINT(1) UNSIGNED DEFAULT '1' NOT NULL AFTER `maildisplay` ");
+    }
 
     return true;
 }

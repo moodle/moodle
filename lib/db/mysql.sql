@@ -175,6 +175,7 @@ CREATE TABLE `user` (
   `description` text,
   `mailformat` tinyint(1) unsigned NOT NULL default '1',
   `maildisplay` tinyint(2) unsigned NOT NULL default '2',
+  `htmleditor` tinyint(1) unsigned NOT NULL default '1',
   `timemodified` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`),
   UNIQUE KEY `id` (`id`),

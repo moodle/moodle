@@ -13,7 +13,8 @@
        "longtimenosee"  =>  100,
        "zip"            => "/usr/bin/zip",
        "unzip"          => "/usr/bin/unzip",
-       "slasharguments" =>  true,
+       "slasharguments" =>  1,
+       "htmleditor"     =>  true,
        "proxyhost"      => "",
        "proxyport"      => "",
        "maxeditingtime" =>  1800
