@@ -868,6 +868,7 @@ $string['wordforteacherseg'] = 'eg Teachers, Tutors, Facilitators etc';
 $string['writingcategoriesandquestions'] = 'Writing categories and questions';
 $string['writingcoursedata'] = 'Writing course data';
 $string['writinggeneralinfo'] = 'Writing general info';
+$string['writinggroupsinfo'] = 'Writing groups info';
 $string['writingheader'] = 'Writing header';
 $string['writingloginfo'] = 'Writing logs info';
 $string['writingmoduleinfo'] = 'Writing modules info';
