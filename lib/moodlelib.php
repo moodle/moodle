@@ -2579,7 +2579,7 @@ function make_upload_directory($directory, $shownotices=true) {
                 }
                 return false;
             }
-            @chmod($currdir, $CFG->directorypermissions);  // Just in case mkdir didn't do it
+            //@chmod($currdir, $CFG->directorypermissions);  // Just in case mkdir didn't do it
         }
     }
 
