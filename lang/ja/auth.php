@@ -27,6 +27,8 @@ $string['auth_ldap_contexts'] = "¥æ¡¼¥¶¤¬ÇÛÃÖ¤µ¤ì¤Æ¤¤¤ë¥³¥ó¥Æ¥­¥¹¥È°ìÍ÷¤Ç¤¹¡£°Û¤
 $string['auth_ldap_host_url'] = "LDAP¥Û¥¹¥È¤ÎURL¤ò²¼µ­¤Î¤è¤¦¤ËÌÀ¼¨¤·¤Æ¤¯¤À¤µ¤¤¡£
 
 'ldap://ldap.myorg.com/' Ëô¤Ï 'ldaps://ldap.myorg.com/' ";
+$string['auth_ldap_memberattribute'] = "¥æ¡¼¥¶¤¬¥°¥ë¡¼¥×¤ËÂ°À­¤·¤Æ¤¤¤ë¾ì¹ç¡¢¥æ¡¼¥¶¤ÎÂ°À­¤òÆÃÄê¤·¤Æ¤¯¤À¤µ¤¤¡£ÄÌ¾ï¤Ï'member'¤Ç¤¹¡£
+";
 $string['auth_ldap_search_sub'] = "¥µ¥Ö¥³¥ó¥Æ¥­¥¹¥È¤«¤é¥æ¡¼¥¶¤ò¸¡º÷¤¹¤ë¾ì¹ç¤Ï¡¢  &lt;&gt; 0 ¤Î¤è¤¦¤ËÆşÎÏ¤·¤Æ¤¯¤À¤µ¤¤¡£";
 $string['auth_ldap_update_userinfo'] = "LDAP¤è¤êMoodle¤Î¾ğÊó(Ì¾Á°¡¢Ì¾»ú¡¢½»½êÅù)¤ò¹¹¿·¤·¤Ş¤¹¡£¥Ş¥Ã¥Ô¥ó¥°¾ğÊó¤Ë´Ø¤·¤Æ¤Ï /auth/ldap/attr_mappings ¤ò¤´Í÷¤¯¤À¤µ¤¤¡£";
 $string['auth_ldap_user_attribute'] = "name/search¥æ¡¼¥¶¤Ë»È¤ï¤ì¤ëÂ°À­¤Ç¤¹¡£ÄÌ¾ï¤Ï'cn'¤Ç¤¹¡£";
