@@ -45,7 +45,7 @@
             $wiki->pagename = backup_todb($info['MOD']['#']['PAGENAME']['0']['#']);
             $wiki->wtype = backup_todb($info['MOD']['#']['WTYPE']['0']['#']);
             $wiki->ewikiprinttitle = backup_todb($info['MOD']['#']['EWIKIPRINTTITLE']['0']['#']);
-            $wiki->ewikiallowsafehtml = backup_todb($info['MOD']['#']['HTMLMODE']['0']['#']);
+            $wiki->htmlmode = backup_todb($info['MOD']['#']['HTMLMODE']['0']['#']);
             $wiki->ewikiacceptbinary = backup_todb($info['MOD']['#']['EWIKIACCEPTBINARY']['0']['#']);
             $wiki->initialcontent = backup_todb($info['MOD']['#']['INITIALCONTENT']['0']['#']);
             $wiki->timemodified = backup_todb($info['MOD']['#']['TIMEMODIFIED']['0']['#']);
@@ -118,18 +118,18 @@
             //If userinfo was selected, restore the entry
             if ($restore->mods['wiki']->userinfo) {
                 //The structure is equal to the db, so insert the wiki_entries
-      	        $newid = insert_record ("wiki_entries",$entry);
+                $newid = insert_record ("wiki_entries",$entry);
 
-            	//Do some output
-	        if (($i+1) % 50 == 0) {
-      	            echo ".";
-            	    if (($i+1) % 1000 == 0) {
+                //Do some output
+            if (($i+1) % 50 == 0) {
+                    echo ".";
+                    if (($i+1) % 1000 == 0) {
                         echo "<br />";
-	            }
-      	            backup_flush(300);
+                }
+                    backup_flush(300);
                 }
                 if ($newid) {
-      	            //We have the newid, update backup_ids
+                    //We have the newid, update backup_ids
                     backup_putid($restore->backup_unique_code,"wiki_entries",$oldid,$newid);
                     //Get old wiki id from backup_ids
                     $rec = get_record("backup_ids","backup_code",$restore->backup_unique_code,
@@ -141,8 +141,8 @@
                     //Restore wiki_pages
                     $status = wiki_pages_restore_mods($oldid,$newid,$ent_info,$restore);
                 } else {
-      	            $status = false;
-	        }
+                    $status = false;
+            }
             }
         }
         return $status;

@@ -41,7 +41,7 @@
                 fwrite ($bf,full_tag("PAGENAME",4,false,$wiki->wtype));
                 fwrite ($bf,full_tag("WTYPE",4,false,$wiki->wtype));
                 fwrite ($bf,full_tag("EWIKIPRINTTITLE",4,false,$wiki->ewikiprinttitle));
-                fwrite ($bf,full_tag("HTMLMODE",4,false,$wiki->allowsafehtml));
+                fwrite ($bf,full_tag("HTMLMODE",4,false,$wiki->htmlmode));
                 fwrite ($bf,full_tag("EWIKIACCEPTBINARY",4,false,$wiki->ewikiacceptbinary));
                 fwrite ($bf,full_tag("INITIALCONTENT",4,false,$wiki->initialcontent));
                 fwrite ($bf,full_tag("TIMEMODIFIED",4,false,$wiki->timemodified));
@@ -88,7 +88,7 @@
             foreach ($wiki_entries as $wik_ent) {
                 //Start entry
                 //Print submission contents
-	        if ($userinfo) {
+            if ($userinfo) {
                     $dumped_entries++;
                     if ($dumped_entries == 1) {
                         //Write start tag
@@ -111,8 +111,8 @@
                 }
             }
             if ( $dumped_entries > 0 ) {
-	        //Write end tag
-      	        $status =fwrite ($bf,end_tag("ENTRIES",4,true));
+            //Write end tag
+                $status =fwrite ($bf,end_tag("ENTRIES",4,true));
             }
         }
         return $status;
