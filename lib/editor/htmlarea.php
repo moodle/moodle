@@ -174,6 +174,7 @@ HTMLArea.Config = function () {
     };
 
     this.formatblock = {
+        "":"",
         "<?php echo $strheading ?> 1": "h1",
         "<?php echo $strheading ?> 2": "h2",
         "<?php echo $strheading ?> 3": "h3",
@@ -662,7 +663,8 @@ HTMLArea.prototype.generate = function () {
         html += '<style type="text/css">\n' + editor.config.pageStyle + "td { border: 1px dotted gray; }</style>\n";
         html += "</head>\n";
         html += '<body>\n';
-        html += editor._textArea.value;
+        // See bug #2222
+        html += (editor._textArea.value != null && editor._textArea.value != '') ? editor._textArea.value : '<p>&nbsp;</p>';
         html += "</body>\n";
         html += "</html>";
     } else {
