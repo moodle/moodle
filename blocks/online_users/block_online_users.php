@@ -63,28 +63,28 @@ class CourseBlock_online_users extends MoodleBlock {
             $groupselect .= " AND u.id = gm.userid AND gm.groupid = '$currentgroup'";
         }
 
+        $timefrom = time()-$timetoshowusers;
+
         if (empty($this->course->category)) {  // Site-level
             $courseselect = '';
+            $timeselect = "AND u.lastaccess > $timefrom";
         } else {
             $courseselect = "AND s.course = '".$this->course->id."'";
+            $timeselect = "AND s.timeaccess > $timefrom";
         }
-
-        $timefrom = time()-$timetoshowusers;
 
         $students = get_records_sql("SELECT u.id, u.username, u.firstname, u.lastname, u.picture, s.timeaccess
                                      FROM {$CFG->prefix}user u,
                                           {$CFG->prefix}user_students s
                                           $groupmembers
-                                     WHERE u.id = s.userid $courseselect $groupselect
-                                       AND s.timeaccess > $timefrom 
+                                     WHERE u.id = s.userid $courseselect $groupselect $timeselect 
                                   ORDER BY s.timeaccess DESC");
 
         $teachers = get_records_sql("SELECT u.id, u.username, u.firstname, u.lastname, u.picture, s.timeaccess
                                      FROM {$CFG->prefix}user u,
                                           {$CFG->prefix}user_teachers s
                                           $groupmembers
-                                     WHERE u.id = s.userid $courseselect $groupselect
-                                       AND s.timeaccess > $timefrom 
+                                     WHERE u.id = s.userid $courseselect $groupselect $timeselect
                                   ORDER BY s.timeaccess DESC");
 
         if ($teachers || $students) {
