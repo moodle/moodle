@@ -84,6 +84,10 @@
             } else {
                 $form->timecreated = time();
 
+                // place at beginning of category
+                fix_course_sortorder();
+                $form->sortorder = get_field_sql("SELECT min(sortorder)-1 FROM {$CFG->prefix}course WHERE category=$form->category");
+
                 if ($newcourseid = insert_record('course', $form)) {  // Set up new course
                     
                     // Setup the blocks
