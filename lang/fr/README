@@ -15,51 +15,53 @@ workshop.php traduits pour nos amis du Canada francophone par Jean-François
 Nadeau, et que j'ai légèrement adaptés.
 
 J'ai légèrement modifié la liste des termes choisis par Sébastien.
-Vous trouvez ci-dessous cette liste modifiée par mes soins.
+Vous trouvez ci-dessous cette liste modifiée par mes soins. Elle comprend
+en outre certains termes canadiens-français qui diffèrent de l'usage du
+français d'Europe.
 
 Je suis conscient que certains choix ne sont pas toujours appropriés.
 Si vous avez d'autres suggestions, merci de me les envoyer.
 
-Concernant la traduction de "email", j'ai choisi le terme "e-mail" (très
-parlant pour les utilisateurs), qui n'est pas une véritable traduction.
-Une autre possibilité serait l'utilisation systématique du terme "courriel",
-mais en aucun cas "émail".
+Anglais                Français                Canadien-français
 
-account          compte
-activity         activité
-assessment       appréciation
-assignment       devoir
-attachment       annexe
-authentication   authentification
-choice           sondage
-course category	 discipline
-department       département
-download         télécharger
-email            message par e-mail, adresse e-mail ou par e-mail, selon le contexte
-emoticons        binettes
-entry            contribution
-feedback         feedback
-grade            note ou niveau, selon le contexte
-guest            visiteur anonyme
-hit              requête
-journal          journal
-logs             événements
-offline          hors-ligne
-post             message
-quiz             test
-scale            barème
-server           serveur
-social format	 informel
-topics format	 thématique
-smilies          binettes
-submissions      devoirs rendus
-survey           questionnaire
-teacher          enseignant
-to login         s'identifier
-upload           envoyer (ou déposer)
-user             utilisateur
-username         nom d'utilisateur
-workshop         atelier
+account                compte
+activity               activité
+assessment             évaluation
+assignment             devoir
+attachment             annexe                  fichier joint
+authentication         authentification
+category               catégorie
+choice                 sondage
+course category	       discipline
+department             département
+download               télécharger
+email                  (adresse de) courriel
+emoticons              binettes
+entry                  contribution
+feedback               feedback                rétroaction
+grade                  note ou niveau
+guest                  visiteur anonyme
+hit                    requête
+journal                journal
+login                  connexion
+logs                   événements
+offline                hors-ligne
+post                   message
+quiz                   test
+scale                  barème                  échelle
+server                 serveur
+social format	       informel
+topic                  thème
+topics format	       thématique
+smilies                binettes
+submissions            devoirs rendus
+survey                 questionnaire
+teacher                enseignant
+to login               se connecter
+upload                 envoyer (ou déposer)    téléverser
+user                   utilisateur
+username               nom d'utilisateur
+workshop               atelier
 
 
 TODO
@@ -67,12 +69,12 @@ TODO
   - trouver une bonne traduction de "Separate and Connected ways of knowing",
     de "Connected Learning", "Separate Learning" et de "Reflective Thinking" ;
   - traduire le dossier docs (en cours) ;
-  - terminer la traduction du dossier help ;
+  - terminer la traduction du dossier help (en cours, en collaboration
+    avec Jean-François Nadeau) ;
   - traduire chatarea.php ;
   - traduire glossary.php ;
   - traduire label.php ;
   - traduire pgassignment.php ;  
-  - traduire workshop.php ;
   - terminer surveys.php.
 
 
@@ -83,7 +85,6 @@ Voici quelques liens que j'utilise :
       http://elsap1.unicaen.fr/dicosyn.html
   - Le grand dictionnaire terminologique
       http://www.granddictionnaire.com/
-      
 
 Quelques conventions :
   - pour la ponctuation de fin de texte et les majuscules,
