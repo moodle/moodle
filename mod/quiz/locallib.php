@@ -1217,7 +1217,7 @@ function quiz_gradesmenu_options($defaultgrade) {
     return $gradesmenu;
 }
 
-function quiz_print_question_list($questionlist, $grades, $allowdelete=true) {
+function quiz_print_question_list($questionlist, $grades, $allowdelete=true, $quizid=0) {
 // Prints a list of quiz questions in a small layout form with knobs
 // returns sum of maximum grades
 // $questionlist is comma-separated list
@@ -1295,9 +1295,10 @@ function quiz_print_question_list($questionlist, $grades, $allowdelete=true) {
         echo '<td align="center">';
 
         if ($canedit) {
+            $context = $quizid ? '&amp;contextquiz='.$quizid : '';
             echo "<a title=\"$strpreview\" href=\"javascript:void();\" onClick=\"openpopup('/mod/quiz/preview.php?id=$qnum','$strpreview','scrollbars=yes,resizable=yes,width=700,height=480', false)\">
                   <img src=\"../../pix/t/preview.gif\" border=\"0\" alt=\"$strpreview\" /></a>&nbsp;";
-            echo "<a title=\"$stredit\" href=\"question.php?id=$qnum\">
+            echo "<a title=\"$stredit\" href=\"question.php?id=$qnum$context\">
                   <img src=\"../../pix/t/edit.gif\" border=\"0\" alt=\"$stredit\" /></a>&nbsp;";
             if ($allowdelete) {
                 echo "<a title=\"$strremove\" href=\"edit.php?delete=$qnum&amp;sesskey=$USER->sesskey\">
@@ -2006,7 +2007,7 @@ function quizzes_question_used($id) {
 
 function quiz_parse_fieldname($name, $nameprefix='question') {
     $reg = array();
-    if(preg_match("/q(\\d+)(\w+)/", $name, $reg)) {
+    if (preg_match("/$nameprefix(\\d+)(\w+)/", $name, $reg)) {
         return array('mode' => $reg[2], 'id' => (int)$reg[1]);
     } else {
         return false;

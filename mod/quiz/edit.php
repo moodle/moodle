@@ -328,7 +328,7 @@
         }
         notify("$strattemptsexist<br /><a href=\"report.php?id=$cm->id\">$strviewallanswers ($usercount $strusers)</a>");
 
-        $sumgrades = quiz_print_question_list($modform->questions, $modform->grades, false);
+        $sumgrades = quiz_print_question_list($modform->questions, $modform->grades, false, $modform->instance);
         if (!set_field('quiz', 'sumgrades', $sumgrades, 'id', $modform->instance)) {
             error('Failed to set sumgrades');
         }
@@ -357,7 +357,7 @@
         echo '<tr><td width="50%" valign="top">';
         print_simple_box_start("center", "100%");
         print_heading($modform->name);
-        $sumgrades = quiz_print_question_list($modform->questions, $modform->grades);
+        $sumgrades = quiz_print_question_list($modform->questions, $modform->grades, true, $modform->instance);
         if (!set_field('quiz', 'sumgrades', $sumgrades, 'id', $modform->instance)) {
             error('Failed to set sumgrades');
         }
