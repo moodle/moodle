@@ -77,6 +77,11 @@
                     //For topics and weeks formats (default built in the function)
                     $form->blockinfo = blocks_get_default_blocks();
                 }
+                
+                // place at beginning of category
+                fix_course_sortorder();
+                $form->sortorder = get_field_sql("SELECT min(sortorder)-1 FROM {$CFG->prefix}course WHERE category=$form->category");
+                
 
                 if ($newcourseid = insert_record("course", $form)) {  // Set up new course
                     $section = NULL;
