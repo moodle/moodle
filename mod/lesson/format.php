@@ -1,4 +1,4 @@
-<?php  // $Id$ 
+<?PHP  // $Id$ 
 
 ////////////////////////////////////////////////////////////////////
 /// format.php  - Default format class for file imports/exports.  //
@@ -50,7 +50,7 @@ class quiz_default_format {
                 case MATCH :
                     $count++;
 
-                    echo "<hr /><p><b>$count</b>. ".stripslashes($question->questiontext)."</p>";
+                    echo "<hr><p><b>$count</b>. ".stripslashes($question->questiontext)."</p>";
                     unset($newpage);
                     $newpage->lessonid = $lesson->id;
                     $newpage->qtype = $question->qtype;

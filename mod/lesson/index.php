@@ -1,9 +1,9 @@
-<?php // $Id$
+<?PHP // $Id$
 
 /// This page lists all the instances of lesson in a particular course
 
     require_once("../../config.php");
-    require_once("lib.php");
+	require_once("locallib.php");
 
     require_variable($id);   // course
 
@@ -11,7 +11,7 @@
         error("Course ID is incorrect");
     }
 
-    require_course_login($course);
+    require_login($course->id);
 
     add_to_log($course->id, "lesson", "view all", "index.php?id=$course->id", "");
 
@@ -24,7 +24,11 @@
 
 /// Print the header
 
-    print_header_simple("$strlessons", "", "$strlessons", "", "", true, "", navmenu($course));
+    if ($course->category) {
+        $navigation = "<A HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> ->";
+    }
+
+    print_header("$course->shortname: $strlessons", "$course->fullname", "$navigation $strlessons", "", "", true, "", navmenu($course));
 
 /// Get all the appropriate data
 
@@ -56,23 +60,22 @@
     foreach ($lessons as $lesson) {
         if (!$lesson->visible) {
             //Show dimmed if the mod is hidden
-            $link = "<a class=\"dimmed\" href=\"view.php?id=$lesson->coursemodule\">$lesson->name</a>";
+            $link = "<A class=\"dimmed\" HREF=\"view.php?id=$lesson->coursemodule\">$lesson->name</A>";
         } else {
             //Show normal if the mod is visible
-            $link = "<a href=\"view.php?id=$lesson->coursemodule\">$lesson->name</a>";
+            $link = "<A HREF=\"view.php?id=$lesson->coursemodule\">$lesson->name</A>";
         }
 
         if ($lesson->deadline > $timenow) {
             $due = userdate($lesson->deadline);
         } else {
-            $due = "<font color=\"red\">".userdate($lesson->deadline)."</font>";
+            $due = "<FONT COLOR=\"red\">".userdate($lesson->deadline)."</FONT>";
         }
 
-        $grade_value = '';
         if ($course->format == "weeks" or $course->format == "topics") {
             if (isteacher($course->id)) {
                 $grade_value = $lesson->grade;
-            } elseif (isstudent($course->id)) {
+            } else {
                 // it's a student, show their mean or maximum grade
                 if ($lesson->usemaxgrade) {
                     $grade = get_record_sql("SELECT MAX(grade) as grade FROM {$CFG->prefix}lesson_grades 
@@ -84,6 +87,8 @@
                 if ($grade) {
                     // grades are stored as percentages
                     $grade_value = number_format($grade->grade * $lesson->grade / 100, 1);
+                } else {
+                    $grade_value = 0;
                 }
             }
             $table->data[] = array ($lesson->section, $link, $grade_value, $due);
@@ -92,7 +97,7 @@
         }
     }
 
-    echo "<br />";
+    echo "<BR>";
 
     print_table($table);
 
