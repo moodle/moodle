@@ -1197,6 +1197,10 @@ foreach ($data as $tab) {
         $row = array();
     }
 }
+//Add the last row! if it contains anything!
+if (!empty($row)) {
+    $tabrows[] = $row;
+}
 
 
 ?>
