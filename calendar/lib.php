@@ -1067,7 +1067,7 @@ function calendar_edit_event_allowed($event) {
 
     if (isadmin($USER->id)) return true; // Admins are allowed anything
 
-    if ($event->courseid != 0 && $event->courseid != SITEID) {
+    if ($event->courseid != 0) {
         // Course event, only editing teachers may... edit :P
         if(isteacheredit($event->courseid)) {
             return true;

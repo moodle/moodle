@@ -539,24 +539,12 @@ function calendar_get_allowed_types(&$allowed) {
     $allowed->user = true; // User events always allowed
     $allowed->groups = false; // This may change just below
     $allowed->courses = false; // This may change just below
-    $allowed->site = isadmin($USER->id);
+    $allowed->site = isteacheredit(SITEID);
 
     if(!empty($SESSION->cal_course_referer) && $SESSION->cal_course_referer != SITEID && isteacheredit($SESSION->cal_course_referer, $USER->id)) {
         $allowed->courses = array($SESSION->cal_course_referer => 1);
         $allowed->groups = get_groups($SESSION->cal_course_referer);
     }
-
-    //[pj]: This was used when we wanted to display all legal choices
-    /*
-    if($allowed->site) {
-        $allowed->courses = get_courses('all', 'c.shortname');
-        $allowed->groups = get_records_sql('SELECT g.*, c.fullname FROM '.$CFG->prefix.'groups g LEFT JOIN '.$CFG->prefix.'course c ON g.courseid = c.id ORDER BY c.shortname');
-    }
-    else if(!empty($USER->teacheredit)) {
-        $allowed->courses = get_records_select('course', 'id != 1 AND id IN ('.implode(',', array_keys($USER->teacheredit)).')');
-        $allowed->groups = get_records_sql('SELECT g.*, c.fullname FROM '.$CFG->prefix.'groups g LEFT JOIN '.$CFG->prefix.'course c ON g.courseid = c.id WHERE g.courseid IN ('.implode(',', array_keys($USER->teacheredit)).')');
-    }
-    */
 }
 
 ?>
