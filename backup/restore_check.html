@@ -117,7 +117,7 @@
             print_heading(get_string("choosecourse"));
             print_simple_box_start("CENTER");
             foreach ($courses as $course) {
-            echo "<A HREF=\"restore.php?course_id=$course->id&launch=check&file=$file\">$course->fullname ($course->shortname)</A><BR>";
+                echo "<A HREF=\"restore.php?course_id=$course->id&launch=check&file=$file\">$course->fullname ($course->shortname)</A><BR>";
             }
             print_simple_box_end();
         } else {
