@@ -34,7 +34,7 @@
                            get_string('adminhelpmanagemodules'));
     $table->data[] = array("<strong><a href=\"blocks.php\">". get_string('manageblocks') .'</a></strong>',
                            get_string('adminhelpmanageblocks'));
-    $table->data[] = array("<strong><a href=\"filters.php?sesskey=$USER->sesskey\">". get_string('managefilters') .'</a></strong>',
+    $table->data[] = array("<strong><a href=\"filters.php\">". get_string('managefilters') .'</a></strong>',
                            get_string('adminhelpmanagefilters'));
     if (!isset($CFG->disablescheduledbackups)) {
         $table->data[] = array("<strong><a href=\"backup.php?sesskey=$USER->sesskey\">".get_string("backup")."</a></strong>",
