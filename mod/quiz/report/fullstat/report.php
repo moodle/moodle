@@ -15,28 +15,28 @@ class quiz_report extends quiz_default_report {
 
 /*
 //These definitions must be in the lang/en/quiz.php file
-$string['qr_indivresp'] = "Responses of Individuals to Each Item";
-$string['qr_name'] = "Name";
-$string['qr_grade'] = "Grade";
-$string['qr_itemanal'] = "Item Response Analysis";
-$string['qr_corrresp'] = "Correct Response";
-$string['qr_noresponse'] = "No Response";
-$string['qr_percentcorrect'] = "Percent Correct";
-$string['qr_listitems'] = "Listing of Items in This Quiz";
-$string['qr_question'] = "Question";
+$string['qrindivresp'] = "Responses of Individuals to Each Item";
+$string['qrname'] = "Name";
+$string['qrgrade'] = "Grade";
+$string['qritemanal'] = "Item Response Analysis";
+$string['qrcorrresp'] = "Correct Response";
+$string['qrnoresponse'] = "No Response";
+$string['qrpercentcorrect'] = "Percent Correct";
+$string['qrlistitems'] = "Listing of Items in This Quiz";
+$string['qrquestion'] = "Question";
 $string[''] = "";
 */
 
-        $strindivresp = get_string("qr_indivresp", "quiz");
-        $strname = get_string("qr_name", "quiz");
-        $strgrade = get_string("qr_grade", "quiz");
-        $stritemanal = get_string("qr_itemanal", "quiz");
-        $strcorrresp = get_string("qr_corrresp", "quiz");
-        $strnoresponse = get_string("qr_noresponse", "quiz");
-        $strpercentcorrect = get_string("qr_percentcorrect", "quiz");
-        $strlistitems = get_string("qr_listitems", "quiz");
-        $strquestion = get_string("qr_question", "quiz");
-//        $str = get_string("qr_", "quiz");
+        $strindivresp = get_string("qrindivresp", "quiz");
+        $strname = get_string("qrname", "quiz");
+        $strgrade = get_string("qrgrade", "quiz");
+        $stritemanal = get_string("qritemanal", "quiz");
+        $strcorrresp = get_string("qrcorrresp", "quiz");
+        $strnoresponse = get_string("qrnoresponse", "quiz");
+        $strpercentcorrect = get_string("qrpercentcorrect", "quiz");
+        $strlistitems = get_string("qrlistitems", "quiz");
+        $strquestion = get_string("qrquestion", "quiz");
+//        $str = get_string("qr", "quiz");
 
     //Get the question ids
     $thisquizid = $quiz->id;
