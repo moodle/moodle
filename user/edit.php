@@ -46,6 +46,10 @@
         $usernew->firstname = strip_tags($usernew->firstname);
         $usernew->lastname  = strip_tags($usernew->lastname);
 
+        if (empty($_FILES['imagefile'])) {
+            $_FILES['imagefile'] = NULL;    // To avoid using uninitialised variable later
+        }
+
         if (find_form_errors($user, $usernew, $err)) {
             if ($filename = valid_uploaded_file($_FILES['imagefile'])) { 
                 $usernew->picture = save_user_image($user->id, $filename);
