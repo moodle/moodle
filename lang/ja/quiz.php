@@ -1,9 +1,9 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.5 unstable development (2004091700)
+      // quiz.php - created with Moodle 1.5 unstable development (2004092000)
 
 
 $string['acceptederror'] = 'エラー範囲';
-$string['addingquestions'] = 'この部分ではデータベース内の質問を管理します。質問は整理しやすいようにカテゴリ毎に保存されます。質問はコース内の全ての小テストに利用できます。「公開」を選んだ場合は他のコースでも利用できます。<br /><br />質問のカテゴリを選択または作成した後に質問を作成・編集してください。このページの反対側にある小テストにどの質問でも追加することができます。';
+$string['addingquestions'] = 'ここではデータベース内の質問を管理します。質問は整理しやすいようにカテゴリ毎に保存されます。質問はコース内の全ての小テストに利用できます。「公開」を選んだ場合は他のコースでも利用できます。<br /><br />カテゴリを選択または作成した後に、質問を作成・編集してください。このページの反対側にある小テストにどの質問でも追加することができます。';
 $string['addquestions'] = '小テストを追加';
 $string['addquestionstoquiz'] = '現在の小テストに質問を追加する';
 $string['addselectedtoquiz'] = '選択したものを小テストに追加する';
@@ -71,7 +71,7 @@ $string['deletequestioncheck'] = '「 $a 」を本当に削除しても宜しいですか?';
 $string['description'] = '説明';
 $string['discrimination'] = '識別インデックス';
 $string['eachattemptbuildsonthelast'] = 'それぞれの解答を最後に作成する';
-$string['editcategories'] = 'カテゴリを編集する';
+$string['editcategories'] = 'カテゴリの編集';
 $string['editdatasets'] = 'データセットを編集する';
 $string['editingcalculated'] = '計算問題を編集する';
 $string['editingdescription'] = '説明を編集する';
@@ -80,7 +80,7 @@ $string['editingmultianswer'] = '穴埋め問題を編集する';
 $string['editingmultichoice'] = '多肢選択式問題を編集する';
 $string['editingnumerical'] = '数値問題を編集する';
 $string['editingquestion'] = '質問を編集する';
-$string['editingquiz'] = '小テストを編集する';
+$string['editingquiz'] = '小テストの編集';
 $string['editingrandom'] = 'ランダム方式を編集する';
 $string['editingrandomsamatch'] = 'ランダム記述組み合わせ問題を編集する';
 $string['editingshortanswer'] = '記述式問題を編集する';
@@ -206,11 +206,11 @@ $string['review'] = 'レビュー';
 $string['save'] = '保存';
 $string['savegrades'] = '評点を保存する';
 $string['savemyanswers'] = '答えを保存する';
-$string['savequiz'] = '全ての小テストを保存する';
+$string['savequiz'] = '全ての小テストを保存';
 $string['score'] = '得点状況';
 $string['select'] = '選択';
 $string['selectall'] = '全てを選択する';
-$string['selectcategoryabove'] = '上記のカテゴリ選択する';
+$string['selectcategoryabove'] = '上記のカテゴリを選択';
 $string['shortanswer'] = '記述式';
 $string['show'] = '表示';
 $string['showcorrectanswer'] = 'フィードバックの中に正解を表示しますか?';
