@@ -18,3 +18,5 @@ function dialogue_upgrade($oldversion) {
     $result = true;
     return $result;
 }
+
+?>

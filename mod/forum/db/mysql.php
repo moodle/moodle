@@ -87,4 +87,3 @@ function forum_upgrade($oldversion) {
 
 
 ?>
-

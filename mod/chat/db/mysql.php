@@ -28,4 +28,3 @@ function chat_upgrade($oldversion) {
 
 
 ?>
-

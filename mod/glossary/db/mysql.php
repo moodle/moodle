@@ -160,6 +160,3 @@ function glossary_upgrade($oldversion) {
 }
 
 ?>
-
-
-
