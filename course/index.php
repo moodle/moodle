@@ -41,7 +41,15 @@
             print_header("$site->shortname: $strfulllistofcourses", $strfulllistofcourses, $strfulllistofcourses);
             print_courses(0, "80%");
         }
-    
+
+        if (iscreator()) {       // Print link to create a new course
+            echo "<center><p>";
+            unset($options);
+            $option["category"] = $category->id;
+            print_single_button("edit.php", $options, get_string("addnewcourse"), "get");
+            echo "</p></center>";
+        }
+            
         print_footer();
         exit;
     }
@@ -255,8 +263,8 @@
     echo "</table>";
     echo "<br />";
 
-    echo "<center>";
     /// Print link to create a new course
+    echo "<center>";
     unset($options);
     $option["category"] = $category->id;
     print_single_button("edit.php", $options, get_string("addnewcourse"), "get");

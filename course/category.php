@@ -353,31 +353,31 @@
     }
 
 
-    if (isadmin()) {
-        echo "<center>";
-
-    /// Print button to re-sort courses by name
+    echo "<center>";
+    if (isadmin()) {           /// Print button to re-sort courses by name
         unset($options);
         $options["id"] = $category->id;
         $options["resort"] = "name";
         print_single_button("category.php", $options, get_string("resortcoursesbyname"), "get");
+    }
 
-    /// Print button to create a new course
+    if (iscreator()) {         /// Print button to create a new course
         unset($options);
         $options["category"] = $category->id;
         print_single_button("edit.php", $options, get_string("addnewcourse"), "get");
         echo "<br />";
+    }
 
-    /// Print form to rename the category
+    if (isadmin()) {           /// Print form to rename the category
         $strrename= get_string("rename");
         echo "<form name=\"renameform\" action=\"category.php\" method=\"post\">";
         echo "<input type=\"hidden\" name=\"id\" value=\"$category->id\">";
         echo "<input type=\"text\" size=30 name=\"rename\" value=\"$category->name\">";
         echo "<input type=\"submit\" value=\"$strrename\">";
         echo "</form>";
-        echo "</center>";
         echo "<br />";
     }
+    echo "</center>";
     
     print_footer();
 

@@ -45,11 +45,10 @@
 
             $form->timemodified = time();
 
-            fix_course_sortorder($form->category);
-
             if (!empty($course)) {
                 if (update_record("course", $form)) {
                     add_to_log($course->id, "course", "update", "edit.php?id=$id", "");
+                    fix_course_sortorder($form->category);
 		            redirect("view.php?id=$course->id", get_string("changessaved"));
                 } else {
                     error("Serious Error! Could not update the course record! (id = $form->id)");
@@ -63,6 +62,7 @@
                     $section->section = 0;
                     $section->id = insert_record("course_sections", $section);
 
+                    fix_course_sortorder($form->category);
                     add_to_log($newcourseid, "course", "new", "view.php?id=$newcourseid", "");
 
                     if (isadmin()) { // Redirect admin to add teachers
