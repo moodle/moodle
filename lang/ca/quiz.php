@@ -2,7 +2,7 @@
       // quiz.php - created with Moodle 1.1 development (2003081500)
 
 
-$string['addingquestions'] = "Des d'aquesta part de la pàgina pots gestionar la teua base de dades de preguntes. Les preguntes es guarden en categories per tal de tenir-les organitzades i es poden utilitzar en qualsevol qüestionari d'aquest curs o fins i tot en altres cursos si tries de 'publicar-les' . <br /><br />Després de seleccionar o crear una categoria de preguntes, podràs crear o editar preguntes. Pots seleccionar qualsevol d'aquestes preguntes per afegir-la al qüestionari en l'altra part de la pàgina.";
+$string['addingquestions'] = "Des d'aquesta part de la pàgina pots gestionar la teva base de dades de preguntes. Les preguntes es guarden en categories per tal de tenir-les organitzades i es poden utilitzar en qualsevol qüestionari d'aquest curs o fins i tot en altres cursos si tries de 'publicar-les' . <br /><br />Després de seleccionar o crear una categoria de preguntes, podràs crear o editar preguntes. Pots seleccionar qualsevol d'aquestes preguntes per afegir-la al qüestionari en l'altra part de la pàgina.";
 $string['addquestions'] = "Afegir preguntes";
 $string['addquestionstoquiz'] = "Afegir preguntes a aquest qüestionari";
 $string['addselectedtoquiz'] = "Afegir la selecció al qüestionari";
@@ -51,7 +51,7 @@ $string['editingquiz'] = "Editar qüestionari";
 $string['editingrandom'] = "Editar una pregunta aleatòria";
 $string['editingrandomsamatch'] = "Editar una pregunta aleatòria de relacionar respostes breus";
 $string['editingshortanswer'] = "Editar una pregunta de resposta breu";
-$string['editingtruefalse'] = "Editar una pregunta de vertader/fals";
+$string['editingtruefalse'] = "Editar una pregunta de Verdader/fals";
 $string['false'] = "Fals";
 $string['feedback'] = "Comentari";
 $string['fileformat'] = "Format de fitxer";
@@ -134,11 +134,11 @@ $string['time'] = "Temps";
 $string['timecompleted'] = "Completat";
 $string['timetaken'] = "Temps emprat";
 $string['toomanyrandom'] = "El nombre de preguntes aleatòries necessari és més gran que el contingut d'aquesta categoria (\$a)";
-$string['true'] = "Vertader";
-$string['truefalse'] = "Vertader/Fals";
+$string['true'] = "Verdader";
+$string['truefalse'] = "Verdader/Fals";
 $string['type'] = "Tipus";
 $string['viewallanswers'] = "Veure \$a qüestionaris completats";
 $string['webct'] = "Format WebCT";
-$string['yourfinalgradeis'] = "La teua qualificació final en aquest qüestionari és \$a";
+$string['yourfinalgradeis'] = "La teva qualificació final en aquest qüestionari és \$a";
 
 ?>
