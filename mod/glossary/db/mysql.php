@@ -344,6 +344,22 @@ function glossary_upgrade($oldversion) {
   if ( $oldversion < 2004080900) {
       set_field('glossary','editalways','1','mainglossary','0');
   }
+
+  if ($oldversion < 2004111200) {
+      modify_database('','ALTER TABLE prefix_glossary ADD INDEX course (course);');
+      modify_database('','ALTER TABLE prefix_glossary_alias ADD INDEX entryid (entryid);');
+      modify_database('','ALTER TABLE prefix_glossary_categories ADD INDEX glossaryid (glossaryid);');
+      modify_database('','ALTER TABLE prefix_glossary_comments ADD INDEX entryid (entryid);');
+      modify_database('','ALTER TABLE prefix_glossary_comments ADD INDEX userid (userid);');
+      modify_database('','ALTER TABLE prefix_glossary_entries ADD INDEX glossaryid (glossaryid);');
+      modify_database('','ALTER TABLE prefix_glossary_entries ADD INDEX userid (userid);');
+      modify_database('','ALTER TABLE prefix_glossary_entries ADD INDEX concept (concept);');
+      modify_database('','ALTER TABLE prefix_glossary_entries_categories ADD INDEX entryid (entryid);');
+      modify_database('','ALTER TABLE prefix_glossary_entries_categories ADD INDEX categoryid (categoryid);');
+      modify_database('','ALTER TABLE prefix_glossary_ratings ADD INDEX userid (userid);');
+      modify_database('','ALTER TABLE prefix_glossary_ratings ADD INDEX entryid (entryid);');
+
+  }
     
   return true;
 }

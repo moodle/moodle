@@ -34,7 +34,8 @@ CREATE TABLE prefix_glossary (
      scale int(10) NOT NULL default '0',
      timecreated int(10) unsigned NOT NULL default '0',
      timemodified int(10) unsigned NOT NULL default '0',
-     PRIMARY KEY  (id)
+     PRIMARY KEY  (id),
+     KEY course (course)
 ) TYPE=MyISAM COMMENT='all glossaries';
 
 #
@@ -57,7 +58,10 @@ CREATE TABLE prefix_glossary_entries (
      casesensitive tinyint(2) unsigned NOT NULL default '0',
      fullmatch tinyint(2) unsigned NOT NULL default '1',
      approved tinyint(2) unsigned NOT NULL default '1',
-     PRIMARY KEY  (id)
+     PRIMARY KEY  (id),
+     KEY glossaryid (glossaryid),
+     KEY userid (userid),
+     KEY concept (concept)
 ) TYPE=MyISAM COMMENT='all glossary entries';
 
 #
@@ -68,7 +72,8 @@ CREATE TABLE prefix_glossary_alias (
      id int(10) unsigned NOT NULL auto_increment,
      entryid int(10) unsigned NOT NULL default '0',
      alias varchar(255) NOT NULL,
-     PRIMARY KEY  (id)
+     PRIMARY KEY  (id), 
+     KEY entryid (entryid)
 ) TYPE=MyISAM COMMENT='entries alias';
 
 #
@@ -80,7 +85,8 @@ CREATE TABLE prefix_glossary_categories (
      glossaryid int(10) unsigned NOT NULL default '0',
      name varchar(255) NOT NULL default '',
      usedynalink tinyint(2) unsigned NOT NULL default '1',
-     PRIMARY KEY  (id)
+     PRIMARY KEY  (id),
+     KEY glossaryid (glossaryid)
 ) TYPE=MyISAM COMMENT='all categories for glossary entries';
 
 #
@@ -91,7 +97,9 @@ CREATE TABLE prefix_glossary_entries_categories (
      id int(10) unsigned NOT NULL auto_increment,
      categoryid int(10) unsigned NOT NULL default '0',
      entryid int(10) unsigned NOT NULL default '0',
-     PRIMARY KEY  (id)
+     PRIMARY KEY  (id),
+     KEY entryid (entryid),
+     KEY categoryid (categoryid) 
 ) TYPE=MyISAM COMMENT='categories of each glossary entry';
 
 CREATE TABLE prefix_glossary_comments (
@@ -101,8 +109,9 @@ CREATE TABLE prefix_glossary_comments (
      comment text NOT NULL,
      format tinyint(2) unsigned NOT NULL default '0',
      timemodified int(10) unsigned NOT NULL default '0',
-	 
-     PRIMARY KEY  (id)
+     PRIMARY KEY  (id),
+     KEY userid (userid),
+     KEY entryid (entryid)
 ) TYPE=MyISAM COMMENT='comments on glossary entries';
 
 CREATE TABLE prefix_glossary_formats (
@@ -128,7 +137,9 @@ CREATE TABLE prefix_glossary_ratings (
   entryid int(10) unsigned NOT NULL default '0',
   time int(10) unsigned NOT NULL default '0',
   rating tinyint(4) NOT NULL default '0',
-  PRIMARY KEY  (id)
+  PRIMARY KEY  (id),
+  KEY userid (userid),
+  KEY entryid (entryid)
 ) COMMENT='Contains user ratings for entries';
 # --------------------------------------------------------
 
