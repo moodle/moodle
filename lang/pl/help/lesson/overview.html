@@ -7,9 +7,9 @@
 <li>Ka¿da odpowied¼ mo¿e zostaæ potwierdzona krótkim tekstem, który
 zostanie wy¶wietlony je¶li dana odpowied¼ zostanie wybrana.
 Ten tekst nazywany jest <b>informacj± zwrotn±</b>.
-<li>Z ka¿d± odpowiedzi± zwi±zane jest <b>przej¶cie</b>. Przej¶cie mo¿e byæ do danej strony,
+<li>Z ka¿d± odpowiedzi± zwi±zany jest <b>link</b>. Link mo¿e przenie¶æ studenta do okre¶lonego fragmentu danej strony,
 nastêpnej strony lub ka¿dej innej strony czy na koniec lekcji.
-<li>Domyl¶lnie pierwsza strona przeniesie studenta do <b>nastêpnej strony</b>. 
+<li>Domy¶lnie pierwsza strona przeniesie studenta do <b>nastêpnej strony</b>. 
     Kolejne odpowiedzi równie¿ przenios± studenta do tej strony.
 <li><b>Logiczny porz±dek</b> determinuje uk³ad lekcji. Odnosi siê to do porz±dku stron z
 perspektywy nauczyciela. Porz±dek ten mo¿e byæ w ka¿dej chwili zmieniony.
@@ -18,35 +18,26 @@ widzianego oczami studenta. Porz±dek ten determinowany jest przez przej¶cia do i
 zdefiniowane w odpowiedziach i mo¿e znacznie odbiegaæ od logicznego porz±dku.
     (Jednak¿e gdy przej¶cia <i>nie</i> zostan± zmienione oba porz±dki pozostan± do siebie podobne.
     Nauczyciel ma mo¿liwo¶æ sprawdzenia porz±dku nawigacji.
-<li>When displayed to the students, the answers are always shuffled. That is, the
-    first answer from the teacher's point of view will not necessarily be the
-    first answer in the list shown to the students. (Further, each time the same
-    set of answers is displayed they are likely to appear in a different order.)
-<li>The number of answers can vary from page to page. For example, it is allowed
-    that some pages can end with a true/false question while others have questions
-    with one correct answer and three, say, distractors. 
-<li>It is possible to set up a page without any answers. The students are shown
-    a <b>Continue</b> link instead of the set of shuffled answers.
-<li>For the purposes of grading the lessons, <b>correct</b> answers are ones which 
-    jump to a page which is further <i>down</i> the logical order than the current page. 
-    <b>Wrong</b> answers are ones which either jump to the same page or to a page
-    further <i>up</i> the logical order than the current page. Thus, if the jumps are
-    <i>not</i> changed, the first answer is a correct answer and the other answers are 
-    wrong answers.
-<li>Questions can have more than one correct answer. For example, if two of the answers
-    jump to the next page then either answer is taken as a correct answer. (Although
-    the same destination page is shown to the students, the responses shown on the way 
-    to that page may well be different for the two answers.)
-<li>In the teacher's view of the lesson the correct answers have underlined Answer 
-    Labels.
-<li>The <b>end of the lesson</b> is reached by either jumping to that location explicitly 
-    or by jumping to the next page from the last (logical) page of the lesson. When the
-    end of the lesson is reached, the student receives a congratulations message and is 
-    shown their grade. The grade is (the number of correct answers checked / number of 
-    pages seen) * the grade of the lesson.
-<li>If the end of the lesson is <i>not</i> reached, when the student goes into the
-    lesson they are given the choice of starting at the begining or picking up the lesson
-    where they answered their last correct answer.
-<li> For a lesson which allow re-takes, students are allowed to re-take the lesson until
-    they have achieved the maximum grade.
+<li>Odpowiedzi wy¶wietlane studentom s± zawsze pomieszane. Tak wiêc pierwsza odpowied¼ na ekranie
+nauczyciela nie oznacza, ¿e bêdzie to pierwsza odpowied¼ na ekranie studenta. Tak wiêc przy wy¶wietlaniu
+tego samego zestawu odpowiedzi, najprawdopodobniej pojawi± siê one w innym porz±dku.
+<li>Ilo¶æ odpowiedzi mo¿e siê ró¿niæ na kolejnych stronach. N.p. jedna strona mo¿e siê koñczyæ pytaniami
+typu PRAWDA/FA£SZ a kolejne mog± zawieraæ po 4 odpowiedzi. 
+<li>Mo¿na zawrzeæ stronê bez odpowiedzi. Studenci wówczas zobacz± link "Kontynuuj".
+<li>Je¶li chodzi o ocenianie lekcji, odpowiedzi <b>poprawne</b> bêd± prowadzi³y do strony, która 
+bêdzie zawieraæ dalsze informacje.  
+    <b>Z³e</b> odpowiedzi bêd± prowadziæ do tej samej strony lub do innej strony w logicznym uk³adzie stron.
+    Tak wiêc je¶li linki do innych stron <i>nie</i> s± zmienione, wówczas pierwsza odpowied¼
+    jest poprawn± odpowiedzi±.
+<li>Pytania mog± mieæ wiêcej ni¿ jedn± dobr± odpowied¼. Przyk³adowo, je¶li dwie odpowiedzi przenios± studenta
+do nastêpnej strony, to oznacza, ¿e obydwie odpowiedzi by³y poprawnymi odpowiedziami. W takim przypadku, mo¿na
+te¿ wy¶wietliæ ró¿ne informacje zwrotne tym studentom. 
+<li>We widoku nauczyciela (podgl±d widoku) poprawne odpowiedzi mog± byæ podkre¶lone.
+<li>Aby przejsæ do <b>koñca lekcji</b> mo¿na albo klikn±æ na taki link albo przej¶æ do nastêpnej strony z ostatniej
+(logicznej) strony lekcji. Kiedy student dojdzie do ostatniej strony, wy¶wietli mu siê ocena za lekcjê. Ocena jest
+stosunkiem licby poprawnych odpowiedzi do liczby stron pomno¿onym przez ocenê za lekcjê.
+<li>Je¶li student <i>nie</i> dojdzie do koñca lekcji, wówczas mo¿e one albo rozpocz±æ lekcjê w miejscu w którym
+ostatnio skoñczy³ b±d¼ te¿ mo¿e rozpocz±æ naukê od pocz±tku. 
+<li> Lekcja, która ma wybrany parametr pozwalaj±cy na powtarzanie, mo¿e byæ powtórzana w nieskoñczono¶æ a¿ do uzyskania
+najlepszej oceny.
 </ol>
