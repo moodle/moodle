@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005030501)
+      // auth.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005031000)
 
 
 $string['auth_cas_baseuri'] = 'サーバのURI  ( ベースURIが無い場合は空白 )<br />CASサーバが host.domaine.fr/CAS/ に応答する場合、<br />cas_baseuri = CAS/';
@@ -7,6 +7,7 @@ $string['auth_cas_create_user'] = 'MoodleデータベースにCAS認証ユーザを挿入したい
 $string['auth_cas_hostname'] = 'CASサーバのホスト名<br />例: host.domaine.fr';
 $string['auth_cas_language'] = '言語の選択';
 $string['auth_cas_port'] = 'CASサーバのポート';
+$string['auth_cas_server_settings'] = 'CASサーバ設定';
 $string['auth_cas_text'] = 'セキュアコネクション';
 $string['auth_cas_use_cas'] = 'CAS認証を使用する場合は、「Yes」を選択してください。';
 $string['auth_cas_version'] = 'CASのバージョン';
