@@ -1,7 +1,7 @@
-<?PHP // $Id$
-      // forum.php - created with Moodle 1.0.6 (2002102600)
-// Traducido por Claudio Tavares Mastrangelo
-// enlaceacademico.com
+<?PHP // $Id$ 
+      // forum.php - created with Moodle 1.0.6.4 (2002112400)
+
+
 $string['addanewdiscussion'] = "Añadir un nuevo tema de debate";
 $string['allowchoice'] = "Permitir a todos escoger";
 $string['allowdiscussions'] = "¿Puede un \$a poner mensages en este foro?";
@@ -70,25 +70,25 @@ $string['openmode2'] = "Permitir debates y respuestas";
 $string['parentofthispost'] = "Anterior a este mensaje";
 $string['postadded'] = "Su mensaje se ha colocado con éxito.<P>Tiene \$a para editarlo si quiere hacer cualquier cambio.";
 $string['postincontext'] = "Mira este mensaje en su contexto";
-$string['postingtip'] = "<B>Recomendaciones</B><BR>
-
-Cuando responda:
-<UL>
-<LI>lea el mensaje con cuidado y atención
-<LI>busque cosas que pueda comentar
-</UL>
-
-Cuando escriba:
-<UL>
-<LI>mantenga sus mensajes cortos y centrados sobre el tema
-<LI>explique sus propias ideas con claridad
-<LI>piense en cuestiones que pueda preguntar
+$string['postingtip'] = "<B>Recomendaciones</B><BR>
+Cuando responda:
+<UL>
+<LI>lea el mensaje con cuidado y atención
+<LI>busque cosas que pueda comentar
+</UL>
+
+Cuando escriba:
+<UL>
+<LI>mantenga sus mensajes cortos y centrados sobre el tema
+<LI>explique sus propias ideas con claridad
+<LI>piense en cuestiones que pueda preguntar
 </UL>";
-$string['postmailinfo'] = "Esta es una copia del mensaje publicado en \$a .
+$string['postmailinfo'] = "Esta es una copia del mensaje publicado en \$a .
+
 Para responder a este mensaje, haga clic en este enlace:";
-$string['postrating1'] = "Pertinente";
+$string['postrating1'] = "Muestra un aprendizaje principalmente individualista";
 $string['postrating2'] = "Ambos";
-$string['postrating3'] = "No pertinente";
+$string['postrating3'] = "Muestra un aprendizaje principalmente solidario";
 $string['postupdated'] = "Su mensaje se ha actualizado";
 $string['processingpost'] = "Procesando mensage \$a";
 $string['rate'] = "Calificar";
@@ -99,8 +99,8 @@ $string['repliesmany'] = "\$a respuestas";
 $string['repliesone'] = "\$a respuesta";
 $string['reply'] = "Responder";
 $string['search'] = "Buscar";
-$string['searchresults'] = "Resultados de la búsqueda";
 $string['searchforums'] = "Buscar foros";
+$string['searchresults'] = "Resultados de la búsqueda";
 $string['sendinratings'] = "Enviar mis últimas calificaciones";
 $string['showsubscribers'] = "Mostrar participantes";
 $string['singleforum'] = "Un debate sencillo";

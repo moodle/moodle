@@ -1,7 +1,8 @@
-<?PHP // $Id$
-      // assignment.php - created with Moodle 1.0.6 (2002102600)
-// Traducido por Claudio Tavares Mastrangelo
-// enlaceacademico.com
+<?PHP // $Id$ 
+      // assignment.php - created with Moodle 1.0.6.4 (2002112400)
+
+
+$string['allowresubmit'] = "Permitir reenvío";
 $string['assignmentdetails'] = "Detalles de la tarea";
 $string['assignmentname'] = "Título de la tarea";
 $string['assignmenttype'] = "Tipo de tarea";
@@ -23,7 +24,7 @@ $string['submissions'] = "Envíos";
 $string['submitassignment'] = "Envíe su tarea usando este formulario";
 $string['submitted'] = "Enviada";
 $string['typeoffline'] = "Actividad Offline";
-$string['typeuploadsingle'] = "Subir un solo archivo, valor entre 0 - 100 puntos";
+$string['typeuploadsingle'] = "Subir un solo archivo";
 $string['uploadbadname'] = "Este archivo contenía caracteres extraños por lo que no pudo ser subido";
 $string['uploadedfiles'] = "archivos enviados";
 $string['uploaderror'] = "Ocurrió un error mientras se guardaba el archivo en el servidor";
