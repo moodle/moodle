@@ -210,7 +210,7 @@ function print_recent_activity($course) {
     // This function trawls through the logs looking for 
     // anything new since the user's last login
 
-    global $CFG, $USER;
+    global $CFG, $USER, $THEME, $SESSION;
 
     if (! $USER->lastlogin ) {
         echo "<p align=center><font size=1>";
@@ -302,6 +302,17 @@ function print_recent_activity($course) {
             $content = true;
             foreach ($changes as $changeinfo => $change) {
                 echo "<p><font size=1>".$change["text"]."</font></p>";
+            }
+        }
+    }    
+
+
+    // If this site uses Library module, then print recent items
+    if (!empty($CFG->librarypath)) {
+        if (file_exists("$CFG->dirroot/$CFG->librarypath/librarylib.php")) {
+            include_once("$CFG->dirroot/$CFG->librarypath/librarylib.php");
+            if (librarysummarize(5, '', date('YmdHis',$USER->lastlogin))) {
+                $content = true;
             }
         }
     }
