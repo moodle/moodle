@@ -2342,7 +2342,9 @@ function get_logs_usercourse($userid, $courseid, $coursestart) {
     global $CFG;
 
     if ($courseid) {
-       $courseselect = " AND course = '$courseid' ";
+        $courseselect = " AND course = '$courseid' ";
+    } else {
+        $courseselect = '';
     }
 
     return get_records_sql("SELECT floor((`time` - $coursestart)/86400) as day, count(*) as num 
@@ -2363,7 +2365,9 @@ function get_logs_userday($userid, $courseid, $daystart) {
     global $CFG;
 
     if ($courseid) {
-       $courseselect = " AND course = '$courseid' ";
+        $courseselect = " AND course = '$courseid' ";
+    } else {
+        $courseselect = '';
     }
 
     return get_records_sql("SELECT floor((`time` - $daystart)/3600) as hour, count(*) as num
