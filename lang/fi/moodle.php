@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.0.9 development (2003032601)
+      // moodle.php - created with Moodle 1.0.9 development (2003041600)
 
 
 $string['action'] = "Tapahtuma";
@@ -37,7 +37,7 @@ $string['assignteachers'] = "Määritä opettajat";
 $string['authentication'] = "Käyttäjäntunnistus";
 $string['availablecourses'] = "Kurssit";
 $string['cancel'] = "Peruuta";
-$string['categories'] = "Kurssi kategoria";
+$string['categories'] = "Kurssikategoriat";
 $string['category'] = "Kategoria";
 $string['categoryadded'] = "Kategoria '\$a' lisätty";
 $string['categorydeleted'] = "Kategoria '\$a' poistettu";
@@ -118,6 +118,7 @@ $string['deletednot'] = "Ei voi poistaa \$a";
 $string['deletingcourse'] = "Poistetaan \$a";
 $string['department'] = "Osasto";
 $string['description'] = "Kuvaus";
+$string['displayingfirst'] = "Vain esimmaiset \$a->count \$a->things näytetään";
 $string['displayingrecords'] = "Näytetään \$a tietuetta";
 $string['displayingusers'] = "Näytetään käyttäjät \$a->start / \$a->end";
 $string['documentation'] = "Moodle Dokumentointi";
@@ -257,6 +258,8 @@ $string['lastname'] = "Sukunimi";
 $string['latestnews'] = "Viimeisimmät uutiset";
 $string['leavetokeep'] = "Pidä tyhjänä säilyttääksi nykyisen salasanasi.";
 $string['license'] = "GPL Lisenssi";
+$string['list'] = "Lista";
+$string['listfiles'] = "Lista tiedostoista \$a :ssa";
 $string['listofallpeople'] = "Kaikki henkilöt";
 $string['livelogs'] = "Anna viimeisen tunnin loki";
 $string['locale'] = "fi_FI";
@@ -437,6 +440,7 @@ $string['shortname'] = "Lyhyt nimi";
 $string['shortnametaken'] = "Annnettu kurssin lyhyt nimi on jo käytössä toisella kursilla.";
 $string['shortsitename'] = "Lyhyt nimi sivustolle (yksi sana)";
 $string['show'] = "Näytä";
+$string['showall'] = "Näytä kaikki \$a";
 $string['showallcourses'] = "Näytä kaikki kurssit";
 $string['showalltopics'] = "Näytä kaikki aiheet";
 $string['showallusers'] = "Näytä kaikki käyttäjät";
@@ -494,6 +498,7 @@ $string['undecided'] = "Valitsematon";
 $string['unenrol'] = "Poista kurssilta";
 $string['unenrolme'] = "Poista minut kurssilta \$a";
 $string['unenrolsure'] = "Oletko varma että haluat poistaa  \$a tältä kurssilta?";
+$string['unpacking'] = "Puretaan \$a";
 $string['unsafepassword'] = "Liian helposti arvattava tai muuten apäkelpo salasana. Kokeile jotain muuta";
 $string['unusedaccounts'] = "Käyttäjätunnukset jotka ovat olleet käyttämättä eli \$a päivää poistetaan automaattisesti.";
 $string['unzip'] = "Unzip";
@@ -509,7 +514,7 @@ $string['upload'] = "Lähetä";
 $string['uploadafile'] = "Lähetä tiedosto";
 $string['uploadedfileto'] = "Tiedosto \$a->file lähetty hakemistoon \$a->directory";
 $string['uploadnofilefound'] = "Tiedostoa ei löytynyt, valitsitko varmasti lähetettävän tiedoston?";
-$string['uploadproblem'] = "Tuntematun virhe talennettaessa tiedostoa '\$a'. (Ehkä se oli liian suuri?)";
+$string['uploadproblem'] = "Tuntematun virhe tallennettaessa tiedostoa '\$a'. (Ehkä se oli liian suuri?)";
 $string['uploadthisfile'] = "Lähetä tämä tiedosto";
 $string['userdeleted'] = "Tämä tunnus on poistettu";
 $string['userdescription'] = "Kuvaus";
@@ -522,8 +527,11 @@ $string['week'] = "Viikko";
 $string['weeklyoutline'] = "Viikko näkymä";
 $string['welcometocourse'] = "Tervetuloa \$a";
 $string['welcometocoursetext'] = "Tervetuloa  \$a->coursename!
+Welcome to \$a->coursename!
 
-Ensimmäiseksi sinun kannattaa muokata kurssi profiiliasi jotta muut voivat tutustua sinuun.
+One of the first things you should do is edit your profile page
+within the course so that we can learn more about you:
+Ensimmäiseksi sinun kannattaa muokata profiiliasi jotta muut voivat tutustua sinuun.
 
   \$a->profileurl";
 $string['withchosenfiles'] = "Valituilla tiedostoilla";

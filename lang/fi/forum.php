@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.0.9 development (2003021600)
+      // forum.php - created with Moodle 1.0.9 development (2003041600)
 
 
 $string['addanewdiscussion'] = "Lisää uusi keskustelu";
@@ -41,6 +41,7 @@ $string['inforum'] = "\$a :ssa";
 $string['intronews'] = "Yleiset uutiset ja tiedotteet";
 $string['introsocial'] = "Avoin foorumi vapaalle keskustelulle";
 $string['introteacher'] = "Opettajien oma keskustelufoorumi";
+$string['lastpost'] = "Viimeisin viesti";
 $string['learningforums'] = "Opiskelufoorumi";
 $string['maxtimehaspassed'] = "Pahus, maksimi muokkausaika on ylittynyt tämän (\$a) viestin osalta!";
 $string['message'] = "Viesti";
@@ -82,6 +83,7 @@ $string['ratings'] = "Arvioinnit";
 $string['ratingssaved'] = "Arviointi tallennettu";
 $string['re'] = "Re:";
 $string['readtherest'] = "Lue loput tästä aiheesta";
+$string['replies'] = "Vastaukset";
 $string['repliesmany'] = "\$a vastausta tähän mennessä";
 $string['repliesone'] = "\$a vastaus tähän mennessä";
 $string['reply'] = "Vastaa";
@@ -91,6 +93,7 @@ $string['searchresults'] = "Haun tulokset";
 $string['sendinratings'] = "Lähetä viimeisimmät arvioinnit viestestäni";
 $string['showsubscribers'] = "Näytä tilaajat";
 $string['singleforum'] = "Yksinkertainen keskustelu";
+$string['startedby'] = "Aloittanut:";
 $string['subject'] = "Aihe";
 $string['subscribe'] = "Tilaa tämä foorumi";
 $string['subscribed'] = "Tilaaja";
