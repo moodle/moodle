@@ -18,6 +18,8 @@ CREATE TABLE `prefix_exercise` (
   `grade` tinyint(3) NOT NULL default '0',
   `gradinggrade` tinyint(3) NOT NULL default '0',
   `showleaguetable` tinyint(3) unsigned NOT NULL default '0',
+  `usepassword` tinyint(3) unsigned NOT NULL default '0',
+  `password` varchar(32) NOT NULL default '',
   PRIMARY KEY  (`id`)
 ) COMMENT='Defines exercise';
 # --------------------------------------------------------

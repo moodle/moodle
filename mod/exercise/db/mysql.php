@@ -25,6 +25,11 @@ function exercise_upgrade($oldversion) {
         execute_sql("ALTER TABLE `{$CFG->prefix}exercise` DROP COLUMN `gradingweight`");
     }
 
+    if ($oldversion < 2004090200) {
+		table_column("exercise", "", "usepassword", "INTEGER", "4", "UNSIGNED", "0", "NOT NULL");
+		table_column("exercise", "", "password", "VARCHAR", "32", "", "", "NOT NULL");
+    }
+
     return true;
 }
 

@@ -236,7 +236,43 @@
     /****************** student's view could be in 1 of 3 stages ***********************/
     elseif ($action == 'studentsview') {
         exercise_print_assignment_info($exercise);
-        // in Stage 1 - the student must make an assessment (linked to the teacher's exercise/submission
+        // is a password needed?
+		if ($exercise->usepassword) {
+			$correctpass = false;
+			if (isset($_POST['userpassword'])) {
+				if ($exercise->password == md5(trim($_POST['userpassword']))) {
+					$USER->exerciseloggedin[$exercise->id] = true;
+					$correctpass = true;
+				}
+			} elseif (isset($USER->exerciseloggedin[$exercise->id])) {
+				$correctpass = true;
+			}
+
+			if (!$correctpass) {
+				print_simple_box_start("center");
+				echo "<form name=\"password\" method=\"post\" action=\"view.php\">\n";
+				echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\">\n";
+				echo "<table cellpadding=\"7px\">";
+				if (isset($_POST['userpassword'])) {
+					echo "<tr align=\"center\" style='color:#DF041E;'><td>".get_string("wrongpassword", "exercise").
+                        "</td></tr>";
+				}
+				echo "<tr align=\"center\"><td>".get_string("passwordprotectedexercise", "exercise", $exercise->name).
+                    "</td></tr>";
+				echo "<tr align=\"center\"><td>".get_string("enterpassword", "exercise").
+                    " <input type=\"password\" name=\"userpassword\"></td></tr>";
+						
+				echo "<tr align=\"center\"><td>";
+				echo "<input type=\"button\" value=\"".get_string("cancel").
+                    "\" onclick=\"parent.location='../../course/view.php?id=$course->id';\">  ";
+				echo "<input type=\"button\" value=\"".get_string("continue").
+                    "\" onclick=\"document.password.submit();\">";
+				echo "</td></tr></table>";
+				print_simple_box_end();
+				exit();
+			}
+		}
+	    // in Stage 1 - the student must make an assessment (linked to the teacher's exercise/submission
         if (!exercise_test_user_assessments($exercise, $USER)) {
             print_heading(get_string("pleaseviewtheexercise", "exercise", $course->teacher));
             exercise_list_teacher_submissions($exercise, $USER);

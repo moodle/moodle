@@ -28,6 +28,9 @@
     if (empty($form->deadline)) {
         $form->deadline = "";
     }
+	if (!isset($form->usepassword)) {
+        $form->usepassword = 0;
+    }
     if (empty($form->showleaguetable)) {
         $form->showleaguetable = "";
     }
@@ -46,6 +49,7 @@
         <input type="text" name="name" size=60 value="<?php  p($form->name) ?>">
     </td>
 </tr>
+
 <tr valign=top>
     <td align=right><P><B><?php  print_string("description", "exercise") ?>:</B></P></TD>
     <td>
@@ -123,6 +127,25 @@
         choose_from_menu($COMPARISONS, "assessmentcomps", $form->assessmentcomps, "");
         helpbutton("comparisonofassessments", get_string("comparisonofassessments", "exercise"), "exercise");
     ?>
+    </td>
+</tr>
+
+<tr>
+    <td align=right><p><b><?php  print_string("usepassword", "exercise"); ?>:</b></p></td>
+    <td>
+    <?PHP 
+        $options[0] = get_string("no"); $options[1] = get_string("yes");
+		choose_from_menu($options, "usepassword", $form->usepassword, "");
+        helpbutton("usepassword", get_string("usepassword", "exercise"), "exercise");
+    ?>
+    </td>
+</tr>
+
+<tr>
+    <td align=right><p><b><?php  print_string("password"); ?>:</b></p></td>
+    <td>
+        <input type="text" name="password" size=10 value=""> <?php echo " (".get_string("leavetokeep").")"; ?>
+		<?php helpbutton("password", get_string("password"), "exercise"); ?>
     </td>
 </tr>
 

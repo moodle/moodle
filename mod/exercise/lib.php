@@ -60,6 +60,13 @@ function exercise_add_instance($exercise) {
             $exercise->deadlinemonth, $exercise->deadlineday, $exercise->deadlinehour, 
             $exercise->deadlineminute);
 
+    // encode password if necessary
+    if (!empty($exercise->password)) {
+		$exercise->password = md5($exercise->password);
+	} else {
+		unset($exercise->password);
+	}
+
     return insert_record("exercise", $exercise);
 }
 
@@ -428,6 +435,13 @@ function exercise_update_instance($exercise) {
     $exercise->deadline = make_timestamp($exercise->deadlineyear, 
             $exercise->deadlinemonth, $exercise->deadlineday, $exercise->deadlinehour, 
             $exercise->deadlineminute);
+
+    // encode password if necessary
+    if (!empty($exercise->password)) {
+		$exercise->password = md5($exercise->password);
+	} else {
+		unset($exercise->password);
+	}
 
     $exercise->id = $exercise->instance;
 
