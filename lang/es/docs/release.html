@@ -17,6 +17,136 @@
 <body bgcolor="#FFFFFF">
 <h1>Notas sobre versiones</h1>
 
+<h3>Moodle 1.4.3 (17 Diciembre de 2004)</h3>
+
+<p>(Dado que esta versi&oacute;n incluye importantes cambios relativos a la seguridad,
+  recomendamos que los sitios que est&eacute;n utilizando versiones anteriores
+de Moodle sean actualizados lo m&aacute;s pronto posible)</p>
+
+<ul>
+  <dl>
+    <dt>Algunos problemas de seguridad solucionados</dt>
+    <dd>
+      <ul>
+        <li>Mejor comprobaci&oacute;n y limpieza de la informaci&oacute;n en cookies.</li>
+	    <li>Medidas preventivas para problemas en las sesiones.</li>
+        <li>Mejor comprobaci&oacute;n y limpieza de los par&aacute;metros de los canales RSS,
+          IP Atlas, glosario, foros, selecci&oacute;n de temas, m&oacute;dulo SCORM y visualizador
+          de la documentaci&oacute;n.</li>
+        <li>Incluida protecci&oacute;n para el visualizado de los ficheros subidos.</li>
+        <li>Incluida protecci&oacute;n contra el acceso transversal a directorios.</li>
+        <li>Soluci&oacute;n a la variable $FULLME necesaria para el cron.</li>
+        <li>Prevenci&oacute;n contra las llamadas directas a librer&iacute;as internas.</li>
+        <li>Prevenci&oacute;n contra la visualizaci&oacute;n del glosario si
+          es una actividad oculta.</li>
+        <li>Las secciones ocultas no son mostradas a los alumnos en la actividad
+          reciente.</li>
+        <li>Solucionado problema con la visualizaci&oacute;n, por parte de los invitados,
+          de eventos del calendario.</li>
+        <li>Solucionada la codificaci&oacute;n de expresiones TEX.</li>
+      </ul>
+    </dd>
+
+    <dt>Unas pocas cosas nuevas</dt>
+    <dd>
+      <ul>
+        <li>Forzada la matriculaci&oacute;n &uacute;nica, esto tambi&eacute;n es una mejora de rendimiento.</li>
+        <li>A&ntilde;adido soporte a transacciones para PostgreSQL.</li>
+        <li>Los accesos y salidas ahora son registrados.</li>
+        <li>Los m&oacute;dulos Wiki y SCORM ahora utilizan un nuevo sistema de compresi&oacute;n
+          (zip) - esto soluciona algunos problemas detectados en SCORM.</li>
+        <li>Nuevo sistema de paginaci&oacute;n para el glosario.</li>
+        <li>La informaci&oacute;n del usuario obtenida desde LDAP ahora es truncada
+          para prevenir p&eacute;rdidas de datos.</li>
+        <li>Actualizada la librer&iacute;a PclZip a una nueva versi&oacute;n.</li>
+        <li>La variable memory_limit puede ser anulada por configuraciones de
+          mayor rango desde  php.ini, l&iacute;nea de comandos,
+          httpd.conf,
+          .htaccess.</li>
+        <li>Nuevas traducciones iniciadas: Maor&iacute;, Kannada,
+          Alban&eacute;s y Vietnamita.</li>
+        <li>Muchas mejoras en numerosos idiomas.</li>
+        <li>Los profesores ahora pueden comprobar los cuestionarios siempre,
+          incluso cuando no est&eacute;n abiertos.</li>
+        <li>La vista de impresi&oacute;n del glosario ahora es diferente para cada formato.</li>
+        <li>La b&uacute;squeda del glosario ahora tambi&eacute;n busca en los alias.</li>
+        <li>Filtro multi-idioma enormemente mejorado con una sintaxis m&aacute;s sencilla.</li>
+      </ul>
+    </dd>
+	
+   <dt>Mejoras de rendimiento</dt>
+    <dd>
+      <ul>
+        <li>Mejor uso de las cabeceras que controlan las cach&eacute;s del navegador,
+          lo que provoca una mejora de rendimiento en todas las p&aacute;ginas
+          al utilizar el bot&oacute;n
+          de p&aacute;gina anterior.</li>
+        <li>Inclu&iacute;dos &iacute;ndices de base de datos en muchos sitios para mejorar
+          el rendimiento en explotaciones de gran tama&ntilde;o.</li>
+        <li>Mejoras de velocidad por todo Moodle en el listado de cursos.</li>
+        <li>Varias optimizaciones, eliminando algunos accesos y ordenaciones
+          innecesarias en la base de datos.</li>
+      </ul>
+    </dd>
+
+    <dt>Y problemas solucionados</dt>
+    <dd>
+      <ul>
+        <li>Solucionado el duplicado de identificadores de cursos en la restauraci&oacute;n.</li>
+        <li>Solucionados muchos peque&ntilde;os problemas con PostgreSQL.</li>
+        <li>Solucionados algunos avisos en PHP5.</li>
+        <li>Solucionado el soporte para ap&oacute;strofes, comillas y barras en la informaci&oacute;n
+          de LDAP.</li>
+        <li>Solucionada la paginaci&oacute;n al buscar cursos en PostgreSQL.</li>
+        <li>Solucionada la b&uacute;squeda de usuarios con alg&uacute;n espacio en blanco.</li>
+        <li>Solucionado problema del chat por el que los usuarios aparec&iacute;an en
+          salas en las que no estaban.</li>
+        <li>Solucionado peque&ntilde;o problema en el gui&oacute;n de instalaci&oacute;n.</li>
+        <li>Solucionada la detecci&oacute;n de nombres de usuarios en la carga
+          de usuarios.</li>
+        <li>Solucionado un problema en la redirecci&oacute;n despu&eacute;s de la calificaci&oacute;n
+          de mensajes en los foros.</li>
+        <li>Solucionado un problema en cuestionarios utilizando preguntas de
+          emparejamiento.</li>
+        <li>Solucionado un problema en la previsualizaci&oacute;n de los cuestionarios.</li>
+        <li>Solucionado un error en la edici&oacute;n de idiomas.</li>
+        <li>Solucionados peque&ntilde;os problemas  en el m&oacute;dulo SCORM.</li>
+        <li>El m&oacute;dulo SCORM ahora muestra las im&aacute;genes de los usuarios correctamente.</li>
+        <li>Los nombres de las actividades ahora son ordenados por longitud en
+          el filtro de actividades.</li>
+        <li>Cualquier error en los canales RSS devolver&aacute; un fichero RSS v&aacute;lido
+          informado del error, en lugar de un fichero inv&aacute;lido.</li>
+        <li>Solucionados problemas con el m&oacute;dulo SCORM y la validaci&oacute;n en PHP5.</li>
+        <li>Solucionado problema con las copias de seguridad y restauraciones
+          de categor&iacute;as vac&iacute;as.</li>
+        <li>Mejoras  XHTML en el m&oacute;dulo Wiki.</li>
+        <li>Solucionado un problema en los informes de la primera sesi&oacute;n de chat.</li>
+        <li>Solucionado un problema con SCORM al borrar muchos archivos o archivos
+          muy grandes.</li>
+        <li>Solucionados algunos problemas en el formato enciclopedia del glosario.</li>
+        <li>Solucionada la integraci&oacute;n del m&oacute;dulo SCORM con las rutinas zip est&aacute;ndar.</li>
+        <li>Solucionado un problema en las notificaciones del m&oacute;dulo di&aacute;logo
+          por correo de texto plano.</li>
+        <li>Solucionado un problema de variables &quot;seeskey&quot; en el bloque de actividades
+          sociales.</li>
+        <li>El exceso de secciones en un curso ahora es ocultado en el men&uacute; de
+          navegaci&oacute;n.</li>
+        <li>A&ntilde;adido soporte para los cambios horarios en el calendario.</li>
+        <li>La primera edici&oacute;n de un cuestionario en un nuevo curso ahora tiene
+          una categor&iacute;a por defecto asociada.</li>
+        <li>Solucionado un problema en el m&oacute;dulo PayPal al aceptar las cantidades
+          de pago.</li>
+        <li>Solucionado un problema en los ficheros del curso con la p&eacute;rdida
+          del modo de elecci&oacute;n.</li>
+      </ul>
+    </dd>
+
+  </dl>
+</ul>
+
+<p>&nbsp;</p>
+
+
 <h3> Moodle 1.4.2   (5 de Noviembre de 2004)</h3>
 
 <p>(Dado que esta versi&oacute;n incluye importantes cambios relativos a la seguridad, recomendamos que
