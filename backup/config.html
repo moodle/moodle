@@ -36,7 +36,7 @@
         $backup_config->backup_sche_weekdays = "0000000";
     }
 
-print_object($backup_config);
+    //print_object($backup_config);                       //Debug
 
     //Yes/no array for use in yes/no menu
     $yesno_array[0] = $no;
@@ -112,10 +112,10 @@ print_object($backup_config);
             //after searching the web I haven't find a sytem to retrieve it in php from locale info
             $firstdayofweek = get_string("firstdayofweek");
             //If it is empty ot it is different of 1, default to 0
-            if (empty($firstdayofweek) || $firstdayofweek != 1) {
+            if (!isset($firstdayofweek) || $firstdayofweek != 1) {
                 $firstdayofweek = 0;
             }
-            //Now create the timestamp of a well-know sunday (02/25/2001, my 31th birthday !!)
+            //Now create the timestamp of a well-know sunday (02/25/2001, my 31th birthday (stronk7) !!)
             $onesunday = make_timestamp(2001,2,25);
             $i = 0;
             $day_names = "";
