@@ -69,6 +69,8 @@
     require_once("$CFG->libdir/moodlelib.php");       // Other general-purpose functions
 
 
+
+
 /// Load up any configuration from the config table
     
     if ($configs = get_records('config')) {
@@ -95,6 +97,14 @@
         $CFG->directorypermissions = 0777;      // Must be octal (that's why it's here)
     }
 
+/// Set up smarty template system
+    require_once("$CFG->libdir/smarty/Smarty.class.php");  
+    $smarty = new Smarty;
+    $smarty->template_dir = "$CFG->dirroot/templates/$CFG->template";
+    if (!file_exists("$CFG->dataroot/cache")) {
+        make_upload_directory('cache');
+    }
+    $smarty->compile_dir = "$CFG->dataroot/cache";
 
 /// Set session timeouts
     if (!empty($CFG->sessiontimeout)) {
