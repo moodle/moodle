@@ -274,6 +274,10 @@ class configvarrss extends configvar {
     $interface['allowuserblockhiding'] = new configvar (get_string('configallowuserblockhiding', 'admin'),
         choose_from_menu ($noyesoptions, 'allowuserblockhiding', $config->allowuserblockhiding, '', '', '', true) );
 
+/// showblocksonmodpages
+    $interface['showblocksonmodpages'] = new configvar (get_string('configshowblocksonmodpages', 'admin'),
+        choose_from_menu ($noyesoptions, 'showblocksonmodpages', $config->showblocksonmodpages, '', '', '', true) );
+
 
 
 
