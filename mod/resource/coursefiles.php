@@ -35,7 +35,7 @@
     
     function html_header($course, $wdir, $formfield=""){
 
-        global $CFG;
+        global $CFG,$THEME;
 
         if (! $site = get_site()) {
             error("Invalid site!");
