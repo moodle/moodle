@@ -195,7 +195,7 @@ $string['gd1'] = "GD 1.x is installed";
 $string['gd2'] = "GD 2.x is installed";
 $string['gdneed'] = "GD must be installed to see this graph";
 $string['gdnot'] = "GD is not installed";
-$string['gpl'] = "Copyright (C) 2001-2002  Martin Dougiamas  (http://dougiamas.com)
+$string['gpl'] = "Copyright (C) 2001-on  Martin Dougiamas  (http://dougiamas.com)
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -207,7 +207,15 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details:
 
-http://www.gnu.org/copyleft/gpl.html";
+http://www.gnu.org/copyleft/gpl.html
+
+In addition to the rights under the GPL I am adding one clause:
+all installed and redistributed copies of Moodle must retain the 
+\"Made with Moodle\" logo on the home page (or a visible equivalent)
+that links to moodle.com.  If you wish to remove the logo,
+re-brand Moodle, or redistribute modifed copies of Moodle then
+please contact martin@dougiamas.com to negotiate terms and pricing.";
+
 $string['grade'] = "Grade";
 $string['grades'] = "Grades";
 $string['guestskey'] = "Allow guests who have the key";
