@@ -168,8 +168,8 @@
         if ($mycourses = get_my_courses($user->id)) {
             $courselisting = '';
             foreach ($mycourses as $mycourse) {
-                if ($mycourse->visible) {
-                    $courselisting .= "<a href=\"$CFG->wwwroot/course/view.php?id=$mycourse->id\">$mycourse->fullname</a>, ";
+                if ($mycourse->visible and $mycourse->category) {
+                    $courselisting .= "<a href=\"$CFG->wwwroot/user/view.php?id=$user->id&course=$mycourse->id\">$mycourse->fullname</a>, ";
                 }
             }
             print_row(get_string('courses').':', rtrim($courselisting,', '));
@@ -231,7 +231,13 @@
     }
     echo "</tr></table></center>\n";
 
-    forum_print_user_discussions($course->id, $user->id);
+    $isseparategroups = ($course->groupmode == SEPARATEGROUPS and 
+                         $course->groupmodeforce and 
+                         !isteacheredit($course->id));
+
+    $groupid = $isseparategroups ? get_current_group($course->id) : NULL;
+
+    forum_print_user_discussions($course->id, $user->id, $groupid);
 
     print_footer($course);
 
