@@ -3,7 +3,7 @@
 
 
 $string['accumulative'] = "累積方式";
-$string['action'] = "アクション";
+$string['action'] = "操作";
 $string['addacomment'] = "コメントを追加";
 $string['afterdeadline'] = "提出期限後： \$a";
 $string['agreetothisassessment'] = "この評価に同意する";
