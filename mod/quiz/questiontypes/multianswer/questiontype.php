@@ -63,7 +63,16 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
         if (!$oldmultianswers = get_records("quiz_multianswers", "question", $question->id, "id ASC")) {
             $oldmultianswers = array();
         }
-
+        
+        if (empty($question->name)) {
+            $result->notice = get_string("missingname", "quiz");
+            return $result;
+        }
+        if (!$question->answers) {
+            $result->notice = get_string('noquestionintext', 'quiz');
+            return $result;
+        }
+        
         // Insert all the new multi answers
         foreach ($question->answers as $dataanswer) {
             if ($oldmultianswer = array_shift($oldmultianswers)) {  // Existing answer, so reuse it
@@ -111,7 +120,9 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
 
         $question = quiz_qtype_multianswer_extract_question
                                      ($form->questiontext);
-        $question->id = $authorizedquestion->id;
+        if (isset($authorizedquestion->id)) {
+            $question->id = $authorizedquestion->id;
+        }
         $question->qtype = $authorizedquestion->qtype;
         $question->category = $authorizedquestion->category;
 
@@ -122,45 +133,40 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
             $question->image = $form->image;
         }
 
-        // Formcheck
-        $err = array();
-        if (empty($question->name)) {
-            $err["name"] = get_string("missingname", "quiz");
-        }
-        if (empty($question->questiontext)) {
-            $err["questiontext"] = get_string("missingquestiontext", "quiz");
-        }
-        if ($err) { // Formcheck failed
-            notify(get_string("someerrorswerefound"));
-
-        } else {
-
-            if (!empty($question->id)) { // Question already exists
-                if (!update_record("quiz_questions", $question)) {
-                    error("Could not update question!");
-                }
-            } else {         // Question is a new one
-                $question->stamp = make_unique_id_code();  // Set the unique code (not to be changed)
-                if (!$question->id = insert_record("quiz_questions", $question)) {
-                    error("Could not insert new question!");
-                }
+        if (!empty($question->id)) { // Question already exists
+            if (!update_record("quiz_questions", $question)) {
+                error("Could not update question!");
             }
-    
-            // Now to save all the answers and type-specific options
-            $result = $this->save_question_options($question);
-
-            if (!empty($result->error)) {
-                error($result->error);
+        } else {         // Question is a new one
+            $question->stamp = make_unique_id_code();  // Set the unique code (not to be changed)
+            if (!$question->id = insert_record("quiz_questions", $question)) {
+                error("Could not insert new question!");
             }
-
-            if (!empty($result->notice)) {
-                notice_yesno($result->notice, "question.php?id=$question->id", "edit.php");
-                print_footer($course);
-                exit;
-            }
-    
-            redirect("edit.php");
         }
+
+        // Now to save all the answers and type-specific options
+        
+        $form->id       = $question->id;
+        $form->qtype    = $question->qtype;
+        $form->category = $question->category;
+        
+        $result = $this->save_question_options($question);
+
+        if (!empty($result->error)) {
+            error($result->error);
+        }
+
+        if (!empty($result->notice)) {
+            notice($result->notice, "question.php?id=$question->id");
+        }
+
+        if (!empty($result->noticeyesno)) {
+            notice_yesno($result->noticeyesno, "question.php?id=$question->id", "edit.php");
+            print_footer($course);
+            exit;
+        }
+        
+        redirect("edit.php");
     }
     
     function convert_to_response_answer_field($questionresponse) {
