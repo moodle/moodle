@@ -37,7 +37,7 @@ define("FORMAT_HTML",   "1");   // Plain HTML (with some tags stripped)
 define("FORMAT_PLAIN",  "2");   // Plain text (even tags are printed in full)
 define("FORMAT_WIKI",   "3");   // Wiki-formatted text
 
-$ALLOWED_TAGS = "<p><br><b><i><u><font><table><tbody><span><div><tr><td><ol><ul><dl><li><dt><dd><h1><h2><h3><h4><h5><h6><hr><img><a><strong><emphasis><em><sup><sub><address><cite><blockquote><pre><strike><embed><object><param>";
+$ALLOWED_TAGS = "<p><br><b><i><u><font><table><tbody><span><div><tr><td><ol><ul><dl><li><dt><dd><h1><h2><h3><h4><h5><h6><hr><img><a><strong><emphasis><em><sup><sub><address><cite><blockquote><pre><strike><embed><object><param><acronym>";
 
 
 /// Functions
