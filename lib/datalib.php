@@ -1249,7 +1249,7 @@ function get_course_users($courseid, $sort="timeaccess DESC") {
     $site = get_site();
 
     if ($courseid == $site->id) {
-        return get_site_users($sort);
+        return get_site_users();
     }
 
     /// Using this method because the single SQL just would not always work!
