@@ -44,8 +44,8 @@ CREATE TABLE `prefix_quiz_answers` (
   `answer` varchar(255) NOT NULL default '',
   `fraction` varchar(10) NOT NULL default '0.0',
   `feedback` text NOT NULL,
-
-  PRIMARY KEY  (`id`)
+  PRIMARY KEY  (`id`),
+  KEY `question` (`question`)
 ) TYPE=MyISAM COMMENT='Answers, with a fractional grade (0-1) and feedback';
 # --------------------------------------------------------
 
@@ -62,7 +62,9 @@ CREATE TABLE `prefix_quiz_attempts` (
   `timestart` int(10) unsigned NOT NULL default '0',
   `timefinish` int(10) unsigned NOT NULL default '0',
   `timemodified` int(10) unsigned NOT NULL default '0',
-  PRIMARY KEY  (`id`)
+  PRIMARY KEY  (`id`),
+  KEY `quiz` (`quiz`),
+  KEY `userid` (`userid`)
 ) TYPE=MyISAM COMMENT='Stores various attempts on a quiz';
 # --------------------------------------------------------
 
@@ -90,7 +92,9 @@ CREATE TABLE `prefix_quiz_grades` (
   `userid` int(10) unsigned NOT NULL default '0',
   `grade` varchar(10) NOT NULL default '0.0',
   `timemodified` int(10) unsigned NOT NULL default '0',
-  PRIMARY KEY  (`id`)
+  PRIMARY KEY  (`id`),
+  KEY `quiz` (`quiz`),
+  KEY `userid` (`userid`)
 ) TYPE=MyISAM COMMENT='Final quiz grade (may be best of several attempts)';
 # --------------------------------------------------------
 
@@ -118,7 +122,9 @@ CREATE TABLE `prefix_quiz_question_grades` (
   `quiz` int(10) unsigned NOT NULL default '0',
   `question` int(10) unsigned NOT NULL default '0',
   `grade` smallint(6) NOT NULL default '0',
-  PRIMARY KEY  (`id`)
+  PRIMARY KEY  (`id`),
+  KEY `quiz` (`quiz`),
+  KEY `question` (`question`)
 ) TYPE=MyISAM COMMENT='The grade for a question in a quiz';
 # --------------------------------------------------------
 
@@ -130,7 +136,8 @@ CREATE TABLE `prefix_quiz_randommatch` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `question` int(10) unsigned NOT NULL default '0',
   `choose` INT UNSIGNED DEFAULT '4' NOT NULL,
-  PRIMARY KEY ( `id` )
+  PRIMARY KEY ( `id` ),
+  KEY `question` (`question`)
 ) TYPE=MyISAM COMMENT='Info about a random matching question';
 
 #
@@ -159,7 +166,9 @@ CREATE TABLE `prefix_quiz_responses` (
   `question` int(10) unsigned NOT NULL default '0',
   `answer` varchar(255) NOT NULL default '',
   `grade` varchar(10) NOT NULL default '0.0',
-  PRIMARY KEY  (`id`)
+  PRIMARY KEY  (`id`),
+  KEY `attempt` (`attempt`),
+  KEY `question` (`question`)
 ) TYPE=MyISAM COMMENT='Stores user responses to a quiz, and percentage grades';
 # --------------------------------------------------------
 
