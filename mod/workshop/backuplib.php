@@ -56,7 +56,6 @@
                 fwrite ($bf,full_tag("WTYPE",4,false,$workshop->wtype));
                 fwrite ($bf,full_tag("NELEMENTS",4,false,$workshop->nelements));
                 fwrite ($bf,full_tag("NATTACHMENTS",4,false,$workshop->nattachments));
-                fwrite ($bf,full_tag("PHASE",4,false,$workshop->phase));
                 fwrite ($bf,full_tag("FORMAT",4,false,$workshop->format));
                 fwrite ($bf,full_tag("GRADINGSTRATEGY",4,false,$workshop->gradingstrategy));
                 fwrite ($bf,full_tag("RESUBMIT",4,false,$workshop->resubmit));
@@ -68,7 +67,7 @@
                 fwrite ($bf,full_tag("SUBMISSIONSTART",4,false,$workshop->submissionstart));
                 fwrite ($bf,full_tag("ASSESSMENTSTART",4,false,$workshop->assessmentstart));
                 fwrite ($bf,full_tag("SUBMISSIONEND",4,false,$workshop->submissionend));
-                fwrite ($bf,full_tag("ASSESSMENTEND",4,false,$workshop->submissionstart));
+                fwrite ($bf,full_tag("ASSESSMENTEND",4,false,$workshop->assessmentend));
                 fwrite ($bf,full_tag("RELEASEGRADES",4,false,$workshop->releasegrades));
                 fwrite ($bf,full_tag("GRADE",4,false,$workshop->grade));
                 fwrite ($bf,full_tag("GRADINGGRADE",4,false,$workshop->gradinggrade));
@@ -264,6 +263,7 @@
                 fwrite ($bf,full_tag("TIMEAGREED",8,false,$wor_ass->timeagreed));
                 fwrite ($bf,full_tag("GRADE",8,false,$wor_ass->grade));
                 fwrite ($bf,full_tag("GRADINGGRADE",8,false,$wor_ass->gradinggrade));
+                fwrite ($bf,full_tag("TEACHERGRADED",8,false,$wor_ass->teachergraded));
                 fwrite ($bf,full_tag("MAILED",8,false,$wor_ass->mailed));
                 fwrite ($bf,full_tag("RESUBMISSION",8,false,$wor_ass->resubmission));
                 fwrite ($bf,full_tag("DONOTUSE",8,false,$wor_ass->donotuse));
