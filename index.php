@@ -113,7 +113,7 @@
          $site->summary .= "<BR><CENTER><A HREF=\"admin/site.php\"><IMG SRC=\"pix/i/edit.gif\" BORDER=0></A>";
      }
 
-     print_simple_box($site->summary, "", "100%", $THEME->cellheading);
+     print_simple_box($site->summary, "", "100%", $THEME->cellcontent2);
      print_spacer(1,$side);
      echo "</TD>";
   ?>
