@@ -54,8 +54,12 @@
             }
             if ($rssfeeds = get_records('block_rss_client')) {
                 foreach($rssfeeds as $rssfeed){
-                    if ($rss
-                    $feedoptions[$rssfeed->id] = $rssfeed->title;
+                    if (!empty($rssfeed->preferredtitle)) {
+                        $feedtitle = $rssfeed->preferredtitle;
+                    } else {
+                        $feedtitle = $rssfeed->title;                    
+                    } 
+                    $feedoptions[$rssfeed->id] = $feedtitle;
                 }
                 $dropdownmenustring = choose_from_menu($feedoptions, 'rssid[]', '', '', '', '0', true);
 

@@ -150,19 +150,21 @@ class block_rss_client extends block_base {
                 }
                 return;
             }
-            
-            if ($showtitle) {
-                $returnstring .= '<div class="rssclienttitle">'. $rss_record->title .'</div><br /><br />';
-            }
+
             if ($shownumentries > 0 && $shownumentries < count($rss->items) ) {
                 $rss->items = array_slice($rss->items, 0, $shownumentries);
             }
 
             if (empty($rss_record->preferredtitle)) {
-                $feedtitle = stripslashes_safe($rss_record->preferredtitle);
-            } else {
                 $feedtitle =  stripslashes_safe(rss_unhtmlentities($rss->channel['title']));
-            }            
+            } else {
+                $feedtitle = stripslashes_safe($rss_record->preferredtitle);
+            }          
+                        
+            if ($showtitle) {
+                $returnstring .= '<div class="rssclienttitle">'. $feedtitle .'</div><br /><br />';
+            }                        
+
             foreach ($rss->items as $item) {
                 $item['title'] = stripslashes_safe(rss_unhtmlentities($item['title']));
                 $item['description'] = stripslashes_safe(rss_unhtmlentities($item['description']));
