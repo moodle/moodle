@@ -3,21 +3,14 @@
 
     //Define some globals for all the script
 
-    //MUST CHANGE WITH FINAL BACKUP LOCATION !! WITHOUT TRAILING SLASH !!
-    //ALL RELATIVE FROM THE LOCATION OF THE restore.php SCRIPT !!!
-
     $moodle_home = "..";
     $mods_home = "../mod";
-
-    //END MUST CHANGE
 
     //Units used
     require_once ("$moodle_home/config.php");
     require_once ("$moodle_home/version.php");
     require_once ("$moodle_home/lib/xmlize.php");
     require_once ("$moodle_home/course/lib.php");
-    require_once ("version.php");
-    require_once ("db/backup_$CFG->dbtype.php");
     require_once ("lib.php");
     require_once ("restorelib.php");
 
@@ -46,7 +39,8 @@
     } else {
         $linkto = "restore.php";
     }
-    upgrade_backup_db($backup_version,$backup_release,$linkto);
+
+    upgrade_backup_db($linkto);
 
     //Get strings
     $strcourserestore = get_string("courserestore");

@@ -14,8 +14,6 @@
     //Units used
     require_once ("$moodle_home/config.php");
     require_once ("$moodle_home/version.php");
-    require_once ("version.php");
-    require_once ("db/backup_$CFG->dbtype.php");
     require_once ("lib.php");
     require_once ("backuplib.php");
 
@@ -39,7 +37,7 @@
     backup_required_functions();
     
     //Check backup_version
-    upgrade_backup_db($backup_version,$backup_release,"backup.php");
+    upgrade_backup_db("backup.php");
 
     //Get strings
     $strcoursebackup = get_string("coursebackup");

@@ -287,53 +287,63 @@
     // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    //This function upgrades, if necesary, the backup-restore tables
-    //It's called from backup.php and restore.php
-    function upgrade_backup_db($updgradeto,$backup_release,$continueto) {
-    
-        global $CFG,$db;
 
-        //Check backup_version
-        if ($CFG->backup_version) {
-            if ($updgradeto > $CFG->backup_version) {  // upgrade
-                $a->oldversion = $CFG->backup_version;
-                $a->newversion = $updgradeto;
-                $strdatabasechecking = get_string("databasechecking", "", $a);
-                $strdatabasesuccess  = get_string("databasesuccess");
-                print_header($strdatabasechecking, $strdatabasechecking, $strdatabasechecking);
-                print_heading($strdatabasechecking);
-                $db->debug=true;
-                if (backup_upgrade($a->oldversion)) {
-                    $db->debug=false;
-                    if (set_config("backup_version", $a->newversion)) {
-                        notify($strdatabasesuccess, "green");
-                        notify("You are running Backup/Recovery version ".$backup_release,"black");
-                        print_continue($continueto);
-                        die;
-                    } else {
-                        notify("Upgrade failed!  (Could not update version in config table)");
-                        die;
-                    }
-                } else {
-                    $db->debug=false;
-                    notify("Upgrade failed!  See version.php");
-                    die;
-                }
-            } else if ($updgradeto < $CFG->backup_version) {
-                notify("WARNING!!!  The code you are using is OLDER than the version that made these databases!");
-            }
-        //Not exists. Starting installation
-        } else {
+    function upgrade_backup_db($continueto) {
+    /// This function upgrades the backup tables, if necessary
+    /// It's called from admin/index.php, also backup.php and restore.php
+    
+        global $CFG, $db;
+
+        require_once ("$CFG->dirroot/backup/version.php");  // Get code versions
+
+        if (empty($CFG->backup_version)) {                  // Backup has never been installed.
             $strdatabaseupgrades = get_string("databaseupgrades");
             print_header($strdatabaseupgrades, $strdatabaseupgrades, $strdatabaseupgrades);
-    
-            if (set_config("backup_version", "2003010100")) {
-                print_heading("You are currently going to install the needed structures to Backup/Recover");
-                print_continue($continueto);
-                die;
+
+            $db->debug=true;
+            if (modify_database("$CFG->dirroot/backup/db/$CFG->dbtype.sql")) {
+                $db->debug = false;
+                if (set_config("backup_version", $backup_version)) {
+                    notify(get_string("databasesuccess"), "green");
+                    notify(get_string("databaseupgradebackups", "", $backup_release));
+                    print_continue($continueto);
+                    exit;
+                } else {
+                    error("Upgrade of backup system failed! (Could not update version in config table)");
+                }
+            } else {
+                error("Backup tables could NOT be set up successfully!");
             }
         }
+
+
+        if ($backup_version > $CFG->backup_version) {       // Upgrade tables
+            $strdatabaseupgrades = get_string("databaseupgrades");
+            print_header($strdatabaseupgrades, $strdatabaseupgrades, $strdatabaseupgrades);
+
+            require_once ("$CFG->dirroot/backup/db/$CFG->dbtype.php");
+
+            $db->debug=true;
+            if (backup_upgrade($CFG->backup_version)) {
+                $db->debug=false;
+                if (set_config("backup_version", $backup_version)) {
+                    notify(get_string("databasesuccess"), "green");
+                    notify(get_string("databaseupgradebackups", "", $backup_release));
+                    print_continue($continueto);
+                    exit;
+                } else {
+                    error("Upgrade of backup system failed! (Could not update version in config table)");
+                }
+            } else {
+                $db->debug=false;
+                error("Upgrade failed!  See backup/version.php");
+            }
+
+        } else if ($backup_version < $CFG->backup_version) {
+            notify("WARNING!!!  The code you are using is OLDER than the version that made these databases!");
+        }
     }
+
  
     //This function is used to insert records in the backup_ids table
     //If the info field is greater than max_db_storage, then its info

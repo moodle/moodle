@@ -209,6 +209,12 @@
     }
 
 
+/// Upgrade backup/restore system if necessary
+
+    require_once("$CFG->dirroot/backup/lib.php");
+    upgrade_backup_db("$CFG->wwwroot/$CFG->admin/index.php");  // Return here afterwards
+    
+
 /// Find and check all modules and load them up or upgrade them if necessary
 
     if (!$mods = get_list_of_plugins("mod") ) {
