@@ -27,6 +27,9 @@
         if (count($err) == 0) {
             print_header();
             foreach ($config as $name => $value) {
+                if ($name == "sessioncookie") {
+                    $value = clean_filename($value);
+                }
                 unset($conf);
                 $conf->name  = $name;
                 $conf->value = $value;
