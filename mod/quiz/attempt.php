@@ -193,7 +193,7 @@
 
     $result = NULL;     // Default
     $questions = NULL;  // Default
-    if ($quiz->attemptonlast) {
+    if ($quiz->attemptonlast && !empty($attempts)) {
         $latestfinishedattempt->attempt = 0;
         foreach ($attempts as $attempt) {
             if ($attempt->timefinish
