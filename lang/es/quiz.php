@@ -181,6 +181,7 @@ $string['paragraphquestion'] = 'Pregunta de parágrafo no permitida en la línea $
 $string['parentlanguage'] = 'es';
 $string['passworderror'] = 'La contraseña es incorrecta';
 $string['percentcorrect'] = 'Porcentaje correcto';
+$string['popup'] = 'Mostrar el cuestionario en una ventana \"segura\"';
 $string['preview'] = 'Vista previa';
 $string['previewquestion'] = 'Ver pregunta';
 $string['publish'] = 'Publicar';
