@@ -136,16 +136,17 @@
     while ($section <= $course->numsections) {
 
         if (!empty($displaysection) and $displaysection != $section) {
-            if (!empty($sections[$section])) {
-                if (strlen($sections[$section]->summary) < 57) {
-                    $strsummary = " - ".$sections[$section]->summary;
-                } else {
-                    $strsummary = " - ".substr($sections[$section]->summary, 0, 60)."...";
-                }
-            } else {
+            if (empty($sections[$section])) {
                 $strsummary = "";
+            } else {
+                $strsummary = " - ".strip_tags($sections[$section]->summary);
+                if (strlen($strsummary) < 57) {
+                    $strsummary = " - $strsummary";
+                } else {
+                    $strsummary = " - ".substr($strsummary, 0, 60)."...";
+                }
             }
-            $sectionmenu["topic=$section"] = "$section$strsummary";
+            $sectionmenu["topic=$section"] = s("$section$strsummary");
             $section++;
             continue;
         }
