@@ -367,6 +367,7 @@ $string['encryptedcode'] = 'Code chiffré';
 $string['enrolledincourse'] = 'Inscrit au cours « $a »';
 $string['enrolledincoursenot'] = 'Non inscrit au cours « $a »';
 $string['enrollfirst'] = 'Vous devez vous inscrire à un cours avant de pouvoir utiliser les activités de la page d\'accueil';
+$string['enrolme'] = 'M\'inscrire dans ce cours';
 $string['enrolmentconfirmation'] = 'Vous êtes sur le point de vous inscrire comme participant à ce cours.<br />Voulez-vous vraiment vous y inscrire ?';
 $string['enrolmentkey'] = 'Clef d\'inscription';
 $string['enrolmentkeyfrom'] = 'Ce cours nécessite une clef d\'inscription, un mot de passe à usage unique que vous devez obtenir de $a';
