@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.2 Beta (2004022400)
+      // forum.php - created with Moodle 1.2 Beta +++ (2004031300)
 
 
 $string['addanewdiscussion'] = 'Voeg een nieuw onderwerp voor discussie toe';
@@ -18,7 +18,7 @@ $string['configmaxbytes'] = 'Standaard maximum grootte voor alle forum bijlagen 
 $string['configshortpost'] = 'Elk bericht dat korter is dan deze waarde (HTML-code niet inbegrepen) wordt als kort beschouwd.';
 $string['couldnotadd'] = 'Door een onbekende fout was het niet mogelijk om je bericht toe te voegen .';
 $string['couldnotdeleteratings'] = 'Helaas, dit kan niet worden verwijderd omdat iemand het bericht al beoordeeld heeft';
-$string['couldnotdeletereplies'] = 'Helaas, dit kan niet dat worden verwijderd omdat er al mensen zijn die erop hebben geantwoord.';
+$string['couldnotdeletereplies'] = 'Helaas, dit kan niet worden verwijderd omdat er al op hebben geantwoord is.';
 $string['couldnotupdate'] = 'Kon je bericht niet bijwerken door een onbekende fout.';
 $string['delete'] = 'Verwijder';
 $string['deleteddiscussion'] = 'De discussie is verwijderd';
