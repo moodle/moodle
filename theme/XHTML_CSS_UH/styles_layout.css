@@ -19,12 +19,6 @@ body {
     margin:10px;
 }
 
-h {
-    background-image:url(gradient.jpg);
-    background-position:top;
-    background-repeat:repeat-x;
-}
-
 ul {
    margin-bottom:5px;
    margin-top:0px;
@@ -100,10 +94,15 @@ input {
 #header,
 #header-main,
 #nav-bar,
-#containerContent {
+#content {
     margin:0px;
 }
 
+#content {
+    margin:0px;
+    padding:0px;
+    border: thin solid #FFFFFF;
+}
 
 #left-column,
 #right-column {
@@ -125,6 +124,12 @@ input {
 h2 { }
 h3 { }
 h4 { }
+
+.admin #content,
+.admin .generalboxcontent,
+.admin .generalbox {
+    width:auto;
+}
 .highlight { }
 
 .headingblock {
@@ -144,12 +149,13 @@ h4 { }
 .generaltablecell { }
 
 .sideblock {
+    width:100%;
     border-width:1px 1px 1px 1px;
     border-style:solid;
 }
 
 .sideblockheading {
-    padding:0px;
+    padding:0px 5px;
     border-width:1px 0px 0px 1px;
     border-style:solid;
 }
@@ -660,9 +666,7 @@ TABLE.formtable TD {
     border-width:0px 0px 0px 25px;
     border-style:solid;
 }
-#containerContent {
-    padding:0em;
-}
+
 #containerPageActions {
     position:relative;
     width:auto !important;

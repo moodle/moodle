@@ -46,9 +46,10 @@ a:hover {
     background-color:#0B4161;
     color:#0B4161;
 }
-
-#left-column,
-#right-column {
+.course .course-content {
+    background-color:#FFFFFF;
+}
+#left-column {
     background-color:#F9FAFA;
 }
 
@@ -425,7 +426,7 @@ TD.cal_event_description {
     background-color:transparent;
     border-color:#FFC86C;
 }
-#containerContent {
+#content {
     background-color:#EEF0F2;
 }
 #entry-page,
