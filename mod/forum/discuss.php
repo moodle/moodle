@@ -134,7 +134,8 @@
             }
             echo ':';
             echo '</td><td nowrap="nowrap" align="left" width="50%">';
-            popup_form("view.php?id=$cm->id&group=", $groups, 'selectgroup', $currentgroup, "", "", "", false, "self");
+            popup_form("view.php?id=$cm->id&group=", $groups, 'selectgroup', 
+                       $discussion->groupid, "", "", "", false, "self");
             echo '</tr></table>';
 
             echo '</td>';
