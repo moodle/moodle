@@ -268,7 +268,9 @@ function require_login($courseid=0) {
     // First check that the user is logged in to the site.
     if (! (isset($USER->loggedin) and $USER->confirmed and ($USER->site == $CFG->wwwroot)) ) { // They're not
         $SESSION->wantsurl = $FULLME;
-        $SESSION->fromurl  = $_SERVER["HTTP_REFERER"];
+        if (!empty($_SERVER["HTTP_REFERER"])) {
+            $SESSION->fromurl  = $_SERVER["HTTP_REFERER"];
+        }
         save_session("SESSION");
         $USER = NULL;
         save_session("USER");
@@ -485,7 +487,7 @@ function create_user_record($username, $password) {
     if (function_exists(auth_get_userinfo)) {
         if ($newinfo = auth_get_userinfo($username)) {
             foreach ($newinfo as $key => $value){
-                $newuser->$key = $value;
+                $newuser->$key = addslashes(stripslashes($value)); // Just in case
             }
         }
     }
