@@ -742,7 +742,7 @@ HTMLArea.prototype.generate = function () {
 			doc.open();
 			var html = "<html>\n";
 			html += "<head>\n";
-			html += "<style>" + editor.config.pageStyle + "</style>\n";
+			html += "<style>" + editor.config.pageStyle + " td { border: 1px dotted gray; }</style>\n";
 			html += "</head>\n";
 			html += "<body>\n";
 			html += editor._textArea.value;
