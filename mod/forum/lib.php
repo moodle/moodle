@@ -366,6 +366,40 @@ function forum_print_recent_activity($course, $isteacher, $timestart) {
 }
 
 
+
+function forum_print_recent_instance_activity($forum, $timestart, $detail=false) {
+
+    global $CFG, $THEME;
+
+    if (!$posts = forum_get_recent_posts($timestart, $forum->id)) {
+        return false;
+    }
+
+    foreach ($posts as $post) {
+        echo '<table border="0" cellpadding="3" cellspacing="0" class="forumpost">';
+        echo "<tr><td bgcolor=\"$THEME->cellcontent2\" class=\"forumpostpicture\" width=\"35\" valign=\"top\">";
+        print_user_picture($post->userid, $forum->course, $post->picture);
+        echo "</td>";
+
+        if ($post->parent) {
+            echo "<td nowrap bgcolor=\"$THEME->cellheading\" class=\"forumpostheader\" width=\"100%\">";
+        } else {
+            echo "<td nowrap bgcolor=\"$THEME->cellheading2\" class=\"forumpostheadertopic\" width=\"100%\">";
+        }
+        echo "<p>";
+        echo "<font size=3>";
+        echo "<a href=\"$CFG->wwwroot/mod/forum/discuss.php?d=$post->discussion#$post->id\">";
+        echo $post->subject;
+        echo "</a></font><br>";
+        echo "<font size=2>";
+        $by->name = "<a href=\"$CFG->wwwroot/user/view.php?id=$post->userid&course=$courseid\">$post->firstname $post->lastname</a>";
+        $by->date = userdate($post->modified);
+        print_string("bynameondate", "forum", $by);
+        echo "</font></p></td></tr></table>";
+    }
+}
+
+
 function forum_grades($forumid) {
 /// Must return an array of grades, indexed by user, and a max grade.
     global $FORUM_POST_RATINGS;
@@ -673,13 +707,35 @@ function forum_subscribed_users($course, $forum) {
         }
     }
     return get_records_sql("SELECT u.id, u.username, u.firstname, u.lastname, u.maildisplay, u.mailformat,
-                                   u.email, u.city, u.country, u.lastaccess, u.lastlogin, u.picture
+                                   u.email, u.city, u.country, u.lastaccess, u.lastlogin, u.picture, u.timezone
                               FROM {$CFG->prefix}user u, 
                                    {$CFG->prefix}forum_subscriptions s
                              WHERE s.forum = '$forum->id'
                                AND s.userid = u.id 
                                AND u.deleted <> 1
                           ORDER BY u.email ASC");
+}
+
+function forum_get_recent_posts($sincetime, $forum="0") {
+// Returns all forum posts since a given time.  If forum is specified then 
+// this restricts the results
+
+    global $CFG;
+
+    if ($forum) {
+        $forumselect = " AND d.forum = '$forum'";
+    } else {
+        $forumselect = "";
+    }
+
+    return get_records_sql("SELECT p.*, d.name, u.id, u.firstname, u.lastname
+                              FROM {$CFG->prefix}forum_posts p, 
+                                   {$CFG->prefix}forum_discussions d,
+                                   {$CFG->prefix}user u
+                             WHERE p.modified > '$sincetime' $forumselect
+                               AND p.userid = u.id
+                               AND p.discussion = d.id
+                             ORDER BY p.discussion ASC");
 }
 
 
