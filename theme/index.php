@@ -31,6 +31,8 @@
             error("This theme is not installed!");
         }
         if (set_config("theme", $choose)) {
+            theme_setup($choose);
+
             print_header("$site->shortname: $strthemes", $site->fullname, 
                  "<a href=\"$CFG->wwwroot/$CFG->admin/index.php\">$stradministration</a> -> ".
                  "<a href=\"$CFG->wwwroot/$CFG->admin/configure.php\">$strconfiguration</a> -> $strthemes");

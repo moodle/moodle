@@ -9,6 +9,11 @@
     $nomoodlecookie = true;
     require_once("../../config.php");
 
+    if (isset($localconfig)) {
+        unset($THEME);
+        include('config.php');
+    }
+
     $lastmodified = 0;
     $lifetime = 600;
 

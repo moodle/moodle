@@ -18,11 +18,10 @@
         error("You must be an administrator to change themes.");
     }
 
-    $CFG->theme       = $preview;
-    $CFG->header      = "$CFG->dirroot/theme/$CFG->theme/header.html";
-    $CFG->footer      = "$CFG->dirroot/theme/$CFG->theme/footer.html";
+    $CFG->theme = $preview;
 
-    print_header();
+    theme_setup($CFG->theme, 'localconfig=true&amp;themename='.$CFG->theme);
+
     $stradministration = get_string("administration");
     $strconfiguration = get_string("configuration");
     $strthemes = get_string("themes");

@@ -4,6 +4,16 @@
 
     $nomoodlecookie = true;
     require_once("../../config.php");
+
+    if (!isset($themename)) {
+        $themename = NULL;
+    }
+
+    if (isset($localconfig)) {
+        unset($THEME);
+        include('config.php');
+    }
+
     $themeurl = style_sheet_setup(filemtime("styles.php"), 300, $themename);
 
 
