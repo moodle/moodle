@@ -1,22 +1,22 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.1.1 (2003091111)
+      // moodle.php - created with Moodle 1.2 development (2003121500)
 
 
 $string['action'] = 'Handling';
 $string['activities'] = 'Aktiviteter';
 $string['activity'] = 'Aktivitet';
-$string['activityclipboard'] = 'Flytter denne aktiviteten: <b>\$a</b>';
+$string['activityclipboard'] = 'Flytter denne aktiviteten: <b>$a</b>';
 $string['activityiscurrentlyhidden'] = 'Beklager, denne aktiviteten er nå skjult';
 $string['activitymodule'] = 'Aktivitetsmodul';
 $string['activityreport'] = 'Aktivitetsrapport';
 $string['activityselect'] = 'Velg denne aktiviteten for å flytte den til et annet sted';
-$string['activitysince'] = 'Aktivitet siden \$a';
+$string['activitysince'] = 'Aktivitet siden $a';
 $string['add'] = 'Legg til';
 $string['addadmin'] = 'Legg til administrator';
 $string['addcreator'] = 'Legg til kurs-produsent';
-$string['added'] = 'Lagt til \$a';
-$string['addinganew'] = 'Legger til ny \$a';
-$string['addinganewto'] = 'Legger til ny \$a->what til \$a->to';
+$string['added'] = 'Lagt til $a';
+$string['addinganew'] = 'Legger til ny $a';
+$string['addinganewto'] = 'Legger til ny $a->what til $a->to';
 $string['addingdatatoexisting'] = 'Legger data til eksisterende';
 $string['addnewcategory'] = 'Legg til ny kategori';
 $string['addnewcourse'] = 'Legg til nytt kurs';
@@ -65,7 +65,7 @@ $string['assignadmins'] = 'Legg til administrator';
 $string['assigncreators'] = 'Legg til kursprodusenter';
 $string['assignstudents'] = 'Meld inn studenter';
 $string['assignstudentsnote'] = 'Merk: Du trenger egentlig ikke å bruke denne siden, da studentene kan registrere seg selv på denne studiesiden.';
-$string['assignstudentspass'] = 'Du trenger bare å gi dem nøkkelen til siden, som for denne siden er: '\$a'';
+$string['assignstudentspass'] = 'Du trenger bare å gi dem nøkkelen til siden, som for denne siden erer: $a ';
 $string['assignteachers'] = 'Legg til lærer';
 $string['authentication'] = 'Godkjenning';
 $string['autosubscribe'] = 'Få e-postkopier AUTOMATISK fra fora';
@@ -84,9 +84,9 @@ $string['backupversion'] = 'Versjon av sikkerhetskopi';
 $string['cancel'] = 'Avbryt';
 $string['categories'] = 'Studiekategorier';
 $string['category'] = 'Kategori';
-$string['categoryadded'] = 'Kategorien '\$a' ble lagt til';
-$string['categorydeleted'] = 'Kategorien '\$a' ble slettet';
-$string['categoryduplicate'] = 'Kategorien '\$a' eksisterer allerede!';
+$string['categoryadded'] = 'Kategorien \"$a\" ble lagt til';
+$string['categorydeleted'] = 'Kategorien \"$a\" ble slettet';
+$string['categoryduplicate'] = 'Kategorien \"$a\" eksisterer allerede!';
 $string['changedpassword'] = 'Passordet er endret';
 $string['changepassword'] = 'Endre passord';
 $string['changessaved'] = 'Endringer lagret';
@@ -109,7 +109,7 @@ $string['complete'] = 'Fullført';
 $string['configcountry'] = 'Hvis du velger et land her, vil dette bli valgt som standard for nye brukere. For å tvinge brukere til å velge land, velger du ikke noe her.';
 $string['configdebug'] = 'Hvis du slår denne på vil du få flere feilrapporter og advarsler fra PHP. Dette er bare nyttig for systemutviklere.';
 $string['configerrorlevel'] = 'Velg antallet PHP-advarsler som skal vises. Normal er som regel det beste valget.';
-$string['configframename'] = 'Dersom du kjører Moodle i en rammeside skriver du navnet på rammen her. Ellers bør denne verdien fortsatt være '_top'';
+$string['configframename'] = 'Dersom du kjører Moodle i en rammeside skriver du navnet på rammen her. Ellers bør denne verdien fortsatt være  \"top\"';
 $string['configgdversion'] = 'Viser hvilken versjon av GD som er installert. Den som automatisk ble funnet vises her. Ikke endre dette dersom du ikke vet hva du gjør.';
 $string['confightmleditor'] = 'Velg om du vil bruke den innebygde HTML-redigereren eller ikke. Selv om velger å bruke den, så vil den kun vises hvis brukeren har kompatibel browser (IE 5.5 eller senere). Brukere kan også velge ikke å bruke den.';
 $string['configidnumber'] = 'Dette spesifiserer om (a) Brukere ikke blir spurt om ID-nummer, (b) Brukere blir spurt om ID-nummer men kan la feltet stå tomt eller (c) Brukere blir spurt om ID-nummer og MÅ fylle dette ut. Hvis ID-nummeret blir skrevet inn vil det bli vist i brukerens profil.';
@@ -125,12 +125,10 @@ $string['configloglifetime'] = 'Levetid på logger. Logger eldre enn dette slette
 $string['configlongtimenosee'] = 'Hvis studenter ikke har logget seg inn på siden på en lang stund, blir de automatisk slettet fra klassene. Denne instillingen setter denne tiden.';
 $string['configmaxeditingtime'] = 'Dette bestemmer tiden man har på å redigere forumposter, journalinnlegg osv. 30 min. er vanligvis passe tid.';
 $string['configproxyhost'] = 'Hvis denne <B>serveren</B> må gjennom en proxy (brannmur) for å få tilgang til internett, skriv da inn nødvendig informasjon her. Hvis ikke, la feltene stå blanke.';
-$string['configsecureforms'] = 'Moodle kan bruke ett ekstra sikkerhetsnivå når data fra nettskjema skal aksepteres. Hvis dette er slått på vil nettleserens variabel HTTP_REFERER sjekkes opp mot gjeldende skjemaadresse. I noen svært få tilfeller kan dette skape problemer hvis brukeren bruker en brannmur (f.eks. Zonealarm) som er innstilt til å fjerne HTTP_REFERER fra trafikken på nett. Symptomer er at brukeren blir 'stående fast' i et skjema. Hvis brukerne dine har problemer med (f.eks.) innloggingssiden bør du kanskje slå av denne funksjonen, selv om dette kan gjøre siden din åpnere for \\\"brute-force password\\\"-angrep. Hvis du er i tvil, sett denne til 'Ja'.';
+$string['configsecureforms'] = 'Moodle kan bruke ett ekstra sikkerhetsnivå når data fra nettskjema skal aksepteres. Hvis dette er slått på vil nettleserens variabel HTTP_REFERER sjekkes opp mot gjeldende skjemaadresse. I noen svært få tilfeller kan dette skape problemer hvis brukeren bruker en brannmur (f.eks. Zonealarm) som er innstilt til å fjerne HTTP_REFERER fra trafikken på nett. Symptomer er at brukeren blir  \"stående fastt\" i et skjema. Hvis brukerne dine har problemer med (f.eks.) innloggingssiden bør du kanskje slå av denne funksjonen, selv om dette kan gjøre siden din åpnere for \"brute-force password\"-angrep. Hvis du er i tvil, sett denne til \"Ja\"';
 $string['configsessiontimeout'] = 'Hvis brukere som er er pålogget på siden er uvirksomme lenge (uten å laste sider) blir de logget ut. (Runden avsluttes.) Denne variablen setter hvor lenge dette skal være.';
 $string['configslasharguments'] = 'Filer (bilder, opplastinger osv.) blir lagt til ved hjelp av et spesielt script (det andre valget her). Denne metoden gjør at filene lettere blir lagt i hurtigminnet til nettleseren, proxyservereren osv. Det er ikke alle servere som støtter denne metoden. Har du problemer med å vise opplastede filer, bilder osv; velg det første valget.';
-$string['configsmtphosts'] = 'Angi hele navnet på en eller flere lokale SMPT-servere som Moodle skal bruke til å sende e-post. (f.eks. 'mail.a.com' eller 'mail.a.com;mail.b.com'.) Hvis denne står blank vil systemet bruke PHP sin innebygde standardfunksjon.';
 $string['configsmtpuser'] = 'Skriv inn brukernavn og passord til SMPT-serveren du evt. skrev inn ovenfor dersom den trenger godkjenning.';
-$string['configteacherassignteachers'] = 'Skal vanlige lærere få lov til å tilordne andre lærere innenfor kurs de underviser i? Hvis 'Nei' er det bare kursprodusenter og administratorer som kan gi lærertilgang.';
 $string['configunzip'] = 'Skriv inn stien til unzipprogrammet (Unix/linux). Dette trengs for å pakke ut zipfiler på serveren. Hvis du lar denne stå tom, vil Moodle bruke interne rutiner for dette.';
 $string['configuration'] = 'Konfigurering';
 $string['configvariables'] = 'Konfigurer variabler';
@@ -162,7 +160,7 @@ $string['courses'] = 'Kurs';
 $string['courseupdates'] = 'Oppdateringer i kurset';
 $string['create'] = 'Lag';
 $string['createaccount'] = 'Lag en ny brukerkonto';
-$string['createfolder'] = 'Lag en mappe i \$a';
+$string['createfolder'] = 'Lag en mappe i $a';
 $string['createuserandpass'] = 'Lag et nytt brukernavn og passord for innlogging';
 $string['createziparchive'] = 'Lag ziparkiv';
 $string['creatingcategoriesandquestions'] = 'Lager kategorier og spørsmål';
@@ -180,10 +178,10 @@ $string['currentlanguage'] = 'Gjeldene språk';
 $string['currentlocaltime'] = 'din lokale tid';
 $string['currentrelease'] = 'Informasjon om gjeldende versjon av Moodle';
 $string['currentversion'] = 'Gjeldende versjon';
-$string['databasechecking'] = 'Oppgraderer Moodledatabsen fra versjon \$a->oldversion til \$a->newversion...';
+$string['databasechecking'] = 'Oppgraderer Moodledatabsen fra versjon $a->oldversion til $a->newversion...';
 $string['databasesetup'] = 'Setter opp database';
 $string['databasesuccess'] = 'Databasen ble oppgradert';
-$string['databaseupgradebackups'] = 'Versjon av sikkerhetskopi er nå \$a';
+$string['databaseupgradebackups'] = 'Versjon av sikkerhetskopi er nå $a';
 $string['databaseupgrades'] = 'Oppgraderer database';
 $string['day'] = 'dag';
 $string['days'] = 'dager';
@@ -195,33 +193,33 @@ $string['defaultcoursesummary'] = 'Skriv om kurset her';
 $string['defaultcourseteacher'] = 'Lærer';
 $string['defaultcourseteachers'] = 'Lærere';
 $string['delete'] = 'Slett';
-$string['deletecheck'] = 'Slett \$a ?';
+$string['deletecheck'] = 'Slett $a ?';
 $string['deletecheckfiles'] = 'Er du helt sikker på at du vil slette disse filene?';
-$string['deletecheckfull'] = 'Er du sikker på at du vil slette \$a ?';
+$string['deletecheckfull'] = 'Er du sikker på at du vil slette $a ?';
 $string['deletecheckwarning'] = 'Du holder på å slette disse filene';
 $string['deletecompletely'] = 'Slett fullstendig';
 $string['deletecourse'] = 'Slett et kurs';
 $string['deletecoursecheck'] = 'Er du sikker på at du vil slette dette kurset og alt det inneholder?';
 $string['deleted'] = 'Slettet';
-$string['deletedactivity'] = 'Slettet \$a';
-$string['deletedcourse'] = '\$a er fullstendig slettet';
-$string['deletednot'] = 'Kunne ikke slette \$a !';
-$string['deletingcourse'] = 'Sletter \$a';
+$string['deletedactivity'] = 'Slettet $a';
+$string['deletedcourse'] = '$a er fullstendig slettet';
+$string['deletednot'] = 'Kunne ikke slette $a !';
+$string['deletingcourse'] = 'Sletter $a';
 $string['deletingexistingcoursedata'] = 'Sletter eksisterende kursdata';
 $string['deletingolddata'] = 'Sletter gamle data';
 $string['department'] = 'Avdeling';
 $string['description'] = 'Beskrivelse';
-$string['displayingfirst'] = 'Bare de første \$a->count \$a->things blir vist';
-$string['displayingrecords'] = 'Viser \$a tilfeller';
-$string['displayingusers'] = 'Viser brukere \$a->start til \$a->end';
+$string['displayingfirst'] = 'Bare de første $a->count $a->things blir vist';
+$string['displayingrecords'] = 'Viser $a tilfeller';
+$string['displayingusers'] = 'Viser brukere $a->start til $a->end';
 $string['documentation'] = 'Moodledokumentasjon';
 $string['donotask'] = 'Ikke spør';
 $string['downloadexcel'] = 'Last ned i MS Excel-format';
 $string['downloadtext'] = 'Last ned i tekstformat';
 $string['doyouagree'] = 'Har du lest disse reglene og forstått dem?';
-$string['edit'] = 'Rediger \$a';
+$string['edit'] = 'Rediger $a';
 $string['editcoursesettings'] = 'Rediger kursinnstillinger';
-$string['editinga'] = 'Redigerer \$a';
+$string['editinga'] = 'Redigerer $a';
 $string['editmyprofile'] = 'Endre profil';
 $string['editsummary'] = 'Rediger overskrift';
 $string['editthisactivity'] = 'Redgier denne aktiviteten';
@@ -229,22 +227,8 @@ $string['editthiscategory'] = 'Rediger denne kategorien';
 $string['edituser'] = 'Rediger brukerkontoer';
 $string['email'] = 'E-postadresse';
 $string['emailconfirm'] = 'Godkjenn din konto';
-$string['emailconfirmation'] = 'Hei \$a->firstname.
-
-En ny konto er opprettet på '\$a->sitename'
-ved bruk av denne e-posten.
-
-For å bekrefte og godkjenne din nye konto,
-vennligst klikk på følgende link:
-
-  \$a->link
-
-Hvis du ikke du kan klikke på linken, klipp og lim den inn i nettleseren. Dersom du IKKE klikker på linken eller skriver inn nettadressen i nettleseren, blir brukerkontoen din IKKE registrert.
-
-Med vennelig hilsen '\$a->sitename' administrator,
-\$a->admin';
-$string['emailconfirmationsubject'] = '\$a: kontobekreftelse';
-$string['emailconfirmsent'] = '   <P>En e-post er nå sendt til deg på adressen <B>\$a</B>
+$string['emailconfirmationsubject'] = '$a: kontobekreftelse';
+$string['emailconfirmsent'] = '   <P>En e-post er nå sendt til deg på adressen <B>$a</B>
    <P>Den inneholder informasjon om hvordan du fullfører registreringen.
    <P>Hvis du fortsatt har problemer, vennligst ta kontakt med administrator.
    <P>Dersom du ikke leser denne e-posten, får du IKKE godkjent brukerkontoen din, og du får heller ikke logget deg inn.';
@@ -255,31 +239,17 @@ $string['emaildisplayyes'] = 'Alle kan se min e-postadresse';
 $string['emailexists'] = 'Denne e-posten er allerede registrert.';
 $string['emailformat'] = 'E-postformat';
 $string['emailmustbereal'] = 'Merk: E-posten din må være en virkelig e-postadresse. Har du skrevet den riktig?';
-$string['emailpasswordconfirmation'] = 'Hei \$a->firstname,
-
-Noen (sannsynligvis deg) har bedt om et nytt passord for kontoen din på '\$a->sitename'.
-
-For å bekrefte dette og få tilsendt et nytt passord sendt til din e-post må du gå til følgende adresse: 
-
-\$a->link
-
-I de fleste e-postlesere vil denne vises som en blå link som du kan klikke på. Hvis dette ikke virker kan du kopiere (eller skrive av) adressen og lime (eller skrive) den inn i nettleseren din. 
-
-Hvis du trenger hjelp, vennligst ta kontakt med administrator,
-\$a->admin';
-$string['emailpasswordconfirmationsubject'] = '\$a: bytt passord-bekreftelse';
-$string['emailpasswordconfirmsent'] = 'En e-post er nå sendt til din adresse <b>\$a</b>.
+$string['emailpasswordconfirmationsubject'] = '$a: bytt passord-bekreftelse';
+$string['emailpasswordconfirmsent'] = 'En e-post er nå sendt til din adresse <b>$a</b>.
 <p>Den inneholder instruksjoner for å fullføre endringen av passord. LES DENNE NØYE!
 Hvis du trenger hjelp, vennligst ta kontakt med administrator,
-\$a->admin';
+$a->admin';
 $string['emailpasswordsent'] = 'Takk for bekreftelse av passordbytte.
-<p>En e-post med det NYE passordet er sendt til din adresse <b>\$a->email</b>.
-<p>Det nye passordet ble automatisk laget - du vil kanskje <a href=\$a->link>endre passordet</a> til noe som er lettere å huske.
+<p>En e-post med det NYE passordet er sendt til din adresse <b>$a->email</b>.
+<p>Det nye passordet ble automatisk laget - du vil kanskje <a href=$a->link>endre passordet</a> til noe som er lettere å huske.
 <p>Slett denne e-posten når du er ferdig med å bytte passord.';
 $string['enrolmentconfirmation'] = 'Du skal til å melde deg på som student på en kursside.<br/> Er du sikker på at det er det du vil?';
 $string['enrolmentkey'] = 'Sikkerhetsnøkkel';
-$string['enrolmentkeyfrom'] = 'Dette kurset krever en 'sikkerhetsnøkkel'.<BR>
-Dette er et engangspassord du burde ha fått av \$a';
 $string['enrolmentkeyhint'] = 'Sikkerhetsnøkklen var feil, vennligst prøv på nytt. Husk: Store og små bokstaver må være riktige.';
 $string['entercourse'] = 'Klikk her for å gå til kurset';
 $string['enteremailaddress'] = 'Skriv inn din e-postadresse for å slette det gammle passordet og få et nytt tilsendt på e-post.';
@@ -295,7 +265,7 @@ $string['existingcreators'] = 'Eksisterende kurs-lager';
 $string['existingstudents'] = 'Innmeldte studenter';
 $string['existingteachers'] = 'Eksisterende lærere';
 $string['feedback'] = 'Tilbakemelding';
-$string['filemissing'] = '\$a mangler';
+$string['filemissing'] = '$a mangler';
 $string['files'] = 'Filer';
 $string['filesfolders'] = 'Filer/mapper';
 $string['filloutallfields'] = 'Vennligst fyll ut ALLE feltene i skjemaet';
@@ -330,17 +300,16 @@ $string['gdneed'] = 'GD må være installert for å vise denne grafen';
 $string['gdnot'] = 'GD er ikke installert';
 $string['gpl'] = 'Copyright (C) 2001-2002  Martin Dougiamas  (http://dougiamas.com)
 
-Dette programmet er gratis programvare; du kan videreformidle det og/eller forandre det i henhold til betingelsene til \\\"GNU General Public License\\\" som publisert av \\\"Free Software Foundation\\\'; enten versjon 2 av lisensen eller (etter ditt valg) en senere versjon.
+Dette programmet er gratis programvare; du kan videreformidle det og/eller forandre det i henhold til betingelsene til \"GNU General Public License\" som publisert av \"Free Software Foundation\'; enten versjon 2 av lisensen eller (etter ditt valg) en senere versjon.
 
-Dette programmet distribueres med håp om at det blir nyttig, men UTEN NOEN GARANTIER; også uten \\\"the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE\\\". Se \\\"GNU General Public License\\\" for flere detaljer:
+Dette programmet distribueres med håp om at det blir nyttig, men UTEN NOEN GARANTIER; også uten \"the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE\". Se \"GNU General Public License\" for flere detaljer:
 
 http://www.gnu.org/copyleft/gpl.html';
 $string['grade'] = 'Karakter';
 $string['grades'] = 'Karakterer';
 $string['guestskey'] = 'Tillat gjester som har sikkerhetsnøkkel';
 $string['guestsno'] = 'Ikke tillat gjester';
-$string['guestsnotallowed'] = 'Beklager, '\$a' er ikke åpen for gjester.';
 $string['guestsyes'] = 'Tillat gjester uten sikkerhetsnøkkel';
 $string['guestuser'] = 'Gjest';
 $string['guestuserinfo'] = 'Denne brukeren er en bruker som kun har lesemuligheter i noen kurs.';
@@ -359,8 +328,8 @@ $string['helpwiki'] = 'Hvordan skrive Wiki-tekst';
 $string['helpwriting'] = 'Skriv nøyaktig';
 $string['hide'] = 'Skjul';
 $string['hits'] = 'Treff';
-$string['hitsoncourse'] = 'Treff på \$a->coursename av \$a->username';
-$string['hitsoncoursetoday'] = 'Dagens treff på \$a->coursename av \$a->username';
+$string['hitsoncourse'] = 'Treff på $a->coursename av $a->username';
+$string['hitsoncoursetoday'] = 'Dagens treff på $a->coursename av $a->username';
 $string['home'] = 'Hjem';
 $string['hour'] = 'time';
 $string['hours'] = 'timer';
@@ -397,12 +366,12 @@ $string['latestnews'] = 'Siste nyheter';
 $string['leavetokeep'] = 'La denne stå blank for å beholde gjeldene passord';
 $string['license'] = '(C) Kopibeskyttelse';
 $string['list'] = 'Liste';
-$string['listfiles'] = 'Liste over filer i \$a';
+$string['listfiles'] = 'Liste over filer i $a';
 $string['listofallpeople'] = 'Vis alle';
 $string['livelogs'] = 'Aktive logger for den siste timen';
 $string['locale'] = 'no_NO';
 $string['location'] = 'Sted';
-$string['loggedinas'] = 'Du er logget inn som \$a ';
+$string['loggedinas'] = 'Du er logget inn som $a ';
 $string['loggedinnot'] = 'Du er ikke logget inn.';
 $string['login'] = 'Logg inn';
 $string['loginas'] = 'Logg inn som';
@@ -410,7 +379,7 @@ $string['loginguest'] = 'Logg inn som gjest';
 $string['loginsite'] = 'Logg inn på kurset';
 $string['loginsteps'] = 'Hei! For å få full tilgang til kursene må du være registrert. Dette gjør du her. Alle kursene har en sikkerhetsnøkkel for at ingen utenom studenter skal kunne melde seg på faget. FØLG DENNE PROSEDYREN NØYE:
    <OL size=2>
-   <LI>Registrer deg som <A HREF=\$a>ny bruker</A>. Du må ha en gyldig e-postadresse for å få gjort dette.
+   <LI>Registrer deg som <A HREF=$a>ny bruker</A>. Du må ha en gyldig e-postadresse for å få gjort dette.
    <LI>En e-post blir sendt til din e-postadresse adresse omgående.
    <LI>Les denne e-posten og klikk på linken som følger med.
    <LI>Din konto vil bli godkjent og du kan logge deg inn.
@@ -421,21 +390,20 @@ $string['loginsteps'] = 'Hei! For å få full tilgang til kursene må du være regis
    </OL>';
 $string['loginstepsnone'] = 'Hei!<P>For å få full tilgang til kursene må du 
 registrere deg.<P> Du må skrive et brukernavn og passord i dette skjemaet. <p>Hvis noen allerede har valgt brukernavnet må du prøve på nytt med et annet.';
-$string['loginto'] = 'Logg inn på \$a';
+$string['loginto'] = 'Logg inn på $a';
 $string['loginusing'] = 'Logg deg inn her ved å bruke ditt brukernavn og passord';
 $string['logout'] = 'Logg ut';
 $string['logs'] = 'Logger';
 $string['mainmenu'] = 'Hovedmeny';
 $string['makeafolder'] = 'Lag en mappe';
-$string['makeeditable'] = 'Hvis du gjør '\$a' skrivbar av serveren (eg. apache) kan du redigere denne filen direkte fra denne siden';
 $string['managedatabase'] = 'Behandle database';
 $string['managemodules'] = 'Behandle moduler';
 $string['markedthistopic'] = 'Dette emnet er markert som det mest aktuelle emnet nå';
 $string['markthistopic'] = 'Uthev denne emneboksen som mest aktuell';
-$string['maximumchars'] = 'Maks \$a tegn';
+$string['maximumchars'] = 'Maks $a tegn';
 $string['maximumgrade'] = 'Høyeste karakter';
 $string['maximumshort'] = 'Maks';
-$string['maxsize'] = 'Maks størrelse: \$a';
+$string['maxsize'] = 'Maks størrelse: $a';
 $string['min'] = 'min';
 $string['mins'] = 'min';
 $string['miscellaneous'] = 'Diverse';
@@ -460,10 +428,8 @@ $string['missingteacher'] = 'Du må velge noe';
 $string['missingurl'] = 'Manglende URL';
 $string['missingusername'] = 'Mangler brukernavn';
 $string['modified'] = 'Endret';
-$string['moduledeleteconfirm'] = 'Du er på tur til å slette modulen '\$a' fullstendig. Dette vil slette alt i databasen som har noe med denne aktiviteten å gjøre. Er du SIKKER på at du vil fortsette?';
-$string['moduledeletefiles'] = 'All data tilknyttet modulen '\$a->module' er slettet fra databasen. For å fullføre slettingen (og forhindre at modulen reinstallerer seg selv) bør du slette denne katalogen fra serveren: \$a->directory ';
 $string['modulesetup'] = 'Setter opp modultabell';
-$string['modulesuccess'] = '\$a tabeller opprettet';
+$string['modulesuccess'] = '$a tabeller opprettet';
 $string['moodleversion'] = 'Moodleversjon';
 $string['mostrecently'] = 'siste';
 $string['move'] = 'Flytt';
@@ -471,7 +437,7 @@ $string['movecategoryto'] = 'Flytt kategori til:';
 $string['movecourseto'] = 'Flytt kurs til:';
 $string['movedown'] = 'Flytt ned';
 $string['movefilestohere'] = 'Flytt filer hit';
-$string['movefull'] = 'Flytt \$a til denne plasseringen';
+$string['movefull'] = 'Flytt $a til denne plasseringen';
 $string['movehere'] = 'Flytt hit';
 $string['moveselectedcoursesto'] = 'Flytt valgte kurs til...';
 $string['movetoanotherfolder'] = 'Flytt til en annen mappe';
@@ -489,22 +455,6 @@ $string['new'] = 'Ny';
 $string['newaccount'] = 'Ny brukerkonto';
 $string['newcourse'] = 'Nytt kurs';
 $string['newpassword'] = 'Nytt passord';
-$string['newpasswordtext'] = 'Hei \$a->firstname,
-
-Ditt passord på '\$a->sitename' er slettet
-og du har fått et midlertidig passord.
-
-Din innloggingsinformasjon er nå:
-   brukernavn: \$a->username
-      passord: \$a->newpassword
-
-Vennligst gå til denne siden for å endre ditt passord:
-   \$a->link
-
-Hvis du ikke du kan klikke på linken, klipp og lim den inn i nettleseren.
-
-Med vennlig hilsen '\$a->sitename' administrator,
-\$a->signoff';
 $string['newpicture'] = 'Nytt bilde';
 $string['newsitem'] = 'nyhet';
 $string['newsitems'] = 'nyheter';
@@ -513,7 +463,6 @@ $string['newuser'] = 'Ny bruker';
 $string['newusers'] = 'Nye brukere';
 $string['next'] = 'Neste';
 $string['no'] = 'Nei';
-$string['nocoursesfound'] = 'Ingen sider ble funnet med ordene '\$a'';
 $string['nocoursesyet'] = 'Ingen kurs i denne kategorien';
 $string['noexistingadmins'] = 'Admin mangler - huff!';
 $string['noexistingcreators'] = 'Ingen eksisterende kursprodusenter';
@@ -534,21 +483,20 @@ $string['nostudentsyet'] = 'Ingen studenterer i dette kurset ennå';
 $string['nosuchemail'] = 'E-postadressen fins ikke';
 $string['notavailable'] = 'Ikke tilgjengelig';
 $string['noteachersyet'] = 'Ingen lærere i dette faget ennå';
-$string['notenrolled'] = '\$a er ikke meldt på dette faget enda.';
+$string['notenrolled'] = '$a er ikke meldt på dette faget enda.';
 $string['noteuserschangednonetocourse'] = 'Merk: Brukerkontoene må også gjenopprettes når du gjenoppretter brukerdata. Denne innstillingen er endret for deg.';
 $string['nothingnew'] = 'Ingenting nytt siden sist du var her';
 $string['notincluded'] = 'Ikke inkludert';
-$string['nousersmatching'] = 'Ingen treff på bruker '\$a' ble funnet';
 $string['nousersyet'] = 'Det finnes ingen brukere ennå';
 $string['now'] = 'nå';
 $string['numberweeks'] = 'Antall uker/emner';
-$string['numdays'] = '\$a dager';
-$string['numhours'] = '\$a timer';
-$string['numminutes'] = '\$a minutter';
-$string['numviews'] = '\$a visninger';
-$string['numweeks'] = '\$a uker';
-$string['numwords'] = '\$a ord';
-$string['numyears'] = '\$a år';
+$string['numdays'] = '$a dager';
+$string['numhours'] = '$a timer';
+$string['numminutes'] = '$a minutter';
+$string['numviews'] = '$a visninger';
+$string['numweeks'] = '$a uker';
+$string['numwords'] = '$a ord';
+$string['numyears'] = '$a år';
 $string['ok'] = 'OK';
 $string['opentoguests'] = 'Gjestetilgang';
 $string['optional'] = 'valgfri';
@@ -556,7 +504,6 @@ $string['order'] = 'Sortering';
 $string['other'] = 'Andre';
 $string['outline'] = 'Kontur';
 $string['page'] = 'Side';
-$string['parentlanguage'] = 'Overordnet reservespråk';
 $string['participants'] = 'Deltagere';
 $string['password'] = 'Passord';
 $string['passwordchanged'] = 'Passord er endret';
@@ -564,10 +511,10 @@ $string['passwordconfirmchange'] = 'Bekreft passordbytte';
 $string['passwordrecovery'] = 'Ja, hjelp meg å logge inn';
 $string['passwordsdiffer'] = 'Passordene stemmer ikke overens';
 $string['passwordsent'] = 'Passordet er sendt';
-$string['passwordsenttext'] = '   <P>En e-post er sendt til deg på \$a->email.
+$string['passwordsenttext'] = '   <P>En e-post er sendt til deg på $a->email.
    <P><B>Vennligst sjekk e-posten din for nytt passord</B>
    <P>Det nye passordet er automatisk generert, så du burde
-   <A HREF=\$a->link>endre det til noe enklere</A>.
+   <A HREF=$a->link>endre det til noe enklere</A>.
    <P>Slett denne e-posten når du er ferdig med å bytte passord.';
 $string['people'] = 'Deltakere';
 $string['personalprofile'] = 'Personlig profil';
@@ -601,7 +548,7 @@ $string['removecreator'] = 'Fjern kursprodusent';
 $string['removestudent'] = 'Fjern student';
 $string['removeteacher'] = 'Fjern lærer';
 $string['rename'] = 'Gi nytt navn';
-$string['renamefileto'] = 'Gi <b>\$a</b> nytt navn til';
+$string['renamefileto'] = 'Gi <b>$a</b> nytt navn til';
 $string['required'] = 'Obligatorisk';
 $string['requireskey'] = 'Dette kurset krever en sikkerhetsnøkkel';
 $string['resortcoursesbyname'] = 'Sorter sidene etter navn';
@@ -632,24 +579,24 @@ $string['section'] = 'Kategori';
 $string['sections'] = 'Kategorier';
 $string['select'] = 'Velg';
 $string['selectacountry'] = 'Velg et land';
-$string['selectednowmove'] = '\$a filer er valgt for flytting. Gå dit du vil ha dem og klikk \\\"Flytt filer hit\\\"';
+$string['selectednowmove'] = '$a filer er valgt for flytting. Gå dit du vil ha dem og klikk \"Flytt filer hit\"';
 $string['senddetails'] = 'Send mine detaljer via e-post';
 $string['separateandconnected'] = 'Individuell (rasjonell) og sosial (empatisk) måte å lære';
 $string['serverlocaltime'] = 'Serverens lokale tid';
 $string['settings'] = 'Innstillinger';
 $string['shortname'] = 'Kort navn';
-$string['shortnametaken'] = 'Kortnavnet er allerede brukt på et annet kurs (\$a)';
+$string['shortnametaken'] = 'Kortnavnet er allerede brukt på et annet kurs ($a)';
 $string['shortsitename'] = 'Kort navn på kurset (et enkelt ord)';
 $string['show'] = 'Vis';
-$string['showall'] = 'Vis alle \$a';
+$string['showall'] = 'Vis alle $a';
 $string['showallcourses'] = 'Vis alle kurs';
 $string['showalltopics'] = 'Vis alle emner';
 $string['showallusers'] = 'Vis alle brukere';
 $string['showallweeks'] = 'Vis alle uker';
 $string['showgrades'] = 'Vis karakterer';
 $string['showlistofcourses'] = 'Vis liste over kurs';
-$string['showonlytopic'] = 'Vis bare emne \$a';
-$string['showonlyweek'] = 'Vis bare uke \$a';
+$string['showonlytopic'] = 'Vis bare emne $a';
+$string['showonlyweek'] = 'Vis bare uke $a';
 $string['showrecent'] = 'Vis siste aktivitet';
 $string['showtheselogs'] = 'Vis disse loggene';
 $string['site'] = 'Kurs';
@@ -672,19 +619,17 @@ $string['strftimedatetime'] = '%%d %%B %%Y, %%H:%%M';
 $string['strftimedaydate'] = '%%A, %%d %%B %%Y';
 $string['strftimedaydatetime'] = '%%A, %%d %%B %%Y, %%H:%%M';
 $string['strftimerecent'] = '%%d %%b, %%H:%%M';
-$string['strftimerecentfull'] = '%%a, %%d %%b %%Y, %%H:%%M "
-
+$string['strftimerecentfull'] = '%%a, %%d %%b %%Y, %%H:%%M ';
 $string['strftimetime'] = '%%H:%%M';
-$string['stringsnotset'] = 'Følgene er ikke definert i \$a';
-$string['studentnotallowed'] = 'Beklager, men du har ikke tilgang til dette kurset som '\$a'';
+$string['stringsnotset'] = 'Følgene er ikke definert i $a';
 $string['students'] = 'Studenter';
 $string['subcategories'] = 'Underkategorier';
 $string['success'] = 'Vellykket';
 $string['summary'] = 'Sammendrag';
-$string['summaryof'] = 'Sammendrag av \$a';
+$string['summaryof'] = 'Sammendrag av $a';
 $string['supplyinfo'] = 'Vennligst skriv inn informasjon om deg selv';
-$string['teacheronly'] = 'kun synlig for \$a ';
-$string['teacherroles'] = '\$a roller';
+$string['teacheronly'] = 'kun synlig for $a ';
+$string['teacherroles'] = '$a roller';
 $string['teachers'] = 'Lærere';
 $string['textediting'] = 'Ved redigering av tekst';
 $string['texteditor'] = 'Bruk standard webskjema';
@@ -703,35 +648,34 @@ $string['todaylogs'] = 'Dagens logger';
 $string['toomanytoshow'] = 'Det er for mange brukere å vise';
 $string['top'] = 'Topp';
 $string['topic'] = 'Emne';
-$string['topichide'] = 'Gjem dette tema for \$a';
+$string['topichide'] = 'Gjem dette tema for $a';
 $string['topicoutline'] = 'Emnevisning';
-$string['topicshow'] = 'Vis dette tema til \$a';
+$string['topicshow'] = 'Vis dette tema til $a';
 $string['total'] = 'Totalt';
 $string['turneditingoff'] = 'Slå redigering av';
 $string['turneditingon'] = 'Slå redigering på';
 $string['undecided'] = 'Ubestemt';
 $string['unenrol'] = 'Avmeld';
-$string['unenrolme'] = 'Avmeld meg fra \$a';
-$string['unenrolsure'] = 'Er du sikker på at du vil avmelde \$a fra denne klassen?';
+$string['unenrolme'] = 'Avmeld meg fra $a';
+$string['unenrolsure'] = 'Er du sikker på at du vil avmelde $a fra denne klassen?';
 $string['unknowncategory'] = 'Ukjent kategori';
-$string['unpacking'] = 'Pakker ut \$a';
+$string['unpacking'] = 'Pakker ut $a';
 $string['unsafepassword'] = 'Usikkert passord - prøv et annet';
-$string['unusedaccounts'] = 'Kontoer som ikke er tatt i bruk innen \$a dager blir automatisk slettet';
+$string['unusedaccounts'] = 'Kontoer som ikke er tatt i bruk innen $a dager blir automatisk slettet';
 $string['unzip'] = 'Pakk opp zip-fil';
 $string['unzippingbackup'] = 'Pakker opp backup';
 $string['update'] = 'Oppdater';
-$string['updated'] = 'Oppdatert \$a';
+$string['updated'] = 'Oppdatert $a';
 $string['updatemyprofile'] = 'Lagre endringer i min profil';
-$string['updatesevery'] = 'Oppdaterer hvert \$a sekund';
-$string['updatethis'] = 'Oppdater \$a';
+$string['updatesevery'] = 'Oppdaterer hvert $a sekund';
+$string['updatethis'] = 'Oppdater $a';
 $string['updatethiscourse'] = 'Oppdater dette kurset';
-$string['updatinga'] = 'Oppdaterer \$a';
-$string['updatingain'] = 'Oppdaterer en \$a->what i \$a->in';
+$string['updatinga'] = 'Oppdaterer $a';
+$string['updatingain'] = 'Oppdaterer en $a->what i $a->in';
 $string['upload'] = 'Laste opp';
 $string['uploadafile'] = 'Laste opp en fil';
-$string['uploadedfileto'] = 'Lastet opp \$a->file til \$a->directory';
+$string['uploadedfileto'] = 'Lastet opp $a->file til $a->directory';
 $string['uploadnofilefound'] = 'Ingen fil funnet. Er du sikker på at du valgte en?';
-$string['uploadproblem'] = 'Det oppstod et problem under opplasting av fila '\$a' (kanskje den var for stor?)';
 $string['uploadthisfile'] = 'Last opp denne filen';
 $string['user'] = 'Bruker';
 $string['userdeleted'] = 'Denne brukeren er slettet';
@@ -739,22 +683,22 @@ $string['userdescription'] = 'Skriv litt om deg selv';
 $string['userfiles'] = 'Brukerfiler';
 $string['username'] = 'Brukernavn';
 $string['usernameexists'] = 'Dette brukernavnet finnes allerede, vennligst velg et annet';
-$string['userprofilefor'] = 'Brukerprofil for \$a';
+$string['userprofilefor'] = 'Brukerprofil for $a';
 $string['users'] = 'Brukere';
 $string['userzones'] = 'Brukersoner';
 $string['usingexistingcourse'] = 'Bruker eksisterende kurs';
 $string['view'] = 'Vis';
 $string['webpage'] = 'Nettside';
 $string['week'] = 'Uke';
-$string['weekhide'] = 'Gjem denne uken for \$a';
+$string['weekhide'] = 'Gjem denne uken for $a';
 $string['weeklyoutline'] = 'Ukeformat';
-$string['weekshow'] = 'Vis denne uken til \$a';
-$string['welcometocourse'] = 'Velkommen til \$a';
-$string['welcometocoursetext'] = 'Velkommen til \$a->coursename!
+$string['weekshow'] = 'Vis denne uken til $a';
+$string['welcometocourse'] = 'Velkommen til $a';
+$string['welcometocoursetext'] = 'Velkommen til $a->coursename!
 
 Hvis du ikke har gjort det enda bør du redigere profilen din (informasjon om deg selv) slik at vi kan bli bedre kjent med deg:
 
-  \$a->profileurl';
+  $a->profileurl';
 $string['whattocallzip'] = 'Hva vil du kalle zip-filen?';
 $string['withchosenfiles'] = 'Med valgte filer';
 $string['withoutuserdata'] = 'uten brukerdata';
@@ -781,7 +725,7 @@ $string['youareabouttocreatezip'] = 'Du holder på å lage en zip-fil som innehold
 $string['youaregoingtorestorefrom'] = 'Du tilbakefører fra';
 $string['yourlastlogin'] = 'Du var sist innlogget';
 $string['yourself'] = 'deg selv';
-$string['yourteacher'] = 'din \$a';
+$string['yourteacher'] = 'din $a';
 $string['zippingbackup'] = 'Pakker backup';
 
 ?>
