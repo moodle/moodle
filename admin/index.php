@@ -75,7 +75,9 @@
         $CFG->version = "";
     }
 
+/// Turn off time limits, sometimes upgrades can be slow.
 
+    set_time_limit(0);
 
 /// Check if the main tables have been installed yet or not.
 
@@ -115,7 +117,6 @@
         print_header($strdatabasesetup, $strdatabasesetup, $strdatabasesetup, "", "", false, "&nbsp;", "&nbsp;");
         if (file_exists("$CFG->libdir/db/$CFG->dbtype.sql")) {
             $db->debug = true;
-            set_time_limit(0);  // To allow slow databases to complete the long SQL
             if (modify_database("$CFG->libdir/db/$CFG->dbtype.sql")) {
                 $db->debug = false;
                 notify($strdatabasesuccess, "green");
