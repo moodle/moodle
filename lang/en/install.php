@@ -9,6 +9,7 @@ $string['admindirsetting'] = "
     renaming the admin directory in your installation, and putting that 
     new name here.  For example: <br/>&nbsp;<br /><b>moodleadmin</b><br />&nbsp;<br />
     This will fix admin links in Moodle.";
+$string['caution'] = 'Caution';
 $string['chooselanguage'] = 'Choose a language';
 $string['compatibilitysettings'] = 'Checking your PHP settings ...';
 $string['configfilenotwritten'] = "The installer script was not able to automatically create a config.php file containing your chosen settings. Please copy the following code into a file named config.php within the root directory of Moodle.";
@@ -26,60 +27,126 @@ $string['databasesettings'] = "
        <b>Name:</b> database name, eg moodle<br />
        <b>User:</b> your database username<br />
        <b>Password:</b> your database password<br />
-       <b>Tables Prefix:</b> prefix to use for all table names";
-$string['dataroot'] = 'Data';
-$string['datarooterror'] = "The 'Data' setting is incorrect";
-$string['dbconnectionerror'] = 'Database connection error. Please check your database settings';
+       <b>Tables Prefix:</b> optional prefix to use for all table names";
+
+$string['dataroot'] = 'Data Directory';
+$string['datarooterror'] = "The 'Data Directory' you specified could not be found or created.  Either correct the path or create that directory manually.";
+$string['dbconnectionerror'] = 'We could not connect to the database you specified. Please check your database settings.';
 $string['dbcreationerror'] = 'Database creation error. Could not create the given database name with the settings provided';
 $string['dbhost'] = 'Host Server';
 $string['dbpass'] = 'Password';
 $string['dbprefix'] = 'Tables prefix';
 $string['dbtype'] = 'Type';
 $string['directorysettings'] = "
-    <b>WWW:</b>
-    You need to tell Moodle where it is located. Specify the full
-    web address to where moodle has been installed.  If your web site 
-    is accessible via multiple URLs then choose the most natural one 
-    that your students would use.  Do not include a trailing slash<br/>&nbsp;<br/>
-    <b>Directory:</b>
-    Specify the full OS directory path to this same location
-    Make sure the upper/lower case is correct<br/>&nbsp;<br/>
-    <b>Data:</b>
-    You need a place where Moodle can save uploaded files.  This
-    directory should be readable AND WRITEABLE by the web server user 
-    (usually 'nobody' or 'apache'), but it should not be accessible 
-    directly via the web.";
+<p>Please confirm the locations of this Moodle installation.</p>
 
-$string['dirroot'] = 'Directory';
-$string['dirrooterror'] = "The 'Directory' setting was incorrect. Try the following setting";
+<p><b>Web Address:</b>
+Specify the full web address where Moodle will be accessed.  
+If your web site is accessible via multiple URLs then choose the 
+most natural one that your students would use.  Do not include 
+a trailing slash.</p>
+
+<p><b>Moodle Directory:</b>
+Specify the full directory path to this installation
+Make sure the upper/lower case is correct.</p>
+
+<p><b>Data Directory:</b>
+You need a place where Moodle can save uploaded files.  This
+directory should be readable AND WRITEABLE by the web server user 
+(usually 'nobody' or 'apache'), but it should not be accessible 
+directly via the web.</p>
+";
+
+$string['dirroot'] = 'Moodle Directory';
+$string['dirrooterror'] = "The 'Moodle Directory' setting seems to be incorrect - we can't find a Moodle installation there.  The value below has been reset.";
+$string['download'] = 'Download';
 $string['fail'] = 'Fail';
 $string['fileuploads'] = 'File Uploads';
 $string['fileuploadserror'] = 'This should be on';
-$string['fileuploadshelp'] = 'Moodle requires file uploading to be switched on';
+$string['fileuploadshelp'] = "
+<p>File uploading seems to be disabled on your server.</p>
+
+<p>Moodle can still be installed, but without this ability, you will not be able 
+   to upload course files or new user profile images.
+
+<p>To enable file uploading you (or your system administrator) will need to 
+   edit the main php.ini file on your system and change the setting for 
+   <b>file_uploads</b> to '1'.</p>
+";
 $string['gdversion'] = 'GD version';
 $string['gdversionerror'] = 'The GD library should be present to process and create images';
-$string['gdversionhelp'] = 'The GD library should be present to process and create images';
+$string['gdversionhelp'] = '
+<p>Your server does not seem to have GD installed.</p>
+
+<p>GD is a library that is required by PHP to allow Moodle to process images 
+   (such as the user profile icons) and to create new images (such as 
+   the log graphs).  Moodle will still work without GD - these features 
+   will just not be available to you.</p>
+
+<p>To add GD to PHP under Unix, compile PHP using the --with-gd parameter.</p>
+
+<p>Under Windows you can usually edit php.ini and uncomment the line referencing libgd.dll.</p>
+';
 $string['installation'] = 'Installation';
 $string['memorylimit'] = 'Memory Limit';
-$string['memorylimiterror'] = 'The PHP memory limit setting needs to be set to at least 16M, or be changeable';
-$string['memorylimithelp'] = "The memory limit needs to be set to at least 16M, or be changeable. Your current memory limit is set to \$a.<p>You can change your memory limit in your php.ini file, or sometimes by creating a .htaccess file in the Moodle directory containing this line:<p><ul>php_value memory_limit 16M</ul>";
+$string['memorylimiterror'] = 'The PHP memory limit is set quite low ... you may run into problems later.';
+$string['memorylimithelp'] = "
+<p>The PHP memory limit for your server is currently set to \$a.</p>
+
+<p>This may cause Moodle to have memory problems later on, especially 
+   if you have a lot of modules enabled and/or a lot of users.
+
+<p>We recommend that you configure PHP with a higher limit if possible, like 16M.  
+   There are several ways of doing this that you can try:
+<ol>
+<li>If you are able to, recompile PHP with <i>--enable-memory-limit</i>.  
+    This will allow Moodle to set the memory limit itself.
+<li>If you have access to your php.ini file, you can change the <b>memory_limit</b> 
+    setting in there to something like 16M.  If you don't have access you might 
+    be able to ask your administrator to do this for you.
+<li>On some PHP servers you can create a .htaccess file in the Moodle directory 
+    containing this line:
+    <p><blockquote>php_value memory_limit 16M</blockquote></p>
+    <p>However, on some servers this will prevent <b>all</b> PHP pages from working 
+    (you will see errors when you look at pages) so you'll have to remove the .htaccess file.
+</ol>";
 $string['pass'] = 'Pass';
-$string['PHPversion'] = 'PHP version';
-$string['PHPversionerror'] = 'PHP version must be at least 4.1.0';
-$string['phpversionhelp'] = "Moodle requires a PHP version of at least 4.1.0. You are currently running version \$a";
+$string['phpversion'] = 'PHP version';
+$string['phpversionerror'] = 'PHP version must be at least 4.1.0';
+$string['phpversionhelp'] = "
+<p>Moodle requires a PHP version of at least 4.1.0.</p>
+<p>You are currently running version \$a</p>
+<p>You must upgrade PHP or move to a host with a newer version of PHP!</p>";
 $string['safemode'] = 'Safe Mode';
-$string['safemodeerror'] = 'Moodle can not handle files properly with safe mode on';
-$string['safemodehelp'] = 'Moodle can not handle files properly with safe mode on';
+$string['safemodeerror'] = 'Moodle may have trouble with safe mode on';
+$string['safemodehelp'] = '
+<p>Moodle may have a variety of problems with safe mode on, not least is that 
+   it probably won\'t be allowed to create new files.</p>
+   
+<p>Safe mode is usually only enabled by paranoid public web hosts, so you may have 
+   to just find a new web hosting company for your Moodle site.</p>
+   
+<p>You can try continuing the install if you like, but expect a few problems later on.</p>';
 $string['sessionautostart'] = 'Session Auto Start';
 $string['sessionautostarterror'] = 'This should be off';
-$string['sessionautostarthelp'] = 'Session auto start should be turned off';
-$string['sessionsavepath'] = 'Session Save Path';
-$string['sessionsavepatherror'] = 'It seems your server does not support sessions';
-$string['sessionsavepathhelp'] = 'Moodle requires session support';
+$string['sessionautostarthelp'] = '
+<p>Moodle requires session support and will not function without it.</p>
+
+<p>Sessions can be enabled in the php.ini file ... look for the session.auto_start parameter.</p>
+';
 $string['magicquotesruntime'] = 'Magic Quotes Run Time';
 $string['magicquotesruntimeerror'] = 'This should be off';
-$string['magicquotesruntimehelp'] = 'Magic quotes should be turned off';
-$string['wwwroot'] = 'WWW';
-$string['wwwrooterror'] = "The 'WWW' setting is incorrect";
+$string['magicquotesruntimehelp'] = "
+<p>Magic quotes runtime should be turned off for Moodle to function properly.</p>
+
+<p>Normally it is off by default ... see the setting <b>magic_quotes_runtime</b> in your php.ini file.</p>
+
+<p>If you don't have access to your php.ini, you might be able to place the following line in a file 
+   called .htaccess within your Moodle directory:
+   <blockquote>php_value magic_quotes_runtime Off</blockquote>
+</p>   
+   ";
+$string['wwwroot'] = 'Web address';
+$string['wwwrooterror'] = "The web address does not appear to be valid - this Moodle installation doesn't appear to be there.";
 
 ?>
