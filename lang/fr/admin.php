@@ -86,12 +86,9 @@ $string['confirmation'] = 'Confirmation';
 $string['confirmdeletedst'] = 'La suppression du réglage <strong>$a</strong> désactivera immédiatement l\'heure d\'été pour tous les utilisateurs de ce réglage. Cela risque de changer leur perception du temps sans avertissement. Voulez-vous vraiment continuer&nbsp;?';
 $string['confirmdeletedstdefault'] = '<strong>Le réglage $a est actuellement utilisé par tous les utilisateurs de ce site&nbsp;!</strong> Sa suppression changera leur perception du temps sans avertissement. Voulez-vous vraiment continuer&nbsp;?';
 $string['cronwarning'] = 'Le <a href=\"cron.php\">script de maintenance cron.php</a> n\'a pas été lancé depuis au moins 24 heures.<br />La <a href=\"../doc/?frame=install.html&sub=cron\">documentation d\'installation</a> explique comment vous pouvez automatiser cette tâche.';
-$string['dstisapreference'] = 'Chaque utilisateur peut choisir son propre réglage';
-$string['dstisforcedto'] = 'Imposer à tous les utilisateurs le réglage';
 $string['dstpresetforced'] = 'Ce réglage est imposé par l\'administrateur du site';
-$string['dstpresets'] = 'Réglages heure d\'été';
 $string['emptydstlist'] = 'Il n\'y a actuellement aucun réglage d\'heure d\'été défini. Vous pouvez en ajouter un en cliquant sur le bouton Ajouter...';
-$string['editingdstpreset'] = 'Modification d\'un réglage d\'heure d\'été';
+$string['editingtimezone'] = 'Modification de fuseau horaire';
 $string['edithelpdocs'] = 'Modifier les fichiers d\'aide';
 $string['editstrings'] = 'Modifier les chaînes de caractères';
 $string['errordstpresetactivateearlier'] = 'Le mois d\'activation doit précéder le mois de désactivation';
@@ -100,14 +97,14 @@ $string['errordstpresetnameexists'] = 'Un autre réglage de même nom existe déjà'
 $string['filteruploadedfiles'] = 'Filtrer les fichiers déposés';
 $string['helpadminseesall'] = 'Les administrateurs voient-ils tous les événements du calendrier ou seulement leurs propres événements&nbsp;?';
 $string['helpcalendarsettings'] = 'Configuration des divers aspects du calendrier de Moodle';
-$string['helpdstforusers'] = 'Chacun peut-il choisir son propre réglage de l\'heure d\'été&nbsp;?';
-$string['helpmanagedstpresets'] = 'Cliquer sur ce bouton pour ajouter, modifier ou supprimer les réglages d\'heure d\'été disponibles sur ce site.';
+$string['helpforcetimezone'] = 'Vous pouvez autoriser les utilisateurs à choisir leur fuseau horaire ou imposer le même fuseau horaire pour tous.';
+$string['helpmanagetimezones'] = 'Vous pouvez ajouter, modifier ou supprimer les profils de fuseaux horaires disponibles sur ce site ou autoriser Moodle à télécharger automatiquement de nouveaux profils depuis moodle.org.';
 $string['helpsitemaintenance'] = 'Pour les mises à jour et d\'autres travaux';
 $string['helpstartofweek'] = 'Quel est le premier jour de la semaine dans le calendrier&nbsp;?';
 $string['helpupcominglookahead'] = 'Par défaut, combien de jours dans le futur le calendrier considère-t-il les événements à venir&nbsp;?';
 $string['helpupcomingmaxevents'] = 'Par défaut, quel est le nombre maximum d\'événements à venir affichés&nbsp;?';
 $string['helpweekenddays'] = 'Quel jours sont traités comme jours du «&nbsp;week-end&nbsp;» et affichés d\'une couleur différente&nbsp;?';
-$string['managedstpresets'] = 'Gestion des réglages d\'heure d\'été';
+$string['managetimezones'] = 'Gestion des profils de fuseaux horaires';
 $string['nodstpresetsexist'] = 'Le support de l\'heure d\'été est désactivé pour tous les utilisateurs, car aucun réglage n\'est défini. Vous pouvez définir des réglages en cliquant sur le bouton ci-dessous.';
 $string['optionalmaintenancemessage'] = 'Message de maintenance facultatif';
 $string['returntocalendaroptions'] = 'Retour aux réglages du calendrier';
@@ -116,13 +113,14 @@ $string['sitemaintenancemode'] = 'Mode maintenance';
 $string['sitemaintenanceon'] = 'Votre site est actuellement en mode maintenance (seuls les administrateurs peuvent se connecter et utiliser le site).';
 $string['sitemaintenanceoff'] = 'Le mode maintenance a été désactivé et le site fonctionne à nouveau normalement';
 $string['sitemaintenancewarning'] = 'Votre site est actuellement en mode maintenance (seuls les administrateurs peuvent se connecter). Pour revenir à un fonctionnement normal du site, veuillez <a href=\"maintenance.php\">désactiver le mode maintenance</a>.';
+$string['timezonenotforced'] = 'Les utilisateurs peuvent choisir leur fuseau horaire';
+$string['timezoneisforcedto'] = 'Imposer à tous les utilisateurs l\'utilisation du fuseau horaire';
+$string['timezones'] = 'Fuseaux horaires';
 $string['therewereerrors'] = 'Des erreurs sont présentes dans vos données';
+$string['updatetimezones'] = 'Mettre à jour automatiquement les profils';
 $string['upgradelogs'] = 'Pour profiter de toutes les fonctionnalités, les historiques (logs) doivent être mis à jour. <a href=\"$a\">Plus d\'informations</a>';
 $string['upgradelogsinfo'] = 'Récemment, des changements ont eu lieu dans la façon de conserver les historiques. Afin de pouvoir profiter de l\'affichage des anciens historiques par activité, ceux-ci doivent être mis à jour. Selon la taille de votre site, cette opération peut durer assez longtemps (c\'est-à-dire plusieurs heures) et peut ralentir les bases de données des sites complexes et très actifs. Une fois l\'opération démarrée, vous devez la laisser se terminer (en laissant ouverte la fenêtre du navigateur). N\'ayez crainte, votre site continuera à très bien fonctionner pour les autres utilisateurs durant la mise à jour des historiques.<br /><br />Voulez-vous mettre à jour maintenant vos historique&nbsp;?';
-$string['upgradesure'] = 'Certains fichiers de votre Moodle ont été modifiés, et vous êtes sur le point<br />de lancer la procédure automatique de mise à jour de votre serveur vers cette version&nbsp;:<br /><br />
-<strong>$a</strong><br /><br />
-Une fois cette mise à jour effectuée, il sera impossible de revenir en arrière&nbsp;!<br /><br />
-Voulez-vous vraiment mettre à jour ce Moodle vers cette version&nbsp;?';
+$string['upgradesure'] = 'Certains fichiers de votre Moodle ont été modifiés, et vous êtes sur le point<br />de lancer la procédure automatique de mise à jour de votre serveur vers cette version&nbsp;:<br /><br /><strong>$a</strong><br /><br />Une fois cette mise à jour effectuée, il sera impossible de revenir en arrière&nbsp;!<br /><br />Voulez-vous vraiment mettre à jour ce Moodle vers cette version&nbsp;?';
 $string['upgradinglogs'] = 'Mise à jour des fichiers d\'historique (logs)';
 
 ?>
