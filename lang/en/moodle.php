@@ -215,6 +215,7 @@ $string['creatingcoursemodules'] = 'Creating course modules';
 $string['creatingevents'] = 'Creating events';
 $string['creatinggroups'] = 'Creating groups';
 $string['creatinglogentries'] = 'Creating log entries';
+$string['creatingmessagesinfo'] = 'Creating messages info';
 $string['creatingmetacoursedata'] = 'Creating metacourse info';
 $string['creatingnewcourse'] = 'Creating new course';
 $string['creatingscales'] = 'Creating scales';
