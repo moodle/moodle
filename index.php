@@ -29,7 +29,7 @@
 
     print_header("$site->fullname", "$site->fullname", "home", "",
                  "<META NAME=\"Description\" CONTENT=\"".stripslashes(strip_tags($site->summary))."\">",
-                 true, "", $langmenu.$headerbutton);
+                 true, "", "<div align=right>$headerbutton$langmenu</div>");
 
     $firstcolumn = false;  // for now
     $side = 175;
