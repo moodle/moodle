@@ -90,6 +90,8 @@
         foreach ($contentforums as $forum) {
             $count = count_records("forum_discussions", "forum", "$forum->id");
 
+            $forum->intro = forum_shorten_post($forum->intro);
+
             if ($can_subscribe) {
                 if (forum_is_forcesubscribed($forum->id)) {
                     $sublink = "YES";

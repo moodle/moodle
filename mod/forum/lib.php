@@ -154,7 +154,7 @@ function make_mail_post(&$post, $user, $touser, $course, $ownpost=false, $reply=
 
 
 function print_post(&$post, $courseid, $ownpost=false, $reply=false, $link=false, $rate=false, $footer="") {
-    global $THEME, $USER, $CFG, $FORUM_LONG_POST;
+    global $THEME, $USER, $CFG;
 
     if ($post->parent) {
         echo "<TABLE BORDER=0 CELLPADDING=1 CELLSPACING=1><TR><TD BGCOLOR=#888888>";
@@ -183,18 +183,13 @@ function print_post(&$post, $courseid, $ownpost=false, $reply=false, $link=false
     echo "</TD><TD BGCOLOR=\"#FFFFFF\">\n";
 
     if ($link && (strlen($post->message) > $FORUM_LONG_POST)) {
-        // Look for the first return between 50 and $FORUM_LONG_POST
-        $shortmessage = substr($post->message, 50, $FORUM_LONG_POST);
-        if ($pos = strpos($shortmessage, "\n")) {
-            $shortmessage = substr($post->message, 0, 50 + $pos);
-        } else {
-            $shortmessage = substr($post->message, 0, $FORUM_LONG_POST). "...";
-        }
-        echo text_to_html($shortmessage);
+        // Print shortened version
+        echo text_to_html(forum_shorten_post($post->message));
         $numwords = count_words($post->message);
-        echo "<A HREF=\"$CFG->wwwroot/mod/forum/discuss.php?d=$post->discussion\">Read the rest of this topic</A> ($numwords words)...";
+        echo "<A HREF=\"$CFG->wwwroot/mod/forum/discuss.php?d=$post->discussion\">";
+        echo "Read the rest of this topic</A> ($numwords words)...";
     } else {
-        // Just print the whole thing
+        // Print whole message
         echo text_to_html($post->message);
     }
 
@@ -241,6 +236,22 @@ function print_post(&$post, $courseid, $ownpost=false, $reply=false, $link=false
     echo "</DIV>";
     echo "</TD></TR></TABLE>";
     echo "</TD></TR>\n</TABLE>\n\n";
+}
+
+function forum_shorten_post($message) {
+    global $FORUM_LONG_POST;
+
+    if (strlen($message) > $FORUM_LONG_POST) {
+        // Look for the first return between 50 and $FORUM_LONG_POST
+        $shortmessage = substr($message, 50, $FORUM_LONG_POST);
+        if ($pos = strpos($shortmessage, "\n")) {
+            return substr($message, 0, 50 + $pos);
+        } else {
+            return substr($message, 0, $FORUM_LONG_POST). "...";
+        }
+    } else {
+        return $message;
+    }
 }
 
 
