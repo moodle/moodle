@@ -92,7 +92,7 @@ function unlockoption(form,item) {
   eval("document."+form+".h"+item+".value=0");
 }
 
-<?php if ($focus) { echo "function setfocus() { document.$focus.focus() }\n"; } ?>
+<?php if (!empty($focus)) { echo "function setfocus() { document.$focus.focus() }\n"; } ?>
 
 // done hiding -->
 
