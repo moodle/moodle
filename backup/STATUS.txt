@@ -117,8 +117,8 @@ Backup Details:
    - Delete backup files........................................DONE
    - Program scheduled backups..................................IN PROGRESS
       - Build a configuration inteface..........................DONE
-      - Create the script.......................................IN PROGRESS
-      - Integrate it in cron....................................NOT EXISTS
+      - Create the script.......................................DONE
+      - Integrate it in cron....................................IN PROGRESS
    - Select manually the desired activities to backup...........NOT EXISTS
       - Modify the backup frontend..............................NOT EXISTS
       - Modify the backup of course_sections and course_modules.NOT EXISTS
@@ -241,7 +241,7 @@ Restore Details:
 
 ========== ========== ========== =========== =========== =========== ===
 
-This is all. It's no a little thing !!!  :-)
+This is all. It isn't a little thing !!!  :-)
 
 Eloy (stronk7)
 29-04-2003
