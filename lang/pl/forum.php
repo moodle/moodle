@@ -1,9 +1,9 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.4 (2004083100)
+      // forum.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005031000)
 
 
 $string['addanewdiscussion'] = 'Dodaj nowy temat dyskusji';
-$string['addanewtopic'] = ' Dodaj nowy temat';
+$string['addanewtopic'] = 'Dodaj nowy temat';
 $string['allowchoice'] = 'Zezwól ka¿demu u¿ytkownikowi na wybór';
 $string['allowdiscussions'] = 'Czy $a mo¿e wysy³aæ wiadomo¶ci na to forum?';
 $string['allowratings'] = 'Czy posty mog± byæ oceniane?';
@@ -107,7 +107,7 @@ $string['prune'] = 'Zerwij';
 $string['prunedpost'] = 'Z tego postu zosta³a utworzona nowa dyskusja';
 $string['pruneheading'] = 'Zerwij post i przejd¼ do nowej dyskusji';
 $string['rate'] = 'Oceñ';
-$string['rating'] = ' Oceny';
+$string['rating'] = 'Oceny';
 $string['ratingeveryone'] = ' Ka¿dy mo¿e oceniæ posty';
 $string['ratingno'] = ' Brak ocen';
 $string['ratingonlyteachers'] = ' Tylko $a mo¿e oceniaæ posty';
@@ -115,7 +115,7 @@ $string['ratingpublic'] = '$a mo¿e zobaczyæ oceny wszystkich';
 $string['ratingpublicnot'] = '$a mo¿e zobaczyæ tylko swoje oceny';
 $string['ratings'] = 'Oceny';
 $string['ratingssaved'] = 'Oceny zosta³y zapisane';
-$string['ratingsuse'] = ' Wykorzystanie ocen';
+$string['ratingsuse'] = 'Wykorzystanie ocen';
 $string['ratingtime'] = ' Ogranicz wystawianie ocen do postów w nastêpuj±cym przedziale czasowym :';
 $string['re'] = 'Odp:';
 $string['readtherest'] = 'Przeczytaj resztê tematu';
@@ -123,7 +123,7 @@ $string['replies'] = 'Odpowiedzi';
 $string['repliesmany'] = '$a odpowiedzi  (jak dot±d)';
 $string['repliesone'] = '$a odpowied¼ (jak dot±d)';
 $string['reply'] = 'Odpowiedz';
-$string['replyforum'] = 'Odpwiedz forum';
+$string['replyforum'] = 'Odpowiedz forum';
 $string['rsssubscriberssdiscussions'] = 'Wy¶wietl RSS feed dla $a dyskusji';
 $string['rsssubscriberssposts'] = 'Wy¶wietl RSS feed dla $a postów';
 $string['search'] = 'Szukaj';
