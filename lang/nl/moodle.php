@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 unstable development (2004091700)
+      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004092700)
 
 
 $string['action'] = 'Actie';
@@ -99,6 +99,7 @@ $string['backup'] = 'Backup';
 $string['backupcoursefileshelp'] = 'Selecteer als je de bestanden van het vak in de backup wil';
 $string['backupdate'] = 'Datum backup';
 $string['backupdetails'] = 'Details van de backup';
+$string['backupfailed'] = 'Sommige vakke zijn niet bewaard!';
 $string['backupfilename'] = 'backup';
 $string['backupfinished'] = 'De backup is succesvol afgerond';
 $string['backupincludemoduleshelp'] = 'Selecteer als je vakmodules met of zonder gebruikersgegevens in de backup wil';
@@ -110,6 +111,8 @@ $string['backupnameformat'] = '%%d%%m%%Y-%%H%%M';
 $string['backupnoneusersinfo'] = 'Merk op: je hebt ervoor gekozen om \"geen\" gebruikers in de backup op te nemen. De backup van alle modules staat nu in de \"zonder gebruikersgegevens\"-modus. De modules \"oefening\" en \"workshop\" zijn niet compatibel met dit type backup en zullen niet mee in de backup gezet worden.';
 $string['backuporiginalname'] = 'Naam backup';
 $string['backupsavetohelp'] = 'Volledig pad naar de map waar je de backupbestanden wil bewaren<br />(laat blanco als je ze in de standaardmap van het vak wil bewaren)';
+$string['backuptakealook'] = 'Bekijk je backuplogs eens op: 
+$a';
 $string['backupuserfileshelp'] = 'Selecteer als je gebruikersbestanden in de de backup';
 $string['backupusershelp'] = 'Selecteer als je alle gebruikers op de server of alleen de gebruikers van het vak in de backup wil';
 $string['backupversion'] = 'Versie backup';
@@ -150,7 +153,10 @@ $string['clamemailsubject'] = '$a:: Clam AV-melding';
 $string['clamfailed'] = 'Clam AV is vastgelopen. De foutmelding was $a. Hier is de melding van Clam: ';
 $string['clamlost'] = 'Moodle is geconfigureerd op Clam te lopen voor bestandsupload, maar het pad naar Clam AV, $a, was niet juist.';
 $string['clamlostandactinglikevirus'] = 'Moodle is zo geconfigureerd dat, wanneer Clam niet loopt, alle bestanden als virussen behandeld worden. Dit heeft natuurlijk als gevolg dat geen enkele leerling bestanden kan uploaden tot je dit hersteld hebt';
-$string['clammovedfilebasic'] = 'Het bestand is in de quarantainemap gezet';
+$string['clammovedfile'] = 'Het bestand is naar je quarantinemap verplaatst. De nieuwe locatie is $a';
+$string['clammovedfilebasic'] = 'Het bestand is in de quarantinemap gezet';
+$string['clamquarantinedirfailed'] = 'Het bestand kon niet naar de quarantinemap, $a, verplaatst worden. Je moet dit herstellen want de bestanden die als besmet gezien worden, worden verwijderd.';
+$string['clamunknownerror'] = 'Er was iets onbekend fout met clam.';
 $string['cleaningtempdata'] = 'Schoon de tijdelijke data op';
 $string['clicktochange'] = 'Klik om te wijzigen';
 $string['closewindow'] = 'Sluit dit venster';
@@ -160,6 +166,9 @@ $string['configallowunenroll'] = 'Als dit op \'ja\' staat, dan mogen leerlingen 
 $string['configallusersaresitestudents'] = 'Moeten ALLE gebruikers als leerlingen beschouwd worden voor activiteiten op de startpagina van de site? Als je hier \"Ja\" kiest, dan zullen alle bevestigde accounts hier als leerling kunnen meedoen aan alle activiteiten. Als je hier \"Nee\" kiest, dan zullen alleen gebruikers die minstens van één vak lid zijn kunnen meedoen aan die startpagina-activiteiten.';
 $string['configautologinguests'] = 'Moeten bezoekers automatisch als gast aangemeld worden als ze vakken met toegangsrecht voor gasten binnengaan ?';
 $string['configcachetext'] = 'Deze instelling kan de snelheid vergroten voor grotere sites of voor sites die tekstfilters gebruiken. kopieën van teksten zullen in hun gecompileerde vorm bewaard worden voor de tijd die je hier instelt. Als je deze tijd te kort instelt, zou je zelfs een kleine vertraging kunnen krijgen, maar de tijd te lang instellen kan ervoor zorgen dat het te lang duurt voor teksten vernieuwd worden (met nieuwe links bijvoorbeeld).';
+$string['configclamactlikevirus'] = 'Behandel bestanden als virussen';
+$string['configclamdonothing'] = 'Behandel bestanden als OK';
+$string['configclamfailureonupload'] = 'Als je clam geconfigureerd hebt om geüploade bestanden op virussen te scannen, maar het is slecht geconfigureerd of loopt niet om één of andere reden,  hoe moet Moodle zich dan gedragen? Als je kiest voor \"Behandel alle bestanden als virussen\", dan zullen alle bestanden naar de quaraninezone  verplaatst worden of verwijderd worden. Als je kies voor \"Behandel bestanden als OK\", dan zullen de bestanden naar de bedoelde map verplaatst worden zoals normaal. In beide gevallen wordt de beheerder op de hoogte gebracht van het slecht werken van clam. Als kiest voor \"Behandel bestanden als virussen\" en om één of andere reden werkt clam niet (gewoonlijk omdat je een verkeerd pad naar clam gegeven hebt), dan zullen ALLE geuploade bestanden naar de quarantinezone verplaatst worden of verwijderd worden. Wees voorzichtig met deze instelling.';
 $string['configcountry'] = 'Als je hier een land invult zal dit land als standaard worden geselecteerd bij nieuwe gebruikersaccounts. Laat dit veld gewoon leeg om gebruikers te dwingen een land te kiezen.';
 $string['configdebug'] = 'Als je dit aan zet zullen er meer PHP-fouten op het scherm worden weergegeven. Dit is alleen maar handig voor ontwikkelaars van de applicatie.';
 $string['configdeleteunconfirmed'] = 'Als je met e-mailauthenticatie werkt dan is dit de periode waarbinnen gebruikers moeten reageren op de bevestigingsmail voor de nieuwe account. Na deze periode zullen oude, niet-bevestigde accounts verwijderd worden.';
@@ -194,7 +203,10 @@ $string['confignoreplyaddress'] = 'Soms verzendt Moodle e-mails voor een gebruik
 $string['confignotifyloginfailures'] = 'Als er mislukte aanmeldingen gelogd worden, dan kunnen er e-mailnotificaties verstuurd worden. Wie moet deze notificaties zien?';
 $string['confignotifyloginthreshold'] = 'Als notificaties over mislukte aanmeldingen verzonden moeten worden, hoeveel aanmeldingspogingen  door één gebruiker of vanaf één IP-adres zijn het melden waard?';
 $string['configopentogoogle'] = 'Als je deze instelling inschakelt, dan zal Google als gast toegelaten worden tot je site. Mensen die jouw site binnenkomen via Moodle zullen automatisch als gast aangemeld zijn. Merk op dat dit alleen toegang zal geven tot vakken waar toegang voor gasten toegelaten is.';
+$string['configpathtoclam'] = 'Pad naar clam AV. Gewoonlijk iets als /usr/bin/clamscan of /usr/bin/clamdscan. Je hebt dit nodig om clam AV te laten lopen.';
 $string['configproxyhost'] = 'Als deze <B>server</B> een proxyserver (zoals bijvoorbeeld een firewall) nodig heeft om op het internet te komen, vul hier dan de hostname en de poort van de proxy in. Laat het leeg als dit niet het geval is.';
+$string['configquarantinedir'] = 'Als je wil dat clam AV besmette bestanden naar een quarantinemap verplaatst, zet het pad dan hier. Het moet beschrijfbaar zijn voor de webserver. Als je dit leeg laat of als je een map opgeeft die niet bestaat of niet beschrijfbaar is, dan zullen besmette bestanden verwijderd worden. Gebruik geen schijne streep achteraan het pad.';
+$string['configrunclamonupload'] = 'Clam AV laten lopen bij het uploaden van een bestand? Je hebt dan een juist pad nodig in pathtoclam om dit te laten werken. (Clam AV is een gratis virusscanner die je kunt downloaden van http://www.clamav.net/)';
 $string['configsecureforms'] = 'Moodle kan een extra beveiliging toepassen wanneer het gegevens aanneemt van webformulieren. Als je dit inschakelt, dan wordt de variable HTTP_REFERER vergeleken met het huidige formulieradres. In zeldzame gevallen kan dit problemen veroorzaken als de gebruiker een firewall gebruikt (zoals Zonealarm) die geconfigureerd is om HTTP_REFERER uit het webverkeer te filteren. Het symptoom is: vastgeraken op een formulier. Als je gebruikers problemen hebben met de inlogpagina (bijvoorbeeld) dan zou je kunnen overwegen om deze instelling uit te zetten, hoewel dit je site meer blootstelt aan brute kracht-aanvallen op je wachtwoord. Bij twijfel laat je deze instelling op \'ja\' staan.';
 $string['configsessioncookie'] = 'Met deze instelling kun je de naam van de cookie die gebruikt wordt voor Moodlesessies, aanpassen. Deze instelling is optioneel en enkel nuttig om te verhinderen dat cookies in conflict komen wanneer meer dan één exemplaar van Moodle binnen dezelfde website draait.';
 $string['configsessiontimeout'] = 'Als mensen die ingelogd zijn op deze site voor een lange tijd niets doen (ze laden geen nieuwe pagina\'s) worden ze automatisch uitgelogd (hun sessie is beëindigd). Deze variabele geeft aan hoe lang deze tijd moet zijn. ';
@@ -303,6 +315,7 @@ $string['department'] = 'Afdeling';
 $string['description'] = 'Beschrijving';
 $string['detailedless'] = 'Minder gedetailleerd';
 $string['detailedmore'] = 'Meer gedetailleerd';
+$string['directorypaths'] = 'Paden van mappen';
 $string['disable'] = 'Schakel uit';
 $string['displayingfirst'] = 'Alleen de eerste $a->count $a->things worden getoond.';
 $string['displayingrecords'] = '$a records worden getoond';
@@ -327,6 +340,7 @@ $string['editcoursesettings'] = 'Wijzig vakinstellingen';
 $string['editfiles'] = 'Bewerk bestanden';
 $string['editgroupprofile'] = 'Wijzig groepsprofiel';
 $string['editinga'] = 'Een $a bewerken';
+$string['editlock'] = 'Deze waarde kan niet bewerkt worden!';
 $string['editmyprofile'] = 'Wijzig profiel';
 $string['editorbgcolor'] = 'Achtergrondkleur';
 $string['editorcleanonpaste'] = 'Opgekuiste Word-HTML  bij plakken';
@@ -768,6 +782,8 @@ $string['passwordsent'] = 'Het wachtwoord is verzonden';
 $string['passwordsenttext'] = '<P>Er is een e-mail verstuurd naar $a->email.
 <P><B>Bekijk je e-mail voor je nieuwe wachtwoord</B>
 <P>Het nieuwe wachtwoord is automatisch aangemaakt, dus misschien wil je het <A HREF=$a->link>wijzigen naar iets wat makkelijker te onthouden is</A>.';
+$string['pathnotexists'] = 'Dit pad bestaat niet op je server!';
+$string['pathslasherror'] = 'Het pad mag niet eindigen met een schuine streep!';
 $string['paymentinstant'] = 'Gebruik de knop om te betalen en je zult binnen enkele minuten aangemeld zijn!';
 $string['paymentrequired'] = 'Betaling vereist om dit vak binnen te gaan.';
 $string['paymentsorry'] = 'Bedankt voor je betaling! Jammer genoeg is je betaling nog niet volledig verwerkt en ben je nog niet geregistreerd om het vak \"$a->fullname\" binnen te gaan. Probeer binnen enkele seconden nog eens het vak binnen te gaan, maar als je blijft problemen hebben, waarschuw dan de $a->teacher of de site beheerder';
@@ -954,6 +970,7 @@ $string['unenrolallstudents'] = 'Zeg lidmaatschap van alle deelnemers op';
 $string['unenrolallstudentssure'] = 'Weet je zeker dat je het lidmaatschap voor alle deelnemers van dit vak wil opzeggen?';
 $string['unenrolme'] = 'Zeg mijn lidmaatschap van $a op';
 $string['unenrolsure'] = 'Weet je zeker dat je het lidmaatschap van $a wilt opzeggen?';
+$string['unfinished'] = 'Niet klaar';
 $string['unknowncategory'] = 'Onbekende categorie';
 $string['unlimited'] = 'Onbeperkt';
 $string['unpacking'] = '$a wordt uitgepakt';
@@ -972,12 +989,20 @@ $string['updatinga'] = 'Een $a wijzigen';
 $string['updatingain'] = 'Een $a->what wijzigen in $a->in';
 $string['upload'] = 'Upload';
 $string['uploadafile'] = 'Upload een bestand';
-$string['uploadedfileto'] = '$a->file is geüpload naar $a->directory';
+$string['uploadedfile'] = 'Bestand met succes geüploadet';
+$string['uploadedfileto'] = '$a->file is geüploadet naar $a->directory';
+$string['uploadedfiletoobig'] = 'Sorry, maar dit bestand is te groot (limiet is $a bytes)';
+$string['uploadfailednotrecovering'] = 'Je bestandsupload is mislukt omdat er een probleem was met één van de bestanden, $a->name.<br/>Hier is een log van de problemen:<br/>$a->problem<br/>Niet te herstellen.';
+$string['uploadfilelog'] = 'Uploadlog voor bestand $a';
 $string['uploadformlimit'] = 'Het geüploade bestand is groter dan de maximumgrootte ingesteld op het formulier';
+$string['uploadlabel'] = 'Titel:';
 $string['uploadnofilefound'] = 'Er is geen bestand gevonden - weet je zeker dat je een bestand geselecteerd hebt om te uploaden?';
 $string['uploadnotallowed'] = 'Uploads niet toegestaan';
+$string['uploadoldfilesdeleted'] = 'Het oude bestand(en) in je uploadzone is verwijderd';
 $string['uploadpartialfile'] = 'Het bestand was slechts gedeeltelijk geüploaded';
 $string['uploadproblem'] = 'Een was een onbekend probleem tijdens het uploaden van bestand \'$a\' (was het misschien te groot?)';
+$string['uploadrenamedchars'] = 'Het bestand is hernoemd van $a->oldname naar $a->newname omdat er ongeldige tekens in staan.';
+$string['uploadrenamedcollision'] = 'Het bestand is hernoemd van $a->oldname naar $a->newname omdat er een bestandsnaamconflict was.';
 $string['uploadserverlimit'] = 'Het geüploade bestand is groter dan de maximumgrootte die op deze server ingesteld is.';
 $string['uploadthisfile'] = 'Upload dit bestand';
 $string['uploadusers'] = 'Upload gebruikers';
@@ -999,6 +1024,25 @@ $string['userzones'] = 'Gebruikerzones';
 $string['usingexistingcourse'] = 'Gebruik bestaand vak';
 $string['version'] = 'Versie';
 $string['view'] = 'Zien';
+$string['virusfound'] = 'Opgelet beheerder! Clam AV vond een virus in een bestand, geüploadet door $a->user voor het vak $a->course. Hier is de boodschap van clamscan:';
+$string['virusfoundlater'] = 'Een bestand dat geüploadet werd op $a->date met als bestandsnaam $a->filename voor het vak $a->course is  besmet met een virus. Hier is een samenvatting van wat er sinds toen met je bestand gebeurd is:
+
+$a->action
+
+Als dit een taak was, dan wil je het misschien terug insturen, zodat je leraar het kan nakijken.';
+$string['virusfoundlateradmin'] = 'Opgelet beheerder! Een bestand dat geüploadet werd op $a->date met als bestandsnaam $a->filename voor het vak $a->course is  besmet met een virus. Hier is een samenvatting van wat er sinds toen met het bestand gebeurd is:
+
+$a->action
+
+De gebruiker is ook verwittigd.';
+$string['virusfoundlateradminnolog'] = 'Opgelet beheerder! Een bestand dat geüploadet werd met bestandsnaam $a->filename bevat een virus. Moodle kon dit bestand niet terugsturen naar de gebruiker die het oorspronkelijk geüploadet had.
+
+Hier is een samenvatting van wat er met dat bestand gebeurd is:
+
+$a->action';
+$string['virusfoundsubject'] = '$a: Virus gevonden!';
+$string['virusfounduser'] = 'Het bestand $a->filename dat je geüploadet hebt is door een virusscanner gecontroleerd en is geïnfecteerd! Je bestandsupload is mislukt.';
+$string['virusplaceholder'] = 'Dit geüploade bestand bevat een virus en is verplaatst of verwijderd. De gebruiker is verwittigd.';
 $string['webpage'] = 'Website';
 $string['week'] = 'Week';
 $string['weekhide'] = 'Verberg deze week voor $a';

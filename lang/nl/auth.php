@@ -3,6 +3,7 @@
 
 
 $string['auth_common_settings'] = 'Algemene instellingen';
+$string['auth_data_mapping'] = 'Data mapping';
 $string['auth_dbdescription'] = 'Deze methode gebruikt een externe database om te controleren of een bepaalde gebruikersnaam en een bepaald wachtwoord geldig zijn. Als de account nieuw is dan kan informatie vanuit andere velden ook naar Moodle worden gekopieerd.';
 $string['auth_dbextrafields'] = 'Deze velden zijn niet verplicht. Je kunt ervoor kiezen om sommige Moodle-gebruikersvelden in te vullen met informatie uit de <B>externe database velden</B> die je hier aangeeft. <P>Als je deze niet invult zullen standaardwaarden worden gebruikt. In beide gevallen kan de gebruiker alle velden wijzigen zodra hij/zij is ingelogd.';
 $string['auth_dbfieldpass'] = 'Naam van het veld dat de wachtwoorden bevat  ';
@@ -37,6 +38,11 @@ $string['auth_ldap_bind_settings'] = 'Bind instellingen';
 $string['auth_ldap_contexts'] = 'Lijst met contexten waar de gebruikers gelocaliseerd zijn. Scheid verschillende contexten met \';\'. Bijvoorbeeld: \'ou=users,o=org; ou=others,o=org\'';
 $string['auth_ldap_create_context'] = 'Als je het aanmaken van gebruikers met e-mailbevestiging aanzet, moet je de context aangeven waarin gebruikers worden aangemaakt. Deze context moet verschillen van andere contexten om beveiligingsproblemen te vermijden. Deze context hoef je niet toe te voegen aan ldap_context_variable. Moodle zoekt automatisch de gebruikers uit deze context.';
 $string['auth_ldap_creators'] = 'Lijst met groepen gebruikers. De leden van de groepen mogen nieuwe vakken aanmaken. Scheid verschillende groepen met \';\'. Meestal iets als \'cn=docenten,ou=medewerkers,o=mijnorganisatie\'';
+$string['auth_ldap_expiration_desc'] = 'Kies nee op de controle op verlopen wachtwoorden uit te schakelen of om LDAP de geldigheidsduur van de wachtwoorden rechtstreeks uit LDAP te laten lezen';
+$string['auth_ldap_expiration_warning_desc'] = 'Aantal dagen op voorhand dat er een waarschuwing voor het verlopen van het wachtwoord gegeven wordt.';
+$string['auth_ldap_expireattr_desc'] = 'Optioneel: gaat voor op het LDAP-attribuut dat de wachtwoordverlooptijd bewaard.';
+$string['auth_ldap_graceattr_desc'] = 'Optioneel: gaat voor op het gracelogin-attribuut';
+$string['auth_ldap_gracelogins_desc'] = 'Schakel de gracelogin-ondersteuning voor LDAP in. Nadat een wachtwoord is verlopen kan een gebruiker nog aanmelden tot de teller van gracelogin 0 is geworden. Door deze instelling  in te schakelen, wordt de gracelogin-boodschap getoond als het wachtwoord verlopen is.';
 $string['auth_ldap_host_url'] = 'Geef de LDAP-host in de vorm van een URL zoals bijvoorbeeld: \'ldap://ldap.myorg.com/\' of \'ldaps://ldap.myorg.com/\'  Com/\'or \'ldaps://ldap.myorg.com/\' ';
 $string['auth_ldap_login_settings'] = 'login instellingen';
 $string['auth_ldap_memberattribute'] = 'Geef gebruiker lid attribuut, voor als gebruikers tot een groep behoren. Meestal \'member\'';
@@ -47,6 +53,7 @@ $string['auth_ldap_server_settings'] = 'LDAP-server instellingen';
 $string['auth_ldap_update_userinfo'] = 'Werk de gebruikersinformatie bij (voornaam, achternaam, adres, ..) van LDAP naar Moodle. Bekijk /auth/ldap/attr_mappings.php om informatie te vinden over de \'mapping\'.';
 $string['auth_ldap_user_attribute'] = 'Het attribuut dat wordt gebruikt om gebruikers te benoemen of te zoeken. Meestal \'cn\'.';
 $string['auth_ldap_user_settings'] = 'Instellingen voor het opzoeken van gebruikers';
+$string['auth_ldap_user_type'] = 'Kies hoe gebruikers in LDAP bewaard worden. Deze instelling geeft ook aan hoe verlopen wachtwoorden, grace logins en het aanmaken van nieuwe gebruikers zal werken.';
 $string['auth_ldap_version'] = 'De versie van het LDAP-protocol die jouw server gebruikt.';
 $string['auth_ldapdescription'] = 'Deze methode levert authenticatie door middel van een externe LDAP-server.  
 Als de gebruikersnaam en wachtwoord geldig zijn maakt Moodle een nieuwe gebruiker aan in zijn database. Deze module kan gebruikerseigenschappen vanuit LDAP lezen en bepaalde velden in Moodle alvast invullen. Bij latere aanmeldingen worden alleen de gebruikersnaam en het wachtwoord gecontroleerd.';
@@ -61,6 +68,7 @@ $string['auth_nntpport'] = 'De poort van de server (meestal is dat 119)';
 $string['auth_nntptitle'] = 'Gebruik een  NNTP server';
 $string['auth_nonedescription'] = 'De gebruikers kunnen meteen inloggen en een geldige account aanmaken, zonder authenticatie door middel van een externe server en zonder bevestiging via e-mail. Wees voorzichtig met het gebruiken van deze mogelijkheid - denk aan de beveiligings- en beheerproblemen die hieruit zouden kunnen ontstaan.';
 $string['auth_nonetitle'] = 'Geen authenticatie';
+$string['auth_pamdescription'] = 'Deze methode gebruikt PAM om toegang te geven tot de gebruikersnamen op deze server. Je moet <a href=\"http://www.math.ohio-state.edu/~ccunning/pam_auth/\" target=\"_blank\">PHP4 PAM Authentication</a> installeren om deze module te kunnen gebruiken.';
 $string['auth_pamtitle'] = 'PAM (Pluggable Authentication Modules)';
 $string['auth_pop3description'] = 'Deze methode gebruikt een POP3-server om te controleren of een gebruikersnaam en wachtwoord geldig zijn.';
 $string['auth_pop3host'] = 'Het adres van de POP3-server. Gebruik het IP-adres, niet een DNS-naam.';
@@ -71,7 +79,9 @@ $string['auth_pop3type'] = 'Het type van de server. Als jouw server gebruikt maa
 $string['auth_updatelocal'] = 'Update lokale gegevens';
 $string['auth_updatelocal_expl'] = '<p><b>Update lokale gegevens:</b>Als je dit inschakelt, dan zal het veld (van de externe authenticatie) automatisch geüpdatet worden telkens de gebruiker zich aanmeldt of wanneer er een gebruikerssynchronisatie gebeurt. Velden die lokaal worden geüpdatet moeten geblokkeerd worden.';
 $string['auth_updateremote'] = 'Update externe gegevens';
-$string['auth_user_create'] = 'Zet aanmaken gebruikers aan';
+$string['auth_updateremote_expl'] = '<p><b>Update de externe gegevens:</b>Als dit ingeschakeld is dan zal de externe authenticatie geüpdatet worden als een gebruikersrecor geüpdatet wordt. De velden mogen niet geblokkeerd zijn om bewerken mogelijk te maken.';
+$string['auth_updateremote_ldap'] = '<p><b>Merk op:</b>Voor het updaten van externe LDAP-gegevens is het nodig dat je binddn en bindpw instelt bij een bind-gebruiker met bewerkrechten op alle gebruikersrecords. Op dit ogenblik behoud het geen attributen met meerdere waarden en dus zullen extra waarden bij update verwijderd worden.</p>';
+$string['auth_user_create'] = 'Zet het aanmaken van gebruikers aan';
 $string['auth_user_creation'] = 'Nieuwe (anonieme) gebruikers kunnen gebruikersaccounts aanmaken op de externe authenticatiebron en bevestigen via e-mail. Als je dit aanzet, vergeet dan niet ook de module specifieke opties voor het aanmaken van gebruikers te configureren.';
 $string['auth_usernameexists'] = 'De gekozen gebruikersnaam bestaat al. Kies alsjeblieft een andere gebruikersnaam.';
 $string['authenticationoptions'] = 'Opties voor authenticatie';
@@ -79,10 +89,19 @@ $string['authinstructions'] = 'Hier kun je instructies geven aan de gebruikers, 
 $string['changepassword'] = 'URL voor het veranderen van het wachtwoord';
 $string['changepasswordhelp'] = 'Hier kun je een locatie aangeven waar gebruikers hun gebruikersnaam/wachtwoord kunnen terugkrijgen als ze deze vergeten zijn. Dit zal aan de gebruikers worden gegeven als een knop op de inlogpagina en op hun gebruikerspagina. Als je dit leeg laat zal de knop niet verschijnen.';
 $string['chooseauthmethod'] = 'Kies een methode van authenticatie:';
+$string['forcechangepassword'] = 'Verplicht het wijzigen van het wachtwoord';
+$string['forcechangepassword_help'] = 'Verplicht gebruikers om hun wachtwoord te wijzigen bij hun volgende aanmelding bij Moodle';
+$string['forcechangepasswordfirst_help'] = 'Verplicht gebruikers om hun wachtwoord te wijzigen bij hun volgende aanmelding bij Moodle.';
 $string['guestloginbutton'] = 'Knop om in te loggen als gast';
 $string['instructions'] = 'Instructies';
 $string['md5'] = 'MD5-encryptie';
 $string['plaintext'] = 'Platte tekst';
 $string['showguestlogin'] = 'Je kunt de om in te loggen als gast verbergen of laten zien op de inlogpagina.';
+$string['stdchangepassword'] = 'Gebruik de standaardpagina om het wachtwoord te wijzigen';
+$string['stdchangepassword_expl'] = 'Zet dit op ja als het externe systeem toelaat om wachtwoorden via Moodle te wijzigen. Deze instelling gaat voor op de \"Verander wachtwoord-URL\"';
+$string['stdchangepassword_explldap'] = 'Merk op: het is aan te raaden om LDAP te gebruiken met een SSL geëncrypteerde tunnel (ldaps://) als de LDAP-server op afstand staat.';
+$string['thischarset'] = 'iso-8859-1';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'nl';
 
 ?>

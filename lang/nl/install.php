@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // install.php - created with Moodle 1.4 alpha (2004081900)
+      // install.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004092700)
 
 
 $string['admindirerror'] = 'De adminmap die je opgeeft is niet juist';
@@ -73,6 +73,7 @@ Hierdoor kan Moodle zelf zijn geheugenlimiet instellen.
 <li>Op sommige PHP-servers kun je een .htaccess-bestand maken in de Moodle-map met volgende lijn: <p><blockquote>php_value memory_limit 16M</blockquote></p>
 <p>Opgelet: op sommige servers zal dit verhinderen dat <b>alle</b> PHP-bestanden uitgevoerd worden. (je zult foutmeldingen zien wanneer je naar php-pagina\'s kijkt) Je zult dan het .htaccess-bestand moeten verwijderen.
 </ol>';
+$string['mysqlextensionisnotpresentinphp'] = 'PHP is niet goed geconfigureerd met de MySQL-extentie om met MySQL te communiceren. Controleer je php.ini-bestand of hercompileer PHP.';
 $string['pass'] = 'OK';
 $string['phpversion'] = 'PHP-versie';
 $string['phpversionerror'] = 'PHP-versie moet minstens 4.1.0 zijn';
@@ -87,6 +88,9 @@ $string['sessionautostart'] = 'Session Auto Start';
 $string['sessionautostarterror'] = 'Dit moet uitgeschakeld zijn';
 $string['sessionautostarthelp'] = '<p>Moodle heeft session support nodig en zal zonder niet werken.</p>
 <p>Sessies kunnen ingeschakeld worden in het php.ini-bestand ... zoek naar de session.auto_start parameter.</p>';
+$string['thischarset'] = 'iso-8859-1';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'nl';
 $string['wwwroot'] = 'Web adres';
 $string['wwwrooterror'] = 'Het webadres lijkt niet geldig te zijn - deze Moodle-installatie is blijkbaar niet op die plaats.';
 

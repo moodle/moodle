@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // lesson.php - created with Moodle 1.5 unstable development (2004091700)
+      // lesson.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004092700)
 
 
 $string['actionaftercorrectanswer'] = 'Actie na juist antwoord';
@@ -34,6 +34,7 @@ $string['correctanswerscore'] = 'Cijfer bij juist antwoord';
 $string['correctresponse'] = 'Juist antwoord';
 $string['customscoring'] = 'Aangepaste cijfers';
 $string['deadline'] = 'Deadline';
+$string['deleteattempts'] = 'Verwijder de pogeingen van de leerling voor deze les (user id)';
 $string['deleting'] = 'Verwijderen';
 $string['deletingpage'] = 'Pagina $a aan het verwijderen';
 $string['description'] = 'Beschrijving';
