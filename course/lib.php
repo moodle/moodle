@@ -607,7 +607,12 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
             $ldcache[$log->module][$log->action] = $ld;
         }
         if ($ld && !empty($log->info)) {
-            $log->info = get_field($ld->mtable, $ld->field, 'id', $log->info);
+            // ugly hack to make sure fullname is shown correctly
+            if (($ld->mtable == 'user') and ($ld->field == 'CONCAT(firstname," ",lastname)')) {
+                $log->info = fullname(get_record($ld->mtable, 'id', $log->info), true);
+            } else {
+                $log->info = get_field($ld->mtable, $ld->field, 'id', $log->info);
+            }
         }
 
         $log->url  = strip_tags(urldecode($log->url));   // Some XSS protection
