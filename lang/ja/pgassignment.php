@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // pgassignment.php - created with Moodle 1.0.9 development (2003032500)
+      // pgassignment.php - created with Moodle 1.0.9 development (2003032601)
 
 
 $string['absent'] = "欠席";
@@ -26,6 +26,7 @@ $string['calculationofthefinalgrade'] = "最終評価の計算";
 $string['checkallocation'] = "Checking allocation of submissions...";
 $string['commentsby'] = "\$a によるコメント";
 $string['completedon'] = "\$a のコメント";
+$string['deadlineforgradingis'] = "評価の期限は \$a です";
 $string['deadlineforpeergradingreached'] = "Deadline for peer grading reached";
 $string['deadlineforsubmissionis'] = "提出期限は \$a です";
 $string['deadlineis'] = "提出日は \$a です";
@@ -56,8 +57,8 @@ $string['gradethiswork'] = "この課題を評価する";
 $string['grading'] = "評価";
 $string['gradingaccepted'] = "Grading accepted after \$a interations";
 $string['gradingacceptedon'] = "Grading accepted on";
-$string['gradingby'] = "Grading by \$a";
-$string['gradingdetails'] = "Grading details";
+$string['gradingby'] = "\$a による評価";
+$string['gradingdetails'] = "評価詳細";
 $string['gradinggiventothissubmission'] = "Grading given to this submission";
 $string['gradingrepliedtoon'] = "Grading replied to on";
 $string['includeself'] = "自分自身を評価者に加える";
@@ -76,9 +77,9 @@ $string['noteonassessmentelements'] = "Note that in a peer graded assignment gra
 	the assignment available to students. This is done by clicking on the peer graded assignment and choosing the<BR>
 	first option in the &quot;Managing a Peer Graded Assignment&quot menu.";
 $string['notgraded'] = "他の学生によるフィードバックのみ、評価無し";
-$string['notyetassessedby'] = "Not yet assessed by \$a";
-$string['notyetgraded'] = "Not yet graded";
-$string['notyetsubmitted'] = "Not yet submitted";
+$string['notyetassessedby'] = "\$a によってまだ評価されていません";
+$string['notyetgraded'] = "未評価";
+$string['notyetsubmitted'] = "未提出";
 $string['numbermarked'] = "Number of assignments graded by the Teacher: \$a";
 $string['numberofallocations'] = "Number of assignments to be assessed by each student: \$a";
 $string['numberofallocationsreduced'] = "Number of assignments to be assessed by each student reduced to: \$a";
@@ -101,17 +102,19 @@ $string['savemyreply'] = "Save my reply";
 $string['scale10'] = "Score out of 10";
 $string['scale100'] = "Score out of 100";
 $string['scale20'] = "Score out of 20";
-$string['scalecorrect'] = "2 point Correct/Incorrect scale";
-$string['scaleexcellent4'] = "4 point Excellent/Very Poor scale";
-$string['scaleexcellent5'] = "5 point Excellent/Very Poor scale";
-$string['scaleexcellent7'] = "7 point Excellent/Very Poor scale";
-$string['scalegood3'] = "3 point Good/Poor scale";
-$string['scalepresent'] = "2 point Present/Absent scale";
-$string['scaleyes'] = "2 point Yes/No scale";
+$string['scalecorrect'] = "2点 正解/不正解 評価";
+$string['scaleexcellent4'] = "4点 優秀/特に悪い 評価";
+$string['scaleexcellent5'] = "5点 優秀/特に悪い 評価";
+$string['scaleexcellent7'] = "7点 優秀/特に悪い 評価";
+$string['scalegood3'] = "3点 良い/悪い 評価";
+$string['scalepresent'] = "2点 出席/欠席 評価";
+$string['scaleyes'] = "2点 Yes/No 評価";
 $string['showfeedback'] = "フィードバックを表示";
 $string['showgrades'] = "常にコメントと評価を表示する";
 $string['showgrading'] = "Show grading";
 $string['showstatus'] = "Show status of the peer grading";
+$string['skipback'] = "\$a 戻る";
+$string['skipforward'] = "\$a 進む";
 $string['specimengradingform'] = "Specimen Grading Form";
 $string['submissiondate'] = "提出期限";
 $string['submissionsalreadyallowed'] = "Submissions already allowed";
