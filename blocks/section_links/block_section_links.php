@@ -28,7 +28,12 @@ class CourseBlock_section_links extends MoodleBlock {
 
         $highlight = 0;
 
-        if($this->content !== NULL) {
+        if ($this->content !== NULL) {
+            return $this->content;
+        }
+
+        if (empty($this->course)) {
+            $this->content = '';
             return $this->content;
         }
 

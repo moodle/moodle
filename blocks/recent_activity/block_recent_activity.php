@@ -10,7 +10,12 @@ class CourseBlock_recent_activity extends MoodleBlock {
 
     function get_content() {
 
-        if($this->content !== NULL) {
+        if ($this->content !== NULL) {
+            return $this->content;
+        }
+
+        if (empty($this->course)) {
+            $this->content = '';
             return $this->content;
         }
 

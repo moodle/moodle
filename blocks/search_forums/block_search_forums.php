@@ -17,6 +17,11 @@ class CourseBlock_search_forums extends MoodleBlock {
             return $this->content;
         }
 
+        if (empty($this->course)) {
+            $this->content = '';
+            return $this->content;
+        }
+
         $this->content = New object;
         $this->content->text = '';
         $this->content->footer = '';

@@ -11,7 +11,11 @@ class CourseBlock_participants extends MoodleBlock {
     function get_content() {
         global $USER, $CFG;
 
-        if($this->content !== NULL) {
+        if ($this->content !== NULL) {
+            return $this->content;
+        }
+        if (empty($this->course)) {
+            $this->content = '';
             return $this->content;
         }
 

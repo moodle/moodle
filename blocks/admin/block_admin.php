@@ -23,10 +23,11 @@ class CourseBlock_admin extends MoodleBlock {
         $this->content->icons = array();
         $this->content->footer = '';
 
-        if($this->course->id == 1) {
+        if (empty($course)) {
+            $this->content = '';
+        } else if ($this->course->category == 0) {
             $this->load_content_for_site();
-        }
-        else {
+        } else {
             $this->load_content_for_course();
         }
 

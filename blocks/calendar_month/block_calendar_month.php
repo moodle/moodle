@@ -27,11 +27,9 @@ class CourseBlock_calendar_month extends MoodleBlock {
         $this->content->text = '';
         $this->content->footer = '';
 
-        if ($this->course === NULL) {
-            // Overrides: use no course at all
+        if (empty($this->course)) { // Overrides: use no course at all
             $courseshown = false;
             $filtercourse = array();
-
         } else {
             $courseshown = $this->course->id;
             $filtercourse = array($courseshown => 1);

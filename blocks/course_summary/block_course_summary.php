@@ -23,6 +23,10 @@ class CourseBlock_course_summary extends MoodleBlock {
             return $this->content;
         }
 
+        if (empty($this->course)) {
+            return '';
+        }
+
         $this->content = New stdClass;
         $this->content->text = format_text($this->course->summary, FORMAT_HTML);
         if (isediting($this->course->id)) {

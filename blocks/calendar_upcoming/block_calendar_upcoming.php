@@ -19,23 +19,26 @@ class CourseBlock_calendar_upcoming extends MoodleBlock {
 
         require_once($CFG->dirroot.'/calendar/lib.php');
 
-        if($this->content !== NULL) {
+        if ($this->content !== NULL) {
             return $this->content;
         }
 
         $this->content = New object;
         $this->content->text = '';
-        $this->content->footer = '<br /><a href="'.$CFG->wwwroot.'/calendar/view.php?view=upcoming&amp;course='.$this->course->id.'">'.get_string('gotocalendar', 'calendar').'</a>...';
-        $this->content->footer .= '<br /><a href="'.$CFG->wwwroot.'/calendar/event.php?action=new&amp;course='.$this->course->id.'">'.get_string('newevent', 'calendar').'</a>...';
 
-        if($this->course === NULL) {
-            // Overrides: use no course at all
+        if (empty($this->course)) {  // Overrides: use no course at all
             $courseshown = false;
             $filtercourse = array();
-        }
-        else {
+            $this->content->footer = '';
+        } else {
             $courseshown = $this->course->id;
             $filtercourse = array($courseshown => 1);
+            $this->content->footer = '<br /><a href="'.$CFG->wwwroot.
+                                     '/calendar/view.php?view=upcoming&amp;course='.$this->course->id.'">'.
+                                      get_string('gotocalendar', 'calendar').'</a>...';
+            $this->content->footer .= '<br /><a href="'.$CFG->wwwroot.
+                                      '/calendar/event.php?action=new&amp;course='.$this->course->id.'">'.
+                                       get_string('newevent', 'calendar').'</a>...';
         }
 
         // We 'll need this later

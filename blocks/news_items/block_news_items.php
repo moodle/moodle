@@ -15,7 +15,12 @@ class CourseBlock_news_items extends MoodleBlock {
     function get_content() {
         global $CFG;
 
-        if($this->content !== NULL) {
+        if ($this->content !== NULL) {
+            return $this->content;
+        }
+
+        if (empty($this->course)) {
+            $this->content = '';
             return $this->content;
         }
 
