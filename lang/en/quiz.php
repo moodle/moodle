@@ -123,6 +123,7 @@ $string['rename'] = "Rename";
 $string['report'] = "Reports";
 $string['reportoverview'] = "Overview";
 $string['reportregrade'] = "Regrade attempts";
+$string['reportsimplestat'] = "Simple statistics";
 $string['review'] = "Review";
 $string['save'] = "Save";
 $string['savegrades'] = "Save grades";
