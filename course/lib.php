@@ -910,8 +910,8 @@ function print_category_info($category, $depth) {
     if ($CFG->frontpage == FRONTPAGECOURSELIST) {
         if ($courses = get_courses($category->id)) {
             foreach ($courses as $course) {
+                echo "<ul style=\"margin-bottom: 0\">";
                 $linkcss = $course->visible ? "" : " class=\"dimmed\" ";
-                echo "<ul>";
                 echo "<a $linkcss href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->fullname</a>";
                 echo "&nbsp;&nbsp;";
                 unset($courses[$key]);
