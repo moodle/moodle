@@ -432,6 +432,14 @@ class quiz_file_format extends quiz_default_format {
 
     }    // end function readquestion($lines)
 
+function repchar( $text ) {
+    // escapes 'reserved' characters # = ~ { )
+    $reserved = array( '#','=','~','{','}' );
+    $escaped = array( '\#','\=','~','\{','\}' );
+
+    return str_replace( $reserved, $escaped, $text ); 
+    }
+
 function writequestion( $question ) {
     // turns question into string
     // question reflects database fields for general question and specific to type
@@ -447,15 +455,15 @@ function writequestion( $question ) {
     case TRUEFALSE:
         if ($question->trueanswer->fraction==1) {
             $answertext = 'TRUE';
-            $wrong_feedback = $question->falseanswer->feedback;
-            $right_feedback = $question->trueanswer->feedback;
+            $wrong_feedback = $this->repchar( $question->falseanswer->feedback );
+            $right_feedback = $this->repchar( $question->trueanswer->feedback );
         }
         else {
             $answertext = 'FALSE';
-            $wrong_feedback = $question->trueanswer->feedback;
-            $right_feedback = $question->falseanswer->feedback;
+            $wrong_feedback = $this->repchar( $question->trueanswer->feedback );
+            $right_feedback = $this->repchar( $question->falseanswer->feedback );
         }
-        $expout .= "::".$question->name."::".$question->questiontext."{".$answertext;
+        $expout .= "::".$question->name."::".$this->repchar( $question->questiontext )."{".$this->repchar( $answertext );
         if ($wrong_feedback!="") {
             $expout .= "#".$wrong_feedback;
         }
@@ -465,7 +473,7 @@ function writequestion( $question ) {
         $expout .= "}\n";
         break;
     case MULTICHOICE:
-        $expout .= "::".$question->name."::".$question->questiontext."{\n";
+        $expout .= "::".$question->name."::".$this->repchar( $question->questiontext )."{\n";
         foreach($question->answers as $answer) {
             if ($answer->fraction==1) {
                 $answertext = '=';
@@ -477,31 +485,31 @@ function writequestion( $question ) {
               $export_weight = $answer->fraction*100;
               $answertext = "~%$export_weight%";
             }
-            $expout .= "\t".$answertext.$answer->answer;
+            $expout .= "\t".$answertext.$this->repchar( $answer->answer );
             if ($answer->feedback!="") {
-                $expout .= "#".$answer->feedback;
+                $expout .= "#".$this->$this->repchar( $answer->feedback );
             }
             $expout .= "\n";
         }
         $expout .= "}\n";
         break;
     case SHORTANSWER:
-        $expout .= "::".$question->name."::".$question->questiontext."{\n";
+        $expout .= "::".$question->name."::".$this->repchar( $question->questiontext )."{\n";
         foreach($question->answers as $answer) {
             $weight = 100 * $answer->fraction;
-            $expout .= "\t=%".$weight."%".$answer->answer."#".$answer->feedback."\n";
+            $expout .= "\t=%".$weight."%".$this->repchar( $answer->answer )."#".$this->repchar( $answer->feedback )."\n";
         }
         $expout .= "}\n";
         break;
     case NUMERICAL:
-        $expout .= "::".$question->name."::".$question->questiontext."{\n";
-        $expout .= "\t#".$question->min."..".$question->max."#".$question->answer->feedback."\n";
+        $expout .= "::".$question->name."::".$this->repchar( $question->questiontext )."{\n";
+        $expout .= "\t#".$question->min."..".$question->max."#".$this->repchar( $question->answer->feedback )."\n";
         $expout .= "}\n";
         break;
     case MATCH:
-        $expout .= "::".$question->name."::".$question->questiontext."{\n";
+        $expout .= "::".$question->name."::".$this->repchar( $question->questiontext )."{\n";
         foreach($question->subquestions as $subquestion) {
-            $expout .= "\t=".$subquestion->questiontext." -> ".$subquestion->answertext."\n";
+            $expout .= "\t=".$this->repchar( $subquestion->questiontext )." -> ".$this->repchar( $subquestion->answertext )."\n";
         }
         $expout .= "}\n";
         break;
