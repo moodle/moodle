@@ -45,33 +45,11 @@
 
 
 /// Check to see if groups are being used in this journal
-/// and if so, set $currentgroup to reflect the current group
-
-    $groupmode = groupmode($course, $cm);   // Groups are being used
-    $currentgroup = get_and_set_current_group($course, $groupmode, $_GET['group']);
-
-    if (!isteacheredit($course->id) and $groupmode and !$currentgroup) {
-        print_heading("Sorry, but you can't see this group");
-        print_footer();
-        exit;
+    if ($groupmode = groupmode($course, $cm)) {   // Groups are being used
+        $currentgroup = setup_and_print_groups($course, $groupmode, "report.php?id=$cm->id");
+    } else {
+        $currentgroup = false;
     }
-
-    if ($groupmode == VISIBLEGROUPS or ($groupmode and isteacheredit($course->id))) {
-        if ($groups = get_records_menu("groups", "courseid", $course->id, "name ASC", "id,name")) {
-            echo '<table align="center"><tr><td>';
-            if ($groupmode == VISIBLEGROUPS) {
-                print_string('groupsvisible');
-            } else {
-                print_string('groupsseparate');
-            }
-            echo ':';
-            echo '</td><td nowrap="nowrap" align="left" width="50%">';
-            popup_form("report.php?id=$cm->id&sort=$sort&dir=$dir&group=", 
-                       $groups, 'selectgroup', $currentgroup, "", "", "", false, "self");
-            echo '</tr></table>';
-        }
-    }
-
 
 /// Process incoming data if there is any
     if ($data = data_submitted()) {
