@@ -7,11 +7,11 @@
 
     optional_variable($cat, 1);
 
-    print_simple_box_start("CENTER", "80%");
+    echo "<TABLE WIDTH=80% ALIGN=CENTER><TR><TD>";
 
     print_all_courses($cat);
 
-    print_simple_box_end();
+    echo "</TD></TR></TABLE>";
 
     print_footer();
 
