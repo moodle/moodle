@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.1 development (2003081001)
+      // forum.php - created with Moodle 1.1 development (2003081600)
 
 
 $string['addanewdiscussion'] = "¥Ç¥£¥¹¥«¥Ã¥·¥ç¥ó¥È¥Ô¥Ã¥¯¤òÄÉ²Ã";
@@ -85,6 +85,10 @@ $string['posts'] = "Åê¹Æ";
 $string['postupdated'] = "Åê¹Æ¤¬¹¹¿·¤µ¤ì¤Þ¤·¤¿";
 $string['processingpost'] = "Åê¹Æ \$a ¤ò½èÍýÃæ";
 $string['rate'] = "É¾²Á";
+$string['rating'] = "É¾²Á";
+$string['ratingeveryone'] = "Ã¯¤Ç¤âÅê¹Æ¤òÉ¾²Á¤Ç¤­¤ë";
+$string['ratingno'] = "É¾²ÁÌµ¤·";
+$string['ratingonlyteachers'] = "\$a ¤Î¤ß¤¬Åê¹Æ¤òÉ¾²Á½ÐÍè¤ë";
 $string['ratings'] = "É¾²Á";
 $string['ratingssaved'] = "É¾²Á¤¬ÊÝÂ¸¤µ¤ì¤Þ¤·¤¿";
 $string['re'] = "Re:";

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.1 development (2003081001)
+      // quiz.php - created with Moodle 1.1 development (2003081600)
 
 
 $string['acceptederror'] = "エラー範囲";
@@ -40,6 +40,9 @@ $string['choice'] = "選択";
 $string['choices'] = "利用可能な選択";
 $string['correctanswer'] = "正解";
 $string['correctanswers'] = "正解";
+$string['countdown'] = "カウントダウン";
+$string['countdownfinished'] = "クイズは終了します、回答を送信してください。";
+$string['countdowntenminutes'] = "クイズは10分後に終了します。";
 $string['createmultiple'] = "マルチ質問を作成する";
 $string['createnewquestion'] = "新しい質問を作成する";
 $string['custom'] = "カスタムフォーマット";
@@ -120,11 +123,13 @@ $string['randomsamatchcreate'] = "ランダム記述マッチング解答方式を作成する";
 $string['randomsamatchintro'] = "各質問のマッチング解答をメニューより選択してください。";
 $string['randomsamatchnumber'] = "選択質問数";
 $string['readytosend'] = "採点のために全てのクイズを送信します。本当に送信してもよろしいですか?";
+$string['recentlyaddedquestion'] = "最新の質問!";
 $string['regrade'] = "全解答を再評価する";
 $string['regradecomplete'] = "全解答が再評価されました";
 $string['regradecount'] = "\$a->attempt 中 \$a->changed の評点が変更されました ";
 $string['rename'] = "変名";
 $string['report'] = "レポート";
+$string['reportoverview'] = "概観";
 $string['review'] = "レビュー";
 $string['save'] = "保存";
 $string['savegrades'] = "評点を保存する";
