@@ -18,7 +18,7 @@
 
 <TABLE WIDTH="100%" BORDER="0" CELLSPACING="5" CELLPADDING="5">
   <TR>
-    <TD WIDTH="10%" VALIGN="TOP" NOWRAP>
+    <TD VALIGN="TOP" NOWRAP>
       <? $readings = list_all_readings();
       
          if ($site->format > 0 or $readings or $USER->editing) {
@@ -52,7 +52,7 @@
 
     </TD>
 
-    <TD WIDTH="55%" VALIGN="TOP">
+    <TD WIDTH="70%" VALIGN="TOP">
       <? if ($site->format == 0 ) {
              print_simple_box("Available Courses", $align="CENTER", $width="100%", $color="$THEME->cellheading");
              echo "<IMG HEIGHT=8 SRC=\"pix/spacer.gif\" ALT=\"\"><BR>";
