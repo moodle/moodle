@@ -161,9 +161,7 @@
 
     $strname    = get_string('name');
     $strquizzes = get_string('modulenameplural', 'quiz');
-    $strediting = get_string(isset($modform->instance) ? "editingquiz"
-                                                       : "editquestions",
-                             "quiz");
+    $strediting = get_string(isset($modform->instance) ? "editingquiz" : "editquestions", "quiz");
     $strheading = empty($modform->name) ? $strediting : $modform->name;
 
     print_header("$course->shortname: $strediting", "$course->shortname: $strheading",
@@ -185,6 +183,17 @@
         ?>
         <center>
         <p>&nbsp;</p>
+        <?php
+
+        if ($attemptcount = count_records_select("quiz_attempts", "quiz = '$modform->instance' AND timefinish > 0"))  {
+            $strviewallanswers  = get_string("viewallanswers","quiz",$attemptcount);
+            $strattemptsexist  = get_string("attemptsexist","quiz");
+            $usercount = count_records("quiz_grades", "quiz", "$modform->instance");
+            $strusers  = get_string("users");
+            notify("$strattemptsexist<br /><a href=\"report.php?id=$modform->instance\">$strviewallanswers ($usercount $strusers)</a>");
+        }
+
+        ?>
         <form  name="theform" method="post" action=<?php echo $modform->destination ?>>
         <input type="hidden" name="course"  value="<?php  p($modform->course) ?>">
         <input type="submit" value="<?php  print_string("savequiz", "quiz") ?>">
@@ -192,6 +201,8 @@
         </form>
         </center>
         <?php
+
+
         print_simple_box_end();
         echo '</td><td valign="top" width="50%">';
     }

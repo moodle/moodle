@@ -24,6 +24,7 @@ $string['attemptlast'] = 'Last attempt';
 $string['attemptquiznow'] = 'Attempt quiz now';
 $string['attempts'] = 'Attempts';
 $string['attemptsallowed'] = 'Attempts allowed';
+$string['attemptsexist'] = 'This quiz has already been attempted';
 $string['attemptincomplete'] = 'That attempt (by $a) is not yet completed.';
 $string['attemptsunlimited'] = 'Unlimited attempts';
 $string['backtoquiz'] = 'Back to quiz editing';
