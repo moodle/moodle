@@ -1,109 +1,110 @@
-<table width="90%" border="0" cellspacing="10" cellpadding="5" align="center">
+<table width="90%" border="0" cellspacing="10" cellpadding="5" align="center" style="font-size: small">
   <tr>
-    <?php if ($show_instructions) { ?>
-        <td width="50%" bgcolor="<?php p($THEME->cellheading2) ?>" class="headingblock">
-          <p align="center"><b><font size="3"><?php  print_string("returningtosite") ?></font></b></p>
-        </td>
-        <td width="50%" bgcolor="<?php p($THEME->cellheading2) ?>" class="headingblock">
-          <p align="center"><b><font size="3"><?php  print_string("firsttime") ?></font></b></p>
-        </td>
-    <?php } ?>
+<?php if ($show_instructions) { ?>
+    <td width="50%" bgcolor="<?php p($THEME->cellheading2) ?>" class="headingblock">
+      <p align="center"><b><font size="3"><?php  print_string("returningtosite") ?></font></b></p>
+    </td>
+    <td width="50%" bgcolor="<?php p($THEME->cellheading2) ?>" class="headingblock">
+      <p align="center"><b><font size="3"><?php  print_string("firsttime") ?></font></b></p>
+    </td>
+<?php } ?>
   </tr>
   <tr>
-    <td width="50%" valign="top" bgcolor="<?php p($THEME->cellcontent2) ?>" class="generalbox"> <font size="2"> 
-        <p align="center"><?php print_string("loginusing") ?>:<br />
-          (<?php print_string("cookiesenabled"); helpbutton("cookies", get_string("cookiesenabled"))?>)<br />
-	  <?php formerr($errormsg) ?>
-      </p></font>
-      <form action="index.php" method="post" name="form" id="form">
-        <table border="0" align="center">
+    <td width="50%" align="center" valign="top" bgcolor="<?php p($THEME->cellcontent2) ?>" class="generalbox">
+      <p><?php print_string("loginusing") ?>:<br />
+        (<?php print_string("cookiesenabled");?>) 
+         <?php helpbutton("cookies", get_string("cookiesenabled"))?><br /><?php formerr($errormsg) ?>
+      </p>
+      <form action="index.php" method="post" name="login" id="login">
+        <table border="0" align="center" style="font-size: small">
         <tr>
-            <td width="80%"><font size="2">
-              <table align="center">
-                <tr> 
-                  <td align="right"><p><font size="2"><?php print_string("username") ?>:</font></p></td>
-                  <td><input type="text" name="username" size="15" value="<?php p($frm->username) ?>" /> 
-                  </td>
-                </tr>
-                <tr> 
-                  <td height="24" align="right"><p><font size="2"><?php print_string("password") ?>:</font></p></td>
-                  <td><input type="password" name="password" size="15" value="<?php p($frm->password) ?>" /> 
-                  </td>
-                </tr>
-              </table>
-              </font></td>
-            <td width="20%"><font size="2">
-                <input type="submit" name="Submit" value="<?php print_string("login") ?>" />
-              </font></td>
+          <td width="80%">
+            <table align="center" style="font-size: small">
+              <tr> 
+                <td align="right">
+                  <p><?php print_string("username") ?>:</p>
+                </td>
+                <td>
+                  <input type="text" name="username" size="15" value="<?php p($frm->username) ?>" /> 
+                </td>
+              </tr>
+              <tr> 
+                <td align="right">
+                  <p><?php print_string("password") ?>:</p>
+                </td>
+                <td>
+                  <input type="password" name="password" size="15" value="<?php p($frm->password) ?>" /> 
+                </td>
+              </tr>
+            </table>
+          </td>
+          <td width="20%">
+            <input type="submit" value="<?php print_string("login") ?>" />
+          </td>
         </tr>
-      </table>
-	  </form>
-      <font size="2"> 
-      <blockquote>
-    <?php if ($CFG->guestloginbutton) {  ?>
-          <hr />
-            <p align="center"><?php print_string("someallowguest") ?>:</p>
-            <center>
-            <form action="index.php" method="post" name="form2" id="form2">
-              <input type="hidden" name="username" value="guest" />
-              <input type="hidden" name="password" value="guest" />
-              <input type="submit" name="Submit"   value="<?php print_string("loginguest") ?>" />
-            </form>
-            </center>
-    <?php } ?>
-    <?php if ($CFG->changepassword or $CFG->auth == "email" or $CFG->auth == "none" or $CFG->auth == "manual") {
-          if ($CFG->auth == "email" or $CFG->auth == "none" or $CFG->auth == "manual") {
+        </table>
+      </form>
+
+<?php if ($CFG->guestloginbutton) {  ?>
+      <hr width="80%" />
+      <p><?php print_string("someallowguest") ?>:</p>
+      <p>
+        <form action="index.php" method="post" name="guestlogin">
+          <input type="hidden" name="username" value="guest" />
+          <input type="hidden" name="password" value="guest" />
+          <input type="submit" value="<?php print_string("loginguest") ?>" />
+        </form>
+      </p>
+<?php } ?>
+
+<?php if ($CFG->changepassword or is_internal_auth() ) {
+          if (is_internal_auth()) {
               $changepassword = "forgot_password.php";
               $changebuttonname = get_string("senddetails");
           } else {
               $changepassword = $CFG->changepassword;
               $changebuttonname = get_string("passwordrecovery");
           }
-    
-    ?>
-          <hr />
-            <p align="center"><?php print_string("forgotten") ?></p> 
-            <center>
-            <form action="<?php p($changepassword) ?>" method="get" name="form3" id="form3">
-              <input type="submit" value="<?php p($changebuttonname) ?>" />
-            </form>
-            </center>
-    <?php } ?>
-        </blockquote>
-      </font> </td>
-    <?php if ($show_instructions) { ?>
-        <td width="50%" valign="top" bgcolor="<?php p($THEME->cellcontent2) ?>" class="generalbox">
-          <font size="2">
-          <?php switch ($CFG->auth) {
-               case "email":             ?>
-                 <p><?php print_string("loginsteps", "", "signup.php") ?></p>
-                 </font>
-                 <center>
-                 <form action="signup.php" method="get" name="form4" id="form4">
-                 
-            <input type="submit" value="<?php print_string("startsignup") ?>" />
-                 </form>
-                 </center>
-          <?php     break;
+?>
+      <hr width="80%" />
+      <p><?php print_string("forgotten") ?></p> 
+      <p>
+        <form action="<?php p($changepassword) ?>" method="get" name="changepassword">
+          <input type="submit" value="<?php p($changebuttonname) ?>" />
+        </form>
+      </p>
+<?php } ?>
+
+    </td>
+
+<?php if ($show_instructions) { ?>
+    <td width="50%" valign="top" bgcolor="<?php p($THEME->cellcontent2) ?>" class="generalbox">
+<?php     switch ($CFG->auth) {
+              case "email":
+                 echo "<p>".get_string("loginsteps", "", "signup.php")."</p>";
+?>
+                 <div align="center">
+                   <form action="signup.php" method="get" name="signup">
+                   <input type="submit" value="<?php print_string("startsignup") ?>" />
+                   </form>
+                 </div>
+<?php            break;
                case "none":
-                 echo "<P>".get_string("loginstepsnone")."</P>";
+                 echo "<p>".get_string("loginstepsnone")."</p>";
                  break;
                default:
-                 echo "<BLOCKQUOTE>";
                  echo format_text($CFG->auth_instructions);
-                 echo "</blockquote>";
                  require_once("../auth/$CFG->auth/lib.php");
-                 if (isset($CFG->auth_user_create) and $CFG->auth_user_create==1 and function_exists('auth_user_create') ){?>
-				    <form action="signup.php" method="get" name="form4" id="form4">
-                    
-          <input type="submit" value="<?php print_string("startsignup") ?>" />
+                 if (!empty($CFG->auth_user_create) and function_exists('auth_user_create') ){
+?>
+                 <div align="center">
+				    <form action="signup.php" method="get" name="signup">
+                    <input type="submit" value="<?php print_string("startsignup") ?>" />
                     </form>
-                    </td></tr>
-                 <?php
-				 }
-             }
-          ?>
-    
-          
-    <?php  } ?>
+                 </div>
+<?php            }
+          }
+?>
+    </td></tr>
+<?php } ?>
 </table>
