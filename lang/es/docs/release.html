@@ -20,7 +20,95 @@
 <body>
 <h1>Notas sobre versiones</h1>
 
-<h3>Moodle 1.4.3 (21 Diciembre de 2004)</h3>
+<h3>Moodle 1.4.4 (7 de Marzo de 2005)</h3>
+
+<p>(Dado que esta versi&oacute;n incluye importantes cambios relativos a la seguridad, recomendamos que los sitios que est&eacute;n utilizando versiones anteriores de Moodle sean actualizados lo m&aacute;s pronto posible)</p>
+
+
+  <dl>
+    <dt>Algunos problemas de seguridad solucionados</dt>
+    <dd>
+      <ul>
+        <li>Inclu&iacute;das potentes funciones para la validaci&oacute;n de URLs.</li>
+	<li>Medidas preventivas contra la sobreescritura de variables de configuraci&oacute;n.</li>
+	<li>Mejor validaci&oacute;n de las entradas en los Cuestionarios, el editor HTML y la edici&oacute;n de cursos.</li>
+	<li>Mayor control sobre los idiomas de los usuarios.</li>
+	<li>Mayor seguridad en la limpieza de las entradas en formato HTML.</li>
+      </ul>
+    </dd>
+
+    <dt>Unas pocas cosas nuevas</dt>
+    <dd>
+      <ul>
+        <li>Nuevo filtro de contenidos MP3 con un reproductor basado en Flash.</li>
+	<li>Mejor visualizaci&oacute;n de las opciones del m&oacute;dulo Consulta.</li>
+	<li>Mejoras en el manejo de tablas en el editor HTML.</li>
+	<li>La configuraci&oacute;n de variables $CFG  en config.php ahora tiene prioridad sobre los ajustes almacenados en la base de datos.</li>
+        <li>Activado el sistema de &quot;recolecci&oacute;n de basura&quot; en los sistemas Debian, con opci&oacute;n para desactivarlo. Soluciona algunos problemas de sesiones.</li>
+      </ul>
+    </dd>
+	
+   <dt>Mejoras de rendimiento</dt>
+    <dd>
+      <ul>
+        <li>Importantes mejoras de velocidad en el c&oacute;digo de los foros.</li>
+        <li>Varias optimizaciones realizadas eliminando accesos y ordenaciones innecesarias en la base de datos. </li>
+	<li>Gran mejora en el uso del bloqueo de sesiones. Descargar archivos grandes o visualizar la actividad &quot;en directo&quot; ya no ralentiza la navegaci&oacute;n en otras ventanas.</li>
+      </ul>
+    </dd>
+
+    <dt>Y problemas solucionados</dt>
+    <dd>
+      <ul>
+	<li>Instalador: Muchas mejoras incorporadas desde HEAD (incluyendo #2625) .</li>
+	<li>Instalador: Ahora se comprueba el estado de  allow_url_fopen() antes de intentar validar URLs propias.</li>
+
+        <li>Solucionados algunos problemas en las b&uacute;squedas de los foros.</li>
+	<li>Solucionados algunos problemas de ordenaci&oacute;n en los foros  (#2613).</li>
+
+        <li>Solucionados problemas en la b&uacute;squeda de usuarios con espacios en el nombre.</li>
+        <li>Arregladas algunas llamadas existentes en el c&oacute;digo al directorio  &quot;/admin&quot;.</li>
+	<li>Solucionados algunos bugs relacionados con los grupos  (#2133, #2550, #2363)</li>
+	<li>Corregido el env&iacute;o de los res&uacute;menes de los foros en formato HTML a usuarios que quieren recibir el correo en formato texto plano.</li>
+
+	<li>M&oacute;dulo SCORM - solucionado problema con la barra de navegaci&oacute;n.</li>
+
+        <li>Chat: Incrementado el tama&ntilde;o del buffer de entrada para prevenir p&aacute;ginas vac&iacute;as y mensajes repetidos.</li>
+	<li>Archivos: Inclu&iacute;do un icono para la &quot;carpeta superior&quot;, (#2491).</li>
+
+	<li>Soporte Postgres: Solucionados problemas de consistencia en la tabla de registros.</li>
+
+	<li>Autenticaci&oacute;n: Mejor limpieza y truncamiento de los datos.</li>
+	<li>Autenticaci&oacute;n: Solucionado problema con la autenticaci&oacute;n externa &mdash; accediendo como invitado, la autenticaci&oacute;n externa fallaba si era el primer acceso de la cuenta.</li>
+	<li>Autenticaci&oacute;n LDAP: Solucionado un problema introducido en 1.4.3 que produc&iacute;a que algunos caracteres (&quot;;&quot;) en algunos campos de la configuraci&oacute;n impidiera el correcto funcionamiento de la autenticaci&oacute;n. </li>
+        <li>Autenticaci&oacute;n Base Datos: Ahora recupera la informaci&oacute;n del usuario correctamente (#2319).</li>
+
+        <li>M&oacute;dulo de pago PayPal: Ahora el texto enviado a PayPal es &quot;limpiado&quot; para evitar algunos diacr&iacute;ticos (Espa&ntilde;ol, por ahora) que interrump&iacute;an el el proceso de matriculaci&oacute;n. &Uacute;nicamente los diacr&iacute;ticos Alemanes y Franceses son soportados oficialmente por PayPal. Esta funcionalidad puede ser facilmente expandida a otros caracteres.</li>
+
+	<li>Copias de seguridad/restauraci&oacute;n: Si el usuario no es un administrador y el curso restaurado no tiene profesores, a&ntilde;adir al usuario como profesor (#2381).</li>
+	<li>Copias de seguridad/restauraci&oacute;n: Solucionados problemas con cursos con ap&oacute;strofes en el nombre.</li>
+	<li>Copias de seguridad/restauraci&oacute;n: Ahora los miembros de los grupos son inclu&iacute;dos &uacute;nicamente si se ha seleccionado incluir usuarios (#2486).</li>
+	<li>Copias de seguridad/restauraci&oacute;n: Varias mejoras menores.</li>
+
+	<li>Glosario: Ahora las calificaciones de 0 son soportadas (#2582) y el funcionamiento bajo PHP5 ha sido mejorado (#2581).</li>
+	<li>Glosario: Mejoras en la importaci&oacute;n de conceptos (#2310).</li>
+
+	<li>Calendario: Mejora en la detecci&oacute;n y manejo de informaci&oacute;n incorrecta.</li>
+	<li>Calendario: Mejoras en el HTML (#2350).</li>
+
+	<li>La ordenaci&oacute;n de cursos era defectuosa en la versi&oacute;n 1.4.3 y, en algunas ocasiones, pod&iacute;a impedir la creaci&oacute;n de nuevos cursos &mdash; todos los problemas conocidos relacionados con esto est&aacute;n ahora solucionados. </li>
+
+	<li>Wiki: Varios problemas solucionados.</li>
+	<li>La p&aacute;gina de ver registros de actividad &quot;en directo&quot; ahora tiene el pie de p&aacute;gina est&aacute;ndar.</li>
+
+	<li>Y otras limpiezas y mejoras del c&oacute;digo aqu&iacute; y all&aacute;...</li>
+      </ul>
+    </dd>
+  </dl>
+
+<p>&nbsp;</p>
+
+<h3>Moodle 1.4.3 (21 de Diciembre de 2004)</h3>
 
 <p>(Dado que esta versi&oacute;n incluye importantes cambios relativos a la seguridad,
   recomendamos que los sitios que est&eacute;n utilizando versiones anteriores
@@ -289,7 +377,7 @@ de Moodle sean actualizados lo m&aacute;s pronto posible)</p>
           no creaci&oacute;n de nuevas cuentas.</li>
       </ul>
     </dd>
-  </dl>
+</dl>
 
   <br />
 
@@ -527,7 +615,7 @@ de Moodle sean actualizados lo m&aacute;s pronto posible)</p>
           forma opcional.</li>
       </ul>
     </dd>
-    </dl>
+</dl>
     <br />
     <div align="center" class="style1"><font size="+1"><strong>Por &uacute;ltimo,
           no olvides examinar alguno de los <a href="http://moodle.org/download/modules/">muchos
