@@ -132,7 +132,9 @@ $string['courseformats'] = "Course formats";
 $string['courserestore'] = "Course Restore";
 $string['courses'] = "Courses";
 $string['courseupdates'] = "Course updates";
+$string['create'] = "Create";
 $string['createaccount'] = "Create my new account";
+$string['createfolder'] = "Create a folder in \$a";
 $string['createuserandpass'] = "Create a new username and password to log in with";
 $string['createziparchive'] = "Create zip archive";
 $string['creatingcategoriesandquestions'] = "Creating categories and questions";
@@ -588,6 +590,7 @@ $string['removeadmin'] = "Remove admin";
 $string['removecreator'] = "Remove course creator";
 $string['removeteacher'] = "Remove teacher";
 $string['rename'] = "Rename";
+$string['renamefileto'] = "Rename <b>\$a</b> to";
 $string['required'] = "Required";
 $string['resources'] = "Resources";
 $string['restore'] = "Restore";
@@ -721,6 +724,7 @@ One of the first things you should do is edit your profile page
 within the course so that we can learn more about you:
 
   \$a->profileurl";
+$string['whattocallzip'] = "What do you want to call the zip file?";
 $string['withchosenfiles'] = "With chosen files";
 $string['withoutuserdata'] = "without user data";
 $string['withuserdata'] = "with user data";
@@ -741,6 +745,7 @@ $string['writingmoduleinfo'] = "Writing modules info";
 $string['writinguserinfo'] = "Writing users info";
 $string['wrongpassword'] = "Incorrect password for this username";
 $string['yes'] = "Yes";
+$string['youareabouttocreatezip'] = "You are going to restore from:";
 $string['youaregoingtorestorefrom'] = "You are going to restore from:";
 $string['yourlastlogin'] = "Your last login was";
 $string['yourself'] = "yourself";

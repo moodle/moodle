@@ -223,8 +223,11 @@
                 displaydir($wdir);
                     
             } else {
+                $strrename = get_string("rename");
+                $strcancel = get_string("cancel");
+                $strrenamefileto = get_string("renamefileto", "moodle", $file);
                 html_header($course, $wdir, "form.name");
-                echo "<P>Rename <B>$file</B> to:";
+                echo "<P>$strrenamefileto:";
                 echo "<TABLE><TR><TD>";
                 echo "<FORM ACTION=index.php METHOD=post NAME=form>";
                 echo " <INPUT TYPE=hidden NAME=id VALUE=$id>";
@@ -232,14 +235,14 @@
                 echo " <INPUT TYPE=hidden NAME=action VALUE=rename>";
                 echo " <INPUT TYPE=hidden NAME=oldname VALUE=\"$file\">";
                 echo " <INPUT TYPE=text NAME=name SIZE=35 VALUE=\"$file\">";
-                echo " <INPUT TYPE=submit VALUE=\"Rename\">";
+                echo " <INPUT TYPE=submit VALUE=\"$strrename\">";
                 echo "</FORM>";
                 echo "</TD><TD>";
                 echo "<FORM ACTION=index.php METHOD=get>";
                 echo " <INPUT TYPE=hidden NAME=id VALUE=$id>";
                 echo " <INPUT TYPE=hidden NAME=wdir VALUE=$wdir>";
                 echo " <INPUT TYPE=hidden NAME=action VALUE=cancel>";
-                echo " <INPUT TYPE=submit VALUE=\"Cancel\">";
+                echo " <INPUT TYPE=submit VALUE=\"$strcancel\">";
                 echo "</FORM>";
                 echo "</TD></TR></TABLE>";
             }
@@ -258,22 +261,25 @@
                 displaydir($wdir);
                     
             } else {
+                $strcreate = get_string("create");
+                $strcancel = get_string("cancel");
+                $strcreatefolder = get_string("createfolder", "moodle", $wdir);
                 html_header($course, $wdir, "form.name");
-                echo "<P>Create folder in $wdir:";
+                echo "<P>$strcreatefolder:";
                 echo "<TABLE><TR><TD>";
                 echo "<FORM ACTION=index.php METHOD=post NAME=form>";
                 echo " <INPUT TYPE=hidden NAME=id VALUE=$id>";
                 echo " <INPUT TYPE=hidden NAME=wdir VALUE=$wdir>";
                 echo " <INPUT TYPE=hidden NAME=action VALUE=mkdir>";
                 echo " <INPUT TYPE=text NAME=name SIZE=35>";
-                echo " <INPUT TYPE=submit VALUE=\"Create\">";
+                echo " <INPUT TYPE=submit VALUE=\"$strcreate\">";
                 echo "</FORM>";
                 echo "</TD><TD>";
                 echo "<FORM ACTION=index.php METHOD=get>";
                 echo " <INPUT TYPE=hidden NAME=id VALUE=$id>";
                 echo " <INPUT TYPE=hidden NAME=wdir VALUE=$wdir>";
                 echo " <INPUT TYPE=hidden NAME=action VALUE=cancel>";
-                echo " <INPUT TYPE=submit VALUE=\"Cancel\">";
+                echo " <INPUT TYPE=submit VALUE=\"$strcancel\">";
                 echo "</FORM>";
                 echo "</TD></TR></TABLE>";
             }
@@ -363,27 +369,28 @@
                     
             } else {
                 html_header($course, $wdir, "form.name");
+
                 if (setfilelist($_POST)) {
-                    echo "<P ALIGN=CENTER>You are about create a zip file containing:</P>";
+                    echo "<P ALIGN=CENTER>".get_string("youareabouttocreatezip").":</P>";
                     print_simple_box_start("center");
                     printfilelist($USER->filelist);
                     print_simple_box_end();
                     echo "<BR>";
-                    echo "<P ALIGN=CENTER>What do you want to call the zip file?";
+                    echo "<P ALIGN=CENTER>".get_string("whattocallzip");
                     echo "<TABLE><TR><TD>";
                     echo "<FORM ACTION=index.php METHOD=post NAME=form>";
                     echo " <INPUT TYPE=hidden NAME=id VALUE=$id>";
                     echo " <INPUT TYPE=hidden NAME=wdir VALUE=\"$wdir\">";
                     echo " <INPUT TYPE=hidden NAME=action VALUE=zip>";
                     echo " <INPUT TYPE=text NAME=name SIZE=35 VALUE=\"new.zip\">";
-                    echo " <INPUT TYPE=submit VALUE=\"Create zip file\">";
+                    echo " <INPUT TYPE=submit VALUE=\"".get_string("createziparchive")."\">";
                     echo "</FORM>";
                     echo "</TD><TD>";
                     echo "<FORM ACTION=index.php METHOD=get>";
                     echo " <INPUT TYPE=hidden NAME=id VALUE=$id>";
                     echo " <INPUT TYPE=hidden NAME=wdir VALUE=$wdir>";
                     echo " <INPUT TYPE=hidden NAME=action VALUE=cancel>";
-                    echo " <INPUT TYPE=submit VALUE=\"Cancel\">";
+                    echo " <INPUT TYPE=submit VALUE=\"".get_string("cancel")."\">";
                     echo "</FORM>";
                     echo "</TD></TR></TABLE>";
                 } else {
