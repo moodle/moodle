@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.0.9 development (2003011600)
+      // assignment.php - created with Moodle 1.0.9 development (2003021600)
 
 
 $string['allowresubmit'] = "Salli uudelleenlähetys";
@@ -13,14 +13,14 @@ $string['failedupdatefeedback'] = "Palautteen tallentaminen epäonnistui käyttäjä
 $string['feedback'] = "Palaute";
 $string['feedbackupdated'] = "Palaute päivitetty  \$a oppilaalle";
 $string['late'] = "\$a myöhässä";
-$string['maximumgrade'] = "Maksimi arvo";
+$string['maximumgrade'] = "Arviointi pisteet";
 $string['maximumsize'] = "Maksimi koko";
 $string['modulename'] = "Tehtävä";
 $string['modulenameplural'] = "Tehtävät";
-$string['newsubmissions'] = "Tehtäviä palautettu";
+$string['newsubmissions'] = "Palautetut tehtävät";
 $string['notsubmittedyet'] = "Ei vielä palautettu";
 $string['overwritewarning'] = "Varoitus: uudelleen lähettäminen korvaa aiemman vastauksesi";
-$string['saveallfeedback'] = "Talenna palaute";
+$string['saveallfeedback'] = "Tallenna palaute";
 $string['submissionfeedback'] = "Palaute tehtävästä";
 $string['submissions'] = "Lähetetyt";
 $string['submitassignment'] = "Palauta tehtäväsi käyttäen tätä lomaketta";
@@ -30,12 +30,12 @@ $string['typeuploadsingle'] = "Lähetä yksi tiedosto";
 $string['uploadbadname'] = "Tiedostonimessä on tuntemattomia merkkejä. Tiedostoa ei voida lähettää.";
 $string['uploadedfiles'] = "lähetetyt tiedostot";
 $string['uploaderror'] = "Tiedoston tallentamisessa palvelimelle tapahtui virhe.";
-$string['uploadfailnoupdate'] = "Tiedosto saapui palvelimelle, mutta vastuksesi talletamisessa tapahtui virhe.";
+$string['uploadfailnoupdate'] = "Tiedosto saapui palvelimelle, mutta vastauksesi talletamisessa tapahtui virhe.";
 $string['uploadfiletoobig'] = "Pahus, tiedosto jota yritit lähettää on liian suuri.  (Kokorajoitus on \$a tavua);";
 $string['uploadnofilefound'] = "Tiedostoa ei löydy, oletko varma että valitsit lähetettävän tiedoston.";
 $string['uploadnotregistered'] = "'\$a' vastaanotettiin, mutta lähetystäsi ei rekisteröity. ";
 $string['uploadsuccess'] = "'\$a' on vastaanotettu palvelimelle.";
-$string['viewfeedback'] = "Katso tehtävien arvosteluja ja palautteita.";
+$string['viewfeedback'] = "Katso tehtävien arviointeja ja palautteita.";
 $string['viewsubmissions'] = "Katso \$a palautettuja tehtäviä";
 $string['yoursubmission'] = "Vastauksesi";
 

@@ -1,18 +1,18 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.0.9 development (2003011300)
+      // forum.php - created with Moodle 1.0.9 development (2003021600)
 
 
 $string['addanewdiscussion'] = "Lisää uusi keskustelu";
 $string['allowchoice'] = "Anna kaikkien valita";
 $string['allowdiscussions'] = "Voiko \$a avata uusia keskusteluja?";
-$string['allowratings'] = "Voidaanko viestejä luokitella?";
+$string['allowratings'] = "Voidaanko viestejä arvioida?";
 $string['allowsdiscussions'] = "Tämä foorumi antaa jokaisen aloittaa yhden uuden keskustelun.";
 $string['anyfile'] = "Mikä tahansa tiedosto";
 $string['attachment'] = "Liite";
-$string['bynameondate'] = " \$a->name - \$a->date";
+$string['bynameondate'] = "\$a->name - \$a->date";
 $string['couldnotadd'] = "Viestiäsi ei voida lisätä tuntemattoman virheen takia.";
-$string['couldnotdeleteratings'] = "Pahus, tuota ei voida postaa koska viesti on jo arvioitu";
-$string['couldnotdeletereplies'] = "Pahus, tuota ei voida poistaa koska viestiin on jo vastattu";
+$string['couldnotdeleteratings'] = "Pahus, viestiä ei voida postaa koska se on jo arvioitu";
+$string['couldnotdeletereplies'] = "Pahus, viestiä ei voida poistaa koska siihen on jo vastattu";
 $string['couldnotupdate'] = "Viestiäsi ei voida päivittää tuntemattoman virheen takia";
 $string['delete'] = "Poista";
 $string['deleteddiscussion'] = "Keskustelu on poistettu";
@@ -37,7 +37,7 @@ $string['forums'] = "Foorumit";
 $string['forumtype'] = "Foorumin  tyyppi";
 $string['generalforum'] = "Yleisfoorumi";
 $string['generalforums'] = "Yleisfoorumit";
-$string['inforum'] = " \$a :ssa";
+$string['inforum'] = "\$a :ssa";
 $string['intronews'] = "Yleiset uutiset ja tiedotteet";
 $string['introsocial'] = "Avoin foorumi vapaalle keskustelulle";
 $string['introteacher'] = "Opettajien oma keskustelufoorumi";
@@ -56,20 +56,20 @@ $string['namesocial'] = "Keskustelu foorumi";
 $string['nameteacher'] = "Opettajain foorumi";
 $string['newforumposts'] = "Foorumin uudet viestit";
 $string['nodiscussions'] = "Tässä foorumissa ei ole vielä keskusteluja";
-$string['noguestpost'] = "Pahus, vieraat eivät saa kirjoitaa foorumiin";
+$string['noguestpost'] = "Pahus, vieraat eivät saa kirjoittaa foorumiin";
 $string['noposts'] = "Ei viestejä";
 $string['nopostscontaining'] = "Viestejä jotka sisältävät '\$a' ei löytynyt";
 $string['nosubscribers'] = "Tällä foorumilla ei ole tilaajia";
 $string['nownotsubscribed'] = "\$a->name EI saa kopioita viesteistä'\$a->forum' sähköpostiinsa.";
 $string['nowsubscribed'] = "\$a->name SAA kopiot viesteistä '\$a->forum' sähköpostiinsa.";
 $string['numposts'] = "\$a viestiä";
-$string['olderdiscussions'] = "Vanhemmat keskustelut";
+$string['olderdiscussions'] = "Vanhat keskustelut";
 $string['openmode0'] = "Ei keskusteja, ei vastauksia";
 $string['openmode1'] = "Ei keskusteluja, mutta vastaaminen sallitaan";
 $string['openmode2'] = "Keskustelut ja vastaukset sallitaan";
 $string['parentofthispost'] = "Tämän viestin alku";
 $string['postadded'] = "Viestisi on lisätty.<P>Sinulla \$a aikaa muokata viestiä jos haluat muuttaa sitä.";
-$string['postincontext'] = "Katso tätä viestiä kontektissa";
+$string['postincontext'] = "Katso tätä viestiä kontektissaan";
 $string['postmailinfo'] = "Tämä on kopio viestistä \$a sivustolla.
 Lisätäksesi vastauksen viestiin suoraan sivustolle, klikkaa seuraavaa linkkiä:";
 $string['postrating1'] = "Suurimmaksi osaksi eristyvää osaamista";
@@ -77,9 +77,9 @@ $string['postrating2'] = "Yhtälaisesti eristynyt ja sosiaalinen";
 $string['postrating3'] = "Suurimmaksi osaksi sosiaalista osaamista";
 $string['postupdated'] = "Viestisi on päivitetty";
 $string['processingpost'] = "Käsitellään viestiä \$a";
-$string['rate'] = "Luokka";
-$string['ratings'] = "Luokittelut";
-$string['ratingssaved'] = "Luokittelut tallennettu";
+$string['rate'] = "Arvio";
+$string['ratings'] = "Arvioinnit";
+$string['ratingssaved'] = "Arviointi tallennettu";
 $string['re'] = "Re:";
 $string['readtherest'] = "Lue loput tästä aiheesta";
 $string['repliesmany'] = "\$a vastausta tähän mennessä";
@@ -88,7 +88,7 @@ $string['reply'] = "Vastaa";
 $string['search'] = "Etsi";
 $string['searchforums'] = "Etsi Foorumeista";
 $string['searchresults'] = "Haun tulokset";
-$string['sendinratings'] = "Lähetä viimeisimmät luokittelut viestestäni";
+$string['sendinratings'] = "Lähetä viimeisimmät arvioinnit viestestäni";
 $string['showsubscribers'] = "Näytä tilaajat";
 $string['singleforum'] = "Yksinkertainen keskustelu";
 $string['subject'] = "Aihe";
@@ -97,7 +97,7 @@ $string['subscribed'] = "Tilaaja";
 $string['subscribers'] = "Tilaajat";
 $string['subscribersto'] = "Tilaa '\$a'";
 $string['unsubscribe'] = "Poista tämän foorumin tilaus";
-$string['youratedthis'] = "Luokittelit tämän";
+$string['youratedthis'] = "Arvioit tämän";
 $string['yournewtopic'] = "Uusi keskustelun aiheesi";
 $string['yourreply'] = "Vastauksesi";
 

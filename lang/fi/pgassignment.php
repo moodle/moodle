@@ -5,7 +5,7 @@
 $string['absent'] = "Puuttuva";
 $string['acceptance'] = "Hyv‰ksyminen";
 $string['acceptassessment'] = "Oletko tyytyv‰inen t‰h‰n arviointiin?";
-$string['acceptedgrades'] = "Hyv‰ksystyt arviot(\$a)";
+$string['acceptedgrades'] = "Hyv‰ksytyt arviot(\$a)";
 $string['addamendassessmentelements'] = "Lis‰‰/Muuta arviointi elementtej‰";
 $string['afterdeadline'] = "\$a m‰‰r‰ajan j‰lkeen";
 $string['allgradeshaveamaximumof'] = "Kaikkien arvosanojen maksimi arvo on: \$a";

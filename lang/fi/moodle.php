@@ -1,8 +1,8 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.0.9 development (2003012000)
+      // moodle.php - created with Moodle 1.0.9 development (2003021600)
 
 
-$string['action'] = "Toiminta";
+$string['action'] = "Tapahtuma";
 $string['activities'] = "Aktiviteetit";
 $string['activity'] = "Aktiviteetti";
 $string['activityreport'] = "Tapahtuma raportti";
@@ -58,16 +58,16 @@ $string['configcountry'] = "Jos asetat maan t‰ss‰ niin valinnasta tulee oletus k
 $string['configdebug'] = "Jos valitset virheenkorjaus tilan p‰‰lle PHP:n error_reporting arvo nousee ja enemm‰n virheilmoituksia tulostuu n‰ytˆlle. T‰st‰ asetuksesta on hyˆty‰ vain  Moodlen kehitt‰jille.";
 $string['configerrorlevel'] = "PHP virheilmoitusten m‰‰r‰. Normal on yleens‰ hyv‰ valinta.";
 $string['configgdversion'] = "GD-kirjaston versio. N‰kyviss‰ oleva numero on tunnistettu automaattisesti. ƒl‰ muuta ellet tied‰ mit teet.";
-$string['confightmleditor'] = "Valitse halueatko k‰ytt‰‰ upotettua HTML-editoria. HTML-editori toimii vain IE5.5 ja uudemissa selaimissa. K‰ytt‰j‰t voivat halutessaa olla k‰ytt‰m‰tt‰ t‰t‰ editoria.";
-$string['configintro'] = "T‰ll‰ sivulla voit m‰‰ritell‰ joukon asetuksia , jotka auttavat Moodle toimimaan palvelimellasi niin kuin haluat. N‰ist‰ on turha stressata, yleens‰ oletukset toivat hyvin. Ja ainahan voit palata takaisin tekem‰‰n muutoksia jos tarpeen.";
+$string['confightmleditor'] = "Valitse haluatko k‰ytt‰‰ upotettua HTML-editoria. HTML-editori toimii vain IE5.5 ja uudemissa selaimissa. K‰ytt‰j‰t voivat halutessaan olla k‰ytt‰m‰tt‰ t‰t‰ editoria.";
+$string['configintro'] = "T‰ll‰ sivulla voit m‰‰ritell‰ joukon asetuksia , jotka auttavat Moodle toimimaan palvelimellasi niin kuin haluat. N‰ist‰ on turha stressata, yleens‰ oletukset toivat hyvin. Ja ainahan voit palata takaisin tekem‰‰n muutoksia, jos tarpeen.";
 $string['configlang'] = "Valitse oletuskieli koko sivustolle, k‰ytt‰j‰t vovat myˆhemmin halutessaan muuttaa asetusta.";
 $string['configlangdir'] = "Kirjoitus suunta ylleens‰ vasemmalta oikelle , mutta esim arabia ja heprea ovat poikkeuksia t‰h‰n.";
-$string['configlocale'] = "P‰iv‰m‰‰riem muotoilu tehd‰‰n t‰m‰n sijainti tiedon mukaan.";
-$string['configlongtimenosee'] = "Jos opiskelijat eiv‰t ole kirjaantuneet pitk‰‰n aikaan , heid‰t poistetaan kursseilta automaattisesti. M‰‰rittele t‰‰s‰ haluamasi aika.";
-$string['configmaxeditingtime'] = "M‰‰ritt‰‰ kauanko foorumi vieti‰ voidaan muokata.";
-$string['configproxyhost'] = "Jos <b>palvelimen</b> pit‰‰ k‰ytt‰‰ v‰lityspalvelinta, m‰‰rit‰ palvelin ja portti t‰ss‰.";
+$string['configlocale'] = "P‰iv‰m‰‰rien muotoilu tehd‰‰n t‰m‰n tiedon mukaan. Annetun locale-koodin pit‰‰ olla palvelimen tuntema (Esim. fi_FI).  Jos et ole varma j‰t‰ t‰m‰ tyhj‰ksi.";
+$string['configlongtimenosee'] = "Opiskelijat jotka eiv‰t ole kirjaantuneet pitk‰‰n aikaan , poistetaan kursseilta automaattisesti. M‰‰rittele t‰ss‰ haluamasi aika.";
+$string['configmaxeditingtime'] = "M‰‰ritt‰‰ kauanko foorumiin l‰hettty‰ viesti‰ voidaan muokata.";
+$string['configproxyhost'] = "Jos <b>palvelimen</b> pit‰‰ k‰ytt‰‰ v‰lityspalvelinta internetyhteyksiin , m‰‰rit‰ palvelin ja portti t‰ss‰.";
 $string['configsessiontimeout'] = "Jos sivuston k‰ytt‰j‰t ovat pitk‰n aikaa tekem‰tt‰ mit‰‰n, heid‰t voidaan kirjata pois j‰rjestelm‰st‰. M‰‰rittele t‰ss‰ sallittu joutoaika jonka j‰lkeen yhteys katkaistaan.";
-$string['configslasharguments'] = "Tiedostot jotka v‰litet‰‰n php-v‰lityksess‰ selaimille voidaan jakaa k‰ytt‰en 'slash arguments'-metodia. T‰m‰ mahdolistaa tiedostojen tallentumisen v‰lityspalvelimille. Kaikki php-palvelimet eiv‰t tue t‰t‰ ominaisuutta. Asta silloin k‰yttˆˆn ensimm‰inen vaihtoehto.";
+$string['configslasharguments'] = "Tiedostot jotka v‰litet‰‰n php-v‰lityksess‰ selaimille voidaan jakaa k‰ytt‰en 'slash arguments'-metodia. T‰m‰ mahdolistaa tiedostojen tallentumisen v‰lityspalvelimille. Kaikki php-palvelimet eiv‰t tue t‰t‰ ominaisuutta. Aseta silloin k‰yttˆˆn ensimm‰inen vaihtoehto.";
 $string['configsmtphosts'] = "Anna SMTP palvelimen nimi jota k‰ytet‰‰n postin l‰hett‰miseen.
 Voit m‰‰ritell‰ useita palvelimia muodossa 'posti.domain.org;
 posti2.domain.org'";
@@ -107,7 +107,7 @@ $string['deletecheck'] = "Poista \$a ?";
 $string['deletecheckfull'] = "Oletko aivan varma ett‰ haluat pysyv‰sti poistaa \$a ?";
 $string['deletecompletely'] = "Poista kokonaan";
 $string['deletecourse'] = "Poista kurssi";
-$string['deletecoursecheck'] = "Oletko aivan varma ett‰ haluat poistaa t‰m‰n kurssin ja kaikki sen sis‰lt‰m‰t tiedostot";
+$string['deletecoursecheck'] = "Oletko aivan varma ett‰ haluat poistaa t‰m‰n kurssin ja kaikki sen sis‰lt‰m‰t tiedot?";
 $string['deleted'] = "Poistettu";
 $string['deletedactivity'] = "Poistettu \$a";
 $string['deletedcourse'] = "\$a on kokonaan poistettu";
@@ -117,7 +117,7 @@ $string['department'] = "Osasto";
 $string['description'] = "Kuvaus";
 $string['displayingrecords'] = "N‰ytet‰‰n \$a tietuetta";
 $string['displayingusers'] = "N‰ytet‰‰n k‰ytt‰j‰t \$a->start - \$a->end";
-$string['documentation'] = "Moodle Ohjeet";
+$string['documentation'] = "Moodle Dokumentointi";
 $string['downloadexcel'] = "Lataa excel muodossa";
 $string['downloadtext'] = "Lataa teksti muodossa";
 $string['doyouagree'] = "Oletko lukenut k‰yttˆoikeuslisessin ja ymm‰rt‰nyt sen?";
@@ -156,7 +156,7 @@ $string['emailformat'] = "Email muoto";
 $string['emailmustbereal'] = "Huomaa: sinun pit‰‰ kaytt‰‰ oikeata osoitetta";
 $string['enrolmentkey'] = "Avain";
 $string['enrolmentkeyfrom'] = "T‰m‰ kurssi vaatii 'avaimen' - kertaluontoisen salasanan<BR>
-jonka saat \$a :lta";
+jonka saat \$a :lta. Sen avulla voi liitty‰ kurssille.";
 $string['enrolmentkeyhint'] = "Tarjottu 'avain' ei kelpaa, yrit‰ uudelleen<BR>
 (Vihje se alkaa n‰in: '\$a'";
 $string['entercourse'] = "Klikkaa p‰‰st‰ksesi kurssille";
@@ -172,7 +172,7 @@ $string['filloutallfields'] = "Ole hyv‰ ja tayt‰ lomakkeen kaikki kent‰t.";
 $string['firstname'] = "Etunimi";
 $string['firsttime'] = "Jos sinulla ei ole viel‰ tunnusta:";
 $string['followingoptional'] = "Seuraavat tiedot ovat vapaaehtoisia";
-$string['followingrequired'] = "Seuraavat iedot vaadiitaan";
+$string['followingrequired'] = "Seuraavat tiedot pit‰‰ t‰ytt‰‰";
 $string['forgotten'] = "Unohditko salasanasi?";
 $string['format'] = "Muotoilu";
 $string['formathtml'] = "HTML muoto";
@@ -189,8 +189,8 @@ $string['fullprofile'] = "Kaikki henkilˆtiedot";
 $string['fullsitename'] = "Koko sivuston nimi";
 $string['gd1'] = "GD 1.x asennetuna";
 $string['gd2'] = "GD 2.x asennettuna";
-$string['gdneed'] = "GD-kirjaston pit‰‰ olla asennetuna jotta kuvat n‰kyy";
-$string['gdnot'] = "GD 3.0 asennettuna";
+$string['gdneed'] = "GD-kirjaston pit‰‰ olla asennetuna jotta t‰m‰ kuva n‰kyisi";
+$string['gdnot'] = "GD ei asennettuna";
 $string['gpl'] = "Copyright (C) 2001-2002  Martin Dougiamas  (http://dougiamas.com)
 
 (Ep‰virallisen suomenkielisen k‰‰nnˆksen lisessist‰ lˆyd‰t  osoitteesta: http://www.turre.com/licenses/gpl_fi.php)
@@ -213,16 +213,16 @@ $string['guestsno'] = "ƒl‰ salli vieraita";
 $string['guestsnotallowed'] = " '\$a' ei salli vieraiden liitty‰.";
 $string['guestsyes'] = "Salli vieraat ilman avainta";
 $string['guestuser'] = "Vieras k‰ytt‰j‰";
-$string['guestuserinfo'] = "T‰m‰ tunnus sallii joidenkin kusssien \"vain luku\"-tyypisen selailun.";
+$string['guestuserinfo'] = "T‰m‰ tunnus sallii joidenkin kurssien \\\"vain luku\\\"-tyyppisen selailun.";
 $string['help'] = "Ohje";
-$string['helphtml'] = "Kuinka kirjoitaa HTML:ll‰‰";
+$string['helphtml'] = "Kuinka kirjoittaa HTML:ll‰‰";
 $string['helppicture'] = "Kuinka l‰hett‰‰ kuva";
 $string['helpquestions'] = "Kuinka kysy‰ apua";
 $string['helpreading'] = "Lue huolellisesti";
 $string['helprichtext'] = "Tietoja HTML editorista";
 $string['helptext'] = "Kuinka kirjoittaa teksti‰";
 $string['helpwriting'] = "Kirjoita huolellisesti";
-$string['hide'] = "Piilota";
+$string['hide'] = "Piiloita";
 $string['hits'] = "Sivupyynnˆt";
 $string['hitsoncourse'] = "K‰ytt‰j‰n \$a->username sivupyynnˆt kurssilla \$a->coursename";
 $string['hitsoncoursetoday'] = "Sivupyynnˆt t‰n‰‰n kurssilla \$a->coursename";
@@ -241,10 +241,10 @@ $string['idnumber'] = "ID numero";
 $string['invalidemail'] = "Virhellinen s‰hkˆpostiosoite";
 $string['invalidlogin'] = "Kirjaantuminen ep‰onnistui , yrit‰ uudelleen";
 $string['jumpto'] = "Siirry...";
-$string['langltr'] = "Kirjoitus suunta vasemlta oikealle";
+$string['langltr'] = "Kirjoitus suunta vasemalta oikealle";
 $string['langrtl'] = "Kirjoitussuunta oikealta vasemmmalle";
 $string['language'] = "Kieli";
-$string['languagegood'] = "T‰m‰ kieli paketti on ajantasalla! :-)";
+$string['languagegood'] = "T‰m‰ kielipaketti on ajantasalla! :-)";
 $string['lastaccess'] = "Viimeksi k‰ytetty";
 $string['lastedited'] = "Viimeksi muokattu";
 $string['lastmodified'] = "Viimeksi muutettu";
@@ -257,7 +257,7 @@ $string['livelogs'] = "Anna viimeisen tunnin loki";
 $string['locale'] = "fi_FI";
 $string['location'] = "Sijainti";
 $string['loggedinas'] = "Olet kirjautunut nimell‰  \$a.";
-$string['loggedinnot'] = "Et ole kirjauntunut.";
+$string['loggedinnot'] = "Et ole kirjautunut.";
 $string['login'] = "Kirjaudu";
 $string['loginas'] = "Kirjaudu toisena";
 $string['loginguest'] = "Kirjaudu vieraana";
@@ -308,7 +308,7 @@ $string['missingsitename'] = "Puuttuva sivuston nimi";
 $string['missingstrings'] = "Tarkista puuttuvat merkkijonot";
 $string['missingstudent'] = "Sinun pit‰‰ valita jotain";
 $string['missingsummary'] = "Puuttuva yhteenveto";
-$string['missingteacher'] = "Pit‰‰ valita opettaja";
+$string['missingteacher'] = "Pit‰‰ valita jotain";
 $string['missingusername'] = "Puuttuva k‰ytt‰j‰nimi";
 $string['modified'] = "Muokattu";
 $string['modulesetup'] = "Asetetaan moduli-taulut";
@@ -345,24 +345,24 @@ Jos t‰m‰ ei toimi Kopioi ja liit‰ osoite selaimen osoitekentt‰‰n.
 
 Terveiset '\$a->sitename' p‰‰k‰ytt‰j‰,
 \$a->signoff";
-$string['newpicture'] = "uusi kuva";
+$string['newpicture'] = "Uusi kuva";
 $string['newsitem'] = "uutisaihe";
 $string['newsitems'] = "uutisaiheet";
 $string['newsitemsnumber'] = "N‰yt‰ uutisaiheet";
-$string['newuser'] = "uusi k‰ytt‰j‰";
+$string['newuser'] = "Uusi k‰ytt‰j‰";
 $string['newusers'] = "Uudet k‰ytt‰j‰t";
 $string['no'] = "Ei";
 $string['nocoursesyet'] = "Ei kursseja t‰ss‰ kategoriassa";
 $string['noexistingadmins'] = "Ei yll‰pit‰ji‰. T‰m‰ on vakava virhe jota ei pit‰isi koskaan tapahtua.";
 $string['noexistingteachers'] = "Ei opettajia";
 $string['nofilesyet'] = "T‰lle kurssille ei ole viel‰ l‰hetetty tiedostoja.";
-$string['nograde'] = "Ei ";
+$string['nograde'] = "Ei arviointia";
 $string['noimagesyet'] = "T‰lle kursille ei ole viel‰ l‰hetty kuvia.";
 $string['none'] = "Ei yht‰‰n";
 $string['nopotentialadmins'] = "Ei mahdollisia yll‰pit‰ji‰";
 $string['nopotentialteachers'] = "Ei mahdollisia opettajia";
 $string['normal'] = "Normaali";
-$string['nostudentsyet'] = "Kursilla ei ole viel‰ opiskelijoita";
+$string['nostudentsyet'] = "Kurssilla ei ole viel‰ opiskelijoita";
 $string['nosuchemail'] = "S‰hkˆpostiosoitetta ei lˆydy";
 $string['noteachersyet'] = "Kurssilla ei ole viel‰ opettajaa";
 $string['notenrolled'] = "\$a ei ole t‰ll‰ kursilla.";
@@ -420,7 +420,7 @@ $string['secs'] = "sekuntia";
 $string['section'] = "Osa";
 $string['selectacountry'] = "Valitse maa";
 $string['senddetails'] = "L‰het‰ tiedot s‰hkˆpostilla";
-$string['separateandconnected'] = "Irralinen ja sis‰istetty tiet‰mys";
+$string['separateandconnected'] = "Eristyv‰ ja sosiaalinen oppiminen";
 $string['serverlocaltime'] = "Palvelimen aika";
 $string['settings'] = "Asetukset";
 $string['shortname'] = "Lyhyt nimi";
@@ -455,7 +455,7 @@ $string['strftimerecent'] = "%%d %%b, %%H:%%M";
 $string['strftimerecentfull'] = "%%a, %%d %%b %%Y, %%H:%%M";
 $string['strftimetime'] = "%%H:%%M";
 $string['stringsnotset'] = "Seuraavat merkkijonot eiv‰t ole m‰‰riteltyn‰ tiedostossa \$a";
-$string['studentnotallowed'] = "Pahus, et voi litty‰ kursille tunnuksella'\$a'";
+$string['studentnotallowed'] = "Pahus, et voi liitty‰ kursille tunnuksella '\$a'";
 $string['success'] = "Valmis!";
 $string['summary'] = "Yhteenveto";
 $string['summaryof'] = "\$a Yhteenveto";
@@ -527,6 +527,6 @@ $string['wrongpassword'] = "V‰‰r‰ salasana";
 $string['yes'] = "Kyll‰";
 $string['yourlastlogin'] = "Olet viimeksi kirjaantunut:";
 $string['yourself'] = "itse";
-$string['yourteacher'] = "opettajasi \$a";
+$string['yourteacher'] = "sinun \$a";
 
 ?>
