@@ -104,6 +104,21 @@ CREATE TABLE `prefix_course_display` (
 
 
 #
+# Table structure for table `course_meta`
+#
+
+CREATE TABLE `prefix_course_meta` (
+ `id` int(10) unsigned NOT NULL auto_increment,
+ `parent_course` int(10) NOT NULL default 0,
+ `child_course` int(10) NOT NULL default 0,
+ PRIMARY KEY (`id`),
+ KEY `parent_course` (parent_course),
+ KEY `child_course` (child_course)
+);
+# --------------------------------------------------------
+
+
+#
 # Table structure for table `course_modules`
 #
 
@@ -559,13 +574,17 @@ CREATE TABLE `prefix_user_coursecreators` (
 ) TYPE=MyISAM COMMENT='One record per course creator';
 
 
-CREATE TABLE `prefix_course_meta` (
- `id` int(10) unsigned NOT NULL auto_increment,
- `parent_course` int(10) NOT NULL default 0,
- `child_course` int(10) NOT NULL default 0,
- PRIMARY KEY (`id`),
- KEY `parent_course` (parent_course),
- KEY `child_course` (child_course)
+#
+# For debugging puposes, see admin/dbperformance.php
+#
+
+CREATE TABLE `adodb_logsql` (
+ `created` datetime NOT NULL,
+ `sql0` varchar(250) NOT NULL,
+ `sql1` text NOT NULL,
+ `params` text NOT NULL,
+ `tracer` text NOT NULL,
+ `timer` decimal(16,6) NOT NULL
 );
 
 INSERT INTO prefix_log_display VALUES ('user', 'view', 'user', 'CONCAT(firstname," ",lastname)');

@@ -142,6 +142,10 @@ global $THEME;
         unset($config);
     }
 
+/// Turn on SQL logging if required
+    if (!empty($CFG->logsql)) {
+        $db->LogSQL();
+    }
 
 
 /// Set error reporting back to normal

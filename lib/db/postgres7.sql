@@ -65,6 +65,15 @@ CREATE TABLE prefix_course_display (
 
 CREATE INDEX prefix_course_display_courseuserid_idx ON prefix_course_display (course,userid);
 
+CREATE TABLE prefix_course_meta (
+	id SERIAL primary key,
+	parent_course integer NOT NULL,
+	child_course integer NOT NULL
+);
+
+CREATE INDEX prefix_course_meta_parent_idx ON prefix_course_meta (parent_course);
+CREATE INDEX prefix_course_meta_child_idx ON prefix_course_meta (child_course);
+
 CREATE TABLE prefix_course_modules (
    id SERIAL PRIMARY KEY,
    course integer NOT NULL default '0',
@@ -390,14 +399,15 @@ CREATE TABLE prefix_user_coursecreators (
    userid int8  NOT NULL default '0'
 );
 
-CREATE TABLE prefix_course_meta (
-	id SERIAL primary key,
-	parent_course integer NOT NULL,
-	child_course integer NOT NULL
+CREATE TABLE adodb_logsql (
+   created timestamp NOT NULL,
+   sql0 varchar(250) NOT NULL,
+   sql1 text NOT NULL,
+   params text NOT NULL,
+   tracer text NOT NULL,
+   timer decimal(16,6) NOT NULL
 );
 
-CREATE INDEX prefix_course_meta_parent_idx ON prefix_course_meta (parent_course);
-CREATE INDEX prefix_course_meta_child_idx ON prefix_course_meta (child_course);
 
 INSERT INTO prefix_log_display VALUES ('user', 'view', 'user', 'firstname||\' \'||lastname');
 INSERT INTO prefix_log_display VALUES ('course', 'user report', 'user', 'firstname||\' \'||lastname');
