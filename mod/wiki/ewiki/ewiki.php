@@ -1913,6 +1913,17 @@ function ewiki_format (
             }
 
 
+            #-- text style triggers
+            foreach ($wm_style as $find=>$replace) {
+               $find_len = strlen($find);
+               $loop = 20;
+               while(($loop--) && (($l = strpos($line, $find)) !== false) && ($r = strpos($line, $find, $l + $find_len))) {
+                  $line = substr($line, 0, $l) . $replace[0] .
+                          substr($line, $l + strlen($find), $r - $l - $find_len) .
+                          $replace[1] . substr($line, $r + $find_len);
+               }
+            }
+
 
             #-- list markup
             if (isset($wm_list[$c0])) {
@@ -1980,17 +1991,6 @@ function ewiki_format (
                }
             }
 
-
-            #-- text style triggers
-            foreach ($wm_style as $find=>$replace) {
-               $find_len = strlen($find);
-               $loop = 20;
-               while(($loop--) && (($l = strpos($line, $find)) !== false) && ($r = strpos($line, $find, $l + $find_len))) {
-                  $line = substr($line, 0, $l) . $replace[0] .
-                          substr($line, $l + strlen($find), $r - $l - $find_len) .
-                          $replace[1] . substr($line, $r + $find_len);
-               }
-            }
 
             #-- start-end markup
             foreach ($wm_start_end as $d) {
