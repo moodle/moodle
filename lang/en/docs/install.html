@@ -387,12 +387,16 @@ php_value post_max_size 2M
 </pre>
   </blockquote>
   <h4>Automatically running the script every 5 minutes</h4>
-  <p>On Unix systems: Use <b>cron</b>. Edit your cron settings from the commandline 
+  <p><b>On Unix systems</b>: Use <b>cron</b>. Edit your cron settings from the commandline 
     using &quot;crontab -e&quot; and add a line like:</p>
   <blockquote>
     <pre>*/5 * * * * wget -q -O /dev/null http://example.com/moodle/admin/cron.php</pre>
   </blockquote>
-  <p>On Windows systems: The simplest way is to use this little package <a href="http://moodle.org/download/moodle-cron-for-windows.zip" title="Click to download this package (150k)" target="_blank">moodle-cron-for-windows.zip</a> 
+  <p>Usually, the "crontab" command will put you into the 'vi' editor. You enter 
+     "insert mode" by pressing "i", then type in the line as above, then exit insert mode by 
+     pressing ESC.  You save and exit by typing ":wq", or quit with saving using ":q!" (without the quotes).</p>
+
+  <p><b>On Windows systems</b>: The simplest way is to use this little package <a href="http://moodle.org/download/moodle-cron-for-windows.zip" title="Click to download this package (150k)" target="_blank">moodle-cron-for-windows.zip</a> 
     which makes this whole thing very easy. You can also explore using the built-in 
     Windows feature for "Scheduled Tasks".</p>
   <p>On web hosts: Your web-based control panel may have a web page that allows 
