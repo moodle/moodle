@@ -334,7 +334,7 @@
             error("The forum number was incorrect ($discussion->forum)");
         }
         if (!isteacher($forum->course)) {
-            error("You can't prune discussions!");
+            error("You can't split discussions!");
         }
         if (!$post->parent) {
             error('This is already the first post in the discussion');
@@ -356,7 +356,7 @@
             }
             
             $post->parent = 0;
-            $post->name = $name;
+            $post->subject = $name;
 
             if (!update_record("forum_posts", $post)) {
                 error('Could not update the original post');
