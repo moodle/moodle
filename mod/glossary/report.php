@@ -1,4 +1,4 @@
-<?PHP 
+<?PHP   // $Id$
 //  For a given entry, shows a report of all the ratings it has
 
     require_once("../../config.php");

@@ -1,4 +1,4 @@
-<?PHP  
+<?PHP    // $Id$
     /// This file allows to manage the default behave of the display formats
     
     require_once("../../config.php");

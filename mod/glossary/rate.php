@@ -1,4 +1,4 @@
-<?PHP 
+<?PHP   // $Id$
 
 //  Collect ratings, store them, then return to where we came from
 

@@ -1,4 +1,4 @@
-<?php
+<?php  // $Id$
 /// This page prints a particular instance of glossary
     require_once("../../config.php");
     require_once("lib.php");
