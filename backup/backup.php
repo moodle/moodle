@@ -25,8 +25,8 @@
     require_login();
 
     //Check admin
-    //Check admin
     if (!isadmin()) {
+        error("You need to be an admin user to use this page.", "$CFG->wwwroot/login/index.php");
     }
 
     //Check site
