@@ -36,7 +36,6 @@
 	
     // set up some general variables
     $usehtmleditor = can_use_html_editor();
-    echo "\$usehtmleditor:$usehtmleditor"; 
     
     $navigation = "";
     if ($course->category) {
