@@ -999,9 +999,14 @@ function calendar_set_filters(&$courses, &$group, &$user, $courseeventsfrom = NU
         foreach($groupcourses as $courseid) {
             // If the user is an editing teacher in there,
             if(!empty($USER->id) && isteacheredit($courseid, $USER->id)) {
-                // Show events from all groups
-                if(($grouprecords = get_groups($courseid)) !== false) {
-                    $grouparray = array_merge($grouparray, array_keys($grouprecords));
+                if (isset($courses[$courseid])) {
+                    $checkcourse = $courses[$courseid];
+                    if (!empty($checkcourse->groupmode)) {
+                        // Show events from all groups
+                        if(($grouprecords = get_groups($courseid)) !== false) {
+                            $grouparray = array_merge($grouparray, array_keys($grouprecords));
+                        }
+                    }
                 }
             }
             // Otherwise show events from the group he is a member of
