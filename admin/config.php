@@ -150,12 +150,14 @@
 
     $httpsurl = str_replace('http://', 'https://', $CFG->wwwroot);
     if ($httpsurl != $CFG->wwwroot) {
-        if ((($fh = @fopen($httpsurl, 'r')) == false) and ($config->loginhttps == 0)) {
-            echo '<script type="text/javascript">'."\n";
-            echo '<!--'."\n";
-            echo "eval('document.form.loginhttps.disabled=true');\n";
-            echo '-->'."\n";
-            echo '</script>'."\n";
+        if (ini_get('allow_url_fopen')) {
+            if ((($fh = @fopen($httpsurl, 'r')) == false) and ($config->loginhttps == 0)) {
+                echo '<script type="text/javascript">'."\n";
+                echo '<!--'."\n";
+                echo "eval('document.form.loginhttps.disabled=true');\n";
+                echo '-->'."\n";
+                echo '</script>'."\n";
+            }
         }
     }
 
