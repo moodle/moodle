@@ -121,7 +121,7 @@
                 }
          
                 notice_yesno(get_string("deletequestioncheck", "quiz", $question->name), 
-                            "question.php?id=$question->id&amp;delete=$delete&amp;confirm=".md5($delete), "edit.php");
+                            "question.php?sesskey=$USER->sesskey&amp;id=$question->id&amp;delete=$delete&amp;confirm=".md5($delete), "edit.php");
             }
             print_footer($course);
             exit;
