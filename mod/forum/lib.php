@@ -498,10 +498,14 @@ function forum_search_posts($search, $courseid, $page=0, $recordsperpage=50) {
     /// Some differences in syntax for PostgreSQL
     if ($CFG->dbtype == "postgres7") {
         $LIKE = "ILIKE";   // case-insensitive
-        $REGEXP = "~";
+        $NOTLIKE = "NOT ILIKE";   // case-insensitive
+        $REGEXP = "~*";
+        $NOTREGEXP = "!~*";
     } else {
         $LIKE = "LIKE";
+        $NOTLIKE = "NOT LIKE";
         $REGEXP = "REGEXP";
+        $NOTREGEXP = "NOT REGEXP";
     }
 
     $messagesearch = "";
@@ -523,8 +527,8 @@ function forum_search_posts($search, $courseid, $page=0, $recordsperpage=50) {
             $subjectsearch .= " p.subject $REGEXP '(^|[^a-zA-Z0-9])$searchterm([^a-zA-Z0-9]|$)' ";
         } else if (substr($searchterm,0,1) == "-") {
             $searchterm = substr($searchterm,1);
-            $messagesearch .= " p.message NOT $REGEXP '(^|[^a-zA-Z0-9])$searchterm([^a-zA-Z0-9]|$)' ";
-            $subjectsearch .= " p.subject NOT $REGEXP '(^|[^a-zA-Z0-9])$searchterm([^a-zA-Z0-9]|$)' ";
+            $messagesearch .= " p.message $NOTREGEXP '(^|[^a-zA-Z0-9])$searchterm([^a-zA-Z0-9]|$)' ";
+            $subjectsearch .= " p.subject $NOTREGEXP '(^|[^a-zA-Z0-9])$searchterm([^a-zA-Z0-9]|$)' ";
         } else {
             $messagesearch .= " p.message $LIKE '%$searchterm%' ";
             $subjectsearch .= " p.subject $LIKE '%$searchterm%' ";
