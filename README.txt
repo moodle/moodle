@@ -1,12 +1,23 @@
 README     $Id$
 ------
 
-I highly recommend you read the detailed help on 
-installation, upgrading and use of Moodle, stored
-in the doc subdirectory of this installation, or 
-read at:
+If you are installing the first time, then you 
+should read the installation guide which is 
+stored in the doc subdirectory:
+
+   doc/install.html
+
+You can also access the latest version (as well 
+complete information about upgrading and using 
+Moodle on the moodle.com web site:
 
    http://moodle.com/doc/
+
+Once Moodle is installed on your machine, then 
+you can also access a local copy of all this 
+documentation (localised to your language) at:
+
+   http://yourmoodlesite.com/doc/
 
 
 For the impatient, here is a basic outline of the 
@@ -21,7 +32,7 @@ a few minutes:
    process.
 
 3) Create a single database for Moodle to store all
-   it's tables in.
+   it's tables in (or choose an existing database).
 
 4) Copy the file config-dist.php to config.php, and 
    edit it with all your own settings.
