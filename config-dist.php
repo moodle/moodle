@@ -67,6 +67,16 @@ $CFG->dataroot  = "/home/moodledata";
 
 
 ///////////////////////////////////////////////////////////////////////////
+// A very small percentage of servers have a bug which causes HTTP_REFERER
+// not to work.  The symptoms of this are that you fill out the configure
+// form during Moodle setup but when hit save you find yourself on the 
+// same form, unable to progress.  If this happens to you, come back here
+// and set the following to true.  Otherwise this should always be false.
+
+$CFG->buggy_referer = false;
+
+
+///////////////////////////////////////////////////////////////////////////
 // To continue the setup, use your web browser to go to your Moodle page //
 ///////////////////////////////////////////////////////////////////////////
 
