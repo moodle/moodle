@@ -128,7 +128,6 @@
 
         // Carry on with the user listing
 
-        $usertotalcount = get_users_count();
 
         $columns = array("name", "email", "city", "country", "lastaccess");
 
@@ -152,7 +151,7 @@
         }
 
         if (!$users = get_users_listing($sort, $dir, $page, $recordsperpage, $search)) {
-            if (!$users = get_users_listing($sort, $dir, $page, $recordsperpage)) {
+            if (!$users = get_users_listing($sort, $dir, 0, $recordsperpage)) {
                 error("No users found!");
             } else {
                 notify(get_string("nousersmatching", "", $search));
@@ -160,8 +159,15 @@
             }
         }
 
-        $usercount = count($users);
-        print_heading("$usercount/$usertotalcount ".get_string("users"));
+        $usercount = get_users_count();
+
+        if ($search) {
+            $usersearchcount = get_users_count($search);
+            print_heading("$usersearchcount / $usercount ".get_string("users"));
+            $usercount = $usersearchcount;
+        } else {
+            print_heading("$usercount ".get_string("users"));
+        }
             
         $a->start = $page;
         $a->end = $page + $recordsperpage;
