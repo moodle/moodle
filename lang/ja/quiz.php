@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005021000)
+      // quiz.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005021800)
 
 
 $string['acceptederror'] = '¥¨¥é¡¼ÈÏ°Ï';
@@ -132,7 +132,7 @@ $string['guestsno'] = '¿½¤·Ìõ¤´¤¶¤¤¤Þ¤»¤ó¡¢¥²¥¹¥È¥æ¡¼¥¶¤Ï¾®¥Æ¥¹¥È¤Î±ÜÍ÷¤ª¤è¤Ó²òÅ
 $string['illegalformulasyntax'] = '¡Ö $a ¡×¤Ç»Ï¤Þ¤ëÉÔÀµ¤Ê¥·¥ó¥¿¥Ã¥¯¥¹¤Î¼°¤Ç¤¹¡£';
 $string['imagedisplay'] = 'É½¼¨¥¤¥á¡¼¥¸';
 $string['imagemissing'] = '$a ¹Ô¤Î¥¤¥á¡¼¥¸¤¬»ÈÍÑ¤Ç¤­¤Þ¤»¤ó¡£¥Õ¥¡¥¤¥ëÌ¾¤ÏÌµ»ë¤µ¤ì¤Þ¤¹¡£';
-$string['importquestions'] = '¥Õ¥¡¥¤¥ë¤«¤é¾®¥Æ¥¹¥È¤ò¥¤¥ó¥Ý¡¼¥È¤¹¤ë';
+$string['importquestions'] = '¥Õ¥¡¥¤¥ë¤«¤éÌäÂê¤ò¥¤¥ó¥Ý¡¼¥È¤¹¤ë';
 $string['indivresp'] = '³ÆÌäÂê¤ËÂÐ¤¹¤ë³Æ¸Ä¿Í¤Î²òÅú';
 $string['introduction'] = 'ÀâÌÀ';
 $string['itemanal'] = '²òÅúÊ¬ÀÏ';
@@ -253,7 +253,7 @@ $string['save'] = 'ÊÝÂ¸';
 $string['saveandedit'] = 'ÊÑ¹¹¤ÎÊÝÂ¸¤ª¤è¤ÓÌäÂê¤ÎÊÔ½¸';
 $string['savegrades'] = 'É¾ÅÀ¤òÊÝÂ¸';
 $string['savemyanswers'] = 'Åú¤¨¤òÊÝÂ¸';
-$string['savequiz'] = 'Á´¤Æ¤Î¾®¥Æ¥¹¥È¤òÊÝÂ¸';
+$string['savequiz'] = '¾®¥Æ¥¹¥È¤òÊÝÂ¸';
 $string['score'] = 'ÆÀÅÀ¾õ¶·';
 $string['select'] = 'ÁªÂò';
 $string['selectall'] = 'Á´¤Æ¤òÁªÂò';

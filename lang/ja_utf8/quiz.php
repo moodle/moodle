@@ -1,5 +1,5 @@
-<?php // $Id$ 
-      // quiz.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005021000)
+<?PHP // $Id$ 
+      // quiz.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005021800)
 
 
 $string['acceptederror'] = 'エラー範囲';
@@ -132,7 +132,7 @@ $string['guestsno'] = '申し訳ございません、ゲストユーザは小テ
 $string['illegalformulasyntax'] = '「 $a 」で始まる不正なシンタックスの式です。';
 $string['imagedisplay'] = '表示イメージ';
 $string['imagemissing'] = '$a 行のイメージが使用できません。ファイル名は無視されます。';
-$string['importquestions'] = 'ファイルから小テストをインポートする';
+$string['importquestions'] = 'ファイルから問題をインポートする';
 $string['indivresp'] = '各問題に対する各個人の解答';
 $string['introduction'] = '説明';
 $string['itemanal'] = '解答分析';
@@ -253,7 +253,7 @@ $string['save'] = '保存';
 $string['saveandedit'] = '変更の保存および問題の編集';
 $string['savegrades'] = '評点を保存';
 $string['savemyanswers'] = '答えを保存';
-$string['savequiz'] = '全ての小テストを保存';
+$string['savequiz'] = '小テストを保存';
 $string['score'] = '得点状況';
 $string['select'] = '選択';
 $string['selectall'] = '全てを選択';
