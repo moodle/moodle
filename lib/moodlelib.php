@@ -2868,7 +2868,13 @@ function address_in_subnet($addr, $subnetstr) {
 
 function mtrace($string, $eol="\n") {
 // For outputting debugging info 
-    fwrite(STDOUT, $string.$eol);
+
+    if (defined('STDOUT')) {
+        fwrite(STDOUT, $string.$eol);
+    } else {
+        echo "$string$eol";
+    }
+
     flush();
 }
 
