@@ -7,10 +7,8 @@
 /* README!
 CAS Module
 This Module can be turn ON/OFF on admin screen.
-The /login module have to be changed to.
+The moodle/login module have to be changed by the one in this directory
 This module is using the LDAP Module so you need the /auth/ldap directory.
-
-
 
 */
 
