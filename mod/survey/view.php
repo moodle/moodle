@@ -78,25 +78,29 @@
         $question = $questions["$val"];
         $question->id = $val;
         
-        if ($question->text) {
-            $question->text = get_string($question->text, "survey");
-        }
-        if ($question->shorttext) {
-            $question->shorttext = get_string($question->shorttext, "survey");
-        }
-        if ($question->type > 0) {
+        if ($question->type >= 0) {
+
+            if ($question->text) {
+                $question->text = get_string($question->text, "survey");
+            }
+
+            if ($question->shorttext) {
+                $question->shorttext = get_string($question->shorttext, "survey");
+            }
+
             if ($question->intro) {
                 $question->intro = get_string($question->intro, "survey");
             }
+
             if ($question->options) {
                 $question->options = get_string($question->options, "survey");
             }
-        }
 
-        if ($question->multi) {
-            survey_print_multi($question);
-        } else {
-            survey_print_single($question);
+            if ($question->multi) {
+                survey_print_multi($question);
+            } else {
+                survey_print_single($question);
+            }
         }
     }
 
