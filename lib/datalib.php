@@ -551,20 +551,23 @@ function get_user_info_from_db($field, $value) {
         $user->student[$site->id] = true;
     }
 
-    $students = get_records("user_students", "userid", $user->id);
-    foreach ($students as $student) {
-        $user->student[$student->course] = true;
+    if ($students = get_records("user_students", "userid", $user->id)) {
+        foreach ($students as $student) {
+            $user->student[$student->course] = true;
+        }
     }
 
-    $teachers = get_records("user_teachers", "userid", $user->id);
-    foreach ($teachers as $teacher) {
-        $user->teacher[$teacher->course] = true;
+    if ($teachers = get_records("user_teachers", "userid", $user->id)) {
+        foreach ($teachers as $teacher) {
+            $user->teacher[$teacher->course] = true;
+        }
     }
 
-    $admins = get_records("user_admins", "userid", $user->id);
-    foreach ($admins as $admin) {
-        $user->admin = true;
-        break;
+    if ($admins = get_records("user_admins", "userid", $user->id)) {
+        foreach ($admins as $admin) {
+            $user->admin = true;
+            break;
+        }
     }
 
     return $user;
