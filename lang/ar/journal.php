@@ -1,29 +1,29 @@
 <?PHP // $Id$
 
 #------------------------------------------------------------
-$string['modulename'] = "ÃÎÈÇÑ";
-$string['modulenameplural'] = "ÃÎÈÇÑ";
+$string['modulename'] = "ãÐßÑÉ";
+$string['modulenameplural'] = "ãÐßÑÇÊ";
 #------------------------------------------------------------
 
 
-$string['alwaysopen'] = "Always open";
-$string['blankentry'] = "Blank entry";
-$string['daysavailable'] = "Days available";
-$string['editingends'] = "Editing period ends";
-$string['editingended'] = "Editing period has ended";
-$string['journalname'] = "Journal name";
-$string['journalquestion'] = "Journal question";
-$string['journalrating1'] = "Not satisfactory";
-$string['journalrating2'] = "Satisfactory";
-$string['journalrating3'] = "Outstanding";
-$string['newjournalentries'] = "New journal entries";
-$string['noentry'] = "No entry";
-$string['notopenuntil'] = "This journal won't be open until";
-$string['notstarted'] = "You have not started this journal yet";
-$string['noratinggiven'] = "No rating given";
-$string['overallrating'] = "Overall rating";
-$string['rate'] = "Rate";
-$string['startoredit'] = "Start or edit my journal entry";
-$string['viewallentries'] = "View \$a journal entries";
+$string['alwaysopen'] = "ãÝÊæÍ ÏÇÆãÇ";
+$string['blankentry'] = "ÞíãÉ ÝÇÑÛÉ";
+$string['daysavailable'] = "ÃíÇã ãÊÇÍÉ";
+$string['editingends'] = "ÊäÊåí ÝÊÑÉ ÇáÊÚÏíá";
+$string['editingended'] = "ÇäÊåÊ ÝÊÑÉ ÇáÊÚÏíá";
+$string['journalname'] = "ÇÓã ÇáãÐßÑÉ";
+$string['journalquestion'] = "ÓÄÇá ÇáãÐßÑÉ";
+$string['journalrating1'] = "áíÓ ãÞäÚÇ";
+$string['journalrating2'] = "ãÞäÚÇ";
+$string['journalrating3'] = "ÎÇÑÌ ÇáäØÇÞ";
+$string['newjournalentries'] = "ãÏÎáÇÊ ãÐßÑÉ ÌÏíÏÉ";
+$string['noentry'] = "áÇ íæÌÏ ãÏÎáÇÊ";
+$string['notopenuntil'] = "åÐå ÇáãÐßÑÉ áä ÊÝÊÍ ÍÊì";
+$string['notstarted'] = "Åäß áã ÊÈÏÇ åÐå ÇáãÐßÑÉ ÍÊì ÇáÂä";
+$string['noratinggiven'] = "áÇ ÊæÌÏ ÊÕäíÝÇÊ ãÍÏÏÉ";
+$string['overallrating'] = "ÛÇáÈíÉ ÇáÊÕäíÝÇÊ";
+$string['rate'] = "ÊÕäíÝ";
+$string['startoredit'] = " ÊÚÏíá ãÐßÑÊí";
+$string['viewallentries'] = "ÚÑÖ \$a ãÏÎáÇÊ ÇáãÐßÑÉ";
 
 ?>

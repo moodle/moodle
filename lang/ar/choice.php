@@ -1,17 +1,17 @@
 <?PHP // $Id$
 
 #------------------------------------------------------------
-$string['modulename'] = "ÇÓÊÈíÇä";
-$string['modulenameplural'] = "ÇÓÊÈíÇäÇÊ";
+$string['modulename'] = "ÇáÇÎÊíÇÑ";
+$string['modulenameplural'] = "ÇáÇÎÊíÇÑÇÊ";
 #------------------------------------------------------------
 
-$string['answered'] = "Answered";
-$string['choice'] = "Choice \$a";
-$string['choicename'] = "Choice name";
-$string['choicetext'] = "Choice text";
-$string['notanswered'] = "Not answered yet";
-$string['responses'] = "Responses";
-$string['responsesto'] = "Responses to \$a";
-$string['savemychoice'] = "Save my choice";
-$string['viewallresponses'] = "View \$a responses";
+$string['answered']				= "ÃÌíÈ Úäå";
+$string['choice']				= "ÇÎÊíÇÑ \$a";
+$string['choicename']			= "ÇÓã ÇáÇÎÊíÇÑÇÊ";
+$string['choicetext']			= "ÇÎÊíÇÑ ÇáäÕ";
+$string['notanswered']			= "áã íÌÈ ÚäåÇ ÈÚÏ";
+$string['responses']			= "ÅÌÇÈÇÊ";
+$string['responsesto']			= "ÅÌÇÈÇÊ áÜ \$a";
+$string['savemychoice']			= "ÍÝÙ ÇáÇÎÊíÇÑ";
+$string['viewallresponses']		= "ÚÑÖ ÅÌÇÈÇÊ \$a ";
 ?>
