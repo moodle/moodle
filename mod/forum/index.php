@@ -106,7 +106,7 @@
             }
                 
             if ($groupmode == SEPARATEGROUPS and !isteacheredit($course->id)) {
-                $count = count_records("forum_discussions", "groupid", $currentgroup);
+                $count = count_records("forum_discussions", "forum", "$forum->id", "groupid", $currentgroup);
             } else {
                 $count = count_records("forum_discussions", "forum", "$forum->id");
             }
@@ -161,7 +161,7 @@
                 $groupmode = groupmode($course, $forum);  /// Can do this because forum->groupmode is defined
                 
                 if ($groupmode == SEPARATEGROUPS and !isteacheredit($course->id)) {
-                    $count = count_records("forum_discussions", "groupid", $currentgroup);
+                    $count = count_records("forum_discussions", "forum", "$forum->id", "groupid", $currentgroup);
                 } else {
                     $count = count_records("forum_discussions", "forum", "$forum->id");
                 }
