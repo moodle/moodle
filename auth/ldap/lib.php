@@ -568,7 +568,8 @@ function auth_ldap_suppported_usertypes (){
 // And then add case clauses in relevant places in functions
 // iauth_ldap_init, auth_user_create, auth_check_expire, auth_check_grace
     $types['edir']='Novell Edirectory';
-    $types['posix']='posixAccount (rfc2307)';
+    $types['rfc2307']='posixAccount (rfc2307)';
+    $types['rfc2307bis']='posixAccount (rfc2307bis)';
     $types['samba']='sambaSamAccount (v.3.0.7)';
     $types['ad']='MS ActiveDirectory'; 
     return $types;
@@ -580,35 +581,40 @@ function auth_ldap_init () {
     global $CFG;
     $default['ldap_objectclass'] = array(
                         'edir' => 'User',
-                        'posix' => 'posixAccount',
+                        'rfc2703' => 'posixAccount',
+                        'rfc2703bis' => 'posixAccount',
                         'samba' => 'sambaSamAccount',
                         'ad' => 'user',
                         'default' => '*'
                         );
     $default['ldap_user_attribute'] = array(
                         'edir' => 'cn',
-                        'posix' => 'uid',
+                        'rfc2307' => 'uid',
+                        'rfc2307bis' => 'uid',
                         'samba' => 'uid',
                         'ad' => 'cn',
                         'default' => 'cn'
                         );
     $default['ldap_memberattribute'] = array(
                         'edir' => 'member',
-                        'posix' => 'member',
+                        'rfc2307' => 'member',
+                        'rfc2307bis' => 'member',
                         'samba' => 'member',
                         'ad' => 'member', //is this right?
                         'default' => 'member'
                         );
     $default['ldap_memberattribute_isdn'] = array(
                         'edir' => '1',
-                        'posix' => '0',
+                        'rfs2307' => '0',
+                        'rfs2307bis' => '1',
                         'samba' => '0', //is this right?
                         'ad' => '0', //is this right?
                         'default' => '0'
                         );
     $default['ldap_expireattr'] = array (
                         'edir' => 'passwordExpirationTime',
-                        'posix' => 'shadowExpire',
+                        'rfc2307' => 'shadowExpire',
+                        'rfc2307bis' => 'shadowExpire',
                         'samba' => '', //No support yet
                         'ad' => '', //No support yet
                         'default' => ''
