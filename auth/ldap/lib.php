@@ -481,7 +481,7 @@ function auth_ldap_find_userdn ($ldap_connection, $username){
   
     foreach ($ldap_contexts as $context) {
 
-        $context == trim($context);
+        $context = trim($context);
         if (empty($context)) {
             continue;
         }
