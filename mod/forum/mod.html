@@ -15,6 +15,7 @@
        require("$CFG->dirroot/mod/forum/lib.php");
        asort($FORUM_TYPES);
        choose_from_menu($FORUM_TYPES, "type", $form->type);
+       helpbutton("forumtype", get_string("forumtype", "forum"), "forum");
     ?>
 
     </td>
@@ -23,6 +24,7 @@
     <td align=right><P><B><? print_string("forumintro", "forum")?>:</B></P></TD>
     <td>
         <textarea name="intro" rows=4 cols=50 wrap="virtual"><? p($form->intro) ?></textarea>
+        <? helpbutton("text", get_string("helptext")); ?>
     </td>
 </tr>
 
@@ -32,15 +34,15 @@
         <? $stryes = get_string("yes"); $strno = get_string("no"); ?>
         <input type=radio name=open value=1 <? if ($form->open == 1) echo "CHECKED"; ?> ><?=$stryes ?>
         <input type=radio name=open value=0 <? if ($form->open == 0) echo "CHECKED"; ?> ><?=$strno ?>
+        <? helpbutton("allowdiscussions", get_string("allowdiscussions", "forum"), "forum") ?>
     </td>
 </tr>
 <tr>
-    <td align=right><P><B><? print_string("allowratings", "forum") ?>
-        <? helpbutton("waysofknowing", get_string("separateandconnected")) ?>
-    :</B></P></TD>
+    <td align=right><P><B><? print_string("allowratings", "forum") ?>:</B></P></TD>
     <td>
         <input type=radio name=assessed value=1 <? if ($form->assessed == 1) echo "CHECKED"; ?> ><?=$stryes ?>
         <input type=radio name=assessed value=0 <? if ($form->assessed == 0) echo "CHECKED"; ?> ><?=$strno ?>
+        <? helpbutton("ratings", get_string("allowratings", "forum"), "forum") ?>
     </td>
 </tr>
 <tr>
@@ -48,6 +50,7 @@
     <td>
         <input type=radio name=forcesubscribe value=1 <? if ($form->forcesubscribe == 1) echo "CHECKED"; ?> ><?=$stryes ?>
         <input type=radio name=forcesubscribe value=0 <? if ($form->forcesubscribe == 0) echo "CHECKED"; ?> ><?=$strno ?>
+        <? helpbutton("subscription", get_string("forcesubscribeq", "forum"), "forum") ?>
     </td>
 </tr>
 </table>
