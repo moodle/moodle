@@ -1492,7 +1492,7 @@ function get_groups($courseid, $userid=0) {
 * 
 * @param	type description
 */
-function get_users_in_group($groupid, $sort="u.lastaccess DESC") {
+function get_group_users($groupid, $sort="u.lastaccess DESC") {
     global $CFG;
     return get_records_sql("SELECT DISTINCT u.*
                               FROM {$CFG->prefix}user u,
@@ -1512,6 +1512,28 @@ function get_users_not_in_group($courseid) {
 
     return array();     /// XXX TO BE DONE
 }
+
+
+/**
+* Returns an array of user objects
+* 
+* @param	type description
+*/
+function get_group_students($groupid, $sort="u.lastaccess DESC") {
+    global $CFG;
+    return get_records_sql("SELECT DISTINCT u.*
+                              FROM {$CFG->prefix}user u,
+                                   {$CFG->prefix}groups_members m,
+                                   {$CFG->prefix}groups g,
+                                   {$CFG->prefix}user_students s
+                             WHERE m.groupid = '$groupid'
+                               AND m.userid = u.id 
+                               AND m.groupid = g.id 
+                               AND g.courseid = s.course
+                               AND s.userid = u.id
+                          ORDER BY $sort");
+}
+
 
 /**
 * Returns the user's group in a particular course
