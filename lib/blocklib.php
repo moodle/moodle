@@ -491,7 +491,7 @@ function blocks_execute_action($page, &$pageblocks, $blockaction, $instanceorid)
             $newinstance->pageid     = $page->get_id();
             $newinstance->pagetype   = $page->get_type();
             $newinstance->position   = $newpos;
-            $newinstance->weight     = $weight->nextfree;
+            $newinstance->weight     = empty($weight->nextfree) ? 0 : $weight->nextfree;
             $newinstance->visible    = 1;
             $newinstance->configdata = '';
             insert_record('block_instance', $newinstance);
