@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // choice.php - created with Moodle 1.0.7 (2002121000)
+      // choice.php - created with Moodle 1.2 development (2003110400)
 
 
 $string['answered'] = "ÃÌíÈ Úäå";
@@ -9,6 +9,10 @@ $string['choicetext'] = "äÕ ÇáÇÎÊíÇÑ";
 $string['modulename'] = "ÇáÇÎÊíÇÑ";
 $string['modulenameplural'] = "ÇáÇÎÊíÇÑÇÊ";
 $string['notanswered'] = "áã íÌÈ ÚäåÇ ÈÚÏ";
+$string['publish'] = "ÃäÔÑ ÇáäÊÇÆÌ";
+$string['publishanonymous'] = "ÃäÔÑ ÇáäÊÇÆÌ ãÈåãå æáÇ ÊÚÑÖ ÇÓãÇÁ ÇáØáÇÈ";
+$string['publishnames'] = "ÃäÔÑ ÇáäÊÇÆÌ ßÇãáÉ ãÚ ÚÑÖ ÃÓãÇÁ ÇáØáÇÈ";
+$string['publishnot'] = "áÇ ÊäÔÑ ÇáäÊÇÆÌ ááØáÇÈ";
 $string['responses'] = "ÅÌÇÈÇÊ";
 $string['responsesto'] = "ÅÌÇÈÇÊ áÜ \$a";
 $string['savemychoice'] = "ÍÝÙ ÇáÇÎÊíÇÑ";

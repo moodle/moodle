@@ -1,12 +1,18 @@
 <?PHP // $Id$ 
-      // journal.php - created with Moodle 1.0.7 (2002121000)
+      // journal.php - created with Moodle 1.2 development (2003110400)
 
 
 $string['alwaysopen'] = "ãİÊæÍ ÏÇÆãÇ";
 $string['blankentry'] = "ŞíãÉ İÇÑÛÉ";
-$string['daysavailable'] = "ãÊÇÍÉ ÍÊì";
+$string['daysavailable'] = "ÇáÇíÇã ãÊÇÍÉ ";
 $string['editingended'] = "ÇäÊåÊ İÊÑÉ ÇáÊÚÏíá";
 $string['editingends'] = "ÊäÊåí İÊÑÉ ÇáÊÚÏíá";
+$string['entries'] = "ãæÇÏ";
+$string['feedbackupdated'] = "ÊÕÍíÍ ãÍÏË ááãÏÎáÇÊ \$a";
+$string['journalmail'] = "\$a->ŞÇã ÇáãÏÑÓ ÈÅÑÓÇá ÈÚÖ ÇáÊÕÍíÍÇÊ Úáì ãÇÏÉ ãĞßÑÊß '\$a->journal'
+ÊÓØíÚ ÑÄíÊåÇ æÇáÍÇŞåÇ ÈãÇÏÉ ÇáãĞßÑÉ";
+$string['journalmailhtml'] = "\$a->ŞÇã ÇáãÏÑÓ ÈÅÑÓÇá ÈÚÖ ÇáÊÕÍíÍÇÊ Úáì ãÇÏÉ ãĞßÑÊß '<i>\$a->journal</i>'<br /><br />
+ÊÓØíÚ ÑÄíÊåÇ æÇáÍÇŞåÇ <a href=\\\"\$a->url\\\">ÈãÇÏÉ ãĞßÑÊß</a>.";
 $string['journalname'] = "ÇÓã ÇáãĞßÑÉ";
 $string['journalquestion'] = "ÓÄÇá ÇáãĞßÑÉ";
 $string['journalrating1'] = "áíÓ ãŞäÚÇ";
@@ -20,7 +26,8 @@ $string['noratinggiven'] = "áÇ ÊæÌÏ ÊÕäíİÇÊ ãÍÏÏÉ";
 $string['notopenuntil'] = "åĞå ÇáãĞßÑÉ áä ÊİÊÍ ÍÊì";
 $string['notstarted'] = "Åäß áã ÊÈÏÇ åĞå ÇáãĞßÑÉ ÍÊì ÇáÂä";
 $string['overallrating'] = "ÛÇáÈíÉ ÇáÊÕäíİÇÊ";
-$string['rate'] = "ÊÕäíİ";
+$string['rate'] = "Õäİ";
+$string['saveallfeedback'] = "ÃÍİÙ ÌãíÚ ÇáÊÕÍíÍÇÊ ÇáÎÇÕ Èí";
 $string['startoredit'] = " ÊÚÏíá ãĞßÑÊí";
 $string['viewallentries'] = "ÚÑÖ \$a ãÏÎáÇÊ ÇáãĞßÑÉ";
 

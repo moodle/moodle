@@ -1,15 +1,15 @@
 <?PHP // $Id$ 
-      // chat.php - created with Moodle 1.2 development (2003102900)
+      // chat.php - created with Moodle 1.2 development (2003110400)
 
 
 $string['beep'] = "äÛãÉ";
 $string['chatintro'] = "äÕ ÇáãÞÏãÉ";
-$string['chatname'] = "ÃÓã ÛÑÝÉ ÇáÏÑÏÔÉ ÇáÍÇáíå";
+$string['chatname'] = "ÃÓã ÛÑÝÉ ÇáãÍÇÏËÉ ÇáÍÇáíå";
 $string['chatreport'] = "ÌáÓÉ ÇáãÍÇÏËÉ";
 $string['chattime'] = "ÇáãæÚÏ ÇáÞÇÏã ÇáãÍÇÏËÉ";
-$string['configoldping'] = "After how long of not hearing from a user should we consider them gone?";
-$string['configrefreshroom'] = "How often should the chat room itself be refreshed? (in seconds).  Setting this low will make the chat room seem quicker, but it may place a higher load on your web server when many people are chatting";
-$string['configrefreshuserlist'] = "How often should the list of users be refreshed? (in seconds)";
+$string['configoldping'] = "ÚäÏ ÚÏã ÓãÇÚ ãÓÊÎÏã¡ ãÇåí ÇáãÏå ÇáÞÕæì ÇáÊí äÚÊÈÑ ÇáãÓÊÎÏã ÞÏ ÛÇÏÑ ÛÑÝÉ ÇáãÍÇËÉ";
+$string['configrefreshroom'] = "ãÇåí ÇáãÏÉ ÇáÊí íÍÈÐ Çä ÊäÔØ ÎáÇáåÇ ÛÑÝÉ ÇáãÍÇÏËÉ (ÈÇáËæÇäí)¿ ÇÎÊíÇ Þíãå ãäÎÝÙå íÌÚá ÛÑÝÉ ÇáãÍÇÏËÉ ÊÈÏæ ÓÑíÚÉ¡ æáßä åÐÇ ÇáÅÚÏÇÏÓíÍãá ÎÇÏã ãæÞÚß ÚÈÁ ÍíäãÇ íßæä ÚÏÏ ÇáãÊÍÏËíä Ýí ÇáÛÑÝÉ ßÈíÑ";
+$string['configrefreshuserlist'] = "ãÇåí ÇáãÏÉ ÇáÊí ÎáÇáåÇ íÊã ÊäÔíØ ÞÇÆãÉ ÇáãÓÊÎÏãíä (ÈÇáËæÇäí)";
 $string['currentchats'] = "äÔØ ÌáÓÉ ÇáãÍÇÏËÉ";
 $string['currentusers'] = "ÇáãÓÊÎÏãíä ÇáÍÇáííä";
 $string['donotusechattime'] = "áÇ ÊÞã ÈäÔÑ ÇáãÍÇÏËÉ Ýí Ãí æÞÊ";
