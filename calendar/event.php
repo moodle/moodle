@@ -279,6 +279,12 @@
                     $form->minutes = '';
                 }
             }
+            if (!empty($form->courseid)) {       // Fixes bug 1488
+                $course = get_record('course', 'id', $form->courseid);
+            } else {
+                $course = $site;
+            }
+
             print_side_block_start(get_string('editevent', 'calendar'), array('class' => 'mycalendar'));
             include('event_edit.html');
             print_side_block_end();
