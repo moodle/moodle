@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // attendance.php - created with Moodle 1.4 development (2004062600)
+      // attendance.php - created with Moodle 1.4 development (2004070800)
 
 
 $string['absentlong'] = '欠席';
@@ -58,12 +58,12 @@ $string['tardyshort'] = '遅';
 $string['teacheredit'] = '出席を取る';
 $string['thursday'] = '木';
 $string['tuesday'] = '火';
-$string['viewall'] = '全ての出席簿を表示する';
+$string['viewall'] = '全ての出席簿を表示';
 $string['viewmulti'] = 'レポートを複数ページに表示する';
 $string['viewone'] = 'レポートの全ページを表示する';
 $string['viewsection'] = 'このセクションの全出席簿を表示する';
 $string['viewtable'] = 'レポートを一つのテーブルに表示する';
-$string['viewweek'] = 'カレンダー週の全出席簿を表示する';
+$string['viewweek'] = 'カレンダー週の全出席簿を表示';
 $string['wednesday'] = '水';
 $string['weekmodulename'] = '先週の全出席簿';
 
