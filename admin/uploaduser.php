@@ -151,7 +151,7 @@
                         $user->password = md5($value);
                     }
                     else if ($name == "username") {
-                        $user->username = moodle_strtolower($value);
+                        $user->username = addslashes(moodle_strtolower($value));
                     }
                     // normal entry
                     else {
