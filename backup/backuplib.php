@@ -140,13 +140,19 @@
                 } else {
                    $tok = "";
                 }
-                //Insert them into backup_files
-                $status = execute_sql("INSERT INTO {$CFG->prefix}backup_files
-                                           (backup_code, file_type, path, old_id)
-                                       VALUES
-                                           ('$backup_unique_code','user','$dir','$userid')",false);
-            //Do some output
-            backup_flush(30);
+                //Look it is a backupable user
+                $data = get_record ("backup_ids","backup_code","$backup_unique_code",
+                                                 "table_name","user",
+                                                 "old_id",$userid);
+                if ($data) {
+                    //Insert them into backup_files
+                    $status = execute_sql("INSERT INTO {$CFG->prefix}backup_files
+                                               (backup_code, file_type, path, old_id)
+                                           VALUES
+                                               ('$backup_unique_code','user','$dir','$userid')",false);
+                }
+                //Do some output
+                backup_flush(30);
             }
         }
 
