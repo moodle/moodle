@@ -1,4 +1,4 @@
-README $Id$
+STATUS $Id$
 ----------
 
 This documment shows the current status of the backup/restore option.
@@ -13,7 +13,7 @@ Now I show the specific detailed status of every item in the process:
 
 Backup Details:
 ===============
-   - Backup FrontEnd............................................NO EXISTS
+   - Backup FrontEnd............................................IN PROGRESS.
         - Check Security........................................NO EXISTS
         - Select Info to Backup.(from mods).....................NO EXISTS
         - Launch Backup.........................................NO EXISTS
