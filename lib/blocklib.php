@@ -236,7 +236,8 @@ function blocks_print_group($page, $instances) {
             $options |= BLOCK_MOVE_DOWN * ($instance->weight != $maxweight);
             $options |= BLOCK_MOVE_RIGHT * ($instance->position != BLOCK_POS_RIGHT);
             $options |= BLOCK_MOVE_LEFT * ($instance->position != BLOCK_POS_LEFT);
-            $options |= BLOCK_CONFIGURE * ($block->multiple);
+            // DH - users can configure this instance if the block class allows multiple instances, not just if the administrator has allowed this block class to display multiple for the given site as would be found in $block->multiple
+            $options |= BLOCK_CONFIGURE * ( $obj->instance_allow_multiple() );
             $obj->add_edit_controls($options);
         }
 
@@ -313,10 +314,9 @@ function blocks_find_instance($instanceid, $blocksarray) {
 function blocks_execute_action($page, &$pageblocks, $blockaction, $instanceorid) {
     global $CFG;
 
-    if(is_int($instanceorid)) {
+    if (is_int($instanceorid)) {
         $blockid = $instanceorid;
-    }
-    else if(is_object($instanceorid)) {
+    } else if (is_object($instanceorid)) {
         $instance = $instanceorid;
     }
 
@@ -381,13 +381,13 @@ function blocks_execute_action($page, &$pageblocks, $blockaction, $instanceorid)
         break;
         case 'delete':
             if(empty($instance))  {
-                error('Invalid block instance for '.$blockaction);
+                error('Invalid block instance for '. $blockaction);
             }
             blocks_delete_instance($instance);
         break;
         case 'moveup':
             if(empty($instance))  {
-                error('Invalid block instance for '.$blockaction);
+                error('Invalid block instance for '. $blockaction);
             }
             $other = $pageblocks[$instance->position][$instance->weight - 1];
             if(!empty($other)) {
@@ -399,7 +399,7 @@ function blocks_execute_action($page, &$pageblocks, $blockaction, $instanceorid)
         break;
         case 'movedown':
             if(empty($instance))  {
-                error('Invalid block instance for '.$blockaction);
+                error('Invalid block instance for '. $blockaction);
             }
             $other = $pageblocks[$instance->position][$instance->weight + 1];
             if(!empty($other)) {
@@ -412,15 +412,15 @@ function blocks_execute_action($page, &$pageblocks, $blockaction, $instanceorid)
         break;
         case 'moveleft':
             if(empty($instance))  {
-                error('Invalid block instance for '.$blockaction);
+                error('Invalid block instance for '. $blockaction);
             }
             $sql = '';
             switch($instance->position) {
                 case BLOCK_POS_RIGHT:
                     // To preserve the continuity of block weights
-                    $sql = 'UPDATE '.$CFG->prefix.'block_instance SET weight = weight - 1 WHERE pagetype = \''.$instance->pagetype.
-                           '\' AND pageid = '.$instance->pageid.' AND position = \''.$instance->position.
-                           '\' AND weight > '.$instance->weight;
+                    $sql = 'UPDATE '. $CFG->prefix .'block_instance SET weight = weight - 1 WHERE pagetype = \''. $instance->pagetype.
+                           '\' AND pageid = '. $instance->pageid .' AND position = \'' .$instance->position.
+                           '\' AND weight > '. $instance->weight;
 
                     $instance->position = BLOCK_POS_LEFT;
                     $maxweight = max(array_keys($pageblocks[$instance->position]));
@@ -434,15 +434,15 @@ function blocks_execute_action($page, &$pageblocks, $blockaction, $instanceorid)
         break;
         case 'moveright':
             if(empty($instance))  {
-                error('Invalid block instance for '.$blockaction);
+                error('Invalid block instance for '. $blockaction);
             }
             $sql = '';
             switch($instance->position) {
                 case BLOCK_POS_LEFT:
                     // To preserve the continuity of block weights
-                    $sql = 'UPDATE '.$CFG->prefix.'block_instance SET weight = weight - 1 WHERE pagetype = \''.$instance->pagetype.
-                           '\' AND pageid = '.$instance->pageid.' AND position = \''.$instance->position.
-                           '\' AND weight > '.$instance->weight;
+                    $sql = 'UPDATE '. $CFG->prefix .'block_instance SET weight = weight - 1 WHERE pagetype = \''. $instance->pagetype.
+                           '\' AND pageid = '. $instance->pageid .' AND position = \''. $instance->position.
+                           '\' AND weight > '. $instance->weight;
 
                     $instance->position = BLOCK_POS_RIGHT;
                     $maxweight = max(array_keys($pageblocks[$instance->position]));
@@ -463,7 +463,7 @@ function blocks_execute_action($page, &$pageblocks, $blockaction, $instanceorid)
                 return false;
             }
 
-            $weight = get_record_sql('SELECT 1, max(weight) + 1 AS nextfree FROM '.$CFG->prefix.'block_instance WHERE pageid = '.$page->id.' AND pagetype = \''.$page->type.'\' AND position = \''.BLOCK_POS_RIGHT.'\''); 
+            $weight = get_record_sql('SELECT 1, max(weight) + 1 AS nextfree FROM '. $CFG->prefix .'block_instance WHERE pageid = '. $page->id .' AND pagetype = \''. $page->type .'\' AND position = \''. BLOCK_POS_RIGHT .'\''); 
 
             $newinstance = new stdClass;
             $newinstance->blockid    = $blockid;
@@ -479,7 +479,7 @@ function blocks_execute_action($page, &$pageblocks, $blockaction, $instanceorid)
 }
 
 function blocks_get_by_page($page) {
-    $blocks = get_records_select('block_instance', 'pageid = '.$page->id.' AND pagetype = \''.$page->type.'\'', 'position, weight');
+    $blocks = get_records_select('block_instance', 'pageid = '. $page->id .' AND pagetype = \''. $page->type .'\'', 'position, weight');
 
     $arr = array(BLOCK_POS_LEFT => array(), BLOCK_POS_RIGHT => array());
     if(empty($blocks)) {
@@ -507,7 +507,7 @@ function blocks_print_adminblock($page, $missingblocks) {
                 case MOODLE_PAGE_COURSE:
                     $course = get_record('course', 'id', $page->id);
                 break;
-                default: die('unknown pagetype: '.$page->type);
+                default: die('unknown pagetype: '. $page->type);
             }
 
             $blockobject = block_instance($block->name);
@@ -523,9 +523,9 @@ function blocks_print_adminblock($page, $missingblocks) {
         else {
             $target = 'view.php';
         }
-        $content = popup_form($target.'?id='.$course->id.'&amp;sesskey='.$USER->sesskey.'&amp;blockaction=add&amp;blockid=',
-                              $menu, 'add_block', '', "$stradd...", '', '', true);
-        $content = '<div align="center">'.$content.'</div>';
+        $content = popup_form($target .'?id='. $course->id .'&amp;sesskey='. $USER->sesskey .'&amp;blockaction=add&amp;blockid=',
+                              $menu, 'add_block', '', $stradd .'...', '', '', true);
+        $content = '<div align="center">'. $content .'</div>';
         print_side_block($strblocks, $content, NULL, NULL, NULL);
     }
 }
@@ -554,8 +554,8 @@ function blocks_repopulate_page($page) {
                 // It's a normal course, so do it accodring to the course format
                 else {
                     $course = get_record('course', 'id', $page->id);
-                    if (!empty($CFG->{'defaultblocks_'.$course->format})) {
-                        $blocknames = $CFG->{'defaultblocks_'.$course->format};
+                    if (!empty($CFG->{'defaultblocks_'. $course->format})) {
+                        $blocknames = $CFG->{'defaultblocks_'. $course->format};
                     }
                     else {
                         $format_config = $CFG->dirroot.'/course/format/'.$course->format.'/config.php';
@@ -576,7 +576,7 @@ function blocks_repopulate_page($page) {
                 }
             break;
             default:
-                error('Invalid page type: '.$page->type);
+                error('Invalid page type: '. $page->type);
             break;
         }
     }
@@ -627,54 +627,54 @@ function upgrade_blocks_db($continueto) {
 
     global $CFG, $db;
 
-    require_once ("$CFG->dirroot/blocks/version.php");  // Get code versions
+    require_once ($CFG->dirroot .'/blocks/version.php');  // Get code versions
 
     if (empty($CFG->blocks_version)) {                  // Blocks have never been installed.
-        $strdatabaseupgrades = get_string("databaseupgrades");
+        $strdatabaseupgrades = get_string('databaseupgrades');
         print_header($strdatabaseupgrades, $strdatabaseupgrades, $strdatabaseupgrades,
-                     "", "", false, "&nbsp;", "&nbsp;");
+                     '', '', false, '&nbsp;', '&nbsp;');
 
         $db->debug=true;
-        if (modify_database("$CFG->dirroot/blocks/db/$CFG->dbtype.sql")) {
+        if (modify_database($CFG->dirroot .'/blocks/db/'. $CFG->dbtype .'.sql')) {
             $db->debug = false;
-            if (set_config("blocks_version", $blocks_version)) {
-                notify(get_string("databasesuccess"), "green");
-                notify(get_string("databaseupgradeblocks", "", $blocks_version));
+            if (set_config('blocks_version', $blocks_version)) {
+                notify(get_string('databasesuccess'), 'green');
+                notify(get_string('databaseupgradeblocks', '', $blocks_version));
                 print_continue($continueto);
                 exit;
             } else {
-                error("Upgrade of blocks system failed! (Could not update version in config table)");
+                error('Upgrade of blocks system failed! (Could not update version in config table)');
             }
         } else {
-            error("Blocks tables could NOT be set up successfully!");
+            error('Blocks tables could NOT be set up successfully!');
         }
     }
 
 
     if ($blocks_version > $CFG->blocks_version) {       // Upgrade tables
-        $strdatabaseupgrades = get_string("databaseupgrades");
+        $strdatabaseupgrades = get_string('databaseupgrades');
         print_header($strdatabaseupgrades, $strdatabaseupgrades, $strdatabaseupgrades);
 
-        require_once ("$CFG->dirroot/blocks/db/$CFG->dbtype.php");
+        require_once ($CFG->dirroot .'/blocks/db/'. $CFG->dbtype .'.php');
 
         $db->debug=true;
         if (blocks_upgrade($CFG->blocks_version)) {
             $db->debug=false;
-            if (set_config("blocks_version", $blocks_version)) {
-                notify(get_string("databasesuccess"), "green");
-                notify(get_string("databaseupgradeblocks", "", $blocks_version));
+            if (set_config('blocks_version', $blocks_version)) {
+                notify(get_string('databasesuccess'), 'green');
+                notify(get_string('databaseupgradeblocks', '', $blocks_version));
                 print_continue($continueto);
                 exit;
             } else {
-                error("Upgrade of blocks system failed! (Could not update version in config table)");
+                error('Upgrade of blocks system failed! (Could not update version in config table)');
             }
         } else {
             $db->debug=false;
-            error("Upgrade failed!  See blocks/version.php");
+            error('Upgrade failed!  See blocks/version.php');
         }
 
     } else if ($blocks_version < $CFG->blocks_version) {
-        notify("WARNING!!!  The code you are using is OLDER than the version that made these databases!");
+        notify('WARNING!!!  The code you are using is OLDER than the version that made these databases!');
     }
 }
 
@@ -701,41 +701,41 @@ function upgrade_blocks_plugins($continueto) {
     $site = get_site();
 
     if (!$blocks = get_list_of_plugins('blocks', 'db') ) {
-        error("No blocks installed!");
+        error('No blocks installed!');
     }
 
-    include_once($CFG->dirroot.'/blocks/moodleblock.class.php');
+    include_once($CFG->dirroot .'/blocks/moodleblock.class.php');
     if(!class_exists('moodleblock')) {
         error('Class MoodleBlock is not defined or file not found for /blocks/moodleblock.class.php');
     }
 
     foreach ($blocks as $blockname) {
 
-        if ($blockname == "NEWBLOCK") {   // Someone has unzipped the template, ignore it
+        if ($blockname == 'NEWBLOCK') {   // Someone has unzipped the template, ignore it
             continue;
         }
 
-        $fullblock = "$CFG->dirroot/blocks/$blockname";
+        $fullblock = $CFG->dirroot .'/blocks/'. $blockname;
 
         if ( is_readable($fullblock.'/block_'.$blockname.'.php')) {
             include_once($fullblock.'/block_'.$blockname.'.php');
         } else {
-            $notices[] = "Block $blockname: ".$fullblock."/block_".$blockname.".php was not readable";
+            $notices[] = 'Block '. $blockname .': '. $fullblock .'/block_'. $blockname .'.php was not readable';
             continue;
         }
 
-        if ( @is_dir("$fullblock/db/")) {
-            if ( @is_readable("$fullblock/db/$CFG->dbtype.php")) {
-                include_once("$fullblock/db/$CFG->dbtype.php");  # defines upgrading function
+        if ( @is_dir($fullblock .'/db/')) {
+            if ( @is_readable($fullblock .'/db/'. $CFG->dbtype .'.php')) {
+                include_once($fullblock .'/db'. /$CFG->dbtype .'.php');  // defines upgrading function
             } else {
-                $notices[] ="Block $blockname: $fullblock/db/$CFG->dbtype.php was not readable";
+                $notices[] ='Block '. $blockname .': '. $fullblock .'/db/'. $CFG->dbtype .'.php was not readable';
                 continue;
             }
         }
 
         $classname = 'CourseBlock_'.$blockname;
         if(!class_exists($classname)) {
-            $notices[] = "Block $blockname: $classname not implemented";
+            $notices[] = 'Block '. $blockname .': '. $classname .' not implemented';
             continue;
         }
 
@@ -745,14 +745,14 @@ function upgrade_blocks_plugins($continueto) {
         $constructor = get_class_constructor($classname);
         if(empty($constructor)) {
             // No constructor
-            $notices[] = "Block $blockname: class does not have a constructor";
+            $notices[] = 'Block '. $blockname .': class does not have a constructor';
             $invalidblocks[] = $blockname;
             continue;
         }
         $methods = get_class_methods($classname);
         if(!in_array('init', $methods)) {
             // This is an old-style block
-            $notices[] = "Block $blockname is an old style block and needs to be updated by a programmer.";
+            $notices[] = 'Block '. $blockname .' is an old style block and needs to be updated by a programmer.';
             $invalidblocks[] = $blockname;
             continue;
         }
@@ -762,19 +762,19 @@ function upgrade_blocks_plugins($continueto) {
 
         // Inherits from MoodleBlock?
         if(!is_subclass_of($blockobj, 'moodleblock')) {
-            $notices[] = "Block $blockname: class does not inherit from MoodleBlock";
+            $notices[] = 'Block '. $blockname .': class does not inherit from MoodleBlock';
             continue;
         }
 
         // OK, it's as we all hoped. For further tests, the object will do them itself.
         if(!$blockobj->_self_test()) {
-            $notices[] = "Block $blockname: self test failed";
+            $notices[] = 'Block '. $blockname .': self test failed';
             continue;
         }
         $block->version = $blockobj->get_version();
 
         if (!isset($block->version)) {
-            $notices[] = "Block $blockname: hasn't version support";
+            $notices[] = 'Block '. $blockname .': has no version support. It must be updated by a programmer.';
             continue;
         }
 
@@ -786,8 +786,8 @@ function upgrade_blocks_plugins($continueto) {
                 // do nothing
             } else if ($currblock->version < $block->version) {
                 if (empty($updated_blocks)) {
-                    $strblocksetup    = get_string("blocksetup");
-                    print_header($strblocksetup, $strblocksetup, $strblocksetup, "", "", false, "&nbsp;", "&nbsp;");
+                    $strblocksetup    = get_string('blocksetup');
+                    print_header($strblocksetup, $strblocksetup, $strblocksetup, '', '', false, '&nbsp;', '&nbsp;');
                 }
                 print_heading('New version of '.$blocktitle.' ('.$block->name.') exists');
                 $upgrade_function = $block->name.'_upgrade';
@@ -805,20 +805,20 @@ function upgrade_blocks_plugins($continueto) {
                     $upgradesuccess = true;
                 }
                 if(!$upgradesuccess) {
-                    notify("Upgrading block $block->name from $currblock->version to $block->version FAILED!");
+                    notify('Upgrading block '. $block->name .' from '. $currblock->version .' to '. $block->version .' FAILED!');
                 }
                 else {
                     // OK so far, now update the block record
                     $block->id = $currblock->id;
                     if (! update_record('block', $block)) {
-                        error("Could not update block $block->name record in block table!");
+                        error('Could not update block '. $block->name .' record in block table!');
                     }
                     notify(get_string('blocksuccess', '', $blocktitle), 'green');
                     echo '<hr />';
                 }
                 $updated_blocks = true;
             } else {
-                error("Version mismatch: block $block->name can't downgrade $currblock->version -> $block->version !");
+                error('Version mismatch: block '. $block->name .' can\'t downgrade '. $currblock->version .' -> '. $block->version .'!');
             }
 
         } else {    // block not installed yet, so install it
@@ -835,23 +835,23 @@ function upgrade_blocks_plugins($continueto) {
                 error('<strong>Naming conflict</strong>: block <strong>'.$block->name.'</strong> has the same title with an existing block, <strong>'.$conflictblock.'</strong>!');
             }
             if (empty($updated_blocks)) {
-                $strblocksetup    = get_string("blocksetup");
-                print_header($strblocksetup, $strblocksetup, $strblocksetup, "", "", false, "&nbsp;", "&nbsp;");
+                $strblocksetup    = get_string('blocksetup');
+                print_header($strblocksetup, $strblocksetup, $strblocksetup, '', '', false, '&nbsp;', '&nbsp;');
             }
             print_heading($block->name);
             $updated_blocks = true;
             $db->debug = true;
             @set_time_limit(0);  // To allow slow databases to complete the long SQL
-            if (!is_dir("$fullblock/db/") || modify_database("$fullblock/db/$CFG->dbtype.sql")) {
+            if (!is_dir($fullblock .'/db/') || modify_database($fullblock .'/db/'. $CFG->dbtype .'.sql')) {
                 $db->debug = false;
                 if ($block->id = insert_record('block', $block)) {
                     notify(get_string('blocksuccess', '', $blocktitle), 'green');
-                    echo "<hr />";
+                    echo '<hr />';
                 } else {
-                    error("$block->name block could not be added to the block list!");
+                    error($block->name .' block could not be added to the block list!');
                 }
             } else {
-                error("Block $block->name tables could NOT be set up successfully!");
+                error('Block '. $block->name .' tables could NOT be set up successfully!');
             }
         }
 
@@ -1050,10 +1050,10 @@ function blocks_get_block_names ($blockinfo) {
     if ($leftblocks || $rightblocks) {
         $blockinfo = '';
         if ($leftblocks) {
-            $blockinfo .= implode(",", $leftblocks);
+            $blockinfo .= implode(',', $leftblocks);
         }
         if ($rightblocks) {
-            $blockinfo .= ':'.implode(",",$rightblocks);
+            $blockinfo .= ':'. implode(',',$rightblocks);
         }
     } else {
         $blockinfo = '';
