@@ -66,8 +66,7 @@
     //Print header
     print_header("$site->shortname: $strcourserestore", $site->fullname,
                  "<A HREF=\"$moodle_home/$CFG->admin/index.php\">$stradministration</A> ->
-                  <A HREF=\"restore.php?file=".$file."\">$strcourserestore</A> -> ".basename($file));
-
+                  $strcourserestore -> ".basename($file));
     //Print form
     print_heading("$strcourserestore: ".basename($file));
     print_simple_box_start("center", "", "$THEME->cellheading");
@@ -80,7 +79,7 @@
     } else if ($launch == "check") {
         include_once("restore_check.html");
     } else if ($launch == "execute") {
-        include_once("backup_execute.html");
+        include_once("restore_check.html");
     }
     print_simple_box_end();
 

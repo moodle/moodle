@@ -9,15 +9,16 @@
     if ($SESSION) {
         $info = $SESSION->info;
         $course_header = $SESSION->course_header;
+        $restore = $SESSION->restore;
     }
 
-    //Check that we have all we need
+    //If restore session info exists, but we are posting parameters
+    //manually, this has prioriry
+    if ($restore and isset($restore_restoreto)) {
+        unset($restore);
+    }
 
-    //backup_unique_code
-    require_variable($backup_unique_code);
-
-    //file
-    require_variable($file);
+    //Check required objects from session
 
     //info
     require_variable($info);
@@ -25,19 +26,73 @@
     //course_header
     require_variable($course_header);
 
-    //Checks for the required restoremod parameters
-    if ($allmods = get_records("modules")) {
-        foreach ($allmods as $mod) {
-            $modname = $mod->name;
-            echo $modname;
-            $var = "restore_".$modname;
-            echo $var;
-            require_variable($$var); 
-            $var = "restore_user_info_".$modname;
-            echo $var."<br>";
-            require_variable($$var);
+    //If the restore object doesn't exist, we are going
+    //to check every variable individually and create it
+
+    if (!$restore) {
+        //Check that we have all we need
+        //backup_unique_code
+        require_variable($backup_unique_code);
+        //file
+        require_variable($file);
+        //Checks for the required restoremod parameters
+        if ($allmods = get_records("modules")) {
+            foreach ($allmods as $mod) {
+                $modname = $mod->name;
+                $var = "restore_".$modname;
+                require_variable($$var); 
+                $var = "restore_user_info_".$modname;
+                require_variable($$var);
+            }
+        }
+        //restoreto
+        require_variable($restore_restoreto);
+        //restore_users
+        require_variable($restore_users);
+        //restore_logs
+        require_variable($restore_logs);
+        //restore_user_files
+        require_variable($restore_user_files);
+        //restore_course_files
+        require_variable($restore_course_files);
+        //restore_course_files
+        require_variable($restore_course_files);
+
+        //Check we've selected a course
+        if (!isset($course_id)) {
+            $course_id = 0;
+        }
+ 
+        //We are here, having all we need !!
+        //Create the restore object and put it in the session
+        $restore->backup_unique_code = $backup_unique_code;
+        $restore->file = $file;
+        if ($allmods = get_records("modules")) {
+            foreach ($allmods as $mod) {
+                $modname = $mod->name;
+                $var = "restore_".$modname;
+                $restore->mods[$modname]->restore=$$var;
+                $var = "restore_user_info_".$modname;
+                $restore->mods[$modname]->userinfo=$$var;
+            }
+        }
+        $restore->restoreto=$restore_restoreto;
+        $restore->users=$restore_users;
+        $restore->logs=$restore_logs;
+        $restore->user_files=$restore_user_files;
+        $restore->course_files=$restore_course_files;
+        $restore->course_id=$course_id;
+    } else {
+        //We have the object, so check if we have a new course_id
+        //passed as parammeter
+        if ($course_id) {
+            $restore->course_id=$course_id;
         }
     }
+    //We have the object with data, put it in the session
+    $SESSION->restore = $restore;
+
+    //From here to the wnd of the script, only use the $restore object
 
     //Check login
     require_login();
@@ -50,167 +105,67 @@
     //Check site
     if (!$site = get_site()) {
         error("Site not found!");
-    } 
-
-    //Check other parameters
-    if (!isset($restore_users)) {
-        $restore_users = 1;
     }
-   
-    if (!isset($restore_logs)) {
-        $restore_logs = 1;
-    }
+ 
+    //Depending the selected restoreto:
+    //    0-Existing course: Select the destination course and launch the check again.
+    //    1-New course: Create the restore object (checking everything) and launch the execute.
 
-    if (!isset($restore_user_files)) {
-        $restore_user_files = 1;
-    }
-
-    if (!isset($restore_course_files)) {
-        $restore_course_files = 1;
-    }
-
-    if (!isset($restore_restoreto)) {
-        $restore_restoreto = 1;
-    }
-
-    if ($count == 0) {
-        notice("No restorable modules are installed!");
-    }
-
-?>
-
-<form name="form" method="post" <?=$onsubmit ?> action="<?=$ME ?>">
-<table cellpadding=5>
-<?
-
-    //First, course destination
-    //Print the full tr
-    echo "<tr>";
-    echo "<td align=\"right\"><P><b>";
-    echo get_string("restoreto").":</b>";
-    echo "</td><td>";
-    $restore_restoreto_options[0] = get_string("existingcourse");
-    $restore_restoreto_options[1] = get_string("newcourse"); 
-    choose_from_menu($restore_restoreto_options, "restore_restoreto", $restore_restoreto, "");
-    echo "</td></tr>";
-    //Line
-    echo "<tr><td colspan=\"2\"><hr noshade size=\"1\"></td></tr>";
-    //Now, check modules and info and show posibilities
-    if ($allmods = get_records("modules") ) {
-        foreach ($allmods as $mod) {
-            $modname = $mod->name;
-            $modrestore = $modname."_restore_mods";
-            //If exists the lib & function
-            $exist = "exists_".$modname;
-            $var = "restore_".$modname;
-            if ($$exist) {
-                //Now check that we have that module info in the backup file
-                if ($info->mods[$modname]->backup == "true") {
-                    //Print the full tr
-                    echo "<tr>";
-                    echo "<td align=\"right\"><P><B>";
-                    echo get_string("include")." ". get_string("modulenameplural",$modname).":";
-                    echo "</td><td>";
-                    $restore_options[0] = get_string("no"); 
-                    $restore_options[1] = get_string("yes");
-                    choose_from_menu($restore_options, $var, $$var, "");
-                    $var = "restore_user_info_".$modname;
-                    //If backup contains user data, then show menu, else fix it to
-                    //without user data
-                    if ($info->mods[$modname]->userinfo == "true") {
-                        $restore_user_options[0] = get_string("withoutuserdata"); 
-                        $restore_user_options[1] = get_string("withuserdata");
-                        choose_from_menu($restore_user_options, $var, $$var, "");
-                    } else {
-                        //Module haven't userdata
-                        echo get_string("withoutuserdata");
-                        echo "<input type=\"hidden\" name=\"$var\" value=\"0\">";
-                    }
-                    echo "</td></tr>";
-                } else {
-                    //Module isn't restorable
-                    echo "<input type=\"hidden\" name=\"$var\" value=\"0\">";
+    //Select course
+    if (($restore->restoreto == 0) and ($restore->course_id == 0)) {
+        if ($courses = get_courses()) {
+            print_heading(get_string("choosecourse"));
+            print_simple_box_start("CENTER");
+            foreach ($courses as $course) {
+            echo "<A HREF=\"restore.php?course_id=$course->id&launch=check&file=$file\">$course->fullname ($course->shortname)</A><BR>";
+            }
+            print_simple_box_end();
+        } else {
+            print_heading(get_string("nocoursesyet"));
+            print_continue("$moodle_home/$CFG->admin/index.php");
+        }
+    //Checks everything and execute restore
+    } else if ((($restore->restoreto == 0) and ($restore->course_id != 0)) or ($restore->restoreto == 1)) {
+        $show_continue_button = true;
+        //Check if we've selected any mod's user info and restore->users 
+        //is set to none. Change it to course and inform.
+        if ($restore->users == 2) {
+            $changed = false;
+            $mods = $restore->mods;
+            foreach ($mods as $mod) {
+                if ($mod->userinfo) {
+                    $changed = true;
                 }
-            } else {
-                //Module isn't restorable
-                echo "<input type=\"hidden\" name=\"$var\" value=\"0\">";
+            }
+            if ($changed) {
+                echo get_string ("noteuserschangednonetocourse");
+                echo "<hr noshade size=\"1\">";
+                $restore->users = 1;
             }
         }
-        //Line
-        echo "<tr><td colspan=\"2\"><hr noshade size=\"1\"></td></tr>";
-
-        //Now print the Users tr
-        echo "<tr>";
-        echo "<td align=\"right\"><P><B>";
-        echo get_string("users").":";
-        echo "</td><td>";
-        //If all users are in the backup file
-        if ($info->backup_users == "all") {
-            $user_options[0] = get_string("all");
-        }
-        $user_options[1] = get_string("course");
-        $user_options[2] = get_string("none");
-        //$user_options[2] = get_string("needed");-->NOT IMPLEMENTED
-        choose_from_menu($user_options, "restore_users", $restore_users, "");
-        echo "</td></tr>";
-
-        //Now print the Logs tr
-        echo "<tr>";
-        echo "<td align=\"right\"><P><B>";
-        echo get_string("logs").":";                                               
-        echo "</td><td>";
-        //If logs are in the backup file, show menu, else fixed to no
-        if ($info->backup_logs == "true") {
-            $log_options[0] = get_string("no");
-            $log_options[1] = get_string("yes"); 
-            choose_from_menu($log_options, "restore_logs", $restore_logs, ""); 
+        //Save the restore session object
+        $SESSION->restore = $restore;
+        if ($show_continue_button) {
+            //Print the continue button to execute the restore NOW !!!!
+            //All is prepared !!!
+            echo "<CENTER>";
+            echo get_string("presscontinuetolaunchrestore");
+            echo "<br>";
+            $hidden["launch"]             = "execute";
+            $hidden["file"]               =  $file;
+            print_single_button("restore.php", $hidden, get_string("continue"),"post");
+            echo "</CENTER>";
         } else {
-            echo get_string("no");
-            echo "<input type=\"hidden\" name=\"restore_logs\" value=\"0\">";
-        }
-        echo "</td></tr>";
+            //Show error
+            error ("Something was wrong checking restore preferences");
+        } 
 
-        //Now print the User Files tr
-        echo "<tr>";
-        echo "<td align=\"right\"><P><B>";
-        echo get_string ("userfiles").":";
-        echo "</td><td>";
-        //If user files are in the backup file, show menu, else fixed to no
-        if ($info->backup_user_files == "true") {
-            $user_file_options[0] = get_string("no"); 
-            $user_file_options[1] = get_string("yes"); 
-            choose_from_menu($user_file_options, "restore_user_files", $restore_user_files, "");
-        } else {
-            echo get_string("no");
-            echo "<input type=\"hidden\" name=\"restore_user_files\" value=\"0\">";
-        }
-        echo "</td></tr>";
-
-        //Now print the Course Files tr
-        echo "<tr>";
-        echo "<td align=\"right\"><P><B>";
-        echo get_string ("coursefiles").":";
-        echo "</td><td>";
-        //If course files are in the backup file, show menu, else fixed to no
-        if ($info->backup_course_files == "true") {
-            $course_file_options[0] = get_string("no");
-            $course_file_options[1] = get_string("yes");
-            choose_from_menu($course_file_options, "restore_course_files", $restore_course_files, "");
-        } else {
-            echo get_string("no");
-            echo "<input type=\"hidden\" name=\"restore_course_files\" value=\"0\">";
-        }
-        echo "</td></tr>";
-        echo "<input type=\"hidden\" name=\"backup_unique_code\" value=\"$backup_unique_code\">";
-        echo "<input type=\"hidden\" name=\"file\" value=\"$file\">";
+    //If we are here. Something must be wrong. Debug !!!
+    } else {
+        print_object($restore);
+        print_object($info);
+        print_object($course_header);
+        error ("Something must be wrong");
     }
+
 ?>
-</table>
-<BR>
-<CENTER>
-<input type="hidden" name=id     value="<? p($id) ?>">
-<input type="hidden" name=launch value="form">
-<input type="submit" value="<? print_string("continue") ?>">
-<input type="submit" name=cancel value="<? print_string("cancel") ?>">
-</CENTER>
-</FORM>
