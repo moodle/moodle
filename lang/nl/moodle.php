@@ -38,7 +38,7 @@ $string['adminhelpauthentication'] = 'Je kunt interne gebruiker accounts of exte
 $string['adminhelpbackup'] = 'Configureer hoe de backups werken';
 $string['adminhelpconfiguration'] = 'Stel in hoe de site er uitziet  en werkt';
 $string['adminhelpconfigvariables'] = 'Stel variabelen in die het algemene werken van de site beïnvloeden';
-$string['adminhelpcourses'] = 'Definieer vakken en vak categorieën en voeg mensen aan de vakken toe';
+$string['adminhelpcourses'] = 'Definieer vakken en vakcategorieën en voeg mensen aan de vakken toe';
 $string['adminhelpedituser'] = 'Bekijk de lijst met gebruikersaccounts en bewerk de accounts';
 $string['adminhelpenrolments'] = 'Kies interne of externe manieren om de aanmelding bij vakken te controleren';
 $string['adminhelplanguage'] = 'Voor het controleren en bewerken van het huidige taalpakket';
@@ -113,7 +113,7 @@ $string['blocksuccess'] = '$a tabellen zijn juist geïnstalleerd';
 $string['bycourseorder'] = 'In volgorde van vak';
 $string['byname'] = 'volgens $a';
 $string['cancel'] = 'Annuleer ';
-$string['categories'] = 'Vak categorieën';
+$string['categories'] = 'Vakcategorieën';
 $string['category'] = 'Categorie  ';
 $string['categoryadded'] = 'De categorie \'$a\'  werd toegevoegd';
 $string['categorydeleted'] = 'De categorie \'$a\'  werd verwijdered';
@@ -208,8 +208,8 @@ $string['course'] = 'Vak';
 $string['courseavailable'] = 'Dit vak is beschikbaar voor leerlingen';
 $string['courseavailablenot'] = 'Dit vak is niet beschikbaar voor leerlingen';
 $string['coursebackup'] = 'Backup  voor vakken';
-$string['coursecategories'] = 'Vak categorieën';
-$string['coursecategory'] = 'Vak categorie';
+$string['coursecategories'] = 'Vakcategorieën';
+$string['coursecategory'] = 'Vakcategorie';
 $string['coursecreators'] = 'Vak-aanmakers';
 $string['coursefiles'] = 'Bestanden voor vakken';
 $string['courseformats'] = 'Formats voor vakken';
@@ -303,12 +303,12 @@ $string['editsummary'] = 'Wijzig samenvatting';
 $string['editthisactivity'] = 'Wijzig deze activiteit';
 $string['editthiscategory'] = 'Bewerk deze categorie';
 $string['edituser'] = 'Wijzig gebruikers accounts';
-$string['email'] = 'E-mail adres';
-$string['emailagain'] = 'Email (nogmaals)';
+$string['email'] = 'E-mailadres';
+$string['emailagain'] = 'E-mail (nogmaals)';
 $string['emailconfirm'] = 'Bevestig je account';
 $string['emailconfirmation'] = 'Beste $a->firstname,
 
-Er is een nieuwe account aangevraagd bij \'$a->sitename\' met gebruik van dit e-mail adres.
+Er is een nieuwe account aangevraagd bij \'$a->sitename\' met gebruik van dit e-mailadres.
 
 Klik op de onderstaande link om de account in werking te stellen:
 
@@ -330,13 +330,13 @@ $string['emaildigestoff'] = 'Geen samenvatting (voor elk forumbericht een e-mail
 $string['emaildigestsubjects'] = 'Onderwerpe (dagelijkse e-mail met alleen de onderwerpen van de berichten)';
 $string['emaildisable'] = 'Dit e-mailadres is uitgeschakeld';
 $string['emaildisplay'] = 'E-mail weergave';
-$string['emaildisplaycourse'] = 'Laat mijn e-mail adres alleen maar zien aan andere leden van dit vak';
-$string['emaildisplayno'] = 'Verberg mijn e-mail adres voor iedereen';
-$string['emaildisplayyes'] = 'Toon mijn e-mail adres aan iedereen';
+$string['emaildisplaycourse'] = 'Laat mijn e-mailadres alleen maar zien aan andere leden van dit vak';
+$string['emaildisplayno'] = 'Verberg mijn e-mailadres voor iedereen';
+$string['emaildisplayyes'] = 'Toon mijn e-mailadres aan iedereen';
 $string['emailenable'] = 'Dit e-mailadres is ingeschakeld';
-$string['emailexists'] = 'Dit e-mail adres is al geregistreerd.';
+$string['emailexists'] = 'Dit e-mailadres is al geregistreerd.';
 $string['emailformat'] = 'E-mail opmaak';
-$string['emailmustbereal'] = 'N.B. je e-mail adres moet een bestaand en werkend adres zijn';
+$string['emailmustbereal'] = 'N.B. je e-mailadres moet een bestaand en werkend adres zijn';
 $string['emailpasswordconfirmation'] = 'Beste $a->firstname,
 
 Iemand (waarschijnlijk jij zelf) heeft een nieuw wachtwoord gevraagd voor je account op \'$a->sitename\'.
@@ -368,7 +368,7 @@ $string['enrolmentnew'] = 'Nieuwe aanmelding in $a';
 $string['enrolmentnointernal'] = 'Manuele aanmeldingen zijn uitgeschakeld';
 $string['enrolments'] = 'Aanmeldingen';
 $string['entercourse'] = 'Klik om dit vak binnen te gaan';
-$string['enteremailaddress'] = 'Typ je e-mail adres om je wachtwoord te resetten en via e-mail een nieuw wachtwoord naar je toegestuurd te krijgen.';
+$string['enteremailaddress'] = 'Typ je e-mailadres om je wachtwoord te resetten en via e-mail een nieuw wachtwoord naar je toegestuurd te krijgen.';
 $string['error'] = 'Fout';
 $string['errortoomanylogins'] = 'Het spijt me, maar je hebt te vaak geprobeerd om in te loggen. Herstart je browser.';
 $string['errorwhenconfirming'] = 'Je account is nog niet bevestigd omdat er iets fout gelopen is. Als je hier gekomen bent door op een link in een e-mail te klikken, kijk dan eens goed of die lijn in je mail niet onderbroken of vervormd was. Het is mogelijk dat je knippen en plakken moet gebruiken om de link op de juiste manier te reconstrueren.';
@@ -411,7 +411,7 @@ $string['frontpagecategorynames'] = 'Toon een lijst met categorieën';
 $string['frontpagecourselist'] = 'Toon een lijst met vakken';
 $string['frontpagedescription'] = 'Beschrijving voorpagina';
 $string['frontpageformat'] = 'Format voorpagina';
-$string['frontpagenews'] = 'Toon nieuws berichten';
+$string['frontpagenews'] = 'Toon nieuwsberichten';
 $string['fulllistofcourses'] = 'Alle vakken';
 $string['fullname'] = 'Volledige naam';
 $string['fullnamedisplay'] = '$a->voornaam $a->achternaam';
@@ -466,7 +466,7 @@ $string['helpindex'] = 'Index  helpbestanden';
 $string['helppicture'] = 'Hoe je een afbeelding kunt uploaden';
 $string['helpquestions'] = 'Stel goede vragen';
 $string['helpreading'] = 'Lees zorgvuldig';
-$string['helprichtext'] = 'Over de HTML editor';
+$string['helprichtext'] = 'Over de HTML-editor';
 $string['helpsummaries'] = 'Over deze opsommingen';
 $string['helptext'] = 'Hoe je een tekst kunt schrijven ';
 $string['helpwiki'] = 'Hoe je een Wiki-tekst kunt schrijven';
@@ -483,7 +483,7 @@ $string['home'] = 'Home';
 $string['hour'] = 'uur';
 $string['hours'] = 'uren';
 $string['howtomakethemes'] = 'Hoe je nieuwe thema\'s kunt maken';
-$string['htmleditor'] = 'Gebruik HTML editor (Werkt niet in alle browsers)';
+$string['htmleditor'] = 'Gebruik HTML-editor (Werkt niet in alle browsers)';
 $string['htmleditoravailable'] = 'De HTML-editor is beschikbaar';
 $string['htmleditordisabled'] = 'Je hebt de HTML-editor uit gezet in je gebruikersprofiel';
 $string['htmleditordisabledadmin'] = 'De beheerder heeft de HTML-editor uit gezet op deze site';
@@ -503,7 +503,7 @@ $string['includeneededusers'] = 'Voeg de nodige gebruikers toe';
 $string['includenoneusers'] = 'Voeg geen gebruikers toe';
 $string['includeuserfiles'] = 'Voeg gebruikersbestanden toe';
 $string['institution'] = 'Instituut';
-$string['invalidemail'] = 'Ongeldig e-mail adres';
+$string['invalidemail'] = 'Ongeldig e-mailadres';
 $string['invalidlogin'] = 'Ongeldige login, probeer het nog eens';
 $string['jumpto'] = 'Ga naar...';
 $string['keep'] = 'Houden';
@@ -537,7 +537,7 @@ $string['loginsteps'] = 'Hallo! Om volledige toegang tot de vakken te krijgen mo
 Elk vak kan ook een eenmalige \"Vaksleutel\" hebben die je pas later nodig hebt. Hier zijn de stappen die je moet volgen:
 <OL size=2>
 <LI>Vul het <A HREF=$a>Nieuwe account</A> formulier in.
-<LI>Er wordt meteen een e-mail verstuurd naar je e-mail adres.
+<LI>Er wordt meteen een e-mail verstuurd naar je e-mailadres.
 <LI>Lees de e-mail en klik op de link die erin staat.
 <LI>Je account wordt bevestigd en je bent dan ingelogd.
 <LI>Kies nu het vak dat je wilt volgen.
@@ -571,7 +571,7 @@ $string['missingcategory'] = 'Je moet een categorie kiezen';
 $string['missingcity'] = 'Plaats ontbreekt';
 $string['missingcountry'] = 'Land ontbreekt';
 $string['missingdescription'] = 'Beschrijving ontbreekt';
-$string['missingemail'] = 'E-mail adres ontbreekt';
+$string['missingemail'] = 'e-mailadres ontbreekt';
 $string['missingfirstname'] = 'Voornaam ontbreekt';
 $string['missingfullname'] = 'Volledige naam ontbreekt';
 $string['missinglastname'] = 'Achternaam ontbreekt';
@@ -667,7 +667,7 @@ $string['normal'] = 'Normaal';
 $string['normalfilter'] = 'Gewoon zoeken';
 $string['nostudentsfound'] = 'Geen $a gevonden';
 $string['nostudentsyet'] = 'Er zijn nog geen leerlingen lid van dit vak';
-$string['nosuchemail'] = 'Dit is geen e-mail adres';
+$string['nosuchemail'] = 'Dit is geen e-mailadres';
 $string['notavailable'] = 'Niet beschikbaar';
 $string['noteachersyet'] = 'Er zijn nog geen docenten voor dit vak';
 $string['notenrolled'] = '$a is geen lid van dit vak.';
@@ -755,7 +755,7 @@ $string['requireskey'] = 'Dit vak vereist een \'Vaksleutel\'.';
 $string['requirespayment'] = 'Voor toegang tot dit vak is betaling vereist';
 $string['resortcoursesbyname'] = 'Hersorteer de vakken op naam';
 $string['resources'] = 'Bronnen';
-$string['restore'] = 'Terug zetten';
+$string['restore'] = 'Terugzetten';
 $string['restorecancelled'] = 'Backup terugzetten geannuleerd';
 $string['restorecoursenow'] = 'Dit vak nu terugzetten!';
 $string['restorefinished'] = 'Terugzetten was succesvol';

@@ -14,11 +14,11 @@ $string['auth_dbtable'] = 'Naam  van  de  tabel in de database';
 $string['auth_dbtitle'] = 'Gebruik een externe database';
 $string['auth_dbtype'] = 'Het type database (Bekijk <A HREF=../lib/adodb/readme.htm#drivers>ADOdb documentatie</A> voor meer informatie)';
 $string['auth_dbuser'] = 'Gebruikersnaam met read access tot de database';
-$string['auth_emaildescription'] = 'E-mail bevestiging is standaard ingesteld als authenticatie methode. Op het moment dat de gebruiker zich aanmeldt en daarbij een nieuwe gebruikersnaam en wachtwoord kiest wordt er een bevestigings e-mail gestuurd naar het e-mail adres van de gebruiker. In deze e-mail staat een veilige link naar een pagina waar de gebruiker zijn account kan bevestigen. In alle latere logins worden de gebruikersnaam en het wachtwoord alleen maar vergeleken met de bewaarde waarden in de Moodle database.';
+$string['auth_emaildescription'] = 'E-mail bevestiging is standaard ingesteld als authenticatie methode. Op het moment dat de gebruiker zich aanmeldt en daarbij een nieuwe gebruikersnaam en wachtwoord kiest wordt er een bevestigings e-mail gestuurd naar het e-mailadres van de gebruiker. In deze e-mail staat een veilige link naar een pagina waar de gebruiker zijn account kan bevestigen. In alle latere logins worden de gebruikersnaam en het wachtwoord alleen maar vergeleken met de bewaarde waarden in de Moodle database.';
 $string['auth_emailtitle'] = 'Op e-mail gebaseerde authenticatie';
 $string['auth_imapdescription'] = 'Deze methode gebruikt een IMAP server om te controleren of een bepaalde gebruikersnaam en een bepaald wachtwoord geldig zijn.
 ';
-$string['auth_imaphost'] = 'Het adres van de IMAP server. Gebruik een IP adres, geen DNS naam.  
+$string['auth_imaphost'] = 'Het adres van de IMAP server. Gebruik een IP-adres, geen DNS naam.  
 ';
 $string['auth_imapport'] = 'Het nummer van de poort van de IMAP server. Meestal is dit 143 of 993.
 ';
@@ -44,7 +44,7 @@ $string['auth_manualdescription'] = 'Deze methode verwijdert alle mogelijkheden 
 $string['auth_manualtitle'] = 'Alleen handmatige accounts';
 $string['auth_multiplehosts'] = 'Je kunt meerdere hosts ingeven (bijv. host1.com;host2.com;host3.com)';
 $string['auth_nntpdescription'] = 'Deze methode gebruikt een NTTP server om te controleren of een gebruikersnaam en wachtwoord geldig zijn.';
-$string['auth_nntphost'] = 'Het adres van de NNTP server. Gebruik het IP adres, niet een DNS naam.';
+$string['auth_nntphost'] = 'Het adres van de NNTP server. Gebruik het IP-adres, niet een DNS naam.';
 $string['auth_nntpport'] = 'De poort van de server (meestal is dat 119)';
 $string['auth_nntptitle'] = 'Gebruik een  NNTP server';
 $string['auth_nonedescription'] = 'De gebruikers kunnen meteen inloggen en een geldige account aanmaken, zonder authenticatie door middel van een externe server en zonder bevestiging via e-mail. Wees voorzichtig met het gebruiken van deze mogelijkheid - denk aan de beveiligings- en beheerproblemen die hieruit zouden kunnen ontstaan.
@@ -52,7 +52,7 @@ $string['auth_nonedescription'] = 'De gebruikers kunnen meteen inloggen en een g
 $string['auth_nonetitle'] = 'Geen authenticatie';
 $string['auth_pop3description'] = 'Deze methode gebruikt een POP3 server om te controleren of een gebruikersnaam en wachtwoord geldig zijn.
 ';
-$string['auth_pop3host'] = 'Het adres van de POP3 server. Gebruik het IP adres, niet een DNS naam.';
+$string['auth_pop3host'] = 'Het adres van de POP3 server. Gebruik het IP-adres, niet een DNS naam.';
 $string['auth_pop3port'] = 'De poort van de server (meestal is dat 110)';
 $string['auth_pop3title'] = 'Gebruik een  POP3 server';
 $string['auth_pop3type'] = 'Het type van de server. Als jouw server gebruikt maakt van beveiliging door middel van een certificaat, kies pop3cert.';
