@@ -1,4 +1,4 @@
-<?php
+<?php // $Id$
 
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
@@ -3333,7 +3333,7 @@ function endecrypt ($pwd, $data, $case) {
  *             be used by calendar plugins to decide how to display event
  *    <li><b>$event->timestart</b>- Timestamp for start of event
  *    <li><b>$event->timeduration</b> - Duration (defaults to zero)
- *    <li><b>$event->>visible</b> - 0 if the event should be hidden (e.g. because the activity that created it is hidden)
+ *    <li><b>$event->visible</b> - 0 if the event should be hidden (e.g. because the activity that created it is hidden)
  *  </ul>
  * @return int The id number of the resulting record
  * @todo Finish documenting this function
@@ -4211,54 +4211,91 @@ function cleardoubleslashes ($path) {
     return preg_replace('/(\/|\\\){1,}/','/',$path);
 }
 
-//Zip an array of files/dirs to a destination file
 function zip_files ($originalfiles, $destination) {
+//Zip an array of files/dirs to a destination zip file
+//Both parameters must be FULL paths to the files/dirs
 
     global $CFG;
 
     //Extract everything from destination
     $path_parts = pathinfo(cleardoubleslashes($destination));
-    $path = $path_parts["dirname"];
-    $filename = $path_parts["basename"];
-    $extension = $path_parts["extension"];
+    $destpath = $path_parts["dirname"];       //The path of the zip file
+    $destfilename = $path_parts["basename"];  //The name of the zip file
+    $extension = $path_parts["extension"];    //The extension of the file
 
     //If no file, error
-    if (empty($filename)) {
+    if (empty($destfilename)) {
         return false;
     }
 
     //If no extension, add it
     if (empty($extension)) { 
         $extension = 'zip';
-        $file = $file.'.'.$extension;
+        $destfilename = $destfilename.'.'.$extension;
     }
 
-    //Check path exists
-    if (!is_dir($path)) {
+    //Check destination path exists
+    if (!is_dir($destpath)) {
         return false;
     }
 
-    //Clean filename
-    $filename = clean_filename($filename);
+    //Check destination path is writable. TODO!!
+
+    //Clean destination filename
+    $destfilename = clean_filename($destfilename);
+
+    //Now check and prepare every file
+    $files = array();
+    $origpath = NULL;
+
+    foreach ($originalfiles as $file) {  //Iterate over each file
+        //Check for every file
+        $tempfile = cleardoubleslashes($file); // no doubleslashes!
+        //Calculate the base path for all files if it isn't set
+        if ($origpath === NULL) {
+            $origpath = rtrim(cleardoubleslashes(dirname($tempfile)), "/");
+        }
+        //See if the file is readable
+        if (!is_readable($tempfile)) {  //Is readable
+            continue;
+        }
+        //See if the file/dir is in the same directory than the rest
+        if (rtrim(cleardoubleslashes(dirname($tempfile)), "/") != $origpath) {
+            continue;
+        }
+        //Add the file to the array
+        $files[] = $tempfile;
+    }
+
+    //Everything is ready:
+    //    -$origpath is the path where ALL the files to be compressed reside (dir).
+    //    -$destpath is the destination path where the zip file will go (dir).
+    //    -$files is an array of files/dirs to compress (fullpath)
+    //    -$destfilename is the name of the zip file (without path)
+
+    //print_object($files);                  //Debug
 
     if (empty($CFG->zip)) {    // Use built-in php-based zip function
-        $files = array();
-        foreach ($originalfiles as $file) {
-           $files[] = cleardoubleslashes($file); // no doubleslashes!
-        }
+
         include_once("$CFG->libdir/pclzip/pclzip.lib.php");
-        $archive = new PclZip(cleardoubleslashes("$path/$filename"));
-        if (($list = $archive->create($files, PCLZIP_OPT_REMOVE_PATH,
-            rtrim(cleardoubleslashes($path), "/"))) == 0) { // no double slashes and trailing slash!
-            error($archive->errorInfo(true));
+        $archive = new PclZip(cleardoubleslashes("$destpath/$destfilename"));
+        if (($list = $archive->create($files, PCLZIP_OPT_REMOVE_PATH,$origpath) == 0)) {
+            notice($archive->errorInfo(true));
+            return false;
         }
+
     } else {                   // Use external zip program
-        $files = "";
-        foreach ($originalfiles as $file) {
-            $files .= basename($file);
-            $files .= " ";
+
+        $filestozip = "";
+        foreach ($files as $filetozip) {
+            $filestozip .= escapeshellarg(basename($filetozip));
+            $filestozip .= " ";
         }
-        $command = "cd $path ; $CFG->zip -r $filename $files";
+        //Construct the command
+        $separator = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN' ? ' &' : ' ;';
+        $command = 'cd '.escapeshellarg($origpath).$separator.
+                    escapeshellarg($CFG->zip).' -r '.
+                    escapeshellarg(cleardoubleslashes("$destpath/$destfilename")).' '.$filestozip;
         Exec($command);
     }
     return true;
