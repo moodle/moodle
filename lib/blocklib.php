@@ -14,24 +14,6 @@ define('BLOCKS_DEFAULT_SOCIAL', 'participants,search_forums,calendar_month,calen
 define('BLOCKS_DEFAULT_TOPICS', 'participants,activity_modules,search_forums,admin,course_list:news_items,calendar_upcoming,recent_activity');
 define('BLOCKS_DEFAULT_WEEKS',  'participants,activity_modules,search_forums,admin,course_list:news_items,calendar_upcoming,recent_activity');
 
-function block_formats_to_array($formatstring) {
-    $retval = array();
-
-    $formats = preg_split('/[+\-]/', $formatstring, -1, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_OFFSET_CAPTURE);
-    if(!empty($formats)) {
-        foreach($formats as $format) {
-            if($format[1] > 0 && substr ($str, $format[1] - 1, 1) === '-') {
-                $retval[$format[0]] = false;
-            }
-            else {
-                $retval[$format[0]] = true;
-            }
-        }
-    }
-
-    return $retval;
-}
-
 function block_remove_inappropriate_from_course(&$course) {
     $blocks = $course->blockinfo;
 
