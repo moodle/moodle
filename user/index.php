@@ -115,7 +115,7 @@
                 $table->data[] = array ($picture,
                     "<B><A HREF=\"$CFG->wwwroot/user/view.php?id=$student->id&course=$course->id\">$student->firstname $student->lastname</A></B>",
                     "<FONT SIZE=2>$student->city</FONT>", 
-                    "<FONT SIZE=2>".$COUNTRIES["$student->country"]."</FONT>",
+                    "<FONT SIZE=2>$student->country</FONT>",
                     "<FONT SIZE=2>$lastaccess</FONT>");
             }
             print_table($table);
