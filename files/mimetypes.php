@@ -3,6 +3,7 @@
 function mimeinfo($element, $filename) {
     $mimeinfo = array (
         "xxx"  => array ("type"=>"document/unknown", "icon"=>"unknown.gif"),
+        "3gp"  => array ("type"=>"video/quicktime", "icon"=>"video.gif"),
         "ai"   => array ("type"=>"application/postscript", "icon"=>"image.gif"),
         "aif"  => array ("type"=>"audio/x-aiff", "icon"=>"audio.gif"),
         "aiff" => array ("type"=>"audio/x-aiff", "icon"=>"audio.gif"),
