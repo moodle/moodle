@@ -1,8 +1,8 @@
+<?php print_simple_box_start('center', '70%'); ?>
 <form method="post" action="dst.php">
 <p><input type="hidden" name="sesskey" value="<?php echo $USER->sesskey ?>"></p>
 
-<div style="text-align: center;">
-<table style="margin: auto; width: 100%;" cellpadding="5" cellspacing="0">
+<table style="width: 100%;">
   <tbody>
     <tr>
       <td style="vertical-align: top; width: 40%;">
@@ -21,16 +21,23 @@
         </div>
       </td>
       <td style="vertical-align: middle;text-align: center;">
+          <div id="dstdisplayboard">&nbsp;</div>
+          <p>
           <input type="submit" name="mode_add" value="<?php print_string('add'); ?>..." />
           <input type="submit" name="mode_edit" value="<?php print_string('edit'); ?>" <?php if(empty($presets)) echo 'disabled="disabled"';?> />
           <input type="submit" name="mode_delete" value="<?php print_string('delete'); ?>" <?php if(empty($presets)) echo 'disabled="disabled"';?> />
+          </p>
       </td>
     </tr>
   </tbody>
 </table>
-</div>
-
 </form>
+<?php print_simple_box_end(); ?>
+
+<form method="post" action="calendar.php">
+<p style="text-align: center;"><input type="submit" value="<?php print_string('returntocalendaroptions', 'admin'); ?>"></p>
+</form>
+
 <script type="text/javascript">
 <!--
     var DSTPresetInfo = new Array();

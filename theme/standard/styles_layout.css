@@ -130,6 +130,15 @@ a img {
     border-width:1px;
     border-style:solid;
 }
+.errorbox {
+    border-width:1px;
+    border-style:solid;
+    margin: 1em 15%;
+    width: 70%;
+}
+.errorbox .title {
+    padding: 5px;
+}
 .informationbox {
     border-width:1px;
     border-style:solid;

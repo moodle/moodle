@@ -6,21 +6,21 @@
 </p>
 
 <div style="text-align: center;">
-<table style="margin: auto;" class="formtable">
+<table class="formtable">
   <tbody>
     <tr>
       <th>
-        <?php print_string('dstpresetname', 'calendar'); ?>
+        <?php print_string('dstpresetname', 'calendar'); ?>:
       </th>
-      <td style="vertical-align: top;">
+      <td>
         <input type="text" name="name" value="<?php print $preset->name; ?>" size="50" />
       </td>
     </tr>
     <tr>
       <th>
-        <?php print_string('dstpresetactivated', 'calendar'); ?>
+        <?php print_string('dstpresetactivated', 'calendar'); ?>:
       </th>
-      <td style="vertical-align: top;">
+      <td>
         <?php print_string('dstonthe', 'calendar'); ?>
         <?php choose_from_menu(array('1' => get_string('first', 'calendar'), '-1' => get_string('last', 'calendar')), 'activate_index', $preset->activate_index, ''); ?>
         <?php choose_from_menu($weekdays, 'activate_day', $preset->activate_day, ''); ?>
@@ -31,9 +31,9 @@
     </tr>
     <tr>
       <th>
-        <?php print_string('dstpresetadjusttime', 'calendar'); ?>
+        <?php print_string('dstpresetadjusttime', 'calendar'); ?>:
       </th>
-      <td style="vertical-align: top;">
+      <td>
         <?php print_string('dstadjusttime', 'calendar'); ?>
         <?php choose_from_menu(array('1' => get_string('timeforward', 'calendar'), '-1' => get_string('timerewind', 'calendar')), 'apply_offset_sign', $preset->apply_offset_sign, ''); ?>
         <?php print_string('dstby', 'calendar'); ?>
@@ -43,9 +43,9 @@
     </tr>
     <tr>
       <th>
-        <?php print_string('dstpresetdeactivated', 'calendar'); ?>
+        <?php print_string('dstpresetdeactivated', 'calendar'); ?>:
       </th>
-      <td style="vertical-align: top;">
+      <td>
         <?php print_string('dstonthe', 'calendar'); ?>
         <?php choose_from_menu(array('1' => get_string('first', 'calendar'), '-1' => get_string('last', 'calendar')), 'deactivate_index', $preset->deactivate_index, ''); ?>
         <?php choose_from_menu($weekdays, 'deactivate_day', $preset->deactivate_day, ''); ?>
@@ -57,7 +57,7 @@
 </table>
 
 <div style="margin: 1em;">
-  <input type="submit" name="result_ok" value="<?php print_string('ok'); ?>" />
+  <input type="submit" name="result_ok" value="<?php print_string('savechanges'); ?>" />
   <input type="submit" name="result_cancel" value="<?php print_string('cancel'); ?>" />
 </div>
 

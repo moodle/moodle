@@ -121,6 +121,12 @@ h4 {
 ******************************/
 /* many places */
 
+.errorbox .title {
+    font-weight: bold;
+    font-size: 1.2em;
+    text-align: center;
+}
+
 /* paging bar */
 .pagingbar .title {
     font-weight: bold;

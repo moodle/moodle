@@ -28,6 +28,7 @@
                  "<a href=\"configure.php\">$strconfiguration</a> -> ".
                  "<a href=\"calendar.php\">$strcalendarsettings</a> -> $strcalendardstpresets");
 
+    $errorhtml = '';
     $mode = '';
     $form = false;
 
@@ -177,14 +178,11 @@
                     redirect('dst.php');
                 }
                 else {
-                    echo '<div class="errorbox">';
-                    echo '<h1>'.get_string('therewereerrors', 'admin').':</h1>';
-                    echo '<ul>';
+                    $errorhtml = '<div class="errorbox"><div class="title">'.get_string('therewereerrors', 'admin').':</div><ul>';
                     foreach($errors as $error) {
-                        echo '<li>'.$error.'</li>';
+                        $errorhtml .= '<li>'.$error.'</li>';
                     }
-                    echo '</ul>';
-                    echo '</div>';
+                    $errorhtml .= '</ul></div>';
                 }
             }
 
@@ -200,6 +198,7 @@
                  6 => get_string('saturday', 'calendar')
             );
             print_heading(get_string('editingdstpreset', 'admin'));
+            echo $errorhtml;
             print_simple_box_start('center', '70%');
             include('./dst_edit.html');
             print_simple_box_end();
@@ -219,9 +218,7 @@
             }
         }
         print_heading($strcalendardstpresets);
-        print_simple_box_start('center', '70%');
         include('./dst.html');
-        print_simple_box_end();
     }
 
     print_footer();

@@ -108,6 +108,7 @@ $string['helpweekenddays'] = 'Which days of the week are treated as \"weekend\" 
 $string['managedstpresets'] = 'Manage DST Presets';
 $string['nodstpresetsexist'] = 'DST support is disabled for all users because there are no DST presets defined. You can define some presets using the button below.';
 $string['optionalmaintenancemessage'] = 'Optional maintenance messsage';
+$string['returntocalendaroptions'] = 'Return to calendar options';
 $string['sitemaintenance'] = 'The site is undergoing maintenance and is currently not available';
 $string['sitemaintenancemode'] = 'Maintenance mode';
 $string['sitemaintenanceon'] = 'Your site is currently in maintenance mode (only admins can log in or use the site).';

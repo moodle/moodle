@@ -136,6 +136,11 @@ th {
     border-color:#DDDDDD; /* borders */
 }
 
+.errorbox {
+    color:#ffffff;
+    border-color:#660000;
+    background-color:#990000;
+}
 
 /* summary of a user in a nice little box - weblib.php */
 .userinfobox {
