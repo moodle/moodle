@@ -16,7 +16,7 @@
     $nomoodlecookie = true;     // Because it interferes with caching
  
     require_once('../config.php');
-    require_once($CFG->dirroot.'/files/mimetypes.php');
+    require_once($CFG->libdir.'/filelib.php');
     require_once($CFG->libdir.'/rsslib.php');
 
 

@@ -6,7 +6,7 @@
     $nomoodlecookie = true;     // Because it interferes with caching
 
     require_once('../config.php');
-    require_once('../files/mimetypes.php');
+    require_once($CFG->libdir.'/filelib.php');
 
     $relativepath = get_file_argument('pixgroup.php');
 
