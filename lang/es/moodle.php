@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.3 (2004052500)
+      // moodle.php - created with Moodle 1.4 development (2004053000)
 
 
 $string['action'] = 'Acción';
@@ -291,6 +291,9 @@ $string['down'] = 'Abajo';
 $string['downloadexcel'] = 'Descargar en formato Excel';
 $string['downloadtext'] = 'Descargar en formato de texto';
 $string['doyouagree'] = '¿Ha leído y comprendido los términos y condiciones?';
+$string['duplicate'] = 'Duplicar';
+$string['duplicatinga'] = 'Duplicando: $a';
+$string['duplicatingain'] = 'Duplicando $a->what en $a->in';
 $string['edit'] = 'Editar $a';
 $string['editcoursesettings'] = 'Editar la configuración del curso';
 $string['editfiles'] = 'Editar archivos';
@@ -865,18 +868,18 @@ $string['todaylogs'] = 'Registros de hoy';
 $string['toomanytoshow'] = 'Hay demasiados usuarios para mostrarlos aquí';
 $string['top'] = 'Top';
 $string['topic'] = 'Tema';
-$string['topichide'] = 'Esconder este tema de $a';
+$string['topichide'] = 'Ocultar este tema a $a';
 $string['topicoutline'] = 'Diagrama de temas';
 $string['topicshow'] = 'Mostrar este tema a $a';
 $string['total'] = 'Total';
 $string['turneditingoff'] = 'Desactivar edición';
 $string['turneditingon'] = 'Activar edición';
 $string['undecided'] = 'No decidido';
-$string['unenrol'] = 'Destituir';
-$string['unenrolallstudents'] = 'Dar de baja a todos los estudiantes';
+$string['unenrol'] = 'Desmatricular';
+$string['unenrolallstudents'] = 'Desmatricular a todos los estudiantes';
 $string['unenrolallstudentssure'] = '¿Está seguro de que desea dar de baja a todos los estudiantes de este curso?';
-$string['unenrolme'] = 'Quitar de $a';
-$string['unenrolsure'] = '¿Está seguro de que desea destituir a $a de este curso?';
+$string['unenrolme'] = 'Desmatricular en $a';
+$string['unenrolsure'] = '¿Está seguro de que desea dar de baja a $a de este curso?';
 $string['unknowncategory'] = 'Categoría desconocida';
 $string['unpacking'] = 'Abriendo $a';
 $string['unsafepassword'] = 'Esta contraseña no es adecuada, intente otra';

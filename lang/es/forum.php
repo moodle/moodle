@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.3 Nearly Ready (2004052000)
+      // forum.php - created with Moodle 1.4 development (2004053000)
 
 
 $string['addanewdiscussion'] = 'Colocar un nuevo tema de discusión aquí';
@@ -27,6 +27,7 @@ $string['deletedpost'] = 'El mensaje se ha borrado';
 $string['deletesure'] = '¿Está seguro de que desea borrar este mensaje?';
 $string['discussion'] = 'Tema';
 $string['discussionmoved'] = 'Este tema se ha movido a \'$a\'.';
+$string['discussionname'] = 'Denominación';
 $string['discussions'] = 'Temas';
 $string['discussionsstartedby'] = 'Tema comenzado por $a';
 $string['discussionsstartedbyrecent'] = 'Tema recientemente comenzado por $a';
@@ -95,6 +96,8 @@ $string['postrating3'] = 'Muy comunicativo';
 $string['posts'] = 'Mensajes';
 $string['postupdated'] = 'Su mensaje se ha actualizado';
 $string['processingpost'] = 'Procesando $a';
+$string['prune'] = 'Partir';
+$string['pruneheading'] = 'Partir el mensaje y pasar a una nueva discusión';
 $string['rate'] = 'Calificar';
 $string['rating'] = 'Calificación';
 $string['ratingeveryone'] = 'Todos pueden calificar los mensajes';
