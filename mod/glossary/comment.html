@@ -1,9 +1,4 @@
-<?php
-    global $CFG, $THEME;
-    require_once("../../config.php");
-    require_once("lib.php");
-?>
-<FORM name="theform" method="post" <?=$onsubmit ?> action="comment.php">
+<FORM name="theform" method="post" action="comment.php">
 <table  class=generalbox cellpadding=5 bgcolor="<?php p($THEME->cellheading)?>">
 <tr valign=top>
     <td align=right><p><b><?php echo get_string("comment","glossary") ?>:</b></p>
@@ -59,12 +54,4 @@
 </table>
 </p>
 
-
 </form>
-
-<?PHP 
-   if ($usehtmleditor) { 
-       print_richedit_javascript("theform", "text", "no");
-   }
-?>
-

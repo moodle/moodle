@@ -47,9 +47,11 @@
     $strsearchconcept = get_string("searchconcept", "glossary");
     $strsearchindefinition = get_string("searchindefinition", "glossary");
     $strsearch = get_string("search");
+    $strcomments = get_string("comments", "glossary");
+    $straddcomment = get_string("addcomment", "glossary");
     
-    print_header(strip_tags("$course->shortname: $glossary->name"), "$course->fullname",
-        "$navigation <A HREF=index.php?id=$course->id>$strglossaries</A> -> <A HREF=view.php?id=$cm->id>$glossary->name</a> -> $entry->concept",
+    print_header(strip_tags("$course->shortname: $strcomments: $entry->concept"), "$course->fullname",
+        "$navigation <A HREF=index.php?id=$course->id>$strglossaries</A> -> <A HREF=view.php?id=$cm->id>$glossary->name</a> -> $strcomments",
         "", "", true, update_module_button($cm->id, $course->id, $strglossary),
         navmenu($course, $cm));
     
@@ -61,12 +63,11 @@
 
 /// comments
 
-    $strheading = get_string('commentson','glossary')." <b>\"$entry->concept\"</b>";
-    if ($glossary->allowcomments) {	
-        $strheading .= "&nbsp;&nbsp;<a href=\"comment.php?id=$cm->id&eid=$entry->id\"><img title=\"" . get_string("addcomment","glossary") . "\" src=\"comment.gif\" height=11 width=11 border=0></a> ";
-    }
+    print_heading(get_string('commentson','glossary')." <b>\"$entry->concept\"</b>");
 
-    print_heading($strheading);
+    if ($glossary->allowcomments) {	
+        print_heading("<a href=\"comment.php?id=$cm->id&eid=$entry->id\">$straddcomment</a> <img title=\"$straddcomment\" src=\"comment.gif\" height=11 width=11 border=0>");
+    }
 
     if ($comments = get_records("glossary_comments","entryid",$entry->id,"timemodified ASC")) {
         foreach ($comments as $comment) {
@@ -76,6 +77,7 @@
     } else {
         print_heading(get_string("nocomments","glossary"));
     }
+
 
 /// Finish the page
 
