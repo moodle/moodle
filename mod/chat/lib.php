@@ -100,8 +100,11 @@ function chat_print_recent_activity($course, $isteacher, $timestart) {
 
     if (!$chatusers = get_records_sql("SELECT u.id, cu.chatid, u.firstname, u.lastname
                                         FROM {$CFG->prefix}chat_users as cu,
+                                             {$CFG->prefix}chat as ch,
                                              {$CFG->prefix}user as u
                                        WHERE cu.userid = u.id 
+                                         AND cu.chatid = ch.id
+                                         AND ch.course = '$course->id'
                                        ORDER BY cu.chatid ASC") ) {
         return false;
     }
