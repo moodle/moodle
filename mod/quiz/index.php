@@ -98,10 +98,9 @@
         $closequiz = userdate($quiz->timeclose);
 
         if (isteacher($course->id)) {
-            if ($allanswers = get_records("quiz_grades", "quiz", $quiz->id)) {
-                $attemptcount = count_records_select("quiz_attempts", "quiz = '$quiz->id' AND timefinish > 0");
-                $usercount = count_records("quiz_grades", "quiz", "$quiz->id");
-                $strviewallanswers  = get_string("viewallanswers","quiz",$attemptcount);
+            if ($usercount = count_records('quiz_grades', 'quiz', $quiz->id)) {
+                $attemptcount = count_records_select('quiz_attempts', 'quiz = '.$quiz->id.' AND timefinish > 0');
+                $strviewallanswers  = get_string('viewallanswers', 'quiz', $attemptcount);
                 $gradecol = "<a href=\"report.php?q=$quiz->id\">$strviewallanswers ($usercount $strusers)</a>";
             } else {
                 $answercount = 0;
