@@ -1357,7 +1357,7 @@ function get_courses_notin_metacourse($metacourseid,$count=false) {
         $sql = "SELECT c.id,c.shortname,c.fullname";
     }
 
-    $sql .= " FROM {$CFG->prefix}course c WHERE c.id NOT IN (".implode(',',array_keys(get_courses_in_metacourse($metacourseid))).") AND c.id !=8 and c.id != 1 and c.metacourse != 1";
+    $sql .= " FROM {$CFG->prefix}course c WHERE c.id NOT IN (".implode(',',array_keys(get_courses_in_metacourse($metacourseid))).") AND c.id !=$metacourseid and c.id != $site->id and c.metacourse != 1";
 
     return get_records_sql($sql);
 }
