@@ -305,7 +305,7 @@ function forum_cron () {
                         add_to_log($course->id, 'forum', 'mail error', "discuss.php?d=$discussion->id#$post->id", 
                                    substr($post->subject,0,30), $cm->id, $userto->id);
                         $errorcount++;
-                    } else if ($mailresult == 'emailstop') {
+                    } else if ($mailresult === 'emailstop') {
                         add_to_log($course->id, 'forum', 'mail blocked', "discuss.php?d=$discussion->id#$post->id", 
                                    substr($post->subject,0,30), $cm->id, $userto->id);
                     } else {
@@ -480,7 +480,7 @@ function forum_cron () {
                     echo "ERROR!\n";
                     echo "Error: mod/forum/cron.php: Could not send out digest mail to user $userto->id ($userto->email)... not trying again.\n";
                     add_to_log($course->id, 'forum', 'mail digest error', '', '', $cm->id, $userto->id);
-                } else if ($mailresult == 'emailstop') {
+                } else if ($mailresult === 'emailstop') {
                     add_to_log($course->id, 'forum', 'mail digest blocked', '', '', $cm->id, $userto->id);
                 } else {
                     echo "success.\n";
