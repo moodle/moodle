@@ -115,8 +115,7 @@ class CourseBlock_social_activities extends MoodleBlock {
 
         if ($isediting && $modnames) {
             $this->content->footer = '<div style="text-align: right;">'.
-                popup_form($CFG->wwwroot.'/course/mod.php?id='.$this->course->id.'&amp;section='.$section->section.'&amp;add=',
-                           $modnames, 'section0', '', get_string('add').'...', 'mods', get_string('activities'), true) . '</div>';
+                print_section_add_menus($this->course, 0, $modnames, true, true).'</div>';
         } else {
             $this->content->footer = '';
         }

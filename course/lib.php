@@ -890,7 +890,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
 }
 
 
-function print_section_add_menus($course, $section, $modnames) {
+function print_section_add_menus($course, $section, $modnames, $vertical=false, $return=false) {
 // Prints the menus to add activities and resources
 
     static $straddactivity, $straddresource, $resources;
@@ -906,14 +906,28 @@ function print_section_add_menus($course, $section, $modnames) {
         $resources['label'] = get_string('resourcetypelabel', 'resource');
     }
 
-    echo '<div align="right"><table align="right"><tr><td>';
-    popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&amp;section=$section&add=",
-                $resources, "ressection$section", "", $straddresource);
-    echo '</td><td>';
-    popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&amp;section=$section&add=",
-                $modnames, "section$section", "", $straddactivity);
-    echo '</td></tr></table>';
-    echo '</div>';
+    $output = '';
+
+    $output .= '<div align="right"><table align="right"><tr><td>';
+    $output .= popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&amp;section=$section&add=",
+                $resources, "ressection$section", "", $straddresource, '', '', true);
+    $output .= '</td>';
+
+    if ($vertical) {
+        $output .= '</tr><tr>';
+    }
+
+    $output .= '<td>';
+    $output .= popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&amp;section=$section&add=",
+                $modnames, "section$section", "", $straddactivity, '', '', true);
+    $output .= '</td></tr></table>';
+    $output .= '</div>';
+
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
+    }
 }
 
 function rebuild_course_cache($courseid=0) {
