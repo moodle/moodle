@@ -38,42 +38,15 @@ function resource_upgrade($oldversion) {
         table_column("resource", "type", "type", "varchar", "30", "", "", "", "");
 
         modify_database("", "UPDATE prefix_resource SET type='reference' WHERE type='1';");
-        modify_database("", "UPDATE prefix_resource SET type='url', options='frame' WHERE type='2';");
+        modify_database("", "UPDATE prefix_resource SET type='file', options='frame' WHERE type='2';");
         modify_database("", "UPDATE prefix_resource SET type='file' WHERE type='3';");
         modify_database("", "UPDATE prefix_resource SET type='text', options='0' WHERE type='4';");
-        modify_database("", "UPDATE prefix_resource SET type='url' WHERE type='5';");
+        modify_database("", "UPDATE prefix_resource SET type='file' WHERE type='5';");
         modify_database("", "UPDATE prefix_resource SET type='html' WHERE type='6';");
-        modify_database("", "UPDATE prefix_resource SET type='program' WHERE type='7';");
+        modify_database("", "UPDATE prefix_resource SET type='file' WHERE type='7';");
         modify_database("", "UPDATE prefix_resource SET type='text', options='3' WHERE type='8';");
         modify_database("", "UPDATE prefix_resource SET type='directory' WHERE type='9';");
-    }
 
-    if ($oldversion < 2004072600) {
-        modify_database("", "UPDATE prefix_resource SET type='file' WHERE type='url';");
-        modify_database("", "UPDATE prefix_resource SET type='file' WHERE type='program';");
-
-    }
-
-    if ($oldversion < 2004073000) {
-        /// Make sure the "frame" flag is turned on for things that can support it (for a smooth upgrade)
-        require_once("$CFG->dirroot/files/mimetypes.php");
-        if ($resources = get_records_select('resource', "type = 'file' AND options = '' AND popup = ''")) {
-            foreach ($resources as $resource) {
-                $mimetype = mimeinfo("type", $resource->reference);
-                $embedded = false;
-                if (in_array($mimetype, array('image/gif','image/jpeg','image/png')) 
-                    or (substr($mimetype, 0, 10) == "video/x-ms")
-                    or ($mimetype == "audio/mp3")
-                    or ($mimetype == "video/quicktime")) {
-                    $embedded = true;
-                }
-                if (!$embedded) {   /// Make sure it's in a frame
-                    $newresource->id = $resource->id;
-                    $newresource->options = 'frame';
-                    update_record('resource', $newresource);
-                }
-            }
-        }
         rebuild_course_cache();
     }
 
