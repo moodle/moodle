@@ -946,6 +946,8 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
         echo "<div align=\"right\">";
         $attachedimages = forum_print_attachments($post);
         echo "</div>";
+    } else {
+        $attachedimages = "";
     }
 
     if ($link and (strlen(strip_tags($post->message)) > FORUM_LONG_POST)) {
