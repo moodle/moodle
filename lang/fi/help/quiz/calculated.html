@@ -1,0 +1,74 @@
+<P ALIGN=CENTER><B>Laskutehtävä</B></P>
+Laskutehtävätyökalulla voi luoda yksilöllisiä laskutehtäviä käyttämällä muuttujia, joiden paikalle sijoitetaan vaihtelevat numeroarvot tenttiä tehtäessä. 
+
+<br/>Alla pienennetty näkymä päämuokkaussivusta ja muutamia esimerkkejä:
+<br/>
+
+<table><tbody>
+<tr valign="top">
+    <td align="right"><p><b>Kysymys:</b></p>
+    </td>
+    <td>
+        <textarea id="questiontext" name="questiontext" rows="5" cols="40" wrap="virtual">Paljonko on {a} + {b} ?</textarea>
+</td>
+</tr>
+<tr valign="top">
+    <td align="right"><p><b>Näytettävä kuva</b></p></td>
+    <td>
+    <select name="image"><option value="" selected>Ei kuvaa</option><option value="grevture.gif">grevture.gif</option></select>
+    </td>
+</tr>
+
+<tr valign="top">
+<td align="right"><p><b>Oikea ratkaisukaava:</b></p></td>
+    <td>
+    <input align="left" type="text" id="formula0" name="answer[]" size="20" value="{a} + {b}">&nbsp;&nbsp;
+    <input type="hidden" name="fraction[]" value="1.0">
+    </td>
+</tr>
+<tr valign="top">
+    <td align="right"><p><b>Virhemarginaali:</b></p></td>
+    <td>
+    <input align="left" type="text" id="tolerance0&quot;" name="tolerance[]" size="15" value="0.01">±
+    </td>
+</tr>
+<tr valign="top">
+<td align="right"><p><b>Virhemarginaalin tyyppi:</b></p></td>
+    <td>
+    <select name="tolerancetype[]"><option value="1" selected>Relatiivinen</option><option value="2">Nimellinen</option><option value="3">Geometrinen</option></select>
+    </td>
+</tr>
+<tr valign="top">
+<td align="right"><p><b>Merkitsevät arvot</b></p></td>
+    <td>
+    <select name="correctanswerlength[]"><option value="1">1</option><option value="2" selected>2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option></select>
+    </td>
+</tr>
+</tbody></table>
+
+<br/>Kysymyksessä näytetään sekä kysymys että oikea ratkaisukaava {a} ja {b}. Näitä ja muita {nimi} voidaan käyttää muutujina, joihin sijoitetaan joku luku tenttiä tehdessä. Oikea vastaus lasketaan tenttiä palautettaessa käyttämällä "Oikea ratkaisukaava" -kaavaa, johon sijoitetaan käytetyt muuttujien arvot. Muuttujien arvot määrätään tai luodaan laskutehtävien muokkaussivulla.
+<br/>Esimerkkikaavassa käytetään operaattoria +. Muut hyväksytyt operaattorit ovat -*/ ja %, joka tarkoittaa modulo-operaattoria. PHP-tyyliset matemaattiset funktiot ovat myös mahdollisia. Näiden joukossa on 24 yksiarvoista funktiota<br/><B>
+abs, acos, acosh, asin, asinh, atan, atanh, ceil, cos, cosh, deg2rad, exp, expm1, floor, log, log10, log1p, rad2deg, round, sin, sinh, sprt, tan, tanh</B><br/> ja kaksi kaksiarvoista funktiota<br/><B>
+atan2, pow
+</b><br/> sekä funktiot <B>min</B> ja <B>max</B> jotka ottavat vastaan kaksi tai useampia argumentteja. On myös mahdollista käyttää funktiota <B>pi</>, johon ei tule argumentteja mutta silloinkin on muistettava käyttää sulkumerkkejä - pi'n oikea käyttö on muotoa <>pi()</B>. Myös muiden funktioiden argumenttejen on oltava sulkujen sisällä. Esimerkiksi siis: <b>sin({a}) + cos({b}) * 2</b>. Funktioita voi myös upottaa toistensa sisään, esimerkiksi:<b>cos(deg2rad({a} + 90))</b> jne.
+
+<br/>Lisätietoja PHP-tyylisten funktioiden käytöstä saa  <a target="phpmathdoc" href="http://www.php.net/manual/en/ref.math.php"> PHP sivuston dokumentaatiosta</a>
+<br/><br/>
+Samoin kuin numeerisissa kysymyksissä, laskutehtävissä on mahdollista antaa marginaali, jonka sisällä olevat luvut kaikki hyväksytään oikeiksi vastauksiksi. Tämä tehdään "Virhemarginaali"-kentässä. Laskutehtävissä on kolmea eri virhemarginaalityyppiä: <B>relatiivinen, nimellinen ja geometrinen.</B> Jos oletetaan, että oikea vastaus kysymykseen olisi 200 ja virhemarginaaliksi on asetettu 0,5, eri tyypit toimisivat näin: 
+
+<br/><br/><b>Relatiivinen:</B> Virhemarginaali lasketaan kertomalla oikea vastaus 0,5:llä, tässä tapauksessa saataisiin siis 100, ja täten oikeaksi katsottaisiin kaikki vastaukset väliltä 100 ja 300 (200 ± 100)<BR/>
+Tämä on hyödyllistä jos oikean vastauksen suuruus vaihtelee suuresti eri muuttujien arvoja käytettäessä.
+
+<br/><br/><b>Nimellinen:</b> Tämä on helpoin marginaalityyppi, mutta ei kovin tehokas. Oikeiksi katsotaan siis vastaukset väliltä 199,5 ja 200,5 (200 ± 0,5). <br/>
+Tätä marginaalityyppiä kannattaa käyttää jos erot eri oikeiden vastausten välillä ovat pienet.
+
+<br/><br/><b>Geometrinen:</b> Virhemarginaalin ylin arvo lasketaan kaavalla 200 + 0,5*200 ja on siis sama kuin relatiivisessa marginaalissa. Alin arvo lasketaan kaavalla 200/(1 + 0,5). Oikeat vastaukset ovat siis välillä 133,33 ja 300.
+<br/>
+Tämä marginaalityyppi on hyödyllinen monimutkaisiin laskutoimituksiin joissa relatiivinen marginaali 1 tai enemmän toimisi ylärajaa määriteltäessä, mutta relatiivista marginaalia ei voisi hyväksyä alarajaa määriteltäessä, sillä silloin 0 katsottaisiin aina oikeaksi vastaukseksi.
+
+<br/><br/><b>Merkitsevät arvot</b> vaikuttaa siihen, missä muodossa oikeat vastaukset esitetään arvostelussa tai kertauksessa ja mistä kohdasta pyöristys tapahtuu. Esimerkiksi: jos arvoksi on määritelty 3, oikea vastaus 13,333 esitettäisiin muodossa 13,3, 1236 olisi muodossa 1240, 23 muodossa 23,0 jne.
+
+<br/><br/>
+Palaute- ja muu yksikkö -kentät toimivat samoin kuin numeerisissa kysymyksissä.
+
+<br/>

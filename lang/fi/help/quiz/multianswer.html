@@ -1,0 +1,42 @@
+<p align="center"><b>Aukkoteht‰v‰t (Cloze)</b></p>
+
+<p>T‰m‰ hyvin joustava kysymystyyppi muistuttaa suosittua "Cloze" -tyyppi‰.
+  
+   
+<p>Kysymykset koostuvat tekstist‰ (Moodle-muodossa) jonne on upotettu eriaisia kysymystyyppej‰: monivalintaa, lyhytvastauksia ja numeerisia kysymyksi‰.
+
+
+<p>Toistaiseksi kysymysten luomiseen ei ole olemassa graafista k‰yttˆliittym‰‰ - kysymysten tyyppi pit‰‰ m‰‰ritell‰ tekstialuella tai tuomalla kysymykset ulkopuolisista tiedostoista.
+
+   
+<p>T‰ss‰ esimerkki siit‰ kuinka t‰m‰ntyyppinen teht‰v‰ laaditaan:
+
+<form>
+<center>
+<textarea rows=15 cols=60 wrap=virtual>T‰h‰n kysymykseen liittyy teksti‰ ja vastaus tulee t‰h‰n {1:MULTICHOICE:V‰‰r‰ vastaus#Palautetta v‰‰r‰st‰ vastauksesta~Toinen v‰‰r‰ vastaus#Palautetta toisesta v‰‰r‰st‰ vastauksesta~=Oikea vastaus#Palautetta oikeasta vastauksesta~%50%Vastauksesta saa puolet maksimipisteist‰#Palautetta puolet maksimipisteist‰ antavasta} ja sen j‰lkeen pit‰‰kin vastata t‰h‰n lyhytvastaukseen {1:SHORTANSWER:V‰‰r‰ vastaus#Palautetta v‰‰r‰st‰ vastauksesta~=Oikea vastaus#Palautetta oikeasta vastauksesta~%50%Vastauksesta saa puolet maksimipisteist‰#Palautetta puolet maksimipisteist‰ antavasta} ja viel‰ lopuksi kaivataan liukuluku {2:NUMERICAL:=23.8:0.1#Palautetta oikeasta vastauksesta 23.8~%50%N/A#Palautetta puolet maksimipisteist‰ antavasta oikeaa vastausta l‰hell‰ olevasta vastauksesta}.
+
+Huomaa ett‰ osoitteet, kuten www.moodle.org and hymiˆt :-) toimivat tavalliseen tapaan:
+ a) Onko t‰m‰ hyv‰? {:MULTICHOICE:=Kyll‰#Correct~Ei#Olemme eri mielt‰}
+ b) Mink‰ arvosanan antaisit? {3:NUMERICAL:=3:2}
+
+Onnea!
+</textarea>
+</center>
+</form>
+
+<p>Vastaajat n‰kev‰t esimerkin t‰llaisena:</p>
+
+
+<form>
+<table align="CENTER" width="90%" class="generalbox" border="0" cellpadding="5" cellspacing="0"><tr><td bgcolor="#FFFFFF" class="generalboxcontent"><table width=100% cellspacing=10><tr><td nowrap width=100 valign=top><p align=center><b>3</b></p><p align=center><font size=1>8 Marks</font></p><img height="1" width="100" src="pix/spacer.gif" alt=""><br />
+</td><td valign=top><p>T‰h‰n kysymykseen liittyy teksti‰ ja vastaus tulee t‰h‰n  <select   name="q4ma1" ><option></option><option value="4" >V‰‰r‰ vastaus</option><option value="5" >Toinen v‰‰r‰ vastaus</option><option value="6" >Oikea vastaus</option><option value="7" >Vastauksesta saa puolet maksimipisteist‰</option></select>  ja sen j‰lkeen pit‰‰kin vastata t‰h‰n lyhytvastaukseen  <input   name="q4ma2"  value="" type="TEXT" size="8"/>  ja viel‰ lopuksi kaivataan liukuluku  <input   name="q4ma3"  value="" type="TEXT" size="8"/> .<br />
+<br />
+Huomaa ett‰ osoitteet, kuten <a href="http://www.moodle.org" target="newpage">www.moodle.org</a> ja hymiˆt <img border="0" src="pix/s/smiley.gif" width="15" height="15"> toimivat tavalliseen tapaan:<br />
+a) Onko t‰m‰ hyv‰ <select   name="q4ma4" ><option></option><option value="13" >Kyll‰</option><option value="14" >Ei</option></select> <br />
+b) Mink‰ arvosanan antaisit?  <input   name="q4ma5"  value="" type="TEXT" size="8"/> <br />
+<br />
+Onnea!</p></TD></TR></TABLE></td></tr></table>
+</form>
+
+<br />
+

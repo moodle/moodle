@@ -1,0 +1,64 @@
+<p align=center><b>WebCT-kysymystiedostojen tuominen</b></p>
+
+<p>WebCT:st‰ kysymysten tuomista kehitet‰‰n ja viel‰ toistaiseksi kaikkia WebCT-kysymystyyppej‰ ei tueta.
+</p>
+
+<p>T‰ll‰ hetkell‰ Moodle tukee ainoastaan monivalinta (Multiple Choice) ja sanallinen vastaus (Short Answer)
+-tyyppej‰.
+</p>
+
+<p>T‰ss‰ muutama esimerkki.
+</p>
+
+<pre>
+# Start of the question: Short Answer Question
+:TYPE:S:
+:TITLE:Sanallinen vastaus
+:QUESTION:H
+Mik‰ on WebCT Learning Hubin nimi?
+&lt;br /> 
+:IMAGE:dotcomLogoc.gif
+:ANSWERS:1
+:CASE:0
+:ANSWER1:WebCT.com:100:0:20:0
+:FEEDBACK1:H
+K‰y tutustumassa WebCT Learning Hubiin\: www.WebCT.com
+:CAT:Default
+# End of question: Short Answer Question
+
+
+
+# Start of question: Multiple Choice Question
+:TYPE:MC:1:0:C
+:TITLE:Monivalintakysymys
+:FEEDBACK
+Darwin keksi evoluutioteorian ja loi darvinismin.
+:QUESTION:H
+Miss‰ on Darwin Research Center?
+:IMAGE:
+:LAYOUT:vertical
+:ANSWER1:0:H
+Menlo Parkissa, Kaliforniassa
+:REASON1:H
+Valitan!
+:ANSWER2:0:H
+Vancouverissa, Kanadassa
+:REASON2:H
+Valitan!
+:ANSWER3:100:H
+Galapagos-saarilla, Ecuadorissa
+:REASON3:H
+Oikea vastaus!
+:ANSWER4:0:H
+Lontoossa, Englannissa
+:REASON4:H
+Valitan!
+:ANSWER5:0:H
+Sidneyss‰, Austraaliassa
+:REASON5:H
+Valitan!
+:CAT:Default
+# End of question: Multiple Choice Question
+
+</pre>
+
