@@ -363,8 +363,16 @@ function quiz_get_attempt_responses($attempt) {
     foreach ($responses as $key => $response) {
         if ($response->qtype == RANDOM) {
             $responses[$key]->random = $response->answer;
-            $responses[$key]->answer = explode(",",$responses[$response->answer]->answer);
             $responses[$response->answer]->delete = true;
+
+            $realanswer = $responses[$response->answer]->answer;
+
+            if (is_array($realanswer)) {
+                $responses[$key]->answer = $realanswer;
+            } else {
+                $responses[$key]->answer = explode(",", $realanswer);
+            }
+
         } else if ($response->qtype == NUMERICAL or $response->qtype == SHORTANSWER) {
             $responses[$key]->answer = array($response->answer);
         } else {
