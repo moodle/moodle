@@ -227,6 +227,16 @@ function calendar_show_day($d, $m, $y, $courses, $groups, $users) {
         // First, print details about events that start today
         foreach ($events as $event) {
             if ($event->timestart >= $starttime && $event->timestart <= $endtime) {  // Print it now
+
+/*
+                print_object($event->time);
+
+                $dayend = calendar_day_representation($event->timestart + $event->timeduration);
+                $timeend = calendar_time_representation($event->timestart + $event->timeduration);
+                $enddate = usergetdate($event->timestart + $event->timeduration);
+                // Set printable representation
+                echo calendar_get_link_tag($dayend, CALENDAR_URL.'view.php?view=day'.$morehref.'&amp;', $enddate['mday'], $enddate['mon'], $enddate['year']).' ('.$timeend.')';
+*/
                 unset($event->time);
                 calendar_print_event($event);
 

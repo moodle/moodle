@@ -278,13 +278,12 @@ function calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxeve
 
     $processed = 0;
     $now = time(); // We 'll need this later
-    $nowsecs = $now % SECS_IN_DAY; // this too
-    $nowdays = $now - $nowsecs; // and this
+    $usermidnighttoday = usergetmidnight($now);
 
     if ($fromtime) {
         $display->tstart = $fromtime;
     } else {
-        $display->tstart = usergetmidnight(time());
+        $display->tstart = $usermidnighttoday;
     }
 
     // This effectively adds as many days as needed, and the final SECS_IN_DAY - 1
@@ -316,29 +315,27 @@ function calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxeve
 
     if($events !== false) {
         foreach($events as $event) {
-            if($processed >= $display->maxevents) break;
+
+            if($processed >= $display->maxevents) {
+                break;
+            }
 
             $startdate = usergetdate($event->timestart);
             $enddate = usergetdate($event->timestart + $event->timeduration);
-
-            $starttimesecs = $event->timestart % SECS_IN_DAY; // Seconds after that day's midnight
-            $starttimedays = $event->timestart - $starttimesecs; // Timestamp of midnight of that day
+            $usermidnightstart = usergetmidnight($event->timestart);
 
             if($event->timeduration) {
                 // To avoid doing the math if one IF is enough :)
-                $endtimesecs = ($event->timestart + $event->timeduration) % SECS_IN_DAY; // Seconds after that day's midnight
-                $endtimedays = ($event->timestart + $event->timeduration) - $endtimesecs; // Timestamp of midnight of that day
+                $usermidnightend = usergetmidnight($event->timestart + $event->timeduration);
             }
             else {
-                $endtimesecs = $starttimesecs;
-                $endtimedays = $starttimedays;
+                $usermidnightend = $usermidnightstart;
             }
 
-            // Keep in mind: $starttimeXXX, $endtimeXXX and $nowXXX are all in GMT-based
             // OK, now to get a meaningful display...
-
             // First of all we have to construct a human-readable date/time representation
-            if($endtimedays < $nowdays || $endtimedays == $nowdays && $endtimesecs <= $nowsecs) {
+
+            if($event->timestart + $event->timeduration < $now) {
                 // It has expired, so we don't care about duration
                 $day = calendar_day_representation($event->timestart + $event->timeduration, $now);
                 $time = calendar_time_representation($event->timestart + $event->timeduration);
@@ -349,8 +346,8 @@ function calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxeve
             }
             else if($event->timeduration) {
                 // It has a duration
-                if($starttimedays == $endtimedays) {
-                    // But it's all on one day
+                if($usermidnightstart == $usermidnightend) {
+                    // But it's all on the same day
                     $day = calendar_day_representation($event->timestart, $now);
                     $timestart = calendar_time_representation($event->timestart);
                     $timeend = calendar_time_representation($event->timestart + $event->timeduration);
