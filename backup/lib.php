@@ -771,6 +771,48 @@
         }
 
         return $status;
+    }
 
+    //Backup log info (time ordered)
+    function backup_log_info($bf,$preferences) {
+
+        global $CFG;
+  
+        $status = true;
+
+        $logs = get_records ("log","course",$preferences->backup_course);
+
+        //We have logs
+        if ($logs) {
+            //Pring logs header
+            fwrite ($bf,start_tag("LOGS",2,true));
+            //Iterate 
+            foreach ($logs as $log) {
+                //See if it is a valid module to backup
+                if ($log->module == "course" or 
+                    $log->module == "user") {
+                    //Begin log tag
+                     fwrite ($bf,start_tag("LOG",3,true));
+
+                    //Output log data
+                    fwrite ($bf,full_tag("ID",4,false,$log->id));
+                    fwrite ($bf,full_tag("TIME",4,false,$log->time));
+                    fwrite ($bf,full_tag("USERID",4,false,$log->userid));
+                    fwrite ($bf,full_tag("IP",4,false,$log->ip));
+                    fwrite ($bf,full_tag("MODULE",4,false,$log->module));
+                    fwrite ($bf,full_tag("ACTION",4,false,$log->action));
+                    fwrite ($bf,full_tag("URL",4,false,$log->url));
+                    fwrite ($bf,full_tag("INFO",4,false,$log->info));
+
+                    //End log data
+                     fwrite ($bf,end_tag("LOG",3,true));
+                }
+            }
+            $status = fwrite ($bf,end_tag("LOGS",2,true));
+        }
+
+        
+
+        return $status;
     }
 ?>

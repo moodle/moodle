@@ -156,7 +156,15 @@
         if ($status) {
             $status = backup_user_info($backup_file,$preferences);
         }
-   
+        
+        //Print logs if selected
+        if ($preferences->backup_logs) {  
+            echo "<li>Writing logs info";
+            //User info
+            if ($status) {
+                $status = backup_log_info($backup_file,$preferences);
+            }
+        }
 
         //Module info
 

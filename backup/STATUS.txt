@@ -4,7 +4,7 @@ STATUS $Id$
 This documment shows the current status of the backup/restore option.
 
 Backup:  WORKING. Only xml generation into temp dir. Header, info,
-                  course data, sections and user data.
+                  course data, sections, user data and logs.
 
 Restore: NOT WORKING. No comments.
 
@@ -47,6 +47,7 @@ Backup Details:
               x students........................................DONE
                  - Course.......................................DONE
                  - All..........................................DONE 
+           - Logs...............................................DONE
            - Mods Info..........................................IN PROGRESS
               x assignments.....................................IN PROGRESS
                  + course data..................................NO EXISTS
