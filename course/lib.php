@@ -450,9 +450,9 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
         $joins[] = "l.module = '$modname'";
     }
 
-    if ($modid && is_int($modid)) {
+    if ($modid and is_int($modid)) {
         $joins[] = "l.cmid = '$modid'";
-    } else if ($modid == "site_errors") {
+    } else if ('site_errors' === $modid) {
         $joins[] = "l.action='error'";
     }
 
