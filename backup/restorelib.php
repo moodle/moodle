@@ -3525,6 +3525,13 @@
                 notify("Error unzipping backup file. Invalid zip file.");
             }
         }
+
+        //Check for Blackboard backups and convert
+        if ($status){
+            require_once("$CFG->dirroot/backup/bb/restore_bb.php");
+            echo "<li>".get_string("checkingforbbexport");
+            $status = blackboard_convert($CFG->dataroot."/temp/backup/".$backup_unique_code);
+        }
         
         //Now check for the moodle.xml file
         if ($status) {
