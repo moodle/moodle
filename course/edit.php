@@ -3,6 +3,7 @@
 
 	require_once("../config.php");
 	require_once("lib.php");
+        require_once("$CFG->libdir/blocklib.php");
 
     optional_variable($id, 0);   // course id
     optional_variable($category, 0);   // category id
@@ -57,6 +58,14 @@
                 }
             } else {
                 $form->timecreated = time();
+
+                //Create blockinfo default content
+                if ($form->format == "social") {
+                    $form->blockinfo = blocks_get_default_blocks (NULL,"participants,search_forums,calendar_month,calendar_upcoming,social_activities,recent_activity,admin,course_list");
+                } else {
+                    //For topics and weeks formats (default built in the function)
+                    $form->blockinfo = blocks_get_default_blocks();
+                }
 
                 if ($newcourseid = insert_record("course", $form)) {  // Set up new course
                     $section = NULL;

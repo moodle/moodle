@@ -363,6 +363,7 @@
             $course->summary = addslashes($course_header->course_summary);
             $course->format = addslashes($course_header->course_format);
             $course->showgrades = addslashes($course_header->course_showgrades);
+            $course->blockinfo = addslashes($course_header->blockinfo);
             $course->newsitems = addslashes($course_header->course_newsitems);
             $course->teacher = addslashes($course_header->course_teacher);
             $course->teachers = addslashes($course_header->course_teachers);
@@ -381,6 +382,18 @@
             $course->visible = addslashes($course_header->course_visible);
             $course->timecreated = addslashes($course_header->course_timecreated);
             $course->timemodified = addslashes($course_header->course_timemodified);
+            //Adjust blockinfo field.
+            //NOTE: For now, it's imposible to find it in backup files because it isn't saved,
+            //      so, we always rebuid it with defaults.
+            if (!$course->blockinfo) {
+                //Create blockinfo default content
+                if ($course->format == "social") {
+                    $course->blockinfo = blocks_get_default_blocks (NULL,"participants,search_forums,calendar_month,calendar_upcoming,social_activities,recent_activity,admin,course_list");
+                } else {
+                    //For topics and weeks formats (default built in the function)
+                    $course->blockinfo = blocks_get_default_blocks();
+                }
+            }
             //Now insert the record
             $newid = insert_record("course",$course);
             if ($newid) {

@@ -194,11 +194,16 @@
 
 
 /// Upgrade backup/restore system if necessary
-
     require_once("$CFG->dirroot/backup/lib.php");
     upgrade_backup_db("$CFG->wwwroot/$CFG->admin/index.php");  // Return here afterwards
-    
 
+/// Upgrade blocks system if necessary
+    require_once("$CFG->dirroot/lib/blocklib.php");
+    upgrade_blocks_db("$CFG->wwwroot/$CFG->admin/index.php");  // Return here afterwards
+
+/// Check all blocks and load (or upgrade them if necessary)
+    upgrade_blocks_plugins("$CFG->wwwroot/$CFG->admin/index.php");  // Return here afterwards
+    
 /// Find and check all modules and load them up or upgrade them if necessary
 
     if (!$mods = get_list_of_plugins("mod") ) {
@@ -374,6 +379,8 @@
                     get_string("adminhelplanguage")."</font><br />";
     $configdata .= "<font size=+1>&nbsp;</font><a href=\"modules.php\">".get_string("managemodules")."</a> - <font size=1>".
                     get_string("adminhelpmanagemodules")."</font><br />";
+    $configdata .= "<font size=+1>&nbsp;</font><a href=\"blocks.php\">".get_string("manageblocks")."</a> - <font size=1>".
+                    get_string("adminhelpmanageblocks")."</font><br />";
     $configdata .= "<font size=+1>&nbsp;</font><a href=\"filters.php\">".get_string("managefilters")."</a> - <font size=1>".
                     get_string("adminhelpmanagefilters")."</font><br />";
     if (!isset($CFG->disablescheduledbackups)) {

@@ -9,6 +9,7 @@
     require_once ("../course/lib.php");
     require_once ("lib.php");
     require_once ("restorelib.php");
+    require_once("$CFG->libdir/blocklib.php");
 
     //Optional
     optional_variable($id);

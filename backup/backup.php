@@ -6,6 +6,7 @@
     require_once ("../config.php");
     require_once ("lib.php");
     require_once ("backuplib.php");
+    require_once ("$CFG->libdir/blocklib.php");
 
     optional_variable($id);       // course id
     optional_variable($cancel);

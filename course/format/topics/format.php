@@ -2,11 +2,24 @@
       // Display the whole course as "topics" made of of modules
       // In fact, this is very similar to the "weeks" format, in that
       // each "topic" is actually a week.  The main difference is that
-      // the dates aren't printed - it's just an aesthetic thing for 
+      // the dates aren't printed - it's just an aesthetic thing for
       // courses that aren't so rigidly defined by time.
       // Included from "view.php"
 
     require_once("$CFG->dirroot/mod/forum/lib.php");
+
+    // Bounds for block widths
+    define('BLOCK_L_MIN_WIDTH', 100);
+    define('BLOCK_L_MAX_WIDTH', 210);
+    define('BLOCK_R_MIN_WIDTH', 100);
+    define('BLOCK_R_MAX_WIDTH', 210);
+
+    optional_variable($preferred_width_left, 0);
+    optional_variable($preferred_width_right, 0);
+    $preferred_width_left = min($preferred_width_left, BLOCK_L_MAX_WIDTH);
+    $preferred_width_left = max($preferred_width_left, BLOCK_L_MIN_WIDTH);
+    $preferred_width_right = min($preferred_width_right, BLOCK_R_MAX_WIDTH);
+    $preferred_width_right = max($preferred_width_right, BLOCK_R_MIN_WIDTH);
 
     if (isset($topic)) {
         $displaysection = course_set_display($course->id, $topic);
@@ -25,10 +38,6 @@
         }
     }
 
-    if ($course->newsitems) {
-        $news = forum_get_course_forum($course->id, "news");
-    }
-
     $streditsummary   = get_string("editsummary");
     $stradd           = get_string("add");
     $stractivities    = get_string("activities");
@@ -36,7 +45,7 @@
     $strtopic         = get_string("topic");
     $strgroups       = get_string("groups");
     $strgroupmy      = get_string("groupmy");
-    if (isediting($course->id)) { 
+    if ($editing) {
         $strstudents = moodle_strtolower($course->students);
         $strtopichide = get_string("topichide", "", $strstudents);
         $strtopicshow = get_string("topicshow", "", $strstudents);
@@ -50,66 +59,18 @@
 /// Layout the whole page as three big columns.
     echo "<table border=0 cellpadding=3 cellspacing=0 width=100%>";
 
+    echo "<tr valign=top>\n";
+
 /// The left column ...
 
-    echo "<tr valign=top><td valign=top width=180>";
-    
-/// Links to people
-    $moddata[]="<a title=\"".get_string("listofallpeople")."\" href=\"../user/index.php?id=$course->id\">".get_string("participants")."</a>";
-    $modicon[]="<img src=\"$CFG->pixpath/i/users.gif\" height=16 width=16 alt=\"\">";
-
-    if ($course->groupmode or !$course->groupmodeforce) {
-        if ($course->groupmode == VISIBLEGROUPS or isteacheredit($course->id)) {
-            $moddata[]="<a title=\"$strgroups\" href=\"groups.php?id=$course->id\">$strgroups</a>";
-            $modicon[]="<img src=\"$CFG->pixpath/i/group.gif\" height=16 width=16 alt=\"\">";
-        } else if ($course->groupmode == SEPARATEGROUPS and $course->groupmodeforce) {
-            // Show nothing
-        } else if ($currentgroup) {
-            $moddata[]="<a title=\"$strgroupmy\" href=\"group.php?id=$course->id\">$strgroupmy</a>";
-            $modicon[]="<img src=\"$CFG->pixpath/i/group.gif\" height=16 width=16 alt=\"\">";
-        }
+    if(block_have_active($leftblocks) || $editing) {
+        echo '<td style="vertical-align: top; width: '.$preferred_width_left.'px;">';
+        print_course_blocks($course, $leftblocks, BLOCK_LEFT);
+        echo '</td>';
     }
-
-    $fullname = fullname($USER, true);
-    $editmyprofile = "<a title=\"$fullname\" href=\"../user/edit.php?id=$USER->id&course=$course->id\">".get_string("editmyprofile")."</a>";
-    if ($USER->description) {
-        $moddata[]= $editmyprofile;
-    } else {
-        $moddata[]= $editmyprofile." <blink>*</blink>";
-    }
-    $modicon[]="<img src=\"$CFG->pixpath/i/user.gif\" height=16 width=16 alt=\"\">";
-    print_side_block(get_string("people"), "", $moddata, $modicon);
-
-
-/// Links to all activity modules by type
-    $moddata = array();
-    $modicon = array();
-    if ($modnamesused) {
-        foreach ($modnamesused as $modname => $modfullname) {
-            if ($modname != "label") {
-                $moddata[] = "<a href=\"../mod/$modname/index.php?id=$course->id\">".$modnamesplural[$modname]."</a>";
-                $modicon[] = "<img src=\"$CFG->modpixpath/$modname/icon.gif\" height=16 width=16 alt=\"\">";
-            }
-        }
-    }
-    print_side_block($stractivities, "", $moddata, $modicon);
-
-/// Print the calendar
-    calendar_print_side_blocks();
-
-/// Print a form to search forums
-    $searchform = forum_print_search_form($course, "", true);
-    $searchform = "<div align=\"center\">$searchform</div>";
-    print_side_block(get_string("search","forum"), $searchform);
-
-/// Admin links and controls
-    print_course_admin_links($course);
-
-/// My courses
-    print_courses_sideblock(0, "180");
 
 /// Start main column
-    echo "</td><td width=\"*\">";
+    echo "<td width=\"*\">";
 
     print_heading_block(get_string("topicoutline"), "100%", "outlineheadingblock");
     print_spacer(8, 1, true);
@@ -131,7 +92,7 @@
     }
 
 
-/// Print Section 0 
+/// Print Section 0
 
     $section = 0;
     $thissection = $sections[$section];
@@ -140,7 +101,7 @@
         echo "<tr>";
         echo "<td nowrap bgcolor=\"$THEME->cellheading\" class=\"topicsoutlineside\" valign=top width=20>&nbsp;</td>";
         echo "<td valign=top bgcolor=\"$THEME->cellcontent\" class=\"topicsoutlinecontent\" width=\"100%\">";
-    
+
         echo format_text($thissection->summary, FORMAT_HTML);
 
         if (isediting($course->id)) {
@@ -148,18 +109,18 @@
                  " href=\"editsection.php?id=$thissection->id\"><img src=\"$CFG->pixpath/t/edit.gif\" ".
                  " height=11 width=11 border=0 alt=\"$streditsummary\"></a><br />";
         }
-    
+
         echo '<br clear="all">';
-    
+
         print_section($course, $thissection, $mods, $modnamesused);
-    
+
         if (isediting($course->id)) {
             echo "<div align=right>";
-            popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&amp;section=$section&add=", 
+            popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&amp;section=$section&add=",
                         $modnames, "section$section", "", "$stradd...", "mods", $stractivities);
             echo "</div>";
         }
-    
+
         echo "</td>";
         echo "<td nowrap bgcolor=\"$THEME->cellheading\" class=\"topicsoutlineside\" valign=top align=center width=10>";
         echo "&nbsp;</td></tr>";
@@ -223,7 +184,7 @@
         echo "<td nowrap $colorsides valign=top width=20>";
         echo "<p align=center><font size=3><b>$section</b></font></p>";
         echo "</td>";
-    
+
         if (!isteacher($course->id) and !$thissection->visible) {   // Hidden for students
             echo "<td valign=top align=center $colormain width=\"100%\">";
             echo get_string("notavailable");
@@ -240,16 +201,16 @@
             }
 
             echo '<br clear="all">';
-    
+
             print_section($course, $thissection, $mods, $modnamesused);
-    
+
             if (isediting($course->id)) {
                 echo "<div align=right>";
-                popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&amp;section=$section&add=", 
+                popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&amp;section=$section&add=",
                             $modnames, "section$section", "", "$stradd...");
                 echo "</div>";
             }
-    
+
             echo "</td>";
         }
         echo "<td nowrap $colorsides valign=top align=center width=10>";
@@ -303,35 +264,26 @@
 
     if (!empty($sectionmenu)) {
         echo "<center>";
-        echo popup_form("$CFG->wwwroot/course/view.php?id=$course->id&", $sectionmenu, 
+        echo popup_form("$CFG->wwwroot/course/view.php?id=$course->id&", $sectionmenu,
                    "sectionmenu", "", get_string("jumpto"), "", "", true);
         echo "</center>";
     }
-    
 
-    if (!empty($news) or $course->showrecent) {
-        echo "</td><td width=210>";
 
-        /// Print all the news items.
+    echo "</td>";
 
-        if (!empty($news)) {
-            print_side_block_start(get_string("latestnews"), 210, "sideblocklatestnews");
-            echo "<font size=\"-2\">";
-            forum_print_latest_discussions($news->id, $course->newsitems, "minimal", "", $currentgroup);
-            echo "</font>";
-            print_side_block_end();
+    // The right column
+    if(block_have_active($rightblocks) || $editing) {
+        echo '<td style="vertical-align: top; width: '.$preferred_width_right.'px;">';
+        if ($editing && !empty($missingblocks)) {
+            block_print_add_block($course->id, $missingblocks);
         }
-        
-        // Print all the recent activity
-        if ($course->showrecent) {
-            print_side_block_start(get_string("recentactivity"), 210, "sideblockrecentactivity");
-            print_recent_activity($course);
-            print_side_block_end();
-        }
-    
+        print_course_blocks($course, $rightblocks, BLOCK_RIGHT);
         print_spacer(1, 120, true);
+        echo '</td>';
     }
 
-    echo "</td></tr></table>\n";
+    echo "</tr>\n";
+    echo "</table>\n";
 
 ?>

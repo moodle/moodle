@@ -4,6 +4,7 @@
 
     require_once("../config.php");
     require_once("lib.php");
+    require_once("$CFG->libdir/blocklib.php");
     require_once('../calendar/lib.php');
 
     optional_variable($id);
@@ -14,11 +15,11 @@
     }
 
     if (!empty($_GET['name'])) {
-        if (! $course = get_record("course", "shortname", $name) ) {
+        if (! ($course = get_record("course", "shortname", $name)) ) {
             error("That's an invalid short course name");
         }
     } else {
-        if (! $course = get_record("course", "id", $id) ) {
+        if (! ($course = get_record("course", "id", $id)) ) {
             error("That's an invalid course id");
         }
     }
@@ -27,14 +28,66 @@
 
     add_to_log($course->id, "course", "view", "view.php?id=$course->id", "$course->id");
 
+    if (!file_exists($CFG->dirroot.'/course/format/'.$course->format.'/format.php')) {
+        $course->format = 'weeks';  // Default format is weeks
+    }
+
+    // Can't avoid this... :(
+    switch($course->format) {
+        case 'weeks':
+            $courseformat = COURSE_FORMAT_WEEKS;
+        break;
+        case 'topics':
+            $courseformat = COURSE_FORMAT_TOPICS;
+        break;
+        case 'social':
+            $courseformat = COURSE_FORMAT_SOCIAL;
+        break;
+        default:
+            $courseformat = 0;
+    }
+
+    // Doing this now so we can pass the results to block_action()
+    // and dodge the overhead of doing the same work twice.
+
+    $blocks = $course->blockinfo;
+    $delimpos = strpos($blocks, ':');
+
+    if($delimpos === false) {
+        // No ':' found, we have all left blocks
+        $leftblocks = explode(',', $blocks);
+        $rightblocks = array();
+    }
+    else if($delimpos === 0) {
+        // ':' at start of string, we have all right blocks
+        $blocks = substr($blocks, 1);
+        $leftblocks = array();
+        $rightblocks = explode(',', $blocks);
+    }
+    else {
+        // Both left and right blocks
+        $leftpart = substr($blocks, 0, $delimpos);
+        $rightpart = substr($blocks, $delimpos + 1);
+        $leftblocks = explode(',', $leftpart);
+        $rightblocks = explode(',', $rightpart);
+    }
+    
+    if (!isset($USER->editing)) {
+        $USER->editing = false;
+    }
+
+    $editing = false;
+
     if (isteacheredit($course->id)) {
-        if (isset($edit)) {
+       if (isset($edit)) {
             if ($edit == "on") {
                 $USER->editing = true;
             } else if ($edit == "off") {
                 $USER->editing = false;
             }
         }
+
+        $editing = $USER->editing;
 
         if (isset($hide)) {
             set_section_visible($course->id, $hide, "0");
@@ -43,6 +96,33 @@
         if (isset($show)) {
             set_section_visible($course->id, $show, "1");
         }
+
+        if (isset($_GET['blockaction'])) {
+            if (isset($_GET['blockid'])) {
+                block_action($course, $leftblocks, $rightblocks, strtolower($_GET['blockaction']), intval($_GET['blockid']));
+            }
+        }
+
+        // This has to happen after block_action() has possibly updated the two arrays
+        $allblocks = array_merge($leftblocks, $rightblocks);
+
+        $missingblocks = array();
+        $recblocks = get_records('blocks','visible','1');
+        if($editing && $recblocks) {
+            foreach($recblocks as $recblock) {
+                // If it's not hidden or displayed right now...
+                if(!in_array($recblock->id, $allblocks) && !in_array(-($recblock->id), $allblocks)) {
+                    // And if it's applicable for display in this format...
+                    if(block_method_result($recblock->name, 'applicable_formats') & $courseformat) {
+                        // Add it to the missing blocks
+                        $missingblocks[] = $recblock->id;
+                    }
+                }
+            }
+        }
+
+        $preferred_width_left = blocks_preferred_width($leftblocks, $recblocks);
+        $preferred_width_right = blocks_preferred_width($rightblocks, $recblocks);
 
         if (!empty($section)) {
             if (!empty($move)) {
@@ -61,13 +141,11 @@
         redirect("$CFG->wwwroot/");
     }
 
-    $currentgroup = get_current_group($course->id);
-
     $strcourse = get_string("course");
 
     $loggedinas = "<p class=\"logininfo\">".user_login_string($course, $USER)."</p>";
 
-    print_header("$strcourse: $course->fullname", "$course->fullname", "$course->shortname", 
+    print_header("$strcourse: $course->fullname", "$course->fullname", "$course->shortname",
                  "", "", true, update_course_icon($course->id), $loggedinas);
 
     get_all_mods($course->id, $mods, $modnames, $modnamesplural, $modnamesused);
@@ -90,10 +168,6 @@
         if (! $course = get_record("course", "id", $course->id) ) {
             error("That's an invalid course id");
         }
-    }
-
-    if (!file_exists("$CFG->dirroot/course/format/$course->format/format.php")) {   // Default format is weeks
-        $course->format = "weeks";
     }
 
     require("$CFG->dirroot/course/format/$course->format/format.php");  // Include the actual course format

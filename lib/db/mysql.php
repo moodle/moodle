@@ -721,6 +721,10 @@ function main_upgrade($oldversion=0) {
         execute_sql("UPDATE {$CFG->prefix}course SET lang = 'cs' WHERE lang = 'cz'");
     }
 
+    if ($oldversion < 2004041800) {     /// Integrate Block System from contrib
+        table_column("course", "", "blockinfo", "varchar", "255", "", "", "not null", "modinfo");
+    }
+
     return $result;
 
 }
