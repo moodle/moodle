@@ -27,7 +27,8 @@
 ************************************************/
 
     require("../../config.php");
-	require("lib.php");
+    require("lib.php");
+	require("locallib.php");
 
 	require_variable($id);    // Course Module ID
  
@@ -258,7 +259,7 @@
 			error("Only teachers can look at this page");
 		}
 		
-		$count = count_records("exercise_grades", "exercise", $exercise->id);
+		$count = count_records("exercise_grades", "exerciseid", $exercise->id);
 		if ($exercise->phase > 1 and $count) {
 			notify(get_string("warningonamendingelements", "exercise"));
 		}
