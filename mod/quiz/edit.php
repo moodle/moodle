@@ -182,7 +182,7 @@
     
 /// all commands have been dealt with, now print the page
 
-    if (empty($modform->category)) {
+    if (empty($modform->category) or !record_exists('quiz_categories', 'id', $modform->category)) { 
         $category = quiz_get_default_category($course->id);
         $modform->category = $category->id;
     }
