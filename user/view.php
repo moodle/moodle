@@ -85,7 +85,7 @@
     // Print the description
 
     if ($user->description) {
-        echo "<p>".format_text(clean_text($user->description))."</p><hr>";
+        echo "<p>".format_text(clean_text($user->description, FORMAT_MOODLE))."</p><hr>";
     }
 
     // Print all the little details in a list
