@@ -2,6 +2,7 @@
       // quiz.php - created with Moodle 1.0.8 dev (2002122301)
 
 
+$string['addquestions'] = "Fragen hinzufügen";
 $string['addselectedtoquiz'] = "Auswahl zum Quiz hinzufügen";
 $string['allowreview'] = "Bericht erlauben";
 $string['alreadysubmitted'] = "Es sieht so aus, als hätten Sie diesen Versuch schon eingetragen";
@@ -32,6 +33,7 @@ $string['choices'] = "Verfügbare Auswahl";
 $string['correctanswer'] = "Richtige Antwort";
 $string['correctanswers'] = "Richtige Antworten";
 $string['createnewquestion'] = "Eine neue Frage anlegen";
+$string['custom'] = "Eigenes Format";
 $string['daysavailable'] = "Tage verfügbar";
 $string['default'] = "Standard";
 $string['defaultinfo'] = "Die Standard-Rubrik für diese Frage";
@@ -40,16 +42,18 @@ $string['editcategories'] = "Rubrik bearbeiten";
 $string['editingmultichoice'] = "Eine Frage mit Mehrfachauswahl bearbeiten";
 $string['editingquestion'] = "Eine Frage bearbeiten";
 $string['editingquiz'] = "Ein Quiz bearbeiten";
+$string['editingrandommatch'] = "Eine Zufallsfrage bearbeiten";
 $string['editingshortanswer'] = "Kurzantwort der Frage bearbeiten";
 $string['editingtruefalse'] = "Ja/Nein-Frage bearbeiten";
 $string['false'] = "Falsch";
 $string['feedback'] = "Rückmeldung";
+$string['fileformat'] = "Dateiformat";
 $string['filloutoneanswer'] = "Sie müssen mindestens eine mögliche Antwort geben. Leere Antworten werden ignoriert.";
 $string['fillouttwochoices'] = "Sie müssen mindestens zwei mögliche Antwort geben. Leere Antworten werden ignoriert.";
-$string['fractionsaddwrong'] = "Ihre positiven gewählten Punktzahlen ergeben keine 100%
-<BR>Statt dessen ergeben Sie \$a%
+$string['fractionsaddwrong'] = "Ihre positiven gewählten Punktzahlen ergeben keine 100%%
+<BR>Statt dessen ergeben Sie \$a%%
 <BR>Möchten Sie zurück gehen und diese Frage korrigieren?";
-$string['fractionsnomax'] = "Eine dieser Antworten sollte 100% sein, so dass
+$string['fractionsnomax'] = "Eine dieser Antworten sollte 100%% sein, so dass
 <br>es möglich ist, die volle Punktzahl für diese Frage zu bekommen.
 <br>Möchten Sie zurück gehen und diese Frage korrigieren?";
 $string['gradeaverage'] = "Durchschnittsnote";
@@ -57,10 +61,12 @@ $string['gradehighest'] = "Beste Note";
 $string['grademethod'] = "Bewertungsschema";
 $string['guestsno'] = "Entschuldigung, aber Gäste können Quiz nicht sehen oder probieren.";
 $string['imagedisplay'] = "Bild für die Anzeige";
+$string['importquestions'] = "Eine Datei aus einer Datei importieren";
 $string['introduction'] = "Einleitung";
 $string['marks'] = "Anmerkungen";
 $string['missingname'] = "Der Name der Frage fehlt";
 $string['missingquestiontext'] = "Der Text der Frage fehlt";
+$string['missingword'] = "Das Wortformat fehlt";
 $string['modulename'] = "Quiz";
 $string['modulenameplural'] = "Quiz";
 $string['multichoice'] = "Mehrfachauswahl";
@@ -71,6 +77,7 @@ $string['noquestions'] = "Es wurden noch keine Fragen eingetragen";
 $string['noreview'] = "Sie dürfen dieses Quiz nicht überprüfen";
 $string['noreviewuntil'] = "Sie dürfen dieses Quiz bis \$a nicht überprüfen";
 $string['publish'] = "Veröffentlichen";
+$string['qti'] = "IMS QTI Format";
 $string['question'] = "Frage";
 $string['questioninuse'] = "Die Frage '\$a' wird momentan benutzt:";
 $string['questionname'] = "Title der Frage";
@@ -81,6 +88,10 @@ $string['quizclosed'] = "Diese Quiz schließt am \$a";
 $string['quiznotavailable'] = "Diese Quiz ist nicht verfügbar bis: \$a";
 $string['quizopen'] = "Ein Quiz beginnen";
 $string['random'] = "Zufällig setzen";
+$string['randommatch'] = "Zufallstreffer";
+$string['randommatchcreate'] = "Einen Zufallsfrage erstellen";
+$string['randommatchintro'] = "Für jede der folgenden Fragen wählen Sie die zutreffende Antwort aus dem Menü aus ";
+$string['randommatchnumber'] = "Nummer der Fragen zur Auswahl";
 $string['readytosend'] = "Sie sind dabei, Ihr ganzes Quiz zu senden, um benotet zu werden.  Sind Sie sicher, daß Sie weitermachen wollen?";
 $string['regrade'] = "Alle Versuche zurücksetzen";
 $string['regradecomplete'] = "Alle Versuche wurden zurückgesetzt";
@@ -93,6 +104,7 @@ $string['savemyanswers'] = "Meine Antworten speichern";
 $string['savequiz'] = "Dieses gesamte Quiz speichern";
 $string['score'] = "Grobe Punktzahl";
 $string['select'] = "Auswählen";
+$string['selectall'] = "Alles auswählen";
 $string['selectcategoryabove'] = "Wählen Sie eine obige Rubrik";
 $string['shortanswer'] = "Kurzantwort";
 $string['show'] = "Zeigen";
@@ -105,6 +117,7 @@ $string['true'] = "Wahr";
 $string['truefalse'] = "Wahr/Falsch";
 $string['type'] = "Typ";
 $string['viewallanswers'] = "Zeige \$a ausgefüllte Quiz";
+$string['webct'] = "WebCT Format";
 $string['yourfinalgradeis'] = "Ihre Gesamtnote für dieses Quiz ist \$a";
 
 ?>
