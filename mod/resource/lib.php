@@ -16,6 +16,9 @@ $RESOURCE_TYPE = array (REFERENCE    => get_string("resourcetype1", "resource"),
                         HTML         => get_string("resourcetype6", "resource"),
                         PROGRAM      => get_string("resourcetype7", "resource") );
 
+$RESOURCE_FRAME_SIZE = 130;
+
+
 function resource_list_all_resources($courseid=0, $sort="name ASC", $recent=0) {
     // Returns list of all resource links in an array of strings
  

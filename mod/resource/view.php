@@ -61,7 +61,7 @@
             } else {
                 add_to_log($course->id, "resource", "view", "view.php?id=$cm->id", "$resource->id");
                 echo "<HEAD><TITLE>$course->shortname: $resource->name</TITLE></HEAD>\n";
-                echo "<FRAMESET ROWS=130,*>";
+                echo "<FRAMESET ROWS=$RESOURCE_FRAME_SIZE,*>";
                 echo "<FRAME SRC=\"view.php?id=$cm->id&frameset=true\">";
                 echo "<FRAME SRC=\"$resource->reference\">";
                 echo "</FRAMESET>";
@@ -82,7 +82,7 @@
                     $ffurl = "file.php?file=/$course->id/$resource->reference";
                 }
                 echo "<HEAD><TITLE>$course->shortname: $resource->name</TITLE></HEAD>\n";
-                echo "<FRAMESET ROWS=130,*>";
+                echo "<FRAMESET ROWS=$RESOURCE_FRAME_SIZE,*>";
                 echo "<FRAME SRC=\"view.php?id=$cm->id&frameset=true\">";
                 echo "<FRAME SRC=\"$CFG->wwwroot/$ffurl\">";
                 echo "</FRAMESET>";
