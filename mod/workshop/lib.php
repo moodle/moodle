@@ -17,13 +17,13 @@ $WORKSHOP_SHOWGRADES = array (0 => get_string("dontshowgrades", "workshop"),
                           1 => get_string("showgrades", "workshop") );
 
 $WORKSHOP_SCALES = array( 
-					0 => array( 'name' => get_string("scaleyes", "workshop"), 'type' => 'radio', 'size' => 2, 'start' => 'yes', 'end' => 'no'),
-					1 => array( 'name' => get_string("scalepresent", "workshop"), 'type' => 'radio', 'size' => 2, 'start' => 'present', 'end' => 'absent'),
-					2 => array( 'name' => get_string("scalecorrect", "workshop"), 'type' => 'radio', 'size' => 2, 'start' => 'correct', 'end' => 'incorrect'), 
-					3 => array( 'name' => get_string("scalegood3", "workshop"), 'type' => 'radio', 'size' => 3, 'start' => 'good', 'end' => 'poor'), 
-					4 => array( 'name' => get_string("scaleexcellent4", "workshop"), 'type' => 'radio', 'size' => 4, 'start' => 'excellent', 'end' => 'very poor'),
-					5 => array( 'name' => get_string("scaleexcellent5", "workshop"), 'type' => 'radio', 'size' => 5, 'start' => 'excellent', 'end' => 'very poor'),
-					6 => array( 'name' => get_string("scaleexcellent7", "workshop"), 'type' => 'radio', 'size' => 7, 'start' => 'excellent', 'end' => 'very poor'),
+					0 => array( 'name' => get_string("scaleyes", "workshop"), 'type' => 'radio', 'size' => 2, 'start' => get_string("yes"), 'end' => get_string("no")),
+					1 => array( 'name' => get_string("scalepresent", "workshop"), 'type' => 'radio', 'size' => 2, 'start' => get_string("present", "workshop"), 'end' => get_string("absent", "workshop")),
+					2 => array( 'name' => get_string("scalecorrect", "workshop"), 'type' => 'radio', 'size' => 2, 'start' => get_string("correct", "workshop"), 'end' => get_string("incorrect", "workshop")), 
+					3 => array( 'name' => get_string("scalegood3", "workshop"), 'type' => 'radio', 'size' => 3, 'start' => get_string("good", "workshop"), 'end' => get_string("poor", "workshop")), 
+					4 => array( 'name' => get_string("scaleexcellent4", "workshop"), 'type' => 'radio', 'size' => 4, 'start' => get_string("excellent", "workshop"), 'end' => get_string("verypoor", "workshop")),
+					5 => array( 'name' => get_string("scaleexcellent5", "workshop"), 'type' => 'radio', 'size' => 5, 'start' => get_string("excellent", "workshop"), 'end' => get_string("verypoor", "workshop")),
+					6 => array( 'name' => get_string("scaleexcellent7", "workshop"), 'type' => 'radio', 'size' => 7, 'start' => get_string("excellent", "workshop"), 'end' => get_string("verypoor", "workshop")),
 					7 => array( 'name' => get_string("scale10", "workshop"), 'type' => 'selection', 'size' => 10),
 					8 => array( 'name' => get_string("scale20", "workshop"), 'type' => 'selection', 'size' => 20),
 					9 => array( 'name' => get_string("scale100", "workshop"), 'type' => 'selection', 'size' => 100)); 
