@@ -1,4 +1,4 @@
-#!./php -q
+#!/usr/bin/php -q
 <?php
 
 echo "Moodle chat daemon v1.0  (\$Id$)\n\n";
@@ -630,11 +630,11 @@ $DAEMON->trace_level = E_ALL;
 $DAEMON->socketserver_refresh = 20;
 $DAEMON->can_daemonize = function_exists('pcntl_fork');
 $DAEMON->beepsoundsrc = $CFG->wwwroot.'/mod/chat/beep.wav';
-$DAEMON->live_data_update_threshold = 30;
+$DAEMON->live_data_update_threshold = 15;
 
 /// Check the parameters //////////////////////////////////////////////////////
 
-    $param = trim(strtolower($argv[1]));
+    $param = empty($argv[1]) ? NULL : trim(strtolower($argv[1]));
 
     if (empty($param) || eregi('^(\-\-help|\-h)$', $param)) {
         echo 'Starts the Moodle chat socket server on port '.$CFG->chat_serverport;

@@ -9,7 +9,7 @@ if (!isset($CFG->chat_refresh_userlist)) {
     set_config("chat_refresh_userlist", 10);
 }
 if (!isset($CFG->chat_old_ping)) {
-    set_config("chat_old_ping", 30);
+    set_config("chat_old_ping", 35);
 }
 if (!isset($CFG->chat_method)) {
     set_config("chat_method", "header_js");
