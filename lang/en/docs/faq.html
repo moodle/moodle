@@ -72,6 +72,8 @@
   about &quot;headers already sent&quot;?</a></p>
 <p class="questionlink"><a href="#failedopen">I keep getting this error: Failed 
   opening required '/web/moodle/lib/setup.php'</a></p>
+<p class="questionlink"><a href="#quotes">Any text I add with an apostrophe (') 
+  or a quote (&quot;) causes errors or comes up with a slash added</a></p>
 <p class="questionlink">&nbsp;</p>
 <h3 class="question"><a name="filenotfound"></a>Whenever I try to access or view 
   a file that I uploaded, I get an error &quot;File not Found&quot;</h3>
@@ -145,6 +147,17 @@
   drive</strong>.</p>
 <p class="answer">Sometimes people only use the path from their home directory, 
   or relative to the root of the web server directory.</p>
+<p class="answer">&nbsp;</p>
+<h4 class="question"><a name="quotes" id="quotes"></a>Any text I add with an apostrophe 
+  (') or a quote (&quot;) causes errors or comes up with a slash added</h4>
+<p class="answer">Problems caused by apostrophes are caused by incorrect &quot;magic 
+  quotes&quot; settings. Moodle requires the following settings (which are usually 
+  the default):</p>
+<p class="answercode">magic_quotes_gpc = On<br>
+  magic_quotes_runtime = Off</p>
+<p class="answer">See the section on <a href="http://moodle.org/doc/?file=install.html#webserver">webserver 
+  configuration</a> in the Installation docs for more details.</p>
+<h2>&nbsp;</h2>
 <h2>&nbsp;</h2>
 
 <hr>
