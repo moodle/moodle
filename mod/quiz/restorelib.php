@@ -5,12 +5,12 @@
     //To see, put your terminal to 132cc
 
     //This is the "graphical" structure of the quiz mod:
-    //
+    //             
     //                           quiz                                                      quiz_categories
-    //                        (CL,pk->id)                                                   (CL,pk->id)
-    //                            |                                                              |
-    //             -----------------------------------------------                               |
-    //             |                        |                    |                               |
+    //                        (CL,pk->id)                                                   (CL,pk->id)  
+    //                            |                                                              |       
+    //             -----------------------------------------------                               |       
+    //             |                        |                    |                               |       
     //             |                        |                    |                               |
     //             |                        |                    |                               |
     //        quiz_attempts          quiz_grades         quiz_question_grades                    |
@@ -23,55 +23,27 @@
     //                                                                                           |
     //                                                                                           |
     //                                                                                           |
-    //             --------------------------------------------------------------------------------------                
-    //             |                         |                        |                                 |
-    //             |                         |                        |                                 |
-    //             |                         |                        |                                 |    quiz_randomsamatch
-    //      quiz_truefalse         quiz_shortanswer       quiz_multichoice         quiz_numerical       |--(CL,pl->id,fk->question)
-    // (CL,pl->id,fk->question)(CL,pl->id,fk->question)(CL,pl->id,fk->question)(CL,pl->id,fk->question) |
-    //             .                         .                        .                 .               |
-    //             .                         .                        .                 .               |
-    //             .                         .                        .                 .               |         quiz_match
-    //             ......................................................................               |--(CL,pl->id,fk->question)
-    //                                                   .                                              |             .
-    //                                                   .                                              |             .
-    //                                                   .                                              |             .
-    //                                                quiz_answers                                      |      quiz_match_sub
-    //                                         (CL,pk->id,fk->question)---------------------------------|--(CL,pl->id,fk->question)
-    //    //This is the "graphical" structure of the quiz mod:
-    //
-    //                           quiz                                                      quiz_categories
-    //                        (CL,pk->id)                                                   (CL,pk->id)
-    //                            |                                                              |
-    //             -----------------------------------------------                               |
-    //             |                        |                    |                               |
-    //             |                        |                    |                               |
-    //             |                        |                    |                               |
-    //        quiz_attempts          quiz_grades         quiz_question_grades                    |
-    //   (UL,pk->id, fk->quiz)   (UL,pk->id,fk->quiz)    (CL,pk->id,fk->quiz)                    |
-    //             |                                              |                              |
-    //             |                                              |                              |
-    //             |                                              |                              |
-    //       quiz_responses                                       |                        quiz_questions
-    //  (UL,pk->id, fk->attempt)----------------------------------------------------(CL,pk->id,fk->category,files)
-    //                                                                                           |
-    //                                                                                           |
-    //                                                                                           |
-    //             --------------------------------------------------------------------------------------                
-    //             |                         |                        |                                 |
-    //             |                         |                        |                                 |
-    //             |                         |                        |                                 |    quiz_randomsamatch
-    //      quiz_truefalse         quiz_shortanswer       quiz_multichoice         quiz_numerical       |--(CL,pl->id,fk->question)
-    // (CL,pl->id,fk->question)(CL,pl->id,fk->question)(CL,pl->id,fk->question)(CL,pl->id,fk->question) |
-    //             .                         .                        .                 .               |
-    //             .                         .                        .                 .               |
-    //             .                         .                        .                 .               |         quiz_match
-    //             ......................................................................               |--(CL,pl->id,fk->question)
-    //                                                   .                                              |             .
-    //                                                   .                                              |             .
-    //                                                   .                                              |             .
-    //                                                quiz_answers                                      |      quiz_match_sub
-    //                                         (CL,pk->id,fk->question)---------------------------------|--(CL,pl->id,fk->question)
+    //             --------------------------------------------------------------------------------------
+    //             |             |              |              |                |                       |
+    //             |             |              |              |                |                       |
+    //             |             |              |              |                |                       |    quiz_randomsamatch
+    //      quiz_truefalse       |       quiz_multichoice      |         quiz_multianswer               |--(CL,pl->id,fk->question)
+    // (CL,pl->id,fk->question)  |   (CL,pl->id,fk->question)  |    (CL,pl->id,fk->question)            |
+    //             .             |              .              |               .                        |
+    //             .      quiz_shortanswer      .       quiz_numerical         .                        |
+    //             .  (CL,pl->id,fk->question)  .  (CL,pl->id,fk->question)    .                        |         quiz_match
+    //             .             .              .              .               .                        |--(CL,pl->id,fk->question)
+    //             .             .              .              .               .                        |             .
+    //             .             .              .              .               .                        |             .
+    //             .             .              .              .               .                        |             .
+    //             .             .              .              .               .                        |       quiz_match_sub
+    //             .             .              .              .               .                        |--(CL,pl->id,fk->question)
+    //             .............................................................                        |
+    //                                                   .                                              |
+    //                                                   .                                              |
+    //                                                   .                                              |
+    //                                                quiz_answers                                      |
+    //                                         (CL,pk->id,fk->question)----------------------------------
     //
     // Meaning: pk->primary key field of the table
     //          fk->foreign key to link with parent
@@ -88,6 +60,7 @@
     //     - quiz_questions
     //     - quiz_truefalse
     //     - quiz_shortanswer
+    //     - quiz_multianswer
     //     - quiz_multichoice
     //     - quiz_numerical
     //     - quiz_randomsamatch
