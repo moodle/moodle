@@ -101,3 +101,12 @@ Changes to 1.1 since 1.0.9
 .categoryname {}
 .coursename {}
 
+
+================================
+Changes to 1.1.1 since 1.1
+--------------------------------
+
+.categoryboxcontent {}
+
+Some better placement of styles on the category/course listings to 
+allow some fancy effects.

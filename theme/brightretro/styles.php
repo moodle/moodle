@@ -286,10 +286,19 @@ a.dimmed:hover {
 }
 
 .categorybox {
+    border-width: 1px;
+    border-color: <?PHP echo $THEME->borders?>;
+    border-style: solid;
+}
+
+.categoryboxcontent {
 }
 
 .categoryname {
+    font-size: large;
+    font-weight: bold;
 }
 
 .coursename {
 }
+

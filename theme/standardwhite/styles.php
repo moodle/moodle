@@ -3,7 +3,7 @@
 /// We use PHP so we can do value substitutions into the styles
 
     $nomoodlecookie = true;
-    require_once("../../config.php");
+    require_once("../../config.php"); 
     $themeurl = style_sheet_setup(filemtime("styles.php"), 300, $themename);
 
 /// From here on it's nearly a normal stylesheet. 
@@ -31,6 +31,7 @@ body, td, th, li {
 th {
     font-weight: bold; 
     background-color: <?PHP echo $THEME->cellheading?>;
+    background-image: url(<?PHP echo "$themeurl"?>/gradient.jpg);
 }
 
 a:link {
@@ -284,10 +285,19 @@ a.dimmed:hover {
 }
 
 .categorybox {
+    border-width: 1px;
+    border-color: <?PHP echo $THEME->borders?>;
+    border-style: solid;
+}
+
+.categoryboxcontent {
 }
 
 .categoryname {
+    font-size: large;
+    font-weight: bold;
 }
 
 .coursename {
 }
+
