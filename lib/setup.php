@@ -10,6 +10,10 @@
 //
 //////////////////////////////////////////////////////////////
 
+    if (!isset($CFG->wwwroot)) {
+        die;
+    }
+
 /// If there are any errors in the standard libraries we want to know!
     error_reporting(E_ALL);
 
