@@ -1059,8 +1059,10 @@ function calendar_get_default_courses($ignoreref = false) {
 
     $courses = array();
     if(!empty($USER->id) && isadmin($USER->id)) {
-        $courses = get_records_sql('SELECT id, 1 FROM '.$CFG->prefix.'course');
-        return $courses;
+        if(!empty($CFG->calendar_adminseesall)) {
+            $courses = get_records_sql('SELECT id, 1 FROM '.$CFG->prefix.'course');
+            return $courses;
+        }
     }
     if(isset($USER->student) && is_array($USER->student)) {
         $courses = $USER->student;
@@ -1073,9 +1075,10 @@ function calendar_get_default_courses($ignoreref = false) {
 
 function calendar_preferences_array() {
     return array(
-        'startwday' => get_string('pref_startwday', 'calendar'),
-        'maxevents' => get_string('pref_maxevents', 'calendar'),
-        'lookahead' => get_string('pref_lookahead', 'calendar'),
+        'dstpreset'  => get_string('pref_dstpreset', 'calendar'),
+        'startwday'  => get_string('pref_startwday', 'calendar'),
+        'maxevents'  => get_string('pref_maxevents', 'calendar'),
+        'lookahead'  => get_string('pref_lookahead', 'calendar'),
         'timeformat' => get_string('pref_timeformat', 'calendar'),
     );
 }
@@ -1153,6 +1156,122 @@ function calendar_format_event_time($event, $now, $morehref, $usecommonwords = t
     }
 
     return $eventtime;
+}
+
+function calendar_human_readable_dst($preset) {
+    $weekdays = array('sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday');
+
+    $options = new stdClass;
+    $options->activate_index     = ($preset->activate_index == -1) ? get_string('last', 'calendar') : get_string('nth', 'calendar', $preset->activate_index);
+    $options->activate_weekday   = ($preset->activate_day < 0) ? get_string('day', 'calendar') : get_string($weekdays[$preset->activate_day], 'calendar');
+    $options->activate_month     = date('F', mktime(0, 0, 0, $preset->activate_month, 1, 2000));
+    $options->offset             = abs($preset->apply_offset);
+    $options->direction          = $preset->apply_offset > 0 ? get_string('timeforward', 'calendar') : get_string('timerewind', 'calendar');
+    $options->deactivate_index   = ($preset->deactivate_index == -1) ? get_string('last', 'calendar') : get_string('nth', 'calendar', $preset->deactivate_index);
+    $options->deactivate_weekday = ($preset->deactivate_day < 0) ? get_string('day', 'calendar') : get_string($weekdays[$preset->deactivate_day], 'calendar');
+    $options->deactivate_month   = date('F', mktime(0, 0, 0, $preset->deactivate_month, 1, 2000));
+
+    return get_string('dsthumanreadable', 'calendar', $options);
+    //print_string('dstonthe', 'calendar')
+    //return 'ID '.$preset->id.': DST is activated on the X of X.';
+}
+
+// "Find the ($index as int, 1st, 2nd, etc, -1 = last) ($weekday as int, sunday = 0) in ($month) of ($year)"
+function calendar_find_day_in_month($index, $weekday, $month, $year) {
+    if($weekday == -1) {
+        // Any day of the week will do
+        if($index == -1) {
+            // Last day of that month
+            $targetday = calendar_days_in_month($month, $year);
+        }
+        else {
+            // Not last day; a straight index value
+            $targetday = $index;
+        }
+    }
+    else {
+        // We need to calculate when exactly that weekday is
+        // Fist of all, what day of the week is the first of that month?
+
+        // Convert to timestamp and back to readable representation using the server's timezone;
+        // this should be correct regardless of what the user's timezone is.
+        $firstmonthweekday = strftime('%w', mktime(0, 0, 0, $month, 1, $year));
+//PJ        print_object('The first of '.$month.'/'.$year.' is '.$firstmonthweekday);
+        $daysinmonth       = calendar_days_in_month($month, $year);
+
+        // This is the first such-named weekday of the month
+        $targetday = 1 + $weekday - $firstmonthweekday;
+        if($targetday <= 0) {
+            $targetday += 7;
+        }
+//PJ        print_object('The FIRST SPECIFIC '.$weekday.' of '.$month.'/'.$year.' is on '.$targetday);
+
+        if($index == -1) {
+            // To find the LAST such weekday, just keep adding 7 days at a time
+            while($targetday + 7 <= $daysinmonth) {
+                $targetday += 7;
+            }
+//PJ            print_object('The LAST SPECIFIC '.$weekday.' of '.$month.'/'.$year.' is on '.$targetday);
+        }
+        else {
+            // For a specific week, add as many weeks as required
+            $targetday += $index > 1 ? ($index - 1) * 7 : 0;
+        }
+    }
+
+    return $targetday;
+}
+
+function calendar_dst_update_preset($dstpreset) {
+    $now  = time();
+
+    // What's the date according to our user right now?
+    $date = usergetdate($now);
+
+    $monthdayactivate   = calendar_find_day_in_month($dstpreset->activate_index, $dstpreset->activate_day, $dstpreset->activate_month, $date['year']);
+    $monthdaydeactivate = calendar_find_day_in_month($dstpreset->deactivate_index, $dstpreset->deactivate_day, $dstpreset->deactivate_month, $date['year']);
+
+    $timeactivate   = make_timestamp($date['year'], $dstpreset->activate_month, $monthdayactivate, $dstpreset->activate_hour, $dstpreset->activate_minute);
+    $timedeactivate = make_timestamp($date['year'], $dstpreset->deactivate_month, $monthdaydeactivate, $dstpreset->deactivate_hour, $dstpreset->deactivate_minute);
+
+    // Great... let's see where exactly we are now.
+    if($now < $timeactivate) {
+        print_object("<<");
+        // DST has not been turned on this year
+        $dstpreset->next_change = $timeactivate;
+        // For the last change, we need to fetch the previous year's DST deactivation timestamp
+        $monthdaydeactivate  = calendar_find_day_in_month($dstpreset->deactivate_index, $dstpreset->deactivate_day, $dstpreset->deactivate_month, $date['year'] - 1);
+        $timedeactivate      = make_timestamp($date['year'] - 1, $dstpreset->deactivate_month, $monthdaydeactivate, $dstpreset->deactivate_hour, $dstpreset->deactivate_minute);
+        $dstpreset->last_change = $timedeactivate;
+    }
+    else if($now < $timedeactivate) {
+        print_object("<>");
+        // DST is on for this year right now
+        $dstpreset->last_change = $timeactivate;
+        $dstpreset->next_change = $timedeactivate;
+    }
+    else {
+        print_object(">>");
+        // DST has already been turned off; we are nearing the end of the year
+        $dstpreset->last_change = $timedeactivate;
+        // For the next change, we need to fetch next year's DST activation timestamp
+        $monthdayactivate    = calendar_find_day_in_month($dstpreset->activate_index, $dstpreset->activate_day, $dstpreset->activate_month, $date['year'] + 1);
+        $timeactivate        = make_timestamp($date['year'] + 1, $dstpreset->activate_month, $monthdayactivate, $dstpreset->activate_hour, $dstpreset->activate_minute);
+        $dstpreset->next_change = $timeactivate;
+    }
+
+    return $dstpreset;
+}
+
+function calendar_print_month_selector($name, $selected) {
+    
+    $months = array();
+
+    for ($i=1; $i<=12; $i++) {
+        $months[$i] = userdate(gmmktime(12, 0, 0, $i, 1, 2000), '%B');
+    }
+
+    choose_from_menu($months, $name, $selected, '');
 }
 
 ?>

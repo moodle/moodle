@@ -1,0 +1,66 @@
+<form method="post" action="dst.php">
+<p>
+  <input type="hidden" name="sesskey" value="<?php echo $USER->sesskey ?>" />
+  <input type="hidden" name="mode_editform" value="mode_editform" />
+  <input type="hidden" name="preset" value="<?php echo $preset->id ?>" />
+</p>
+
+<div style="text-align: center;">
+<table style="margin: auto;" class="formtable">
+  <tbody>
+    <tr>
+      <th>
+        <?php print_string('dstpresetname', 'calendar'); ?>
+      </th>
+      <td style="vertical-align: top;">
+        <input type="text" name="name" value="<?php print $preset->name; ?>" size="50" />
+      </td>
+    </tr>
+    <tr>
+      <th>
+        <?php print_string('dstpresetactivated', 'calendar'); ?>
+      </th>
+      <td style="vertical-align: top;">
+        <?php print_string('dstonthe', 'calendar'); ?>
+        <?php choose_from_menu(array('1' => get_string('first', 'calendar'), '-1' => get_string('last', 'calendar')), 'activate_index', $preset->activate_index, ''); ?>
+        <?php choose_from_menu($weekdays, 'activate_day', $preset->activate_day, ''); ?>
+        <?php print_string('dstof', 'calendar'); echo ' '; calendar_print_month_selector('activate_month', $preset->activate_month); ?>
+        <?php print_string('dstat', 'calendar'); echo ' '; print_time_selector('activate_hour', 'activate_minute', make_timestamp(2000, 1, 1, $preset->activate_hour, $preset->activate_minute), 30); ?>
+        <?php $preset->activate_hour; ?>
+      </td>
+    </tr>
+    <tr>
+      <th>
+        <?php print_string('dstpresetadjusttime', 'calendar'); ?>
+      </th>
+      <td style="vertical-align: top;">
+        <?php print_string('dstadjusttime', 'calendar'); ?>
+        <?php choose_from_menu(array('1' => get_string('timeforward', 'calendar'), '-1' => get_string('timerewind', 'calendar')), 'apply_offset_sign', $preset->apply_offset_sign, ''); ?>
+        <?php print_string('dstby', 'calendar'); ?>
+        <input type="text" name="apply_offset" value="<?php echo $preset->apply_offset; ?>" size="3" />
+        <?php print_string('mins'); ?>
+      </td>
+    </tr>
+    <tr>
+      <th>
+        <?php print_string('dstpresetdeactivated', 'calendar'); ?>
+      </th>
+      <td style="vertical-align: top;">
+        <?php print_string('dstonthe', 'calendar'); ?>
+        <?php choose_from_menu(array('1' => get_string('first', 'calendar'), '-1' => get_string('last', 'calendar')), 'deactivate_index', $preset->deactivate_index, ''); ?>
+        <?php choose_from_menu($weekdays, 'deactivate_day', $preset->deactivate_day, ''); ?>
+        <?php print_string('dstof', 'calendar'); echo ' '; calendar_print_month_selector('deactivate_month', $preset->deactivate_month); ?>
+        <?php print_string('dstat', 'calendar'); echo ' '; print_time_selector('deactivate_hour', 'deactivate_minute', make_timestamp(2000, 1, 1, $preset->deactivate_hour, $preset->deactivate_minute), 30); ?>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<div style="margin: 1em;">
+  <input type="submit" name="result_ok" value="<?php print_string('ok'); ?>" />
+  <input type="submit" name="result_cancel" value="<?php print_string('cancel'); ?>" />
+</div>
+
+</div>
+
+</form>

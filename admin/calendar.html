@@ -1,0 +1,49 @@
+
+<form method="post" action="calendar.php">
+<p><input type="hidden" name="sesskey" value="<?php echo $USER->sesskey ?>"></p>
+
+<div style="text-align: center;">
+<table style="margin: auto; border: none; width: 90%;" class="formtable">
+  <tbody>
+    <tr>
+      <th>adminseesall:</th>
+      <td>
+        <select name="adminseesallcourses">
+          <option value="0" <?php if(empty($CFG->calendar_adminseesall)) echo "selected='selected'"; ?>><?php print_string('adminseesownevents', 'admin'); ?></option>
+          <option value="1" <?php if(!empty($CFG->calendar_adminseesall)) echo "selected='selected'"; ?>><?php print_string('adminseesallevents', 'admin'); ?></option>
+        </select>
+      </td>
+      <td><?php print_string('helpadminseesall', 'admin'); ?></td>
+    </tr>
+    <tr>
+      <th>dstforusers:</th>
+      <td>
+        <?php if(empty($presets)) { print_string('nodstpresetsexist', 'admin'); } else { ?>
+        <div>
+          <nobr>
+          <input type="radio" id="dstradio1" name="dstforusers" value="preference" <?php if(empty($CFG->calendar_dstforusers)) echo 'checked="checked"';?> /> <label for="dstradio1"><?php print_string('dstisapreference', 'admin'); ?></label>
+          </nobr>
+        </div>
+        <div>
+          <nobr><input type="radio" id="dstradio2" name="dstforusers" value="force" <?php if(!empty($CFG->calendar_dstforusers)) echo 'checked="checked"';?> /> <label for="dstradio2"><?php print_string('dstisforcedto', 'admin'); ?></label>
+          <?php choose_from_menu($presets, 'dstpreset', (empty($CFG->calendar_dstforusers) ? 0 : $CFG->calendar_dstforusers), get_string('choose').'...', 'form.dstradio2.checked=\'checked\''); ?>
+          </nobr>
+        </div>
+        <?php } ?>
+      </td>
+      <td><?php print_string('helpdstforusers', 'admin'); ?></td>
+    </tr>
+    <tr>
+      <th>managedstpresets:</th>
+      <td>
+        <input type="submit" name="mode_dst" value="<?php print_string('managedstpresets', 'admin'); ?>..." />
+      </td>
+      <td><?php print_string('helpmanagedstpresets', 'admin'); ?></td>
+    </tr>
+  </tbody>
+</table>
+
+  <input type="submit" value="<?php print_string('savechanges'); ?>" />
+</div>
+
+</form>

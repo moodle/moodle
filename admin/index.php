@@ -305,6 +305,8 @@
     }
     $configdata .= "<font size=+1>&nbsp;</font><a href=\"editor.php?sesskey=$USER->sesskey\">". get_string("editorsettings") ."</a> - <font size=\"1\">".
                     get_string("adminhelpeditorsettings")."</font><br />";
+    $configdata .= "<font size=+1>&nbsp;</font><a href=\"calendar.php?sesskey=$USER->sesskey\">". get_string('calendarsettings', 'admin') ."</a> - <font size=\"1\">".
+                    get_string('helpcalendarsettings', 'admin')."</font><br />";
 
     $table->data[] = array("<font size=+1><b><a href=\"configure.php\">".get_string("configuration")."</a></b>", 
                             $configdata);

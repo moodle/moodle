@@ -1,0 +1,62 @@
+<form method="post" action="dst.php">
+<p><input type="hidden" name="sesskey" value="<?php echo $USER->sesskey ?>"></p>
+
+<div style="text-align: center;">
+<table style="margin: auto; width: 100%;" cellpadding="5" cellspacing="0">
+  <tbody>
+    <tr>
+      <td style="vertical-align: top; width: 40%;">
+        <div style="text-align: center;">
+        <?php if (!empty($presets)) {
+            echo '<select style="width: 100%;" id="dstselectmenu" size="10" name="preset" onclick="showdstinfo();">';
+            foreach($presets as $id => $preset) {
+                echo '<option value="'.$id.'">'.$preset->name.'</option>';
+            }
+            echo '</select>';
+         }
+         else {
+            echo get_string('emptydstlist', 'admin');
+         }
+        ?>
+        </div>
+      </td>
+      <td style="vertical-align: middle;">
+        <div id="dstdisplayboard" style="display: none; margin: 1em; padding: 5px; border: 1px black solid; text-align: center; background-color: <?php echo $THEME->cellcontent; ?>; -moz-border-radius: 4px;"> </div>
+        <div style="text-align: center; margin: 1em;">
+          <input type="submit" name="mode_add" value="<?php print_string('add'); ?>..." />
+          <input type="submit" name="mode_edit" value="<?php print_string('edit'); ?>" <?php if(empty($presets)) echo 'disabled="disabled"';?> />
+          <input type="submit" name="mode_delete" value="<?php print_string('delete'); ?>" <?php if(empty($presets)) echo 'disabled="disabled"';?> />
+        </div>
+      </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+</form>
+<script type="text/javascript">
+<!--
+    var DSTPresetInfo = new Array();
+    <?php
+        foreach($presetdescriptions as $id => $desc) {
+            echo 'DSTPresetInfo['.$id.'] = "'.$desc.'";';
+        }
+    ?>
+
+    function showdstinfo() {
+        var board  = document.getElementById('dstdisplayboard');
+        var select = document.getElementById('dstselectmenu');
+        if(board && select) {
+            var index = select.selectedIndex;
+            if(index == -1 && select.options.length >= 1) {
+                select.selectedIndex = index = 0;
+            }
+            board.firstChild.nodeValue = window.DSTPresetInfo[select.options[index].value];
+            board.style.display = 'block';
+        }
+        return true;
+    }
+
+    showdstinfo();
+-->
+</script>

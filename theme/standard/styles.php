@@ -694,8 +694,18 @@ A IMG {
     border: none;
 }
 
-TABLE.formtable TD {
-    padding: 9px;
+table.formtable td, table.formtable th {
+    padding: 8px;
+}
+
+table.formtable tbody tr {
+    vertical-align: top;
+}
+
+table.formtable tbody th {
+    text-align: right;
+    font-weight: bold;
+    background: none;
 }
 
 .eventfull {

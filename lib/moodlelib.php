@@ -496,9 +496,9 @@ function make_timestamp($year, $month=1, $day=1, $hour=0, $minute=0, $second=0, 
     $timezone = get_user_timezone($timezone);
 
     if (abs($timezone) > 13) {
-        return mktime((int)$hour,(int)$minute,(int)$second,(int)$month,(int)$day,(int)$year);
+        return mktime((int)$hour,(int)$minute,(int)$second,(int)$month,(int)$day,(int)$year, 0);
     } else {
-        $time = gmmktime((int)$hour,(int)$minute,(int)$second,(int)$month,(int)$day,(int)$year);
+        $time = gmmktime((int)$hour,(int)$minute,(int)$second,(int)$month,(int)$day,(int)$year, 0);
         return usertime($time, $timezone);  // This is GMT
     }
 }

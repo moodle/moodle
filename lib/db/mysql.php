@@ -1012,6 +1012,30 @@ function main_upgrade($oldversion=0) {
     if ($oldversion < 2004121400) {
         table_column('groups', '', 'password', 'varchar', '50', '', '', 'not null', 'description');
     }
+
+    if ($oldversion < 2004121500) {
+        modify_database('',"CREATE TABLE prefix_dst_preset (
+            id int(10) NOT NULL auto_increment,
+            name char(48) default '' NOT NULL,
+            
+            apply_offset tinyint(3) default '0' NOT NULL,
+            
+            activate_index tinyint(1) default '1' NOT NULL,
+            activate_day tinyint(1) default '1' NOT NULL,
+            activate_month tinyint(2) default '1' NOT NULL,
+            activate_time char(5) default '03:00' NOT NULL,
+            
+            deactivate_index tinyint(1) default '1' NOT NULL,
+            deactivate_day tinyint(1) default '1' NOT NULL,
+            deactivate_month tinyint(2) default '2' NOT NULL,
+            deactivate_time char(5) default '03:00' NOT NULL,
+            
+            last_change int(10) default '0' NOT NULL,
+            next_change int(10) default '0' NOT NULL,
+            current_offset tinyint(3) default '0' NOT NULL,
+            
+            PRIMARY KEY (id))");
+    }       
        
     return $result;
 

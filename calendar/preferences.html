@@ -2,6 +2,38 @@
 
 <table cellpadding="9" cellspacing="0">
 <tr valign="top">
+	<td nowrap="nowrap" align="right"><?php print_string('pref_dstpreset', 'calendar')?>:</td>
+	<td>
+    <?php
+        if(empty($CFG->calendar_dstforusers)) {
+            $presets = get_records('dst_preset');
+            $presetarray = array('0' => get_string('notusingdst', 'calendar'));
+            if(!empty($presets)) {
+                foreach($presets as $preset) {
+                    $presetarray[$preset->id] = $preset->name;
+                }
+            }
+            choose_from_menu ($presetarray, 'dstpreset', $prefs->dstpreset, '');
+        }
+        else {
+            $preset = get_record('dst_preset', 'id', $CFG->calendar_dstforusers);
+            echo '<strong>'.$preset->name.'</strong>';
+        }
+    ?>
+    </td>
+    <td>
+    <?php
+        if(empty($CFG->calendar_dstforusers)) {
+            print_string('explain_dstpreset', 'calendar');
+        }
+        else {
+            print_string('explain_dstpresetforced', 'calendar');
+        }
+    ?>
+    </td>
+</tr>
+
+<tr valign="top">
 	<td nowrap="nowrap" align="right"><?php print_string('pref_timeformat', 'calendar')?>:</td>
 	<td>
     <?php
