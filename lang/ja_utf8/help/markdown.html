@@ -141,139 +141,65 @@ Markdown段落、リスト、ヘッダのどこでも使用することができ
 
 <h3 id="autoescape">スペシャルキャラクタの自動エスケープ</h3>
 
+<p>HTMLには特別に扱う必要のある2つの文字があります: <code>&lt;</code> と <code>&amp;</code>です。左鍵括弧タグの開始に使用し、アンパサンドはHTMLエンティティーを示すために使用します。
+これらの文字を使用する場合は、エンティティーとしてエスケープする必要があります。例、<code>&amp;lt;</code> と <code>&amp;amp;</code>です。</p>
 
-
-<p>In HTML, there are two characters that demand special treatment: <code>&lt;</code>
-
-and <code>&amp;</code>. Left angle brackets are used to start tags; ampersands are
-
-used to denote HTML entities. If you want to use them as literal
-
-characters, you must escape them as entities, e.g. <code>&amp;lt;</code>, and
-
-<code>&amp;amp;</code>.</p>
-
-
-
-<p>Ampersands in particular are bedeviling for web writers. If you want to
-
-write about &#8216;AT&amp;T&#8217;, you need to write &#8216;<code>AT&amp;amp;T</code>&#8217;. You even need to
-
-escape ampersands within URLs. Thus, if you want to link to:</p>
-
-
+<p>特にアンパサンドは、ホームページ製作者泣かせの存在です。&#8216;AT&amp;T&#8217;と書きたい場合、&#8216;<code>AT&amp;amp;T</code>&#8217;と書く必要があります。
+更に、URLの中でもアンパサンドをエスケープする必要があります。従って、次のようにリンクしたい場合:</p>
 
 <pre><code>http://images.google.com/images?num=30&amp;q=larry+bird
 
 </code></pre>
 
-
-
-<p>you need to encode the URL as:</p>
-
-
+<p>アンカータグ<code>href</code>の属性において、URLを次のようにエンコードする必要があります:</p>
 
 <pre><code>http://images.google.com/images?num=30&amp;amp;q=larry+bird
 
 </code></pre>
 
+<p>言うまでもなく、このことは忘れやすく、恐らく適切にマークアップされたウェブサイトでHTML妥当性エラーが発生する最も一般的な原因となっています。</p>
 
+<p>Markdownは必要に応じてエスケープ処理を行いますので、あなたはこれらの文字を自然に使うことができます。
+アンパサンドをHTMLエンティティーの一部として使用したい場合は、そのままの状態にされます。そうで無い場合は、<code>&amp;amp;</code>にエンコードされます。</p>
 
-<p>in your anchor tag <code>href</code> attribute. Needless to say, this is easy to
-
-forget, and is probably the single most common source of HTML validation
-
-errors in otherwise well-marked-up web sites.</p>
-
-
-
-<p>Markdown allows you to use these characters naturally, taking care of
-
-all the necessary escaping for you. If you use an ampersand as part of
-
-an HTML entity, it remains unchanged; otherwise it will be translated
-
-into <code>&amp;amp;</code>.</p>
-
-
-
-<p>So, if you want to include a copyright symbol in your article, you can write:</p>
-
-
+<p>ですから、あなたが著作権記号を記事に入れたい場合は、次のように記述できます:</p>
 
 <pre><code>&amp;copy;
 
 </code></pre>
 
-
-
-<p>and Markdown will leave it alone. But if you write:</p>
-
-
+<p>Markdownはアンパサンドをそのままにします。しかし、次のように記述すると:</p>
 
 <pre><code>AT&amp;T
 
 </code></pre>
 
-
-
-<p>Markdown will translate it to:</p>
-
-
+<p>Markdownは次のようにエンコードします:</p>
 
 <pre><code>AT&amp;amp;T
 
 </code></pre>
 
-
-
-<p>Similarly, because Markdown supports <a href="#html">inline HTML</a>, if you use
-
-angle brackets as delimiters for HTML tags, Markdown will treat them as
-
-such. But if you write:</p>
-
-
+<p>同様に、Markdownは<a href="#html">inline HTML</a>をサポートします。鍵括弧をHTMLの区切り文字として使用する場合、Markdownは鍵括弧をそのままにします。しかし、次のように記述すると:</p>
 
 <pre><code>4 &lt; 5
 
 </code></pre>
 
-
-
-<p>Markdown will translate it to:</p>
-
-
+<p>Markdownは次のようにエンコードします:</p>
 
 <pre><code>4 &amp;lt; 5
 
 </code></pre>
 
-
-
-<p>However, inside Markdown code spans and blocks, angle brackets and
-
-ampersands are <em>always</em> encoded automatically. This makes it easy to use
-
-Markdown to write about HTML code. (As opposed to raw HTML, which is a
-
-terrible format for writing about HTML syntax, because every single <code>&lt;</code>
-
-and <code>&amp;</code> in your example code needs to be escaped.)</p>
-
-
+<p>しかし、Markdownコードspansとblocksの中では、鍵括弧、アンパサンドは<em>常に</em>自動的にエンコードされます。このことにより、Markdownを使用すると簡単にHTMLコードを記述することができます。
+(逆に、生のHTMLでHTMLシンタックスを記述すると酷いことになります。あなたのサンプルコード内の全ての <code>&lt;</code> と <code>&amp;</code> をエスケープする必要があるからです。)</p>
 
 <hr />
 
-
-
 <h2 id="block">ブロック要素</h2>
 
-
-
 <h3 id="p">段落と改行</h3>
-
-
 
 <p>A paragraph is simply one or more consecutive lines of text, separated
 
