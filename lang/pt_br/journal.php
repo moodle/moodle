@@ -1,28 +1,29 @@
 <?PHP // $Id$ 
-      // journal.php - created with Moodle 1.0.6.3 (2002111401)
+      // journal.php - created with Moodle 1.0.8 (2003010600)
 
 
 $string['alwaysopen'] = "Sempre aberto";
 $string['blankentry'] = "Entrada em branco";
 $string['daysavailable'] = "Dias disponíveis";
-$string['editingended'] = "O periodo de edição terminou";
-$string['editingends'] = "Editando extremidades do período";
-$string['journalname'] = "Nome de diário";
-$string['journalquestion'] = "Pergunta de diário";
+$string['editingended'] = "O período de edição terminou";
+$string['editingends'] = "O período de edição termina";
+$string['feedbackupdated'] = "Feedback atualizado para \$a registros";
+$string['journalname'] = "Nome do diário";
+$string['journalquestion'] = "Pergunta do diário";
 $string['journalrating1'] = "Não satisfatório";
 $string['journalrating2'] = "Satisfatório";
-$string['journalrating3'] = "Excelente";
+$string['journalrating3'] = "Extraordinário";
 $string['modulename'] = "Diário";
 $string['modulenameplural'] = "Diários";
-$string['newjournalentries'] = "Novas entradas de diário";
-$string['noentry'] = "Nenhuma entrada";
+$string['newjournalentries'] = "Novos registros no diário";
+$string['noentry'] = "Nenhum registro";
 $string['noratinggiven'] = "Nenhuma avaliação dada";
-$string['notopenuntil'] = "Este diário não estará aberto até";
-$string['notstarted'] = "Você não começou este diário ainda";
+$string['notopenuntil'] = "Este diário não será aberto antes de";
+$string['notstarted'] = "Você ainda não iniciou este diário";
 $string['overallrating'] = "Avaliação global";
-$string['rate'] = "Taxa";
-$string['startoredit'] = "Comece ou edite minha entrada de diário";
-$string['viewallentries'] = "Veja todas as entradas do diário";
-$string['feedbackupdated'] = "Gabarito atualizado para entradas de \$a";
-$string['saveallfeedback'] = "Salvar todo meu gabarito";
+$string['rate'] = "Avaliação";
+$string['saveallfeedback'] = "Gravar o feedback";
+$string['startoredit'] = "Iniciar ou editar o meu registro no diário";
+$string['viewallentries'] = "Ver todos os registros no diário";
+
 ?>

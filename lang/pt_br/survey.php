@@ -1,173 +1,207 @@
 <?php // $Id$
-// Traduzido por Fabricio Valadares - Três Corações - MG - Brasil
-// Webdesigner da Universidade Vale do Rio Verde
+// Traduzido por Jaime Villate - University of Porto, Portugal
+// <villate@gnu.org>
 // ------------------------------------------------------------
-$string['modulename'] = "Pesquisa";
-$string['modulenameplural'] = "Pesquisas";
+$string['modulename'] = "Inquérito";
+$string['modulenameplural'] = "Inquéritos";
 // ------------------------------------------------------------
-$string['actual'] = "Atual";
-$string['allquestions'] = "Tudas as questões em ordem, todos os estudantes,";
-$string['allscales'] = "Tudas as escalas, todos os estudantes";
-$string['alreadysubmitted'] = "Você já submeteu esta pesquisa";
-$string['analysisof'] = "Análise de \$a";
-$string['ipreferthat'] = "Eu prefiro isso";
-$string['ifoundthat'] = "Eu achei isso";
-$string['done'] = "Feito";
-$string['download'] = "Download";
-$string['downloadexcel'] = "Carregue dados com suporte a planilha eletrônica";
-$string['downloadinfo'] = "Você pode carregar os dados crus completos para esta pesquisa em uma forma satisfatório para análise em Supere, SPSS ou outro pacote.";
-$string['downloadtext'] = "Carregue dados como um arquivo de texto";
-$string['editingasurvey'] = "Editando uma pesquisa";
-$string['helpsurveys'] = "Ajude nos tipos diferentes de pesquisas";
-$string['introtext'] = "Texto de introdução";
-$string['name'] = "Nome";
-$string['nobodyyet'] = "Ninguém ainda completou esta pesquisa";
-$string['notdone'] = "Ainda não feito";
-$string['notes'] = "Sua análise privada e notas";
-$string['peoplecompleted'] = "\$a pessoas completaram esta pesquisa tão longe";
-$string['preferred'] = "Preferido";
-$string['questions'] = "Questões";
-$string['question'] = "Questão";
-$string['report'] = "Relatório de pesquisa";
-$string['scales'] = "Escalas";
-$string['savednotes'] = "Suas notas foram salvas";
-$string['seemoredetail'] = "Clique aqui para ver mais detalhes";
-$string['selectedquestions'] = "Perguntas selecionadas de uma escala, todos os estudantes";
-$string['summary'] = "Resumo";
-$string['surveycompleted'] = "Você completou esta pesquisa.  O gráfico debaixo de espetáculos um resumo de seus resultados comparou às médias de classe.";
-$string['surveyname'] = "Nome da pesquisa";
-$string['surveysaved'] = "Pesquiza salva";
-$string['surveytype'] = "Tipo de pesquisa";
-$string['thanksforanswers'] = "Obrigado por responder esta pesquisa, \$a";
-$string['time'] = "Tempo";
-$string['viewsurveyresponses'] = "Ver \$a inspecione respostas";
-$string['newsurveyresponses'] = "Respostas de pesquisa novas";
-// Novo para traduzir
-$string['actualclass'] = "Classe real";
-$string['actualstudent'] = "\$a real";
-$string['attlsname'] = "ATTLS (versão de 20 artigos)";
-$string['collesm1'] = "Relevância";
-$string['collesm1short'] = "Relevância";
-$string['collesm2'] = "Pensamento reflexivo";
-$string['collesm2short'] = "Pensamento reflexivo";
-$string['collesm3'] = "Interatividade";
-$string['collesm3short'] = "Interatividade";
-$string['collesm4'] = "Apoio do Tutor";
-$string['collesm4short'] = "Suporte do Tutor";
-$string['collesm5'] = "Apoio do companheiro";
-$string['collesm5short'] = "Apoio do companheiro";
-$string['collesm6'] = "Interpretação";
-$string['collesm6short'] = "Interpretação";
-$string['collesmintro'] = "Nesta unidade online...";
-$string['howlong'] = "Quanto tempo você gastou para terminar este questionário?";
-$string['howlongoptions'] = "Menos que 1 min, 1-2 min, 2-3 min, 3-4 min, 4-5-min, 5-10 min, mais que 10 min";
-$string['othercomments'] = "Você tem algum outro comentário?";
-$string['preferredclass'] = "Classe preferida";
-$string['preferredstudent'] = "\$a preferido(a)";
-$string['questionsnotanswered'] = "Alguma das perguntas de múltipla escolha não foram respondidas.";
-$string['scaleagree5'] = "Discorda, discorda pouco, nem concorda nem discorda, concorda pouco, concorda";
-$string['scaletimes5'] = "Quase Nunca, Raramente, Às vezes, Frequentemente, Quase Sempre";
-$string['attls1'] = "Em avaliar o que alguém diz, eu focalizo na qualidade de seu argumento, não na pessoa que a está apresentando.";
-$string['attls1short'] = "qualidade do enfoque do argumento";
-$string['attls2'] = "Eu gosto de jogar o advogado do diabo - discutindo o oposto do que alguém está dizendo.";
-$string['attls2short'] = "jogue";
-$string['attls3'] = "Eu gosto de compreender de onde os colegas 'estão', que experiências lhes conduziram sentirem desta maneira.";
-$string['attls3short'] = "saiba onde";
-$string['attls4'] = "A parte mais importante de minha instrução é ter aprendido compreender os povos que são muito diferentes a mim.";
-$string['attls4short'] = "compreenda";
-$string['attls5'] = "Eu sinto que a melhor maneira para que eu consiga minha própria identidade deve ser interagindo com uma variedade de colegas.";
-$string['attls5short'] = "interaja";
-$string['attls6'] = "Eu aprecío ouvir as opiniões dos colegas que vêm de lugares diferentes do meu - Eles me ajudam a compreender como as mesmas coisas podem ser vistas de maneiras diferentes.";
-$string['attls6short'] = "ouça";
-$string['attls7'] = "Eu acredito que em minha posição posso debater com o alguém que discorda de mim.";
-$string['attls7short'] = "strengthen by argue";
-$string['attls8'] = "Eu estou sempre interessado em saber porque os colegas dizem que acreditam nas coisas que fazem.";
-$string['attls8short'] = "saiba";
-$string['attls9'] = "Frequentemente me acho debatendo com os autores dos livros que eu leio, tentando achar logica no que está errado.";
-$string['attls9short'] = "discuta";
-$string['attls10'] = "É importante para mim remanescer tão objetivo quanto possível quando eu analiso algo.";
-$string['attls10short'] = "remanesça";
-$string['attls11'] = "Eu tento pensar com os colegas em vez de ficar apoiado neles.";
-$string['attls11short'] = "pense como eles";
-$string['attls12'] = "Eu tenho determinados critérios que eu uso em argumentos da avaliação.";
-$string['attls12short'] = "use critérios";
-$string['attls13'] = "É mais provável eu tentar compreender a opinião de alguém que tentar avaliá-lo.";
-$string['attls13short'] = "tente compreender";
-$string['attls14'] = "Eu tento indicar as fraquezas em outros colegas para ajudar-lhes a esclarecer seus argumentos.";
-$string['attls14short'] = "fraquezas";
-$string['attls15'] = "Eu tento no lugar dos colegas e discutir edições controversas, para ver porque pensam daquela maneira.";
-$string['attls15short'] = "se ponha no lugar";
-$string['attls16'] = "Se poderia chamar minha maneira de analisar as coisas 'de experimento' porque eu tenho cuidado para considerar toda a evidência.";
-$string['attls16short'] = "experimente";
-$string['attls17'] = "Eu uso o valor da lógica e da razão sobre minhas próprias questões para resolver meus problemas.";
-$string['attls17short'] = "lógica";
-$string['attls18'] = "Eu posso obter a introspecção em opiniões que difira da minha";
-$string['attls18short'] = "seja diferente";
-$string['attls19'] = "Quando eu encontro os colegas cuja as opiniões parecem diferentes das minhas, eu faço um grnade esforço 'entendendo', para tentar ver como poderiam ter aquelas opiniões.";
-$string['attls19short'] = "fazer entender";
-$string['attls20'] = "Eu gasto tempo com coisas que acho diferente de o que é 'errado'. Por exemplo, eu procuro algo em uma interpretação literária que não seja discutida bastante.";
-$string['attls20short'] = "o que é errado?";
-$string['attlsmintro'] = "Em discussões ...";
-$string['attlsm1'] = "Atitudes para pensar e aprender";
-$string['attlsm2'] = "Aprendizagem online";
-$string['attlsm3'] = "Aprendizagem presencial";
-$string['clicktocontinue'] = "Clique aqui para continuar";
-$string['clicktocontinuecheck'] = "Clique aqui para verificar e continuar";
-$string['colles1'] = "my learning focuses on issues that interest me.";
-$string['colles1short'] = "focus on interesting issues";
-$string['colles2'] = "what I learn is important for my professional practice.";
-$string['colles2short'] = "important to my practice";
-$string['colles3'] = "I learn how to improve my professional practice.";
-$string['colles3short'] = "improve my practice";
-$string['colles4'] = "what I learn connects well with my professional practice.";
-$string['colles4short'] = "connects with my practice";
-$string['colles5'] = "I think critically about how I learn.";
-$string['colles5short'] = "I'm critical of my learning";
-$string['colles6'] = "I think critically about my own ideas.";
-$string['colles6short'] = "I'm critical of my own ideas";
-$string['colles7'] = "I think critically about other students' ideas.";
-$string['colles7short'] = "I'm critical of other students";
-$string['colles8'] = "I think critically about ideas in the readings.";
-$string['colles8short'] = "I'm critical of readings";
-$string['colles9'] = "I explain my ideas to other students.";
-$string['colles9short'] = "I explain my ideas";
-$string['colles10'] = "I ask other students to explain their ideas.";
-$string['colles10short'] = "I ask for explanations";
-$string['colles11'] = "other students ask me to explain my ideas.";
-$string['colles11short'] = "I'm asked to explain";
-$string['colles12'] = "other students respond to my ideas.";
-$string['colles12short'] = "students respond to me";
-$string['colles13'] = "the tutor stimulates my thinking.";
-$string['colles13short'] = "tutor stimulates thinking";
-$string['colles14'] = "the tutor encourages me to participate.";
-$string['colles14short'] = "tutor encourages me";
-$string['colles15'] = "the tutor models good discourse.";
-$string['colles15short'] = "tutor models discourse";
-$string['colles16'] = "the tutor models critical self-reflection.";
-$string['colles16short'] = "tutor models self-reflection";
-$string['colles17'] = "other students encourage my participation.";
-$string['colles17short'] = "students encourage me";
-$string['colles18'] = "other students praise my contribution.";
-$string['colles18short'] = "students praise me";
-$string['colles19'] = "other students value my contribution.";
-$string['colles19short'] = "students value me";
-$string['colles20'] = "other students empathise with my struggle to learn.";
-$string['colles20short'] = "students empathise";
-$string['colles21'] = "I make good sense of other students' messages.";
-$string['colles21short'] = "I understand other students";
-$string['colles22'] = "other students make good sense of my messages.";
-$string['colles22short'] = "students understand me";
-$string['colles23'] = "I make good sense of the tutor's messages.";
-$string['colles23short'] = "I understand the tutor";
-$string['colles24'] = "the tutor makes good sense of my messages.";
-$string['colles24short'] = "tutor understands me";
-$string['collesaname'] = "COLLES (Actual)";
-$string['attlsintro'] = "The purpose of this questionnaire is to help us evaluate your attitudes towards thinking and learning. There are no 'right' or 'wrong' answers; we are interested only in your opinion. Please be assured that your responses will be treated with a high degree of confidentiality, and will not affect your assessment.";
-$string['collesaintro'] = "The purpose of this survey is to help us understand how well the online delivery of this unit enabled you to learn. Each one of the 24 statements below asks about your experience in this unit. There are no 'right' or 'wrong' answers; we are interested only in your opinion. Please be assured that your responses will be treated with a high degree of confidentiality, and will not affect your assessment. Your carefully considered responses will help us improve the way this unit is presented online in the future. Thanks very much.";
-$string['collesapname'] = "COLLES (Preferred and Actual)";
-$string['collesapintro'] = "The purpose of this questionnaire is to help us understand how well the online delivery of this unit enabled you to learn. Each one of the 24 statements below asks you to compare your <B>preferred</B> (ideal) and <B>actual</B> experience in this unit. There are no 'right' or 'wrong' answers; we are interested only in your opinion. Please be assured that your responses will be treated with a high degree of confidentiality, and will not affect your assessment. Your carefully considered responses will help us improve the way this unit is presented online in the future. Thanks very much.";
-$string['collespname'] = "COLLES (Preferred)";
-$string['collespintro'] = "The purpose of this survey is to help us understand what you value in an online learning experience. Each one of the 24 statements below asks about your <B>preferred</B> (ideal) experience in this unit. There are no 'right' or 'wrong' answers; we are interested only in your opinion. Please be assured that your responses will be treated with a high degree of confidentiality, and will not affect your assessment. Your carefully considered responses will help us improve the way this unit is presented online in the future. Thanks very much.";
+$string['actual'] = "Realidade";
+$string['actualclass'] = "Realidade, turma";
+$string['actualstudent'] = "Realidade, \$a";
+$string[allquestions] = "Todas as perguntas em ordem, todos os alunos";
+$string[allscales] = "Todas as escalas, todos os alunos";
+$string[alreadysubmitted] = "Já tinha submetido este inquérito";
+$string[analysisof] = "Análise de \$a";
 
+$string['attlsname'] = "ATTLS (versão de 20 alíneas)";
+$string['attlsintro'] = "O objectivo deste inquérito é ajudar-nos avaliar as suas atitudes perante a aprendizagem e o pensamento.
+
+Não existem respostas 'correctas' ou 'incorrectas'; estamos interessados apenas na sua opinião. Garantimos-lhe que as suas respostas serão tratados com um elevado grau de confidencialidade, e não vão influenciar a sua avaliação no curso.";
+
+$string['attls1'] = "Quando avalio o que alguém diz, Foco-me na qualidade do argumento, e não na pessoa que o apresenta.";
+$string['attls1short'] = "foco na qualidade do argumento";
+$string['attls2'] = "Eu gosto de fazer de advogado do diabo - defendo o argumento oposto do que o outro está a defender.";
+$string['attls2short'] = "faz de advogado do diabo";
+$string['attls3'] = "Gosto de entender a experiência prévia das outras pessoas, e o que as faz sentir numa determinada forma.";
+$string['attls3short'] = "experiência prévia das pessoas";
+$string['attls4'] = "A parte mais importante da minha educação tem sido aprender a entender pessoas que são diferentes de mim.";
+$string['attls4short'] = "entender pessoas diferentes";
+$string['attls5'] = "Sinto que a melhor forma de atingir a minha própria identidade é conviver com uma diversidade de pessoas.";
+$string['attls5short'] = "conviver com diversidade de pessoas";
+$string['attls6'] = "Gosto de ouvir as opiniões de outras pessoas com origens diferentes das minhas - ajuda-me a entender como as mesmas coisas podem ser vistas de diferentes formas.";
+$string['attls6short'] = "gosta de ouvir opiniões";
+$string['attls7'] = "Acho que posso fortalecer a minha posição através da discussão com alguém que discorda comigo.";
+$string['attls7short'] = "fortalecimento através de discussão";
+$string['attls8'] = "Estou sempre interessado(a) em saber porque as pessoas dizem e pensam determinadas coisas.";
+$string['attls8short'] = "saber o que faz as pessoas agir";
+$string['attls9'] = "Frequentemente encontro-me na situação de discordar com o autor de um livro que estou a ler, tentando perceber porque está errado.";
+$string['attls9short'] = "discorda com o autor";
+$string['attls10'] = "Para mim é importante ser tão objectivo quanto possível quando analiso alguma coisa.";
+$string['attls10short'] = "manter a objectividade";
+$string['attls11'] = "Tento pensar com as pessoas em vez de contra elas.";
+$string['attls11short'] = "pensar COM as pessoas";
+$string['attls12'] = "Tenho certos critérios que uso para avaliar argumentos.";
+$string['attls12short'] = "usa critérios de avaliação";
+$string['attls13'] = "Sou mais propenso(a) a tentar perceber a opinião de alguém do que tentar julgar a sua opinião.";
+$string['attls13short'] = "tenta perceber";
+$string['attls14'] = "Tento apontar fraquezas no pensamento dos outros para ajudá-los a esclarecer os seus argumentos.";
+$string['attls14short'] = "aponta fraquezas";
+$string['attls15'] = "Tento por-me na posição dos outros quando discuto questões polémicas, para ver porque pensam na forma que pensam.";
+$string['attls15short'] = "ponho-me na posição dos outros";
+$string['attls16'] = "Podia dizer-se que a minha forma de analisara as coisas é 'submeté-las a escrutínio' porque sou cuidadoso(a) em considerar todas as evidências.";
+$string['attls16short'] = "submeter a escrutínio";
+$string['attls17'] = "Quando resolvo problemas dou mais valor à lógica e à razão do que às minhas próprias preocupações.";
+$string['attls17short'] = "Dou mais valor à lógica";
+$string['attls18'] = "Consigo perceber melhor opiniões diferentes da minha através da empatia.";
+$string['attls18short'] = "percepção por empatia";
+$string['attls19'] = "Quando encontro pessoas com opiniões que parecem oppostas às minhas, faço um grande esforço para 'estender' a minha visão à dessa pessoa, para tentar ver como podem ter essas opiniões.";
+$string['attls19short'] = "faço um esforço de extensão";
+$string['attls20'] = "Perco algum tempo tentando perceber o que está de 'errado' com as coisas. Por exemplo, procuro algo que não está suficientemente argumentado numa interpretação literária.";
+$string['attls20short'] = "o que é que está errado?";
+
+$string['attlsmintro'] = "Em discussão ...";
+$string['attlsm1'] = "Atitudes perante a Aprendizagem e o Pensamento";
+$string['attlsm2'] = "Aprendizagem Conexa";
+$string['attlsm3'] = "Aprendizagem Isolada";
+$string['clicktocontinue'] = "Carregue aqui para continuar";
+$string['clicktocontinuecheck'] = "Carregue aqui para conferir e continuar";
+
+$string['colles1'] = "a minha aprendizagem concentra-se em assuntos que me interessam.";
+$string['colles1short'] = "foco em assuntos interessantes";
+$string['colles2'] = "o que aprendo é importante para a minha prática profissional.";
+$string['colles2short'] = "importante para a minha prática";
+$string['colles3'] = "aprendo como melhorar a minha prática profissional.";
+$string['colles3short'] = "melhorar a minha prática";
+$string['colles4'] = "o que aprendo enquadra-se bem na minha prática profissional.";
+$string['colles4short'] = "enquadra-se bem na minha prática";
+$string['colles5'] = "penso em forma crítica sobre o que aprendo.";
+$string['colles5short'] = "sou critico com o que aprendo";
+$string['colles6'] = "penso em forma crítica sobre as minhas próprias ideias.";
+$string['colles6short'] = "sou crítico com as minhas próprias ideias";
+$string['colles7'] = "penso em forma crítica sobre as ideias de outros alunos.";
+$string['colles7short'] = "sou crítico com ideias de outros alunos";
+$string['colles8'] = "penso em forma crítica sobre as ideias nas leituras.";
+$string['colles8short'] = "sou crítico acerca das leituras";
+$string['colles9'] = "explico as minhas ideias a outros alunos.";
+$string['colles9short'] = "explico as minhas ideias";
+$string['colles10'] = "peço a outros alunos para me explicarem as suas ideias.";
+$string['colles10short'] = "peço explicações";
+$string['colles11'] = "outros alunos pedem-me para lhes explicar as minhas ideias.";
+$string['colles11short'] = "pedem-me para explicar";
+$string['colles12'] = "outros alunos respondem às minhas ideias.";
+$string['colles12short'] = "os alunos respondem-me";
+$string['colles13'] = "o tutor estimula o meu pensamento.";
+$string['colles13short'] = "o tutor estimula o pensamento";
+$string['colles14'] = "o tutor encoraja-me a participar.";
+$string['colles14short'] = "o tutor encoraja-me";
+$string['colles15'] = "o tutor é modelo de bom discurso.";
+$string['colles15short'] = "tutor modelo de discurso";
+$string['colles16'] = "o tutor é modelo de auto-reflexão crítica.";
+$string['colles16short'] = "tutor modelo de auto-reflexão";
+$string['colles17'] = "os outros alunos animam-me a participar.";
+$string['colles17short'] = "alunos animam-me";
+$string['colles18'] = "os outros alunos apreciam a mina contribuição.";
+$string['colles18short'] = "alunos apreciam-me";
+$string['colles19'] = "os outros alunos dão valor à minha colaboração.";
+$string['colles19short'] = "alunos dão-me valor";
+$string['colles20'] = "os outros alunos mostram empatia com a minha luta por aprender.";
+$string['colles20short'] = "alunos mostram empatia";
+$string['colles21'] = "percebo bem as mensagens dos outros alunos.";
+$string['colles21short'] = "percebo aos outros alunos";
+$string['colles22'] = "os outros alunos percebem bem as minhas mensagens.";
+$string['colles22short'] = "os alunos entendem-me";
+$string['colles23'] = "percebo bem as mensagens do tutor.";
+$string['colles23short'] = "entendo ao tutor";
+$string['colles24'] = "o tutor percebe bem as minhas mensagens.";
+$string['colles24short'] = "o tutor entende-me";
+
+$string['collesaname'] = "COLLES (Realidad)";
+$string['collesaintro'] = "O objectivo deste inquérito é ajudar-nos a entender que tão útil tem sido o material nesta unidade para contribuir à sua aprendizagem.
+
+Cada uma das 24 afirmações em baixo refere-se à sua experiência nesta unidade.
+
+Não existem respostas certas nem falsas; estamos apenas interessados na sua opinião.  Garantimos-lhe que as suas respostas serão tratados com um elevado grau de confidencialidade, e não vão influenciar a sua avaliação no curso.
+
+As suas perguntas cuidadosas ajudar-nos-ão a melhorar a forma como esta unidade é presentada no futuro.
+
+Muito obrigado pela sua colaboração.";
+
+$string['collesapname'] = "COLLES (Realidad e Preferências)";
+$string['collesapintro'] = "O objectivo deste inquérito é ajudar-nos a entender que tão útil tem sido o material nesta unidade para contribuir à sua aprendizagem.
+
+Cada uma das 24 afirmações em baixo pede para comparar a sua <b>preferência</b> (curso ideal) com sua experiência <b>real</b> nesta unidade.
+
+Não existem respostas certas nem falsas; estamos apenas interessados na sua opinião.  Garantimos-lhe que as suas respostas serão tratados com um elevado grau de confidencialidade, e não vão influenciar a sua avaliação no curso.
+
+As suas perguntas cuidadosas ajudar-nos-ão a melhorar a forma como esta unidade é presentada no futuro.
+
+Muito obrigado pela sua colaboração.";
+
+$string['collespname'] = "COLLES (Preferências)";
+$string['collespintro'] = "O objectivo deste inquérito é ajudar-nos a entender que tão útil tem sido o material nesta unidade para contribuir à sua aprendizagem.
+
+Cada uma das 24 afirmações em baixo refere-se à sua <b>preferência</b> (curso ideal) nesta unidade.
+
+Não existem respostas certas nem falsas; estamos apenas interessados na sua opinião.  Garantimos-lhe que as suas respostas serão tratados com um elevado grau de confidencialidade, e não vão influenciar a sua avaliação no curso.
+
+As suas perguntas cuidadosas ajudar-nos-ão a melhorar a forma como esta unidade é presentada no futuro.
+
+Muito obrigado pela sua colaboração.";
+
+$string['collesm1']      = "Relevância";
+$string['collesm1short'] = "Relevância";
+$string['collesm2']      = "Reflexão";
+$string['collesm2short'] = "Reflexão";
+$string['collesm3']      = "Interacção";
+$string['collesm3short'] = "Interacção";
+$string['collesm4']      = "Apoio Tutorial";
+$string['collesm4short'] = "Apoio Tutorial";
+$string['collesm5']      = "Apoio dos Colegas";
+$string['collesm5short'] = "Apoio dos Colegas";
+$string['collesm6']      = "Interpretação";
+$string['collesm6short'] = "Interpretação";
+
+$string['collesmintro'] = "Nesta unidade em linha...";
+
+$string['done'] = "Feito";
+$string['download'] = "Descarregar";
+$string['downloadexcel'] = "Descarregar dados numa folha Excel";
+$string['downloadinfo'] = "Pode descarregar os dados completos para este inquérito numa forma apropriada para serem analisados com Excel, SPSS ou outros pacotes.";
+$string['downloadtext'] = "Descarregar dados num ficheiro de texto plano";
+$string['editingasurvey'] = "Edição de um inquérito";
+$string['helpsurveys'] = "Ajuda com os diferentes tipos de inquérito";
+$string['howlong'] = "Quanto tempo levou para completar este inquérito?";
+$string['howlongoptions'] = "menos de 1 min,1-2 min,2-3 min,3-4 min,4-5-min,5-10 min,mais de 10";
+$string['ifoundthat'] = "Eu achei isso";
+$string['introtext'] = "Texto introdutório";
+$string['ipreferthat'] = "Eu prefiro isso";
+$string['name'] = "Nome";
+$string['newsurveyresponses'] = "Respostas a novo inquérito";
+$string['nobodyyet'] = "Ninguém respondeu ainda este inquérito";
+$string['notdone'] = "Ainda não está concluído";
+$string['notes'] = "A sua análise privada e anotações";
+$string['othercomments'] = "Tem outros comentários a fazer?";
+$string['peoplecompleted'] = "\$a pessoas já responderam ao inquérito até agora";
+$string['preferred'] = "Preferências";
+$string['preferredclass'] = "Preferência da turma";
+$string['preferredstudent'] = "preferência de \$a";
+$string['question'] = "Pergunta";
+$string['questions'] = "Perguntas";
+$string['questionsnotanswered'] = "Algumas das perguntas de escolha múltipla não têm sido respondidas.";
+$string['report'] = "Relatório de Inquérito";
+$string['scales'] = "Escalas";
+$string['savednotes'] = "As suas anotações foram gravadas";
+$string['scaleagree5'] = "Discordo plenamente,Discordo na generalidade,Nem concordo nem discordo,Concordo na generalidade,Concordo plenamente";
+$string['scaletimes5'] = "Quase nunca,Raramente,Às vezes,Frequentemente,Quase sempre";
+$string['seemoredetail'] = "Carregue aqui para ver mais pormenores";
+$string['selectedquestions'] = "Perguntas seleccionadas de uma escala, todos os alunos";
+$string['summary'] = "Sumário";
+$string['surveycompleted'] = "Tem concluído o inquérito. O gráfico em baixo mostra um sumário dos seus resultados comparados com a média da turma.";
+$string['surveyname'] = "Nome do inquérito";
+$string['surveysaved'] = "Inquérito gravado";
+$string['surveytype'] = "Tipo de inquérito";
+$string['thanksforanswers'] = "Obrigado por responder este inquérito, \$a";
+$string['time'] = "Tempo";
+$string['viewsurveyresponses'] = "Ver \$a respostas ao inquérito";
 
 ?>

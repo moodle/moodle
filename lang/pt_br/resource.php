@@ -1,29 +1,28 @@
-<?PHP // $Id$
-# Traduzido por Fabricio Valadares - Três Corações - MG - Brasil
-# Webdesigner da Universidade Vale do Rio Verde
-#------------------------------------------------------------
-$string['modulename'] = "Leitura";
-$string['modulenameplural'] = "Leituras";
-#------------------------------------------------------------
+<?PHP // $Id$ 
+      // resource.php - created with Moodle 1.0.8 (2003010600)
 
-$string['addresource'] = "Adicionar leitura";
-$string['editingaresource'] = "Editar leitura";
+
+$string['addresource'] = "Adicionar material";
+$string['editingaresource'] = "Editar feedback";
 $string['example'] = "Exemplo";
-$string['examplereference'] = "Tobin, K. & Tippins, D (1993) Construtivismo como um Referent por Ensinar e Aprender. Em: K. Tobin (Ed) A Prática de Construtivismo em Educação de Ciência, pp 3-21, Lawrence-Erlbaum, Hillsdale, NJ.";
-$string['exampleurl'] = "http://www.example.com/somedirectory/somefile.html";
+$string['examplereference'] = "Tobin, K. & Tippins, D (1993) Constructivism as a Referent for Teaching and Learning. In: K. Tobin (Ed) The Practice of Constructivism in Science Education, pp 3-21, Lawrence-Erlbaum, Hillsdale, NJ.";
+$string['exampleurl'] = "http://www.exemplo.com/diretorio/arquivo.html";
 $string['filename'] = "Nome do arquivo";
 $string['fulltext'] = "Texto completo";
-$string['neverseen'] = "Nunca leia";
+$string['htmlfragment'] = "Fragmento de HTML";
+$string['modulename'] = "Material";
+$string['modulenameplural'] = "Materiais";
+$string['neverseen'] = "Nunca visto";
 $string['note'] = "Nota";
-$string['notefile'] = "Para upload mais arquivos no curso (assim eles aparecem nesta lista) use o <A HREF=\$a >Manipulação de arquivo</A>.";
-$string['notypechosen'] = "Você precisa escolher um tipo.  Use seu botão de parte de trás para voltar e tentar novamente.";
-$string['resourcetype'] = "Tipo de recurso";
-$string['resourcetype1'] = "Referencia";
-$string['resourcetype2'] = "Página da Web";
+$string['notefile'] = "Para transferir mais arquivos ao curso (in modo que aparecerem nesta lista) use o <a href=\"\$a\">Administrador de Arquivos</a>.";
+$string['notypechosen'] = "Você tem que escolher um tipo. Use seu botão de retorno e tente novamente.";
+$string['resourcetype'] = "Tipo de material";
+$string['resourcetype1'] = "Referência";
+$string['resourcetype2'] = "Página  Web";
 $string['resourcetype3'] = "Arquivo enviado";
-$string['resourcetype4'] = "Texto claro";
-$string['resourcetype5'] = "Endereço da Web";
-$string['htmlfragment'] = "Fragmento HTML";
+$string['resourcetype4'] = "Texto simples";
+$string['resourcetype5'] = "Endereço Web (link)";
 $string['resourcetype6'] = "Texto HTML";
 $string['resourcetype7'] = "Programa";
+
 ?>
