@@ -2080,13 +2080,14 @@ function print_simple_box_end() {
  * @todo Finish documenting this function
  */
 function print_single_button($link, $options, $label='OK', $method='get', $target='_self') {
+    echo '<span class="singlebutton">';
     echo '<form action="'. $link .'" method="'. $method .'" target="'.$target.'">';
     if ($options) {
         foreach ($options as $name => $value) {
             echo '<input type="hidden" name="'. $name .'" value="'. $value .'" />';
         }
     }
-    echo '<input type="submit" value="'. $label .'" /></form>';
+    echo '<input type="submit" value="'. $label .'" /></form></span>';
 }
 
 /**
@@ -2099,7 +2100,7 @@ function print_single_button($link, $options, $label='OK', $method='get', $targe
  */
 function print_spacer($height=1, $width=1, $br=true) {
     global $CFG;
-    echo '<img height="'. $height .'" width="'. $width .'" src="'. $CFG->wwwroot .'/pix/spacer.gif" alt="" />';
+    echo '<img class="spacer" height="'. $height .'" width="'. $width .'" src="'. $CFG->wwwroot .'/pix/spacer.gif" alt="" />';
     if ($br) {
         echo '<br />'."\n";
     }
@@ -2183,10 +2184,10 @@ function print_user_picture($userid, $courseid, $picture, $size=0, $returnstring
     }
     if ($picture) {  // Print custom user picture
         if ($CFG->slasharguments) {        // Use this method if possible for better caching
-            $output .= '<img align="middle" src="'. $CFG->wwwroot .'/user/pix.php/'. $userid .'/'. $file .'.jpg"'.
+            $output .= '<img class="userpicture" align="middle" src="'. $CFG->wwwroot .'/user/pix.php/'. $userid .'/'. $file .'.jpg"'.
                        ' border="0" width="'. $size .'" height="'. $size .'" alt="" />';
         } else {
-            $output .= '<img align="middle" src="'. $CFG->wwwroot .'/user/pix.php?file=/'. $userid .'/'. $file .'.jpg"'.
+            $output .= '<img class="userpicture" align="middle" src="'. $CFG->wwwroot .'/user/pix.php?file=/'. $userid .'/'. $file .'.jpg"'.
                        ' border="0" width="'. $size .'" height="'. $size .'" alt="" />';
         }
     } else {         // Print default user pictures (use theme version if available)
@@ -2250,15 +2251,14 @@ function print_user($user, $course) {
         $isadmin   = isadmin();
     }
 
-    echo '<table width="80%" align="center" border="0" cellpadding="10" cellspacing="0" class="userinfobox">';
+    echo '<table class="userinfobox">';
     echo '<tr>';
-    echo '<td width="100" bgcolor="#ffffff" valign="top" class="userinfoboxside">';
+    echo '<td class="left side">';
     print_user_picture($user->id, $course->id, $user->picture, true);
     echo '</td>';
-    echo '<td width="100%" bgcolor="#ffffff" valign="top" class="userinfoboxsummary">';
-    echo '<font size="-1">';
-    echo '<font size="3"><strong>'.fullname($user, $isteacher).'</strong></font>';
-    echo '<p>';
+    echo '<td class="content">';
+    echo '<div class="username">'.fullname($user, $isteacher).'</div>';
+    echo '<div class="info">';
     if (!empty($user->role) and ($user->role <> $course->teacher)) {
         echo $string->role .': '. $user->role .'<br />';
     }
@@ -2284,9 +2284,8 @@ function print_user($user, $course) {
     } else {
         echo $string->lastaccess .': '. $string->never;
     }
-    echo '</td><td valign="bottom" bgcolor="#ffffff" nowrap="nowrap" class="userinfoboxlinkcontent">';
+    echo '</div></td><td class="links">';
 
-    echo '<font size="1">';
     if ($isteacher) {
         $timemidnight = usergetmidnight(time());
         echo '<a href="'. $CFG->wwwroot .'/course/user.php?id='. $course->id .'&amp;user='. $user->id .'">'. $string->activity .'</a><br />';
@@ -2300,7 +2299,6 @@ function print_user($user, $course) {
         }
     }
     echo '<a href="'. $CFG->wwwroot .'/user/view.php?id='. $user->id .'&amp;course='. $course->id .'">'. $string->fullprofile .'...</a>';
-    echo '</font>';
 
     echo '</td></tr></table>';
 }
@@ -2343,11 +2341,11 @@ function print_group_picture($group, $courseid, $large=false, $returnstring=fals
     }
     if ($group->picture) {  // Print custom group picture
         if ($CFG->slasharguments) {        // Use this method if possible for better caching
-            $output .= "<img align=\"middle\" src=\"$CFG->wwwroot/user/pixgroup.php/$group->id/$file.jpg\"".
-                       " border=\"0\" width=\"$size\" height=\"$size\" alt=\"\" title=\"$group->name\"/>";
+            $output .= '<img class="grouppicture" align="middle" src="'.$CFG->wwwroot.'/user/pixgroup.php/'.$group->id.'/'.$file.'.jpg"'.
+                       ' border="0" width="'.$size.'" height="'.$size.'" alt="" title="'.s($group->name).'"/>';
         } else {
-            $output .= "<img align=\"middle\" src=\"$CFG->wwwroot/user/pixgroup.php?file=/$group->id/$file.jpg\"".
-                       " border=\"0\" width=\"$size\" height=\"$size\" alt=\"\" title=\"$group->name\"/>";
+            $output .= '<img class="grouppicture" align="middle" src="'.$CFG->wwwroot.'/user/pixgroup.php?file=/'.$group->id.'/'.$file.'.jpg"'.
+                       ' border="0" width="'.$size.'" height="'.$size.'" alt="" title="'.s($group->name).'"/>';
         }
     }
     if ($link or $isteacheredit) {
@@ -2633,8 +2631,8 @@ function make_table($table) {
  * @param boolean $usehtmleditor ?
  * @param int $rows ?
  * @param int $cols ?
- * @param null $width <b>Legacy field no longer used!</b>
- * @param null $height <b>Legacy field no longer used!</b>
+ * @param null $width <b>Legacy field no longer used!</b>  Set to zero to get control over mincols
+ * @param null $height <b>Legacy field no longer used!</b>  Set to zero to get control over minrows
  * @param string $name ?
  * @param string $value ?
  * @param int $courseid ?
@@ -2661,11 +2659,15 @@ function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $v
         echo '<script type="text/javascript" src="'. $CFG->wwwroot .'/lib/editor/lang/en.php"></script>'."\n";
         echo '<script type="text/javascript" src="'. $CFG->wwwroot .'/lib/editor/popupwin.js"></script>'."\n";
 
-        if ($rows < 10) {
-            $rows = 10;
+        if ($height) {    // Usually with legacy calls
+            if ($rows < 10) {
+                $rows = 10;
+            }
         }
-        if ($cols < 65) {
-            $cols = 65;
+        if ($width) {    // Usually with legacy calls
+            if ($cols < 65) {
+                $cols = 65;
+            }
         }
     }
 
@@ -2696,9 +2698,9 @@ function print_richedit_javascript($form, $name, $source='no') {
  *
  * @param string $name Form element to replace with HTMl editor by name
  */
-function use_html_editor($name='') {
+function use_html_editor($name='', $editorhidebuttons='') {
     echo '<script language="javascript" type="text/javascript" defer="defer">'."\n";
-    print_editor_config();
+    print_editor_config($editorhidebuttons);
     if (empty($name)) {
         echo "\n".'HTMLArea.replaceAll(config);'."\n";
     } else {
@@ -3658,7 +3660,7 @@ function print_side_block_end($attributes) {
  *
  * @uses $CFG
  */
- function print_editor_config() {
+ function print_editor_config($editorhidebuttons='') {
 
     global $CFG;
 
@@ -3699,7 +3701,9 @@ function print_side_block_end($attributes) {
     }
     echo '};';
 
-    if (!empty($CFG->editorhidebuttons)) {
+    if (!empty($editorhidebuttons)) {
+        echo "\nconfig.hideSomeButtons(\" ". $editorhidebuttons ." \");\n";
+    } else if (!empty($CFG->editorhidebuttons)) {
         echo "\nconfig.hideSomeButtons(\" ". $CFG->editorhidebuttons ." \");\n";
     }
 
