@@ -21,6 +21,7 @@ function mimeinfo($element, $filename) {
         "eps"  => array ("type"=>"application/postscript", "icon"=>"image.gif"),
         "gif"  => array ("type"=>"image/gif", "icon"=>"image.gif"),
         "gtar" => array ("type"=>"application/x-gtar", "icon"=>"zip.gif"),
+        "gz"   => array ("type"=>"application/g-zip", "icon"=>"zip.gif"),
         "gzip" => array ("type"=>"application/g-zip", "icon"=>"zip.gif"),
         "h"    => array ("type"=>"text/plain", "icon"=>"text.gif"),
         "hqx"  => array ("type"=>"application/mac-binhex40", "icon"=>"zip.gif"),
