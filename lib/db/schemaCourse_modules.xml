@@ -29,7 +29,10 @@
     <field name="indent" type="I" size="5">
       <NOTNULL/>
     </field>
-    <field name="visible" type="L" size="1">
+    <field name="visible" type="L" size="1" default="1">
+      <NOTNULL/>
+    </field>
+    <field name="groupmode" type="L" size="4" default="0">
       <NOTNULL/>
     </field>
   </table>
