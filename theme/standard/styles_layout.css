@@ -633,6 +633,7 @@ table.minicalendar th {
 }
 
 table.minicalendar {
+    width: 100%;
     margin:10px auto;
     padding:2px;
     border-width:1px;
