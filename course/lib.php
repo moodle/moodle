@@ -151,7 +151,7 @@ function print_recent_selector_form($course, $advancedfilter=0, $selecteduser=0,
             echo "<input type=hidden name=id value=\"$course->id\">";
         }
 
-        $sortfields = array("default" => "By course order","dateasc" => "Date - Most recent last", "datedesc" => "Date - Most recent first");
+        $sortfields = array("default" => get_string("bycourseorder"),"dateasc" => get_string("datemostrecentlast"), "datedesc" => get_string("datemostrecentfirst"));
 
         echo "<tr><td><b>" . get_string("participants") . "</b></td><td>";
         choose_from_menu ($users, "user", $selecteduser, get_string("allparticipants") );
