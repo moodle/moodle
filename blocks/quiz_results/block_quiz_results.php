@@ -151,7 +151,10 @@ class block_quiz_results extends block_base {
             // Ready for output!
             $gradeformat = intval(empty($this->config->gradeformat) ? GRADE_FORMAT_PCT : $this->config->gradeformat);
 
-            $this->content->text .= '<h1><a href="'.$CFG->wwwroot.'/mod/quiz/view.php?q='.$quizid.'">'.$quiz->name.'</a></h1>';
+            if($this->instance->pagetype != PAGE_QUIZ_VIEW) {
+                // Don't show header and link to the quiz if we ARE at the quiz...
+                $this->content->text .= '<h1><a href="'.$CFG->wwwroot.'/mod/quiz/view.php?q='.$quizid.'">'.$quiz->name.'</a></h1>';
+            }
 
             $rank = 0;
             if(!empty($best)) {
@@ -256,7 +259,10 @@ class block_quiz_results extends block_base {
 
             $gradeformat = intval(empty($this->config->gradeformat) ? GRADE_FORMAT_PCT : $this->config->gradeformat);
 
-            $this->content->text .= '<h1><a href="'.$CFG->wwwroot.'/mod/quiz/view.php?q='.$quizid.'">'.$quiz->name.'</a></h1>';
+            if($this->instance->pagetype != PAGE_QUIZ_VIEW) {
+                // Don't show header and link to the quiz if we ARE at the quiz...
+                $this->content->text .= '<h1><a href="'.$CFG->wwwroot.'/mod/quiz/view.php?q='.$quizid.'">'.$quiz->name.'</a></h1>';
+            }
 
             $rank = 0;
             if(!empty($best)) {
