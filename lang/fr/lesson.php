@@ -1,5 +1,4 @@
-<?PHP // $Id$ 
-
+<?php // $Id$ 
 
 $string['actionaftercorrectanswer'] = 'Action après réponse correcte';
 $string['addabranchtable'] = 'Ajouter une table de branchement';
@@ -73,7 +72,7 @@ $string['savepage'] = 'Enregistrer la page';
 $string['singleanswer'] = 'Réponse simple';
 $string['showanunseenpage'] = 'Afficher une page non vue';
 $string['showanunansweredpage'] = 'Afficher une page sans réponse';
-$string['thatsthecorrectanswer'] = 'C\'est la réponse correcte';
+$string['thatsthecorrectanswer'] = 'C\'est une réponse correcte';
 $string['thatsthewronganswer'] = 'C\'est une mauvaise réponse';
 $string['thefollowingpagesjumptothispage'] = 'Les pages suivantes renvoient vers cette page';
 $string['thispage'] = 'Cette page';
