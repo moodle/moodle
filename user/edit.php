@@ -145,16 +145,16 @@
         }
         if ($course->category) {
             print_header("$course->shortname: $streditmyprofile", "$course->fullname: $streditmyprofile",
-                        "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> 
-                        -> <A HREF=\"index.php?id=$course->id\">$strparticipants</A>
-                        -> <A HREF=\"view.php?id=$user->id&course=$course->id\">$userfullname</A> 
+                        "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> 
+                        -> <a href=\"index.php?id=$course->id\">$strparticipants</a>
+                        -> <a href=\"view.php?id=$user->id&course=$course->id\">$userfullname</a> 
                         -> $streditmyprofile", "");
         } else {
             if (isset($USER->newadminuser)) {
                 print_header();
             } else {
                 print_header("$course->shortname: $streditmyprofile", "$course->fullname",
-                             "<A HREF=\"view.php?id=$user->id&course=$course->id\">$userfullname</A> 
+                             "<a href=\"view.php?id=$user->id&course=$course->id\">$userfullname</a> 
                               -> $streditmyprofile", "");
             }
         }
@@ -184,9 +184,9 @@
 
     print_simple_box_start("center", "", "$THEME->cellheading");
     if (!empty($err)) {
-       echo "<CENTER>";
+       echo "<center>";
        notify(get_string("someerrorswerefound"));
-       echo "</CENTER>";
+       echo "</center>";
     }
     include("edit.html");
     print_simple_box_end();

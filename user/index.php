@@ -51,7 +51,7 @@
 
     if ($course->category) {
         print_header("$course->shortname: ".get_string("participants"), "$course->fullname",
-                     "<A HREF=../course/view.php?id=$course->id>$course->shortname</A> -> ".
+                     "<a href=\"../course/view.php?id=$course->id\">$course->shortname</a> -> ".
                      "$participantslink", "", "", true, "&nbsp;", navmenu($course));
     } else {
         print_header("$course->shortname: ".get_string("participants"), "$course->fullname",
@@ -128,15 +128,15 @@
         }
     }
 
-    echo "<h2 align=center>$totalcount $course->students";
+    echo "<h2 align=\"center\">$totalcount $course->students";
     if (isteacheredit($course->id)) {
         echo ' <a href="../course/student.php?id='.$course->id.'">';
-        echo '<img src="'.$CFG->pixpath.'/i/edit.gif" height="16" width="16" alt=""></a>';
+        echo '<img src="'.$CFG->pixpath.'/i/edit.gif" height="16" width="16" alt="" /></a>';
     }
     echo '</h2>';
 
     if (($CFG->longtimenosee < 500) and (!$page) and ($sort == "lastaccess")) {
-        echo "<center><p><font size=1>(";
+        echo "<center><p><font size=\"1\">(";
         print_string("unusedaccounts","",$CFG->longtimenosee);
         echo ")</font></p></center>";
     }
@@ -271,7 +271,7 @@ function print_user_table($users, $isteacher) {
 
 
         $table->head = array ("&nbsp;", "$firstname / $lastname", $city, $country, $lastaccess);
-        $table->align = array ("LEFT", "LEFT", "LEFT", "LEFT", "LEFT");
+        $table->align = array ("left", "left", "left", "left", "left");
         $table->size = array ("10",  "*", "*", "*", "*");
         $table->size = array ("10",  "*", "*", "*", "*");
         $table->cellpadding = 4;
@@ -291,9 +291,9 @@ function print_user_table($users, $isteacher) {
 
             $table->data[] = array ($picture,
                 "<b><a href=\"$CFG->wwwroot/user/view.php?id=$user->id&course=$course->id\">$fullname</a></b>",
-                "<font size=2>$user->city</font>",
-                "<font size=2>$user->country</font>",
-                "<font size=2>$lastaccess</font>");
+                "<font size=\"2\">$user->city</font>",
+                "<font size=\"2\">$user->country</font>",
+                "<font size=\"2\">$lastaccess</font>");
         }
         print_table($table);
 }
