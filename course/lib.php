@@ -609,7 +609,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
 
     $modinfo = unserialize($course->modinfo);
 
-    echo "<table width=\"$width\" cellpadding=3 cellspacing=0>\n";
+    echo "<table width=\"$width\" cellpadding=1 cellspacing=0>\n";
     if (!empty($section->sequence)) {
 
         $sectionmods = explode(",", $section->sequence);
