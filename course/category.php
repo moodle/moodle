@@ -36,19 +36,20 @@
     }
 
 
-/// Rename the category if requested
-
-    if (!empty($_GET['rename'])) {
-        $category->name = $rename;
-        if (! set_field("course_categories", "name", $category->name, "id", $category->id)) {
-            notify("An error occurred while renaming the category");
+    if (isadmin()) {
+        /// Rename the category if requested
+        if (!empty($_POST['rename'])) {
+            $category->name = $_POST['rename'];
+            if (! set_field("course_categories", "name", $category->name, "id", $category->id)) {
+                notify("An error occurred while renaming the category");
+            }
         }
-    }
 
-/// Resort the category if requested
+        /// Resort the category if requested
 
-    if (!empty($_GET['resort'])) {
-        fix_course_sortorder($category->id, "fullname ASC");
+        if (!empty($_GET['resort'])) {
+            fix_course_sortorder($category->id, "fullname ASC");
+        }
     }
 
 
@@ -197,7 +198,6 @@
     
 /// Print out all the courses
 
-
     if (!$courses = get_courses($category->id)) {
         print_heading(get_string("nocoursesyet"));
 
@@ -292,8 +292,14 @@
                 echo "</td>";
             } else {
                 echo "<td>";
+                if ($course->summary) {
+                    link_to_popup_window ("/course/info.php?id=$course->id", "courseinfo", 
+                                          "<img alt=\"info\" height=16 width=16 border=0 src=\"$pixpath/i/info.gif\">", 
+                                           400, 500, $strsummary);
+                    echo "&nbsp;";
+                }
                 if ($course->guest ) {
-                echo "<img title=\"$strallowguests\" alt=\"\" height=16 width=16 border=0 src=\"$pixpath/i/user.gif\">";
+                    echo "<img title=\"$strallowguests\" alt=\"\" height=16 width=16 border=0 src=\"$pixpath/i/user.gif\">&nbsp;";
                 }
                 if ($course->password) {
                     echo "<img title=\"$strrequireskey\" alt=\"\" height=16 width=16 border=0 src=\"$pixpath/i/key.gif\">";
@@ -318,7 +324,7 @@
     }
 
 
-    if ($adminediting) {
+    if (isadmin()) {
         echo "<center>";
 
     /// Print button to re-sort courses by name
@@ -343,8 +349,6 @@
         echo "</center>";
         echo "<br />";
     }
-
-
     
     print_footer();
 
