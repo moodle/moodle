@@ -1,0 +1,33 @@
+<P ALIGN=CENTER><B>Importowanie nowych pytañ</B></P>
+<P>Ta funkcja pozwala Ci na importowanie pytañ z zewnêtrznych plików tekstowych, wczytuj±c je poprzez formê</P>
+
+<P>Obs³ugiwane s± nastêpuj±ce formaty plików : <P>
+
+<B>Brakuj±ce S³owa</B></P>
+<UL>
+<P>Ten format przeznaczony jest jedynie do pytañ wielokrotnego wyboru.
+Ka¿da odpowied¼ jest oddzielana tyld± (~), a prawid³owa odpowied¼ poprzedzona jest znakiem równo¶ci (=). Poni¿ej podano przyk³ad : 
+	<BLOCKQUOTE>Ju¿ wtedy gdy rozpoczynamy odkrywaæ czê¶ci naszego cia³a jako noworodki zostajemy studentami {=anatomii i fizjologii  ~refleksologii ~nauki ~do¶wiadczenia}, i w pewnym sensie pozostajemy studentami przez ca³e ¿ycie.</BLOCKQUOTE>
+
+<P>Wiêcej informacji: <? helpbutton("formatmissingword", "", "quiz") ?></P>
+
+</UL>
+<P><B>AON</B></P>
+<UL>
+<P>Ten format jest identyczny z formatem Brakuj±ce S³owa, z t± ró¿nic±, ¿e po zaimportowaniu pytañ wszystkie pytania typu Krótka Odpowied¼ zmieniane s± czwórkami na pytania typu Dopasuj Odpowiedzi.</P>
+
+<p>Nazwa pochodzi od organizacji która sponsorowa³a rozwój wielu cech quizów</p></UL>
+
+<P><B>Blackboard (Tablica) </B></P>
+
+<UL><P>Ten modu³ umo¿liwia importowanie pytañ zapisanych w formacie eksportowym Blackboard.  Polega on na umieszczaniu funkcji XML w twoim pliku PHP</P>
+
+<P>Wiêcej informacji: <? helpbutton("formatblackboard", "", "quiz")?></P></UL>
+
+<P><B>Niestandardowy</B></P>
+<UL><P>Je¶li masz swój w³asny format, który chcesz zaimportowaæ mo¿esz zaimplementowaæ ten proces samodzielnie edytuj±c mod/quiz/format/custom.php
+<P>Dodaæ musisz jedynie niewielk± ilo¶æ kodu - jedynie tyle ile potrzeba by wyró¿niæ pojedyncze pytanie z danego tekstu.</P>
+
+<P>Wiêcej informacji: <? helpbutton("formatcustom", "", "quiz") ?></P></UL>
+
+<P>Planowana jest obs³uga wiêkszej ilo¶ci formatów, wliczaj±c w to WebCT, IMS QTI i wszelkie inne formaty, które mog± dostarczyæ u¿ytkownicy Moodle! </p>
