@@ -1,5 +1,5 @@
-<?php // $Id$ 
-      // calendar.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005011000)
+<?PHP // $Id$ 
+      // calendar.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005032300)
 
 
 $string['calendar'] = 'カレンダー';
@@ -17,7 +17,6 @@ $string['detailedmonthview'] = '月毎表示詳細';
 $string['dstadjusttime'] = '時間を';
 $string['dstat'] = ':';
 $string['dstby'] = ':';
-$string['dstdefaultpresetname'] = '新しいDSTプリセット';
 $string['dsthumanreadable'] = '毎 $a->activate_month の $a->activate_index  $a->activate_weekday に時間を $a->offset minutes $a->direction 。この設定は $a->deactivate_month の $a->deactivate_index $a->deactivate_weekday まで続きます。';
 $string['dstof'] = '月:時間';
 $string['dstonthe'] = '曜日';
@@ -72,7 +71,6 @@ $string['notusingdst'] = 'DST ( 夏時間 ) を使用しない';
 $string['noupcomingevents'] = '直近のイベントはありません';
 $string['nth'] = '{$a} 番目の';
 $string['oneevent'] = '1 イベント';
-$string['pref_dstpreset'] = '夏時間';
 $string['pref_lookahead'] = '直近イベントの日数範囲';
 $string['pref_maxevents'] = '直近イベントの最大表示数';
 $string['pref_persistflt'] = 'フィルタ設定を記憶する';
@@ -95,6 +93,7 @@ $string['timeformat_12'] = '12時間 ( 午前/午後 )';
 $string['timeformat_24'] = '24時間';
 $string['timeforward'] = '進めます';
 $string['timerewind'] = '戻します';
+$string['timezonename'] = 'タイムゾーン';
 $string['today'] = '今日';
 $string['tomorrow'] = '明日';
 $string['tt_deleteevent'] = 'イベントの削除';

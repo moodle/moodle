@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // admin.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005031000)
+      // admin.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005032300)
 
 
 $string['adminseesallevents'] = '管理者に全てのイベントを表示';
@@ -86,17 +86,9 @@ $string['configvariables'] = '詳細設定';
 $string['configwarning'] = '間違った設定はトラブルの原因になりますので、これらの設定を変更する場合は注意してください。';
 $string['configzip'] = 'ZIPプログラムの場所を指定してください ( UNIXのみ、任意 )。これはZIP書庫をサーバ内で作成するために必要です。空白にした場合、Moodleは内部ルーチンを使用します';
 $string['confirmation'] = '確認';
-$string['confirmdeletedst'] = 'プリセット <strong>$a</strong> を削除すると即座に全てのユーザのDST ( 夏時間 ) プリセットを停止することになります。プリセットの削除によりユーザの認識している時間を警告無しに変更する可能性があります。本当に続けてもよろしいですか?';
-$string['confirmdeletedstdefault'] = '<strong>プリセット $a はこのサイトの全てのユーザが使用しています!</strong> プリセットの削除によりユーザの認識している時間を警告無しに変更する可能性があります。本当に続けてもよろしいですか?';
 $string['cronwarning'] = 'メンテナンススクリプト cron.php が稼動していません ( 少なくとも24時間 )。<br>まだ設定していない場合は、インストールマニュアルの<em>cronの設定</em>をご覧ください。';
-$string['dstpresetforced'] = 'この設定はサイト管理者によって強制されています。';
 $string['edithelpdocs'] = 'ヘルプ文書の編集';
-$string['editingtimezone'] = 'タイムゾーンの編集';
 $string['editstrings'] = '翻訳ストリングの編集';
-$string['emptydstlist'] = '現在、DST ( 夏時間 ) は設定されていません。追加するには追加ボタンをクリックしてください。';
-$string['errordstpresetactivateearlier'] = '適用開始月は適用終了月より早い時期を指定してください。';
-$string['errordstpresetnameempty'] = 'プリセット名は空白にしないでください。';
-$string['errordstpresetnameexists'] = '同じ名称のプリセットが設定されています。';
 $string['filteruploadedfiles'] = 'アップロードファイルをフィルタする';
 $string['helpadminseesall'] = '管理者は全てのカレンダーイベントを閲覧または自分自身のイベントとすることができますか?';
 $string['helpcalendarsettings'] = 'Moodleのカレンダーの日/時間に関する様々な設定を行います。';
@@ -107,10 +99,8 @@ $string['helpstartofweek'] = '週の始めは何曜日ですか?';
 $string['helpupcominglookahead'] = 'デフォルトで何日前のイベントを直近イベントとして表示しますか?';
 $string['helpupcomingmaxevents'] = '直近イベントを最大何件ユーザに表示しますか?';
 $string['helpweekenddays'] = '何曜日を「週末」として別の色で表示しますか?';
-$string['managetimezones'] = 'タイムゾーンプロフィールの管理';
 $string['nodstpresetsexist'] = 'DST ( 夏時間 ) プリセットが設定されていないため、DST ( 夏時間 ) サポートは使用できません。下記のボタンをクリックしてプリセットを設定することができます。';
 $string['optionalmaintenancemessage'] = 'オプション・メンテナンスメッセージ';
-$string['returntocalendaroptions'] = 'カレンダーオプションに戻る';
 $string['sitemaintenance'] = 'このサイトはメンテナンス中です。現在ご利用いただけません。';
 $string['sitemaintenancemode'] = 'メンテナンスモード';
 $string['sitemaintenanceoff'] = 'メンテナンスモードが解除されました。サイトは正常に動作しています。';
@@ -118,9 +108,9 @@ $string['sitemaintenanceon'] = 'あなたのサイトは現在メンテナンスモードで運用され
 $string['sitemaintenancewarning'] = 'あなたのサイトは現在メンテナンスモードで運用されています ( 管理者のみログインできます ) 。通常運用に戻すには、<a href=\"maintenance.php\">メンテナンスモードを解除</a> してください。';
 $string['tabselectedtofront'] = 'タグ付きのテーブルで、現在選択されているタグの列を最前面に表示する。';
 $string['therewereerrors'] = 'データにエラーがあります。';
+$string['timezoneforced'] = 'サイト管理者によって強制されています。';
 $string['timezoneisforcedto'] = 'ユーザに使用を強制';
 $string['timezonenotforced'] = '独自のタイムゾーンを使用';
-$string['timezones'] = 'タイムゾーン';
 $string['updatetimezones'] = '自動的にプロフィールを更新';
 $string['upgradelogs'] = '正常に動作させるためには古いログのアップグレードが必要です。<a href=\"$a\">詳細はこちら</a>';
 $string['upgradelogsinfo'] = 'ログの保存方法に変更点があります。全活動ベースのログを閲覧することができるようにするには、古いログをアップグレードする必要があります。サイトによってはアップグレード作業に長時間(例 数時間)を要し、規模が大きなサイトではデータベースに負担がかかります。処理を開始した場合は終了するまでそのまま(ブラウザを開いたまま)にしてください。心配する必要はありません - ログが更新された後に、あなたのサイトは正常に動作します。<br/><br/>本当にログをアップグレードしてもよろしいですか?';
