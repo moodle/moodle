@@ -48,35 +48,24 @@
 
     foreach ($workshops as $workshop) {
         if (isteacher($course->id, $USER->id)) { // teacher see info (students see grade)
-            switch ($workshop->phase) {
-                case 0:
-                case 1: $info = get_string("phase1short", "workshop");
-                        break;
-                case 2: $info = get_string("phase2short", "workshop");
-                        break;
-                case 3: $info = get_string("phase3short", "workshop");
-                        break;
-                case 4: $info = get_string("phase4short", "workshop");
-                        break;
-                case 5: $info = get_string("phase5short", "workshop");
-                        break;
-            }
-            if ($workshop->phase > 1) {
+            $info = workshop_phase($workshop, 'short');
+            if (time() > $workshop->submissionstart) {
                 if ($num = workshop_count_student_submissions_for_assessment($workshop, $USER)) {
                     $info .= " [".get_string("unassessed", "workshop", $num)."]";
                 }
             }
         }
 
+        $due = userdate($workshop->submissionend);
+
         if ($submissions = workshop_get_user_submissions($workshop, $USER)) {
             foreach ($submissions as $submission) {
-                if ($submission->timecreated <= $workshop->deadline) {
+                if ($submission->timecreated <= $workshop->submissionend) {
                     $submitted = userdate($submission->timecreated);
                 } 
                 else {
                     $submitted = "<font color=\"red\">".userdate($submission->timecreated)."</font>";
                 }
-                $due = userdate($workshop->deadline);
                 if (!$workshop->visible) {
                     //Show dimmed if the mod is hidden
                     $link = "<a class=\"dimmed\" href=\"view.php?id=$workshop->coursemodule\">$workshop->name</a><br />";
@@ -119,7 +108,6 @@
         }
         else { // no submission
             $submitted = get_string("no");
-            $due = userdate($workshop->deadline);
             if (!$workshop->visible) {
                 //Show dimmed if the mod is hidden
                 $link = "<a class=\"dimmed\" href=\"view.php?id=$workshop->coursemodule\">$workshop->name</a>";

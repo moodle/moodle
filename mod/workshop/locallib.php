@@ -67,6 +67,7 @@ workshop_list_unassessed_teacher_submissions($workshop, $user) {
 workshop_list_ungraded_assessments($workshop, $stype) {
 workshop_list_user_submissions($workshop, $user) {
 
+workshop_calculate_phase($workshop, $style='') {
 
 workshop_print_assessment($workshop, $assessment, $allowchanges, $showcommentlinks, $returnto)
 workshop_print_assessments_by_user_for_admin($workshop, $user) {
@@ -77,7 +78,6 @@ workshop_print_feedback($course, $submission) {
 workshop_print_league_table($workshop) {
 workshop_print_submission_assessments($workshop, $submission, $type) {
 workshop_print_submission_title($workshop, $user) {
-workshop_print_tabbed_table($table) {
 workshop_print_time_to_deadline($time) {
 workshop_print_upload_form($workshop) {
 workshop_print_user_assessments($workshop, $user) {
@@ -959,6 +959,7 @@ function workshop_list_assessed_submissions($workshop, $user) {
 }
 
 
+
 //////////////////////////////////////////////////////////////////////////////////////
 function workshop_list_peer_assessments($workshop, $user) {
     global $CFG;
@@ -1791,9 +1792,8 @@ function workshop_list_user_submissions($workshop, $user) {
 
     if ($submissions = workshop_get_user_submissions($workshop, $user)) {
         foreach ($submissions as $submission) {
-            // allow user to edit or delete a submission if it's warm OR if the workshop is still in 
-            // the submission phase 
-            if (($submission->timecreated > ($timenow - $CFG->maxeditingtime)) or ($workshop->phase == 2)) {
+            // allow user to edit or delete a submission if it's warm OR if assessment period has not started
+            if (($submission->timecreated > ($timenow - $CFG->maxeditingtime)) or ($workshop->assessmentstart > time())) {
                 $action = "<a href=\"submissions.php?action=editsubmission&amp;id=$cm->id&amp;sid=$submission->id\">".
                     get_string("edit", "workshop")."</a> | ".
                     "<a href=\"submissions.php?action=userconfirmdelete&amp;id=$cm->id&amp;sid=$submission->id\">".
@@ -1813,6 +1813,33 @@ function workshop_list_user_submissions($workshop, $user) {
         }
         print_table($table);
     }
+}
+
+
+
+///////////////////////////////////////////////////////////////////////////////
+function workshop_phase($workshop, $style='') {
+    $time = time();
+    if ($time < $workshop->submissionstart) {
+        return get_string('phase1'.$style, 'workshop');
+    } 
+    else if ($time < $workshop->submissionend) {
+        if ($time < $workshop->assessmentstart) {
+            return get_string('phase2'.$style, 'workshop');
+        } else {
+            return get_string('phase3'.$style, 'workshop');
+        }
+    } 
+    else if ($time < $workshop->assessmentstart) {
+        return  get_string('phase0'.$style, 'workshop');
+    }
+    else if ($time < $workshop->assessmentend) {
+        return  get_string('phase4'.$style, 'workshop');
+    }
+    else {
+        return  get_string('phase5'.$style, 'workshop');
+    }    
+    error('Something is wrong with the workshop dates');
 }
 
 
@@ -2543,17 +2570,31 @@ function workshop_print_assignment_info($workshop) {
         error("Course Module ID was incorrect");
     }
     // print standard assignment heading
-    $strdifference = format_time($workshop->deadline - time());
-    if (($workshop->deadline - time()) < 0) {
-        $strdifference = "<font color=\"red\">$strdifference</font>";
-    }
-    $strduedate = userdate($workshop->deadline)." ($strdifference)";
     print_simple_box_start("center");
     print_heading($workshop->name, "center");
     print_simple_box_start("center");
-    echo "<b>".get_string("duedate", "assignment")."</b>: $strduedate<br />";
+
+    // print phase and date info
+    $string = '<b>'.get_string('currentphase', 'workshop').'</b>: '.workshop_phase($workshop).'<br />';
+    $dates = array(
+        'submissionstart' => $workshop->submissionstart,
+        'submissionend' => $workshop->submissionend,
+        'assessmentstart' => $workshop->assessmentstart,
+        'assessmentend' => $workshop->assessmentend
+    );
+    foreach ($dates as $type => $date) {
+        if ($date) {
+            $strdifference = format_time($date - time());
+            if (($date - time()) < 0) {
+                $strdifference = "<font color=\"red\">$strdifference</font>";
+            }
+            $string .= '<b>'.get_string($type, 'workshop').'</b>: '.userdate($date)." ($strdifference)<br />";
+        }
+    }
+    echo $string;
+
     $grade = $workshop->gradinggrade + $workshop->grade;
-    echo "<b>".get_string("maximumgrade")."</b>: $grade<br />";
+    echo "<br /><b>".get_string("maximumgrade")."</b>: $grade<br />";
     echo "<b>".get_string("detailsofassessment", "workshop")."</b>: 
         <a href=\"assessments.php?id=$cm->id&amp;action=displaygradingform\">".
         get_string("specimenassessmentform", "workshop")."</a><br />";
@@ -2836,90 +2877,6 @@ function workshop_print_submission_title($workshop, $submission) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////////////////
-function workshop_print_tabbed_heading($tabs) {
-// Prints a tabbed heading where one of the tabs highlighted.
-// $tabs is an object with several properties.
-//      $tabs->names      is an array of tab names
-//      $tabs->urls       is an array of links
-//      $tabs->align     is an array of column alignments (defaults to "center")
-//      $tabs->size      is an array of column sizes
-//      $tabs->wrap      is an array of "nowrap"s or nothing
-//      $tabs->highlight    is an index (zero based) of "active" heading .
-//      $tabs->width     is an percentage of the page (defualts to 80%)
-//      $tabs->cellpadding    padding on each cell (defaults to 5)
-
-    global $CFG, $THEME;
-    
-    if (isset($tabs->names)) {
-        foreach ($tabs->names as $key => $name) {
-            if (!empty($tabs->urls[$key])) {
-                $url =$tabs->urls[$key];
-                if ($tabs->highlight == $key) {
-                    $tabcontents[$key] = "<b>$name</b>";
-                } else {
-                    $tabcontents[$key] = "<a class= \"dimmed\" href=\"$url\"><b>$name</b></a>";
-                }
-            } else {
-                $tabcontents[$key] = "<b>$name</b>";
-            }
-        }
-    }
-
-    if (empty($tabs->width)) {
-        $tabs->width = "80%";
-    }
-
-    if (empty($tabs->cellpadding)) {
-        $tabs->cellpadding = "5";
-    }
-
-    // print_simple_box_start("center", "$table->width", "#ffffff", 0);
-    echo "<table width=\"$tabs-width\" border=\"0\" align=\"center\" ";
-    echo " cellpadding=\"$tabs->cellpadding\" cellspacing=\"0\" class=\"generaltable\">\n";
-
-    if (!empty($tabs->names)) {
-        echo "<tr>";
-        echo "<td  class=\"generaltablecell\">".
-            "<img width=\"10\" src=\"$CFG->wwwroot/pix/spacer.gif\" alt=\"\" /></td>\n";
-        foreach ($tabcontents as $key => $tab) {
-            if (isset($align[$key])) {
-                $alignment = "align=\"$align[$key]\"";
-            } else {
-                $alignment = "align=\"center\"";
-            }
-            if (isset($size[$key])) {
-                $width = "width=\"$size[$key]\"";
-            } else {
-                $width = "";
-            }
-            if (isset($wrap[$key])) {
-                $wrapping = "no wrap";
-            } else {
-                $wrapping = "";
-            }
-            if ($key == $tabs->highlight) {
-                echo "<td valign=\"top\" class=\"generaltabselected\" $alignment $width $wrapping bgcolor=\"$THEME->cellheading2\">$tab</td>\n";
-            } else {
-                echo "<td valign=\"top\" class=\"generaltab\" $alignment $width $wrapping bgcolor=\"$THEME->cellheading\">$tab</td>\n";
-            }
-        echo "<td  class=\"generaltablecell\">".
-            "<img width=\"10\" src=\"$CFG->wwwroot/pix/spacer.gif\" alt=\"\" /></td>\n";
-        }
-        echo "</tr>\n";
-    } else {
-        echo "<tr><td>No names specified</td></tr>\n";
-    }
-    // bottom stripe
-    $ncells = count($tabs->names)*2 +1;
-    $height = 2;
-    echo "<tr><td colspan=\"$ncells\" bgcolor=\"$THEME->cellheading2\">".
-        "<img height=\"$height\" src=\"$CFG->wwwroot/pix/spacer.gif\" alt=\"\" /></td></tr>\n";
-    echo "</table>\n";
-    // print_simple_box_end();
-
-    return true;
-}
 
 function workshop_print_time_to_deadline($time) {
     if ($time < 0) {

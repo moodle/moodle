@@ -65,6 +65,7 @@ $WORKSHOP_ASSESSMENT_COMPS = array (
 
 /*** Standard Moodle functions ******************
 workshop_add_instance($workshop) 
+workshop_check_dates($workshop)
 workshop_cron () 
 workshop_delete_instance($id) 
 workshop_grades($workshopid) 
@@ -83,33 +84,72 @@ function workshop_add_instance($workshop) {
 // of the new instance.
 
     $workshop->timemodified = time();
-    
-    $workshop->deadline = make_timestamp($workshop->deadlineyear, 
-            $workshop->deadlinemonth, $workshop->deadlineday, $workshop->deadlinehour, 
-            $workshop->deadlineminute);
+
+    $workshop->submissionstart = make_timestamp($workshop->submissionstartyear, 
+            $workshop->submissionstartmonth, $workshop->submissionstartday, $workshop->submissionstarthour, 
+            $workshop->submissionstartminute);
+
+    $workshop->assessmentstart = make_timestamp($workshop->assessmentstartyear, 
+            $workshop->assessmentstartmonth, $workshop->assessmentstartday, $workshop->assessmentstarthour, 
+            $workshop->assessmentstartminute);
+
+    $workshop->submissionend = make_timestamp($workshop->submissionendyear, 
+            $workshop->submissionendmonth, $workshop->submissionendday, $workshop->submissionendhour, 
+            $workshop->submissionendminute);
+
+    $workshop->assessmentend = make_timestamp($workshop->assessmentendyear, 
+            $workshop->assessmentendmonth, $workshop->assessmentendday, $workshop->assessmentendhour, 
+            $workshop->assessmentendminute);
 
     $workshop->releasegrades = make_timestamp($workshop->releaseyear, 
             $workshop->releasemonth, $workshop->releaseday, $workshop->releasehour, 
             $workshop->releaseminute);
+    
+    if (!workshop_check_dates($workshop)) {
+        return get_string('invaliddates', 'workshop');
+    }
 
     if ($returnid = insert_record("workshop", $workshop)) {
 
         $event = NULL;
-        $event->name        = $workshop->name;
+        $event->name        = get_string('submissionstartevent','workshop', $workshop->name);
         $event->description = $workshop->description;
         $event->courseid    = $workshop->course;
         $event->groupid     = 0;
         $event->userid      = 0;
         $event->modulename  = 'workshop';
         $event->instance    = $returnid;
-        $event->eventtype   = 'deadline';
-        $event->timestart   = $workshop->deadline;
+        $event->eventtype   = 'submissionstart';
+        $event->timestart   = $workshop->submissionstart;
         $event->timeduration = 0;
+        add_event($event);
 
+        $event->name        = get_string('submissionendevent','workshop', $workshop->name);
+        $event->eventtype   = 'submissionend';
+        $event->timestart   = $workshop->submissionend;
+        add_event($event);
+
+        $event->name        = get_string('assessmentstartevent','workshop', $workshop->name);
+        $event->eventtype   = 'assessmentstart';
+        $event->timestart   = $workshop->assessmentstart;
+        add_event($event);
+
+        $event->name        = get_string('assessmentendevent','workshop', $workshop->name);
+        $event->eventtype   = 'assessmentend';
+        $event->timestart   = $workshop->assessmentend;
         add_event($event);
     }
 
     return $returnid;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// returns true if the dates are valid, false otherwise
+function workshop_check_dates($workshop) {
+    return ($workshop->submissionstart < $workshop->submissionend and
+            $workshop->submissionstart <= $workshop->assessmentstart and
+            $workshop->assessmentstart <= $workshop->assessmentend and
+            $workshop->submissionend < $workshop->assessmentend);
 }
 
 
@@ -525,13 +565,13 @@ function workshop_delete_instance($id) {
 ///////////////////////////////////////////////////////////////////////////////
 function workshop_grades($workshopid) {
 /// Must return an array of grades, indexed by user, and a max grade.
-/// only returns grades in phase 2 or greater
+/// only returns grades once assessment has started
 /// returns nothing if workshop is not graded
     global $CFG;
 
     $return = null;
     if ($workshop = get_record("workshop", "id", $workshopid)) {
-        if (($workshop->phase > 1) and $workshop->gradingstrategy) {
+        if (($workshop->assessmentstart < time()) and $workshop->gradingstrategy) {
             if ($students = get_course_students($workshop->course)) {
                 foreach ($students as $student) {
                     if ($workshop->wtype) {
@@ -809,26 +849,37 @@ function workshop_refresh_events($courseid = 0) {
     $moduleid = get_field('modules', 'id', 'name', 'workshop');
     
     foreach ($workshops as $workshop) {
-        $event = NULL;
-        $event->name        = addslashes($workshop->name);
-        $event->description = addslashes($workshop->description);
-        $event->timestart   = $workshop->deadline;
-
-        if ($event->id = get_field('event', 'id', 'modulename', 'workshop', 'instance', $workshop->id)) {
-            update_event($event);
     
-        } else {
-            $event->courseid    = $workshop->course;
-            $event->groupid     = 0;
-            $event->userid      = 0;
-            $event->modulename  = 'workshop';
-            $event->instance    = $workshop->id; 
-            $event->eventtype   = 'deadline';
-            $event->timeduration = 0;
-            $event->visible     = get_field('course_modules', 'visible', 'module', $moduleid, 'instance', $workshop->id); 
-            add_event($event);
+        $dates = array(
+            'submissionstart' => $workshop->submissionstart,
+            'submissionend' => $workshop->submissionend,
+            'assessmentstart' => $workshop->assessmentstart,
+            'assessmentend' => $workshop->assessmentend
+        );
+        
+        foreach ($dates as $type => $date) {
+        
+            if ($date) {
+                if ($event = get_record('event', 'modulename', 'workshop', 'instance', $workshop->id, 'eventtype', $type)) {
+                    $event->name        = addslashes(get_string($type.'event','workshop', $workshop->name));
+                    $event->description = addslashes($workshop->description);
+                    $event->eventtype   = $type;
+                    $event->timestart   = $date;
+                    update_event($event);
+                } else {
+                    $event->courseid    = $workshop->course;
+                    $event->modulename  = 'workshop';
+                    $event->instance    = $workshop->id; 
+                    $event->name        = addslashes(get_string($type.'event','workshop', $workshop->name));
+                    $event->description = addslashes($workshop->description);
+                    $event->eventtype   = $type;
+                    $event->timestart   = $date;
+                    $event->timeduration = 0;
+                    $event->visible     = get_field('course_modules', 'visible', 'module', $moduleid, 'instance', $workshop->id); 
+                    add_event($event);
+                }
+            }
         }
-
     }
     return true;
 }   
@@ -842,13 +893,29 @@ function workshop_update_instance($workshop) {
 
     $workshop->timemodified = time();
 
-    $workshop->deadline = make_timestamp($workshop->deadlineyear, 
-            $workshop->deadlinemonth, $workshop->deadlineday, $workshop->deadlinehour, 
-            $workshop->deadlineminute);
+    $workshop->submissionstart = make_timestamp($workshop->submissionstartyear, 
+            $workshop->submissionstartmonth, $workshop->submissionstartday, $workshop->submissionstarthour, 
+            $workshop->submissionstartminute);
+
+    $workshop->assessmentstart = make_timestamp($workshop->assessmentstartyear, 
+            $workshop->assessmentstartmonth, $workshop->assessmentstartday, $workshop->assessmentstarthour, 
+            $workshop->assessmentstartminute);
+
+    $workshop->submissionend = make_timestamp($workshop->submissionendyear, 
+            $workshop->submissionendmonth, $workshop->submissionendday, $workshop->submissionendhour, 
+            $workshop->submissionendminute);
+
+    $workshop->assessmentend = make_timestamp($workshop->assessmentendyear, 
+            $workshop->assessmentendmonth, $workshop->assessmentendday, $workshop->assessmentendhour, 
+            $workshop->assessmentendminute);
 
     $workshop->releasegrades = make_timestamp($workshop->releaseyear, 
             $workshop->releasemonth, $workshop->releaseday, $workshop->releasehour, 
             $workshop->releaseminute);
+            
+    if (!workshop_check_dates($workshop)) {
+        return get_string('invaliddates', 'workshop');
+    }
 
     // set the workshop's type
     $wtype = 0; // 3 phases, no grading grades
@@ -858,30 +925,50 @@ function workshop_update_instance($workshop) {
     
     // encode password if necessary
     if (!empty($workshop->password)) {
-		$workshop->password = md5($workshop->password);
-	} else {
-		unset($workshop->password);
-	}
+        $workshop->password = md5($workshop->password);
+    } else {
+        unset($workshop->password);
+    }
 
     $workshop->id = $workshop->instance;
 
     if ($returnid = update_record("workshop", $workshop)) {
 
-        $event = NULL;
-
-        if ($event->id = get_field('event', 'id', 'modulename', 'workshop', 'instance', $workshop->id)) {
-
-            $event->name        = $workshop->name;
-            $event->description = $workshop->description;
-            $event->timestart   = $workshop->deadline;
-
-            update_event($event);
+        $dates = array(
+            'submissionstart' => $workshop->submissionstart,
+            'submissionend' => $workshop->submissionend,
+            'assessmentstart' => $workshop->assessmentstart,
+            'assessmentend' => $workshop->assessmentend
+        );
+        $moduleid = get_field('modules', 'id', 'name', 'workshop');
+        
+        foreach ($dates as $type => $date) {
+            if ($event = get_record('event', 'modulename', 'workshop', 'instance', $workshop->id, 'eventtype', $type)) {
+                $event->name        = get_string($type.'event','workshop', $workshop->name);
+                $event->description = $workshop->description;
+                $event->eventtype   = $type;
+                $event->timestart   = $date;
+                update_event($event);
+            } else if ($date) {
+                $event = NULL;
+                $event->name        = get_string($type.'event','workshop', $workshop->name);
+                $event->description = $workshop->description;
+                $event->courseid    = $workshop->course;
+                $event->groupid     = 0;
+                $event->userid      = 0;
+                $event->modulename  = 'workshop';
+                $event->instance    = $workshop->instance;
+                $event->eventtype   = $type;
+                $event->timestart   = $date;
+                $event->timeduration = 0;
+                $event->visible     = get_field('course_modules', 'visible', 'module', $moduleid, 'instance', $workshop->id); 
+                add_event($event);
+            }
         }
     }
 
     return $returnid;
 }
-
 
 ///////////////////////////////////////////////////////////////////////////////
 function workshop_user_complete($course, $user, $mod, $workshop) {

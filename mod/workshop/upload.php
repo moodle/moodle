@@ -60,14 +60,14 @@
     $newsubmission->title  = $title;
     $newsubmission->description = trim($form->description);
     $newsubmission->timecreated  = $timenow;
-    if ($timenow > $workshop->deadline) {
+    if ($timenow > $workshop->submissionend) {
         $newsubmission->late = 1;
     }
     if (!$newsubmission->id = insert_record("workshop_submissions", $newsubmission)) {
         error("Workshop upload: Failure to create new submission record!");
     }
     // see if this is a resubmission by looking at the previous submissions...
-    if ($submissions and ($workshop->phase >1)) { // ...but not teacher submissions
+    if ($submissions and ($workshop->submissionstart > time())) { // ...but not teacher submissions
         // find the last submission
         foreach ($submissions as $submission) {
             $lastsubmission = $submission;

@@ -65,7 +65,10 @@
                 fwrite ($bf,full_tag("ANONYMOUS",4,false,$workshop->anonymous));
                 fwrite ($bf,full_tag("INCLUDESELF",4,false,$workshop->includeself));
                 fwrite ($bf,full_tag("MAXBYTES",4,false,$workshop->maxbytes));
-                fwrite ($bf,full_tag("DEADLINE",4,false,$workshop->deadline));
+                fwrite ($bf,full_tag("SUBMISSIONSTART",4,false,$workshop->submissionstart));
+                fwrite ($bf,full_tag("ASSESSMENTSTART",4,false,$workshop->assessmentstart));
+                fwrite ($bf,full_tag("SUBMISSIONEND",4,false,$workshop->submissionend));
+                fwrite ($bf,full_tag("ASSESSMENTEND",4,false,$workshop->submissionstart));
                 fwrite ($bf,full_tag("RELEASEGRADES",4,false,$workshop->releasegrades));
                 fwrite ($bf,full_tag("GRADE",4,false,$workshop->grade));
                 fwrite ($bf,full_tag("GRADINGGRADE",4,false,$workshop->gradinggrade));

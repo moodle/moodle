@@ -7,18 +7,18 @@ function workshop_upgrade($oldversion) {
     global $CFG;
 
     if ($oldversion < 2003050400) {
-	table_column("workshop","graded", "agreeassessments", "INT","2", "", "0" ,"NOT NULL");
-	table_column("workshop", "showgrades","hidegrades", "INT","2", "","0", "NOT NULL");
-	table_column("workshop_assessments","","timeagreed", "INT","8", "UNSIGNED", "0", "NOT NULL" );
-	
-	execute_sql("
+    table_column("workshop","graded", "agreeassessments", "INT","2", "", "0" ,"NOT NULL");
+    table_column("workshop", "showgrades","hidegrades", "INT","2", "","0", "NOT NULL");
+    table_column("workshop_assessments","","timeagreed", "INT","8", "UNSIGNED", "0", "NOT NULL" );
+    
+    execute_sql("
             CREATE TABLE {$CFG->prefix}workshop_comments (
             id SERIAL8 PRIMARY KEY  ,
             workshopid int8 NOT NULL default '0', 
             assessmentid int8  NOT NULL default '0',
             userid int8 NOT NULL default '0',
             timecreated int8  NOT NULL default '0',
-	        mailed int2  NOT NULL default '0',
+            mailed int2  NOT NULL default '0',
             comments text NOT NULL
         )
         ");
@@ -26,30 +26,30 @@ function workshop_upgrade($oldversion) {
 
     if ($oldversion < 2003051400) {
         table_column("workshop","","showleaguetable", "INTEGER", "4", "unsigned", "0", "not null", "gradingweight");
-		execute_sql("
-		CREATE TABLE {$CFG->prefix}workshop_rubrics (
-		  id SERIAL8 PRIMARY KEY,
-		  workshopid int8 NOT NULL default '0',
-		  elementid int8 NOT NULL default '0',
-		  rubricno int4  NOT NULL default '0',
-		  description text NOT NULL,
-		) 
+        execute_sql("
+        CREATE TABLE {$CFG->prefix}workshop_rubrics (
+          id SERIAL8 PRIMARY KEY,
+          workshopid int8 NOT NULL default '0',
+          elementid int8 NOT NULL default '0',
+          rubricno int4  NOT NULL default '0',
+          description text NOT NULL,
+        ) 
         ");
-	}
-		
-	if ($oldversion < 2003082200) {
-        table_column("workshop_rubrics", "elementid", "elementno", "INTEGER", "10", "unsigned", "0", "not null", "id"); 	
-	}
+    }
+        
+    if ($oldversion < 2003082200) {
+        table_column("workshop_rubrics", "elementid", "elementno", "INTEGER", "10", "unsigned", "0", "not null", "id");     
+    }
 
-	if ($oldversion < 2003092500) {
+    if ($oldversion < 2003092500) {
         table_column("workshop", "", "overallocation", "INTEGER", "4", "unsigned", "0", "not null", "nsassesments");
-	}
+    }
 
     if ($oldversion < 2003100200) {
-	
+    
         table_column("workshop_assesments", "", "resubmission", "INTEGER", "4", "unsigned", "0", "not null", "mailed");
-	}
-		
+    }
+        
     if ($oldversion < 2003100800) {
         // tidy up log_display entries
         execute_sql("DELETE FROM {$CFG->prefix}log_display WHERE module = 'workshop'");
@@ -76,8 +76,8 @@ function workshop_upgrade($oldversion) {
     }
 
     if ($oldversion < 2004081100) {
-		table_column("workshop", "", "gradinggrade", "INTEGER", "4", "UNSIGNED", "0", "NOT NULL", "grade");
-		table_column("workshop", "", "assessmentcomps", "INTEGER", "4", "UNSIGNED", "2", "NOT NULL", "ntassessments");
+        table_column("workshop", "", "gradinggrade", "INTEGER", "4", "UNSIGNED", "0", "NOT NULL", "grade");
+        table_column("workshop", "", "assessmentcomps", "INTEGER", "4", "UNSIGNED", "2", "NOT NULL", "ntassessments");
         execute_sql("ALTER TABLE {$CFG->prefix}workshop DROP COLUMN gradingweight");
         execute_sql("ALTER TABLE {$CFG->prefix}workshop DROP COLUMN mergegrades");
         execute_sql("ALTER TABLE {$CFG->prefix}workshop DROP COLUMN peerweight");
@@ -89,18 +89,18 @@ function workshop_upgrade($oldversion) {
     }
 
     if ($oldversion < 2004092400) {
-		table_column("workshop", "", "nattachments", "INTEGER", "4", "UNSIGNED", "0", "NOT NULL", "nelements");
-		table_column("workshop_submissions", "", "description", "TEXT", "", "", "", "", "mailed");
+        table_column("workshop", "", "nattachments", "INTEGER", "4", "UNSIGNED", "0", "NOT NULL", "nelements");
+        table_column("workshop_submissions", "", "description", "TEXT", "", "", "", "", "mailed");
         execute_sql("CREATE INDEX {$CFG->prefix}workshop_submissions_userid_idx ON {$CFG->prefix}workshop_submissions (userid)");
         execute_sql("CREATE INDEX {$CFG->prefix}workshop_assessments_submissionid_idx ON {$CFG->prefix}workshop_assessments (submissionid)");
         execute_sql("CREATE INDEX {$CFG->prefix}workshop_assessments_userid_idx ON {$CFG->prefix}workshop_assessments (userid)");
     }
 
     if ($oldversion < 2004092700) {
-		table_column("workshop", "", "wtype", "INTEGER", "4", "UNSIGNED", "0", "NOT NULL", "description");
-		table_column("workshop", "", "usepassword", "INTEGER", "4", "UNSIGNED", "0", "NOT NULL");
-		table_column("workshop", "", "password", "VARCHAR", "32", "", "", "NOT NULL");
-		table_column("workshop_submissions", "", "late", "INTEGER", "4", "UNSIGNED", "0", "NOT NULL");
+        table_column("workshop", "", "wtype", "INTEGER", "4", "UNSIGNED", "0", "NOT NULL", "description");
+        table_column("workshop", "", "usepassword", "INTEGER", "4", "UNSIGNED", "0", "NOT NULL");
+        table_column("workshop", "", "password", "VARCHAR", "32", "", "", "NOT NULL");
+        table_column("workshop_submissions", "", "late", "INTEGER", "4", "UNSIGNED", "0", "NOT NULL");
 
         // update wkey value
         if ($workshops = get_records("workshop")) {
@@ -114,21 +114,21 @@ function workshop_upgrade($oldversion) {
     }
 
     if ($oldversion < 2004102800) {
-		table_column("workshop", "", "releasegrades", "INTEGER", "10", "UNSIGNED", "0", "NOT NULL", "deadline");
-		execute_sql("
+        table_column("workshop", "", "releasegrades", "INTEGER", "10", "UNSIGNED", "0", "NOT NULL", "deadline");
+        execute_sql("
         CREATE TABLE {$CFG->prefix}workshop_stockcomments (
           id SERIAL PRIMARY KEY,
-		  workshopid INT8 NOT NULL default '0', 
+          workshopid INT8 NOT NULL default '0', 
           elementno INT8 NOT NULL default '0',
           comments text NOT NULL
         ) 
         ");
-	}
+    }
 
     if ($oldversion < 2004111000) {
-		table_column("workshop_elements", "", "stddev", "FLOAT", "", "", "0", "NOT NULL");
-		table_column("workshop_elements", "", "totalassessments", "INTEGER", "10", "", "0", "NOT NULL");
-		table_column("workshop_elements", "weight", "weight", "INTEGER", "4", "UNSIGNED", "11",  "NOT NULL");
+        table_column("workshop_elements", "", "stddev", "FLOAT", "", "", "0", "NOT NULL");
+        table_column("workshop_elements", "", "totalassessments", "INTEGER", "10", "", "0", "NOT NULL");
+        table_column("workshop_elements", "weight", "weight", "INTEGER", "4", "UNSIGNED", "11",  "NOT NULL");
         table_column("workshop_submissions", "", "nassessments", "INTEGER", "10", "", "0", "NOT NULL");
         execute_sql("ALTER TABLE {$CFG->prefix}workshop_submissions DROP COLUMN teachergrade");
         execute_sql("ALTER TABLE {$CFG->prefix}workshop_submissions DROP COLUMN peergrade");
@@ -168,6 +168,26 @@ function workshop_upgrade($oldversion) {
         modify_database('','CREATE INDEX prefix_workshop_submissions_workshopid_idx ON prefix_workshop_submissions (workshopid);');
         modify_database('','CREATE INDEX prefix_workshop_submissions_userid_idx ON prefix_workshop_submissions (userid);');
         modify_database('','CREATE INDEX prefix_workshop_submissions_mailed_idx ON prefix_workshop_submissions (mailed);');
+    }
+
+    if ($oldversion < 2004120402) {
+        table_column('workshop', '', 'submissionstart', 'INTEGER', '10', 'UNSIGNED', '0', 'NOT NULL', 'maxbytes');
+        table_column('workshop', '', 'assessmentstart', 'INTEGER', '10', 'UNSIGNED', '0', 'NOT NULL', 'submissionstart');
+        table_column('workshop', 'deadline', 'submissionend', 'INTEGER', '10', 'UNSIGNED', '0', 'NOT NULL', 'assessmentstart');
+        table_column('workshop', '', 'assessmentend', 'INTEGER', '10', 'UNSIGNED', '0', 'NOT NULL', 'submissionend');
+        
+        $workshops = get_records('workshop');
+        foreach ($workshops as $workshop) {
+            $early = (time() < $workshop->submissionend) ? 0 : $workshop->submissionend;
+            $late = (time() > $workshop->submissionend) ? 0 : $workshop->submissionend;
+            set_field('workshop', 'submissionstart', ($workshop->phase > 1) ? $early : $late, 'id', $workshop->id);
+            set_field('workshop', 'assessmentstart', ($workshop->phase > 2) ? $early : $late, 'id', $workshop->id);
+            set_field('workshop', 'submissionend', ($workshop->phase > 3) ? $early : $late, 'id', $workshop->id);
+            set_field('workshop', 'assessmentend', ($workshop->phase > 4) ? $early : $late, 'id', $workshop->id);
+        }
+        execute_sql('ALTER TABLE  '. $CFG->prefix .'workshop DROP COLUMN phase');
+        
+        execute_sql("UPDATE {$CFG->prefix}event SET eventtype = 'submissionend' WHERE eventtype = 'deadline' AND modulename = 'workshop'", false);
     }
 
     return true;

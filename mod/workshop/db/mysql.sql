@@ -19,7 +19,10 @@ CREATE TABLE `prefix_workshop` (
   `anonymous` tinyint(2) unsigned NOT NULL default '0',
   `includeself` tinyint(2) unsigned NOT NULL default '0',
   `maxbytes` int(10) unsigned NOT NULL default '100000',
-  `deadline` int(10) unsigned NOT NULL default '0',
+  `submissionstart` int(10) unsigned NOT NULL default '0',
+  `assessmentstart` int(10) unsigned NOT NULL default '0',
+  `submissionend` int(10) unsigned NOT NULL default '0',
+  `assessmentend` int(10) unsigned NOT NULL default '0',
   `releasegrades` int(10) unsigned NOT NULL default '0',
   `grade` tinyint(3) NOT NULL default '0',
   `gradinggrade` tinyint(3) NOT NULL default '0',
@@ -182,4 +185,3 @@ INSERT INTO `prefix_log_display` VALUES ('workshop', 'set up', 'workshop', 'name
 INSERT INTO `prefix_log_display` VALUES ('workshop', 'submissions', 'workshop', 'name');
 INSERT INTO `prefix_log_display` VALUES ('workshop', 'view', 'workshop', 'name');
 INSERT INTO `prefix_log_display` VALUES ('workshop', 'update', 'workshop', 'name');
-

@@ -1,5 +1,5 @@
 <?php
-	require("$CFG->dirroot/mod/workshop/lib.php");  // for parameter arrays
+    require_once("$CFG->dirroot/mod/workshop/lib.php");  // for parameter arrays
     // ...and fill the form if needed
     if (empty($form->name)) {
         $form->name = "";
@@ -17,8 +17,8 @@
         $form->grade = 100;
     }
     if (!isset($form->gradingstrategy)) {
-	   $form->gradingstrategy = 1;  // default is accumulative
-	}
+       $form->gradingstrategy = 1;  // default is accumulative
+    }
     if (!isset($form->nelements)) {
         $form->nelements = 1;
     }
@@ -64,8 +64,20 @@
     if (empty($form->maxbytes)) {
         $form->maxbytes = "";
     }
-    if (empty($form->deadline)) {
-        $form->deadline = "";
+    if (empty($form->submissionstart)) {
+        $form->submissionstart = time();
+    }
+    if (empty($form->assessmentstart)) {
+        $form->assessmentstart = time();
+    }
+    if (empty($form->submissionend)) {
+        $form->submissionend = time();
+    }
+    if (empty($form->assessmentend)) {
+        $form->assessmentend = time();
+    }
+    if (empty($form->releasegrades)) {
+        $form->releasegrades = time();
     }
 ?>
 
@@ -143,7 +155,7 @@
     <td align="right"><b><?php  print_string("gradingstrategy", "workshop") ?>:</b></td>
     <td>
     <?php
-	   choose_from_menu($WORKSHOP_TYPE, "gradingstrategy", $form->gradingstrategy, "");
+       choose_from_menu($WORKSHOP_TYPE, "gradingstrategy", $form->gradingstrategy, "");
        helpbutton("gradingstrategy", get_string("gradingstrategy", "workshop"), "workshop");
     ?>
     </td>
@@ -190,14 +202,14 @@
 <tr valign="top">
     <td align="right"><b><?php  print_string("numberofassessmentsofteachersexamples", "workshop") ?>:</b></td>
     <td>
-		<?php
+        <?php
         unset($numbers);
-		for ($i=20; $i>=0; $i--) {
-			$numbers[$i] = $i;
-		}
-		choose_from_menu($numbers, "ntassessments", $form->ntassessments, "");
+        for ($i=20; $i>=0; $i--) {
+            $numbers[$i] = $i;
+        }
+        choose_from_menu($numbers, "ntassessments", $form->ntassessments, "");
        helpbutton("nassessmentsofteachersexamples", get_string("numberofassessmentsofteachersexamples", "workshop"), "workshop");
-		?>
+        ?>
     </td>
 </tr>
 
@@ -205,10 +217,10 @@
     <td align="right"><b><?php print_string("comparisonofassessments", "workshop") ?>:</b></td>
     <td>
         <?php
-		// set up comparison names
+        // set up comparison names
         foreach ($WORKSHOP_ASSESSMENT_COMPS as $KEY => $COMPARISON) {
             $COMPARISONS[] = $COMPARISON['name'];
-		}
+        }
         choose_from_menu($COMPARISONS, "assessmentcomps", $form->assessmentcomps, "");
         helpbutton("comparisonofassessments", get_string("comparisonofassessments", "workshop"), "workshop");
     ?>
@@ -218,28 +230,28 @@
 <tr valign="top">
     <td align="right"><b><?php  print_string("numberofassessmentsofstudentsubmissions", "workshop") ?>:</b></td>
     <td>
-		<?php
+        <?php
         unset($numbers);
-		for ($i=20; $i>=0; $i--) {
-			$numbers[$i] = $i;
-		}
-		choose_from_menu($numbers, "nsassessments", $form->nsassessments, "");
+        for ($i=20; $i>=0; $i--) {
+            $numbers[$i] = $i;
+        }
+        choose_from_menu($numbers, "nsassessments", $form->nsassessments, "");
        helpbutton("nassessmentsofstudentsubmissions", get_string("numberofassessmentsofstudentsubmissions", "workshop"), "workshop");
-		?>
+        ?>
     </td>
 </tr>
 
 <tr valign="top">
     <td align="right"><b><?php  print_string("weightforteacherassessments", "workshop") ?>:</b></td>
     <td>
-		<?php
+        <?php
         unset($numbers);
-		for ($i=10; $i>=0; $i--) {
-			$numbers[$i] = $i;
-		}
-		choose_from_menu($numbers, "teacherweight", $form->teacherweight, "");
+        for ($i=10; $i>=0; $i--) {
+            $numbers[$i] = $i;
+        }
+        choose_from_menu($numbers, "teacherweight", $form->teacherweight, "");
        helpbutton("teacherweight", get_string("weightforteacherassessments", "workshop"), "workshop");
-		?>
+        ?>
     </td>
 </tr>
 
@@ -319,7 +331,7 @@
     <td>
     <?php 
         $options[0] = get_string("no"); $options[1] = get_string("yes");
-		choose_from_menu($options, "usepassword", $form->usepassword, "");
+        choose_from_menu($options, "usepassword", $form->usepassword, "");
         helpbutton("usepassword", get_string("usepassword", "workshop"), "workshop");
     ?>
     </td>
@@ -329,7 +341,7 @@
     <td align="right"><b><?php  print_string("password"); ?>:</b></td>
     <td>
         <input type="text" name="password" size="10" value="" alt="<?php  print_string("password"); ?>" /> <?php echo " (".get_string("leavetokeep").")"; ?>
-		<?php helpbutton("password", get_string("password"), "workshop"); ?>
+        <?php helpbutton("password", get_string("password"), "workshop"); ?>
     </td>
 </tr>
 
@@ -360,14 +372,44 @@
 </tr>
 
 <tr valign="top">
-    <td align="right"><b><?php  print_string("deadline", "workshop") ?>:</b></td>
+    <td align="right"><b><?php  print_string("submissionstart", "workshop") ?>:</b></td>
     <td><?php
-           print_date_selector("deadlineday", "deadlinemonth", "deadlineyear", $form->deadline);
-           echo "&nbsp;-&nbsp;";
-           print_time_selector("deadlinehour", "deadlineminute", $form->deadline);
+            print_date_selector("submissionstartday", "submissionstartmonth", "submissionstartyear", $form->submissionstart);
+            echo "&nbsp;-&nbsp;";
+            print_time_selector("submissionstarthour", "submissionstartminute", $form->submissionstart);
+            helpbutton("submissionstart", get_string("submissionstart", "workshop"), "workshop");
     ?></td>
 </tr>
 
+<tr valign="top">
+    <td align="right"><b><?php  print_string("assessmentstart", "workshop") ?>:</b></td>
+    <td><?php
+            print_date_selector("assessmentstartday", "assessmentstartmonth", "assessmentstartyear", $form->assessmentstart);
+            echo "&nbsp;-&nbsp;";
+            print_time_selector("assessmentstarthour", "assessmentstartminute", $form->assessmentstart);
+            helpbutton("assessmentstart", get_string("assessmentstart", "workshop"), "workshop");
+    ?></td>
+</tr>
+
+<tr valign="top">
+    <td align="right"><b><?php  print_string("submissionend", "workshop") ?>:</b></td>
+    <td><?php
+            print_date_selector("submissionendday", "submissionendmonth", "submissionendyear", $form->submissionend);
+            echo "&nbsp;-&nbsp;";
+            print_time_selector("submissionendhour", "submissionendminute", $form->submissionend);
+            helpbutton("submissionend", get_string("submissionend", "workshop"), "workshop");
+    ?></td>
+</tr>
+
+<tr valign="top">
+    <td align="right"><b><?php  print_string("assessmentend", "workshop") ?>:</b></td>
+    <td><?php
+            print_date_selector("assessmentendday", "assessmentendmonth", "assessmentendyear", $form->assessmentend);
+            echo "&nbsp;-&nbsp;";
+            print_time_selector("assessmentendhour", "assessmentendminute", $form->assessmentend);
+            helpbutton("assessmentend", get_string("assessmentend", "workshop"), "workshop");
+    ?></td>
+</tr>
 <tr valign="top">
     <td align="right"><b><?php  print_string("releaseteachergrades", "workshop") ?>:</b></td>
     <td><?php

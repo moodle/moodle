@@ -22,6 +22,8 @@ $string['assessedon'] = 'Assessed on $a';
 $string['assessment'] = 'Assessment';
 $string['assessmentby'] = 'Assessment by $a';
 $string['assessmentdropped'] = 'Assessment Dropped';
+$string['assessmentend'] = 'End of assessments';
+$string['assessmentendevent'] = 'End of assessments for $a';
 $string['assessmentgrade'] = 'Assessment Grade: $a';
 $string['assessmentnotyetagreed'] = 'Assessment not yet agreed';
 $string['assessmentnotyetgraded'] = 'Assessment not yet graded';
@@ -33,6 +35,8 @@ $string['assessmentsby'] = 'Assessments by $a';
 $string['assessmentsdone'] = 'Assessments Done';
 $string['assessmentsexcluded'] = 'Number of Assessments excluded for this $a';
 $string['assessmentsmustbeagreed'] = 'Assessments must be agreed';
+$string['assessmentstart'] = 'Start of assessments';
+$string['assessmentstartevent'] = 'Start of assessments for $a';
 $string['assessmentwasagreedon'] = 'Assessment was agreed on $a';
 $string['assessor'] = 'Assessor';
 $string['assessthissubmission'] = 'Assess this submission';
@@ -54,8 +58,9 @@ $string['confirmdeletionofthisitem'] = 'Confirm Deletion of this $a';
 $string['correct'] = 'Correct';
 $string['count'] = 'Count';
 $string['criterion'] = 'Criterion';
-$string['deadline'] = 'Deadline';
-$string['deadlineis'] = 'The Deadline is $a';
+$string['currentphase'] = 'Current phase';
+$string['deadline'] = 'Deadline for submission';
+$string['deadlineis'] = 'The Deadline for submission is $a';
 $string['delete'] = 'Delete';
 $string['deleting'] = 'Deleting';
 $string['description'] = 'Description';
@@ -102,6 +107,8 @@ $string['hidegradesbeforeagreement'] = 'Hide Grades before Agreement';
 $string['hidenamesfromstudents'] = 'Hide Names from $a';
 $string['includeteachersgrade'] = 'Include Teacher\'s Grade';
 $string['incorrect'] = 'Incorrect';
+$string['info'] = 'Info';
+$string['invaliddates'] = 'The dates you have entered are not possible.<br />Use the browser\'s Back button to return to the form and correct the dates.';
 $string['iteration'] = 'Iteration $a completed';
 $string['lax'] = "Lax";
 $string['leaguetable'] = 'League Table of Submitted Work';
@@ -137,14 +144,15 @@ $string['noassessmentsdone'] = 'No Assessments Done';
 $string['noattachments'] = 'No Attachments';
 $string['nosubmission'] = 'No Submission';
 $string['nosubmissionsavailableforassessment'] = 'No Submissions available for assessment';
+$string['notallowed'] = 'You are not allowed on this page at this time';
 $string['notavailable'] = 'Not Available';
 $string['notenoughexamplessubmitted'] = 'Not enough Examples submitted.';
 $string['noteonassessmentelements'] = 'Note that grading is broken down into a number of \'Assessment Elements\'.<br />
-	This makes the grading easier and more consistent. As teacher you must add these <br />
-	Elements before making the assignment available to students. This is done by<br />
-	clicking on the assignment in the course, if no elements are present you will be asked<br />
-	to add them. You can change the number of elements using the Edit Assignment screen,<br />
-	the elements themselves can be amended from the &quot;Managing Assessment&quot; screen. ';
+    This makes the grading easier and more consistent. As teacher you must add these <br />
+    Elements before making the assignment available to students. This is done by<br />
+    clicking on the assignment in the course, if no elements are present you will be asked<br />
+    to add them. You can change the number of elements using the Edit Assignment screen,<br />
+    the elements themselves can be amended from the &quot;Managing Assessment&quot; screen. ';
 $string['noteonstudentassessments'] = '{Grade from Student / Grading Grade for Assessment}';
 $string['notgraded'] = 'Not Graded';
 $string['notitle'] = 'No Title';
@@ -173,6 +181,8 @@ $string['ownwork'] = 'Own Work';
 $string['passwordprotectedworkshop'] = "Password Protected Workshop";
 $string['percentageofassessments'] = 'Percentage of Assessments to Drop';
 $string['phase'] = 'Phase';
+$string['phase0'] = 'Inactive';
+$string['phase0short'] = 'Inactive';
 $string['phase1'] = 'Set Up Assignment';
 $string['phase1short'] = 'Set Up';
 $string['phase2'] = 'Allow $a Submissions';
@@ -228,8 +238,12 @@ $string['studentgrades'] = '$a Grades';
 $string['studentsubmissions'] = '$a Submissions';
 $string['studentsubmissionsforassessment'] = '$a Student Submissions for Assessment';
 $string['submission'] = 'Submission';
+$string['submissionend'] = 'End of submissions';
+$string['submissionendevent'] = 'End of submissions for $a';
 $string['submissions'] = 'Submissions';
 $string['submissionsnolongerallowed'] = 'Submissions no longer allowed';
+$string['submissionstart'] = 'Start of submissions';
+$string['submissionstartevent'] = 'Start of submissions for $a';
 $string['submissionsused'] = '$a Submissions used in this table';
 $string['submitassignment'] = 'Submit Assignment';
 $string['submitassignmentusingform'] = 'Submit your Assignment using this Form';

@@ -68,7 +68,10 @@
             $workshop->anonymous = backup_todb($info['MOD']['#']['ANONYMOUS']['0']['#']);
             $workshop->includeself = backup_todb($info['MOD']['#']['INCLUDESELF']['0']['#']);
             $workshop->maxbytes = backup_todb($info['MOD']['#']['MAXBYTES']['0']['#']);
-            $workshop->deadline = backup_todb($info['MOD']['#']['DEADLINE']['0']['#']);
+            $workshop->submissionstart = backup_todb($info['MOD']['#']['SUBMISSIONSTART']['0']['#']);
+            $workshop->assessmentstart = backup_todb($info['MOD']['#']['ASSESSMENTSTART']['0']['#']);
+            $workshop->submissionend = backup_todb($info['MOD']['#']['SUBMISSIONEND']['0']['#']);
+            $workshop->assessmentend = backup_todb($info['MOD']['#']['ASSESSMENTEND']['0']['#']);
             $workshop->releasegrades = backup_todb($info['MOD']['#']['RELEASEGRADES']['0']['#']);
             $workshop->grade = backup_todb($info['MOD']['#']['GRADE']['0']['#']);
             $workshop->gradinggrade = backup_todb($info['MOD']['#']['GRADINGGRADE']['0']['#']);
