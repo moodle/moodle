@@ -484,6 +484,7 @@ $string['opentoguests'] = "Guest access";
 $string['optional'] = "optional";
 $string['order'] = "Order";
 $string['outline'] = "Outline";
+$string['parentlanguage'] = "en";
 $string['participants'] = "Participants";
 $string['password'] = "Password";
 $string['passwordchanged'] = "Password has been changed";
