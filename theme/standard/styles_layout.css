@@ -448,10 +448,15 @@ td.cal_event_description {
     padding:10px;
 }
 
+#block_quiz_results {
+    text-align: center;
+}
+
 #block_quiz_results table.grades {
     width: 100%;
     border-spacing: 0px;
     border-collapse: collapse;
+    text-align: left;
 }
 
 #block_quiz_results h1 {
@@ -465,5 +470,6 @@ td.cal_event_description {
     text-align: center;
     font-weight: bold;
     font-size: 1em;
-    margin: 0px;
+    margin: 1em 0px 0px 0px;
+    border-bottom: 1px solid;
 }
