@@ -473,6 +473,7 @@ $string['groupadd'] = 'Ajouter un nouveau groupe';
 $string['groupaddusers'] = 'Ajouter les utilisateurs sélectionnés au groupe';
 $string['groupfor'] = 'pour le groupe';
 $string['groupinfo'] = 'Information sur le groupe sélectionné';
+$string['groupinfoedit'] = 'Modifier les réglages du groupe';
 $string['groupinfomembers'] = 'Information sur les membres sélectionnés';
 $string['groupinfopeople'] = 'Information sur les personnes sélectionnées';
 $string['groupmembers'] = 'Membres du groupe';
