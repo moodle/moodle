@@ -75,5 +75,8 @@ $string['validationtype'] = 'Ce réglage détermine la librairie DOMXML utilisée p
 $string['validateascorm'] = 'Valider un paquet SCORM';
 $string['versionwarning'] = 'La version du fichier « manifest » est antérieure à 1.3, avertissement à la balise $a->tag';
 $string['viewallreports'] = 'Afficher les rapports des $a tentatives';
+$string['display'] = 'Affichage';
+$string['expcoll'] = 'Développer/Minimiser';
+$string['exit'] = 'Sortir du cours SCORM';
 
 ?>
