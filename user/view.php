@@ -3,12 +3,11 @@
 //  Display profile for a particular user
 
     require_once("../config.php");
-    require_once("../mod/forum/lib.php");
 
-    optional_variable($id);
-    optional_variable($course);
-    optional_variable($enable, "");
-    optional_variable($disable, "");
+    $id      = optional_param('id',     0,      PARAM_INT);   // user id
+    $course  = optional_param('course', SITEID, PARAM_INT);   // course id (defaults to Site)
+    $enable  = optional_param('enable', '');                  // enable email
+    $disable = optional_param('disable', '');                 // disable email
 
     if (!empty($SESSION->wantsurl)) {
         $wantsurl = $SESSION->wantsurl;
@@ -19,10 +18,6 @@
     if (empty($id)) {         // See your own profile by default
         require_login();
         $id = $USER->id;
-    }
-
-    if (empty($course)) {     // See it at site level by default
-        $course = SITEID;
     }
 
     if (! $user = get_record("user", "id", $id) ) {
