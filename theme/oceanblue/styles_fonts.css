@@ -40,7 +40,7 @@ body, td, th, li {
 }
 
 th {
-    font-weight: bold;
+    font-weight: normal;
 }
 
 a:link,
@@ -77,7 +77,7 @@ h4 {
 }
 
 .bold {
-    font-weight:normal;
+    font-weight:bold;
 }
 
 .sideblock .content h3,
@@ -123,17 +123,17 @@ h4 {
 /* many places */
 
 .errorbox .title {
-    font-weight: bold;
+    font-weight: normal;
     font-size: 1.2em;
     text-align: center;
 }
 
 /* paging bar */
 .pagingbar .title {
-    font-weight: bold;
+    font-weight: normal;
 }
 .pagingbar .thispage {
-    font-weight: bold;
+    font-weight: normal;
 }
 
 /*****************************
@@ -180,7 +180,7 @@ table.formtable tbody th {
 
 /* user */
 .userinfobox .username {
-    font-weight: bold;
+    font-weight: normal;
 }
 
 .userinfobox .links {
@@ -220,7 +220,7 @@ table.formtable tbody th {
 
 
 .forumpost .topic .subject {
-    font-weight: bold;
+    font-weight: normal;
 }
 
 .forumpost .topic .author {
@@ -294,7 +294,7 @@ body#mod-quiz-report .controls {
     font-style: italic;
 }
 .concept {
-    font-weight: bold;
+    font-weight: normal;
 }
 .glossarycomment .time {
     font-size: 0.7em;
@@ -341,7 +341,7 @@ body#mod-quiz-report .controls {
 }
 
 #calendar .maincalendar .day {
-    font-weight: bold;
+    font-weight: normal;
 }
 
 table.minicalendar {
@@ -380,7 +380,7 @@ table.calendar-controls .next {
     text-align: right;
 }
 #calendar .maincalendar .calendar-controls .current {
-    font-weight: bold;
+    font-weight: normal;
 }
 
 /*****************************
@@ -422,12 +422,12 @@ table.calendar-controls .next {
 }
 
 .sideblock.block_quiz_results h1 {
-    font-weight: bold;
+    font-weight: normal;
     font-size: 1.2em;
 }
 
 .sideblock.block_quiz_results table.grades caption {
-    font-weight: bold;
+    font-weight: normal;
 }
 
 .sideblock.block_quiz_results table.grades .number, .block_quiz_results table.grades .grade {
@@ -461,7 +461,7 @@ body#user-index #longtimenosee {
 /* Messaging */
 
 .message .author {
-    font-weight: bold;
+    font-weight: normal;
 }
 
 .message .time {
@@ -477,11 +477,11 @@ body#user-index #longtimenosee {
 }
 
 .headingblock .title {
-    font-weight: bold;
+    font-weight: normal;
 }
 .headingblock .link {
     font-size: 0.9em;
-    font-weight: bold;
+    font-weight: normal;
 }
 
 .files .file {
@@ -493,5 +493,5 @@ body#user-index #longtimenosee {
 }
 
 .files .folder .size {
-    font-weight: bold;
+    font-weight: normal;
 }
