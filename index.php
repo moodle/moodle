@@ -9,7 +9,8 @@
     }
 
     print_header("$site->fullname", "$site->fullname", "", "",
-                 "<META NAME=\"Description\" CONTENT=\"".stripslashes(strip_tags($site->summary))."\">");
+                 "<META NAME=\"Description\" CONTENT=\"".stripslashes(strip_tags($site->summary))."\">",
+                 true, update_course_icon($site->id));
 
 
 ?>
@@ -43,9 +44,8 @@
       <?
          if (isadmin()) {
              print_simple_box("Admin", $align="CENTER", $width="100%", $color="$THEME->cellheading");
-             echo "<LI><A HREF=\"$CFG->wwwroot/admin/\">Admin Page</A></LI>";
-             echo "<LI>";
-             print_editing_switch($site->id); 
+             echo "<LI><A HREF=\"$CFG->wwwroot/admin/\">Admin Page...</A></LI>";
+             echo "<LI><A HREF=\"$CFG->wwwroot/admin/site.php\">Site settings...</A></LI>";
          }
       ?>
 
