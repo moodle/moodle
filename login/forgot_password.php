@@ -43,6 +43,10 @@
 			if (!$user = get_user_info_from_db("email", $frm->email)) {
                 error("No such user with this address:  $frm->email");
             }
+
+            if (empty($user->confirmed)) {
+                error(get_string("confirmednot"));
+            }
             
             $user->secret = random_string(15);
             
