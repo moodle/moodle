@@ -1,14 +1,13 @@
-<HEAD>
-    <!-- $Id$ -->
-    <TITLE>Moodle Docs: Table of Contents</TITLE>
-	<LINK REL="stylesheet" HREF="../theme/standard/styles.css" TYPE="TEXT/CSS">
-</HEAD>
+<?PHP  // $Id$
 
-<BODY BGCOLOR="#FFFFFF">
-    <FONT SIZE=2 FACE="san-serif">
-    <P><B>Moodle Documentation</B></P>
-    <LI><A TARGET="main" HREF="intro.html">Introduction</A>
+    require("../config.php");
+
+    print_header();
     
+?>
+
+<FONT SIZE=2 FACE="san-serif">
+<LI><A TARGET="main" HREF="intro.html">Introduction</A>
 <LI><A TARGET="main" HREF="background.html">Background</A> 
 <LI><A TARGET="main" HREF="features.html">Features</A> 
 <LI><A TARGET="main" HREF="release.html">Release Notes</A> 
@@ -20,5 +19,3 @@
 <LI><A TARGET="main" HREF="credits.html">Credits</A> 
 <LI><A TARGET="main" HREF="licence.html">License</A>
 </FONT>
-</BODY>
-

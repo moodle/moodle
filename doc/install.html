@@ -5,7 +5,10 @@
 
 <BODY BGCOLOR="#FFFFFF">
 <H2>Installing Moodle</H2>
-<P>This guide explains how to install Moodle for the first time.</P>
+<P>This guide explains how to install Moodle for the first time.  It goes into some detail
+   about some of the steps, in order to cover the wide variety of small differences between
+   web server setups.  Don't be put off by this - on most servers Moodle can be set up 
+   in a few minutes!</P>
 <P>Sections in this document:</P>
 <OL>
   <LI><A HREF="#requirements">Requirements</A></LI>
@@ -126,18 +129,43 @@
   </blockquote>
   <p>Just make sure index.php is in the list (and preferably towards the start 
     of the list, for efficiency).</p>
-  <p>Secondly, check your PHP configuration file (usually called php.ini) and 
-    make sure uploading has been turned on:</p>
+  <p>Secondly, Moodle requires a number of PHP settings to be active for it to 
+     work.  <B>On most servers these will already be the default settings.</B>
+     However, some PHP servers (and some of the more recent PHP versions) may 
+     have things set differently.  These are defined in PHP's configuration
+     file (usually called php.ini):</p>
   <blockquote>
-    <pre>file_uploads = On</pre>
+<pre>file_uploads = 1
+magic_quotes_gpc = 1
+short_open_tag = 1
+session.auto_start = 0
+</pre>
   </blockquote>
-  <p>Most distributions of PHP have this turned on by default, but you may want 
-    to check it anyway. </p>
-  <p>If you don't have access to httpd.conf or php.ini on your server, another 
-    way you can set both of the above settings (and more) is to put definitions in a 
-    .htaccess file in Moodle's main directory.  This only works on Apache servers 
-    and only when Overrides have been allowed.  A sample .htaccess file 
-    is included with Moodle (called lib/htaccess) that includes further information.
+  <p>If you don't have access to httpd.conf or php.ini on your server, or you 
+     have Moodle on a server with other applications that require different 
+     settings, then you can OVERRIDE all of the default settings.
+     
+  <p>To do this, you need to create a file called <B>.htaccess</B> in Moodle's
+     main directory that contains definitions for these settings.
+     This only works on Apache servers and only when Overrides have been allowed.
+     <BLOCKQUOTE><PRE>
+DirectoryIndex index.php index.html index.htm
+php_value magic_quotes_gpc 1
+php_value file_uploads 1
+php_value short_open_tag 1
+php_value session.auto_start 0</BLOCKQUOTE></PRE>
+     <P>You can also do things like define the maximum size for uploaded files:
+     <BLOCKQUOTE><PRE>
+php_value upload_max_filesize 2M
+php_value post_max_size 2M
+     </BLOCKQUOTE></PRE>
+
+  <p>The easiest thing to do is just copy the sample file from lib/htaccess 
+     and edit it to suit your needs.  It contains further instructions.  For 
+     example, in a Unix shell:
+  <blockquote>
+    <pre>cp lib/htaccess .htaccess</pre>
+  </blockquote>
 
 </blockquote>
 <p>&nbsp;</p>
@@ -157,7 +185,7 @@
 <P>&nbsp;</P>
 <H3><A NAME="admin"></A>8. Go to the admin page</H3>
 <blockquote> 
-  <p>The admin page should now be working at: http://example.com/moodle/admin. 
+  <p>The admin page should now be working at: <u>http://example.com/moodle/admin</u>. 
     If you try and access the front page of your site you'll be taken there automatically 
     anyway. The first time you access this admin page, you will be presented with 
     a GPL agreement with which you need to agree before you can continue with the setup.</p>
