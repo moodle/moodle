@@ -68,11 +68,11 @@
         
         $dataobject->id = $rssid;
         if ($rss === false) {
-            $dataobject->description = addslashes($rss->channel['description']);
-            $dataobject->title = addslashes($rss->channel['title']);
-        } else {
             $dataobject->description = '';
             $dataobject->title = '';
+        } else {
+            $dataobject->description = addslashes($rss->channel['description']);
+            $dataobject->title = addslashes($rss->channel['title']);
         }
         $dataobject->url = addslashes($url);
             
