@@ -1,4 +1,4 @@
-<?
+<?php
 //Moodle wersja polska, Adam Pawelczak, Michal Wozniak, Lukasz Wrona (crow1@interia.pl)
 //Modul assignment.php
 
