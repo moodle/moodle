@@ -267,15 +267,33 @@ function quiz_grades($quizid) {
 
 function quiz_get_participants($quizid) {
 /// Returns an array of users who have data in a given quiz
-/// (users with records in quiz_attempts, students)
+/// (users with records in quiz_attempts and quiz_question_versions)
 
     global $CFG;
 
-    return get_records_sql("SELECT DISTINCT u.id, u.id
-                            FROM {$CFG->prefix}user u,
-                                 {$CFG->prefix}quiz_attempts a
-                            WHERE a.quiz = '$quizid' and
-                                  u.id = a.userid");
+    //Get users from attempts
+    $us_attempts = get_records_sql("SELECT DISTINCT u.id, u.id
+                                    FROM {$CFG->prefix}user u,
+                                         {$CFG->prefix}quiz_attempts a
+                                    WHERE a.quiz = '$quizid' and
+                                          u.id = a.userid");
+
+    //Get users from question_versions
+    $us_versions = get_records_sql("SELECT DISTINCT u.id, u.id
+                                    FROM {$CFG->prefix}user u,
+                                         {$CFG->prefix}quiz_question_version v
+                                    WHERE v.quiz = '$quizid' and
+                                          u.id = v.userid");
+
+    //Add us_versions to us_attempts
+    if ($us_versions) {
+        foreach ($us_versions as $us_version) {
+            $us_attempts[$us_version->id] = $us_version;
+        }
+    }
+    //Return us_attempts array (it contains an array of unique users)
+    return ($us_attempts);
+
 }
 
 function quiz_refresh_events($courseid = 0) {
