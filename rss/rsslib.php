@@ -347,7 +347,9 @@ function rss_get_feed($rssid, $url, $type) {
     
     global $CFG;
     $writetofile = false;
-    $urlfailurestring = 'Failed to open remote feed at: ' . $url .'<br /> allow_url_fopen needs to be On in the php.ini file for this file wrapper call to work. Please refer to <a href="http://us2.php.net/filesystem">http://us2.php.net/filesystem</a>';
+    $errorstring = '';
+
+    $urlfailurestring = '<p>Failed to open remote news feed at: ' . $url .'</p><p>To troubleshoot this problem please ensure that the setting <strong>allow_url_fopen</strong> is <strong>On</strong> in the php.ini. For more details on why this setting is needed for this file wrapper call to work please refer to <a href="http://us2.php.net/filesystem">http://us2.php.net/filesystem</a>';
     $filefailurestring = 'Could not open the file located at: ';
     $secs = $CFG->block_rss_timeout * 60;
 
@@ -367,80 +369,111 @@ function rss_get_feed($rssid, $url, $type) {
     if (file_exists($file)) {
         //check age of cache file
     //      echo "file exists $file"; //debug
-        if ($CFG->debug){
-            $data = stat($file);
-        } else {
-            $data = @stat($file);
-        }
+    
+        //get file information capturing any error information
+        ob_start();
+        $data = stat($file);
+        $errorstring .= ob_get_contents();
+        ob_end_clean();
+
         $now = time();
+        //Note: there would be a problem here reading data[10] if the above stat() call failed
         if (($now - $data[10]) > $secs) {
             // The cached file has expired. Attempt to read fresh from source
             $xml = load_feed_from_url($url);
-            if ($xml) {
+            if (!empty($xml) && !empty($xml->xml) && empty($xml->ERROR)) {
                 //success
                 $writetofile = true;
             } else {
                 // Failed to load remote feed. Since the file exists attempt to read from cache
                 if ($CFG->debug) {
-                    print $urlfailurestring;
+                    if (isset($xml) && isset($xml->ERROR)) {
+                       $errorstring = $xml->ERROR . $errorstring .'<br />';
+                    }
+                    $errorstring = $urlfailurestring .'<br /><br />'. $errorstring .'<br />';
                 }
                 $xml = load_feed_from_file($file);
-                if (!$xml) {
+                if (!empty($xml) && !empty($xml->xml) && empty($xml->ERROR)) {
                     // Failed to load from cache as well!
                     if ($CFG->debug) {
-                        print $filefailurestring . $file;
-                        return;
+                        if (isset($xml) && isset($xml->ERROR)) {
+                           $errorstring = $xml->ERROR . $errorstring;
+                        }
+                        $errorstring = $filefailurestring . $file .'<br /><br />'. $errorstring .'<br />';
+                        $err->ERROR = $errorstring .'<br />';
+                        return $err;
                     }
                 }
             }
         } else {
             // Cached file has not expired. Attempt to read from cached file.
             $xml = load_feed_from_file($file);
-            if (!$xml) {
+            if (!empty($xml) && !empty($xml->xml) && empty($xml->ERROR)) {
                 // Failed to load from cache, attempt to read from source
                 if ($CFG->debug) {
-                    print $filefailurestring . $file;
+                    if (isset($xml) && isset($xml->ERROR)) {
+                       $errorstring = $xml->ERROR . $errorstring .'<br />';
+                    }
+                    $errorstring = $filefailurestring . $file .'<br /><br />'. $errorstring .'<br />';
                 }
                 $xml = load_feed_from_url($url);
-                if ($xml) {
+                if (!empty($xml) && !empty($xml->xml) && empty($xml->ERROR)) {
                     // success
                     $writetofile = true;
                 } else {
                     // Failed to read from source as well!
                     if ($CFG->debug) {
-                        print $urlfailurestring;
+                        if (!empty($xml) && !empty($xml->ERROR)) {
+                           $errorstring = $xml->ERROR . $errorstring;
+                        }
+                        $errorstring = $urlfailurestring .'<br /><br />'. $errorstring .'<br />';
+                        $err->ERROR = $errorstring .'<br />';
+                        return $err;
                     }
                     return;
                 }
             }
         }
     } else { 
-        // No cached fil at all, read from source
+        // No cached file at all, read from source
         $xml = load_feed_from_url($url);
-        if ($xml) {
+        if (!empty($xml) && !empty($xml->xml) && empty($xml->ERROR)) {
             //success
             $writetofile = true;
         } else {
             // Failed to read from source url!
             if ($CFG->debug) {
-                print $urlfailurestring;
+                if (!empty($xml) && !empty($xml->ERROR)) {
+                   $errorstring = $xml->ERROR . $errorstring .'<br />';
+                }
+                $errorstring = $urlfailurestring .'<br /><br />'. $errorstring .'<br />';
+                $err->ERROR = $errorstring .'<br />';
+                return $err;
             }
             return;
         }
     }
     
+    // echo 'DEBUG: feed\'s raw xml was loaded:<br />';//debug
     //print_object($xml); //debug
-    if ($CFG->debug){
-        $xmlstr = implode(' ', $xml);
-    } else {
-        $xmlstr = @implode(' ', $xml);
-    }
+    
+    //implode xml file. in some cases this operation may fail, capture failure info to errorstring.
+    ob_start();
+    $xmlstr = implode(' ', $xml->xml);
+    $errorstring .= ob_get_contents();
+    ob_end_clean();
+    //print_object($xmlstr);
     
     if ( $writetofile && !empty($xmlstr) ) { //write file to cache
         // jlb: adding file:/ to the start of the file name fixed
         // some caching problems that I was experiencing.
         //$file="file:/" + $file;
         file_put_contents($file, $xmlstr);
+    }
+    
+    if (empty($xmlstr) && !empty($errorstring)) {
+        $err->ERROR = 'XML file failed to implode correctly:<br /><br />'. $errorstring .'<br />';
+        return $err;
     }
     
     if ($type == 'A') {
@@ -464,32 +497,47 @@ function rss_get_feed($rssid, $url, $type) {
 
 /**
  * @param string $file The path to the cached feed to load
+ * @return stdObject Object with ->xml string value and ->ERROR string value if applicable.
  */
 function load_feed_from_file($file) {
     global $CFG;
+    $errorstring = '';
 //          echo "read from cache"; //debug
     //read in from cache
-    if ($CFG->debug){
-        $xml = file($file);
-    } else {
-        $xml = @file($file);
+    ob_start();
+    $xml = file($file);
+    $errorstring .= ob_get_contents();
+    ob_end_clean();
+
+    $returnobj->xml = $xml;
+    if (!empty($errorstring)){
+        $returnobj->ERROR = 'XML file failed to load:<br /><br />'. $errorstring .'<br />';
     }
-    return $xml;
+    return $returnobj;
 }
 
 /**
  * @param string $url The url of the remote news feed to load
+ * @return stdObject Object with ->xml string value and ->ERROR string value if applicable.
  */
 function load_feed_from_url($url) {
     global $CFG;
-//          echo "read from original"; //debug
-    //read from source
-    if ($CFG->debug){
-        $xml = file($url);
-    } else {
-        $xml = @file($url);
+//          echo "read from source url"; //debug
+    //read from source url
+    $errorstring = '';
+//          echo "read from cache"; //debug
+    //read in from cache
+    ob_start();
+    $xml = file($url);
+    $errorstring .= ob_get_contents();
+    ob_end_clean();
+
+    $returnobj->xml = $xml;
+    if (!empty($errorstring)){
+        $returnobj->ERROR = 'XML url failed to load:<br />'. $errorstring;
     }
-    return $xml;
+    return $returnobj;
+
 }
 
 /**
