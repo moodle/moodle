@@ -1683,7 +1683,7 @@ function get_courses($categoryid="all", $sort="c.sortorder ASC", $fields="c.*") 
     if (!empty($categoryselect)) {
         $sqland = "AND ";
     }
-    if (!empty($USER)) {  // May need to check they are a teacher
+    if (!empty($USER->id)) {  // May need to check they are a teacher
         if (!iscreator()) {
             $visiblecourses = "$sqland ((c.visible > 0) OR (t.userid = '$USER->id' AND t.course = c.id))";
             $teachertable = ", {$CFG->prefix}user_teachers t";
