@@ -613,25 +613,25 @@ function authenticate_user_login($username, $password) {
     }
 }
 
-
 function enrol_student($userid, $courseid) {
 /// Enrols a student in a given course
-    global $db;
 
     if (!record_exists("user_students", "userid", $userid, "course", $courseid)) {
-        $student->userid = $userid;
-        $student->course = $courseid;
-        $student->start = 0;
-        $student->end = 0;
-        $student->time = time();
-        return insert_record("user_students", $student);
+        if (record_exists("user", "id", $userid)) {
+            $student->userid = $userid;
+            $student->course = $courseid;
+            $student->start = 0;
+            $student->end = 0;
+            $student->time = time();
+            return insert_record("user_students", $student);
+        }
+        return false;
     }
     return true;
 }
 
 function unenrol_student($user, $course=0) {
 /// Unenrols a student from a given course
-    global $db;
 
     if ($course) {
         /// First delete any crucial stuff that might still send mail
@@ -648,30 +648,83 @@ function unenrol_student($user, $course=0) {
     }
 }
 
-function remove_teacher($user, $course=0) {
+function add_teacher($userid, $courseid) {
+/// Add a teacher to a given course
+
+    if (!record_exists("user_teachers", "userid", $userid, "course", $courseid)) {
+        if (record_exists("user", "id", $userid)) {
+            $teacher->userid = $userid;
+            $teacher->course = $courseid;
+            $teacher->editall = 1;
+            $teacher->role = "";
+            if (record_exists("user_teachers", "course", $courseid)) {
+                $teacher->authority = 2;
+            } else {
+                $teacher->authority = 1;
+            }
+            return insert_record("user_teachers", $teacher);
+        }
+        return false;
+    }
+    return true;
+}
+
+function remove_teacher($userid, $courseid=0) {
 /// Removes a teacher from a given course (or ALL courses)
 /// Does not delete the user account
-    global $db;
-
-    if ($course) {
+    if ($courseid) {
         /// First delete any crucial stuff that might still send mail
-        if ($forums = get_records("forum", "course", $course)) {
+        if ($forums = get_records("forum", "course", $courseid)) {
             foreach ($forums as $forum) {
-                delete_records("forum_subscriptions", "forum", $forum->id, "userid", $user);
+                delete_records("forum_subscriptions", "forum", $forum->id, "userid", $userid);
             }
         }
-        return delete_records("user_teachers", "userid", $user, "course", $course);
+        return delete_records("user_teachers", "userid", $userid, "course", $courseid);
     } else {
-        delete_records("forum_subscriptions", "userid", $user);
-        return delete_records("user_teachers", "userid", $user);
+        delete_records("forum_subscriptions", "userid", $userid);
+        return delete_records("user_teachers", "userid", $userid);
     }
 }
 
-function remove_admin($user) {
+
+function add_creator($userid) {
+/// Add a creator to the site
+
+    if (!record_exists("user_admins", "userid", $userid)) {
+        if (record_exists("user", "id", $userid)) {
+            $creator->userid = $userid;
+            return insert_record("user_coursecreators", $creator);
+        }
+        return false;
+    }
+    return true;
+}
+
+function remove_creator($userid) {
+/// Removes a creator from a site
+    global $db;
+
+    return delete_records("user_coursecreators", "userid", $userid);
+}
+
+function add_admin($userid) {
+/// Add an admin to the site
+
+    if (!record_exists("user_admins", "userid", $userid)) {
+        if (record_exists("user", "id", $userid)) {
+            $admin->userid = $userid;
+            return insert_record("user_admins", $admin);
+        }
+        return false;
+    }
+    return true;
+}
+
+function remove_admin($userid) {
 /// Removes an admin from a site
     global $db;
 
-    return delete_records("user_admins", "userid", $user);
+    return delete_records("user_admins", "userid", $userid);
 }
 
 

@@ -92,67 +92,24 @@
 		redirect("teacher.php?id=$course->id", get_string("changessaved"));
 	}
 
-
-/// Get all existing teachers for this course.
-    $teachers = get_course_teachers($course->id);
-
-
 /// Add a teacher if one is specified
 
     if (!empty($_GET['add'])) {
-	    if (!isteacher($course->id)){
-		    error("You must be an administrator or teacher to modify this course.");
-        }
-
-        if (! $user = get_record("user", "id", $_GET['add'])) {
-            error("That teacher (id = $add) doesn't exist", "teacher.php?id=$course->id");
-        }
-
-        if (!empty($teachers)) {
-            foreach ($teachers as $tt) {
-                if ($tt->id == $user->id) {
-                    error("That user is already a teacher for this course.", "teacher.php?id=$course->id");
-                }
-            }
-        }
-
-        $teacher->userid   = $user->id;
-        $teacher->course = $course->id;
-        $teacher->editall = 1;
-        if (!empty($teachers)) {
-            $teacher->authority = 2;
-        } else {
-            $teacher->authority = 1;   // First teacher is the main teacher
-        }
-        $teacher->id = insert_record("user_teachers", $teacher);
-        if (empty($teacher->id)) {
+        if (! add_teacher($add, $course->id)) {
             error("Could not add that teacher to this course!");
         }
-        $user->authority = $teacher->authority;
-        $user->editall = $teacher->editall;
-        $teachers[] = $user;
-
     }
 
 /// Remove a teacher if one is specified.
 
     if (!empty($_GET['remove'])) {
-
-        if (!isteacher($course->id)){
-        	error("You must be an administrator or teacher to modify this course.");
-		}
-        if (! $user = get_record("user", "id", $_GET['remove'])) {
-            error("That teacher (id = $remove) doesn't exist", "teacher.php?id=$course->id");
-        }
-        if (!empty($teachers)) {
-            foreach ($teachers as $key => $tt) {
-                if ($tt->id == $user->id) {
-                    remove_teacher($user->id, $course->id);
-                    unset($teachers[$key]);
-                }
-            }
+        if (! remove_teacher($remove, $course->id)) {
+            error("Could not add that teacher to this course!");
         }
     }
+
+/// Display all current teachers for this course.
+    $teachers = get_course_teachers($course->id);
 
     print_heading_with_help("$strexistingteachers $parateachers", "teachers");
 
