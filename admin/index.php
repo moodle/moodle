@@ -355,37 +355,39 @@
     $table->cellspacing = 3;
     $table->width = "90%";
 
-    $configdata  = "<a href=\"config.php\">".get_string("configvariables")."</a> - <font size=-1>".
+    $configdata  = "<a href=\"config.php\">".get_string("configvariables")."</a> - <font size=1>".
                     get_string("adminhelpconfigvariables")."</font><br />";
-    $configdata .= "<a href=\"site.php\">".get_string("sitesettings")."</a> - <font size=-1>".
+    $configdata .= "<a href=\"site.php\">".get_string("sitesettings")."</a> - <font size=1>".
                     get_string("adminhelpsitesettings")."</font><br />";
-    $configdata .= "<a href=\"../theme/index.php\">".get_string("themes")."</a> - <font size=-1>".
+    $configdata .= "<a href=\"../theme/index.php\">".get_string("themes")."</a> - <font size=1>".
                     get_string("adminhelpthemes")."</font><br />";
-    $configdata .= "<a href=\"lang.php\">".get_string("language")."</a> - <font size=-1>".
+    $configdata .= "<a href=\"lang.php\">".get_string("language")."</a> - <font size=1>".
                     get_string("adminhelplanguage")."</font><br />";
-    $configdata .= "<a href=\"modules.php\">".get_string("managemodules")."</a> - <font size=-1>".
+    $configdata .= "<a href=\"modules.php\">".get_string("managemodules")."</a> - <font size=1>".
                     get_string("adminhelpmanagemodules")."</font><br />";
 
     $table->data[] = array("<b><a href=\"configure.php\">".get_string("configuration")."</a></b>", $configdata);
 
 
-    $userdata = "<a href=\"auth.php\">".get_string("authentication")."</a> - <font size=-1>".
+    $userdata = "<a href=\"auth.php\">".get_string("authentication")."</a> - <font size=1>".
                  get_string("adminhelpauthentication")."</font><br />";
 
     if ($CFG->auth == "email" || $CFG->auth == "none" || $CFG->auth == "manual") {
         $userdata .= "<a href=\"$CFG->wwwroot/$CFG->admin/user.php?newuser=true\">".
-                                     get_string("addnewuser")."</a> - <font size=-1>".
+                                     get_string("addnewuser")."</a> - <font size=1>".
                                      get_string("adminhelpaddnewuser")."</font><br />";
     }
-    $userdata .= "<a href=\"user.php\">".get_string("edituser")."</a> - <font size=-1>".
+    $userdata .= "<a href=\"user.php\">".get_string("edituser")."</a> - <font size=1>".
                  get_string("adminhelpedituser")."</font><br />";
-    $userdata .= "<a href=\"admin.php\">".get_string("assignadmins")."</a> - <font size=-1>".
+    $userdata .= "<a href=\"admin.php\">".get_string("assignadmins")."</a> - <font size=1>".
                  get_string("adminhelpassignadmins")."</font><br />";
-    $userdata .= "<a href=\"creators.php\">".get_string("assigncreators")."</a> - <font size=-1>".
+    $userdata .= "<a href=\"creators.php\">".get_string("assigncreators")."</a> - <font size=1>".
                  get_string("adminhelpassigncreators")."</font><br />";
-    $userdata .= "<a href=\"../course/index.php?edit=on\">".get_string("assignteachers")."</a> - <font size=-1>".
+    $userdata .= "<a href=\"../course/index.php?edit=on\">".get_string("assignteachers")."</a> - <font size=1>".
                  get_string("adminhelpassignteachers").
-                 " <img src=\"../pix/t/user.gif\" height=11 width=11>";
+                 " <img src=\"../pix/t/user.gif\" height=11 width=11></font><br />";
+    $userdata .= "<a href=\"../course/index.php?edit=off\">".get_string("assignstudents")."</a> - <font size=1>".
+                 get_string("adminhelpassignstudents");
 
     $table->data[] = array("<b><a href=\"users.php\">".get_string("users")."</a></b>", $userdata);
 

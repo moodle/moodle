@@ -28,6 +28,7 @@ $string['admin'] = "Admin";
 $string['adminhelpaddnewuser'] = "To manually create a new user account";
 $string['adminhelpassignadmins'] = "Admins can do anything and go anywhere in the site";
 $string['adminhelpassigncreators'] = "Creators can create new courses and teach in them";
+$string['adminhelpassignstudents'] = "Admins and teachers can add students within courses";
 $string['adminhelpassignteachers'] = "Select a course then use the icon to add teachers";
 $string['adminhelpauthentication'] = "You can use internal user accounts or external databases";
 $string['adminhelpconfiguration'] = "Configure how the site looks and works";
