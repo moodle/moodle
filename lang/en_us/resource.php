@@ -1,8 +1,10 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.1 development (2003053000)
+      // resource.php - created with Moodle 1.2 development (2003111400)
 
 
 $string['addresource'] = "Add resource";
+$string['chooseafile'] = "Choose or upload a file";
+$string['configframesize'] = "When a web page or an uploaded file is displayed within a frame, this value is the size (in pixels) of the top frame (which contains the navigation).";
 $string['editingaresource'] = "Editing a resource";
 $string['example'] = "Example";
 $string['examplereference'] = "Tobin, K. & Tippins, D (1993) Constructivism as a Referent for Teaching and Learning. In: K. Tobin (Ed) The Practice of Constructivism in Science Education, pp 3-21, Lawrence-Erlbaum, Hillsdale, NJ.";
@@ -13,6 +15,18 @@ $string['htmlfragment'] = "HTML fragment";
 $string['modulename'] = "Resource";
 $string['modulenameplural'] = "Resources";
 $string['neverseen'] = "Never seen";
+$string['newdirectories'] = "Show the directory links";
+$string['newfullscreen'] = "Fill the whole screen";
+$string['newheight'] = "Default window height (in pixels)";
+$string['newlocation'] = "Show the location bar";
+$string['newmenubar'] = "Show the menu bar";
+$string['newresizable'] = "Allow the window to be resized";
+$string['newscrollbars'] = "Allow the window to be scrolled";
+$string['newstatus'] = "Show the status bar";
+$string['newtoolbar'] = "Show the toolbar";
+$string['newwidth'] = "Default window width (in pixels)";
+$string['newwindow'] = "New window";
+$string['newwindowopen'] = "Display this resource in a new popup window";
 $string['note'] = "Note";
 $string['notefile'] = "To upload more files into the course (so they appear in this list) use the 
 <A HREF=\$a >File Manager</A>.";

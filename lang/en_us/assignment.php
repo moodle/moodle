@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.1 development (2003053000)
+      // assignment.php - created with Moodle 1.2 development (2003111400)
 
 
 $string['allowresubmit'] = "Allow resubmitting";
@@ -15,8 +15,10 @@ $string['assignmentmailhtml'] = "\$a->teacher has posted some feedback on your
     You can see it appended to your <a href=\\\"\$a->url\\\">assignment submission</a>.";
 $string['assignmentname'] = "Assignment name";
 $string['assignmenttype'] = "Assignment type";
+$string['configmaxbytes'] = "Default maximum assignment size for all assignments on the site (subject to course limits and other local settings)";
 $string['description'] = "Description";
 $string['duedate'] = "Due date";
+$string['duedateno'] = "No due date";
 $string['early'] = "\$a early";
 $string['failedupdatefeedback'] = "Failed to update submission feedback for user \$a";
 $string['feedback'] = "Feedback";
@@ -27,6 +29,7 @@ $string['maximumsize'] = "Maximum size";
 $string['modulename'] = "Assignment";
 $string['modulenameplural'] = "Assignments";
 $string['newsubmissions'] = "Assignments submitted";
+$string['notgradedyet'] = "Not graded yet";
 $string['notsubmittedyet'] = "Not submitted yet";
 $string['overwritewarning'] = "Warning: uploading again will REPLACE your current submission";
 $string['saveallfeedback'] = "Save all my feedback";

@@ -1,0 +1,76 @@
+<?PHP // $Id$ 
+      // editor.php - created with Moodle 1.2 development (2003111400)
+
+
+$string['about'] = "About this editor";
+$string['absbottom'] = "Absbottom";
+$string['absmiddle'] = "Absmiddle";
+$string['address'] = "Address";
+$string['alignment'] = "Alignment";
+$string['alternatetext'] = "Alternate text";
+$string['baseline'] = "Baseline";
+$string['bold'] = "Bold";
+$string['borderthickness'] = "Border thickness";
+$string['bottom'] = "Bottom";
+$string['browse'] = "Browse";
+$string['cancel'] = "Cancel";
+$string['cellpadding'] = "Cellpadding";
+$string['cellspacing'] = "Cellspacing";
+$string['choosechar'] = "Choose Character";
+$string['chooseicon'] = "Choose an icon to insert";
+$string['close'] = "Close";
+$string['cols'] = "Cols";
+$string['copy'] = "Copy selection";
+$string['createlink'] = "Insert Web Link";
+$string['cut'] = "Cut selection";
+$string['forecolor'] = "Font Color";
+$string['heading'] = "Heading";
+$string['hilitecolor'] = "Background Color";
+$string['horizontal'] = "Horizontal";
+$string['horizontalrule'] = "Horizontal Rule";
+$string['htmlmode'] = "Toggle HTML Source";
+$string['imageurl'] = "Image URL";
+$string['indent'] = "Increase Indent";
+$string['insertchar'] = "Insert Special Character";
+$string['insertimage'] = "Insert Image";
+$string['insertsmile'] = "Insert Smiley";
+$string['inserttable'] = "Insert Table";
+$string['italic'] = "Italic";
+$string['justifycenter'] = "Justify Center";
+$string['justifyfull'] = "Justify Full";
+$string['justifyleft'] = "Justify Left";
+$string['justifyright'] = "Justify Right";
+$string['layout'] = "Layout";
+$string['left'] = "Left";
+$string['middle'] = "Middle";
+$string['normal'] = "Normal";
+$string['notset'] = "Not Set";
+$string['ok'] = "OK";
+$string['orderedlist'] = "Ordered List";
+$string['outdent'] = "Decrease Indent";
+$string['paste'] = "Paste from clipboard";
+$string['path'] = "Path";
+$string['percent'] = "Percent";
+$string['pixels'] = "Pixels";
+$string['popupeditor'] = "Enlarge Editor";
+$string['preformatted'] = "Preformatted";
+$string['preview'] = "Preview";
+$string['redo'] = "Redo your last action";
+$string['right'] = "Right";
+$string['rows'] = "Rows";
+$string['showhelp'] = "Help using editor";
+$string['spacing'] = "Spacing";
+$string['strikethrough'] = "Strikethrough";
+$string['subscript'] = "Subscript";
+$string['superscript'] = "Superscript";
+$string['textindicator'] = "Current style";
+$string['textmode'] = "You are in TEXT MODE.  Use the [<>] button to go back to WYSIWYG MODE.";
+$string['texttop'] = "Texttop";
+$string['top'] = "Top";
+$string['underline'] = "Underline";
+$string['undo'] = "Undo your last action";
+$string['unorderedlist'] = "Bulleted List";
+$string['vertical'] = "Vertical";
+$string['width'] = "Width";
+
+?>
