@@ -549,10 +549,7 @@ function calendar_print_event($event) {
     if (!empty($event->time)) {
         echo '<span style="float:right;" class="cal_event_date">'.$event->time.'</span>';
     } else {
-        if (!isset($strftimetime)) {
-            $strftimetime = get_string('strftimetime');
-        }
-        echo '<span style="float:right;" class="cal_event_date">'.userdate($event->timestart, $strftimetime).'</span>';
+        echo '<span style="float:right;" class="cal_event_date">'.calendar_time_representation($event->timestart).'</span>';
     }
 
     echo "</td></tr>";
