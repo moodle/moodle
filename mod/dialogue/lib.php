@@ -179,6 +179,40 @@ function dialogue_print_recent_activity($course, $isteacher, $timestart) {
 		}
 	}
 
+	// have a look for open conversations
+    $opencontent = false;
+	if ($logs = dialogue_get_open_conversations($course)) {
+		// got some, see if any belong to a visible module
+		foreach ($logs as $log) {
+			// Create a temp valid module structure (only need courseid, moduleid)
+			$tempmod->course = $course->id;
+			$tempmod->id = $log->dialogueid;
+			//Obtain the visible property from the instance
+			if (instance_is_visible("dialogue",$tempmod)) {
+				$opencontent = true;
+				break;
+			}
+		}
+		// if we got some "live" ones then output them
+		if ($opencontent) {
+			$strftimerecent = get_string("strftimerecent");
+			print_headline(get_string("opendialogueentries", "dialogue").":");
+			foreach ($logs as $log) {
+				//Create a temp valid module structure (only need courseid, moduleid)
+				$tempmod->course = $course->id;
+				$tempmod->id = $log->dialogueid;
+				//Obtain the visible property from the instance
+				if (instance_is_visible("dialogue",$tempmod)) {
+					$date = userdate($log->time, $strftimerecent);
+					echo "<p><font size=1>$date - $log->firstname $log->lastname<br />";
+					echo "\"<a href=\"$CFG->wwwroot/mod/dialogue/$log->url\">";
+					echo "$log->name";
+					echo "</a>\"</font></p>";
+				}
+			}
+		}
+	}
+
 	// have a look for closed conversations
 	$closedcontent = false;
     if ($logs = dialogue_get_closed_logs($course, $timestart)) {
@@ -571,6 +605,39 @@ function dialogue_get_add_entry_logs($course, $timestart) {
 
 
 //////////////////////////////////////////////////////////////////////////////////////
+function dialogue_get_open_conversations($course) {
+	// get the conversations which are waiting for a response for this user. 
+    // Add the first and last names of the other participant
+	global $CFG, $USER;
+    if ($conversations = get_records_sql("SELECT d.name dialoguename, c.id, c.dialogueid, c.timemodified, c.lastid
+                            FROM {$CFG->prefix}dialogue d, {$CFG->prefix}dialogue_conversations c
+                            WHERE d.course = $course->id
+                                AND c.dialogueid = d.id
+                                AND (c.userid = $USER->id OR c.recipientid = $USER->id)
+                                AND c.lastid != $USER->id
+                                AND c.closed =0")) {
+        
+         foreach ($conversations as $conversation) {
+            if (!$user = get_record("user", "id", $conversation->lastid)) {
+                error("Get open conversations: user record not found");
+            }
+            if (!$cm = get_coursemodule_from_instance("dialogue", $conversation->dialogueid, $course->id)) {
+                error("Course Module ID was incorrect");
+            }
+            $entry[$conversation->id]->dialogueid = $conversation->dialogueid;
+            $entry[$conversation->id]->time = $conversation->timemodified;
+            $entry[$conversation->id]->url = "view.php?id=$cm->id";
+            $entry[$conversation->id]->firstname = $user->firstname; 
+            $entry[$conversation->id]->lastname = $user->lastname;
+            $entry[$conversation->id]->name = $conversation->dialoguename;
+	    }
+        return $entry;
+    }
+    return;
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////
 function dialogue_get_closed_logs($course, $timestart) {
 	// get the "closed" entries and add the first and last names, we are not interested in the entries 
 	// make by this user (the last condition)!
@@ -657,10 +724,10 @@ function dialogue_list_conversations_other($dialogue) {
 // list the conversations of the current user awaiting response from the other person
     global $THEME, $USER;
 	
-	if (! $course = get_record("course", "id", $dialogue->course)) {
+	if (!$course = get_record("course", "id", $dialogue->course)) {
         error("Course is misconfigured");
     }
-    if (! $cm = get_coursemodule_from_instance("dialogue", $dialogue->id, $course->id)) {
+    if (!$cm = get_coursemodule_from_instance("dialogue", $dialogue->id, $course->id)) {
         error("Course Module ID was incorrect");
     }
 	

@@ -67,8 +67,8 @@
 
         $status = true;
 
-        $dialogue_conversations = get_records("dialogue_conversations","dialogue",$dialogue,"id");
-        //If there is conversationss
+        $dialogue_conversations = get_records("dialogue_conversations","dialogueid",$dialogue,"id");
+        //If there is conversations
         if ($dialogue_conversations) {
             //Write start tag
             $status =fwrite ($bf,start_tag("CONVERSATIONS",4,true));
@@ -108,7 +108,7 @@
 
         $status = true;
 
-        $dialogue_entries = get_records("dialogue_entries","conversationid",$conservationid,"id");
+        $dialogue_entries = get_records("dialogue_entries","conversationid",$conversationid,"id");
         //If there is entries
         if ($dialogue_entries) {
             //Write start tag
@@ -120,9 +120,9 @@
                 //Print dialogue_entries contents
                 fwrite ($bf,full_tag("ID",6,false,$entry->id));
                 fwrite ($bf,full_tag("USERID",6,false,$entry->userid));
-                fwrite ($bf,full_tag("TIMECREATED",6,false,$entry->modified));
-                fwrite ($bf,full_tag("MAILED",6,false,$entry->text));
-                fwrite ($bf,full_tag("TEXT",6,false,$entry->format));
+                fwrite ($bf,full_tag("TIMECREATED",6,false,$entry->timecreated));
+                fwrite ($bf,full_tag("MAILED",6,false,$entry->mailed));
+                fwrite ($bf,full_tag("TEXT",6,false,$entry->text));
                 //End entry
                 $status =fwrite ($bf,end_tag("ENTRY",5,true));
             }
