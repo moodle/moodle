@@ -491,6 +491,14 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
 
     global $CFG, $course; 
 
+    if (!empty($CFG->cachetext)) {
+        $time = time() - $CFG->cachetext;
+        $md5key = md5($text);
+        if ($cacheitem = get_record_select('text_cache', "md5key = '$md5key' AND timemodified > '$time'")) {
+            return $cacheitem->formattedtext;
+        }
+    }
+
     if (empty($courseid)) {
         if (!empty($course->id)) {     // An ugly hack for better compatibility
             $courseid = $course->id;
@@ -500,7 +508,7 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
     switch ($format) {
         case FORMAT_HTML:
             replace_smilies($text);
-            return filter_text($text, $courseid);
+            $text = filter_text($text, $courseid);
             break;
 
         case FORMAT_PLAIN:
@@ -508,12 +516,11 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
             $text = str_replace("  ", "&nbsp; ", $text);
             replace_smilies($text);
             $text = nl2br($text);
-            return $text;
             break;
 
         case FORMAT_WIKI:
             $text = wiki_to_html($text);
-            return filter_text($text, $courseid);
+            $text = filter_text($text, $courseid);
             break;
 
         default:  // FORMAT_MOODLE or anything else
@@ -524,10 +531,18 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
                 $options->para=true;
             }
             $text = text_to_html($text, $options->smiley, $options->para);
-            return filter_text($text, $courseid);
-
+            $text = filter_text($text, $courseid);
             break;
     }
+
+    if (!empty($CFG->cachetext)) {
+        $newrecord->md5key = $md5key;
+        $newrecord->formattedtext = addslashes($text);
+        $newrecord->timemodified = time();
+        insert_record('text_cache', $newrecord);
+    }
+
+    return $text;
 }
 
 function format_text_email($text, $format) {
