@@ -337,7 +337,7 @@ if ($nextstage == 5) {
 
 <html dir="<?php echo (get_string('this_direction') == 'rtl') ? 'rtl' : 'ltr' ?>">
 <head>
-<link rel="shortcut icon" href="http://moodle.dougiamas.net/theme/standard/favicon.ico" />
+<link rel="shortcut icon" href="theme/standard/favicon.ico" />
 <title>Moodle Install</title>
 <meta http-equiv="content-type" content="text/html; charset=<?php print_string('thischarset') ?>" />
 <?php css_styles() ?>
