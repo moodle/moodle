@@ -65,9 +65,10 @@ $CFG->lang     = "en";
 
 
 // Give the full name (eg mail.example.com) of an SMTP server that the 
-// web server machine has access to (to send mail).
+// web server machine has access to (to send mail).  You can specify 
+// more than one server like this: "mail1.example.com;mail2.example.com"
 
-$CFG->smtphost  = "mail.example.com";
+$CFG->smtphosts  = "mail.example.com";
 
 
 // You should not need to change anything else. To continue setting up 
