@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.0.6 dev 2 (2002101701)
+      // moodle.php - created with Moodle 1.0.6 dev 3 (2002102101)
 
 
 $string['action'] = "Aktion";
@@ -47,6 +47,7 @@ $string['chooselogs'] = "Wählen Sie die anzuzeigende Statistik aus";
 $string['choosetheme'] = "Thema auswählen";
 $string['chooseuser'] = "Nutzer auswählen";
 $string['city'] = "Stadt/Ort";
+$string['closewindow'] = "Dieses Fenster schließen";
 $string['comparelanguage'] = "Sprache vergleichen und bearbeiten";
 $string['complete'] = "Fertig";
 $string['configauth'] = "Wählen Sie das Authentisierung Modul, das Sie benutzen möchten. Die Standardeinstellung ist ' email' und bietet die höchste Sicherheit. Die Methode 'keine' ist ohne Überprüfung.
