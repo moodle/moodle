@@ -1180,7 +1180,7 @@ function print_user_picture($userid, $courseid, $picture, $large=false, $returns
 function print_user($user, $course) {
 /// Prints a summary of a user in a nice little box
 
-    global $CFG;
+    global $CFG,$USER;
 
     static $string;
     static $datestring;
