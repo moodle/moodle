@@ -449,7 +449,7 @@ function validate_form(&$form, &$err) {
         if($course === false) {
             error('Event belongs to invalid course');
         }
-        else if($form->timestart < $form->startdate) {
+        else if($form->timestart < $course->startdate) {
             $err['timestart'] = get_string('errorbeforecoursestart', 'calendar');
         }
     }
