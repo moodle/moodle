@@ -61,14 +61,14 @@
     if ($USER->groupediting) {          // Make an editing form for group information
         print_heading($group->name);
         echo '<div align="center">';
-        print_group_picture($group->id, $course->id, $group->picture, true, false, false);
+        print_group_picture($group, $course->id, true, false, false);
         echo '</div>';
         print_simple_box($group->description, 'center', '50%');
 
     } else {                            // Just display the information 
         print_heading($group->name);
         echo '<div align="center">';
-        print_group_picture($group->id, $course->id, $group->picture, true, false, false);
+        print_group_picture($group, $course->id, true, false, false);
         echo '</div>';
         print_simple_box($group->description, 'center', '50%');
     }
