@@ -61,7 +61,7 @@
         return $status;  
     }
 
-    //Backup assignment_submissions contents (executed from backup_assignment)
+    //Backup assignment_submissions contents (executed from assignment_backup_mods)
     function backup_assignment_submissions ($bf,$preferences,$assignment) {
 
         global $CFG;
