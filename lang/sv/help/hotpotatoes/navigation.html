@@ -1,0 +1,39 @@
+<?php
+    require_once("$CFG->dirroot/mod/hotpotatoes/lib.php");
+?>
+<p align="center"><b>Navigation</b></p>
+<p>	Du kan ange olika former av verktyg f&ouml;r navigation i en <? print_string('modulename', 'hotpotatoes') ?>.</p>
+<dl>
+	<dt><b><? echo $hotpotatoes_navigation[navigation_bar] ?></b></dt>
+	<dd>
+		Den navigeringsrad som &auml;r standard i Moodle kommer att visas i samma f&ouml;nster som 
+		testet l&auml;ngst upp p&aring; sidan. <br />
+	</dd>
+	<dt><b><?php echo $hotpotatoes_navigation[navigation_frame] ?></b></dt>
+	<dd>Den navigeringsrad som &auml;r standard i Moodle kommer att visas 
+		i en separat ram l&auml;ngst upp i testet.
+	</dd>
+	<dt><b><?php echo $hotpotatoes_navigation[navigation_iframe] ?></b></dt>
+	<dd>Den navigeringsrad som &auml;r standard i Moodle kommer att visas 
+		i samma f&ouml;nster som testet och testet kommer att vara inb&auml;ddat i en 
+		 &lt;IFRAME&gt;.
+	</dd>
+	<dt><b><?php echo $hotpotatoes_navigation[navigation_buttons] ?></b></dt>
+	<dd>Testet kommer att visas med navigationsknapparna (om det finns n&aring;gra)
+	definierade i testet.		
+	</dd>
+	<dt><b><?php echo $hotpotatoes_navigation[navigation_give_up] ?></b></dt>
+	<dd>Testet kommer att visas med en enskild &quot;Ge upp&quot;-knapp
+		l&auml;ngst upp p&aring; sidan.
+	</dd>
+	<dt><b><?php echo $hotpotatoes_navigation[navigation_none] ?></b></dt>
+	<dd>Testet kommer att visas utan n&aring;gra verktyg f&ouml;r navigation, dvs
+	det kommer inte att finnas n&aring;gon navigationsrad f&ouml;r Moodle eller n&aring;gra 
+	navigationsknappar f&ouml;r Hot Potatoes.
+	<br /><br />
+N&auml;r alla fr&aring;gor i det aktuella testet har besvarats p&aring; ett korrekt s&auml;tt s&aring;
+kommer Moodle antingen att &aring;terg&aring; till kursens hemsida eller visa n&auml;sta test. 
+Detta beror p&aring; hur  &quot;<?php print_string('shownextquiz', 'hotpotatoes') ?>&quot; 
+&auml;r inst&auml;llt f&ouml;r field det aktuella testet.
+	</dd>
+</dl>

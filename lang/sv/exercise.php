@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // exercise.php - created with Moodle 1.4 (2004083100)
+      // exercise.php - created with Moodle 1.4.2+ (2004083126)
 
 
 $string['absent'] = 'Frånvarande';
@@ -151,13 +151,16 @@ $string['submitted'] = 'Inskickad';
 $string['submittedby'] = 'Inskickad av';
 $string['suggestedgrade'] = 'Föreslaget betyg/omdöme';
 $string['teacherassessment'] = '$a  Bedömning/värdering/betygssättning';
-$string['teacherassessmenttable'] = '$a tabell för bedöming/värdering/betygssättning';
+$string['teacherassessmenttable'] = '$a tabell för bedömning/värdering/betygssättning';
 $string['teacherscomment'] = 'Distanslärarens kommentar';
 $string['theexercise'] = 'Övningsuppgiften';
 $string['theexerciseandthesubmissionby'] = 'Övningsuppgift och inskickat bidrag av $a';
 $string['thegradeis'] = 'Betyget/omdömet är $a';
 $string['thereisfeedbackfromthe'] = 'Det finns återkoppling från $a';
+$string['thischarset'] = 'iso-8859-1';
+$string['thisdirection'] = 'ltr';
 $string['thisisaresubmission'] = 'Det här är ett återinskickat bidrag från $a<br />Din bedömning/värdering/betygssättning av deras tidigare inskickade bidrag visas.<br />När Du har tittat på de senast inskickade bidragen var då snäll och rätta/ändra/komplettera den här bedömningen/värderingen/betygssättningen och klicka på någon av knapparna i sidfoten.  ';
+$string['thislanguage'] = 'Swedish';
 $string['title'] = 'Titel';
 $string['typeofscale'] = 'Typ av skala';
 $string['unassessed'] = '$a inte bedömd/värderad/betygssatt';

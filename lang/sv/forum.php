@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.4 (2004083100)
+      // forum.php - created with Moodle 1.4.3 + (2004083131)
 
 
 $string['addanewdiscussion'] = 'Lägg till ett nytt diskussionsämne';
@@ -11,13 +11,17 @@ $string['allowsdiscussions'] = 'Detta forum tillåter var och en att starta ett d
 $string['anyfile'] = 'Vilken fil som helst';
 $string['attachment'] = 'Bilaga';
 $string['bynameondate'] = 'av $a->name - $a->date';
+$string['configcleanreadtime'] = 'Tidpunkten under dagen då gamla inlägg ska rensas från \'läs\'-tabellen.';
 $string['configdisplaymode'] = 'Det förinställda sättet att visa diskussionsämnen, om Du inte har ställt in ett annat.';
 $string['configenablerssfeeds'] = 'Den här omkopplaren aktiverar RSS -inmatning för alla forum. Du måste dock fortfarande koppla på inmatningen manuellt i inställlningarna för varje enskilt forum.';
 $string['configlongpost'] = 'Alla inlägg som överskrider den här längden (förutom HTML) anses vara långa.';
 $string['configmanydiscussions'] = 'Maximalt antal diskussionsämnen som visas per sida i ett forum.';
 $string['configmaxbytes'] = 'Standardval (förinställt värde) för den maximala storleken på bifogade filer på den här webbsajten (det finns även lokala inställningar för t ex varje enskild kurs)';
+$string['configoldpostdays'] = 'Antal dagar då vilket gammalt inlägg som helst ska anses vara läst.';
 $string['configreplytouser'] = 'När ett inlägg i ett forum har skickats som e-post; ska det då innehålla användarens e-postadress så att mottagarna kan svara personligen snarare än via forumet? Även om Du väljer \"Ja\" för denna inställning så kan användaren i sin profil välja att dölja sin e-postadress.';
 $string['configshortpost'] = 'Alla inlägg som överskrider den här längden (förutom HTML) anses vara långa.';
+$string['configtrackreadposts'] = 'Ställ in detta till \'Ja\' om Du vill spåra läst/inte läst för varje användare. ';
+$string['configusermarksread'] = 'Om \'Ja\' så måste användare manuellt markera ett inlägg som läst. Om \'Nej\' så markeras inlägget som läst när det visas. ';
 $string['couldnotadd'] = 'Det gick inte att lägga till Ditt inlägg på grund av okänt fel.';
 $string['couldnotdeleteratings'] = 'Tyvärr, detta kan inte tas bort eftersom folk redan har värderat det.';
 $string['couldnotdeletereplies'] = 'Tyvärr, det kan inte tas bort eftersom folk redan har svarat på det.';
@@ -59,9 +63,12 @@ $string['introsocial'] = 'Ett öppet forum där Du kan diskutera vad Du vill';
 $string['introteacher'] = 'Ett forum endast för distanslärares anteckningar och diskussionsämnen';
 $string['lastpost'] = 'Senaste inlägg';
 $string['learningforums'] = 'Forum för lärande';
+$string['markread'] = 'Markera som läst';
+$string['markunread'] = 'Markera som loäst';
 $string['maxattachmentsize'] = 'Maximal storlek på bifogad fil';
 $string['maxtimehaspassed'] = 'Tyvärr, men maximitiden för att redigera detta inlägg ($a) har passerat!';
 $string['message'] = 'Meddelande';
+$string['missingsearchterms'] = 'De följande söktermerna förekommer bara i HTML-koden för det här meddelandet: ';
 $string['modeflatnewestfirst'] = 'Visa svarslista, med det senaste först';
 $string['modeflatoldestfirst'] = 'Visa svarslista, med det äldsta först';
 $string['modenested'] = 'Visa svar i nästlad form';
@@ -146,6 +153,10 @@ $string['subscribestart'] = 'Skicka e-postkopior av inlägg i detta forum till mi
 $string['subscribestop'] = 'Skicka INTE e-postkopior av inlägg i detta forum  till mig ';
 $string['subscription'] = 'Prenumeration';
 $string['subscriptions'] = 'Prenumerationer';
+$string['unread'] = 'Oläst ';
+$string['unreadposts'] = 'Olästa inlägg';
+$string['unreadpostsnumber'] = '$a olästa inlägg';
+$string['unreadpostsone'] = '1 oläst inlägg';
 $string['unsubscribe'] = 'Avbeställ prenumeration från detta forum';
 $string['unsubscribed'] = 'Avbeställd';
 $string['unsubscribeshort'] = 'Avregistrera prenumeration';

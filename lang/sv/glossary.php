@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.4 (2004083100)
+      // glossary.php - created with Moodle 1.4.3 + (2004083131)
 
 
 $string['addcomment'] = 'Lägg till kommentarer';
@@ -10,6 +10,7 @@ $string['allcategories'] = 'Alla kategorier';
 $string['allentries'] = 'ALLA';
 $string['allowcomments'] = 'Tillåt kommentarer till bidrag';
 $string['allowduplicatedentries'] = 'Det är tillåtet med kopierade bidrag';
+$string['allowprintview'] = 'Tillåt visning av utskrift';
 $string['allowratings'] = 'Tillåt bedömning/värdering av bidrag?';
 $string['answer'] = 'Svar';
 $string['approve'] = 'Godkänn';
@@ -130,6 +131,7 @@ $string['notcategorised'] = 'Inte indelad i kategori';
 $string['numberofentries'] = 'Antal bidrag';
 $string['onebyline'] = '(en per rad)';
 $string['printerfriendly'] = 'Utskriftsvänlig version';
+$string['printviewnotallowed'] = 'Visning av utskrift är inte tillåten.';
 $string['question'] = 'Fråga';
 $string['rate'] = 'Bedöm/värdera';
 $string['rating'] = 'Bedömning/värdering';

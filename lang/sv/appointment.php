@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // appointment.php - created with Moodle 1.4 (2004083100)
+      // appointment.php - created with Moodle 1.4.2+ (2004083126)
 
 
 $string['allowresubmit'] = 'Låt användare skicka in flera gånger';
@@ -26,6 +26,9 @@ $string['submissionfeedback'] = 'Återkoppling på inskickning';
 $string['submissions'] = 'Inskickningar';
 $string['submitappointment'] = 'Skicka in Din tidsbokning via detta formulär';
 $string['submitted'] = 'Inskickad';
+$string['thischarset'] = 'iso-8859-1';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'svenska';
 $string['timeend'] = 'Slut på tidsbokning';
 $string['timestart'] = 'Början på tidsbokning';
 $string['typeoffline'] = 'Offline aktivitet';

@@ -1,8 +1,8 @@
 <?PHP // $Id$ 
-      // choice.php - created with Moodle 1.3.2 (2004052502)
+      // choice.php - created with Moodle 1.4 (2004083100)
 
 
-$string['allowupdate'] = 'Tillåt uppdatering av opinionsudersökning';
+$string['allowupdate'] = 'Tillåt uppdatering av opinionsundersökning';
 $string['answered'] = 'Besvarade';
 $string['choice'] = 'Svarsalternativ $a';
 $string['choiceclose'] = 'Till';

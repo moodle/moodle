@@ -1,0 +1,100 @@
+<?php
+	$strabandoned = get_string('abandoned', 'hotpotatoes');
+	$strinprogress = get_string('inprogress', 'hotpotatoes');
+?>
+<style type="text/css">
+<!--
+	DD {font-size:0.8em; margin-top:0.5em;}
+-->
+</style>
+<p align="center"><b>Att v&auml;lja en rapport</b></p>
+<p>Du kan ange olika kriterier f&ouml;r att v&auml;lja olika format f&ouml;r output f&ouml;r
+de rapporter som &auml;r m&ouml;jliga i Hot Potatoes.</p>
+<?php
+	if (isadmin()) { // only admins can select a course
+?>
+<dl>
+	<dt><b>Att v&auml;lja en kurs</b></dt>
+
+	<dd><b><?php print_string('thiscourse', 'hotpotatoes') ?></b><br /> 
+	Rapporten kommer att visa responser fr&aring;n deltagare
+	i den aktuella kursen.</dd>
+	<dd><b><?php print_string('allmycourses', 'hotpotatoes') ?></b><br /> 
+		Rapporten kommer att visa responser fr&aring;n deltagare f&ouml;r alla kurser som 
+		anv&auml;nder detta test och och i vilka Du &auml;r (distans)l&auml;rare-
+		F&ouml;r att kunna anv&auml;ndas i ett flertal kurser s&aring; m&aring;ste testet vara
+		placerat i katalogen f&ouml;r Webbplatsens filer.
+		Detta alternativ &auml;r bara tillg&auml;ngligt f&ouml;r weebbplatsens systemadministrat&ouml;r.
+		</dd>
+	</dl>
+<?php
+	}
+?>
+<dl>
+	<dt><b>Att v&auml;lja anv&auml;ndare</b></dt>
+	<dd><b><?php print_string('students', 'hotpotatoes') ?></b><br /> 
+		Rapporten kommer att visa responser endast fr&aring;n studenter/elever/deltagare/l&auml;rande
+		Responser fr&aring;n (distans)l&auml;rare kommer inte att inkluderas i rapporten.
+	</dd>
+
+	<dd><b><?php print_string('studentsandteachers', 'hotpotatoes') ?></b><br /> 			
+		Rapporten kommer att visa responser fr&aring;n studenter/elever/deltagare/l&auml;rande ocgh (distans)l&auml;rare.
+		Responser fr&aring;n &quot;g&auml;st&quot;-anv&auml;ndare, om det finns n&aring;gra, kommer ocks&aring; att inkluderas. 
+	</dd>
+</dl>
+<dl>
+	<dt><b>Att v&auml;lja betyg/omd&ouml;men</b></dt>
+	<dd><b><?php print_string('bestattempt', 'hotpotatoes') ?></b><br /> 
+	Rapporten kommer bara att visa responserna fr&aring;n det b&auml;sta f&ouml;rs&ouml;ket f&ouml;r varje anv&auml;ndare.
+	</dd>
+
+	<dd><b><?php print_string('allattempts', 'hotpotatoes') ?></b><br /> 
+	Rapporten kommer att visa responserna fr&aring;n alla f&ouml;rs&ouml;k f&ouml;r varje anv&auml;ndare.
+	</dd>
+</dl>
+<dl>
+	<dt><b>Att v&auml;lja  ett format f&ouml;r  output</b></dt>
+	<dd><b><?php print_string('reportoverview', 'quiz') ?></b><br /> 	
+		Den h&auml;r rapporten &auml;r en lista &ouml;ver f&ouml;rs&ouml;k p&aring; det h&auml;r testet.
+		&quot;<?php p($strabandoned) ?>&quot; f&ouml;rs&ouml;k &auml;r inkluderade,
+		men &quot;<?php p($strinprogress) ?>&quot; f&ouml;rs&ouml;k visas inte.
+		Den visar bilden, namnet och det b&auml;sta resultatet f&ouml;r varje anv&auml;ndare.
+		och resultatet, tiden och hur l&aring;ng tid varje f&ouml;rs&ouml;k tog.
+		<br /><br />
+		F&ouml;rs&ouml;k kan markeras och d&auml;refter tas bort om Du s&aring; &ouml;nskar.
+		</dd>
+	<dd><b><?php print_string('reportsimplestat', 'quiz') ?></b><br /> 	
+		Den h&auml;r rapporten &auml;r en lista &ouml;ver fullf&ouml;ljda f&ouml;rs&ouml;k p&aring; det h&auml;r testet.
+		
+		F&ouml;rs&ouml;k som &auml;r markerade som &quot;<?php p($strabandoned) ?>&quot; eller 
+		&quot;<?php p($strinprogress) ?>&quot; &auml;r inte inkluderade.
+		Rapporten visar namnet och det b&auml;sta resultatet f&ouml;r varje anv&auml;ndare samt
+		resultatet f&ouml;r varje fr&aring;ga i varje f&ouml;rs&ouml;k.
+		<br /><br />
+		Det visar ocks&aring; medelresultatet p&aring; de enskilda fr&aring;gorna och p&aring; testet som helhet.
+		<br />
+		En detaljerad rapport &ouml;ver f&ouml;rs&ouml;ken kan laddas ner i Excel- eller textformat.
+		
+	</dd>
+	<dd><b><?php print_string('reportfullstat', 'quiz') ?></b><br /> 	
+	    Den h&auml;r rapporten visar alla detaljer ang&aring;ende alla fullf&ouml;ljda f&ouml;rs&ouml;k f&ouml;r det h&auml;r testet.
+		<br /><br />
+
+		F&ouml;rs&ouml;k som &auml;r markerade som  &quot;<?php p($strabandoned) ?>&quot; or 
+		&quot;<?php p($strinprogress) ?>&quot;  &auml;r inte inkluderade.
+		<br /><br />
+		Rapporten inneh&aring;ller f&ouml;ljande tabeller:
+		
+		<ul>
+			<li>
+				 <b>Tabellen &ouml;ver responser</b>, som visar hur varje anv&auml;ndare
+				 gav respons p&aring; varje fr&aring;ga i vart och ett av deras f&ouml;s&ouml;k med testet.
+			</li>
+			<li>
+				<b>Tabellen f&ouml;r analys av komponenter</b>, som listat responserna p&aring; varje fr&auml;ga och 
+				frekvensen f&ouml;r varje response.
+			</li>
+		</ul>
+		En detaljerad rapport &ouml;ver f&ouml;rs&ouml;ken kan laddas ner i Excel- eller textformat..
+	</dd>
+</dl>

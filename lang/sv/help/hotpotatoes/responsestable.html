@@ -1,0 +1,27 @@
+<?php
+	// message strings
+	$strhints = get_string('hints', 'hotpotatoes');
+	$strclues = get_string('clues', 'hotpotatoes');
+	$strchecks = get_string('checks', 'hotpotatoes');
+	$strpenalties = get_string('penalties', 'hotpotatoes');
+?>
+<p align="center">
+	<b><?php echo get_string('indivresp', 'quiz') ?></b>
+</p>
+<p>Den h&auml;r tabellen visar hur varje anv&auml;ndare gav respons (svarade) p&aring; 
+varje fr&aring;ga i vart och ett av deras f&ouml;rs&ouml;k p&aring; testet.</p>
+<p>
+	Responserna &auml;r f&auml;rgkodade enligt f&ouml;ljande:</p>
+	<ul style="margin-top:0px">
+		<li><font color="red"><b>Korrekt svar</b></font></li>
+		<li><font color="blue"><b>Felaktigt svar</b></font></li>
+		<li><font color="green"><b>xx% (<?php echo $strhints.'-'.$strclues.'-'.$strchecks.'-'.$strpenalties ?>)</b></font>
+			<ul>
+				<li><b>xx</b> &auml;r det procentuella resultatet f&ouml;r den h&auml;r fr&aring;gan</li>
+				<li><b><?php echo $strhints ?></b> &auml;r det antal tips som har efterfr&aring;gats</li>
+				<li><b><?php echo $strclues ?></b> &auml;r det antal ledtr&aring;dar som har efterfr&aring;gats</li>
+				<li><b><?php echo $strchecks ?></b> &auml;r det antal kontroller som har genomf&ouml;rts i den h&auml;r fr&aring;gan</li>
+				<li><b><?php echo $strpenalties ?></b> &auml;r det antal avdrag som har gjorts f&ouml;r den h&auml;r fr&aring;gan</li>
+			</ul>
+		</li>
+	</ul>

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.4 (2004083100)
+      // auth.php - created with Moodle 1.4.3 + (2004083131)
 
 
 $string['auth_common_settings'] = 'Vanliga inställningar';
@@ -47,6 +47,7 @@ $string['auth_ldap_host_url'] = 'Specificera en LDAP-värd i URL-form som \'ldap:
 $string['auth_ldap_login_settings'] = 'Inställningar för inloggning';
 $string['auth_ldap_memberattribute'] = 'Specificera en medlems egenskaper när användare tillhör en grupp. Vanligtvis \'medlem\'';
 $string['auth_ldap_objectclass'] = 'Det här är det filter som används för att namnge/söka efter användare. Normalt sett så ska Du ställa in det till någonting i stil med objectClass=posixAccount . Det är i linje med standarden för objectClass=* som kommer att returnera all aobjekt från LDAP.';
+$string['auth_ldap_opt_deref'] = 'Detta avgör hur alias hanteras under sökning. Markera ett av det följande värdena: \"No\" (LDAP_DEREF_NEVER) eller \"Yes\" (LDAP_DEREF_ALWAYS) ';
 $string['auth_ldap_passwdexpire_settings'] = 'Inställningar för lösenords giltighetstid enligt LDAP';
 $string['auth_ldap_search_sub'] = 'Sätt in ett värde <> 0 om Du vill söka användare från subkontexter.';
 $string['auth_ldap_server_settings'] = 'Inställningar för LDAP-server';
@@ -77,6 +78,8 @@ $string['auth_pop3mailbox'] = 'Namn på den \"brevlåda\" (mailbox) som Du vill fö
 $string['auth_pop3port'] = 'Serverport (110 är den vanligaste)';
 $string['auth_pop3title'] = 'Använd en POP3-server';
 $string['auth_pop3type'] = 'Servertyp. Om Din server använder certifikat som säkerhet, välj pop3cert.';
+$string['auth_shibbolethdescription'] = 'Genom att använda den här metoden kan Du ansluta till en befintlig Shibboleth server för att kontrollera och skapa nya konton';
+$string['auth_shibbolethtitle'] = 'Shibboleth';
 $string['auth_updatelocal'] = 'Uppdatera lokala data';
 $string['auth_updatelocal_expl'] = '<p><b>Uppdatera lokala data:</b> Om detta är aktiverat så kommer fältet att uppdateras (från extern autenticering) varje gång användaren loggar in eller när det förekommer synkronisering av användare. Fält som är inställda att uppdatera lokalt bör vara låsta.</p>';
 $string['auth_updateremote'] = 'Uppdatera externa data';

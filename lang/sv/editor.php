@@ -1,11 +1,11 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.3.2 (2004052502)
+      // editor.php - created with Moodle 1.4.3 + (2004083131)
 
 
 $string['about'] = 'Om den här redigeraren';
 $string['absbottom'] = 'Absbottom';
-$string['absmiddle'] = 'Absmiddle';
 $string['address'] = 'Adress';
+$string['alertnoselectedtext'] = 'Du måste först markera text!';
 $string['alignment'] = 'Justering';
 $string['alternatetext'] = 'Alternativ text';
 $string['anchorhelp'] = 'Det här skapar bara ett ankare. Du behöver fortfarande skapa en länk manuellt.';
@@ -30,7 +30,10 @@ $string['createlink'] = 'Infoga  en webblänk';
 $string['cut'] = 'Klipp ut urvalet';
 $string['delete'] = 'Ta bort';
 $string['filebrowser'] = 'Filläsare';
+$string['fontname'] = 'Namn på typsnitt';
+$string['fontsize'] = 'Storlek på typsnitt';
 $string['forecolor'] = 'Färg på typsnittet';
+$string['formatblock'] = 'Formattera';
 $string['fullscreen'] = 'Redigerare helskärm';
 $string['heading'] = 'Rubrik';
 $string['height'] = 'Höjd';
@@ -52,9 +55,9 @@ $string['justifyleft'] = 'Justera åt vänster';
 $string['justifyright'] = 'Justera åt höger';
 $string['layout'] = 'Layout';
 $string['left'] = 'Vänster';
-$string['lefttoright'] = 'Läs-och skrivriktning från höger till vänster';
+$string['lefttoright'] = 'Läs- och skrivriktning från höger till vänster';
 $string['linkproperties'] = 'Egenskaper för länk';
-$string['linktarget'] = 'target';
+$string['linktarget'] = 'mål för länk';
 $string['linktargetblank'] = 'Nytt fönster';
 $string['linktargetnone'] = 'Ingen';
 $string['linktargetother'] = 'Annan (ur funktion)';
@@ -65,13 +68,14 @@ $string['linkurl'] = 'URL';
 $string['middle'] = 'Mitten';
 $string['minimize'] = 'Minimera redigerare';
 $string['move'] = 'Flytta ';
+$string['nolink'] = 'Förhindra automatisk länkning';
 $string['normal'] = 'Normal';
 $string['notimage'] = 'Vald fil är inte en bild. Var snäll och välj en bild!';
 $string['notset'] = 'Ej angivet';
 $string['ok'] = 'OK';
 $string['orderedlist'] = 'Ordnad lista';
 $string['outdent'] = 'Minska indrag';
-$string['paste'] = 'Klistra in från \'clipboard\'';
+$string['paste'] = 'Klistra in från \'Urklippshanteraren\'';
 $string['path'] = '(sök)väg';
 $string['percent'] = 'Procent';
 $string['pixels'] = 'Pixlar';
@@ -79,11 +83,11 @@ $string['popupeditor'] = 'Förstora redigeraren';
 $string['preformatted'] = 'Förformatterad';
 $string['preview'] = 'Förhandsgranska';
 $string['properties'] = 'Egenskaper';
-$string['redo'] = 'Gör om Din senast aktivitet';
+$string['redo'] = 'Gör om Din senaste aktivitet';
 $string['removelink'] = 'Ta bort länk';
 $string['rename'] = 'Byt namn';
 $string['right'] = 'Höger';
-$string['righttoleft'] = 'Läs-och skrivriktning från höger till vänster';
+$string['righttoleft'] = 'Läs- och skrivriktning från höger till vänster';
 $string['rows'] = 'Rader';
 $string['selectcolor'] = 'Välj färg';
 $string['selection'] = 'Urval';
