@@ -115,6 +115,7 @@ $string['choosetheme'] = 'Choose theme';
 $string['chooseuser'] = 'Choose a user';
 $string['city'] = 'City/town';
 $string['cleaningtempdata'] = 'Cleaning temp data';
+$string['clicktochange'] = 'click to change';
 $string['closewindow'] = 'Close this window';
 $string['comparelanguage'] = 'Compare and edit current language';
 $string['complete'] = 'Complete';
