@@ -68,6 +68,7 @@ $string['markunread'] = 'Mark unread';
 $string['maxattachmentsize'] = 'Maximum attachment size';
 $string['maxtimehaspassed'] = 'Sorry, but the maximum time for editing this post ($a) has passed!';
 $string['message'] = 'Message';
+$string['missingsearchterms'] = 'The following search terms occur only in the HTML markup of this message:';
 $string['modeflatnewestfirst'] = 'Display replies flat, with newest first';
 $string['modeflatoldestfirst'] = 'Display replies flat, with oldest first';
 $string['modenested'] = 'Display replies in nested form';
