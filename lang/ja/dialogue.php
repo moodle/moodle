@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // dialogue.php - created with Moodle 1.2 development (2003101200)
+      // dialogue.php - created with Moodle 1.2 development (2003110400)
 
 
 $string['addmynewentries'] = "新しいエントリーを追加";
@@ -9,27 +9,50 @@ $string['allowmultiple'] = "1人で1つ以上のダイアログの作成を許可する";
 $string['allowstudentdialogues'] = "学生 - 学生のダイアログを許可する";
 $string['close'] = "閉じる";
 $string['closed'] = "閉鎖中";
-$string['deleteafter'] = "閉じられたダイアログを削除する(○日後)";
+$string['deleteafter'] = "終了したダイアログを削除する(○日後)";
 $string['dialogueclosed'] = "ダイアログが閉じられました";
 $string['dialogueintro'] = "ダイアログ説明";
 $string['dialoguename'] = "ダイアログ名";
 $string['dialogueopened'] = "\$a により開かれたダイアログ";
+$string['dialoguewith'] = "\$a とのダイアログ";
 $string['everybody'] = "全員";
 $string['furtherinformation'] = "詳細";
 $string['lastentry'] = "最新エントリ";
+$string['maildefault'] = "デフォルトメール";
 $string['modulename'] = "ダイアログ";
 $string['modulenameplural'] = "ダイアログ";
 $string['namehascloseddialogue'] = "\$a がダイアログを閉じました";
 $string['newdialogueentries'] = "新しいダイアログエントリ";
 $string['newentry'] = "新しいエントリ";
+$string['noavailablepeople'] = "ダイアログを行う相手がいません。";
+$string['nopersonchosen'] = "誰も選択していません";
+$string['nosubject'] = "題名が入力されていません";
+$string['notextentered'] = "テキストが入力されていません";
+$string['notstarted'] = "このダイアログをまだ開始していません";
+$string['notyetseen'] = "まだ閲覧されていません";
+$string['numberofentries'] = "エントリー数";
+$string['numberofentriesadded'] = "追加されたエントリー: \$a";
 $string['open'] = "開く";
+$string['openadialoguewith'] = "ダイアログを開く";
 $string['opendialogue'] = "ダイアログを開く";
 $string['pane0'] = "ダイアログを開く";
+$string['pane1'] = "あなたの返事を待っているダイアログ \$a 件";
+$string['pane1one'] = "あなたの返事を待っているダイアログ 1 件";
+$string['pane2'] = "他の人の返事を待っているダイアログ \$a 件";
+$string['pane2one'] = "他の人の返事を待っているダイアログ １ 件";
+$string['pane3'] = "終了したダイアログ \$a 件";
+$string['pane3one'] = "終了したダイアログ 1 件";
+$string['seen'] = "\$a 以前に閲覧";
+$string['sendmailmessages'] = "新しいエントリーに関してメールを送信する";
 $string['status'] = "ステータス";
 $string['studenttostudent'] = "学生 - 学生";
 $string['subject'] = "題名";
 $string['subjectadded'] = "題名が追加されました";
 $string['teachertostudent'] = "教師 - 学生";
+$string['typefirstentry'] = "最初のエントリーをここに入力してください";
+$string['typefollowup'] = "フォローアップをここに入力してください";
 $string['typeofdialogue'] = "ダイアログタイプ";
+$string['typereply'] = "返事をここに入力してください";
+$string['viewallentries'] = "\$a のダイアログエントリーを表示する";
 
 ?>

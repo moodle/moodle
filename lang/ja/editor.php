@@ -1,0 +1,76 @@
+<?PHP // $Id$ 
+      // editor.php - created with Moodle 1.2 development (2003110400)
+
+
+$string['about'] = "エディタに関して";
+$string['absbottom'] = "Absbottom";
+$string['absmiddle'] = "Absmiddle";
+$string['address'] = "アドレス";
+$string['alignment'] = "配置";
+$string['alternatetext'] = "Alternate text";
+$string['baseline'] = "Baseline";
+$string['bold'] = "太字";
+$string['borderthickness'] = "線の太さ";
+$string['bottom'] = "Bottom";
+$string['browse'] = "閲覧";
+$string['cancel'] = "キャンセル";
+$string['cellpadding'] = "Cellpadding";
+$string['cellspacing'] = "Cellspacing";
+$string['choosechar'] = "キャラクタの選択";
+$string['chooseicon'] = "挿入するアイコンの選択";
+$string['close'] = "閉じる";
+$string['cols'] = "Cols";
+$string['copy'] = "選択したものをコピー";
+$string['createlink'] = "リンクの挿入";
+$string['cut'] = "選択したものを切り取る";
+$string['forecolor'] = "フォント色";
+$string['heading'] = "Heading";
+$string['hilitecolor'] = "背景色";
+$string['horizontal'] = "水平";
+$string['horizontalrule'] = "水平線";
+$string['htmlmode'] = "HTMLソースモード";
+$string['imageurl'] = "画像URL";
+$string['indent'] = "インデントを増やす";
+$string['insertchar'] = "特別文字の挿入";
+$string['insertimage'] = "画像の挿入";
+$string['insertsmile'] = "スマイリーの挿入";
+$string['inserttable'] = "テーブルの挿入";
+$string['italic'] = "イタリック";
+$string['justifycenter'] = "中央寄せ";
+$string['justifyfull'] = "均等";
+$string['justifyleft'] = "左寄せ";
+$string['justifyright'] = "右寄せ";
+$string['layout'] = "レイアウト";
+$string['left'] = "左";
+$string['middle'] = "中央";
+$string['normal'] = "ノーマル";
+$string['notset'] = "未設定";
+$string['ok'] = "OK";
+$string['orderedlist'] = "順序付きリスト";
+$string['outdent'] = "インデントを減らす";
+$string['paste'] = "クリップボードよりコピー";
+$string['path'] = "パス";
+$string['percent'] = "パーセント";
+$string['pixels'] = "ピクセル";
+$string['popupeditor'] = "エディタを大きくする";
+$string['preformatted'] = "整形された";
+$string['preview'] = "プレビュー";
+$string['redo'] = "やり直す";
+$string['right'] = "右";
+$string['rows'] = "列";
+$string['showhelp'] = "エディタのヘルプ";
+$string['spacing'] = "Spacing";
+$string['strikethrough'] = "打ち消し線";
+$string['subscript'] = "下付き文字";
+$string['superscript'] = "上付き文字";
+$string['textindicator'] = "現在のスタイル";
+$string['textmode'] = "現在テキストモードです。WYSIWYGモードに戻る場合は[<>]ボタンを押してください。 ";
+$string['texttop'] = "Texttop";
+$string['top'] = "トップ";
+$string['underline'] = "アンダーライン";
+$string['undo'] = "元に戻す";
+$string['unorderedlist'] = "黒丸付きリスト";
+$string['vertical'] = "垂直";
+$string['width'] = "幅";
+
+?>

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.2 development (2003101700)
+      // moodle.php - created with Moodle 1.2 development (2003110400)
 
 
 $string['action'] = "操作";
@@ -542,6 +542,7 @@ $string['nopotentialcreators'] = "潜在的なコース作成者は登録されていません";
 $string['nopotentialstudents'] = "潜在的な学生は登録されていません";
 $string['nopotentialteachers'] = "潜在的な教師は登録されていません";
 $string['normal'] = "普通";
+$string['nostudentsfound'] = "\$a が見つかりませんでした";
 $string['nostudentsyet'] = "このコースにはまだ学生が参加していません";
 $string['nosuchemail'] = "そのようなメールアドレスは存在しません";
 $string['notavailable'] = "利用できません";
@@ -664,6 +665,7 @@ $string['showlistofcourses'] = "コース一覧を表示";
 $string['showonlytopic'] = "トピック \$a のみ表示";
 $string['showonlyweek'] = "第 \$a 週のみ表示";
 $string['showrecent'] = "最新の活動を表示";
+$string['showreports'] = "活動レポートを表示";
 $string['showtheselogs'] = "ログを表示";
 $string['site'] = "サイト";
 $string['sitefiles'] = "サイトファイル";
@@ -760,6 +762,7 @@ $string['userprofilefor'] = "\$a のプロフィール";
 $string['users'] = "ユーザ";
 $string['userzones'] = "ユーザゾーン";
 $string['usingexistingcourse'] = "既存のコースを使用する";
+$string['version'] = "バージョン";
 $string['view'] = "表示";
 $string['webpage'] = "ウェブページ";
 $string['week'] = "週";

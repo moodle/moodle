@@ -1,0 +1,65 @@
+<?PHP // $Id$ 
+      // exercise.php - created with Moodle 1.2 development (2003110400)
+
+
+$string['absent'] = "欠席";
+$string['accumulative'] = "累積方式";
+$string['action'] = "活動";
+$string['amendassessmentelements'] = "評価要素を更新する";
+$string['assessment'] = "評価";
+$string['assessmentby'] = "\$a による評価";
+$string['assessmentofthissubmission'] = "この提出物の評価";
+$string['assessments'] = "評価";
+$string['criterion'] = "標準";
+$string['deadline'] = "提出期限";
+$string['deadlineis'] = "提出期限は \$a です";
+$string['delete'] = "削除";
+$string['deleting'] = "削除中";
+$string['description'] = "説明";
+$string['detailsofassessment'] = "評価詳細";
+$string['displayoffinalgrades'] = "最終成績を表示";
+$string['duedate'] = "締切日";
+$string['edit'] = "編集";
+$string['element'] = "要素";
+$string['elementweight'] = "要素比重";
+$string['excellent'] = "素晴らしい";
+$string['good'] = "良い";
+$string['gradeassessment'] = "評価成績";
+$string['gradeforassessment'] = "評価に対する評価";
+$string['gradeforstudentsassessment'] = "学生の評価に対する評価";
+$string['gradetable'] = "評価テーブル";
+$string['gradingstrategy'] = "評価方法";
+$string['notgraded'] = "採点無し";
+$string['overallgrade'] = "総合評価";
+$string['phase'] = "フェーズ";
+$string['phase4short'] = "表示";
+$string['poor'] = "悪い";
+$string['rubric'] = "題名";
+$string['scale10'] = "10点中の得点";
+$string['scale100'] = "100点中の得点";
+$string['scale20'] = "20点中の得点";
+$string['scalecorrect'] = "2点 正解/不正解 評価";
+$string['scaleexcellent4'] = "4点 優秀/特に悪い 評価";
+$string['scaleexcellent5'] = "5点 優秀/特に悪い 評価";
+$string['scaleexcellent7'] = "7点 優秀/特に悪い 評価";
+$string['scalegood3'] = "3点 良い/悪い 評価";
+$string['scalepresent'] = "2点 出席/欠席 評価";
+$string['scaleyes'] = "2点 Yes/No 評価";
+$string['studentassessments'] = "\$a 評価";
+$string['submission'] = "提出";
+$string['submissions'] = "提出";
+$string['submitted'] = "提出";
+$string['teacherscomment'] = "教師のコメント";
+$string['title'] = "題名";
+$string['typeofscale'] = "評価基準";
+$string['verypoor'] = "非常に悪い";
+$string['view'] = "表示";
+$string['viewassessment'] = "評価を表示する";
+$string['weights'] = "比重";
+$string['weightssaved'] = "比重が保存されました";
+$string['weightsusedforoverallgrade'] = "総合評価に使用される比重";
+$string['yourassessment'] = "あなたの評価";
+$string['yourfeedbackgoeshere'] = "あなたのフィードバックはここに表示されます";
+$string['yoursubmission'] = "あなたの評価";
+
+?>

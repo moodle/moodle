@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // workshop.php - created with Moodle 1.2 development (2003101700)
+      // workshop.php - created with Moodle 1.2 development (2003110400)
 
 
 $string['absent'] = "欠席";
@@ -77,12 +77,14 @@ $string['listassessments'] = "評価一覧";
 $string['listofallsubmissions'] = "全提出物一覧";
 $string['liststudentsassessments'] = "学生の提出物を一覧表示する";
 $string['mail1'] = "あなたの提出物 '\$a'  の評価者";
+$string['mail10'] = "あなたのワークショップ提出物の中で評価することが出来ます";
 $string['mail2'] = "コメントと評価はワークショップ提出物 '\$a' で見ることが出来ます";
 $string['mail3'] = "ワークショップ提出物で見ることが出来ます";
 $string['mail4'] = "コメントが提出物 '\$a' に追加されました";
 $string['mail5'] = "新しいコメントはワークショップ提出物 '\$a' で見ることが出来ます";
 $string['mail6'] = "あなたの提出物 '\$a' に対する評価レビュー";
 $string['mail7'] = "\$a によるコメントはワークショップ提出物で見ることが出来ます";
+$string['mail9'] = "ワークショップ提出物 \$a の中で評価してください";
 $string['managingassignment'] = "課題を管理";
 $string['maximumsize'] = "最大サイズ";
 $string['modulename'] = "ワークショップ";
@@ -124,9 +126,17 @@ $string['overallteachergrade'] = "教師の総合評価： \$a";
 $string['ownwork'] = "自身の課題";
 $string['phase'] = "フェーズ";
 $string['phase1'] = "課題の設定";
-$string['phase2'] = "\$a の提出物と評価";
-$string['phase3'] = "最終評価の計算";
-$string['phase4'] = "最終評価を表示";
+$string['phase1short'] = "セットアップ";
+$string['phase2'] = "\$a の提出を許可する";
+$string['phase2short'] = "提出";
+$string['phase3'] = "\$a の提出物と評価を許可する";
+$string['phase3short'] = "両方";
+$string['phase4'] = "\$a の評価を許可する";
+$string['phase4short'] = "評価";
+$string['phase5'] = "最終評価の計算";
+$string['phase5short'] = "計算";
+$string['phase6'] = "最終評価を表示";
+$string['phase6short'] = "評価を表示";
 $string['pleaseassesstheseexamplesfromtheteacher'] = "\$a によるこれらの模範解答を評価してください";
 $string['pleaseassessthesestudentsubmissions'] = "これらの \$a の提出物を評価してください";
 $string['pleaseassessyoursubmissions'] = "あなたの提出物を評価してください";
@@ -161,7 +171,9 @@ $string['studentsubmissions'] = "\$a 件の提出物";
 $string['studentsubmissionsforassessment'] = "\$a 学生の評価対象提出物";
 $string['submission'] = "提出";
 $string['submissions'] = "提出";
+$string['submissionsnolongerallowed'] = "これ以上の提出は許可されていません";
 $string['submitassignment'] = "課題を登録する";
+$string['submitassignmentusingform'] = "このフォームを利用してあなたの課題を登録してください";
 $string['submitexampleassignment'] = "課題例を登録する";
 $string['submitted'] = "登録されました";
 $string['submittedby'] = "登録された";
@@ -193,6 +205,10 @@ $string['weightforteacherassessments'] = "\$a 評価に対する比重";
 $string['weights'] = "比重";
 $string['weightsusedforfinalgrade'] = "最終成績に使用する比重";
 $string['weightsusedforsubmissions'] = "提出物に使用する比重";
+$string['workshopassessments'] = "ワークショップ評価";
+$string['workshopcomments'] = "ワークショップコメント";
+$string['workshopfeedback'] = "ワークショップフィードバック";
+$string['workshopsubmissions'] = "ワークショップ提出";
 $string['yourassessments'] = "あなたの評価";
 $string['yourfeedbackgoeshere'] = "あなたのフィードバックはここに表示されます";
 
