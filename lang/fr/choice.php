@@ -7,6 +7,7 @@ $string['choiceclose'] = 'Jusqu\'au';
 $string['choicename'] = 'Nom du sondage';
 $string['choiceopen'] = 'Ouvert';
 $string['choicetext'] = 'Texte de la question';
+$string['havetologin'] = 'Vous devez vous connecter pour pouvoir répondre à ce sondage';
 $string['modulename'] = 'Sondage';
 $string['modulenameplural'] = 'Sondages';
 $string['mustchooseone'] = 'Vous devez sélectionner une réponse avant d\'enregistrer. L\'enregistrement n\'a pas eu lieu.';
