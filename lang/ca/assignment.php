@@ -1,15 +1,23 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.0.8 dev (2002122700)
+      // assignment.php - created with Moodle 1.1 development (2003081500)
 
 
 $string['allowresubmit'] = "Permetre de tornar a enviar";
 $string['assignmentdetails'] = "Detalls de la tasca";
+$string['assignmentmail'] = "\$a->teacher ha posat alguns comentaris sobre la teua tasca '\$a->assignment'
+
+Pots veure la teua tasca i els comentaris en aquesta adreça:
+
+    \$a->url";
+$string['assignmentmailhtml'] = "\$a->teacher ha posat alguns comentaris sobre la teua tasca '<i>\$a->assignment</i>'<br /><br />
+Els comentaris s'han adjuntat a la teua <a href=\\\"\$a->url\\\">tasca</a>.";
 $string['assignmentname'] = "Nom de la tasca";
 $string['assignmenttype'] = "Tipus de tasca";
 $string['description'] = "Descripció";
 $string['duedate'] = "Data de venciment";
 $string['early'] = "\$a prompte";
 $string['failedupdatefeedback'] = "Ha fallat l'actualització dels comentaris sobre l'enviament de l'usuari \$a";
+$string['feedback'] = "Comentaris";
 $string['feedbackupdated'] = "Actualització dels comentaris sobre els enviaments de \$a persones";
 $string['late'] = "\$a tard";
 $string['maximumgrade'] = "Nota màxima";
@@ -19,6 +27,7 @@ $string['modulenameplural'] = "Tasques";
 $string['newsubmissions'] = "Tasques enviades";
 $string['notsubmittedyet'] = "No enviada encara";
 $string['overwritewarning'] = "Avís: si tornes a pujar el fitxer REEMPLAÇARÀS el que hi ha";
+$string['saveallfeedback'] = "Guardar els meus comentaris";
 $string['submissionfeedback'] = "Comentaris sobre l'enviament";
 $string['submissions'] = "Enviaments";
 $string['submitassignment'] = "Envia la teua tasca per mitjà d'aquest formulari";
@@ -36,16 +45,5 @@ $string['uploadsuccess'] = "'\$a' penjat correctament";
 $string['viewfeedback'] = "Veure les qualificacions de les tasques i els comentaris";
 $string['viewsubmissions'] = "Veure \$a tasques enviades";
 $string['yoursubmission'] = "El teu enviament";
-
-$string['feedback'] = "Comentaris";
-$string['saveallfeedback'] = "Guardar els meus comentaris";
-
-$string['assignmentmail'] = "\$a->teacher ha posat alguns comentaris sobre la teua tasca '\$a->assignment'
-
-Pots veure la teua tasca i els comentaris en aquesta adreça:
-
-    \$a->url";
-$string['assignmentmailhtml'] = "\$a->teacher ha posat alguns comentaris sobre la teua tasca '<i>\$a->assignment</i>'<br /><br />
-Els comentaris s'han adjuntat a la teua <a href=\\\"\$a->url\\\">tasca</a>.";
 
 ?>

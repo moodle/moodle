@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.0.8 dev (2002122700)
+      // forum.php - created with Moodle 1.1 development (2003081500)
 
 
 $string['addanewdiscussion'] = "Afegir un tema de debat";
@@ -19,6 +19,7 @@ $string['deleteddiscussion'] = "Tema de debat esborrat";
 $string['deletedpost'] = "Missatge esborrat";
 $string['deletesure'] = "Segur que vols esborrar aquest missatge?";
 $string['discussion'] = "Debat";
+$string['discussionmoved'] = "Aquest debat s'ha traslladat a '\$a'.";
 $string['discussions'] = "Debats";
 $string['discussionsstartedby'] = "Debats començats per \$a";
 $string['discussthistopic'] = "Debatre aquest tema";
@@ -41,6 +42,7 @@ $string['inforum'] = "en \$a";
 $string['intronews'] = "Anuncis i notícies generals";
 $string['introsocial'] = "Un fòrum obert per a xarrar sobre qualsevol cosa que es vulga";
 $string['introteacher'] = "Un fòrum només per a notes i debats del professorat";
+$string['lastpost'] = "Darrer missatge";
 $string['learningforums'] = "Fòrums per a aprendre";
 $string['maxtimehaspassed'] = "Ho lamentem, ha passat el temps màxim per a editar aquest missatge! (\$a)";
 $string['message'] = "Missatge";
@@ -51,6 +53,7 @@ $string['modethreaded'] = "Mostrar rèpliques per temes";
 $string['modulename'] = "Fòrum";
 $string['modulenameplural'] = "Fòrums";
 $string['more'] = "més";
+$string['movethisdiscussionto'] = "Trasllador aquest debat a... ";
 $string['namenews'] = "Nou fòrum";
 $string['namesocial'] = "Fòrum social";
 $string['nameteacher'] = "Fòrum del professorat";
@@ -71,19 +74,19 @@ $string['parentofthispost'] = "Missatge original";
 $string['postadded'] = "S'ha afegit el teu missatge.<P>Tens \$a per a editar-lo si vols fer algun canvi.";
 $string['postincontext'] = "Veure aquest missatge en el seu context";
 $string['postmailinfo'] = "Açò és una còpia d'un missatge enviat al lloc web \$a.
-
-
-
 Per a afegir la teua resposta via web, fes clic en aquest enllaç:";
 $string['postrating1'] = "Mostra sobretot coneixements SEPARATS";
 $string['postrating2'] = "Tant separats com connectats";
 $string['postrating3'] = "Mostra sobretot coneixements CONNECTATS";
+$string['posts'] = "Missatges";
 $string['postupdated'] = "S'ha actualitzat el teu missatge.";
 $string['processingpost'] = "Processant missatge \$a";
 $string['rate'] = "Valoració";
 $string['ratings'] = "Valoracions";
+$string['ratingssaved'] = "Qualificacions guardades";
 $string['re'] = "Re:";
 $string['readtherest'] = "Llegir la resta del tema";
+$string['replies'] = "Respostes";
 $string['repliesmany'] = "\$a respostes fins ara";
 $string['repliesone'] = "\$a resposta fins ara";
 $string['reply'] = "Contestar";
@@ -93,30 +96,20 @@ $string['searchresults'] = "Resultats de la recerca";
 $string['sendinratings'] = "Enviar les meues últimes valoracions";
 $string['showsubscribers'] = "Mostra els subscriptors";
 $string['singleforum'] = "Un debat simple";
+$string['startedby'] = "Iniciat per";
 $string['subject'] = "Títol";
 $string['subscribe'] = "Subscriure's a aquest fòrum";
 $string['subscribed'] = "Subscrit";
 $string['subscribers'] = "Subscriptors";
 $string['subscribersto'] = "Subscriptors de '\$a'";
-$string['unsubscribe'] = "Cancel·lar la subscripció a aquest fòrum";
-$string['youratedthis'] = "La teua valoració";
-$string['yournewtopic'] = "Nou tema de debat";
-$string['yourreply'] = "La teua resposta";
-
-$string['ratingssaved'] = "Qualificacions guardades";
-
-$string['discussionmoved'] = "Aquest debat s'ha traslladat a '\$a'.";
-$string['lastpost'] = "Darrer missatge";
-$string['movethisdiscussionto'] = "Trasllador aquest debat a... ";
-$string['posts'] = "Missatges";
-$string['replies'] = "Respostes";
-$string['startedby'] = "Iniciat per";
 $string['subscribestart'] = "Envia'm còpia dels missatges d'aquest fòrum";
 $string['subscribestop'] = "No vull rebre còpies per correu dels missatges d'aquest fòrum";
 $string['subscription'] = "Subscripció";
 $string['subscriptions'] = "Subscripcions";
+$string['unsubscribe'] = "Cancel·lar la subscripció a aquest fòrum";
 $string['unsubscribed'] = "Subscripció cancel·lada";
-
-
+$string['youratedthis'] = "La teua valoració";
+$string['yournewtopic'] = "Nou tema de debat";
+$string['yourreply'] = "La teua resposta";
 
 ?>

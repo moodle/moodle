@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.0.8 dev (2002122700)
+      // resource.php - created with Moodle 1.1 development (2003081500)
 
 
 $string['addresource'] = "Afegir un recurs";
@@ -23,9 +23,7 @@ $string['resourcetype3'] = "Fitxer";
 $string['resourcetype4'] = "Només text";
 $string['resourcetype5'] = "Enllaç web";
 $string['resourcetype6'] = "Text HTML";
-
 $string['resourcetype7'] = "Programa";
-
 $string['resourcetype8'] = "Text wiki";
 
 ?>

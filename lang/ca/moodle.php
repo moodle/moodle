@@ -1,12 +1,16 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.0.8 dev (2002122700)
+      // moodle.php - created with Moodle 1.1 development (2003081500)
 
 
 $string['action'] = "Acció";
 $string['activities'] = "Activitats";
 $string['activity'] = "Activitat";
+$string['activityiscurrentlyhidden'] = "Ho lamentem, aquesta activitat està oculta";
+$string['activitymodule'] = "Mòdul d'activitat";
 $string['activityreport'] = "Informe d'activitat";
 $string['add'] = "Afegir";
+$string['addadmin'] = "Afegir administrador";
+$string['addcreator'] = "Afegir creador";
 $string['added'] = "Afegit \$a";
 $string['addinganew'] = "Afegir un nou \$a";
 $string['addinganewto'] = "Afegir un nou \$a->what a \$a->to";
@@ -16,6 +20,7 @@ $string['address'] = "Adreça";
 $string['addteacher'] = "Afegir professor";
 $string['admin'] = "Admin";
 $string['administration'] = "Administració";
+$string['administrator'] = "Administrador";
 $string['again'] = "una altra vegada";
 $string['all'] = "Tots";
 $string['alldays'] = "Tots els dies";
@@ -28,15 +33,29 @@ $string['allparticipants'] = "Tots els participants";
 $string['alphanumerical'] = "Només pot contindre lletres o números";
 $string['alreadyconfirmed'] = "El registre ja s'ha confirmat";
 $string['answer'] = "Resposta";
+$string['areyousuretorestorethis'] = "Estàs segur que vols restaurar-lo?";
 $string['assessment'] = "Avaluació";
+$string['assignadmins'] = "Assignar administradors";
+$string['assigncreators'] = "Assignar creadors de cursos";
 $string['assignteachers'] = "Assignar professors";
 $string['authentication'] = "Autenticació";
+$string['autosubscribe'] = "Subscripció automàtica al fòrum";
+$string['autosubscribeno'] = "No: no vull subscriure'm automàticament als fòrums";
+$string['autosubscribeyes'] = "Sí: quan escric en un fòrum, vull subscriure'm automàticament";
 $string['availablecourses'] = "Cursos disponibles";
+$string['backup'] = "Còpia de seguretat";
+$string['backupdate'] = "Data de la còpia";
+$string['backupdetails'] = "Informació sobre la còpia";
+$string['backupfilename'] = "backup";
+$string['backupnameformat'] = "%%Y%%m%%d-%%H%%M";
+$string['backuporiginalname'] = "Nom de la còpia";
+$string['backupversion'] = "Versió de la còpia";
 $string['cancel'] = "Cancel·lar";
 $string['categories'] = "Categories de cursos";
 $string['category'] = "Categoria";
 $string['categoryadded'] = "S'ha afegit la categoria '\$a'";
 $string['categorydeleted'] = "S'ha esborrat la categoria '\$a'";
+$string['categoryduplicate'] = "Ja existeix una categoria denominada '\$a'!";
 $string['changedpassword'] = "S'ha canviat la contrasenya";
 $string['changepassword'] = "Canviar la contrasenya";
 $string['changessaved'] = "Canvis guardats";
@@ -51,16 +70,23 @@ $string['city'] = "Població";
 $string['closewindow'] = "Tanca aquesta finestra";
 $string['comparelanguage'] = "Comparar idioma amb l'anglès";
 $string['complete'] = "Completat";
+$string['configcountry'] = "If you set a country here, then this country will be selected by default on new user accounts.  To force users to choose a country, just leave this unset.";
+$string['configdebug'] = "If you turn this on, then PHP's error_reporting will be increased so that more warnings are printed.  This is only useful for developers.";
 $string['configerrorlevel'] = "Choose the amount of PHP warnings that you want to be displayed.  Normal is usually the best choice.";
 $string['configgdversion'] = "Indicate the version of GD that is installed.  The version shown by default is the one that has been auto-detected.  Don't change this unless you really know what you're doing.";
 $string['confightmleditor'] = "Choose whether or not to allow use of the embedded HTML text editor. Even if you choose allow, this editor will only appear when the user is using a compatible browser (IE 5.5 or later).  Users can also choose not to use it.";
 $string['configintro'] = "On this page you can specify a number of configuration variables that help make Moodle work properly on your server.  Don't worry too much about it - the defaults will usually work fine and you can always come back to this page later and change these settings.";
+$string['configintroadmin'] = "En aquesta pàgina haureu de configurar el compte de l'administrador principal que té el control complet del lloc web. Assegureu-vos de donar  un nom d'usuari i contrasenya segurs així com una adreça de correu.  Podreu crear més comptes d'administrador més endavant.";
+$string['configintrosite'] = "En aquesta pàgina podreu configurar la pàgina d'inici i el nom del lloc nou.  Sempre podreu tornar-hi i canviar les opcions usant l'enllaç a 'Configuració del lloc' de la pàgina d'inici.";
 $string['configlang'] = "Choose a default language for the whole site.  Users can override this setting later.";
 $string['configlangdir'] = "Most languages are printed left-to-right, but some, like Arabic and Hebrew, are printed right-to-left.";
+$string['configlanglist'] = "Deixeu-ho en blanc si permeteu que els usuaris escullin entre els diferents llenguatges d'aquesta instal·lació de Moodle.  Tanmateix podeu escurçar el menú de llenguatges si escriviu una llista separada per comes amb els codis dels llenguatges que voleu.  Per exemple:  ca,en,es_es,fr,it";
+$string['configlangmenu'] = "Escolliu si voleu o no mostrar el menú de lllenguatge a les pàgines d'inici, d'entrada, etc.  Això no afecta la possibilitat que l'usuari determini el llenguatge preferit al seu perfil.";
 $string['configlocale'] = "Choose a sitewide locale - this will affect the format and language of dates. You need to have this locale data installed on your operating system.  (eg en_US or es_ES).  If you don't know what to choose leave it blank.";
 $string['configlongtimenosee'] = "If students haven't logged in for a very long time, then they are automatically unsubscribed from courses.  This parameter specifies that time limit.";
 $string['configmaxeditingtime'] = "This specifies the amount of time people have to re-edit forum postings, journal feedback etc.  Usually 30 minutes is a good value.";
 $string['configproxyhost'] = "If this <B>server</B> needs to use a proxy computer (eg a firewall) to access the Internet, then provide the proxy hostname and port here.  Otherwise leave it blank.";
+$string['configsessiontimeout'] = "Quan els usuaris que han entrat fa estona que no treballen amb Moodle (no carreguen pàgines) són desconnectats automàticament (se'ls finalitza la sessió).  Aquesta variable especifica quant de temps s'espera a desconnectar-los.";
 $string['configslasharguments'] = "Files (images, uploads etc) are provided via a script using 'slash arguments' (the second option here). This method allows files to be more easily cached in web browsers, proxy servers etc.  Unfortunately, some PHP servers don't allow this method, so if you have trouble viewing uploaded files or images (eg user pictures), set this variable to the first option";
 $string['configsmtphosts'] = "Give the full name of one or more local SMTP servers that Moodle should use to send mail (eg 'mail.a.com' or 'mail.a.com;mail.b.com'). If you leave it blank, Moodle will use the PHP default method of sending mail.";
 $string['configsmtpuser'] = "If you have specified an SMTP server above, and the server requires authentication, then enter the username and password here.";
@@ -68,12 +94,16 @@ $string['configunzip'] = "Indicate the location of your unzip program (Unix only
 $string['configvariables'] = "Variables de configuració";
 $string['configzip'] = "Indicate the location of your zip program (Unix only).  This is needed to create zip archives on the server.";
 $string['confirmed'] = "S'ha confirmat el registre";
+$string['confirmednot'] = "Encara no has confirmat el teu registre!";
 $string['continue'] = "Continuar";
 $string['cookiesenabled'] = "les cookies han d'estar activades en el teu client web";
 $string['copyrightnotice'] = "Copyright";
 $string['country'] = "País";
 $string['course'] = "Curs";
+$string['coursebackup'] = "Còpia del curs";
+$string['coursefiles'] = "Fitxers del curs";
 $string['courseformats'] = "Formats de curs";
+$string['courserestore'] = "Restaurar curs";
 $string['courses'] = "Cursos";
 $string['courseupdates'] = "Actualitzacions del curs";
 $string['createaccount'] = "Crear un compte nou";
@@ -81,6 +111,8 @@ $string['createuserandpass'] = "Crear un nou nom d'usuari i contrasenya per conn
 $string['createziparchive'] = "empaquetar-los en un fitxer zip";
 $string['currentlanguage'] = "Idioma actual";
 $string['currentlocaltime'] = "hora local";
+$string['currentrelease'] = "Informació sobre l'edició actual";
+$string['currentversion'] = "Versió actual";
 $string['databasechecking'] = "Actualitzar la base de dades de Moodle de la versió \$a->oldversion a \$a->newversion...";
 $string['databasesetup'] = "Ajustant la base de dades";
 $string['databasesuccess'] = "La base de dades s'ha actualitzat amb èxit";
@@ -107,7 +139,9 @@ $string['deletednot'] = "No s'ha pogut esborrar \$a!";
 $string['deletingcourse'] = "Esborrant \$a";
 $string['department'] = "Departament";
 $string['description'] = "Descripció";
-$string['displayingusers'] = "Llista d'usuaris \$a->start a \$a->end";
+$string['displayingfirst'] = "Només es mostren els primers \$a->count \$a->things ";
+$string['displayingrecords'] = "Visualitzar \$a registres";
+$string['displayingusers'] = "Visualitzar usuaris \$a->start a \$a->end";
 $string['documentation'] = "Moodle Documentation";
 $string['downloadexcel'] = "Baixar en format Excel";
 $string['downloadtext'] = "Baixar en format text";
@@ -139,6 +173,7 @@ de la finestra del teu navegador.
 Salutacions de l'administrador de '\$a->sitename',
 
 \$a->admin";
+$string['emailconfirmationsubject'] = "\$a: confirmació de compte";
 $string['emailconfirmsent'] = "   <P>S'ha enviat un missatge de correu a la teua adreça <B>\$a</B>
 
    <P>Conté instruccions senzilles per a completar el registre.
@@ -151,6 +186,31 @@ $string['emaildisplayyes'] = "Permetre que tothom veja la meua adreça de correu"
 $string['emailexists'] = "Aquesta adreça de correu ja està registrada.";
 $string['emailformat'] = "Format del correu";
 $string['emailmustbereal'] = "Nota: l'adreça de correu ha de ser una adreça real";
+$string['emailpasswordconfirmation'] = "Hola, \$a->firstname,
+
+Algú (probablement tu) ha demanat una nova contrasenya 
+per al teu compte en '\$a->sitename'.
+
+Per confirmar aquesta sol·licitud i rebre la nova contrasenya 
+per correu electrònic, vés a l'adreça web següent:
+
+  \$a->link
+
+En la majoria de programes de correu electrònic, l'adreça
+s'hauria de presentar com un enllaç blau i només cal clicar-lo.
+Si això no funciona, copia i apega l'adreça en el camp d'adreces
+de la finestra del teu navegador.
+
+Si necessites ajuda, contacta amb l'administrador del lloc:
+\$a->admin";
+$string['emailpasswordconfirmationsubject'] = "\$a: confirmació de canvi de contrasenya";
+$string['emailpasswordconfirmsent'] = "Rebràs un missatge de correu a la teua adreça: <b>\$a</b>.
+<p>Aquest missatge conté instruccions molt senzilles per confirmar i completar el canvi de contrasenya.
+Si després d'això segueixes experimentant problemes, contacta amb l'administrador del lloc.";
+$string['emailpasswordsent'] = "Gràcies per confirmar el canvi de contrasenya.
+<p>Rebràs un missatge de correu amb la contrasenya nova a la teua adreça: <b>\$a->email</b>.
+<p>La contrasenya nova s'ha generat automàticament - potser voldràs
+<a href=\$a->link>canviar-la</a> per una altra més fàcil de recordar.";
 $string['enrolmentkey'] = "Clau d'inscripció";
 $string['enrolmentkeyfrom'] = "Aquest curs requereix una clau d'inscripció - una contrasenya<BR>
 
@@ -161,6 +221,10 @@ $string['enrolmentkeyhint'] = "Aquesta clau d'inscripció es errònia, per favor t
 $string['entercourse'] = "Fes clic per a entrar en aquest curs";
 $string['enteremailaddress'] = "Introdueix la teua adreça de correu per anul·lar la contrasenya anterior i rebre'n una de nova per correu electrònic.";
 $string['error'] = "Error";
+$string['errortoomanylogins'] = "Ho lamentem, has excedit el nombre màxim d'intents de connexió. Tanca el teu navegador i torna a començar.";
+$string['existingadmins'] = "Administradors actuals";
+$string['existingcourse'] = "Cursos actuals";
+$string['existingcreators'] = "Creadors de cursos actuals";
 $string['existingteachers'] = "Professors actuals";
 $string['feedback'] = "Interaccions";
 $string['filemissing'] = "Falta \$a";
@@ -173,21 +237,24 @@ $string['followingrequired'] = "Els ítems següents són obligatoris";
 $string['forgotten'] = "Has oblidat el nom d'usuari o la contrasenya?";
 $string['format'] = "Format";
 $string['formathtml'] = "Format HTML";
+$string['formatplain'] = "Text simple";
 $string['formatsocial'] = "Format social";
 $string['formattext'] = "Autoformat Moodle";
 $string['formattexttype'] = "Formatar";
 $string['formattopics'] = "Format per temes";
 $string['formatweeks'] = "Format semanal";
+$string['formatwiki'] = "Format Wiki";
 $string['frontpagedescription'] = "Descripció per a la primera plana";
 $string['frontpageformat'] = "Format de la primera plana";
 $string['fulllistofcourses'] = "Tots els cursos";
 $string['fullname'] = "Nom complet";
 $string['fullprofile'] = "Perfil complet";
 $string['fullsitename'] = "Nom complet del lloc";
+$string['gd1'] = "GD 1.x instal·lada";
+$string['gd2'] = "GD 2.x instal·lada";
+$string['gdneed'] = "GD requerida per a veure aquesta gràfica";
+$string['gdnot'] = "GD no està instal·lada";
 $string['gpl'] = "Copyright (C) 2001-2002  Martin Dougiamas  (http://dougiamas.com)
-
-
-
 This program is free software; you can redistribute it and/or modify
 
 it under the terms of the GNU General Public License as published by
@@ -195,9 +262,6 @@ it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 
 (at your option) any later version.
-
-
-
 This program is distributed in the hope that it will be useful,
 
 but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -205,9 +269,6 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 
 GNU General Public License for more details:
-
-
-
 http://www.gnu.org/copyleft/gpl.html";
 $string['grade'] = "Nivell";
 $string['grades'] = "Notes";
@@ -218,11 +279,17 @@ $string['guestsyes'] = "Permetre invitats sense clau";
 $string['guestuser'] = "Usuari invitat";
 $string['guestuserinfo'] = "Aquest usuari és un usuari especial que permet entrar a alguns cursos en mode només de lectura (read-only).";
 $string['help'] = "Ajuda";
+$string['helpemoticons'] = "Emoticones";
+$string['helpformatting'] = "Sobre el formatatge del text";
 $string['helphtml'] = "Com escriure HTML";
 $string['helppicture'] = "Com penjar una imatge";
 $string['helpquestions'] = "Fes bones preguntes";
+$string['helpreading'] = "Llegeix amb cura";
 $string['helprichtext'] = "Referent a l'editor HTML Richtext";
+$string['helpsummaries'] = "Sobre aquests resums";
 $string['helptext'] = "Com escriure text";
+$string['helpwiki'] = "Com escriure text Wiki";
+$string['helpwriting'] = "Escriu amb cura";
 $string['hide'] = "Ocultar";
 $string['hits'] = "Peticions";
 $string['hitsoncourse'] = "Peticions en \$a->coursename per \$a->username";
@@ -230,6 +297,7 @@ $string['hitsoncoursetoday'] = "Peticions avui en \$a->coursename per \$a->usern
 $string['home'] = "Inici";
 $string['hour'] = "hora";
 $string['hours'] = "hores";
+$string['howtomakethemes'] = "Com crear nous temes";
 $string['htmleditor'] = "Utilitzar l'editor HTML Richtext (requereix IE 5.5 o posterior)";
 $string['htmleditoravailable'] = "L'editor Richtext està disponible";
 $string['htmleditordisabled'] = "Tens desactivat l'editor Richtext en el teu perfil d'usuari";
@@ -238,6 +306,14 @@ $string['htmleditordisabledbrowser'] = "L'editor Richtext no està disponible per
 $string['htmlformat'] = "Format HTML amb imatges";
 $string['icqnumber'] = "Número ICQ";
 $string['idnumber'] = "Número ID";
+$string['include'] = "Incloure";
+$string['includeallusers'] = "Incloure tots els usuaris";
+$string['includecoursefiles'] = "Incloure els fitxers del curs";
+$string['includecourseusers'] = "Incloure els usuaris del curs";
+$string['included'] = "Inclòs";
+$string['includelogentries'] = "Incloure les entrades del diari";
+$string['includeneededusers'] = "Incloure els usuaris requerits";
+$string['includeuserfiles'] = "Incloure els fitxers dels usuaris";
 $string['invalidemail'] = "L'adreça de correu no és vàlida";
 $string['invalidlogin'] = "Entrada incorrecta, torna a intentar-ho";
 $string['jumpto'] = "Saltar a...";
@@ -249,9 +325,12 @@ $string['lastaccess'] = "Últim accés";
 $string['lastedited'] = "Última edició";
 $string['lastmodified'] = "Última modificació";
 $string['lastname'] = "Cognoms";
+$string['latestlanguagepack'] = "Comprovar l'últim paquet d'idioma en moodle.org";
 $string['latestnews'] = "Últimes notícies";
 $string['leavetokeep'] = "Deixa en blanc per tal de mantenir la contrasenya actual";
 $string['license'] = "Llicència GPL";
+$string['list'] = "Llistar";
+$string['listfiles'] = "Llista els fitxers de \$a";
 $string['listofallpeople'] = "Llistat de tota la gent";
 $string['livelogs'] = "Diaris de l'última hora";
 $string['locale'] = "ca_ES";
@@ -263,9 +342,6 @@ $string['loginas'] = "Entrar com";
 $string['loginguest'] = "Entrar com a invitat";
 $string['loginsite'] = "Entrar en aquest lloc";
 $string['loginsteps'] = "Hola! L'accés complet als cursos requereix que dediques un minut a la creació d'un nou compte d'usuari vàlid per a aquest lloc web. Cada curs pot requerir també una &quot;clau d'inscripció&quot; que se't demanaria només la primera vegada que entres. Els passos que has de donar són els següents:
-
-
-
    <OL size=2>
 
    <LI>Ompli el formulari de <A HREF=\$a>Nou compte</A> amb les dades que se't demanaran.
@@ -292,7 +368,10 @@ $string['logout'] = "Eixida";
 $string['logs'] = "Diaris";
 $string['mainmenu'] = "Menú principal";
 $string['makeafolder'] = "Crear una carpeta";
+$string['makeeditable'] = "If you make '\$a' editable by the web server process (eg apache) then you could edit this file directly from this page";
 $string['managedatabase'] = "Gestió de la base de dades";
+$string['managemodules'] = "Gestionar mòduls";
+$string['markedthistopic'] = "Aquest tema està marcat com a tema actual";
 $string['markthistopic'] = "Marcar aquest tema com a tema actual";
 $string['maximumchars'] = "Màxim de \$a caràcters";
 $string['maximumgrade'] = "Nota màxima";
@@ -319,10 +398,14 @@ $string['missingstrings'] = "Comprovar si falten cadenes";
 $string['missingstudent'] = "Has d'elegir alguna cosa";
 $string['missingsummary'] = "Falta el resum";
 $string['missingteacher'] = "Has de triar alguna cosa";
+$string['missingurl'] = "Falta l'URL";
 $string['missingusername'] = "Falta el nom d'usuari";
 $string['modified'] = "Modificat";
+$string['moduledeleteconfirm'] = "Vas a esborrar completament el mòdul '\$a'.  Això eliminarà tots els registres de la base de dades associats amb aquest mòdul d'activitat. Estàs segur que vols continuar?";
+$string['moduledeletefiles'] = "S'han eliminat de la base de dades totes les dades associades amb el mòdul '\$a->module'. Per completar la supressió del mòdul (i impedir que es reinstal·le per si mateix), ara hauries d'esborrar aquest directori del servidor: \$a->directory";
 $string['modulesetup'] = "Ajustant les taules de mòduls";
 $string['modulesuccess'] = "\$a taules s'han ajustat correctament";
+$string['moodleversion'] = "Versió de Moodle";
 $string['mostrecently'] = "més recent";
 $string['movedown'] = "avall";
 $string['movefilestohere'] = "Traslladar els fitxers ací";
@@ -334,34 +417,22 @@ $string['name'] = "Nom";
 $string['namesocial'] = "secció";
 $string['nametopics'] = "tema";
 $string['nameweeks'] = "setmana";
+$string['needed'] = "Requerit";
 $string['never'] = "Mai";
+$string['neverdeletelogs'] = "No esborrar mai els diaris";
 $string['new'] = "Nou";
 $string['newaccount'] = "Nou compte";
+$string['newcourse'] = "Nou curs";
 $string['newpassword'] = "Nova contrasenya";
 $string['newpasswordtext'] = "Hola, \$a->firstname,
-
-
-
 La contrasenya del teu compte en '\$a->sitename' ha estat
 
 anul·lada i se te n'ha assignat una nova provisionalment.
-
-
-
 Les dades per a fer la connexió són ara les següents:
-
-
-
    nom d'usuari: \$a->username
 
    contrasenya: \$a->newpassword
-
-
-
 Per favor, vés a aquesta plana i canvia la teua contrasenya:
-
-
-
    \$a->link
 
    
@@ -369,19 +440,10 @@ Per favor, vés a aquesta plana i canvia la teua contrasenya:
 En la majoria de programes de correu electrònic, l'adreça
 
 s'hauria de presentar com un enllaç blau i només cal clicar-lo.
-
-
-
 Si això no funciona, copia i apega l'adreça en la línea
 
 d'adreces de la finestra del teu navegador.
-
-
-
 Salutacions de l'administrador de '\$a->sitename',
-
-
-
 \$a->signoff
 
 ";
@@ -393,20 +455,32 @@ $string['newuser'] = "Nou usuari";
 $string['newusers'] = "Nous usuaris";
 $string['no'] = "No";
 $string['nocoursesyet'] = "No hi ha cursos en aquesta categoria";
+$string['noexistingadmins'] = "No hi ha administradors: això és un error seriós i mai no hauries d'haver vist aquest missatge.";
+$string['noexistingcreators'] = "No hi ha creadors";
 $string['noexistingteachers'] = "No hi ha professors";
+$string['nofilesselected'] = "No has seleccionat cap arxiu per restaurar";
 $string['nofilesyet'] = "Encara no s'han penjat fitxers en aquest curs";
 $string['nograde'] = "Sense nota";
 $string['noimagesyet'] = "Encara no s'han penjat imatges en aquest curs";
+$string['none'] = "Cap";
+$string['nopotentialadmins'] = "No hi ha administradors en potència";
+$string['nopotentialcreators'] = "No hi ha creadors de cursos en potència";
 $string['nopotentialteachers'] = "No hi ha professors en potència";
+$string['normal'] = "Normal";
 $string['nostudentsyet'] = "Encara no hi ha cap estudiant inscrit en aquest curs";
 $string['nosuchemail'] = "Adreça de correu desconeguda";
+$string['notavailable'] = "No disponible";
 $string['noteachersyet'] = "Encara no hi ha cap professor en aquest curs";
 $string['notenrolled'] = "\$a no està inscrit en aquest curs.";
 $string['nothingnew'] = "Cap novetat des de l'última entrada";
+$string['notincluded'] = "No inclòs";
+$string['nousersmatching'] = "No s'han trobat usuaris que complisquen la condició '\$a'";
 $string['nousersyet'] = "Encara no hi ha usuaris";
 $string['now'] = "ara";
 $string['numberweeks'] = "Nombre de setmanes/temes";
 $string['numdays'] = "\$a dies";
+$string['numhours'] = "\$a hores";
+$string['numminutes'] = "\$a minuts";
 $string['numviews'] = "\$a vistes";
 $string['numweeks'] = "\$a setmanes";
 $string['numwords'] = "\$a paraules";
@@ -419,6 +493,7 @@ $string['outline'] = "Esquema";
 $string['participants'] = "Participants";
 $string['password'] = "Contrasenya";
 $string['passwordchanged'] = "S'ha canviat la contrasenya";
+$string['passwordconfirmchange'] = "Confirma el canvi de la contrasenya";
 $string['passwordrecovery'] = "Sí, ajuda'm a connectar-me";
 $string['passwordsdiffer'] = "Les contrasenyes no coincideixen";
 $string['passwordsent'] = "S'ha enviat la contrasenya";
@@ -430,17 +505,42 @@ $string['passwordsenttext'] = "   <P>S'ha enviat un missatge per correu electròn
 $string['people'] = "Gent";
 $string['personalprofile'] = "Perfil personal";
 $string['phone'] = "Telèfon";
+$string['popupwindow'] = "Obrir el fitxer en una altra finestra";
+$string['potentialadmins'] = "Administradors en potència";
+$string['potentialcreators'] = "Creadors de cursos en potència";
 $string['potentialteachers'] = "Professors en potència";
 $string['preferredlanguage'] = "Idioma de preferència";
 $string['preview'] = "Vista prèvia";
 $string['previeworchoose'] = "Prova o tria un tema";
+$string['publicdirectory'] = "Directori públic";
+$string['publicdirectory0'] = "No publicar el lloc web";
+$string['publicdirectory1'] = "Publicar només el nom del lloc web";
+$string['publicdirectory2'] = "Publicar el nom del lloc web i l'enllaç";
 $string['question'] = "Pregunta";
 $string['readme'] = "LLEGIU-ME";
 $string['recentactivity'] = "Activitat recent";
+$string['registration'] = "Registre de Moodle";
+$string['registrationemail'] = "Notificacions per correu";
+$string['registrationinfo'] = "<p>Aquesta pàgina us permet registrar el vostre lloc basat en Moodle a moodle.org.  El registre és gratuït.
+The principal benefici del registre és que sereu afegit a una llista de correu amb poca activitat 
+per rebre les notificacions més importants, com ara alertes de seguretat o l'aparició de noves versions de Moodle.
+<p>Per defecte la vostra informació serà privada i mai serà venuda o cedida a ningú més.  La única 
+   raó per recollir aquesta informació és per motius de suport i per contribuir a fer una imatge estadística 
+   de tota la comunitat Moodle.
+<p>Si així ho trieu s'afegirà a la llista pública de llocs Moodle el nom del vostre lloc web, el país i l'adreça web.
+<p>Totes el registres nous són verificats manualment abans de ser afegits a la llista, però un cop afegits podeu modificar el vostre registre i les dades de la llista pública en el moment en què ho desitgeu tot reenviant aquest formulari.";
+$string['registrationno'] = "No vull rebre correu electrònic";
+$string['registrationsend'] = "Envia la informació de registre a moodle.org";
+$string['registrationyes'] = "Vull rebre notificacions sobre aspectes importants";
+$string['removeadmin'] = "Eliminar administrador";
+$string['removecreator'] = "Eliminar creador de cursos";
 $string['removeteacher'] = "Eliminar professor";
 $string['rename'] = "Canviar nom";
 $string['requireskey'] = "Aquest curs necessita una clau d'inscripció";
 $string['resources'] = "Recursos";
+$string['restore'] = "Restaurar";
+$string['restorecancelled'] = "Restauració cancel·lada";
+$string['restoreto'] = "Restaurar a";
 $string['returningtosite'] = "Tornes a aquest lloc?";
 $string['revert'] = "Tornar";
 $string['role'] = "Funció";
@@ -457,10 +557,13 @@ $string['separateandconnected'] = "Formes de coneixement separades i connectades
 $string['serverlocaltime'] = "Hora del servidor local";
 $string['settings'] = "Opcions";
 $string['shortname'] = "Nom curt";
+$string['shortnametaken'] = "Aquest nom curt ja el té un altre curs (\$a)";
 $string['shortsitename'] = "Nom curt del lloc (p. e. una paraula)";
 $string['show'] = "Mostrar";
+$string['showall'] = "Mostrar tots \$a";
 $string['showallcourses'] = "Mostrar tots els cursos";
 $string['showalltopics'] = "Mostrar tots els temes";
+$string['showallusers'] = "Mostrar tots els usuaris";
 $string['showallweeks'] = "Mostrar totes les setmanes";
 $string['showlistofcourses'] = "Mostrar llista de cursos";
 $string['showonlytopic'] = "Mostrar només el tema \$a";
@@ -478,6 +581,7 @@ $string['someallowguest'] = "Alguns cursos poden permetre l'accés d'invitats";
 $string['someerrorswerefound'] = "Falta informació, o és incorrecta. Detalls més avall.";
 $string['startdate'] = "Data d'inici del curs";
 $string['startsignup'] = "Comença creant-te un compte d'usuari nou!";
+$string['state'] = "Comarca";
 $string['status'] = "Estatus";
 $string['strftimedate'] = "%%d %%B %%Y";
 $string['strftimedateshort'] = "%%d %%B";
@@ -507,7 +611,9 @@ $string['today'] = "Avui";
 $string['todaylogs'] = "Diaris d'avui";
 $string['toomanytoshow'] = "Hi ha massa usuaris per a mostrar-los tots";
 $string['topic'] = "Tema";
+$string['topichide'] = "Ocultar aquest tema a \$a";
 $string['topicoutline'] = "Esquema per temes";
+$string['topicshow'] = "Mostrar aquest tema a \$a";
 $string['total'] = "Total";
 $string['turneditingoff'] = "Desactivar edició";
 $string['turneditingon'] = "Activar edició";
@@ -515,6 +621,7 @@ $string['undecided'] = "No decidit";
 $string['unenrol'] = "Esborrar d'aquest curs";
 $string['unenrolme'] = "Esborrar de \$a";
 $string['unenrolsure'] = "Estàs segur que vols esborrar \$a d'aquest curs?";
+$string['unpacking'] = "Desempaquetant \$a";
 $string['unsafepassword'] = "Aquesta contrasenya no és segura, prova'n un altre";
 $string['unusedaccounts'] = "Els comptes no utilitzats durant \$a dies o més es desconnecten del curs automàticament.";
 $string['unzip'] = "Unzip";
@@ -528,28 +635,32 @@ $string['updatinga'] = "Actualitzant un \$a";
 $string['updatingain'] = "Actualitzant un \$a->what en \$a->in";
 $string['upload'] = "Penjar";
 $string['uploadafile'] = "Penjar un fitxer";
+$string['uploadedfileto'] = "Pujar \$a->file a \$a->directory";
+$string['uploadnofilefound'] = "No s'ha trobat cap fitxer. Segur que n'havies seleccionat un?";
+$string['uploadproblem'] = "S'ha produït un problema desconegut mentre es pujava el fitxer '\$a' (potser era massa gran?)";
 $string['uploadthisfile'] = "Penjar aquest fitxer";
+$string['user'] = "Usuari";
+$string['userdeleted'] = "Aquest compte d'usuari ha estat esborrat";
 $string['userdescription'] = "Descripció";
+$string['userfiles'] = "Fitxers de l'usuari";
 $string['username'] = "Nom d'usuari";
 $string['usernameexists'] = "Aquest nom d'usuari ja existeix, tria'n un altre";
 $string['userprofilefor'] = "Perfil d'usuari per a \$a";
 $string['users'] = "Usuaris";
 $string['webpage'] = "Pàgina web";
 $string['week'] = "Setmana";
+$string['weekhide'] = "Ocultar aquesta setmana a \$a";
 $string['weeklyoutline'] = "Esquema per setmanes";
+$string['weekshow'] = "Mostrar aquesta setmana a \$a";
 $string['welcometocourse'] = "Benvingut a \$a";
 $string['welcometocoursetext'] = "Benvingut a \$a->coursename!
-
-
-
 Una de les primeres coses que hauries de fer és editar el teu
 
 perfil de manera que puguem conèixer-te una mica més:
-
-
-
   \$a->profileurl";
 $string['withchosenfiles'] = "Els fitxers seleccionats";
+$string['withoutuserdata'] = "sense dades d'usuari";
+$string['withuserdata'] = "amb dades d'usuari";
 $string['wordforstudent'] = "La teua paraula per a 'Estudiant'";
 $string['wordforstudenteg'] = "p. e. Estudiant, Participant, etc.";
 $string['wordforstudents'] = "La teua paraula per a 'Estudiants'";
@@ -560,188 +671,9 @@ $string['wordforteachers'] = "La teua paraula per a 'Professors'";
 $string['wordforteacherseg'] = "p. e. Professors, Tutors, Facilitadors, etc.";
 $string['wrongpassword'] = "Contrasenya incorrecta per a aquest nom d'usuari";
 $string['yes'] = "Sí";
+$string['youaregoingtorestorefrom'] = "Vas a restaurar des de:";
 $string['yourlastlogin'] = "La teua última entrada va ser";
 $string['yourself'] = "tu mateix";
 $string['yourteacher'] = "el teu \$a";
-
-$string[addadmin] = "Afegir administrador";
-$string[assignadmins] = "Assignar administradors";
-$string[configcountry] = "If you set a country here, then this country will be selected by default on new user accounts.  To force users to choose a country, just leave this unset.";
-$string[configdebug] = "If you turn this on, then PHP's error_reporting will be increased so that more warnings are printed.  This is only useful for developers.";
-$string[displayingrecords] = "\$a registres llistats";
-$string[errortoomanylogins] = "Ho lamentem, has excedit el nombre màxim d'intents de connexió. Renicia el teu navegador.";
-$string[existingadmins] = "Administradors actuals";
-$string[gd1] = "GD 1.x instal·lada";
-$string[gd2] = "GD 2.x instal·lada";
-$string[gdneed] = "GD requerida per a veure aquesta gràfica";
-$string[gdnot] = "GD no està instal·lada";
-$string[helpreading] = "Llegeix atentament";
-$string[helpwriting] = "Escriu amb molt de compte";
-$string[howtomakethemes] = "Com crear nous temes";
-$string[makeeditable] = "If you make '\$a' editable by the web server process (eg apache) then you could edit this file directly from this page";
-$string[noexistingadmins] = "No existing admins, this is a serious error and you should never have seen this message.";
-$string[none] = "Cap";
-$string[nopotentialadmins] = "No hi ha administradors en potència";
-$string[normal] = "Normal";
-$string[numminutes] = "\$a minuts";
-$string[potentialadmins] = "Administradors en potència";
-$string[removeadmin] = "Eliminar administrador";
-$string[uploadedfileto] = "\$a->file pujat a \$a->directory";
-$string[uploadnofilefound] = "No s'ha pogut trobar el fitxer. Segur que n'havies seleccionat un?";
-$string[uploadproblem] = "S'ha produït un error en intentar pujar el fitxer '\$a' (potser és massa gran?)";
-$string[userdeleted] = "Aquest compte d'usuari ha estat esborrat";
-
-
-$string['activityiscurrentlyhidden'] = "Ho lamentem, aquesta activitat està oculta";
-$string['activitymodule'] = "Mòdul d'activitat";
-$string['addadmin'] = "Afegir administrador";
-$string['addcreator'] = "Afegir creador";
-$string['administrator'] = "Administrador";
-$string['areyousuretorestorethis'] = "Estàs segur que vols restaurar-lo?";
-$string['assignadmins'] = "Assignar administradors";
-$string['assigncreators'] = "Assignar creadors de cursos";
-$string['autosubscribe'] = "Subscripció automàtica al fòrum";
-$string['autosubscribeno'] = "No: no vull subscriure'm automàticament als fòrums";
-$string['autosubscribeyes'] = "Sí: quan escric en un fòrum, vull subscriure'm automàticament";
-$string['backup'] = "Còpia de seguretat";
-$string['backupdir'] = "backupdata";
-$string['backupdate'] = "Data de la còpia";
-$string['backupdetails'] = "Informació sobre la còpia";
-$string['backupfilename'] = "backup";
-$string['backupnameformat'] = "%%Y%%m%%d-%%H%%M";
-$string['backuporiginalname'] = "Nom de la còpia";
-$string['backupversion'] = "Versió de la còpia";
-$string['categoryduplicate'] = "Ja existeix una categoria denominada '\$a'!";
-$string['confirmednot'] = "Encara no has confirmat el teu registre!";
-$string['coursebackup'] = "Còpia del curs";
-$string['coursefiles'] = "Fitxers del curs";
-$string['courserestore'] = "Restaurar curs";
-$string['currentrelease'] = "Informació sobre l'edició actual";
-$string['currentversion'] = "Versió actual";
-$string['displayingrecords'] = "Visualitzar \$a registres";
-$string['displayingusers'] = "Visualitzar usuaris \$a->start a \$a->end";
-$string['emailconfirmationsubject'] = "\$a: confirmació de compte";
-$string['emailpasswordconfirmation'] = "Hola, \$a->firstname,
-
-Algú (probablement tu) ha demanat una nova contrasenya 
-per al teu compte en '\$a->sitename'.
-
-Per confirmar aquesta sol·licitud i rebre la nova contrasenya 
-per correu electrònic, vés a l'adreça web següent:
-
-  \$a->link
-
-En la majoria de programes de correu electrònic, l'adreça
-s'hauria de presentar com un enllaç blau i només cal clicar-lo.
-Si això no funciona, copia i apega l'adreça en el camp d'adreces
-de la finestra del teu navegador.
-
-Si necessites ajuda, contacta amb l'administrador del lloc:
-\$a->admin";
-$string['emailpasswordconfirmationsubject'] = "\$a: confirmació de canvi de contrasenya";
-$string['emailpasswordconfirmsent'] = "Rebràs un missatge de correu a la teua adreça: <b>\$a</b>.
-<p>Aquest missatge conté instruccions molt senzilles per confirmar i completar el canvi de contrasenya.
-Si després d'això segueixes experimentant problemes, contacta amb l'administrador del lloc.";
-$string['emailpasswordsent'] = "Gràcies per confirmar el canvi de contrasenya.
-<p>Rebràs un missatge de correu amb la contrasenya nova a la teua adreça: <b>\$a->email</b>.
-<p>La contrasenya nova s'ha generat automàticament - potser voldràs
-<a href=\$a->link>canviar-la</a> per una altra més fàcil de recordar.";
-$string['errortoomanylogins'] = "Ho lamentem, has excedit el nombre màxim d'intents de connexió. Tanca el teu navegador i torna a començar.";
-$string['existingadmins'] = "Administradors actuals";
-$string['existingcourse'] = "Cursos actuals";
-$string['existingcreators'] = "Creadors de cursos actuals";
-$string['formatplain'] = "Text simple";
-$string['formatwiki'] = "Format Wiki";
-$string['helpemoticons'] = "Emoticones";
-$string['helpformatting'] = "Sobre el formatatge del text";
-$string['helpreading'] = "Llegeix amb cura";
-$string['helpsummaries'] = "Sobre aquests resums";
-$string['helpwiki'] = "Com escriure text Wiki";
-$string['helpwriting'] = "Escriu amb cura";
-$string['howtomakethemes'] = "Com crear nous temes";
-$string['include'] = "Incloure";
-$string['included'] = "Inclòs";
-$string['includeallusers'] = "Incloure tots els usuaris";
-$string['includecourseusers'] = "Incloure els usuaris del curs";
-$string['includeneededusers'] = "Incloure els usuaris requerits";
-$string['includelogentries'] = "Incloure les entrades del diari";
-$string['includeuserfiles'] = "Incloure els fitxers dels usuaris";
-$string['includecoursefiles'] = "Incloure els fitxers del curs";
-$string['latestlanguagepack'] = "Comprovar l'últim paquet d'idioma en moodle.org";
-$string['list'] = "Llistar";
-$string['listfiles'] = "Llista els fitxers de \$a";
-$string['managemodules'] = "Gestionar mòduls";
-$string['markedthistopic'] = "Aquest tema està marcat com a tema actual";
-$string['missingurl'] = "Falta l'URL";
-$string['moduledeleteconfirm'] = "Vas a esborrar completament el mòdul '\$a'.  Això eliminarà tots els registres de la base de dades associats amb aquest mòdul d'activitat. Estàs segur que vols continuar?";
-$string['moduledeletefiles'] = "S'han eliminat de la base de dades totes les dades associades amb el mòdul '\$a->module'. Per completar la supressió del mòdul (i impedir que es reinstal·le per si mateix), ara hauries d'esborrar aquest directori del servidor: \$a->directory";
-$string['moodleversion'] = "Versió de Moodle";
-$string['needed'] = "Requerit";
-$string['neverdeletelogs'] = "No esborrar mai els diaris";
-$string['newcourse'] = "Nou curs";
-$string['noexistingadmins'] = "No hi ha administradors: això és un error seriós i mai no hauries d'haver vist aquest missatge.";
-$string['noexistingcreators'] = "No hi ha creadors";
-$string['none'] = "Cap";
-$string['nopotentialadmins'] = "No hi ha administradors en potència";
-$string['nopotentialcreators'] = "No hi ha creadors de cursos en potència";
-$string['nopotentialteachers'] = "No hi ha professors en potència";
-$string['normal'] = "Normal";
-$string['notavailable'] = "No disponible";
-$string['notincluded'] = "No inclòs";
-$string['nousersmatching'] = "No s'han trobat usuaris que complisquen la condició '\$a'";
-$string['numhours'] = "\$a hores";
-$string['numminutes'] = "\$a minuts";
-$string['passwordconfirmchange'] = "Confirma el canvi de la contrasenya";
-$string['popupwindow'] = "Obrir el fitxer en una altra finestra";
-$string['potentialadmins'] = "Administradors en potència";
-$string['potentialcreators'] = "Creadors de cursos en potència";
-$string['removeadmin'] = "Eliminar administrador";
-$string['removecreator'] = "Eliminar creador de cursos";
-$string['restore'] = "Restaurar";
-$string['restorecancelled'] = "Restauració cancel·lada";
-$string['restoreto'] = "Restaurar a";
-$string['shortnametaken'] = "Aquest nom curt ja el té un altre curs (\$a)";
-$string['showall'] = "Mostrar tots \$a";
-$string['showallusers'] = "Mostrar tots els usuaris";
-$string['state'] = "Comarca";
-$string['topichide'] = "Ocultar aquest tema a \$a";
-$string['topicshow'] = "Mostrar aquest tema a \$a";
-$string['unpacking'] = "Desempaquetant \$a";
-$string['uploadedfileto'] = "Pujar \$a->file a \$a->directory";
-$string['uploadnofilefound'] = "No s'ha trobat cap fitxer. Segur que n'havies seleccionat un?";
-$string['uploadproblem'] = "S'ha produït un problema desconegut mentre es pujava el fitxer '\$a' (potser era massa gran?)";
-$string['user'] = "Usuari";
-$string['userdeleted'] = "Aquest compte d'usuari ha estat esborrat";
-$string['userfiles'] = "Fitxers de l'usuari";
-$string['weekhide'] = "Ocultar aquesta setmana a \$a";
-$string['weekshow'] = "Mostrar aquesta setmana a \$a";
-$string['withoutuserdata'] = "sense dades d'usuari";
-$string['withuserdata'] = "amb dades d'usuari";
-$string['youaregoingtorestorefrom'] = "Vas a restaurar des de:";
-
-$string['configintroadmin'] = "En aquesta pàgina haureu de configurar el compte de l'administrador principal que té el control complet del lloc web. Assegureu-vos de donar  un nom d'usuari i contrasenya segurs així com una adreça de correu.  Podreu crear més comptes d'administrador més endavant.";
-$string['configintrosite'] = "En aquesta pàgina podreu configurar la pàgina d'inici i el nom del lloc nou.  Sempre podreu tornar-hi i canviar les opcions usant l'enllaç a 'Configuració del lloc' de la pàgina d'inici.";
-$string['configlangmenu'] = "Escolliu si voleu o no mostrar el menú de lllenguatge a les pàgines d'inici, d'entrada, etc.  Això no afecta la possibilitat que l'usuari determini el llenguatge preferit al seu perfil.";
-$string['configlanglist'] = "Deixeu-ho en blanc si permeteu que els usuaris escullin entre els diferents llenguatges d'aquesta instal·lació de Moodle.  Tanmateix podeu escurçar el menú de llenguatges si escriviu una llista separada per comes amb els codis dels llenguatges que voleu.  Per exemple:  ca,en,es_es,fr,it";
-$string['configsessiontimeout'] = "Quan els usuaris que han entrat fa estona que no treballen amb Moodle (no carreguen pàgines) són desconnectats automàticament (se'ls finalitza la sessió).  Aquesta variable especifica quant de temps s'espera a desconnectar-los.";
-$string['displayingfirst'] = "Només es mostren els primers \$a->count \$a->things ";
-$string['nofilesselected'] = "No has seleccionat cap arxiu per restaurar";
-$string['publicdirectory'] = "Directori públic";
-$string['publicdirectory0'] = "No publicar el lloc web";
-$string['publicdirectory1'] = "Publicar només el nom del lloc web";
-$string['publicdirectory2'] = "Publicar el nom del lloc web i l'enllaç";
-$string['registration'] = "Registre de Moodle";
-$string['registrationemail'] = "Notificacions per correu";
-$string['registrationinfo'] = "<p>Aquesta pàgina us permet registrar el vostre lloc basat en Moodle a moodle.org.  El registre és gratuït.
-The principal benefici del registre és que sereu afegit a una llista de correu amb poca activitat 
-per rebre les notificacions més importants, com ara alertes de seguretat o l'aparició de noves versions de Moodle.
-<p>Per defecte la vostra informació serà privada i mai serà venuda o cedida a ningú més.  La única 
-   raó per recollir aquesta informació és per motius de suport i per contribuir a fer una imatge estadística 
-   de tota la comunitat Moodle.
-<p>Si així ho trieu s'afegirà a la llista pública de llocs Moodle el nom del vostre lloc web, el país i l'adreça web.
-<p>Totes el registres nous són verificats manualment abans de ser afegits a la llista, però un cop afegits podeu modificar el vostre registre i les dades de la llista pública en el moment en què ho desitgeu tot reenviant aquest formulari.";
-$string['registrationno'] = "No vull rebre correu electrònic";
-$string['registrationsend'] = "Envia la informació de registre a moodle.org";
-$string['registrationyes'] = "Vull rebre notificacions sobre aspectes importants";
 
 ?>
