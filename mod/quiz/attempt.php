@@ -80,7 +80,7 @@
     }
 
 /// Check password access
-    if ($quiz->password) {
+    if ($quiz->password and empty($_POST['q'])) {
         if (empty($_POST['quizpassword'])) {
     
             print_heading($quiz->name);
@@ -88,14 +88,14 @@
             print_simple_box(format_text($quiz->intro), "CENTER");
             echo "<br />\n";
         
-            echo "<form name=\"passwordform\" method=\"post\" action=\"attempt.php?q=$quiz->id\">\n";
+            echo "<form name=\"passwordform\" method=\"post\" action=\"attempt.php?id=$cm->id\">\n";
             print_simple_box_start("center");
             
             echo "<div align=\"center\">\n";
             print_string("requirepasswordmessage", "quiz");
             echo "<br /><br />\n";
             echo " <input name=\"quizpassword\" type=\"password\" value=\"\">";
-            echo " <input name=\"submit\" type=\"submit\" value=\"".get_string("ok")."\">\n";
+            echo " <input type=\"submit\" value=\"".get_string("ok")."\">\n";
             echo "</div>\n";
 
             print_simple_box_end();
@@ -108,7 +108,7 @@
             if (strcmp($quiz->password, $_POST['quizpassword']) !== 0) {
                 error(get_string("passworderror", "quiz"), "view.php?id=$cm->id");
             }
-            unset($_POST); /// needed so as not to confuse later code dealing with submitted answers
+            unset($_POST['quizpassword']); /// needed so as not to confuse later code dealing with submitted answers
         }
     }
     
