@@ -1791,8 +1791,13 @@ function print_standard_coursemodule_settings($form) {
 /**
  * Print groupmode form element on module setup forms in mod/.../mod.html
  */
-function print_groupmode_setting($form, $course) {
+function print_groupmode_setting($form, $course=NULL) {
 
+    if (empty($course)) {
+        if (! $course = get_record('course', 'id', $form->course)) {
+            error("This course doesn't exist");
+        }
+    }
     if ($form->coursemodule) {
         if (! $cm = get_record('course_modules', 'id', $form->coursemodule)) {
             error("This course module doesn't exist");
@@ -1818,7 +1823,7 @@ function print_groupmode_setting($form, $course) {
 /**
  * Print visibility setting form element on module setup forms in mod/.../mod.html
  */
-function print_visible_setting($form, $course) {
+function print_visible_setting($form, $course=NULL) {
 
     if ($form->coursemodule) {
         $visible = get_field('course_modules', 'visible', 'id', $form->coursemodule);
