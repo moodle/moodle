@@ -898,7 +898,7 @@ function quiz_print_cat_question_list($categoryid) {
 
     echo "</CENTER>";
 
-    if (!$questions = get_records("quiz_questions", "category", $category->id)) {
+    if (!$questions = get_records("quiz_questions", "category", $category->id, "qtype ASC")) {
         echo "<P align=center>";
         print_string("noquestions", "quiz");
         echo "</P>";
