@@ -1,0 +1,19 @@
+ENGLISH
+-------
+
+English is the default language of Moodle, and this language 
+pack is the "master" set against which other packs are compared.
+
+If a string is missing for any reason from another language
+then the English version will be used.
+
+Each installed activity module in moodle/mod should have a file 
+here, as well as the main file which is called "moodle.php".
+
+The "help" directory contains whole pages written in HTML,
+and the "docs" directory contains other miscellaneous 
+documents.
+
+If you are thinking of translating Moodle to another language,
+please contact Martin Dougiamas!
+
