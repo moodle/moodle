@@ -16,7 +16,7 @@ function schedule_backup_cron() {
 
     //First of all, we have to see if the scheduled is active and detect
     //that there isn't another cron running
-    echo "    Checking status";
+    echo "    Checking backup status";
     $backup_config = backup_get_config();
     if(!isset($backup_config->backup_sche_active) || !$backup_config->backup_sche_active) {
         echo "...INACTIVE\n";
@@ -82,7 +82,7 @@ function schedule_backup_cron() {
                 //Now, calculate next execution of the course
                 $nextstarttime = schedule_backup_next_execution ($backup_course,$backup_config,$now,$admin->timezone);
                 //Save it to db
-                set_field("backup_courses","nextstarttime",$nextstarttime,"id",$backup_course->courseid);
+                set_field("backup_courses","nextstarttime",$nextstarttime,"courseid",$backup_course->courseid);
                 //Print it to screen as necessary
                 $showtime = "undefined";
                 if ($nextstarttime > 0) {
