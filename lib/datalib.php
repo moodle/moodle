@@ -2627,7 +2627,7 @@ function instance_is_visible($moduletype, $module) {
  */
 function add_to_log($courseid, $module, $action, $url='', $info='', $cm=0, $user=0) {
 
-    global $db, $CFG, $USER, $REMOTE_ADDR;
+    global $db, $CFG, $USER;
 
     if ($cm === '') { // postgres won't translate empty string to its default
         $cm = 0;
@@ -2641,6 +2641,8 @@ function add_to_log($courseid, $module, $action, $url='', $info='', $cm=0, $user
         }
         $userid = empty($USER->id) ? '0' : $USER->id;
     }
+
+    $REMOTE_ADDR = getremoteaddr();
 
     $timenow = time();
     $info = addslashes($info);
