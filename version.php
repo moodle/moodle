@@ -17,7 +17,7 @@
 // If there's something it cannot do itself, it 
 // will tell you what you need to do.
 
-$version = 2002082101;
+$version = 2002082600;
 
 function upgrade_moodle($oldversion=0) {
 
