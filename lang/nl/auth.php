@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.3 development (2004040500)
+      // auth.php - created with Moodle 1.4 development (2004080300)
 
 
 $string['auth_dbdescription'] = 'Deze methode gebruikt een externe database om te controleren of een bepaalde gebruikersnaam en een bepaald wachtwoord geldig zijn. Als de account nieuw is dan kan informatie vanuit andere velden ook naar Moodle worden gekopieerd.';
@@ -16,15 +16,18 @@ $string['auth_dbtype'] = 'Het type database (Bekijk <A HREF=../lib/adodb/readme.
 $string['auth_dbuser'] = 'Gebruikersnaam met read access tot de database';
 $string['auth_emaildescription'] = 'E-mail bevestiging is standaard ingesteld als authenticatie methode. Op het moment dat de gebruiker zich aanmeldt en daarbij een nieuwe gebruikersnaam en wachtwoord kiest wordt er een bevestigings e-mail gestuurd naar het e-mailadres van de gebruiker. In deze e-mail staat een veilige link naar een pagina waar de gebruiker zijn account kan bevestigen. In alle latere logins worden de gebruikersnaam en het wachtwoord alleen maar vergeleken met de bewaarde waarden in de Moodle database.';
 $string['auth_emailtitle'] = 'Op e-mail gebaseerde authenticatie';
-$string['auth_imapdescription'] = 'Deze methode gebruikt een IMAP server om te controleren of een bepaalde gebruikersnaam en een bepaald wachtwoord geldig zijn.
-';
-$string['auth_imaphost'] = 'Het adres van de IMAP server. Gebruik een IP-adres, geen DNS naam.  
-';
-$string['auth_imapport'] = 'Het nummer van de poort van de IMAP server. Meestal is dit 143 of 993.
-';
+$string['auth_fccreators'] = 'Lijst met groepen van wie de leden nieuwe vakken mogen maken. Gebruik een ; als scheidingsteken voor meerdere groepen. Namen moeten hetzelfde gespeld worden als op de FirstClass server. Het systeem is hoofdlettergevoelig.';
+$string['auth_fcdescription'] = 'Deze methode gebruikt een FirstClass server om te controleren of een gegeven gebruikersnaam en wachtwoord geldig zijn.';
+$string['auth_fcfppport'] = 'Server poort (3333 is de meest gebruikelijke)';
+$string['auth_fchost'] = 'Het adres van de server. Gebruik het IP-nummer of DNS-naam.';
+$string['auth_fcpasswd'] = 'Wachtwoord voor bovenstaande account';
+$string['auth_fctitle'] = 'Gebruik een FirstClass server';
+$string['auth_fcuserid'] = 'Gebruikers-ID voor FirstClass account met het privilege \'Subadministrator\'.';
+$string['auth_imapdescription'] = 'Deze methode gebruikt een IMAP server om te controleren of een bepaalde gebruikersnaam en een bepaald wachtwoord geldig zijn.';
+$string['auth_imaphost'] = 'Het adres van de IMAP server. Gebruik een IP-adres, geen DNS naam.  ';
+$string['auth_imapport'] = 'Het nummer van de poort van de IMAP server. Meestal is dit 143 of 993.';
 $string['auth_imaptitle'] = 'Gebruik een IMAP  server ';
-$string['auth_imaptype'] = 'Het type van de IMAP server. IMAP servers kunnen verschillende manieren van authenticatie en onderhandeling hebben.
-';
+$string['auth_imaptype'] = 'Het type van de IMAP server. IMAP servers kunnen verschillende manieren van authenticatie en onderhandeling hebben.';
 $string['auth_ldap_bind_dn'] = 'Als je \'bind-user\' wilt gebruiken om gebruikers te zoeken, dan moet je dat hier aangeven. Bijvoorbeeld \'cn=ldapuser,ou=public,o=org\'';
 $string['auth_ldap_bind_pw'] = 'Wachtwoord voor de \'bind-user\'';
 $string['auth_ldap_contexts'] = 'Lijst met contexten waar de gebruikers gelocaliseerd zijn. Scheid verschillende contexten met \';\'. Bijvoorbeeld: \'ou=users,o=org; ou=others,o=org\'';
@@ -32,7 +35,7 @@ $string['auth_ldap_create_context'] = 'Als je het aanmaken van gebruikers met e-
 $string['auth_ldap_creators'] = 'Lijst met groepen gebruikers. De leden van de groepen mogen nieuwe vakken aanmaken. Scheid meerdere groepen met \';\'. Meestal iets als \'cn=docenten,ou=medewerkers,o=mijnorganisatie\'';
 $string['auth_ldap_host_url'] = 'Geef de LDAP host in de vorm van een URL zoals bijvoorbeeld: \'ldap://ldap.myorg.com/\' of \'ldaps://ldap.myorg.com/\'  Com/\'or \'ldaps://ldap.myorg.com/\' ';
 $string['auth_ldap_memberattribute'] = 'Geef gebruiker lid attribuut, voor als gebruikers tot een groep behoren. Meestal \'member\'';
-$string['auth_ldap_search_sub'] = 'Zet waarde &lt;&gt; 0 als je gebruikers wilt kunnen zoeken in subcontexten.';
+$string['auth_ldap_search_sub'] = 'Zet waarde <> 0 als je gebruikers wilt kunnen zoeken in subcontexten.';
 $string['auth_ldap_update_userinfo'] = 'Werk de gebruikersinformatie bij (voornaam, achternaam, adres, ..) van LDAP naar Moodle. Bekijk /auth/ldap/attr_mappings.php om informatie te vinden over de \'mapping\'.';
 $string['auth_ldap_user_attribute'] = 'Het attribuut dat wordt gebruikt om gebruikers te benoemen of zoeken. Meestal \'cn\'.';
 $string['auth_ldap_version'] = 'De versie van het LDAP protocol die jouw server gebruikt.';
@@ -47,11 +50,9 @@ $string['auth_nntpdescription'] = 'Deze methode gebruikt een NTTP server om te c
 $string['auth_nntphost'] = 'Het adres van de NNTP server. Gebruik het IP-adres, niet een DNS naam.';
 $string['auth_nntpport'] = 'De poort van de server (meestal is dat 119)';
 $string['auth_nntptitle'] = 'Gebruik een  NNTP server';
-$string['auth_nonedescription'] = 'De gebruikers kunnen meteen inloggen en een geldige account aanmaken, zonder authenticatie door middel van een externe server en zonder bevestiging via e-mail. Wees voorzichtig met het gebruiken van deze mogelijkheid - denk aan de beveiligings- en beheerproblemen die hieruit zouden kunnen ontstaan.
-';
+$string['auth_nonedescription'] = 'De gebruikers kunnen meteen inloggen en een geldige account aanmaken, zonder authenticatie door middel van een externe server en zonder bevestiging via e-mail. Wees voorzichtig met het gebruiken van deze mogelijkheid - denk aan de beveiligings- en beheerproblemen die hieruit zouden kunnen ontstaan.';
 $string['auth_nonetitle'] = 'Geen authenticatie';
-$string['auth_pop3description'] = 'Deze methode gebruikt een POP3 server om te controleren of een gebruikersnaam en wachtwoord geldig zijn.
-';
+$string['auth_pop3description'] = 'Deze methode gebruikt een POP3 server om te controleren of een gebruikersnaam en wachtwoord geldig zijn.';
 $string['auth_pop3host'] = 'Het adres van de POP3 server. Gebruik het IP-adres, niet een DNS naam.';
 $string['auth_pop3port'] = 'De poort van de server (meestal is dat 110)';
 $string['auth_pop3title'] = 'Gebruik een  POP3 server';
@@ -62,14 +63,12 @@ $string['auth_usernameexists'] = 'De gekozen gebruikersnaam bestaat al. Kies als
 $string['authenticationoptions'] = 'Opties voor authenticatie';
 $string['authinstructions'] = 'Hier kun je instructies geven aan de gebruikers, zodat ze weten welke gebruikersnaam en welk wachtwoord ze moeten gebruiken. De tekst die je hier invult komt te staan op de login pagina. Als je dit leeg laat zullen er geen instructies worden weergegeven.';
 $string['changepassword'] = 'URL voor het veranderen van het wachtwoord';
-$string['changepasswordhelp'] = 'Hier kun je een locatie aangeven waar gebruikers hun gebruikersnaam/wachtwoord kunnen terugkrijgen als ze deze vergeten zijn. Dit zal aan de gebruikers worden gegeven als een knop op de login pagina en op hun gebruikerspagina. Als je dit leeg laat zal de knop niet verschijnen.
-';
+$string['changepasswordhelp'] = 'Hier kun je een locatie aangeven waar gebruikers hun gebruikersnaam/wachtwoord kunnen terugkrijgen als ze deze vergeten zijn. Dit zal aan de gebruikers worden gegeven als een knop op de login pagina en op hun gebruikerspagina. Als je dit leeg laat zal de knop niet verschijnen.';
 $string['chooseauthmethod'] = 'Kies een methode van authenticatie:';
 $string['guestloginbutton'] = 'Knop voor login als gast';
 $string['instructions'] = 'Instructies';
 $string['md5'] = 'MD5 encryptie';
 $string['plaintext'] = 'Platte tekst';
-$string['showguestlogin'] = 'Je kunt de knop voor login als gast verbergen of laten zien op de login pagina.
-';
+$string['showguestlogin'] = 'Je kunt de knop voor login als gast verbergen of laten zien op de login pagina.';
 
 ?>

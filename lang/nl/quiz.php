@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.4 development (2004072901)
+      // quiz.php - created with Moodle 1.4 development (2004080300)
 
 
 $string['acceptederror'] = 'Geaccepteerde fout';
@@ -59,6 +59,7 @@ $string['coursetestmanager'] = 'Course Test Manager opmaak';
 $string['createmultiple'] = 'Maak meerdere vragen';
 $string['createnewquestion'] = 'Maak een nieuwe vraag';
 $string['custom'] = 'Aangepast formaat';
+$string['datasetdefinitions'] = 'Herbruikbare dataset definities voor categorie $a';
 $string['datasetnumber'] = 'Aantal';
 $string['daysavailable'] = 'Dagen beschikbaar';
 $string['decimals'] = 'met $a';
@@ -93,6 +94,7 @@ $string['exportnameformat'] = '%%Y%%m%%d-%%H%%M';
 $string['exportquestions'] = 'Exporteer de vragen naar een bestand';
 $string['false'] = 'Onwaar';
 $string['feedback'] = 'Feedback';
+$string['file'] = 'Bestand';
 $string['fileformat'] = 'Bestandsformaat';
 $string['filloutoneanswer'] = 'Je moet minstens één mogelijk antwoord invullen. Lege antwoorden zullen niet worden gebruikt.';
 $string['filloutthreequestions'] = 'Je moet minstens drie vragen invullen. Leeg gelaten vragen zullen niet worden gebruikt.';
@@ -104,6 +106,11 @@ $string['fractionsaddwrong'] = 'De positieve cijfers die je hebt gekozen tellen 
 $string['fractionsnomax'] = 'Eén van de antwoorden moet 100%% zijn, zodat het mogelijk is
 <BR>om een vol punt voor deze vraag te krijgen.
 <BR>Wil je terug gaan en deze vraag verbeteren?';
+$string['functiontakesatleasttwo'] = 'De functie $a moet minstens twee argumenten hebben';
+$string['functiontakesnoargs'] = 'De functie $a neemt geen argumenten aan';
+$string['functiontakesonearg'] = 'De functie $a moet juist één argument hebben';
+$string['functiontakesoneortwoargs'] = 'De functie $a moet één of twee argumenten hebben';
+$string['functiontakestwoargs'] = 'De functie $a moet juist twee argumenten hebben';
 $string['generatevalue'] = 'Genereer een nieuwe waarde tussen';
 $string['geometric'] = 'Geometrisch';
 $string['gift'] = 'GIFT opmaak';
@@ -118,9 +125,12 @@ $string['importquestions'] = 'Importeer vragen uit een bestand';
 $string['indivresp'] = 'Reacties van ieder afzonderlijk op elk item';
 $string['introduction'] = 'Inleiding';
 $string['itemanal'] = 'Analyse van de reacties op de items';
+$string['itemdefinition'] = 'Definitie';
 $string['keptcategory'] = 'a \".(1==$a ? \'letterlijk\' :(2==$a ? \'bestand\' :(3==$a ? \'link\' : $a))).\" hebruikbare set van dezelfde categorie\".(1==$a ? \'letterlijk\' :(2==$a ? \'bestanden\' : (3==$a ? \'links\' : $a))).\" zoals hiervoor';
 $string['keptlocal'] = 'a \".(1==$a ? \'letterlijk\' :(2==$a ? \'bestand\' :(3==$a ? \'link\' : $a))).\" van dezelfde private vragenset van\".(1==$a ? \'letterlijk\' :(2==$a ? \'bestanden\' : (3==$a ? \'links\' : $a))).\" zoals hiervoor';
+$string['link'] = 'Link';
 $string['listitems'] = 'Lijst van items in de test';
+$string['literal'] = 'Letterlijk';
 $string['loguniform'] = 'cijfers, van een loguniform distrubutie';
 $string['marks'] = 'Punten';
 $string['match'] = 'Koppelen';
@@ -237,6 +247,7 @@ $string['type'] = 'Soort';
 $string['uniform'] = 'decimalen, van een uniforme distributie';
 $string['unit'] = 'Eenheid';
 $string['unknowntype'] = 'Vraagtype op lijn $a niet ondersteund. De vraag zal genegeerd worden';
+$string['unsupportedformulafunction'] = 'De functie $a is niet ondersteund';
 $string['viewallanswers'] = 'Bekijk $a voltooide testen';
 $string['viewallreports'] = 'Bekijk overzicht van $a pogingen';
 $string['warningsdetected'] = '$a waarschuwing(en) ontdekt';
@@ -244,6 +255,7 @@ $string['webct'] = 'WebCT opmaak';
 $string['wildcard'] = 'Jokerteken';
 $string['withsummary'] = 'met samenvattende statistieken';
 $string['wronggrade'] = 'Verkeerd cijfer (na lijn $a):';
+$string['xml'] = 'Moodle XML-formaat';
 $string['yourfinalgradeis'] = 'Je eindcijfer voor deze test is $a';
 
 ?>

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.4 development (2004072901)
+      // moodle.php - created with Moodle 1.4 development (2004080300)
 
 
 $string['action'] = 'Actie';
@@ -395,6 +395,7 @@ $string['existingteachers'] = 'Bestaande docenten';
 $string['failedloginattempts'] = '$a->attempts mislukte aanmeldingen sinds je laatste aanmelding';
 $string['failedloginattemptsall'] = '$a->attempts mislukte aanmelding bij $a->accounts accounts';
 $string['feedback'] = 'Feedback';
+$string['file'] = 'Bestand';
 $string['filemissing'] = '$a ontbreekt';
 $string['files'] = 'Bestanden';
 $string['filesfolders'] = 'Bestanden/mappen';
@@ -690,10 +691,9 @@ $string['notenrolled'] = '$a is geen lid van dit vak.';
 $string['noteuserschangednonetocourse'] = 'Let op: de gebruikers van een vak moeten worden hersteld op het moment dat je gebruikers data aan het terugzetten bent. Deze instelling is voor je veranderd.';
 $string['nothingnew'] = 'Niets nieuws sinds je laatste login';
 $string['noticenewerbackup'] = 'Dit backupbestand is gemaakt met Moodle $a->backuprelease ($a->backupversion) en is nieuwer dan je geïnstalleerde Moodle $a->serverrelease ($a->serverversion). Dit kan wat inconsistenties veroorzaken omdat terugwaartse compatibiliteit van backupbestanden niet gegarandeerd kan worden.';
+$string['notifyloginfailuresmessage'] = '$a->time, IP-adres: $a->ip, Gebruiker: $a->info';
 $string['notifyloginfailuresmessageend'] = 'Je kunt deze logs bekijken op $a/course/log.php?id=1&chooselog=1&modid=site_errors.';
-$string['notifyloginfailuresmessagefromip'] = 'van IP-adres';
 $string['notifyloginfailuresmessagestart'] = 'Hier is een lijst van mislukte aanmeldingen op $a sinds je laatste notificatie';
-$string['notifyloginfailuresmessagewithuser'] = 'met gebruikersnaam';
 $string['notifyloginfailuressubject'] = '$a::Notificatie van mislukte aanmeldingen';
 $string['notincluded'] = 'Niet ingevoegd';
 $string['notingroup'] = 'Om deze activiteit te kunnen zien moet je lid zijn van een groep.';
