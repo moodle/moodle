@@ -110,6 +110,7 @@ $string['replies'] = 'Respuestas';
 $string['repliesmany'] = '$a respuestas';
 $string['repliesone'] = '$a respuesta';
 $string['reply'] = 'Responder';
+$string['replyforum'] = 'Responder al foro';
 $string['search'] = 'Buscar';
 $string['searchforums'] = 'Buscar foro';
 $string['searcholderposts'] = 'Buscar mensajes antiguos...';

@@ -8,6 +8,7 @@ $string['choicename'] = 'Título de la consulta';
 $string['choicetext'] = 'Pregunta a responder';
 $string['modulename'] = 'Consulta';
 $string['modulenameplural'] = 'Consultas';
+$string['mustchooseone'] = 'No se ha guardado nada porque no ha hecho una elección. Elija una opción antes de guardar.';
 $string['notanswered'] = 'No contestada aún';
 $string['publish'] = 'Publicar resultados';
 $string['publishanonymous'] = 'Publicar resultados anónimamente, sin mostrar los nombres de los alumnos.';

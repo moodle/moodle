@@ -18,6 +18,7 @@ $string['configpopupstatus'] = 'Las ventanas \"popup\", ¿deben por defecto mostr
 $string['configpopuptoolbar'] = 'Las ventanas \"popup\", ¿deben por defecto mostrar la barra de herramientas?';
 $string['configpopupwidth'] = '¿Qué ancho deben tener por defecto las ventanas \"popup\"?';
 $string['configwebsearch'] = 'Cuando agregue una URL como página wueb o como enlace, esta ubicación se ofrece como un sitio para que el usuario busque la URL que desea.';
+$string['directlink'] = 'Enlace directo a este archivo';
 $string['editingaresource'] = 'Editar material';
 $string['example'] = 'Ejemplo';
 $string['examplereference'] = 'Tobin, K. & Tippins, D (1993) Constructivism as a Referent for Teaching and Learning. In: K. Tobin (Ed) The Practice of Constructivism in Science Education, pp 3-21, Lawrence-Erlbaum, Hillsdale, NJ.';

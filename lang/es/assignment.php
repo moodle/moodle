@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.2 development (2003120700)
+      // assignment.php - created with Moodle 1.2 development (2004010900)
 
 
 $string['allowresubmit'] = 'Permitir corrección';
@@ -18,6 +18,7 @@ $string['description'] = 'Descripción';
 $string['duedate'] = 'Fecha de entrega';
 $string['duedateno'] = 'No hay fecha de entrega';
 $string['early'] = '$a antes';
+$string['existingfiledeleted'] = 'Los archivos se han borrado: $a';
 $string['failedupdatefeedback'] = 'Fallo al actualizar la calificación de $a';
 $string['feedback'] = 'Respuesta';
 $string['feedbackupdated'] = 'Respuesta actualizada para $a personas';

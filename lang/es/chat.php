@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // chat.php - created with Moodle 1.2 development (2003120700)
+      // chat.php - created with Moodle 1.2 development (2004010900)
 
 
 $string['beep'] = 'beep';
@@ -13,6 +13,8 @@ Un valor bajo permitirá una conversación más ágil, pero puede ser mucha carga pa
 $string['configrefreshuserlist'] = '¿Cada cuantos segundos se debe actualizar la lista de usuarios presentes en el chat?';
 $string['currentchats'] = 'Salas activas';
 $string['currentusers'] = 'usuarios ';
+$string['deletesession'] = 'Borrar esta sesión';
+$string['deletesessionsure'] = '¿Está seguro de que desea borrar esta sesión?';
 $string['donotusechattime'] = 'No publicar tiempo de chat';
 $string['enterchat'] = 'Entrar a la sala';
 $string['errornousers'] = '¡No puedo encontrar usuarios!';
