@@ -69,16 +69,20 @@
             }
         }
 
-        echo "<table cellpadding=\"10\" align=\"center\"><tr>";
+        $tabs = array();
+        $row  = array();
+        $currenttab = '';
         foreach ($reportlist as $report) {
-            $strreport = get_string("report$report", "quiz");
+            $row[] = new tabobject($report, "report.php?id=$cm->id&amp;mode=$report", 
+                                    get_string("report$report", "quiz"));
             if ($report == $mode) {
-                echo "<td><u>$strreport</u></td>";
-            } else {
-                echo "<td><a href=\"report.php?id=$cm->id&amp;mode=$report\">$strreport</a></td>";
+                $currenttab = $report;
             }
         }
-        echo "</tr></table><hr size=\"1\" noshade=\"noshade\" />";
+        $tabs[] = $row;
+
+        print_tabs($tabs, $currenttab);
+
     }
 
 
