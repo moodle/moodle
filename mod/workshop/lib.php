@@ -1012,10 +1012,10 @@ function workshop_get_student_submissions($workshop, $order = "title") {
 		$order = "firstname, lastname";
 		}
     return get_records_sql("SELECT s.* FROM {$CFG->prefix}workshop_submissions s, {$CFG->prefix}user_students u,
-							{$CFG->prefix}user 
+							{$CFG->prefix}user a 
                             WHERE u.course = $workshop->course
                               AND s.userid = u.userid
-							  AND user.id = u.userid
+							  AND a.id = u.userid
                               AND s.workshopid = $workshop->id
 							  AND s.timecreated > 0
 							  ORDER BY $order");
@@ -1640,11 +1640,6 @@ function workshop_list_teacher_submissions($workshop, $user) {
 				}
 			// put the submissions with the lowest number of assessments first
 			asort($nassessments);
-			reset($nassessments);
-
-			echo "<PRE>";
-			print_r($nassessments);
-			
 			reset($nassessments);
 			$comment = "";
 			foreach ($nassessments as $submissionid => $n) { // actually only the first one is displayed...
