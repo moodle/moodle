@@ -45,6 +45,7 @@ class CourseBlock_online_users extends MoodleBlock {
             $this->content = '';
             return $this->content;
         }
+
     
         $this->content = New object;
         $this->content->text = '';
@@ -58,12 +59,18 @@ class CourseBlock_online_users extends MoodleBlock {
         $currentgroup = $isseparategroups ? get_current_group($this->course->id) : NULL;
 
         $groupmembers = "";
-        $select = "";
+        $groupselect = "";
 
         //Add this to the SQL to show only group users
         if ($currentgroup !== NULL) {
             $groupmembers = ", {$CFG->prefix}groups_members gm ";
-            $select .= " AND u.id = gm.userid AND gm.groupid = '$currentgroup'";
+            $groupselect .= " AND u.id = gm.userid AND gm.groupid = '$currentgroup'";
+        }
+
+        if (empty($this->course->category)) {  // Site-level
+            $courseselect = '';
+        } else {
+            $courseselect = "AND s.course = '".$this->course->id;
         }
 
         $timefrom = time()-$timetoshowusers;
@@ -72,17 +79,17 @@ class CourseBlock_online_users extends MoodleBlock {
                                      FROM {$CFG->prefix}user u,
                                           {$CFG->prefix}user_students s
                                           $groupmembers
-                                     WHERE u.id = s.userid and
-                                           s.course = {$this->course->id} and
-                                           s.timeaccess > $timefrom $select ORDER BY s.timeaccess DESC");
+                                     WHERE u.id = s.userid $courseselect $groupselect
+                                       AND s.timeaccess > $timefrom 
+                                  ORDER BY s.timeaccess DESC");
 
         $teachers = get_records_sql("SELECT u.id, u.username, u.firstname, u.lastname, u.picture, s.timeaccess
                                      FROM {$CFG->prefix}user u,
                                           {$CFG->prefix}user_teachers s
                                           $groupmembers
-                                     WHERE u.id = s.userid and
-                                           s.course = {$this->course->id} and
-                                           s.timeaccess > $timefrom $select ORDER BY s.timeaccess DESC");
+                                     WHERE u.id = s.userid $courseselect $groupselect
+                                       AND s.timeaccess > $timefrom 
+                                  ORDER BY s.timeaccess DESC");
 
         if ($teachers || $students) {
             if ($students) {
