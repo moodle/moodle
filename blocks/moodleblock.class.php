@@ -155,26 +155,26 @@ class MoodleBlock {
             $title = $this->str->show;
         }
 
-        $movebuttons .= '<a style="margin-right: 10px;" title="'.$title.'" href="'.$path.'/view.php?id='.$this->course->id.'&amp;blockaction=toggle&amp;blockid='.$blockid.'">' .
+        $movebuttons .= '<a style="margin-right: 6px; margin-left: 3px;" title="'.$title.'" href="'.$path.'/view.php?id='.$this->course->id.'&amp;blockaction=toggle&amp;blockid='.$blockid.'">' .
                         '<img src="'.$pixpath.$icon.'" /></a>';
 
-        $movebuttons .= '<a style="margin-right: 10px;" title="'.$this->str->delete.'" href="'.$path.'/view.php?id='.$this->course->id.'&amp;blockaction=delete&amp;blockid='.$blockid.'">' .
-                        '<img src="'.$pixpath.'/t/delete.gif" /></a>';
+        $movebuttons .= '<a title="'.$this->str->delete.'" href="'.$path.'/view.php?id='.$this->course->id.'&amp;blockaction=delete&amp;blockid='.$blockid.'">' .
+                        '<img src="'.$pixpath.'/t/delete.gif" /></a> ';
 
         if ($options & BLOCK_MOVE_LEFT) {
-            $movebuttons .= '<a style="margin-right: 3px;" title="'.$this->str->moveleft.'" href="'.$path.'/view.php?id='.$this->course->id.'&amp;blockaction=moveside&amp;blockid='.$blockid.'">' .
+            $movebuttons .= '<a style="margin-right: 2px; margin-left: 2px;" title="'.$this->str->moveleft.'" href="'.$path.'/view.php?id='.$this->course->id.'&amp;blockaction=moveside&amp;blockid='.$blockid.'">' .
                             '<img src="'.$pixpath.'/t/left.gif" /></a>';
         }
         if ($options & BLOCK_MOVE_UP) {
-            $movebuttons .= '<a style="margin-right: 3px;" title="'.$this->str->moveup.'" href="'.$path.'/view.php?id='.$this->course->id.'&amp;blockaction=moveup&amp;blockid='.$blockid.'">' .
+            $movebuttons .= '<a style="margin-right: 2px; margin-left: 2px;" title="'.$this->str->moveup.'" href="'.$path.'/view.php?id='.$this->course->id.'&amp;blockaction=moveup&amp;blockid='.$blockid.'">' .
                             '<img src="'.$pixpath.'/t/up.gif" /></a>';
         }
         if ($options & BLOCK_MOVE_DOWN) {
-            $movebuttons .= '<a style="margin-right: 3px;" title="'.$this->str->movedown.'" href="'.$path.'/view.php?id='.$this->course->id.'&amp;blockaction=movedown&amp;blockid='.$blockid.'">' .
+            $movebuttons .= '<a style="margin-right: 2px; margin-left: 2px;" title="'.$this->str->movedown.'" href="'.$path.'/view.php?id='.$this->course->id.'&amp;blockaction=movedown&amp;blockid='.$blockid.'">' .
                             '<img src="'.$pixpath.'/t/down.gif" /></a>';
         }
         if ($options & BLOCK_MOVE_RIGHT) {
-            $movebuttons .= '<a style="margin-right: 3px;" title="'.$this->str->moveright.'" href="'.$path.'/view.php?id='.$this->course->id.'&amp;blockaction=moveside&amp;blockid='.$blockid.'">' .
+            $movebuttons .= '<a style="margin-right: 2px; margin-left: 2px;" title="'.$this->str->moveright.'" href="'.$path.'/view.php?id='.$this->course->id.'&amp;blockaction=moveside&amp;blockid='.$blockid.'">' .
                             '<img src="'.$pixpath.'/t/right.gif" /></a>';
         }
 
