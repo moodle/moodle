@@ -21,7 +21,7 @@ if (!$chat = get_record("chat", "id", $chatuser->chatid)) {
     error("Could not find chat! id = $chatuser->chatid");
 }
 
-if (isset($chat_enter)) {
+if (isset($_GET['chat_enter'])) {
     $message->chatid = $chatuser->chatid;
     $message->userid = $chatuser->userid;
     $message->message = "enter";
@@ -33,27 +33,22 @@ if (isset($chat_enter)) {
     }
 }
 
-/// Delete users who are using text version and are old
-
-$timeold = time() - CHAT_OLD_PING;
-
-if ($oldusers = get_records_select("chat_users", "lastping < '$timeold'") ) {
-    delete_records_select("chat_users", "lastping < '$timeold'");
-    foreach ($oldusers as $olduser) {
-        $message->chatid = $olduser->chatid;
-        $message->userid = $olduser->userid;
-        $message->message = "exit";
-        $message->system = 1;
-        $message->timestamp = time();
-     
-        if (!insert_record("chat_messages", $message)) {
-            error("Could not insert a chat message!");
-        }
+if (isset($_GET['beep'])) {
+    $message->chatid = $chatuser->chatid;
+    $message->userid = $chatuser->userid;
+    $message->message = "beep $beep";
+    $message->system = 0;
+    $message->timestamp = time();
+ 
+    if (!insert_record("chat_messages", $message)) {
+        error("Could not insert a chat message!");
     }
-
-
 }
 
+
+/// Delete users who are using text version and are old
+
+chat_delete_old_users();
 
  
 /// Get list of users
@@ -70,13 +65,14 @@ header("Last-Modified: ".gmdate("D, d M Y H:i:s")." GMT");
 header("Cache-Control: no-cache, must-revalidate");
 header("Pragma: no-cache");
 header("Content-Type: text/html");
-header("Refresh: ".CHAT_REFRESH_USERLIST."; URL=users.php?chat_sid=".$chat_sid);
+header("Refresh: ".CHAT_REFRESH_USERLIST."; URL=users.php?chat_sid=$chat_sid");
 
 print_header();
 
 $timenow = time();
 
 $stridle   = get_string("idle", "chat");
+$strbeep   = get_string("beep", "chat");
 $str->day   = get_string("day");
 $str->days  = get_string("days");
 $str->hour  = get_string("hour");
@@ -95,6 +91,7 @@ foreach ($chatusers as $chatuser) {
     echo "<p><font size=1>";
     echo "$chatuser->firstname $chatuser->lastname<br />";
     echo "<font color=\"#888888\">$stridle: ".format_time($lastping, $str)."</font>";
+    echo " <a href=\"users.php?chat_sid=$chat_sid&beep=$chatuser->id\">$strbeep</a>";
     echo "</font></p>";
     echo "<td></tr>";
 }

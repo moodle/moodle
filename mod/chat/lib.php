@@ -109,6 +109,8 @@ function chat_cron () {
 
     global $CFG;
 
+    chat_delete_old_users();
+
     return true;
 }
 
@@ -168,7 +170,26 @@ function chat_login_user($chatid, $version="header_js") {
     return $chatuser->sid;
 }
 
+function chat_delete_old_users() {
+// Delete the old and in the way
 
+    $timeold = time() - CHAT_OLD_PING;
+
+    if ($oldusers = get_records_select("chat_users", "lastping < '$timeold'") ) {
+        delete_records_select("chat_users", "lastping < '$timeold'");
+        foreach ($oldusers as $olduser) {
+            $message->chatid = $olduser->chatid;
+            $message->userid = $olduser->userid;
+            $message->message = "exit";
+            $message->system = 1;
+            $message->timestamp = time();
+     
+            if (!insert_record("chat_messages", $message)) {
+                error("Could not insert a chat message!");
+            }
+        }
+    }
+}
 
 function chat_browser_detect($HTTP_USER_AGENT) {
 
@@ -348,61 +369,92 @@ function chat_display_version($version, $browser)
 }
 
 
-function chat_format_message($userid, $chatid, $timestamp, $message, $system=false) {
-/// Given a message and some information, this function formats it appropriately
-/// for displaying on the web, and returns the formatted string.
+function chat_format_message($message) {
+/// Given a message object full of information, this function 
+/// formats it appropriately into text and html, then 
+/// returns the formatted data.
 
     global $CFG, $USER;
 
-    if (!$user = get_record("user", "id", $userid)) {
-        return "Error finding user id = $userid";
+    $output = new object;
+
+    if (!$user = get_record("user", "id", $message->userid)) {
+        return "Error finding user id = $message->userid";
     }
 
     $picture = print_user_picture($user->id, 0, $user->picture, false, true, false);
 
-    $strtime = userdate($timestamp, get_string("strftimemessage", "chat"));
+    $strtime = userdate($message->timestamp, get_string("strftimemessage", "chat"));
 
-    if ($system) {                                    /// It's a system message
-        $message = get_string("message$message", "chat", 
-                              "$user->firstname $user->lastname");
-        $message = addslashes($message);
-        $output  = "<table><tr><td valign=top>$picture</td><td>";
-        $output .= "<font size=2 color=\"#AAAAAA\">$strtime $message</font>";
-        $output .= "</td></tr></table>";
+    $output->beep = false;   // by default
+
+    $text = $message->message;
+
+    if (!empty($message->system)) {             /// It's a system message
+        $output->text = get_string("message$text", "chat", 
+                                   "$user->firstname $user->lastname");
+        $output->text = "$strtime: $output->text";
+        $output->html  = "<table><tr><td valign=top>$picture</td><td>";
+        $output->html .= "<font size=2 color=\"#CCAAAA\">$output->text</font>";
+        $output->html .= "</td></tr></table>";
         return $output;
     }
 
-    convert_urls_into_links($message);
-    replace_smilies($message);
+    convert_urls_into_links($text);
+    replace_smilies($text);
 
-    if (substr($message, 0, 1) == ":") {              /// It's an MOO emote
+    if (substr($text, 0, 5) == "beep ") {          /// It's a beep!
+        $beepwho = trim(substr($text, 5));
+
+        if ($beepwho == "all") {   // everyone
+            $outinfo = "$strtime: ". get_string("messagebeepseveryone", "chat", 
+                       "$user->firstname $user->lastname");
+            $outmain = "";
+            $output->beep = true;  // (eventually this should be set to 
+                                   //  to a filename uploaded by the user)
+
+        } else if ($beepwho == $USER->id) {  // current user
+            $outinfo = "$strtime: ". get_string("messagebeepsyou", "chat", 
+                       "$user->firstname $user->lastname");
+            $outmain = "";
+            $output->beep = true;
+
+        } else {
+            return false;
+        }
+
+    } else if (substr($text, 0, 1) == ":") {              /// It's an MOO emote
         $outinfo = $strtime;
-        $outmain = "$user->firstname ".substr($message, 1);
+        $outmain = "$user->firstname ".substr($text, 1);
 
-    } else if (substr($message, 0, 1) == "/") {     /// It's a user command
+    } else if (substr($text, 0, 1) == "/") {     /// It's a user command
 
-        if (substr($message, 0, 4) == "/me ") {
+        if (substr($text, 0, 4) == "/me ") {
             $outinfo = $strtime;
-            $outmain = "$user->firstname ".substr($message, 4);
+            $outmain = "$user->firstname ".substr($text, 4);
         } else {
             $outinfo = $strtime;
-            $outmain = $message;
+            $outmain = $text;
         }
 
     } else {                                          /// It's a normal message
         $outinfo = "$strtime $user->firstname";
-        $outmain = $message;
+        $outmain = $text;
     }
 
     /// Format the message as a small table
 
-    $output  = "<table><tr><td valign=top>$picture</td><td>";
-    $output .= "<font size=2><font color=\"#888888\">$outinfo</font>: $outmain</font>";
-    $output .= "</td></tr></table>";
+    $output->text  = strip_tags("$outinfo: $outmain");
 
-    return addslashes($output);
+    $output->html  = "<table><tr><td valign=top>$picture</td><td><font size=2>";
+    $output->html .= "<font color=\"#888888\">$outinfo</font>";
+    if ($outmain) {
+        $output->html .= ": $outmain";
+    }
+    $output->html .= "</font></td></tr></table>";
+
+    return $output;
 
 }
-
 
 ?>

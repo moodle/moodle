@@ -40,16 +40,18 @@ header("Refresh: 4; URL=jsupdate.php?chat_sid=".$chat_sid."&chat_lasttime=".$cha
     <script language="Javascript">
     <!--
 <?php
+     $beep = false;
+
      if ($chat_lasttime) {
          if ($messages = get_records_select("chat_messages", 
                                             "chatid = '$chatuser->chatid' AND timestamp > '$chat_lasttime'", 
                                             "timestamp ASC")) {
              foreach ($messages as $message) {
-                 $formatmessage = chat_format_message($message->userid, $message->chatid, 
-                                                      $message->timestamp, $message->message, $message->system);
-?>
-                 parent.msg.document.write('<?php echo $formatmessage ?>\n');
-<?php
+                 $formatmessage = chat_format_message($message);
+                 if ($formatmessage->beep) {
+                     $beep = $formatmessage->beep;
+                 }
+                 echo "parent.msg.document.write('".$formatmessage->html."\\n');";
              }
          }
      }
@@ -62,5 +64,8 @@ header("Refresh: 4; URL=jsupdate.php?chat_sid=".$chat_sid."&chat_lasttime=".$cha
     </script>
    </head>
    <body bgcolor="<?php echo $THEME->body ?>">
+   <?php if ($beep) { ?>
+           <embed src="../beep.wav" autostart="true" hidden="true" />
+   <?php } ?>
    </body>
   </html>
