@@ -1761,6 +1761,10 @@ function quiz_grade_responses($quiz, $questions) {
     $result->sumgrades = 0.0;
     foreach ($questions as $qid => $question) {
 
+        if (empty($question->qtype)) {
+            continue;
+        }
+
         $resultdetails = $QUIZ_QTYPES[$question->qtype]->grade_response
                                 ($question, quiz_qtype_nameprefix($question));
 
