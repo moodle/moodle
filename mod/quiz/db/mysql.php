@@ -130,6 +130,19 @@ function quiz_upgrade($oldversion) {
         table_column("quiz", "eachattemptbuildsonthelast", "attemptonlast", "TINYINT", "4", "UNSIGNED", "0", "NOT NULL", "");
     }
 
+    if ($oldversion < 2003082300) {
+        table_column("quiz_questions", "", "stamp", "varchar", "255", "", "qtype");
+
+        if ($questions = get_records("quiz_questions")) {
+            foreach ($questions as $question) {
+                $stamp = make_unique_id_code();
+                if (!set_field("quiz_questions", "stamp", $stamp, "id", $question->id)) {
+                    notify("Error while adding stamp to question id = $question->id");
+                }
+            }
+        }
+    }
+
     return true;
 }
 

@@ -74,6 +74,31 @@ function quiz_upgrade($oldversion) {
         execute_sql(" INSERT INTO {$CFG->prefix}log_display VALUES ('quiz', 'review', 'quiz', 'name') ");
     }
 
+    if ($oldversion < 2003082300) {
+        modify_database ("", " CREATE TABLE prefix_quiz_multianswers (
+                               id SERIAL PRIMARY KEY,
+                               question integer NOT NULL default '0',
+                               answers varchar(255) NOT NULL default '',
+                               positionkey varchar(255) NOT NULL default '',
+                               answertype integer NOT NULL default '0',
+                               norm integer NOT NULL default '1'
+                              ); ");
+        modify_database ("", "CREATE INDEX prefix_quiz_multianswers_question_idx ON prefix_quiz_multianswers (question);");
+
+        table_column("quiz", "", "attemptonlast", "INTEGER", "10", "UNSIGNED", "0", "NOT NULL", "attempts");
+
+        table_column("quiz_questions", "", "stamp", "varchar", "255", "", "qtype");
+
+        if ($questions = get_records("quiz_questions")) {
+            foreach ($questions as $question) {
+                $stamp = make_unique_id_code();
+                if (!set_field("quiz_questions", "stamp", $stamp, "id", $question->id)) {
+                    notify("Error while adding stamp to question id = $question->id");
+                }
+            }
+        }
+    }
+
     return true;
 }
 

@@ -21,6 +21,7 @@ CREATE TABLE prefix_quiz (
   timeopen integer NOT NULL default '0',
   timeclose integer NOT NULL default '0',
   attempts integer NOT NULL default '0',
+  attemptonlast integer NOT NULL default '0',
   feedback integer NOT NULL default '0',
   correctanswers integer NOT NULL default '1',
   grademethod integer NOT NULL default '1',
@@ -115,6 +116,21 @@ CREATE TABLE prefix_quiz_match_sub (
 # --------------------------------------------------------
 CREATE INDEX prefix_quiz_match_sub_question_idx ON prefix_quiz_match_sub (question);
 
+
+#
+# Table structure for table `quiz_multianswers`
+#
+
+CREATE TABLE prefix_quiz_multianswers (
+  id SERIAL PRIMARY KEY,
+  question integer NOT NULL default '0',
+  answers varchar(255) NOT NULL default '',
+  positionkey varchar(255) NOT NULL default '',
+  answertype integer NOT NULL default '0',
+  norm integer NOT NULL default '1'
+);
+CREATE INDEX prefix_quiz_multianswers_question_idx ON prefix_quiz_multianswers (question);
+
 #
 # Table structure for table quiz_multichoice
 #
@@ -166,7 +182,8 @@ CREATE TABLE prefix_quiz_questions (
   questiontext text NOT NULL default '',
   image varchar(255) NOT NULL default '',
   defaultgrade integer NOT NULL default '1',
-  qtype integer NOT NULL default '0'
+  qtype integer NOT NULL default '0',
+  stamp varchar(255) NOT NULL default ''
 );
 # --------------------------------------------------------
 

@@ -170,6 +170,7 @@ CREATE TABLE `prefix_quiz_questions` (
   `image` varchar(255) NOT NULL default '',
   `defaultgrade` INT UNSIGNED DEFAULT '1' NOT NULL,
   `qtype` smallint(6) NOT NULL default '0',
+  `stamp` varchar(255) NOT NULL default '',
   PRIMARY KEY  (`id`)
 ) TYPE=MyISAM COMMENT='The quiz questions themselves';
 # --------------------------------------------------------
