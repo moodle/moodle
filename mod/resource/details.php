@@ -214,7 +214,7 @@
         </center>
         </form>
 <?
-        if ($usehtmleditor) {
+        if ($usehtmleditor and $form->type == HTML) {
             print_richedit_javascript("theform", "alltext", "yes");
         }
         print_simple_box_end();
