@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.4 alpha (2004081500)
+      // moodle.php - created with Moodle 1.4 alpha (2004081900)
 
 
 $string['action'] = '操作';
@@ -41,6 +41,7 @@ $string['adminhelpbackup'] = '自動バックアップ及びスケジュールの設定を行います。
 $string['adminhelpconfiguration'] = 'サイト全体の動作に関係する変数の設定を行います。';
 $string['adminhelpconfigvariables'] = 'サイトの一般的な運用に関わる設定を行います。';
 $string['adminhelpcourses'] = 'コース・カテゴリの設定及び人の割当てを行います。';
+$string['adminhelpeditorsettings'] = 'HTMLエディタの基本的な設定を行います。';
 $string['adminhelpedituser'] = 'ユーザアカウントリストの表示及び編集を行います。';
 $string['adminhelpenrolments'] = 'ユーザ登録を内部的に行うか、外部より行うか選択してください。';
 $string['adminhelpfailurelogs'] = 'ログイン失敗のログを表示';
@@ -299,12 +300,26 @@ $string['doyouagree'] = 'これらの要件を読んで理解できましたか?';
 $string['duplicate'] = '複写';
 $string['duplicatinga'] = '複写: $a';
 $string['duplicatingain'] = '$a->in の $a->what を複写';
+$string['edhelpbgcolor'] = '編集領域の背景色を設定します。<br />正しい値の例: #ffffff　または　white';
+$string['edhelpcleanword'] = 'ここでは、Word特有のフォーマットをフィルタするか否かを設定します。';
+$string['edhelpenablespelling'] = 'スペルチェックを行うか否かを設定します。スペルチェックを行う場合、<strong>aspell</strong>が自動的にサーバにインストールされます。';
+$string['edhelpfontfamily'] = 'フォントファミリー属性は、フォントファミリーの一覧及び一般的なフォントファミリー名です。フォントファミリー名はコンマで分離するしてください。';
+$string['edhelpfontlist'] = 'エディタのドロップダウンメニューに使われるフォントを設定します。';
+$string['edhelpfontsize'] = 'デフォルトフォントサイズではフォントのサイズを設定します。<br />正しい値の例: medium, large, smaller, larger, 10pt, 11px.';
 $string['edit'] = '$a 編集';
 $string['editcoursesettings'] = 'コース設定';
 $string['editfiles'] = 'ファイルの編集';
 $string['editgroupprofile'] = 'グループプロフィールの編集';
 $string['editinga'] = '$a 編集';
 $string['editmyprofile'] = 'プロフィールの編集';
+$string['editorbgcolor'] = '背景色';
+$string['editorcleanonpaste'] = 'ペースト時にWord HTMLを削除';
+$string['editorcommonsettings'] = '一般設定';
+$string['editordefaultfont'] = 'デフォルトフォント';
+$string['editorenablespelling'] = 'スペルチェックを行う';
+$string['editorfontlist'] = 'フォントリスト';
+$string['editorfontsize'] = 'デフォルトフォントサイズ';
+$string['editorsettings'] = 'エディタ設定';
 $string['editsummary'] = '概要の編集';
 $string['editthisactivity'] = '活動の編集';
 $string['editthiscategory'] = 'カテゴリの編集';
