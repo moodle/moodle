@@ -130,7 +130,8 @@ class phpmailer
     *  @public
     *  @type string
     */
-   var $Version       = "phpmailer [version 1.25]";
+   //var $Version       = "phpmailer [version 1.25]";
+   var $Version       = "Moodle [phpmailer 1.25]";
 
 
    /////////////////////////////////////////////////
