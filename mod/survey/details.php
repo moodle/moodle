@@ -26,21 +26,22 @@
 
         print_simple_box_start("center", "", "$THEME->cellheading");
         ?>
-        <FORM NAME=form METHOD=post ACTION="<? p($form->destination)?>">
-        <TABLE CELLPADDING=5 ALIGN=CENTER>
-        <TR><TD ALIGN=right NOWRAP><P><B><? print_string("name") ?>:</B></P></TD>
-            <TD><P><? p($form->name) ?></P></A></TD></TR>
+        <form name=form method=post action="<?php p($form->destination)?>">
+        <table cellpadding=5 align=center>
+        <tr><td align=right nowrap><p><b><?php print_string("name") ?>:</b></p></td>
+            <td><p><?php p($form->name) ?></p></a></td></tr>
 
-        <TR VALIGN=top>
-            <TD ALIGN=right NOWRAP>
-                <P><B><? print_string("introtext", "survey") ?>:</B></P><BR>
-                <font SIZE="1">
-                <? helpbutton("writing", get_string("helpwriting"), "moodle", true, true) ?><br \>
-                <? helpbutton("text", get_string("helptext"), "moodle", true, true) ?><br \>
+        <tr valign=top>
+            <td align=right nowrap>
+                <p><b><?php print_string("introtext", "survey") ?>:</b></p><br>
+                <font size="1">
+                <?php helpbutton("writing", get_string("helpwriting"), "moodle", true, true) ?> <br \>
+                <?php helpbutton("text", get_string("helptext"), "moodle", true, true) ?> <br \>
+                <?php emoticonhelpbutton("form", "intro"); ?> <br \>
                 </font>
-            </TD>
-            <TD>
-                <TEXTAREA NAME="intro" ROWS=20 COLS=50 WRAP="virtual"><? 
+            </td>
+            <td>
+                <textarea name="intro" rows=20 cols=50 wrap="virtual"><?php 
                 if ($form->intro) {
                     p($form->intro);
                 } else {
@@ -48,25 +49,25 @@
                     $form->intro = get_string($form->intro, "survey");
                     p($form->intro);
                 }
-                ?></TEXTAREA>
-            </TD>
-        </TR>
-        </TABLE>
-        <input type="hidden" name=name       value="<? p($form->name) ?>">
-        <input type="hidden" name=template   value="<? p($form->template) ?>">
+                ?></textarea>
+            </td>
+        </tr>
+        </table>
+        <input type="hidden" name=name       value="<?php p($form->name) ?>">
+        <input type="hidden" name=template   value="<?php p($form->template) ?>">
 
-        <input type="hidden" name=course     value="<? p($form->course) ?>">
-        <input type="hidden" name=coursemodule     value="<? p($form->coursemodule) ?>">
-        <input type="hidden" name=section       value="<? p($form->section) ?>">
-        <input type="hidden" name=module     value="<? p($form->module) ?>">
-        <input type="hidden" name=modulename value="<? p($form->modulename) ?>">
-        <input type="hidden" name=instance   value="<? p($form->instance) ?>">
-        <input type="hidden" name=mode       value="<? p($form->mode) ?>">
-        <CENTER>
-        <input type="submit" value="<? print_string("savechanges") ?>">
-        </CENTER>
-        </FORM>
-        <?
+        <input type="hidden" name=course     value="<?php p($form->course) ?>">
+        <input type="hidden" name=coursemodule     value="<?php p($form->coursemodule) ?>">
+        <input type="hidden" name=section       value="<?php p($form->section) ?>">
+        <input type="hidden" name=module     value="<?php p($form->module) ?>">
+        <input type="hidden" name=modulename value="<?php p($form->modulename) ?>">
+        <input type="hidden" name=instance   value="<?php p($form->instance) ?>">
+        <input type="hidden" name=mode       value="<?php p($form->mode) ?>">
+        <center>
+        <input type="submit" value="<?php print_string("savechanges") ?>">
+        </center>
+        </form>
+        <?php
         print_simple_box_end();
         print_footer($course);
 
