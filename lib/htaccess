@@ -17,7 +17,7 @@ php_value magic_quotes_gpc 1
 php_value file_uploads 1
 php_value short_open_tag 1
 php_value session.auto_start 0
-
+php_value session.bug_compat_warn 0
 
 ### These are optional - you may not want to override php.ini 
 
