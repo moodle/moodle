@@ -13,6 +13,10 @@ Emmanuelle Gutiérrez y Restrepo (emmanuelle@mi.madritel.es)
 Sergio Alfaro (salfaro@humanos.cl)
 Benito Arias (barias@benitoarias.com)
 David Delgado (davidds@aprend-d.com)
+Raúl Vernengo 
+Sergio Zúñiga Sánchez (szuniga@vtr.net)
+Ricardo Dalton (moodle@avmed.com.ar)
+
 
 Si desea contribuir puede hacerlo de diferentes maneras:
 
