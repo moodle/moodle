@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005031000)
+      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005032300)
 
 
 $string['action'] = '操作';
@@ -357,7 +357,7 @@ $string['emailenable'] = 'このメールアドレスは有効です';
 $string['emailenableclick'] = 'このメールアドレスにメールが送信されるようにする';
 $string['emailexists'] = 'このメールアドレスは既に使用されています。';
 $string['emailformat'] = 'メールフォーマット';
-$string['emailmustbereal'] = '注意：メールアドレスは存在するものを入力してください。';
+$string['emailmustbereal'] = ' 注意：メールアドレスは存在するものを入力してください。 ';
 $string['emailnotallowed'] = 'これらのドメインのメールアドレスは許可されていません ( $a )';
 $string['emailonlyallowed'] = 'このメールアドレスは許可されているメールアドレスに入っていません ( $a )';
 $string['emailpasswordconfirmation'] = 'こんにちは $a->firstname さん
@@ -586,16 +586,15 @@ $string['login_failure_logs'] = 'ログイン失敗ログ';
 $string['loginas'] = 'ログイン';
 $string['loginguest'] = 'ゲストとしてログインする';
 $string['loginsite'] = 'ログイン画面';
-$string['loginsteps'] = 'こんにちは! 全てのコースにアクセスするために新しいアカウントを作成してください。それぞれのコースには、後で必要になる「ワンタイム登録キー」が設定されています。アカウント作成方法は下記の通りです。
-
+$string['loginsteps'] = 'こんにちは! コースにアクセスするために新しいアカウントを作成してください。アカウント作成方法は下記の通りです。
 <ol>
-<li><a href=\"$a\">新規アカウント作成</a> フォームに必要事項を入力します。</li>
-<li>登録されたメールアドレスにメールが直ちに送信されます。</li>
-<li>メールを読んだ後、リンク部分をクリックしてください。</li>
-<li>アカウントの確定が行われ、ログイン可能な状態になります。</li>
-<li>参加したいコースを選択してください。</li>
-<li>「登録キー」を入力する必要がある場合は、あなたの先生から送られたものを使用してください。それがコースに参加するための「登録キー」となります。</li>
-<liI>これでコースにアクセスできるようになります。今後、あなたが登録したコースにアクセスするために必要なものは、ユーザ名とパスワードのみです。このページにユーザ名とパスワードの入力欄があります。</li>
+<li><a href=\"$a\">新しいアカウント作成</a> フォームに<b>必要事項を入力してください</b>。</li>
+<li>登録されたメールアドレスにメールがすぐに送信されます。</li>
+<li>メールを開いて、その中の<b>リンクをクリックしてください</b>。</li>
+<li>アカウントの確定が行われ、ログインが可能になります。</li>
+<li>参加したい<b>コースを選択してください</b>。</li>
+<li>「登録キー」を入力する必要がある場合は、先生が教えたものを入力してください。これでコースにアクセスできるようになります。</li>
+<li>今後、登録したコースにアクセスするために必要なものは、ユーザ名とパスワードのみです。 このページの左側のユーザ名とパスワードの入力欄を利用してください。</li>
 </ol>';
 $string['loginstepsnone'] = '<p>こんにちは!</p>
 <p>コースを利用するためにはアカウントを開設する必要があります。</p>
@@ -695,9 +694,9 @@ $string['needed'] = '必要な';
 $string['never'] = '無し';
 $string['neverdeletelogs'] = 'ログを削除しない';
 $string['new'] = '新しい';
-$string['newaccount'] = '新規アカウント';
-$string['newcourse'] = '新規コース';
-$string['newpassword'] = '新規パスワード';
+$string['newaccount'] = '新しいアカウント';
+$string['newcourse'] = '新しいコース';
+$string['newpassword'] = '新しいパスワード';
 $string['newpasswordtext'] = '$a->firstname さんこんにちは、
 
 「 $a->sitename 」のパスワードリセットおよび仮パスワードの作成が完了しました。
@@ -742,7 +741,7 @@ $string['nopotentialstudents'] = '潜在的な学生は登録されていません。';
 $string['nopotentialteachers'] = '潜在的な教師は登録されていません。';
 $string['noreplybouncemessage'] = 'あなたは no-reply アドレスにメール返信しました。フォーラムの投稿に返信したい場合は、メール返信する代わりにフォーラム $a で返信を投稿してください。
 
-あなたのメール本文は下記の通りです:';
+あなたのメール本文は下記のとおりです:';
 $string['noreplybouncesubject'] = '$a -宛先不明メール';
 $string['noreplyname'] = 'このメールに返信しないでください。';
 $string['noresults'] = '該当データがありません。';
