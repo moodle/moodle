@@ -16,15 +16,19 @@
     }
 
     if (!$id) {
-        $courses = get_records_sql("SELECT * from course WHERE category > 0 ORDER BY fullname");
-
 	    print_header("Add teachers to a course", "Add teachers to a course", "<A HREF=\"$CFG->wwwroot/admin\">Admin</A> -> Add teachers", "");
-        print_heading("Choose a course to add teachers to");
-        print_simple_box_start("CENTER");
-        foreach ($courses as $course) {
-            echo "<A HREF=\"teacher.php?id=$course->id\">$course->fullname</A><BR>";
+        if ($courses = get_records_sql("SELECT * from course WHERE category > 0 ORDER BY fullname")) {
+
+            print_heading("Choose a course to add teachers to");
+            print_simple_box_start("CENTER");
+            foreach ($courses as $course) {
+                echo "<A HREF=\"teacher.php?id=$course->id\">$course->fullname</A><BR>";
+            }
+            print_simple_box_end();
+        } else {
+            print_heading(get_string("nocoursesyet"));
+            print_continue("$CFG->wwwroot/admin/");
         }
-        print_simple_box_end();
         print_footer();
         exit;
     }

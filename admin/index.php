@@ -164,14 +164,16 @@
 
     print_header("$site->fullname: Administration Page","$site->fullname: Administration Page", "Admin");
 
-    echo "<UL>";
-    echo "<LI><B><A HREF=\"site.php\">Site settings</A></B>";
-    echo "<LI><B><A HREF=\"../course/edit.php\">Create a new course</A></B>";
-    echo "<LI><B><A HREF=\"user.php\">Edit a user's account</A></B>";
-    echo "<LI><B><A HREF=\"teacher.php\">Assign teachers to courses</A></B>";
-    echo "<LI><B>Delete a course</B>";
-    echo "<LI><B><A HREF=\"../course/log.php?id=$site->id\">Site Logs</A></B>";
-    echo "</UL>";
+    $table->head  = array ("Site Management", "Course Setup", "Other");
+    $table->align = array ("CENTER", "CENTER", "CENTER");
+    $table->data[0][0] = "<P><A HREF=\"site.php\">Site settings</A></P>".
+                         "<P><A HREF=\"../course/log.php?id=$site->id\">Site Logs</A></P>";
+    $table->data[0][1] = "<P><A HREF=\"../course/edit.php\">Create a new course</A></P>".
+                         "<P><A HREF=\"../course/teacher.php\">Assign teachers to a course</A></P>".
+                         "<P><A HREF=\"../course/delete.php\">Delete a course</A></P>";
+    $table->data[0][2] = "<P><A HREF=\"user.php\">Edit a user's account</A></P>";
+
+    print_table($table);
 
     print_footer();
 ?>
