@@ -3,7 +3,7 @@
 ?>
 <html style="width: 398; height: 218">
 <head>
-<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<meta http-equiv="content-type" content="text/html; <?php print_string("thischarset");?>" />
   <title>Insert Table</title>
 <script type="text/javascript" src="popup.js"></script>
 <script type="text/javascript">
