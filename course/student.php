@@ -60,7 +60,13 @@
 
     if (!empty($add)) {
         check_for_restricted_user($USER->username, "$CFG->wwwroot/course/student.php?id=$course->id");
-        if (! enrol_student($add, $course->id)) {
+        if ($course->enrolperiod) {
+            $timestart = time();
+            $timeend   = $timestart + $course->enrolperiod;
+        } else {
+            $timestart = $timeend = 0;
+        }
+        if (! enrol_student($add, $course->id, $timestart, $timeend)) {
             error("Could not add that student to this course!");
         }
     }
