@@ -80,6 +80,8 @@ $string['auth_pop3mailbox'] = 'Nombre de la bandeja de entrada con la que intent
 $string['auth_pop3port'] = 'Puerto del Servidor (110 es el más habitual)';
 $string['auth_pop3title'] = 'Usar un servidor POP3';
 $string['auth_pop3type'] = 'Tipo de servidor. Si su servidor utiliza certificado de seguridad, escoja pop3cert.';
+$string['auth_shibbolethdescription'] = 'Con este método puede conectarse a un servidor Shibboleth para comprobar y crear nuevas cuentas';
+$string['auth_shibbolethtitle'] = 'Shibboleth';
 $string['auth_updatelocal'] = 'Actualizar datos locales';
 $string['auth_updatelocal_expl'] = '<p><b>Actualizar datos locales:</b> Si está activado, el campo debe ser actualizado (con autenticación externa) cada vez que el usuario entra o se produce una sincronización de usuarios. Los campos a actualizar localmente deberían ser bloqueados.</p>';
 $string['auth_updateremote'] = 'Actualizar datos externos';
@@ -105,8 +107,5 @@ $string['showguestlogin'] = 'Puede ocultar o mostrar el botón de entrada para in
 $string['stdchangepassword'] = 'Utilizar Página de cambio de contraseña estándar';
 $string['stdchangepassword_expl'] = 'Si el sistema de autenticación externa permite cambios de contraseña en Moodle, seleccione Sí. Este ajuste pasa por alto \'Cambiar contraseña URL\'.';
 $string['stdchangepassword_explldap'] = 'NOTA: Se recomienda que utilice LDAP sobre un túnel encriptado SSL (ldaps://) si el servidor LDAP es remoto.';
-$string['thischarset'] = 'iso-8859-1';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'es';
 
 ?>

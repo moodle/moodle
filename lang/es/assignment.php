@@ -18,8 +18,7 @@ $string['description'] = 'Descripción';
 $string['duedate'] = 'Fecha de entrega';
 $string['duedateno'] = 'No hay fecha de entrega';
 $string['early'] = '$a antes';
-$string['emailteachermail'] = '
-$a->username ha actualizado el envío de su tarea
+$string['emailteachermail'] = '$a->username ha actualizado el envío de su tarea
 para \'$a->assignment\'
 
 Está disponible aquí:
@@ -39,6 +38,7 @@ $string['maximumsize'] = 'Tamaño máximo';
 $string['modulename'] = 'Tarea';
 $string['modulenameplural'] = 'Tareas';
 $string['newsubmissions'] = 'Tareas enviadas';
+$string['noassignments'] = 'Aún no hay tareas';
 $string['notgradedyet'] = 'No calificado aún';
 $string['notsubmittedyet'] = 'Aún no ha enviado esta tarea';
 $string['overwritewarning'] = 'Advertencia: Si envía un nuevo archivo REEMPLAZARÁ al anterior';

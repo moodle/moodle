@@ -14,6 +14,7 @@ $string['missingfield'] = 'Falta el campo \"$a\"';
 $string['modulerequirementsnotmet'] = 'El módulo \"$a->modulename\" ($a->moduleversion) no se puede instalar debido a que requiere una versión más nueva de Moodle (esta versión es la $a->currentmoodle, y el módulo requiere la $a->requiremoodle).';
 $string['notavailable'] = 'No disponible en este momento';
 $string['parentlanguage'] = 'es';
+$string['processingstops'] = 'El procesamiento acaba aquí. Se ignoran los demás registros.';
 $string['restricteduser'] = 'Lo sentimos, su cuenta \"$a\" no puede hacer esto.';
 $string['sessionipnomatch'] = 'Lo sentimos, pero su número IP parece haber cambiado desde su primer acceso. Esta norma de seguridad previene que los crackers roben su identidad mientras usted está dentro de este sitio. Los usuarios normales no deberían ver este mensaje, así que por favor pida ayuda al administrador del sitio.';
 $string['thischarset'] = 'iso-8859-1';
