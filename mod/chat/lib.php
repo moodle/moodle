@@ -2,6 +2,8 @@
 
 /// Library of functions and constants for module chat
 
+require_once($CFG->libdir.'/pagelib.php');
+
 if (!isset($CFG->chat_refresh_room)) {
     set_config("chat_refresh_room", 5);
 }

@@ -2,6 +2,8 @@
 
 /// Library of function for module quiz
 
+require_once($CFG->libdir.'/pagelib.php');
+
 /// CONSTANTS ///////////////////////////////////////////////////////////////////
 
 define("QUIZ_MAX_EVENT_LENGTH", "432000");   // 5 days maximum
