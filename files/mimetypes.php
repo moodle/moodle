@@ -68,6 +68,7 @@ function mimeinfo($element, $filename) {
         "txt"  => array ("type"=>"text/plain", "icon"=>"text.gif"),
         "wav"  => array ("type"=>"audio/wav", "icon"=>"audio.gif"),
         "wmv"  => array ("type"=>"video/x-ms-wmv", "icon"=>"avi.gif"),
+        "asf"  => array ("type"=>"video/x-ms-asf", "icon"=>"avi.gif"),
         "xls"  => array ("type"=>"application/vnd.ms-excel", "icon"=>"excel.gif"),
         "xml"  => array ("type"=>"text/xml", "icon"=>"xml.gif"),
         "xsl"  => array ("type"=>"text/xml", "icon"=>"xml.gif"),
