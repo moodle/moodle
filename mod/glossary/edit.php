@@ -171,11 +171,7 @@ print_header(strip_tags("$course->shortname: $glossary->name"), "$course->fullna
               <A HREF=\"view.php?id=$cm->id\">$glossary->name</A> -> $stredit", "theform.text",
               "", true, "", navmenu($course, $cm));
 
-echo "<CENTER>\n";
-
-print_simple_box( text_to_html($glossary->name) , "center");
-
-echo "<BR>";
+print_heading($glossary->name);
 
 include("edit.html");
 
