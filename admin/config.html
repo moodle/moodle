@@ -232,6 +232,52 @@
     <?php print_string("configloglifetime") ?>
     </td>
 </tr>
+<tr valign="top">
+    <td align="right"><p>displayloginfailures:</p></td>
+    <td>
+    <?php
+       unset($options);
+       $options[''] = get_string('nobody');
+       $options['admin'] = get_string('administrators');
+       $options['teacher'] = get_string('administratorsandteachers');
+       $options['everybody'] = get_string('everybody');
+       choose_from_menu($options, "displayloginfailures",$config->displayloginfailures,"","","");
+    ?>
+    </td>
+    <td>
+    <?php print_string("configdisplayloginfailures") ?>
+    </td>
+</tr>
+<tr valign="top">
+    <td align="right"><p>notifyloginfailures:</p></td>
+    <td>
+    <?php
+       unset($options);
+       $options[''] = get_string('nobody');
+       $options['mainadmin'] = get_string('administrator');
+       $options['alladmins'] = get_string('administratorsall');
+       choose_from_menu($options,"notifyloginfailures",$config->notifyloginfailures,"","","");
+    ?>
+    </td>
+    <td>
+    <?php print_string('confignotifyloginfailures') ?>
+    </td>
+</tr>
+<tr valign="top">
+    <td align="right"><p>notifythreshold:</p></td>
+    <td>
+    <?php
+       unset($options);
+       for ($i=1; $i<=100; $i++) {
+           $options[$i] = "$i";
+       }
+       choose_from_menu($options,"notifythreshold",$config->notifythreshold,"","","");
+    ?>
+    </td>
+    <td>
+    <?php print_string('confignotifythreshold') ?>
+    </td>
+</tr>
 <tr valign=top>
     <td align=right><p>sessiontimeout:</td>
     <td>

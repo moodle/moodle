@@ -117,7 +117,12 @@
             $cachelifetime = time() - $CFG->cachetext;
             delete_records_select("cache_text", "timemodified < '$cachelifetime'");
         }
-    }
+
+        if (!empty($CFG->notifyloginfailures)) {
+            notify_login_failures();
+        }
+
+    } // End of occasional clean-up tasks
 
     if (file_exists("$CFG->dataroot/cronextra.php")) {
         include("$CFG->dataroot/cronextra.php");
