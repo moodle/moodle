@@ -255,6 +255,10 @@ function survey_print_multi($question) {
         $qnum++;
         $bgcolor = survey_question_color($qnum);
 
+        if ($q->text) {
+            $q->text = get_string($q->text, "survey");
+        }
+
         echo "<TR BGCOLOR=$bgcolor>";
         if ($oneanswer) {
             echo "<TD WIDTH=10 VALIGN=top><P><B>$qnum</B></P></TD>";
@@ -322,7 +326,7 @@ function survey_print_single($question) {
 
     } else if ($question->type < 0) {     // Choose several of a number
         $options = explode( ",", $question->options);
-        echo "<P>THIS TYPE OF QUESTION NOT SUPPORTED YET</P>";
+        notify("This question type not supported yet");
     }
 
     echo "</FONT></TD></TR></TABLE>";

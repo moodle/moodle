@@ -31,11 +31,12 @@ CREATE TABLE survey (
 # Dumping data for table `survey`
 #
 
-INSERT INTO survey VALUES (1, 0, 0, 0, 985017600, 985017600, 'COLLES (Actual)', 'The purpose of this questionnaire is to help us understand how well the online delivery of this unit enabled you to learn. \r\n\r\nEach one of the 24 statements below asks about your experience in this unit.\r\n\r\nThere are no \'right\' or \'wrong\' answers; we are interested only in your opinion. Please be assured that your responses will be treated with a high degree of confidentiality, and will not affect your assessment.\r\n\r\nYour carefully considered responses will help us improve the way this unit is presented online in the future.\r\n\r\nThanks very much.\r\n', '25,26,27,28,29,30,43,44');
-INSERT INTO survey VALUES (2, 0, 0, 0, 985017600, 985017600, 'COLLES (Preferred)', 'The purpose of this questionnaire is to help us understand what you value in an online learning experience.\r\n\r\nEach one of the 24 statements below asks about your <B>preferred</B> (ideal) experience in this unit.\r\n\r\nThere are no \'right\' or \'wrong\' answers; we are interested only in your opinion. Please be assured that your responses will be treated with a high degree of confidentiality, and will not affect your assessment.\r\n\r\nYour carefully considered responses will help us improve the way this unit is presented online in the future.\r\n\r\nThanks very much.\r\n', '31,32,33,34,35,36,43,44');
-INSERT INTO survey VALUES (3, 0, 0, 0, 985017600, 985017600, 'COLLES (Preferred and Actual)', 'The purpose of this questionnaire is to help us understand how well the online delivery of this unit enabled you to learn. \r\n\r\nEach one of the 24 statements below asks you to compare your <B>preferred</B> (ideal) and <B>actual</B> experience in this unit.\r\n\r\nThere are no \'right\' or \'wrong\' answers; we are interested only in your opinion. Please be assured that your responses will be treated with a high degree of confidentiality, and will not affect your assessment.\r\n\r\nYour carefully considered responses will help us improve the way this unit is presented online in the future.\r\n\r\nThanks very much.\r\n', '37,38,39,40,41,42,43,44');
-INSERT INTO survey VALUES (4, 0, 0, 0, 985017600, 985017600, 'ATTLS (20 item version)', 'The purpose of this questionnaire is to help \r\nus evaluate your attitudes towards thinking and learning.\r\n', '65,67,68');
-# --------------------------------------------------------
+INSERT INTO `survey` (`id`, `course`, `template`, `days`, `timecreated`, `timemodified`, `name`, `intro`, `questions`) VALUES (1, 0, 0, 0, 985017600, 985017600, 'collesaname', 'collesaintro', '25,26,27,28,29,30,43,44');
+INSERT INTO `survey` (`id`, `course`, `template`, `days`, `timecreated`, `timemodified`, `name`, `intro`, `questions`) VALUES (2, 0, 0, 0, 985017600, 985017600, 'collespname', 'collespintro', '31,32,33,34,35,36,43,44');
+INSERT INTO `survey` (`id`, `course`, `template`, `days`, `timecreated`, `timemodified`, `name`, `intro`, `questions`) VALUES (3, 0, 0, 0, 985017600, 985017600, 'collesapname', 'collesapintro', '37,38,39,40,41,42,43,44');
+INSERT INTO `survey` (`id`, `course`, `template`, `days`, `timecreated`, `timemodified`, `name`, `intro`, `questions`) VALUES (4, 0, 0, 0, 985017600, 985017600, 'attlsname', 'attlsintro', '65,67,68');
+
+
 
 #
 # Table structure for table `survey_analysis`
@@ -97,75 +98,73 @@ CREATE TABLE `survey_questions` (
 # Dumping data for table `survey_questions`
 #
 
-INSERT INTO `survey_questions` VALUES (1, 'my learning focuses on issues that interest me.', 'focus on interesting issues', '', '', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r\n');
-INSERT INTO `survey_questions` VALUES (2, 'what I learn is important for my professional practice.', 'important to my practice', '', '', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r\n');
-INSERT INTO `survey_questions` VALUES (3, 'I learn how to improve my professional practice.', 'improve my practice', '', '', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r');
-INSERT INTO `survey_questions` VALUES (4, 'what I learn connects well with my professional practice.', 'connects with my practice', '', '', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r\n');
-INSERT INTO `survey_questions` VALUES (5, 'I think critically about how I learn.', 'I\'m critical of my learning', '', '', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r');
-INSERT INTO `survey_questions` VALUES (6, 'I think critically about my own ideas.', 'I\'m critical of my own ideas', '', '', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r');
-INSERT INTO `survey_questions` VALUES (7, 'I think critically about other students\' ideas.', 'I\'m critical of other students', '', '', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r');
-INSERT INTO `survey_questions` VALUES (8, 'I think critically about ideas in the readings.', 'I\'m critical of readings', '', '', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r');
-INSERT INTO `survey_questions` VALUES (9, 'I explain my ideas to other students.', 'I explain my ideas', '', '', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r');
-INSERT INTO `survey_questions` VALUES (10, 'I ask other students to explain their ideas.', 'I ask for explanations', '', '', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r');
-INSERT INTO `survey_questions` VALUES (11, 'other students ask me to explain my ideas.', 'I\'m asked to explain', '', '', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r\n');
-INSERT INTO `survey_questions` VALUES (12, 'other students respond to my ideas.', 'students respond to me', '', '', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r\n');
-INSERT INTO `survey_questions` VALUES (13, 'the tutor stimulates my thinking.', 'tutor stimulates thinking', '', '', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r\n');
-INSERT INTO `survey_questions` VALUES (14, 'the tutor encourages me to participate.', 'tutor encourages me', '', '', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r\n');
-INSERT INTO `survey_questions` VALUES (15, 'the tutor models good discourse.', 'tutor models discourse', '', '', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r\n');
-INSERT INTO `survey_questions` VALUES (16, 'the tutor models critical self-reflection.', 'tutor models self-reflection', '', '', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r\n');
-INSERT INTO `survey_questions` VALUES (17, 'other students encourage my participation.', 'students encourage me', '', '', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r\n');
-INSERT INTO `survey_questions` VALUES (18, 'other students praise my contribution.', 'students praise me', '', '', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r\n');
-INSERT INTO `survey_questions` VALUES (19, 'other students value my contribution.', 'students value me', '', '', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r\n');
-INSERT INTO `survey_questions` VALUES (20, 'other students empathise with my struggle to learn.', 'student empathise', '', '', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r\n');
-INSERT INTO `survey_questions` VALUES (21, 'I make good sense of other students\' messages.', 'I understand other students', '', '', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r');
-INSERT INTO `survey_questions` VALUES (22, 'other students make good sense of my messages.', 'students understand me', '', '', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r\n');
-INSERT INTO `survey_questions` VALUES (23, 'I make good sense of the tutor\'s messages.', 'I understand the tutor', '', '', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r');
-INSERT INTO `survey_questions` VALUES (24, 'the tutor makes good sense of my messages.', 'tutor understands me', '', '', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r\n');
-INSERT INTO `survey_questions` VALUES (25, 'Relevance', 'Relevance', '1,2,3,4', 'In this online unit...', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r');
-INSERT INTO `survey_questions` VALUES (26, 'Reflective Thinking', 'Reflective Thinking', '5,6,7,8', 'In this online unit...', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r');
-INSERT INTO `survey_questions` VALUES (27, 'Interactivity', 'Interactivity', '9,10,11,12', 'In this online unit...', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r');
-INSERT INTO `survey_questions` VALUES (28, 'Tutor Support', 'Tutor Support', '13,14,15,16', 'In this online unit...', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r');
-INSERT INTO `survey_questions` VALUES (29, 'Peer Support', 'Peer Support', '17,18,19,20', 'In this online unit...', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r');
-INSERT INTO `survey_questions` VALUES (30, 'Interpretation', 'Interpretation', '21,22,23,24', 'In this online unit...', 1, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r');
-INSERT INTO `survey_questions` VALUES (31, 'Relevance', 'Relevance', '1,2,3,4', 'In this online unit, I prefer that...', 2, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r');
-INSERT INTO `survey_questions` VALUES (32, 'Reflective Thinking', 'Reflective Thinking', '5,6,7,8', 'In this online unit, I prefer that...', 2, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r');
-INSERT INTO `survey_questions` VALUES (33, 'Interactivity', 'Interactivity', '9,10,11,12', 'In this online unit, I prefer that...', 2, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r');
-INSERT INTO `survey_questions` VALUES (34, 'Tutor Support', 'Tutor Support', '13,14,15,16', 'In this online unit, I prefer that...', 2, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r');
-INSERT INTO `survey_questions` VALUES (35, 'Peer Support', '', '17,18,19,20', 'In this online unit, I prefer that...', 2, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r');
-INSERT INTO `survey_questions` VALUES (36, 'Interpretation', '', '21,22,23,24', 'In this online unit, I prefer that...', 2, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r');
-INSERT INTO `survey_questions` VALUES (37, 'Relevance', '', '1,2,3,4', 'In this online unit...', 3, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r');
-INSERT INTO `survey_questions` VALUES (38, 'Reflective Thinking', '', '5,6,7,8', 'In this online unit...', 3, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r');
-INSERT INTO `survey_questions` VALUES (39, 'Interactivity', '', '9,10,11,12', 'In this online unit...', 3, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r');
-INSERT INTO `survey_questions` VALUES (40, 'Tutor Support', '', '13,14,15,16', 'In this online unit...', 3, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r');
-INSERT INTO `survey_questions` VALUES (41, 'Peer Support', '', '17,18,19,20', 'In this online unit...', 3, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r');
-INSERT INTO `survey_questions` VALUES (42, 'Interpretation', '', '21,22,23,24', 'In this online unit...', 3, 'Almost Never,Seldom,Sometimes,Often,Almost Always\r');
-INSERT INTO `survey_questions` VALUES (43, 'How long did this survey take you to complete?', '', '', '', 1, 'under 1 min,1-2 min,2-3 min,3-4 min,4-5-min,5-10 min,more than 10\r');
-INSERT INTO `survey_questions` VALUES (44, 'Do you have any other comments?', '', '', '', 0, '\r');
-INSERT INTO `survey_questions` VALUES (64, 'I spend time figuring out what\'s "wrong" with things. For example, I\'ll look for something in a literary interpretation that isn\'t argued well enough.', 'what\'s wrong?', '', '', 1, 'Strongly disagree,Somewhat disagree,Neither agree nor disagree,Somewhat agree,Strongly agree');
-INSERT INTO `survey_questions` VALUES (58, 'I try to point out weaknesses in other people\'s thinking to help them clarify their arguments.', 'point out weaknesses', '', '', 1, 'Strongly disagree,Somewhat disagree,Neither agree nor disagree,Somewhat agree,Strongly agree');
-INSERT INTO `survey_questions` VALUES (59, 'I tend to put myself in other people\'s shoes when discussing controversial issues, to see why they think the way they do.', 'put myself in their shoes', '', '', 1, 'Strongly disagree,Somewhat disagree,Neither agree nor disagree,Somewhat agree,Strongly agree');
-INSERT INTO `survey_questions` VALUES (60, 'One could call my way of analysing things "putting them on trial" because I am careful to consider all the evidence.', 'putting on trial', '', '', 1, 'Strongly disagree,Somewhat disagree,Neither agree nor disagree,Somewhat agree,Strongly agree');
-INSERT INTO `survey_questions` VALUES (61, 'I value the use of logic and reason over the incorporation of my own concerns when solving problems.', 'i value logic most', '', '', 1, 'Strongly disagree,Somewhat disagree,Neither agree nor disagree,Somewhat agree,Strongly agree');
-INSERT INTO `survey_questions` VALUES (62, 'I can obtain insight into opinions that differ from mine through empathy.', 'insight from empathy', '', '', 1, 'Strongly disagree,Somewhat disagree,Neither agree nor disagree,Somewhat agree,Strongly agree');
-INSERT INTO `survey_questions` VALUES (63, 'When I encounter people whose opinions seem alien to me, I make a deliberate effort to "extend" myself into that person, to try to see how they could have those opinions.', 'make effort to extend', '', '', 1, 'Strongly disagree,Somewhat disagree,Neither agree nor disagree,Somewhat agree,Strongly agree');
-INSERT INTO `survey_questions` VALUES (56, 'I have certain criteria I use in evaluating arguments.', 'use criteria to evaluate', '', '', 1, 'Strongly disagree,Somewhat disagree,Neither agree nor disagree,Somewhat agree,Strongly agree');
-INSERT INTO `survey_questions` VALUES (57, 'I\'m more likely to try to understand someone else\'s opinion that to try to evaluate it.', 'try to understand', '', '', 1, 'Strongly disagree,Somewhat disagree,Neither agree nor disagree,Somewhat agree,Strongly agree');
-INSERT INTO `survey_questions` VALUES (55, 'I try to think with people instead of against them.', 'think WITH people', '', '', 1, 'Strongly disagree,Somewhat disagree,Neither agree nor disagree,Somewhat agree,Strongly agree');
-INSERT INTO `survey_questions` VALUES (54, 'It\'s important for me to remain as objective as possible when I analyze something.', 'remain objective', '', '', 1, 'Strongly disagree,Somewhat disagree,Neither agree nor disagree,Somewhat agree,Strongly agree');
-INSERT INTO `survey_questions` VALUES (53, 'I often find myself arguing with the authors of books that I read, trying to logically figure out why they\'re wrong.', 'argue with authors', '', '', 1, 'Strongly disagree,Somewhat disagree,Neither agree nor disagree,Somewhat agree,Strongly agree');
-INSERT INTO `survey_questions` VALUES (52, 'I am always interested in knowing why people say and believe the things they do.', 'know why people do', '', '', 1, 'Strongly disagree,Somewhat disagree,Neither agree nor disagree,Somewhat agree,Strongly agree');
-INSERT INTO `survey_questions` VALUES (51, 'I find that I can strengthen my own position through arguing with someone who disagrees with me.', 'strengthen by argue', '', '', 1, 'Strongly disagree,Somewhat disagree,Neither agree nor disagree,Somewhat agree,Strongly agree');
-INSERT INTO `survey_questions` VALUES (50, 'I enjoy hearing the opinions of people who come from backgrounds different to mine - it helps me to understand how the same things can be seen in such different ways.', 'enjoy hearing opinions', '', '', 1, 'Strongly disagree,Somewhat disagree,Neither agree nor disagree,Somewhat agree,Strongly agree');
-INSERT INTO `survey_questions` VALUES (49, 'I feel that the best way for me to achieve my own identity is to interact with a variety of other people.', 'interact with variety', '', '', 1, 'Strongly disagree,Somewhat disagree,Neither agree nor disagree,Somewhat agree,Strongly agree');
-INSERT INTO `survey_questions` VALUES (48, 'The most important part of my education has been learning to understand people who are very different to me.', 'understand different people', '', '', 1, 'Strongly disagree,Somewhat disagree,Neither agree nor disagree,Somewhat agree,Strongly agree');
-INSERT INTO `survey_questions` VALUES (47, 'I like to understand where other people are "coming from", what experiences have led them to feel the way they do.', 'where people come from', '', '', 1, 'Strongly disagree,Somewhat disagree,Neither agree nor disagree,Somewhat agree,Strongly agree');
-INSERT INTO `survey_questions` VALUES (45, 'In evaluating what someone says, I focus on the quality of their argument, not on the person who\'s presenting it.', 'focus quality of argument', '', '', 1, 'Strongly disagree,Somewhat disagree,Neither agree nor disagree,Somewhat agree,Strongly agree');
-INSERT INTO `survey_questions` VALUES (46, 'I like playing devil\'s advocate - arguing the opposite of what someone is saying.', 'play devil\'s advocate', '', '', 1, 'Strongly disagree,Somewhat disagree,Neither agree nor disagree,Somewhat agree,Strongly agree');
-INSERT INTO `survey_questions` VALUES (65, 'Attitudes Towards Thinking and Learning', '', '45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64', 'In discussion ...', 1, 'Strongly disagree,Somewhat disagree,Neither agree nor disagree,Somewhat agree,Strongly agree');
-INSERT INTO `survey_questions` VALUES (67, 'Connected Learning', '', '63,62,59,57,55,49,52,50,48,47', 'Connected knowers...', -1, 'Strongly disagree,Somewhat disagree,Neither agree nor disagree,Somewhat agree,Strongly agree');
-INSERT INTO `survey_questions` VALUES (68, 'Separate Learning', '', '46,54,45,51,60,53,56,58,61,64', 'Separate knowers...', -1, 'Strongly disagree,Somewhat disagree,Neither agree nor disagree,Somewhat agree,Strongly agree');
-
-    
+INSERT INTO `survey_questions` (`id`, `text`, `shorttext`, `multi`, `intro`, `type`, `options`) VALUES (1, 'colles1', 'colles1short', '', '', 1, 'scaletimes5');
+INSERT INTO `survey_questions` (`id`, `text`, `shorttext`, `multi`, `intro`, `type`, `options`) VALUES (2, 'colles2', 'colles2short', '', '', 1, 'scaletimes5');
+INSERT INTO `survey_questions` (`id`, `text`, `shorttext`, `multi`, `intro`, `type`, `options`) VALUES (3, 'colles3', 'colles3short', '', '', 1, 'scaletimes5');
+INSERT INTO `survey_questions` (`id`, `text`, `shorttext`, `multi`, `intro`, `type`, `options`) VALUES (4, 'colles4', 'colles4short', '', '', 1, 'scaletimes5');
+INSERT INTO `survey_questions` (`id`, `text`, `shorttext`, `multi`, `intro`, `type`, `options`) VALUES (5, 'colles5', 'colles5short', '', '', 1, 'scaletimes5');
+INSERT INTO `survey_questions` (`id`, `text`, `shorttext`, `multi`, `intro`, `type`, `options`) VALUES (6, 'colles6', 'colles6short', '', '', 1, 'scaletimes5');
+INSERT INTO `survey_questions` (`id`, `text`, `shorttext`, `multi`, `intro`, `type`, `options`) VALUES (7, 'colles7', 'colles7short', '', '', 1, 'scaletimes5');
+INSERT INTO `survey_questions` (`id`, `text`, `shorttext`, `multi`, `intro`, `type`, `options`) VALUES (8, 'colles8', 'colles8short', '', '', 1, 'scaletimes5');
+INSERT INTO `survey_questions` (`id`, `text`, `shorttext`, `multi`, `intro`, `type`, `options`) VALUES (9, 'colles9', 'colles9short', '', '', 1, 'scaletimes5');
+INSERT INTO `survey_questions` (`id`, `text`, `shorttext`, `multi`, `intro`, `type`, `options`) VALUES (10, 'colles10', 'colles10short', '', '', 1, 'scaletimes5');
+INSERT INTO `survey_questions` (`id`, `text`, `shorttext`, `multi`, `intro`, `type`, `options`) VALUES (11, 'colles11', 'colles11short', '', '', 1, 'scaletimes5');
+INSERT INTO `survey_questions` (`id`, `text`, `shorttext`, `multi`, `intro`, `type`, `options`) VALUES (12, 'colles12', 'colles12short', '', '', 1, 'scaletimes5');
+INSERT INTO `survey_questions` (`id`, `text`, `shorttext`, `multi`, `intro`, `type`, `options`) VALUES (13, 'colles13', 'colles13short', '', '', 1, 'scaletimes5');
+INSERT INTO `survey_questions` (`id`, `text`, `shorttext`, `multi`, `intro`, `type`, `options`) VALUES (14, 'colles14', 'colles14short', '', '', 1, 'scaletimes5');
+INSERT INTO `survey_questions` (`id`, `text`, `shorttext`, `multi`, `intro`, `type`, `options`) VALUES (15, 'colles15', 'colles15short', '', '', 1, 'scaletimes5');
+INSERT INTO `survey_questions` (`id`, `text`, `shorttext`, `multi`, `intro`, `type`, `options`) VALUES (16, 'colles16', 'colles16short', '', '', 1, 'scaletimes5');
+INSERT INTO `survey_questions` (`id`, `text`, `shorttext`, `multi`, `intro`, `type`, `options`) VALUES (17, 'colles17', 'colles17short', '', '', 1, 'scaletimes5');
+INSERT INTO `survey_questions` (`id`, `text`, `shorttext`, `multi`, `intro`, `type`, `options`) VALUES (18, 'colles18', 'colles18short', '', '', 1, 'scaletimes5');
+INSERT INTO `survey_questions` (`id`, `text`, `shorttext`, `multi`, `intro`, `type`, `options`) VALUES (19, 'colles19', 'colles19short', '', '', 1, 'scaletimes5');
+INSERT INTO `survey_questions` (`id`, `text`, `shorttext`, `multi`, `intro`, `type`, `options`) VALUES (20, 'colles20', 'colles20short', '', '', 1, 'scaletimes5');
+INSERT INTO `survey_questions` (`id`, `text`, `shorttext`, `multi`, `intro`, `type`, `options`) VALUES (21, 'colles21', 'colles21short', '', '', 1, 'scaletimes5');
+INSERT INTO `survey_questions` (`id`, `text`, `shorttext`, `multi`, `intro`, `type`, `options`) VALUES (22, 'colles22', 'colles22short', '', '', 1, 'scaletimes5');
+INSERT INTO `survey_questions` (`id`, `text`, `shorttext`, `multi`, `intro`, `type`, `options`) VALUES (23, 'colles23', 'colles23short', '', '', 1, 'scaletimes5');
+INSERT INTO `survey_questions` (`id`, `text`, `shorttext`, `multi`, `intro`, `type`, `options`) VALUES (24, 'colles24', 'colles24short', '', '', 1, 'scaletimes5');
+INSERT INTO `survey_questions` (`id`, `text`, `shorttext`, `multi`, `intro`, `type`, `options`) VALUES (25, 'collesm1', 'collesm1short', '1,2,3,4', 'collesmintro', 1, 'scaletimes5');
+INSERT INTO `survey_questions` (`id`, `text`, `shorttext`, `multi`, `intro`, `type`, `options`) VALUES (26, 'collesm2', 'collesm2short', '5,6,7,8', 'collesmintro', 1, 'scaletimes5');
+INSERT INTO `survey_questions` (`id`, `text`, `shorttext`, `multi`, `intro`, `type`, `options`) VALUES (27, 'collesm3', 'collesm3short', '9,10,11,12', 'collesmintro', 1, 'scaletimes5');
+INSERT INTO `survey_questions` (`id`, `text`, `shorttext`, `multi`, `intro`, `type`, `options`) VALUES (28, 'collesm4', 'collesm4short', '13,14,15,16', 'collesmintro', 1, 'scaletimes5');
+INSERT INTO `survey_questions` (`id`, `text`, `shorttext`, `multi`, `intro`, `type`, `options`) VALUES (29, 'collesm5', 'collesm5short', '17,18,19,20', 'collesmintro', 1, 'scaletimes5');
+INSERT INTO `survey_questions` (`id`, `text`, `shorttext`, `multi`, `intro`, `type`, `options`) VALUES (30, 'collesm6', 'collesm6short', '21,22,23,24', 'collesmintro', 1, 'scaletimes5');
+INSERT INTO `survey_questions` (`id`, `text`, `shorttext`, `multi`, `intro`, `type`, `options`) VALUES (31, 'collesm1', 'collesm1short', '1,2,3,4', 'collesmintro', 2, 'scaletimes5');
+INSERT INTO `survey_questions` (`id`, `text`, `shorttext`, `multi`, `intro`, `type`, `options`) VALUES (32, 'collesm2', 'collesm2short', '5,6,7,8', 'collesmintro', 2, 'scaletimes5');
+INSERT INTO `survey_questions` (`id`, `text`, `shorttext`, `multi`, `intro`, `type`, `options`) VALUES (33, 'collesm3', 'collesm3short', '9,10,11,12', 'collesmintro', 2, 'scaletimes5');
+INSERT INTO `survey_questions` (`id`, `text`, `shorttext`, `multi`, `intro`, `type`, `options`) VALUES (34, 'collesm4', 'collesm4short', '13,14,15,16', 'collesmintro', 2, 'scaletimes5');
+INSERT INTO `survey_questions` (`id`, `text`, `shorttext`, `multi`, `intro`, `type`, `options`) VALUES (35, 'collesm5', 'collesm5short', '17,18,19,20', 'collesmintro', 2, 'scaletimes5');
+INSERT INTO `survey_questions` (`id`, `text`, `shorttext`, `multi`, `intro`, `type`, `options`) VALUES (36, 'collesm6', 'collesm6short', '21,22,23,24', 'collesmintro', 2, 'scaletimes5');
+INSERT INTO `survey_questions` (`id`, `text`, `shorttext`, `multi`, `intro`, `type`, `options`) VALUES (37, 'collesm1', 'collesm1short', '1,2,3,4', 'collesmintro', 3, 'scaletimes5');
+INSERT INTO `survey_questions` (`id`, `text`, `shorttext`, `multi`, `intro`, `type`, `options`) VALUES (38, 'collesm2', 'collesm2short', '5,6,7,8', 'collesmintro', 3, 'scaletimes5');
+INSERT INTO `survey_questions` (`id`, `text`, `shorttext`, `multi`, `intro`, `type`, `options`) VALUES (39, 'collesm3', 'collesm3short', '9,10,11,12', 'collesmintro', 3, 'scaletimes5');
+INSERT INTO `survey_questions` (`id`, `text`, `shorttext`, `multi`, `intro`, `type`, `options`) VALUES (40, 'collesm4', 'collesm4short', '13,14,15,16', 'collesmintro', 3, 'scaletimes5');
+INSERT INTO `survey_questions` (`id`, `text`, `shorttext`, `multi`, `intro`, `type`, `options`) VALUES (41, 'collesm5', 'collesm5short', '17,18,19,20', 'collesmintro', 3, 'scaletimes5');
+INSERT INTO `survey_questions` (`id`, `text`, `shorttext`, `multi`, `intro`, `type`, `options`) VALUES (42, 'collesm6', 'collesm6short', '21,22,23,24', 'collesmintro', 3, 'scaletimes5');
+INSERT INTO `survey_questions` (`id`, `text`, `shorttext`, `multi`, `intro`, `type`, `options`) VALUES (43, 'howlong', '', '', '', 1, 'howlongoptions');
+INSERT INTO `survey_questions` (`id`, `text`, `shorttext`, `multi`, `intro`, `type`, `options`) VALUES (44, 'othercomments', '', '', '', 0, '');
+INSERT INTO `survey_questions` (`id`, `text`, `shorttext`, `multi`, `intro`, `type`, `options`) VALUES (64, 'attls20', 'attls20short', '', '', 1, 'scaleagree5');
+INSERT INTO `survey_questions` (`id`, `text`, `shorttext`, `multi`, `intro`, `type`, `options`) VALUES (58, 'attls14', 'attls14short', '', '', 1, 'scaleagree5');
+INSERT INTO `survey_questions` (`id`, `text`, `shorttext`, `multi`, `intro`, `type`, `options`) VALUES (59, 'attls15', 'attls15short', '', '', 1, 'scaleagree5');
+INSERT INTO `survey_questions` (`id`, `text`, `shorttext`, `multi`, `intro`, `type`, `options`) VALUES (60, 'attls16', 'attls16short', '', '', 1, 'scaleagree5');
+INSERT INTO `survey_questions` (`id`, `text`, `shorttext`, `multi`, `intro`, `type`, `options`) VALUES (61, 'attls17', 'attls17short', '', '', 1, 'scaleagree5');
+INSERT INTO `survey_questions` (`id`, `text`, `shorttext`, `multi`, `intro`, `type`, `options`) VALUES (62, 'attls18', 'attls18short', '', '', 1, 'scaleagree5');
+INSERT INTO `survey_questions` (`id`, `text`, `shorttext`, `multi`, `intro`, `type`, `options`) VALUES (63, 'attls19', 'attls19short', '', '', 1, 'scaleagree5');
+INSERT INTO `survey_questions` (`id`, `text`, `shorttext`, `multi`, `intro`, `type`, `options`) VALUES (56, 'attls12', 'attls12short', '', '', 1, 'scaleagree5');
+INSERT INTO `survey_questions` (`id`, `text`, `shorttext`, `multi`, `intro`, `type`, `options`) VALUES (57, 'attls13', 'attls13short', '', '', 1, 'scaleagree5');
+INSERT INTO `survey_questions` (`id`, `text`, `shorttext`, `multi`, `intro`, `type`, `options`) VALUES (55, 'attls11', 'attls11short', '', '', 1, 'scaleagree5');
+INSERT INTO `survey_questions` (`id`, `text`, `shorttext`, `multi`, `intro`, `type`, `options`) VALUES (54, 'attls10', 'attls10short', '', '', 1, 'scaleagree5');
+INSERT INTO `survey_questions` (`id`, `text`, `shorttext`, `multi`, `intro`, `type`, `options`) VALUES (53, 'attls9', 'attls9short', '', '', 1, 'scaleagree5');
+INSERT INTO `survey_questions` (`id`, `text`, `shorttext`, `multi`, `intro`, `type`, `options`) VALUES (52, 'attls8', 'attls8short', '', '', 1, 'scaleagree5');
+INSERT INTO `survey_questions` (`id`, `text`, `shorttext`, `multi`, `intro`, `type`, `options`) VALUES (51, 'attls7', 'attls7short', '', '', 1, 'scaleagree5');
+INSERT INTO `survey_questions` (`id`, `text`, `shorttext`, `multi`, `intro`, `type`, `options`) VALUES (50, 'attls6', 'attls6short', '', '', 1, 'scaleagree5');
+INSERT INTO `survey_questions` (`id`, `text`, `shorttext`, `multi`, `intro`, `type`, `options`) VALUES (49, 'attls5', 'attls5short', '', '', 1, 'scaleagree5');
+INSERT INTO `survey_questions` (`id`, `text`, `shorttext`, `multi`, `intro`, `type`, `options`) VALUES (48, 'attls4', 'attls4short', '', '', 1, 'scaleagree5');
+INSERT INTO `survey_questions` (`id`, `text`, `shorttext`, `multi`, `intro`, `type`, `options`) VALUES (47, 'attls3', 'attls3short', '', '', 1, 'scaleagree5');
+INSERT INTO `survey_questions` (`id`, `text`, `shorttext`, `multi`, `intro`, `type`, `options`) VALUES (45, 'attls1', 'attls1short', '', '', 1, 'scaleagree5');
+INSERT INTO `survey_questions` (`id`, `text`, `shorttext`, `multi`, `intro`, `type`, `options`) VALUES (46, 'attls2', 'attls2short', '', '', 1, 'scaleagree5');
+INSERT INTO `survey_questions` (`id`, `text`, `shorttext`, `multi`, `intro`, `type`, `options`) VALUES (65, 'attlsm1', 'attlsm1', '45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64', 'attlsmintro', 1, 'scaleagree5');
+INSERT INTO `survey_questions` (`id`, `text`, `shorttext`, `multi`, `intro`, `type`, `options`) VALUES (67, 'attlsm2', 'attlsm2', '63,62,59,57,55,49,52,50,48,47', 'attlsmintro', -1, 'scaleagree5');
+INSERT INTO `survey_questions` (`id`, `text`, `shorttext`, `multi`, `intro`, `type`, `options`) VALUES (68, 'attlsm3', 'attlsm3', '46,54,45,51,60,53,56,58,61,64', 'attlsmintro', -1, 'scaleagree5');
 
 
 

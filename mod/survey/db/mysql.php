@@ -81,6 +81,77 @@ function survey_upgrade($oldversion) {
 
     }
 
+    if ($oldversion < 2002110903) {
+        if (! execute_sql("ALTER TABLE `survey_questions` ADD `shorttext` VARCHAR(30) NOT NULL AFTER `text` ")) {
+            notice("If you get an error above, don't worry, just ignore it.  Everything is OK.");
+        }
+
+        execute_sql("UPDATE `survey` SET `name` = 'collesaname', `intro` = 'collesaintro' WHERE name = 'COLLES (Actual)' AND template = 0 ");
+        execute_sql("UPDATE `survey` SET `name` = 'collespname', `intro` = 'collespintro' WHERE name = 'COLLES (Preferred)' AND template = 0");
+        execute_sql("UPDATE `survey` SET `name` = 'collesapname', `intro` = 'collesapintro' WHERE name = 'COLLES (Preferred and Actual)' AND template = 0");
+        execute_sql("UPDATE `survey` SET `name` = 'attlsname', `intro` = 'attlsintro' WHERE name = 'ATTLS (20 item version)' AND template = 0");
+
+        execute_sql("UPDATE `survey_questions` SET `text` = 'colles1', `shorttext` = 'colles1short', `options` = 'scaletimes5' WHERE `shorttext` = 'focus on interesting issues'");
+        execute_sql("UPDATE `survey_questions` SET `text` = 'colles2', `shorttext` = 'colles2short', `options` = 'scaletimes5' WHERE `shorttext` = 'important to my practice'");
+        execute_sql("UPDATE `survey_questions` SET `text` = 'colles3', `shorttext` = 'colles3short', `options` = 'scaletimes5' WHERE `shorttext` = 'improve my practice'");
+        execute_sql("UPDATE `survey_questions` SET `text` = 'colles4', `shorttext` = 'colles4short', `options` = 'scaletimes5' WHERE `shorttext` = 'connects with my practice'");
+        execute_sql("UPDATE `survey_questions` SET `text` = 'colles5', `shorttext` = 'colles5short', `options` = 'scaletimes5' WHERE `shorttext` = 'I\'m critical of my learning'");
+        execute_sql("UPDATE `survey_questions` SET `text` = 'colles6', `shorttext` = 'colles6short', `options` = 'scaletimes5' WHERE `shorttext` = 'I\'m critical of my own ideas'");
+        execute_sql("UPDATE `survey_questions` SET `text` = 'colles7', `shorttext` = 'colles7short', `options` = 'scaletimes5' WHERE `shorttext` = 'I\'m critical of other students'");
+        execute_sql("UPDATE `survey_questions` SET `text` = 'colles8', `shorttext` = 'colles8short', `options` = 'scaletimes5' WHERE `shorttext` = 'I\'m critical of readings'");
+        execute_sql("UPDATE `survey_questions` SET `text` = 'colles9', `shorttext` = 'colles9short', `options` = 'scaletimes5' WHERE `shorttext` = 'I explain my ideas'");
+        execute_sql("UPDATE `survey_questions` SET `text` = 'colles10', `shorttext` = 'colles10short', `options` = 'scaletimes5' WHERE `shorttext` = 'I ask for explanations'");
+        execute_sql("UPDATE `survey_questions` SET `text` = 'colles11', `shorttext` = 'colles11short', `options` = 'scaletimes5' WHERE `shorttext` = 'I\'m asked to explain'");
+        execute_sql("UPDATE `survey_questions` SET `text` = 'colles12', `shorttext` = 'colles12short', `options` = 'scaletimes5' WHERE `shorttext` = 'students respond to me'");
+        execute_sql("UPDATE `survey_questions` SET `text` = 'colles13', `shorttext` = 'colles13short', `options` = 'scaletimes5' WHERE `shorttext` = 'tutor stimulates thinking'");
+        execute_sql("UPDATE `survey_questions` SET `text` = 'colles14', `shorttext` = 'colles14short', `options` = 'scaletimes5' WHERE `shorttext` = 'tutor encourages me'");
+        execute_sql("UPDATE `survey_questions` SET `text` = 'colles15', `shorttext` = 'colles15short', `options` = 'scaletimes5' WHERE `shorttext` = 'tutor models discourse'");
+        execute_sql("UPDATE `survey_questions` SET `text` = 'colles16', `shorttext` = 'colles16short', `options` = 'scaletimes5' WHERE `shorttext` = 'tutor models self-reflection'");
+        execute_sql("UPDATE `survey_questions` SET `text` = 'colles17', `shorttext` = 'colles17short', `options` = 'scaletimes5' WHERE `shorttext` = 'students encourage me'");
+        execute_sql("UPDATE `survey_questions` SET `text` = 'colles18', `shorttext` = 'colles18short', `options` = 'scaletimes5' WHERE `shorttext` = 'students praise me'");
+        execute_sql("UPDATE `survey_questions` SET `text` = 'colles19', `shorttext` = 'colles19short', `options` = 'scaletimes5' WHERE `shorttext` = 'students value me'");
+        execute_sql("UPDATE `survey_questions` SET `text` = 'colles20', `shorttext` = 'colles20short', `options` = 'scaletimes5' WHERE `shorttext` = 'student empathise'");
+        execute_sql("UPDATE `survey_questions` SET `text` = 'colles21', `shorttext` = 'colles21short', `options` = 'scaletimes5' WHERE `shorttext` = 'I understand other students'");
+        execute_sql("UPDATE `survey_questions` SET `text` = 'colles22', `shorttext` = 'colles22short', `options` = 'scaletimes5' WHERE `shorttext` = 'students understand me'");
+        execute_sql("UPDATE `survey_questions` SET `text` = 'colles23', `shorttext` = 'colles23short', `options` = 'scaletimes5' WHERE `shorttext` = 'I understand the tutor'");
+        execute_sql("UPDATE `survey_questions` SET `text` = 'colles24', `shorttext` = 'colles24short', `options` = 'scaletimes5' WHERE `shorttext` = 'tutor understands me'");
+
+        execute_sql("UPDATE `survey_questions` SET `text` = 'collesm1', `shorttext` = 'collesm1short', `intro` = 'collesmintro', `options` = 'scaletimes5' WHERE `text` = 'Relevance'");
+        execute_sql("UPDATE `survey_questions` SET `text` = 'collesm2', `shorttext` = 'collesm2short', `intro` = 'collesmintro', `options` = 'scaletimes5' WHERE `text` = 'Reflective Thinking'");
+        execute_sql("UPDATE `survey_questions` SET `text` = 'collesm3', `shorttext` = 'collesm3short', `intro` = 'collesmintro', `options` = 'scaletimes5' WHERE `text` = 'Interactivity'");
+        execute_sql("UPDATE `survey_questions` SET `text` = 'collesm4', `shorttext` = 'collesm4short', `intro` = 'collesmintro', `options` = 'scaletimes5' WHERE `text` = 'Tutor Support'");
+        execute_sql("UPDATE `survey_questions` SET `text` = 'collesm5', `shorttext` = 'collesm5short', `intro` = 'collesmintro', `options` = 'scaletimes5' WHERE `text` = 'Peer Support'");
+        execute_sql("UPDATE `survey_questions` SET `text` = 'collesm6', `shorttext` = 'collesm6short', `intro` = 'collesmintro', `options` = 'scaletimes5' WHERE `text` = 'Interpretation'");
+
+        execute_sql("UPDATE `survey_questions` SET `text` = 'howlong', `options` = 'howlongoptions' WHERE `text` = 'How long did this survey take you to complete\?'");
+        execute_sql("UPDATE `survey_questions` SET `text` = 'othercomments' WHERE `text` = 'Do you have any other comments\?'");
+
+        execute_sql("UPDATE `survey_questions` SET `text` = 'attls1', `shorttext` = 'attls1short', `options` = 'scaleagree5' WHERE `shorttext` = 'focus quality of argument'");
+        execute_sql("UPDATE `survey_questions` SET `text` = 'attls2', `shorttext` = 'attls2short', `options` = 'scaleagree5' WHERE `shorttext` = 'play devil\'s advocate'");
+        execute_sql("UPDATE `survey_questions` SET `text` = 'attls3', `shorttext` = 'attls3short', `options` = 'scaleagree5' WHERE `shorttext` = 'where people come from'");
+        execute_sql("UPDATE `survey_questions` SET `text` = 'attls4', `shorttext` = 'attls4short', `options` = 'scaleagree5' WHERE `shorttext` = 'understand different people'");
+        execute_sql("UPDATE `survey_questions` SET `text` = 'attls5', `shorttext` = 'attls5short', `options` = 'scaleagree5' WHERE `shorttext` = 'interact with variety'");
+        execute_sql("UPDATE `survey_questions` SET `text` = 'attls6', `shorttext` = 'attls6short', `options` = 'scaleagree5' WHERE `shorttext` = 'enjoy hearing opinions'");
+        execute_sql("UPDATE `survey_questions` SET `text` = 'attls7', `shorttext` = 'attls7short', `options` = 'scaleagree5' WHERE `shorttext` = 'strengthen by argue'");
+        execute_sql("UPDATE `survey_questions` SET `text` = 'attls8', `shorttext` = 'attls8short', `options` = 'scaleagree5' WHERE `shorttext` = 'know why people do'");
+        execute_sql("UPDATE `survey_questions` SET `text` = 'attls9', `shorttext` = 'attls9short', `options` = 'scaleagree5' WHERE `shorttext` = 'argue with authors'");
+        execute_sql("UPDATE `survey_questions` SET `text` = 'attls10', `shorttext` = 'attls10short', `options` = 'scaleagree5' WHERE `shorttext` = 'remain objective'");
+        execute_sql("UPDATE `survey_questions` SET `text` = 'attls11', `shorttext` = 'attls11short', `options` = 'scaleagree5' WHERE `shorttext` = 'think WITH people'");
+        execute_sql("UPDATE `survey_questions` SET `text` = 'attls12', `shorttext` = 'attls12short', `options` = 'scaleagree5' WHERE `shorttext` = 'use criteria to evaluate'");
+        execute_sql("UPDATE `survey_questions` SET `text` = 'attls13', `shorttext` = 'attls13short', `options` = 'scaleagree5' WHERE `shorttext` = 'try to understand'");
+        execute_sql("UPDATE `survey_questions` SET `text` = 'attls14', `shorttext` = 'attls14short', `options` = 'scaleagree5' WHERE `shorttext` = 'point out weaknesses'");
+        execute_sql("UPDATE `survey_questions` SET `text` = 'attls15', `shorttext` = 'attls15short', `options` = 'scaleagree5' WHERE `shorttext` = 'put myself in their shoes'");
+        execute_sql("UPDATE `survey_questions` SET `text` = 'attls16', `shorttext` = 'attls16short', `options` = 'scaleagree5' WHERE `shorttext` = 'putting on trial'");
+        execute_sql("UPDATE `survey_questions` SET `text` = 'attls17', `shorttext` = 'attls17short', `options` = 'scaleagree5' WHERE `shorttext` = 'i value logic most'");
+        execute_sql("UPDATE `survey_questions` SET `text` = 'attls18', `shorttext` = 'attls18short', `options` = 'scaleagree5' WHERE `shorttext` = 'insight from empathy'");
+        execute_sql("UPDATE `survey_questions` SET `text` = 'attls19', `shorttext` = 'attls19short', `options` = 'scaleagree5' WHERE `shorttext` = 'make effort to extend'");
+        execute_sql("UPDATE `survey_questions` SET `text` = 'attls20', `shorttext` = 'attls20short', `options` = 'scaleagree5' WHERE `shorttext` = 'what\'s wrong\?'");
+
+        execute_sql("UPDATE `survey_questions` SET `text` = 'attlsm1', `shorttext` = 'attlsm1', `options` = 'scaleagree5', `intro` = 'attlsmintro' WHERE `text` = 'Attitudes Towards Thinking and Learning'");
+        execute_sql("UPDATE `survey_questions` SET `text` = 'attlsm2', `shorttext` = 'attlsm2', `options` = 'scaleagree5', `intro` = 'attlsmintro' WHERE `text` = 'Connected Learning'");
+        execute_sql("UPDATE `survey_questions` SET `text` = 'attlsm3', `shorttext` = 'attlsm3', `options` = 'scaleagree5', `intro` = 'attlsmintro' WHERE `text` = 'Separate Learning'");
+    }
+
     return true;
 }
 

@@ -11,6 +11,9 @@
     <td>
     <?
         if ($options = get_records_sql_menu("SELECT id, name FROM survey WHERE template='0'")) {
+            foreach ($options as $id => $name) {
+                $options[$id] = get_string($name, "survey");
+            }
             choose_from_menu($options, "template", $form->template);
             helpbutton("surveys", get_string("helpsurveys", "survey"));
         } else {

@@ -73,6 +73,19 @@
         $question->id = $val;
         
         if ($question->type > 0) {
+            if ($question->text) {
+                $question->text = get_string($question->text, "survey");
+            }
+            if ($question->shorttext) {
+                $question->shorttext = get_string($question->shorttext, "survey");
+            }
+            if ($question->intro) {
+                $question->intro = get_string($question->intro, "survey");
+            }
+            if ($question->options) {
+                $question->options = get_string($question->options, "survey");
+            }
+
             if ($question->multi) {
                 survey_print_multi($question);
             } else {
@@ -81,16 +94,10 @@
         }
     }
 
-
-// End the survey page
-   echo "<CENTER><P>&nbsp;</P><P>";
-   if ($ownerpreview) {
-       echo "(Because this is only a preview, the button below will not send data)<BR>\n";
-       echo "<FONT SIZE=+1><INPUT TYPE=submit VALUE=\"Click here to go back\"></FONT>";
-   } else {
-       echo "\n";
 ?>
 
+<CENTER>
+<BR>
 <SCRIPT>
 <!-- // BEGIN
 function checkform() {
@@ -104,24 +111,25 @@ function checkform() {
     }
 
     if (error) {
-        alert("Some of the multiple choice questions have not been answered.");
+        alert("<?PHP print_string("questionsnotanswered", "survey") ?>");
     } else {
         document.form.submit();
     }
 }
 
-document.write('<INPUT TYPE="button" VALUE="Click here to check and continue" onClick="checkform()">');
+<?PHP echo "document.write('<INPUT TYPE=button VALUE=\"".get_string("clicktocontinuecheck", "survey")."\" onClick=\"checkform()\">');";  ?>
 
 // END -->
 </SCRIPT>
 
 <NOSCRIPT>
     <!-- Without Javascript, no checking is done -->
-    <INPUT TYPE="submit" VALUE="Click here to continue">
+    <INPUT TYPE="submit" VALUE="<? get_string("clicktocontinue", "survey") ?>">
 </NOSCRIPT>
-<?
 
-   }
+</CENTER>
+
+<?
    echo "</FORM>";
 
    print_footer($course);

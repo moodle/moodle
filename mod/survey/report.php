@@ -201,7 +201,7 @@
             error("Question doesn't exist");
         }
 
-        $answers =  explode(",", $question->options);
+        $answers =  explode(",", get_string($question->options, "survey"));
 
         print_header("$survey->name: $strquestion", "$strquestion: $question->text");
 

@@ -80,6 +80,12 @@
     $order     = explode(",", $fullorderlist);
     $questions = $fullquestions;
 
+//  Translate all the question texts
+
+    foreach ($questions as $key => $question) {
+        $questions[$key]->text = get_string($question->text, "survey");
+    }
+
 
 // Get and collate all the results in one big array
 

@@ -42,7 +42,9 @@
                 if ($form->intro) {
                     p($form->intro);
                 } else {
-                    p(get_field("survey", "intro", "id", $form->template));
+                    $form->intro = get_field("survey", "intro", "id", $form->template);
+                    $form->intro = get_string($form->intro, "survey");
+                    p($form->intro);
                 }
                 ?></TEXTAREA>
             </TD>
