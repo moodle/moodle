@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // wiki.php - created with Moodle 1.4 development (2004072500)
+      // wiki.php - created with Moodle 1.4 development (2004072901)
 
 
 $string['action'] = '-- Toiminto --';
@@ -130,7 +130,7 @@ $string['revertpagescheck'] = 'Haluatko varmasti peruuttaa seuraavat muutokset:'
 $string['safehtml'] = 'Turvallinen HTML';
 $string['save'] = 'Tallenna';
 $string['searchwiki'] = 'Etsi Wikistä';
-$string['setpageflags'] = 'Asetan sivun liput';
+$string['setpageflags'] = 'Aseta sivun liput';
 $string['sitemap'] = 'Sivukartta';
 $string['smfor'] = 'Sivukartta';
 $string['status'] = 'Tila';
