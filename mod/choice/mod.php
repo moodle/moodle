@@ -9,56 +9,27 @@
 //
 /////////////////////////////////////////////////////////////
 
-function add_instance($form) {
+function add_instance($choice) {
 // Given an object containing all the necessary data, 
 // (defined by the form in mod.html) this function 
 // will create a new instance and return the id number 
 // of the new instance.
-//
-    GLOBAL $db;
 
-    $timenow = time();
+    $choice->timemodified = time();
 
-    if (!$rs = $db->Execute("INSERT into choice
-                                SET course   = '$form->course', 
-                                    name     = '$form->name',
-                                    text     = '$form->text',
-                                    answer1  = '$form->answer1',
-                                    answer2  = '$form->answer2',
-                                    timemodified = '$timenow'")) {
-        return 0;
-    }
-    
-    // Get it out again - this is the most compatible way to determine the ID
-    if ($rs = $db->Execute("SELECT id FROM choice
-                            WHERE course = $form->course AND timemodified = '$timenow'")) {
-        return $rs->fields[0];
-    } else {
-        return 0;
-    }
+    return insert_record("choice", $choice);
 }
 
 
-function update_instance($form) {
+function update_instance($choice) {
 // Given an object containing all the necessary data, 
 // (defined by the form in mod.html) this function 
 // will update an existing instance with new data.
-//
-    GLOBAL $db;
 
-    $timenow = time();
+    $choice->id = $choice->instance;
+    $choice->timemodified = time();
 
-    if (!$rs = $db->Execute("UPDATE choice
-                                SET course   = '$form->course', 
-                                    name     = '$form->name',
-                                    text     = '$form->text',
-                                    answer1  = '$form->answer1',
-                                    answer2  = '$form->answer2',
-                                    timemodified = '$timenow'
-                              WHERE id = '$form->instance' ")) {
-        return false;
-    }
-    return true;
+    return update_record("choice", $choice);
 }
 
 
@@ -66,15 +37,22 @@ function delete_instance($id) {
 // Given an ID of an instance of this module, 
 // this function will permanently delete the instance 
 // and any data that depends on it.  
-//
-    GLOBAL $db;
 
-    if (!$rs = $db->Execute("DELETE from choice WHERE id = '$id' ")) {
+    if (! $choice = get_record("choice", "id", "$id")) {
         return false;
     }
 
-    return true;
-    
+    $result = true;
+
+    if (! delete_records("choice_answers", "choice", "$choice->id")) {
+        $result = false;
+    }
+
+    if (! delete_records("choice", "id", "$choice->id")) {
+        $result = false;
+    }
+
+    return $result;
 }
 
 
