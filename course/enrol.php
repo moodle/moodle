@@ -24,8 +24,10 @@
                 }
 
                 $subject = get_string("welcometocourse", "", $course->fullname);
-                $message = get_string("welcometocoursetext", "", $course->fullname,
-                                      "$CFG->wwwroot/user/view.php?id=$USER->id&course=$course->id");
+
+                $a->coursename = $course->fullname;
+                $a->profileurl = "$CFG->wwwroot/user/view.php?id=$USER->id&course=$course->id";
+                $message = get_string("welcometocoursetext", "", $a);
 
                 email_to_user($USER,  get_teacher($course->id), $subject, $message);
 
