@@ -22,7 +22,7 @@
     }
 
 
-    add_to_log($course->id, "course", "user record", "user.php?id=$course->id&user=$user->id", "$user->id"); 
+    add_to_log($course->id, "course", "user report", "user.php?id=$course->id&user=$user->id&mode=$mode", "$user->id"); 
 
     print_header("$course->shortname: Activity Report", "$course->fullname",
                  "<A HREF=\"../course/view.php?id=$course->id\">$course->shortname</A> ->
@@ -92,21 +92,32 @@
                         foreach ($sectionmods as $sectionmod) {
                             $mod = $mods[$sectionmod];
                             $instance = get_record("$mod->modname", "id", "$mod->instance");
-                            $userfile = "$CFG->dirroot/mod/$mod->modname/user.php";
-                            if (file_exists($userfile)) {
-                                if ($mode == "outline") {
-                                    $output = include($userfile);
-                                    print_outline_row($mod, $instance, $output);
-                                } else {
-                                    
-                                    $image = "<IMG SRC=\"../mod/$mod->modname/icon.gif\" ".
-                                             "HEIGHT=16 WIDTH=16 ALT=\"$mod->modfullname\">";
-                                    echo "<H4>$image $mod->modfullname: ".
-                                         "<A HREF=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\">".
-                                         "$instance->name</A></H4>";
-                                    echo "<UL>";
-                                    include($userfile);
-                                    echo "</UL>";
+                            $libfile = "$CFG->dirroot/mod/$mod->modname/lib.php";
+
+                            if (file_exists($libfile)) {
+                                require_once($libfile);
+
+                                switch ($mode) {
+                                    case "outline":
+                                        $user_outline = $mod->modname."_user_outline";
+                                        if (function_exists($user_outline)) {
+                                            $output = $user_outline($course, $user, $mod, $instance);
+                                            print_outline_row($mod, $instance, $output);
+                                        }
+                                        break;
+                                    case "complete":
+                                        $user_complete = $mod->modname."_user_complete";
+                                        if (function_exists($user_complete)) {
+                                            $image = "<IMG SRC=\"../mod/$mod->modname/icon.gif\" ".
+                                                     "HEIGHT=16 WIDTH=16 ALT=\"$mod->modfullname\">";
+                                            echo "<H4>$image $mod->modfullname: ".
+                                                 "<A HREF=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\">".
+                                                 "$instance->name</A></H4>";
+                                            echo "<UL>";
+                                            $user_complete($course, $user, $mod, $instance);
+                                            echo "</UL>";
+                                        }
+                                        break;
                                 }
                             }
                         }
@@ -116,6 +127,7 @@
                             print_simple_box_end();
                         }
                         echo "</UL>";
+
                     
                     }
                 }
@@ -127,15 +139,28 @@
     print_footer($course);
 
 
-function print_outline_row($mod, $instance, $info) {
+function print_outline_row($mod, $instance, $result) {
     $image = "<IMG SRC=\"../mod/$mod->modname/icon.gif\" HEIGHT=16 WIDTH=16 ALT=\"$mod->modfullname\">";
 
-    echo "<TR><TD VALIGN=top>$image</TD>";
+    echo "<TR>";
+    echo "<TD VALIGN=top>$image</TD>";
     echo "<TD VALIGN=top width=300>";
-    echo "<A TITLE=\"$mod->modfullname\"";
+    echo "   <A TITLE=\"$mod->modfullname\"";
     echo "   HREF=\"../mod/$mod->modname/view.php?id=$mod->id\">$instance->name</A></TD>";
     echo "<TD>&nbsp;&nbsp;&nbsp;</TD>";
-    echo "<TD VALIGN=top BGCOLOR=white>$info</TD></TR>";
+    echo "<TD VALIGN=top BGCOLOR=white>";
+    if (isset($result->info)) {
+        echo "$result->info";
+    } else {
+        echo "<P ALIGN=CENTER>-</P>";
+    }
+    echo "</TD>";
+    echo "<TD>&nbsp;&nbsp;&nbsp;</TD>";
+    if (isset($result->time)) {
+        $timeago = format_time(time() - $result->time);
+        echo "<TD VALIGN=top NOWRAP>".userdate($result->time)." ($timeago ago)</TD>";
+    }
+    echo "</TR>";
 }
 
 ?>
