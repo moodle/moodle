@@ -4,7 +4,7 @@ $string['action'] = 'Action';
 $string['active'] = 'Actif';
 $string['activities'] = 'Activités';
 $string['activity'] = 'Activité';
-$string['activityclipboard'] = 'Activité en cours de déplacement : <b>$a</b>';
+$string['activityclipboard'] = 'Activité en cours de déplacement : <strong>$a</strong>';
 $string['activityiscurrentlyhidden'] = 'Désolé, cette activité n\'est pas visible actuellement';
 $string['activitymodule'] = 'Module d\'activité';
 $string['activityreport'] = 'Rapport d\'activité';
@@ -366,7 +366,7 @@ Dans la plupart des logiciels de messagerie, cette adresse devrait apparaître co
 
 Si vous avez besoin d\'aide, veuillez contacter l\'administrateur du site, $a->admin';
 $string['emailconfirmationsubject'] = '$a : confirmation de l\'ouverture du compte';
-$string['emailconfirmsent'] = '<p>Un message vous a été envoyé à l\'adresse de courriel <b>$a</b>.</p>
+$string['emailconfirmsent'] = '<p>Un message vous a été envoyé à l\'adresse de courriel <strong>$a</strong>.</p>
 <p>Il contient les instructions pour terminer votre enregistrement.</p>
 <p>Si vous rencontrez des difficultés, contactez l\'administrateur du site.</p>';
 $string['emaildigest'] = 'Forme du courriel quotidien';
@@ -398,11 +398,11 @@ Dans la plupart des logiciels de messagerie, cette adresse devrait apparaître co
 
 Si vous avez besoin d\'aide, veuillez contacter l\'administrateur du site, $a->admin';
 $string['emailpasswordconfirmationsubject'] = '$a : confirmation du changement de mot de passe';
-$string['emailpasswordconfirmsent'] = '<p>Un message a été envoyé à votre adresse de courriel<b>$a</b>.</p>
+$string['emailpasswordconfirmsent'] = '<p>Un message a été envoyé à votre adresse de courriel<strong>$a</strong>.</p>
 <p>Ce message décrit la marche à suivre pour confirmer et terminer le changement de mot de passe.</p>
 <p>En cas de difficulté, veuillez contacter l\'administrateur du site.</p>';
 $string['emailpasswordsent'] = '<p>Merci pour votre confirmation.</p>
-<p>Un message avec votre nouveau mot de passe a été envoyé à votre adresse <b>$a->email</b>.</p>
+<p>Un message avec votre nouveau mot de passe a été envoyé à votre adresse <strong>$a->email</strong>.</p>
 <p>Le nouveau mot de passe a été généré automatiquement. Vous pouvez <a href=\"$a->link\">le modifier</a> pour le rendre plus facile à retenir.</p>';
 $string['enable'] = 'Activer';
 $string['encryptedcode'] = 'Code chiffré';
@@ -786,7 +786,7 @@ $string['passwordrecovery'] = 'Oui, j\'ai besoin d\'aide pour me connecter';
 $string['passwordsdiffer'] = 'Les mots de passe ne correspondent pas';
 $string['passwordsent'] = 'Le mot de passe a été envoyé';
 $string['passwordsenttext'] = '<p>Un message vous a été envoyé à cette adresse : $a->email.</p>
-<p><b>Merci de lire ce message afin de connaître votre nouveau mot de passe</b></p>
+<p><strong>Merci de lire ce message afin de connaître votre nouveau mot de passe</strong></p>
 <p>Ce nouveau mot de passe a été généré automatiquement. Vous voudrez sans doute<br /> le <a href=\"$a->link\">modifier</a> afin qu\'il vous soit plus facile de vous en souvenir.</p>';
 $string['pathnotexists'] = 'Ce chemin n\'existe pas sur votre serveur !';
 $string['pathslasherror'] = 'Le chemin ne doit pas se terminer par une barre oblique !';
@@ -832,7 +832,7 @@ $string['removecreator'] = 'Supprimer ce responsable de cours';
 $string['removestudent'] = 'Supprimer cet étudiant';
 $string['removeteacher'] = 'Supprimer cet enseignant';
 $string['rename'] = 'Renommer';
-$string['renamefileto'] = 'Renommer <b>$a</b> en';
+$string['renamefileto'] = 'Renommer <strong>$a</strong> en';
 $string['required'] = 'Nécessaire';
 $string['requireskey'] = 'Ce cours nécessite une clef d\'inscription';
 $string['requirespayment'] = 'Un paiement est requis pour accéder à ce cours';
@@ -863,10 +863,7 @@ $string['scheduledbackupstatus'] = 'Statut de la sauvegarde planifiée';
 $string['search'] = 'Rechercher';
 $string['searchagain'] = 'Rechercher de nouveau';
 $string['searchcourses'] = 'Rechercher des cours';
-$string['searchhelp'] = '<p>Vous pouvez introduire plusieurs termes comme critères de recherche.</p>
-<p>terme : rechercher toutes les occurences du terme dans le texte.<br />
-+terme : seules les correspondances exactes du terme (mot entier) seront trouvées.<br />
--terme : ne pas inclure les résultats contenant ce terme.</p>';
+$string['searchhelp'] = 'Vous pouvez introduire plusieurs termes comme critères de recherche.<br /><br />terme : rechercher toutes les occurences du terme dans le texte.<br />+terme : seules les correspondances exactes du terme (mot entier) seront trouvées.<br />-terme : ne pas inclure les résultats contenant ce terme.';
 $string['searchresults'] = 'Résultats de la recherche';
 $string['sec'] = 'sec';
 $string['secs'] = 'secs';
@@ -994,9 +991,9 @@ $string['updatinga'] = 'Modifier $a';
 $string['updatingain'] = 'Modifier $a->what dans $a->in';
 $string['upload'] = 'Déposer';
 $string['uploadafile'] = 'Déposer un fichier';
-$string['uploadedfile'] = 'Le fichier a t dpos avec succs';
-$string['uploadfailednotrecovering'] = 'Votre dp™t de fichier a chou car un des fichiers, $a->name, a pos problme.<br/>Voici une liste des problmes rencontrs&nbsp;:<br />$a->problem<br />Impossible de rcuprer l\'erreur.';
-$string['uploadfilelog'] = 'Historique du dp™t du fichier $a';
+$string['uploadedfile'] = 'Le fichier a été déposé avec succès';
+$string['uploadfailednotrecovering'] = 'Votre dépôt de fichier a échoué car un des fichiers, $a->name, a posé problème.<br/>Voici une liste des problèmes rencontrés&nbsp;:<br />$a->problem<br />Impossible de récupérer l\'erreur.';
+$string['uploadfilelog'] = 'Historique du dépôt du fichier $a';
 $string['uploadedfileto'] = 'Le fichier «&nbsp;$a->file » a été déposé dans le dossier «&nbsp;$a->directory »';
 $string['uploadedfiletoobig'] = 'Ce fichier dépasse la taille maximale (fixée à $a octets)';
 $string['uploadformlimit'] = 'Le fichier déposé dépasse la taille maximale fixée dans le formulaire';
