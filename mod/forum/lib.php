@@ -496,6 +496,11 @@ function forum_cron () {
                 }
                 $posthtml .= '</body>';
 
+                if($userto->mailformat != 1) {
+                    // This user DOESN'T want to receive HTML
+                    $posthtml = '';
+                }
+
                 if (!$mailresult =  email_to_user($userto, $site->shortname, $postsubject, $posttext, $posthtml, 
                                                   '', '', $CFG->forum_replytouser)) {
                     mtrace("ERROR!");
