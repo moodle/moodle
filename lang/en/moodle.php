@@ -131,6 +131,7 @@ $string['configsmtpuser'] = "If you have specified an SMTP server above, and the
 $string['configunzip'] = "Indicate the location of your unzip program (Unix only, optional).  If specified, this will be used to unpack zip archives on the server.  If you leave this blank, then Moodle will use internal routines.";
 $string['configuration'] = "Configuration";
 $string['configvariables'] = "Variables";
+$string['configwarning'] = "Be careful modifying these settings - strange values could cause problems.";
 $string['configzip'] = "Indicate the location of your zip program (Unix only, optional).  If specified, this will be used to create zip archives on the server.  If you leave this blank, then Moodle will use internal routines.";
 $string['confirmed'] = "Your registration has been confirmed";
 $string['confirmednot'] = "Your registration has not yet been confirmed!";
