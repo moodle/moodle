@@ -3339,5 +3339,5 @@ function unzip_show_status ($list) {
     }
 }
 
-// vm:autoindent:expandtab:shiftwidth=4:tabstop=4:tw=140:
+// vim:autoindent:expandtab:shiftwidth=4:tabstop=4:tw=140:
 ?>
