@@ -30,6 +30,11 @@ function journal_upgrade($oldversion) {
         table_column("journal", "", "introformat", "integer", "2", "", "1", "not null", "intro");
     }
 
+    if ($oldversion < 2004060401) {
+        modify_database('','CREATE INDEX prefix_journal_course_idx ON prefix_journal (course);');
+        modify_database('','CREATE INDEX prefix_journal_entries_journal_idx ON prefix_journal_entries (journal);');
+        modify_database('','CREATE INDEX prefix_journal_entries_userid_idx ON prefix_journal_entries (userid);');
+    }
 
     return $result;
 }
