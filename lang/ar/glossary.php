@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005010100)
+      // glossary.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005011000)
 
 
 $string['addcomment'] = 'ÃÖÝ ÊÚáíÞ';
@@ -50,6 +50,7 @@ $string['commentson'] = 'ÊÚáíÞÇÊ Úáì';
 $string['commentupdated'] = 'Êã ÊÍÏíË ÇáÊÚáíÞ';
 $string['concept'] = 'ãÝåæã';
 $string['concepts'] = 'ãÝÇåíã';
+$string['configenablerssfeeds'] = 'åÐÇ ÇáãÝÊÇÍ Óíãßä ÇÍÊãÇáíÉ ÎÏãÉ ÊÛÐíÉ ÇáãÚáæãÇÊ áÌãíÚ ÇáãÓÑÏÇÊ. ßãÇ ÓíÌÈ Úáíß Ãä Êãßä ÎÏãÉ ÊÛÐíÉ ÇáãÚáæãÇÊ íÏæíÇð ãä ÎáÇá ÅÚÏÇÏÇÊ ßá ãÓÑÏ.';
 $string['currentglossary'] = 'ÇáãÓÑÏ ÇáÍÇáí';
 $string['dateview'] = 'ÇÓÊÚÑÇÖ ÍÓÈ ÇáÊÇÑíÎ';
 $string['defaultapproval'] = 'ÍÇáÉ ÇáãæÇÝÞÉ ÇáÇÝÊÑÇÖíÉ';
@@ -143,6 +144,7 @@ $string['ratingsuse'] = 'ÇÓÊÎÏã ÇáÊÕäíÝÇÊ';
 $string['ratingtime'] = 'ÇÍÕÑ ÊÕäíÝÇÊ ÇáãÕØáÇÍÇÊ Öãä äØÇÞ åÐå ÇáÊæÇÑíÎ';
 $string['rejectedentries'] = 'ÇáãÕØáÇÍÇÊ ÇáãÑÝæÖÉ';
 $string['rejectionrpt'] = 'ÊÞÑíÑ ÇáÑÝÖ';
+$string['rsssubscriberss'] = 'ÃÚÑÖ ÎÏãÉ ÊÛÐíÉ ÇáãÚáæãÇÊ ááãÝÇåíã \'$a\'';
 $string['searchindefinition'] = 'ÈÍË äÕí ßÇãá';
 $string['secondaryglossary'] = 'ãÓÑÏ ËÇäæí';
 $string['sendinratings'] = 'ÇÑÓá ÊÕäíÝí ÇáÇÎíÑ';
