@@ -154,9 +154,9 @@ $string['totalentries'] = 'Total entries';
 $string['usedynalink'] = 'Automatically link glossary entries';
 $string['waitingapproval'] = 'Waiting approval';
 $string['warningstudentcapost'] = '(Applies only if the glossary is not the main one)';
-$string['writtenby'] = 'by';
 $string['withauthor'] = 'Concepts with author';
 $string['withoutauthor'] = 'Concepts without author';
+$string['writtenby'] = 'by';
 $string['youarenottheauthor'] = 'You are not the author of this comment, so you are not allowed to edit it.';
 
 ?>
