@@ -903,7 +903,7 @@ function get_user_info_from_db($field, $value) {
     if (!$field || !$value) 
         return false;
 
-    $result = $db->Execute("SELECT * FROM user WHERE $field = '$value'");
+    $result = $db->Execute("SELECT * FROM user WHERE $field = '$value' AND deleted = '0'");
 
     if ( $result->RecordCount() == 1 ) {
         $user = (object)$result->fields;
@@ -1127,7 +1127,7 @@ function verify_login($username, $password) {
 
     if (! $user) {
         return false;
-    } else if ( $user->password == md5($password) ) {
+    } else if ( $user->password == md5($password) and ! $user->deleted ) {
         return $user;
     } else {
         return false;
@@ -1148,7 +1148,7 @@ function get_admin () {
 
     if ( $admins = get_records_sql("SELECT u.* FROM user u, user_admins a WHERE a.user = u.id ORDER BY u.id ASC")) {
         foreach ($admins as $admin) {
-            return $admin;   // ie the first one (yeah I know it's bodgy)
+            return $admin;   // ie the first one 
         }
     } else {
         return false;
@@ -1161,7 +1161,9 @@ function get_teacher($courseid) {
                                       WHERE t.user = u.id AND t.course = '$courseid' 
                                       ORDER BY t.authority ASC")) {
         foreach ($teachers as $teacher) {
-            return $teacher;   // ie the first one (yeah I know it's bodgy)
+            if ($teacher->authority) {
+                return $teacher;   // the highest authority teacher
+            }
         }
     } else {
         return false;
@@ -1170,13 +1172,13 @@ function get_teacher($courseid) {
 
 function get_course_students($courseid, $sort="u.lastaccess DESC") {
     return get_records_sql("SELECT u.* FROM user u, user_students s
-                            WHERE s.course = '$courseid' AND s.user = u.id
+                            WHERE s.course = '$courseid' AND s.user = u.id AND u.deleted = '0'
                             ORDER BY $sort");
 }
 
 function get_course_teachers($courseid, $sort="t.authority ASC") {
     return get_records_sql("SELECT u.*,t.authority,t.role FROM user u, user_teachers t
-                            WHERE t.course = '$courseid' AND t.user = u.id 
+                            WHERE t.course = '$courseid' AND t.user = u.id AND u.deleted = '0'
                             ORDER BY $sort");
 }
 

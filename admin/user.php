@@ -80,26 +80,37 @@
         
     } else {                        // List all users for editing
 
-        if ($users = get_records_sql("SELECT * from user WHERE username <> 'guest' ORDER BY firstname")) {
-            $stredituser = get_string("edituser");
-            $stradministration = get_string("administration");
-            $stredit   = get_string("edit");
-            $strdelete = get_string("delete");
+        $stredituser = get_string("edituser");
+        $stradministration = get_string("administration");
+        $stredit   = get_string("edit");
+        $strdelete = get_string("delete");
+        $strdeletecheck = get_string("deletecheck");
 
-	        print_header("$site->fullname : $stredituser", $site->fullname, 
-                         "<A HREF=\"$CFG->wwwroot/admin\">$stradministration</A> -> $stredituser");
+        print_header("$site->fullname : $stredituser", $site->fullname, 
+                     "<A HREF=\"$CFG->wwwroot/admin\">$stradministration</A> -> $stredituser");
 
+        if ($delete) {
+            if ($deleteuser = get_record("user", "id", "$delete")) {
+                if (set_field("user", "deleted", "1", "id", "$delete")) {
+                    set_field("user", "timemodified", time(), "id", "$delete");
+                    notify(get_string("deletedactivity", "", "$deleteuser->firstname $deleteuser->lastname"));
+                }
+            }
+        }
+
+        if ($users = get_records_sql("SELECT * from user WHERE username <> 'guest' AND deleted <> '1' ORDER BY firstname")) {
             print_heading(get_string("chooseuser"));
 
             $table->head  = array (get_string("fullname"), get_string("email"), get_string("city"), 
-                                   get_string("country"), " ");
-            $table->align = array ("LEFT", "LEFT", "CENTER", "CENTER", "CENTER", "CENTER");
+                                   get_string("country"), " ", " ");
+            $table->align = array ("LEFT", "LEFT", "CENTER", "CENTER", "CENTER", "CENTER", "CENTER");
             foreach ($users as $user) {
                 $table->data[] = array ("<A HREF=\"../user/view.php?id=$user->id&course=$site->id\">$user->firstname $user->lastname</A>",
-                                        "$user->email",
-                                        "$user->city",
-                                        $COUNTRIES[$user->country],
-                                        "<A HREF=\"../user/edit.php?id=$user->id&course=$site->id\">$stredit</A>");
+                                 "$user->email",
+                                 "$user->city",
+                                 $COUNTRIES[$user->country],
+                                 "<A HREF=\"../user/edit.php?id=$user->id&course=$site->id\">$stredit</A>",
+                                 "<A HREF=\"user.php?delete=$user->id\" TARGET=\"$strdeletecheck\">$strdelete</A>");
             }
             print_table($table);
 

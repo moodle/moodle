@@ -1,3 +1,187 @@
+2002-09-21 Saturday 15:46  martin
+
+	* mod/: assignment/lib.php, forum/lib.php, journal/lib.php: 
+	
+	Make sure mailouts are in the user's chosen language
+
+2002-09-21 Saturday 15:42  martin
+
+	* mod/forum/lib.php: 
+	
+	Make sure mailouts are in the chosen language of each user
+
+2002-09-21 Saturday 15:27  martin
+
+	* lang/fr/: assignment.php, choice.php, forum.php, journal.php,
+	moodle.php, reading.php, survey.php, help/coursecategory.html,
+	help/courseformats.html, help/coursefullname.html,
+	help/coursenewsitems.html, help/coursenumsections.html,
+	help/courseshortname.html, help/coursestartdate.html,
+	help/enrolmentkey.html, help/guestaccess.html, help/picture.html,
+	help/questions.html, help/surveys.html, help/text.html,
+	help/forum/allowdiscussions.html, help/forum/forumtype.html,
+	help/forum/ratings.html, help/forum/subscription.html,
+	help/reading/readingtype.html, help/reading/summary.html: 
+	
+	Initial (incomplete) version of French translation by Sebastien
+	Nameche <snameche@virtual-net.fr>
+	
+	Good start!  Thanks, Sebastien.
+
+2002-09-21 Saturday 15:22  martin
+
+	* lang/fi/: README, assignment.php, choice.php, forum.php,
+	journal.php, moodle.php, reading.php, survey.php, testupdate.php,
+	docs/module_files.txt, help/coursecategory.html,
+	help/courseformats.html, help/coursefullname.html,
+	help/coursenewsitems.html, help/coursenumsections.html,
+	help/courseshortname.html, help/coursestartdate.html,
+	help/enrolmentkey.html, help/guestaccess.html, help/html.html,
+	help/picture.html, help/questions.html, help/surveys.html,
+	help/teachers.html, help/text.html, help/choice/options.html,
+	help/forum/allowdiscussions.html, help/forum/attachment.html,
+	help/forum/forumtype.html, help/forum/ratings.html,
+	help/forum/subscription.html, help/reading/readingtype.html,
+	help/reading/summary.html: 
+	
+	Initial version of Finnish translation, as done by Petri Asikainen
+	<paca@sci.fi>
+	
+	Thanks, Petri!
+
+2002-09-21 Saturday 15:18  martin
+
+	* lang/en/: assignment.php, choice.php, forum.php, journal.php,
+	moodle.php, reading.php, survey.php: 
+	
+	Added single quotes around all the keys ... even though PHP works
+	without them, it will flag errors when errorlevel is turned up, and
+	I suspect this slows it all down a bit.
+
+2002-09-21 Saturday 15:07  martin
+
+	* lang/en/README: 
+	
+	Added my email address
+
+2002-09-21 Saturday 15:03  martin
+
+	* course/view.php: 
+	
+	Don't need to log in to see site-level course
+
+2002-09-21 Saturday 14:45  martin
+
+	* admin/config.html: 
+	
+	More options for longtimenosee
+
+2002-09-21 Saturday 14:39  martin
+
+	* user/: index.php, lib.php: 
+	
+	Don't print pictures at all for very large lists
+
+2002-09-21 Saturday 14:30  martin
+
+	* user/index.php: 
+	
+	Make more room in list
+
+2002-09-21 Saturday 14:27  martin
+
+	* user/: index.php, lib.php: 
+	
+	more refinements to sorting display
+
+2002-09-21 Saturday 14:13  martin
+
+	* user/index.php: 
+	
+	Fixed typo from testing
+
+2002-09-21 Saturday 14:12  martin
+
+	* pix/t/down.gif, pix/t/up.gif, user/index.php: 
+	
+	Much better look for user index
+
+2002-09-21 Saturday 13:43  martin
+
+	* lib/moodlelib.php: 
+	
+	Slight additions to print_table
+
+2002-09-21 Saturday 13:43  martin
+
+	* lib/db/mysql.sql: 
+	
+	Added lang for users
+
+2002-09-21 Saturday 13:42  martin
+
+	* user/: index.php, lib.php: 
+	
+	Better display of users in shortened form, for testing
+
+2002-09-20 Friday 23:42  martin
+
+	* user/lib.php: 
+	
+	Tweak
+
+2002-09-20 Friday 23:40  martin
+
+	* user/: index.php, lib.php: 
+	
+	First go at an abbreviated user listing
+
+2002-09-19 Thursday 22:59  martin
+
+	* admin/config.php: 
+	
+	Put sitename on debugging info (helpful when comparing two sites)
+
+2002-09-19 Thursday 22:51  martin
+
+	* course/teachers.php, lang/en/moodle.php,
+	lang/en/help/teachers.html, lib/weblib.php: 
+	
+	Improved interface for course/teachers.php ... instead of typing
+	numbers into a box there is now a menu for each user.	Much
+	better!
+
+2002-09-19 Thursday 22:07  martin
+
+	* admin/config.html, lib/defaults.php, lib/setup.php: 
+	
+	Got rid of errorlevel configuration - more trouble than it's worth!
+	Hardcoded it into setup.php now - people who are that keen can
+	change it there.
+
+2002-09-19 Thursday 22:06  martin
+
+	* doc/install.html: 
+	
+	Updated for new configuration page
+
+2002-09-19 Thursday 21:55  martin
+
+	* course/edit.php, user/edit.php: 
+	
+	Some consistency in headers on editing forms
+
+2002-09-19 Thursday 20:01  martin
+
+	* CHANGES, config-dist.php, version.php, admin/config.html,
+	admin/config.php, admin/index.php, admin/site.php, course/lib.php,
+	lang/en/moodle.php, lib/defaults.php, lib/moodlelib.php,
+	lib/setup.php: 
+	
+	Most of the configuration variables have been moved out of the
+	config.php file and into a database, where they can be edited using
+	a new admin form called "Configure variables".
+
 2002-09-17 Tuesday 22:56  martin
 
 	* error/index.php: 

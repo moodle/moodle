@@ -18,7 +18,7 @@
 // If there's something it cannot do itself, it 
 // will tell you what you need to do.
 
-$version = 2002092000;   // The current version is a date (YYYYMMDDXX) where 
+$version = 2002092100;   // The current version is a date (YYYYMMDDXX) where 
                          //    XX is a number that increments during the day
 
 $release = "1.0.5 dev";      // For humans only, not used for the upgrade process
@@ -76,6 +76,9 @@ function upgrade_moodle($oldversion=0) {
     }
     if ($oldversion < 2002092000) {
         execute_sql(" ALTER TABLE `user` CHANGE `lang` `lang` VARCHAR(5) DEFAULT 'en' NOT NULL  ");
+    }
+    if ($oldversion < 2002092100) {
+        execute_sql(" ALTER TABLE `user` ADD `deleted` TINYINT(1) UNSIGNED DEFAULT '0' NOT NULL AFTER `confirmed` ");
     }
 
     return true;
