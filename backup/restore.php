@@ -13,6 +13,8 @@
     //Optional
     optional_variable($id);
     optional_variable($file);
+    optional_variable($cancel);
+    optional_variable($launch);
 
     //Check login       
     require_login();

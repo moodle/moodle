@@ -8,6 +8,8 @@
     require_once ("backuplib.php");
 
     optional_variable($id);       // course id
+    optional_variable($cancel);
+    optional_variable($launch);
 
     require_login();
 
