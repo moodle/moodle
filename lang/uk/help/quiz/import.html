@@ -1,0 +1,44 @@
+<P ALIGN=CENTER><B>Імпорт нових питань</B></P>
+
+<P>Ця функція дозволяє Вам імпортувати питання із зовнішнього файлу.  
+
+<P>Підтримується кілька форматів файлів:
+
+<P><B>Формат із пропущеним словом</B></P>
+<UL>
+<P>Цей формат підтримує тільки питання, що припускають кілька варіантів відповідей. Кожна відповідь відокремлюється тильдою(~), а перед правильною відповіддю стоїть знак (=).  Приклад:
+
+<BLOCKQUOTE>As soon as we begin to explore our body parts as infants
+we become students of {=anatomy and physiology ~reflexology 
+~science ~experiment}, and in a sense we remain students for life.
+</BLOCKQUOTE>
+
+<P>ще... <?php  helpbutton("formatmissingword", "", "quiz") ?></P>
+</UL>
+
+
+<P><B>IMS QTI формат</B></P>
+<UL>
+<P>Поки не підтримується
+
+<P>ще... <?php  helpbutton("formatqti", "", "quiz") ?></P>
+</UL>
+
+
+<P><B>WebCT формат</B></P>
+<UL>
+<P>Поки не підтримується
+
+<P>ще... <?php  helpbutton("formatwebct", "", "quiz") ?></P>
+</UL>
+
+<P><B>Користувальницький формат</B></P>
+<UL>
+<P>Якщо у Вас є файли, що містять питання, які Ви хочете імпортувати, відредагуйте файл mod/quiz/format/custom.php
+
+<P>Кількість коду, що буде необхідно дописати досить мало - рівно стільки, скільки необхідно, для того щоб пропарсити одиночне питання з тексту.
+
+<P>ще... <?php  helpbutton("formatcustom", "", "quiz") ?></P>
+</UL>
+
+
