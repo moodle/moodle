@@ -46,7 +46,7 @@ $string['availablecourses'] = "Cursos disponibles";
 $string['backup'] = "Respaldo";
 $string['backupdate'] = "Fecha del respaldo";
 $string['backupdetails'] = "Detalles del respaldo";
-$string['backupdir'] = "archivos_respaldo";//Sin espacios ni caracteres raros, por favor. Es el nombre de un directorio. 2003-06-15 stronk7.
+$string['backupdir'] = "direcorio de respaldo";
 $string['backupfilename'] = "respaldo";
 $string['backupnameformat'] = " %%Y%%m%%d-%%H%%M ";
 $string['backuporiginalname'] = "Nombre del respaldo";
@@ -160,21 +160,9 @@ $string['edituser'] = "Editar usuario";
 $string['email'] = "Dirección de correo";
 $string['emailconfirm'] = "Confirme su cuenta";
 $string['emailconfirmation'] = "Hola \$a->firstname,
-
-
-
 Alguien, seguramente usted, ha solicitado la apertura de una cuenta en '\$a->sitename' utilizando esta dirección de correo.
-
-
-
 Para completar el proceso de inscripción haga clic aquí:
-
-
-
   \$a->link
-
-
-
 Si usted no lo ha solicitado, ignore esta mensaje.
 
 Felicitaciones 
@@ -254,9 +242,6 @@ $string['gd2'] = "GD 2.x instalado";
 $string['gdneed'] = "GD debe estar instalado para ver este gráfico.";
 $string['gdnot'] = "GD no instalado";
 $string['gpl'] = "Copyright (C) 2001-2002  Martin Dougiamas  (http://dougiamas.com)<BR> Traducción: Claudio Tavares (http://enlaceacademico.com)
-
-
-
 Este programa es software gratuito; Ud. puede redistribuirlo y/o modificarlo
 
 bajo los términos de GNU General Public License según la publicación
@@ -278,6 +263,7 @@ $string['help'] = "Ayuda";
 $string['helpemoticons'] = "Use caritas";
 $string['helpformatting'] = "Sobre el formato de texto";
 $string['helphtml'] = "Cómo escribir HTML";
+$string['helpindex'] = "Índice de todos los archivos de ayuda";
 $string['helppicture'] = "Cómo subir una imagen";
 $string['helpquestions'] = "Haga buenas preguntas";
 $string['helpreading'] = "Lea con atención";
@@ -398,8 +384,9 @@ $string['missingteacher'] = "Debe elejir algo";
 $string['missingurl'] = "URL perdida";
 $string['missingusername'] = "Colocar: nombre de usuario";
 $string['modified'] = "Modificado";
-$string['moduledeleteconfirm'] = "You are about to completely delete the module '\$a'. This will completely delete everything in the database associated with this activity module. Are you SURE you want to continue?";
-$string['moduledeletefiles'] = "All data associated with the module '\$a->module' has been deleted from the database. To complete the deletion (and prevent the module re-installing itself), you should now delete this directory from your server: \$a->directory";
+$string['moduledeleteconfirm'] = "Está a punto de borrar completamente el módulo '\$a'.
+Esto borrará de la base de datos todo lo asociado con este módulo. ¿Está SEGURO de que desea continuar?";
+$string['moduledeletefiles'] = "Todos los datos asociados con el módulo '\$a->module' se han borrado de la base de datos. Para completar el proceso (y prevenir que el módulo se reinstale a sí mismo) debe borrar ahora el directorio \$a->directory de su servidor.";
 $string['modulesetup'] = "Instalando el módulo de tablas";
 $string['modulesuccess'] = "El módulo de tablas \$a se instaló correctamente";
 $string['moodleversion'] = "Versión Moodle";
@@ -422,25 +409,13 @@ $string['newaccount'] = "Nueva cuenta";
 $string['newcourse'] = "Nuevo curso";
 $string['newpassword'] = "Nueva contraseña";
 $string['newpasswordtext'] = "Hola \$a->firstname,
-
-
-
 La contraseña de su cuenta en '\$a->sitename' se ha cancelado y se le otorgado una nueva contraseña temporal.
-
-
-
    Nombre de usuario: \$a->username
 
    contraseña: \$a->newpassword
-
-
-
 Dirígase a esta página y cambie su contraseña temporal por una que pueda recordar mejor:
 
    \$a->link
-
-
-
 Atte. '\$a->sitename' El Administrador,
 
 \$a->signoff";
@@ -487,6 +462,7 @@ $string['opentoguests'] = "Acceso de invitados";
 $string['optional'] = "opcional";
 $string['order'] = "Ordenar";
 $string['outline'] = "Diagrama";
+$string['parentlanguage'] = "es";
 $string['participants'] = "Participantes";
 $string['password'] = "Contraseña";
 $string['passwordchanged'] = "La contraseña ha cambiado";
@@ -519,18 +495,15 @@ $string['question'] = "Pregunta";
 $string['readme'] = "LÉAME";
 $string['recentactivity'] = "Actividad reciente";
 $string['registration'] = "Registro";
-$string['registrationemail'] = "Notificaciones por e-mail";
-$string['registrationinfo'] = "<p>This page allows you to register your Moodle site with moodle.org. Registration is free.
-The main benefit of registering is that you will be added to a low-volume mailing list 
-for important notifications such as security alerts and new releases of Moodle.
-<p>By default, your information will be kept private, and will never be sold or passed on to anyone else. The only 
-reason for collecting this information is for support purposes, and to help build up a statistical 
-picture of the Moodle community as a whole.
-<p>If you choose, you can allow your site name, country and URL to be added to the public list of Moodle Sites.
-<p>All new registrations are verified manually before they are added to the list, but once you are added you can update your registration (and your entry on the public list) at any time by resubmitting this form.";
-$string['registrationno'] = "No deseo recibir notificaciones por e-mail";
+$string['registrationemail'] = "Notificaciones por correo electrónico";
+$string['registrationinfo'] = "<p>Esta página le permite registrar si sitio Moodle en moodle.org. el registro es gratuito.
+El principal beneficio del registro es que usted será incluido en una lista de correo de bajo voulmen para notificaciones importantes como alertas de seguridad y nuevos lanzamientos de Moodle.
+<p>Su información será mantenida en privado, y nunca será vendida o transmitida a nadia más. La única razón para recolectar esta información es para el soporte y para ayudar a costruir un cuadro estadístico de la comunidad Moodle.
+<p>Si lo desea, puede colocar el nombre de su sitio, páis y URL para que aparezca en la lista pública de los sitios que usan Moodle.
+<p>Todos los registros son verificados manualmente antes de ser colocados en la lista, pero una vez en ella, pueden actualizar su registro (y sus datos en la lista pública) en cualquier momento llenado esta forma otra vez.";
+$string['registrationno'] = "No deseo recibir notificaciones por correo electrónico";
 $string['registrationsend'] = "Enviar mi información de registro a moodle.org";
-$string['registrationyes'] = "Sí, envíeme notificaciones por e-mail";
+$string['registrationyes'] = "Sí, envíeme notificaciones por correo electrónico";
 $string['removeadmin'] = "Quitar administrador";
 $string['removecreator'] = "Quitar creador";
 $string['removeteacher'] = "Quitar maestro";
@@ -556,7 +529,7 @@ $string['separateandconnected'] = "Vías de conocimiento separadas y conectadas";
 $string['serverlocaltime'] = "Hora local del servidor";
 $string['settings'] = "Configuración";
 $string['shortname'] = "Nombre corto";
-$string['shortnametaken'] = "Este nombre corto ya está en uso (\$a)+";
+$string['shortnametaken'] = "Este nombre corto ya está en uso (\$a)";
 $string['shortsitename'] = "Nombre corto para el sitio (una palabra)";
 $string['show'] = "Mostrar";
 $string['showall'] = "Mostrar \$a";
@@ -586,8 +559,8 @@ $string['status'] = "Estatus";
 $string['strftimedate'] = "%%d de %%B de %%Y";
 $string['strftimedateshort'] = " %%d de %%B ";
 $string['strftimedatetime'] = " %%d de %%B de %%Y, %%I:%%M %%p ";
-$string['strftimedaydate'] = " %%A %%d de %%B de %%Y ";
-$string['strftimedaydatetime'] = " %%A %%d de %%B de %%Y, %%I:%%M %%p ";
+$string['strftimedaydate'] = " %%A, %%d de %%B de %%Y ";
+$string['strftimedaydatetime'] = " %%A, %%d de %%B de %%Y, %%I:%%M %%p ";
 $string['strftimerecent'] = " %%d de %%b, %%H:%%M ";
 $string['strftimerecentfull'] = " %%a, %%d de %%b de %%Y, %%I:%%M %%p ";
 $string['strftimetime'] = " %%I:%%M %%p ";
@@ -654,14 +627,8 @@ $string['weeklyoutline'] = "Diagrama semanal";
 $string['weekshow'] = "Mostrar esta semana a \$a";
 $string['welcometocourse'] = "Bienvenido a \$a";
 $string['welcometocoursetext'] = "Bienvenido a \$a->coursename
-
-
-
 Lo primero que debe hacer es actualizar su información personal, así podremos saber algo más sobre usted.
 No olvide colocar su foto u otra imagen que lo identifique.
-
-
-
   \$a->profileurl";
 $string['withchosenfiles'] = "Con los archivos escojidos";
 $string['withoutuserdata'] = "datos sin usuario";
@@ -676,7 +643,7 @@ $string['wordforteachers'] = "Su palabra para maestros";
 $string['wordforteacherseg'] = "por ejemplo: Maestros, Profesores, Guías, etc.";
 $string['wrongpassword'] = "Contraseña incorrecta para este usuario";
 $string['yes'] = "Sí";
-$string['youaregoingtorestorefrom'] = "Está restaurande desde: ";
+$string['youaregoingtorestorefrom'] = "Está restaurando desde: ";
 $string['yourlastlogin'] = "Su último ingrso fue el";
 $string['yourself'] = "usted";
 $string['yourteacher'] = "su \$a";

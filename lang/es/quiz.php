@@ -2,6 +2,7 @@
       // quiz.php - created with Moodle 1.0.9 Beta 1 + (2003051700)
 
 
+$string['addingquestions'] = "Esta parte de la página es el lugar para administrar las preguntas. Las preguntas se agrupan en categorías para ayudarlo en la organización, pero pueden ser utilizadas por cualquier cuestionario en su curso o en otro curso si usted decide 'publicarlas'.<br />Luego de seleccionar o crear una categoría podrá crear o editar preguntas. Puede seleccionar cualquiera de esas preguntas para agregarlas al otro lado de la página.";
 $string['addquestions'] = "Agregar preguntas";
 $string['addquestionstoquiz'] = "Agregar preguntas al presente cuestionario";
 $string['addselectedtoquiz'] = "Agregar al cuestionario";
@@ -82,7 +83,7 @@ $string['nomoreattempts'] = "No se permiten más respuestas";
 $string['noquestions'] = "Aún no se han agregado perguntas";
 $string['noreview'] = "No está autorizado para revisar este cuestionario";
 $string['noreviewuntil'] = "No está autorizado para revistar este cuestionario hasta \$a";
-$string['notenoughsubquestions'] = "NO se han definido suficientes subpreguntas.<br> ¿Quiere regresar y arreglar esto?";
+$string['notenoughsubquestions'] = "No se han definido suficientes subpreguntas.<br> ¿Quiere regresar y arreglar esto?";
 $string['publish'] = "Publicar";
 $string['qti'] = "Formato IMS QTI";
 $string['question'] = "Pregunta";
@@ -92,6 +93,7 @@ $string['questions'] = "Preguntas";
 $string['quizavailable'] = "El cuestionario está disponible hasta el \$a";
 $string['quizclose'] = "Cerrar cuestionario";
 $string['quizclosed'] = "Este cuestionario está cerrado en \$a";
+$string['quizcloses'] = "Cuestionario cerrado";
 $string['quiznotavailable'] = "Este cuestionario no estará disponible hasta el \$a";
 $string['quizopen'] = "Abrir cuestionario";
 $string['random'] = "Organizado al azar";
