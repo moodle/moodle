@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // calendar.php - created with Moodle 1.2.1 (2004032500)
+      // calendar.php - created with Moodle 1.3 (2004052500)
 
 
 $string['april'] = 'Abril';
@@ -16,11 +16,14 @@ $string['december'] = 'Dezembro';
 $string['default'] = 'Predefinido';
 $string['deleteevent'] = 'Cancelar evento';
 $string['detailedmonthview'] = 'Visualizar mês em detalhes';
+$string['durationminutes'] = 'Duração em minutos';
 $string['durationnone'] = 'Sem duração';
 $string['durationuntil'] = 'Até';
 $string['editevent'] = 'Editando evento';
 $string['errorbeforecoursestart'] = 'Não è possivel definir um evento anterior à data inicial do curso';
 $string['errorinvaliddate'] = 'Data não valida';
+$string['errorinvalidminutes'] = 'Definir duração em minutos utilizando uma numeração entre 1 e 999.';
+$string['errorinvalidrepeats'] = 'Definir numero de eventos utilizando uma numeração entre 1 e 99.';
 $string['errornodescription'] = 'É necessária uma descrição';
 $string['errornoeventname'] = 'É necessário um nome';
 $string['eventdate'] = 'Data';
@@ -30,6 +33,7 @@ $string['eventendtime'] = 'Ora final';
 $string['eventinstanttime'] = 'Ora';
 $string['eventkind'] = 'Tipo de evento';
 $string['eventname'] = 'Nome';
+$string['eventrepeat'] = 'Repetição';
 $string['eventsfor'] = '$a eventos';
 $string['eventstarttime'] = 'Ora inicial';
 $string['eventtime'] = 'Ora';
@@ -39,6 +43,7 @@ $string['february'] = 'Fevereiro';
 $string['fri'] = 'Sex';
 $string['friday'] = 'Sexta-feira';
 $string['globalevents'] = 'Eventos globais';
+$string['gotocalendar'] = 'Calendário';
 $string['groupevents'] = 'Eventos do grupo';
 $string['hidden'] = 'Escondido';
 $string['january'] = 'Janeiro';
@@ -61,6 +66,9 @@ $string['pref_startwday'] = 'primeiro dia da semana';
 $string['pref_timeformat'] = 'Formato de visualização da ora';
 $string['preferences'] = 'Preferencias';
 $string['preferences_available'] = 'As suas preferencias';
+$string['repeatnone'] = 'Nenhuma repetição';
+$string['repeatweeksl'] = 'Repetir semanalmente, criar todas jde uma vez';
+$string['repeatweeksr'] = 'eventos';
 $string['sat'] = 'Sáb';
 $string['saturday'] = 'Sábado';
 $string['september'] = 'Setembro';
