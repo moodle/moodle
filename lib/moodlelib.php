@@ -366,25 +366,31 @@ function reset_login_count() {
     $SESSION->logincount = 0;
 }
 
-
-function isadmin($userid=0) {
+function isadmin($userid=false) {
 /// Is the user an admin?
     global $USER;
+    static $admins = array();
+    static $nonadmins = array();
 
     if (empty($USER->id)) {
         return false;
     }
 
-    if (empty($userid)) {
-        if (!empty($USER->admin)) {
-            return true;
-        }
-        return record_exists("user_admins", "userid", $USER->id);
+    $checkid = $userid ? $userid : $USER->id;
+
+    if (in_array($checkid, $admins)) {
+        return true;
+    } elseif (in_array($ceckid, $nonadmins)) {
+        return false;
+    } elseif (record_exists("user_admins", "userid", $checkid)){
+        $admins[] = $checkid;
+        return true;
+    } else {
+        $nonadmins[] = $checkid;
+        return false;
     }
 
-    return record_exists("user_admins", "userid", $userid);
 }
-
 
 function isteacher($courseid, $userid=0) {
 /// Is the user a teacher or admin?
@@ -1193,26 +1199,34 @@ function can_use_richtext_editor() {
 
 function check_gd_version() {
 /// Hack to find out the GD version by parsing phpinfo output
-    ob_start();
-    phpinfo(8);
-    $phpinfo = ob_get_contents();
-    ob_end_clean();
-
-    $phpinfo = explode("\n",$phpinfo);
-
     $gdversion = 0;
 
-
-    foreach ($phpinfo as $text) {
-        $parts = explode('</td>',$text);
-        foreach ($parts as $key => $val) {
-            $parts[$key] = trim(strip_tags($val));
+    if (function_exists('gd_info')){
+        $gd_info = gd_info();
+        /// THIS IS UGLY AND NEEDS TO BE IMPROVED
+        if($gd_info['GD Version'] == 'bundled (2.0 compatible)'){
+            $gdversion = 2;
         }
-        if ($parts[0] == "GD Version") {
-            if (substr_count($parts[1], "2.0")) {
-                $parts[1] = "2.0";
+    } else {
+        ob_start();
+        phpinfo(8);
+        $phpinfo = ob_get_contents();
+        ob_end_clean();
+
+        $phpinfo = explode("\n",$phpinfo);
+
+
+        foreach ($phpinfo as $text) {
+            $parts = explode('</td>',$text);
+            foreach ($parts as $key => $val) {
+                $parts[$key] = trim(strip_tags($val));
             }
-            $gdversion = intval($parts[1]);
+            if ($parts[0] == "GD Version") {
+                if (substr_count($parts[1], "2.0")) {
+                    $parts[1] = "2.0";
+                }
+                $gdversion = intval($parts[1]);
+            }
         }
     }
 
