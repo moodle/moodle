@@ -22,6 +22,7 @@ $FORUM_SHORT_POST = 300;  // Less than this is "short"
 
 $FORUM_LONG_POST  = 600;  // More than this is "long"
 
+$FORUM_MANY_DISCUSSIONS = 10;
 
 
 /// FUNCTIONS ///////////////////////////////////////////////////////////
@@ -236,6 +237,56 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
     echo "</TD></TR></TABLE>";
     echo "</TD></TR>\n</TABLE>\n\n";
 }
+
+
+function forum_print_post_header(&$post, $courseid, $ownpost=false, $reply=false, $link=false, $rate=false, $footer="") {
+    global $THEME, $USER, $CFG, $FORUM_LONG_POST;
+
+    if ($post->parent) {
+        echo "<TABLE BORDER=0 CELLPADDING=1 CELLSPACING=1><TR><TD BGCOLOR=#888888>";
+        echo "<TABLE BORDER=0 CELLPADDING=3 CELLSPACING=0>";
+    } else {
+        echo "<TABLE BORDER=0 CELLPADDING=1 CELLSPACING=1 WIDTH=100%><TR><TD BGCOLOR=#888888>";
+        echo "<TABLE BORDER=0 CELLPADDING=3 CELLSPACING=0 WIDTH=100%>";
+    }
+
+    echo "<TR><TD BGCOLOR=\"$THEME->body\" WIDTH=35 VALIGN=TOP>";
+    print_user_picture($post->userid, $courseid, $post->picture);
+    echo "</TD>";
+
+    if ($post->parent) {
+        echo "<TD NOWRAP BGCOLOR=\"$THEME->cellheading\">";
+    } else {
+        echo "<TD NOWRAP BGCOLOR=\"$THEME->cellheading2\">";
+    }
+    echo "<P>";
+    echo "<FONT SIZE=3><B>$post->subject</B></FONT><BR>";
+    echo "<FONT SIZE=2>";
+    $by->name = "<A HREF=\"$CFG->wwwroot/user/view.php?id=$post->userid&course=$courseid\">$post->firstname $post->lastname</A>";
+    $by->date = userdate($post->created);
+    print_string("bynameondate", "forum", $by);
+    echo "</FONT></P></TD>";
+
+    if ($post->parent) {
+        echo "<TD VALIGN=BOTTOM BGCOLOR=\"$THEME->cellheading\">";
+    } else {
+        echo "<TD VALIGN=BOTTOM BGCOLOR=\"$THEME->cellheading2\">";
+    }
+    echo "<P ALIGN=right><FONT SIZE=-1>";
+
+    if ($link) {
+        if ($post->replies == 1) {
+            $replystring = get_string("repliesone", "forum", $post->replies);
+        } else {
+            $replystring = get_string("repliesmany", "forum", $post->replies);
+        }
+        echo "<A HREF=\"$CFG->wwwroot/mod/forum/discuss.php?d=$post->discussion\"><B>".get_string("discussthistopic", "forum")."</B></A> ($replystring)&nbsp;&nbsp;";
+    }
+    echo "</P>";
+    echo "</TD></TR></TABLE>";
+    echo "</TD></TR>\n</TABLE>\n\n";
+}
+
 
 function forum_shorten_post($message) {
     global $FORUM_LONG_POST, $FORUM_SHORT_POST;
@@ -837,7 +888,7 @@ function forum_get_discussions($forum="0", $forum_sort="DESC", $user=0) {
 
 
 function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5, $forum_style="plain", $forum_sort="DESC") {
-    global $CFG, $USER;
+    global $CFG, $USER, $FORUM_MANY_DISCUSSIONS;
     
     if ($forum_id) {
         if (! $forum = get_record("forum", "id", $forum_id)) {
@@ -869,40 +920,47 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5, $f
 
     if (! $discussions = forum_get_discussions($forum->id, $forum_sort) ) {
         echo "<P ALIGN=CENTER><B>(".get_string("nodiscussions", "forum").")</B></P>";
+        return;
 
-    } else {
+    }
+    
+    if ((!$forum_numdiscussions) && ($forum_style == "plain") && (count($discussions) > $FORUM_MANY_DISCUSSIONS) ) { 
+        $forum_style = "header";  // Abbreviate display if it's going to be long.
+    }
 
-        $replies = forum_count_discussion_replies($forum->id);
+    $replies = forum_count_discussion_replies($forum->id);
 
-        $discussioncount = 0;
+    $discussioncount = 0;
 
-        foreach ($discussions as $discussion) {
-            $discussioncount++;
+    foreach ($discussions as $discussion) {
+        $discussioncount++;
 
-            if ($forum_numdiscussions && ($discussioncount > $forum_numdiscussions)) {
-                echo "<P ALIGN=right><A HREF=\"$CFG->wwwroot/mod/forum/view.php?f=$forum->id\">";
-                echo get_string("olderdiscussions", "forum")."</A> ...</P>";
-                break;
-            }
-            if ($replies[$discussion->discussion]) {
-                $discussion->replies = $replies[$discussion->discussion]->replies;
-            } else {
-                $discussion->replies = 0;
-            }
-            $ownpost = ($discussion->userid == $USER->id);
-            switch ($forum_style) {
-                case "minimal":
-                    echo "<P><FONT COLOR=#555555>".userdate($discussion->modified, "%e %b, %H:%M")." - $discussion->firstname</FONT>";
-                    echo "<BR>$discussion->subject ";
-                    echo "<A HREF=\"$CFG->wwwroot/mod/forum/discuss.php?d=$discussion->discussion\">";
-                    echo get_string("more", "forum")."...</A>";
-                    echo "</P>\n";
-                break;
-                default:
-                    forum_print_post($discussion, $forum->course, $ownpost, $reply=0, $link=1, $assessed=false);
-                    echo "<BR>\n";
-                break;
-            }
+        if ($forum_numdiscussions && ($discussioncount > $forum_numdiscussions)) {
+            echo "<P ALIGN=right><A HREF=\"$CFG->wwwroot/mod/forum/view.php?f=$forum->id\">";
+            echo get_string("olderdiscussions", "forum")."</A> ...</P>";
+            break;
+        }
+        if ($replies[$discussion->discussion]) {
+            $discussion->replies = $replies[$discussion->discussion]->replies;
+        } else {
+            $discussion->replies = 0;
+        }
+        $ownpost = ($discussion->userid == $USER->id);
+        switch ($forum_style) {
+            case "minimal":
+                echo "<P><FONT COLOR=#555555>".userdate($discussion->modified, "%e %b, %H:%M")." - $discussion->firstname</FONT>";
+                echo "<BR>$discussion->subject ";
+                echo "<A HREF=\"$CFG->wwwroot/mod/forum/discuss.php?d=$discussion->discussion\">";
+                echo get_string("more", "forum")."...</A>";
+                echo "</P>\n";
+            break;
+            case "header":
+                forum_print_post_header($discussion, $forum->course, $ownpost, $reply=0, $link=1, $assessed=false);
+            break;
+            default:
+                forum_print_post($discussion, $forum->course, $ownpost, $reply=0, $link=1, $assessed=false);
+                echo "<BR>\n";
+            break;
         }
     }
 }
