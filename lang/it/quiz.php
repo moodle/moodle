@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.4 development (2004062600)
+      // quiz.php - created with Moodle 1.4 development (2004070800)
 
 
 $string['acceptederror'] = 'Errore accettato';
@@ -135,6 +135,7 @@ $string['notenoughanswers'] = 'Questo tipo di domanda richiede come minimo $a ri
 $string['notenoughsubquestions'] = 'Non sono state definite abbastanza sottodomande!<br>Vuoi tornare indietro e correggere questa domanda?';
 $string['numerical'] = 'Numerica';
 $string['paragraphquestion'] = 'Domanda paragrafo non supportata alla linea $a. La domanda sarà ignorata';
+$string['passworderror'] = 'La password inserita non è corretta';
 $string['percentcorrect'] = 'Percentuale corretta';
 $string['publish'] = 'Rendere pubblico';
 $string['publishedit'] = 'Devi avere il permesso nel corso sono pubblicate per aggiungere o modificare le domande in questa categoria';
@@ -173,6 +174,9 @@ $string['reportmulti_resp'] = 'Risposte individuali';
 $string['reportoverview'] = 'Sommario';
 $string['reportregrade'] = 'Rivaluta tentativi';
 $string['reportsimplestat'] = 'Statistiche semplici';
+$string['requirepassword'] = 'Richiede password';
+$string['requirepasswordmessage'] = 'Per tentare questo quiz è necessario conoscere la password d\'accesso.';
+$string['requiresubnet'] = 'Richiede abilitazione dell\'indirizzo di rete';
 $string['review'] = 'Rivedi';
 $string['save'] = 'Salva';
 $string['savegrades'] = 'Salva i voti';
@@ -188,6 +192,7 @@ $string['showcorrectanswer'] = 'Mostrare le risposte corrette nel feedback?';
 $string['showfeedback'] = 'Mostrare il feedback dopo le risposte?';
 $string['shuffleanswers'] = 'Risposte mischiate';
 $string['shufflequestions'] = 'Domande mischiate';
+$string['subneterror'] = 'Spiacente, questo quiz è bloccato in modo da essere accessibile solo da certi indirizzi di rete. Attualmente i tuo computer non è abilitato all\'utilizzo di questo quiz. ';
 $string['time'] = 'Ora';
 $string['timecompleted'] = 'Completato';
 $string['timeleft'] = 'Tempo rimasto';

@@ -1,8 +1,10 @@
 <?PHP // $Id$ 
-      // scorm.php - created with Moodle 1.2.1 (2004032500)
+      // scorm.php - created with Moodle 1.4 development (2004070800)
 
 
+$string['attr_error'] = 'Valore non valido per l\'attributo ($a->attr) del tag $a->tag.';
 $string['autocontinue'] = 'Continuazione automatica';
+$string['badmanifest'] = 'Trovati alcuni errori nel manifest: controlla l\'elenco';
 $string['browse'] = 'Visita';
 $string['browsed'] = 'Navigato';
 $string['browsemode'] = 'Modalità di visita corso';
@@ -18,9 +20,20 @@ $string['configpopupwidth'] = 'Larghezza standard per le nuove finestre di popup
 $string['coursepacket'] = 'Pacchetto del corso';
 $string['coursestruct'] = 'Struttura del corso';
 $string['datadir'] = 'Errore Filesystem: non è possibile creare la directory dei dati';
+$string['domxml'] = 'Libreria esterna DOMXML';
 $string['entercourse'] = 'Segui corso SCORM';
+$string['errorlogs'] = 'Errori';
 $string['failed'] = 'Fallito';
+$string['found'] = 'Manifest trovato';
+$string['gradeaverage'] = 'Media dei voti';
+$string['gradehighest'] = 'Il voto più alto';
+$string['grademethod'] = 'Metodo di valutazione';
+$string['gradescoes'] = 'Situazione degli sco';
+$string['gradesum'] = 'Somma dei voti';
+$string['guestsno'] = 'Gli ospiti non possono visualizzare i corsi scorm';
 $string['incomplete'] = 'Incompleto';
+$string['missing_attribute'] = 'Attributo mancante $a->attr al tag $a->tag';
+$string['missing_tag'] = 'Tag mancante $a->tag';
 $string['mode'] = 'Modalità';
 $string['modulename'] = 'Scorm';
 $string['modulenameplural'] = 'Scorms';
@@ -32,21 +45,32 @@ $string['newwidth'] = 'Larghezza standard della finestra (in pixel)';
 $string['newwindow'] = 'Nuova finestra';
 $string['newwindowopen'] = 'Visualizza questo pacchetto scorm in una nuova finestra';
 $string['next'] = 'Continua';
+$string['no_attributes'] = 'Il tag $a->tag deve avere degli attributi';
+$string['no_children'] = 'Il tag $a->tag deve avere dei figli';
 $string['nomanifest'] = 'Manifest non trovato';
 $string['noreports'] = 'Non ci sono tentativi da visualizzare';
 $string['normal'] = 'Normale';
+$string['not_corr_type'] = 'Tipo sbagliato per il tag $a->tag';
 $string['notattempted'] = 'Non provato';
 $string['packagedir'] = 'Errore Filesystem: non è possibile creare la directory del pacchetto SCORM';
 $string['passed'] = 'Superato';
+$string['php5'] = 'PHP5 (libreria DOMXML nativa)';
+$string['position_error'] = 'It tag $a->tag non può essere figlio del tag $a->parent';
 $string['prev'] = 'Precedente';
 $string['regular'] = 'Manifest corretto';
 $string['report'] = 'Report';
 $string['review'] = 'Rivedi';
 $string['scoes'] = 'Sco';
 $string['score'] = 'Voto';
+$string['syntax'] = 'Errore di sintassi';
+$string['tag_error'] = 'Tag sconosciuto ($a->tag) con questo valore: $a->value';
+$string['too_many_attributes'] = 'Il tag $a->tag ha troppi attributi';
+$string['too_many_children'] = 'Il tag $a->tag ha troppi figli';
 $string['trackingloose'] = 'ATTENZIONE: I dati di tracciamento esistenti saranno cancellati!';
 $string['validateascorm'] = 'Controllo pacchetto scorm';
 $string['validation'] = 'Risultato controllo';
+$string['validationtype'] = 'Questa impostazione abilita l\'utilizzo di una libreria DOMXML per validare il manifest. Se non conosci quale libreria è installata sul tuo server lascia la preselezione.';
+$string['versionwarning'] = 'La versione del manifest è precedente alla 1.3, avviso rilevato al tag $a->tag';
 $string['viewallreports'] = 'Vedi lo stato dei $a tentativi';
 
 ?>

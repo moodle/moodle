@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.3 Beta + (2004051300)
+      // glossary.php - created with Moodle 1.4 development (2004070800)
 
 
 $string['addcomment'] = 'Aggiungi commento';
@@ -100,6 +100,7 @@ $string['filetoimport'] = 'File da importare';
 $string['fillfields'] = 'Concetto e definizione sono campi necessari.';
 $string['filtername'] = 'Auto-collegamento al glossario';
 $string['fullmatch'] = 'Trova tutte le parole solo<br /><small>(quando collegato automaticamente)</small>';
+$string['globalglossary'] = 'Glossario globale';
 $string['glossaryleveldefaultsettings'] = 'Impostazione del livello dei glossari standard';
 $string['glossarytype'] = 'Tipo di Glossario';
 $string['glosssaryexported'] = 'Glossario esportato';
@@ -109,7 +110,7 @@ $string['importedentries'] = 'Termini importati';
 $string['importentries'] = 'Importa termini';
 $string['isglobal'] = 'Questo glossario è globale?';
 $string['linkcategory'] = 'Collega automaticamente questa categoria';
-$string['mainglossary'] = 'Glossario generale';
+$string['mainglossary'] = 'Glossario principale';
 $string['maxtimehaspassed'] = 'Spiacente, ma il tempo massimo per modificare questo commento ($a) è terminato!';
 $string['modulename'] = 'Glossario';
 $string['modulenameplural'] = 'Glossari';

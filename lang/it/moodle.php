@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.4 development (2004062600)
+      // moodle.php - created with Moodle 1.4 development (2004070800)
 
 
 $string['action'] = 'Azione';
@@ -843,6 +843,7 @@ $string['sitefiles'] = 'File del sito';
 $string['sitelogs'] = 'Logs del sito';
 $string['sitenews'] = 'News del sito';
 $string['sites'] = 'Siti';
+$string['sitesection'] = 'Includi una sezione';
 $string['sitesettings'] = 'Impostazioni sito';
 $string['size'] = 'Dimensione';
 $string['sizeb'] = 'bytes';
