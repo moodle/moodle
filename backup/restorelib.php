@@ -331,6 +331,7 @@
             $course->showreports = addslashes($course_header->course_showreports);
             $course->groupmode = addslashes($course_header->course_groupmode);
             $course->groupmodeforce = addslashes($course_header->course_groupmodeforce);
+            $course->lang = addslashes($course_header->course_lang);
             $course->marker = addslashes($course_header->course_marker);
             $course->visible = addslashes($course_header->course_visible);
             $course->timecreated = addslashes($course_header->course_timecreated);
@@ -1465,6 +1466,9 @@
                             break;
                         case "GROUPMODEFORCE":
                             $this->info->course_groupmodeforce = $this->getContents();
+                            break;
+                        case "LANG":
+                            $this->info->course_lang = $this->getContents();
                             break;
                         case "MARKER":
                             $this->info->course_marker = $this->getContents();

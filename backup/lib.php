@@ -225,6 +225,8 @@
     //This function return the names of all directories and files under a give directory
     //Not recursive
     function list_directories_and_files ($rootdir) {
+
+        $results = "";
  
         $dir = opendir($rootdir);
         while ($file=readdir($dir)) {
