@@ -6,6 +6,7 @@
       <AUTOINCREMENT/>
     </field>
     <field name="category" type="I" size="10" default="0">
+      <KEY/>
       <NOTNULL/>
     </field>
     <field name="sortorder" type="I" size="10" default="0">
@@ -69,6 +70,12 @@
       <NOTNULL/>
     </field>
     <field name="visible" type="I" size="10" default="1">
+      <NOTNULL/>
+    </field>
+    <field name="groupmode" type="I" size="4" default="1">
+      <NOTNULL/>
+    </field>
+    <field name="groupmodeforce" type="I" size="4" default="1">
       <NOTNULL/>
     </field>
     <field name="timecreated" type="I" size="10" default="0">
