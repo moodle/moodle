@@ -183,18 +183,28 @@ function print_user_picture($userid, $courseid, $picture, $large=false, $returns
 
 function print_table($table) {
 // Prints a nicely formatted table.
-// $table is an object with three properties.
+// $table is an object with several properties.
 //     $table->head      is an array of heading names.
 //     $table->align     is an array of column alignments
+//     $table->size      is an array of column sizes
 //     $table->data[]    is an array of arrays containing the data.
 //     $table->width     is an percentage of the page
 
-    if ($table->align) {
+    if (isset($table->align)) {
         foreach ($table->align as $key => $aa) {
             if ($aa) {
-                $align[$key] = "ALIGN=\"$aa\"";
+                $align[$key] = " ALIGN=\"$aa\"";
             } else {
                 $align[$key] = "";
+            }
+        }
+    }
+    if (isset($table->size)) {
+        foreach ($table->size as $key => $ss) {
+            if ($ss) {
+                $size[$key] = " WIDTH=\"$ss\"";
+            } else {
+                $size[$key] = "";
             }
         }
     }
@@ -209,7 +219,7 @@ function print_table($table) {
     if ($table->head) {
         echo "<TR>";
         foreach ($table->head as $key => $heading) {
-            echo "<TH ".$align[$key].">$heading</TH>";
+            echo "<TH ".$align[$key].$size[$key].">$heading</TH>";
         }
         echo "</TR>\n";
     }
@@ -217,7 +227,7 @@ function print_table($table) {
     foreach ($table->data as $row) {
         echo "<TR VALIGN=TOP>";
         foreach ($row as $key => $item) {
-            echo "<TD ".$align[$key].">$item</TD>";
+            echo "<TD ".$align[$key].$size[$key].">$item</TD>";
         }
         echo "</TR>\n";
     }
