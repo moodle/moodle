@@ -147,7 +147,7 @@
             print_header($pagetitle, "$course->fullname", "$navigation $resource->name",
                          "", "", true, update_module_button($cm->id, $course->id, $strresource), navmenu($course, $cm));
 
-            print_simple_box(text_to_html($resource->alltext), "center", "", "$THEME->cellcontent", "20");
+            print_simple_box(format_text($resource->alltext), "center", "", "$THEME->cellcontent", "20");
 
             echo "<center><p><font size=1>$strlastmodified: ".userdate($resource->timemodified)."</p></center>";
 
@@ -161,7 +161,7 @@
 
             print_simple_box_start("center", "", "$THEME->cellcontent", "20");
 
-            echo $resource->alltext;
+            echo format_text($resource->alltext, FORMAT_HTML);
 
             print_simple_box_end();
 
@@ -222,7 +222,7 @@
             print_header($pagetitle, "$course->fullname", "$navigation $resource->name",
                 "", "", true, update_module_button($cm->id, $course->id, $strresource), navmenu($course, $cm));
 
-            print_simple_box(wiki_to_html($resource->alltext), "center", "", "$THEME->cellcontent", "20" );
+            print_simple_box(format_text($resource->alltext, FORMAT_WIKI), "center", "", "$THEME->cellcontent", "20" );
 
             echo "<center><p><font size=\"1\">$strlastmodified: ".userdate($resource->timemodified)."</p></center>";
 
