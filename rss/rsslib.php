@@ -40,6 +40,12 @@ function cron_rss_feeds () {
    
     echo "    Generating rssfeeds...\n";
 
+    //Check for required functions...
+    if(!function_exists('utf8_encode')) {
+        echo "        ERROR: You need to add XML support to your PHP installation!\n";
+        return true;
+    }
+
     if ($allmods = get_records("modules") ) {
         foreach ($allmods as $mod) {
             echo '        '.$mod->name.': ';
