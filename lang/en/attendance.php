@@ -4,6 +4,7 @@
 $string['modulename'] = "Attendance";
 $string['allmodulename'] = "All Attendance Rolls";
 $string['modulenameplural'] = "Attendance Rolls";
+$string['weekmodulename'] = "All Attendance Rolls In the Last Week";
 $string['addmultiple'] = "Add Multiple Attendance Rolls";
 $string['addingmultiple'] = "Adding Multiple Attendance Rolls";
 #------------------------------------------------------------
@@ -33,6 +34,8 @@ $string['viewall'] = "View All Attendance Rolls";
 $string['viewone'] = "View All Pages of Report";
 $string['viewtable'] = "View Report as One Table";
 $string['viewmulti'] = "View Report as Multiple Pages";
+$string['viewweek'] = "View All Attendance Rolls from the Calendar Week";
+$string['viewsection'] = "View All Attendance Rolls from this Section";
 $string['noviews'] = "Sorry, there is no data for your account here";
 $string['norolls'] = "There are no attendance rolls in this course";
 $string['startmulti'] = "Date for first attendance roll";
