@@ -60,7 +60,7 @@ function print_all_responses($survey, $results) {
                  
         echo "<TR>";
         echo "<TD><A HREF=\"report.php?action=student&student=$a->id&id=$survey\">$a->firstname $a->lastname</A></TD>";
-        echo "<TD>".userdate($a->time, "j M Y, h:i A")."</TD>";
+        echo "<TD>".userdate($a->time, "%e %B %Y, %I:%M %p")."</TD>";
         echo "<TD align=right>$a->numanswers</TD>";
         echo "</TR>";
     }

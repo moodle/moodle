@@ -64,7 +64,7 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate="today"
     $timemidnight = $today = usergetmidnight($timenow);
 
     // Put today up the top of the list
-    $dates = array("$timemidnight" => "Today, ".userdate($timenow, "j F Y") );
+    $dates = array("$timemidnight" => "Today, ".userdate($timenow, "%e %B %Y") );
 
     if (! $course->startdate) {
         $course->startdate = $course->timecreated;
@@ -74,7 +74,7 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate="today"
     while ($timemidnight > $course->startdate and $numdates < 365) {
         $timemidnight = $timemidnight - 86400;
         $timenow = $timenow - 86400;
-        $dates["$timemidnight"] = userdate($timenow, "l, j F Y");
+        $dates["$timemidnight"] = userdate($timenow, "%A, %e %B %Y");
         $numdates++;
     }
 
@@ -161,8 +161,8 @@ function print_log($course, $user=0, $date=0, $order="ORDER BY l.time ASC") {
         if (! $course->category) {
             echo "<TD><FONT SIZE=2><A HREF=\"view.php?id=$log->course\">".$courses[$log->course]."</A></TD>";
         }
-        echo "<TD ALIGN=right><FONT SIZE=2>".userdate($log->time, "l")."</TD>";
-        echo "<TD><FONT SIZE=2>".userdate($log->time, "j M Y, h:i A")."</TD>";
+        echo "<TD ALIGN=right><FONT SIZE=2>".userdate($log->time, "%A")."</TD>";
+        echo "<TD><FONT SIZE=2>".userdate($log->time, "%e %B %Y, %I:%M %p")."</TD>";
         echo "<TD><FONT SIZE=2><A TITLE=\"$log->ip\" HREF=\"../user/view.php?id=$log->user&course=$log->course\"><B>$log->firstname $log->lastname</B></TD>";
         echo "<TD><FONT SIZE=2>";
         link_to_popup_window( make_log_url($log->module,$log->url), "fromloglive","$log->module $log->action", 400, 600);
@@ -201,7 +201,7 @@ function print_course($course) {
     echo "<TABLE WIDTH=100%>";
     echo "<TR VALIGN=top>";
     echo "<TD VALIGN=top WIDTH=50%>";
-    echo "<P><FONT SIZE=3><B><A TITLE=\"Click to enter this course\" 
+    echo "<P><FONT SIZE=3><B><A TITLE=\"".get_string("entercourse")."\" 
               HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->fullname</A></B></FONT></P>";
     if ($teachers = get_records_sql("SELECT u.* FROM user u, user_teachers t 
                                      WHERE u.id = t.user AND t.course = '$course->id' 

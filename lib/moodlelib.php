@@ -205,10 +205,12 @@ function update_module_icon($moduleid) {
 
 function userdate($date, $format="", $timezone=99) {
 // Returns a formatted string that represents a date in user time
+// WARNING: note that the format is for strftime(), not date().
+
     global $USER;
 
     if ($format == "") {
-        $format = "l, j F Y, g:i A";
+        $format = "%A, %e %B %Y, %I:%M %p";
     }
     if ($timezone == 99) {
         $timezone = (float)$USER->timezone;
@@ -216,7 +218,7 @@ function userdate($date, $format="", $timezone=99) {
     if (abs($timezone) > 12) {
         return date("$format", $date);
     }
-    return gmdate($format, $date + (int)($timezone * 3600));
+    return gmstrftime($format, $date + (int)($timezone * 3600));
 }
 
 function usergetdate($date, $timezone=99) {
@@ -1117,7 +1119,7 @@ function get_string($identifier, $module="", $a="", $b="", $c="") {
     if (!file_exists($langfile)) {                // try English instead
         $langfile = "$langpath/en/strings.php";
         if (!file_exists($langfile)) {
-            return "ERROR: No translation file found";
+            return "ERROR: No lang file";
         }
     }
 
@@ -1128,18 +1130,18 @@ function get_string($identifier, $module="", $a="", $b="", $c="") {
 
     } else {
         if ($lang == "en") {
-            return "ERROR: Translation string '$identifier' is missing!";
+            return "ERROR: '$identifier' is missing!";
 
         } else {   // Try looking in the english file.
             $langfile = "$langpath/en/strings.php";
             if (!file_exists($langfile)) {
-                return "ERROR: No translation file found";
+                return "ERROR: No lang file";
             }
             if ($result = get_string_from_file($identifier, $langfile, "\$resultstring")) {
                 eval($result);
                 return $resultstring;
             } else {
-                return "ERROR: Translation string '$identifier' is missing!";
+                return "ERROR: '$identifier' is missing!";
             }
         }
     }

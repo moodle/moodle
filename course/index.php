@@ -3,7 +3,9 @@
     require("../config.php");
     require("lib.php");
 
-    print_header("Courses", "Courses", "Courses", "");
+    $title = get_string("courses");
+
+    print_header($title, $title, $title, "");
 
     optional_variable($cat, 1);
 

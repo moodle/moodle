@@ -142,7 +142,7 @@
             $myxls->InsertText($u->lastname);
             $myxls->InsertText($u->email);
             $myxls->InsertText($u->idnumber);
-            $myxls->InsertText( userdate($results["$user"]["time"], "d-M-Y h:i:s A") );
+            $myxls->InsertText( userdate($results["$user"]["time"], "%d-%b-%Y %I:%M:%S %p") );
             $myxls->InsertText($notes);
     
             foreach ($order as $key => $qid) {
@@ -187,14 +187,14 @@
         if (! $u = get_record_sql("SELECT firstname,lastname,email,idnumber FROM user WHERE id = '$user'")) {
             error("Error finding student # $user");
         }
-        echo $survey->id."    ";
-        echo $survey->name."    ";
-        echo $user."    ";
-        echo $u->firstname."    ";
-        echo $u->lastname."    ";
-        echo $u->email."    ";
-        echo $u->idnumber."    ";
-        echo userdate($results["$user"]["time"], "d-M-Y h:i:s A")."    ";
+        echo $survey->id."\t";
+        echo $survey->name."\t";
+        echo $user."\t";
+        echo $u->firstname."\t";
+        echo $u->lastname."\t";
+        echo $u->email."\t";
+        echo $u->idnumber."\t";
+        echo userdate($results["$user"]["time"], "%d-%b-%Y %I:%M:%S %p")."\t";
 
         foreach ($order as $key => $qid) {
             $question = $questions["$qid"];

@@ -194,7 +194,7 @@
             print_user_picture($a->user, $course->id, $a->picture, false);
             echo "</TD>";
             echo "<TD><P><A HREF=\"report.php?id=$id&action=student&student=$a->user\">$a->firstname $a->lastname</A></TD>";
-            echo "<TD><P>".userdate($a->time, "j M Y h:i A")."</TD>";
+            echo "<TD><P>".userdate($a->time, "%e %B %Y, %I:%M %p")."</TD>";
             echo "<TD BGCOLOR=\"$THEME->cellcontent\"><P>";
             if ($a->answer1) {
                 echo "$a->answer1 - ".$answers[$a->answer1 - 1];

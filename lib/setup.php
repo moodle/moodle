@@ -34,6 +34,10 @@
     $CFG->header      = "$CFG->dirroot/theme/$CFG->theme/header.html";
     $CFG->footer      = "$CFG->dirroot/theme/$CFG->theme/footer.html";
 
+// Set language/locale of printed times (must be supported by OS)
+
+    setlocale ("LC_TIME", $CFG->lang);
+
 // Load up theme variables (colours etc)
 
     require("$CFG->dirroot/theme/$CFG->theme/config.php");

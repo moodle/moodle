@@ -162,7 +162,7 @@ function print_forum_latest_topics($forum_id=0, $forum_numtopics=5, $forum_style
             $ownpost = ($topic->userid == $USER->id);
             switch ($forum_style) {
                 case "minimal":
-                    echo "<P><FONT COLOR=#555555>".userdate($topic->modified, "j M H:i")."</FONT>";
+                    echo "<P><FONT COLOR=#555555>".userdate($topic->modified, "%e %B, %H:%M")."</FONT>";
                     echo "<BR>$topic->subject ";
                     echo "<A HREF=\"$CFG->wwwroot/mod/discuss/view.php?d=$topic->discuss\">more...</A>";
                     echo "</P>\n";

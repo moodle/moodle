@@ -39,7 +39,7 @@
             $userinfo = "$u->firstname $u->lastname";
         }
         if ($date) {
-            $dateinfo = userdate($date, "l, j F Y");
+            $dateinfo = userdate($date, "%A, %e %B %Y");
         }
 
         print_header("$course->shortname: Logs", "$course->fullname", 
