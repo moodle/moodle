@@ -108,7 +108,7 @@
             redirect(CALENDAR_URL.'view.php?view=day&cal_d='.$_GET['cal_d'].'&cal_m='.$_GET['cal_m'].'&cal_y='.$_GET['cal_y']);
         break;
         case 'course':
-            redirect(CALENDAR_URL.'view.php?id='.intval($_GET['id']));
+            redirect($CFG->wwwroot.'/course/view.php?id='.intval($_GET['id']));
         break;
         default:
 
