@@ -1269,20 +1269,20 @@ function get_site_users($sort="u.lastaccess DESC", $select="") {
                       "u.email, u.emailstop, u.city, u.country, u.lastaccess, u.lastlogin, u.picture, u.lang, u.timezone";
     }
 
-    if (!$users = get_records_sql("SELECT $selectinfo from {$CFG->prefix}user u, {$CFG->prefix}user_students s
-                                    WHERE s.userid = u.id GROUP BY u.id ORDER BY $sort")) {
+    if (!$users = get_records_sql("SELECT DISTINCT $selectinfo from {$CFG->prefix}user u, {$CFG->prefix}user_students s
+                                    WHERE s.userid = u.id ORDER BY $sort")) {
         $users = array();
     }
 
-    if ($teachers = get_records_sql("SELECT $selectinfo from {$CFG->prefix}user u, {$CFG->prefix}user_teachers t
-                                      WHERE t.userid = u.id GROUP BY u.id ORDER BY $sort")) {
+    if ($teachers = get_records_sql("SELECT DISTINCT $selectinfo from {$CFG->prefix}user u, {$CFG->prefix}user_teachers t
+                                      WHERE t.userid = u.id ORDER BY $sort")) {
         foreach ($teachers as $teacher) {
             $users[$teacher->id] = $teacher;
         }
     }
 
-    if ($admins = get_records_sql("SELECT $selectinfo from {$CFG->prefix}user u, {$CFG->prefix}user_admins a
-                                      WHERE a.userid = u.id GROUP BY u.id ORDER BY $sort")) {
+    if ($admins = get_records_sql("SELECT DISTINCT $selectinfo from {$CFG->prefix}user u, {$CFG->prefix}user_admins a
+                                      WHERE a.userid = u.id ORDER BY $sort")) {
         foreach ($admins as $admin) {
             $users[$admin->id] = $admin;
         }
