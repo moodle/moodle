@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // chat.php - created with Moodle 1.4 development (2004072500)
+      // chat.php - created with Moodle 1.4 aiming-for-beta-soon (2004082200)
 
 
 $string['beep'] = 'ビープ';
@@ -26,8 +26,8 @@ $string['helpchatting'] = 'チャットヘルプ';
 $string['idle'] = 'アイドル';
 $string['messagebeepseveryone'] = '$a が全員にビープします!';
 $string['messagebeepsyou'] = '$a があなたにビープしました!';
-$string['messageenter'] = '$a が入室しました';
-$string['messageexit'] = '$a が退室しました';
+$string['messageenter'] = '$a が入室しました。';
+$string['messageexit'] = '$a が退室しました。';
 $string['messages'] = 'メッセージ';
 $string['methoddaemon'] = 'Chatサーバデーモン';
 $string['methodnormal'] = 'ノーマルメソッド';
@@ -35,7 +35,8 @@ $string['modulename'] = 'チャット';
 $string['modulenameplural'] = 'チャット';
 $string['neverdeletemessages'] = 'メッセージを削除しない';
 $string['nextsession'] = '次のスケジュールセッション';
-$string['nomessages'] = 'メッセージがありません';
+$string['noguests'] = 'ゲストはこのチャットを利用出来ません。';
+$string['nomessages'] = 'メッセージがありません。';
 $string['repeatdaily'] = '毎日同じ時間に';
 $string['repeatnone'] = '繰り返し無し - 指定した時間にのみ表示';
 $string['repeattimes'] = 'セッションの繰り返し';

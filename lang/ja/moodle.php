@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.4 aiming-for-beta-soon (2004082100)
+      // moodle.php - created with Moodle 1.4 aiming-for-beta-soon (2004082200)
 
 
 $string['action'] = '操作';
@@ -74,7 +74,7 @@ $string['allowguests'] = 'このコースはゲストユーザも利用出来ます。';
 $string['allowinternal'] = '内部登録も許可する';
 $string['allownot'] = '許可しない';
 $string['allparticipants'] = '全参加者';
-$string['alphabet'] = 'A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z';
+$string['alphabet'] = 'A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,あ,い,う,え,お,か,き,く,け,こ,さ,し,す,せ,そ,た,ち,つ,て,と,や,ゆ,よ';
 $string['alphanumerical'] = '半角英数字のみ入力';
 $string['alreadyconfirmed'] = '登録作業は既に完了しています。';
 $string['always'] = '常に';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.4 alpha (2004081500)
+      // glossary.php - created with Moodle 1.4 aiming-for-beta-soon (2004082200)
 
 
 $string['addcomment'] = 'コメントの追加';
@@ -47,8 +47,8 @@ $string['commentdeleted'] = 'コメントが削除されました。';
 $string['comments'] = 'コメント';
 $string['commentson'] = 'コメント';
 $string['commentupdated'] = 'コメントが更新されました。';
-$string['concept'] = '概念';
-$string['concepts'] = '概念';
+$string['concept'] = '用語';
+$string['concepts'] = '用語';
 $string['configenablerssfeeds'] = 'このスイッチは用語集全てにおいてRSSフィードを設置可能にします。更にそれぞれの用語集でRSSフィードを手動設定する必要があります。';
 $string['currentglossary'] = '現在の用語集';
 $string['dateview'] = '日付順';
@@ -86,7 +86,7 @@ $string['entryexported'] = 'エントリーが正常にエクスポートされました。';
 $string['entryishidden'] = '(このエントリーは現在非表示です)';
 $string['entryleveldefaultsettings'] = 'エントリーレベルデフォルト設定';
 $string['entryusedynalink'] = 'エントリーを自動的にリンクさせる';
-$string['explainaddentry'] = '用語集に新しいエントリーを追加します。<br>概念と定義は必須入力項目です。';
+$string['explainaddentry'] = '用語集に新しいエントリーを追加します。<br>用語と定義は必須入力項目です。';
 $string['explainall'] = '全てのエントリーを1ページに表示';
 $string['explainalphabet'] = 'インデックスを利用して用語集を閲覧';
 $string['explainexport'] = 'ファイルが生成されました。<br>ファイルをダウンロードして安全に保管してください。いつでも必要な時に、このコースまたは他のコースにインポートすることが出来ます。';
@@ -98,7 +98,7 @@ $string['exportentries'] = 'エントリーのエクスポート';
 $string['exportglossary'] = '用語集のエクスポート';
 $string['exporttomainglossary'] = 'メイン用語集のエクスポート';
 $string['filetoimport'] = 'インポートするファイル';
-$string['fillfields'] = '概念と定義は必須入力項目です。';
+$string['fillfields'] = '用語と定義は必須入力項目です。';
 $string['filtername'] = '用語集オートリンク';
 $string['fullmatch'] = '完全一致<small>（自動的にリンクさせる場合）</small>';
 $string['globalglossary'] = 'グローバル用語集';
@@ -121,7 +121,7 @@ $string['newglossarycreated'] = '新しい用語集が作成されました。';
 $string['newglossaryentries'] = '新規用語集エントリー';
 $string['nocomment'] = 'コメントが見つかりません';
 $string['nocomments'] = '(このエントリーにはコメントがありません)';
-$string['noconceptfound'] = '概念または定義が見つかりませんでした。';
+$string['noconceptfound'] = '用語または定義が見つかりませんでした。';
 $string['noentries'] = 'このセクションにはエントリーがありません';
 $string['noentry'] = 'エントリーが見つかりませんでした。';
 $string['notcategorised'] = 'カテゴリ無し';
@@ -140,26 +140,26 @@ $string['ratingsuse'] = '評価を使用する';
 $string['ratingtime'] = '下記の期間のエントリー評価を制限する:';
 $string['rejectedentries'] = '拒否されたエントリ';
 $string['rejectionrpt'] = '拒否レポート';
-$string['rsssubscriberss'] = '\'$a\' 概念のRSSフィードを表示';
+$string['rsssubscriberss'] = '\'$a\' 用語のRSSフィードを表示';
 $string['searchindefinition'] = '定義も検索する';
 $string['secondaryglossary'] = 'サブ用語集';
 $string['sendinratings'] = '最新の評価を送る';
 $string['showall'] = '全てのリンクを表示';
-$string['showalphabet'] = 'アルファベットを表示';
+$string['showalphabet'] = '五十音を表示';
 $string['showspecial'] = '特別リンクを表示';
 $string['sortby'] = '並び替え';
 $string['sortbycreation'] = '作成日時';
 $string['sortbylastupdate'] = '最終更新日時';
 $string['sortchronogically'] = '日付順の並び替え';
 $string['special'] = '特別';
-$string['standardview'] = 'アルファベットに表示';
+$string['standardview'] = '五十音順';
 $string['studentcanpost'] = '学生のエントリー追加を許可する';
 $string['totalentries'] = 'エントリー合計';
 $string['usedynalink'] = 'エントリーを自動的にリンクする';
 $string['waitingapproval'] = '承認待ち';
 $string['warningstudentcapost'] = '(用語集がメインで無い場合に適用)';
-$string['withauthor'] = '概念(著者有り)';
-$string['withoutauthor'] = '概念(著者無し)';
+$string['withauthor'] = '用語(著者有り)';
+$string['withoutauthor'] = '用語(著者無し)';
 $string['writtenby'] = '作成';
 $string['youarenottheauthor'] = 'あなたはこのコメントの作者ではありません。編集は出来ません。';
 
