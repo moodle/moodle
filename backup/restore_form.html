@@ -98,7 +98,21 @@
 
 ?>
 
-<form name="form" method="post" action="<?php echo $ME ?>">
+<SCRIPT LANGUAGE="JavaScript">
+<!--
+function selectItemInMenuByName(formId, menuName, selectIndex ) {
+	myForm = document.getElementById(formId)
+        for (i=0,n=myForm.elements.length;i<n;i++) {
+            myLen = menuName.length;
+			myName = myForm.elements[i].name;
+			if (myName.substring(0,myLen) == menuName)
+                myForm.elements[i].options[selectIndex].selected = true;
+		}
+}
+-->
+</script>
+
+<form name="form1" id="form1" method="post" action="<?php echo $ME ?>">
 <table cellpadding=5>
 <?php
 
@@ -123,6 +137,17 @@
     echo "<tr><td colspan=\"2\"><hr noshade size=\"1\"></td></tr>";
     //Now, check modules and info and show posibilities
     if ($allmods = get_records("modules") ) {
+        //Print option to select/deselect every "with user info" popup. For Gustav, lol, Eloy :-)
+        echo "<tr>";
+        echo "<td colspan=\"2\" align=\"right\"><font size=\"-1\">";
+        echo get_string("userdata").":";
+        echo "<a href=\"javascript:void(0);\" onclick=\"selectItemInMenuByName('form1', 'restore_user_info_', '1');\">".
+             get_string("all")."</a>/";
+        echo "<a href=\"javascript:void(0);\" onclick=\"selectItemInMenuByName('form1', 'restore_user_info_', '0');\">".
+             get_string("none")."</a>";
+        echo "</font></td>";
+        echo "</tr>";
+        echo "<tr><td colspan=\"2\"><hr noshade size=\"1\"></td></tr>";
         foreach ($allmods as $mod) {
             $modname = $mod->name;
             $modrestore = $modname."_restore_mods";
