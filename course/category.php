@@ -286,16 +286,22 @@
                     if (is_dir("$CFG->dataroot/$course->id/backupdata")) {
                         echo "<a title=\"$strrestore\" href=\"../files/index.php?id=$course->id&wdir=/backupdata\"><img".
                              " src=\"$pixpath/t/restore.gif\" height=11 width=11 border=0></a> ";
+                    } else {
+                        echo "<img src=\"$CFG->wwwroot/pix/spacer.gif\" height=11 width=11 border=0></a> ";
                     }
             
                     if ($up) {
                         echo "<a title=\"$strmoveup\" href=\"category.php?id=$category->id&moveup=$course->id\"><img".
                              " src=\"$pixpath/t/up.gif\" height=11 width=11 border=0></a> ";
+                    } else {
+                        echo "<img src=\"$CFG->wwwroot/pix/spacer.gif\" height=11 width=11 border=0></a> ";
                     }
         
                     if ($down) {
                         echo "<a title=\"$strmovedown\" href=\"category.php?id=$category->id&movedown=$course->id\"><img".
                              " src=\"$pixpath/t/down.gif\" height=11 width=11 border=0></a> ";
+                    } else {
+                        echo "<img src=\"$CFG->wwwroot/pix/spacer.gif\" height=11 width=11 border=0></a> ";
                     }
     
                     echo "</td>";
