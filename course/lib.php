@@ -792,7 +792,7 @@ function print_course_admin_links($course, $width=180) {
         }
 
     } else {  // Students menu
-        if ($course->usegrades) {
+        if ($course->showgrades) {
             $admindata[]="<a href=\"grade.php?id=$course->id\">".get_string("grades")."...</a>";
             $adminicon[]="<img src=\"$pixpath/i/grades.gif\" height=16 width=16 alt=\"\">";
         }
