@@ -81,13 +81,4 @@ function print_user($user, $course, $string) {
     echo "</TD></TR></TABLE></TD></TR></TABLE>";
 }
 
-function valid_uploaded_file($newfile) {
-// Returns current name of file on disk if true
-    if (is_uploaded_file($newfile['tmp_name']) and $newfile['size'] > 0) {
-        return $newfile['tmp_name'];
-    } else {
-        return "";
-    }
-}
-
 ?>
