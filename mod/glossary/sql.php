@@ -9,6 +9,8 @@
 
 /// Creating the SQL statements
 
+    $calculatedrows = array();
+
 /// Pivot is the field that set the break by groups (category, initial, author name, etc)
 
 /// fullpivot indicate if the whole pivot should be compared agasint the db or just the first letter
@@ -169,10 +171,43 @@
         break;
         
         case 'term': 
+            //Here we are going to use two selects to do the work and then mix the results
+            //due to differences about the left join implementation in some versions of MySQL
+            //When MySQL 4.1 become the minimum to Moodle, we must change this again
+            //to use the UNION operator!!
+
+            $concepts = get_records_sql("$sqlselect
+                         FROM {$CFG->prefix}glossary_entries ge
+                         WHERE (ge.glossaryid = $glossary->id or ge.sourceglossaryid = $glossary->id) AND
+                               (ge.approved != 0 $userid) AND
+                               (ge.concept = '$hook')");
+
+            if (empty($concepts)) {
+                $concepts = get_records_sql("$sqlselect
+                         FROM {$CFG->prefix}glossary_entries ge,
+                              {$CFG->prefix}glossary_alias al
+                         WHERE (ge.glossaryid = $glossary->id or ge.sourceglossaryid = $glossary->id) AND
+                               (ge.approved != 0 $userid) AND
+                               (ge.id = al.entryid) AND
+                               (al.alias = '$hook')");
+            }
+
+            if (!empty($concepts)) {
+                foreach ($concepts as $concept) {
+                    $calculatedrows[] = $concept;
+                    break;
+                }
+            }
+
             $printpivot = 0;
-            $sqlfrom .= " left join {$CFG->prefix}glossary_alias ga on ge.id = ga.entryid ";
-            $where = "AND (ge.concept = '$hook' OR ga.alias = '$hook' )
-                     ";
+
+            //Here I leave previous code left join. Someday code above will be deleted and code below
+            //wil be changed to a standard UNION statement. No it's only executed if $calculatedrows is empty
+            if (empty($calculatedrows)) {
+                $sqlfrom .= " left join {$CFG->prefix}glossary_alias ga on ge.id = ga.entryid ";
+                $where = "AND (ge.concept = '$hook' OR ga.alias = '$hook' )
+                        ";
+            }
         break;
 
         case 'entry': 
@@ -208,8 +243,14 @@
         break;
         }
     break;
-    } 
-    $count = count_records_sql("select count(*) $sqlfrom $sqlwhere");
+    }
+ 
+    //If there are calculatedrows, use them
+    if (!empty ($calculatedrows)) {
+        $count = count($calculatedrows);
+    } else { //Execute the query
+        $count = count_records_sql("select count(*) $sqlfrom $sqlwhere");
+    }
 
     $sqllimit = '';
     
@@ -224,5 +265,10 @@
         }    
     }
 
-    $allentries = get_records_sql("$sqlselect $sqlfrom $sqlwhere $sqlorderby $sqllimit");
+    //If there are calculatedrows, use them
+    if (!empty ($calculatedrows)) {
+        $allentries = $calculatedrows;
+    } else { //Execute the query
+        $allentries = get_records_sql("$sqlselect $sqlfrom $sqlwhere $sqlorderby $sqllimit");
+    }
 ?>
