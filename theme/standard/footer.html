@@ -1,18 +1,15 @@
 <!-- START OF FOOTER -->
 <CENTER>
 <HR SIZE=1 NOSHADE>
-<FONT SIZE=1><P>
+<FONT SIZE=1>
+<P>
 <? if ($USER->id) {
-       echo "You are logged in as $USER->firstname $USER->lastname. ";
-       if ($USER->survey) {
-           echo " (Student)<BR>To log out you need to quit the browser.";
-       } else {
-	       echo " (<A HREF=$CFG->wwwroot/login/logout.php>Logout</A>)";
-	   }
-   } else {
-       echo "You are not logged in.  <A HREF=$CFG->wwwroot/login/>Log in here</A>.";
-   }
+       echo "You are logged in as $USER->firstname $USER->lastname.";
+	   echo "(<A HREF=\"$CFG->wwwroot/login/logout.php\">Logout</A>)";
+   } else { 
+       echo "You are not logged in.  <A HREF=\"$CFG->wwwroot/login/\">Log in here</A>.";
+   } 
 ?>
 </P>
 <P><?=$homelink ?></P>
-</BODY>
+</FONT>

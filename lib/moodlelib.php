@@ -156,6 +156,18 @@ function print_table($table) {
     return true;
 }
 
+function print_editing_switch($courseid) {
+    global $CFG, $USER;
+
+    if (isadmin() || isteacher($courseid)) {
+        if ($USER->editing) {
+            echo "<A HREF=\"$CFG->wwwroot/course/view.php?id=$courseid&edit=off\">Turn editing off</A>";
+        } else {
+            echo "<A HREF=\"$CFG->wwwroot/course/view.php?id=$courseid&edit=on\">Turn editing on</A>";
+        }
+    }
+}
+
 
 function moodledate($date) {
     return date("l, j F Y, g:i A T", $date);

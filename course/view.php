@@ -12,10 +12,6 @@
         error("That's an invalid course id");
     }
 
-    if (! $course->category) {      // This course is not a real course.
-        redirect("$CFG->wwwroot");
-    }
-
     add_to_log("View course: $course->shortname", $id);
 
     if ( $USER->teacher[$course->id] ) {
@@ -29,6 +25,10 @@
         $USER->help = true;
     } else if ($help == "off") {
         $USER->help = false;
+    }
+
+    if (! $course->category) {      // This course is not a real course.
+        redirect("$CFG->wwwroot");
     }
 
     print_header("Course: $course->fullname", "$course->fullname", "$course->shortname", "");

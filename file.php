@@ -13,12 +13,15 @@
 
     $args = get_slash_arguments();
     $numargs = count($args);
-
     $courseid = (integer)$args[0];
 
-    if ($courseid > 0) {
+    $course = get_record("course", "id", $courseid);
+
+    if ($course->category) {
         require_login($courseid);
     }
+
+    // it's OK to get here if no course was specified
 
     $pathname = "$CFG->dataroot$PATH_INFO";
     $filename = $args[$numargs-1];
@@ -36,7 +39,7 @@
         header("Content-type: $mimetype");
         readfile("$pathname");
     } else {
-        error("Sorry, but the file you are looking for was not found", "/course/view.php?id=$courseid");
+        error("Sorry, but the file you are looking for was not found", "course/view.php?id=$courseid");
     }
 
     exit;
