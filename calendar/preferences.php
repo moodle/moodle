@@ -258,7 +258,7 @@
     list($prevmon, $prevyr) = calendar_sub_month($mon, $yr);
     list($nextmon, $nextyr) = calendar_add_month($mon, $yr);
 
-    echo calendar_filter_controls($_GET['view']);
+    echo calendar_filter_controls('prefs');
     echo '<p>';
     echo calendar_top_controls('display', array('m' => $prevmon, 'y' => $prevyr));
     echo calendar_get_mini($courses, $groups, $users, $prevmon, $prevyr);

@@ -567,6 +567,9 @@ function calendar_filter_controls($type) {
         case 'upcoming':
             $getvars = '';
         break;
+        case 'prefs':
+            $getvars = '&amp;from=prefs&amp;pref='.$_GET['edit'];
+        break;
         case 'event':
             global $day, $mon, $yr;
             $getvars = '&amp;from=event&amp;id='.$_GET['id'];
