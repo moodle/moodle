@@ -52,6 +52,7 @@ $string['not_corr_type'] = 'Type mismatch for tag $a->tag';
 $string['missing_attribute'] = 'Missing attribute $a->attr in tag $a->tag';
 $string['missing_tag'] = 'Missing tag $a->tag';
 $string['mode'] = 'Mode';
+$string['organizations'] = 'Organizations';
 $string['packagedir'] = 'Filesystem Error: Can\'t create package directory';
 $string['passed'] = 'Passed';
 $string['php5'] = 'PHP 5 (DOMXML native library)';
