@@ -1,3 +1,33 @@
+2003-01-11 Saturday 22:01  moodler
+
+	* lib/session-test.php: 
+	
+	Slight cleanup
+
+2003-01-11 Saturday 21:58  moodler
+
+	* lib/session-test.php: 
+	
+	A small standalone test program to test session support
+
+2003-01-11 Saturday 13:29  moodler
+
+	* config-dist.php: 
+	
+	Slightly clearer documentation
+
+2003-01-11 Saturday 11:03  moodler
+
+	* login/index.php: 
+	
+	Closing sessions may fix some problems on WIndows/CGI systems ...
+
+2003-01-10 Friday 21:47  moodler
+
+	* CHANGES: 
+	
+	Daily changes
+
 2003-01-10 Friday 21:07  moodler
 
 	* mod/choice/mod.html: 
