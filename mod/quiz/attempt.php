@@ -36,10 +36,15 @@
     require_login($course->id);
 
 
-/// Check number of attempts
+/// Set number for next attempt:
 
     if ($attempts = quiz_get_user_attempts($quiz->id, $USER->id)) {
-        $numattempts = count($attempts) + 1;
+        $numattempts = 2;
+        foreach ($attempts as $attempt) {
+            if ($attempt->attempt >= $numattempts) {
+                $numattempts = $attempt->attempt + 1;
+            }
+        }
     } else {
         $numattempts = 1;
     }
@@ -63,10 +68,8 @@
 
 /// Check availability
 
-    if ($quiz->attempts) {
-        if ($numattempts > $quiz->attempts) {
-            error("Sorry, you've had $quiz->attempts attempts already.", "view.php?id=$cm->id");
-        }
+    if ($quiz->attempts and count($attempts) >= $quiz->attempts) {
+        error("Sorry, you've had $quiz->attempts attempts already.", "view.php?id=$cm->id");
     }
 
     $timenow = time();
