@@ -14,13 +14,12 @@
         if (moodle_needs_upgrading()) {
             redirect("$CFG->wwwroot/admin/index.php");
         }
-        $headerbutton = update_course_icon($site->id);
+    }
+
+    if (empty($USER->id)) {
+        $loginstring = "<font size=2><a href=\"$CFG->wwwroot/login/index.php\">".get_string("login")."</a></font>";
     } else {
-        if (isset($USER->id)) {
-            $headerbutton = "<FONT SIZE=2><A HREF=\"$CFG->wwwroot/login/logout.php\">".get_string("logout")."</A></FONT>";
-        } else {
-            $headerbutton = "<FONT SIZE=2><A HREF=\"$CFG->wwwroot/login/index.php\">".get_string("login")."</A></FONT>";
-        }
+        $loginstring = "<font size=1>".user_login_string($site)."</font>";
     }
 
     $currlang = current_language();
@@ -29,7 +28,7 @@
 
     print_header("$site->fullname", "$site->fullname", "home", "",
                  "<META NAME=\"Description\" CONTENT=\"".stripslashes(strip_tags($site->summary))."\">",
-                 true, "", "<div align=right>$headerbutton$langmenu</div>");
+                 true, "", "<div align=right>$loginstring$langmenu</div>");
 
     $firstcolumn = false;  // for now
     $side = 175;
@@ -37,20 +36,25 @@
 ?>
 
 
-<TABLE WIDTH="100%" BORDER="0" CELLSPACING="5" CELLPADDING="5">
-  <TR>
+<table width="100%" border="0" cellspacing="5" cellpadding="5">
+  <tr>
   <?PHP 
      $sections = get_all_sections($site->id);
   
-     if ($site->newsitems > 0 or $sections[0]->sequence or isediting($site->id)) {
+     if ($site->newsitems > 0 or $sections[0]->sequence or isediting($site->id) or isadmin()) {
 
-         echo "<TD WIDTH=\"$side\" VALIGN=TOP NOWRAP>"; 
+         echo "<td width=\"$side\" valign=top nowrap>"; 
          $firstcolumn=true;
   
          if ($sections[0]->sequence or isediting($site->id)) {
              get_all_mods($site->id, $mods, $modnames, $modnamesplural, $modnamesused);
              print_section_block(get_string("mainmenu"), $site, $sections[0], 
                                  $mods, $modnames, $modnamesused, true, $side, isediting($site->id));
+         }
+
+         if (isadmin()) {
+             echo "<div align=\"center\">".update_course_icon($site->id)."</div>";
+             echo "<br />";
          }
 
          if ($site->newsitems > 0 ) {
@@ -67,15 +71,16 @@
  
      if (iscreator()) {
          if (!$firstcolumn) {
-             echo "<TD WIDTH=\"$side\" VALIGN=TOP NOWRAP>"; $firstcolumn=true;
+             echo "<td width=\"$side\" valign=top nowrap>"; 
+             $firstcolumn=true;
          }
          print_admin_links($site->id, $side);
      }
 
      if ($firstcolumn) {
-         echo "</TD>";
+         echo "</td>";
      }
-     echo "<TD WIDTH=70% VALIGN=TOP>";
+     echo "<td width=\"70%\" valign=\"top\">";
 
      if ($site->newsitems == 0 ) {
          print_heading_block(get_string("availablecourses"));
@@ -99,11 +104,11 @@
              } else {
                  $subtext = get_string("subscribe", "forum");
              }
-             $headertext = "<TABLE BORDER=0 WIDTH=100% CELLPADDING=0 CELLSPACING=0><TR>
-                            <TD>$newsforum->name</TD>
-                            <TD ALIGN=RIGHT><FONT SIZE=1>
-                            <A HREF=\"mod/forum/subscribe.php?id=$newsforum->id\">$subtext</A>
-                            </TD></TR></TABLE>";
+             $headertext = "<table border=0 width=100% cellpadding=0 cellspacing=0><tr>
+                            <td>$newsforum->name</td>
+                            <td align=right><font size=1>
+                            <a href=\"mod/forum/subscribe.php?id=$newsforum->id\">$subtext</a>
+                            </td></tr></table>";
          } else {
              $headertext = $newsforum->name;
          }
@@ -112,20 +117,20 @@
          forum_print_latest_discussions($newsforum->id, $site->newsitems);
      }
 
-     echo "</TD>";
-     echo "<TD WIDTH=30% VALIGN=TOP>";
+     echo "</td>";
+     echo "<td width=30% valign=top>";
      
      if (isediting($site->id)) {
-         $site->summary .= "<BR><CENTER><A HREF=\"admin/site.php\"><IMG SRC=\"pix/i/edit.gif\" BORDER=0></A>";
+         $site->summary .= "<br><center><a href=\"admin/site.php\"><img src=\"pix/i/edit.gif\" border=0></a>";
      }
 
      print_simple_box($site->summary, "", "100%", $THEME->cellcontent2, 5, "siteinfo");
      print_spacer(1,$side);
-     echo "</TD>";
+     echo "</td>";
   ?>
 
-  </TR>
-</TABLE>
+  </tr>
+</table>
 
 <?PHP print_footer("home");     // Please do not modify this line ?>
 
