@@ -3,7 +3,7 @@
 # http://www.phpmyadmin.net/ (download page)
 #
 # Host: localhost
-# Generation Time: Oct 07, 2002 at 12:23 AM
+# Generation Time: Oct 13, 2002 at 03:11 PM
 # Server version: 3.23.49
 # PHP Version: 4.2.3
 # Database : `moodle`
@@ -40,10 +40,11 @@ CREATE TABLE `quiz_answers` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `question` int(10) unsigned NOT NULL default '0',
   `answer` varchar(255) NOT NULL default '',
-  `grade` float NOT NULL default '0',
+  `fraction` float NOT NULL default '0',
   `feedback` varchar(255) NOT NULL default '',
   PRIMARY KEY  (`id`)
-) TYPE=MyISAM COMMENT='Answers, with a percentage grade and feedback';
+
+) TYPE=MyISAM COMMENT='Answers, with a fractional grade (0-1) and feedback';
 # --------------------------------------------------------
 
 #
@@ -55,7 +56,7 @@ CREATE TABLE `quiz_attempts` (
   `quiz` int(10) unsigned NOT NULL default '0',
   `user` int(10) unsigned NOT NULL default '0',
   `attempt` smallint(6) NOT NULL default '0',
-  `grade` float NOT NULL default '0',
+  `sumgrades` float NOT NULL default '0',
   `timemodified` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`)
 ) TYPE=MyISAM COMMENT='Stores various attempts on a quiz';
@@ -172,5 +173,4 @@ CREATE TABLE `quiz_truefalse` (
   PRIMARY KEY  (`id`),
   KEY `question` (`question`)
 ) TYPE=MyISAM COMMENT='Options for True-False questions';
-
 

@@ -82,14 +82,17 @@
 
     echo "<P ALIGN=CENTER>You have attempted this quiz $numattempts times, out of $quiz->attempts allowed attempts.</P>";
     if ($numattempts) { 
-        $table->data = array("Attempt", "Time", "Grade");
+        $table->head = array("Attempt", "Time", "Grade");
+        $table->align = array("CENTER", "LEFT", "RIGHT");
         foreach ($attempts as $attempt) {
-            $table->data = array($attempt->attempt, userdate($attempt->timemodified), $attempt->grade);
+            $table->data[] = array( $attempt->attempt, 
+                                    userdate($attempt->timemodified), 
+                                    ($attempt->sumgrades/$quiz->sumgrades)*$quiz->grade );
         }
         print_table($table);
     }
 
-    $mygrade = quiz_get_grade($quiz->id, $USER->id);
+    $mygrade = quiz_get_best_grade($quiz->id, $USER->id);
 
     if ($numattempts < $quiz->attempts) { 
         $options["id"] = $quiz->id;

@@ -35,16 +35,7 @@
 
     require_login($course->id);
 
-    add_to_log($course->id, "quiz", "attempt", "attempt.php?id=$cm->id", "$quiz->id");
 
-    if ($course->format == "weeks" and $quiz->days) {
-        $timenow = time();
-        $timestart = $course->startdate + (($cw->section - 1) * 608400);
-        $timefinish = $timestart + (3600 * 24 * $quiz->days);
-        $available = ($timestart < $timenow and $timenow < $timefinish);
-    } else {
-        $available = true;
-    }
 
 // Print the page header
 
@@ -57,15 +48,9 @@
 
     print_header("$course->shortname: $quiz->name", "$course->fullname",
                  "$navigation <A HREF=index.php?id=$course->id>$strquizzes</A> -> $quiz->name", 
-                  "", "", true, update_module_icon($cm->id, $course->id));
+                  "", "", true);
 
-/// Print the headings and so on
-
-    print_heading($quiz->name);
-
-    if (!$available) {
-        error("Sorry, this quiz is not available", "view.php?id=$cm->id");
-    }
+/// Check some quiz parameters
 
     if ($attempts = quiz_get_user_attempts($quiz->id, $USER->id)) {
         $numattempts = count($attempts) + 1;
@@ -77,6 +62,83 @@
         error("Sorry, you've had $quiz->attempts attempts already.", "view.php?id=$cm->id");
     }
 
+    if ($course->format == "weeks" and $quiz->days) {
+        $timenow = time();
+        $timestart = $course->startdate + (($cw->section - 1) * 608400);
+        $timefinish = $timestart + (3600 * 24 * $quiz->days);
+        $available = ($timestart < $timenow and $timenow < $timefinish);
+    } else {
+        $available = true;
+    }
+
+/// Check to see if they are submitting answers
+    if (match_referer() && isset($HTTP_POST_VARS)) {
+        add_to_log($course->id, "quiz", "submit", "attempt.php?id=$cm->id", "$quiz->id");
+
+        $rawanswers = $HTTP_POST_VARS;
+        unset($rawanswers["q"]);  // quiz id
+        if (! count($rawanswers)) {
+            print_heading(get_string("noanswers", "quiz"));
+            print_continue("attempt.php?q=$quiz->id");
+            exit;
+        }   
+
+        if (!$questions = get_records_list("quiz_questions", "id", $quiz->questions)) {
+            error("No questions found!");
+        }
+
+        foreach ($rawanswers as $key => $value) {    // Parse input for question -> answers
+            if (substr($key, 0, 1) == "q") {
+                $key = substr($key,1);
+                if (!isset($questions[$key])) {
+                    if (substr_count($key, "a")) {   // checkbox style multiple answers
+                        $check = explode("a", $key);
+                        $key   = $check[0];
+                        $value = $check[1];
+                    } else {
+                        error("Answer received for non-existent question ($key)!");
+                    }
+                }
+                $questions[$key]->answer[] = $value;  // Store answers in array
+            }
+        }
+
+        if (!$result = quiz_grade_attempt_results($quiz, $questions)) {
+            error("Could not grade your quiz attempt!");
+        }
+
+        if (! $attempt = quiz_save_attempt($quiz, $questions, $result, $numattempts)) {
+            error("Sorry! Could not save your attempt!");
+        }
+
+        if (! quiz_save_best_grade($quiz, $USER)) {
+            error("Sorry! Could not calculate your best grade!");
+        }
+
+        print_heading(get_string("grade", "quiz").": $result->grade/$quiz->grade  ($result->sumgrades / $quiz->sumgrades = $percent %)");
+
+        print_continue("view.php?id=$cm->id");
+
+        if ($quiz->correctanswers) {
+            quiz_print_quiz_questions($quiz, $result);
+            print_continue("view.php?id=$cm->id");
+        }
+
+        exit;
+    }
+
+    add_to_log($course->id, "quiz", "attempt", "attempt.php?id=$cm->id", "$quiz->id");
+
+/// Print the quiz page
+
+/// First print the headings and so on
+
+    print_heading($quiz->name);
+
+    if (!$available) {
+        error("Sorry, this quiz is not available", "view.php?id=$cm->id");
+    }
+
     print_heading("Attempt $numattempts out of $quiz->attempts");
 
     print_simple_box($quiz->intro, "CENTER");
@@ -86,29 +148,10 @@
 
     echo "<BR>";
 
-    if (!$quiz->questions) {
-        error("No questions have been defined!", "view.php?id=$cm->id");
-    }
-
-    $questions = explode(",", $quiz->questions);
-
-    if (!$grades = get_records_sql("SELECT question, grade FROM quiz_question_grades WHERE question in ($quiz->questions)")) {
-        error("No grades were found for these questions!");
-    }
-
-    echo "<FORM METHOD=POST ACTION=attempt.php>";
-    echo "<INPUT TYPE=hidden NAME=q VALUE=\"$quiz->id\">";
-    foreach ($questions as $key => $questionid) {
-        print_simple_box_start("CENTER", "90%");
-        quiz_print_question($key+1, $questionid, $grades[$questionid]->grade, $course->id);
-        print_simple_box_end();
-        echo "<BR>";
-    }
-    echo "<CENTER><INPUT TYPE=submit VALUE=\"".get_string("savemyanswers", "quiz")."\"></CENTER>";
-    echo "</FORM>";
+    quiz_print_quiz_questions($quiz);
 
 
-// Finish the page
+/// Finish the page
     print_footer($course);
 
 ?>

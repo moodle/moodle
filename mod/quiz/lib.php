@@ -1,19 +1,34 @@
 <?PHP  // $Id$
 
-// Library of function for module quiz
+/// Library of function for module quiz
 
-$QUIZ_GRADE_METHOD = array ( "1" => get_string("gradehighest", "quiz"),
-                             "2" => get_string("gradeaverage", "quiz"),
-                             "3" => get_string("attemptfirst", "quiz"),
-                             "4" => get_string("attemptlast", "quiz")
-                           );
+/// CONSTANTS ///////////////////////////////////////////////////////////////////
 
+define("GRADEHIGHEST", "1");
+define("GRADEAVERAGE", "2");
+define("ATTEMPTFIRST", "3");
+define("ATTEMPTLAST",  "4");
+$QUIZ_GRADE_METHOD = array ( GRADEHIGHEST => get_string("gradehighest", "quiz"),
+                             GRADEAVERAGE => get_string("gradeaverage", "quiz"),
+                             ATTEMPTFIRST => get_string("attemptfirst", "quiz"),
+                             ATTEMPTLAST  => get_string("attemptlast", "quiz"));
+
+define("SHORTANSWER", "1");
+define("TRUEFALSE",   "2");
+define("MULTICHOICE", "3");
+$QUIZ_QUESTION_TYPE = array ( SHORTANSWER => get_string("shortanswer", "quiz"),
+                              TRUEFALSE   => get_string("truefalse", "quiz"),
+                              MULTICHOICE => get_string("multichoice", "quiz"));
+
+
+
+/// FUNCTIONS ///////////////////////////////////////////////////////////////////
 
 function quiz_add_instance($quiz) {
-// Given an object containing all the necessary data, 
-// (defined by the form in mod.html) this function 
-// will create a new instance and return the id number 
-// of the new instance.
+/// Given an object containing all the necessary data, 
+/// (defined by the form in mod.html) this function 
+/// will create a new instance and return the id number 
+/// of the new instance.
 
     $quiz->timemodified = time();
 
@@ -24,9 +39,9 @@ function quiz_add_instance($quiz) {
 
 
 function quiz_update_instance($quiz) {
-// Given an object containing all the necessary data, 
-// (defined by the form in mod.html) this function 
-// will update an existing instance with new data.
+/// Given an object containing all the necessary data, 
+/// (defined by the form in mod.html) this function 
+/// will update an existing instance with new data.
 
     $quiz->timemodified = time();
     $quiz->id = $quiz->instance;
@@ -38,9 +53,9 @@ function quiz_update_instance($quiz) {
 
 
 function quiz_delete_instance($id) {
-// Given an ID of an instance of this module, 
-// this function will permanently delete the instance 
-// and any data that depends on it.  
+/// Given an ID of an instance of this module, 
+/// this function will permanently delete the instance 
+/// and any data that depends on it.  
 
     if (! $quiz = get_record("quiz", "id", "$id")) {
         return false;
@@ -58,27 +73,27 @@ function quiz_delete_instance($id) {
 }
 
 function quiz_user_outline($course, $user, $mod, $quiz) {
-// Return a small object with summary information about what a 
-// user has done with a given particular instance of this module
-// Used for user activity reports.
-// $return->time = the time they did it
-// $return->info = a short text description
+/// Return a small object with summary information about what a 
+/// user has done with a given particular instance of this module
+/// Used for user activity reports.
+/// $return->time = the time they did it
+/// $return->info = a short text description
 
     return $return;
 }
 
 function quiz_user_complete($course, $user, $mod, $quiz) {
-// Print a detailed representation of what a  user has done with 
-// a given particular instance of this module, for user activity reports.
+/// Print a detailed representation of what a  user has done with 
+/// a given particular instance of this module, for user activity reports.
 
     return true;
 }
 
 function quiz_print_recent_activity(&$logs, $isteacher=false) {
-// Given a list of logs, assumed to be those since the last login 
-// this function prints a short list of changes related to this module
-// If isteacher is true then perhaps additional information is printed.
-// This function is called from course/lib.php: print_recent_activity()
+/// Given a list of logs, assumed to be those since the last login 
+/// this function prints a short list of changes related to this module
+/// If isteacher is true then perhaps additional information is printed.
+/// This function is called from course/lib.php: print_recent_activity()
 
     global $CFG, $COURSE_TEACHER_COLOR;
 
@@ -86,9 +101,9 @@ function quiz_print_recent_activity(&$logs, $isteacher=false) {
 }
 
 function quiz_cron () {
-// Function to be run periodically according to the moodle cron
-// This function searches for things that need to be done, such 
-// as sending out mail, toggling flags etc ... 
+/// Function to be run periodically according to the moodle cron
+/// This function searches for things that need to be done, such 
+/// as sending out mail, toggling flags etc ... 
 
     global $CFG;
 
@@ -97,10 +112,11 @@ function quiz_cron () {
 
 
 //////////////////////////////////////////////////////////////////////////////////////
-// Any other quiz functions go here.  Each of them must have a name that 
-// starts with quiz_
+/// Any other quiz functions go here.  Each of them must have a name that 
+/// starts with quiz_
 
 function  quiz_print_question($number, $questionid, $grade, $courseid) {
+/// Prints a quiz question, any format
     
     if (!$question = get_record("quiz_questions", "id", $questionid)) {
         notify("Error: Question not found!");
@@ -115,12 +131,9 @@ function  quiz_print_question($number, $questionid, $grade, $courseid) {
     echo "</TD><TD VALIGN=TOP>";
 
     switch ($question->type) {
-       case 1: // shortanswer
+       case SHORTANSWER: 
            if (!$options = get_record("quiz_shortanswer", "question", $question->id)) {
                notify("Error: Missing question options!");
-           }
-           if (!$answer = get_record("quiz_answers", "id", $options->answer)) {
-               notify("Error: Missing question answers!");
            }
            echo "<P>$question->question</P>";
            if ($question->image) {
@@ -129,7 +142,7 @@ function  quiz_print_question($number, $questionid, $grade, $courseid) {
            echo "<P ALIGN=RIGHT>$stranswer: <INPUT TYPE=TEXT NAME=q$question->id SIZE=20></P>";
            break;
 
-       case 2: // true-false
+       case TRUEFALSE:
            if (!$options = get_record("quiz_truefalse", "question", $question->id)) {
                notify("Error: Missing question options!");
            }
@@ -155,11 +168,11 @@ function  quiz_print_question($number, $questionid, $grade, $courseid) {
            echo "<INPUT TYPE=RADIO NAME=\"q$question->id\" VALUE=\"$false->id\">$false->answer</P>";
            break;
 
-       case 3: // multiple-choice
+       case MULTICHOICE:
            if (!$options = get_record("quiz_multichoice", "question", $question->id)) {
                notify("Error: Missing question options!");
            }
-           if (!$answers = get_records_sql("SELECT * from quiz_answers WHERE id in ($options->answers)")) {
+           if (!$answers = get_records_list("quiz_answers", "id", $options->answers)) {
                notify("Error: Missing question answers!");
            }
            echo "<P>$question->question</P>";
@@ -174,10 +187,10 @@ function  quiz_print_question($number, $questionid, $grade, $courseid) {
                $answer = $answers[$answerid];
                $qnum = $key + 1;
                echo "<TR><TD valign=top>";
-               if (!$options->single) {
+               if ($options->single) {
                    echo "<INPUT TYPE=RADIO NAME=q$question->id VALUE=\"$answer->id\">";
                } else {
-                   echo "<INPUT TYPE=CHECKBOX NAME=q$question->id VALUE=\"$answer->id\">";
+                   echo "<INPUT TYPE=CHECKBOX NAME=q$question->id"."a$answer->id VALUE=\"$answer->id\">";
                }
                echo "</TD>";
                echo "<TD valign=top>$qnum. $answer->answer</TD>";
@@ -194,12 +207,40 @@ function  quiz_print_question($number, $questionid, $grade, $courseid) {
     echo "</TD></TR></TABLE>";
 }
 
+function quiz_print_quiz_questions($quiz, $results=NULL) {
+// Prints a whole quiz on one page.
+
+    if (!$quiz->questions) {
+        error("No questions have been defined!", "view.php?id=$cm->id");
+    }
+
+    $questions = explode(",", $quiz->questions);
+
+    if (!$grades = get_records_list("quiz_question_grades", "question", $quiz->questions, "", "question,grade")) {
+        error("No grades were found for these questions!");
+    }
+
+    echo "<FORM METHOD=POST ACTION=attempt.php>";
+    echo "<INPUT TYPE=hidden NAME=q VALUE=\"$quiz->id\">";
+    foreach ($questions as $key => $questionid) {
+        print_simple_box_start("CENTER", "90%");
+        quiz_print_question($key+1, $questionid, $grades[$questionid]->grade, $course->id);
+        print_simple_box_end();
+        echo "<BR>";
+    }
+    echo "<CENTER><INPUT TYPE=submit VALUE=\"".get_string("savemyanswers", "quiz")."\"></CENTER>";
+    echo "</FORM>";
+}
+
+
 
 function quiz_get_user_attempts($quizid, $userid) {
+// Returns a list of all attempts by a user
     return get_records_sql("SELECT * FROM quiz_attempts WHERE quiz = '$quizid' and user = '$userid' ORDER by attempt ASC");
 }
 
-function quiz_get_grade($quizid, $userid) {
+function quiz_get_best_grade($quizid, $userid) {
+/// Get the best current grade for a particular user in a quiz
     if (!$grade = get_record_sql("SELECT * FROM quiz_grades WHERE quiz = '$quizid' and user = '$userid'")) {
         return 0;
     }
@@ -207,41 +248,236 @@ function quiz_get_grade($quizid, $userid) {
     return $grade->grade;
 }
 
+function quiz_save_best_grade($quiz, $user) {
+/// Calculates the best grade out of all attempts at a quiz for a user,
+/// and then saves that grade in the quiz_grades table.
+
+    if (!$attempts = quiz_get_user_attempts($quiz->id, $user->id)) {
+        return false;
+    }
+
+    $bestgrade = quiz_calculate_best_grade($quiz, $attempts);
+    $bestgrade = (($bestgrade / $quiz->sumgrades) * $quiz->grade);
+
+    if ($grade = get_record_sql("SELECT * FROM quiz_grades WHERE quiz='$quiz->id' AND user='$user->id'")) {
+        $grade->grade = $bestgrade;
+        $grade->timemodified = time();
+        if (!update_record("quiz_grades", $grade)) {
+            return false;
+        }
+    } else {
+        $grade->quiz = $quiz->id;
+        $grade->user = $user->id;
+        $grade->grade = $bestgrade;
+        $grade->timemodified = time();
+        if (!insert_record("quiz_grades", $grade)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+
+function quiz_get_answer($question) {
+// Given a question, returns the correct answers and grades
+    switch ($question->type) {
+        case SHORTANSWER;       // Could be multiple answers
+            return get_records_sql("SELECT a.*, sa.case, g.grade
+                                      FROM quiz_shortanswer sa, quiz_answers a, quiz_question_grades g
+                                     WHERE sa.question = '$question->id' 
+                                       AND sa.question = a.question
+                                       AND sa.question = g.question");
+            break;
+
+        case TRUEFALSE;         // Should be always two answers
+            return get_records_sql("SELECT a.*, g.grade
+                                      FROM quiz_answers a, quiz_question_grades g
+                                     WHERE a.question = '$question->id' 
+                                       AND a.question = g.question");
+            break;
+
+        case MULTICHOICE;       // Should be multiple answers
+            return get_records_sql("SELECT a.*, mc.single, g.grade
+                                      FROM quiz_multichoice mc, quiz_answers a, quiz_question_grades g
+                                     WHERE mc.question = '$question->id' 
+                                       AND mc.question = a.question 
+                                       AND mc.question = g.question");
+            break;
+
+        default:
+            return false;
+    }
+}
+
 function quiz_calculate_best_grade($quiz, $attempts) {
-// Calculate the best grade for a quiz given a number of attempts by a particular user.
+/// Calculate the best grade for a quiz given a number of attempts by a particular user.
 
     switch ($quiz->grademethod) {
-        case "1": // Use highest score
-            $max = 0;
-            foreach ($attempts as $attempt) {
-                if ($attempt->grade > $max) {
-                    $max = $attempt->grade;
-                }
-            }
-            return $max;
 
-        case "2": // Use average score
+        case ATTEMPTFIRST:
+            foreach ($attempts as $attempt) {
+                return $attempt->sumgrades;
+            }
+            break;
+
+        case ATTEMPTLAST:
+            foreach ($attempts as $attempt) {
+                $final = $attempt->sumgrades;
+            }
+            return $final;
+
+        case GRADEAVERAGE:
             $sum = 0;
             $count = 0;
             foreach ($attempts as $attempt) {
-                $sum += $attempt->grade;
+                $sum += $attempt->sumgrades;
                 $count++;
             }
             return (float)$sum/$count;
 
-        case "3": // Use first attempt
-            foreach ($attempts as $attempt) {
-                return $attempt->attempt;
-            }
-            break;
-
         default:
-        case "4": // Use last attempt
+        case GRADEHIGHEST:
+            $max = 0;
             foreach ($attempts as $attempt) {
-                $final = $attempt->attempt;
+                if ($attempt->sumgrades > $max) {
+                    $max = $attempt->sumgrades;
+                }
             }
-            return $final;
+            return $max;
     }
 }
 
+function quiz_save_attempt($quiz, $questions, $result, $attemptnum) {
+/// Given a quiz, a list of attempted questions and a total grade 
+/// this function saves EVERYTHING so it can be reconstructed later
+/// if necessary.
+
+    global $USER;
+
+    // First let's save the attempt record itself
+
+    $attempt->quiz = $quiz->id;
+    $attempt->user = $USER->id;
+    $attempt->attempt = $attemptnum;
+    $attempt->sumgrades = $result->sumgrades;
+    $attempt->timemodified = time();
+
+    if (!$attempt->id = insert_record("quiz_attempts", $attempt)) {
+        return false;
+    }
+
+    // Now let's save all the questions for this attempt
+
+    foreach ($questions as $question) {
+        $response->attempt = $attempt->id;
+        $response->question = $question->id;
+        $response->grade = $result->grades[$question->id];
+        if ($question->answer) {
+            $response->answer = implode(",",$question->answer);
+        } else {
+            $response->answer = "";
+        }
+        if (!insert_record("quiz_responses", $response)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+
+function quiz_grade_attempt_results($quiz, $questions) {
+/// Given a list of questions (including answers for each one)
+/// this function does all the hard work of calculating the 
+/// grades for each question, as well as a total grade for 
+/// for the whole quiz.  It returns everything in a structure 
+/// that looks like:
+/// $result->sumgrades    (sum of all grades for all questions)
+/// $result->percentage   (Percentage of grades that were correct)
+/// $result->grade        (final grade result for the whole quiz)
+/// $result->grades[]     (array of grades, indexed by question id)
+/// $result->feedback[]   (array of feedback arrays, indexed by question id)
+
+    if (!$questions) {
+        error("No questions!");
+    }
+    
+    $result->sumgrades = 0;
+
+    foreach ($questions as $question) {
+        if (!$answers = quiz_get_answer($question)) {
+            error("No answer defined for question id $question->id!");
+        }
+
+        $grade    = 0;   // default
+        $feedback = array ();
+
+        switch ($question->type) {
+            case SHORTANSWER:
+                if ($question->answer) {
+                    $question->answer = $question->answer[0];
+                } else {
+                    $question->answer = NULL;
+                }
+                foreach($answers as $answer) {  // There might be multiple right answers
+                    $feedback[$answer->id] = $answer->feedback;
+                    if (!$answer->case) {       // Don't compare case
+                        $answer->answer = strtolower($answer->answer);
+                        $question->answer = strtolower($question->answer);
+                    }
+                    if ($question->answer == $answer->answer) {
+                        $grade = (float)$answer->fraction * $answer->grade;
+                    }
+                }
+                break;
+
+
+            case TRUEFALSE:
+                if ($question->answer) {
+                    $question->answer = $question->answer[0];
+                } else {
+                    $question->answer = NULL;
+                }
+                foreach($answers as $answer) {  // There should be two answers (true and false)
+                    $feedback[$answer->id] = $answer->feedback;
+                    if ($question->answer == $answer->id) {
+                        $grade = (float)$answer->fraction * $answer->grade;
+                    }
+                }
+                break;
+
+
+            case MULTICHOICE:
+                foreach($answers as $answer) {  // There will be multiple answers, perhaps more than one is right
+                    $feedback[$answer->id] = $answer->feedback;
+                    if ($question->answer) {
+                        foreach ($question->answer as $questionanswer) {
+                            if ($questionanswer == $answer->id) {
+                                if ($answer->single) {
+                                    $grade = (float)$answer->fraction * $answer->grade;
+                                    continue;
+                                } else {
+                                    $grade += (float)$answer->fraction * $answer->grade;
+                                }
+                            }
+                        }
+                    }
+                }
+                break;
+
+            
+        }
+        if ($grade < 0.0) {   // No negative grades
+            $grade = 0.0;
+        }
+        $result->grades[$question->id] = $grade;
+        $result->sumgrades += $grade;
+        $result->feedback[$question->id] = $feedback;
+    }
+
+    $result->percentage = ($result->sumgrades / $quiz->sumgrades);
+    $result->grade      = $result->percentage * $quiz->grade;
+
+    return $result;
+}
+    
 ?>
