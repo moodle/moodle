@@ -144,7 +144,7 @@
         echo "</CENTER>";
 
         foreach ($stringfiles as $file) {
-
+        
             print_heading("$file", "LEFT", 4);
 
             if (!file_exists("$langdir/$file")) {
@@ -184,7 +184,14 @@
                 echo "<TD WIDTH=20% BGCOLOR=\"$THEME->cellheading\" NOWRAP VALIGN=TOP>$key</TD>";
                 echo "<TD WIDTH=40% BGCOLOR=\"$THEME->cellheading\" VALIGN=TOP>$envalue</TD>";
 
-                $value = str_replace("\\","",$string[$key]);          // Delete all slashes
+                $value = $string[$key];
+ 	        $value = str_replace("\r","",$value);
+ 	        $value = str_replace("\n\n\n\n\n\n","\n",$value);
+ 	        $value = str_replace("\n\n\n\n\n","\n",$value);
+ 	        $value = str_replace("\n\n\n\n","\n",$value);
+ 	        $value = str_replace("\n\n\n","\n",$value);
+ 	        $value = str_replace("\n\n\n","\n",$value);
+ 	        $value = str_replace("\\","",$value);          // Delete all slashes
                 $value = str_replace("%%","%",$value);
                 $value = htmlspecialchars($value);
 
