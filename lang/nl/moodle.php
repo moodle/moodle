@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.2 development (2004010900)
+      // moodle.php - created with Moodle 1.2 development (2004013000)
 
 
 $string['action'] = 'Actie';
@@ -190,6 +190,7 @@ $string['createuserandpass'] = 'Maak een nieuwe gebruikersnaam en een nieuw wach
 $string['createziparchive'] = 'Maak een ZIP archief';
 $string['creatingcategoriesandquestions'] = 'Categorieën en vragen maken';
 $string['creatingcoursemodules'] = 'Vak modulen maken';
+$string['creatinggroups'] = 'Groepen maken';
 $string['creatinglogentries'] = 'Log invoer maken';
 $string['creatingnewcourse'] = 'Nieuw vak maken';
 $string['creatingscales'] = 'Schalen maken';
@@ -614,6 +615,7 @@ $string['order'] = 'Volgorde';
 $string['other'] = 'Andere';
 $string['outline'] = 'Overzicht';
 $string['page'] = 'Pagina';
+$string['parentlanguage'] = '\"\"';
 $string['participants'] = 'Deelnemers';
 $string['password'] = 'Wachtwoord';
 $string['passwordchanged'] = 'Het wachtwoord is veranderd';
@@ -846,6 +848,7 @@ $string['wordforteacherseg'] = 'bijv. leraren, mentoren, coaches, begeleiders, e
 $string['writingcategoriesandquestions'] = 'Categorieën en vragen schrijven';
 $string['writingcoursedata'] = 'Vak data schrijven';
 $string['writinggeneralinfo'] = 'Algemene info schrijven';
+$string['writinggroupsinfo'] = 'Info groepen schrijven';
 $string['writingheader'] = 'Header schrijven';
 $string['writingloginfo'] = 'Log info schrijven';
 $string['writingmoduleinfo'] = 'Modulen info schrijven';
