@@ -180,7 +180,7 @@ function quiz_upgrade($oldversion) {
                                category INT8  NOT NULL default '0',
                                userid INT8  NOT NULL default '0',
                                datasetnumber INT8  NOT NULL default '0',
-                               CONSTRAINT  category UNIQUE (category,userid)
+                               CONSTRAINT  prefix_quiz_attemptonlast_datasets_category_userid UNIQUE (category,userid)
             ) ;");
 
         modify_database ("", " CREATE TABLE prefix_quiz_dataset_definitions (
