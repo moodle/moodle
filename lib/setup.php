@@ -228,4 +228,19 @@
         setlocale (LC_CTYPE, $CFG->locale);
     }
 
+    if (!empty($CFG->opentogoogle)) {
+        if (empty($_SESSION['USER'])) {
+            if (!empty($_SERVER['HTTP_USER_AGENT'])) {
+                if (strpos($_SERVER['HTTP_USER_AGENT'], 'Googlebot') !== false ) {
+                    $USER = guest_user();
+                }
+            }
+            if (empty($_SESSION['USER']) and !empty($_SERVER['HTTP_REFERER'])) {
+                if (strpos($_SERVER['HTTP_REFERER'], 'google') !== false ) {
+                    $USER = guest_user();
+                }
+            }
+        }
+    }
+
 ?>
