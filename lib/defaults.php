@@ -26,6 +26,7 @@
        "proxyhost"        => "",
        "proxyport"        => "",
        "secureforms"      =>  false,
+       "sessioncookie"    => "",
        "sessiontimeout"   =>  7200,
        "slasharguments"   =>  1,
        "smtphosts"        => "",

@@ -171,7 +171,7 @@
     class object {};
     
     if (!isset($nomoodlecookie)) {
-        session_name('MoodleSession');
+        session_name('MoodleSession'.$CFG->sessioncookie);
         @session_start();
         if (! isset($_SESSION['SESSION'])) { 
             $_SESSION['SESSION'] = new object; 
