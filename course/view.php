@@ -67,6 +67,6 @@
             error("Course format not defined yet!");
     }
 
-    print_footer($course);
+    print_footer();
 
 ?>
