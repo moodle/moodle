@@ -2,7 +2,8 @@
 //  created from the above 2003/11/20 by Tom Robb tom@robb.net
 // Version 2.2  Modified 2003/11/25 pm
 // Version 2.3  Modified 2004/01/17
-//  Error in display of items followin a matching question fixed
+// Version 2.4  Modified 2004/01/18
+//  Error in percentage calculations for T/F items fixed
 
 /// This report shows the specific responses made by each student for each question.
 
@@ -760,14 +761,14 @@ class quiz_report extends quiz_default_report {
             $nowstat =  $analysis[1][$itemcount];
             $colpos = strpos($nowstat,":");
             $nowresp = substr($nowstat,$colpos+1);
-            $pct_cor = qr_make_pct($nowresp,$total_user_count) *100;
+            $pct_cor = qr_make_pct($nowresp,$total_user_count);
             print("<tr valign=top><td align='right'>$nowresp ($pct_cor%)&nbsp;</td>");
             print("<td colspan=2 align=left>True</td></tr>\n");
             //"False" responses
             $nowstat =  $analysis[2][$itemcount];
             $colpos = strpos($nowstat,":");
             $nowresp = substr($nowstat,$colpos+1);
-            $pct_cor = qr_make_pct($nowresp,$total_user_count) *100;
+            $pct_cor = qr_make_pct($nowresp,$total_user_count);
             print("<tr valign=top><td align='right'>$nowresp ($pct_cor%)&nbsp;</td>");
             print("<td colspan=2 align=left>False</td></tr>\n");
         }
