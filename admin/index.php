@@ -281,6 +281,10 @@
 
     print_table($table);
 
+    echo "<BR><DIV align=center>";
+    print_single_button("$CFG->wwwroot/doc", NULL, get_string("documentation"));
+    echo "</DIV>";
+
     print_heading("Moodle $CFG->release ($CFG->version)", "CENTER", 1);
 
     print_footer($site);
