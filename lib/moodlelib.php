@@ -681,7 +681,7 @@ function require_login($course=0) {
             }
 
             $SESSION->wantsurl = $FULLME;
-            redirect("$CFG->wwwroot/course/login.php?id=$course");
+            redirect("$CFG->wwwroot/course/enrol.php?id=$course");
             die;
         }
     }
