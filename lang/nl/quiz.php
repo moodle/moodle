@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.2 development (2003121500)
+      // quiz.php - created with Moodle 1.2 development (2004010900)
 
 
 $string['acceptederror'] = 'Geaccepteerde fout';
@@ -18,6 +18,7 @@ $string['answerhowmany'] = 'Eén of meerdere antwoorden';
 $string['answersingleno'] = 'Meerdere antwoorden toegestaan';
 $string['answersingleyes'] = 'Slechts één antwoord';
 $string['answerswithacceptederrormarginmustbenumeric'] = 'Antwoorden met een geaccepteerde fout moeten numeriek zijn';
+$string['answertoolong'] = 'Antwoord is te lang na lijn $a (maximum 255 tekens)';
 $string['aon'] = 'AON opmaak';
 $string['attempt'] = 'Poging $a';
 $string['attemptfirst'] = 'Eerste poging';
@@ -29,6 +30,7 @@ $string['attemptsunlimited'] = 'Onbeperkt aantal pogingen';
 $string['backtoquiz'] = 'Terug naar het bewerken/wijzigen van de test';
 $string['bestgrade'] = 'Hoogste cijfer';
 $string['blackboard'] = 'Blackboard';
+$string['calculatedquestion'] = 'Berekende vraag niet ondersteund op lijn $a. De vraag wordt genegeerd.';
 $string['caseno'] = 'Nee, hoofd/kleine letters zijn niet belangrijk';
 $string['casesensitive'] = 'Gevoeligheid voor hoofd/kleine letters';
 $string['caseyes'] = 'Ja, hoofd/kleine letters moeten exact hetzelfde zijn';
@@ -71,6 +73,7 @@ $string['editingrandomsamatch'] = 'Een willekeurige vraag met kort antwoord bewe
 $string['editingshortanswer'] = 'Een vraag met kort antwoord bewerken';
 $string['editingtruefalse'] = 'Een waar/onwaar vraag bewerken';
 $string['editquestions'] = 'Bewerk vragen';
+$string['errorsdetected'] = '$a fout(en) ontdekt';
 $string['false'] = 'Onwaar';
 $string['feedback'] = 'Feedback';
 $string['fileformat'] = 'Bestandsformaat';
@@ -89,6 +92,7 @@ $string['gradehighest'] = 'Hoogste cijfer';
 $string['grademethod'] = 'Beoordelingsmethode';
 $string['guestsno'] = 'Sorry, gasten kunnen testen niet bekijken noch een poging wagen';
 $string['imagedisplay'] = 'Weer te geven afbeelding';
+$string['imagemissing'] = 'Afbeelding niet beschikbaar op lijn $a. De bestandsnaam zal genegeerd worden';
 $string['importquestions'] = 'Importeer vragen uit een bestand';
 $string['indivresp'] = 'Reacties van ieder afzonderlijk op elk item';
 $string['introduction'] = 'Inleiding';
@@ -97,8 +101,10 @@ $string['listitems'] = 'Lijst van items in de test';
 $string['marks'] = 'Punten';
 $string['match'] = 'Koppelen';
 $string['matchanswer'] = 'Gepaarde antwoord';
+$string['missinganswer'] = 'Te weinig :ANSWER, :Lx, Rx stellingen voor de vraag op lijn $a. Je moet minstens twee mogelijke antwoorden opgeven';
 $string['missingcorrectanswer'] = 'Het goede antwoord moet worden aangegeven';
 $string['missingname'] = 'Naam voor de vraag ontbreekt';
+$string['missingquestion'] = 'Er ontbreekt een vraag na lijn $a';
 $string['missingquestiontext'] = 'Tekst voor de vraag ontbreekt';
 $string['missingword'] = 'Gatentekst';
 $string['modulename'] = 'Test';
@@ -115,12 +121,14 @@ $string['noreview'] = 'Het is niet toegestaan om de antwoorden na te lezen en te
 $string['noreviewuntil'] = 'Het is niet toegestaan om deze test na te lezen tot $a';
 $string['notenoughsubquestions'] = 'Er zijn onvoldoende deelvragen gedefinieerd!<br>Wil je teruggaan en deze vraag herstellen?';
 $string['numerical'] = 'Numeriek';
+$string['paragraphquestion'] = 'Vraagparagraaf niet ondersteund op lijn $a. De vraag wordt genegeerd';
 $string['percentcorrect'] = 'Percentage juist';
 $string['publish'] = 'Publiceer  ';
 $string['qti'] = 'IMS QTI opmaak';
 $string['question'] = 'Vraag';
 $string['questioninuse'] = 'De vraag \'$a\' is op dit moment al in gebruik:';
 $string['questionname'] = 'Naam vraag';
+$string['questionnametoolong'] = 'Vraagnaam te lang op lijn $a (maximum 255 tekens). De naam is afgekort.';
 $string['questions'] = 'Vragen';
 $string['quizavailable'] = 'De test is beschikbaar tot: $a';
 $string['quizclose'] = 'Sluit de test';
@@ -170,10 +178,13 @@ $string['toomanyrandom'] = 'Er zijn meer willekeurige vragen vereist, dan er in 
 $string['true'] = 'Waar';
 $string['truefalse'] = 'Waar/Onwaar';
 $string['type'] = 'Soort';
+$string['unknowntype'] = 'Vraagtype op lijn $a niet ondersteund. De vraag zal genegeerd worden';
 $string['viewallanswers'] = 'Bekijk $a voltooide testen';
 $string['viewallreports'] = 'Bekijk overzicht van $a pogingen';
+$string['warningsdetected'] = '$a waarschuwing(en) ontdekt';
 $string['webct'] = 'WebCT opmaak';
 $string['withsummary'] = 'met samenvattende statistieken';
+$string['wronggrade'] = 'Verkeerd cijfer (na lijn $a):';
 $string['yourfinalgradeis'] = 'Je eindcijfer voor deze test is $a';
 
 ?>
