@@ -212,6 +212,10 @@
     }
 
     //Cleanup temps (files and db)
+    if ($status) {
+        echo "<li>Cleaning up temp data <b>(commented!!)</b>";
+        //$status = clean_temp_data ($restore);
+    }
 
     //End the main ul
     echo "</ul>";
