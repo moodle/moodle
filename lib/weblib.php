@@ -358,7 +358,13 @@ function get_slash_arguments($i=0) {
         return false;
     }
 
-    if (strpos($PATH_INFO, "..")) {  // check for funny business
+    if (strpos($PATH_INFO, "..")) { // check for parent URLs
+        return false;
+    }
+    if (strpos($PATH_INFO, "|")) {  // check for pipes
+        return false;
+    }
+    if (strpos($PATH_INFO, "`")) {  // check for backquotes
         return false;
     }
 
