@@ -58,7 +58,8 @@
         global $CFG;
 
         $status = true;
-        $list = get_directory_list($CFG->dataroot."/temp/backup", "", false);
+        //Get files and directories in the temp backup dir witout descend
+        $list = get_directory_list($CFG->dataroot."/temp/backup", "", false, true, true);
         foreach ($list as $file) {
             $file_path = $CFG->dataroot."/temp/backup/".$file;
             $moddate = filemtime($file_path);
