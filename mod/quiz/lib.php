@@ -1024,6 +1024,7 @@ function quiz_print_question_list($questionlist, $grades) {
         if (empty($questions[$qnum])) {
             continue;
         }
+        $question = $questions[$qnum];
         $count++;
         echo "<TR BGCOLOR=\"$THEME->cellcontent\">";
         echo "<TD>$count</TD>";
@@ -1039,12 +1040,16 @@ function quiz_print_question_list($questionlist, $grades) {
                  SRC=\"../../pix/t/down.gif\" BORDER=0></A>";
         }
         echo "</TD>";
-        echo "<TD>".$questions[$qnum]->name."</TD>";
+        echo "<TD>$question->name</TD>";
         echo "<TD ALIGN=CENTER>";
-        quiz_print_question_icon($questions[$qnum]);
+        quiz_print_question_icon($question);
         echo "</TD>";
         echo "<TD>";
-        choose_from_menu($gradesmenu, "q$qnum", (string)$grades[$qnum], "");
+        if ($question->qtype == DESCRIPTION) {
+            echo "<INPUT TYPE=hidden NAME=q$qnum VALUE=\"0\"> ";
+        } else {
+            choose_from_menu($gradesmenu, "q$qnum", (string)$grades[$qnum], "");
+        }
         echo "<TD>";
             echo "<A TITLE=\"$strdelete\" HREF=\"edit.php?delete=$qnum\"><IMG 
                  SRC=\"../../pix/t/delete.gif\" BORDER=0></A>&nbsp;";
