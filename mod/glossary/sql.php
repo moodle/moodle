@@ -124,6 +124,10 @@
         $fullpivot = 0;
         $printpivot = 0;
 
+        if (!isset($sqlsortkey)) {
+            $sqlsortkey = NULL;
+        }
+
         $where = '';
         if ($hook != 'ALL' and $hook != 'SPECIAL') {
             switch ($CFG->dbtype) {
