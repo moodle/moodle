@@ -1413,7 +1413,8 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
         $stredit = get_string("edit", "forum");
         $strdelete = get_string("delete", "forum");
         $strreply = get_string("reply", "forum");
-        $strparent = get_string("parent", "forum");
+        $strprune = get_string("prune", "forum");
+        $strpruneheading = get_string("pruneheading", "forum");
         $threadedmode = (!empty($USER->mode) and ($USER->mode == FORUM_MODE_THREADED));
         $isteacher = isteacher($courseid);
         $adminedit = (isadmin() and !empty($CFG->admineditalways));
@@ -1502,11 +1503,10 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
     }
 
     if (isteacheredit($courseid) and $post->parent) {
-        echo "<a href=\"$CFG->wwwroot/mod/forum/post.php?prune=$post->id\" title=\"".get_string('pruneheading', 'forum').'">'.
-            get_string("prune", "forum")."</a> | ";
+        echo "<a href=\"$CFG->wwwroot/mod/forum/post.php?prune=$post->id\" title=\"$strpruneheading\">$strprune</a> | ";
     }
 
-    if ($ownpost or $isteacher) {
+    if (($ownpost and $age < $CFG->maxeditingtime) or $isteacher) {
         echo "<a href=\"$CFG->wwwroot/mod/forum/post.php?delete=$post->id\">$strdelete</a>";
         if ($reply) {
             echo " | ";
@@ -1609,7 +1609,8 @@ function forum_print_discussion_header(&$post, $forum, $datestring="") {
 
     echo "<td bgcolor=\"$THEME->cellcontent2\" class=\"forumpostheaderdate\" align=right nowrap>";
     $usedate = (empty($post->timemodified)) ? $post->modified : $post->timemodified;  // Just in case
-    echo '<a href="'.$CFG->wwwroot.'/mod/forum/discuss.php?d='.$post->discussion.'&parent='.$post->lastpostid.'">'.
+    $parenturl = (empty($post->lastpostid)) ? '' : '&parent='.$post->lastpostid;
+    echo '<a href="'.$CFG->wwwroot.'/mod/forum/discuss.php?d='.$post->discussion.$parenturl.'">'.
           userdate($usedate, $datestring).'</a>';
     echo "</td>\n";
 
