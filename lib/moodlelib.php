@@ -69,6 +69,7 @@ define('HOURMINS', 60);
  * Ensure that a variable is set or display error
  *
  * If $var is undefined display an error message using the {@link error()} function.
+ * This function will soon be made obsolete by {@link parameter()}
  *
  * @param mixed $var the variable which may not be set
  */
@@ -85,6 +86,7 @@ function require_variable($var) {
  *
  * If $var is undefined set it (by reference), otherwise return $var.
  * This function is very similar to {@link nvl()}
+ * This function will soon be made obsolete by {@link parameter()}
  *
  * @param mixed $var the variable which may be unset
  * @param mixed $default the value to return if $var is unset
@@ -94,6 +96,32 @@ function optional_variable(&$var, $default=0) {
     if (! isset($var)) {
         $var = $default;
     }
+}
+
+/**
+ * Returns a particular value for the named variable, taken from 
+ * POST or GET, otherwise returning a given default.
+ *
+ * This function should be used to initialise all values in a script
+ * that are based on parameters.  Usually it will be used like this:
+ *
+ *    $id = (int)parameter('id');
+ *
+ * @param string $varname the name of the parameter variable we want
+ * @param mixed  $default the default value to return if nothing is found
+ * @return mixed
+ */
+function parameter($varname, $default=NULL) {
+
+    if (isset($_POST[$varname])) {       // POST has precedence
+        return $_POST[$varname];
+    }
+
+    if (isset($_GET[$varname])) {
+        return $_GET[$varname];
+    }
+    
+    return $default;
 }
 
 /**
