@@ -7,7 +7,7 @@
         }
     }
     if (empty($subquestions) and empty($subanswers)) {
-        for ($i=0; $i<quiz_MAX_NUMBER_ANSWERS; $i++) {
+        for ($i=0 ; $i < QUIZ_MAX_NUMBER_ANSWERS ; $i++) {
             $subquestions[] = "";   // Make question slots, default as blank
             $subanswers[] = "";     // Make answer slots, default as blank
         }
