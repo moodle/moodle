@@ -1080,6 +1080,9 @@
                             $group = backup_getid($restore->backup_unique_code,"group",$eve->groupid);
                             if ($group) {
                                 $eve->groupid = $group->new_id;
+                            } else {
+                                //Assign it to group 0
+                                $eve->groupid = 0
                             }
 
                             //The structure is equal to the db, so insert the event
