@@ -298,7 +298,7 @@
 function print_category_edit($category, $displaylist, $parentslist, $depth=-1, $up=false, $down=false) {
 /// Recursive function to print all the categories ready for editing
 
-    global $THEME, $CFG;
+    global $THEME, $CFG, $USER;
 
     static $str = '';
     static $pixpath = '';
@@ -327,7 +327,7 @@ function print_category_edit($category, $displaylist, $parentslist, $depth=-1, $
             echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
         }
         $linkcss = $category->visible ? "" : " class=\"dimmed\" ";
-        echo "<a $linkcss title=\"$str->edit\" href=\"category.php?id=$category->id&edit=on\">$category->name</a>";
+        echo "<a $linkcss title=\"$str->edit\" href=\"category.php?id=$category->id&edit=on&sesskey=$USER->sesskey\">$category->name</a>";
         echo "</p>";
         echo "</td>";
 
