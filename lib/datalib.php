@@ -92,7 +92,7 @@ function record_exists_sql($sql) {
     global $db;
 
     $rs = $db->Execute($sql);
-    if (!$rs) return false;
+    if (empty($rs)) return false;
 
     if ( $rs->RecordCount() ) {
         return true;
@@ -142,7 +142,7 @@ function count_records_sql($sql) {
     global $db;
 
     $rs = $db->Execute("$sql");
-    if (!$rs) return 0;
+    if (empty($rs)) return 0;
 
     return $rs->fields[0];
 }
@@ -171,7 +171,7 @@ function get_record_sql($sql) {
     global $db;
 
     $rs = $db->Execute("$sql");
-    if (!$rs) return false;
+    if (empty($rs)) return false;
 
     if ( $rs->RecordCount() == 1 ) {
         return (object)$rs->fields;
@@ -267,7 +267,7 @@ function get_records_sql($sql) {
     global $db;
 
     $rs = $db->Execute("$sql");
-    if (!$rs) return false;
+    if (empty($rs)) return false;
 
     if ( $rs->RecordCount() > 0 ) {
         if ($records = $rs->GetAssoc(true)) {
@@ -333,7 +333,7 @@ function get_records_sql_menu($sql) {
     global $db;
 
     $rs = $db->Execute("$sql");
-    if (!$rs) return false;
+    if (empty($rs)) return false;
 
     if ( $rs->RecordCount() > 0 ) {
         while (!$rs->EOF) {
@@ -353,7 +353,7 @@ function get_field($table, $return, $field, $value) {
     global $db, $CFG;
 
     $rs = $db->Execute("SELECT $return FROM $CFG->prefix$table WHERE $field = '$value'");
-    if (!$rs) return false;
+    if (empty($rs)) return false;
 
     if ( $rs->RecordCount() == 1 ) {
         return $rs->fields["$return"];
