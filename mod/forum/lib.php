@@ -215,9 +215,7 @@ function forum_cron () {
 
         $timenow = time();
 
-        /// PJ: moved this out of the inner loop, once is enough
-        /// GWD: reset timelimit so that script does not get timed out when posting to many users
-        @set_time_limit(0);
+        @set_time_limit(0);   /// so that script does not get timed out when posting to many users
 
         foreach ($posts as $post) {
 
@@ -320,16 +318,17 @@ function forum_cron () {
     unset($CFG->courselang);
 
     /// Now see if there are any digest mails waiting to be sent, and if we should send them
-    $datenow = getdate();
-    $lastcron = get_field('modules', 'lastcron', 'name', 'forum');
-    $datelast = getdate($lastcron);
 
-    /// When to send out mails? If the current hour is >= the respective admin setting, OR
-    /// if the last cron's day was not today. This could happen if cron was scheduled every 2
-    /// hours and the admin setting was set to 11pm. If the first check fails due to the day
-    /// having changed, the second will not.
+    if (!isset($CFG->digestmailtimelast)) {    // To catch the first time 
+        set_config('digestmailtimelast', 0);
+    }
 
-    if($datenow['hours'] >= $CFG->digestmailtime && $datelast['hours'] < $CFG->digestmailtime || $datenow['yday'] != $datelast['yday']) {
+    $timenow = time();
+    $digesttime = usergetmidnight($timenow) + ($CFG->digestmailtime * 3600);
+
+    if ($CFG->digestmailtimelast < $digesttime and $timenow > $digesttime) {
+        set_config('digestmailtimelast', $timenow);
+
         $digestposts = get_records('forum_queue');
         if(!empty($digestposts)) {
 
