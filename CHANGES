@@ -1,3 +1,245 @@
+2002-09-02 Monday 14:34  martin
+
+	* config-dist.php: 
+	
+	Added ability to define proxy machine (eg a firewall) so that
+	Moodle is able to get to the Internet if it needs to
+
+2002-09-02 Monday 14:30  martin
+
+	* lib/ipatlas/plotconf.inc: 
+	
+	Add Moodle support for proxies
+
+2002-09-02 Monday 14:25  martin
+
+	* mod/forum/post.php: 
+	
+	[no log message]
+
+2002-09-02 Monday 13:03  martin
+
+	* mod/forum/discuss.php: 
+	
+	Fix the display when USER display mode is flat, and a parent is
+	selected.  In this case, the display is temporarily changed to
+	nested
+
+2002-09-02 Monday 11:48  martin
+
+	* mod/forum/lib.php: 
+	
+	Default forum display mode is actually used now
+
+2002-09-02 Monday 10:17  martin
+
+	* course/editsection.html: 
+	
+	Removed the 255 character limit ... now they have a gun, I hope
+	people don't shoot themseves with it.	;-)
+
+2002-09-01 Sunday 22:47  martin
+
+	* course/lib.php: 
+	
+	Hide no-authority teachers from course listings too
+
+2002-09-01 Sunday 22:35  martin
+
+	* lang/en/help/forum/attachment.html: 
+	
+	New documenttaion about attachments
+
+2002-09-01 Sunday 22:34  martin
+
+	* mod/forum/: lib.php, post.html, post.php, version.php: 
+	
+	
+	Attachments can now be added to postings.  They are stored in the
+	course moddata area.  They appear as links within the message,
+	including mailed-out messages.	They are deleted when the post is
+	deleted.
+
+2002-09-01 Sunday 22:32  martin
+
+	* lang/en/: forum.php, moodle.php, help/picture.html: 
+	
+	Updates and changes
+
+2002-09-01 Sunday 22:31  martin
+
+	* user/lib.php: 
+	
+	Moved valid_uploaded_file out to lib/moodlelib.php
+
+2002-09-01 Sunday 22:31  martin
+
+	* user/: edit.html, edit.php: 
+	
+	Documentation on file sizes
+
+2002-09-01 Sunday 22:30  martin
+
+	* user/index.php: 
+	
+	DOn't print teachers with no authority
+
+2002-09-01 Sunday 22:29  martin
+
+	* lib/moodlelib.php: 
+	
+	Functions moved here from files/index.php (related to file
+	handling)
+
+2002-09-01 Sunday 22:28  martin
+
+	* files/index.php: 
+	
+	Moved some functions out to lib/moodlelib.php
+
+2002-09-01 Sunday 22:24  martin
+
+	* version.php, lib/db/mysql.sql: 
+	
+	Increased size of section summaries from 255 chars to 65000 chars.
+
+2002-08-31 Saturday 10:44  martin
+
+	* doc/install.html: 
+	
+	Mentioned that config.php needs to be edited using a *text editor*
+	:-)
+
+2002-08-31 Saturday 00:02  martin
+
+	* theme/index.php: 
+	
+	Prints an error message if theme can't be set
+
+2002-08-30 Friday 21:28  martin
+
+	* lang/en/moodle.php: 
+	
+	New strings for file management stuff
+
+2002-08-30 Friday 21:18  martin
+
+	* files/index.php: 
+	
+	Improved header now contains directory trail, and I
+	internationalised all the texts (buttons etc)
+
+2002-08-28 Wednesday 23:53  martin
+
+	* index.php: 
+	
+	Added slash after login to fix obscure problems on some servers
+
+2002-08-28 Wednesday 23:28  martin
+
+	* lib/moodlelib.php: 
+	
+	Added slash after login link ... some servers have problems without
+	it
+
+2002-08-28 Wednesday 23:07  martin
+
+	* lib/moodlelib.php, login/index.php: 
+	
+	Security fix for:
+	
+	  Internet Explorer bug that allows sends cookies to different
+	sites if
+	  they have the same ending.  eg moodle.com cookie is sent to
+	smec.moodle.com!!
+	
+	  Also fixes case where multiple moodle installations may be in
+	different
+	  directories on the same server.  When you go from one to the
+	other the
+	  first session will be destroyed now (you can't be logged in the
+	two
+	  at the same time).  It's just a lot safer this way, for now.
+	
+	Basically this works by storing the wwwroot variable in the session
+	and checking it for every page.
+
+2002-08-28 Wednesday 21:41  martin
+
+	* files/index.php: 
+	
+	slasharguments wasn't being found (CFG not declared global)
+
+2002-08-28 Wednesday 21:36  martin
+
+	* files/mimetypes.php: 
+	
+	Added powerpoint
+
+2002-08-28 Wednesday 21:36  martin
+
+	* files/pix/powerpoint.gif: 
+	
+	New icon
+
+2002-08-28 Wednesday 21:20  martin
+
+	* lang/en/docs/module_files.txt, mod/assignment/version.php: 
+	
+	Slight improvements to documentation
+
+2002-08-28 Wednesday 21:07  martin
+
+	* lang/en/moodle.php, lang/en/docs/module_files.txt,
+	lib/moodlelib.php, lib/setup.php, mod/assignment/lib.php,
+	mod/assignment/version.php, mod/reading/details.php: 
+	
+	Moved uploaded assignment files into a subdirectory called moddata,
+	where data from other modules can also live later on.
+	
+	Also added a README for that directory to warn teachers not to mess
+	with it, version code to perform the upgrade, tweaks to
+	assignment/lib.php and a tweak to reading module so that assignment
+	files aren't listed in the list of possible readings (could get
+	messy).
+
+2002-08-28 Wednesday 11:45  martin
+
+	* doc/future.html: 
+	
+	More details about Moodle futures
+
+2002-08-27 Tuesday 04:45  martin
+
+	* index.php, course/lib.php: 
+	
+	Tweak to side boxes
+
+2002-08-27 Tuesday 04:41  martin
+
+	* index.php: 
+	
+	Further little tweak to front-page spacing
+
+2002-08-27 Tuesday 04:38  martin
+
+	* index.php, course/lib.php: 
+	
+	Fix for front page case when no left column
+
+2002-08-26 Monday 19:04  martin
+
+	* lib/ipatlas/plot.php: 
+	
+	Doesn't matter if user isn't provided
+
+2002-08-26 Monday 18:07  martin
+
+	* CHANGES: 
+	
+	
+	MOODLE 1.0.1 RELEASED
+
 2002-08-26 Monday 18:06  martin
 
 	* version.php: 
