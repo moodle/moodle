@@ -16,16 +16,23 @@
         $post->subject = strip_tags($post->subject);  // Strip all tags
         $post->message = cleantext($post->message);   // Clean up any bad tags
 
+        $post->attachment = $HTTP_POST_FILES["attachment"];
+
+        if (!$post->subject and !$post->message) {
+            error("Something was wrong with your post.  Perhaps you left it blank, or the attachment was too big.  Your changes have NOT been saved.");
+        }
+
         require_login();
 
         if ($post->edit) {           // Updating a post
             $post->id = $post->edit;
-            if (forum_update_post($post) ) {
+            if (forum_update_post($post)) {
                 add_to_log($post->course, "forum", "update post", "discuss.php?d=$post->discussion&parent=$post->id", "$post->id");
                 redirect(forum_go_back_to("discuss.php?d=$post->discussion"), "Your post was updated", 1);
             } else {
                 error("Could not update your post due to an unknown error"); 
             }
+
         } else if ($post->discussion) { // Adding a new post to an existing discussion
             if ($post->id = forum_add_new_post($post)) {
                 if ( ! forum_is_subscribed($USER->id, $post->forum) ) {
@@ -190,7 +197,7 @@
                     redirect("view.php?f=$discussion->forum", 
                              "The discussion topic has been deleted", 1);
 
-                } else if (forum_delete_post($post->id)) {
+                } else if (forum_delete_post($post)) {
 
                     add_to_log($discussion->course, "forum", "delete post", "discuss.php?d=$post->discussion", "$post->id");
                     redirect(forum_go_back_to("discuss.php?d=$post->discussion"), 

@@ -1,5 +1,7 @@
 <?PHP  // $Id$
 
+include_once("$CFG->dirroot/files/mimetypes.php");
+
 /// CONSTANTS ///////////////////////////////////////////////////////////
 
 $FORUM_DEFAULT_DISPLAY_MODE = 3; 
@@ -109,6 +111,14 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
     $output .= "&nbsp;";
     $output .= "</TD><TD BGCOLOR=\"$THEME->cellcontent\">\n";
 
+    if ($post->attachment) {
+        $post->course = $course->id;
+        $post->forum = get_field("forum_discussions", "forum", "id", $post->discussion);
+        $output .= "<DIV ALIGN=right>";
+        $output .= forum_print_attachments($post, "html");
+        $output .= "</DIV>";
+    }
+
     $output .= text_to_html($post->message);
 
     $output .= "<P ALIGN=right><FONT SIZE=-1>";
@@ -177,6 +187,14 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
     echo "<TR><TD BGCOLOR=\"$THEME->body\" WIDTH=10>";
     echo "&nbsp;";
     echo "</TD><TD BGCOLOR=\"$THEME->cellcontent\">\n";
+
+    if ($post->attachment) {
+        $post->course = $courseid;
+        $post->forum = get_field("forum_discussions", "forum", "id", $post->discussion);
+        echo "<DIV ALIGN=right>";
+        forum_print_attachments($post);
+        echo "</DIV>";
+    }
 
     if ($link && (strlen($post->message) > $FORUM_LONG_POST)) {
         // Print shortened version
@@ -424,13 +442,128 @@ function forum_get_post_full($postid) {
                            WHERE p.id = '$postid' AND p.user = u.id");
 }
 
+function forum_file_area_name($post) {
+//  Creates a directory file name, suitable for make_upload_directory()
+    global $CFG;
+
+    return "$post->course/$CFG->moddata/forum/$post->forum/$post->id";
+}
+
+function forum_file_area($post) {
+    return make_upload_directory( forum_file_area_name($post) );
+}
+
+function forum_delete_old_attachments($post, $exception="") {
+// Deletes all the user files in the attachments area for a post
+// EXCEPT for any file named $exception
+
+    if ($basedir = forum_file_area($post)) {
+        if ($files = get_directory_list($basedir)) {
+            foreach ($files as $file) {
+                if ($file != $exception) {
+                    unlink("$basedir/$file");
+                    notify("Existing file '$file' has been deleted!");
+                }
+            }
+        }
+        if (!$exception) {  // Delete directory as well, if empty
+            rmdir("$basedir");
+        }
+    }
+}
+
+function forum_print_attachments($post, $return=NULL) {
+// if return=html, then return a html string.
+// if return=text, then return a text-only string.
+// otherwise, print HTML
+
+    global $CFG;
+
+    $filearea = forum_file_area_name($post);
+
+    if ($basedir = forum_file_area($post)) {
+        if ($files = get_directory_list($basedir)) {
+            $strattachment = get_string("attachment", "forum");
+            foreach ($files as $file) {
+                $icon = mimeinfo("icon", $file);
+                if ($CFG->slasharguments) {
+                    $ffurl = "file.php/$filearea/$file";
+                } else {
+                    $ffurl = "file.php?file=/$filearea/$file";
+                }
+                $image = "<IMG BORDER=0 SRC=\"$CFG->wwwroot/files/pix/$icon\" HEIGHT=16 WIDTH=16 ALT=\"File\">";
+
+                if ($return == "html") {
+                    $output .= "<A HREF=\"$CFG->wwwroot/$ffurl\">$image</A> ";
+                    $output .= "<A HREF=\"$CFG->wwwroot/$ffurl\">$file</A><BR>";
+
+                } else if ($return == "text") {
+                    $output .= "$strattachment $file:\n$CFG->wwwroot/$ffurl\n";
+
+                } else {
+                    link_to_popup_window("/$ffurl", "attachment", $image, 500, 500, $strattachment);
+                    echo "<A HREF=\"$CFG->wwwroot/$ffurl\">$file</A>";
+                    echo "<BR>";
+                }
+            }
+        }
+    }
+    if ($return) {
+        return $output;
+    }
+}
+
+function forum_add_attachment($post, $newfile) {
+// $post is a full post record, including course and forum
+// $newfile is a full upload array from HTTP_POST_FILES
+// If successful, this function returns the name of the file
+
+    if (!isset($newfile['name'])) {
+        return "";
+    }
+
+    $newfile_name = clean_filename($newfile['name']);
+
+    if (valid_uploaded_file($newfile)) {
+        if (! $newfile_name) {
+            notify("This file had a wierd filename and couldn't be uploaded");
+
+        } else if (! $dir = forum_file_area($post)) {
+            notify("Attachment could not be stored");
+            $newfile_name = "";
+
+        } else {
+            if (move_uploaded_file($newfile['tmp_name'], "$dir/$newfile_name")) {
+                forum_delete_old_attachments($post, $newfile_name);
+            } else {
+                notify("An error happened while saving the file on the server");
+                $newfile_name = "";
+            }
+        }
+    } else {
+        $newfile_name = "";
+    }
+
+    return $newfile_name;
+}
 
 function forum_add_new_post($post) {
 
     $post->created = $post->modified = time();
     $post->mailed = "0";
 
-    return insert_record("forum_posts", $post);
+    $newfile = $post->attachment;
+    $post->attachment = "";
+
+    if (! $post->id = insert_record("forum_posts", $post)) { 
+        return false;
+    }
+
+    if ($post->attachment = forum_add_attachment($post, $newfile)) {
+        set_field("forum_posts", "attachment", $post->attachment, "id", $post->id);
+    }
+    
+    return $post->id;
 }
 
 function forum_update_post($post) {
@@ -439,6 +572,11 @@ function forum_update_post($post) {
 
     if (!$post->parent) {   // Post is a discussion starter - update discussion title too
         set_field("forum_discussions", "name", $post->subject, "id", $post->discussion);
+    }
+    if ($newfilename = forum_add_attachment($post, $post->attachment)) {
+        $post->attachment = $newfilename;
+    } else {
+        unset($post->attachment);
     }
     return update_record("forum_posts", $post);
 }
@@ -462,9 +600,16 @@ function forum_add_discussion($discussion) {
     $post->mailed      = 0;
     $post->subject     = $discussion->name;
     $post->message     = $discussion->intro;
+    $post->attachment  = "";
+    $post->forum       = $discussion->forum;
+    $post->course      = $discussion->course;
 
     if (! $post->id = insert_record("forum_posts", $post) ) {
         return 0;
+    }
+
+    if ($post->attachment = forum_add_attachment($post, $discussion->attachment)) {
+        set_field("forum_posts", "attachment", $post->attachment, "id", $post->id); //ignore errors
     }
 
     // Now do the real module entry
@@ -473,11 +618,14 @@ function forum_add_discussion($discussion) {
     $discussion->timemodified = $timenow;
 
     if (! $discussion->id = insert_record("forum_discussions", $discussion) ) {
+        delete_records("forum_posts", "id", $post->id);
         return 0;
     }
 
     // Finally, set the pointer on the post.
     if (! set_field("forum_posts", "discussion", $discussion->id, "id", $post->id)) {
+        delete_records("forum_posts", "id", $post->id);
+        delete_records("forum_discussions", "id", $discussion->id);
         return 0;
     }
 
@@ -492,14 +640,15 @@ function forum_delete_discussion($discussion) {
 
     if ($posts = get_records("forum_posts", "discussion", $discussion->id)) {
         foreach ($posts as $post) {
+            $post->course = $discussion->course;
+            $post->forum  = $discussion->forum;
             if (! delete_records("forum_ratings", "post", "$post->id")) {
                 $result = false;
             }
+            if (! forum_delete_post($post)) {
+                $result = false;
+            }
         }
-    }
-
-    if (! delete_records("forum_posts", "discussion", "$discussion->id")) {
-        $result = false;
     }
 
     if (! delete_records("forum_discussions", "id", "$discussion->id")) {
@@ -510,9 +659,15 @@ function forum_delete_discussion($discussion) {
 }
 
 
-function forum_delete_post($postid) {
-   if (delete_records("forum_posts", "id", $postid)) {
-       delete_records("forum_ratings", "post", $postid);  // Just in case
+function forum_delete_post($post) {
+   if (delete_records("forum_posts", "id", $post->id)) {
+       delete_records("forum_ratings", "post", $post->id);  // Just in case
+       if ($post->attachment) {
+           $discussion = get_record("forum_discussions", "id", $post->discussion);
+           $post->course = $discussion->course;
+           $post->forum  = $discussion->forum;
+           forum_delete_old_attachments($post);
+       }
        return true;
    }
    return false;
@@ -547,7 +702,7 @@ function forum_print_user_discussions($courseid, $userid) {
             $inforum = get_string("inforum", "forum", "<A HREF=\"$CFG->wwwroot/mod/forum/view.php?f=$discussion->forumid\">$discussion->forumname</A>");
             $discussion->subject .= " ($inforum)";
             $ownpost = ($discussion->userid == $USER->id);
-            forum_print_post($discussion, $course->id, $ownpost, $reply=0, $link=1, $assessed=false);
+            forum_print_post($discussion, $courseid, $ownpost, $reply=0, $link=1, $assessed=false);
             echo "<BR>\n";
         }
     }
@@ -768,6 +923,11 @@ function forum_cron () {
                     $posttext .= "---------------------------------------------------------------------\n";
                     $posttext .= strip_tags($post->message);
                     $posttext .= "\n\n";
+                    if ($post->attachment) {
+                        $post->course = $course->id;
+                        $post->forum = $forum->id;
+                        $posttext .= forum_print_attachments($post, "text");
+                    }
                     $posttext .= "---------------------------------------------------------------------\n";
                     $posttext .= get_string("postmailinfo", "forum", $course->shortname)."\n";
                     $posttext .= "$CFG->wwwroot/mod/forum/post.php?reply=$post->id";

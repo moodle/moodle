@@ -5,7 +5,7 @@
 //  This fragment is called by /admin/index.php
 ////////////////////////////////////////////////////////////////////////////////
 
-$module->version  = 2002082000;
+$module->version  = 2002082900;
 $module->cron     = 60;
 
 function forum_upgrade($oldversion) {
@@ -37,6 +37,10 @@ function forum_upgrade($oldversion) {
   if ($oldversion < 2002080100) {
     execute_sql("INSERT INTO log_display VALUES ('forum', 'view subscribers', 'forum', 'name') ");
     execute_sql("INSERT INTO log_display VALUES ('forum', 'update', 'forum', 'name') ");
+  }
+
+  if ($oldversion < 2002082900) {
+    execute_sql(" ALTER TABLE `forum_posts` ADD `attachment` VARCHAR(100) NOT NULL AFTER `message` ");
   }
 
   return true;
