@@ -224,20 +224,8 @@
     if (empty($CFG->lang)) {
         $CFG->lang = "en";
     }
-    if (!empty($SESSION->lang) and ($SESSION->lang != $CFG->lang) ) {
-        $CFG->locale = get_string('locale');
-    } else if (!empty($USER->lang) and ($USER->lang != $CFG->lang) ) {
-        $CFG->locale = get_string('locale');
-    } else if (empty($CFG->locale)) {
-        $CFG->locale = get_string('locale');
-        set_config('locale', $CFG->locale);   // cache it to save lookups in future
-    }
-    setlocale (LC_TIME, $CFG->locale);
-    setlocale (LC_COLLATE, $CFG->locale);
 
-    if ($CFG->locale != 'tr_TR') {            // To workaround a well-known PHP bug with Turkish
-        setlocale (LC_CTYPE, $CFG->locale);
-    }
+    moodle_setlocale();
 
     if (!empty($CFG->opentogoogle)) {
         if (empty($_SESSION['USER'])) {

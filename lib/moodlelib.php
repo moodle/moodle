@@ -2300,6 +2300,30 @@ function moodle_needs_upgrading() {
 
 /// MISCELLANEOUS ////////////////////////////////////////////////////////////////////
 
+function moodle_setlocale($locale='') {
+
+    global $SESSION, $USER, $CFG;
+
+    if ($locale) {
+        $CFG->locale = $locale;
+    } else if (!empty($CFG->courselang) and ($CFG->courselang != $CFG->lang) ) {
+        $CFG->locale = get_string('locale');
+    } else if (!empty($SESSION->lang) and ($SESSION->lang != $CFG->lang) ) {
+        $CFG->locale = get_string('locale');
+    } else if (!empty($USER->lang) and ($USER->lang != $CFG->lang) ) {
+        $CFG->locale = get_string('locale');
+    } else if (empty($CFG->locale)) {
+        $CFG->locale = get_string('locale');
+        set_config('locale', $CFG->locale);   // cache it to save lookups in future
+    }
+    setlocale (LC_TIME, $CFG->locale);
+    setlocale (LC_COLLATE, $CFG->locale);
+
+    if ($CFG->locale != 'tr_TR') {            // To workaround a well-known PHP bug with Turkish
+        setlocale (LC_CTYPE, $CFG->locale);
+    }
+}
+
 function moodle_strtolower ($string, $encoding='') {
 /// Converts string to lowercase using most compatible  function available
     if (function_exists('mb_strtolower')) {
