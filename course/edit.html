@@ -4,28 +4,28 @@
 	<td><P><? print_string("fullname") ?>:</td>
 	<td><input type="text" name="fullname" size=50 value="<? p($form->fullname) ?>">
     <? helpbutton("coursefullname", get_string("fullname")) ?>
-	<? formerr($err["fullname"]) ?>
+    <? if (isset($err["fullname"])) formerr($err["fullname"]); ?>
 	</td>
 </tr>
 <tr valign=top>
 	<td><P><? print_string("shortname") ?>:</td>
 	<td><input type="text" name="shortname" size=10 value="<? p($form->shortname) ?>">
     <? helpbutton("courseshortname", get_string("shortname")) ?>
-	<? formerr($err["shortname"]) ?>
+    <? if (isset($err["shortname"])) formerr($err["shortname"]); ?>
 	</td>
 </tr>
 <tr valign=top>
 	<td><P><? print_string("summary") ?>:</td>
 	<td><TEXTAREA NAME=summary COLS=50 ROWS=10 WRAP=virtual><? p($form->summary) ?></TEXTAREA>
     <? helpbutton("text", get_string("helptext")) ?>
-	<? formerr($err["summary"]) ?>
+    <? if (isset($err["summary"])) formerr($err["summary"]); ?>
 	</td>
 </tr>
 <tr valign=top>
 	<td><P><? print_string("enrolmentkey") ?>:</td>
 	<td><input type="text" name="password" size=25 value="<? p($form->password) ?>">
     <? helpbutton("enrolmentkey", get_string("enrolmentkey")) ?>
-	<? formerr($err["password"]) ?>
+    <? if (isset($err["password"])) formerr($err["password"]); ?>
 	</td>
 </tr>
 <tr valign=top>
@@ -43,7 +43,6 @@
 	<td><? 
            choose_from_menu ($form->categories, "category", "$form->category", "");
            helpbutton("coursecategory", get_string("category"));
-	       formerr($err["category"]);
         ?>
 	</td>
 </tr>
@@ -52,7 +51,6 @@
 	<td><? 
            choose_from_menu ($form->courseformats, "format", "$form->format", "");
            helpbutton("courseformats", get_string("courseformats"));
-	       formerr($err["format"]);
         ?>
 	</td>
 </tr>
@@ -75,7 +73,6 @@
                         "10" => "10 $newsitems");
        choose_from_menu ($options, "newsitems", "$form->newsitems", "");
        helpbutton("coursenewsitems", get_string("newsitemsnumber"));
-       formerr($err["newsitems"]);
     ?>
     </td>
 </tr>
@@ -84,7 +81,6 @@
 	<td><?
            print_date_selector("startday", "startmonth", "startyear", $form->startdate);
            helpbutton("coursestartdate", get_string("startdate"));
-	       formerr($err["startdate"]);
 	?></td>
 </tr>
 <tr valign=top>
@@ -93,9 +89,8 @@
            for ($i=1; $i<=52; $i++) {
               $sectionmenu[$i] = "$i";
            }
-           choose_from_menu ($sectionmenu, "numsections", "$form->numsections");
+           choose_from_menu ($sectionmenu, "numsections", "$form->numsections", "");
            helpbutton("coursenumsections", get_string("numberweeks"));
-	       formerr($err["numsections"]);
 	?></td>
 </tr>
 <tr valign=top>
@@ -111,25 +106,29 @@
 <tr valign=top>
 	<td><P><? print_string("wordforteacher") ?>:</td>
 	<td><input type="text" name="teacher" size=25 value="<? p($form->teacher) ?>">
-	(<? print_string("wordforteachereg") ?>) <? formerr($err["teacher"]) ?>
+	(<? print_string("wordforteachereg") ?>) 
+    <? if (isset($err["teacher"])) formerr($err["teacher"]); ?>
 	</td>
 </tr>
 <tr valign=top>
 	<td><P><? print_string("wordforteachers") ?>:</td>
 	<td><input type="text" name="teachers" size=25 value="<? p($form->teachers) ?>">
-	(<? print_string("wordforteacherseg") ?>) <? formerr($err["teachers"]) ?>
+	(<? print_string("wordforteacherseg") ?>)
+    <? if (isset($err["teachers"])) formerr($err["teachers"]); ?>
 	</td>
 </tr>
 <tr valign=top>
 	<td><P><? print_string("wordforstudent") ?>:</td>
 	<td><input type="text" name="student" size=25 value="<? p($form->student) ?>">
-	(<? print_string("wordforstudenteg") ?>) <? formerr($err["student"]) ?>
+	(<? print_string("wordforstudenteg") ?>) 
+    <? if (isset($err["student"])) formerr($err["student"]); ?>
 	</td>
 </tr>
 <tr valign=top>
 	<td><P><? print_string("wordforstudents") ?>:</td>
 	<td><input type="text" name="students" size=25 value="<? p($form->students) ?>">
-	(<? print_string("wordforstudentseg") ?>) <? formerr($err["students"]) ?>
+	(<? print_string("wordforstudentseg") ?>) 
+    <? if (isset($err["students"])) formerr($err["students"]); ?>
 	</td>
 </tr>
 <tr>

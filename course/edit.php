@@ -76,7 +76,7 @@
 
 /// Otherwise fill and print the form.
 
-    if (!$form) {
+    if (empty($form)) {
         if ($course) {
             $form = $course;
         } else {
@@ -94,6 +94,10 @@
             $form->showrecent = 1;
             $form->category = 1;
         }
+    }
+
+    if (empty($focus)) {
+        $focus = "";
     }
 
     $form->categories = get_records_select_menu("course_categories", "", "name", "id,name");
