@@ -1,6 +1,6 @@
 <?PHP  // $Id$
 
-function glossary_show_entry_encyclopedia($course, $cm, $glossary, $entry, $mode="",$hook="",$printicons=1,$ratings=NULL) {
+function glossary_show_entry_encyclopedia($course, $cm, $glossary, $entry, $mode="",$hook="",$printicons=1,$ratings=NULL, $aliases=true) {
     global $THEME, $CFG, $USER;
 
     $colour = $THEME->cellheading2;
@@ -47,9 +47,14 @@ function glossary_show_entry_encyclopedia($course, $cm, $glossary, $entry, $mode
             glossary_print_entry_attachment($entry,"",$align,false);
         }
         glossary_print_entry_definition($entry);
-
-        $return = glossary_print_entry_lower_section($course, $cm, $glossary, $entry,$mode,$hook,$printicons,$ratings);
-        echo ' ';
+        if ($printicons or $ratings or $aliases) {
+            echo "</td></tr>";
+            echo "\n<td bgcolor=\"$colour\" width=35 valign=top class=\"forumpostside\">&nbsp;</td>";
+            echo "\n<td width=100% colspan=\"2\" bgcolor=\"$THEME->cellcontent\" class=\"forumpostmessage\">";
+    
+            $return = glossary_print_entry_lower_section($course, $cm, $glossary, $entry,$mode,$hook,$printicons,$ratings, $aliases);
+            echo ' ';
+        }
     } else {
         echo "<center>";
         print_string("noentry", "glossary");
@@ -60,6 +65,18 @@ function glossary_show_entry_encyclopedia($course, $cm, $glossary, $entry, $mode
     echo "</table>\n";
     
     return $return;
+}
+
+function glossary_print_entry_encyclopedia($course, $cm, $glossary, $entry, $mode="", $hook="", $printicons=1, $ratings=NULL) {
+
+    //The print view for this format is exactly the normal view, so we use it
+
+    //Take out autolinking in definitions un print view
+    $entry->definition = '<nolink>'.$entry->definition.'</nolink> ';
+
+    //Call to view function (without icons, ratings and aliases) and return its result
+    return glossary_show_entry_encyclopedia($course, $cm, $glossary, $entry, $mode, $hook, false, false, false);
+
 }
 
 ?>
