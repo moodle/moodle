@@ -60,7 +60,7 @@
     $strduedate = userdate($assignment->timedue)." ($strdifference)";
 
     print_simple_box_start("CENTER");
-    print_heading(get_string("assignmentdetails", "assignment").":", "CENTER");
+    print_heading($assignment->name, "CENTER");
     print_simple_box_start("CENTER");
     echo "<B>".get_string("duedate", "assignment")."</B>: $strduedate<BR>";
     echo "<B>".get_string("maximumgrade")."</B>: $assignment->grade<BR>";
