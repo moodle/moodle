@@ -816,6 +816,8 @@ function instance_config_save($data) {
 
     <p>Note that $data does not hold all of the submitted POST data because Moodle adds some hidden fields to the form in order to be able to process it. However, before calling this method it strips the hidden fields from the received data and so when this method is called only the "real" configuration data remain.</p>
 
+    <p>If you want to update the stored copy of the configuration data at run time (for example to persist some changes you made programmatically), you should not use this method. The correct procedure for that purpose is to call <a class="function_title" href="#method_instance_config_commit">instance_config_commit</a>.</p>
+
     <p>You should return a boolean value denoting the success or failure of your method's actions.</p>
 
 </li>
@@ -876,6 +878,17 @@ function specialization() {
 
 <ul>
 
+<li id="method_instance_config_commit">
+    <div class="function_title">instance_config_commit</div>
+    <pre class="code">
+function instance_config_commit() {
+    return set_field('block_instance',
+                     'configdata', base64_encode(serialize($this->config)),
+                     'id', $this->instance->id);
+}</pre>
+
+    <p>This method saves the current contents of <a class="variable_title" href="#variable_config">$this->config</a> to the database. If you need to make a change to the configuration settings of a block instance at run time (and not through the usual avenue of letting the user change it), just make the changes you want to <a class="variable_title" href="#variable_config">$this->config</a> and then call this method.</p>
+</li>
 <li id="method_get_content_type">
     <div class="function_title">get_content_type</div>
     <pre class="code">
@@ -966,7 +979,7 @@ function name() {
 
     <p>The variable is initialized just after the block object is constructed, immediately before <a class="function_title" href="#method_specialization">specialization</a> is called for the object. It is possible that the block has no instance configuration, in which case the variable will be NULL.</p>
 
-    <p>It is obvious that there is a direct relationship between this variable and the configdata field in the mdl_block_instance table. However, it is <em>strongly</em> advised that you refrain from acessing the configdata field yourself. If you absolutely must update its value at any time, it is recommended that you call the method <a class="function_title" href="#method_instance_config_save">instance_config_save</a> to do the actual work.</p>
+    <p>It is obvious that there is a direct relationship between this variable and the configdata field in the mdl_block_instance table. However, it is <em>strongly</em> advised that you refrain from accessing the configdata field yourself. If you absolutely must update its value at any time, it is recommended that you call the method <a class="function_title" href="#method_instance_config_commit">instance_config_commit</a> to do the actual work.</p>
 
   </li>
 
