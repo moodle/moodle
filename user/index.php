@@ -14,9 +14,8 @@
     optional_variable($lastinitial, "");     // only show students with this last initial
     optional_variable($firstinitial, "");    // only show students with this first initial
     optional_variable($perpage, "20");       // how many per page
-    optional_variable($_GET['format'], '');  // 'brief' for less details, '' for more
-
-    $compactmode = ($_GET['format'] == 'brief');
+    $format = optional_param('format', '');  // 'brief' for less details, '' for more
+    $compactmode = ($format == 'brief');
 
     if (! $course = get_record("course", "id", $id)) {
         error("Course ID is incorrect");
@@ -65,7 +64,7 @@
             'brief' => get_string('detailedless'),
     );
     // [pj] Oh, the things I do to put it in one line... :P
-    echo str_replace('<form', '<form style="display: inline;"', popup_form ("index.php?id=$id&amp;format=", $formatmenu, 'formatmenu', $_GET['format'], '', '', '', true));
+    echo str_replace('<form', '<form style="display: inline;"', popup_form ("index.php?id=$id&amp;format=", $formatmenu, 'formatmenu', $format, '', '', '', true));
     echo '</div>';
 
     $exceptions = ''; // This will be a list of userids that are shown as teachers and thus
@@ -217,7 +216,7 @@
 
 function print_user_table($users, $isteacher) {
         // Print one big table with abbreviated info
-        global $sort, $course, $dir, $CFG;
+        global $format, $sort, $course, $dir, $CFG;
 
         $columns = array("firstname", "lastname", "city", "country", "lastaccess");
 
@@ -252,7 +251,7 @@ function print_user_table($users, $isteacher) {
                 }
                 $columnicon = " <img src=\"$CFG->pixpath/t/$columnicon.gif\" alt=\"\"/>";
             }
-            $$column = "<a href=\"index.php?id=$course->id&amp;sort=$column&amp;dir=$columndir\">".$colname["$column"]."</a>$columnicon";
+            $$column = "<a href=\"index.php?id=$course->id&amp;sort=$column&amp;dir=$columndir&amp;format=$format\">".$colname["$column"]."</a>$columnicon";
         }
 
         foreach ($users as $key => $user) {
