@@ -71,7 +71,7 @@
 
 /// Print a help notice about the need to use this page
 
-    if (empty($add) and empty($remove)) {
+    if (empty($add) and empty($remove) and empty($search)) {
         $note = get_string("assignstudentsnote");
         if ($course->password) {
             $note .= "<p>".get_string("assignstudentspass", "", "<a href=\"edit.php?id=$course->id\">$course->password</a>");
@@ -80,7 +80,7 @@
     }
 
 /// Get all existing students for this course.
-    $students = get_course_students($course->id);
+    $students = get_course_students($course->id, "u.lastname ASC, u.firstname ASC");
 
 /// Print the lists of existing and potential students
 
@@ -108,7 +108,7 @@
 
 /// Print list of potential students
 
-    $usercount = get_users(false, $search, true, $studentlist);
+    $usercount = get_users(false, $search, true, $studentlist, "lastname ASC, firstname ASC");
 
     if ($usercount == 0) {
         echo "<p align=center>$strnopotentialstudents</p>";
