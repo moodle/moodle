@@ -182,9 +182,9 @@
         //Iterate over comments
         for($i = 0; $i < sizeof($comments); $i++) {
             $com_info = $comments[$i];
-            traverse_xmlize($com_info);                                                                 //Debug
-            print_object ($GLOBALS['traverse_array']);                                                  //Debug
-            $GLOBALS['traverse_array']="";                                                              //Debug
+            //traverse_xmlize($com_info);                                                                 //Debug
+            //print_object ($GLOBALS['traverse_array']);                                                  //Debug
+            //$GLOBALS['traverse_array']="";                                                              //Debug
 
             //Now, build the GLOSSARY_COMMENTS record structure
             $comment->entryid = $new_entry_id;
