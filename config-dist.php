@@ -34,7 +34,7 @@
 // will be stored.  This database must already have been created
 // and a username/password created to access it.   See doc/INSTALL.
 
-$CFG->dbtype    = "mysql";       // eg mysql (postgres7, oracle, access coming soon)
+$CFG->dbtype    = "mysql";       // eg mysql (postgres7, oracle, access etc coming soon)
 $CFG->dbhost    = "localhost";   // eg localhost 
 $CFG->dbname    = "moodle";      // eg moodle
 $CFG->dbuser    = "username";
@@ -59,7 +59,9 @@ $CFG->dirroot   = "/web/moodle";
 $CFG->dataroot  = "/home/moodledata";
 
 
-// Choose a theme from the "themes" folder.  Default theme is "standard".
+// Choose a theme from the "themes" folder.  Current choices include 
+// "standard" and "standardblue", but feel free to copy one and 
+// make new themes!
 
 $CFG->theme     = "standard";
 
@@ -85,8 +87,8 @@ $CFG->locale     = "en";
 $CFG->smtphosts  = "";
 
 
-// There is no way, currently, to automatically tell whether the graphic
-// library GD is version 1.* or 2.*.  Specify that here (either 1 or 2).
+// There is no way, currently, for PHP to automatically tell whether the 
+// graphic library GD is version 1.* or 2.*.  Specify here (either 1 or 2).
 
 $CFG->gdversion = 1;
 
