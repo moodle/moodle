@@ -78,18 +78,18 @@
                 echo '<img src="'.$CFG->pixpath.'/i/edit.gif" height="16" width="16" alt="" /></a>';
             }
             echo '</h2>';
-            if($compactmode) {
+            if ($compactmode) {
                 // First of all, remove teachers with no authority
                 $teachers = array_filter($teachers, create_function('$t','return ($t->authority > 0);'));
 
                 // And now show the remainder as usual
                 $exceptions .= implode(',', array_keys($teachers));
                 print_user_table($teachers, $isteacher);
-            }
-            else {
+
+            } else {
                 foreach ($teachers as $teacher) {
                     if ($isseparategroups) {
-                        if ($teacher->editall or ismember($currentgroup, $teacher->id)) {
+                        if ($teacher->editall or ismember($currentgroup, $teacher->id) and ($teacher->authority > 0)) {
                             print_user($teacher, $course);
                             $exceptions .= "$teacher->id,";
                         }
