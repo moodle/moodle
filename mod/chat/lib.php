@@ -130,7 +130,7 @@ function chat_get_users($chatid) {
 
     global $CFG;
    
-    return get_records_sql("SELECT u.id, u.firstname, u.lastname, u.picture 
+    return get_records_sql("SELECT u.id, u.firstname, u.lastname, u.picture, c.lastmessageping
                               FROM {$CFG->prefix}chat_users c,
                                    {$CFG->prefix}user u
                              WHERE c.chatid = '$chatid'
@@ -158,7 +158,7 @@ function chat_login_user($chatid, $version="header_js") {
     $chatuser->userid   = $USER->id;
     $chatuser->version  = $version;
     $chatuser->ip       = $USER->lastIP;
-    $chatuser->lastping = time();
+    $chatuser->lastping = $chatuser->firstping = $chatuser->lastmessageping = time();
     $chatuser->sid      = random_string(32);
 
     if (!insert_record("chat_users", $chatuser)) {

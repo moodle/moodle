@@ -3,9 +3,18 @@
 require("../../../config.php");
 require("../lib.php");
 
+require_variable($chat_sid);
+
 if (!$chatuser = get_record("chat_users", "sid", $chat_sid)) {
     echo "Not logged in!";
+    die;
 }
+
+if (!$chat = get_record("chat", "id", $chatuser->chatid)) {
+    error("No chat found");
+}
+
+require_login($chat->course);
 
 ?>
  

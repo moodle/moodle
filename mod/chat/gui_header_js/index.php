@@ -13,6 +13,8 @@ if (!$course = get_record("course", "id", $chat->course)) {
     error("Could not find the course this belongs to!");
 }
 
+require_login($course->id);
+
 if (!$chat_sid = chat_login_user($chat->id, "header_js")) {
     error("Could not log in to chat room!!");
 }

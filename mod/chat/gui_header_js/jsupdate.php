@@ -5,7 +5,15 @@ require("../lib.php");
 
 if (!$chatuser = get_record("chat_users", "sid", $chat_sid)) {
     echo "Not logged in!";
+    die;
 }
+
+if (!$chat = get_record("chat", "id", $chatuser->chatid)) {
+    error("No chat found");
+}
+
+require_login($chat->course);
+
 
 if ($message = chat_get_latest_message($chatuser->chatid)) {
     $chat_newlasttime = $message->timestamp;

@@ -11,6 +11,13 @@ if (!$chatuser = get_record("chat_users", "sid", $chat_sid)) {
 }
 
 if (!$chat = get_record("chat", "id", $chatuser->chatid)) {
+    error("No chat found");
+}
+
+require_login($chat->course);
+
+
+if (!$chat = get_record("chat", "id", $chatuser->chatid)) {
     error("Could not find chat! id = $chatuser->chatid");
 }
 
@@ -51,12 +58,28 @@ header("Refresh: ".CHAT_REFRESH_USERLIST."; URL=users.php?chat_sid=".$chat_sid);
 
 print_header();
 
+$timenow = time();
+
+$stridle   = get_string("idle", "chat");
+$str->day   = get_string("day");
+$str->days  = get_string("days");
+$str->hour  = get_string("hour");
+$str->hours = get_string("hours");
+$str->min   = get_string("min");
+$str->mins  = get_string("mins");
+$str->sec   = get_string("sec");
+$str->secs  = get_string("secs");
+
 echo "<table width=\"100%\">";
 foreach ($chatusers as $chatuser) {
+    $lastping = $timenow - $chatuser->lastmessageping;
     echo "<tr><td width=35>";
     print_user_picture($chatuser->id, 0, $chatuser->picture, false, false, false);
     echo "</td><td valign=center>";
-    echo "<p><font size=1>$chatuser->firstname $chatuser->lastname</font></p>";
+    echo "<p><font size=1>";
+    echo "$chatuser->firstname $chatuser->lastname<br />";
+    echo "<font color=\"#888888\">$stridle: ".format_time($lastping, $str)."</font>";
+    echo "</font></p>";
     echo "<td></tr>";
 }
 echo "</table>";
