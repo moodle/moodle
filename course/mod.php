@@ -6,7 +6,7 @@
     require("lib.php");
 
     if (isset($cancel)) {  
-        if ($SESSION->returnpage) {
+        if (!empty($SESSION->returnpage)) {
             $return = $SESSION->returnpage;
             unset($SESSION->returnpage);
             save_session("SESSION");
@@ -91,7 +91,7 @@
             error("Could not cache module information!");
         }
 
-        if ($SESSION->returnpage) {
+        if (!empty($SESSION->returnpage)) {
             $return = $SESSION->returnpage;
             unset($SESSION->returnpage);
             save_session("SESSION");
