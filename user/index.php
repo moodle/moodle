@@ -85,8 +85,10 @@
 
     if (0 < $totalcount and $totalcount < USER_SMALL_CLASS) {    // Print simple listing
 
-        foreach ($students as $student) {
-            print_user($student, $course, $string);
+        if ($students = get_course_students($course->id, $dsort, $dir)) {
+            foreach ($students as $student) {
+                print_user($student, $course, $string);
+            }
         }
 
     } else if ($students = get_course_students($course->id, $dsort, $dir, $page*$perpage, $perpage)) {
