@@ -1,0 +1,221 @@
+<head>
+    
+<title>Documentazione Moodle: Note di rilascio vecchie versioni</title>
+	
+<link rel="stylesheet" href="docstyles.css" type="TEXT/CSS">
+    
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    
+<style type="text/css">
+       dt {font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif; font-weight: bold;}
+       dd {margin-bottom:1em;} 
+    </style>
+</head>
+
+<body bgcolor="#FFFFFF">
+<h1>Note di rilascio vecchie versioni</h1>
+<h3>Novit&agrave; in Moodle 1.1.1 (10 settembre 2003):</h3>
+<ul>
+  <dl>
+    <dt>&nbsp; </dt>
+    <dt>Perfezionamenti Generali</dt>
+  </dl>
+  <dl>
+    <dd> 
+      <ul>
+        <li>Miglioramenti nella traduzione di molte lingue</li>
+        <li>Mantiene stabile il frame quando si cambiano le lingue nella documentazione</li>
+        <li>Sono stati rimossi tutti i tag PHP brevi... short_tags non &egrave; pi&ugrave; richiesto</li>
+        <li>Collegamento ai risultati di ricerca del forum utilizzando il tag di collegamento per un contesto migliore</li>
+        <li>&Egrave; stato rimosso il target dal collegamento &quot;cancella&quot; sulla pagina dei cambiamenti dell'utente.</li>
+        <li>&quot;Ricerca&quot; su formato relazionale spostata pi&ugrave; vicina alla parte superiore per impedire l'auto-scorrimento del browser </li>
+        <li>Il reindirizzamento delle pagine &egrave; pi&ugrave; veloce e non provoca pi&ugrave; la memorizzazione della pagina intermedia all'interno della cronologia IE</li>
+        <li>Nella visualizzazione dei corsi, gli elenchi dei corsi sono migliorati, comprese maggiori informazioni.</li>
+        <li>Gli elenchi delle categorie mostrano i corsi per intero quando ci sono meno di dieci corsi.</li>
+        <li>I corsi non visibili sono sempre mostrati come ultimi in Corsi</li>
+        <li>I creatori dei corsi sono ora in grado di vedere tutte le categorie e i corsi nascosti.</li>
+        <li>Sono stati aggiunti degli stili per i nomi delle categorie e dei corsi.</li>
+        <li>Sono stati rimossi i tag dal testo delle domande sul report &quot;Statistiche semplici&quot; del questionario</li>
+        <li>Sono state aggiunte delle percentuali ai dati scaricati dal report &quot;Statistiche semplici&quot; </li>
+        <li>Consente il collegamento esterno profondo utilizzando l'account da ospite ?username=guest</li>
+        <li>Qualsiasi amministratore &egrave; ora in grado di aggiungere/togliere i creatori del corso</li>
+        <li>L'amministratore principali ora può aggiornare il proprio nome utente/password anche con l'autenticazione esterna</li>
+        <li>&Egrave; ora possibile specificare che i quiz sono &quot;senza voto&quot; e non saranno mostrati voti</li>
+        <li>Quando si modifica una lingua, si creano i file di stringhe mancanti laddove sia possibile</li>
+        <li>&Egrave; stato corretto l'errore nei calcoli dei dati del diario settimanale</li>
+        <li>&Egrave; stato corretto l'errore nel config.php che non faceva funzionare l'error_reporting</li>
+        <li>&Egrave; stato corretto l'errore nella modifica del nome utente con delle citazioni al suo interno</li>
+        <li>&Egrave; stato corretto l'errore nell'offuscamento della posta elettronica per gli indirizzi e-mail con numeri al loro interno</li>
+        <li>&Egrave; stato corretto lo schema PostgreSQL mancante per il modulo della chat</li>
+        <li>Sono stati corretti numerosi refusi nel codice di aggiornamento PostgreSQL</li>
+        <li>Sono state corrette alcune variabili non inizializzate</li>
+        <li>Sono stati corretti diversi errori nel modulo Workshop</li>
+      </ul>
+    </dd>
+  </dl>
+</ul>
+<hr>
+
+
+
+<h3>Nuovo in Moodle 1.1 (28 agosto 2003):</h3>
+<ul>
+  <dl>
+    <dt>&nbsp; </dt>
+    <dt>Principali Cambiamenti</dt>
+  </dl>
+  <dl>
+    <dd> 
+      <ul>
+        <li>Sistema di <strong>copie di sicurezza</strong>completamente nuovo per il salvataggio ed il ripristino dei corsi (grazie, Eloy!)</li>
+        <li>Un nuovo modulo <strong>workshop</strong> per l'assegnazione di voti tra pari (grazie, Ray!)</li>
+        <li>Un nuovo modulo della <strong>chat</strong> per discussioni simultanee</li>
+        <li>Un <strong>course manager</strong> tutto nuovo per gestire un numero di corsi molto ampio (testato con 3700)</li>
+        <li><strong>Scale di assegnazione dei voti</strong>definite in maniera personalizzata utilizzabili per un intero corso</li>
+        <li>Miglioramenti nell'esecuzione di molte aree.</li>
+      </ul>
+    </dd>
+  </dl>
+  <dl>
+    <dt>Generale</dt>
+  </dl>
+  <dl>
+    <dd> 
+      <ul>
+        <li>Pulizia dell'intera organizzazione del menu dell'amministratore per renderla pi&ugrave; chiara</li>
+        <li>&Egrave; possibile disporre le categorie una dentro l'altra ed ordinarle alfabeticamente o manualmente</li>
+        <li>&Egrave; possibile nascondere agli studenti corsi ed intere categorie</li>
+        <li>&Egrave; possibile ricercare parole chiave all'interno delle descrizioni di corsi e dei nomi</li>
+        <li>Ampie categorie sono ora completamente paginate</li>
+        <li>&Egrave; stata migliorata la procedura di cache di rete per fogli di stile ed immagini</li>
+        <li>Quando ci si connette, sulla home page si visualizza &quot;Corsi&quot;.</li>
+        <li>Inclusione di pagine senza collegamento per visualizzare TUTTE le foto utenti immediatamente (consultare /foto utenti)</li>
+        <li>La funzione "secureforms" &egrave; ora impostata in maniera predefinita su OFF.</li>
+        <li>Ora a Moodle non interessa se la funzione &quot;magic quotes&quot; sia attivata o meno.</li>
+        <li>Le immagini in /pix sono state riorganizzate e riordinate</li>
+        <li>L'e-mail in HTML &egrave; formattata in maniera migliore per una pi&ugrave; vasta compatibilit&agrave;</li>
+        <li>I rimbalzi della posta sono ora inviati all'utente amministratore</li>
+        <li>Le operazioni Cron sono migliori (meno utilizzate da CPU) e le iscrizioni duplicate ora sono pulite</li>
+        <li>&Egrave; stata migliorata la visualizzazione degli accessi con paginazione infinita ed una maggiore flessibilit&agrave;</li>
+        <li>I grafici di accesso dell'utente ora funzionano a livello di sito (mostrando TUTTE le connessioni al sito)</li>
+        <li>Coloro che hanno degli account manuali possono ora recuperare la loro password</li>
+        <li>&Egrave; stato migliorato il sistema di definizione/stampa dei file di help per i moduli delle attivit&agrave; principali</li>
+        <li>I moduli delle attivit&agrave; ora possono avere delle impostazioni</li>
+        <li>Gli indirizzi di posta elettronica adesso sono completamente nascosti (per ingannare i ragni della rete)</li>
+        <li>&Egrave; ora disponibile un indice per i file di help</li>
+        <li>La biblioteca (aggiunta da Mark Kimes) &egrave; adesso supportata se installata (consultare i contributi di Moodle per le risorse della Biblioteca)</li>
+      </ul>
+    </dd>
+  </dl>
+  <dl>
+    <dt></dt>
+    <dt>Corsi</dt>
+  </dl>
+  <dl>
+    <dd> 
+      <ul>
+        <li>&Egrave; ora possibile togliere ai docenti i privilegi di modifica dei corsi</li>
+        <li>I docenti adesso possono registrare gli studenti manualmente se lo desiderano</li>
+        <li>La gestione del docente &egrave; ora tutta organizzata in una sola interfaccia</li>
+        <li>&Egrave; possibile spostare le attivit&agrave; a qualsiasi distanza con due clic</li>
+        <li>Gli argomenti/settimane ora possono essere spostati su e gi&ugrave;</li>
+        <li>Sono stati aggiunti dei menu a comparsa per passare velocemente da argomenti a settimane quando si chiudono</li>
+        <li>Durante l'auto iscrizione, gli studenti ricevono una notifica ed &egrave; loro data la possibilit&agrave; di cancellarsi</li>
+        <li>I docenti e gli studenti visualizzano l'elenco di &quot;Corsi&quot; sulle home page del corso.</li>
+        <li>&Egrave; possibile nascondere i voti agli studenti qualora non servano</li>
+      </ul>
+    </dd>
+  </dl>
+  <dl>
+    <dt></dt>
+    <dt>Lingue</dt>
+  </dl>
+  <dl>
+    <dd> 
+      <ul>
+        <li>Sono stati aggiunti l'<strong>ungherese</strong> ed il <strong>greco</strong> e ci sono molti altri aggiornamenti. Come al solito, i pacchetti linguistici all'interno di questa versione potrebbero anche non essere ancora del tutto completi. &Egrave; sempre possibile scaricare i pacchetti linguistici pi&ugrave; nuovi da <a href="http://moodle.org/download/lang/">http://moodle.org/download/lang/</a>.</li>
+        <li>Aggiornamenti e miglioramenti per la maggior parte delle lingue</li>
+        <li>Le lingue adesso sono dotate di una lingua madre (per visualizzare le stringhe mancanti)</li>
+        <li>Ci sono dei miglioramenti nella visualizzazione dei luoghi e dell'ora in diverse lingue</li>
+        <li>es_mx &egrave; in corso di eliminazione a favore di &quot;es&quot; (Spagnolo Internazionale)</li>
+      </ul>
+    </dd>
+  </dl>
+  <dl>
+    <dt></dt>
+    <dt>Forum</dt>
+  </dl>
+  <dl>
+    <dd> 
+      <ul>
+        <li>La ricerca &egrave; molto migliorata, con molteplici parole chiave, paginazione, ecc.</li>
+        <li>L'assegnazione dei voti del forum può essere o disattivata, utilizzata da tutti, o utilizzata solo dai docenti</li>
+        <li>L'assegnazione dei voti del forum può utilizzare delle scale di valutazione personalizzate o dei numeri</li>
+        <li>&Egrave; possibile impostare una serie di date al fine di limitare gli interventi a cui &egrave; possibile assegnare un voto.</li>
+        <li>L'amministratore ora ha accesso ad alcune impostazioni tramite Amministrazione -&gt; Moduli -&gt; Forums </li>
+        <li>Dopo aver modificato un intervento, si comunica all'utente di inviare un intervento nel contesto</li>
+        <li>Le immagini allegate si visualizzano allineate</li>
+        <li>Le copie delle e-mail in formato di testo normale ora stampano gli URL per bene</li>
+      </ul>
+    </dd>
+  </dl>
+  <dl>
+    <dt>Quiz</dt>
+  </dl>
+  <dl>
+    <dd> 
+      <ul>
+        <li>Nuovo tipo di domanda: Risposte Incorporate (Cloze) - consente i passaggi di testo con risposte incorporate</li>
+        <li>Nuovo tipo di domanda: Numerico - permette di immettere una gamma di risposte numeriche</li>
+        <li>Nuovo tipo di domanda: Descrizione - non una vera domanda, permette di inserire testo/grafici ovunque</li>
+        <li>&Egrave; stato esteso il report del questionario con dei plugin di report modulari</li>
+        <li>&Egrave; presente una nuova funzione relativa alla ripetizione dei tentativi: ciascun tentativo si aggiunge al precedente</li>
+        <li>Se il questionario chiude entro le successive 24 ore, nella barra dei titoli si visualizzer&agrave; un piccolo orologio per il conto alla rovescia e ci saranno degli avvisi allo scattare di dieci minuti e zero minuti.</li>
+        <li>Il codice del quiz &egrave; stato nuovamente scomposto in fattori per semplificarne l'estensione con i nuovi tipi di domanda</li>
+      </ul>
+    </dd>
+  </dl>
+  <dl>
+    <dt></dt>
+    <dt>Risorse</dt>
+  </dl>
+  <dl>
+    <dd> 
+      <ul>
+        <li>I collegamenti alla rete possono ora essere in delle finestre a comparsa ampiamente personalizzabili.</li>
+        <li>Adesso l'amministratore ha accesso ad alcune impostazioni tramite Amministrazione -&gt; Moduli -&gt; 
+          Risorse</li>
+      </ul>
+    </dd>
+  </dl>
+  <dl>
+    <dt>Alcuni degli errori pi&ugrave; fastidiosi sono stati corretti recentemente</dt>
+  </dl>
+  <dl>
+    <dd> 
+      <ul>
+        <li>Se si spostano gli interventi ora si spostano anche gli allegati</li>
+        <li>Non ci sono pi&ugrave; avvisi quando si cercano file caricati in un corso vuoto</li>
+        <li>Gli studenti non ricevono pi&ugrave; messaggi di posta in formato normale nei forum con iscrizione obbligatoria</li>
+        <li>I cookie non sono pi&ugrave; in grado di interferire con l'impostazione dell'amministratore durante l'installazione</li>
+        <li>Totale assenza di limiti nel numero di attivit&agrave; per sezione</li>
+        <li>Numerosi miglioramenti per quel che riguarda i file zip, specialmente su Windows</li>
+        <li>L'amministratore &egrave; ora in grado di modificare gli account creati da database esterni</li>
+        <li>La sessione non &egrave; pi&ugrave; in conflitto con altri programmi</li>
+        <li>I file Excel ora funzionano con computer non dotati di processori Intel</li>
+      </ul>
+    </dd>
+  </dl>
+  <dl>
+    <dt>&nbsp; </dt>
+  </dl>
+  <dd>&nbsp;</dd>
+</ul>
+<hr>
+
+<p>&Egrave; possibile visualizzare le versioni pi&ugrave; vecchie nel <a href="http://moodle.org/mod/forum/view.php?f=1">forum degli annunci di Moodle.org</a>.
+
+
+<p>&nbsp;</p>
+<p align="CENTER"><font size="1"><a href="../doc/" target="_top">Documentazione di Moodle</a></font></p>
+<p align="CENTER"><font size="1">Version: $Id$</font></p>
