@@ -986,15 +986,16 @@ function forum_get_unmailed_posts($starttime, $endtime) {
                              WHERE p.mailed = 0
                                AND p.created >= '$starttime'
                                AND p.created < '$endtime'
-                               AND p.discussion = d.id");
+                               AND p.discussion = d.id
+                          ORDER BY p.modified ASC");
 }
 
 function forum_mark_old_posts_as_mailed($endtime) {
 /// Marks posts before a certain time as being mailed already
     global $CFG;
-    return modify_database("UPDATE prefix_forum_posts
-                               SET mailed = '1'
-                             WHERE created < '$endtime'");
+    return execute_sql("UPDATE {$CFG->prefix}forum_posts
+                           SET mailed = '1'
+                         WHERE created < '$endtime'");
 }
 
 function forum_get_user_posts($forumid, $userid) {
