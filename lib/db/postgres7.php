@@ -61,6 +61,19 @@ function main_upgrade($oldversion=0) {
         }
     }
 
+    if ($oldversion < 2003042400) {
+    // Rebuild all course caches, because of changes to do with visible variable
+        if ($courses = get_records_sql("SELECT * FROM {$CFG->prefix}course")) {
+            require_once("$CFG->dirroot/course/lib.php");
+            foreach ($courses as $course) {
+                $modinfo = serialize(get_array_of_activities($course->id));
+
+                if (!set_field("course", "modinfo", $modinfo, "id", $course->id)) {
+                    notify("Could not cache module information for course '$course->fullname'!");
+                }
+            }
+        }
+    }
 	
     return true;
 }
