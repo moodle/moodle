@@ -80,10 +80,10 @@
                 $entrybyuser[$entry->userid]->timemarked = $timenow;
             }
         }
-        add_to_log($course->id, "journal", "update feedback", "report.php?id=$cm->id", "$count users");
+        add_to_log($course->id, "journal", "update feedback", "report.php?id=$cm->id", "$count users", $cm->id);
         notify(get_string("feedbackupdated", "journal", "$count"), "green");
     } else {
-        add_to_log($course->id, "journal", "view responses", "report.php?id=$cm->id", "$journal->id");
+        add_to_log($course->id, "journal", "view responses", "report.php?id=$cm->id", "$journal->id", $cm->id);
     }
 
 /// Print out the journal entries

@@ -41,7 +41,7 @@
 			if (! update_record("journal_entries", $newentry)) {
 				error("Could not update your journal");
 			}
-            add_to_log($course->id, "journal", "update entry", "view.php?id=$cm->id", "$newentry->id");
+            add_to_log($course->id, "journal", "update entry", "view.php?id=$cm->id", "$newentry->id", $cm->id);
 		} else {
             $newentry->userid = $USER->id;
             $newentry->journal = $journal->id;
@@ -51,7 +51,7 @@
 			if (! $newentry->id = insert_record("journal_entries", $newentry)) {
 				error("Could not insert a new journal entry");
 			}
-            add_to_log($course->id, "journal", "add entry", "view.php?id=$cm->id", "$newentry->id");
+            add_to_log($course->id, "journal", "add entry", "view.php?id=$cm->id", "$newentry->id", $cm->id);
 		} 
 		
 		redirect("view.php?id=$cm->id");
