@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // workshop.php - created with Moodle 1.2 Beta (2004022400)
+      // workshop.php - created with Moodle 1.3 development (2004040500)
 
 
 $string['absent'] = 'Absent';
@@ -9,7 +9,7 @@ $string['addacomment'] = 'Afegeix un comentari';
 $string['afterdeadline'] = 'Després de la data límit: $a';
 $string['agreetothisassessment'] = 'Accepta aquesta avaluació';
 $string['allgradeshaveamaximumof'] = 'Totes les qualificacions tenen un màxim de: $a';
-$string['allowresubmit'] = 'Permet repetir la tramesa';
+$string['allowresubmit'] = 'Permet tornar a trametre';
 $string['alreadyinphase'] = 'Ja en fase $a';
 $string['amendassessmentelements'] = 'Modifica elements d\'avaluació';
 $string['amendtitle'] = 'Modifica títol';
@@ -63,7 +63,7 @@ $string['errortable'] = 'Taula d\'errors';
 $string['excellent'] = 'Excel·lent';
 $string['excludingdroppedassessments'] = 's\'estan excloent les avaluacions omeses';
 $string['expectederror'] = 'Valor esperat d\'error suposant: $a';
-$string['feedbackgoeshere'] = 'Els comentaris van aquí';
+$string['feedbackgoeshere'] = 'La retroacció va aquí';
 $string['generalcomment'] = 'Comentari general';
 $string['good'] = 'Bo';
 $string['grade'] = 'Qualificació';
@@ -87,7 +87,7 @@ $string['leaguetable'] = 'Taula de treballs tramesos';
 $string['listassessments'] = 'Llista les avaluacions';
 $string['listofallsubmissions'] = 'Llista de totes les trameses';
 $string['liststudentsassessments'] = 'Llista les avaluacions dels estudiants';
-$string['loadingforteacherassessments'] = 'Carregant les avaluacions $a';
+$string['loadingforteacherassessments'] = 'Càrrega de les avaluacions del $a';
 $string['mail1'] = 'La vostra tasca \'$a\' ha estat avaluada per';
 $string['mail10'] = 'Podeu avaluar-lo en la vostra tasca del taller';
 $string['mail2'] = 'Els comentaris i la qualificació es poden veure en la tasca del taller \'$a\'';
@@ -202,7 +202,7 @@ $string['teacherscomment'] = 'Comentari del professor';
 $string['teachersgrade'] = 'Qualificació del professor';
 $string['teachersubmissionsforassessment'] = '$a trameses del professor per a avaluació';
 $string['thegradeis'] = 'La qualificació és $a';
-$string['thereisfeedbackfromtheteacher'] = 'Hi ha comentaris del $a';
+$string['thereisfeedbackfromtheteacher'] = 'Hi ha retroacció del $a';
 $string['theseasessmentsaregradedbytheteacher'] = 'Aquestes avaluacions estan qualificades pel $a';
 $string['timeassessed'] = 'Temps avaluat';
 $string['title'] = 'Títol';
@@ -220,16 +220,17 @@ $string['weightforbias'] = 'Pes per al biaix';
 $string['weightforgradingofassessments'] = 'Pes per a la qualificació d\'avaluacions';
 $string['weightforpeerassessments'] = 'Pes per a les avaluacions dels companys';
 $string['weightforreliability'] = 'Pes per a la fiabilitat';
+$string['weightforteacherassessments'] = 'Per per a les avaluacions del professor';
 $string['weights'] = 'Pesos';
 $string['weightsusedforfinalgrade'] = 'Pesos emprats per a la qualificació final';
 $string['weightsusedforsubmissions'] = 'Pesos emprats per a les trameses';
 $string['workshopagreedassessments'] = 'Avaluacions acceptades del taller';
 $string['workshopassessments'] = 'Avaluacions del taller';
 $string['workshopcomments'] = 'Comentaris del taller';
-$string['workshopfeedback'] = 'Comentaris del taller';
+$string['workshopfeedback'] = 'Retroacció del taller';
 $string['workshopsubmissions'] = 'Trameses del taller';
 $string['yourassessments'] = 'Les vostres avaluacions';
 $string['yourassessmentsofexamplesfromtheteacher'] = 'Les vostres avaluacions dels exemples de $a ';
-$string['yourfeedbackgoeshere'] = 'Els vostres comentaris van aquí';
+$string['yourfeedbackgoeshere'] = 'La vostra retroacció va aquí';
 
 ?>
