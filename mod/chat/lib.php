@@ -113,7 +113,7 @@ function chat_delete_instance($id) {
 /// this function will permanently delete the instance
 /// and any data that depends on it.
 
-    if (! $chat = get_record("chat", "id", "$id")) {
+    if (! $chat = get_record('chat', 'id', $id)) {
         return false;
     }
 
@@ -121,7 +121,13 @@ function chat_delete_instance($id) {
 
     # Delete any dependent records here #
 
-    if (! delete_records("chat", "id", "$chat->id")) {
+    if (! delete_records('chat', 'id', $chat->id)) {
+        $result = false;
+    }
+    if (! delete_records('chat_messages', 'chatid', $chat->id)) {
+        $result = false;
+    }
+    if (! delete_records('chat_users', 'chatid', $chat->id)) {
         $result = false;
     }
 
