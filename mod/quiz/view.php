@@ -84,7 +84,7 @@
                '<td><form target="'.$CFG->framename.'" method="get" action="view.php">'.
                '<input type="hidden" name="id" value="'.$cm->id.'" />'.
                '<input type="hidden" name="edit" value="'.($PAGE->user_is_editing()?'off':'on').'" />'.
-               '<input type="submit" value="add/edit blocks" /></form></td></tr></table>';
+               '<input type="submit" value="'.get_string($PAGE->user_is_editing()?'turneditingoff':'blocksaddedit').'" /></form></td></tr></table>';
     } else {
         $buttons = '';
     }

@@ -122,6 +122,7 @@ $string['blockconfigbad'] = 'This block has not been implemented correctly and t
 $string['blockdeleteconfirm'] = 'You are about to completely delete the block \'$a\'.  This will completely delete everything in the database associated with this block.  Are you SURE you want to continue?';
 $string['blockdeletefiles'] = 'All data associated with the block \'$a->block\' has been deleted from the database.  To complete the deletion (and prevent the block re-installing itself), you should now delete this directory from your server: $a->directory';
 $string['blocks'] = 'Blocks';
+$string['blocksaddedit'] = 'Add/Edit Blocks';
 $string['blocksetup'] = 'Setting up block tables';
 $string['blocksuccess'] = '$a tables have been set up correctly';
 $string['bycourseorder'] = 'By course order';
