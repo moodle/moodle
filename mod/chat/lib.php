@@ -20,7 +20,7 @@ if (!isset($CFG->chat_serverhost)) {
     set_config("chat_serverhost", $_SERVER['HTTP_HOST']);
 }
 if (!isset($CFG->chat_serverip)) {
-    set_config("chat_serverip", $_SERVER['SERVER_ADDR']);
+    set_config("chat_serverip", '127.0.0.1');
 }
 if (!isset($CFG->chat_serverport)) {
     set_config("chat_serverport", 9111);
