@@ -164,14 +164,12 @@
                 $strconfirmstartattempt = addslashes(get_string("confirmstartattempt","quiz"));
                 echo "<br />";
                 echo "<div align=\"center\">";
-                // BEGIN EDIT
-                if($quiz->timelimit) {
+                if ($quiz->timelimit) {
                     include("view_js.php");
                 } else {
-                print_single_button("attempt.php", $options, get_string("attemptquiznow","quiz"));
+                    print_single_button("attempt.php", $options, get_string("attemptquiznow","quiz"));
                 }
                 echo "</div>\n";
-                // END EDIT
                 echo "</p>";
             }
         } else {

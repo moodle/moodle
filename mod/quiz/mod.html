@@ -46,6 +46,12 @@
     if (!isset($form->questions)) {
         $form->questions = "";
     }
+    if (!isset($form->password)) {
+        $form->password = "";
+    }
+    if (!isset($form->subnet)) {
+        $form->subnet = "";
+    }
 ?>
 
 
@@ -237,6 +243,21 @@
      ?>
     </td>
 </tr>
+<tr valign=top>
+    <td align=right><p><b><?php print_string("requirepassword", "quiz") ?>:</b></p></td>
+    <td>
+        <input type="text" name="password" size=40 value="<?php p($form->password) ?>">
+        <?php helpbutton("requirepassword", get_string("requirepassword", "quiz"), "quiz"); ?>
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><p><b><?php print_string("requiresubnet", "quiz") ?>:</b></p></td>
+    <td>
+        <input type="text" name="subnet" size=40 value="<?php p($form->subnet) ?>">
+        <?php helpbutton("requiresubnet", get_string("requiresubnet", "quiz"), "quiz"); ?>
+    </td>
+</tr>
+    
 </table>
 <input type="hidden" name=questions     value="<?php p($form->questions) ?>">
 <!-- these hidden variables are always the same -->

@@ -74,6 +74,40 @@
         error("Sorry, you've had $quiz->attempts attempts already.", "view.php?id=$cm->id");
     }
 
+/// Check subnet access
+    if ($quiz->subnet and !address_in_subnet($_SERVER['REMOTE_ADDR'], $quiz->subnet)) {
+        error(get_string("subneterror", "quiz"), "view.php?id=$cm->id");
+    }
+
+/// Check password access
+    if ($quiz->password) {
+        if (empty($_POST['quizpassword'])) {
+        
+            echo "<form name=\"passwordform\" method=\"post\" action=\"attempt.php?q=$quiz->id\">\n";
+            print_simple_box_start("center");
+            
+            echo "<div align=\"center\">\n";
+            print_string("requirepasswordmessage", "quiz");
+            echo "<br /><br />\n";
+            echo " <input name=\"quizpassword\" type=\"password\" value=\"\">";
+            echo " <input name=\"submit\" type=\"submit\" value=\"".get_string("ok")."\">\n";
+            echo "</div>\n";
+
+            print_simple_box_end();
+            echo "</form>\n";
+            
+            print_footer();
+            exit;
+
+        } else {
+            if (strcmp($quiz->password, $_POST['quizpassword']) !== 0) {
+                error(get_string("passworderror", "quiz"), "view.php?id=$cm->id");
+            }
+            unset($_POST); /// needed so as not to confuse later code dealing with submitted answers
+        }
+    }
+    
+
 /// BEGIN EDIT Get time limit if any.
 
     $timelimit = $quiz->timelimit * 60;
