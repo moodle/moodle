@@ -18,8 +18,11 @@
       <p> <font color="#990000" face="Courier New, Courier, mono">idnumber, icq, phone1, phone2, address, url, description, mailformat, maildisplay, htmleditor, autosubscribe, course1, course2, course3, course4, course5</font></p>
     </blockquote>
     </li>
-  <li>Commas within the data should be encoded as &#44 - the script will automatically decode these back to commas. </li>
+  <li>Commas within the data should be encoded as &amp;#44 - the script will automatically decode these back to commas. </li>
   <li>For Boolean fields, use 0 for false and 1 for true. </li>
+  <li>Note: If a user is already registered in the Moodle user database, this script will return the 
+      userid number (database index) for that user, and will enrol the user as a student in any of the
+      specified courses WITHOUT updating the other specified data.</li>
 </ul>
   
   
@@ -27,3 +30,4 @@
 <p><font size="-1" face="Courier New, Courier, mono">username, password, firstname, lastname, email, lang, idnumber, maildisplay, course1<br>
 jonest, verysecret, Tom, Jones, jonest@someplace.edu, en, 3663737, 1, Intro101<br>
 reznort, somesecret, Trent, Reznor, reznort@someplace.edu, en_us, 6736733, 0, Advanced202</font></p>
+
