@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.0.6.4 (2002112400)
+      // auth.php - created with Moodle 1.0.9 development (2003042801)
 
 
 $string['auth_dbdescription'] = "该方法使用一个外部数据库来检验用户名和密码是否有效。如果是一个新帐号，该帐号其它字段的信息将一起复制到本系统中。";
@@ -9,6 +9,7 @@ $string['auth_dbfielduser'] = "含有用户名的字段名";
 $string['auth_dbhost'] = "数据库所在的主机。";
 $string['auth_dbname'] = "数据库名";
 $string['auth_dbpass'] = "与上面的用户名匹配的密码";
+$string['auth_dbpasstype'] = "指定密码字段所用的格式。MD5编码可用于与其它通用WEB应用如PostNuke相联接";
 $string['auth_dbtable'] = "数据库中的表单名";
 $string['auth_dbtitle'] = "使用一个外部数据库";
 $string['auth_dbtype'] = "数据库类型（详情请看<A HREF=../lib/adodb/readme.htm#drivers>ADOdb帮助文档</A>）";

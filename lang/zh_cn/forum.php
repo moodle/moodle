@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.0.8 dev (2002121200)
+      // forum.php - created with Moodle 1.0.9 development (2003042801)
 
 
 $string['addanewdiscussion'] = "添加一个新的讨论话题";
@@ -18,8 +18,9 @@ $string['delete'] = "删除";
 $string['deleteddiscussion'] = "讨论话题已被删除";
 $string['deletedpost'] = "贴子已被删除";
 $string['deletesure'] = "你确定要删除该贴吗？";
-$string['discussion'] = "讨论";
-$string['discussions'] = "讨论";
+$string['discussion'] = "论题";
+$string['discussionmoved'] = "该讨论已被移到 \$a ";
+$string['discussions'] = "论题";
 $string['discussionsstartedby'] = "讨论由 \$a 发起";
 $string['discussthistopic'] = "讨论这个话题";
 $string['eachuserforum'] = "每个人发表一个论题";
@@ -41,9 +42,10 @@ $string['inforum'] = "在 \$a 里";
 $string['intronews'] = "普通新闻与通告";
 $string['introsocial'] = "一个开放的讨论区，可以随便聊聊";
 $string['introteacher'] = "一个教师专用讨论区";
+$string['lastpost'] = "最后一贴";
 $string['learningforums'] = "学习讨论区";
 $string['maxtimehaspassed'] = "抱歉，编辑该贴的时间限制（ \$a ）已过！";
-$string['message'] = "讯息";
+$string['message'] = "正文";
 $string['modeflatnewestfirst'] = "列表显示回贴内容，新贴在前";
 $string['modeflatoldestfirst'] = "列表显示回贴内容，旧贴在前";
 $string['modenested'] = "嵌套显示回贴内容";
@@ -51,6 +53,7 @@ $string['modethreaded'] = "树状显示回贴标题";
 $string['modulename'] = "讨论区";
 $string['modulenameplural'] = "讨论区";
 $string['more'] = "更多";
+$string['movethisdiscussionto'] = "将此讨论移至…";
 $string['namenews'] = "新闻讨论区";
 $string['namesocial'] = "公众讨论区";
 $string['nameteacher'] = "教师讨论区";
@@ -74,6 +77,10 @@ $string['postmailinfo'] = "这是一份来自 \$a 网站的贴子。
 
 
 
+
+
+
+
 要在网站上回贴，请点击这个链接：";
 $string['postrating1'] = "极端独立型";
 $string['postrating2'] = "独立型与情景型兼备";
@@ -82,8 +89,10 @@ $string['postupdated'] = "你的贴子已经更新";
 $string['processingpost'] = "正在处理贴子 \$a";
 $string['rate'] = "评价";
 $string['ratings'] = "评价";
+$string['ratingssaved'] = "评价已保存";
 $string['re'] = "回复：";
 $string['readtherest'] = "阅读该主题的其它贴子";
+$string['replies'] = "回贴";
 $string['repliesmany'] = "迄今有 \$a 个回贴";
 $string['repliesone'] = "迄今有 \$a 个回贴";
 $string['reply'] = "答复";
@@ -93,6 +102,7 @@ $string['searchresults'] = "搜索结果";
 $string['sendinratings'] = "呈送我的最新评分";
 $string['showsubscribers'] = "显示订阅者";
 $string['singleforum'] = "单个简单论题";
+$string['startedby'] = "发起人";
 $string['subject'] = "主题";
 $string['subscribe'] = "订阅该讨论区";
 $string['subscribed'] = "订阅";

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // journal.php - created with Moodle 1.0.8 dev (2002121200)
+      // journal.php - created with Moodle 1.0.9 development (2003042801)
 
 
 $string['alwaysopen'] = "总是开放";
@@ -7,6 +7,7 @@ $string['blankentry'] = "空白条目";
 $string['daysavailable'] = "可看天数";
 $string['editingended'] = "编辑期已经结束";
 $string['editingends'] = "编辑期结束";
+$string['feedbackupdated'] = "已更新 \$a 条反馈";
 $string['journalname'] = "杂志名称";
 $string['journalquestion'] = "杂志问题";
 $string['journalrating1'] = "不满意";
@@ -21,6 +22,7 @@ $string['notopenuntil'] = "这个杂志不能打开,直到";
 $string['notstarted'] = "你还没有启动这个杂志";
 $string['overallrating'] = "全部的评分";
 $string['rate'] = "评分";
+$string['saveallfeedback'] = "保存我的所有反馈";
 $string['startoredit'] = "启动或编辑我的杂志条目";
 $string['viewallentries'] = "查看 \$a 个杂志条目";
 
