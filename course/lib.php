@@ -625,7 +625,7 @@ function print_admin_links ($siteid, $width=180) {
 		$modicon[]=$icon;
 		$moddata[]="<A HREF=\"$CFG->wwwroot/$CFG->admin/lang.php\">".get_string("checklanguage")."</A>";
 		$modicon[]=$icon;
-		if (file_exists("$CFG->diradmin/$CFG->dbtype")) {
+		if (file_exists("$CFG->dirroot/$CFG->admin/$CFG->dbtype")) {
             $moddata[]="<A HREF=\"$CFG->wwwroot/$CFG->admin/$CFG->dbtype/frame.php\">".get_string("managedatabase")."</A>";
 			$modicon[]=$icon;
 		}

@@ -93,7 +93,33 @@ $CFG->dataroot  = "/home/moodledata";
 
 
 //=========================================================================
-// 5. TROUBLESHOOTING  (most people can just ignore this setting)
+// 5. DATA FILES PERMISSIONS
+//=========================================================================
+// The following parameter sets the permissions of new directories
+// created by Moodle within the data directory.  The format is in 
+// octal format (as used by the Unix utility chmod, for example).
+// The default is usually OK, but you may want to change it to 0750 
+// if you are concerned about world-access to the files (you will need
+// to make sure the web server process (eg Apache) can access the files.
+
+$CFG->directorypermissions = 0777;
+
+
+
+//=========================================================================
+// 6. ADMIN LOCATION  (most people can just ignore this setting)
+//=========================================================================
+// A very few webhosts use /admin as a special URL for you to access a 
+// control panel or something.  Unfortunately this conflicts with the 
+// standard location for the Moodle admin pages.  You can fix this by 
+// renaming the admin directory in your installation, and putting that 
+// new name here.  eg "moodleadmin".  This will fix admin links in Moodle.
+
+$CFG->admin = "admin";
+
+
+//=========================================================================
+// 7. TROUBLESHOOTING  (most people can just ignore this setting)
 //=========================================================================
 // A very small percentage of servers have a bug which causes HTTP_REFERER
 // not to work.  The symptoms of this are that you fill out the configure
@@ -105,9 +131,8 @@ $CFG->buggy_referer = false;
 
 
 //=========================================================================
-// 6. ALL DONE!  To continue your setup, visit your Moodle web page.
+// ALL DONE!  To continue your setup, visit your Moodle web page.
 //=========================================================================
-
 
 require_once("$CFG->dirroot/lib/setup.php");       // Do not change this
 
