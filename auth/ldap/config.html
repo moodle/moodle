@@ -70,6 +70,17 @@
 </TR>
 
 <TR VALIGN=TOP BGCOLOR="<?php echo $THEME->cellheading2 ?>">
+	<TD ALIGN=RIGHT><P>ldap_objectclass:</TD>
+	<TD>
+    <INPUT name=ldap_objectclass TYPE=text SIZE=30 VALUE="<?php echo $config->ldap_objectclass?>">
+    <?php  if (isset($err["ldap_objectclass"])) formerr($err["ldap_objectclass"]); ?>
+    </TD>
+    <TD>
+    <?php  print_string("auth_ldap_objectclass","auth") ?>
+    </TD>
+</TR>
+
+<TR VALIGN=TOP BGCOLOR="<?php echo $THEME->cellheading2 ?>">
 	<TD ALIGN=RIGHT><P>ldap_search_sub:</TD>
 	<TD>
     <INPUT name=ldap_search_sub TYPE=text SIZE=1 VALUE="<?php echo $config->ldap_search_sub?>">
