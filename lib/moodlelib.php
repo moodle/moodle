@@ -3212,6 +3212,132 @@ function zip_files ($originalfiles, $destination) {
     return true;
 }
 
+function unzip_file ($zipfile, $destination = '') {
+//Unzip one zip file to a destination dir
+//Both parameters must be FULL paths
+//If destination isn't specified, it will be the
+//SAME directory where the zip file resides.
 
-// vim:autoindent:expandtab:shiftwidth=4:tabstop=4:tw=140:
+    global $CFG;
+    
+    //Extract everything from zipfile
+    $path_parts = pathinfo(cleardoubleslashes($zipfile));
+    $zippath = $path_parts["dirname"];       //The path of the zip file
+    $zipfilename = $path_parts["basename"];  //The name of the zip file
+    $extension = $path_parts["extension"];    //The extension of the file
+
+    //If no file, error
+    if (empty($zipfilename)) {
+        return false;
+    }
+
+    //If no extension, error
+    if (empty($extension)) {
+        return false;
+    }
+
+    //If no destination, passed let's go with the same directory
+    if (empty($destination)) {
+        $destination = $zippath;
+    }
+
+    //Clear $destination
+    $destpath = rtrim(cleardoubleslashes($destination), "/");
+
+    //Check destination path exists
+    if (!is_dir($destpath)) {
+        return false;
+    }
+
+    //Check destination path is writable. TODO!!
+
+    //Everything is ready:
+    //    -$zippath is the path where the zip file resides (dir)
+    //    -$zipfilename is the name of the zip file (without path)
+    //    -$destpath is the destination path where the zip file will uncompressed (dir)
+
+    echo "zippath: $zippath - zipfilename: $zipfilename - destpath: $destpath <br />";  //Debug
+
+    if (empty($CFG->unzip)) {    // Use built-in php-based unzip function
+
+        include_once("$CFG->libdir/pclzip/pclzip.lib.php");
+        $archive = new PclZip(cleardoubleslashes("$zippath/$zipfilename"));
+        if (!$list = $archive->extract(PCLZIP_OPT_PATH, $destpath,
+                                       PCLZIP_CB_PRE_EXTRACT, 'unzip_approvefile')) {
+            notice($archive->errorInfo(true));
+            return false;
+        }
+
+    } else {                     // Use external unzip program
+
+        $separator = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN' ? ' &' : ' ;';
+        $redirection = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN' ? '' : ' 2>&1';
+
+        $command = 'cd '.escapeshellarg($zippath).$separator.
+                    escapeshellarg($CFG->unzip).' -o '.
+                    escapeshellarg(cleardoubleslashes("$zippath/$zipfilename")).' -d '.
+                    escapeshellarg($destpath).$redirection;
+        echo $command;
+        Exec($command,$list);
+    }
+
+    //Display some info about the unzip execution
+    unzip_show_status($list);
+  
+    return true;
+}
+
+function unzip_approvefile ($p_event, &$p_header) {
+//This function is used as callback in unzip_file() function
+//to decide if one file in the zip file must be extracted or no
+//print_object ($p_header['filename']);
+    if (detect_munged_arguments($p_header['filename'], 0)) {
+        return 0; // do not extract file!!
+    } else {
+        return 1;
+    }
+}
+
+
+function unzip_show_status ($list) {
+//This function shows the results of the unzip execution
+//depending of the value of the $CFG->zip, results will be
+//text or an array of files.
+
+    global $CFG;
+
+    if (empty($CFG->unzip)) {    // Use built-in php-based zip function
+        echo "<table cellpadding=\"4\" cellspacing=\"2\" border=\"0\" width=640>";
+        echo "<tr><th align=left>$strname</th>";
+        echo "<th align=right>$strsize</th>";
+        echo "<th align=right>$strmodified</th>";
+        echo "<th align=right>$strstatus</th></tr>";
+        foreach ($list as $item) {
+            echo "<tr>";
+            $item['filename'] = str_replace(cleardoubleslashes("$basedir/$wdir/"), "", $item['filename']);
+            print_cell("left", $item['filename']);
+            if (! $item['folder']) {
+                print_cell("right", display_size($item['size']));
+            } else {
+                echo "<td>&nbsp;</td>";
+            }
+            $filedate  = userdate($item['mtime'], get_string("strftimedatetime"));
+            print_cell("right", $filedate);
+            print_cell("right", $item['status']);
+            echo "</tr>";
+        }
+        echo "</table>";
+
+    } else {                   // Use external zip program
+        print_simple_box_start("center");
+        echo "<PRE>";
+        foreach ($list as $item) {
+            echo $item.'<br />';
+        }
+        echo "</PRE>";
+        print_simple_box_end();
+    }
+}
+
+// vm:autoindent:expandtab:shiftwidth=4:tabstop=4:tw=140:
 ?>
