@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.0.6.4 (2002112400)
+      // forum.php - created with Moodle 1.0.7 (2002121000)
 
 
 $string['addanewdiscussion'] = "ディスカッションのトピックを追加";
@@ -68,7 +68,7 @@ $string['openmode0'] = "ディスカッション不許可、返答不許可";
 $string['openmode1'] = "ディスカッション不許可、返答許可";
 $string['openmode2'] = "ディスカッションと返答を許可";
 $string['parentofthispost'] = "この投稿の親記事";
-$string['postadded'] = "投稿が追加されました。<P>変更したい場合は \$a 編集可能です。";
+$string['postadded'] = "投稿が追加されました<P>変更したい場合は \$a 編集可能です";
 $string['postincontext'] = "この投稿の状態を見る";
 $string['postingtip'] = "<B>投稿のヒント:</B>
 
@@ -116,7 +116,7 @@ $string['subscribe'] = "このフォーラムに参加する";
 $string['subscribed'] = "参加";
 $string['subscribers'] = "参加者";
 $string['subscribersto'] = " '\$a' の参加者";
-$string['unsubscribe'] = "このフォーラムへの登録を抹消する";
+$string['unsubscribe'] = "このフォーラムから登録抹消する";
 $string['youratedthis'] = "あなたの評価";
 $string['yournewtopic'] = "新規ディスカッショントピック";
 $string['yourreply'] = "あなたの返答";
