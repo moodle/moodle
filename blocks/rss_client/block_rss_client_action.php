@@ -48,7 +48,7 @@
     
     //if the user is an admin or course teacher then allow the user to
     //assign categories to other uses than personal
-    if (isguest() || !( isadmin() || $submitters == SUBMITTERS_ALL_ACCOUNT_HOLDERS || ($submitters == SUBMITTERS_ADMIN_AND_TEACHER && $isteacher) ) ) {
+    if (!( isadmin() || $submitters == SUBMITTERS_ALL_ACCOUNT_HOLDERS || ($submitters == SUBMITTERS_ADMIN_AND_TEACHER && $isteacher) ) ) {
         error(get_string('noguestpost', 'forum'), $referrer);
     }
 
