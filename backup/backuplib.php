@@ -9,7 +9,7 @@
         $status = true;
         $status = execute_sql("INSERT INTO {$CFG->prefix}backup_ids
                                    (backup_code, table_name, old_id)
-                               SELECT DISTINCT '$backup_unique_code','quiz_categories',t.category
+                               SELECT DISTINCT $backup_unique_code,'quiz_categories',t.category
                                FROM {$CFG->prefix}quiz_questions t,
                                     {$CFG->prefix}quiz_question_grades g,
                                     {$CFG->prefix}quiz q
