@@ -89,7 +89,7 @@
                 fwrite ($bf,full_tag("TIMEMARKED",6,false,$ass_sub->timemarked));       
                 fwrite ($bf,full_tag("MAILED",6,false,$ass_sub->mailed));       
                 //End submission
-                $status =fwrite ($bf,start_tag("SUBMISSION",5,true));
+                $status =fwrite ($bf,end_tag("SUBMISSION",5,true));
             }
             //Write end tag
             $status =fwrite ($bf,end_tag("SUBMISSIONS",4,true));
