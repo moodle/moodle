@@ -51,42 +51,35 @@ class Wiki {
   var $block_state;
   var $list_state;
   var $list_depth;
+  var $list_backtrack;
   var $output; // output buffer
 
   function close_block( $state ) {
     // provide appropriate closure for block according to state
     
     // if in list close this first
-    $ltag = "";
-    switch ($this->list_state) {
-      case LIST_NONE:
-        break;
-      case LIST_UNORDERED:
-         $ltag = "</ul>\n";
-         break;
-       case LIST_ORDERED:
-         $ltag = "</ol>\n";
-         break;
-       case LIST_DEFINITION:
-         $ltag = "</dl>\n";     	
-         break;
-    }    	
-    $this->list_state = LIST_NONE;
+    $lclose = "";
+    if ($this->list_state != LIST_NONE) {
+      $lclose = $this->do_list( " ",true );
+    }
     	
+    $sclose = "";
     switch ($state) {
       case STATE_PARAGRAPH:
-        return "$ltag</p>\n";
+        $sclose =  "</p>\n";
         break;
       case STATE_BLOCKQUOTE:
-        return "$ltag</blockquote>\n";
+        $sclose =  "</blockquote>\n";
         break;
       case STATE_PREFORM:
-        return "$ltag</pre>\n";
+        $sclose =  "</pre>\n";
         break;
       case STATE_NOTIKI:
-        return "$ltag</pre>\n";
+        $sclose =  "</pre>\n";
         break;  
     }
+
+    return $lclose . $sclose;
   }
 
 
@@ -117,53 +110,79 @@ class Wiki {
     $replace = '<'.$tag.'>\\1</'.$tag.'>';
     return eregi_replace( $regex, $replace, $line );
   }
-  
-  function do_list( $line ) {
+
+  function do_list( $line, $blank=false ) {
     // handle line with list character on it
+    // if blank line implies drop to level 0
     
-    // get magic character and then delete it from the line
-    $listchar = $line{0};	
-    $line = eregi_replace( "^[*#;:] ", "", $line );
+    // get magic character and then delete it from the line if not blank
+    if ($blank) {
+      $listchar="";
+      $count = 0;
+    }
+    else {
+      $listchar = $line{0};	
+      $count = strspn( $line, $listchar );
+      $line = eregi_replace( "^[".$listchar."]+ ", "", $line );
+    }
     
-    // if not in "list mode" then we need to drop the appropriate start tag
-    $tag = "";
-    if ($this->list_state == LIST_NONE) {
-      switch ($listchar) {
-        case '*':
-          $tag = "<ul>";
-          $this->list_state = LIST_UNORDERED;
-          break;
-        case '#':
-          $tag = 	"<ol>";
-          $this->list_state = LIST_ORDERED;
-          break;
-        case ';':
-        case ':':
-          $tag = "<dl>";
-          $this->list_state = LIST_DEFINITION;
-          break;  
-        }  
-      }     	
+    // find what sort of list this character represents
+    $list_tag = "";
+    $item_tag = "";
+    $list_style = LIST_NONE;
+    switch ($listchar) {
+      case '*':
+        $list_tag = "ul";
+        $item_tag = "li";
+        $list_style = LIST_UNORDERED;
+        break;
+      case '#':
+        $list_tag = "ol";
+        $item_tag = "li";
+        $list_style = LIST_ORDERED;
+        break;
+      case ';':
+        $list_tag = "dl";
+        $item_tag = "dd";
+        $list_style = LIST_DEFINITION;
+        break;
+      case ':':
+        $list_tag = "dl";
+        $item_tag = "dt";
+        $list_style = LIST_DEFINITION;
+        break;  
+      }  
+
+    // tag opening/closing regime now - fun bit :-)
+    $tags = "";
+
+    // if depth has reduced do number of closes to restore level
+    for ($i=$this->list_depth; $i>$count; $i-- ) {
+      $close_tag = array_pop( $this->list_backtrack );
+      $tags = $tags . $close_tag;
+      }
+
+    // if depth has increased do number of opens to balance
+    for ($i=$this->list_depth; $i<$count; $i++ ) {
+      array_push( $this->list_backtrack, "</$list_tag>" );
+      $tags = $tags . "<$list_tag>";
+    }
+
+    // ok, so list state is now same as style and depth same as count
+    $this->list_state = $list_style;
+    $this->list_depth = $count;
 
     // apply formatting to remainder of line
     $line = $this->line_replace( $line );
-      
-    // generate appropriate list tag
-    $ltag = "";
-    switch ($listchar) {
-      case '*':
-      case '#':
-        $ltag = "<li>";
-        break;
-      case ';':
-        $ltag = "<dd>";
-        break;
-      case ':':
-        $ltag = "<dt>";
-        break;      
-    }    
     
-    return $tag . $ltag . $line;
+    if ($blank) {
+      $newline = $tags;
+    }
+    else {  
+      $newline = $tags . "<$item_tag>" . $line . "</$item_tag>";
+    }
+
+    return $newline;
   }  	
 
   function line_replace( $line ) {
@@ -178,7 +197,7 @@ class Wiki {
     $line = eregi_replace( "^-{4}.*", "<div class=\"hr\"><hr /></div>", $line );
     
     // is this a list line (starts with * # ; :)    
-    if (eregi( "^[*#;:] ", $line )) {
+    if (eregi( "^([*]+|[#]+|[;]+|[:]+) ", $line )) {
       $line = $this->do_list( $line );	        
     }    	
 
@@ -231,6 +250,20 @@ class Wiki {
       $line = eregi_replace( " ([a-zA-Z]+):([0-9]+)\(([^)]+)\)",
          " <a href=\"".$CFG->wwwroot."/mod/\\1/view.php?id=\\2\">\\3</a> ", $line );
     }
+
+    // *Moodle specific* replace picture resource link 
+    if (IN_MOODLE==1) {
+      global $course;
+
+      if ($CFG->slasharguments) {
+      $line = eregi_replace( "/([a-zA-Z./_-]+)(png|gif|jpg)\(([^)]+)\)",
+        "<img src=\"$CFG->wwwroot/file.php/$course->id/\\1\\2\" alt=\"\\3\" />", $line );
+      }
+      else {
+      $line = eregi_replace( "/([a-zA-Z./_-]+)(png|gif|jpg)\(([^)]+)\)",
+        "<img src=\"$CFG->wwwroot/file.php\?file=$course->id/\\1\\2\" alt=\"\\3\" />", $line );
+      }
+    }
     
     return $line;
   }
@@ -244,6 +277,8 @@ class Wiki {
     $this->output = "";
     $this->block_state = STATE_NONE;
     $this->list_state = LIST_NONE;
+    $this->list_depth = 0;
+    $this->list_backtrack = array();
 
     // split content into array of single lines
     $lines = explode( "\n",$content );
@@ -254,11 +289,6 @@ class Wiki {
 
     // run through lines
     foreach( $lines as $line ) {
-
-      // convert line contents
-      // if ($this->block_state!=STATE_NOTIKI) {
-      //   $line = $this->line_replace( $line );
-      //}  
 
       // is this a blank line?
       $blank_line = eregi( "^[[:blank:]\r]*$", $line );
@@ -332,7 +362,8 @@ class Wiki {
     // close off wiki div
     $buffer = $buffer . "</div>\n";
 
-    return $buffer;    
+    //return $buffer;    
+    return $buffer;
   }
 
 }
