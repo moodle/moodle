@@ -11,8 +11,8 @@
     $CFG->texfilterdir = "filter/tex";
     $CFG->teximagedir = "filter/tex";
 
-    error_reporting(E_ALL);
     $query = urldecode($_SERVER['QUERY_STRING']);
+    error_reporting(E_ALL);
 
     if ($query) {
       $output = $query;
