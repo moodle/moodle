@@ -928,19 +928,6 @@ function get_site_users($sort="u.lastaccess DESC") {
                             GROUP BY u.id ORDER BY $sort");
 }
 
-function get_users_search($search, $sort="u.firstname ASC") {
-    global $CFG;
-
-    return get_records_sql("SELECT * from {$CFG->prefix}user 
-                             WHERE confirmed = 1 
-                               AND deleted = 0
-                               AND (firstname LIKE '%$search%' OR 
-                                    lastname LIKE '%$search%' OR 
-                                    email LIKE '%$search%')
-                               AND username <> 'guest' 
-                               AND username <> 'changeme'");
-}
-
 
 function get_users($get=true, $search="", $confirmed=false, $exceptions="", $sort="firstname ASC") {
 /// Returns a subset of users, 
