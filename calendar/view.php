@@ -128,13 +128,15 @@
 
     echo calendar_overlib_html();
 
+    echo '<div id="calendar-container">';
+
     // Layout the whole page as three big columns.
-    echo '<table border="0" cellpadding="3" cellspacing="0" width="100%">';
-    echo '<tr style="vertical-align: top;">';
+    echo '<table id="calendar">';
+    echo '<tr>';
 
     // START: Main column
 
-    echo '<td style="vertical-align: top; width: 100%;">';
+    echo '<td class="maincalendar">';
 
     switch($view) {
         case 'day':
@@ -153,27 +155,33 @@
     // END: Main column
 
     // START: Last column (3-month display)
-    echo '<td style="vertical-align: top; width: 180px;">';
-    print_side_block_start(get_string('monthlyview', 'calendar'));
+    echo '<td class="sidecalendar">';
+    echo '<div class="heading">'.get_string('monthlyview', 'calendar').'</div>';
+
     list($prevmon, $prevyr) = calendar_sub_month($mon, $yr);
     list($nextmon, $nextyr) = calendar_add_month($mon, $yr);
     $getvars = 'cal_d='.$day.'&amp;cal_m='.$mon.'&amp;cal_y='.$yr; // For filtering
+
+    echo '<div class="filters">';
     echo calendar_filter_controls($view, $getvars);
-    echo '<div style="margin: 10px 0px;">';
+    echo '</div>';
+
+    echo '<div>';
     echo calendar_top_controls('display', array('m' => $prevmon, 'y' => $prevyr));
     echo calendar_get_mini($courses, $groups, $users, $prevmon, $prevyr);
-    echo '</div><div style="margin: 10px 0px;">';
+    echo '</div><div>';
     echo calendar_top_controls('display', array('m' => $mon, 'y' => $yr));
     echo calendar_get_mini($courses, $groups, $users, $mon, $yr);
-    echo '</div><div style="margin: 10px 0px;">';
+    echo '</div><div>';
     echo calendar_top_controls('display', array('m' => $nextmon, 'y' => $nextyr));
     echo calendar_get_mini($courses, $groups, $users, $nextmon, $nextyr);
     echo '</div>';
-    print_side_block_end();
-    print_spacer(1, 180);
+
     echo '</td>';
 
     echo '</tr></table>';
+
+    echo '</div>'; // id=calendar-container
 
     print_footer();
 
@@ -209,8 +217,9 @@ function calendar_show_day($d, $m, $y, $courses, $groups, $users) {
         $text.= '</form></div>';
     }
 
-    print_side_block_start($text, array('class' => 'mycalendar'));
-    echo '<div>'.calendar_top_controls('day', array('d' => $d, 'm' => $m, 'y' => $y)).'</div>';
+    echo '<div style="float: left;" class="heading">'.$text.'</div>';
+
+    echo '<div class="controls">'.calendar_top_controls('day', array('d' => $d, 'm' => $m, 'y' => $y)).'</div>';
 
     if (empty($events)) {
         // There is nothing to display today.
@@ -250,8 +259,6 @@ function calendar_show_day($d, $m, $y, $courses, $groups, $users) {
             }
         }
     }
-
-    print_side_block_end();
 }
 
 function calendar_show_month_detailed($m, $y, $courses, $groups, $users) {
@@ -329,9 +336,11 @@ function calendar_show_month_detailed($m, $y, $courses, $groups, $users) {
         $text.= '</form></div>';
     }
 
-    print_side_block_start($text, array('class' => 'mycalendar'));
+    echo '<div style="float: left;" class="heading">'.$text.'</div>';
 
+    echo '<div class="controls">';
     echo calendar_top_controls('month', array('m' => $m, 'y' => $y));
+    echo '</div>';
 
     // Start calendar display
     echo '<table class="calendarmonth"><thead><tr>'; // Begin table. First row: day names
@@ -341,7 +350,7 @@ function calendar_show_month_detailed($m, $y, $courses, $groups, $users) {
     for($i = $display->minwday; $i <= $display->maxwday; ++$i) {
         // This uses the % operator to get the correct weekday no matter what shift we have
         // applied to the $display->minwday : $display->maxwday range from the default 0 : 6
-        echo '<td class="calendarheader">'.get_string($days[$i % 7], 'calendar').'</td>';
+        echo '<th>'.get_string($days[$i % 7], 'calendar').'</th>';
     }
 
     echo '</tr></thead><tbody><tr>'; // End of day names; prepare for day numbers
@@ -450,12 +459,10 @@ function calendar_show_month_detailed($m, $y, $courses, $groups, $users) {
     }
     echo "</tr>\n</tbody>\n"; // Last row ends
 
-    echo "</table>\n<br />\n"; // Tabular display of days ends
+    echo "</table>\n"; // Tabular display of days ends
 
     // OK, now for the filtering display
-    echo '<table class="cal_filters">';
-    echo '<tbody>';
-    echo '<tr>';
+    echo '<div class="filters"><table><tbody><tr>';
 
     // Global events
     if($SESSION->cal_show_global) {
@@ -502,8 +509,7 @@ function calendar_show_month_detailed($m, $y, $courses, $groups, $users) {
         echo "</tr>\n";
     }
 
-    echo '</tbody></table><br />';
-    print_side_block_end();
+    echo '</tbody></table></div>';
 }
 
 function calendar_show_upcoming_events($courses, $groups, $users, $futuredays, $maxevents) {
@@ -527,16 +533,16 @@ function calendar_show_upcoming_events($courses, $groups, $users, $futuredays, $
         $text.= '</form></div>';
     }
 
-    print_side_block_start($text, array('class' => 'mycalendar'));
+    echo '<div style="float: left;" class="heading">'.$text.'</div>';
+    echo '<div class="controls">&nbsp;</div>';
+
     if ($events) {
         foreach ($events as $event) {
             calendar_print_event($event);
         }
     } else {
-        echo '<br />';
         print_heading(get_string('noupcomingevents', 'calendar'));
     }
-    print_side_block_end();
 }
 
 
@@ -545,23 +551,23 @@ function calendar_print_event($event) {
 
     static $strftimetime;
 
-    echo '<table border="0" cellpadding="3" cellspacing="0" class="eventfull" width="100%">';
-    echo "<tr><td class=\"eventfullpicture\" width=\"32\" valign=\"top\">";
+    echo '<table class="eventfull">';
+    echo '<tr><td class="eventfullpicture">';
     if (!empty($event->icon)) {
         echo $event->icon;
     } else {
         print_spacer(16,16);
     }
     echo '</td>';
-    echo "<td class=\"eventfullheader\" width=\"100%\">";
+    echo '<td class="eventfullheader">';
 
     if (!empty($event->referer)) {
-        echo '<span style="float:left;" class="calendarreferer">'.$event->referer.' </span>';
+        echo '<div style="float:left;" class="calendarreferer">'.$event->referer.'</div>';
     } else {
-        echo '<span style="float:left;" class="cal_event">'.$event->name."</span>";
+        echo '<div style="float:left;" class="cal_event">'.$event->name."</div>";
     }
     if (!empty($event->courselink)) {
-        echo '<br /><span style="float:left; font-size: 0.8em;">'.$event->courselink.' </span>';
+        echo '<div style="float:left; clear: left; font-size: 0.8em;">'.$event->courselink.' </div>';
     }
     if (!empty($event->time)) {
         echo '<span style="float:right;" class="cal_event_date">'.$event->time.'</span>';
@@ -590,7 +596,7 @@ function calendar_print_event($event) {
                   title="'.get_string('tt_deleteevent', 'calendar').'" /></a>';
         echo '</div>';
     }
-    echo "</td></tr>\n</table><br />\n\n";
+    echo "</td></tr>\n</table>\n";
 
 }
 

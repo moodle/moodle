@@ -142,7 +142,7 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
     //calendar_events_by_day($events, $display->tstart, $eventsbyday, $durationbyday, $typesbyday);
     calendar_events_by_day($events, $m, $y, $eventsbyday, $durationbyday, $typesbyday);
 
-    $content .= '<table class="calendarmini">'; // Begin table
+    $content .= '<table class="minicalendar">'; // Begin table
     $content .= '<thead><tr>'; // Header row: day names
 
     // Print out the names of the weekdays
@@ -150,7 +150,7 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
     for($i = $display->minwday; $i <= $display->maxwday; ++$i) {
         // This uses the % operator to get the correct weekday no matter what shift we have
         // applied to the $display->minwday : $display->maxwday range from the default 0 : 6
-        $content .= '<td>'.get_string($days[$i % 7], 'calendar').'</td>';
+        $content .= '<th>'.get_string($days[$i % 7], 'calendar').'</th>';
     }
 
     $content .= '</tr></thead><tbody><tr>'; // End of day names; prepare for day numbers
@@ -1130,7 +1130,7 @@ function calendar_format_event_time($event, $now, $morehref, $usecommonwords = t
 
             // Set printable representation
             $eventtime = calendar_get_link_tag($day, CALENDAR_URL.'view.php?view=day'.$morehref.'&amp;', $enddate['mday'], $enddate['mon'], $enddate['year']).
-                ' ('.$timestart.' -> '.$timeend.')';
+                ' ('.$timestart.' <strong>&raquo;</strong> '.$timeend.')';
         }
         else {
             // It spans two or more days
@@ -1141,7 +1141,7 @@ function calendar_format_event_time($event, $now, $morehref, $usecommonwords = t
 
             // Set printable representation
             $eventtime = calendar_get_link_tag($daystart, CALENDAR_URL.'view.php?view=day'.$morehref.'&amp;', $startdate['mday'], $startdate['mon'], $startdate['year']).
-                ' ('.$timestart.') -> '.calendar_get_link_tag($dayend, CALENDAR_URL.'view.php?view=day'.$morehref.'&amp;', $enddate['mday'], $enddate['mon'], $enddate['year']).
+                ' ('.$timestart.') <strong>&raquo;</strong> '.calendar_get_link_tag($dayend, CALENDAR_URL.'view.php?view=day'.$morehref.'&amp;', $enddate['mday'], $enddate['mon'], $enddate['year']).
                 ' ('.$timeend.')';
         }
     }

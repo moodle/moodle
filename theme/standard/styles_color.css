@@ -307,17 +307,6 @@ table.message_search_results td {
 *** Calendar
 ***
 ******************************/
-table.calendarmini {
-    border-color:#DDDDDD; /* borders */
-}
-
-table.calendarmini tbody td {
-    border-color:#DDDDDD; /* cellcontent2 */
-}
-
-table.calendarmonth tbody td {
-    border-color:#FEE6B9; /* cellcontent2 */
-}
 
 .cal_event_global {
     border-color:#2EBA0E !important;
@@ -371,14 +360,6 @@ table.calendarmonth thead td {
     border-bottom-color:#FFC85F;
 }
 
-.mycalendar .cal_filters thead td {
-    border-bottom-color:#FFC85F;
-}
-
-.mycalendar .cal_event_table thead {
-    background-color:#FFFFFF; /* cellcontent */
-}
-
 td.cal_event_description {
     border-left-color:#FFC85F;
 }
@@ -389,20 +370,6 @@ td.cal_event_description {
 
 .cal_popup_bg {
     border-color:#FEE6B9;
-}
-
-.mycalendar .cal_event_table, 
-table.calendarmonth, 
-.mycalendar table.cal_filters {
-    border-color:#FFC85F; /* borders */
-}
-
-.mycalendar hr {
-    border-top-color:#999999;
-}
-
-.eventfull {
-    border-color:#DDDDDD; /* borders */
 }
 
 

@@ -254,68 +254,6 @@ h4 {
 *** Calendar
 ***
 ******************************/
-table.calendarmini {
-    font-size:85%;
-}
-
-table.calendarmini tbody td {
-    text-align:center;
-}
-
-table.calendarmini thead td {
-    font-size:.95em;
-    text-align:center;
-}
-
-table.calendarmonth thead td {
-    text-align:center;
-}
-
-.sideblockmain .cal_event {
-    font-size:0.8em;
-    font-weight:bold;
-}
-
-.sideblockmain .cal_event_date {
-    font-size:0.6em;
-}
-
-.mycalendar .cal_event_date {
-    font-size:0.8em;
-}
-
-.mycalendar .cal_event_table thead {
-    font-weight:bold;
-    text-align:center;
-}
-
-.cal_popup_caption {
-    font-family:sans-serif;
-    font-size:75%;
-    font-weight:bold;
-}
-
-.cal_popup_close {
-    font-family:sans-serif;
-    font-size:75%;
-    font-weight:bold;
-}
-
-.sideblock .cal_controls {
-    font-size:9px;
-    text-align:center;
-}
-
-table.calendarmonth tbody td table,
-table.calendarmonth tbody td div {
-    font-size:0.75em;
-    line-height:1.2em;
-}
-
-.calendarreferer,
-.mycalendar .cal_event {
-    font-weight:bold;
-}
 
 
 /*****************************

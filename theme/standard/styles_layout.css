@@ -281,36 +281,6 @@ table.message_search_results td {
 ***
 ******************************/
 /* calendar */
-table.calendarmini {
-    width:100%;
-    margin:0px;
-    padding:2px;
-    border-width:1px;
-    border-style:solid;
-}
-
-table.calendarmini thead td {
-    vertical-align:center;
-}
-
-table.calendarmini tbody td {
-    border-width:2px;
-    border-style:solid;
-    vertical-align:center;
-}
-
-table.calendarmonth thead td {
-    padding-bottom:3px;
-    border-bottom:2px solid;
-    vertical-align:center;
-}
-
-table.calendarmonth tbody td {
-    width:14%;
-    border-width:2px;
-    border-style:solid;
-    vertical-align:top;
-}
 
 .cal_event_global {
     border:2px solid !important;
@@ -350,12 +320,6 @@ table.calendarmonth tbody td {
 
 .cal_today {
     border:2px solid !important;
-}
-
-.mycalendar .cal_filters thead td {
-    margin:0px;
-    padding:2px;
-    border-bottom:2px solid;
 }
 
 table.calendarmonth tbody td table,
@@ -563,4 +527,130 @@ body#admin-blocks .generaltablecell {
 body#admin-config .confighelp {
     display: block;
     padding-bottom: 20px;
+}
+
+
+
+
+/*
+CALENDAR STYLES -- PROVISIONALLY PLACED HERE UNTIL FINALIZED
+*/
+
+.cal_popup_caption {
+    font-family:sans-serif;
+    font-size:75%;
+    font-weight:bold;
+}
+
+.cal_popup_close {
+    font-family:sans-serif;
+    font-size:75%;
+    font-weight:bold;
+}
+
+.calendarreferer {
+    font-weight:bold;
+}
+
+#calendar .maincalendar table.calendarmonth tbody td {
+    font-size:0.8em;
+    line-height:1.2em;
+}
+
+#calendar .maincalendar table.calendarmonth {
+    -moz-border-radius: 10px;
+    margin: 1em;
+}
+
+#calendar .maincalendar table.calendarmonth thead th {
+    padding:10px;
+    border-bottom:2px solid;
+    vertical-align:center;
+}
+
+#calendar-container #calendar {
+    width: 100%;
+    border-spacing: 5px;
+}
+
+#calendar-container table {
+    border-collapse: separate;
+}
+
+#calendar .maincalendar .controls {
+    clear:both;
+    padding:10px;
+    font-size:1.2em;
+}
+
+table.calendarmonth tbody td, table.minicalendar tbody td {
+    width:13%;
+    vertical-align:top;
+}
+
+#calendar .sidecalendar, #calendar .maincalendar {
+    vertical-align: top;
+    border: 1px #DDDDDD solid;
+    -moz-border-radius-bottomright:20px;
+    -moz-border-radius-bottomleft:20px;
+}
+
+#calendar .sidecalendar {
+    width: 180px;
+}
+
+.maincalendar .filters table, .sidecalendar .filters table {
+    border-spacing: 2px;
+    margin: 2em 0.5em;
+    -moz-border-radius:4px;
+    background-color: #EEEEEE;
+    padding: 2px;
+    width: 100%;
+}
+
+.sidecalendar .filters table {
+    font-size: 0.75em;
+}
+
+#calendar .maincalendar .heading, #calendar-container .sidecalendar .heading {
+    background-image:url(gradient.jpg);
+    background-position:top;
+    background-repeat:repeat-x;
+    font-weight:bold;
+    padding: 5px;
+}
+
+table.minicalendar {
+    font-size:0.85em;
+    -moz-border-radius:10px;
+    border-color:#DDDDDD;
+    width:100%;
+    margin:10px;
+    padding:2px;
+    border-width:1px;
+    border-style:solid;
+    border-spacing: 1px;
+}
+
+table.minicalendar thead th {
+    padding: 0px 2px;
+}
+
+table.minicalendar tbody td {
+    -moz-border-radius:4px;
+    text-align: center;
+}
+
+#calendar .eventfull {
+    margin: 2px 10px;
+    width: 100%;
+    border-color:#DDDDDD; /* borders */
+}
+
+#calendar .eventfullheader, #calendar .eventfullpicture, #calendar .eventfullside {
+    background-color:#EEEEEE;
+}
+
+#calendar .eventfullmessage {
+    padding: 5px;
 }

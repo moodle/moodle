@@ -70,14 +70,6 @@
     -moz-border-radius-topright:15px;
 }
 
-table.calendarmini {
-    -moz-border-radius:10px;
-}
-
-table.calendarmini tbody td {
-    -moz-border-radius:4px;
-}
-
 .eventfull {
     -moz-border-radius-bottomleft:15px;
     -moz-border-radius-bottomright:15px;
@@ -124,11 +116,7 @@ table.calendarmini tbody td {
     -moz-border-radius-bottomright:20px;
 }
 
-.mycalendar .cal_event_table, table.calendarmonth, .mycalendar table.cal_filters {
-    -moz-border-radius:10px;
-}
-
-.sideblockmain, .sideblocklatestnews, .sideblockrecentactivity, .mycalendar {
+.sideblockmain, .sideblocklatestnews, .sideblockrecentactivity {
     -moz-border-radius-bottomleft:20px;
     -moz-border-radius-bottomright:20px;
 }
