@@ -7,7 +7,7 @@
         error('You cannot call this script in that way');
     }
 
-    print_heading(fullname($user, isteacher($course)));
+    print_heading(fullname($user, isteacher($course->id)));
 
 //if (!empty($USER) and (isteacher($course->id) or (($USER->id == $user->id) and !isguest()))) { // tabs are shown
 
