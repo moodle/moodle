@@ -13,6 +13,10 @@
     if (!$course = get_record("course", "id", $chat->course)) {
         error("Could not find the course this belongs to!");
     }
+
+    if (!$cm = get_coursemodule_from_instance("chat", $chat->id, $course->id)) {
+        error("Course Module ID was incorrect");
+    }
     
     require_login($course->id);
     
