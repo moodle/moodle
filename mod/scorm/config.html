@@ -1,0 +1,50 @@
+<form method="post" action="module.php" name="form">
+
+<table cellpadding=9 cellspacing=0 >
+<tr valign=top>
+	<td align=right><p>scorm_framesize:</td>
+	<td>
+    <input name=scorm_framesize type=text size=5 value="<?php p($CFG->scorm_framesize) ?>">
+    </td>
+    <td>
+    <?php print_string("configframesize", "scorm") ?>
+    </td>
+</tr>
+<tr valign=top>
+	<td align=right><p>scorm_popup:</td>
+	<td>
+    <?php
+        unset($choices);
+        $choices[""] = get_string("no");
+        $choices["checked"] = get_string("yes");
+        choose_from_menu ($choices, "scorm_popup", $CFG->scorm_popup, "");
+    ?>
+    </td>
+    <td>
+    <?php print_string("configpopup", "scorm") ?>
+    </td>
+</tr>
+<?php foreach ($SCORM_WINDOW_OPTIONS as $optionname) {
+          $defaultvalue = "scorm_popup$optionname";
+          echo "<tr valign=top>";
+	      echo "<td align=right><p>$defaultvalue:</td>";
+	      echo "<td>";
+          if ($optionname == "height" or $optionname == "width") {
+              echo "<input name=$defaultvalue type=text size=5 value=\"".$CFG->$defaultvalue."\">";
+          } else {
+              choose_from_menu ($choices, $defaultvalue, $CFG->$defaultvalue, "");
+          }
+          echo "</td>";
+          echo "<td>";
+          print_string("configpopup$optionname", "scorm");
+          echo "</td>";
+          echo "</tr>";
+      }
+?>
+<tr>
+    <td colspan=3 align=center>
+	<input type="submit" value="<?php print_string("savechanges") ?>"></td>
+</tr>
+</table>
+
+</form>

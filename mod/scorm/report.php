@@ -90,6 +90,8 @@
     				    $scoreview = "";
     				    if ($data->cmi_core_score_raw > 0)
     				    	$scoreview = "<br />".get_string("score","scorm").":&nbsp;".$data->cmi_core_score_raw;
+    				    if ( $data->cmi_core_lesson_status == "")
+    		    			$data->cmi_core_lesson_status = "not attempted";
         		    	    $row[]="<img src=\"pix/".scorm_remove_spaces($data->cmi_core_lesson_status).".gif\" 
     						   alt=\"".get_string(scorm_remove_spaces($data->cmi_core_lesson_status),"scorm")."\"
     						   title=\"".get_string(scorm_remove_spaces($data->cmi_core_lesson_status),"scorm")."\">&nbsp;"

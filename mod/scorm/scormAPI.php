@@ -135,6 +135,7 @@
     include("api1_2.php");
 
 ?>
+
 function hilightcurrent(popupmenu) {
     for (i=0;i < popupmenu.options.length;i++) {
 	 if ( popupmenu.options[i].value == <?php echo $sco->id; ?> )
@@ -154,8 +155,9 @@ function SCOInitialize() {
     }
 ?>
 	top.main.location="<?php echo $result; ?>";
+<?php	if ($scorm->popup == "") { ?>
 	hilightcurrent(top.nav.document.navform.courseStructure);
-	
+<?php   } ?>
 } 
 
 function changeSco(direction) {

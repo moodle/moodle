@@ -3,8 +3,28 @@
 /// Library of functions and constants for module scorm
 /// (replace scorm with the name of your module and delete this line)
 
+$SCORM_WINDOW_OPTIONS = array("resizable", "scrollbars", "status", "height", "width");
 
-$SCORM_FRAME_SIZE = 140;
+if (!isset($CFG->scorm_popup)) {
+    set_config("scorm_popup", "");
+}  
+
+foreach ($SCORM_WINDOW_OPTIONS as $popupoption) {
+    $popupoption = "scorm_popup$popupoption";
+    if (!isset($CFG->$popupoption)) {
+        if ($popupoption == "scorm_popupheight") {
+            set_config($popupoption, 450);
+        } else if ($popupoption == "scorm_popupwidth") {
+            set_config($popupoption, 620);
+        } else {
+            set_config($popupoption, "checked");
+        }
+    }  
+}
+
+if (!isset($CFG->scorm_framesize)) {
+    set_config("scorm_framesize", 140);
+}
 
 function scorm_add_instance($scorm) {
 /// Given an object containing all the necessary data, 
@@ -15,6 +35,19 @@ function scorm_add_instance($scorm) {
     $scorm->timemodified = time();
 
     # May have to add extra stuff in here #
+    global $SCORM_WINDOW_OPTIONS;
+    
+    if (isset($scorm->setnewwindow)) {
+        $optionlist = array();
+        foreach ($SCORM_WINDOW_OPTIONS as $option) {
+            if (isset($scorm->$option)) {
+                $optionlist[] = $option."=".$scorm->$option;
+            }
+        }
+        $scorm->popup = implode(',', $optionlist);
+        $scorm->popup .= ',location=0,menubar=0,toolbar=0';
+        $scorm->auto = '0';
+    }
     
     return insert_record("scorm", $scorm);
 }
@@ -24,11 +57,24 @@ function scorm_update_instance($scorm) {
 /// Given an object containing all the necessary data, 
 /// (defined by the form in mod.html) this function 
 /// will update an existing instance with new data.
-
+    
     $scorm->timemodified = time();
     $scorm->id = $scorm->instance;
 
     # May have to add extra stuff in here #
+    global $SCORM_WINDOW_OPTIONS;
+    
+    if (isset($scorm->setnewwindow)) {
+        $optionlist = array();
+        foreach ($SCORM_WINDOW_OPTIONS as $option) {
+            if (isset($scorm->$option)) {
+                $optionlist[] = $option."=".$scorm->$option;
+            }
+        }
+        $scorm->popup = implode(',', $optionlist);
+        $scorm->popup .= ',location=0,menubar=0,toolbar=0';
+        $scorm->auto = '0';
+    }
 
     return update_record("scorm", $scorm);
 }

@@ -93,7 +93,7 @@
         print_simple_box_start("CENTER");
     	echo "<table>\n";
     	echo "  <tr><th>".get_string("coursestruct","scorm")."</th></tr>\n";
-    	echo "  <tr><td nowrap>\n<ul compact class=\"scormlist\"'>\n";
+    	echo "  <tr><td nowrap>\n<ul class=\"scormlist\"'>\n";
     	$incomplete = false;
     	if ($scoes = get_records_select("scorm_scoes","scorm='$scorm->id' order by id ASC")){
     	    $level=0;
@@ -102,10 +102,10 @@
     	    foreach ($scoes as $sco) {
     		if ($parents[$level]!=$sco->parent) {
     		    if ($level>0 && $parents[$level-1]==$sco->parent) {
-    			echo "  </ul>\n";
+    			echo "  </ul></li>\n";
     			$level--;
     		    } else {
-    			echo "  <ul id='".$sublist."' compact class=\"scormlist\"'>\n";
+    			echo "  <li><ul id='".$sublist."' class=\"scormlist\"'>\n";
     			$level++;
     			$parents[$level]=$sco->parent;
     		    }
@@ -135,7 +135,7 @@
 		}
 	    }
 	    for ($i=0;$i<$level;$i++){
-	    	 echo "  </ul>\n";
+	    	 echo "  </ul></li>\n";
 	    }
 	}
 	echo "</ul></td></tr>\n";

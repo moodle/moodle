@@ -1,47 +1,11 @@
-//
-// CMI Initialization SCORM 1.2
-//
-	var cmi= new Object();
-	
-	cmi.core = new Object();
-	cmi.core._children = "student_id,student_name,lesson_location,credit,lesson_status,exit,entry,session_time,total_time,lesson_mode,score,suspend_data,launch_data";
-	cmi.core.student_id = "<?php echo $USER->username; ?>";
-	cmi.core.student_name = "<?php echo $USER->firstname." ".$USER->lastname; ?>";
-	cmi.core.lesson_location = "<?php echo $sco_user->cmi_core_lesson_location; ?>";
-	cmi.core.credit = "credit";
-	cmi.core.lesson_status = "<?php echo $sco_user->cmi_core_lesson_status; ?>";
-	cmi.core.exit = "<?php echo $sco_user->cmi_core_exit ?>";
-	cmi.core.entry = "<?php if ($sco_user->cmi_core_lesson_status=="not attempted") 
-				    echo 'ab-initio'; 
-				else 
-				    if ($sco_user->cmi_core_lesson_status!="completed") 
-					echo 'resume'; 
-				    else 
-					echo '';?>";
-	cmi.core.session_time = "<?php echo $sco_user->cmi_core_session_time; ?>";
-	cmi.core.total_time = "<?php echo $sco_user->cmi_core_total_time; ?>";
-	cmi.core.lesson_mode = "<?php echo $mode; ?>";
-	
-	cmi.core.score = new Object();
-	cmi.core.score._children = "raw,min,max";
-	cmi.core.score.raw = "<?php echo $sco_user->cmi_core_score_raw; ?>";
-	cmi.suspend_data = "<?php echo $sco_user->cmi_suspend_data; ?>";
-	cmi.launch_data = "<?php echo $sco_user->cmi_launch_data; ?>";
-/*	cmi.interactions = new Object();
-	cmi.interactions._children = "id,objectives,time,type,correct_responses,weighting,student_response,result,latency";
-	cmi.interactions._count = 0;
-*/
-	var errorCode = 0;
-
-//
-// end CMI Initialization
-//
-
-
 // 
 // SCORM API 1.2 Implementation
 //
 function SCORMapi() {
+    var cmi= new Object();
+
+    var errorCode = 0;
+    
     var Initialized = false;
 
     function LMSInitialize (param) {
@@ -52,6 +16,37 @@ function SCORMapi() {
 	if (!Initialized) {
 	    Initialized = true;
 	    errorCode = 0;
+	    
+	    //
+	    // CMI Initialization SCORM 1.2
+	    //
+	    cmi.core = new Object();
+	    cmi.core._children = "student_id,student_name,lesson_location,credit,lesson_status,exit,entry,session_time,total_time,lesson_mode,score,suspend_data,launch_data";
+	    cmi.core.student_id = "<?php echo $USER->username; ?>";
+	    cmi.core.student_name = "<?php echo $USER->firstname." ".$USER->lastname; ?>";
+	    cmi.core.lesson_location = "<?php echo $sco_user->cmi_core_lesson_location; ?>";
+	    cmi.core.credit = "credit";
+	    cmi.core.lesson_status = "<?php echo $sco_user->cmi_core_lesson_status; ?>";
+	    cmi.core.exit = "<?php echo $sco_user->cmi_core_exit ?>";
+	    cmi.core.entry = "<?php if ($sco_user->cmi_core_lesson_status=="not attempted") 
+					echo 'ab-initio'; 
+				    else 
+					if ($sco_user->cmi_core_lesson_status!="completed") 
+					    echo 'resume'; 
+				    	else 
+					    echo '';?>";
+	    cmi.core.session_time = "";
+	    cmi.core.total_time = "<?php echo $sco_user->cmi_core_total_time; ?>";
+	    cmi.core.lesson_mode = "<?php echo $mode; ?>";
+	    cmi.core.score = new Object();
+	    cmi.core.score._children = "raw,min,max";
+	    cmi.core.score.raw = "<?php echo $sco_user->cmi_core_score_raw; ?>";
+	    cmi.suspend_data = "<?php echo $sco_user->cmi_suspend_data; ?>";
+	    cmi.launch_data = "<?php echo $sco_user->cmi_launch_data; ?>";
+	    //
+	    // end CMI Initialization
+	    //
+
 	    return "true";
 	} else {
 	    errorCode = 101;
@@ -277,6 +272,7 @@ function SCORMapi() {
 	
 	return hours + ":" + mins + ":" + secs;
     }
+    
     this.LMSInitialize = LMSInitialize;
     this.LMSGetValue = LMSGetValue;
     this.LMSSetValue = LMSSetValue;
