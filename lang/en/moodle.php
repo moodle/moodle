@@ -267,6 +267,7 @@ $string['managedatabase'] = "Manage database";
 $string['markthistopic'] = "Mark this topic as the current topic";
 $string['maximumchars'] = "Maximum of \$a characters";
 $string['maximumgrade'] = "Maximum grade";
+$string['maximumshort'] = "Max";
 $string['maxsize'] = "Max size: \$a";
 $string['min'] = "min";
 $string['mins'] = "mins";
