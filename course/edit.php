@@ -37,6 +37,8 @@
 
 	if ($form = data_submitted()) {
 
+        check_for_restricted_user($USER->username, "$CFG->wwwroot/course/view.php?id=$course->id");
+
         $form->startdate = make_timestamp($form->startyear, $form->startmonth, $form->startday);
 
         validate_form($course, $form, $err);
