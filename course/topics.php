@@ -117,10 +117,8 @@
         }
     
         echo "</td>";
-        echo "<td nowrap bgcolor=\"$THEME->cellheading\" class=\"topicsoutlineside\" valign=top align=center width=10>&nbsp;";
-        echo "<a href=\"view.php?id=$course->id&topic=all\" title=\"$strshowalltopics\"><img src=\"$pixpath/i/all.gif\" height=25 width=16 border=0></a><br><br>";
-        echo "</td>";
-        echo "</tr>";
+        echo "<td nowrap bgcolor=\"$THEME->cellheading\" class=\"topicsoutlineside\" valign=top align=center width=10>";
+        echo "&nbsp;</td></tr>";
         echo "<tr><td colspan=3><img src=\"../pix/spacer.gif\" width=1 height=1></td></tr>";
     }
 
@@ -173,9 +171,7 @@
         if (!isteacher($course->id) and !$thissection->visible) {   // Hidden for students
             echo "<td valign=top align=center $colormain width=\"100%\">";
             echo get_string("notavailable");
-            echo "</td><td $colorsides width=20>";
-            echo "&nbsp;";
-            echo "</td></tr>";
+            echo "</td>";
 
         } else {
             echo "<td valign=top $colormain width=\"100%\">";
@@ -196,40 +192,40 @@
             }
     
             echo "</td>";
-            echo "<td nowrap $colorsides valign=top align=center width=10>";
-            echo "<font size=1>";
-
-            if ($displaysection == $section) {      // Show the zoom boxes
-                echo "<a href=\"view.php?id=$course->id&topic=all\" title=\"$strshowalltopics\">".
-                     "<img src=\"$pixpath/i/all.gif\" height=25 width=16 border=0></a><br />";
-            } else {
-                $strshowonlytopic = get_string("showonlytopic", "", $section);
-                echo "<a href=\"view.php?id=$course->id&topic=$section\" title=\"$strshowonlytopic\">".
-                     "<img src=\"$pixpath/i/one.gif\" height=16 width=16 border=0></a><br />";
-            }
-
-            if (isediting($course->id)) {
-                if ($course->marker == $section) {  // Show the "light globe" on/off
-                    echo "<a href=\"view.php?id=$course->id&marker=0\" title=\"$strmarkedthistopic\">".
-                         "<img src=\"$pixpath/i/marked.gif\" vspace=3 height=16 width=16 border=0></a><br />";
-                } else {
-                    echo "<a href=\"view.php?id=$course->id&marker=$section\" title=\"$strmarkthistopic\">".
-                         "<img src=\"$pixpath/i/marker.gif\" vspace=3 height=16 width=16 border=0></a><br />";
-                }
-
-                if ($thissection->visible) {        // Show the hide/show eye
-                    echo "<a href=\"view.php?id=$course->id&hide=$section\" title=\"$strtopichide\">".
-                         "<img src=\"$pixpath/i/hide.gif\" vspace=3 height=16 width=16 border=0></a><br />";
-                } else {
-                    echo "<a href=\"view.php?id=$course->id&show=$section\" title=\"$strtopicshow\">".
-                         "<img src=\"$pixpath/i/show.gif\" vspace=3 height=16 width=16 border=0></a><br />";
-                }
-
-            }
-
-            echo "</td>";
-            echo "</tr>";
         }
+        echo "<td nowrap $colorsides valign=top align=center width=10>";
+        echo "<font size=1>";
+
+        if ($displaysection == $section) {      // Show the zoom boxes
+            echo "<a href=\"view.php?id=$course->id&topic=all\" title=\"$strshowalltopics\">".
+                 "<img src=\"$pixpath/i/all.gif\" height=25 width=16 border=0></a><br />";
+        } else {
+            $strshowonlytopic = get_string("showonlytopic", "", $section);
+            echo "<a href=\"view.php?id=$course->id&topic=$section\" title=\"$strshowonlytopic\">".
+                 "<img src=\"$pixpath/i/one.gif\" height=16 width=16 border=0></a><br />";
+        }
+
+        if (isediting($course->id)) {
+            if ($course->marker == $section) {  // Show the "light globe" on/off
+                echo "<a href=\"view.php?id=$course->id&marker=0\" title=\"$strmarkedthistopic\">".
+                     "<img src=\"$pixpath/i/marked.gif\" vspace=3 height=16 width=16 border=0></a><br />";
+            } else {
+                echo "<a href=\"view.php?id=$course->id&marker=$section\" title=\"$strmarkthistopic\">".
+                     "<img src=\"$pixpath/i/marker.gif\" vspace=3 height=16 width=16 border=0></a><br />";
+            }
+
+            if ($thissection->visible) {        // Show the hide/show eye
+                echo "<a href=\"view.php?id=$course->id&hide=$section\" title=\"$strtopichide\">".
+                     "<img src=\"$pixpath/i/hide.gif\" vspace=3 height=16 width=16 border=0></a><br />";
+            } else {
+                echo "<a href=\"view.php?id=$course->id&show=$section\" title=\"$strtopicshow\">".
+                     "<img src=\"$pixpath/i/show.gif\" vspace=3 height=16 width=16 border=0></a><br />";
+            }
+
+        }
+
+        echo "</td>";
+        echo "</tr>";
         echo "<tr><td colspan=3><img src=\"../pix/spacer.gif\" width=1 height=1></td></tr>";
 
         $section++;
