@@ -1,5 +1,5 @@
-ABOUT THIS DIRECTORY
---------------------
+À PROPOS DE CE DOSSIER
+----------------------
 
 NE PAS MODIFIER, NE PAS RENOMMER ET NE PAS DÉPLACER
 LES FICHIERS DE CE DOSSIER à moins que vous ne sachiez
