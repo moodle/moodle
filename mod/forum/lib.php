@@ -1559,7 +1559,7 @@ function forum_move_attachments($discussion, $forumid) {
             if (is_dir($oldpostdir)) {
                 $newpost = $oldpost;
                 $newpost->forum = $forumid;
-                $newpostdir = "$CFG->dataroot/".forum_file_area($newpost);
+                $newpostdir = forum_file_area($newpost);
                 if (! @rename($oldpostdir, $newpostdir)) {
                     $return = false;
                 }
