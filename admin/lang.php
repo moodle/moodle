@@ -60,7 +60,7 @@
         echo "<b>$strcurrentlanguage:</b>";
         echo "</td><td>";
         echo popup_form ("$CFG->wwwroot/$CFG->admin/lang.php?lang=", $langs, "chooselang", $currlang, "", "", "", true);
-        echo '</tr><td colspan="2">';
+        echo '</td></tr><tr><td colspan="2">';
         $options["lang"] = $currentlang;
         print_single_button("http://moodle.org/download/lang/", $options, get_string("latestlanguagepack"));
         echo "</td></tr></table>";
@@ -175,7 +175,7 @@
             if ($file == $currentfile) {
                 echo "<b>$file</b> &nbsp; ";
             } else {
-                echo "<a href=\"lang.php?mode=compare&currentfile=$file\">$file</a> &nbsp; ";
+                echo "<a href=\"lang.php?mode=compare&amp;currentfile=$file\">$file</a> &nbsp; ";
             }
         }
         echo '</font></center>';
@@ -257,7 +257,7 @@
                     if ($valuelen) {
                         $cols = $valuelen + 2;
                     }
-                    echo '<input type="text" name="string-'.$key.'" value="'.$value.'" size="'.$cols.'"></td>';
+                    echo '<input type="text" name="string-'.$key.'" value="'.$value.'" size="'.$cols.'" />';
                 }
                 echo '</td>';
 
@@ -268,9 +268,9 @@
         if ($editable) {
             echo '<tr><td colspan="2">&nbsp;<td><br />';
             echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
-            echo '    <input type="hidden" name="currentfile" value="'.$currentfile.'">';
-            echo '    <input type="hidden" name="mode" value="compare">';
-            echo '    <input type="submit" name="update" value="'.get_string('savechanges').': '.$currentfile.'">';
+            echo '    <input type="hidden" name="currentfile" value="'.$currentfile.'" />';
+            echo '    <input type="hidden" name="mode" value="compare" />';
+            echo '    <input type="submit" name="update" value="'.get_string('savechanges').': '.$currentfile.'" />';
             echo '</td></tr>';
         }
         echo '</table>';
