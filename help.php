@@ -10,6 +10,8 @@
   optional_variable($text, "No text to display");
   optional_variable($module, "moodle");
 
+  $lang = current_language();
+
   print_header();
 
   if (ereg("\\.\\.", $file)) {
@@ -18,9 +20,9 @@
 
   if ($file) {
         if ($module == "moodle") {
-            $filepath = "$CFG->dirroot/lang/$CFG->lang/help/$file";
+            $filepath = "$CFG->dirroot/lang/$lang/help/$file";
         } else {
-            $filepath = "$CFG->dirroot/lang/$CFG->lang/help/$module/$file";
+            $filepath = "$CFG->dirroot/lang/$lang/help/$module/$file";
         }
 
         if (file_exists("$filepath")) {
