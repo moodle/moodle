@@ -7,7 +7,6 @@
 
     require_once("../../config.php");
 
-
     $CFG->texfilterdir = "filter/tex";
     $CFG->teximagedir = "filter/tex";
 
@@ -15,153 +14,154 @@
     error_reporting(E_ALL);
 
     if ($query) {
-      $output = $query;
-      $splitpos = strpos($query,'&')-4;
-      $texexp = substr($query,4,$splitpos);
-      $md5 = md5($texexp);
-      if (strpos($query,'ShowDB') || strpos($query,'DeleteDB')) {
-	$texcache = get_record("cache_filters","filter","tex", "md5key", $md5);
-      }
-      if (strpos($query,'ShowDB')) {
-        if ($texcache) {
-	  $output = "DB cache_filters entry for $texexp\n";
-          $output .= "id = $texcache->id\n";
-          $output .= "filter = $texcache->filter\n";
-          $output .= "version = $texcache->version\n";
-          $output .= "md5key = $texcache->md5key\n";
-          $output .= "rawtext = $texcache->rawtext\n";
-          $output .= "timemodified = $texcache->timemodified\n";
-        } else {
-          $output = "DB cache_filters entry for $texexp not found\n";
+        $output = $query;
+        $splitpos = strpos($query,'&')-4;
+        $texexp = substr($query,4,$splitpos);
+        $md5 = md5($texexp);
+        if (strpos($query,'ShowDB') || strpos($query,'DeleteDB')) {
+            $texcache = get_record("cache_filters","filter","tex", "md5key", $md5);
         }
-      }
-      if (strpos($query,'DeleteDB')) {
-        if ($texcache) {
-          $output = "Deleting DB cache_filters entry for $texexp\n";
-          $result =  delete_records("cache_filters","id",$texcache->id);
-          if ($result) {
-	    $result = 1;
-          } else {
-            $result = 0;
-          }
-          $output .= "Number of records deleted = $result\n";
-        } else {
-          $output = "Could not delete DB cache_filters entry for $texexp\nbecause it could not be found.\n";
+        if (strpos($query,'ShowDB')) {
+            if ($texcache) {
+                $output = "DB cache_filters entry for $texexp\n";
+                $output .= "id = $texcache->id\n";
+                $output .= "filter = $texcache->filter\n";
+                $output .= "version = $texcache->version\n";
+                $output .= "md5key = $texcache->md5key\n";
+                $output .= "rawtext = $texcache->rawtext\n";
+                $output .= "timemodified = $texcache->timemodified\n";
+            } else {
+                $output = "DB cache_filters entry for $texexp not found\n";
+            }
         }
-      }
-      if (strpos($query,'ShowImage')) {
-        tex2image($texexp);
-      } else {   
-        outputText($output);
-      }
-      exit;
+        if (strpos($query,'DeleteDB')) {
+            if ($texcache) {
+                $output = "Deleting DB cache_filters entry for $texexp\n";
+                $result =  delete_records("cache_filters","id",$texcache->id);
+                if ($result) {
+                    $result = 1;
+                } else {
+                    $result = 0;
+                }
+                $output .= "Number of records deleted = $result\n";
+            } else {
+                $output = "Could not delete DB cache_filters entry for $texexp\nbecause it could not be found.\n";
+            }
+        }
+        if (strpos($query,'ShowImage')) {
+            tex2image($texexp);
+        } else {   
+            outputText($output);
+        }
+        exit;
     }
 
 
-function outputText($texexp) {
-  header("Content-type: text/html");
-  echo "<html><body><pre>\n";
-  if ($texexp) {
-    $texexp = str_replace('<','&lt;',$texexp);
-    $texexp = str_replace('>','&gt;',$texexp);
-    $texexp = str_replace('"','&quot;',$texexp);
-    echo "$texexp\n\n";
-  } else {
-    echo "No text output available\n\n";
-  }
-  echo "</pre></body></html>\n";
-}
+    function outputText($texexp) {
+        header("Content-type: text/html");
+        echo "<html><body><pre>\n";
+        if ($texexp) {
+            $texexp = str_replace('<','&lt;',$texexp);
+            $texexp = str_replace('>','&gt;',$texexp);
+            $texexp = str_replace('"','&quot;',$texexp);
+            echo "$texexp\n\n";
+        } else {
+            echo "No text output available\n\n";
+        }
+        echo "</pre></body></html>\n";
+    }
 
-function tex2image($texexp) {
-  global $CFG;
-  $error_message1 = "Your system is not configured to run mimeTeX. ";
-  $error_message1 .= "You need to download the appropriate<br> executable ";
-  $error_message1 .= "from <a href=\"http://moodle.org/download/mimetex/\">";
-  $error_message1 .= "http://moodle.org/download/mimetex/</a>, or obtain the ";
-  $error_message1 .= "C source<br> from <a href=\"http://www.forkosh.com/mimetex.zip\">";
-  $error_message1 .= "http://www.forkosh.com/mimetex.zip</a>, compile it and ";
-  $error_message1 .= "put the executable into your<br> moodle/filter/tex/ directory. ";
-  $error_message1 .= "You also need to edit your moodle/filter/tex/pix.php file<br>";
-  $error_message1 .= ' by adding the line<br><pre>       case "' . PHP_OS . "\":\n";
-  $error_message1 .= "           \$cmd = \"\\\\\"\$CFG->dirroot/\$CFG->texfilterdir/";
-  $error_message1 .= 'mimetex.' . strtolower(PHP_OS) . "\\\\\" -e \\\\\"\$pathname\\\\\" \". escapeshellarg(\$texexp);";
-  $error_message1 .= "</pre>You also need to add this to your texdebug.php file.";
+    function tex2image($texexp) {
+        global $CFG;
+        $error_message1 = "Your system is not configured to run mimeTeX. ";
+        $error_message1 .= "You need to download the appropriate<br> executable ";
+        $error_message1 .= "from <a href=\"http://moodle.org/download/mimetex/\">";
+        $error_message1 .= "http://moodle.org/download/mimetex/</a>, or obtain the ";
+        $error_message1 .= "C source<br> from <a href=\"http://www.forkosh.com/mimetex.zip\">";
+        $error_message1 .= "http://www.forkosh.com/mimetex.zip</a>, compile it and ";
+        $error_message1 .= "put the executable into your<br> moodle/filter/tex/ directory. ";
+        $error_message1 .= "You also need to edit your moodle/filter/tex/pix.php file<br>";
+        $error_message1 .= ' by adding the line<br><pre>       case "' . PHP_OS . "\":\n";
+        $error_message1 .= "           \$cmd = \"\\\\\"\$CFG->dirroot/\$CFG->texfilterdir/";
+        $error_message1 .= 'mimetex.' . strtolower(PHP_OS) . "\\\\\" -e \\\\\"\$pathname\\\\\" \". escapeshellarg(\$texexp);";
+        $error_message1 .= "</pre>You also need to add this to your texdebug.php file.";
 
-  if ($texexp) {
-       $texexp = '\Large ' . $texexp;
-       $lifetime = 86400;
-       $image  = md5($texexp) . ".gif";
-       $filetype = 'image/gif';
-       if (!file_exists("$CFG->dataroot/$CFG->teximagedir")) {
-          make_upload_directory($CFG->teximagedir);
-       }
-       $pathname = "$CFG->dataroot/$CFG->teximagedir/$image";
-       if (file_exists($pathname)) {
-          unlink($pathname);
-       }
-       $commandpath = "";
-       $cmd = "";
-         switch (PHP_OS) {
-       case "Linux":
-         $commandpath="$CFG->dirroot/$CFG->texfilterdir/mimetex.linux";           
-         $cmd = "\"$CFG->dirroot/$CFG->texfilterdir/mimetex.linux\" -e \"$pathname\" ". escapeshellarg($texexp);
-       break;
-       case "WINNT":
-       case "WIN32":
-       case "Windows":
-	 $commandpath="$CFG->dirroot/$CFG->texfilterdir/mimetex.exe";
-	 $texexp = str_replace('"','\"',$texexp);
-	 $cmd = str_replace(' ','^ ',$commandpath);
-	 $cmd .= " ++ -e  \"$pathname\" \"$texexp\"";
-       break;
-       case "Darwin":
-           $commandpath="$CFG->dirroot/$CFG->texfilterdir/mimetex.darwin";
-           $cmd = "\"$CFG->dirroot/$CFG->texfilterdir/mimetex.darwin\" -e \"$pathname\" ". escapeshellarg($texexp);
-       break;
-       }
-       if (!$cmd) {
-	   error($error_message1);
-       }
-       system($cmd, $status);
-  }
-  if ($texexp && file_exists($pathname)) {
-           $lastmodified = filemtime($pathname);
-           header("Last-Modified: " . gmdate("D, d M Y H:i:s", $lastmodified) . " GMT");
-           header("Expires: " . gmdate("D, d M Y H:i:s", time() + $lifetime) . " GMT");
-           header("Cache-control: max_age = $lifetime"); // a day
-           header("Pragma: ");
-           header("Content-disposition: inline; filename=$image");
-           header("Content-length: ".filesize($pathname));
-           header("Content-type: $filetype");
-           readfile("$pathname");
-   } else {
-           $ecmd = "$cmd 2>&1";
-           echo `$ecmd` . "<br>\n";
-           echo "The shell command<br>$cmd<br>returned status = $status<br>\n";
-	   if ($status == 4) {
-	     echo "Status corresponds to illegal instruction<br>\n";
-           } else if ($status == 11) {
-	     echo "Status corresponds to bus error<br>\n";
-           } else if ($status == 22) {
-	     echo "Status corresponds to abnormal termination<br>\n";
-           }
-           if (file_exists($commandpath)) {
-              echo "File size of mimetex executable  $commandpath is " . filesize($commandpath) . "<br>";
-              echo "The file permissions are: " . decoct(fileperms($commandpath)) . "<br>";
-              if (function_exists("md5_file")) {
-		echo "The md5 checksum of the file is " . md5_file($commandpath) . "<br>";
-              } else {
-                $handle = fopen($commandpath,"rb");
-                $contents = fread($handle,16384);
-                fclose($handle);
-                echo "The md5 checksum of the first 16384 bytes is " . md5($contents) . "<br>";
-	      }
-           } else {
-              echo "mimetex executable $commandpath not found!<br>";
-           }
-           echo "Image not found!";
-   }
-}
+        if ($texexp) {
+            $texexp = '\Large ' . $texexp;
+            $lifetime = 86400;
+            $image  = md5($texexp) . ".gif";
+            $filetype = 'image/gif';
+            if (!file_exists("$CFG->dataroot/$CFG->teximagedir")) {
+                make_upload_directory($CFG->teximagedir);
+            }
+            $pathname = "$CFG->dataroot/$CFG->teximagedir/$image";
+            if (file_exists($pathname)) {
+                unlink($pathname);
+            }
+            $commandpath = "";
+            $cmd = "";
+            switch (PHP_OS) {
+                case "Linux":
+                    $commandpath="$CFG->dirroot/$CFG->texfilterdir/mimetex.linux";           
+                $cmd = "\"$CFG->dirroot/$CFG->texfilterdir/mimetex.linux\" -e \"$pathname\" ". escapeshellarg($texexp);
+                break;
+                case "WINNT":
+                    case "WIN32":
+                    case "Windows":
+                    $commandpath="$CFG->dirroot/$CFG->texfilterdir/mimetex.exe";
+                $texexp = str_replace('"','\"',$texexp);
+                $cmd = str_replace(' ','^ ',$commandpath);
+                $cmd .= " ++ -e  \"$pathname\" \"$texexp\"";
+                break;
+                case "Darwin":
+                    $commandpath="$CFG->dirroot/$CFG->texfilterdir/mimetex.darwin";
+                $cmd = "\"$CFG->dirroot/$CFG->texfilterdir/mimetex.darwin\" -e \"$pathname\" ". escapeshellarg($texexp);
+                break;
+            }
+            if (!$cmd) {
+                error($error_message1);
+            }
+            system($cmd, $status);
+        }
+        if ($texexp && file_exists($pathname)) {
+            $lastmodified = filemtime($pathname);
+            header("Last-Modified: " . gmdate("D, d M Y H:i:s", $lastmodified) . " GMT");
+            header("Expires: " . gmdate("D, d M Y H:i:s", time() + $lifetime) . " GMT");
+            header("Cache-control: max_age = $lifetime"); // a day
+            header("Pragma: ");
+            header("Content-disposition: inline; filename=$image");
+            header("Content-length: ".filesize($pathname));
+            header("Content-type: $filetype");
+            readfile("$pathname");
+        } else {
+            $ecmd = "$cmd 2>&1";
+            echo `$ecmd` . "<br>\n";
+            echo "The shell command<br>$cmd<br>returned status = $status<br>\n";
+            if ($status == 4) {
+                echo "Status corresponds to illegal instruction<br>\n";
+            } else if ($status == 11) {
+                echo "Status corresponds to bus error<br>\n";
+            } else if ($status == 22) {
+                echo "Status corresponds to abnormal termination<br>\n";
+            }
+            if (file_exists($commandpath)) {
+                echo "File size of mimetex executable  $commandpath is " . filesize($commandpath) . "<br>";
+                echo "The file permissions are: " . decoct(fileperms($commandpath)) . "<br>";
+                if (function_exists("md5_file")) {
+                    echo "The md5 checksum of the file is " . md5_file($commandpath) . "<br>";
+                } else {
+                    $handle = fopen($commandpath,"rb");
+                    $contents = fread($handle,16384);
+                    fclose($handle);
+                    echo "The md5 checksum of the first 16384 bytes is " . md5($contents) . "<br>";
+                }
+            } else {
+                echo "mimetex executable $commandpath not found!<br>";
+            }
+            echo "Image not found!";
+        }
+    }
+
 ?>
 
 <html>
@@ -178,7 +178,7 @@ function tex2image($texexp) {
            <ol>
            <li>First click on this button <input type="submit" name="ShowDB" value="Show DB Entry">
                to see the cache_filters database entry for this expression.</li>
-	   <li>If the database entry looks corrupt, click on this button to delete it:
+           <li>If the database entry looks corrupt, click on this button to delete it:
                <input type="submit" name="DeleteDB" value="Delete DB Entry"></li>
            <li>Finally click on this button <input type="submit" name="ShowImage" value="Show Image">
                to show a graphic image of the algebraic expression.</li>

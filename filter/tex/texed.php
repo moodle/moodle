@@ -15,43 +15,44 @@
     $texexp = str_replace('formdata=','',$texexp);
 
     if ($texexp) {
-      //$texexp = stripslashes($texexp);
-       $lifetime = 86400;
-       $image  = md5($texexp) . ".gif";
-       $filetype = 'image/gif';
-       if (!file_exists("$CFG->dataroot/$CFG->teximagedir")) {
-          make_upload_directory($CFG->teximagedir);
-       }
-       $pathname = "$CFG->dataroot/$CFG->teximagedir/$image";
-         switch (PHP_OS) {
-       case "Linux":
-           system("$CFG->dirroot/$CFG->texfilterdir/mimetex.linux -e $pathname ". escapeshellarg($texexp) );
-       break;
-       case "WINNT":
-       case "WIN32":
-       case "Windows":
-           $texexp = str_replace('"','\"',$texexp);
-           system("$CFG->dirroot/$CFG->texfilterdir/mimetex.exe -e  $pathname \"$texexp\"");
-       break;
-       case "Darwin":
-           system("$CFG->dirroot/$CFG->texfilterdir/mimetex.darwin -e $pathname ". escapeshellarg($texexp) );
-       break;
-       }
-       if (file_exists($pathname)) {
-           $lastmodified = filemtime($pathname);
-           header("Last-Modified: " . gmdate("D, d M Y H:i:s", $lastmodified) . " GMT");
-           header("Expires: " . gmdate("D, d M Y H:i:s", time() + $lifetime) . " GMT");
-           header("Cache-control: max_age = $lifetime"); // a day
-           header("Pragma: ");
-           header("Content-disposition: inline; filename=$image");
-           header("Content-length: ".filesize($pathname));
-           header("Content-type: $filetype");
-           readfile("$pathname");
-       } else {
-           echo "Image not found!";
-       }
-       exit;
+        //$texexp = stripslashes($texexp);
+        $lifetime = 86400;
+        $image  = md5($texexp) . ".gif";
+        $filetype = 'image/gif';
+        if (!file_exists("$CFG->dataroot/$CFG->teximagedir")) {
+            make_upload_directory($CFG->teximagedir);
+        }
+        $pathname = "$CFG->dataroot/$CFG->teximagedir/$image";
+        switch (PHP_OS) {
+            case "Linux":
+                system("$CFG->dirroot/$CFG->texfilterdir/mimetex.linux -e $pathname ". escapeshellarg($texexp) );
+            break;
+            case "WINNT":
+                case "WIN32":
+                case "Windows":
+                $texexp = str_replace('"','\"',$texexp);
+            system("$CFG->dirroot/$CFG->texfilterdir/mimetex.exe -e  $pathname \"$texexp\"");
+            break;
+            case "Darwin":
+                system("$CFG->dirroot/$CFG->texfilterdir/mimetex.darwin -e $pathname ". escapeshellarg($texexp) );
+            break;
+        }
+        if (file_exists($pathname)) {
+            $lastmodified = filemtime($pathname);
+            header("Last-Modified: " . gmdate("D, d M Y H:i:s", $lastmodified) . " GMT");
+            header("Expires: " . gmdate("D, d M Y H:i:s", time() + $lifetime) . " GMT");
+            header("Cache-control: max_age = $lifetime"); // a day
+            header("Pragma: ");
+            header("Content-disposition: inline; filename=$image");
+            header("Content-length: ".filesize($pathname));
+            header("Content-type: $filetype");
+            readfile("$pathname");
+        } else {
+            echo "Image not found!";
+        }
+        exit;
     }
+
 ?>
 
 <html>
