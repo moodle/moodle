@@ -9,7 +9,7 @@
     require_variable($id);   //course
     optional_variable($sort, "lastaccess");  //how to sort students
     optional_variable($dir,"DESC");          //how to sort students
-    optional_variable($showall,"0");         //show all of the students?
+    optional_variable($showall,"");         //show all of the students?
 
     if (! $course = get_record("course", "id", $id)) {
         error("Course ID is incorrect");
@@ -112,7 +112,7 @@
             $count = 0;
             foreach ($students as $student) {
                 $count++;
-                if ($showall == "0" and $count > $USER_LARGE_CLASS) {
+                if (!$showall and $count > $USER_LARGE_CLASS) {
                     break;
                 }
                 if ($student->lastaccess) {
@@ -121,7 +121,7 @@
                     $lastaccess = $string->never;
                 }
 
-                if ($numstudents > $USER_LARGE_CLASS and $showall == "1") {  // Don't show pictures
+                if ($showall and $numstudents > $USER_LARGE_CLASS) {  // Don't show pictures
                     $picture = "";
                 } else {
                     $picture = print_user_picture($student->id, $course->id, $student->picture, false, true);
@@ -135,7 +135,7 @@
             }
             print_table($table);
 
-            if ($numstudents > $USER_LARGE_CLASS and $showall == "0") {
+            if ($numstudents > $USER_LARGE_CLASS and !$showall) {
                 $moreinfo->count  = $USER_LARGE_CLASS;
                 $moreinfo->things = strtolower($course->students);
                 echo "<center><p>".get_string("displayingfirst", "", $moreinfo);
