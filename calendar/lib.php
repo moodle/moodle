@@ -540,7 +540,7 @@ function calendar_top_controls($type, $data) {
             $nextname = calendar_month_name($nextdate['month']);
             $content .= "<table style='width: 100%;'><tr>\n";
             $content .= '<td style="text-align: left; width: 30%;"><a href="'.calendar_get_link_href('view.php?view=month&amp;', 1, $prevmonth, $prevyear).'">&lt;&lt; '.$prevname.' '.$prevyear."</a></td>\n";
-            $content .= '<td style="text-align: center"><strong>'.$monthname.' '.$data['y']."</strong></td>\n";
+            $content .= '<td style="text-align: center"><strong>'.strftime(get_string('strftimemonthyear'), $time)."</strong></td>\n";
             $content .= '<td style="text-align: right; width: 30%;"><a href="'.calendar_get_link_href('view.php?view=month&amp;', 1, $nextmonth, $nextyear).'">'.$nextname.' '.$nextyear." &gt;&gt;</a></td>\n";
             $content .= "</tr></table>\n";
         break;
@@ -553,7 +553,17 @@ function calendar_top_controls($type, $data) {
             $nextname = calendar_wday_name($nextdate['weekday']);
             $content .= "<table style='width: 100%;'><tr>\n";
             $content .= '<td style="text-align: left; width: 20%;"><a href="'.calendar_get_link_href('view.php?view=day&amp;', $prevdate['mday'], $prevdate['mon'], $prevdate['year']).'">&lt;&lt; '.$prevname."</a></td>\n";
-            $content .= '<td style="text-align: center"><strong>'.$dayname.', '.$data['d'].' <a href="'.calendar_get_link_href('view.php?view=month&amp;', 1, $data['m'], $data['y']).'">'.$monthname.' '.$data['y']."</a></strong></td>\n";
+
+            // Get the format string
+            $text = get_string('strftimedaydate');
+            // Regexp hackery to make a link out of the month/year part
+            $text = ereg_replace('(%B.+%Y|%Y.+%B|%Y.+%m[^ ]+)', '<a href="'.calendar_get_link_href('view.php?view=month&amp;', 1, $data['m'], $data['y']).'">\\1</a>', $text);
+            // Replace with actual values and lose any day leading zero
+            $text = strftime($text, $time);
+            $text = str_replace(' 0', ' ', $text);
+            // Print the actual thing
+            $content .= '<td style="text-align: center"><strong>'.$text."</strong></td>\n";
+
             $content .= '<td style="text-align: right; width: 20%;"><a href="'.calendar_get_link_href('view.php?view=day&amp;', $nextdate['mday'], $nextdate['mon'], $nextdate['year']).'">'.$nextname." &gt;&gt;</a></td>\n";
             $content .= "</tr></table>\n";
         break;
@@ -649,7 +659,7 @@ function calendar_day_representation($tstamp, $now = false, $usecommonwords = tr
     }
 
     // To have it in one place, if a change is needed
-    $formal = get_string($days[userdate($tstamp, '%w')], 'calendar') . userdate($tstamp, $shortformat);
+    $formal = get_string($days[userdate($tstamp, '%w')], 'calendar').' '.userdate($tstamp, $shortformat);
 
     // Reverse TZ compensation: make GMT stamps correspond to user's TZ
     $tzfix = calendar_get_tz_offset();

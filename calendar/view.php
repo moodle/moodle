@@ -74,14 +74,19 @@
         $mon = intval($now['mon']);
         $yr = intval($now['year']);
     }
+    $time = mktime(0, 0, 0, $mon, $day, $yr);
 
     switch($_GET['view']) {
         case 'day':
-            $nav .= ' -> '.$day.' '.calendar_month_name($mon).' '.$yr;
+            $text = strftime(get_string('strftimedate'), $time);
+            if($text[0] == '0') {
+                $text = substr($text, 1);
+            }
+            $nav .= ' -> '.$text;
             $pagetitle = get_string('dayview', 'calendar');
         break;
         case 'month':
-            $nav .= ' -> '.calendar_month_name($mon).' '.$yr;
+            $nav .= ' -> '.strftime(get_string('strftimemonthyear'), $time);
             $pagetitle = get_string('detailedmonthview', 'calendar');
         break;
         case 'upcoming':
