@@ -17,7 +17,7 @@
         if (! $forum = get_record("forum", "id", $cm->instance)) {
             error("Forum ID was incorrect");
         }
-        $buttontext = update_module_icon($cm->id);
+        $buttontext = update_module_icon($cm->id, $course->id);
 
     } else if ($f) {
         if (! $forum = get_record("forum", "id", $f)) {

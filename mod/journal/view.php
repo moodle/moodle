@@ -28,7 +28,7 @@
     print_header("$course->shortname: $journal->name", "$course->fullname",
                  "<A HREF=../../course/view.php?id=$course->id>$course->shortname</A> -> 
                   <A HREF=index.php?id=$course->id>Journals</A> -> $journal->name", "", "", true,
-                  update_module_icon($cm->id));
+                  update_module_icon($cm->id, $course->id));
 
     if (isteacher($course->id)) {
         echo "<P align=right><A HREF=\"report.php?id=$cm->id\">View all responses</A></P>";
