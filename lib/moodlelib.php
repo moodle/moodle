@@ -973,16 +973,16 @@ function get_coursemodule_from_instance($modulename, $instance, $course) {
 
 }
 
-function get_all_instances_in_course($modulename, $course, $sort="cw.week") {
+function get_all_instances_in_course($modulename, $course, $sort="cw.section") {
 // Returns an array of all the active instances of a particular
 // module in a given course.   Returns false on any errors.
 
-    return get_records_sql("SELECT m.*,cw.week,cm.id as coursemodule 
-                            FROM course_modules cm, course_weeks cw, modules md, $modulename m 
+    return get_records_sql("SELECT m.*,cw.section,cm.id as coursemodule 
+                            FROM course_modules cm, course_sections cw, modules md, $modulename m 
                             WHERE cm.course = '$course' AND 
                                   cm.instance = m.id AND 
                                   cm.deleted = '0' AND
-                                  cm.week = cw.id AND 
+                                  cm.section = cw.id AND 
                                   md.name = '$modulename' AND 
                                   md.id = cm.module
                             ORDER BY $sort");
