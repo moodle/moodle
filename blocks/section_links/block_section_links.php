@@ -48,7 +48,10 @@ class CourseBlock_section_links extends MoodleBlock {
             $inc = 5;
         }
         $courseid = $this->course->id;
-        if ($display = get_field('course_display', 'display', 'course', $courseid, 'userid', $USER->id)) {
+        if (!empty($USER->id)) {
+            $display = get_field('course_display', 'display', 'course', $courseid, 'userid', $USER->id);
+        }
+        if (!empty($display)) {
             $link = "$CFG->wwwroot/course/view.php?id=$courseid&amp;$sectionname=";
         } else {
             $link = '#';
