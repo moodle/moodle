@@ -478,16 +478,13 @@ function forum_cron () {
 function forum_make_mail_text($course, $forum, $discussion, $post, $userfrom, $userto, $bare = false) {
     global $CFG;
 
-    static $strforums = NULL;
-    if($strforums === NULL) {
-        $strforums = get_string('forums', 'forum');
-    }
-
     $by = New stdClass;
     $by->name = fullname($userfrom, isteacher($course->id, $userto->id));
     $by->date = userdate($post->modified, "", $userto->timezone);
 
     $strbynameondate = get_string('bynameondate', 'forum', $by);
+
+    $strforums = get_string('forums', 'forum');
 
     $canunsubscribe = ! forum_is_forcesubscribed($forum->id);
     $canreply = forum_user_can_post($forum, $userto);
@@ -533,13 +530,9 @@ function forum_make_mail_text($course, $forum, $discussion, $post, $userfrom, $u
 function forum_make_mail_html($course, $forum, $discussion, $post, $userfrom, $userto) {
     global $CFG;
 
-    static $strforums = NULL;
-    if($strforums === NULL) {
-        $strforums = get_string('forums', 'forum');
-    }
-
     if ($userto->mailformat == 1) {  // HTML
 
+        $strforums = get_string('forums', 'forum');
         $canreply = forum_user_can_post($forum, $userto);
         $canunsubscribe = ! forum_is_forcesubscribed($forum->id);
 
@@ -561,7 +554,7 @@ function forum_make_mail_html($course, $forum, $discussion, $post, $userfrom, $u
         return $posthtml;
 
     } else {
-      return '';
+        return '';
     }
 }
 
