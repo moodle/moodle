@@ -10,6 +10,8 @@ define("TOKEN_EXACT","2");
 define("TOKEN_NEGATE","3");
 define("TOKEN_STRING","4");
 define("TOKEN_USERID","5");
+define("TOKEN_DATEFROM","6");
+define("TOKEN_DATETO","7");
 
 // Class to hold token/value pairs after they're parsed.
 
@@ -51,9 +53,31 @@ class search_lexer extends Lexer{
 
     //Set up the state machine and pattern matches for transitions.
 
+    // Patterns to handle strings  of the form datefrom:foo
+
+    // If we see the string datefrom: while in the base accept state, start
+    // parsing a username and go to the indatefrom state.
+    $this->addEntryPattern("datefrom:\S+","accept","indatefrom");
+
+    // Snarf everything into the username until we see whitespace, then exit
+    // back to the base accept state.
+    $this->addExitPattern("\s","indatefrom");
+
+
+    // Patterns to handle strings  of the form dateto:foo
+
+    // If we see the string dateto: while in the base accept state, start
+    // parsing a username and go to the indateto state.
+    $this->addEntryPattern("dateto:\S+","accept","indateto");
+
+    // Snarf everything into the username until we see whitespace, then exit
+    // back to the base accept state.
+    $this->addExitPattern("\s","indateto");
+
+
     // Patterns to handle strings  of the form userid:foo
 
-    // If we see the string user: while in the base accept state, start
+    // If we see the string userid: while in the base accept state, start
     // parsing a username and go to the inuserid state.
     $this->addEntryPattern("userid:\S+","accept","inuserid");
 
@@ -151,6 +175,28 @@ class search_parser {
         return true;
     }
 
+    // State for handling datefrom:foo constructs. Potentially emits a token.
+    function indatefrom($content){
+        if (strlen($content) < 10) { // State exit or missing parameter.
+            return true;
+        }
+        // Strip off the datefrom: part and add the reminder to the parsed token array
+        $param = trim(substr($content,9));
+        $this->tokens[] = new search_token(TOKEN_DATEFROM,$param);
+        return true;
+    }
+
+    // State for handling dateto:foo constructs. Potentially emits a token.
+    function indateto($content){
+        if (strlen($content) < 8) { // State exit or missing parameter.
+            return true;
+        }
+        // Strip off the dateto: part and add the reminder to the parsed token array
+        $param = trim(substr($content,7));
+        $this->tokens[] = new search_token(TOKEN_DATETO,$param);
+        return true;
+    }
+
     // State for handling userid:foo constructs. Potentially emits a token.
     function inuserid($content){
         if (strlen($content) < 8) { // State exit or missing parameter.
@@ -241,7 +287,7 @@ class search_parser {
 // Other fields are database table names to search.
 
 function search_generate_SQL($parsetree, $datafield, $metafield, $mainidfield, $useridfield,
-                             $userfirstnamefield, $userlastnamefield) {
+                             $userfirstnamefield, $userlastnamefield, $timefield) {
     global $CFG;
 
     if ($CFG->dbtype == "postgres7") {
@@ -288,6 +334,12 @@ function search_generate_SQL($parsetree, $datafield, $metafield, $mainidfield, $
                 break; 
             case TOKEN_USERID: 
                 $SQLString .= "($useridfield = $value)";
+                break; 
+            case TOKEN_DATETO: 
+                $SQLString .= "($timefield <= $value)";
+                break; 
+            case TOKEN_DATEFROM: 
+                $SQLString .= "($timefield >= $value)";
                 break; 
             case TOKEN_NEGATE: 
                 $SQLString .= "(NOT (($datafield  $LIKE '%$value%') OR ($metafield  $LIKE '%$value%')))";

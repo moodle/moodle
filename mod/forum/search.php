@@ -16,6 +16,29 @@
     $fullwords = trim(optional_param('fullwords', '', PARAM_NOTAGS)); // Whole words
     $notwords = trim(optional_param('notwords', '', PARAM_NOTAGS));   // Words we don't want
 
+    $fromday = optional_param('fromday', 0, PARAM_INT);      // Starting date
+    $frommonth = optional_param('frommonth', 0, PARAM_INT);      // Starting date
+    $fromyear = optional_param('fromyear', 0, PARAM_INT);      // Starting date
+    $fromhour = optional_param('fromhour', 0, PARAM_INT);      // Starting date
+    $fromminute = optional_param('fromminute', 0, PARAM_INT);      // Starting date
+    if ($fromday) {
+        $datefrom = make_timestamp($fromyear, $frommonth, $fromday, $fromhour, $fromminute);
+    } else {
+        $datefrom = optional_param('datefrom', 0, PARAM_INT);      // Starting date
+    }
+
+    $today = optional_param('today', 0, PARAM_INT);      // Ending date
+    $tomonth = optional_param('tomonth', 0, PARAM_INT);      // Ending date
+    $toyear = optional_param('toyear', 0, PARAM_INT);      // Ending date
+    $tohour = optional_param('tohour', 0, PARAM_INT);      // Ending date
+    $tominute = optional_param('tominute', 0, PARAM_INT);      // Ending date
+    if ($today) {
+        $dateto = make_timestamp($toyear, $tomonth, $today, $tohour, $tominute);
+    } else {
+        $dateto = optional_param('datefrom', 0, PARAM_INT);      // Ending date
+    }
+
+
 
     if (empty($search)) {   // Check the other parameters instead
         if (!empty($words)) {
@@ -38,6 +61,12 @@
         }
         if (!empty($phrase)) {
             $search .= ' "'.$phrase.'"';
+        }
+        if (!empty($datefrom)) {
+            $search .= ' datefrom:'.$datefrom;
+        }
+        if (!empty($dateto)) {
+            $search .= ' dateto:'.$dateto;
         }
         $individualparams = true;
     } else {
@@ -82,6 +111,7 @@
     } else {
         $groupid = 0;
     }
+
     if (!$posts = forum_search_posts($searchterms, $course->id, $page*$perpage, $perpage, $totalcount, $groupid)) {
 
         print_header_simple("$strsearchresults", "",
@@ -181,7 +211,7 @@
 
 
 function forum_print_big_search_form($course) {
-    global $words, $subject, $phrase, $user, $userid, $fullwords, $notwords;
+    global $words, $subject, $phrase, $user, $userid, $fullwords, $notwords, $datefrom, $dateto;
 
     print_simple_box(get_string('searchforumintro', 'forum'), 'center', '', '', 'searchbox', 'intro');
 
@@ -196,8 +226,8 @@ function forum_print_big_search_form($course) {
     echo '</tr>';
 
     echo '<tr>';
-    echo '<td class="c0">'.get_string('searchfullwords', 'forum').':</td>';
-    echo '<td class="c1"><input type="text" size="35" name="fullwords" value="'.s($fullwords).'" alt=""></td>';
+    echo '<td class="c0">'.get_string('searchphrase', 'forum').':</td>';
+    echo '<td class="c1"><input type="text" size="35" name="phrase" value="'.s($phrase).'" alt=""></td>';
     echo '</tr>';
 
     echo '<tr>';
@@ -206,8 +236,30 @@ function forum_print_big_search_form($course) {
     echo '</tr>';
 
     echo '<tr>';
-    echo '<td class="c0">'.get_string('searchphrase', 'forum').':</td>';
-    echo '<td class="c1"><input type="text" size="35" name="phrase" value="'.s($phrase).'" alt=""></td>';
+    echo '<td class="c0">'.get_string('searchfullwords', 'forum').':</td>';
+    echo '<td class="c1"><input type="text" size="35" name="fullwords" value="'.s($fullwords).'" alt=""></td>';
+    echo '</tr>';
+
+    echo '<tr>';
+    echo '<td class="c0">'.get_string('searchdatefrom', 'forum').':</td>';
+    echo '<td class="c1">';
+    if (empty($dateto)) {
+        $datefrom = make_timestamp(2000, 1, 1, 0, 0, 0);
+    }
+    print_date_selector('fromday', 'frommonth', 'fromyear', $datefrom);
+    print_time_selector('fromhour', 'fromminute', $datefrom);
+    echo '</td>';
+    echo '</tr>';
+
+    echo '<tr>';
+    echo '<td class="c0">'.get_string('searchdateto', 'forum').':</td>';
+    echo '<td class="c1">';
+    if (empty($dateto)) {
+        $dateto = time()+3600;
+    }
+    print_date_selector('today', 'tomonth', 'toyear', $dateto);
+    print_time_selector('tohour', 'tominute', $dateto);
+    echo '</td>';
     echo '</tr>';
 
     echo '<tr>';
@@ -222,8 +274,7 @@ function forum_print_big_search_form($course) {
 
     echo '<tr>';
     echo '<td class="submit" colspan="2" align="center">';
-    echo helpbutton('search', get_string('search'), 'moodle', true, false, '', true);
-    echo '&nbsp;<input type="submit" value="'.get_string('searchforums', 'forum').'" alt=""></td>';
+    echo '<input type="submit" value="'.get_string('searchforums', 'forum').'" alt=""></td>';
     echo '</tr>';
 
     echo '</table>';
