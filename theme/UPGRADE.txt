@@ -110,3 +110,13 @@ Changes to 1.1.1 since 1.1
 
 Some better placement of styles on the category/course listings to 
 allow some fancy effects.
+
+================================
+Changes to 1.2 since 1.1
+--------------------------------
+
+a.autolink:link {}
+a.autolink:visited {}
+a.autolink:hover {}
+
+Automatically generated links (eg links to glossary items)
