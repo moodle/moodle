@@ -1,29 +1,31 @@
-<FORM METHOD="post" action="site.php" NAME="form">
-<TABLE cellpadding=9 cellspacing=0 >
+<form method="post" action="site.php" name="form">
+<table cellpadding=9 cellspacing=0 >
 <tr valign=top>
-    <td align=right><P><? print_string("fullsitename") ?>:</td>
-    <td><input type="text" name="fullname" size=50 value="<? p($form->fullname) ?>">
-    <? if (isset($err["fullname"])) formerr($err["fullname"]); ?>
+    <td align=right><P><?php print_string("fullsitename") ?>:</td>
+    <td><input type="text" name="fullname" size=50 value="<?php p($form->fullname) ?>">
+    <?php if (isset($err["fullname"])) formerr($err["fullname"]); ?>
     </td>
 </tr>
 <tr valign=top>
-    <td align=right><P><? print_string("shortsitename") ?>:</td>
-    <td><input type="text" name="shortname" size=50 value="<? p($form->shortname) ?>">
-    <? if (isset($err["shortname"])) formerr($err["shortname"]); ?>
+    <td align=right><P><?php print_string("shortsitename") ?>:</td>
+    <td><input type="text" name="shortname" size=50 value="<?php p($form->shortname) ?>">
+    <?php if (isset($err["shortname"])) formerr($err["shortname"]); ?>
     </td>
 </tr>
 <tr valign=top>
-    <td align=right><P><? print_string("frontpagedescription") ?>:</P><BR>
-     <? helpbutton("writing", get_string("helpwriting"), "moodle", true, true) ?><br \>
-     <? helpbutton("text", get_string("helptext"), "moodle", true, true) ?><br \>
+    <td align=right><P><?php print_string("frontpagedescription") ?>:</P><br />
+     <font size=1>
+     <?php helpbutton("writing", get_string("helpwriting"), "moodle", true, true) ?><br />
+     <?php helpbutton("html", get_string("helphtml"), "moodle", true, true) ?><br />
+     </font>
     </td>
-    <td><TEXTAREA NAME=summary COLS=50 ROWS=10 WRAP=virtual><? p($form->summary) ?></TEXTAREA>
-    <? if (isset($err["summary"])) formerr($err["summary"]); ?>
+    <td><textarea name=summary cols=50 rows=10 wrap=virtual><?php p($form->summary) ?></textarea>
+    <?php if (isset($err["summary"])) formerr($err["summary"]); ?>
     </td>
 </tr>
 <tr valign=top>
-        <td align=right><P><? print_string("frontpageformat") ?>:</td>
-        <td><? 
+        <td align=right><P><?php print_string("frontpageformat") ?>:</td>
+        <td><?php 
            $newsitem  = get_string("newsitem");
            $newsitems = get_string("newsitems");
            $options = array("0"  =>  get_string("showlistofcourses"),
@@ -43,10 +45,10 @@
 </tr>
 <tr>
     <td></td>
-    <td><input type="submit" value="<? print_string("savechanges") ?>"></td>
+    <td><input type="submit" value="<?php print_string("savechanges") ?>"></td>
 </tr>
-</TABLE>
-<INPUT type="hidden" name="id" value="<?=$form->id ?>">
-<INPUT type="hidden" name="category" value="<?=$form->category ?>">
-<INPUT type="hidden" name="format" value="<?=$form->format ?>">
-</FORM>
+</table>
+<input type="hidden" name="id" value="<?php p($form->id) ?>">
+<input type="hidden" name="category" value="<?php p($form->category) ?>">
+<input type="hidden" name="format" value="<?php p($form->format) ?>">
+</form>
