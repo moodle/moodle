@@ -347,8 +347,8 @@
     </dd>
     <dt>Administration</dt>
     <dd> 
-      <li><font color=red>Plusieurs options et du code de config-dist.php ont
-      &eacute;t&eacute; modifi&eacute;es (en cas de mise &agrave; jour, comparez-le avec
+      <li><font color=red>Plusieurs options et quelques morceaux de code de config-dist.php ont
+      &eacute;t&eacute; modifi&eacute;s (en cas de mise &agrave; jour, comparez-le avec
       votre config.php ou reconstruisez compl&egrave;tement votre config.php)</font></li>
       <li><font color=red>Nombreuses modifications dans les th&egrave;mes - les auteurs
       de th&egrave;mes doivent lire
@@ -420,34 +420,51 @@
     </dd>
     <dt>Tests</dt>
     <dd> 
-      <li>New question type, Random Question (selects from all questions in the same category)</li>
-      <li>New question type, Matching Question (student must match answers to questions)</li>
-      <li>New question type, Random Matching Short-Answers (randomly creates Matching Questions 
-        from the available Short Answer questions in the same category)</li>
-      <li>Quiz question import from text files (modular design allows expansion to new formats - a beta Blackboard module is included)</li>
-      <li>'Create multiple questions' wizard to quickly create a random quiz</li>
-      <li>Quiz questions may be randomly shuffled</li>
-      <li>Quiz answers (multiple choice, etc) may be randomly shuffled</li>
-      <li>Fixed off-by-one error when "Save Grades" button wasn't used.</li>
-      <li>Regrading works properly if the quiz has been changed</li>
-      <li>Editing a question after it's already been used in a quiz no longer affects quiz results</li>
-      <li>Multiple choice answers are labelled a,b,c not 1,2,3</li>
+      <li>Nouveau type de question : al&eacute;atoire (choisit une question
+      parmi toutes celles d'une cat&eacute;gorie)</li>
+      <li>Nouveau type de question : mise en correspondance (les
+      &eacute;tudiants doivent faire correspondre les r&eacute;ponses avec des questions)</li>
+      <li>Nouveau type de question : al&eacute;atoire de mise en correspondance
+      (cr&eacute;e al&eacute;atoirement une question de mise en correspondance avec les questions
+      &agrave; r&eacute;ponse courte d'une cat&eacute;gorie)</li>
+      <li>Importation de questions &agrave; partir de fichiers texte (concept modulaire
+      permettant l'extension &agrave; de nouveaux formats - une module pour le format
+      Blackboard est inclus en version b&ecirc;ta)</li>
+      <li>Un assistant &laquo;&nbsp;Cr&eacute;er plusieurs questions&nbsp;&raquo;
+      permet de cr&eacute;er rapidement un test al&eacute;atoire</li>
+      <li>Les questions d'un test peuvent &ecirc;tre m&eacute;lang&eacute;es
+      al&eacute;atoirement</li>
+      <li>Les r&eacute;ponses d'un test (choix multiples, etc.) peuvent &ecirc;tre
+      m&eacute;lang&eacute;es al&eacute;atoirement</li>
+      <li>Erreur corrig&eacute;e lorsque le bouton &laquo;&nbsp;Enregistrer les
+      notes&nbsp;&raquo; n'&eacute;tait pas utilis&eacute;</li>
+      <li>La re-notation fonctionne correctement si le test a &eacute;t&eacute;
+      modifi&eacute;</li>
+      <li>La modification d'une question apr&egrave;s son utilisation dans un test
+      n'a pas d'influence sur les r&eacute;sultats du test</li>
+      <li>Les r&eacute;ponses des questions &agrave; choix multiples sont
+      num&eacute;rot&eacute;es par a, b, c et non plus 1, 2, 3</li>
     </dd>
     <dt>Ressources</dt>
     <dd> 
-      <li>Better performance when editing large text or HTML resources</li>
-      <li>Plain images are now display centered within a proper web page (not raw).</li>
-      <li>Wiki format added as a new option for Resource pages</li>
+      <li>Meilleure performance lors de la modification d'un long texte ou
+      de ressources HTML</li>
+      <li>Les images sont maintenant affich&eacute;es centr&eacute;es dans une page
+      web, et non plus de fa&ccedil;on brute</li>
+      <li>Le format Wiki a &eacute;t&eacute; ajout&eacute; comme une nouvelle option pour
+      les pages Ressources</li>
     </dd>
     <dt>Th&egrave;mes personnalis&eacute;s</dt>
     <dd> 
-      <li>A number of new styles have been added to all built-in themes.  Some of these are ESSENTIAL
-        to viewing some of the new features.  PLEASE SEE 
-        <a href="http://moodle.org/theme/UPGRADE.txt">theme/UPGRADE.txt</a> 
-        TO SEE THE CHANGES YOU WILL HAVE TO MAKE TO OLDER THEMES.</li>
-      <li>Custom themes now have the capability to re-define all the little button graphics.  
-        There is a new entry in theme/x/config.php ($THEME->custompix) and a new  
-        optional subdirectory "pix".  See the theme cordoroyblue for an example.</li>
+      <li>Un certain nombre de nouveaux styles ont &eacute;t&eacute; ajout&eacute;s
+      &agrave; tous les th&egrave;mes fournis en standard. Certains d'entre eux sont
+      ESSENTIELS &agrave; l'affichage des nouvelles fonctionnalit&eacute;s. VEUILLEZ LIRE SVP
+      <a href="http://moodle.org/theme/UPGRADE.txt">theme/UPGRADE.txt</a> 
+      POUR UNE LISTE DES MODIFICATIONS &Agrave; EFFECTUER SUR LES ANCIENS TH&Egrave;MES</li>
+      <li>Les th&egrave;mes personnalis&eacute;s peuvent maintenant red&eacute;finir tous les petits
+      boutons graphiques. Il existe pour cela un nouveau param&egrave;tre dans
+      theme/x/config.php ($THEME->custompix) et un nouveau dossier facultatif
+      &laquo;&nbsp;pix&nbsp;&raquo;. Pour un exemple, voyez le th&egrave;me cordoroyblue.</li>
     </dd>
   </dl>
 </ul>
