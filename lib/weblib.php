@@ -1958,8 +1958,8 @@ function print_continue($link) {
  * @param string $class ?
  * @todo Finish documenting this function
  */
-function print_simple_box($message, $align='', $width='', $color='', $padding=5, $class='generalbox') {
-    print_simple_box_start($align, $width, $color, $padding, $class);
+function print_simple_box($message, $align='', $width='', $color='', $padding=5, $class='generalbox', $id='') {
+    print_simple_box_start($align, $width, $color, $padding, $class, $id);
     echo stripslashes_safe($message);
     print_simple_box_end();
 }
@@ -1974,7 +1974,7 @@ function print_simple_box($message, $align='', $width='', $color='', $padding=5,
  * @param string $class ?
  * @todo Finish documenting this function
  */
-function print_simple_box_start($align='', $width='', $color='', $padding=5, $class='generalbox') {
+function print_simple_box_start($align='', $width='', $color='', $padding=5, $class='generalbox', $id='') {
 
     if ($color) {
         $color = 'bgcolor="'. $color .'"';
@@ -1985,7 +1985,10 @@ function print_simple_box_start($align='', $width='', $color='', $padding=5, $cl
     if ($width) {
         $width = 'width="'. $width .'"';
     }
-    echo "<table $align $width class=\"$class\" border=\"0\" cellpadding=\"$padding\" cellspacing=\"0\">".
+    if ($id) {
+        $id = 'id="'. $id .'"';
+    }
+    echo "<table $align $width $id class=\"$class\" border=\"0\" cellpadding=\"$padding\" cellspacing=\"0\">".
          "<tr><td $color class=\"$class"."content\">";
 }
 
@@ -2381,9 +2384,15 @@ function print_table($table) {
         $table->cellspacing = '1';
     }
 
+    if (empty($table->class)) {
+        $table->class = 'generaltable';
+    }
+
+    $tableid = empty($table->id) ? '' : 'id="'.$table->id.'"';
+
     print_simple_box_start('center', $table->width, '#ffffff', 0);
     echo '<table width="100%" border="0" align="center" ';
-    echo " cellpadding=\"$table->cellpadding\" cellspacing=\"$table->cellspacing\" class=\"generaltable\">\n";
+    echo " cellpadding=\"$table->cellpadding\" cellspacing=\"$table->cellspacing\" class=\"$table->class\" $tableid>\n";
 
     $countcols = 0;
 
