@@ -753,6 +753,9 @@ function print_course_admin_links($course, $width=180) {
             $admindata[]="<a href=\"teacher.php?id=$course->id\">$course->teachers...</a>";
             $adminicon[]="<img src=\"$pixpath/i/settings.gif\" height=16 width=16 alt=\"\">";
 
+            $admindata[]="<a href=\"student.php?id=$course->id\">$course->students...</a>";
+            $adminicon[]="<img src=\"$pixpath/i/settings.gif\" height=16 width=16 alt=\"\">";
+
             $admindata[]="<a href=\"$CFG->wwwroot/backup/backup.php?id=$course->id\">".get_string("backup")."...</a>";
             $adminicon[]="<img src=\"$pixpath/i/backup.gif\" height=16 width=16 alt=\"\">";
         
