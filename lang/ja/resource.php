@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.4 development (2004072500)
+      // resource.php - created with Moodle 1.4 development (2004072901)
 
 
 $string['addresource'] = 'リソースを追加する';
@@ -30,6 +30,7 @@ $string['fetcherror'] = 'ウェブページを検索している時、エラーが発生しました。';
 $string['fetchservererror'] = 'ウェブページを検索している時、リモートサーバにエラーが発生しました。プログラムエラーだと思われます。';
 $string['filename'] = 'ファイル名';
 $string['filtername'] = 'リソースオートリンク';
+$string['frameifpossible'] = 'サイトナビゲーションを表示する為に、フレーム内にリソースを入れてください。';
 $string['fulltext'] = 'フルテキスト';
 $string['htmlfragment'] = 'HTMLフラグメント';
 $string['maindirectory'] = 'メインファイルディレクトリ';
@@ -62,7 +63,9 @@ $string['resourcetypedirectory'] = 'ディレクトリの表示';
 $string['resourcetypefile'] = 'ファイル又はウェブにリンク';
 $string['resourcetypehtml'] = 'ウェブページの作成';
 $string['resourcetypelabel'] = 'ラベルの挿入';
-$string['resourcetypereference'] = '参照の投稿';
+$string['resourcetypereference'] = '参照の追加';
 $string['resourcetypetext'] = 'テキストページの作成';
+$string['searchweb'] = 'ウェブページを検索';
+$string['variablename'] = '変数名';
 
 ?>
