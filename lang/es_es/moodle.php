@@ -615,7 +615,6 @@ $string['publicdirectory1'] = 'Publicar sólo el nombre del sitio';
 $string['publicdirectory2'] = 'Publicar el nombre del sitio con un enlace';
 $string['publicsitefileswarning'] = 'Nota: los archivos colocados aquí están accesibles a todos';
 $string['question'] = 'Pregunta';
-$string['readinginfofrombackup'] = 'Leuendo información de la copia de seguridad';
 $string['readme'] = 'LEAME';
 $string['recentactivity'] = 'Actividad reciente';
 $string['recentactivityreport'] = 'Informe completo de la actividad reciente';
