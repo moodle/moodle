@@ -6,6 +6,7 @@
 
     require_variable($id);    // Course Module ID
     require_variable($type);  // Graph Type
+    optional_variable($group, "0");  // Group ID
     optional_variable($sid);  // Student ID
 
     if (! $cm = get_record("course_modules", "id", $id)) {
@@ -18,14 +19,26 @@
 
     require_login($course->id);
 
-    if (!isteacher($course->id) && !isadmin()) {
-        if (! ($type == "student.png" && $sid == $USER->id) ) {
+    $groupmode = groupmode($course, $cm);   // Groups are being used
+
+    if (!isteacher($course->id)) {
+        if ($type != "student.png" or $sid != $USER->id ) {
+            error("Sorry, you aren't allowed to see this.");
+        } else if ($groupmode and !ismember($group)) {
             error("Sorry, you aren't allowed to see this.");
         }
     }
 
     if (! $survey = get_record("survey", "id", $cm->instance)) {
         error("Survey ID was incorrect");
+    }
+
+/// Check to see if groups are being used in this survey
+    if ($groupmode and $group) {
+        $users = get_users_in_group($group);
+    } else {
+        $users = get_course_users($course->id);
+        $group = false;
     }
 
     $stractual = get_string("actual", "survey");
@@ -53,11 +66,13 @@
 
        if ($aaa = get_records_select("survey_answers", "survey = '$cm->instance' AND question = '$qid'")) {
            foreach ($aaa as $aa) {
-               if ($a1 = $aa->answer1) {
-                   $buckets1[$a1 - 1]++;
-               }
-               if ($a2 = $aa->answer2) {
-                   $buckets2[$a2 - 1]++;
+               if (!$group or isset($users[$aa->userid])) {
+                   if ($a1 = $aa->answer1) {
+                       $buckets1[$a1 - 1]++;
+                   }
+                   if ($a2 = $aa->answer2) {
+                       $buckets2[$a2 - 1]++;
+                   }
                }
            }
        }
@@ -127,14 +142,16 @@
 
        if ($aaa) {
            foreach ($aaa as $a) {
-               $index = $indexof[$a->question];
-               if ($a->answer1) {
-                   $buckets1[$index] += $a->answer1;
-                   $count1[$index]++;
-               }
-               if ($a->answer2) {
-                   $buckets2[$index] += $a->answer2;
-                   $count2[$index]++;
+               if (!$group or isset($users[$a->userid])) {
+                   $index = $indexof[$a->question];
+                   if ($a->answer1) {
+                       $buckets1[$index] += $a->answer1;
+                       $count1[$index]++;
+                   }
+                   if ($a->answer2) {
+                       $buckets2[$index] += $a->answer2;
+                       $count2[$index]++;
+                   }
                }
            }
        }
@@ -150,14 +167,16 @@
 
        if ($aaa) {
            foreach ($aaa as $a) {
-               $index = $indexof[$a->question];
-               if ($a->answer1) {
-                   $difference = (float) ($a->answer1 - $buckets1[$index]);
-                   $stdev1[$index] += ($difference * $difference);
-               }
-               if ($a->answer2) {
-                   $difference = (float) ($a->answer2 - $buckets2[$index]);
-                   $stdev2[$index] += ($difference * $difference);
+               if (!$group or isset($users[$a->userid])) {
+                   $index = $indexof[$a->question];
+                   if ($a->answer1) {
+                       $difference = (float) ($a->answer1 - $buckets1[$index]);
+                       $stdev1[$index] += ($difference * $difference);
+                   }
+                   if ($a->answer2) {
+                       $difference = (float) ($a->answer2 - $buckets2[$index]);
+                       $stdev2[$index] += ($difference * $difference);
+                   }
                }
            }
        }
@@ -266,13 +285,15 @@
 
            if ($aaa) {
                foreach ($aaa as $a) {
-                   if ($a->answer1) {
-                       $buckets1[$i] += $a->answer1;
-                       $count1[$i]++;
-                   }
-                   if ($a->answer2) {
-                       $buckets2[$i] += $a->answer2;
-                       $count2[$i]++;
+                   if (!$group or isset($users[$a->userid])) {
+                       if ($a->answer1) {
+                           $buckets1[$i] += $a->answer1;
+                           $count1[$i]++;
+                       }
+                       if ($a->answer2) {
+                           $buckets2[$i] += $a->answer2;
+                           $count2[$i]++;
+                       }
                    }
                }
            }
@@ -287,13 +308,15 @@
            // Calculate the standard devaiations
            if ($aaa) {
                foreach ($aaa as $a) {
-                   if ($a->answer1) {
-                       $difference = (float) ($a->answer1 - $buckets1[$i]);
-                       $stdev1[$i] += ($difference * $difference);
-                   }
-                   if ($a->answer2) {
-                       $difference = (float) ($a->answer2 - $buckets2[$i]);
-                       $stdev2[$i] += ($difference * $difference);
+                   if (!$group or isset($users[$a->userid])) {
+                       if ($a->answer1) {
+                           $difference = (float) ($a->answer1 - $buckets1[$i]);
+                           $stdev1[$i] += ($difference * $difference);
+                       }
+                       if ($a->answer2) {
+                           $difference = (float) ($a->answer2 - $buckets2[$i]);
+                           $stdev2[$i] += ($difference * $difference);
+                       }
                    }
                }
            }
@@ -406,23 +429,25 @@
 
            if ($aaa) {
                foreach ($aaa as $a) {
-                   if ($a->userid == $sid) {
+                   if (!$group or isset($users[$a->userid])) {
+                       if ($a->userid == $sid) {
+                           if ($a->answer1) {
+                               $studbuckets1[$i] += $a->answer1;
+                               $studcount1[$i]++;
+                           }
+                           if ($a->answer2) {
+                               $studbuckets2[$i] += $a->answer2;
+                               $studcount2[$i]++;
+                           }
+                       }
                        if ($a->answer1) {
-                           $studbuckets1[$i] += $a->answer1;
-                           $studcount1[$i]++;
+                           $buckets1[$i] += $a->answer1;
+                           $count1[$i]++;
                        }
                        if ($a->answer2) {
-                           $studbuckets2[$i] += $a->answer2;
-                           $studcount2[$i]++;
+                           $buckets2[$i] += $a->answer2;
+                           $count2[$i]++;
                        }
-                   }
-                   if ($a->answer1) {
-                       $buckets1[$i] += $a->answer1;
-                       $count1[$i]++;
-                   }
-                   if ($a->answer2) {
-                       $buckets2[$i] += $a->answer2;
-                       $count2[$i]++;
                    }
                }
            }
@@ -442,13 +467,15 @@
 
            // Calculate the standard devaiations
            foreach ($aaa as $a) {
-               if ($a->answer1) {
-                   $difference = (float) ($a->answer1 - $buckets1[$i]);
-                   $stdev1[$i] += ($difference * $difference);
-               }
-               if ($a->answer2) {
-                   $difference = (float) ($a->answer2 - $buckets2[$i]);
-                   $stdev2[$i] += ($difference * $difference);
+               if (!$group or isset($users[$a->userid])) {
+                   if ($a->answer1) {
+                       $difference = (float) ($a->answer1 - $buckets1[$i]);
+                       $stdev1[$i] += ($difference * $difference);
+                   }
+                   if ($a->answer2) {
+                       $difference = (float) ($a->answer2 - $buckets2[$i]);
+                       $stdev2[$i] += ($difference * $difference);
+                   }
                }
            }
 
@@ -553,24 +580,26 @@
 
        if ($aaa) {
            foreach ($aaa as $a) {
-               $index = $indexof[$a->question];
-                   if ($a->userid == $sid) {
-                       if ($a->answer1) {
-                           $studbuckets1[$index] += $a->answer1;
-                           $studcount1[$index]++;
+               if (!$group or isset($users[$a->userid])) {
+                   $index = $indexof[$a->question];
+                       if ($a->userid == $sid) {
+                           if ($a->answer1) {
+                               $studbuckets1[$index] += $a->answer1;
+                               $studcount1[$index]++;
+                           }
+                           if ($a->answer2) {
+                               $studbuckets2[$index] += $a->answer2;
+                               $studcount2[$index]++;
+                           }
                        }
-                       if ($a->answer2) {
-                           $studbuckets2[$index] += $a->answer2;
-                           $studcount2[$index]++;
-                       }
+                   if ($a->answer1) {
+                       $buckets1[$index] += $a->answer1;
+                       $count1[$index]++;
                    }
-               if ($a->answer1) {
-                   $buckets1[$index] += $a->answer1;
-                   $count1[$index]++;
-               }
-               if ($a->answer2) {
-                   $buckets2[$index] += $a->answer2;
-                   $count2[$index]++;
+                   if ($a->answer2) {
+                       $buckets2[$index] += $a->answer2;
+                       $count2[$index]++;
+                   }
                }
            }
        }
@@ -591,14 +620,16 @@
        }
 
        foreach ($aaa as $a) {
-           $index = $indexof[$a->question];
-           if ($a->answer1) {
-               $difference = (float) ($a->answer1 - $buckets1[$index]);
-               $stdev1[$index] += ($difference * $difference);
-           }
-           if ($a->answer2) {
-               $difference = (float) ($a->answer2 - $buckets2[$index]);
-               $stdev2[$index] += ($difference * $difference);
+           if (!$group or isset($users[$a->userid])) {
+               $index = $indexof[$a->question];
+               if ($a->answer1) {
+                   $difference = (float) ($a->answer1 - $buckets1[$index]);
+                   $stdev1[$index] += ($difference * $difference);
+               }
+               if ($a->answer2) {
+                   $difference = (float) ($a->answer2 - $buckets2[$index]);
+                   $stdev2[$index] += ($difference * $difference);
+               }
            }
        }
 

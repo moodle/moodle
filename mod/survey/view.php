@@ -36,8 +36,19 @@
                  "$navigation <A HREF=index.php?id=$course->id>$strsurveys</A> -> $survey->name", "", "", true,
                   update_module_button($cm->id, $course->id, $strsurvey), navmenu($course, $cm));
 
+/// Check to see if groups are being used in this survey
+    if ($groupmode = groupmode($course, $cm)) {   // Groups are being used
+        $currentgroup = get_current_group($course->id);
+    } else {
+        $currentgroup = 0;
+    }
+
+    if (isteacheredit($course->id) or ($groupmode == VISIBLEGROUPS)) {
+        $currentgroup = 0;
+    }
+
     if (isteacher($course->id)) {
-        $numusers = survey_count_responses($survey->id);
+        $numusers = survey_count_responses($survey->id, $currentgroup);
         echo "<p align=right><a href=\"report.php?id=$cm->id\">".
               get_string("viewsurveyresponses", "survey", $numusers)."</A></P>";
     } else if (!$cm->visible) {
@@ -54,13 +65,13 @@
     if (survey_already_done($survey->id, $USER->id)) {
 
         add_to_log($course->id, "survey", "view graph", "view.php?id=$cm->id", $survey->id, $cm->id);
-        $numusers = survey_count_responses($survey->id);
+        $numusers = survey_count_responses($survey->id, $currentgroup);
 
         if ($showscales) {
             print_heading(get_string("surveycompleted", "survey"));
             print_heading(get_string("peoplecompleted", "survey", $numusers));
             echo "<center>";
-            survey_print_graph("id=$cm->id&sid=$USER->id&type=student.png");
+            survey_print_graph("id=$cm->id&sid=$USER->id&group=$currentgroup&type=student.png");
             echo "</center>";
 
         } else {

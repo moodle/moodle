@@ -172,6 +172,8 @@ INSERT INTO prefix_survey_questions (id, text, shorttext, multi, intro, type, op
 # Dumping data for table log_display
 #
 
+INSERT INTO prefix_log_display VALUES ('survey', 'add', 'survey', 'name');
+INSERT INTO prefix_log_display VALUES ('survey', 'update', 'survey', 'name');
 INSERT INTO prefix_log_display VALUES ('survey', 'download', 'survey', 'name');
 INSERT INTO prefix_log_display VALUES ('survey', 'view form', 'survey', 'name');
 INSERT INTO prefix_log_display VALUES ('survey', 'view graph', 'survey', 'name');

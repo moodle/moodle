@@ -185,15 +185,23 @@ function survey_log_info($log) {
                               AND u.id = '$log->userid'");
 }
 
-function survey_get_responses($survey) {
+function survey_get_responses($surveyid, $groupid) {
     global $CFG;
+
+    if ($groupid) {
+        $groupsql = "AND gm.groupid = $groupid AND u.id = gm.userid";
+    } else {
+        $groupsql = "";
+    }
+
     return get_records_sql("SELECT MAX(a.time) as time, 
                                    count(*) as numanswers, 
                                    u.id, u.firstname, u.lastname, u.picture
                               FROM {$CFG->prefix}survey_answers AS a, 
-                                   {$CFG->prefix}user AS u
-                             WHERE a.survey = $survey 
-                                   AND a.userid = u.id
+                                   {$CFG->prefix}user AS u,
+                                   {$CFG->prefix}groups_members AS gm
+                             WHERE a.survey = $surveyid 
+                                   AND a.userid = u.id $groupsql
                           GROUP BY u.id, u.firstname, u.lastname
                           ORDER BY time ASC");
 }
@@ -217,15 +225,22 @@ function survey_update_analysis($survey, $user, $notes) {
 }
 
 
-function survey_get_user_answers($surveyid, $questionid, $sort="sa.answer1,sa.answer2 ASC") {
+function survey_get_user_answers($surveyid, $questionid, $groupid, $sort="sa.answer1,sa.answer2 ASC") {
     global $CFG;
+
+    if ($groupid) {
+        $groupsql = "AND gm.groupid = $groupid AND u.id = gm.userid";
+    } else {
+        $groupsql = "";
+    }
 
     return get_records_sql("SELECT sa.*,u.firstname,u.lastname,u.picture 
                               FROM {$CFG->prefix}survey_answers sa, 
-                                   {$CFG->prefix}user u 
+                                   {$CFG->prefix}user u,
+                                   {$CFG->prefix}groups_members gm 
                              WHERE sa.survey = '$surveyid' 
                                AND sa.question = $questionid 
-                               AND u.id = sa.userid 
+                               AND u.id = sa.userid $groupsql
                           ORDER BY $sort");
 }
 
@@ -255,8 +270,8 @@ function survey_already_done($survey, $user) {
    return record_exists("survey_answers", "survey", $survey, "userid", $user);
 }
 
-function survey_count_responses($survey) {
-    if ($responses = survey_get_responses($survey)) {
+function survey_count_responses($surveyid, $groupid) {
+    if ($responses = survey_get_responses($surveyid, $groupid)) {
         return count($responses);
     } else {
         return 0;
@@ -439,8 +454,8 @@ function survey_print_graph($url) {
         echo "(".get_string("gdneed").")";
 
     } else {
-        echo "<IMG HEIGHT=\"$SURVEY_GHEIGHT\" WIDTH=\"$SURVEY_GWIDTH\" BORDER=1".
-             " SRC=\"$CFG->wwwroot/mod/survey/graph.php?$url\">";
+        echo "<img height=\"$survey_gheight\" width=\"$survey_gwidth\" border=\"1\"".
+             " src=\"$CFG->wwwroot/mod/survey/graph.php?$url\">";
     }
 }
 

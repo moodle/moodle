@@ -19,6 +19,10 @@ function survey_upgrade($oldversion) {
         table_column("survey_answers", "answer1", "answer1", "text", "", "", "");
         table_column("survey_answers", "answer2", "answer2", "text", "", "", "");
     }
+    if ($oldversion < 2004021900) {
+        modify_database("", "INSERT INTO prefix_log_display VALUES ('survey', 'add', 'survey', 'name');");
+        modify_database("", "INSERT INTO prefix_log_display VALUES ('survey', 'update', 'survey', 'name');");
+    }
 
     return true;
 }

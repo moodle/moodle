@@ -90,8 +90,8 @@
     $strsurveysaved = get_string("surveysaved", "survey");
 
 	print_header("$course->shortname: $strsurveysaved", "$course->fullname", 
-        "<A HREF=/course/view.php?id=$course->id>$course->shortname</A> ->
-         <A HREF=index.php?id=$course->id>$strsurveys</A> -> $survey->name -> $strsurveysaved", "");
+        "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> ->
+         <a href=\"index.php?id=$course->id\">$strsurveys</a> -> $survey->name -> $strsurveysaved", "");
 
 
     notice(get_string("thanksforanswers","survey", $USER->firstname), "$CFG->wwwroot/course/view.php?id=$course->id");

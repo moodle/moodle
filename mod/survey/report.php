@@ -5,8 +5,9 @@
 
 // Check that all the parameters have been provided.
  
-    require_variable($id);         // Course Module ID
-    optional_variable($action, "students");    // What to look at
+    require_variable($id);           // Course Module ID
+    optional_variable($action, "");  // What to look at
+    optional_variable($qid, "0");    // Question id
 
     if (! $cm = get_record("course_modules", "id", $id)) {
         error("Course Module ID was incorrect");
@@ -62,6 +63,20 @@
                  "", "", true,
                  update_module_button($cm->id, $course->id, $strsurvey), navmenu($course, $cm));
 
+/// Check to see if groups are being used in this survey
+    if ($groupmode = groupmode($course, $cm)) {   // Groups are being used
+        $currentgroup = setup_and_print_groups($course, $groupmode, 
+                                       "report.php?id=$cm->id&action=$action&qid=$qid");
+    } else {
+        $currentgroup = 0;
+    }
+
+    if ($currentgroup) {
+        $users = get_users_in_group($currentgroup);
+    } else {
+        $users = get_course_users($course->id);
+    }
+
     print_simple_box_start("center");
     if ($showscales) {
         echo "<a href=\"report.php?action=summary&id=$id\">$strsummary</a>";
@@ -69,10 +84,16 @@
         echo "&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"report.php?action=questions&id=$id\">$strquestions</a>";
         echo "&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"report.php?action=students&id=$id\">$course->students</a>";
         echo "&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"report.php?action=download&id=$id\">$strdownload</a>";
+        if (empty($action)) {
+            $action = "summary";
+        }
     } else {
         echo "<a href=\"report.php?action=questions&id=$id\">$strquestions</a>";
         echo "&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"report.php?action=students&id=$id\">$course->students</a>";
         echo "&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"report.php?action=download&id=$id\">$strdownload</a>";
+        if (empty($action)) {
+            $action = "questions";
+        }
     }
     print_simple_box_end();
 
@@ -86,9 +107,9 @@
       case "summary":
         print_heading($strsummary);
 
-        if (survey_count_responses($survey->id)) {
+        if (survey_count_responses($survey->id, $currentgroup)) {
             echo "<p align=center><a href=\"report.php?action=scales&id=$id\">";
-            survey_print_graph("id=$id&type=overall.png");
+            survey_print_graph("id=$id&group=$currentgroup&type=overall.png");
             echo "</a>";
         } else {
             echo "<p align=center>".get_string("nobodyyet","survey")."</p>";
@@ -116,7 +137,7 @@
                     continue;
                 }
                 echo "<p align=center><a title=\"$strseemoredetail\" href=report.php?action=questions&id=$id&qid=$question->multi>";
-                survey_print_graph("id=$id&qid=$question->id&type=multiquestion.png");
+                survey_print_graph("id=$id&qid=$question->id&group=$currentgroup&type=multiquestion.png");
                 echo "</a></p><br>";
             } 
         }
@@ -169,14 +190,14 @@
                     if ($subquestion->type > 0) {
                         echo "<p align=center>";
                         echo "<a title=\"$strseemoredetail\" href=\"report.php?action=question&id=$id&qid=$subquestion->id\">";
-                        survey_print_graph("id=$id&qid=$subquestion->id&type=question.png");
+                        survey_print_graph("id=$id&qid=$subquestion->id&group=$currentgroup&type=question.png");
                         echo "</a></p>";
                     }
                 }
             } else if ($question->type > 0 ) {
                 echo "<p align=center>";
                 echo "<a title=\"$strseemoredetail\" href=\"report.php?action=question&id=$id&qid=$question->id\">";
-                survey_print_graph("id=$id&qid=$question->id&type=question.png");
+                survey_print_graph("id=$id&qid=$question->id&group=$currentgroup&type=question.png");
                 echo "</a></p>";
 
             } else {
@@ -186,7 +207,7 @@
 
                 $contents = '<table cellpadding="15" width="100%">';
 
-                if ($aaa = survey_get_user_answers($survey->id, $question->id, "sa.time ASC")) {
+                if ($aaa = survey_get_user_answers($survey->id, $question->id, $currentgroup, "sa.time ASC")) {
                     foreach ($aaa as $a) {
                         $contents .= "<tr>";
                         $contents .= '<td nowrap="nowrap" width="10%" valign="top">'.fullname($a).'</td>';
@@ -227,7 +248,7 @@
         $table->align = array ("left", "left", "left", "left", "right");
         $table->size = array (35, "", "", "", "");
 
-        if ($aaa = survey_get_user_answers($survey->id, $question->id)) {
+        if ($aaa = survey_get_user_answers($survey->id, $question->id, $currentgroup)) {
             foreach ($aaa as $a) {
                 if ($a->answer1) {
                     $answer1 =  "$a->answer1 - ".$answers[$a->answer1 - 1];
@@ -257,7 +278,7 @@
 
          print_heading(get_string("analysisof", "survey", "$course->students"));
         
-         if (! $results = survey_get_responses($survey->id) ) {
+         if (! $results = survey_get_responses($survey->id, $currentgroup) ) {
              notify(get_string("nobodyyet","survey"));
          } else {
              survey_print_all_responses($cm->id, $results, $course->id);
@@ -373,6 +394,7 @@
         echo '<center>';
         $options["id"] = "$cm->id";
         $options["type"] = "xls";
+        $options["group"] = $currentgroup;
         print_single_button("download.php", $options, get_string("downloadexcel", "survey"));
 
         $options["type"] = "txt";

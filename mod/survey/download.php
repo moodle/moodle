@@ -6,6 +6,7 @@
 
     require_variable($id);    // Course Module ID
     optional_variable($type, "xls");
+    optional_variable($group, 0);
 
     if (! $cm = get_record("course_modules", "id", $id)) {
         error("Course Module ID was incorrect");
@@ -25,8 +26,18 @@
         error("Survey ID was incorrect");
     }
 
-    add_to_log($course->id, "survey", "download", "download.php?id=$cm->id&type=$type", "$survey->id");
+    add_to_log($course->id, "survey", "download", "download.php?id=$cm->id&type=$type", "$survey->id", $cm->id);
 
+/// Check to see if groups are being used in this survey
+
+    $groupmode = groupmode($course, $cm);   // Groups are being used
+
+    if ($groupmode and $group) {
+        $users = get_users_in_group($group);
+    } else {
+        $users = get_course_users($course->id);
+        $group = false;
+    }
 
 // Get all the questions and their proper order
 
@@ -94,15 +105,17 @@
     }
    
     foreach ($aaa as $a) {
-        if (!$results["$a->userid"]) { // init new array
-            $results["$a->userid"]["time"] = $a->time;
-            foreach ($order as $key => $qid) {
-                $results["$a->userid"]["$qid"]["answer1"] = "";
-                $results["$a->userid"]["$qid"]["answer2"] = "";
+        if (!$group or isset($users[$a->userid])) {
+            if (!$results["$a->userid"]) { // init new array
+                $results["$a->userid"]["time"] = $a->time;
+                foreach ($order as $key => $qid) {
+                    $results["$a->userid"]["$qid"]["answer1"] = "";
+                    $results["$a->userid"]["$qid"]["answer2"] = "";
+                }
             }
+            $results["$a->userid"]["$a->question"]["answer1"] = $a->answer1;
+            $results["$a->userid"]["$a->question"]["answer2"] = $a->answer2;
         }
-        $results["$a->userid"]["$a->question"]["answer1"] = $a->answer1;
-        $results["$a->userid"]["$a->question"]["answer2"] = $a->answer2;
     }
 
 // Output the file as a valid Excel spreadsheet if required
