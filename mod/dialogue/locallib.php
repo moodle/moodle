@@ -149,7 +149,7 @@ global $USER;
 		}
 	}
     if (isset($names)) {
-        asort($names);
+        natcasesort($names);
         return $names;
     }
     return;
@@ -180,7 +180,7 @@ global $USER;
 		}
 	}
 	if (isset($names)) {
-        asort($names);
+        natcasesort($names);
 		return $names;
 	}
 	return;
@@ -233,7 +233,7 @@ function dialogue_list_conversations_closed($dialogue) {
 			}
             $names[$conversation->id] = fullname($with);
         }
-        asort($names);
+        natcasesort($names);
         
 		print_simple_box_start();
 		$table->head = array (get_string("dialoguewith", "dialogue"), get_string("subject", "dialogue"),  
@@ -294,7 +294,7 @@ function dialogue_list_conversations_other($dialogue) {
 			}
             $names[$conversation->id] = fullname($with);
         }
-        asort($names);
+        natcasesort($names);
         
 		print_simple_box_start();
 		$table->head = array (get_string("dialoguewith", "dialogue"), get_string("subject", "dialogue"),  
@@ -533,14 +533,6 @@ function dialogue_print_conversation($dialogue, $conversation) {
 	print_simple_box_end();
 	if ($showbutton) {
 		echo "<hr />\n";
-		echo "<b>".get_string("sendmailmessages", "dialogue").":</b> \n";
-		if ($dialogue->maildefault) {
-			echo "<input type=\"checkbox\" name=\"sendthis\" value=\"1\" checked> \n";
-		}
-		else {
-			echo "<input type=\"checkbox\" name=\"sendthis\" value=\"1\"> \n";
-		}
-		helpbutton("sendmail", get_string("sendmailmessages", "dialogue"), "dialogue");
 		echo "<br /><input type=\"submit\" value=\"".get_string("addmynewentry", "dialogue")."\">\n";
 	}
 	echo "</form>\n";

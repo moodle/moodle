@@ -8,6 +8,7 @@
     getsubject
 	insertentries
 	openconversation
+    printdialogue
     showdialogues
     updatesubject
 	
