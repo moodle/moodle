@@ -1,3 +1,243 @@
+2002-10-25 Friday 17:10  moodler
+
+	* mod/forum/lib.php: 
+	
+	Brand-new news and social forums are now also assigned course
+	modules and put in section 0 of the course.
+
+2002-10-25 Friday 16:54  moodler
+
+	* mod/quiz/view.php: 
+	
+	Ugh type in string module name
+
+2002-10-25 Friday 16:47  moodler
+
+	* version.php, lib/db/mysql.php, mod/forum/lib.php,
+	mod/forum/mod.html: 
+	
+	Upgrading all news and social forums (except those in social
+	courses) so that they are course modules in an (invisible) section,
+	which means they are now editable and parameters, names etc can be
+	changed.
+
+2002-10-25 Friday 16:42  moodler
+
+	* UPGRADING.txt: 
+	
+	Making it clear not to overwrite old files
+
+2002-10-25 Friday 16:15  moodler
+
+	* lang/en/quiz.php, mod/quiz/view.php: 
+	
+	Added translation for Attempt quiz now
+
+2002-10-25 Friday 16:01  moodler
+
+	* lang/en/moodle.php: 
+	
+	Slight change to configlocale ... added examples
+
+2002-10-25 Friday 15:22  moodler
+
+	* mod/forum/post.php: 
+	
+	Disallow people posting in forums where they arent allowed to post!
+	 8-.
+
+2002-10-25 Friday 15:17  moodler
+
+	* lib/: moodlelib.php, weblib.php: 
+	
+	Tweaks
+
+2002-10-25 Friday 14:50  moodler
+
+	* mod/forum/lib.php: 
+	
+	Tweaks to mail formats so that unnecessary information (replies,
+	etc) is not printed.
+
+2002-10-25 Friday 13:58  moodler
+
+	* mod/forum/lib.php: 
+	
+	Tweaks to forum formatting
+
+2002-10-25 Friday 13:46  compuproggy
+
+	* lang/de/quiz.php: 
+	
+	[no log message]
+
+2002-10-25 Friday 11:20  moodler
+
+	* lang/pt_br/: assignment.php, forum.php, moodle.php, quiz.php,
+	help/langedit.html, help/mods.html, help/richtext.html,
+	help/text.html, help/textformat.html,
+	help/forum/allowdiscussions.html, help/quiz/attempts.html,
+	help/quiz/categories.html, help/quiz/correctanswers.html,
+	help/quiz/feedback.html, help/quiz/grademethod.html,
+	help/quiz/maxgrade.html, help/quiz/multichoice.html,
+	help/quiz/questiontypes.html, help/quiz/random.html,
+	help/quiz/shortanswer.html, help/quiz/timeopen.html,
+	help/quiz/truefalse.html: 
+	
+	Latest updates from Fabricio
+
+2002-10-25 Friday 10:11  moodler
+
+	* course/weeks.php: 
+	
+	Weekdays are now calculated using userdate, so that
+	
+	  - they are relative to the user
+	  - they should take advantage of locales etc
+
+2002-10-25 Friday 10:02  moodler
+
+	* admin/: config.php, index.php, site.php, user.php: 
+	
+	Changes to improve usability when the admin folder has been
+	renamed, and also a change in checking for the admin user, just in
+	case an old session is hanging around
+
+2002-10-24 Thursday 21:41  moodler
+
+	* lang/de/moodle.php: 
+	
+	All the variables were missing!
+
+2002-10-24 Thursday 20:49  moodler
+
+	* course/lib.php: 
+	
+	Fix for category box display on IE
+
+2002-10-24 Thursday 15:09  moodler
+
+	* mod/forum/lib.php: 
+	
+	The BR in print_post was to fix the case when embedded images are
+	used.  However it added too much space.  I'll find a way to fix the
+	embedded images problem later, during the styles changeover, as
+	it's pretty rare.
+
+2002-10-24 Thursday 11:43  moodler
+
+	* mod/choice/: version.php, db/mysql.php: 
+	
+	never upgraded choice tables to six choices!
+
+2002-10-24 Thursday 11:11  moodler
+
+	* doc/features.html: 
+	
+	Updated with some new features
+
+2002-10-24 Thursday 10:42  moodler
+
+	* admin/config.php: 
+	
+	Added a new debugging command so that I can see the config
+	variables
+
+2002-10-23 Wednesday 22:38  moodler
+
+	* RELEASE.html: 
+	
+	more readable
+
+2002-10-23 Wednesday 22:33  moodler
+
+	* doc/credits.html: 
+	
+	Rearranged to alphabetical order
+
+2002-10-23 Wednesday 22:30  moodler
+
+	* RELEASE.html: 
+	
+	Forgot to mention the new LDAP functions!  My deep apologies,
+	Petri, 1.0.5 was too long ago - I forgot your plug-in was developed
+	since then!
+
+2002-10-23 Wednesday 20:13  moodler
+
+	* mod/forum/lib.php: 
+	
+	WHoops ... just undoing the last checkin which was premature ...
+
+2002-10-23 Wednesday 20:12  moodler
+
+	* lib/moodlelib.php: 
+	
+	Mail now contains Moodle version
+
+2002-10-23 Wednesday 20:10  moodler
+
+	* lang/en/quiz.php, mod/forum/lib.php, mod/quiz/lib.php,
+	mod/quiz/question.php: 
+	
+	After saving new question, sanity checks are made to make sure the
+	fractional grades are correct.
+	
+	Icons now have tooltips and are also a shortcut to editing page.
+
+2002-10-23 Wednesday 15:27  compuproggy
+
+	* lang/de/help/quiz/: attempts.html, categories.html,
+	correctanswers.html, feedback.html, grademethod.html,
+	maxgrade.html, multichoice.html, questiontypes.html, random.html,
+	shortanswer.html, timeopen.html, truefalse.html: 
+	
+	[no log message]
+
+2002-10-23 Wednesday 15:11  compuproggy
+
+	* lang/de/moodle.php: 
+	
+	[no log message]
+
+2002-10-23 Wednesday 12:10  moodler
+
+	* admin/index.php, lib/db/mysql.php, lib/db/postgres7.php: 
+	
+	Changed name of upgrade_moodle function to main_upgrade (for
+	consistency)
+
+2002-10-23 Wednesday 10:00  moodler
+
+	* lang/it/: LEGGIMI, assignment.php, choice.php, forum.php,
+	journal.php, moodle.php, resource.php, survey.php,
+	help/teachers.html, help/text.html,
+	help/resource/resourcetype.html, help/resource/summary.html: 
+	
+	Latest version of Italian from Davide Suraci.
+
+2002-10-22 Tuesday 21:17  moodler
+
+	* UPGRADING.txt: 
+	
+	cvs update -dP
+	
+	not
+	
+	cvs update -d
+
+2002-10-22 Tuesday 20:36  compuproggy
+
+	* lang/de/quiz.php: 
+	
+	[no log message]
+
+2002-10-22 Tuesday 19:21  moodler
+
+	* CHANGES, RELEASE.html, version.php: 
+	
+	Updated information for 1.0.6 Beta 1
+
 2002-10-22 Tuesday 18:56  moodler
 
 	* lang/en/quiz.php, mod/quiz/report.php: 
