@@ -25,6 +25,8 @@ define('MOODLE_PAGE_COURSE',    'course');
  */
 
 function page_create_object($type, $id = NULL) {
+    global $CFG;
+
     $data = new stdClass;
     $data->pagetype = $type;
     $data->pageid   = $id;
@@ -34,9 +36,11 @@ function page_create_object($type, $id = NULL) {
     $object = &new $classname;
     // TODO: subclassing check here
 
-    if($object->get_type() !== $type) {
+    if ($object->get_type() !== $type) {
         // Somehow somewhere someone made a mistake
-        error('Page object\'s type ('. $object->get_type() .') does not match requested type ('. $type .')');
+        if ($CFG->debug > 7) {
+            error('Page object\'s type ('. $object->get_type() .') does not match requested type ('. $type .')');
+        }
     }
 
     $object->init_quick($data);
@@ -49,23 +53,30 @@ function page_create_object($type, $id = NULL) {
  */
 
 function page_map_class($type, $classname = NULL) {
+    global $CFG;
+
     static $mappings = NULL;
     
-    if($mappings === NULL) {
+    if ($mappings === NULL) {
         $mappings = array(
             MOODLE_PAGE_COURSE => 'page_course'
         );
     }
 
-    if(!empty($type) && !empty($classname)) {
+    if (!empty($type) && !empty($classname)) {
         $mappings[$type] = $classname;
     }
-    if(!isset($mappings[$type])) {
-        error('Page class mapping requested for unknown type: '.$type);
+
+    if (!isset($mappings[$type])) {
+        if ($CFG->debug > 7) {
+            error('Page class mapping requested for unknown type: '.$type);
+        }
     }
 
-    if(!class_exists($mappings[$type])) {
-        error('Page class mapping for id "'.$type.'" exists but class "'.$mappings[$type].'" is not defined');
+    if (!class_exists($mappings[$type])) {
+        if ($CFG->debug > 7) {
+            error('Page class mapping for id "'.$type.'" exists but class "'.$mappings[$type].'" is not defined');
+        }
     }
 
     return $mappings[$type];
