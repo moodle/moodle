@@ -33,19 +33,27 @@ a:visited {
 
 a.dimmed:link,
 a.dimmed:visited {
-    color:#AAAAAA; /* hidden */
+    color:#AAAAAA;
 }
 
 a.autolink:link,
-a.autolink:visited {
-    background-color:#DDDDDD; /* autolink */
+a.autolink:visited,
+a.glossary-autolink:link,
+a.glossary-autolink:visited,
+a.activity-autolink:link,
+a.activity-autolink:visited,
+a.resource-autolink:link,
+a.resource-autolink:visited {
+    background-color:#DDDDDD; 
     color:#000000;
 }
 
-a.autolink:hover,
-a:hover,
-a.dimmed:hover {
+a:hover {
     color:#FF0000;
+}
+
+a.glossary-autolink:hover {
+    cursor: help;
 }
 
 
