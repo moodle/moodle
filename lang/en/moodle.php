@@ -597,6 +597,7 @@ $string['passwordsenttext'] = "
 $string['people'] = "People";
 $string['personalprofile'] = "Personal profile";
 $string['phone'] = "Phone";
+$string['phpinfo'] = "PHP info";
 $string['popupwindow'] = "Open file in new window";
 $string['potentialadmins'] = "Potential admins";
 $string['potentialcreators'] = "Potential course creators";

@@ -9,14 +9,26 @@
         error("Only the admin can use this page");
     }
 
-    $stradministration = get_string("administration");
-    $site = get_site();
+    if (isset($topframe)) {
+        $stradministration = get_string("administration");
+        $site = get_site();
+    
+	    print_header("$site->shortname: phpinfo", "$site->fullname", 
+                     "<a target=\"$CFG->framename\" href=\"index.php\">$stradministration</a> -> PHP info");
+        exit;
+    }
 
-	print_header("$site->shortname: phpinfo", "$site->fullname", 
-                 "<a href=\"index.php\">$stradministration</a> -> phpinfo");
-
-    phpinfo();
-
-    print_footer();
+    if (isset($bottomframe)) {
+        phpinfo();
+        exit;
+    }
 
 ?>
+<head>
+<title>PHP info</title>
+</head>
+
+<frameset rows="80,*">
+   <frame src="phpinfo.php?topframe=true">
+   <frame src="phpinfo.php?bottomframe=true">
+</frameset>
