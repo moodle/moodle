@@ -80,7 +80,7 @@ $string['importquestions'] = 'Import questions from file';
 $string['indivresp'] = 'Responses of Individuals to Each Item';
 $string['introduction'] = 'Introduction';
 $string['itemanal'] = 'Item Response Analysis';
-$string['listitems'] = 'Listing of Items in This Quiz';
+$string['listitems'] = 'Listing of Items in Quiz';
 $string['marks'] = 'Marks';
 $string['match'] = 'Matching';
 $string['matchanswer'] = 'Matching answer';
@@ -160,6 +160,7 @@ $string['type'] = 'Type';
 $string['viewallanswers'] = 'View $a completed quizzes';
 $string['viewallreports'] = 'View reports for $a attempts';
 $string['webct'] = 'WebCT format';
+$string['withsummary'] = "with Summary Statistics";
 $string['yourfinalgradeis'] = 'Your final grade for this quiz is $a';
 
 ?>
