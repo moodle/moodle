@@ -192,6 +192,7 @@
         global $ewiki_author, $USER;
         $ewiki_author=fullname($USER);
         $content=ewiki_page($wikipage);
+        $content2='';
 
         ### RESTORE ID from Moodle
         $_REQUEST["id"]=$moodleID;
@@ -199,7 +200,8 @@
 ///     ################# EWIKI Part ###########################
     }
     else {
-        $content = '<div align="center">'.get_string('nowikicreated', 'wiki').'</div>';
+        $content = '';
+        $content2 = '<div align="center">'.get_string('nowikicreated', 'wiki').'</div>';
     }
 
 
@@ -322,9 +324,11 @@
     print_simple_box_start( "right", "100%", "$THEME->cellcontent", "20");
     if($ewiki_action=="edit") {
       # When editing, the filters shall not interfere the wiki-source
-      print $content;
+      print $content.$content2;
     } else {
-      print(format_text($content, $moodle_format));
+      //print(format_text($content, $moodle_format));    /// DISABLED UNTIL IT CAN BE FIXED
+      print $content;
+      print $content2;
     }
     print_simple_box_end();
     echo "<br clear=all />";
