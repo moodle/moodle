@@ -122,7 +122,7 @@
                 foreach ($sessionusers as $sessionuser => $usermessagecount) {
                     if ($user = get_record("user", "id", $sessionuser)) {
                         print_user_picture($user->id, $course->id, $user->picture);
-                        echo "&nbsp;$user->firstname $user->lastname";
+                        echo "&nbsp;".fullname($user);
                         echo "&nbsp;($usermessagecount)<br />";
                     }
                 }

@@ -130,7 +130,8 @@ function chat_print_recent_activity($course, $isteacher, $timestart) {
             }
             $current = $chatuser->chatid;
         }
-        echo "&nbsp;&nbsp;&nbsp;<font size=1>- $chatuser->firstname $chatuser->lastname</font><br />";
+        $fullname = fullname($chatuser);
+        echo "&nbsp;&nbsp;&nbsp;<font size=1>- $fullname</font><br />";
     }
     echo "<br />";
 
@@ -494,8 +495,7 @@ function chat_format_message($message, $courseid=0) {
     $text = $message->message;
 
     if (!empty($message->system)) {             /// It's a system message
-        $output->text = get_string("message$text", "chat", 
-                                   "$user->firstname $user->lastname");
+        $output->text = get_string("message$text", "chat", fullname($user));
         $output->text = "$strtime: $output->text";
         $output->html  = "<table><tr><td valign=top>$picture</td><td>";
         $output->html .= "<font size=2 color=\"#CCAAAA\">$output->text</font>";
@@ -510,15 +510,13 @@ function chat_format_message($message, $courseid=0) {
         $beepwho = trim(substr($text, 5));
 
         if ($beepwho == "all") {   // everyone
-            $outinfo = "$strtime: ". get_string("messagebeepseveryone", "chat", 
-                       "$user->firstname $user->lastname");
+            $outinfo = "$strtime: ". get_string("messagebeepseveryone", "chat", fullname($user));
             $outmain = "";
             $output->beep = true;  // (eventually this should be set to 
                                    //  to a filename uploaded by the user)
 
         } else if ($beepwho == $USER->id) {  // current user
-            $outinfo = "$strtime: ". get_string("messagebeepsyou", "chat", 
-                       "$user->firstname $user->lastname");
+            $outinfo = "$strtime: ". get_string("messagebeepsyou", "chat", fullname($user));
             $outmain = "";
             $output->beep = true;
 

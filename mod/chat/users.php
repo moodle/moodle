@@ -94,7 +94,7 @@ foreach ($chatusers as $chatuser) {
     print_user_picture($chatuser->id, 0, $chatuser->picture, false, false, false);
     echo "</a></td><td valign=center>";
     echo "<p><font size=1>";
-    echo "$chatuser->firstname $chatuser->lastname<br />";
+    echo fullname($chatuser)."<br />";
     echo "<font color=\"#888888\">$stridle: ".format_time($lastping, $str)."</font>";
     echo " <a href=\"users.php?chat_sid=$chat_sid&beep=$chatuser->id\">$strbeep</a>";
     echo "</font></p>";
