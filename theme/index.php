@@ -75,6 +75,9 @@
             continue;
         }
 
+        unset($THEME);
+        include_once("$CFG->dirroot/theme/$theme/config.php");
+
         echo "<tr>";
         echo "<td align=\"center\"><iframe name=\"$theme\" src=\"preview.php?preview=$theme\" height=\"150\" width=\"500\"></iframe></td>";
 
@@ -84,17 +87,25 @@
             echo '<td valign="top">';
         }
         echo "<h4>$theme</h4>";
+        if (!isset($THEME->sheets)) {
+            notify("OLD THEME!!");
+        }
+
+        echo '<ul>';
 
         if (file_exists("$theme/README.html")) {
-            echo "<p><a target=\"$theme\" href=\"preview.php?preview=$theme\">$strpreview</a></p>";
+            echo "<li><a target=\"$theme\" href=\"preview.php?preview=$theme\">$strpreview</a>";
+            echo '<li>';
             link_to_popup_window('/theme/'.$theme.'/README.html', $theme, $strinfo);
         } else if (file_exists("$theme/README.txt")) {
-            echo "<p><a target=\"$theme\" href=\"preview.php?preview=$theme\">$strpreview</a></p>";
+            echo "<li><a target=\"$theme\" href=\"preview.php?preview=$theme\">$strpreview</a>";
+            echo '<li>';
             link_to_popup_window('/theme/'.$theme.'/README.txt', $theme, $strinfo);
         }
         if ($CFG->theme != $theme) {
-            echo "<p><a href=\"index.php?choose=$theme&amp;sesskey=$sesskey\">$strchoose</a></p>";
+            echo "<li><a href=\"index.php?choose=$theme&amp;sesskey=$sesskey\">$strchoose</a>";
         }
+        echo '</ul>';
         echo '</td>';
         echo "</tr>";
     }
