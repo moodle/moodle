@@ -1298,13 +1298,13 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml="", $a
 
     if (is_string($from)) { // So we can pass whatever we want if there is need
         $mail->From     = $CFG->noreplyaddress;
-        $mail->FromName = $from.' '.get_string('noreply', 'forum');
+        $mail->FromName = $from;
     } else if ($usetrueaddress and $from->maildisplay) {
         $mail->From     = "$from->email";
         $mail->FromName = fullname($from);
     } else {
         $mail->From     = "$CFG->noreplyaddress";
-        $mail->FromName = fullname($from).' '.get_string('noreply', 'forum');
+        $mail->FromName = fullname($from);
     }
     $mail->Subject  =  stripslashes($subject);
 
