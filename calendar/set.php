@@ -68,11 +68,11 @@
 			$SESSION->cal_show_groups = !$SESSION->cal_show_groups;
 		break;
 		case 'showcourses':
-			if($SESSION->cal_show_course) {
-				$SESSION->cal_show_course = false;
+			if(empty($SESSION->cal_show_course)) {
+				$SESSION->cal_show_course = calendar_get_default_courses();
 			}
 			else {
-				$SESSION->cal_show_course = true;
+				$SESSION->cal_show_course = false;
 			}
 		break;
 		case 'showglobal':

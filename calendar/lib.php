@@ -239,7 +239,6 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
 }
 
 function calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxevents) {
-
     global $CFG;
 
     $display = &New object;
@@ -1015,6 +1014,7 @@ function calendar_set_filters(&$courses, &$group, &$user, $defaultcourses = NULL
         (is_array($SESSION->cal_show_course) && count($SESSION->cal_show_course)) ||
         ($SESSION->cal_show_course === true)
     );
+
     if($defaultcourses === NULL) {
         $defaultcourses = array();
     }
