@@ -59,7 +59,7 @@
                     }
                 }
             }
-            redirect("$CFG->wwwroot/admin/index.php", get_string("changessaved"), 1);
+            redirect("index.php", get_string("changessaved"), 1);
             exit;
 
         } else {
@@ -80,7 +80,7 @@
 
     if ($site) {
         print_header("$site->shortname: $strconfigvariables", "$site->fullname",
-                      "<A HREF=\"$CFG->wwwroot/admin/\">$stradmin</A> -> $strconfigvariables", "$focus");
+                      "<A HREF=\"index.php\">$stradmin</A> -> $strconfigvariables", "$focus");
         print_heading($strconfigvariables);
     } else {
         print_header();

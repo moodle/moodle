@@ -23,7 +23,7 @@
 
             if ($form->id) {
                 if (update_record("course", $form)) {
-		            redirect("$CFG->wwwroot/admin/index.php", get_string("changessaved"));
+		            redirect("index.php", get_string("changessaved"));
                 } else {
                     error("Serious Error! Could not update the site record! (id = $form->id)");
                 }
@@ -31,7 +31,7 @@
                 if ($newid = insert_record("course", $form)) {
                     $cat->name = get_string("miscellaneous");
                     if (insert_record("course_categories", $cat)) {
-		                redirect("$CFG->wwwroot/admin/index.php", get_string("changessaved"), "1");
+		                redirect("index.php", get_string("changessaved"), "1");
                     } else {
                         error("Serious Error! Could not set up a default course category!");
                     }
@@ -62,7 +62,7 @@
     $strsitesettings = get_string("sitesettings");
 
     print_header("$site->shortname: $strsitesettings", "$site->fullname",
-                  "<A HREF=\"$CFG->wwwroot/admin/\">$stradmin</A> -> $strsitesettings", "$focus");
+                  "<A HREF=\"index.php\">$stradmin</A> -> $strsitesettings", "$focus");
 
     print_heading($strsitesettings);
     print_simple_box_start("center", "", "$THEME->cellheading");

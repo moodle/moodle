@@ -212,19 +212,21 @@
 /// If any new configurations were found then send to the config page to check
 
     if ($configchange) {
-        redirect("$CFG->wwwroot/admin/config.php");
+        redirect("config.php");
     }
 
 /// Set up the overall site name etc.
     if (! $site = get_site()) {
-        redirect("$CFG->wwwroot/admin/site.php");
+        redirect("site.php");
     }
 
 /// Set up the admin user
+    if (! record_exists_sql("SELECT * FROM user_admins")) {   // No admin user yet
+        redirect("user.php");
+    }
+
+/// Check for valid admin user
     if (!isadmin()) {
-        if (! record_exists_sql("SELECT * FROM user_admins")) {   // No admin user yet
-            redirect("$CFG->wwwroot/admin/user.php");
-        }
         error("You need to be an admin user to use this page.", "$CFG->wwwroot/login/index.php");
     }
 
