@@ -33,11 +33,13 @@
 
     forum_set_display_mode($mode);
 
-    if (abs($USER->mode) == 1) {  // If flat display then display the lot.
-        $parent = 0;  
-    }
+    $displaymode = $USER->mode;
 
-    if (!$parent) {
+    if ($parent) {
+        if (abs($USER->mode) == 1) {  // If flat AND parent, then force nested display this time
+            $displaymode = 3;
+        }
+    } else {
         $parent = $discussion->firstpost;
         $navtail = "$discussion->name";
     }
@@ -67,7 +69,7 @@
                  "$navmiddle -> $navtail", "", "", true, $updatebutton);
     }
 
-    forum_print_discussion($course, $forum, $discussion, $post, $USER->mode);
+    forum_print_discussion($course, $forum, $discussion, $post, $displaymode);
 
     print_footer($course);
 
