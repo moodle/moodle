@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // admin.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005021000)
+      // admin.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005021800)
 
 
 $string['adminseesallevents'] = 'Beheerders zien alle gebeurtenissen';
@@ -88,6 +88,7 @@ $string['confirmdeletedstdefault'] = '<strong>De voorkeuze $a genoemd, wordt geb
 $string['cronwarning'] = 'Het onderhoudsscript cron.php heeft de laatste 24 uur niet gelopen. <br />Als je dit nog niet geconfigureerd hebt, lees dan het onderdeel <em>Cron configureren</em> bij de installatie-instructies.';
 $string['dstisapreference'] = 'Elke gebruiker kan kiezen welke voorkeuze voor zomertijd te gebruiken';
 $string['dstisforcedto'] = 'Dwing alle gebruikers om het volgende te gebruiken';
+$string['dstpresetforced'] = 'Dit wordt door de site-beheerder opgelegd';
 $string['dstpresets'] = 'Instellingsmogelijkheden zomertijd';
 $string['edithelpdocs'] = 'Bewerk helpbestanden';
 $string['editingdstpreset'] = 'De instellingsmogelijkheid voor zomertijd bewerken';
@@ -109,6 +110,7 @@ $string['helpweekenddays'] = 'Welke dagen van de week worden als \"weekend\" bes
 $string['managedstpresets'] = 'Beheer de voorkeuzes voor zomertijd';
 $string['nodstpresetsexist'] = 'Zomertijd is uitgeschakeld voor alle gebruikers omdat er geen voorkeuzes voor zomertijd gedefiniëerd zijn. Je kunt er definiëren door op onderstaande knop te klikken.';
 $string['optionalmaintenancemessage'] = 'Optionele onderhoudsboodschap';
+$string['returntocalendaroptions'] = 'Terugkeren naar kalenderinstellingen';
 $string['sitemaintenance'] = 'De site is in onderhoud en is op dit ogenblik niet beschikbaar';
 $string['sitemaintenancemode'] = 'Onderhoudsmodus';
 $string['sitemaintenanceoff'] = 'De onderhoudsmodus is uitgeschakeld en de site loopt nu terug normaal';

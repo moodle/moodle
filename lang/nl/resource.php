@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
+      // resource.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005021800)
 
 
 $string['addresource'] = 'Bron toevoegen';
@@ -78,9 +78,7 @@ $string['resourcetypehtml'] = 'Webpagina maken';
 $string['resourcetypelabel'] = 'Label toevoegen';
 $string['resourcetypetext'] = 'Tekstpagina maken';
 $string['searchweb'] = 'Zoek webpagina\'s';
-$string['thischarset'] = 'iso-8859-1';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Nederlands';
+$string['serverurl'] = 'Server URL ($a->wwwroot)';
 $string['variablename'] = 'Variable naam';
 
 ?>

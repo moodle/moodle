@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005021000)
+      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005021800)
 
 
 $string['action'] = 'Actie';
@@ -470,6 +470,7 @@ $string['groupfor'] = 'voor groep';
 $string['groupinfo'] = 'Info over geselecteerde groep';
 $string['groupinfomembers'] = 'Info over geselecteerde leden';
 $string['groupinfopeople'] = 'Info over geselecteerde personen';
+$string['groupmembers'] = 'Groepsleden';
 $string['groupmemberssee'] = 'Bekijk de groepsleden';
 $string['groupmembersselected'] = 'Leden van geselecteerde groep';
 $string['groupmode'] = 'Groepsmodus';
@@ -716,6 +717,7 @@ $string['no'] = 'Nee';
 $string['nobody'] = 'Niemand';
 $string['nocoursesfound'] = 'Er zijn geen vakken gevonden met het woord \'$a\'';
 $string['nocoursesyet'] = 'Er zijn geen vakken in deze categorie';
+$string['nodstpresets'] = 'De beheerder heeft de ondersteuning voor zomertijd niet ingeschakeld.';
 $string['noexistingadmins'] = 'Er bestaan geen beheerders. Dit is een ernstige fout die je in normale omstandigheden nooit te zien krijgt.';
 $string['noexistingcreators'] = 'Nog geen vak-aanmakers';
 $string['noexistingstudents'] = 'Nog geen leerlingen';
@@ -822,6 +824,7 @@ $string['readinginfofrombackup'] = 'Info van de backup lezen';
 $string['readme'] = 'LEESME';
 $string['recentactivity'] = 'Recente activiteiten';
 $string['recentactivityreport'] = 'Volledig rapport van recente activiteiten...';
+$string['recreatedcategory'] = 'Categorie $a opnieuw gemaakt';
 $string['refreshingevents'] = 'Kalender bijwerken';
 $string['registration'] = 'Moodleregistratie';
 $string['registrationemail'] = 'E-mailmeldingen';
