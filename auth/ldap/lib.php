@@ -1,5 +1,6 @@
 <?PHP  
 //CHANGELOG:
+//03.10.2002 First version to CVS
 //29.09.2002 Clean up and splitted code to functions v. 0.02
 //29.09.2002 LDAP authentication functions v. 0.01
 //Distributed under GPL (c)Petri Asikainen 2002
@@ -45,8 +46,7 @@ function auth_get_userinfo($username){
   $ldap_connection=auth_ldap_connect();
   	
   $moodleattributes = array();
-  // Commented out , does not work (why ?) 	
-  //require("$CFG->wwwroot/auth/ldap/attr_mappings.php");
+  //atribute mappings between moodle and ldap
 
   $moodleattributes['firstname']    ='givenname';
   $moodleattributes['lastname']     ='sn';
@@ -127,21 +127,13 @@ function auth_ldap_find_userdn ($ldap_connection, $username){
   //default return value
   $ldap_user_dn = FALSE;
 
-
-  //$ldap_connection = auth_ldap_connect();
   auth_ldap_bind($ldap_connection);
-  
+
   //get all contexts and look for first matching user
   $ldap_contexts = explode(";",$CFG->ldap_contexts);
   
-  
-  
-      
   foreach($ldap_contexts as $context) {
     $context == trim($context);
-    //echo ("looking in context:".$context."<br>");
-    //echo ("filter :"."(".$CFG->ldap_user_attribute."=".$username.")". "<br>");
-    
     if($CFG->ldap_search_sub){
       //use ldap_search to find first user from subtree
       $ldap_result = ldap_search($ldap_connection, $context, "(".$CFG->ldap_user_attribute."=".$username.")");
@@ -160,8 +152,5 @@ function auth_ldap_find_userdn ($ldap_connection, $username){
    }
   return $ldap_user_dn;
 }
-
-
-
 
 ?>
