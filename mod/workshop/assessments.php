@@ -128,7 +128,7 @@
         if (!$assessment = get_record("workshop_assessments", "id", $aid)) {
             error("workshop assessment is misconfigured");
         }
-        $form = data_submitted("nomatch"); // probably always come from the same page, change this statement
+        $form = data_submitted();
 
         // store the comment in the stock comments table
         if ($elementno == 99) { // it's the general comment
@@ -881,7 +881,7 @@
         if (!$assessment = get_record("workshop_assessments", "id", $aid)) {
             error("workshop assessment is misconfigured");
         }
-        $form = data_submitted("nomatch"); // probably always come from the same page, change this statement
+        $form = data_submitted();
 
         // delete the comment from the stock comments table
         if (!delete_records("workshop_stockcomments", "id", $stockcommentid)) {
@@ -1080,7 +1080,7 @@
         // don't fiddle about, delete all the old and add the new!
         delete_records("workshop_grades", "assessmentid",  $assessment->id);
 
-        $form = data_submitted("nomatch"); // probably always come from the same page, change this statement
+        $form = data_submitted();
 
         //determine what kind of grading we have
         switch ($workshop->gradingstrategy) {

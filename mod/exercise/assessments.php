@@ -879,7 +879,6 @@
         $timenow = time();
         $form = data_submitted();
 
-
         // first do the (teacher's) assessment of the student's submission
         if (! $submission = get_record("exercise_submissions", "id", $form->sid)) {
             error("Update teacher assessment: student's submission record not found");
