@@ -106,7 +106,7 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
     $output .= "</FONT></P></TD></TR>";
     $output .= "<TR><TD BGCOLOR=\"$THEME->body\" WIDTH=10>";
     $output .= "&nbsp;";
-    $output .= "</TD><TD BGCOLOR=\"#FFFFFF\">\n";
+    $output .= "</TD><TD BGCOLOR=\"$THEME->cellcontent\">\n";
 
     $output .= text_to_html($post->message);
 
@@ -175,7 +175,7 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
     echo "</FONT></P></TD></TR>";
     echo "<TR><TD BGCOLOR=\"$THEME->body\" WIDTH=10>";
     echo "&nbsp;";
-    echo "</TD><TD BGCOLOR=\"#FFFFFF\">\n";
+    echo "</TD><TD BGCOLOR=\"$THEME->cellcontent\">\n";
 
     if ($link && (strlen($post->message) > $FORUM_LONG_POST)) {
         // Print shortened version
@@ -691,7 +691,7 @@ function forum_cron () {
                 continue;
             }
 
-            if ($users = get_course_users($course->id)) {
+            if ($users = forum_subscribed_users($course, $forum)) {
                 $strforums = get_string("forums", "forum");
 
                 $mailcount=0;
@@ -700,44 +700,43 @@ function forum_cron () {
                     $by->date = userdate($post->created, "", $userto->timezone);
                     $strbynameondate = get_string("bynameondate", "forum", $by);
 
-                    if (forum_is_subscribed($userto->id, $forum->id)) {
-                        $postsubject = "$course->shortname: $post->subject";
-                        $posttext  = "$course->shortname -> $strforums -> $forum->name";
+                    $postsubject = "$course->shortname: $post->subject";
+                    $posttext  = "$course->shortname -> $strforums -> $forum->name";
+
+                    if ($discussion->name == $forum->name) {
+                        $posttext  .= "\n";
+                    } else {
+                        $posttext  .= " -> $discussion->name\n";
+                    }
+                    $posttext .= "---------------------------------------------------------------------\n";
+                    $posttext .= "$post->subject\n";
+                    $posttext .= $strbynameondate."\n";
+                    $posttext .= "---------------------------------------------------------------------\n";
+                    $posttext .= strip_tags($post->message);
+                    $posttext .= "\n\n";
+                    $posttext .= "---------------------------------------------------------------------\n";
+                    $posttext .= get_string("postmailinfo", "forum", $course->shortname)."\n";
+                    $posttext .= "$CFG->wwwroot/mod/forum/post.php?reply=$post->id";
+  
+                    if ($userto->mailformat == 1) {  // HTML
+                        $posthtml = "<P><FONT FACE=sans-serif>".
+                        "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> -> ".
+                        "<A HREF=\"$CFG->wwwroot/mod/forum/index.php?id=$course->id\">$strforums</A> -> ".
+                        "<A HREF=\"$CFG->wwwroot/mod/forum/view.php?f=$forum->id\">$forum->name</A>";
                         if ($discussion->name == $forum->name) {
-                            $posttext  .= "\n";
+                            $posthtml .= "</FONT></P>";
                         } else {
-                            $posttext  .= " -> $discussion->name\n";
+                            $posthtml .= " -> <A HREF=\"$CFG->wwwroot/mod/forum/discuss.php?d=$discussion->id\">$discussion->name</A></FONT></P>";
                         }
-                        $posttext .= "---------------------------------------------------------------------\n";
-                        $posttext .= "$post->subject\n";
-                        $posttext .= $strbynameondate."\n";
-                        $posttext .= "---------------------------------------------------------------------\n";
-                        $posttext .= strip_tags($post->message);
-                        $posttext .= "\n\n";
-                        $posttext .= "---------------------------------------------------------------------\n";
-                        $posttext .= get_string("postmailinfo", "forum", $course->shortname)."\n";
-                        $posttext .= "$CFG->wwwroot/mod/forum/post.php?reply=$post->id";
-    
-                        if ($userto->mailformat == 1) {  // HTML
-                            $posthtml = "<P><FONT FACE=sans-serif>".
-                            "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> -> ".
-                            "<A HREF=\"$CFG->wwwroot/mod/forum/index.php?id=$course->id\">$strforums</A> -> ".
-                            "<A HREF=\"$CFG->wwwroot/mod/forum/view.php?f=$forum->id\">$forum->name</A>";
-                            if ($discussion->name == $forum->name) {
-                                $posthtml .= "</FONT></P>";
-                            } else {
-                                $posthtml .= " -> <A HREF=\"$CFG->wwwroot/mod/forum/discuss.php?d=$discussion->id\">$discussion->name</A></FONT></P>";
-                            }
-                            $posthtml .= forum_make_mail_post($post, $userfrom, $userto, $course, false, true, false, false);
-                        } else {
-                          $posthtml = "";
-                        }
-    
-                        if (! email_to_user($userto, $userfrom, $postsubject, $posttext, $posthtml)) {
-                            echo "Error: mod/forum/cron.php: Could not send out mail for id $post->id to user $userto->id ($userto->email)\n";
-                        } else {
-                            $mailcount++;
-                        }
+                        $posthtml .= forum_make_mail_post($post, $userfrom, $userto, $course, false, true, false, false);
+                    } else {
+                      $posthtml = "";
+                    }
+   
+                    if (! email_to_user($userto, $userfrom, $postsubject, $posttext, $posthtml)) {
+                        echo "Error: mod/forum/cron.php: Could not send out mail for id $post->id to user $userto->id ($userto->email)\n";
+                    } else {
+                        $mailcount++;
                     }
                 }
                 echo "mailed to $mailcount users ...";
@@ -767,6 +766,19 @@ function forum_is_subscribed($userid, $forumid) {
         return true;
     }
     return record_exists_sql("SELECT * FROM forum_subscriptions WHERE user='$userid' AND forum='$forumid'");
+}
+
+function forum_subscribed_users($course, $forum) {
+// Returns list of user objects that are subscribed to this forum
+
+    if ($course->category) {   // normal course
+        if ($forum->forcesubscribe) {
+            return get_course_users($course->id);
+        }
+    }
+    return get_records_sql("SELECT u.* FROM user u, forum_subscriptions s
+                            WHERE s.forum = '$forum->id'
+                              AND s.user = u.id");
 }
 
 function forum_subscribe($userid, $forumid) {

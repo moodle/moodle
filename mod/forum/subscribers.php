@@ -38,31 +38,20 @@
 
     print_header("$course->shortname: $strsubscribers", "$course->fullname", "$navigation");
 
-    if ($course->category) {
-        $users = get_course_users($course->id);
-    } else {
-        $users = get_records_sql("SELECT * from user");
-    }
-
-    if (! $users) {
-        print_heading(get_string("nousersyet"));
+    if (! $users = forum_subscribed_users($course, $forum) ) {
+        print_heading(get_string("nosubscribers", "forum"));
 
     } else {
         print_heading(get_string("subscribersto","forum", "'$forum->name'"));
-        echo "<TABLE ALIGN=CENTER>";
-        $count = 0;
+        echo "<TABLE ALIGN=CENTER cellpadding=5 cellspacing=5>";
         foreach ($users as $user) {
-            if (forum_is_subscribed($user->id, $forum->id)) {
-                echo "<TR><TD>";
-                print_user_picture($user->id, $course->id, $user->picture);
-                echo "</TD><TD>";
-                echo "$user->firstname $user->lastname";
-                echo "</TD></TR>";
-                $count++;
-            }
-        }
-        if (!$count) {
-            echo "<TR><TD>".get_string("nosubscribers", "forum")."</TD></TR>";
+            echo "<TR><TD>";
+            print_user_picture($user->id, $course->id, $user->picture);
+            echo "</TD><TD BGCOLOR=\"$THEME->cellcontent\">";
+            echo "$user->firstname $user->lastname";
+            echo "</TD><TD BGCOLOR=\"$THEME->cellcontent\">";
+            echo "$user->email";
+            echo "</TD></TR>";
         }
         echo "</TABLE>";
     }
