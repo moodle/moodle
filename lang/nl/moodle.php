@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005010100)
+      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005011000)
 
 
 $string['action'] = 'Actie';
@@ -232,6 +232,7 @@ $string['confirmednot'] = 'Je registratie is nog niet bevestigd !';
 $string['continue'] = 'Ga door';
 $string['continuetocourse'] = 'Klik hier om je vak binnen te gaan';
 $string['cookiesenabled'] = 'Cookies moeten aan staan in je browser';
+$string['cookiesnotenabled'] = 'Het gebruik van cookies is door je browser niet toegelaten. Met deze instelling kun je deze site niet gebruiken.';
 $string['copy'] = 'Kopie';
 $string['copyingcoursefiles'] = 'Vakbestanden kopiëren';
 $string['copyinguserfiles'] = 'Gebruikersbestanden kopiëren';

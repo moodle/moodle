@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005010100)
+      // quiz.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005011000)
 
 
 $string['acceptederror'] = 'Geaccepteerde fout';
@@ -225,6 +225,7 @@ $string['randomsamatchnumber'] = 'Aantal te selecteren vragen';
 $string['readytosend'] = 'Je staat op het punt om de test in te sturen zodat hij beoordeeld kan worden. Weet je zeker dat je door wilt gaan?';
 $string['reattemptquiz'] = 'Probeer de test opnieuw';
 $string['recentlyaddedquestion'] = 'Recent toegevoegde vraag!';
+$string['recurse'] = 'Gebruik ook subcategorieën';
 $string['regrade'] = 'Herbereken alle pogingen';
 $string['regradecomplete'] = 'Alle pogingen zijn herberekend';
 $string['regradecount'] = '$a->changed van de $a->attempt cijfers zijn gewijzigd  ';

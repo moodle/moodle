@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
+      // assignment.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005011000)
 
 
 $string['allowresubmit'] = 'Sta herhaald insturen toe';
@@ -16,6 +16,15 @@ $string['description'] = 'Beschrijving  ';
 $string['duedate'] = 'Uiterste inleverdatum';
 $string['duedateno'] = 'Geen uiterste inleverdatum';
 $string['early'] = '$a vroeg';
+$string['emailteachermail'] = '$a->username heeft de inzending voor opdracht $a->assignment aangepast.
+
+Je kunt ze hier vinden:
+
+$a->url';
+$string['emailteachermailhtml'] = '$a->username heeft de inzending voor opdracht <i>$a->assignment</i> aangepast.<br /><br />
+Je kunt ze hier vinden:
+Je kunt het <a href=\"$a->url\"> nakijken op de website</a>.';
+$string['emailteachers'] = 'Stuur een e-mail als waarschuwing naar de leraren';
 $string['existingfiledeleted'] = 'Het vorige bestand is verwijderd: $a';
 $string['failedupdatefeedback'] = 'Het updaten van de feedback op de ingestuurde opdracht van gebruiker $a is niet gelukt';
 $string['feedback'] = 'Feedback';
@@ -34,9 +43,6 @@ $string['submissionfeedback'] = 'Feedback op de ingestuurde opdracht';
 $string['submissions'] = 'Ingestuurde opdrachten';
 $string['submitassignment'] = 'Stuur je opdracht in door dit formulier in te vullen';
 $string['submitted'] = 'Ingestuurd';
-$string['thischarset'] = 'iso-8859-1';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Nederlands';
 $string['typeoffline'] = 'Off line activiteit';
 $string['typeuploadsingle'] = 'Upload een bestand';
 $string['uploadbadname'] = 'In deze bestandsnaam staan rare tekens, het bestand kon daardoor niet worden geüpload';

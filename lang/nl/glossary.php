@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
+      // glossary.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005011000)
 
 
 $string['addcomment'] = 'Voeg commentaar toe';
@@ -10,6 +10,7 @@ $string['allcategories'] = 'Alle categorieën';
 $string['allentries'] = 'Alles';
 $string['allowcomments'] = 'Commentaar toevoegen toelaten';
 $string['allowduplicatedentries'] = 'Woord meer keren invoegen toelaten';
+$string['allowprintview'] = 'Afdrukbare versie tonen toelaten';
 $string['allowratings'] = 'Toelaten invoer te beoordelen?';
 $string['answer'] = 'Antwoord';
 $string['approve'] = 'Goedkeuren';
@@ -130,6 +131,7 @@ $string['notcategorised'] = 'Niet gecategoriseerd';
 $string['numberofentries'] = 'Aantal items';
 $string['onebyline'] = '(één per lijn)';
 $string['printerfriendly'] = 'Afdrukbare versie';
+$string['printviewnotallowed'] = 'Afdrukbare versie tonen is niet toegelaten';
 $string['question'] = 'Vraag';
 $string['rate'] = 'Beoordeel';
 $string['rating'] = 'Beoordeling';
@@ -156,9 +158,6 @@ $string['sortchronogically'] = 'Sorteer chronologisch';
 $string['special'] = 'Speciale tekens';
 $string['standardview'] = 'Blader alfabetisch';
 $string['studentcanpost'] = 'Leerlingen kunnen items toevoegen';
-$string['thischarset'] = 'iso-8859-1 ';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Nederlands';
 $string['totalentries'] = 'Totaal aantal items';
 $string['usedynalink'] = 'Link de items uit de woordenlijst automatisch';
 $string['waitingapproval'] = 'Nog goedkeuren';
