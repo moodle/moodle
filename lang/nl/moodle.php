@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004111700)
+      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004112200)
 
 
 $string['action'] = 'Actie';
@@ -614,7 +614,7 @@ $string['loginsteps'] = 'Hallo! Om volledige toegang tot de vakken te krijgen mo
 Elk vak kan ook een eenmalige \"Vaksleutel\" hebben die je pas later nodig hebt. Hier zijn de stappen die je moet volgen:
 <ol>
 <li>Vul het formulier <a href=\"$a\">Nieuwe account</a> in.</li>
-<li>Er wordt meteen een e-mail verstuurd naar je e-mailadres.<li>
+<li>Er wordt meteen een e-mail verstuurd naar je e-mailadres.</li>
 <li>Lees de e-mail en klik op de link die erin staat.</li>
 <li>Je account wordt bevestigd en je bent dan ingelogd.</li>
 <li>Kies nu het vak dat je wilt volgen.</li>
