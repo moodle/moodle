@@ -53,6 +53,10 @@ function resource_upgrade($oldversion) {
         rebuild_course_cache();
     }
 
+    if ($oldversion < 2004083124) {
+        modify_database('','ALTER TABLE prefix_resource ADD INDEX course (course);');
+    }
+
     return true;
 }
 

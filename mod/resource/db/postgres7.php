@@ -49,6 +49,10 @@ function resource_upgrade($oldversion) {
         rebuild_course_cache();
     }
 
+    if ($oldversion < 2004083124) {
+        modify_database('','CREATE INDEX prefix_resource_course_idx ON prefix_resource (course);');
+    }
+    
     return true;
 }
 
