@@ -191,8 +191,8 @@ class quiz_default_questiontype {
     }
 
     function extract_response($rawresponse, $nameprefix) {
-    /// This function is very mcuh the inverse of convert_to_response_answer
-    /// This function and convert_to_response_answer, should be
+    /// This function is very much the inverse of convert_to_response_answer_field
+    /// This function and convert_to_response_answer_field, should be
     /// obsolete as soon as we get a better response storage
     /// Right now they are a bridge between a consistent
     /// response model and the old field answer in quiz_responses
@@ -711,8 +711,8 @@ function quiz_get_attempt_questions($quiz, $attempt, $attempting = false) {
     /// Returns the questions of the quiz attempt at a format used for
     /// grading and printing them...
     /// On top of the ordinary persistent question fields,
-    /// this function also set these properties
-
+    /// this function also set these properties:
+    //
     /// ->response   -   contains names (as keys) and values (as values)
     ///                            for all question html-form inputs
     /// ->recentlyadded - true only if the question has been added to the quiz
@@ -724,119 +724,176 @@ function quiz_get_attempt_questions($quiz, $attempt, $attempting = false) {
     global $QUIZ_QTYPES;
     global $CFG;
 
+    /////////////////////////
     /// Get the questions:
+    /////////////////////////
     if (!($questions =
             get_records_list('quiz_questions', 'id', $quiz->questions))) {
         notify('Error when reading questions from the database!');
         return false;
     }
 
-    /// Retrieve ->maxgrade for all questions
+    ////////////////////////////////////////////
+    /// Determine ->maxgrade for all questions
+    ////////////////////////////////////////////
     If (!($grades = quiz_get_question_grades($quiz->id, $quiz->questions))) {
         $grades = array();
     }
-
-    /// Get any existing responses on this attempt:
-    if (!($rawresponses = get_records_sql
-            ("SELECT question, answer, attempt FROM {$CFG->prefix}quiz_responses
-               WHERE attempt = '$attempt->id'
-                 AND question IN ($quiz->questions)"))
-            and $quiz->attemptonlast
-                    // Try to get responses from the previous attempt:
-            and $lastattemptnum = $attempt->attempt - 1) {
-        do {
-            $lastattempt = get_record('quiz_attempts',
-                                      'quiz', $quiz->id,
-                                      'userid', $attempt->userid,
-                                      'attempt', $lastattemptnum);
-        } while(empty($lastattempt) && --$lastattemptnum); 
-
-        if (0 == $lastattemptnum or
-                !($rawresponses = get_records_sql
-                ("SELECT question, answer, attempt
-                    FROM {$CFG->prefix}quiz_responses
-                   WHERE attempt = '$lastattempt->id'
-                     AND question IN ($quiz->questions)"))) {
-            $rawresponses = array();
-        } else {
-            /// We found a last attempt that is now to be used:
-
-            /// This line can be uncommented for debuging
-            // echo "Last attempt is $lastattempt->id with number $lastattemptnum";
-        }
-    }
-
-    /// Set the additional question properties
-    /// response, recentlyadded and grade
     foreach ($questions as $qid => $question) {
-
         if (isset($grades[$qid])) {
             $questions[$qid]->maxgrade = $grades[$qid]->grade;
         } else {
             $questions[$qid]->maxgrade = 0.0;
         }
-
-        if (isset($rawresponses[$qid])) {
-            $questions[$qid]->response = $QUIZ_QTYPES[$question->qtype]
-                    ->extract_response($rawresponses[$qid],
-                                       quiz_qtype_nameprefix($question));
-            $questions[$qid]->recentlyadded = false;
-        } else {
-            $questions[$qid]->response = array();
-            $questions[$qid]->recentlyadded = !empty($rawresponses);
-        }
     }
+
+    //////////////////////////////////////////////////////////////
+    /// Determine attributes ->response and ->recentlyadded (hard)
+    //////////////////////////////////////////////////////////////
+
+    /// Get all existing responses on this attempt
+    $rawresponses = get_records_sql("
+            SELECT question, answer, attempt
+            FROM {$CFG->prefix}quiz_responses
+            WHERE attempt = '$attempt->id' ");
     
+    /// The setting for ->recentlyadded depends on whether this is
+    /// a test attempt of just a review
     if ($attempting) {
-        /// Questions are requested for a test attempt that is
-        /// about to start and there are no responses to reuse
-        /// for current question, so we need to create new ones...
+        /// This is a test attempt so there is a need to create responses
+        /// in case there are none existing.
+        /// Further - the attribute recentlyadded is determined from
+        /// whether the question has a response in the previous attempt,
+        /// which might be used in case the attemptonlast quiz option
+        /// is true.
+
+        $prevattempt = $attempt->attempt;
+        $prevresponses= array();
+        while (--$prevattempt) {
+            $prevresponses = get_records_sql("
+                    SELECT r.question, r.answer, r.attempt
+                    FROM {$CFG->prefix}quiz_responses r, {$CFG->prefix}quiz_attempts a
+                    WHERE a.quiz='$quiz->id' AND a.userid='$attempt->userid'
+                      AND a.attempt='$prevattempt' AND r.attempt=a.id ");
+            if (!empty($prevresponses)) {
+                break;
+            }
+        }
         
-        /// For the case of wrapping question types that can
-        /// wrap other arbitrary questions, there is a need
-        /// to make sure that no question will appear twice
-        /// in the quiz attempt:
-        
-        $questionsinuse = $quiz->questions;
-        foreach ($questions as $question) {
-            if ($wrapped = $QUIZ_QTYPES[$question->qtype]->wrapped_questions
-                    ($question, quiz_qtype_nameprefix($question))) {
-                $questionsinuse .= ",$wrapped";
+        $questionsinuse = $quiz->questions; // used if responses must be created
+        foreach ($questions as $qid => $question) {
+            if ($questions[$qid]->recentlyadded =
+                    $prevattempt && empty($prevresponses[$qid])) {
+                /* No action */
+
+            } else if ($prevattempt && $quiz->attemptonlast
+                    && empty($rawresponses[$qid])) {
+                /// Store the previous response on this attempt!
+                $rawresponses[$qid] = $prevresponses[$qid];
+                $rawresponses[$qid]->attempt = $attempt->id;
+                $rawresponses[$qid]->id =
+                        insert_record("quiz_responses", $rawresponses[$qid])
+                or error("Unable to create attemptonlast response for question $qid");
+                
+                ///////////////////////////////////////////
+                /// WORKAROUND FOR QUESTION TYPE RANDOM ///
+                ///////////////////////////////////////////
+                if (RANDOM == $question->qtype) {
+                    $randomqid = $prevresponses[$qid]->answer;
+                    if (empty($prevresponses[$randomqid]) || ereg(
+                            "(^|,)$randomqid(,|$)", $questionsinuse)) {
+                        // Ooops!
+                        // The randomly picked question has been included
+                        // among the fixed ones or did not get any response
+                        // in the previous attempt - either way the raw
+                        // responserecord created above needs to go!
+                        delete_records('quiz_responses', 'id',
+                                       $rawresponses[$qid]->id);
+                        unset($rawresponses[$qid]);
+
+                    } else if (empty($rawresponses[$randomqid])) {
+                        /// Also copy this response from the previous attempt
+                        $rawresponses[$randomqid] = $prevresponses[$randomqid];
+                        $rawresponses[$randomqid]->attempt = $attempt->id;
+                        $rawresponses[$randomqid]->id =
+                                insert_record('quiz_responses', $rawresponses[$randomqid])
+                        or error("Unable to create attemptonlast response for question $qid");
+
+                    }
+                } ////// END OF WORKAROUND ///////
+            }
+
+            /* Extract possible response and its wrapped questions */
+            if (!empty($rawresponses[$qid])) {
+                $questions[$qid]->response = $QUIZ_QTYPES[$question->qtype]
+                        ->extract_response($rawresponses[$qid],
+                                           quiz_qtype_nameprefix($question));
+                /// Catch any additional wrapped questions:
+                if ($wrapped = $QUIZ_QTYPES[$question->qtype]
+                        ->wrapped_questions($questions[$question->id],
+                                            quiz_qtype_nameprefix($question))) {
+                    $questionsinuse .= ",$wrapped";
+                }                
             }
         }
 
         /// Make sure all the questions will have responses:
         foreach ($questions as $question) {
             if (empty($question->response)) {
+                /// No response on this question
+
                 $nameprefix = quiz_qtype_nameprefix($question);
                 $questions[$question->id]->response =
                         $QUIZ_QTYPES[$question->qtype]->create_response
                         ($question, $nameprefix, $questionsinuse);
 
-                //////////////////////////////////////////////////
-                // In the future, a nice feature could be to save
-                // the created response right here, so that if a
-                // student quits the quiz without saving, the
-                // student will have the oppertunity to go back
-                // to same quiz if he/she restarts the attempt.
-                // Today, the student gets new RANDOM questions
-                // whenever he/she restarts the quiz attempt.
-                //////////////////////////////////////////////////
-                // The above would also open the door for a new 
-                // quiz feature that allows the student to save
-                // all responses if he/she needs to switch computer
-                // or have any other break in the middle of the quiz.
-                // (Or simply because the student feels more secure
-                // if he/she has the chance to save the responses
-                // a number of times during the quiz.)
-                //////////////////////////////////////////////////
+                //////////////////////////////////////////////
+                // Saving the newly created response before
+                // continuing with the quiz...
+                //////////////////////////////////////////////
+                $responserecord->attempt = $attempt->id;
+                $responserecord->question = $question->id;
+                $responserecord->answer = $QUIZ_QTYPES[$question->qtype]
+                        ->convert_to_response_answer_field
+                        ($questions[$question->id]->response);
+
+                ///////////////////////////////////////////
+                // WORKAROUND for question type RANDOM:
+                ///////////////////////////////////////////
+                if ($question->qtype == RANDOM and ereg(
+                        '^random([0-9]+)-(.*)$', $responserecord->answer, $afields)) {
+                    $responserecord->answer = $afields[1];
+                    insert_record("quiz_responses", $responserecord)
+                    or error("Unable to create an initial random response for question $question->id");
+
+                    $responserecord->question = $responserecord->answer;
+                    $responserecord->answer = $afields[2];
+                } ///   End of WORKAROUND //////////////////////
+
+                insert_record("quiz_responses", $responserecord)
+                or error("Unable to create initial response for question $question->id");
 
                 /// Catch any additional wrapped questions:
                 if ($wrapped = $QUIZ_QTYPES[$question->qtype]
                         ->wrapped_questions($questions[$question->id],
-                                            $nameprefix)) {
+                                            quiz_qtype_nameprefix($question))) {
                     $questionsinuse .= ",$wrapped";
                 }
+            }
+        }
+
+    } else {
+        /// In the case of review, the recentlyadded flag is set true
+        /// when the question has been added after the attempt and new
+        /// responses are never created
+
+        foreach ($questions as $qid => $question) {
+            if ($questions[$qid]->recentlyadded = empty($rawresponses[$qid])) {
+                /* No action */
+            } else {
+                $questions[$qid]->response = $QUIZ_QTYPES[$question->qtype]
+                        ->extract_response($rawresponses[$qid],
+                                           quiz_qtype_nameprefix($question));
             }
         }
     }
@@ -1598,7 +1655,7 @@ function quiz_save_attempt($quiz, $questions, $result, $attemptnum) {
     $attempt->timefinish = time();
     $attempt->timemodified = time();
 
-    if (! update_record("quiz_attempts", $attempt)) {
+    if (!update_record("quiz_attempts", $attempt)) {
         notify("Error while saving attempt");
         return false;
     }
@@ -1606,32 +1663,48 @@ function quiz_save_attempt($quiz, $questions, $result, $attemptnum) {
     // Now let's save all the questions for this attempt
 
     foreach ($questions as $question) {
-        $response->attempt = $attempt->id;
-        $response->grade = $result->details[$question->id]->grade;
-        $response->question = $question->id;
 
+        // Fetch the response record for this question...
+        $response = get_record('quiz_responses',
+                'attempt', $attempt->id, 'question', $question->id);
+
+        $response->grade = $result->details[$question->id]->grade;
+        
         if (!empty($question->response)) {
-            $response->answer = $QUIZ_QTYPES[$question->qtype]
+            $responseanswerfield = $QUIZ_QTYPES[$question->qtype]
                     ->convert_to_response_answer_field($question->response);
 
             ///////////////////////////////////////////
             // WORKAROUND for question type RANDOM:
             ///////////////////////////////////////////
-            if ($question->qtype == RANDOM and
-                    ereg('^random([0-9]+)-(.*)$', $response->answer, $afields)) {
-                $response->answer = $afields[1];
-                if (!insert_record("quiz_responses", $response)) {
-                    notify("Error while saving response");
+            if ($question->qtype == RANDOM) {
+
+                /// This will update the grade only
+                /// Everything else must already be in place...
+                if (!update_record('quiz_responses', $response)) {
+                    notify("Error while saving grade on random response");
                     return false;
                 }
-                $response->question = $response->answer;
-                $response->answer = $afields[2];
+
+                /// Rescue grade before fetching response record for actual question
+                $responsegradefield = $response->grade;
+
+                /// Fetch the response record containing
+                /// the response on the actual question
+                $response = get_record('quiz_responses',
+                        'attempt', $attempt->id, 'question', $response->answer);
+
+                $response->grade = $responsegradefield;
+                ereg('^random[0-9]+-(.*)$', $responseanswerfield, $afields);
+                $responseanswerfield = $afields[1];
             } ///   End of WORKAROUND //////////////////////
 
+            $response->answer = $responseanswerfield;
         } else {
-            $response->answer = "";
+            $response->answer = '';
         }
-        if (!insert_record("quiz_responses", $response)) {
+
+        if (!update_record("quiz_responses", $response)) {
             notify("Error while saving response");
             return false;
         }
