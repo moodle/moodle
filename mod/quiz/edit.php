@@ -91,7 +91,7 @@
                     }
                 }
                 $questions[] = $key;
-                $modform->grades[$key] = 1;   // default score
+                $modform->grades[$key] = QUIZ_DEFAULT_SCORE; 
             }
         }
         if (!empty($questions)) {

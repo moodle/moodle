@@ -32,6 +32,8 @@ $QUIZ_FILE_FORMAT = array ( "custom"   => get_string("custom", "quiz"),
 
 define("QUIZ_PICTURE_DEFAULT_HEIGHT", "200");
 
+define("QUIZ_DEFAULT_SCORE", "1");
+
 /// FUNCTIONS ///////////////////////////////////////////////////////////////////
 
 function quiz_add_instance($quiz) {
