@@ -332,6 +332,8 @@ function quiz_get_attempt_responses($attempt, $quiz) {
             $responses[$key]->random = $response->answer;
             $responses[$key]->answer = explode(",",$responses[$response->answer]->answer);
             $responses[$response->answer]->delete = true;
+        } else if ($response->qtype == NUMERICAL or $response->qtype == SHORTANSWER) {
+            $responses[$key]->answer = array($response->answer);
         } else {
             $responses[$key]->answer = explode(",",$response->answer);
         }
