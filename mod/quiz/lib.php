@@ -2391,4 +2391,21 @@ $oldalternativeids);
     return $answers;       
 }
 
+function quiz_get_participants($quizid) {
+//Returns the users with data in one quiz
+//(users with records in quiz_attempts, students)
+
+    global $CFG;
+
+    //Get students
+    $students = get_records_sql("SELECT DISTINCT u.*
+                                 FROM {$CFG->prefix}user u,
+                                      {$CFG->prefix}quiz_attempts a
+                                 WHERE a.quiz = '$quizid' and  
+                                       u.id = a.userid");
+
+    //Return students array (it contains an array of unique users)
+    return ($students);
+}
+
 ?>
