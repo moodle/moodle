@@ -10,6 +10,7 @@
 var timesup = "<?php print_string("timesup","quiz");?>";
 var quizclose = <?php echo ($quiz->timeclose - time()) - $timerstartvalue; ?>; // in seconds
 var quizTimerValue = <? echo $timerstartvalue; ?>; // in seconds
+parseInt(quizTimerValue);
 // -->
 </script>
 <script language="javascript" type="text/javascript" src="timer.js"></script>

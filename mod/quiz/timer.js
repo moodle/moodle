@@ -16,15 +16,18 @@ function countdown_clock() {
 
     now = quizTimerValue;
     var hours = Math.floor( now / 3600 );
+    parseInt(hours);
     now = now - (hours * 3600);
     var minutes = Math.floor(now / 60);
+    parseInt(minutes);
     now = now - (minutes * 60);
     var seconds = now;
+    parseInt(seconds);
 
     var t = "" + hours;
     t += ((minutes < 10) ? ":0" : ":") + minutes;
     t += ((seconds < 10) ? ":0" : ":") + seconds;
-    window.status = t;
+    window.status = t.toString();
 
     if(hours == 0 && minutes == 0 && seconds <= 15) {
         //go from fff0f0 to ffe0e0 to ffd0d0...ff2020, ff1010, ff0000 in 15 steps
@@ -32,7 +35,7 @@ function countdown_clock() {
         var col = 'ff' + hexascii.charAt(seconds) + '0' + hexascii.charAt(seconds) + 0;
         changecolor(col);
     }
-    document.forms['clock'].time.value = t;
+    document.forms['clock'].time.value = t.toString();
     timeout_id = setTimeout("countdown_clock()", 1000);
 }
 
