@@ -88,13 +88,14 @@ class block_news_items extends block_base {
                     $discussion->subject = filter_text($discussion->subject, $forum->course);
                 }
 
-                $text .= '<p class="post">'.
-                         '<span class="head">'.userdate($discussion->modified, $strftimerecent).'<br />'.
-                                               fullname($discussion).'</span><br />'.
-                         '<span class="info">'.$discussion->subject.' '.
+                $text .= '<div class="post">'.
+                         '<div class="head">'.
+                         '<span class="date">'.userdate($discussion->modified, $strftimerecent).'</span><br />'.
+                         '<span class="name">'.fullname($discussion).'</span></div>'.
+                         '<div class="info">'.$discussion->subject.' '.
                          '<a href="'.$CFG->wwwroot.'/mod/forum/discuss.php?d='.$discussion->discussion.'">'.
-                         $strmore.'...</a></span>'.
-                         '</p>';
+                         $strmore.'...</a></div>'.
+                         '</div>';
             }
 
             $this->content->text = $text;
