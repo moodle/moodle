@@ -155,10 +155,10 @@
 
 /// Print the controls across the top
 
-    echo "<table width=\"100%\"><tr><td width=\"33%\">";
+    echo '<table width="100%"><tr><td width="33%">';
 
     if ($groupmode == VISIBLEGROUPS or ($groupmode and isteacheredit($course->id))) {
-        if ($groups = get_records_menu("groups", "courseid", $course->id, "name ASC", "id,name")) {
+        if ($groups = get_records_menu('groups', 'courseid', $course->id, 'name ASC', 'id,name')) {
             print_group_menu($groups, $groupmode, $discussion->groupid, "view.php?id=$cm->id&amp;group=");
         }
     }

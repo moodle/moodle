@@ -2545,18 +2545,18 @@ function forum_user_can_post($forum, $user=NULL) {
 
 
 function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5,
-                                        $forum_style="plain", $forum_sort="",
+                                        $forum_style='plain', $forum_sort='',
                                         $currentgroup=0, $groupmode=-1, $page=-1) {
     global $CFG, $USER;
 
     if ($forum_id) {
-        if (! $forum = get_record("forum", "id", $forum_id)) {
-            error("Forum ID was incorrect");
+        if (! $forum = get_record('forum', 'id', $forum_id)) {
+            error('Forum ID was incorrect');
         }
-        if (! $course = get_record("course", "id", $forum->course)) {
-            error("Could not find the course this forum belongs to!");
+        if (! $course = get_record('course', 'id', $forum->course)) {
+            error('Could not find the course this forum belongs to!');
         }
-        if (! $cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
+        if (! $cm = get_coursemodule_from_instance('forum', $forum->id, $course->id)) {
             // This happens for example for the teacher forum
             $cm->id = NULL;
             $cm->visible = 1;
@@ -2565,16 +2565,16 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5,
         require_course_login($course, true, $cm);
 
     } else {
-        if (! $course = get_record("course", "category", 0)) {
-            error("Could not find a top-level course!");
+        if (! $course = get_record('course', 'category', 0)) {
+            error('Could not find a top-level course!');
         }
-        if (! $forum = forum_get_course_forum($course->id, "news")) {
+        if (! $forum = forum_get_course_forum($course->id, 'news')) {
             error("Could not find or create a main forum in this course (id $course->id)");
         }
     }
 
     if ($groupmode == -1) {    /// We need to reconstruct groupmode because none was given
-        if ($cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
+        if ($cm = get_coursemodule_from_instance('forum', $forum->id, $course->id)) {
             $groupmode = groupmode($course, $cm);
         } else {
             $groupmode = SEPARATEGROUPS;
@@ -2589,22 +2589,22 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5,
         echo "<form name=\"newdiscussionform\" method=\"get\" action=\"$CFG->wwwroot/mod/forum/post.php\">";
         echo "<input type=\"hidden\" name=\"forum\" value=\"$forum->id\" />";
         echo '<input type="submit" value="';
-        echo ($forum->type == "news") ? get_string("addanewtopic", "forum") : get_string("addanewdiscussion", "forum");
+        echo ($forum->type == 'news') ? get_string('addanewtopic', 'forum') : get_string('addanewdiscussion', 'forum');
         echo '" />';
         echo '</form>';
         echo "</div>\n";
     }
 
-    if ((!$forum_numdiscussions) && ($forum_style == "plain")) {
-        $forum_style = "header";  // Abbreviate display by default
+    if ((!$forum_numdiscussions) && ($forum_style == 'plain')) {
+        $forum_style = 'header';  // Abbreviate display by default
     }
 
-    if ($forum_style == "minimal") {
-        $forum_sort = "p.modified DESC";
+    if ($forum_style == 'minimal') {
+        $forum_sort = 'p.modified DESC';
     }
 
     $fullpost = false;
-    if ($forum_style == "plain") {
+    if ($forum_style == 'plain') {
         $fullpost = true;
     }
 
@@ -2623,10 +2623,10 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5,
         echo '<div class="';
         echo ($forum_style == 'minimal') ? 'forumnodiscussminimal' : 'forumnodiscuss';
         echo '">';
-        if ($forum->type == "news") {
-            echo "(".get_string("nonews", "forum").")";
+        if ($forum->type == 'news') {
+            echo '('.get_string('nonews', 'forum').')';
         } else {
-            echo "(".get_string("nodiscussions", "forum").")";
+            echo '('.get_string('nodiscussions', 'forum').')';
         }
         echo "</div>\n";
         return;
@@ -2777,11 +2777,11 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5,
     if ($olddiscussionlink) {
         echo '<div class="';
         echo ($forum_style == 'minimal') ? 'forumolddiscussminimal">' : 'forumolddiscuss">';
-        if ($forum_style == "minimal") {
+/*        if ($forum_style == "minimal") {
             echo '<p align="center">';
         } else {
             echo '<p align="right">';
-        }
+        }*/
         echo "<a href=\"$CFG->wwwroot/mod/forum/view.php?f=$forum->id&amp;showall=1\">";
         echo get_string("olderdiscussions", "forum")."</a> ...</div>";
     }
