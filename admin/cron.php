@@ -48,6 +48,7 @@
     $random100 = rand(0,100);
 
     if ($random100 < 20) {     // Approximately 20% of the time.
+        echo "Running clean-up tasks...\n";
 
         /// Unenrol users who haven't logged in for $CFG->longtimenosee
 
