@@ -44,6 +44,7 @@ quiz             test
 scale            barème
 server           serveur
 social format	 informel
+topics format	 thématique
 submissions      devoirs rendus
 survey           questionnaire
 teacher          enseignant
@@ -57,23 +58,24 @@ TODO
   Beaucoup de choses encore. Entre autres :
   - trouver une bonne traduction de "Separate and Connected ways of knowing",
     de "Connected Learning", "Separate Learning" et de "Reflective Thinking" ;
-  - traduire attendance.php ;
+  - traduire le dossier docs (en cours) ;
+  - terminer la traduction du dossier help ;
   - traduire chatarea.php ;
-  - traduire countries.php ;
   - traduire glossary.php ;
   - traduire label.php ;
   - traduire pgassignment.php ;  
   - traduire workshop.php ;
   - terminer surveys.php.
 
+
 Voici quelques liens que j'utilise :
-  - dictionnaire des synonymes
+  - Dictionnaire de l'internaute
+      http://www.can.ibm.com/francais/dico/
+  - Dictionnaire des synonymes
       http://elsap1.unicaen.fr/dicosyn.html
   - Le grand dictionnaire terminologique
       http://www.granddictionnaire.com/
-  - la conjugaison (Alléluia !)
-      http://www.leconjugueur.com/
-
+      
 
 Quelques conventions :
   - pour la ponctuation de fin de texte et les majuscules,
