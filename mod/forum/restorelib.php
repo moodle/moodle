@@ -204,6 +204,18 @@
             $discussion->assessed = backup_todb($dis_info['#']['ASSESSED']['0']['#']);
             $discussion->timemodified = backup_todb($dis_info['#']['TIMEMODIFIED']['0']['#']);
 
+            //We have to recode the userid field
+            $user = backup_getid($restore->backup_unique_code,"user",$discussion->userid);
+            if ($user) {
+                $discussion->userid = $user->new_id;
+            }
+
+            //We have to recode the groupid field
+            $group = backup_getid($restore->backup_unique_code,"group",$discussion->groupid);
+            if ($group) {
+                $discussion->groupid = $group->new_id;
+            }
+
             //The structure is equal to the db, so insert the forum_discussions
             $newid = insert_record ("forum_discussions",$discussion);
 
