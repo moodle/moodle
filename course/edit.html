@@ -41,9 +41,15 @@
 	</td>
 </tr>
 <tr valign=top>
-	<td><P>Word used to refer<BR>to your role:</td>
+	<td><P>Word for teacher:</td>
 	<td><input type="text" name="teacher" size=25 value="<? p($form->teacher) ?>">
-	<? formerr($err["teacher"]) ?>
+	(eg Teacher, Tutor, Facilitator etc) <? formerr($err["teacher"]) ?>
+	</td>
+</tr>
+<tr valign=top>
+	<td><P>Word for student:</td>
+	<td><input type="text" name="student" size=25 value="<? p($form->student) ?>">
+	(eg Student, Participant etc) <? formerr($err["student"]) ?>
 	</td>
 </tr>
 <tr valign=top>

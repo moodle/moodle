@@ -21,6 +21,10 @@
         if (!isadmin()) {
             error("Only administrators can use this page");
         }
+
+        if (! $site = get_record("course", "category", 0)) {
+            redirect("$CFG->wwwroot/admin/");
+        }
     }
 
 
@@ -79,6 +83,13 @@
         } else {
             $ts = getdate(time() + 3600 * 24);
             $te = getdate(time() + 3600 * 24 * 7 * 16);
+            $form->teacher = "Facilitator";
+            $form->student = "Student";
+            $form->fullname = "Course Fullname 101";
+            $form->shortname = "CF101";
+            $form->summary = "Write a concise and interesting paragraph here that explains what this course is about.";
+            $form->format = 0;
+            $form->category = 1;
         }
 
         $form->startday = $ts[mday];
@@ -88,15 +99,6 @@
         $form->endday = $te[mday];
         $form->endmonth = $te[mon];
         $form->endyear = $te[year];
-
-        if (!$course) {
-            $form->teacher = "Facilitator";
-            $form->fullname = "Course Fullname 101";
-            $form->shortname = "CF101";
-            $form->summary = "Write a concise and interesting paragraph here that explains what this course is about.";
-            $form->format = 0;
-            $form->category = 1;
-        }
     }
 
     for ($i=1;$i<=31;$i++) {
@@ -113,15 +115,14 @@
 
     //$form->owners   = get_records_sql_menu("SELECT u.id, CONCAT(u.firstname, " ", u.lastname) FROM users u, teachers t WHERE t.user = u.id");
 
-    if (isadmin()) {
-        print_header("Admin: Creating a new course", "$CFG->sitename: Administration",
-                     "<A HREF=\"$CFG->wwwroot/admin/\">Admin</A> 
-                      -> Create a new course", $focus);
-
-    } else {
+    if (isset($course)) {
 	    print_header("Edit course settings", "$course->fullname", 
                      "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> 
                       -> Edit course settings", $focus);
+    } else {
+        print_header("Admin: Creating a new course", "$site->shortname: Administration",
+                     "<A HREF=\"$CFG->wwwroot/admin/\">Admin</A> 
+                      -> Create a new course", $focus);
     }
 
     print_simple_box_start("center", "", "$THEME->cellheading");
@@ -147,8 +148,10 @@ function validate_form($course, &$form, &$err) {
         $err["summary"] = "Missing summary";
 
     if (empty($form->teacher))
-        $err["teacher"] = "Missing Teacher/Tutor/Instructor/Facilitator";
+        $err["teacher"] = "Must choose something";
 
+    if (empty($form->student))
+        $err["student"] = "Must choose something";
 
     if ($form->startdate > $form->enddate)
         $err["startdate"] = "Starts after it ends!";
