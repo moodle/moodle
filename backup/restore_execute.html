@@ -204,10 +204,16 @@
         $status = restore_check_instances($restore);
     }
 
-    //Now if all is OK, update course modinfo field !!
+    //Now if all is OK, update:
+    //   - course modinfo field 
+    //   - categories table
     if ($status) {
         echo "<li>".get_string("checkingcourse");
+        //modinfo field
         rebuild_course_cache($restore->course_id);
+        //categories table
+        $course = get_record("course","id",$restore->course_id); 
+        fix_category_courses($course->category);
     }
 
     //Cleanup temps (files and db)
