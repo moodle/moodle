@@ -133,6 +133,8 @@
 
     echo "Cron script completed correctly\n";
 
+    unset($USER);
+
     $difftime = microtime_diff($starttime, microtime());
     echo "Execution took ".$difftime." seconds\n"; 
 
