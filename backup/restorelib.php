@@ -402,6 +402,13 @@
                 if ($status) {
                     $rec->id = $newid;
                     $rec->sequence = $sequence;
+                    //Unset other fields before update (we don't want them)
+                    //Only need id and sequence !! Previously, existing bug 
+                    //because update without addslashes in summary
+                    unset($rec->course);
+                    unset($rec->section);
+                    unset($rec->summary);
+                    unset($rec->visible);
                     $status = update_record("course_sections",$rec);
                 }
             }
