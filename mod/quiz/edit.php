@@ -146,8 +146,9 @@
             if ($question == $delete) {
                 unset($questions[$key]);
                 unset($modform->grades[$question]);
-                if (!delete_records('quiz_question_grades', 'quiz', $modform->instance, 'question', $question)) {
-                    error("Could not delete question grade");
+                if (!(delete_records('quiz_question_grades', 'quiz', $modform->instance, 'question', $question)
+                      and delete_records('quiz_responses', 'question', $question))) {
+                    error("Could not delete question responses");
                 }
             }
         }
@@ -196,8 +197,8 @@
     $strediting = get_string('editquestions', "quiz");
 
     // Print basic page layout.
-    
-    if (isset($modform->instance) and record_exists_sql("SELECT * FROM {$CFG->prefix}quiz_attempts WHERE quiz = '$modform->instance' AND NOT (userid = '$USER->id') LIMIT 1")){    
+
+    if (isset($modform->instance) and record_exists_sql("SELECT * FROM {$CFG->prefix}quiz_attempts WHERE quiz = '$modform->instance' AND NOT (userid = '$USER->id') LIMIT 1")){
     // one column layout with table of questions used in this quiz
         print_header_simple($strediting, '',
                  "<a href=\"index.php?id=$course->id\">$strquizzes</a>".
