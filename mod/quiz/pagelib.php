@@ -2,24 +2,24 @@
 
 require_once($CFG->libdir.'/pagelib.php');
 
-define('PAGE_CHAT_VIEW',   'mod-chat-view');
+define('PAGE_QUIZ_VIEW',   'mod-quiz-view');
 
-page_map_class(PAGE_CHAT_VIEW, 'page_chat');
+page_map_class(PAGE_QUIZ_VIEW, 'page_quiz');
 
 /**
- * Class that models the behavior of a chat
+ * Class that models the behavior of a quiz
  *
  * @author Jon Papaioannou
  * @package pages
  */
 
-class page_chat extends page_generic_activity {
+class page_quiz extends page_generic_activity {
 
     function init_quick($data) {
         if(empty($data->pageid)) {
             error('Cannot quickly initialize page: empty course id');
         }
-        $this->activityname = 'chat';
+        $this->activityname = 'quiz';
         parent::init_quick($data);
     }
 
@@ -36,8 +36,8 @@ class page_chat extends page_generic_activity {
 
         $breadcrumbs = array(
             $this->courserecord->shortname => $CFG->wwwroot.'/course/view.php?id='.$this->courserecord->id,
-            get_string('modulenameplural', 'chat') => $CFG->wwwroot.'/mod/chat/index.php?id='.$this->courserecord->id,
-            $this->activityrecord->name => $CFG->wwwroot.'/mod/chat/view.php?id='.$this->modulerecord->id,
+            get_string('modulenameplural', 'quiz') => $CFG->wwwroot.'/mod/quiz/index.php?id='.$this->courserecord->id,
+            $this->activityrecord->name => $CFG->wwwroot.'/mod/quiz/view.php?id='.$this->modulerecord->id,
         );
 
         if(!empty($morebreadcrumbs)) {
@@ -57,11 +57,15 @@ class page_chat extends page_generic_activity {
         }
 
         if(empty($morebreadcrumbs) && $this->user_allowed_editing()) {
-            $buttons = '<table><tr><td>'.update_module_button($this->modulerecord->id, $this->courserecord->id, get_string('modulename', 'chat')).'</td>'.
-                       '<td><form target="'.$CFG->framename.'" method="get" action="view.php">'.
-                       '<input type="hidden" name="id" value="'.$this->modulerecord->id.'" />'.
-                       '<input type="hidden" name="edit" value="'.($this->user_is_editing()?'off':'on').'" />'.
-                       '<input type="submit" value="'.get_string($this->user_is_editing()?'turneditingoff':'blocksaddedit').'" /></form></td></tr></table>';
+            $buttons = '<table><tr><td><form target="'.$CFG->framename.'" method="get" action="edit.php">'.
+               '<input type="hidden" name="quizid" value="'.$this->activityrecord->id.'" />'.
+               '<input type="submit" value="'.get_string('editquestions', 'quiz').'" /></form></td><td>'.
+               update_module_button($this->modulerecord->id, $this->courserecord->id, get_string('modulename', 'quiz')).
+               '</td>'.
+               '<td><form target="'.$CFG->framename.'" method="get" action="view.php">'.
+               '<input type="hidden" name="id" value="'.$this->modulerecord->id.'" />'.
+               '<input type="hidden" name="edit" value="'.($this->user_is_editing()?'off':'on').'" />'.
+               '<input type="submit" value="'.get_string($this->user_is_editing()?'turneditingoff':'blocksaddedit').'" /></form></td></tr></table>';
         }
         else {
             $buttons = '&nbsp;';
@@ -71,7 +75,7 @@ class page_chat extends page_generic_activity {
     }
 
     function get_type() {
-        return PAGE_CHAT_VIEW;
+        return PAGE_QUIZ_VIEW;
     }
 }
 

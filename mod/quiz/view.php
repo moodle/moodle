@@ -4,7 +4,8 @@
 
     require_once("../../config.php");
     require_once("locallib.php");
-    require_once($CFG->dirroot.'/lib/blocklib.php');
+    require_once($CFG->libdir.'/blocklib.php');
+    require_once('pagelib.php');
 
     $id          = optional_param('id', 0, PARAM_INT); // Course Module ID, or
     $q           = optional_param('q',  0, PARAM_INT);  // quiz ID
