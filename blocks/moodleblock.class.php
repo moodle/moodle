@@ -286,7 +286,7 @@ class block_base {
             $pixpath = $path .'/../theme/'. $CFG->theme .'/pix';
         }
  
-        $movebuttons = '<div style="float: right;">';
+        $movebuttons = '<div style="float: right; font-size: 0.75em; margin-top: 0.3em;">';
 
         if ($this->instance->visible) {
             $icon = '/t/hide.gif';
@@ -300,31 +300,31 @@ class block_base {
         $script = $page->url_get_full(array('instanceid' => $this->instance->id, 'sesskey' => $USER->sesskey));
      
         $movebuttons .= '<a style="margin-right: 6px; margin-left: 2px;" title="'. $title .'" href="'.$script.'&amp;blockaction=toggle">' .
-                        '<img src="'. $pixpath.$icon .'" alt="Hide" /></a>';
+                        '<img src="'. $pixpath.$icon .'" alt="'.$title.'" /></a>';
 
         if ($options & BLOCK_CONFIGURE) {
             $movebuttons .= '<a style="margin-right: 6px; margin-left: 2px;" title="'. $this->str->configure .'" href="'.$script.'&amp;blockaction=config">' .
-                            '<img src="'. $pixpath .'/t/edit.gif" alt="Config" /></a>';
+                            '<img src="'. $pixpath .'/t/edit.gif" alt="'. $this->str->configure .'" /></a>';
         }
 
         $movebuttons .= '<a style="margin-right: 2px; margin-left: 2px;" title="'. $this->str->delete .'" href="'.$script.'&amp;blockaction=delete">' .
-                        '<img src="'. $pixpath .'/t/delete.gif" alt="Delete" /></a> ';
+                        '<img src="'. $pixpath .'/t/delete.gif" alt="'. $this->str->delete .'" /></a> ';
 
         if ($options & BLOCK_MOVE_LEFT) {
             $movebuttons .= '<a style="margin-right: 2px; margin-left: 2px;" title="'. $this->str->moveleft .'" href="'.$script.'&amp;blockaction=moveleft">' .
-                            '<img src="'. $pixpath .'/t/left.gif" alt="Left" /></a>';
+                            '<img src="'. $pixpath .'/t/left.gif" alt="'. $this->str->moveleft .'" /></a>';
         }
         if ($options & BLOCK_MOVE_UP) {
             $movebuttons .= '<a style="margin-right: 2px; margin-left: 2px;" title="'. $this->str->moveup .'" href="'.$script.'&amp;blockaction=moveup">' .
-                            '<img src="'. $pixpath .'/t/up.gif" alt="Up" /></a>';
+                            '<img src="'. $pixpath .'/t/up.gif" alt="'. $this->str->moveup .'" /></a>';
         }
         if ($options & BLOCK_MOVE_DOWN) {
             $movebuttons .= '<a style="margin-right: 2px; margin-left: 2px;" title="'. $this->str->movedown .'" href="'.$script.'&amp;blockaction=movedown">' .
-                            '<img src="'. $pixpath .'/t/down.gif" alt="Down" /></a>';
+                            '<img src="'. $pixpath .'/t/down.gif" alt="'. $this->str->movedown .'" /></a>';
         }
         if ($options & BLOCK_MOVE_RIGHT) {
             $movebuttons .= '<a style="margin-right: 2px; margin-left: 2px;" title="'. $this->str->moveright .'" href="'.$script.'&amp;blockaction=moveright">' .
-                            '<img src="'. $pixpath .'/t/right.gif" alt="Right" /></a>';
+                            '<img src="'. $pixpath .'/t/right.gif" alt="'. $this->str->moveright .'" /></a>';
         }
 
         $movebuttons .= '</div>';
