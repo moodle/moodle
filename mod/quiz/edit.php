@@ -7,6 +7,8 @@
 
     optional_variable($courseid);
     optional_variable($quizid);
+    optional_variable($page, 0);
+    optional_variable($perpage, "20"); 
 
     if (empty($destination)) {
         $destination = "";
@@ -45,8 +47,8 @@
 
     } else {
         if (!isset($SESSION->modform)) {
-        	// We currently also get here after editing a question by
-        	// following the edit link on the review page. Perhaps that should be fixed.
+          // We currently also get here after editing a question by
+          // following the edit link on the review page. Perhaps that should be fixed.
             error('');
         }
 
@@ -75,6 +77,10 @@
     
     if (isset($cancel)) {
         redirect('view.php?q='.$modform->instance);
+    }
+    
+    if (isset($recurse)) {
+        $modform->recurse = $recurse;
     }
 
     if (!empty($up)) { /// Move the given question up a slot
@@ -188,7 +194,10 @@
     }
 
     if (empty($modform->category)) {
-        $modform->category = "";
+        $modform->category = quiz_get_default_category($modform->course)->id;
+    }
+    if (!isset($modform->recurse)) {
+        $modform->recurse = 1;
     }
 
     $modform->sumgrades = 0;
@@ -255,14 +264,14 @@
         echo '</td><td valign="top" width="50%">';
     }
     print_simple_box_start("center", "100%", $THEME->cellcontent2);
-    quiz_print_category_form($course, $modform->category);
+    quiz_print_category_form($course, $modform->category, $modform->recurse);
     print_simple_box_end();
     
     print_spacer(5,1);
 
     print_simple_box_start("center", "100%", $THEME->cellcontent2);
     quiz_print_cat_question_list($modform->category,
-                                 isset($modform->instance));
+                                 isset($modform->instance), $modform->recurse, $page, $perpage);
     print_simple_box_end();
 
     echo '</td></tr>';

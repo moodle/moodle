@@ -38,11 +38,26 @@
 
 </tr>
 
+<tr valign="top">
+
+    <td align="right"><b><?php  print_string("recurse", "quiz") ?>:</b></td>
+
+    <td>
+        <?php  if (!isset($question->questiontext)) {
+
+            $question->questiontext = "0";
+
+        } ?>
+
+        <input type="hidden" name="questiontext" value="0" />
+        <input type="checkbox" name="questiontext" value="1" <?php echo ($question->questiontext == "1") ? 'checked="checked"' : '' ?> />
+
+    </td>
+
+</tr>
+
 </table>
 
-
-
-<input type="hidden" name="questiontext" value="---" />
 <input type="hidden" name="questiontextformat" value="0" />
 
 

@@ -39,22 +39,19 @@
             // find existing random questions in this category
             $random = RANDOM;
             if ($existingquestions = get_records_select('quiz_questions', "qtype = '$random' AND category = '$category->id'")) {
-                // now remove the ones that are already used in this quiz, if any
+                // now remove the ones that are already used in this quiz
                 if ($questionids = explode(',', $modform->questions)) {
                     foreach ($questionids as $questionid) {
-                        foreach ($existingquestions as $key => $existingquestion) {
-                            if ($existingquestion->id == $questionid) {
-                                unset($existingquestions[$key]);
-                                break;
-                            }
-                        }
+                        unset($existingquestions[$key]);
                     }
                 }
                 // now take as many of these as needed
                 $i = 0;
                 while (($existingquestion = array_pop($existingquestions)) and ($i < $form->randomcreate)) {
-                    $newquestionids[] = $existingquestion->id;
-                    $i++;
+                    if ($existingquestion->questiontext == "$form->recurse") { 
+                        // this question has the right recurse property, so use it
+                        $newquestionids[] = $existingquestion->id;
+                        $i++;
                 }
                 $randomcreate = $form->randomcreate - $i; // the number of additional random questions needed.
             } else {
@@ -66,7 +63,8 @@
                 $question->qtype = RANDOM;
                 $question->category = $category->id;
                 $question->name = get_string('random', 'quiz') .' ('. $category->name .')';
-                $question->questiontext = '---';
+                $question->questiontext = "$form->recurse"; // we use the questiontext field to store the info 
+                                                            // on whether to include questions in subcategories
                 $question->image = '';
                 $question->defaultgrade = $form->randomgrade;
                 for ($i=0; $i<$randomcreate; $i++) {

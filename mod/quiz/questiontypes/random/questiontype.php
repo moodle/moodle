@@ -75,9 +75,15 @@ class quiz_random_qtype extends quiz_default_questiontype {
 
             $possiblerandomqtypes = "'"
                     . implode("','", $this->possiblerandomqtypes) . "'";
+            if ($question->questiontext == "1") {
+                // recurse into subcategories
+                $categorylist = quiz_categorylist($question->category);
+            } else {
+                $categorylist = $question->category;
+            }
             $this->catrandoms[$question->category] = get_records_sql
                     ("SELECT * FROM {$CFG->prefix}quiz_questions
-                       WHERE category = '$question->category'
+                       WHERE category IN ($categorylist)
                          AND id NOT IN ($questionsinuse)
                          AND qtype IN ($possiblerandomqtypes)");
             $this->catrandoms[$question->category] = 
@@ -215,9 +221,7 @@ class quiz_random_qtype extends quiz_default_questiontype {
     function get_wrapped_question($question, $nameprefix) {
         if (!empty($question->response[$nameprefix])
                 and $actualquestion = get_record('quiz_questions',
-                'id', $question->response[$nameprefix],
-                // The category check is a security check
-                'category', $question->category)) {
+                'id', $question->response[$nameprefix])) {
             $actualquestion->response = $question->response;
             unset($actualquestion->response[$nameprefix]);
             $actualquestion->maxgrade = $question->maxgrade;

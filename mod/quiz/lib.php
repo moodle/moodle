@@ -1247,7 +1247,7 @@ function quiz_print_quiz_questions($quiz, $questions, $results=NULL,
 function quiz_get_default_category($courseid) {
 /// Returns the current category
 
-    if ($categories = get_records("quiz_categories", "course", $courseid, "id")) {
+    if ($categories = get_records_select("quiz_categories", "course = '$courseid' AND parent = '0'", "id")) {
         foreach ($categories as $category) {
             return $category;   // Return the first one (lowest id)
         }
@@ -1297,7 +1297,7 @@ function quiz_get_category_menu($courseid, $published=false) {
     return $catmenu;
 }
 
-function quiz_print_category_form($course, $current) {
+function quiz_print_category_form($course, $current, $recurse=1) {
 /// Prints a form to choose categories
 
 /// Make sure the default category exists for this course
@@ -1328,20 +1328,29 @@ function quiz_print_category_form($course, $current) {
     echo "<table width=\"100%\"><tr><td width=\"20\" nowrap=\"nowrap\">";
     echo "<b>$strcategory:</b>&nbsp;";
     echo "</td><td>";
-    popup_form ("edit.php?cat=", $catmenu, "catmenu", $current, "choose", "", "", false, "self");
+    popup_form ("edit.php?cat=", $catmenu, "catmenu", $current, "", "", "", false, "self");
     echo "</td><td align=\"right\">";
     echo "<form method=\"get\" action=\"category.php\">";
     echo "<input type=\"hidden\" name=\"id\" value=\"$course->id\" />";
     echo "<input type=\"submit\" value=\"$streditcats\" />";
     echo "</form>";
-    echo "</td></tr></table>";
+    echo '</td></tr></table>';
+    echo '<form method="get" action="edit.php" name="recurse">';
+    print_string('recurse', 'quiz');
+    echo '<input type="hidden" name="recurse" value="0">';
+    echo '<input type="checkbox" name="recurse" value="1"';
+    if ($recurse) {
+        echo ' checked="checked"';
+    }
+    echo ' onclick="document.recurse.submit(); return true;">';
+    echo '</form>';
 }
 
 
 function add_indented_names(&$categories, $id = 0, $indent = 0) {
 // returns the categories with their names indented to show parent-child relationships
     $fillstr = '&nbsp;&nbsp;&nbsp;';
- $fill = str_repeat($fillstr, $indent);
+    $fill = str_repeat($fillstr, $indent);
     $children = array();
     $keys = array_keys($categories);
 
@@ -1547,8 +1556,8 @@ function quiz_print_question_list($questionlist, $grades) {
 }
 
 
-function quiz_print_cat_question_list($categoryid, $quizselected=true) {
-// Prints a form to choose categories
+function quiz_print_cat_question_list($categoryid, $quizselected=true, $recurse=1, $page, $perpage) {
+// Prints the table of questions in a category with interactions
 
     global $THEME, $QUIZ_QUESTION_TYPE;
 
@@ -1620,7 +1629,9 @@ function quiz_print_cat_question_list($categoryid, $quizselected=true) {
 
     echo '</center>';
 
-    if (!$questions = get_records("quiz_questions", "category", $category->id, "qtype ASC, name ASC")) {
+    $categorylist = ($recurse) ? quiz_categorylist($category->id) : $category->id;
+    
+    if (!$questions = get_records_select('quiz_questions', "category IN ($categorylist) AND qtype != '".RANDOM."'", 'qtype, name ASC', '*', $page*$perpage, $perpage)) {
         echo "<p align=\"center\">";
         print_string("noquestions", "quiz");
         echo "</p>";
@@ -1642,7 +1653,7 @@ function quiz_print_cat_question_list($categoryid, $quizselected=true) {
     echo "</tr>\n";
     foreach ($questions as $question) {
         if ($question->qtype == RANDOM) {
-            continue;
+            //continue;
         }
         echo "<tr bgcolor=\"$THEME->cellcontent\">\n";
         if ($quizselected) {
@@ -1662,10 +1673,16 @@ function quiz_print_cat_question_list($categoryid, $quizselected=true) {
                       src=\"../../pix/t/preview.gif\" border=\"0\" alt=\"$strpreview\" /></a>&nbsp;";
                 echo "<a title=\"$stredit\" href=\"question.php?id=$question->id\"><img
                      src=\"../../pix/t/edit.gif\" border=\"0\" alt=\"$stredit\" /></a>";
-            echo "</td>\n";// deleted </tr> jm
+            echo "</td>\n";
         }
         echo "</tr>\n";
     }
+    $numquestions = count_records_select('quiz_questions', "category IN ($categorylist) AND qtype != '".RANDOM."'");
+    echo '<tr><td colspan="3">';
+    print_paging_bar($numquestions, $page, $perpage,
+                "edit.php?perpage=$perpage&amp;");
+    echo '</td></tr>';
+
     if ($quizselected) {
         echo "<tr>\n<td colspan=\"3\">";
         echo "<input type=\"submit\" name=\"add\" value=\"<< $straddselectedtoquiz\" />\n";
@@ -1685,7 +1702,8 @@ function quiz_print_cat_question_list($categoryid, $quizselected=true) {
         print_string('addrandom2', 'quiz');
         // Don't offer the option to change the grade
         //choose_from_menu($randomcount, 'randomgrade', '1', '');
-        echo '<input type="hidden" name="randomgrade", value="1" />';
+        echo '<input type="hidden" name="randomgrade" value="1" />';
+        echo '<input type="hidden" name="recurse" value="'.$recurse.'" />';
         echo "<input type=\"hidden\" name=\"category\" value=\"$category->id\" />";
         echo ' <input type="submit" name="save" value="'. get_string('add') .'" />';
         helpbutton('random', get_string('random', 'quiz'), 'quiz');
@@ -2270,4 +2288,14 @@ function get_exp_answers( $question_num ) {
     return $answers;
 }
 
+function quiz_categorylist($categoryid) {
+    // returns a comma separated list of ids of the category and all subcategories
+    $categorylist = $categoryid;
+    if ($subcategories = get_records('quiz_categories', 'parent', $categoryid, 'sortorder ASC', 'id, id')) {
+        foreach ($subcategories as $subcategory) {
+            $categorylist .= ','. quiz_categorylist($subcategory->id);
+        }
+    }
+    return $categorylist;
+}
 ?>

@@ -171,25 +171,12 @@ class quiz_category_object {
     function initialize() {
         
         /// Get the existing categories
-        if (!$this->categories = $this->get_quiz_categories(null, "parent, sortorder, name ASC")) {
-            unset($this->categories);
-            $defaultcategory = quiz_get_default_category($this->course->id);
-            if (!$defaultcategory) {
-                error("Error: Could not find or make a category!");
-            } else {
-                $this->categories[$defaultcategory->id] = $defaultcategory;
-                $this->defaultcategory = $defaultcategory->id;
-            }
-        } else {
-               /// Find lowest ID category for this course - this is the default category
-            $this->defaultcategory = 99999;
-            foreach ($this->categories as $category) {
-                if ($category->course == $this->course->id && $category->id < $this->defaultcategory) {
-                    $this->defaultcategory = $category->id;
-                }
-            }
-        }
-        
+        if (!$this->defaultcategory = quiz_get_default_category($this->course->id)) {
+            error("Error: Could not find or make a category!");
+        } 
+
+        $this->categories = $this->get_quiz_categories(null, "parent, sortorder, name ASC");
+
         $this->categories = $this->arrange_categories($this->categories);
         
         // create the array of id=>full_name strings
@@ -440,8 +427,7 @@ class quiz_category_object {
         $edittable->data[] = array();
         $edittable->tablealign = 'center';
 
-           /// Each section below adds a data cell to the table row
-
+        /// Each section below adds a data cell to the table row
         
         $viableparents = $this->categorystrings;
         $this->set_viable_parents($viableparents, $category);
@@ -570,6 +556,7 @@ class quiz_category_object {
             }
         }
     }
+
 /**
 * Gets quiz categories
 *
