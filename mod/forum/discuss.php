@@ -54,19 +54,13 @@
 
     $navmiddle = "<A HREF=\"../forum/index.php?id=$course->id\">".get_string("forums", "forum")."</A> -> <A HREF=\"../forum/view.php?f=$forum->id\">$forum->name</A>";
 
-    if ($cm->id) {
-        $updatebutton = update_module_icon($cm->id, $course->id);
-    } else {
-        $updatebutton = "";
-    }
-
     if ($course->category) {
         print_header("$course->shortname: $discussion->name", "$course->fullname",
                  "<A HREF=../../course/view.php?id=$course->id>$course->shortname</A> ->
-                  $navmiddle -> $navtail", "", "", true, $updatebutton);
+                  $navmiddle -> $navtail", "", "", true);
     } else {
         print_header("$course->shortname: $discussion->name", "$course->fullname",
-                 "$navmiddle -> $navtail", "", "", true, $updatebutton);
+                 "$navmiddle -> $navtail", "", "", true);
     }
 
     forum_print_discussion($course, $forum, $discussion, $post, $displaymode);

@@ -33,7 +33,7 @@
     print_header("$course->shortname: $assignment->name", "$course->fullname",
                  "$navigation <A HREF=index.php?id=$course->id>$strassignments</A> -> 
                   <A HREF=\"view.php?a=$assignment->id\">$assignment->name</A> -> $strsubmissions", 
-                  "", "", true, update_module_icon($cm->id, $course->id));
+                  "", "", true);
 
     // Some easy ways to reference submissions
     if ($submissions = assignment_get_all_submissions($assignment)) {

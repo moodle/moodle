@@ -8,6 +8,9 @@
     optional_variable($mode);    // Display mode (for single forum)
 
 
+    $strforums = get_string("modulenameplural", "forum");
+    $strforum = get_string("modulename", "forum");
+
     if ($id) {
         if (! $cm = get_record("course_modules", "id", $id)) {
             error("Course Module ID was incorrect");
@@ -18,7 +21,7 @@
         if (! $forum = get_record("forum", "id", $cm->instance)) {
             error("Forum ID was incorrect");
         }
-        $buttontext = update_module_icon($cm->id, $course->id);
+        $buttontext = update_module_button($cm->id, $course->id, $strforum);
 
     } else if ($f) {
         if (! $forum = get_record("forum", "id", $f)) {
@@ -28,7 +31,7 @@
             error("Forum is misconfigured - don't know what course it's from");
         }
         if ($cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
-            $buttontext = update_module_icon($cm->id, $course->id);
+            $buttontext = update_module_button($cm->id, $course->id, $strforum);
         } else {
             $buttontext = "";
         }
@@ -37,7 +40,6 @@
         error("Must specify a course module or a forum ID");
     }
 
-    $strforums = get_string("modulenameplural", "forum");
 
     if ($course->category) {
         require_login($course->id);

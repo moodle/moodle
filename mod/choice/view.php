@@ -59,7 +59,7 @@
     }
     print_header("$course->shortname: $choice->name", "$course->fullname",
                  "$navigation <A HREF=index.php?id=$course->id>$strchoices</A> -> $choice->name", "", "", true,
-                  update_module_icon($cm->id, $course->id));
+                  update_module_button($cm->id, $course->id, $strchoice));
 
     if (isteacher($course->id)) {
         if ( $allanswers = get_records("choice_answers", "choice", $choice->id)) {

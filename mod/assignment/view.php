@@ -44,7 +44,7 @@
 
     print_header("$course->shortname: $assignment->name", "$course->fullname",
                  "$navigation <A HREF=index.php?id=$course->id>$strassignments</A> -> $assignment->name", 
-                  "", "", true, update_module_icon($cm->id, $course->id));
+                  "", "", true, update_module_button($cm->id, $course->id, $strassignment));
 
     if (isteacher($course->id)) {
         if ($submissions = assignment_get_all_submissions($assignment)) {

@@ -24,10 +24,11 @@
     }
 
     $strsurveys = get_string("modulenameplural", "survey");
+    $strsurvey = get_string("modulename", "survey");
 
     print_header("$course->shortname: $survey->name", "$course->fullname",
                  "$navigation <A HREF=index.php?id=$course->id>$strsurveys</A> -> $survey->name", "", "", true,
-                  update_module_icon($cm->id, $course->id));
+                  update_module_button($cm->id, $course->id, $strsurvey));
 
     if (isteacher($course->id)) {
         $numusers = survey_count_responses($survey->id);

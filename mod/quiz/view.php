@@ -51,7 +51,7 @@
 
     print_header("$course->shortname: $quiz->name", "$course->fullname",
                  "$navigation <A HREF=index.php?id=$course->id>$strquizzes</A> -> $quiz->name", 
-                 "", "", true, update_module_icon($cm->id, $course->id));
+                 "", "", true, update_module_button($cm->id, $course->id, $strquiz));
 
     if (isteacher($course->id)) {
         if ($allanswers = get_records("quiz_grades", "quiz", $quiz->id)) {
