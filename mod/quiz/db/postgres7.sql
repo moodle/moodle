@@ -327,7 +327,8 @@ CREATE TABLE prefix_quiz_calculated (
     answer INT8  NOT NULL default '0',
     tolerance varchar(20) NOT NULL default '0.0',
     tolerancetype INT8 NOT NULL default '1',
-    correctanswerlength INT8 NOT NULL default '2'
+    correctanswerlength INT8 NOT NULL default '2',
+    correctanswerformat INT8 NOT NULL default '2'
 );
 
 CREATE INDEX prefix_quiz_calculated_question_idx 

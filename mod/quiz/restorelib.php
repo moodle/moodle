@@ -1012,6 +1012,7 @@
             $calculated->tolerance = backup_todb($cal_info['#']['TOLERANCE']['0']['#']);
             $calculated->tolerancetype = backup_todb($cal_info['#']['TOLERANCETYPE']['0']['#']);
             $calculated->correctanswerlength = backup_todb($cal_info['#']['CORRECTANSWERLENGTH']['0']['#']);
+            $calculated->correctanswerformat = backup_todb($cal_info['#']['CORRECTANSWERFORMAT']['0']['#']);
 
             ////We have to recode the answer field
             $answer = backup_getid($restore->backup_unique_code,"quiz_answers",$calculated->answer);

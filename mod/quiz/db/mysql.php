@@ -288,6 +288,10 @@ function quiz_upgrade($oldversion) {
         modify_database('','ALTER TABLE prefix_quiz_numerical_units ADD INDEX question (question);');
         modify_database('','ALTER TABLE prefix_quiz_questions ADD INDEX category (category);');
     }
+
+    if ($oldversion < 2004120501) {
+        table_column("quiz_calculated", "", "correctanswerformat", "integer", "10", "", "2", "not null", "correctanswerlength");
+    }
     
     return true;
 }

@@ -274,6 +274,10 @@ function quiz_upgrade($oldversion) {
         modify_database('','ALTER TABLE prefix_quiz_attemptonlast_datasets ADD CONSTRAINT prefix_quiz_category_userid_unique UNIQUE (category,userid);');
     }
 
+    if ($oldversion < 2004120501) {
+        table_column("quiz_calculated", "", "correctanswerformat", "integer", "10", "", "2", "not null", "correctanswerlength");
+    }
+
     return true;
 }
 

@@ -419,6 +419,7 @@
                 fwrite ($bf,full_tag("TOLERANCE",$level+1,false,$calculated->tolerance));
                 fwrite ($bf,full_tag("TOLERANCETYPE",$level+1,false,$calculated->tolerancetype));
                 fwrite ($bf,full_tag("CORRECTANSWERLENGTH",$level+1,false,$calculated->correctanswerlength));
+                fwrite ($bf,full_tag("CORRECTANSWERFORMAT",$level+1,false,$calculated->correctanswerformat));
                 //Now backup numerical_units
                 $status = quiz_backup_numerical_units($bf,$preferences,$question,7);
                 //Now backup required dataset definitions and items...

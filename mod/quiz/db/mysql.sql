@@ -100,6 +100,7 @@ CREATE TABLE `prefix_quiz_calculated` (
   `tolerance` varchar(20) NOT NULL default '0.0',
   `tolerancetype` int(10) NOT NULL default '1',
   `correctanswerlength` int(10) NOT NULL default '2',
+  `correctanswerformat` int(10) NOT NULL default '2',
   PRIMARY KEY  (`id`),
   KEY `question` (`question`),
   KEY `answer` (`answer`)
