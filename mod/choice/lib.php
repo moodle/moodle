@@ -1,18 +1,11 @@
 <?PHP // $Id$
 
-function choice_user_summary($course, $user, $mod, $choice) {
-    global $CFG;
-}
-
+$CHOICE_MAX_NUMBER = 6;
 
 function choice_user_outline($course, $user, $mod, $choice) {
     if ($current = get_record_sql("SELECT * FROM choice_answers
                                    WHERE choice='$choice->id' AND user='$user->id'")) {
-        if ($current->answer == "1") {
-            $result->info = "'$choice->answer1'";
-        } else if ($current->answer == "2") {
-            $result->info = "'$choice->answer2'";
-        }
+        $result->info = "'".choice_get_answer($choice, $current->answer)."'";
         $result->time = $current->timemodified;
         return $result;
     }
@@ -23,11 +16,7 @@ function choice_user_outline($course, $user, $mod, $choice) {
 function choice_user_complete($course, $user, $mod, $choice) {
     if ($current = get_record_sql("SELECT * FROM choice_answers
                                    WHERE choice='$choice->id' AND user='$user->id'")) {
-        if ($current->answer == "1") {
-            $result->info = "'$choice->answer1'";
-        } else if ($current->answer == "2") {
-            $result->info = "'$choice->answer2'";
-        }
+        $result->info = "'".choice_get_answer($choice, $current->answer)."'";
         $result->time = $current->timemodified;
         echo get_string("answered", "choice").": $result->info , last updated ".userdate($result->time);
     } else {
@@ -90,8 +79,32 @@ function choice_get_answer($choice, $code) {
             return "$choice->answer1";
         case 2:
             return "$choice->answer2";
+        case 3:
+            return "$choice->answer3";
+        case 4:
+            return "$choice->answer4";
+        case 5:
+            return "$choice->answer5";
+        case 6:
+            return "$choice->answer6";
         default:
             return get_string("notanswered", "choice");
+    }
+}
+
+function choice_get_choice($choiceid) {
+// Gets a full choice record
+
+    if ($choice = get_record("choice", "id", $choiceid)) {
+        $choice->answer[1] = $choice->answer1;
+        $choice->answer[2] = $choice->answer2;
+        $choice->answer[3] = $choice->answer3;
+        $choice->answer[4] = $choice->answer4;
+        $choice->answer[5] = $choice->answer5;
+        $choice->answer[6] = $choice->answer6;
+        return $choice;
+    } else {
+        return false;
     }
 }
 

@@ -19,7 +19,7 @@
         error("Only teachers can look at this page");
     }
 
-    if (! $choice = get_record("choice", "id", $cm->instance)) {
+    if (!$choice = choice_get_choice($cm->instance)) {
         error("Course module is incorrect");
     }
 
@@ -43,20 +43,23 @@
         foreach ($allanswers as $aa) {
             $answers[$aa->user] = $aa;
         }
-        
     } else {
         $answers = array () ;
     }
 
     $timenow = time();
 
-    for ($i=0; $i<=2; $i++) {    // number of choices (presently hardcoded)
-        $useranswer[$i] = array();
+    foreach ($choice->answer as $key => $answer) {  
+        $useranswer[$key] = array();
     }
-
     foreach ($users as $user) {
         $answer = $answers[$user->id];
         $useranswer[(int)$answer->answer][] = $user;
+    }
+    foreach ($choice->answer as $key => $answer) {  
+        if (!$choice->answer[$key]) {
+            unset($useranswer[$key]);     // Throw away any data that doesn't apply
+        }
     }
     ksort($useranswer);
 

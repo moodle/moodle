@@ -13,30 +13,52 @@
     <td align=right><P><B><? print_string("choicetext","choice") ?>:</B></P></TD>
     <td>
         <textarea name="text" rows=15 cols=30 wrap="virtual"><? p($form->text) ?></textarea>
+        <? helpbutton("text", get_string("helptext")); ?>
     </td>
 </tr>
 
 <tr valign=top>
-    <td align=right><P><B><? print_string("choice1","choice") ?>:</B></P></TD>
+    <td align=right><P><B><? print_string("choice","choice","1") ?>:</B></P></TD>
     <td>
-        <input type="text" name="answer1" size=30 value="<? 
-        if ($form->answer1) {
-            p($form->answer1);
-        } else {
-            print_string("yes");
-        } ?>">
+        <input type="text" name="answer1" size=30 value="<? p($form->answer1) ?>">
+        <? helpbutton("options", get_string("modulenameplural", "choice"), "choice") ?>
     </td>
 </tr>
 
 <tr valign=top>
-    <td align=right><P><B><? print_string("choice2","choice") ?>:</B></P></TD>
+    <td align=right><P><B><? print_string("choice","choice","2") ?>:</B></P></TD>
     <td>
-        <input type="text" name="answer2" size=30 value="<? 
-        if ($form->answer2) {
-            p($form->answer2);
-        } else {
-            print_string("no");
-        } ?>">
+        <input type="text" name="answer2" size=30 value="<? p($form->answer2) ?>">
+        <? helpbutton("options", get_string("modulenameplural", "choice"), "choice") ?>
+    </td>
+</tr>
+
+<tr valign=top>
+    <td align=right><P><B><? print_string("choice","choice","3") ?>:</B></P></TD>
+    <td>
+        <input type="text" name="answer3" size=30 value="<? p($form->answer3) ?>">
+        <? helpbutton("options", get_string("modulenameplural", "choice"), "choice") ?>
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><P><B><? print_string("choice","choice","4") ?>:</B></P></TD>
+    <td>
+        <input type="text" name="answer4" size=30 value="<? p($form->answer4) ?>">
+        <? helpbutton("options", get_string("modulenameplural", "choice"), "choice") ?>
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><P><B><? print_string("choice","choice","5") ?>:</B></P></TD>
+    <td>
+        <input type="text" name="answer5" size=30 value="<? p($form->answer5) ?>">
+        <? helpbutton("options", get_string("modulenameplural", "choice"), "choice") ?>
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><P><B><? print_string("choice","choice","6") ?>:</B></P></TD>
+    <td>
+        <input type="text" name="answer6" size=30 value="<? p($form->answer6) ?>">
+        <? helpbutton("options", get_string("modulenameplural", "choice"), "choice") ?>
     </td>
 </tr>
 

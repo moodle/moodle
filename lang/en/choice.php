@@ -6,8 +6,7 @@ $string[modulenameplural] = "Choices";
 #------------------------------------------------------------
 
 $string[answered] = "Answered";
-$string[choice1] = "First choice";
-$string[choice2] = "Second choice";
+$string[choice] = "Choice \$a";
 $string[choicename] = "Choice name";
 $string[choicetext] = "Choice text";
 $string[notanswered] = "Not answered yet";

@@ -15,17 +15,13 @@
 
     require_login($course->id);
 
-    if (! $choice = get_record("choice", "id", $cm->instance)) {
+    if (!$choice = choice_get_choice($cm->instance)) {
         error("Course module is incorrect");
     }
 
     if ($current = get_record_sql("SELECT * FROM choice_answers
                                      WHERE choice='$choice->id' AND user='$USER->id'")) {
-        if ($current->answer == "1") {
-            $answer1checked = "CHECKED";
-        } else if ($current->answer == "2") {
-            $answer2checked = "CHECKED";
-        }
+        $answerchecked[$current->answer] = "CHECKED";
     }
 
     if (match_referer() && isset($HTTP_POST_VARS)) {    // form submitted
@@ -76,7 +72,22 @@
 
     print_simple_box( text_to_html($choice->text) , "center");
 
-    require("view.html");
+    echo "<CENTER><P><FORM name=\"form\" method=\"post\" action=\"view.php\">";
+    echo "<TABLE CELLPADDING=20 CELLSPACING=20><TR>";
+
+    foreach ($choice->answer as $key => $answer) {
+        if ($answer) {
+            echo "<TD ALIGN=CENTER>";
+            echo "<INPUT type=radio name=answer value=\"$key\" ".$answerchecked[$key].">";
+            p($answer);
+            echo "</TD>";
+        }
+    }
+
+    echo "</TR></TABLE>";
+    echo "<INPUT type=hidden name=id value=\"$cm->id\">";
+    echo "<INPUT type=submit value=\"".get_string("savemychoice","choice")."\">";
+    echo "</P></FORM></CENTER>";
 
     print_footer($course);
 
