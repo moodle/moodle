@@ -41,7 +41,7 @@
                                get_string("adminhelpbackup"));
     }
 
-    $table->data[]= array("<b><a href=\"editor.php\">". get_string("editorsettings") ."</a></b>",
+    $table->data[]= array("<b><a href=\"editor.php?sesskey=$USER->sesskey\">". get_string("editorsettings") ."</a></b>",
                     get_string("adminhelpeditorsettings"));
 
     print_table($table);
