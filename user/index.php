@@ -14,6 +14,7 @@
     optional_variable($lastinitial, "");     // only show students with this last initial
     optional_variable($firstinitial, "");    // only show students with this first initial
     optional_variable($perpage, "20");       // how many per page
+    optional_variable($showall, "");         // SHow everyone on one page
 
 
     if (! $course = get_record("course", "id", $id)) {
