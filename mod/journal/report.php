@@ -79,7 +79,7 @@
             }
         }
         add_to_log($course->id, "journal", "update feedback", "report.php?id=$cm->id", "$count users");
-        notify("Journal feedback updated for $count people.");
+        notify(get_string("feedbackupdated", "journal", "$count"), "green");
     } else {
         add_to_log($course->id, "journal", "view responses", "report.php?id=$cm->id", "$journal->id");
     }
@@ -87,7 +87,7 @@
 
     $teachers = get_course_teachers($course->id);
     if (! $users = get_course_users($course->id)) {
-        print_heading("No users in this course yet");
+        print_heading(get_string("nousersyet"));
 
     } else {
         echo "<FORM ACTION=report.php METHOD=post>\n";
@@ -105,9 +105,11 @@
                 journal_print_user_entry($course, $user, $entry, $teachers, $JOURNAL_RATING);
             }
         }
+
+        $strsaveallfeedback = get_string("saveallfeedback", "journal");
         echo "<CENTER>";
         echo "<INPUT TYPE=hidden NAME=id VALUE=\"$cm->id\">";
-        echo "<INPUT TYPE=submit VALUE=\"Save all my feedback\">";
+        echo "<INPUT TYPE=submit VALUE=\"$strsaveallfeedback\">";
         echo "</CENTER>";
         echo "</FORM>";
     }
