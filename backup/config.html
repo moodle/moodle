@@ -163,13 +163,13 @@
             if (!isset($firstdayofweek) || $firstdayofweek != 1) {
                 $firstdayofweek = 0;
             }
-            //Now create the timestamp of a well-know sunday (02/25/2001, my 31th birthday (stronk7) !!)
-            $onesunday = make_timestamp(2001,2,25);
+            //Now create the GMT timestamp of a well-know sunday (02/25/2001, my 31th birthday (stronk7) !!)
+            $onesunday = gmmktime(0,0,0,2,25,2001);
             $i = 0;
             $day_names = "";
             $check_names = "";
             while ($i<7) {
-                $day_names[] = strftime("%A",$onesunday + (($firstdayofweek+$i)*86400));
+                $day_names[] = gmstrftime("%A",$onesunday + (($firstdayofweek+$i)*86400));
                 //Calculate standard day of week (0=Sunday......6=Saturday)
                 //to store info in that exact order in DB
                 $stddayofweek = ($i+$firstdayofweek) % 7;
