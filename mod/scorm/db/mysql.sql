@@ -27,6 +27,7 @@ CREATE TABLE prefix_scorm_scoes (
   parent varchar(255) NOT NULL default '',
   identifier varchar(255) NOT NULL default '',
   launch varchar(255) NOT NULL default '',
+  parameters varchar(255) NOT NULL default '',
   scormtype set('sco','asset') NOT NULL default '',
   title varchar(255) NOT NULL default '',
   prerequisites varchar(200) NOT NULL default '',
@@ -50,7 +51,8 @@ CREATE TABLE prefix_scorm_scoes_track (
   value longtext NOT NULL default '',
   PRIMARY KEY  (id),
   UNIQUE (userid, scormid, scoid, element),
-  KEY userdata (userid, scormid, scoid)
+  KEY userdata (userid, scormid, scoid),
+  KEY id (id)
 ) TYPE=MyISAM;
 
 #

@@ -26,6 +26,7 @@ CREATE TABLE prefix_scorm_scoes (
   parent varchar(255) NOT NULL default '',
   identifier varchar(255) NOT NULL default '',
   launch varchar(255) NOT NULL default '',
+  parameters varchar(255) NOT NULL default '',
   scormtype varchar(5) NOT NULL default '',
   title varchar(255) NOT NULL default '',
   datafromlms text NOT NULL default '',
@@ -35,7 +36,7 @@ CREATE TABLE prefix_scorm_scoes (
 
 CREATE INDEX prefix_scorm_scoes_scorm_idx ON prefix_scorm_scoes (scorm);
 
-CREATE TABLE prefix_scorm_sco_users (
+CREATE TABLE prefix_scorm_scoes_track (
   id SERIAL KEY,
   userid integer NOT NULL default '0',
   scormid integer NOT NULL default '0',
@@ -44,7 +45,8 @@ CREATE TABLE prefix_scorm_sco_users (
   value text NOT NULL default '',
   PRIMARY KEY (userid, scormid, scoid, element),
   UNIQUE (userid, scormid, scoid, element),
-  INDEX userdata (userid, scormid, scoid)
+  INDEX userdata (userid, scormid, scoid),
+  INDEX id (id)
 );
 
 

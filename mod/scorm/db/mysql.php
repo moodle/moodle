@@ -93,6 +93,10 @@ function scorm_upgrade($oldversion) {
         execute_sql('ALTER TABLE `'.$CFG->prefix.'scorm` DROP `popup`');    // Old field
     }
 
+    if ($oldversion < 2005040400) {
+       table_column("scorm_scoes", "", "parameters", "VARCHAR", "255", "", "", "NOT NULL", "launch");
+    }
+    
     return true;
 }
 

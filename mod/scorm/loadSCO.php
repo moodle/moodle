@@ -70,13 +70,21 @@
     //
     // Forge SCO URL
     //
+    $connector = '';
+    if (!empty($sco->parameters)) {
+	if (stripos($sco->launch,'?') !== false) {
+	    $connector = '&';
+	} else {
+    	    $connector = '?';
+    	}
+    }
     if (scorm_external_link($sco->launch)) {
 	$result = $sco->launch;
     } else {
 	if ($CFG->slasharguments) {
-	    $result = "$CFG->wwwroot/file.php/$scorm->course/moddata/scorm$scorm->datadir/$sco->launch";
+	    $result = $CFG->wwwroot.'/file.php/'.$scorm->course.'/moddata/scorm'.$scorm->datadir.'/'.$sco->launch.$connector.$sco->parameters;
 	} else {
-	    $result = "$CFG->wwwroot/file.php?file=/$scorm->course/moddata/scorm$scorm->datadir/$sco->launch";
+	    $result = $CFG->wwwroot.'/file.php?file=/'.$scorm->course.'/moddata/scorm'.$scorm->datadir.'/'.$sco->launch.$connector.$sco->parameters;
 	}
     }
 ?>

@@ -189,48 +189,61 @@
     	    if ($sco->launch) {
     	        $startbold = '';
     	        $endbold = '';
-    	        if ($sco->id == $scoid) {
-    		    $startbold = '-> <b>';
-    		    $endbold = '</b> <-';
-    		    if ($nextsco !== false) {
-    			$nextid = $nextsco->id;
+    	        $score = '';
+    	        if ($scoid != '') {
+    	            if ($sco->id == $scoid) {
+    			$startbold = '-> <b>';
+    			$endbold = '</b> <-';
+    			if ($nextsco !== false) {
+    			    $nextid = $nextsco->id;
+    			} else {
+    			    $nextid = 0;
+    			}
+    	    	    }
+    	    	} else {
+    		    if ($user_tracks=scorm_get_tracks($sco->id,$USER->id)) {
+    			if ( $user_tracks->status == '') {
+    	    		    $user_tracks->status = 'notattempted';
+    	    		}
+    	    		$strstatus = get_string($user_tracks->status,'scorm');
+    			echo "<img src='pix/".$user_tracks->status.".gif' alt='$strstatus' title='$strstatus' />";
+ 			if (($user_tracks->status == 'notattempted') || ($user_tracks->status == 'incomplete')) {
+ 				$incomplete = true;
+ 				$scoid = $sco->id;
+ 				$startbold = '-> <b>';
+    				$endbold = '</b> <-';
+    				if ($nextsco !== false) {
+    				    $nextid = $nextsco->id;
+    				} else {
+    				    $nextid = 0;
+    				}
+ 			}
+ 			if ($user_tracks->score_raw != "") {
+    		    	    $score = '('.get_string('score','scorm').':&nbsp;'.$user_tracks->score_raw.')';
+			}
     		    } else {
-    			$nextid = 0;
+    		    	if (mode != 'normal') {
+    	    		    $scoid = $sco->id;
+    	    		    $startbold = '-> <b>';
+    			    $endbold = '</b> <-';
+    			    if ($nextsco !== false) {
+    				$nextid = $nextsco->id;
+    			    } else {
+    				$nextid = 0;
+    			    }
+    	    		}
+    			if ($sco->scormtype == 'sco') {
+    			    echo "<img src='pix/notattempted.gif' alt='".get_string('notattempted','scorm')."' />";
+    			    $incomplete = true;
+    			} else {
+    			    echo "<img src='pix/asset.gif' alt='".get_string('asset','scorm')."' />";
+    			}
     		    }
-    	    	} else if ($nextid == 0) {
+    		} 
+    		if ($nextid == 0) {
     	    	    $previd = $sco->id;
     	    	}
-    	    	if (($scoid == "") && ($mode != "normal")) {
-    	    	    $scoid = $sco->id;
- 		    $startbold = '-> <b>';
-    		    $endbold = '</b> <-';
-    	    	}
-    	    	$score = "";
-    		if ($user_tracks=scorm_get_tracks($sco->id,$USER->id)) {
-    		    if ( $user_tracks->status == '') {
-    	    		$user_tracks->status = 'notattempted';
-    	    	    }
-    	    	    $strstatus = get_string($user_tracks->status,'scorm');
-    		    echo "<img src='pix/".$user_tracks->status.".gif' alt='$strstatus' title='$strstatus' />";
- 		    if (($user_tracks->status == 'notattempted') || ($user_tracks->status == 'incomplete')) {
- 		        if ($scoid == '') {
- 			    $incomplete = true;
- 			    $scoid = $sco->id;
- 			    $startbold = '-> <b>';
-    		    	    $endbold = '</b> <-';
- 			}
- 		    }
- 		    if ($user_tracks->score_raw != "") {
-    		    	$score = '('.get_string('score','scorm').':&nbsp;'.$user_tracks->score_raw.')';
-		    }
-    		} else {
-    		    if ($sco->scormtype == 'sco') {
-    			echo "<img src='pix/notattempted.gif' alt='".get_string('notattempted','scorm')."' />";
-    			$incomplete = true;
-    		    } else {
-    			echo "<img src='pix/asset.gif' alt='".get_string('asset','scorm')."' />";
-    		    }
-    		}
+    	    	
     		echo "&nbsp;$startbold<a href='javascript:playSCO(".$sco->id.");'>$sco->title</a> $score$endbold</li>\n";
     	    } else {
 		echo "&nbsp;$sco->title</li>\n";
