@@ -97,6 +97,14 @@
 
      case "userday.png":
 
+       $site = get_site();
+        
+       if ($course->id == $site->id) {
+           $courseselect = 0;
+       } else {
+           $courseselect = $course->id;
+       }
+
        if ($date) {
            $daystart = usergetmidnight($date);
        } else {
@@ -111,7 +119,7 @@
            $hours[$i] = userdate($hour, "$hh %p");
        }
 
-       if ($rawlogs = get_logs_userday($user->id, $course->id, $daystart)) {
+       if ($rawlogs = get_logs_userday($user->id, $courseselect, $daystart)) {
            foreach ($rawlogs as $rawlog) {
                $logs[$rawlog->hour] = $rawlog->num;
            }

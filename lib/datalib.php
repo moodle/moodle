@@ -1260,11 +1260,14 @@ function get_logs_usercourse($userid, $courseid, $coursestart) {
 function get_logs_userday($userid, $courseid, $daystart) {
     global $CFG;
 
+    if ($courseid) {
+       $courseselect = " AND course = '$courseid' ";
+    }
+
     return get_records_sql("SELECT floor((`time` - $daystart)/3600) as hour, count(*) as num
                             FROM {$CFG->prefix}log
                            WHERE userid = '$userid' 
-                             AND course = '$courseid'
-                             AND `time` > '$daystart'
+                             AND `time` > '$daystart' $courseselect
                         GROUP BY hour ");
 }
 
