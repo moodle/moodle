@@ -1,3 +1,94 @@
+2002-06-25 Tuesday 20:08  martin
+
+	* course/weeks.php, lib/db/mysql.sql: Minor changes
+
+2002-06-25 Tuesday 19:57  martin
+
+	* index.php, lib/moodlelib.php: Whoops forgot some more 'week's
+
+2002-06-25 Tuesday 19:49  martin
+
+	* index.php, admin/site.html, admin/site.php, course/edit.html,
+	course/edit.php, course/lib.php, course/mod.php,
+	course/mod_delete.html, course/social.php, course/topics.php,
+	course/user.php, course/view.php, course/weeks.php,
+	lib/db/mysql.sql, mod/choice/index.php, mod/choice/mod.html,
+	mod/discuss/mod.html, mod/discuss/user.php, mod/forum/mod.html,
+	mod/journal/index.php, mod/journal/mod.html, mod/journal/user.php,
+	mod/journal/view.php, mod/reading/details.php,
+	mod/reading/index.php, mod/reading/mod.html,
+	mod/survey/details.php, mod/survey/index.php, mod/survey/mod.html:
+	Major changes throughout to change "week" notation to "section"
+	notation.  Sections covers "weeks", "topics" and anything else that
+	may come along.  Note, again, some databases have changed esp
+	course_weeks -> course_sections and several fields called "week"
+	are now "section.  Also course no longer has an enddate, but
+	instead has a numsections field.
+
+2002-06-25 Tuesday 19:46  martin
+
+	* course/: editsection.html, editsection.php: Renamed from editweek
+	to editsection
+
+2002-06-25 Tuesday 19:44  martin
+
+	* course/: editweek.html, editweek.php: Renamed week->section
+
+2002-06-25 Tuesday 19:43  martin
+
+	* pix/i/: all.gif, allweeks.gif, one.gif, oneweek.gif: Renamed
+	allweeks.gif -> all.gif oneweek.gif -> one.gif
+
+2002-06-25 Tuesday 15:56  martin
+
+	* course/: lib.php, mod.php: Nicer formatting of editing modules,
+	takes into account course format
+
+2002-06-25 Tuesday 15:17  martin
+
+	* mod/survey/report.php: Don't show overall graph when no students
+	have completed survey
+
+2002-06-25 Tuesday 15:10  martin
+
+	* mod/survey/: lib.php, report.php, view.php: Slight tweaks to
+	survey display after it's been done (list # of students)
+
+2002-06-25 Tuesday 14:47  martin
+
+	* index.php, course/mod.php, course/social.php, course/topics.php,
+	course/view.php, course/weeks.php, lib/moodlelib.php,
+	mod/discuss/post.php, mod/discuss/view.php, mod/forum/lib.php,
+	mod/forum/view.php: Changes related to new forum type: eachuser and
+	some general forum-related tweaking
+
+2002-06-25 Tuesday 11:32  martin
+
+	* course/topics.php: Improved formatting of module links (using a
+	TITLE that is modulename)
+
+2002-06-25 Tuesday 11:30  martin
+
+	* course/weeks.php: Slight formatting improvement (list module name
+	in link title)
+
+2002-06-25 Tuesday 11:23  martin
+
+	* mod/forum/icon.gif: Updated icon to make it less like discussions
+	and more flexible
+
+2002-06-24 Monday 23:27  martin
+
+	* mod/forum/view.php: Typo in add_to_log ... index->view
+
+2002-06-21 Friday 23:55  martin
+
+	* index.php: Slight change when checking for user.
+
+2002-06-21 Friday 12:54  martin
+
+	* CHANGES: Ch ch ch changes
+
 2002-06-20 Thursday 23:41  martin
 
 	* mod/forum/db/mysql.sql: Bugfixes from move - this is now up to
