@@ -1105,6 +1105,7 @@ function main_upgrade($oldversion=0) {
     
 
     if ($oldversion < 2005012500) { 
+        /*
         // add new table for meta courses.
         modify_database("","CREATE TABLE `prefix_meta_course` (
             `id` int(1) unsigned NOT NULL auto_increment,
@@ -1116,6 +1117,7 @@ function main_upgrade($oldversion=0) {
         );");
         // add flag to course field
         table_column('course','','meta_course','integer','1','','0','not null');
+        */ // taking this OUT for upgrade from 1.4 to 1.5 (those tracking head will have already seen it)
     }
 
     if ($oldversion < 2005012501) { 

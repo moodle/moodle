@@ -879,6 +879,7 @@ function main_upgrade($oldversion=0) {
     }
 
     if ($oldversion < 2005012500) { // add new table for meta courses.
+        /*
         modify_database("","CREATE TABLE prefix_meta_course (
 	         id SERIAL primary key,
 	         parent_course integer NOT NULL,
@@ -888,6 +889,7 @@ function main_upgrade($oldversion=0) {
         modify_database("","CREATE INDEX prefix_meta_course_parent_idx ON prefix_meta_course (parent_course);");
         modify_database("","CREATE INDEX prefix_meta_course_child_idx ON prefix_meta_course (child_course);");
         table_column('course','','meta_course','integer','1','','0','not null');
+        */ // taking this OUT for upgrade from 1.4 to 1.5 (those tracking head will have already seen it)
     }
 
     if ($oldversion < 2005012501) { //fix table names for consistency
