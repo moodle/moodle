@@ -189,16 +189,17 @@ function survey_get_responses($surveyid, $groupid) {
     global $CFG;
 
     if ($groupid) {
+        $groupsdb = ", {$CFG->prefix}groups_members AS gm";
         $groupsql = "AND gm.groupid = $groupid AND u.id = gm.userid";
     } else {
+        $groupsdb = "";
         $groupsql = "";
     }
 
     return get_records_sql("SELECT MAX(a.time) as time, 
                                    u.id, u.firstname, u.lastname, u.picture
                               FROM {$CFG->prefix}survey_answers AS a, 
-                                   {$CFG->prefix}user AS u,
-                                   {$CFG->prefix}groups_members AS gm
+                                   {$CFG->prefix}user AS u   $groupsdb
                              WHERE a.survey = $surveyid 
                                    AND a.userid = u.id $groupsql
                           GROUP BY u.id, u.firstname, u.lastname
