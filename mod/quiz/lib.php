@@ -100,5 +100,62 @@ function quiz_cron () {
 // Any other quiz functions go here.  Each of them must have a name that 
 // starts with quiz_
 
+function  quiz_print_question($number, $questionid) {
+    echo "<P><B>$number</B></P>";
+    echo "<UL>";
+    echo "<P>XXXXXX</P>";
+    echo "</UL>";
+    echo "<HR>";
+}
+
+
+function quiz_get_user_attempts($quizid, $userid) {
+    return get_records_sql("SELECT * FROM quiz_attempts WHERE quiz = '$quizid' and user = '$userid' ORDER by attempt ASC");
+}
+
+function quiz_get_grade($quizid, $userid) {
+    if (!$grade = get_record_sql("SELECT * FROM quiz_grades WHERE quiz = '$quizid' and user = '$userid'")) {
+        return 0;
+    }
+
+    return $grade->grade;
+}
+
+function quiz_calculate_best_grade($quiz, $attempts) {
+// Calculate the best grade for a quiz given a number of attempts by a particular user.
+
+    switch ($quiz->grademethod) {
+        case "1": // Use highest score
+            $max = 0;
+            foreach ($attempts as $attempt) {
+                if ($attempt->grade > $max) {
+                    $max = $attempt->grade;
+                }
+            }
+            return $max;
+
+        case "2": // Use average score
+            $sum = 0;
+            $count = 0;
+            foreach ($attempts as $attempt) {
+                $sum += $attempt->grade;
+                $count++;
+            }
+            return (float)$sum/$count;
+
+        case "3": // Use first attempt
+            foreach ($attempts as $attempt) {
+                return $attempt->attempt;
+            }
+            break;
+
+        default:
+        case "4": // Use last attempt
+            foreach ($attempts as $attempt) {
+                $final = $attempt->attempt;
+            }
+            return $final;
+    }
+}
 
 ?>
