@@ -115,7 +115,7 @@
     }
 
 
-    if ($USER) {
+    if (!empty($USER->id)) {
         echo '<td align="right">';
         $SESSION->fromdiscussion = "$FULLME";
         if (forum_is_forcesubscribed($forum->id)) {
@@ -158,18 +158,24 @@
             echo "<font size=1><a title=\"$subtexttitle\" href=\"subscribe.php?id=$forum->id\">$subtext</a></font>";
         }
 
-        //If rss are activated at site and forum level and this forum has rss defined, show link
-        if (isset($CFG->enablerssfeeds) && isset($CFG->forum_enablerssfeeds) &&
-            $CFG->enablerssfeeds && $CFG->forum_enablerssfeeds && $forum->rsstype and $forum->rssarticles) {
-            echo "<br />";
-            if ($forum->rsstype == 1) {
-                $tooltiptext = get_string("rsssubscriberssdiscussions","forum",$forum->name);
-            } else {
-                $tooltiptext = get_string("rsssubscriberssposts","forum",$forum->name);
-            }
-            rss_print_link($course->id, $USER->id, "forum", $forum->id, $tooltiptext);
-        }
+        echo '</td>';
+    }
 
+    //If rss are activated at site and forum level and this forum has rss defined, show link
+    if (isset($CFG->enablerssfeeds) && isset($CFG->forum_enablerssfeeds) &&
+        $CFG->enablerssfeeds && $CFG->forum_enablerssfeeds && $forum->rsstype and $forum->rssarticles) {
+        echo '</tr></tr><td align="right">';
+        if ($forum->rsstype == 1) {
+            $tooltiptext = get_string("rsssubscriberssdiscussions","forum",$forum->name);
+        } else { 
+            $tooltiptext = get_string("rsssubscriberssposts","forum",$forum->name);
+        }
+        if (empty($USER->id)) {
+            $userid = 0;
+        } else {
+            $userid = $USER->id;
+        }
+        rss_print_link($course->id, $userid, "forum", $forum->id, $tooltiptext);
         echo '</td>';
     }
 

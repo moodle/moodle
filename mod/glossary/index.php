@@ -55,9 +55,10 @@
         $table->align = array ("LEFT", "CENTER");
     }
 
-    $can_subscribe = (isstudent($course->id) or isteacher($course->id) or isadmin() or $course->id == SITEID);
+    $can_subscribe = (isstudent($course->id) or isteacher($course->id) or isadmin());
 
-    if ($show_rss = ($can_subscribe && isset($CFG->enablerssfeeds) && isset($CFG->glossary_enablerssfeeds) &&
+    if ($show_rss = (($can_subscribe || $course->id == SITEID) && 
+                     isset($CFG->enablerssfeeds) && isset($CFG->glossary_enablerssfeeds) &&
                      $CFG->enablerssfeeds && $CFG->glossary_enablerssfeeds)) {
         $table->head[] = $strrss;
         $table->align[] = "CENTER";
@@ -92,8 +93,13 @@
             if ($glossary->rsstype and $glossary->rssarticles) {
                 //Calculate the tolltip text
                 $tooltiptext = get_string("rsssubscriberss","glossary",$glossary->name);
+                if (empty($USER->id)) {
+                    $userid = 0;
+                } else {
+                    $userid = $USER->id;
+                }
                 //Get html code for RSS link
-                $rsslink = rss_get_link($course->id, $USER->id, "glossary", $glossary->id, $tooltiptext);
+                $rsslink = rss_get_link($course->id, $userid, "glossary", $glossary->id, $tooltiptext);
             }
         }
 
