@@ -1171,9 +1171,10 @@ function require_login($courseid=0, $autologinguest=true, $cm=null) {
             $USER->loggedin = true;
             $USER->site = $CFG->wwwroot;
             $USER->realuser = $realuser;
-            if (isset($SESSION->currentgroup[$course->id])) {    // Remember current setting for later
-                $SESSION->oldcurrentgroup = $SESSION->currentgroup[$course->id];
-                unset($SESSION->currentgroup[$course->id]);
+            $USER->sessionIP = md5(getremoteaddr());   // Store the current IP in the session
+            if (isset($SESSION->currentgroup)) {    // Remember current cache setting for later
+                $SESSION->oldcurrentgroup = $SESSION->currentgroup;
+                unset($SESSION->currentgroup);
             }
             $guest_name = fullname($USER, true);
             add_to_log($course->id, "course", "loginas", "../user/view.php?id=$course->id&$USER->id$", "$realname -> $guest_name");
