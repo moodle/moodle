@@ -133,10 +133,14 @@ global $USER;
     if (! $course = get_record("course", "id", $dialogue->course)) {
         error("Course is misconfigured");
     }
+    if (! $cm = get_coursemodule_from_instance("dialogue", $dialogue->id, $course->id)) {
+        error("Course Module ID was incorrect");
+    }
+	
+    $groupid = get_current_group($course->id);
     // add current group before list of students if it's the teacher
     if (isteacher($course->id) and groupmode($course)) {
         // show teacher their current group
-        $groupid = get_current_group($course->id);
         if ($groupid) {
             if (!$group = get_record("groups", "id", $groupid)) {
                 error("Dialogue get available students: group not found");
@@ -152,13 +156,19 @@ global $USER;
 		foreach ($users as $otheruser) {
 			// ...exclude self and...
 			if ($USER->id != $otheruser->id) {
-                // if teacher and groups then exclude students not in the current group
+                // ...if teacher and groups then exclude students not in the current group
                 if (isteacher($course->id) and groupmode($course) and $groupid) {
                     if (!ismember($groupid, $otheruser->id)) {
                         continue;
                     }
                 }
-				// ...any already in any open conversations unless multiple conversations allowed
+                // ...if student and groupmode is SEPARATEGROUPS then exclude students not in student's group
+                if (isstudent($course->id) and (groupmode($course, $cm) == SEPARATEGROUPS)) {
+                    if (!ismember($groupid, $otheruser->id)) {
+                        continue;
+                    }
+                }
+				// ... and any already in any open conversations unless multiple conversations allowed
 				if ($dialogue->multipleconversations or count_records_select("dialogue_conversations", 
                         "dialogueid = $dialogue->id AND 
                         ((userid = $USER->id AND recipientid = $otheruser->id) OR 
