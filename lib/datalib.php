@@ -1127,13 +1127,16 @@ function get_course_students($courseid, $sort="s.timeaccess", $dir="", $page=0, 
         $select .= " AND u.id = gm.userid AND gm.groupid = '$group'";
     }
 
+    if ($sort) {
+        $sort = " ORDER BY $sort ";
+    }
+
     return get_records_sql("SELECT u.id, u.username, u.firstname, u.lastname, u.maildisplay, u.mailformat,
                             u.email, u.city, u.country, u.lastlogin, u.picture, u.department, u.institution,
                             u.lang, u.timezone, s.timeaccess as lastaccess
                             FROM {$CFG->prefix}user u, 
                                  {$CFG->prefix}user_students s $groupmembers
-                            WHERE $select
-                            ORDER BY $sort $dir $limit");
+                            WHERE $select $sort $dir $limit");
 }
 
 /**
