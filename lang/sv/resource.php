@@ -1,12 +1,14 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.3 (2004052500)
+      // resource.php - created with Moodle 1.4 (2004083100)
 
 
 $string['addresource'] = 'Lägg till resurs';
 $string['chooseafile'] = 'Välj eller ladda upp en fil';
+$string['chooseparameter'] = 'Välj parameter';
 $string['configdefaulturl'] = 'Det här värdet används för att fylla i en URL i formuläret när Du skapar en ny URL-baserad resurs.';
 $string['configfilterexternalpages'] = 'Om Du aktiverar den här inställningen så kommer alla externa resurser(webbsidor, uppladdade HTML-filer att bearbetas (processas) av de filter som är definierade för webbplatsen (som t ex ord- och begreppslistans automatiska länkar). Om Du väljer detta alternativ så kan det leda till att Dina kurssidor visas märkbart långsammare. Var försiktig och använd detta alternativ endast när Du verkligen behöver det.';
 $string['configframesize'] = 'Det här värdet är storleken (i pixlar)på den översta ramen (som innehåller navigationsverktygen)  när en webbsida eller en uppladdad fil visas i en ram.';
+$string['configparametersettings'] = 'Det här ställer in standardvärdet för rutan för inställningar av parametrar i formuläret när Du vill lägga till nya resurser. Efter det att Du har gjort detta en första gång så blir detta en individuell inställning för varje användare.';
 $string['configpopup'] = 'När Du lägger till en ny resurs som går att visa i ett \'popup\'-fönster, vill Du då att detta alternativ ska vara det förinställda standardvalet?';
 $string['configpopupdirectories'] = 'Ska \'popup\'-fönster som förinställt standardval visa kataloglänkar?';
 $string['configpopupheight'] = 'Vilken höjd ska vara det förinställda standardvalet på hödjen för nya \'popup\'-fönster?';
@@ -17,18 +19,23 @@ $string['configpopupscrollbars'] = 'Ska det förinställda standardvalet vara att 
 $string['configpopupstatus'] = 'Ska det förinställda standardvalet vara att nya \'popup\'-fönster visar statusraden?';
 $string['configpopuptoolbar'] = 'Ska det förinställda standardvalet vara att nya \'popup\'-fönster  visar verktygsraden?';
 $string['configpopupwidth'] = 'Vilket ska det förinställda standardvalet för bredden på nya \'popup\'-fönster vara? ';
+$string['configsecretphrase'] = 'Den här hemliga frasen används för att skapa det krypterade kodvärde som kan skickas till vissa resurser som en parameter. Den krypterade koden skapas av ett md5-värde av current_users (den aktuelle användarens) IP-adress konkatenerad med Din hemliga fras. t ex code = md5(IP.secretphrase). Detta gör det möjligt för målresursen att verifiera uppkopplingen som en extra säkerhetsåtgärd.';
 $string['configwebsearch'] = 'När Du lägger till en URL som en webbsida eller en webblänk så erbjuds användaren denna plats som en webbsajt. Detta för att hjälpa användaren att hitta det denne söker. ';
+$string['configwindowsettings'] = 'Detta ställer in standardvärdet för rutan för inställningar i Windows när Du lägger till nya resurser. Efter det att Du har gjort detta en första gång så blir detta en individuell inställning för varje användare.';
 $string['directlink'] = 'Direktlänk till den här filen';
 $string['directoryinfo'] = 'Alla filer i den valda katalogen kommer att visas.';
+$string['display'] = 'Visa';
 $string['editingaresource'] = 'Redigera en resurs';
+$string['encryptedcode'] = 'Krypterad kod';
 $string['example'] = 'Exempel';
-$string['examplereference'] = 'Tobin, K. & Tippins, D (1993) Constructivism as a Referent for Teaching and Learning. In: K. Tobin (Ed) The Practice of Constructivism in Science Education, pp 3-21, Lawrence-Erlbaum, Hillsdale, NJ.';
 $string['exampleurl'] = 'http://www.example.com/somedirectory/somefile.html';
 $string['fetchclienterror'] = 'Din webbläsare påträffade ett fel när den försökte ladda ner webbsidan (kanske fel adress)';
 $string['fetcherror'] = 'Ett fel påträffades i samband med hämtningen av  webbsidan';
 $string['fetchservererror'] = 'Ett serverfel påträffades i samband med hämtningen av webbsidan (kanske ett i fel i ett serverprogram)</p>';
 $string['filename'] = 'Filnamn';
 $string['filtername'] = 'Automatisk länkning av resurs';
+$string['frameifpossible'] = 'Placera en resurs i en ram för att webbplatsens
+navigation ska fortsätta att vara synlig';
 $string['fulltext'] = 'Full text';
 $string['htmlfragment'] = 'HTML-fragment';
 $string['maindirectory'] = 'HTML fragment';
@@ -40,7 +47,7 @@ $string['newfullscreen'] = 'Visa helskärm';
 $string['newheight'] = 'Förinställd höjd på fönstret';
 $string['newlocation'] = 'Visa placeringen';
 $string['newmenubar'] = 'Visa menyraden';
-$string['newresizable'] = 'Låt användarna återställa fönstrets storlek';
+$string['newresizable'] = 'Låt användarna ändra fönstrets storlek';
 $string['newscrollbars'] = 'Låt användarna \'skrolla\' fönstret';
 $string['newstatus'] = 'Visa statusraden';
 $string['newtoolbar'] = 'Visa verktygsraden';
@@ -50,6 +57,10 @@ $string['newwindowopen'] = 'Visa den här resursen i ett nytt \'pop-up\'-fönster'
 $string['note'] = 'OBS';
 $string['notefile'] = 'För att ladda upp fler filer till kursen (så att de uppträder i denna lista) använd <A HREF=$a >Filhanteraren</A>.';
 $string['notypechosen'] = 'Du måste välja typ.  Använd tillbakaknappen för att gå tillbaka och försöka igen.';
+$string['pagedisplay'] = 'Visa den här resursen i det aktuella fönstret ';
+$string['pagewindow'] = 'Samma fönster';
+$string['parameter'] = 'Parameter';
+$string['parameters'] = 'Parametrar';
 $string['popupresource'] = 'Den här resursen bör dyka upp i ett snabbfönster.';
 $string['popupresourcelink'] = 'Om den inte gjorde det, klicka här: $a';
 $string['resourcetype'] = 'Typ av resurs';
@@ -62,5 +73,12 @@ $string['resourcetype6'] = 'HTML-text';
 $string['resourcetype7'] = 'Program';
 $string['resourcetype8'] = 'Wiki text';
 $string['resourcetype9'] = 'Katalog';
+$string['resourcetypedirectory'] = 'Visa en katalog';
+$string['resourcetypefile'] = 'Länk till en fil eller en webbplats';
+$string['resourcetypehtml'] = 'Utforma en webbsida';
+$string['resourcetypelabel'] = 'Infoga en etikett';
+$string['resourcetypetext'] = 'Utforma en textsida';
+$string['searchweb'] = 'Sök en webbsida';
+$string['variablename'] = 'Namn på variabel';
 
 ?>

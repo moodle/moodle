@@ -1,13 +1,16 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.3 (2004052500)
+      // editor.php - created with Moodle 1.3.2 (2004052502)
 
 
 $string['about'] = 'Om den här redigeraren';
 $string['absbottom'] = 'Absbottom';
 $string['absmiddle'] = 'Absmiddle';
 $string['address'] = 'Adress';
-$string['alignment'] = 'Alignment';
+$string['alignment'] = 'Justering';
 $string['alternatetext'] = 'Alternativ text';
+$string['anchorhelp'] = 'Det här skapar bara ett ankare. Du behöver fortfarande skapa en länk manuellt.';
+$string['anchorname'] = 'Namn på ankare';
+$string['anchors'] = 'Ankare';
 $string['baseline'] = 'Baslinje';
 $string['bold'] = 'Fet';
 $string['borderthickness'] = 'Tjocklek på tabellram';
@@ -21,6 +24,7 @@ $string['chooseicon'] = 'Välj en ikon som Du vill lägga in';
 $string['close'] = 'Stäng';
 $string['cols'] = 'Kolumner';
 $string['copy'] = 'Kopiera urvalet';
+$string['createanchor'] = 'Skapa ankare';
 $string['createfolder'] = 'Skapa en mapp ';
 $string['createlink'] = 'Infoga  en webblänk';
 $string['cut'] = 'Klipp ut urvalet';
@@ -99,7 +103,7 @@ $string['undo'] = 'Ångra senaste aktivitet';
 $string['unorderedlist'] = 'Lista med \'ringar\'';
 $string['upload'] = 'Ladda upp';
 $string['vertical'] = 'Vertikal';
-$string['width'] = 'Vidd';
+$string['width'] = 'Bredd';
 $string['wordclean'] = 'Rensa HTML skapad med Word';
 $string['zip'] = 'Zip';
 

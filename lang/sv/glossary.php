@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.3 (2004052500)
+      // glossary.php - created with Moodle 1.3.2 (2004052502)
 
 
 $string['addcomment'] = 'Lägg till kommentarer';
@@ -61,16 +61,17 @@ $string['deletingnoneemptycategory'] = 'Om en kategori som inte är tom tas bort 
 $string['descending'] = '(fallande)';
 $string['destination'] = 'Mål ';
 $string['displayformat'] = 'Visa format';
-$string['displayformat2'] = 'Komplett och med författare';
-$string['displayformat3'] = 'Encyklopedi';
-$string['displayformat4'] = 'FAQ';
-$string['displayformat5'] = 'Komplett men utan författare';
-$string['displayformat6'] = 'Lista över bidrag';
 $string['displayformatcontinuous'] = 'Fortlöpande men utan författare';
-$string['displayformatdefault'] = 'Enkel, ordboksstil';
+$string['displayformatdictionary'] = 'Enkel ordboksstil';
+$string['displayformatencyclopedia'] = 'Encyklopedi';
+$string['displayformatentrylist'] = 'Lista över bidrag';
+$string['displayformatfaq'] = 'FAQ';
+$string['displayformatfullwithauthor'] = 'Komplett med författare';
+$string['displayformatfullwithoutauthor'] = 'Komplett utan författare';
 $string['displayformats'] = 'Visningsformat';
-$string['displayformatssetup'] = 'Visa \"inställningar av format\"';
+$string['displayformatssetup'] = 'Visa ';
 $string['duplicateentry'] = 'Dubblerat bidrag';
+$string['editalways'] = 'Redigera alltid';
 $string['editcategories'] = 'Redigera kategorier';
 $string['editentry'] = 'Redigera bidrag';
 $string['editingcomment'] = 'Redigerar kommentar';
@@ -100,6 +101,7 @@ $string['filetoimport'] = 'Fil att importera';
 $string['fillfields'] = '\'Begrepp\' och definition\' är obligatoriska fält';
 $string['filtername'] = 'Länka ord- och begreppslista automatiskt ';
 $string['fullmatch'] = 'Matcha hela ord bara<br /><small>när de är automatiskt länkade</small>';
+$string['globalglossary'] = 'Global ord- och begreppslista';
 $string['glossaryleveldefaultsettings'] = 'Standardval för inställningar på den globala nivån i en ord- och begreppslista ';
 $string['glossarytype'] = 'Typ av ord- och begreppslista';
 $string['glosssaryexported'] = 'Ord- och begreppslistan har exporterats';
@@ -138,7 +140,7 @@ $string['ratingsuse'] = 'Använd bedömningar/värderingar ';
 $string['ratingtime'] = 'Begränsa bedömningar/värderingar till bidrag inom följande tidsperiod:';
 $string['rejectedentries'] = 'Bidrag som inte antagits';
 $string['rejectionrpt'] = 'Rapport över icke antagna bidrag';
-$string['rsssubscriberss'] = 'Visa RSS-inmatningen för  ';
+$string['rsssubscriberss'] = 'Visa RSS-inmatningen för  \'$a\' koncept';
 $string['searchindefinition'] = 'Sök i begrepp OCH definitioner?';
 $string['secondaryglossary'] = 'sekundär ord- och begreppslista';
 $string['sendinratings'] = 'Skicka in de senaste av mina bedömningar/värderingar';

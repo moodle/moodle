@@ -1,25 +1,28 @@
 <?PHP // $Id$ 
-      // wiki.php - created with Moodle 1.3.1 (2004052501)
+      // wiki.php - created with Moodle 1.4 (2004083100)
 
 
 $string['action'] = '-- Händelse --';
 $string['administration'] = 'Administration';
+$string['allowremovepages'] = 'Tillåt  \'ta bort sidor\'';
+$string['allowrevertchanges'] = 'Tillåt  \'återställ massändringar\'';
+$string['allowsetpage'] = 'Tillåt \'ställ in flaggor för sidor\'';
+$string['allowstrippages'] = 'Tillåt \'rensa sidor\'';
 $string['attachments'] = 'Bifogade sidor';
 $string['author'] = 'Författare';
 $string['authorfieldpattern'] = 'Fältmönster för författare';
 $string['authorfieldpatternerror'] = 'Var snäll och ange författare';
-$string['backlinks'] = 'Rererande länkar';
+$string['backlinks'] = 'Refererande länkar';
 $string['binimgtoolarge'] = 'Bilden är för stor!';
 $string['binnoimg'] = 'Detta är ett ogiltigt filformat';
 $string['browse'] = 'Bläddra';
 $string['canceledit'] = 'Avbryt';
+$string['cannotchangepage'] = 'Den här sidan kan Du inte ändra på.';
 $string['changes'] = '$a ändringar';
 $string['changesfield'] = 'Antal timmar sedan den senaste ändringen';
 $string['changesfielderror'] = 'Var snäll och ange ett korrekt antal timmar';
 $string['checklinks'] = 'Kontrollera länkar';
-$string['checklinkscheck'] = 'Är Du säker på att Du vill kontrollera länkarna på den här sidan?
-
-';
+$string['checklinkscheck'] = 'Är Du säker på att Du vill kontrollera länkarna på den här sidan?';
 $string['checklinksnotice'] = 'Medan sidan arbetar så får Du vara lite tålmodig-';
 $string['chooseadministration'] = '-- Administration --';
 $string['chooseafile'] = 'Välj/ladda upp inledande sida';
@@ -34,6 +37,7 @@ $string['deleteversions'] = 'Antal senaste versioner att ta bort';
 $string['deleteversionserror'] = 'Var snäll och ange ett korrekt antal versioner';
 $string['diff'] = 'Skillnad';
 $string['differences'] = 'Skillnader mellan version $a->new_ver och $a->old_ver av $a->pagename.';
+$string['disablecamel'] = 'Avaktivera länkar av typ CamelCase';
 $string['disabledpage'] = 'Den här sidan är inte tillgänglig f n.';
 $string['doesnotexist'] = 'Den här sidan finns inte ännu, var snäll och välj \"Redigera\" om Du vill skapa den. ';
 $string['downloadaszip'] = 'Nedladdningsbart ziparkiv';
@@ -108,6 +112,7 @@ $string['nothingtostrip'] = 'Det finns inga sidor med mer än en version.';
 $string['nowikicreated'] = 'Inga inlägg har gjorts i den här wikin,';
 $string['of'] = 'av';
 $string['offline'] = 'OFFLINE';
+$string['optional'] = 'Valfri';
 $string['orphanedpage'] = '\'Föräldralös\' sida';
 $string['orphanedpages'] = '\'Föräldralösa\' sidor';
 $string['otherwikis'] = 'Andra Wikis';
@@ -142,11 +147,18 @@ $string['sitemap'] = 'Sajtkarta';
 $string['smfor'] = 'Sajtkarta för';
 $string['status'] = 'Status';
 $string['strippagecheck'] = 'Är Du säker på att Du vill ta bort gamla versioner från dessa sidor?';
+$string['studentadminoptions'] = 'Alternativ för administration för studenter/elever/deltagare/lärande';
 $string['submit'] = 'Skicka';
+$string['tabattachments'] = 'Bifogade filer';
+$string['tabedit'] = 'Redigera';
+$string['tabinfo'] = 'Info';
+$string['tablinks'] = 'Länkar';
+$string['tabview'] = 'Visa';
 $string['thanksforcontribution'] = 'Tack för Ditt bidrag';
 $string['thispageisntlinkedfromanywhereelse'] = 'Den här sidan länkas inte från någon annanstans, ';
 $string['updatedpages'] = 'Uppdaterade sidor';
 $string['uplerror'] = 'Någonting blev tyvärr fel under uppladdningen av filen.';
+$string['uplinsect'] = 'Ladda upp till';
 $string['uplnewnam'] = 'Spara under ett annat filnamn';
 $string['upload0'] = 'Använd det här formuläret för att ladda upp en valfri binär fil till wikin:';
 $string['uploadedon'] = 'Uppladdad på';
@@ -162,6 +174,7 @@ $string['wantedpages'] = 'Önskade sidor';
 $string['wikidefaultpagename'] = 'Wiki-index';
 $string['wikiexport'] = 'Sidor att exportera';
 $string['wikiexportcomment'] = 'Har kan Du konfigurera exporten så som Du önskar.';
+$string['wikilinkoptions'] = 'Alternativ för automatisk länkning för Wiki';
 $string['wikilinks'] = 'Wiki-länkar';
 $string['wikiname'] = 'Namn på sida';
 $string['wikistartederror'] = 'Det finns redan inlägg i Wikin - det går inte att ändra,';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.3 Beta (2004051100)
+      // auth.php - created with Moodle 1.3.2 (2004052502)
 
 
 $string['auth_dbdescription'] = 'Denna metod använder en extern databastabell för att kontrollera huruvida ett givet användarnamn och lösenord är giltigt.  Om kontot är nytt, så kan information från andra fält också kopieras till Moodle.';
@@ -16,13 +16,13 @@ $string['auth_dbtype'] = 'Databastyp (se <A HREF=../lib/adodb/readme.htm#drivers
 $string['auth_dbuser'] = 'Användarnamn med läsbehörighet till databasen';
 $string['auth_emaildescription'] = 'E-postbekräftelse är standardvalet som autenticeringsmetod.  När användaren registrerar sig, väljer eget nytt användarnamn och lösenord, kommer en bekräftelse via e-post sändas till användarens e-postadress.  Detta e-postbrev innehåller en säker länk till en sida där användaren kan bekräfta sitt konto. Framtida inlogging kontrollerar bara användarnamn och lösenord mot de lagrade värdena i Moodles databas.';
 $string['auth_emailtitle'] = 'E-postbaserad autenticering';
-$string['auth_fctitle'] = 'Använd en FirstClass server';
-$string['auth_fcdescription'] = "Denna metod använder en FirstClass server för att kontrollera huruvida ett givet användarnamn och lösenord är giltiga.";
-$string['auth_fchost'] = 'FirstClass serverns adress. Använd IP nummer eller DNS namn.';
-$string['auth_fcfppport'] = 'Serverport  (3333 är den vanligaste)';
-$string['auth_fcuserid'] = "Namn på FirstClass konto med rättigheten 'Underadministratör'.";
-$string['auth_fcpasswd'] = 'Lösenordet för ovanstående FirstClass konto.';
-$string['auth_fccreators'] = "Lista av FirstClass grupper som får behörighet att skapa nya kurser. Skilj på grupperna med ';'. Gruppernas namn måste anges exakt. Systemet gör skillnad på versaler och gemener.";
+$string['auth_fccreators'] = 'Lista på grupper vars medlemmar har tillstånd att skapa nya kurser. Skilj flerfaldiga grupper med \';\'. Namn måste stavas exakt som på FirstClass servern. Systemet är skiftlägeskänsligt.';
+$string['auth_fcdescription'] = 'Den här metoden använder en FirstClass server för att kontrollera huruvida ett användarnamn eller ett lösenord är giltigt.';
+$string['auth_fcfppport'] = 'Serverport (3333 är den vanligaste)';
+$string['auth_fchost'] = 'Adressen till FirstClass-servern. Använd det här IP-numret eller DNS-namnet.';
+$string['auth_fcpasswd'] = 'Lösenordet för det ovanstående kontot';
+$string['auth_fctitle'] = 'Använd en FirstClass-server';
+$string['auth_fcuserid'] = 'AnvändarID för FirstClass-konto med inställningen \"Subadministrator\" aktiverad.';
 $string['auth_imapdescription'] = 'Denna metod använder en IMAP-server för att kontrollera huruvida ett givet användarnamn och lösenord är giltigt.';
 $string['auth_imaphost'] = 'IMAP-serverns adress. Använd IP-nummer, inte DNS- namn.';
 $string['auth_imapport'] = 'IMAP-serverns portnummer. Vanligtvis är detta 143 eller 993.';
@@ -35,6 +35,7 @@ $string['auth_ldap_create_context'] = 'Om Du aktiverar \'Skapa användare\' med e
 $string['auth_ldap_creators'] = 'Lista av grupper som har behörighet att skapa nya kurser. Skilj på grupperna med \';\'. Vanligtvis något liknande \'ch=utbildare, ou=personal, o=minOrg\'';
 $string['auth_ldap_host_url'] = 'Specificera en LDAP-värd i URL-form som \'ldap://ldap.myorg.com/\' eller \'ldaps://ldap.myorg.com/\' ';
 $string['auth_ldap_memberattribute'] = 'Specificera en medlems egenskaper när användare tillhör en grupp. Vanligtvis \'medlem\'';
+$string['auth_ldap_objectclass'] = 'Det här är det filter som används för att namnge/söka efter användare. Normalt sett så ska Du ställa in det till någonting i stil med objectClass=posixAccount . Det är i linje med standarden för objectClass=* som kommer att returnera all aobjekt från LDAP.';
 $string['auth_ldap_search_sub'] = 'Sätt in ett värde <> 0 om Du vill söka användare från subkontexter.';
 $string['auth_ldap_update_userinfo'] = 'Uppdatera användarinformation (förnamn, efternamn, adress..) från LDAP till Moodle.  Se /auth/ldap/attr_mappings.php för mappnings- information';
 $string['auth_ldap_user_attribute'] = 'Attributet som används för namn/sökning av användare.  Vanligtvis \'cn\'.';
@@ -53,6 +54,7 @@ $string['auth_nonedescription'] = 'Användare kan logga in och skapa giltiga kont
 $string['auth_nonetitle'] = 'Ingen autenticering';
 $string['auth_pop3description'] = 'Denna metod använder en POP3 server för att kontrollera huruvida ett givet användarnamn och lösenord är giltiga.';
 $string['auth_pop3host'] = 'POP3-serveradressen. Använd IP-nummer, inte DNS-namn.';
+$string['auth_pop3mailbox'] = 'Namn på den \"brevlåda\" (mailbox) som Du vill försöka skapa en koppling till. (Vanligtvis INBOX)';
 $string['auth_pop3port'] = 'Serverport (110 är den vanligaste)';
 $string['auth_pop3title'] = 'Använd en POP3-server';
 $string['auth_pop3type'] = 'Servertyp. Om Din server använder certifikat som säkerhet, välj pop3cert.';

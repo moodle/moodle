@@ -1,37 +1,78 @@
 <?PHP // $Id$ 
-      // scorm.php - created with Moodle 1.3 (2004052500)
+      // scorm.php - created with Moodle 1.3.2 (2004052502)
 
 
+$string['asset'] = 'Tillgång';
+$string['attr_error'] = 'Olämpligt värde för attributet ($a->attr) i taggen $a->tag.';
 $string['autocontinue'] = 'Fortsätt automatiskt';
+$string['badmanifest'] = 'Några fel med manifestet: se loggarna över fel';
 $string['browse'] = 'Bläddra';
 $string['browsed'] = 'Genombläddrad';
-$string['browsemode'] = 'Löge för bläddring';
+$string['browsemode'] = 'Läge för bläddring';
 $string['chooseapacket'] = 'Välj eller uppdatera ett SCORM-paket';
 $string['completed'] = 'Slutfört';
+$string['configframesize'] = 'Det här värdet är storleken (i pixlar) på den översta ramen (som innehåller navigationen) när Du spelar upp ett SCORM-paket-';
+$string['configpopup'] = 'Ska det här alternativet vara aktiverat som standard när Du lägger till ett SCORM-paket som går att visa i ett popup-fönster?';
+$string['configpopupheight'] = 'Vilken höjd ska vara den förinställda standardhöjden på nys popup-fönster?';
+$string['configpopupresizable'] = 'Ska storleken på popup-fönster gå att ändra som standard? ';
+$string['configpopupscrollbars'] = 'Ska popup-fönster gå skrolla som standard?';
+$string['configpopupstatus'] = 'Ska popup-fönster visa statusraden som standard?';
+$string['configpopupwidth'] = 'Vilken bredd ska nys popup-fönster ha som förinställd standard?';
 $string['coursepacket'] = 'Kurspaket';
 $string['coursestruct'] = 'Struktur på kurs';
 $string['datadir'] = 'Fel i filsystemet: det går inte att skapa en datakatalog för kursen';
+$string['domxml'] = 'DOMXML externt bibliotek';
 $string['entercourse'] = 'Mata in en SCORM-kurs';
+$string['errorlogs'] = 'Log över fel';
 $string['failed'] = 'Det fungerade inte';
+$string['found'] = 'Manifestet hittades';
+$string['gradeaverage'] = 'Medelbetyg/omdöme';
+$string['gradehighest'] = 'Högsta betyg/omdöme';
+$string['grademethod'] = 'Metod för betyg/omdömen';
+$string['gradescoes'] = 'Situation angående scoes';
+$string['gradesum'] = 'Summera betyg/omdöme(n)';
+$string['guestsno'] = 'Gäster har inte tillgång till scorm-kurser';
 $string['incomplete'] = 'Inte komplett';
+$string['missing_attribute'] = 'Saknat attribut $a->attr i taggen $a->tag ';
+$string['missing_tag'] = 'Saknad tagg $a->tag';
 $string['mode'] = 'Läge';
 $string['modulename'] = 'Scorm';
 $string['modulenameplural'] = 'Scorms (flera)';
+$string['newheight'] = 'Standardhöjd på fönster (i pixlar)';
+$string['newresizable'] = 'Tillåt förändring av storlek på fönster';
+$string['newscrollbars'] = 'Tillåt skrollning av fönster';
+$string['newstatus'] = 'Visa statusraden';
+$string['newwidth'] = 'Standardbredd på fönster (i pixlar)';
+$string['newwindow'] = 'Nytt fönster';
+$string['newwindowopen'] = 'Visa det här SCORM-paketet i ett nytt popup-fönster';
 $string['next'] = 'Fortsätt';
+$string['no_attributes'] = 'Taggen $a->tag måste ha attribut';
+$string['no_children'] = 'Taggen $a->tag måste ha barn';
 $string['nomanifest'] = 'Kunde inte hitta manifest';
 $string['noreports'] = 'Ingen rapport att visa';
 $string['normal'] = 'Normal';
+$string['not_corr_type'] = 'Felaktig matchning av datatyp för taggen  $a->tag';
 $string['notattempted'] = 'Inget försök';
+$string['organizations'] = 'Organisationer';
 $string['packagedir'] = 'filsystemet: det går inte att skapa en katalog för paketet';
 $string['passed'] = 'Genomförd';
+$string['php5'] = 'PHP 5 (DOMXML ursprungligt (native) bibliotek)';
+$string['position_error'] = '$a->tag taggen kan inte vara \"child\" till $a->parent taggen';
 $string['prev'] = 'Föregående';
 $string['regular'] = 'Normalt manifest';
 $string['report'] = 'Rapport';
 $string['review'] = 'Visa igen';
+$string['scoes'] = 'Scoes';
 $string['score'] = 'Resultat';
+$string['syntax'] = 'Syntaxfel';
+$string['tag_error'] = 'Okänd tagg ($a->tag) med detta innehåll: $a->value';
+$string['too_many_attributes'] = 'Taggen $a->tag har för många attribut';
+$string['too_many_children'] = 'Taggen $a->tag har för många barn';
 $string['trackingloose'] = 'VARNING: spårningsdata till detta SCORM-paket kommer att försvinna!';
 $string['validateascorm'] = 'Validera ett SCORM-paket';
 $string['validation'] = 'Resultat av validering';
+$string['validationtype'] = 'Det här preferenssetet använder DOMXML-biblioteket för att validera SCORM Mansifestet om Du inte överger det markerade valet.  ';
+$string['versionwarning'] = 'Den här versionen av manifestet är äldre än 1.3, varning vid $a->tag taggen';
 $string['viewallreports'] = 'Visa rapporter för $a försök';
 
 ?>

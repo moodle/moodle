@@ -1,0 +1,45 @@
+<p align="center"><b>Att ladda upp anv&auml;ndare</b></p>
+
+<p>Till att b&ouml;rja med, observera att <strong>
+det i regel inte &auml;r n&ouml;dv&auml;ndigt att importera anv&auml;ndare i klump.
+</strong> - f&ouml;r att minska Ditt eget arbete med underh&aring;ll s&aring; b&ouml;r Du
+f&ouml;rst unders&ouml;ka olika former av autenticering som inte kr&auml;ver manuellt 
+underh&aring;ll, s&aring;som att koppla upp sig till befintliga externa databaser
+eller att l&aring;ta anv&auml;ndarna skapa sina egna konton. Se sektionen f&ouml;r Autenticering
+p&aring; administrationsmenyn.</p>
+<p>
+Om Du &auml;r s&auml;ker p&aring; att Du vill importera anv&auml;ndarkonton i m&auml;ngd fr&aring;n en textfil s&aring; beh&ouml;ver Du formattera Din
+textfil enligt f&ouml;ljande:</p>
+
+<ul>
+  <li>Varje rad i filen inneh&aring;ller en post</li>
+  <li>Varje post &auml;r en serie data som &auml;r separerade med komman</li>
+  <li>Den f&ouml;rsta posten i filen &auml;r speciell och den inneh&aring;ller en lista med f&auml;ltnamn. Detta definierar 
+  formatet p&aring; resten av filen.
+    <blockquote>
+      <p><strong>Obligatoriska f&auml;lt:</strong> dessa f&auml;lt m&aring;ste vara med i den f&ouml;rsta postenm
+	   och definierad f&ouml;r varje anv&auml;ndare</p>
+      <p></p>
+      <font color="#990000" face="Courier New, Courier, mono">username, password, firstname, lastname, email</font></p>
+</p>
+      <p><strong>F&auml;ltnamn av standardtyp:</strong> dessa &auml;r valfria - om de inte finns med s&aring; tas v&auml;rdena fr&aring;n den prim&auml;ra admin</p>
+      <p><font color="#990000" face="Courier New, Courier, mono">institution, department, city, country, lang, timezone</font> </p>
+      <p><strong>Valfria f&auml;ltnamn: </strong> alla dessa &auml;r helt valfria. Namnen p&aring; kurserna &auml;r  &quot;kortnamnen&quot; p&aring; kurserna
+	   - om de finns med som kommer anv&auml;ndarna att registreras som studenter/elever/deltagare/l&auml;rande p&aring; dessa kurser. Namn p&aring; grupper m&aring;ste vara kopplade till
+	  motsvarande kurser, t ex  grupp1 till kurs1, etc.</p>
+      <p> <font color="#990000" face="Courier New, Courier, mono">idnumber, icq, phone1, phone2, address, url, description, mailformat, maildisplay, htmleditor, autosubscribe, course1, course2, course3, course4, course5, group1, group2, group3, group4, group5</font></p>
+    </blockquote>
+    </li>
+  <li>Komman inom data m&aring;ste vara kodade som &amp;#44 - skriptet kommer automatiskt att avkoda dessa tillbaka till komman. </li>
+  <li>F&ouml;r Booleanska f&auml;lt, anv&auml;nder Du  0 f&ouml;r "false" och 1 f&ouml;r "true". </li>
+  <li>OBS: Om en anv&auml;ndare redan &auml;r registrerad som anv&auml;ndare i Moodles databas, s&aring; kommer det h&auml;r skriptet att returnera 
+ numret p&aring; dennes anv&auml;ndarID "userid number" (database index), och sedan registrera den anv&auml;ndaren som en student/elev/deltagare/l&auml;rande 
+p&aring; vilken som helst av de angivna kurserna UTAN att uppdatera de &ouml;vriga angivna data.</li>
+</ul>
+  
+  
+<p>H&auml;r &auml;r ett exempel p&aring; en giltig importfil:</p>
+<p><font size="-1" face="Courier New, Courier, mono">username, password, firstname, lastname, email, lang, idnumber, maildisplay, course1, group1<br />
+jonest, verysecret, Tom, Jones, jonest@someplace.edu, en, 3663737, 1, Intro101, Section 1<br />
+reznort, somesecret, Trent, Reznor, reznort@someplace.edu, en_us, 6736733, 0, Advanced202, Section 3</font></p>
+

@@ -1,10 +1,10 @@
 <?PHP // $Id$ 
-      // lesson.php - created with Moodle 1.3 Beta (2004051100)
+      // lesson.php - created with Moodle 1.4 (2004083100)
 
 
 $string['actionaftercorrectanswer'] = 'Det som händer vid rätt svar';
 $string['addabranchtable'] = 'Lägg till en tabell för förgrening';
-$string['addanendofbranch'] = 'Lägg ett ';
+$string['addanendofbranch'] = 'Lägg till ett slut på förgrening';
 $string['addaquestionpage'] = 'Lägg till en sida med fråga';
 $string['answer'] = 'Svar';
 $string['answersfornumerical'] = 'Svar på numeriska frågor bör vara matchade par av minimala och maximala värden';
@@ -47,6 +47,7 @@ $string['multipleanswer'] = 'Flera svar';
 $string['nextpage'] = 'Nästa sida';
 $string['noanswer'] = 'Det finns inget angivet svar';
 $string['noattemptrecordsfound'] = 'Inga försök har registrerats, inga betyg/omdömen är avgivna';
+$string['nobranchtablefound'] = 'Det gick inte att hitta någon förgreningstabell';
 $string['normal'] = 'Normal - följ lektionens progression';
 $string['notdefined'] = 'Inte definierad';
 $string['notitle'] = 'Ingen titel';
@@ -69,7 +70,7 @@ $string['questiontype'] = 'Typ av fråga';
 $string['reached'] = 'uppnådd';
 $string['redisplaypage'] = 'Sida för återvisning';
 $string['response'] = 'Respons';
-$string['sanitycheckfailed'] = 'Kontrol misslyckades. Det här försöket har tagits bort';
+$string['sanitycheckfailed'] = 'Kontrollen misslyckades. Det här försöket har tagits bort';
 $string['savepage'] = 'Spara sida';
 $string['showanunansweredpage'] = 'Visa en obesvarad sida';
 $string['showanunseenpage'] = 'Visa en tidigare inte visad sida';

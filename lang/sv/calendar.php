@@ -1,9 +1,7 @@
 <?PHP // $Id$ 
-      // calendar.php - created with Moodle 1.3 Beta (2004051100)
+      // calendar.php - created with Moodle 1.3.2 (2004052502)
 
 
-$string['april'] = 'April';
-$string['august'] = 'Augusti';
 $string['calendar'] = 'Kalender';
 $string['calendarheading'] = '$a Kalender';
 $string['clickhide'] = 'Klicka för att dölja';
@@ -12,7 +10,6 @@ $string['confirmeventdelete'] = 'Är Du säker på att Du vill ta bort den här händ
 $string['courseevents'] = 'Händelser i kursen';
 $string['dayview'] = 'Vy över dag';
 $string['daywithnoevents'] = 'Det finns inga händelser för den här dagen';
-$string['december'] = 'December';
 $string['default'] = 'Aktuell ';
 $string['deleteevent'] = 'Ta bort händelse';
 $string['detailedmonthview'] = 'Detaljerad vy över månad';
@@ -43,39 +40,30 @@ $string['explain_lookahead'] = 'Detta anger (max)antal dagar i framtiden som en 
 $string['explain_maxevents'] = 'Det här ställer in det maximala antalet kommande händelser som kan visas. Om Du väljer ett stort tal här är det möjligt att kommande händelser kommer att ta upp en hel del utrymme på Din skärm.';
 $string['explain_startwday'] = 'Kalenderveckor kommer att visas med den startdag som Du väljer här.';
 $string['explain_timeformat'] = 'Du kan välja att se tíder i 12 eller 24-timmars format. Om Du väljer \"Aktuell\" så kommer formatet att väljas automatiskt beroende på det språk Du använder på webbplatsen.';
-$string['february'] = 'Februari';
 $string['fri'] = 'Fre';
 $string['friday'] = 'Fredag';
 $string['globalevents'] = 'Globala händelser';
 $string['gotocalendar'] = 'Gå till Kalender';
 $string['groupevents'] = 'Händelser för grupp';
 $string['hidden'] = 'Dold';
-$string['january'] = 'Januari';
-$string['july'] = 'Juli';
-$string['june'] = 'Juni';
 $string['manyevents'] = '$a händelser';
-$string['march'] = 'Mars';
-$string['may'] = 'Maj';
 $string['mon'] = 'Mån';
 $string['monday'] = 'Måndag';
 $string['monthlyview'] = 'Vy över månad';
 $string['newevent'] = 'Ny händelse';
 $string['noupcomingevents'] = 'Det finns inga kommande händelser';
-$string['november'] = 'November';
-$string['october'] = 'Oktober';
 $string['oneevent'] = '1 händelse';
 $string['pref_lookahead'] = 'Visa kommande händelser';
 $string['pref_maxevents'] = 'Max antal kommande händelser';
 $string['pref_startwday'] = 'Första dagen i veckan';
 $string['pref_timeformat'] = 'Sätt att visa tid';
-$string['preferences'] = 'Preferenser';
+$string['preferences'] = 'Inställningar';
 $string['preferences_available'] = 'Dina personliga preferenser';
 $string['repeatnone'] = 'Inga upprepningar';
 $string['repeatweeksl'] = 'Upprepa veckovis, skapa ';
 $string['repeatweeksr'] = 'händelser';
 $string['sat'] = 'Lör';
 $string['saturday'] = 'Lördag';
-$string['september'] = 'September';
 $string['shown'] = 'visad';
 $string['spanningevents'] = 'Händelser på gång';
 $string['sun'] = 'Sön';
