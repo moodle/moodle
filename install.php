@@ -303,10 +303,13 @@ if ($nextstage == 5) {
     $str .= '// RETURNS, OR ANYTHING ELSE AFTER THE TWO CHARACTERS ON THE NEXT LINE.'."\r\n";
     $str .= '?>';
 
+    umask(0137);
+
     if (( $configsuccess = ($fh = @fopen($configfile, 'w')) ) !== false) {
         fwrite($fh, $str);
         fclose($fh);
     }
+        
 
     $INSTALL['config'] = $str;
 }
@@ -576,6 +579,7 @@ function form_table($nextstage = 0, $formaction = "install.php") {
 
             <?php echo ($nextstage < 5) ? "<input type=\"submit\" name=\"next\" value=\"".get_string('next')."  &raquo;\" style=\"float: right\"/>\n" : "&nbsp;\n" ?>
             <?php echo ($nextstage > 0) ? "<input type=\"submit\" name=\"prev\" value=\"&laquo;  ".get_string('previous')."\" style=\"float: left\"/>\n" : "&nbsp;\n" ?>
+
 
         </td>
 
