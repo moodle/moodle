@@ -674,7 +674,7 @@ HTMLArea.prototype.generate = function () {
 	// size the IFRAME according to user's prefs or initial textarea
 	var height = (this.config.height == "auto" ? (this._ta_size.h + "px") : this.config.height);
 	height = parseInt(height);
-	var width = (this.config.width == "auto" ? (this._ta_size.w + "px") : this.config.width);
+	var width = (this.config.width == "auto" ? (this._ta_size.w + 50 + "px") : this.config.width);
 	width = parseInt(width);
 
 	if (!HTMLArea.is_ie) {
