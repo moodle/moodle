@@ -146,6 +146,12 @@
 
 /// Print the quiz page
 
+    if (isguest()) {
+        print_heading(get_string("guestsno", "quiz"));
+        print_footer($course);
+        exit;
+    }
+
 /// Actually seeing the questions marks the start of an attempt
  
     if (!$unfinished = quiz_get_user_attempt_unfinished($quiz->id, $USER->id)) {

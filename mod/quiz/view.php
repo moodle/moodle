@@ -38,7 +38,7 @@
     add_to_log($course->id, "quiz", "view", "view.php?id=$cm->id", "$quiz->id");
 
     $timenow = time();
-    $available = ($quiz->timeopen < $timenow and $timenow < $quiz->timeclose);
+
 
 // Print the page header
 
@@ -62,6 +62,8 @@
         echo "<P align=right><A HREF=\"report.php?id=$cm->id\">".get_string("viewallanswers","quiz",$answercount)."</A></P>";
     }
 
+    $available = ($quiz->timeopen < $timenow and $timenow < $quiz->timeclose);
+
 // Print the main part of the page
 
     print_heading($quiz->name);
@@ -74,6 +76,12 @@
         echo "<P ALIGN=CENTER>".get_string("quiznotavailable", "quiz", userdate($quiz->timeopen));
     } else {
         echo "<P ALIGN=CENTER>".get_string("quizclosed", "quiz", userdate($quiz->timeclose));
+    }
+
+    if (isguest()) {
+        print_heading(get_string("guestsno", "quiz"));
+        print_footer($course);
+        exit;
     }
 
     if ($attempts = quiz_get_user_attempts($quiz->id, $USER->id)) {
