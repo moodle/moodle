@@ -1338,7 +1338,7 @@ function print_table($table) {
         foreach ($table->data as $row) {
             echo "<tr valign=\"top\">";
             if ($row == "hr" and $countcols) {
-                echo "<td class=\"tabledivider\" colspan=\"$countcols\"></td>";
+                echo "<td colspan=\"$countcols\"><div class=\"tabledivider\"></div></td>";
             } else {  /// it's a normal row of data
                 foreach ($row as $key => $item) {
                     if (!isset($size[$key])) {
