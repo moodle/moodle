@@ -107,7 +107,7 @@ $string['deletednot'] = "无法删除\$a！";
 $string['deletingcourse'] = "正在删除\$a";
 $string['department'] = "系部";
 $string['description'] = "描述";
-$string['displayingusers'] = "从\$a->start到\$a->end显示用户";
+$string['displayingusers'] = "从 \$a->start 到 \$a->end 显示用户";
 $string['documentation'] = "帮助文档";
 $string['downloadexcel'] = "以Excel文件格式下载";
 $string['downloadtext'] = "以纯文本格式下载";
@@ -121,7 +121,7 @@ $string['editthisactivity'] = "编辑这个活动项目";
 $string['edituser'] = "编辑用户帐号";
 $string['email'] = "Email地址";
 $string['emailconfirm'] = "确认你的帐号";
-$string['emailconfirmation'] = "\$a->firstname：<br>
+$string['emailconfirmation'] = "\$a->lastname：<br>
 &nbsp;&nbsp;&nbsp;&nbsp;你好！<br>
 &nbsp;&nbsp;&nbsp;&nbsp;刚才你用你的电子邮箱地址在'\$a->sitename'上申请了一个新帐号。
 
@@ -304,7 +304,7 @@ $string['never'] = "从不";
 $string['new'] = "新";
 $string['newaccount'] = "新帐号";
 $string['newpassword'] = "新密码";
-$string['newpasswordtext'] = "\$a->firstname：<br>
+$string['newpasswordtext'] = "\$a->lastname：<br>
 &nbsp;&nbsp;&nbsp;&nbsp;你好！ 
 <br>&nbsp;&nbsp;&nbsp;&nbsp;你在'\$a->sitename'上的帐号密码已被重设，这是你新的临时密码。
 
