@@ -56,6 +56,7 @@
             $workshop->course = $restore->course_id;
             $workshop->name = backup_todb($info['MOD']['#']['NAME']['0']['#']);
             $workshop->description = backup_todb($info['MOD']['#']['DESCRIPTION']['0']['#']);
+            $workshop->wtype = backup_todb($info['MOD']['#']['WTYPE']['0']['#']);
             $workshop->nelements = backup_todb($info['MOD']['#']['NELEMENTS']['0']['#']);
             $workshop->nattachments = backup_todb($info['MOD']['#']['NATTACHMENTS']['0']['#']);
             $workshop->phase = backup_todb($info['MOD']['#']['PHASE']['0']['#']);
@@ -77,6 +78,8 @@
             $workshop->timemodified = backup_todb($info['MOD']['#']['TIMEMODIFIED']['0']['#']);
             $workshop->teacherweight = backup_todb($info['MOD']['#']['TEACHERWEIGHT']['0']['#']);
             $workshop->showleaguetable = backup_todb($info['MOD']['#']['SHOWLEAGUETABLE']['0']['#']);
+            $workshop->usepassword = backup_todb($info['MOD']['#']['USEPASSWORD']['0']['#']);
+            $workshop->password = backup_todb($info['MOD']['#']['PASSWORD']['0']['#']);
 
             //The structure is equal to the db, so insert the workshop
             $newid = insert_record ("workshop",$workshop);
@@ -238,6 +241,7 @@
             $submission->reliabilitygrade = backup_todb($sub_info['#']['RELIABILITYGRADE']['0']['#']);
             $submission->gradinggrade = backup_todb($sub_info['#']['GRADINGGRADE']['0']['#']);
             $submission->finalgrade = backup_todb($sub_info['#']['FINALGRADE']['0']['#']);
+            $submission->late = backup_todb($sub_info['#']['LATE']['0']['#']);
 
             //We have to recode the userid field
             $user = backup_getid($restore->backup_unique_code,"user",$olduserid);

@@ -53,6 +53,7 @@
                 fwrite ($bf,full_tag("MODTYPE",4,false,"workshop"));
                 fwrite ($bf,full_tag("NAME",4,false,$workshop->name));
                 fwrite ($bf,full_tag("DESCRIPTION",4,false,$workshop->description));
+                fwrite ($bf,full_tag("WTYPE",4,false,$workshop->wtype));
                 fwrite ($bf,full_tag("NELEMENTS",4,false,$workshop->nelements));
                 fwrite ($bf,full_tag("NATTACHMENTS",4,false,$workshop->nattachments));
                 fwrite ($bf,full_tag("PHASE",4,false,$workshop->phase));
@@ -74,6 +75,8 @@
                 fwrite ($bf,full_tag("TIMEMODIFIED",4,false,$workshop->timemodified));
                 fwrite ($bf,full_tag("TEACHERWEIGHT",4,false,$workshop->teacherweight));
                 fwrite ($bf,full_tag("SHOWLEAGUETABLE",4,false,$workshop->showleaguetable));
+                fwrite ($bf,full_tag("USEPASSWORD",4,false,$workshop->usepassword));
+                fwrite ($bf,full_tag("PASSWORD",4,false,$workshop->password));
                 //Now we backup workshop elements
                 $status = backup_workshop_elements($bf,$preferences,$workshop->id);
                 //if we've selected to backup users info, then execute backup_workshop_submisions
@@ -186,6 +189,7 @@
                 fwrite ($bf,full_tag("RELIABILITYGRADE",6,false,$wor_sub->reliabilitygrade));       
                 fwrite ($bf,full_tag("GRADINGGRADE",6,false,$wor_sub->gradinggrade));       
                 fwrite ($bf,full_tag("FINALGRADE",6,false,$wor_sub->finalgrade));       
+                fwrite ($bf,full_tag("LATE",6,false,$wor_sub->late));       
                 //Now we backup workshop assessments
                 $status = backup_workshop_assessments($bf,$preferences,$workshop,$wor_sub->id);
                 //End submission
