@@ -9,10 +9,14 @@
 
     require("../config.php");
 
-    $id     = required_param('id', PARAM_INT);
-    $file   = optional_param('file', '');
-    $wdir   = optional_param('wdir', '');
-    $action = optional_param('action', '');
+    global $USER;
+
+    $id      = required_param('id', PARAM_INT);
+    $file    = optional_param('file', '', PARAM_PATH);
+    $wdir    = optional_param('wdir', '', PARAM_PATH);
+    $action  = optional_param('action', '', PARAM_ACTION);
+    $name    = optional_param('name', '', PARAM_FILE);
+    $oldname = optional_param('oldname', '', PARAM_FILE);
 
     if (! $course = get_record("course", "id", $id) ) {
         error("That's an invalid course id");
@@ -107,7 +111,7 @@
             html_header($course, $wdir);
             require_once($CFG->dirroot.'/lib/uploadlib.php');
                 
-            if (!empty($save)) {
+            if (!empty($save) and confirm_sesskey()) {
                 $um = new upload_manager('userfile',false,false,$course,false,0);
                 $dir = "$basedir$wdir";
                 if ($um->process_file_uploads($dir)) {
@@ -130,6 +134,7 @@
                 echo " <input type=\"hidden\" name=\"id\" value=\"$id\" />";
                 echo " <input type=\"hidden\" name=\"wdir\" value=\"$wdir\" />";
                 echo " <input type=\"hidden\" name=\"action\" value=\"upload\" />";
+                echo " <input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />";
                 upload_print_form_fragment(1,array('userfile'),null,false,null,$course->maxbytes,0,false);
                 echo " </td><tr><td width=\"10\">";
                 echo " <input type=\"submit\" name=\"save\" value=\"$struploadthisfile\" />";
@@ -147,7 +152,7 @@
             break;
 
         case "delete":
-            if (!empty($confirm)) {
+            if (!empty($confirm) and confirm_sesskey()) {
                 html_header($course, $wdir);
                 foreach ($USER->filelist as $file) {
                     $fullfile = $basedir.$file;
@@ -168,7 +173,7 @@
                     print_simple_box_end();
                     echo "<br />";
                     notice_yesno (get_string("deletecheckfiles"), 
-                                "index.php?id=$id&amp;wdir=$wdir&amp;action=delete&amp;confirm=1",
+                                "index.php?id=$id&amp;wdir=$wdir&amp;action=delete&amp;confirm=1&amp;sesskey=$USER->sesskey",
                                 "index.php?id=$id&amp;wdir=$wdir&amp;action=cancel");
                 } else {
                     displaydir($wdir);
@@ -208,10 +213,9 @@
             break;
 
         case "rename":
-            if (!empty($name)) {
+            if (!empty($name) and confirm_sesskey()) {
                 html_header($course, $wdir);
-                $name    = clean_filename($name);
-                $oldname = clean_filename($oldname);
+                $name = clean_filename($name);
                 if (file_exists($basedir.$wdir."/".$name)) {
                     echo "Error: $name already exists!";
                 } else if (!rename($basedir.$wdir."/".$oldname, $basedir.$wdir."/".$name)) {
@@ -231,6 +235,7 @@
                 echo " <input type=\"hidden\" name=\"wdir\" value=\"$wdir\" />";
                 echo " <input type=\"hidden\" name=\"action\" value=\"rename\" />";
                 echo " <input type=\"hidden\" name=\"oldname\" value=\"$file\" />";
+                echo " <input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />";
                 echo " <input type=\"text\" name=\"name\" size=\"35\" value=\"$file\" />";
                 echo " <input type=\"submit\" value=\"$strrename\" />";
                 echo "</form>";
@@ -247,7 +252,7 @@
             break;
 
         case "mkdir":
-            if (!empty($name)) {
+            if (!empty($name) and confirm_sesskey()) {
                 html_header($course, $wdir);
                 $name = clean_filename($name);
                 if (file_exists("$basedir$wdir/$name")) {
@@ -269,6 +274,7 @@
                 echo " <input type=\"hidden\" name=\"wdir\" value=\"$wdir\" />";
                 echo " <input type=\"hidden\" name=\"action\" value=\"mkdir\" />";
                 echo " <input type=\"text\" name=\"name\" size=\"35\" />";
+                echo " <input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />";
                 echo " <input type=\"submit\" value=\"$strcreate\" />";
                 echo "</form>";
                 echo "</td><td>";
@@ -335,7 +341,7 @@
             break;
 
         case "zip":
-            if (!empty($name)) {
+            if (!empty($name) and confirm_sesskey()) {
                 html_header($course, $wdir);
                 $name = clean_filename($name);
 
@@ -367,6 +373,7 @@
                     echo " <input type=\"hidden\" name=\"wdir\" value=\"$wdir\" />";
                     echo " <input type=\"hidden\" name=\"action\" value=\"zip\" />";
                     echo " <input type=\"text\" name=\"name\" size=\"35\" value=\"new.zip\" />";
+                    echo " <input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />";
                     echo " <input type=\"submit\" value=\"".get_string("createziparchive")."\" />";
                     echo "</form>";
                     echo "</td><td>";
@@ -387,7 +394,7 @@
 
         case "unzip":
             html_header($course, $wdir);
-            if (!empty($file)) {
+            if (!empty($file) and confirm_sesskey()) {
                 $strok = get_string("ok");
                 $strunpacking = get_string("unpacking", "", $file);
 
@@ -414,7 +421,7 @@
 
         case "listzip":
             html_header($course, $wdir);
-            if (!empty($file)) {
+            if (!empty($file) and confirm_sesskey()) {
                 $strname = get_string("name");
                 $strsize = get_string("size");
                 $strmodified = get_string("modified");
@@ -461,7 +468,7 @@
 
         case "restore":
             html_header($course, $wdir);
-            if (!empty($file)) {
+            if (!empty($file) and confirm_sesskey()) {
                 echo "<p align=\"center\">".get_string("youaregoingtorestorefrom").":</p>";
                 print_simple_box_start("center");
                 echo $file;
@@ -490,14 +497,6 @@
 
 
 /// FILE FUNCTIONS ///////////////////////////////////////////////////////////
-
-function approvefile($p_event, &$p_header){
-    if (detect_munged_arguments($p_header['filename'], 0)) {
-        return 0; // do not extract file!!
-    } else {
-        return 1;
-    }
-}
 
 function fulldelete($location) { 
     if (is_dir($location)) {
@@ -541,7 +540,6 @@ function setfilelist($VARS) {
     foreach ($VARS as $key => $val) {
         if (substr($key,0,4) == "file") {
             $count++;
-            $val = rawurldecode($val);
             if (!detect_munged_arguments($val, 0)) {
                 $USER->filelist[] = rawurldecode($val);
             }
@@ -709,10 +707,10 @@ function displaydir ($wdir) {
             if ($icon == "text.gif" || $icon == "html.gif") {
                 $edittext = "<a href=\"index.php?id=$id&amp;wdir=$wdir&amp;file=$fileurl&amp;action=edit\">$stredit</a>";
             } else if ($icon == "zip.gif") {
-                $edittext = "<a href=\"index.php?id=$id&amp;wdir=$wdir&amp;file=$fileurl&amp;action=unzip\">$strunzip</a>&nbsp;";
-                $edittext .= "<a href=\"index.php?id=$id&amp;wdir=$wdir&amp;file=$fileurl&amp;action=listzip\">$strlist</a> ";
+                $edittext = "<a href=\"index.php?id=$id&amp;wdir=$wdir&amp;file=$fileurl&amp;action=unzip&amp;sesskey=$USER->sesskey\">$strunzip</a>&nbsp;";
+                $edittext .= "<a href=\"index.php?id=$id&amp;wdir=$wdir&amp;file=$fileurl&amp;action=listzip&amp;sesskey=$USER->sesskey\">$strlist</a> ";
                 if (!empty($CFG->backup_version) and isteacheredit($id)) {
-                    $edittext .= "<a href=\"index.php?id=$id&amp;wdir=$wdir&amp;file=$filesafe&amp;action=restore\">$strrestore</a> ";
+                    $edittext .= "<a href=\"index.php?id=$id&amp;wdir=$wdir&amp;file=$filesafe&amp;action=restore&amp;sesskey=$USER->sesskey\">$strrestore</a> ";
                 }
             } else {
                 $edittext = "";
