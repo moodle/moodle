@@ -2619,10 +2619,11 @@ function workshop_print_submission_assessments($workshop, $submission, $type) {
                                     number_format($assessment->gradinggrade * $workshop->gradinggrade / 100, 0).
                                     ")]</a> ";
                             } else {
-                                $str .= "&lt;".number_format($assessment->grade, 0)." (0)&gt;</a> ";
+                                $str .= "&lt;".number_format($assessment->grade * $workshop->grade / 100, 0).
+                                    " (0)&gt;</a> ";
                             }
                         } else {
-                            $str .= "[".number_format($assessment->grade, 0);
+                            $str .= "[".number_format($assessment->grade *$workshop->grade / 100, 0);
                             if ($workshop->wtype) { // print null grade if there are student assessments
                                 $str .= " ((".number_format($assessment->gradinggrade * $workshop->gradinggrade / 100,
                                             0)."))";

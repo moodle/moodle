@@ -1674,6 +1674,15 @@ function workshop_grade_assessments($workshop) {
                             }
                         }
                     }
+                } else {
+                    // there are less 3 assessments for this submission
+                    foreach ($assessments as $assessment) {
+                        if (!$assessment->timegraded) {
+                            // set the grading grade to the maximum and say it's been graded 
+                            set_field("workshop_assessments", "gradinggrade", 100, "id", $assessment->id);
+                            set_field("workshop_assessments", "timegraded", $timenow, "id", $assessment->id);
+                        }
+                    }
                 }       
             }
         }
