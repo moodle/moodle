@@ -68,7 +68,7 @@
         }
     }
 
-    if (!$course->category and !$currentuser) {  // To reduce possibility of "browsing" userbase at site level
+    if ($course->id == SITEID and !$currentuser) {  // To reduce possibility of "browsing" userbase at site level
         if (!isteacherinanycourse() and !isteacherinanycourse($user->id) ) {  // Teachers can browse and be browsed at site level
             print_header("$personalprofile: ", "$personalprofile: ",
                           "<a href=\"index.php?id=$course->id\">$participants</a>",
