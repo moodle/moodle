@@ -1669,9 +1669,9 @@
         
         confirm_sesskey();
         
-        $form = lesson_clean_data_submitted();
+        $form = data_submitted();
         
-        if (!$essay = get_record("lesson_attempts", "id", $form->attemptid)) {
+        if (!$essay = get_record("lesson_attempts", "id", clean_param($form->attemptid, PARAM_INT))) {
             error("Error: could not find essay");
         }
 
@@ -1682,11 +1682,11 @@
         $essayinfo = new stdClass;
         $essayinfo = unserialize($essay->useranswer);
 
-           $essayinfo->graded = 1;
-        $essayinfo->score = $form->score;
-        $essayinfo->response = stripslashes_safe($form->response);
+        $essayinfo->graded = 1;
+        $essayinfo->score = clean_param($form->score, PARAM_INT);
+        $essayinfo->response = clean_param(stripslashes_safe($form->response), PARAM_CLEANHTML);
         $essayinfo->sent = 0;
-        if (!$lesson->custom && $form->score == 1) {
+        if (!$lesson->custom && $essayinfo->score == 1) {
             $essay->correct = 1;
         } else {
             $essay->correct = 0;
