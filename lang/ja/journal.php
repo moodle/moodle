@@ -22,6 +22,6 @@ $string['notstarted'] = "¤³¤ÎÆü»ï¤ÏÌ¤»ÈÍÑ¤Ç¤¹";
 $string['overallrating'] = "ÁíÂÎÅªÉ¾²Á";
 $string['rate'] = "É¾²Á";
 $string['startoredit'] = "Æü»ï¤òÊÔ½¸¤¹¤ë";
-$string['viewallentries'] = "\$a ÅÐÏ¿ºÑ¤ßÆü»ï¤ò³ÎÇ§¤¹¤ë";
+$string['viewallentries'] = "\$a ·ï¤ÎÅÐÏ¿ºÑ¤ßÆü»ï¤ò¸«¤ë";
 
 ?>

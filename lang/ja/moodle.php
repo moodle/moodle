@@ -88,7 +88,7 @@ $string['courses'] = "¥³¡¼¥¹";
 $string['courseupdates'] = "¥³¡¼¥¹ÊÑ¹¹ÅÀ";
 $string['createaccount'] = "¥¢¥«¥¦¥ó¥È¤òºîÀ®¤¹¤ë";
 $string['createuserandpass'] = "¥æ¡¼¥¶Ì¾¤È¥Ñ¥¹¥ï¡¼¥É¤òºîÀ®¤¹¤ë";
-$string['createziparchive'] = "ZIP½ñ¸Ë¤òºîÀ®¤¹¤ë";
+$string['createziparchive'] = "ZIP½ñ¸Ë¤òºîÀ®";
 $string['currentlanguage'] = "¸½ºß¤Î¸À¸ì";
 $string['currentlocaltime'] = "¥í¡¼¥«¥ë¥¿¥¤¥à";
 $string['databasechecking'] = "¥Ð¡¼¥¸¥ç¥ó \$a->¸Å¤¤¥Ð¡¼¥¸¥ç¥ó¤«¤é \$a->¿·¥Ð¡¼¥¸¥ç¥ó...";
@@ -108,7 +108,7 @@ $string['defaultcourseteachers'] = "¶µ»Õ";
 $string['delete'] = "ºï½ü";
 $string['deletecheck'] = "\$a ¤òºï½ü¤·¤Þ¤¹¤« ?";
 $string['deletecheckfull'] = "ËÜÅö¤Ë \$a ¤ò´°Á´¤Ëºï½ü¤·¤Æ¤â¤è¤í¤·¤¤¤Ç¤¹¤«?";
-$string['deletecompletely'] = "ºï½ü¤¬´°Î»¤·¤Þ¤·¤¿";
+$string['deletecompletely'] = "ºï½ü¤¹¤ë";
 $string['deletecourse'] = "¥³¡¼¥¹¤Îºï½ü";
 $string['deletecoursecheck'] = "¤³¤Î¥³¡¼¥¹¤È¥³¡¼¥¹Æâ¤Î¥Ç¡¼¥¿¤òËÜÅö¤Ëºï½ü¤·¤Æ¤â¤è¤í¤·¤¤¤Ç¤¹¤«?";
 $string['deleted'] = "ºï½üºÑ¤ß";
@@ -241,7 +241,7 @@ $string['icqnumber'] = "ICQ¥Ê¥ó¥Ð¡¼";
 $string['idnumber'] = "ID¥Ê¥ó¥Ð¡¼";
 $string['invalidemail'] = "ÉÔÀµ¤Ê¥á¡¼¥ë¥¢¥É¥ì¥¹¤Ç¤¹";
 $string['invalidlogin'] = "ÉÔÀµ¤Ê¥í¥°¥¤¥ó¤Ç¤¹¡¢ºÆÅÙ¥í¥°¥¤¥ó¤·¤Æ¤¯¤À¤µ¤¤";
-$string['jumpto'] = "¥¸¥ã¥ó¥×...";
+$string['jumpto'] = "°ÜÆ° ...";
 $string['langltr'] = "¸À¸ì¤Î¸þ¤­ º¸¢ª±¦";
 $string['langrtl'] = "¸À¸ì¤Î¸þ¤­ ±¦¢ªº¸";
 $string['language'] = "¸À¸ì";
@@ -271,7 +271,7 @@ $string['loginsteps'] = "Á´¤Æ¤Î¥³¡¼¥¹¤Ë¥¢¥¯¥»¥¹¤¹¤ë°Ù¤Ë¿·¤·¤¤¥¢¥«¥¦¥ó¥È¤òºîÀ®¤·¤
 <LI>¥¢¥«¥¦¥ó¥È¤Î³ÎÄê¤¬¹Ô¤ï¤ì¡¢¥í¥°¥¤¥ó²ÄÇ½¤Ê¾õÂÖ¤Ë¤Ê¤ê¤Þ¤¹¡£
 <LI>»²²Ã¤·¤¿¤¤¥³¡¼¥¹¤òÁªÂò¤·¤Æ¤¯¤À¤µ¤¤¡£
 <LI>¡ÖÅÐÏ¿¥­¡¼¡×¤òÆþÎÏ¤¹¤ëÉ¬Í×¤¬¤¢¤ë¾ì¹ç¤Ï¡¢¤¢¤Ê¤¿¤ÎÀèÀ¸¤«¤éÁ÷¤é¤ì¤¿¤â¤Î¤ò»ÈÍÑ¤·¤Æ¤¯¤À¤µ¤¤¡£¤½¤ì¤¬¥³¡¼¥¹¤Ë»²²Ã¤¹¤ë¤¿¤á¤Î¡ÖÅÐÏ¿¥­¡¼¡×¤È¤Ê¤ê¤Þ¤¹¡£
-<LI>¤³¤ì¤Ç¥³¡¼¥¹¤Ë¥¢¥¯¥»¥¹½ÐÍè¤ë¤è¤¦¤Ë¤Ê¤ê¤Þ¤¹¡£º£¸å¡¢¤¢¤Ê¤¿¤¬ÅÐÏ¿¤·¤¿¥³¡¼¥¹¤Ë¥¢¥¯¥»¥¹¤¹¤ë°Ù¤ËÉ¬Í×¤Ê¤Î¤Ï¥æ¡¼¥¶Ì¾¤È¥Ñ¥¹¥ï¡¼¥É¤Î¤ß¤Ç¤¹¡£¤³¤Î¥Ú¡¼¥¸¤Ë¥æ¡¼¥¶Ì¾¤È¥Ñ¥¹¥ï¡¼¥É¤ÎÆþÎÏÍó¤¬¤¢¤ê¤Þ¤¹¡£
+<LI>¤³¤ì¤Ç¥³¡¼¥¹¤Ë¥¢¥¯¥»¥¹½ÐÍè¤ë¤è¤¦¤Ë¤Ê¤ê¤Þ¤¹¡£º£¸å¡¢¤¢¤Ê¤¿¤¬ÅÐÏ¿¤·¤¿¥³¡¼¥¹¤Ë¥¢¥¯¥»¥¹¤¹¤ë¤¿¤á¤ËÉ¬Í×¤Ê¤â¤Î¤Ï¥æ¡¼¥¶Ì¾¤È¥Ñ¥¹¥ï¡¼¥É¤Î¤ß¤Ç¤¹¡£¤³¤Î¥Ú¡¼¥¸¤Ë¥æ¡¼¥¶Ì¾¤È¥Ñ¥¹¥ï¡¼¥É¤ÎÆþÎÏÍó¤¬¤¢¤ê¤Þ¤¹¡£
 </OL>
 ";
 $string['loginstepsnone'] = "¤³¤ó¤Ë¤Á¤Ï!<P>¥³¡¼¥¹¤òÍøÍÑ¤¹¤ë¤¿¤á¤Ë¤Ï¥¢¥«¥¦¥ó¥È¤ò³«Àß¤¹¤ëÉ¬Í×¤¬¤¢¤ê¤Þ¤¹¡£<P>ÊýË¡¤Ï¥æ¡¼¥¶Ì¾¤È¥Ñ¥¹¥ï¡¼¥É¤ò¤³¤Î¥Ú¡¼¥¸¤Î¥Õ¥©¡¼¥à¤ò»È¤Ã¤ÆºîÀ®¤¹¤ë¤À¤±¤Ç¤¹!<P>¤â¤·Â¾¤Î¿Í¤¬Æ±¤¸¥æ¡¼¥¶Ì¾¤ò»È¤Ã¤Æ¤¤¤ë¾ì¹ç¤Ï°ã¤¦¥æ¡¼¥¶Ì¾¤ÇÅÐÏ¿¤·¤Æ¤¯¤À¤µ¤¤¡£
@@ -311,7 +311,7 @@ $string['missingstudent'] = "²¿¤«¤òÁª¤ó¤Ç¤¯¤À¤µ¤¤";
 $string['missingsummary'] = "³µÍ×¤¬ÆþÎÏ¤µ¤ì¤Æ¤¤¤Þ¤»¤ó";
 $string['missingteacher'] = "²¿¤«¤òÁª¤ó¤Ç¤¯¤À¤µ¤¤";
 $string['missingusername'] = "¥æ¡¼¥¶Ì¾¤¬ÆþÎÏ¤µ¤ì¤Æ¤¤¤Þ¤»¤ó";
-$string['modified'] = "½¤Àµ¤µ¤ì¤¿";
+$string['modified'] = "½¤ÀµÆü»þ";
 $string['modulesetup'] = "Moodle¤Î¥Æ¡¼¥Ö¥ë¤òÀßÄê¤¹¤ë";
 $string['modulesuccess'] = "\$a ¥Æ¡¼¥Ö¥ë¤¬Àµ¾ï¤ËÀßÄê¤µ¤ì¤Þ¤·¤¿";
 $string['mostrecently'] = "Ä¾¶á¤Î";
@@ -398,7 +398,7 @@ $string['question'] = "¼ÁÌä";
 $string['readme'] = "README¥Õ¥¡¥¤¥ë";
 $string['recentactivity'] = "ºÇ¿·¤Î³èÆ°";
 $string['removeteacher'] = "¶µ»Õ¤òºï½ü¤¹¤ë";
-$string['rename'] = "ÊÑÌ¾";
+$string['rename'] = "¥ê¥Í¡¼¥à";
 $string['requireskey'] = "¤³¤Î¥³¡¼¥¹¤Ë¤ÏÅÐÏ¿¥­¡¼¤¬É¬Í×¤Ç¤¹";
 $string['resources'] = "»ñÎÁ";
 $string['returningtosite'] = "¥¢¥«¥¦¥ó¥È¤ò¤ª»ý¤Á¤ÎÊý";
@@ -453,7 +453,7 @@ $string['thanks'] = "¤¢¤ê¤¬¤È¤¦¤´¤¶¤¤¤Þ¤¹";
 $string['theme'] = "¥Æ¡¼¥Þ";
 $string['themesaved'] = "¿·¤·¤¤¥Æ¡¼¥Þ¤¬ÊÝÂ¸¤µ¤ì¤Þ¤·¤¿";
 $string['thischarset'] = "euc-jp";
-$string['thislanguage'] = "ÆüËÜ¸ì";
+$string['thislanguage'] = "Japanese";
 $string['timezone'] = "¥¿¥¤¥à¥¾¡¼¥ó";
 $string['today'] = "º£Æü";
 $string['todaylogs'] = "º£Æü¤Î¥í¥°";
@@ -480,7 +480,7 @@ $string['updatinga'] = "\$a ¤ò¹¹¿·Ãæ";
 $string['updatingain'] = "\$a->in ¤Î \$a->what ¤ò¹¹¿·Ãæ";
 $string['upload'] = "¥¢¥Ã¥×¥í¡¼¥É";
 $string['uploadafile'] = "¥Õ¥¡¥¤¥ë¤ò¥¢¥Ã¥×¥í¡¼¥É¤¹¤ë";
-$string['uploadthisfile'] = "¤³¤Î¥Õ¥¡¥¤¥ë¤ò¥¢¥Ã¥×¥í¡¼¥É¤¹¤ë";
+$string['uploadthisfile'] = "¥Õ¥¡¥¤¥ë¤ò¥¢¥Ã¥×¥í¡¼¥É¤¹¤ë";
 $string['userdeleted'] = "¤³¤Î¥æ¡¼¥¶¤Î¥¢¥«¥¦¥ó¥È¤Ïºï½ü¤µ¤ì¤Þ¤·¤¿";
 $string['userdescription'] = "¼«¸Ê¾Ò²ð";
 $string['username'] = "¥æ¡¼¥¶Ì¾";
@@ -496,7 +496,7 @@ $string['welcometocoursetext'] = "\$a->coursename ¤Ø¤è¤¦¤³¤½!
 »äÃ£¤¬¤¢¤Ê¤¿¤Î¤³¤È¤òÍý²ò½ÐÍè¤ë¤è¤¦¤Ë¡¢¤Þ¤ººÇ½é¤Ë¥×¥í¥Õ¥£¡¼¥ë¤Î¥Ú¡¼¥¸¤Ë¸Ä¿Í¾ðÊó¤òÆþÎÏ¤·¤Æ¤¯¤À¤µ¤¤¡£
 
   \$a->profileurl";
-$string['withchosenfiles'] = "ÁªÂò¥Õ¥¡¥¤¥ë¤È¶¦¤Ë";
+$string['withchosenfiles'] = "ÁªÂò¤·¤¿¤â¤Î¤ò";
 $string['wordforstudent'] = "À¸ÅÌ(Ã±¿ô)¤ËÂÐ¤¹¤ë¸Æ¾Î";
 $string['wordforstudenteg'] = "Îã À¸ÅÌ¡¢»²²Ã¼Ô";
 $string['wordforstudents'] = "À¸ÅÌ(Ê£¿ô)¤ËÂÐ¤¹¤ë¸Æ¾Î";

@@ -3,15 +3,15 @@
 
 
 $string['answered'] = "回答済み";
-$string['choice'] = "\$a を選択";
+$string['choice'] = "選択肢 \$a";
 $string['choicename'] = "選択名";
-$string['choicetext'] = "選択テキスト";
+$string['choicetext'] = "選択文";
 $string['modulename'] = "選択";
 $string['modulenameplural'] = "選択";
-$string['notanswered'] = "まだ回答されていません。";
-$string['responses'] = "返答";
-$string['responsesto'] = "\$a へ返答";
-$string['savemychoice'] = "選択を保存する";
-$string['viewallresponses'] = "\$a の返答を見る";
+$string['notanswered'] = "未回答";
+$string['responses'] = "回答";
+$string['responsesto'] = "\$a へ回答する";
+$string['savemychoice'] = "回答を保存する";
+$string['viewallresponses'] = "\$a 件の回答を見る";
 
 ?>
