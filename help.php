@@ -17,9 +17,9 @@
     }
 
     $helpfound = false;
-  
+    $langs = array(current_language(), get_string("parentlanguage"), "en");  // Fallback
+
     if (!empty($file)) {
-        $langs = array(current_language(), get_string("parentlanguage"), "en");  // Fallback
         foreach ($langs as $lang) {
             if (empty($lang)) {
                 continue;
@@ -33,6 +33,34 @@
             if (file_exists("$filepath")) {
                 $helpfound = true;
                 include("$filepath");   // The actual helpfile
+
+                if ($module == "moodle" && ($file == "index.html" || $file == "mods.html")) {
+                    // include file for each module
+
+                    if (!$modules = get_records("modules")) {
+                        error("No modules found!!");        // Should never happen
+                    }
+
+                    foreach ($modules as $mod) {
+                        $strmodulename = get_string("modulename", "$mod->name");
+                        $modulebyname[$strmodulename] = $mod;
+                    }
+                    ksort($modulebyname);
+
+                    foreach ($modulebyname as $mod) {
+                        foreach ($langs as $lang) {
+                            if (empty($lang)) {
+                                continue;
+                            }
+                            $filepath = "$CFG->dirroot/lang/$lang/help/$mod->name/$file";
+
+                            if (file_exists("$filepath")) {
+                                include("$filepath");   // The actual helpfile
+                                break;
+                            }
+                        }
+                    }
+                }
                 break;
             }
         }
