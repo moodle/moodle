@@ -140,6 +140,7 @@ $string['keptcategory3'] = 'Un lien d\'un jeu de données réutilisables de liens 
 $string['keptlocal1'] = 'Une lettre du même jeu de données privé de lettres que précédemment';
 $string['keptlocal2'] = 'Un fichier du même jeu de données privé de fichiers que précédemment';
 $string['keptlocal3'] = 'Un lien du même jeu de données privé de liens que précédemment';
+$string['learnwise'] = 'Format Learnwise';
 $string['link'] = 'Lien';
 $string['listitems'] = 'Liste des questions du test';
 $string['literal'] = 'Lettre';
