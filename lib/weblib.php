@@ -157,7 +157,10 @@ function match_referer($goodreferer = "") {
     if (empty($goodreferer)) {
         $goodreferer = qualified_me();
     }
-    return $goodreferer == get_referer();
+    
+    $referer = get_referer();
+
+    return (($referer == $goodreferer) or ($referer == "$CFG->wwwroot/"));
 }
 
 function data_submitted($url="") {
