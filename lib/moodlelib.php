@@ -113,7 +113,6 @@ define('PARAM_BOOL',    0x0800);  //convert to value 1 or 0 using empty()
  */
 define('PAGE_COURSE_VIEW', 'course-view');
 define('PAGE_QUIZ_VIEW',   'mod-quiz-view');
-define('PAGE_CHAT_VIEW',   'mod-chat-view');
 
 /// PARAMETER HANDLING ////////////////////////////////////////////////////
 

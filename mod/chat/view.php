@@ -5,6 +5,7 @@
     require_once('../../config.php');
     require_once('lib.php');
     require_once($CFG->dirroot.'/lib/blocklib.php');
+    require_once('pagelib.php');
 
     $id          = optional_param('id', 0, PARAM_INT);
     $c           = optional_param('c', 0, PARAM_INT);
