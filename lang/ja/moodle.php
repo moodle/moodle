@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 unstable development (2004083000)
+      // moodle.php - created with Moodle 1.5 unstable development (2004090402)
 
 
 $string['action'] = '操作';
@@ -295,6 +295,8 @@ $string['deletingexistingcoursedata'] = '既存コースデータの削除';
 $string['deletingolddata'] = '古いデータの削除';
 $string['department'] = '部署';
 $string['description'] = '説明';
+$string['detailedless'] = '一覧表示';
+$string['detailedmore'] = '詳細表示';
 $string['disable'] = '無効にする';
 $string['displayingfirst'] = '最初の $a->count $a->things のみ表示されます。';
 $string['displayingrecords'] = '$a レコードを表示';
