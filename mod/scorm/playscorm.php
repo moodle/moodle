@@ -65,239 +65,180 @@
     $modestring = '';
     $scoidstring = '';
     $currentorgstring = '';
-    if (($scorm->popup == "") && ($frameset == "top")) {
-    	if (!empty($_GET["mode"])) {
-    	    $mode = $_GET["mode"];
-    	    $modestring = '&mode='.$mode;
-    	}
-    	if (!empty($_GET["scoid"])) {
-    	    $scoid = $_GET["scoid"];
-    	    $scoidstring = '&scoid='.$scoid;
-    	}
-    	if (!empty($_GET['currentorg'])) {
-	    $currentorg = $_GET['currentorg'];
-	    $currentorgstring = '&currentorg='.$currentorg;
-    	}
-    } else {
-    	if (!empty($_POST["mode"])) {
-    	    $mode = $_POST["mode"];
-    	    $modestring = '&mode='.$mode;
-    	}
-    	if (!empty($_POST["scoid"])) {
-    	    $scoid = $_POST["scoid"];
-    	    $scoidstring = '&scoid='.$scoid;
-    	}
-    	if (!empty($_POST['currentorg'])) {
-	    $currentorg = $_POST['currentorg'];
-	    $currentorgstring = '&currentorg='.$currentorg;
-    	}
+    if (!empty($_POST["mode"])) {
+        $mode = $_POST["mode"];
+        $modestring = '&mode='.$mode;
+    }
+    if (!empty($_POST["scoid"])) {
+        $scoid = $_POST["scoid"];
+        $scoidstring = '&scoid='.$scoid;
+    }
+    if (!empty($_POST['currentorg'])) {
+	$currentorg = $_POST['currentorg'];
+	$currentorgstring = '&currentorg='.$currentorg;
     }
     
-    if (($frameset == "top") || ($scorm->popup != "")) {
-    	add_to_log($course->id, "scorm", "view", "playscorm.php?id=$cm->id", "$scorm->id");
-	//
-	// Print the page header
-	//
-	$bodyscripts = "";
-	if ($scorm->popup != "") {
-	    $bodyscripts = "onUnload='SCOFinish(); closeMain();' ";
-	}
-       	print_header($pagetitle, "$course->fullname",
-		"$navigation <a target=\"{$CFG->framename}\" href=\"view.php?id=$cm->id\">$scorm->name</a>",
-		"", "", true, update_module_button($cm->id, $course->id, $strscorm), "", "", $bodyscripts);
-    	echo "<table width=\"100%\">\n    <tr><td align=\"center\">".text_to_html($scorm->summary, true, false)."</td>\n";
-    	if ($mode == "browse")
-	    echo "<td align=\"right\" width=\"10%\" nowrap>".get_string("browsemode","scorm")."</td>\n";
-    	echo "     </tr>\n</table>\n";
+    add_to_log($course->id, "scorm", "view", "playscorm.php?id=$cm->id", "$scorm->id");
+    //
+    // Print the page header
+    //
+    $bodyscripts = "onUnload='SCOFinish(); closeMain();'";
+    print_header($pagetitle, "$course->fullname",
+	"$navigation <a target=\"{$CFG->framename}\" href=\"view.php?id=$cm->id\">$scorm->name</a>",
+	"", "", true, update_module_button($cm->id, $course->id, $strscorm), "", "", $bodyscripts);
+?>
+    <style type="text/css">
+        .scormlist { 
+            list-style-type:none; 
+            text-indent:-4ex;
+        } 
+    </style>
+    <script language="Javascript">
+    <!--
+        function playSCO(scoid) {
+            document.navform.scoid.value=scoid;
+            document.navform.submit();
+        }
+
+        function expandCollide(which,list) {
+    	    var nn=document.ids?true:false
+	    var w3c=document.getElementById?true:false
+	    var beg=nn?"document.ids.":w3c?"document.getElementById(":"document.all.";
+	    var mid=w3c?").style":".style";
     	
-    	if ($scorm->popup != "") {
-    	    echo "<script language=\"JavaScript\" type=\"text/javascript\" src=\"request.js\"></script>\n";
-    	    echo "<script language=\"JavaScript\" type=\"text/javascript\" src=\"api.php?id=$cm->id\"></script>\n";
-        ?>
-            <br />
-            <script language="Javascript">
-            <!--
-                function playSCO(scoid) {
-            	    document.navform.scoid.value=scoid;
-            	    document.navform.submit();
-            	}
-            	
-            	function expandCollide(which,list) {
-    		    var nn=document.ids?true:false
-		    var w3c=document.getElementById?true:false
-		    var beg=nn?"document.ids.":w3c?"document.getElementById(":"document.all.";
-		    var mid=w3c?").style":".style";
+    	    if (eval(beg+list+mid+".display") != "none") {
+    		which.src = "pix/plus.gif";
+    		eval(beg+list+mid+".display='none';");
+    	    } else {
+    		which.src = "pix/minus.gif";
+    		eval(beg+list+mid+".display='block';");
+    	    }
     	
-    		    if (eval(beg+list+mid+".display") != "none") {
-    			which.src = "pix/plus.gif";
-    			eval(beg+list+mid+".display='none';");
+    	}
+    -->
+    </script>
+
+    <script language="JavaScript" type="text/javascript" src="request.js"></script>
+    <script language="JavaScript" type="text/javascript" src="api.php?id=<?php echo $cm->id ?>"></script>
+    <table width="100%">
+    <tr><td valign="top">
+    	<p><?php echo text_to_html($scorm->summary, false, false) ?></p>
+    	<p><?php echo $mode == "browse" ? get_string("browsemode","scorm") : '&nbsp;'; ?></p>
+	<?php print_simple_box_start(); ?>
+	<table>
+	    <tr><th><?php print_string("coursestruct","scorm") ?></th></tr>
+	    <tr><td nowrap>
+		<ul class="scormlist">  
+<?php
+    $incomplete = false;
+    if ($scoes = get_records_select("scorm_scoes","scorm='$scorm->id' AND organization='$currentorg' order by id ASC")){
+    	$level=0;
+    	$sublist=0;
+    	$parents[$level]="/";
+    	foreach ($scoes as $sco) {
+    	    if ($parents[$level]!=$sco->parent) {
+    		if ($level>0 && $parents[$level-1]==$sco->parent) {
+    		    echo "\t\t</ul></li>\n";
+    		    $level--;
+    		} else {
+    		    $i = $level;
+    		    $closelist = "";
+    		    while (($i > 0) && ($parents[$level] != $sco->parent)) {
+	 	    	$closelist .= "\t\t</ul></li>\n";
+	 	    	$i--;
+	 	    }
+	 	    if (($i == 0) && ($sco->parent != $currentorg)) {
+	 	    	echo "\t\t<li><ul id='".$sublist."' class=\"scormlist\"'>\n";
+    		    	$level++;
     		    } else {
-    			which.src = "pix/minus.gif";
-    			eval(beg+list+mid+".display='block';");
+    		    	echo $closelist;
+    		    	$level = $i;
     		    }
-    	
+    		    $parents[$level]=$sco->parent;
     		}
-            -->
-            </script>
-            <style type="text/css">
-                .scormlist { list-style-type:none; }
-            </style>
-        <?php
-            print_simple_box_start("CENTER");
-    	    echo "<table>\n";
-    	    echo "  <tr><th>".get_string("coursestruct","scorm")."</th></tr>\n";
-    	    echo "  <tr><td nowrap>\n<ul class=\"scormlist\">\n";
-    	    $incomplete = false;
-    	    if ($scoes = get_records_select("scorm_scoes","scorm='$scorm->id' AND organization='$currentorg' order by id ASC")){
-    		$level=0;
-    		$sublist=0;
-    		$parents[$level]="/";
-    		foreach ($scoes as $sco) {
-    		    if ($parents[$level]!=$sco->parent) {
-    			if ($level>0 && $parents[$level-1]==$sco->parent) {
-    			    echo "  </ul></li>\n";
-    			    $level--;
-    			} else {
-    			    $i = $level;
-    			    $closelist = "";
-    			    while (($i > 0) && ($parents[$level] != $sco->parent)) {
-	    	 	    	$closelist .= "  </ul></li>\n";
-	    	 	    	$i--;
-	    	 	    }
-	    	 	    if (($i == 0) && ($sco->parent != $currentorg)) {
-	    	 	    	echo "  <li><ul id='".$sublist."' class=\"scormlist\"'>\n";
-    			    	$level++;
-    			    } else {
-    			    	echo $closelist;
-    			    	$level = $i;
-    			    }
-    			    $parents[$level]=$sco->parent;
-    			}
-    		    }
-    		    echo "    <li>\n";
-    		    $nextsco = next($scoes);
-    		    if (($nextsco !== false) && ($sco->parent != $nextsco->parent) && (($level==0) || (($level>0) && ($nextsco->parent == $sco->identifier)))) {
-    			$sublist++;
-    			echo "      <img src=\"pix/minus.gif\" onClick='expandCollide(this,".$sublist.");'/>\n";
-    		    } else {
-    			echo "      <img src=\"pix/spacer.gif\" />\n";
-    		    }
-    		    
-    		    if ($sco->launch) {
-    		        $startbold = '';
-    		        $endbold = '';
-    		        if ($sco->id == $scoid) {
-    			    $startbold = '-> <b>';
-    			    $endbold = '</b> <-';
-    		    	}
-    		    	if (($scoid == "") && ($mode != "normal")) {
-    		    	    $scoid = $sco->id;
- 			    $startbold = '-> <b>';
-    			    $endbold = '</b> <-';
-    		    	}
-    		    	$score = "";
-    			if ($sco_user=get_record("scorm_sco_users","scoid",$sco->id,"userid",$USER->id)) {
-    			    if ( $sco_user->cmi_core_lesson_status == "") {
-    		    		$sco_user->cmi_core_lesson_status = "not attempted";
-    		    	    }
-    			    echo "      <img src=\"pix/".scorm_remove_spaces($sco_user->cmi_core_lesson_status).".gif\" alt=\"".get_string(scorm_remove_spaces($sco_user->cmi_core_lesson_status),"scorm")."\" title=\"".get_string(scorm_remove_spaces($sco_user->cmi_core_lesson_status),"scorm")."\" />\n";
- 			    if (($sco_user->cmi_core_lesson_status == "not attempted") || ($sco_user->cmi_core_lesson_status == "incomplete")) {
- 			        if ($scoid == "") {
- 				    $incomplete = true;
- 				    $scoid = $sco->id;
- 				    $startbold = '-> <b>';
-    			    	    $endbold = '</b> <-';
- 				}
- 			    }
- 			    if ($sco_user->cmi_core_score_raw > 0) {
-    			    	$score = "(".get_string("score","scorm").":&nbsp;".$sco_user->cmi_core_score_raw.")";
-			    }
-    			} else {
-    			    if ($sco->type == 'sco') {
-    				echo "      <img src=\"pix/notattempted.gif\" alt=\"".get_string("notattempted","scorm")."\" />";
-    				$incomplete = true;
-    			    } else {
-    				echo "      <img src=\"pix/asset.gif\" alt=\"".get_string("asset","scorm")."\" />";
-    			    }
-    			}
-    			echo "      &nbsp;$startbold<a href=\"javascript:playSCO(".$sco->id.");\">$sco->title</a> $score$endbold\n    </li>\n";
-    		    } else {
-			echo "      &nbsp;$sco->title\n    </li>\n";
-		    }
-		}
-		for ($i=0;$i<$level;$i++){
-		    echo "  </ul></li>\n";
-		}
-	    }
-	    echo "</ul></td></tr>\n";
-    	    echo "</table>\n";
-    	    print_simple_box_end();
+    	    }
+    	    echo "\t\t<li>";
+    	    $nextsco = next($scoes);
+    	    if (($nextsco !== false) && ($sco->parent != $nextsco->parent) && (($level==0) || (($level>0) && ($nextsco->parent == $sco->identifier)))) {
+    		$sublist++;
+    		echo "<img id='img".$sublist."' src=\"pix/minus.gif\" onClick='expandCollide(this,".$sublist.");'/>";
+    	    } else {
+    		echo "<img src=\"pix/spacer.gif\" />";
+    	    }
     	    
-        }
-	    
-    	echo "<table width=\"100%\">\n    <tr>\n";
-    	echo "          <td align=\"center\" nowrap>
-		     <!--<iframe name=\"cmi\" width=\"1\" height=\"1\" src=\"cmi.php?id=$cm->id\" style=\"visibility: hidden\"></iframe> -->
-		     <form name=\"navform\" method=\"POST\" action=\"playscorm.php?id=$cm->id\" target=\"_top\">
-		     	<input name=\"scoid\" type=\"hidden\" />
-			<input name=\"currentorg\" type=\"hidden\" value=\"$currentorg\" />
-		     	<input name=\"mode\" type=\"hidden\" value=\"".$mode."\" />
-		     	<input name=\"prev\" type=\"button\" value=\"".get_string("prev","scorm")."\" onClick=\"top.changeSco('previous');\" />&nbsp;\n";
-		     	
-	if ($scorm->popup == "") {
-	    if ($scoes = get_records_select("scorm_scoes","scorm='$scorm->id' AND organization='$currentorg' order by id ASC")){
-    	    	$level=0;			
-    	    	$parents[$level]="/";
-    	    	foreach ($scoes as $sco) {
-    		    if ($parents[$level]!=$sco->parent) {
-    			if ($level>0 && $parents[$level-1]==$sco->parent) {
-    			    $level--;
-    			} else {
-    			    $i = $level;
-    			    while (($i > 0) && ($parents[$level] != $sco->parent)) {
-	    	 	    	$i--;
-	    	 	    }
-	    	 	    if (($i == 0) && ($sco->parent != $currentorg)) {
-    			    	$level++;
-    			    } else {
-    			    	$level = $i;
-    			    }
-    			    $parents[$level]=$sco->parent;
-    			}
+    	    if ($sco->launch) {
+    	        $startbold = '';
+    	        $endbold = '';
+    	        if ($sco->id == $scoid) {
+    		    $startbold = '-> <b>';
+    		    $endbold = '</b> <-';
+    	    	}
+    	    	if (($scoid == "") && ($mode != "normal")) {
+    	    	    $scoid = $sco->id;
+ 		    $startbold = '-> <b>';
+    		    $endbold = '</b> <-';
+    	    	}
+    	    	$score = "";
+    		if ($sco_user=get_record("scorm_sco_users","scoid",$sco->id,"userid",$USER->id)) {
+    		    if ( $sco_user->cmi_core_lesson_status == "") {
+    	    		$sco_user->cmi_core_lesson_status = "not attempted";
+    	    	    }
+    		    echo "<img src=\"pix/".scorm_remove_spaces($sco_user->cmi_core_lesson_status).".gif\" alt=\"".get_string(scorm_remove_spaces($sco_user->cmi_core_lesson_status),"scorm")."\" title=\"".get_string(scorm_remove_spaces($sco_user->cmi_core_lesson_status),"scorm")."\" />\n";
+ 		    if (($sco_user->cmi_core_lesson_status == "not attempted") || ($sco_user->cmi_core_lesson_status == "incomplete")) {
+ 		        if ($scoid == "") {
+ 			    $incomplete = true;
+ 			    $scoid = $sco->id;
+ 			    $startbold = '-> <b>';
+    		    	    $endbold = '</b> <-';
+ 			}
+ 		    }
+ 		    if ($sco_user->cmi_core_score_raw > 0) {
+    		    	$score = "(".get_string("score","scorm").":&nbsp;".$sco_user->cmi_core_score_raw.")";
+		    }
+    		} else {
+    		    if ($sco->type == 'sco') {
+    			echo "<img src=\"pix/notattempted.gif\" alt=\"".get_string("notattempted","scorm")."\" />";
+    			$incomplete = true;
+    		    } else {
+    			echo "<img src=\"pix/asset.gif\" alt=\"".get_string("asset","scorm")."\" />";
     		    }
-    		    $indenting = "";
-    		    for ($i=0;$i<$level;$i++) {
-    		        $indenting .= "-";
-    		    }
-    		    $options[$sco->id] = $indenting."&gt; ".$sco->title;
-	    	}
+    		}
+    		echo "&nbsp;$startbold<a href=\"javascript:playSCO(".$sco->id.");\">$sco->title</a> $score$endbold</li>\n";
+    	    } else {
+		echo "&nbsp;$sco->title</li>\n";
 	    }
-	    choose_from_menu($options, "courseStructure", $scoid, "", "document.navform.scoid.value=document.navform.courseStructure.options[document.navform.courseStructure.selectedIndex].value;document.navform.submit();");
 	}
-	echo "     	&nbsp;<input name=\"next\" type=\"button\" value=\"".get_string("next","scorm")."\" onClick=\"top.changeSco('continue')\" />\n";
-	echo "	     </form>
-		</td>\n";
-	
-    	echo "</tr>\n</table>\n";
-	if ($scorm->popup == "") {
-	    echo "</body>\n</html>\n";
-	} else {
-	    print_footer($course);
+	for ($i=0;$i<$level;$i++) {
+	    echo "\t\t</ul></li>\n";
 	}
-    } else {
-        if ($scorm->popup == "") {
-    	    // 
-    	    // Frameset
-    	    //
-    	    echo "<html>\n";
-            echo "<head><title>$course->shortname: $scorm->name</title></head>\n";
-            echo "<script language=\"JavaScript\" type=\"text/javascript\" src=\"request.js\"></script>\n";
-            echo "<script language=\"JavaScript\" type=\"text/javascript\" src=\"api.php?id=$cm->id\"></script>\n";
-	    echo "<frameset rows=\"$CFG->scorm_framesize,*\" onUnload=\"SCOFinish();\">\n";
-            echo "\t    <frame name=\"navigation\" src=\"playscorm.php?id=$cm->id".$modestring.$currentorgstring.$scoidstring."&frameset=top\">\n";
-            echo "\t    <frame name=\"main\" src=\"loadSCO.php?id=$cm->id$scoidstring\">\n";
-            echo "</frameset>\n";
-            echo "</html>\n";
-        }
     }
 ?>
+		</ul>
+	    </td></tr>
+	    <tr><td align="center">
+		<form name="navform" method="post" action="playscorm.php?id=<?php echo $cm->id ?>" target="_top">
+		    <input name="scoid" type="hidden" />
+		    <input name="currentorg" type="hidden" value="<?php echo $currentorg ?>" />
+		    <input name="mode" type="hidden" value="<?php echo $mode ?>" />
+		    <input name="prev" type="button" value="<?php print_string('prev','scorm') ?>" onClick="top.changeSco('previous');" />
+		    <input name="next" type="button" value="<?php print_string('next','scorm') ?>" onClick="top.changeSco('continue')" />
+		</form>
+	    </td></tr>
+	</table>
+	<?php print_simple_box_end(); ?>
+    </td>
+    <td width="100%">
+    	<iframe name="main" height="500" width="100%" src="loadSCO.php?id=<?php echo $cm->id.$scoidstring ?>"></iframe>
+    </td></tr>
+    </table>
+<?php    
+    /*$popuplocation = '';
+    if (isset($_COOKIE["SCORMpopup"])) {
+       	$popuplocation = $_COOKIE["SCORMpopup"];
+    }
+    echo "<script language=\"javascript\">\n";
+    echo "\t    top.main = window.open('loadSCO.php?id=$cm->id".$scoidstring."','main','$scorm->popup$popuplocation');\n";
+    echo "</script>\n"; */
+?>
+</body>
+</html>
