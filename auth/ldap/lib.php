@@ -494,6 +494,7 @@ function auth_user_update($olduser, $newuser) {
 
 }
 
+
 function auth_user_update_password($username, $newpassword) {
 /// called when the user password is updated -- it assumes it is called by an admin
 /// or that you've otherwise checked the user's credentials
@@ -535,7 +536,7 @@ function auth_ldap_suppported_usertypes (){
     $types['edir']='Novell Edirectory';
     $types['posix']='posixAccount (rfc2307)';
     $types['samba']='sambaSamAccount (v.3.0.7)';
-    $types['ad']='ActiveDirectory'; 
+    $types['ad']='MS ActiveDirectory'; 
     return $types;
 }    
 

@@ -13,6 +13,7 @@
     optional_variable($config->ldap_creators,             "");
     optional_variable($config->ldap_create_context,     "");
     optional_variable($config->ldap_expiration,         "");
+    optional_variable($config->ldap_expiration_warning,         "10");
     optional_variable($config->ldap_expireattr,         "");
     optional_variable($config->ldap_gracelogins,         "");
     optional_variable($config->ldap_graceattr,         "");
@@ -20,14 +21,14 @@
     optional_variable($config->auth_user_create,         "");
     optional_variable($config->auth_ldap_forcepasswordchange,         "");
     
-    optional_variable($config->auth_user_firstname_updatelocal,     "");
-    optional_variable($config->auth_user_firstname_editlock,        "");  
+    optional_variable($config->auth_user_firstname_updatelocal,     "1");
+    optional_variable($config->auth_user_firstname_editlock,        "1");  
     optional_variable($config->auth_user_firstname_updateremote,    "");                    
-    optional_variable($config->auth_user_lastname_updatelocal,         "");
-    optional_variable($config->auth_user_lastname_editlock,         "");  
+    optional_variable($config->auth_user_lastname_updatelocal,         "1");
+    optional_variable($config->auth_user_lastname_editlock,         "1");  
     optional_variable($config->auth_user_lastname_updateremote,     "");  
-    optional_variable($config->auth_user_email_updatelocal,         "");
-    optional_variable($config->auth_user_email_editlock,             "");  
+    optional_variable($config->auth_user_email_updatelocal,         "1");
+    optional_variable($config->auth_user_email_editlock,             "1");  
     optional_variable($config->auth_user_email_updateremote,         ""); 
     optional_variable($config->auth_user_phone1_updatelocal,         "");
     optional_variable($config->auth_user_phone1_editlock,             "");  
@@ -207,9 +208,9 @@ if (!function_exists('ldap_connect')){ // Is php4-ldap really there?
     <td>
  
     <select name="auth_ldap_forcechangepassword">
-        <option value="0" <?php echo ($config->auth_ldap_forcechangepassword ? '' : 'selectED="yes"') ?> >
+        <option value="0" <?php echo ($config->auth_ldap_forcechangepassword ? '' : 'selected="yes"') ?> >
             <?php  print_string("no")  ?></option>
-        <option value="1" <?php echo ($config->auth_ldap_forcechangepassword ? 'selectED="yes"' : '') ?> >
+        <option value="1" <?php echo ($config->auth_ldap_forcechangepassword ? 'selected="yes"' : '') ?> >
             <?php  print_string("yes") ?></option>
     </select><br>
  
@@ -224,9 +225,9 @@ if (!function_exists('ldap_connect')){ // Is php4-ldap really there?
     <td>
  
     <select name="auth_ldap_stdchangepassword">
-        <option value="0" <?php echo ($config->auth_ldap_stdchangepassword ? '' : 'selectED="yes"') ?> >
+        <option value="0" <?php echo ($config->auth_ldap_stdchangepassword ? '' : 'selected="yes"') ?> >
             <?php  print_string("no")  ?></option>
-        <option value="1" <?php echo ($config->auth_ldap_stdchangepassword ? 'selectED="yes"' : '') ?> >
+        <option value="1" <?php echo ($config->auth_ldap_stdchangepassword ? 'selected="yes"' : '') ?> >
             <?php  print_string("yes") ?></option>
     </select><br>
 
@@ -256,6 +257,19 @@ if (!function_exists('ldap_connect')){ // Is php4-ldap really there?
     </td>
     <td>
     <?php  print_string("auth_ldap_expiration_desc","auth") ?>
+    </td>
+</tr>
+
+
+<tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
+    <td align="right"><P>ldap_expiration_warning:</td>
+    <td>
+    <input name="ldap_expiration_warning" type="text" size="2" value="<?php echo $config->ldap_expiration_warning?>">
+    <?php   if (isset($err["ldap_expiration_warning"])) formerr($err["ldap_expiration_warning"]); 
+    ?>
+    </td>
+    <td>
+    <?php  print_string("auth_ldap_expiration_warning_desc","auth") ?>
     </td>
 </tr>
 
@@ -349,23 +363,23 @@ if (!function_exists('ldap_connect')){ // Is php4-ldap really there?
     <div align="right">
     <?php  print_string("auth_updatelocal", "auth") ?>
     <select name="auth_user_firstname_updatelocal">
-        <option value="0" <?php echo ($config->auth_user_firstname_updatelocal ? '' : 'selectED="yes"') ?> >
+        <option value="0" <?php echo ($config->auth_user_firstname_updatelocal ? '' : 'selected="yes"') ?> >
             <?php  print_string("no")  ?></option>
-        <option value="1" <?php echo ($config->auth_user_firstname_updatelocal ? 'selectED="yes"' : '') ?> >
+        <option value="1" <?php echo ($config->auth_user_firstname_updatelocal ? 'selected="yes"' : '') ?> >
             <?php  print_string("yes") ?></option>
     </select><br>
     <?php  print_string("auth_editlock", "auth") ?>
     <select name="auth_user_firstname_editlock">
-        <option value="0" <?php echo ($config->auth_user_firstname_editlock ? '' : 'selectED="yes"') ?> >
+        <option value="0" <?php echo ($config->auth_user_firstname_editlock ? '' : 'selected="yes"') ?> >
             <?php  print_string("no")  ?></option>
-        <option value="1" <?php echo ($config->auth_user_firstname_editlock ? 'selectED="yes"' : '') ?> >
+        <option value="1" <?php echo ($config->auth_user_firstname_editlock ? 'selected="yes"' : '') ?> >
             <?php  print_string("yes") ?></option>
     </select><br>    
     <?php  print_string("auth_updateremote", "auth") ?>
     <select name="auth_user_firstname_updateremote">
-        <option value="0" <?php echo ($config->auth_user_firstname_updateremote ? '' : 'selectED="yes"') ?> >
+        <option value="0" <?php echo ($config->auth_user_firstname_updateremote ? '' : 'selected="yes"') ?> >
             <?php  print_string("no")  ?></option>
-        <option value="1" <?php echo ($config->auth_user_firstname_updateremote ? 'selectED="yes"' : '') ?> >
+        <option value="1" <?php echo ($config->auth_user_firstname_updateremote ? 'selected="yes"' : '') ?> >
             <?php  print_string("yes") ?></option>
     </select><br>    
     </div>
@@ -387,23 +401,23 @@ if (!function_exists('ldap_connect')){ // Is php4-ldap really there?
     <div align="right">
     <?php  print_string("auth_updatelocal", "auth") ?>
     <select name="auth_user_lastname_updatelocal">
-        <option value="0" <?php echo ($config->auth_user_lastname_updatelocal ? '' : 'selectED="yes"') ?> >
+        <option value="0" <?php echo ($config->auth_user_lastname_updatelocal ? '' : 'selected="yes"') ?> >
             <?php  print_string("no")  ?></option>
-        <option value="1" <?php echo ($config->auth_user_lastname_updatelocal ? 'selectED="yes"' : '') ?> >
+        <option value="1" <?php echo ($config->auth_user_lastname_updatelocal ? 'selected="yes"' : '') ?> >
             <?php  print_string("yes") ?></option>
     </select><br>
     <?php  print_string("auth_editlock","auth") ?>
     <select name="auth_user_lastname_editlock">
-        <option value="0" <?php echo ($config->auth_user_lastname_editlock ? '' : 'selectED="yes"') ?> >
+        <option value="0" <?php echo ($config->auth_user_lastname_editlock ? '' : 'selected="yes"') ?> >
             <?php  print_string("no")  ?></option>
-        <option value="1" <?php echo ($config->auth_user_lastname_editlock ? 'selectED="yes"' : '') ?> >
+        <option value="1" <?php echo ($config->auth_user_lastname_editlock ? 'selected="yes"' : '') ?> >
             <?php  print_string("yes") ?></option>
     </select><br>    
     <?php  print_string("auth_updateremote", "auth") ?>
     <select name="auth_user_lastname_updateremote">
-        <option value="0" <?php echo ($config->auth_user_lastname_updateremote ? '' : 'selectED="yes"') ?> >
+        <option value="0" <?php echo ($config->auth_user_lastname_updateremote ? '' : 'selected="yes"') ?> >
             <?php  print_string("no")  ?></option>
-        <option value="1" <?php echo ($config->auth_user_lastname_updateremote ? 'selectED="yes"' : '') ?> >
+        <option value="1" <?php echo ($config->auth_user_lastname_updateremote ? 'selected="yes"' : '') ?> >
             <?php  print_string("yes") ?></option>
     </select><br>    
     </div>
@@ -417,23 +431,23 @@ if (!function_exists('ldap_connect')){ // Is php4-ldap really there?
     <div align="right">
     <?php  print_string("auth_updatelocal", "auth") ?>
     <select name="auth_user_email_updatelocal">
-        <option value="0" <?php echo ($config->auth_user_email_updatelocal ? '' : 'selectED="yes"') ?> >
+        <option value="0" <?php echo ($config->auth_user_email_updatelocal ? '' : 'selected="yes"') ?> >
             <?php  print_string("no")  ?></option>
-        <option value="1" <?php echo ($config->auth_user_email_updatelocal ? 'selectED="yes"' : '') ?> >
+        <option value="1" <?php echo ($config->auth_user_email_updatelocal ? 'selected="yes"' : '') ?> >
             <?php  print_string("yes") ?></option>
     </select><br>
     <?php  print_string("auth_editlock", "auth") ?>
     <select name="auth_user_email_editlock">
-        <option value="0" <?php echo ($config->auth_user_email_editlock ? '' : 'selectED="yes"') ?> >
+        <option value="0" <?php echo ($config->auth_user_email_editlock ? '' : 'selected="yes"') ?> >
             <?php  print_string("no")  ?></option>
-        <option value="1" <?php echo ($config->auth_user_email_editlock ? 'selectED="yes"' : '') ?> >
+        <option value="1" <?php echo ($config->auth_user_email_editlock ? 'selected="yes"' : '') ?> >
             <?php  print_string("yes") ?></option>
     </select><br>    
     <?php  print_string("auth_updateremote", "auth") ?>
     <select name="auth_user_email_updateremote">
-        <option value="0" <?php echo ($config->auth_user_email_updateremote ? '' : 'selectED="yes"') ?> >
+        <option value="0" <?php echo ($config->auth_user_email_updateremote ? '' : 'selected="yes"') ?> >
             <?php  print_string("no")  ?></option>
-        <option value="1" <?php echo ($config->auth_user_email_updateremote ? 'selectED="yes"' : '') ?> >
+        <option value="1" <?php echo ($config->auth_user_email_updateremote ? 'selected="yes"' : '') ?> >
             <?php  print_string("yes") ?></option>
     </select><br>    
     </div>
@@ -447,23 +461,23 @@ if (!function_exists('ldap_connect')){ // Is php4-ldap really there?
     <div align="right">
     <?php  print_string("auth_updatelocal", "auth") ?>
     <select name="auth_user_phone1_updatelocal">
-        <option value="0" <?php echo ($config->auth_user_phone1_updatelocal ? '' : 'selectED="yes"') ?> >
+        <option value="0" <?php echo ($config->auth_user_phone1_updatelocal ? '' : 'selected="yes"') ?> >
             <?php  print_string("no")  ?></option>
-        <option value="1" <?php echo ($config->auth_user_phone1_updatelocal ? 'selectED="yes"' : '') ?> >
+        <option value="1" <?php echo ($config->auth_user_phone1_updatelocal ? 'selected="yes"' : '') ?> >
             <?php  print_string("yes") ?></option>
     </select><br>
     <?php  print_string("auth_editlock", "auth") ?>
     <select name="auth_user_phone1_editlock">
-        <option value="0" <?php echo ($config->auth_user_phone1_editlock ? '' : 'selectED="yes"') ?> >
+        <option value="0" <?php echo ($config->auth_user_phone1_editlock ? '' : 'selected="yes"') ?> >
             <?php  print_string("no")  ?></option>
-        <option value="1" <?php echo ($config->auth_user_phone1_editlock ? 'selectED="yes"' : '') ?> >
+        <option value="1" <?php echo ($config->auth_user_phone1_editlock ? 'selected="yes"' : '') ?> >
             <?php  print_string("yes") ?></option>
     </select><br>    
     <?php  print_string("auth_updateremote", "auth") ?>
     <select name="auth_user_phone1_updateremote">
-        <option value="0" <?php echo ($config->auth_user_phone1_updateremote ? '' : 'selectED="yes"') ?> >
+        <option value="0" <?php echo ($config->auth_user_phone1_updateremote ? '' : 'selected="yes"') ?> >
             <?php  print_string("no")  ?></option>
-        <option value="1" <?php echo ($config->auth_user_phone1_updateremote ? 'selectED="yes"' : '') ?> >
+        <option value="1" <?php echo ($config->auth_user_phone1_updateremote ? 'selected="yes"' : '') ?> >
             <?php  print_string("yes") ?></option>
     </select><br>    
     </div>
@@ -477,23 +491,23 @@ if (!function_exists('ldap_connect')){ // Is php4-ldap really there?
     <div align="right">
     <?php  print_string("auth_updatelocal", "auth") ?>
     <select name="auth_user_phone2_updatelocal">
-        <option value="0" <?php echo ($config->auth_user_phone2_updatelocal ? '' : 'selectED="yes"') ?> >
+        <option value="0" <?php echo ($config->auth_user_phone2_updatelocal ? '' : 'selected="yes"') ?> >
             <?php  print_string("no")  ?></option>
-        <option value="1" <?php echo ($config->auth_user_phone2_updatelocal ? 'selectED="yes"' : '') ?> >
+        <option value="1" <?php echo ($config->auth_user_phone2_updatelocal ? 'selected="yes"' : '') ?> >
             <?php  print_string("yes") ?></option>
     </select><br>
     <?php  print_string("auth_editlock", "auth") ?>
     <select name="auth_user_phone2_editlock">
-        <option value="0" <?php echo ($config->auth_user_phone2_editlock ? '' : 'selectED="yes"') ?> >
+        <option value="0" <?php echo ($config->auth_user_phone2_editlock ? '' : 'selected="yes"') ?> >
             <?php  print_string("no")  ?></option>
-        <option value="1" <?php echo ($config->auth_user_phone2_editlock ? 'selectED="yes"' : '') ?> >
+        <option value="1" <?php echo ($config->auth_user_phone2_editlock ? 'selected="yes"' : '') ?> >
             <?php  print_string("yes") ?></option>
     </select><br>    
     <?php  print_string("auth_updateremote", "auth") ?>
     <select name="auth_user_phone2_updateremote">
-        <option value="0" <?php echo ($config->auth_user_phone2_updateremote ? '' : 'selectED="yes"') ?> >
+        <option value="0" <?php echo ($config->auth_user_phone2_updateremote ? '' : 'selected="yes"') ?> >
             <?php  print_string("no")  ?></option>
-        <option value="1" <?php echo ($config->auth_user_phone2_updateremote ? 'selectED="yes"' : '') ?> >
+        <option value="1" <?php echo ($config->auth_user_phone2_updateremote ? 'selected="yes"' : '') ?> >
             <?php  print_string("yes") ?></option>
     </select><br>    
     </div>
@@ -507,23 +521,23 @@ if (!function_exists('ldap_connect')){ // Is php4-ldap really there?
     <div align="right">
     <?php  print_string("auth_updatelocal", "auth") ?>
     <select name="auth_user_department_updatelocal">
-        <option value="0" <?php echo ($config->auth_user_department_updatelocal ? '' : 'selectED="yes"') ?> >
+        <option value="0" <?php echo ($config->auth_user_department_updatelocal ? '' : 'selected="yes"') ?> >
             <?php  print_string("no")  ?></option>
-        <option value="1" <?php echo ($config->auth_user_department_updatelocal ? 'selectED="yes"' : '') ?> >
+        <option value="1" <?php echo ($config->auth_user_department_updatelocal ? 'selected="yes"' : '') ?> >
             <?php  print_string("yes") ?></option>
     </select><br>
     <?php  print_string("auth_editlock", "auth") ?>
     <select name="auth_user_department_editlock">
-        <option value="0" <?php echo ($config->auth_user_department_editlock ? '' : 'selectED="yes"') ?> >
+        <option value="0" <?php echo ($config->auth_user_department_editlock ? '' : 'selected="yes"') ?> >
             <?php  print_string("no")  ?></option>
-        <option value="1" <?php echo ($config->auth_user_department_editlock ? 'selectED="yes"' : '') ?> >
+        <option value="1" <?php echo ($config->auth_user_department_editlock ? 'selected="yes"' : '') ?> >
             <?php  print_string("yes") ?></option>
     </select><br>    
     <?php  print_string("auth_updateremote", "auth") ?>
     <select name="auth_user_department_updateremote">
-        <option value="0" <?php echo ($config->auth_user_department_updateremote ? '' : 'selectED="yes"') ?> >
+        <option value="0" <?php echo ($config->auth_user_department_updateremote ? '' : 'selected="yes"') ?> >
             <?php  print_string("no")  ?></option>
-        <option value="1" <?php echo ($config->auth_user_department_updateremote ? 'selectED="yes"' : '') ?> >
+        <option value="1" <?php echo ($config->auth_user_department_updateremote ? 'selected="yes"' : '') ?> >
             <?php  print_string("yes") ?></option>
     </select><br>    
     </div>
@@ -537,23 +551,23 @@ if (!function_exists('ldap_connect')){ // Is php4-ldap really there?
     <div align="right">
     <?php  print_string("auth_updatelocal", "auth") ?>
     <select name="auth_user_address_updatelocal">
-        <option value="0" <?php echo ($config->auth_user_address_updatelocal ? '' : 'selectED="yes"') ?> >
+        <option value="0" <?php echo ($config->auth_user_address_updatelocal ? '' : 'selected="yes"') ?> >
             <?php  print_string("no")  ?></option>
-        <option value="1" <?php echo ($config->auth_user_address_updatelocal ? 'selectED="yes"' : '') ?> >
+        <option value="1" <?php echo ($config->auth_user_address_updatelocal ? 'selected="yes"' : '') ?> >
             <?php  print_string("yes") ?></option>
     </select><br>
     <?php  print_string("auth_editlock", "auth") ?>
     <select name="auth_user_address_editlock">
-        <option value="0" <?php echo ($config->auth_user_address_editlock ? '' : 'selectED="yes"') ?> >
+        <option value="0" <?php echo ($config->auth_user_address_editlock ? '' : 'selected="yes"') ?> >
             <?php  print_string("no")  ?></option>
-        <option value="1" <?php echo ($config->auth_user_address_editlock ? 'selectED="yes"' : '') ?> >
+        <option value="1" <?php echo ($config->auth_user_address_editlock ? 'selected="yes"' : '') ?> >
             <?php  print_string("yes") ?></option>
     </select><br>    
     <?php  print_string("auth_updateremote", "auth") ?>
     <select name="auth_user_address_updateremote">
-        <option value="0" <?php echo ($config->auth_user_address_updateremote ? '' : 'selectED="yes"') ?> >
+        <option value="0" <?php echo ($config->auth_user_address_updateremote ? '' : 'selected="yes"') ?> >
             <?php  print_string("no")  ?></option>
-        <option value="1" <?php echo ($config->auth_user_address_updateremote ? 'selectED="yes"' : '') ?> >
+        <option value="1" <?php echo ($config->auth_user_address_updateremote ? 'selected="yes"' : '') ?> >
             <?php  print_string("yes") ?></option>
     </select><br>    
     </div>
@@ -567,23 +581,23 @@ if (!function_exists('ldap_connect')){ // Is php4-ldap really there?
     <div align="right">
     <?php  print_string("auth_updatelocal", "auth") ?>
     <select name="auth_user_city_updatelocal">
-        <option value="0" <?php echo ($config->auth_user_city_updatelocal ? '' : 'selectED="yes"') ?> >
+        <option value="0" <?php echo ($config->auth_user_city_updatelocal ? '' : 'selected="yes"') ?> >
             <?php  print_string("no")  ?></option>
-        <option value="1" <?php echo ($config->auth_user_city_updatelocal ? 'selectED="yes"' : '') ?> >
+        <option value="1" <?php echo ($config->auth_user_city_updatelocal ? 'selected="yes"' : '') ?> >
             <?php  print_string("yes") ?></option>
     </select><br>
     <?php  print_string("auth_editlock", "auth") ?>
     <select name="auth_user_city_editlock">
-        <option value="0" <?php echo ($config->auth_user_city_editlock ? '' : 'selectED="yes"') ?> >
+        <option value="0" <?php echo ($config->auth_user_city_editlock ? '' : 'selected="yes"') ?> >
             <?php  print_string("no")  ?></option>
-        <option value="1" <?php echo ($config->auth_user_city_editlock ? 'selectED="yes"' : '') ?> >
+        <option value="1" <?php echo ($config->auth_user_city_editlock ? 'selected="yes"' : '') ?> >
             <?php  print_string("yes") ?></option>
     </select><br>    
     <?php  print_string("auth_updateremote", "auth") ?>
     <select name="auth_user_city_updateremote">
-        <option value="0" <?php echo ($config->auth_user_city_updateremote ? '' : 'selectED="yes"') ?> >
+        <option value="0" <?php echo ($config->auth_user_city_updateremote ? '' : 'selected="yes"') ?> >
             <?php  print_string("no")  ?></option>
-        <option value="1" <?php echo ($config->auth_user_city_updateremote ? 'selectED="yes"' : '') ?> >
+        <option value="1" <?php echo ($config->auth_user_city_updateremote ? 'selected="yes"' : '') ?> >
             <?php  print_string("yes") ?></option>
     </select><br>    
     </div>
@@ -597,23 +611,23 @@ if (!function_exists('ldap_connect')){ // Is php4-ldap really there?
     <div align="right">
     <?php  print_string("auth_updatelocal", "auth") ?>
     <select name="auth_user_country_updatelocal">
-        <option value="0" <?php echo ($config->auth_user_country_updatelocal ? '' : 'selectED="yes"') ?> >
+        <option value="0" <?php echo ($config->auth_user_country_updatelocal ? '' : 'selected="yes"') ?> >
             <?php  print_string("no")  ?></option>
-        <option value="1" <?php echo ($config->auth_user_country_updatelocal ? 'selectED="yes"' : '') ?> >
+        <option value="1" <?php echo ($config->auth_user_country_updatelocal ? 'selected="yes"' : '') ?> >
             <?php  print_string("yes") ?></option>
     </select><br>
     <?php  print_string("auth_editlock", "auth") ?>
     <select name="auth_user_country_editlock">
-        <option value="0" <?php echo ($config->auth_user_country_editlock ? '' : 'selectED="yes"') ?> >
+        <option value="0" <?php echo ($config->auth_user_country_editlock ? '' : 'selected="yes"') ?> >
             <?php  print_string("no")  ?></option>
-        <option value="1" <?php echo ($config->auth_user_country_editlock ? 'selectED="yes"' : '') ?> >
+        <option value="1" <?php echo ($config->auth_user_country_editlock ? 'selected="yes"' : '') ?> >
             <?php  print_string("yes") ?></option>
     </select><br>    
     <?php  print_string("auth_updateremote", "auth") ?>
     <select name="auth_user_country_updateremote">
-        <option value="0" <?php echo ($config->auth_user_country_updateremote ? '' : 'selectED="yes"') ?> >
+        <option value="0" <?php echo ($config->auth_user_country_updateremote ? '' : 'selected="yes"') ?> >
             <?php  print_string("no")  ?></option>
-        <option value="1" <?php echo ($config->auth_user_country_updateremote ? 'selectED="yes"' : '') ?> >
+        <option value="1" <?php echo ($config->auth_user_country_updateremote ? 'selected="yes"' : '') ?> >
             <?php  print_string("yes") ?></option>
     </select><br>    
     </div>
@@ -627,23 +641,23 @@ if (!function_exists('ldap_connect')){ // Is php4-ldap really there?
     <div align="right">
     <?php  print_string("auth_updatelocal", "auth") ?>
     <select name="auth_user_description_updatelocal">
-        <option value="0" <?php echo ($config->auth_user_description_updatelocal ? '' : 'selectED="yes"') ?> >
+        <option value="0" <?php echo ($config->auth_user_description_updatelocal ? '' : 'selected="yes"') ?> >
             <?php  print_string("no")  ?></option>
-        <option value="1" <?php echo ($config->auth_user_description_updatelocal ? 'selectED="yes"' : '') ?> >
+        <option value="1" <?php echo ($config->auth_user_description_updatelocal ? 'selected="yes"' : '') ?> >
             <?php  print_string("yes") ?></option>
     </select><br>
     <?php  print_string("auth_editlock", "auth") ?>
     <select name="auth_user_description_editlock">
-        <option value="0" <?php echo ($config->auth_user_description_editlock ? '' : 'selectED="yes"') ?> >
+        <option value="0" <?php echo ($config->auth_user_description_editlock ? '' : 'selected="yes"') ?> >
             <?php  print_string("no")  ?></option>
-        <option value="1" <?php echo ($config->auth_user_description_editlock ? 'selectED="yes"' : '') ?> >
+        <option value="1" <?php echo ($config->auth_user_description_editlock ? 'selected="yes"' : '') ?> >
             <?php  print_string("yes") ?></option>
     </select><br>    
     <?php  print_string("auth_updateremote", "auth") ?>
     <select name="auth_user_description_updateremote">
-        <option value="0" <?php echo ($config->auth_user_description_updateremote ? '' : 'selectED="yes"') ?> >
+        <option value="0" <?php echo ($config->auth_user_description_updateremote ? '' : 'selected="yes"') ?> >
             <?php  print_string("no")  ?></option>
-        <option value="1" <?php echo ($config->auth_user_description_updateremote ? 'selectED="yes"' : '') ?> >
+        <option value="1" <?php echo ($config->auth_user_description_updateremote ? 'selected="yes"' : '') ?> >
             <?php  print_string("yes") ?></option>
     </select><br>    
     </div>
@@ -657,23 +671,23 @@ if (!function_exists('ldap_connect')){ // Is php4-ldap really there?
     <div align="right">
     <?php  print_string("auth_updatelocal", "auth") ?>
     <select name="auth_user_idnumber_updatelocal">
-        <option value="0" <?php echo ($config->auth_user_idnumber_updatelocal ? '' : 'selectED="yes"') ?> >
+        <option value="0" <?php echo ($config->auth_user_idnumber_updatelocal ? '' : 'selected="yes"') ?> >
             <?php  print_string("no")  ?></option>
-        <option value="1" <?php echo ($config->auth_user_idnumber_updatelocal ? 'selectED="yes"' : '') ?> >
+        <option value="1" <?php echo ($config->auth_user_idnumber_updatelocal ? 'selected="yes"' : '') ?> >
             <?php  print_string("yes") ?></option>
     </select><br>
     <?php  print_string("auth_editlock", "auth") ?>
     <select name="auth_user_idnumber_editlock">
-        <option value="0" <?php echo ($config->auth_user_idnumber_editlock ? '' : 'selectED="yes"') ?> >
+        <option value="0" <?php echo ($config->auth_user_idnumber_editlock ? '' : 'selected="yes"') ?> >
             <?php  print_string("no")  ?></option>
-        <option value="1" <?php echo ($config->auth_user_idnumber_editlock ? 'selectED="yes"' : '') ?> >
+        <option value="1" <?php echo ($config->auth_user_idnumber_editlock ? 'selected="yes"' : '') ?> >
             <?php  print_string("yes") ?></option>
     </select><br>    
     <?php  print_string("auth_updateremote", "auth") ?>
     <select name="auth_user_idnumber_updateremote">
-        <option value="0" <?php echo ($config->auth_user_idnumber_updateremote ? '' : 'selectED="yes"') ?> >
+        <option value="0" <?php echo ($config->auth_user_idnumber_updateremote ? '' : 'selected="yes"') ?> >
             <?php  print_string("no")  ?></option>
-        <option value="1" <?php echo ($config->auth_user_idnumber_updateremote ? 'selectED="yes"' : '') ?> >
+        <option value="1" <?php echo ($config->auth_user_idnumber_updateremote ? 'selected="yes"' : '') ?> >
             <?php  print_string("yes") ?></option>
     </select><br>    
     </div>
@@ -687,23 +701,23 @@ if (!function_exists('ldap_connect')){ // Is php4-ldap really there?
     <div align="right">
     <?php  print_string("auth_updatelocal", "auth") ?>
     <select name="auth_user_lang_updatelocal">
-        <option value="0" <?php echo ($config->auth_user_lang_updatelocal ? '' : 'selectED="yes"') ?> >
+        <option value="0" <?php echo ($config->auth_user_lang_updatelocal ? '' : 'selected="yes"') ?> >
             <?php  print_string("no")  ?></option>
-        <option value="1" <?php echo ($config->auth_user_lang_updatelocal ? 'selectED="yes"' : '') ?> >
+        <option value="1" <?php echo ($config->auth_user_lang_updatelocal ? 'selected="yes"' : '') ?> >
             <?php  print_string("yes") ?></option>
     </select><br>
     <?php  print_string("auth_editlock", "auth") ?>
     <select name="auth_user_lang_editlock">
-        <option value="0" <?php echo ($config->auth_user_lang_editlock ? '' : 'selectED="yes"') ?> >
+        <option value="0" <?php echo ($config->auth_user_lang_editlock ? '' : 'selected="yes"') ?> >
             <?php  print_string("no")  ?></option>
-        <option value="1" <?php echo ($config->auth_user_lang_editlock ? 'selectED="yes"' : '') ?> >
+        <option value="1" <?php echo ($config->auth_user_lang_editlock ? 'selected="yes"' : '') ?> >
             <?php  print_string("yes") ?></option>
     </select><br>    
     <?php  print_string("auth_updateremote", "auth") ?>
     <select name="auth_user_lang_updateremote">
-        <option value="0" <?php echo ($config->auth_user_lang_updateremote ? '' : 'selectED="yes"') ?> >
+        <option value="0" <?php echo ($config->auth_user_lang_updateremote ? '' : 'selected="yes"') ?> >
             <?php  print_string("no")  ?></option>
-        <option value="1" <?php echo ($config->auth_user_lang_updateremote ? 'selectED="yes"' : '') ?> >
+        <option value="1" <?php echo ($config->auth_user_lang_updateremote ? 'selected="yes"' : '') ?> >
             <?php  print_string("yes") ?></option>
     </select><br>    
     </div>
