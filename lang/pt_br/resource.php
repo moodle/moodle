@@ -14,7 +14,7 @@ $string['modulename'] = "Material";
 $string['modulenameplural'] = "Materiais";
 $string['neverseen'] = "Nunca visto";
 $string['note'] = "Nota";
-$string['notefile'] = "Para transferir mais arquivos ao curso (in modo que aparecerem nesta lista) use o <a href=\"\$a\">Administrador de Arquivos</a>.";
+$string['notefile'] = "Para transferir mais arquivos ao curso (in modo que aparecerem nesta lista) use o <a href=\$a>Administrador de Arquivos</a>.";
 $string['notypechosen'] = "Você tem que escolher um tipo. Use seu botão de retorno e tente novamente.";
 $string['resourcetype'] = "Tipo de material";
 $string['resourcetype1'] = "Referência";
