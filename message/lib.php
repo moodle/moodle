@@ -370,7 +370,8 @@ function message_print_search_results($frm) {
         
     /// search messages for keywords
     } else if (!empty($frm->keywordssubmit) and !empty($frm->keywords)) {
-        $keywords = explode(' ', $frm->keywords);
+        $keywordstring = clean_text(trim($frm->keywords));
+        $keywords = explode(' ', $keywordstring);
         $tome     = false;
         $fromme   = false;
         $courseid = 'none';
@@ -405,7 +406,7 @@ function message_print_search_results($frm) {
             }
 
         /// print heading with number of results
-            echo '<strong>'.get_string('keywordssearchresults', 'message', count($messages)).'</strong>';
+            echo '<p class="message_heading">'.get_string('keywordssearchresults', 'message', count($messages)).' ("'.s($keywordstring).'")</p>';
 
         /// print table headings
             echo '<table class="message_search_results">';
@@ -418,7 +419,7 @@ function message_print_search_results($frm) {
 
             $blockedcount = 0;
             $dateformat = get_string('strftimedatetime');
-            $strmore = get_string('more');
+            $strcontext = get_string('context', 'message');
             foreach ($messages as $message) {
 
             /// ignore messages to and from blocked users unless $frm->includeblocked is set
@@ -469,9 +470,8 @@ function message_print_search_results($frm) {
                 echo '<td class="message_contact">';
                 message_print_user($userto, $tocontact, $toblocked);
                 echo '</td>';
-                echo '<td class="message_summary">'.message_shorten_message($message->message, 20);
-                echo ' ...('.message_history_link($message->useridto, $message->useridfrom, true, $datestring, 
-                     $strmore.'&nbsp;<img src="'.$CFG->pixpath.'/t/log.gif" height="11" width="11" border="0">').')';
+                echo '<td class="message_summary">'.message_get_fragment($message->message, $keywords);
+                echo '<br /><div class="message_summary_link">'.message_history_link($message->useridto, $message->useridfrom, true, $keywordstring, $datestring, $strcontext).'</div>';
                 echo '</td>';
                 echo '<td class="message_date">'.userdate($message->timecreated, $dateformat).'</td>';
                 echo "</tr>\n";
@@ -574,7 +574,7 @@ function message_contact_link($userid, $linktype='add', $return=false) {
     }
 }
 
-function message_history_link ($userid1, $userid2=0, $returnstr=false, $position='', $linktext='') {
+function message_history_link($userid1, $userid2=0, $returnstr=false, $keywords='', $position='', $linktext='') {
     global $USER, $CFG;
 
     if (!$userid2) {
@@ -583,6 +583,9 @@ function message_history_link ($userid1, $userid2=0, $returnstr=false, $position
     if ($position) {
         $position = "#$position";
     }
+    if ($keywords) {
+        $keywords = "&search=".urlencode($keywords);
+    }
 
     if ($linktext == 'icon') {
         $linktext = '<img src="'.$CFG->pixpath.'/t/log.gif" height="11" width="11" border="0">';
@@ -590,7 +593,7 @@ function message_history_link ($userid1, $userid2=0, $returnstr=false, $position
         $linktext = get_string('messagehistory', 'message');
     }
 
-    $str = link_to_popup_window("/message/history.php?user1=$userid1&user2=$userid2$position", 
+    $str = link_to_popup_window("/message/history.php?user1=$userid1&user2=$userid2$keywords$position", 
                     "message_history_$user->id", $linktext, 500, 500, '', 
                     'menubar=0,location=0,status,scrollbars,resizable,width=500,height=500', true);
 
@@ -834,6 +837,55 @@ function message_shorten_message($message, $minlength=0) {
     return substr($message, 0, $truncate);
 }
 
+
+/*
+ * Given a string and an array of keywords, this function looks
+ * for the first keyword in the string, and then chops out a
+ * small section from the text that shows that word in context.
+ */
+function message_get_fragment($message, $keywords) {
+
+    $fullsize = 120;
+    $halfsize = (int)($fullsize/2);
+
+    $message = strip_tags($message);
+
+    foreach ($keywords as $keyword) {  // Just get the first one
+        if ($keyword !== '') {
+            break;
+        }
+    }
+    if (empty($keyword)) {   // None found, so just return start of message
+        return message_shorten_message($message, 30);
+    }
+
+    $leadin = $leadout = '';
+
+/// Find the start of the fragment
+    $start = 0;
+    $length = strlen($message);
+
+    $pos = strpos($message, $keyword);
+    if ($pos > $halfsize) {
+        $start = $pos - $halfsize;
+        $leadin = '...';
+    }
+/// Find the end of the fragment
+    $end = $start + $fullsize;
+    if ($end > $length) {
+        $end = $length;
+    } else {
+        $leadout = '...';
+    }
+
+/// Pull out the fragment and format it
+
+    $fragment = substr($message, $start, $end - $start);
+    $fragment = $leadin.highlight(implode(' ',$keywords), $fragment).$leadout;
+    return $fragment;
+}
+
+
 function message_get_history($user1, $user2) {
     $messages = get_records_select('message_read', "(useridto = '$user1->id' AND useridfrom = '$user2->id') OR 
                                                     (useridto = '$user2->id' AND useridfrom = '$user1->id')", 
@@ -848,13 +900,17 @@ function message_get_history($user1, $user2) {
     return $messages;
 }
 
-function message_format_message(&$message, &$user, $format='') {
+function message_format_message(&$message, &$user, $format='', $keywords='') {
     if (empty($format)) {
         $format = get_string('strftimedaytime');
     }
     $time = userdate($message->timecreated, $format);
+    $messagetext = format_text($message->message, $message->format);
+    if ($keywords) {
+        $messagetext = highlight($keywords, $messagetext);
+    }
     return '<p><font size="-1"><strong>'.s($user->firstname).'</strong> ['.$time.']: '.
-            format_text($message->message, $message->format).'</font></p>';
+            $messagetext.'</font></p>';
 }
 
 /*

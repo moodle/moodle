@@ -680,6 +680,7 @@ $string['maximumupload'] = 'Maximum upload size';
 $string['maxsize'] = 'Max size: $a';
 $string['min'] = 'min';
 $string['mins'] = 'mins';
+$string['minutes'] = 'minutes';
 $string['miscellaneous'] = 'Miscellaneous';
 $string['missingcategory'] = 'You need to choose a category';
 $string['missingcity'] = 'Missing city/town';

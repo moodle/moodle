@@ -817,6 +817,10 @@ TABLE.formtable TD {
 .message_summary {
 	font-size: small;
 }
+.message_summary_link {
+	font-size: small;
+    text-align: right;
+}
 .message_date {
 	font-size: small;
 }

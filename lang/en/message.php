@@ -8,6 +8,7 @@ $string['allusers'] = 'All messages from all users';
 $string['beepnewmessage'] = 'Beep when a new message comes in';
 $string['blockcontact'] = 'Block contact';
 $string['blockedmessages'] = '$a message(s) to/from blocked users';
+$string['context'] = 'context';
 $string['deletemessagesdays'] = 'Number of days before old messages are automatically deleted';
 $string['discussion'] = 'Discussion';
 $string['emailmessages'] = 'Email messages when I am offline';

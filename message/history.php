@@ -21,6 +21,7 @@
         $userid2 = $USER->id;    // Can only see messages involving yourself
         $user2 = $USER; 
     }
+    $search = optional_param('search', '', PARAM_CLEAN);
 
 /// Our two users are defined - let's set up the page
 
@@ -66,9 +67,9 @@
                 print_heading(userdate($message->timecreated, $blockdate), 'center', 4);
             }
             if ($message->useridfrom == $user1->id) {
-                echo message_format_message($message, $user1, $messagedate);
+                echo message_format_message($message, $user1, $messagedate, $search);
             } else {
-                echo message_format_message($message, $user2, $messagedate);
+                echo message_format_message($message, $user2, $messagedate, $search);
             }
         }
     } else {
