@@ -1,9 +1,9 @@
 <?php // $Id$
 
-class resource extends resource_base {
+class resource_html extends resource_base {
 
 
-function resource($cmid=0) {
+function resource_html($cmid=0) {
     parent::resource_base($cmid);
 }
 

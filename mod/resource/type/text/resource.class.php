@@ -1,9 +1,9 @@
 <?php // $Id$
 
-class resource extends resource_base {
+class resource_text extends resource_base {
 
 
-function resource($cmid=0) {
+function resource_text($cmid=0) {
     parent::resource_base($cmid);
 }
 
@@ -46,7 +46,7 @@ function setup($form) {
     $editorfields = 'summary';
     
     parent::setup($form);
-    
+
     $format_array = format_text_menu();
     unset($format_array[FORMAT_HTML]);
     include("$CFG->dirroot/mod/resource/type/text/text.html");

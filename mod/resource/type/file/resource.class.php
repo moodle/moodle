@@ -6,11 +6,14 @@
 * Extend the base resource class for file resources
 *
 */
-class resource extends resource_base {
+class resource_file extends resource_base {
+
+function resource_file($cmid=0) {
+    parent::resource_base($cmid);
+}
 
 var $parameters;
 var $maxparameters = 5;
-
 
 
 /**

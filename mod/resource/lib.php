@@ -83,7 +83,7 @@ function display() {
 }
 
 
-function setup($form) {
+function setup(&$form) {
     global $CFG, $usehtmleditor;
 
     if (! empty($form->course)) {
@@ -106,6 +106,9 @@ function setup($form) {
     }
     if (empty($form->alltext)) {
         $form->alltext = "";
+    }
+    if (empty($form->options)) {
+        $form->options = "";
     }
     $nohtmleditorneeded = true;
 
@@ -217,7 +220,8 @@ function resource_add_instance($resource) {
     global $CFG;
     
     require_once("$CFG->dirroot/mod/resource/type/$resource->type/resource.class.php");
-    $res = new resource();
+    $resourceclass = "resource_$resource->type";
+    $res = new $resourceclass();
 
     return $res->add_instance($resource);
 }
@@ -226,7 +230,8 @@ function resource_update_instance($resource) {
     global $CFG;
     
     require_once("$CFG->dirroot/mod/resource/type/$resource->type/resource.class.php");
-    $res = new resource();
+    $resourceclass = "resource_$resource->type";
+    $res = new $resourceclass();
 
     return $res->update_instance($resource);
 }
@@ -239,7 +244,8 @@ function resource_delete_instance($id) {
     }
     
     require_once("$CFG->dirroot/mod/resource/type/$resource->type/resource.class.php");
-    $res = new resource();
+    $resourceclass = "resource_$resource->type";
+    $res = new $resourceclass();
 
     return $res->delete_instance($id);
 }

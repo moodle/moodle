@@ -4,8 +4,6 @@
     require_once("lib.php");
  
     require_variable($id);    // Course Module ID
-//    optional_variable($frameset, "");
-//    optional_variable($subdir, "");
 
     if (!empty($CFG->forcelogin)) {
         require_login();
@@ -20,8 +18,8 @@
     }
 
     require ("$CFG->dirroot/mod/resource/type/$resource->type/resource.class.php");
-
-    $resourceinstance = new resource($id);
+    $resourceclass = "resource_$resource->type";
+    $resourceinstance = new $resourceclass($id);
 
     $resourceinstance->display();
 
