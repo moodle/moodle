@@ -13,6 +13,10 @@ function exercise_upgrade($oldversion) {
 		execute_sql(" ALTER TABLE `{$CFG->prefix}exercise_assessments` ADD INDEX (`userid`)");
 		execute_sql(" ALTER TABLE `{$CFG->prefix}exercise_grades` ADD INDEX (`assessmentid`)");
 		}
+    
+    if ($oldversion < 2003121000) {
+		execute_sql(" ALTER TABLE `{$CFG->prefix}exercise_submissions` ADD `late` TINYINT(3) UNSIGNED NOT NULL DEFAULT '0'");
+		}
  		
     return true;
 }

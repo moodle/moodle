@@ -56,27 +56,30 @@
     }
 
     foreach ($exercises as $exercise) {
+		if ($exercise->deadline > $timenow) {
+            $due = userdate($exercise->deadline);
+        } else {
+            $due = "<FONT COLOR=\"red\">".userdate($exercise->deadline)."</FONT>";
+        }
         if ($submissions = exercise_get_user_submissions($exercise, $USER)) {
             foreach ($submissions as $submission) {
-				if ($submission->timecreated <= $exercise->deadline) {
-					$submitted = userdate($submission->timecreated);
+				if ($submission->late) {
+					$submitted = "<FONT COLOR=\"red\">".userdate($submission->timecreated)."</FONT>";
 					} 
 				else {
-					$submitted = "<FONT COLOR=red>".userdate($submission->timecreated)."</FONT>";
+					$submitted = userdate($submission->timecreated);
 					}
-				$due = userdate($exercise->deadline);
 				$link = "<A HREF=\"view.php?id=$exercise->coursemodule\">$exercise->name</A>";
 				$title = $submission->title;
 				if ($course->format == "weeks" or $course->format == "topics") {
                     if (isteacher($course->id)) {
+                        $phase = '';
                         switch ($exercise->phase) {
                             case 1: $phase = get_string("phase1short", "exercise");
                                     break;
                             case 2: $phase = get_string("phase2short", "exercise");
                                     break;
                             case 3: $phase = get_string("phase3short", "exercise");
-                                    break;
-                            case 4: $phase = get_string("phase4short", "exercise");
                                     break;
                         }
 					    $table->data[] = array ($exercise->section, $link, $title, $phase, 
@@ -97,9 +100,13 @@
                             }
                         }
                         if ($assessed) {
-                            $actualgrade = $grade * $exercise->grade / 100.0; 
+                            $actualgrade = number_format($grade * $exercise->grade / 100.0, 1);
+                            if ($submission->late) {
+                                $actualgrade = "<font color=\"red\">(".$actualgrade.")<font color=\"red\">";
+                            } else {
+                            }
     					    $table->data[] = array ($exercise->section, $link, $title, 
-                                    number_format($actualgrade, 1), $submitted, $due);
+                                    $actualgrade, $submitted, $due);
                         } else {
     					    $table->data[] = array ($exercise->section, $link, $title, 
                                     "-", $submitted, $due);
@@ -114,7 +121,6 @@
 		else {
             $submitted = get_string("no");
 			$title = '';
-			$due = userdate($exercise->deadline);
 			$link = "<A HREF=\"view.php?id=$exercise->coursemodule\">$exercise->name</A>";
 			if ($course->format == "weeks" or $course->format == "topics") {
                 if (isteacher($course->id)) {

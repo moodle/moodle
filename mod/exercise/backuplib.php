@@ -68,11 +68,7 @@
                 //Now we backup exercise elements
                 $status = backup_exercise_elements($bf,$preferences,$exercise->id);
                 //Now we backup any teacher submissions (these are an integral part of the exercise)
-                $status = backup_exercise_teacher_submissions($bf, $preferences, $exercise->id);
-                //if we've selected to backup users info, then execute backup_exercise_submisions
-                if ($preferences->mods["exercise"]->userinfo) {
-                    $status = backup_exercise_student_submissions($bf,$preferences,$exercise->id);
-                }
+                $status = backup_exercise_submissions($bf, $preferences, $exercise->id);
                 //End mod
                 $status =fwrite ($bf,end_tag("MOD",3,true));
                 //we need to backup the teacher files (the exercise descriptions)
@@ -152,8 +148,8 @@
         return $status;
     }
 
-    //Backup exercise_teacher_submissions contents (executed from exercise_backup_mods)
-    function backup_exercise_teacher_submissions ($bf,$preferences,$exerciseid) {
+    //Backup exercise_submissions contents (executed from exercise_backup_mods)
+    function backup_exercise_submissions ($bf,$preferences,$exerciseid) {
 
         global $CFG;
 
@@ -184,6 +180,32 @@
                 //End submission
                 $status =fwrite ($bf,end_tag("SUBMISSION",5,true));
             }
+            //if we've selected to backup users info, then backup the student submisions
+            if ($preferences->mods["exercise"]->userinfo) {
+                $exercise_submissions = get_records_select("exercise_submissions","exerciseid = $exerciseid
+                        AND isexercise = 0");
+                //If there is submissions
+                if ($exercise_submissions) {
+                    //Iterate over each submission
+                    foreach ($exercise_submissions as $submission) {
+                        //Start submission
+                        $status =fwrite ($bf,start_tag("SUBMISSION",5,true));
+                        //Print submission contents
+                        fwrite ($bf,full_tag("ID",6,false,$submission->id));       
+                        fwrite ($bf,full_tag("USERID",6,false,$submission->userid));       
+                        fwrite ($bf,full_tag("TITLE",6,false,$submission->title));       
+                        fwrite ($bf,full_tag("TIMECREATED",6,false,$submission->timecreated));       
+                        fwrite ($bf,full_tag("RESUBMIT",6,false,$submission->resubmit));       
+                        fwrite ($bf,full_tag("MAILED",6,false,$submission->mailed));       
+                        fwrite ($bf,full_tag("ISEXERCISE",6,false,$submission->isexercise));       
+                        fwrite ($bf,full_tag("LATE",6,false,$submission->late));       
+                        //Now we backup any exercise assessments
+                        $status = backup_exercise_assessments($bf,$preferences,$exerciseid,$submission->id);
+                        //End submission
+                        $status =fwrite ($bf,end_tag("SUBMISSION",5,true));
+                    }
+                }
+            }
             //Write end tag
             $status =fwrite ($bf,end_tag("SUBMISSIONS",4,true));
         }
@@ -197,32 +219,6 @@
 
         $status = true;
 
-        $exercise_submissions = get_records_select("exercise_submissions","exerciseid = $exerciseid
-                AND isexercise = 0");
-        //If there is submissions
-        if ($exercise_submissions) {
-            //Write start tag
-            $status =fwrite ($bf,start_tag("SUBMISSIONS",4,true));
-            //Iterate over each submission
-            foreach ($exercise_submissions as $submission) {
-                //Start submission
-                $status =fwrite ($bf,start_tag("SUBMISSION",5,true));
-                //Print submission contents
-                fwrite ($bf,full_tag("ID",6,false,$submission->id));       
-                fwrite ($bf,full_tag("USERID",6,false,$submission->userid));       
-                fwrite ($bf,full_tag("TITLE",6,false,$submission->title));       
-                fwrite ($bf,full_tag("TIMECREATED",6,false,$submission->timecreated));       
-                fwrite ($bf,full_tag("RESUBMIT",6,false,$submission->resubmit));       
-                fwrite ($bf,full_tag("MAILED",6,false,$submission->mailed));       
-                fwrite ($bf,full_tag("ISEXERCISE",6,false,$submission->isexercise));       
-                //Now we backup any exercise assessments
-                $status = backup_exercise_assessments($bf,$preferences,$exerciseid,$submission->id);
-                //End submission
-                $status =fwrite ($bf,end_tag("SUBMISSION",5,true));
-            }
-            //Write end tag
-            $status =fwrite ($bf,end_tag("SUBMISSIONS",4,true));
-        }
         return $status;
     }
 

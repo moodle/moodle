@@ -4,8 +4,10 @@
 	ACTIONS handled are:
 
 	adminamendtitle
+    adminclearlate
 	adminconfirmdelete
 	admindelete
+    adminlateflag
 	adminlist
 	displayfinalgrades (teachers only)
 	listforassessmentstudent
@@ -89,6 +91,29 @@
 		}
 	
 
+	/******************* admin clear late (flag) ************************************/
+	elseif ($action == 'adminclearlate' ) {
+
+		if (!isteacher($course->id)) {
+			error("Only teachers can look at this page");
+		}
+		if (empty($_GET['sid'])) {
+			error("Admin clear late flag: submission id missing");
+		}
+	
+		if (!$submission = get_record("exercise_submissions", "id", $_GET['sid'])) {
+			error("Admin clear late flag: can not get submission record");
+		}
+		if (set_field("exercise_submissions", "late", 0, "id", $_GET['sid'])) {
+			print_heading(get_string("clearlateflag", "exercise")." ".get_string("ok"));
+		}
+        
+        add_to_log($course->id, "exercise", "late flag cleared", "view.php?id=$cm->id", "submission $submission->id");
+		
+		print_continue("submissions.php?id=$cm->id&action=adminlist");
+	}
+	
+
 	/******************* admin confirm delete ************************************/
 	elseif ($action == 'adminconfirmdelete' ) {
 
@@ -98,7 +123,15 @@
 		if (empty($_GET['sid'])) {
 			error("Admin confirm delete: submission id missing");
 			}
-			
+		if (!$submission = get_record("exercise_submissions", "id", $_GET['sid'])) {
+			error("Admin delete: can not get submission record");
+			}
+
+        if (isteacher($course->id, $submission->userid)) {
+            if (!isteacheredit($course->id)) {
+                error("Only teacher with editing permissions can delete teacher submissions.");
+            }
+        }
 		notice_yesno(get_string("confirmdeletionofthisitem","exercise", get_string("submission", "exercise")), 
 			 "submissions.php?action=admindelete&id=$cm->id&sid=$_GET[sid]", "submissions.php?id=$cm->id&action=adminlist");
 		}
@@ -135,6 +168,25 @@
         add_to_log($course->id, "exercise", "delete", "view.php?id=$cm->id", "submission $submission->id");
 		
 		print_continue("submissions.php?id=$cm->id&action=adminlist");
+		}
+	
+
+	/******************* admin (confirm) late flag ************************************/
+	elseif ($action == 'adminlateflag' ) {
+
+		if (!isteacher($course->id)) {
+			error("Only teachers can look at this page");
+			}
+		if (empty($_GET['sid'])) {
+			error("Admin confirm late flag: submission id missing");
+			}
+		if (!$submission = get_record("exercise_submissions", "id", $_GET['sid'])) {
+			error("Admin confirm late flag: can not get submission record");
+			}
+
+		notice_yesno(get_string("clearlateflag","exercise")."?", 
+			 "submissions.php?action=adminclearlate&id=$cm->id&sid=$_GET[sid]", 
+             "submissions.php?id=$cm->id&action=adminlist");
 		}
 	
 
@@ -209,15 +261,21 @@
 				foreach ($submissions as $submission) {
 					if ($assessments = exercise_get_assessments($submission)) {
 						foreach ($assessments as $assessment) { // (normally there should only be one
+                            $grade = number_format($assessment->grade * $exercise->grade / 100.0, 1);
+                            $overallgrade = number_format(((($assessment->grade * 
+                                $EXERCISE_FWEIGHTS[$teacherweight] / 100.0) + 
+                                ($ownassessment->gradinggrade * $EXERCISE_FWEIGHTS[$gradingweight]/
+                                COMMENTSCALE )) * $exercise->grade) / ($EXERCISE_FWEIGHTS[$teacherweight] + 
+                                $EXERCISE_FWEIGHTS[$gradingweight]), 1);
+                            if ($submission->late) {
+                                $grade = "<font color=\"red\">(".$grade.")</font>";
+                                $overallgrade = "<font color=\"red\">(".$overallgrade.")</font>";
+                            }
 							echo "<tr><td>$user->firstname $user->lastname</td>\n";
 							echo "<td>".exercise_print_submission_title($exercise, $submission)."</td>\n";
 							echo "<td align=\"center\">".number_format($ownassessment->gradinggrade * $exercise->grade / COMMENTSCALE, 1)."</td>";
-							echo "<td align=\"center\">".number_format($assessment->grade * $exercise->grade / 100.0, 1)."</td>";
-							echo "<td align=\"center\">". number_format(((($assessment->grade * $EXERCISE_FWEIGHTS[$teacherweight] 
-								/ 100.0) + ($ownassessment->gradinggrade * $EXERCISE_FWEIGHTS[$gradingweight] 
-								/ COMMENTSCALE )) * $exercise->grade) / 
-								($EXERCISE_FWEIGHTS[$teacherweight] + $EXERCISE_FWEIGHTS[$gradingweight]), 1).
-								"</td></tr>\n";
+							echo "<td align=\"center\">$grade</td>";
+							echo "<td align=\"center\">$overallgrade</td></tr>\n";
 						}
 					}
 				}

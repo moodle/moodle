@@ -64,13 +64,16 @@
 					if (isteacher($course->id)) {
 						// it's an exercise submission, flag it as such
 						$newsubmission->userid         = 0;
-						$newsubmission->isexercise = 1;  // it'sa description of an exercise
+						$newsubmission->isexercise = 1;  // it's a description of an exercise
 						}
 					else {
-						$newsubmission->userid         = $USER->id;
+						$newsubmission->userid = $USER->id;
 						}
 					$newsubmission->title  = $title;
 					$newsubmission->timecreated  = $timenow;
+                    if ($timenow > $exercise->deadline) {
+                        $newsubmission->late = 1;
+                    }
 					if (!$newsubmission->id = insert_record("exercise_submissions", $newsubmission)) {
 						error("exercise upload: Failure to create new submission record!");
 						}

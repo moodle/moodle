@@ -199,9 +199,8 @@
 
         $status = true;
 
-        //Get the submissions array 
+        //Get the submissions array (teacher submissions)
         $submissions = $info['MOD']['#']['SUBMISSIONS']['0']['#']['SUBMISSION'];
-
         //Iterate over submissions
         for($i = 0; $i < sizeof($submissions); $i++) {
             $sub_info = $submissions[$i];
@@ -221,9 +220,10 @@
             $submission->resubmit = backup_todb($sub_info['#']['RESUBMIT']['0']['#']);
             $submission->mailed = backup_todb($sub_info['#']['MAILED']['0']['#']);
             $submission->isexercise = backup_todb($sub_info['#']['ISEXERCISE']['0']['#']);
+            $submission->late = backup_todb($sub_info['#']['LATE']['0']['#']);
 
-            //test if this is from teacher or we restoring student submissions
-            if ($submission->isexercise or $restore->mods['exercise']->userinfo) {
+            // always save the exercise descriptions and optionally the student submissions
+            if ($submission->isexercise or $restore->mods["exercise"]->userinfo) {
                 //We have to recode the userid field
                 $user = backup_getid($restore->backup_unique_code,"user",$olduserid);
                 if ($user) {

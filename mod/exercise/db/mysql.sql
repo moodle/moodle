@@ -35,6 +35,7 @@ CREATE TABLE `prefix_exercise_submissions` (
   `resubmit` tinyint(3) unsigned NOT NULL default '0',
   `mailed` tinyint(3) unsigned NOT NULL default '0',
   `isexercise` tinyint(3) unsigned NOT NULL default '0',
+  `late` tinyint(3) unsigned NOT NULL default '0',
    PRIMARY KEY  (`id`),
    INDEX `userid` (`userid`) 
 ) COMMENT='Info about submitted work from teacher and students';
