@@ -5,5 +5,6 @@
 $string['allcourses'] = 'Yöneticiler bütün dersleri görür';
 $string['blockname'] = 'Ders Listesi';
 $string['owncourses'] = 'Yöneticiler kendi derslerini görür';
+$string['configadminview'] = "What should the admin see in the course list block?";
 
 ?>

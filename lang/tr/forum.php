@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.4 (2004083100)
+      // forum.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005012800)
 
 
 $string['addanewdiscussion'] = 'Yeni tartýþma konusu ekle';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.4 (2004083100)
+      // resource.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005012800)
 
 
 $string['addresource'] = 'Kaynak ekle';
