@@ -238,6 +238,11 @@ function glossary_upgrade($oldversion) {
     if ($oldversion < 2003112101) {
         table_column("glossary", "", "scale", "integer", "10", "", "0", "", "assesstimefinish");
     }
+    
+    if ($oldversion < 2003112701) {
+        delete_records("glossary_alias","entryid",0);
+    }
+    
   return true;
 }
 
