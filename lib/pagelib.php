@@ -24,6 +24,10 @@ function page_import_types($path) {
 
     static $types = array();
 
+    if(substr($path, -1) != '/') {
+        $path .= '/';
+    }
+
     $path = clean_param($path, PARAM_PATH);
 
     if(isset($types[$path])) {
