@@ -9,9 +9,17 @@ $string['allowmultiple'] = "1人で1つ以上のダイアログの作成を許可する";
 $string['allowstudentdialogues'] = "学生 - 学生のダイアログを許可する";
 $string['close'] = "閉じる";
 $string['closed'] = "閉鎖中";
+$string['confirmclosure'] = "\$a とのダイアログを閉じようとしています。終了したダイアログは再開することは出来ません。このダイアログを閉じた場合、閲覧することは可能ですが追加することは出来ません。この人と計測して&quot;会話&quot;を行う場合、再度ダイアログを開始する必要があります。<br /><br />本当にこのダイアログを閉じても宜しいですか?";
 $string['deleteafter'] = "終了したダイアログを削除する(○日後)";
 $string['dialogueclosed'] = "ダイアログが閉じられました";
 $string['dialogueintro'] = "ダイアログ説明";
+$string['dialoguemail'] = "\$a->userfrom が新しいエントリをあなたのダイアログエントリ '\$a->dialogue' に投稿しました。
+
+追加されたダイアログを下記にてご覧になれます:
+
+\$a->url";
+$string['dialoguemailhtml'] = "a->userfrom があなたのダイアログエントリ '<i>\$a->dialogue</i>' に新しいエントリを投稿しました。<br /><br />
+あなたの<a href=\\\"\$a->url\\\">ダイアログ</a>でご覧になれます。 ";
 $string['dialoguename'] = "ダイアログ名";
 $string['dialogueopened'] = "\$a により開かれたダイアログ";
 $string['dialoguewith'] = "\$a とのダイアログ";
@@ -32,6 +40,9 @@ $string['notstarted'] = "このダイアログをまだ開始していません";
 $string['notyetseen'] = "まだ閲覧されていません";
 $string['numberofentries'] = "エントリー数";
 $string['numberofentriesadded'] = "追加されたエントリー: \$a";
+$string['of'] = "中";
+$string['onwrote'] = "\$a への書込み日時";
+$string['onyouwrote'] = "\$a へのあなたの書込み日時";
 $string['open'] = "開く";
 $string['openadialoguewith'] = "ダイアログを開く";
 $string['opendialogue'] = "ダイアログを開く";
