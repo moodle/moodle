@@ -2,7 +2,9 @@
     // index.php - the front page.
     
     require("config.php");
+    include("course/lib.php");
     include("mod/reading/lib.php"); 
+    include("mod/discuss/lib.php");
 
     if (! $site = get_record("course", "category", 0)) {
         redirect("$CFG->wwwroot/admin/");
@@ -61,14 +63,31 @@
       <? if ($site->format == 0 ) {
              print_simple_box("Available Courses", $align="CENTER", $width="100%", $color="$THEME->cellheading");
              echo "<IMG HEIGHT=8 SRC=\"pix/spacer.gif\" ALT=\"\"><BR>";
-             include("course/lib.php");
              print_all_courses();
 
          } else {
-             print_simple_box("Site News", $align="CENTER", $width="100%", $color="$THEME->cellheading");
+             if (! $newsforum = get_course_news_forum($site->id)) {
+                 error("Could not find or create a main forum for the site");
+             }
+
+             if ($USER) {
+                 $SESSION->fromdiscuss = "$CFG->wwwroot";
+                 if (is_subscribed($USER->id, $newsforum->id)) {
+                     $subtext = "Unsubscribe from news";
+                 } else {
+                     $subtext = "Subscribe me by mail";
+                 }
+                 $headertext = "<TABLE BORDER=0 WIDTH=100% CELLPADDING=0 CELLSPACING=0><TR>
+                                <TD>Site News</TD>
+                                <TD ALIGN=RIGHT><FONT SIZE=1>
+                                <A HREF=\"mod/discuss/subscribe.php?id=$newsforum->id\">$subtext</A>
+                                </TD></TR></TABLE>";
+             } else {
+                 $headertext = "Site News";
+             }
+             print_simple_box("$headertext", $align="CENTER", $width="100%", $color="$THEME->cellheading");
              echo "<IMG HEIGHT=8 SRC=\"pix/spacer.gif\" ALT=\"\"><BR>";
-             include("mod/discuss/lib.php");
-             forum_latest_topics(0, $site->format);
+             forum_latest_topics($newsforum->id, $site->format);
          }
       ?>
 
