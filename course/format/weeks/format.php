@@ -50,7 +50,7 @@
 
 
 /// Layout the whole page as three big columns.
-    echo '<table id="layout-table"><tr>';
+    echo '<table id="layout-table" cellspacing="0"><tr>';
 
 /// The left column ...
 
