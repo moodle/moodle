@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // chat.php - created with Moodle 1.2 Beta (2004022400)
+      // chat.php - created with Moodle 1.3 (2004052500)
 
 
 $string['beep'] = 'bip';
@@ -12,7 +12,7 @@ $string['configrefreshroom'] = 'Freqüència de refresc de la sala de xat (en sego
 $string['configrefreshuserlist'] = 'Freqüència de refresc de la llista d\'usuaris (en segons)';
 $string['currentchats'] = 'Sessions de xat actives';
 $string['currentusers'] = 'Usuaris actuals';
-$string['deletesession'] = 'Suprimir aquesta sessió';
+$string['deletesession'] = 'Suprimeix aquesta sessió';
 $string['deletesessionsure'] = 'Esteu segur que voleu suprimir aquesta sessió?';
 $string['donotusechattime'] = 'No publiquis el dia i hora dels xats';
 $string['enterchat'] = 'Feu clic aquí per entrar al xat';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.3 (2004052500)
+      // moodle.php - created with Moodle 1.4 development (2004060400)
 
 
 $string['action'] = 'Acció';
@@ -144,6 +144,7 @@ $string['configcachetext'] = 'En llocs grans o llocs que utilitzen filtres de te
 $string['configcountry'] = 'Si definiu aquí un país, quedarà seleccionat per defecte en els nous comptes. Deixeu-lo en blanc per forçar els usuaris a triar un país.';
 $string['configdebug'] = 'Si l\'activeu, s\'incrementaran els informes d\'errors de PHP i apareixeran més avisos. Això només és útil per a desenvolupadors.';
 $string['configdeleteunconfirmed'] = 'Si esteu utilitzant autenticació per correu electronic, aquest es el període de temps durant el qual s\'acceptarà la resposta de l\'usuari. Després d\'aquest períde, els comptes no confirmats se suprimiran.';
+$string['configdigestmailtime'] = 'La gent que vulgui els correus en format resum els rebrà una vegada al dia. Aquest paràmetre controla a quina hora s\'enviarà el resum diari (l\'enviarà el següent cron que s\'executi després d\'aquesta hora).';
 $string['configenablerssfeeds'] = 'Aquest commutador habilitarà l\'RSS en tot el lloc. Per veure realment cap canvi haureu d\'habilitar també l\'RSS en cada mòdul: aneu als paràmetres dels mòduls en el menú de configuració.';
 $string['configenablerssfeedsdisabled'] = 'No està disponible perquè l\'RSS està inhabilitat en tot el lloc. Per habilitar-lo, aneu a les variables en el menú de configuració.';
 $string['configerrorlevel'] = 'Trieu la quantitat d\'avisos de PHP que voleu visualitzar. La millor elecció sol ser Normal.';
@@ -168,6 +169,7 @@ $string['configloglifetime'] = 'Especifiqueu aquí el temps que voleu mantenir el
 $string['configlongtimenosee'] = 'Si els estudiants no han entrat durant molt de temps, se\'ls dóna de baixa dels cursos automàticament. Aquest paràmetre especifica el límit de temps.';
 $string['configmaxbytes'] = 'Especifiqueu la mida màxima que poden tenir els fitxers que es pengen en aquest lloc. Aquest paràmetre està limitat pel paràmetre de PHP upload_max_filesize i pel paràmetre d\'Apache LimitRequestBody. Al seu torn, maxbytes limita el rang de mides que es poden triar dins de cada curs o per a cada mòdul.';
 $string['configmaxeditingtime'] = 'Especifiqueu el temps que tenen els usuaris per revisar els enviaments dels fòrums, la retroacció dels diaris, etc. Generalment 30 minuts és una bona opció.';
+$string['confignoreplyaddress'] = 'Els correus de vegades s\'envien a nom d\'un usuari (p. ex. els missatges dels fòrums). L\'adreça de correu que especifiqueu aquí s\'utilitzarà en el \"From\" en els casos en què els destinataris no haurien de poder contestar directament a l\'usuari (p. ex. quan un usuari tria de mantenir oculta la seva adreça).';
 $string['configopentogoogle'] = 'Si habiliteu aquest paràmetre, llavors Google podrà entrar al vostre lloc com a Visitant. A més a més, la gent que vagi a parar al vostre lloc a través d\'una recerca en Google, hi entrarà automàticament com a Visitant. Adoneu-vos que això només proporciona accés transparent als cursos que permeten l\'accés als visitants. ';
 $string['configproxyhost'] = 'Si aquest <B>servidor</B> accedeix a la xarxa a través d\'un intermediari (<i>proxy</i>, p. e. un tallafocs), escriviu aquí el nom del servidor intermediari i el port. En cas contrari deixeu-lo en blanc.';
 $string['configsecureforms'] = 'Moodle pot fer servir un nivell addicional de seguretat a l\'hora d\'acceptar dades dels formularis web. Si habiliteu aquesta opció, la variable HTTP_REFERER del navegador es compara amb l\'adreça real del formulari. Això pot causar problemes en molt pocs casossi l\'usuari fa servir un tallafocs (p. e. Zonealarm) configurat per eliminar l\'HTTP_REFERER del tràfic web. Els símptomes són que us quedeu encallats en un formulari. Si els vostres usuaris tenen problemes amb la pàgina d\'entrada, per exemple, potser vodreu inhabilitar aquest paràmetre, tot i que això podria deixar el vostre lloc més obert als atacs de força bruta que intenten esbrinar una contrasenya. En cas de dubte deixeu aquest paràmetre configurat com \'Sí\'.';
@@ -280,12 +282,15 @@ $string['down'] = 'Avall';
 $string['downloadexcel'] = 'Baixa en format Excel';
 $string['downloadtext'] = 'Baixa en format text';
 $string['doyouagree'] = 'Heu llegit aquestes condicions i les enteneu?';
+$string['duplicate'] = 'Duplica';
+$string['duplicatinga'] = 'S\'està duplicant: $a';
+$string['duplicatingain'] = 'S\'està duplicant $a->what en $a->in';
 $string['edit'] = 'Edita $a';
 $string['editcoursesettings'] = 'Edita els paràmetres del curs';
 $string['editfiles'] = 'Edita fitxers';
 $string['editgroupprofile'] = 'Edita el perfil del grup';
 $string['editinga'] = 'S\'està editant $a';
-$string['editmyprofile'] = 'Edita el perfil';
+$string['editmyprofile'] = 'Edita perfil';
 $string['editsummary'] = 'Edita un resum';
 $string['editthisactivity'] = 'Edita aquesta activitat';
 $string['editthiscategory'] = 'Edita aquesta categoria';
@@ -310,6 +315,10 @@ $string['emailconfirmationsubject'] = '$a: confirmació de compte';
 $string['emailconfirmsent'] = '<P>S\'ha enviat un correu a la vostra adreça <B>$a</B>
 <P>Conté instruccions senzilles per completar el registre.
 <P>Si seguiu tenint problemes, contacteu amb l\'administrador del lloc.';
+$string['emaildigest'] = 'Tipus de resum de correu';
+$string['emaildigestcomplete'] = 'Complet (correu diari amb missatges complets)';
+$string['emaildigestoff'] = 'Sense resum (un correu per cada missatge dels fòrums)';
+$string['emaildigestsubjects'] = 'Assumptes (correu diari només amb els assumptes)';
 $string['emaildisable'] = 'Aquesta adreça de correu està inhabilitada.';
 $string['emaildisplay'] = 'Mostra el correu electrònic';
 $string['emaildisplaycourse'] = 'Permet només als altres membres del curs veure la meva adreça de correu';
@@ -346,9 +355,7 @@ $string['enrolledincourse'] = 'Inscrit al curs ';
 $string['enrolledincoursenot'] = 'No inscrit al curs ';
 $string['enrolmentconfirmation'] = 'Aneu a inscriure-us en aquest curs.<br />Esteu segur que voleu fer això?';
 $string['enrolmentkey'] = 'Clau d\'inscripció';
-$string['enrolmentkeyfrom'] = 'Aquest curs requereix una clau d\'inscripció - una contrasenya<br />d\'un sol ús que us ha d\'haver proporcionat $a
-
-d\'un sol ús que us ha d\'haver proporcionat $a';
+$string['enrolmentkeyfrom'] = 'Aquest curs requereix una clau d\'inscripció - una contrasenya<br />d\'un sol ús que us ha d\'haver proporcionat $a';
 $string['enrolmentkeyhint'] = 'Aquesta clau d\'inscripció es errònia, si us plau torneu a intentar-ho<br />
 (Heus ací una pista: comença per \'$a\'.)
 
