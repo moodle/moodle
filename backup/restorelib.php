@@ -1034,6 +1034,30 @@
         return $status;
     }
 
+    //This function decode things to make restore multi-site fully functional
+    //It does this conversions:
+    //    - $@WWWROOT@$ -------------------------------> $CFG->wwwroot
+    //    - $@COURSEID@$ ------------------------------> $courseid
+    //                              
+    function restore_decode_absolute_links($content) {
+                                     
+        global $CFG,$restore;    
+        
+        $search = array ("$@WWWROOT@$",
+                         "$@COURSEID@$");
+        
+        $replace = array ($CFG->wwwroot,
+                         $restore->course_id);
+    
+        $result = str_replace($search,$replace,$content);
+
+        //if ($result != $content) {                                                   //Debug
+        //    echo "\n<hr>".$content." \nchanged to \n".$result."<hr>\n";              //Debug
+        //}                                                                            //Debug
+
+        return $result;
+    }
+
     //This function restores the userfiles from the temp (user_files) directory to the
     //dataroot/users directory
     function restore_user_files($restore) {

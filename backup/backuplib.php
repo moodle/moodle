@@ -426,6 +426,8 @@
     
     //Return the start tag, the contents and the end tag
     function full_tag($tag,$level=0,$endline=true,$content,$to_utf=true) {
+        //Here we encode absolute links
+        $content = backup_encode_absolute_links($content);
         $st = start_tag($tag,$level,$endline);
         $co="";
         if ($to_utf) {
@@ -1105,6 +1107,30 @@
    
         return $status; 
         
+    }
+
+    //This function encode things to make backup multi-site fully functional
+    //It does this conversions:
+    //    - $CFG->wwwroot -----------------------------> $@WWWROOT@$
+    //    - /file.php/$courseid -----------------------> /file.php/$@COURSEID@$
+    //
+    function backup_encode_absolute_links($content) {
+
+        global $CFG,$preferences;
+
+        $search = array ($CFG->wwwroot,
+                         "/file.php/".$preferences->backup_course);
+
+        $replace = array ("$@WWWROOT@$",
+                          "/file.php/$@COURSEID@$");
+
+        $result = str_replace($search,$replace,$content);
+
+        //if ($result != $content) {                                                   //Debug
+        //    echo "\n<hr>".$content." \nchanged to \n".$result."<hr>\n";              //Debug
+        //}                                                                            //Debug
+
+        return $result;
     }
 
     //This function copies all the needed files under the "users" directory to the "user_files"
