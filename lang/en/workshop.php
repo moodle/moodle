@@ -69,6 +69,7 @@ $string['modulename'] = "Workshop";
 $string['modulenameplural'] = "Workshops";
 $string['movedtophase'] = "Moved to Phase \$a";
 $string['moveonto'] = "Move on to";
+$string['newassessments'] = "New workshop assessments";
 $string['newsubmissions'] = "New workshop submissions";
 $string['noassessmentsdone'] = "No Assessments Done";
 $string['nosubmissionsavailableforassessment'] = "No Submissions available for assessment";
