@@ -35,6 +35,25 @@
     $personalprofile = get_string("personalprofile");
     $participants = get_string("participants");
 
+    $groupmode = groupmode($course);
+
+    if ($groupmode and !isteacheredit($course->id)) {   // Groups must be kept separate
+        if ($groupmode == SEPARATEGROUPS) {
+            require_login();
+
+            if (!ismember($USER->groupmember[$course->id], $user->id)) {
+                print_header("$personalprofile: ", "$personalprofile: ",
+                             "<a href=\"../course/view.php?id=$course->id\">$course->shortname</a> ->
+                              <a href=\"index.php?id=$course->id\">$participants</a>",
+                              "", "", true, "&nbsp;", navmenu($course));
+                print_heading("Sorry, you can't see this user because you are not in his group");
+                print_footer();
+                die;
+            }
+
+        }
+    }
+
     if ($course->category) {
         print_header("$personalprofile: $fullname", "$personalprofile: $fullname", 
                      "<a href=\"../course/view.php?id=$course->id\">$course->shortname</a> -> 
