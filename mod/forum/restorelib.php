@@ -68,9 +68,23 @@
                     $forum->scale = -($scale->new_id);
                 }
             }
+            
+            $forumtobeinserted = true;
+            //If the forum is a teacher forum, then we have to look if it exists in destination course
+            if ($forum->type == "teacher") {
+                //Look for teacher forum in destination course
+                $teacherforum = get_record("forum","course",$restore->course_id,"type","teacher");
+                if ($teacherforum) {
+                    $newid = $teacherforum->id;
+                    $forumtobeinserted = false;
+                }
+            }
 
-            //The structure is equal to the db, so insert the forum
-            $newid = insert_record ("forum",$forum);
+            //If the forum has to be inserted
+            if ($forumtobeinserted) {
+                //The structure is equal to the db, so insert the forum
+                $newid = insert_record ("forum",$forum);
+            }
 
             //Do some output
             echo "<ul><li>".get_string("modulename","forum")." \"".$forum->name."\"<br>";
