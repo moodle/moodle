@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.0.9 development (2003032500)
+      // moodle.php - created with Moodle 1.0.9 development (2003032601)
 
 
 $string['action'] = "Tapahtuma";
@@ -59,6 +59,7 @@ $string['complete'] = "Täysi";
 $string['configcountry'] = "Jos asetat maan tässä niin valinnasta tulee oletus kaikille käyttäjille. Pakottaaksesi käyttäjät valitsemaan maansa itse , jätä tämä kohta tyhjäksi.";
 $string['configdebug'] = "Jos valitset virheenkorjaus tilan päälle PHP:n error_reporting arvo nousee ja enemmän virheilmoituksia tulostuu näytölle. Tästä asetuksesta on hyötyä vain  Moodlen kehittäjille.";
 $string['configerrorlevel'] = "PHP virheilmoitusten määrä. Normal on yleensä hyvä valinta.";
+$string['configframename'] = "Jos haluat sijoittaa Moodlen sivustolle joka käyttää kehyksiä , määritä tässä sen kehyksen nimi jossa Moodle on. Muutoin jätä tämä ennalleen asetukseen '_top'";
 $string['configgdversion'] = "GD-kirjaston versio. Näkyvissä oleva numero on tunnistettu automaattisesti. Älä muuta ellet tiedä mit teet.";
 $string['confightmleditor'] = "Valitse haluatko käyttää upotettua HTML-editoria. HTML-editori toimii vain IE5.5 ja uudemissa selaimissa. Käyttäjät voivat halutessaan olla käyttämättä tätä editoria.";
 $string['configintro'] = "Tällä sivulla voit määritellä joukon asetuksia , jotka auttavat Moodle toimimaan palvelimellasi niin kuin haluat. Näistä on turha stressata, yleensä oletukset toivat hyvin. Ja ainahan voit palata takaisin tekemään muutoksia, jos tarpeen.";
@@ -118,7 +119,7 @@ $string['deletingcourse'] = "Poistetaan \$a";
 $string['department'] = "Osasto";
 $string['description'] = "Kuvaus";
 $string['displayingrecords'] = "Näytetään \$a tietuetta";
-$string['displayingusers'] = "Näytetään käyttäjät \$a->start - \$a->end";
+$string['displayingusers'] = "Näytetään käyttäjät \$a->start / \$a->end";
 $string['documentation'] = "Moodle Dokumentointi";
 $string['downloadexcel'] = "Lataa excel muodossa";
 $string['downloadtext'] = "Lataa teksti muodossa";
@@ -223,6 +224,7 @@ $string['helppicture'] = "Kuinka lähettää kuva";
 $string['helpquestions'] = "Kuinka kysyä apua";
 $string['helpreading'] = "Lue huolellisesti";
 $string['helprichtext'] = "Tietoja HTML editorista";
+$string['helpsummaries'] = "Yhteenvedoista";
 $string['helptext'] = "Kuinka kirjoittaa tekstiä";
 $string['helpwriting'] = "Kirjoita huolellisesti";
 $string['hide'] = "Piiloita";
@@ -372,6 +374,7 @@ $string['nosuchemail'] = "Sähköpostiosoitetta ei löydy";
 $string['noteachersyet'] = "Kurssilla ei ole vielä opettajaa";
 $string['notenrolled'] = "\$a ei ole tällä kursilla.";
 $string['nothingnew'] = "Ei uutisia edellisen käyntisi jälkeen";
+$string['nousersmatching'] = "Haku '\$a' ei löytänyt käyttäjiä";
 $string['nousersyet'] = "Ei vielä käyttäjiä";
 $string['now'] = "nyt";
 $string['numberweeks'] = "Viikkojen/Aiheiden määrä";
@@ -431,10 +434,12 @@ $string['separateandconnected'] = "Eristyvä ja sosiaalinen oppiminen";
 $string['serverlocaltime'] = "Palvelimen aika";
 $string['settings'] = "Asetukset";
 $string['shortname'] = "Lyhyt nimi";
+$string['shortnametaken'] = "Annnettu kurssin lyhyt nimi on jo käytössä toisella kursilla.";
 $string['shortsitename'] = "Lyhyt nimi sivustolle (yksi sana)";
 $string['show'] = "Näytä";
 $string['showallcourses'] = "Näytä kaikki kurssit";
 $string['showalltopics'] = "Näytä kaikki aiheet";
+$string['showallusers'] = "Näytä kaikki käyttäjät";
 $string['showallweeks'] = "Näytä kaikki viikot";
 $string['showlistofcourses'] = "Näytä kurssilista";
 $string['showonlytopic'] = "Näytä vain aihe \$a";
@@ -494,7 +499,7 @@ $string['unusedaccounts'] = "Käyttäjätunnukset jotka ovat olleet käyttämättä eli
 $string['unzip'] = "Unzip";
 $string['update'] = "Päivitä";
 $string['updated'] = "Päivitetty \$a";
-$string['updatemyprofile'] = "Päivitä henkilötiedot";
+$string['updatemyprofile'] = "Päivitä profiilini";
 $string['updatesevery'] = "Päivitä joka \$a sekunti";
 $string['updatethis'] = "Päivitä tämä \$a";
 $string['updatethiscourse'] = "Päivitä tämä kurssi";

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.0.9 development (2003032500)
+      // quiz.php - created with Moodle 1.0.9 development (2003032601)
 
 
 $string['addquestions'] = "Lisää kysymyksiä";
@@ -87,6 +87,7 @@ $string['quiznotavailable'] = "Tentti on avoinna \$a lähtien";
 $string['quizopen'] = "Avaa tentti";
 $string['random'] = "Satunnaisesti";
 $string['randommatch'] = "Satunnaistettu kysymys";
+$string['randommatchcreate'] = "Luo satunnaistetut kysymykset";
 $string['randommatchintro'] = "Valitse jokaiselle kysymykselle vastaus valikosta.";
 $string['randommatchnumber'] = "Valittavien kysymysten määrä";
 $string['readytosend'] = "olet lähettämässä tentin arvosteltavaksi. Oletko varma että haluat jatkaa?";

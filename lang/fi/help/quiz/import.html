@@ -1,49 +1,23 @@
-<P ALIGN=CENTER><B>Importing new questions</B></P>
-
-<P>This function allows you to import questions from 
-   external text files.  
-
-<P>Several common file formats are supported:
-
+<P align=center><B>Uusien kysymysten tuominen</B></P>
+<P>Tämän toiminnon avulla voit tuoda kysymyksiä ulkopuolisista tekstitiedostoista. 
+<P>Järjestelmä tukee useita tavallisia tiedostomuotoja: 
 <P><B>Missing word format</B></P>
 <UL>
-<P>This format only supports multiple choice questions.
-Each answer is separated with a tilde (~), and the correct answer is 
-prefixed with an equals sign (=).  Here is an example:
-
-<BLOCKQUOTE>As soon as we begin to explore our body parts as infants
-we become students of {=anatomy and physiology ~reflexology 
-~science ~experiment}, and in a sense we remain students for life.
-</BLOCKQUOTE>
-
-<P>More info: <? helpbutton("formatmissingword", "", "quiz") ?></P>
-</UL>
-
-
+<P>Tämä muoto tukee vain monivalintakysymyksiä. Vastaukset erotetaan toisistaan tildellä (~), oikean vastauksen edessä on yhtäläisyysmerkki (=). Esimerkiksi: 
+<BLOCKQUOTE>Heti kun alamme vauvana tutkia ruumiinosiamme meistä tulee&nbsp;{=anatomian ja&nbsp;fysiologian ~refleksologian ~luonnontieteen}opiskelijoita, ja tässä mielessä me pysymme opiskelijoina koko ikämme. </BLOCKQUOTE>
+<P>Lisätietoja: <? helpbutton("formatmissingword", "", "quiz") ?></P></UL>
 <P><B>IMS QTI format</B></P>
 <UL>
-<P>The standard format for Question and Test Interoperability, from IMS.
-<P>Not yet implemented
-
-<P>More info: <? helpbutton("formatqti", "", "quiz") ?></P>
-</UL>
-
-
+<P>Kysymysten ja testien yhteensopivuuden&nbsp;standardimuoto,&nbsp;IMS:ltä. 
+<P>Not yet implemented 
+<P>More info: <? helpbutton("formatqti", "", "quiz") ?></P></UL>
 <P><B>WebCT format</B></P>
 <UL>
-<P>The format of files exported from WebCT.
-<P>Not yet implemented
-
-<P>More info: <? helpbutton("formatwebct", "", "quiz") ?></P>
-</UL>
-
+<P>The format of files exported from WebCT. 
+<P>Not yet implemented 
+<P>More info: <? helpbutton("formatwebct", "", "quiz") ?></P></UL>
 <P><B>Custom format</B></P>
 <UL>
-<P>If you have your own format that you need to import, you can 
-   implement it yourself by editing mod/quiz/format/custom.php
-
-<P>The amount of new code needed is quite small - just enough
-   to parse a single question from given text.
-
-<P>More info: <? helpbutton("formatcustom", "", "quiz") ?></P>
-</UL>
+<P>If you have your own format that you need to import, you can implement it yourself by editing mod/quiz/format/custom.php 
+<P>The amount of new code needed is quite small - just enough to parse a single question from given text. 
+<P>More info: <? helpbutton("formatcustom", "", "quiz") ?></P></UL>
