@@ -131,13 +131,17 @@
         //Check we are restoring forums
         if ($restore->mods['forum']->restore == 1) {
             echo "<li>".get_string("from")." ".get_string("modulenameplural","forum");
-            //Get all course posts
+            //Get all course posts being restored
             if ($posts = get_records_sql ("SELECT p.id, p.message
                                        FROM {$CFG->prefix}forum_posts p,
-                                            {$CFG->prefix}forum_discussions d
+                                            {$CFG->prefix}forum_discussions d,
+                                            {$CFG->prefix}backup_ids b
                                        WHERE d.course = $restore->course_id AND
                                              p.discussion = d.id AND
-                                             p.format = $formatwiki")) {
+                                             p.format = $formatwiki AND
+                                             b.backup_code = $restore->backup_unique_code AND
+                                             b.table_name = 'forum_posts' AND
+                                             b.new_id = p.id")) {
                 //Iterate over each post->message
                 $i = 0;   //Counter to send some output to the browser to avoid timeouts
                 foreach ($posts as $post) {
@@ -172,11 +176,15 @@
         //Check we are restoring resources
         if ($restore->mods['resource']->restore == 1) {
             echo "<li>".get_string("from")." ".get_string("modulenameplural","resource");
-            //Get all course resources of type=8 WIKITEXT
+            //Get all course resources of type=8 WIKITEXT being restored
             if ($resources = get_records_sql ("SELECT r.id, r.alltext
-                                       FROM {$CFG->prefix}resource r
+                                       FROM {$CFG->prefix}resource r,
+                                            {$CFG->prefix}backup_ids b
                                        WHERE r.course = $restore->course_id AND
-                                             r.type = $typewiki")) {
+                                             r.type = $typewiki AND
+                                             b.backup_code = $restore->backup_unique_code AND
+                                             b.table_name = 'resource' AND
+                                             b.new_id = r.id")) {
                 //Iterate over each resource->alltext
                 $i = 0;   //Counter to send some output to the browser to avoid timeouts
                 foreach ($resources as $resource) {

@@ -7,4 +7,4 @@
 
 $backup_version = 2004052400;   // The current version is a date (YYYYMMDDXX)
 
-$backup_release = "1.3";  // User-friendly version number
+$backup_release = "1.3.2";  // User-friendly version number
