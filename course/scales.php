@@ -147,7 +147,7 @@
                  "<a href=\"view.php?id=$course->id\">$course->shortname</A> 
                   -> $strscales", $focus);
 
-    print_heading($strcustomscales);
+    print_heading_with_help($strcustomscales, "scales");
 
     if (!empty($notify)) {
         notify($notify);
@@ -180,7 +180,6 @@
         }
         echo "<td align=\"right\"><p>$strname:</p></td>";
         echo "<td $class><input type=\"text\" name=\"name\" size=\"50\" value=\"".s($scale->name)."\">";
-        helpbutton("scalename", $strname);
         echo "</td>";
         echo "</tr>";
         echo "<tr valign=top>";
@@ -191,13 +190,12 @@
         }
         echo "<td align=\"right\"><p>$strscale:</p></td>";
         echo "<td $class><textarea name=\"scale\" cols=50 rows=1 wrap=virtual>".s($scale->scale)."</textarea>";
-        helpbutton("scale", $strscale);
         echo "</td>";
         echo "</tr>";
         echo "<tr valign=top>";
         echo "<td align=\"right\"><p>$strdescription:</p></td>";
         echo "<td><textarea name=\"description\" cols=50 rows=8 wrap=virtual>".s($scale->description)."</textarea>";
-        helpbutton("scaledescription", get_string("scaledescription"));
+        helpbutton("text", get_string("text"));
         echo "</td>";
         echo "</tr>";
         echo "<tr>";
