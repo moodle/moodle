@@ -866,6 +866,19 @@ function calendar_get_course_cached(&$coursecache, $courseid) {
 function calendar_session_vars() {
     global $SESSION, $USER;
 
+    if(isset($USER) && isset($USER->realuser) && !isset($SESSION->cal_loggedinas)) {
+        // We just logged in as someone else, update the filtering
+        unset($SESSION->cal_users_shown);
+        unset($SESSION->cal_courses_shown);
+        $SESSION->cal_loggedinas = true;
+    }
+    else if(isset($USER) && !isset($USER->realuser) && isset($SESSION->cal_loggedinas)) {
+        // We just logged back to our real self, update again
+        unset($SESSION->cal_users_shown);
+        unset($SESSION->cal_courses_shown);
+        unset($SESSION->cal_loggedinas);
+    }
+
     if(!isset($SESSION->cal_course_referer)) {
         $SESSION->cal_course_referer = 0;
     }
