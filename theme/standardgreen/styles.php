@@ -66,6 +66,7 @@ form {
     border-width: 1px;
     border-color: <?PHP echo $THEME->borders?>;
     border-style: solid;
+    -moz-border-radius: 3px;
 }
 
 .navbar {
@@ -86,6 +87,8 @@ form {
     border-width: 1px;
     border-color: <?PHP echo $THEME->borders?>;
     border-style: solid;
+    -moz-border-radius-bottomleft: 20px;
+    -moz-border-radius-bottomright: 20px;
 }
 
 .sideblockheading {
@@ -93,15 +96,21 @@ form {
 }
 
 .sideblockmain {
+    -moz-border-radius-bottomleft: 20px;
+    -moz-border-radius-bottomright: 20px;
 }
 
 .sideblocklinks {
 }
 
 .sideblocklatestnews {
+    -moz-border-radius-bottomleft: 20px;
+    -moz-border-radius-bottomright: 20px;
 }
 
 .sideblockrecentactivity {
+    -moz-border-radius-bottomleft: 20px;
+    -moz-border-radius-bottomright: 20px;
 }
 
 .outlineheadingblock {
@@ -109,21 +118,26 @@ form {
     border-width: 1px;
     border-color: <?PHP echo $THEME->borders?>;
     border-style: solid;
+    -moz-border-radius: 3px;
 }
 
 .forumpost {
     border-width: 1px;
     border-color: <?PHP echo $THEME->borders?>;
     border-style: solid;
+    -moz-border-radius-bottomleft: 20px;
+    -moz-border-radius-bottomright: 20px;
 }
 
 .forumpostpicture {
 }
 
 .forumpostside {
+    -moz-border-radius-bottomleft: 20px;
 }
 
 .forumpostmessage {
+    -moz-border-radius-bottomright: 20px;
 }
 
 
@@ -141,12 +155,27 @@ form {
 }
 
 .weeklyoutlinecontent {
+    border-color: <?PHP echo $THEME->cellheading ?>;
+    border-style: solid;
+    border-width: 1px;
+    border-left: 0px;
+    border-right: 0px;
 }
 
 .weeklyoutlinecontenthighlight {
+    border-color: <?PHP echo $THEME->cellheading2 ?>;
+    border-style: solid;
+    border-width: 1px;
+    border-left: 0px;
+    border-right: 0px;
 }
 
 .weeklyoutlinecontenthidden {
+    border-color: <?PHP echo $THEME->hidden ?>;
+    border-style: solid;
+    border-width: 1px;
+    border-left: 0px;
+    border-right: 0px;
 }
 
 .weeklydatetext {
@@ -169,21 +198,38 @@ form {
 }
 
 .topicsoutlinecontent {
+    border-color: <?PHP echo $THEME->cellheading ?>;
+    border-style: solid;
+    border-width: 1px;
+    border-left: 0px;
+    border-right: 0px;
 }
 
 .topicsoutlinecontenthighlight {
+    border-color: <?PHP echo $THEME->cellheading2 ?>;
+    border-style: solid;
+    border-width: 1px;
+    border-left: 0px;
+    border-right: 0px;
 }
 
 .topicsoutlinecontenthidden {
+    border-color: <?PHP echo $THEME->hidden ?>;
+    border-style: solid;
+    border-width: 1px;
+    border-left: 0px;
+    border-right: 0px;
 }
 
 .siteinfo {
-    border-width: 1px;
-    border-color: <?PHP echo $THEME->borders?>;
-    border-style: solid;
 }
 
 .siteinfocontent {
+    border-width: 1px;
+    border-color: <?PHP echo $THEME->borders?>;
+    border-style: solid;
+    -moz-border-radius: 20px;
+    padding: 10px;
 }
 
 
@@ -191,15 +237,24 @@ form {
     border-width: 1px;
     border-color: <?PHP echo $THEME->borders?>;
     border-style: solid;
+    -moz-border-radius-topleft: 3px;
+    -moz-border-radius-topright: 3px;
+    -moz-border-radius-bottomleft: 15px;
+    -moz-border-radius-bottomright: 15px;
 }
 
 .generalboxcontent {
+    -moz-border-radius-topleft: 3px;
+    -moz-border-radius-topright: 3px;
+    -moz-border-radius-bottomleft: 15px;
+    -moz-border-radius-bottomright: 15px;
 }
 
 .noticebox {
     border-width: 1px;
     border-color: <?PHP echo $THEME->borders?>;
     border-style: solid;
+    -moz-border-radius: 3px;
 }
 
 .noticeboxcontent {
@@ -225,6 +280,7 @@ a.dimmed:hover {
     text-decoration: underline;
     color: red;
 }
+
 .dimmed_text {
     color: #AAAAAA;
 }
@@ -288,6 +344,7 @@ a.dimmed:hover {
     border-width: 1px;
     border-color: <?PHP echo $THEME->borders?>;
     border-style: solid;
+    -moz-border-radius: 3px;
 }
 
 .categoryboxcontent {
@@ -299,6 +356,22 @@ a.dimmed:hover {
 }
 
 .coursename {
+}
+
+.coursebox {
+}
+
+.courseboxcontent {
+    border-width: 1px;
+    border-color: <?PHP echo $THEME->borders?>;
+    border-style: solid;
+    -moz-border-radius: 20px;
+}
+
+.courseboxinfo {
+}
+
+.courseboxsummary {
 }
 
 a.autolink:link {
@@ -316,5 +389,39 @@ a.autolink:visited {
 a.autolink:hover {
     text-decoration: underline;
     color: red;
+}
+
+.userinfobox {
+    border-width: 1px;
+    border-color: <?PHP echo $THEME->borders?>;
+    border-style: solid;
+    -moz-border-radius-bottomleft: 20px;
+    -moz-border-radius-bottomright: 20px;
+    margin-bottom: 5px;
+}
+
+.userinfoboxside {
+    -moz-border-radius-bottomleft: 20px;
+}
+
+.userinfoboxcontent {
+    -moz-border-radius-bottomright: 20px;
+}
+
+.userinfoboxsummary {
+}
+
+.userinfoboxlinkcontent {
+    -moz-border-radius-bottomright: 20px;
+}
+
+.generaltab {
+    -moz-border-radius-topleft: 15px;
+    -moz-border-radius-topright: 15px;
+}
+
+.generaltabselected {
+    -moz-border-radius-topleft: 15px;
+    -moz-border-radius-topright: 15px;
 }
 

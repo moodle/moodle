@@ -106,17 +106,42 @@ Changes to 1.1 since 1.0.9
 Changes to 1.1.1 since 1.1
 --------------------------------
 
+/* Some better placement of styles on the category/course listings 
+   to allow some fancy effects. */
+
 .categoryboxcontent {}
 
-Some better placement of styles on the category/course listings to 
-allow some fancy effects.
 
 ================================
 Changes to 1.2 since 1.1
 --------------------------------
 
+/* Automatically generated links (eg links to glossary items) */
+
 a.autolink:link {}
 a.autolink:visited {}
 a.autolink:hover {}
 
-Automatically generated links (eg links to glossary items)
+
+/* Styles for user info page */
+
+.userinfobox {}
+.userinfoboxside {}
+.userinfoboxcontent {}
+.userinfoboxsummary {}
+.userinfoboxlinkcontent {}
+
+
+/* Styles for tabs */
+
+.generaltab {}
+.generaltabselected {}
+
+
+/* Styles for displaying course info */
+
+.coursebox {}
+.courseboxcontent {}
+.courseboxinfo {}
+.courseboxsummary {}
+
