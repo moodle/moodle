@@ -99,7 +99,7 @@
 
     if ($thissection->summary or $thissection->sequence or isediting($course->id)) {
         echo '<tr id="section_0">';
-        echo "<td nowrap bgcolor=\"$THEME->cellheading\" class=\"topicsoutlineside\" valign=\"top\" width=\"20\">&nbsp;</td>";
+        echo "<td nowrap=\"nowrap\" bgcolor=\"$THEME->cellheading\" class=\"topicsoutlineside\" valign=\"top\" width=\"20\">&nbsp;</td>";
         echo "<td valign=\"top\" bgcolor=\"$THEME->cellcontent\" class=\"topicsoutlinecontent\" width=\"100%\">";
 
         $summaryformatoptions->noclean = true;
@@ -118,7 +118,7 @@
         }
 
         echo "</td>";
-        echo "<td nowrap bgcolor=\"$THEME->cellheading\" class=\"topicsoutlineside\" valign=\"top\" align=\"center\" width=\"10\">";
+        echo "<td nowrap=\"nowrap\" bgcolor=\"$THEME->cellheading\" class=\"topicsoutlineside\" valign=\"top\" align=\"center\" width=\"10\">";
         echo "&nbsp;</td></tr>";
         echo "<tr><td colspan=\"3\"><img src=\"../pix/spacer.gif\" width=\"1\" height=\"1\" alt=\"\" /></td></tr>";
     }
@@ -181,7 +181,7 @@
             }
 
             echo "<tr>";
-            echo "<td nowrap $colorsides valign=\"top\" width=\"20\">";
+            echo "<td nowrap=\"nowrap\" $colorsides valign=\"top\" width=\"20\">";
             echo "<p align=\"center\"><font size=\"3\"><b><a name=\"$section\">$section</a></b></font></p>";
             echo "</td>";
 
@@ -208,7 +208,7 @@
 
                 echo "</td>";
             }
-            echo "<td nowrap $colorsides valign=\"top\" align=\"center\" width=\"10\">";
+            echo "<td nowrap=\"nowrap\" $colorsides valign=\"top\" align=\"center\" width=\"10\">";
             echo "<font size=\"1\">";
 
             if ($displaysection == $section) {      // Show the zoom boxes
@@ -249,6 +249,7 @@
 
             }
 
+            echo "</font>";
             echo "</td>";
             echo "</tr>";
             echo "<tr><td colspan=\"3\"><img src=\"../pix/spacer.gif\" width=\"1\" height=\"1\" alt=\"\"></td></tr>";
