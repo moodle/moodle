@@ -336,6 +336,10 @@ function link_to_popup_window ($url, $name="popup", $linkname="click here",
     }
     $fullscreen = 0;
 
+    if (!(strpos($url,$CFG->wwwroot) === false)) { // some log url entries contain _SERVER[HTTP_REFERRER] in which case wwwroot is already there.
+        $url = substr($url,strlen($CFG->wwwroot)+1);
+    }
+
     $link = "<a target=\"$name\" title=\"$title\" href=\"$CFG->wwwroot$url\" ".
            "onclick=\"return openpopup('$url', '$name', '$options', $fullscreen);\">$linkname</a>\n";
     if ($return) {

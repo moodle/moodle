@@ -607,7 +607,7 @@ function clam_log_upload($newfilepath,$course=null) {
     if ($course) {
         $courseid = $course->id;
     }
-    add_to_log($courseid,"upload","upload","",$newfilepath);
+    add_to_log($courseid,"upload","upload",$_SERVER['HTTP_REFERER'],$newfilepath);
 }
 
 /**
@@ -618,7 +618,7 @@ function clam_log_upload($newfilepath,$course=null) {
  */
 function clam_log_infected($oldfilepath='',$newfilepath='',$userid=0) {
 
-    add_to_log(0,"upload","infected","",$oldfilepath,0,$userid);
+    add_to_log(0,"upload","infected",$_SERVER['HTTP_REFERER'],$oldfilepath,0,$userid);
     
     $user = get_record('user','id',$userid);
     

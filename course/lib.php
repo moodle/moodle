@@ -320,15 +320,14 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate="today"
                 $selectedactivity = "$mod->cm";
             }
         }
-
-        if (isadmin() && !$course->category) {
-            $activities["site_errors"] = get_string("siteerrors");
-            if ($modid === "site_errors") {
-            $selectedactivity = "site_errors";
-            }
-        }
     }
 
+    if (isadmin() && !$course->category) {
+        $activities["site_errors"] = get_string("siteerrors");
+        if ($modid === "site_errors") {
+            $selectedactivity = "site_errors";
+        }
+    }
 
     $strftimedate = get_string("strftimedate");
     $strftimedaydate = get_string("strftimedaydate");
@@ -398,6 +397,9 @@ function make_log_url($module, $url) {
         case "admin":
             return "/$module/$url";
             break;
+        case "upload":
+            return "$url";
+            break;
         case "library":
         case "":
             return "/";
@@ -448,7 +450,7 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
     }
 
     if ('site_errors' === $modid) {
-        $joins[] = "l.action='error'";
+        $joins[] = "l.action='error' OR l.action='infected'";
     } else if ($modid) {
         $joins[] = "l.cmid = '$modid'";
     }
