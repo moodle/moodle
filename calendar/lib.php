@@ -540,8 +540,8 @@ function calendar_top_controls($type, $data) {
         case 'day':
             $data['d'] = $date['mday']; // Just for convenience
             $dayname = calendar_wday_name($date['weekday']);
-            $prevdate = getdate(make_timestamp($data['y'], $data['m'], $data['d'] - 1));
-            $nextdate = getdate(make_timestamp($data['y'], $data['m'], $data['d'] + 1));
+            $prevdate = usergetdate(make_timestamp($data['y'], $data['m'], $data['d'] - 1));
+            $nextdate = usergetdate(make_timestamp($data['y'], $data['m'], $data['d'] + 1));
             $prevname = calendar_wday_name($prevdate['weekday']);
             $nextname = calendar_wday_name($nextdate['weekday']);
             $content .= "<table style='width: 100%;'><tr>\n";
