@@ -70,7 +70,13 @@ function set_config($name, $value) {
 function make_timestamp($year, $month=1, $day=1, $hour=0, $minute=0, $second=0, $timezone=99) {
 /// Given date parts in user time, produce a GMT timestamp
 
+    global $USER;
+
     if ($timezone == 99) {
+        $timezone = (float)$USER->timezone;
+    }
+
+    if (abs($timezone) > 13) {
         return mktime((int)$hour,(int)$minute,(int)$second,(int)$month,(int)$day,(int)$year);
     } else {
         $time = gmmktime((int)$hour,(int)$minute,(int)$second,(int)$month,(int)$day,(int)$year);
