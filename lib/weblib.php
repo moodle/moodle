@@ -1981,11 +1981,14 @@ function print_file_picture($path, $courseid=0, $height='', $width='', $link='')
  * return string
  * @todo Finish documenting this function
  */
-function print_user_picture($userid, $courseid, $picture, $size=0, $returnstring=false, $link=true) {
+function print_user_picture($userid, $courseid, $picture, $size=0, $returnstring=false, $link=true, $target='') {
     global $CFG;
 
     if ($link) {
-        $output = '<a href="'. $CFG->wwwroot .'/user/view.php?id='. $userid .'&amp;course='. $courseid .'">';
+        if ($target) {
+            $target=' target="_blank"';
+        }
+        $output = '<a '.$target.' href="'. $CFG->wwwroot .'/user/view.php?id='. $userid .'&amp;course='. $courseid .'">';
     } else {
         $output = '';
     }
