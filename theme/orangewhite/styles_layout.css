@@ -366,7 +366,8 @@ table.formtable td {
 /* forum */
 .forum {
     position:relative;
-    width:45em;
+    /*width:45em;*/
+    width:100%;
     margin-left:auto;
     margin-right:auto;
     border:1px solid;
@@ -375,6 +376,10 @@ table.formtable td {
 #forum-post {
     margin:0px;
     width:auto;
+}
+
+#forum-discuss .forumpostindent {
+    padding-left:3em;
 }
 
 .unread {
