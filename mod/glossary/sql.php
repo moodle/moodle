@@ -43,7 +43,7 @@
     case GLOSSARY_CATEGORY_VIEW:
         if ($hook == GLOSSARY_SHOW_ALL_CATEGORIES  ) { 
 
-            $sqlselect = "SELECT gec.id, gc.name $as pivot, ge.*";
+            $sqlselect = "SELECT ge.*, gec.id, gc.name $as pivot";
             $sqlfrom   = "FROM {$CFG->prefix}glossary_entries ge,
                          {$CFG->prefix}glossary_entries_categories gec,
                          {$CFG->prefix}glossary_categories gc";
@@ -60,7 +60,7 @@
         } elseif ($hook == GLOSSARY_SHOW_NOT_CATEGORISED ) { 
 
             $printpivot = 0;
-            $sqlselect = "SELECT concept $as pivot, ge.*";
+            $sqlselect = "SELECT ge.*, concept $as pivot";
             $sqlfrom   = "FROM {$CFG->prefix}glossary_entries ge";
             $sqlwhere  = "WHERE (glossaryid = '$glossary->id' OR sourceglossaryid = '$glossary->id') AND
                           (ge.approved != 0 $userid)";
@@ -71,7 +71,7 @@
         } else {
 
             $printpivot = 0;
-            $sqlselect  = "SELECT ce.id, c.name $as pivot, ge.*";
+            $sqlselect  = "SELECT ge.*, ce.id, c.name $as pivot";
             $sqlfrom    = "FROM {$CFG->prefix}glossary_entries ge, {$CFG->prefix}glossary_entries_categories ce, {$CFG->prefix}glossary_categories c";
             $sqlwhere   = "WHERE ge.id = ce.entryid AND ce.categoryid = $hook AND
                                  ce.categoryid = c.id AND ge.approved != 0 AND
@@ -132,7 +132,7 @@
             }
         }
 
-        $sqlselect  = "SELECT ge.concept $as pivot, ge.*";
+        $sqlselect  = "SELECT ge.*, ge.concept $as pivot";
         $sqlfrom    = "FROM {$CFG->prefix}glossary_entries ge";
         $sqlwhere   = "WHERE (ge.glossaryid = $glossary->id OR ge.sourceglossaryid = $glossary->id) AND
                              ge.approved = 0 $where";
@@ -146,7 +146,7 @@
     case GLOSSARY_DATE_VIEW:
     case GLOSSARY_STANDARD_VIEW:
     default:
-        $sqlselect  = "SELECT ge.concept $as pivot, ge.*";
+        $sqlselect  = "SELECT ge.*, ge.concept $as pivot";
         $sqlfrom    = "FROM {$CFG->prefix}glossary_entries ge";
 
         $where = '';
@@ -223,6 +223,6 @@
         break;
         }    
     }
-    
+
     $allentries = get_records_sql("$sqlselect $sqlfrom $sqlwhere $sqlorderby $sqllimit");
 ?>
