@@ -1365,14 +1365,16 @@ function exercise_list_submissions_for_admin($exercise, $order) {
 	echo "<TR><TD ALIGN=\"right\">".get_string("weightforgradingofassessments", "exercise").":</TD>\n";
 	echo "<TD>";
 	exercise_choose_from_menu($EXERCISE_FWEIGHTS, "gradingweight", $gradingweight, "");
-	echo "</TD></TR>\n";
+	echo "</td></tr>\n";
 	echo "<tr><td align=\"right\">".get_string("weightforteacherassessments", "exercise", 
             $course->teacher).":</td>\n";
 	echo "<td>";
 	exercise_choose_from_menu($EXERCISE_FWEIGHTS, "teacherweight", $teacherweight, "");
 	echo "</td></tr>\n";
-	echo "</TABLE>\n";
+	echo "<tr><td colspan=\"2\" align=\"center\">"; 
 	echo "<INPUT TYPE=submit VALUE=\"".get_string("saveweights", "exercise")."\">\n";
+	echo "</td></tr>\n";
+	echo "</TABLE>\n";
 	echo "</CENTER><br />";
 	echo "</FORM>\n";
 
@@ -1399,13 +1401,15 @@ function exercise_list_submissions_for_admin($exercise, $order) {
     }
     choose_from_menu($numbers, "nentries", "$nentries", "");
     echo "</td></tr>\n";
-    echo "<tr><td align=right><p>".get_string("hidenamesfromstudents", "exercise", 
-            $course->students)."</p></td><td>\n";
+    echo "<tr><td align=\"right\">".get_string("hidenamesfromstudents", "exercise", 
+            $course->students)."</td><td>\n";
     $options[0] = get_string("no"); $options[1] = get_string("yes");
     choose_from_menu($options, "anonymous", $exercise->anonymous, "");
     echo "</td></tr>\n";
-    echo "</table>\n";
+    echo "<tr><td colspan=\"2\" align=\"center\">"; 
    	echo "<INPUT TYPE=submit VALUE=\"".get_string("saveentries", "exercise")."\">\n";
+    echo "</td></tr>\n";
+    echo "</table>\n";
 	echo "</CENTER>";
 	echo "</FORM>\n";
 
