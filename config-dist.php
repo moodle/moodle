@@ -135,15 +135,6 @@ $CFG->admin = 'admin';
 // eg   $CFG->textfilter1 = "mod/glossary/dynalink.php";
 //      $CFG->textfilter2 = "library/librarylib.php";
 
-//=========================================================================
-// 8. HTML EDITOR (temporary setting in development version only)
-//=========================================================================
-// We are currently moving to a new HTML editor that works on 
-// Mozilla browsers as well as Internet Explorer.  To enable this 
-// editor, uncomment the following line.
-//
-// $CFG->useneweditor = true;
-
 
 //=========================================================================
 // ALL DONE!  To continue installation, visit your main page with a browser
