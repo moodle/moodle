@@ -1490,7 +1490,7 @@ function highlightfast($needle, $haystack) {
 function print_header ($title='', $heading='', $navigation='', $focus='', $meta='',
                        $cache=true, $button='&nbsp;', $menu='', $usexml=false, $bodytags='') {
 
-    global $USER, $CFG, $SESSION, $ME;
+    global $USER, $CFG, $THEME, $SESSION, $ME;
 
 /// This is an ugly hack to be replaced later by a proper global $COURSE
     global $course;
@@ -1498,14 +1498,22 @@ function print_header ($title='', $heading='', $navigation='', $focus='', $meta=
         $CFG->courselang = $course->lang;
     }
 
-/// Set up all our style sheets
-    if ($CFG->theme != 'standard') {   // Always include the standard stylesheet
-        $meta = "\n".'<link rel="stylesheet" type="text/css" href="'.$CFG->wwwroot.'/theme/standard/styles.php" />';
+/// Add the required stylesheets
+    $stylesheets = '';
+    $theme = current_theme();
+    if ($theme != 'standard') {    /// The standard sheet is always loaded first
+        $stylesheets .= '<link rel="stylesheet" type="text/css" href="'.
+                        $CFG->wwwroot.'/theme/standard/styles.php" />'."\n";
     }
-    $meta .= "\n".'<link rel="stylesheet" type="text/css" href="'.$CFG->wwwroot.'/theme/'.$CFG->theme.'/styles.php" />';
+    if (!empty($THEME->parent)) {  /// Parent stylesheets are loaded next
+        $stylesheets .= '<link rel="stylesheet" type="text/css" href="'.
+                        $CFG->wwwroot.'/theme/'.$THEME->parent.'/styles.php?parent=true" />'."\n";
+    }
+    $stylesheets .= '<link rel="stylesheet" type="text/css" href="'.
+                    $CFG->wwwroot.'/theme/'.$theme.'/styles.php" />'."\n";
 
-    // Add a stylesheet for the HTML editor
-    $meta = "\n".'<style type="text/css">@import url($CFG->wwwroot/lib/editor/htmlarea.css);</style>'."\n$meta\n";
+    $meta = $stylesheets.$meta;
+
 
     if ($navigation == 'home') {
         $home = true;
@@ -1737,6 +1745,34 @@ function print_footer($course=NULL, $usercourse=NULL) {
 }
 
 /**
+ * Returns the name of the current theme
+ *
+ * @uses $CFG
+ * @param $USER
+ * @param $SESSION
+ * @return string
+ */
+function current_theme() {
+    global $CFG, $USER, $SESSION;
+
+/// Logic for this will probably change to accomodate local theme rules.
+
+    if (!empty($CFG->coursetheme)) {    // Course theme can override all other settings for this page
+        return $CFG->coursetheme;
+
+    } else if (!empty($SESSION->theme)) {    // Session theme can override other settings
+        return $SESSION->theme;
+
+    } else if (!empty($USER->theme)) {    // User theme can override site theme
+        return $USER->theme;
+
+    } else {
+        return $CFG->theme;
+    }
+}
+
+
+/**
  * This function is called by stylesheets to set up the header
  * approriately as well as the current path
  *
@@ -1763,6 +1799,7 @@ function style_sheet_setup($lastmodified=0, $lifetime=300, $themename='') {
     return $CFG->wwwroot .'/theme/'. $CFG->theme;
 
 }
+
 
 /**
  * Returns text to be displayed to the user which reflects their login status
