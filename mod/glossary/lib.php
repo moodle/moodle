@@ -490,19 +490,39 @@ function glossary_get_entries($glossaryid, $entrylist, $pivot = "") {
 }
 
 function glossary_get_entries_search($concept, $courseid) {
+
     global $CFG;
+
+    //Check if the user is an admin 
+    $bypassadmin = 1; //This means NO (by default)
+    if (isadmin()) {
+        $bypassadmin = 0; //This means YES
+    } 
+
+    //Check if the user is a teacher 
+    $bypassteacher = 1; //This means NO (by default)
+    if (isteacher($courseid)) {
+        $bypassteacher = 0; //This means YES
+    } 
 
     $conceptupper = strtoupper(trim($concept));
 
     return get_records_sql("SELECT e.*, g.name as glossaryname
-                              FROM {$CFG->prefix}glossary_entries e, 
-                                   {$CFG->prefix}glossary g
-                             WHERE e.glossaryid = g.id 
-                               AND (    (e.casesensitive != 0 and UPPER(concept) = '$conceptupper')
-                                     OR (e.casesensitive = 0 and concept = '$concept'))
-                               AND (g.course = '$courseid' OR g.globalglossary = 1)
-                               AND e.usedynalink != 0 
-                               AND g.usedynalink != 0");
+                            FROM {$CFG->prefix}glossary_entries e, 
+                                 {$CFG->prefix}glossary g,
+                                 {$CFG->prefix}course_modules cm,
+                                 {$CFG->prefix}modules m
+                            WHERE m.name = 'glossary' AND
+                                  cm.module = m.id AND
+                                  (cm.visible = 1 OR  cm.visible = $bypassadmin OR
+                                    (cm.course = '$courseid' AND cm.visible = $bypassteacher)) AND
+                                  g.id = cm.instance AND
+                                  e.glossaryid = g.id  AND
+                                  ( (e.casesensitive != 0 AND UPPER(concept) = '$conceptupper') OR
+                                    (e.casesensitive = 0 and concept = '$concept')) AND
+                                  (g.course = '$courseid' OR g.globalglossary = 1) AND
+                                  e.usedynalink != 0 AND
+                                  g.usedynalink != 0");
 }
 
 function glossary_get_entries_sorted($glossary, $where="", $orderby="", $pivot = "") {
