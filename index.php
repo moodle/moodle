@@ -34,12 +34,13 @@
 	             echo "<LI>$reading";
                  }
              }
+             if ($USER->editing) {
+                 echo "<P align=right><A HREF=\"$CFG->wwwroot/course/mod.php?id=$site->id&week=0&add=reading\">Add Reading</A>...</P>";
+             } else {
+                 echo "<BR><BR>";
+             }
          }
      
-         if ($USER->editing) {
-             echo "<P align=right><A HREF=\"$CFG->wwwroot/course/mod.php?id=$site->id&week=0&add=reading\">Add Reading</A>...</P>";
-             echo "<BR>";
-         }
 
          if (isadmin()) {
              print_simple_box("Admin", $align="CENTER", $width="100%", $color="$THEME->cellheading");
