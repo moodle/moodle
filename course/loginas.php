@@ -40,6 +40,8 @@
         error("Only teachers can use this page!");
     }
 
+    check_for_restricted_user($USER->username, "$CFG->wwwroot/user/view.php?id=$user&course=$course->id");
+
     if ($course->category and !isstudent($course->id, $user) and !isadmin()) {
         error("This student is not in this course!");
     }
