@@ -54,12 +54,12 @@
                 }
             }
             
-            // register success changing password
-            unset_user_preference('auth_forcepasswordchange');
-            
             $USER = $user;
             $USER->loggedin = true;
             $USER->site = $CFG->wwwroot;   // for added security
+
+            // register success changing password
+            unset_user_preference('auth_forcepasswordchange');
 
             set_moodle_cookie($USER->username);
 
