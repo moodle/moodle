@@ -144,14 +144,19 @@
     $sessionusers = array();
     $lasttime   = 0;
 
+    $messagesleft = count($messages);
+
     foreach ($messages as $message) {  // We are walking BACKWARDS through the messages
+
+        $messagesleft --;              // Countdown
+
         if (!$lasttime) {
             $lasttime = $message->timestamp;
         }
         if (!$sessionend) {
             $sessionend = $message->timestamp;
         }
-        if (($lasttime - $message->timestamp) < $sessiongap) {  // Same session
+        if ((($lasttime - $message->timestamp) < $sessiongap) and $messagesleft) {  // Same session
             if ($message->userid and !$message->system) {       // Remember user and count messages
                 if (empty($sessionusers[$message->userid])) {
                     $sessionusers[$message->userid] = 1;
