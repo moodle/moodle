@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.2 Beta (2004022400)
+      // editor.php - created with Moodle 1.2.1 (2004032500)
 
 
 $string['about'] = 'O tomto editoru';
@@ -73,6 +73,7 @@ $string['preformatted'] = 'Pøedformátovaný';
 $string['preview'] = 'Náhled';
 $string['properties'] = 'Vlastnosti';
 $string['redo'] = 'Opakovat poslední akci';
+$string['removelink'] = 'Odstranit odkaz';
 $string['rename'] = 'Pøejmenovat';
 $string['right'] = 'Vpravo';
 $string['rows'] = 'Sloupcù';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // error.php - created with Moodle 1.2 Beta (2004022400)
+      // error.php - created with Moodle 1.2.1 (2004032500)
 
 
 $string['coursegroupunknown'] = 'Nebyl urèen kurz odpovídající skupinì $a';
@@ -10,6 +10,7 @@ $string['groupunknown'] = 'Skupina $a nebyla pøidru¾ena k urèenému kurzu';
 $string['invalidfieldname'] = '\"$a\" není platný název pole';
 $string['missingfield'] = 'Chybí pole \"$a\"';
 $string['modulerequirementsnotmet'] = 'Modul \"$a->modulename\" ($a->moduleversion) nemohl být nainstalován. Vy¾aduje novìj¹í verzi Moodle (pou¾íváte verzi $a->currentmoodle, potøebujete $a->requiremoodle).';
+$string['notavailable'] = 'Prozatím není dostupné';
 $string['restricteduser'] = 'Je mi líto, ale stávajícímu úètu \"$a\" bylo zakázáno toto provést.';
 $string['unknowncourse'] = 'Neznámý kurz s názvem \"$a\"';
 $string['usernotaddederror'] = 'U¾ivatel \"$a\" nebyl pøidán (neznámá chyba)';
