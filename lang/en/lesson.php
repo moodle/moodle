@@ -47,6 +47,7 @@ $string['multipleanswer'] = "Multiple Answer";
 $string['nextpage'] = "Next page";
 $string['noanswer'] = "No answer given";
 $string['noattemptrecordsfound'] = "No Attempt Records Found: No Grade given";
+$string['nobranchtablefound'] = "No Branch Table found";
 $string['normal'] = "Normal - follow Lesson Path";
 $string['notdefined'] = "Not Defined";
 $string['notitle'] = "No Title";
