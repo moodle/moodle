@@ -146,7 +146,7 @@ HTMLArea.Config = function () {
           "forecolor", "hilitecolor", "separator",
           "inserthorizontalrule", "createanchor", "createlink", "unlink", "nolink", "separator",
           "insertimage", "inserttable",
-          "insertsmile", "insertchar",
+          "insertsmile", "insertchar", "search_replace",
           <?php if (!empty($CFG->aspellpath) && file_exists($CFG->aspellpath) && !empty($CFG->editorspelling)) {
               echo '"separator","spellcheck",';
             } ?>
@@ -233,7 +233,8 @@ HTMLArea.Config = function () {
             echo 'spellcheck: ["Spell-check", "spell-check.gif", false, spellClickHandler ],'."\n";
         }?>
         insertsmile: ["Insert Smiley", "em.icon.smile.gif", false, function(e) {e.execCommand("insertsmile");} ],
-        insertchar: [ "Insert Char", "icon_ins_char.gif", false, function(e) {e.execCommand("insertchar");} ]
+        insertchar: [ "Insert Char", "icon_ins_char.gif", false, function(e) {e.execCommand("insertchar");} ],
+        search_replace: [ "Search and replace", "ed_replace.gif", false, function(e) {e.execCommand("searchandreplace");} ]
     };
 
     // initialize tooltips from the I18N module and generate correct image path
@@ -1453,6 +1454,9 @@ HTMLArea.prototype._createLink = function(link) {
 // Called when the user clicks on "InsertImage" button.  If an image is already
 // there, it will just modify it's properties.
 HTMLArea.prototype._insertImage = function(image) {
+
+    // Make sure that editor has focus
+    this.focusEditor();
     var editor = this;  // for nested functions
     var outparam = null;
     if (typeof image == "undefined") {
@@ -1597,6 +1601,8 @@ HTMLArea.prototype._insertTable = function() {
 
 /// Moodle hack - insertSmile
 HTMLArea.prototype._insertSmile = function() {
+    // Make sure that editor has focus
+    this.focusEditor();
     var sel = this._getSelection();
     var range = this._createRange(sel);
     var editor = this;  // for nested functions
@@ -1679,6 +1685,83 @@ HTMLArea.prototype._nolinktag = function () {
 
 };
 
+HTMLArea.prototype._searchReplace = function() {
+
+    var editor = this;
+    var selectedtxt = "";
+    var strReplaced = '<?php print_string('itemsreplaced','editor'); ?>';
+    var strNotfound = '<?php print_string('searchnotfound','editor');?>';
+    var ile;
+
+    //in source mode mozilla show errors, try diffrent method
+    if (editor._editMode == "wysiwyg") {
+        selectedtxt = editor.getSelectedHTML();
+    } else {
+        if (HTMLArea.is_ie) {
+            selectedtxt = document.selection.createRange().text;
+        } else {
+            selectedtxt = getMozSelection(editor._textArea);
+        }
+    }
+
+    outparam = {
+        f_search : selectedtxt
+    };
+
+    //Call Search And Replace popup window
+    editor._popupDialog( "searchandreplace.php", function( entity ) {
+        if ( !entity ) {
+            //user must have pressed Cancel
+            return false;
+        }
+        var text = editor.getHTML();
+        var search = entity[0];
+        var replace = entity[1];
+        var delim = entity[2];
+        var regularx = entity[3];
+        var closesar = entity[4];
+        ile = 0;
+        if (search.length < 1) {
+            alert ("Enter a search word! \n search for: " + entity[0]);
+        } else {
+            if (regularx) {
+            var regX = new RegExp (search, delim) ;
+            var text = text.replace ( regX,
+            function (str, n) {
+                // Increment our counter variable.
+                ile++ ;
+                //return replace ;
+                return str.replace( regX, replace) ;
+                }
+            )
+
+            } else {
+                while (text.indexOf(search)>-1) {
+                    pos = text.indexOf(search);
+                    text = "" + (text.substring(0, pos) + replace + text.substring((pos + search.length), text.length));
+                    ile++;
+                }
+            }
+
+            editor.setHTML(text);
+            editor.forceRedraw();
+            if (ile > 0) {
+                alert(ile + ' ' + strReplaced);
+            } else {
+                alert (strNotfound + "\n");
+            }
+        }
+    }, outparam);
+
+    function getMozSelection(txtarea) {
+        var selLength = txtarea.textLength;
+        var selStart = txtarea.selectionStart;
+        var selEnd = txtarea.selectionEnd;
+        if (selEnd==1 || selEnd==2) selEnd=selLength;
+        return (txtarea.value).substring(selStart, selEnd);
+    }
+};
+
 /// Moodle hack's ends
 //
 // Category: EVENT HANDLERS
@@ -1755,6 +1838,7 @@ HTMLArea.prototype.execCommand = function(cmdID, UI, param) {
         case "insertimage": this._insertImage(); break;
         case "insertsmile": this._insertSmile(); break;
         case "insertchar": this._insertChar(); break;
+        case "searchandreplace": this._searchReplace(); break;
         case "about"    : this._popupDialog("about.html", null, this); break;
         case "showhelp" : window.open(_editor_url + "reference.html", "ha_help"); break;
 
@@ -2367,6 +2451,7 @@ HTMLArea.formathtml = function (html) {
             indentation = indentation.replace(format.regex.inremove, '') ;
         }
 
+        line = line.replace(format.regex.tagopen, '\n$&');
         line = line.replace(format.regex.tagclose, '$&\n');
         line = line.replace(format.regex.tagsmain, '$&\n');
         formatted += indentation + line;
