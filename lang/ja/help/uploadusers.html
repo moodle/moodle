@@ -1,0 +1,31 @@
+<p align="center"><b>ユーザのアップロード</b></p>
+
+<p>まず、<strong>通常は大量のユーザをインポートする必要が無いことに</strong>注意してください - インポートが正常に行えるように最初に認証フォームをチェックしてください。認証フォームが外部データベースに接続していたり、ユーザがアカウントを作成出来るようにしている場合、後で手動によるメンテナンスが必要になります。 詳細は管理メニューの認証セクションをご覧ください。</p>
+<p>本当にテキストファイルから複数のユーザアカウントをインポートしたい場合は、テキストファイルを次のフォーマットにする必要があります:</p>
+
+<ul>
+  <li>1行に1レコードを記述する</li>
+  <li>それぞれのレコードをカンマで区切る</li>
+  <li>最初のレコードは特別な意味を持ち、フィールド名一覧を記述します。 最初のレコードは残りのレコードフォーマットを定義します。
+    <blockquote>
+      <p><strong>必須フィールド名:</strong> これらのフィールドは最初のレコードにユーザ毎に記述する必要があります。</p>
+      <p></p>
+      <font color="#990000" face="Courier New, Courier, mono">username, password, firstname, lastname, email</font></p>
+</p>
+      <p><strong>デフォルト フィールド名:</strong> これらは任意です - レコードに記述されない場合は管理者による初期値が使用されます</p>
+      <p><font color="#990000" face="Courier New, Courier, mono">institution, department, city, country, lang, timezone</font> </p>
+      <p><strong>オプション フィールド名: </strong>これらは全て完全に任意です。courseはコースの&quot;コース省略名&quot;です - 記述されている場合は、生徒はこれらのコースに自動的に登録されます。groupは対応するcourseに関連付ける必要があります。例 group1 → course1</p>
+      <p> <font color="#990000" face="Courier New, Courier, mono">idnumber, icq, phone1, phone2, address, url, description, mailformat, maildisplay, htmleditor, autosubscribe, course1, course2, course3, course4, course5, group1, group2, group3, group4, group5</font></p>
+    </blockquote>
+    </li>
+  <li>データ中のカンマは&amp;#44にエンコードされます - エンコードされたものをスクリプトが自動的にカンマにデコードします。</li>
+  <li>論理型フィールドにはfalseの場合0を、trueの場合1を使用してください。</li>
+  <li>注意: ユーザが既にMoodleデータベースに登録されている場合、このスクリプトはユーザID(データベースインデックス)を返し、他のフィールドを更新せずに、ユーザを指定されたコースに学生として登録します。</li>
+</ul>
+  
+  
+<p>正しいインポートファイルの例です:</p>
+<p><font size="-1" face="Courier New, Courier, mono">username, password, firstname, lastname, email, lang, idnumber, maildisplay, course1, group1<br>
+jonest, verysecret, Tom, Jones, jonest@someplace.edu, en, 3663737, 1, Intro101, Section 1<br>
+reznort, somesecret, Trent, Reznor, reznort@someplace.edu, en_us, 6736733, 0, Advanced202, Section 3</font></p>
+
