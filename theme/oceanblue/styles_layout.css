@@ -95,7 +95,7 @@ a img {
   border-style:solid;
 }
 
-.generalbox#intro {   /* On most modules */
+.generalbox#intro {
   text-align:center;
 }
 
@@ -132,7 +132,6 @@ a img {
   margin-left:3em;
 }
 
-/* weblib.php table */
 .tabledivider {
   border-width:1px;
   border-style:solid;
@@ -141,14 +140,15 @@ a img {
   border-top:0px;
 }
 
-/* entry-page index.php */ 
 .sitetopic {
+  margin-bottom:20px;
+}
+
+.sitetopiccontent {
   border-width:1px;
   border-style:solid;
 }
 
-
-/* paging bar */
 .pagingbar {
   text-align:center;
 }
@@ -159,7 +159,6 @@ a img {
   padding-left: 10px;
 }
 
-/* admin, calendar */
 table.formtable {
   margin: auto;
 }
@@ -183,7 +182,7 @@ table.formtable tbody th
   padding-right:2px;
 } 
 
-.cell {  /* Very generic table cell*/
+.cell {
   vertical-align: top;
 }
 
@@ -482,7 +481,7 @@ table.minicalendar th {
 
 #calendar .maincalendar .eventlist .topic {
   padding: 5px;
-  border-style:solid; /* borders */
+  border-style:solid; 
   border-width: 0px;
   border-bottom-color: #EEEEEE;
   border-bottom-width: 1px;
@@ -715,6 +714,9 @@ body#site-index .headingblock {
   margin-bottom: 8px;
 }
 
+.coursebox {
+  margin-bottom: 8px;
+}
 
 .categoryboxcontent,
 .courseboxcontent {
@@ -736,7 +738,7 @@ body#doc-contents ul {
   list-style-type: none;
   margin: 0px;
   padding: 0px;
-  width: 90%; /* try it on IE without this and see what happens */
+  width: 90%;
 }
 
 
@@ -916,7 +918,7 @@ body#user-index #longtimenosee {
 
 .forumpost .topic {
   padding: 4px;
-  border-style:solid; /* borders */
+  border-style:solid;
   border-width: 0px;
   border-bottom-width: 1px;
 }
@@ -1130,7 +1132,6 @@ body#mod-forum-search .introcontent {
   width: 100%;
 }
 
-/* Override default tab styles */
 .mod-glossary .tabs {
   margin-bottom: 0px;
 }

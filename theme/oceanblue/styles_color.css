@@ -127,6 +127,10 @@ table.formtable tbody th {
 }
 
 .sitetopic {
+}
+
+.sitetopiccontent {
+  border-color:#DDDDDD;
   background-color:#FFFFFF;
   border-color:#9999FF;
 }
