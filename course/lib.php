@@ -154,7 +154,7 @@ function print_log($course, $user=0, $date=0, $order="ORDER BY l.time ASC") {
     foreach ($logs as $log) {
 
         if ($ld = get_record_sql("SELECT * FROM log_display WHERE module='$log->module' AND action='$log->action'")) {
-            $log->info = get_field($ld->table, $ld->field, "id", $log->info);
+            $log->info = get_field($ld->mtable, $ld->field, "id", $log->info);
         }
 
         echo "<TR>";
@@ -182,7 +182,7 @@ function print_all_courses($cat=1, $style="full", $maxcount=999) {
             $count = 0;
             $icon  = "<IMG SRC=\"pix/i/course.gif\" HEIGHT=16 WIDTH=16 ALT=\"Course\">";
             foreach ($courses as $course) {
-                $moddata[]="<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->fullname</A>";
+                $moddata[]="<A TITLE=\"$course->shortname\" HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->fullname</A>";
                 $modicon[]=$icon;
                 if ($count++ >= $maxcount) {
                     break;

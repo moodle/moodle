@@ -117,9 +117,9 @@ CREATE TABLE `log` (
 CREATE TABLE `log_display` (
   `module` varchar(20) NOT NULL default '',
   `action` varchar(20) NOT NULL default '',
-  `table` varchar(20) NOT NULL default '',
+  `mtable` varchar(20) NOT NULL default '',
   `field` varchar(40) NOT NULL default ''
-) TYPE=MyISAM COMMENT='For a particular module/action, specifies a table field.';
+) TYPE=MyISAM COMMENT='For a particular module/action, specifies a moodle table/field.';
 # --------------------------------------------------------
 
 #
@@ -213,7 +213,7 @@ CREATE TABLE `user_teachers` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `user` int(10) unsigned NOT NULL default '0',
   `course` int(10) unsigned NOT NULL default '0',
-  `authority` varchar(10) default NULL,
+  `authority` tinyint(3) NOT NULL default '3',
   PRIMARY KEY  (`id`),
   UNIQUE KEY `id` (`id`)
 ) TYPE=MyISAM COMMENT='One record per teacher per course';

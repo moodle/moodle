@@ -17,7 +17,7 @@
 // If there's something it cannot do itself, it 
 // will tell you what you need to do.
 
-$version = 2002080200;
+$version = 2002080300;
 
 function upgrade_moodle($oldversion=0) {
 
@@ -40,6 +40,11 @@ function upgrade_moodle($oldversion=0) {
     if ($oldversion < 2002080200) {
         execute_sql(" ALTER TABLE `modules` DROP `fullname`  ");
         execute_sql(" ALTER TABLE `modules` DROP `search`  ");
+    }
+
+    if ($oldversion < 2002080300) {
+        execute_sql("  ALTER TABLE `log_display` CHANGE `table` `mtable` VARCHAR( 20 ) NOT NULL   ");
+        execute_sql("  ALTER TABLE `user_teachers` CHANGE `authority` `authority` TINYINT( 3 ) DEFAULT '3' NOT NULL   ");
     }
 
     return true;
