@@ -16,9 +16,7 @@
 
 /// If data submitted, then process and store.
 
-	if (match_referer() && isset($HTTP_POST_VARS)) {
-
-        $config = (object)$HTTP_POST_VARS;
+	if ($config = data_submitted()) {
 
         validate_form($config, $err);
 

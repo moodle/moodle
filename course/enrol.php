@@ -11,9 +11,9 @@
         error("That's an invalid course id");
     }
 
-    if (match_referer() && isset($HTTP_POST_VARS)) {    // form submitted
+    if ($form = data_submitted()) {
 
-        if ($password == $course->password) {
+        if ($form->password == $course->password) {
 
             if (isguest()) {
                 add_to_log($course->id, "course", "guest", "view.php?id=$course->id", "$REMOTE_ADDR, $REMOTE_HOST");

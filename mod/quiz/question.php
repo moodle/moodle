@@ -94,10 +94,8 @@
         }
     }
 
-    if (match_referer() and isset($HTTP_POST_VARS)) {    // question submitted
+    if ($form = data_submitted()) { 
 
-        $form = (object)$HTTP_POST_VARS;
-        
         // First, save the basic question itself
         $question->name         = $form->name;
         $question->questiontext = $form->questiontext;

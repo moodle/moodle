@@ -10,8 +10,7 @@
         error(get_string("noguestpost", "forum"), $HTTP_REFERER);
     }
 
-    if (match_referer() && isset($HTTP_POST_VARS)) {    // form submitted
-        $post = (object)$HTTP_POST_VARS;
+    if ($post = data_submitted()) {
 
         $post->subject = strip_tags($post->subject);  // Strip all tags
         $post->message = clean_text($post->message, $post->format);   // Clean up any bad tags

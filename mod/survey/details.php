@@ -2,8 +2,7 @@
 
     require("../../config.php");
 
-    if (match_referer("$destination") && isset($HTTP_POST_VARS)) {    // form submitted
-        $form = (object)$HTTP_POST_VARS;
+    if ($form = data_submitted($destination)) { 
 
         if (! $course = get_record("course", "id", $form->course)) {
             error("This course doesn't exist");

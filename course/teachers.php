@@ -19,12 +19,12 @@
 
 /// If data submitted, then process and store.
 
-	if (match_referer() && isset($HTTP_POST_VARS)) {
+    if ($form = data_submitted()) {
 
         $rank = array();
 
         // Peel out all the data from variable names.
-        foreach ($HTTP_POST_VARS as $key => $val) {
+        foreach ($form as $key => $val) {
             if ($key <> "id") {
                 $type = substr($key,0,1);
                 $num  = substr($key,1);

@@ -19,9 +19,8 @@
     }
 
 
-    if (match_referer() && isset($HTTP_POST_VARS)) {    // form submitted
+	if ($frm = data_submitted()) {
 
-        $frm = (object)$HTTP_POST_VARS;
         $user = authenticate_user_login($frm->username, $frm->password);
 
 	    update_login_count();

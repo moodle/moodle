@@ -26,8 +26,7 @@
         $answerchecked[$current->answer] = "CHECKED";
     }
 
-    if (match_referer() && isset($HTTP_POST_VARS)) {    // form submitted
-        $form = (object)$HTTP_POST_VARS;
+    if ($form = data_submitted()) {
         $timenow = time();
         if ($current) {
             $newanswer = $current;

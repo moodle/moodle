@@ -31,12 +31,12 @@
 
 /// If data submitted, then process and store.
 
-	if (match_referer() && isset($HTTP_POST_VARS)) {
+	if ($form = data_submitted()) {
 
         $categories = array();
 
         // Peel out all the data from variable names.
-        foreach ($HTTP_POST_VARS as $key => $val) {
+        foreach ($form as $key => $val) {
             if ($key == "new" and $val != "") {
                 $cat->name = $val;
                 if (!insert_record("course_categories", $cat)) {

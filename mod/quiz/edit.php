@@ -9,8 +9,9 @@
         $destination = "";
     }
 
-    if (match_referer($destination) && isset($course) && isset($HTTP_POST_VARS)) {    // form submitted from mod.html
-        $modform = (object)$HTTP_POST_VARS;
+    $modform = data_submitted($destination);
+
+    if ($modform and !empty($modform->course)) {    // form submitted from mod.html
 
         if (empty($modform->name) or empty($modform->intro)) {
             error(get_string("filloutallfields"), $HTTP_REFERER);

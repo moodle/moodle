@@ -23,11 +23,11 @@
 
 /// If data submitted, then process and store.
 
-    if (match_referer() && isset($HTTP_POST_VARS)) {
+    if ($form = data_submitted()) {
 
         $timenow = time();
 
-        if (! set_field("course_sections", "summary", $summary, "id", $section->id)) {
+        if (! set_field("course_sections", "summary", $form->summary, "id", $section->id)) {
             error("Could not update the summary!");
         }
 

@@ -42,9 +42,7 @@
 
 /// If data submitted, then process and store.
 
-	if (match_referer() && isset($HTTP_POST_VARS)) {
-
-        $usernew = (object)$HTTP_POST_VARS;
+	if ($usernew = data_submitted()) {
 
         $usernew->firstname = strip_tags($usernew->firstname);
         $usernew->lastname  = strip_tags($usernew->lastname);

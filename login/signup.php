@@ -3,8 +3,7 @@
 	require("../config.php");
 	require("../lib/countries.php");
 
-	if (match_referer() && isset($HTTP_POST_VARS)) {
-		$user = (object) $HTTP_POST_VARS;
+	if ($user = data_submitted()) {
 
 		validate_form($user, $err);
 

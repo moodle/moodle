@@ -73,10 +73,11 @@
     $available = ($quiz->timeopen < $timenow and $timenow < $quiz->timeclose);
 
 /// Check to see if they are submitting answers
-    if (match_referer() && isset($HTTP_POST_VARS)) {
+    if ($rawanswers = data_submitted()) {
         add_to_log($course->id, "quiz", "submit", "attempt.php?id=$cm->id", "$quiz->id");
 
-        $rawanswers = $HTTP_POST_VARS;
+        $rawanswers = (array)$rawanswers;
+
         unset($rawanswers["q"]);  // quiz id
         if (! count($rawanswers)) {
             print_heading(get_string("noanswers", "quiz"));

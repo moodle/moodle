@@ -179,6 +179,30 @@ function match_referer($good_referer = "") {
     return $good_referer == get_referer();
 }
 
+function data_submitted($url="") {
+/// Used on most forms in Moodle to check for data
+/// Returns the data as an object, if it's found.
+/// 
+/// Checks that submitted POST data exists, and also 
+/// checks the referer against the given url (it uses 
+/// the current page if none was specified.
+
+    global $HTTP_POST_VARS, $CFG;
+
+    if (empty($HTTP_POST_VARS)) {
+        return false;
+    } else {
+        if (match_referer($url)) {
+            return (object)$HTTP_POST_VARS;
+        } else {
+            if ($CFG->debug > 10) {
+                notice("The form did not come from this page! (referer = ".get_referer().")");
+            }
+            return false;
+        }
+    }
+}
+
 
 function stri_replace($find, $replace, $string ) {
 /// This does a search and replace, ignoring case

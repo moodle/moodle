@@ -83,16 +83,9 @@
         $action = "";
     }    
 
-
-    if (!match_referer("$baseweb/files/index.php")) {   // To stop spoofing 
-        $action="cancel";
-        $wdir="/";
-    }
-
     if (!$wdir) {
         $wdir="/";
     }
-
 
 
     switch ($action) {

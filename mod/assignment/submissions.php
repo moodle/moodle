@@ -70,12 +70,13 @@
 
 
 /// If data is being submitted, then process it
-    if (match_referer() && isset($HTTP_POST_VARS)) { 
+    if ($data = data_submitted()) {
        
         $feedback = array();
+        $data = (array)$data;
 
         // Peel out all the data from variable names.
-        foreach ($HTTP_POST_VARS as $key => $val) {
+        foreach ($data as $key => $val) {
             if ($key <> "id") {
                 $type = substr($key,0,1);
                 $num  = substr($key,1); 

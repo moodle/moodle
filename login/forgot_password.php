@@ -2,9 +2,7 @@
 
 	include("../config.php");
 
-	if (match_referer() && isset($HTTP_POST_VARS)) {
-
-		$frm = (object)$HTTP_POST_VARS;
+	if ($frm = data_submitted()) {
 
 		validate_form($frm, $err);
 

@@ -27,17 +27,17 @@
 
 /// If data submitted, then process and store.
 
-	if (match_referer() && isset($HTTP_POST_VARS)) {
+    if ($form = data_submitted()) {
 
 		$timenow = time();
 
-        $text = clean_text($text, $format);
+        $form->text = clean_text($form->text, $form->format);
 
 		if ($entry) {
             $newentry->id = $entry->id;
-            $newentry->text = $text;
+            $newentry->text = $form->text;
+            $newentry->format = $form->format;
             $newentry->modified = $timenow;
-            $newentry->format = $format;
 			if (! update_record("journal_entries", $newentry)) {
 				error("Could not update your journal");
 			}
@@ -45,9 +45,9 @@
 		} else {
             $newentry->userid = $USER->id;
             $newentry->journal = $journal->id;
+            $newentry->text = $form->text;
+            $newentry->format = $form->format;
             $newentry->modified = $timenow;
-            $newentry->text = $text;
-            $newentry->format = $format;
 			if (! $newentry->id = insert_record("journal_entries", $newentry)) {
 				error("Could not insert a new journal entry");
 			}
