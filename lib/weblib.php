@@ -3547,19 +3547,21 @@ function print_side_block_start($heading='', $attributes = array()) {
     echo '<table class="sideblock" cellspacing="0" cellpadding="5"'.$attrtext.'>';
     if ($heading) {
         // orig echo '<thead><tr><td class="sideblockheading">'.$heading.'</td></tr></thead>';
-        echo '<thead>
-        <tr>
-            <td class="sideblockheading">'
-            .$heading.
-            '<div class="hide-show">
+        echo '<thead><tr><td class="sideblockheading">'.$heading;
+        if(isset($attributes['id'])) {
+            echo '<div class="hide-show">
                 <a href="javascript:containerDisplaySwitching('."'".$attributes['id']."'".');"\ >'."<img src=\"$CFG->pixpath/t/switch.gif\" alt=\"\" height=\"11\" width=\"11\" class=\"hide-show-image\" />".'</a>
-            </div>
-            </td>
-        </tr>
-        </thead>';
+            </div>';
+        }
+        echo '</td></tr></thead>';
     }
     // orig echo '<tbody><tr><td class="sideblockmain">';
-    echo '<tbody><tr><td class="sideblockmain"><div class="blockcontent" id="'.$attributes['id']."_cont\">";
+    if(isset($attributes['id'])) {
+        echo '<tbody><tr><td class="sideblockmain"><div class="blockcontent" id="'.$attributes['id'].'_cont">';
+    }
+    else {
+        echo '<tbody><tr><td class="sideblockmain"><div class="blockcontent">';
+    }
 }
 
 
@@ -3569,10 +3571,12 @@ function print_side_block_start($heading='', $attributes = array()) {
 function print_side_block_end($attributes = array()) {
     echo '</div></td></tr></tbody></table>';
     // js call to set block display state which is saved in cookie.
-    echo "\n <script type='text/javascript'> <!-- //hide ";
-    echo "\n containerDisplaySet(\"".$attributes['id']."\");";
-    echo "\n // done hiding --> </script>";
-    echo "\n";
+    if(isset($attributes['id'])) {
+        echo "\n <script type='text/javascript'> <!-- //hide ";
+        echo "\n containerDisplaySet(\"".$attributes['id']."\");";
+        echo "\n // done hiding --> </script>";
+        echo "\n";
+    }
 }
 
 
