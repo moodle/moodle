@@ -22,7 +22,7 @@
         error('Course module is incorrect');
     }
 
-    require_login($course->id);
+    require_login($course->id, false, $cm);
 
 /// Print the page header
 
