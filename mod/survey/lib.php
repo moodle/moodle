@@ -44,7 +44,7 @@ function survey_get_responses($survey) {
                             GROUP BY a.user ORDER BY a.time ASC");
 }
 
-function survey_count_reponses($survey) {
+function survey_count_responses($survey) {
     if ($responses = survey_get_responses($survey)) {
         return count($responses);
     } else {
