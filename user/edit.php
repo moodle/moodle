@@ -3,8 +3,17 @@
     require_once("../config.php");
     require_once("$CFG->libdir/gdlib.php");
 
-    require_variable($id);       // user id
-    require_variable($course);   // course id
+    optional_variable($id);       // user id
+    optional_variable($course);   // course id
+
+    if (empty($id)) {         // See your own profile by default
+        require_login();
+        $id = $USER->id;
+    }
+
+    if (empty($course)) {     // See it at site level by default
+        $course = SITEID;
+    }
 
     if (! $user = get_record("user", "id", $id)) {
         error("User ID was incorrect");
@@ -30,7 +39,7 @@
         require_login($course->id);
     }
 
-    if ($USER->id <> $user->id and !isadmin()) {
+    if (($USER->id <> $user->id) && !isadmin()) {
         error("You can only edit your own information");
     }
 
@@ -46,6 +55,10 @@
 /// If data submitted, then process and store.
 
     if ($usernew = data_submitted()) {
+
+        if (($USER->id <> $usernew->id) && !isadmin()) {
+            error("You can only edit your own information");
+        }
 
         if (isset($USER->username)) {
             check_for_restricted_user($USER->username, "$CFG->wwwroot/course/view.php?id=$course->id");
