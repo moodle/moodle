@@ -418,7 +418,7 @@ class block_base {
      * @todo finish documenting this function
      */
     function applicable_formats() {
-        // Default case: the block can be used in all course types but not in activities
+        // Default case: the block can be used in courses and site index, but not in activities
         return array('all' => true, 'mod' => false);
     }
     
@@ -447,7 +447,7 @@ class block_base {
      * @todo finish documenting this function
      */
     function html_attributes() {
-        // Default case: just an id for the block, with our name in it
+        // Default case: an id with the instance and a class with our name in it
         return array('id' => 'inst'.$this->instance->id, 'class' => 'block_'. $this->name());
     }
     

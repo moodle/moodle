@@ -92,7 +92,7 @@
     .updating {
         padding: 10px;
         border: 1px #999 dotted;
-        background-color: #FFD991;
+        background-color: #F76120;
     }
     ul#methods_reference, ul#variables_reference, ul#constants_reference {
         list-style-type: decimal;
@@ -110,6 +110,10 @@
     ul#methods_reference ul li .function_title, ul#variables_reference .variable_title, ul#constants_reference .named_constant {
         margin: 2em 0px 1em 0px;
         border-bottom: 2px #666 dotted;
+    }
+    ul#methods_reference ul ul {
+        border: none;
+        list-style-type: disc;
     }
 </style>
 </head>
@@ -447,14 +451,14 @@ function instance_config_save($data) {
 
     <p>Our block is just about complete functionally, so now let's take a look at some of the tricks we can use to make its behavior customized in a few more useful ways.</p>
 
-    <p>First of all, there are a couple of ways we can adjust the visual aspects of our block. First of all, it might be useful to create a block that doesn't display a header (title) at all. You can see this effect in action in the Course Description block that comes with Moodle. This behavior is achieved by, you guessed it, adding one more method to our block class:</p>
+    <p>First of all, there are a couple of ways we can adjust the visual aspects of our block. For starters, it might be useful to create a block that doesn't display a header (title) at all. You can see this effect in action in the Course Description block that comes with Moodle. This behavior is achieved by, you guessed it, adding one more method to our block class:</p>
 
     <pre class="code">
 function hide_header() {
     return true;
 }</pre>
 
-    <p>As you see, hiding the title is quite straightforward. One more note here: you cannot just set an empty title inside the block's <a class="function_title" href="#method_init">init</a> method; it's necessary for each block to have a unique, non-empty title after <a class="function_title" href="#method_init">init</a> is called so that Moodle can use those titles to differentiate between all of the installed blocks.</p>
+    <p>One more note here: we cannot just set an empty title inside the block's <a class="function_title" href="#method_init">init</a> method; it's necessary for each block to have a unique, non-empty title after <a class="function_title" href="#method_init">init</a> is called so that Moodle can use those titles to differentiate between all of the installed blocks.</p>
 
     <p>Another adjustment we might want to do is instruct our block to take up a certain amount of width on screen. Moodle handles this as a two-part process: first, it queries each block about its preferred width and takes the maximum number as the desired value. Then, the page that's being displayed can choose to use this value or, more probably, bring it within some specific range of values if it isn't already. That means that the width setting is a best-effort settlement; your block can <em>request</em> a certain width and Moodle will <em>try</em> to provide it, but there's no guarantee whatsoever about the end result. As a concrete example, all standard Moodle course formats will deliver any requested width between 180 and 210 pixels, inclusive.</p>
 
@@ -470,48 +474,80 @@ function preferred_width() {
 
     <p>Finally, we can also affect some properties of the actual HTML that will be used to print our block. Each block is fully contained within a &lt;table&gt; element, inside which all the HTML for that block is printed. We can instruct Moodle to add HTML attributes with specific values to that container. This would be done to either a) directly affect the end result (if we say, assign bgcolor="black"), or b) give us freedom to customize the end result using CSS (this is in fact done by default as we 'll see below).</p>
 
-    <p>The default behavior of this feature in our case will assign to our block's container the id HTML attribute with the value "block_simplehtml" (the prefix "block_" followed by the name of our block, lowercased). We can then use that id to make CSS selectors in our theme to alter this block's visual style (for example, "#block_simplehtml { border: 1px black solid}").</p>
+    <p>The default behavior of this feature in our case will assign to our block's container the class HTML attribute with the value "sideblock block_simplehtml" (the prefix "block_" followed by the name of our block, lowercased). We can then use that class to make CSS selectors in our theme to alter this block's visual style (for example, ".sideblock.block_simplehtml { border: 1px black solid}").</p>
 
     <p>To change the default behavior, we will need to define a method which returns an associative array of attribute names and values. For example, the version</p>
 
     <pre class="code">
 function html_attributes() {
     return array(
-        'id'          => 'block_'. $this->name(),
+        'class'       => 'sideblock block_'. $this->name(),
         'onmouseover' => 'alert("Mouseover on our block!");'
     );
 }</pre>
 
-    <p>will result in a mouseover event being added to our block using JavaScript, just as if we had written the onmouseover="alert(...)" part ourselves in HTML. Note that we actually duplicate the part which sets the id attribute (we want to keep that, and since we override the default behavior it's our responsibility to emulate it if required). And the final elegant touch is that we don't set the id to the hard-coded value "block_simplehtml" but instead use the <a class="function_title" href="#method_name">name</a> method to make it dynamically match our block's name.</p>
+    <p>will result in a mouseover event being added to our block using JavaScript, just as if we had written the onmouseover="alert(...)" part ourselves in HTML. Note that we actually duplicate the part which sets the class attribute (we want to keep that, and since we override the default behavior it's our responsibility to emulate it if required). And the final elegant touch is that we don't set the class to the hard-coded value "block_simplehtml" but instead use the <a class="function_title" href="#method_name">name</a> method to make it dynamically match our block's name.</p>
 
 </li>
 
-<li>
+<li id="section_authorized_personnel_only">
 
     <h3>Authorized Personnel Only</h3>
 
     <p>It's not difficult to imagine a block which is very useful in some circumstances but it simply cannot be made meaningful in others. An example of this would be the "Social Activities" block which is indeed useful in a course with the social format, but doesn't do anything useful in a course with the weeks format. There should be some way of allowing the use of such blocks only where they are indeed meaningful, and not letting them confuse users if they are not.<p>
 
-    <p>Moodle allows us to declare which course formats each block is allowed to be displayed in, and enforces these restrictions as set by the block developers at all times. The information is given to Moodle as a standard associative array, with each key corresponding to a course format and defining a boolean value (true/false) that declares whether the block should be allowed to appear in that course format.</p>
+    <p>Moodle allows us to declare which course formats each block is allowed to be displayed in, and enforces these restrictions as set by the block developers at all times. The information is given to Moodle as a standard associative array, with each key corresponding to a page format and defining a boolean value (true/false) that declares whether the block should be allowed to appear in that page format.</p>
 
-    <p>The format names we can use are: "weeks", "topics", and "social", which correspond to the three standard course format in Moodle; "site", which refers specifically to the front page of our Moodle installation; and "all", which is a fallback case and applies to everything. We can mix and match between these to create the desired effect. If a name is not present at all as a key in the array, it is assumed to be "false".</p>
+    <p>Notice the deliberate use of the term <em>page</em> instead of <em>course</em> in the above paragraph. This is because in Moodle 1.5 and onwards, blocks can be displayed in any page that supports them. The best example of such pages are the course pages, but we are not restricted to them. For instance, the quiz view page (the first one we see when we click on the name of the quiz) also supports blocks.</p>
 
-    <p>For example, to have our block appear <strong>only</strong> in the site front page, we would use:</p>
+    <p>The format names we can use for the pages derive from the name of the script which is actually used to display that page. For example, when we are looking at a course, the script is <span class="filename">/course/view.php</span> (this is evident from the browser's address line). Thus, the format name of that page is <strong>course-view</strong>. It follows easily that the format name for a quiz view page is <strong>mod-quiz-view</strong>. This rule of thumb does have a few exceptions, however:
+    <ul>
+    <li>The format name for the front page of Moodle is <strong>site-index</strong>.</li>
+    <li>The format name for courses is actually not just <strong>course-view</strong>; it is <strong>course-view-weeks</strong>, <strong>course-view-topics</strong>, etc.</li>
+    <li>Even though there is no such page, the format name <strong>all</strong> can be used as a catch-all option.</li>
+    </ul>
+    </p>
+
+    <p>We can include as many format names as we want in our definition of the applicable formats. Each format can be allowed or disallowed, and there are also three more rules that help resolve the question "is this block allowed into this page or not?":
+    
+    <ul>
+    <li>Prefixes of a format name will match that format name; for example, <strong>mod</strong> will match all the activity modules. <strong>course-view</strong> will match any course, regardless of the course format. And finally, <strong>site</strong> will also match the front page (remember that its full format name is <strong>site-index</strong>).</li>
+    <li>The more specialized a format name that matches our page is, the higher precedence it has when deciding if the block will be allowed. For example, <strong>mod</strong>, <strong>mod-quiz</strong> and <strong>mod-quiz-view</strong> all match the quiz view page. But if all three are present, <strong>mod-quiz-view</strong> will take precedence over the other two because it is a better match.</li>
+    <li>The character <strong>*</strong> can be used in place of any word. For example, <strong>mod</strong> and <strong>mod-*</strong> are equivalent. At the time of this document's writing, there is no actual reason to utilize this "wildcard matching" feature, but it exists for future usage.</li>
+    <li>The order that the format names appear does not make any difference.</li>
+    </ul>
+    </p>
+
+    <p>All of the above are enough to make the situation sound complex, so let's look at some specific examples. First of all, to have our block appear <strong>only</strong> in the site front page, we would use:</p>
 
     <pre class="code">
 function applicable_formats() {
     return array('site' => true);
 }</pre>
 
-    <p>Since "all" is missing, the block is disallowed from appearing in <em>any</em> course format; but then "site" is set to true, so it's explicitly allowed to appear in the site front page. For another example, if we wanted to allow the block to appear in all course formats <em>except</em> social, and also to <em>not</em> be allowed at the front page, we would use:</p>
+    <p>Since <strong>all</strong> is missing, the block is disallowed from appearing in <em>any</em> course format; but then <strong>site</strong> is set to true, so it's explicitly allowed to appear in the site front page (remember that <strong>site</strong> matches <strong>site-index</strong> because it's a prefix).</p>
+    
+    <p>For another example, if we wanted to allow the block to appear in all course formats <em>except</em> social, and also to <em>not</em> be allowed anywhere but in courses, we would use:</p>
 
     <pre class="code">
 function applicable_formats() {
-    return array('all' => true, 'social' => false, 'site' => false);
+    return array('course-view' => true, 'course-view-social' => false);
 }</pre>
 
-    <p>This time we allow the block to appear in "all" course formats by default, and then explicitly disallow those we want to leave outside. Remember that "all" is used as a fallback case if a specific course format isn't explicitly allowed or disallowed; if the specific course format appears in the array, it overrides "all". The exact order of the array items doesn't make any difference at all, but it is good practice to write them in an order easily understood by a human maintaining the code.</p>
+    <p>This time, we first allow the block to appear in all courses and then we explicitly disallow the social format.</p>
+    
+    <p>For our final, most complicated example, suppose that a block can be displayed in the site front page, in courses (but not social courses) and also when we are viewing any activity module, <em>except</em> quiz. This would be:</p>
+    
+    <pre class="code">
+function applicable_formats() {
+    return array('site-index' => true,
+                 'course-view' => true, 'course-view-social' => false,
+                 'mod' => true, 'mod-quiz' => false);
+}</pre>
 
+    <p>It is not difficult to realize that the above accomplishes the objective if we remember that there is a "best match" policy to determine the end result.</p>
+
+    <p class="updating"><strong>UPDATING:</strong> Prior to version 1.5, blocks were only allowed in courses (and in Moodle 1.4, in the site front page). Also, the keywords used to describe the valid course formats at the time were slightly different and had to be changed in order to allow for a more open architecture. Refer to <a href="#appendix_b">Appendix B</a> for more information on the changes that old blocks have to make to conform to the new standard.</p>
 </li>
 
 <li>
@@ -569,15 +605,22 @@ function get_content() {
 
     <pre class="code">
 function applicable_formats() {
-    // Default case: the block can be used in all course types
-    return array('all' => true);
+    // Default case: the block can be used in courses and site index, but not in activities
+    return array('all' => true, 'mod' => false);
 }</pre>
 
-    <p>This method allows you to control which formats your block can be added to. Currently "formats" refers to course formats only, but in the future it may also include other kinds of pages than courses as Moodle is developed. You should return an array with the keys being page format names and the values being booleans (true or false). Your block is only allowed to appear in those formats where the value is true.</p>
+    <p>This method allows you to control which pages your block can be added to. Page formats are formulated from the full path of the script that is used to display that page. You should return an array with the keys being page format names and the values being booleans (true or false). Your block is only allowed to appear in those formats where the value is true.</p>
 
-    <p>Valid options for format names are: "social", "topics", "weeks" (referring to the three standard course formats), "site" (referring to the front page) and "all" (this will be used for those formats you have not explicitly allowed or disallowed).</p>
+    <p>Example format names are: <strong>course-view</strong>, <strong>site-index</strong> (this is an exception, referring front page of the Moodle site), <strong>course-format-weeks</strong> (referring to a specific course format), <strong>mod-quiz</strong> (referring to the quiz module) and <strong>all</strong> (this will be used for those formats you have not explicitly allowed or disallowed).</p>
 
-    <p>If a format does not appear at all in the array keys and there is no "all" key either, then your block will <strong>not</strong> be allowed in that format.</p>
+    <p>The full matching rules are:
+    <ul>
+    <li>Prefixes of a format name will match that format name; for example, <strong>mod</strong> will match all the activity modules. <strong>course-view</strong> will match any course, regardless of the course format. And finally, <strong>site</strong> will also match the front page (remember that its full format name is <strong>site-index</strong>).</li>
+    <li>The more specialized a format name that matches our page is, the higher precedence it has when deciding if the block will be allowed. For example, <strong>mod</strong>, <strong>mod-quiz</strong> and <strong>mod-quiz-view</strong> all match the quiz view page. But if all three are present, <strong>mod-quiz-view</strong> will take precedence over the other two because it is a better match.</li>
+    <li>The character <strong>*</strong> can be used in place of any word. For example, <strong>mod</strong> and <strong>mod-*</strong> are equivalent. At the time of this document's writing, there is no actual reason to utilize this "wildcard matching" feature, but it exists for future usage.</li>
+    <li>The order that the format names appear does not make any difference.</li>
+    </ul>
+    </p>
 
 </li>
 
@@ -690,8 +733,8 @@ function hide_header() {
 
     <pre class="code">
 function html_attributes() {
-    // Default case: just an id for the block, with our name in it
-    return array('id' => 'block_'. $this->name());
+    // Default case: an id with the instance and a class with our name in it
+    return array('id' => 'inst'.$this->instance->id, 'class' => 'block_'. $this->name());
 }</pre>
 
     <p>This method should return an associative array of HTML attributes that will be given to your block's container element when Moodle constructs the output HTML. No sanitization will be performed in these elements at all.</p>
@@ -1148,9 +1191,29 @@ class block_online_users extends block_base { ... }
         <li>If you have overridden <strong>handle_config</strong>, rename your method to <strong>config_save</strong>.</li>
     </ol>
 
+</li>
+
+<li>
+
+    <h3>Blocks with customized applicable formats</h3>
+
+    <p>The correct way to specify the formats you want to allow or disallow your block to exist has been reworked for Moodle 1.5 to take account of the fact that blocks are no longer restricted to just courses. To have a block retain its intended behavior, you must change these format names (array keys in the return value of <a class="function_title" href="#method_applicable_formats">applicable_formats</a>) if they are used in your block:
+
+    <ul>
+      <li><strong>social</strong> should become <strong>course-view-social</strong></li>
+      <li><strong>topics</strong> should become <strong>course-view-topics</strong></li>
+      <li><strong>weeks</strong> should become <strong>course-view-weeks</strong></li>
+    </ul>
+    
+    </p>
+
+    <p>You should also keep in mind that there is now the possibility of blocks being displayed in other pages too, like the introductory page that users see when they enter an activity module. You might therefore need to make the specification for applicable formats more restrictive to keep your block out of pages it is not supposed to be shown in. Also, there are subtle changes to the way that the final decision to allow or disallow a block is made. For the technical details refer to the definition of <a class="function_title" href="#method_applicable_formats">applicable_formats</a>, and for a more extended example read <a href="#section_authorized_personnel_only">the section dedicated to this subject</a>.
+    
     <p>That's everything; your block will now be ready for use in Moodle 1.5!</p>
 
+
 </li>
+
 </ol>
 
 <div class="footer"><h1>The End</h1></div>
