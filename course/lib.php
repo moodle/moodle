@@ -596,6 +596,9 @@ function print_course_admin_links($course, $width=180) {
 
 function print_course_categories($categories, $selected="none", $width=180) {
     global $CFG, $THEME, $USER;
+    
+    $strallowguests = get_string("allowguests");
+    $strrequireskey = get_string("requireskey");
 
     if ($selected == "index") {  // Print comprehensive index of categories with courses
         if ($courses = get_records_sql("SELECT * FROM course WHERE category > 0 ORDER BY shortname")) {
@@ -606,7 +609,8 @@ function print_course_categories($categories, $selected="none", $width=180) {
                 echo "<UL>";
                 foreach ($courses as $key => $course) {
                     if (isteacher($course->id) or isstudent($course->id)) {
-                        echo "<IMG SRC=\"$CFG->wwwroot/pix/i/course.gif\" HEIGHT=16 WIDTH=16>&nbsp;<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> &nbsp; ";
+                        echo "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->fullname</A>";
+                        echo "<BR>";
                         $some = true;
                     }
                 }
@@ -624,8 +628,18 @@ function print_course_categories($categories, $selected="none", $width=180) {
                 echo "<UL>";
                 foreach ($courses as $key => $course) {
                     if ($course->category == $category->id) {
-                        echo "<IMG SRC=\"$CFG->wwwroot/pix/i/course.gif\" HEIGHT=16 WIDTH=16>&nbsp;<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> &nbsp; ";
+                        echo "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->fullname</A>";
+                        echo "&nbsp;&nbsp;";
                         unset($courses[$key]);
+                        if ($course->guest ) {
+                            echo "<A TITLE=\"$strallowguests\" HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">";
+                            echo "<IMG ALT=\"\" HEIGHT=16 WIDTH=16 BORDER=0 SRC=\"$CFG->wwwroot/user/user.gif\"></A>";
+                        }
+                        if ($course->password) {
+                            echo "<A TITLE=\"$strrequireskey\" HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">";
+                            echo "<IMG ALT=\"\" HEIGHT=16 WIDTH=16 BORDER=0 SRC=\"$CFG->wwwroot/pix/i/key.gif\"></A>";
+                        }
+                        echo "<BR>";
                         $some = true;
                     }
                 }
