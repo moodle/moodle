@@ -88,10 +88,6 @@
         case 'upcoming':
             $pagetitle = get_string('upcomingevents', 'calendar');
         break;
-        case 'event':
-            $pagetitle = get_string('eventview', 'calendar');
-            $nav .= ' -> '.$pagetitle; // Smart guy... :)
-        break;
     }
 
     if(isguest($USER->id)) {
@@ -128,17 +124,6 @@
     echo '<td style="vertical-align: top; width: 100%;">';
 
     switch($_GET['view']) {
-        case 'event':
-            optional_variable($_GET['id'], 0);
-            $event = get_record('event', 'id', intval($_GET['id']));
-            if($event === false) {
-                error('Invalid event id');
-            }
-            $date = calendar_show_event($event);
-            $day = $date['mday'];
-            $mon = $date['mon'];
-            $yr  = $date['year'];
-        break;
         case 'day':
             calendar_show_day($day, $mon, $yr, $courses, $groups, $users);
         break;
@@ -258,8 +243,9 @@ function calendar_show_day($d, $m, $y, $courses, $groups, $users) {
             echo '<p style="text-align: center;"><ul>';
             foreach($summarize as $index) {
                 $endstamp = $events[$index]->timestart + $events[$index]->timeduration;
+                $startdate = usergetdate($events[$index]->timestart);
                 $enddate = usergetdate($endstamp);
-                echo '<li><a href="view.php?view=event&amp;id='.$events[$index]->id.'">'.$events[$index]->name.'</a> ';
+                echo '<li><a href="'.calendar_get_link_href('view.php?view=day&amp;', $startdate['mday'], $startdate['mon'], $startdate['year']).'">'.$events[$index]->name.'</a> ';
                 echo '('.$until.' <a href="'.calendar_get_link_href('view.php?view=day&amp;', $enddate['mday'], $enddate['mon'], $enddate['year']).'">';
                 echo calendar_day_representation($endstamp, false, false).'</a>)</li>';
             }
@@ -382,6 +368,8 @@ function calendar_show_month_detailed($m, $y, $courses, $groups, $users) {
 
         // Reset vars
         $cell = '';
+        $dayhref = calendar_get_link_href(CALENDAR_URL.'view.php?view=day&amp;', $day, $m, $y);
+
         if($dayweek % 7 == 0 || $dayweek % 7 == 6) {
             // Weekend. This is true no matter what the exact range is.
             $class = 'cal_weekend';
@@ -411,7 +399,7 @@ function calendar_show_month_detailed($m, $y, $courses, $groups, $users) {
             else {
                 $title = get_string('manyevents', 'calendar', count($eventsbyday[$day]));
             }
-            $cell = '<strong><a href="'.calendar_get_link_href(CALENDAR_URL.'view.php?view=day&amp;', $day, $m, $y).'" title="'.$title.'">'.$day.'</a></strong>';
+            $cell = '<strong><a href="'.$dayhref.'" title="'.$title.'">'.$day.'</a></strong>';
         }
         else {
             $cell = $day;
@@ -446,7 +434,7 @@ function calendar_show_month_detailed($m, $y, $courses, $groups, $users) {
             echo '<table>';
             foreach($eventsbyday[$day] as $eventindex) {
                 echo '<tr><td style="vertical-align: top; width: 10px;"><strong>&middot;</strong></td>';
-                echo '<td style="width: 100%;"><a href="'.CALENDAR_URL.'view.php?view=event&amp;id='.$events[$eventindex]->id.'">'.$events[$eventindex]->name.'</a></td></tr>';
+                echo '<td style="width: 100%;"><a href="'.$dayhref.'">'.$events[$eventindex]->name.'</a></td></tr>';
             }
             echo '</table>';
         }

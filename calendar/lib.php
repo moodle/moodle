@@ -163,14 +163,16 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
 
         // Special visual fx if an event is defined
         if(isset($eventsbyday[$day])) {
+            $dayhref = calendar_get_link_href(CALENDAR_URL.'view.php?view=day&amp;', $day, $m, $y);
+
             // OverLib popup
             $popupcontent = '';
             foreach($eventsbyday[$day] as $eventid) {
                 if(!empty($events[$eventid]->modulename)) {
-                    $popupcontent .= '<div><img src=\\\''.$CFG->modpixpath.'/'.$events[$eventid]->modulename.'/icon.gif\\\' style=\\\'vertical-align: middle; margin-right: 4px;\\\' alt=\\\''.$events[$eventid]->modulename.'\\\' /><a href=\\\''.CALENDAR_URL.'view.php?view=event&amp;id='.$events[$eventid]->id.'\\\'>'.addslashes(htmlspecialchars($events[$eventid]->name)).'</a></div>';
+                    $popupcontent .= '<div><img src=\\\''.$CFG->modpixpath.'/'.$events[$eventid]->modulename.'/icon.gif\\\' style=\\\'vertical-align: middle; margin-right: 4px;\\\' alt=\\\''.$events[$eventid]->modulename.'\\\' /><a href=\\\''.$dayhref.'\\\'>'.addslashes(htmlspecialchars($events[$eventid]->name)).'</a></div>';
                 }
                 else {
-                    $popupcontent .= '<div><img src=\\\''.$CFG->pixpath.'/c/event.gif\\\' style=\\\'vertical-align: middle; margin-right: 4px;\\\' alt=\\\'\\\' /><a href=\\\''.CALENDAR_URL.'view.php?view=event&amp;id='.$events[$eventid]->id.'\\\'>'.addslashes(htmlspecialchars($events[$eventid]->name)).'</a></div>';
+                    $popupcontent .= '<div><img src=\\\''.$CFG->pixpath.'/c/event.gif\\\' style=\\\'vertical-align: middle; margin-right: 4px;\\\' alt=\\\'\\\' /><a href=\\\''.$dayhref.'\\\'>'.addslashes(htmlspecialchars($events[$eventid]->name)).'</a></div>';
                 }
             }
 
@@ -196,7 +198,7 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
             else {
                 $title = get_string('manyevents', 'calendar', count($eventsbyday[$day]));
             }
-            $cell = '<strong><a href="'.calendar_get_link_href(CALENDAR_URL.'view.php?view=day&amp;', $day, $m, $y).'" '.$popup.'">'.$day.'</a></strong>';
+            $cell = '<strong><a href="'.$dayhref.'" '.$popup.'">'.$day.'</a></strong>';
         }
         else {
             $cell = $day;
@@ -559,12 +561,6 @@ function calendar_filter_controls($type, $vars = NULL) {
     switch($type) {
         case 'upcoming':
             $getvars = '&amp;from=upcoming';
-        break;
-        case 'prefs':
-            $getvars = '&amp;from=prefs&amp;pref='.$_GET['edit'];
-        break;
-        case 'event':
-            $getvars = '&amp;from=event&amp;id='.$_GET['id'];
         break;
         case 'day':
             $getvars = '&amp;from=day';
