@@ -2203,7 +2203,7 @@ function forum_update_post($post,&$message) {
         $data->date = userdate($post->modified);
         $editedby = get_string('editedby', 'forum', $data);
         if ($post->format == FORMAT_HTML) {
-            $post->message .= '<p>(<i>'.$editedby.'</i>)</p>';
+            $post->message .= '<p>(<i><span class="edited">'.$editedby.'</span></i>)</p>';
         } else {
             $post->message .= "\n\n(".$editedby.')';
         }
