@@ -1109,7 +1109,7 @@ function get_recent_enrolments($courseid, $timestart) {
 
     global $CFG;
 
-    return get_records_sql("SELECT DISTINCT u.id, u.firstname, u.lastname
+    return get_records_sql("SELECT DISTINCT u.id, u.firstname, u.lastname, l.time
                             FROM {$CFG->prefix}user u,
                                  {$CFG->prefix}user_students s,
                                  {$CFG->prefix}log l
