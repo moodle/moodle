@@ -508,6 +508,7 @@ function chat_format_message($message, $courseid=0) {
 
     convert_urls_into_links($text);
     replace_smilies($text);
+    $text = filter_text($text, $courseid);
 
     if (substr($text, 0, 5) == "beep ") {          /// It's a beep!
         $beepwho = trim(substr($text, 5));

@@ -47,7 +47,7 @@ header("Refresh: $CFG->chat_refresh_room; URL=jsupdate.php?chat_sid=".$chat_sid.
                                             "chatid = '$chatuser->chatid' AND timestamp > '$chat_lasttime'", 
                                             "timestamp ASC")) {
              foreach ($messages as $message) {
-                 $formatmessage = chat_format_message($message);
+                 $formatmessage = chat_format_message($message, $chat->course);
                  if ($formatmessage->beep) {
                      $beep = $formatmessage->beep;
                  }

@@ -108,7 +108,7 @@
     }
 
     if ($chat->intro) {
-        print_simple_box( text_to_html($chat->intro) , "center");
+        print_simple_box( format_text($chat->intro) , "center");
         echo "<br />";
     }
 
