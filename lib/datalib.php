@@ -482,10 +482,11 @@ function get_records($table, $field="", $value="", $sort="", $fields="*", $limit
 * Can optionally be sorted eg "time ASC" or "time DESC"
 * "select" is a fragment of SQL to define the selection criteria
 * The "key" is the first column returned, eg usually "id"
+* limitfrom and limitnum must both be specified or not at all
 *
 * @param	type description
 */
-function get_records_select($table, $select="", $sort="", $fields="*") {
+function get_records_select($table, $select="", $sort="", $fields="*", $limitfrom="", $limitnum="") {
 
     global $CFG;
 
@@ -493,11 +494,26 @@ function get_records_select($table, $select="", $sort="", $fields="*") {
         $select = "WHERE $select";
     }
 
+    if ($limitfrom !== "") {
+        switch ($CFG->dbtype) {
+            case "mysql":
+                 $limit = "LIMIT $limitfrom,$limitnum";
+                 break;
+            case "postgres7":
+                 $limit = "LIMIT $limitnum OFFSET $limitfrom";
+                 break;
+            default: 
+                 $limit = "LIMIT $limitnum,$limitfrom";
+        }
+    } else {
+        $limit = "";
+    }
+
     if ($sort) {
         $sort = "ORDER BY $sort";
     }
 
-    return get_records_sql("SELECT $fields FROM $CFG->prefix$table $select $sort");
+    return get_records_sql("SELECT $fields FROM $CFG->prefix$table $select $sort $limit");
 }
 
 
