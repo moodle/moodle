@@ -220,7 +220,7 @@
 
 /// Moodle Log
     add_to_log($course->id, "wiki", $ewiki_action, 
-               addslashes("view.php?id=$cm->id&amp;groupid=$groupid&amp;userid=$userid&amp;page=$page"),
+               addslashes("view.php?id=$cm->id&amp;groupid=$groupid&amp;userid=$userid&amp;page=$ewiki_title"),
                $wiki->name.": ".$ewiki_title, $cm->id, $userid);
 
 /// Print the page header

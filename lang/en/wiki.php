@@ -159,6 +159,7 @@ $string['tabview'] = 'View';
 $string['thanksforcontribution'] = 'Thank you for your contribution.';
 $string['thispageisntlinkedfromanywhereelse'] = 'This page isn\'t linked from anywhere else.';
 $string['updatedpages'] = 'Updated pages';
+$string['updatedwikipages'] = 'Updated wiki pages';
 $string['uplerror'] = 'We are sorry, but something went wrong during the file upload.';
 $string['uplinsect'] = 'Upload into';
 $string['uplnewnam'] = 'Save with different filename';
