@@ -579,7 +579,7 @@ function blocks_print_adminblock(&$page, &$pageblocks) {
 
         $target = $page->url_get_full(array('sesskey' => $USER->sesskey, 'blockaction' => 'add'));
         $content = popup_form($target.'&amp;blockid=', $menu, 'add_block', '', $stradd .'...', '', '', true);
-        print_side_block($strblocks, $content, NULL, NULL, NULL, array('id' => 'block_adminblock'));
+        print_side_block($strblocks, $content, NULL, NULL, NULL, array('class' => 'block_adminblock'));
     }
 }
 
