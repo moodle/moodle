@@ -11,7 +11,7 @@ function glossary_print_entry_by_format($course, $cm, $glossary, $entry, $mode="
     echo "\n<tr>";
     echo "<td width=100% bgcolor=\"$colour\">";
     if ($entry) {
-        echo "<b><a href=\"view.php?id=$cm->id&mode=entry&hook=$entry->id\">";
+        echo "<b><a href=\"showentry.php?courseid=$course->id\&eid=$entry->id\&displayformat=5\" target=\"_blank\" onClick=\"return openpopup('/mod/glossary/showentry.php?courseid=$course->id\&eid=$entry->id\&displayformat=5', 'entry', 'menubar=0,location=0,scrollbars,resizable,width=600,height=450', 0);\">";
 
         glossary_print_entry_concept($entry);
         echo '</a></b> ';
