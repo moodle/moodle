@@ -2016,9 +2016,11 @@ function forum_add_attachment($post, $inputname,&$message) {
 
 function forum_add_new_post($post,&$message) {
 
+    global $USER;
+    
     $post->created = $post->modified = time();
     $post->mailed = "0";
-
+    $post->userid = $USER->id;
     $post->attachment = "";
 
     if (! $post->id = insert_record("forum_posts", $post)) {
@@ -2038,7 +2040,10 @@ function forum_add_new_post($post,&$message) {
 
 function forum_update_post($post,&$message) {
 
+    global $USER;
+
     $post->modified = time();
+    $post->userid = $USER->id;
 
     if (!$post->parent) {   // Post is a discussion starter - update discussion title too
         set_field("forum_discussions", "name", $post->subject, "id", $post->discussion);
@@ -2095,6 +2100,7 @@ function forum_add_discussion($discussion,&$message) {
     $discussion->firstpost    = $post->id;
     $discussion->timemodified = $timenow;
     $discussion->usermodified = $post->userid;
+    $discussion->userid = $USER->id;
 
     if (! $discussion->id = insert_record("forum_discussions", $discussion) ) {
         delete_records("forum_posts", "id", $post->id);
