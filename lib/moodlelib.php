@@ -1401,7 +1401,7 @@ function create_user_record($username, $password) {
 // Creates a bare-bones user record 
     global $REMOTE_ADDR, $CFG;
 
-    if ($CFG->auth_update_userinfo and function_exists(auth_get_userinfo)) {
+    if (function_exists(auth_get_userinfo)) {
         if ($newinfo = auth_get_userinfo($username)) {
             foreach ($newinfo as $key => $value){
                 $newuser->$key = $value;
