@@ -1,0 +1,86 @@
+<head>
+    <title>Moodle Docs: Upgrading</title>
+	<link rel="stylesheet" href="docstyles.css" type="TEXT/CSS">
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</head>
+
+<body bgcolor="#FFFFFF">
+<h1>Moodle Upgraden</h1>
+
+<blockquote>
+  <p>Moodle is ontworpen om netjes van een oudere naar een recentere versie te upgraden.</p>
+  <p>Een Moodleïnstallatie kun je best in volgende stappen upgraden:</p>
+  <h3 class="sectionheading">1. Maak van belangrijke gegevens een backup</h3>
+  <blockquote>
+    <p>Hoewel het niet strikt noodzakelijk is, is het toch altijd een goed idee om een backup te maken van gelijk welk productiesysteem voor je een belangrijke update uitvoert voor het geval je om één of ander reden zou moeten terugkeren naar een oudere versie. Best is dat je de backup van je Moodleserver dagelijks automatisch laat gebeuren, zodat je deze stap kunt overslaan.</p>
+    <p>Er zijn drie plaatsen waarvan je een backup moet maken:</p>
+    <blockquote>
+      <p><strong>1. De softwaremap van Moodle</strong></p>
+      <blockquote>
+        <p>Maak een aparte kopie van deze bestanden voor je upgrade, zodat je je config.php, toegevoegde modules zoals thema's talen enz.gemakkelijk terug kunt plaatsen.<strong><br>
+        </strong></p>
+      </blockquote>
+      <p><strong>2. De map met je gegevens</strong></p>
+      <blockquote>
+        <p>Dit is de plaats waar de geüploade bestanden geplaatst worden (zoals bronnen en opdrachten van leerlingen). Het is altijd belangrijk een backup te hebben van deze bestanden. Soms gaat een upgrade bestanden uit je gegevensmap hernoemen of verplaatsen.<strong><br>
+        </strong></p>
+      </blockquote>
+      <p><strong>3. Je databank</strong></p>
+      <blockquote>
+        <p>De meeste Moodle upgrades zullen de databanktabellen wijzigen door velden toe te voegen of te wijzigen. Een databank kan op verschillende manieren gebackuped worden. Eén manier om een MySQL databank te backuppen is een 'dump' te maken naar een SQL bestand. In volgend voorbeeld zie je de Unixcommando's om een dump te maken van een databank die &quot;Moodle&quot; heet:</p>
+        <blockquote>
+          <p><font face="Courier New, Courier, mono">mysqldump moodle &gt; moodle-backup-2002-10-26.sql</font></p>
+        </blockquote>
+        <p>Je kunt ook de &quot;Export&quot; functie van de optionele &quot;Database&quot; web interface van Moodle gebruiken om hetzelfde te doen op alle besturingssystemen.</p>
+        <p>&nbsp;</p>
+      </blockquote>
+    </blockquote>
+  </blockquote>
+  <h3 class="sectionheading">2. De nieuwe Moodlesoftware installeren</h3>
+  <blockquote>
+    <p><strong>Een gedownload archiefbestand gebruiken</strong></p>
+    <blockquote>
+      <p>Overschrijf geen oude installatie tenzij je weet wat je doet ...soms kunnen oude bestanden problemen veroorzaken in nieuwe installaties.  De beste manier is je huidige Moodlemap te hernoemen naar iets anders en dan het nieuwe Moodle archiefbestand uit te pakken in de oude locatie.</p>
+      <blockquote>
+        <p><font face="Courier New, Courier, mono">mv moodle moodle.backup<br>
+        tar xvzf moodle-1.1.tgz</font></p>
+      </blockquote>
+      <p>Kopieer daarna je config.php en al je andere plugins zoals bijvoorbeeld een aangepast thema:</p>
+      <blockquote>
+        <p><font face="Courier New, Courier, mono">cp moodle.backup/config.php moodle<br>
+        cp -pr moodle.backup/theme/mytheme moodle/theme/mytheme</font></p>
+      </blockquote>
+    </blockquote>
+    <p><strong>CVS gebruiken</strong></p>
+    <blockquote>
+      <p>Als je CVS gebruikt kun je gewoon naar de Moodle root map gaan en updaten naar de nieuwe bestanden:</p>
+      <blockquote>
+        <p><font face="Courier New, Courier, mono">cvs update -dP</font></p>
+      </blockquote>
+      <p>Zorg er in elk geval voor dat je de &quot;d&quot; parameter om eventuele nieuwe mappen aan te maken gebruikt en de &quot;P&quot; parameter om lege mappen weg te gooien.</p>
+      <p>ALs je zelf de Moodlebestanden bewerkt hebt, let dan goed op de boodschappen om mogelijke conflicten op te sporen. Al je aangepaste thema's en afwijkende plugins zullen bewaard blijven.</p>
+    </blockquote>
+    <p>&nbsp;</p>
+  </blockquote>
+  <h3 class="sectionheading">3. De upgrade afronden</h3>
+  <blockquote>
+    <p>De laatste stap is het upgradeproces in Moodle te starten.</p>
+    <p>Om dat te doen moet je gewoon <a target=_top href="../admin/index.php">de beheerpagina van je installatie</a> bezoeken.</p>
+    <blockquote>
+      <p><font face="Courier New, Courier, mono">http://example.com/moodle/admin</font></p>
+    </blockquote>
+    <p>Je hoeft hiervoor niet als beheerder aangemeld te zijn.</p>
+    <p> Moodle zal de nieuwe versie automatisch detecteren en daarna alle databaseupdates en benodigde updates van het bestandssysteem uitvoeren. Als het upgradeproces bepaalde stappen niet zelf kan doen (heel zelden), dan zul je boodschappen zien met aanwijzingen over wat je moet doen.</p>
+  </blockquote>
+  <p>&nbsp; </p>
+  <p>Als alles goed gegaan is (geen foutmeldingen) dan kun je je nieuwe Moodle gaan gebruiken en van de nieuwe mogelijkheden gaan genieten! </p>
+  <p>Als je toch moeilijkheden zou ondervinden met je upgrade, ga dan naar <a target=_top href="http://moodle.org/">moodle.org</a> en post hierover op het <a target=_top href="http://moodle.org/mod/forum/view.php?id=28">Installation 
+  Support Forum</a> in Using Moodle.</p>
+</blockquote>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p align="CENTER"><font size="1"><a href="." target="_top">Moodle Documentation</a></font></p>
+<p align="CENTER"><font size="1">Version: $Id$</font></p>
+
+</body>
+</html>
