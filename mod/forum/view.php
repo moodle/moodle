@@ -76,7 +76,7 @@
     }
 
     print_header_simple("$forum->name", "",
-                 "$navigation $forum->name", "", "", true, $buttontext, navmenu($course, $cm), true);
+                 "$navigation $forum->name", "", "", true, $buttontext, navmenu($course, $cm));
 
     if (!$cm->visible and !isteacher($course->id)) {
         notice(get_string("activityiscurrentlyhidden"));
