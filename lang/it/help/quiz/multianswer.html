@@ -1,0 +1,39 @@
+<p align="center"><b>Domande con riempimento di vuoti (Cloze)</b></p>
+
+<p>Questo tipo di domanda, molto flessibile, è simile al noto formato chiamato Cloze. 
+   
+<p>Le domande consistono in un passaggio di testo (in formato Moodle) che ha uno o più box con varie possibili risposte, del tipo 'scelta multipla', 'risposta breve' e 'numerica'.
+
+<p>Attualmente non è prevista un'interfaccia grafica per preparare queste domande - bisogna scriverle nello spazio previsto aiutandosi con l'esempio che segue o importandole da un file esterno.
+   
+<p>Questo è l'esempio:
+
+<form>
+<center>
+<textarea rows=15 cols=60 wrap=virtual>La domanda consiste in un testo con una risposta, di tipo multiscelta, inserita esattamente qua {1:MULTICHOICE:Risposta errata#Feedback in caso di risposta errata~Altra risposta errata#Feedback per altra risposta errata~=Risposta corretta#Feedback per risposta corretta~%50%Risposta che dà il 50% del punteggio#Feedback per la risposta col mezzo punteggio} e subito dopo bisogna rispondere con questa risposta breve {1:SHORTANSWER:Risposta errata#Feedback per questa risposta errata~=Risposta corretta#Feedback per la risposta corretta~%50%Risposta che dà il 50% del punteggio#Feedback per la risposta col mezzo punteggio} e alla fine abbiamo un numero decimale {2:NUMERICAL:=23.8:0.1#Feedback per risposta corretta 23.8~%50%N/A#Feedback per il mezzo punteggio di una risposta nelle vicinanze del intervallo corretto}.
+
+Nota che indirizzi come www.moodle.org e smileys come :-) funzionano tutti normalmente:
+ a) E' una cosa buona? {:MULTICHOICE:=Si#Giusto~No#Non siamo della stessa opinione}
+ b) Che voto gli daresti? {3:NUMERICAL:=3:2}
+
+Buona fortuna!
+</textarea>
+</center>
+</form>
+
+<p>Questo esempio apparirà agli studenti come segue:</p>
+
+
+<form>
+<table align="CENTER" width="90%" class="generalbox" border="0" cellpadding="5" cellspacing="0"><tr><td bgcolor="#FFFFFF" class="generalboxcontent"><table width=100% cellspacing=10><tr><td nowrap width=100 valign=top><p align=center><b>3</b></p><p align=center><font size=1>8 Marks</font></p><img height="1" width="100" src="pix/spacer.gif" alt=""><br />
+</td><td valign=top><p>La domanda consiste in un testo con una risposta, di tipo multiscelta, inserita esattamente qua <select   name="q4ma1" ><option></option><option value="4" >Risposta errata</option><option value="5" >Altra risposta errata</option><option value="6" >Risposta corretta</option><option value="7" >Risposta che dà il 50% del punteggio</option></select> e subito dopo bisogna rispondere con questa risposta breve <input   name="q4ma2"  value="" type="TEXT" size="8"/> e alla fine abbiamo un numero decimale <input   name="q4ma3"  value="" type="TEXT" size="8"/> .<br />
+<br />
+Nota che indirizzi come <a href="http://www.moodle.org" target="newpage">www.moodle.org</a> e smileys <img border="0" src="pix/s/smiley.gif" width="15" height="15"> funzionano tutti normalmente:<br />
+a) E' una cosa buona?  <select   name="q4ma4" ><option></option><option value="13" >Si</option><option value="14" >No</option></select> <br />
+b) Che voto gli daresti?  <input   name="q4ma5"  value="" type="TEXT" size="8"/> <br />
+<br />
+Buona fortuna!</p></TD></TR></TABLE></td></tr></table>
+</form>
+
+<br />
+
