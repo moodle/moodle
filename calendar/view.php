@@ -606,7 +606,7 @@ function calendar_course_filter_selector($getvars = '') {
     }
 
     if (isadmin()) {
-        $courses = get_courses('all', 'c.shortname');
+        $courses = get_courses('all', 'c.shortname','c.id,c.shortname');
     } else {
         $courses = get_my_courses($USER->id, 'shortname');
     }

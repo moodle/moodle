@@ -49,11 +49,11 @@
         print_header("$site->shortname: $strcoursebackup", $site->fullname,
                      "<A HREF=\"$CFG->wwwroot/$CFG->admin/index.php\">$stradministration</A> -> $strcoursebackup");
 
-        if ($courses = get_courses()) {
+        if ($courses = get_courses('all','c.shortname','c.id,c.shortname,c.fullname')) {
             print_heading(get_string("choosecourse"));
             print_simple_box_start("CENTER");
             foreach ($courses as $course) {
-            echo "<A HREF=\"backup.php?id=$course->id\">$course->fullname ($course->shortname)</A><BR>";
+                echo "<A HREF=\"backup.php?id=$course->id\">$course->fullname ($course->shortname)</A><BR>";
             }
             print_simple_box_end();
         } else {

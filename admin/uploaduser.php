@@ -170,7 +170,7 @@
                 $addgroup[2] = $user->group3;
                 $addgroup[3] = $user->group4;
                 $addgroup[4] = $user->group5;
-                $courses = get_courses("all");
+                $courses = get_courses("all",'c.sortorder','c.id,c.shortname,c.fullname,c.sortorder');
                 for ($i=0; $i<5; $i++) {
                     $courseid[$i]=0;
                 }
