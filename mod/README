@@ -29,5 +29,7 @@ Standard components expected of each module:
 
          modulename_cron()
 
+         modulename_print_recent_activity()
+
 See newmodule_template.zip in this directory for a blank template 
 to help you get started.
