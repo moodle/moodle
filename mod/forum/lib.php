@@ -2540,7 +2540,7 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=5, $dis
     $strdatestring = get_string('strftimerecentfull');
 
     if ($displayformat == 'header') {
-        echo '<table class="forumheaderlist">';
+        echo '<table cellspacing="0" class="forumheaderlist">';
         echo '<thead>';
         echo '<tr>';
         echo '<th class="header topic">'.get_string('discussion', 'forum').'</th>';
