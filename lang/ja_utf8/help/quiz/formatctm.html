@@ -53,24 +53,19 @@ ODBC Socket Serverの状態が「開始」に変わります。インポート�
 確認してください。これは、通常のWindowsにインストールされています。「管理ツール」の「データ ソース (ODBC)」を開いて「ドライバ」タブで、
 MS Access ODBCドライバがインストールされているか確認することができます。
 
-You're going to have to determine where CTM is installed and locate the system.mda file and the ctm.mdb database 
-or databases you're interested in importing data from.  Make note of the full local paths to these files as well 
-as the IP address or hostname of the Windows server.  You're going to need this information for the import process.</li>
+CTMをどこにインストールするか、system.mdaとctm.mdaデータベースをどこに置くか、またはデータベースをどこからインポートするか決めてください。
+WindowsサーバのIPアドレスまたはホスト名と同様に、これらのファイルへはフルパスを指定してください。重要な処理を行うために、この情報が必要です。</li>
 
-<li>Now you may import the testbank or testbanks into moodle. Crete your quiz and go into the 
-"import questions from file" process.  <b>NOW HERE'S WHERE THINGS ARE DIFFERENT FOR LINUX - </b>
-YOU MUST SPECIFY A DUMMY FILE IN THE UPLOAD FIELD TO GET THE IMPORT PROCESS STARTED.  THIS FILE <b>WILL NOT</b>
-BE PROCESSED, IT'S JUST A PLACEHOLDER FOR THE IMPORT FORM.  YOU WILL GET A PLACE TO SPECIFY THE WINDOWS SERVER
-INFORMATION NEXT.  Next, you will get a screen where you can type in the hostname for the Windows ODBC Socket Server
-machine as well as the paths to the system and testbank databases.  Type in the information you wrote down from the 
-previous step here and click "Connect to Server". If everything was set up correctly, you'll get another form to allow
-you to choose the sub-category of questions to import from the database. The reason this step is here is that 
-CTM test banks often contain a large number of categorized questions, based on the chapters of the book or 
-sections of the course.  IF YOU GET TO THIS STEP WITHOUT ERROR MESSAGES, YOU HAVE SET UP THE SOCKET SERVER CORRECTLY
-AND YOU'RE ABOUT TO IMPORT QUESTIONS TO MOODLE!</li>
+<li>これでテストバンクをmoodleにインポートする準備ができました。「ファイルから小テストをインポートする」を使用して、あなたの小テストを
+作成してください。<b>ここからLINUXサーバで設定が異なる部分を挙げます - </b>
+インポートプロセスを開始させるために、アップロードフィールドにダミーファイルを指定してください。このフィールドに入れたファイルは、<b>処理されません</b>。
+ここでは、インポートフォームに対する代替的な値を入れるだけです。次に、Windowsサーバに関する情報を指定する画面が表示されます。次に、system及びtestbank
+データベースと同様に、Windows ODBC Socket Serverのホスト名を入力する画面が表示されます。前のステップで指定した情報を入力して、「サーバに接続する」ボタンを
+クリックしてください。全てが正しく設定された場合、データベースから問題をインポートするために、サブカテゴリを選択するフォームが表示されます。
+このステップがある理由は、CTMテストバンクがしばしば、本の章またはコースのセクションのようにカテゴリ分けされた大量の問題を含んでいることがあるからです。
+あなたがこのステップにエラーメッセージ無しに到達した場合、Socket Serverの設定は正しく設定されて、問題をMOODLEにインポートするところまで来ています!</li>
 </ol>
 
-<p>If you received error messages during this process, you may find this technical information useful. 
-The ODBC Socket server uses port 9628 to open a socket and trade and XML query for an XML result table of 
-the query results.  The import class parses that XML and use it just like I use a local query to do the importing. 
-</p>
+<p>処理の途中でエラーメッセージが表示された場合、あなたはこの技術情報が便利であることに気付くでしょう。ODBC Socket serverは、ソケットをオープンして、
+XMLクエリーがクエリー結果用XMLテーブルを利用できるように、ポート9628を使用します。インポートにおいて、この重要なXML用クラスは、ローカルクエリーと同じように
+クエリーを実行できるような働きをします。</p>
