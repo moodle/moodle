@@ -81,6 +81,6 @@
     }
 
     print_heading_with_help(get_string("editingnumerical", "quiz"), "numerical", "quiz");
-    require("numerical.html");
+    require("$CFG->dirroot/mod/quiz/questiontypes/numerical/numerical.html");
 
 ?>

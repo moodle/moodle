@@ -23,6 +23,6 @@
     }
 
     print_heading_with_help(get_string("editingtruefalse", "quiz"), "truefalse", "quiz");
-    require("truefalse.html");
+    require("$CFG->dirroot/mod/quiz/questiontypes/truefalse/truefalse.html");
 
 ?>

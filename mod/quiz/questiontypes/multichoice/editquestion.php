@@ -19,6 +19,6 @@
         }
     }
     print_heading_with_help(get_string("editingmultichoice", "quiz"), "multichoice", "quiz");
-    require("multichoice.html");
+    require("$CFG->dirroot/mod/quiz/questiontypes/multichoice/multichoice.html");
 
 ?>

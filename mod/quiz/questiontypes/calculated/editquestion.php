@@ -193,6 +193,6 @@ if ($form) {
 }
 
 print_heading_with_help(get_string("editingcalculated", "quiz"), "calculated", "quiz");
-require("calculated.html");
+require("$CFG->dirroot/mod/quiz/questiontypes/calculated/calculated.html");
 
 ?>

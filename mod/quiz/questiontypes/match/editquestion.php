@@ -21,6 +21,6 @@
         }
     }
     print_heading_with_help(get_string("editingmatch", "quiz"), "match", "quiz");
-    require("match.html");
+    require("$CFG->dirroot/mod/quiz/questiontypes/match/match.html");
 
 ?>

@@ -6,6 +6,6 @@
     }
     $numberavailable = count_records("quiz_questions", "category", $category->id, "qtype", SHORTANSWER);
     print_heading_with_help(get_string("editingrandomsamatch", "quiz"), "randomsamatch", "quiz");
-    require("randomsamatch.html");
+    require("$CFG->dirroot/mod/quiz/questiontypes/randomsamatch/randomsamatch.html");
 
 ?>
