@@ -1,4 +1,4 @@
-<?PHP  // $Id: view.php, v1.0 30th April 2003
+<?PHP  // $Id: view.php, v1.0 14 Aug 2003
 
 /*************************************************
 	ACTIONS handled are:
@@ -287,17 +287,15 @@
 		echo format_text($workshop->description, $workshop->format);
 		print_simple_box_end();
 		echo "<br />";
-		// in Stage 1? - assess teacher's submissions to a satisfactory level
+		// in Stage 1? - assess teacher's submissions ("satisfactory level" dropped 14/8/03)
 		if (!workshop_test_user_assessments($workshop, $USER)) {
 			print_heading(get_string("pleaseassesstheseexamplesfromtheteacher", "workshop", $course->teacher));
-			print_heading(get_string("theseasessmentsaregradedbytheteacher", "workshop", $course->teacher), "center", 5);
 			workshop_list_teacher_submissions($workshop, $USER);
 			}
 		// in stage 2? - submit own first attempt
 		else {
-			if ($workshop->ntassessments) { // display message if student had to assess the teacher's examples
-				print_heading("<a href=\"assessments.php?action=listteachersubmissions&id=$cm->id\">".
-					get_string("assessmentsareok", "workshop")."</a>");
+			if ($workshop->ntassessments) { // show assessment the teacher's examples, there may be feedback from teacher
+				workshop_list_teacher_submissions($workshop, $USER);
 				}
 			if (!workshop_get_user_submissions($workshop, $USER)) {
 				// print upload form
@@ -362,7 +360,7 @@
 		echo "<B>".get_string("duedate", "assignment")."</B>: $strduedate<BR>";
 		echo "<B>".get_string("maximumgrade")."</B>: $workshop->grade<BR>";
 		echo "<B>".get_string("detailsofassessment", "workshop")."</B>: 
-			<A HREF=\"assessments.php?id=$cm->id&action=displayelements\">".
+			<A HREF=\"assessments.php?id=$cm->id&action=displaygradingform\">".
 			get_string("specimenassessmentform", "workshop")."</A><BR>";
 		print_simple_box_end();
 		echo "<BR>";
@@ -403,7 +401,11 @@
 			"view.php?id=$cm->id&action=openworkshop",
 			"view.php?id=$cm->id&action=closeworkshop",
 			"view.php?id=$cm->id&action=makefinalgradesavailable");
-		$tabs->highlight = $workshop->phase - 1;
+		if ($workshop->phase) { // phase 1 or more
+			$tabs->highlight = $workshop->phase - 1;
+			} else {
+			$tabs->highlight = 0; // phase is zero
+			}
 		workshop_print_tabbed_heading($tabs);
 		echo "<CENTER><P>\n";
 			switch ($workshop->phase) {

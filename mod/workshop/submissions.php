@@ -1,5 +1,4 @@
-<?PHP  
-/*	submissions.php: version 1.0 30th April 2003 */
+<?PHP  // $Id: lib.php,v 1.0 14 Aug 2003
 
 /*************************************************
 	ACTIONS handled are:

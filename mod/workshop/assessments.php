@@ -1,5 +1,4 @@
-<?PHP  
-/*	assessments.php: version 1.0 30th April 2003 */
+<?PHP  // $Id: lib.php,v 1.0 14 Aug 2003
 
 /*************************************************
 	ACTIONS handled are:
@@ -64,8 +63,6 @@
 
     if ($course->category) {
         $navigation = "<A HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> ->";
-    } else {
-        $navigation = "";
     }
 
     $strworkshops = get_string("modulenameplural", "workshop");
@@ -212,18 +209,18 @@
 			}
 	
 		if (! $submission = get_record("workshop_submissions", "id", $sid)) {
-			error("assess submission is misconfigured");
+			error("Assess submission is misconfigured - no submission record!");
 			}
 		
-		$yearfromnow = time() + 365 * 86400;
-		// is there an assessment record, create one and set timecreated way in the future, this is reset when record is updated
+		// there can be an assessment record (for teacher submissions), if there isn't...
 		if (!$assessment = workshop_get_submission_assessment($submission, $USER)) {
+			$yearfromnow = time() + 365 * 86400;
+			// ...create one and set timecreated way in the future, this is reset when record is updated
 			$assessment->workshopid = $workshop->id;
 			$assessment->submissionid = $submission->id;
 			$assessment->userid = $USER->id;
 			$assessment->grade = -1; // set impossible grade
 			$assessment->timecreated = $yearfromnow;
-			$assessment->timeagreed = 0;
 			$assessment->timegraded = 0;
 			if (!$assessment->id = insert_record("workshop_assessments", $assessment)) {
 				error("Could not insert workshop assessment!");
@@ -792,15 +789,16 @@
 			set_field("workshop_assessments", "generalcomment", $form->generalcomment, "id", $assessment->id);
 			}
 			
+	    add_to_log($course->id, "workshop", "assess", "view.php?a=$workshop->id", "$workshop->id");
+
 		// show grade if grading strategy is not zero
 		if ($workshop->gradingstrategy) {
-			echo "<B>".get_string("thegradeis", "workshop").": ".number_format($grade, 2)."% (".get_string("maximumgrade").
-				" ".number_format($workshop->grade)."%)</B>\n";
+			redirect("view.php?id=$cm->id", get_string("thegradeis", "workshop").": ".number_format($grade, 2)."% (".get_string("maximumgrade").
+				" ".number_format($workshop->grade)."%)");
 			}
-			
-		print_continue("view.php?id=$cm->id");
-		
-	    add_to_log($course->id, "workshop", "assess", "view.php?a=$workshop->id", "$workshop->id");
+		else {
+			redirect("view.php?id=$cm->id");
+			}
 		}
 
 
@@ -851,16 +849,16 @@
 			set_field("workshop_assessments", "gradinggrade", $form->gradinggrade, "id", $assessment->id);
 			set_field("workshop_assessments", "timegraded", $timenow, "id", $assessment->id);
 			set_field("workshop_assessments", "mailed", 0, "id", $assessment->id);
-			echo "<CENTRE><B>".get_string("savedok", "workshop")."</B></CENTER><BR>\n";
+			echo "<CENTRE><B>".get_string("savedok", "workshop")."</B></CENTRE><BR>\n";
 			
 			add_to_log($course->id, "workshop", "grade", "view.php?id=$cm->id", "$workshop->id");
 			}
 		switch ($form->stype) {
 			case "student" : 
-				print_continue("assessments.php?action=listungradedstudentsubmissions&id=$cm->id");
+				redirect("assessments.php?action=listungradedstudentsubmissions&id=$cm->id");
 				break;
 			case "teacher" : 
-				print_continue("assessments.php?action=listungradedteachersubmissions&id=$cm->id");
+				redirect("assessments.php?action=listungradedteachersubmissions&id=$cm->id");
 				break;
 			}
 		}
