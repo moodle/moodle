@@ -258,7 +258,7 @@
 			}
             /// CDC-FLAG /// -- This is the code for starting a timed test
             if($lesson->timed && !isset($USER->startlesson[$lesson->id])) {
-                unset($startlesson);
+                $startlesson = new stdClass;
                 $USER->startlesson[$lesson->id] = true;
                 if($timeid = get_field('lesson_timer', 'id', 'lessonid', $lesson->id, 'userid', $USER->id)) {
                     $startlesson->id = $timeid;
@@ -386,7 +386,7 @@
                                 error('Error: could not find record');
                             }
     
-                            unset($continuelesson);
+                            $continuelesson = new stdClass;
                             $continuelesson->id = $timer->id;
                             $continuelesson->starttime = time() - ($timer->lessontime - $timer->starttime);
                             $continuelesson->lessontime = time();
@@ -400,7 +400,7 @@
                             }
     
                             // starting over, so reset the clock
-                            unset($startlesson);
+                            $startlesson = new stdClass;
                             $startlesson->id = $timer->id;
                             $startlesson->starttime = time();
                             $startlesson->lessontime = time();
@@ -438,7 +438,7 @@
                         echo "<p align=\"center\">".get_string('studentoneminwarning', 'lesson')."</p>";
                     }	
                                     
-                    unset($newtime);
+                    $newtime = new stdClass;
                     $newtime->id = $timer->id;
                     $newtime->lessontime = time();
                     
@@ -885,11 +885,12 @@
                     /// CDC-FLAG /// 6/11/04
                     if (!$lesson->custom) {
                         $ncorrect = 0;						
+						$temp = array();
                         if ($pagesanswered = get_records_select("lesson_attempts",  "lessonid = $lesson->id AND 
                                 userid = $USER->id AND retry = $ntries order by timeseen")) {
 
                             foreach ($pagesanswered as $pageanswered) {
-                                if (@!array_key_exists($pageanswered->pageid, $temp)) {
+                                if (!array_key_exists($pageanswered->pageid, $temp)) {
                                     $temp[$pageanswered->pageid] = array($pageanswered->correct, 1);
                                 } else {
                                     if ($temp[$pageanswered->pageid][1] < $lesson->maxattempts) {
@@ -975,7 +976,7 @@
 						}
 							
 						$thegrade = intval(100 * $score / $bestscore);
-                        unset($a);
+                        $a = new stdClass;
                         if ($essayquestions > 0) {
                             $a->score = $score;
                             $a->tempmaxgrade = $bestscore - $essayquestionpoints;
@@ -1022,6 +1023,7 @@
                     if ($lesson->timed) {
                         if (isset($_GET["outoftime"])) {
                             if ($_GET["outoftime"] == "normal") {
+								$grade = new stdClass;
                                 $grade->lessonid = $lesson->id;
                                 $grade->userid = $USER->id;
                                 $grade->grade = 0;
@@ -1531,6 +1533,7 @@
         	error ("No one has answered essay questions yet...");
 		}
 		// group all the essays by userid
+		$studentessays = array();
     	foreach ($essayattempts as $essay) {
 			// not very nice :) but basically
 			// this organizes the essays so I know how many times a student answered an essay per try and per page
@@ -1538,7 +1541,7 @@
         }
 
 	   	print_heading("<a href=\"view.php?id=$cm->id\">".get_string("gobacktolesson", "lesson")."</a>");
-
+		$table = new stdClass;
 		$table->head = array($course->students, get_string("essays", "lesson"), get_string("email", "lesson"));
         $table->align = array("left", "left", "left");
         $table->wrap = array("nowrap", "wrap", "nowrap");
@@ -1551,7 +1554,7 @@
 		// cycle through all the ids
         foreach ($studentids as $id) {
             $studentname = $users[$id]->lastname.", ".$users[$id]->firstname;
-			unset($essaylinks);
+			$essaylinks = array();
 			// go through each essay
             foreach ($studentessays[$id] as $page => $tries) {
 				// go through each essay per page
@@ -1615,6 +1618,7 @@
         echo "<input type=\"hidden\" name=\"sesskey\" value=\"".$USER->sesskey."\" />\n";		
 	
 		// all tables will have these
+		$table = new stdClass;
         $table->align = array("left");
         $table->wrap = array("wrap");
         $table->width = "70%";
@@ -1681,6 +1685,7 @@
             error("Error: could not find grades");
         }
         
+		$essayinfo = new stdClass;
 		$essayinfo = unserialize($essay->useranswer);
 
        	$essayinfo->graded = 1;
@@ -1907,6 +1912,7 @@
             }
         }
         
+		$newhighscore = new stdClass;
         $newhighscore->lessonid = $lesson->id;
         $newhighscore->userid = $USER->id;
         $newhighscore->gradeid = $newgrade->id;
