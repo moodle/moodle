@@ -5,7 +5,7 @@
     require_once($CFG->dirroot.'/calendar/lib.php');
 
     if (isset($SESSION->cal_course_referer)) {
-        if (! $course = get_record("course", "id", $SESSION->cal_course_referer)) {
+        if (! $course = get_record('course', 'id', $SESSION->cal_course_referer)) {
             $course = get_site();
         }
     }
@@ -34,18 +34,18 @@
                     set_user_preference('calendar_startwday', $value);
                 break;
                 case 'maxevents':
-                    if ((int)$value >= 1) {
+                    if (intval($value) >= 1) {
                         set_user_preference('calendar_maxevents', $value);
                     }
                 break;
                 case 'lookahead':
-                    if ((int)$value >= 1) {
+                    if (intval($value) >= 1) {
                         set_user_preference('calendar_lookahead', $value);
                     }
                 break;
             }
         }
-        redirect("view.php", get_string("changessaved"), 1);
+        redirect('view.php', get_string('changessaved'), 1);
         exit;
     }
 
