@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.5 unstable development (2004083000)
+      // resource.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005010100)
 
 
 $string['addresource'] = 'Afegeix un recurs';
@@ -54,7 +54,7 @@ $string['newwidth'] = 'Amplada de la finestra (en píxels)';
 $string['newwindow'] = 'Nova finestra';
 $string['newwindowopen'] = 'Mostra el material en una nova finestra emergent';
 $string['note'] = 'Nota';
-$string['notefile'] = 'Per penjar més fitxers al curs (de manera que apareguin en aquesta llista) feu servir l\'<a href=$a >Gestor de fitxers</a>.';
+$string['notefile'] = 'Per penjar més fitxers al curs (de manera que apareguin en aquesta llista) feu servir l\'<a href=\"$a\">Gestor de fitxers</a>.';
 $string['notypechosen'] = 'Heu de triar un tipus. Torneu enrere i proveu una altra vegada.';
 $string['pagedisplay'] = 'Visualitza aquest recurs dins de la finestra actual';
 $string['pagewindow'] = 'La mateixa finestra';

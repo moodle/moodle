@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.4 development (2004070800)
+      // quiz.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005010100)
 
 
 $string['acceptederror'] = 'Error acceptat';
@@ -86,9 +86,9 @@ $string['filloutoneanswer'] = 'Heu d\'emplenar almenys una possible resposta. Le
 $string['filloutthreequestions'] = 'Heu d\'emplenar almenys tres preguntes. Les respostes en blanc no es tindran en compte.';
 $string['fillouttwochoices'] = 'Heu d\'emplenar almenys dues opcions. Les opcions en blanc no es tindran en compte.';
 $string['fractionsaddwrong'] = 'Les notes que heu donat no sumen 100%% (sumen $a%%).
-<BR />Voleu tornar enrere i corregir aquesta pregunta?';
+<br />Voleu tornar enrere i corregir aquesta pregunta?';
 $string['fractionsnomax'] = 'Una de les respostes ha de valer 100%%, de manera que sigui
-<BR />possible obtenir la qualificació màxima en aquesta pregunta.<BR />Voleu tornar enrere i corregir aquesta pregunta?';
+<br />possible obtenir la qualificació màxima en aquesta pregunta.<br />Voleu tornar enrere i corregir aquesta pregunta?';
 $string['gift'] = 'Format GIFT';
 $string['gradeaverage'] = 'Nota mitjana';
 $string['gradehighest'] = 'Nota més alta';

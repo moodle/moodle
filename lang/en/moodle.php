@@ -1,5 +1,5 @@
-<?php // $Id$ 
-      // moodle.php - created with Moodle 1.5 development (2004082300)
+<?PHP // $Id$ 
+      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005010100)
 
 
 $string['action'] = 'Action';
@@ -151,7 +151,7 @@ $string['chooseuser'] = 'Choose a user';
 $string['city'] = 'City/town';
 $string['clambroken'] = 'Your administrator has enabled virus checking for file uploads but has misconfigured something.<br />Your file upload was NOT successful. Your administrator has been emailed to notify them so they can fix it.<br />Maybe try uploading this file later.';
 $string['clamdeletedfile'] = 'The file has been deleted';
-$string['clamdeletedfilefailed'] ='The file could not be deleted';
+$string['clamdeletedfilefailed'] = 'The file could not be deleted';
 $string['clamemailsubject'] = '$a :: Clam AV notification';
 $string['clamfailed'] = 'Clam AV has failed to run.  The return error message was $a. Here is the output from Clam:';
 $string['clamlost'] = 'Moodle is configured to run clam on file upload, but the path supplied to Clam AV, $a,  is invalid.';
@@ -320,8 +320,8 @@ $string['deletingexistingcoursedata'] = 'Deleting existing course data';
 $string['deletingolddata'] = 'Deleting old data';
 $string['department'] = 'Department';
 $string['description'] = 'Description';
-$string['detailedmore'] = 'More detailed';    
 $string['detailedless'] = 'Less detailed';
+$string['detailedmore'] = 'More detailed';
 $string['directorypaths'] = 'Directory Paths';
 $string['disable'] = 'Disable';
 $string['displayingfirst'] = 'Only the first $a->count $a->things are displayed';
@@ -384,9 +384,9 @@ line at the top of your web browser window.
 If you need help, please contact the site administrator,
 $a->admin';
 $string['emailconfirmationsubject'] = '$a: account confirmation';
-$string['emailconfirmsent'] = '   <p>An email should have been sent to your address at <b>$a</b>
-   <p>It contains easy instructions to complete your registration.
-   <p>If you continue to have difficulty, contact the site administrator.';
+$string['emailconfirmsent'] = '   <p>An email should have been sent to your address at <b>$a</b></p>
+   <p>It contains easy instructions to complete your registration.</p>
+   <p>If you continue to have difficulty, contact the site administrator.</p>';
 $string['emaildigest'] = 'Email digest type';
 $string['emaildigestcomplete'] = 'Complete (daily email with full posts)';
 $string['emaildigestoff'] = 'No digest (single email per forum post)';
@@ -794,7 +794,7 @@ $string['noteuserschangednonetocourse'] = 'Note: course users need to be restore
 $string['nothingnew'] = 'Nothing new since your last login';
 $string['noticenewerbackup'] = 'This backup file has been created with Moodle $a->backuprelease ($a->backupversion) and it\'s newer than your currently installed Moodle $a->serverrelease ($a->serverversion). This could cause some inconsistencies because backwards compatibility of backup files cannot be guaranteed.';
 $string['notifyloginfailuresmessage'] = '$a->time, IP: $a->ip, User: $a->info';
-$string['notifyloginfailuresmessageend'] = 'You can view these logs at $a/course/log.php?id=1&amp;chooselog=1&amp;modid=site_errors.';
+$string['notifyloginfailuresmessageend'] = 'You can view these logs at $a/course/log.php?id=1&chooselog=1&modid=site_errors.';
 $string['notifyloginfailuresmessagestart'] = 'Here is a list of failed login attempts at $a since you were last notified ';
 $string['notifyloginfailuressubject'] = '$a :: Failed logins notification';
 $string['notincluded'] = 'Not included';
@@ -827,10 +827,10 @@ $string['passwordconfirmchange'] = 'Confirm password change';
 $string['passwordrecovery'] = 'Yes, help me log in';
 $string['passwordsdiffer'] = 'These passwords do not match';
 $string['passwordsent'] = 'Password has been sent';
-$string['passwordsenttext'] = '   <p>An email has been sent to your address at $a->email.
-   <p><b>Please check your email for your new password</b>
+$string['passwordsenttext'] = '   <p>An email has been sent to your address at $a->email.</p>
+   <p><b>Please check your email for your new password</b></p>
    <p>The new password was automatically generated, so you might like to
-   <a href=$a->link>change it to something easier to remember</a>.';
+   <a href=\"$a->link\">change it to something easier to remember</a>.</p>';
 $string['pathnotexists'] = 'Path doesn\'t exist in your server!';
 $string['pathslasherror'] = 'Path can\'t end with a slash!!';
 $string['paymentinstant'] = 'Use the button below to pay and be enrolled within minutes!';
@@ -868,12 +868,12 @@ $string['registration'] = 'Moodle Registration';
 $string['registrationemail'] = 'Email notifications';
 $string['registrationinfo'] = '<p>This page allows you to register your Moodle site with moodle.org.  Registration is free.
 The main benefit of registering is that you will be added to a low-volume mailing list
-for important notifications such as security alerts and new releases of Moodle.
+for important notifications such as security alerts and new releases of Moodle.</p>
 <p>By default, your information will be kept private, and will never be sold or passed on to anyone else.  The only
    reason for collecting this information is for support purposes, and to help build up a statistical
-   picture of the Moodle community as a whole.
-<p>If you choose, you can allow your site name, country and URL to be added to the public list of Moodle Sites.
-<p>All new registrations are verified manually before they are added to the list, but once you are added you can update your registration (and your entry on the public list) at any time by resubmitting this form.';
+   picture of the Moodle community as a whole.</p>
+<p>If you choose, you can allow your site name, country and URL to be added to the public list of Moodle Sites.</p>
+<p>All new registrations are verified manually before they are added to the list, but once you are added you can update your registration (and your entry on the public list) at any time by resubmitting this form.</p>';
 $string['registrationno'] = 'No, I do not want to receive email';
 $string['registrationsend'] = 'Send registration information to moodle.org';
 $string['registrationyes'] = 'Yes, please notify me about important issues';
@@ -952,9 +952,9 @@ $string['sitedefault'] = 'Site Default';
 $string['siteerrors'] = 'Site errors';
 $string['sitefiles'] = 'Site files';
 $string['sitelogs'] = 'Site logs';
+$string['sitenews'] = 'Site news';
 $string['sitepartlist0'] = 'You must be a site teacher to be allowed to see the site participants list';
 $string['sitepartlist1'] = 'You must be a teacher to be allowed to see the site participants list';
-$string['sitenews'] = 'Site news';
 $string['sites'] = 'Sites';
 $string['sitesection'] = 'Include a topic section';
 $string['sitesettings'] = 'Site settings';
@@ -1047,10 +1047,10 @@ $string['updatingain'] = 'Updating $a->what in $a->in';
 $string['upload'] = 'Upload';
 $string['uploadafile'] = 'Upload a file';
 $string['uploadedfile'] = 'File uploaded successfully';
-$string['uploadfailednotrecovering'] = 'Your file upload has failed because there was a problem with one of the files, $a->name.<br/> Here is a log of the problems:<br />$a->problem<br />Not recovering.';
-$string['uploadfilelog'] = 'Upload log for file $a';
 $string['uploadedfileto'] = 'Uploaded $a->file to $a->directory';
 $string['uploadedfiletoobig'] = 'Sorry, but that file is too big (limit is $a bytes)';
+$string['uploadfailednotrecovering'] = 'Your file upload has failed because there was a problem with one of the files, $a->name.<br /> Here is a log of the problems:<br />$a->problem<br />Not recovering.';
+$string['uploadfilelog'] = 'Upload log for file $a';
 $string['uploadformlimit'] = 'Uploaded file exceeded the maximum size limit set by the form';
 $string['uploadlabel'] = 'Title:';
 $string['uploadnofilefound'] = 'No file was found - are you sure you selected one to upload?';
@@ -1081,12 +1081,24 @@ $string['userzones'] = 'User zones';
 $string['usingexistingcourse'] = 'Using existing course';
 $string['version'] = 'Version';
 $string['view'] = 'View';
-$string['virusfoundsubject'] = '$a: Virus found!';
 $string['virusfound'] = 'Attention administrator! Clam AV has found a virus in a file uploaded by $a->user for the course $a->course. Here is the output of clamscan:';
+$string['virusfoundlater'] = 'A file you uploaded on $a->date with the filename $a->filename for the course $a->course has since been found to contain a virus.  Here is a summary of what has happened to your file:
+
+$a->action
+
+If this was submitted work, you may want to resubmit it so that your tutor can see it.';
+$string['virusfoundlateradmin'] = 'Attention administrator! A file that was uploaded on $a->date with the filename $a->filename for the course $a->course by the user $a->user has since been found to contain a virus.  Here is a summary of what has happened to the file:
+
+$a->action
+
+The user has also been notified.';
+$string['virusfoundlateradminnolog'] = 'Attention administrator! A file that was uploaded with the filename $a->filename has since been found to contain a virus. Moodle was unable to resolve this file back to the user that originally uploaded it.
+
+Here is a summary of what has happened to the file:
+
+$a->action';
+$string['virusfoundsubject'] = '$a: Virus found!';
 $string['virusfounduser'] = 'The file you have uploaded, $a->filename, has been scanned by a virus checker and found to be infected! Your file upload was NOT successful.';
-$string['virusfoundlater'] = 'A file you uploaded on $a->date with the filename $a->filename for the course $a->course has since been found to contain a virus.  Here is a summary of what has happened to your file:'."\n\n".'$a->action'."\n\n".'If this was submitted work, you may want to resubmit it so that your tutor can see it.';
-$string['virusfoundlateradmin'] = 'Attention administrator! A file that was uploaded on $a->date with the filename $a->filename for the course $a->course by the user $a->user has since been found to contain a virus.  Here is a summary of what has happened to the file:'."\n\n".'$a->action'."\n\n".'The user has also been notified.';
-$string['virusfoundlateradminnolog'] = 'Attention administrator! A file that was uploaded with the filename $a->filename has since been found to contain a virus. Moodle was unable to resolve this file back to the user that originally uploaded it.'."\n\n".'Here is a summary of what has happened to the file:'."\n\n".'$a->action';
 $string['virusplaceholder'] = 'This file that has been uploaded was found to contain a virus and has been moved or delted and the user notified.';
 $string['webpage'] = 'Web page';
 $string['week'] = 'Week';
@@ -1130,4 +1142,5 @@ $string['yourlastlogin'] = 'Your last login was';
 $string['yourself'] = 'yourself';
 $string['yourteacher'] = 'your $a';
 $string['zippingbackup'] = 'Zipping backup';
+
 ?>
