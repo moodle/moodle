@@ -221,6 +221,11 @@ function auth_get_users($filter='*') {
 
 
     foreach ($contexts as $context) {
+        
+        $context = trim($context);
+        if (empty($context)) {
+            continue;
+        }
 
         if ($CFG->ldap_search_sub) {
             //use ldap_search to find first user from subtree
@@ -396,7 +401,10 @@ function auth_ldap_isgroupmember ($username='', $groupdns='') {
     //build filter
     $filter = "(& ($CFG->ldap_user_attribute=$username)(|";
     foreach ($groups as $group){
-        $filter .= "($CFG->ldap_memberattribute=$group)";
+        $group = trim($group);
+        if(!empty($group)) {
+            $filter .= "($CFG->ldap_memberattribute=$group)";
+        }
     }
     $filter .= "))";
     //search
@@ -474,6 +482,9 @@ function auth_ldap_find_userdn ($ldap_connection, $username){
     foreach ($ldap_contexts as $context) {
 
         $context == trim($context);
+        if (empty($context)) {
+            continue;
+        }
 
         if ($CFG->ldap_search_sub){
             //use ldap_search to find first user from subtree
@@ -538,6 +549,11 @@ function auth_ldap_get_userlist($filter="*") {
     }
 
     foreach ($contexts as $context) {
+
+        $context = trim($context);
+        if (empty($context)) {
+            continue;
+        }
 
         if ($CFG->ldap_search_sub) {
             //use ldap_search to find first user from subtree
