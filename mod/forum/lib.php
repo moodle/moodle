@@ -413,11 +413,14 @@ function forum_count_unrated_posts($discussionid, $userid) {
 
 
 function forum_set_return() {
-    global $SESSION, $HTTP_REFERER;
+    global $CFG, $SESSION, $HTTP_REFERER;
 
-    if (! $SESSION->fromdiscussion) {
-        $SESSION->fromdiscussion = $HTTP_REFERER;
-        save_session("SESSION");
+    if (! isset($SESSION->fromdiscussion)) {
+        // If the referer is NOT a login screen then save it.
+        if (! strncasecmp("$CFG->wwwroot/login", $HTTP_REFERER, 300)) {
+            $SESSION->fromdiscussion = $HTTP_REFERER;
+            save_session("SESSION");
+        }
     }
 }
 
