@@ -850,6 +850,8 @@ function quiz_get_default_category($courseid) {
 }
 
 function quiz_get_category_menu($courseid, $published=false) {
+/// Returns the list of categories
+    $publish = "";
     if ($published) {
         $publish = "OR publish = '1'";
     }
