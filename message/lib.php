@@ -37,17 +37,13 @@ function message_print_contacts() {
     $blockedcontacts = get_records_select('message_contacts', "userid='$USER->id' AND blocked='1'", '', 'contactid, id');
 
 
-    echo '<table id="message_contacts" align="center" cellspacing="2" cellpadding="0">';
-    echo '<tr><td colspan="2"><strong>'.get_string('mycontacts', 'message').'</strong></td></tr>';
+    echo '<table id="message_contacts" align="center" cellspacing="2" cellpadding="0" border="0">';
 
 
 /// print out list of online contacts
-    echo '<tr><td width="20">&nbsp;</td>';
-    echo '<td id="message_onlinecontacts">';
 
     $countcontacts = (is_array($onlinecontacts)) ? count($onlinecontacts) : 0;
     
-    echo '<table class="message_contacts">';
     echo '<tr><td colspan="3">';
     echo '<strong>'.get_string('onlinecontacts', 'message', $countcontacts).'</strong>';
     echo '</td></tr>';
@@ -55,37 +51,32 @@ function message_print_contacts() {
     if (!empty($onlinecontacts)) {
         foreach ($onlinecontacts as $contact) {
             if ($contact->blocked == 1) continue;
-            $strcontact  = '';
+            $fullname  = fullname($contact);
+            $fullnamelink  = $fullname;
         /// are there any unread messages for this contact?
             if (($unread = message_count_messages($unreadmessages, 'useridfrom', $contact->id)) > 0) {
-                $strcontact .= '<strong>( '.get_string('unreadmessages', 'message', $unread).')</strong>';
+                $fullnamelink = '<strong>'.$fullnamelink.' ('.$unread.')</strong>';
             }
         /// link to remove from contact list
             $strcontact .= message_contact_link($contact->id, 'remove', true);
             
             echo '<tr><td class="message_pix">';
-            print_user_picture($contact->id, SITEID, $contact->picture, 20, false, false);
+            print_user_picture($contact->id, SITEID, $contact->picture, 20, false, true, 'userwindow');
             echo '</td>';
             echo '<td class="message_contact">';
-            link_to_popup_window("/message/user.php?id=$contact->id", "message_$contact->id", fullname($contact), 400, 400, get_string('sendmessageto', 'message', fullname($contact)));
+            link_to_popup_window("/message/user.php?id=$contact->id", "message_$contact->id", $fullnamelink, 400, 400, get_string('sendmessageto', 'message', $fullname));
             echo '</td>';
             echo '<td class="message_link">'.$strcontact.'</td>';
             echo '</tr>';
         }
     }
     echo '<tr><td colspan="3">&nbsp;</td></tr>';
-    echo '</table>';
-
-    echo '</td></tr>';
 
 
 /// print out list of offline contacts
-    echo '<tr><td width="20">&nbsp;</td>';
-    echo '<td id="message_offlinecontacts">';
     
     $countcontacts = (is_array($offlinecontacts)) ? count($offlinecontacts) : 0;
     
-    echo '<table class="message_contacts">';
     echo '<tr><td colspan="3">';
     echo '<strong>'.get_string('offlinecontacts', 'message', $countcontacts).'</strong>';
     echo '</td></tr>';
@@ -93,28 +84,26 @@ function message_print_contacts() {
     if (!empty($offlinecontacts)) {
         foreach ($offlinecontacts as $contact) {
             if ($contact->blocked == 1) continue;
-            $strcontact  = '';
+            $fullname  = fullname($contact);
+            $fullnamelink = $fullname;
         /// are there any unread messages for this contact?
             if (($unread = message_count_messages($unreadmessages, 'useridfrom', $contact->id)) > 0) {
-                $strcontact .= '<strong>( '.get_string('unreadmessages', 'message', $unread).')</strong>';
+                $fullnamelink = '<strong>'.$fullnamelink.' ('.$unread.')</strong>';
             }
         /// link to remove from contact list
-            $strcontact .= message_contact_link($contact->id, 'remove', true);
+            $strcontact = message_contact_link($contact->id, 'remove', true);
             
             echo '<tr><td class="message_pix">';
-            print_user_picture($contact->id, SITEID, $contact->picture, 20, false, false);
+            print_user_picture($contact->id, SITEID, $contact->picture, 20, false, true, 'userwindow');
             echo '</td>';
             echo '<td class="message_contact">';
-            link_to_popup_window("/message/user.php?id=$contact->id", "message_$contact->id", fullname($contact), 400, 400, get_string('sendmessageto', 'message', fullname($contact)));
+            link_to_popup_window("/message/user.php?id=$contact->id", "message_$contact->id", $fullnamelink, 400, 400, get_string('sendmessageto', 'message', $fullname));
             echo '</td>';
             echo '<td class="message_link">'.$strcontact.'</td>';
             echo '</tr>';
         }
     }
     echo '<tr><td colspan="3">&nbsp;</td></tr>';
-    echo '</table>';
-
-    echo '</td></tr>';
     
 
 /// Cycle through messages and extract those that are from unknown contacts
@@ -146,32 +135,30 @@ function message_print_contacts() {
 
 /// print out list of incoming contacts
     if (!empty($unknownmessages)) {
-        echo '<tr><td colspan="2">';
+        echo '<tr><td colspan="3">';
         echo '<strong>'.get_string('incomingcontacts', 'message', count($unknownmessages)).'</strong>';
         echo '</td></tr>';
-        echo '<tr><td width="20">&nbsp;</td>';
-        echo '<td id="message_unknowncontacts">';
 
-        echo '<table class="message_contacts">';
         foreach ($unknownmessages as $messageuser) {
-            $strcontact = '<strong>( '.get_string('unreadmessages', 'message', $messageuser->count).')</strong>';
+            $fullname = fullname($messageuser);
+            $fullnamelink = $fullname;
+            if ($messageuser->count) {
+                $fullnamelink = '<strong>'.$fullnamelink.' ('.$messageuser->count.')</strong>';
+            }
         /// link to add to contact list
             
-            $strcontact .= message_contact_link($messageuser->useridfrom, 'add', true);
+            $strcontact = message_contact_link($messageuser->useridfrom, 'add', true);
             $strblock   = message_contact_link($messageuser->useridfrom, 'block', true);
             
             echo '<tr><td class="message_pix">';
-            print_user_picture($messageuser->useridfrom, SITEID, $messageuser->picture, 20, false, false);
+            print_user_picture($messageuser->useridfrom, SITEID, $messageuser->picture, 20, false, true, 'userwindow');
             echo '</td>';
             echo '<td class="message_contact">';
-            link_to_popup_window("/message/user.php?id=$messageuser->useridfrom", "message_$messageuser->useridfrom", fullname($messageuser), 400, 400, get_string('sendmessageto', 'message', fullname($messageuser)));
+            link_to_popup_window("/message/user.php?id=$messageuser->useridfrom", "message_$messageuser->useridfrom", $fullnamelink, 400, 400, get_string('sendmessageto', 'message', $fullname));
             echo '</td>';
-            echo '<td class="message_link">'.$strcontact.'</td>';
-            echo '<td class="message_link">'.$strblock.'</td>';
+            echo '<td class="message_link">'.$strcontact.'&nbsp;'.$strblock.'</td>';
             echo '</tr>';
         }
-        echo '</table>';
-        echo '</td></tr>';
     }
 
     echo '</table>';
@@ -289,7 +276,6 @@ function message_add_contact($contactid, $blocked=0) {
 
 function message_remove_contact($contactid) {
     global $USER;
-
     return delete_records('message_contacts', 'userid', $USER->id, 'contactid', $contactid);
 }
 
@@ -348,7 +334,7 @@ function message_print_search_results($frm) {
                 }
                 
                 echo '<tr><td class="message_pix">';
-                print_user_picture($user->id, SITEID, $user->picture, 20, false, false);
+                print_user_picture($user->id, SITEID, $user->picture, 20, false, true, 'userwindow');
                 echo '</td>';
                 echo '<td class="message_contact">';
                 link_to_popup_window("/message/user.php?id=$user->id", "message_$user->id", fullname($user), 400, 400, get_string('sendmessageto', 'message', fullname($user)));
@@ -405,7 +391,7 @@ function message_print_search_results($frm) {
         echo '<strong>'.get_string('keywordssearchresults', 'message', count($messages)).'</strong>';
 
         /// print table headings
-            echo '<table class="message_users" cellpadding="5" border="1">';
+            echo '<table class="message_users" cellpadding="5" border="0">';
             echo '<tr>';
             echo '<td align="center"><strong>'.get_string('from').'</strong></td>';
             echo '<td align="center"><strong>'.get_string('to').'</strong></td>';
@@ -414,6 +400,7 @@ function message_print_search_results($frm) {
             echo "</tr>\n";
 
             $blockedcount = 0;
+            $dateformat = get_string('strftimedatetime');
             foreach ($messages as $message) {
 
             /// ignore messages to and from blocked users unless $frm->includeblocked is set
@@ -452,6 +439,10 @@ function message_print_search_results($frm) {
                     $fromblocked = false;
                 }
 
+            /// find date string for this message
+                $date = usergetdate($message->timecreated);
+                $datestring = $date['year'].$date['mon'].$date['mday'];
+
             /// print out message row
                 echo '<tr valign="top">';
                 echo '<td class="message_contact">';
@@ -460,13 +451,17 @@ function message_print_search_results($frm) {
                 echo '<td class="message_contact">';
                 message_print_user($userto, $tocontact, $toblocked);
                 echo '</td>';
-                echo '<td class="message_summary">'.message_shorten_message($message->message, 20).'</td>';
-                echo '<td class="message_date">'.userdate($message->timecreated, get_string('strftimedatetime')).'</td>';
+                echo '<td class="message_summary">'.message_shorten_message($message->message, 20);
+                echo ' '.message_history_link($message->useridto, $message->useridfrom, true, $datestring);
+                echo '</td>';
+                echo '<td class="message_date">'.userdate($message->timecreated, $dateformat).'</td>';
                 echo "</tr>\n";
             }
             
 
-            if ($blockedcount > 0) echo '<tr><td colspan="4" align="center">'.get_string('blockedmessages', 'message', $blockedcount).'</td></tr>';
+            if ($blockedcount > 0) {
+                echo '<tr><td colspan="4" align="center">'.get_string('blockedmessages', 'message', $blockedcount).'</td></tr>';
+            }
             echo '</table>';
         
         } else {
@@ -489,11 +484,10 @@ function message_print_search_results($frm) {
 function message_print_user ($user=false, $iscontact=false, $isblocked=false) {
     global $USER;
     if ($user === false) {
-        print_user_picture($USER->id, SITEID, $USER->picture, 20, false, false);
+        print_user_picture($USER->id, SITEID, $USER->picture, 20, false, true, 'userwindow');
     } else {
-        print_user_picture($user->id, SITEID, $user->picture, 20, false, false);
-        link_to_popup_window("/message/user.php?id=$user->id", "message_$user->id", fullname($user), 400, 400, get_string('sendmessageto', 'message', fullname($user)));
-        echo '<br />';
+        print_user_picture($user->id, SITEID, $user->picture, 20, false, true, 'userwindow');
+        echo '&nbsp;';
         if ($iscontact) {
             message_contact_link($user->id, 'remove');
         } else {
@@ -505,57 +499,68 @@ function message_print_user ($user=false, $iscontact=false, $isblocked=false) {
         } else {
             message_contact_link($user->id, 'block');
         }
+        echo '<br />';
+        link_to_popup_window("/message/user.php?id=$user->id", "message_$user->id", fullname($user), 400, 400, get_string('sendmessageto', 'message', fullname($user)));
     }
 }
 
 
 /// linktype can be: add, remove, block, unblock
-function message_contact_link ($userid, $linktype='add', $returnstr=false) {
-    global $USER;
+function message_contact_link($userid, $linktype='add', $return=false) {
+    global $USER, $CFG;
+
+    static $str;
+
+    if (empty($str->blockcontact)) {
+       $str->blockcontact   =  get_string('blockcontact', 'message');
+       $str->unblockcontact =  get_string('unblockcontact', 'message');
+       $str->removecontact  =  get_string('removecontact', 'message');
+       $str->addcontact     =  get_string('addcontact', 'message');
+    }
+
     switch ($linktype) {
         case 'block':
-            $str = '[<a href="index.php?tab=contacts&amp;blockcontact='.$userid.
-                   '&amp;sesskey='.$USER->sesskey.'" title="'.
-                   get_string('blockcontact', 'message').'">'.
-                   get_string('blockcontact', 'message').'</a>]';
+            $output = '<a href="index.php?tab=contacts&amp;blockcontact='.$userid.
+                   '&amp;sesskey='.$USER->sesskey.'" title="'.$str->blockcontact.'">'.
+                   '<img src="'.$CFG->pixpath.'/t/go.gif" height="11" width="11" border="0"></a>';
             break;
         case 'unblock':
-            $str = '[<a href="index.php?tab=contacts&amp;unblockcontact='.$userid.
-                   '&amp;sesskey='.$USER->sesskey.'" title="'.
-                   get_string('unblockcontact', 'message').'">'.
-                   get_string('unblockcontact', 'message').'</a>]';
+            $output = '<a href="index.php?tab=contacts&amp;unblockcontact='.$userid.
+                   '&amp;sesskey='.$USER->sesskey.'" title="'.$str->unblockcontact.'">'.
+                   '<img src="'.$CFG->pixpath.'/t/stop.gif" height="11" width="11" border="0"></a>';
             break;
         case 'remove':
-            $str = '[<a href="index.php?tab=contacts&amp;removecontact='.$userid.
-                   '&amp;sesskey='.$USER->sesskey.'" title="'.
-                   get_string('removecontact', 'message').'">'.
-                   get_string('removecontact', 'message').'</a>]';
+            $output = '<a href="index.php?tab=contacts&amp;removecontact='.$userid.
+                   '&amp;sesskey='.$USER->sesskey.'" title="'.$str->removecontact.'">'.
+                   '<img src="'.$CFG->pixpath.'/t/user.gif" height="11" width="11" border="0"></a>';
             break;
         case 'add':
         default:
-            $str = '[<a href="index.php?tab=contacts&amp;addcontact='.$userid.
-                   '&amp;sesskey='.$USER->sesskey.'" title="'.
-                   get_string('addcontact', 'message').'">'.
-                   get_string('addcontact', 'message').'</a>]';
+            $output = '<a href="index.php?tab=contacts&amp;addcontact='.$userid.
+                   '&amp;sesskey='.$USER->sesskey.'" title="'.$str->addcontact.'">'.
+                   '<img src="'.$CFG->pixpath.'/t/usernot.gif" height="11" width="11" border="0"></a>';
 
     }
-    if ($returnstr) {
-        return $str;
+    if ($return) {
+        return $output;
     } else {
-        echo $str;
+        echo $output;
         return true;
     }
 }
 
-function message_history_link ($userid1, $userid2=0, $returnstr=false) {
+function message_history_link ($userid1, $userid2=0, $returnstr=false, $position='') {
     global $USER;
 
     if (!$userid2) {
         $userid2 = $USER->id;
     }
+    if ($position) {
+        $position = "#$position";
+    }
 
-    $str = link_to_popup_window("/message/history.php?user1=$userid1&user2=$userid2", "message_history_$user->id", 
-                    get_string('messagehistory', 'message'), 500, 500, '', 
+    $str = link_to_popup_window("/message/history.php?user1=$userid1&user2=$userid2$position", 
+                    "message_history_$user->id", get_string('messagehistory', 'message'), 500, 500, '', 
                     'menubar=0,location=0,status,scrollbars,resizable,width=500,height=500', true);
 
     if ($returnstr) {
@@ -817,7 +822,7 @@ function message_format_message(&$message, &$user, $format='') {
         $format = get_string('strftimemessage', 'chat');
     }
     $time = userdate($message->timecreated, $format);
-    return '<p><font size="-1"><b>'.addslashes($user->firstname).'</b> ['.$time.']: '.$message->message.'</font></p>';
+    return '<p><font size="-1"><b>'.addslashes($user->firstname).'</b> ['.$time.']: '.format_text($message->message, $message->format).'</font></p>';
 }
 
 

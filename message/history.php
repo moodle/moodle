@@ -62,6 +62,7 @@
                 $current->mday = $date['mday'];
                 $current->month = $date['month'];
                 $current->year = $date['year'];
+                echo '<a name="'.$date['year'].$date['mon'].$date['mday'].'"></a>';
                 print_heading(userdate($message->timecreated, $blockdate), 'center', 4);
             }
             if ($message->useridfrom == $user1->id) {

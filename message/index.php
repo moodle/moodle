@@ -14,15 +14,19 @@ $blockcontact   = optional_param('blockcontact',   0, PARAM_INT); // blocking a 
 $unblockcontact = optional_param('unblockcontact', 0, PARAM_INT); // unblocking a contact
 
 if ($addcontact and confirm_sesskey()) {
+    add_to_log(SITEID, 'message', 'add contact', 'history.php?user1='.$addcontact.'&amp;user2='.$USER->id, $addcontact);
     message_add_contact($addcontact);
 }
 if ($removecontact and confirm_sesskey()) {
+    add_to_log(SITEID, 'message', 'remove contact', 'history.php?user1='.$removecontact.'&amp;user2='.$USER->id, $removecontact);
     message_remove_contact($removecontact);
 }
 if ($blockcontact and confirm_sesskey()) {
+    add_to_log(SITEID, 'message', 'block contact', 'history.php?user1='.$blockcontact.'&amp;user2='.$USER->id, $blockcontact);
     message_block_contact($blockcontact);
 }
 if ($unblockcontact and confirm_sesskey()) {
+    add_to_log(SITEID, 'message', 'unblock contact', 'history.php?user1='.$unblockcontact.'&amp;user2='.$USER->id, $unblockcontact);
     message_unblock_contact($unblockcontact);
 }
 

@@ -160,7 +160,10 @@
                 $script .= "parent.messages.scroll(1,5000000);\n";
                 $script .= "</script>\n\n";
 
-                add_to_log(SITEID, 'message', 'write', 'history.php?user='.$user->id.'&amp;time='.time(), $user->id);
+                $date = usergetdate($message->timecreated);
+                $datestring = $date['year'].$date['mon'].$date['mday'];
+
+                add_to_log(SITEID, 'message', 'write', 'history.php?user1='.$user->id.'&amp;user2='.$USER->id.'#'.$datestring, $user->id);
             } else {
                 $script  = '';
             }
