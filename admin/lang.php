@@ -177,9 +177,8 @@
             echo "<TABLE WIDTH=\"100%\" CELLPADDING=2 CELLSPACING=3 BORDER=0>";
             foreach ($enstring as $key => $envalue) {
                 $envalue = nl2br(htmlspecialchars($envalue));
-                $envalue = str_replace("\$a","<B>\$a</B>", $envalue);  // Make variables bold
+                $envalue = preg_replace('/(\$a\-\&gt;[a-zA-Z0-9]*|\$a)/', '<b>$0</b>', $envalue);  // Make variables bold. 
                 $envalue = str_replace("%%","%",$envalue);
-                // TODO:  It would be nice if all the $a->something variables were bold too
 
                 echo "<TR>";
                 echo "<TD WIDTH=20% BGCOLOR=\"$THEME->cellheading\" NOWRAP VALIGN=TOP>$key</TD>";
