@@ -534,7 +534,7 @@ function userdate($date, $format="", $timezone=99) {
             $timezone = (float)$USER->timezone;
         }
     }
-    if (abs($timezone) > 12) {
+    if (abs($timezone) > 13) {
         return strftime("$format", $date);
     }
     return gmstrftime($format, $date + (int)($timezone * 3600));
@@ -549,7 +549,7 @@ function usergetdate($date, $timezone=99) {
     if ($timezone == 99) {
         $timezone = (float)$USER->timezone;
     }
-    if (abs($timezone) > 12) {
+    if (abs($timezone) > 13) {
         return getdate($date);
     }
     //There is no gmgetdate so I have to fake it...
@@ -575,7 +575,7 @@ function usertime($date, $timezone=99) {
     if ($timezone == 99) {
         $timezone = (float)$USER->timezone;
     }
-    if (abs($timezone) > 12) {
+    if (abs($timezone) > 13) {
         return $date;
     }
     return $date - (int)($timezone * 3600);
@@ -592,7 +592,7 @@ function usergetmidnight($date, $timezone=99) {
 
     $userdate = usergetdate($date, $timezone);
 
-    if (abs($timezone) > 12) {
+    if (abs($timezone) > 13) {
         return mktime(0, 0, 0, $userdate["mon"], $userdate["mday"], $userdate["year"]);
     }
 
@@ -608,7 +608,7 @@ function usertimezone($timezone=99) {
     if ($timezone == 99) {
         $timezone = (float)$USER->timezone;
     }
-    if (abs($timezone) > 12) {
+    if (abs($timezone) > 13) {
         return "server time";
     }
     if (abs($timezone) < 0.5) {

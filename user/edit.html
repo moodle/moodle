@@ -99,12 +99,12 @@ if (isadmin()) {
 <tr valign=top>
 	<td><P><? print_string("timezone") ?>:</td>
 	<td><?
-       if (abs($user->timezone) > 12) {
+       if (abs($user->timezone) > 13) {
            $user->timezone = 99;
        }
        $timenow = time();
 
-       for ($tz = -23; $tz <= 24; $tz++) {
+       for ($tz = -26; $tz <= 26; $tz++) {
            $zone = (float)$tz/2.0;
            $usertime = $timenow + ($tz * 1800);
            if ($tz == 0) {
