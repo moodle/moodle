@@ -179,11 +179,14 @@
             echo "<TABLE WIDTH=\"100%\" CELLPADDING=2 CELLSPACING=3 BORDER=0>";
             foreach ($enstring as $key => $envalue) {
                 $envalue = nl2br(htmlentities($envalue));
+                $envalue = str_replace("\$a","<B>\$a</B>", $envalue);  // Make variables bold
+                // TODO:  It would be nice if all the $a->something variables were bold too
+
                 echo "<TR>";
                 echo "<TD WIDTH=20% BGCOLOR=\"$THEME->cellheading\" NOWRAP VALIGN=TOP>$key</TD>";
                 echo "<TD WIDTH=40% BGCOLOR=\"$THEME->cellheading\" VALIGN=TOP>$envalue</TD>";
 
-                $value = str_replace("\\","",$string[$key]);               // Delete all slashes
+                $value = str_replace("\\","",$string[$key]);          // Delete all slashes
                 $value = htmlentities($value);
                 if ($editable) {
                     echo "<TD WIDTH=40% VALIGN=TOP>";
