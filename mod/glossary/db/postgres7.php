@@ -134,6 +134,19 @@ function glossary_upgrade($oldversion) {
       modify_database('','CREATE INDEX prefix_glossary_ratings_entryid_idx ON prefix_glossary_ratings (entryid);');
   }
 
+  //Delete orphaned categories (bug 2140)
+  if ($oldversion < 2005011100) {
+      $categories = get_records('glossary_categories', '', '', '', 'id, glossaryid');
+      if ($categories) {
+          foreach ($categories as $category) {
+              $glossary = get_record('glossary', 'id', "$category->glossaryid");
+              if (!$glossary) {
+                  delete_records('glossary_categories', 'id', "$category->id");
+              }
+          }
+      }
+  }
+
   return true;
 }
 
