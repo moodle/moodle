@@ -687,7 +687,9 @@ function update_record($table, $dataobject) {
     }
 
     // Determine all the fields in the table
-    $columns = $db->MetaColumns($table);
+    if (!$columns = $db->MetaColumns($table)) {
+        return false;
+    }
     $data = (array)$dataobject;
 
     // Pull out data matching these fields
