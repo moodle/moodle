@@ -3,52 +3,52 @@ French Translation
 
 Authors: 
 Nicolas Martignoni <nicolas@martignoni.net>
-Sbastien Namche <seb@gaia.anet.fr>
+Sébastien Namèche <seb@gaia.anet.fr>
 
-La traduction franaise de Moodle semblant ne plus tre mise ˆ jour,
-je (Nicolas Martignoni) me suis mis au travail pour amliorer et complter
-le dbut de traduction de Sbastien Namche.
+La traduction française de Moodle semblant ne plus être mise à jour,
+je (Nicolas Martignoni) me suis mis au travail pour améliorer et compléter
+le début de traduction de Sébastien Namèche.
 
-J'ai lgrement modifi la liste des termes choisis par Sbastien.
-Vous trouvez ci-dessous cette liste modifie par mes soins.
+J'ai légèrement modifié la liste des termes choisis par Sébastien.
+Vous trouvez ci-dessous cette liste modifiée par mes soins.
 
-Je suis conscient que certains choix ne sont pas toujours appropris.
+Je suis conscient que certains choix ne sont pas toujours appropriés.
 Si vous avez d'autres suggestions, merci de me les envoyer.
 
-Concernant la traduction de "email", j'ai choisi le terme "e-mail" (trs
-parlant pour les utilisateurs), qui n'est pas une vritable traduction.
-Une autre possibilit serait l'utilisation systmatique du terme "courriel",
-mais en aucun cas "mail".
+Concernant la traduction de "email", j'ai choisi le terme "e-mail" (très
+parlant pour les utilisateurs), qui n'est pas une véritable traduction.
+Une autre possibilité serait l'utilisation systématique du terme "courriel",
+mais en aucun cas "émail".
 
 account          compte
-activity         activit
-assessment       apprciation
+activity         activité
+assessment       appréciation
 assignment       devoir
 attachment       annexe
 authentication   authentification
 choice           sondage
 course category	 discipline
-department       dpartement
-download         tlcharger
+department       département
+download         télécharger
 email            message par e-mail, adresse e-mail ou par e-mail, selon le contexte
 entry            contribution
 feedback         feedback
 grade            note ou niveau, selon le contexte
 guest            visiteur anonyme
-hit              requte
+hit              requête
 journal          journal
-logs             vnements
+logs             événements
 offline          hors-ligne
 post             message
 quiz             test
-scale            barme
+scale            barème
 server           serveur
 social format	 informel
 submissions      devoirs rendus
 survey           questionnaire
 teacher          enseignant
 to login         s'identifier
-upload           envoyer (ou dposer)
+upload           envoyer (ou déposer)
 user             utilisateur
 username         nom d'utilisateur
 
@@ -71,18 +71,18 @@ Voici quelques liens que j'utilise :
       http://elsap1.unicaen.fr/dicosyn.html
   - Le grand dictionnaire terminologique
       http://www.granddictionnaire.com/
-  - la conjugaison (Allluia !)
+  - la conjugaison (Alléluia !)
       http://www.leconjugueur.com/
 
 
 Quelques conventions :
   - pour la ponctuation de fin de texte et les majuscules,
     on essaie de suivre strictement le texte anglais original ;
-  - les majuscules *sont* accentues ;
-  - les guillemets franais sont Ç È.
+  - les majuscules *sont* accentuées ;
+  - les guillemets français sont « ».
 
 
-Quelques liens qui traitent du constructivisme social en franais :
+Quelques liens qui traitent du constructivisme social en français :
   - http://www.acelf.ca/revue/XXV1/articles/rxxv1-10.html
   - http://www.schule.suedtirol.it/blikk/angebote/reformpaedagogik/rp70110b.htm
   - http://agora.unige.ch/sred/Archive/const/ecole.html
