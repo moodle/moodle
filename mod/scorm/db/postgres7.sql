@@ -27,14 +27,14 @@ CREATE TABLE prefix_scorm_scoes (
 );
 
 CREATE TABLE prefix_scorm_sco_users (
-  id iSERIAL PRIMARY KEY,
+  id SERIAL PRIMARY KEY,
   userid integer NOT NULL default '0',
   scormid integer NOT NULL default '0',
   scoid integer NOT NULL default '0',
   cmi_core_lesson_location varchar(255) NOT NULL default '',
   cmi_core_lesson_status varchar(30) NOT NULL default '',
   cmi_core_exit varchar(30) NOT NULL default '',
-  cmi_core_total_time varchar(13) NOT NULL default '00:00:00',,
+  cmi_core_total_time varchar(13) NOT NULL default '00:00:00',
   cmi_core_session_time varchar(13) NOT NULL default '00:00:00',
   cmi_core_score_raw real NOT NULL default '0',
   cmi_suspend_data text NOT NULL default '',
