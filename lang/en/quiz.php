@@ -99,6 +99,7 @@ $string['questionname'] = "Question name";
 $string['quizavailable'] = "The quiz is available until: \$a";
 $string['quizclose'] = "Close the quiz";
 $string['quizclosed'] = "This quiz closed on \$a";
+$string['quizcloses'] = "Quiz closes";
 $string['quizopen'] = "Open the quiz";
 $string['quiznotavailable'] = "The quiz will not be available until: \$a";
 $string['random'] = "Random Question";
