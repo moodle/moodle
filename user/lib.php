@@ -113,9 +113,12 @@ function save_user_image($userid, $filename) {
         ImageLine ($im2, 34, 34, 34, 0, $black2);
         ImageLine ($im2, 34, 0, 0, 0, $black2);
     
-        ImageJpeg($im1, "$CFG->dataroot/users/$userid/f1.jpg", 90);
-        ImageJpeg($im2, "$CFG->dataroot/users/$userid/f2.jpg", 95);
-        return 1;
+        if (ImageJpeg($im1, "$CFG->dataroot/users/$userid/f1.jpg", 90) and 
+            ImageJpeg($im2, "$CFG->dataroot/users/$userid/f2.jpg", 95) ) {
+            return 1;
+        } else {
+            return 0;
+        }
     }
 }
 
