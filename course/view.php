@@ -14,7 +14,7 @@
 
     add_to_log("View course: $course->shortname", $id);
 
-    if ( $USER->teacher[$course->id] ) {
+    if ( isteacher($course->id) || isadmin() ) {
         if ($edit == "on") {
             $USER->editing = true;
         } else if ($edit == "off") {

@@ -12,7 +12,7 @@
 
 	    require_login($course->id);
 
-        if (!isteacher($course->id)) {
+        if (!isteacher($course->id)  && ! isadmin()) {
             error("Only teachers can edit the course!");
         }
     } else {  // Admin is creating a new course
