@@ -12,7 +12,7 @@ define('COURSE_MAX_LOGS_PER_PAGE', 1000);    // records
 
 define('COURSE_LIVELOG_REFRESH', 60);        // Seconds
 
-define('COURSE_MAX_RECENT_PERIOD', 604800);  // A week, in seconds
+define('COURSE_MAX_RECENT_PERIOD', 86400);  // A day, in seconds
 
 define('COURSE_MAX_SUMMARIES_PER_PAGE', 10); // courses
 
@@ -480,23 +480,26 @@ function print_recent_activity($course) {
 
     $isteacher = isteacher($course->id);
 
-    if (! $USER->lastlogin ) {
-        echo "<p align=center><font size=1>";
+
+    if (empty($USER->lastlogin)) {
+        echo '<p align="center"><font size="1">';
         print_string("welcometocourse", "", $course->shortname);
-        echo "</font></p>";
+        echo '</font></p>';
         return;
-    } else {
-        echo "<p align=center><font size=1>";
-        echo get_string("yourlastlogin").":<BR>"; 
-        echo userdate($USER->lastlogin, get_string("strftimerecentfull"));
-        echo "</font></p>";
     }
-  
+
     $timestart = $USER->lastlogin;
     $timemaxrecent = time() - COURSE_MAX_RECENT_PERIOD;
     if ($timestart < $timemaxrecent) {
         $timestart = $timemaxrecent;
     }
+
+    echo '<center><font size="1">';
+    echo get_string("activitysince", "", userdate($timestart));
+
+    echo '<p><a href="recent.php?id='.$course->id.'">'.get_string('recentactivityreport').'</a></p>';
+
+    echo '</font></center>';
 
 
     // Firstly, have there been any new enrolments?

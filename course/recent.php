@@ -122,7 +122,11 @@ $advancedfilter = 1;
 
             if ($i < $course->numsections) {
                 $activity->type = "section";
-                $activity->name = $sectiontitle . " $i";
+                if ($i) {
+                    $activity->name = $sectiontitle . " $i";
+                } else {
+                    $activity->name = '';
+                }
                 $activities[$index] = $activity;
             }
             $index++;
@@ -193,17 +197,24 @@ $advancedfilter = 1;
 
     if (!empty($activities)) {
 
-        echo "<ul>";
         $newsection = true;
         $lastsection = "";
         $newinstance = true;
         $lastinstance = "";
+        $inbox = false;
 
         $section = 0;
         foreach ($activities as $activity) {
-            
+
             if (($activity->type == "section") && ($sortby == "default")) {
-                echo "<h1>$activity->name</h1>";
+                if ($inbox) {
+                    print_simple_box_end();
+                    print_spacer(30);
+                }
+                print_simple_box_start("center", "90%");
+                echo "<h2>$activity->name</h2>";
+                $inbox = true;
+
             } else if ($activity->type == "activity") {
 
                if ($sortby == "default") {
@@ -216,18 +227,26 @@ $advancedfilter = 1;
                }
 
             } else {
+            
+                if (!$inbox) {
+                    print_simple_box_start("center", "90%");
+                    $inbox = true;
+                }
     
                 $print_recent_mod_activity = $activity->type."_print_recent_mod_activity";
     
                 if (function_exists($print_recent_mod_activity)) {
-                    echo "<ul><ul>";
+                    echo '<ul><ul>';
                     $print_recent_mod_activity($activity, $course->id, $detail);
-                    echo "</ul></ul>";
+                    echo '</ul></ul>';
                 }
             }
         }
 
-        echo "</ul>";
+        if ($inbox) {
+            print_simple_box_end();
+        }
+
 
     } else {
 
