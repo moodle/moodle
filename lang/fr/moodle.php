@@ -119,6 +119,7 @@ $string['blockconfigin'] = 'Cours : configuration d\'un bloc dans $a';
 $string['blockdeleteconfirm'] = 'Vous allez supprimer totalement le bloc « $a ». Cette action supprimera de la base de données tout ce qui est associé à ce bloc. Voulez-vous VRAIMENT continuer ?';
 $string['blockdeletefiles'] = 'Toutes les données associées au bloc « $a->block » ont été supprimées de la base de données. Pour terminer la suppression du bloc, et éviter ainsi qu\'il se réinstalle, veuillez supprimer de votre serveur le dossier « $a->directory ».';
 $string['blocks'] = 'Blocs';
+$string['blocksaddedit'] = 'Ajouter/Modifier des blocs';
 $string['blocksetup'] = 'Installation des tables de blocs';
 $string['blocksuccess'] = 'Les tables $a ont été installées correctement';
 $string['bycourseorder'] = 'Ordre dans le cours';
