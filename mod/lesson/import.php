@@ -90,7 +90,7 @@
 
     print_heading_with_help($strimportquestions, "import", "lesson");
 
-    print_simple_box_start("center", "", "$THEME->cellheading");
+    print_simple_box_start("center");
     echo "<form enctype=\"multipart/form-data\" method=\"post\" action=import.php>";
     echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\">\n";
     echo "<input type=\"hidden\" name=\"pageid\" value=\"$pageid\">\n";

@@ -100,11 +100,6 @@
     // set up some general variables
     $usehtmleditor = can_use_html_editor();
     $path = $CFG->wwwroot .'/course';
-    if (empty($THEME->custompix)) {
-        $pixpath = $path .'/../pix';
-    } else {
-        $pixpath = $path .'/../theme/'. $CFG->theme .'/pix';
-    }
 
     /************** navigation **************************************/
     if ($action == 'navigation') {
@@ -343,7 +338,7 @@
 							echo '<input type="hidden" name="id" value="'. $cm->id .'" />';
 							echo '<input type="hidden" name="action" value="navigation" />';
 							echo '<input type="hidden" name="pageid" />';
-									echo "<table bgcolor=\"$THEME->cellheading\" width=\"140px\">";
+									echo "<table width=\"140px\">";
 									echo "<tr><td>".get_string('lessonmenu', 'lesson') .'</td></tr>';
 									echo "<tr><td class=\"main\">";
 									echo "<a href=\"../../course/view.php?id=$course->id\">".get_string("mainmenu", "lesson")."</a></td></tr>";
@@ -1175,7 +1170,7 @@
                     echo get_string("treeview", "lesson")."<br /><br />";
                     echo "<a href=\"view.php?id=$id&amp;viewAll=1\">".get_string("viewallpages", "lesson")."</a><br /><br />\n";
                     echo "<table><tr><td>";
-                    lesson_print_tree($page->id, $lesson->id, $cm->id, $pixpath);
+                    lesson_print_tree($page->id, $lesson->id, $cm->id, $CFG->pixpath);
                     echo "</td></tr></table>";
                     echo "<br /><a href=\"view.php?id=$id&amp;viewAll=1\">".get_string("viewallpages", "lesson")."</a>\n";
                 echo "</div>";
@@ -1241,24 +1236,24 @@
                 /// CDC-FLAG /// end tree code	(note, there is an "}" below for an else above)
             while (true) {
             	echo "<tr><td>\n";
-                echo "<table width=\"100%\" border=\"1\"><tr><td bgcolor=\"$THEME->cellheading2\" colspan=\"2\"><b>$page->title</b>&nbsp;&nbsp;\n";
+                echo "<table width=\"100%\" border=\"1\"><tr><th colspan=\"2\">$page->title&nbsp;&nbsp;\n";
                 if (isteacheredit($course->id)) {
                     if ($npages > 1) {
                         echo "<a title=\"".get_string("move")."\" href=\"lesson.php?id=$cm->id&amp;action=move&amp;pageid=$page->id\">\n".
-                            "<img src=\"$pixpath/t/move.gif\" hspace=\"2\" height=\"11\" width=\"11\" border=\"0\" alt=\"move\" /></a>\n";
+                            "<img src=\"$CFG->pixpath/t/move.gif\" hspace=\"2\" height=\"11\" width=\"11\" border=\"0\" alt=\"move\" /></a>\n";
                     }
                     echo "<a title=\"".get_string("update")."\" href=\"lesson.php?id=$cm->id&amp;action=editpage&amp;pageid=$page->id\">\n".
-                        "<img src=\"$pixpath/t/edit.gif\" hspace=\"2\" height=\"11\" width=\"11\" border=\"0\" alt=\"edit\" /></a>\n".
+                        "<img src=\"$CFG->pixpath/t/edit.gif\" hspace=\"2\" height=\"11\" width=\"11\" border=\"0\" alt=\"edit\" /></a>\n".
                         "<a title=\"".get_string("delete")."\" href=\"lesson.php?id=$cm->id&amp;sesskey=".$USER->sesskey."&amp;action=confirmdelete&amp;pageid=$page->id\">\n".
-                        "<img src=\"$pixpath/t/delete.gif\" hspace=\"2\" height=\"11\" width=\"11\" border=\"0\" alt=\"delete\" /></a>\n";
+                        "<img src=\"$CFG->pixpath/t/delete.gif\" hspace=\"2\" height=\"11\" width=\"11\" border=\"0\" alt=\"delete\" /></a>\n";
                 }
-                echo "</td></tr>\n";             
+                echo "</th></tr>\n";             
                 echo "<tr><td colspan=\"2\">\n";
                 print_simple_box(format_text($page->contents), "center");
                 echo "</td></tr>\n";
                 // get the answers in a set order, the id order
                 if ($answers = get_records("lesson_answers", "pageid", $page->id, "id")) {
-                    echo "<tr><td bgcolor=\"$THEME->cellheading2\" colspan=\"2\" align=\"center\"><b>\n";
+                    echo "<tr><td colspan=\"2\" align=\"center\"><b>\n";
                     switch ($page->qtype) {
                         case LESSON_ESSAY :  /// CDC-FLAG /// 6/16/04  this line and the next
                             echo $LESSON_QUESTION_TYPE[$page->qtype];
@@ -1299,7 +1294,7 @@
                             case LESSON_TRUEFALSE:
                             case LESSON_SHORTANSWER:
                             case LESSON_NUMERICAL:
-                                echo "<tr><td bgcolor=\"$THEME->cellheading2\" align=\"right\" valign=\"top\" width=\"20%\">\n";
+                                echo "<tr><td align=\"right\" valign=\"top\" width=\"20%\">\n";
                                 /// CDC-FLAG /// 6/11/04
                                 if ($lesson->custom) {
                                     // if the score is > 0, then it is correct
@@ -1343,7 +1338,7 @@
                                     $n++;
                                     $i--;
                                 } else {
-                                    echo "<tr><td bgcolor=\"$THEME->cellheading2\" align=\"right\" valign=\"top\" width=\"20%\">\n";
+                                    echo "<tr><td align=\"right\" valign=\"top\" width=\"20%\">\n";
                                     if ($lesson->custom) {
                                         // if the score is > 0, then it is correct
                                         if ($answer->score > 0) {
@@ -1427,7 +1422,7 @@
                         $i++;
                     }
                     // print_simple_box_end();  /// CDC-FLAG /// not sure if i commented this out... hehe
-                    echo "<tr><td bgcolor=\"$THEME->cellheading2\" colspan=\"2\" align=\"center\">";
+                    echo "<tr><td colspan=\"2\" align=\"center\">";
                     if ($page->qtype != LESSON_ENDOFBRANCH) {
                         echo "<input type=\"button\" value=\"";
                         if ($page->qtype == LESSON_BRANCHTABLE) {
@@ -1821,7 +1816,7 @@
             krsort($topscores);
             
             echo "<table cellspacing=\"10px\">";
-            echo "<tr align=\"center\" bgcolor=\"$THEME->cellheading2\"><td>".get_string("rank", "lesson")."</td><td>$course->students</td><td>".get_string("scores", "lesson")."</td></tr>";
+            echo "<tr align=\"center\"><td>".get_string("rank", "lesson")."</td><td>$course->students</td><td>".get_string("scores", "lesson")."</td></tr>";
             $printed = 0;
             while (true) {
                 $temp = current($topscores);

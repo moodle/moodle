@@ -624,9 +624,9 @@
 				echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\">\n";
 				echo "<input type=\"hidden\" name=\"action\" value=\"navigation\">\n";
 				echo "<input type=\"hidden\" name=\"pageid\">\n";
-						echo "<table bgcolor=\"$THEME->cellheading\" width=\"140px\">";
+						echo "<table class=\"lessonside\" width=\"140px\">";
 						echo "<tr><td>".get_string("lessonmenu", "lesson")."</td></tr>";
-						echo "<tr><td class='main'>";
+						echo '<tr><td class="lessonmain">';
 						echo "<a href=\"../../course/view.php?id=$course->id\">".get_string("mainmenu", "lesson")."</a></td></tr>";
 						echo "<td class=\"leftmenu\">"; 
 						lesson_print_tree_menu($lesson->id, $firstpageid, $cm->id);
@@ -2138,7 +2138,7 @@
                 if (!$title = trim($page->title)) {
                     $title = "<< ".get_string("notitle", "lesson")."  >>";
                 }
-                echo "<tr><td bgcolor=\"$THEME->cellheading2\"><b>$title</b></td></tr>\n";
+                echo "<tr><td><b>$title</b></td></tr>\n";
                 echo "<tr><td><a href=\"lesson.php?id=$cm->id&amp;sesskey=".$USER->sesskey."&amp;action=moveit&amp;pageid=$pageid&amp;after={$page->id}\"><small>".
                     get_string("movepagehere", "lesson")."</small></a></td></tr>\n";
             }

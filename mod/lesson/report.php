@@ -799,13 +799,13 @@
 		foreach ($answerpages as $page) {
 			unset($table->data);
 			if ($page->grayout) { // set the color of text
-				$fontstart = "<font color=\"#AAAAAA\">";
+				$fontstart = "<span class=\"dimmed\">";
 				$fontend = "</font>";
 				$fontstart2 = $fontstart;
 				$fontend2 = $fontend;
 			} else {
-				$fontstart = "<font color=\"$THEME->cellheading2\">";
-				$fontend = "</font>";
+				$fontstart = "";
+				$fontend = "";
 				$fontstart2 = "";
 				$fontend2 = "";		
 			}
