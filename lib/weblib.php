@@ -1702,7 +1702,7 @@ function navmenu($course, $cm=NULL, $targetwindow="self") {
         }
     }
     if ($selectmod and $isteacher) {
-        $logslink = "<td><a href=".
+        $logslink = "<td><a target=\"$CFG->framename\" href=".
                     "\"$CFG->wwwroot/course/log.php?chooselog=1&user=0&date=0&id=$course->id&modid=$selectmod->cm\">".
                     "<img border=\"0\" height=\"16\" width=\"16\" src=\"$CFG->pixpath/i/log.gif\"></a></td>";
         
