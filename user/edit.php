@@ -79,6 +79,13 @@
         $usernew->lang    = clean_param($usernew->lang,    PARAM_FILE);
         $usernew->url     = clean_param($usernew->url,     PARAM_URL);
         $usernew->icq     = clean_param($usernew->icq,     PARAM_INT);
+        if (!$usernew->icq) {
+            $usernew->icq = '';
+        }
+        $usernew->skype   = clean_param($usernew->skype,   PARAM_CLEAN);
+        $usernew->yahoo   = clean_param($usernew->yahoo,   PARAM_CLEAN);
+        $usernew->aim   = clean_param($usernew->aim,   PARAM_CLEAN);
+        $usernew->msn   = clean_param($usernew->msn,   PARAM_CLEAN);
         
         $usernew->maildisplay   = clean_param($usernew->maildisplay,   PARAM_INT);
         $usernew->mailformat    = clean_param($usernew->mailformat,    PARAM_INT);

@@ -215,7 +215,20 @@
     }
 
     if ($user->icq) {
-        print_row("ICQ:","<a href=\"http://web.icq.com/wwp?uin=$user->icq\">$user->icq <img src=\"http://web.icq.com/whitepages/online?icq=$user->icq&amp;img=5\" width=\"18\" height=\"18\" border=\"0\" alt=\"\" /></a>");
+        print_row(get_string('icqnumber').':',"<a href=\"http://web.icq.com/wwp?uin=$user->icq\">$user->icq <img src=\"http://web.icq.com/whitepages/online?icq=$user->icq&amp;img=5\" width=\"18\" height=\"18\" border=\"0\" alt=\"\" /></a>");
+    }
+
+    if ($user->skype) {
+        print_row(get_string('skypeid').':','<a href="callto:'.urlencode($user->skype).'">'.s($user->skype).'</a>');
+    }
+    if ($user->yahoo) {
+        print_row(get_string('yahooid').':', s($user->yahoo));
+    }
+    if ($user->aim) {
+        print_row(get_string('aimid').':', s($user->aim));
+    }
+    if ($user->msn) {
+        print_row(get_string('msnid').':', s($user->msn));
     }
 
     if (isteacher($course->id)) {

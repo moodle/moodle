@@ -330,6 +330,30 @@ if (isadmin()) {
     </td>
 </tr>
 <tr>
+    <th><?php print_string("skypeid") ?>:</th>
+    <td><input type="text" name="skype" size="25" alt="<?php print_string("skypeid") ?>" maxlength="50" value="<?php p($user->skype) ?>" />
+    <?php if (isset($err["skype"])) formerr($err["skype"]); ?>
+    </td>
+</tr>
+<tr>
+    <th><?php print_string("aimid") ?>:</th>
+    <td><input type="text" name="aim" size="25" alt="<?php print_string("aimid") ?>" maxlength="50" value="<?php p($user->aim) ?>" />
+    <?php if (isset($err["aim"])) formerr($err["aim"]); ?>
+    </td>
+</tr>
+<tr>
+    <th><?php print_string("yahooid") ?>:</th>
+    <td><input type="text" name="yahoo" size="25" alt="<?php print_string("yahooid") ?>" maxlength="50" value="<?php p($user->yahoo) ?>" />
+    <?php if (isset($err["yahoo"])) formerr($err["yahoo"]); ?>
+    </td>
+</tr>
+<tr>
+    <th><?php print_string("msnid") ?>:</th>
+    <td><input type="text" name="msn" size="25" alt="<?php print_string("msnid") ?>" maxlength="50" value="<?php p($user->msn) ?>" />
+    <?php if (isset($err["msn"])) formerr($err["msn"]); ?>
+    </td>
+</tr>
+<tr>
     <th><?php print_string("idnumber") ?>:</th>
     <td>
     <input type="text" name="idnumber" size="25" alt="<?php print_string("idnumber") ?>" maxlength="12" value="<?php p($user->idnumber) ?>" /> <?php p($teacheronly) ?>

@@ -1218,6 +1218,13 @@ function main_upgrade($oldversion=0) {
         table_column('dst_preset', '', 'year', 'int', '10', '', '0', 'not null', 'family');
     }
 
+    if ($oldversion < 2005030501) {
+        table_column('user', '', 'msn', 'varchar', '50', '', '', '', 'icq');
+        table_column('user', '', 'aim', 'varchar', '50', '', '', '', 'icq');
+        table_column('user', '', 'yahoo', 'varchar', '50', '', '', '', 'icq');
+        table_column('user', '', 'skype', 'varchar', '50', '', '', '', 'icq');
+    }
+
     return $result;
 }
 
