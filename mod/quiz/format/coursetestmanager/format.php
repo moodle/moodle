@@ -55,21 +55,21 @@ class quiz_file_format {
 
         echo "<tr><td align=right>";
 		    echo "What is the hostname or IP address of the ODBC Socket Server:</td><td>";
-		    echo " <input name=\"hostname\" type=\"text\" size=\"50\" value=\"".stripslashes($hostname_access_error)."\">";
-		    echo " <input name=\"filename\" type=\"hidden\" value=\"".$filename."\">";
-		    echo " <input name=\"category\" type=\"hidden\" value=\"".$category->id."\">";
-		    echo " <input name=\"format\" type=\"hidden\" value=\"".$form->format."\">";
+		    echo " <input name=\"hostname\" type=\"text\" size=\"50\" value=\"".stripslashes($hostname_access_error)."\" />";
+		    echo " <input name=\"filename\" type=\"hidden\" value=\"".$filename."\" />";
+		    echo " <input name=\"category\" type=\"hidden\" value=\"".$category->id."\" />";
+		    echo " <input name=\"format\" type=\"hidden\" value=\"".$form->format."\" />";
 		    echo "</td><td>&nbsp;</td></tr>";
         echo "<tr><td align=right>";
 		    echo "What is the location of the database (.mdb file) on the Socket Server:</td><td>";
-		    echo " <input name=\"mdbpath\" type=\"text\" size=\"50\" value=\"".stripslashes($mdbpath)."\">";
+		    echo " <input name=\"mdbpath\" type=\"text\" size=\"50\" value=\"".stripslashes($mdbpath)."\" />";
 				echo "</td><td>&nbsp;</td></tr>";
         echo "<tr><td align=right>";
 		    echo "What is the location of the system database (System.mda file) on the Socket Server:</td><td>";
-		    echo " <input name=\"mdapath\" type=\"text\" size=\"50\" value=\"".stripslashes($mdapath)."\">";
+		    echo " <input name=\"mdapath\" type=\"text\" size=\"50\" value=\"".stripslashes($mdapath)."\" />";
 				echo "</td><td>&nbsp;</td></tr>";
 		    echo "<tr><td>&nbsp;</td><td>";
-		    echo " <input type=submit name=save value=\"Connect to Server\">";
+		    echo " <input type=submit name=save value=\"Connect to Server\" />";
 		    echo "</td></tr>";
 		    echo "</table>";
 		    echo "</form>";
@@ -117,17 +117,17 @@ class quiz_file_format {
 		    echo "Choose a category of questions to import:</td><td>";
 		    asort($question_categories);
 		    choose_from_menu($question_categories, "question_category","All Categories","All Categories", "", "allcategories");
-		    echo " <input name=\"filename\" type=\"hidden\" value=\"".$filename."\">";
-		    echo " <input name=\"category\" type=\"hidden\" value=\"".$category->id."\">";
-		    echo " <input name=\"format\" type=\"hidden\" value=\"".$form->format."\">";
+		    echo " <input name=\"filename\" type=\"hidden\" value=\"".$filename."\" />";
+		    echo " <input name=\"category\" type=\"hidden\" value=\"".$category->id."\" />";
+		    echo " <input name=\"format\" type=\"hidden\" value=\"".$form->format."\" />";
 		    if (PHP_OS == "Linux") {
-			    echo " <input name=\"hostname\" type=\"hidden\" value=\"".stripslashes(trim($hostname))."\">";
-			    echo " <input name=\"mdbpath\" type=\"hidden\" value=\"".stripslashes($mdbpath)."\">";
-			    echo " <input name=\"mdapath\" type=\"hidden\" value=\"".stripslashes($mdapath)."\">";
+			    echo " <input name=\"hostname\" type=\"hidden\" value=\"".stripslashes(trim($hostname))."\" />";
+			    echo " <input name=\"mdbpath\" type=\"hidden\" value=\"".stripslashes($mdbpath)."\" />";
+			    echo " <input name=\"mdapath\" type=\"hidden\" value=\"".stripslashes($mdapath)."\" />";
 		    }
 		    echo "</td><td>&nbsp;</td>";
 		    echo "</tr><tr><td>&nbsp;</td><td>";
-		    echo " <input type=submit name=save value=\"Import Questions\">";
+		    echo " <input type=submit name=save value=\"Import Questions\" />";
 		    echo "</td></tr>";
 		    echo "</table>";
 		    echo "</form>";
@@ -173,7 +173,7 @@ class quiz_file_format {
 		//			echo "<pre>";echo htmlspecialchars($qrec[2]); echo "</pre>";
       				$question->questiontext = addslashes(trim($qrec[2]));
 		//			echo "<pre>";echo $question->questiontext; echo "</pre>";
- 			        $question->name = preg_replace("/<br>/", "", $question->questiontext);
+ 			        $question->name = preg_replace("/<br />/", "", $question->questiontext);
          			$question->single = 1;	// Only one answer is allowed -- used for multiple choicers
 							$fractionset = 0;
 							for ($i=4;$i<=7;$i++) {
@@ -193,7 +193,7 @@ class quiz_file_format {
 						case 2:  // TRUE FALSE
 			        $question->qtype = TRUEFALSE; 
       				$question->questiontext = addslashes(trim($qrec[2]));
-			        $question->name = preg_replace("/<br>/", "", $question->questiontext);
+			        $question->name = preg_replace("/<br />/", "", $question->questiontext);
 							// for TF, $question->answer should be 1 for true, 0 for false
  			        if ($qrec[8] == "T") { $question->answer =1;} else { $question->answer = 0; }
 				      // for TF, use $question->feedbacktrue and feedbackfalse
@@ -204,7 +204,7 @@ class quiz_file_format {
 			        $question->qtype = SHORTANSWER;
       				$question->questiontext = addslashes(trim($qrec[2]));
 		//			echo "<pre>";echo $question->questiontext; echo "</pre>";
- 			        $question->name = preg_replace("/<br>/", "", $question->questiontext);
+ 			        $question->name = preg_replace("/<br />/", "", $question->questiontext);
 	          		$question->usecase=0;  // Ignore case -- for SHORT ANSWER questions
 							$answers = explode("~", $qrec[8]);
 							$question->answer[0]=" ";
@@ -234,7 +234,7 @@ class quiz_file_format {
 				}
 				foreach ($questions as $question) {   // Process and store each question
           $count++;
-          echo "<hr><p><b>$count</b>. ".stripslashes($question->questiontext)."</p>";
+          echo "<hr /><p><b>$count</b>. ".stripslashes($question->questiontext)."</p>";
           $question->category = $this->category->id;
           $question->stamp = make_unique_id_code();  // Set the unique code (not to be changed)
           $question->version = 1;                    // Original version of this question
@@ -360,7 +360,7 @@ class quiz_file_format {
         } else  { 
 //        	echo("Successful XML parse.  ");
         	// prepare the array for use in the pull-down
-/*        	echo "<br>count of rows is ". count ($result);
+/*        	echo "<br />count of rows is ". count ($result);
 					echo "<pre>\n";
 					$qResult = HtmlSpecialChars($qResult);
 					echo $qResult;

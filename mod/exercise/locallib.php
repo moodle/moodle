@@ -1568,11 +1568,11 @@ function exercise_print_assessment_form($exercise, $assessment = false, $allowch
     // FORM is needed for Mozilla browsers, else radio bttons are not checked
         ?>
     <form name="assessmentform" method="post" action="assessments.php">
-    <INPUT TYPE="hidden" NAME="id" VALUE="<?PHP echo $cm->id ?>">
-    <input type="hidden" name="aid" value="<?PHP echo $assessment->id ?>">
-    <input type="hidden" name="action" value="updateassessment">
-    <input type="hidden" name="resubmit" value="0">
-    <input type="hidden" name="returnto" value="<?PHP echo $returnto ?>">
+    <INPUT TYPE="hidden" NAME="id" VALUE="<?PHP echo $cm->id ?>" />
+    <input type="hidden" name="aid" value="<?PHP echo $assessment->id ?>" />
+    <input type="hidden" name="action" value="updateassessment" />
+    <input type="hidden" name="resubmit" value="0" />
+    <input type="hidden" name="returnto" value="<?PHP echo $returnto ?>" />
     <?PHP
     if ($assessment) {
         if (!$assessmentowner = get_record("user", "id", $assessment->userid)) {
@@ -1687,10 +1687,10 @@ function exercise_print_assessment_form($exercise, $assessment = false, $allowch
                                         }
                                     }
                                 if ($checked) {
-                                    echo " <INPUT TYPE=\"RADIO\" NAME=\"grade[$i]\" VALUE=\"$j\" CHECKED> &nbsp;&nbsp;&nbsp;\n";
+                                    echo " <INPUT TYPE=\"RADIO\" NAME=\"grade[$i]\" VALUE=\"$j\" CHECKED=\"checked\" /> &nbsp;&nbsp;&nbsp;\n";
                                     }
                                 else {
-                                    echo " <INPUT TYPE=\"RADIO\" NAME=\"grade[$i]\" VALUE=\"$j\"> &nbsp;&nbsp;&nbsp;\n";
+                                    echo " <INPUT TYPE=\"RADIO\" NAME=\"grade[$i]\" VALUE=\"$j\" /> &nbsp;&nbsp;&nbsp;\n";
                                     }
                                 }
                             echo "&nbsp;&nbsp;&nbsp;<B>$SCALE->end</B></CENTER>\n";
@@ -1768,10 +1768,10 @@ function exercise_print_assessment_form($exercise, $assessment = false, $allowch
                                         }
                                     }
                                 if ($checked) {
-                                    echo " <INPUT TYPE=\"RADIO\" NAME=\"grade[$i]\" VALUE=\"$j\" CHECKED> &nbsp;&nbsp;&nbsp;\n";
+                                    echo " <INPUT TYPE=\"RADIO\" NAME=\"grade[$i]\" VALUE=\"$j\" CHECKED=\"checked\" /> &nbsp;&nbsp;&nbsp;\n";
                                     }
                                 else {
-                                    echo " <INPUT TYPE=\"RADIO\" NAME=\"grade[$i]\" VALUE=\"$j\"> &nbsp;&nbsp;&nbsp;\n";
+                                    echo " <INPUT TYPE=\"RADIO\" NAME=\"grade[$i]\" VALUE=\"$j\" /> &nbsp;&nbsp;&nbsp;\n";
                                     }
                                 }
                             echo "&nbsp;&nbsp;&nbsp;<B>$SCALE->end</B></CENTER>\n";
@@ -1873,10 +1873,10 @@ function exercise_print_assessment_form($exercise, $assessment = false, $allowch
 
                 echo "  <TD>$iplus1</TD><TD>".text_to_html($elements[$i]->description)."</TD>\n";
                 if ($selection == $i) {
-                    echo "  <TD align=center><INPUT TYPE=\"RADIO\" NAME=\"grade[0]\" VALUE=\"$i\" CHECKED></TD>\n";
+                    echo "  <TD align=center><INPUT TYPE=\"RADIO\" NAME=\"grade[0]\" VALUE=\"$i\" CHECKED=\"checked\" /></TD>\n";
                     }
                 else {
-                    echo "  <TD align=center><INPUT TYPE=\"RADIO\" NAME=\"grade[0]\" VALUE=\"$i\"></TD>\n";
+                    echo "  <TD align=center><INPUT TYPE=\"RADIO\" NAME=\"grade[0]\" VALUE=\"$i\" /></TD>\n";
                     }
                 echo "<TD align=center>{$elements[$i]->maxscore}</TD></TR>\n";
                 }
@@ -1930,9 +1930,9 @@ function exercise_print_assessment_form($exercise, $assessment = false, $allowch
                         echo "<TR valign=top>\n";
 
                         if ($selection == $j) {
-                            echo "  <TD align=center><INPUT TYPE=\"RADIO\" NAME=\"grade[$i]\" VALUE=\"$j\" CHECKED></TD>\n";
+                            echo "  <TD align=center><INPUT TYPE=\"RADIO\" NAME=\"grade[$i]\" VALUE=\"$j\" CHECKED=\"checked\" /></TD>\n";
                             }else {
-                            echo "  <TD align=center><INPUT TYPE=\"RADIO\" NAME=\"grade[$i]\" VALUE=\"$j\"></TD>\n";
+                            echo "  <TD align=center><INPUT TYPE=\"RADIO\" NAME=\"grade[$i]\" VALUE=\"$j\" /></TD>\n";
                             }
                         echo "<TD>".text_to_html($rubrics[$j]->description)."</TD>\n";
                         }
@@ -2047,7 +2047,7 @@ function exercise_print_assessments_by_user_for_admin($exercise, $user) {
                 get_string("amend", "exercise")." ".get_string("gradeforstudentsassessment","exercise",
                 $course->student)."</a>\n";
             echo " | <a href=\"assessments.php?action=adminconfirmdelete&id=$cm->id&aid=$assessment->id\">".
-                get_string("delete", "exercise")."</a></p><hr>\n";
+                get_string("delete", "exercise")."</a></p><hr />\n";
             }
         }
     }
@@ -2071,7 +2071,7 @@ function exercise_print_assessments_for_admin($exercise, $submission) {
             echo "<p><center><b>".get_string("assessmentby", "exercise", fullname($user))."</b></center></p>\n";
             exercise_print_assessment_form($exercise, $assessment);
             echo "<p align=\"right\"><a href=\"assessments.php?action=adminconfirmdelete&id=$cm->id&aid=$assessment->id\">".
-                get_string("delete", "exercise")."</a></p><hr>\n";
+                get_string("delete", "exercise")."</a></p><hr />\n";
             }
         }
     }
@@ -2367,12 +2367,12 @@ function exercise_print_teacher_assessment_form($exercise, $assessment, $submiss
 
     ?>
     <form name="assessmentform" method="post" action="assessments.php">
-    <INPUT TYPE="hidden" NAME="id" VALUE="<?PHP echo $cm->id ?>">
-    <input type="hidden" name="said" value="<?PHP echo $assessment->id ?>">
-    <input type="hidden" name="sid" value="<?PHP echo $submission->id ?>">
-    <input type="hidden" name="action" value="updateteacherassessment">
-    <input type="hidden" name="resubmit" value="0">
-    <input type="hidden" name="returnto" value="<?PHP echo $returnto ?>">
+    <INPUT TYPE="hidden" NAME="id" VALUE="<?PHP echo $cm->id ?>" />
+    <input type="hidden" name="said" value="<?PHP echo $assessment->id ?>" />
+    <input type="hidden" name="sid" value="<?PHP echo $submission->id ?>" />
+    <input type="hidden" name="action" value="updateteacherassessment" />
+    <input type="hidden" name="resubmit" value="0" />
+    <input type="hidden" name="returnto" value="<?PHP echo $returnto ?>" />
     <?PHP
 
     // now print a normal assessment form based on the student's assessment for this submission 
@@ -2482,10 +2482,10 @@ function exercise_print_teacher_assessment_form($exercise, $assessment, $submiss
                                     }
                                 }
                                 if ($checked) {
-                                    echo " <INPUT TYPE=\"RADIO\" NAME=\"grade[$i]\" VALUE=\"$j\" CHECKED> &nbsp;&nbsp;&nbsp;\n";
+                                    echo " <INPUT TYPE=\"RADIO\" NAME=\"grade[$i]\" VALUE=\"$j\" CHECKED=\"checked\" /> &nbsp;&nbsp;&nbsp;\n";
                                 }
                                 else {
-                                    echo " <INPUT TYPE=\"RADIO\" NAME=\"grade[$i]\" VALUE=\"$j\"> &nbsp;&nbsp;&nbsp;\n";
+                                    echo " <INPUT TYPE=\"RADIO\" NAME=\"grade[$i]\" VALUE=\"$j\" /> &nbsp;&nbsp;&nbsp;\n";
                                 }
                             }
                             echo "&nbsp;&nbsp;&nbsp;<B>$SCALE->end</B></CENTER>\n";
@@ -2561,10 +2561,10 @@ function exercise_print_teacher_assessment_form($exercise, $assessment, $submiss
                                     }
                                 }
                                 if ($checked) {
-                                    echo " <INPUT TYPE=\"RADIO\" NAME=\"grade[$i]\" VALUE=\"$j\" CHECKED> &nbsp;&nbsp;&nbsp;\n";
+                                    echo " <INPUT TYPE=\"RADIO\" NAME=\"grade[$i]\" VALUE=\"$j\" CHECKED=\"checked\" /> &nbsp;&nbsp;&nbsp;\n";
                                 }
                                 else {
-                                    echo " <INPUT TYPE=\"RADIO\" NAME=\"grade[$i]\" VALUE=\"$j\"> &nbsp;&nbsp;&nbsp;\n";
+                                    echo " <INPUT TYPE=\"RADIO\" NAME=\"grade[$i]\" VALUE=\"$j\" /> &nbsp;&nbsp;&nbsp;\n";
                                 }
                             }
                             echo "&nbsp;&nbsp;&nbsp;<B>$SCALE->end</B></CENTER>\n";
@@ -2662,10 +2662,10 @@ function exercise_print_teacher_assessment_form($exercise, $assessment, $submiss
                 echo "<TR valign=top>\n";
                 echo "  <TD>$iplus1</TD><TD>".text_to_html($elements[$i]->description)."</TD>\n";
                 if ($selection == $i) {
-                    echo "  <TD align=center><INPUT TYPE=\"RADIO\" NAME=\"grade[0]\" VALUE=\"$i\" CHECKED></TD>\n";
+                    echo "  <TD align=center><INPUT TYPE=\"RADIO\" NAME=\"grade[0]\" VALUE=\"$i\" CHECKED=\"checked\" /></TD>\n";
                 }
                 else {
-                    echo "  <TD align=center><INPUT TYPE=\"RADIO\" NAME=\"grade[0]\" VALUE=\"$i\"></TD>\n";
+                    echo "  <TD align=center><INPUT TYPE=\"RADIO\" NAME=\"grade[0]\" VALUE=\"$i\" /></TD>\n";
                 }
                 echo "<TD align=center>{$elements[$i]->maxscore}</TD></TR>\n";
             }
@@ -2715,9 +2715,9 @@ function exercise_print_teacher_assessment_form($exercise, $assessment, $submiss
                         }
                         echo "<TR valign=top>\n";
                         if ($selection == $j) {
-                            echo "  <TD align=center><INPUT TYPE=\"RADIO\" NAME=\"grade[$i]\" VALUE=\"$j\" CHECKED></TD>\n";
+                            echo "  <TD align=center><INPUT TYPE=\"RADIO\" NAME=\"grade[$i]\" VALUE=\"$j\" CHECKED=\"checked\" /></TD>\n";
                         } else {
-                            echo "  <TD align=center><INPUT TYPE=\"RADIO\" NAME=\"grade[$i]\" VALUE=\"$j\"></TD>\n";
+                            echo "  <TD align=center><INPUT TYPE=\"RADIO\" NAME=\"grade[$i]\" VALUE=\"$j\" /></TD>\n";
                         }
                         echo "<TD>".text_to_html($rubrics[$j]->description)."</TD>\n";
                     }
@@ -2865,11 +2865,11 @@ function exercise_print_upload_form($exercise) {
 
     echo "<DIV ALIGN=CENTER>";
     echo "<FORM ENCTYPE=\"multipart/form-data\" METHOD=\"POST\" ACTION=upload.php>";
-    echo " <INPUT TYPE=hidden NAME=MAX_FILE_SIZE value=\"$exercise->maxbytes\">";
-    echo " <INPUT TYPE=hidden NAME=id VALUE=\"$cm->id\">";
-    echo "<b>".get_string("title", "exercise")."</b>: <INPUT NAME=\"title\" TYPE=\"text\" SIZE=\"60\" MAXSIZE=\"100\"><BR><BR>\n";
-    echo " <INPUT NAME=\"newfile\" TYPE=\"file\" size=\"50\">";
-    echo " <INPUT TYPE=submit NAME=save VALUE=\"".get_string("uploadthisfile")."\">";
+    echo " <INPUT TYPE=hidden NAME=MAX_FILE_SIZE value=\"$exercise->maxbytes\" />";
+    echo " <INPUT TYPE=hidden NAME=id VALUE=\"$cm->id\" />";
+    echo "<b>".get_string("title", "exercise")."</b>: <INPUT NAME=\"title\" TYPE=\"text\" SIZE=\"60\" MAXSIZE=\"100\" /><BR><BR>\n";
+    echo " <INPUT NAME=\"newfile\" TYPE=\"file\" size=\"50\" />";
+    echo " <INPUT TYPE=submit NAME=save VALUE=\"".get_string("uploadthisfile")."\" />";
     echo " (".get_string("maximumupload").": ".display_size($exercise->maxbytes).")\n"; 
     echo "</FORM>";
     echo "</DIV>";

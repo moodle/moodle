@@ -19,7 +19,7 @@ $ewiki_t["de"]["ATTACHMENTS"] = "Anhänge";
 
 function ewiki_view_append_attachments($id, $data, $action) {
 
-   $o = '<hr><h4><a href="' . ewiki_script(EWIKI_ACTION_ATTACHMENTS, $id) .
+   $o = '<hr /><h4><a href="' . ewiki_script(EWIKI_ACTION_ATTACHMENTS, $id) .
         '">' . ewiki_t("ATTACHMENTS") . '</a></h4>';
 
    $scan = 's:7:"section";' . serialize($id);

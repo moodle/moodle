@@ -264,8 +264,8 @@ function testNode($DomNode)
                                   $error->data->tag = "metadata";
                                   array_push($errors, $error);
                                   //echo "WARNING, se il tag metadata non e' figlio di manifest non deve avere schema
-                                  //      come figlio <br>";
-			         //echo "Probabilmente la versione e' antecedente alla 1.3 <br>";
+                                  //      come figlio <br />";
+			         //echo "Probabilmente la versione e' antecedente alla 1.3 <br />";
 			        }
 			        if($new_t_scv < $t_scv)
                                 {
@@ -273,8 +273,8 @@ function testNode($DomNode)
                                   $error->data->tag = "metadata";
                                   array_push($errors, $error);
                                   //echo "WARNING, se il tag metadata non e' figlio di manifest, non deve avere schemaversion
-                                  //      come figlio <br>";
-			          //echo "Probabilmente la versione e' antecedente alla 1.3 <br>";
+                                  //      come figlio <br />";
+			          //echo "Probabilmente la versione e' antecedente alla 1.3 <br />";
                                 }
                             }
 			  }	
@@ -376,7 +376,7 @@ function testNode($DomNode)
 				$cont_err++;
                             } 
 			  }          
-			  //echo "<br> SCANSIONE DI LOCATION TERMINATA, OK \n";
+			  //echo "<br /> SCANSIONE DI LOCATION TERMINATA, OK \n";
 			}
 
 			if($nome_figlio == "organizations")

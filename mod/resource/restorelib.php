@@ -82,7 +82,7 @@
             $newid = insert_record ("resource",$resource);
 
             //Do some output     
-            echo "<ul><li>".get_string("modulename","resource")." \"".$resource->name."\"<br>";
+            echo "<ul><li>".get_string("modulename","resource")." \"".$resource->name."\"<br />";
             backup_flush(300);
 
             if ($newid) {
@@ -203,14 +203,14 @@
                         $post->message = addslashes($result);
                         $status = update_record("forum_posts",$post);
                         if ($CFG->debug>7) {
-                            echo "<br><hr>".$content."<br>changed to</br>".$result."<hr><br>";
+                            echo "<br /><hr />".$content."<br />changed to</br>".$result."<hr /><br />";
                         }
                     }
                     //Do some output
                     if (($i+1) % 5 == 0) {
                         echo ".";
                         if (($i+1) % 100 == 0) {
-                            echo "<br>";
+                            echo "<br />";
                         }
                         backup_flush(300);
                     }
@@ -238,14 +238,14 @@
                         $forum->intro = addslashes($result);
                         $status = update_record("forum",$forum);
                         if ($CFG->debug>7) {
-                            echo "<br><hr>".$content."<br>changed to</br>".$result."<hr><br>";
+                            echo "<br /><hr />".$content."<br />changed to</br>".$result."<hr /><br />";
                         }
                     }
                     //Do some output
                     if (($i+1) % 5 == 0) {
                         echo ".";
                         if (($i+1) % 100 == 0) {
-                            echo "<br>";
+                            echo "<br />";
                         }
                         backup_flush(300);
                     }
@@ -274,14 +274,14 @@
                         $resource->alltext = addslashes($result);
                         $status = update_record("resource",$resource);
                         if ($CFG->debug>7) {
-                            echo "<br><hr>".$content."<br>changed to</br>".$result."<hr><br>";
+                            echo "<br /><hr />".$content."<br />changed to</br>".$result."<hr /><br />";
                         }
                     }
                     //Do some output
                     if (($i+1) % 5 == 0) {
                         echo ".";
                         if (($i+1) % 100 == 0) {
-                            echo "<br>";
+                            echo "<br />";
                         }
                         backup_flush(300);
                     }
@@ -309,14 +309,14 @@
                         $resource->summary = addslashes($result);
                         $status = update_record("resource",$resource);
                         if ($CFG->debug>7) {
-                            echo "<br><hr>".$content."<br>changed to</br>".$result."<hr><br>";
+                            echo "<br /><hr />".$content."<br />changed to</br>".$result."<hr /><br />";
                         }
                     }
                     //Do some output
                     if (($i+1) % 5 == 0) {
                         echo ".";
                         if (($i+1) % 100 == 0) {
-                            echo "<br>";
+                            echo "<br />";
                         }
                         backup_flush(300);
                     }
@@ -375,7 +375,7 @@
             $status = true;
             break;
         default:
-            echo "action (".$log->module."-".$log->action.") unknow. Not restored<br>";                 //Debug
+            echo "action (".$log->module."-".$log->action.") unknow. Not restored<br />";                 //Debug
             break;
         }
 

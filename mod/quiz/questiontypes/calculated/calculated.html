@@ -1,6 +1,6 @@
 <FORM name="theform" method="post" action="question.php">
 <CENTER>
-<INPUT type="hidden" name="nextwizardpage" value="<?php p($nextwizardpage)?>"/>
+<INPUT type="hidden" name="nextwizardpage" value="<?php p($nextwizardpage)?>" />
 <?php foreach ($calculatedmessages as $message) {formerr("$message<br/>");} ?>
 <TABLE cellpadding=5>
 <TR valign=top>
@@ -12,7 +12,7 @@
 <TR valign=top>
     <TD align=right><P><B><?php  print_string("questionname", "quiz") ?>:</B></P></TD>
     <TD>
-        <INPUT type="text" name="name" size=50 value="<?php  p($question->name) ?>">
+        <INPUT type="text" name="name" size=50 value="<?php  p($question->name) ?>" />
         <?php  if (isset($err["name"])) formerr($err["name"]); ?>
     </TD>
 </TR>
@@ -40,7 +40,7 @@
            print_textarea($usehtmleditor, 20, 60, 630, 300, "questiontext", $question->questiontext);
 
            if ($usehtmleditor) {   /// Trying this out for a while
-               echo '<input type="hidden" name="questiontextformat" value="'.FORMAT_HTML.'">';
+               echo '<input type="hidden" name="questiontextformat" value="'.FORMAT_HTML.'" />';
            } else {
                echo "<div align=right>";
                print_string("formattexttype");
@@ -70,8 +70,8 @@
 <TR valign=top>
 <TD align=right><P><B><?php  print_string("correctanswerformula", "quiz") ?>:</B></P></TD>
     <TD>
-    <INPUT align="LEFT" type="text" id="formula0" name="answer[]" size="20" value="<?php  p($answers[0]->answer) ?>"/>&nbsp;&nbsp;
-    <INPUT type="hidden" name="fraction[]" value="1.0"/>
+    <INPUT align="LEFT" type="text" id="formula0" name="answer[]" size="20" value="<?php  p($answers[0]->answer) ?>" />&nbsp;&nbsp;
+    <INPUT type="hidden" name="fraction[]" value="1.0" />
     </TD>
 </TR>
 <TR valign=top>
@@ -107,9 +107,9 @@
 <TR valign=top>
 <TD align=right><P><B><?php  print_string("unit", "quiz") ?>:</B></P></TD>
     <TD>
-        <P><INPUT type="HIDDEN" name="multiplier[]" value="1.0"/>
+        <P><INPUT type="HIDDEN" name="multiplier[]" value="1.0" />
         <INPUT align="LEFT" type="text" id="defaultunit" name="unit[]"
-                size="5" value="<?php  p($units[0]->unit) ?>"/>
+                size="5" value="<?php  p($units[0]->unit) ?>" />
         <B>(<?php  print_string("optional", "quiz") ?>)</B></P>
     </TD>
 </TR>
@@ -128,11 +128,11 @@ for ($i=1; $i<count($units); $i++) {
         <P><B><?php  print_string("multiplier", "quiz") ?>:</B>
         <INPUT type="text" id="<?php  p("multiplier$i") ?>" size="10"
                 align="RIGHT" name="multiplier[]"
-                value="<?php  p($unit->multiplier) ?>"/>
+                value="<?php  p($unit->multiplier) ?>" />
         <B>&nbsp;&nbsp;&nbsp;<?php  print_string("unit", "quiz") ?>:</B>
         <INPUT align="LEFT" type="text" id="<?php  p("unit$i") ?>"
                 name="unit[]"
-                size="5" value="<?php  p($unit->unit) ?>"/></P>
+                size="5" value="<?php  p($unit->unit) ?>" /></P>
     </TD>
 </TR>
 <?PHP
@@ -140,9 +140,9 @@ for ($i=1; $i<count($units); $i++) {
 ?>
 </TABLE>
 
-<input type="hidden" name=id value="<?php  p($question->id) ?>">
-<input type="hidden" name=qtype value="<?php  p($question->qtype) ?>">
-<input type="submit" onClick="return determineMinAndMax();"  value="<?php  print_string("savechanges") ?>">
+<input type="hidden" name=id value="<?php  p($question->id) ?>" />
+<input type="hidden" name=qtype value="<?php  p($question->qtype) ?>" />
+<input type="submit" onClick="return determineMinAndMax();"  value="<?php  print_string("savechanges") ?>" />
 </center>
 </form>
 <script language="javascript">

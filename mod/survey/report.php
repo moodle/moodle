@@ -144,7 +144,7 @@
                     }
                     echo "<p align=center><a title=\"$strseemoredetail\" href=report.php?action=questions&id=$id&qid=$question->multi>";
                     survey_print_graph("id=$id&qid=$question->id&group=$currentgroup&type=multiquestion.png");
-                    echo "</a></p><br>";
+                    echo "</a></p><br />";
                 } 
             }
         }
@@ -354,7 +354,7 @@
                      echo "<p align=center>";
                      echo "<a title=\"$strseemoredetail\" href=report.php?action=questions&id=$id&qid=$question->multi>";
                      survey_print_graph("id=$id&qid=$question->id&sid=$student&type=studentmultiquestion.png");
-                     echo "</a></p><br>";
+                     echo "</a></p><br />";
                  } 
              }
          }        
@@ -387,11 +387,11 @@
          echo "<blockquote>";
          echo "<textarea name=notes rows=10 cols=60>";
          p($notes);
-         echo "</textarea><br>";
-         echo "<input type=hidden name=action value=student>";
-         echo "<input type=hidden name=student value=$student>";
-         echo "<input type=hidden name=id value=$cm->id>";
-         echo "<input type=submit value=\"".get_string("savechanges")."\">";
+         echo "</textarea><br />";
+         echo "<input type=hidden name=action value=student />";
+         echo "<input type=hidden name=student value=\"$student\" />";
+         echo "<input type=hidden name=id value=\"$cm->id\" />";
+         echo "<input type=submit value=\"".get_string("savechanges")."\" />";
          echo "</blockquote>";
          echo "</form>";
          echo "</center>";

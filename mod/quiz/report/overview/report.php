@@ -117,14 +117,14 @@ class quiz_report extends quiz_default_report {
         $onsub = "return confirm('$strreallydel')";
 
         echo "<form method=\"post\" action=\"report.php\" name=\"delform\" onsubmit=\"$onsub\">\n";
-        echo "<input type=\"hidden\" name=\"del\" value=\"selection\">\n";
-        echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\">\n";
+        echo "<input type=\"hidden\" name=\"del\" value=\"selection\" />\n";
+        echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\" />\n";
 
         print_table($table);
     
         //There might be a more elegant way than using the <center> tag for this
         echo "<center><input type=\"submit\" value=\"$strdeleteselected\">&nbsp;";
-        echo "<input type=button value=\"$strdeleteall\" onClick=\"if(delcheck()){document.delform.submit()}\">\n</center>\n";
+        echo "<input type=button value=\"$strdeleteall\" onClick=\"if(delcheck()){document.delform.submit()}\" />\n</center>\n";
         echo "</form>\n";
 
         return true;
@@ -145,7 +145,7 @@ class quiz_report extends quiz_default_report {
             } else {
                 $attemptlapse = "...";
             }
-            $button = "<input type=checkbox name=\"box$attempt->id\" value=\"$attempt->id\">";
+            $button = "<input type=checkbox name=\"box$attempt->id\" value=\"$attempt->id\" />";
             $revurl = "review.php?q=$quiz->id&attempt=$attempt->id";
             if ($attemptgrade == $bestgrade) {
                 $userattempts[] = "$button&nbsp;<span class=\"highlight\">$attemptgrade</span>&nbsp;<a href=\"$revurl\">$attemptdate</a>&nbsp;($attemptlapse)";

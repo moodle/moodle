@@ -112,7 +112,7 @@
             $newid = insert_record ("glossary",$glossary);
 
             //Do some output
-            echo "<ul><li>".get_string("modulename","glossary")." \"".$glossary->name."\"<br>";
+            echo "<ul><li>".get_string("modulename","glossary")." \"".$glossary->name."\"<br />";
             backup_flush(300);
 
             if ($newid) {
@@ -193,7 +193,7 @@
 	        if (($i+1) % 50 == 0) {
       	            echo ".";
             	    if (($i+1) % 1000 == 0) {
-                        echo "<br>";
+                        echo "<br />";
 	            }
       	            backup_flush(300);
                 }
@@ -260,7 +260,7 @@
             if (($i+1) % 50 == 0) {
                 echo ".";
                 if (($i+1) % 1000 == 0) {
-                    echo "<br>";
+                    echo "<br />";
                 }
                 backup_flush(300);
             }
@@ -311,7 +311,7 @@
             if (($i+1) % 50 == 0) {
                 echo ".";
                 if (($i+1) % 1000 == 0) {
-                    echo "<br>";
+                    echo "<br />";
                 }
                 backup_flush(300);
             }
@@ -349,7 +349,7 @@
             if (($i+1) % 50 == 0) {
                 echo ".";
                 if (($i+1) % 1000 == 0) {
-                    echo "<br>";
+                    echo "<br />";
                 }
                 backup_flush(300);
             }
@@ -393,7 +393,7 @@
             if (($i+1) % 50 == 0) {
                 echo ".";
                 if (($i+1) % 1000 == 0) {
-                    echo "<br>";
+                    echo "<br />";
                 }
                 backup_flush(300);
             }
@@ -445,7 +445,7 @@
             if (($i+1) % 50 == 0) {
                 echo ".";
                 if (($i+1) % 1000 == 0) {
-                    echo "<br>";
+                    echo "<br />";
                 }
                 backup_flush(300);
             }
@@ -680,7 +680,7 @@
             }
             break;
         default:
-            echo "action (".$log->module."-".$log->action.") unknow. Not restored<br>";                 //Debug
+            echo "action (".$log->module."-".$log->action.") unknow. Not restored<br />";                 //Debug
             break;
         }
 

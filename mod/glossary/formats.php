@@ -259,10 +259,10 @@
     </tr>
     <tr>
         <td colspan=3 align=center>
-        <input type="submit" value="<?php print_string("savechanges") ?>"></td>
+        <input type="submit" value="<?php print_string("savechanges") ?>" /></td>
     </tr>
-    <input type="hidden" name=id    value="<?php p($id) ?>">
-    <input type="hidden" name=mode    value="edit">
+    <input type="hidden" name=id    value="<?php p($id) ?>" />
+    <input type="hidden" name=mode    value="edit" />
     <?PHP
     
     print_simple_box_end();    

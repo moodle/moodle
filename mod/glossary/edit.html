@@ -17,14 +17,14 @@ if (isset($errors)) {
     <td valign="top"><table border="0" width="100%" cellspacing="0" cellpadding="5">
         <tr>
           <td width="150" align=right><p><b><?php echo get_string("concept","glossary") ?>:</b></p></td>
-          <td><input type="text" name="concept" size=30 value="<?php p($newentry->concept) ?>"></td>
+          <td><input type="text" name="concept" size=30 value="<?php p($newentry->concept) ?>" /></td>
         </tr>
         <tr>
           <td align="right"><p><b><?php echo get_string("categories","glossary") ?>:</b></p></td>
           <td valign="top">
     <?php
         $categories = get_records("glossary_categories","glossaryid",$glossary->id,'name ASC');
-        echo "<select size=\"5\" name=\"categories[]\" multiple=\"yes\">";
+        echo "<select size=\"5\" name=\"categories[]\" multiple=\"yes\" />";
         echo "<option value=\"0\">" . get_string("notcategorised","glossary") . "</option>";
 
         if ( $categories ) {
@@ -60,9 +60,9 @@ if (isset($errors)) {
           <td colspan="2">
 <?php
     if ( !$glossary->usedynalink ) {
-      echo '<input type="hidden" name=usedynalink value="0">';
-      echo '<input type="hidden" name=casesensitive value="0">';
-      echo '<input type="hidden" name=fullmatch value="0">';
+      echo '<input type="hidden" name=usedynalink value="0" />';
+      echo '<input type="hidden" name=casesensitive value="0" />';
+      echo '<input type="hidden" name=fullmatch value="0" />';
     } else {
         echo '<script>var items = [\'casesensitive\',\'fullmatch\'];</script>';
 
@@ -71,7 +71,7 @@ if (isset($errors)) {
         } else {
             $selected = "";
         }
-        echo '<input type="checkbox" name="usedynalink" value=1 ' . $selected . ' onclick="return lockoptions(\'form\',\'usedynalink\', items)"> ';
+        echo '<input type="checkbox" name="usedynalink" value=1 ' . $selected . ' onclick="return lockoptions(\'form\',\'usedynalink\', items)" /> ';
         echo '<font size="-1">';
         print_string("entryusedynalink","glossary");
         echo '</font>';
@@ -83,7 +83,7 @@ if (isset($errors)) {
         } else {
             $selected = "";
         }
-        echo '<input type="checkbox" name="casesensitive" value=1 ' . $selected . '> ';
+        echo '<input type="checkbox" name="casesensitive" value=1 ' . $selected . ' /> ';
         echo '<font size="-1">';
         print_string("casesensitive","glossary");
         echo '</font>';
@@ -96,7 +96,7 @@ if (isset($errors)) {
         } else {
             $selected = "";
         }
-        echo '<input type="checkbox" name="fullmatch" value=1 ' . $selected . '> ';
+        echo '<input type="checkbox" name="fullmatch" value=1 ' . $selected . ' /> ';
         echo '<font size="-1">';
         print_string("fullmatch","glossary");
         echo '</font>';
@@ -143,7 +143,7 @@ if (isset($errors)) {
     <?php
         if ($usehtmleditor) {   /// Trying this out for a while
             print_string('formathtml');
-            echo '<input type="hidden" name="format" value="'.FORMAT_HTML.'">';
+            echo '<input type="hidden" name="format" value="'.FORMAT_HTML.'" />';
         } else {
             if (!isset($newentry->format)) {
                 $newentry->format = $defaultformat;
@@ -158,8 +158,8 @@ if (isset($errors)) {
 <tr valign=top>
     <td align=right><p><b><?php print_string("attachment", "glossary") ?>:<br />(<?php print_string("optional") ?>)&nbsp;</b></p></td>
     <td>
-    <input type="hidden" name="MAX_FILE_SIZE" value="<?php echo get_max_upload_file_size($CFG->maxbytes, $course->maxbytes) ?>">
-    <input type="file" name="attachment" size=40>
+    <input type="hidden" name="MAX_FILE_SIZE" value="<?php echo get_max_upload_file_size($CFG->maxbytes, $course->maxbytes) ?>" />
+    <input type="file" name="attachment" size=40 />
     <?php
        helpbutton("attachment", get_string("attachment", "glossary"), "glossary");
        print_string("maxsize", "", display_size(get_max_upload_file_size($CFG->maxbytes, $course->maxbytes)));
@@ -170,21 +170,21 @@ if (isset($errors)) {
 <td colspan=2>
     <p align=center>
     <?php if (isset($newentry->id)) {
-        echo "<input type=\"hidden\" name=e value=\"$newentry->id\">";
+        echo "<input type=\"hidden\" name=e value=\"$newentry->id\" />";
       }
   ?>
 
-  <input type="hidden" name=husedynalink value="1">
-  <input type="hidden" name=hcasesensitive value="0">
-  <input type="hidden" name=hfullmatch value="1">
+  <input type="hidden" name=husedynalink value="1" />
+  <input type="hidden" name=hcasesensitive value="0" />
+  <input type="hidden" name=hfullmatch value="1" />
 
-  <input type="hidden" name=id value="<?php p($cm->id) ?>">
-  <input type="hidden" name=mode value="<?php p($mode) ?>">
-  <input type="hidden" name=hook value="<?php p($hook) ?>">
+  <input type="hidden" name=id value="<?php p($cm->id) ?>" />
+  <input type="hidden" name=mode value="<?php p($mode) ?>" />
+  <input type="hidden" name=hook value="<?php p($hook) ?>" />
   <input type="hidden" name=confirm value="1">
 
-  <input type="submit" value="<?php print_string("savechanges") ?>">
-  <input type="reset" value="<?php print_string("revert") ?>">
+  <input type="submit" value="<?php print_string("savechanges") ?>" />
+  <input type="reset" value="<?php print_string("revert") ?>" />
   </P>
 </td>
 </tr>

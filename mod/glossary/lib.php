@@ -262,7 +262,7 @@ function glossary_print_recent_activity($course, $isteacher, $timestart) {
             
             $user = get_record("user","id",$entry->userid);
             $fullname = fullname($user, $isteacher);
-            echo "<p><font size=1>$date - $fullname<br>";
+            echo "<p><font size=1>$date - $fullname<br />";
             echo "\"<a href=\"$CFG->wwwroot/mod/glossary/view.php?g=$entry->glossaryid&mode=entry&hook=$entry->id\">";
             echo "$entry->concept";
             echo "</a>\"</font></p>";
@@ -462,7 +462,7 @@ function glossary_debug($debug,$text,$br=1) {
     if ( $debug ) {
         echo '<font color=red>' . $text . '</font>';
         if ( $br ) {
-            echo '<br>';
+            echo '<br />';
         }
     }
 }
@@ -1262,7 +1262,7 @@ for ($row = 0; $row < $numrows; $row++) {
       </td>
     </tr>
     <tr>
-      <td width="100%" bgcolor="<?php p($tablecolor) ?>"><hr></td>
+      <td width="100%" bgcolor="<?php p($tablecolor) ?>"><hr /></td>
     </tr>
     <tr>
       <td width="100%" bgcolor="<?php p($tablecolor) ?>">
@@ -1430,7 +1430,7 @@ global $CFG;
               if ((int) ($i % $letters_by_line) != 0 or $i == 0) {
                    echo ' | ';
               } else {
-                   echo '<br>';
+                   echo '<br />';
               }
           }
      }
@@ -1515,7 +1515,7 @@ global $CFG;
          $sort        = get_string("sortby", "glossary");
      }
 
-     echo "<br>$sort: $sbtag<a title=\"$ssort $sordertitle\" href=\"$CFG->wwwroot/mod/glossary/view.php?id=$cm->id&sortkey=$sorder$sneworder&mode=$mode\">$ssort$sicon</a>$sendbtag | ".
+     echo "<br />$sort: $sbtag<a title=\"$ssort $sordertitle\" href=\"$CFG->wwwroot/mod/glossary/view.php?id=$cm->id&sortkey=$sorder$sneworder&mode=$mode\">$ssort$sicon</a>$sendbtag | ".
                           "$fbtag<a title=\"$fsort $fordertitle\" href=\"$CFG->wwwroot/mod/glossary/view.php?id=$cm->id&sortkey=$forder$fneworder&mode=$mode\">$fsort$ficon</a>$fendbtag<br />";
 }
 

@@ -260,20 +260,20 @@
     
     echo '<p align="center">';
     echo '<form method="POST" action="view.php">';
-    echo '<input type="submit" value="'.$strsearch.'" name="searchbutton"> ';
+    echo '<input type="submit" value="'.$strsearch.'" name="searchbutton" /> ';
     if ($mode == 'search') {
-        echo '<input type="text" name="hook" size="20" value="'.$hook.'"> ';
+        echo '<input type="text" name="hook" size="20" value="'.$hook.'" /> ';
     } else {
-        echo '<input type="text" name="hook" size="20" value=""> ';
+        echo '<input type="text" name="hook" size="20" value="" /> ';
     }
     if ($fullsearch) {
         $fullsearchchecked = 'checked="checked"';
     } else {
         $fullsearchchecked = '';
     }
-    echo '<input type="checkbox" name="fullsearch" value="1" '.$fullsearchchecked.'>';
-    echo '<input type="hidden" name="mode" value="search">';
-    echo '<input type="hidden" name="id" value="'.$cm->id.'">';
+    echo '<input type="checkbox" name="fullsearch" value="1" '.$fullsearchchecked.' />';
+    echo '<input type="hidden" name="mode" value="search" />';
+    echo '<input type="hidden" name="id" value="'.$cm->id.'" />';
     echo $strsearchindefinition;
     echo '</form>';
     echo '</p>';
@@ -303,7 +303,7 @@
             for ($i = 0; ($i*$entriesbypage) < $count  ; $i++   ) {
                 if ( $paging != '' ) {
                     if ($i % 20 == 0 and $i) {
-                        $paging .= '<br>';
+                        $paging .= '<br />';
                     } else {
                         $paging .= ' | ';
                     }
@@ -335,7 +335,7 @@
             }
 
             echo "<form name=form method=post action=rate.php>";
-            echo "<input type=hidden name=id value=\"$course->id\">";
+            echo "<input type=hidden name=id value=\"$course->id\" />";
         }
 
         foreach ($allentries as $entry) {
@@ -397,7 +397,7 @@
     }
 
     if ($ratingsmenuused) {
-        echo "<p><center><input type=\"submit\" value=\"".get_string("sendinratings", "glossary")."\">";
+        echo "<p><center><input type=\"submit\" value=\"".get_string("sendinratings", "glossary")."\" />";
         if ($glossary->scale < 0) {
             if ($scale = get_record("scale", "id", abs($glossary->scale))) {
                 print_scale_menu_helpbutton($course->id, $scale );
@@ -415,7 +415,7 @@
     glossary_print_tabbed_table_end();
     if ( $debug and isadmin() ) {
         echo '<p>';
-        print_simple_box("$sqlselect<br> $sqlfrom<br> $sqlwhere<br> $sqlorderby<br> $sqllimit","center","85%");
+        print_simple_box("$sqlselect<br /> $sqlfrom<br /> $sqlwhere<br /> $sqlorderby<br /> $sqllimit","center","85%");
 
         echo "<p align=right><font size=-3>";
         echo microtime_diff($CFG->startpagetime, microtime());

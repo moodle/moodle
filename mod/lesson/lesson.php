@@ -91,15 +91,15 @@
 		print_heading_with_help(get_string("addabranchtable", "lesson"), "overview", "lesson");
         ?>
         <form name="form" method="post" action="lesson.php">
-        <input type="hidden" name="id" value="<?PHP echo $cm->id ?>">
-        <input type="hidden" name="action" value="insertpage">
-        <input type="hidden" name="pageid" value="<?PHP echo $_GET['pageid'] ?>">
-        <input type="hidden" name="qtype" value="<?PHP echo LESSON_BRANCHTABLE ?>">
+        <input type="hidden" name="id" value="<?PHP echo $cm->id ?>" />
+        <input type="hidden" name="action" value="insertpage" />
+        <input type="hidden" name="pageid" value="<?PHP echo $_GET['pageid'] ?>" />
+        <input type="hidden" name="qtype" value="<?PHP echo LESSON_BRANCHTABLE ?>" />
         <center><table cellpadding=5 border=1>
         <tr><td align="center">
         <tr valign="top">
         <td><b><?php print_string("pagetitle", "lesson"); ?>:</b><br />
-        <input type="text" name="title" size="80" maxsize="255" value=""></td></tr>
+        <input type="text" name="title" size="80" maxsize="255" value="" /></td></tr>
         <?PHP
         echo "<tr><td><b>";
         echo get_string("pagecontents", "lesson").":</b><br />\n";
@@ -125,8 +125,8 @@
         // close table and form
         ?>
         </table><br />
-        <input type="submit" value="<?php  print_string("addabranchtable", "lesson") ?>">
-        <input type="submit" name="cancel" value="<?php  print_string("cancel") ?>">
+        <input type="submit" value="<?php  print_string("addabranchtable", "lesson") ?>" />
+        <input type="submit" name="cancel" value="<?php  print_string("cancel") ?>" />
         </center>
         </form>
         <?PHP
@@ -228,14 +228,14 @@
 		print_heading_with_help(get_string("addaquestionpage", "lesson"), "overview", "lesson");
         ?>
         <form name="form" method="post" action="lesson.php">
-        <input type="hidden" name="id" value="<?PHP echo $cm->id ?>">
-        <input type="hidden" name="action" value="insertpage">
-        <input type="hidden" name="pageid" value="<?PHP echo $_GET['pageid'] ?>">
+        <input type="hidden" name="id" value="<?PHP echo $cm->id ?>" />
+        <input type="hidden" name="action" value="insertpage" />
+        <input type="hidden" name="pageid" value="<?PHP echo $_GET['pageid'] ?>" />
         <center><table cellpadding=5 border=1>
         <tr><td align="center">
         <tr valign="top">
         <td><b><?php print_string("pagetitle", "lesson"); ?>:</b><br />
-        <input type="text" name="title" size="80" maxsize="255" value=""></td></tr>
+        <input type="text" name="title" size="80" maxsize="255" value="" /></td></tr>
         <?PHP
         echo "<tr><td><b>";
         echo get_string("pagecontents", "lesson").":</b><br />\n";
@@ -246,7 +246,7 @@
         choose_from_menu($LESSON_QUESTION_TYPE, "qtype", LESSON_MULTICHOICE, "");
         helpbutton("questiontype", get_string("questiontype", "lesson"), "lesson");
         echo "<br /><b>".get_string("questionoption", "lesson").":</b>\n";
-        echo " <input type=\"checkbox\" name=\"qoption\" value=\"1\"/>";
+        echo " <input type=\"checkbox\" name=\"qoption\" value=\"1\"/ />";
         helpbutton("questionoption", get_string("questionoption", "lesson"), "lesson");
         echo "</td></tr>\n";
         for ($i = 0; $i < $lesson->maxanswers; $i++) {
@@ -271,8 +271,8 @@
         // close table and form
         ?>
         </table><br />
-        <input type="submit" value="<?php  print_string("addaquestionpage", "lesson") ?>">
-        <input type="submit" name="cancel" value="<?php  print_string("cancel") ?>">
+        <input type="submit" value="<?php  print_string("addaquestionpage", "lesson") ?>" />
+        <input type="submit" name="cancel" value="<?php  print_string("cancel") ?>" />
         </center>
         </form>
         <?PHP
@@ -677,11 +677,11 @@
             }
         }
         echo "<form name=\"pageform\" method =\"post\" action=\"view.php\">\n";
-        echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\">\n";
-        echo "<input type=\"hidden\" name=\"action\" value=\"navigation\">\n";
-        echo "<input type=\"hidden\" name=\"pageid\" value=\"$newpageid\">\n";
+        echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\" />\n";
+        echo "<input type=\"hidden\" name=\"action\" value=\"navigation\" />\n";
+        echo "<input type=\"hidden\" name=\"pageid\" value=\"$newpageid\" />\n";
         echo "<p align=\"center\"><input type=\"submit\" name=\"continue\" value=\"".
-            get_string("continue", "lesson")."\"></p>\n";
+            get_string("continue", "lesson")."\" /></p>\n";
         echo "</form>\n";
 	}
 	
@@ -786,15 +786,15 @@
         // give teacher a proforma
         ?>
         <form name="editpage" method="post" action="lesson.php">
-        <input type="hidden" name="id" value="<?PHP echo $cm->id ?>">
-        <input type="hidden" name="action" value="updatepage">
-        <input type="hidden" name="pageid" value="<?PHP echo $_GET['pageid'] ?>">
-        <input type="hidden" name="redisplay" value="0">
+        <input type="hidden" name="id" value="<?PHP echo $cm->id ?>" />
+        <input type="hidden" name="action" value="updatepage" />
+        <input type="hidden" name="pageid" value="<?PHP echo $_GET['pageid'] ?>" />
+        <input type="hidden" name="redisplay" value="0" />
         <center><table cellpadding=5 border=1>
         <tr><td align="center">
         <tr valign="top">
         <td><b><?php print_string("pagetitle", "lesson"); ?>:</b><br />
-        <input type="text" name="title" size="80" maxsize="255" value="<?PHP echo $page->title ?>"></td>
+        <input type="text" name="title" size="80" maxsize="255" value="<?PHP echo $page->title ?>" /></td>
         </tr>
         <?PHP
         echo "<tr><td><b>";
@@ -810,9 +810,9 @@
                 echo "&nbsp;&nbsp;";
                 echo " <b>".get_string("casesensitive", "lesson").":</b> \n";
                 if ($page->qoption) {
-                    echo "<input type=\"checkbox\" name=\"qoption\" value=\"1\" checked=\"checked\"/>";
+                    echo "<input type=\"checkbox\" name=\"qoption\" value=\"1\" checked=\"checked\" />";
                 } else {
-                    echo "<input type=\"checkbox\" name=\"qoption\" value=\"1\"/>";
+                    echo "<input type=\"checkbox\" name=\"qoption\" value=\"1\" />";
                 }
                 helpbutton("questiontypes", get_string("questiontype", "lesson"), "lesson");
                 break;
@@ -822,9 +822,9 @@
                 echo "&nbsp;&nbsp;";
                 echo " <b>".get_string("multianswer", "lesson").":</b> \n";
                 if ($page->qoption) {
-                    echo "<input type=\"checkbox\" name=\"qoption\" value=\"1\" checked=\"checked\"/>";
+                    echo "<input type=\"checkbox\" name=\"qoption\" value=\"1\" checked=\"checked\" />";
                 } else {
-                    echo "<input type=\"checkbox\" name=\"qoption\" value=\"1\"/>";
+                    echo "<input type=\"checkbox\" name=\"qoption\" value=\"1\" />";
                 }
                 helpbutton("questiontypes", get_string("questiontype", "lesson"), "lesson");
                 break;
@@ -836,11 +836,11 @@
                 helpbutton("questiontypes", get_string("questiontype", "lesson"), "lesson");
                 break;
             case LESSON_BRANCHTABLE :
-                echo "<input type=\"hidden\" name=\"qtype\" value=\"$page->qtype\">\n";
+                echo "<input type=\"hidden\" name=\"qtype\" value=\"$page->qtype\" />\n";
                 echo "<tr><td><b>".get_string("branchtable", "lesson")."</b> \n";
                 break;
             case LESSON_ENDOFBRANCH :
-                echo "<input type=\"hidden\" name=\"qtype\" value=\"$page->qtype\">\n";
+                echo "<input type=\"hidden\" name=\"qtype\" value=\"$page->qtype\" />\n";
                 echo "<tr><td><b>".get_string("endofbranch", "lesson")."</b> \n";
                 break;                
         }       
@@ -850,7 +850,7 @@
             foreach ($answers as $answer) {
                 $flags = intval($answer->flags); // force into an integer
                 $nplus1 = $n + 1;
-                echo "<input type=\"hidden\" name=\"answerid[$n]\" value=\"$answer->id\">\n";
+                echo "<input type=\"hidden\" name=\"answerid[$n]\" value=\"$answer->id\" />\n";
                 switch ($page->qtype) {
                     case LESSON_MULTICHOICE:
                     case LESSON_TRUEFALSE:
@@ -861,14 +861,14 @@
                         if ($flags & LESSON_ANSWER_EDITOR) {
                             echo " [".get_string("useeditor", "lesson").": ".
                                 "<input type=\"checkbox\" name=\"answereditor[$n]\" value=\"1\" 
-                                checked=\"checked\">";
+                                checked=\"checked\" />";
                             helpbutton("useeditor", get_string("useeditor", "lesson"), "lesson");
                             echo "]<br />\n";
                             print_textarea($usehtmleditor, 20, 70, 630, 300, "answer[$n]", $answer->answer);
                             use_html_editor("answer[$n]"); // switch on the editor
                         } else {
                             echo " [".get_string("useeditor", "lesson").": ".
-                                "<input type=\"checkbox\" name=\"answereditor[$n]\" value=\"1\">";
+                                "<input type=\"checkbox\" name=\"answereditor[$n]\" value=\"1\" />";
                             helpbutton("useeditor", get_string("useeditor", "lesson"), "lesson");
                             echo "]<br />\n";
                             print_textarea(false, 6, 70, 630, 300, "answer[$n]", $answer->answer);
@@ -878,14 +878,14 @@
                         if ($flags & LESSON_RESPONSE_EDITOR) {
                             echo " [".get_string("useeditor", "lesson").": ".
                                 "<input type=\"checkbox\" name=\"responseeditor[$n]\" value=\"1\" 
-                                checked=\"checked\">";
+                                checked=\"checked\" />";
                             helpbutton("useeditor", get_string("useeditor", "lesson"), "lesson");
                             echo "]<br />\n";
                             print_textarea($usehtmleditor, 20, 70, 630, 300, "response[$n]", $answer->response);
                             use_html_editor("response[$n]"); // switch on the editor
                         } else {
                             echo " [".get_string("useeditor", "lesson").": ".
-                                "<input type=\"checkbox\" name=\"responseeditor[$n]\" value=\"1\">";
+                                "<input type=\"checkbox\" name=\"responseeditor[$n]\" value=\"1\" />";
                             helpbutton("useeditor", get_string("useeditor", "lesson"), "lesson");
                             echo "]<br />\n";
                             print_textarea(false, 6, 70, 630, 300, "response[$n]", $answer->response);
@@ -897,13 +897,13 @@
                         if ($flags & LESSON_ANSWER_EDITOR) {
                             echo " [".get_string("useeditor", "lesson").": ".
                                 "<input type=\"checkbox\" name=\"answereditor[$n]\" value=\"1\" 
-                                checked=\"checked\">";
+                                checked=\"checked\" />";
                             helpbutton("useeditor", get_string("useeditor", "lesson"), "lesson");
                             echo "]<br />\n";
                             print_textarea($usehtmleditor, 20, 70, 630, 300, "answer[$n]", $answer->answer);
                         } else {
                             echo " [".get_string("useeditor", "lesson").": ".
-                                "<input type=\"checkbox\" name=\"answereditor[$n]\" value=\"1\">";
+                                "<input type=\"checkbox\" name=\"answereditor[$n]\" value=\"1\" />";
                             helpbutton("useeditor", get_string("useeditor", "lesson"), "lesson");
                             echo "]<br />\n";
                             print_textarea(false, 10, 70, 630, 300, "answer[$n]", $answer->answer);
@@ -921,7 +921,7 @@
         if ($page->qtype != LESSON_ENDOFBRANCH) {
             for ($i = $n; $i < $lesson->maxanswers; $i++) {
                 $iplus1 = $i + 1;
-                echo "<input type=\"hidden\" name=\"answerid[$i]\" value=\"0\">\n";
+                echo "<input type=\"hidden\" name=\"answerid[$i]\" value=\"0\" />\n";
                 switch ($page->qtype) {
                     case LESSON_MULTICHOICE:
                     case LESSON_TRUEFALSE:
@@ -930,14 +930,14 @@
                     case LESSON_MATCHING:
                         echo "<tr><td><b>".get_string("answer", "lesson")." $iplus1:</b>\n";
                         echo " [".get_string("useeditor", "lesson").": ".
-                            "<input type=\"checkbox\" name=\"answereditor[$i]\" value=\"1\">";
+                            "<input type=\"checkbox\" name=\"answereditor[$i]\" value=\"1\" />";
                         helpbutton("useeditor", get_string("useeditor", "lesson"), "lesson");
                         echo "]<br />\n";
                         print_textarea(false, 10, 70, 630, 300, "answer[$i]");
                         echo "</td></tr>\n";
                         echo "<tr><td><b>".get_string("response", "lesson")." $iplus1:</b>\n";
                         echo " [".get_string("useeditor", "lesson").": ".
-                            "<input type=\"checkbox\" name=\"responseeditor[$i]\" value=\"1\">";
+                            "<input type=\"checkbox\" name=\"responseeditor[$i]\" value=\"1\" />";
                         helpbutton("useeditor", get_string("useeditor", "lesson"), "lesson");
                         echo "]<br />\n";
                         print_textarea(false, 10, 70, 630, 300, "response[$i]");
@@ -946,7 +946,7 @@
                     case LESSON_BRANCHTABLE:
                         echo "<tr><td><b>".get_string("description", "lesson")." $iplus1:</b>\n";
                         echo " [".get_string("useeditor", "lesson").": ".
-                            "<input type=\"checkbox\" name=\"answereditor[$i]\" value=\"1\">";
+                            "<input type=\"checkbox\" name=\"answereditor[$i]\" value=\"1\" />";
                         helpbutton("useeditor", get_string("useeditor", "lesson"), "lesson");
                         echo "]<br />\n";
                         print_textarea(false, 10, 70, 630, 300, "answer[$i]");
@@ -963,9 +963,9 @@
         ?>
         </table><br />
         <input type="button" value="<?php print_string("redisplaypage", "lesson") ?>" 
-            onclick="document.editpage.redisplay.value=1;document.editpage.submit();">
-        <input type="submit" value="<?php  print_string("savepage", "lesson") ?>">
-        <input type="submit" name="cancel" value="<?php  print_string("cancel") ?>">
+            onclick="document.editpage.redisplay.value=1;document.editpage.submit();" />
+        <input type="submit" value="<?php  print_string("savepage", "lesson") ?>" />
+        <input type="submit" name="cancel" value="<?php  print_string("cancel") ?>" />
         </center>
         </form>
         <?PHP

@@ -111,8 +111,8 @@
                 // Make sure that we aren't overwriting any recent feedback from other teachers. (see bug #324)
                 if ($timewas < $submission->timemarked && (!empty($submission->grade)) && (!empty($submission->comment))) {
                     notify(get_string("failedupdatefeedback", "assignment", fullname($users[$submission->userid]))
-                    . "<br>" . get_string("grade") . ": $newsubmission->grade" 
-                    . "<br>" . get_string("feedback", "assignment") . ": $newsubmission->comment\n");
+                    . "<br />" . get_string("grade") . ": $newsubmission->grade" 
+                    . "<br />" . get_string("feedback", "assignment") . ": $newsubmission->comment\n");
                 } else { //print out old feedback and grade
                     if (empty($submission->timemodified)) {   // eg for offline assignments
                         $newsubmission->timemodified = $timenow;

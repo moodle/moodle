@@ -54,7 +54,7 @@
             $newid = insert_record ("attendance",$attendance);
 
             //Do some output     
-            echo "<ul><li>".get_string("modulename","attendance")." \"".$attendance->name."\"<br>";
+            echo "<ul><li>".get_string("modulename","attendance")." \"".$attendance->name."\"<br />";
             backup_flush(300);
 
             if ($newid) {
@@ -121,7 +121,7 @@
             if (($i+1) % 50 == 0) {
                 echo ".";
                 if (($i+1) % 1000 == 0) {
-                    echo "<br>";
+                    echo "<br />";
                 }
                 backup_flush(300);
             }

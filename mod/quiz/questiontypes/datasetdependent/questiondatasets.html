@@ -29,30 +29,30 @@
     <TD/>
     <TD/>
     <TD>
-        <INPUT type="hidden" name="name"               value="<?php  p($question->name) ?>"/>
-        <INPUT type="hidden" name="questiontext"       value="<?php  p($question->questiontext) ?>"/>
-        <INPUT type="hidden" name="questiontextformat" value="<?php  p($question->questiontextformat) ?>"/>
-        <INPUT type="hidden" name="image"              value="<?php  p($question->image) ?>"/>
+        <INPUT type="hidden" name="name"               value="<?php  p($question->name) ?>" />
+        <INPUT type="hidden" name="questiontext"       value="<?php  p($question->questiontext) ?>" />
+        <INPUT type="hidden" name="questiontextformat" value="<?php  p($question->questiontextformat) ?>" />
+        <INPUT type="hidden" name="image"              value="<?php  p($question->image) ?>" />
         <?php foreach ($answers as $answer) { ?>
-        <INPUT type="hidden" name="answer[]"              value="<?php  p($answer->answer) ?>"/>
-        <INPUT type="hidden" name="fraction[]"            value="<?php  p($answer->fraction) ?>"/>
-        <INPUT type="hidden" name="feedback[]"            value="<?php  p($answer->feedback) ?>"/>
-        <INPUT type="hidden" name="tolerance[]"           value="<?php  p($answer->tolerance) ?>"/>
-        <INPUT type="hidden" name="tolerancetype[]"       value="<?php  p($answer->tolerancetype) ?>"/>
-        <INPUT type="hidden" name="correctanswerlength[]" value="<?php  p($answer->correctanswerlength) ?>"/>
+        <INPUT type="hidden" name="answer[]"              value="<?php  p($answer->answer) ?>" />
+        <INPUT type="hidden" name="fraction[]"            value="<?php  p($answer->fraction) ?>" />
+        <INPUT type="hidden" name="feedback[]"            value="<?php  p($answer->feedback) ?>" />
+        <INPUT type="hidden" name="tolerance[]"           value="<?php  p($answer->tolerance) ?>" />
+        <INPUT type="hidden" name="tolerancetype[]"       value="<?php  p($answer->tolerancetype) ?>" />
+        <INPUT type="hidden" name="correctanswerlength[]" value="<?php  p($answer->correctanswerlength) ?>" />
         <?php } ?>
         <?php foreach ($units as $unit) { ?>
-        <INPUT type="hidden" name="multiplier[]"   value="<?php  p($unit->multiplier) ?>"/>
-        <INPUT type="hidden" name="unit[]"         value="<?php  p($unit->unit) ?>"/>
+        <INPUT type="hidden" name="multiplier[]"   value="<?php  p($unit->multiplier) ?>" />
+        <INPUT type="hidden" name="unit[]"         value="<?php  p($unit->unit) ?>" />
         <?php } ?>
     </TD>
 </TR>
 </TABLE>
 
-<INPUT type="hidden" name=id value="<?php  p($question->id) ?>">
-<INPUT type="hidden" name=qtype value="<?php  p($question->qtype) ?>">
-<INPUT type="hidden" name="category" value="<?php  p($question->category) ?>"/>
-<INPUT type="submit"      value="<?php  print_string("savechanges") ?>">
+<INPUT type="hidden" name=id value="<?php  p($question->id) ?>" />
+<INPUT type="hidden" name=qtype value="<?php  p($question->qtype) ?>" />
+<INPUT type="hidden" name="category" value="<?php  p($question->category) ?>" />
+<INPUT type="submit"      value="<?php  print_string("savechanges") ?>" />
 </CENTER>
 </FORM>
 

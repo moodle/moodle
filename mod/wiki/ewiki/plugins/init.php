@@ -36,23 +36,23 @@ function ewiki_initialization_wizard($id, &$data, &$action) {
       elseif (empty($_REQUEST["init"])) {
 
          $o = "<h2>WikiSetupWizard</h2>\n";
-         $o .= "You don't have any pages in your Wiki yet, so we should try to read-in the default ones from <tt>init-pages/</tt> now.<br><br>";
+         $o .= "You don't have any pages in your Wiki yet, so we should try to read-in the default ones from <tt>init-pages/</tt> now.<br /><br />";
 
          $o .= '<a href="'.ewiki_script("",$id,array("init"=>"now")).'">[InitializeWikiDatabase]</a>';
          $o .= " &nbsp; ";
          $o .= '<a href="'.ewiki_script("",$id,array("abort"=>"this")).'">[NoThanks]</a>';
-         $o .= "<br><br>";
+         $o .= "<br /><br />";
 
          #-- analyze and print settings and misconfigurations
          $pf_db = $ewiki_plugins["database"][0];
          $db = substr($pf_db, strrpos($pf_db, "_") + 1);
          $o .= '<table border="0" width="90%" class="diagnosis">';
          $o .= '<tr><td>DatabaseBackend</td><td>';
-         $o .= "<b>" . $db . "</b><br>";
+         $o .= "<b>" . $db . "</b><br />";
          if ($db == "files") {
             $o .= "<small>_DBFILES_DIR='</small><tt>" . EWIKI_DBFILES_DIRECTORY . "'</tt>";
             if (strpos(EWIKI_DBFILES_DIRECTORY, "tmp")) {
-               $o .= "<br><b>Warning</b>: Storing your pages into a temporary directory is not what you want (there they would get deleted randomly), except for testing purposes of course. See the README.";
+               $o .= "<br /><b>Warning</b>: Storing your pages into a temporary directory is not what you want (there they would get deleted randomly), except for testing purposes of course. See the README.";
             }
          }
          else {
@@ -65,10 +65,10 @@ function ewiki_initialization_wizard($id, &$data, &$action) {
 
          #-- more diagnosis 
          if (ini_get("magic_quotes")) {
-            $o.= "<b>Warning</b>: Your PHP interpreter has enabled the ugly and outdated '<i>magic_quotes</i>'. This will lead to problems, so please ask your provider to correct it; or fix it yourself with .htaccess settings as documented in the README. Otherwise don't forget to include() the <tt>fragments/strip_wonderful_slashes.php</tt> (it's ok to proceed for the moment).<br><br>";
+            $o.= "<b>Warning</b>: Your PHP interpreter has enabled the ugly and outdated '<i>magic_quotes</i>'. This will lead to problems, so please ask your provider to correct it; or fix it yourself with .htaccess settings as documented in the README. Otherwise don't forget to include() the <tt>fragments/strip_wonderful_slashes.php</tt> (it's ok to proceed for the moment).<br /><br />";
          }
          if (ini_get("register_globals")) {
-            $o.= "<b>Security warning</b>: The horrible '<i>register_globals</i>' setting is enabled. Without always using <tt>fragments/strike_register_globals.php</tt> or letting your provider fix that, you could get into trouble some day.<br><br>";
+            $o.= "<b>Security warning</b>: The horrible '<i>register_globals</i>' setting is enabled. Without always using <tt>fragments/strike_register_globals.php</tt> or letting your provider fix that, you could get into trouble some day.<br /><br />";
          }
 
          return('<div class="wiki view WikiSetupWizard">' . $o . '</div>');
@@ -103,7 +103,7 @@ function ewiki_initialization_wizard($id, &$data, &$action) {
             closedir($dh);
          }
          else {
-            return("<b>ewiki error</b>: could not read from directory ". realpath($path) ."<br>\n");
+            return("<b>ewiki error</b>: could not read from directory ". realpath($path) ."<br />\n");
          }
 
          #-- try to view/ that newly inserted page

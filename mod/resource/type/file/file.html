@@ -34,10 +34,10 @@
     </td>
     <td>
     <?php
-        echo "<input name=\"reference\" size=\"90\" value=\"$form->reference\"><br />";
+        echo "<input name=\"reference\" size=\"90\" value=\"$form->reference\" /><br />";
         button_to_popup_window ("/mod/resource/coursefiles.php?id=$form->course", "coursefiles", $strchooseafile, 500, 750, $strchooseafile);
         echo "<input type=\"button\" name=\"searchbutton\" value=\"$strsearch ...\" ".
-             "onClick=\"return window.open('$CFG->resource_websearch', 'websearch', 'menubar=1,location=1,directories=1,toolbar=1,scrollbars,resizable,width=800,height=600');\">\n";
+             "onClick=\"return window.open('$CFG->resource_websearch', 'websearch', 'menubar=1,location=1,directories=1,toolbar=1,scrollbars,resizable,width=800,height=600');\" />\n";
     ?>
     </td>
 </tr>
@@ -70,11 +70,11 @@
         </script>
         <input type="radio" name="windowpopup" value=0 <?php echo ($windowtype != "popup") ? "checked" : "" ?> 
         onClick="lockoptions('form', 'windowpopup[0]', frameitem); 
-        return lockoptions('form', 'windowpopup[1]', popupitems);">
+        return lockoptions('form', 'windowpopup[1]', popupitems);" />
         <b title="<?php print_string("pagedisplay", "resource") ?>"><?php print_string("pagewindow", "resource") ?></b>
         <ul>
-            <input type="hidden" name="hframepage" value=0>
-            <input type="checkbox" name="framepage" value=1 <?php echo ($form->options == "frame") ? "checked" : "" ?> >
+            <input type="hidden" name="hframepage" value=0 />
+            <input type="checkbox" name="framepage" value=1 <?php echo ($form->options == "frame") ? "checked" : "" ?> />
             <?php print_string("frameifpossible", "resource") ?>
         </ul>
     </td>
@@ -85,7 +85,7 @@
     <td colspan="2">
         <input name="windowpopup" type=radio value=1 <?php echo ($windowtype == "popup") ? "checked" : "" ?>
         onclick="lockoptions('form', 'windowpopup[0]', frameitem); 
-        return lockoptions('form', 'windowpopup[1]', popupitems);">
+        return lockoptions('form', 'windowpopup[1]', popupitems);" />
         <b title="<?php p($strnewwindowopen) ?>"><?php p($strnewwindow) ?></b>
         <ul>
         <?php
@@ -93,19 +93,19 @@
                 if ($name == "height" or $name == "width") {
                     continue;
                 }
-                echo "<input name=\"h$name\" type=hidden value=0>";
-                echo "<input name=\"$name\" type=checkbox value=1 ".$window->$name.">";
+                echo "<input name=\"h$name\" type=hidden value=0 />";
+                echo "<input name=\"$name\" type=checkbox value=1 ".$window->$name." />";
                 $stringname = "str$name";
                 echo $$stringname."<br />";
             }
         ?>
 
-        <input name="hwidth" type=hidden value=0>
-        <input name="width" type=text size=4 value="<?php p($window->width) ?>">
+        <input name="hwidth" type=hidden value=0 />
+        <input name="width" type=text size=4 value="<?php p($window->width) ?>" />
         <?php p($strwidth) ?><br />
 
-        <input name="hheight" type=hidden value=0>
-        <input name="height" type=text size=4 value="<?php p($window->height) ?>">
+        <input name="hheight" type=hidden value=0 />
+        <input name="height" type=text size=4 value="<?php p($window->height) ?>" />
         <?php p($strheight) ?><br />
         <?php
             if ($windowtype == "page") {
@@ -170,7 +170,7 @@ for ($i=0; $i < $this->maxparameters; $i++) {
     }
     echo "</td>\n";
     echo "<td valign=\"top\">\n";
-    echo "<input type=\"text\" name=\"parse$i\" value=\"{$alltextfield[$i]['parse']}\">\n";
+    echo "<input type=\"text\" name=\"parse$i\" value=\"{$alltextfield[$i]['parse']}\" />\n";
     echo "</td>\n";
     echo "</tr>\n";
 }

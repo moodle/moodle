@@ -73,7 +73,7 @@
                       "$CFG->wwwroot/mod/quiz/import.php?category=$category->id");
             }
 
-            echo "<hr>";
+            echo "<hr />";
             print_continue("edit.php");
             print_footer($course);
             exit;
@@ -121,10 +121,10 @@
     echo "<tr><td align=right>";
     print_string("upload");
     echo ":</td><td>";
-    echo " <input name=\"newfile\" type=\"file\" size=\"50\">";
+    echo " <input name=\"newfile\" type=\"file\" size=\"50\" />";
     echo "</tr><tr><td>&nbsp;</td><td>";
-    echo " <input type=hidden name=category value=\"$category->id\">";
-    echo " <input type=submit name=save value=\"".get_string("uploadthisfile")."\">";
+    echo " <input type=hidden name=category value=\"$category->id\" />";
+    echo " <input type=submit name=save value=\"".get_string("uploadthisfile")."\" />";
     echo "</td></tr>";
 
     echo "</table>";

@@ -235,7 +235,7 @@
 		"<" => "&lt;",
            ),
            "wm_source" => array(
-		"%%%" => "<br>",
+		"%%%" => "<br />",
 		"\t" => "        ",
 		"\n;:" => "\n      ",   # workaround, replaces the old ;:
            ),
@@ -341,8 +341,8 @@
 	   "EDIT_FORM_1" => "<a href=\"".EWIKI_SCRIPT."GoodStyle\">GoodStyle</a> is to
 		write what comes to your mind. Don't care about how it
 		looks too much now. You can add <a href=\"".EWIKI_SCRIPT."WikiMarkup\">WikiMarkup</a>
-		also later if you think it is necessary.<br>",
-	   "EDIT_FORM_2" => "<br>Please do not write things, which may make other
+		also later if you think it is necessary.<br />",
+	   "EDIT_FORM_2" => "<br />Please do not write things, which may make other
 		people angry. And please keep in mind that you are not all that
 		anonymous in the internet (find out more about your computers
 		'<a href=\"http://google.com/search?q=my+computers+IP+address\">IP address</a>' at Google).",
@@ -378,8 +378,8 @@
            "EDIT_FORM_1" => "<a href=\"".EWIKI_SCRIPT."BuenEstilo\">BuenEstilo</a> es
 		escribir lo que viene a su mente. No se preocupe mucho
 		por la apariencia. También puede agregar <a href=\"".EWIKI_SCRIPT."ReglasDeMarcadoWiki\">ReglasDeMarcadoWiki</a>
-		más adelante si piensa que es necesario.<br>",
-           "EDIT_FORM_2" => "<br>Por favor no escriba cosas, que puedan
+		más adelante si piensa que es necesario.<br />",
+           "EDIT_FORM_2" => "<br />Por favor no escriba cosas, que puedan
 		enfadar a otras personas. Y por favor tenga en mente que
 		usted no es del todo anónimo en Internet 
 		(encuentre más sobre 
@@ -406,7 +406,7 @@
 		zurück und speichere Deine Änderungen in der Zwischenablage
 		(Bearbeiten->Kopieren) um sie dann wieder an der richtigen
 		Stelle einzufügen, nachdem du die EditBoxSeite nocheinmal
-		geladen hast.<br>
+		geladen hast.<br />
 		Vielen Dank für Deine Mühe.",
 	   "ERRORSAVING" => "Beim Abspeichern ist ein Fehler aufgetreten. Bitte versuche es erneut.",
 	   "THANKSFORCONTRIBUTION" => "Vielen Dank für Deinen Beitrag!",
@@ -421,8 +421,8 @@
 		Sinn kommt. Du solltest dich jetzt noch nicht so sehr
 		darum kümmern, wie die Seite aussieht. Du kannst später
 		immernoch zurückkommen und den Text mit <a href=\"".EWIKI_SCRIPT."FormatierungsRegeln\">WikiTextFormatierungsRegeln</a>
-		aufputschen.<br>",
-	   "EDIT_FORM_2" => "<br>Bitte schreib keine Dinge, die andere Leute
+		aufputschen.<br />",
+	   "EDIT_FORM_2" => "<br />Bitte schreib keine Dinge, die andere Leute
 		verärgern könnten. Und bedenke auch, daß es schnell auf
 		dich zurückfallen kann wenn du verschiedene andere Dinge sagst (mehr Informationen zur
 		'<a href=\"http://google.de/search?q=computer+IP+adresse\">IP Adresse</a>'
@@ -734,7 +734,7 @@ function ewiki_page_view($id, &$data, $action, $all=1) {
    /// Add Moodle filters to text porion of wiki.
    global $moodle_format;   // from wiki/view.php
    $o = format_text($o, $moodle_format);
-   $o.= "<br><br>";
+   $o.= "<br /><br />";
 
    #-- control line + other per-page info stuff
    if ($pf_a = $ewiki_plugins["view_append"]) {
@@ -1006,7 +1006,7 @@ function ewiki_list_pages($pages=array(), $limit=EWIKI_LIST_LIMIT,
       $o = $pf_list($lines);
    }
    elseif($lines) {
-      $o = "&middot; " . implode("<br>\n&middot; ", $lines) . "<br>\n";
+      $o = "&middot; " . implode("<br />\n&middot; ", $lines) . "<br />\n";
    }
 
    return($o);
@@ -1087,8 +1087,8 @@ function ewiki_page_search($id, &$data, $action) {
    if (! ($q = @$_REQUEST["q"])) {
 
       $o .= '<form action="' . ewiki_script("", $id) . '" method="POST">';
-      $o .= '<input name="q" size="30"><br><br>';
-      $o .= '<input type="submit" value="'.$id.'">';
+      $o .= '<input name="q" size="30" /><br /><br />';
+      $o .= '<input type="submit" value="'.$id.'" />';
       $o .= '</form>';
    }
    else {
@@ -1189,7 +1189,7 @@ function ewiki_page_info($id, &$data, $action) {
             continue;  // MOODLE DOESN'T USE IT
             $str = "";
             if ($first && $value) { foreach ($value as $n=>$d) {
-               $str .= htmlentities("$n: $d") . "<br>\n";
+               $str .= htmlentities("$n: $d") . "<br />\n";
             } }
             $value = $str;
          }
@@ -1269,7 +1269,7 @@ function ewiki_page_info($id, &$data, $action) {
 
    #-- page result split
    if ($v >= 1) {
-      $o .= "<br>\n show " . ewiki_chunked_page($this, $id, -1, $v+1, 1) . "\n <br>";
+      $o .= "<br />\n show " . ewiki_chunked_page($this, $id, -1, $v+1, 1) . "\n <br />";
    }
 
    return($o);
@@ -1399,7 +1399,7 @@ function ewiki_page_edit($id, $data, $action) {
 
             if (!$pf || !$pf($id, $data)) {
                $error = 1;
-               $o .= ewiki_t("ERRVERSIONSAVE") . "<br><br>";
+               $o .= ewiki_t("ERRVERSIONSAVE") . "<br /><br />";
             }
 
          }
@@ -1442,7 +1442,7 @@ function ewiki_page_edit($id, $data, $action) {
                #-- prevent double saving, when ewiki_page() is re-called
                $_REQUEST = $_GET = $_POST = array();
 
-               $o = ewiki_t("THANKSFORCONTRIBUTION") . "<br><br>";
+               $o = ewiki_t("THANKSFORCONTRIBUTION") . "<br /><br />";
                $o .= ewiki_page($id);
 
                if (EWIKI_EDIT_REDIRECT) {
@@ -1529,7 +1529,7 @@ function ewiki_page_edit_form(&$id, &$data, &$hidden_postdata) {
 
    #-- additional POST vars
    foreach ($hidden_postdata as $name => $value) {
-       $o .= '<input type="hidden" name="'.$name.'" value="'.$value.'">'."\n";
+       $o .= '<input type="hidden" name="'.$name.'" value="'.$value.'" />'."\n";
    }
 
    if (EWIKI_CHARSET=="UTF-8") {
@@ -1564,10 +1564,10 @@ function ewiki_page_edit_form(&$id, &$data, &$hidden_postdata) {
    }
 
    ##### BEGIN MOODLE ADDITION (Cancel Editing into Button) #####
-   $o .= "\n<br>\n"
-      . '<input type="submit" name="save" value="'. ewiki_t("SAVE") . '">'."\n"
-      . '<input type="submit" name="preview" value="'. ewiki_t("PREVIEW") . '">' . "\n"
-      . '<input type="submit" name="canceledit" value="'. ewiki_t("CANCEL_EDIT") . '">' . "\n";
+   $o .= "\n<br />\n"
+      . '<input type="submit" name="save" value="'. ewiki_t("SAVE") . '" />'."\n"
+      . '<input type="submit" name="preview" value="'. ewiki_t("PREVIEW") . '" />' . "\n"
+      . '<input type="submit" name="canceledit" value="'. ewiki_t("CANCEL_EDIT") . '" />' . "\n";
 #      . ' &nbsp; <a href="'. ewiki_script("", $id) . '">' . ewiki_t("CANCEL_EDIT") . '</a>';
    ##### END MOODLE ADDITION #####
 
@@ -1587,15 +1587,15 @@ function ewiki_page_edit_form(&$id, &$data, &$hidden_postdata) {
 #-- pic upload form
 function ewiki_page_edit_form_final_imgupload(&$o, &$id, &$data, &$action) {
    if (EWIKI_SCRIPT_BINARY && EWIKI_UP_UPLOAD && EWIKI_IMAGE_MAXSIZE) {
-      $o .= "\n<br>\n". '<div class="image-upload">'
+      $o .= "\n<br />\n". '<div class="image-upload">'
       . '<form action='
       . '"'. ewiki_script_binary("", EWIKI_IDF_INTERNAL, "", "_UPLOAD=1") .'"'
       . ' method="POST" enctype="multipart/form-data" target="_upload">'
       . '<input type="file" name="'.EWIKI_UP_UPLOAD.'"'
-      . (defined("EWIKI_IMAGE_ACCEPT") ? ' accept="'.EWIKI_IMAGE_ACCEPT.'">' : "")
-      . '<input type="hidden" name="'.EWIKI_UP_BINARY.'" value="'.EWIKI_IDF_INTERNAL.'">'
+      . (defined("EWIKI_IMAGE_ACCEPT") ? ' accept="'.EWIKI_IMAGE_ACCEPT.'" />' : "")
+      . '<input type="hidden" name="'.EWIKI_UP_BINARY.'" value="'.EWIKI_IDF_INTERNAL.'" />'
       . '&nbsp;&nbsp;&nbsp;'
-      . '<input type="submit" value="'.ewiki_t("UPLOAD_PICTURE_BUTTON").'">'
+      . '<input type="submit" value="'.ewiki_t("UPLOAD_PICTURE_BUTTON").'" />'
       . '</form></div>'. "\n";
   }
 }
@@ -1607,9 +1607,9 @@ function ewiki_page_edit_preview(&$data) {
    $preview_text=$GLOBALS["ewiki_plugins"]["render"][0]($_REQUEST["content"], 1, EWIKI_ALLOW_HTML || (@$data["flags"]&EWIKI_DB_F_HTML));
    return( '<div class="preview">'
            . "<hr noshade>"
-           . "<div align=\"right\">" . ewiki_t("PREVIEW") . "</div><hr noshade><br>\n"
+           . "<div align=\"right\">" . ewiki_t("PREVIEW") . "</div><hr noshade><br />\n"
            . format_text($preview_text, $moodle_format)
-           . "<br><br><hr noshade><br>"
+           . "<br /><br /><hr noshade><br />"
            . "</div>"
    );
 #### END MOODLE CHANGES   
@@ -1628,15 +1628,15 @@ function ewiki_control_links($id, &$data, $action) {
 
    $o = "\n"
       . '<div align="right" class="action-links control-links">'
-      . "\n<br>\n"
+      . "\n<br />\n"
       . "<hr noshade>" . "\n";
 
    if (@$data["forced_version"]) {
 
       $o .= '<form action="' . ewiki_script("edit", $id) . '" method="POST">' .
-            '<input type="hidden" name="edit" value="old">' .
-            '<input type="hidden" name="version" value="'.$data["forced_version"].'">' .
-            '<input type="submit" value="' . ewiki_t("OLDVERCOMEBACK") . '"></form> ';
+            '<input type="hidden" name="edit" value="old" />' .
+            '<input type="hidden" name="version" value="'.$data["forced_version"].'" />' .
+            '<input type="submit" value="' . ewiki_t("OLDVERCOMEBACK") . '" /></form> ';
    }
    else {
       foreach ($action_links as $action => $title)
@@ -2540,9 +2540,9 @@ function ewiki_binary($break=0) {
 <html><head><title>File/Picture Upload</title><script language="JavaScript" type="text/javascript"><!--
  opener.document.forms["ewiki"].elements["content"].value += "\\nUPLOADED PICTURE: [$id$title]\\n";
  window.setTimeout("self.close()", 5000);
-//--></script></head><body bgcolor="#440707" text="#FFFFFF">Your uploaded file was saved as<br><big><b>
+//--></script></head><body bgcolor="#440707" text="#FFFFFF">Your uploaded file was saved as<br /><big><b>
 [$id]
-</b></big>.<br><br><noscript>Please copy this &uarr; into the text input box:<br>select/mark it with your mouse, press [Ctrl]+[Insert], go back<br>to the previous screen and paste it into the textbox by pressing<br>[Shift]+[Insert] inside there.</noscript></body></html>
+</b></big>.<br /><br /><noscript>Please copy this &uarr; into the text input box:<br />select/mark it with your mouse, press [Ctrl]+[Insert], go back<br />to the previous screen and paste it into the textbox by pressing<br />[Shift]+[Insert] inside there.</noscript></body></html>
 EOF;
       }
    }
@@ -3018,7 +3018,7 @@ function ewiki_auth($id, &$data, $action, $ring=false, $request_auth=0) {
    $ok = true;
    $ewiki_errmsg="";
 
-#echo "_a($id,dat,$action,$ring,$request_auth)<br>\n";
+#echo "_a($id,dat,$action,$ring,$request_auth)<br />\n";
 
    if (EWIKI_PROTECTED_MODE) {
  
@@ -3169,7 +3169,7 @@ function ewiki_eventually_initialize(&$id, &$data, &$action) {
          closedir($dh);
         }
         else {
-         echo "<b>ewiki error</b>: could not read from directory ". realpath($path) ."<br>\n";
+         echo "<b>ewiki error</b>: could not read from directory ". realpath($path) ."<br />\n";
         }
       }
 #### END MOODLE CHANGE

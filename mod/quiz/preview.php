@@ -61,7 +61,7 @@
     print_header();
     print_heading(get_string("previewquestion","quiz"));
 
-    echo "<p align='center'><input type=\"button\" onClick=\"window.close()\" value=\"" . get_string("close", "quiz") . "\"></p>";
+    echo "<p align='center'><input type=\"button\" onClick=\"window.close()\" value=\"" . get_string("close", "quiz") . "\" /></p>";
 
     if (empty($question->id)) {
         $question->id = "";
@@ -141,7 +141,7 @@
 
       echo "<br />";
       echo "<center>";
-      echo "<input name=\"submit\" type=\"submit\" value=\"".get_string("checkanswer", "quiz")."\"/>\n";
+      echo "<input name=\"submit\" type=\"submit\" value=\"".get_string("checkanswer", "quiz")."\" />\n";
       echo "</center>";
       echo "</form>";
     }

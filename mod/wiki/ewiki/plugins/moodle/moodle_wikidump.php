@@ -62,35 +62,35 @@ function moodle_ewiki_page_wiki_dump($id=0, $data=0, $action=0) {
     
   $url = ewiki_script("", "WikiExport");
   $ret  = ewiki_make_title($id, $id, 2);
-  $ret .= ($cont&&$cont!==true)?$cont."<br><br>\n":"";
+  $ret .= ($cont&&$cont!==true)?$cont."<br /><br />\n":"";
   $ret .= get_string("wikiexportcomment","wiki");
-  $ret .= "<br><br>\n".
+  $ret .= "<br /><br />\n".
     '<FORM name="form" method="post" action="'.$url.'">'."\n".
-    '<INPUT TYPE="HIDDEN" NAME="userid" VALUE="'.$userid.'">'."\n".
-    '<INPUT TYPE="HIDDEN" NAME="groupid" VALUE="'.$groupid.'">'."\n".
-    '<INPUT TYPE="HIDDEN" NAME="id" VALUE="'.$cm->id.'">'."\n".
-    '<INPUT TYPE="HIDDEN" NAME="wikipage" VALUE="'.$wikipage.'">'."\n".
+    '<INPUT TYPE="HIDDEN" NAME="userid" VALUE="'.$userid.'" />'."\n".
+    '<INPUT TYPE="HIDDEN" NAME="groupid" VALUE="'.$groupid.'" />'."\n".
+    '<INPUT TYPE="HIDDEN" NAME="id" VALUE="'.$cm->id.'" />'."\n".
+    '<INPUT TYPE="HIDDEN" NAME="wikipage" VALUE="'.$wikipage.'" />'."\n".
     "<CENTER>\n";
   
   // Export binaries too ?
   if(!$wiki->ewikiacceptbinary) {
-    $ret.='<INPUT TYPE="HIDDEN" NAME="exportbinaries" VALUE="0">'.$exportdestinations[0]."\n";
+    $ret.='<INPUT TYPE="HIDDEN" NAME="exportbinaries" VALUE="0" />'.$exportdestinations[0]."\n";
   } else {
-    $ret.='<INPUT TYPE="HIDDEN" NAME="exportbinaries" VALUE="0">'."\n";
+    $ret.='<INPUT TYPE="HIDDEN" NAME="exportbinaries" VALUE="0" />'."\n";
   }
   $ret.="<TABLE cellpadding=5>\n";
   if($wiki->ewikiacceptbinary) {
     $ret.="  <TR valign=top>\n".
         '    <TD align=right>'.get_string("withbinaries","wiki").":</TD>\n".
         "    <TD>\n".
-        '      <input type="checkbox" name="exportbinaries" value="1"'.($_REQUEST["exportbinaries"]==1?" checked":"").">\n".
+        '      <input type="checkbox" name="exportbinaries" value="1"'.($_REQUEST["exportbinaries"]==1?" checked":"")." />\n".
         "    </TD>\n".
         "  </TR>\n";
   }
   $ret.="  <TR valign=top>\n".
       '    <TD align=right>'.get_string("withvirtualpages","wiki").":</TD>\n".
       "    <TD>\n".
-      '      <input type="checkbox" name="withvirtualpages" value="1"'.($_REQUEST["withvirtualpages"]==1?" checked":"").">\n".
+      '      <input type="checkbox" name="withvirtualpages" value="1"'.($_REQUEST["withvirtualpages"]==1?" checked":"")." />\n".
       "    </TD>\n".
       "  </TR>\n";
   $exportformats=array( "0" => get_string("plaintext","wiki") , "1" => get_string("html","wiki"));
@@ -101,7 +101,7 @@ function moodle_ewiki_page_wiki_dump($id=0, $data=0, $action=0) {
   if($wiki->htmlmode!=2) {
     $ret.= choose_from_menu($exportformats, "exportformats", $_REQUEST["exportformats"], "", "", "", true)."\n";
   } else {
-    $ret.= '<INPUT TYPE="HIDDEN" NAME="exportformats" VALUE="1">'.
+    $ret.= '<INPUT TYPE="HIDDEN" NAME="exportformats" VALUE="1" />'.
            get_string("html","wiki");
   }
   $ret.="    </TD>\n".
@@ -121,14 +121,14 @@ function moodle_ewiki_page_wiki_dump($id=0, $data=0, $action=0) {
         '    <TD align=right>'.get_string("exportto","wiki").":</TD>\n".
         "    <TD>\n";
   if(count($exportdestinations)==1) {
-    $ret.='<INPUT TYPE="HIDDEN" NAME="exportdestinations" VALUE="0">'.$exportdestinations[0]."\n";
+    $ret.='<INPUT TYPE="HIDDEN" NAME="exportdestinations" VALUE="0" />'.$exportdestinations[0]."\n";
   } else {
     $ret.=choose_from_menu($exportdestinations, "exportdestinations", $_REQUEST["exportdestinations"], "", "", "", true)."\n";
   }
   $ret.="    </TD>\n".
       "  </TR>\n".      
       "</TABLE>\n".
-      '  <input type="submit" name="wikiexport" value= "'.get_string("export","wiki").'">'."\n".
+      '  <input type="submit" name="wikiexport" value= "'.get_string("export","wiki").'" />'."\n".
       "</CENTER>\n";
       "</FORM>\n";
   return $ret;
@@ -211,7 +211,7 @@ function ewiki_page_wiki_dump_send($exportbinaries=0, $exportformats=0, $withvir
   }  
   
   #print "<pre>"; print_r($a_validpages); print "</pre>";
-  #print "<hr><pre>"; print_r($a_pagelist); print "</pre>";
+  #print "<hr /><pre>"; print_r($a_pagelist); print "</pre>";
 
   $a_sitemap = ewiki_sitemap_create($wiki_entry->pagename, $a_validpages, 99, 0);
   if ($a_pagelist) {
@@ -296,7 +296,7 @@ function ewiki_page_wiki_dump_send($exportbinaries=0, $exportformats=0, $withvir
             }
             break;
           case (EWIKI_DB_F_BINARY):            
-            #print "Binary: $row[id]<br>";
+            #print "Binary: $row[id]<br />";
             if (($row["meta"]["class"]=="image" || $row["meta"]["class"]=="file") && ($exportbinaries)) {
               # Copy files to the appropriate directory              
               $fn= moodle_binary_get_path($id, $row["meta"], $course, $wiki, $userid, $groupid);
@@ -434,7 +434,7 @@ function ewiki_page_wiki_dump_send($exportbinaries=0, $exportformats=0, $withvir
       #exit();
       return false;
     } else {
-       return get_string("exportsuccessful","wiki")."<br>";      
+       return get_string("exportsuccessful","wiki")."<br />";      
     }
   }
 }

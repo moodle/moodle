@@ -86,7 +86,7 @@
             echo "<br />";
         }
     } else if ($assignment->grade > 0) {
-        echo "<b>".get_string("maximumgrade")."</b>: $assignment->grade<br>";
+        echo "<b>".get_string("maximumgrade")."</b>: $assignment->grade<br />";
     }
 
     echo "<br />";

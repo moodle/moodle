@@ -92,7 +92,7 @@ function dialogue_cron () {
                 "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> ->".
                 "<a href=\"$CFG->wwwroot/mod/dialogue/index.php?id=$course->id\">dialogues</a> ->".
                 "<a href=\"$CFG->wwwroot/mod/dialogue/view.php?id=$cm->id\">$dialogue->name</a></font></p>";
-                $posthtml .= "<hr><font face=\"sans-serif\">";
+                $posthtml .= "<hr /><font face=\"sans-serif\">";
                 $posthtml .= "<p>".get_string("dialoguemailhtml", "dialogue", $dialogueinfo)."</p>";
                 $posthtml .= "</font><hr />";
             } else {

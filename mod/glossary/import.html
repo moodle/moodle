@@ -3,7 +3,7 @@
 <tr>
     <td align=right valign=top width="30%"><p><b><?php print_string("filetoimport","glossary") ?>:</b></p></td>
     <td width="70%">
-    <input type="hidden" name="MAX_FILE_SIZE" value="<?php echo get_max_upload_file_size() ?>">
+    <input type="hidden" name="MAX_FILE_SIZE" value="<?php echo get_max_upload_file_size() ?>" />
     <input type="file" name="file" size=40> <br />
     <?php 
        helpbutton("filetoimport", get_string("filetoimport", "glossary"), "glossary"); 
@@ -23,7 +23,7 @@
         </select> <?PHP helpbutton("destination", get_string("destination", "glossary"), "glossary") ?></td>
         <td width="25%">
         <p align="right"><?PHP p(get_string("importcategories","glossary")) ?>:</td>
-        <td width="25%"><input type="checkbox" name="catsincl" value="1"> <?PHP helpbutton("importcategories", get_string("importcategories", "glossary"), "glossary") ?></td>
+        <td width="25%"><input type="checkbox" name="catsincl" value="1" /> <?PHP helpbutton("importcategories", get_string("importcategories", "glossary"), "glossary") ?></td>
       </tr>
     </table>
     </td>
@@ -33,15 +33,15 @@
     <table border="0" cellpadding="3" cellspacing="3" width="100%">
       <tr>
         <td width="50%">
-        <p align="right"><input type="submit" value="<?php print_string("savechanges") ?>"></td>
-        <td width="50%"><input type="reset" value="<?php print_string("revert") ?>"></td>
+        <p align="right"><input type="submit" value="<?php print_string("savechanges") ?>" /></td>
+        <td width="50%"><input type="reset" value="<?php print_string("revert") ?>" /></td>
       </tr>
     </table>
     </td>
 </tr>
 </table>
-<input type="hidden" name="id" value="<?PHP p($id) ?>">
-<input type="hidden" name="l" value="<?PHP p($l) ?>">
-<input type="hidden" name="lasttab" value="<?PHP p($lasttab) ?>">
-<input type="hidden" name="step" value="1">
+<input type="hidden" name="id" value="<?PHP p($id) ?>" />
+<input type="hidden" name="l" value="<?PHP p($l) ?>" />
+<input type="hidden" name="lasttab" value="<?PHP p($lasttab) ?>" />
+<input type="hidden" name="step" value="1" />
 </form> 

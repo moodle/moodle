@@ -69,9 +69,9 @@
 
     print_simple_box_start("center", "", "$THEME->cellheading");
     echo "<form method=\"post\" action=\"categorydatasetdefinitions.php\">";
-    echo "<input type=\"hidden\" name=\"category\" value=\"$category->id\"/>";
+    echo "<input type=\"hidden\" name=\"category\" value=\"$category->id\" />";
     if ($question) {
-        echo "<input type=\"hidden\" name=\"question\" value=\"$question\"/>";
+        echo "<input type=\"hidden\" name=\"question\" value=\"$question\" />";
     }
     
     echo "<table cellpadding=5>";
@@ -89,14 +89,14 @@
         echo "<tr><td align=right>";
         print_string("itemdefinition", "quiz");
         echo ":</td><td>";
-        echo "<input name=\"name[]\" type=\"text\" size=\"20\" value=\"$definition->name\"/>";
-        echo "<input type=\"hidden\" name=\"id[]\" value=\"$definition->id\"/>";
+        echo "<input name=\"name[]\" type=\"text\" size=\"20\" value=\"$definition->name\" />";
+        echo "<input type=\"hidden\" name=\"id[]\" value=\"$definition->id\" />";
         echo " </td><td> ";
         choose_from_menu($DATASET_TYPES, 'type[]', $definition->type, '');
         echo "</td></tr>\n";
     }
 
-    echo "<tr><td align=\"CENTER\" colspan=\"3\"><input type=submit value=\"".get_string("continue")."\"></td></tr>";
+    echo "<tr><td align=\"CENTER\" colspan=\"3\"><input type=submit value=\"".get_string("continue")."\" /></td></tr>";
     echo "</table>";
     echo "</form>";
     print_simple_box_end();

@@ -294,9 +294,9 @@
 
     if($ewiki_title==$wiki_entry->pagename && !empty($wiki->summary)) {
       if (trim(strip_tags($wiki->summary))) {
-          print "<br>";
+          print "<br />";
           print_simple_box(format_text($wiki->summary, FORMAT_MOODLE), "center");
-          print "<br>";
+          print "<br />";
       }
     }
     

@@ -55,7 +55,7 @@
             $newid = insert_record ("wiki",$wiki);
 
             //Do some output
-            echo "<ul><li>".get_string("modulename","wiki")." \"".$wiki->name."\"<br>";
+            echo "<ul><li>".get_string("modulename","wiki")." \"".$wiki->name."\"<br />";
             backup_flush(300);
 
             if ($newid) {
@@ -124,7 +124,7 @@
 	        if (($i+1) % 50 == 0) {
       	            echo ".";
             	    if (($i+1) % 1000 == 0) {
-                        echo "<br>";
+                        echo "<br />";
 	            }
       	            backup_flush(300);
                 }
@@ -190,7 +190,7 @@
             //The structure is equal to the db, so insert the wiki_comments
             insert_record ("wiki_pages",$page, false,"pagename");
 #print "<pre>"; print_r($page); print "</pre>";            
-            print ($r?"TRUE":"FALSE")."<br>\n";
+            print ($r?"TRUE":"FALSE")."<br />\n";
             #$newid = insert_record ("wiki_pages",$page);
             #if($newid) {
             #  $newid = backup_todb($pag_info['#']['PAGENAME']['0']['#']."_".$pag_info['#']['VERSION']['0']['#']."_".$new_entry_id);
@@ -199,7 +199,7 @@
             if (($i+1) % 50 == 0) {
                 echo ".";
                 if (($i+1) % 1000 == 0) {
-                    echo "<br>";
+                    echo "<br />";
                 }
                 backup_flush(300);
             }

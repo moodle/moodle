@@ -9,11 +9,11 @@ if (!isset($form->changesfield)) {
 
 ?>
 <FORM ACTION="admin.php" METHOD="POST" ENCTYPE="multipart/form-data">
-<INPUT TYPE="HIDDEN" NAME="userid" VALUE="<? print $userid; ?>">
-<INPUT TYPE="HIDDEN" NAME="groupid" VALUE="<? print $groupid ?>">
-<INPUT TYPE="HIDDEN" NAME="action" VALUE="<? print $action; ?>">
-<INPUT TYPE="HIDDEN" NAME="id" VALUE="<? print $cm->id ?>">
-<INPUT TYPE="HIDDEN" NAME="wikipage" VALUE="<? print $wikipage?>">
+<INPUT TYPE="HIDDEN" NAME="userid" VALUE="<? print $userid; ?>" />
+<INPUT TYPE="HIDDEN" NAME="groupid" VALUE="<? print $groupid ?>" />
+<INPUT TYPE="HIDDEN" NAME="action" VALUE="<? print $action; ?>" />
+<INPUT TYPE="HIDDEN" NAME="id" VALUE="<? print $cm->id ?>" />
+<INPUT TYPE="HIDDEN" NAME="wikipage" VALUE="<? print $wikipage?>" />
 
 <CENTER>
 <?
@@ -25,7 +25,7 @@ if($err->remark) {
 <TR valign=top>
     <TD align=right><P><B><?php print_string('authorfieldpattern','wiki') ?>:</B></P></TD>
     <TD>
-        <INPUT type="text" name="authorfieldpattern" size=30 value="<?php p($form->authorfieldpattern) ?>">
+        <INPUT type="text" name="authorfieldpattern" size=30 value="<?php p($form->authorfieldpattern) ?>" />
 <?php
         helpbutton('revertauthorfieldpattern', get_string('authorfieldpattern', 'wiki'), 'wiki');
         if (!empty($err->authorfieldpattern)) { formerr($err->authorfieldpattern); }
@@ -35,7 +35,7 @@ if($err->remark) {
 <TR valign=top>
     <TD align=right><P><B><?php print_string('changesfield','wiki') ?>:</B></P></TD>
     <TD>
-        <INPUT type="text" name="changesfield" size=30 value="<?php p($form->changesfield) ?>">
+        <INPUT type="text" name="changesfield" size=30 value="<?php p($form->changesfield) ?>" />
         <? if (!empty($err->changesfield)) { formerr($err->changesfield); } ?>
     </TD>
 </TR>
@@ -53,10 +53,10 @@ if($err->remark) {
 <TR valign=top>
     <TD align=right><P><B><?php print_string('deleteversions','wiki') ?>:</B></P></TD>
     <TD>
-        <INPUT type="text" name="deleteversions" size=2 value="<?php p($form->deleteversions) ?>">
+        <INPUT type="text" name="deleteversions" size=2 value="<?php p($form->deleteversions) ?>" />
         <? if (!empty($err->deleteversions)) { formerr($err->deleteversions); } ?>
     </TD>
 </TR>
 </TABLE>
-  <input type="submit" name="proceed" value="<? print get_string("revertchanges","wiki"); ?>">
+  <input type="submit" name="proceed" value="<? print get_string("revertchanges","wiki"); ?>" />
 </center>

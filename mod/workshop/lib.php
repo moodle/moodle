@@ -1112,7 +1112,7 @@ function workshop_print_recent_mod_activity($activity, $course, $detail=false) {
 
     echo "</a>$closeformat";
 
-    echo "<br><font size=\"2\">";
+    echo "<br /><font size=\"2\">";
     echo "<a href=\"$CFG->wwwroot/user/view.php?id=" . $activity->user->userid . "&course=" . "$course\">"
         . $activity->user->fullname . "</a>";
     echo " - " . userdate($activity->timestamp) . "</font></td></tr>";

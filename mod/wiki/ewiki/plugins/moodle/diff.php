@@ -81,32 +81,32 @@
        $i2 = $i;
        while ($rm = $diff0[$i2++]) {          
           if($wiki->htmlmode == 2) {
-            $o .= "<b>-</b><font color=\"#990000\">$rm</font><br>\n";
+            $o .= "<b>-</b><font color=\"#990000\">$rm</font><br />\n";
           } else {
-            $o .= "<b>-</b><font color=\"#990000\"><tt>$rm</tt></font><br>\n";
+            $o .= "<b>-</b><font color=\"#990000\"><tt>$rm</tt></font><br />\n";
           }
           unset($diff0[$i2-1]);
        }
 
        if (in_array($line, $diff2)) {
           if($wiki->htmlmode == 2) {
-            $o .= "<b>+</b><font color=\"#009900\">$line</font><br>\n";
+            $o .= "<b>+</b><font color=\"#009900\">$line</font><br />\n";
           } else {
-            $o .= "<b>+</b><font color=\"#009900\"><tt>$line</tt></font><br>\n";
+            $o .= "<b>+</b><font color=\"#009900\"><tt>$line</tt></font><br />\n";
           }
        }
        else {
           if($wiki->htmlmode == 2) {
             $o .= "$line\n";
           } else {
-            $o .= "&nbsp; $line<br>\n";
+            $o .= "&nbsp; $line<br />\n";
           }
        }
 
     }
 
     foreach ($diff0 as $rm) {
-       $o .= "<b>-</b><font color=\"#990000\"> <tt>$rm</tt></font><br>\n";
+       $o .= "<b>-</b><font color=\"#990000\"> <tt>$rm</tt></font><br />\n";
     }
 
     return($o);

@@ -72,7 +72,7 @@ if (!isset($form->assesstimefinish)) {
 <TR valign=top>
     <TD align=right><P><B><?php print_string("name") ?>:</B></P></TD>
     <TD>
-        <INPUT type="text" name="name" size=30 value="<?php p($form->name) ?>">
+        <INPUT type="text" name="name" size=30 value="<?php p($form->name) ?>" />
     </TD>
 </TR>
 <tr valign=top>
@@ -95,7 +95,7 @@ if (!isset($form->assesstimefinish)) {
 <TR valign=top>
     <TD align=right><P><B><?php echo get_string("entbypage", "glossary") ?>:</B></P></TD>
     <TD>
-		<input name=entbypage type=text size=2 value="<?php p($form->entbypage) ?>"> <?php helpbutton("entbypage", get_string("entbypage", "glossary"), "glossary") ?>
+		<input name=entbypage type=text size=2 value="<?php p($form->entbypage) ?>" /> <?php helpbutton("entbypage", get_string("entbypage", "glossary"), "glossary") ?>
     </TD>
 </TR>
 
@@ -114,12 +114,12 @@ if (isadmin() ) {
         }
     }
 ?> 
-  <input type="checkbox" name="globalglossary" value=1 <?PHP p($selected)?>> <?php helpbutton("globalglossary", get_string("globalglossary", "glossary"), "glossary") ?>
+  <input type="checkbox" name="globalglossary" value=1 selected="<?PHP p($selected)?>" /> <?php helpbutton("globalglossary", get_string("globalglossary", "glossary"), "glossary") ?>
     </TD>
 </TR>
 <?php
 } else {
-   echo '<INPUT type="hidden" name=globalglossary value="' . $form->globalglossary . '">';
+   echo '<INPUT type="hidden" name=globalglossary value="' . $form->globalglossary . '" />';
 }
 ?>
 <?php
@@ -147,11 +147,11 @@ if (!$mainglossary or $mainglossary->id == $form->instance ) {
 </TR>
 <?php
 } else {
-	echo "<INPUT type=\"hidden\" name=mainglossary value=\"0\">";
+	echo "<INPUT type=\"hidden\" name=mainglossary value=\"0\" />";
 }
 ?>
 <TR valign=top>
-    <TD align=right><P><B><?php p(get_string("studentcanpost", "glossary")) ?>:</B><br>
+    <TD align=right><P><B><?php p(get_string("studentcanpost", "glossary")) ?>:</B><br />
     <font size=1><?php p(get_string("warningstudentcapost","glossary")) ?></font></P></TD>
     <TD>
   <select size="1" name="studentcanpost">
@@ -246,7 +246,7 @@ if (!$mainglossary or $mainglossary->id == $form->instance ) {
     </TD>
 </TR>
 <TR valign=top>
-<td colspan=2><hr>
+<td colspan=2><hr />
 </tr>
 </tr>
 <TR valign=top>
@@ -405,9 +405,9 @@ if (!$mainglossary or $mainglossary->id == $form->instance ) {
             echo "<input name=\"userating\" type=checkbox value=1 ";
             echo " onclick=\"return lockoptions('form','userating', subitemsall)\" ";
             if ($form->assessed) {
-                echo " checked ";
+                echo " checked=\"checked\" ";
             }
-            echo ">";
+            echo " />";
             echo get_string("ratingsuse", "glossary").":";
             echo "<br />";
 
@@ -427,9 +427,9 @@ if (!$mainglossary or $mainglossary->id == $form->instance ) {
             echo " onclick=\"return lockoptions('form','ratingtime', subitemstime)\" ";
             if ($form->assesstimestart and $form->assesstimefinish and $form->assessed) {
                 $form->ratingtime = 1;
-                echo " checked ";
+                echo " checked=\"checked\" ";
             }
-            echo ">";
+            echo " />";
 
             print_string("ratingtime", "glossary");
             echo "<table align=left><tr><td align=right nowrap>";
@@ -442,19 +442,19 @@ if (!$mainglossary or $mainglossary->id == $form->instance ) {
             print_time_selector("finishhour", "finishminute", $form->assesstimefinish);
             echo "<br />";
             echo "</td></tr></table>";
-            echo "<input type=\"hidden\" name=\"hratingtime\" value=0>";
-            echo "<input type=\"hidden\" name=\"hassessed\" value=0>";
-            echo "<input type=\"hidden\" name=\"hscale\" value=0>";
-            echo "<input type=\"hidden\" name=\"hstartday\" value=0>";
-            echo "<input type=\"hidden\" name=\"hstartmonth\" value=0>";
-            echo "<input type=\"hidden\" name=\"hstartyear\" value=0>";
-            echo "<input type=\"hidden\" name=\"hstarthour\" value=0>";
-            echo "<input type=\"hidden\" name=\"hstartminute\" value=0>";
-            echo "<input type=\"hidden\" name=\"hfinishday\" value=0>";
-            echo "<input type=\"hidden\" name=\"hfinishmonth\" value=0>";
-            echo "<input type=\"hidden\" name=\"hfinishyear\" value=0>";
-            echo "<input type=\"hidden\" name=\"hfinishhour\" value=0>";
-            echo "<input type=\"hidden\" name=\"hfinishminute\" value=0>";
+            echo "<input type=\"hidden\" name=\"hratingtime\" value=0 />";
+            echo "<input type=\"hidden\" name=\"hassessed\" value=0 />";
+            echo "<input type=\"hidden\" name=\"hscale\" value=0 />";
+            echo "<input type=\"hidden\" name=\"hstartday\" value=0 />";
+            echo "<input type=\"hidden\" name=\"hstartmonth\" value=0 />";
+            echo "<input type=\"hidden\" name=\"hstartyear\" value=0 />";
+            echo "<input type=\"hidden\" name=\"hstarthour\" value=0 />";
+            echo "<input type=\"hidden\" name=\"hstartminute\" value=0 />";
+            echo "<input type=\"hidden\" name=\"hfinishday\" value=0 />";
+            echo "<input type=\"hidden\" name=\"hfinishmonth\" value=0 />";
+            echo "<input type=\"hidden\" name=\"hfinishyear\" value=0 />";
+            echo "<input type=\"hidden\" name=\"hfinishhour\" value=0 />";
+            echo "<input type=\"hidden\" name=\"hfinishminute\" value=0 />";
 
             echo "<script>";
             echo "lockoptions('form','userating', subitemsall);";
@@ -470,13 +470,13 @@ if (!$mainglossary or $mainglossary->id == $form->instance ) {
 </tr>
 </TABLE>
 <!-- These hidden variables are always the same -->
-<INPUT type="hidden" name=course        value="<?php p($form->course) ?>">
-<INPUT type="hidden" name=coursemodule  value="<?php p($form->coursemodule) ?>">
-<INPUT type="hidden" name=section       value="<?php p($form->section) ?>">
-<INPUT type="hidden" name=module        value="<?php p($form->module) ?>">
-<INPUT type="hidden" name=modulename    value="<?php p($form->modulename) ?>">
-<INPUT type="hidden" name=instance      value="<?php p($form->instance) ?>">
-<INPUT type="hidden" name=mode          value="<?php p($form->mode) ?>">
-<INPUT type="submit" value="<?php print_string("savechanges") ?>">
+<INPUT type="hidden" name=course        value="<?php p($form->course) ?>" />
+<INPUT type="hidden" name=coursemodule  value="<?php p($form->coursemodule) ?>" />
+<INPUT type="hidden" name=section       value="<?php p($form->section) ?>" />
+<INPUT type="hidden" name=module        value="<?php p($form->module) ?>" />
+<INPUT type="hidden" name=modulename    value="<?php p($form->modulename) ?>" />
+<INPUT type="hidden" name=instance      value="<?php p($form->instance) ?>" />
+<INPUT type="hidden" name=mode          value="<?php p($form->mode) ?>" />
+<INPUT type="submit" value="<?php print_string("savechanges") ?>" />
 </CENTER>
 </FORM>

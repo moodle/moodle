@@ -45,7 +45,7 @@ class quiz_default_format {
         foreach ($questions as $question) {   // Process and store each question
             $count++;
 
-            echo "<hr><p><b>$count</b>. ".stripslashes($question->questiontext)."</p>";
+            echo "<hr /><p><b>$count</b>. ".stripslashes($question->questiontext)."</p>";
 
             $question->category = $this->category->id;
             $question->stamp = make_unique_id_code();  // Set the unique code (not to be changed)
@@ -201,7 +201,7 @@ class quiz_default_format {
         // iterate through questions
         foreach($questions as $question) {
           $count++;
-          echo "<hr><p><b>$count</b>. ".stripslashes($question->questiontext)."</p>";
+          echo "<hr /><p><b>$count</b>. ".stripslashes($question->questiontext)."</p>";
           $expout .= $this->writequestion( $question ) . "\n";
           }
 

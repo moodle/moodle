@@ -111,8 +111,8 @@ if (empty($form->id)) {
     ?>
 <FORM name="form" method="post" action="<?php echo "$CFG->wwwroot/course/mod.php"; ?>">
 <CENTER>
-<INPUT type="submit" value="<?php  print_string("savechanges") ?>">
-<INPUT type="submit" name="cancel" value="<?php  print_string("cancel") ?>">
+<INPUT type="submit" value="<?php  print_string("savechanges") ?>" />
+<INPUT type="submit" name="cancel" value="<?php  print_string("cancel") ?>" />
 
 <?php  // if we're modifying an existing instance of attendance instead 
     //   of creating a new one
@@ -204,19 +204,19 @@ if ($form->hours >1) {
 } // if ($form->id)
 ?>
 <!-- These hidden variables are always the same -->
-<INPUT type="hidden" name=course        value="<?php p($form->course) ?>">
-<INPUT type="hidden" name=coursemodule  value="<?php p($form->coursemodule) ?>">
-<INPUT type="hidden" name=section       value="<?php p($form->section) ?>">
-<INPUT type="hidden" name=module        value="<?php p($form->module) ?>">
-<INPUT type="hidden" name=modulename    value="<?php p($form->modulename) ?>">
-<INPUT type="hidden" name=instance      value="<?php p($form->instance) ?>">
-<INPUT type="hidden" name=mode          value="<?php p($form->mode) ?>">
+<INPUT type="hidden" name=course        value="<?php p($form->course) ?>" />
+<INPUT type="hidden" name=coursemodule  value="<?php p($form->coursemodule) ?>" />
+<INPUT type="hidden" name=section       value="<?php p($form->section) ?>" />
+<INPUT type="hidden" name=module        value="<?php p($form->module) ?>" />
+<INPUT type="hidden" name=modulename    value="<?php p($form->modulename) ?>" />
+<INPUT type="hidden" name=instance      value="<?php p($form->instance) ?>" />
+<INPUT type="hidden" name=mode          value="<?php p($form->mode) ?>" />
 <BR />
 <?php
   echo "<a href=\"../mod/attendance/add.php?id=".$form->course . "&section=".$form->section ."\">Add multiple rolls</a><br /><br />";
 ?>
-<INPUT type="submit" value="<?php print_string("savechanges") ?>">
-<INPUT type="submit" name="cancel" value="<?php print_string("cancel") ?>">
+<INPUT type="submit" value="<?php print_string("savechanges") ?>" />
+<INPUT type="submit" name="cancel" value="<?php print_string("cancel") ?>" />
 </CENTER>
 </FORM>
 

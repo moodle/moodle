@@ -1828,10 +1828,10 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
     // FORM is needed for Mozilla browsers, else radio bttons are not checked
         ?>
     <form name="assessmentform" method="post" action="assessments.php">
-    <input type="hidden" name="id" value="<?php echo $cm->id ?>">
-    <input type="hidden" name="aid" value="<?php echo $assessment->id ?>">
-    <input type="hidden" name="action" value="updateassessment">
-    <input type="hidden" name="returnto" value="<?php echo $returnto ?>">
+    <input type="hidden" name="id" value="<?php echo $cm->id ?>" />
+    <input type="hidden" name="aid" value="<?php echo $assessment->id ?>" />
+    <input type="hidden" name="action" value="updateassessment" />
+    <input type="hidden" name="returnto" value="<?php echo $returnto ?>" />
     <center>
     <table cellpadding=2 border=1>
     <?php
@@ -1935,10 +1935,10 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
                                             }
                                         }
                                     if ($checked) {
-                                        echo " <INPUT TYPE=\"RADIO\" NAME=\"grade[$i]\" VALUE=\"$j\" CHECKED> &nbsp;&nbsp;&nbsp;\n";
+                                        echo " <INPUT TYPE=\"RADIO\" NAME=\"grade[$i]\" VALUE=\"$j\" CHECKED=\"checked\" /> &nbsp;&nbsp;&nbsp;\n";
                                         }
                                     else {
-                                        echo " <INPUT TYPE=\"RADIO\" NAME=\"grade[$i]\" VALUE=\"$j\"> &nbsp;&nbsp;&nbsp;\n";
+                                        echo " <INPUT TYPE=\"RADIO\" NAME=\"grade[$i]\" VALUE=\"$j\" /> &nbsp;&nbsp;&nbsp;\n";
                                         }
                                     }
                                 echo "&nbsp;&nbsp;&nbsp;<B>$SCALE->end</B></CENTER>\n";
@@ -2015,10 +2015,10 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
                                         }
                                     }
                                 if ($checked) {
-                                    echo " <INPUT TYPE=\"RADIO\" NAME=\"grade[$i]\" VALUE=\"$j\" CHECKED> &nbsp;&nbsp;&nbsp;\n";
+                                    echo " <INPUT TYPE=\"RADIO\" NAME=\"grade[$i]\" VALUE=\"$j\" CHECKED=\"checked\" /> &nbsp;&nbsp;&nbsp;\n";
                                     }
                                 else {
-                                    echo " <INPUT TYPE=\"RADIO\" NAME=\"grade[$i]\" VALUE=\"$j\"> &nbsp;&nbsp;&nbsp;\n";
+                                    echo " <INPUT TYPE=\"RADIO\" NAME=\"grade[$i]\" VALUE=\"$j\" /> &nbsp;&nbsp;&nbsp;\n";
                                     }
                                 }
                             echo "&nbsp;&nbsp;&nbsp;<B>$SCALE->end</B></CENTER>\n";
@@ -2119,10 +2119,10 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
                 echo "<TR valign=top>\n";
                 echo "  <TD>$iplus1</TD><TD>".text_to_html($elements[$i]->description)."</TD>\n";
                 if ($selection == $i) {
-                    echo "  <TD align=center><INPUT TYPE=\"RADIO\" NAME=\"grade[0]\" VALUE=\"$i\" CHECKED></TD>\n";
+                    echo "  <TD align=center><INPUT TYPE=\"RADIO\" NAME=\"grade[0]\" VALUE=\"$i\" CHECKED=\"checked\" /></TD>\n";
                     }
                 else {
-                    echo "  <TD align=center><INPUT TYPE=\"RADIO\" NAME=\"grade[0]\" VALUE=\"$i\"></TD>\n";
+                    echo "  <TD align=center><INPUT TYPE=\"RADIO\" NAME=\"grade[0]\" VALUE=\"$i\" /></TD>\n";
                     }
                 echo "<TD align=center>{$elements[$i]->maxscore}</TD></TR>\n";
                 }
@@ -2172,9 +2172,9 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
                             }
                         echo "<TR valign=top>\n";
                         if ($selection == $j) {
-                            echo "  <TD align=center><INPUT TYPE=\"RADIO\" NAME=\"grade[$i]\" VALUE=\"$j\" CHECKED></TD>\n";
+                            echo "  <TD align=center><INPUT TYPE=\"RADIO\" NAME=\"grade[$i]\" VALUE=\"$j\" CHECKED=\"checked\" /></TD>\n";
                             }else {
-                            echo "  <TD align=center><INPUT TYPE=\"RADIO\" NAME=\"grade[$i]\" VALUE=\"$j\"></TD>\n";
+                            echo "  <TD align=center><INPUT TYPE=\"RADIO\" NAME=\"grade[$i]\" VALUE=\"$j\" /></TD>\n";
                             }
                         echo "<TD>".text_to_html($rubrics[$j]->description)."</TD>\n";
                         }
@@ -2259,16 +2259,16 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
     echo "</table>\n";
     if ($assessment) {
         if ($allowchanges) {  
-            echo "<input type=\"submit\" VALUE=\"".get_string("savemyassessment", "workshop")."\">\n";
+            echo "<input type=\"submit\" VALUE=\"".get_string("savemyassessment", "workshop")."\" />\n";
             }
         // ...if user is author, assessment not agreed, there's no comments, the showcommentlinks flag is set and 
         // it's not self assessment then show some buttons!
         if (($submission->userid == $USER->id) and !$assessment->timeagreed and !$comments and $showcommentlinks and 
                 $submission->userid != $assessment->userid) {
             echo "<input type=button VALUE=\"".get_string("agreetothisassessment", "workshop")."\" 
-                onclick=\"document.assessmentform.action.value='agreeassessment';document.assessmentform.submit();\">\n";
+                onclick=\"document.assessmentform.action.value='agreeassessment';document.assessmentform.submit();\" />\n";
             echo "<input type=submit value=\"".get_string("disagreewiththisassessment", "workshop")."\"
-                onclick=\"document.assessmentform.action.value='addcomment';document.assessmentform.submit();\">\n";
+                onclick=\"document.assessmentform.action.value='addcomment';document.assessmentform.submit();\" />\n";
             }
         }
     echo "</center>";
@@ -2288,7 +2288,7 @@ function workshop_print_assessments_by_user_for_admin($workshop, $user) {
             echo "<p><center><b>".get_string("assessmentby", "workshop", fullname($user))."</b></center></p>\n";
             workshop_print_assessment($workshop, $assessment);
             echo "<p align=\"right\"><a href=\"assessments.php?action=adminconfirmdelete&id=$cm->id&aid=$assessment->id\">".
-                get_string("delete", "workshop")."</a></p><hr>\n";
+                get_string("delete", "workshop")."</a></p><hr />\n";
             }
         }
     }
@@ -2309,7 +2309,7 @@ function workshop_print_assessments_for_admin($workshop, $submission) {
             echo "<p><center><b>".get_string("assessmentby", "workshop", fullname($user))."</b></center></p>\n";
             workshop_print_assessment($workshop, $assessment);
             echo "<p align=\"right\"><a href=\"assessments.php?action=adminconfirmdelete&id=$cm->id&aid=$assessment->id\">".
-                get_string("delete", "workshop")."</a></p><hr>\n";
+                get_string("delete", "workshop")."</a></p><hr />\n";
             }
         }
     }
@@ -2687,11 +2687,11 @@ function workshop_print_upload_form($workshop) {
 
     echo "<DIV ALIGN=CENTER>";
     echo "<FORM ENCTYPE=\"multipart/form-data\" METHOD=\"POST\" ACTION=upload.php>";
-    echo " <INPUT TYPE=hidden NAME=MAX_FILE_SIZE value=\"$workshop->maxbytes\">";
-    echo " <INPUT TYPE=hidden NAME=id VALUE=\"$cm->id\">";
-    echo "<b>".get_string("title", "workshop")."</b>: <INPUT NAME=\"title\" TYPE=\"text\" SIZE=\"60\" MAXSIZE=\"100\"><BR><BR>\n";
-    echo " <INPUT NAME=\"newfile\" TYPE=\"file\" size=\"50\">";
-    echo " <INPUT TYPE=submit NAME=save VALUE=\"".get_string("uploadthisfile")."\">";
+    echo " <INPUT TYPE=hidden NAME=MAX_FILE_SIZE value=\"$workshop->maxbytes\" />";
+    echo " <INPUT TYPE=hidden NAME=id VALUE=\"$cm->id\" />";
+    echo "<b>".get_string("title", "workshop")."</b>: <INPUT NAME=\"title\" TYPE=\"text\" SIZE=\"60\" MAXSIZE=\"100\" /><BR><BR>\n";
+    echo " <INPUT NAME=\"newfile\" TYPE=\"file\" size=\"50\" />";
+    echo " <INPUT TYPE=submit NAME=save VALUE=\"".get_string("uploadthisfile")."\" />";
     echo "</FORM>";
     echo "</DIV>";
 }

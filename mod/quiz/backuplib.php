@@ -188,7 +188,7 @@
                 if ($counter % 10 == 0) {
                     echo ".";            
                     if ($counter % 200 == 0) {
-                        echo "<br>";
+                        echo "<br />";
                     }
                     backup_flush(300);
                 }

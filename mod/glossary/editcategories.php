@@ -100,7 +100,7 @@
                 echo "<p align=\"center\">" . get_string("delete"). " " . get_string("category","glossary") . "<font size=\"3\">";
 
                 print_simple_box_start("center","40%", "#FFBBBB");
-                echo "<center><b>$category->name</b><br>";
+                echo "<center><b>$category->name</b><br />";
                 
                 $num_entries = count_records("glossary_entries_categories","categoryid",$category->id);
                 if ( $num_entries ) {
@@ -111,13 +111,13 @@
 ?>
                 <form name="form" method="post" action="editcategories.php">
 
-                <input type="hidden" name=id          value="<?php p($cm->id) ?>">
-                <input type="hidden" name=action      value="delete">
-                <input type="hidden" name=confirm     value="1">
-                <input type="hidden" name=mode         value="<?php echo $mode ?>">
-                <input type="hidden" name=hook         value="<?php echo $hook ?>">
-                <table border=0 widTH=100><tr><td align=right width=50%>
-                <input type="submit" value=" <?php print_string("yes")?> ">
+                <input type="hidden" name=id          value="<?php p($cm->id) ?>" />
+                <input type="hidden" name=action      value="delete" />
+                <input type="hidden" name=confirm     value="1" />
+                <input type="hidden" name=mode         value="<?php echo $mode ?>" />
+                <input type="hidden" name=hook         value="<?php echo $hook ?>" />
+                <table border=0 widTH=100><tr><td align=right width="50%" />
+                <input type="submit" value=" <?php print_string("yes")?> " />
                 </form>
                 </td><td align=left width=50%>
 

@@ -161,9 +161,9 @@ function journal_cron () {
                 "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> ->".
                 "<a href=\"$CFG->wwwroot/mod/journal/index.php?id=$course->id\">journals</a> ->".
                 "<a href=\"$CFG->wwwroot/mod/journal/view.php?id=$mod->id\">$entry->name</a></font></p>";
-                $posthtml .= "<hr><font face=\"sans-serif\">";
+                $posthtml .= "<hr /><font face=\"sans-serif\">";
                 $posthtml .= "<p>".get_string("journalmailhtml", "journal", $journalinfo)."</p>";
-                $posthtml .= "</font><hr>";
+                $posthtml .= "</font><hr />";
             } else {
               $posthtml = "";
             }

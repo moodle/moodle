@@ -265,9 +265,9 @@ function assignment_cron () {
                 "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> ->".
                 "<a href=\"$CFG->wwwroot/mod/assignment/index.php?id=$course->id\">$strassignments</a> ->".
                 "<a href=\"$CFG->wwwroot/mod/assignment/view.php?id=$mod->id\">$submission->name</a></font></p>";
-                $posthtml .= "<hr><font face=\"sans-serif\">";
+                $posthtml .= "<hr /><font face=\"sans-serif\">";
                 $posthtml .= "<p>".get_string("assignmentmailhtml", "assignment", $assignmentinfo)."</p>";
-                $posthtml .= "</font><hr>";
+                $posthtml .= "</font><hr />";
             } else {
                 $posthtml = "";
             }
@@ -682,10 +682,10 @@ function assignment_print_upload_form($assignment) {
 
     echo "<DIV ALIGN=CENTER>";
     echo "<FORM ENCTYPE=\"multipart/form-data\" METHOD=\"POST\" ACTION=\"upload.php?id=$assignment->id\">";
-    echo " <INPUT TYPE=hidden NAME=MAX_FILE_SIZE value=\"$assignment->maxbytes\">";
-    echo " <INPUT TYPE=hidden NAME=id VALUE=\"$assignment->id\">";
-    echo " <INPUT NAME=\"newfile\" TYPE=\"file\" size=\"50\">";
-    echo " <INPUT TYPE=submit NAME=save VALUE=\"".get_string("uploadthisfile")."\">";
+    echo " <INPUT TYPE=hidden NAME=MAX_FILE_SIZE value=\"$assignment->maxbytes\" />";
+    echo " <INPUT TYPE=hidden NAME=id VALUE=\"$assignment->id\" />";
+    echo " <INPUT NAME=\"newfile\" TYPE=\"file\" size=\"50\" />";
+    echo " <INPUT TYPE=submit NAME=save VALUE=\"".get_string("uploadthisfile")."\" />";
     echo "</FORM>";
     echo "</DIV>";
 }
@@ -782,7 +782,7 @@ function assignment_print_recent_mod_activity($activity, $course, $detail=false)
             echo "<img src=\"$CFG->pixpath/f/$file->icon\" height=16 width=16 border=0 alt=\"file\">";
             echo "&nbsp;<a target=\"uploadedfile\" HREF=\"$CFG->wwwroot/$file->url\">$file->name</A>";
         }
-        echo "<br>";
+        echo "<br />";
     }
     echo "<a href=\"$CFG->wwwroot/user/view.php?id="
          . $activity->user->userid . "&course=$course\">"

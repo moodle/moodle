@@ -107,12 +107,12 @@
     echo "<tr><td align=\"right\">";
     print_string("exportname", "quiz" );
     echo ":</td><td>";
-    echo "<input type=\"text\" size=\"40\" name=\"exportfilename\" value=\"$exportfilename\">";
+    echo "<input type=\"text\" size=\"40\" name=\"exportfilename\" value=\"$exportfilename\" />";
     echo "</td></tr>";
 
     echo "<tr><td align=\"center\" colspan=\"2\">";
-    echo " <input type=hidden name=category value=\"$category->id\">";
-    echo " <input type=submit name=save value=\"".get_string("exportquestions","quiz")."\">";
+    echo " <input type=hidden name=category value=\"$category->id\" />";
+    echo " <input type=submit name=save value=\"".get_string("exportquestions","quiz")."\" />";
     echo "</td></tr>";
 
     echo "</table>";

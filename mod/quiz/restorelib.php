@@ -269,10 +269,10 @@
 
             //Do some output
             if ($status) {
-                echo "<ul><li>".get_string("category")." \"".$quiz_cat->name."\"<br>";
+                echo "<ul><li>".get_string("category")." \"".$quiz_cat->name."\"<br />";
             } else {
                 //We must never arrive here !!
-                echo "<ul><li>".get_string("category")." \"".$quiz_cat->name."\" Error!<br>";
+                echo "<ul><li>".get_string("category")." \"".$quiz_cat->name."\" Error!<br />";
             }
             backup_flush(300);
 
@@ -355,7 +355,7 @@
             if (($i+1) % 2 == 0) {
                 echo ".";
                 if (($i+1) % 40 == 0) {
-                    echo "<br>";
+                    echo "<br />";
                 }
                 backup_flush(300);
             }
@@ -458,7 +458,7 @@
                 if (($i+1) % 50 == 0) {
                     echo ".";
                     if (($i+1) % 1000 == 0) {
-                        echo "<br>";
+                        echo "<br />";
                     }
                     backup_flush(300);
                 }
@@ -514,7 +514,7 @@
             if (($i+1) % 50 == 0) {
                 echo ".";
                 if (($i+1) % 1000 == 0) {
-                    echo "<br>";
+                    echo "<br />";
                 }
                 backup_flush(300);
             }
@@ -581,7 +581,7 @@
             if (($i+1) % 50 == 0) {
                 echo ".";
                 if (($i+1) % 1000 == 0) {
-                    echo "<br>";
+                    echo "<br />";
                 }
                 backup_flush(300);
             }
@@ -634,7 +634,7 @@
             if (($i+1) % 50 == 0) {
                 echo ".";
                 if (($i+1) % 1000 == 0) {
-                    echo "<br>";
+                    echo "<br />";
                 }
                 backup_flush(300);
             }
@@ -698,7 +698,7 @@
             if (($i+1) % 50 == 0) {
                 echo ".";
                 if (($i+1) % 1000 == 0) {
-                    echo "<br>";
+                    echo "<br />";
                 }
                 backup_flush(300);
             }
@@ -746,7 +746,7 @@
             if (($i+1) % 50 == 0) {
                 echo ".";
                 if (($i+1) % 1000 == 0) {
-                    echo "<br>";
+                    echo "<br />";
                 }
                 backup_flush(300);
             }
@@ -822,7 +822,7 @@
             if (($i+1) % 50 == 0) {
                 echo ".";
                 if (($i+1) % 1000 == 0) {
-                    echo "<br>";
+                    echo "<br />";
                 }
                 backup_flush(300);
             }
@@ -877,7 +877,7 @@
             if (($i+1) % 50 == 0) {
                 echo ".";
                 if (($i+1) % 1000 == 0) {
-                    echo "<br>";
+                    echo "<br />";
                 }
                 backup_flush(300);
             }
@@ -922,7 +922,7 @@
             if (($i+1) % 50 == 0) {
                 echo ".";
                 if (($i+1) % 1000 == 0) {
-                    echo "<br>";
+                    echo "<br />";
                 }
                 backup_flush(300);
             }
@@ -970,7 +970,7 @@
             if (($i+1) % 50 == 0) {
                 echo ".";
                 if (($i+1) % 1000 == 0) {
-                    echo "<br>";
+                    echo "<br />";
                 }
                 backup_flush(300);
             }
@@ -1022,7 +1022,7 @@
             if (($i+1) % 50 == 0) {
                 echo ".";
                 if (($i+1) % 1000 == 0) {
-                    echo "<br>";
+                    echo "<br />";
                 }
                 backup_flush(300);
             }
@@ -1103,7 +1103,7 @@
             if (($i+1) % 50 == 0) {
                 echo ".";
                 if (($i+1) % 1000 == 0) {
-                    echo "<br>";
+                    echo "<br />";
                 }
                 backup_flush(300);
             }
@@ -1344,7 +1344,7 @@
             $newid = insert_record ("quiz",$quiz);
 
             //Do some output
-            echo "<ul><li>".get_string("modulename","quiz")." \"".$quiz->name."\"<br>";
+            echo "<ul><li>".get_string("modulename","quiz")." \"".$quiz->name."\"<br />";
             backup_flush(300);
 
             if ($newid) {
@@ -1414,7 +1414,7 @@
             if (($i+1) % 10 == 0) {
                 echo ".";
                 if (($i+1) % 200 == 0) {
-                    echo "<br>";
+                    echo "<br />";
                 }
                 backup_flush(300);
             }
@@ -1474,7 +1474,7 @@
             if (($i+1) % 10 == 0) {
                 echo ".";
                 if (($i+1) % 200 == 0) {
-                    echo "<br>";
+                    echo "<br />";
                 }
                 backup_flush(300);
             }
@@ -1700,7 +1700,7 @@
             if (($i+1) % 10 == 0) {
                 echo ".";
                 if (($i+1) % 200 == 0) {
-                    echo "<br>";
+                    echo "<br />";
                 }
                 backup_flush(300);
             }
@@ -1757,7 +1757,7 @@
             if (($i+1) % 10 == 0) {
                 echo ".";
                 if (($i+1) % 200 == 0) {
-                    echo "<br>";
+                    echo "<br />";
                 }
                 backup_flush(300);
             }
@@ -1882,7 +1882,7 @@
             }
             break;
         default:
-            echo "action (".$log->module."-".$log->action.") unknow. Not restored<br>";                 //Debug
+            echo "action (".$log->module."-".$log->action.") unknow. Not restored<br />";                 //Debug
             break;
         }
 

@@ -1811,7 +1811,7 @@ function quiz_print_recent_mod_activity($activity, $course, $detail=false) {
              . $activity->instance . "&attempt="
              . $activity->content->attemptid . "\">" . $grades . "</a> ";
 
-        echo  get_string("attempt", "quiz") . " - " . $activity->content->attempt . "<br>";
+        echo  get_string("attempt", "quiz") . " - " . $activity->content->attempt . "<br />";
     }
     echo "<a href=\"$CFG->wwwroot/user/view.php?id="
          . $activity->user->userid . "&course=$course\">"

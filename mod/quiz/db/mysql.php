@@ -171,7 +171,7 @@ function quiz_upgrade($oldversion) {
                 $questions = get_records("quiz_questions","stamp",$duplicate->id);
                 $add = 1;
                 foreach ($questions as $question) {
-                    echo "Changing question id $question->id stamp to ".$duplicate->id.$add."<br>";
+                    echo "Changing question id $question->id stamp to ".$duplicate->id.$add."<br />";
                     set_field("quiz_questions","stamp",$duplicate->id.$add,"id",$question->id);
                     $add++;
                 }

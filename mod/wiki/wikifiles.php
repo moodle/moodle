@@ -150,20 +150,20 @@
                 echo "<P>$struploadafile ($strmaxsize) --> <B>$wdir</B>";
                 echo "<TABLE><TR><TD COLSPAN=2>";
                 echo "<FORM ENCTYPE=\"multipart/form-data\" METHOD=\"post\" ACTION=\"".$ME."\">";
-                echo " <INPUT TYPE=hidden NAME=MAX_FILE_SIZE value=\"$upload_max_filesize\">";
-                echo " <INPUT TYPE=hidden NAME=id VALUE=$id>";
-                echo " <INPUT TYPE=hidden NAME=wdir VALUE=$wdir>";
-                echo " <INPUT TYPE=hidden NAME=action VALUE=upload>";
-                echo " <INPUT NAME=\"userfile\" TYPE=\"file\" size=\"60\">";
+                echo " <INPUT TYPE=hidden NAME=MAX_FILE_SIZE value=\"$upload_max_filesize\" />";
+                echo " <INPUT TYPE=hidden NAME=id VALUE=$id />";
+                echo " <INPUT TYPE=hidden NAME=wdir VALUE=$wdir />";
+                echo " <INPUT TYPE=hidden NAME=action VALUE=upload />";
+                echo " <INPUT NAME=\"userfile\" TYPE=\"file\" size=\"60\" />";
                 echo " </TD><TR><TD WIDTH=10>";
-                echo " <INPUT TYPE=submit NAME=save VALUE=\"$struploadthisfile\">";
+                echo " <INPUT TYPE=submit NAME=save VALUE=\"$struploadthisfile\" />";
                 echo "</FORM>";
                 echo "</TD><TD WIDTH=100%>";
                 echo "<FORM ACTION=\"".$ME."\" METHOD=\"get\">";
-                echo " <INPUT TYPE=hidden NAME=id VALUE=$id>";
-                echo " <INPUT TYPE=hidden NAME=wdir VALUE=$wdir>";
-                echo " <INPUT TYPE=hidden NAME=action VALUE=cancel>";
-                echo " <INPUT TYPE=submit VALUE=\"$strcancel\">";
+                echo " <INPUT TYPE=hidden NAME=id VALUE=$id />";
+                echo " <INPUT TYPE=hidden NAME=wdir VALUE=$wdir />";
+                echo " <INPUT TYPE=hidden NAME=action VALUE=cancel />";
+                echo " <INPUT TYPE=submit VALUE=\"$strcancel\" />";
                 echo "</FORM>";
                 echo "</TD></TR></TABLE>";
             }
@@ -250,19 +250,19 @@
                 echo "<P>$strrenamefileto:";
                 echo "<TABLE><TR><TD>";
                 echo "<FORM ACTION=\"".$ME."\" METHOD=\"post\" NAME=\"form\">";
-                echo " <INPUT TYPE=hidden NAME=id VALUE=$id>";
-                echo " <INPUT TYPE=hidden NAME=wdir VALUE=$wdir>";
-                echo " <INPUT TYPE=hidden NAME=action VALUE=rename>";
-                echo " <INPUT TYPE=hidden NAME=oldname VALUE=\"$file\">";
-                echo " <INPUT TYPE=text NAME=name SIZE=35 VALUE=\"$file\">";
-                echo " <INPUT TYPE=submit VALUE=\"$strrename\">";
+                echo " <INPUT TYPE=hidden NAME=id VALUE=$id />";
+                echo " <INPUT TYPE=hidden NAME=wdir VALUE=$wdir />";
+                echo " <INPUT TYPE=hidden NAME=action VALUE=rename />";
+                echo " <INPUT TYPE=hidden NAME=oldname VALUE=\"$file\" />";
+                echo " <INPUT TYPE=text NAME=name SIZE=35 VALUE=\"$file\" />";
+                echo " <INPUT TYPE=submit VALUE=\"$strrename\" />";
                 echo "</FORM>";
                 echo "</TD><TD>";
                 echo "<FORM ACTION=\"".$ME."\" METHOD=get>";
-                echo " <INPUT TYPE=hidden NAME=id VALUE=$id>";
-                echo " <INPUT TYPE=hidden NAME=wdir VALUE=$wdir>";
-                echo " <INPUT TYPE=hidden NAME=action VALUE=cancel>";
-                echo " <INPUT TYPE=submit VALUE=\"$strcancel\">";
+                echo " <INPUT TYPE=hidden NAME=id VALUE=$id />";
+                echo " <INPUT TYPE=hidden NAME=wdir VALUE=$wdir />";
+                echo " <INPUT TYPE=hidden NAME=action VALUE=cancel />";
+                echo " <INPUT TYPE=submit VALUE=\"$strcancel\" />";
                 echo "</FORM>";
                 echo "</TD></TR></TABLE>";
             }
@@ -288,18 +288,18 @@
                 echo "<P>$strcreatefolder:";
                 echo "<TABLE><TR><TD>";
                 echo "<FORM ACTION=\"".$ME."\" METHOD=post NAME=form>";
-                echo " <INPUT TYPE=hidden NAME=id VALUE=$id>";
-                echo " <INPUT TYPE=hidden NAME=wdir VALUE=$wdir>";
-                echo " <INPUT TYPE=hidden NAME=action VALUE=mkdir>";
-                echo " <INPUT TYPE=text NAME=name SIZE=35>";
-                echo " <INPUT TYPE=submit VALUE=\"$strcreate\">";
+                echo " <INPUT TYPE=hidden NAME=id VALUE=$id />";
+                echo " <INPUT TYPE=hidden NAME=wdir VALUE=$wdir />";
+                echo " <INPUT TYPE=hidden NAME=action VALUE=mkdir />";
+                echo " <INPUT TYPE=text NAME=name SIZE=35 />";
+                echo " <INPUT TYPE=submit VALUE=\"$strcreate\" />";
                 echo "</FORM>";
                 echo "</TD><TD>";
                 echo "<FORM ACTION=\"".$ME."\" METHOD=get>";
-                echo " <INPUT TYPE=hidden NAME=id VALUE=$id>";
-                echo " <INPUT TYPE=hidden NAME=wdir VALUE=$wdir>";
-                echo " <INPUT TYPE=hidden NAME=action VALUE=cancel>";
-                echo " <INPUT TYPE=submit VALUE=\"$strcancel\">";
+                echo " <INPUT TYPE=hidden NAME=id VALUE=$id />";
+                echo " <INPUT TYPE=hidden NAME=wdir VALUE=$wdir />";
+                echo " <INPUT TYPE=hidden NAME=action VALUE=cancel />";
+                echo " <INPUT TYPE=submit VALUE=\"$strcancel\" />";
                 echo "</FORM>";
                 echo "</TD></TR></TABLE>";
             }
@@ -330,20 +330,20 @@
 
                 echo "<TABLE><TR><TD COLSPAN=2>";
                 echo "<FORM ACTION=\"".$ME."\" METHOD=\"post\" NAME=\"form\">";
-                echo " <INPUT TYPE=hidden NAME=id VALUE=$id>";
-                echo " <INPUT TYPE=hidden NAME=wdir VALUE=\"$wdir\">";
-                echo " <INPUT TYPE=hidden NAME=file VALUE=\"$file\">";
-                echo " <INPUT TYPE=hidden NAME=action VALUE=edit>";
+                echo " <INPUT TYPE=hidden NAME=id VALUE=$id />";
+                echo " <INPUT TYPE=hidden NAME=wdir VALUE=\"$wdir\" />";
+                echo " <INPUT TYPE=hidden NAME=file VALUE=\"$file\" />";
+                echo " <INPUT TYPE=hidden NAME=action VALUE=edit />";
                 print_textarea($usehtmleditor, 25, 80, 680, 400, "text", $contents);
                 echo "</TD></TR><TR><TD>";
-                echo " <INPUT TYPE=submit VALUE=\"".get_string("savechanges")."\">";
+                echo " <INPUT TYPE=submit VALUE=\"".get_string("savechanges")."\" />";
                 echo "</FORM>";
                 echo "</TD><TD>";
                 echo "<FORM ACTION=\"".$ME."\" METHOD=get>";
-                echo " <INPUT TYPE=hidden NAME=id VALUE=$id>";
-                echo " <INPUT TYPE=hidden NAME=wdir VALUE=$wdir>";
-                echo " <INPUT TYPE=hidden NAME=action VALUE=cancel>";
-                echo " <INPUT TYPE=submit VALUE=\"".get_string("cancel")."\">";
+                echo " <INPUT TYPE=hidden NAME=id VALUE=$id />";
+                echo " <INPUT TYPE=hidden NAME=wdir VALUE=$wdir />";
+                echo " <INPUT TYPE=hidden NAME=action VALUE=cancel />";
+                echo " <INPUT TYPE=submit VALUE=\"".get_string("cancel")."\" />";
                 echo "</FORM>";
                 echo "</TD></TR></TABLE>";
 
@@ -393,18 +393,18 @@
                     echo "<P ALIGN=CENTER>".get_string("whattocallzip");
                     echo "<TABLE><TR><TD>";
                     echo "<FORM ACTION=\"".$ME."\" METHOD=post NAME=form>";
-                    echo " <INPUT TYPE=hidden NAME=id VALUE=$id>";
-                    echo " <INPUT TYPE=hidden NAME=wdir VALUE=\"$wdir\">";
-                    echo " <INPUT TYPE=hidden NAME=action VALUE=zip>";
-                    echo " <INPUT TYPE=text NAME=name SIZE=35 VALUE=\"new.zip\">";
-                    echo " <INPUT TYPE=submit VALUE=\"".get_string("createziparchive")."\">";
+                    echo " <INPUT TYPE=hidden NAME=id VALUE=$id />";
+                    echo " <INPUT TYPE=hidden NAME=wdir VALUE=\"$wdir\" />";
+                    echo " <INPUT TYPE=hidden NAME=action VALUE=zip />";
+                    echo " <INPUT TYPE=text NAME=name SIZE=35 VALUE=\"new.zip\" />";
+                    echo " <INPUT TYPE=submit VALUE=\"".get_string("createziparchive")."\" />";
                     echo "</FORM>";
                     echo "</TD><TD>";
                     echo "<FORM ACTION=\"".$ME."\" METHOD=get>";
-                    echo " <INPUT TYPE=hidden NAME=id VALUE=$id>";
-                    echo " <INPUT TYPE=hidden NAME=wdir VALUE=$wdir>";
-                    echo " <INPUT TYPE=hidden NAME=action VALUE=cancel>";
-                    echo " <INPUT TYPE=submit VALUE=\"".get_string("cancel")."\">";
+                    echo " <INPUT TYPE=hidden NAME=id VALUE=$id />";
+                    echo " <INPUT TYPE=hidden NAME=wdir VALUE=$wdir />";
+                    echo " <INPUT TYPE=hidden NAME=action VALUE=cancel />";
+                    echo " <INPUT TYPE=submit VALUE=\"".get_string("cancel")."\" />";
                     echo "</FORM>";
                     echo "</TD></TR></TABLE>";
                 } else {
@@ -467,10 +467,10 @@
                 }
 
                 echo "<CENTER><FORM ACTION=\"".$ME."\" METHOD=get>";
-                echo " <INPUT TYPE=hidden NAME=id VALUE=$id>";
-                echo " <INPUT TYPE=hidden NAME=wdir VALUE=$wdir>";
-                echo " <INPUT TYPE=hidden NAME=action VALUE=cancel>";
-                echo " <INPUT TYPE=submit VALUE=\"$strok\">";
+                echo " <INPUT TYPE=hidden NAME=id VALUE=$id />";
+                echo " <INPUT TYPE=hidden NAME=wdir VALUE=$wdir />";
+                echo " <INPUT TYPE=hidden NAME=action VALUE=cancel />";
+                echo " <INPUT TYPE=submit VALUE=\"$strok\" />";
                 echo "</FORM>";
                 echo "</CENTER>";
             } else {
@@ -513,11 +513,11 @@
                     }
                     echo "</table>";
                 }
-                echo "<br><center><form action=\"".$ME."\" method=get>";
-                echo " <INPUT TYPE=hidden NAME=id VALUE=$id>";
-                echo " <INPUT TYPE=hidden NAME=wdir VALUE=$wdir>";
-                echo " <INPUT TYPE=hidden NAME=action VALUE=cancel>";
-                echo " <INPUT TYPE=submit VALUE=\"$strok\">";
+                echo "<br /><center><form action=\"".$ME."\" method=get>";
+                echo " <INPUT TYPE=hidden NAME=id VALUE=$id />";
+                echo " <INPUT TYPE=hidden NAME=wdir VALUE=$wdir />";
+                echo " <INPUT TYPE=hidden NAME=action VALUE=cancel />";
+                echo " <INPUT TYPE=submit VALUE=\"$strok\" />";
                 echo "</FORM>";
                 echo "</CENTER>";
             } else {
@@ -629,7 +629,7 @@ function printfilelist($filelist) {
 
     foreach ($filelist as $file) {
         if (is_dir($basedir.$file)) {
-            echo "<img src=\"$CFG->pixpath/f/folder.gif\" height=16 width=16> $file<br>";
+            echo "<img src=\"$CFG->pixpath/f/folder.gif\" height=16 width=16> $file<br />";
             $subfilelist = array();
             $currdir = opendir($basedir.$file);
             while ($subfile = readdir($currdir)) { 
@@ -641,7 +641,7 @@ function printfilelist($filelist) {
 
         } else { 
             $icon = mimeinfo("icon", $file);
-            echo "<img src=\"$CFG->pixpath/f/$icon\"  height=16 width=16> $file<br>";
+            echo "<img src=\"$CFG->pixpath/f/$icon\"  height=16 width=16> $file<br />";
         }
     }
 }
@@ -725,7 +725,7 @@ function displaydir ($wdir) {
     
             echo "<TR>";
 
-            print_cell("center", "<INPUT TYPE=checkbox NAME=\"file$count\" VALUE=\"$fileurl\">");
+            print_cell("center", "<INPUT TYPE=checkbox NAME=\"file$count\" VALUE=\"$fileurl\" />");
             print_cell("left", "<A HREF=\"".basename($ME)."?id=$id&wdir=$fileurl\"><IMG SRC=\"$CFG->pixpath/f/folder.gif\" HEIGHT=16 WIDTH=16 BORDER=0 ALT=\"Folder\"></A> <A HREF=\"".basename($ME)."?id=$id&wdir=$fileurl\">".htmlspecialchars($dir)."</A>");
             print_cell("right", "-");
             print_cell("right", $filedate);
@@ -762,7 +762,7 @@ function displaydir ($wdir) {
 
             echo "<tr>";
 
-            print_cell("center", "<input type=\"checkbox\" name=\"file$count\" value=\"$fileurl\">");
+            print_cell("center", "<input type=\"checkbox\" name=\"file$count\" value=\"$fileurl\" />");
 
             echo "<td align=left nowrap>";
             link_to_popup_window ($ffurl, "display", 
@@ -799,8 +799,8 @@ function displaydir ($wdir) {
 
     echo "<TABLE BORDER=0 cellspacing=2 cellpadding=2 width=640>";    
     echo "<TR><TD>";
-    echo "<INPUT TYPE=hidden NAME=id VALUE=\"$id\">";
-    echo "<INPUT TYPE=hidden NAME=wdir VALUE=\"$wdir\"> ";
+    echo "<INPUT TYPE=hidden NAME=id VALUE=\"$id\" />";
+    echo "<INPUT TYPE=hidden NAME=wdir VALUE=\"$wdir\" /> ";
     $options = array (
                    "move" => "$strmovetoanotherfolder",
                    "delete" => "$strdeletecompletely",
@@ -814,26 +814,26 @@ function displaydir ($wdir) {
     echo "<TD ALIGN=center>";
     if (!empty($USER->fileop) and ($USER->fileop == "move") and ($USER->filesource <> $wdir)) {
         echo "<FORM ACTION=\"".$ME."\" METHOD=get>";
-        echo " <INPUT TYPE=hidden NAME=id VALUE=$id>";
-        echo " <INPUT TYPE=hidden NAME=wdir VALUE=\"$wdir\">";
-        echo " <INPUT TYPE=hidden NAME=action VALUE=paste>";
-        echo " <INPUT TYPE=submit VALUE=\"$strmovefilestohere\">";
+        echo " <INPUT TYPE=hidden NAME=id VALUE=$id />";
+        echo " <INPUT TYPE=hidden NAME=wdir VALUE=\"$wdir\" />";
+        echo " <INPUT TYPE=hidden NAME=action VALUE=paste />";
+        echo " <INPUT TYPE=submit VALUE=\"$strmovefilestohere\" />";
         echo "</FORM>";
     }
     echo "<TD ALIGN=right>";
         echo "<FORM ACTION=\"".$ME."\" METHOD=get>";
-        echo " <INPUT TYPE=hidden NAME=id VALUE=$id>";
-        echo " <INPUT TYPE=hidden NAME=wdir VALUE=\"$wdir\">";
-        echo " <INPUT TYPE=hidden NAME=action VALUE=mkdir>";
-        echo " <INPUT TYPE=submit VALUE=\"$strmakeafolder\">";
+        echo " <INPUT TYPE=hidden NAME=id VALUE=$id />";
+        echo " <INPUT TYPE=hidden NAME=wdir VALUE=\"$wdir\" />";
+        echo " <INPUT TYPE=hidden NAME=action VALUE=mkdir />";
+        echo " <INPUT TYPE=submit VALUE=\"$strmakeafolder\" />";
         echo "</FORM>";
     echo "</TD>";
     echo "<TD ALIGN=right>";
         echo "<FORM ACTION=\"".$ME."\" METHOD=get>";
-        echo " <INPUT TYPE=hidden NAME=id VALUE=$id>";
-        echo " <INPUT TYPE=hidden NAME=wdir VALUE=\"$wdir\">";
-        echo " <INPUT TYPE=hidden NAME=action VALUE=upload>";
-        echo " <INPUT TYPE=submit VALUE=\"$struploadafile\">";
+        echo " <INPUT TYPE=hidden NAME=id VALUE=$id />";
+        echo " <INPUT TYPE=hidden NAME=wdir VALUE=\"$wdir\" />";
+        echo " <INPUT TYPE=hidden NAME=action VALUE=upload />";
+        echo " <INPUT TYPE=submit VALUE=\"$struploadafile\" />";
         echo "</FORM>";
     echo "</TD></TR>";
     echo "</TABLE>";

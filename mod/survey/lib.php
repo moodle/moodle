@@ -399,9 +399,9 @@ function survey_print_multi($question) {
             echo "<TD WIDTH=10 VALIGN=top><P><B>$qnum</B></P></TD>";
             echo "<TD VALIGN=top><P>$q->text</P></TD>";
             for ($i=1;$i<=$numoptions;$i++) {
-                echo "<TD WIDTH=10% ALIGN=CENTER><INPUT TYPE=radio NAME=q$P$q->id VALUE=$i></TD>";
+                echo "<TD WIDTH=10% ALIGN=CENTER><INPUT TYPE=radio NAME=q$P$q->id VALUE=$i /></TD>";
             }
-            echo "<TD BGCOLOR=white><INPUT TYPE=radio NAME=q$P$q->id VALUE=0 checked></TD>";
+            echo "<TD BGCOLOR=white><INPUT TYPE=radio NAME=q$P$q->id VALUE=0 checked=\"checked\" /></TD>";
             $checklist["q$P$q->id"] = $numoptions;
         
         } else {
@@ -409,17 +409,17 @@ function survey_print_multi($question) {
             echo "<TD WIDTH=10% NOWRAP><P><FONT SIZE=1>$stripreferthat&nbsp;</FONT></P></TD>";
             echo "<TD WIDTH=40% VALIGN=middle rowspan=2><P>$q->text</P></TD>";
             for ($i=1;$i<=$numoptions;$i++) {
-                echo "<TD WIDTH=10% ALIGN=CENTER><INPUT TYPE=radio NAME=qP$q->id VALUE=$i></TD>";
+                echo "<TD WIDTH=10% ALIGN=CENTER><INPUT TYPE=radio NAME=qP$q->id VALUE=$i /></TD>";
             }
-            echo "<TD BGCOLOR=\"$THEME->body\"><INPUT TYPE=radio NAME=qP$q->id VALUE=0 checked></TD>";
+            echo "<TD BGCOLOR=\"$THEME->body\"><INPUT TYPE=radio NAME=qP$q->id VALUE=0 checked=\"checked\" /></TD>";
             echo "</TR>";
 
             echo "<TR BGCOLOR=$bgcolor>";
             echo "<TD WIDTH=10% NOWRAP><P><FONT SIZE=1>$strifoundthat&nbsp;</P></TD>";
             for ($i=1;$i<=$numoptions;$i++) {
-                echo "<TD WIDTH=10% ALIGN=CENTER><INPUT TYPE=radio NAME=q$q->id VALUE=$i></TD>";
+                echo "<TD WIDTH=10% ALIGN=CENTER><INPUT TYPE=radio NAME=q$q->id VALUE=$i /></TD>";
             }
-            echo "<TD WIDTH=5% BGCOLOR=\"$THEME->body\"><INPUT TYPE=radio NAME=q$q->id VALUE=0 checked></TD>";
+            echo "<TD WIDTH=5% BGCOLOR=\"$THEME->body\"><INPUT TYPE=radio NAME=q$q->id VALUE=0 checked=\"checked\" /></TD>";
             $checklist["qP$q->id"] = $numoptions;
             $checklist["q$q->id"] = $numoptions;
         }

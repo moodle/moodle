@@ -166,8 +166,8 @@ $form->hours = isset($CFG->attendance_default_hours)?$CFG->attendance_default_ho
 ?>
 <FORM name="form" method="post" action="<?php echo $ME ?>">
 <CENTER>
-<INPUT type="submit" value="<?php  print_string("savechanges") ?>">
-<INPUT type="submit" name="cancel" value="<?php  print_string("cancel") ?>">
+<INPUT type="submit" value="<?php  print_string("savechanges") ?>" />
+<INPUT type="submit" name="cancel" value="<?php  print_string("cancel") ?>" />
 <TABLE cellpadding=5>
 
 <TR valign=top>
@@ -263,17 +263,17 @@ for ($i=0;$i<=100;$i++){ $opt2[$i] = $i; } ?>
 
 </TABLE>
 <!-- These hidden variables are always the same -->
-<INPUT type="hidden" name=course        value="<?php p($form->course) ?>">
-<INPUT type="hidden" name=coursemodule  value="<?php p($form->coursemodule) ?>">
-<INPUT type="hidden" name=section       value="<?php p($form->section) ?>">
-<INPUT type="hidden" name=module        value="<?php p($form->module) ?>">
-<INPUT type="hidden" name=modulename    value="<?php p($form->modulename) ?>">
-<INPUT type="hidden" name=instance      value="<?php p($form->instance) ?>">
-<INPUT type="hidden" name=mode          value="<?php p($form->mode) ?>">
-<INPUT type="hidden" name=numsections   value="<?php p($course->numsections) ?>">
+<INPUT type="hidden" name=course        value="<?php p($form->course) ?>" />
+<INPUT type="hidden" name=coursemodule  value="<?php p($form->coursemodule) ?>" />
+<INPUT type="hidden" name=section       value="<?php p($form->section) ?>" />
+<INPUT type="hidden" name=module        value="<?php p($form->module) ?>" />
+<INPUT type="hidden" name=modulename    value="<?php p($form->modulename) ?>" />
+<INPUT type="hidden" name=instance      value="<?php p($form->instance) ?>" />
+<INPUT type="hidden" name=mode          value="<?php p($form->mode) ?>" />
+<INPUT type="hidden" name=numsections   value="<?php p($course->numsections) ?>" />
 <BR />
-<INPUT type="submit" value="<?php print_string("savechanges") ?>">
-<INPUT type="submit" name="cancel" value="<?php print_string("cancel") ?>">
+<INPUT type="submit" value="<?php print_string("savechanges") ?>" />
+<INPUT type="submit" name="cancel" value="<?php print_string("cancel") ?>" />
 </CENTER>
 </FORM>
 

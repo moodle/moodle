@@ -43,7 +43,7 @@
             $newid = insert_record ("label",$label);
 
             //Do some output     
-            echo "<ul><li>".get_string("modulename","label")." \"".$label->name."\"<br>";
+            echo "<ul><li>".get_string("modulename","label")." \"".$label->name."\"<br />";
             backup_flush(300);
 
             if ($newid) {
@@ -96,7 +96,7 @@
             }
             break;
         default:
-            echo "action (".$log->module."-".$log->action.") unknow. Not restored<br>";                 //Debug
+            echo "action (".$log->module."-".$log->action.") unknow. Not restored<br />";                 //Debug
             break;
         }
 

@@ -23,7 +23,7 @@
 <tr valign=top>
     <td align=right><p>scorm_framesize:</td>
     <td>
-    	<input name=scorm_framesize type=text size=5 value="<?php p($CFG->scorm_framesize) ?>">
+    	<input name=scorm_framesize type=text size=5 value="<?php p($CFG->scorm_framesize) ?>" />
     </td>
     <td>
     <?php print_string("configframesize", "scorm") ?>
@@ -49,7 +49,7 @@
 	      echo "<td align=right><p>$defaultvalue:</td>";
 	      echo "<td>";
           if ($optionname == "height" or $optionname == "width") {
-              echo "<input name=$defaultvalue type=text size=5 value=\"".$CFG->$defaultvalue."\">";
+              echo "<input name=$defaultvalue type=text size=5 value=\"".$CFG->$defaultvalue."\" />";
           } else {
               choose_from_menu ($choices, $defaultvalue, $CFG->$defaultvalue, "");
           }
@@ -62,7 +62,7 @@
 ?>
 <tr>
     <td colspan=3 align=center>
-	<input type="submit" value="<?php print_string("savechanges") ?>">
+	<input type="submit" value="<?php print_string("savechanges") ?>" />
     </td>
 </tr>
 </table>

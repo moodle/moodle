@@ -71,7 +71,7 @@
 <TR valign=top>
     <TD align=right><P><B><?php  print_string('name') ?>:</B></P></TD>
     <TD>
-        <INPUT type="text" name="name" size=30 value="<?php  p($form->name) ?>">
+        <INPUT type="text" name="name" size=30 value="<?php  p($form->name) ?>" />
     </TD>
 </TR>
 <TR valign=top>
@@ -176,7 +176,7 @@
             }
             else {
         ?>
-        <INPUT type="text" name="pagename" size=30 value="<?php  p($form->pagename) ?>"><b>
+        <INPUT type="text" name="pagename" size=30 value="<?php  p($form->pagename) ?>" /><b>
         <?php print_string('pagenamechoice', 'wiki'); ?></b>
         <?php
             }
@@ -196,7 +196,7 @@
             }
             else {
                 $strchooseafile = get_string("chooseafile", "wiki");
-                echo "<input name=\"initialcontent\" size=\"50\" value=\"$form->initialcontent\">&nbsp;";
+                echo "<input name=\"initialcontent\" size=\"50\" value=\"$form->initialcontent\" />&nbsp;";
                 button_to_popup_window ("/mod/wiki/wikifiles.php?id=$course->id", 
                                         "wikifiles", $strchooseafile, 500, 750, $strchooseafile);
             }
@@ -206,14 +206,14 @@
 
 </TABLE>
 <!-- These hidden variables are always the same -->
-<INPUT type="hidden" name=course        value="<?php  p($form->course) ?>">
-<INPUT type="hidden" name=coursemodule  value="<?php  p($form->coursemodule) ?>">
-<INPUT type="hidden" name=section       value="<?php  p($form->section) ?>">
-<INPUT type="hidden" name=module        value="<?php  p($form->module) ?>">
-<INPUT type="hidden" name=modulename    value="<?php  p($form->modulename) ?>">
-<INPUT type="hidden" name=instance      value="<?php  p($form->instance) ?>">
-<INPUT type="hidden" name=id            value="<?php  p($form->instance) ?>">
-<INPUT type="hidden" name=mode          value="<?php  p($form->mode) ?>">
-<INPUT type="submit" value="<?php  print_string('savechanges') ?>">
+<INPUT type="hidden" name=course        value="<?php  p($form->course) ?>" />
+<INPUT type="hidden" name=coursemodule  value="<?php  p($form->coursemodule) ?>" />
+<INPUT type="hidden" name=section       value="<?php  p($form->section) ?>" />
+<INPUT type="hidden" name=module        value="<?php  p($form->module) ?>" />
+<INPUT type="hidden" name=modulename    value="<?php  p($form->modulename) ?>" />
+<INPUT type="hidden" name=instance      value="<?php  p($form->instance) ?>" />
+<INPUT type="hidden" name=id            value="<?php  p($form->instance) ?>" />
+<INPUT type="hidden" name=mode          value="<?php  p($form->mode) ?>" />
+<INPUT type="submit" value="<?php  print_string('savechanges') ?>" />
 </CENTER>
 </FORM>

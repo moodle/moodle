@@ -150,8 +150,8 @@
     echo "</TR>";
 
     echo "<TR><TD>&nbsp;</TD><TD>";
-    echo " <INPUT TYPE=hidden NAME=category VALUE=\"$category->id\">";
-    echo " <INPUT TYPE=submit NAME=save VALUE=\"$strcreatemultiple\">";
+    echo " <INPUT TYPE=hidden NAME=category VALUE=\"$category->id\" />";
+    echo " <INPUT TYPE=submit NAME=save VALUE=\"$strcreatemultiple\" />";
     echo "</TD></TR>";
     echo "</TABLE>";
     echo "</FORM>";

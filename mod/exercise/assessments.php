@@ -95,7 +95,7 @@
                 number_format($exercise->gradinggrade * $assessment->gradinggrade / 100, 0), "");
         echo "</td></tr>\n";
         echo "<tr><td colspan=\"2\" align=\"center\">"; 
-        echo "<INPUT TYPE=submit VALUE=\"".get_string("amend", "exercise")."\">\n";
+        echo "<INPUT TYPE=submit VALUE=\"".get_string("amend", "exercise")."\" />\n";
         echo "</td></tr>\n";
         echo "</table>\n";
         echo "</CENTER>";

@@ -472,7 +472,7 @@ class quiz_report extends quiz_default_report {
             $myxls->write_string($row,0,$label,$formatbrt);
             //display answer tallies
             for ($j = 1; $j <= $table_colcount; $j++){
-                //substitute "<br>" for a "//"
+                //substitute "<br />" for a "//"
                 $nowdata = $analysis[$i][$j];
                 if($slashpos = strpos($nowdata,"//")){
                 $text = substr($nowdata,0,$slashpos);
@@ -644,7 +644,7 @@ class quiz_report extends quiz_default_report {
             echo  "M/C #$i\t";
             //display answer tallies
             for ($j = 1; $j <= $table_colcount; $j++){
-                //substitute "<br>" for a "//"
+                //substitute "<br />" for a "//"
                 $nowdata = $analysis[$i][$j];
                 if (strpos($nowdata,"//")>0) {
                 $nowdata = str_replace("//"," : ",$nowdata);
@@ -682,7 +682,7 @@ class quiz_report extends quiz_default_report {
                     } elseif ($thisitem['qtype'] == 5) {
                         if ($thisitem['score'] == 1) {$thiscolor = "blue";}
                         if(!$thisitem['data'][1]){$thisitem['data'][1]="($strnoresponse)";}
-                        print("<td align=center><font size=-2>{$thisitem['data'][0]}<br><font color='$thiscolor'>{$thisitem['data'][1]}</font></font></td>");
+                        print("<td align=center><font size=-2>{$thisitem['data'][0]}<br /><font color='$thiscolor'>{$thisitem['data'][1]}</font></font></td>");
                     } elseif  ($thisitem['qtype'] == 3) {
                         if ($showtext) {
                             print("<td align=center><font color='$thiscolor' size=-2>&nbsp;&nbsp;{$thisitem['data']}&nbsp;&nbsp;</font></td>");
@@ -726,9 +726,9 @@ class quiz_report extends quiz_default_report {
         print("<tr valign=top><th colspan=2 align=right>&nbsp;M/C #$i</td>");
         //display answer tallies
         for ($j = 1; $j <= $table_colcount; $j++){
-           //substitute "<br>" for a "//"
+           //substitute "<br />" for a "//"
            $nowdata = $analysis[$i][$j];
-           if (strpos($nowdata,"//")>0) {$nowdata = str_replace("//","<br>",$nowdata);}
+           if (strpos($nowdata,"//")>0) {$nowdata = str_replace("//","<br />",$nowdata);}
            print("<td align='center'>&nbsp;$nowdata</td>");
         
         }

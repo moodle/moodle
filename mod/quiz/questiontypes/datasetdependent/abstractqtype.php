@@ -439,7 +439,7 @@ class quiz_dataset_dependent_questiontype extends quiz_default_questiontype {
 
         // Print hidden field with dataset info
         echo '<input type="hidden" name="' . $nameprefix
-                . '" value="' . $datasetinput . '"/>';
+                . '" value="' . $datasetinput . '" />';
 
         // Forward to the virtual qtype
         unset($question->response[$nameprefix]);

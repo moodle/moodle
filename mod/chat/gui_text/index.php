@@ -96,7 +96,7 @@ if ($arsc_my = arsc_getdatafromsid($arsc_sid))
        echo "<a href=\"../version_".$arsc_my["version"]."/index.php?arsc_sid=".$arsc_my["sid"]."&arsc_lastid=".$arsc_lastid."&arsc_pretext=".urlencode("/msg ".$arsc_a["user"]." ")."\">".$arsc_opstring.$arsc_a["user"]."</a>\n";
       }
      }
-     echo "<br>";
+     echo "<br />";
      $arsc_result = mysql_query("SELECT * from arsc_room_$arsc_room WHERE timeid > '$arsc_lastid' ORDER BY timeid DESC");
      while ($arsc_a = mysql_fetch_array($arsc_result))
      {

@@ -80,25 +80,30 @@
 			}
 		?>
 		<FORM NAME="commentform" ACTION="assessments.php" METHOD="post">
-		<INPUT TYPE="HIDDEN" NAME="action" VALUE="insertcomment">
-		<INPUT TYPE="HIDDEN" NAME="id" VALUE="<?PHP echo $cm->id ?>">
-		<INPUT TYPE="HIDDEN" NAME="aid" VALUE="<?PHP echo $_REQUEST['aid'] ?>">
+		<INPUT TYPE="HIDDEN" NAME="action" VALUE="insertcomment" />
+		<INPUT TYPE="HIDDEN" NAME="id" VALUE="<?PHP echo $cm->id ?>" />
+		<INPUT TYPE="HIDDEN" NAME="aid" VALUE="<?PHP echo $_REQUEST['aid'] ?>" />
 		<CENTER>
 		<TABLE CELLPADDING=5 BORDER=1>
 		<?PHP
 
 		// now get the comment
 		echo "<TR valign=top>\n";
+
 		echo "	<TD align=right><P><B>". get_string("comment", "workshop").":</B></P></TD>\n";
+
 		echo "	<TD>\n";
+
 		echo "		<textarea name=\"comments\" rows=5 cols=75 wrap=\"virtual\">\n";
 		echo "</textarea>\n";
+
 		echo "	</TD></TR></TABLE>\n";
-		echo "<INPUT TYPE=submit VALUE=\"".get_string("savemycomment", "workshop")."\">\n";
+		echo "<INPUT TYPE=submit VALUE=\"".get_string("savemycomment", "workshop")."\" />\n";
 		echo "</CENTER></FORM>\n";
 		echo "<P><CENTER><B>".get_string("assessment", "workshop"). "</B></CENTER>\n";
 		workshop_print_assessment($workshop, $assessment);
 		}
+
 
 
 	/******************* admin confirm delete ************************************/
@@ -185,6 +190,7 @@
 		}
 
 
+
 	/*************** Assess submission (by teacher or student) ***************************/
 	elseif ($action == 'assesssubmission') {
 
@@ -250,9 +256,9 @@
 			}
 		?>
 		<FORM NAME="gradingform" ACTION="assessments.php" METHOD="post">
-		<INPUT TYPE="HIDDEN" NAME="action" VALUE="updatecomment">
-		<INPUT TYPE="HIDDEN" NAME="id" VALUE="<?PHP echo $cm->id ?>">
-		<INPUT TYPE="HIDDEN" NAME="cid" VALUE="<?PHP echo $_GET['cid'] ?>">
+		<INPUT TYPE="HIDDEN" NAME="action" VALUE="updatecomment" />
+		<INPUT TYPE="HIDDEN" NAME="id" VALUE="<?PHP echo $cm->id ?>" />
+		<INPUT TYPE="HIDDEN" NAME="cid" VALUE="<?PHP echo $_GET['cid'] ?>" />
 		<CENTER>
 		<TABLE CELLPADDING=5 BORDER=1>
 		<?PHP
@@ -267,7 +273,7 @@
 			}
 		echo "	    </textarea>\n";
 		echo "	</TD></TR></TABLE>\n";
-		echo "<INPUT TYPE=submit VALUE=\"".get_string("savemycomment", "workshop")."\">\n";
+		echo "<INPUT TYPE=submit VALUE=\"".get_string("savemycomment", "workshop")."\" />\n";
 		echo "</CENTER></FORM>\n";
 		workshop_print_assessment($workshop, $assessment);
 		}
@@ -288,8 +294,8 @@
 		print_heading_with_help(get_string("editingassessmentelements", "workshop"), "elements", "workshop");
 		?>
 		<form name="form" method="post" action="assessments.php">
-		<input type="hidden" name="id" value="<?PHP echo $cm->id ?>">
-		<input type="hidden" name="action" value="insertelements">
+		<input type="hidden" name="id" value="<?PHP echo $cm->id ?>" />
+		<input type="hidden" name="action" value="insertelements" />
 		<CENTER><TABLE cellpadding=5 border=1>
 		<?PHP
 		
@@ -447,10 +453,11 @@
 				break;
 			}
 		// close table and form
+
 		?>
 		</TABLE>
-		<input type="submit" value="<?php  print_string("savechanges") ?>">
-		<input type="submit" name=cancel value="<?php  print_string("cancel") ?>">
+		<input type="submit" value="<?php  print_string("savechanges") ?>" />
+		<input type="submit" name=cancel value="<?php  print_string("cancel") ?>" />
 		</CENTER>
 		</FORM>
 		<?PHP
@@ -503,10 +510,10 @@
 		
 		?>
 		<FORM NAME="gradingform" ACTION="assessments.php" METHOD="post">
-		<INPUT TYPE="HIDDEN" NAME="action" VALUE="updategrading">
-		<INPUT TYPE="HIDDEN" NAME="id" VALUE="<?PHP echo $cm->id ?>">
-		<INPUT TYPE="HIDDEN" NAME="stype" VALUE="<?PHP echo $_GET['stype'] ?>">
-		<INPUT TYPE="HIDDEN" NAME="aid" VALUE="<?PHP echo $_GET['aid'] ?>">
+		<INPUT TYPE="HIDDEN" NAME="action" VALUE="updategrading" />
+		<INPUT TYPE="HIDDEN" NAME="id" VALUE="<?PHP echo $cm->id ?>" />
+		<INPUT TYPE="HIDDEN" NAME="stype" VALUE="<?PHP echo $_GET['stype'] ?>" />
+		<INPUT TYPE="HIDDEN" NAME="aid" VALUE="<?PHP echo $_GET['aid'] ?>" />
 		<CENTER>
 		<TABLE CELLPADDING=5 BORDER=1>
 		<?PHP
@@ -525,7 +532,7 @@
 		echo "<TR><TD ALIGN=RIGHT><B>".get_string("gradeforstudentsassessment", "workshop")."</TD><TD>\n";
 		choose_from_menu($num, "gradinggrade", $assessment->gradinggrade, "");
 		echo "</TD></TR></TABLE>\n";
-		echo "<INPUT TYPE=submit VALUE=\"".get_string("savemygrading", "workshop")."\">\n";
+		echo "<INPUT TYPE=submit VALUE=\"".get_string("savemygrading", "workshop")."\" />\n";
 		echo "</CENTER></FORM>\n";
 	}
 

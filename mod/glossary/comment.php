@@ -99,16 +99,16 @@
             glossary_print_comment($course, $cm, $glossary, $entry, $comment);
 
             print_simple_box_start("center","40%", "#FFBBBB");
-            echo "<center><br>" . get_string("areyousuredeletecomment","glossary");
+            echo "<center><br />" . get_string("areyousuredeletecomment","glossary");
             ?>
                 <form name="form" method="post" action="comment.php">
-                <input type="hidden" name=id            value="<?php p($id) ?>">
-                <input type="hidden" name=eid           value="<?php p($eid) ?>">
-                <input type="hidden" name=cid           value="<?php p($cid) ?>">
-                <input type="hidden" name=action        value="delete">
-                <input type="hidden" name=confirm       value="1">
-                <input type="submit" value=" <?php print_string("yes")?> ">
-                <input type=button value=" <?php print_string("no")?> " onclick="javascript:history.go(-1);">
+                <input type="hidden" name=id            value="<?php p($id) ?>" />
+                <input type="hidden" name=eid           value="<?php p($eid) ?>" />
+                <input type="hidden" name=cid           value="<?php p($cid) ?>" />
+                <input type="hidden" name=action        value="delete" />
+                <input type="hidden" name=confirm       value="1" />
+                <input type="submit" value=" <?php print_string("yes")?> " />
+                <input type=button value=" <?php print_string("no")?> " onclick="javascript:history.go(-1);" />
 
                 </form>
                 </center>

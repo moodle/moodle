@@ -144,7 +144,7 @@
 
     $site = get_record("course","id",1);
     echo '<p align="right"><font size=-1>' . userdate(time()) . '</font></p>';
-    echo '<strong>' . $site->fullname . '</strong><br>';
+    echo '<strong>' . $site->fullname . '</strong><br />';
     echo get_string("course") . ': <strong>' . $course->fullname . ' ('. $course->shortname . ')</strong><br />';
     echo get_string("modulename","glossary") . ': <strong>' . $glossary->name . '</strong><p>';
     if ( $allentries ) {
@@ -176,7 +176,7 @@
     
             echo ($definition);
         
-            echo '<br><br>';
+            echo '<br /><br />';
         }
     }
 

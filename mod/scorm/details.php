@@ -260,7 +260,7 @@
         } else {
 ?>
     <center>
-           <input type="button" value="<?php print_string("continue") ?>" onClick="document.location='<?php echo $CFG->wwwroot ?>/course/view.php?id=<?php echo $course->id ?>';">
+           <input type="button" value="<?php print_string("continue") ?>" onClick="document.location='<?php echo $CFG->wwwroot ?>/course/view.php?id=<?php echo $course->id ?>';" />
         </center>
 <?php
     }

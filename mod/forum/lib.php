@@ -720,7 +720,7 @@ function forum_print_recent_activity($course, $isteacher, $timestart) {
                 }
                 $date = userdate($post->modified, $strftimerecent);
                 $fullname = fullname($post, $isteacher);
-                echo "<p $teacheronly><font size=1>$date - $fullname<br>";
+                echo "<p $teacheronly><font size=1>$date - $fullname<br />";
                 echo "\"<a href=\"$CFG->wwwroot/mod/forum/$log->url\">";
                 if (!empty($CFG->filterall)) {
                     $post->subject = filter_text("<nolink>$post->subject</nolink>", $course->id);
@@ -1825,7 +1825,7 @@ function forum_print_search_form($course, $search="", $return=false, $type="") {
         $output = "<table border=0 cellpadding=10 cellspacing=0><tr><td align=center>";
         $output .= "<form name=search action=\"$CFG->wwwroot/mod/forum/search.php\">";
         $output .= "<font size=\"-1\">";
-        $output .= "<input name=search type=text size=15 value=\"$search\"><br>";
+        $output .= "<input name=search type=text size=15 value=\"$search\"><br />";
         $output .= "<input value=\"".get_string("searchforums", "forum")."\" type=submit>";
         $output .= "</font>";
         $output .= "<input name=id type=hidden value=\"$course->id\">";
@@ -2527,7 +2527,7 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5,
                     $link = false;
                 }
                 forum_print_post($discussion, $forum->course, $ownpost, $reply=0, $link, $assessed=false);
-                echo "<br>\n";
+                echo "<br />\n";
             break;
         }
     }
@@ -2809,7 +2809,7 @@ function forum_print_recent_mod_activity($activity, $course, $detail=false) {
     echo $activity->content->subject;
     echo "</a>$closeformat";
 
-    echo "<br><font size=\"2\">";
+    echo "<br /><font size=\"2\">";
     echo "<a href=\"$CFG->wwwroot/user/view.php?id=" . $activity->user->userid . "&course=" . "$course\">"
          . $activity->user->fullname . "</a>";
     echo " - " . userdate($activity->timestamp) . "</font></td></tr>";

@@ -67,7 +67,7 @@
             $newid = insert_record("lesson", $lesson);
 
             //Do some output     
-            echo "<ul><li>".get_string("modulename","lesson")." \"".$lesson->name."\"<br>";
+            echo "<ul><li>".get_string("modulename","lesson")." \"".$lesson->name."\"<br />";
             backup_flush(300);
 
             if ($newid) {
@@ -143,7 +143,7 @@
             if (($i+1) % 10 == 0) {
                 echo ".";
                 if (($i+1) % 200 == 0) {
-                    echo "<br>";
+                    echo "<br />";
                 }
                 backup_flush(300);
             }
@@ -213,7 +213,7 @@
                 if (($i+1) % 10 == 0) {
                     echo ".";
                     if (($i+1) % 200 == 0) {
-                        echo "<br>";
+                        echo "<br />";
                     }
                     backup_flush(300);
                 }
@@ -274,7 +274,7 @@
                 if (($i+1) % 50 == 0) {
                     echo ".";
                     if (($i+1) % 1000 == 0) {
-                        echo "<br>";
+                        echo "<br />";
                     }
                     backup_flush(300);
                 }
@@ -325,7 +325,7 @@
                 if (($i+1) % 50 == 0) {
                     echo ".";
                     if (($i+1) % 1000 == 0) {
-                        echo "<br>";
+                        echo "<br />";
                     }
                     backup_flush(300);
                 }
@@ -407,7 +407,7 @@
             }
             break;
         default:
-            echo "action (".$log->module."-".$log->action.") unknow. Not restored<br>";                 //Debug
+            echo "action (".$log->module."-".$log->action.") unknow. Not restored<br />";                 //Debug
             break;
         }
 

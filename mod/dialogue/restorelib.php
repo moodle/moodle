@@ -57,7 +57,7 @@
             $newid = insert_record ("dialogue",$dialogue);
 
             //Do some output
-            echo "<ul><li>".get_string("modulename","dialogue")." \"".$dialogue->name."\"<br>";
+            echo "<ul><li>".get_string("modulename","dialogue")." \"".$dialogue->name."\"<br />";
             backup_flush(300);
 
             if ($newid) {
@@ -134,7 +134,7 @@
                 if (($i+1) % 50 == 0) {
                     echo ".";
                     if (($i+1) % 1000 == 0) {
-                        echo "<br>";
+                        echo "<br />";
                     }
                     backup_flush(300);
                 }
@@ -202,7 +202,7 @@
                 if (($i+1) % 50 == 0) {
                     echo ".";
                     if (($i+1) % 1000 == 0) {
-                        echo "<br>";
+                        echo "<br />";
                     }
                     backup_flush(300);
                 }

@@ -154,7 +154,7 @@ class quiz_random_qtype extends quiz_default_questiontype {
         if ($actualquestion = $this->get_wrapped_question($question,
                                                           $nameprefix)) {
             echo '<input type="hidden" name="' . $nameprefix
-                    . '" value="' . $actualquestion->id . '"/>';
+                    . '" value="' . $actualquestion->id . '" />';
             return $QUIZ_QTYPES[$actualquestion->qtype]
                     ->print_question_formulation_and_controls($actualquestion,
                     $quiz, $readonly, $answers, $correctanswers,

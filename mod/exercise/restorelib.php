@@ -75,7 +75,7 @@
             $newid = insert_record ("exercise",$exercise);
 
             //Do some output     
-            echo "<ul><li>".get_string("modulename","exercise")." \"".$exercise->name."\"<br>";
+            echo "<ul><li>".get_string("modulename","exercise")." \"".$exercise->name."\"<br />";
             backup_flush(300);
 
             if ($newid) {
@@ -132,7 +132,7 @@
             if (($i+1) % 10 == 0) {
                 echo ".";
                 if (($i+1) % 200 == 0) {
-                    echo "<br>";
+                    echo "<br />";
                 }
                 backup_flush(300);
             }
@@ -180,7 +180,7 @@
                 if (($i+1) % 10 == 0) {
                     echo ".";
                     if (($i+1) % 200 == 0) {
-                        echo "<br>";
+                        echo "<br />";
                     }
                     backup_flush(300);
                 }
@@ -239,7 +239,7 @@
                 if (($i+1) % 50 == 0) {
                     echo ".";
                     if (($i+1) % 1000 == 0) {
-                        echo "<br>";
+                        echo "<br />";
                     }
                     backup_flush(300);
                 }
@@ -311,7 +311,7 @@
                 if (($i+1) % 50 == 0) {
                     echo ".";
                     if (($i+1) % 1000 == 0) {
-                        echo "<br>";
+                        echo "<br />";
                     }
                     backup_flush(300);
                 }
@@ -366,7 +366,7 @@
                 if (($i+1) % 50 == 0) {
                     echo ".";
                     if (($i+1) % 1000 == 0) {
-                        echo "<br>";
+                        echo "<br />";
                     }
                     backup_flush(300);
                 }

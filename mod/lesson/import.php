@@ -72,7 +72,7 @@
                 error("Error occurred during post-processing!");
             }
 
-            echo "<hr>";
+            echo "<hr />";
             print_continue("view.php?id=$cm->id");
             print_footer($course);
             exit;
@@ -97,8 +97,8 @@
 
     print_simple_box_start("center", "", "$THEME->cellheading");
     echo "<form enctype=\"multipart/form-data\" method=\"post\" action=import.php>";
-    echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\">\n";
-    echo "<input type=\"hidden\" name=\"pageid\" value=\"".$_GET['pageid']."\">\n";
+    echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\" />\n";
+    echo "<input type=\"hidden\" name=\"pageid\" value=\"".$_GET['pageid']."\" />\n";
     echo "<table cellpadding=5>";
 
     echo "<tr><td align=right>";
@@ -110,9 +110,9 @@
     echo "<tr><td align=right>";
     print_string("upload");
     echo ":</td><td>";
-    echo " <input name=\"newfile\" type=\"file\" size=\"50\">";
+    echo " <input name=\"newfile\" type=\"file\" size=\"50\" />";
     echo "</tr><tr><td>&nbsp;</td><td>";
-    echo " <input type=submit name=save value=\"".get_string("uploadthisfile")."\">";
+    echo " <input type=submit name=save value=\"".get_string("uploadthisfile")."\" />";
     echo "</td></tr>";
 
     echo "</table>";

@@ -203,9 +203,9 @@
 
         ?>
         <form  name="theform" method="post" action=<?php echo $modform->destination ?>>
-        <input type="hidden" name="course"  value="<?php  p($modform->course) ?>">
-        <input type="submit" value="<?php  print_string("savequiz", "quiz") ?>">
-        <input type="submit" name="cancel" value="<?php  print_string("cancel") ?>">
+        <input type="hidden" name="course"  value="<?php  p($modform->course) ?>" />
+        <input type="submit" value="<?php  print_string("savequiz", "quiz") ?>" />
+        <input type="submit" name="cancel" value="<?php  print_string("cancel") ?>" />
         </form>
         </center>
         <?php

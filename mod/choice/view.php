@@ -105,16 +105,16 @@
         foreach ($choice->answer as $key => $answer) {
             if ($answer) {
                 echo "<TD ALIGN=CENTER>";
-                echo "<INPUT type=radio name=answer value=\"$key\" ".$answerchecked[$key].">";
+                echo "<INPUT type=radio name=answer value=\"$key\" ".$answerchecked[$key]." />";
                 p($answer);
                 echo "</TD>";
             }
         }
     
         echo "</TR></TABLE>";
-        echo "<INPUT type=hidden name=id value=\"$cm->id\">";
+        echo "<INPUT type=hidden name=id value=\"$cm->id\" />";
         if (isstudent($course->id) or isteacher($course->id, 0, false)) {
-            echo "<INPUT type=submit value=\"".get_string("savemychoice","choice")."\">";
+            echo "<INPUT type=submit value=\"".get_string("savemychoice","choice")."\" />";
         } else {
             print_string('havetologin', 'choice');
         }

@@ -95,14 +95,14 @@
                 }
                 if ($lastpageseen != $firstpageid) {
                     echo "<form name=\"queryform\" method =\"post\" action=\"view.php\">\n";
-                    echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\">\n";
-                    echo "<input type=\"hidden\" name=\"action\" value=\"navigation\">\n";
-                    echo "<input type=\"hidden\" name=\"pageid\">\n";
+                    echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\" />\n";
+                    echo "<input type=\"hidden\" name=\"action\" value=\"navigation\" />\n";
+                    echo "<input type=\"hidden\" name=\"pageid\" />\n";
                     print_simple_box("<p align=\"center\">".get_string("youhaveseen","lesson")."</p>",
                             "center");
                     echo "<p align=\"center\"><input type=\"button\" value=\"".get_string("yes").
                         "\" onclick=\"document.queryform.pageid.value='$lastpageseen';document.queryform.submit();\">&nbsp;&nbsp;&nbsp;<input type=\"button\" value=\"".get_string("no").
-                        "\" onclick=\"document.queryform.pageid.value='$firstpageid';document.queryform.submit();\"></p>\n";
+                        "\" onclick=\"document.queryform.pageid.value='$firstpageid';document.queryform.submit();\" /></p>\n";
                     echo "</form>\n";
                     print_footer($course);
                     exit();
@@ -186,26 +186,26 @@
             // get the answers in a set order, the id order
             if ($answers = get_records("lesson_answers", "pageid", $page->id, "id")) {
                 echo "<form name=\"answerform\" method =\"post\" action=\"lesson.php\">";
-                echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\">";
-                echo "<input type=\"hidden\" name=\"action\" value=\"continue\">";
-                echo "<input type=\"hidden\" name=\"pageid\" value=\"$pageid\">";
+                echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\" />";
+                echo "<input type=\"hidden\" name=\"action\" value=\"continue\" />";
+                echo "<input type=\"hidden\" name=\"pageid\" value=\"$pageid\" />";
                 print_simple_box_start("center");
                 echo '<table width="100%">';
                 switch ($page->qtype) {
                     case LESSON_SHORTANSWER :
                     case LESSON_NUMERICAL :
                         echo "<tr><td align=\"center\">".get_string("youranswer", "lesson").
-                            ": <input type=\"text\" name=\"answer\" size=\"50\" maxlength=\"200\">\n";
+                            ": <input type=\"text\" name=\"answer\" size=\"50\" maxlength=\"200\" />\n";
                         echo '</table>';
                         print_simple_box_end();
                         echo "<p align=\"center\"><input type=\"submit\" name=\"continue\" value=\"".
-                            get_string("pleaseenteryouranswerinthebox", "lesson")."\"></p>\n";
+                            get_string("pleaseenteryouranswerinthebox", "lesson")."\" /></p>\n";
                         break;
                     case LESSON_TRUEFALSE :
                         shuffle($answers);
                         foreach ($answers as $answer) {
                             echo "<tr><td>";
-                            echo "<input type=\"radio\" name=\"answerid\" value=\"{$answer->id}\">";
+                            echo "<input type=\"radio\" name=\"answerid\" value=\"{$answer->id}\" />";
                             echo "</td><td>";
                             $options->para = false; // no <p></p>
                             echo format_text(trim($answer->answer), FORMAT_MOODLE, $options);
@@ -214,7 +214,7 @@
                         echo '</table>';
                         print_simple_box_end();
                         echo "<p align=\"center\"><input type=\"submit\" name=\"continue\" value=\"".
-                            get_string("pleasecheckoneanswer", "lesson")."\"></p>\n";
+                            get_string("pleasecheckoneanswer", "lesson")."\" /></p>\n";
                         break;
                     case LESSON_MULTICHOICE :
                         $i = 0;
@@ -223,10 +223,10 @@
                             echo "<tr><td>";
                             if ($page->qoption) {
                                 // more than one answer allowed
-                                echo "<input type=\"checkbox\" name=\"answer[$i]\" value=\"{$answer->id}\">";
+                                echo "<input type=\"checkbox\" name=\"answer[$i]\" value=\"{$answer->id}\" />";
                             } else {
                                 // only one answer allowed
-                                echo "<input type=\"radio\" name=\"answerid\" value=\"{$answer->id}\">";
+                                echo "<input type=\"radio\" name=\"answerid\" value=\"{$answer->id}\" />";
                             }
                             echo "</td><td>";
                             $options->para = false; // no <p></p>
@@ -238,10 +238,10 @@
                         print_simple_box_end();
                         if ($page->qoption) {
                             echo "<p align=\"center\"><input type=\"submit\" name=\"continue\" value=\"".
-                                get_string("pleasecheckoneormoreanswers", "lesson")."\"></p>\n";
+                                get_string("pleasecheckoneormoreanswers", "lesson")."\" /></p>\n";
                         } else {
                             echo "<p align=\"center\"><input type=\"submit\" name=\"continue\" value=\"".
-                                get_string("pleasecheckoneanswer", "lesson")."\"></p>\n";
+                                get_string("pleasecheckoneanswer", "lesson")."\" /></p>\n";
                         }
                         break;
 
@@ -267,17 +267,17 @@
                         echo '</table></table>';
                         print_simple_box_end();
                         echo "<p align=\"center\"><input type=\"submit\" name=\"continue\" value=\"".
-                            get_string("pleasematchtheabovepairs", "lesson")."\"></p>\n";
+                            get_string("pleasematchtheabovepairs", "lesson")."\" /></p>\n";
                         break;
 
                     case LESSON_BRANCHTABLE :
                         echo "<tr><td><table width=\"100%\">";
-                        echo "<input type=\"hidden\" name=\"jumpto\">";
+                        echo "<input type=\"hidden\" name=\"jumpto\" />";
                         // don't suffle answers
                         foreach ($answers as $answer) {
                             echo "<tr><td align=\"center\">";
                             echo "<input type=\"button\" value=\"$answer->answer\"";
-                            echo "onclick=\"document.answerform.jumpto.value=$answer->jumpto;document.answerform.submit();\">";
+                            echo "onclick=\"document.answerform.jumpto.value=$answer->jumpto;document.answerform.submit();\" />";
                             echo "</td></tr>";
                         }
                         echo '</table></table>';
@@ -289,8 +289,8 @@
             } else {
                 // a page without answers - find the next (logical) page
                 echo "<form name=\"pageform\" method =\"post\" action=\"view.php\">\n";
-                echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\">\n";
-                echo "<input type=\"hidden\" name=\"action\" value=\"navigation\">\n";
+                echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\" />\n";
+                echo "<input type=\"hidden\" name=\"action\" value=\"navigation\" />\n";
                 if ($lesson->nextpagedefault) {
                     // in Flash Card mode...
                     // ...first get number of retakes
@@ -335,9 +335,9 @@
                         $newpageid = LESSON_EOL;
                     }
                 }
-                echo "<input type=\"hidden\" name=\"pageid\" value=\"$newpageid\">\n";
+                echo "<input type=\"hidden\" name=\"pageid\" value=\"$newpageid\" />\n";
                 echo "<p align=\"center\"><input type=\"submit\" name=\"continue\" value=\"".
-                    get_string("continue", "lesson")."\"></p>\n";
+                    get_string("continue", "lesson")."\" /></p>\n";
                 echo "</form>\n";
             }
             echo "</table>\n";
@@ -421,14 +421,14 @@
             // if there are no pages give teacher a blank proforma
             ?>
             <form name="form" method="post" action="lesson.php">
-            <input type="hidden" name="id" value="<?PHP echo $cm->id ?>">
-            <input type="hidden" name="action" value="insertpage">
-            <input type="hidden" name="pageid" value="0">
+            <input type="hidden" name="id" value="<?PHP echo $cm->id ?>" />
+            <input type="hidden" name="action" value="insertpage" />
+            <input type="hidden" name="pageid" value="0" />
             <center><table cellpadding=5 border=1>
             <tr><td align="center">
             <tr valign="top">
             <td><p><b><?php print_string("pagetitle", "lesson"); ?>:</b></p></td></tr>
-            <tr><td><input type="text" name="title" size="80" maxsize="255" value=""></td></tr>
+            <tr><td><input type="text" name="title" size="80" maxsize="255" value="" /></td></tr>
             <?PHP
             echo "<tr><td><b>";
             echo get_string("pagecontents", "lesson").":</b><br />\n";
@@ -438,7 +438,7 @@
             choose_from_menu($LESSON_QUESTION_TYPE, "qtype", LESSON_MULTICHOICE, "");
             helpbutton("questiontypes", get_string("questiontype", "lesson"), "lesson");
             echo "<br /><b>".get_string("questionoption", "lesson").":</b>\n";
-            echo " <input type=\"checkbox\" name=\"qoption\" value=\"1\"/>";
+            echo " <input type=\"checkbox\" name=\"qoption\" value=\"1\" />";
             helpbutton("questionoption", get_string("questionoption", "lesson"), "lesson");
             echo "</td></tr>\n";
             for ($i = 0; $i < $lesson->maxanswers; $i++) {
@@ -451,17 +451,17 @@
                 echo "</td></tr>\n";
                 if ($i) {
                     // answers 2,3,4... jump to this page
-                    echo "<input type=\"hidden\" name=\"jumpto[$i]\" value =\"0\">\n";
+                    echo "<input type=\"hidden\" name=\"jumpto[$i]\" value =\"0\" />\n";
                 } else {
                     // answer 1 jumps to next page
-                    echo "<input type=\"hidden\" name=\"jumpto[$i]\" value =\"".LESSON_NEXTPAGE."\">\n";
+                    echo "<input type=\"hidden\" name=\"jumpto[$i]\" value =\"".LESSON_NEXTPAGE."\" />\n";
                 }
             }
             // close table and form
             ?>
             </table><br />
-            <input type="submit" value="<?php  print_string("savepage", "lesson") ?>">
-            <input type="submit" name="cancel" value="<?php  print_string("cancel") ?>">
+            <input type="submit" value="<?php  print_string("savepage", "lesson") ?>" />
+            <input type="submit" name="cancel" value="<?php  print_string("cancel") ?>" />
             </center>
             </form>
             <?PHP
@@ -473,8 +473,8 @@
             // print the pages
             echo "<form name=\"lessonpages\" method=\"post\" action=\"view.php\">\n";
             echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\">\n";
-            echo "<input type=\"hidden\" name=\"action\" value=\"navigation\">\n";
-            echo "<input type=\"hidden\" name=\"pageid\">\n";
+            echo "<input type=\"hidden\" name=\"action\" value=\"navigation\" />\n";
+            echo "<input type=\"hidden\" name=\"pageid\" />\n";
             echo "<center><table cellpadding=\"5\" border=\"0\" width=\"80%\">\n";
             if (isteacheredit($course->id)) {
                 echo "<tr><td align=\"right\"><small><a href=\"import.php?id=$cm->id&pageid=0\">".
@@ -593,7 +593,7 @@
                             echo get_string("checkquestion", "lesson");
                         }
                         echo "\" onclick=\"document.lessonpages.pageid.value=$page->id;".
-                            "document.lessonpages.submit();\">";
+                            "document.lessonpages.submit();\" />";
                     }
                     echo "&nbsp;</td></tr>\n";
                 }

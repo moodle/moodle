@@ -48,7 +48,7 @@ class quiz_file_format extends quiz_default_format {
                     continue;
                 }
                 //                This will show everyline when file is being processed
-                //                print("$nowline<br>");
+                //                print("$nowline<br />");
                 $leader = substr(ltrim($nowline),0,2);
                 if (strpos(".A)B)C)D)E)F)G)H)I)J)A.B.C.D.E.F.G.H.I.J.",$leader)>0){
                     //trim off the label and space

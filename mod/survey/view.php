@@ -100,7 +100,7 @@
     add_to_log($course->id, "survey", "view form", "view.php?id=$cm->id", $survey->id, $cm->id);
 
     echo "<form name=form method=post action=save.php>";
-    echo "<input type=hidden name=id value=$id>";
+    echo "<input type=hidden name=id value=\"$id\" />";
 
     print_simple_box(format_text($survey->intro), "center", "80%");
 
@@ -176,14 +176,14 @@ function checkform() {
     }
 }
 
-<?php echo "document.write('<INPUT TYPE=button VALUE=\"".get_string("clicktocontinuecheck", "survey")."\" onClick=\"checkform()\">');";  ?>
+<?php echo "document.write('<INPUT TYPE=button VALUE=\"".get_string("clicktocontinuecheck", "survey")."\" onClick=\"checkform()\" />');";  ?>
 
 // END -->
 </SCRIPT>
 
 <noscript>
     <!-- Without Javascript, no checking is done -->
-    <input type="submit" value="<?php  get_string("clicktocontinue", "survey") ?>">
+    <input type="submit" value="<?php  get_string("clicktocontinue", "survey") ?>" />
 </noscript>
 
 </center>

@@ -22,7 +22,7 @@
 
     <TD>
 
-        <INPUT type="text" name="name" size=40 value="<?php  p($question->name) ?>">
+        <INPUT type="text" name="name" size=40 value="<?php  p($question->name) ?>" />
 
         <?php  if (isset($err["name"])) formerr($err["name"]); ?>
 
@@ -88,13 +88,13 @@
 
 
 
-<INPUT type="hidden" name=id value="<?php  p($question->id) ?>">
+<INPUT type="hidden" name=id value="<?php  p($question->id) ?>" />
 
-<INPUT type="hidden" name=qtype value="<?php  p($question->qtype) ?>">
+<INPUT type="hidden" name=qtype value="<?php  p($question->qtype) ?>" />
 
-<INPUT type="hidden" name=defaultgrade value="<?php  p($question->defaultgrade) ?>">
+<INPUT type="hidden" name=defaultgrade value="<?php  p($question->defaultgrade) ?>" />
 
-<INPUT type="submit" value="<?php  print_string("savechanges") ?>">
+<INPUT type="submit" value="<?php  print_string("savechanges") ?>" />
 
 
 

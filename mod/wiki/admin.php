@@ -153,7 +153,7 @@
         case "removepages": 
             if($form->proceed) {            
               if(!$confirm && $form->pagestodelete) {
-                notice_yesno(get_string("removepagecheck", "wiki")."<br>".join(", ", $form->pagestodelete),
+                notice_yesno(get_string("removepagecheck", "wiki")."<br />".join(", ", $form->pagestodelete),
                   $link."&confirm=".urlencode(join(" ",$form->pagestodelete)), $link);       
                 print_footer($course);
                 exit;
@@ -171,7 +171,7 @@
                   $confirm.="&confirm[$cnfid]=".urlencode(join(" ",$cnfver));
                 }
                 if(count($err)==0) {
-                  notice_yesno(get_string("strippagecheck", "wiki")."<br>".join(", ", $form->pagestostrip),
+                  notice_yesno(get_string("strippagecheck", "wiki")."<br />".join(", ", $form->pagestostrip),
                       $link.$confirm, $link);       
                   print_footer($course);
                   exit;
@@ -203,7 +203,7 @@
                            "&confirm[deleteversions]=".urlencode($form->deleteversions);
                   $revertedpages=wiki_admin_revert("", $form->authorfieldpattern, $form->changesfield, $form->howtooperate, $form->deleteversions);
                   if($revertedpages) {
-                    notice_yesno(get_string("revertpagescheck", "wiki")."<br>".$revertedpages,
+                    notice_yesno(get_string("revertpagescheck", "wiki")."<br />".$revertedpages,
                       $link.$confirm, $link);       
                     print_footer($course);
                     exit;                
@@ -244,7 +244,7 @@
            exit;        
         case "checklinks":
            $ret=wiki_admin_checklinks($confirm);
-           redirect($redirect, get_string("linkschecked","wiki")."<br>".$ret, 5);
+           redirect($redirect, get_string("linkschecked","wiki")."<br />".$ret, 5);
            exit;        
         case "revertpages":
            $revertedpages=wiki_admin_revert(1, $confirm["authorfieldpattern"], $confirm["changesfield"], $confirm["howtooperate"], $confirm["deleteversions"]);

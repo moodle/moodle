@@ -90,7 +90,7 @@
             }
 
             //Do some output
-            echo "<ul><li>".get_string("modulename","forum")." \"".$forum->name."\"<br>";
+            echo "<ul><li>".get_string("modulename","forum")." \"".$forum->name."\"<br />";
             backup_flush(300);
 
             if ($newid) {
@@ -158,7 +158,7 @@
             if (($i+1) % 50 == 0) {
                 echo ".";
                 if (($i+1) % 1000 == 0) {
-                    echo "<br>";
+                    echo "<br />";
                 }
                 backup_flush(300);
             }
@@ -232,7 +232,7 @@
             if (($i+1) % 50 == 0) {
                 echo ".";
                 if (($i+1) % 1000 == 0) {
-                    echo "<br>";
+                    echo "<br />";
                 }
                 backup_flush(300);
             }
@@ -263,7 +263,7 @@
                 $temp_discussion->userid = $discussion->userid;
                 //Update discussion (only firstpost and userid will be changed)
                 $status = update_record("forum_discussions",$temp_discussion);
-                //echo "Updated firstpost ".$old_firstpost." to ".$temp_discussion->firstpost."<br>";                //Debug
+                //echo "Updated firstpost ".$old_firstpost." to ".$temp_discussion->firstpost."<br />";                //Debug
             } else {
                 $status = false;
             }
@@ -319,7 +319,7 @@
             if (($i+1) % 50 == 0) {
                 echo ".";
                 if (($i+1) % 1000 == 0) {
-                    echo "<br>";
+                    echo "<br />";
                 }
                 backup_flush(300);
             }
@@ -363,7 +363,7 @@
                 //Create temp post record
                 $temp_post->id = $post->id;
                 $temp_post->parent = $post->parent;
-                //echo "Updated parent ".$old_parent." to ".$temp_post->parent."<br>";                //Debug
+                //echo "Updated parent ".$old_parent." to ".$temp_post->parent."<br />";                //Debug
                 //Update post (only parent will be changed)
                 $status = update_record("forum_posts",$temp_post);
             }
@@ -466,7 +466,7 @@
             if (($i+1) % 50 == 0) {
                 echo ".";
                 if (($i+1) % 1000 == 0) {
-                    echo "<br>";
+                    echo "<br />";
                 }
                 backup_flush(300);
             }
@@ -652,7 +652,7 @@
             $status = true;
             break;
         default:
-            echo "action (".$log->module."-".$log->action.") unknow. Not restored<br>";                 //Debug
+            echo "action (".$log->module."-".$log->action.") unknow. Not restored<br />";                 //Debug
             break;
         }
 
@@ -865,14 +865,14 @@
                         $post->message = addslashes($result);
                         $status = update_record("forum_posts",$post);
                         if ($CFG->debug>7) {
-                            echo "<br><hr>".$content."<br>changed to</br>".$result."<hr><br>";
+                            echo "<br /><hr />".$content."<br />changed to<br />".$result."<hr /><br />";
                         }
                     }
                     //Do some output
                     if (($i+1) % 5 == 0) {
                         echo ".";
                         if (($i+1) % 100 == 0) {
-                            echo "<br>";
+                            echo "<br />";
                         }
                         backup_flush(300);
                     }
@@ -900,14 +900,14 @@
                         $forum->intro = addslashes($result);
                         $status = update_record("forum",$forum);
                         if ($CFG->debug>7) {
-                            echo "<br><hr>".$content."<br>changed to</br>".$result."<hr><br>";
+                            echo "<br /><hr />".$content."<br />changed to</br>".$result."<hr /><br />";
                         }
                     }
                     //Do some output
                     if (($i+1) % 5 == 0) {
                         echo ".";
                         if (($i+1) % 100 == 0) {
-                            echo "<br>";
+                            echo "<br />";
                         }
                         backup_flush(300);
                     }
@@ -936,14 +936,14 @@
                         $resource->alltext = addslashes($result);
                         $status = update_record("resource",$resource);
                         if ($CFG->debug>7) {
-                            echo "<br><hr>".$content."<br>changed to</br>".$result."<hr><br>";
+                            echo "<br /><hr />".$content."<br />changed to</br>".$result."<hr /><br />";
                         }
                     }
                     //Do some output
                     if (($i+1) % 5 == 0) {
                         echo ".";
                         if (($i+1) % 100 == 0) {
-                            echo "<br>";
+                            echo "<br />";
                         }
                         backup_flush(300);
                     }
@@ -971,14 +971,14 @@
                         $resource->summary = addslashes($result);
                         $status = update_record("resource",$resource);
                         if ($CFG->debug>7) {
-                            echo "<br><hr>".$content."<br>changed to</br>".$result."<hr><br>";
+                            echo "<br /><hr />".$content."<br />changed to</br>".$result."<hr /><br />";
                         }
                     }
                     //Do some output
                     if (($i+1) % 5 == 0) {
                         echo ".";
                         if (($i+1) % 100 == 0) {
-                            echo "<br>";
+                            echo "<br />";
                         }
                         backup_flush(300);
                     }

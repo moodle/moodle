@@ -265,7 +265,7 @@ function ewiki_database_moodle($action, &$args, $sw1, $sw2) {
 
          #mysql_query("DELETE FROM " . EWIKI_DB_TABLE_NAME ."
          #   WHERE pagename='$id' AND version=$version");
-         # print "DELETING wiki:".$wiki_entry->id."Pagename: $id Version: $version <br>\n";
+         # print "DELETING wiki:".$wiki_entry->id."Pagename: $id Version: $version <br />\n";
          delete_records(EWIKI_DB_TABLE_NAME,"wiki", $wiki_entry->id,"pagename",$id,"version",$version);
 
          break;

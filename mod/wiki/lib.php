@@ -918,13 +918,13 @@ function wiki_print_search_form($cmid, $search="", $userid, $groupid, $return=fa
     # TODO: Add Group and User !!!
     $output = "<form name=\"search\" action=\"$CFG->wwwroot/mod/wiki/view.php\">";
     $output .= "<font size=\"-1\">";
-    $output .= "<input value=\"".get_string("searchwiki", "wiki").":\" type=\"submit\">";
-    $output .= "<input name=\"id\" type=\"hidden\" value=\"$cmid\">";
-    $output = $output.($groupid?"<input name=\"groupid\" type=\"hidden\" value=\"$groupid\">":"");
-    $output = $output.($userid?"<input name=\"userid\" type=\"hidden\" value=\"$userid\">":"");
-    $output .= "<input name=\"q\" type=\"text\" size=\"20\" value=\"$search\">".' ';
+    $output .= "<input value=\"".get_string("searchwiki", "wiki").":\" type=\"submit\" />";
+    $output .= "<input name=\"id\" type=\"hidden\" value=\"$cmid\" />";
+    $output = $output.($groupid?"<input name=\"groupid\" type=\"hidden\" value=\"$groupid\" />":"");
+    $output = $output.($userid?"<input name=\"userid\" type=\"hidden\" value=\"$userid\" />":"");
+    $output .= "<input name=\"q\" type=\"text\" size=\"20\" value=\"$search\" />".' ';
     $output .= "</font>";
-    $output .= "<input name=\"page\" type=\"hidden\" value=\"SearchPages\">";
+    $output .= "<input name=\"page\" type=\"hidden\" value=\"SearchPages\" />";
     $output .= "</form>";
 
     if ($return) {
@@ -1053,8 +1053,8 @@ function wiki_admin_setpageflags_list($pageflagstatus) {
     foreach ($FD as $n=>$str) {
         $cell_flags .='<INPUT TYPE="checkbox" NAME="flags['. rawurlencode($id)
             . '][' . $n . ']" VALUE="1" '
-            . (($data["flags"] & $n) ? "CHECKED" : "")
-            . '>'.$str. ' ';
+            . (($data["flags"] & $n) ? "CHECKED=\"checked\"" : "")
+            . ' />'.$str. ' ';
     }
     if($pageflagstatus) {
       $table->data[]=array($cell_pagename, $cell_flags, $pageflagstatus[$id]);
@@ -1111,17 +1111,17 @@ function wiki_admin_remove_list($listall="") {
   /// User wants to see all pages
   if ($listall) {
     while ($row = $result->get()) {
-      $selected[$row["id"]] = get_string("listall","wiki")."<br>";
+      $selected[$row["id"]] = get_string("listall","wiki")."<br />";
     }
   }
   while ($page = $result->get()) {            
     $id = $page["id"];
     $page = ewiki_database("GET", array("id"=>$id));
     $flags = $page["flags"];
-    #print "$id ".strlen(trim(($page["content"])))."<br>";           
+    #print "$id ".strlen(trim(($page["content"])))."<br />";           
 
     if (!strlen(trim(($page["content"]))) && !($flags & EWIKI_DB_F_BINARY)) {
-        @$selected[$id] .= get_string("emptypage","wiki")."<br>";
+        @$selected[$id] .= get_string("emptypage","wiki")."<br />";
     }
     
     // Check for orphaned pages
@@ -1136,50 +1136,50 @@ function wiki_admin_remove_list($listall="") {
             $orphanedpage=false;
           }
 
-          #echo "rc({$row['id']})==>($id): $check2 <br>";
+          #echo "rc({$row['id']})==>($id): $check2 <br />";
         }
     }
 
     /// Some more reasons for Deletion...    
     if ($orphanedpage && $id!=EWIKI_PAGE_INDEX &&!($flags & EWIKI_DB_F_BINARY)) {
-        @$selected[$id] .= get_string("orphanedpage","wiki")."<br>";
+        @$selected[$id] .= get_string("orphanedpage","wiki")."<br />";
     }
 
     if ($flags & EWIKI_DB_F_DISABLED) {
-        @$selected[$id] .= get_string("disabledpage","wiki")."<br>";
+        @$selected[$id] .= get_string("disabledpage","wiki")."<br />";
     }
 
     if (($flags & 3) == 3) {
-        @$selected[$id] .= get_string("errorbinandtxt","wiki")."<br>";
+        @$selected[$id] .= get_string("errorbinandtxt","wiki")."<br />";
     }
 
     if (!($flags & 3)) {
-        @$selected[$id] .= get_string("errornotype","wiki")."<br>";
+        @$selected[$id] .= get_string("errornotype","wiki")."<br />";
     }
 
     if ($flags & EWIKI_DB_F_HTML) {
-        @$selected[$id] .= get_string("errorhtml","wiki")."<br>";
+        @$selected[$id] .= get_string("errorhtml","wiki")."<br />";
     }
 
     if (($flags & EWIKI_DB_F_READONLY) && !($flags & EWIKI_DB_F_BINARY)) {
-        @$selected[$id] .= get_string("readonly","wiki")."<br>";
+        @$selected[$id] .= get_string("readonly","wiki")."<br />";
     }
 
     if (($flags & EWIKI_DB_F_READONLY) && ($flags & EWIKI_DB_F_WRITEABLE)) {
-        @$selected[$id] .= get_string("errorroandwr","wiki")."<br>";
+        @$selected[$id] .= get_string("errorroandwr","wiki")."<br />";
     }
 
     if (strlen($page["content"]) >= 65536) {
-        @$selected[$id] .= get_string("errorsize","wiki")."<br>";
+        @$selected[$id] .= get_string("errorsize","wiki")."<br />";
     }
 
     if (strpos($page["refs"], "\n".get_string("deletemewikiword","wiki")."\n")!==false) {
-        @$selected[$id] .= get_string("deletemewikiwordfound","wiki",get_string("deletemewikiword","wiki"))."<br>";
+        @$selected[$id] .= get_string("deletemewikiwordfound","wiki",get_string("deletemewikiword","wiki"))."<br />";
     }
   }
   
   foreach ($selected as $id => $reason) {    
-    $table_checkbox='<INPUT TYPE="checkbox" VALUE="'.rawurlencode($id).'" NAME="pagestodelete[]">';
+    $table_checkbox='<INPUT TYPE="checkbox" VALUE="'.rawurlencode($id).'" NAME="pagestodelete[]" />';
 
     #-- link & id
     if (strpos($id, EWIKI_IDF_INTERNAL) === false) {
@@ -1241,9 +1241,9 @@ function wiki_admin_strip_list($pagestostrip="",$version="",$err="") {
         } else {
           $versiondefault=$version[$i];
         }
-        $table->data[]=array('<input type="checkbox" value="'.rawurlencode($id).'" name="pagestostrip['.$i.']" '.$checked.'>', 
+        $table->data[]=array('<input type="checkbox" value="'.rawurlencode($id).'" name="pagestostrip['.$i.']" '.$checked.' />', 
                         '<A HREF="'.EWIKI_SCRIPT.$id.'">'.htmlentities($id).'</A> / '.get_string("version","wiki").": ".$row["version"],
-                        '<input name="version['.$i.']" value="'.$versiondefault.'" size="7">'.$error);
+                        '<input name="version['.$i.']" value="'.$versiondefault.'" size="7" />'.$error);
         
       }
       $i++;
@@ -1312,7 +1312,7 @@ function wiki_admin_checklinks($pagetocheck) {
      preg_match_all('_(http.?://[^\s"\'<>#,;]+[^\s"\'<>#,;.])_', $content, $links);
      $badlinks = array();
      if(!$links[1]) {
-       $ret = get_string("nolinksfound","wiki")."<br><br>";
+       $ret = get_string("nolinksfound","wiki")."<br /><br />";
      } else {
        foreach ($links[1] as $href) {
           #print "[ $href ]";
@@ -1323,10 +1323,10 @@ function wiki_admin_checklinks($pagetocheck) {
             $d="OK";
           }
           if (empty($d) || !strlen(trim($d)) || stristr("not found", $d) || stristr("error 404", $d)) {
-             $ret.="[".get_string("linkdead","wiki")."] $href <br>\n";
+             $ret.="[".get_string("linkdead","wiki")."] $href <br />\n";
              $badlinks[] = $href;
           } else {
-             $ret.="[".get_string("linkok","wiki")."] $href <br>\n";
+             $ret.="[".get_string("linkok","wiki")."] $href <br />\n";
           }
        }     
      }
@@ -1401,7 +1401,7 @@ function wiki_admin_revert($proceed, $authorfieldpattern, $changesfield, $howtoo
             ewiki_database("DELETE", $row);
           }
         }
-        $ret .= ")<br>";
+        $ret .= ")<br />";
         break;
       }
     } #-- for($ver)

@@ -66,11 +66,11 @@
                 $categories = quiz_get_category_menu($course->id);
                 unset($categories[$category->id]);
                 echo "<CENTER><P><FORM ACTION=category.php METHOD=get>";
-                echo "<INPUT TYPE=hidden NAME=id VALUE=\"$course->id\">";
-                echo "<INPUT TYPE=hidden NAME=delete VALUE=\"$category->id\">";
+                echo "<INPUT TYPE=hidden NAME=id VALUE=\"$course->id\" />";
+                echo "<INPUT TYPE=hidden NAME=delete VALUE=\"$category->id\" />";
                 choose_from_menu($categories, "confirm", "", "");
-                echo "<INPUT TYPE=submit VALUE=\"".get_string("categorymoveto", "quiz")."\">";
-                echo "<INPUT TYPE=submit NAME=cancel VALUE=\"$strcancel\">";
+                echo "<INPUT TYPE=submit VALUE=\"".get_string("categorymoveto", "quiz")."\" />";
+                echo "<INPUT TYPE=submit NAME=cancel VALUE=\"$strcancel\" />";
                 echo "</FORM></P></CENTER>";
                 print_footer($course);
                 exit;
@@ -159,21 +159,21 @@
         } else {
             $delete = "<A HREF=\"category.php?id=$course->id&delete=$category->id\">$strdelete</A>";
         }
-        $table->data[] = array ("<INPUT TYPE=text NAME=\"c$category->id\" VALUE=\"$category->name\" SIZE=15>",
-                                "<INPUT TYPE=text NAME=\"i$category->id\" VALUE=\"$category->info\" SIZE=50>",
+        $table->data[] = array ("<INPUT TYPE=text NAME=\"c$category->id\" VALUE=\"$category->name\" SIZE=15 />",
+                                "<INPUT TYPE=text NAME=\"i$category->id\" VALUE=\"$category->info\" SIZE=50 />",
                                 choose_from_menu ($publishoptions, "p$category->id", "$category->publish", "", "", "", true),
                                 "$count", 
                                 $delete);
     }
-    $table->data[] = array ("<INPUT TYPE=text NAME=\"new\" VALUE=\"\" SIZE=15>", 
-                            "<INPUT TYPE=text NAME=\"newinfo\" VALUE=\"\" SIZE=50>", 
+    $table->data[] = array ("<INPUT TYPE=text NAME=\"new\" VALUE=\"\" SIZE=15 />", 
+                            "<INPUT TYPE=text NAME=\"newinfo\" VALUE=\"\" SIZE=50 />", 
                             choose_from_menu ($publishoptions, "newpublish", "", "", "", "", true),
                             "", 
                             "$stradd");
     print_table($table);
-    echo "<INPUT TYPE=hidden NAME=id VALUE=\"$course->id\">";
-    echo "<CENTER><BR><INPUT TYPE=submit VALUE=\"$strsavechanges\"> ";
-    echo "<BR><BR><INPUT TYPE=submit NAME=backtoquiz VALUE=\"$strbacktoquiz\"> ";
+    echo "<INPUT TYPE=hidden NAME=id VALUE=\"$course->id\" />";
+    echo "<CENTER><BR><INPUT TYPE=submit VALUE=\"$strsavechanges\" /> ";
+    echo "<BR><BR><INPUT TYPE=submit NAME=backtoquiz VALUE=\"$strbacktoquiz\" /> ";
     echo "</CENTER>";
     echo "</FORM>";
 

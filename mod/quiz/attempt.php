@@ -92,8 +92,8 @@
             echo "<div align=\"center\">\n";
             print_string("requirepasswordmessage", "quiz");
             echo "<br /><br />\n";
-            echo " <input name=\"quizpassword\" type=\"password\" value=\"\">";
-            echo " <input type=\"submit\" value=\"".get_string("ok")."\">\n";
+            echo " <input name=\"quizpassword\" type=\"password\" value=\"\" />";
+            echo " <input type=\"submit\" value=\"".get_string("ok")."\" />\n";
             echo "</div>\n";
 
             print_simple_box_end();
