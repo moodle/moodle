@@ -2477,9 +2477,12 @@
     //--(MAGIC-PclTrace)--//PclTraceFctStart(__FILE__, __LINE__, "PclZip::privExtract", "list, path=$p_path, remove_path='$p_remove_path', remove_all_path='".($p_remove_all_path?'true':'false')."'");
     $v_result=1;
 
-    // ----- Check the path
-    if (($p_path == "") || ((substr($p_path, 0, 1) != "/") && (substr($p_path, 0, 3) != "../")))
-      $p_path = "./".$p_path;
+// COMMENTED OUT FOR MOODLE - IT WAS CAUSING PROBLEMS FOR WINDOWS  - Martin 25/5/2003
+//
+//    // ----- Check the path
+//    if (($p_path == "") || ((substr($p_path, 0, 1) != "/") && (substr($p_path, 0, 3) != "../")))
+//      $p_path = "./".$p_path;
+
 
     // ----- Reduce the path last (and duplicated) '/'
     if (($p_path != "./") && ($p_path != "/"))
