@@ -13,13 +13,14 @@ Now I show the specific detailed status of every item in the process:
 
 Backup Details:
 ===============
-   - Backup FrontEnd............................................IN PROGRESS.
-        - Check Security........................................NO EXISTS
-        - Select Info to Backup.(from mods).....................NO EXISTS
+   - Backup FrontEnd............................................IN PROGRESS
+        - Check Security........................................DONE
+        - Select Info to Backup.(from mods).....................IN PROGRESS
         - Launch Backup.........................................NO EXISTS
         - Show progress.........................................NO EXISTS
-   - Backup Items:..............................................NO EXISTS
-        - Backup Info data......................................NO EXISTS
+        - Determine Backup location.............................NO EXISTS
+   - Backup Items:..............................................IN PROGRESS
+        - Backup Info data......................................IN PROGRESS
         - Course................................................NO EXISTS
            - Course Summary Data................................NO EXISTS
            - User Accounts Info.................................NO EXISTS
