@@ -68,7 +68,7 @@ global $CFG;
                         `id` int(10) not null auto_increment,
                         `blockid` int(10) not null default '0',
                         `pageid` int(10) not null default '0',
-                        `pagetype` enum('course') not null,
+                        `pagetype` varchar(12) not null default '',
                         `position` enum('l', 'r') not null,
                         `weight` tinyint(3) not null default '0',
                         `visible` tinyint(1) not null default '0',

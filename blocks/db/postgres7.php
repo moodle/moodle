@@ -70,7 +70,7 @@ global $CFG;
                         id SERIAL8 PRIMARY KEY,
                         blockid INT8 not null default '0',
                         pageid INT8 not null default '0',
-                        pagetype varchar(12) not null check (pagetype in ('course')),
+                        pagetype varchar(12) not null default '',
                         position char not null check (position in ('l', 'r')) ,
                         weight int not null default '0',
                         visible int not null default '0',
