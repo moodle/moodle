@@ -1836,11 +1836,11 @@ function print_visible_setting($form, $course) {
     }
     
     echo '<tr valign="top">';
-    echo '<td align="right"><b>'.get_string('hidefromstudents','',moodle_strtolower($course->students)).':</b></td>';
+    echo '<td align="right"><b>'.get_string('visibletostudents','',moodle_strtolower($course->students)).':</b></td>';
     echo '<td>';
     unset($choices);
-    $choices[1] = get_string('no');
-    $choices[0] = get_string('yes');
+    $choices[1] = get_string('show');
+    $choices[0] = get_string('hide');
     choose_from_menu($choices, 'visible', $visible, '', '', 0, false, $hiddensection);
     echo '</td></tr>';
 } 

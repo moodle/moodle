@@ -521,7 +521,6 @@ $string['hiddensectionscollapsed'] = 'Hidden sections are shown in collapsed for
 $string['hiddensectionsinvisible'] = 'Hidden sections are completely invisible';
 $string['hide'] = 'Hide';
 $string['hideadvancedsettings'] = 'Hide advanced settings';
-$string['hidefromstudents'] = 'Hide from $a';
 $string['hidepicture'] = 'Hide picture';
 $string['hidesettings'] = 'Hide settings';
 $string['hits'] = 'Hits';
@@ -1081,6 +1080,7 @@ $a->action';
 $string['virusfoundsubject'] = '$a: Virus found!';
 $string['virusfounduser'] = 'The file you have uploaded, $a->filename, has been scanned by a virus checker and found to be infected! Your file upload was NOT successful.';
 $string['virusplaceholder'] = 'This file that has been uploaded was found to contain a virus and has been moved or delted and the user notified.';
+$string['visibletostudents'] = 'Visible to $a';
 $string['webpage'] = 'Web page';
 $string['week'] = 'Week';
 $string['weekhide'] = 'Hide this week from $a';
