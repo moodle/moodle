@@ -3,16 +3,13 @@
 
 
 $string['acceptederror'] = 'エラー範囲';
-$string['addingquestions'] = 'この部分ではデータベース内の質問を管理します。質問は整理しやすいようにカテゴリー毎に保存されます。質問はコース内の全ての小テストに利用出来ます。「公開」を選んだ場合は他のコースでも利用出来ます。<br /><br />質問のカテゴリーを選択又は作成した後に質問を作成・編集してください。このページの反対側にある小テストにどの質問でも追加することが出来ます。
-';
+$string['addingquestions'] = 'この部分ではデータベース内の質問を管理します。質問は整理しやすいようにカテゴリ毎に保存されます。質問はコース内の全ての小テストに利用出来ます。「公開」を選んだ場合は他のコースでも利用出来ます。<br /><br />質問のカテゴリを選択又は作成した後に質問を作成・編集してください。このページの反対側にある小テストにどの質問でも追加することが出来ます。';
 $string['addquestions'] = '小テストを追加';
 $string['addquestionstoquiz'] = '現在の小テストに質問を追加する';
 $string['addselectedtoquiz'] = '選択したものを小テストに追加する';
 $string['aiken'] = 'Aikenフォーマット';
 $string['allowreview'] = '復習を許可する';
-$string['alreadysubmitted'] = 'すでに解答されています
-
-';
+$string['alreadysubmitted'] = 'すでに解答されています';
 $string['alwaysavailable'] = '常時利用可能';
 $string['answer'] = '答え';
 $string['answerhowmany'] = '解答方法';
@@ -37,11 +34,11 @@ $string['calculatedquestion'] = '$a 行の計算された質問はサポートされていません。
 $string['caseno'] = '解答の精度は重要ではありません';
 $string['casesensitive'] = '解答の精度';
 $string['caseyes'] = '解答は合致しなければなりません';
-$string['categories'] = 'カテゴリー';
-$string['category'] = 'カテゴリー';
+$string['categories'] = 'カテゴリ';
+$string['category'] = 'カテゴリ';
 $string['categoryinfo'] = '詳細';
-$string['categorymove'] = 'カテゴリー $a->name には $a->count の質問があります。他のカテゴリーを選んでください。';
-$string['categorymoveto'] = 'このカテゴリーに移動する';
+$string['categorymove'] = 'カテゴリ $a->name には $a->count の質問があります。他のカテゴリを選んでください。';
+$string['categorymoveto'] = 'このカテゴリに移動する';
 $string['choice'] = '選択';
 $string['choices'] = '利用可能な選択';
 $string['confirmstartattempt'] = 'このクイズには時間制限が設けられています。本当にスタートしても宜しいですか?';
@@ -58,13 +55,13 @@ $string['custom'] = 'カスタムフォーマット';
 $string['daysavailable'] = '日利用可能';
 $string['default'] = 'デフォルト';
 $string['defaultgrade'] = '評価の初期値';
-$string['defaultinfo'] = '質問の標準カテゴリー';
+$string['defaultinfo'] = '質問の標準カテゴリ';
 $string['deleteattemptcheck'] = '本当のこれらの挑戦を削除してもよろしいですか?';
 $string['deletequestioncheck'] = ' \'$a\' を本当に削除してもよろしいですか?';
 $string['description'] = '説明';
 $string['discrimination'] = '識別インデックス';
 $string['eachattemptbuildsonthelast'] = 'それぞれの解答を最後に作成する';
-$string['editcategories'] = 'カテゴリーを編集する';
+$string['editcategories'] = 'カテゴリを編集する';
 $string['editingdescription'] = '説明を編集する';
 $string['editingmatch'] = '組み合わせ問題を編集する';
 $string['editingmultianswer'] = '隠し解答方式を編集する';
@@ -135,6 +132,7 @@ $string['numerical'] = '数字方式';
 $string['passworderror'] = 'パスワードが間違っています';
 $string['percentcorrect'] = '正答率';
 $string['publish'] = '公開';
+$string['publishedit'] = 'このカテゴリへの質問の追加・編集を行う為にはコース公開に関する権限を有する必要があります';
 $string['qti'] = 'IMS QTIフォーマット';
 $string['question'] = '質問';
 $string['questioninuse'] = '質問  \'$a\' は現在使用中です：';
@@ -179,7 +177,7 @@ $string['savequiz'] = '全小テストを保存する';
 $string['score'] = '得点状況';
 $string['select'] = '選択';
 $string['selectall'] = '全てを選択する';
-$string['selectcategoryabove'] = '上記のカテゴリー選択する';
+$string['selectcategoryabove'] = '上記のカテゴリ選択する';
 $string['shortanswer'] = '記述式';
 $string['show'] = '表示';
 $string['showcorrectanswer'] = 'フィードバックの中に正解を表示しますか?';

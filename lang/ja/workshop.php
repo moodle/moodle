@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // workshop.php - created with Moodle 1.2 Beta ++ (2004031100)
+      // workshop.php - created with Moodle 1.4 development (2004070800)
 
 
 $string['absent'] = '·çÀÊ';
@@ -123,8 +123,7 @@ $string['noteonassessmentelements'] = 'É¾²Á¤Ï¿ôÂ¿¤¯¤Î¡ÖÉ¾²ÁÍ×ÁÇ¡×¤Ë¤è¤êÀ®Î©¤Á¤Ş¤
 <BR>
 ¡Ö²İÂê¤ÎÊÔ½¸¡×²èÌÌ¤ÇÍ×ÁÇ¿ô¤òÊÑ¹¹¤¹¤ë¤³¤È¤¬½ĞÍè¤Ş¤¹¡£
 <BR>
-Í×ÁÇ¼«ÂÎ¤Ï¡ÖÉ¾²Á¤Î´ÉÍı¡×²èÌÌ¤ÇÊÑ¹¹¤Ç¤­¤Ş¤¹¡£ 
-';
+Í×ÁÇ¼«ÂÎ¤Ï¡ÖÉ¾²Á¤Î´ÉÍı¡×²èÌÌ¤ÇÊÑ¹¹¤Ç¤­¤Ş¤¹¡£ ';
 $string['notgraded'] = 'ºÎÅÀÌµ¤·';
 $string['notitlegiven'] = 'ÂêÌ¾¤¬¤¢¤ê¤Ş¤»¤ó';
 $string['numberofassessmentelements'] = '¥³¥á¥ó¥È¿ô¡¢É¾²ÁÍ×ÁÇ¿ô¡¢É¾²Á¤ÎÉı¡¢´ğ½à¿ô';
@@ -148,7 +147,7 @@ $string['ownwork'] = '¼«¿È¤Î²İÂê';
 $string['percentageofassessments'] = '²¼¤²¤ëÉ¾²Á¤Î³ä¹ç';
 $string['phase'] = '¥Õ¥§¡¼¥º';
 $string['phase1'] = '²İÂê¤ÎÀßÄê';
-$string['phase1short'] = '¥»¥Ã¥È¥¢¥Ã¥×';
+$string['phase1short'] = 'ÀßÄê';
 $string['phase2'] = '$a ¤ÎÄó½Ğ¤òµö²Ä¤¹¤ë';
 $string['phase2short'] = 'Äó½Ğ';
 $string['phase3'] = '$a ¤ÎÄó½ĞÊª¤ÈÉ¾²Á¤òµö²Ä¤¹¤ë';
