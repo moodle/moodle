@@ -46,7 +46,7 @@
     }
 
     foreach ($assignments as $assignment) {
-        if ($submission = assignment_get_submission($assignment->id, $USER->id)) {
+        if ($submission = assignment_get_submission($assignment, $USER)) {
             if ($submission->timemodified <= $assignment->timedue) {
                 $submitted = userdate($submission->timemodified);
             } else {
