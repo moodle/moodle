@@ -570,7 +570,7 @@
 function fulldelete($location) {
     if (is_dir($location)) {
         $currdir = opendir($location);
-        while ($file = readdir($currdir)) {
+        while (false !== ($file = readdir($currdir))) {
             if ($file <> ".." && $file <> ".") {
                 $fullfile = $location."/".$file;
                 if (is_dir($fullfile)) {
@@ -631,7 +631,7 @@ function printfilelist($filelist) {
             echo "<img src=\"$CFG->pixpath/f/folder.gif\" height=\"16\" width=\"16\" alt=\"\" /> $file<br />";
             $subfilelist = array();
             $currdir = opendir($basedir.$file);
-            while ($subfile = readdir($currdir)) {
+            while (false !== ($subfile = readdir($currdir))) {
                 if ($subfile <> ".." && $subfile <> ".") {
                     $subfilelist[] = $file."/".$subfile;
                 }
@@ -681,7 +681,7 @@ function displaydir ($wdir) {
     $fullpath = $basedir.$wdir;
 
     $directory = opendir($fullpath);             // Find all files
-    while ($file = readdir($directory)) {
+    while (false !== ($file = readdir($currdir))) {
         if ($file == "." || $file == "..") {
             continue;
         }
