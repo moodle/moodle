@@ -297,18 +297,20 @@ function SCORMapi() {
 	    errorCode = "301";
 	    return "false";
 	} else {
-	    Initialized = false;
-	    errorCode = "0";
+	    if (LMSCommit(param)) {
+ 		Initialized = false;
+ 		errorCode = "0";
 	   
-            if (nav.event != "") {
-            <?php
-		if ($sco != $last) {
-	            echo "setTimeout('top.changeSco(nav.event);',500);\n";
-		} else {
-		    echo "exitloc = '".$CFG->wwwroot."/mod/scorm/view.php?id=".$cm->id."';\n";
-		    echo "setTimeout('top.location = exitloc;',500);\n";
-		} 
-	    ?>
+        	if (nav.event != "") {
+       		   <?php
+			if ($sco != $last) {
+			    echo "setTimeout('top.changeSco(nav.event);',500);\n";
+			} else {
+			    echo "exitloc = '".$CFG->wwwroot."/mod/scorm/view.php?id=".$cm->id."';\n";
+			    echo "setTimeout('top.location = exitloc;',500);\n";
+			} 
+	    	   ?>
+	    	}
 	    }
 	    return "true";
 	}    
