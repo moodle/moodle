@@ -39,8 +39,8 @@
     if (empty($_GET['frameset'])) {
         echo "<head><title>{$course->shortname}: {$workshop->name}</title></head>\n";
         echo "<frameset rows=\"90%,*\" border=\"10\">";
-        echo "<frame src=\"viewassessment.php?id=$id&amp;aid=$aid&amp;frameset=top&amp;redirect=$redirect\" border=\"10\">";
-        echo "<frame src=\"viewassessment.php?id=$id&amp;aid=$aid&amp;frameset=bottom&amp;redirect=$redirect\">";
+        echo "<frame src=\"viewassessment.php?id=$id&amp;aid=$aid&amp;allowcomments=$allowcomments&amp;frameset=top&amp;redirect=$redirect\" border=\"10\">";
+        echo "<frame src=\"viewassessment.php?id=$id&amp;aid=$aid&amp;allowcomments=$allowcomments&amp;frameset=bottom&amp;redirect=$redirect\">";
         echo "</frameset>";
         exit;
     }
