@@ -28,7 +28,8 @@
 ************************************************/
 
     require("../../config.php");
-	require("lib.php");
+	require("lib.php");	
+    require("locallib.php");
 
 	optional_variable($id);    // Course Module ID
     optional_variable($a);    // workshop ID
@@ -293,8 +294,8 @@
 		if (!isteacher($course->id)) {
 			error("Only teachers can look at this page");
 			}
-		
-		$count = count_records("workshop_grades", "workshop", $workshop->id);
+
+		$count = count_records("workshop_grades", "workshopid", $workshop->id);
 		if ($workshop->phase > 1 and $count) {
 			notify(get_string("warningonamendingelements", "workshop"));
 			}
@@ -712,14 +713,17 @@
 		}
 
 		// first get the assignment elements for maxscores and weights...
-		if (!$elementsraw = get_records("workshop_elements", "workshopid", $workshop->id, "elementno ASC")) {
+		$elementsraw = get_records("workshop_elements", "workshopid", $workshop->id, "elementno ASC");
+        if (count($elementsraw) < $workshop->nelements) {
 			print_string("noteonassignmentelements", "workshop");
 		}
-		else {
+		if ($elementsraw) {
 			foreach ($elementsraw as $element) {
 				$elements[] = $element;   // to renumber index 0,1,2...
 			}
-		}
+		} else {
+            $elements = null;
+        }
 
 		$timenow = time();
         // don't fiddle about, delete all the old and add the new!

@@ -2,6 +2,7 @@
 
     require("../../config.php");
     require("lib.php");
+    require("locallib.php");
 
     require_variable($id);          // CM ID
 
@@ -46,7 +47,7 @@
 	else {	
 		if (is_uploaded_file($newfile['tmp_name']) and $newfile['size'] > 0) {
 			if ($newfile['size'] > $workshop->maxbytes) {
-				notify(get_string("uploadfiletoobig", "assignment", $workshop->maxbytes));
+			    notify(get_string("uploadfiletoobig", "assignment", $workshop->maxbytes));
 			} 
 			else {
 				$newfile_name = clean_filename($newfile['name']);
@@ -61,8 +62,8 @@
 					if (!$newsubmission->id = insert_record("workshop_submissions", $newsubmission)) {
 						error("Workshop upload: Failure to create new submission record!");
 					}
-                    // see if this is a resubmission by looking at the previous submissions
-                    if ($submissions) {
+                    // see if this is a resubmission by looking at the previous submissions...
+                    if ($submissions and ($workshop->phase >1)) { // ...but not teacher submissions
                         // find the last submission
                         foreach ($submissions as $submission) {
                             $lastsubmission = $submission;
@@ -101,15 +102,15 @@
 					else {
 						notify(get_string("uploaderror", "assignment") );
 					}
-				} 
-				else {
-					notify(get_string("uploadbadname", "assignment") );
 				}
-			}
-		}
-		else {
-			notify(get_string("uploadnofilefound", "assignment") );
-		}
+            }
+        } 
+        elseif (!is_uploaded_file($newfile['tmp_name']) and !$newfile['size'] > 0 and $newfile['name']) {
+            notify(get_string("uploadfiletoobig", "assignment", $workshop->maxbytes));
+        } 
+        else {
+            notify(get_string("uploadnofilefound", "assignment"));
+        }
 	}
     print_continue("view.php?a=$workshop->id");
 

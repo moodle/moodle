@@ -18,6 +18,7 @@
 
 	require("../../config.php");
     require("lib.php");
+    require("locallib.php");
 	
 	optional_variable($id);    // Course Module ID
     optional_variable($a);    // workshop ID
@@ -71,7 +72,7 @@
     if (isteacher($course->id)) {
 		if (empty($action)) { // no action specified, either go straight to elements page else the admin page
 			// has the assignment any elements
-			if (count_records("workshop_elements", "workshopid", $workshop->id)) {
+			if (count_records("workshop_elements", "workshopid", $workshop->id) >= $workshop->nelements) {
 				$action = "teachersview";
 			}
 			else {
@@ -455,9 +456,11 @@
 			switch ($workshop->phase) {
 				case 0:
 				case 1: // set up assignment
-					echo "<p><b><a href=\"assessments.php?id=$cm->id&action=editelements\">".
+                    if ($workshop->nelements) {
+    					echo "<p><b><a href=\"assessments.php?id=$cm->id&action=editelements\">".
 						  get_string("amendassessmentelements", "workshop")."</a></b> \n";
-					helpbutton("elements", get_string("amendassessmentelements", "workshop"), "workshop");
+	    				helpbutton("elements", get_string("amendassessmentelements", "workshop"), "workshop");
+                    }
 					if ($workshop->ntassessments) { 
                         // if teacher examples show submission and assessment links
 						echo "<p><b><a href=\"view.php?id=$cm->id&action=submitassignment\">".
