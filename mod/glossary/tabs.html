@@ -1,5 +1,10 @@
 <?php
-
+    if (!isset($sortorder)) {
+        $sortorder = '';
+    }    
+    if (!isset($sortkey)) {
+        $sortkey = '';
+    }
     echo '<p align="center">';
     $glossary_tCFG->TabTableBGColor = $THEME->cellheading;
     $glossary_tCFG->ActiveTabColor = $THEME->cellheading;
@@ -107,4 +112,4 @@
         break;
     } 
     echo '<hr>';
-?>
+?> 
