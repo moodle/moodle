@@ -270,7 +270,7 @@
     	    echo "<html>\n";
             echo "<head><title>$course->shortname: $scorm->name</title></head>\n";
             echo "<script id=\"scormAPI\" language=\"JavaScript\" type=\"text/javascript\" src=\"scormAPI.php?id=$cm->id&amp;mode=".$mode.$scoid."\"></script>\n";
-	    echo "<frameset rows=\"$CFG->scorm_framesize,*\" onLoad=\"SCOInitialize();\" onUnload=\"SCOFinish();\" onbeforeUnload=\"SCOFinish();\">\n";
+	    echo "<frameset rows=\"$CFG->scorm_framesize,*\" onLoad=\"SCOInitialize();\" onUnload=\"SCOFinish();\">\n";
             echo "\t    <frame name=\"navigation\" src=\"playscorm.php?id=$cm->id&amp;mode=".$mode.'&amp;currentorg='.$currentorg."&amp;frameset=top\">\n";
             echo "\t    <frame name=\"main\" src=\"\">\n";
             echo "</frameset>\n";
