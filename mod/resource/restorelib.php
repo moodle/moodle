@@ -179,6 +179,42 @@
         $status = true;
 
         echo "<ul>";
+
+        //ASSIGNMENT: Decode every ASSIGNMENT (description) in the coure
+
+        //Check we are restoring assignments
+        if ($restore->mods['assignment']->restore == 1) {
+            echo "<li>".get_string("from")." ".get_string("modulenameplural","assignment");
+            //Get all course assignments
+            if ($assignments = get_records_sql ("SELECT a.id, a.description
+                                       FROM {$CFG->prefix}assignment a
+                                       WHERE a.course = $restore->course_id")) {
+                //Iterate over each assignment->description
+                $i = 0;   //Counter to send some output to the browser to avoid timeouts
+                foreach ($assignments as $assignment) {
+                    //Increment counter
+                    $i++;
+                    $content = $assignment->description;
+                    $result = resource_decode_content_links($content,$restore);
+                    if ($result != $content) {
+                        //Update record
+                        $assignment->description = addslashes($result);
+                        $status = update_record("assignment",$assignment);
+                        if ($CFG->debug>7) {
+                            echo "<br><hr>".$content."<br>changed to</br>".$result."<hr><br>";
+                        }
+                    }
+                    //Do some output
+                    if (($i+1) % 5 == 0) {
+                        echo ".";
+                        if (($i+1) % 100 == 0) {
+                            echo "<br>";
+                        }
+                        backup_flush(300);
+                    }
+                }
+            }
+        }
  
         //FORUM: Decode every POST (message) in the coure
 
