@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.2 development (2004021700)
+      // forum.php - created with Moodle 1.3 development (2004043001)
 
 
 $string['addanewdiscussion'] = 'Aggiungi un nuovo argomento di discussione';
@@ -121,7 +121,9 @@ $string['singleforum'] = 'Una singola discussione semplice';
 $string['startedby'] = 'Iniziato da';
 $string['subject'] = 'Soggetto';
 $string['subscribe'] = 'Iscriviti a questo forum';
+$string['subscribeall'] = 'Iscrivi tutti a questo forum';
 $string['subscribed'] = 'Iscritto';
+$string['subscribenone'] = 'Disiscrivi tutti da questo forum';
 $string['subscribers'] = 'Iscritti';
 $string['subscribersto'] = 'Iscritti a \'$a\'';
 $string['subscribestart'] = 'Spediscimi copia dei messaggi inviati a questo forum';
@@ -130,6 +132,7 @@ $string['subscription'] = 'Iscrizione';
 $string['subscriptions'] = 'Iscrizioni';
 $string['unsubscribe'] = 'Cancella la tua iscrizione da questo forum';
 $string['unsubscribed'] = 'Iscrizione cancellata';
+$string['unsubscribeshort'] = 'Disiscrivi';
 $string['youratedthis'] = 'Hai già votato questo';
 $string['yournewtopic'] = 'Il tuo nuovo argomento di discussione';
 $string['yourreply'] = 'La tua replica';
