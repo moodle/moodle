@@ -1,6 +1,13 @@
 <?PHP  // $Id: lib.php,v 1.0 30th April 2003
 
+if (defined('COMMENTSCALE')) {  // Being included again - should never happen!!
+    return;
+}
+
+define("COMMENTSCALE", 20);
+
 include_once("$CFG->dirroot/files/mimetypes.php");
+
 
 /*** Constants **********************************/
 
@@ -30,7 +37,6 @@ $WORKSHOP_EWEIGHTS = array(  0 => -4.0, 1 => -2.0, 2 => -1.5, 3 => -1.0, 4 => -0
 $WORKSHOP_FWEIGHTS = array(  0 => 0, 1 => 0.1, 2 => 0.25, 3 => 0.5, 4 => 0.75, 5 => 1,  6 => 1.5, 
 											7 => 2.0, 8 => 3.0, 9 => 5.0, 10 => 7.5, 11=> 10.0); 
 
-define("COMMENTSCALE", 20);
 
 /*** Standard Moodle functions ******************
 function workshop_add_instance($workshop) 
@@ -266,7 +272,7 @@ function workshop_cron () {
             $posttext .= "---------------------------------------------------------------------\n";
             $posttext .= $msg;
             $posttext .= "You can see it in your workshop assignment:\n";
-            $posttext .= "   $CFG->wwwroot/mod/workshop/view.php?a=$workshop->id\n";
+            $posttext .= "   $CFG->wwwroot/mod/workshop/view.php?id=$workshop->id\n";
             $posttext .= "---------------------------------------------------------------------\n";
             if ($user->mailformat == 1) {  // HTML
                 $posthtml = "<P><FONT FACE=sans-serif>".
@@ -275,7 +281,7 @@ function workshop_cron () {
               "<A HREF=\"$CFG->wwwroot/mod/workshop/view.php?a=$pgassessment->id\">$workshop->name</A></FONT></P>";
               $posthtml .= "<HR><FONT FACE=sans-serif>";
               $posthtml .= "<P>$msg</P>";
-              $posthtml .= "<P>You can see it <A HREF=\"$CFG->wwwroot/mod/workshop/view.php?a=$workshop->id\">";
+              $posthtml .= "<P>You can see it <A HREF=\"$CFG->wwwroot/mod/workshop/view.php?id=$workshop->id\">";
               $posthtml .= "in to your peer graded assignment</A>.</P></FONT><HR>";
             } else {
               $posthtml = "";
