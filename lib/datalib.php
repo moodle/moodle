@@ -912,6 +912,7 @@ function get_user_info_from_db($field, $value) {
             if (get_field("course", "visible", "id", $student->course)) {
                 $user->student[$student->course] = true;
             }
+            $user->timeaccess[$student->course] = $student->timeaccess;
         }
     }
 
@@ -921,6 +922,7 @@ function get_user_info_from_db($field, $value) {
             if ($teacher->editall) {
                 $user->teacheredit[$teacher->course] = true;
             }
+            $user->timeaccess[$teacher->course] = $teacher->timeaccess;
         }
     }
 

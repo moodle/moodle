@@ -12,7 +12,7 @@ define('COURSE_MAX_LOGS_PER_PAGE', 1000);    // records
 
 define('COURSE_LIVELOG_REFRESH', 60);        // Seconds
 
-define('COURSE_MAX_RECENT_PERIOD', 86400);  // A day, in seconds
+define('COURSE_MAX_RECENT_PERIOD', 172800);  // Two days, in seconds
 
 define('COURSE_MAX_SUMMARIES_PER_PAGE', 10); // courses
 
@@ -482,15 +482,14 @@ function print_recent_activity($course) {
 
     $isteacher = isteacher($course->id);
 
+    $timestart = $USER->lastlogin;
 
-    if (empty($USER->lastlogin)) {
-        echo '<p align="center"><font size="1">';
-        print_string("welcometocourse", "", $course->shortname);
-        echo '</font></p>';
-        return;
+    if (!empty($USER->timeaccess[$course->id])) {
+        if ($USER->timeaccess[$course->id] < $timestart) {
+            $timestart = $USER->timeaccess[$course->id];
+        }
     }
 
-    $timestart = $USER->lastlogin;
     $timemaxrecent = time() - COURSE_MAX_RECENT_PERIOD;
     if ($timestart < $timemaxrecent) {
         $timestart = $timemaxrecent;
