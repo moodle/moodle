@@ -64,7 +64,7 @@ $advancedfilter = 1;
                      "<a href=\"../$CFG->admin/index.php\">$stradministration</a> -> $strrecentactivity", "");
         }
 
-        print_heading(get_string("choosereportfilter").":");
+        print_heading(get_string("activitysince", "", userdate($date)));
 
         print_recent_selector_form($course, $advancedfilter);
 

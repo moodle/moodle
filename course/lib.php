@@ -214,15 +214,13 @@ function print_recent_selector_form($course, $advancedfilter=0, $selecteduser=0,
             } else {
               $day = $strdays;
             }
-            $selecteddate = time() - ($count * 3600 * 24);
+            $tmpdate = time() - ($count * 3600 * 24);
             $heading = $heading .
-                "<a href=\"$CFG->wwwroot/course/recent.php?id=$course->id&date=$selecteddate\"> $count $day</a> | ";
+                "<a href=\"$CFG->wwwroot/course/recent.php?id=$course->id&date=$tmpdate\"> $count $day</a> | ";
         }
 
         $heading = $strsince . ": <a href=\"$CFG->wwwroot/course/recent.php?id=$course->id\">$strlastlogin</a>" . " | " . $heading;
         print_heading($heading);
-
-        print_heading(get_string("activitysince", "", userdate($selecteddate)));
 
         $advancedlink = "<a href=\"$CFG->wwwroot/course/recent.php?id=$course->id&advancedfilter=1\">" . get_string("advancedfilter") . "</a>";
         print_heading($advancedlink);
