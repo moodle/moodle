@@ -39,7 +39,7 @@
 
     $PAGE = page_create_object(MOODLE_PAGE_COURSE, $course->id);
     $pageblocks = blocks_get_by_page($PAGE);
-   
+
     if (!isset($USER->editing)) {
         $USER->editing = false;
     }
@@ -68,7 +68,7 @@
         if (!empty($blockaction) && confirm_sesskey()) {
             if (!empty($blockid)) {
                 blocks_execute_action($PAGE, $pageblocks, strtolower($blockaction), intval($blockid));
-                
+
             }
             else if (!empty($instanceid)) {
                 $instance = blocks_find_instance($instanceid, $pageblocks);
@@ -100,6 +100,8 @@
 
     $PAGE->print_header(get_string('course').': %fullname%');
 
+    echo '<div id="course-view" class="course">';  // course wrapper start
+
     get_all_mods($course->id, $mods, $modnames, $modnamesplural, $modnamesused);
 
     if (! $sections = get_all_sections($course->id)) {   // No sections found
@@ -124,6 +126,7 @@
 
     require("$CFG->dirroot/course/format/$course->format/format.php");  // Include the actual course format
 
+    echo '</div>';  // content wrapper end
     print_footer(NULL, $course);
 
 ?>

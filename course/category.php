@@ -1,6 +1,6 @@
 <?php // $Id$
       // Displays the top level category or all courses
-      // In editing mode, allows the admin to edit a category, 
+      // In editing mode, allows the admin to edit a category,
       // and rearrange courses
 
     require_once("../config.php");
@@ -85,27 +85,28 @@
 
     if ($creatorediting) {
         if ($adminediting) {
-            print_header("$site->shortname: $category->name", "$site->fullname: $strcourses", 
+            print_header("$site->shortname: $category->name", "$site->fullname: $strcourses",
                          "<a href=\"../$CFG->admin/index.php\">$stradministration</a> -> ".
                          "<a href=\"index.php\">$strcategories</a> -> $category->name",
                          "", "", true, $navbaritem);
         } else {
-            print_header("$site->shortname: $category->name", "$site->fullname: $strcourses", 
+            print_header("$site->shortname: $category->name", "$site->fullname: $strcourses",
                          "<a href=\"index.php\">$strcategories</a> -> $category->name", "", "", true, $navbaritem);
         }
     } else {
-        print_header("$site->shortname: $category->name", "$site->fullname: $strcourses", 
+        print_header("$site->shortname: $category->name", "$site->fullname: $strcourses",
                      "<a href=\"index.php\">$strcategories</a> -> $category->name", "", "", true, $navbaritem);
     }
 
+    echo '<div id="course-category" class="course">';  // course wrapper start
 
 /// Print the category selector
 
     $displaylist = array();
     $parentlist = array();
-    
+
     make_categories_list($displaylist, $parentlist, "");
-    
+
     echo '<table align="center"><tr><td align="right">';
     echo "<p>$strcategories:</p>";
     echo "</td><td>";
@@ -117,7 +118,7 @@
 
     if ($adminediting) {
 
-    /// Move a specified course to a new category 
+    /// Move a specified course to a new category
 
         if (isset($moveto) and $data = data_submitted() and confirm_sesskey()) {   // Some courses are being moved
 
@@ -131,7 +132,7 @@
 
             if ($data) {
                 foreach ($data as $code => $junk) {
- 
+
                     $courseid = substr($code, 1);
 
                     if (! $course  = get_record("course", "id", $courseid)) {
@@ -140,7 +141,7 @@
                         // figure out a sortorder that we can use in the destination category
                         $sortorder = get_field_sql('SELECT MIN(sortorder)-1 AS min
                                                     FROM ' . $CFG->prefix . 'course WHERE category=' . $destcategory->id);
-                        if ($sortorder < 1) { 
+                        if ($sortorder < 1) {
                             // rather than let the db default to 0
                             // set it to > 100 and avoid extra work in fix_coursesortorder()
                             $sortorder = 200;
@@ -148,7 +149,7 @@
 
                         $course->category  = $destcategory->id;
                         $course->sortorder = $sortorder;
- 
+
                         if (!update_record('course', $course)) {
                             notify("An error occurred - course not moved!");
                         }
@@ -160,8 +161,8 @@
         }
 
 
-    /// Hide or show a course 
-    
+    /// Hide or show a course
+
         if ((isset($hide) or isset($show)) and confirm_sesskey()) {
             if (isset($hide)) {
                 $course = get_record("course", "id", $hide);
@@ -188,24 +189,24 @@
             // ensure the course order has no gaps
             // and isn't at 0
             fix_course_sortorder($category->id);
-            
+
             // we are going to need to know the range
             $max = get_record_sql('SELECT MAX(sortorder) AS max, 1
                                          FROM ' . $CFG->prefix . 'course WHERE category=' . $category->id);
             $max = $max->max + 100;
-            
+
             if (isset($moveup)) {
                 $movecourse = get_record('course', 'id', $moveup);
-                $swapcourse = get_record('course', 
-                                         'category',  $category->id, 
+                $swapcourse = get_record('course',
+                                         'category',  $category->id,
                                          'sortorder', $movecourse->sortorder - 1);
             } else {
                 $movecourse = get_record('course', 'id', $movedown);
-                $swapcourse = get_record('course', 
-                                         'category',  $category->id, 
+                $swapcourse = get_record('course',
+                                         'category',  $category->id,
                                          'sortorder', $movecourse->sortorder + 1);
             }
-            
+
             if ($swapcourse and $movecourse) {        // Renumber everything for robustness
                 begin_sql();
                 if (!(    set_field("course", "sortorder", $max, "id", $swapcourse->id)
@@ -243,13 +244,13 @@
             echo "<br />";
         }
     }
-    
+
 
 /// Print out all the courses
     unset($course);    // To avoid unwanted language effects later
 
-    $courses = get_courses_page($category->id, 'c.sortorder ASC', 
-                                'c.id,c.sortorder,c.shortname,c.fullname,c.summary,c.visible,c.teacher,c.guest,c.password', 
+    $courses = get_courses_page($category->id, 'c.sortorder ASC',
+                                'c.id,c.sortorder,c.shortname,c.fullname,c.summary,c.visible,c.teacher,c.guest,c.password',
                                 $totalcount, $page*$perpage, $perpage);
     $numcourses = count($courses);
 
@@ -261,7 +262,7 @@
     } else if ($numcourses <= COURSE_MAX_SUMMARIES_PER_PAGE and !$page and !$creatorediting) {
         print_courses($category, "80%");
 
-    } else { 
+    } else {
         print_paging_bar($totalcount, $page, $perpage, "category.php?id=$category->id&amp;perpage=$perpage&");
 
         $strcourses  = get_string("courses");
@@ -333,14 +334,14 @@
                              '&amp;show='.$acourse->id.'&amp;sesskey='.$USER->sesskey.'">'.
                              '<img src="'.$pixpath.'/t/show.gif" height="11" width="11" border="0" alt="" /></a> ';
                     }
-    
+
                     echo '<a title="'.$strbackup.'" href="../backup/backup.php?id='.$acourse->id.'">'.
                          '<img src="'.$pixpath.'/t/backup.gif" height="11" width="11" border="0" alt="" /></a> ';
 
                         echo '<a title="'.$strrestore.'" href="../files/index.php?id='.$acourse->id.
                              '&amp;wdir=/backupdata">'.
                              '<img src="'.$pixpath.'/t/restore.gif" height="11" width="11" border="0" alt="" /></a> ';
-            
+
                     if ($up) {
                         echo '<a title="'.$strmoveup.'" href="category.php?id='.$category->id.'&amp;page='.$page.
                              '&amp;moveup='.$acourse->id.'&amp;sesskey='.$USER->sesskey.'">'.
@@ -348,7 +349,7 @@
                     } else {
                         echo '<img src="'.$CFG->wwwroot.'/pix/spacer.gif" height="11" width="11" border="0" alt="" /></a> ';
                     }
-        
+
                     if ($down) {
                         echo '<a title="'.$strmovedown.'" href="category.php?id='.$category->id.'&amp;page='.$page.
                              '&amp;movedown='.$acourse->id.'&amp;sesskey='.$USER->sesskey.'">'.
@@ -356,7 +357,7 @@
                     } else {
                         echo '<img src="'.$CFG->wwwroot.'/pix/spacer.gif" height="11" width="11" border="0" alt="" /></a> ';
                     }
-    
+
                     echo "</td>";
                     echo "<td align=\"center\">";
                     echo '<input type="checkbox" name="c'.$acourse->id.'" />';
@@ -383,8 +384,8 @@
                          $pixpath.'/i/key.gif" /></a>';
                 }
                 if (!empty($acourse->summary)) {
-                    link_to_popup_window ("/course/info.php?id=$acourse->id", "courseinfo", 
-                                          '<img hspace="2" alt="info" height="16" width="16" border="0" src="'.$pixpath.'/i/info.gif" />', 
+                    link_to_popup_window ("/course/info.php?id=$acourse->id", "courseinfo",
+                                          '<img hspace="2" alt="info" height="16" width="16" border="0" src="'.$pixpath.'/i/info.gif" />',
                                            400, 500, $strsummary);
                 }
                 echo "</td>";
@@ -400,7 +401,7 @@
             echo '<input type="hidden" name="id" value="'.$category->id.'" />';
             echo "</td></tr>";
         }
-    
+
         echo "</table>";
         echo "</form>";
         echo "<br />";
@@ -434,7 +435,9 @@
         echo "<br />";
     }
     echo "</center>";
-    
+
+    echo '</div>';  // course wrapper end
+
     print_footer();
 
 ?>
