@@ -1,5 +1,5 @@
 <?php // $Id$ 
-      // quiz.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005012501)
+      // quiz.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005021000)
 
 
 $string['acceptederror'] = 'エラー範囲';
@@ -149,7 +149,7 @@ $string['literal'] = '定数';
 $string['loguniform'] = '対数一様分布';
 $string['marks'] = '得点';
 $string['match'] = '組み合わせ問題';
-$string['matchanswer'] = '答えを組合わせる';
+$string['matchanswer'] = '組み合わせの答え';
 $string['max'] = '最大';
 $string['min'] = '最小';
 $string['minutes'] = '分';
@@ -294,6 +294,6 @@ $string['withsummary'] = '( 統計概要を含む )';
 $string['wronggrade'] = '誤評定 ( $a 以降 ):';
 $string['xml'] = 'Moodle XMLフォーマット';
 $string['yourfinalgradeis'] = 'あなたの最終評点は $a です。';
-$string['zerosignificantfiguresnotallowed'] = '正解の有効数字にゼロを設定できません!';
+$string['zerosignificantfiguresnotallowed'] = '正解の有効数字にはゼロを設定できません!';
 
 ?>

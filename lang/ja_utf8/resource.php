@@ -1,5 +1,5 @@
 <?php // $Id$ 
-      // resource.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004121600)
+      // resource.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005021000)
 
 
 $string['addresource'] = 'リソースを追加する';
@@ -35,7 +35,7 @@ $string['fetchservererror'] = 'ウェブページを検索している時、リ�
 $string['filename'] = 'ファイル名';
 $string['filtername'] = 'リソースオートリンク';
 $string['frameifpossible'] = 'ナビゲーションを表示したままにするため、リソースをフレーム内に表示する';
-$string['fulltext'] = 'フルテキスト';
+$string['fulltext'] = '詳細';
 $string['htmlfragment'] = 'HTMLフラグメント';
 $string['maindirectory'] = 'メインファイルディレクトリ';
 $string['modulename'] = 'リソース';
