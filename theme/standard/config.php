@@ -56,20 +56,22 @@ $THEME->parentsheets = false;
 ////////////////////////////////////////////////////////////////////////////////
 
 
-$THEME->modsheets = false;  
+$THEME->modsheets = true;  
 
-/// By setting this to true, then this theme will search for 
+/// When this is enabled, then this theme will search for 
 /// files named "styles.php" inside all Activity modules and 
 /// include them.   This allows modules to provide some basic 
 /// layouts so they work out of the box.
+/// It is HIGHLY recommended to leave this enabled.
 
 
-$THEME->blocksheets = false;  
+$THEME->blocksheets = true;  
 
-/// By setting this to true, then this theme will search for 
+/// When this is enabled, then this theme will search for 
 /// files named "styles.php" inside all Block modules and 
 /// include them.   This allows Blocks to provide some basic 
 /// layouts so they work out of the box.
+/// It is HIGHLY recommended to leave this enabled.
 
 
 $THEME->langsheets = false;  

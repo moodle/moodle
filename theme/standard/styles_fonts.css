@@ -88,7 +88,6 @@ h4 {
     text-align: center;
 }
 
-/* paging bar */
 .pagingbar .title {
     font-weight: bold;
 }
@@ -96,13 +95,12 @@ h4 {
     font-weight: bold;
 }
 
-
-/* index, admin, course, lang, adodb, quiz */
 .categoryname,
 .categorynumber {
     font-size:larger;
     font-weight:bold;
 }
+
 .helplink {
     font-size:0.8em;
 }
@@ -200,7 +198,6 @@ table.formtable tbody th {
 }
 
 
-/* block_rss_client.php */
 .rssclientlink {
     font-size:x-small;
 }
