@@ -665,8 +665,7 @@ HTMLArea.prototype.generate = function () {
         html += '<style type="text/css">\n' + editor.config.pageStyle + "td { border: 1px dotted gray; }</style>\n";
         html += "</head>\n";
         html += '<body>\n';
-        // See bug #2222
-        html += (editor._textArea.value != null && editor._textArea.value != '') ? editor._textArea.value : '<p>&nbsp;</p>';
+        html += editor._textArea.value;
         html = html.replace(/<nolink>/gi, '<span class="nolink">').
                     replace(/<\/nolink>/gi, '</span>');
         html += "</body>\n";
@@ -826,7 +825,6 @@ HTMLArea.prototype.setMode = function(mode) {
         }
         if (this.config.statusBar) {
             this._statusBar.innerHTML = '';
-            this._statusBar.appendChild(document.createTextNode(HTMLArea.I18N.msg["Path"] + ": "));
             this._statusBar.appendChild(this._statusBarTree);
         }
         break;
