@@ -2,8 +2,6 @@
 
 include_once("$CFG->dirroot/files/mimetypes.php");
 
-error_reporting(15);
-
 /*** Constants **********************************/
 
 $WORKSHOP_TYPE = array (0 => get_string("notgraded", "workshop"),
