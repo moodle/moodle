@@ -32,7 +32,8 @@ optional_variable($chat_pretext, '');
 scroll_active = true;
 function empty_field_and_submit() {
     cf = document.getElementById('chatform');
-    cf.chat_message.value=document.f.chat_message.value;
+    cf.chat_msgidnr.value = parseInt(cf.chat_msgidnr.value) + 1;
+    cf.chat_message.value = document.f.chat_message.value;
     cf.submit();
     document.f.chat_message.value='';
     document.f.chat_message.focus();
@@ -42,10 +43,7 @@ function empty_field_and_submit() {
 </script>
 </head>
 
-<body bgcolor="<?php echo $THEME->body ?>"
-      OnLoad="document.f.chat_message.focus();document.f.chat_message.select();">
-
-
+<body bgcolor="<?php echo $THEME->body ?>" onload="document.f.chat_message.focus();document.f.chat_message.select();">
 
 <!--
 <form action="<?php echo "http://$CFG->chat_serverhost:$CFG->chat_serverport"; ?>" method="GET" target="empty" name="f" onsubmit="return empty_field_and_submit()">
@@ -62,11 +60,12 @@ function empty_field_and_submit() {
 <!--
 <form action="../insert.php" method="GET" target="empty" id="chatform" onsubmit="return empty_field_and_submit()">
 -->
-    <input type="hidden" name="win" value="message">
-    <input type="hidden" name="chat_version" value="sockets">
-    <input type="hidden" name="chat_message">
-    <input type="hidden" name="chat_sid" value="<?php echo $chat_sid ?>">
-    <input type="hidden" name="groupid" value="<?php echo $groupid ?>">
+    <input type="hidden" name="win" value="message" />
+    <input type="hidden" name="chat_version" value="sockets" />
+    <input type="hidden" name="chat_message" value="" />
+    <input type="hidden" name="chat_msgidnr" value="0" />
+    <input type="hidden" name="chat_sid" value="<?php echo $chat_sid ?>" />
+    <input type="hidden" name="groupid" value="<?php echo $groupid ?>" />
 </form>
 
 </body>

@@ -135,9 +135,9 @@ class ChatDaemon {
         else {
             foreach ($this->sets_info as $usersid => $userinfo) {
                 $lastping = $timenow - $userinfo['chatuser']->lastmessageping;
+                $popuppar = '\'/user/view.php?id='.$userinfo['user']->id.'&amp;course='.$userinfo['courseid'].'\',\'user'.$userinfo['chatuser']->id.'\',\'\'';
                 echo '<tr><td width="35">';
-
-                echo '<a target="_new" onclick="return openpopup(\'/user/view.php?id='.$userinfo['chatuser']->id.'&amp;course='.$userinfo['courseid'].'\',\'user'.$userinfo['chatuser']->id.'\',\'\');" href="'.$CFG->wwwroot.'/user/view.php?id='.$userinfo['chatuser']->id.'&amp;course='.$userinfo['courseid'].'">';
+                echo '<a target="_new" onclick="return openpopup('.$popuppar.');" href="'.$CFG->wwwroot.'/user/view.php?id='.$userinfo['chatuser']->id.'&amp;course='.$userinfo['courseid'].'">';
                 print_user_picture($userinfo['user']->id, 0, $userinfo['user']->picture, false, false, false);
                 echo "</a></td><td valign=center>";
                 echo "<p><font size=1>";
@@ -282,6 +282,20 @@ class ChatDaemon {
             break;
             case CHAT_SIDEKICK_MESSAGE:
                 // Incoming message
+
+                // Browser stupidity protection from duplicate messages:
+                $messageindex = intval($customdata['index']);
+                
+                if($this->sets_info[$sessionid]['lastmessageindex'] >= $messageindex) {
+                    // We have already broadcasted that!
+                    trace('discarding message with stale index');
+                    break;
+                }
+                else {
+                    // Update our info
+                    $this->sets_info[$sessionid]['lastmessageindex'] = $messageindex;
+                }
+
                 $msg = &New stdClass;
                 $msg->chatid    = $this->sets_info[$sessionid]['chatid'];
                 $msg->userid    = $this->sets_info[$sessionid]['userid'];
@@ -377,6 +391,7 @@ class ChatDaemon {
         // code base to follow suit. But AFTER development is done.
         $this->sets_info[$sessionid] = array(
             'lastinfocommit' => 0,
+            'lastmessageindex' => 0,
             'courseid'  => $course->id,
             'chatuser'  => $chatuser,
             'chatid'    => $chatuser->chatid,
@@ -795,13 +810,13 @@ while(true) {
                     break;
                     case 'message':
                         $type = CHAT_SIDEKICK_MESSAGE;
-                        if(!ereg('chat_message=([^&]*)[& ]', $data, $info)) {
+                        if(!ereg('chat_message=([^&]*)[& ]chat_msgidnr=([^&]*)[& ]', $data, $info)) {
                             trace('Message sidekick did not contain a valid message', E_USER_WARNING);
                             $DAEMON->dismiss_ufo($handle);
                             continue;
                         }
                         else {
-                            $customdata = array('message' => $info[1]);
+                            $customdata = array('message' => $info[1], 'index' => $info[2]);
                         }
                     break;
                     default:
