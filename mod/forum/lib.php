@@ -2045,10 +2045,10 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5, $f
         }
         switch ($forum_style) {
             case "minimal":
-                echo "<p><font color=#555555>".userdate($discussion->modified, $strftimerecent)." - $discussion->firstname</font>";
-                echo "<br>$discussion->subject ";
+                echo "<p><span class=\"smallinfohead\">".userdate($discussion->modified, $strftimerecent)." - $discussion->firstname</span><br />";
+                echo "<span class=\"smallinfo\">$discussion->subject ";
                 echo "<a href=\"$CFG->wwwroot/mod/forum/discuss.php?d=$discussion->discussion\">";
-                echo $strmore."...</a>";
+                echo $strmore."...</a></span>";
                 echo "</p>\n";
             break;
             case "header":
