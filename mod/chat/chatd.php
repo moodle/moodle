@@ -216,7 +216,7 @@ class ChatDaemon {
 
     function get_user_window($sessionid) {
 
-        global $CFG, $THEME;
+        global $CFG;
 
         static $str;
 
@@ -253,7 +253,7 @@ class ChatDaemon {
         echo 'windowobj.focus();';
         echo 'return false;';
         echo "}\n-->\n";
-        echo '</script></head><body style="font-face: serif;" bgcolor="'.$THEME->body.'">';
+        echo '</script></head><body style="font-face: serif;" bgcolor="#FFFFFF">';
 
         echo '<table style="width: 100%;"><tbody>';
 
