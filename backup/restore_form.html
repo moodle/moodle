@@ -22,8 +22,14 @@
     require_login();
 
     //Check admin
-    if (!isadmin()) {
-        error("You need to be an admin user to use this page.", "$CFG->wwwroot/login/index.php");
+    if (!empty($id)) {
+        if (!isteacher($id)) {
+            error("You need to be a teacher or admin user to use this page.", "$CFG->wwwroot/login/index.php");
+        }
+    } else {
+        if (!isadmin()) {
+            error("You need to be an admin user to use this page.", "$CFG->wwwroot/login/index.php");   
+        }
     }
 
     //Check site

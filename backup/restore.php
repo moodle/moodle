@@ -11,14 +11,20 @@
     require_once ("restorelib.php");
 
     //Optional
+    optional_variable($id);
     optional_variable($file);
 
     //Check login       
     require_login();
 
-    //Check admin
-    if (!isadmin()) {
-        error("You need to be an admin user to use this page.", "$CFG->wwwroot/login/index.php");
+    if (!empty($id)) {
+        if (!isteacher($id)) {
+            error("You need to be a teacher or admin user to use this page.", "$CFG->wwwroot/login/index.php");
+        }
+    } else {
+        if (!isadmin()) {
+            error("You need to be an admin user to use this page.", "$CFG->wwwroot/login/index.php");
+        }
     }
 
     //Check site
@@ -31,11 +37,10 @@
     
     //Check backup_version
     if ($file) {
-        $linkto = "restore.php?file=".$file;
+        $linkto = "restore.php?id=".$id."&file=".$file;
     } else {
         $linkto = "restore.php";
     }
-
     upgrade_backup_db($linkto);
 
     //Get strings
@@ -63,10 +68,22 @@
     }
 
     //We are here, so me have a file.
+
+    //Get and check course
+    if (! $course = get_record("course", "id", $id)) {
+        error("Course ID was incorrect (can't find it)");
+    }
+
     //Print header
-    print_header("$site->shortname: $strcourserestore", $site->fullname,
-                 "<A HREF=\"$CFG->wwwroot/$CFG->admin/index.php\">$stradministration</A> ->
-                  $strcourserestore -> ".basename($file));
+    if (isadmin()) {
+        print_header("$site->shortname: $strcourserestore", $site->fullname,
+                     "<a href=\"$CFG->wwwroot/$CFG->admin/index.php\">$stradministration</a> ->
+                      $strcourserestore -> ".basename($file));
+    } else {
+        print_header("$course->shortname: $strcourserestore", $course->fullname,
+                     "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> ->
+                     $strcourserestore");
+    }
     //Print form
     print_heading("$strcourserestore: ".basename($file));
     print_simple_box_start("center", "", "$THEME->cellheading");
