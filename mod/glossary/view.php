@@ -246,7 +246,7 @@
                      $entry->concept = highlight($search,$concept);
                      $entry->definition = highlight($search,$definition);
                  }
-                 if ( !glossary->mainglossary ) {
+                 if ( !$glossary->mainglossary ) {
                      $entry->definition = glossary_dynamic_link($course->id,$definition);
                  }
                  
