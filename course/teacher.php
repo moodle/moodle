@@ -218,8 +218,6 @@
         echo "</center>";
     }
 
-    echo "</td></tr></table>";
-
     print_footer();
 
 ?>
