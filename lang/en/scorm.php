@@ -5,6 +5,7 @@ $string['modulename'] = 'Scorm';
 $string['modulenameplural'] = 'Scorms';
 #------------------------------------------------------------
 
+$string['asset'] = 'Asset';
 $string['attr_error'] = 'Bad value for attribute ($a->attr) in tag $a->tag.';
 $string['autocontinue'] = 'Auto-Continue';
 $string['badmanifest'] ='Some manifest errors: see errors log';
