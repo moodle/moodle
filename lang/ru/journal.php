@@ -30,7 +30,7 @@ $string['overallrating'] = "Общая оценка";
 $string['rate'] = "Без оценки";
 $string['saveallfeedback'] = "Сохранить результаты";
 $string['startoredit'] = "Работать с тетрадью";
-$string['viewallentries'] = "Проверить тетради ($a)";
+$string['viewallentries'] = "Проверить тетради (\$a)";
 $string['entries'] = "Записи";
 $string['journalmail'] = "\$a->teacher добавил оценку Вашей записи в рабочей тетраде '\$a->journal'. Вы можете увидеть комментарий по ссылке: \$a->url";
 $string['journalmailhtml'] = "\$a->teacher добавил оценку Вашей записи в рабочей тетраде '<i>\$a->journal</i>'<br /><br /> Вы можете увидеть <a href=\"\$a->url\">комментарий</a>.";
