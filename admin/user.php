@@ -124,11 +124,13 @@
 
                 exit;
             } else if (!$user->deleted) {
-                $user->deleted = "1";
-                $user->username = "$user->email.".time();  // Remember it just in case
-                $user->email = "";               // Clear this field to free it up
-                $user->timemodified = time();
-                if (update_record("user", $user)) {
+                unset($updateuser);
+                $updateuser->id = $user->id;
+                $updateuser->deleted = "1";
+                $updateuser->username = "$user->email.".time();  // Remember it just in case
+                $updateuser->email = "";               // Clear this field to free it up
+                $updateuser->timemodified = time();
+                if (update_record("user", $updateuser)) {
                     unenrol_student($user->id);  // From all courses
                     remove_teacher($user->id);   // From all courses
                     remove_admin($user->id);
