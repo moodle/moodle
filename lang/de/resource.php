@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // reading.php - created with Moodle 1.0.6 dev (2002100200)
+      // resource.php - created with Moodle 1.0.8 dev (2002122301)
 
 
 $string['addresource'] = "Literatur hinzufügen";
@@ -26,5 +26,6 @@ $string['resourcetype3'] = "Hochgeladene Datei";
 $string['resourcetype4'] = "Reiner Text";
 $string['resourcetype5'] = "Internet-Verknüpfung";
 $string['resourcetype6'] = "HTML-Text";
+$string['resourcetype7'] = "Programm";
 
 ?>

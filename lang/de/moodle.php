@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.0.6 dev 3 (2002102101)
+      // moodle.php - created with Moodle 1.0.8 dev (2002122301)
 
 
 $string['action'] = "Aktion";
@@ -116,6 +116,7 @@ $string['deletednot'] = "Kann \$a nicht löschen!";
 $string['deletingcourse'] = "Lösche \$a";
 $string['department'] = "Abteilung";
 $string['description'] = "Beschreibung";
+$string['displayingrecords'] = "Zeige \$a Einträge";
 $string['displayingusers'] = "Benutzer anzeigen von \$a->start bis \$a->end";
 $string['documentation'] = "Moodle Dokumentation";
 $string['downloadexcel'] = "Im Excel-Format herunterladen";
@@ -167,6 +168,7 @@ $string['enrolmentkeyhint'] = "Der Zugangs-Schlüssel war falsch, bitte versuchen
 $string['entercourse'] = "Hier klicken, um den Kurs zu betreten";
 $string['enteremailaddress'] = "Geben Sie hier Ihre Email-Adresse ein, um Ihr Passwort zurückzusetzen. Ein neues Password wird Ihnen via Email ztugesendet.";
 $string['error'] = "Fehler";
+$string['errortoomanylogins'] = "Entschuldigung, aber Sie haben die Anzahl erlaubter Zugangs-Versucher erreicht. Starten Sie Ihren Browser neu.";
 $string['existingadmins'] = "Vorhandene Verwalter";
 $string['existingteachers'] = "Vorhandene Lehrer";
 $string['feedback'] = "Rückmeldung";
