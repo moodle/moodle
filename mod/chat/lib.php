@@ -141,6 +141,7 @@ function chat_user_outline($course, $user, $mod, $chat) {
 /// $return->time = the time they did it
 /// $return->info = a short text description
 
+    $return = NULL;
     return $return;
 }
 

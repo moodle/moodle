@@ -169,6 +169,7 @@ function wiki_get_participants($wikiid) {
 //in the instance, independient of his role (student, teacher, admin...)
 //See other modules as example.
 
+    $return = NULL;
     return false;
 }
 
