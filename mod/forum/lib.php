@@ -231,7 +231,11 @@ function forum_cron () {
                 continue;
             }
 
-            $CFG->courselang = $course->lang;
+            if (!empty($course->lang)) {
+                $CFG->courselang = $course->lang;
+            } else {
+                unset($CFG->courselang);
+            }
 
             $groupmode = false;
             if ($cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
