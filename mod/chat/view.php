@@ -84,7 +84,7 @@
 /// Print the main part of the page
 
    // Do the browser-detection etc later on.
-    $chatversion = "header_js";
+   // $chatversion = "header_js";
 
    // $browser = chat_browser_detect($HTTP_USER_AGENT);
 
@@ -103,7 +103,7 @@
 
     if (!isguest()) {
         print_simple_box_start("center");
-        link_to_popup_window ("/mod/chat/gui_$chatversion/index.php?id=$chat->id$groupparam", 
+        link_to_popup_window ("/mod/chat/gui_$CFG->chat_method/index.php?id=$chat->id$groupparam", 
                               "chat$course->id$chat->id$groupparam", "$strenterchat", 500, 700, $strchat);
         print_simple_box_end();
     }

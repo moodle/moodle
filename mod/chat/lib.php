@@ -11,7 +11,21 @@ if (!isset($CFG->chat_refresh_userlist)) {
 if (!isset($CFG->chat_old_ping)) {
     set_config("chat_old_ping", 30);
 } 
-
+if (!isset($CFG->chat_method)) {
+    set_config("chat_method", "header_js");
+} 
+if (!isset($CFG->chat_serverhost)) {
+    set_config("chat_serverhost", $_SERVER['HTTP_HOST']);
+} 
+if (!isset($CFG->chat_serverip)) {
+    set_config("chat_serverip", $_SERVER['SERVER_ADDR']);
+} 
+if (!isset($CFG->chat_serverport)) {
+    set_config("chat_serverport", 9111);
+} 
+if (!isset($CFG->chat_servermax)) {
+    set_config("chat_servermax", 100);
+} 
 
 define("CHAT_DRAWBOARD", false);  // Look into this later
 
