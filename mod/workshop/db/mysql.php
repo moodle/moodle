@@ -93,7 +93,6 @@ function workshop_upgrade($oldversion) {
         modify_database('','ALTER TABLE prefix_workshop_comments ADD INDEX mailed (mailed);'); 
         modify_database('','ALTER TABLE prefix_workshop_elements ADD INDEX workshopid (workshopid);');
         modify_database('','ALTER TABLE prefix_workshop_grades ADD INDEX workshopid (workshopid);'); 
-        modify_database('','ALTER TABLE prefix_workshop_grades ADD INDEX assessmentid (assessmentid);'); 
         modify_database('','ALTER TABLE prefix_workshop_submissions ADD INDEX workshopid (workshopid);');
         modify_database('','ALTER TABLE prefix_workshop_submissions ADD INDEX userid (userid);');
         modify_database('','ALTER TABLE prefix_workshop_submissions ADD INDEX mailed (mailed);');
