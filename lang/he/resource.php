@@ -56,7 +56,7 @@ $string['resourcetypetext'] = 'כתוב דף טקסט';
 $string['searchweb'] = 'חיפוש דף באינטרנט';
 $string['thischarset'] = 'ISO-8859-8-I';
 $string['thisdirection'] = 'rtl';
-$string['thislanguage'] = 'Hebrew';
+$string['thislanguage'] = '&#1506;&#1489;&#1512;&#1497;&#1514;';
 $string['variablename'] = 'שם משתנה';
 
 ?>

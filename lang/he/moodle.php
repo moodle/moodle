@@ -85,7 +85,7 @@ $string['areyousuretorestorethisinfo'] = 'מאוחר יותר בתהליך זה תהיה בידך האפשרות
 $string['assessment'] = 'הערכה';
 $string['assignadmins'] = 'מנה מנהלים';
 $string['assigncreators'] = 'מנה יוצרים';
-$string['assignstudents'] = 'הרשם סטודנטים';
+$string['assignstudents'] = 'רשום סטודנטים';
 $string['assignstudentsnote'] = 'הערה: אין זה הכרחי להשתמש בדף זה, לסטודנטים ישנה האפשרות להירשם בעצמם לקורס זה. ';
 $string['assignstudentspass'] = 'יכול להיות וכל מה שתצתרכו לעשות הוא להודיע לסטודנטים שלכם על קוד ההרשמה לקורס זה, שכרגע נקבע כ: \'a$\' ';
 $string['assignteachers'] = 'מנה מורים';
@@ -379,7 +379,7 @@ $string['emailpasswordconfirmsent'] = 'לכתובתך ב <b>$a</b> תשלח בקרוב הודעת דואר
 אם אתה ממשיך להיתקל בקשיים, צור קשר עם מנהל האתר.';
 $string['emailpasswordsent'] = 'תודה על אישור שינוי סיסמא זה.
 <p>דואר אלקטרוני המכיל את סיסמתך החדשה נשלח לכתובתך ב<b>$a->email</b>.
-<p>הסיסמא החדשה הופעלה אוטומטית - יכול להיות שתרצה ל
+<p>הסיסמא החדשה הופעלה אוטומטית - יכול להיות שתרצה
 <a href=$a->link>לשנות את הסיסמא שלך</a> למשהו שקל יותר לזכור.';
 $string['enable'] = 'הרשה';
 $string['encryptedcode'] = 'קוד מוצפן';
@@ -668,22 +668,22 @@ $string['new'] = 'חדש';
 $string['newaccount'] = 'חשבון חדש';
 $string['newcourse'] = 'קורס חדש';
 $string['newpassword'] = 'סיסמא חדשה';
-$string['newpasswordtext'] = 'הי a->firstname$,
+$string['newpasswordtext'] = 'שלום לך $a->firstname,
 
-סיסמאת חשבונך ב \'$a->sitename\' אופסה,
+סיסמת חשבונך באתר \'$a->sitename\' אופסה,
 והונפקה לך סיסמא זמנית חדשה.
 
-פרטי ההתחברות העכשויים שלך הינם:
-שם משתמש: a->username$
-סיסמא: a->newpassword$
+פרטי ההתחברות החדשים שלך הינם:
+שם משתמש: $a->username
+סיסמא: $a->newpassword
 
-אנא לך לעמוד זה כדי לשנות את סיסמאתך:
-   a->link$
+אנא גש לעמוד זה כדי לשנות את סיסמאתך:
+$a->link
 
 ברוב תוכנות הדואר, כתובת האינטרנט אמורה להופיע כקישור כחול אשר אתה יכול פשוט ללחוץ עליו. אם זה לא עובד, גזור את הכתובת והדבק אותה בתוך פס הכתובות של דפדפן האינטרנט שלך.
 
- איחולי הצלחה מהמנהל של\'a->sitename$\' ,
-a->signoff$';
+איחולי הצלחה מהמנהל של \'$a->sitename\'.
+$a->signoff';
 $string['newpicture'] = 'תמונה חדשה';
 $string['newsitem'] = 'פריט חדשות';
 $string['newsitems'] = 'פריטי חדשות';
@@ -747,7 +747,7 @@ $string['passwordrecovery'] = 'כן, עזור לי להתחבר';
 $string['passwordsdiffer'] = 'סיסמאות אלו אינן תואמות';
 $string['passwordsent'] = 'הסיסמא נשלחה';
 $string['passwordsenttext'] = '<p>לכתובתך ב $a->email תשלח בקרוב הודעת דואר אלקטרוני.
-<p><b>עליך לבדוק את תיבת הדואר שלך לרבלת סיסמתך החדשה</
+<p><b>עליך לבדוק את תיבת הדואר שלך לקבלת סיסמתך החדשה</
 <p>סיסמה זו נוצרה באופן אוטומטי, כך שיתכן ותרצה <a href=$a->link>לשנות את הסיסמה לאחת שתוכל לזכור בקלות</a>';
 $string['people'] = 'משתמשים';
 $string['personalprofile'] = 'פרופיל אישי';
@@ -775,7 +775,7 @@ $string['recentactivityreport'] = 'דו\"ח מלא על פעילויות אחרונות';
 $string['refreshingevents'] = 'רענון אירועים';
 $string['registration'] = 'הרשמת Moodle  ';
 $string['registrationemail'] = 'הודעות דואר אלקטרוני';
-$string['registrationinfo'] = 'עמוד זה מאפשר לך לרשום את אתר ה Moodle שלך באמצעות   moodle.org. ההרשמה היא חינם.
+$string['registrationinfo'] = 'עמוד זה מאפשר לך לרשום את אתר ה Moodle שלך באמצעות moodle.org. ההרשמה היא חינם.
 ההטבה העיקרית של ההרשמה היא שאתה תתווסף לרשימת הפצה בעלת נפח נמוך של הודעות, להודעות חשובות כגון התראות אבטחה ושחרורים חדשים של .Moodle
 <p>לפי ברירת מחדל, הנתונים שלך יישמרו סודיים, ולעולם לא יימכרו או יעבורו למשהו אחר. הסיבה היחידה לאסיפת מידע זה היא למטרת תמיכה, וכדי לעזור לבנות תמונה סטטיסטית של קהילת Moodle כשלם. 
 <p>אם תבחר, אתה יכול להרשות ששם האתר שלך, ארץ וURL יוספו לרשימה הפומבית של אתרי .Moodle
@@ -904,7 +904,7 @@ $string['themes'] = 'ערכות נושא';
 $string['themesaved'] = 'ערכת הנושא החדשה נשמרה';
 $string['thischarset'] = 'ISO-8859-8-I';
 $string['thisdirection'] = 'rtl';
-$string['thislanguage'] = 'Hebrew';
+$string['thislanguage'] = '&#1506;&#1489;&#1512;&#1497;&#1514;';
 $string['time'] = 'זמן';
 $string['timezone'] = 'אזור זמן';
 $string['to'] = 'ל';
