@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004112900)
+      // forum.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005022400)
 
 
 $string['addanewdiscussion'] = 'Lisää uusi keskustelu';
@@ -12,7 +12,7 @@ $string['anyfile'] = 'Mikä tahansa tiedosto';
 $string['attachment'] = 'Liite';
 $string['bynameondate'] = '$a->name - $a->date';
 $string['configdisplaymode'] = 'Oletusasetus keskustelujen näyttämiselle, jos sellaista ei ole asetettu.';
-$string['configenablerssfeeds'] = 'Tämä mahdollistaa RSS syötteet eri  keskustelualueilta. Sinun pitää vielä erikseen kytkeä RSS päälle niiden keskustelualueiden asetuksesta jolla haluat käyttää RSS syötteitä.';
+$string['configenablerssfeeds'] = 'Tämä mahdollistaa RSS-syötteet eri keskustelualueilta. Sinun pitää vielä erikseen kytkeä RSS päälle niiden keskustelualueiden asetuksesta, joille haluat käyttää RSS-syötteitä.';
 $string['configlongpost'] = 'Tätä pitemmät keskustelut käsitellään pitkinä (HTML koodia ei lasketa mukaan).';
 $string['configmanydiscussions'] = 'Samalla sivulla näytettävien keskustelujen suurin määrä';
 $string['configmaxbytes'] = 'Oletusasetus liitetiedoston maksimikoolle koko sivustolla.';
@@ -59,6 +59,8 @@ $string['introsocial'] = 'Avoin keskustelualue vapaalle keskustelulle';
 $string['introteacher'] = 'Opettajien oma keskustelualue';
 $string['lastpost'] = 'Viimeisin viesti';
 $string['learningforums'] = 'Keskustelualueet opiskelulle';
+$string['markread'] = 'Merkitse luetuksi';
+$string['markunread'] = 'Merkitse lukemattomaksi';
 $string['maxattachmentsize'] = 'Liitteen maksimikoko';
 $string['maxtimehaspassed'] = 'Valitettavasti suurin sallittu muokkausaika on ylittynyt tämän ($a) viestin osalta!';
 $string['message'] = 'Viesti';
@@ -125,10 +127,10 @@ $string['repliesmany'] = '$a vastausta tähän mennessä';
 $string['repliesone'] = '$a vastaus tähän mennessä';
 $string['reply'] = 'Vastaa';
 $string['replyforum'] = 'Vastaa keskustelualueelle';
-$string['rsssubscriberssdiscussions'] = 'Näytä RSS syöte $a keskusteluille';
-$string['rsssubscriberssposts'] = 'Näytä RSS syöte $a viesteille';
+$string['rsssubscriberssdiscussions'] = 'Näytä alueen \"$a\" keskusteluiden RSS-syöte';
+$string['rsssubscriberssposts'] = 'Näytä alueen \"$a\" viestien RSS-syöte';
 $string['search'] = 'Etsi';
-$string['searchforums'] = 'Etsi keskustelualueilta';
+$string['searchforums'] = 'Etsi viesteistä';
 $string['searcholderposts'] = 'Selaa vanhoja viestejä';
 $string['searchresults'] = 'Haun tulokset';
 $string['sendinratings'] = 'Lähetä viimeisimmät arvioinnit viesteistä';
