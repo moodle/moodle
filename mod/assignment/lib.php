@@ -84,17 +84,21 @@ function assignment_user_complete($course, $user, $mod, $assignment) {
         }
 
         print_simple_box_start();
-        echo "<P><FONT SIZE=1>";
+        echo "<p><font size=1>";
         echo get_string("lastmodified").": ";
         echo userdate($submission->timemodified);
         echo assignment_print_difference($assignment->timedue - $submission->timemodified);
-        echo "</FONT></P>";
+        echo "</font></p>";
 
         assignment_print_user_files($assignment, $user);
 
-        echo "<BR>";
+        echo "<br />";
 
-        assignment_print_feedback($course, $submission);
+        if (empty($submission->timemarked)) {
+            print_string("notgradedyet", "assignment");
+        } else {
+            assignment_print_feedback($course, $submission);
+        }
 
         print_simple_box_end();
 

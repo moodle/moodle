@@ -27,6 +27,7 @@ $string['maximumsize'] = "Maximum size";
 $string['modulename'] = "Assignment";
 $string['modulenameplural'] = "Assignments";
 $string['newsubmissions'] = "Assignments submitted";
+$string['notgradedyet'] = "Not graded yet";
 $string['notsubmittedyet'] = "Not submitted yet";
 $string['overwritewarning'] = "Warning: uploading again will REPLACE your current submission";
 $string['saveallfeedback'] = "Save all my feedback";
