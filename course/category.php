@@ -35,6 +35,7 @@
     } else {
         $navbaritem = print_course_search("", true, "navbar");
         $adminediting = false;
+        $creatorediting = false;
     }
 
 
@@ -231,6 +232,7 @@
         $strupdate   = get_string("update");
         $strhide     = get_string("hide");
         $strshow     = get_string("show");
+        $strsummary  = get_string("summary");
         $strassignteachers     = get_string("assignteachers");
         $strallowguests     = get_string("allowguests");
         $strrequireskey     = get_string("requireskey");
