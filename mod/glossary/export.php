@@ -6,7 +6,7 @@
     
     require_variable($id);           // Course Module ID
 
-    optional_variable($l,"ALL");
+    optional_variable($l,"");
     optional_variable($cat,0);
 
     if (! $cm = get_record("course_modules", "id", $id)) {
@@ -52,16 +52,19 @@
     }
 
 /// Tabbed browsing sections
+    $lastl   = $l;
+    $lastcat = $cat;
     $tab = GLOSSARY_EXPORT_VIEW;
     include("tabs.html");
 
-    glossary_generate_export_file($glossary,$l,$cat);
+    glossary_generate_export_file($glossary,$lastl,$lastcat);
     print_string("glosssaryexported","glossary");
 
+    $ffurl = "/$course->id/glossary/" . clean_filename($glossary->name) ."/glossary.xml";
     if ($CFG->slasharguments) {
-        $ffurl = "../../file.php/$course->id/glossary/" . clean_filename($glossary->name) ."/glossary.xml";
+        $ffurl = "../../file.php$ffurl" ;
     } else {
-        $ffurl = "../../file.php?file=/$course->id/glossary/" . clean_filename($glossary->name) ."/glossary.xml";
+        $ffurl = "../../file.php?file=$ffurl";
     }
     echo '<p><center><a href="' . $ffurl . '" target=_blank>' . get_string("exportedfile","glossary") .  '</a></center><p>'
 ?>

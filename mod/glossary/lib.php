@@ -439,7 +439,6 @@ function glossary_print_entry_by_default($course, $cm, $glossary, $entry,$tab=""
         echo "<b>";
         glossary_print_entry_concept($entry);
         echo ":</b> ";
-        glossary_print_entry_aliases($entry);
         glossary_print_entry_definition($entry);
         glossary_print_entry_lower_section($course, $cm, $glossary, $entry,$tab,$cat);
     echo "</td>";
@@ -1138,7 +1137,7 @@ function glossary_print_dynaentry($courseid, $entries) {
     echo "</tr></table></center>";
 }
 
-function glossary_generate_export_file($glossary,$l, $cat) {
+function glossary_generate_export_file($glossary, $l = "", $cat = 0) {
 global $CFG;
     glossary_check_moddata_dir($glossary);
     $h = glossary_open_xml($glossary);
@@ -1159,7 +1158,30 @@ global $CFG;
         if ( $entries = get_records("glossary_entries","glossaryid",$glossary->id) ) {
             $status = fwrite ($h,glossary_start_tag("ENTRIES",2,true));
             foreach ($entries as $entry) {
-                if ( $entry->approved ) {
+                $permissiongranted = 1;
+                if ( $l ) {
+                    switch ( $l ) {
+                    case "ALL":
+                    case "SPECIAL":
+                    break;
+                    default:
+                        $permissiongranted = ($entry->concept[ strlen($l)-1 ] == $l);
+                    break;
+                    }
+                }
+                if ( $cat ) {
+                    switch ( $cat ) {
+                    case GLOSSARY_SHOW_ALL_CATEGORIES:
+                    break;
+                    case GLOSSARY_SHOW_NOT_CATEGORISED:
+                        $permissiongranted = !record_exists("glossary_entries_categories","entryid",$entry->id);
+                    break;
+                    default:
+                        $permissiongranted = record_exists("glossary_entries_categories","entryid",$entry->id, "categoryid",$cat);
+                    break;
+                    }
+                }
+                if ( $entry->approved and $permissiongranted ) {
                     $status = fwrite($h,glossary_start_tag("ENTRY",3,true));
                     fwrite($h,glossary_full_tag("CONCEPT",4,false,$entry->concept));
                     fwrite($h,glossary_full_tag("DEFINITION",4,false,$entry->definition));
