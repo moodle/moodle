@@ -13,6 +13,9 @@
         error("Site isn't defined!");
     }
 
+    if (!confirm_sesskey()) {
+        error(get_string('confirmsesskeybad', 'error'));
+    }
 
 /// If data submitted, then process and store.
 
