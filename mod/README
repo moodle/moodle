@@ -2,13 +2,19 @@ This directory contains all the learning modules.
 
 Standard components expected of each module:
 
-mod.html: a form to setup/update a module instance
-version.php: defines some meta-info and provides upgrading code
-icon.gif: a 16x16 icon for the module
-db/mysql.sql: an SQL dump of all the required db tables and data
-index.php: a page to list all instances in a course
-view.php: a page to view a particular instance
-lib.php: any/all functions defined by the module should be in here.
+  mod.html: a form to setup/update a module instance
+
+  version.php: defines some meta-info and provides upgrading code
+
+  icon.gif: a 16x16 icon for the module
+
+  db/mysql.sql: an SQL dump of all the required db tables and data
+ 
+  index.php: a page to list all instances in a course
+
+  view.php: a page to view a particular instance
+
+  lib.php: any/all functions defined by the module should be in here.
          constants should be defined using MODULENAME_xxxxxx
          functions should be defined using modulename_xxxxxx
 
@@ -23,3 +29,5 @@ lib.php: any/all functions defined by the module should be in here.
 
          modulename_cron()
 
+See newmodule_template.zip in this directory for a blank template 
+to help you get started.
