@@ -938,13 +938,14 @@ function print_category_box($category, $depth) {
     echo print_spacer(1, $size);
     echo "<td width=\"100%\">";
     echo "<font size=+1><a $catlinkcss href=\"$CFG->wwwroot/course/index.php?category=$category->id\">$category->name</a></font>";
+    echo "<br />";
     //echo "<font size=+1>$category->name</font>";
     if ($CFG->frontpage == FRONTPAGECOURSELIST) {
         if ($courses = get_courses($category)) {
-            echo "<ul>";
             foreach ($courses as $course) {
                 $linkcss = $course->visible ? "" : " class=\"dimmed\" ";
-                echo "<li><a $linkcss href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->fullname</a>";
+                echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+                echo "<a $linkcss href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->fullname</a>";
                 echo "&nbsp;&nbsp;";
                 unset($courses[$key]);
                 if ($course->guest ) {
@@ -955,8 +956,8 @@ function print_category_box($category, $depth) {
                     echo "<a title=\"$strrequireskey\" href=\"$CFG->wwwroot/course/view.php?id=$course->id\">";
                     echo "<img alt=\"\" height=16 width=16 border=0 src=\"$pixpath/i/key.gif\"></a>";
                 }
+                echo "<br />";
             }
-            echo "</ul>";
         }
     }
     echo "</td>";
