@@ -87,6 +87,7 @@ $string['confirmdeletedstdefault'] = '<strong>The preset named $a is being used 
 $string['cronwarning'] = 'The <a href=\"cron.php\">cron.php maintenance script</a> has not been run for at least 24 hours. <br />The <a href=\"../doc/?frame=install.html&sub=cron\">installation documentation</a> explains how you can automate this.';
 $string['dstisapreference'] = 'Each user can choose which preset to use';
 $string['dstisforcedto'] = 'Force all users to use';
+$string['dstpresetforced'] = 'This is forced by the site administrator';
 $string['dstpresets'] = 'DST Presets';
 $string['emptydstlist'] = 'There are currently no DST presets defined. You can add one by clicking on the Add button.';
 $string['editingdstpreset'] = 'Editing a DST preset';
