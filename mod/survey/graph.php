@@ -109,7 +109,7 @@
        $graph->parameter['y_axis_gridlines']= $maxbuckets + 1;
        $graph->parameter['y_resolution_left']= 1;
        $graph->parameter['y_decimal_left']  = 0;
-       $graph->parameter['x_axis_angle']    = 0;
+       $graph->parameter['x_axis_angle']    = 20;
        $graph->parameter['shadow']          = 'none';
 
        $graph->draw_stack();
@@ -239,7 +239,7 @@
        $graph->parameter['y_axis_gridlines']= count($options);
        $graph->parameter['y_resolution_left']= 1;
        $graph->parameter['y_decimal_left']= 1;
-       $graph->parameter['x_axis_angle']  = 0;
+       $graph->parameter['x_axis_angle']  = 20;
 
        $graph->draw();
 
@@ -380,6 +380,7 @@
        $graph->parameter['y_resolution_left']= 1;
        $graph->parameter['y_decimal_left']= 1;
        $graph->parameter['x_axis_angle']  = 0;
+       $graph->parameter['x_inner_padding']  = 6;
 
        $graph->draw();
 
@@ -546,7 +547,7 @@
        $graph->parameter['y_axis_gridlines']= $numoptions;
        $graph->parameter['y_resolution_left']= 1;
        $graph->parameter['y_decimal_left']= 1;
-       $graph->parameter['x_axis_angle']  = 0;
+       $graph->parameter['x_axis_angle']  = 20;
 
        $graph->draw();
        break;
@@ -700,7 +701,7 @@
        $graph->parameter['y_axis_gridlines']= count($options);
        $graph->parameter['y_resolution_left']= 1;
        $graph->parameter['y_decimal_left']= 1;
-       $graph->parameter['x_axis_angle']  = 0;
+       $graph->parameter['x_axis_angle']  = 20;
 
        $graph->draw();
 

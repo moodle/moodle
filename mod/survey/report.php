@@ -139,7 +139,7 @@
             foreach ($questionorder as $key => $val) {
                 $question = $questions[$val];
                 if ($question->multi) {
-                    if ($virtualscales && $question->type > 0) {  // Don't show non-virtual scales if virtual
+                    if (!empty($virtualscales) && $question->type > 0) {  // Don't show non-virtual scales if virtual
                         continue;
                     }
                     echo "<p align=\"center\"><a title=\"$strseemoredetail\" href=\"report.php?action=questions&amp;id=$id&amp;qid=$question->multi\">";
