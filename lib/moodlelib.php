@@ -2083,6 +2083,22 @@ function ismember($groupid, $userid=0) {
 }
 
 /**
+ * Add a user to a group, return true upon success or if user already a group member
+ *
+ * @param groupid  The group id
+ * @param userid   The user id
+ * @todo Finish documenting this function
+ */
+function add_user_to_group ($groupid, $userid) {
+    if (ismember($groupid, $userid)) return true;
+    $record->groupid = $groupid;
+    $record->userid = $userid;
+    $record->timeadded = time(); 
+    return (insert_record('groups_members', $record) !== false);
+}
+
+
+/**
  * Returns the group ID of the current user in the given course
  *
  * @uses $USER
