@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // survey.php - created with Moodle 1.0.9 development (2003032601)
+      // survey.php - created with Moodle 1.0.9 development (2003032602)
 
 
 $string['actual'] = "Toteutunut";
@@ -7,7 +7,7 @@ $string['actualclass'] = "Luokan toteutunut";
 $string['actualstudent'] = "\$a toteutunut";
 $string['allquestions'] = "Kaikki kysymykset järjestyksessä, kaikki opiskelijat";
 $string['allscales'] = "Kaikki asteikot, kaikki opiskelijat";
-$string['alreadysubmitted'] = "Olet jo palauttanut tämän kyselyn";
+$string['alreadysubmitted'] = "Olet jo palauttanut tämän tutkimuksen";
 $string['analysisof'] = "Analyysi \$a";
 $string['attls1'] = "Kun arvion mitä joku sanoo, keskityn argumenttien laatuun, en henkilöön joka esittää asian.";
 $string['attls10'] = "Minulle on tärkeää pysyä mahdollisimman objektiivisena kun arvion jotain.";
@@ -115,7 +115,7 @@ $string['colles8'] = "Lukiessani olen krittinen kirjoittajan ideoiden suhteen.";
 $string['colles8short'] = "Olen kriittinen lukemani suhteen";
 $string['colles9'] = "Selitän ideani muille opiskelijoille";
 $string['colles9short'] = "Selitän ideani";
-$string['collesaintro'] = "Tämän kyselyn tarkoituksena on selvittää kuinka hyvin tämä online-kurssi on auttanut sinua oppimaan.
+$string['collesaintro'] = "Tämän tutkimuksen tarkoituksena on selvittää kuinka hyvin tämä online-kurssi on auttanut sinua oppimaan.
 
 Jokainen seuravista 24 kysymyksestä koskee sinun kokemuksiasi tällä kursilla.
 
@@ -148,7 +148,7 @@ $string['collesm5short'] = "Vertaistuki";
 $string['collesm6'] = "Tulkinta";
 $string['collesm6short'] = "Tulkinta";
 $string['collesmintro'] = "Tällä kurssilla ...";
-$string['collespintro'] = "Tämän kyselyn tarkoituksena on selvitää mitä asiaoita arvostat online-oppimisympäristössä.
+$string['collespintro'] = "Tämän tutkimuksen tarkoituksena on selvitää mitä asiaoita arvostat online-oppimisympäristössä.
 
 Jokainen seuraavasta 24 kysymyksestä kysyy sinun  odotuksistasi tältä kurssilta.
 
@@ -162,31 +162,31 @@ $string['collespname'] = "COLLES (Haluttu)";
 $string['done'] = "Tehty";
 $string['download'] = "Lataa";
 $string['downloadexcel'] = "Lataa tiedot Excel-taulukkona";
-$string['downloadinfo'] = "Voit ladata kaikki kyselyn tiedot analysointia varten. Voit käyttää tietoja  Excel, SPPS tai muussa ohjelmissa.";
+$string['downloadinfo'] = "Voit ladata kaikki tutkimuksen tiedot analysointia varten. Voit käyttää tietoja  Excel, SPPS tai muussa ohjelmissa.";
 $string['downloadtext'] = "Lataa tiedot tekstitiedostona.";
-$string['editingasurvey'] = "Kyselyn muokkaus";
-$string['helpsurveys'] = "Opastus eri kyselytyyppeihin";
-$string['howlong'] = "Kauanko sinulta meni aikaa kyselyyn vastaamiseen?";
+$string['editingasurvey'] = "Tutkimuksen muokkaus";
+$string['helpsurveys'] = "Opastus eri tutkimustyyppeihin";
+$string['howlong'] = "Kauanko sinulta meni aikaa tutkimukseen vastaamiseen?";
 $string['howlongoptions'] = "alle 1 min,1-2 min,2-3 min,3-4 min,4-5-min,5-10 min,yli 10 min";
 $string['ifoundthat'] = "Huomasin että";
 $string['introtext'] = "Johdanto teksti";
 $string['ipreferthat'] = "Pidän parempana että";
-$string['modulename'] = "Palautekysely";
-$string['modulenameplural'] = "Palautekyselyt";
+$string['modulename'] = "Tutkimus";
+$string['modulenameplural'] = "Tutkimukset";
 $string['name'] = "Nimi";
-$string['newsurveyresponses'] = "Uudet vastaukset";
-$string['nobodyyet'] = "Kukaan ei ole vielä suorittanut tätä kyselyä";
+$string['newsurveyresponses'] = "Uudet tutkimus vastaukset";
+$string['nobodyyet'] = "Kukaan ei ole vielä suorittanut tätä tutkimusta";
 $string['notdone'] = "Suorittamatta";
 $string['notes'] = "Oma analyysisi ja muistiinpanosi.(Henk.Kohtainen)";
 $string['othercomments'] = "Onko sinulla muita kommentteja?";
-$string['peoplecompleted'] = "\$a henkilöä on suorittanut tämän kyselyn";
+$string['peoplecompleted'] = "\$a henkilöä on suorittanut tämän tutkimuksen";
 $string['preferred'] = "Haluttu";
 $string['preferredclass'] = "Luokan haluttu";
 $string['preferredstudent'] = "\$a haluttu";
 $string['question'] = "Kysymys";
 $string['questions'] = "Kysymykset";
 $string['questionsnotanswered'] = "Joihinkin monivalintoihin ei ole vastattu.";
-$string['report'] = "Kysely raportti";
+$string['report'] = "Tutkimus raportti";
 $string['savednotes'] = "Muistiinpanosi tallennettiin";
 $string['scaleagree5'] = "Vahvasti erimieltä, Jotakuinkin erimieltä, Ei samaa tai eri mieltä, Jotakuinkin samaa mieltä, Vahvasti samaa mieltä";
 $string['scales'] = "Skaalat";
@@ -194,12 +194,12 @@ $string['scaletimes5'] = "Ei koskaan, Harvoin, Joskus, Usein, Miltein aina";
 $string['seemoredetail'] = "Klikkaa tästä nähdäksesi lisätietoja ";
 $string['selectedquestions'] = "Valitut kysymykset, kaikki opiskelijat";
 $string['summary'] = "Yhteenveto";
-$string['surveycompleted'] = "Olet suorittanut tämän kyselyn. Alla olevasta kuvasta näet suorituksesi verrattuna kurssin  keskiarvoon.";
-$string['surveyname'] = "Kyselyn nimi";
-$string['surveysaved'] = "Kesely tallennettu";
-$string['surveytype'] = "Kyselyn tyyppi";
-$string['thanksforanswers'] = "Kiitos vastauksestasi kyselyyn, \$a";
+$string['surveycompleted'] = "Olet suorittanut tämän tutkimuksen. Alla olevasta kuvasta näet suorituksesi verrattuna kurssin  keskiarvoon.";
+$string['surveyname'] = "Tutkimuksen nimi";
+$string['surveysaved'] = "Tutkimus tallennettu";
+$string['surveytype'] = "Tutkimuksen tyyppi";
+$string['thanksforanswers'] = "Kiitos vastauksestasi tutkimukseen, \$a";
 $string['time'] = "Aika";
-$string['viewsurveyresponses'] = "Katso \$a kyselyn vastaukset";
+$string['viewsurveyresponses'] = "Katso \$a tutkimuksen vastaukset";
 
 ?>
