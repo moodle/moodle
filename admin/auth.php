@@ -113,7 +113,10 @@
     echo "<table border=\"0\" width=\"100%\" cellpadding=\"4\">";
 
     require_once("$CFG->dirroot/auth/$auth/config.html");
-
+    echo "<tr><td colspan=\"2\"><h2>";
+    print_string("auth_common_settings", "auth");
+    echo "</h2><td/></tr>";
+    
     if ($auth != "email" and $auth != "none" and $auth != "manual") {
         echo "<tr valign=\"top\">";
         echo "<td align=\"right\" nowrap=\"nowrap\"><p>";

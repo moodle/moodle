@@ -89,29 +89,34 @@ function reload_user_preferences() {
     }
 }
 
-function set_user_preference($name, $value) {
+function set_user_preference($name, $value, $user=NULL) {
 /// Sets a preference for the current user
+/// Optionally, can set a preference for a different user object
 
     global $USER;
+
+    if (empty($user)){ 
+        $user = $USER;
+    }
 
     if (empty($name)) {
         return false;
     }
 
-    if ($preference = get_record('user_preferences', 'userid', $USER->id, 'name', $name)) {
+    if ($preference = get_record('user_preferences', 'userid', $user->id, 'name', $name)) {
         if (set_field("user_preferences", "value", $value, "id", $preference->id)) {
-            $USER->preference[$name] = $value;
+            $user->preference[$name] = $value;
             return true;
         } else {
             return false;
         }
 
     } else {
-        $preference->userid = $USER->id;
+        $preference->userid = $user->id;
         $preference->name   = $name;
         $preference->value  = (string)$value;
         if (insert_record('user_preferences', $preference)) {
-            $USER->preference[$name] = $value;
+            $user->preference[$name] = $value;
             return true;
         } else {
             return false;
@@ -379,6 +384,20 @@ function require_login($courseid=0, $autologinguest=true) {
             redirect("$wwwroot/login/index.php$loginguest");
         }
         die;
+    }
+
+    // check whether the user should be changing password
+    reload_user_preferences();
+    if ($USER->preference['auth_forcepasswordchange']){
+        if (is_internal_auth() || $CFG->{'auth_'.$USER->auth.'_stdchangepassword'}){
+            redirect("$CFG->wwwroot/login/change_password.php");
+        } elseif($CFG->changepassword) {
+            redirect($CFG->changepassword);
+        } else {
+            error("You cannot proceed without changing your password. 
+                   However there is no available page for changing it.
+                   Please contact your Moodle Administrator.");
+        }
     }
 
     // Check that the user account is properly set up
@@ -762,11 +781,33 @@ function create_user_record($username, $password, $auth='') {
     $newuser->timemodified = time();
 
     if (insert_record("user", $newuser)) {
-        return get_user_info_from_db("username", $username);
+         $user = get_user_info_from_db("username", $newuser->username);
+         if($CFG->{'auth_'.$newuser->auth.'_forcechangepassword'}){
+             set_user_preference('auth_forcepasswordchange', 1, $user);
+         }
+         return $user;
     }
     return false;
 }
 
+function update_user_record($username) {
+/// will update a local user record from an external source. 
+    global $CFG;
+
+    if (function_exists('auth_get_userinfo')) {
+        $username = trim(moodle_strtolower($username)); /// just in case check text case
+
+        if ($newinfo = auth_get_userinfo($username)) {
+            foreach ($newinfo as $key => $value){
+                if (!empty($CFG->{'auth_user_' . $key. '_updatelocal'})) {
+                    $value = addslashes(stripslashes($value));   // Just in case
+                    set_field('user', $key, $value, 'username', $username);
+                }
+            }
+        }
+    }
+    return get_user_info_from_db("username", $username);
+}
 
 function guest_user() {
     global $CFG;
@@ -809,6 +850,10 @@ function authenticate_user_login($username, $password) {
         } else {
             $auth = $CFG->auth;  // Normal users default to site method
         }
+        // update user record from external DB
+        if ($user->auth != 'manual' && $user->auth != 'email') {
+            $user = update_user_record($username);
+        }
     } else {
         $auth = $user->auth;
     }
@@ -826,6 +871,10 @@ function authenticate_user_login($username, $password) {
             }
             if ($md5password <> $user->password) {   // Update local copy of password for reference
                 set_field('user', 'password', $md5password, 'username', $username);
+            }
+            // update user record from external DB
+            if ($user->auth != 'manual' && $user->auth != 'email'){
+                $user = update_user_record($username);
             }
         } else {
             $user = create_user_record($username, $password, $auth);

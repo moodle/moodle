@@ -1,5 +1,7 @@
-<?php  // $Id$
+<?PHP  // $Id$
 //CHANGELOG:
+//19.09.2004 Lot of changes are coming from Martin Langhoff
+//           Current code is working but can change a lot. Be warned...
 //15.08.2004 Added support for user syncronization
 //24.02.2003 Added support for coursecreators
 //20.02.2003 Added support for user creation
@@ -29,6 +31,8 @@ I write ldap-module on Novell E-directory / Linux & Solaris ,
 so all default values are for it.
 
 LDAP USER SYNCRONIZATION
+!!!! Following comlete outdated as guid-field is not used anymorein moodeles user-table
+!!!! I'll update this documentation as soon ldap-code get more stabile.
 
 BACKUP
 This is first version of usersync so backup your database, if you like to test this feature!
@@ -135,7 +139,6 @@ function auth_get_userinfo($username){
                 $result[$key]=$user_entry[0][strtolower($value)][0];
             }
         }
-        $result['guid']='ldap';
     }
 
     @ldap_close($ldap_connection);
@@ -195,7 +198,7 @@ function auth_get_users($filter='*') {
 
     auth_ldap_bind($ldap_connection);
 
-    if (! isset($CFG->ldap_objectclass)) {
+    if (empty($CFG->ldap_objectclass)) {
         $CFG->ldap_objectclass="objectClass=*";
     }
 
@@ -256,33 +259,92 @@ function auth_get_users($filter='*') {
     return $fresult;
 }
 
-function auth_sync_users () {
+function auth_sync_users ($unsafe_optimizations = false, $bulk_insert_records = 1) {
 //Syncronizes userdb with ldap
 //This will add, rename 
+/// OPTIONAL PARAMETERS
+/// $unsafe_optimizations = true  // will skip over moodle standard DB interfaces and use very optimized
+///             and non-portable SQL -- useful only for mysql or postgres7
+/// $bulk_insert_records = 1 // will insert $bulkinsert_records per insert statement
+///                         valid only with $unsafe. increase to a couple thousand for
+///                         blinding fast inserts -- but test it: you may hit mysqld's 
+///                         max_allowed_packet limit.
+
     global $CFG ;
-    $users = auth_get_users();
-    $usedguids = Array();
+    $ldapusers     = auth_get_users();
+    $usedidnumbers = Array();
+
+    // these are only populated if we managed to find added/removed users
+    $add_users    = false;
+    $remove_users = false;
     
-    foreach ($users as $user) {
-        $usedguids[] = $user->guid; //we will need all used guids later
+    if($unsafe_optimizations){
+        // create a temp table
+        if(strtolower($CFG->dbtype) === 'mysql'){
+            // help old mysql versions cope with large temp tables
+            execute_sql('SET SQL_BIG_TABLES=1'); 
+            execute_sql('CREATE TEMPORARY TABLE ' . $CFG->prefix .'extuser (idnumber VARCHAR(12), PRIMARY KEY (idnumber)) TYPE=MyISAM'); 
+        } elseif (strtolower($CFG->dbtype) === 'postgres7'){
+            execute_sql('CREATE TEMPORARY TABLE '.$CFG->prefix.'extuser (idnumber VARCHAR(12), PRIMARY KEY (idnumber))'); 
+        }
+        
+        $userids = array_keys($ldapusers);
+        // bulk insert -- superfast with $bulk_insert_records
+        while(count($userids)){
+            $sql = 'INSERT INTO '.$CFG->prefix.'extuser (idnumber) VALUES ';
+            $values = array_splice($userids, -($bulk_insert_records) ); 
+            // make those values safe
+            array_map('addslashes', $values);
+            // join and quote the whole lot
+            $sql = $sql . '(\'' . join('\'),(\'', $values) . '\')';
+            execute_sql($sql); 
+        }
+        
+        /// REMOVE execute_sql('delete from mdl_user where idnumber like \'%s\'');
+        
+        // find users in DB that aren't in ldap -- to be removed!
+        $sql = 'SELECT u.* 
+                FROM ' . $CFG->prefix .'user u LEFT JOIN ' . $CFG->prefix .'extuser e 
+                        ON u.idnumber = e.idnumber 
+                WHERE u.auth=\'ldap\' AND u.deleted=\'0\' AND e.idnumber IS NULL';
+        $remove_users = get_records_sql($sql); 
+        print "User entries to remove: ". count($remove_users) . "\n";
+        
+        // find users missing in DB that are in LDAP
+        // note that get_records_sql wants at least 2 fields returned,
+        // and gives me a nifty object I don't want.
+        $sql = 'SELECT e.idnumber,1 
+                FROM ' . $CFG->prefix .'extuser e  LEFT JOIN ' . $CFG->prefix .'user u
+                        ON e.idnumber = u.idnumber 
+                WHERE  u.id IS NULL';
+        $add_users = array_keys(get_records_sql($sql)) || array(); // get rid of the fat        
+        print "User entries to add: ". count($add_users). "\n";
+    }
+    
+    foreach ($ldapusers as $user) {
+    
+        $usedidnumbers[] = $user->idnumber; //we will need all used idnumbers later
         //update modified time
         $user->modified = time();
         //All users are confirmed
         $user->confirmed = 1;
         // if user does not exist create it
-        if (!record_exists('user','auth', 'ldap', 'guid', $user->guid)) {
+        if ( ($unsafe_optimizations && is_array($add_users) && in_array($user->idnumber, $add_users) )
+              || (!$unsafe_optimizations  &&!record_exists('user','auth', 'ldap', 'idnumber', $user->idnumber)) ) {
             if (insert_record ('user',$user)) {
-                echo "inserted user $user->username with guid $user->guid \n";
+                echo "inserted user $user->username with idnumber $user->idnumber \n";
             } else {
-                echo "error inserting user $user->username with guid $user->guid \n";
+                echo "error inserting user $user->username with idnumber $user->idnumber \n";
             }
+            update_user_record($user->username);
             continue ;
         } else {
            //update username
-           set_field('user', 'username', $user->username , 'auth', 'ldap', 'guid', $user->guid);
+           set_field('user', 'username', $user->username , 'auth', 'ldap', 'idnumber', $user->idnumber);
            //no id-information in ldap so get now
-           $userid = get_field('user', 'id', 'auth', 'ldap', 'guid', $user->guid);
-
+           update_user_record($user->username);
+           $userid = get_field('user', 'id', 'auth', 'ldap', 'idnumber', $user->idnumber);
+           
            if (auth_iscreator($user->username)) {
                  if (! record_exists("user_coursecreators", "userid", $userid)) {
                       $cdata['userid']=$userid;
@@ -302,9 +364,13 @@ function auth_sync_users () {
         }
     }    
     
-    //find nonexisting users from moodles userdb
-    $sql = "SELECT * FROM ".$CFG->prefix."user WHERE deleted = '0' AND auth = 'ldap' AND guid  NOT IN ('".implode('\' , \'',$usedguids)."');" ;
-    $result = get_records_sql($sql);
+    if($unsafe_optimizations){
+        $result=(is_array($remove_users) ? $remove_users : array());
+    } else{
+        //find nonexisting users from moodles userdb
+        $sql = "SELECT * FROM ".$CFG->prefix."user WHERE deleted = '0' AND auth = 'ldap' AND idnumber  NOT IN ('".implode('\' , \'',$usedidnumbers)."');" ;
+        $result = get_records_sql($sql);
+    }
 
     if (!empty($result)){
         foreach ($result as $user) {
@@ -373,6 +439,98 @@ function auth_iscreator($username=0) {
 
     return auth_ldap_isgroupmember($username, $CFG->ldap_creators);
  
+}
+
+function auth_user_update($olduser, $newuser) {
+/// called when the user record is updated. push fields to 
+/// the LDAP database if configured to do so...
+
+    global $USER , $CFG;
+    
+    $ldap_connection = auth_ldap_connect();
+    $ldapbind = auth_ldap_bind($ldap_connection);
+    
+    $result = array();
+    $search_attribs = array();
+
+    $attrmap = auth_ldap_attributes();  
+    foreach ($attrmap as $key=>$value) {
+        if (!in_array($value, $search_attribs)) {
+            array_push($search_attribs, $value);
+        }    
+    }
+
+    $user_dn = auth_ldap_find_userdn($ldap_connection, $olduser->username);
+
+    if (empty($CFG->ldap_objectclass)) {
+        $CFG->ldap_objectclass="objectClass=*";
+    }
+  
+    $user_info_result = ldap_read($ldap_connection,$user_dn,$CFG->ldap_objectclass, $search_attribs);
+
+    if ($user_info_result){
+
+        $user_entry = ldap_get_entries($ldap_connection, $user_info_result);
+        //error_log(var_export($user_entry) . 'fpp' );
+
+        foreach ($attrmap as $key=>$ldapkey){
+            if (isset($CFG->{'auth_user_'. $key.'_updateremote'}) && $CFG->{'auth_user_'. $key.'_updateremote'}){
+                // skip update if the values already match
+                if( !($newuser->$key === $user_entry[0][strtolower($ldapkey)][0]) ){
+                    ldap_modify($ldap_connection, $user_dn, array($ldapkey => utf8_encode($newuser->$key)));
+                } else { 
+                    error_log("Skip updating field $key for entry $user_dn: it seems to be already same on LDAP. " . 
+                              "  old moodle value: '" . $olduser->$key . 
+                              "' new value '" . $newuser->$key . 
+                              "' current value in ldap entry " . $user_entry[0][strtolower($ldapkey)][0]);
+                }
+            }
+        }
+        
+
+    } else {
+        error_log("ERROR:No user found in LDAP");
+        @ldap_close($ldap_connection);
+        return false;
+    }
+
+    @ldap_close($ldap_connection);
+        
+    return true;
+
+}
+
+function auth_user_update_password($username, $newpassword) {
+/// called when the user password is updated -- it assumes it is called by an admin
+/// or that you've otherwise checked the user's credentials
+/// IMPORTANT: $newpassword must be cleartext, not crypted/md5'ed
+
+    global $CFG;
+    $result = false;
+     
+    $ldap_connection = auth_ldap_connect();
+    $ldapbind = auth_ldap_bind($ldap_connection);
+    
+
+
+    $user_dn = auth_ldap_find_userdn($ldap_connection, $username);
+    
+    if(!$user_dn){
+        error_log('LDAP Error in auth_user_update_password(). No DN for: ' . $username); 
+        return false;
+    }
+    // send ldap the password in cleartext, it will md5 it itself
+    $result = ldap_modify($ldap_connection, $user_dn, array('userPassword' => $newpassword));
+    
+    if(!$result){
+        error_log('LDAP Error in auth_user_update_password(). Error code: ' 
+                  . ldap_errno($ldap_connection) . '; Error string : '
+                  . ldap_err2str(ldap_errno($ldap_connection)));
+    }
+    
+    @ldap_close($ldap_connection);
+
+    return $result;
 }
 
 //PRIVATE FUNCTIONS starts
@@ -502,11 +660,11 @@ function auth_ldap_attributes (){
     $config = (array)$CFG;
     $fields = array("firstname", "lastname", "email", "phone1", "phone2", 
                     "department", "address", "city", "country", "description", 
-                    "idnumber", "lang", "guid");
+                    "idnumber", "lang" );
 
     $moodleattributes = array();
     foreach ($fields as $field) {
-        if ($config["auth_user_$field"]) {
+        if (!empty($config["auth_user_$field"])) {
             $moodleattributes[$field] = $config["auth_user_$field"];
         }
     }
@@ -523,7 +681,7 @@ function auth_ldap_get_userlist($filter="*") {
 
     auth_ldap_bind($ldap_connection);
 
-    if (! isset($CFG->ldap_objectclass)) {
+    if (empty($CFG->ldap_objectclass)) {
         $CFG->ldap_objectclass="objectClass=*";
     }
 

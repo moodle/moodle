@@ -1,4 +1,4 @@
-<?php // $Id$
+<?PHP // $Id$
 
     require_once("../config.php");
 
@@ -28,12 +28,39 @@
                 error("Can't change guest password!");
             }
             
-            if (set_field("user", "password", $password, "username", $username)) {
-                $user->password = $password;
-            } else {
-                error("Could not set the new password");
-            }
+            if(is_internal_auth($user)){
+                if (set_field("user", "password", $password, "username", $username)) {
+                    $user->password = $password;
+                } else {
+                    error("Could not set the new password");
+                }
+            } else { // external users
+                // the relevant auth libs should be loaded already 
+                // as validate_form() calls authenticate_user_login()
+                // check that we allow changes through moodle
+                if(isset($CFG->{'auth_'. $user->auth.'_stdchangepassword'}) && $CFG->{'auth_'. $user->auth.'_stdchangepassword'}){
+                       if(function_exists('auth_user_update_password')){
+                           // note that we pass cleartext password 
+                           if(auth_user_update_password($user->username, $frm->newpassword1)){
+                               $user->password = $password;
+                           } else {
+                               error("Could not set the new password");
+                           }
+                       } else {
 
+                           error_log("External Authentication " . $user->auth . 
+                                     ' is set to use standard change password interface ' .
+                                     ' but auth_user_update_password() is missing.');
+                           error('The authentication module is misconfigured'); 
+                       } 
+                } else {
+                      error("You are cannot change you password this way.");
+                }
+            }
+            
+            // register success changing password
+            set_user_preference('auth_forcepasswordchange', false);
+            
             $USER = $user;
             $USER->loggedin = true;
             $USER->site = $CFG->wwwroot;   // for added security
@@ -103,24 +130,35 @@
  *****************************************************************************/
 function validate_form($frm, &$err) {
 
-    if (empty($frm->username))
+    if (empty($frm->username)){
         $err->username = get_string("missingusername");
+    } else {
+        if (empty($frm->password)){
+            $err->password = get_string("missingpassword");
+        } else {  
+            //require non adminusers to give valid password
+            if (!isadmin() && !authenticate_user_login($frm->username, $frm->password)){
+                $err->password = get_string("wrongpassword");
+            }
+        }
+    }
 
-    else if (empty($frm->password))
-        $err->password = get_string("missingpassword");
-
-    else if (!authenticate_user_login($frm->username, $frm->password))
-        $err->password = get_string("wrongpassword");
-
-    if (empty($frm->newpassword1))
+    if (empty($frm->newpassword1)){
         $err->newpassword1 = get_string("missingnewpassword");
+    }
 
-    if (empty($frm->newpassword2))
+    if (empty($frm->newpassword2)){
         $err->newpassword2 = get_string("missingnewpassword");
-
-    else if ($frm->newpassword1 <> $frm->newpassword2)
-        $err->newpassword2 = get_string("passwordsdiffer");
-
+    } else {
+        if ($frm->newpassword1 <> $frm->newpassword2) {
+            $err->newpassword2 = get_string("passwordsdiffer");
+        } else {
+            if($frm->password === $frm->newpassword1){
+                $err->newpassword1 = get_string("mustchangepassword");
+            }
+        }
+    }
+    
     return;
 }
 

@@ -337,6 +337,7 @@ $string['editcoursesettings'] = 'Edit course settings';
 $string['editfiles'] = 'Edit files';
 $string['editgroupprofile'] = 'Edit group profile';
 $string['editinga'] = 'Editing $a';
+$string['editlock'] = 'This value cannot be edited!';
 $string['editmyprofile'] = 'Edit profile';
 $string['editorbgcolor'] = 'Background-color';
 $string['editorcleanonpaste'] = 'Clean Word HTML on paste';

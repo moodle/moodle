@@ -584,11 +584,21 @@ function main_upgrade($oldversion=0) {
         set_field('user', 'auth', 'manual', 'username', 'guest');
     }
 
+    /* Just commenteed unused fields out
     if ($oldversion < 2004090300) { // Add guid-field used in user syncronization
             table_column('user', '', 'guid', 'varchar', '128', '', '', '', 'auth');
             execute_sql("CREATE INDEX {$CFG->prefix}user_auth_guid_idx ON {$CFG->prefix}user (auth, guid)"); 
     }
+    */
 
+    if ($oldversion < 2004091900) {  //Modify idnumber to hold longer keys 
+        set_field('user', 'auth', 'manual', 'username', 'guest');
+        table_column('user', 'idnumber', 'idnumber', 'varchar', '64', '', '', '', '');
+        execute_sql("CREATE INDEX {$CFG->prefix}user_idnumber_idx ON {$CFG->prefix}user (idnumber)"); 
+        execute_sql("CREATE INDEX {$CFG->prefix}user_auth_idx ON {$CFG->prefix}user (auth)"); 
+    }
+
+    
     return $result;
 
 }

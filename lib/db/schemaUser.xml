@@ -17,7 +17,7 @@
     <field name="password" type="C" size="32" default="">
       <NOTNULL/>
     </field>
-    <field name="idnumber" type="C" size="12" default="">
+    <field name="idnumber" type="C" size="64" default="">
       <NOTNULL/>
     </field>
     <field name="firstname" type="C" size="20" default="">

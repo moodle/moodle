@@ -308,12 +308,11 @@ CREATE TABLE `prefix_scale` (
 CREATE TABLE `prefix_user` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `auth` varchar(20) NOT NULL default 'manual',
-  `guid` varchar(128) default NULL,
   `confirmed` tinyint(1) NOT NULL default '0',
   `deleted` tinyint(1) NOT NULL default '0',
   `username` varchar(100) NOT NULL default '',
   `password` varchar(32) NOT NULL default '',
-  `idnumber` varchar(12) default NULL,
+  `idnumber` varchar(64) default NULL,
   `firstname` varchar(20) NOT NULL default '',
   `lastname` varchar(20) NOT NULL default '',
   `email` varchar(100) NOT NULL default '',
@@ -348,7 +347,8 @@ CREATE TABLE `prefix_user` (
   UNIQUE KEY `username` (`username`)
 ) TYPE=MyISAM COMMENT='One record for each person';
 
-ALTER TABLE `prefix_user` ADD INDEX `authguid` (`auth`, `guid`);
+ALTER TABLE `prefix_user` ADD INDEX `auth` (`auth`);
+ALTER TABLE `prefix_user` ADD INDEX `idnumber` (`idnumber`);
 # --------------------------------------------------------
 
 #

@@ -69,6 +69,20 @@
             unset($SESSION->lang);
             $SESSION->justloggedin = true;
 
+            // check whether the user should be changing password
+            reload_user_preferences();
+            if ($USER->preference['auth_forcepasswordchange']){
+                if (is_internal_auth() || $CFG->{'auth_'.$USER->auth.'_stdchangepassword'}){
+                    redirect("$CFG->wwwroot/login/change_password.php");
+                } elseif($CFG->changepassword) {
+                    redirect($CFG->changepassword);
+                } else {
+                    error("You cannot proceed without changing your password. 
+                           However there is no available page for changing it.
+                           Please contact your Moodle Administrator.");
+                }
+            }
+
             if (user_not_fully_set_up($USER)) {
                 redirect("$CFG->wwwroot/user/edit.php?id=$USER->id&amp;course=".SITEID);
 

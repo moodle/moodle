@@ -850,9 +850,17 @@ function main_upgrade($oldversion=0) {
         set_field('user', 'auth', 'manual', 'username', 'guest');
     }
     
+    /* Commented out unused guid-field code
     if ($oldversion < 2004090300) { // Add guid-field used in user syncronization
         table_column('user', '', 'guid', 'varchar', '128', '', '', '', 'auth');
         execute_sql("ALTER TABLE {$CFG->prefix}user ADD INDEX authguid (auth, guid)");
+    }
+    */
+
+    if ($oldversion < 2004091900) { // modify idnumber to hold longer values
+        table_column('user', 'idnumber', 'idnumber', 'varchar', '64', '', '', '', 'auth');
+        execute_sql("ALTER TABLE {$CFG->prefix}user ADD INDEX idnumber (idnumber)");
+        execute_sql("ALTER TABLE {$CFG->prefix}user ADD INDEX auth (auth)");
     }
 
     return $result;

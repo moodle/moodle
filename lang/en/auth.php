@@ -14,6 +14,8 @@ $string['auth_dbtable'] = 'Name of the table in the database';
 $string['auth_dbtitle'] = 'Use an external database';
 $string['auth_dbtype'] = 'The database type (See the <a href=\"../lib/adodb/readme.htm#drivers\">ADOdb documentation</a> for details)';
 $string['auth_dbuser'] = 'Username with read access to the database';
+$string['auth_editlock'] = 'Lock value';
+$string['auth_editlock_expl'] = '<p><b>Lock value:</b> If enabled, will prevent Moodle users and admins from editing the field directly. Use this option if you are maintaining this data in the external auth system. </p>';
 $string['auth_emaildescription'] = 'Email confirmation is the default authentication method.  When the user signs up, choosing their own new username and password, a confirmation email is sent to the user\'s email address.  This email contains a secure link to a page where the user can confirm their account. Future logins just check the username and password against the stored values in the Moodle database.';
 $string['auth_emailtitle'] = 'Email-based authentication';
 $string['auth_fctitle'] = 'Use a FirstClass server';
@@ -28,6 +30,12 @@ $string['auth_imaphost'] = 'The IMAP server address. Use the IP number, not DNS 
 $string['auth_imapport'] = 'IMAP server port number. Usually this is 143 or 993.';
 $string['auth_imaptitle'] = 'Use an IMAP server';
 $string['auth_imaptype'] = 'The IMAP server type.  IMAP servers can have different types of authentication and negotiation.';
+$string['auth_ldap_server_settings'] = 'LDAP server settings';
+$string['auth_ldap_bind_settings'] = 'Bind settings';
+$string['auth_ldap_user_settings'] = 'User lookup settings';
+$string['auth_ldap_login_settings'] = 'Login settings';
+$string['auth_common_settings'] = 'Common settings';
+$string['auth_data_mapping'] = 'Data mapping';
 $string['auth_ldap_bind_dn'] = 'If you want to use bind-user to search users, specify it here. Someting like \'cn=ldapuser,ou=public,o=org\'';
 $string['auth_ldap_bind_pw'] = 'Password for bind-user.';
 $string['auth_ldap_contexts'] = 'List of contexts where users are located. Separate different contexts with \';\'. For example: \'ou=users,o=org; ou=others,o=org\'';
@@ -69,15 +77,24 @@ $string['auth_pop3type'] = 'Server type. If your server uses certificate securit
 $string['auth_user_create'] = 'Enable user creation';
 $string['auth_user_creation'] = 'New (anonymous) users can create user accounts on the external authentication source and confirmed via email. If you enable this , remember to also configure module-specific options for user creation.';
 $string['auth_usernameexists'] = 'Selected username already exists. Please choose a new one.';
+$string['auth_updatelocal'] = 'Update local data';
+$string['auth_updatelocal_expl'] = '<p><b>Update local data:</b> If enabled, the field will be updated (from external auth) every time the user logs in or there is a user synchronization. Fields set to update locally should be locked.</p>';
+$string['auth_updateremote'] = 'Update external data';
+$string['auth_updateremote_expl'] = '<p><b>Update external data:</b> If enabled, the external auth will be updated when the user record is updated. Fields should be unlocked to allow edits.</p>';
+$string['auth_updateremote_ldap'] = '<p><b>Note:</b> Updating external LDAP data requires that you set binddn and bindpw to a bind-user with editing privileges to all the user records. It currently does not preserve multi-valued attributes, and will remove extra values on update. </p>';
 $string['authenticationoptions'] = 'Authentication options';
 $string['authinstructions'] = 'Here you can provide instructions for your users, so they know which username and password they should be using.  The text you enter here will appear on the login page.  If you leave this blank then no instructions will be printed.';
 $string['changepassword'] = 'Change password URL';
 $string['changepasswordhelp'] = 'Here you can specify a location at which your users can recover or change their username/password if they\'ve forgotten it.  This will be provided to users as a button on the login page and their user page.  if you leave this blank the button will not be printed.';
 $string['chooseauthmethod'] = 'Choose an authentication method: ';
-$string['guestloginbutton'] = 'Guest login button';
 $string['instructions'] = 'Instructions';
 $string['md5'] = 'MD5 encryption';
 $string['plaintext'] = 'Plain text';
 $string['showguestlogin'] = 'You can hide or show the guest login button on the login page.';
+$string['stdchangepassword'] = 'Use standard Change Password Page';
+$string['stdchangepassword_expl'] = 'If the external authentication system allows password changes through Moodle, switch this to Yes. This setting overrides \'Change Password URL\'.';
+$string['stdchangepassword_explldap'] = 'NOTE: It is recommended that you use LDAP over an SSL encrypted tunnel (ldaps://) if the LDAP server is remote.';
+$string['forcechangepassword'] = 'Force change password';
+$string['forcechangepassword_help'] = 'Force users to change password on their first login to Moodle.';$string['guestloginbutton'] = 'Guest login button';
 
 ?>

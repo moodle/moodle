@@ -44,7 +44,16 @@
         error("Sorry, the guest user cannot be edited.");
     }
 
+    // load the relevant auth libraries
+    if ($user->auth) { 
+        $auth = $user->auth;
+        if (!file_exists("$CFG->dirroot/auth/$auth/lib.php")) {
+            $auth = "manual";    // Can't find auth module, default to internal
+        }
+        require_once("$CFG->dirroot/auth/$auth/lib.php");
+    }
 
+    
 /// If data submitted, then process and store.
 
     if ($usernew = data_submitted()) {
@@ -68,7 +77,7 @@
         require_once($CFG->dirroot.'/lib/uploadlib.php');
         $um = new upload_manager('imagefile',false,false,null,false,0,true,true);
 
-        if (find_form_errors($user, $usernew, $err,$um)) {
+        if (find_form_errors($user, $usernew, $err, $um)) {
             if (empty($err['imagefile']) && $usernew->picture = save_profile_image($user->id, $um,'users')) {
                 set_field('user', 'picture', $usernew->picture, 'id', $user->id);  /// Note picture in DB
             } else {
@@ -97,6 +106,21 @@
             if (isadmin()) {
                 if (!empty($usernew->newpassword)) {
                     $usernew->password = md5($usernew->newpassword);
+                    // update external passwords
+                    if (!empty($CFG->{'auth_'. $user->auth.'_stdchangepassword'})) {
+                        if(function_exists('auth_user_update_password')){
+                            if (!auth_user_update_password($user->username, $usernew->newpassword)){
+                                error('Failed to update password on external auth: ' . $user->auth .
+                                        '. See the server logs for more details.');
+                            }
+                        } else {
+                            error('Your external authentication module is misconfigued!'); 
+                        }
+                    }
+                    // store forcepasswordchange in user's preferences
+                    if (isset($usernew->forcepasswordchange)){
+                        set_user_preference('auth_forcepasswordchange', 1, $user);
+                    }
                 }
             } else {
                 if (isset($usernew->newpassword)) {
@@ -108,7 +132,10 @@
             }
 
             if (update_record("user", $usernew)) {
-                add_to_log($course->id, "user", "update", "view.php?id=$user->id&amp;course=$course->id", "");
+                if (function_exists("auth_user_update")){ 
+                    auth_user_update($user, $usernew);
+                }
+                add_to_log($course->id, "user", "update", "view.php?id=$user->id&course=$course->id", "");
 
                 if ($user->id == $USER->id) {
                     // Copy data into $USER session variable
@@ -183,9 +210,9 @@
 
     print_simple_box_start("center", "", "$THEME->cellheading");
     if (!empty($err)) {
-       echo "<center>";
-       notify(get_string("someerrorswerefound"));
-       echo "</center>";
+        echo "<center>";
+        notify(get_string("someerrorswerefound"));
+        echo "</center>";
     }
     include("edit.html");
     print_simple_box_end();
@@ -208,7 +235,7 @@ function find_form_errors(&$user, &$usernew, &$err, &$um) {
             $err["username"] = get_string("missingusername");
 
         } else if (record_exists("user", "username", $usernew->username) and $user->username == "changeme") {
-                $err["username"] = get_string("usernameexists");
+            $err["username"] = get_string("usernameexists");
 
         } else {
             if (empty($CFG->extendedusernamechars)) {
@@ -261,6 +288,43 @@ function find_form_errors(&$user, &$usernew, &$err, &$um) {
     }
     if (!$um->preprocess_files()) {
         $err['imagefile'] = $um->notify;
+    }
+
+    if ($CFG->auth_user_firstname_editlock && !($user->firstname === $usernew->firstname)){
+        $err["firstname"] = get_string("editlock");
+    }
+    if ($CFG->auth_user_lastname_editlock && !($user->lastname === $usernew->lastname)){
+        $err["lastname"] = get_string("editlock");
+    }
+    if ($CFG->auth_user_email_editlock && !($user->email === $usernew->email)){
+        $err["email"] = get_string("editlock");
+    }
+    if ($CFG->auth_user_phone1_editlock && !($user->phone1 === $usernew->phone1)){
+        $err["phone1"] = get_string("editlock");
+    }
+    if ($CFG->auth_user_phone2_editlock && !($user->phone2 === $usernew->phone2)){
+        $err["phone2"] = get_string("editlock");
+    }
+    if ($CFG->auth_user_department_editlock && !($user->department === $usernew->department)){
+        $err["department"] = get_string("editlock");
+    }
+    if ($CFG->auth_user_address_editlock && !($user->address === $usernew->address)){
+        $err["address"] = get_string("editlock");
+    }
+    if ($CFG->auth_user_city_editlock && !($user->city === $usernew->city)){
+        $err["city"] = get_string("editlock");
+    }
+    if ($CFG->auth_user_description_editlock && !($user->description === $usernew->description)){
+        $err["description"] = get_string("editlock");
+    }
+    if ($CFG->auth_user_idnumber_editlock && !($user->idnumber === $usernew->idnumber)){
+        $err["idnumber"] = get_string("editlock");
+    }
+    if ($CFG->auth_user_lang_editlock && !($user->lang === $usernew->lang)){
+        $err["lang"] = get_string("editlock");
+    }
+    if ($CFG->auth_user_guid_editlock && !($user->guid === $usernew->guid)){
+        $err["guid"] = get_string("editlock");
     }
 
     $user->email = $usernew->email;
