@@ -140,7 +140,11 @@
 
 <p class="questionlink"><a href="#resource1">When trying to add a resource I receive error messages.</a></p>
 
+<p class="questionlink"><a href="#noadmin">During the initial setting-up process, I never get asked to create an admin account!</a></p>
+
 <p class="questionlink">&nbsp;</p>
+
+
 
 <h3 class="question"><a name="filenotfound"></a>Whenever I try to access or view 
 
@@ -384,6 +388,22 @@
 <h4 class="question"><a name="resource1"></a>When trying to add a resource I receive error messages.</h4>
 
 <p class="answer">Assuming you are using Apache, then it's quite likely that your setting in config.php for $CFG->wwwroot is different from the actual URL you are using to access the site. Also try turning off "secureforms" in the admin settings.</p>
+
+
+
+<h4 class="question"><a name="noadmin"></a>During the initial setting-up process, I never get asked to create an admin account!</h4>
+
+<p class="answer">This is a known bug in versions of Moodle up to 1.0.9, now fixed in the main code and version 1.1.</p>
+
+<p class="answer">It doesn't affect all people, it only occurs when the person installing Moodle has a
+  cookie in their browser from another program on the same site, called "user", "admin", or "teacher".</p>
+
+<p class="answer">Quick fixes include deleting those cookies from your browser before installing, using a different browser, or editing the file moodle/admin/user.php to insert these lines near the top:</p>
+
+<p class="answercode">unset($user);<br />unset($admin);<br />unset($teacher);</p>
+
+<p class="answer">After performing any of these fixes it might be a good idea to drop all the tables in your database and re-install again from scratch.</p>
+
 
 
 <h2>&nbsp;</h2>
