@@ -11,7 +11,7 @@
 <body bgcolor="#FFFFFF">
 
 <h2>ADOdb Library for PHP</h2>
-<p>V4.11 27 Jan 2004 (c) 2000-2004 John Lim (jlim#natsoft.com)</p>
+<p>V4.20 22 Feb 2004 (c) 2000-2004 John Lim (jlim#natsoft.com)</p>
 <p><font size="1">This software is dual licensed using BSD-Style and LGPL. This 
   means you can use it in compiled proprietary and commercial products.</font></p>
 	<p>Useful ADOdb links:  <a href=http://php.weblogs.com/adodb>Download</a> &nbsp; <a href=http://php.weblogs.com/adodb_manual>Other Docs</a>
@@ -476,7 +476,7 @@ catch exceptions on errors as they occur.
     <td height="54"><font size="2">Y/N</font></td>
     <td height="54"><font size="2">DB2 CLI/ODBC interface</font></td>
     <td height="54"> <p><font size="2">Unix and Windows. <a href="http://www.faqts.com/knowledge_base/view.phtml/aid/6283/fid/14">Unix 
-        install hints</a>.</font></p></td>
+        install hints</a>. I have had reports that the $host and $database params have to be reversed in Connect() when using the CLI interface.</font></p></td>
   </tr>
   <tr valign="top"> 
     <td><b><font size="2">vfp</font></b></td>
@@ -1807,13 +1807,19 @@ will return -1 (DB_ERROR).</p>
 <p><b>MetaErrorMsg<a name="metaerrormsg"></a>($errno)</b></p>
 <p>Pass the error number returned by MetaError() for the equivalent textual error message.</p>
 <p><b>ErrorMsg<a name="errormsg"></a>()</b></p>
-<p>Returns the last status or error message. This can return a string even if 
+<p>Returns the last status or error message. The error message is reset after every 
+call to Execute(). 
+<p>
+This can return a string even if 
 	no error occurs. In general you do not need to call this function unless an 
 	ADOdb function returns false on an error. </p>
 <p>Note: If <b>debug</b> is enabled, the SQL error message is always displayed 
 	when the <b>Execute</b> function is called.</p>
 <p><b>ErrorNo<a name="errorno"></a>()</b></p>
-<p>Returns the last error number. Note that old versions of PHP (pre 4.0.6) do 
+<p>Returns the last error number. The error number is reset after every call to Execute(). 
+If 0 is returned, no error occurred.
+<p>
+Note that old versions of PHP (pre 4.0.6) do 
 	not support error number for ODBC. In general you do not need to call this 
 	function unless an ADOdb function returns false on an error.</p>
 </font>
@@ -2974,7 +2980,23 @@ $<font color="#663300">rs</font>   = $<font color="#663300">conn</font>->Execute
   PHP</a>. </p>
 </font>
 <h2>Change Log<a name="Changes"></a><a name="changes"></a><a name="changelog"></a></h2>
+<p><b>4.20 27 Feb 2004</b>
+<p>Updated to AXMLS 1.01.
+<p>MetaForeignKeys for postgres7 modified by Edward Jaramilla, works on pg 7.4.
+<p>Now numbers accepts function calls or sequences for GetInsertSQL/GetUpdateSQL numeric fields.
+<p>Changed quotes of 'delete from $perf_table' to "". Thx Kehui (webmaster#kehui.net)
+<p>Added ServerInfo() for ifx, and putenv trim fix. Thx Fernando Ortiz.
+<p>Added addq(), which is analogous to addslashes().
+<p>Tested with php5b4. Fix some php5 compat problems with exceptions and sybase.
+<P>Carl-Christian Salvesen added patch to mssql _query to support binds greater than 4000 chars.
+<p>Mike suggested patch to PHP5 exception handler. $errno must be numeric.
+<p>Added double quotes (") to ADODB_TABLE_REGEX.
+<p>For oci8, Prepare(...,$cursor), $cursor's meaning was accidentally inverted in 4.11. This causes problems with ExecuteCursor() too, which calls Prepare() internally. Thx to William Lovaton.
+<p>Now dateHasTime property in connection object renamed to datetime for consistency. This could break bc.
+<p>Csongor Halmai reports that db2 SelectLimit with input array is not working. Fixed..
 <p><b>4.11 27 Jan 2004</b>
+<p>Csongor Halmai reports db2 binding not working. Reverted back to emulated binding.
+<p>Dan Cech modifies datadict code. Adds support for DropIndex. Minor cleanups.
 <p>Table misspelt in perf-oci8.inc.php. Changed v$conn_cache_advice to v$db_cache_advice. Reported by Steve W.
 <p>UserTimeStamp and DBTimeStamp did not handle YYYYMMDDHHMMSS format properly. Reported by Mike Muir. Fixed.
 <p>Changed oci8 Prepare(). Does not auto-allocate OCINewCursor automatically, unless 2nd param is set to true.

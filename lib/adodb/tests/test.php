@@ -1,6 +1,6 @@
 <?php
 /* 
-V4.11 27 Jan 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
+V4.20 22 Feb 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. 
@@ -14,7 +14,7 @@ $ADODB_FLUSH = true;
 
 define('ADODB_ASSOC_CASE',0);
 
-include_once('../adodb-pear.inc.php');
+if (PHP_VERSION < 5) include_once('../adodb-pear.inc.php');
 //--------------------------------------------------------------------------------------
 //define('ADODB_ASSOC_CASE',1);
 //
@@ -173,9 +173,17 @@ FROM `nuke_stories` `t1`, `nuke_authors` `t2`, `nuke_stories_cat` `t3`, `nuke_to
 		$rs->Close();
 	} else print "err=".$db->ErrorMsg();
 
-	print "<p>Test select on empty table</p>";
-	$rs = &$db->Execute("select * from ADOXYZ where id=9999");
+	print "<p>Test select on empty table, FetchField when EOF, and GetInsertSQL</p>";
+	$rs = &$db->Execute("select id,firstname from ADOXYZ where id=9999");
 	if ($rs && !$rs->EOF) print "<b>Error: </b>RecordSet returned by Execute(select...') on empty table should show EOF</p>";
+	if ($rs->EOF && ($o = $rs->FetchField(0))) {
+		$record['id'] = 99;
+		$record['firstname'] = 'John';
+		$sql =  $db->GetInsertSQL($rs, $record);
+		if ($sql != "INSERT INTO ADOXYZ ( id, firstname ) VALUES ( 99, 'John' )") Err("GetInsertSQL does not work on empty table");
+	} else {
+		Err("FetchField does not work on empty recordset, meaning GetInsertSQL will fail...");
+	}
 	if ($rs) $rs->Close();
 	flush();
 	//$db->debug=true;	
@@ -420,9 +428,7 @@ PROCEDURE data_out(input IN varchar, output OUT varchar) IS
 END adodb;
 /
 */
-		$stmt = $db->Prepare("BEGIN adodb.open_tab(:RS,'A%'); END;");
-		$db->InParameter($stmt, $cur, 'RS', -1, OCI_B_CURSOR);
-		$rs = $db->Execute($stmt);
+		$rs = $db->ExecuteCursor("BEGIN adodb.open_tab(:RS,'A%'); END;");
 	
 		if ($rs && !$rs->EOF) {
 			print "Test 1 RowCount: ".$rs->RecordCount()."<p>";
@@ -468,7 +474,7 @@ END adodb;
 	$db->debug=1;
 	print "<p>Testing Bulk Insert of 3 rows</p>";
 
-	$sql = "insert into ADOXYZ (id,firstname,lastname) values (?,?,?)";
+	$sql = "insert into ADOXYZ (id,firstname,lastname) values (".$db->Param('0').",".$db->Param('1').",".$db->Param('2').")";
 	$db->StartTrans();
 	$db->Execute($sql,$arr);
 	$db->CompleteTrans();
@@ -532,7 +538,7 @@ END adodb;
 	case 'oci805':
 		$arr = array('first'=>'Caroline','last'=>'Miranda');
 		$amt = rand() % 100;
-		$sql = "insert into ADOXYZ (id,firstname,lastname,created,amount) values ($i*10+0,:first,:last,$time,$amt)";		
+		$sql = "insert into ADOXYZ (id,firstname,lastname,created) values ($i*10+0,:first,:last,$time)";		
 		break;
 	}
 	if ($i & 1) {
@@ -1387,17 +1393,25 @@ include("../adodb.inc.php");
 include("../rsfilter.inc.php");
 
 /* White Space Check */
+
+if (isset($_SERVER['argv'][1])) {
+	//print_r($_SERVER['argv']);
+	$HTTP_GET_VARS[$_SERVER['argv'][1]] = 1;
+}
+
 if (@$HTTP_SERVER_VARS['COMPUTERNAME'] == 'TIGRESS') {
 	CheckWS('mysqlt');
 	CheckWS('postgres');
 	CheckWS('oci8po');
+	
 	CheckWS('firebird');
 	CheckWS('sybase');
 	CheckWS('informix');
+
 	CheckWS('ado_mssql');
 	CheckWS('ado_access');
 	CheckWS('mssql');
-	//
+	
 	CheckWS('vfp');
 	CheckWS('sqlanywhere');
 	CheckWS('db2');

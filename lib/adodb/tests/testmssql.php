@@ -1,7 +1,7 @@
 <?php
 
 /** 
- * @version V4.11 27 Jan 2004 (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
+ * @version V4.20 22 Feb 2004 (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
  * Released under both BSD license and Lesser GPL library license. 
  * Whenever there is any discrepancy between the two licenses, 
  * the BSD license will take precedence. 
@@ -26,6 +26,20 @@ include('../tohtml.inc.php');
 
 $conn = &ADONewConnection("mssql");  // create a connection
 $conn->Connect('localhost','sa','natsoft','northwind') or die('Fail');
+
+$conn->debug =1;
+$query = 'select * from products';
+$conn->SetFetchMode(ADODB_FETCH_ASSOC);
+$rs = $conn->Execute($query);
+echo "<pre>";
+while( !$rs->EOF ) {
+	$output[] = $rs->fields;
+	var_dump($rs->fields);
+	$rs->MoveNext();
+	print "<p>";
+}
+die();
+
 
 $p = $conn->Prepare('insert into products (productname,unitprice,dcreated) values (?,?,?)');
 echo "<pre>";

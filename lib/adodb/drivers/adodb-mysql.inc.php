@@ -1,6 +1,6 @@
 <?php
 /*
-V4.11 27 Jan 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
+V4.20 22 Feb 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -81,7 +81,7 @@ class ADODB_mysql extends ADOConnection {
         }
         
         // get index details
-        $rs = $this->Execute(sprintf('SHOW INDEXES FROM %s',$table));
+        $rs = $this->Execute(sprintf('SHOW INDEX FROM %s',$table));
         
         // restore fetchmode
         if (isset($savem)) {

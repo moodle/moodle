@@ -4,7 +4,7 @@ global $ADODB_INCLUDED_LIB;
 $ADODB_INCLUDED_LIB = 1;
 
 /* 
-V4.11 27 Jan 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
+V4.20 22 Feb 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. See License.txt. 
@@ -412,7 +412,12 @@ function _adodb_getupdatesql(&$zthis,&$rs, $arrFields,$forceUpdate=false,$magicq
 							break;
 						default:
 							$val = $arrFields[$upperfname];
-							if (!is_numeric($val)) $val = (float) $val;
+							/*if (!is_numeric($val)) {
+								if (strncmp($val,'=',1) == 0) $val = substr($val,1);
+								else $val = (float) $val;
+							}*/
+							if (empty($val)) $val = '0';
+
 							$updateSQL .= $field->name . " = " . $val  . ", ";
 							break;
 					};
@@ -521,7 +526,11 @@ function _adodb_getinsertsql(&$zthis,&$rs,$arrFields,$magicq=false)
 					break;
 				default:
 					$val = $arrFields[$upperfname];
-					if (!is_numeric($val)) $val = (float) $val;
+					/*if (!is_numeric($val)) {
+						if (strncmp($val,'=',1) == 0) $val = substr($val,1);
+						else $val = (float) $val;
+					}*/
+					if (empty($val)) $val = '0';
 					$values .= $val . ", ";
 					break;
 			};

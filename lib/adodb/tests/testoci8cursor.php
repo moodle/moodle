@@ -1,6 +1,6 @@
 <?php
 /* 
-V4.11 27 Jan 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
+V4.20 22 Feb 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. 
@@ -20,17 +20,32 @@ V4.11 27 Jan 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights rese
 -- TEST PACKAGE YOU NEED TO INSTALL ON ORACLE - run from sql*plus
 ------------------------------------------------------------------
 
-CREATE or replace PACKAGE adodb AS
+
+-- TEST PACKAGE
+CREATE OR REPLACE PACKAGE adodb AS
 TYPE TabType IS REF CURSOR RETURN tab%ROWTYPE;
-  -- list all tables that match tablenames in current schema
 PROCEDURE open_tab (tabcursor IN OUT TabType,tablenames in varchar);
+PROCEDURE data_out(input IN varchar, output OUT varchar); 
+
+procedure myproc (p1 in number, p2 out number);
 END adodb;
 /
-CREATE or replace PACKAGE BODY adodb AS
+
+CREATE OR REPLACE PACKAGE BODY adodb AS
 PROCEDURE open_tab (tabcursor IN OUT TabType,tablenames in varchar) IS
 	BEGIN
 		OPEN tabcursor FOR SELECT * FROM tab where tname like tablenames;
 	END open_tab;
+	
+PROCEDURE data_out(input IN varchar, output OUT varchar) IS
+	BEGIN
+		output := 'Cinta Hati '||input;
+	END;
+	
+procedure myproc (p1 in number, p2 out number) as
+begin
+p2 := p1;
+end;
 END adodb;
 /
 
@@ -50,27 +65,12 @@ include('../tohtml.inc.php');
 
 
 /*
--- TEST PACKAGE
-CREATE OR REPLACE PACKAGE adodb AS
-TYPE TabType IS REF CURSOR RETURN tab%ROWTYPE;
-PROCEDURE open_tab (tabcursor IN OUT TabType,tablenames in varchar);
-PROCEDURE data_out(input IN varchar, output OUT varchar); 
-END adodb;
-/
-
-CREATE OR REPLACE PACKAGE BODY adodb AS
-PROCEDURE open_tab (tabcursor IN OUT TabType,tablenames in varchar) IS
-	BEGIN
-		OPEN tabcursor FOR SELECT * FROM tab where tname like tablenames;
-	END open_tab;
-	
-PROCEDURE data_out(input IN varchar, output OUT varchar) IS
-	BEGIN
-		output := 'Cinta Hati '||input;
-	END;
-END adodb;
-/
 */
+
+	define('MYNUM',5);
+	
+
+	
 	$stmt = $db->Prepare("BEGIN adodb.open_tab(:RS,'A%'); END;");
 	$db->InParameter($stmt, $cur, 'RS', -1, OCI_B_CURSOR);
 	$rs = $db->Execute($stmt);
@@ -83,6 +83,12 @@ END adodb;
 	
 	
 	print "<h4>Testing Stored Procedures for oci8</h4>";
+	
+	$stid = $db->PrepareSP('BEGIN adodb.myproc('.MYNUM.', :myov); END;');
+	$db->OutParameter($stid, $myov, 'myov');
+	$db->Execute($stid);
+	if ($myov != MYNUM) print "<p><b>Error with myproc</b></p>";
+	
 	
 	$stmt = $db->PrepareSP("BEGIN adodb.data_out(:a1, :a2); END;",true);
 	$a1 = 'Malaysia';

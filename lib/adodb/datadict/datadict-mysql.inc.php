@@ -1,7 +1,7 @@
 <?php
 
 /**
-  V4.11 27 Jan 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
+  V4.20 22 Feb 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -13,6 +13,8 @@
 class ADODB2_mysql extends ADODB_DataDict {
 	var $databaseType = 'mysql';
 	var $alterCol = ' MODIFY COLUMN';
+	var $alterTableAddIndex = true;
+	var $dropTable = 'DROP TABLE IF EXISTS %s'; // requires mysql 3.22 or later
 	
 	var $dropIndex = 'DROP INDEX %s ON %s';
 	
@@ -132,17 +134,14 @@ class ADODB2_mysql extends ADODB_DataDict {
 		ON tbl_name (col_name[(length)],... )
 	*/
 	
-	function DropIndexSQL ($idxname, $tabname)
-	{
-		return array(sprintf($this->dropIndex, $this->NameQuote($idxname), $this->TableName($tabname)));
-	}
-	
 	function _IndexSQL($idxname, $tabname, $flds, $idxoptions)
 	{
 		$sql = array();
 		
 		if ( isset($idxoptions['REPLACE']) || isset($idxoptions['DROP']) ) {
-			$sql[] = sprintf ($this->dropIndex, $idxname, $tabname);
+			if ($this->alterTableAddIndex) $sql[] = "ALTER TABLE $tabname DROP INDEX $idxname";
+			else $sql[] = sprintf($this->dropIndex, $idxname, $tabname);
+
 			if ( isset($idxoptions['DROP']) )
 				return $sql;
 		}
@@ -159,9 +158,12 @@ class ADODB2_mysql extends ADODB_DataDict {
 			$unique = '';
 		}
 		
-		if ( is_array($flds) )
-			$flds = implode(', ',$flds);
-		$s = 'CREATE' . $unique . ' INDEX ' . $idxname . ' ON ' . $tabname . ' (' . $flds . ')';
+		if ( is_array($flds) ) $flds = implode(', ',$flds);
+		
+		if ($this->alterTableAddIndex) $s = "ALTER TABLE $tabname ADD $unique INDEX $idxname ";
+		else $s = 'CREATE' . $unique . ' INDEX ' . $idxname . ' ON ' . $tabname;
+		
+		$s .= ' (' . $flds . ')';
 		
 		if ( isset($idxoptions[$this->upperName]) )
 			$s .= $idxoptions[$this->upperName];

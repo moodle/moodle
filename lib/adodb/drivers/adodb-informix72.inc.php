@@ -1,6 +1,6 @@
 <?php
 /*
-V4.11 27 Jan 2004  (c) 2000-2004 John Lim. All rights reserved.
+V4.20 22 Feb 2004  (c) 2000-2004 John Lim. All rights reserved.
   Released under both BSD license and Lesser GPL library license.
   Whenever there is any discrepancy between the two licenses,
   the BSD license will take precedence.
@@ -58,6 +58,18 @@ class ADODB_informix72 extends ADOConnection {
         	ifx_blobinfile_mode(0); // Mode "0" means save Byte-Blobs in memory, and mode "1" means save Byte-Blobs in a file.
 		}
 	}
+	
+	function ServerInfo()
+	{
+	    if (isset($this->version)) return $this->version;
+	
+	    $arr['description'] = $this->GetOne("select DBINFO('version','full') from systables where tabid = 1");
+	    $arr['version'] = $this->GetOne("select DBINFO('version','major')||"."||DBINFO('version','minor') from systables where tabid = 1");
+	    $this->version = $arr;
+	    return $arr;
+	}
+
+
 
 	function _insertid()
 	{
@@ -186,7 +198,7 @@ class ADODB_informix72 extends ADOConnection {
 		
 		$dbs = $argDatabasename . "@" . $argHostname;
 		if ($argHostname) putenv("INFORMIXSERVER=$argHostname"); 
-		putenv("INFORMIXSERVER=$argHostname"); 
+		putenv("INFORMIXSERVER=".trim($argHostname)); 
 		$this->_connectionID = ifx_connect($dbs,$argUsername,$argPassword);
 		if ($this->_connectionID === false) return false;
 		#if ($argDatabasename) return $this->SelectDB($argDatabasename);
@@ -199,14 +211,14 @@ class ADODB_informix72 extends ADOConnection {
 		if (!function_exists('ifx_connect')) return false;
 		
 		$dbs = $argDatabasename . "@" . $argHostname;
-		if ($argHostname) putenv("INFORMIXSERVER=$argHostname"); 
+		putenv("INFORMIXSERVER=".trim($argHostname)); 
 		$this->_connectionID = ifx_pconnect($dbs,$argUsername,$argPassword);
 		if ($this->_connectionID === false) return false;
 		#if ($argDatabasename) return $this->SelectDB($argDatabasename);
 		return true;
 	}
 /*
-	// ifx_do does not accept bind parameters - wierd ???
+	// ifx_do does not accept bind parameters - weird ???
 	function Prepare($sql)
 	{
 		$stmt = ifx_prepare($sql);

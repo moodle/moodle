@@ -1,6 +1,6 @@
 <?php
 /*
- V4.11 27 Jan 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
+ V4.20 22 Feb 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -97,6 +97,8 @@ WHERE relkind = 'r' AND (c.relname='%s' or c.relname = lower('%s'))
 	var $random = 'random()';		/// random function
 	var $autoRollback = true; // apparently pgsql does not autorollback properly before 4.3.4
 							// http://bugs.php.net/bug.php?id=25404
+							
+	var $_bindInputArray = false; // requires postgresql 7.3+ and ability to modify database
 	
 	// The last (fmtTimeStamp is not entirely correct: 
 	// PostgreSQL also has support for time zones, 
@@ -613,16 +615,44 @@ WHERE c2.relname=\'%s\'';
 	{
 		return $this->_connect($str,$user,$pwd,$db,1);
 	}
+	
 
 	// returns queryID or false
 	function _query($sql,$inputarr)
 	{
+		
+		if ($inputarr) {
 		/*
-		if (is_array($sql)) {
-			if (!$sql[1]) {
+			It appears that PREPARE/EXECUTE is slower for many queries.
 			
-				$sqltxt = $sql[0];
-				$plan = $sql[1] = 'P'.md5($sqltxt);
+			For query executed 1000 times:
+			"select id,firstname,lastname from adoxyz 
+				where firstname not like ? and lastname not like ? and id = ?"
+				
+			with plan = 1.51861286163 secs
+			no plan =   1.26903700829 secs
+
+			
+
+		*/
+			$plan = 'P'.md5($sql);
+				
+			$execp = '';
+			foreach($inputarr as $v) {
+				if ($execp) $execp .= ',';
+				if (is_string($v)) {
+					if (strncmp($v,"'",1) !== 0) $execp .= $this->qstr($v);
+				} else {
+					$execp .= $v;
+				}
+			}
+			
+			if ($execp) $exsql = "EXECUTE $plan ($execp)";
+			else $exsql = "EXECUTE $plan";
+			
+			$rez = @pg_exec($this->_connectionID,$exsql);
+			if (!$rez) {
+			# Perhaps plan does not exist? Prepare/compile plan.
 				$params = '';
 				foreach($inputarr as $v) {
 					if ($params) $params .= ',';
@@ -634,40 +664,26 @@ WHERE c2.relname=\'%s\'';
 						$params .= "REAL";
 					}
 				}
-				$sqlarr = explode('?',$sqltxt);
-				$sqltxt = '';
+				$sqlarr = explode('?',$sql);
+				//print_r($sqlarr);
+				$sql = '';
 				$i = 1;
 				foreach($sqlarr as $v) {
-					$sqltxt .= $v.'$'.$i;
+					$sql .= $v.' $'.$i;
 					$i++;
 				}
-				$s = "PREPARE $plan ($params) AS ".substr($sqltxt,0,strlen($sqltxt)-2);		
-				adodb_pr($s);
+				$s = "PREPARE $plan ($params) AS ".substr($sql,0,strlen($sql)-2);		
+				//adodb_pr($s);
 				pg_exec($this->_connectionID,$s);
 				echo $this->ErrorMsg();
-			} else {
-				$plan = $sql[1];
-			}
-			$params = '';
-			foreach($inputarr as $v) {
-				if ($params) $params .= ',';
-				if (is_string($v)) {
-					if (strncmp($v,"'",1) !== 0) $params .= $this->qstr($v.'TEST');
-				} else {
-					$params .= $v;
-				}
 			}
 			
-			if ($params) $sql = "EXECUTE $plan ($params)";
-			else $sql = "EXECUTE $plan";
-			
-			adodb_pr(">>>>>".$sql);
-			pg_exec($this->_connectionID,$s);
-		}*/
-		
-		$this->_errorMsg = false;
-		
-		$rez = pg_exec($this->_connectionID,$sql);
+			$rez = pg_exec($this->_connectionID,$exsql);
+		} else {
+			$this->_errorMsg = false;
+			//adodb_backtrace();
+			$rez = pg_exec($this->_connectionID,$sql);
+		}
 		// check if no data returned, then no need to create real recordset
 		if ($rez && pg_numfields($rez) <= 0) {
 			if (is_resource($this->_resultid) && get_resource_type($this->_resultid) === 'pgsql result') {

@@ -1,6 +1,6 @@
 <?php
 /* 
-V4.11 27 Jan 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
+V4.20 22 Feb 2004  (c) 2000-2004 John Lim (jlim#natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. 
@@ -456,7 +456,7 @@ class ADODB_odbc extends ADOConnection {
 		if (! $this->_bindInputArray) return $sql; // no binding
 		$stmt = odbc_prepare($this->_connectionID,$sql);
 		if (!$stmt) {
-		//	print "Prepare Error for ($sql) ".$this->ErrorMsg()."<br>";
+			// we don't know whether odbc driver is parsing prepared stmts, so just return sql
 			return $sql;
 		}
 		return array($sql,$stmt,false);
@@ -526,8 +526,6 @@ class ADODB_odbc extends ADOConnection {
 			} else
 				$this->_errorMsg = $php_errormsg;
 		}
-		
-		
 		return $stmtid;
 	}
 

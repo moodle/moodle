@@ -14,7 +14,7 @@
 /**
 	\mainpage 	
 	
-	 @version V4.11 27 Jan 2004 (c) 2000-2004 John Lim (jlim\@natsoft.com.my). All rights reserved.
+	 @version V4.20 22 Feb 2004 (c) 2000-2004 John Lim (jlim\@natsoft.com.my). All rights reserved.
 
 	Released under both BSD license and Lesser GPL library license. You can choose which license
 	you prefer.
@@ -68,8 +68,8 @@
 		
 		define('ADODB_BAD_RS','<p>Bad $rs in %s. Connection or SQL invalid. Try using $connection->debug=true;</p>');
 	
-	// allow [ ] @ ` and . in table names
-		define('ADODB_TABLE_REGEX','([]0-9a-z_\`\.\@\[-]*)');
+	// allow [ ] @ ` " and . in table names
+		define('ADODB_TABLE_REGEX','([]0-9a-z_\"\`\.\@\[-]*)');
 	
 	// prefetching used by oracle
 		if (!defined('ADODB_PREFETCH_ROWS')) define('ADODB_PREFETCH_ROWS',10);
@@ -147,7 +147,7 @@
 		/**
 		 * ADODB version as a string.
 		 */
-		$ADODB_vers = 'V4.11 27 Jan 2004 (c) 2000-2004 John Lim (jlim#natsoft.com.my). All rights reserved. Released BSD & LGPL.';
+		$ADODB_vers = 'V4.20 22 Feb 2004 (c) 2000-2004 John Lim (jlim#natsoft.com.my). All rights reserved. Released BSD & LGPL.';
 	
 		/**
 		 * Determines whether recordset->RecordCount() is used. 
@@ -592,10 +592,13 @@
 	}
 	
 	/*
-		 returns placeholder for parameter, eg.
+		 Returns placeholder for parameter, eg.
 		 $DB->Param('a')
 		 
 		 will return ':a' for Oracle, and '?' for most other databases...
+		 
+		 For databases that require positioned params, eg $1, $2, $3 for postgresql,
+		 	pass in Param(false) before setting the first parameter.
 	*/
 	function Param($name)
 	{
@@ -2112,6 +2115,31 @@
 		return adodb_date($fmt,$tt);
 	}
 	
+	/**
+	* Quotes a string, without prefixing nor appending quotes. 
+	*/
+	function addq($s,$magicq=false)
+	{
+		if (!$magic_quotes) {
+		
+			if ($this->replaceQuote[0] == '\\'){
+				// only since php 4.0.5
+				$s = adodb_str_replace(array('\\',"\0"),array('\\\\',"\\\0"),$s);
+				//$s = str_replace("\0","\\\0", str_replace('\\','\\\\',$s));
+			}
+			return  str_replace("'",$this->replaceQuote,$s);
+		}
+		
+		// undo magic quotes for "
+		$s = str_replace('\\"','"',$s);
+		
+		if ($this->replaceQuote == "\\'")  // ' already quoted, no need to change anything
+			return $s;
+		else {// change \' to '' for sybase/mssql
+			$s = str_replace('\\\\','\\',$s);
+			return str_replace("\\'",$this->replaceQuote,$s);
+		}
+	}
 	
 	/**
 	 * Correctly quotes a string so that all strings are escaped. We prefix and append
@@ -2290,7 +2318,7 @@
 	var $_atLastPage = false;	/** Added by Iván Oliva to implement recordset pagination */
 	var $_lastPageNo = -1; 
 	var $_maxRecordCount = 0;
-	var $dateHasTime = false;
+	var $datetime = false;
 	
 	/**
 	 * Constructor
@@ -3123,7 +3151,7 @@
 			return 'B';
 		
 		case 'D':
-			if (!empty($this->dateHasTime)) return 'T';
+			if (!empty($this->datetime)) return 'T';
 			return 'D';
 			
 		default: 
@@ -3377,9 +3405,10 @@
 			case 'postgres':
 			case 'pgsql': $db = 'postgres7'; break;
 		}
-		$ok = @include_once(ADODB_DIR."/drivers/adodb-".$db.".inc.php");
+		@include_once(ADODB_DIR."/drivers/adodb-".$db.".inc.php");
 		$ADODB_LASTDB = $db;
 		
+		$ok = class_exists("ADODB_" . $db);
 		if ($ok) return $db;
 		
 		$file = ADODB_DIR."/drivers/adodb-".$db.".inc.php";
@@ -3466,7 +3495,7 @@
 						if ($perf) $drivername = '';
 						break;
 			case 'db2':	
-						if ($perf) break;
+						break;
 			default:
 				$drivername = 'generic';
 				break;

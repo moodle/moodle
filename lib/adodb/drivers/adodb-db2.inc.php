@@ -1,6 +1,6 @@
 <?php
 /* 
-V4.11 27 Jan 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
+V4.20 22 Feb 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. 
@@ -64,6 +64,22 @@ $db = NewADOConnection('db2');
 $db->curMode = SQL_CUR_USE_ODBC;
 $db->Connect($dsn, $userid, $pwd);
 
+
+
+USING CLI INTERFACE
+===================
+
+I have had reports that the $host and $database params have to be reversed in 
+Connect() when using the CLI interface. From Halmai Csongor csongor.halmai#nexum.hu:
+
+> The symptom is that if I change the database engine from postgres or any other to DB2 then the following
+> connection command becomes wrong despite being described this version to be correct in the docs. 
+>
+> $connection_object->Connect( $DATABASE_HOST, $DATABASE_AUTH_USER_NAME, $DATABASE_AUTH_PASSWORD, $DATABASE_NAME )
+>
+> In case of DB2 I had to swap the first and last arguments in order to connect properly. 
+
+
 */
 
 if (!defined('_ADODB_ODBC_LAYER')) {
@@ -82,7 +98,7 @@ class ADODB_DB2 extends ADODB_odbc {
 	var $fmtTimeStamp = "'Y-m-d-H.i.s'";
 	var $ansiOuter = true;
 	var $identitySQL = 'values IDENTITY_VAL_LOCAL()';
-	var $_bindInputArray = true;
+	var $_bindInputArray = false;
 	var $upperCase = 'upper';
 	
 	
@@ -115,35 +131,6 @@ class ADODB_DB2 extends ADODB_odbc {
 		if ($this->_autocommit) $this->BeginTrans();
 		return $this->GetOne("select 1 as ignore from $tables where $where for update");
 	}
-	/*
-	function &MetaTables($showSchema=false)
-	{
-	global $ADODB_FETCH_MODE;
-	
-		$savem = $ADODB_FETCH_MODE;
-		$ADODB_FETCH_MODE = ADODB_FETCH_NUM;
-		$qid = odbc_tables($this->_connectionID);
-		
-		$rs = new ADORecordSet_odbc($qid);
-		
-		$ADODB_FETCH_MODE = $savem;
-		if (!$rs) return false;
-		
-		$rs->_has_stupid_odbc_fetch_api_change = $this->_has_stupid_odbc_fetch_api_change;
-		
-		//print_r($rs);
-		$arr =& $rs->GetArray();
-		$rs->Close();
-		$arr2 = array();
-		//print_r($arr);
-		for ($i=0; $i < sizeof($arr); $i++) {
-			$row = $arr[$i];
-			if ($row[2] && strncmp($row[1],'SYS',3) != 0)
-				 if ($showSchema) $arr2[] = $row[1].'.'.$row[2];
-				 else $arr2[] = $row[2];
-		}
-		return $arr2;
-	}*/
 	
 	function &MetaTables($ttype=false,$showSchema=false)
 	{
@@ -242,23 +229,23 @@ class ADODB_DB2 extends ADODB_odbc {
 	} 
  
 	
-		function &SelectLimit($sql,$nrows=-1,$offset=-1)
-		{
-			if ($offset <= 0) {
-			// could also use " OPTIMIZE FOR $nrows ROWS "
-				if ($nrows >= 0) $sql .=  " FETCH FIRST $nrows ROWS ONLY ";
-				$rs =& $this->Execute($sql,false);
-			} else {
-				if ($offset > 0 && $nrows < 0);
-				else {
-					$nrows += $offset;
-					$sql .=  " FETCH FIRST $nrows ROWS ONLY ";
-				}
-				$rs =& ADOConnection::SelectLimit($sql,-1,$offset);
+	function &SelectLimit($sql,$nrows=-1,$offset=-1,$inputArr=false)
+	{
+		if ($offset <= 0) {
+		// could also use " OPTIMIZE FOR $nrows ROWS "
+			if ($nrows >= 0) $sql .=  " FETCH FIRST $nrows ROWS ONLY ";
+			$rs =& $this->Execute($sql,$inputArr);
+		} else {
+			if ($offset > 0 && $nrows < 0);
+			else {
+				$nrows += $offset;
+				$sql .=  " FETCH FIRST $nrows ROWS ONLY ";
 			}
-			
-			return $rs;
+			$rs =& ADOConnection::SelectLimit($sql,-1,$offset,$inputArr);
 		}
+		
+		return $rs;
+	}
 	
 };
  

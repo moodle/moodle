@@ -7,7 +7,7 @@
 
 <body>
 <h3>The ADOdb Performance Monitoring Library</h3>
-<p>V4.11 27 Jan 2004 (c) 2000-2004 John Lim (jlim#natsoft.com.my)</p>
+<p>V4.20 22 Feb 2004 (c) 2000-2004 John Lim (jlim#natsoft.com.my)</p>
 <p><font size="1">This software is dual licensed using BSD-Style and LGPL. This 
   means you can use it in compiled proprietary and commercial products.</font></p>
   <p>Useful ADOdb links:  <a href=http://php.weblogs.com/adodb?perf=1>Download</a> &nbsp; <a href=http://php.weblogs.com/adodb_manual?perf=1>Other Docs</a>
@@ -27,6 +27,7 @@
       <li>a list of all tables in the current database</li>
       <li>an interface to continiously poll the server for key performance indicators 
         such as CPU, Hit Ratio, Disk I/O</li>
+		<li>a form where you can enter and run SQL interactively.</li>
     </ul>
   <li>Gives you an API to build database monitoring tools for a server farm, for 
     example calling <code>$perf->DBParameter('data cache hit ratio')</code> returns 
@@ -84,7 +85,13 @@ Thx to Fernando Ortiz for the informix module.
 <p><font face="Courier New, Courier, mono">function <b>UI($pollsecs=5)</b></font></p>
 <p>Creates a web-based user interface for performance monitoring. When you click on Poll, 
 server statistics will be displayed every $pollsecs seconds.  See <a href="#usage">Usage</a> 
-  above. Sample output follows below:</p>
+  above. 
+  <p>Since 4.11, we allow users to enter and run SQL interactively via the "Run SQL" link. To disable
+  this for security reasons, set this constant before calling $perf->UI().
+  <p>
+    <pre>define('ADODB_PERF_NO_RUN_SQL',1);</pre>
+  
+ <p>Sample output follows below:</p>
 
 <table border=1 width=100% bgcolor=lightyellow><tr>
     <td> <b><a href=http://php.weblogs.com/adodb?perf=1>ADOdb</a> Performance 

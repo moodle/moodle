@@ -1,7 +1,7 @@
 <?php
 /*
 
-  version V4.11 27 Jan 2004 (c) 2000-2004 John Lim. All rights reserved.
+  version V4.20 22 Feb 2004 (c) 2000-2004 John Lim. All rights reserved.
 
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
@@ -218,7 +218,7 @@ NATSOFT.DOMAIN =
 	
 	function _affectedrows()
 	{
-		if (is_resource($this->_stmt)) return OCIRowCount($this->_stmt);
+		if (is_resource($this->_stmt)) return @OCIRowCount($this->_stmt);
 		return 0;
 	}
 	
@@ -600,12 +600,12 @@ NATSOFT.DOMAIN =
 	
 		$stmt = OCIParse($this->_connectionID,$sql);
 
-		if (!$stmt) return $sql; // error in statement, let Execute() handle the error
-		
+		if (!$stmt) return false;
+
 		$BINDNUM += 1;
 		
 		if (@OCIStatementType($stmt) == 'BEGIN') {
-			return array($sql,$stmt,0,$BINDNUM, ($cursor) ? false : OCINewCursor($this->_connectionID));
+			return array($sql,$stmt,0,$BINDNUM, ($cursor) ? OCINewCursor($this->_connectionID) : false);
 		} 
 		
 		return array($sql,$stmt,0,$BINDNUM);
@@ -1111,7 +1111,7 @@ class ADORecordset_oci8 extends ADORecordSet {
 
 	function _fetch() 
 	{
-		return OCIfetchinto($this->_queryID,$this->fields,$this->fetchMode);
+		return @OCIfetchinto($this->_queryID,$this->fields,$this->fetchMode);
 	}
 
 	/*		close() only needs to be called if you are worried about using too much memory while your script

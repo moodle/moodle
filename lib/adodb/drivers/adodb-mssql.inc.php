@@ -1,6 +1,6 @@
 <?php
 /* 
-V4.11 27 Jan 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
+V4.20 22 Feb 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. 
@@ -574,7 +574,14 @@ order by constraint_name, referenced_table_name, keyno";
 				if (is_string($v)) {
 					$len = strlen($v);
 					if ($len == 0) $len = 1;
-					$decl .= "@P$i NVARCHAR($len)";
+					
+					if ($len > 4000 ) {
+						// NVARCHAR is max 4000 chars. Let's use NTEXT
+						$decl .= "@P$i NTEXT";
+					} else {
+						$decl .= "@P$i NVARCHAR($len)";
+					}
+
 					$params .= "@P$i=N". (strncmp($v,"'",1)==0? $v : $this->qstr($v));
 				} else if (is_integer($v)) {
 					$decl .= "@P$i INT";

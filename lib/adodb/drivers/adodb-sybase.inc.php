@@ -1,6 +1,6 @@
 <?php
 /* 
-V4.11 27 Jan 2004  (c) 2000-2004 John Lim. All rights reserved.
+V4.20 22 Feb 2004  (c) 2000-2004 John Lim. All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. 
@@ -32,13 +32,10 @@ class ADODB_sybase extends ADOConnection {
 	where o.name='%s'";
 	*/
 	var $concat_operator = '+'; 
-	var $sysDate = 'GetDate()';
 	var $arrayClass = 'ADORecordSet_array_sybase';
 	var $sysDate = 'GetDate()';
 	var $leftOuter = '*=';
 	var $rightOuter = '=*';
-	
-	
 	
 	function ADODB_sybase() 
 	{			
