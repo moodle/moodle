@@ -8,6 +8,7 @@
 
     $id          = optional_param('id', 0, PARAM_INT);
     $name        = optional_param('name');
+    $idnumber    = optional_param('idnumber');
     $blockaction = optional_param('blockaction');
 
     if (empty($id) && empty($name)) {
@@ -17,6 +18,10 @@
     if (!empty($name)) {
         if (! ($course = get_record('course', 'shortname', $name)) ) {
             error('Invalid short course name');
+        }
+    } else if (!empty($idnumber)) {
+        if (! ($course = get_record('course', 'idnumber', $idnumber)) ) {
+            error('Invalid course idnumber');
         }
     } else {
         if (! ($course = get_record('course', 'id', $id)) ) {
