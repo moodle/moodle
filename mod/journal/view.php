@@ -43,13 +43,13 @@
         $entrycount = journal_count_entries($journal, $currentgroup);
 
         echo "<p align=\"right\"><a href=\"report.php?id=$cm->id\">".
-              get_string("viewallentries","journal", $entrycount)."</a>$groupname</p>";
+              get_string('viewallentries','journal', $entrycount)."</a>$groupname</p>";
 
     } else if (!$cm->visible) {
-        notice(get_string("activityiscurrentlyhidden"));
+        notice(get_string('activityiscurrentlyhidden'));
     }
 
-    echo "<center>\n";
+    echo '<center>';
 
     $journal->intro = trim($journal->intro);
 
@@ -57,11 +57,11 @@
         print_simple_box( format_text($journal->intro,  $journal->introformat), 'center', '70%', '', 5, 'generalbox', 'intro');
     }
 
-    echo "<br />";
+    echo '<br />';
 
     $timenow = time();
 
-    if ($course->format == "weeks" and $journal->days) {
+    if ($course->format == 'weeks' and $journal->days) {
         $timestart = $course->startdate + (($cw->section - 1) * 604800);
         if ($journal->days) {
             $timefinish = $timestart + (3600 * 24 * $journal->days);
@@ -77,59 +77,61 @@
 
     if ($timenow > $timestart) {
 
-        print_simple_box_start("center");
+        print_simple_box_start('center');
 
         if ($timenow < $timefinish) {
-            $options = array ("id" => "$cm->id");
-            echo "<center>";
+            $options = array ('id' => "$cm->id");
+            echo '<center>';
             if (!isguest()) {
-                print_single_button("edit.php", $options, get_string("startoredit","journal"));
+                print_single_button('edit.php', $options, get_string('startoredit','journal'));
             }
-            echo "</center>";
+            echo '</center>';
         }
 
 
-        if ($entry = get_record("journal_entries", "userid", $USER->id, "journal", $journal->id)) {
+        if ($entry = get_record('journal_entries', 'userid', $USER->id, 'journal', $journal->id)) {
 
             if (empty($entry->text)) {
-                echo "<p align=\"center\"><b>".get_string("blankentry","journal")."</b></p>";
+                echo '<p align="center"><b>'.get_string('blankentry','journal').'</b></p>';
             } else {
                 echo format_text($entry->text, $entry->format);
             }
 
         } else {
-            echo "<b><i>".get_string("notstarted","journal")."</i></b>";
+            echo '<span class="warning">'.get_string('notstarted','journal').'</span>';
         }
 
         print_simple_box_end();
 
         if ($timenow < $timefinish) {
             if ($entry->modified) {
-                echo "<p><font size=\"-2\"><b>".get_string("lastedited").":</b> ";
+                echo '<div class="lastedit"><strong>'.get_string('lastedited').':</strong> ';
                 echo userdate($entry->modified);
-                echo " (".get_string("numwords", "", count_words($entry->text)).")";
-                echo "</font></p>";
+                echo ' ('.get_string('numwords', '', count_words($entry->text)).')';
+                echo "</div>";
             }
             if ($journal->days) {
-                echo "<p><font size=\"-2\"><b>".get_string("editingends", "journal").":</b> ";
-                echo userdate($timefinish)."</font></p>";
+                echo '<div class="editend"><strong>'.get_string('editingends', 'journal').':</strong> ';
+                echo userdate($timefinish).'</div>';
             }
         } else {
-            echo "<p><font size=\"-2\"><b>".get_string("editingended", "journal").":</b> ";
-            echo userdate($timefinish)."</p>";
+            echo '<div class="editend"><strong>'.get_string('editingended', 'journal').':</strong> ';
+            echo userdate($timefinish).'</div>';
         }
 
         if ($entry->comment or $entry->rating) {
             $grades = make_grades_menu($journal->assessed);
-            print_heading(get_string("feedback"));
+            print_heading(get_string('feedback'));
             journal_print_feedback($course, $entry, $grades);
         }
 
 
     } else {
-        echo "<p><b>".get_string("notopenuntil", "journal").": ";
-        echo userdate($timestart)."</b></p>";
+        echo '<div class="warning">'.get_string('notopenuntil', 'journal').': ';
+        echo userdate($timestart).'</div>';
     }
+
+    echo '</center>';
 
     print_footer($course);
 

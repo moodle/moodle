@@ -516,35 +516,39 @@ function journal_delete_instance($id) {
 function journal_print_feedback($course, $entry, $grades) {
     global $CFG, $THEME;
 
-    if (! $teacher = get_record("user", "id", $entry->teacher)) {
-        error("Weird journal error");
+    if (! $teacher = get_record('user', 'id', $entry->teacher)) {
+        error('Weird journal error');
     }
 
-    echo "\n<table border=\"0\" cellpadding=\"1\" cellspacing=\"1\" align=\"center\"><tr><td bgcolor=#888888>";
-    echo "\n<table border=\"0\" cellpadding=\"3\" cellspacing=\"0\" valign=\"top\">";
+//    echo "\n<table border=\"0\" cellpadding=\"3\" cellspacing=\"0\" valign=\"top\">";
+    echo '<table cellspacing="0" class="feedbackbox"';
 
-    echo "\n<tr>";
-    echo "\n<td rowspan=\"3\" bgcolor=\"$THEME->body\" width=\"35\" valign=\"top\">";
+    echo '<tr>';
+    echo '<td class="left picture">';
     print_user_picture($teacher->id, $course->id, $teacher->picture);
-    echo "</td>";
-    echo "<td nowrap=\"nowrap\" width=\"100%\" bgcolor=\"$THEME->cellheading\">".fullname($teacher);
-    echo "&nbsp;&nbsp;<font size=\"2\"><i>".userdate($entry->timemarked)."</i>";
-    echo "</tr>";
+    echo '</td>';
+    echo '<td class="entryheader">';
+//    echo "<td nowrap=\"nowrap\" width=\"100%\" bgcolor=\"$THEME->cellheading\">";
+    echo '<span class="author">'.fullname($teacher).'</span>';
+    echo '&nbsp;&nbsp;<span class="time">'.userdate($entry->timemarked).'</span>';
+    echo '</tr>';
 
-    echo "\n<tr><td width=\"100%\" bgcolor=\"$THEME->cellcontent\">";
+    echo '<tr>';
+    echo '<td class="left side">&nbsp;</td>';
+    echo '<td class="entrycontent">';
 
-    echo "<p align=\"right\"><font size=\"-1\"><i>";
-    if ($grades[$entry->rating]) {
-        echo get_string("grade").": ";
+    echo '<div class="grade">';
+    
+    if (!empty($entry->rating) and !empty($grades[$entry->rating])) {
+        echo get_string('grade').': ';
         echo $grades[$entry->rating];
     } else {
-        print_string("nograde");
+        print_string('nograde');
     }
-    echo "</i></font></p>";
+    echo '</div>';
 
     echo format_text($entry->comment);
-    echo "</td></tr></table>";
-    echo "</td></tr></table>";
+    echo '</td></tr></table>';
 }
 
 ?>
