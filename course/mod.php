@@ -3,6 +3,7 @@
 //  Moves, adds, updates or deletes modules in a course
 
     require("../config.php");
+    require("lib.php");
 
     if (isset($course) && isset($HTTP_POST_VARS)) {    // add or update form submitted
         $mod = (object)$HTTP_POST_VARS;
@@ -131,6 +132,8 @@
             error("This module doesn't exist");
         }
 
+        $section = $SECTION[$course->format];
+
         if (! $form = get_record($module->name, "id", $cm->instance)) {
             error("The required instance of this module doesn't exist");
         }
@@ -147,7 +150,7 @@
         $form->instance   = $cm->instance;
         $form->mode       = "update";
 
-        $pageheading = "Updating a $module->fullname in Week $cw->week";
+        $pageheading = "Updating a ".strtolower($module->fullname)." in $section $cw->week";
 
         
     } else if (isset($add)) {
@@ -164,6 +167,8 @@
             error("This course doesn't exist");
         }
 
+        $section = $SECTION[$course->format];
+
         if (! $module = get_record("modules", "name", $add)) {
             error("This module type doesn't exist");
         }
@@ -176,9 +181,9 @@
         $form->mode       = "add";
 
         if ($form->week) {
-            $pageheading = "Adding a new $module->fullname to Week $form->week";
+            $pageheading = "Adding a new ".strtolower($module->fullname)." to $section $form->week";
         } else {
-            $pageheading = "Adding a new $module->fullname";
+            $pageheading = "Adding a new ".strtolower($module->fullname);
         }
 
     } else {

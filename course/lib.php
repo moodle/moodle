@@ -8,6 +8,12 @@ $FORMATS = array (
              "3" => "Topics layout"
            );
 
+$SECTION = array (
+             "1" => "week",
+             "2" => "section",
+             "3" => "topic"
+           );
+
 
 function print_log_selector_form($course, $selecteduser=0, $selecteddate="today") {
 
