@@ -1144,7 +1144,7 @@ function get_my_courses($userid, $sort="c.fullname ASC") {
 }
 
 
-function get_courses_search($search, $sort="fullname ASC", $page=0, $recordsperpage=50) {
+function get_courses_search($searchterms, $sort="fullname ASC", $page=0, $recordsperpage=50, &$totalcount) {
 /// Returns a list of courses that match a search
 
     global $CFG;
@@ -1162,39 +1162,55 @@ function get_courses_search($search, $sort="fullname ASC", $page=0, $recordsperp
 
     //to allow caseinsensitive search for postgesql
     if ($CFG->dbtype == "postgres7") {
-       $LIKE = "ILIKE";
+        $LIKE = "ILIKE";
+        $NOTLIKE = "NOT ILIKE";   // case-insensitive
+        $REGEXP = "~*";
+        $NOTREGEXP = "!~*";
     } else {
-       $LIKE = "LIKE";
+        $LIKE = "LIKE";
+        $NOTLIKE = "NOT LIKE";
+        $REGEXP = "REGEXP";
+        $NOTREGEXP = "NOT REGEXP";
     }
 
     $fullnamesearch = "";
     $summarysearch = "";
 
-    $searchterms = explode(" ", $search);     // Search for words independently
-
     foreach ($searchterms as $searchterm) {
         if ($fullnamesearch) {
             $fullnamesearch .= " AND ";
         }
-        $fullnamesearch .= " fullname $LIKE '%$searchterm%' ";
-
         if ($summarysearch) {
             $summarysearch .= " AND ";
         }
-        $summarysearch .= " summary $LIKE '%$searchterm%' ";
+
+        if (substr($searchterm,0,1) == "+") {
+            $searchterm = substr($searchterm,1);
+            $summarysearch .= " summary $REGEXP '(^|[^a-zA-Z0-9])$searchterm([^a-zA-Z0-9]|$)' ";
+            $fullnamesearch .= " fullname $REGEXP '(^|[^a-zA-Z0-9])$searchterm([^a-zA-Z0-9]|$)' ";
+        } else if (substr($searchterm,0,1) == "-") {
+            $searchterm = substr($searchterm,1);
+            $summarysearch .= " summary $NOTREGEXP '(^|[^a-zA-Z0-9])$searchterm([^a-zA-Z0-9]|$)' ";
+            $fullnamesearch .= " fullname $NOTREGEXP '(^|[^a-zA-Z0-9])$searchterm([^a-zA-Z0-9]|$)' ";
+        } else {
+            $summarysearch .= " summary $LIKE '%$searchterm%' ";
+            $fullnamesearch .= " fullname $LIKE '%$searchterm%' ";
+        }
+
     }
 
+    $selectsql = "{$CFG->prefix}course WHERE ($fullnamesearch OR $summarysearch)";
 
-    $courses = get_records_sql("SELECT * 
-                                  FROM {$CFG->prefix}course
-                                 WHERE ($fullnamesearch OR $summarysearch)
-                              ORDER BY $sort $limit");
+    $totalcount = count_records_sql("SELECT COUNT(*) FROM $selectsql");
+
+    $courses = get_records_sql("SELECT * FROM $selectsql ORDER BY $sort $limit"); 
 
     if ($courses) {  /// Remove unavailable courses from the list
         foreach ($courses as $key => $course) {
             if (!$course->visible) {
                 if (!isteacher($course->id)) {
                     unset($courses[$key]);
+                    $totalcount--;
                 }
             }
         }

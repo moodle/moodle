@@ -11,6 +11,16 @@
 
     $search = trim(strip_tags($search));
 
+    if ($search) {
+        $searchterms = explode(" ", $search);    // Search for words independently
+        foreach ($searchterms as $key => $searchterm) {
+            if (strlen($searchterm) < 2) {
+                unset($searchterms[$key]);
+            }
+        }
+        $search = trim(implode(" ", $searchterms));
+    }
+
     $site = get_site();
 
     if (empty($THEME->custompix)) {
@@ -31,44 +41,50 @@
     if (!$search) {
         print_header("$site->fullname : $strsearch", $site->fullname, 
                      "<a href=\"index.php\">$strcourses</a> -> $strsearch", "", "");
-        print_course_search();
+        print_simple_box_start("center");
+        echo "<center>";
+        echo "<br />";
+        print_course_search("", false, "plain");
+        echo "<br /><p>";
+        print_string("searchhelp");
+        echo "</p>";
+        echo "</center>";
+        print_simple_box_end();
         print_footer();
         exit;
     }
 
-    print_header("$site->fullname : $strsearchresults", $site->fullname, 
-                 "<a href=\"index.php\">$strcourses</a> -> $strsearchresults -> '$search'", "", "");
+    $searchform = print_course_search($search, true, "navbar");
 
-    print_heading("$strsearchresults");
+    print_header("$site->fullname : $strsearchresults", $site->fullname, 
+                 "<a href=\"index.php\">$strcourses</a> -> <a href=\"search.php\">$strsearch</a> -> '$search'", "", "", "", $searchform);
+
 
     $lastcategory = -1;
-    if ($courses = get_courses_search($search, "category ASC, sortorder DESC", $page*$perpage, $perpage)) {
+    if ($courses = get_courses_search($searchterms, "fullname ASC", 
+                                      $page*$perpage, $perpage, $totalcount)) {
+
+        print_heading("$strsearchresults: $totalcount");
+
+        echo "<center>";
+        print_paging_bar($totalcount, $page, $perpage, "search.php?search=$search&perpage=$perpage&");
+        echo "</center>";
+
         foreach ($courses as $course) {
-            if ($course->category != $lastcategory) {
-                $lastcategory = $course->category;
-                echo "<br /><p align=\"center\">";
-                echo "<a href=\"category.php?id=$course->category\">";
-                echo $displaylist[$course->category];
-                echo "</a></p>";
-            }
             $course->fullname = highlight("$search", $course->fullname);
             $course->summary = highlight("$search", $course->summary);
+            $course->summary .= "<br /><p align=\"right\">";
+            $course->summary .= "$strcategory: <a href=\"category.php?id=$course->category\">";
+            $course->summary .= $displaylist[$course->category];
+            $course->summary .= "</a></p>";
             print_course($course);
             print_spacer(5,5);
         }
 
-        if (count($courses) == $perpage) {
-            $options = array();
-            $options["search"] = $search;
-            $options["page"] = $page+1;
-            $options["perpage"] = $perpage;
-            echo "<center>";
-            echo "<br />";
-            print_single_button("search.php", $options, get_string("findmorecourses"));
-            echo "</center>";
-        } else {
-            print_heading(get_string("nomorecourses", "", $search));
-        }
+        echo "<center>";
+        print_paging_bar($totalcount, $page, $perpage, "search.php?search=$search&perpage=$perpage&");
+        echo "</center>";
+
     } else {
         print_heading(get_string("nocoursesfound", "", $search));
     }

@@ -1122,17 +1122,32 @@ function print_my_moodle() {
 }
 
 
-function print_course_search($value="") {
+function print_course_search($value="", $return=false, $format="plain") {
 
     global $CFG;
 
     $strsearchcourses= get_string("searchcourses");
 
-    echo "<center><p align=\"center\" class=\"coursesearchbox\">";
-    echo "<form name=\"coursesearch\" action=\"$CFG->wwwroot/course/search.php\" method=\"get\">";
-    echo "<input type=\"text\" size=30 name=\"search\" value=\"$value\">";
-    echo "<input type=\"submit\" value=\"$strsearchcourses\">";
-    echo "</form></p></center>";
+    if ($format == "plain") {
+        $output  = "<center><p align=\"center\" class=\"coursesearchbox\">";
+        $output .= "<form name=\"coursesearch\" action=\"$CFG->wwwroot/course/search.php\" method=\"get\">";
+        $output .= "<input type=\"text\" size=30 name=\"search\" value=\"$value\">";
+        $output .= "<input type=\"submit\" value=\"$strsearchcourses\">";
+        $output .= "</form></p></center>";
+    } else if ($format == "navbar") {
+        $output = "<table border=0 cellpadding=0 cellspacing=0><tr><td nowrap>";
+        $output .= "<form name=\"coursesearch\" action=\"$CFG->wwwroot/course/search.php\" method=\"get\">";
+        $output .= "<input type=\"text\" size=20 name=\"search\" value=\"$value\">";
+        $output .= "<input type=\"submit\" value=\"$strsearchcourses\">";
+        $output .= "<input name=id type=hidden value=\"$course->id\">";
+        $output .= "</form>";
+        $output .= "</td></tr></table>";
+    }
+
+    if ($return) {
+        return $output;
+    }
+    echo $output;
 }
 
 /// MODULE FUNCTIONS /////////////////////////////////////////////////////////////////
