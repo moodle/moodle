@@ -62,15 +62,16 @@
 
 <tr valign="top">
 
-	<td colspan="2"><p><b><?php print_string("createuserandpass") ?>:</b></p></td>
+	<td colspan="2"><b><?php print_string("createuserandpass") ?>:</b></td>
 
 </tr>
 
+
 <tr valign="top">
 
-	<td align="right"><p><?php print_string("username") ?>:</p></td>
+	<td align="right"><?php print_string("username") ?>:</td>
 
-	<td><input type="text" name="username" size="12" value="<?php p($user->username) ?>" />
+	<td><input type="text" name="username" size="12" value="<?php p($user->username) ?>" alt="<?php print_string("username") ?>" />
 
 	<?php if (!empty($err->username)) { formerr($err->username); } ?>
 
@@ -80,9 +81,9 @@
 
 <tr valign="top">
 
-	<td align="right"><p><?php print_string("password") ?>:</p></td>
+	<td align="right"><?php print_string("password") ?>:</td>
 
-	<td><input type="password" name="password" size="12" value="<?php p($user->password) ?>" />
+	<td><input type="password" name="password" size="12" value="<?php p($user->password) ?>" alt="<?php print_string("password") ?>" />
 
 	<?php if (!empty($err->password)) { formerr($err->password); } ?>
 
@@ -104,9 +105,9 @@
 
 <tr valign="top">
 
-	<td align="right"><p><?php print_string("email") ?>:</p></td>
+	<td align="right"><?php print_string("email") ?>:</td>
 
-	<td><input type="text" name="email" size="25" value="<?php p($user->email) ?>" />
+	<td><input type="text" name="email" size="25" value="<?php p($user->email) ?>" alt="<?php print_string("email") ?>" />
 
 	<?php if (!empty($err->email)) { formerr($err->email); } ?>
 
@@ -116,9 +117,9 @@
 
 <tr valign="top">
 
-	<td align="right"><p><?php print_string("emailagain") ?>:</p></td>
+	<td align="right"><?php print_string("emailagain") ?>:</td>
 
-	<td><input type="text" name="email2" size="25" value="<?php p($user->email2) ?>" />
+	<td><input type="text" name="email2" size="25" value="<?php p($user->email2) ?>" alt="<?php print_string("emailagain") ?>" />
 
 	<?php if (!empty($err->email2)) { formerr($err->email2); } ?>
 
@@ -128,9 +129,9 @@
 
 <tr valign="top">
 
-	<td align="right"><p><?php print_string("firstname") ?>:</p></td>
+	<td align="right"><?php print_string("firstname") ?>:</td>
 
-	<td><input type="text" name="firstname" size="25" value="<?php p($user->firstname) ?>" />
+	<td><input type="text" name="firstname" size="25" value="<?php p($user->firstname) ?>" alt="<?php print_string("firstname") ?>" />
 
 	<?php if (!empty($err->firstname)) { formerr($err->firstname);} ?>
 
@@ -140,9 +141,9 @@
 
 <tr valign="top">
 
-	<td align="right"><p><?php print_string("lastname") ?>:</p></td>
+	<td align="right"><?php print_string("lastname") ?>:</td>
 
-	<td><input type="text" name="lastname" size="25" value="<?php p($user->lastname) ?>" />
+	<td><input type="text" name="lastname" size="25" value="<?php p($user->lastname) ?>" alt="<?php print_string("lastname") ?>" />
 
 	<?php if (!empty($err->lastname)) { formerr($err->lastname);} ?>
 
@@ -152,9 +153,9 @@
 
 <tr valign="top">
 
-	<td align="right"><p><?php print_string("city") ?>:</p></td>
+	<td align="right"><?php print_string("city") ?>:</td>
 
-	<td><input type="text" name="city" size="25" value="<?php p($user->city) ?>" />
+	<td><input type="text" name="city" size="25" value="<?php p($user->city) ?>" alt="<?php print_string("city") ?>" />
 
 	<?php if (!empty($err->city)) { formerr($err->city);} ?>
 
@@ -164,7 +165,7 @@
 
 <tr valign="top">
 
-	<td align="right"><p><?php print_string("country") ?>:</p></td>
+	<td align="right"><?php print_string("country") ?>:</td>
 
 	<td><?php choose_from_menu (get_list_of_countries(), "country", $user->country, get_string("selectacountry"), "", "") ?>
 

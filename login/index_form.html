@@ -22,18 +22,18 @@
             <table align="center" style="font-size: small">
               <tr> 
                 <td align="right">
-                  <p><?php print_string("username") ?>:</p>
+                  <?php print_string("username") ?>:
                 </td>
                 <td>
-                  <input type="text" name="username" size="15" value="<?php p($frm->username) ?>" /> 
+                  <input type="text" name="username" size="15" value="<?php p($frm->username) ?>" alt="<?php print_string("username") ?>" /> 
                 </td>
               </tr>
               <tr> 
                 <td align="right">
-                  <p><?php print_string("password") ?>:</p>
+                  <?php print_string("password") ?>:
                 </td>
                 <td>
-                  <input type="password" name="password" size="15" value="<?php p($frm->password) ?>" /> 
+                  <input type="password" name="password" size="15" value="<?php p($frm->password) ?>" alt="<?php print_string("password") ?>" />
                 </td>
               </tr>
             </table>
@@ -48,13 +48,11 @@
 <?php if ($CFG->guestloginbutton) {  ?>
       <hr width="80%" />
       <p><?php print_string("someallowguest") ?>:</p>
-      <p>
         <form action="index.php" method="post" name="guestlogin">
           <input type="hidden" name="username" value="guest" />
           <input type="hidden" name="password" value="guest" />
           <input type="submit" value="<?php print_string("loginguest") ?>" />
         </form>
-      </p>
 <?php } ?>
 
 <?php if ($CFG->changepassword or is_internal_auth() ) {
@@ -68,11 +66,9 @@
 ?>
       <hr width="80%" />
       <p><?php print_string("forgotten") ?></p> 
-      <p>
         <form action="<?php p($changepassword) ?>" method="get" name="changepassword">
           <input type="submit" value="<?php p($changebuttonname) ?>" />
         </form>
-      </p>
 <?php } ?>
 
     </td>
@@ -81,7 +77,7 @@
     <td width="50%" valign="top" bgcolor="<?php p($THEME->cellcontent2) ?>" class="generalbox">
 <?php     switch ($CFG->auth) {
               case "email":
-                 echo "<p>".get_string("loginsteps", "", "signup.php")."</p>";
+                 print_string("loginsteps", "", "signup.php");
 ?>
                  <div align="center">
                    <form action="signup.php" method="get" name="signup">
@@ -90,7 +86,7 @@
                  </div>
 <?php            break;
                case "none":
-                 echo "<p>".get_string("loginstepsnone")."</p>";
+                 print_string("loginstepsnone");
                  break;
                default:
                  echo format_text($CFG->auth_instructions);
