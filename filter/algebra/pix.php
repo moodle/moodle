@@ -49,30 +49,32 @@
             $texexp = '\Large ' . $texexp;
             switch (PHP_OS) {
                 case "Linux":
-                    $cmd = "$CFG->dirroot/$CFG->texfilterdir/mimetex.linux -e $pathname ". escapeshellarg($texexp);
+                    $cmd = "\"$CFG->dirroot/$CFG->texfilterdir/mimetex.linux\" -e \"$pathname\" ". escapeshellarg($texexp);
                 break;
                 case "WINNT":
                 case "WIN32":
                 case "Windows":
                     $texexp = str_replace('"','\"',$texexp);
-                    $cmd = "$CFG->dirroot/$CFG->texfilterdir/mimetex.exe -e  $pathname \"$texexp\"";
+                    $cmd = "$CFG->dirroot/$CFG->texfilterdir/mimetex.exe";
+                    $cmd = str_replace(' ','^ ',$cmd);
+                    $cmd .= " ++ -e  \"$pathname\" \"$texexp\"";
                 break;
                 case "Darwin":
-                    $cmd = "$CFG->dirroot/$CFG->texfilterdir/mimetex.darwin -e $pathname ". escapeshellarg($texexp);
+                    $cmd = "\"$CFG->dirroot/$CFG->texfilterdir/mimetex.darwin\" -e \"$pathname\" ". escapeshellarg($texexp);
                 break;
-                default:      /// To allow drop-in binaries for other platforms
-                    if (!is_executable("$CFG->dirroot/$CFG->texfilterdir/mimetex")) {
-                        echo "Make sure you have an appropriate MimeTeX binary here:\n\n"; 
-                        echo "    $CFG->dirroot/$CFG->texfilterdir/mimetex\n\n";
-                        echo "and that it has the right permissions set on it as executable program.\n\n";
-                        echo "You can get the latest binaries for your ".PHP_OS." platform from: \n\n";
-                        echo "    http://moodle.org/download/mimetex/";
-                        exit;
-                    }
-                    $cmd = "$CFG->dirroot/$CFG->texfilterdir/mimetex -e $pathname ". escapeshellarg($texexp);
-                break;
+	      default:      /// To allow drop-in binaries for other platforms
+	       if (!is_executable("$CFG->dirroot/$CFG->texfilterdir/mimetex")) {
+		echo "Make sure you have an appropriate MimeTeX binary here:\n\n"; 
+		echo "    $CFG->dirroot/$CFG->texfilterdir/mimetex\n\n";
+		echo "and that it has the right permissions set on it as executable program.\n\n";
+		echo "You can get the latest binaries for your ".PHP_OS." platform from: \n\n";
+		echo "    http://moodle.org/download/mimetex/";
+		exit;
+	      }
+	      $cmd = "$CFG->dirroot/$CFG->texfilterdir/mimetex -e $pathname ". escapeshellarg($texexp);
+	      break;
             }
-            system($cmd, $status);
+	    system($cmd, $status);
         }
     }
 
@@ -88,7 +90,8 @@
         readfile("$pathname");
     } else {
         echo "The shell command<br>$cmd<br>returned status = $status<br>\n";
-        echo "Image not found!";
+        echo "Image not found!<br>";
+	echo "Please try the <a href=\"$CFG->wwwroot/filter/algebra/algebradebug.php\">debugging script</a>";
     }
 
     exit;

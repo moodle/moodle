@@ -74,6 +74,19 @@ function outputText($texexp) {
 
 function tex2image($texexp) {
   global $CFG;
+  $error_message1 = "Your system is not configured to run mimeTeX. ";
+  $error_message1 .= "You need to download the appropriate<br> executable ";
+  $error_message1 .= "from <a href=\"http://moodle.org/download/mimetex/\">";
+  $error_message1 .= "http://moodle.org/download/mimetex/</a>, or obtain the ";
+  $error_message1 .= "C source<br> from <a href=\"http://www.forkosh.com/mimetex.zip\">";
+  $error_message1 .= "http://www.forkosh.com/mimetex.zip</a>, compile it and ";
+  $error_message1 .= "put the executable into your<br> moodle/filter/tex/ directory. ";
+  $error_message1 .= "You also need to edit your moodle/filter/tex/pix.php file<br>";
+  $error_message1 .= ' by adding the line<br><pre>       case "' . PHP_OS . "\":\n";
+  $error_message1 .= "           \$cmd = \"\\\\\"\$CFG->dirroot/\$CFG->texfilterdir/";
+  $error_message1 .= 'mimetex.' . strtolower(PHP_OS) . "\\\\\" -e \\\\\"\$pathname\\\\\" \". escapeshellarg(\$texexp);";
+  $error_message1 .= "</pre>You also need to add this to your texdebug.php file.";
+
   if ($texexp) {
        $texexp = '\Large ' . $texexp;
        $lifetime = 86400;
@@ -86,21 +99,28 @@ function tex2image($texexp) {
        if (file_exists($pathname)) {
           unlink($pathname);
        }
-       $windows = 0;
+       $commandpath = "";
+       $cmd = "";
          switch (PHP_OS) {
        case "Linux":
-           $cmd = "$CFG->dirroot/$CFG->texfilterdir/mimetex.linux -e $pathname ". escapeshellarg($texexp);
+         $commandpath="$CFG->dirroot/$CFG->texfilterdir/mimetex.linux";           
+         $cmd = "\"$CFG->dirroot/$CFG->texfilterdir/mimetex.linux\" -e \"$pathname\" ". escapeshellarg($texexp);
        break;
        case "WINNT":
        case "WIN32":
        case "Windows":
-           $windows = 1;
-           $texexp = str_replace('"','\"',$texexp);
-           $cmd = "$CFG->dirroot/$CFG->texfilterdir/mimetex.exe -e  $pathname \"$texexp\"";
+	 $commandpath="$CFG->dirroot/$CFG->texfilterdir/mimetex.exe";
+	 $texexp = str_replace('"','\"',$texexp);
+	 $cmd = str_replace(' ','^ ',$commandpath);
+	 $cmd .= " ++ -e  \"$pathname\" \"$texexp\"";
        break;
        case "Darwin":
-           $cmd = "$CFG->dirroot/$CFG->texfilterdir/mimetex.darwin -e $pathname ". escapeshellarg($texexp);
+           $commandpath="$CFG->dirroot/$CFG->texfilterdir/mimetex.darwin";
+           $cmd = "\"$CFG->dirroot/$CFG->texfilterdir/mimetex.darwin\" -e \"$pathname\" ". escapeshellarg($texexp);
        break;
+       }
+       if (!$cmd) {
+	   error($error_message1);
        }
        system($cmd, $status);
   }
@@ -115,10 +135,8 @@ function tex2image($texexp) {
            header("Content-type: $filetype");
            readfile("$pathname");
    } else {
-           if (!$windows) {
-             $ecmd = "$cmd 2>&1";
-             echo `$ecmd` . "<br>\n";
-           }
+           $ecmd = "$cmd 2>&1";
+           echo `$ecmd` . "<br>\n";
            echo "The shell command<br>$cmd<br>returned status = $status<br>\n";
 	   if ($status == 4) {
 	     echo "Status corresponds to illegal instruction<br>\n";
@@ -126,6 +144,15 @@ function tex2image($texexp) {
 	     echo "Status corresponds to bus error<br>\n";
            } else if ($status == 22) {
 	     echo "Status corresponds to abnormal termination<br>\n";
+           }
+           if (file_exists($commandpath)) {
+              echo "File size of mimetex executable  $commandpath is " . filesize($commandpath) . "<br>";
+              $handle = fopen($commandpath,"rb");
+              $contents = fread($handle,16384);
+              fclose($handle);
+              echo "The md5 checksum of the first 16384 bytes is " . md5($contents) . "<br>";
+           } else {
+              echo "mimetex executable $commandpath not found!<br>";
            }
            echo "Image not found!";
    }
@@ -135,24 +162,13 @@ function tex2image($texexp) {
 <html>
 <head><title>TeX Filter Debugger</title></head>
 <body>
-<?PHP
-  require_once("../../config.php");
-  $filename = "$CFG->dirroot/filter/tex/pix.php";
-  $PHP_OS = PHP_OS;
-  $handle = fopen($filename,"r");
-  $contents = fread($handle, filesize($filename));
-  fclose($handle);
-  if (!strpos($contents,'case "'. $PHP_OS . '":')) {
-    echo "<b>WARNING!</b> case \"$PHP_OS\": NOT found in pix.php!!!<br><br>";
-  }
-?>
   <p>Please enter an algebraic expression <b>without</b> any surrounding $$ into
        the text box below. (Click <a href="#help">here for help.</a>)
           <form action="texdebug.php" method="get"
            target="inlineframe">
             <center>
              <input type="text" name="tex" size=50
-                    value="\Large f(x)=\Bigint_{-\infty}^x~e^{-t^2}dt">
+                    value="f(x)=\Bigint_{-\infty}^x~e^{-t^2}dt">
             </center>
            <ol>
            <li>First click on this button <input type="submit" name="ShowDB" value="Show DB Entry">

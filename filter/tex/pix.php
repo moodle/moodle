@@ -48,18 +48,20 @@
             $texexp = '\Large ' . $texexp;
             switch (PHP_OS) {
                 case "Linux":
-                    $cmd = "$CFG->dirroot/$CFG->texfilterdir/mimetex.linux -e $pathname ". escapeshellarg($texexp);
+                    $cmd = "\"$CFG->dirroot/$CFG->texfilterdir/mimetex.linux\" -e \"$pathname\" ". escapeshellarg($texexp);
                 break;
                 case "WINNT":
                 case "WIN32":
                 case "Windows":
                     $texexp = str_replace('"','\"',$texexp);
-                    $cmd = "$CFG->dirroot/$CFG->texfilterdir/mimetex.exe -e  $pathname \"$texexp\"";
+                    $cmd = "$CFG->dirroot/$CFG->texfilterdir/mimetex.exe";
+                    $cmd = str_replace(' ','^ ',$cmd);
+                    $cmd .= " ++ -e  \"$pathname\" \"$texexp\"";
                 break;
                 case "Darwin":
-                    $cmd = "$CFG->dirroot/$CFG->texfilterdir/mimetex.darwin -e $pathname ". escapeshellarg($texexp);
+                    $cmd = "\"$CFG->dirroot/$CFG->texfilterdir/mimetex.darwin\" -e \"$pathname\" ". escapeshellarg($texexp);
                 break;
-                default:      /// To allow drop-in binaries for other platforms
+	        default:      /// To allow drop-in binaries for other platforms
                     if (!is_executable("$CFG->dirroot/$CFG->texfilterdir/mimetex")) {
                         echo "Make sure you have an appropriate MimeTeX binary here:\n\n"; 
                         echo "    $CFG->dirroot/$CFG->texfilterdir/mimetex\n\n";
@@ -87,7 +89,8 @@
         readfile("$pathname");
     } else {
         echo "The shell command<br>$cmd<br>returned status = $status<br>\n";
-        echo "Image not found!";
+        echo "Image not found!<br>";
+        echo "Please try the <a href=\"$CFG->wwwroot/filter/tex/texdebug.php\">debugging script</a>";
     }
 
     exit;
