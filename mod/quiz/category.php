@@ -641,7 +641,7 @@ class quiz_category_object {
        
         /// Finally delete the category itself
         if (delete_records("quiz_categories", "id", $category->id)) {
-            notify(get_string("categorydeleted", "", $category->name), 'green');
+            notify(get_string("categorydeleted", "quiz", $category->name), 'green');
         }
     }
 
@@ -757,7 +757,7 @@ class quiz_category_object {
         if (!insert_record("quiz_categories", $cat)) {
             error("Could not insert the new quiz category '$newcategory'", "category.php?id={$newcourse}");
         } else {
-            notify(get_string("categoryadded", "", $newcategory), 'green');
+            notify(get_string("categoryadded", "quiz", $newcategory), 'green');
         }
 
     }
