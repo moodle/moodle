@@ -84,12 +84,12 @@
         $backup_name = "backup";
     }
     //Calculate the format string
-    $backup_name_format = get_string("backupnameformat");
+    $backup_name_format = str_replace(" ","_",get_string("backupnameformat"));
     //If non-translated, use "%Y%m%d-%H%M"
     if (substr($backup_name_format,0,1) == "[") {
         $backup_name_format = "%%Y%%m%%d-%%H%%M";
     }
-    $backup_name .= "-".strtolower($course->shortname)."-".userdate(time(),$backup_name_format,99,false).".zip";
+    $backup_name .= str_replace(" ","_","-".strtolower($course->shortname)."-".userdate(time(),$backup_name_format,99,false).".zip");
     echo $backup_name;
     //Add as hidden name
     echo "<input type=\"hidden\" name=\"backup_name\" value=\"".$backup_name."\">";
