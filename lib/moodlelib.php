@@ -5100,7 +5100,7 @@ function address_in_subnet($addr, $subnetstr) {
  * @param string $eol ?
  * @todo Finish documenting this function
  */
-function mtrace($string, $eol="\n") {
+function mtrace($string, $eol="\n", $sleep=0) {
 
     if (defined('STDOUT')) {
         fwrite(STDOUT, $string.$eol);
@@ -5109,6 +5109,11 @@ function mtrace($string, $eol="\n") {
     }
 
     flush();
+
+    //delay to keep message on user's screen in case of subsequent redirect
+    if ($sleep) {
+        sleep($sleep);
+    }
 }
 
 //Replace 1 or more slashes or backslashes to 1 slash
