@@ -2,6 +2,8 @@
       // auth.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005010100)
 
 
+$string['auth_cas_logincas'] = 'Securised connection access';
+$string['auth_cas_invalidcaslogin'] = 'Connection failed, you are not autorised to connect to the platform.';
 $string['auth_cas_server_settings'] = 'CAS server configuration';
 $string['auth_castitle'] = 'Use a CAS server (SSO)';
 $string['auth_cas_hostname'] = 'Hostname of the CAS server <br />eg: host.domaine.fr';
