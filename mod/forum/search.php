@@ -17,7 +17,7 @@
                 unset($searchterms[$key]);
             }
         }
-        $search = trim(implode(" ", $searchterms));
+        $search = s(trim(implode(" ", $searchterms)));
     }
 
     if (! $course = get_record("course", "id", $id)) {
@@ -28,14 +28,14 @@
         require_login($course->id);
     }
 
-    add_to_log($course->id, "forum", "search", "search.php?id=$course->id&search=".urlencode(s($search)), "$search"); 
+    add_to_log($course->id, "forum", "search", "search.php?id=$course->id&search=".urlencode($search)), $search); 
 
     $strforums = get_string("modulenameplural", "forum");
     $strsearch = get_string("search", "forum");
     $strsearchresults = get_string("searchresults", "forum");
     $strpage = get_string("page");
 
-    $searchform = forum_print_search_form($course, s($search), true, "plain");
+    $searchform = forum_print_search_form($course, $search, true, "plain");
 
     if (!$search) {
         print_header("$course->shortname: $strsearch", "$course->fullname",
@@ -55,8 +55,6 @@
     }
 
     if ($search) {
-
-        $search = s($search);
 
         if (!$posts = forum_search_posts($searchterms, $course->id, $page*$perpage, $perpage, $totalcount)) {
 
