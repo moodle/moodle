@@ -61,17 +61,23 @@
     $table->align = array ("RIGHT", "LEFT", "CENTER", "CENTER");
     $table->size  = array ("35", "", "", "");
 
+    $option[0] = get_string("hide");
+    for ($i=1; $i<=8; $i++) {
+        $option[$i] = $i;
+    }
+
     echo "<FORM ACTION=teachers.php METHOD=post>";
     foreach ($teachers as $teacher) {
 
         $picture = print_user_picture($teacher->id, $course->id, $teacher->picture, false, true);
 
+        $authority = choose_from_menu ($option, "a$teacher->id", $teacher->authority, "", "", "", true);
+
         if (!$teacher->role) {
             $teacher->role = $course->teacher;
         }
 
-        $table->data[] = array ($picture, "$teacher->firstname $teacher->lastname",
-                                "<INPUT TYPE=text NAME=\"a$teacher->id\" VALUE=\"$teacher->authority\" SIZE=2>",
+        $table->data[] = array ($picture, "$teacher->firstname $teacher->lastname", $authority,
                                 "<INPUT TYPE=text NAME=\"r$teacher->id\" VALUE=\"$teacher->role\" SIZE=30>");
     }
     print_table($table);

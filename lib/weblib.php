@@ -145,7 +145,7 @@ function close_window_button() {
 }
 
 
-function choose_from_menu ($options, $name, $selected="", $nothing="choose", $script="", $nothingvalue="0") {
+function choose_from_menu ($options, $name, $selected="", $nothing="choose", $script="", $nothingvalue="0", $return=false) {
 // $options["value"]["label"]
     
     if ($nothing == "choose") {
@@ -155,26 +155,32 @@ function choose_from_menu ($options, $name, $selected="", $nothing="choose", $sc
     if ($script) {
         $javascript = "onChange=\"$script\"";
     }
-    echo "<SELECT NAME=$name $javascript>\n";
+    $output = "<SELECT NAME=$name $javascript>\n";
     if ($nothing) {
-        echo "   <OPTION VALUE=\"$nothingvalue\"\n";
+        $output .= "   <OPTION VALUE=\"$nothingvalue\"\n";
         if ($nothingvalue == $selected) {
-            echo " SELECTED";
+            $output .= " SELECTED";
         }
-        echo ">$nothing</OPTION>\n";
+        $output .= ">$nothing</OPTION>\n";
     }
     foreach ($options as $value => $label) {
-        echo "   <OPTION VALUE=\"$value\"";
+        $output .= "   <OPTION VALUE=\"$value\"";
         if ($value == $selected) {
-            echo " SELECTED";
+            $output .= " SELECTED";
         }
         if ($label) {
-            echo ">$label</OPTION>\n";
+            $output .= ">$label</OPTION>\n";
         } else {
-            echo ">$value</OPTION>\n";
+            $output .= ">$value</OPTION>\n";
         }
     }
-    echo "</SELECT>\n";
+    $output .= "</SELECT>\n";
+
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
+    }
 }   
 
 function popup_form ($common, $options, $formname, $selected="", $nothing="choose") {
