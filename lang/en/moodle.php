@@ -662,8 +662,8 @@ $string['wordforstudents'] = "Your word for Students";
 $string['wordforstudentseg'] = "eg Students, Participants etc";
 $string['wrongpassword'] = "Incorrect password for this username";
 $string['yes'] = "Yes";
-$string['yes'] = "Yes";
 $string['youaregoingtorestorefrom'] = "You are going to restore from:";
+$string['yourlastlogin'] = "Your last login was";
 $string['yourself'] = "yourself";
 $string['yourteacher'] = "your \$a";
 
