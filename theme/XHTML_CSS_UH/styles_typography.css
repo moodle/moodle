@@ -1,0 +1,327 @@
+
+/***********************
+*  typography css
+************************/
+
+
+.clearer {
+    font-size:1px;
+}
+/* basic definitions */
+font {
+    font-size:100% !important;
+}
+body {
+    font-family:"Lucida Grande", Verdana, Geneva, Lucida, Arial, Helvetica, sans-serif;
+    /*font-size:1em;*/
+    line-height:1.2em;
+    letter-spacing:0.02em;
+}
+#footer,
+#header,
+#header-home,
+#nav-bar {
+    font-size:0.8em;
+}
+
+#header-home .headermain {
+    font-size:1.5em;
+}
+
+#header .headermain {
+    font-size:1.3em;
+}
+
+.headermenu {
+    text-align:right;
+}
+
+#footer {
+    text-align:center;
+}
+#containerContent {
+    font-size:0.9em;
+    text-align:center;
+}
+.course {
+    text-align:left;
+}
+#containerPageActions {
+    text-align:left;
+}
+
+td, th {
+ 	font-family:"Lucida Grande", Verdana, Geneva, Lucida, Arial, Helvetica, sans-serif;
+	font-size:1em;
+}
+th {
+    font-weight:bold;
+}
+
+a {
+    font-family:"Lucida Grande", Verdana, Geneva, Lucida, Arial, Helvetica, sans-serif;
+    font-size:1em;
+    line-height:1.5em;
+    text-decoration:none;
+}
+
+h2 {
+	font-size:1.5em;
+    font-weight:bold;
+}
+h3 {
+	font-size:1.3em;
+    font-weight:bold;
+}
+h4 {
+	font-size:1.1em;
+    font-weight:bold;
+}
+
+#left-column,
+#right-column {
+    text-align:left;
+}
+
+#middle-column{
+    text-align:left;
+    font-size:0.9em;
+}
+
+.headingblock {
+    font-family:"Lucida Grande", Verdana, Geneva, Lucida, Arial, Helvetica, sans-serif;
+    font-size:0.9em;
+    font-weight:bold;
+}
+
+.sideblock {
+	font-family:"Lucida Grande", Verdana, Geneva, Lucida, Arial, Helvetica, sans-serif;
+	font-size:0.75em;
+}
+
+.sideblockheading {
+	font-weight:bold;
+}
+
+td.sideblockmain center, td.sideblockmain p, td.sideblockmain div {
+    text-align:left;
+}
+
+.sideblocklinks {
+	/*font-size:0.9em;*/
+}
+
+.outlineheadingblock {
+	font-family:"Lucida Grande", Verdana, Geneva, Lucida, Arial, Helvetica, sans-serif;
+	font-size:0.9em;
+	font-weight:bold;
+}
+
+.weeklydatetext {
+	font-weight:bold;
+}
+
+.noticeboxcontent {
+    text-align:center;
+}
+
+a.dimmed:link {
+    text-decoration:none;
+}
+
+a.dimmed:visited {
+    text-decoration:none;
+}
+
+a.dimmed:hover {
+    text-decoration:none;
+}
+
+.forumpostheadertopic {
+   	font-family:"Lucida Grande", Verdana, Geneva, Lucida, Arial, Helvetica, sans-serif;
+}
+
+.logininfo {
+   	font-family:"Lucida Grande", Verdana, Geneva, Lucida, Arial, Helvetica, sans-serif;
+	font-size:0.9em;
+}
+
+.homelink {
+    font-family:"Lucida Grande", Verdana, Geneva, Lucida, Arial, Helvetica, sans-serif;
+	font-size:0.9em;
+}
+
+.headermain {
+    font-weight:bold;
+}
+
+.headerhomemain {
+    font-weight:bold;
+}
+
+.headerhomemenu {
+    font-size:0.8em;
+}
+.headerhomemenu a {
+    font-size:0.8em;
+}
+
+.categoryname {
+    font-weight:bold;
+}
+
+.categorynumber {
+    font-weight:bold;
+}
+
+.courseboxinfo {
+	font-size:0.9em;
+	font-weight:bold;
+}
+
+a.autolink:link {
+    text-decoration:none;
+}
+
+a.autolink:visited {
+    text-decoration:none;
+}
+
+a.autolink:hover {
+    text-decoration:none;
+}
+
+.smallinfo {
+    font-size:1em;
+}
+.smallinfohead {
+    font-size:1em;
+}
+
+TABLE.calendarmini {
+	font-size:0.9em;
+    letter-spacing:0.1em;
+}
+
+TABLE.calendarmini TBODY TD {
+    text-align:center;
+    letter-spacing:0em;
+}
+
+TABLE.calendarmonth TBODY TD TABLE {
+	font-size:1em;
+	line-height:1.2em;
+}
+
+TABLE.calendarmonth TBODY TD DIV {
+	font-size:1em;
+	line-height:1.2em;
+}
+
+TABLE.calendarmini THEAD TD {
+    font-size:1em;
+	font-weight:bold;
+    text-align:center;
+}
+
+TABLE.calendarmonth THEAD TD {
+	text-align:center;
+	font-weight:bold;
+}
+
+.sideblockmain .cal_event { }
+
+.sideblockmain .cal_event_date { }
+
+TABLE.cal_controls td {
+	font-size:1em;
+	line-height:1.2em;
+}
+
+.mycalendar .cal_event {
+	font-weight:bold;
+}
+.mycalendar .cal_event_date {
+	font-size:0.8em;
+}
+
+.mycalendar TABLE.cal_filters { }
+
+.mycalendar .cal_filters THEAD TD { }
+
+
+.mycalendar .cal_event_table { }
+
+.mycalendar .cal_event_table THEAD {
+	text-align:center;
+	font-weight:bold;
+}
+
+.sideblockmain HR { }
+
+.mycalendar HR { }
+
+.calendarexpired {
+	font-weight:bold;
+}
+
+.calendarreferer {
+	font-weight:bold;
+}
+
+TD.cal_event_description { }
+
+.cal_popup_fg { }
+
+.cal_popup_bg { }
+
+.cal_popup_caption {
+	font-family:"Lucida Grande", Verdana, Geneva, Lucida, Arial, Helvetica, sans-serif;
+	font-size:0.8em;
+	font-weight:bold;
+}
+
+.cal_popup_close {
+    font-family:"Lucida Grande", Verdana, Geneva, Lucida, Arial, Helvetica, sans-serif;
+    font-size:75%;
+    font-weight:bold;
+}
+
+.sideblock .cal_controls {
+	font-size:0.8em;
+}
+
+.sitetopiccontent { }
+#block_course_summary .sideblockmain {
+    font-family:"Lucida Grande", Verdana, Geneva, Lucida, Arial, Helvetica, sans-serif;
+}
+#entry-page #block_course_summary {
+    line-height:1.5em;
+}
+.forum {
+    text-align:left;
+}
+.mwiki {
+    text-align:left;
+}
+
+
+
+/* glossary styles */
+
+.glossary .generaltab B, 
+.glossary .generaltabselected B {
+    font-size:0.85em;
+    font-weight:normal;
+}
+
+
+/* wiki styles */
+
+.wiki { }
+.wiki .title { }
+
+.wiki .upload {
+    font-family:"Lucida Grande", Verdana, Geneva, Lucida, Arial, Helvetica, sans-serif;
+    font-size:0.9em;
+}

@@ -1,0 +1,491 @@
+
+/***********************
+*  color css
+************************/
+
+/* basic definitions */
+font {
+    background-color:transparent;
+}
+
+body {
+    /*margin:0px;
+    padding:0px;*/
+    background-color:#FFFFFF;
+    color:#000000;
+}
+
+/*body, body td, body th, body tr {
+    background-color:#FFFFFF;
+    color:#000000;
+}*/
+
+a:link {
+    color:#1246A3;
+}
+a:visited {
+    color:#AE1107;
+}
+a:hover {
+    border-bottom-color:#EC6E0A;
+}
+
+#nav-bar a:link {
+    color:#1246A3;
+}
+
+#nav-bar a:visited {
+    color:#AE1107;
+}
+
+#nav-bar, #nav-bar td, #nav-bar input {
+    color:#000000;
+}
+
+#nav-bar hr {
+    background-color:#0B4161;
+    color:#0B4161;
+}
+
+#left-column,
+#right-column {
+    background-color:#F9FAFA;
+}
+
+#right-column .sideblockheading {
+    background-color:#FFDA9D;
+}
+
+.highlight {
+    background-color:#C0CAD4;
+}
+
+.headingblock {
+	background-color:#FFFFFF;
+    border-color:#D1D7DC;
+    border-top-color:#F68933;
+    border-left-color:#F68933;
+}
+.sideblock a:link {
+    color:#4B809E;
+}
+
+.sideblock a:visited {
+    color:#C16E28;
+}
+
+.sideblock,
+.sideblockmain,
+.sideblocklinks {
+    background-color:#F9FAFA;
+}
+
+.sideblockheading {
+    background-color:#EEF0F2;
+}
+
+.sideblock,
+.sideblockheading {
+    border-color:#D1D7DC;
+}
+
+.sideblockheading {
+    color:#666666;
+}
+
+.sideblockmain {
+    color:#666666;
+}
+
+#left-column .sideblocklinks {
+    background-color:#F9FAFA;
+    border-color:#FFFFFF;
+}
+
+#left-column td.sideblocklinks:hover,
+#left-column td.sideblocklinks:active {
+    background-color:#FFB63B;
+}
+
+.outlineheadingblock {
+	background-color:#FFFFFF;
+}
+
+.forumpost {
+    border-color:#D1D7DC;
+}
+
+.forumpostpicture {
+	background-color:#FFFFFF;
+}
+
+.forumpostside {
+    background-color:#EEF0F2;
+}
+
+.weeklyoutlineside {
+    border-color:#D1D7DC;
+}
+
+.weeklyoutlinesidehighlight {
+    border-color:#D1D7DC;
+}
+
+.weeklyoutlinesidehidden {
+    border-color:#D1D7DC;
+}
+
+.weeklyoutlinecontent {
+    border-color:#D1D7DC;
+}
+
+.weeklyoutlinecontenthighlight {
+    background-color:#FFFFFF;
+    border-color:#D1D7DC;
+}
+
+.weeklyoutlinecontenthidden {
+    background-color:#F7F6F1;
+    border-color:#D1D7DC;
+}
+
+.topicsoutlineside {
+    background-color:#FFFFFF;
+    border-color:#1580BD;
+}
+
+.topicsoutlinesidehighlight {
+    background-color:#FFC86C;
+    color:#000000;
+    border-color:#12A316;
+}
+
+.topicsoutlinesidehidden {
+    background-color:#FFFFFF;
+    border-color:#EEF0F2;
+}
+
+.topicsoutlinecontent {
+    background-color:#FFFFFF;
+    border-color:#D1D7DC;
+}
+
+.topicsoutlinecontenthighlight {
+    background-color:#FFFFFF;
+    border-color:#D1D7DC;
+}
+
+.topicsoutlinecontenthidden {
+    background-color:transparent;
+    border-color:#D1D7DC;
+}
+
+.siteinfo {
+    border-color:#D1D7DC;
+}
+
+.siteinfocontent {
+	 background-color:#EEF0F2;
+}
+
+.generalbox {
+	background-color:#FFFFFF;
+    border-color:#D1D7DC;
+}
+
+.generalboxcontent {
+    background-color:#FFFFFF;
+    border-color:#D1D7DC;
+}
+
+.noticebox {
+    border-color:#D1D7DC;
+}
+
+.feedbacktext {
+    color:#C0CAD4;
+}
+
+a.dimmed:link {
+    color:#AAAAAA;
+}
+
+a.dimmed:visited {
+    color:#AAAAAA;
+}
+
+a.dimmed:hover {
+    color:#990000;
+}
+
+.dimmed_text {
+    color:#AAAAAA;
+}
+
+.forumpostheadertopic {
+    background-color:#FFC86C}
+
+.forumpostheaderpicture {
+	background-color:#EEF0F2;
+}
+
+.forumpostheadername {
+	background-color:#EEF0F2;
+}
+
+.forumpostheaderdate {
+ 	background-color:#EEF0F2;
+}
+
+.teacheronly {
+    color:#AE1107;
+}
+
+.categorybox {
+    border-color:#D1D7DC;
+}
+
+.courseboxcontent {
+    border-color:#D1D7DC;
+}
+
+a.autolink:link {
+    background-color:transparent;
+    color:#000000;
+	border-bottom-color:#000000;
+}
+
+a.autolink:visited {
+    background-color:transparent;
+    color:#000000;
+	border-bottom-color:#000000;
+}
+
+a.autolink:hover {
+    background-color:transparent;
+    color:#000000;
+	border-bottom-color:#000000;
+}
+
+.userinfobox {
+    border-color:#D1D7DC;
+}
+
+.forumheaderlist {
+    border-color:#D1D7DC;
+}
+
+.tabledivider {
+    border-color:#C0CAD4;
+}
+
+TABLE.calendarmini {
+    border-color:#C0CAD4;
+}
+
+TABLE.calendarmonth {
+    border-color:#C0CAD4;
+}
+
+TABLE.calendarmini TBODY TD {
+    border-color:#C0CAD4;
+}
+
+TABLE.calendarmonth TBODY TD {
+    background-color:#EEF0F2;
+    border-color:#C0CAD4;
+}
+
+TABLE.calendarmonth THEAD TD {
+    background-color:#EEF0F2;
+    border-bottom-color:#666666;
+}
+
+.cal_event_global {
+	background-color:#009999 !important;
+	border-color:#009999 !important;
+}
+
+.cal_event_course {
+	background-color:#ff3333 !important;
+	border-color:#ff3333 !important;
+}
+
+.cal_event_group {
+	background-color:#ffcc33 !important;
+	border-color:#ffcc33 !important;
+}
+
+.cal_event_user {
+	background-color:#99ccff !important;
+	border-color:#99ccff !important;
+}
+
+.cal_duration_global {
+	border-top-color:#009999 !important;
+	border-bottom-color:#009999 !important;
+}
+
+.cal_duration_course {
+	border-top-color:#ff3333 !important;
+	border-bottom-color:#ff3333 !important;
+}
+
+.cal_duration_user {
+	border-top-color:#99ccff !important;
+	border-bottom-color:#99ccff !important;
+}
+
+.cal_duration_group {
+	border-top-color:#ffcc33 !important;
+	border-bottom-color:#ffcc33 !important;
+}
+
+.cal_weekend {
+    color:red;
+}
+
+.cal_today {
+	border-color:#666666 !important;
+}
+
+.mycalendar {
+	background-color:#EEF0F2;
+}
+
+.mycalendar TABLE.cal_filters {
+    border-color:#C0CAD4;
+}
+
+.mycalendar .cal_filters THEAD TD {
+	border-bottom-color:#666666;
+}
+
+.mycalendar .cal_event_table {
+    border-color:#C0CAD4;
+}
+
+.mycalendar .cal_event_table THEAD {
+	background-color:#EEF0F2;
+}
+
+.sideblockmain HR {
+	border-top-color:#999;
+}
+
+.mycalendar HR {
+	border-top-color:#999;
+}
+
+.calendarexpired {
+	color:red;
+}
+
+TD.cal_event_description {
+	border-left-color:#C6BDA8;
+}
+
+.cal_popup_fg {
+	background-color:#EEF0F2;
+}
+
+.cal_popup_bg {
+	background-color:#FFFFFF;
+	border-top-color:#C6BDA8;
+	border-left-color:#C6BDA8;
+	border-right-color:#663300;
+	border-bottom-color:#663300;
+}
+
+.cal_popup_caption {
+	background-color:#FFFFFF;
+}
+
+.eventfull {
+    border-color:#D1D7DC;
+}
+
+#block_course_summary .sideblockmain {
+    background-color:#F9FAFA;
+    color:#000000;
+}
+#block_glossary_random .sideblockmain {
+    /*background-color:#FFDA9D;*/
+}
+
+.sitetopic { 
+    border-color:#D1D7DC;
+}
+
+#entry-page #left-column {
+    background-color:#F9FAFA;
+}
+#entry-page .headingblock,
+#entry-page .forumpostheadertopic {
+    background-color:transparent;
+    border-color:#FFC86C;
+}
+#containerContent {
+    background-color:#EEF0F2;
+}
+#entry-page,
+.course, 
+.forum,
+.glossary,
+.mwiki .edit {
+    background-color:#FFFFFF;
+}
+.forum,
+.glossary,
+.mwiki {
+    border-color:#D1D7DC;
+}
+
+/* glossary styles */
+
+.glossary td,
+.glossary-edit td {  
+    background-color:transparent;
+}
+.glossary center center td table td,
+.glossary-edit center center td table td {  
+    background-color:#FFFFFF;
+}
+.glossary center center td,
+.glossary-edit center center td {  
+    background-color:#EEF0F2;
+}
+.glossary .generaltab {
+    background-color:#EEF0F2;
+}
+.glossary .generaltabselected {
+    background-color:#D1D7DC;
+}
+.glossary form table.generaltabselected td {
+    background-color:#FFC86C;
+}
+.glossary form table.forumpost td {
+    background-color:#F9FAFA;
+}
+
+
+/* wiki styles */
+
+.wiki {
+    border-color:#A7B1B7;
+}
+.wiki .title {
+	background-color:#EEF0F2;
+	border-color:#C6BDA8;
+}
+
+/* experiments */
+
+.topicsoutlinecontent,
+.topicsoutlinecontenthighlight,
+.topicsoutlinecontenthidden {
+    border-color:#FFC86C;
+}
+.topicsoutlinecontenthidden {
+    border-color:#FFC86C;
+}

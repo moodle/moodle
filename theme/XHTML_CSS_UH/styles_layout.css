@@ -1,0 +1,762 @@
+
+/***********************
+*  layout css
+************************/
+
+/* basic styles */
+.clearer {
+    clear:both;
+    margin:0px;
+    padding:0px;
+    height:1px;
+    border:none;
+    background:transparent;
+}
+
+/* basic definitions */
+body {
+	behavior:url(/htc/csshover.htc);
+    margin:10px;
+}
+
+h {
+    background-image:url(gradient.jpg);
+    background-position:top;
+    background-repeat:repeat-x;
+}
+
+ul {
+   margin-bottom:5px;
+   margin-top:0px;
+}
+
+form {
+    margin-bottom:0px;
+}
+a { }
+a:link { }
+a:visited { }
+a:hover {
+    text-decoration:underline;
+}
+a img {
+    border:none;
+}
+input {
+	background:transparent;
+}
+#header {
+    padding:0.1em 0.5em;
+    height:50px;
+}
+#header-home {
+    padding:1em 0.5em;
+    height:2em;
+}
+
+.headermain {
+    float:left;
+}
+
+#header .headermain {
+    margin:0.2em 0em;
+}
+
+.headermenu {
+    float:right;
+    padding:0px;
+    margin:0px,
+}
+
+#nav-bar {
+    background-image:url(farbstreifen_moodle.gif);
+    background-position:left;
+    background-repeat:no-repeat;
+    margin-bottom:0px;
+    padding:1px 0.5em;
+    height:3em;
+}
+
+#breadcrumb {
+    float:left;
+    padding-top:13px;
+    margin:0.2em 0em;
+}
+
+#navbutton {
+    float:right;
+    padding-top:13px;
+    margin:0.2em 0em;
+}
+
+#nav-bar hr {
+    height:1px;
+}
+
+#footer br {
+    display:none;
+}
+
+#header,
+#header-main,
+#nav-bar,
+#containerContent {
+    margin:0px;
+}
+
+
+#left-column, 
+#right-column {
+    margin:0px;
+    padding:0px;
+    border:0px;
+}
+#left-column br, 
+#right-column br {
+    display:none;
+}
+#left-column .sideblockmain br, 
+#right-column .sideblockmain br {
+    display:inline;
+}
+#middle-column {
+    padding:0px 15px;
+}
+h2 { }
+h3 { }
+h4 { }
+.highlight { }
+
+.headingblock {
+    border-width:1px 0px 0px 5px;
+    border-style:solid;
+}
+
+.navbar {
+    border-width:1px;
+    border-style:solid;
+}
+
+.generaltable { }
+
+.generaltableheader { }
+
+.generaltablecell { }
+
+.sideblock {
+    border-width:1px 1px 1px 1px;
+    border-style:solid;
+}
+
+.sideblockheading {
+    padding:0px;
+    border-width:1px 0px 0px 1px;
+    border-style:solid;
+}
+.sideblockheading a {
+    cursor:pointer;
+    border-bottom:none;
+}
+
+.sideblockheading a img {
+    padding-top:0.5em;
+}
+
+.sideblockmain { }
+
+.sideblocklatestnews { }
+
+.sideblockrecentactivity { }
+
+#left-column .sideblockmain {
+    padding:1px 0px;
+}
+#left-column .sideblockheading,
+#left-column .sideblock {
+    border-width:0px 0px 0px 1px;
+}
+#left-column .sideblocklinks {
+    padding-left:5px;
+    border-width:0px 0px 1px 0px;
+    border-style:solid;
+}
+#right-column .sideblock {
+    margin:1em 0em 0.5em;
+}
+.outlineheadingblock {
+    border:none;
+}
+
+.forumpost {
+    border-width:1px;
+    border-style:solid;
+}
+
+.forumpostpicture { }
+
+.forumpostside { }
+
+.forumpostmessage { }
+
+
+.weeklyoutline { }
+
+.weeklyoutlineside {
+    border-width:1px;
+    border-style:solid;
+}
+
+.weeklyoutlinesidehighlight {
+    border-width:1px;
+    border-style:solid;
+}
+
+.weeklyoutlinesidehidden {
+    border-width:1px;
+    border-style:dashed;
+}
+
+.weeklyoutlinecontent {
+    border-width:0px;
+    border-top:1px;
+    border-bottom:1px;
+    border-style:solid;
+}
+
+.weeklyoutlinecontenthighlight {
+    border-width:0px;
+    border-top:1px;
+    border-bottom:1px;
+    border-style:solid;
+}
+
+.weeklyoutlinecontenthidden {
+    border-width:0px;
+    border-top:1px;
+    border-bottom:1px;
+    border-style:dashed;
+}
+
+.weeklydatetext { }
+
+.topicsoutline { }
+
+.topicsoutlineside {
+    border-width:1px;
+    border-style:solid;
+}
+
+.topicsoutlinesidehighlight {
+    border-width:1px;
+    border-style:solid;
+}
+
+.topicsoutlinesidehidden {
+    border-width:1px;
+    border-style:solid;
+}
+
+.topicsoutlinecontent {
+    border-width:0px;
+    border-top:1px;
+    border-bottom:1px;
+    border-style:solid;
+}
+
+.topicsoutlinecontenthighlight {
+    border-width:0px;
+    border-top:1px;
+    border-bottom:1px;
+    border-style:solid;
+}
+
+.topicsoutlinecontenthidden {
+    border-width:1px;
+    border-style:solid;
+}
+
+.siteinfo {
+    border-width:1px;
+    border-style:solid;
+}
+
+.siteinfocontent { }
+
+.generalbox {
+    border-width:1px;
+    border-style:solid;
+    margin-left:auto;
+    margin-right:auto;
+}
+
+.generalboxcontent {
+    background-image:none;
+}
+
+.noticebox {
+    border-width:1px;
+    border-style:solid;
+}
+
+.noticeboxcontent { }
+
+.feedbacktext { }
+
+a.dimmed:link { }
+
+a.dimmed:visited { }
+
+a.dimmed:hover { }
+
+.dimmed_text { }
+
+.forumpostheader { }
+
+.forumpostheadertopic { }
+
+.forumpostheaderpicture { }
+
+.forumpostheadername { }
+
+.forumpostheaderreplies { }
+
+.forumpostheaderdate { }
+
+.logininfo { }
+
+.homelink { }
+
+.teacheronly { }
+
+.header { }
+
+.headermain { }
+
+.headermenu { }
+
+.headerhome { }
+
+.headerhomemain { }
+
+.headerhomemenu { }
+
+.categorybox {
+    border-width:1px; 
+    border-style:solid;
+}
+
+.categoryboxcontent { }
+
+.categoryname { }
+
+.categorynumber { }
+
+.coursename { }
+
+.coursebox { }
+
+.courseboxcontent {
+    border-width:1px;
+    border-style:solid;
+}
+
+.courseboxinfo { }
+
+.courseboxsummary { }
+
+a.autolink:link {
+	border-bottom:dashed 1px;
+	cursor:help;
+}
+
+a.autolink:visited {
+	border-bottom:dashed 1px;
+	cursor:help;
+}
+
+a.autolink:hover {
+	border-bottom:solid 1px;
+	cursor:help;
+}
+
+.userinfobox {
+    margin-bottom:5px;
+    border-width:1px;
+    border-style:solid;
+}
+
+.userinfoboxside { }
+
+.userinfoboxcontent { }
+
+.userinfoboxsummary { }
+
+.userinfoboxlinkcontent { }
+
+.generaltab { }
+
+.generaltabselected { }
+
+.forumheaderlist {
+    border-width:1px;
+    border-style:solid;
+}
+
+.smallinfo { }
+.smallinfohead { }
+
+.tabledivider {
+    border-width:1px;
+    border-style:solid;
+    border-left:0px;
+    border-right:0px;
+    border-top:0px;
+}
+
+.headingblockcontent { }
+
+TABLE.calendarmini {
+	width:100%;
+    margin:0px;
+    padding:2px;
+    border-width:1px;
+    border-style:solid;
+}
+
+TABLE.calendarmonth {
+	width:100%;
+    margin:0px;
+    padding:0px;
+    border-width:1px;
+    border-style:solid;
+}
+
+TABLE.calendarmini TBODY TD {
+    width:14%;
+    border-width:1px;
+    border-style:solid;
+    vertical-align:center;
+}
+
+TABLE.calendarmonth TBODY TD {
+    width:14%;
+    border-width:1px;
+    border-style:solid;
+    vertical-align:top;
+}
+
+TABLE.calendarmonth TBODY TD TABLE {
+	margin-top:0px;
+	margin-left:0px;
+}
+
+TABLE.calendarmonth TBODY TD TABLE TD {
+    background:none;
+    border:none;
+}
+
+TABLE.calendarmonth TBODY TD DIV {
+	margin-top:0px;
+	margin-left:0px;
+}
+
+TABLE.calendarmini THEAD TD {
+    vertical-align:center;
+}
+
+TABLE.calendarmonth THEAD TD {
+    padding-bottom:3px;
+    border-bottom:2px solid;
+    vertical-align:center;
+}
+table.quiz td {
+    padding-top:0.1em;
+    line-height:1.7em;
+}
+table.quiz input {
+    height:1.7em;
+    padding-top:0.1em;
+    vertical-align:top;
+}
+.sideblockmain .cal_event { }
+.sideblockmain .cal_event_date { }
+
+.cal_event_global {
+	border:2px solid !important;
+}
+
+.cal_event_course {
+	border:2px solid !important;
+}
+
+.cal_event_group {
+	border:2px solid !important;
+}
+
+.cal_event_user {
+	border:2px solid !important;
+}
+
+.cal_duration_global {
+	border-top:2px solid !important;
+	border-bottom:2px solid !important;
+}
+
+.cal_duration_course {
+	border-top:2px solid !important;
+	border-bottom:2px solid !important;
+}
+
+.cal_duration_user {
+	border-top:2px solid !important;
+	border-bottom:2px solid !important;
+}
+
+.cal_duration_group {
+	border-top:2px solid !important;
+	border-bottom:2px solid !important;
+}
+
+.cal_weekend { }
+
+.cal_today {
+	border:2px solid !important;
+}
+
+.mycalendar { }
+.mycalendar .cal_event { }
+.mycalendar .cal_event_date { }
+
+.mycalendar TABLE.cal_filters {
+    margin:0px;
+    padding:2px;
+	width:100%;
+    border-width:1px;
+    border-style:solid;
+}
+
+.mycalendar .cal_filters THEAD TD {
+    margin:0px;
+    padding:2px;
+	border-bottom:2px solid;
+}
+
+.mycalendar .cal_event_table {
+    margin:0px;
+    padding:2px;
+	width:100%;
+    border-width:1px;
+    border-style:solid;
+}
+
+.mycalendar .cal_event_table THEAD { }
+
+.sideblockmain HR {
+	height:1px;
+	border:none;
+	border-top:1px solid;
+	margin-top:4px;
+	margin-bottom:4px;
+}
+
+.mycalendar HR {
+	height:1px;
+	border:none;
+	border-top:1px solid;
+	margin-top:4px;
+	margin-bottom:4px;
+}
+
+.calendarexpired { }
+
+.calendarreferer { }
+
+TD.cal_event_description {
+	width:80%;
+	border-left:2px solid;
+	vertical-align:top;
+	padding:5px;
+}
+
+.cal_popup_fg { }
+
+.cal_popup_bg {
+	padding:0px;
+	margin:0px;
+	border-top:2px solid;
+	border-left:2px solid;
+	border-right:2px solid;
+	border-bottom:2px solid;
+}
+
+.cal_popup_caption { }
+
+
+.cal_popup_close {
+	margin-right:5px;
+}
+
+.sideblock .cal_controls { }
+
+
+TABLE.formtable TD {
+	padding:9px;
+}
+.eventfull {
+    border-width:1px;
+    border-style:solid;
+}
+
+.eventfullheader { }
+
+.eventfullpicture {
+    padding:8px;
+}
+
+.eventfullside { }
+
+.eventfullmessage { }
+
+#block_course_summary, #block_course_summary .sideblockmain { }
+
+#block_course_summary .sideblockmain {
+    padding:10px;
+}
+
+.sitetopic {
+    border-width:1px;
+    border-style:solid;
+}
+
+.sitetopiccontent { }
+
+#footer HR {
+    display:none;
+}
+#entry-page #left-column,
+#entry-page #left-column .sideblock
+{
+    width:250px !important;
+}
+#entry-page #middle-column
+{
+    width:auto;
+    padding:0em 2.5em;
+}
+#entry-page #right-column{
+    width:30%;
+}
+#entry-page .forumpost {
+    border-width:0px;
+    border-style:none;
+}
+#entry-page .forumpostpicture,
+#entry-page .forumpostside {
+    display:none;
+}
+#entry-page .headingblock,
+#entry-page .forumpostheadertopic {
+    padding:1em;
+    border-width:0px 0px 0px 25px;
+    border-style:solid;
+}
+#containerContent {
+    padding:0em;
+}
+#containerPageActions {
+    position:relative;
+    width:auto !important;
+    margin:auto;
+}
+.mwiki,
+.glossary,
+.forum {
+    position:relative;
+    width:45em;
+    margin-left:auto;
+    margin-right:auto;
+    border:1px solid;
+}
+#forum-post,
+#glossary-edit {
+    margin:0px;
+    width:auto;
+}
+
+#block_glossary_random .sideblockheading,
+#block_glossary_random .sideblockmain br,
+#block_glossary_random .sideblockmain b {
+    display:none;
+}
+#block_glossary_random .sideblockmain {
+    text-align:center;
+}
+
+/* glossary styles */
+
+.glossary .generaltab, 
+.glossary .generaltabselected  {
+    padding:0px 1px;
+}
+.glossary table {
+    width:100%;
+}
+
+/* wiki styles */
+
+.wiki {
+    border-width:1px;
+    border-style:solid;
+}
+.mwiki .view {
+    margin-left:auto;
+    margin-right:auto;
+    width:35em;
+}
+.mwiki .edit {
+    margin-right:auto;
+    margin-left:auto;
+    padding:0em;
+}
+.wiki .title {
+	padding:3px;
+	border:1px solid;
+}
+
+.wiki .upload {
+    padding-top:1em;
+}
+
+/******
+/ experimente
+******/
+.topicsoutlineside,
+.topicsoutlinesidehighlight,
+.topicsoutlinesidehidden {
+    border-width:0px;
+}
+.topicsoutlineside p b,
+.topicsoutlinesidehighlight p b,
+.topicsoutlinesidehidden p b {
+    display:none;
+}
+.outlineheadingblock {
+    display:none;
+}
+.topicsoutlinecontent,
+.topicsoutlinecontenthighlight,
+.topicsoutlinecontenthidden {
+    margin:0.5em 0em;
+    padding:0.5em 1em;
+    border-width:0px 0px 0px 22px;
+    border-style:solid;
+    border-color:#FFC86C;
+}
+.topicsoutlinecontenthidden {
+    border-color:#FFC86C;
+}
+.topicsoutlinecontent span,
+.topicsoutlinecontenthighlight span,
+.topicsoutlinecontenthidden span {
+    padding:1em 0em;
+}
