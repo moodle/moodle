@@ -71,6 +71,8 @@
    // chat_display_version("box", $browser);
    // chat_display_version("text", $browser);
 
+    print_heading("");
+
     print_simple_box( text_to_html($chat->intro) , "center");
 
     print_spacer(20,20);
