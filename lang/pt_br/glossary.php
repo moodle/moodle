@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.3.3 (2004052503)
+      // glossary.php - created with Moodle 1.4.2 (2004083120)
 
 
 $string['addcomment'] = 'Acrescentar comentário';
@@ -85,6 +85,8 @@ $string['entrydeleted'] = 'Item cancelado';
 $string['entryexported'] = 'Item exportado com sucesso';
 $string['entryishidden'] = '(este item está escondido)';
 $string['entryleveldefaultsettings'] = 'Configurações predefinidas';
+$string['entrysaved'] = 'este item foi salvado';
+$string['entryupdated'] = 'Este item foi atualizado';
 $string['entryusedynalink'] = 'Link automático';
 $string['explainaddentry'] = 'Adicionar um novo item ao presente glossário.<br />Conceito e definição são campos obrigatórios.';
 $string['explainall'] = 'Mostrar TODOS os itens em uma página';

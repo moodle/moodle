@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.4.1 (2004083101)
+      // moodle.php - created with Moodle 1.4.2 (2004083120)
 
 
 $string['action'] = 'Ação';
@@ -99,6 +99,7 @@ $string['backup'] = 'Backup';
 $string['backupcoursefileshelp'] = 'Se ativado os arquivos do curso serão incluidos nos backups automáticos';
 $string['backupdate'] = 'Data do Backup';
 $string['backupdetails'] = 'Detalhes do Backup';
+$string['backupfailed'] = 'Alguns cursos não foram salvados!';
 $string['backupfilename'] = 'backup';
 $string['backupfinished'] = 'Backup completado com sucesso';
 $string['backupincludemoduleshelp'] = 'Decida se você quer incluir os módulos dos cursos nos backups automáticos com ou sem os dados dos usuários.';
@@ -111,6 +112,7 @@ $string['backupnoneusersinfo'] = 'Atenção: Como você selecionou \"nenhum\" usuár
 Infelizmente o backup dos módulos exercício e workshop não é compatível com esta opção e foi desativado completamente.';
 $string['backuporiginalname'] = 'Nome do Backup ';
 $string['backupsavetohelp'] = 'Percurso completo do diretório de destinação dos arquivos de backup<br />(deixar em branco para salvar no diretório predefinido)';
+$string['backuptakealook'] = 'Por favor controle os logs de backup em: $a';
 $string['backupuserfileshelp'] = 'Decida se os arquivos dos usuários (ex. imagens dos perfis) devem ser incluidos em backups automáticos';
 $string['backupusershelp'] = 'Escolha se você quer incluir todos os usuários do servidor ou apenas aqueles específicos de cada curso';
 $string['backupversion'] = 'Versão do Backup ';
@@ -144,6 +146,17 @@ $string['choosereportfilter'] = 'Escolha um filtro para o relatório';
 $string['choosetheme'] = 'Escolher o tema';
 $string['chooseuser'] = 'Escolher um usuário';
 $string['city'] = 'Cidade/Município';
+$string['clambroken'] = 'O seu arquivo não foi enviado ao servidor em razão de problemas técnicos que dizem respeito à configuração do filtro antivirus. Tente enviar o arquivo mais tarde - estamos resolvendo este problema.';
+$string['clamdeletedfile'] = 'Este arquivo foi cancelado';
+$string['clamdeletedfilefailed'] = 'Não foi possível cancelar este arquivo';
+$string['clamemailsubject'] = '$a ::  aviso Clam AV';
+$string['clamfailed'] = 'Clam AV não funcionaou. A mensagem de erro foi $a. Eis o output de Clam:';
+$string['clamlost'] = 'Moodle está configurato para ativar 0 Clam durante o upload de arquivos mas o percurso indicado para o acesso de Clam AV, $a, não é válido.';
+$string['clamlostandactinglikevirus'] = 'Além disso, Moodle está configurado para tratar os arquivos como vírus quando Clam deixa de funcionar. Isto significa que ninguém conseguirá fazer uploads enquanto o problema não for resolvido';
+$string['clammovedfile'] = 'O arquivo foi transferido para o diretório de quarentena, o novo endereço é $a';
+$string['clammovedfilebasic'] = 'Este arquivo foi transferido para o diretório de quarentena.';
+$string['clamquarantinedirfailed'] = 'O arquivo não pôde ser transferido ao diretório de quarentena,$a. Você precisa retificar a configuração pois os arquivos infectados estão sendo cancelados. ';
+$string['clamunknownerror'] = 'Erro desconhecido com clam.';
 $string['cleaningtempdata'] = 'Limpando data temp';
 $string['clicktochange'] = 'Clicar para mudar';
 $string['closewindow'] = 'Fechar esta janela';
@@ -153,7 +166,11 @@ $string['configallowunenroll'] = 'A opção \"sim\" permite ao estudante de fazer 
 $string['configallusersaresitestudents'] = 'Considerando as atividades da página inicial do site, todos os usuários registrados devem ser autorizados a participar? Em caso de resposta afirmativa os usuários terão o perfil de estudantes nestas atividades. Em caso de resposta negativa, apenas os alunos já inscritos em cursos terão a possibilidade de participar destas atividades. Apenas os administradores e os tutores designados podem moderar as atividades da página inicial.';
 $string['configautologinguests'] = 'Os visitantes devem fazer o login automaticamente quando acessam cursos com permissão de visitas?';
 $string['configcachetext'] = 'Esta opção pode acelerar os sites muito grandes e os sites que usam filtros de texto. Cópias dos textos serão conservadas durante o período de tempo configurado. Períodos muito breves podem haver o efeito contrário e períodos excessivamente longos terão como consequência a dificuldade de visualização de novas versões das páginas (refresh).';
+$string['configclamactlikevirus'] = 'Tratar arquivos como vírus';
+$string['configclamdonothing'] = 'Considerar arquivos OK';
+$string['configclamfailureonupload'] = 'Se Clam está configurado para controlar os arquivos enviados ao servidor mas esta configuração não foi feita em modo correto ou o contrôle falha por razões desconhecidas, como o sistema deve proceder? Se você escolher \'Tratar arquivos como vírus\', estes serão transferidos para a área de quarentena ou serão cancelados. Se você escolher \'Tratar os arquivos como OK\', isto não vai acontecer. Em qualquer destas situações o administrador será informado que Clam falhou. Se você escolher \'Tratar arquivos como vírus\' e Clam falhar (por erros de path, por exemplo), TODOS os arquivos enviados ao servidor serão transferidos à area de quarentena ou serão cancelados.';
 $string['configcountry'] = 'Se você escolher um país, esta será a opção predefinida nos formulários de inscrição de novos usuários.  Para obrigar os usuários a escolherem o país, não configure esta opção.';
+$string['configdbsessions'] = 'Esta opção define o uso do database para arquivar informações sobre as sessões ativas. Isto pode ser útil em sites muito grandes com muitos acessos ou em sites instaldos em clusters de servidores. Na maioria dos sites é melhor não habilitar esta opção e deixar que o disco do servidor seja usado em lugar da base de dados. Se você mudar esta opção agora, todas as sessões de usuários ativas neste momento serão interrompidas, inclusive a sua.';
 $string['configdebug'] = 'Se você ativar a função PHP\'s error_reporting, informações endereçadas a programadores serão visualizadas como mensagens de erro.';
 $string['configdeleteunconfirmed'] = 'Se você está usando a autenticação de email, este é o período durante o qual a resposta será aceita pelos usuários. Depois deste período as contas não confirmadas serão canceladas.';
 $string['configdigestmailtime'] = 'As pessoas que escolherem o formato digest receberão todas as mensagens do dia via email em um arquivo único. Esta configuração define a ora aproximada do dia em que a mensagem será enviada (a ora exata corresponde ao primeiro cron ativado a partir deste orário).';
@@ -188,7 +205,10 @@ $string['confignoreplyaddress'] = 'Algumas das mensagens enviadas via email tem 
 $string['confignotifyloginfailures'] = 'Podem ser mandados avisos via email quando erros de login são registrados. Quem deve receber estes avisos?';
 $string['confignotifyloginthreshold'] = 'Qual é o número de notificações por usuário ou por IP adequado nos casos em que é ativada a motificação de erros de login via email?';
 $string['configopentogoogle'] = 'Permite que Google acesse o site como visitante. Além disto, quem chegar ao site a partir de um link em uma página de Google fará o login automático como visitante. Isto é aplicável apenas aos cursos che permitem o acesso a visitantes.';
+$string['configpathtoclam'] = 'Percurso de acesso a Clam AV. Algo parecido com /usr/bin/clamscan ou /usr/bin/clamdscan. Necessário para que Clam seja ativado.';
 $string['configproxyhost'] = 'Se este <B>servidor</B> usa um proxy ou firewall para o acesso à rede, indique o  hostname e a porta correspondentes.  Em caso contrário, deixe em branco.';
+$string['configquarantinedir'] = 'Nome do diretório que deve arquivar os arquivos infectados em quarentena. O diretório deve ter permissão de escritura. Se você deixar isto em branco, indicar um diretório inexistente ou que não aceita escritura, os arquivos infectados serão cancelados. Não inclua um trailing slash.';
+$string['configrunclamonupload'] = 'Usar clam AV durante o upload de arquivos? Você deve indicar um percurso de acesso correto em pathtoclam para que isto funcione. (Clam AV é um virus scanner free que pode ser obtido em http://www.clamav.net/)';
 $string['configsecureforms'] = 'Moodle pode ter um nível adicional de segurança quando recebe dados de web forms. Se isto for ativado, a variável HTTP_REFERER do browser vai ser comparada com o endereço atual do form. Em alguns casos podem surgir problemas se o usuário estiver usando um firewall configurado para eliminar o HTTP_REFERER (ex. Zonealarm). O sintoma típico é a página do form bloqueada. Se os teus usuários tiverem estes problemas com a página de ingresso, por exemplo, você pode desabilitar esta funcionalidade mas lembre-se que assim o site fica mais vulnerável a ataques ligados a senhas. Em caso de dúvidas, escolha \'Sim\'.';
 $string['configsessioncookie'] = 'Este parametro personaliza o nome do cookie usado nas sessões. Mudar o nome do cookie é util apenas quando existem mais de uma copia de Moodle implementada no mesmo website.';
 $string['configsessiontimeout'] = 'Esta variável define o período de tempo em que um usuário pode ficar inativo enquanto está conectado ao site (idle time). Ao fim deste período o usuário é automaticamente desconectado do sistema (a sessão acaba)';
@@ -322,6 +342,7 @@ $string['editcoursesettings'] = 'Editar configurações do curso';
 $string['editfiles'] = 'Editar arquivos';
 $string['editgroupprofile'] = 'Editar perfil do grupo';
 $string['editinga'] = 'Editando um $a';
+$string['editlock'] = 'Este valôr não pode ser editado!';
 $string['editmyprofile'] = 'Editar perfil';
 $string['editorbgcolor'] = 'Côr do background';
 $string['editorcleanonpaste'] = 'Limpar html de word quando colar';
@@ -446,6 +467,8 @@ $string['force'] = 'Forçar';
 $string['forcedmode'] = 'modo forçado';
 $string['forcelanguage'] = 'Forçar lingua';
 $string['forceno'] = 'Não forçar';
+$string['forcepasswordchange'] = 'Forçar mudança de senha';
+$string['forcepasswordchangehelp'] = 'Solecitar a mudança no próximo login do usuário';
 $string['forgotten'] = 'Esqueceu o seu nome de usuário ou a sua senha?';
 $string['format'] = 'Formato';
 $string['formathtml'] = 'Formato HTML';
@@ -472,6 +495,7 @@ $string['gd1'] = 'GD 1.x está instalado';
 $string['gd2'] = 'GD 2.x está instalado';
 $string['gdneed'] = 'Para ver este gráfico é preciso ter o GD instalado';
 $string['gdnot'] = 'GD não está instalado';
+$string['go'] = 'Vai';
 $string['gpl'] = 'Copyright (C) 2001-2003 Martin Dougiamas (http://dougiamas.com)
 
 This program is free software; you can redistribute it and/or modify
@@ -563,6 +587,7 @@ $string['institution'] = 'Instituição';
 $string['invalidemail'] = 'Endereço de email errado';
 $string['invalidlogin'] = 'Nome de usuário ou senha errados, por favor tente outra vez.';
 $string['ip_address'] = 'Endereço IP';
+$string['jump'] = 'Seguir';
 $string['jumpto'] = 'Seguir para...';
 $string['keep'] = 'Manter';
 $string['langltr'] = 'Direção do idioma da esquerda para a direita ';
@@ -736,7 +761,7 @@ $string['noteuserschangednonetocourse'] = 'Nota: é necessário fazer o Restore do
 $string['nothingnew'] = 'Nenhuma novidade desde o seu último acesso';
 $string['noticenewerbackup'] = 'Este arquivo de backup foi criado com Moodle $a->backuprelease ($a->backupversion) e é mais recente que a versão $a->serverrelease ($a->serverversion)atualmente instalada. A compatibilidade retroativa não pode ser garantida. É possivel que ocorram conflitos e inconsistências.';
 $string['notifyloginfailuresmessage'] = '$a->time, IP: $a->ip, Usuário: $a->info';
-$string['notifyloginfailuresmessageend'] = 'Você pode consultar estes logs em $a/course/log.php?id=1&amp;chooselog=1&amp;modid=site_errors.';
+$string['notifyloginfailuresmessageend'] = 'Você pode consultar estes logs em $a/course/log.php?id=1&chooselog=1&modid=site_errors.';
 $string['notifyloginfailuresmessagestart'] = 'Esta é uma lista dos erros de login em $a desde o último aviso';
 $string['notifyloginfailuressubject'] = '$a :: avisos de erro de login';
 $string['notincluded'] = 'Não incluído';
@@ -957,6 +982,7 @@ $string['unenrolallstudents'] = 'Cancelar inscrição de todos os estudantes';
 $string['unenrolallstudentssure'] = 'Tem certeza que quer cancelar completamente a inscrição de todos os estudantes deste curso?';
 $string['unenrolme'] = 'Cancelar a minha inscrição no curso $a';
 $string['unenrolsure'] = 'Você tem certeza que quer cancelar a inscrição de: $a ?';
+$string['unfinished'] = 'Inacabado';
 $string['unknowncategory'] = 'Categoria desconhecida';
 $string['unlimited'] = 'Ilimitado';
 $string['unpacking'] = 'Unpacking $a';
@@ -975,12 +1001,20 @@ $string['updatinga'] = 'Atualizando um $a';
 $string['updatingain'] = 'Atualizando um $a->what em $a->in';
 $string['upload'] = 'Enviar';
 $string['uploadafile'] = 'Enviar um arquivo';
+$string['uploadedfile'] = 'Arquivo enviado com sucesso';
 $string['uploadedfileto'] = 'Enviado $a->file a $a->directory';
+$string['uploadedfiletoobig'] = 'Sinto muito, este arquivo é grande demais, o limite é de $a bytes';
+$string['uploadfailednotrecovering'] = 'O envio deste arquivo ao servidor não foi possível em razão de um problema com o seguinte arquivo, $a->name.<br/>Este é o log do problema::<br />$a->problem<br />Not recovering.';
+$string['uploadfilelog'] = 'Relatório de envio do arquivo: $a';
 $string['uploadformlimit'] = 'O tamanho do arquivo é superior ao limite autorizado neste formulário';
+$string['uploadlabel'] = 'Título:';
 $string['uploadnofilefound'] = 'Nenhum arquivo foi encontrado - você tem certeza que selecionou um arquivo para enviar?';
 $string['uploadnotallowed'] = 'Não é permitido enviar arquivos';
+$string['uploadoldfilesdeleted'] = 'Os velhos arquivos da sua área de arquivos enviados foram cancelados';
 $string['uploadpartialfile'] = 'O arquivo foi carregado apenas parcialmente';
 $string['uploadproblem'] = 'Ocorreu um problema desconhecido ao enviar o arquivo \'$a\' (era muito grande?)';
+$string['uploadrenamedchars'] = 'O arquivo foi renomeado de $a->oldname para $a->newname porque continha caracteres não válidos.';
+$string['uploadrenamedcollision'] = 'O arquivo foi renomeado de $a->oldname para $a->newname havia um conflito de nomes de arquivos.';
 $string['uploadserverlimit'] = 'O tamanho do arquivo é superior ao limite autorizado pelo servidor';
 $string['uploadthisfile'] = 'Enviar este arquivo';
 $string['uploadusers'] = 'Enviar usuários';
@@ -1002,6 +1036,25 @@ $string['userzones'] = 'Zonas';
 $string['usingexistingcourse'] = 'Usando curso existente';
 $string['version'] = 'Versão';
 $string['view'] = 'Ver';
+$string['virusfound'] = 'Atenção administrador! Clam AV encontrou um vírus em um arquivo enviado por $a->user do curso $a->course. Eis o output de Clamscan:';
+$string['virusfoundlater'] = 'Um arquivo enviado ao servidor em $a->date com o nome de $a->filename no curso $a->course foi identificado como portador de vírus. Veja abaixo o que aconteceu com o arquivo indicado:
+
+$a->action
+
+Se arquivo era um trabalho sujeito a avaliação, envie uma nova versão.';
+$string['virusfoundlateradmin'] = 'Atenção! Um arquivo carregado em $a->date com o nome de $a->filename no curso $a->course pelo usuário $a->user provavelmente contém um vírus. Leia o relatório que se refere a este arquivo:
+
+$a->action
+
+O usuário também foi notificado';
+$string['virusfoundlateradminnolog'] = 'Atenção! Um arquivo com o nome de $a->filename provavelmente contém um vírus. O sistema não conseguiu identificar o usuário que fez o upload.
+
+Leia o relatório que se refere a este arquivo:
+
+$a->action';
+$string['virusfoundsubject'] = '$a: Vírus encontrado!';
+$string['virusfounduser'] = 'Foi diagnosticado um vírus no arquivo que você tentou enviar ao servidor, $a->filename . O arquivo NÃO foi enviado.';
+$string['virusplaceholder'] = 'Foi diagnosticado um vírus neste arquivo. O usuário que enviou o arquivo ao servidor foi avisado e o arquivo foi cancelado ou transferido ao diretório de quarentena.';
 $string['webpage'] = 'Página  web';
 $string['week'] = 'Semana';
 $string['weekhide'] = 'Esconda esta semana de $a';

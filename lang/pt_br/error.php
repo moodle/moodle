@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // error.php - created with Moodle 1.4.1 (2004083101)
+      // error.php - created with Moodle 1.4.2 (2004083120)
 
 
 $string['coursegroupunknown'] = 'O curso correspondente ao grupo $a não foi definido';
@@ -13,6 +13,7 @@ $string['missingfield'] = 'O campo \"$a\" está faltando';
 $string['modulerequirementsnotmet'] = 'Não foi possível instalar módulo \"$a->modulename\" ($a->moduleversion). A instalação requer uma versão de Moodle mais recente. Atualmente você está usando a versão $a->currentmoodle, mas você precisa da versão $a->requiremoodle.';
 $string['notavailable'] = 'Atualmente não é disponível';
 $string['restricteduser'] = 'Sinto muito, mas a sua conta atual, \"$a\" , não tem permissão para fazer isto.';
+$string['sessionipnomatch'] = 'Sinto muito, mas parece que o seu número de IP mudou desde o seu primeiro login. Esta medida de segurança evita o roubo da sua identidade por crackers enquanto você estiver utilizando este site. Contate o administrador do site se voc~e precisar de ajuda para resolver este problema.';
 $string['unknowncourse'] = 'Curso \"$a\" desconhecido';
 $string['usernotaddederror'] = 'Usuário \"$a\" não foi adicionado - erro indefinido';
 $string['usernotaddedregistered'] = 'Usuário \"$a\" não foi adicionado - já foi registrado antes';
