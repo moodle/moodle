@@ -10,19 +10,25 @@
     //                        (CL,pk->id)                                                   (CL,pk->id)
     //                            |                                                              |
     //             -----------------------------------------------                               |
-    //             |                        |                    |                               |
-    //             |                        |                    |                               |
-    //             |                        |                    |                               |
-    //        quiz_attempts          quiz_grades         quiz_question_grades                    |
-    //   (UL,pk->id, fk->quiz)   (UL,pk->id,fk->quiz)    (CL,pk->id,fk->quiz)                    |
-    //             |                                              |                              |
-    //             |                                              |                              |
-    //             |                                              |                              |
-    //       quiz_responses                                       |                        quiz_questions     
-    //  (UL,pk->id, fk->attempt)----------------------------------------------------(CL,pk->id,fk->category,files)
-    //                                                                                           |
-    //                                                                                           |
-    //                                                                                           |
+    //             |                        |                    |                               |.......................................
+    //             |                        |                    |                               |                                      .
+    //             |                        |                    |                               |                                      .
+    //        quiz_attempts          quiz_grades         quiz_question_grades                    |    ----quiz_question_datasets----    .
+    //   (UL,pk->id, fk->quiz)   (UL,pk->id,fk->quiz)    (CL,pk->id,fk->quiz)                    |    |  (CL,pk->id,fk->question,  |    .
+    //             |                                              |                              |    |   fk->dataset_definition)  |    .             
+    //             |                                              |                              |    |                            |    .
+    //             |                                              |                              |    |                            |    .
+    //             |                                              |                              |    |                            |    .
+    //       quiz_responses                                       |                        quiz_questions                     quiz_dataset_definitions 
+    //  (UL,pk->id, fk->attempt)----------------------------------------------------(CL,pk->id,fk->category,files)            (CL,pk->id,fk->category)   
+    //                                                                                           |                                      |
+    //                                                                                           |                                      |
+    //                                                                                           |                                      |
+    //                                                                                           |                               quiz_dataset_items
+    //                                                                                           |                            (CL,pk->id,fk->definition) 
+    //                                                                                           |                              
+    //                                                                                           |                              
+    //                                                                                           |                              
     //             --------------------------------------------------------------------------------------------------------------
     //             |             |              |              |                       |                  |                     |    
     //             |             |              |              |                       |                  |                     |
@@ -68,8 +74,12 @@
     //     - quiz_randomsamatch
     //     - quiz_match
     //     - quiz_match_sub
+    //     - quiz_calculated
     //     - quiz_answers
     //     - quiz_numerical_units
+    //     - quiz_question_datasets
+    //     - quiz_dataset_definitions
+    //     - quiz_dataset_items
     //    All this backup info have its own section in moodle.xml (QUESTION_CATEGORIES) and it's generated
     //    before every module backup standard invocation. And only if to backup quizzes has been selected !!
     //    It's invoked with quiz_backup_question_categories. (course independent).
@@ -168,6 +178,8 @@
                     $status = quiz_backup_numerical($bf,$preferences,$question->id);
                 } else if ($question->qtype == "9") {
                     $status = quiz_backup_multianswer($bf,$preferences,$question->id);
+                } else if ($question->qtype == "10") {
+                    $status = quiz_backup_calculated($bf,$preferences,$question->id);
                 }
                 //End question
                 $status =fwrite ($bf,end_tag("QUESTION",5,true));
@@ -388,8 +400,42 @@
         return $status;
     }
 
+    //This function backups the data in a calculated question (qtype=10) and its
+    //asociated data
+    function quiz_backup_calculated($bf,$preferences,$question,$level=6,$include_answers=true) {
+
+        global $CFG;
+
+        $status = true;
+
+        $calculateds = get_records("quiz_calculated","question",$question,"id");
+        //If there are calculated-s
+        if ($calculateds) {
+            //Iterate over each calculateds
+            foreach ($calculateds as $calculated) {
+                $status =fwrite ($bf,start_tag("CALCULATED",$level,true));
+                //Print calculated contents
+                fwrite ($bf,full_tag("ANSWER",$level+1,false,$calculated->answer));
+                fwrite ($bf,full_tag("TOLERANCE",$level+1,false,$calculated->tolerance));
+                fwrite ($bf,full_tag("TOLERANCETYPE",$level+1,false,$calculated->tolerancetype));
+                fwrite ($bf,full_tag("CORRECTANSWERLENGTH",$level+1,false,$calculated->correctanswerlength));
+                //Now backup numerical_units
+                $status = quiz_backup_numerical_units($bf,$preferences,$question,7);
+                //Now backup required dataset definitions and items...
+                $status = quiz_backup_datasets($bf,$preferences,$question,7);
+                //End calculated data
+                $status =fwrite ($bf,end_tag("CALCULATED",$level,true));
+            }
+            //Now print quiz_answers
+            if ($include_answers) {
+                $status = quiz_backup_answers($bf,$preferences,$question);
+            }
+        }
+        return $status;
+    }
+
     //This function backups the answers data in some question types
-    //(truefalse, shortanswer,multichoice,numerical)
+    //(truefalse, shortanswer,multichoice,numerical,calculated)
     function quiz_backup_answers($bf,$preferences,$question) {
 
         global $CFG;
@@ -442,6 +488,70 @@
 
     }
 
+    //This function backups dataset_definitions (via question_datasets) from different question types
+    function quiz_backup_datasets($bf,$preferences,$question,$level=7) {
+
+        global $CFG;
+
+        $status = true;
+
+        //First, we get the used datasets for this question
+        $question_datasets = get_records("quiz_question_datasets","question",$question,"id");
+        //If there are question_datasets
+        if ($question_datasets) {
+            $status =fwrite ($bf,start_tag("DATASET_DEFINITIONS",$level,true));
+            //Iterate over each question_dataset
+            foreach ($question_datasets as $question_dataset) {
+                $def = NULL;
+                //Get dataset_definition
+                if ($def = get_record("quiz_dataset_definitions","id",$question_dataset->datasetdefinition)) {;
+                    $status =fwrite ($bf,start_tag("DATASET_DEFINITION",$level+1,true));
+                    //Print question_dataset contents
+                    fwrite ($bf,full_tag("CATEGORY",$level+2,false,$def->category));
+                    fwrite ($bf,full_tag("NAME",$level+2,false,$def->name));
+                    fwrite ($bf,full_tag("TYPE",$level+2,false,$def->type));
+                    fwrite ($bf,full_tag("OPTIONS",$level+2,false,$def->options));
+                    fwrite ($bf,full_tag("ITEMCOUNT",$level+2,false,$def->itemcount));
+                    //Now backup dataset_entries
+                    $status = quiz_backup_dataset_items($bf,$preferences,$def->id,$level+2);
+                    //End dataset definition
+                    $status =fwrite ($bf,end_tag("DATASET_DEFINITION",$level+1,true));
+                }
+            }
+            $status =fwrite ($bf,end_tag("DATASET_DEFINITIONS",$level,true));
+        }
+
+        return $status;
+
+    }
+
+    //This function backups datases_items from dataset_definitions
+    function quiz_backup_dataset_items($bf,$preferences,$datasetdefinition,$level=9) {
+
+        global $CFG;
+
+        $status = true;
+
+        //First, we get the datasets_items for this dataset_definition
+        $dataset_items = get_records("quiz_dataset_items","definition",$datasetdefinition,"id");
+        //If there are dataset_items
+        if ($dataset_items) {
+            $status =fwrite ($bf,start_tag("DATASET_ITEMS",$level,true));
+            //Iterate over each dataset_item
+            foreach ($dataset_items as $dataset_item) {
+                $status =fwrite ($bf,start_tag("DATASET_ITEM",$level+1,true));
+                //Print question_dataset contents
+                fwrite ($bf,full_tag("NUMBER",$level+2,false,$dataset_item->number));
+                fwrite ($bf,full_tag("VALUE",$level+2,false,$dataset_item->value));
+                //End dataset definition
+                $status =fwrite ($bf,end_tag("DATASET_ITEM",$level+1,true));
+            }
+            $status =fwrite ($bf,end_tag("DATASET_ITEMS",$level,true));
+        }
+
+        return $status;
+
+    }
 
     //STEP 2. Backup quizzes and associated structures
     //    (course dependent)

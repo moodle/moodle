@@ -2,7 +2,7 @@
     //This php script contains all the stuff to backup/restore
     //quiz mods
 
-    //To see, put your terminal to 132cc
+    //To see, put your terminal to 160cc
 
     //This is the "graphical" structure of the quiz mod:
     //
@@ -10,16 +10,22 @@
     //                        (CL,pk->id)                                                   (CL,pk->id)
     //                            |                                                              |
     //             -----------------------------------------------                               |
-    //             |                        |                    |                               |
-    //             |                        |                    |                               |
-    //             |                        |                    |                               |
-    //        quiz_attempts          quiz_grades         quiz_question_grades                    |
-    //   (UL,pk->id, fk->quiz)   (UL,pk->id,fk->quiz)    (CL,pk->id,fk->quiz)                    |
-    //             |                                              |                              |
-    //             |                                              |                              |
-    //             |                                              |                              |
-    //       quiz_responses                                       |                        quiz_questions
-    //  (UL,pk->id, fk->attempt)----------------------------------------------------(CL,pk->id,fk->category,files)
+    //             |                        |                    |                               |.......................................
+    //             |                        |                    |                               |                                      .
+    //             |                        |                    |                               |                                      .
+    //        quiz_attempts          quiz_grades         quiz_question_grades                    |    ----quiz_question_datasets----    .
+    //   (UL,pk->id, fk->quiz)   (UL,pk->id,fk->quiz)    (CL,pk->id,fk->quiz)                    |    |  (CL,pk->id,fk->question,  |    .
+    //             |                                              |                              |    |   fk->dataset_definition)  |    .
+    //             |                                              |                              |    |                            |    .
+    //             |                                              |                              |    |                            |    .
+    //             |                                              |                              |    |                            |    .
+    //       quiz_responses                                       |                        quiz_questions                     quiz_dataset_definitions
+    //  (UL,pk->id, fk->attempt)----------------------------------------------------(CL,pk->id,fk->category,files)            (CL,pk->id,fk->category)
+    //                                                                                           |                                      |
+    //                                                                                           |                                      |
+    //                                                                                           |                                      |
+    //                                                                                           |                               quiz_dataset_items
+    //                                                                                           |                            (CL,pk->id,fk->definition)
     //                                                                                           |
     //                                                                                           |
     //                                                                                           |
@@ -66,8 +72,12 @@
     //     - quiz_randomsamatch
     //     - quiz_match
     //     - quiz_match_sub
+    //     - quiz_calculated
     //     - quiz_answers
     //     - quiz_numerical_units
+    //     - quiz_question_datasets
+    //     - quiz_dataset_definitions
+    //     - quiz_dataset_items
     //    All this backup info have its own section in moodle.xml (QUESTION_CATEGORIES) and it's generated
     //    before every module backup standard invocation. And only if to restore quizzes has been selected !!
     //    It's invoked with quiz_restore_question_categories. (course independent).
@@ -378,6 +388,8 @@
                     $status = quiz_restore_numerical($oldid,$newid,$que_info,$restore);
                 } else if ($question->qtype == "9") {
                     $status = quiz_restore_multianswer($oldid,$newid,$que_info,$restore);
+                } else if ($question->qtype == "10") {
+                    $status = quiz_restore_calculated($oldid,$newid,$que_info,$restore);
                 }
             } else {
                 //We are NOT creating the question, but we need to know every quiz_answers
@@ -405,6 +417,8 @@
                     //Numerical question. Nothing to remap
                 } else if ($question->qtype == "9") {
                     $status = quiz_restore_map_multianswer($oldid,$newid,$que_info,$restore);
+                } else if ($question->qtype == "10") {
+                    //Calculated question. Nothing to remap
                 }
             }
         }
@@ -972,6 +986,63 @@
         return $status;
     }
 
+    function quiz_restore_calculated ($old_question_id,$new_question_id,$info,$restore) {
+
+        global $CFG;
+
+        $status = true;
+
+        //Get the calculated-s array
+        $calculateds = $info['#']['CALCULATED'];
+
+        //Iterate over calculateds
+        for($i = 0; $i < sizeof($calculateds); $i++) {
+            $cal_info = $calculateds[$i];
+            //traverse_xmlize($cal_info);                                                                 //Debug
+            //print_object ($GLOBALS['traverse_array']);                                                  //Debug
+            //$GLOBALS['traverse_array']="";                                                              //Debug
+
+            //Now, build the QUIZ_CALCULATED record structure
+            $calculated->question = $new_question_id;
+            $calculated->answer = backup_todb($cal_info['#']['ANSWER']['0']['#']);
+            $calculated->tolerance = backup_todb($cal_info['#']['TOLERANCE']['0']['#']);
+            $calculated->tolerancetype = backup_todb($cal_info['#']['TOLERANCETYPE']['0']['#']);
+            $calculated->correctanswerlength = backup_todb($cal_info['#']['CORRECTANSWERLENGTH']['0']['#']);
+
+            ////We have to recode the answer field
+            $answer = backup_getid($restore->backup_unique_code,"quiz_answers",$calculated->answer);
+            if ($answer) {
+                $calculated->answer = $answer->new_id;
+            }
+
+            //The structure is equal to the db, so insert the quiz_calculated
+            $newid = insert_record ("quiz_calculated",$calculated);
+
+            //Do some output
+            if (($i+1) % 50 == 0) {
+                echo ".";
+                if (($i+1) % 1000 == 0) {
+                    echo "<br>";
+                }
+                backup_flush(300);
+            }
+
+            //Now restore numerical_units
+            $status = quiz_restore_numerical_units ($old_question_id,$new_question_id,$cal_info,$restore);
+
+            //Now restore dataset_definitions
+            if ($status && $newid) {
+                $status = quiz_restore_dataset_definitions ($old_question_id,$new_question_id,$cal_info,$restore);
+            }
+
+            if (!$newid) {
+                $status = false;
+            }
+        }
+
+        return $status;
+    }
+
     function quiz_restore_multianswer ($old_question_id,$new_question_id,$info,$restore) {
 
         global $CFG;
@@ -1067,9 +1138,9 @@
         //Iterate over numerical_units
         for($i = 0; $i < sizeof($numerical_units); $i++) {
             $nu_info = $numerical_units[$i];
-            traverse_xmlize($nu_info);                                                                  //Debug
-            print_object ($GLOBALS['traverse_array']);                                                  //Debug
-            $GLOBALS['traverse_array']="";                                                              //Debug
+            //traverse_xmlize($nu_info);                                                                  //Debug
+            //print_object ($GLOBALS['traverse_array']);                                                  //Debug
+            //$GLOBALS['traverse_array']="";                                                              //Debug
 
             //Now, build the QUIZ_NUMERICAL_UNITS record structure
             $numerical_unit->question = $new_question_id;
@@ -1087,6 +1158,124 @@
         return $status;
     }
 
+    function quiz_restore_dataset_definitions ($old_question_id,$new_question_id,$info,$restore) {
+
+        global $CFG;
+
+        $status = true;
+
+        //Get the dataset_definitions array
+        $dataset_definitions = $info['#']['DATASET_DEFINITIONS']['0']['#']['DATASET_DEFINITION'];
+
+        //Iterate over dataset_definitions
+        for($i = 0; $i < sizeof($dataset_definitions); $i++) {
+            $dd_info = $dataset_definitions[$i];
+            //traverse_xmlize($dd_info);                                                                  //Debug
+            //print_object ($GLOBALS['traverse_array']);                                                  //Debug
+            //$GLOBALS['traverse_array']="";                                                              //Debug
+
+            //Now, build the QUIZ_DATASET_DEFINITION record structure
+            $dataset_definition->category = backup_todb($dd_info['#']['CATEGORY']['0']['#']);
+            $dataset_definition->name = backup_todb($dd_info['#']['NAME']['0']['#']);
+            $dataset_definition->type = backup_todb($dd_info['#']['TYPE']['0']['#']);
+            $dataset_definition->options = backup_todb($dd_info['#']['OPTIONS']['0']['#']);
+            $dataset_definition->itemcount = backup_todb($dd_info['#']['ITEMCOUNT']['0']['#']);
+
+            //We have to recode the category field (only if the category != 0)
+            if ($dataset_definition->category != 0) {
+                $category = backup_getid($restore->backup_unique_code,"quiz_categories",$dataset_definition->category);
+                if ($category) {
+                    $dataset_definition->category = $category->new_id;
+                }
+            }
+
+            //Now, we hace to decide when to create the new records or reuse an existing one
+            $create_definition = false;
+            
+            //If the dataset_definition->category = 0, it's a individual question dataset_definition, so we'll create it
+            if ($dataset_definition->category == 0) {
+                $create_definition = true;
+            } else {
+                //The category isn't 0, so it's a category question dataset_definition, we have to see if it exists
+                //Look for a definition with the same category, name and type
+                if ($definitionrec = get_record_sql("SELECT d.*
+                                                     FROM {$CFG->prefix}quiz_dataset_definitions d
+                                                     WHERE d.category = '$dataset_definition->category' AND
+                                                           d.name = '$dataset_definition->name' AND
+                                                           d.type = '$dataset_definition->type'")) {
+                    //Such dataset_definition exist. Now we must check if it has enough itemcount
+                    if ($definitionrec->itemcount < $dataset_definition->itemcount) {
+                        //We haven't enough itemcount, so we have to create the definition as an individual question one.
+                        $dataset_definition->category = 0;
+                        $create_definition = true;
+                    } else {
+                        //We have enough itemcount, so we'll reuse the existing definition
+                        $create_definition = false;
+                        $newid = $definitionrec->id;
+                    }
+                } else {
+                    //Such dataset_definition doesn't exist. We'll create it.
+                    $create_definition = true;
+                }
+            }
+
+            //If we've to create the definition, do it
+            if ($create_definition) {
+                //The structure is equal to the db, so insert the quiz_dataset_definitions
+                $newid = insert_record ("quiz_dataset_definitions",$dataset_definition);
+                if ($newid) {
+                    //Restore quiz_dataset_items
+                    $status = quiz_restore_dataset_items($newid,$dd_info,$restore);
+                }
+            }
+
+            //Now, we must have a definition (created o reused). Its id is in newid. Create the quiz_question_datasets record
+            //to join the question and the dataset_definition
+            if ($newid) {
+                $question_dataset->question = $new_question_id;
+                $question_dataset->datasetdefinition = $newid;
+                $newid = insert_record ("quiz_question_datasets",$question_dataset);
+            }
+
+            if (!$newid) {
+                $status = false;
+            }
+        }
+
+        return $status;
+    }
+
+    function quiz_restore_dataset_items ($definitionid,$info,$restore) {
+        
+        global $CFG;
+        
+        $status = true;
+        
+        //Get the items array
+        $dataset_items = $info['#']['DATASET_ITEMS']['0']['#']['DATASET_ITEM'];
+        
+        //Iterate over dataset_items
+        for($i = 0; $i < sizeof($dataset_items); $i++) {
+            $di_info = $dataset_items[$i];                                                              
+            //traverse_xmlize($di_info);                                                                  //Debug
+            //print_object ($GLOBALS['traverse_array']);                                                  //Debug
+            //$GLOBALS['traverse_array']="";                                                              //Debug
+            
+            //Now, build the QUIZ_DATASET_ITEMS record structure
+            $dataset_item->definition = $definitionid;
+            $dataset_item->number = backup_todb($di_info['#']['NUMBER']['0']['#']);
+            $dataset_item->value = backup_todb($di_info['#']['VALUE']['0']['#']);
+            
+            //The structure is equal to the db, so insert the quiz_dataset_items
+            $newid = insert_record ("quiz_dataset_items",$dataset_item);
+            
+            if (!$newid) {
+                $status = false;
+            }
+        }
+        
+        return $status;
+    }
 
     //STEP 2. Restore quizzes and associated structures
     //    (course dependent)
@@ -1491,6 +1680,9 @@
                             $tok = strtok(",");
                         }
                         $response->answer = $answer_field;
+                        break;
+                    case 10:    //CALCULATED QTYPE
+                        //Nothing to do. The response is a text.
                         break;
                     default:   //UNMATCHED QTYPE.
                         //This is an error (unimplemented qtype)
