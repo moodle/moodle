@@ -233,10 +233,12 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
             else if(isset($typesbyday[$day]['startuser'])) {
                 $class .= ' event_user';
             }
-            $cell = '<div class="day"><a href="'.$dayhref.'" '.$popup.'>'.$day.'</a></div>';
+            $class .= ' day';
+            $cell = '<a href="'.$dayhref.'" '.$popup.'>'.$day.'</a>';
         }
         else {
-            $cell = '<div class="day">'.$day.'</div>';
+            $class .= ' day';
+            $cell = $day;
         }
 
         if(isset($typesbyday[$day]['durationglobal'])) {
