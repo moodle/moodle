@@ -177,7 +177,7 @@ border-bottom: 1px solid black; letter-spacing: 2px;
 </table>
 
 <div id="buttons">
-  <?php print(isteacher($id))? "<button type=\"button\" name=\"browse\" onclick=\"return onBrowse();\">".get_string("browse","editor")."</button>" : ""; ?>
+  <?php print(isteacher($id))? "<button type=\"button\" name=\"browse\" onclick=\"return onBrowse();\">".get_string("browse","editor")."...</button>" : ""; ?>
   <button type="button" name="ok" onclick="return onOK();"><?php print_string("ok","editor");?></button>
   <button type="button" name="cancel" onclick="return onCancel();"><?php print_string("cancel","editor");?></button>
 </div>

@@ -8,6 +8,7 @@ $string['absmiddle'] = 'Absmiddle';
 $string['address'] = 'Address';
 $string['alignment'] = 'Alignment';
 $string['alternatetext'] = 'Alternate text';
+$string['anchors'] = 'Anchors';
 $string['baseline'] = 'Baseline';
 $string['bold'] = 'Bold';
 $string['borderthickness'] = 'Border thickness';
