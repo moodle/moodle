@@ -116,7 +116,7 @@
             $form->numsections = 10;
             $form->newsitems = 5;
             $form->showrecent = 1;
-            $form->category = 1;
+            $form->category = 0;
             $form->id = "";
             $form->visible = 1;
         }

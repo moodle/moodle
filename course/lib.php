@@ -1097,7 +1097,7 @@ function print_my_moodle() {
             print_course($course, "100%");
             echo "<br />\n";
         }
-        echo "<p align=\"right\"><a href=\"$CFG->wwwroot/course/\">".get_string("fulllistofcourses")."</a>...</p>";
+        echo "<p align=\"center\"><a href=\"$CFG->wwwroot/course/\">".get_string("fulllistofcourses")."</a>...</p>";
     } else {
         if (count_records("course_categories") > 1) {
             print_simple_box_start("center", "100%");
