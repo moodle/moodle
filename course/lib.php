@@ -141,7 +141,7 @@ function print_recent_selector_form($course, $selecteduser=0, $selecteddate="tod
 }
 
 function print_log_selector_form($course, $selecteduser=0, $selecteddate="today",
-                                 $mod="", $modid=0, $modaction="") {
+                                 $modname="", $modid=0, $modaction="") {
 
     global $USER, $CFG;
 
@@ -278,7 +278,7 @@ function make_log_url($module, $url) {
 
 
 function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $perpage=100, 
-                   $url="", $mod="", $modid=0, $modaction="") {
+                   $url="", $modname="", $modid=0, $modaction="") {
 
 // It is assumed that $date is the GMT time of midnight for that day, 
 // and so the next 86400 seconds worth of logs are printed.
@@ -297,8 +297,8 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
         }
     }
 
-    if ($mod) {
-        $selector .= " AND l.module = '$mod'";
+    if ($modname) {
+        $selector .= " AND l.module = '$modname'";
     }
 
     if ($modid) {
