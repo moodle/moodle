@@ -1,7 +1,7 @@
 <?PHP // $Id$
 
-	require_once("../config.php");
-	require_once("../user/lib.php");
+    require_once("../config.php");
+    require_once("../user/lib.php");
     require_once("../lib/countries.php");
 
     $recordsperpage = 30;
@@ -15,6 +15,8 @@
     optional_variable($search, "");
 
     if (! record_exists("user_admins")) {   // No admin user yet
+
+        unset($user);
         $user->firstname = get_string("admin");
         $user->lastname  = get_string("user");
         $user->username  = "admin";
@@ -29,6 +31,7 @@
             error("SERIOUS ERROR: Could not create admin user record !!!");
         }
 
+        unset($admin);
         $admin->userid = $user->id;
 
         if (! insert_record("user_admins", $admin)) {
@@ -43,6 +46,7 @@
             error("Could not find site-level course");
         }
 
+        unset($teacher);
         $teacher->userid = $user->id;
         $teacher->course = $site->id;
         $teacher->authority = 1;
@@ -256,13 +260,13 @@
         }
 
         echo "<TABLE align=center cellpadding=10><TR><TD>";
-   	    echo "<FORM ACTION=user.php METHOD=POST>";
-   	    echo "<INPUT TYPE=text NAME=search VALUE=\"$search\" SIZE=20>";
-   	    echo "<INPUT TYPE=submit VALUE=\"$strsearch\">";
+        echo "<FORM ACTION=user.php METHOD=POST>";
+        echo "<INPUT TYPE=text NAME=search VALUE=\"$search\" SIZE=20>";
+        echo "<INPUT TYPE=submit VALUE=\"$strsearch\">";
         if ($search) {
             echo "<INPUT type=\"button\" onClick=\"document.location='user.php';\" value=\"$strshowallusers\">";
         }
-   	    echo "</FORM>";	
+        echo "</FORM>";    
         echo "</TD></TR></TABLE>";
 
         print_table($table);
