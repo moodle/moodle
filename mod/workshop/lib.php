@@ -1126,7 +1126,7 @@ function workshop_get_submit_logs($course, $timestart) {
     global $CFG, $USER;
     
     $timethen = time() - $CFG->maxeditingtime;
-    return get_records_sql("SELECT l.time, l.url, u.firstname, u.lastname, l.info workshopid, e.name
+    return get_records_sql("SELECT l.time, l.url, u.firstname, u.lastname, l.info as workshopid, e.name
                              FROM {$CFG->prefix}log l,
                                 {$CFG->prefix}workshop e, 
                                 {$CFG->prefix}user u
