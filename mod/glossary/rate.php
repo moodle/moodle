@@ -20,7 +20,7 @@
 
     if ($data = data_submitted("$CFG->wwwroot/mod/glossary/view.php")) {    // form submitted
 
-        foreach ($data as $entry => $rating) {
+        foreach ((array)$data as $entry => $rating) {
             if ($entry == "id") {
                 continue;
             }
@@ -32,7 +32,7 @@
                         error("Could not update an old rating ($entry = $rating)");
                     }
                 }
-            } else if ($rating) {
+                } else if ($rating >= 0) {
                 unset($newrating);
                 $newrating->userid = $USER->id;
                 $newrating->time = time();
