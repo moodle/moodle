@@ -13,6 +13,7 @@ $string['config_grade_format'] = 'Display grades as:';
 $string['config_format_percentage'] = 'Percentages';
 $string['config_format_fraction'] = 'Fractions';
 $string['config_format_absolute'] = 'Absolute numbers';
+$string['config_no_quizzes_in_course'] = 'This course does not contain any quiz activities . You must add at least one before you are able to use this block correctly.';
 $string['error_emptyquizid'] = 'There is an error right now with this block: you need to select which quiz it should display results from.';
 $string['error_emptyquizrecord'] = 'There is an error right now with this block: the selected quiz does not seem to exist in the database.';
 $string['error_nogroupsexist'] = 'There is an error right now with this block: it is set to display grades in group mode, but the course has no defined groups.';
