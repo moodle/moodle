@@ -28,6 +28,7 @@
     $strftimetime = get_string("strftimetime").":%S";
     $strerror = get_string("error");
     $strok = get_string("ok");
+    $strunfinished = get_string("unfinished");
     $strcourse = get_string("course");
     $strtimetaken = get_string("timetaken","quiz");
     $strstatus = get_string("status");
@@ -66,10 +67,12 @@
                     echo "<td nowrap><font size=2>".userdate($course->laststarttime,$strftimedatetime)."</td>";
                     echo "<td nowrap><font size=2> - </td>";
                     echo "<td nowrap><font size=2>".userdate($course->lastendtime,$strftimedatetime)."</td>";
-                    if (!$course->laststatus) {
-                        echo "<td nowrap align=center><font size=2 color=red>".$strerror."</td>";
-                    } else {
+                    if ($course->laststatus == 1) {
                         echo "<td nowrap align=center><font size=2 color=green>".$strok."</td>";
+                    } else if ($course->laststatus == 2) {
+                        echo "<td nowrap align=center><font size=2 color=red>".$strunfinished."</td>";
+                    } else {
+                        echo "<td nowrap align=center><font size=2 color=red>".$strerror."</td>";
                     }
                     echo "<td nowrap><font size=2>".userdate($course->nextstarttime,$strftimedatetime)."</td>";
                     echo "</tr>";

@@ -54,6 +54,12 @@ function schedule_backup_cron() {
         $status = false;
     }
 
+    //Delete old_entries from backup tables
+    if ($status) {
+        mtrace("    Deleting old data");
+        $status = backup_delete_old_data();
+    }
+
     //Now we get a list of courses in the server
     if ($status) {
         mtrace("    Checking courses");
@@ -79,20 +85,25 @@ function schedule_backup_cron() {
                 }
                 //Now we backup every course with nextstarttime < now
                 if ($backup_course->nextstarttime > 0 && $backup_course->nextstarttime < $now) {
-                    //Set laststarttime
-                    $starttime = time();
-                    set_field("backup_courses","laststarttime",$starttime,"courseid",$backup_course->courseid);
-                    //Launch backup
-                    $course_status = schedule_backup_launch_backup($course,$starttime);
                     //We have to send a email because we have included at least one backup
                     $emailpending = true;
-                    //Set lastendtime
-                    set_field("backup_courses","lastendtime",time(),"courseid",$backup_course->courseid);
-                    //Set laststatus
-                    if ($course_status) {
-                        set_field("backup_courses","laststatus","1","courseid",$backup_course->courseid);
-                    } else {
-                        set_field("backup_courses","laststatus","0","courseid",$backup_course->courseid);
+                    //Only make the backup if laststatus isn't 2-UNFINISHED (uncontrolled error)
+                    if ($backup_course->laststatus != 2) {
+                        //Set laststarttime
+                        $starttime = time();
+                        set_field("backup_courses","laststarttime",$starttime,"courseid",$backup_course->courseid);
+                        //Set course status to unfinished, the process will reset it
+                        set_field("backup_courses","laststatus","2","courseid",$backup_course->courseid);
+                        //Launch backup
+                        $course_status = schedule_backup_launch_backup($course,$starttime);
+                        //Set lastendtime
+                        set_field("backup_courses","lastendtime",time(),"courseid",$backup_course->courseid);
+                        //Set laststatus
+                        if ($course_status) {
+                            set_field("backup_courses","laststatus","1","courseid",$backup_course->courseid);
+                        } else {
+                            set_field("backup_courses","laststatus","0","courseid",$backup_course->courseid);
+                        }
                     }
                 }
 
@@ -117,25 +128,47 @@ function schedule_backup_cron() {
         delete_records_select("backup_log", "laststarttime < '$loglifetime'");
     }
 
-    //Send email to admin
+    //Send email to admin if necessary
     if ($emailpending) {
         mtrace("    Sending email to admin");
         $message = "";
-        //Build the message text (future versions should handle html messages too!!)
-        $logs = get_records_select ("backup_log","laststarttime >= '$now'","id");
-        if ($logs) {
-            $currentcourse = 1;
-            foreach ($logs as $log) {
-                if ($currentcourse != $log->courseid) {
-                    $message .= "\n==================================================\n\n";
-                    $currentcourse = $log->courseid;
-                }
-                $message .= userdate($log->time,"%T",$admin->timezone)." ".$log->info."\n";
-            }
+
+        //Get info about the status of courses
+        $count_all = count_records('backup_courses');
+        $count_ok = count_records('backup_courses','laststatus','1');
+        $count_error = count_records('backup_courses','laststatus','0');
+        $count_unfinished = count_records('backup_courses','laststatus','2');
+
+        //Build the message text
+        //Summary
+        $message .= get_string('summary')."\n";
+        $message .= "==================================================\n";
+        $message .= "  ".get_string('courses').": ".$count_all."\n";
+        $message .= "  ".get_string('ok').": ".$count_ok."\n";
+        $message .= "  ".get_string('error').": ".$count_error."\n";
+        $message .= "  ".get_string('unfinished').": ".$count_unfinished."\n\n";
+
+        //Reference
+        if ($count_error != 0 || $count_unfinished != 0) {
+            $message .= "  ".get_string('backupfailed')."\n\n";
+            $dest_url = $CFG->wwwroot.'/backup/log.php';
+            $message .= "  ".get_string('backuptakealook','',$dest_url)."\n\n";
+            //Reset unfinished to error
+            set_field('backup_courses','laststatus','0','laststatus','2');
+        } else {
+            $message .= "  ".get_string('backupfinished')."\n";
         }
-        //Send the message
+
+        //Build the message subject
         $site = get_site();
-        email_to_user($admin,$admin,"$site->shortname: ".get_string("scheduledbackupstatus"),$message);
+        $prefix = $site->shortname.": ";
+        if ($count_error != 0 || $count_unfinished != 0) {
+            $prefix .= "[".strtoupper(get_string('error'))."] ";
+        } 
+        $subject = $prefix.get_string("scheduledbackupstatus");
+
+        //Send the message
+        email_to_user($admin,$admin,$subject,$message);
     }
     
 
@@ -161,6 +194,7 @@ function schedule_backup_launch_backup($course,$starttime = 0) {
         schedule_backup_log($starttime,$course->id,"  Phase 2: Executing and copying:");
         $status = schedule_backup_course_execute($preferences,$starttime);
     }
+
     if ($status && $preferences) {
         //Only if the backup_sche_keep is set
         if ($preferences->backup_keep) {
@@ -168,6 +202,7 @@ function schedule_backup_launch_backup($course,$starttime = 0) {
             $status = schedule_backup_course_delete_old_files($preferences,$starttime);
         }
     }
+
     if ($status && $preferences) {
         mtrace("            End backup OK");
         schedule_backup_log($starttime,$course->id,"End backup course $course->fullname - OK");
@@ -483,12 +518,6 @@ function schedule_backup_course_execute($preferences,$starttime = 0) {
     if ($status) {
         schedule_backup_log($starttime,$preferences->backup_course,"    cleaning current dir");
         $status = clear_backup_dir($preferences->backup_unique_code);
-    }
-
-    //Delete old_entries from backup tables
-    if ($status) {
-        schedule_backup_log($starttime,$preferences->backup_course,"    cleaning old data");
-        $status = backup_delete_old_data();
     }
 
     //Create the moodle.xml file
