@@ -37,6 +37,7 @@ global $CFG;
                      COMMENT = 'To register and update all the available blocks'");
     }
 
+
     //Finally, return result
     return $result;
 }

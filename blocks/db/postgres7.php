@@ -39,6 +39,7 @@ global $CFG;
 
     }
 
+
     //Finally, return result
     return $result;
 }
