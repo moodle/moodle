@@ -1822,7 +1822,7 @@ require_once "../../lib/xmlize.php";
         }
         fclose($h);
 	}
-    return xmlize($line);
+    return xmlize($line, 0);
 }
 //Close the file
 function glossary_close_xml($h) {
