@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.4.2 (2004083120)
+      // quiz.php - created with Moodle 1.4.3 (2004083130)
 
 
 $string['acceptederror'] = 'Margem de erro';
@@ -29,6 +29,7 @@ $string['attempts'] = 'Tentativas';
 $string['attemptsallowed'] = 'Tentativas permitidas';
 $string['attemptsexist'] = 'Este questonário já foi respondido';
 $string['attemptsunlimited'] = 'Tentativas ilimitadas';
+$string['back'] = 'Voltar à visualização prévia da questão';
 $string['backtoquiz'] = 'Voltar para edição do questionário';
 $string['bestgrade'] = 'Melhor nota';
 $string['blackboard'] = 'Blackboard';
@@ -52,6 +53,7 @@ $string['correctanswer'] = 'Resposta correta';
 $string['correctanswerformula'] = 'Fórmula de respostas corretas';
 $string['correctanswerlength'] = 'Cifras significativas';
 $string['correctanswers'] = 'Respostas corretas';
+$string['correctanswershows'] = 'Exibições de respostas corretas';
 $string['corrresp'] = 'Resposta correta';
 $string['countdown'] = 'Contagem regressiva';
 $string['countdownfinished'] = 'O prazo para o envio dos resultados do questionário está terminando, envie as suas respostas agora.';
@@ -63,6 +65,7 @@ $string['custom'] = 'Formato padrão';
 $string['datasetdefinitions'] = 'Definições de dataset reutilizáveis em categoria $a';
 $string['datasetnumber'] = 'Número';
 $string['daysavailable'] = 'Dias disponíveis';
+$string['decimalformat'] = 'decimais';
 $string['decimals'] = 'com $a ';
 $string['default'] = 'Predefinido';
 $string['defaultgrade'] = 'Avaliação predefinida';
@@ -182,6 +185,7 @@ $string['overdue'] = 'Expirado';
 $string['paragraphquestion'] = 'O Parágrafo-questão da linha $a não é suportado. A questão será ignorada.';
 $string['passworderror'] = 'Senha errada';
 $string['percentcorrect'] = 'por cento correto';
+$string['popup'] = 'Mostrar o questionário em uma janela \"segura\"';
 $string['preview'] = 'Visualização prévia';
 $string['previewquestion'] = 'Visualização prévia da questão';
 $string['publish'] = 'Publicar';
@@ -243,6 +247,7 @@ $string['showfeedback'] = 'Mostrar feedback depois de responder?';
 $string['shuffleanswers'] = 'Misturar as respostas';
 $string['shufflequestions'] = 'Misturar as perguntas';
 $string['significantfigures'] = 'com $a';
+$string['significantfiguresformat'] = 'números significativos';
 $string['subneterror'] = 'O acesso a este questionário é limitado aos endereços de rede autorizados. Atualmente o pc que você está utilizando não tem esta autorização.';
 $string['substitutedby'] = 'será substituido por';
 $string['time'] = 'Tempo';
@@ -271,5 +276,6 @@ $string['withsummary'] = 'com resumo de estatisticas';
 $string['wronggrade'] = 'Avaliação errada a partir da linha $a:';
 $string['xml'] = 'Formato XML Moodle';
 $string['yourfinalgradeis'] = 'A sua nota final neste questionário é $a';
+$string['zerosignificantfiguresnotallowed'] = 'A resposta correta não pode ser igual a zero números significativos';
 
 ?>
