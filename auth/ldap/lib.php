@@ -280,11 +280,11 @@ function auth_ldap_find_userdn ($ldap_connection, $username){
 
         if ($CFG->ldap_search_sub){
             //use ldap_search to find first user from subtree
-            $ldap_result = ldap_search($ldap_connection, $context, "(".$CFG->ldap_user_attribute."=".$username.")");
+            $ldap_result = ldap_search($ldap_connection, $context, "(".$CFG->ldap_user_attribute."=".$username.")",array($CFG->ldap_user_attribute));
 
         } else {
             //search only in this context
-            $ldap_result = ldap_list($ldap_connection, $context, "(".$CFG->ldap_user_attribute."=".$username.")");
+            $ldap_result = ldap_list($ldap_connection, $context, "(".$CFG->ldap_user_attribute."=".$username.")",array($CFG->ldap_user_attribute));
         }
  
         $entry = ldap_first_entry($ldap_connection,$ldap_result);
