@@ -57,6 +57,11 @@
     -moz-border-radius-bottomright:20px;
 }
 
+.groupinfobox {
+    -moz-border-radius-bottomleft:20px;
+    -moz-border-radius-bottomright:20px;
+}
+
 
 .generaltab, .generaltabinactive{
     -moz-border-radius-topleft:15px;

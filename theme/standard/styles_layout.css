@@ -718,6 +718,7 @@ body#course-user .section h2 {
     margin-top: 0px;
 }
 
+
 .headingblock {
     border-width:1px;
     border-style:solid;
@@ -861,6 +862,7 @@ table.message_search_results td {
 .userinfobox .left {
     padding: 10px;
     width: 100px;
+    vertical-align: top;
 }
 
 .userinfobox .content {
@@ -887,6 +889,21 @@ table.userinfobox {
     width: 80%;
     margin-left: 10%;
     margin-right: 10%;
+}
+
+table.groupinfobox {
+    width: 60%;
+    margin-left: 20%;
+    margin-right: 20%;
+    border-width:1px;
+    border-style:solid;
+    margin-bottom: 20px;
+}
+
+.groupinfobox .left {
+    padding: 10px;
+    width: 100px;
+    vertical-align: top;
 }
 
 

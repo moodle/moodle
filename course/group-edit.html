@@ -11,10 +11,15 @@
         <?php helpbutton("text", get_string("helptext")) ?>
     </td>
     <td><?php 
-        print_textarea($usehtmleditor, 10, 50, 660, 200, "description", $group->description);
+        print_textarea($usehtmleditor, 8, 35, 660, 200, "description", $group->description);
         if (isset($err["description"])) formerr($err["description"]); 
     ?>
     </td>
+</tr>
+
+<tr valign="top">
+    <td align="right"><?print_string('enrolmentkey') ?>:</td>
+    <td><input type="text" name="password" size="25" value="<?php echo $group->password ?>" alt="<?print_string('enrolmentkey') ?>" /></td>
 </tr>
 
 <tr valign="top">
@@ -26,11 +31,6 @@
         choose_from_menu ($options, "hidepicture", $group->hidepicture, "");
     ?>
     </td>
-</tr>
-
-<tr valign="top">
-    <td align="right"><?print_string('enrolmentkey') ?>:</td>
-    <td><input type="text" name="password" size="25" value="<?php echo $group->password ?>" alt="<?print_string('enrolmentkey') ?>" /></td>
 </tr>
 
 <?php 

@@ -3,12 +3,14 @@
 /// Shows current group, and allows editing of the group 
 /// icon and other settings related to that group
 
-  require_once('../config.php');
-  require_once('lib.php');
+/// This script appears within a popup window
 
-    require_variable($id);        // Course id
-    optional_variable($group);    // Optionally look at other groups
-    optional_variable($edit);     // Turn editing on and off
+    require_once('../config.php');
+    require_once('lib.php');
+
+    $id    = required_param('id');          // Course id
+    $group = optional_param('group', 0);    // Optionally look at other groups
+    $edit  = optional_param('edit', false); // Editing can be turned on
 
     if (! $course = get_record('course', 'id', $id) ) {
         error("That's an invalid course id");
@@ -16,44 +18,19 @@
 
     require_login($course->id);
 
-    if ($group) {
-        if (isteacheredit($course->id) or $course->groupmode == VISIBLEGROUPS) {
-            if (! $group = get_record("groups", "id", $group, "courseid", $course->id)) {
-                error('Specified group could not be found!', "groups.php?id=$course->id");
-            }
-        } else {
-            error('Sorry, you don\'t have access to view this group', "view.php?id=$course->id");
-        }
-    } else if (! $group = get_current_group($course->id, 'full')) {
-        error('You are not currently in a group!', "view.php?id=$course->id");
+    if (!isteacheredit($course->id)) {
+        close_window();
     }
 
-    if (isteacheredit($course->id) or (isteacher($course->id) and ismember($group->id) ) ) {
-        $edit = isset($_GET['edit']);
-        $editbutton = $edit ? "" : update_group_button($course->id, $group->id);
-    } else {
-        $edit = false;
-        $editbutton = "";
+    if (! $group = get_record("groups", "id", $group, "courseid", $course->id)) {
+        notice('Specified group could not be found!', "#");
+        close_window_button();
     }
 
 
 /// Print the headers of the page
 
-    $strgroup = get_string('group');
-    $strgroups = get_string('groups');
-    $loggedinas = "<p class=\"logininfo\">".user_login_string($course, $USER)."</p>";
-
-    if (isteacheredit($course->id) or $course->groupmode == VISIBLEGROUPS) {
-        print_header("$strgroup : $group->name", "$course->fullname", 
-                     "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> 
-                      -> <a href=\"groups.php?id=$course->id\">$strgroups</a> -> $group->name", 
-                      "", "", true, $editbutton, $loggedinas);
-    } else {
-        print_header("$strgroup : $group->name", "$course->fullname", 
-                     "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> 
-                      -> $strgroup -> $group->name", "", "", true, "", $loggedinas);
-    }
-
+    print_header(get_string('groupinfoedit').' : '.$group->name);
 
 
 /// If data submitted, then process and store.
@@ -74,63 +51,37 @@
                     $group->picture = 1;
                 }
             }
-            $group->name        = $form->name;
-            $group->description = $form->description;
+            $group->name        = clean_text($form->name);
+            $group->description = clean_text($form->description);
             $group->hidepicture = $form->hidepicture;
             $group->password    = $form->password;
             if (!update_record("groups", $group)) {
-                redirect("group.php?id=$course->id&amp;group=$group->id", "A strange error occurred while trying to save ");
+                notify("A strange error occurred while trying to save");
             } else {
-                redirect("group.php?id=$course->id&amp;group=$group->id", get_string('changessaved'));
+                notify(get_string('changessaved'));
             }
+            close_window(3);
         }
     }
 
 
 /// Are we editing?  If so, handle it.
 
-    if ($edit) {          // We are editing a group's information
-        if ($usehtmleditor = can_use_richtext_editor()) {
-            $defaultformat = FORMAT_HTML;
-        } else {
-            $defaultformat = FORMAT_MOODLE;
-        }
-
-        $sesskey = !empty($USER->id) ? $USER->sesskey : '';
-
-        include('group-edit.html');
-
-        if ($usehtmleditor) {
-            use_html_editor("description");
-        }
-
-        print_footer($course);
-        exit;
-    }
-    
-/// Just display the information 
-
-    print_heading($group->name);
-    echo '<div align="center">';
-    print_group_picture($group, $course->id, true, false, false);
-    echo '</div>';
-    if ($group->description) {
-        print_simple_box(format_text($group->description), 'center', '50%');
-    }
-
-    echo '<br />';
-
-    if ($users = get_group_users($group->id)) {
-        foreach ($users as $user) {
-            print_user($user, $course);
-        }
+    if ($usehtmleditor = can_use_richtext_editor()) {
+        $defaultformat = FORMAT_HTML;
     } else {
-        print_heading(get_string('nousersyet'));
+        $defaultformat = FORMAT_MOODLE;
     }
 
+    $usehtmleditor = false;
 
-/// Finish off the page
+    $sesskey = !empty($USER->id) ? $USER->sesskey : '';
 
-    print_footer($course);
+    include('group-edit.html');
 
+    if ($usehtmleditor) {
+        use_html_editor("description");
+    }
+
+    echo "</body></html>";
 ?>

@@ -36,10 +36,10 @@ class block_participants extends block_list {
             if ($course->groupmode == VISIBLEGROUPS or isteacheredit($this->instance->pageid)) {
                 $this->content->items[]='<a title="'.$strgroups.'" href="'.$CFG->wwwroot.'/course/groups.php?id='.$this->instance->pageid.'">'.$strgroups.'</a>';
                 $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/group.gif" height="16" width="16" alt="" />';
-            } else if ($course->groupmode == SEPARATEGROUPS and $course->groupmodeforce) {
+            } else if ($course->groupmode == SEPARATEGROUPS) {
                 // Show nothing
             } else if ($currentgroup = get_current_group($this->instance->pageid)) {
-                $this->content->items[]='<a title="'.$strgroupmy.'" href="'.$CFG->wwwroot.'/course/group.php?id='.$this->instance->pageid.'">'.$strgroupmy.'</a>';
+                $this->content->items[]='<a title="'.$strgroupmy.'" href="'.$CFG->wwwroot.'/user/index.php?id='.$this->instance->pageid.'&amp;group='.$currentgroup.'">'.$strgroupmy.'</a>';
                 $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/group.gif" height="16" width="16" alt="" />';
             }
         }

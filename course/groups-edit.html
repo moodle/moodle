@@ -64,7 +64,7 @@ function groupWindow(selectgroup) {
         if (selectgroup.options[i].selected) {
             num++;
             group = selectgroup.options[i].value;
-            openpopup('/course/group.php?id=<?php echo $courseid ?>&group='+group,'groupinfo'+num,'','');
+            openpopup('/course/group.php?id=<?php echo $courseid ?>&group='+group,'groupinfo'+num,'menubar=0,directory=0,location=0,scrollbars,resizable,width=600,height=480','');
         }
     }
     return false;
@@ -129,7 +129,7 @@ function groupWindow(selectgroup) {
           </select>
         </p>
         <p>
-          <input type="submit" name="groupsinfo" value="<?php p($strgroupinfo) ?>" 
+          <input type="submit" name="groupsinfo" value="<?php p($strgroupinfoedit) ?>" 
                  onclick="return groupWindow(document.form2.groups);"/>
         </p>
         <p>

@@ -14,8 +14,9 @@
     optional_variable($lastinitial, "");     // only show students with this last initial
     optional_variable($firstinitial, "");    // only show students with this first initial
     optional_variable($perpage, "20");       // how many per page
-    $format = optional_param('format', '');  // 'brief' for less details, '' for more
-    $compactmode = ($format == 'brief');
+    optional_variable($group, "-1");         // Group to show
+    $mode = optional_param('mode', NULL);    // '0' for less details, '1' for more
+
 
     if (! $course = get_record("course", "id", $id)) {
         error("Course ID is incorrect");
@@ -43,10 +44,39 @@
         $participantslink = "<a href=\"index.php?id=$course->id\">".get_string("participants")."</a>";
     }
 
+    if ($mode !== NULL) {
+        $SESSION->userindexmode = $fullmode = ($mode == 1);
+    } else if (isset($SESSION->userindexmode)) {
+        $fullmode = $SESSION->userindexmode;
+    } else {
+        $fullmode = false;
+    }
+
+
+
+/// Check to see if groups are being used in this forum
+/// and if so, set $currentgroup to reflect the current group
+
+    $changegroup  = isset($_GET['group']) ? $_GET['group'] : -1;  // Group change requested?
+    $groupmode    = groupmode($course);   // Groups are being used
+    $currentgroup = get_and_set_current_group($course, $groupmode, $changegroup);
+
+
     $isseparategroups = ($course->groupmode == SEPARATEGROUPS and $course->groupmodeforce and
                          !isteacheredit($course->id));
 
-    $currentgroup = $isseparategroups ? get_current_group($course->id) : NULL;
+    if ($isseparategroups and (!$currentgroup) ) {  //XXX
+        print_heading(get_string("notingroup", "forum"));
+        print_footer($course);
+        exit;
+    }
+
+    if (!$currentgroup) {      // To make some other functions work better later
+        $currentgroup  = NULL;
+    }
+
+
+/// Print headers
 
     if ($course->category) {
         print_header("$course->shortname: ".get_string("participants"), "$course->fullname",
@@ -57,15 +87,42 @@
                      "$participantslink", "", "", true, "&nbsp;", navmenu($course));
     }
 
-    echo '<div style="text-align: right;">';
+/// Print settings and things in a table across the top
+
+    echo '<table width="100%" border="0" cellpadding="3" cellspacing="0"><tr valign="top">';
+
+    if ($groupmode == VISIBLEGROUPS or ($groupmode and isteacheredit($course->id))) {
+        if ($groups = get_records_menu("groups", "courseid", $course->id, "name ASC", "id,name")) {
+            echo '<td class="left">';
+            print_group_menu($groups, $groupmode, $currentgroup, "index.php?id=$course->id");
+            echo '</td>';
+        }
+    }
+
+    echo '<td class="right" align="right">';
     echo get_string('userlist').': ';
-    $formatmenu = array(
-            '' => get_string('detailedmore'),
-            'brief' => get_string('detailedless'),
-    );
-    // [pj] Oh, the things I do to put it in one line... :P
-    echo str_replace('<form', '<form style="display: inline;"', popup_form ("index.php?id=$id&amp;format=", $formatmenu, 'formatmenu', $format, '', '', '', true));
-    echo '</div>';
+    $formatmenu = array( '0' => get_string('detailedless'),
+                         '1' => get_string('detailedmore'));
+    echo popup_form("index.php?id=$id&amp;sort=$sort&amp;dir=$dir&amp;perpage=$perpage&amp;lastinitial=$lastinitial&amp;mode=", $formatmenu, 'formatmenu', $fullmode, '', '', '', true);
+    echo '</td></tr></table>';
+
+    if ($currentgroup and (!$isseparategroups or isteacheredit($course->id))) {    /// Display info about the group
+        if ($group = get_record('groups', 'id', $currentgroup)) {              
+            if (!empty($group->description) or (!empty($group->picture) and empty($group->hidepicture))) { 
+                echo '<table class="groupinfobox"><tr><td class="left side picture">';
+                print_group_picture($group, $course->id, true, false, false);
+                echo '</td><td class="content">';
+                echo '<h3>'.$group->name;
+                echo '&nbsp;<a title="'.get_string('editgroupprofile').'" href="../course/groups.php?id='.$course->id.'&amp;group='.$group->id.'">';
+                echo '<img src="'.$CFG->pixpath.'/t/edit.gif" alt="" border="0">';
+                echo '</a>';
+                echo '</h3>';
+                echo format_text($group->description);
+                echo '</td></tr></table>';
+            }
+        }
+    }
+
 
     $exceptions = ''; // This will be a list of userids that are shown as teachers and thus
                       // do not have to be shown as users as well. Only relevant on site course.
@@ -77,34 +134,39 @@
                 echo '<img src="'.$CFG->pixpath.'/i/edit.gif" height="16" width="16" alt="" /></a>';
             }
             echo '</h2>';
-            if ($compactmode) {
-                // First of all, remove teachers with no authority
-                $teachers = array_filter($teachers, create_function('$t','return ($t->authority > 0);'));
 
-                // And now show the remainder as usual
-                $exceptions .= implode(',', array_keys($teachers));
-                print_user_table($teachers, $isteacher);
-
-            } else {
-                foreach ($teachers as $teacher) {
-                    if ($isseparategroups) {
-                        if ($teacher->editall or ismember($currentgroup, $teacher->id) and ($teacher->authority > 0)) {
-                            print_user($teacher, $course);
-                            $exceptions .= "$teacher->id,";
-                        }
-                    } else if ($teacher->authority > 0) {    // Don't print teachers with no authority
-                        print_user($teacher, $course);
-                        $exceptions .= "$teacher->id,";
+            foreach ($teachers as $key => $teacher) {
+                if ($isseparategroups) {
+                    if ($teacher->editall or ismember($currentgroup, $teacher->id) and ($teacher->authority > 0)) {
+                        continue;
                     }
+                } else if ($currentgroup) {    // Displaying a group by choice
+                    if (ismember($currentgroup, $teacher->id) and ($teacher->authority > 0)) {
+                        continue;
+                    }
+                } else if ($teacher->authority > 0) {    // Don't print teachers with no authority
+                    continue;
                 }
+                unset($teachers[$key]);
+            }
+
+            $exceptions .= implode(',', array_keys($teachers));
+            if ($fullmode) {
+                foreach ($teachers as $key => $teacher) {
+                    print_user($teacher, $course);
+                }
+            } else {
+                print_user_table($teachers, $isteacher);
             }
         }
     }
+
     $guest = get_guest();
     $exceptions .= $guest->id;
 
     if ($course->id == SITEID) { // Show all site users (even unconfirmed)
-        $students = get_users(true, '', true, $exceptions, $sort.' '.$dir, $firstinitial, $lastinitial, $page*$perpage, $perpage);
+        $students = get_users(true, '', true, $exceptions, $sort.' '.$dir, 
+                              $firstinitial, $lastinitial, $page*$perpage, $perpage);
         $totalcount = get_users(false, '', true, '', '', '', '') - 1; // -1 to not count guest user
         if ($firstinitial or $lastinitial) {
             $matchcount = get_users(false, '', true, '', '', $firstinitial, $lastinitial) - 1;
@@ -117,8 +179,8 @@
         } else {
             $dsort = "u.$sort";
         }
-        $students = get_course_students($course->id, $dsort, $dir, $page*$perpage,
-                                    $perpage, $firstinitial, $lastinitial, $currentgroup);
+        $students = get_course_students($course->id, $dsort, $dir, $page*$perpage, $perpage, 
+                                        $firstinitial, $lastinitial, $currentgroup);
         $totalcount = count_course_students($course, "", "", "", $currentgroup);
         if ($firstinitial or $lastinitial) {
             $matchcount = count_course_students($course, "", $firstinitial, $lastinitial, $currentgroup);
@@ -195,13 +257,14 @@
     if ($matchcount < 1) {
         print_heading(get_string("nostudentsfound", "", $course->students));
 
-    } if (!$compactmode && (0 < $matchcount and $matchcount < USER_SMALL_CLASS)) {    // Print simple listing
+    } else if ($fullmode) {    // Print simple listing
         foreach ($students as $student) {
             print_user($student, $course);
         }
 
     } else if ($matchcount > 0) {
         print_user_table($students, $isteacher);
+
         print_paging_bar($matchcount, $page, $perpage,
                          "index.php?id=$course->id&amp;sort=$sort&amp;dir=$dir&amp;perpage=$perpage&amp;firstinitial=$firstinitial&amp;lastinitial=$lastinitial&amp;");
 
@@ -213,10 +276,14 @@
     }
 
     print_footer($course);
+    exit;
+
+
+
 
 function print_user_table($users, $isteacher) {
         // Print one big table with abbreviated info
-        global $format, $sort, $course, $dir, $CFG;
+        global $mode, $sort, $course, $dir, $CFG;
 
         $columns = array("firstname", "lastname", "city", "country", "lastaccess");
 
@@ -251,7 +318,7 @@ function print_user_table($users, $isteacher) {
                 }
                 $columnicon = " <img src=\"$CFG->pixpath/t/$columnicon.gif\" alt=\"\"/>";
             }
-            $$column = "<a href=\"index.php?id=$course->id&amp;sort=$column&amp;dir=$columndir&amp;format=$format\">".$colname["$column"]."</a>$columnicon";
+            $$column = "<a href=\"index.php?id=$course->id&amp;sort=$column&amp;dir=$columndir\">".$colname["$column"]."</a>$columnicon";
         }
 
         foreach ($users as $key => $user) {
