@@ -406,12 +406,25 @@ function insert_record($table, $dataobject, $returnid=true) {
 
     $data = (array)$dataobject;
 
-    // Pull out data matching these fields
+    // Pull out data from the dataobject that matches the fields in the table.
+    // If fields are missing or empty, then try to set the defaults explicitly
+    // because some databases (eg PostgreSQL) don't always set them properly
     foreach ($columns as $column) {
-        if ($column->name <> "id" && isset($data[$column->name]) ) {
-            $ddd[$column->name] = $data[$column->name];
+        if ($column->name <> "id") {
+            if (isset($data[$column->name])) { 
+                if ($data[$column->name] == "" and isset($column->has_default)) {
+                    $ddd[$column->name] = $column->default_value;
+                } else {
+                    $ddd[$column->name] = $data[$column->name];
+                }
+            } else {
+                if (isset($column->has_default)) {
+                    $ddd[$column->name] = $column->default_value;
+                } 
+            }
         }
     }
+
 
     // Construct SQL queries
     if (! $numddd = count($ddd)) {
