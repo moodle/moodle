@@ -129,6 +129,16 @@
         return $info;
     }
 
+    //This function read the xml file and store its data from the logs in
+    //backup_ids->info
+    function restore_read_xml_logs ($restore,$xml_file) {
+
+        //We call the main read_xml function, with todo = LOGS
+        $info = restore_read_xml ($xml_file,"LOGS",$restore);
+
+        return $info;
+    }
+
     //This function prints the contents from the info parammeter passed
     function restore_print_info ($info) {
 
@@ -809,7 +819,7 @@
         }
         //Get info from xml
         if ($status) {
-            //groups will contain the old_id of every scale
+            //groups will contain the old_id of every group
             //in backup_ids->info will be the real info (serialized)
             $groups = restore_read_xml_groups($restore,$xml_file);
         }
@@ -1074,6 +1084,301 @@
        return $status;
     }
 
+    //This function creates all the structures for every log in backup file
+    //Depending what has been selected.
+    function restore_create_logs($restore,$xml_file) {
+            
+        global $CFG,$db;
+
+        //Number of records to get in every chunk
+        $recordset_size = 4;
+        //Counter, points to current record
+        $counter = 0;
+        //To count all the recods to restore
+        $count_logs = 0;
+        
+        $status = true;
+        //Check it exists 
+        if (!file_exists($xml_file)) { 
+            $status = false;
+        }
+        //Get info from xml
+        if ($status) {
+            //count_logs will contain the number of logs entries to process
+            //in backup_ids->info will be the real info (serialized)
+            $count_logs = restore_read_xml_logs($restore,$xml_file);
+        }
+ 
+        //Now, if we have records in count_logs, we have to restore that logs
+        //from backup_ids. This piece of code makes calls to:
+        // - restore_log_course() if it's a course log
+        // - restore_log_user() if it's a user log
+        // - restore_log_module() if it's a module log.
+        //And all is segmented in chunks to allow large recordsets to be restored !!
+        if ($count_logs > 0) {
+            while ($counter < $count_logs) {
+                //Get a chunk of records
+                //Take old_id twice to avoid adodb limitation
+                $logs = get_records_select("backup_ids","table_name = 'log' AND backup_code = '$restore->backup_unique_code'","old_id","old_id,old_id",$counter,$recordset_size);
+                //We have logs
+                if ($logs) {
+                    //Iterate
+                    foreach ($logs as $log) {
+                        //Get the full record from backup_ids
+                        $data = backup_getid($restore->backup_unique_code,"log",$log->old_id);
+                        if ($data) {
+                            //Now get completed xmlized object
+                            $info = $data->info;
+                            //traverse_xmlize($info);                                                                     //Debug
+                            //print_object ($GLOBALS['traverse_array']);                                                  //Debug
+                            //$GLOBALS['traverse_array']="";                                                              //Debug
+                            //Now build the LOG record structure
+                            $dblog->time = backup_todb($info['LOG']['#']['TIME']['0']['#']);
+                            $dblog->userid = backup_todb($info['LOG']['#']['USERID']['0']['#']);
+                            $dblog->ip = backup_todb($info['LOG']['#']['IP']['0']['#']);
+                            $dblog->course = $restore->course_id;
+                            $dblog->module = backup_todb($info['LOG']['#']['MODULE']['0']['#']);
+                            $dblog->cmid = backup_todb($info['LOG']['#']['CMID']['0']['#']);
+                            $dblog->action = backup_todb($info['LOG']['#']['ACTION']['0']['#']);
+                            $dblog->url = backup_todb($info['LOG']['#']['URL']['0']['#']);
+                            $dblog->info = backup_todb($info['LOG']['#']['INFO']['0']['#']);
+                            //We have to recode the userid field
+                            $user = backup_getid($restore->backup_unique_code,"user",$dblog->userid);
+                            if ($user) {
+                                //echo "User ".$dblog->userid." to user ".$user->new_id."<br>";                             //Debug
+                                $dblog->userid = $user->new_id;
+                            }
+                            //We have to recode the cmid field (if module isn't "course" or "user")
+                            if ($dblog->module != "course" and $dblog->module != "user") {
+                                $cm = backup_getid($restore->backup_unique_code,"course_modules",$dblog->cmid);
+                                if ($cm) {
+                                    //echo "Module ".$dblog->cmid." to module ".$cm->new_id."<br>";                         //Debug
+                                    $dblog->cmid = $cm->new_id;
+                                }
+                            }
+                            //print_object ($dblog);                                                                        //Debug
+                            //Now, we redirect to the needed function to make all the work
+                            if ($dblog->module == "course") {
+                                //It's a course log,
+                                $stat = restore_log_course($restore,$dblog);
+                            } elseif ($dblog->module == "user") {
+                                //It's a user log,
+                                $stat = restore_log_user($restore,$dblog);
+                            } else {
+                                //It's a module log,
+                                $stat = restore_log_module($restore,$dblog);
+                            }
+                        }
+
+                        //Do some output
+                        $counter++;
+                        if ($counter % 10 == 0) {
+                            echo ".";
+                            if ($counter % 200 == 0) {
+                                echo "<br>";
+                            }
+                            backup_flush(300);
+                        }
+                    }
+                } else {
+                    //We never should arrive here
+                    $counter = $count_logs;
+                    $status = false;
+                }
+            }
+        }
+
+        return $status;
+    }
+
+    //This function inserts a course log record, calculating the URL field as necessary
+    function restore_log_course($restore,$log) {
+
+        $status = true;
+        $toinsert = false;
+
+        //echo "<hr>Before transformations<br>";                                        //Debug
+        //print_object($log);                                                           //Debug
+        //Depending of the action, we recode different things
+        switch ($log->action) {
+        case "view":
+            $log->url = "view.php?id=".$log->course;
+            $log->info = $log->course;
+            $toinsert = true;
+            break;
+        case "user report":
+            //recode the info field (it's the user id)
+            $user = backup_getid($restore->backup_unique_code,"user",$log->info);
+            if ($user) {
+                $log->info = $user->new_id;
+                //Now, extract the mode from the url field
+                $mode = substr(strrchr($log->url,"="),1);
+                $log->url = "user.php?id=".$log->course."&user=".$log->info."&mode=".$mode;
+                $toinsert = true;
+            }
+            break;
+        case "add mod":
+            //Extract the course_module from the url field
+            $cmid = substr(strrchr($log->url,"="),1);
+            //recode the course_module to see it it has been restored
+            $cm = backup_getid($restore->backup_unique_code,"course_modules",$cmid);
+            if ($cm) {
+                $cmid = $cm->new_id;
+                //Extract the module name and the module id from the info field
+                $modname = strtok($log->info," ");
+                $modid = strtok(" ");
+                //recode the module id to see if it has been restored
+                $mod = backup_getid($restore->backup_unique_code,$modname,$modid);
+                if ($mod) {
+                    $modid = $mod->new_id;
+                    //Now I have everything so reconstruct url and info
+                    $log->info = $modname." ".$modid;
+                    $log->url = "../mod/".$modname."/view.php?id=".$cmid;
+                    $toinsert = true;
+                }
+            }
+            break;
+        case "update mod":
+            //Extract the course_module from the url field
+            $cmid = substr(strrchr($log->url,"="),1);
+            //recode the course_module to see it it has been restored
+            $cm = backup_getid($restore->backup_unique_code,"course_modules",$cmid);
+            if ($cm) {
+                $cmid = $cm->new_id;
+                //Extract the module name and the module id from the info field
+                $modname = strtok($log->info," ");
+                $modid = strtok(" ");
+                //recode the module id to see if it has been restored
+                $mod = backup_getid($restore->backup_unique_code,$modname,$modid);
+                if ($mod) {
+                    $modid = $mod->new_id;
+                    //Now I have everything so reconstruct url and info
+                    $log->info = $modname." ".$modid;
+                    $log->url = "../mod/".$modname."/view.php?id=".$cmid;
+                    $toinsert = true;
+                }
+            }
+            break;
+        case "delete mod":
+            $log->url = "view.php?id=".$log->course;
+            $toinsert = true;
+            break;
+        case "update":
+            $log->url = "edit.php?id=".$log->course;
+            $log->info = "";
+            $toinsert = true;
+            break;
+        case "unenrol":
+            //recode the info field (it's the user id)
+            $user = backup_getid($restore->backup_unique_code,"user",$log->info);
+            if ($user) {
+                $log->info = $user->new_id;
+                $log->url = "view.php?id=".$log->course;
+                $toinsert = true;
+            }
+            break;
+        case "enrol":
+            //recode the info field (it's the user id)
+            $user = backup_getid($restore->backup_unique_code,"user",$log->info);
+            if ($user) {
+                $log->info = $user->new_id;
+                $log->url = "view.php?id=".$log->course;
+                $toinsert = true;
+            }
+            break;
+        case "editsection":
+            //Extract the course_section from the url field
+            $secid = substr(strrchr($log->url,"="),1);
+            //recode the course_section to see if it has been restored
+            $sec = backup_getid($restore->backup_unique_code,"course_sections",$secid);
+            if ($sec) {
+                $secid = $sec->new_id;
+                //Now I have everything so reconstruct url and info
+                $log->url = "editsection.php?id=".$secid;
+                $toinsert = true;
+            }
+            break;
+        case "new":
+            $log->url = "view.php?id=".$log->course;
+            $log->info = "";
+            $toinsert = true;
+            break;
+        default:
+            //echo "action (".$log->action.") unknow. Not restored<br>";                 //Debug
+            break;
+        }
+
+        //echo "After transformations<br>";                                             //Debug
+        //print_object($log);                                                           //Debug
+
+        //Now if $toinsert is set, insert the record
+        if ($toinsert) {
+            //echo "Inserting record<br>";                                              //Debug
+            $status = insert_record("log",$log);
+        }
+        return $status;
+    }
+
+    //This function inserts a user log record, calculating the URL field as necessary
+    function restore_log_user($restore,$log) {
+
+        $status = true;
+        $toinsert = false;
+        
+        //echo "<hr>Before transformations<br>";                                        //Debug
+        //print_object($log);                                                           //Debug
+        //Depending of the action, we recode different things                           
+        switch ($log->action) {
+        case "view":
+            //recode the info field (it's the user id)
+            $user = backup_getid($restore->backup_unique_code,"user",$log->info);
+            if ($user) {
+                $log->info = $user->new_id;
+                $log->url = "view.php?id=".$log->info."&course=".$log->course;
+                $toinsert = true;
+            }
+            break;
+        case "view all":
+            $log->url = "view.php?id=".$log->course;
+            $log->info = "";
+            $toinsert = true;
+        case "update":
+            //We split the url by ampersand char 
+            $first_part = strtok($log->url,"&");
+            //Get data after the = char. It's the user being updated
+            $userid = substr(strrchr($first_part,"="),1);
+            //Recode the user
+            $user = backup_getid($restore->backup_unique_code,"user",$userid);
+            if ($user) {
+                $log->info = "";
+                $log->url = "view.php?id=".$user->new_id."&course=".$log->course;
+                $toinsert = true;
+            }
+            break;
+        default:
+            //echo "action (".$log->action.") unknow. Not restored<br>";                 //Debug
+            break;
+        }
+
+        //echo "After transformations<br>";                                             //Debug
+        //print_object($log);                                                           //Debug
+
+        //Now if $toinsert is set, insert the record
+        if ($toinsert) {
+            //echo "Inserting record<br>";                                              //Debug
+            $status = insert_record("log",$log);
+        }
+        return $status;
+    }
+
+    //This function inserts a module log record, calculating the URL field as necessary
+    function restore_log_module($restore,$log) {
+
+        $status = true;
+
+        return $status;
+    }
+
     //This function adjusts the instance field into course_modules. It's executed after
     //modules restore. There, we KNOW the new instance id !!
     function restore_check_instances($restore) {
@@ -1302,6 +1607,34 @@
             //If we are under a MOD tag under a MODULES zone, accumule it
             if (isset($this->tree[4]) and isset($this->tree[3])) {
                 if (($this->tree[4] == "MOD") and ($this->tree[3] == "MODULES")) {
+                    if (!isset($this->temp)) {
+                        $this->temp = "";
+                    }
+                    $this->temp .= "<".$tagName.">";
+                }
+            }
+        }
+
+        //This is the startTag handler we use where we are reading the logs zone (todo="LOGS")
+        function startElementLogs($parser, $tagName, $attrs) {
+            //Refresh properties
+            $this->level++;
+            $this->tree[$this->level] = $tagName;
+
+            //if ($tagName == "LOG" && $this->tree[3] == "LOGS") {                                        //Debug
+            //    echo "<P>LOG: ".strftime ("%X",time()),"-";                                             //Debug
+            //}                                                                                           //Debug
+
+            //Output something to avoid browser timeouts...
+            backup_flush();
+
+            //Check if we are into LOGS zone
+            //if ($this->tree[3] == "LOGS")                                                             //Debug
+            //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br>\n";   //Debug
+
+            //If we are under a LOG tag under a LOGS zone, accumule it
+            if (isset($this->tree[4]) and isset($this->tree[3])) {
+                if (($this->tree[4] == "LOG") and ($this->tree[3] == "LOGS")) {
                     if (!isset($this->temp)) {
                         $this->temp = "";
                     }
@@ -2016,6 +2349,69 @@
             $this->content = "";
         }
 
+        //This is the endTag handler we use where we are reading the logs zone (todo="LOGS")
+        function endElementLogs($parser, $tagName) {
+            //Check if we are into LOGS zone
+            if ($this->tree[3] == "LOGS") {
+                //if (trim($this->content))                                                                     //Debug
+                //    echo "C".str_repeat("&nbsp;",($this->level+2)*2).$this->getContents()."<br>\n";           //Debug
+                //echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;/".$tagName."&gt;<br>\n";          //Debug
+                //Acumulate data to info (content + close tag)
+                //Reconvert: strip htmlchars again and trim to generate xml data
+                if (!isset($this->temp)) {
+                    $this->temp = "";
+                }
+                $this->temp .= htmlspecialchars(trim($this->content))."</".$tagName.">";
+                //If we've finished a log, xmlize it an save to db
+                if (($this->level == 4) and ($tagName == "LOG")) {
+                    //Prepend XML standard header to info gathered
+                    $xml_data = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n".$this->temp;
+                    //Call to xmlize for this portion of xml data (one LOG)
+                    //echo "-XMLIZE: ".strftime ("%X",time()),"-";                                                //Debug
+                    $data = xmlize($xml_data,0);
+                    //echo strftime ("%X",time())."<p>";                                                          //Debug
+                    //traverse_xmlize($data);                                                                     //Debug
+                    //print_object ($GLOBALS['traverse_array']);                                                  //Debug
+                    //$GLOBALS['traverse_array']="";                                                              //Debug
+                    //Now, save data to db. We'll use it later
+                    //Get id and modtype from data
+                    $log_id = $data["LOG"]["#"]["ID"]["0"]["#"];
+                    $log_module = $data["LOG"]["#"]["MODULE"]["0"]["#"];
+                    //We only save log entries from backup file if they are:
+                    // - Course logs
+                    // - User logs
+                    // - Module logs about one restored module
+                    if  ($log_module == "course" or
+                         $log_module == "user" or
+                        $this->preferences->mods[$log_module]->restore) {
+                        //Increment counter
+                        $this->counter++;
+                        //Save to db
+                        $status = backup_putid($this->preferences->backup_unique_code,"log",$log_id,
+                                     null,$data);
+                        //echo "<p>id: ".$mod_id."-".$mod_type." len.: ".strlen($sla_mod_temp)." to_db: ".$status."<p>";   //Debug
+                        //Create returning info
+                        $this->info = $this->counter;
+                    }
+                    //Reset temp
+                    unset($this->temp);
+                }
+            }
+
+            //Stop parsing if todo = LOGS and tagName = LOGS (en of the tag, of course)
+            //Speed up a lot (avoid parse all)
+            if ($tagName == "LOGS" and $this->level == 3) {
+                $this->finished = true;
+                $this->counter = 0;
+
+            }
+
+            //Clear things
+            $this->tree[$this->level] = "";
+            $this->level--;
+            $this->content = "";
+        }
+
         //This is the endTag default handler we use when todo is undefined
         function endElement($parser, $tagName) {
             if (trim($this->content))                                                                     //Debug
@@ -2069,6 +2465,9 @@
         } else if ($todo == "MODULES") {
             //Define handlers to that zone
             xml_set_element_handler($xml_parser, "startElementModules", "endElementModules");
+        } else if ($todo == "LOGS") {
+            //Define handlers to that zone
+            xml_set_element_handler($xml_parser, "startElementLogs", "endElementLogs");
         } else {
             //Define default handlers (must no be invoked when everything become finished)
             xml_set_element_handler($xml_parser, "startElementInfo", "endElementInfo");

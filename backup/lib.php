@@ -387,7 +387,6 @@
         global $CFG;
 
         $max_db_storage = 128;  //Max bytes to save to db, else save to file
-                                //MUST BE LOWER THAN 256 (VARCHAR LIMIT)
  
         $status = true;
         

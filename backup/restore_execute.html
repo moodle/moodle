@@ -245,7 +245,10 @@
 
     //Now create log entries as needed
     if ($status and ($restore->logs)) {
-        echo "<li>".get_string("creatinglogentries")."<b> (not implemented!!)</b>";
+        echo "<li>".get_string("creatinglogentries")."<b> (working on it!!)</b>";
+        if (!$status = restore_create_logs($restore,$xml_file)) {
+            notify("Could not restore logs!");
+        }
     }    
 
     //Now, if all is OK, adjust the instance field in course_modules !!
