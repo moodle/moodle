@@ -626,7 +626,7 @@ function insert_record($table, $dataobject, $returnid=true) {
         
         if ($CFG->dbtype == "postgres7" and isset($pkey)){
             $oid = $db->Insert_ID();
-            if ($rs = $db->Execute("SELECT $pkey FROM $CFG->prefix$table WHERE 'oid' = $oid")) {
+            if ($rs = $db->Execute("SELECT $pkey FROM $CFG->prefix$table WHERE oid = $oid")) {
                 if ($rs->RecordCount() == 1) {
                     return $rs->fields[0];
                 } else {
