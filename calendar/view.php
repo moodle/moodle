@@ -578,11 +578,11 @@ function calendar_print_event($event) {
     if (calendar_edit_event_allowed($event)) {
         echo '<div align="right">';
         if (empty($event->cmid)) {
-            $editlink = CALENDAR_URL.'event.php?action=edit&amp;id='.$event->id;
+            $editlink   = CALENDAR_URL.'event.php?action=edit&amp;id='.$event->id;
             $deletelink = CALENDAR_URL.'event.php?action=delete&amp;id='.$event->id;
         } else {
-            $editlink   = "$CFG->wwwroot/mod/$event->modulename/view.php?id=$event->cmid";
-            $deletelink = "$CFG->wwwroot/course/mod.php?delete=$event->cmid";
+            $editlink   = $CFG->wwwroot.'/course/mod.php?update='.$event->cmid.'&amp;return=true';
+            $deletelink = $CFG->wwwroot.'/course/mod.php?delete='.$event->cmid;
         }
         echo ' <a href="'.$editlink.'"><img
                   src="'.$CFG->pixpath.'/t/edit.gif" alt="'.get_string('tt_editevent', 'calendar').'"
