@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.3 (2004052500)
+      // quiz.php - created with Moodle 1.4 development (2004060400)
 
 
 $string['acceptederror'] = 'คลาดเคลื่อนได้..';
@@ -40,6 +40,7 @@ $string['categorymove'] = 'ประเภท \'$a->name\' contains $a->count questions.  กร
 $string['categorymoveto'] = 'ย้ายไปยังประเภทนี้';
 $string['choice'] = 'ตัวเลือก';
 $string['choices'] = 'ตัวเลือก';
+$string['confirmstartattempt'] = 'แบบทดสอบนี้จำกัดเวลาในการทำ คุณต้องการเริ่มทำแบบทดสอบแล้วใช่ไหมคะ';
 $string['correctanswer'] = 'คำตอบที่ถูกต้อง';
 $string['correctanswers'] = 'คำตอบที่ถูกต้อง';
 $string['corrresp'] = 'เมื่อตอบถูกโต้ตอบว่า';
@@ -53,7 +54,7 @@ $string['custom'] = 'สร้างรูปแบบใหม่';
 $string['daysavailable'] = 'จำนวนวันที่เปิดให้ตอบ ';
 $string['default'] = 'ค่าที่ตั้งไว้';
 $string['defaultgrade'] = 'คะแนนที่ตั้งไว้';
-$string['defaultinfo'] = 'ตั้งค่าประเภท ให้เป็น\"ค่าที่ตั้งไว้\"สำหรับคำถาม';
+$string['defaultinfo'] = 'ตั้งค่าประเภท ให้เป็น';
 $string['deleteattemptcheck'] = 'คุณแน่ใจนะคะว่าต้องการลบคำตอบที่ทำมา';
 $string['deletequestioncheck'] = 'แน่ใจนะคะว่าต้องการลบ \'$a\'?';
 $string['description'] = 'คำอธิบาย';
@@ -101,6 +102,7 @@ $string['listitems'] = 'รายการคำถามในแบบทดสอบ';
 $string['marks'] = 'คะแนน';
 $string['match'] = 'จับคู่';
 $string['matchanswer'] = 'จับคู่คำตอบ';
+$string['minutes'] = 'นาที';
 $string['missinganswer'] = 'วิธีตอบคำถามสำหรับสองคำตอบ   เช่น  คำถาม :คำตอบ,:ก,:ข  ';
 $string['missingcorrectanswer'] = 'ต้องระบุคำตอบที่ถูก';
 $string['missingname'] = 'ขาดชื่อคำถาม';
@@ -119,6 +121,8 @@ $string['noquestions'] = 'ยังไม่มีคำถามในแบบทดสอบ';
 $string['noresponse'] = 'ไม่มีการโต้ตอบ';
 $string['noreview'] = 'คุณไม่ได้รับอนุญาตให้ทำแบบทดสอบนี้ใหม่';
 $string['noreviewuntil'] = 'คุณไม่ได้รับอนุญาตให้ทำแบบทดสอบนี้ใหม่ จนกว่า $a';
+$string['noscript'] = 'คุณต้อง enable JavaScript';
+$string['notenoughanswers'] = 'คำถามประเภทนี้ต้องการอย่างน้อย $a  คำตอบ';
 $string['notenoughsubquestions'] = 'ข้อมูลเกี่ยวกับคำถามย่อยๆ ยังไม่สมบูรณ์ คุณต้องการกลับไปแก้ไขหรือไม่';
 $string['numerical'] = 'แบบโจทย์ตัวเลข';
 $string['paragraphquestion'] = 'คำถามย่อหน้าดังกล่าวบรรทัดที่ $a ไม่ถูกต้อง ระบบจะไม่นำคำถามนี้มาใช้';
@@ -136,6 +140,9 @@ $string['quizclosed'] = 'หมดเวลาทำแบบแบบทดสอบเมื่อ $a';
 $string['quizcloses'] = 'หมดเวลาแบบทดสอบเวลา';
 $string['quiznotavailable'] = 'ไม่สามารถทำแบบทดสอบได้จนกว่า: $a';
 $string['quizopen'] = 'เริ่มทำแบบทดสอบได้';
+$string['quizopens'] = 'เริ่มให้ทำแบบทดสอบ';
+$string['quiztimelimit'] = 'ระยะเวลา';
+$string['quiztimer'] = 'เวลาที่ใช้ทำแบบทดสอบ';
 $string['random'] = 'คำถามแบบสุ่ม';
 $string['randomcreate'] = 'สร้างคำถามแบบสุ่ม';
 $string['randomsamatch'] = 'เติมคำ(สั้น ๆ)ให้ถูกต้องแบบสุ่ม';
@@ -173,6 +180,10 @@ $string['shuffleanswers'] = 'สลับคำตอบ';
 $string['shufflequestions'] = 'สลับคำถาม';
 $string['time'] = 'เวลา';
 $string['timecompleted'] = 'ทำเสร็จเมื่อ';
+$string['timeleft'] = 'เหลือเวลา';
+$string['timelimit'] = 'เวลาที่อนุญาตให้ทำแบบทดสอบ';
+$string['timelimitexeeded'] = 'ขออภัยค่ะ หมดเวลาทำแบบทดสอบแล้ว';
+$string['timesup'] = 'หมดเวลา';
 $string['timetaken'] = 'เวลาที่ใช้';
 $string['toomanyrandom'] = 'จำนวนของคำถามที่ต้องการ มีมากกว่า จำนวนที่มีอยู่ในฐานข้อมูล ($a)';
 $string['true'] = 'ถูก';

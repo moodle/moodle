@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.2 Beta (2004022400)
+      // resource.php - created with Moodle 1.4 development (2004060400)
 
 
 $string['addresource'] = 'เพิ่มแหล่งข้อมูล';
@@ -19,6 +19,7 @@ $string['configpopuptoolbar'] = 'หน้าต่างที่ปรากฎขึ้นควรจะมีแถบข้อมูลด้วยหรือไม่
 $string['configpopupwidth'] = 'กำหนดความกว้างของหน้าต่างที่จะปรากฏขึ้นมา';
 $string['configwebsearch'] = 'ในการที่จะเพิ่ม URL ให้เป็นเว็บลิงก์หรือเว็บเพจ  จุดตรงนี้จะช่วยให้สมาชิกสามารถค้นหา URL ที่ต้องการได้ง่ายขึ้น';
 $string['directlink'] = 'ลิงก์ไปยังไฟล์นี้';
+$string['directoryinfo'] = 'แสดงไฟล์ที่เลือกทั้งหมดในไดเรคทอรี่นี้';
 $string['editingaresource'] = 'แก้ไขแหล่งข้อมูล';
 $string['example'] = 'ตัวอย่าง';
 $string['examplereference'] = 'ประเสริฐ วิทยารัฐ และคณะ.หนังสือเรียน ส503 สังคมศึกษา.กรุงเทพมหานคร:สำนักพิมพ์วัฒนาพานิช จำกัด, 2535';
@@ -27,8 +28,10 @@ $string['fetchclienterror'] = 'พบข้อผิดพลาดในการเรียกดูเว็บเพจที่คุณต้องการ (อาจ
 $string['fetcherror'] = 'พบข้อผิดพลาดในการเรียกดูเว็บเพจ';
 $string['fetchservererror'] = 'พบข้อผิดพลาดในเซิร์ฟเวอร์ในระหว่างการเรียกดูเว็บเพจ (อาจเกิดจากความผิดพลาดของโปรแกรม)</p>';
 $string['filename'] = 'ชื่อไฟล์';
+$string['filtername'] = 'ลิงก์ไปยังแหล่งข้อมูลอัตโนมัติ';
 $string['fulltext'] = 'Full text';
 $string['htmlfragment'] = 'HTML fragment';
+$string['maindirectory'] = 'ไดเรคทอรี่หลัก';
 $string['modulename'] = 'แหล่งข้อมูล';
 $string['modulenameplural'] = 'แหล่งข้อมูล';
 $string['neverseen'] = 'ไม่เคยเห็น';
@@ -36,7 +39,7 @@ $string['newdirectories'] = 'แสดงลิงก์ไปยังไดเรคทอรี่';
 $string['newfullscreen'] = 'แสดงเต็มหน้าจอ';
 $string['newheight'] = 'ความสูงของวินโดว์ปกติ (พิกเซล)';
 $string['newlocation'] = 'แสดง location bar';
-$string['newmenubar'] = 'แสดอง menu bar';
+$string['newmenubar'] = 'แสดง menu bar';
 $string['newresizable'] = 'อนุญาตให้เปลี่ยนขนาดของวินโดว์';
 $string['newscrollbars'] = 'อนุญาตให้มีการสกรอลในวินโดว์';
 $string['newstatus'] = 'แสดง status bar';
@@ -47,7 +50,7 @@ $string['newwindowopen'] = 'แสดงแหล่งข้อมูลในหน้าต่างใหม่';
 $string['note'] = 'หมายเหตุ';
 $string['notefile'] = 'หากต้องการอัพโหลดไฟล์ สำหรับรายวิชานี้กรุณาใช้
 <A HREF=$a >File Manager</A>.';
-$string['notypechosen'] = 'คุณต้องเลือก ประเภท  กรุณาใช้ปุ่ม  back เพื่อกลับไปเลือก';
+$string['notypechosen'] = 'คุณต้องเลือกประเภท  กรุณาใช้ปุ่ม  back เพื่อกลับไปเลือก';
 $string['popupresource'] = 'แหล่งข้อมูลนี้ควรจะปรากฎในหน้าต่างถัดไป';
 $string['popupresourcelink'] = 'ถ้าไม่ปรากฏ  คลิกที่นี่ค่ะ: $a';
 $string['resourcetype'] = 'ประเภทของแหล่งข้อมูล';
@@ -59,5 +62,6 @@ $string['resourcetype5'] = 'เว็บลิงก์';
 $string['resourcetype6'] = 'บทความใช้ โค้ด html';
 $string['resourcetype7'] = 'โปรแกรม';
 $string['resourcetype8'] = 'รูปแบบ Wiki';
+$string['resourcetype9'] = 'ไดเรคทอรี่';
 
 ?>

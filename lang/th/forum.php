@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.3 (2004052500)
+      // forum.php - created with Moodle 1.4 development (2004060400)
 
 
 $string['addanewdiscussion'] = 'ตั้งกระทู้';
@@ -92,8 +92,12 @@ $string['postrating1'] = 'แสดงถึงการรู้แบบแยกส่วน';
 $string['postrating2'] = 'ก้ำกึ่งมีทั้งรู้แบบแยกส่วนและเชื่อมโยง';
 $string['postrating3'] = 'แสดงถึงการรู้แบบเชื่อมโยง';
 $string['posts'] = 'โพสต์';
+$string['posttoforum'] = 'โพสต์ลงกระดานเสวนา';
 $string['postupdated'] = 'โพสต์ของคุณได้รับการอัพเดทแล้ว';
+$string['processingdigest'] = 'ประเมินผลการส่งอีเมล์สำหรับ $a';
 $string['processingpost'] = 'กำลังดำเนินการโพสต์ $a';
+$string['prune'] = 'แยก';
+$string['pruneheading'] = 'แยกโพสต์โดยอัตโนมัติแล้วทำการย้ายไปยังกระทู้ใหม่';
 $string['rate'] = 'ให้คะแนน';
 $string['rating'] = 'คะแนน';
 $string['ratingeveryone'] = 'ทุกคนสามารถให้คะแนนโพสต์';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.3 (2004052500)
+      // editor.php - created with Moodle 1.4 development (2004060400)
 
 
 $string['about'] = 'เกี่ยวกับเครื่องมือแก้ไข';
@@ -76,7 +76,9 @@ $string['redo'] = 'ยกเลิกทำซ้ำ';
 $string['removelink'] = 'ลบลิงก์ออก';
 $string['rename'] = 'เปลี่ยนชื่อ';
 $string['right'] = 'ขวา';
+$string['righttoleft'] = 'จากขวาไปซ้าย';
 $string['rows'] = 'แถว';
+$string['selectcolor'] = 'เลือกสี';
 $string['selection'] = 'เลือก';
 $string['showhelp'] = 'วิธีใช้เครื่องมือแก้ไข';
 $string['size'] = 'ขนาด';
@@ -95,6 +97,7 @@ $string['unorderedlist'] = 'ปุ่มรายการ';
 $string['upload'] = 'อัพโหลด';
 $string['vertical'] = 'แนวตั้ง';
 $string['width'] = 'กว้าง';
+$string['wordclean'] = 'ล้าง HTML';
 $string['zip'] = 'zip';
 
 ?>

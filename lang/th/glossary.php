@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.3 (2004052500)
+      // glossary.php - created with Moodle 1.4 development (2004060400)
 
 
 $string['addcomment'] = 'เพิ่มเติมความคิดเห็น';
@@ -98,6 +98,7 @@ $string['filetoimport'] = 'ไฟล์ที่ต้องการส่ง';
 $string['fillfields'] = 'ต้องเติมคอนเซปต์และความหมายของคำนะคะ';
 $string['filtername'] = 'ลิงก์คำศัพท์อัตโนมัติ';
 $string['fullmatch'] = 'เลือกมาเฉพาะศัพท์ที่ตรงตัวค้นหา';
+$string['glossaryleveldefaultsettings'] = 'ค่าที่ตั้งไว้ของระดับคำศัพท์';
 $string['glossarytype'] = 'ประเภทคำศัพท์';
 $string['glosssaryexported'] = 'คำศัพท์ที่ถูกส่งออกไป';
 $string['importcategories'] = 'นำเข้าประเภทคำศัพท์';
