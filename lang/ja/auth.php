@@ -24,6 +24,8 @@ $string['auth_imaptype'] = "IMAPサーバタイプです。IMAPサーバは異なる認証及びネゴ
 $string['auth_ldap_bind_dn'] = "ユーザ検索にbindユーザを利用したい場合は、ここに明示してください。例 'cn=ldapuser,ou=public,o=org'";
 $string['auth_ldap_bind_pw'] = "bindユーザ用のパスワード";
 $string['auth_ldap_contexts'] = "ユーザが配置されているコンテキスト一覧です。異なるコンテキストは「;」で分けてください。例 'ou=users,o=org; ou=others,o=org'";
+$string['auth_ldap_create_context'] = "ユーザ作成をメールによる認証で行う場合、ユーザが作成されるコンテキストを特定してください。セキュリティーの観点から、このコンテキストは各ユーザ毎に異なるものでなければなりません。Moodleが自動的にコンテキストからユーザを探しますので、ldap_context-vaiableをこのコンテキストに追加する必要はありません。";
+$string['auth_ldap_creators'] = "メンバーが新しいコースの作成を許されているグループのリストです。複数のグループは「;」で分けられています。通常は'cn=teachers,ou=staff,o=myorg'のようになります。";
 $string['auth_ldap_host_url'] = "LDAPホストのURLを下記のように明示してください。
 
 'ldap://ldap.myorg.com/' 又は 'ldaps://ldap.myorg.com/' ";
@@ -49,6 +51,8 @@ $string['auth_pop3port'] = "サーバーポート (110が一般的です)";
 $string['auth_pop3title'] = "POP3サーバを使用";
 $string['auth_pop3type'] = "サーバタイプです。もし認証が必要な場合はpop3certを選択してください。";
 $string['auth_user_create'] = "ユーザの作成を許可する";
+$string['auth_user_creation'] = "新しい(匿名の)ユーザは外部認証によりユーザアカウントを作成することが出来ます。ユーザの確定はメールによって行われます。このオプションを有効にした場合、module-specificオプションも同時に有効にする必要があります。";
+$string['auth_usernameexists'] = "このユーザ名は既に存在します。新しいものを選んでください。";
 $string['authenticationoptions'] = "認証オプション";
 $string['authinstructions'] = "どのようなユーザ名やパスワードを使用したらよいのかユーザに説明します。ここに入力した文章はログインページに表示されます。空白の場合、何も表示されません。";
 $string['changepassword'] = "パスワードのURLを変更する";

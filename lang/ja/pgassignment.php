@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // pgassignment.php - created with Moodle 1.0.9 development (2003012000)
+      // pgassignment.php - created with Moodle 1.0.9 development (2003032500)
 
 
 $string['absent'] = "欠席";
@@ -11,11 +11,10 @@ $string['allocatedon'] = "Allocated on";
 $string['allocatesubmissions'] = "Allocate submissions to students";
 $string['allocationsincludegoodandbad'] = "Allocations to each student will include at least one good and one poor assignment";
 $string['allowsubmissions'] = "Allow submissions from students";
-$string['amendassignmentelements'] = "Amend assignment elements";
-$string['analyseassignment'] = "Analyse assignment";
+$string['allthecommentsfor'] = "全てのコメント";
 $string['anonymous'] = "Do peer grading anonymously";
 $string['assignmentawaitinggrading'] = "Assignment awaiting grading (Deadline is \$a)";
-$string['assignmenthasbeengraded'] = "Assignment has been graded";
+$string['assignmenthasbeengraded'] = "課題は評価されました";
 $string['awaitingregrading'] = "Awaiting re-grading (on iteration \$a)";
 $string['beforedeadline'] = "\$a before deadline";
 $string['checkallocation'] = "Checking allocation of submissions...";
@@ -29,6 +28,8 @@ $string['editingassessmentelements'] = "Editing Assessment Elements";
 $string['element'] = "Assessment Element";
 $string['elementweight'] = "Element Weight";
 $string['feedbackgoeshere'] = "Feedback goes here";
+$string['finalgrade'] = "最終評価";
+$string['first'] = "最初";
 $string['generalcomment'] = "General comment";
 $string['graded'] = "Grading and feedback by other Students";
 $string['gradedawaitingacceptance'] = "Graded, awaiting acceptance (on iteration \$a)";
@@ -46,9 +47,11 @@ $string['gradingdetails'] = "Grading details";
 $string['gradinggiventothissubmission'] = "Grading given to this submission";
 $string['gradingrepliedtoon'] = "Grading replied to on";
 $string['includeself'] = "Include self in list of graders";
+$string['last'] = "最後";
 $string['managingpeerassignment'] = "Managing a Peer Graded Assignment";
 $string['modulename'] = "Peer Graded Assignment";
 $string['modulenameplural'] = "Peer Graded Assignments";
+$string['next'] = "次";
 $string['notavailable'] = "This assignment is in preparation, it is not yet available.";
 $string['notenoughmarked'] = "There are not enough marked assignments to ensure that allocations include at least one
 good and one poor assignment";
@@ -72,7 +75,7 @@ $string['peerassessmentsdisabled'] = "Peer assessments disabled";
 $string['phase'] = "Phase";
 $string['present'] = "Present";
 $string['regradethissubmission'] = "Reassess this submission";
-$string['reply'] = "Reply";
+$string['reply'] = "返答";
 $string['returntosubmissionpage'] = "Return to submission page";
 $string['savemyassessment'] = "Save my assessment";
 $string['savemyreply'] = "Save my reply";
@@ -86,6 +89,7 @@ $string['scaleexcellent7'] = "7 point Excellent/Very Poor scale";
 $string['scalegood3'] = "3 point Good/Poor scale";
 $string['scalepresent'] = "2 point Present/Absent scale";
 $string['scaleyes'] = "2 point Yes/No scale";
+$string['showfeedback'] = "フィードバックを表示";
 $string['showgrades'] = "Always show grades with comments";
 $string['showgrading'] = "Show grading";
 $string['showstatus'] = "Show status of the peer grading";
@@ -95,13 +99,20 @@ $string['submissionsalreadyallowed'] = "Submissions already allowed";
 $string['submissionsawaitinggrading'] = "Submissions awaiting grading (\$a)";
 $string['submissionsawaitingregrading'] = "Submissions awaiting re-grading (\$a)";
 $string['submittedby'] = "Submitted by \$a";
-$string['thecurrentgradeis'] = "The current grade is";
+$string['teacherscomments'] = "教師のコメント";
+$string['teachersgrade'] = "教師の評価";
+$string['teachersgradeis'] = "教師の評価は \$a です";
+$string['teachersgrades'] = "教師の評価";
+$string['thecurrentgradeis'] = "現在の評価は";
 $string['thegradegiventothissubmissionis'] = "The Grade given to this submission is";
-$string['thegradeis'] = "The Grade is";
+$string['thegradeis'] = "評価は";
 $string['typeofscale'] = "Type of scale";
 $string['warningonamendingelements'] = "WARNING: There are submitted assessments. <BR>Do NOT change the number
  of elements, the scale types or the element weights.";
-$string['workbeingassessed'] = "Work being assessed by you";
-$string['yourworkbeingassessed'] = "Your work being assessed by other";
+$string['weightingofpeer'] = "学生による評価の比重";
+$string['weightingofteacher'] = "教師による評価の比重";
+$string['workofotherstudentsbeinggraded'] = "他の \$a 人の課題があなたによって評価されました";
+$string['youhavenotbeenallocatedanyworktograde'] = "あなたは評価すべき課題を提出していません";
+$string['yourworkbeinggraded'] = "あなたの課題は他の \$a　人によって評価されました";
 
 ?>
