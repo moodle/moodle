@@ -101,6 +101,7 @@ $string['configunzip'] = "UNZIPプログラムの場所を指定してください(Unixのみ、任意
 $string['configvariables'] = "詳細設定";
 $string['configzip'] = "ZIPプログラムの場所を指定してください(UNIXのみ、任意)。これはZIP書庫をサーバ内で作成するために必要です。空白にした場合、Moodleは内部ルーチンを使用します";
 $string['confirmed'] = "登録が完了しました";
+$string['confirmednot'] = "登録はまだ完了していません！";
 $string['continue'] = "続ける";
 $string['cookiesenabled'] = "ブラウザのクッキーの設定を有効にしてください";
 $string['copyrightnotice'] = "著作権表示";
@@ -488,9 +489,12 @@ $string['readme'] = "READMEファイル";
 $string['recentactivity'] = "最新の活動";
 $string['registration'] = "Moodle登録";
 $string['registrationemail'] = "メール通知";
+$string['registrationinfo'] = "<p>このページではあなたのMoodleサイトをmoodle.orgに登録出来ます。登録は無料です。登録の主な利点は、発信数の少ないメーリングリストにあなたのメールアドレスが追加され、セキュリティーに関する警告やMoodleの最新リリースに関する情報を受取れることです。
+<p>デフォルトではあなたの情報は公開されず、他の人に販売・転送されることはありません。情報を収集する唯一の理由はサポートを目的とするものであり、Moodleコミュニティーの統計的全体像を構築するものにあります。<p>登録する場合、あなたのサイト名、国、URLがMoodleサイトの公開リストに登録されます。
+<p>全ての登録内容は公開リストに登録される前に手作業で確認されますが、1度登録されるといつでも登録内容(及び公開リストの内容)をこのフォームで再登録することが出来ます。";
 $string['registrationno'] = "いいえ、メールは送信しないでください";
 $string['registrationsend'] = "moodle.orgに登録情報を送信する";
-$string['registrationyes'] = "はい、重要事項を知らせてください。";
+$string['registrationyes'] = "はい、重要事項を知らせてください";
 $string['removeadmin'] = "管理者を削除する";
 $string['removecreator'] = "コース作成者を削除する";
 $string['removeteacher'] = "教師を削除する";
