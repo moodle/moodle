@@ -1570,13 +1570,6 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
 }
 
 
-// [pj] The first parameter in this function "looks like" a post, but if you find
-// the ONLY place it's called from, you 'll see that what gets passed is actually
-// a DISCUSSION object!!! Furthermore, that object has properties like discussion
-// which a normal discussion object wouldn't have. WTF?!?!?
-// 
-// *** THIS IS MISLEADING AT BEST AND SHOULD BE CORRECTED!!! ***
-
 function forum_print_discussion_header(&$post, $forum, $datestring="") {
 /// This function prints the overview of a discussion in the forum listing.
 /// It needs some discussion information and some post information, these
