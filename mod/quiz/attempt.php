@@ -78,6 +78,8 @@
 
         $rawanswers = (array)$rawanswers;
 
+        $shuffleorder = NULL;
+
         unset($rawanswers["q"]);  // quiz id
         if (! count($rawanswers)) {
             print_heading(get_string("noanswers", "quiz"));
@@ -116,6 +118,8 @@
                 } else {
                     error("Answer received for non-existent question ($key)!");
                 }
+            } else if ($key == "shuffleorder") {
+                $shuffleorder = explode(",", $value);   // Actual order questions were given in
             }
         }
 
@@ -142,7 +146,9 @@
         print_continue("view.php?id=$cm->id");
 
         if ($quiz->feedback) {
-            quiz_print_quiz_questions($quiz, $result, $questions);
+            $quiz->shufflequestions = false;
+            $quiz->shuffleanswers = false;
+            quiz_print_quiz_questions($quiz, $result, $questions, $shuffleorder);
             print_continue("view.php?id=$cm->id");
         }
 

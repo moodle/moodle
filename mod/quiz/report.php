@@ -126,6 +126,8 @@
 
         $quiz->feedback = true;
         $quiz->correctanswers = true;
+        $quiz->shuffleanswers = false;
+        $quiz->shufflequestions = false;
         quiz_print_quiz_questions($quiz, $result, $questions);
 
         if (empty($review)) {

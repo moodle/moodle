@@ -565,14 +565,16 @@ function quiz_print_question($number, $question, $grade, $courseid,
            if (!$subquestions = get_records_list("quiz_match_sub", "id", $options->subquestions)) {
                notify("Error: Missing subquestions for this question!");
            }
-           if ($shuffleanswers) {
-               $subquestions = draw_rand_array($subquestions, count($subquestions));
+           if (!empty($question->questiontext)) {
+               echo text_to_html($question->questiontext);
            }
-           echo text_to_html($question->questiontext);
-           if ($question->image) {
+           if (!empty($question->image)) {
                print_file_picture($question->image, $courseid, QUIZ_PICTURE_DEFAULT_HEIGHT);
            }
 
+           if ($shuffleanswers) {
+               $subquestions = draw_rand_array($subquestions, count($subquestions));
+           }
            foreach ($subquestions as $subquestion) {
                $answers[$subquestion->id] = $subquestion->answertext;
            }
@@ -711,7 +713,7 @@ function quiz_print_question($number, $question, $grade, $courseid,
 
 
 
-function quiz_print_quiz_questions($quiz, $results=NULL, $questions=NULL) {
+function quiz_print_quiz_questions($quiz, $results=NULL, $questions=NULL, $shuffleorder=NULL) {
 // Prints a whole quiz on one page.
 
     /// Get the questions
@@ -727,7 +729,13 @@ function quiz_print_quiz_questions($quiz, $results=NULL, $questions=NULL) {
             return false;
         }
 
-        if (!empty($quiz->shufflequestions)) {
+        if ($shuffleorder) {                             // Order has been defined, so reorder questions
+            $oldquestions = $questions;
+            $questions = array();
+            foreach ($shuffleorder as $key) {     
+                $questions[] = $oldquestions[$key];      // This loses the index key, but doesn't matter
+            }
+        } else if (!empty($quiz->shufflequestions)) {    // Mix everything up
             $questions = swapshuffle_assoc($questions);
         }
     }
@@ -772,8 +780,11 @@ function quiz_print_quiz_questions($quiz, $results=NULL, $questions=NULL) {
     echo "<INPUT TYPE=hidden NAME=q VALUE=\"$quiz->id\">";
 
     $count = 0;
+    $questionorder = array();
+
     foreach ($questions as $question) {
         $count++;
+        $questionorder[] = $question->id;
 
         $feedback       = NULL;
         $response       = NULL;
@@ -814,13 +825,17 @@ function quiz_print_quiz_questions($quiz, $results=NULL, $questions=NULL) {
                             $feedback, $response, $actualgrades, $correct, 
                             $randomquestion, $quiz->shuffleanswers);
         print_simple_box_end();
-        echo "<BR>";
+        echo "<br \>";
     }
 
     if (empty($results)) {
-        echo "<CENTER><INPUT TYPE=submit VALUE=\"".get_string("savemyanswers", "quiz")."\"></CENTER>";
+        if (!empty($quiz->shufflequestions)) {  // Things have been mixed up, so pass the question order
+            $shuffleorder = implode(',', $questionorder);
+            echo "<input type=hidden name=shuffleorder value=\"$shuffleorder\">\n";
+        }
+        echo "<center><input type=submit value=\"".get_string("savemyanswers", "quiz")."\"></center>";
     }
-    echo "</FORM>";
+    echo "</form>";
 
     return true;
 }
