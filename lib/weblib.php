@@ -1996,11 +1996,14 @@ function print_headline($text, $size=2) {
  * @param string $align The alignment of the printed paragraph of text
  * @param int $size The size to set the font for text display.
  */
-function print_heading($text, $align='', $size=2) {
+function print_heading($text, $align='', $size=2, $class='main') {
     if ($align) {
         $align = ' align="'.$align.'"';
     }
-    echo "<h$size $align>".stripslashes_safe($text)."</h$size>";
+    if ($class) {
+        $class = ' class="'.$class.'"';
+    }
+    echo "<h$size $align $class>".stripslashes_safe($text)."</h$size>";
 }
 
 /**
@@ -2013,7 +2016,7 @@ function print_heading($text, $align='', $size=2) {
  * @param string $icon Image to display if needed
  */
 function print_heading_with_help($text, $helppage, $module='moodle', $icon='') {
-    echo '<h2>'.$icon.stripslashes_safe($text);
+    echo '<h2 class="main help">'.$icon.stripslashes_safe($text);
     helpbutton($helppage, $text, $module);
     echo '</h2>';
 }
