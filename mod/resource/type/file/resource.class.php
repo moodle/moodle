@@ -502,7 +502,7 @@ function setup($form) {
                 if ($optionname == "height" or $optionname == "width") {
                     $window->$optionname = $optionvalue;
                 } else if ($optionvalue) {
-                    $window->$optionname = "checked";
+                    $window->$optionname = "checked=\"checked\"";
                 }
             }
         }

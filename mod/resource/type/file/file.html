@@ -1,4 +1,9 @@
-<script language="javascript">
+
+<tr valign="top">
+    <td align="right" nowrap="nowrap">
+
+
+<script language="javascript" type="text/javascript">
     function showhide (id, set) {
         divobj = document.getElementById(id);
         butobj = document.getElementById(id+'button');
@@ -26,15 +31,11 @@
 </script>
 
 
-
-
-<tr valign="top">
-    <td align="right" nowrap="nowrap">
         <p><b><?php echo $strfilename ?>:</b></p>
     </td>
     <td>
     <?php
-        echo "<input name=\"reference\" size=\"90\" value=\"$form->reference\" /><br />";
+        echo "<input name=\"reference\" size=\"90\" value=\"$form->reference\" alt=\"reference\" /><br />";
         button_to_popup_window ("/mod/resource/coursefiles.php?id=$form->course", "coursefiles", $strchooseafile, 500, 750, $strchooseafile);
         echo "<input type=\"button\" name=\"searchbutton\" value=\"$strsearch ...\" ".
              "onclick=\"return window.open('$CFG->resource_websearch', 'websearch', 'menubar=1,location=1,directories=1,toolbar=1,scrollbars,resizable,width=800,height=600');\" />\n";
@@ -68,44 +69,44 @@
             var frameitem = [<?php echo $frameoption; ?>];
             var allitems = [<?php echo $alloptions; ?>];
         </script>
-        <input type="radio" name="windowpopup" value="0" <?php echo ($windowtype != "popup") ? "checked=\"checked\"" : "" ?> 
+        <input type="radio" name="windowpopup" value="0" alt="<?php print_string('pagewindow', 'resource') ?>" <?php echo ($windowtype != "popup") ? "checked=\"checked\"" : "" ?> 
         onclick="lockoptions('form', 'windowpopup[0]', frameitem); 
         return lockoptions('form', 'windowpopup[1]', popupitems);" />
         <b title="<?php print_string("pagedisplay", "resource") ?>"><?php print_string("pagewindow", "resource") ?></b>
-        <ul>
+        <blockquote>
             <input type="hidden" name="hframepage" value="0" />
-            <input type="checkbox" name="framepage" value="1" <?php echo ($form->options == "frame") ? "checked=\"checked\"" : "" ?> />
+            <input type="checkbox" name="framepage" value="1" <?php echo ($form->options == "frame") ? "checked=\"checked\"" : "" ?> alt="<?php print_string('frameifpossible', 'resource') ?>" />
             <?php print_string("frameifpossible", "resource") ?>
-        </ul>
+        </blockquote>
     </td>
 </tr>
 
 <tr valign="top">
     
     <td colspan="2">
-        <input name="windowpopup" type="radio" value="1" <?php echo ($windowtype == "popup") ? "checked=\"checked\"" : "" ?>
+        <input name="windowpopup" type="radio" value="1" alt="<?php p($strnewwindow)?>" <?php echo ($windowtype == "popup") ? "checked=\"checked\"" : "" ?>
         onclick="lockoptions('form', 'windowpopup[0]', frameitem); 
         return lockoptions('form', 'windowpopup[1]', popupitems);" />
         <b title="<?php p($strnewwindowopen) ?>"><?php p($strnewwindow) ?></b>
-        <ul>
+        <blockquote>
         <?php
             foreach ($window as $name => $value) {
                 if ($name == "height" or $name == "width") {
                     continue;
                 }
                 echo "<input name=\"h$name\" type=\"hidden\" value=\"0\" />";
-                echo "<input name=\"$name\" type=\"checkbox\" value=\"1\" ".$window->$name." />";
+                echo "<input name=\"$name\" type=\"checkbox\" value=\"1\" ".$window->$name." alt=\"$name\" />";
                 $stringname = "str$name";
                 echo $$stringname."<br />";
             }
         ?>
 
         <input name="hwidth" type="hidden" value="0" />
-        <input name="width" type="text" size="4" value="<?php p($window->width) ?>" />
+        <input name="width" type="text" size="4" value="<?php p($window->width) ?>" alt="<?php p($strwidth) ?>" />
         <?php p($strwidth) ?><br />
 
         <input name="hheight" type="hidden" value="0" />
-        <input name="height" type="text" size="4" value="<?php p($window->height) ?>" />
+        <input name="height" type="text" size="4" value="<?php p($window->height) ?>" alt="<?php p($strheight) ?>" />
         <?php p($strheight) ?><br />
         <?php
             if ($windowtype == "page") {
@@ -118,7 +119,7 @@
                 echo "</script>";
             }
         ?>
-        </ul>
+        </blockquote>
     </td>
 </tr>
 
@@ -168,9 +169,10 @@ for ($i=0; $i < $this->maxparameters; $i++) {
             echo ">{$fieldarr['langstr']}</option>\n";
         }
     }
+    echo "</select>\n";
     echo "</td>\n";
     echo "<td valign=\"top\">\n";
-    echo "<input type=\"text\" name=\"parse$i\" value=\"{$alltextfield[$i]['parse']}\" />\n";
+    echo "<input type=\"text\" name=\"parse$i\" value=\"{$alltextfield[$i]['parse']}\" alt=\"parameter$i\"/>\n";
     echo "</td>\n";
     echo "</tr>\n";
 }
@@ -181,12 +183,14 @@ for ($i=0; $i < $this->maxparameters; $i++) {
 </table>
     
     </div>
-    
-</td></tr>
 
 
-
-<script language="javascript">
+<script language="javascript" type="text/javascript">
     showhide('parametersettings', true);
     showhide('windowsettings', true);
 </script>
+
+
+</td></tr>
+
+
