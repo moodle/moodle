@@ -786,6 +786,7 @@ $string['restoreto'] = 'Zet de backup terug naar';
 $string['returningtosite'] = 'Al eerder op deze website geweest?';
 $string['revert'] = 'Keer terug';
 $string['role'] = 'Rol';
+$string['rss'] = 'RSS';
 $string['rssarticles'] = 'Aantal recente RSS artikels';
 $string['rsstype'] = 'RSS-feed voor deze activiteit';
 $string['savechanges'] = 'Bewaar de wijzigingen';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // scorm.php - created with Moodle 1.4 development (2004072901)
+      // scorm.php - created with Moodle 1.4 development (2004080300)
 
 
 $string['attr_error'] = 'Foute waarde voor attribuut ($a->attr) in tag $a->tag.';
@@ -52,6 +52,7 @@ $string['noreports'] = 'Er is geen rapport om te tonen';
 $string['normal'] = 'Normaal';
 $string['not_corr_type'] = 'Typfout voor tag $a->tag';
 $string['notattempted'] = 'Niet geprobeerd';
+$string['organizations'] = 'Organisaties';
 $string['packagedir'] = 'Fout van het bestandssysteem: kan geen map voor het pakket maken';
 $string['passed'] = 'Geslaagd';
 $string['php5'] = 'PHP 5 (DOMXML native library)';
