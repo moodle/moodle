@@ -40,7 +40,7 @@
 
     print_header_simple("$strjournals", "",
                  "<a href=\"index.php?id=$course->id\">$strjournals</a> ->
-                  <a href=\"view.php?id=$cm->id\">$journal->name</a> -> $strentries", "", "", true);
+                  <a href=\"view.php?id=$cm->id\">".format_string($journal->name,true)."</a> -> $strentries", "", "", true);
 
 
 /// Check to see if groups are being used in this journal

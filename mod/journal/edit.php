@@ -75,9 +75,9 @@
         $entry->format = $defaultformat;
     }
 
-    print_header_simple("$journal->name", "",
+    print_header_simple(format_string($journal->name), "",
                  "<a href=\"index.php?id=$course->id\">$strjournals</a> ->
-                  <a href=\"view.php?id=$cm->id\">$journal->name</a> -> $stredit", "",
+                  <a href=\"view.php?id=$cm->id\">".format_string($journal->name,true)."</a> -> $stredit", "",
                   "", true, "", navmenu($course, $cm));
 
     echo "<center>\n";

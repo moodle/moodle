@@ -59,7 +59,7 @@
             $newid = insert_record ("journal",$journal);
 
             //Do some output
-            echo "<li>".get_string("modulename","journal")." \"".$journal->name."\"</li>";
+            echo "<li>".get_string("modulename","journal")." \"".format_string(stripslashes($journal->name),true)."\"</li>";
             backup_flush(300);
 
             if ($newid) {

@@ -55,7 +55,7 @@ function journal_user_complete_index($course, $user, $journal, $journalopen, $he
         $entryinfo = "";
     }
 
-    $journal->name = "<a href=\"view.php?id=$journal->coursemodule\">$journal->name</a>";
+    $journal->name = "<a href=\"view.php?id=$journal->coursemodule\">".format_string($journal->name,true)."</a>";
 
     if ($heading) {
         echo "<h3>$heading - $journal->name$entryinfo</h3>";
@@ -183,7 +183,7 @@ function journal_cron () {
 function journal_print_recent_activity($course, $isteacher, $timestart) {
     global $CFG;
 
-    if (empty($CFG->journal_showrecentactivity)) {    // Don't even bother
+    if (!empty($CFG->journal_showrecentactivity)) {    // Don't even bother
         return false;
     }
 

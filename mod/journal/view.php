@@ -28,8 +28,8 @@
     $strjournal = get_string("modulename", "journal");
     $strjournals = get_string("modulenameplural", "journal");
 
-    print_header_simple("$journal->name", '',
-                 "<a href=\"index.php?id=$course->id\">$strjournals</a> -> $journal->name", '', '', true,
+    print_header_simple(format_string($journal->name), '',
+                 "<a href=\"index.php?id=$course->id\">$strjournals</a> -> ".format_string($journal->name), '', '', true,
                   update_module_button($cm->id, $course->id, $strjournal), navmenu($course, $cm));
 
     if (isteacher($course->id)) {
