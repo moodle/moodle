@@ -261,8 +261,9 @@
         $rootdir = $CFG->dataroot."/users";
         //Check if directory exists
         if (is_dir($rootdir)) {
-            $coursedirs = get_directory_list($rootdir);
-            foreach ($coursedirs as $dir) {
+            //Get directories without descend
+            $userdirs = get_directory_list($rootdir,"",false,true,false);
+            foreach ($userdirs as $dir) {
                 //Extracts user id from file path
                 $tok = strtok($dir,"/");
                 if ($tok) {
@@ -313,7 +314,8 @@
         $rootdir = $CFG->dataroot."/$course";
         //Check if directory exists
         if (is_dir($rootdir)) {
-            $coursedirs = get_directory_list($rootdir,$CFG->moddata);
+            //Get files and directories without descend
+            $coursedirs = get_directory_list($rootdir,$CFG->moddata,false,true,true);
             $backupdata_dir = "backupdata";
             foreach ($coursedirs as $dir) {
                 //Check it isn't backupdata_dir
