@@ -15,7 +15,6 @@ class CourseBlock_calendar_month extends MoodleBlock {
 
         require_once($CFG->dirroot.'/calendar/lib.php');
         
-        $site = get_site();
         if ($this->content !== NULL) {
             return $this->content;
         }
@@ -38,7 +37,7 @@ class CourseBlock_calendar_month extends MoodleBlock {
         // Be VERY careful with the format for default courses arguments!
         // Correct formatting is [courseid] => 1 to be concise with moodlelib.php functions.
         calendar_set_filters($courses, $group, $user, $filtercourse, $filtercourse);
-        if ($courseshown == $site->id) {
+        if ($courseshown == SITEID) {
             // For the front page
             $this->content->text .= calendar_overlib_html();
             $this->content->text .= calendar_top_controls('frontpage', array('m' => $_GET['cal_m'], 'y' => $_GET['cal_y']));
