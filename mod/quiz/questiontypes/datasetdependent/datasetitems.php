@@ -225,8 +225,14 @@
                     $itemvalue = $maxnumber + 1;
             }
 
+            if (isset($datasetdef->items[$maxnumber + 1]->id)) {
+                $itemid = $datasetdef->items[$maxnumber + 1]->id;
+            } else {
+                $itemid = '';
+            }
+
             $addline[] = 
-                    '<INPUT TYPE="hidden" name="itemid[]" value="'. $datasetdef->items[$maxnumber + 1]->id .'"/>'
+                    '<INPUT TYPE="hidden" name="itemid[]" value="'.$itemid.'"/>'
                     . "<INPUT TYPE=\"hidden\" name=\"definition[]\" value=\"$datasetdef->id\"/>"
                     . ( 2 != $datasetdef->type
                       ? '<INPUT TYPE="text" size="20" name="value[]" value="'
