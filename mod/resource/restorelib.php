@@ -82,7 +82,7 @@
             $newid = insert_record ("resource",$resource);
 
             //Do some output     
-            echo "<li>".get_string("modulename","resource")." \"".format_string(stripslashes$resource->name),true)."\"</li>";
+            echo "<li>".get_string("modulename","resource")." \"".format_string(stripslashes($resource->name),true)."\"</li>";
             backup_flush(300);
 
             if ($newid) {
