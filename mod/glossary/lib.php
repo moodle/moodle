@@ -232,7 +232,7 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry,$currentview
     global $THEME, $USER;
 
     $importedentry = ($entry->sourceglossaryid == $glossary->id);
-    $isteacher = isteacher($course->id));
+    $isteacher = isteacher($course->id);
     $ismainglossary = $glossary->mainglossary;
 	
     echo "<p align=\"right\">";
