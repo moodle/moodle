@@ -728,10 +728,10 @@ function usergetdate($time, $timezone=99) {
     $time += dst_offset_on($time);
 
     if (abs($timezone) > 13) {
-        $time += intval((float)(date('O')) * HOURSECS;
+        $time += intval((float)date('O') * HOURSECS);
     }
     else {
-        $time += intval((float)($timezone) * HOURSECS;
+        $time += intval((float)$timezone * HOURSECS);
     }
 
     // This is independent of the server's TZ settings,
