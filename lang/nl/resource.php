@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.2 Beta (2004022400)
+      // resource.php - created with Moodle 1.3 development (2004050300)
 
 
 $string['addresource'] = 'Voeg bron toe';
@@ -19,6 +19,7 @@ $string['configpopuptoolbar'] = 'Wil je dat popup-vensters standaard een knoppen
 $string['configpopupwidth'] = 'Hoe breed zou een popup-venster standaard moeten zijn?';
 $string['configwebsearch'] = 'Wanneer je een URL als webpagina of link toevoegd, wordt deze plaats aangeboden als een site om de gebruiker te helpen de URL te zoeken.';
 $string['directlink'] = 'Rechtstreekse link naar dit bestand';
+$string['directoryinfo'] = 'Alle bestanden in de gekozen map zullen getoond worden.';
 $string['editingaresource'] = 'Bewerk een bron';
 $string['example'] = 'Voorbeeld';
 $string['examplereference'] = 'Koers, Diane (1999) <I>Visuele leermethode Office 2000</I>, A.W. Bruna multimedia, ISBN 9022943046.';
@@ -29,9 +30,10 @@ $string['fetchservererror'] = 'Er is een fout gevonden bij de webserver terwijl 
 $string['filename'] = 'Bestandsnaam';
 $string['fulltext'] = 'Volledige tekst';
 $string['htmlfragment'] = 'HTML fragment';
+$string['maindirectory'] = 'Hoofdmap';
 $string['modulename'] = 'Bron';
 $string['modulenameplural'] = 'Bronnen';
-$string['neverseen'] = 'Nooit gezien';
+$string['neverseen'] = 'Nooit bekeken';
 $string['newdirectories'] = 'Toon de links naar de mappen';
 $string['newfullscreen'] = 'Vul het volledige scherm';
 $string['newheight'] = 'Standaard vensterhoogte (in pixels)';
@@ -58,5 +60,6 @@ $string['resourcetype5'] = 'Weblink (nieuw venster)';
 $string['resourcetype6'] = 'HTML tekst';
 $string['resourcetype7'] = 'Programma';
 $string['resourcetype8'] = 'Wiki tekst';
+$string['resourcetype9'] = 'Map';
 
 ?>
