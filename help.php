@@ -36,7 +36,8 @@
             if (file_exists("$filepath")) {
                 include("$filepath");
             } else {
-                error("Can not find the specified help file");
+                notify("Can not find the specified help file");
+                die;
             }
         }
     } else {
