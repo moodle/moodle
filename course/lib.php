@@ -559,7 +559,7 @@ function print_section_block($heading, $course, $section, $mods, $modnames, $mod
                     $modicon[] = "";
                     $moddata[] = format_text($extra, FORMAT_HTML).$editbuttons;
                 } else {
-                    $modicon[] = "<img src=\"$CFG->wwwroot/mod/$mod->modname/icon.gif\"".
+                    $modicon[] = "<img src=\"$CFG->modpixpath/$mod->modname/icon.gif\"".
                                  " height=\"16\" width=\"16\" alt=\"$mod->modfullname\">";
                     $moddata[] = "<a title=\"$mod->modfullname\" $linkcss $extra".
                                  "href=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\">$instancename</a>".
@@ -654,7 +654,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
 
                 } else { // Normal activity
                     $linkcss = $mod->visible ? "" : " class=\"dimmed\" ";
-                    echo "<img src=\"$CFG->wwwroot/mod/$mod->modname/icon.gif\"".
+                    echo "<img src=\"$CFG->modpixpath/$mod->modname/icon.gif\"".
                          " height=16 width=16 alt=\"$mod->modfullname\">".
                          " <font size=2><a title=\"$mod->modfullname\" $linkcss $extra".
                          " href=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\">$instancename</a></font>";
