@@ -61,6 +61,9 @@
     if (! isset($config->guestloginbutton)) {
         $config->guestloginbutton = 1;
     }
+    if (! isset($config->alternateloginurl)) {
+        $config->alternateloginurl = '';
+    }
     if (! isset($config->auth_instructions)) {
         $config->auth_instructions = "";
     }
@@ -159,6 +162,22 @@
         print_string("auth_user_creation","auth");
         echo "</td></tr>";
     }
+
+
+/// An alternate url for the login form. It means we can use login forms that are integrated
+/// into non-moodle pages
+    echo '<tr valign="top">';
+    echo '<td algin="right" nowrap="nowrap">';
+    print_string('alternateloginurl', 'auth');
+    echo '</td>';
+    echo '<td>';
+    echo '<input type="text" size="40" name="alternateloginurl" alt="'.get_string('alternateloginurl', 'auth').'" value="'.$config->alternateloginurl.'" />';
+    echo '</td>';
+    echo '<td>';
+    print_string('alternatelogin', 'auth', htmlspecialchars($CFG->wwwroot.'/login/index.php'));
+    echo '</td>';
+    echo '</tr>';
+
 
     echo '</table>';
     echo '<p align="center"><input type="submit" value="'.get_string('savechanges').'"></p>';

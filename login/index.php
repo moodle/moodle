@@ -61,10 +61,10 @@
         if ($user) {
         	$frm->username = $user->username;
         } else {
-            $frm = data_submitted();
+            $frm = data_submitted($CFG->alternateloginurl);
         }
     } else {
-        $frm = data_submitted();
+        $frm = data_submitted($CFG->alternateloginurl);
     }
 
     if ($frm and (get_moodle_cookie() == '')) {    // Login without cookie
@@ -217,6 +217,11 @@
         $show_instructions = true;
     } else {
         $show_instructions = false;
+    }
+
+    if (!empty($CFG->alternateloginurl)) {
+        redirect($CFG->alternateloginurl);
+        exit;
     }
     
     print_header("$site->fullname: $loginsite", "$site->fullname", $loginsite, $focus, "", true, "<div align=\"right\">$langmenu</div>"); 

@@ -10,6 +10,7 @@
        'allowuserthemes'          =>  false,
        'allowuserblockhiding'     =>  true,
        'allusersaresitestudents'  =>  true,
+       'alternateloginurl'        => '',
        'aspellpath'               => '',
        'auth'                     => 'email',
        'auth_pop3mailbox'         => 'INBOX',
