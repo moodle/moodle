@@ -50,6 +50,17 @@ function main_upgrade($oldversion=0) {
 	if ($oldversion < 2003041400) {
         table_column("course_modules", "", "visible", "integer", "1", "unsigned", "1", "not null", "score");
     }
+
+	if ($oldversion < 2003042104) {  // Try to update permissions of all files
+        if ($files = get_directory_list($CFG->dataroot)) {
+            echo "Attempting to update permissions for all files... ignore any errors.";
+            foreach ($files as $file) {
+                echo "$CFG->dataroot/$file<br>";
+                @chown("$CFG->dataroot/$file", $CFG->directorypermissions);
+            }
+        }
+    }
+
 	
     return true;
 }
