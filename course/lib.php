@@ -882,6 +882,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
             $strmovehere = get_string("movehere");
             $strmovefull = strip_tags(get_string("movefull", "", "'$USER->activitycopyname'"));
         }
+        $labelformatoptions->noclean = true;
     }
 
     $modinfo = unserialize($course->modinfo);
@@ -933,7 +934,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                     if (!$mod->visible) {
                         echo "<span class=\"dimmed_text\">";
                     }
-                    echo format_text($extra, FORMAT_HTML);
+                    echo format_text($extra, FORMAT_HTML, $labelformatoptions);
                     if (!$mod->visible) {
                         echo "</span>";
                     }

@@ -102,7 +102,8 @@
         echo "<td nowrap bgcolor=\"$THEME->cellheading\" class=\"topicsoutlineside\" valign=top width=20>&nbsp;</td>";
         echo "<td valign=top bgcolor=\"$THEME->cellcontent\" class=\"topicsoutlinecontent\" width=\"100%\">";
 
-        echo format_text($thissection->summary, FORMAT_HTML);
+        $summaryformatoptions->noclean = true;
+        echo format_text($thissection->summary, FORMAT_HTML, $summaryformatoptions);
 
         if (isediting($course->id)) {
             echo "<a title=\"$streditsummary\" ".
@@ -193,7 +194,8 @@
             } else {
                 echo '<td id="section_'.($section).'" style="vertical-align:top; width: 100%;" '.$colormain.'>';
 
-                echo format_text($thissection->summary, FORMAT_HTML);
+                $summaryformatoptions->noclean = true;
+                echo format_text($thissection->summary, FORMAT_HTML, $summaryformatoptions);
 
                 if (isediting($course->id)) {
                     echo " <a title=\"$streditsummary\" href=editsection.php?id=$thissection->id>".
