@@ -1,5 +1,8 @@
 <?php // $Id$
 
+$string['blockinstances'] = 'Instances';
+$string['blockmultiple'] = 'Multiple';
+$string['change'] = 'changer';
 $string['cachetext'] = 'Durée de vie du cache texte';
 $string['filteruploadedfiles'] = 'Filtrer les fichiers déposés';
 $string['upgradelogs'] = 'Pour profiter de toutes les fonctionnalités, les historiques (logs) doivent être mis à jour. <a href=\"$a\">Plus d\'informations</a>';
