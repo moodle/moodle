@@ -178,6 +178,7 @@ function glossary_print_entry($course, $cm, $glossary, $entry) {
     } else {
        $PermissionGranted = 1;
     }
+    
     if ( $glossary->displayformat > 0 and $PermissionGranted ) {
         glossary_print_entry_by_format($course, $cm, $glossary, $entry);
     } else {
@@ -489,6 +490,111 @@ function glossary_print_attachments($entry, $return=NULL) {
     }
 
     return $imagereturn;
+}
+
+function print_tabbed_table_start($data, $CurrentTab, $tTHEME = NULL) {
+
+if ( !$tTHEME ) {
+     global $THEME;
+     $tTHEME = $THEME;
+}
+
+$TableColor           = $tTHEME->TabTableBGColor;
+$TableWidth           = $tTHEME->TabTableWidth;
+$CurrentTabColor      = $tTHEME->ActiveTabColor;
+$TabColor             = $tTHEME->InactiveTabColor;
+$TabsPerRow           = $tTHEME->TabsPerRow;
+$TabSeparation        = $tTHEME->TabSeparation;
+
+$Tabs                 = count($data);
+$TabWidth             = (int) (100 / $TabsPerRow);
+
+$CurrentRow           = ( $CurrentTab - ( $CurrentTab % $TabsPerRow) ) / $TabsPerRow;
+
+$NumRows              = (int) ( $Tabs / $TabsPerRow ) + 1;
+
+?>
+  <center>
+  <table border="0" cellpadding="0" cellspacing="0" width="<? p($TableWidth) ?>">
+    <tr>
+      <td width="100%">
+
+      <table border="0" cellpadding="0" cellspacing="0" width="100%">
+
+<?
+$TabProccessed = 0;
+for ($row = 0; $row < $NumRows; $row++) {
+     echo "<tr>\n";
+     if ( $row != $CurrentRow ) {
+          for ($col = 0; $col < $TabsPerRow; $col++) {
+               if ( $TabProccessed < $Tabs ) {
+                    if ($TabProccessed == $CurrentTab) {
+                         $CurrentColor = $CurrentTabColor;
+                    } else {
+                         $CurrentColor = $TabColor;
+                    }
+                    ?>
+                    <td width="<? p($TabWidth) ?>%" bgcolor="<? p($CurrentColor) ?>" align="center">
+                    <b><a href="<? p($data[$TabProccessed]->link) ?>"><? p($data[$TabProccessed]->caption) ?></a></b></td>
+                    <? if ($col < $TabsPerRow) { ?>
+                         <td width="<? p($TabSeparation) ?>" align="center">&nbsp;</td>
+                    <? }
+               } else {
+                    $CurrentColor = "";
+               }
+               $TabProccessed++;
+          }
+     } else {
+          $FirstTabInCurrentRow = $TabProccessed;
+          $TabProccessed += $TabsPerRow;
+     }
+     echo "</tr><tr><td colspan=" . (2* $TabsPerRow) . " ></td></tr>\n";
+}
+     echo "<tr>\n";
+          $TabProccessed = $FirstTabInCurrentRow;
+          for ($col = 0; $col < $TabsPerRow; $col++) {
+               if ( $TabProccessed < $Tabs ) {
+                    if ($TabProccessed == $CurrentTab) {
+                         $CurrentColor = $CurrentTabColor;
+                    } else {
+                         $CurrentColor = $TabColor;
+                    }
+                    ?>
+                    <td width="<? p($TabWidth) ?>%" bgcolor="<? p($CurrentColor) ?>" align="center">
+                    <b><a href="<? p($data[$TabProccessed]->link) ?>"><? p($data[$TabProccessed]->caption) ?></a></b></td>
+                    <? if ($col < $TabsPerRow) { ?>
+                         <td width="<? p($TabSeparation) ?>" align="center">&nbsp;</td>
+                    <? }
+               } else {
+                    if ($NumRows > 1) {
+                         $CurrentColor = $TabColor;
+                    } else {
+                         $CurrentColor = "";
+                    }
+                    echo "<td colspan = " . (2 * ($TabsPerRow - $col)) . " bgcolor=\"$CurrentColor\" align=\"center\">";
+                    echo "</td>";
+
+                    $col = $TabsPerRow;
+               }
+               $TabProccessed++;
+          }
+     echo "</tr>\n";
+     ?>
+
+      </table>
+      </td>
+    </tr>
+    <tr>
+      <td width="100%" bgcolor="<? p($TableColor) ?>"><hr></td>
+    </tr>
+    <tr>
+      <td width="100%" bgcolor="<? p($TableColor) ?>">
+          <center>
+<?
+}
+
+function print_tabbed_table_end() {
+     echo "</center><p></td></tr></table></center>";
 }
 
 ?>

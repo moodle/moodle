@@ -43,6 +43,27 @@ CREATE TABLE prefix_glossary_entries (
 ) TYPE=MyISAM COMMENT='all glossary entries';
 
 #
+# Table structure for table `glossary_cageories`
+#
+
+CREATE TABLE prefix_glossary_categories (
+     id int(10) unsigned NOT NULL auto_increment,
+     glossaryid int(10) unsigned NOT NULL default '0',
+     name varchar(255) NOT NULL default '',
+     PRIMARY KEY  (id)
+) TYPE=MyISAM COMMENT='all categories for glossary entries';
+
+#
+# Table structure for table `glossary_entries_category`
+#
+
+CREATE TABLE prefix_glossary_entries_categories (
+     categoryid int(10) unsigned NOT NULL default '1',
+     entryid int(10) unsigned NOT NULL default '0',
+     PRIMARY KEY  (categoryid, entryid)
+) TYPE=MyISAM COMMENT='categories of each glossary entry';
+
+#
 # Dumping data for table `log_display`
 #
 
@@ -52,4 +73,7 @@ INSERT INTO prefix_log_display VALUES ('glossary', 'view', 'glossary', 'name');
 INSERT INTO prefix_log_display VALUES ('glossary', 'view all', 'glossary', 'name');
 INSERT INTO prefix_log_display VALUES ('glossary', 'add entry', 'glossary', 'name');
 INSERT INTO prefix_log_display VALUES ('glossary', 'update entry', 'glossary', 'name');
+INSERT INTO prefix_log_display VALUES ('glossary', 'add category', 'glossary', 'name');
+INSERT INTO prefix_log_display VALUES ('glossary', 'update category', 'glossary', 'name');
+INSERT INTO prefix_log_display VALUES ('glossary', 'delete category', 'glossary', 'name');
 

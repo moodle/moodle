@@ -35,10 +35,36 @@ function glossary_upgrade($oldversion) {
                     " ADD `showall` TINYINT(2) UNSIGNED DEFAULT '1' NOT NULL AFTER `showalphabet` ");
     }
     
+    if ( $oldversion < 2003091800 ) {
+
+        execute_sql("CREATE TABLE `{$CFG->prefix}glossary_categories` (
+                    `id` INT(10) unsigned NOT NULL auto_increment,
+                    `glossaryid` INT(10) UNSIGNED NOT NULL default '0',
+                    `name` VARCHAR(255) NOT NULL default '',
+                    PRIMARY KEY  (`id`)
+                    ) TYPE=MyISAM COMMENT='all categories for glossary entries'");
+
+        execute_sql("CREATE TABLE `{$CFG->prefix}glossary_entries_categories` (
+                    `categoryid` INT(10) UNSIGNED NOT NULL default '1',
+                    `entryid` INT(10) UNSIGNED NOT NULL default '0',
+                    PRIMARY KEY  (`categoryid`, `entryid`)
+                    ) TYPE=MyISAM COMMENT='categories of each glossary entry'");
+                    
+          // creating a default category for every glossary
+        execute_sql("INSERT INTO `{$CFG->prefix}glossary_categories` (`glossaryid`, `name`)
+                    SELECT `id`, '" . get_string("main","glossary") . "' FROM `{$CFG->prefix}glossary`");
+                    
+
+          // setting the default category for every entry.
+        execute_sql("INSERT INTO `{$CFG->prefix}glossary_entries_categories` (`categoryid`, `entryid`)
+                    SELECT c.id, e.id
+                    FROM `{$CFG->prefix}glossary_entries` e, `{$CFG->prefix}glossary_categories` c
+                    WHERE e.glossaryid = c.glossaryid");
+
+     }
+
     return true;
 }
-
-
 
 ?>
 

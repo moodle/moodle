@@ -13,7 +13,7 @@ function glossary_print_entry_by_format($course, $cm, $glossary, $entry) {
     $user = get_record("user", "id", $entry->userid);
     $strby = get_string("writtenby","glossary");
 
-    echo "<table width=70% border=0><tr><td>";
+    echo "<table width=95% border=0><tr><td>";
 
     echo "\n<TABLE BORDER=1 CELLSPACING=0 valign=top cellpadding=10>";
 
