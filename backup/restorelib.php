@@ -70,7 +70,16 @@
 
         //We call the main read_xml function, with todo = SECTIONS
         $info = restore_read_xml ($xml_file,"SECTIONS",false);
-print_object($info);
+
+        return $info;
+    }
+    
+    //This function read the xml file and store its data from the users in 
+    //backup_ids->info db (and user's id in $info)
+    function restore_read_xml_users ($restore,$xml_file) {
+
+        //We call the main read_xml function, with todo = USERS
+        $info = restore_read_xml ($xml_file,"USERS",$restore);
 
         return $info;
     }
@@ -369,6 +378,130 @@ print_object($info);
 
         return $status;
     }
+    
+    //This function creates all the user, user_students, user_teachers
+    //user_course_creators and user_admins from xml
+    function restore_create_users($restore,$xml_file) {
+
+        global $CFG;   
+
+        $status = true;
+        //Check it exists
+        if (!file_exists($xml_file)) {
+            $status = false;
+        }
+        //Get info from xml
+        if ($status) {
+            //info will contain the old_id of every user
+            //in backup_ids->info will be the real info (serialized)
+            $info = restore_read_xml_users($restore,$xml_file);
+        }
+
+        //Now, get evey user_id from $info and user data from $backup_ids
+        //and create the necessary records (users, user_students, user_teachers
+        //user_course_creators and user_admins
+        if ($info) {
+            //For each, user, take its info from backup_ids
+            foreach ($info->users as $userid) {
+                $rec = backup_getid($restore->backup_unique_code,"user",$userid); 
+                $user = unserialize($rec->info);
+                //Calculate if it is a course user
+                //Has role teacher or student or admin or coursecreator
+                $is_course_user = ($user->roles[teacher] or $user->roles[student] or
+                                   $user->roles[admin] or $user->roles[coursecreator]);
+                //Check if it's admin and coursecreator
+                $is_admin = ($user->roles[admin]);
+                $is_coursecreator = ($user->roles[coursecreator]);
+                //Check if it's teacher and student
+                $is_teacher = ($user->roles[teacher]);
+                $is_student = ($user->roles[student]);
+                //check if it exists (by username)
+                $user_exists = true;
+                if (!record_exists("user","username",$user->username)) {
+                    $user_exists = false;
+                }
+                //Flags to see if we have to create the user and roles
+                $create_user = true;
+                $create_roles = true;
+                //To store new ids created
+                $newid=null;
+
+                //If we are restoring course users and it isn't a course user
+                if ($restore->users == 1 and !$is_course_user) {
+                    //If only restoring course_users and user isn't a course_user, inform to $backup_ids
+                    $status = backup_putid($restore->backup_unique_code,"user",$userid,null,'notincourse');
+                    $create_user = false;
+                    $create_roles = false;
+                }
+
+                if ($user_exists and $create_user) {
+                    //If user exists mark its newid in backup_ids (the same than old)
+                    $status = backup_putid($restore->backup_unique_code,"user",$userid,$userid,'exists');
+                    $create_user = false;
+                }
+
+                //Here, if create_user, do it
+                if ($create_user) {
+                    //We are going to create the user
+                    //The structure is exactly as we need
+                    $newid = insert_record ("user",$user);
+                    //Put the new id
+                    $status = backup_putid($restore->backup_unique_code,"user",$userid,$newid);
+                }
+
+                //Here, if create_roles, do it as necessary
+                if ($create_roles) {
+                    //Get the newid from backup_ids
+                    $data = backup_getid($restore->backup_unique_code,"user",$userid);
+                    $newid = $data->new_id;
+                    //Now, depending of the role, create records in user_studentes and user_teacher 
+                    //and/or mark it in backup_ids
+                    if ($is_admin) {
+                        //Only put status in backup_ids
+                        $status = backup_putid($restore->backup_unique_code,"user",$userid,$newid,"admin");
+                    } 
+                    if ($is_coursecreator) {
+                        //Only put status in backup_ids
+                        $status = backup_putid($restore->backup_unique_code,"user",$userid,$newid,"coursecreator");
+                    } 
+                    if ($is_teacher) {
+                        //Put status in backup_ids 
+                        $status = backup_putid($restore->backup_unique_code,"user",$userid,$newid,"teacher");
+                        //If the record (teacher) doesn't exists
+                        if (!record_exists("user_teachers","userid",$newid,"course", $restore->course_id)) {
+                            //Set course and user
+                            $user->roles[teacher]->course = $restore->course_id;
+                            $user->roles[teacher]->userid = $newid;
+                            //Insert data in user_teachers
+                            //The structure is exactly as we need
+                            $status = insert_record("user_teachers",$user->roles[teacher]);
+                        }
+                    } 
+                    if ($is_student) {
+                        //Put status in backup_ids
+                        $status = backup_putid($restore->backup_unique_code,"user",$userid,$newid,"student");
+                        //If the record (student) doesn't exists
+                        if (!record_exists("user_students","userid",$newid,"course", $restore->course_id)) {
+                            //Set course and user
+                            $user->roles[student]->course = $restore->course_id;
+                            $user->roles[student]->userid = $newid;
+                            //Insert data in user_students
+                            //The structure is exactly as we need
+                            $status = insert_record("user_students",$user->roles[student]);
+                        }
+                    }
+                    if (!$is_course_user) {
+                        //Put status in backup_ids
+                        $status = backup_putid($restore->backup_unique_code,"user",$userid,$newid,"user");
+                    }
+                }
+            }
+        } else {
+            $status = false;
+        }
+
+        return $status;
+    }
    
 
     //=====================================================================================
@@ -424,6 +557,16 @@ print_object($info);
 
             //Check if we are into SECTIONS zone
             //if ($this->tree[3] == "SECTIONS")                                                         //Debug
+            //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br>\n";   //Debug
+        }
+        
+        //This is the startTag handler we use where we are reading the user zone (todo="USERS")
+        function startElementUsers($parser, $tagName, $attrs) {
+            //Refresh properties     
+            $this->level++;
+            $this->tree[$this->level] = $tagName;   
+            //Check if we are into USERS zone  
+            //if ($this->tree[3] == "USERS")                                                            //Debug
             //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br>\n";   //Debug
         }
 
@@ -639,18 +782,18 @@ print_object($info);
                 if ($this->level == 6) {
                     switch ($tagName) {
                         case "MOD":
-                            //We've finalized a section, get it
-                            $this->info->sections[$this->info->tempsection->id]->mods[$this->info->tempmod->id]->type = 
+                            //We've finalized a mod, get it
+                            $this->info->tempsection->mods[$this->info->tempmod->id]->type = 
                                 $this->info->tempmod->type;
-                            $this->info->sections[$this->info->tempsection->id]->mods[$this->info->tempmod->id]->instance = 
+                            $this->info->tempsection->mods[$this->info->tempmod->id]->instance = 
                                 $this->info->tempmod->instance;
-                            $this->info->sections[$this->info->tempsection->id]->mods[$this->info->tempmod->id]->added = 
+                            $this->info->tempsection->mods[$this->info->tempmod->id]->added = 
                                 $this->info->tempmod->added;
-                            $this->info->sections[$this->info->tempsection->id]->mods[$this->info->tempmod->id]->deleted = 
+                            $this->info->tempsection->mods[$this->info->tempmod->id]->deleted = 
                                 $this->info->tempmod->deleted;
-                            $this->info->sections[$this->info->tempsection->id]->mods[$this->info->tempmod->id]->score = 
+                            $this->info->tempsection->mods[$this->info->tempmod->id]->score = 
                                 $this->info->tempmod->score;
-                            $this->info->sections[$this->info->tempsection->id]->mods[$this->info->tempmod->id]->visible = 
+                            $this->info->tempsection->mods[$this->info->tempmod->id]->visible = 
                                 $this->info->tempmod->visible;
                             unset($this->info->tempmod);
                     }
@@ -692,6 +835,183 @@ print_object($info);
                 $this->finished = true;
             }
         }
+        
+        //This is the endTag handler we use where we are reading the users zone (todo="USERS")
+        function endElementUsers($parser, $tagName) {
+            //Check if we are into USERS zone
+            if ($this->tree[3] == "USERS") {
+                //if (trim($this->content))                                                                     //Debug
+                //    echo "C".str_repeat("&nbsp;",($this->level+2)*2).$this->getContents()."<br>\n";           //Debug
+                //echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;/".$tagName."&gt;<br>\n";          //Debug
+                //Dependig of different combinations, do different things
+                if ($this->level == 4) {
+                    switch ($tagName) {
+                        case "USER":
+                            //We've finalized a user, get it and save to db
+                            backup_putid($this->preferences->backup_unique_code,"user",$this->info->tempuser->id,
+                                          null,serialize($this->info->tempuser));
+                            //Delete temp obejct
+                            unset($this->info->tempuser);
+                            break;
+                    }
+                }
+                if ($this->level == 5) {
+                    switch ($tagName) {
+                        case "ID": 
+                            $this->info->users[$this->getContents()] = $this->getContents();
+                            $this->info->tempuser->id = $this->getContents();
+                            break;
+                        case "CONFIRMED": 
+                            $this->info->tempuser->confirmed = $this->getContents();
+                            break;
+                        case "DELETED": 
+                            $this->info->tempuser->deleted = $this->getContents();
+                            break;
+                        case "USERNAME": 
+                            $this->info->tempuser->username = $this->getContents();
+                            break;
+                        case "PASSWORD": 
+                            $this->info->tempuser->password = $this->getContents();
+                            break;
+                        case "IDNUMBER": 
+                            $this->info->tempuser->idnumber = $this->getContents();
+                            break;
+                        case "FIRSTNAME": 
+                            $this->info->tempuser->firstname = $this->getContents();
+                            break;
+                        case "LASTNAME": 
+                            $this->info->tempuser->lastname = $this->getContents();
+                            break;
+                        case "EMAIL": 
+                            $this->info->tempuser->email = $this->getContents();
+                            break;
+                        case "ICQ": 
+                            $this->info->tempuser->icq = $this->getContents();
+                            break;
+                        case "PHONE1": 
+                            $this->info->tempuser->phone1 = $this->getContents();
+                            break;
+                        case "PHONE2": 
+                            $this->info->tempuser->phone2 = $this->getContents();
+                            break;
+                        case "INSTITUTION": 
+                            $this->info->tempuser->institution = $this->getContents();
+                            break;
+                        case "DEPARTMENT": 
+                            $this->info->tempuser->department = $this->getContents();
+                            break;
+                        case "ADDRESS": 
+                            $this->info->tempuser->address = $this->getContents();
+                            break;
+                        case "CITY": 
+                            $this->info->tempuser->city = $this->getContents();
+                            break;
+                        case "COUNTRY": 
+                            $this->info->tempuser->country = $this->getContents();
+                            break;
+                        case "LANG": 
+                            $this->info->tempuser->lang = $this->getContents();
+                            break;
+                        case "TIMEZONE": 
+                            $this->info->tempuser->timezone = $this->getContents();
+                            break;
+                        case "FIRSTACCESS": 
+                            $this->info->tempuser->firstaccess = $this->getContents();
+                            break;
+                        case "LASTACCESS": 
+                            $this->info->tempuser->lastaccess = $this->getContents();
+                            break;
+                        case "LASTLOGIN": 
+                            $this->info->tempuser->lastlogin = $this->getContents();
+                            break;
+                        case "CURRENTLOGIN": 
+                            $this->info->tempuser->currentlogin = $this->getContents();
+                            break;
+                        case "LASTIP": 
+                            $this->info->tempuser->lastip = $this->getContents();
+                            break;
+                        case "SECRET": 
+                            $this->info->tempuser->secret = $this->getContents();
+                            break;
+                        case "PICTURE": 
+                            $this->info->tempuser->picture = $this->getContents();
+                            break;
+                        case "URL": 
+                            $this->info->tempuser->url = $this->getContents();
+                            break;
+                        case "DESCRIPTION": 
+                            $this->info->tempuser->description = $this->getContents();
+                            break;
+                        case "MAILFORMAT": 
+                            $this->info->tempuser->mailformat = $this->getContents();
+                            break;
+                        case "MAILDISPLAY": 
+                            $this->info->tempuser->maildisplay = $this->getContents();
+                            break;
+                        case "HTMLEDITOR": 
+                            $this->info->tempuser->htmleditor = $this->getContents();
+                            break;
+                        case "AUTOSUBSCRIBE": 
+                            $this->info->tempuser->autosubscribe = $this->getContents();
+                            break;
+                        case "TIMEMODIFIED": 
+                            $this->info->tempuser->timemodified = $this->getContents();
+                            break;
+                    }
+                }
+                if ($this->level == 6) {
+                    switch ($tagName) {
+                        case "ROLE":
+                            //We've finalized a role, get it
+                            $this->info->tempuser->roles[$this->info->temprole->type]->authority =
+                                $this->info->temprole->authority;
+                            $this->info->tempuser->roles[$this->info->temprole->type]->tea_role =
+                                $this->info->temprole->tea_role;
+                            $this->info->tempuser->roles[$this->info->temprole->type]->timestart =
+                                $this->info->temprole->timestart;
+                            $this->info->tempuser->roles[$this->info->temprole->type]->timeend =
+                                $this->info->temprole->timeend;
+                            $this->info->tempuser->roles[$this->info->temprole->type]->time =
+                                $this->info->temprole->time;
+                            unset($this->info->temprole);
+                            break;
+                    }
+                }
+                if ($this->level == 7) {
+                    switch ($tagName) {
+                        case "TYPE":
+                            $this->info->temprole->type = $this->getContents();
+                            break;
+                        case "AUTHORITY":
+                            $this->info->temprole->authority = $this->getContents();
+                            break;
+                        case "TEA_ROLE":
+                            $this->info->temprole->tea_role = $this->getContents();
+                            break;
+                        case "TIMESTART":
+                            $this->info->temprole->timestart = $this->getContents();
+                            break;
+                        case "TIMEEND":
+                            $this->info->temprole->timeend = $this->getContents();
+                            break;
+                        case "TIME":
+                            $this->info->temprole->time = $this->getContents();
+                            break;
+                    }
+                }
+            }
+
+            //Stop parsing if todo = USERS and tagName = USERS (en of the tag, of course)
+            //Speed up a lot (avoid parse all)
+            if ($tagName == "USERS" and $this->level == 3) {
+                $this->finished = true;
+            }
+
+            //Clear things
+            $this->tree[$this->level] = "";
+            $this->level--;
+            $this->content = "";
+        }
 
         //This is the endTag default handler we use when todo is undefined
         function endElement($parser, $tagName) {
@@ -731,6 +1051,9 @@ print_object($info);
         } else if ($todo == "SECTIONS") {
             //Define handlers to that zone
             xml_set_element_handler($xml_parser, "startElementSections", "endElementSections");
+        } else if ($todo == "USERS") {
+            //Define handlers to that zone
+            xml_set_element_handler($xml_parser, "startElementUsers", "endElementUsers");
         } else {
             //Define default handlers (must no be invoked when everything become finished)
             xml_set_element_handler($xml_parser, "startElementInfo", "endElementInfo");

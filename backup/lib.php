@@ -333,4 +333,18 @@
                                      old_id = '$old_id'",false);
         return $status;
     }
+
+    //This function is used to get a record from the backup_ids table
+    function backup_getid ($backup_unique_code, $table, $old_id) {
+
+        global $CFG;
+
+        $status = true;
+
+        $status = get_record ("backup_ids","backup_code",$backup_unique_code,
+                                           "table_name",$table, 
+                                           "old_id", $old_id);
+
+        return $status;
+    }
 ?>
