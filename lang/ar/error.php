@@ -1,14 +1,18 @@
 <?PHP // $Id$ 
-      // error.php - created with Moodle 1.2 development (2004012800)
+      // error.php - created with Moodle 1.3 development (2004041800)
 
 
+$string['coursegroupunknown'] = 'ÇáãäåÌ ÇáãÊØÇÈŞ ãÚ ÇáãÌãæÚÉ $a áã íÍÏÏ';
 $string['erroronline'] = 'ÎØÇÁ İí ÓØÑ $a';
 $string['fieldrequired'] = '\"$a\" ÍŞá ãØáæÈ';
+$string['groupalready'] = 'ÇáãÓÊÎÏã íäÊãí ááãÌãæÚÉ $a';
+$string['groupunknown'] = 'ÇáãÌãæÚÉ $a  áÇ íÑÊÈØ ÈÃí ãäåÌ ÏÑÇÓí ãÍÏÏ';
 $string['invalidfieldname'] = '\"$a\"  ÇÓã ÇáÍŞá ÛíÑ ÕÍíÍ';
 $string['missingfield'] = 'ÇáÍŞá \"$a\" ÛíÑ ãæÌæÏ';
-$string['modulerequirementsnotmet'] = 'ÇáæÍÏ \" $a->modulename\" ($a->moduleversion) áÇíãßä ÊËÈÊåÇ ÇáÂä. ÃäåÇ ÊÊØáÈ ÃÕÏÇÑ ÌÏíÏ áãæÏá 
-(ÃäÊ ÊÓÊÎÏã ÇáÂä $a->currentmoodle, æÊÍÊÇÌ $a ->requiremoodle)
+$string['modulerequirementsnotmet'] = 'ÇáæÍÏ \" $a->modulename\" ($a->moduleversion) áÇíãßä ÊËÈÊåÇ ÇáÂä. ÃäåÇ ÊÊØáÈ ÃÕÏÇÑ ÌÏíÏ áãæÏá 
+(ÃäÊ ÊÓÊÎÏã ÇáÂä $a->currentmoodle, æÊÍÊÇÌ $a ->requiremoodle)
 ';
+$string['notavailable'] = 'ÛíÑ ãÊæİÑ ÍÇáíÇ';
 $string['restricteduser'] = 'ÚĞÑÇ¡ ÃäÊ áÓÊ ãÎæáÇ ááŞíÇã ÈĞáß ÍÇáíÇğ';
 $string['unknowncourse'] = 'ÇÓã ÇáãäåÌ ÇáÏÑÇÓí ÛíÑ ãÚÑæİ\"$a\"';
 $string['usernotaddederror'] = 'ÇáãÓÊÎÏã\"$a\" áã íÊã ÇÖÇİÉ- ÎØÇÁ ÛíÑ ãÚÑæİ';

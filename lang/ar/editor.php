@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.2 development (2004012800)
+      // editor.php - created with Moodle 1.3 development (2004041800)
 
 
 $string['about'] = 'Íæá åÐÇ ÇáãÍÑÑ';
@@ -21,10 +21,14 @@ $string['chooseicon'] = 'ÃÎÊÑ ÃíÞæäå ááÃÏÑÇÌ';
 $string['close'] = 'ãÛáÞ';
 $string['cols'] = 'ÃÚãÏÉ';
 $string['copy'] = 'ÃäÓÎ ÇáãÎÊÇÑ';
+$string['createfolder'] = 'ÃäÔÆ ãÌáÏ';
 $string['createlink'] = 'ÃÏÑÇÌ ÑÇÈØ æíÈ';
 $string['cut'] = 'ÞÕ ÇáãÎÊÇÑ';
+$string['delete'] = 'ÃÍÐÝ';
+$string['filebrowser'] = 'ãÓÊÚÑÖ ÇáãáÝ';
 $string['forecolor'] = 'áæä ÇáÎØ';
 $string['heading'] = 'ÚäæÇä';
+$string['height'] = 'Ùáá';
 $string['hilitecolor'] = 'áæä ÇáÎáÝíÉ';
 $string['horizontal'] = 'ÇÝÞí';
 $string['horizontalrule'] = 'ÎØ ÊÓØíÑ ÃÝÞí';
@@ -33,6 +37,7 @@ $string['imageurl'] = 'ÇáÇÑÊÈÇØ ÇáÊÔÚÈí ááÕæÑÉ';
 $string['indent'] = 'ÒíÇÏÉ ÇáãÓÇÝÉ ÇáÈÇÏÆÉ';
 $string['insertchar'] = 'ÅÏÑÇÌ ÃÍÑÝ ÎÇÕÉ';
 $string['insertimage'] = 'ÅÏÑÇÌ ÕæÑÉ';
+$string['insertlink'] = 'ÅÏÑÇÌ ÑÇÈØ';
 $string['insertsmile'] = 'ÅÏÑÇÌ ÃæÌå';
 $string['inserttable'] = 'ÅÏÑÇÌ ÌÏæá';
 $string['italic'] = 'ãÇÆá';
@@ -42,8 +47,19 @@ $string['justifyleft'] = 'ÖÈØ ÇáíÓÇÑ';
 $string['justifyright'] = 'ÖÈØ Çáíãíä';
 $string['layout'] = 'ÊÎØíØ';
 $string['left'] = 'íÓÇÑ';
+$string['linkproperties'] = 'ÎÕÇÆÕ ÑÇÈØ';
+$string['linktarget'] = 'åÏÝ';
+$string['linktargetblank'] = 'äÇÝÐå ÌÏíÏÉ';
+$string['linktargetnone'] = 'áÇ ÔíÆ';
+$string['linktargetother'] = 'ÃÎÑ (ÎÇÑÌ ÇáÊÑÊíÈ)';
+$string['linktargetself'] = 'äÝÓ ÇáÇØÇÑ';
+$string['linktargettop'] = 'äÝÓ ÇáäÇÝÐå';
+$string['linktitle'] = 'ÚäæÇä';
+$string['linkurl'] = 'ãæÌÉ ÑÇÈØ';
 $string['middle'] = 'æÓØ';
+$string['move'] = 'ÍÑß';
 $string['normal'] = 'ÚÇÏí';
+$string['notimage'] = 'ÇáãáÝ ÇáãÎÊÇÑ áíÓ ÕæÑÉ. ÇáÑÌÇÁ ÅÎÊíÇÑ ÕæÑÉ';
 $string['notset'] = 'áã íÚííä';
 $string['ok'] = 'OK';
 $string['orderedlist'] = 'ÞÇÆãÉ ãäØãÉ';
@@ -55,10 +71,15 @@ $string['pixels'] = 'ÈßÓá';
 $string['popupeditor'] = 'ÊßÈíÑ ÇáãÍÑÑ';
 $string['preformatted'] = 'ãäÓÞ ÓÇÈÞÇð';
 $string['preview'] = 'ãÚÇíäÉ';
+$string['properties'] = 'ÎÕÇÆÕ';
 $string['redo'] = 'ÅÚÇÏÉ ÇÎÑ Úãá';
+$string['removelink'] = 'ÇÓÊÈÚÇÏ ÇáÑÇÈØ';
+$string['rename'] = 'ÅÚÇÏÉ ÊÓãíÉ';
 $string['right'] = 'íãíä';
 $string['rows'] = 'ÕÝæÝ';
+$string['selection'] = 'ãÎÊÇÑ';
 $string['showhelp'] = 'ÇáãÓÇÚÏÉ áÓÊÎÏÇã ÇáãÍÑÑ';
+$string['size'] = 'ÍÌã';
 $string['spacing'] = 'ÇáãÓÇÝÉ Èíä ÇáÇÓØÑ';
 $string['strikethrough'] = 'íÊæÓøóØå ÎØ';
 $string['subscript'] = 'ÇÍÑÝ ÓÝáíå';
@@ -67,10 +88,13 @@ $string['textindicator'] = 'ÇáÇÓáæÈ ÇáÍÇáí';
 $string['textmode'] = 'ÇäÊ Ýí æÖÚ ÇáäÕ.  ÇÓÊÎÏã ÃÒÑÇÑ[<>] áÊÊäÞá Åáì æÖÚ ÓÊÍÕá Úáì ãÇÊÔÇåÏ.';
 $string['texttop'] = 'ÃÚáì ÇáäÕ';
 $string['top'] = 'Úáæí';
+$string['type'] = 'äæÚ';
 $string['underline'] = 'ÊÓØíÑ';
 $string['undo'] = 'ÅáÛí ÇÎÑ Úãá';
 $string['unorderedlist'] = 'ÞÇÆãÉ äÞØíÉ';
+$string['upload'] = 'ÊÍãíá';
 $string['vertical'] = 'ÚãæÏíø/ ÑÃÓí';
 $string['width'] = 'ÚÑÖ';
+$string['zip'] = 'ÖÛØ';
 
 ?>

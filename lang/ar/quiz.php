@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.2 development (2004012800)
+      // quiz.php - created with Moodle 1.3 development (2004041800)
 
 
 $string['acceptederror'] = 'ÇÎØÇÁ דÞÈזבו';
@@ -20,6 +20,7 @@ $string['answertoolong'] = 'ÇבÌזÇÈ Øזםב ÌÏÇנ ÈÚÏ ÇבÓØÑ $a (ÇבÍÏ ÇבÇÞÕל 255 ÍÑÝ) 
 $string['aon'] = 'ÊהÓםÞ AON';
 $string['attempt'] = 'דÍÇזבÉ $a ';
 $string['attemptfirst'] = 'ÇבדÍÇזבÉ ÇבÃזבל';
+$string['attemptincomplete'] = 'ÇבדÍÇזבÉ ÇבÊם ÊדÊ (ÈזÇÓØÉ a$)  בד Ê‗Êדב ÈÚÏ';
 $string['attemptlast'] = 'ÇבדÍÇזבÉ ÇבÃÎםÑÉ';
 $string['attemptquiznow'] = 'Þד ÈÃÏÇÁ ÇבÇדÊÍÇה ÇבÂה';
 $string['attempts'] = 'דÍÇזבÇÊ';
@@ -78,11 +79,11 @@ $string['fileformat'] = 'ÊהÓםÞ ÇבדבÝ';
 $string['filloutoneanswer'] = 'בÇÈÏ Ãה ÊדבÃ ÇבÝÑÇÛ ÈÅÌÇÈÉ זÇÍÏÉ Úבל ÇבÃÞב.ÇבÅÌÇÈÇÊ ÇבÊם ÊÊÑ‗ ÝÇÑÛÉ בה ÊÓÊÎÏד.';
 $string['filloutthreequestions'] = 'םÌÈ ÊÚÈםÆÉ ËבÇËÉ ÃÓÆבÉ Úבל ÇבÇÞב. ÇבÇÓÆבÉÇבÝÇÑÛÉ בה ÊÓÊÎÏד.';
 $string['fillouttwochoices'] = 'םÌÈ ÊÚÈםÆÉ ÇÎÊםÇÑםה Úבל ÇבÃÞב. ÇבÎםÇÑÇÊ ÇבÊם ÊÊÑ‗ ÝÇÑÛÉ בה ÊÓÊÎÏד.';
-$string['fractionsaddwrong'] = 'ÇבÏÑÌÇÊ ÇבדזÌÈÉ ÇבÊם ÍÕבÊ ÚבםוÇ בÇ ÊÈבÛ 100%%
-<BR>Èב ÅהוÇ ÊÈבÛ $a %%
+$string['fractionsaddwrong'] = 'ÇבÏÑÌÇÊ ÇבדזÌÈÉ ÇבÊם ÍÕבÊ ÚבםוÇ בÇ ÊÈבÛ 100%%
+<BR>Èב ÅהוÇ ÊÈבÛ $a %%
 <BR>וב ÊÑםÏ ÇבÑÌזÚ בÊÕזםÈ וÐÇ ÇבÓÄÇב¿';
-$string['fractionsnomax'] = 'בÇ ÈÏ Ãה ם‗זה ÃÍÏ ÇבÃÓÆבÉ 100%%, ÍÊל ם‗זה
-<BR>ÇבÍÕזב Úבל ÇבÏÑÌÉ ÇבהוÇÆםÉ בוÐÇ ÇבÓÄÇב דד‗הÇ.
+$string['fractionsnomax'] = 'בÇ ÈÏ Ãה ם‗זה ÃÍÏ ÇבÃÓÆבÉ 100%%, ÍÊל ם‗זה
+<BR>ÇבÍÕזב Úבל ÇבÏÑÌÉ ÇבהוÇÆםÉ בוÐÇ ÇבÓÄÇב דד‗הÇ.
 <BR>וב ÊÑםÏ ÇבÑÌזÚ בÊÕזםÈ וÐÇ ÇבÓÄÇב¿';
 $string['gift'] = 'ÊהÓםÞ GIFT';
 $string['gradeaverage'] = 'דÊזÓØ ÇבÏÑÌÉ';

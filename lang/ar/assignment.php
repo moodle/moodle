@@ -1,13 +1,13 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.2 development (2004012800)
+      // assignment.php - created with Moodle 1.3 development (2004041800)
 
 
 $string['allowresubmit'] = 'ÇáÓãÇÍ ÈÅÚÇÏÉ ÇáÊÓáíã';
 $string['assignmentdetails'] = 'ÊİÇÕíá ÇáãåãÉ';
-$string['assignmentmail'] = '$a->teacher ŞÇã íæÖÚ ÈÚÖ ÇáÊÕÍíÍÇÊ Úáì ãåãÊß ÇáãÓáãÉ áÜ \'$a->assignment\'
-
+$string['assignmentmail'] = '$a->teacher ŞÇã íæÖÚ ÈÚÖ ÇáÊÕÍíÍÇÊ Úáì ãåãÊß ÇáãÓáãÉ áÜ \'$a->assignment\'
+
 ÊÓÊØíÚ ãÔÇåÏÊåÇ ãÑİŞÉ ãÚ ãåãÊß ÇáãÓáãÉ$a->url';
-$string['assignmentmailhtml'] = '$a->teacher ŞÇã ÈæÖÚ ÈÚÖ ÇáÊÕÍíÍÇÊ Úáì ãåãÊß ÇáÊí Êã ÊÓáíãåÇ \'<i>$a->assignment</i>\'<br /><br />
+$string['assignmentmailhtml'] = '$a->teacher ŞÇã ÈæÖÚ ÈÚÖ ÇáÊÕÍíÍÇÊ Úáì ãåãÊß ÇáÊí Êã ÊÓáíãåÇ \'<i>$a->assignment</i>\'<br /><br />
  ííãßäß ãÔÇåÏÊåÇ ãÑİŞÉ ãÚ ãåãÊß<a href=\"$a->url\">assignment submission</a>.';
 $string['assignmentname'] = 'ÇÓã ÇáãåãÉ';
 $string['assignmenttype'] = 'äæÚ ÇáãåãÉ';
@@ -16,6 +16,7 @@ $string['description'] = 'ÇáæÕİ';
 $string['duedate'] = 'ÊÇÑíÎ ÇáÅäåÇÁ';
 $string['duedateno'] = 'áÇ íæÌÏ ãæÚÏ ááÊÓáíã';
 $string['early'] = '$a ãÈßÑ';
+$string['existingfiledeleted'] = 'Êã ÍĞ ÇáãáİÇÊ ÇáãæÌæÏÉ :a$';
 $string['failedupdatefeedback'] = 'ÊÚĞÑ ÊÍÏíË ÊÚáíŞ ÇáãÓÊÎÏã Úáì ÇáÑÓÇáÉ $a ';
 $string['feedback'] = 'ÊÕÍíÍ';
 $string['feedbackupdated'] = 'ÊÍÏíË ÇáÊÚáíŞÇÊ$a  ÇáäÇÓ';

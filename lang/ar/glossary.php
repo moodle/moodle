@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.2 development (2004012800)
+      // glossary.php - created with Moodle 1.3 development (2004041800)
 
 
 $string['addcomment'] = 'ÃÖÝ ÊÚáíÞ';
@@ -95,6 +95,7 @@ $string['exportglossary'] = 'ÕÏÑ ÇáãÓÑÏ';
 $string['exporttomainglossary'] = 'ÕÏÑ Åáì ãÓÑÏ ÑÆíÓ';
 $string['filetoimport'] = 'ÇáãáÝ ÇáãÑÇÏ ÇÓÊíÑÇÏå';
 $string['fillfields'] = 'ÍÞæá ÇáãÝåæã æÇáÊÚÑíÝ ÇÌÈÇÑíÉ';
+$string['filtername'] = 'ÇáÑÈØ ÇáÂáí ááãÓÑÏ';
 $string['fullmatch'] = 'ÞÇÑä ßá ÇáßáãÇÊ ÝÞØ';
 $string['glossarytype'] = 'äæÚ ÇáãÓÑÏ';
 $string['glosssaryexported'] = 'Êã ÊÕÏíÑ ÇáãÓÑÏ';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // workshop.php - created with Moodle 1.2 development (2004012800)
+      // workshop.php - created with Moodle 1.3 development (2004041800)
 
 
 $string['absent'] = 'ÛÇÆÈ';
@@ -112,21 +112,21 @@ $string['noassessmentsdone'] = 'áã íÊã ÊäİíĞ Ãì ÊŞííãÇÊ';
 $string['nosubmission'] = 'áÇ íæÌÏ Çì ÊÓáíã';
 $string['nosubmissionsavailableforassessment'] = 'áÇ íæÌÏ Ãì ÊÓáíã ááÊŞííã';
 $string['notavailable'] = 'ÛíÑ ãÊÇÍ';
-$string['noteonassessmentelements'] = 'áÇÍÙ Ãä ÇáÊøÕäíİ ŞÓã İí ÚÏÏ ãä ÚäÇÕÑ ÇáÊŞííã .<br />
-åĞÇ ÈÌÚá ÑÕÏ ÇáÏÑÌÇÊ ÃÓåá æ ÃßËÑ ËÈÇÊÇğ . ßãÏÑøÓ íÌÈ Ãä ÊÖíİ åĞå .<br />
-ÇáÚäÇÕÑ ŞÈá ÅÊÇÍÉ ÇáãåãÉ ááØøáÈÉ . ÓíäİĞ åĞÇ .<br />
-ÈÇáÖøÛØ Úáì ÇáãåãÉ İí ÇáãäåÌ ÇáÏÑÇÓí, İí ÍÇáÉ ÚÏã æÌæÏ Ãì ÚäÕÑ ÓÊÊØáÈ .<br />
-ÈÅÖÇİÉ ÇáÚäÇÕÑ . íãßäß Ãä ÊÛíøÑ ÚÏÏ ÇáÚäÇÕÑ ÈÇÓÊÎÏÇã ÔÇÔÉ ÊÍíÑí ÇáãåãÉ, .<br />
-íãßä ÊõÚóÏøóá ÇáÚäÇÕÑ ãä ÇáÔøÇÔÉ &quot;ÅÏÇÑÉ ÇáãåãÉ&quot
+$string['noteonassessmentelements'] = 'áÇÍÙ Ãä ÇáÊøÕäíİ ŞÓã İí ÚÏÏ ãä ÚäÇÕÑ ÇáÊŞííã .<br />
+åĞÇ ÈÌÚá ÑÕÏ ÇáÏÑÌÇÊ ÃÓåá æ ÃßËÑ ËÈÇÊÇğ . ßãÏÑøÓ íÌÈ Ãä ÊÖíİ åĞå .<br />
+ÇáÚäÇÕÑ ŞÈá ÅÊÇÍÉ ÇáãåãÉ ááØøáÈÉ . ÓíäİĞ åĞÇ .<br />
+ÈÇáÖøÛØ Úáì ÇáãåãÉ İí ÇáãäåÌ ÇáÏÑÇÓí, İí ÍÇáÉ ÚÏã æÌæÏ Ãì ÚäÕÑ ÓÊÊØáÈ .<br />
+ÈÅÖÇİÉ ÇáÚäÇÕÑ . íãßäß Ãä ÊÛíøÑ ÚÏÏ ÇáÚäÇÕÑ ÈÇÓÊÎÏÇã ÔÇÔÉ ÊÍíÑí ÇáãåãÉ, .<br />
+íãßä ÊõÚóÏøóá ÇáÚäÇÕÑ ãä ÇáÔøÇÔÉ &quot;ÅÏÇÑÉ ÇáãåãÉ&quot
 ';
 $string['notgraded'] = 'áã íÊã ÑÕÏ ÇáÏÑÌÇÊ';
 $string['notitlegiven'] = 'áã íÚØì ÚäæÇä';
 $string['numberofassessmentelements'] = 'Number of Comments, Assessment Elements, Grade Bands, Criterion Statments or Categories in a Rubric';
 $string['numberofassessments'] = 'ÚÏÏ ÇáÊŞííãÇÊ';
 $string['numberofassessmentschanged'] = 'ÚÏÏ ÇáÊŞííãÇÊ ÇáÊí Êã ÊÛíÑåÇ: $a';
-$string['numberofassessmentsofstudentsubmissions'] = 'Number of Assessments of Student Submissions';
-$string['numberofassessmentsofteachersexamples'] = 'Number of Assessments of Examples from Teacher';
-$string['numberofentries'] = 'Number of Entries';
+$string['numberofassessmentsofstudentsubmissions'] = 'ÚÏÏ ÇáÊŞííãÇÊ ÇáãÓáãÉ ãä ŞÈá ÇáØÇáÈ';
+$string['numberofassessmentsofteachersexamples'] = 'ÚÏÏ ÃãËáÉ ÇáÊŞííãÇÊ ÇáãÓáãÉ ãä ŞÈá ÇáÏÑÓ';
+$string['numberofentries'] = 'ÚÏÏ ÇáãÏÎáÇÊ';
 $string['numberofnegativeresponses'] = 'ÚÏÏ ÇáÇÌÇÈÇÊ ÇáÓáÈíÉ';
 $string['numberofsubmissions'] = 'ÚÏÏ ÇáÊÓáíãÇÊ: $a';
 $string['on'] = 'İí $a';
@@ -226,6 +226,7 @@ $string['weightforbias'] = 'æÒä ÇáÊÍíÒ';
 $string['weightforgradingofassessments'] = 'æÒä ÑÕÏ ÏÑÌÇÊ ÇáÊŞííãÇÊ';
 $string['weightforpeerassessments'] = 'æÒä ÊŞííãÇÊ ÇáäÙíÑ';
 $string['weightforreliability'] = 'ÇæÒÇä ÇáÊÚæíá';
+$string['weightforteacherassessments'] = 'æÒä ÊŞííãÇÊ ÇáãÏÑÓ';
 $string['weights'] = 'ÇæÒÇä';
 $string['weightsusedforfinalgrade'] = 'ÇáÇæÒÇä ÇáãÓÊÎÏãÉ ááÏÑÌÉ ÇáäåÇÆíÉ';
 $string['weightsusedforsubmissions'] = 'ÇáÇæÒÇä ÇáãÓÊÎÏãÉ ááÊÓáíã';

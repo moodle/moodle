@@ -1,11 +1,11 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.2 development (2004012800)
+      // forum.php - created with Moodle 1.3 development (2004041800)
 
 
 $string['addanewdiscussion'] = 'ÃÖİ ãæÖæÚÇ ÌÏíÏÇ ááäŞÇÔ';
 $string['addanewtopic'] = 'ÃÖİ ãæÖæÚ ÌÏíÏ';
 $string['allowchoice'] = 'ãÓãæÍ ÇáÇÎÊíÇÑ';
-$string['allowdiscussions'] = 'åá íÓÊØÚ $a ÈÅÑÓÇá ãŞÇáÉ Åáì åĞÇ ÇáãäÊÏì¿';
+$string['allowdiscussions'] = 'åá íÓÊØÚ  ÇáØÇáÈ  ÈÅÑÓÇá ãŞÇáÉ Åáì åĞÇ ÇáãäÊÏì¿';
 $string['allowratings'] = 'åá ÊÕäíİ ÇáãÔÇÑßÇÊ ãÓãæÍ Èå¿';
 $string['allowsdiscussions'] = 'åĞÇ ÇáãäÊÏì íÓãÚ áßá ãÓÊÎÏã Ãä íÈÏÃ ãæÖæÚÇ æÇÍÏÇ ááäŞÇÔ.';
 $string['anyfile'] = 'Ãí ãáİ';
@@ -30,7 +30,7 @@ $string['discussions'] = 'ãäÇŞÔÇÊ';
 $string['discussionsstartedby'] = 'ÇáãäÇŞÔÇÊ ÈÏÃÊ ÈæÇÓØÉ  $a';
 $string['discussionsstartedbyrecent'] = 'ÇáãäÇŞÔÇÊ ÈÏÃÊ ÍÏíËÇ ÈæÇÓØÉ  $a';
 $string['discussthistopic'] = 'äÇŞÔ åĞÇ ÇáãæÖæÚ';
-$string['eachuserforum'] = 'áßá ãÓÊÎÏã Ãä íÑÓá äŞÇÔÇ æÇÍÏÇ';
+$string['eachuserforum'] = 'íÓÊØíÚ ßá ãÓÊÎÏã Ãä íÑÓá äŞÇÔÇ æÇÍÏÇ';
 $string['edit'] = 'ÍÑÑ';
 $string['editing'] = 'ÊÍÑíÑ';
 $string['emptymessage'] = 'ËãÉ ÎØÃ æŞÚ İí ãŞÇáß ÇáãÑÓá. ÑÈãÇ ÊÑßÊå İÇÑÛÇ Ãæ Ãä ÍÌã Çáãáİ ÇáãÑİŞ ÃßÈÑ ãä ÇááÇÒã¡ áĞÇ áã íÊã ÍİÙ ÊÛííÑÇÊß';
@@ -69,16 +69,17 @@ $string['newforumposts'] = 'ãÚÇáã ÇáãäÊÏì ÇáÌÏíÏ';
 $string['nodiscussions'] = 'áÇ íæÌÏ ãæÖæÚ ááãäÇŞÔÉ İí åĞÇ ÇáãäÊÏì';
 $string['noguestpost'] = 'ÚĞÑÇğ! ÛíÑ ãÓãæÍ ááÖíæİ ÈÅÑÓÇá ãŞÇáÇÊ';
 $string['nomorepostscontaining'] = 'áÇÊæÌÏ ãÔÇÑßÇÊ ÅÖÇİíÉ ÊÍÊæí Úáì \' $a\' Êã ÇßÊÔÇİåÇ';
-$string['nonews'] = 'áã ÊäÔÑ ÃÎÈÇÑ ÈÚÏ';
+$string['nonews'] = 'áã ÊäÔÑ ÃÎÈÇÑ ÌÏíÏÉ';
 $string['noposts'] = 'áÇ ÊæÌÏ ãÔÇÑßÇÊ';
 $string['nopostscontaining'] = 'áÇ ÊæÌÏ ÑÏæÏ ÊÍÊæì Úáì \' $a\' ãæÌæÏÉ';
 $string['nosubscribers'] = 'áÇ íæÌÏ ãÔÊÑßæä İí åĞÇ ÇáãäÊÏì';
+$string['notingroup'] = 'ÚĞÑÇ¡ íÌÈ Çä Êßæä ãä Öãä ÇáãÌãæÚÉ áãÚÇíäÉ åĞÇ ÇáãäÊÏì.';
 $string['nownotsubscribed'] = ' $a->name áä íÓÊáã äÓÎ ãä \'$a->forum\' ÈÇáÈÑíÏ ÇáÅáßÊÑæäí.';
 $string['nowsubscribed'] = ' $a->name ÓíÓÊáã äÓÎ ãä \'$a->forum\' ÈÇáÈÑíÏ ÇáÅáßÊÑæäí.';
 $string['numposts'] = ' $a ãŞÇáÇÊ';
 $string['olderdiscussions'] = 'ÃŞÏã ÇáãäÇŞÔÇÊ';
-$string['openmode0'] = 'áÇ ÊæÌÏ ãäÇŞÔÇÊ¡ áÇ ÊæÌÏ ÑÏæÏ';
-$string['openmode1'] = 'áÇ ÊæÌÏ ãäÇŞÔÇÊ¡ áßä íÓãÍ ÈÇáÑÏæÏ';
+$string['openmode0'] = 'áÇ íÓãÍ ÈÇáãäÇŞÔÇÊ¡ æáÇ íÓãÍ ÈÇáÑÏæÏ';
+$string['openmode1'] = 'áÇ íÓãÍ ÈÇáãäÇŞÔÇÊ¡ æáßä íÓãÍ ÈÇáÑÏæÏ';
 $string['openmode2'] = 'íÓãÍ ÈÇáãäÇŞÔÇÊ æÇáÑÏæÏ';
 $string['parent'] = 'ÇÚÑÖ ÇáÇÕá';
 $string['parentofthispost'] = 'ÇÕá ÇáãŞÇá';
@@ -95,9 +96,9 @@ $string['rate'] = 'Õäİ';
 $string['rating'] = 'ÊÕäíİ';
 $string['ratingeveryone'] = 'ÇáÌãíÚ íÓÊØíÚ ÇáÊÕäíİ';
 $string['ratingno'] = 'áÇ íæÌÏ ÊÕäíİ';
-$string['ratingonlyteachers'] = '$a İŞØ  íÊÓØíÚ ÊÕäíİ ÇáãŞÇáÇÊ';
-$string['ratingpublic'] = '$a íÊãßäæÇ ãä ãÔÇåÏÉ ÊÕäíİ Çáßá';
-$string['ratingpublicnot'] = '$a íÊãßäæÇ ãä ãÔÇåÏÉ ÊÕäíİåã İŞØ';
+$string['ratingonlyteachers'] = 'ÇáãÏÑÓæä  İŞØ  íÊÓØíÚ ÊÕäíİ ÇáãŞÇáÇÊ';
+$string['ratingpublic'] = 'Çáßá íÓÊØíÚ ãÔÇåÏÉ ÊÕäíİ Çáßá';
+$string['ratingpublicnot'] = 'ßá ãÔÇÑß íÓÊØíÚ ãÔÇåÏÉ ÊÕäíİå İŞØ';
 $string['ratings'] = 'ÊÕäíİÇÊ';
 $string['ratingssaved'] = 'Êã ÍİÙ ÇáÊÕäíİÇÊ';
 $string['ratingsuse'] = 'ÇÓÊÎÏã ÇáÊÕäíİ';
@@ -121,7 +122,7 @@ $string['subject'] = 'ÇáãæÖæÚ';
 $string['subscribe'] = 'ÇÔÊÑß İí åĞÇ ÇáãäÊÏì';
 $string['subscribed'] = 'Êã ÇáÇÔÊÑÇß';
 $string['subscribers'] = 'ÇáãÔÊÑßæä';
-$string['subscribersto'] = ' \' $a\' ÇáãÔÊÑßæä İí';
+$string['subscribersto'] = 'ÇáãÔÊÑßæä İí  \' $a\' ';
 $string['subscribestart'] = 'ÊÒæíÏí ÈäÓÎ ÇáãÔÇÑßÇÊ ãä åĞÇ ÇáãäÊÏì ÚÈÑ ÇáÈÑíÏ ÇáÇáßÊÑæäí';
 $string['subscribestop'] = 'áÇ ÇÑÛÈ İí ÇáÍÕæá Úáì äÓÎ ÇáãÔÇÑßÇÊ ãä åĞÇ ÇáãäÊÏì ÚÈÑ ÇáÈÑíÏ ÇáÇáßÊÑæäí';
 $string['subscription'] = 'ÇÔÊÑÇß';
