@@ -1,15 +1,15 @@
 <form name="theform" method="post" action="post.php" enctype="multipart/form-data">
 <table border="0" cellpadding="5">
 <tr valign="top">
-    <td align="right"><p><b><?php print_string("subject", "forum"); ?>:</b></p></td>
+    <td align="right"><b><?php print_string("subject", "forum"); ?>:</b></td>
     <td>
-        <input type="text" name="subject" size="60" value="<?php p($post->subject) ?>" />
+        <input type="text" name="subject" size="60" value="<?php p($post->subject) ?>" alt="<?php print_string("subject", "forum"); ?>" />
     </td>
 </tr>
 <tr valign="top">
-    <td align="right"><p><b>
+    <td align="right"><b>
      <?php print_string("message", "forum"); ?>:
-     </b></p></td>
+     </b></td>
     <td align="left" rowspan="2">
     <?php print_textarea($usehtmleditor, 25, 65, 630, 400, "message", $post->message); ?>
     </td>
@@ -40,7 +40,7 @@
 
 
 <tr valign="top">
-    <td align="right"><p><b><?php print_string("formattexttype"); ?>:</b></p></td>
+    <td align="right"><b><?php print_string("formattexttype"); ?>:</b></td>
     <td>
     <?php 
         if ($usehtmleditor) {   /// Trying this out for a while
@@ -56,7 +56,7 @@
 
 
 <tr valign="top">
-    <td align="right"><p><b><?php print_string("subscription", "forum") ?>:</b></p></td>
+    <td align="right"><b><?php print_string("subscription", "forum") ?>:</b></td>
     <td>
     <?php 
        if (forum_is_forcesubscribed($forum->id)) {
@@ -86,11 +86,11 @@
 <?php if ($forum->maxbytes != 1) {  //  1 = No attachments at all  ?>
 
 <tr valign="top">
-    <td align="right"><p><b><?php print_string("attachment", "forum") ?>:<br />(<?php print_string("optional") ?>)&nbsp;</b></p></td>
+    <td align="right"><b><?php print_string("attachment", "forum") ?>:<br />(<?php print_string("optional") ?>)&nbsp;</b></td>
     <td>
     <?php $maxbytes = get_max_upload_file_size($CFG->maxbytes, $course->maxbytes, $forum->maxbytes); ?>
     <input type="hidden" name="MAX_FILE_SIZE" value="<?php echo $maxbytes ?>" />
-    <input type="file" name="attachment" size="40" />
+    <input type="file" name="attachment" size="40" alt="<?php print_string("attachment", "forum") ?>" />
     <?php
     helpbutton("attachment", get_string("attachment", "forum"), "forum"); 
     print_string("maxsize", "", display_size($maxbytes)); 

@@ -488,7 +488,7 @@
 
     if ($course->category) {
         print_header("$course->shortname: $discussion->name: $toppost->subject", "$course->fullname",
-                 "<a href=../../course/view.php?id=$course->id>$course->shortname</a> ->
+                 "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->
                   $navmiddle -> $navtail", $formstart, "", true, "", navmenu($course, $cm));
     } else {
         print_header("$course->shortname: $discussion->name: $toppost->subject", "$course->fullname",
