@@ -280,6 +280,7 @@ $string[sitesettings] = "Site settings";
 $string[someallowguest] = "Some courses may allow guest access";
 $string[startdate] = "Course start date";
 $string[startsignup] = "Start now by creating a new account!";
+$string[status] = "Status";
 $string[success] = "Success";
 $string[summary] = "Summary";
 $string[summaryof] = "Summary of \$a";
