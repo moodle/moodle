@@ -3835,6 +3835,7 @@ function print_maintenance_message () {
     print_heading(get_string('sitemaintenance', 'admin'));
     @include($CFG->dataroot.'/1/maintenance.html');
     print_simple_box_end();
+    print_footer();
 }
 
 
