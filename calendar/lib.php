@@ -38,10 +38,17 @@
 //                                                                         //
 /////////////////////////////////////////////////////////////////////////////
 
+$firstday = get_string('firstdayofweek');
+if(!is_numeric($firstday)) {
+    define ('CALENDAR_STARTING_WEEKDAY', 1);
+}
+else {
+    define ('CALENDAR_STARTING_WEEKDAY', intval($firstday) % 7);
+}
+
 define ('SECS_IN_DAY', 86400);
 define ('CALENDAR_UPCOMING_DAYS', 14);
 define ('CALENDAR_UPCOMING_MAXEVENTS', 10);
-define ('CALENDAR_STARTING_WEEKDAY', 1);
 define ('CALENDAR_URL', $CFG->wwwroot.'/calendar/');
 
 function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_year = false) {
