@@ -68,7 +68,7 @@
         }
     } else {
         echo "<p>";
-        echo $text;
+        echo clean_text($text);
         echo "</p>";
         $helpfound = true;
     }
