@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.2 development (2004013101)
+      // assignment.php - created with Moodle 1.2 Beta + (2004030702)
 
 
 $string['allowresubmit'] = 'Permitir reenvío';
@@ -16,6 +16,7 @@ $string['assignmenttype'] = 'Tipo de tarea';
 $string['description'] = 'Descripción';
 $string['duedate'] = 'Fecha límite de entrega';
 $string['early'] = '$a antes de la fecha límite';
+$string['existingfiledeleted'] = 'Los archivos existentes han sido borrados: $a';
 $string['failedupdatefeedback'] = 'Error al actualizar la respuesta enviada por el usuario $a';
 $string['feedback'] = 'Retroalimentación';
 $string['feedbackupdated'] = 'Respuestas enviadas actualizadas para $a';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.2 development (2004013101)
+      // quiz.php - created with Moodle 1.2 Beta + (2004030702)
 
 
 $string['acceptederror'] = 'Error aceptado';
@@ -15,6 +15,7 @@ $string['answerhowmany'] = '¿Una o varias respuestas?';
 $string['answersingleno'] = 'Permitido varias respuestas';
 $string['answersingleyes'] = 'Sólo una respuesta';
 $string['answerswithacceptederrormarginmustbenumeric'] = 'Las respuestas con error aceptado debe ser numérico';
+$string['answertoolong'] = 'Respuesta demasiado larga después de la línea $a (máx. 255 caracteres)';
 $string['attempt'] = 'Intento $a';
 $string['attemptfirst'] = 'Primer intento';
 $string['attemptlast'] = 'Último intento';
@@ -25,6 +26,7 @@ $string['attemptsunlimited'] = 'Intentos ilimitados';
 $string['backtoquiz'] = 'Regresar a la edición del cuestionario';
 $string['bestgrade'] = 'Calificación máxima';
 $string['blackboard'] = 'Pizarra';
+$string['calculatedquestion'] = 'Pregunta calculada no permitida en la línea $a. La pregunta será ignorada.';
 $string['caseno'] = 'No, es indiferente que esté en mayúsculas o minúsculas';
 $string['casesensitive'] = 'Sensible a mayúsculas y minúsculas';
 $string['caseyes'] = 'Mayúsculas y minúsculas deben coincidir';
@@ -85,11 +87,13 @@ $string['guestsno'] = 'Lo sentimos, los invitados no pueden ver o responder cues
 $string['imagedisplay'] = 'Imagen a mostrar';
 $string['importquestions'] = 'Importar preguntas desde un archivo';
 $string['introduction'] = 'Introducción';
+$string['listitems'] = 'Listado de ítems en el cuestionario';
 $string['marks'] = 'Punto/s';
 $string['match'] = 'Emparejando';
 $string['matchanswer'] = 'Emparejar respuesta';
 $string['missingcorrectanswer'] = 'Se debe especificar la respuesta correcta';
 $string['missingname'] = 'La pregunta no tiene título';
+$string['missingquestion'] = 'Falta una etiqueta de pregunta después de la línea $a';
 $string['missingquestiontext'] = 'La pregunta no tiene texto';
 $string['missingword'] = 'formato de palabra perdido';
 $string['modulename'] = 'Cuestionario';
@@ -131,6 +135,7 @@ $string['regradecomplete'] = 'Todos los intentos realizados han sido recalificad
 $string['regradecount'] = 'Se han cambiado $a->changed de $a->attempt calificaciones';
 $string['rename'] = 'Renombrar';
 $string['report'] = 'Informes';
+$string['reportmulti_q_x_student'] = 'Opciones multi-estudiantes';
 $string['reportoverview'] = 'Vista general';
 $string['reportregrade'] = 'Recalificar los intentos';
 $string['reportsimplestat'] = 'Estadísticas simples';
@@ -159,6 +164,7 @@ $string['type'] = 'Escriba';
 $string['viewallanswers'] = 'Ver $a cuestionarios resueltos';
 $string['viewallreports'] = 'Ver los informes de $a intentos';
 $string['webct'] = 'Formato WebCT';
+$string['wronggrade'] = 'Calificación equivocada (después de la línea $a):';
 $string['yourfinalgradeis'] = 'Su calificación final en este cuestionario es $a';
 
 ?>

@@ -1,8 +1,10 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.2 development (2004013101)
+      // resource.php - created with Moodle 1.2 Beta + (2004030702)
 
 
 $string['addresource'] = 'Añadir recurso';
+$string['configdefaulturl'] = 'Este valor se usa para prerrellenar el campo URL cuando se crea un nuevo recurso basado en URL.';
+$string['configfilterexternalpages'] = 'Activar esta variable ocasionará que todos los recursos externos (páginas web, archivos HTML cargados) se procesen según los filtros definidos en el sitio (como los autoenlaces del glosario, por ejemplo). Esto puede hacer que el rendimiento del sistema disminuya considerablemente --úselo con cuidado y sólo si es necesario.';
 $string['configframesize'] = 'Cuando se muestra una página web o un archivo cargado dentro de un marco (frame), este valor es el tamaño (en pixeles) del marco superior (el cual contiene la navegación).';
 $string['editingaresource'] = 'Editar recurso';
 $string['example'] = 'Ejemplo';
@@ -31,6 +33,7 @@ $string['notefile'] = 'Para subir más de un archivo (y que se puedan ver en la l
 
 <a href=$a >Administrador de archivos</a>.';
 $string['notypechosen'] = 'Necesita elegir un tipo. Vuelva atrás e inténtelo de nuevo.';
+$string['popupresourcelink'] = 'Si no lo hizo, haga clic aquí: $a';
 $string['resourcetype'] = 'Tipo de recurso';
 $string['resourcetype1'] = 'Referencia';
 $string['resourcetype2'] = 'Página web';

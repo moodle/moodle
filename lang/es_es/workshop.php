@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // workshop.php - created with Moodle 1.2 development (2004020300)
+      // workshop.php - created with Moodle 1.2 Beta + (2004030702)
 
 
 $string['absent'] = 'Ausente';
@@ -30,6 +30,7 @@ $string['assessor'] = 'Evaluador';
 $string['assessthissubmission'] = 'Evaluar este envío';
 $string['assignmentnotinthecorrectphase'] = 'La valoración no se ha hecho en la fase correcta';
 $string['authorofsubmission'] = 'Autor del envío';
+$string['averageerror'] = 'Promedio de Error';
 $string['awaitinggradingbyteacher'] = 'Esperando la calificación de $a';
 $string['beforedeadline'] = 'Antes de la fecha límite: $a';
 $string['calculationoffinalgrades'] = 'Cálculo de la Calificación Final';
@@ -75,6 +76,7 @@ $string['leaguetable'] = 'Tabla de trabajos entregados';
 $string['listassessments'] = 'Listado de Evaluaciones';
 $string['listofallsubmissions'] = 'Listado de todos los envíos';
 $string['liststudentsassessments'] = 'Listado de las Evaluaciones de los alumnos';
+$string['loadingforteacherassessments'] = 'Cargando $a Evaluaciones';
 $string['mail1'] = 'Tu tarea \'$a\' ha sido evaluada por';
 $string['mail2'] = 'Los comentarios y la calificación pueden verse en \'$a\'';
 $string['mail3'] = 'Puede verlo en su tarea de taller';
