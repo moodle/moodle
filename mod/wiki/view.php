@@ -299,7 +299,7 @@
     if ($canedit) {   /// Print tabs with commands for this page
         $tabstyle = ' style="padding-left: 5px;padding-right: 5px" ';
 
-        echo "<table align=right border=0>";
+        echo "<table border=0>";
         echo "<tr>";
         $tabs = array('view', 'edit','links','info');
         if ($binary) {
@@ -319,14 +319,19 @@
         echo "</table>";
     }
     print_simple_box_start( "right", "100%", "$THEME->cellcontent", "20");
-    if($ewiki_action=="edit") {
-      # When editing, the filters shall not interfere the wiki-source
-      print $content.$content2;
-    } else {
-      //print(format_text($content, $moodle_format));    /// DISABLED UNTIL IT CAN BE FIXED
-      print $content;
-      print $content2;
+
+    /// Don't filter any pages containing wiki actions (except view). A wiki page containing
+    /// actions will have the form [action]/[pagename]. If the '/' isn't there, or the action
+    /// is 'view', filter it. Also, if the page doesn't exist, it will default to 'edit'.
+    $actions = explode('/', $wikipage);
+    if ($ewiki_action == "edit" || ($actions !== false && count($actions) > 1 && $actions[0] != 'view') ||
+        (count($actions) == 1 && !record_exists('wiki_pages', 'pagename', $wikipage, 'wiki', $wiki_entry->id))) {
+        print $content;
     }
+    else {
+        print(format_text($content, $moodle_format));    /// DISABLED UNTIL IT CAN BE FIXED
+    }
+    print $content2;
     print_simple_box_end();
     echo "<br clear=all />";
 
