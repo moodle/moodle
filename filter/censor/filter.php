@@ -6,9 +6,9 @@
 //  printed text, replacing words with other words
 //
 //  To activate this filter, add a line like this to your
-//  config.php:
+//  list of filters in your Filter configuration:
 //
-//  $CFG->textfilter1 = 'filter/censor/censor.php';
+//  filter/censor/filter.php
 //
 //////////////////////////////////////////////////////////////
 

@@ -5,10 +5,10 @@
 //  This filter will replace any links to a media file with 
 //  a media plugin that plays that media inline
 //
-//  To activate this filter, add his to your list of filters
-//  in  Admin -> Configuration -> Variables
+//  To activate this filter, add a line like this to your
+//  list of filters in your Filter configuration:
 //
-//       filter/mediaplugin/mediaplugin.php';
+//  filter/mediaplugin/filter.php
 //
 //////////////////////////////////////////////////////////////
 

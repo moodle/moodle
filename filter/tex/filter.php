@@ -24,13 +24,17 @@
 // NOTE: This Moodle text filter converts TeX expressions delimited
 // by either $$...$$ or by <tex...>...</tex> tags to gif images using
 // mimetex.cgi obtained from http://www.forkosh.com/mimetex.html authored by
-// John Forkosh john@forkosh.com. The mimetex.cgi ELF binary compiled for Linux i386
-// is included with this distribution. 
+// John Forkosh john@forkosh.com.  Several binaries of this areincluded with 
+// this distribution. 
 // Note that there may be patent restrictions on the production of gif images
 // in Canada and some parts of Western Europe and Japan until July 2004.
 //-------------------------------------------------------------------------
-// You will then need to edit your moodle/config.php to invoke tex_filter.php
-//-------------------------------------------------------------------------
+/////////////////////////////////////////////////////////////////////////////
+//  To activate this filter, add a line like this to your                  //
+//  list of filters in your Filter configuration:                          //
+//                                                                         //
+//       filter/tex/filter.php                                             //
+/////////////////////////////////////////////////////////////////////////////
 
 $CFG->texfilterdir = "filter/tex";
 

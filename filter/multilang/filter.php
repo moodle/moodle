@@ -22,6 +22,11 @@
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
+//  To activate this filter, add a line like this to your                //
+//  list of filters in your Filter configuration:                        //
+//                                                                       //
+//       filter/multilang/filter.php                                     //
+//                                                                       //
 // See README.txt for more information about this module                 //
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
