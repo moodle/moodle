@@ -22,7 +22,7 @@ class block_messages extends block_base {
             return $this->content;
         }
 
-        $this->content->footer = '<a target="message" href="'.$CFG->wwwroot.'/message/index.php" onclick="return openpopup(\'/message/index.php\', \'message\', \'menubar=0,location=0,scrollbars,status,resizable,width=400,height=500\', 0);">'.get_string('messages', 'message').'...</a>';
+        $this->content->footer = '<a target="message" href="'.$CFG->wwwroot.'/message/index.php" onclick="return openpopup(\'/message/index.php\', \'message\', \'menubar=0,location=0,scrollbars,status,resizable,width=400,height=500\', 0);">'.get_string('messages', 'message').'</a>...';
 
         $users = get_records_sql("SELECT m.useridfrom as id, COUNT(m.useridfrom) as count,
                                          u.firstname, u.lastname, u.picture 
@@ -53,7 +53,7 @@ class block_messages extends block_base {
                 $this->content->text .= '</div>';
             }
         } else {
-            $this->content->text .= "<center><font size=\"-1\">".get_string("nomessages")."</font></center>";
+            $this->content->text .= "<center><font size=\"-1\">".get_string('nomessages', 'message')."</font></center>";
         }
 
         return $this->content;
