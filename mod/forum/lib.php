@@ -1188,7 +1188,7 @@ function forum_count_discussion_replies($forum='0', $course='0', $user='0') {
                               FROM {$CFG->prefix}forum_posts p,
                                    {$CFG->prefix}forum_discussions d
                              WHERE p.parent > 0 $forumselect $courseselect $userselect
-                               AND p.discussion = d.id 
+                               AND p.discussion = d.id
                           GROUP BY p.discussion");
 }
 
@@ -1553,7 +1553,7 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
     }
 
     if (!empty($CFG->filterall)) {      /// Put the subject through the filters
-        $post->subject = filter_text('<span class="nolink">$post->subject</span>', $courseid);
+        $post->subject = filter_text('<span class="nolink">'.$post->subject.'</span>', $courseid);
     }
     echo '<div class="subject">'.$post->subject.'</div>';
 
