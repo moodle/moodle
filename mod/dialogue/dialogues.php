@@ -102,12 +102,12 @@
             error("Confirm Close: conversation id missing");
         }
         print_heading(get_string("addsubject", "dialogue"));
-        echo "<form name=\"getsubjectform\" method=\"post\" action=\"dialogues.php\"/>\n";
+        echo "<form name=\"getsubjectform\" method=\"post\" action=\"dialogues.php\">\n";
         echo "<input type=\"hidden\" name=\"action\" value=\"updatesubject\"/>\n";
-        echo "<input type=\"hidden\" name=\"id\" value=\"$_GET[id]\"/>\n";
-        echo "<input type=\"hidden\" name=\"cid\" value=\"$_GET[cid]\"/>\n";
-        echo "<input type=\"hidden\" name=\"pane\" value=\"$_GET[pane]\"/>\n";
-        echo "<table align=\"center\"border=\"1\" width=\"60%\">\n";
+        echo "<input type=\"hidden\" name=\"id\" value=\"".p($_GET[id])."\"/>\n";
+        echo "<input type=\"hidden\" name=\"cid\" value=\"".p($_GET[cid])."\"/>\n";
+        echo "<input type=\"hidden\" name=\"pane\" value=\"".p($_GET[pane])."\"/>\n";
+        echo "<table align=\"center\" border=\"1\" width=\"60%\">\n";
         echo "<tr><td align=\"right\"><b>".get_string("subject", "dialogue")."</b></td>";
         echo "<td><input type=\"text\" size=\"50\" maxsize=\"100\" name=\"subject\" 
                 value=\"\" /></td></tr>\n";
@@ -138,7 +138,7 @@
                     $item->timecreated = time(); 
                     // reverse the dialogue mail default 
                     $item->mailed = !$dialogue->maildefault;
-                    $item->text = $_POST[$textarea_name];
+                    $item->text = clean_text($_POST[$textarea_name]);
                     if (!$item->id = insert_record("dialogue_entries", $item)) {
                         error("Insert Entries: Could not insert dialogue record!");
                     }
@@ -209,7 +209,7 @@
                     $conversation->recipientid = $recipient->id;
                     $conversation->lastid = $USER->id; // this USER is adding an entry too
                     $conversation->timemodified = time();
-                    $conversation->subject = $_POST['subject']; // may be blank
+                    $conversation->subject = clean_text($_POST['subject']); // may be blank
                     if (!$conversation->id = insert_record("dialogue_conversations", $conversation)) {
                         error("Open dialogue: Could not insert dialogue record!");
                     }
@@ -223,7 +223,7 @@
                     $entry->timecreated = time(); 
                     // reverse the dialogue default value
                     $entry->mailed = !$dialogue->maildefault;
-                    $entry->text = $_POST['firstentry'];
+                    $entry->text = clean_text($_POST['firstentry']);
                     if (!$entry->id = insert_record("dialogue_entries", $entry)) {
                         error("Insert Entries: Could not insert dialogue record!");
                     }
@@ -292,7 +292,7 @@
             
         if (!$_POST['subject']) {
             redirect("view.php?id=$cm->id&amp;pane=$_POST[pane]", get_string("nosubject", "dialogue"));
-        } elseif (!set_field("dialogue_conversations", "subject", $_POST['subject'], "id", $_POST['cid'])) {
+        } elseif (!set_field("dialogue_conversations", "subject", clean_text($_POST['subject']), "id", $_POST['cid'])) {
             error("Update subject: could not update conversation record");
         }
         redirect("view.php?id=$cm->id&amp;pane=$_POST[pane]", get_string("subjectadded", "dialogue"));
