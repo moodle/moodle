@@ -164,13 +164,13 @@ GOOD: $assignments (for an array of objects)<br>
 <p>&nbsp;</p>
 <h2>Database structures</h2>
 <ol class="normaltext">
-  <li class="spaced">Every table must have an auto-incrementing <strong>id</strong> field (INT(10)) as primary index.</li>
-  <li class="spaced">The main table containing instances of each module must have the same name as the module (eg <strong>widget</strong>)</li>
-  <li class="spaced">Other tables associated with a module that contain information about 'things' should be named <strong>widget_things</strong> (note the plural)</li>
+  <li class="spaced">Every table must have an auto-incrementing <strong>id</strong> field (INT10) as primary index.</li>
+  <li class="spaced">The main table containing instances of each module must have the same name as the module (eg <strong>widget</strong>).</li>
+  <li class="spaced">Other tables associated with a module that contain information about 'things' should be named <strong>widget_things</strong> (note the plural).</li>
   <li class="spaced">Column names should be simple and short, following the same rules as for variable names.</li>
   <li class="spaced">Columns that contain a reference to the id field of another table (eg <strong>widget</strong>) should be called <strong>widgetid</strong>.</li>
-  <li class="spaced">Boolean fields should be implemented as small integer fields (eg INT(4)) containing 0 or 1, to allow for later expansion of values if necessary.</li>
-  <li class="spaced">Most tables should have a <strong>timemodified</strong> field (INT(10) which is updated with a current timestamp obtained with the PHP <strong>time</strong>() function.</li>
+  <li class="spaced">Boolean fields should be implemented as small integer fields (eg INT4) containing 0 or 1, to allow for later expansion of values if necessary.</li>
+  <li class="spaced">Most tables should have a <strong>timemodified</strong> field (INT10) which is updated with a current timestamp obtained with the PHP <strong>time</strong>() function.</li>
 </ol>
 <hr>
 <p align="CENTER"><font size="1"><a href="." target="_top">Moodle Documentation</a></font></p>
