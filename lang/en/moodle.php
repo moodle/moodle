@@ -241,7 +241,7 @@ using your email address.
 
 To confirm your new account, please go to this web address:
 
-  \$a->link
+\$a->link
 
 In most mail programs, this should appear as a blue link
 which you can just click on.  If that doesn't work,
@@ -265,7 +265,7 @@ account on '\$a->sitename'.
 To confirm this and have a new password sent to you via email,
 go to the following web address:
 
-  \$a->link
+\$a->link
 
 In most mail programs, this should appear as a blue link
 which you can just click on.  If that doesn't work,
@@ -293,6 +293,7 @@ $string['enteremailaddress'] = "Enter in your email address to reset your
    password and have the new password sent to you via email.";
 $string['error'] = "Error";
 $string['errortoomanylogins'] = "Sorry, you have exceeded the allowed number of login attempts. Restart your browser.";
+$string['errorwhenconfirming'] = "You are not confirmed yet because an error occurred.  If you clicked on a link in an email to get here, make sure that the line in your email wasn't broken or wrapped. You may have to use cut and paste to reconstruct the link properly.";
 $string['existing'] = "Existing";
 $string['existingadmins'] = "Existing admins";
 $string['existingcourse'] = "Existing course";
