@@ -58,7 +58,7 @@ INSERT INTO prefix_log_display VALUES ('choice', 'view', 'choice', 'name');
 INSERT INTO prefix_log_display VALUES ('choice', 'update', 'choice', 'name');
 INSERT INTO prefix_log_display VALUES ('choice', 'add', 'choice', 'name');
 INSERT INTO prefix_log_display VALUES ('choice', 'report', 'choice', 'name');
-
-    
+INSERT INTO prefix_log_display VALUES ('choice', 'choose', 'choice', 'name');
+INSERT INTO prefix_log_display VALUES ('choice', 'choose again', 'choice', 'name');
 
 

@@ -25,6 +25,10 @@ function choice_upgrade($oldversion) {
     if ($oldversion < 2004010100) {
         table_column("choice", "", "showunanswered", "integer", "4", "unsigned", "0", "", "publish");
     }
+    if ($oldversion < 2004021700) {
+        modify_database("", "INSERT INTO prefix_log_display VALUES ('choice', 'choose', 'choice', 'name');");
+        modify_database("", "INSERT INTO prefix_log_display VALUES ('choice', 'choose again', 'choice', 'name');");
+    }
 
     return true;
 }
