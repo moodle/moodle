@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // workshop.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004092700)
+      // workshop.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
 
 
 $string['absent'] = 'Afwezig';
@@ -43,6 +43,7 @@ $string['averageerror'] = 'Gewone fout';
 $string['awaitinggradingbyteacher'] = 'In afwachting van beoordeling door $a';
 $string['beforedeadline'] = 'Voor deadline: $a';
 $string['calculationoffinalgrades'] = 'Berekening van de eindbeoordeling';
+$string['clearlateflag'] = 'Wis de te laat vermelding';
 $string['closeassignment'] = 'Sluit de beoordeling';
 $string['comment'] = 'Commentaar';
 $string['commentby'] = 'Commentaar door';
@@ -66,6 +67,7 @@ $string['editingassessmentelements'] = 'Evaluatieonderdelen aanbrengen';
 $string['editsubmission'] = 'Bewerk inzending';
 $string['element'] = 'Onderdeel';
 $string['elementweight'] = 'Gewicht van het onderdeel';
+$string['enterpassword'] = 'Geef het wachtwoord';
 $string['errorbanded'] = 'Als fout aangeduid';
 $string['errortable'] = 'Foutentabel';
 $string['excellent'] = 'Schitterend';
@@ -160,6 +162,7 @@ $string['overallocation'] = 'Over toewijzing';
 $string['overallpeergrade'] = 'Totaalcijfer: $a';
 $string['overallteachergrade'] = 'Volledige beoordeling door leraar: $a';
 $string['ownwork'] = 'Eigen werk';
+$string['passwordprotectedworkshop'] = 'Workshop beschermd met wachtwoord';
 $string['percentageofassessments'] = 'Percentage te negeren beoordelingen';
 $string['phase'] = 'Fase';
 $string['phase1'] = 'Begin taak';
@@ -244,6 +247,7 @@ $string['ungradedassessments'] = '$a beoordelingen zonder cijfer';
 $string['ungradedassessmentsofstudentsubmissions'] = '$a Niet-beoordeelde evaluaties van leerlingenbijdragen.';
 $string['ungradedassessmentsofteachersubmissions'] = '$a Niet-beoordeelde evaluaties van lerarenbijdragen';
 $string['uploadsuccess'] = 'Upload gelukt';
+$string['usepassword'] = 'Gebruik wachtwoord';
 $string['verylax'] = 'Heel mild';
 $string['verypoor'] = 'Heel slecht';
 $string['verystrict'] = 'Heel streng';
@@ -266,6 +270,7 @@ $string['workshopassessments'] = 'Workshop Beoordelingen';
 $string['workshopcomments'] = 'Workshop Opmerkingen';
 $string['workshopfeedback'] = 'Workshop Feedback';
 $string['workshopsubmissions'] = 'Workshop Bijdragen';
+$string['wrongpassword'] = 'Verkeerd wachtwoord voor deze workshop';
 $string['yourassessments'] = 'Jouw evaluaties';
 $string['yourassessmentsofexamplesfromtheteacher'] = 'Je beoordelingen van voorbeelden van de $a';
 $string['yourfeedbackgoeshere'] = 'Je feedback komt hier';

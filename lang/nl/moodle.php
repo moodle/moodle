@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004092700)
+      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
 
 
 $string['action'] = 'Actie';
@@ -170,6 +170,7 @@ $string['configclamactlikevirus'] = 'Behandel bestanden als virussen';
 $string['configclamdonothing'] = 'Behandel bestanden als OK';
 $string['configclamfailureonupload'] = 'Als je clam geconfigureerd hebt om geüploade bestanden op virussen te scannen, maar het is slecht geconfigureerd of loopt niet om één of andere reden,  hoe moet Moodle zich dan gedragen? Als je kiest voor \"Behandel alle bestanden als virussen\", dan zullen alle bestanden naar de quaraninezone  verplaatst worden of verwijderd worden. Als je kies voor \"Behandel bestanden als OK\", dan zullen de bestanden naar de bedoelde map verplaatst worden zoals normaal. In beide gevallen wordt de beheerder op de hoogte gebracht van het slecht werken van clam. Als kiest voor \"Behandel bestanden als virussen\" en om één of andere reden werkt clam niet (gewoonlijk omdat je een verkeerd pad naar clam gegeven hebt), dan zullen ALLE geuploade bestanden naar de quarantinezone verplaatst worden of verwijderd worden. Wees voorzichtig met deze instelling.';
 $string['configcountry'] = 'Als je hier een land invult zal dit land als standaard worden geselecteerd bij nieuwe gebruikersaccounts. Laat dit veld gewoon leeg om gebruikers te dwingen een land te kiezen.';
+$string['configdbsessions'] = 'Als dit ingeschakeld is, dan zal de databank gebruikt worden om informatie over de sessies te bewaren. Dit is vooral nuttig op grote, veel gebruikte sites of sites op een cluster van servers.  Voor de meeste sites kan dit waarschijnlijk beter uitgeschakeld zijn zodat de server de informatie op schijf bewaard. Merk op dat het wijzigen van deze instelling alle gebruikers zal afmelden (jij inbegrepen).';
 $string['configdebug'] = 'Als je dit aan zet zullen er meer PHP-fouten op het scherm worden weergegeven. Dit is alleen maar handig voor ontwikkelaars van de applicatie.';
 $string['configdeleteunconfirmed'] = 'Als je met e-mailauthenticatie werkt dan is dit de periode waarbinnen gebruikers moeten reageren op de bevestigingsmail voor de nieuwe account. Na deze periode zullen oude, niet-bevestigde accounts verwijderd worden.';
 $string['configdigestmailtime'] = 'Gebruikers die ervoor kiezen dat de e-mails hun als samenvatting toegezonden worden, zullen dagelijks een e-mail ontvangen. Deze instelling controleert op welk moment van de dag dat deze dagelijkse mail verzonden wordt (de mail wordt verstuurd door de cron die volgt op het uur dat hier gekozen wordt)';
@@ -461,6 +462,8 @@ $string['force'] = 'Verplicht';
 $string['forcedmode'] = 'Verplichte modus';
 $string['forcelanguage'] = 'Verplicht taal';
 $string['forceno'] = 'Verplicht niet';
+$string['forcepasswordchange'] = 'Verplicht het wijzigen van het wachtwoord';
+$string['forcepasswordchangehelp'] = 'Vraag de gebruiker om het te wijzigen bij de volgende aanmelding';
 $string['forgotten'] = 'Heb je je gebruikersnaam of wachtwoord vergeten?';
 $string['format'] = 'Format';
 $string['formathtml'] = 'HTML-opmaak';
@@ -487,6 +490,7 @@ $string['gd1'] = 'GD 1.x is geïnstalleerd';
 $string['gd2'] = 'GD 2.x is geïnstalleerd';
 $string['gdneed'] = 'GD moet geïnstalleerd zijn om deze grafiek te kunnen bekijken';
 $string['gdnot'] = 'GD is niet geïnstalleerd';
+$string['go'] = 'Start';
 $string['gpl'] = 'Copyright (C) 2001-2002 Martin Dougiamas
 (http://dougiamas.com)
 
@@ -573,6 +577,7 @@ $string['institution'] = 'Instituut';
 $string['invalidemail'] = 'Ongeldig e-mailadres';
 $string['invalidlogin'] = 'Ongeldige log in, probeer het nog eens';
 $string['ip_address'] = 'IP-adres';
+$string['jump'] = 'Spring';
 $string['jumpto'] = 'Ga naar...';
 $string['keep'] = 'Houden';
 $string['langltr'] = 'Taalrichting van links naar rechts';

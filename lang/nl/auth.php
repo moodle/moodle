@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004092700)
+      // auth.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
 
 
 $string['auth_common_settings'] = 'Algemene instellingen';
@@ -70,6 +70,8 @@ $string['auth_nonedescription'] = 'De gebruikers kunnen meteen inloggen en een g
 $string['auth_nonetitle'] = 'Geen authenticatie';
 $string['auth_pamdescription'] = 'Deze methode gebruikt PAM om toegang te geven tot de gebruikersnamen op deze server. Je moet <a href=\"http://www.math.ohio-state.edu/~ccunning/pam_auth/\" target=\"_blank\">PHP4 PAM Authentication</a> installeren om deze module te kunnen gebruiken.';
 $string['auth_pamtitle'] = 'PAM (Pluggable Authentication Modules)';
+$string['auth_passwordisexpired'] = 'Je wachtwoord is verlopen. Wil je het nu wijzigen?';
+$string['auth_passwordwillexpire'] = 'Je wachtwoord zal binnen $a dagen verlopen. Wil je het nu wijzigen?';
 $string['auth_pop3description'] = 'Deze methode gebruikt een POP3-server om te controleren of een gebruikersnaam en wachtwoord geldig zijn.';
 $string['auth_pop3host'] = 'Het adres van de POP3-server. Gebruik het IP-adres, niet een DNS-naam.';
 $string['auth_pop3mailbox'] = 'Naam van de mailbox waarmee je een connectie probeert te maken. (gewoonlijk INBOX)';
