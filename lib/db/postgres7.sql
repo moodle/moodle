@@ -35,7 +35,7 @@ CREATE TABLE prefix_course_categories (
    description text NOT NULL default '',
    parent integer NOT NULL default '0',
    sortorder integer NOT NULL default '0',
-   courseorder integer NOT NULL default '0',
+   coursecount integer NOT NULL default '0',
    visible integer NOT NULL default '1',
    timemodified` integer NOT NULL default '0'
 );

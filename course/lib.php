@@ -930,8 +930,8 @@ function print_category_info($category, $depth) {
         }
         echo "</td>";
         echo "<td valign=\"top\">";
-        if ($count = count_records("course", "category", $category->id)) {
-            echo $count;
+        if ($category->coursecount) {
+            echo $category->coursecount;
         }
         echo "</td>";
         echo "</tr>";

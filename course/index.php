@@ -303,9 +303,7 @@ function print_category_edit($category, $displaylist, $parentslist, $depth=-1, $
         echo "</p>";
         echo "</td>";
 
-        echo "<td align=\"right\">";    /// Print little icons
-        echo count_records("course", "category", $category->id);
-        echo "</td>";
+        echo "<td align=\"right\">$category->coursecount</td>";
 
         echo "<td nowrap=\"nowrap\">";    /// Print little icons
 

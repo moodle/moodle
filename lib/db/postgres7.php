@@ -230,6 +230,10 @@ function main_upgrade($oldversion=0) {
         table_column("user_teachers", "", "timemodified", "integer", "10", "unsigned", "0", "", "editall");
     }
 
+    if ($oldversion < 2003081900) {
+        table_column("course_categories", "courseorder", "coursecount", "integer", "10", "unsigned", "0");
+    }
+
     return $result;
 }
 ?>    

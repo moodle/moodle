@@ -64,7 +64,7 @@ CREATE TABLE `prefix_course_categories` (
   `description` text NOT NULL,
   `parent` int(10) unsigned NOT NULL default '0',
   `sortorder` int(10) unsigned NOT NULL default '0',
-  `courseorder` int(10) unsigned NOT NULL default '0',
+  `coursecount` int(10) unsigned NOT NULL default '0',
   `visible` tinyint(1) NOT NULL default '1',
   `timemodified` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`),

@@ -1264,6 +1264,7 @@ function fix_course_sortorder($categoryid, $sort="sortorder ASC") {
     if ($modified) {
         set_field("course_categories", "timemodified", time(), "id", $categoryid);
     }
+    set_field("course_categories", "coursecount", $count, "id", $categoryid);
 
     return true;
 }
