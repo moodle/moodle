@@ -9,7 +9,7 @@ function glossary_show_entry_fullwithauthor($course, $cm, $glossary, $entry, $mo
 
     $return = false;
     if ($entry) {
-        echo '<table class="glossarypost fullwithauthor">';
+        echo '<table class="glossarypost fullwithauthor" cellspacing="0">';
         echo '<tr valign="top">';
         
         echo '<td class="picture">';

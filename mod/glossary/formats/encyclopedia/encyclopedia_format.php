@@ -9,7 +9,7 @@ function glossary_show_entry_encyclopedia($course, $cm, $glossary, $entry, $mode
 
     $return = false;
     if ($entry) {
-        echo '<table class="glossarypost encyclopedia" align="center">';
+        echo '<table class="glossarypost encyclopedia" cellspacing="0">';
         echo '<tr valign="top">';
         echo '<td class="picture">';
         
@@ -48,6 +48,7 @@ function glossary_show_entry_encyclopedia($course, $cm, $glossary, $entry, $mode
 
         if ($printicons or $ratings or $aliases) {
             echo '</td></tr>';
+            echo '<tr>';
             echo '<td class="left">&nbsp;</td>';
             echo '<td colspan="2" class="entrylowersection">';
             $return = glossary_print_entry_lower_section($course, $cm, $glossary, $entry,$mode,$hook,$printicons,$ratings, $aliases);

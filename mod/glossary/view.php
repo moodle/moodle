@@ -378,7 +378,7 @@
 
 
     if ($ratingsmenuused) {
-        echo "<p><center><input type=\"submit\" value=\"".get_string("sendinratings", "glossary")."\" />";
+        echo "<center><input type=\"submit\" value=\"".get_string("sendinratings", "glossary")."\" />";
         if ($glossary->scale < 0) {
             if ($scale = get_record("scale", "id", abs($glossary->scale))) {
                 print_scale_menu_helpbutton($course->id, $scale );

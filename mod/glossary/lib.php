@@ -1965,9 +1965,8 @@ function glossary_print_ratings_mean($entryid, $scale) {
             $strratings = get_string("ratings", "glossary");
         }
 
-        echo "<font size=\"-1\">$strratings: ";
+        echo "$strratings: ";
         link_to_popup_window ("/mod/glossary/report.php?id=$entryid", "ratings", $mean, 400, 600);
-        echo "</font>";
     }
 }
 

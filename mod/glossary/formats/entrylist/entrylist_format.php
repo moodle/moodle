@@ -5,7 +5,7 @@ function glossary_show_entry_entrylist($course, $cm, $glossary, $entry, $mode=''
 
     $return = false;
 
-    echo '<table class="glossarypost entrylist">';
+    echo '<table class="glossarypost entrylist" cellspacing="0">';
 
     echo '<tr valign="top">';
     echo '<td class="entry">';

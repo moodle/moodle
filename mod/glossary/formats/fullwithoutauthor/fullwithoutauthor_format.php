@@ -6,7 +6,7 @@ function glossary_show_entry_fullwithoutauthor($course, $cm, $glossary, $entry, 
 
     $return = false;
     if ($entry) {
-        echo "\n".'<table class="glossarypost fullwithoutauthor" align="center">';
+        echo '<table class="glossarypost fullwithoutauthor" cellspacing="0">';
         echo '<tr valign="top">';
 
         echo '<td class="entryheader">';
