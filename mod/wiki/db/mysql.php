@@ -71,6 +71,22 @@ function wiki_upgrade($oldversion) {
         }
     }
 
+    if ($oldversion < 2004111200) {
+        execute_sql("ALTER TABLE {$CFG->prefix}wiki DROP INDEX course;",false);
+        execute_sql("ALTER TABLE {$CFG->prefix}wiki_entries DROP INDEX course;",false); 
+        execute_sql("ALTER TABLE {$CFG->prefix}wiki_entries DROP INDEX userid;",false); 
+        execute_sql("ALTER TABLE {$CFG->prefix}wiki_entries DROP INDEX groupid;",false);
+        execute_sql("ALTER TABLE {$CFG->prefix}wiki_entries DROP INDEX wikiid;",false); 
+        execute_sql("ALTER TABLE {$CFG->prefix}wiki_entries DROP INDEX pagename;",false);
+
+        modify_database('','ALTER TABLE prefix_wiki ADD INDEX course (course);');
+        modify_database('','ALTER TABLE prefix_wiki_entries ADD INDEX course (course);');
+        modify_database('','ALTER TABLE prefix_wiki_entries ADD INDEX userid (userid);');
+        modify_database('','ALTER TABLE prefix_wiki_entries ADD INDEX groupid (groupid);');
+        modify_database('','ALTER TABLE prefix_wiki_entries ADD INDEX wikiid (wikiid);');
+        modify_database('','ALTER TABLE prefix_wiki_entries ADD INDEX pagename (pagename);');
+    }
+
     return true;
 }
 
