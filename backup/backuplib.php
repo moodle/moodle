@@ -382,6 +382,8 @@
         
         //Course open tag
         fwrite ($bf,start_tag("COURSE",1,true));
+        //Header open tag
+        fwrite ($bf,start_tag("HEADER",2,true));
 
         //Get info from course
         $course=false;
@@ -390,7 +392,7 @@
         }
         if ($course) {
             //Prints course info
-            fwrite ($bf,full_tag("ID",2,false,$course->id));
+            fwrite ($bf,full_tag("ID",3,false,$course->id));
             //Obtain the category
             $category = false;
             if ($categories = get_records("course_categories","id","$course->category")) {
@@ -398,29 +400,31 @@
             }
             if ($category) {
                 //Prints category info
-                fwrite ($bf,start_tag("CATEGORY",2,true));
-                fwrite ($bf,full_tag("ID",3,false,$course->category));
-                fwrite ($bf,full_tag("NAME",3,false,$category->name));
-                fwrite ($bf,end_tag("CATEGORY",2,true));
+                fwrite ($bf,start_tag("CATEGORY",3,true));
+                fwrite ($bf,full_tag("ID",4,false,$course->category));
+                fwrite ($bf,full_tag("NAME",4,false,$category->name));
+                fwrite ($bf,end_tag("CATEGORY",3,true));
             }
             //Continues with the course
-            fwrite ($bf,full_tag("PASSWORD",2,false,$course->password));
-            fwrite ($bf,full_tag("FULLNAME",2,false,$course->fullname));
-            fwrite ($bf,full_tag("SHORTNAME",2,false,$course->shortname));
-            fwrite ($bf,full_tag("SUMMARY",2,false,$course->summary));
-            fwrite ($bf,full_tag("FORMAT",2,false,$course->format));
-            fwrite ($bf,full_tag("NEWSITEMS",2,false,$course->newsitems));
-            fwrite ($bf,full_tag("TEACHER",2,false,$course->teacher));
-            fwrite ($bf,full_tag("TEACHERS",2,false,$course->teachers));
-            fwrite ($bf,full_tag("STUDENT",2,false,$course->student));
-            fwrite ($bf,full_tag("STUDENTS",2,false,$course->students));
-            fwrite ($bf,full_tag("GUEST",2,false,$course->guest));
-            fwrite ($bf,full_tag("STARDATE",2,false,$course->stardate));
-            fwrite ($bf,full_tag("NUMSECTIONS",2,false,$course->numsections));
-            fwrite ($bf,full_tag("SHOWRECENT",2,false,$course->showrecent));
-            fwrite ($bf,full_tag("MARKER",2,false,$course->marker));
-            fwrite ($bf,full_tag("TIMECREATED",2,false,$course->timecreated));
-            $status = fwrite ($bf,full_tag("TIMEMODIFIED",2,false,$course->timemodified));
+            fwrite ($bf,full_tag("PASSWORD",3,false,$course->password));
+            fwrite ($bf,full_tag("FULLNAME",3,false,$course->fullname));
+            fwrite ($bf,full_tag("SHORTNAME",3,false,$course->shortname));
+            fwrite ($bf,full_tag("SUMMARY",3,false,$course->summary));
+            fwrite ($bf,full_tag("FORMAT",3,false,$course->format));
+            fwrite ($bf,full_tag("NEWSITEMS",3,false,$course->newsitems));
+            fwrite ($bf,full_tag("TEACHER",3,false,$course->teacher));
+            fwrite ($bf,full_tag("TEACHERS",3,false,$course->teachers));
+            fwrite ($bf,full_tag("STUDENT",3,false,$course->student));
+            fwrite ($bf,full_tag("STUDENTS",3,false,$course->students));
+            fwrite ($bf,full_tag("GUEST",3,false,$course->guest));
+            fwrite ($bf,full_tag("STARDATE",3,false,$course->stardate));
+            fwrite ($bf,full_tag("NUMSECTIONS",3,false,$course->numsections));
+            fwrite ($bf,full_tag("SHOWRECENT",3,false,$course->showrecent));
+            fwrite ($bf,full_tag("MARKER",3,false,$course->marker));
+            fwrite ($bf,full_tag("TIMECREATED",3,false,$course->timecreated));
+            $status = fwrite ($bf,full_tag("TIMEMODIFIED",3,false,$course->timemodified));
+            //Print header end
+            fwrite ($bf,end_tag("HEADER",2,true));
         } else { 
            $status = false;
         } 
