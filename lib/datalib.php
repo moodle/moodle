@@ -1012,9 +1012,7 @@ function get_users($get=true, $search="", $confirmed=false, $exceptions="", $sor
 /// $sort is a sorting criteria to use
 
     if ($search) {
-        $search = " AND (firstname LIKE '%$search%'
-                     OR lastname LIKE '%$search%'
-                     OR email LIKE '%$search%') ";
+        $search = " AND (CONCAT(firstname,\" \",lastname) LIKE '%$search%' OR email LIKE '%$search%') ";
     }
 
     if ($confirmed) {
@@ -1054,9 +1052,7 @@ function get_users_listing($sort, $dir="ASC", $page=1, $recordsperpage=20, $sear
     }
 
     if ($search) {
-        $search = " AND (firstname LIKE '%$search%'
-                     OR lastname LIKE '%$search%'
-                     OR email LIKE '%$search%') ";
+        $search = " AND (CONCAT(firstname,\" \",lastname) LIKE '%$search%' OR email LIKE '%$search%') ";
     }
 
     return get_records_sql("SELECT id, username, email, firstname, lastname, city, country, lastaccess  
