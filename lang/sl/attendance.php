@@ -1,0 +1,72 @@
+<?PHP // $Id$ 
+      // attendance.php - created with Moodle 1.3 (2004052500)
+
+
+$string['absentlong'] = 'Odsoten';
+$string['absentshort'] = 'O';
+$string['addingmultiple'] = 'Dodajanje seznamov za veèkratno prisotnost';
+$string['addmultiple'] = 'Dodaj sezname za veèkratno prisotnost';
+$string['allmodulename'] = 'Vsi seznami prisotnosti';
+$string['auto'] = 'auto';
+$string['autoattend'] = 'Samodejno ugotavljanje prisotnosti (temelji na dnevniku aktivnosti)';
+$string['autoattendmulti'] = 'Samodejno ugotavljanje prisotnosti (temelji na dnevniku aktivnosti) za vse sezname';
+$string['autoattendshort'] = 'Samodejno iz dnevnika';
+$string['choosedays'] = 'Dnevi v tednu, ko je zahtevana prisotnost';
+$string['dayofroll'] = 'Datum vpisa v seznam prisotnih';
+$string['defaultautoattend'] = 'Privzeto: samodejno ugotavljanje prisotnosti (temelji na dnevniku aktivnosti)';
+$string['defaultdynamicsection'] = 'Privzeto: premik prisotnosti na pravi dan v tednu';
+$string['defaultgrade'] = 'Privzeto: prisotnost se ocenjuje';
+$string['defaulthoursinclass'] = 'Privzeto: koliko ur prisotnosti ';
+$string['defaultmaxgrade'] = 'Privzeto: kaj je navišja ocena za polno prisotnost';
+$string['defaultstudentstatus'] = 'Privzeto: status novega seznama prisotnostattendance rolls';
+$string['downloadexcelfull'] = 'Prenos celotne preglednice (Excel)';
+$string['downloadexceltotals'] = 'Prenos povzetka preglednice (Excel)';
+$string['downloadtextfull'] = 'Prenos celotne preglednice (tekst)';
+$string['downloadtexttotals'] = 'Prenos povzetka preglednice (tekst)';
+$string['dynamicsection'] = 'Doloèi teden prisotnosti glede na ta datum';
+$string['dynamicsectionmulti'] = 'Samodejno vnesi seznam prisotnosti v tedenske sekcije ';
+$string['dynsectionshort'] = 'Dinamièno prenesen v sekcijo';
+$string['endbeforestart'] = 'Zakljuèni datum je pred zaèetnim datumom';
+$string['endmulti'] = 'Konèni datum ugotavljanja prisotnosti';
+$string['for'] = 'za';
+$string['friday'] = 'Pet';
+$string['gradeshort'] = 'Ocenjen';
+$string['gradevalue'] = 'Seznam prisotnosti se uporabi za toèkovanje';
+$string['gradevaluemulti'] = 'Seznami prisotnosti se uporabijo za toèkovanje';
+$string['hoursinclass'] = 'Število ur v razredu v obdobju';
+$string['hoursineachclass'] = 'Število ur v razredu za vsako obdobje';
+$string['hoursinfullreport'] = 'Najveèje število ur prisotnosti, ki bo izpisano na posamezni strani poroèila';
+$string['maxgradeshort'] = 'Najveèja ocena';
+$string['maxgradevalue'] = 'Najveèja ocena za polno prisotnost';
+$string['modulename'] = 'Prisotnost';
+$string['modulenameplural'] = 'Seznami prisotnosti';
+$string['monday'] = 'Mon';
+$string['norolls'] = 'There are no attendance rolls in this course';
+$string['notes'] = 'Exceptional information';
+$string['notesfor'] = 'Exceptional information for';
+$string['noviews'] = 'Sorry, there is no data for your account here';
+$string['of'] = 'of';
+$string['pages'] = 'Strani';
+$string['presentlong'] = 'Prisoten';
+$string['presentshort'] = 'P';
+$string['saturday'] = 'Sob';
+$string['startafterend'] = 'Datum zaèetka veèji od datuma zakljuèka';
+$string['startmulti'] = 'Datum zaèetka preverjanja prisotnost';
+$string['sunday'] = 'Ned';
+$string['takeroll'] = 'Zahtevate seznam prisotnosti za danes?';
+$string['tardiesperabsence'] = 'Koliko zamud šteje kot ena odsotnost?';
+$string['tardylong'] = 'Zamudil';
+$string['tardyshort'] = 'Z';
+$string['teacheredit'] = 'Urejanje prisotnosti';
+$string['thursday'] = 'Èet';
+$string['tuesday'] = 'Tor';
+$string['viewall'] = 'Pregled vseh seznamov prisotnosti';
+$string['viewmulti'] = 'Pregled poroèila na veè straneh';
+$string['viewone'] = 'Pregled vseh strani poroèila';
+$string['viewsection'] = 'Pregled prisotnosti za to sekcijo';
+$string['viewtable'] = 'Poroèilo v eni tabeli';
+$string['viewweek'] = 'Pregled prisotnosti v koledarskem tednu';
+$string['wednesday'] = 'Sre';
+$string['weekmodulename'] = 'Vsi seznami prisotnosti v preteklem tednu';
+
+?>
