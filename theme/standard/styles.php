@@ -14,7 +14,7 @@
 /// Following lines are just for standard theme/styles.php
     if (!isset($THEME->standardsheets) or $THEME->standardsheets === true) { // Use all the sheets we have
         $subsheets = array('styles_layout', 'styles_fonts', 'styles_color', 'styles_moz');
-    } else if ($THEME->standardsheets === false) {                           // We can stop right now!
+    } else if (empty($THEME->standardsheets)) {                              // We can stop right now!
         exit;
     } else {                                                                 // Use the provided subset only
         $subsheets = $THEME->standardsheets;
