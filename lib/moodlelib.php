@@ -2550,8 +2550,8 @@ function notify_login_failures() {
             $message .= get_string('notifyloginfailuresmessagestart','',$CFG->wwwroot)
                  .(($CFG->lastnotifyfailure != 0) ? '('.userdate($CFG->lastnotifyfailure).')' : '')."\n\n";
             foreach ($logs as $log) {
-                $message .= userdate($log->time) .get_string('notifyloginfailuresmessagefromip').$log->ip 
-                 .get_string('notifyloginfailuresmessagewithuser').$log->info."\n";
+                $log->time = userdate($log->time);
+                $message .= get_string('notifyloginfailuresmessage','',$log)."\n";
             }
             $message .= "\n\n".get_string('notifyloginfailuresmessageend','',$CFG->wwwroot)."\n\n";
             foreach ($recip as $admin) {
