@@ -8,7 +8,7 @@
                  get_string('error'), 
                  get_string('error') );
 
-    echo clean_text(urldecode($error));
+    print clean_text(urldecode($error));
 
     print_footer();
 ?>
