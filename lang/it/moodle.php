@@ -140,6 +140,7 @@ $string['closewindow'] = 'Chiudi questa finestra';
 $string['comparelanguage'] = 'Confronta ed modifica la lingua corrente';
 $string['complete'] = 'Completo';
 $string['configallowunenroll'] = 'Se selezioni \'Si\', gli studenti possono disiscriversi da soli dai corsi quando preferiscono. Altrimenti questo può essere fatto solamente dagli insegnanti e dagli  amministratori.';
+$string['configautologinguests'] = 'I visitatori devono essere registrati automaticamente come ospiti quando entrano nei corsi con accesso agli ospiti?';
 $string['configcachetext'] = 'Per i siti grandi o i siti che usa filtri di testo, questa impostazione può velocizzare molto le cose. Copie dei testi saranno mantenute nella loro forma elaborata per il tempo qui specificato. Impostandolo troppo breve potrebbe rallentare un po\' le cose, ma impostandolo troppo lungo potrebbe significare attendere molto tempo prima che il testo venga aggiornato (i nuovi collegamenti, per esempio)';
 $string['configcountry'] = 'Se scegli uno stato qui, questo verrà proposto di default. Per obbligare un utente a scegliere il proprio stato, lascialo vuoto.';
 $string['configdebug'] = 'Se si attiva questa opzione, Si incrementerà il livello di rapporto di errore e saranno stampati più avvertimenti. Questo è utile solo per sviluppatori.';
