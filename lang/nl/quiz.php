@@ -1,8 +1,9 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.0.7 (2002121000)
+      // quiz.php - created with Moodle 1.0.8.1 (2003011200)
 
 
 $string['addselectedtoquiz'] = "Voeg het geselecteerde toe aan de test";
+$string['allowreview'] = "Sta nalezen toe";
 $string['alreadysubmitted'] = "Waarschijnlijk heb je deze poging al ingestuurd";
 $string['alwaysavailable'] = "Altijd beschikbaar ";
 $string['answer'] = "Antwoord";
@@ -59,6 +60,8 @@ $string['guestsno'] = "Sorry, gasten kunnen testen niet bekijken noch een poging
 $string['imagedisplay'] = "Weer te geven plaatje";
 $string['introduction'] = "Inleiding";
 $string['marks'] = "Punten";
+$string['missingname'] = "Naam voor de vraag ontbreekt";
+$string['missingquestiontext'] = "Tekst voor de vraag ontbreekt";
 $string['modulename'] = "Test";
 $string['modulenameplural'] = "Testen";
 $string['multichoice'] = "Multiple choice";
@@ -66,6 +69,8 @@ $string['noanswers'] = "Er zijn geen antwoorden geselecteerd!";
 $string['noattempts'] = "Er zijn geen pogingen geweest om deze test te maken";
 $string['nomoreattempts'] = "Een nieuwe poging is niet meer toegestaan";
 $string['noquestions'] = "Er zijn nog geen vragen toegevoegd";
+$string['noreview'] = "Het is niet toegestaan om de antwoorden na te lezen en te verbeteren";
+$string['noreviewuntil'] = "Het is niet toegestaan om deze test na te lezen tot \$a";
 $string['publish'] = "Publiceer  ";
 $string['question'] = "Vraag";
 $string['questioninuse'] = "De vraag '\$a' is op dit moment al in gebruik:";

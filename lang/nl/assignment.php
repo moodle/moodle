@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.0.7 (2002121000)
+      // assignment.php - created with Moodle 1.0.8.1 (2003011200)
 
 
 $string['allowresubmit'] = "Sta  meerdere malen insturen toe";
@@ -10,6 +10,7 @@ $string['description'] = "Beschrijving  ";
 $string['duedate'] = "Uiterste inleverdatum";
 $string['early'] = "\$a vroeg";
 $string['failedupdatefeedback'] = "Het updaten van de feedback op de ingestuurde opdracht van gebruiker \$a is niet gelukt";
+$string['feedback'] = "Feedback";
 $string['feedbackupdated'] = "De feedback op ingestuurde opdrachten is voor \$a mensen bijgewerkt";
 $string['late'] = "\$a laat";
 $string['maximumgrade'] = "Maximale cijfer";
@@ -19,6 +20,7 @@ $string['modulenameplural'] = "Opdrachten";
 $string['newsubmissions'] = "Ingestuurde opdrachten";
 $string['notsubmittedyet'] = "Nog niet ingestuurd";
 $string['overwritewarning'] = "Waarschuwing: als je opnieuw een opdracht instuurt OVERSCHRIJFT deze de huidige ingestuurde opdracht";
+$string['saveallfeedback'] = "Bewaar al mijn feedback";
 $string['submissionfeedback'] = "Feedback op de ingestuurde opdracht";
 $string['submissions'] = "Ingestuurde opdrachten";
 $string['submitassignment'] = "Stuur je opdracht in door dit formulier in te vullen";

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // survey.php - created with Moodle 1.0.7 (2002121000)
+      // survey.php - created with Moodle 1.0.8.1 (2003011200)
 
 
 $string['actual'] = "Werkelijk";
@@ -77,7 +77,7 @@ $string['colles16short'] = "docent staat model voor zelfreflectie";
 $string['colles17'] = "de andere studenten moedigen mijn participatie aan";
 $string['colles17short'] = "studenten moedigen me aan";
 $string['colles18'] = "de andere studenten complimenteren mijn bijdrage(n)";
-$string['colles18hort'] = "studenten complimenteren mij";
+$string['colles18short'] = "studenten complimenteren me";
 $string['colles19'] = "de andere studenten waarderen mijn bijdrage(n)";
 $string['colles19short'] = "studenten waarderen mij";
 $string['colles1short'] = "interessante zaken in beeld brengen";

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.0.7 (2002121000)
+      // moodle.php - created with Moodle 1.0.8.1 (2003011200)
 
 
 $string['action'] = "Actie";
@@ -7,6 +7,7 @@ $string['activities'] = "Activiteiten ";
 $string['activity'] = "Activiteit";
 $string['activityreport'] = "Activiteitenrapport";
 $string['add'] = "Voeg toe";
+$string['addadmin'] = "Voeg beheerder toe";
 $string['added'] = "\$a toegevoegd";
 $string['addinganew'] = "Een nieuwe \$a toevoegen";
 $string['addinganewto'] = "Een nieuwe \$a->what aan \$a->to toevoegen";
@@ -29,6 +30,7 @@ $string['alphanumerical'] = "Mag alleen maar alphabetische letters of nummers be
 $string['alreadyconfirmed'] = "De registratie is al bevestigd";
 $string['answer'] = "Antwoord";
 $string['assessment'] = "Beoordeling ";
+$string['assignadmins'] = "Wijs beheerders aan";
 $string['assignteachers'] = "Wijs docenten aan";
 $string['authentication'] = "Authenticatie";
 $string['availablecourses'] = "Beschikbare vakken";
@@ -51,6 +53,8 @@ $string['city'] = "Plaats";
 $string['closewindow'] = "Sluit dit venster";
 $string['comparelanguage'] = "Vergelijk en bewerk huidige taal ";
 $string['complete'] = "Voltooid";
+$string['configcountry'] = "Als je hier een land invult zal dit land als standaard worden geselecteerd bij nieuwe gebruikersaccounts. Laat dit veld gewoon leeg om gebruikers te dwingen een land te kiezen.";
+$string['configdebug'] = "Als je dit aan zet zullen er meer PHP-fouten op het scherm worden weergegeven. Dit is alleen maar handig voor ontwikkelaars van de applicatie.";
 $string['configerrorlevel'] = "Kies hoeveel PHP waarschuwingen je wilt dat Moodle laat zien. 'Normaal' is meestal de beste keuze.
 ";
 $string['configgdversion'] = "Geef aan welke versie van GD geïnstalleerd is. De versie die standaard getoond wordt is automatisch gevonden. Verander dit niet tenzij je echt weet wat je aan het doen bent.
@@ -112,6 +116,7 @@ $string['deletednot'] = "Kon \$a niet verwijderen!";
 $string['deletingcourse'] = "\$a verwijderen";
 $string['department'] = "Afdeling";
 $string['description'] = "Beschrijving";
+$string['displayingrecords'] = "\$a records worden getoond";
 $string['displayingusers'] = "Gebruikers \$a->start tot en met \$a->end worden getoond";
 $string['documentation'] = "Moodle documentatie";
 $string['downloadexcel'] = "Download in Excel formaat";
@@ -159,6 +164,8 @@ $string['enrolmentkeyhint'] = "Die 'Vak sleutel' was niet correct. Probeer het n
 $string['entercourse'] = "Klik om dit vak binnen te gaan";
 $string['enteremailaddress'] = "Typ je e-mail adres om je wachtwoord te resetten en via e-mail een nieuw wachtwoord naar je toegestuurd te krijgen.";
 $string['error'] = "Fout";
+$string['errortoomanylogins'] = "Het spijt me, maar je hebt te vaak geprobeerd om in te loggen. Herstart je browser.";
+$string['existingadmins'] = "Bestaande beheerders";
 $string['existingteachers'] = "Bestaande docenten";
 $string['feedback'] = "Feedback";
 $string['filemissing'] = "\$a ontbreekt";
@@ -184,6 +191,7 @@ $string['fullprofile'] = "Volledig profiel";
 $string['fullsitename'] = "Volledige naam van de site";
 $string['gd1'] = "GD 1.x is geïnstalleerd";
 $string['gd2'] = "GD 2.x is geïnstalleerd";
+$string['gdneed'] = "GD moet geïnstalleerd zijn om deze grafiek te kunnen bekijken";
 $string['gdnot'] = "GD is niet geïnstalleerd";
 $string['gpl'] = "Copyright (C) 2001-2002 Martin Dougiamas
 (http://dougiamas.com)
@@ -205,8 +213,10 @@ $string['help'] = "Help";
 $string['helphtml'] = "Hoe je HTML kunt schrijven";
 $string['helppicture'] = "Hoe je een plaatje kunt uploaden";
 $string['helpquestions'] = "Hoe je vragen kunt stellen";
+$string['helpreading'] = "Lees zorgvuldig";
 $string['helprichtext'] = "Over de Richtext HTML editor";
 $string['helptext'] = "Hoe je een tekst kunt schrijven ";
+$string['helpwriting'] = "Schrijf zorgvuldig";
 $string['hide'] = "Verberg";
 $string['hits'] = "Hits";
 $string['hitsoncourse'] = "Hits voor \$a->coursename door \$a->username";
@@ -214,6 +224,7 @@ $string['hitsoncoursetoday'] = "Hits van vandaag voor \$a->coursename door \$a->
 $string['home'] = "Home";
 $string['hour'] = "uur";
 $string['hours'] = "uren";
+$string['howtomakethemes'] = "Hoe je nieuwe thema's kunt maken";
 $string['htmleditor'] = "Gebruik Richtext HTML editor (alleen voor IE 5.5 of later)";
 $string['htmleditoravailable'] = "De Richtext editor is beschikbaar";
 $string['htmleditordisabled'] = "Je hebt de Richtext editor uit gezet in je gebruikersprofiel";
@@ -270,7 +281,7 @@ $string['makeeditable'] = "Als je '\$a' bewerkbaar maakt door de het proces op d
 $string['managedatabase'] = "Beheer de database";
 $string['markthistopic'] = "Selecteer dit onderwerp als het huidige onderwerp";
 $string['maximumchars'] = "Een maximum van \$a characters";
-$string['maximumgrade'] = "Hoogste cijfer";
+$string['maximumgrade'] = "Hoogst haalbare cijfer";
 $string['maximumshort'] = "Max";
 $string['maxsize'] = "Maximale grootte: \$a";
 $string['min'] = "minuut";
@@ -319,7 +330,7 @@ Het wachtwoord voor je account op '\$a->sitename' is gereset en je hebt een nieu
 
 Je login informatie is nu:
 gebruikersnaam: \$a->username
-wachtwoord: \$a->wachtwoord
+wachtwoord: \$a->newpassword
 
 Ga naar deze pagina om je wachtwoord te wijzigen:
 \$a->link
@@ -331,7 +342,7 @@ Veel succes en met vriendelijke groet,
 \$a->admin
 (Beheerder van '\$a->sitename')
 
-";
+\$a->signoff";
 $string['newpicture'] = "Nieuwe foto";
 $string['newsitem'] = "Nieuws item";
 $string['newsitems'] = "Nieuws items";
@@ -340,11 +351,13 @@ $string['newuser'] = "Nieuwe gebruiker";
 $string['newusers'] = "Nieuwe gebruikers";
 $string['no'] = "Nee";
 $string['nocoursesyet'] = "Er zijn geen vakken in deze categorie";
+$string['noexistingadmins'] = "Er bestaan geen beheerders. Dit is een ernstige fout die je in normale omstandigheden nooit te zien krijgt.";
 $string['noexistingteachers'] = "Nog geen docenten";
 $string['nofilesyet'] = "Er zijn nog geen bestanden naar deze cursus upgeload";
 $string['nograde'] = "Nog geen cijfer";
 $string['noimagesyet'] = "Er zijn nog geen plaatjes naar dit vak upgeload";
 $string['none'] = "Geen";
+$string['nopotentialadmins'] = "Geen mogelijke beheerders";
 $string['nopotentialteachers'] = "Geen mogelijke docenten";
 $string['normal'] = "Normaal";
 $string['nostudentsyet'] = "Er zijn nog geen leerlingen lid van dit vak";
@@ -378,6 +391,7 @@ $string['passwordsenttext'] = "<P>Er is een e-mail verstuurd naar \$a->email.
 $string['people'] = "Mensen";
 $string['personalprofile'] = "Persoonlijke profiel";
 $string['phone'] = "Telefoon";
+$string['potentialadmins'] = "Mogelijke beheerders";
 $string['potentialteachers'] = "Mogelijke docenten";
 $string['preferredlanguage'] = "Voorkeurstaal";
 $string['preview'] = "Bekijk";
@@ -385,6 +399,7 @@ $string['previeworchoose'] = "Bekijk of kies een thema";
 $string['question'] = "Vraag";
 $string['readme'] = "LEESME";
 $string['recentactivity'] = "Recente activiteiten";
+$string['removeadmin'] = "Verwijder beheerder";
 $string['removeteacher'] = "Verwijder docent";
 $string['rename'] = "Hernoem";
 $string['requireskey'] = "Dit vak vereist een 'Vak sleutel'.";
@@ -463,12 +478,15 @@ $string['update'] = "Wijzig";
 $string['updated'] = "\$a gewijzigd";
 $string['updatemyprofile'] = "Wijzig het profiel";
 $string['updatesevery'] = "Wordt elke \$a seconden bijgewerkt";
-$string['updatethis'] = "Wijzig deze \$a";
+$string['updatethis'] = "Wijzig \$a";
 $string['updatethiscourse'] = "Wijzig dit vak";
 $string['updatinga'] = "Een \$a wijzigen";
 $string['updatingain'] = "Een \$a->what wijzigen in \$a->in";
 $string['upload'] = "Upload";
 $string['uploadafile'] = "Upload een bestand";
+$string['uploadedfileto'] = "\$a->file is upgeload naar \$a->directory";
+$string['uploadnofilefound'] = "Er is geen bestand gevonden - weet je zeker dat je een bestand geselecteerd hebt om te uploaden?";
+$string['uploadproblem'] = "Een was een onbekend probleem tijdens het uploaden van bestand '\$a' (was het misschien te groot?)";
 $string['uploadthisfile'] = "Upload dit bestand";
 $string['userdeleted'] = "De account van deze gebruiker is verwijderd";
 $string['userdescription'] = "Beschrijving";

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.0.7 (2002121000)
+      // forum.php - created with Moodle 1.0.8.1 (2003011200)
 
 
 $string['addanewdiscussion'] = "Voeg een nieuwe onderwerp voor discussie toe";
@@ -72,18 +72,6 @@ $string['openmode2'] = "Nieuwe discussies en bijdragen zijn toegestaan";
 $string['parentofthispost'] = "'Moeder' van deze bijdrage";
 $string['postadded'] = "Je bijdrage is met succes toegevoegd.<p> Je hebt \$a de tijd om deze bijdrage te wijzigen als je iets wilt veranderen.";
 $string['postincontext'] = "Bekijk deze bijdrage in zijn context";
-$string['postingtip'] = "<B>Tips voor bijdragen:</B>
-Als je een antwoord geeft op een bijdrage: <UL>
-<LI>Lees de andere bijdrage zorgvuldig en met inlevingsvermogen
-<LI>zoek naar zaken waar je commentaar op kunt geven
-</UL>
-
-Terwijl je schrijft:
-<UL>
-<LI>Hou de bijdrage kort en blijf bij het onderwerp
-<LI>Geef een duidelijke uitleg van je eigen ideeën
-<LI>Bedenk welke vragen je kunt stellen
-</UL>";
 $string['postmailinfo'] = "Dit is een kopie van een bijdrage die is toegevoegd op de \$a website.
 Klik op deze link om jouw antwoord via de website toe te voegen:";
 $string['postrating1'] = "Laat voornamelijk 'gescheiden kennen' zien";
@@ -93,6 +81,7 @@ $string['postupdated'] = "Je bijdrage is bijgewerkt";
 $string['processingpost'] = "Bijdrage \$a aan het verwerken";
 $string['rate'] = "Classificeer  ";
 $string['ratings'] = "Classificaties  ";
+$string['ratingssaved'] = "Classificaties zijn bewaard";
 $string['re'] = "Re:";
 $string['readtherest'] = "Lees de rest van deze discussie";
 $string['repliesmany'] = "\$a antwoorden tot nu toe";

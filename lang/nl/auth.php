@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.0.7 (2002121000)
+      // auth.php - created with Moodle 1.0.8.1 (2003011200)
 
 
 $string['auth_dbdescription'] = "Deze methode gebruikt een externe database om te controleren of een bepaalde gebruikersnaam en een bepaald wachtwoord geldig zijn. Als de account nieuw is dan kan informatie vanuit andere velden ook naar Moodle worden gekopieerd.";
@@ -9,6 +9,7 @@ $string['auth_dbfielduser'] = "Naam van het veld dat de gebruikersnamen bevat  "
 $string['auth_dbhost'] = "De computer die de database server host";
 $string['auth_dbname'] = "Naam van de database zelf";
 $string['auth_dbpass'] = "Wachtwoord dat bij de bovengenoemde gebruikersnaam past";
+$string['auth_dbpasstype'] = "Geef hier aan welk format het wachtwoordveld gebruikt. MD5 encryptie is handig om een verbinding te maken naar andere veel voorkomende web applicaties zoals PostNuke";
 $string['auth_dbtable'] = "Naam  van  de  tabel in de database";
 $string['auth_dbtitle'] = "Gebruik een externe database";
 $string['auth_dbtype'] = "Het type database (Bekijk <A HREF=../lib/adodb/readme.htm#drivers>ADOdb documentatie</A> voor meer informatie)";
@@ -56,6 +57,8 @@ $string['changepasswordhelp'] = "Hier kun je een locatie aangeven waar gebruiker
 $string['chooseauthmethod'] = "Kies een methode van authenticatie:";
 $string['guestloginbutton'] = "Knop voor login als gast";
 $string['instructions'] = "Instructies";
+$string['md5'] = "MD5 encryptie";
+$string['plaintext'] = "Platte tekst";
 $string['showguestlogin'] = "Je kunt de knop voor login als gast verbergen of laten zien op de login pagina.
 ";
 

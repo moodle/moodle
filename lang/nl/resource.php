@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.0.7 (2002121000)
+      // resource.php - created with Moodle 1.0.8.1 (2003011200)
 
 
 $string['addresource'] = "Voeg bron toe";
@@ -23,5 +23,6 @@ $string['resourcetype3'] = "Upgeload bestand";
 $string['resourcetype4'] = "Platte tekst";
 $string['resourcetype5'] = "Weblink (nieuw venster)";
 $string['resourcetype6'] = "HTML tekst";
+$string['resourcetype7'] = "Programma";
 
 ?>
