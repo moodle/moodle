@@ -22,6 +22,7 @@ $string['displayformat'] = "Formato de muestra de entradas";
 $string['displayformatdefault'] = "Simple, estilo diccionario";
 $string['displayformat1'] = "Completo sin autor.";
 $string['displayformat2'] = "Completo con autor.";
+$string['displayformat3'] = "Enciclopedia";
 $string['editentry'] = "Editar entrada";
 $string['editcategories'] = "Editar categorías";
 $string['entries'] = "Entradas";
