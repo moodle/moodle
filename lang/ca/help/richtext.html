@@ -1,0 +1,171 @@
+
+<P ALIGN=CENTER><B>Sobre l'editor de text enriquit HTML</B></P>
+
+<P>Disponibilitat: <B> 
+  <? if (!$CFG->htmleditor) {
+       print_string("htmleditordisabledadmin");
+   } else if (!$USER->htmleditor) {
+       print_string("htmleditordisabled");
+   } else if (!can_use_richtext_editor()) {
+       print_string("htmleditordisabledbrowser");
+   } else {
+       print_string("htmleditoravailable");
+   }
+?>
+  </B></P>
+
+<P>L'editor de text enriquit HTML ens proporciona una interf&iacute;cie de processador 
+  de textos incrustada a la p&agrave;gina web per permetre-us editar text d'una 
+  forma intu&iuml;tiva, i el resultat &eacute;s codi HTML. 
+<P>A m&eacute;s de formatar text aquest editor presenta una s&egrave;rie de caracter&iacute;stiques 
+  extra que us poden ser molt &uacute;tils.
+<P><B>Copiar text des d'altres aplicacions</B></P>
+<UL>
+  <p>Podeu copiar i enganxar directament text enriquit des d'altres aplicacions 
+    Windows, com ara Microsoft Word, a aquest editor i es conservar&agrave; el 
+    format. Nom&eacute;s cal que useu els men&uacute;s habituals de copiar i enganxar 
+    del vostre navegador o b&eacute; Control-C i Control-V.</p>
+</UL>
+
+<P><B>Inserir imatges <img border="0" hspace="10" src="lib/rte/images/icon_ins_image.gif"></B></P>
+<UL>
+  <P>Si teniu imatges publicades en un lloc web accessible via Internet les podeu 
+    incloure als vostres textos tot utilitzant el bot&oacute; &quot;Insereix imatge&quot;
+</UL>
+
+<P><B>Inserir taules<img border="0" hspace="10" src="lib/rte/images/icon_ins_table.gif"></B></P>
+<UL>
+  <P>Per afegir graelles als textos podeu usar el bot&oacute; &quot;Insereix taules&quot; 
+    de la barra de men&uacute;s.
+</UL>
+
+<P><B>Inserir enlla&ccedil;os<img border="0" hspace="10" src="lib/rte/images/icon_ins_link.gif"></B></P>
+<UL>
+  <p>Per crear un nou enlla&ccedil; primer cal escriure el text on voleu que hi 
+    hagi l'&iexcl;enlla&ccedil;. En acabat seleccioneu-lo i cliqueu el bot&oacute; 
+    d'enlla&ccedil; de la barra de men&uacute;s. Escriviu l'adre&ccedil;a (URL) 
+    a la que voleu enlla&ccedil;ar i Accepteu. Res m&eacute;s senzill.</p>
+</UL>
+
+
+<P><B>Inserir emoticones<img border="0" hspace="10" src="pix/s/smiley.gif" width="15" height="15"></B></P>
+<UL>
+  <p>Per incloure emoticones als vostres textos feu clic al bot&oacute; amb l'emoticona 
+    de la barra de men&uacute;s. Una finestreta emergent us permetr&agrave; escollir 
+    entre les diferents emoticones. Altrament podeu escriure el codi corresponent 
+    al vostre text i es convertir&agrave; autom&agrave;ticament en emoticona quan, 
+    m&eacute;s endavant, es mostri el vostre text.</p>
+  <p>&nbsp;</p>
+  <table border="1" align="center">
+    <tr valign="top"> 
+      <td> 
+        <table border="0" align="center" cellpadding="5">
+          <tr> 
+            <td><a href="javascript:inserttext(':-)')"><img border="0" hspace="10" src="pix/s/smiley.gif" width="15" height="15"></a></td>
+            <td>somriure</td>
+            <td><font face="courier">:-)</font></td>
+          </tr>
+          <tr> 
+            <td><a href="javascript:inserttext(':-D')"><img alt border="0" hspace="10" src="pix/s/biggrin.gif" width="15" height="15"></a></td>
+            <td>riallada</td>
+            <td><font face="courier">:-D</font></td>
+          </tr>
+          <tr> 
+            <td><a href="javascript:inserttext(';-)')"><img alt border="0" hspace="10" src="pix/s/wink.gif" width="15" height="15"></a></td>
+            <td>fer l'ullet</td>
+            <td><font face="courier">;-)</font></td>
+          </tr>
+          <tr> 
+            <td><a href="javascript:inserttext(':-/')"><img alt border="0" hspace="10" src="pix/s/mixed.gif" width="15" height="15"></a></td>
+            <td>indec&iacute;s</td>
+            <td><font face="courier">:-/</font></td>
+          </tr>
+          <tr> 
+            <td><a href="javascript:inserttext('V-.')"><img alt border="0" hspace="10" src="pix/s/thoughtful.gif" width="15" height="15"></a></td>
+            <td>pensar&oacute;s</td>
+            <td><font face="courier">V-.</font></td>
+          </tr>
+          <tr> 
+            <td><a href="javascript:inserttext(':-P')"><img alt border="0" hspace="10" src="pix/s/tongueout.gif" width="15" height="15"></a></td>
+            <td>treure la llengua</td>
+            <td><font face="courier">:-P</font></td>
+          </tr>
+          <tr> 
+            <td><a href="javascript:inserttext('B-)')"><img alt border="0" hspace="10" src="pix/s/cool.gif" width="15" height="15"></a></td>
+            <td>guai</td>
+            <td><font face="courier">B-)</font></td>
+          </tr>
+          <tr> 
+            <td><a href="javascript:inserttext('^-)')"><img alt border="0" hspace="10" src="pix/s/approve.gif" width="15" height="15"></a></td>
+            <td>d'acord</td>
+            <td><font face="courier">^-)</font></td>
+          </tr>
+          <tr> 
+            <td><a href="javascript:inserttext('8-)')"><img alt border="0" hspace="10" src="pix/s/wideeyes.gif" width="15" height="15"></a></td>
+            <td>ulls oberts</td>
+            <td><font face="courier">8-)</font></td>
+          </tr>
+          <tr> 
+            <td><a href="javascript:inserttext('8-o')"><img alt border="0" hspace="10" src="pix/s/surprise.gif" width="15" height="15"></a></td>
+            <td>sorpr&egrave;s</td>
+            <td><font face="courier">8-o</font></td>
+          </tr>
+        </table>
+      </td>
+      <td> 
+        <table border="0" align="center" cellpadding="5">
+          <tr> 
+            <td><a href="javascript:inserttext(':-(')"><img alt border="0" hspace="10" src="pix/s/sad.gif" width="15" height="15"></a></td>
+            <td>trist</td>
+            <td><font face="courier">:-(</font></td>
+          </tr>
+          <tr> 
+            <td><a href="javascript:inserttext('8-.')"><img alt border="0" hspace="10" src="pix/s/shy.gif" width="15" height="15"></a></td>
+            <td>t&iacute;mid</td>
+            <td><font face="courier">8-.</font></td>
+          </tr>
+          <tr> 
+            <td><a href="javascript:inserttext(':-I')"><img alt border="0" hspace="10" src="pix/s/blush.gif" width="15" height="15"></a></td>
+            <td>avergonyit</td>
+            <td><font face="courier">:-I</font></td>
+          </tr>
+          <tr> 
+            <td><a href="javascript:inserttext(':-X')"><img alt border="0" hspace="10" src="pix/s/kiss.gif" width="15" height="15"></a></td>
+            <td>petons</td>
+            <td><font face="courier">:-X</font></td>
+          </tr>
+          <tr> 
+            <td><a href="javascript:inserttext(':o)')"><img alt border="0" hspace="10" src="pix/s/clown.gif" width="15" height="15"></a></td>
+            <td>pallasso</td>
+            <td><font face="courier">:o)</font></td>
+          </tr>
+          <tr> 
+            <td><a href="javascript:inserttext('P-|')"><img alt border="0" hspace="10" src="pix/s/blackeye.gif" width="15" height="15"></a></td>
+            <td>ull tapat</td>
+            <td><font face="courier">P-|</font></td>
+          </tr>
+          <tr> 
+            <td><a href="javascript:inserttext('8-[')"><img alt border="0" hspace="10" src="pix/s/angry.gif" width="15" height="15"></a></td>
+            <td>enfadat</td>
+            <td><font face="courier">8-[</font></td>
+          </tr>
+          <tr> 
+            <td><a href="javascript:inserttext('xx-P')"><img alt border="0" hspace="10" src="pix/s/dead.gif" width="15" height="15"></a></td>
+            <td>mort</td>
+            <td><font face="courier">xx-P</font></td>
+          </tr>
+          <tr> 
+            <td><a href="javascript:inserttext('|-.')"><img alt border="0" hspace="10" src="pix/s/sleepy.gif" width="15" height="15"></a></td>
+            <td>adormit</td>
+            <td><font face="courier">|-.</font></td>
+          </tr>
+          <tr> 
+            <td><a href="javascript:inserttext('}-]')"><img alt border="0" hspace="10" src="pix/s/evil.gif" width="15" height="15"></a></td>
+            <td>dolent</td>
+            <td><font face="courier">}-]</font></td>
+          </tr>
+        </table>
+  </table>
+</UL>
+
+

@@ -1,0 +1,54 @@
+
+<P ALIGN=CENTER><B>Importar preguntes noves</B></P>
+
+<P>Aquesta funci&oacute; us permet importar preguntes des d'un fitxer de text 
+  extern carregat amb un formulari.
+<P>Els formats d'arxiu suportats s&oacute;n aquests:
+<P><b>Paraula que falta </b> 
+<UL>
+  <P>Aquest format nom&eacute;s suporta preguntes d'elecci&oacute; m&uacute;ltiple. 
+    Cada resposta se separa amb una titlla (~), i la resposta correcta ve precedida 
+    per un signe igual (=). Observeu aquest exemple: 
+  <BLOCKQUOTE>Aix&iacute; que vam comen&ccedil;ar a explorar les nostres parts 
+    del cos com a infants es transformarem en estudiants de {=anatomia i fisiologia 
+    ~reflexologia ~ci&egrave;ncia ~experiment}, i en algun sentit encara som estudiants 
+    per la resta de la nostra vida. </BLOCKQUOTE>
+  <p align=right><a href="help.php?file=formatmissingword.html&module=quiz">Més informació sobre el format de "Paraula que falta" 
+    </a></p>
+</UL>
+
+
+<P><B>AON</B></P>
+<UL>
+  <P>&Eacute;s el mateix format que l'anterior excepte pel fet que despr&eacute;s 
+    d'importar les preguntes totes les q&uuml;estions de resposta curta es transformen 
+    de quatre en quatre en Preguntes de relacionar.</P>
+  <p>A m&eacute;s, les respostes a les preguntes d'elecci&oacute; m&uacute;ltiple 
+    es barregen a l'atzar durant el proc&eacute;s d'importaci&oacute;. 
+  <p>El nom prov&eacute; d'una organitzaci&oacute; que va esponsoritzar el desenvolupament 
+    d'algunes caracter&iacute;stiques dels q&uuml;estionaris.</p>
+</UL>
+
+
+<P><B>Blackboard</B></P>
+<UL>
+  <P>Aquest m&ograve;dul pot importar preguntes desades en el format d'exportaci&oacute; 
+    de Blackboard. Est&agrave; basat en la compilaci&oacute; de funcions XML per 
+    part del vostre PHP.</P>
+  <p align=right><a href="help.php?file=formatblackboard.html&module=quiz">Més informació sobre el format de  
+    "Blackboard"</a></p>
+</UL>
+
+<P><B>Personalitzat</B></P>
+<UL>
+  <P>Si teniu un format propi per importar podeu implementar-lo vosaltres mateixos 
+    tot editant mod/quiz/format/custom.php 
+  <P>Es necessita una petita quantitat de codi, just per transformar un text donat 
+    en una pregunta senzilla.
+  <p align=right><a href="help.php?file=formatcustom.html&module=quiz">M&eacute;s 
+    informaci&oacute; sobre el format "Personalitzat"</a></p>
+</UL>
+
+
+<P>M&eacute;s endavant es podran importar m&eacute;s formats, com ara WebCT, IMS 
+  QTI i qualsevol altre que els usuaris de Moodle vulguin implementar! </p>
