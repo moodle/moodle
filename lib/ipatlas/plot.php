@@ -11,11 +11,15 @@ if (isset($user)) {
     $username = "";
 }
 
-if($warnings == "1") {
+if ($CFG->debug > 1) {
 error_reporting(E_ALL);
 } else {
 error_reporting(E_ERROR);
 }
+
+// cleanup
+$HTTP_GET_VARS["lastquery"] = clean_param($HTTP_GET_VARS["lastquery"], PARAM_HOST);
+
 
 // check if it is the user's ip, or another host
 
@@ -23,6 +27,7 @@ if(!isset($HTTP_GET_VARS["address"]) || ($HTTP_GET_VARS["address"] == "")) {
     $address = $HTTP_SERVER_VARS['REMOTE_ADDR'];
     $local = 1; 
 } else {
+    $HTTP_GET_VARS["address"] = clean_param($HTTP_GET_VARS["address"], PARAM_HOST);
     $address = $HTTP_GET_VARS["address"];
     $local = 0; 
 }
@@ -38,6 +43,7 @@ if(isset($logging) && is_writable("plotlog.txt")) {
 
 if(isset($HTTP_COOKIE_VARS["atlasprefs"]) && validcookie($HTTP_COOKIE_VARS["atlasprefs"])) {
 list( , , , $imagething) = split(":", $HTTP_COOKIE_VARS["atlasprefs"]);
+$imagething = clean_param($imagething, PARAM_FILE);
 $earthimage = isvalidimage($imagething, $earthimages, $defaultimage);
 } else {
 $earthimage = $earthimages[$defaultimage];
@@ -64,10 +70,12 @@ list($x, $y) = getlocationcoords($values["lat"], $values["lon"], $width, $height
 
 if(isset($HTTP_COOKIE_VARS["atlasprefs"])) {
 list( , , , , $dotname) = split(":", $HTTP_COOKIE_VARS["atlasprefs"]);
+$dotname = clean_param($dotname, PARAM_FILE);
 list($thedot, $dotwidth, $dotheight) = finddot($dotname, $cssdots, $defaultdot);
 } else {
 $dotname = $cssdots[$defaultdot];
 list($dotname, , , ) = split(":", $dotname);
+$dotname = clean_param($dotname, PARAM_FILE);
 list($thedot, $dotwidth, $dotheight) = finddot($dotname, $cssdots, $defaultdot);
 }
 

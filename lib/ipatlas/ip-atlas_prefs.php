@@ -3,10 +3,14 @@
 include("plotconf.inc"); 
 include("plot.inc"); 
 
-if($warnings == "1") {
-error_reporting(E_ALL);
+if($CFG->debug > 1) {
+    error_reporting(E_ALL);
 } else {
-error_reporting(E_ERROR);
+    error_reporting(E_ERROR);
+}
+
+if (isset($HTTP_GET_VARS["lastquery"])){
+    $HTTP_GET_VARS["lastquery"] = clean_param($HTTP_GET_VARS["lastquery"], PARAM_HOST);
 }
 
 ?>
@@ -19,16 +23,32 @@ error_reporting(E_ERROR);
  }
 
 if(isset($HTTP_POST_VARS["button"])) {
+
+// cleanup post data
+$HTTP_POST_VARS["shape"]      = clean_param($HTTP_POST_VARS["shape"], PARAM_ALPHA);
+$HTTP_POST_VARS["color"]      = clean_param($HTTP_POST_VARS["color"], PARAM_ALPHA);
+$HTTP_POST_VARS["color"]      = clean_param($HTTP_POST_VARS["size"],  PARAM_INT);
+$HTTP_POST_VARS["earthimage"] = clean_param($HTTP_POST_VARS["earthimage"], PARAM_FILE);
+$HTTP_POST_VARS["cssdot"]      = clean_param($HTTP_POST_VARS["cssdot"], PARAM_FILE);
+$HTTP_POST_VARS["seldrawmode"] = clean_param($HTTP_POST_VARS["seldrawmode"],PARAM_ALPHA);
+// unset the earth image if we don't have it in our list
+ if (!in_array($HTTP_POST_VARS["earthimage"],$earthimages)) {
+     unset($HTTP_POST_VARS["earthimage"]);
+ }
+
+
 // save data from the POST
 setcookie ("atlasprefs", "", time() - 36000000);
 setcookie ("atlasprefs", "$HTTP_POST_VARS[shape]:$HTTP_POST_VARS[color]:$HTTP_POST_VARS[size]:$HTTP_POST_VARS[earthimage]:$HTTP_POST_VARS[cssdot]:$HTTP_POST_VARS[seldrawmode]", time() + 36000000, $cookiepath);
 
-$setshape = $HTTP_POST_VARS["shape"];
-$setcolor = $HTTP_POST_VARS["color"];
-$setsize = $HTTP_POST_VARS["size"];
+$setshape      = $HTTP_POST_VARS["shape"];
+$setcolor      = $HTTP_POST_VARS["color"];
+$setsize       = $HTTP_POST_VARS["size"];
 $setearthimage = $HTTP_POST_VARS["earthimage"];
-$setcssdot = $HTTP_POST_VARS["cssdot"];
+$setcssdot     = $HTTP_POST_VARS["cssdot"];
 $setseldrawmode = $HTTP_POST_VARS["seldrawmode"];
+
+
 
  if($setseldrawmode == "1") {
    $drawmode = "GD";

@@ -53,6 +53,7 @@ define('PARAM_FORMAT',  0x04);  // Alias for PARAM_ALPHA
 define('PARAM_NOTAGS',  0x08);
 define('PARAM_FILE',    0x10);
 define('PARAM_PATH',    0x20);
+define('PARAM_HOST',    0x40);  // FQDN or IPv4 dotted quad
 
 
 /// PARAMETER HANDLING ////////////////////////////////////////////////////
@@ -133,6 +134,29 @@ function clean_param($param, $options) {
         $param = ereg_replace('[[:cntrl:]]|[<>"`\|\']', '', $param);
         $param = ereg_replace('\.\.+', '', $param);
         $param = ereg_replace('//+', '/', $param);
+    }
+
+    if ($options & PARAM_HOST) {         // allow FQDN or IPv4 dotted quad
+        preg_replace('/[^\.\d\w-]/','', $param ); // only allowed chars 
+	    // match ipv4 dotted quad
+        if (preg_match('/(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/',$param, $match)){
+            // confirm values are ok
+            if ( $match[0] > 255
+                 || $match[1] > 255
+                 || $match[3] > 255 
+                 || $match[4] > 255 ) {
+                // hmmm, what kind of dotted quad is this?
+                $param = '';
+            }
+        } elseif ( preg_match('/^[\w\d\.-]+$/', $param) // dots, hyphens, numbers
+                   && !preg_match('/^[\.-]/',  $param) // no leading dots/hyphens
+                   && !preg_match('/[\.-]$/',  $param) // no trailing dots/hyphens
+                   ) {
+            // all is ok - $param is respected
+        } else {
+            // all is not ok...
+            $param='';               
+        } 
     }
 
     return $param;
