@@ -124,7 +124,7 @@
                     }
                 }
                 else if($form->duration == 2) {
-                    $form->timeduration = $form->minutes * 60;
+                    $form->timeduration = $form->minutes * MINSECS;
                 }
                 else {
                     $form->timeduration = 0;
@@ -164,7 +164,7 @@
                     }
                 }
                 else if ($form->duration == 2) {
-                    $form->timeduration = $form->minutes * 60;
+                    $form->timeduration = $form->minutes * MINSECS;
                 }
                 else {
                     $form->timeduration = 0;
@@ -184,6 +184,8 @@
 
                     if ($form->repeat) {
                         for($i = 1; $i < $form->repeats; $i++) {
+                            // [pj]
+                            // This will not necessarily work correctly because of DST
                             $form->timestart += 604800;  // add one week
                             /// Get the event id for the log record.
                             $eventid = insert_record('event', $form, true);
@@ -207,7 +209,7 @@
 
     // Let's see if we are supposed to provide a referring course link
     // but NOT for the "main page" course
-    if($SESSION->cal_course_referer > 1 &&
+    if($SESSION->cal_course_referer != SITEID &&
       ($shortname = get_field('course', 'shortname', 'id', $SESSION->cal_course_referer)) !== false) {
         // If we know about the referring course, show a return link
         $nav = '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$SESSION->cal_course_referer.'">'.$shortname.'</a> -> '.$nav;
@@ -269,7 +271,7 @@
                 $form->timeduration = $event->timeduration;
                 $form->id = $event->id;
                 $form->format = $defaultformat;
-                if($event->timeduration > 3600) {
+                if($event->timeduration > HOURSECS) {
                     // More than one hour, so default to normal duration mode
                     $form->duration = 1;
                     $form->minutes = '';
@@ -277,7 +279,7 @@
                 else if($event->timeduration) {
                     // Up to one hour, "minutes" mode probably is better here
                     $form->duration = 2;
-                    $form->minutes = $event->timeduration / 60;
+                    $form->minutes = $event->timeduration / MINSECS;
                 }
                 else {
                     // No duration
