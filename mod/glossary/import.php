@@ -118,7 +118,7 @@
                     $glossary->allowduplicatedentries = $CFG->glossary_dupentries;
                 }
                 if ( isset($xmlglossary['DISPLAYFORMAT'][0]['#']) ) {
-                    $glossary->allowduplicatedentries = $xmlglossary['DISPLAYFORMAT'][0]['#'];
+                    $glossary->displayformat = $xmlglossary['DISPLAYFORMAT'][0]['#'];
                 } else {
                     $glossary->displayformat = 2;
                 }
