@@ -302,7 +302,7 @@
     
     // The wiki Contents
 
-    if ($canedit) {   /// Print tabs with commands for this page
+    if (!empty($canedit)) {   /// Print tabs with commands for this page
         $tabstyle = ' style="padding-left: 5px;padding-right: 5px" ';
 
         echo '<table border="0">';
