@@ -890,6 +890,21 @@ function main_upgrade($oldversion=0) {
         table_column('course','','meta_course','integer','1','','0','not null');
     }
 
+    if ($oldversion < 2005012501) { //fix table names for consistency
+        execute_sql("DROP TABLE {$CFG->prefix}meta_course",false); // drop silently
+        execute_sql("ALTER TABLE {$CFG->prefix}course DROP COLUMN meta_course",false); // drop silently
+        
+        modify_database("","CREATE TABLE prefix_course_meta (
+	         id SERIAL primary key,
+	         parent_course integer NOT NULL,
+	         child_course integer NOT NULL
+             );");
+
+        modify_database("","CREATE INDEX prefix_course_meta_parent_idx ON prefix_course_meta (parent_course);");
+        modify_database("","CREATE INDEX prefix_course_meta_child_idx ON prefix_course_meta (child_course);");
+        table_column('course','','metacourse','integer','1','','0','not null');
+    }
+
     return $result;
 }
 

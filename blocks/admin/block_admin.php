@@ -104,7 +104,7 @@ class block_admin extends block_base {
                 if (!$course->students) {
                     $course->students = get_string('defaultcoursestudents');
                 } 
-                if (!$course->meta_course) {
+                if (!$course->metacourse) {
                     $this->content->items[]='<a href="student.php?id='.$this->instance->pageid.'">'.$course->students.'...</a>';
                     $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/users.gif" height="16" width="16" alt="" />';
                 }

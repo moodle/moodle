@@ -37,7 +37,7 @@ CREATE TABLE prefix_course (
    cost varchar(10) NOT NULL default '',
    timecreated integer NOT NULL default '0',
    timemodified integer NOT NULL default '0',
-   meta_course integer NOT NULL default '0'
+   metacourse integer NOT NULL default '0'
 );
 
 CREATE UNIQUE INDEX prefix_course_category_sortorder_uk ON prefix_course (category,sortorder);
@@ -381,14 +381,14 @@ CREATE TABLE prefix_user_coursecreators (
    userid int8  NOT NULL default '0'
 );
 
-CREATE TABLE prefix_meta_course (
+CREATE TABLE prefix_course_meta (
 	id SERIAL primary key,
 	parent_course integer NOT NULL,
 	child_course integer NOT NULL
 );
 
-CREATE INDEX prefix_meta_course_parent_idx ON prefix_meta_course (parent_course);
-CREATE INDEX prefix_meta_course_child_idx ON prefix_meta_course (child_course);
+CREATE INDEX prefix_course_meta_parent_idx ON prefix_course_meta (parent_course);
+CREATE INDEX prefix_course_meta_child_idx ON prefix_course_meta (child_course);
 
 INSERT INTO prefix_log_display VALUES ('user', 'view', 'user', 'firstname||\' \'||lastname');
 INSERT INTO prefix_log_display VALUES ('course', 'user report', 'user', 'firstname||\' \'||lastname');

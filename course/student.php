@@ -18,7 +18,7 @@
         error("Course ID was incorrect (can't find it)");
     }
 
-    if ($course->meta_course) {
+    if ($course->metacourse) {
         redirect("$CFG->wwwroot/course/importstudents.php?id=$course->id");
     }
 

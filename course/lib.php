@@ -1886,7 +1886,7 @@ function course_format_name ($course,$max=100) {
  * This function will return true if the given course is a child course at all
  */
 function course_in_meta ($course) {
-    return record_exists("meta_course","child_course",$course->id);
+    return record_exists("course_meta","child_course",$course->id);
 }
 
 ?>

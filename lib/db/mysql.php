@@ -1118,6 +1118,23 @@ function main_upgrade($oldversion=0) {
         table_column('course','','meta_course','integer','1','','0','not null');
     }
 
+    if ($oldversion < 2005012501) { 
+        execute_sql("DROP TABLE {$CFG->prefix}meta_course",false); // drop silently
+        execute_sql("ALTER TABLE {$CFG->prefix}course DROP COLUMN meta_course",false); // drop silently
+        
+        // add new table for meta courses.
+        modify_database("","CREATE TABLE `prefix_course_meta` (
+            `id` int(1) unsigned NOT NULL auto_increment,
+            `parent_course` int(10) NOT NULL default 0,
+            `child_course` int(10) NOT NULL default 0,
+            PRIMARY KEY (`id`),
+            KEY `parent_course` (parent_course),
+            KEY `child_course` (child_course)
+        );");
+        // add flag to course field
+        table_column('course','','metacourse','integer','1','','0','not null');
+    }
+
     return $result;
 }
 

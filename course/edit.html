@@ -15,8 +15,8 @@
     if (!isset($form->enrolperiod)) {
         $form->enrolperiod = 0;
     }
-    if (!isset($form->meta_course)) {
-        $form->meta_course = 0;
+    if (!isset($form->metacourse)) {
+        $form->metacourse = 0;
     }
 ?>
 <form method="post" action="edit.php" name="form">
@@ -265,9 +265,9 @@
       if (empty($disable_meta)) {
           $meta[0] = get_string('no');
           $meta[1] = get_string('yes');
-          choose_from_menu($meta,"meta_course",$form->meta_course,"","","");
+          choose_from_menu($meta,"metacourse",$form->metacourse,"","","");
       } else {
-          echo ((empty($form->meta_course)) ? get_string("no") : get_string("yes"));
+          echo ((empty($form->metacourse)) ? get_string("no") : get_string("yes"));
 	  echo " - $disable_meta ";
       } ?>&nbsp;<?php print_string("managemetaexplan"); ?>
     </td>

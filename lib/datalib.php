@@ -1300,7 +1300,7 @@ function get_creators() {
 function get_courses_in_metacourse($metacourseid) {
     global $CFG;
 
-    $sql = "SELECT c.id,c.shortname,c.fullname FROM {$CFG->prefix}course c, {$CFG->prefix}meta_course mc WHERE mc.parent_course = $metacourseid
+    $sql = "SELECT c.id,c.shortname,c.fullname FROM {$CFG->prefix}course c, {$CFG->prefix}course_meta mc WHERE mc.parent_course = $metacourseid
         AND mc.child_course = c.id";
 
     return get_records_sql($sql);
@@ -1318,7 +1318,7 @@ function get_courses_notin_metacourse($metacourseid,$count=false) {
     else {
         $sql = "SELECT c.id,c.shortname,c.fullname";
     }
-    $sql .= " FROM {$CFG->prefix}course c LEFT  JOIN {$CFG->prefix}meta_course mc ON mc.child_course = c.id
+    $sql .= " FROM {$CFG->prefix}course c LEFT  JOIN {$CFG->prefix}course_meta mc ON mc.child_course = c.id
      WHERE (mc.parent_course IS NULL OR mc.parent_course != $metacourseid) AND c.id != $metacourseid AND c.id != $site->id";
 
     return get_records_sql($sql);

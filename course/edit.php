@@ -24,8 +24,8 @@
         if (course_in_meta($course)) {
             $disable_meta = get_string('metaalreadyinmeta');
         }
-        else if ($course->meta_course) {
-            if (count_records("meta_course","parent_course",$course->id) > 0) {
+        else if ($course->metacourse) {
+            if (count_records("course_meta","parent_course",$course->id) > 0) {
                 $disable_meta = get_string('metaalreadyhascourses');
             }
         }

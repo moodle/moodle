@@ -23,7 +23,7 @@
 
     require_login($course->id);
 
-    if (!$course->meta_course) {
+    if (!$course->metacourse) {
         redirect("$CFG->wwwroot/course/student.php?id=$course->id");
     }
 

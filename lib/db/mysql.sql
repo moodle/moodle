@@ -59,7 +59,7 @@ CREATE TABLE `prefix_course` (
   `cost` varchar(10) NOT NULL default '',
   `timecreated` int(10) unsigned NOT NULL default '0',
   `timemodified` int(10) unsigned NOT NULL default '0',
-  `meta_course` int(1) unsigned NOT NULL default '0',
+  `metacourse` int(1) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`),
   KEY `category` (`category`),
   KEY `idnumber` (`idnumber`),
@@ -551,7 +551,7 @@ CREATE TABLE `prefix_user_coursecreators` (
 ) TYPE=MyISAM COMMENT='One record per course creator';
 
 
-CREATE TABLE `prefix_meta_course` (
+CREATE TABLE `prefix_course_meta` (
  `id` int(1) unsigned NOT NULL auto_increment,
  `parent_course` int(10) NOT NULL default 0,
  `child_course` int(10) NOT NULL default 0,
