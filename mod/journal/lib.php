@@ -161,6 +161,22 @@ function journal_print_recent_activity(&$logs, $isteacher=false) {
     return $content;
 }
 
+function journal_grades($journalid) {
+/// Must return an array of grades, indexed by user, and a max grade.
+    global $JOURNAL_RATING;
+
+    $return->grades = get_records_sql_menu("SELECT user,rating FROM journal_entries WHERE journal = '$journalid'");
+    foreach ($return->grades as $key => $value) {
+        if ($value) {
+            $return->grades[$key] = $JOURNAL_RATING[$value];
+        } else {
+            $return->grades[$key] = "-";
+        }
+    }
+    $return->maxgrade = "";
+    return $return;
+}
+
 
 // OTHER JOURNAL FUNCTIONS ///////////////////////////////////////////////////////////////////
 
