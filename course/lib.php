@@ -528,22 +528,23 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
 
         $log->url  = strip_tags(urldecode($log->url));   // Some XSS protection
         $log->info = strip_tags(urldecode($log->info));  // Some XSS protection
+        $log->url  = str_replace('&', '&amp;', $log->url); /// XHTML compatibility
 
-        echo '<tr nowrap="nowrap">';
+        echo '<tr>';
         if (! $course->category) {
-            echo '<td nowrap="nowrap"><font size="2"><a href="view.php?id='.$log->course.'">'.$courses[$log->course].'</a></td>';
+            echo '<td nowrap="nowrap"><font size="2"><a href="view.php?id='.$log->course.'">'.$courses[$log->course].'</a></font></td>';
         }
-        echo '<td nowrap="nowrap" align="right"><font size="2">'.userdate($log->time, '%a').'</td>';
-        echo '<td nowrap="nowrap"><font size="2">'.userdate($log->time, $strftimedatetime).'</td>';
+        echo '<td nowrap="nowrap" align="right"><font size="2">'.userdate($log->time, '%a').'</font></td>';
+        echo '<td nowrap="nowrap"><font size="2">'.userdate($log->time, $strftimedatetime).'</font></td>';
         echo '<td nowrap="nowrap"><font size="2">';
         link_to_popup_window("/lib/ipatlas/plot.php?address=$log->ip&amp;user=$log->userid", 'ipatlas',$log->ip, 400, 700);
-        echo '</td>';
+        echo '</font></td>';
         $fullname = fullname($log, $isteacher);
-        echo '<td nowrap="nowrap"><font size="2"><a href="../user/view.php?id='."$log->userid&amp;course=$log->course".'"><b>'.$fullname.'</b></td>';
+        echo '<td nowrap="nowrap"><font size="2"><a href="../user/view.php?id='."$log->userid&amp;course=$log->course".'"><b>'.$fullname.'</b></a></font></td>';
         echo '<td nowrap="nowrap"><font size="2">';
         link_to_popup_window( make_log_url($log->module,$log->url), 'fromloglive',"$log->module $log->action", 400, 600);
-        echo '</td>';
-        echo '<td nowrap="nowrap"><font size="2">'.$log->info.'</td>';
+        echo '</font></td>';
+        echo '<td nowrap="nowrap"><font size="2">'.$log->info.'</font></td>';
         echo '</tr>';
     }
     echo '</table>';
