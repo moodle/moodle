@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.0.5 (2002092700)
+      // assignment.php - created with Moodle 1.0.6.2 (2002111100)
 
 
 $string['assignmentdetails'] = "Dettaglio compiti";
@@ -8,7 +8,7 @@ $string['assignmenttype'] = "Tipo di compito";
 $string['description'] = "Descrizione";
 $string['duedate'] = "Data di scadenza";
 $string['early'] = "\$a anticipo";
-$string['failedupdatefeedback'] = "Aggiornamento delle risposte alle consegne dell'utente non riuscito \$a";
+$string['failedupdatefeedback'] = "Aggiornamento delle risposte alle consegne dell'utente \$a non riuscito";
 $string['feedbackupdated'] = "Risposte alle consegne aggiornate per \$a utenti";
 $string['late'] = "\$a ritardo";
 $string['maximumgrade'] = "Voto massimo";
@@ -20,10 +20,20 @@ $string['notsubmittedyet'] = "Non ancora inviato";
 $string['overwritewarning'] = "Attenzione: trasferendo ulteriori allegati essi SOSTITUIRANNO quelli attualmente presenti.";
 $string['submissionfeedback'] = "Risposte alla consegna";
 $string['submissions'] = "Consegne";
+$string['submitassignment'] = "Presenta il tuo compito usando questo form";
 $string['submitted'] = "Consegnato";
+$string['typeoffline'] = "Attività non in rete";
 $string['typeuploadsingle'] = "Trasferire un singolo file, punteggio
 attibuibile per un valore compreso fra 0 e 100 punti";
+$string['uploadbadname'] = "Questo file contiene caratteri non conformi e non può essere trasferito.";
 $string['uploadedfiles'] = "files trasferiti";
+$string['uploaderror'] = "Si è verificato un errore durante il salvataggio del file sul server.";
+$string['uploadfailnoupdate'] = "Il file è stato trasferito con successo ma non è stato possibile aggiornarlo!";
+$string['uploadfiletoobig'] = "Spiacenti, ma il file è troppo grande (il limite è  \$a bytes)";
+$string['uploadnofilefound'] = "Nessun file risulta disponibile - sei sicuro che ne hai selezionato uno per effettuare il trasferimento sul server?";
+$string['uploadnotregistered'] = "'\$a' è stato trasferito ma la registrazione non è avvenuta!";
+$string['uploadsuccess'] = "Trasferimento di '\$a' avvenuto con successo";
+$string['viewfeedback'] = "Vedi valutazione dei compiti e risposte";
 $string['viewsubmissions'] = "Vedi \$a compiti consegnati";
 $string['yoursubmission'] = "La tua consegna";
 

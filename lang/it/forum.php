@@ -1,16 +1,15 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.0.5 beta 1 (2002092500)
+      // forum.php - created with Moodle 1.0.6.2 (2002111100)
 
 
 $string['addanewdiscussion'] = "Aggiungi un nuovo argomento di discussione";
-$string['allowchoice'] = "Permetti ad ognuno di scegliere";
+$string['allowchoice'] = "Scegli";
 $string['allowdiscussions'] = "Può \$a dare inizio a delle nuove discussioni?";
 $string['allowratings'] = "Permettere la valutazione degli interventi (posts)?";
 $string['allowsdiscussions'] = "Questo forum permette a ciscuna persona di dare inizio a una discussione.";
 $string['anyfile'] = "Qualunque file";
 $string['attachment'] = "Allegato";
 $string['bynameondate'] = "di \$a->name - \$a->date";
-$string['canstudentsstart'] = "Può un \$a dare inizio a delle nuove discussioni?";
 $string['couldnotadd'] = "Non è possibile aggiungere il tuo intervento a causa di un errore sconosciuto.";
 $string['couldnotdeleteratings'] = "Spiacenti, non può essere cancellato in quanto gli utenti lo hanno già valutato.";
 $string['couldnotdeletereplies'] = "Spiacenti, non può essere cancellato in quanto gli utenti hanno già dato le loro risposte.";
@@ -27,9 +26,9 @@ $string['eachuserforum'] = "Ciascuna persona può postare una discussione";
 $string['edit'] = "Edita";
 $string['editing'] = "Pubblicazione";
 $string['emptymessage'] = "Qualche errore con il tuo post. Forse lo hai lasciato in bianco, oppure l'allegato era troppo grande.I tuoi cambiamenti NON sono stati salvati.";
-$string['everyonecanchoose'] = "Ognuno può decidere di iscriversi";
-$string['everyoneissubscribed'] = "Ognuno è iscritto a questo forum";
-$string['forcesubscribe'] = "Obbligare ognuno all'iscrizione.";
+$string['everyonecanchoose'] = "Opzioni";
+$string['everyoneissubscribed'] = "Iscrizione obbligatoria a questo forum in quanto ciò è previsto dal docente";
+$string['forcesubscribe'] = "Obbligare ognuno all'iscrizione";
 $string['forcesubscribeq'] = "Obbligare ognuno all'iscrizione?";
 $string['forum'] = "Forum";
 $string['forumintro'] = "Introduzione al forum";
@@ -40,7 +39,7 @@ $string['generalforum'] = "Forum standard per uso generale";
 $string['generalforums'] = "Forums per l'uso generale";
 $string['inforum'] = "in \$a";
 $string['intronews'] = "Annunci e news di carattere generale";
-$string['introsocial'] = "Un forum aperto per dialogare su qualsiasi argomento che desideri.";
+$string['introsocial'] = "Un forum aperto per dialogare su qualsiasi argomento di tuo interesse.";
 $string['introteacher'] = "Un forum per insegnanti solo per annotazioni e discussioni.";
 $string['learningforums'] = "Forum per l'apprendimento";
 $string['maxtimehaspassed'] = "Spiacenti ma il tempo massimo concesso per editare questo post (\$a) è trascorso!";
@@ -57,15 +56,20 @@ $string['namesocial'] = "Forum formato Relazionale";
 $string['nameteacher'] = "Forum Insegnanti";
 $string['newforumposts'] = "Nuovi messaggi nel forum";
 $string['nodiscussions'] = "Non ci sono ancora argomenti di discussione in questo forum";
-$string['noguestpost'] = "Spiacenti, agli ospiti non è concesso postare";
+$string['noguestpost'] = "Spiacenti, agli ospiti non è concesso postare.";
 $string['noposts'] = "Niente posts";
+$string['nopostscontaining'] = "Nessun messaggio contenente '\$a' è stato trovato";
 $string['nosubscribers'] = "Non ci sono ancora iscritti per questo forum";
 $string['nownotsubscribed'] = "\$a->name NON riceverà copie di '\$a->forum' via email.";
 $string['nowsubscribed'] = "\$a->name riceverà copie di '\$a->forum' via email.";
 $string['numposts'] = "\$a posts";
 $string['olderdiscussions'] = "Vecchie discussioni";
+$string['openmode0'] = "Discussioni e risposte non permesse";
+$string['openmode1'] = "Discussioni non permesse ma risposte consentite";
+$string['openmode2'] = "Discussioni e risposte sono permesse";
 $string['parentofthispost'] = "Relativo a questo post";
 $string['postadded'] = "Il tuo messaggio è stato aggiunto con successo.<P>Hai \$a per editarlo se desideri apportare delle modifiche.";
+$string['postincontext'] = "Vedi questo messaggio nel contesto";
 $string['postingtip'] = "<B>Suggerimenti per il posting:</B>
 Quando rispondi a un post:
 <UL>
@@ -94,7 +98,8 @@ $string['repliesmany'] = "\$a risposte al momento";
 $string['repliesone'] = "\$a risposta al momento";
 $string['reply'] = "Rispondi";
 $string['search'] = "Cerca";
-$string['searchforums'] = "Cerca nei forum";
+$string['searchforums'] = "Cerca nei forums";
+$string['searchresults'] = "Risultati delle ricerche";
 $string['sendinratings'] = "Aggiungi alle mie ultime valutazioni";
 $string['showsubscribers'] = "Mostra chi è iscritto";
 $string['singleforum'] = "Una singola discussione semplice";

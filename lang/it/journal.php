@@ -25,3 +25,4 @@ $string['startoredit'] = "Inizia o edita la mia scrittura sul diario";
 $string['viewallentries'] = "Vedi \$a scritture sul diario";
 
 ?>
+

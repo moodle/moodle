@@ -15,3 +15,4 @@ $string['savemychoice'] = "Salva la mia scelta";
 $string['viewallresponses'] = "Vedi \$a risposte";
 
 ?>
+
