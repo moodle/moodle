@@ -88,29 +88,4 @@ function print_user($user, $course, $string) {
     echo "</TD></TR></TABLE></TD></TR></TABLE>";
 }
 
-function print_user_small($user, $course, $string) {
-    global $CFG, $USER, $COUNTRIES;
-
-    echo "<TABLE WIDTH=80% ALIGN=CENTER BORDER=0 CELLPADDING=1 CELLSPACING=1><TR><TD BGCOLOR=#888888>";
-    echo "<TABLE WIDTH=100% BORDER=0 CELLPADDING=0 CELLSPACING=0><TR>";
-    echo "<TD WIDTH=35 BGCOLOR=#FFFFFF>";
-    print_user_picture($user->id, $course->id, $user->picture, false);
-    echo "</A>";
-    echo "</TD><TD BGCOLOR=#FFFFFF>";
-    echo "<FONT SIZE=2><B>&nbsp;<A HREF=\"$CFG->wwwroot/user/view.php?id=$user->id&course=$course->id\">$user->firstname $user->lastname</A></B></FONT>";
-    echo "</TD><TD BGCOLOR=#FFFFFF NOWRAP ALIGN=right>";
-    echo "<FONT SIZE=1>";
-    echo "<I>$user->city, ".$COUNTRIES["$user->country"]."</I>&nbsp;";
-    echo "</FONT>";
-    echo "</TD><TD BGCOLOR=#FFFFFF NOWRAP ALIGN=right>";
-    echo "<FONT SIZE=1>";
-    if ($user->lastaccess) {
-        echo userdate($user->lastaccess);
-        echo "&nbsp (".format_time(time() - $user->lastaccess).")";
-    } else {
-        echo "$string->never";
-    }
-    echo "</FONT>";
-    echo "</TD></TR></TABLE></TD></TR></TABLE>";
-}
 ?>
