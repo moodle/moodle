@@ -22,6 +22,11 @@ Copy of GNU Lesser General Public License at: http://www.gnu.org/copyleft/lesser
 Contact author at: hermanV@mindless.com
 */
 
+/* This file contains modifications by Martin Dougiamas
+ * as part of Moodle (http://moodle.com).  Modified lines
+ * are marked with "Moodle".
+ */
+
 
 class graph {
   var $image;
@@ -141,7 +146,7 @@ class graph {
 // init all text - title, labels, and axis text.
 function init() {
   global $CFG;
-  $this->parameter['path_to_fonts'] = $CFG->dirroot."/lib/fonts/";  // Added for Moodle
+  $this->parameter['path_to_fonts'] = $CFG->dirroot."/lib/fonts/";  // Moodle
 
   $this->calculated['outer_border'] = $this->calculated['boundary_box'];
 
@@ -264,13 +269,13 @@ function draw_set($order, $set, $offset) {
     //print "$thisX, $thisY <BR>";
 
     if (($bar!='none') && (string)$thisY != 'none') {
-        // Moodle addition - next 5 lines and last parameter yoffset
-        if ($relatedset = $this->offset_relation[$set]) {
-            $yoffset = $this->calculated['y_plot'][$relatedset][$index];
-        } else {
-            $yoffset = 0;
-        }
-        $this->bar($thisX, $thisY, $bar, $barSize, $colour, $offset, $set, $yoffset);
+        if ($relatedset = $this->offset_relation[$set]) {                               // Moodle
+            $yoffset = $this->calculated['y_plot'][$relatedset][$index];                // Moodle
+        } else {                                                                        // Moodle
+            $yoffset = 0;                                                               // Moodle
+        }                                                                               // Moodle
+        //$this->bar($thisX, $thisY, $bar, $barSize, $colour, $offset, $set);           // Moodle
+        $this->bar($thisX, $thisY, $bar, $barSize, $colour, $offset, $set, $yoffset);   // Moodle
     }
 
     if (($area!='none') && (((string)$lastY != 'none') && ((string)$thisY != 'none')))
@@ -1539,11 +1544,11 @@ function bar($x, $y, $type, $size, $colour, $offset, $index, $yoffset) {
     $v       = $this->calculated['boundary_box']['bottom'] - $y + $offset;
 
     // Moodle addition, plus the function parameter yoffset
-    if ($yoffset) {
-        $yoffset = $yoffset - round(($bottom - $v) / 2.0);
-        $bottom -= $yoffset;
-        $v      -= $yoffset;
-    }
+    if ($yoffset) {                                           // Moodle
+        $yoffset = $yoffset - round(($bottom - $v) / 2.0);    // Moodle
+        $bottom -= $yoffset;                                  // Moodle
+        $v      -= $yoffset;                                  // Moodle
+    }                                                         // Moodle
 
     switch ($type) {
       case 'open':
