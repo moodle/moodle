@@ -19,7 +19,12 @@
 
 ?>
 
-body, td, th {
+body {
+    font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+    background-image: url(<?PHP echo "$themeurl"?>/texture1.jpg);
+}
+
+td, th {
     font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
 }
 
