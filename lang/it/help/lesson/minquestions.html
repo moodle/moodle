@@ -1,0 +1,13 @@
+<p align="center"><b>Numero minimo di domande</b></p>
+
+<p>Quando una lezione contiene una o più pagine di diramazione, l'insegnante dovrebbe impostare questo parametro. Il suo valore pone un limite minimo al numero di domande che si suppone siano state viste, quando viene calcolato il voto. Questo comunque non obbliga i partecipanti a rispondere a quel numero di domande.</p>
+
+<p>Per esempio, impostando questo parametro a 20, si garantisce che i voti saranno valutati come se i partecipanti hanno visto <B>almeno </B>questo numero di domande. Supponiamo che uno studente ha visto un solo ramo della lezione con, per esempio, 5 pagine e risponde correttamente a tutte le corrispondenti domande. Quindi termina la lezione supponendo che le domande siano finite. Se il "numero minimo di domande" non è stato impostato, allora il suo voto sarà 5 su 5, cioè 100%. Ma se il parametro è stato impostato a 20, il suo voto sarà ridotto a 5 su 20, cioè 25%. Nel caso di un altro studente che attraversa tutti i rami della lezione, vedendo, per esempio, tutte le 25 pagine e corrispondenti domande e rispondendo a tutte meno due, il suo voto sarà 23 su 25, cioè 92%.</p>
+
+<p>Se questo parametro viene utilizzato, allora la pagina di apertura della lezione dovrebbe dire qualcosa del tipo:<p>
+
+<p><blockquote>In questa lezione ci si aspetta che proviate a rispondere almeno a "n" domande. Potete anche provarne un numero maggiore, ma se ne tentate un numero inferiore, tenete presente che il vostro voto sarà calcolato come se ne aveste provate "n".</blockquote></p>
+
+<p>(dove, ovviamente "n" è sostituito dal valore assegnato al parametro).</p>
+
+<p>Se il parametro è stato impostato, ai partecipanti viene segnalato quante domande hanno provato a rispondere e quante ci si aspettava che provassero.</p>

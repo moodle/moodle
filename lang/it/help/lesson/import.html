@@ -1,0 +1,107 @@
+<P ALIGN=CENTER><B>Importazione di domande</B></P>
+
+<P>Questa funzione permette di importare domande da file di testo esterni, caricati tramite un opportuno form.</P>  
+
+<P>Sono supportati diversi formati di file:</P>
+
+<P><B>Formato GIFT</B></P>
+<ul>
+<p>GIFT è il più completo formato di importazione disponibile per caricare le domande di un quiz da un file di testo. E' stato progettato per offrire agli insegnanti un metodo semplice per scrivere le domande sotto forma di un semplice testo. Supporta i vari tipi di domande a Risposta multipla, Vero/Falso, Risposta breve, Corrispondenze, Numeriche e anche l'inserimento di un _____ per il formato "parola mancante".
+Differenti tipi di domanda possono essere mischiati in un unico file di testo, e il formato supporta anche righe di commento, nomi di domande, feedback, e voti pesati su base percentuale. Seguono alcuni esempi:</p>
+<pre>
+In quale isola è morto Napoleone? {~Elba ~Corsica =Sant'Elena}
+
+Napoleone è morto nell'isola di {~Corsica =Sant'Elena ~Elba}.
+
+Napoleone è morto in Corsica.{FALSE}
+
+Napoleone è morto in un'isola?{=si =vero}
+
+Quando è morto Napoleone?{#1821}
+</pre>
+
+<p align=right><a href="help.php?file=formatgift.html&module=quiz">Altre informazioni sul formato "GIFT"</a></p>
+</ul>
+
+<P><B>Formato Aiken</B></P>
+<ul>
+<p>Il formato Aiken costituisce un modo molto semplice di creare domande a risposta multipla usando un linguaggio molto leggibile. Di seguito è riportato un esempio di utilizzo:</p>
+<pre>
+Quale è l'obiettivo di un primo intervento di assistenza?
+A. Salvare la vita, prevenire ulteriori infortuni, conservare una buona salute
+B. Fornire trattamenti medici ad ogni persona infortunata o ferita
+C. Prevenire ulteriori infortuni
+D. Aiutare le vittime che cercano aiuto
+RISPOSTA: A
+</pre>
+
+<p align=right><a href="help.php?file=formataiken.html&module=quiz">Altre informazioni sul formato "Aiken"</a></p>
+</ul>
+
+
+<P><B>Formato Missing Word</B></P>
+<UL>
+<P>Questo formato supporta solamente le domande a risposta multipla.
+Ogni domanda è separata da una tilde (~), e la risposta corretta è preceduta da un segno uguale (=). Segue un esempio:</P>
+
+<BLOCKQUOTE>Appena, da bambini, cominciamo a esplorare le parti del nostro corpo diventiamo studenti {=anatomia e psicologia ~riflessologia 
+~scienza ~sperimentazione}, e in un certo senso rimaniamo studenti per tutta la vita.
+</BLOCKQUOTE>
+
+<p align=right><a href="help.php?file=formatmissingword.html&module=quiz">Altre informazioni sul formato  "Missing Word"</a></p>
+</UL>
+
+
+<P><B>Formato AON</B></P>
+<UL>
+<P>Qusto è come il formato a "Missing Word" (a parola mancante), a parte il fatto che dopo l'importazione delle domande, tutte le domande a risposta breve sono trasformate 4 a 4 in domande a corrispondenza.</P>
+<p>Inoltre, le risposte delle domande a risposta multipla sono mescolate a caso durante l'importazione.</P>
+<p>Prende il nome da un'organizzazione che ha sponsorizzato lo sviluppo di molte caratteristiche dei quiz.</p>
+</UL>
+
+
+<P><B>Formato Blackboard</B></P>
+<UL>
+<P>Questo programma filtro può importare domande salvate nel formato di esportazione di Blackboard. E' basato sulle funzioni XML presenti all'interno del PHP.</P>
+
+<p align=right><a href="help.php?file=formatblackboard.html&module=quiz">Altre informazioni sul formato  "Blackboard"</a></p>
+</UL>
+
+
+<P><B>Formato WebCT</B></P>
+<UL>
+<P>Questo filtro può importare domande salvate nel formato a base testuale di WebCT.</P>
+
+<p align=right><a href="help.php?file=formatwebct.html&module=quiz">Altre informazioni sul formato "WebCT"</a></p>
+</UL>
+
+
+<P><B>Formato Course Test Manager</B></P>
+<UL>
+<P>Questo filtro permette di importare domande salvate in una banca dati prodotta dal programma Course Test Manager.
+Esistono diversi modi per accedere alla banca dati, che è un database Microsoft Access, a seconda che Moodle gira su un web server Windows oppure Linux.</P>
+<p>Su Windows esso permette di accedere al database come ogni file di importazione di dati.</p>
+<p>Su Linux, bisogna avere una macchina Windows sulla stessa rete sulla quale si trova il database del Course Test Manager e un pezzo di software che si chiama ODBC Socket Server, che usa l'XML per trasferire i dati a Moodle sul server Linux.</p>  
+<p>Si legga l'help file sotto indicato prima di usare questo filtro d'importazione.</p>
+
+<p align=right><a href="help.php?file=formatctm.html&module=quiz">Altre informazioni sul formato "CTM"</a></p>
+</UL>
+
+<P><B>Risposte a riempimento di vuoti (Cloze)</B></P>
+<UL>
+<P>Questo filtro particolare serve per importare solamente un tipo di domande, quelle con le risposte a riempimento di vuoti (anche dette Cloze).
+</p>
+
+<p align=right><a href="help.php?file=multianswer.html&module=quiz">Altre informazioni sul formato "Cloze"</a></p>
+</UL>
+
+<P><B>Formato Custom</B></P>
+<UL>
+<P>Se si ha un proprio formato di domande da importare, si può editare il modulo software mod/quiz/format/custom.php.</P>
+
+<P>La quantità di istruzioni da scrivere è modesta - solo quanto basta ad analizzare una singola domanda da un file di testo.</P>
+
+<p align=right><a href="help.php?file=formatcustom.html&module=quiz">Altre informazioni sul formato "Custom"</a></p>
+</UL>
+
+<P>Altri formati devono ancora essere gestiti, tra cui IMS QTI, e qualunque altro gli utilizzatori di Moodle vorranno contribuire a creare! </p>
