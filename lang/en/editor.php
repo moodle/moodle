@@ -111,5 +111,7 @@ $string['anchorname'] = 'Anchorname';
 $string['fontname'] = 'Fontname';
 $string['fontsize'] = 'Font-size';
 $string['formatblock'] = 'Format';
+$string['nolink'] = 'Prevent glossary link';
+$string['alertnoselectedtext'] = 'You must select text first!';
 
 ?>
