@@ -66,6 +66,9 @@ Restore Details:
    - Restore FrontEnd...........................................NO EXISTS
         - Check Security........................................NO EXISTS
         - Select Info to Restore (from backup)..................NO EXISTS
+        - Restore into feature..................................NO EXISTS
+           - New course (restore)...............................NO EXISTS
+           - Existing course (import)...........................NO EXISTS
         - Launch Restore........................................NO EXISTS
         - Show progress.........................................NO EXISTS
    - Restore Items:.............................................NO EXISTS
