@@ -201,6 +201,11 @@ class Wiki {
       $line = $this->do_list( $line );	        
     }    	
 
+   if (IN_MOODLE==1) {
+     // replace smilies
+     replace_smilies( $line );
+   }
+
    // typographic conventions
     $line = eregi_replace( "--", "&#8212;", $line );
     $line = eregi_replace( " - ", " &#8211; ", $line );
