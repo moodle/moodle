@@ -771,13 +771,6 @@ function get_records_sql($sql) {
             foreach ($records as $key => $record) {
                 $objects[$key] = (object) $record;
             }
-            // log performance info
-            if ($rs->RecordCount() > 100 
-                && !empty($CFG->perfdebug)
-                && function_exists('memory_get_usage')) {
-                error_log("get_records_sql() in $_SERVER[REQUEST_URI]. Fetched $rs->RecordCount() records. Memory allocated: "
-                          . memory_get_usage());
-            }
             return $objects;
         } else {
             return false;
