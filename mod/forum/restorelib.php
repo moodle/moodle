@@ -60,6 +60,8 @@
             $forum->maxbytes = backup_todb($info['MOD']['#']['MAXBYTES']['0']['#']);
             $forum->scale = backup_todb($info['MOD']['#']['SCALE']['0']['#']);
             $forum->forcesubscribe = backup_todb($info['MOD']['#']['FORCESUBSCRIBE']['0']['#']);
+            $forum->rsstype = backup_todb($info['MOD']['#']['RSSTYPE']['0']['#']);
+            $forum->rssarticles = backup_todb($info['MOD']['#']['RSSARTICLES']['0']['#']);
             $forum->timemodified = backup_todb($info['MOD']['#']['TIMEMODIFIED']['0']['#']);
 
             //We have to recode the scale field if it's <0 (positive is a grade, not a scale)
