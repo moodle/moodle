@@ -10,7 +10,7 @@
 // Part of Moodle - Modular Object-Oriented Dynamic Learning Environment //
 //                  http://moodle.com                                    //
 //                                                                       //
-// Copyright (C) 2003 ASP Consulting   http://www.asp-consulting.net     //
+// Copyright (C) 2004 ASP Consulting   http://www.asp-consulting.net     //
 //                                                                       //
 // This program is free software; you can redistribute it and/or modify  //
 // it under the terms of the GNU General Public License as published by  //
@@ -28,6 +28,36 @@
 
 // Based on format.php, included by ../../import.php
 
+function unhtmlentities($string){
+    $search = array ("'<script[?>]*?>.*?</script>'si",  // remove javascript
+                 "'<[\/\!]*?[^<?>]*?>'si",  // remove HTML tags
+                 "'([\r\n])[\s]+'",  // remove spaces
+                 "'&(quot|#34);'i",  // remove HTML entites
+                 "'&(amp|#38);'i",
+                 "'&(lt|#60);'i",
+                 "'&(gt|#62);'i",
+                 "'&(nbsp|#160);'i",
+                 "'&(iexcl|#161);'i",
+                 "'&(cent|#162);'i",
+                 "'&(pound|#163);'i",
+                 "'&(copy|#169);'i",
+                 "'&#(\d+);'e");  // Evaluate like PHP
+    $replace = array ("",
+                  "",
+                  "\\1",
+                  "\"",
+                  "&",
+                  "<",
+                  "?>",
+                  " ",
+                  chr(161),
+                  chr(162),
+                  chr(163),
+                  chr(169),
+                  "chr(\\1)");
+    return preg_replace ($search, $replace, $string);
+}
+
 class quiz_file_format extends quiz_default_format {
 
     function readquestions ($lines) {
@@ -37,21 +67,21 @@ class quiz_file_format extends quiz_default_format {
         $warnings = array();
         $webct_options = array();
 
-        $ignore_lines = FALSE;
+        $ignore_rest_of_question = FALSE;
 
-        $nLine = 0;
+        $nLineCounter = 0;
         $nQuestionStartLine = 0;
-        $bRawText = TRUE;
+        $bIsHTMLText = FALSE;
         $lines[] = ":EOF:";    // for an easiest processing of the last line
 
         foreach ($lines as $line) {
-            $nLine++;
+            $nLineCounter++;
+
+            // Processing multiples lines strings
+
             if (is_string($questiontext)) {
                 if (ereg("^:",$line)) {
-                    if ($bRawText) {
-                    	$questiontext = htmlentities($questiontext);
-                    }
-                    $question->questiontext = trim($questiontext);
+                    $question->questiontext = addslashes(trim($questiontext));
                     unset($questiontext);
                 }
                  else {
@@ -62,13 +92,11 @@ class quiz_file_format extends quiz_default_format {
 
             if (is_string($answertext)) {
                 if (ereg("^:",$line)) {
-                    if ($bRawText) {
-                    	$answertext = htmlentities($answertext);
+                    if ($bIsHTMLText) {
+                    	$answertext = unhtmlentities($answertext); // answer as HTML text not supported by Moddle
                     }
-                    $answertext = trim($answertext);
+                    $answertext = addslashes(trim($answertext));
                     $question->answer[$currentchoice] = $answertext;
-                    $question->answers[$currentchoice] = $answertext;	// for question MULTIANSWER (see lib.php)
-                    $question->subanswers[$currentchoice] = $answertext;
                     unset($answertext);
                 }
                  else {
@@ -79,10 +107,10 @@ class quiz_file_format extends quiz_default_format {
 
             if (is_string($responstext)) {
                 if (ereg("^:",$line)) {
-                    if ($bRawText) {
-                    	$responstext = htmlentities($responstext);
+                    if ($bIsHTMLText) {
+                    	$responstext = unhtmlentities($responstext); // answer as HTML text not supported by Moddle
                     }
-                    $question->subquestions[$currentchoice] = trim($responstext);
+                    $question->subquestions[$currentchoice] = addslashes(trim($responstext));
                     unset($responstext);
                 }
                  else {
@@ -93,10 +121,10 @@ class quiz_file_format extends quiz_default_format {
 
             if (is_string($feedbacktext)) {
                 if (ereg("^:",$line)) {
-                    if ($bRawText) {
-                    	$feedbacktext = htmlentities($feedbacktext);
+                    if ($bIsHTMLText) {
+                    	$feedbacktext = unhtmlentities($feedbacktext); // feedback as HTML text not supported by Moddle
                     }
-                    $question->feedback[$currentchoice] = trim($feedbacktext);
+                    $question->feedback[$currentchoice] = addslashes(trim($feedbacktext));
                     unset($feedbacktext);
                 }
                  else {
@@ -109,22 +137,30 @@ class quiz_file_format extends quiz_default_format {
 
             if (eregi("^:(TYPE|EOF):",$line)) {
                 // New Question or End of File
-                if (isset($question)) {            // if previous question exists, save it
-                    $QuestionOK = TRUE;
-                    if (strlen($question->name) == 0) {
+                if (isset($question)) {            // if previous question exists, complete, check and save it
+
+                    // Setup default value of missing fields
+                    if (!isset($question->name)) {
                         $question->name = $question->questiontext;
                     }
                     if (strlen($question->name) > 255) {
                         $question->name = substr($question->name,0,250)."...";
                         $warnings[] = get_string("questionnametoolong", "quiz", $nQuestionStartLine);
                     }
+                    if (!isset($question->defaultgrade)) {
+                        $question->defaultgrade = 1;
+                    }
+                    if (!isset($question->image)) {
+                        $question->image = "";
+                    }
+
                     // Perform sanity checks
+                    $QuestionOK = TRUE;
                     if (strlen($question->questiontext) == 0) {
                         $errors[] = get_string("missingquestion", "quiz", $nQuestionStartLine);
                         $QuestionOK = FALSE;
                     }
-
-                    if (sizeof($question->answer) <= 1) {
+                    if (sizeof($question->answer) <= 1) {  // a question must have at last 2 answers
                         $errors[] = get_string("missinganswer", "quiz", $nQuestionStartLine);
                         $QuestionOK = FALSE;
                     }
@@ -150,7 +186,7 @@ class quiz_file_format extends quiz_default_format {
                             case SHORTANSWER:
                                 if ($maxfraction != 1) {
                                     $maxfraction = $maxfraction * 100;
-                                    $errors[] = get_string("wronggrade", "quiz", $nLine).get_string("fractionsnomax", "quiz", $maxfraction);
+                                    $errors[] = get_string("wronggrade", "quiz", $nLineCounter).get_string("fractionsnomax", "quiz", $maxfraction);
                                     $QuestionOK = FALSE;
                                 }
                                 break;
@@ -159,7 +195,7 @@ class quiz_file_format extends quiz_default_format {
                                 if ($question->single) {
                                     if ($maxfraction != 1) {
                                         $maxfraction = $maxfraction * 100;
-                                        $errors[] = get_string("wronggrade", "quiz", $nLine).get_string("fractionsnomax", "quiz", $maxfraction);
+                                        $errors[] = get_string("wronggrade", "quiz", $nLineCounter).get_string("fractionsnomax", "quiz", $maxfraction);
                                         $QuestionOK = FALSE;
                                     }
                                 }
@@ -167,7 +203,7 @@ class quiz_file_format extends quiz_default_format {
                                     $totalfraction = round($totalfraction,2);
                                     if ($totalfraction != 1) {
                                         $totalfraction = $totalfraction * 100;
-                                        $errors[] = get_string("wronggrade", "quiz", $nLine).get_string("fractionsaddwrong", "quiz", $totalfraction);
+                                        $errors[] = get_string("wronggrade", "quiz", $nLineCounter).get_string("fractionsaddwrong", "quiz", $totalfraction);
                                         $QuestionOK = FALSE;
                                     }
                                 }
@@ -175,83 +211,73 @@ class quiz_file_format extends quiz_default_format {
                     }
 
                     if ($QuestionOK) {
+                        // a MULTIANSWER Question record use 'answers' variable instead of 'answer' (see lib.php)
+                        foreach ($question->answer as $key => $dataanswer) {
+                            $question->answers[$key] = $dataanswer;
+                        }
+
                         $questions[] = $question;    // store it
                         unset($question);            // and prepare a new one
                     }
                 }
-                $nQuestionStartLine = $nLine;
+                $nQuestionStartLine = $nLineCounter;
             }
+
+            // Processing Question Header
 
             if (eregi("^:TYPE:MC:1(.*)",$line,$webct_options)) {
                 // Multiple Choice Question with only one good answer
                 $question->qtype = MULTICHOICE;
-                $question->name = "";
-                $question->defaultgrade = 1;
                 $question->single = 1;        // Only one answer is allowed
-                $question->image = "";        // No images with this format
-                $ignore_lines = FALSE;
+                $ignore_rest_of_question = FALSE;
                 continue;
             }
 
             if (eregi("^:TYPE:MC:N(.*)",$line,$webct_options)) {
-                // Multiple Choice Question with many good answers
+                // Multiple Choice Question with several good answers
                 $question->qtype = MULTICHOICE;
-                $question->name = "";
-                $question->defaultgrade = 1;
                 $question->single = 0;        // Many answers allowed
-                $question->image = "";        // No images with this format
-                $ignore_lines = FALSE;
+                $ignore_rest_of_question = FALSE;
                 continue;
             }
 
             if (eregi("^:TYPE:S",$line)) {
                 // Short Answer Question
                 $question->qtype = SHORTANSWER;
-                $question->name = "";
-                $question->defaultgrade = 1;
                 $question->usecase = 0;       // Ignore case
-                $question->image = "";        // No images with this format
-                $ignore_lines = FALSE;
+                $ignore_rest_of_question = FALSE;
                 continue;
             }
 
             if (eregi("^:TYPE:M",$line)) {
                 // Match Question
                 $question->qtype = MATCH;
-                $question->name = "";
-                $question->defaultgrade = 1;
-                $question->image = "";        // No images with this format
-                $ignore_lines = TRUE;         // match question processing is not debugged
+                $ignore_rest_of_question = TRUE;         // match question processing is not debugged
                 continue;
             }
 
             if (eregi("^:TYPE:P",$line)) {
                 // Paragraph Question
-                $warnings[] = get_string("paragraphquestion", "quiz", $nLine);
-                $ignore_lines = TRUE;         // do not process lines until next question
+                $warnings[] = get_string("paragraphquestion", "quiz", $nLineCounter);
+                $ignore_rest_of_question = TRUE;         // Question Type not handled by Moodle
                 continue;
             }
 
             if (eregi("^:TYPE:C",$line)) {
                 // Calculated Question
-                $warnings[] = get_string("calculatedquestion", "quiz", $nLine);
-                $ignore_lines = TRUE;         // do not process lines until next question
+                $warnings[] = get_string("calculatedquestion", "quiz", $nLineCounter);
+                $ignore_rest_of_question = TRUE;         // Question Type not handled by Moodle
                 continue;
             }
 
             if (eregi("^:TYPE:",$line)) {
                 // Unknow Question
-                $warnings[] = get_string("unknowntype", "quiz", $nLine);
-                $ignore_lines = TRUE;         // do not process lines until next question
+                $warnings[] = get_string("unknowntype", "quiz", $nLineCounter);
+                $ignore_rest_of_question = TRUE;         // Question Type not handled by Moodle
                 continue;
             }
 
-            if (eregi("^:CAT:",$line)) {
-                // Category ignored
-                continue;
-            }
-
-            if ($ignore_lines) {
+            if ($ignore_rest_of_question) {
                 continue;
             }
 
@@ -259,51 +285,50 @@ class quiz_file_format extends quiz_default_format {
             	$name = trim($webct_options[1]);
                 if (strlen($name) > 255) {
                     $name = substr($name,0,250)."...";
-                    $warnings[] = get_string("questionnametoolong", "quiz", $nLine);
+                    $warnings[] = get_string("questionnametoolong", "quiz", $nLineCounter);
                 }
-                $question->name = $name;
+                $question->name = addslashes($name);
                 continue;
             }
 
             if (eregi("^:IMAGE:(.*)",$line,$webct_options)) {
             	$filename = trim($webct_options[1]);
-            	if (file_exists("$CFG->dataroot\\$filename")) {
+            	if (eregi("^http://",$filename)) {
 	                $question->image = $filename;
             	}
             	else {
-                    $warnings[] = get_string("imagemissing", "quiz", $nLine);
+                    $warnings[] = get_string("imagemissing", "quiz", $nLineCounter." ($filename)");
             	}
                 continue;
             }
 
-            $bRawText = !eregi(":H$",$line);	// false if next lines are coded in HTML
-
+            $bIsHTMLText = eregi(":H$",$line);	// True if next lines are coded in HTML
             if (eregi("^:QUESTION",$line)) {
-                $questiontext="";               // Grab next lines
+                $questiontext="";               // Start gathering next lines
                 continue;
             }
 
             if (eregi("^:ANSWER([0-9]+):([0-9\.]+)",$line,$webct_options)) {
-                $answertext="";                 // Grab next lines
+                $answertext="";                 // Start gathering next lines
                 $currentchoice=$webct_options[1];
-                $question->fraction[$currentchoice]=1.0*$webct_options[2];
+                $question->fraction[$currentchoice]=($webct_options[2]/100);
                 continue;
             }
 
             if (eregi("^:L([0-9]+)",$line,$webct_options)) {
-                $answertext="";                 // Grab next lines
+                $answertext="";                 // Start gathering next lines
                 $currentchoice=$webct_options[1];
                 continue;
             }
 
             if (eregi("^:R[0-9]+)",$line,$webct_options)) {
-                $responstext="";                // Grab next lines
+                $responstext="";                // Start gathering next lines
                 $currentchoice=$webct_options[1];
                 continue;
             }
 
             if (eregi("^:REASON([0-9]+):?",$line,$webct_options)) {
-                $feedbacktext="";               // Grab next lines
+                $feedbacktext="";               // Start gathering next lines
                 $currentchoice=$webct_options[1];
                 continue;
             }
@@ -315,6 +340,7 @@ class quiz_file_format extends quiz_default_format {
                 echo "<li>$error</li>";
             }
             echo "</ul>";
+            unset($questions);     // no questions imported
         }
 
         if (sizeof($warnings) > 0) {
