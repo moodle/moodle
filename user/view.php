@@ -21,7 +21,7 @@
 
     if ($course->category) {
         require_login($course->id);
-    } else if ($CFG->forcelogin or !empty($CFG->forceloginforprofiles)) { 
+    } else if ($CFG->forcelogin or !empty($CFG->forceloginforprofiles)) {
         if (isguest()) {
             redirect("$CFG->wwwroot/login/index.php");
         }
@@ -53,12 +53,12 @@
     }
 
     if ($course->category) {
-        print_header("$personalprofile: $fullname", "$personalprofile: $fullname", 
-                     "<a href=\"../course/view.php?id=$course->id\">$course->shortname</a> -> 
+        print_header("$personalprofile: $fullname", "$personalprofile: $fullname",
+                     "<a href=\"../course/view.php?id=$course->id\">$course->shortname</a> ->
                       <a href=\"index.php?id=$course->id\">$participants</a> -> $fullname",
                       "", "", true, "&nbsp;", navmenu($course));
     } else {
-        print_header("$course->fullname: $personalprofile: $fullname", "$course->fullname", 
+        print_header("$course->fullname: $personalprofile: $fullname", "$course->fullname",
                      "$fullname", "", "", true, "&nbsp;", navmenu($course));
     }
 
@@ -93,10 +93,15 @@
        $currentuser = ($user->id == $USER->id);
     }
     if (($currentuser and !isguest()) or isadmin()) {
-        echo "<p><form action=edit.php method=get>";
-        echo "<input type=hidden name=id value=\"$id\">";
-        echo "<input type=hidden name=course value=\"$course->id\">";
-        echo "<input type=submit value=\"".get_string("editmyprofile")."\">";
+        if(empty($CFG->loginhttps)) {
+            $wwwroot = $CFG->wwwroot;
+        } else {
+            $wwwroot = str_replace('http','https',$CFG->wwwroot);
+        }
+        echo "<p><form action=\"$wwwroot/user/edit.php\" method=\"get\">";
+        echo "<input type=\"hidden\" name=\"id\" value=\"$id\" />";
+        echo "<input type=\"hidden\" name=\"course\" value=\"$course->id\" />";
+        echo "<input type=\"submit\" value=\"".get_string("editmyprofile")."\" />";
         echo "</form></p>";
     }
     echo "</td></tr></table>";
@@ -129,8 +134,8 @@
         }
     }
 
-    if ($user->maildisplay == 1 or 
-       ($user->maildisplay == 2 and $course->category and !isguest()) or 
+    if ($user->maildisplay == 1 or
+       ($user->maildisplay == 2 and $course->category and !isguest()) or
        isteacher($course->id)) {
 
         if (isteacheredit($course->id) or $currentuser) {   /// Can use the enable/disable email stuff
@@ -194,7 +199,11 @@
 
     $internalpassword = false;
     if (is_internal_auth()) {
+        if(empty($CFG->loginhttps)) {
         $internalpassword = "$CFG->wwwroot/login/change_password.php";
+        } else {
+            $internalpassword = str_replace('http','https',$CFG->wwwroot.'/login/change_password.php');
+        }
     }
 
 //  Print other functions
@@ -211,8 +220,8 @@
             echo "</form></p></td>";
         }
     }
-    if ($course->category and 
-        ((isstudent($course->id) and ($user->id == $USER->id) and !isguest() and $CFG->allowunenroll) or 
+    if ($course->category and
+        ((isstudent($course->id) and ($user->id == $USER->id) and !isguest() and $CFG->allowunenroll) or
         (isteacheredit($course->id) and isstudent($course->id, $user->id))) ) {
         echo "<td nowrap><p><form action=\"../course/unenrol.php\" method=get>";
         echo "<input type=hidden name=id value=\"$course->id\">";
@@ -236,8 +245,8 @@
     }
     echo "</tr></table></center>\n";
 
-    $isseparategroups = ($course->groupmode == SEPARATEGROUPS and 
-                         $course->groupmodeforce and 
+    $isseparategroups = ($course->groupmode == SEPARATEGROUPS and
+                         $course->groupmodeforce and
                          !isteacheredit($course->id));
 
     $groupid = $isseparategroups ? get_current_group($course->id) : NULL;
