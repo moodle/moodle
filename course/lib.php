@@ -464,15 +464,21 @@ function set_section_visible($courseid, $sectionnumber, $visibility) {
 function print_section_block($heading, $course, $section, $mods, $modnames, $modnamesused, 
                              $absolute=true, $width="100%") {
 
-    global $CFG;
+    global $CFG, $USER, $THEME;
     static $isteacher;
     static $isediting;
+    static $ismoving;
+    static $strmovehere;
+    static $strmovefull;
 
     if (!isset($isteacher)) {
         $isteacher = isteacher($course->id);
     }
     if (!isset($isediting)) {
         $isediting = isediting($course->id);
+    }
+    if (!isset($ismoving)) {
+        $ismoving = ismoving($course->id);
     }
 
     $modinfo = unserialize($course->modinfo);
@@ -484,15 +490,39 @@ function print_section_block($heading, $course, $section, $mods, $modnames, $mod
 
         $sectionmods = explode(",", $section->sequence);
 
+        if ($ismoving) {
+            $strmovehere = get_string("movehere");
+            $strmovefull = get_string("movefull", "", "'$USER->activitycopyname'");
+            $stractivityclipboard = $USER->activitycopyname;
+            $strcancel= get_string("cancel");
+            if (empty($THEME->custompix)) {
+                $pixpath = "$CFG->wwwroot/pix";
+            } else {
+                $pixpath = "$CFG->wwwroot/theme/$CFG->theme/pix";
+            }
+            $modicon[] = "&nbsp;<img align=bottom src=\"$pixpath/t/move.gif\" height=\"11\" width=\"11\">";
+            $moddata[] = "$USER->activitycopyname&nbsp;(<a href=\"$CFG->wwwroot/course/mod.php?cancelcopy=true\">$strcancel</a>)";
+        }
+
         foreach ($sectionmods as $modnumber) {
             if (empty($mods[$modnumber])) {
                 continue;
             }
             $mod = $mods[$modnumber];
-            if ($isediting) {
-                $editbuttons = make_editing_buttons($mod->id, $absolute, $mod->visible, false);
+            if ($isediting and !$ismoving) {
+                $editbuttons = "<br />".make_editing_buttons($mod->id, $absolute, $mod->visible, true);
+            } else {
+                $editbuttons = "";
             }
             if ($mod->visible or $isteacher) {
+                if ($ismoving) {
+                    if ($mod->id == $USER->activitycopy) {
+                        continue;
+                    }
+                    $modicon[] = "";
+                    $moddata[] = "<font size=\"2\"> -> <a title=\"$strmovefull\"".
+                                 " href=\"$CFG->wwwroot/course/mod.php?moveto=$mod->id\"><b>$strmovehere</b></a></font>";
+                }
                 $instancename = urldecode($modinfo[$modnumber]->name);
                 $linkcss = $mod->visible ? "" : " class=\"dimmed\" ";
                 if (!empty($modinfo[$modnumber]->extra)) {
@@ -505,9 +535,14 @@ function print_section_block($heading, $course, $section, $mods, $modnames, $mod
                              " height=\"16\" width=\"16\" alt=\"$mod->modfullname\">";
                 $moddata[] = "<a title=\"$mod->modfullname\" $linkcss $extra".
                              "href=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\">$instancename</a>".
-                             "<br />$editbuttons";
+                             "$editbuttons";
             }
         }
+    }
+    if ($ismoving) {
+        $modicon[] = "";
+        $moddata[] = "<font size=\"2\"> -> <a title=\"$strmovefull\"".
+                     " href=\"$CFG->wwwroot/course/mod.php?movetosection=$section->id\"><b>$strmovehere</b></a></font>";
     }
     if ($isediting) {
         $editmenu = popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&amp;section=$section->section&add=", 
