@@ -33,11 +33,10 @@
  * Returns true if the username and password work
  * and false if they don't
  *
- * @param string  username
- * @param string  plaintext password
+ * @param string  $username
+ * @param string  $password
  *
  */
-
 function auth_user_login ($username, $password) {
 
     global $CFG;
@@ -249,13 +248,13 @@ function auth_get_users($filter='*') {
 }
 
 /**
- * return number of daysi to user users password expires
+ * return number of days to user password expires
  *
  * If userpassword does not expire it should return 0. If password is already expired
  * it should return negative value.
  *
- * @param mixed $username    username
- *
+ * @param mixed $username username
+ * @return integer
  */
 function auth_password_expire($username) {
     global $CFG ;
@@ -443,7 +442,7 @@ function auth_sync_users ($firstsync=0, $unsafe_optimizations = false, $bulk_ins
  * Activates (enables) user in external db so user can login to external db
  *
  * @param mixed $username    username
- *
+ * @return boolen result
  */
 function auth_user_activate ($username) {
 	global $CFG;
@@ -465,7 +464,7 @@ function auth_user_activate ($username) {
  * Disables user in external db so user can't login to external db
  *
  * @param mixed $username    username
- *
+ * @return boolean result
  */
 function auth_user_disable ($username) {
 	global $CFG;
@@ -486,7 +485,7 @@ function auth_user_disable ($username) {
  * auth_iscreator returns true if user should be coursecreator
  *
  * @param mixed $username    username
- * @return
+ * @return boolean result
  */
 function auth_iscreator($username=0) {
 ///if user is member of creator group return true
@@ -514,7 +513,7 @@ function auth_iscreator($username=0) {
  *
  * @param mixed $olduser     Userobject before modifications
  * @param mixed $newuser     Userobject new modified userobject
- * @return
+ * @return boolean result
  *
  */
 function auth_user_update($olduser, $newuser) {
@@ -570,14 +569,14 @@ function auth_user_update($olduser, $newuser) {
 }
 
 /*
- * auth_user_update_password changes userpassword in external db
+ * changes userpassword in external db
  *
  * called when the user password is updated.
  * changes userpassword in external db
  *
  * @param mixed $username    Username
  * @param mixed $newpassword Plaintext password
- * @return
+ * @return boolean result
  *
  */
 function auth_user_update_password($username, $newpassword) {
@@ -616,7 +615,7 @@ function auth_user_update_password($username, $newpassword) {
 /**
  * returns predefined usertypes
  *
- * @return
+ * @return array of predefined usertypes
  */
 
 function auth_ldap_suppported_usertypes (){
@@ -643,12 +642,10 @@ function auth_ldap_suppported_usertypes (){
  *                      ....
  *                      );
  *
- * And acording this information $CFG->pseudoname values are set
- * If $CFG->pseudoname is alredy set curren value is honored.
- *
+ * @return array of default values
  */
-function auth_ldap_init () {
-    global $CFG;
+
+function auth_ldap_getdefaults(){
     $default['ldap_objectclass'] = array(
                         'edir' => 'User',
                         'rfc2703' => 'posixAccount',
@@ -689,8 +686,22 @@ function auth_ldap_init () {
                         'ad' => '', //No support yet
                         'default' => ''
                         );
-  
+    return $default; 
+}
 
+/**
+ * set $CFG-values for ldap_module
+ * 
+ * Get default configuration values with auth_ldap_getdefaults() 
+ * and by using this information $CFG-> values are set
+ * If $CFG->value is alredy set current value is honored.
+ *
+ * 
+ */
+function auth_ldap_init () {
+    global $CFG;
+ 
+    $default = auth_ldap_getdefaults();
 
     foreach ($default as $key => $value) {
         //set defaults if overriding fields not set
