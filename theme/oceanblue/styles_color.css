@@ -586,7 +586,7 @@ table.message_search_results td {
   background: none;
 }
 
-#mod-forum-discuss .unread .forumpost .message {
+#mod-forum-discuss .forumpost.unread .content {
   border-color: #FFD991; 
 } 
 
