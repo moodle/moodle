@@ -95,8 +95,16 @@
     // If a course has been supplied in the URL, change the filters to show that one
     if(!empty($_GET['course'])) {
         if(is_numeric($_GET['course']) && $_GET['course'] > 0 && record_exists('course', 'id', $_GET['course'])) {
-            $SESSION->cal_courses_shown = intval($_GET['course']);
-            calendar_set_referring_course($SESSION->cal_courses_shown);
+            if($_GET['course'] == 1) {
+                // If coming from the home page, show all courses
+                $SESSION->cal_courses_shown = calendar_get_default_courses(true);
+                calendar_set_referring_course(0);
+            }
+            else {
+                // Otherwise show just this one
+                $SESSION->cal_courses_shown = intval($_GET['course']);
+                calendar_set_referring_course($SESSION->cal_courses_shown);
+            }
         }
     }
 
@@ -151,7 +159,7 @@
 
     // START: Last column (3-month display)
     echo '<td style="vertical-align: top; width: 180px;">';
-    print_side_block_start(get_string('monthlyview', 'calendar'), '', 'sideblockmain');
+    print_side_block_start(get_string('monthlyview', 'calendar'));
     list($prevmon, $prevyr) = calendar_sub_month($mon, $yr);
     list($nextmon, $nextyr) = calendar_add_month($mon, $yr);
     $getvars = 'cal_d='.$day.'&amp;cal_m='.$mon.'&amp;cal_y='.$yr; // For filtering
@@ -207,7 +215,7 @@ function calendar_show_day($d, $m, $y, $courses, $groups, $users) {
         $text.= '</form></div>';
     }
 
-    print_side_block_start($text, '', 'mycalendar');
+    print_side_block_start($text, array('class' => 'mycalendar'));
     echo '<p>'.calendar_top_controls('day', array('d' => $d, 'm' => $m, 'y' => $y)).'</p>';
 
     if (empty($events)) {
@@ -316,7 +324,7 @@ function calendar_show_month_detailed($m, $y, $courses, $groups, $users) {
         $text.= '</form></div>';
     }
 
-    print_side_block_start($text, '', 'mycalendar');
+    print_side_block_start($text, array('class' => 'mycalendar'));
 
     echo calendar_top_controls('month', array('m' => $m, 'y' => $y));
 
@@ -513,7 +521,7 @@ function calendar_show_upcoming_events($courses, $groups, $users, $futuredays, $
         $text.= '</form></div>';
     }
 
-    print_side_block_start($text, '', 'mycalendar');
+    print_side_block_start($text, array('class' => 'mycalendar'));
     if ($events) {
         foreach ($events as $event) {
             calendar_print_event($event);

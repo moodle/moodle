@@ -14,9 +14,9 @@ class CourseBlock_section_links extends MoodleBlock {
         }
         $this->content_type = BLOCK_TYPE_TEXT;
         $this->course = $course;
-        $this->version = 2004050500;
+        $this->version = 2004052800;
     }
-    
+
     function applicable_formats() {
         return (COURSE_FORMAT_WEEKS | COURSE_FORMAT_TOPICS);
     }
@@ -62,9 +62,8 @@ class CourseBlock_section_links extends MoodleBlock {
         if ($highlight) {
             $text .= "<br><a href=\"$link#$highlight\">$linktext</a>";
         }
-        
-        $this->content = New object;
-        $this->content->header = 'Hello';
+
+        $this->content = New stdClass;
         $this->content->footer = '';
         $this->content->text = $text;
         return $this->content;

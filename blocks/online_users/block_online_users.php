@@ -5,7 +5,11 @@ class CourseBlock_online_users extends MoodleBlock {
         $this->title = get_string('blockname','block_online_users');
         $this->content_type = BLOCK_TYPE_TEXT;
         $this->course = $course;
-        $this->version = 2004041800;
+        $this->version = 2004052700;
+    }
+
+    function applicable_formats() {
+        return COURSE_FORMAT_WEEKS | COURSE_FORMAT_TOPICS | COURSE_FORMAT_SOCIAL | COURSE_FORMAT_SITE;
     }
 
     function has_config() {return true;}

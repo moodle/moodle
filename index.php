@@ -1,9 +1,10 @@
 <?PHP  // $Id$
        // index.php - the front page.
-    
+
     require_once("config.php");
     require_once("course/lib.php");
-    require_once("mod/resource/lib.php"); 
+    require_once('lib/blocklib.php');
+    require_once("mod/resource/lib.php");
     require_once("mod/forum/lib.php");
 
     if (! $site = get_site()) {
@@ -38,149 +39,175 @@
                  "<meta name=\"description\" content=\"".s(strip_tags($site->summary))."\">",
                  true, "", "$loginstring$langmenu");
 
-    $firstcolumn = false;  // for now
-    $lastcolumn = false;   // for now
-    $side = 175;
+    $editing = isediting($site->id);
 
-    $site_summary_editbuttons = '';
-    if (isediting($site->id)) {
-        $site_summary_editbuttons = "<br><center><a href=\"$CFG->admin/site.php\"><img src=\"pix/i/edit.gif\" border=0></a>";
+    $courseformat = COURSE_FORMAT_SITE;
+
+    // Doing this now so we can pass the results to block_action()
+    // and dodge the overhead of doing the same work twice.
+
+    $blocks = $site->blockinfo;
+    $delimpos = strpos($blocks, ':');
+
+    if($delimpos === false) {
+        // No ':' found, we have all left blocks
+        $leftblocks = explode(',', $blocks);
+        $rightblocks = array();
+    }
+    else if($delimpos === 0) {
+        // ':' at start of string, we have all right blocks
+        $blocks = substr($blocks, 1);
+        $leftblocks = array();
+        $rightblocks = explode(',', $blocks);
+    }
+    else {
+        // Both left and right blocks
+        $leftpart = substr($blocks, 0, $delimpos);
+        $rightpart = substr($blocks, $delimpos + 1);
+        $leftblocks = explode(',', $leftpart);
+        $rightblocks = explode(',', $rightpart);
     }
 
-    if ($site->summary) {
-        $lastcolumn = true;
+    if($editing) {
+        if (isset($_GET['blockaction'])) {
+            if (isset($_GET['blockid'])) {
+                block_action($site, $leftblocks, $rightblocks, strtolower($_GET['blockaction']), intval($_GET['blockid']));
+            }
+        }
+
+        // This has to happen after block_action() has possibly updated the two arrays
+        $allblocks = array_merge($leftblocks, $rightblocks);
+
+        $missingblocks = array();
+        $recblocks = get_records('blocks','visible','1');
+
+        // Note down which blocks are going to get displayed
+        blocks_used($allblocks, $recblocks);
+
+        if($editing && $recblocks) {
+            foreach($recblocks as $recblock) {
+                // If it's not hidden or displayed right now...
+                if(!in_array($recblock->id, $allblocks) && !in_array(-($recblock->id), $allblocks)) {
+                    // And if it's applicable for display in this format...
+                    if(block_method_result($recblock->name, 'applicable_formats') & $courseformat) {
+                        // Add it to the missing blocks
+                        $missingblocks[] = $recblock->id;
+                    }
+                }
+            }
+        }
+    }
+    else {
+        // Note down which blocks are going to get displayed
+        $allblocks = array_merge($leftblocks, $rightblocks);
+        $recblocks = get_records('blocks','visible','1');
+        blocks_used($allblocks, $recblocks);
     }
 
+    // If the block width cache is not set, set it
+    if(!isset($SESSION->blockcache->width->{$site->id}) || $editing) {
+        // This query might be optimized away if we 're in editing mode
+        if(!isset($recblocks)) {
+            $recblocks = get_records('blocks','visible','1');
+        }
+        $preferred_width_left = blocks_preferred_width($leftblocks, $recblocks);
+        $preferred_width_right = blocks_preferred_width($rightblocks, $recblocks);
+
+        // This may be kind of organizational overkill, granted...
+        // But is there any real need to simplify the structure?
+        $SESSION->blockcache->width->{$site->id}->left = $preferred_width_left;
+        $SESSION->blockcache->width->{$site->id}->right = $preferred_width_right;
+    }
+    else {
+        $preferred_width_left = $SESSION->blockcache->width->{$site->id}->left;
+        $preferred_width_right = $SESSION->blockcache->width->{$site->id}->right;
+    }
 
 ?>
 
 
 <table width="100%" border="0" cellspacing="5" cellpadding="5">
   <tr>
-  <?PHP 
-     $sections = get_all_sections($site->id);
-  
-     if ($site->newsitems > 0 or $sections[0]->sequence or isediting($site->id) or isadmin()) {
+  <?PHP
 
-         echo "<td width=\"$side\" valign=top nowrap>"; 
-         $firstcolumn=true;
-  
-         if ($sections[0]->sequence or isediting($site->id)) {
-             get_all_mods($site->id, $mods, $modnames, $modnamesplural, $modnamesused);
-             print_section_block(get_string("mainmenu"), $site, $sections[0], 
-                                 $mods, $modnames, $modnamesused, true, $side);
-         }
+    if(block_have_active($leftblocks) || $editing) {
+        echo '<td style="vertical-align: top; width: '.$preferred_width_left.'px;">';
+        print_course_blocks($site, $leftblocks, BLOCK_LEFT);
+        echo '</td>';
+    }
 
-         if (isadmin()) {
-             echo "<div align=\"center\">".update_course_icon($site->id)."</div>";
-             echo "<br />";
-         }
+    echo '<td style="vertical-align: top;">';
+    switch ($CFG->frontpage) {     /// Display the main part of the front page.
+        case FRONTPAGENEWS:
+            if (! $newsforum = forum_get_course_forum($site->id, "news")) {
+                error("Could not find or create a main news forum for the site");
+            }
 
-         switch ($CFG->frontpage) {
-             case FRONTPAGENEWS:       // print news links on the side
-                 print_courses_sideblock(0, "$side");
-             break;
-    
-             case FRONTPAGECOURSELIST:
-             case FRONTPAGECATEGORYNAMES:
-                 if ($site->newsitems) {
-                     if ($news = forum_get_course_forum($site->id, "news")) {
-                         print_side_block_start(get_string("latestnews"), $side, "sideblocklatestnews");
-                         echo "<font size=\"-2\">";
-                         forum_print_latest_discussions($news->id, $site->newsitems, "minimal", "", false);
-                         echo "</font>";
-                         print_side_block_end();
-                     }
-                 }
-             break;
-         } 
-         print_spacer(1,$side);
-     }
- 
-     if (iscreator()) {
-         if (!$firstcolumn) {
-             echo "<td width=\"$side\" valign=top nowrap>"; 
-             $firstcolumn=true;
-         }
-         print_admin_links($site->id, $side);
-     }
+            if (isset($USER->id)) {
+                $SESSION->fromdiscussion = "$CFG->wwwroot";
+                if (forum_is_subscribed($USER->id, $newsforum->id)) {
+                    $subtext = get_string("unsubscribe", "forum");
+                } else {
+                    $subtext = get_string("subscribe", "forum");
+                }
+                $headertext = "<table border=0 width=100% cellpadding=0 cellspacing=0 class=headingblockcontent><tr>
+                               <td>$newsforum->name</td>
+                               <td align=right><font size=1>
+                               <a href=\"mod/forum/subscribe.php?id=$newsforum->id\">$subtext</a>
+                               </td></tr></table>";
+            } else {
+                $headertext = $newsforum->name;
+            }
+            print_heading_block($headertext);
+            print_spacer(8,1);
+            forum_print_latest_discussions($newsforum->id, $site->newsitems);
+        break;
 
-     if ($firstcolumn) {
-         echo "</td>";
-     }
-     if ($lastcolumn) {
-         echo "<td width=\"70%\" valign=\"top\">";
-     } else {
-         echo "<td width=\"100%\" valign=\"top\">";
-     }
+        case FRONTPAGECOURSELIST:
+        case FRONTPAGECATEGORYNAMES:
+            if (isset($USER->id) and !isset($USER->admin)) {
+                print_heading_block(get_string("mycourses"));
+                print_spacer(8,1);
+                print_my_moodle();
+            } else {
+                if (count_records("course_categories") > 1) {
+                    if ($CFG->frontpage == FRONTPAGECOURSELIST) {
+                        print_heading_block(get_string("availablecourses"));
+                    } else {
+                        print_heading_block(get_string("categories"));
+                    }
+                    print_spacer(8,1);
+                    print_simple_box_start("center", "100%");
+                    print_whole_category_list();
+                    print_simple_box_end();
+                    print_course_search("", false, "short");
+                } else {
+                    print_heading_block(get_string("availablecourses"));
+                    print_spacer(8,1);
+                    print_courses(0, "100%");
+                }
+            }
+        break;
 
-     switch ($CFG->frontpage) {     /// Display the main part of the front page.
-         case FRONTPAGENEWS:
-             if (! $newsforum = forum_get_course_forum($site->id, "news")) {
-                 error("Could not find or create a main news forum for the site");
-             }
-    
-             if (isset($USER->id)) {
-                 $SESSION->fromdiscussion = "$CFG->wwwroot";
-                 if (forum_is_subscribed($USER->id, $newsforum->id)) {
-                     $subtext = get_string("unsubscribe", "forum");
-                 } else {
-                     $subtext = get_string("subscribe", "forum");
-                 }
-                 $headertext = "<table border=0 width=100% cellpadding=0 cellspacing=0 class=headingblockcontent><tr>
-                                <td>$newsforum->name</td>
-                                <td align=right><font size=1>
-                                <a href=\"mod/forum/subscribe.php?id=$newsforum->id\">$subtext</a>
-                                </td></tr></table>";
-             } else {
-                 $headertext = $newsforum->name;
-             }
-             print_heading_block($headertext);
-             print_spacer(8,1);
-             forum_print_latest_discussions($newsforum->id, $site->newsitems);
-         break;
-    
-         case FRONTPAGECOURSELIST:
-         case FRONTPAGECATEGORYNAMES:
-             if (isset($USER->id) and !isset($USER->admin)) {
-                 print_heading_block(get_string("mycourses"));
-                 print_spacer(8,1);
-                 print_my_moodle();
-             } else {
-                 if (count_records("course_categories") > 1) {
-                     if ($CFG->frontpage == FRONTPAGECOURSELIST) {
-                         print_heading_block(get_string("availablecourses"));
-                     } else {
-                         print_heading_block(get_string("categories"));
-                     }
-                     print_spacer(8,1);
-                     print_simple_box_start("center", "100%");
-                     print_whole_category_list();
-                     print_simple_box_end();
-                     print_course_search("", false, "short");
-                 } else {
-                     print_heading_block(get_string("availablecourses"));
-                     print_spacer(8,1);
-                     print_courses(0, "100%");
-                 }
-             }
-         break;
+    }
 
-     }
-
-     echo "</td>";
-
-     if ($lastcolumn) {
-         echo "<td width=\"30%\" valign=\"top\">";
-         print_simple_box(format_text($site->summary, FORMAT_HTML).$site_summary_editbuttons, 
-                          "", "100%", $THEME->cellcontent2, 5, "siteinfo");
-         print_spacer(1,$side);
-         echo "</td>";
-     }
-  ?>
+    echo '</td>';
+    if(block_have_active($rightblocks) || $editing || isadmin()) {
+        echo '<td style="vertical-align: top; width: '.$preferred_width_right.'px;">';
+        if (isadmin()) {
+            echo '<div align="center">'.update_course_icon($site->id).'</div>';
+            echo '<br />';
+        }
+        print_course_blocks($site, $rightblocks, BLOCK_RIGHT);
+        if ($editing && !empty($missingblocks)) {
+            block_print_blocks_admin($site->id, $missingblocks);
+        }
+        echo '</td>';
+    }
+?>
 
   </tr>
 </table>
 
-<?PHP print_footer("home");     // Please do not modify this line ?>
+<?PHP print_footer('home');     // Please do not modify this line ?>
 

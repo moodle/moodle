@@ -69,9 +69,9 @@ class MoodleBlock {
                     break;
                 }
                 if ($this->edit_controls !== NULL || !$this->hide_header()) {
-                    print_side_block($title, $this->content->text, NULL, NULL, $this->content->footer);
+                    print_side_block($title, $this->content->text, NULL, NULL, $this->content->footer, $this->html_attributes());
                 } else {
-                    print_side_block(NULL, $this->content->text, NULL, NULL, $this->content->footer);
+                    print_side_block(NULL, $this->content->text, NULL, NULL, $this->content->footer, $this->html_attributes());
                 }
             break;
             case BLOCK_TYPE_LIST:
@@ -79,9 +79,9 @@ class MoodleBlock {
                     break;
                 }
                 if ($this->edit_controls !== NULL || !$this->hide_header()) {
-                    print_side_block($title, '', $this->content->items, $this->content->icons, $this->content->footer);
+                    print_side_block($title, '', $this->content->items, $this->content->icons, $this->content->footer, $this->html_attributes());
                 } else {
-                    print_side_block(NULL, '', $this->content->items, $this->content->icons, $this->content->footer);
+                    print_side_block(NULL, '', $this->content->items, $this->content->icons, $this->content->footer, $this->html_attributes());
                 }
             break;
         }
@@ -93,6 +93,7 @@ class MoodleBlock {
         }
         print_side_block($title, '&nbsp;', NULL, NULL, '');
     }
+
     function add_edit_controls($options, $blockid) {
         global $CFG, $THEME;
 
@@ -179,7 +180,7 @@ class MoodleBlock {
             $errors[] = 'version_not_set';
             $correct = false;
         }
-        $allformats = COURSE_FORMAT_WEEKS | COURSE_FORMAT_TOPICS | COURSE_FORMAT_SOCIAL;
+        $allformats = COURSE_FORMAT_WEEKS | COURSE_FORMAT_TOPICS | COURSE_FORMAT_SOCIAL | COURSE_FORMAT_SITE;
         if(!($this->applicable_formats() & $allformats)) {
             $errors[] = 'no_course_formats';
             $correct = false;
@@ -216,8 +217,8 @@ class MoodleBlock {
         return false;
     }
     function html_attributes() {
-        // Default case: we want no extra attributes
-        return false;
+        // Default case: just an id for the block, with our name in it
+        return array('id' => 'block_'.$this->name());
     }
 }
 

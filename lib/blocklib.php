@@ -9,9 +9,10 @@ define('BLOCK_MOVE_RIGHT',  0x02);
 define('BLOCK_MOVE_UP',     0x04);
 define('BLOCK_MOVE_DOWN',   0x08);
 
-define('COURSE_FORMAT_WEEKS',   0x01);
-define('COURSE_FORMAT_TOPICS',  0x02);
-define('COURSE_FORMAT_SOCIAL',  0x04);
+define('COURSE_FORMAT_SITE',    0x01);
+define('COURSE_FORMAT_WEEKS',   0x02);
+define('COURSE_FORMAT_TOPICS',  0x04);
+define('COURSE_FORMAT_SOCIAL',  0x08);
 
 //This function retrieves a method-defined property of a class WITHOUT instantiating an object
 //It seems that the only way to use the :: operator with variable class names is eval() :(
@@ -327,7 +328,14 @@ function block_print_blocks_admin($courseid, $missingblocks) {
                     }
                     $menu[$block->id] = $blockobject->get_title();
                 }
-                $content = popup_form('view.php?id='.$courseid.'&amp;blockaction=add&amp;blockid=',
+
+                if($courseid == 1) {
+                    $target = 'index.php';
+                }
+                else {
+                    $target = 'view.php';
+                }
+                $content = popup_form($target.'?id='.$courseid.'&amp;blockaction=add&amp;blockid=',
                                       $menu, 'add_block', '', "$stradd...", '', '', true);
                 $content = '<div align="center">'.$content.'</div>';
                 print_side_block($strblocks, $content, NULL, NULL, NULL);
@@ -718,7 +726,7 @@ function block_get_name_by_id ($blockid) {
 //then the function will update the field too!
 
 function blocks_get_default_blocks ($courseid = NULL, $blocknames="") {
- 
+
     global $CFG;
 
     if (empty($blocknames)) {

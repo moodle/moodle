@@ -5,12 +5,15 @@ class CourseBlock_admin extends MoodleBlock {
         $this->title = get_string('administration');
         $this->content_type = BLOCK_TYPE_LIST;
         $this->course = $course;
-        $this->version = 2004041000;
+        $this->version = 2005052800;
     }
+
+    function applicable_formats() {
+        return COURSE_FORMAT_WEEKS | COURSE_FORMAT_TOPICS | COURSE_FORMAT_SOCIAL | COURSE_FORMAT_SITE;
+    }
+
     function get_content() {
         global $USER, $CFG, $THEME;
-
-        require_once($CFG->dirroot.'/mod/forum/lib.php');
 
         if($this->content !== NULL) {
             return $this->content;
@@ -20,6 +23,52 @@ class CourseBlock_admin extends MoodleBlock {
         $this->content->items = array();
         $this->content->icons = array();
         $this->content->footer = '';
+
+        if($this->course->id == 1) {
+            $this->load_content_for_site();
+        }
+        else {
+            $this->load_content_for_course();
+        }
+
+        return $this->content;
+    }
+
+
+    function load_content_for_site() {
+        global $CFG;
+
+        if (isadmin()) {
+            $this->content->items[] = '<a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/configure.php">'.get_string('configuration').'</a>...';
+            $this->content->icons[] = '<img src="'.$CFG->pixpath.'/i/admin.gif" height="16" width="16" alt="" />';
+
+            $this->content->items[] = '<a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/users.php">'.get_string('users').'</a>...';
+            $this->content->icons[] = '<img src="'.$CFG->pixpath.'/i/users.gif" height="16" width="16" alt="" />';
+        }
+
+        if (iscreator()) {
+            $this->content->items[] = '<a href="'.$CFG->wwwroot.'/course/index.php?edit=on">'.get_string('courses').'</a>';
+            $this->content->icons[] = '<img src="'.$CFG->pixpath.'/i/course.gif" height="16" width="16" alt="" />';
+        }
+
+        if (isadmin()) {
+            $this->content->items[] = '<a href="'.$CFG->wwwroot.'/course/log.php?id=1">'.get_string('logs').'</a>';
+            $this->content->icons[] = '<img src="'.$CFG->pixpath.'/i/log.gif" height="16" width="16" alt="" />';
+
+            $this->content->items[] = '<a href="'.$CFG->wwwroot.'/files/index.php?id=1">'.get_string('sitefiles').'</a>';
+            $this->content->icons[] = '<img src="'.$CFG->pixpath.'/i/files.gif" height="16" width="16" alt="" />';
+
+            if (file_exists($CFG->dirroot.'/'.$CFG->admin.'/'.$CFG->dbtype)) {
+                $this->content->items[] = '<a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/'.$CFG->dbtype.'/frame.php">'.get_string('managedatabase').'</a>';
+                $this->content->icons[] = '<img src="'.$CFG->pixpath.'/i/db.gif" height="16" width="16" alt="" />';
+            }
+            $this->content->footer = '<a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/">'.get_string('admin').'</a>...';
+        }
+    }
+
+    function load_content_for_course() {
+        global $CFG;
+        require_once($CFG->dirroot.'/mod/forum/lib.php');
 
         if (isguest()) {
             return $this->content;
@@ -82,6 +131,7 @@ class CourseBlock_admin extends MoodleBlock {
             }
 
         } else if (!isguest()) {  // Students menu
+
             if ($this->course->showgrades) {
                 $this->content->items[]='<a href="grade.php?id='.$this->course->id.'">'.get_string('grades').'...</a>';
                 $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/grades.gif" height="16" width="16" alt="">';
@@ -102,8 +152,6 @@ class CourseBlock_admin extends MoodleBlock {
                 $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/user.gif" height="16" width="16" alt="">';
             }
         }
-
-        return $this->content;
     }
 }
 

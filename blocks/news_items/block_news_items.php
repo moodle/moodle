@@ -5,7 +5,11 @@ class CourseBlock_news_items extends MoodleBlock {
         $this->title = get_string('latestnews');
         $this->content_type = BLOCK_TYPE_TEXT;
         $this->course = $course;
-        $this->version = 2004041200;
+        $this->version = 2004052600;
+    }
+
+    function applicable_formats() {
+        return COURSE_FORMAT_WEEKS | COURSE_FORMAT_TOPICS | COURSE_FORMAT_SOCIAL | COURSE_FORMAT_SITE;
     }
 
     function get_content() {
@@ -16,6 +20,7 @@ class CourseBlock_news_items extends MoodleBlock {
         }
 
         require_once($CFG->dirroot.'/course/lib.php');
+        require_once($CFG->dirroot.'/mod/forum/lib.php');
 
         $this->content = New object;
         $this->content->text = '';

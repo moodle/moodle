@@ -98,7 +98,7 @@
     $thissection = $sections[$section];
 
     if ($thissection->summary or $thissection->sequence or isediting($course->id)) {
-        echo "<tr>";
+        echo '<tr id="section_0">';
         echo "<td nowrap bgcolor=\"$THEME->cellheading\" class=\"topicsoutlineside\" valign=top width=20>&nbsp;</td>";
         echo "<td valign=top bgcolor=\"$THEME->cellcontent\" class=\"topicsoutlinecontent\" width=\"100%\">";
 
@@ -190,11 +190,11 @@
             echo "</td>";
 
             if (!isteacher($course->id) and !$thissection->visible) {   // Hidden for students
-                echo "<td valign=top align=center $colormain width=\"100%\">";
+                echo '<td id="section_'.($section).'" style="vertical-align:top; text-align: center; width: 100%;" '.$colormain.'>';
                 echo get_string("notavailable");
                 echo "</td>";
             } else {
-                echo "<td valign=top $colormain width=\"100%\">";
+                echo '<td id="section_'.($section).'" style="vertical-align:top; width: 100%;" '.$colormain.'>';
 
                 echo format_text($thissection->summary, FORMAT_HTML);
 

@@ -1012,7 +1012,6 @@ function print_footer ($course=NULL) {
 // to the course home page, otherwise the link will go to the site home
     global $USER, $CFG, $THEME;
 
-
 /// Course links
     if ($course) {
         if ($course == "home") {   // special case for site home page - please do not remove
@@ -2215,6 +2214,89 @@ function rebuildnolinktag($text) {
 
     return $text;
 }
+
+// ================================================
+// THREE FUNCTIONS MOVED HERE FROM course/lib.php
+// ================================================
+
+function print_side_block($heading='', $content='', $list=NULL, $icons=NULL, $footer='', $attributes = array()) {
+// Prints a nice side block with an optional header.  The content can either
+// be a block of HTML or a list of text with optional icons.
+
+    global $THEME;
+
+    print_side_block_start($heading, $attributes);
+
+    if ($content) {
+        echo $content;
+        if ($footer) {
+            echo "<center><font size=\"-2\">$footer</font></center>";
+        }
+    } else {
+        echo "<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"2\">";
+        if ($list) {
+            foreach ($list as $key => $string) {
+                echo "<tr bgcolor=\"$THEME->cellcontent2\">";
+                if ($icons) {
+                    echo "<td class=\"sideblocklinks\" valign=\"top\" width=\"16\">".$icons[$key]."</td>";
+                }
+                echo "<td class=\"sideblocklinks\" valign=\"top\" width=\"*\"><font size=\"-1\">$string</font></td>";
+                echo "</tr>";
+            }
+        }
+        if ($footer) {
+            echo "<tr bgcolor=\"$THEME->cellcontent2\">";
+            echo "<td class=\"sideblocklinks\" ";
+            if ($icons) {
+                echo ' colspan="2" ';
+            }
+            echo '>';
+            echo "<center><font size=\"-2\">$footer</font></center>";
+            echo "</td></tr>";
+        }
+        echo "</table>";
+    }
+
+    print_side_block_end();
+}
+
+function print_side_block_start($heading='', $attributes = array()) {
+// Starts a nice side block with an optional header.
+    global $THEME;
+
+    // If there are no special attributes, give a default CSS class
+    if(empty($attributes) || !is_array($attributes)) {
+        $attributes = array('class' => 'sideblock');
+    }
+    else if(!isset($attributes['class'])) {
+        $attributes['class'] = 'sideblock';
+    }
+    else if(!strpos($attributes['class'], 'sideblock')) {
+        $attributes['class'] .= ' sideblock';
+    }
+    // OK, the class is surely there and in addition to anything
+    // else, it's tagged as a sideblock
+
+    $attrtext = '';
+    foreach($attributes as $attr => $val) {
+       $attrtext .= ' '.$attr.'="'.$val.'"';
+    }
+
+    // [pj] UGLY UGLY UGLY! I hate myself for doing this!
+    // When the Lord Moodle 2.0 cometh, his mercy shalt move all this mess
+    // to CSS and banish the evil to the abyss from whence it came.
+    echo '<table style="width: 100%;" cellspacing="0" cellpadding="5"'.$attrtext.'>';
+    if ($heading) {
+        echo '<thead class="sideblockheading"><tr><td>'.$heading.'</td></tr></thead>';
+    }
+    echo '<tbody style="background-color: '.$THEME->cellcontent2.';"><tr><td class="sideblockmain">';
+}
+
+function print_side_block_end() {
+    echo '</td></tr></tbody></table><br />';
+    echo "\n";
+}
+
 
 // vim:autoindent:expandtab:shiftwidth=4:tabstop=4:tw=140:
 ?>

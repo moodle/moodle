@@ -5,7 +5,7 @@ class CourseBlock_participants extends MoodleBlock {
         $this->title = get_string('people');
         $this->content_type = BLOCK_TYPE_LIST;
         $this->course = $course;
-        $this->version = 2004041800;
+        $this->version = 2004052600;
     }
 
     function get_content() {
@@ -38,14 +38,16 @@ class CourseBlock_participants extends MoodleBlock {
             }
         }
 
-        $fullname = fullname($USER, true);
-        $editmyprofile = '<a title="'.$fullname.'" href="../user/edit.php?id='.$USER->id.'&amp;course='.$this->course->id.'">'.get_string('editmyprofile').'</a>';
-        if ($USER->description) {
-            $this->content->items[]= $editmyprofile;
-        } else {
-            $this->content->items[]= $editmyprofile." <blink>*</blink>";
+        if(!empty($USER)) {
+            $fullname = fullname($USER, true);
+            $editmyprofile = '<a title="'.$fullname.'" href="../user/edit.php?id='.$USER->id.'&amp;course='.$this->course->id.'">'.get_string('editmyprofile').'</a>';
+            if ($USER->description) {
+                $this->content->items[]= $editmyprofile;
+            } else {
+                $this->content->items[]= $editmyprofile." <blink>*</blink>";
+            }
+            $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/user.gif" height="16" width="16" alt="">';
         }
-        $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/user.gif" height="16" width="16" alt="">';
 
         return $this->content;
     }

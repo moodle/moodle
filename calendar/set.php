@@ -52,6 +52,9 @@
     optional_variable($_GET['cal_y']);
 
     switch($_GET['var']) {
+        case 'setuser':
+            // Not implemented yet (or possibly at all)
+        break;
         case 'setcourse':
             $id = intval($_GET['id']);
             if($id == 0) {
@@ -85,12 +88,7 @@
             $SESSION->cal_show_global = !$SESSION->cal_show_global;
         break;
         case 'showuser':
-            if($SESSION->cal_show_user) {
-                $SESSION->cal_show_user = false;
-            }
-            else {
-                $SESSION->cal_show_user = $USER->id;
-            }
+            $SESSION->cal_show_user = !$SESSION->cal_show_user;
         break;
     }
 

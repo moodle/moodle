@@ -5,7 +5,11 @@ class CourseBlock_course_list extends MoodleBlock {
         $this->title = get_string('mycourses');
         $this->content_type = BLOCK_TYPE_LIST;
         $this->course = $course;
-        $this->version = 2004041800;
+        $this->version = 2005052600;
+    }
+
+    function applicable_formats() {
+        return COURSE_FORMAT_WEEKS | COURSE_FORMAT_TOPICS | COURSE_FORMAT_SOCIAL | COURSE_FORMAT_SITE;
     }
 
     function get_content() {
@@ -40,7 +44,7 @@ class CourseBlock_course_list extends MoodleBlock {
                     $this->content->icons[]=$icon;
                 }
                 $this->title = get_string('mycourses');
-                $this->content->footer = "<p><a href=\"$CFG->wwwroot/course/index.php\">".get_string("fulllistofcourses")."</a>...";
+                $this->content->footer = "<a href=\"$CFG->wwwroot/course/index.php\">".get_string("fulllistofcourses")."</a>...";
                 return $this->content;
             }
         }
@@ -53,12 +57,12 @@ class CourseBlock_course_list extends MoodleBlock {
                     $this->content->items[]="<a $linkcss href=\"$CFG->wwwroot/course/category.php?id=$category->id\">$category->name</a>";
                     $this->content->icons[]=$icon;
                 }
-                $this->content->footer = "<p><a href=\"$CFG->wwwroot/course/\">".get_string("searchcourses")."</a>...";
+                $this->content->footer = "<a href=\"$CFG->wwwroot/course/\">".get_string("searchcourses")."</a>...";
                 $this->title = get_string('categories');
             } else {                          // Just print course names of single category
                 $category = array_shift($categories);
                 $courses = get_courses($category->id);
-    
+
                 if ($courses) {
                     foreach ($courses as $course) {
                         $linkcss = $course->visible ? "" : " class=\"dimmed\" ";
@@ -66,7 +70,7 @@ class CourseBlock_course_list extends MoodleBlock {
                                    "href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->fullname</a>";
                         $this->content->icons[]=$icon;
                     }
-                    $this->content->footer = "<p><a href=\"$CFG->wwwroot/course/index.php\">".get_string("fulllistofcourses")."</a>...";
+                    $this->content->footer = "<a href=\"$CFG->wwwroot/course/index.php\">".get_string("fulllistofcourses")."</a>...";
                 } else {
                     $this->content->items = array();
                     $this->content->icons = array();

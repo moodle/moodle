@@ -71,6 +71,22 @@
         $defaultformat = FORMAT_MOODLE;
     }
 
+    // If a course has been supplied in the URL, change the filters to show that one
+    if(!empty($_GET['course'])) {
+        if(is_numeric($_GET['course']) && $_GET['course'] > 0 && record_exists('course', 'id', $_GET['course'])) {
+            if($_GET['course'] == 1) {
+                // If coming from the home page, show all courses
+                $SESSION->cal_courses_shown = calendar_get_default_courses(true);
+                calendar_set_referring_course(0);
+            }
+            else {
+                // Otherwise show just this one
+                $SESSION->cal_courses_shown = intval($_GET['course']);
+                calendar_set_referring_course($SESSION->cal_courses_shown);
+            }
+        }
+    }
+
     switch($_REQUEST['action']) {
         case 'delete':
             $title = get_string('deleteevent', 'calendar');
@@ -230,7 +246,7 @@
                 $d = $eventtime['mday'];
                 $y = $eventtime['year'];
                 // Display confirmation form
-                print_side_block_start(get_string('deleteevent', 'calendar').': '.$event->name, '', 'mycalendar');
+                print_side_block_start(get_string('deleteevent', 'calendar').': '.$event->name, array('class' => 'mycalendar'));
                 include('event_delete.html');
                 print_side_block_end();
             }
@@ -261,7 +277,7 @@
                     $form->minutes = '';
                 }
             }
-            print_side_block_start(get_string('editevent', 'calendar'), '', 'mycalendar');
+            print_side_block_start(get_string('editevent', 'calendar'), array('class' => 'mycalendar'));
             include('event_edit.html');
             print_side_block_end();
             if ($usehtmleditor) {
@@ -391,7 +407,7 @@
                 $header = ' ('.$header.')';
             }
 
-            print_side_block_start(get_string('newevent', 'calendar').$header, '', 'mycalendar');
+            print_side_block_start(get_string('newevent', 'calendar').$header, array('class' => 'mycalendar'));
             if($_REQUEST['type'] == 'select') {
                 $defaultcourse = $SESSION->cal_course_referer;
                 if(isteacheredit($defaultcourse, $USER->id)) {
@@ -424,7 +440,7 @@
     echo calendar_overlib_html();
     calendar_set_filters($courses, $groups, $users, $defaultcourses, $defaultcourses);
 
-    print_side_block_start(get_string('monthlyview', 'calendar'), '', 'sideblockmain');
+    print_side_block_start(get_string('monthlyview', 'calendar'));
     list($prevmon, $prevyr) = calendar_sub_month($mon, $yr);
     list($nextmon, $nextyr) = calendar_add_month($mon, $yr);
 
@@ -507,7 +523,7 @@ function calendar_get_allowed_types(&$allowed) {
     $allowed->courses = false; // This may change just below
     $allowed->site = isadmin($USER->id);
 
-    if(!empty($SESSION->cal_course_referer) && isteacheredit($SESSION->cal_course_referer, $USER->id)) {
+    if(!empty($SESSION->cal_course_referer) && $SESSION->cal_course_referer > 1 && isteacheredit($SESSION->cal_course_referer, $USER->id)) {
         $allowed->courses = array($SESSION->cal_course_referer => 1);
         $allowed->groups = get_groups($SESSION->cal_course_referer);
     }

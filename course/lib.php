@@ -31,13 +31,13 @@ function print_recent_selector_form($course, $advancedfilter=0, $selecteduser=0,
 
         // Get all the possible users
         $users = array();
-    
+
         if ($course->category) {
             $courseusers = get_course_users($course->id);
         } else {
             $courseusers = get_site_users("u.lastaccess DESC", "u.id, u.firstname, u.lastname");
-        } 
-     
+        }
+
         if ($courseusers) {
             foreach ($courseusers as $courseuser) {
                 $users[$courseuser->id] = fullname($courseuser, $isteacher);
@@ -46,7 +46,7 @@ function print_recent_selector_form($course, $advancedfilter=0, $selecteduser=0,
         if ($guest = get_guest()) {
             $users[$guest->id] = fullname($guest);
         }
-     
+
         if (isadmin()) {
             if ($ccc = get_records("course", "", "", "fullname")) {
                 foreach ($ccc as $cc) {
@@ -54,7 +54,7 @@ function print_recent_selector_form($course, $advancedfilter=0, $selecteduser=0,
                         $courses["$cc->id"] = "$cc->fullname";
                     } else {
                         $courses["$cc->id"] = " $cc->fullname (Site)";
-                    } 
+                    }
                 }
             }
             asort($courses);
@@ -84,7 +84,7 @@ function print_recent_selector_form($course, $advancedfilter=0, $selecteduser=0,
             foreach ($modinfo as $mod) {
                 if ($mod->mod == "label") {
                     continue;
-                }  
+                }
                 if (!$mod->visible and !$isteacher) {
                     continue;
                 }
@@ -370,10 +370,10 @@ function make_log_url($module, $url) {
 }
 
 
-function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $perpage=100, 
+function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $perpage=100,
                    $url="", $modname="", $modid=0, $modaction="") {
 
-// It is assumed that $date is the GMT time of midnight for that day, 
+// It is assumed that $date is the GMT time of midnight for that day,
 // and so the next 86400 seconds worth of logs are printed.
 
     global $CFG, $db;
@@ -475,7 +475,7 @@ function print_log_graph($course, $userid=0, $type="course.png", $date=0) {
 
 function print_recent_activity($course) {
     // $course is an object
-    // This function trawls through the logs looking for 
+    // This function trawls through the logs looking for
     // anything new since the user's last login
 
     global $CFG, $USER, $THEME, $SESSION;
@@ -521,7 +521,7 @@ function print_recent_activity($course) {
 
     // Next, have there been any modifications to the course structure?
 
-    $logs = get_records_select("log", "time > '$timestart' AND course = '$course->id' AND 
+    $logs = get_records_select("log", "time > '$timestart' AND course = '$course->id' AND
                                        module = 'course' AND action LIKE '% mod'", "time ASC");
 
     if ($logs) {
@@ -538,7 +538,7 @@ function print_recent_activity($course) {
             $tempmod->id = $info[1];
             //Obtain the visible property from the instance
             $modvisible = instance_is_visible($info[0],$tempmod);
-            
+
             //Only if the mod is visible
             if ($modvisible) {
                 switch ($log->action) {
@@ -553,7 +553,7 @@ function print_recent_activity($course) {
                        }
                     break;
                     case "delete mod":
-                       if (!empty($changelist["$log->info"]["operation"]) and 
+                       if (!empty($changelist["$log->info"]["operation"]) and
                                   $changelist["$log->info"]["operation"] == "add") {
                            $changelist["$log->info"] = NULL;
                        } else {
@@ -581,7 +581,7 @@ function print_recent_activity($course) {
                 }
             }
         }
-    }    
+    }
 
 
     // If this site uses Library module, then print recent items
@@ -616,7 +616,7 @@ function print_recent_activity($course) {
 
 
 function get_array_of_activities($courseid) {
-// For a given course, returns an array of course activity objects 
+// For a given course, returns an array of course activity objects
 // Each item in the array contains he following properties:
 //  cm - course module id
 //  mod - name of the module (eg forum)
@@ -709,8 +709,8 @@ function get_all_mods($courseid, &$mods, &$modnames, &$modnamesplural, &$modname
 
 
 function get_all_sections($courseid) {
-    
-    return get_records("course_sections", "course", "$courseid", "section", 
+
+    return get_records("course_sections", "course", "$courseid", "section",
                        "section, id, course, summary, sequence, visible");
 }
 
@@ -759,119 +759,6 @@ function set_section_visible($courseid, $sectionnumber, $visibility) {
     }
 }
 
-function print_section_block($heading, $course, $section, $mods, $modnames, $modnamesused, 
-                             $absolute=true, $width="100%") {
-
-    global $CFG, $USER, $THEME;
-    static $groupbuttons;
-    static $isteacher;
-    static $isediting;
-    static $ismoving;
-    static $strmovehere;
-    static $strmovefull;
-    static $strcancel;
-    static $stractivityclipboard;
-
-    if (!isset($isteacher)) {
-        $groupbuttons = $course->groupmode and !$course->groupmodeforce;
-        $isteacher = isteacher($course->id);
-        $isediting = isediting($course->id);
-        $ismoving = ismoving($course->id);
-        if ($ismoving) {
-            $strmovehere = get_string("movehere");
-            $strmovefull = strip_tags(get_string("movefull", "", "'$USER->activitycopyname'"));
-            $strcancel= get_string("cancel");
-            $stractivityclipboard = $USER->activitycopyname;
-        }
-    }
-
-    $modinfo = unserialize($course->modinfo);
-    $moddata = array();
-    $modicon = array();
-    $editbuttons = "";
-
-    if ($ismoving) {
-        $modicon[] = "&nbsp;<img align=bottom src=\"$CFG->pixpath/t/move.gif\" height=\"11\" width=\"11\">";
-        $moddata[] = "$USER->activitycopyname&nbsp;(<a href=\"$CFG->wwwroot/course/mod.php?cancelcopy=true\">$strcancel</a>)";
-    }
-
-    if (!empty($section->sequence)) {
-
-        $sectionmods = explode(",", $section->sequence);
-
-
-        foreach ($sectionmods as $modnumber) {
-            if (empty($mods[$modnumber])) {
-                continue;
-            }
-            $mod = $mods[$modnumber];
-            if ($isediting and !$ismoving) {
-                if (!$groupbuttons) {
-                    $mod->groupmode = false;
-                }
-                $editbuttons = "<br />".make_editing_buttons($mod, $absolute, true);
-            } else {
-                $editbuttons = "";
-            }
-            if ($mod->visible or $isteacher) {
-                if ($ismoving) {
-                    if ($mod->id == $USER->activitycopy) {
-                        continue;
-                    }
-                    $modicon[] = "";
-                    $moddata[] = "<a title=\"$strmovefull\"".
-                                 " href=\"$CFG->wwwroot/course/mod.php?moveto=$mod->id\">".
-                                 "<img height=\"16\" width=\"80\" src=\"$CFG->pixpath/movehere.gif\" ".
-                                 " alt=\"$strmovehere\" border=\"0\"></a>";
-                }
-                $instancename = urldecode($modinfo[$modnumber]->name);
-                if (!empty($CFG->filterall)) {
-                    $instancename = filter_text("<nolink>$instancename</nolink>", $course->id);
-                }
-                $linkcss = $mod->visible ? "" : " class=\"dimmed\" ";
-                if (!empty($modinfo[$modnumber]->extra)) {
-                    $extra = urldecode($modinfo[$modnumber]->extra);
-                } else {
-                    $extra = "";
-                }
-
-                if (!empty($modinfo[$modnumber]->icon)) {
-                    $icon = "$CFG->pixpath/".urldecode($modinfo[$modnumber]->icon);
-                } else {
-                    $icon = "$CFG->modpixpath/$mod->modname/icon.gif";
-                }
-
-                if ($mod->modname == "label") {
-                    $modicon[] = "";
-                    $moddata[] = format_text($extra, FORMAT_HTML).$editbuttons;
-                } else {
-                    $modicon[] = "<img src=\"$icon\"".
-                                 " height=\"16\" width=\"16\" alt=\"$mod->modfullname\">";
-                    $moddata[] = "<a title=\"$mod->modfullname\" $linkcss $extra".
-                                 "href=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\">$instancename</a>".
-                                 "$editbuttons";
-                }
-            }
-        }
-    }
-    if ($ismoving) {
-        $modicon[] = "";
-        $moddata[] = "<a title=\"$strmovefull\"".
-                     " href=\"$CFG->wwwroot/course/mod.php?movetosection=$section->id\">".
-                     "<img height=\"16\" width=\"80\" src=\"$CFG->pixpath/movehere.gif\" ".
-                     " alt=\"$strmovehere\" border=\"0\"></a>";
-    }
-    if ($isediting) {
-        $editmenu = popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&amp;section=$section->section&add=", 
-                   $modnames, "section0", "", get_string("add")."...", "mods", get_string("activities"), true);
-        $editmenu = "<div align=right>$editmenu</div>";
-    } else {
-        $editmenu = "";
-    }
-
-    print_side_block($heading, "", $moddata, $modicon, $editmenu, $width);
-}
-
 
 function print_section($course, $section, $mods, $modnamesused, $absolute=false, $width="100%") {
 /// Prints a section full of activity modules
@@ -900,7 +787,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
 
     $modinfo = unserialize($course->modinfo);
 
-    echo "<table width=\"$width\" cellpadding=1 cellspacing=0>\n";
+    echo '<table width="'.$width.'" cellpadding="1" cellspacing="0">';
     if (!empty($section->sequence)) {
 
         $sectionmods = explode(",", $section->sequence);
@@ -1016,199 +903,9 @@ function print_heading_block($heading, $width="100%", $class="headingblock") {
     echo "</td></tr></table>";
 }
 
-function print_side_block($heading="", $content="", $list=NULL, $icons=NULL, $footer="", $width=180) {
-// Prints a nice side block with an optional header.  The content can either 
-// be a block of HTML or a list of text with optional icons.
-    
-    global $THEME;
-
-    print_side_block_start($heading, $width);
-
-    if ($content) {
-        echo "$content";
-        if ($footer) {
-            echo "<center><font size=\"-2\">$footer</font></center>";
-        }
-    } else {
-        echo "<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"2\">";
-        if ($list) {
-            foreach ($list as $key => $string) {
-                echo "<tr bgcolor=\"$THEME->cellcontent2\">";
-                if ($icons) {
-                    echo "<td class=\"sideblocklinks\" valign=\"top\" width=\"16\">".$icons[$key]."</td>";
-                }
-                echo "<td class=\"sideblocklinks\" valign=\"top\" width=\"*\"><font size=\"-1\">$string</font></td>";
-                echo "</tr>";
-            }
-        }
-        if ($footer) {
-            echo "<tr bgcolor=\"$THEME->cellcontent2\">";
-            echo "<td class=\"sideblocklinks\" ";
-            if ($icons) {
-                echo ' colspan="2" ';
-            }
-            echo '>';
-            echo "<center><font size=\"-2\">$footer</font></center>";
-            echo "</td></tr>";
-        }
-        echo "</table>";
-    }
-
-    print_side_block_end();
-}
-
-function print_side_block_start($heading="", $width=180, $class="sideblockmain") {
-// Starts a nice side block with an optional header.
-    
-    global $THEME;
-
-    echo "<table class=\"sideblock\" width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"5\">";
-    if ($heading) {
-        echo "<tr>";
-        echo "<td class=\"sideblockheading\" bgcolor=\"$THEME->cellheading\">$heading</td>";
-        echo "</tr>";
-    }
-    echo "<tr>";
-    echo "<td class=\"$class\" bgcolor=\"$THEME->cellcontent2\">";
-}
-
-function print_side_block_end() {
-    echo "</td></tr>";
-    echo "</table><br />";
-}
-
-
-function print_admin_links ($siteid, $width=180) {
-    global $CFG, $THEME;
-    
-    if (isadmin()) {
-        $moddata[]="<a href=\"$CFG->wwwroot/$CFG->admin/configure.php\">".get_string("configuration")."</a>...";
-        $modicon[]="<img src=\"$CFG->pixpath/i/admin.gif\" height=16 width=16 alt=\"\" />";
-
-        $moddata[]="<a href=\"$CFG->wwwroot/$CFG->admin/users.php\">".get_string("users")."</a>...";
-        $modicon[]="<img src=\"$CFG->pixpath/i/users.gif\" height=16 width=16 alt=\"\" />";
-    }
-
-    if (iscreator()) {
-        $moddata[]="<a href=\"$CFG->wwwroot/course/index.php?edit=on\">".get_string("courses")."</a>";
-        $modicon[]="<img src=\"$CFG->pixpath/i/course.gif\" height=16 width=16 alt=\"\" />";
-        $fulladmin = "";
-    }
-
-    if (isadmin()) {
-        $moddata[]="<a href=\"$CFG->wwwroot/course/log.php?id=$siteid\">".get_string("logs")."</a>";
-        $modicon[]="<img src=\"$CFG->pixpath/i/log.gif\" height=16 width=16 alt=\"\" />";
-
-        $moddata[]="<a href=\"$CFG->wwwroot/files/index.php?id=$siteid\">".get_string("sitefiles")."</a>";
-        $modicon[]="<img src=\"$CFG->pixpath/i/files.gif\" height=16 width=16 alt=\"\" />";
-
-        if (file_exists("$CFG->dirroot/$CFG->admin/$CFG->dbtype")) {
-            $moddata[]="<a href=\"$CFG->wwwroot/$CFG->admin/$CFG->dbtype/frame.php\">".
-                        get_string("managedatabase")."</a>";
-            $modicon[]="<img src=\"$CFG->pixpath/i/db.gif\" height=16 width=16 alt=\"\" />";
-        }
-        $fulladmin = "<p><a href=\"$CFG->wwwroot/$CFG->admin/\">".get_string("admin")."</a>...";
-    }
-
-    print_side_block(get_string("administration"), "", $moddata, $modicon, $fulladmin, $width);
-
-    echo "<img src=\"$CFG->wwwroot/pix/spacer.gif\" width=\"$width\" height=1><br>";
-}
-
-function print_course_admin_links($course, $width=180) {
-    global $USER, $CFG, $THEME;
-
-    if (isguest()) {
-        return true;
-    }
-
-    if (isteacher($course->id)) {
-
-        $isteacheredit = isteacheredit($course->id);
-
-        if ($isteacheredit) {
-            $adminicon[]="<img src=\"$CFG->pixpath/i/edit.gif\" height=16 width=16 alt=\"\">";
-            if (isediting($course->id)) {
-                $admindata[]="<a href=\"view.php?id=$course->id&edit=off\">".get_string("turneditingoff")."</a>";
-            } else {
-                $admindata[]="<a href=\"view.php?id=$course->id&edit=on\">".get_string("turneditingon")."</a>";
-            }
-            $admindata[]="<a href=\"edit.php?id=$course->id\">".get_string("settings")."...</a>";
-            $adminicon[]="<img src=\"$CFG->pixpath/i/settings.gif\" height=16 width=16 alt=\"\">";
-
-            if (iscreator() or !empty($CFG->teacherassignteachers)) {
-                if (!$course->teachers) {
-                    $course->teachers = get_string("defaultcourseteachers");
-                }
-                $admindata[]="<a href=\"teacher.php?id=$course->id\">$course->teachers...</a>";
-                $adminicon[]="<img src=\"$CFG->pixpath/i/users.gif\" height=16 width=16 alt=\"\">";
-            }
-
-            if (!$course->students) {
-                $course->students = get_string("defaultcoursestudents");
-            }
-            $admindata[]="<a href=\"student.php?id=$course->id\">$course->students...</a>";
-            $adminicon[]="<img src=\"$CFG->pixpath/i/users.gif\" height=16 width=16 alt=\"\">";
-
-            $admindata[]="<a href=\"$CFG->wwwroot/backup/backup.php?id=$course->id\">".get_string("backup")."...</a>";
-            $adminicon[]="<img src=\"$CFG->pixpath/i/backup.gif\" height=16 width=16 alt=\"\">";
-        
-            $admindata[]="<a href=\"$CFG->wwwroot/files/index.php?id=$course->id&wdir=/backupdata\">".get_string("restore")."...</a>";
-            $adminicon[]="<img src=\"$CFG->pixpath/i/restore.gif\" height=16 width=16 alt=\"\">";
-            $admindata[]="<a href=\"scales.php?id=$course->id\">".get_string("scales")."...</a>";
-            $adminicon[]="<img src=\"$CFG->pixpath/i/scales.gif\" height=16 width=16 alt=\"\">";
-        }
-    
-        $admindata[]="<a href=\"grades.php?id=$course->id\">".get_string("grades")."...</a>";
-        $adminicon[]="<img src=\"$CFG->pixpath/i/grades.gif\" height=16 width=16 alt=\"\">";
-    
-        $admindata[]="<a href=\"log.php?id=$course->id\">".get_string("logs")."...</a>";
-        $adminicon[]="<img src=\"$CFG->pixpath/i/log.gif\" height=16 width=16 alt=\"\">";
-
-        if ($isteacheredit) {
-            $admindata[]="<a href=\"$CFG->wwwroot/files/index.php?id=$course->id\">".get_string("files")."...</a>";
-            $adminicon[]="<img src=\"$CFG->pixpath/i/files.gif\" height=16 width=16 alt=\"\">";
-        }
-
-        $admindata[]="<a href=\"$CFG->wwwroot/doc/view.php?id=$course->id&file=teacher.html\">".get_string("help")."...</a>";
-        $adminicon[]="<img src=\"$CFG->modpixpath/resource/icon.gif\" height=16 width=16 alt=\"\">";
-
-        if ($teacherforum = forum_get_course_forum($course->id, "teacher")) {
-            $admindata[]="<a href=\"$CFG->wwwroot/mod/forum/view.php?f=$teacherforum->id\">".get_string("nameteacher","forum")."</a>";
-            $adminicon[]="<img src=\"$CFG->modpixpath/forum/icon.gif\" height=16 width=16 alt=\"\">";
-        }
-
-    } else if (!isguest()) {  // Students menu
-        if ($course->showgrades) {
-            $admindata[]="<a href=\"grade.php?id=$course->id\">".get_string("grades")."...</a>";
-            $adminicon[]="<img src=\"$CFG->pixpath/i/grades.gif\" height=16 width=16 alt=\"\">";
-        }
-        if ($course->showreports) {
-            $admindata[]="<a href=\"user.php?id=$course->id&user=$USER->id\">".get_string("activityreport")."...</a>";
-            $adminicon[]="<img src=\"$CFG->pixpath/i/report.gif\" height=16 width=16 alt=\"\">";
-        }
-        if (is_internal_auth()) {
-            $admindata[]="<a href=\"$CFG->wwwroot/login/change_password.php?id=$course->id\">".
-                          get_string("changepassword")."...</a>";
-            $adminicon[]="<img src=\"$CFG->pixpath/i/user.gif\" height=16 width=16 alt=\"\">";
-        } else if ($CFG->changepassword) {
-            $admindata[]="<a href=\"$CFG->changepassword\">".get_string("changepassword")."...</a>";
-            $adminicon[]="<img src=\"$CFG->pixpath/i/user.gif\" height=16 width=16 alt=\"\">";
-        }
-        if ($CFG->allowunenroll) {
-            $admindata[]="<a href=\"unenrol.php?id=$course->id\">".get_string("unenrolme", "", $course->shortname)."...</a>";
-            $adminicon[]="<img src=\"$CFG->pixpath/i/user.gif\" height=16 width=16 alt=\"\">";
-        }
-    } 
-
-    if (!empty($admindata)) {
-        print_side_block(get_string("administration"), "", $admindata, $adminicon, "", $width);
-    }
-}
-
 
 function make_categories_list(&$list, &$parents, $category=NULL, $path="") {
-/// Given an empty array, this function recursively travels the 
+/// Given an empty array, this function recursively travels the
 /// categories, building up a nice list for display.  It also makes
 /// an array that list all the parents for each category.
 
@@ -1231,14 +928,14 @@ function make_categories_list(&$list, &$parents, $category=NULL, $path="") {
                 }
                 $parents[$cat->id][] = $category->id;
             }
-            make_categories_list($list, $parents, $cat, $path);         
+            make_categories_list($list, $parents, $cat, $path);
         }
     }
 }
 
 
 function print_whole_category_list($category=NULL, $displaylist=NULL, $parentslist=NULL, $depth=-1) {
-/// Recursive function to print out all the categories in a nice format 
+/// Recursive function to print out all the categories in a nice format
 /// with or without courses included
     global $CFG;
     if (isset($CFG->max_category_depth)&&($depth >= $CFG->max_category_depth)) {
@@ -1255,7 +952,7 @@ function print_whole_category_list($category=NULL, $displaylist=NULL, $parentsli
         } else {
             return;  // Don't bother printing children of invisible categories
         }
-        
+
     } else {
         $category->id = "0";
     }
@@ -1274,7 +971,7 @@ function print_whole_category_list($category=NULL, $displaylist=NULL, $parentsli
             $down = $last ? false : true;
             $first = false;
 
-            print_whole_category_list($cat, $displaylist, $parentslist, $depth + 1);         
+            print_whole_category_list($cat, $displaylist, $parentslist, $depth + 1);
         }
     }
 }
@@ -1315,7 +1012,7 @@ function print_category_info($category, $depth) {
             print_spacer(10, $indent);
             echo "</td>";
         }
-    
+
         echo "<td valign=\"top\">$catimage</td>";
         echo "<td valign=\"top\" width=\"100%\" class=\"categoryname\">";
         echo "<a $catlinkcss href=\"$CFG->wwwroot/course/category.php?id=$category->id\">$category->name</a>";
@@ -1343,8 +1040,8 @@ function print_category_info($category, $depth) {
                     echo "<img alt=\"\" height=16 width=18 border=0 src=\"$CFG->pixpath/spacer.gif\">";
                 }
                 if ($course->summary) {
-                    link_to_popup_window ("/course/info.php?id=$course->id", "courseinfo", 
-                                          "<img hspace=1 alt=\"$strsummary\" height=16 width=16 border=0 src=\"$CFG->pixpath/i/info.gif\">", 
+                    link_to_popup_window ("/course/info.php?id=$course->id", "courseinfo",
+                                          "<img hspace=1 alt=\"$strsummary\" height=16 width=16 border=0 src=\"$CFG->pixpath/i/info.gif\">",
                                            400, 500, $strsummary);
                 } else {
                     echo "<img alt=\"\" height=16 width=18 border=0 src=\"$CFG->pixpath/spacer.gif\">";
@@ -1360,7 +1057,7 @@ function print_category_info($category, $depth) {
             print_spacer(10, $indent);
             echo "</td>";
         }
-    
+
         echo "<td valign=\"top\" width=\"100%\" class=\"categoryname\">";
         echo "<a $catlinkcss href=\"$CFG->wwwroot/course/category.php?id=$category->id\">$category->name</a>";
         echo "</td>";
@@ -1369,68 +1066,7 @@ function print_category_info($category, $depth) {
     echo "\n</table>\n";
 }
 
-function print_courses_sideblock($category=0, $width="100%") {
-    global $CFG, $THEME, $USER;
 
-    if (empty($THEME->custompix)) {
-        $icon  = "<img src=\"$CFG->wwwroot/pix/i/course.gif\"".
-                 " height=\"16\" width=\"16\" alt=\"".get_string("course")."\">";
-    } else {
-        $icon  = "<img src=\"$CFG->wwwroot/theme/$CFG->theme/pix/i/course.gif\"".
-                 " height=\"16\" width=\"16\" alt=\"".get_string("course")."\">";
-    }
-
-    if (isset($USER->id) and !isadmin()) {    // Just print My Courses
-        if ($courses = get_my_courses($USER->id)) {
-            foreach ($courses as $course) {
-                if (!$course->category) {
-                    continue;
-                }
-                $linkcss = $course->visible ? "" : " class=\"dimmed\" ";
-                $moddata[]="<a $linkcss title=\"$course->shortname\" ".
-                           "href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->fullname</a>";
-                $modicon[]=$icon;
-            }
-            $fulllist = "<p><a href=\"$CFG->wwwroot/course/index.php\">".get_string("fulllistofcourses")."</a>...</p>";
-            print_side_block( get_string("mycourses"), "", $moddata, $modicon, $fulllist, $width);
-            return;
-        }
-    }
-
-    $categories = get_categories("0");  // Parent = 0   ie top-level categories only
-    if (count($categories) > 1) {     // Just print top level category links
-        foreach ($categories as $category) {
-            $linkcss = $category->visible ? "" : " class=\"dimmed\" ";
-            $moddata[]="<a $linkcss href=\"$CFG->wwwroot/course/category.php?id=$category->id\">$category->name</a>";
-            $modicon[]=$icon;
-        }
-        $fulllist = "<p><a href=\"$CFG->wwwroot/course/\">".get_string("searchcourses")."</a>...</p>";
-        $blocktitle = get_string("categories");
-
-    } else {                          // Just print course names of single category
-        $category = array_shift($categories);
-        $courses = get_courses($category->id);
-
-        if ($courses) {
-            foreach ($courses as $course) {
-                $linkcss = $course->visible ? "" : " class=\"dimmed\" ";
-                $moddata[]="<a $linkcss title=\"$course->shortname\" ".
-                           "href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->fullname</a>";
-                $modicon[]=$icon;
-            }   
-            $fulllist = "<p><a href=\"$CFG->wwwroot/course/index.php\">".get_string("fulllistofcourses")."</a>...</p>";
-        } else {
-            $moddata = array();
-            $modicon = array();
-            $fulllist = get_string("nocoursesyet");
-        }
-        $blocktitle = get_string("courses");
-    }
-
-    print_side_block($blocktitle, "", $moddata, $modicon, $fulllist, $width);
-}
-
-    
 function print_courses($category, $width="100%") {
 /// Category is 0 (for all courses) or an object
 
@@ -1477,7 +1113,7 @@ function print_course($course, $width="100%") {
     echo "<table width=\"100%\">";
     echo "<tr valign=top>";
     echo "<td valign=top width=\"50%\" class=\"courseboxinfo\">";
-    echo "<p><font size=3><b><a title=\"".get_string("entercourse")."\" 
+    echo "<p><font size=3><b><a title=\"".get_string("entercourse")."\"
               $linkcss href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->fullname</a></b></font></p>";
     if ($teachers = get_course_teachers($course->id)) {
         echo "<p><font size=\"1\">\n";
@@ -1622,13 +1258,13 @@ function add_mod_to_section($mod, $beforemod=NULL) {
         } else {
             $newsequence = "$section->sequence,$mod->coursemodule";
         }
-        
+
         if (set_field("course_sections", "sequence", $newsequence, "id", $section->id)) {
             return $section->id;     // Return course_sections ID that was used.
         } else {
             return 0;
         }
-       
+
     } else {  // Insert a new record
         $section->course = $mod->course;
         $section->section = $mod->section;
@@ -1681,7 +1317,7 @@ function delete_mod_from_section($mod, $section) {
         } else {
             return false;
         }
-       
+
     }
     return false;
 }
@@ -1732,7 +1368,7 @@ function moveto_module($mod, $section, $beforemod=NULL) {
 /// Update module itself if necessary
 
     if ($mod->section != $section->id) {
-        $mod->section = $section->id; 
+        $mod->section = $section->id;
 
         if (!update_record("course_modules", $mod)) {
             return false;
@@ -1792,7 +1428,7 @@ function move_module($cm, $move) {
 
             } else {               // Push onto end of previous section
                 $prevsectionnumber = $thissection->section - 1;
-                if (! $prevsection = get_record("course_sections", "course", "$thissection->course", 
+                if (! $prevsection = get_record("course_sections", "course", "$thissection->course",
                                                                    "section", "$prevsectionnumber")) {
                     error("Previous section ($prevsection->id) doesn't exist");
                 }
@@ -1824,7 +1460,7 @@ function move_module($cm, $move) {
             $swap = $mods[$thepos-1];
             $mods[$thepos-1] = $mods[$thepos];
             $mods[$thepos] = $swap;
-            
+
             $newsequence = implode(",", $mods);
             if (! set_field("course_sections", "sequence", $newsequence, "id", $thissection->id)) {
                 error("This section could not be updated");
@@ -1836,7 +1472,7 @@ function move_module($cm, $move) {
 
         if ($last) {
             $nextsectionnumber = $thissection->section + 1;
-            if ($nextsection = get_record("course_sections", "course", "$thissection->course", 
+            if ($nextsection = get_record("course_sections", "course", "$thissection->course",
                                                                "section", "$nextsectionnumber")) {
 
                 if (!empty($nextsection->sequence)) {
@@ -1868,7 +1504,7 @@ function move_module($cm, $move) {
             $swap = $mods[$thepos+1];
             $mods[$thepos+1] = $mods[$thepos];
             $mods[$thepos] = $swap;
-            
+
             $newsequence = implode(",", $mods);
             if (! set_field("course_sections", "sequence", $newsequence, "id", $thissection->id)) {
                 error("This section could not be updated");

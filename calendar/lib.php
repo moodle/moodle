@@ -922,10 +922,20 @@ function calendar_session_vars() {
         $SESSION->cal_show_course = true;
     }
     if(!isset($SESSION->cal_show_user)) {
-        $SESSION->cal_show_user = isset($USER->id) ? $USER->id : false;
+        $SESSION->cal_show_user = true;
     }
     if(empty($SESSION->cal_courses_shown)) {
         $SESSION->cal_courses_shown = calendar_get_default_courses(true);
+    }
+    if(empty($SESSION->cal_users_shown)) {
+        // The empty() instead of !isset() here makes a whole world of difference,
+        // as it will automatically change to the user's id when the user first logs
+        // in. With !isset(), it would never do that.
+        $SESSION->cal_users_shown = isset($USER->id) ? $USER->id : false;
+    }
+    else if(is_numeric($SESSION->cal_users_shown) && !empty($USER->id) && $SESSION->cal_users_shown != $USER->id) {
+        // Follow the white rabbit, for example if a teacher logs in as a student
+        $SESSION->cal_users_shown = $USER->id;
     }
 }
 
@@ -987,12 +997,8 @@ function calendar_set_filters(&$courses, &$group, &$user, $courseeventsfrom = NU
     }
 
     if($SESSION->cal_show_user || $ignorefilters) {
-        // This ignores the "which user to see" setting
-        // The functionality to do that does exist, but this was
-        // the most painless way to solve bug 1323. And anyway,
-        // it wasn't being used anywhere.
-        $user = $USER->id;
-        //$user = $SESSION->cal_show_user;
+        // This doesn't work for arrays yet (maybe someday it will)
+        $user = $SESSION->cal_users_shown;
     }
     else {
         $user = false;
@@ -1010,7 +1016,7 @@ function calendar_set_filters(&$courses, &$group, &$user, $courseeventsfrom = NU
         // For each course...
         foreach($groupcourses as $courseid) {
             // If the user is an editing teacher in there,
-            if(isteacheredit($courseid, $USER->id)) {
+            if(!empty($USER) && isteacheredit($courseid, $USER->id)) {
                 // Show events from all groups
                 if(($grouprecords = get_groups($courseid)) !== false) {
                     $grouparray = array_merge($grouparray, array_keys($grouprecords));
