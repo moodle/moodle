@@ -35,7 +35,7 @@ function quiz_upgrade($oldversion) {
                                  questiontext text NOT NULL default '',
                                  answertext varchar(255) NOT NULL default ''
                               );");
-        modify_database ("", "CREATE INDEX question_prefix_quiz_match_sub_idx ON prefix_quiz_match_sub (question);");
+        modify_database ("", "CREATE INDEX prefix_quiz_match_sub_question_idx ON prefix_quiz_match_sub (question);");
 
         modify_database ("", "CREATE TABLE prefix_quiz_multichoice (
                                  id SERIAL PRIMARY KEY,
@@ -44,7 +44,7 @@ function quiz_upgrade($oldversion) {
                                  answers varchar(255) NOT NULL default '',
                                  single integer NOT NULL default '0'
                                );");
-        modify_database ("", "CREATE INDEX question_quiz_multichoice_idx ON prefix_quiz_multichoice (question);");
+        modify_database ("", "CREATE INDEX prefix_quiz_multichoice_question_idx ON prefix_quiz_multichoice (question);");
     }
 
     if ($oldversion < 2003040901) {
@@ -57,7 +57,7 @@ function quiz_upgrade($oldversion) {
                                  question integer NOT NULL default '0',
                                  subquestions varchar(255) NOT NULL default ''
                                );");
-        modify_database ("", "CREATE INDEX question ON prefix_quiz_match (question);");
+        modify_database ("", "CREATE INDEX prefix_quiz_match_question_idx ON prefix_quiz_match (question);");
     }
     return true;
 }

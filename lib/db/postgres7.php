@@ -123,8 +123,8 @@ function main_upgrade($oldversion=0) {
 
     if ($oldversion < 2003042700) {
         /// Changing to multiple indexes
-        execute_sql(" CREATE INDEX coursemoduleaction ON {$CFG->prefix}log (course,module,action) ");
-        execute_sql(" CREATE INDEX courseuserid ON {$CFG->prefix}log (course,userid) ");
+        execute_sql(" CREATE INDEX {$CFG->prefix}log_coursemoduleaction_idx ON {$CFG->prefix}log (course,module,action) ");
+        execute_sql(" CREATE INDEX {$CFG->prefix}log_courseuserid_idx ON {$CFG->prefix}log (course,userid) ");
     }
 
     if ($oldversion < 2003042801) {
@@ -135,7 +135,7 @@ function main_upgrade($oldversion=0) {
                          display integer NOT NULL default '0'
                       )");
 
-        execute_sql("CREATE INDEX courseuserid ON {$CFG->prefix}course_display (course,userid)");
+        execute_sql("CREATE INDEX {$CFG->prefix}course_display_courseuserid_idx ON {$CFG->prefix}course_display (course,userid)");
     }
                                                             
     return $result;

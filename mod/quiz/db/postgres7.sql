@@ -100,7 +100,7 @@ CREATE TABLE prefix_quiz_match (
   subquestions varchar(255) NOT NULL default ''
 );
 # --------------------------------------------------------
-CREATE INDEX question_prefix_quiz_match_idx ON prefix_quiz_match (question);
+CREATE INDEX prefix_quiz_match_question_idx ON prefix_quiz_match (question);
 
 #
 # Table structure for table `quiz_match_sub`
@@ -113,7 +113,7 @@ CREATE TABLE prefix_quiz_match_sub (
   answertext varchar(255) NOT NULL default ''
 );
 # --------------------------------------------------------
-CREATE INDEX question_prefix_quiz_match_sub_idx ON prefix_quiz_match_sub (question);
+CREATE INDEX prefix_quiz_match_sub_question_idx ON prefix_quiz_match_sub (question);
 
 #
 # Table structure for table quiz_multichoice
@@ -127,7 +127,7 @@ CREATE TABLE prefix_quiz_multichoice (
   single integer NOT NULL default '0'
 );
 # --------------------------------------------------------
-CREATE INDEX question_quiz_multichoice_idx ON prefix_quiz_multichoice (question);
+CREATE INDEX prefix_quiz_multichoice_question_idx ON prefix_quiz_multichoice (question);
 
 #
 # Table structure for table quiz_question_grades
@@ -190,7 +190,7 @@ CREATE TABLE prefix_quiz_shortanswer (
   usecase integer NOT NULL default '0'
 );
 # --------------------------------------------------------
-CREATE INDEX question_prefix_quiz_shortanswer_idx ON prefix_quiz_shortanswer (question);
+CREATE INDEX prefix_quiz_shortanswer_question_idx ON prefix_quiz_shortanswer (question);
 
 #
 # Table structure for table quiz_truefalse
@@ -202,7 +202,7 @@ CREATE TABLE prefix_quiz_truefalse (
   trueanswer integer NOT NULL default '0',
   falseanswer integer NOT NULL default '0'
 );
-CREATE INDEX question_prefix_quiz_truefalse_idx ON prefix_quiz_truefalse (question);
+CREATE INDEX prefix_quiz_truefalse_question_idx ON prefix_quiz_truefalse (question);
 
 
 INSERT INTO prefix_log_display VALUES ('quiz', 'view', 'quiz', 'name');
