@@ -43,7 +43,7 @@
 
     if (is_uploaded_file($newfile['tmp_name']) and $newfile['size'] > 0) {
         if ($newfile['size'] > $assignment->maxbytes) {
-            notify("Sorry, but that file is too big (limit is $assignment->maxbytes bytes)");
+            notify(get_string("uploadfiletoobig", "assignment", $assignment->maxbytes));
         } else {
             $newfile_name = clean_filename($newfile['name']);
             if ($newfile_name) {
@@ -54,7 +54,7 @@
                         if (update_record("assignment_submissions", $submission)) {
                             print_heading(get_string("uploadsuccess", "assignment", $newfile_name) );
                         } else {
-                            notify("File was uploaded OK but could not update your submission!");
+                            notify(get_string("uploadfailnoupdate", "assignment"));
                         }
                     } else {
                         $newsubmission->assignment   = $assignment->id;
@@ -65,18 +65,18 @@
                         if (insert_record("assignment_submissions", $newsubmission)) {
                             print_heading(get_string("uploadsuccess", "assignment", $newfile_name) );
                         } else {
-                            notify("'$newfile_name' was uploaded OK but submission did not register!");
+                            notify(get_string("uploadnotregistered", "assignment", $newfile_name) );
                         }
                     }
                 } else {
-                    notify("An error happened while saving the file on the server");
+                    notify(get_string("uploaderror", "assignment") );
                 }
             } else {
-                notify("This file had a wierd filename and couldn't be uploaded");
+                notify(get_string("uploadbadname", "assignment") );
             }
         }
     } else {
-        notify("No file was found - are you sure you selected one?");
+        notify(get_string("uploadnofilefound", "assignment") );
     }
     
     print_continue("view.php?a=$assignment->id");
