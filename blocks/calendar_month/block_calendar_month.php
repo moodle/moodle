@@ -5,7 +5,7 @@ class CourseBlock_calendar_month extends MoodleBlock {
         $this->title = get_string('calendar', 'calendar');
         $this->content_type = BLOCK_TYPE_TEXT;
         $this->course = $course;
-        $this->version = 2004041000;
+        $this->version = 2004052000;
     }
 
     function get_content() {
@@ -36,7 +36,7 @@ class CourseBlock_calendar_month extends MoodleBlock {
         // We 'll need this later
         calendar_set_referring_course($courseshown);
 
-        if($courseshown !== false) {
+        if($courseshown !== false && $SESSION->cal_show_course !== false) {
             // By default, the course filter will show this course only
             $SESSION->cal_show_course = $courseshown;
         }
