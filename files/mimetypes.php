@@ -12,6 +12,7 @@ function mimeinfo($element, $filename) {
         "html" => array ("type"=>"text/html", "icon"=>"html.gif"),
         "htm"  => array ("type"=>"text/html", "icon"=>"html.gif"),
         "txt"  => array ("type"=>"text/plain", "icon"=>"text.gif"),
+        "php"  => array ("type"=>"text/plain", "icon"=>"text.gif"),
         "wav"  => array ("type"=>"audio/wav", "icon"=>"audio.gif"),
         "mp3"  => array ("type"=>"audio/mp3", "icon"=>"audio.gif"),
         "au"   => array ("type"=>"audio/au", "icon"=>"audio.gif"),
