@@ -1,3 +1,152 @@
+2002-07-24 Wednesday 02:02  martin
+
+	* mod/journal/: user.php, view.php: Formatting fixes for ratings
+
+2002-07-24 Wednesday 01:56  martin
+
+	* mod/journal/: report.php, view.php: Allow teachers to be marked,
+	and allow ratings to be ignored
+
+2002-07-24 Wednesday 01:04  martin
+
+	* course/user.php, mod/discuss/user.php, mod/journal/user.php,
+	mod/reading/user.php: Fixes to Activity reports
+
+2002-07-24 Wednesday 00:48  martin
+
+	* course/user.php, lang/en/strings.php, user/index.php:
+	Improvements to activity reports
+
+2002-07-24 Wednesday 00:25  martin
+
+	* mod/reading/user.php: typo
+
+2002-07-24 Wednesday 00:24  martin
+
+	* course/lib.php, course/topics.php, course/user.php,
+	course/view.php, course/weeks.php, lang/en/strings.php,
+	mod/discuss/lib.php, mod/discuss/user.php, mod/journal/user.php,
+	mod/reading/user.php: Part of "contributions" overhaul in
+	course/user.php
+
+2002-07-21 Sunday 16:34  martin
+
+	* help.php, lang/en/strings.php, lang/en/page/help.questions.php,
+	lib/moodlelib.php, lib/weblib.php, mod/discuss/post.html,
+	mod/discuss/lang/en/strings.php, user/edit.html: Improvements to
+	the help system
+
+2002-07-21 Sunday 03:11  martin
+
+	* mod/reading/view.php: More tweaks to summary display
+
+2002-07-21 Sunday 03:08  martin
+
+	* mod/reading/view.php: tweaking summary display on frames
+
+2002-07-21 Sunday 02:50  martin
+
+	* course/: topics.php, view.php, weeks.php: Doesn't display
+	discussions AND forums in the Activities
+
+2002-07-21 Sunday 02:20  martin
+
+	* course/topics.php, course/weeks.php, lib/moodlelib.php,
+	mod/choice/index.php, mod/forum/index.php, mod/journal/index.php,
+	mod/reading/index.php, mod/survey/index.php: Slight formatting
+	tweaks (forum index)
+
+2002-07-21 Sunday 01:56  martin
+
+	* mod/forum/: index.php, lib.php, db/mysql.sql: Changed listing of
+	forums
+
+2002-07-21 Sunday 01:20  martin
+
+	* mod/reading/view.php: Trying summaries back again in frameset
+
+2002-07-21 Sunday 00:04  martin
+
+	* lang/en/strings.php: additions
+
+2002-07-19 Friday 20:18  martin
+
+	* lang/en/strings.php: Fixed welcome email
+
+2002-07-19 Friday 20:18  martin
+
+	* course/enrol.php: Fixed formatting of welcome email
+
+2002-07-19 Friday 20:11  martin
+
+	* course/topics.php: typo
+
+2002-07-19 Friday 20:11  martin
+
+	* course/topics.php: Altered blink to make it less annoying
+
+2002-07-19 Friday 20:08  martin
+
+	* course/topics.php: Make 'Edit profile" link blink, as a reminder,
+	if not used yet
+
+2002-07-19 Friday 20:01  martin
+
+	* course/edit.html, course/edit.php, course/enrol.php,
+	lang/en/strings.php, login/confirm.php, login/signup.php: More
+	language changes
+
+2002-07-14 Sunday 21:32  martin
+
+	* mod/forum/: subscribers.php, view.php, lang/en/strings.php: Added
+	ability for teacher to see subscribers for each forum
+
+2002-07-12 Friday 21:29  martin
+
+	* login/signup.php: Format tweak
+
+2002-07-12 Friday 21:25  martin
+
+	* lang/en/strings.php, login/signup_form.php, mod/discuss/lib.php,
+	mod/discuss/lang/en/strings.php: Small language-related changes
+
+2002-07-11 Thursday 13:30  martin
+
+	* index.php, lang/en/strings.php, lib/weblib.php,
+	login/change_password.php, login/change_password_form.html,
+	login/confirm.php, login/forgot_password.php,
+	login/forgot_password_change.html, login/forgot_password_form.html,
+	login/index.php, login/index_confirm.html, login/index_form.html,
+	login/signup.php, login/signup_confirm.html, login/signup_form.php,
+	user/edit.html, user/edit.php: Changes related to
+	internationalision strings and printing them
+
+2002-07-11 Thursday 13:30  martin
+
+	* admin/index.php, admin/site.php, admin/user.php, course/edit.php,
+	course/enrol.php, course/lib.php, lib/moodlelib.php: Consistent use
+	of get_site() instead of checking course->category directly
+
+2002-07-10 Wednesday 23:28  martin
+
+	* mod/discuss/search.php: Searches now respect teacher-only forums
+
+2002-07-10 Wednesday 23:26  martin
+
+	* mod/forum/index.php: Added search box here
+
+2002-07-10 Wednesday 23:17  martin
+
+	* course/weeks.php: Fixed week zooming
+
+2002-07-08 Monday 20:37  martin
+
+	* mod/reading/lang/en/strings.php: Added language strings
+
+2002-07-06 Saturday 14:34  martin
+
+	* CHANGES: Daily changes
+
 2002-07-06 Saturday 12:07  martin
 
 	* mod/: discuss/post.html, survey/edit_form.html,
