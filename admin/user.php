@@ -103,7 +103,7 @@
                      "user.php?delete=$delete&confirm=".md5($delete), "user.php");
 
                 exit;
-            } else {
+            } else if (!$user->deleted) {
                 $user->deleted = "1";
                 $user->username = $user->email;  // Remember it just in case
                 $user->email = "";               // Clear this field to free it up
