@@ -32,13 +32,7 @@ function print_recent_selector_form($course, $advancedfilter=0, $selecteduser=0,
         // Get all the possible users
         $users = array();
 
-        if ($course->category) {
-            $courseusers = get_course_users($course->id);
-        } else {
-            $courseusers = get_site_users("u.lastaccess DESC", "u.id, u.firstname, u.lastname");
-        }
-
-        if ($courseusers) {
+        if ($courseusers = get_course_users($course->id, '', '', 'u.id, u.firstname, u.lastname')) {
             foreach ($courseusers as $courseuser) {
                 $users[$courseuser->id] = fullname($courseuser, $isteacher);
             }
@@ -266,9 +260,8 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate="today"
                    'WHERE us.course='.$course->id.' AND gm.groupid='.$selectedgroup.
                    ' AND (gm.userid=us.userid OR gm.userid=ut.userid) AND gm.userid=u.id';
             $courseusers = get_records_sql($sql); 
-        }
-        else {
-            $courseusers = get_course_users($course->id);
+        } else {
+            $courseusers = get_course_users($course->id, '', '', 'u.id, u.firstname, u.lastname');
         }
     } else {
         $courseusers = get_site_users("u.lastaccess DESC", "u.id, u.firstname, u.lastname");
