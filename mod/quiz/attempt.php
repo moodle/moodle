@@ -170,7 +170,7 @@
 
     print_heading(get_string("attempt", "quiz", $numattempts));
 
-    print_simple_box($quiz->intro, "CENTER");
+    print_simple_box(text_to_html($quiz->intro), "CENTER");
 
 
 /// Print all the questions
