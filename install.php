@@ -281,7 +281,7 @@ if ($nextstage == 5) {
 
     $str .= '$CFG->dbtype    = \''.$INSTALL['dbtype']."';\r\n";
     $str .= '$CFG->dbhost    = \''.$INSTALL['dbhost']."';\r\n";
-    if (empty($INSTALL['dbname'])) {
+    if (!empty($INSTALL['dbname'])) {
         $str .= '$CFG->dbname    = \''.$INSTALL['dbname']."';\r\n";
         $str .= '$CFG->dbuser    = \''.$INSTALL['dbuser']."';\r\n";
         $str .= '$CFG->dbpass    = \''.$INSTALL['dbpass']."';\r\n";
