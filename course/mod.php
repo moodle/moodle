@@ -27,7 +27,7 @@
 
     if (isset($_POST["course"])) {    // add or update form submitted
 
-        if (!isteacher($mod->course)) {
+        if (!isteacheredit($mod->course)) {
             error("You can't modify this course!");
         }
 
@@ -111,7 +111,7 @@
             error("This course module doesn't exist");
         }
 
-        if (!isteacher($cm->course)) {
+        if (!isteacheredit($cm->course)) {
             error("You can't modify this course!");
         }
     
@@ -148,7 +148,7 @@
             }
         }
 
-        if (!isteacher($section->course)) {
+        if (!isteacheredit($section->course)) {
             error("You can't modify this course!");
         }
 
@@ -177,7 +177,7 @@
             error("This course module doesn't exist");
         }
 
-        if (!isteacher($cm->course)) {
+        if (!isteacheredit($cm->course)) {
             error("You can't modify this course!");
         }
    
@@ -199,7 +199,7 @@
             error("This course module doesn't exist");
         }
 
-        if (!isteacher($cm->course)) {
+        if (!isteacheredit($cm->course)) {
             error("You can't modify this course!");
         }
 
@@ -231,7 +231,7 @@
             error("This course module doesn't exist");
         }
 
-        if (!isteacher($cm->course)) {
+        if (!isteacheredit($cm->course)) {
             error("You can't modify this course!");
         }
 
@@ -273,7 +273,7 @@
             error("This course doesn't exist");
         }
 
-        if (!isteacher($course->id)) {
+        if (!isteacheredit($course->id)) {
             error("You can't modify this course!");
         }
 
@@ -329,7 +329,7 @@
             error("This course doesn't exist");
         }
 
-        if (!isteacher($course->id)) {
+        if (!isteacheredit($course->id)) {
             error("You can't modify this course!");
         }
 
@@ -410,7 +410,7 @@
         error("No action was specfied");
     }
 
-    if (!isteacher($course->id)) {
+    if (!isteacheredit($course->id)) {
         error("You can't modify this course!");
     }
 
