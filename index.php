@@ -24,7 +24,7 @@
     }
     print_header("$site->fullname", "$site->fullname", "home", "",
                  "<META NAME=\"Description\" CONTENT=\"".stripslashes(strip_tags($site->summary))."\">",
-                 true, $headerbutton);
+                 true, "", $headerbutton);
 
     $side = 180;
 
