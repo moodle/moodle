@@ -12,6 +12,7 @@
 	listallsubmissions
 	listforassessmentstudent
 	listforassessmentteacher
+	updateoverallocation
 	userconfirmdelete
 	userdelete
 	
@@ -244,6 +245,15 @@
 			set_field("workshop", "gradingweight", $gradingweight, "id", "$workshop->id");
 			}
 	
+		// save number of entries in showleaguetable option
+		if ($form->nentries == 'All') {
+			$form->nentries = 99;
+			}
+		set_field("workshop", "showleaguetable", $form->nentries, "id", "$workshop->id");
+		
+		// save the anonymous option
+		set_field("workshop", "anonymous", $form->anonymous, "id", "$workshop->id");
+		
 		// work out what to show in the final grades tables and what to include in the calculation of the final grade
 		// teacher grades?
 		if ($workshop->gradingstrategy and $teacherweight) {
@@ -753,9 +763,13 @@
 				}
 			}
 		echo "</table><br clear=\"all\">\n";
-		workshop_print_league_table($workshop);
-		echo "<br clear=\"all\">\n";
-		print_string("allgradeshaveamaximumof", "workshop", $workshop->grade);
+		if ($workshop->showleaguetable) {
+			workshop_print_league_table($workshop);
+			if ($workshop->anonymous) {
+				echo "<p>".get_string("namesnotshowntostudents", "workshop", $course->students)."</p>\n";
+				}
+			}
+		echo "<p>".get_string("allgradeshaveamaximumof", "workshop", $workshop->grade)."</p>\n";
 		print_continue("view.php?a=$workshop->id");
 		}
 
@@ -767,7 +781,7 @@
 			error("Only teachers can look at this page");
 		}
 
-		if ($workshop->phase != 3) { // is this at the expected phase?
+		if ($workshop->phase != 4) { // is this at the expected phase?
 			print_heading(get_string("assignmentnotinthecorrectphase", "workshop"));
 			print_continue("view.php?a=$workshop->id");
 			}
@@ -822,6 +836,27 @@
 			helpbutton("includeteachersgrade", get_string("includeteachersgrade", "workshop"), "workshop");
 			echo "</TD></TR>\n";
 			echo "</TABLE>\n";
+
+			print_heading_with_help(get_string("leaguetable", "workshop"), "leaguetable", "workshop");
+			echo "<TABLE WIDTH=\"50%\" BORDER=\"1\">\n";
+			echo "<tr><td align=\"right\">".get_string("numberofentries", "workshop").":</td>\n";
+			echo "<TD>";
+			$numbers[22] = 'All';
+		    $numbers[21] = 50;
+		    for ($i=20; $i>=0; $i--) {
+				$numbers[$i] = $i;
+				}
+			$nentries = $workshop->showleaguetable;
+			if ($nentries == 99) {
+				$nentries = 'All';
+				}
+			choose_from_menu($numbers, "nentries", "$nentries", "");
+			echo "</td></tr>\n";
+			echo "<tr><td align=right><p>".get_string("hidenamesfromstudents", "workshop", $course->students)."</p></td><td>\n";
+            $options[0] = get_string("no"); $options[1] = get_string("yes");
+			choose_from_menu($options, "anonymous", $workshop->anonymous, "");
+			echo "</td></tr>\n";
+			echo "</table><br />\n";
 			echo "<INPUT TYPE=submit VALUE=\"".get_string("calculationoffinalgrades", "workshop")."\">\n";
 			echo "</CENTER>";
 			echo "</FORM>\n";
@@ -868,6 +903,23 @@
 		
 		}
 	
+
+	/*************** update over allocation (by teacher) ***************************/
+	elseif ($action == 'updateoverallocation') {
+		
+		if (!isteacher($course->id)) {
+			error("Only teachers can look at this page");
+		}
+
+		$form = (object)$_POST;
+		
+		set_field("workshop", "overallocation", $form->overallocation, "id", $workshop->id);
+		echo "<p align=\"center\"><b>".get_string("overallocation", "workshop").": $form->overallocation</b></p>\n";
+		add_to_log($course->id, "workshop", "over allocation", "view.php?id=$cm->id", $form->overallocation);
+
+		redirect("submissions.php?action=adminlist&id=$cm->id");
+		}
+
 
 	/******************* user confirm delete ************************************/
 	elseif ($action == 'userconfirmdelete' ) {

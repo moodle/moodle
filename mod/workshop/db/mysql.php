@@ -51,6 +51,12 @@ function workshop_upgrade($oldversion) {
 		execute_sql(" ALTER TABLE `{$CFG->prefix}workshop_rubrics` CHANGE `elementid` `elementno` INT(10) UNSIGNED NOT NULL DEFAULT '0'");
 		
 		}
+
+	if ($oldversion < 2003092500) {
+	
+		execute_sql(" ALTER TABLE `{$CFG->prefix}workshop` ADD `overallocation` TINYINT(3) UNSIGNED NOT NULL DEFAULT '0' AFTER `nsassessments`");
+		
+		}
 		
     return true;
 }

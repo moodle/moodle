@@ -84,9 +84,10 @@
 		switch ($workshop->phase) {
 			case 0 :
 			case 1 : $action = 'notavailable'; break;
-			case 2 : $action = 'studentsview'; break;
-			case 3 : $action = 'notavailable'; break;
-			case 4 : $action = 'displayfinalgrade';
+			case 2 :
+			case 3: $action = 'studentsview'; break;
+			case 4 : $action = 'notavailable'; break;
+			case 5 : $action = 'displayfinalgrade';
 			}
 		}
 	else { // it's a guest, oh no!
@@ -94,8 +95,8 @@
 		}
 	
 	
-	/*********************** close workshop for student assessments and submissions (move to phase 3) (for teachers)**/
-	if ($action == 'closeworkshop') {
+	/*********************** alow peer assessments (move to phase 3) (for teachers)**/
+	if ($action == 'allowpeerassessments') {
 
 		if (!isteacher($course->id)) {
 			error("Only teachers can look at this page");
@@ -104,6 +105,19 @@
 		// move tp phase 3
 		set_field("workshop", "phase", 3, "id", "$workshop->id");
 		redirect("view.php?a=$workshop->id", get_string("movingtophase", "workshop", 3));
+		}
+	
+
+	/******************* close workshop for student assessments and submissions (move to phase 4) (for teachers)**/
+	elseif ($action == 'closeworkshop') {
+
+		if (!isteacher($course->id)) {
+			error("Only teachers can look at this page");
+			}
+
+		// move tp phase 4
+		set_field("workshop", "phase", 4, "id", "$workshop->id");
+		redirect("view.php?a=$workshop->id", get_string("movingtophase", "workshop", 4));
 		}
 	
 
@@ -217,8 +231,10 @@
 				}
 			}
 		echo "</TABLE><BR CLEAR=ALL>\n";
-		workshop_print_league_table($workshop);
-		print_string("allgradeshaveamaximumof", "workshop", $workshop->grade);
+		if ($workshop->showleaguetable) {
+			workshop_print_league_table($workshop);
+			}
+		echo "<br />".get_string("allgradeshaveamaximumof", "workshop", $workshop->grade);
 		}
 
 
@@ -229,8 +245,8 @@
 			error("Only teachers can look at this page");
 			}
 
-		set_field("workshop", "phase", 4, "id", "$workshop->id");
-		redirect("view.php?a=$workshop->id", get_string("movingtophase", "workshop", 4));
+		set_field("workshop", "phase", 5, "id", "$workshop->id");
+		redirect("view.php?a=$workshop->id", get_string("movingtophase", "workshop", 5));
 		add_to_log($course->id, "workshop", "display grades", "view.php?a=$workshop->id", "$workshop->id");
 		}
 	
@@ -260,7 +276,7 @@
 		}
 
 
-	/*********************** set up assignemnt (move back to phase 1) (for teachers)***********************/
+	/*********************** set up assignment (move back to phase 1) (for teachers)***********************/
 	elseif ($action == 'setupassignment') {
 
 		if (!isteacher($course->id)) {
@@ -284,6 +300,7 @@
 		// in stage 2? - submit own first attempt
 		else {
 			if ($workshop->ntassessments) { // show assessment the teacher's examples, there may be feedback from teacher
+				print_heading(get_string("yourassessmentsofexamplesfromtheteacher", "workshop", $course->teacher));
 				workshop_list_teacher_submissions($workshop, $USER);
 				}
 			if (!workshop_get_user_submissions($workshop, $USER)) {
@@ -303,11 +320,11 @@
 					// prints a table if there are any submissions which have not been self assessed yet
 					workshop_list_self_assessments($workshop, $USER);
 					}
-				// if student assessments show any to assess...
-				if ($workshop->nsassessments) { // if there are student assessments display them... 
+				// if peer assessments are being done and workshop is in phase 3 then show some  to assess...
+				if ($workshop->nsassessments and ($workshop->phase == 3)) {  
 					workshop_list_student_submissions($workshop, $USER);
 					}
-				// ..and any they have already done...
+				// ..and any they have already done (and have gone cold)...
 				if (workshop_count_user_assessments($workshop, $USER, "student")) {
 					print_heading(get_string("yourassessments", "workshop"));
 					workshop_list_assessed_submissions($workshop, $USER);
@@ -320,9 +337,9 @@
 				// list previous submissions
 				print_heading(get_string("submissions", "workshop"));
 				workshop_list_user_submissions($workshop, $USER);
-				echo "<hr size=\"1\" noshade>";
 				if ($workshop->resubmit) {
 					// if resubmissions allowed print upload form
+					echo "<hr size=\"1\" noshade>";
 					print_heading(get_string("submitassignment", "assignment").":");
 					workshop_print_upload_form($workshop);
 					echo "<hr size=\"1\" noshade>";
@@ -373,9 +390,10 @@
 		workshop_print_assignment_info($workshop);
 		
 		$tabs->names = array("1. ".get_string("phase1", "workshop"), "2. ".get_string("phase2", "workshop", $course->student), 
-			"3. ".get_string("phase3", "workshop"), "4. ".get_string("phase4", "workshop"));
+			"3. ".get_string("phase3", "workshop"), "4. ".get_string("phase4", "workshop"), "5. ".get_string("phase5", "workshop"));
 		$tabs->urls = array("view.php?id=$cm->id&action=setupassignment", 
 			"view.php?id=$cm->id&action=openworkshop",
+			"view.php?id=$cm->id&action=allowpeerassessments",
 			"view.php?id=$cm->id&action=closeworkshop",
 			"view.php?id=$cm->id&action=makefinalgradesavailable");
 		if ($workshop->phase) { // phase 1 or more
@@ -404,6 +422,7 @@
 					break;
 					
 				case 2: // submissions and assessments
+				case 3:
 					if ($workshop->ntassessments) { // if teacher example show student assessments link
 						echo "<p><b><a href=\"assessments.php?id=$cm->id&action=listungradedteachersubmissions\">".
 						  get_string("ungradedassessmentsofteachersubmissions", "workshop", 
@@ -420,7 +439,7 @@
 					helpbutton("gradingsubmissions", get_string("studentsubmissionsforassessment", "workshop"), "workshop");
 					break;
 					
-				case 3: // calculate final grades
+				case 4: // calculate final grades
 					if ($workshop->ntassessments) { // if teacher example show student assessments link
 						echo "<p><b><a href=\"assessments.php?id=$cm->id&action=listungradedteachersubmissions\">".
 						  get_string("ungradedassessmentsofteachersubmissions", "workshop", 
@@ -439,7 +458,7 @@
 						  get_string("calculationoffinalgrades", "workshop")."</a>");
 					break;
 					
-				case 4: // show final grades
+				case 5: // show final grades
 					print_heading("<A HREF=\"submissions.php?id=$cm->id&action=displayfinalgrades\">".
 						  get_string("displayoffinalgrades", "workshop")."</A>");
 			}

@@ -21,6 +21,7 @@ CREATE TABLE `prefix_workshop` (
   `grade` int(10) NOT NULL default '0',
   `ntassessments` tinyint(3) unsigned NOT NULL default '0',
   `nsassessments` tinyint(3) unsigned NOT NULL default '0',
+  `overallocation` tinyint(3) unsigned NOT NULL default '0',
   `timemodified` int(10) unsigned NOT NULL default '0',
   `mergegrades` tinyint(3) unsigned NOT NULL default '0',
   `teacherweight` tinyint(3) unsigned NOT NULL default '5',
