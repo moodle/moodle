@@ -75,15 +75,19 @@
     <td align=right><P><B><? print_string("maximumsize", "assignment") ?>:</B></P></TD>
     <td>
         <?
-        $filesize[10000] = "10kb";
-        $filesize[50000] = "50kb";
-        $filesize[100000] = "100kb";
-        $filesize[500000] = "500kb";
-        $filesize[1000000] = "1000Kb (1Mb)";
-        $filesize[2000000] = "2000Kb (2Mb)";
-        if (!$form->maxbytes) {
-            $form->maxbytes = 500000;
+        $sizelist = array("10Kb", "50Kb", "100Kb", "500Kb", "1Mb", "2Mb", "5Mb", "10Mb", "20Mb", "50Mb");
+        $maxsize = get_max_upload_file_size();
+        foreach ($sizelist as $size) {
+            $sizebytes = get_real_size($size);
+            if ($sizebytes < $maxsize) {
+                $filesize[$sizebytes] = $size;
+            }
         }
+        $filesize[$maxsize] = display_size($maxsize);
+        if (!$form->maxbytes) {
+            $form->maxbytes = get_real_size("500K");
+        }
+        ksort($filesize, SORT_NUMERIC);
         choose_from_menu($filesize, "maxbytes", "$form->maxbytes");
         ?>
     </td>
