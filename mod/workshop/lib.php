@@ -171,7 +171,7 @@ function workshop_delete_instance($id) {
 }
 
 function workshop_user_outline($course, $user, $mod, $workshop) {
-    if ($submission = workshop_get_submission($workshop, $user)) {
+    if ($submission = workshop_get_student_submission($workshop, $user)) {
         
         if ($submission->grade) {
             $result->info = get_string("grade").": $submission->grade";
@@ -183,7 +183,7 @@ function workshop_user_outline($course, $user, $mod, $workshop) {
 }
 
 function workshop_user_complete($course, $user, $mod, $workshop) {
-    if ($submission = workshop_get_submission($workshop, $user)) {
+    if ($submission = workshop_get_student_submission($workshop, $user)) {
         if ($basedir = workshop_file_area($workshop, $user)) {
             if ($files = get_directory_list($basedir)) {
                 $countfiles = count($files)." ".get_string("submissions", "workshop");
@@ -1051,6 +1051,17 @@ function workshop_get_student_submissions($workshop, $order = "title") {
                               AND s.workshopid = $workshop->id
 							  AND s.timecreated > 0
 							  ORDER BY $order");
+}
+
+function workshop_get_student_submission($workshop, $user) {
+// Return a submission for a particular user
+	global $CFG;
+
+    $submission = get_record("workshop_submissions", "workshopid", $workshop->id, "userid", $user->id);
+    if (!empty($submission->timemodified)) {
+        return $submission;
+    }
+    return NULL;
 }
 
 
