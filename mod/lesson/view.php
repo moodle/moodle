@@ -51,6 +51,10 @@
         }
     }
 
+    $formatoptions = NULL;
+    $formatoptions->noclean = true; // Don't clean text
+    $formatoptions->para = false;   // no <p></p>
+
     /************** navigation **************************************/
     if ($action == 'navigation') {
         // display individual pages and their sets of answers
@@ -181,7 +185,9 @@
                 }
             }
             print_heading($page->title);
-            print_simple_box(format_text($page->contents), 'center');
+
+            print_simple_box(format_text($page->contents, FORMAT_HTML, $formatoptions), 'center');
+
             echo "<br />\n";
             // get the answers in a set order, the id order
             if ($answers = get_records("lesson_answers", "pageid", $page->id, "id")) {
@@ -207,8 +213,7 @@
                             echo "<tr><td>";
                             echo "<input type=\"radio\" name=\"answerid\" value=\"{$answer->id}\">";
                             echo "</td><td>";
-                            $options->para = false; // no <p></p>
-                            echo format_text(trim($answer->answer), FORMAT_MOODLE, $options);
+                            echo format_text(trim($answer->answer), FORMAT_MOODLE, $formatoptions);
                             echo "</td></tr>";
                         }
                         echo '</table>';
@@ -229,8 +234,7 @@
                                 echo "<input type=\"radio\" name=\"answerid\" value=\"{$answer->id}\">";
                             }
                             echo "</td><td>";
-                            $options->para = false; // no <p></p>
-                            echo format_text(trim($answer->answer), FORMAT_MOODLE, $options);
+                            echo format_text(trim($answer->answer), FORMAT_MOODLE, $formatoptions);
                             echo "</td></tr>";
                             $i++;
                         }
@@ -500,7 +504,9 @@
                     }
                     echo "</td></tr>\n";
                 echo "<tr><td colspan=\"2\">\n";
-                print_simple_box(format_text($page->contents), "center");
+
+                print_simple_box(format_text($page->contents, FORMAT_HTML, $formatoptions), 'center');
+
                 echo "</td></tr>\n";
                 // get the answers in a set order, the id order
                 if ($answers = get_records("lesson_answers", "pageid", $page->id, "id")) {
