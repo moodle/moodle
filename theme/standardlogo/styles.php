@@ -680,7 +680,7 @@ TD.cal_event_description {
 .cal_popup_close {
 	font-size: 75%;
 	font-weight: bold;
-	font-family: Tahoma, Helvetica, sans-serif;
+    font-family: sans-serif;
 	margin-right: 5px;
 }
 
@@ -696,3 +696,28 @@ A IMG {
 TABLE.formtable TD {
 	padding: 9px;
 }
+
+.eventfull {
+    border-width: 1px;
+    border-color: <?PHP echo $THEME->borders?>;
+    border-style: solid;
+    -moz-border-radius-bottomleft: 15px;
+    -moz-border-radius-bottomright: 15px;
+}
+
+.eventfullheader {
+}
+
+.eventfullpicture {
+    padding:8px;
+}
+
+.eventfullside {
+    -moz-border-radius-bottomleft: 15px;
+}
+
+.eventfullmessage {
+    -moz-border-radius-bottomright: 15px;
+}
+
+
