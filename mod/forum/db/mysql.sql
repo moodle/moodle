@@ -5,7 +5,7 @@
 CREATE TABLE forum (
   id int(10) unsigned NOT NULL auto_increment,
   course int(10) unsigned NOT NULL default '0',
-  type enum('discussion','news','general','social') NOT NULL default 'general',
+  type enum('discussion','news','general','social','eachuser') NOT NULL default 'general',
   name varchar(255) NOT NULL default '',
   intro tinytext NOT NULL,
   open tinyint(1) unsigned NOT NULL default '0',
@@ -33,6 +33,6 @@ CREATE TABLE forum_subscriptions (
 # Dumping data for table `log_display`
 #
 
-INSERT INTO log_display VALUES ('discuss', 'view forum', 'forum', 'name');
-INSERT INTO log_display VALUES ('discuss', 'subscribe', 'forum', 'name');
-INSERT INTO log_display VALUES ('discuss', 'unsubscribe', 'forum', 'name');
+INSERT INTO log_display VALUES ('forum', 'view forum', 'forum', 'name');
+INSERT INTO log_display VALUES ('forum', 'subscribe', 'forum', 'name');
+INSERT INTO log_display VALUES ('forum', 'unsubscribe', 'forum', 'name');
