@@ -78,28 +78,39 @@
                 $fullurl = "$CFG->wwwroot/file.php?file=/$course->id/$resource->reference";
             }
 
+            $embedded = false;
 
-            if ($frameset == "top") {
+            if (mimeinfo("icon", $fullurl) == "image.gif") {  //  It's an image
+                $embedded = true;
+                $resourceimage = true;
+            } else {
+                $resourceimage = false;
+            }
+
+            // (could check for more embeddable media here...)
+
+            if ($frameset == "top" or $embedded) {
                 print_header("$course->shortname: $resource->name", "$course->fullname", 
                              "$navigation <a target=\"$CFG->framename\" HREF=\"$fullurl\">$resource->name</A>",
                              "", "", true, update_module_button($cm->id, $course->id, $strresource), 
                              navmenu($course, $cm));
                 echo "<center><font size=-1>".text_to_html($resource->summary, true, false)."</font></center>";
-            } else if ($frameset == "image") {
-                print_header();
-                echo "<center><img class=\"resourceimage\" src=\"$fullurl\"></center>";
+                add_to_log($course->id, "resource", "view", "view.php?id=$cm->id", "$resource->id");
+            }
+            
+            if ($embedded) {       // Display resource embedded in page
+                if ($resourceimage) {  
+                    echo "<br />";
+                    echo "<center><img class=\"resourceimage\" src=\"$fullurl\"></center>";
+                    echo "<br />";
+                }
                 print_footer($course);
                 
-            } else {
-                add_to_log($course->id, "resource", "view", "view.php?id=$cm->id", "$resource->id");
+            } else {               // Display resource in a frame of it's own.
                 echo "<head><title>$course->shortname: $resource->name</title></head>\n";
                 echo "<frameset rows=$RESOURCE_FRAME_SIZE,*>";
                 echo "<frame src=\"view.php?id=$cm->id&frameset=top\">";
-                if (mimeinfo("icon", $fullurl) == "image.gif") {
-                    echo "<frame src=\"view.php?id=$cm->id&frameset=image\">";
-                } else {
-                    echo "<frame src=\"$fullurl\">";
-                }
+                echo "<frame src=\"$fullurl\">";
                 echo "</frameset>";
             }
             break;
