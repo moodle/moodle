@@ -66,9 +66,9 @@ require_once('../../../config.php');
    <frame src="<?php echo "http://$CFG->chat_serverhost:$CFG->chat_serverport?win=chat&amp;$params"; ?>" NAME="msg" scrolling="auto" noresize marginwidth="2" marginheight="0">
    <frame src="chatinput.php?<?php echo $params ?>" name="input" scrolling="no" marginwidth="2" marginheight="1">
   </frameset>
-  <frame src="../users.php?<?php echo $params ?>" name="users" scrolling="auto" marginwidth="5" marginheight="5">
-<!--  
   <frame src="<?php echo "http://$CFG->chat_serverhost:$CFG->chat_serverport?win=users&amp;$params"; ?>" name="users" scrolling="auto" marginwidth="5" marginheight="5"> 
+<!--  
+  <frame src="../users.php?<?php echo $params ?>" name="users" scrolling="auto" marginwidth="5" marginheight="5">
   -->
  </frameset>
  <noframes>

@@ -599,8 +599,27 @@ function chat_display_version($version, $browser)
 
 }
 
+function chat_language_override($language) {
+    // Override the highest-ranking language variable from current_language()
+    // And save it so we can restore it again afterwards
+    global $CFG;
 
-function chat_format_message_manually($message, $courseid, $sender, $currentuserid, $language = NULL) {
+    $oldlang = empty($CFG->courselang) ? NULL : $CFG->courselang;
+    $CFG->courselang = $language;
+
+    return $oldlang;
+}
+
+function chat_language_restore($language = NULL) {
+    // Restore the highest-ranking language variable from current_language()
+    global $CFG;
+
+    if(!empty($language)) {
+        $CFG->courselang = $language;
+    }
+}
+
+function chat_format_message_manually($message, $courseid, $sender, $currentuser, $language = NULL) {
     global $CFG;
 
     $output = New stdClass;
@@ -610,21 +629,17 @@ function chat_format_message_manually($message, $courseid, $sender, $currentuser
         $language = current_language();
     }
 
-    // Override the highest-ranking language variable from current_language() here
-    // And save it so we can restore it again afterwards
-
-    $oldcfglang = empty($CFG->courselang) ? NULL : $CFG->courselang;
-    $CFG->courselang = $language;
+    $oldcfglang = chat_language_override($language);
 
     // Get some additional info now that the language has been correctly set
 
     // But before that :-) let's override get_user_timezone() for this call... messy stuff...
-    $tz = ($sender->timezone == 99) ? $CFG->timezone : $sender->timezone;
+    $tz = ($currentuser->timezone == 99) ? $CFG->timezone : $currentuser->timezone;
     $message->strtime = userdate($message->timestamp, get_string('strftimemessage', 'chat'), $tz);
 
     $message->picture = print_user_picture($sender->id, 0, $sender->picture, false, true, false);
     if ($courseid) {
-        $message->picture = "<a target=\"_new\" href=\"$CFG->wwwroot/user/view.php?id=$sender->id&course=$courseid\">$picture</a>";
+        $message->picture = "<a target=\"_new\" href=\"$CFG->wwwroot/user/view.php?id=$sender->id&course=$courseid\">$message->picture</a>";
     }
 
     // Start processing the message
@@ -642,12 +657,14 @@ function chat_format_message_manually($message, $courseid, $sender, $currentuser
         return $output;
     }
 
-    // It's not a system event, so format it nicely
+    // It's not a system event
 
     $text = $message->message;
-    convert_urls_into_links($text);
-    replace_smilies($text);
-    $text = filter_text($text, $courseid);
+
+    /// Parse the text to clean and filter it
+
+    $options->para = false;
+    $text = format_text($text, FORMAT_MOODLE, $options, $courseid);
 
     // And now check for special cases
 
@@ -661,7 +678,7 @@ function chat_format_message_manually($message, $courseid, $sender, $currentuser
             $output->beep = true;  // (eventually this should be set to
                                    //  to a filename uploaded by the user)
 
-        } else if ($beepwho == $currentuserid) {  // current user
+        } else if ($beepwho == $currentuser->id) {  // current user
             $outinfo = $message->strtime.': '.get_string('messagebeepsyou', 'chat', fullname($sender));
             $outmain = '';
             $output->beep = true;
@@ -700,9 +717,7 @@ function chat_format_message_manually($message, $courseid, $sender, $currentuser
     $output->html .= "</font></td></tr></table>";
 
     // Don't forget to reset the language before returning!!!
-    if(!empty($oldcfglang)) {
-        $CFG->courselang = $oldcfglang;
-    }
+    chat_language_restore($oldcfglang);
 
     return $output;
 }
@@ -718,7 +733,7 @@ function chat_format_message($message, $courseid=0) {
         return "Error finding user id = $message->userid";
     }
 
-    return chat_format_message_manually($message, $courseid, $user, $USER->id);
+    return chat_format_message_manually($message, $courseid, $user, $USER);
 
 }
 
