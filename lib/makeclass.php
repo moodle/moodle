@@ -1,9 +1,19 @@
 <?PHP // $Id$
 
-// This file is currently optional within Moodle - see config-dist.php
+// This file is not used by Moodle itself.
 //
 // It exists to provide a more object-oriented interface to some of 
 // Moodle's main library functions, for use by external programs.
+// 
+// Thanks to Greg Barnett from Crown College for this code
+
+// Usage example (from an external program):
+// 
+//     require("blah/moodle/lib/makeclass.php"); 
+//     makeClassFromFile("blah/moodle/lib/moodlelib.php", "moodlelib"); 
+//
+//     moodle::isteacher($courseID);    // for example ... 
+//
 
 
 function makeClassFromFile($file, $classname) {
