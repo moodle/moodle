@@ -58,6 +58,9 @@
         case 2:
             include("social.php");
             break;
+        case 3:
+            include("topics.php");
+            break;
         default:
             error("Course format not defined yet!");
     }
