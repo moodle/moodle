@@ -55,9 +55,12 @@ class quiz_file_format extends quiz_default_format {
 
 
         /// Parse the answers
-        $answers = str_replace("=", "~=", $answertext);
+        $answertext = str_replace("=", "~=", $answertext);
         $answers = explode("~", $answertext);
-        if (empty(trim($answers[0]))) {
+        if (isset($answers[0])) {
+            $answers[0] = trim($answers[0]);
+        }
+        if (empty($answers[0])) {
             array_shift($answers);
         }
 
