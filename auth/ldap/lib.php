@@ -512,7 +512,7 @@ function auth_iscreator($username=0) {
     }
    
     if ((! $CFG->ldap_creators) OR (! $CFG->ldap_memberattribute)) {
-        return false;
+        return null;
     } 
 
     return auth_ldap_isgroupmember($username, $CFG->ldap_creators);
