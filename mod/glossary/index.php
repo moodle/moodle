@@ -57,6 +57,8 @@
         $table->align = array ("LEFT", "CENTER");
     }
 
+    $currentsection = "";
+
     foreach ($glossarys as $glossary) {
         if (!$glossary->visible) {
             //Show dimmed if the mod is hidden
@@ -65,14 +67,21 @@
             //Show normal if the mod is visible
             $link = "<A HREF=\"view.php?id=$glossary->coursemodule\">$glossary->name</A>";
         }
+        $printsection = "";
+        if ($glossary->section !== $currentsection) {
+            if ($glossary->section) {
+                $printsection = $glossary->section;
+            }
+            if ($currentsection !== "") {
+                $table->data[] = 'hr';
+            }
+            $currentsection = $glossary->section;
+        }
 
         $count = count_records_sql("SELECT COUNT(*) FROM {$CFG->prefix}glossary_entries where (glossaryid = $glossary->id or sourceglossaryid = $glossary->id)");
 
         if ($course->format == "weeks" or $course->format == "topics") {
-            if (empty($glossary->section)) {
-                $glossary->section = "";
-            }
-            $table->data[] = array ($glossary->section, $link, $count);
+            $table->data[] = array ($printsection, $link, $count);
         } else {
             $table->data[] = array ($link, $count);
         }
