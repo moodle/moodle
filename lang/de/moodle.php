@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.2 Beta +++ (2004031300)
+      // moodle.php - created with Moodle 1.3 development (2004040500)
 
 
 $string['action'] = 'Aktion';
@@ -20,7 +20,7 @@ $string['addedtogroup'] = 'Zur Gruppe $a hinzugefügt';
 $string['addedtogroupnot'] = 'Nicht zur Gruppe $a hinzugefügt';
 $string['addedtogroupnotenrolled'] = 'Nicht zur Gruppe $a hinzugefügt, weil Teilnehmer/in nicht im Kurs registriert ist';
 $string['addinganew'] = 'Neue Aktivität $a hinzufügen';
-$string['addinganewto'] = 'Füge $a->what ein zu $a->to';
+$string['addinganewto'] = 'Neue Aktivität $a->what hinzufügen';
 $string['addingdatatoexisting'] = 'Daten zu bestehenden  hinzufügen';
 $string['addnewcategory'] = 'Neue Kategorie hinzufügen';
 $string['addnewcourse'] = 'Neuen Kurs anlegen';
@@ -68,6 +68,7 @@ $string['allparticipants'] = 'Alle Teilnehmer/innen';
 $string['alphabet'] = 'A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z';
 $string['alphanumerical'] = 'Kann nur Buchstaben und Zahlen haben';
 $string['alreadyconfirmed'] = 'Die Registrierung wurde bereits bestätigt';
+$string['always'] = 'Immer';
 $string['answer'] = 'Antwort';
 $string['areyousuretorestorethis'] = 'Wollen Sie wirklich fortsetzen?';
 $string['areyousuretorestorethisinfo'] = 'Sie haben später die Auswahl, diese Sicherung einem neuen Kurs hinzuzufügen oder einen völlig neuen Kurs anzulegen.';
@@ -131,6 +132,7 @@ $string['configallowunenroll'] = 'Wenn Sie diesen Schalter auf \'Ja\' stellen, d
 $string['configcachetext'] = 'Diese Einstellung führt zu Beschleunigungen wenn Sie größere Seiten betreiben oder Textfilter verwenden. Textkopien bleiben in ihrer ursprünglichen Fassung für die festgelegte Zeit bestehen. Eine zu niedrige Einstellung führt zu einer Verlangsamung, bei einer zu hohen Einstellung Einstellung dauert zu lange bis Texte aktualisiert werden (z.B. mit neuen Links)';
 $string['configcountry'] = 'Wenn Sie hier ein Land einstellen, wird dieses Land als Vorgabe für neue Benutzerkonten gewählt.  Um Benutzer/innen zu zwingen, ein Land zu wählen, lassen Sie dieses Feld leer.';
 $string['configdebug'] = 'Wenn Sie dies einschalten, werden die Fehlermeldungen von PHP erweitert, so dass mehr Warnungen ausgegeben werden. Dies ist nur nützlich für Entwickler.';
+$string['configdeleteunconfirmed'] = 'Mit dsieser Einstellung legen Sie fest in welchem Zeitraum eine Bestätigung des Teilnehmers bei der Anmeldebestätigung per Email (email authentication) akzeptiert wird. Nach diesem Zeitraum werden nicht bestätigte Anmeldungen automatisch gelöscht.';
 $string['configerrorlevel'] = 'Wählen Sie die Menge der PHP Warnungen, die Sie angezeigt bekommen möchten. Normal ist gebräuchlicherweise die beste Wahl.';
 $string['configfilteruploadedfiles'] = 'Beim Aktivieren dieser Option werden alle hochgeladenen HTML- und Textdateien über den Filter bearbeitet bevor sie angezeigt werden.';
 $string['configforcelogin'] = 'Normalerweise können die Startseite und die Kursübersicht (nicht die Kurse) eingesehen werden ohne sich anzumelden. Wenn Sie die Teilnehmer zwingen wollen sich erst anzumelden, bevor Sie irgendetwas auf dieser Seite tun können, dann müssen Sie diese Option aktivieren';
@@ -678,6 +680,7 @@ $string['readinginfofrombackup'] = 'Lese Information vom Backup';
 $string['readme'] = 'LIESMICH';
 $string['recentactivity'] = 'Neueste Aktivitäten';
 $string['recentactivityreport'] = 'Vollständiger Bericht über alle Aktvititäten';
+$string['refreshingevents'] = 'Termine aktualisieren';
 $string['registration'] = 'Moodle Anmeldung';
 $string['registrationemail'] = 'E-Mail Benachrichtigung';
 $string['registrationinfo'] = '<p>Diese Seite ermöglicht es Ihnen, Ihre Moodle Seite auf moodle.org zu registrieren.
@@ -837,12 +840,14 @@ $string['upload'] = 'Hochladen';
 $string['uploadafile'] = 'Eine Datei hochladen';
 $string['uploadedfileto'] = '$a->file hochgeladen nach $a->directory';
 $string['uploadnofilefound'] = 'Es wurde keine Datei gefunden - Sind Sie sicher, dass Sie eine zum hochladen ausgewählt haben?';
+$string['uploadnotallowed'] = 'Das Hochladen von Dateien ist nicht erlaubt.';
 $string['uploadproblem'] = 'Ein unbekanntes Problem ist während dem Hochladen der Datei aufgetreten
 \'$a\' (Vielleicht war diese zu groß?)) ';
 $string['uploadthisfile'] = 'Diese Datei hochladen';
 $string['uploadusers'] = 'Nutzer hochladen';
 $string['user'] = 'Nutzer';
 $string['userconfirmed'] = 'Bestätigt $a';
+$string['userdata'] = 'Nutzerdaten';
 $string['userdeleted'] = 'Dieser Benutzer-Zugang wurde gelöscht';
 $string['userdescription'] = 'Beschreibung';
 $string['userfiles'] = 'Nutzer-Dateien';
