@@ -11,7 +11,7 @@
     confirmdelete
     continue
     delete
-       editpage
+    editpage
     insertpage
     move
     moveit
@@ -1954,7 +1954,7 @@
 
         $timenow = time();
         
-        $form = lesson_clean_data_submitted();
+        $form = data_submitted();
         $newpage = new stdClass;
         $newanswer = new stdClass;
         if ($form->pageid) {
@@ -1962,36 +1962,36 @@
             if (!$page = get_record("lesson_pages", "id", $form->pageid)) {
                 error("Insert page: page record not found");
             }
-            $newpage->lessonid = $lesson->id;
-            $newpage->prevpageid = $form->pageid;
-            $newpage->nextpageid = $page->nextpageid;
+            $newpage->lessonid = clean_param($lesson->id, PARAM_INT);
+            $newpage->prevpageid = clean_param($form->pageid, PARAM_INT);
+            $newpage->nextpageid = clean_param($page->nextpageid, PARAM_INT);
             $newpage->timecreated = $timenow;
             $newpage->qtype = $form->qtype;
             if (isset($form->qoption)) {
-                $newpage->qoption = $form->qoption;
+                $newpage->qoption = clean_param($form->qoption, PARAM_INT);
             } else {
                 $newpage->qoption = 0;
             }
             /// CDC-FLAG /// 6/16/04
             if (isset($form->layout)) {
-                $newpage->layout = $form->layout;
+                $newpage->layout = clean_param($form->layout, PARAM_INT);
             } else {
                 $newpage->layout = 0;
             }
             if (isset($form->display)) {
-                $newpage->display = $form->display;
+                $newpage->display = clean_param($form->display, PARAM_INT);
             } else {
                 $newpage->display = 0;
             }
             /// CDC-FLAG ///
-            $newpage->title = $form->title;
-            $newpage->contents = trim($form->contents);
+            $newpage->title = clean_param($form->title, PARAM_CLEAN);
+            $newpage->contents = clean_param(trim($form->contents), PARAM_CLEANHTML);
             $newpageid = insert_record("lesson_pages", $newpage);
             if (!$newpageid) {
                 error("Insert page: new page not inserted");
             }
-            // update the linked list
-            if (!set_field("lesson_pages", "nextpageid", $newpageid, "id", $form->pageid)) {
+            // update the linked list (point the previous page to this new one)
+            if (!set_field("lesson_pages", "nextpageid", $newpageid, "id", $newpage->prevpageid)) {
                 error("Insert page: unable to update next link");
             }
             if ($page->nextpageid) {
@@ -2009,26 +2009,26 @@
                 $newpage->prevpageid = 0; // this is a first page
                 $newpage->nextpageid = 0; // this is the only page
                 $newpage->timecreated = $timenow;
-                $newpage->qtype = $form->qtype;
+                $newpage->qtype = clean_param($form->qtype, PARAM_INT);
                 if (isset($form->qoption)) {
-                    $newpage->qoption = $form->qoption;
+                    $newpage->qoption = clean_param($form->qoption, PARAM_INT);
                 } else {
                     $newpage->qoption = 0;
                 }
                 /// CDC-FLAG /// 6/16/04                
                 if (isset($form->layout)) {
-                    $newpage->layout = $form->layout;
+                    $newpage->layout = clean_param($form->layout, PARAM_INT);
                 } else {
                     $newpage->layout = 0;
                 }
                 if (isset($form->display)) {
-                    $newpage->display = $form->display;
+                    $newpage->display = clean_param($form->display, PARAM_INT);
                 } else {
                     $newpage->display = 0;
                 }                
                 /// CDC-FLAG ///
-                $newpage->title = $form->title;
-                $newpage->contents = trim($form->contents);
+                $newpage->title = clean_param($form->title, PARAM_CLEAN);
+                $newpage->contents = clean_param(trim($form->contents), PARAM_CLEANHTML);
                 $newpageid = insert_record("lesson_pages", $newpage);
                 if (!$newpageid) {
                     error("Insert page: new first page not inserted");
@@ -2039,32 +2039,32 @@
                 $newpage->prevpageid = 0; // this is a first page
                 $newpage->nextpageid = $page->id;
                 $newpage->timecreated = $timenow;
-                $newpage->qtype = $form->qtype;
+                $newpage->qtype = clean_param($form->qtype, PARAM_INT);
                 if (isset($form->qoption)) {
-                    $newpage->qoption = $form->qoption;
+                    $newpage->qoption = clean_param($form->qoption, PARAM_INT);
                 } else {
                     $newpage->qoption = 0;
                 }
                 /// CDC-FLAG /// 6/16/04
                 if (isset($form->layout)) {
-                    $newpage->layout = $form->layout;
+                    $newpage->layout = clean_param($form->layout, PARAM_INT);
                 } else {
                     $newpage->layout = 0;
                 }
                 if (isset($form->display)) {
-                    $newpage->display = $form->display;
+                    $newpage->display = clean_param($form->display, PARAM_INT);
                 } else {
                     $newpage->display = 0;
                 }                
                 /// CDC-FLAG ///
-                $newpage->title = $form->title;
-                $newpage->contents = trim($form->contents);
+                $newpage->title = clean_param($form->title, PARAM_CLEAN);
+                $newpage->contents = clean_param(trim($form->contents), PARAM_CLEANHTML);
                 $newpageid = insert_record("lesson_pages", $newpage);
                 if (!$newpageid) {
                     error("Insert page: first page not inserted");
                 }
                 // update the linked list
-                if (!set_field("lesson_pages", "prevpageid", $newpageid, "id", $page->id)) {
+                if (!set_field("lesson_pages", "prevpageid", $newpageid, "id", $newpage->nextpageid)) {
                     error("Insert page: unable to update link");
                 }
             }
@@ -2076,14 +2076,14 @@
             $newanswer->pageid = $newpageid;
             $newanswer->timecreated = $timenow;
             if (isset($form->jumpto[0])) {
-                $newanswer->jumpto = $form->jumpto[0];
+                $newanswer->jumpto = clean_param($form->jumpto[0], PARAM_INT);
             }
             if (isset($form->score[0])) {
-                $newanswer->score = $form->score[0];
+                $newanswer->score = clean_param($form->score[0], PARAM_INT);
             }
             $newanswerid = insert_record("lesson_answers", $newanswer);
             if (!$newanswerid) {
-                error("Insert Page: answer record $i not inserted");
+                error("Insert Page: answer record not inserted");
             }
         } else {
             if ($form->qtype == LESSON_MATCHING) {
@@ -2095,17 +2095,17 @@
                     $newanswer->lessonid = $lesson->id;
                     $newanswer->pageid = $newpageid;
                     $newanswer->timecreated = $timenow;
-                    $newanswer->answer = trim($form->answer[$i]);
+                    $newanswer->answer = clean_param(trim($form->answer[$i]), PARAM_CLEANHTML);
                     if (isset($form->response[$i])) {
-                        $newanswer->response = trim($form->response[$i]);
+                        $newanswer->response = clean_param(trim($form->response[$i]), PARAM_CLEANHTML);
                     }
                     if (isset($form->jumpto[$i])) {
-                        $newanswer->jumpto = $form->jumpto[$i];
+                        $newanswer->jumpto = clean_param($form->jumpto[$i], PARAM_INT);
                     }
                     /// CDC-FLAG ///
                     if ($lesson->custom) {
                         if (isset($form->score[$i])) {
-                            $newanswer->score = $form->score[$i];
+                            $newanswer->score = clean_param($form->score[$i], PARAM_INT);
                         }
                     }
                     /// CDC-FLAG ///
@@ -2288,31 +2288,31 @@
         confirm_sesskey();
 
         $timenow = time();
-        $form = lesson_clean_data_submitted();
+        $form = data_submitted();
         
         $page = new stdClass;
-        $page->id = $form->pageid;
+        $page->id = clean_param($form->pageid, PARAM_INT);
         $page->timemodified = $timenow;
-        $page->qtype = $form->qtype;
+        $page->qtype = clean_param($form->qtype, PARAM_INT);
         if (isset($form->qoption)) {
-            $page->qoption = $form->qoption;
+            $page->qoption = clean_param($form->qoption, PARAM_INT);
         } else {
             $page->qoption = 0;
         }
         /// CDC-FLAG /// 6/16/04
         if (isset($form->layout)) {
-            $page->layout = $form->layout;
+            $page->layout = clean_param($form->layout, PARAM_INT);
         } else {
             $page->layout = 0;
         }
         if (isset($form->display)) {
-            $page->display = $form->display;
+            $page->display = clean_param($form->display, PARAM_INT);
         } else {
             $page->display = 0;
         }
         /// CDC-FLAG ///        
-        $page->title = $form->title;
-        $page->contents = trim($form->contents);
+        $page->title = clean_param($form->title, PARAM_CLEAN);
+        $page->contents = clean_param(trim($form->contents), PARAM_CLEANHTML);
         if (!update_record("lesson_pages", $page)) {
             error("Update page: page not updated");
         }
@@ -2321,16 +2321,16 @@
             $oldanswer = new stdClass;
             $oldanswer->id = $form->answerid[0];
             $oldanswer->timemodified = $timenow;
-            $oldanswer->jumpto = $form->jumpto[0];
+            $oldanswer->jumpto = clean_param($form->jumpto[0], PARAM_INT);
             if (isset($form->score[0])) {
-                $oldanswer->score = $form->score[0];
+                $oldanswer->score = clean_param($form->score[0], PARAM_INT);
             }
             // delete other answers  this if mainly for essay questions.  If one switches from using a qtype like Multichoice,
             // then switches to essay, the old answers need to be removed because essay is
             // supposed to only have one answer record
-            if ($answers = get_records_select("lesson_answers", "pageid = $form->pageid")) {
+            if ($answers = get_records_select("lesson_answers", "pageid = ".$page->id)) {
                 foreach ($answers as $answer) {
-                    if ($answer->id != $form->answerid[0]) {
+                    if ($answer->id != clean_param($form->answerid[0], PARAM_INT)) {
                         if (!delete_records("lesson_answers", "id", $answer->id)) {
                             error("Update page: unable to delete answer record");
                         }
@@ -2342,7 +2342,7 @@
             }
         } else {
             // it's an "ordinary" page
-            if ($form->qtype == LESSON_MATCHING) {
+            if ($page->qtype == LESSON_MATCHING) {
                 // need to add two to offset correct response and wrong response
                 $lesson->maxanswers = $lesson->maxanswers + 2;
             }
@@ -2352,18 +2352,18 @@
                 if (trim(strip_tags($form->answer[$i])) or $form->answereditor[$i] or $form->responseeditor[$i]) {
                     if ($form->answerid[$i]) {
                         $oldanswer = new stdClass;
-                        $oldanswer->id = $form->answerid[$i];
-                        $oldanswer->flags = $form->answereditor[$i] * LESSON_ANSWER_EDITOR +
-                            $form->responseeditor[$i] * LESSON_RESPONSE_EDITOR;
+                        $oldanswer->id = clean_param($form->answerid[$i], PARAM_INT);
+                        $oldanswer->flags = clean_param($form->answereditor[$i], PARAM_INT) * LESSON_ANSWER_EDITOR +
+                            clean_param($form->responseeditor[$i], PARAM_INT) * LESSON_RESPONSE_EDITOR;
                         $oldanswer->timemodified = $timenow;
-                        $oldanswer->answer = trim($form->answer[$i]);
+                        $oldanswer->answer = clean_param(trim($form->answer[$i]), PARAM_CLEANHTML);
                         if (isset($form->response[$i])) {
-                            $oldanswer->response = trim($form->response[$i]);
+                            $oldanswer->response = clean_param(trim($form->response[$i]), PARAM_CLEANHTML);
                         }
-                        $oldanswer->jumpto = $form->jumpto[$i];
+                        $oldanswer->jumpto = clean_param($form->jumpto[$i], PARAM_INT);
                         /// CDC-FLAG ///
                         if ($lesson->custom) {
-                            $oldanswer->score = $form->score[$i];
+                            $oldanswer->score = clean_param($form->score[$i], PARAM_INT);
                         }
                         /// CDC-FLAG ///
                         if (!update_record("lesson_answers", $oldanswer)) {
@@ -2374,16 +2374,16 @@
                         $newanswer = new stdClass; // need to clear id if more than one new answer is ben added
                         $newanswer->lessonid = $lesson->id;
                         $newanswer->pageid = $page->id;
-                        $newanswer->flags = $form->answereditor[$i] * LESSON_ANSWER_EDITOR +
-                            $form->responseeditor[$i] * LESSON_RESPONSE_EDITOR;
+                        $newanswer->flags = clean_param($form->answereditor[$i], PARAM_INT) * LESSON_ANSWER_EDITOR +
+                            clean_param($form->responseeditor[$i], PARAM_INT) * LESSON_RESPONSE_EDITOR;
                         $newanswer->timecreated = $timenow;
-                        $newanswer->answer = trim($form->answer[$i]);
+                        $newanswer->answer = clean_param(trim($form->answer[$i]), PARAM_CLEANHTML);
                         if (isset($form->response[$i])) {
-                            $newanswer->response = trim($form->response[$i]);
+                            $newanswer->response = clean_param(trim($form->response[$i]), PARAM_CLEANHTML);
                         }
-                        $newanswer->jumpto = $form->jumpto[$i];
+                        $newanswer->jumpto = clean_param($form->jumpto[$i], PARAM_INT);
                         /// CDC-FLAG ///
-                        $newanswer->score = $form->score[$i];
+                        $newanswer->score = clean_param($form->score[$i], PARAM_INT);
                         /// CDC-FLAG ///
                         $newanswerid = insert_record("lesson_answers", $newanswer);
                         if (!$newanswerid) {
@@ -2395,15 +2395,15 @@
                         if ($i >= 2) {
                             if ($form->answerid[$i]) {
                                 // need to delete blanked out answer
-                                if (!delete_records("lesson_answers", "id", $form->answerid[$i])) {
+                                if (!delete_records("lesson_answers", "id", clean_param($form->answerid[$i], PARAM_INT))) {
                                     error("Update page: unable to delete answer record");
                                 }
                             }
                         } else {
                             $oldanswer = new stdClass;
-                            $oldanswer->id = $form->answerid[$i];
-                            $oldanswer->flags = $form->answereditor[$i] * LESSON_ANSWER_EDITOR +
-                                $form->responseeditor[$i] * LESSON_RESPONSE_EDITOR;
+                            $oldanswer->id = clean_param($form->answerid[$i], PARAM_INT);
+                            $oldanswer->flags = clean_param($form->answereditor[$i], PARAM_INT) * LESSON_ANSWER_EDITOR +
+                                clean_param($form->responseeditor[$i], PARAM_INT) * LESSON_RESPONSE_EDITOR;
                             $oldanswer->timemodified = $timenow;
                             $oldanswer->answer = NULL;
                             if (!update_record("lesson_answers", $oldanswer)) {
@@ -2412,7 +2412,7 @@
                         }                        
                     } elseif ($form->answerid[$i]) {
                         // need to delete blanked out answer
-                        if (!delete_records("lesson_answers", "id", $form->answerid[$i])) {
+                        if (!delete_records("lesson_answers", "id", clean_param($form->answerid[$i], PARAM_INT))) {
                             error("Update page: unable to delete answer record");
                         }
                     }
