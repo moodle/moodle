@@ -171,18 +171,19 @@ function auth_user_create ($userobject,$plainpass) {
     $newuser = array();
      
     foreach ($attrmap as $key=>$value){
-            if(isset($userobject->$key) ){
-                $newuser[$value]=utf8_encode($userobject->$key);
+            if(!empty($userobject->$key) ){
+                if (isset($CFG->{auth_user_.$key._updateremote}) && $CFG->{auth_user_.$key._updateremote} == "1" ) { 
+                    $newuser[$value]=utf8_encode($userobject->$key);
+                }     
             }
     }
     
     //Following sets all mandatory and other forced attribute values
-    //this should be moved to config inteface ASAP
+    //MODIFY following to suite your enviroment
     $newuser['objectClass']= array("inetOrgPerson","organizationalPerson","person","top");
     $newuser['uniqueId']= $userobject->username;
     $newuser['logindisabled']="TRUE";
     $newuser['userpassword']=$plainpass;
-    unset($newuser[country]);
         
     $uadd = ldap_add($ldapconnection, $CFG->ldap_user_attribute."=$userobject->username,".$CFG->ldap_create_context, $newuser);
 
