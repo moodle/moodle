@@ -1,0 +1,43 @@
+<p align="center"><b>Pyetjet e inkorporuara(Cloze)</b></p>
+
+<p>Ky tip pyetjeje shumë fleksibile është e ngjashme me formatin popullor që njihet 
+   si formati Cloze.  
+   
+<p>Pyetjet konsistojnë në një pasazh teksti (në foramtin Moodle) që ka përgjigje 
+   të ndryshme të inkorporuara brenda saj, duke përfshirë zgjedhjen e shumëfishtë, 
+   përgjigjet shkurt dhe përgjigjet numerike.
+
+<p>Aktualisht nuk ka interfej grafik për të krijuar këto pyetje - ju duhet të specifikoni
+   formatin e petjes duke përdorur një kuti teksti ose duke i importuar ata nga skedarë të jashtëm. 
+   
+<p>Këtu është një shembull i një teksti të përdorur për të specifikur një pyetje të tille:
+
+<form>
+<center>
+<textarea rows=15 cols=60 wrap=virtual>Kjo pyetje konsiston nga ca tekst me një përgjigje të inkorporuar këtu {1:MULTICHOICE:Wrong answer#Fëdback for this wrong answer~Another wrong answer#Feedback for the other wrong answer~=Correct answer#Feedback for correct answer~%50%Answer that gives half the credit#Feedback for half credit answer} and right after that you will have to deal with this short answer {1:SHORTANSWER:Wrong answer#Feedback for this wrong answer~=Correct answer#Feedback for correct answer~%50%Answer that gives half the credit#Feedback for half credit answer} and finally we have a floating point number {2:NUMERICAL:=23.8:0.1#Feedback for correct answer 23.8~%50%N/A#Feedback for halfcredit answer in the nearby region of the correct answer}.
+
+Vini re se adresat si www.moodle.org dhe mimikat :-) të gjitha punojnë si normalisht:
+ a) Sa e mirë ështe kjo? {:MULTICHOICE:=Yes#Correct~No#We have a different opinion}
+ b) Çfarë note do t'i jipnit ju? {3:NUMERICAL:=3:2}
+
+Paç fat!
+</textarea>
+</center>
+</form>
+
+<p>Ky shembull do t'u shfaqet studentëve si më poshtë:</p>
+
+
+<form>
+<table align="CENTER" width="90%" class="generalbox" border="0" cellpadding="5" cellspacing="0"><tr><td bgcolor="#FFFFFF" class="generalboxcontent"><table width=100% cellspacing=10><tr><td nowrap width=100 valign=top><p align=center><b>3</b></p><p align=center><font size=1>8 Marks</font></p><img height="1" width="100" src="pix/spacer.gif" alt=""><br />
+</td><td valign=top><p>Kjo pyetje konsiston nga ca tekst me një përgjigje të inkorporuar këtu  <select   name="q4ma1" ><option></option><option value="4" >Përgjigje e gabuar</option><option value="5" >Një pyetje tjetër e gabuar</option><option value="6" >Përgjigje korrekte</option><option value="7" >Përgjigje që jep gjysmën e krediteve</option></select>  dhe pas kësaj ju do të keni të bëni me këtë pyetje të shkurtër  <input   name="q4ma2"  value="" type="TEXT" size="8"/>  dhe së fundi ne kemi një një numër dhjetor  <input   name="q4ma3"  value="" type="TEXT" size="8"/> .<br />
+<br />
+Vini re se adresat si <a href="http://www.moodle.org" target="newpage">www.moodle.org</a> dhe mimikat <img border="0" src="pix/s/smiley.gif" width="15" height="15"> punojnë normalishtall work as normal:<br />
+a) Sa e mirë është kjo?  <select   name="q4ma4" ><option></option><option value="13" >Yes</option><option value="14" >No</option></select> <br />
+b) Çfarë note do t'i vinit ju?  <input   name="q4ma5"  value="" type="TEXT" size="8"/> <br />
+<br />
+Paç Fat!</p></TD></TR></TABLE></td></tr></table>
+</form>
+
+<br />
+

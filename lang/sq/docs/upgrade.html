@@ -1,0 +1,114 @@
+<head>
+    <title>Moodle Docs: Upgrading</title>
+	<link rel="stylesheet" href="docstyles.css" type="TEXT/CSS">
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</head>
+
+<body bgcolor="#FFFFFF">
+<h1>Upgrading Moodle</h1>
+
+<blockquote>
+  <p>Moodle është dizenjuar për tu  upgrade-uar nga një version më i hershëm në në version më të  
+  vonë. </p>
+  <p>Kur bëni upgrade të një insatlimi Moodle duhet të ndiqni këto hapa:</p>
+  <h3 class="sectionheading">1. Bëni Backup të të dhënae të rëndësishme</h3>
+  <blockquote>
+    <p>Megjithse nuk është e domosdoshme, është mirë që të bëni  një 
+    backup të sistemit të mëparshëm para upgrade-it, nërast se ju duhet  
+    të ktheheni tek versioni i vjetër për ndonjë arsye. Në fakt, është mirë 
+    që të automatizosh serverin për ti bërë backup Moodle-it  për ditë, kësht 
+    që ju mund ta kapërxeni këtë hap.</p>
+    <p>Ka tre zona që duhet të bëhen  backup:</p>
+    <blockquote>
+      <p><strong>1. Direktoria e e vetë software-it Moodle </strong></p>
+      <blockquote>
+        <p>Bëni kopje të veçanta të këtyre skedarëve para upgrade, kështu që ju mund ta  
+        gjeni config.php tuaj dhe çdo modul që keni shtuar si themes, languages 
+        etj.<strong><br>
+        </strong></p>
+      </blockquote>
+      <p><strong>2. Direktorinë tuaj të të dhënave.</strong></p>
+      <blockquote>
+        <p>Eshtë kjo ku ruhet çdo përmbajteje e ngarkuar (si resource-et e kurseve dhe 
+        detyrat e studentëve) kështu që është e rëndësishme të kesh një backup të këtyre 
+        skedarëve. Ndonjëherë upgrade-et mund të zhvendosin ose të riemërtojnë direktoritë brenda 
+        direktorisë tuaj të të dhënave.<strong><br>
+        </strong></p>
+    </blockquote>
+      <p><strong>3. Databazën tuaj</strong></p>
+      <blockquote>
+        <p>Shumica e upgrade-eteve të Moodle do ti ndyshojë tabelat e databazës, duke shtuar apo ndryshuar 
+        fushat. Backup-i i çdo  databaze kryhet në mënyra të ndryshme. Një mënyrë për 
+        një databazë MySQL është ta "zbrazësh" databazën në një skedar të vetëm SQL. Shembulli që 
+        pason trego komandata Unix për ta zbrazura databazën e quajtur &quot;moodle&quot;:</p>
+        <blockquote>
+          <p><font face="Courier New, Courier, mono">mysqldump moodle &gt; moodle-backup-2002-10-26.sql</font></p>
+        </blockquote>
+        <p>Ju mund të përdorni edhe veçorinë &quot;Export&quot; opsionale të Moodle 
+        &quot;Database&quot; interfejsi web për të bërë të njëjtën gjë në të gjitha platformat.</p>
+      <p>&nbsp;</p>
+      </blockquote>
+    </blockquote>
+  </blockquote>
+  <h3 class="sectionheading">2. Instalimo software e ri Moodle</h3>
+  <blockquote>
+    <p><strong>Duke përdorur një arshivë të download-uar</strong></p>
+    <blockquote>
+      <p>Mos mbishkruaj mbi instalimin e vjetër deri sa nuk e dini se çfarë po bën 
+      ... nganjëherë skedraët e vjetër mund të shkaktojnë probleme në instalimet e reja. Mënyra më 
+      e miraë është ta riemërtosh direktorinë ekzistuese të Moodle me emër tjetër, mandej at çpaketosh 
+      arshiveën e re Moodle tek lokalizimi i të vjetrës.</p>
+      <blockquote>
+        <p><font face="Courier New, Courier, mono">mv moodle moodle.backup<br>
+        tar xvzf moodle-1.1.tgz</font></p>
+      </blockquote>
+      <p>Mandej, kopjo përmbajtejen e config.php dhe çdo plugins-i tjetër si custom 
+      themes:</p>
+      <blockquote>
+        <p><font face="Courier New, Courier, mono">cp moodle.backup/config.php moodle<br>
+        cp -pr moodle.backup/theme/mytheme moodle/theme/mytheme</font></p>
+      </blockquote>
+    </blockquote>
+    <p><strong>Duke përdorur CVS</strong></p>
+    <blockquote>
+      <p>Nëse po përdorni CVS, thjeshtë shko te direktoria rrënjë e Moodle dhe update-o 
+      skedarët e rinj:</p>
+      <blockquote>
+        <p><font face="Courier New, Courier, mono">cvs update -dP</font></p>
+      </blockquote>
+      <p>Sigurohu që p përdor parametrin &quot;d&quot; për të krijuar direktoritë e reja 
+      nëse është e domosdoshme, dhe parametrine &quot;P&quot; për të krasitur direktoritë boshe.</p>
+      <p>Nëse keni qenë duke edituar skedarët e Moodle, ndiq  mesazhet nga afër 
+      për konflikte të mundshme. Të gjitha temat e personalizuar dhe plugins-et jo-standarte 
+      nuk do të preken.</p>
+    </blockquote>
+    <p>&nbsp;</p>
+  </blockquote>
+  <h3 class="sectionheading">3. Mbarimi i upgrade</h3>
+  <blockquote>
+    <p>Hapi i fundit është të shkrepësh procesin upgrade brenda Moodle.</p>
+    <p>Për ta bërë këtë visito <a target=_top href="../admin/index.php">faqen admin të 
+    instalimit tënd</a>.</p>
+    <blockquote>
+      <p><font face="Courier New, Courier, mono">http://example.com/moodle/admin</font></p>
+    </blockquote>
+    <p>Nuk ka rëndësi nëse je loguar si admin ose jo.</p>
+    <p> Moodle do ta detektojë automatikisht versionin e ri dhe do të kryejë upgrade-in e gjithë databazës 
+    ose të filesystem-it që janë të domosdoshëm. Nëse ka ndonjë gjë që nuk mund ta bëjë  
+    vetë (shumë rrallë) atëhere do të shikoni mesazhet që ju tregojnë se çfarë duhet të  
+    bëni. </p>
+  </blockquote>
+  <p>&nbsp; </p>
+  <p> Duke supozuar se çdo gjë ecën mbarë (pa mesazhe gabimi) atëher ju mund të filloni ta përdorni  
+  versionin e ri të Moodle dhe kënaqu me veçoritë e reja!</p>
+  <p>Nëse keni shqetësime me  upgrade, visito <a target=_top href="http://moodle.org/">moodle.org</a> 
+  and post on the <a target=_top href="http://moodle.org/mod/forum/view.php?id=28">Installation 
+  Support Forum</a> te  Using Moodle course.</p>
+</blockquote>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p align="CENTER"><font size="1"><a href="." target="_top">Dokumentacioni i Moodle</a></font></p>
+<p align="CENTER"><font size="1">Version: $Id$</font></p>
+
+</body>
+</html>

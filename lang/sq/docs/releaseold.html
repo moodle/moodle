@@ -1,0 +1,344 @@
+<head>
+    
+<title>Moodle Docs: Old Release notes</title>
+	
+<link rel="styleshët" href="docstyles.css" type="TEXT/CSS">
+    
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    
+<style type="text/css">
+       dt {font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif; font-weight: bold;}
+       dd {margin-bottom:1em;} 
+    </style>
+</head>
+
+<body bgcolor="#FFFFFF">
+<h1>Shënime të vjetra të botuara</h1>
+<h3> Të reja në Moodle 1.1.1 (10 Shtator, 2003):</h3>
+<ul>
+  <dl>
+    <dt>&nbsp; </dt>
+    <dt>Rregullimet në Përgjithësi</dt>
+  </dl>
+  <dl>
+    <dd> 
+      <ul>
+        <li>Përmirësime përkthimi në shumë gjuhë</li>
+        <li>Rregullimi i kuadrit kur ndryshon gjuhën në dokumentacion</li>
+        <li>Të gjitha etiketat (tag-et) e shkurtra PHP janë hequr ... short_tags nuk është më kërkesë</li>
+        <li>Rezultatet e kërkimit të forumeve link-on duke përdorur etiketën "anchor" për një konteks më të mirë</li>
+        <li>Eshtë zhvendosur objekti nga link-u &quot;fshi&quot; në faqen e editimit të përdoruesit</li>
+        <li>'Kërkimi' mbi formmatin social u zhvendos më afërkreut për të parandaluar "self-scrolling" e brauzerit </li>
+        <li>Ridrejtimi i Faqes është më i shpejtë dhe nuk kërkon ruajtjem e një faqe të ndërmjetme 
+          në historinë e IE </li>
+        <li>Listimi i kurseve i përmirësuar kur ato shfaqen, duke përfshirë më shumë informacion</li>
+        <li>Listimi i Kategorive tregon kurset komplet kur ato janë nën dhjetë kurseve</li>
+        <li>Kurset që nuk duken tregohen gjithmonë në fund të "Kurset e mia"</li>
+        <li>Krijuesit e kurseve mund të shohin tashmë të gjitha kategoritë dhe kurset e fshehura</li>
+        <li>Janë shtuar stilet për emrat e kategorive dhe kurseve</li>
+        <li>Janë hequr tag-et nga teksti i pyetjeve në rapotin "simplestat" të quiz-it</li>
+        <li>Shtohen përqindjet te të dhënat e download-uar nga reporti "simplestat"</li>
+        <li>Lejon linkim më të thelle të jashtëm duke përdorur llogari guest account ?username=guest</li>
+        <li>Any admin can now add/remove course creators</li>
+        <li>Admin mund të update-ojë username/password  e vet edhe me një aatentifikim të jashtëm</li>
+        <li>Quiz-et tashmë mund të specifikohen sikur janë  "pa nota" dhe kështu do shfaqen</li>
+        <li>Kur editohet një gjuhë, skedarë me stringje që mungojnë krijohen kur është e mundur</li>
+        <li>Janë rregulluar gabimet në llogaritjen e datës te reviztat javore</li>
+        <li>Janë rregulluar gabimet në config.php që bënin të  mos funksiononte "error_reporting"</li>
+        <li>Janë rregulluar gabimet kur editon emrat e përdoruesve me thonjëza</li>
+        <li>Janë rregulluar gabimet në konfuzionin e adresave të email-it  me numberat në to</li>
+        <li>Janë rregulluar mungesa  e skemës PostgreSQL për modulin chat</li>
+        <li>Janë rregulluar disa tipe kodesh te upgrading PostgreSQL</li>
+        <li>Janë rregulluar disa variabla të painicializuara</li>
+        <li>Janë rregulluar disa gabime në modulin e Workshop-it</li>
+      </ul>
+    </dd>
+  </dl>
+</ul>
+<hr>
+
+
+
+<h3> Të reja në Moodle 1.1 (28 Gusht, 2003):</h3>
+<ul>
+  <dl>
+    <dt>&nbsp; </dt>
+    <dt>Ndryshimet kryesore</dt>
+  </dl>
+  <dl>
+    <dd> 
+      <ul>
+        <li>Një <strong>backup</strong> i ri dhe i fortë i sistemit për kurset (Faleminderit, Eloy!)</li>
+        <li>Një modul <strong>workshop-i</strong> i ri për vlerësimin mes shokësh (Faleminderit, Ray!)</li>
+        <li>Një modul <strong>chat</strong> i ri për diskutime sinkrone</li>
+        <li>Të gjitha <strong>menaxher kursesh</strong>-ët të reja për menaxhimin e një numri shumë të madh kursesh (e testuar me 3700)</li>
+        <li> <strong>shkallëzime notash</strong> të reja që mund të përdoren nëpër një kurs</li>
+        <li>Përmirësime të Performancës në shumë anë</li>
+      </ul>
+    </dd>
+  </dl>
+  <dl>
+    <dt>Të përgjithshme</dt>
+  </dl>
+  <dl>
+    <dd> 
+      <ul>
+        <li>Pastrim i krejt menusë së admin për ta bërë atë më të qartë</li>
+        <li>Kategoritë mund të nënkategorizohen dhe të renditen alfabetikisht ose manualisht</li>
+        <li>Kurset dhe krejt kategoritë mund të fshihen prej studentëve</li>
+        <li>Përshkrimet e Kurseve dhe emrat mund të kërkohen për fjalëkyçe</li>
+        <li>Kategoritë e mëdha janë tashmë të kompletuara me faqe</li>
+        <li>Përmirësim i "web caching" për stilet e faqeve dhe imazhet</li>
+        <li>&quot;Kurset e mia&quot; shfaqet në home-page kur logohesh.</li>
+        <li>Futja e faqes së pa-link-uar për të shfaqur Të gjitha figurat e përdoruesve (shih /userpix)</li>
+        <li>Tipari &quot;secureforms&quot; tashmë është i çaktivizuar në mënyrë feature defaults.</li>
+        <li>Moodle tashmë nuk kujdeset nëse  &quot;kuotat magjike&quot; është aktivizuar apo jo.</li>
+        <li>Imazhet në /pix janë rirregulluar dhe sistemuar</li>
+        <li>E-mail-i HTML është formatuar për kompatibilitet më të gjerë</li>
+        <li>Mesazhet e kthyera tashmë i dërgohen përdoruesit admin</li>
+        <li>Detyrat "cron" më të mira (përdoret më pak CPU) dhe regjistrimet e dublikuara janë tashmë të pastrura</li>
+        <li>Shfaqje e përmirësura e logimeve me pafundësi faqesh dhe rritje e fleksibilitetit</li>
+        <li>Grafika e logimit tashmë funksionon në nivel site-i (duke treguar të gjithë logimet në site)</li>
+        <li>Njerzit me llogari manuale tashmë mund ta rigjejnë password-in</li>
+        <li>Sistem i përmirësuar i përcaktimit/printimit të skedarëve e ndihmës për shumicën e moduleve të aktiviteteve </li>
+        <li>Modulet e aktiviteteve tashmë mund të kenë vendosje parametrash</li>
+       <li>Adresta e Email-it janë tashmë të komplikuara (për spajderit e web-it)</li>
+        <li>Tashmë ka n jë indeks të skedarëve të ndihmës</li>
+        <li>Librartë ( shtojca e Mark Kimes) janë tashme të suportuara nëse janë të instaluara (shih kontributi i Moodle për Libraritë)</li>
+      </ul>
+    </dd>
+  </dl>
+  <dl>
+    <dt></dt>
+    <dt>Kurset</dt>
+  </dl>
+  <dl>
+    <dd> 
+      <ul>
+        <li>Mësuesit mund të kenë tashmë kurset e tyre duke edituar privilegjet</li>
+        <li>Mësuesit mund të regjistrojnë tashmë manualisht studentët nëse duan</li>
+        <li>Menaxhimi i mësuesve është tashmë i kombinuar në një interfejs</li>
+        <li>Aktivitetet mund të zhvendosen në çdo distancë me dy klikime</li>
+        <li> Temat/Jvët tashmë mun d të zhvendoset lart apo poshtë</li>
+        <li>Menuja e Pop-up mund të lëvizet shpejt midis Temat/Javët kur mbyllet</li>
+        <li>Kur vetë-regjistrohen, studentët njoftohen dhe u jepet mundësia të çrregjistrohen</li>
+        <li>Mësues dhe studentë shohin listën e &quot;Kurset e mia&quot; home page-ete e kursve.</li>
+        <li>Notat mund të fshihen prej studentëve nëse duhet</li>
+      </ul>
+    </dd>
+  </dl>
+  <dl>
+    <dt></dt>
+    <dt>Gjuhët</dt>
+  </dl>
+  <dl>
+    <dd> 
+      <ul>
+        <li><strong>Hungarishtja</strong> dhe <strong>Greqishtja</strong> janë shtuar, 
+          dhe ka shumë të tjera të update-uara. Si zakonisht, paketat e gjuhëve brenda 
+          këtij varianti mund te mos jetë ende i komletuar. Gjithmonë ju mund të download-oni
+          paketat më të reja të gjuhëve nga <a href="http://moodle.org/download/lang/">http://moodle.org/download/lang/</a>.</li>
+        <li>Update-te dhe rregullime për shumicën e gjuhëve</li>
+        <li>Gjuhët tashmë kanë një gjuhë prindërore (për stringjet e munguara)</li>
+        <li>Disa rregullime për shfaqjen e veneve dhe kohës në disa gjuhë</li>
+        <li>es_mx është tashmë e ndarë në faza në favor të &quot;es&quot; ( Spanjishte e Internacionalizuar) </li>
+      </ul>
+    </dd>
+  </dl>
+  <dl>
+    <dt></dt>
+    <dt>Forumi</dt>
+  </dl>
+  <dl>
+    <dd> 
+      <ul>
+        <li>Kërkim më i përmirësuar, me fjalëkyçe të shumëfishta, faqëzimin etj.</li>
+        <li>Vlerësime me notë e Forum-it mund të vendosen për t'u përdorur nga çdokush, ose të përdoren vetëm nga mësuesit</li>
+        <li>Vlerësimet me nota të Forum-it mund të përdorë shkalle te personalizuara ose numra</li>
+        <li>Mund të vendoset një interval datash për të kufizuar postimet që do vlerësohen.</li>
+        <li>Admin now has access to some settings via Admin -&gt; Modules -&gt; Forums </li>
+        <li>Pasi editohet një postim, përdoruesi të ripostojë</li>
+        <li>Imazhet e atashuar shfaen inline</li>
+        <li>Kopje Email-i në format të thjeshtë teksti tashmë printojnë URL-të s mirë</li>
+      </ul>
+    </dd>
+  </dl>
+  <dl>
+    <dt>Quiz-i</dt>
+  </dl>
+  <dl>
+    <dd> 
+      <ul>
+        <li>Tip i ri pyetjesh: Përgjigje e Inkorporuara (Cloze) - lejon pasazhe teksti me përgjigjë të inkorporuara</li>
+        <li>Tip i ri pyetjeje: Numerike - lejon një interval numerik për përgjigje numerike </li>
+        <li>Tip i ri pyetjesh: Përshkrim - jo një pyetje reale, ai lejon të futen tekst/grafikë kudo</li>
+        <li>Zgjerim i raportimit të quiz-it me një raport modular</li>
+        <li>Tipar i ri i tentativave të përsëritura, ku çdo tentativë ngrihet mbi këtë të fundit</li>
+        <li>Nëse quiz-i mbyllet brenda 24 orëve, tregohet një sahat në shiritin e titullit dhe lajmëron 10 minuta deri në zero minuta.</li>
+        <li>Disa ribërje të kodit të quiz-it janë kryesr për ta bërë më të lehtë futjen e tipeve të reja të pyetjeve</li>
+      </ul>
+    </dd>
+  </dl>
+  <dl>
+    <dt></dt>
+    <dt>Resurset</dt>
+  </dl>
+  <dl>
+    <dd> 
+      <ul>
+        <li>Link-et Web tashmë mund të të jenë në dritare pop-up-i të personalizuara.</li>
+        <li>Admin tashmë ka akses në disa vendosje nëpërmjet Admin -&gt; Moduleve -&gt; Resurset</li>
+      </ul>
+    </dd>
+  </dl>
+  <dl>
+    <dt>Disa nga gabimet e mëparshme të mërzitshme janë rregulluar</dt>
+  </dl>
+  <dl>
+    <dd> 
+      <ul>
+        <li>Zhvendosja e postimeve tashmë zhvenndos atashimet</li>
+        <li>S'ka më paralajmërime kur kërkon të të ngarkosh skedare në një kurs bosh</li>
+        <li>Studentët nuk marin gjithmonë mesazhe në foramatin e thjeshtë nga forumet ku janë regjistruar</li>
+        <li>Kukitë nuk interferojnë më me setup-in e admin gjatë instalimit</li>
+        <li>Efektivisht nuk ka kufinj për numrin e aktiviteteve për seksion</li>
+        <li>Disa rregullime kur ke të bësh me skedarë zip, veçanërisht në Windows</li>
+        <li>Admin-ët tashmë mund të shtojnë llogari të nga databzat e jashtme</li>
+        <li>Sesionin nuk konflikton më me software-ët e tjerë</li>
+        <li>Skedarët Excel tashmë punojnë edhe në makinat jo-Intel</li>
+      </ul>
+    </dd>
+  </dl>
+  <dl>
+    <dt>&nbsp; </dt>
+  </dl>
+  <dd>&nbsp;</dd>
+</ul>
+<hr>
+
+<h3> Të reja ne Moodle 1.0.9 (29 Maj 2003) :</h3>
+<ul>
+  <dl>
+    <dt> Të përgjithshme</dt>
+    <dd> 
+      <li>Optimizime të ndryshme dhe përmirësim sinjifikativ i performancës</li>
+      <li>Disa elemente të errët të sigurisë janë rregulluar</li>
+      <li>Moodle tashmë sillet mirë kur mbyllet brenda një kornize</li>
+      <li>Editori Richtext tashmë mund të pëerdoret me mëshumë fusha editimi</li>
+      <li>Formati i ri "Plain text format", është i dobishëm kur poston code ose HTML.</li>
+      <li>Formati i ri "Wiki format", lejon stilin-Wiki me etiketa në shumicën e vendeve</li>
+      <li>Popup-et e reja lejojnë ikona emocioni/mimikash që të futen duke klikuar mbi imazhet</li>
+      <li>Aftësimi i specifikimit të lejeve për të krijuar skedarë dhe foldera në server</li>
+      <li>Disa rregullime për ekzekutimin e serverit në Safe Mode (disa probleme me skedrë mbeten)</li>
+      <li>Rregullime të ndryshme për pastrimin e disa teksteve te jashtme me thonjëza, etj</li>
+      <li>Rregullime të ndryshme per pajtueshmërinë e PostgreSQL 7.3</li>
+      <li>Starton migrimi i kodeve HTML drejt XHTML Transitional</li>
+      <li>Rregullime të vogla të panumururta në shumë vende</li>
+    </dd>
+    <dt> Gjuhët</dt>
+    <dd> 
+      <li><b>10</b> paketa të reja gjuhësh!   Argentinian Spanish, Czech, Portuguese, Slovakian, Romanian, Danish, Russian, Polish, Chinese Traditional, French Canadian.</li>
+      <li>Rregulluar dhe upgrade- të shumicës së paketave të gjuhëve</li>
+      <li>Gjuhët mund të specifikohen për sesionin (shih menunë në home page-in e  logimit) dhe mund të ndryshohet, psh:  http://moodle.org/?lang=ru </li>
+      <li>Menuja e gjuhëve mund të kufizohet te një nënbashkësi gjuhësh.</li>
+      <li>Fontet Truetype tashmë janë pjesë e paketave të gjuhëve</li>
+      <li>Të gjitha data/ora tashmë mund të riformatohet si pjesë e paketës së gjuhës</li>
+      <li>Një gabim i vogël por i mërzitshëm është rregulluar me editorin web-based të gjuhëve në servera Windows, gabim i cili shkaktonte rritjen e skedarëve</li>
+    </dd>
+    <dt> Zhvilluesit</dt>
+    <dd> 
+      <li>Variablat Globalë të debug-ut japin më shumë reagime mbi variablat e painicializuara</li>
+      <li>Rregullime të ndryshme për të sistemuar standartizuar disa kode PHP </li>
+      <li>rregullime të ndryshme për qëndrueshmërinë (duke siguruar që variablat të jenë gjithmonë të inicializuara)</li>
+    </dd>
+    <dt> Admin</dt>
+    <dd> 
+      <li><font color=red>Disa kode dhe osione të ndryshuar në config-dist.php (kur bën upgrade, krahason config.php korent ose ri ndërton config.php nga hiçi)</font></li>
+      <li><font color=red>Shumë ndryshime te stilet - autorët e stileve duhet të lexojnë <a href="http://moodle.org/theme/UPGRADE.txt">theme/UPGRADE.txt</a> </font></li>
+      <li>Funksioni i ri i regjistrimit në moodle.org për efekte sigurie etj.</li>
+      <li>Direktoria Admin mund të zhvendoset nga /admin diku tjetër (shih config-dist.php)</li>
+      <li>Listimi i Përdoruesve tashmë është i faqezuar, dhe mund të kërkohet për stringje</li>
+      <li>Menaxhimi i Module: modulet e aktiviteve tashmë mund të çaktivizohen individualisht ose të fshihen komplet</li>
+      <li>Përmirësime të faqes së editimit të gjuhës</li>
+      <li>Kontroll më i mirë i mjedisit PHP gjatë instalimit, me njoftime</li>
+      <li>Procedurë më e pastërt e instalimit.</li>
+    </dd>
+    <dt> Menaxhimi i përdoruesve</dt>
+    <dd> 
+      <li>Rol i ri: Krijues i kurseve - krejt  njëlloj si mësuesi por mund edhe të krijojë kurse të reja</li>
+      <li>Autentifikimi i ri si plug-in i quajtur "manual", parandalon përdoruesit nga krijimi i llogarive vetë</li>
+      <li>Rutinaq e "Forgot Password" tashmë përdor  një konfirmim me  email para se ta rivendosë password-in</li>
+    </dd>
+    <dt> Kurset</dt>
+    <dd> 
+      <li>Aktivititet në faqen e kursit tashmë kanë një buton të vogël për të fshehur/shfaqur këtë aktivitet për studentët</li>
+      <li>Gjithashtu e gjithë tematika/javët mund të fshuhet ose të shfaqet</li>
+      <li>Lista e pjesmarsve tashmë ka një faqosje, për të bashkpunuar me klasa shumë të gjera</li>
+      <li>Zip/Unzip tashmë suportohet nga një librari e brendshme, duke hequr varësinë
+       nga programe të jashtme për ta bëre këtë.  Kjo do të thotë se zip/unzip tashmë punojnë në Windows.</li>
+    </dd>
+    <dt> Detyrat</dt>
+    <dd> 
+      <li>Aplikimet e Detyrave mund të renditen</li>
+      <li>Mesazhi i njoftimit të detyrës nuk u dërgohet studentëve të paregjistruar</li>
+    </dd>
+    <dt> Forumet</dt>
+    <dd> 
+      <li>Shfaqja e listës së diskutimeve të forum-it  është përmirësuar shumë</li>
+      <li>Krejt diskutimet mund të zhvendosen nga një forum në një tjetër me një klikim të thjeshtë</li>
+      <li>Data/Ora e postimeve tashmë është e postuar në "të modifikuar së fundi", dhe jo të "krijuar"</li>
+      <li>Rreshtat ose mesazhet me subjekt bosh janë tashmë të parandaluar</li>
+      <li>Shfaqje dhe rradhitje më inteligjente e tekstit në postime</li>
+      <li>Nënshkrim i detyruar tashmë funksionon në forumin "Të rejat e Site-it" (mesazhe të gjithë studentëve/mësuesve aktivë)</li>
+      <li>menaxhim më i mirë i daljeve të mesazheve për të parandaluar kopje të dyfishta
+        që nganjëherë ndodhin me klasa shumë të gjera</li>
+    </dd>
+    <dt> Moduli i Detyrave të Workshop-it (nuk është inkluduar: shpejt do jetë i vlefshëm për t'u download-uar veçanërishyt)</dt>
+    <dd> 
+      <li>Një modul i ri shumë interesant i kontribuar nga Ray Kingdon,</li>
+      <li>Një mjet fleksibël që implementon një shumëllojshmëri vlerësimesh mes shokësh dhe 
+        skema vendosje-shembuj që përfshin një grup të tëre në ekzaminimin dhe venie notash 
+        për pjesë punësh.</li>
+    </dd>
+    <dt> Quiz-et</dt>
+    <dd> 
+      <li>Një tip i ri pyetjesh, Pyetje të Rastit (të zgjedhura nga gjithë pyetjet në të  njëjtën kategori)</li>
+      <li>Një tip i ri pyetjesh, Pyetje me koresponduesa (studenti duhet të korespondojë përgjigjen me pyetjen)</li>
+      <li>Një tip i ri pyetjesh, Përgjigje-shkurt me korespondues të rastit (ne mënyrë të rastit krijon Pyetje me koresponduesa 
+        nga pyetjet me përgjigje shkurt të disponueshme në të njëjtën kategori)</li>
+      <li>Importi i pyetjeve të Quiz-it nga skedarët tekst (moduli është dizenjuar që të lejojë ekspansionin në formate të reja - nje modul "beta Blackboard" është futur)</li>
+      <li>Wizardi i krijimit të pyeteve të shumëfishta te nje quiz te rastit</li>
+      <li>Pyetjet e Quiz-it mund të shkartisen në mënyrë të rastit</li>
+      <li>Përgjigjet e Quiz-it (zgjedhje e shumëfsishtë, etj.) mund të shkartisen në mënyrë të rastit</li>
+      <li>Janë rregulluar gabimet një për një kur nuk është përdorur butoni "Ruaj Notat" .</li>
+      <li>Rivlerësimi punon mirë nëse quiz-i ndryshohet</li>
+      <li>Editimi i një pyetjeje që tashmë nuk është përdorur në një quiz nuk ndikon më në rezultatet e quiz-it</li>
+      <li>Përgjigjet me zgjedhje të shumëfishta janë etiketuar a,b,c dhe jo 1,2,3</li>
+    </dd>
+    <dt> Resurset</dt>
+    <dd> 
+      <li>Performancë më e mirë kur editohet një tekst i gjerë ose burime HTML</li>
+      <li>Imazhe të thjeshta tashmë shfaqen të centruara brenda një faqeje web-i (jo rresht).</li>
+      <li>Formati Wiki është shtuar si një opsion i ri i faqeve Resurse</li>
+    </dd>
+    <dt> Stile të personalizuara</dt>
+    <dd> 
+      <li>Një numër stilesh të rinj janë shtuar.  disa prej tyre janë ESENCIAL
+        për të parë disa tipare të reja.  SHIH 
+        <a href="http://moodle.org/theme/UPGRADE.txt">theme/UPGRADE.txt</a> 
+        PER TE PARE NDRYSHIMET QE JU DUHET TE BENI TE STILET E VJETRA.</li>
+     <li>Stile të personalizuara tashme kanë aftësinë të ripërcaktojnë të gjithë butonat grafike.  
+        Ka një futje të re në  theme/x/config.php ($THEME->custompix) dhe një nën direktori  
+        opsionale "pix".  Shih stilin "cordoroyblue" si shembull.</li>
+    </dd>
+  </dl>
+</ul>
+<hr>
+
+
+<p>Shënimet e vjetra të botuara mund të shihen te <a href="http://moodle.org/mod/forum/view.php?f=1">Moodle.org announcement forum</a>.
+
+
+<p>&nbsp;</p>
+<p align="CENTER"><font size="1"><a href="../doc/" target="_top">Dokumentacioni i Moodle</a></font></p>
+<p align="CENTER"><font size="1">Version: $Id$</font></p>

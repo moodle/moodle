@@ -1,0 +1,155 @@
+<p align="center"><b>Ndihma për shkrimin e faqeve të formatuara në formën Wiki</b></p>
+
+<p>
+  Faqet e formatuara si Wiki lehtëson kryerjen e markimit të tekstit më format të lexueshëm,
+  që do të konvertohet në XHTML kur të shfaqet. Avantazhi më i madh është që ju nuk 
+  keni nevojë të mësoni gjuhën HTML për ta shkruar tekstin në HTML, tekst që ju shkruani
+  <em>duket</em> mirë për syrin edhe <em>para</em> konvertimit. është një alternativë për 
+  ti ruajtur skedarët "Word" si HTML duke mundësuar editimin direkt të tij.
+</p>
+
+<p>Ju duhet kryeshit të shkruani tekst të thjeshtë. Ka një numër karakteresh <em>speciale</em> që ju
+mund të shtoni për të futur formatimin</p>
+
+<h3>Formatimi në nivel Blloku</h3>
+
+<p>
+  Blloqet e paragrafëve ndahen nga të paktën një rresht bosh. Për të shtuar formatim special për një paragraf
+  shtohet një nga karakteret speciale që pasojnë tek karakteri i parë i rreshtit të parë i bllokut
+  i pasuar nga një boshllëk...
+</p>
+
+<table>
+  <tr><th>Karakter</th><th>Tipi i Bllokut</th></tr>
+  <tr><td>Pa karaktere</td><td>paragraf i zakonshëm</td></tr>
+  <tr><td>&gt;</td><td>Thonjëzim</td></tr>
+  <tr><td>Boshllëk</td><td>Teksti i paraformatuar (Monospaced)</td></tr>
+  <tr><td>%</td><td>Paraformatimi <em>dhe</em> formatimi Wikki injorohet</td></tr>
+  <tr><td>!#</td><td>Kreu - ku # është 1-6, niveli i kreut (1 është më i madhi)</td></tr>
+  <tr><td>Q.</td><td>Pyetjet - informacion stili që i shtohet paragrafit për të përmirsuar paraqitjen e pyetje/përgjigje (tek tema)</td></tr>
+  <tr><td>A.</td><td>Përgjigje - si më lart por për përgjigjet</td></tr>
+</table>
+
+<h3>Formatimi i listave</h3>
+
+<p>Listat e thjeshta mund të ndëtohen lehtë duke vendosur një karakter special në fillim të çdo rreshti të listës e pasuar me një boshllëk.
+Lista mbyllet me një rresht bosh. Listat mund futen lirisht brenda njera tjetrës - dhe mund tu ndryshohet tipi i listimit të listave të brendëshme. Përcaktimet e lloit të listes
+dhe të tipit të tekstit mund të shkëmbehen lirisht për të përftuar efektin e dëshiruar. krarkteret speciale
+janë si më poshtë...</p>
+
+<table>
+  <tr><th>Karakter</th><th>Tipi i çështjeve të listës</th></tr>
+  <tr><td>*</td><td>E parenditur (me pika)</td></tr>
+  <tr><td>#</td><td>List e renditur (1,2,3 etj)</td></tr>
+  <tr><td>:</td><td>List e përcaktuar, përcaktimi</td></tr>
+  <tr><td>;</td><td>List e përcaktuar, tekst</td></tr>
+</table>  
+
+<p>Shembull i listave të futura nën njera tjetrën:</p>
+<p><pre>
+  * Pika e parë
+  * Pika e dytë
+  ## rreshti 1 i nënfutur
+  ## rreshti 2 i nënfutur
+  * pika e tretë
+</pre></p>
+<p>Krijon:
+<ul><li>Pika e parë</li>
+  <li>Pika e dytë</li>
+  <ol><li>rreshti 1 i nënfutur</li>
+    <li>rreshti 2 i nënfutur</li></ol>
+  <li>Pika e tretë
+</ul></p>
+
+<h3>Formatimi i rreshtave</h3>
+
+<p>Formatimi i rreshtave lejon që një pjesë e markuar e rreshtit të këtë  stil të veçantë. Karakteret
+e veçantë të përdorur mund të shfaqen kudo në një rresht, por formatimi nuk mund
+të kapërxejë rreshta. Kodet janë si më poshtë...</p>
+
+<table>
+  <tr><th>Shembull</th><th>Shembull</th><th>Formatimi</th></tr>
+  <tr><td>*hello world*</td><td><strong>hello world</strong></td><td>Strong or Bold</td></tr>
+  <tr><td>/hello world/</td><td><em>hello world</em></td><td>Emphasis or Italics</td></tr>
+  <tr><td>+hello world+</td><td><ins>hello world</ins></td><td>Inserted text</td></tr>
+  <tr><td>-hello world-</td><td><del>hello world</del></td><td>Deleted or Strikethrough</td></tr>
+  <tr><td>hello ~world~</td><td>hello <sub>world</sub></td><td>Subscript</td></tr>
+  <tr><td>hello ^world^</td><td>hello <sup>world</sup></td><td>Superscript</td></tr>
+  <tr><td>"hello world"</td><td>&#8220;hello world&#8221;</td><td>Quoted</td></tr>
+  <tr><td>%hello world%</td><td><code>hello world</code></td><td>Code or Monospaced</td></tr>
+  <tr><td>@hello world@</td><td><cite>hello world</cite></td><td>Cite</td></tr>
+</table>  
+
+<h3>Akronimet</h3>
+
+<p>Etiketimi i akronimeve arrihet duke vendosur akronimin në germa kapitale të pasuar nga përshkrimi
+në paranteza. Nuk duhet të ketë boshllëk midis akronimit parantezave. Shembull...</p>
+
+<p>HTML(Hypertext Markup Language) <br />   <acronym title="Hypertext Markup Language">HTML</acronym></p>
+
+<h3>Hyper Links</h3>
+
+<p>Link-et mund të vihen në tekst dhe pasohen (pa bolshllëk) nga teksti që duhet të shfaqet në kllapa. Shembull: </em>http://www.google.com/(Search Now)</em> will be converted to 
+<a href="http://www.google.com/">Search Now</a>.</p>
+
+<p>link-et e mail-eve mund të arrihen me të njëjtën mënyrë, psh.,</p>
+<p>nobody@example.com(Test User) do të konvertohet në 
+<a href="mailto:nobody@example.com">Test User</a></p>
+
+<h3>Link-et e moduleve të Moodle</h3>
+
+<p>Nëse e dini numrin e identifikimit (id) të modulit të Moodle (shiko për ?id=nn në fund të një adrese moduli) dhe 
+emrin e modulit, ju mund ta link-oni direkt me këtë resurs duke përdorur sintaksën:</p>
+
+<p>ModuleName:nn(Tekst përshkrues)</p>
+<p>psh, <em>resursi:36(My New Page)</em>   <em>forum:10(kërce te forumi)</em></p>
+
+<h3>Link-et e piktuarave të Moodle</h3>
+
+<p>Grafiqet mund të vendosen në faqet wiki. Ju duhet ti ngarkoni (upload) grafiqet dhe vini re path-et e tyre. Sintaksa eshtë:</p>
+
+<p>/<em>..path-i për skedarin..</em>(alt text)</p>
+
+<p>për shembull,  /mypics/graphic.jpg(Staff picture)</p>
+
+<h3>Link-et e skedareve të Moodle</h3>
+
+<p>Në mënyrë të ngjashme me link-et e pikturave (më lart), kjo veti mundëson link-imin me skedarët e ngarkuara më parë
+të skedarëve të vendosur në faqe wiki. Sintaksa është:</p>
+
+<p><b>skedari:</b><em>..path për te skedari</em>(teksti i link-ut)</p>
+
+<p>për shembull, skedari:/pdfs/moodle.pdf(Informacioni mbi Moodle)</p>
+
+<h3>Riformatimi Automatik</h3>
+
+<p>Shumë funksione konvertohen në ekuivalentet e tyre XHTML .. Kryesoret janë
+si më poshtë...</p>
+
+<ul>
+  <li>Link-et HTTP  konvertohen në link-e aktive
+  <li> ..., (R), (TM), (C), 1/4, 1/2, 3/4 konvertohen në karaktere korrekte
+  <li> shifra x shifra konvertohen në simbolin e shumezimit korrekt
+  <li>Një fillim rreshti me të paktën 4 vijeza të ndërprera konvertohet në një rresht horizontal
+</ul>  
+
+<h3>Kontrolli shqiptimit (Experimental)</h3>
+
+<p>Formatuesi  wiki mund të ndrohet në moden e kontrollit të shqiptimit. Vendos atë që pason në
+një rresht më vete tekstin. Pas kësaj çdo gjë do të kontrollohet...
+
+<pre>
+!SPELL:language_code:language_variant
+
+Për shembull:
+!SPELL:en:british
+!SPELL:sp
+</pre>
+
+<p>"language_code" duhet të zevendsohet nga kodi përkatës i gjuhës (psh, EN, FR etc), "language_variant" (bashe me dy pikat) eshtë opsional dhe mund të jetë një nga "american", "british", ose "canadian" .</p>
+
+<p>Kur shfaqen fjalë të panjohura që janë "highlighted" ju mund të shikoni sugjerimet duke mbajtur mausin sipër
+fjalës</p>
+
+<p><em>NOTE: kontrolli i shqiptimit përdor<strong>pspell</strong> libraritë. Këto dhe fjalorët e kërkuar duhet të jenë present në server-in tuaj. Në veçanti platformat Windows nuk e suportojnë.
+</em></p>

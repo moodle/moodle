@@ -1,0 +1,148 @@
+<html>
+<head>
+<title>Moodle Docs: Si përdoren CVS</title>
+    <link rel="stylesheet" href="docstyles.css" type="TEXT/CSS">
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</head>
+<body bgcolor="#ffffff">
+<h1>Të përdorësh CVS për të aksesuar dhe   rifreskuar kodet burim të Moodle</h1>
+<blockquote> 
+  <p>CVS është Sistem i versionimit konkurrent (Concurrent Versioning System). Ai është një mënyrë ruajtjeje që përdoret gjerësisht 
+    për të ruajtur kodet burim sepse ruan edhe versionet e të gjithë skedarëve, pra asgjë nuk humbet 
+    asnjëherë, dhe përdorimi nga njerëz të ndryshëm mund të gjurmohet. Kjo mënyrë jep edhe mundësinë për të përzier 
+    kodet nëse dy ose më shumë njerëz po punojnë me të njëjtin skedar. Të gjitha kodet dhe të gjitha 
+    versionet ruhen në një server qëndror(në rastin e Moodle, te <a target="_top" href="http://www.sf.net/">Sourceforge</a>). 
+  </p>
+  <p>Nëse doni të aksesoni versionin corent CVS të Moodle vetëm për ta lexuar (read-only) e jo për ta ndyshuar atëhere 
+     ju nuk ju duhet kjo faqe - vetëm ndiq instruksionet CVS tek <a target="_top" href="http://moodle.org/download">faqja Moodle e download-imit</a>.</p>
+
+  <p>Për të përdorur <a  target="_top" href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/moodle/moodle/">arshivën CVS të 
+    Moodle</a> (as a <a target="_top" href="http://sourceforge.net/project/memberlist.php?group_id=30935">mer 
+    akses ndryshimi (shkrimi)</a>), duhet së pari të kesh një <a href="http://sourceforge.net/account/register.php">llogari(account) 
+    te Sourceforge</a>. Psh në këtë faqe, le ta zemë se username juaj 
+    është <strong><font color="#990000">myusername</font></strong> dhe password-i juaj 
+    është <strong><font color="#990000">mypassword</font></strong>. Merr shënime speciale nga 
+    instruksionet e sourceforge te <a target="_top" href="http://sourceforge.net/docman/display_doc.php?docid=768&group_id=1#develhomedir">krijo direktorinë (home) tënde CVS </a> - diçka që keni për
+    të bërë me çdo llogari të re për ta aftësuar "enable" atë për CVS.  Ju duhet të përdorni shellin ssh për tu lidhur në mënyrë interaktive me cvs.sourceforge.net.</p>
+    
+  <p>Pasi të keni një 
+    llogari pune në Sourceforge, kontakto <a 
+  target="_top" href="http://moodle.org/user/view.php?id=1&course=1">Martin Dougiamas</a> i cili mund tu japë akses shkrimi 
+    në direktori të veçanta të Moodle.</p>
+
+  <p>Për të mënjanuar ekzistenën e prompte-it sa <strong><font color="#990000">mypassword</font></strong> 
+    herë që ekzekutoni një komandë CVS, ndiqni <a target="_top" href="http://sourceforge.net/account/editsshkeys.php">direktivat e Sourceforge 
+    për përdorimin e çelsave të autorizuar</a>. Ky hap është opsional, por mund ta bëjë 
+    eksperiencën tuaj me CVS më të këndshme.</p>
+  <p>Pasi të bëni këtë, ju do keni të gjitha lejet e nevojshme, pra  mjafton të 
+ bësh set-up -in e makinës dhe të download-oni kodet burim korente dhe mund të filloni të punoni 
+    me to. Më poshtë janë instruksionet për sistemet Unix dhe Windows.</p>
+  <h2>1. Përdorimi i CVS në Unix</h2>
+  <blockquote> 
+    <p>Sourceforge CVS përdor shellin ssh si shtresë transporti sigurie, kësht që ju duhet ta vendosni 
+    këtë variabël mjedisi CVS_RSH në shellin tuaj Unix:</p>
+    <blockquote> 
+  <pre><strong>setenv CVS_RSH ssh</strong> (për csh, tcsh etc)</pre>
+      <pre><strong>export CVS_RSH=ssh</strong> (për sh, bash etc)</pre>
+    </blockquote>
+    <p>Më e mira është ta vesh këtë në .bashrc ose .cshrc tuaj që të mos ta shtypësh 
+      atë çdo herë. Mandej, kontrollo Moodle duke përdorur këtë (e gjitha në një rresht): </p>
+    <blockquote> 
+      <pre><strong>cvs -z3 -d:ext:myusername@cvs.moodle.sourceforge.net:/cvsroot/moodle co moodle</strong></pre>
+    </blockquote>
+    <p>Mos provo ta ekzekutosh këtë komandë të parë CVS në një direktori ekzistuese të Moodle 
+      - fillo me një direktori të re.</p>
+    <p>Vini re se se do dali prompti për <strong><font color="#990000">mypassword</font></strong> 
+      çdo komandë derisa ju të vini <a target="_top" href="http://sourceforge.net/account/editsshkeys.php">një çels 
+      autorizimi</a></p>
+    <p>Tashmë, ju duhet të keni një dirktori të re 'moodle'. Ju mund ta riemërtoni atë dhe ta lëvizni 
+      atë kudo. Shko te ajo: </p>
+    <blockquote> 
+      <pre><strong>cd moodle </strong></pre>
+    </blockquote>
+    <p>Të gjithë skedarët e mëparshëm të Moodle do jenë aty. Ju mund ti ndryshoni skedarët 
+      në kopjen tuaj. Për të krahasuar skedarët tuaj me kopjen kryesore CVS të serverit 
+      përdor cvs diff, psh: </p>
+    <blockquote> 
+      <pre><strong>cvs diff -c config-dist.php
+cvs diff -c lang</strong></pre>
+    </blockquote>
+    <p>Për të kapur ndryshimin më të fundit nga serveri përdor: </p>
+    <blockquote> 
+      <pre><strong>cvs update -dP</strong> </pre>
+    </blockquote>
+    <p>Për të kopjuar skedarë tuaj të rinj tek serveri, ju duhet të bëni diçka si: 
+    </p>
+    <blockquote> 
+      <pre><strong>cd lang/ca 
+cvs commit</strong> </pre>
+    </blockquote>
+    <p>Do të dali prompte-i pë të shtuar ca komente (varet nga editori juaj i tekstit 
+   default) ... shto koment kuptimplotë dhe mbylle editorin ... skedarët 
+      do të dërgohen te Sourceforge dhe do ruhen. U bë! </p>
+    <p>Për të ruajtur më shumë se një herë ju mund të vini argumenta default tek skedari e quajtur  .cvsrc 
+      në direktorinë tuaj home. Psh, imja përmban: </p>
+    <blockquote> 
+      <pre><strong>diff -c 
+update -dP</strong> </pre>
+    </blockquote>
+    <p>Provo 'cvs help' përm ë shumë detaje ... </p>
+    <p>&nbsp;</p>
+  </blockquote>
+  <h2>2. Përdorimi i CVS në Windows</h2>
+  <blockquote> 
+    <p>Së pari, ju duhet të download-oni një kopje komplete të Moodle duke përdorur llogarinë tuaj  
+      si zhvillues.</p>
+    <blockquote> 
+      <p> 1. Gjej TortoiseCVS te <a target="_top" href="http://www.tortoisecvs.org/">tortoisecvs.org</a> 
+        dhe  instaloje atë, pastaj riboot-o kompjuterin.<br>
+        <br>
+        2. Gjej ose krijo një folder të ri diku ku ju doni ta download-oni  
+       Moodle.<br>
+        <br>
+        3. Klikoni me të djthtaën te mausi mbi këtë folder dhe zgjidhni &quot;<strong>CVS Checkout</strong>&quot; 
+        nga menuja. Ju duhet të shikoni një dialog box.<br>
+        <br>
+        4. Kopjo këtë tekst tek fush CVSROOT (duke përdorur username tuaj!):</p>
+      <blockquote> 
+        <pre> :ext:<font color="#990000">myusername</font>@cvs.moodle.sourceforge.net:/cvsroot/moodle</pre>
+      </blockquote>
+      <p><br>
+        5. Shtyp butonin: &quot;<strong>Kap list...</strong>&quot;.<br>
+        <br>
+        6. Në të djathtë të butonit ju duhet të shikoni një listë të moduleve: zgjidh 
+        &quot;<strong>moodle</strong>&quot; nga kjo listë.<br>
+      <br>
+        7. Shtyp butonin: &quot;<strong>OK</strong>&quot; dhe gjithçka duhet 
+        të download-ohet<br>
+      </p>
+    </blockquote>
+    <p>Një dialog box duhet të tregojë të  gjithë skedarët që janë download-uar, dhe pas pak 
+      ju do të keni një kopje komplete të Moodle. Pas kontrollit të parë, ju 
+      mund të gjeni skedarët më të rinj nga serveri CVS :</p>
+    <blockquote> 
+      <p> 1. Kliko me të djathtën e mausit tek folderi juaj Moodle (ose çdo skedar) dhe zgjidh 
+       &quot;<strong>CVS Update</strong>&quot;. <br>
+      </p>
+    </blockquote>
+    <p>Pasi modifikoni skedarët (ju mund ta vini re këtë kur ata ndryshojnë nga jeshil në të kuq në krye!), 
+      ju mund ti ktheni ata te serveri CVS server kështu:</p>
+    <blockquote> 
+      <p> 1. Kliko me të djathtën e mausit tek folderi juaj Moodle (ose çdo skedar) dhe zgjidh  
+        &quot;<strong>CVS Commit...</strong>&quot;.<br>
+        <br>
+        2. Në dialog box, shtyp një përshkrim të qartë të ndryshimeve që po 
+        kryeni. <br>
+        <br>
+        3. Kliko te &quot;OK&quot;. Ndryshimet tuaja do të dërgohen te serveri.<br>
+      </p>
+    </blockquote>
+  </blockquote>
+  <p>&nbsp;</p>
+  <p align="center">Paç fat!</p>
+  <p>&nbsp;</p>
+</blockquote>
+<p align="CENTER"><font size="1"><a href="." target="_top">Dokumentacioni i Moddle</a></font></p>
+<p align="CENTER"><font size="1">Version: $Id$</font></p>
+</body>
+</html>

@@ -1,0 +1,213 @@
+<p align=center><b>Importimi i skedarëve në formatin "GIFT"</b></p>
+<p>GIFT është formati i importimeve më i kuptueshëm për importimin e 
+   pyetjeve të quiz-it të Moodle nga një skedar teksti.  Ai suporton pyetjet Me zgjedhje të shumëfishë, 
+   pyetjet E Vërtetë-False, Përgjigje të Shkurtra, pyetjet me korespondim dhe ato numerike, si edhe futjen e 
+   një _____ për formatin "Fjalë munguar". Tipet e ndryshme të pyetjeve mund të jenë 
+   të përziera në një skedar të vetëm teksti, dhe formati suporton edhe futjen e komenteve, 
+   emrave të pyetjeve, rezultatet dhe notat e peshuara në përqindje.</p>
+
+    <p>The text encoding of your text file must be the same as your Moodle installation. 
+    An example questions text file can be found here: <a href="../../../../mod/quiz/format/gift/examples.txt">gift/examples.txt</a>.</p>
+
+
+<h3>TIPET E PYETJEVE</h3>
+
+<p><u>Me shumë Zgjedhje:</u><br />
+    Për pyetjet me shumë zgjedhje, përgjigjet e gabuara kanë përpara tildë (~) 
+    dhe përgjigjte korrekte kanë para një shenjë barazimi (=).</p>
+    <pre>     Kush është varrosur në varrin e Grantit?{~Grant ~Jefferson =asnjë}</pre>
+    <p>Formati <b>Fjalë Munguar</b> fut automatikisht një rresht për t'u plotësuar (si ky _____) në mes të fjalisë. 
+    Per të përdorur këtë format, vendos përgjigjen aty ku shfaqet rreshti në fjali.</p>
+    <pre>     Grant ështe {~buried =varrosur ~living} në varrin e Grantit.</pre>
+    <p>Nëse përgjigjet bien para pikës qe perfundon fjalinë, do futet një rësht per t'u plotësuar  
+    për formatin &quot;fjalë munguar&quot;. Të gjitha tipet e pyetjeve mund të shkruhen në formatin Fjalë Munguar.</p>
+    <p>There must be a blank line (double carriage return) separating questions. 
+    Për qartësi, përgjigjet mund të shkruhen në rreshta të ndarë. Psh:</p>
+    <pre>     Festa Amerikane Falenderimeve festohet në {
+         ~të dytën
+         ~të tretën
+         =të katërten
+     } Të Enjte të Nëndorit.
+     
+     Germat Japaneze e kanë prejardhjen nga cili vend? {
+         ~India
+         =Kina
+         ~Korea
+         ~Egjipti}</pre>
+
+<p><u>Përgjigje shkurt:</u><br />
+    Përgjigjet në këtë ti pyetjesh kanë të gjitha përpara një shenjë barazimi (=), 
+    që tregon se ato jnaë përgjigje korrekte. Përgjigjet duhet të mos përmbajnë nje tildë (~).</p>
+    <pre>     Kush ështe varrosur në varrin e Grantit?{=asnjë =askush}
+
+     Dy plus dy janë baraz me {=katër =4}.</pre>
+    <p>Nëse ka vetëm <u>një</u> përgjigje korrekte, ajo mund të shkruhet pa shenjën e barazimit përpara, 
+    kur nuk ngatërrohet me E vërtete-False.
+
+<p><u>E vërtete-False:</u><br />
+    Në këte tip pyetjesh përgjigja tregon nëse pohimi është i vërtetë ose i gabuar. 
+    Përgjigja duhet të shkruhet si {E VERTETE} ose {FALSE}, ose shkurt {T} ose {F}.</p>
+    <pre>     Granti ështe varrosur në varrin e Grantit.{F}
+
+     Dielli lind në Lindjet.{T}</pre>
+
+<p><u>Korrespondues:</u><br />
+    Çiftet  korrespondues fillojnë me një shenjë barazimi (=) dhe janë të ndara nga ky simbol "->". 
+    Duhet të ketë të paktën tre çifte korresponduese.</p>
+    <pre>     Pyetje me korresponduesa. {
+         =subquestion1 -> subanswer1
+         =subquestion2 -> subanswer2
+         =subquestion3 -> subanswer3
+         }
+     
+     Për shtetet e mëposhtëm korrespondo kryeqytetet. {
+         =Canada -> Ottawa
+         =Italy  -> Rome
+         =Japan  -> Tokyo
+         =India  -> New Delhi
+         }</pre>
+    <p>Pyetjet me koresonduesa nuk e suportojnë rezultatin ose peshimet në përqindje.</p>
+
+<p><u>Numerike:</u><br />
+    Seksioni i përgjigjeve për pyetjet Numerike duhet të fillojnë me një shenjën e numrit (#). 
+    Përgjigjet numerike mund të përfshijnë kufi gabimi, i cili shkruhet në pasim të përgjigjes korrekte, të ndara me dy pikat (:). 
+    Psh, nëse përgjigja korrekte ështe çfardo numri midis 1.5 dhe 2.5, atëhere ai do të shkruhej si më poshtë <u>{#2:0.5}</u>. 
+    Kjo tregon se 2 me një kufi gabimi 0.5 është korrekte. 
+    Nëse asnjë kufi gabimi nuk ështe specifikuar, do supozohet se ai është zero.</p>
+    <pre>     When was Ulysses S. Grant born? {#1822}
+
+     What is the value of pi (to 3 decimal places)? {#3.1415:0.0005}.</pre>
+    <p>Optionally, numerical answers can be written as a span in the following format {#<i>MinimumValue</i>..<i>MaximumValue</i>}.</p>
+    <pre>     What is the value of pi (to 3 decimal places)? {#3.141..3.142}.</pre>
+    <p>Moodle's browser interface does not support multiple numerical answers, but Moodle's code can and so does GIFT. 
+    This can be used to specify numerical multiple spans, and can be particularly usefully when combined with percentage weight grades. 
+    If multiple answers are used, they must be separated by an equal sign, like short answer questions.</p>
+    <pre>     Kur ka lindur Ulysses S. Grant? {#
+         =1822:0
+         =%50%1822:2}</pre>
+    <p>Vini re se meqë GUI e brauzerit të Moodle nuk suporton përgjigje të shumëfishta për pyetjet Numerike, 
+    nuk ka mënyrë që t'i shikosh apo ndryshosh ato  nëpërmjet Moodle. 
+    E vetmja mënyrë që të ndryshosh një përgjigje numerike, është ta fshish pyetjen 
+    dhe ta ri-importosh atë.</p>
+
+
+<h3>OPSIONET</h3>
+    <p>Ky filtër, si shtojcë e tipeve bazë të pyetjeve, ofron opsionet e mëposhtme: 
+    komentet rresht, emra pyetjesh, rezulatat (jehonë) dhe koeficientë peshimi në përqindje.</p>
+
+<p><u>Komente rresht:</u><br />
+    Komentet që nuk importohen në Moodle, mund të futen në skedar teksti. 
+    Kjo mund të përdoret për të futur koka ose informacione mbi pyetjet. 
+    Të gjitha rreshtat që fillojnë me dy backslash-e (pa llogaritur tab-et ose spaciot) do të injorohen nga filtri.</p>
+    <pre>     // Subheading: Pyetjaq numerike me poshtë
+     Sa është 2 plus 2? {#4}</pre>
+
+<p><u>Emra Pyetjesh:</u><br />
+    Një emër pyetjeje mund të specifikohet duke e vendosur atë të parën dhe duke e mbyllur më dy dypikëshe (::).</p>
+    <pre>     ::Kanji Origins::Japanese characters originally
+     came from what country? {=China}
+
+     ::Thanksgiving Date::The American holiday of Thanksgiving is 
+     celebrated on the {~second ~third =fourth} Thursday of November.</pre>
+    <p>nëse emri i pyetjes nuk është specifikuar, e gjithë pyetja do përdoret si emër i saj në mënyrë default.</p>
+
+<p><u>Rezultati (Feedback):</u><br />
+    Feedback mund të përfshihet te çdo përgjigje duke pasuar përgjigjen me një shenjë numri (#) dhe feedback-un.</p>
+    <pre>     What's the answer to this multiple-choice question?{
+     ~wrong answer#feedback comment on the wrong answer
+     ~another wrong answer#feedback comment on this wrong answer
+     =right answer#Very good!}
+     
+     Who's buried in Grant's tomb?{
+     =no one#excellent answer!
+     =nobody#excellent answer!}
+     
+     Grant is buried in Grant's tomb.{FALSE#No one is buried in Grant's tomb.}</pre>
+    <p>Për pyetjet me shumë zgjedhje, feedback-u shfaqet vetëm për përgjigjen që ka zgjedhur studenti. 
+    Për përgjigjet shkurt, feedback-u shfaqet vetëm kur studenti fut përgjigjen korresponduese korrekte. 
+    Për pyetjet true-false, feedback-u i importuar ruhet në mënyrë që ajo të shfaqet kur studenti zgjedh  përgjigjen e gabuar. 
+    Kështe, në shembullin e fundit me lart, studenti do të shohë feedback vetëm nëse ka zgjedhur si përgjigje TRUE.</p>
+
+<p><u>Koeficientët e peshimit në %:</u><br />
+    Këta janë të vlefshëm për të dyja tipet e pyetjeve Me zgjedhje të shumëfishte dhe Përgjigje Shkurt. 
+    Ata mund të inkludohen duke pasuar shenjë tildë (për Me shumë Zgjedhje) ose 
+    shenjën e barazimit (për Përgjigje shkurt) me përqindjen e dëshiruar midis shenjave të përqindjes (psh, %50%). 
+    Ky opsion mund të kombinohet me komentet feedback.</p>
+    <pre>     Pyetje e vështirë.{~përgjigje gabim ~%50%përgjigje gjysëm e besueshme =përgjigje me të gjithë pikët}
+          
+     ::Jesus' hometown::Jesus Christ was from {
+     ~Jerusalem#This was an important city, but the wrong answer.
+     ~%25%Bethlehem#He was born here, but not raised here.
+     ~%50%Galilë#You nëd to be more specific.
+     =Nazareth#Yes! That's right!}.
+     
+     ::Jesus' hometown:: Jesus Christ was from {
+     =Nazareth#Yes! That's right!
+     =%75%Nazereth#Right, but misspelled.
+     =%25%Bethlehem#He was born here, but not raised here.}</pre>
+    <p>Vini re se dy shembujt e fundit janë kryesisht e njëjta pyetje, së pari në formën Me shmë zgjedhje dhe mandej si përgjigje shkurt.</p>
+
+    <p><font size="-1">Vini re se është e mundur të specifikosh peshat e përgjigjeve në përqindje që nuk janë
+    të vlefshme nëperemjet interfejsit të brauzerit. Këto përgjigje-të peshuara do kalkulohen korrektësisht 
+    (sipas vlerës së shënuar kur importohen), dhe do t'u shfaqen normalisht studentëve. 
+    Por këto përgjigje të peshuara nuk do t'u shfaqen korektësisht mësuesve kur edituhen nëpërmjet Moodle. 
+    Menuja që shfaqet në interfejsin e editimit të pyetjeve lejon vetëm disa vlera të fiksuara, dhe nëse pesha 
+    nuk përputhet me një nga këto vlera të paracaktuara, atëhere ajo nuk do të shfaqet korrektësish. 
+    Nëse editoni një pyetje të tille nga interfejsi i brauzerit, pesha e përgjigjes do të ndryshojë nga ajo e shfaqur.</font></p>
+
+<p><u>Përgjigjet e shumefishtas:</u><br />
+    Ky opsion përdoret për pyetjet me shumë zgjedhje, kur dy ose më shumë përgjigje duhet
+    të zgjidhen që të marresh kreditet e plota. Ky opsion është aktivizohet duke caktuar 
+    peshat e përgjigjeve të pjesëshme ndaj përgjigjeve të shumëfishta, duke mos lejuar që përgjigja e vetme të marre kredite te plota.</p>
+    <pre>     What two people are entombed in Grant's tomb? {
+          ~No one
+          ~%50%Grant
+          ~%50%Grant's wife
+          ~Grant's father }</pre>
+    <p>Vini re se nuk ka shenjë barazimi (=) në asnjë përgjigjë dhe përgjigjet duhet të jenë në total jo më shumë se 100%, 
+    përndryshe  Moodle do të njoftojë një gabim. 
+    Për të mënjanuar problemin që studentët të marrin automatikisht 100% thjeshtë duke çekuar të gjitha përgjigjet, 
+    ështe mirë që të futen pesha negative pë përgjit e gabuara.</p>
+    <pre>     What two people are entombed in Grant's tomb? {
+          ~%-50%No one
+          ~%50%Grant
+          ~%50%Grant's wife
+          ~%-50%Grant's father }</pre>
+
+<p><u>Karakteret Speciale ~ = # { } :</u><br />
+    Këto simbole <b> ~ = # { } </b> kontrollojnë operacionin e këtij filtri dhe nuk mund të përdoren si tekst normal brenda pyetjeve.
+    Meqë këto simbole kanë një rol special në përcaktimin e operacionit të këtij filtri, ato quhen "karaktere kontrolli."
+    por, nganjëherë ju mund të doni të përdorni një nga këto karaktere, psh për të shfaqur një formulë matematike në një pyetje. 
+    Mënyra për të mënjanuar këtë problem është "escaping" i karaktereve të kontrollit. 
+    Kjo dmth thjeshtë të vendosësh një backslash (\) para një karakteri kontrolli, kështu që filtri do ta kuptojë që ju doni
+    ta përdorni atë si një karakter të zakonshëm.
+    Psh:</p>
+    <pre>     Cila përgjigje barazon 5? {
+          ~ \= 2 + 2
+          = \= 2 + 3
+          ~ \= 2 + 4  }
+
+     ::GIFT Control Characters::
+     Cila nga më poshtë NUK është një karakter kontrolli për formatin e importimit GIFT? {
+        ~ \~     # \~ is a control character.
+        ~ \=     # \= is a control character.
+        ~ \#     # \# is a control character.
+        ~ \{     # \{ is a control character.
+        ~ \}     # \} is a control character.
+        = \     # Correct! \ (backslash) is not a control character. BUT,
+                   it is used to escape the control characters.
+     }</pre>
+    <p>Kur pyetja procesohet, backslash-i hiqet dhe nuk ruhet në Moodle.</p>
+
+<p><u>Optione të tjera:</u><br />
+    Pyetjet me përgjigje shkurt mund të bëhen të ndjeshme ndaj lloit të germave (të vogla apo kapitale)cduke ndryshuar  &quot;0&quot; me &quot;1&quot; në reshtin që pason:<br />
+    <tt>$question-&gt;usecase = 0;  // Ignore case</tt></p>
+    <p>Opsione të tjera janë të vlefshme duke edituar filtrin e importimit <b>gift/format.php</b>. </p>
+<p></p>
+
+<h3>KREDITET</h3>
+    <p>Ky filtër është shkruar nëpërmjet bashkpunimit të shumë antarëve nga komuniteti i Moodle. 
+    Fillimisht është bazuar mbi formatin FjalëMunguar, i cili përfshinte kode nga Martin Dougiamas dhe Thomas Robb.
+    Paul Tsuchido Shew shkroi këte në Dhjetor 2003 duke inkorporuar sugjerimet e komunitetit. 
+    Emri është koceptuar nga shkurtimet e &quot;General Import Format Technology&quot; .</p>
+    <p><font size="-1">Filtri GIFT dhe  dokumentimi nga Paul Tsuchido Shew http://ac.shew.jp. Last updated 27 Feb 2004.</font></p>

@@ -1,0 +1,133 @@
+<P ALIGN=CENTER><B>Importimi i pyetjeve të reja</B></P>
+
+<P>Ky funksion ju lejon të importoni pyetje nga skedarë teksti të jashtëm, 
+   të ngarkuara nëpërmjet një forme.  
+
+<P>Një numër formatesh skedari suportohen:
+
+<P><B>Formati GIFT</B></P>
+<ul>
+<p>GIFT është formati më i kuptueshëm për të importuar pyetje quiz-i të  
+   Moodle nga një skedar teksti.  Eshtë dizenjuar në mënyrë që të jetë  mënyra më e thjeshtë
+   për mësuesin për të shkruar pyetjet si një skedar teksti. Suporton pyetjete e tipeve  Me shumë zgjedhje, 
+   E Vërtetë-False, Përgjigje Shkurt, Korresponduese dhe  Numerike, si edhe  futjen e 
+   e një _____ për formatin "fjalë munguar".  Në një skedar teksti mund të përziehen 
+   tipe të ndryshme pyetjesh, si edhe komente, emra pyetjesh, fëdback dhe nota me peshime në përqindje. 
+   Më poshtë janë disa shembuj:</p>
+<pre>
+Who's buried in Grant's tomb?{~Grant ~Jefferson =no one}
+
+Grant is {~buried =entombed ~living} in Grant's tomb.
+
+Grant is buried in Grant's tomb.{FALSE}
+
+Who's buried in Grant's tomb?{=no one =nobody}
+
+When was Ulysses S. Grant born?{#1822}
+</pre>
+
+<p align=right><a href="help.php?file=formatgift.html&module=quiz">Më shumë informacion rreth formatit  "GIFT" </a></p>
+</ul>
+
+<P><B>Formati Aiken</B></P>
+<ul>
+<p>Formati Aiken është një mënyrë e thjeshtë për krijimin e pyetjeve me shumë zgjedhje duke përdorur një format
+   që është lehtësisht i lexueshëm nga njerzit. Këtu ështe një shembull i këtij formati:</p>
+<pre>
+What is the purpose of first aid?
+A. To save life, prevent further injury, preserve good health
+B. To provide medical treatment to any injured or wounded person
+C. To prevent further injury
+D. To aid victims who may be sëking help
+ANSWER: A
+</pre>
+
+<p align=right><a href="help.php?file=formataiken.html&module=quiz">Më shumë informacion mbi formatin "Aiken"</a></p>
+</ul>
+
+
+<P><B>Fjalë Munguar</B></P>
+<UL>
+<P>Ky format suporton vetëm pyetjet me shumë zgjedhje.
+Çdo përgjigje është e ndarë me një tildë (~), dhe përgjigja korrekte është 
+e paraprirë me një shenjë barazimi (=).  Këtu është një shembuull:
+
+<BLOCKQUOTE> Sapo të fillojmë të eksplorojmë pjesët e tupit tonë
+ne bëhemi studentë të {=anatomi dhe fiziologjisë ~refleksologjisë 
+~shkencë ~eksperiment}, dhe në një farë kuptimi ne mbetëm studentë të jetës.
+</BLOCKQUOTE>
+
+<p align=right><a href="help.php?file=formatmissingword.html&module=quiz">Më shumë informcion mbi formatin "Fjalë Munguar"</a></p>
+</UL>
+
+
+<P><B>Formati AON</B></P>
+<UL>
+<P>Ky është i njëjtë me formatin Fjalë Munguar, me përjashtim që pas importimit 
+   pyetjet Me Përgjigje Shkurt konvertohen në pyetje me koresponues në grupe katërshe në një kohë.</P>
+<p>Ndërsa, përgjigjte e pyetjeve me përgjigje me shumë zgjedhje shkartisen në mënyrë të rastit 
+   gjatë importimit.
+<p>Emërtimi i këtij formati vjen nga një organizatë që  sponsorizoi zhvillimin e shumë 
+   tipareve të quiz-it</p>
+</UL>
+
+
+<P><B>Drasa e zezë</B></P>
+<UL>
+<P>Ky modul mund të importojë pyetje të ruajtura në format eksportimi të Drasa e Zezë (Blackboard). 
+ Ai mbështetet në funksione XML që kompilohen nga PHP juaj.</P>
+
+<p align=right><a href="help.php?file=formatblackboard.html&module=quiz">Më shumë infi formatin "Blackboard" </a></p>
+</UL>
+
+
+<P><B>Formati WebCT</B></P>
+<UL>
+<P>Ky modul mund të importojë pyetje të ruajtura në formatin e bazuar në tekst WebCT.</P>
+
+<p align=right><a href="help.php?file=formatwebct.html&module=quiz">Më shumë informacion mbi formatin "WebCT"</a></p>
+</UL>
+
+
+<P><B>Menaxheri i Testeve të Kursit</B></P>
+<UL>
+<P>Ky modul mund të importojë pyetje të ruajtura në një bankë testesh Course Test Manager.
+Ai mbështetet në aksesimin në mënyra të ndryshme të bankës së testeve, e cila është një databazë e Microsoft Access, 
+që varet nga fakti nëse Moodle ekzekutohet në  një web server Windows-i apo Linux-i.</P>
+<p>Në Windows ai lejon ngarkimin e databazave të access-it sikurse skedarët e tjerë të importimit të të dhënave.</p>
+<p>Në Linux, ju duhet të ngrini një makinë windows në të njëjtin rjet me databazën  e Course Test
+Manager dhe një copë software-i i quajtur ODBC Socket Server, i cili përdor XML
+për të transferuar të dhëna të moodle në serverin Linux.</p>  <p>Ju lutemi Please lexoni gjithë skedarin e ndihmës para
+se të përdorni klasën e importimit.</p>
+
+
+<p align=right><a href="help.php?file=formatctm.html&module=quiz">Më shumë informacion mbi formatin "CTM"</a></p>
+</UL>
+
+
+
+<P><B>Përgjigjet e Inkorporuara (Cloze)</B></P>
+<UL>
+<P>Ky format importon vetëm një tip pyetjesh, të formatit Përgjigjet e Inkorporuara 
+(shpesh e njohur si Cloze).
+</p>
+
+<p align=right><a href="help.php?file=multianswer.html&module=quiz">Më shumë informacion mbi formatin "Cloze" </a></p>
+</UL>
+
+
+
+<P><B>Formate të Personalizuara</B></P>
+<UL>
+<P>Nëse ju keni një format të vetin që doni ta importoni, ju mund ta implementoni 
+   atë vetë duke edituar mod/quiz/format/custom.php
+
+<P>Sasia e kodit të ri të nevojshëm është mjaft i vogël - i mjaftueshëm për
+   të analizuar një pyetje të vetme nga një tekst i dhënë.
+
+<p align=right><a href="help.php?file=formatcustom.html&module=quiz">Më shumë informacion  mbi formatin e "Personalizuar" </a></p>
+</UL>
+
+
+<P>Më shumë formatë do të vijnë, duke përfshirë  WebCT, IMS QTI dhe çfardo formati
+   që përdoruesit e Moodle mund të kontribuojnë! </p>

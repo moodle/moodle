@@ -1,0 +1,804 @@
+<html>
+<head>
+<title>Moodle Docs: Pyetjet më të shpeshta (FAQ)</title>
+<link rel="stylesheet" href="docstyles.css" type="TEXT/CSS">
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</head>
+
+<body bgcolor="#FFFFFF">
+<h1>Pyetjet më të shpeshta (FAQ)</h1>
+<p class="normaltext">Kjo faqe përmban përgjigjet e disa nga pyetjet më të shpeshta  
+  që bëjnë njerzit që instalojnë Moodle. Nëse ju keni ndjekur 
+  instruksionet e <a href="./?file=install.html">instalimit</a> por 
+  keni një problem, atëhere kjo faqe është më e përshtatshmja. </p>
+
+<p class="normaltext">Nëse nuk gjeni përgjigjen tuaj këtu atëhere provoni <a href="http://moodle.org/mod/forum/index.php?id=5" target="_top">Using 
+  Moodle</a> course on moodle.org. Fillo me kërkimin e forumeve duke përdorur pak fjalëkyçe, 
+  nës rastin kur problemi juaj është tashmë i diskutuar. Nëse nuk gjeni 
+  gjë, atëhere provo postimin e pyetjes tuaj në një forum të përshtatshëm- zakonisht dikush 
+  do të jetë i aftë t'ju ndihmojë.</p>
+
+
+<p class="normaltext">Nëse keni provuar një numër zgjidhjesh pa e zgjidhur problemin tuaj,
+dhe ju ekzekutoni Moodle-in pas një firewall, është e këshillueshme të riprovoni  rikonfigurimin e
+firewall-it për tu siguruar që ai nuk bllokon një funksion të kërkuar ose komunikimin e nevojshëm.
+Firewall-et rrallë shkaktojnë probleme me Moodle por janë rastësisht përgjegjës për
+funksionimin e reduktuar si pasojë e keq-konfigurimit të firewall-it.
+
+
+
+<p class="normaltext">Përdor këtë listë për të kërcyer te përgjigja e përkatse më poshtë:</p>
+
+<p class="questionlink"><a href="#filenotfound">Sa herë që provoj të aksesoj ose shoh një skedar që unë e kam ngarkuar (uploaded), marr një gabim &quot;File not Found&quot;</a></p>
+
+
+
+<p class="questionlink"><a href="#php">PHP - a është i instaluar dhë çfarë versioni unë kam?</a></p>
+
+
+
+<p class="questionlink"><a href="#blankpages">Përse të gjitha faqet e mia janë bosh?</a></p>
+
+
+
+<p class="questionlink"><a href="#errorgetstring">Faqet e mia shfaqin një gabim fatal (fatal errors) si : call to undefined function: get_string()</a></p>
+
+
+
+<p class="questionlink"><a href="#headerssent">Përse unë vazhdoj të marr mesazhe gabimi mbi &quot;headers already sent&quot;?</a></p>
+
+
+
+<p class="questionlink"><a href="#failedopen">Vazhdoj të marr këtë gabim: Failed opening required '/web/moodle/lib/setup.php'</a></p>
+
+
+
+<p class="questionlink"><a href="#quotes">çdo tekst që unë shtoj me një apostrof (') ose një thonjëza (&quot;) shkakton gabime ose del me një slash</a></p>
+
+
+
+<p class="questionlink"><a href="#sessiontmp">Vazhdoj të marr mesazhe gabimi mbi session_start</a></p>
+
+
+
+<p class="questionlink"><a href="#fixdirroot">Kur unë shkoj te faqja admin, më thuhet ta boshatis dirroot !</a></p>
+
+
+
+<p class="questionlink"><a href="#loginsetting">Unë logohem por linku i login-it nuk ndryshon. Jam i loguar dhe dhe mund të navigoj lirisht.</a></p>
+
+
+
+<p class="questionlink"><a href="#resource1">Kur përpiqem të shtoj një resource, marr një mesazh gabimi.</a></p>
+
+
+
+<p class="questionlink"><a href="#noadmin">Gjatë procesit fillestar të setting-up, nuk më kërkohet fare të krojoj një llogari admin!</a></p>
+
+<p class="questionlink"><a href="#nologin">Nuk mund të logohem fare- Ngecem tek pamja e ekranit të logimit.</a></p>
+
+<p class="questionlink"><a href="#backup">Si mund ta bëj backup site-in tim Moodle ?</a></p>
+
+<p class="questionlink"><a href="#locale">Përse nuk e tregon kohën korrekte site-i 
+
+  im Moodle & date correctly?</a></p>
+
+<p class="questionlink"><a href="#cron">Kopjet e Email-it nuk janë dërguar 
+
+  nga forumet e mia</a></p>
+
+<p class="questionlink">&nbsp;</p>
+
+
+
+
+
+
+
+<h3><a name="filenotfound"></a>Sa herë që përpiqem të aksesoj ose shoh  
+
+
+
+  një skedar që unë kam ngarkuar, marr  një gabim error &quot;File not Found&quot;</h3>
+
+
+
+<p class="answer">Psh: Not Found: The requested URL /moodle/file.php/2/myfile.jpg 
+
+
+
+  was not found on this server. </p>
+
+
+
+<p class="answer">Web serveri juaj duhet të konfigurohet që të lejojë pjesën 
+
+
+
+  e URL-së pas pas një emri skriptimi që të kalojë direkt te skripti. Zakonisht kjo është e 
+
+
+
+  mundshme në Apache 1, por zakonisht e pamundshme default në Apache 2. Për ta bërë  
+
+
+
+  atë të mundshme, shto këtë rresht te httpd.conf, ose te një skedar .htaccess në direktorinë tuaj 
+
+
+
+  lokale (shih <a href="./?file=install.html#webserver">Install documentation</a> 
+
+
+
+  për më shumë detaje):</p>
+
+
+
+<p class="answercode"><b>AcceptPathInfo</b> on</p>
+
+
+
+<p class="answer">Vini re, kjo ecën vetëm për versionin 2.x të Apache. </p>
+
+
+
+<p class="answer">Nëse nuk përdorni Apache 2 dhe e keni akoma këtë problem 
+
+
+
+  atëhere ndro Moodle me ndonjë metodë tjetër. Disadvantazhet 
+
+
+
+  janë një humbje e lehtë e performancës për përdoruesit tuaj dhe ju nuk do të mundeni të përdorni 
+
+
+
+  link-et relative brenda resurseve HTML. </p>
+
+
+
+<p class="answer">Për të përdorur këtë metodë alternative: logohu si Admin, shko te faqja 
+
+
+
+  "Configure Variables" dhe ndysho vendosjet e  "<b>slasharguments</b>". 
+
+
+
+  Ju duhet të jeni tani i aftë që të aksesoni skedarët tuaj të ngarkuar.</p>
+
+
+
+<p class="answer">&nbsp;</p>
+
+
+
+  
+
+
+
+  <h3><a name="php"></a>PHP - është e instaluar dhe çfarë  versioni 
+
+
+
+  unë kam?</h3>
+
+
+
+  <p class="answer">Krijo një skedar të ri të quajtur info.php në web site-in tuaj, që përmban tekstin e 
+
+
+
+    mëposhtëm, dhe thirre atë nga browser-i juaj:</p>
+
+
+
+    
+
+
+
+  <p class="answercode">&lt;?PHP phpinfo() ?&gt;</p>
+
+
+
+<p class="answer">Nëse nuk ndodh asgjë atëhere nuk e ke instaluar PHP . Shiko 
+
+
+
+  dokumentat e instalimit për ndonjë informacion ku ta download-osh atë për te kompjuteri juaj.</p>
+
+
+
+<p class="answer">&nbsp;</p>
+
+
+
+<h3><a name="blankpages"></a>Përse faqet e mia janë bosh? </h3> 
+
+
+
+<p class="answer">Kontrollo variablin dirroot variable te config.php. Ju duhet ta kompletoni, 
+
+
+
+  pathname-in absolut, psh:</p>
+
+
+
+<p class="answercode"> $CFG->dirroot = "d:\inetpub\sites\www.yoursite.com\web\moodle";</p>
+
+
+
+<p>&nbsp; </p>
+
+
+
+<p class="answer">Platforma Redhat Linux shiko: <a href="http://moodle.org/doc/?file=installamp.html">Redhat Linux</a></p>
+
+
+
+<p>&nbsp; </p>
+
+
+
+<h3><a name="errorgetstring"></a>Faqet e mia tregojnë  fatal error 
+
+
+
+  si: call to undefined function: get_string()</h3>
+
+
+
+<p class="answer">Nëse shikoni gabime si:</p>
+
+
+
+<p class="answercode">Parse error: parse error, unexpected T_VARIABLE in c:\program 
+
+
+
+  files\easyphp\www\moodle\config.php on line 94 <br>
+
+
+
+  Fatal error: Call to undefined function: get_string() in c:\program files\easyphp\www\moodle\mod\resource\lib.php 
+
+
+
+  on line 11</p>
+
+
+
+<p class="answer">atëhere ju mund të mos keni vënë pikpresjeen ose thonjëzat mbyllëse 
+
+
+
+  nga një rresht te config.php (para rreshtit 94).</p>
+
+
+
+<p class="answer">Një arsye tjetër mund të jetë ju e keni hapur config.php me një 
+
+
+
+  program si Word dhe e keni edituar atë, dhe e keni ruajtur atë si një faqe HTML , në vend të një skedar 
+
+
+
+  teksti.</p>
+
+
+
+<p>&nbsp;</p>
+
+
+
+<h3><a name="headerssent"></a>Përse vazhdoj të marr mesazhe gabimi 
+
+
+
+  mbi &quot;headers already sent&quot;?</h3>
+
+
+
+<p class="answer">Nëse shikoni mesazhe si:</p>
+
+
+
+<p class="answercode">Warning: Cannot add header information - headers already 
+
+
+
+  sent by (output started at /webs/moodle/config.php:87) in /webs/moodle/lib/moodlelib.php 
+
+
+
+  on line 1322 </p>
+
+
+
+<p class="answercode"> Warning: Cannot add header information - headers already 
+
+
+
+  sent by (output started at /webs/moodle/config.php:87) in /webs/moodle/lib/moodlelib.php 
+
+
+
+  on line 1323 </p>
+
+
+
+<p class="answercode"> Warning: Cannot add header information - headers already 
+
+
+
+  sent by (output started at /webs/moodle/config.php:87) in /webs/moodle/login/index.php 
+
+
+
+  on line 54 </p>
+
+
+
+<p class="answer">Ju keni rreshtat bosh ose spacio pas shenjës finale ?> në skedarin config.php. 
+
+
+
+  Nganjëherë editorët e tekstit i shtojnë këto - psh Notepad i Windows - kështu 
+
+
+
+  ju mund të përdorni editorë të tjerë për ti fshirë këto spacio 
+
+
+
+  ose rreshta komplet. </p>
+
+
+
+<p class="answer">&nbsp;</p>
+
+
+
+<h3><a name="failedopen"></a>Unë vazhdoj të marr mesazh të këtij gabimi: Failed 
+
+
+
+  opening required '/web/moodle/lib/setup.php'</h3>
+
+
+
+<p class="answer">Në skedarin tuaj config.php, vendosja që ju përdorni për variablin dirroot 
+
+
+
+  duhet me komplet <strong> path-in që nga root-i i harddrive-it të serverit 
+
+
+
+  tuaj</strong>.</p>
+
+
+
+<p class="answer">Nganjëherë njerzit përdorin vetëm path-in që nga home directory e tyre, 
+
+
+
+  ose relativisht ndaj root-it  të direktorisë së web server-it.</p>
+
+
+
+<p class="answer">&nbsp;</p>
+
+
+
+<h3><a name="quotes" id="quotes"></a>çdo tekst që unë e shtoj me një apostrof 
+
+
+
+  (') ose thonjëza (&quot;) shkakton gabime ose del me një slash</h3>
+
+
+
+<p class="answer">Probleme të shkaktuara nga  apostrofat vijnë nga vendosje &quot;magic 
+
+
+
+  quotes&quot; jokorrekte. Moodle kërkon vendosjet e mëposhtme (që janë zakonisht  
+
+
+
+  default):</p>
+
+
+
+<p class="answercode">magic_quotes_gpc = On<br>
+
+
+
+  magic_quotes_runtime = Off</p>
+
+
+
+<p class="answer">Shiko seksionin në <a href="./?file=install.html#webserver">webserver 
+
+  configuration</a> në dokumentat e Instalimit për më shumëe detaje.</p>
+
+<p class="answer">&nbsp;</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h3><a name="sessiontmp"></a>Vazhdoj të marr mesazhe  gabimi mbi session_start</h3>
+
+
+
+<p class="answer">Nëse shikoni mesazhe si:</p>
+
+
+
+<p class="answercode">Warning: session_start() [function.session-start]: open(/tmp\sess_d40f380d37d431fc1516e9a895ad9ce0, O_RDWR) failed: No such file or directory (2) in G:\web\moodle\lib\setup.php on line 123</p>
+
+
+
+<p class="answercode">Warning: session_start() [function.session-start]: open(/tmp\sess_d40f380d37d431fc1516e9a895ad9ce0, O_RDWR) failed: No such file or directory (2) in G:\web\moodle\lib\setup.php on line 123</p>
+
+
+
+<p class="answercode">Warning: session_start() [function.session-start]: Cannot send session cache limiter - headers already sent (output started at G:\web\moodle\lib\setup.php:1) in G:\web\moodle\lib\setup.php on line 123</p>
+
+
+
+
+
+
+
+<p class="answer">... këto janë të lidhur me faktin që PHP ka dështuar ne ruajtjen 
+
+
+
+  e skedarëve të "session" në hard disk-un tuaj (në një direktorinë e quajtuar /tmp).  Zakonisht 
+
+
+
+  arsyeja është se ju nuk keni një direktori të quajtur /tmp në kompjuterin tuaj.  Kjo ndodh 
+
+
+
+  zakonisht në instalimet në Windows.
+
+
+
+
+
+
+
+<p class="answer">Për ta zgjidhur fikso tek vendosjet (settings) e PHP për path të tillë një direktori reale.  Ju mund ta bëni këtë te skedari php.ini:</p>
+
+
+
+<p class="answercode">session.save_path = C:\temp</p>
+
+
+
+<p class="answer">ose ndryshe skedarin .htaccess në direktorinë kryesore të moodle:</p>
+
+
+
+<p class="answercode">php_value session.save_path "/home/moodle/sessions"</p>
+
+<p class="answercode">&nbsp;</p>
+
+
+
+
+
+
+
+<h3><a name="fixdirroot"></a>Kur unë shkoj te faqja admin, më thuhet ta zbraz krejt dirroot!</h3>
+
+
+
+<p class="answer">Nëse shikoni gabime të tilla në Moodle 1.0.9:</p>
+
+
+
+
+
+
+
+<table class=generalbox cellspacing=0 cellpadding=5 align=center border=0>
+
+
+
+<tbody>
+
+
+
+<tr>
+
+
+
+<td bgcolor=#ffbbbb>Ju lutem rregulloni vendosjet në config.php: 
+
+
+
+<p>Ju keni: 
+
+
+
+<p>$CFG-&gt;dirroot = "/home/users/fred/public_html/moodle"; 
+
+
+
+<p>por duhet: 
+
+
+
+<p>$CFG-&gt;dirroot = "";</p></td></tr></tbody></table>
+
+
+
+
+
+
+
+<p class="answer">atëhere ju keni ndeshur me një të metë të vogël që ndeshet në disa servera. Problemi  është me mekanizmin e kontrollit të gabimeve, jo me path-in aktual.  Për ta ndrequr, gjej rreshtin këtë rresht (line 66) në skedarin admin/index.php: </p>
+
+
+
+<p class="answercode">if ($dirroot != $CFG->dirroot) {</p>
+
+
+
+<p class="answer">dhe  ndroje atë me:</p>
+
+
+
+<p class="answercode">if (!empty($dirroot) and $dirroot != $CFG->dirroot) {</p>
+
+<p class="answercode">&nbsp;</p>
+
+
+
+
+
+<h3><a name="loginsetting"></a>Unë logohem por duket sikur nuk jam loguar. Unë jam loguar dhe mund të navigoj lirisht.</h3>
+
+
+
+<p class="answer">Sigurohu që URL ter $CFG->wwwroot setting është ekzaktësisht 
+
+  e njëjtë me atë që ju po përdorni për të aksesuar site-in.</p>
+
+<p class="answer">&nbsp;</p>
+
+
+
+<h3><a name="resource1"></a>Kur përpiqem të shtoj një resource marr një mesazhe gabimi.</h3>
+
+
+
+<p class="answer">Duke supozuar se përdorni Apache, atëhere ka mundësi që vendosja 
+
+  juaj në config.php për $CFG->wwwroot është e ndryshmeis nga URL aktuale që 
+
+  ju përdorni për të aksesuar site-in. Gjithashtu provo ta bësh off "<b>secureforms</b>" te 
+
+  vendosjet e admin.</p>
+
+<p class="answer">&nbsp;</p>
+
+
+
+
+
+
+
+<h3><a name="noadmin"></a>Gjatë procesit të vendosjes fillestare, nuk më është kërkuar fare të krijoj një llogari admin!</h3>
+
+
+
+<p class="answer">Kjo ësht një e metë e njohur e  versioneve të Moodle deri te 1.0.9, tashmë është ndrequr te versioni 1.1.</p>
+
+
+
+<p class="answer">Ajo nuk prek të gjithë njerzit, ndodh vetëm kur personi që instalon Moodle ka një
+
+  cookie në browser nga një program tjetër në të njëjtin site, të quajtur "user", "admin", ose "teacher".</p>
+
+
+
+<p class="answer">Rregullime të shpejta janë ti fshish këto cookies nga browser-i juaj para instalimit, përdorimi i një browser-i tjetër, ose editimi i skedarëve moodle/admin/user.php për të futur këto rreshta afër kreut:</p>
+
+
+
+<p class="answercode">unset($user);<br />unset($admin);<br />unset($teacher);</p>
+
+
+
+<p class="answer">Pasi kryen seicilën nga këto rregullime është mirë 
+
+  ti fshish të gjitha tabelat nga databaza juaj dhe të re-install përsëri nga fillimi.</p>
+
+<p class="answer">&nbsp;</p>
+
+
+
+
+
+
+
+<h3><a name="nologin"></a>Nuk  mund të logohem - Ngecem tek pamja e logimit.</h3>
+
+
+
+<p class="answer">Shkaku më i rëndomtë është që kompjuteri juaj  (jo serveri juaj Moodle) 
+
+                  ka një firewall që heq informacion nga browser-i.  Këtu janë  
+                  
+                  disa instruksione për rregullimin <a href="http://service1.symantec.com/SUPPORT/nip.nsf/46f26a2d6dafb0a788256bc7005c3fa3/b9b47ad7eddd343b88256c6b006a85a8?OpenDocument&src=bar_sch_nam">Norton firewall products</a>.</p>
+
+
+
+<p class="answer">Severi admin mund ta rregullojë këtë për të gjithë duke edituar konfigurimin e  Moodle 
+
+                   dhe duke ndryshuar variablin "<b>secureforms</b>" në "No".</p>
+
+
+
+<p class="answer">Një shkak tjetër i mundshëm i këtij prpblemi është që sesionet nuk 
+
+  janë konfiguruar në si duhet në server. Ju mund ta testoni këtë duke thirrur  skriptin 
+
+  http://yourserver/moodle/lib/session-test.php.</p>
+
+<p class="answer">&nbsp;</p>
+
+
+
+
+
+
+
+<h3><a name="backup"></a>Si mund të bëj backup krejt site-in   Moodle?</h3>
+
+
+
+<p class="answer">Ka dy gjëra kryesore që duhet ti bëni kopje: databaza dhe skedarët e ngarkuar (uploaded). Vetë skritet Moodle janë më pak të rëndësishëm, meqenëse ju gjithmonë mund të download-oni një kopje nëse ju duhet.</p>
+
+
+
+<p class="answer">Ka shumë mënyra për të bërë backup-e.  Këtu është skica e një skripti të vogël që mund ta ekzekutoni në Unix për të bërë backup të databazës (ai ecën mirë sa mund ta keni si skript që ekzekutohet çdo ditë nëpërmjet një cron task</p>
+
+<p class="answercode">cd /my/backup/directory</p>
+
+<p class="answercode">mv moodle-database.sql.gz moodle-database-old.sql.gz</p>
+
+<p class="answercode">mysqldump -h example.com -u myusername --password=mypassword -C -Q -e -a mydatabasename > moodle-database.sql</p>
+
+<p class="answercode">gzip moodle-database.sql</p>
+
+<p class="answer">Për skedarët, ju mund të përdorni rregullisht komandën rsync për të kopjuar vetëm skedarët e ndryshuar te një host tjetër:</p>
+
+<p class="answercode">rsync -auvtz --delete -e ssh mysshusername@example.com:/my/server/directory 
+
+  /my/backup/directory/</p>
+
+<p class="answercode">&nbsp;</p>
+
+
+
+
+
+<h3><a name="locale"></a>Përse site-i Moodle im nuk e shfaq kohën dhe & datën në mënyrë korrekte?</h3>
+
+
+
+<p class="answer">çdo gjuhë kërkon kodin specifik  (të quajtur një <strong>kod lokal)</strong> 
+
+  për të lejuar shfaqjen korrekte të datës. Paketa e gjuhës përmban kodet 
+
+  standarte default, por nganjëherë këto nuk funksionojnë në servera Windows. </p>
+
+<p class="answer">Ju mund të gjeni kodet korrekte lokale për Windows në këto dy 
+
+  faqe: <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/vclib/html/_crt_language_strings.asp" target="_blank">Kodet e  
+
+  gjuhës</a> dhe <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/vclib/html/_crt_country_strings.asp" target="_blank"> Kodet e Country/region 
+
+  </a>.(psh &quot;esp_esp&quot; për spanish)</p>
+
+<p class="answer">Këto kode lokale mund të futen në Admin -&gt; Configure 
+
+  -&gt; Variables page, ku ato mund të mbishkruhen mbi ato të paketës së gjuhës së zgjedhur aktualisht  
+
+  .</p>
+
+<p class="answer">&nbsp;</p>
+
+<h3><a name="cron"></a>Kopjet  Email nuk janë dërguar 
+
+  nga forumet e mia </h3>
+
+<p class="answer">Ju <strong>duhet</strong> ndërtoni cron-et në mënyrë të përshtatshme nëse doni që Moodle 
+
+  të dërgojë automatikisht email-e nga forumet, journals, assignments etj. I njëjti  
+
+  proces gjithashtu kryen një numër pastrimesh (clean-up tasks) siç janë fshirjet e përdoruesve të vjetër të pakonfirmuar, 
+
+   studentë të vjetër të paregjistruar etj.</p>
+
+<p class="answer">Kryesisht, ju duhet të ndërtoni një proces i cili rregullisht të thërrasi skriptin 
+
+  http://yoursite/admin/cron.php. Ju litem shikoni <a href="./?file=install.html#cron"> 
+
+  seksioni mbi cron-in në dokumentat e instalimit</a>.</p>
+
+<p class="answer">Tip: Provo vendosjen default në faqen e variablave të Moodlee. Lere smtphost bosh.
+
+Kjo do të jetë e pranueshme për shumicën e përdoruesve.
+<p class="answer">&nbsp;
+<p class="answer">&nbsp;
+
+
+<hr>
+
+
+
+<p align="center" class="normaltext"><a href='ma&#105&#108t&#111:ma%72%74in@%6d%6fo%64%6c%65.o%72g' title='mar&#116&#105n@&#109oo&#100&#108&#101&#46&#111&#114g'>Sugjero 
+
+
+
+  një FAQ të re</a> (përfshi dhe përgjigjen!)</p>
+
+
+
+<hr>
+
+
+
+<p align="right"><strong><em>Falenderojmë John Eyre për ndihmën në mbajtjen e kësaj 
+
+
+
+  FAQ.</em></strong></p>
+
+
+
+<p align="CENTER"><font size="1"><a href="." target="_top">Dokumentacioni i Moodle</a></font></p>
+
+
+
+<p align="CENTER"><font size="1">Version: $Id: faq.html,v 1.6 2003/03/30 13:54:28 
+
+
+
+  moodler Exp $</font></p>
+
+
+
+
+
+
+
+</body>
+
+
+
+</html>
+

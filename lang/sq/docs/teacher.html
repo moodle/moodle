@@ -1,0 +1,243 @@
+<head>
+<title>Moodle Docs: Teachers Manual</title>
+<link rel="stylesheet" href="docstyles.css" type="TEXT/CSS">
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</head>
+
+<body bgcolor="#FFFFFF">
+<h1>Manuali i Mësuesit</h1>
+<p>Kjo faqe është një guidë e shpejtë për krijimin e kurseve online me Moodle. Këtu 
+  skicohen funksionet kryesore që janë të vlefshme, si edhe disa vendime kryesore 
+  që ju duhet të merrni.</p>
+<p>Seksionet e këtij dokumenti:</p>
+<ol>
+  <li><a href="#started">Si të fillosh</a></li>
+  <li><a href="#settings">Vendosjet e kurseve</a></li>
+  <li><a href="#upload">Ngarkimi i skedarëve</a></li>
+  <li><a href="#activities">Ngritja e aktiviteteve</a></li>
+  <li><a href="#course">Ekzekutimi i kursit</a></li>
+  <li><a href="#further">Informacion i mëtejshëm</a></li>
+</ol>
+<h3 class="sectionheading"><a name="started"></a>Si të fillosh</h3>
+<blockquote> 
+  <p>Në këtë dokument administratori i site-it e ka ngritur Moodle dhe ka kurs bosh për të filluar 
+  me të. Supozohet se ju jeni loguar në kursin tuaj 
+    duke përdorur llogarinë tuaj si mësues.</p>
+  <p>Këtu janë tre udhëzimet e përgjithsjme që ju ndihmojnë për të filluar.</p>
+  <ol>
+    <li><strong>Mos u frikëso të eksperimentosh:</strong>
+      <blockquote>të ndërhysh dhe ti ndryshosh gjërat. Eshtë vështirë të prishësh ndonjë gjë  
+      në kurset e Moodle, edhe nëse e bëni është e lehtë ta rregullosh.
+    </blockquote>
+    <li><strong>Vini re dhe përdorni këto ikona të vogla</strong>: 
+      <blockquote> 
+        <p>&nbsp;<img src="f:/php_programe/moodle/pix/i/edit.gif"> - ikona <strong>edit </strong> 
+          ju lejon të editoni çfardo që vjen pas.</p>
+        <p><img src="f:/php_programe/moodle/pix/help.gif" width="22" height="17"> - ikona <strong>help 
+          </strong> do tu japë një dritare <a target="helpwindow" href="../help.php?file=index.html">ndihmese</a></p>
+        <p>&nbsp;<img src="f:/php_programe/moodle/pix/i/hide.gif" width="16" height="16"> - ikona <strong>open-eye 
+          </strong> ju mundëson të fshihni diçka nga studentët</p>
+        <p>&nbsp;<img src="f:/php_programe/moodle/pix/i/show.gif" width="16" height="16"> - ikona <strong>closed-eye 
+          </strong> e bën të shfaqet diçka që ka qenë e fshehur</p>
+      </blockquote>
+    </li>
+    <li><strong>Përdor shiritin e navigimit në krye të çdo faqeje </strong>
+	  <blockquote>kjo 
+      ju ndihmon të kujtoheni se ku jeni dhe të parandalojë që të humbisni diku.
+    </blockquote>
+    </li>
+  </ol>
+  <p>&nbsp;</p>
+</blockquote>
+<h3 class="sectionheading"><a name="settings"></a>Vendosjet e kursit</h3>
+<blockquote> 
+  <p>Gjëja e parë që duhet të bëni është të shikoni nën &quot;Administration&quot; 
+    të faqes së kursit tuaj dhe të klikoni mbi &quot;<strong>Settings...</strong>&quot; 
+    (Vini re se ky link, dhe krejt seksioni i Administratimit është 
+    i vlefshëm vetëm për ju (dhe për administratorin e site-it). Studentët nuk do ti shikojnë 
+    këto link-e).</p>
+  <p>Në faqen e Settings ju mund të ndryshoni një numër vendosjesh të kursit tuaj, 
+    duke filluar nga emri io tij deri te data kur fillon. Nuk do flas për to, 
+    sepse ikona e help-it ngjitur me to ju shpjegon në detaje. 
+    Megjithatë, do flas për më të rëndësishmet e tyre - the <strong>formati 
+    kursit</strong>.</p>
+  <p>Formati i kursit që ju zgjidhni vendos faqosjen bazë të kursit tuaj, 
+    njëlloj si një template (model i gatshëm). Versioni 1.0 i Moodle ka tre formate - në të ardhmen do të ketë 
+    më shumë (ju lutem dëgoni ide të reja te <a href="mailto:martin@moodle.org">martin@moodle.org</a>!)</p>
+  <p>Këtu ka disa pamje të tre shembujve kursesh për seicilin nga tre  
+    formatet (injoro diferencën e ngyrave, të cilat janë vënë për krejt site-in nga 
+    administratori i site-it):</p>
+  <p align="center"><strong>Formati javor:</strong></p>
+  <p align="center"><img src="f:/php_programe/moodle/doc/pix/weekly.jpg" width="570" height="527"></p>
+  <p align="center">&nbsp;</p>
+  <p align="center"><strong>Formati tematik:</strong></p>
+  <p align="center"><img src="f:/php_programe/moodle/doc/pix/topics.jpg" width="570" height="463"></p>
+  <p align="center">&nbsp;</p>
+  <p align="center"><strong>Formati Social:</strong></p>
+  <p align="center"><img src="f:/php_programe/moodle/doc/pix/social.jpg" width="570" height="429"></p>
+  <p>&nbsp;</p>
+  <p>Vini re se formatet javore dhe tematike kanë strukturë mjaft të ngjashme. Diferenca  
+    kryesore është që çdo box në formatin javor mbulon ekzaktësisht një javë, 
+    ndërsa te formati tematik çdo box mund të mbullojë çfardo që që doni. Formati 
+    social nuk përdor aspak përmbajtje dhe bazohet mbi një forum  
+    - kjo shfaqet në faqen kryesore.</p>
+  <p>Shiko butonin help te faqja e Course Settings për më shumë detaje.</p>
+  <p>&nbsp;</p>
+</blockquote>
+<h3 class="sectionheading"><a name="upload"></a>Ngarkimi i skedarëve</h3>
+<blockquote> 
+  <p>Ju mund të keni përmbajtje ekzistuese që ju doni ta shtoni te kursi juaj, si 
+    faqe web-i, skedarë audio, video, dokumenta word-i, ose animacione flash. 
+    çdo tip skedari që ekziston ju mund ta ngarkoni (uploaded) në kursin tuaj dhe ta ruani 
+    në server. Ndërkohë që skedarët tuaj janë në server ju mund ti zhvendosni, ti riemëroni, editoni 
+    ose ti fshini ato.</p>
+  <p>Kjo arrihet nëpërmjet link-ut<strong>Files</strong> në menunë e 
+    administrimit. Seksioni Files duket si:</p>
+  <p align="center"><img src="f:/php_programe/moodle/doc/pix/files.jpg" width="400" height="347"></p>
+  <p>&nbsp;</p>
+  <p>Ky interface është i vlefshëm vetëm përmësuesit - nuk aksesohet nga studentët. 
+    Skedarët e veçantë bëhen të vlefshëm për studentët më vonë (si &quot;Resources&quot; 
+    - shiko seksionin tjetër).</p>
+  <p>Siç mund ta shikoni nga pamja e ekranit, skedarët janë listuar përgjatë nëndirektorive. 
+    Ju mund të krijoni një numër nëndirektorish për të organizuar skedarët tuaj dhe të 
+    zhvendosni skedarët nga njera te tjetra.</p>
+  <p>Ngarkimi i skedarëve nëpërmjet web-it është i kufizuar me nga një skedar çdo herë. 
+    Nëse doni të ngarkoni shumë skedarë njëherazi (psh një web site të plotë), 
+    kjo mund të bëhet më lehtë duke i  <strong>zip program</strong> kompresuar ata  
+    në një skedar të vetëm, upload skedarin  zip dhe unzipo atë përsëri në server 
+    (ju do shikoni një link &quot;unzip&quot; ngjitur me zip archives).</p>
+  <p>Për të parë çdo skedar që keni ngarkuar vetëm kliko mbi emrin e zij. Web browser-i juaj 
+    do kujdeset ose ta shfaqë atë ose ta download-ojë atë te kompjuteri juaj.</p>
+  <p>Skedarët HTML dhe teskst mund të editohen online. Skedarët e tjerë do kërkojnë 
+    të editohen në kompjuterin tuaj lokal dhe të ngarkohen përsëri. Nëse e ngarkoni skedarin 
+    me të njëjtin emër si ai ekzistues, ai do të zëvëndësohet automatikisht.</p>
+  <p>Një shënim  final: nëse përmbajtja juaj mbetet jashtë web-it atëhere nuk është e nevojshme 
+    të ngarkosh skedarët fare - ju mund të link-oni direkt te ata nga brenda  
+    kursit (shiko modulin Resources më poshtë).</p>
+  <p>&nbsp;</p>
+</blockquote>
+<h3 class="sectionheading"><a name="activities"></a>Ngritja e  aktiviteteve</h3>
+<blockquote> 
+  <p>Ndërtimi i një kursi përfshin  modulin e shtimit të aktiviteteve të kursit te faqja kryesore 
+    që studentët ti përdorin ato. Ju mund ta shkartisni renditjen sa herë të 
+    doni.</p>
+  <p>Për të kthyer editimin në "on", kliko &quot;Turn on editing&quot; nënr Administration. 
+    Thy çelës kyç trego ose fshih kontrollet ekstra që ju lejon të  manipuloni 
+    faqen kryesore të kursit. Shiko pamjen e parë të ekarnit më lart (formati Javor 
+ i   kursit) ku kontrollet e edit janë kthyer "on".</p>
+  <p>Për të shtuar një aktivitet të ri, thjeshtë shko te sekstioni week ose topic ose section i ekranit 
+    ku doni ta shtoni atë, dhe zgjidhni tipin e aktivitetit nga menuja që del (pop-up). 
+    Kështu është një përmbkledhje e aktiviteteve standarte të Moodle 1.0:</p>
+  <dl>
+    <dt><strong>Assignment</strong></dt>
+    <dd>Detyra (assignment) është ajo ku ju vendosni një detyrë me një datë të detyrueshme dhe një maksimum pikësh. 
+      Studentët do të jenë të aftë të ngarkojë një skedar që kënaq kërkesat. Data 
+      kur ata e ngarkojnë skedarin e tyre regjistrohet. Ndërkaq, ju do të keni një faqe 
+      të vetme në të cilën mund të shikoni seicilin skedar (dhe sa i hershëm është ai), dhe 
+      regjistroni një vlerësim dhe nj?7 koment. Gjysëm ore pasi keni vlerësuar çdo student 
+      veçanërisht, Moodle do tu dërgojë automatikisht email-e studentëve. </dd>
+    <br>
+    <br>
+    <dt><strong>Choice</strong></dt>
+    <dd>Aktiviteti  choice është shumë i thjeshtë - ju bëni një pyetje dhe specifikoni një zgjedhje (choice) 
+      nga përgjigjet. Studentët mund të bëjnë zgjedhjet e tyre, dhe do të keni një raport në ekran 
+      ku mund të shikoni rezultatet. Unë e përdor atë për grumbulluar pajtime kërkimi nga 
+      studentët e mi, por ju mund ta përdorni atë për zgjedhje të shpejta ose votime në klasë.</dd>
+    <br>
+    <br>
+    <dt><strong>Forum</strong></dt>
+    <dd>Ky modul është deri tani më i rëndësishmi - këu bëhen 
+      diskutimet. Kur shtoni një forum të ri, do tju paraqitet një zgjedhje nga  
+      tipet e ndryshme - një diskutim i thjeshtë çështje-vetme, forum i lirë-për të gjithë  
+      i përgjithshëm, ose një-hallkë-diskutimi-për-përdorues.</dd>
+    <br>
+    <br>
+    <dt><strong>Journal</strong></dt>
+    <dd>çdo aktivitet reviste është një hyrje në krejt revistën e kursit. Për seicilën 
+      ju mund të specifikoni një pyetje "open-ended" që udhëhezon çfarë të shkruajnë studentët, 
+      si edhe një dritare gjatë kohës në të cilën revista është e hapur (në formatin kursi javor 
+      vetëm). Një rregull i trashë është  të krijosh një revistë pë javë.       Inkurajo studentët të shkruajnë mendueshëm dhe kritikë në këto revista, 
+      sepse janë të vlefshme vetëm për ju. Ndërkohë, ju mundeni ti vlerësoni dhe  
+      ti komentoni të gjitha hyrjet e kësaj jave ose teme, dhe studentët 
+      do të marrin një e-mail automatik që i imformon për përgjigjen tuaj. Revistat 
+      nuk janë dizenjuar që të shtohen vazhdimisht - nëse keni nevojë për ta bërë këtë atëhere 
+      shto më shumë aktivitete journal.</dd>
+    <br>
+    <br>
+    <dt><strong>Resource</strong></dt>
+    <dd>Resource-et janë brendia e kursit tuaj. çdo resource mund të jetë çdo skedar 
+      që ju keni ngarkuar duke përdorur një URL. Ju mund ti mbani thjesht faqet si 
+      text-based  duke i shtypur ata direkt brenad një forme.</dd>
+    <br>
+    <br>
+    <dt><strong>Quiz</strong></dt>
+    <dd>Ky modul ju lejon të dizenjoni dhe ngrini teste quiz, që përmbajnë shumë 
+      zgjedhje, true-false, dhe pyetje me përgjigje të shkurtra. Këto pyetje ruhen  
+      në një databazë të kategorizaur, dhe mund të ripërdoren brenda kursit dhe madje  
+      midis kursev. Quizz-et mund të lejojnë disa tentativa. çdo tentativë shënohet 
+      automatikisht, dhe mësuesi mund të zgjedhë nëse do ti japë rezulatin apo do të tregojë përgjigjen e 
+      saktë. Ky modul përfshin lehtësinë e vlerësimeve. </dd>
+    <br>
+    <br>
+    <dt><strong>Survey</strong></dt>
+    <dd>Moduli sondazh (survey) jep një numër instrumentesh sondazhi që 
+      janë të dobishme në vlerësimin e të kuptuarit nga klasa juaj. Aktualisht ato përfshijnë 
+      instrumentet COLLES dhe ATTLS. Ato mund tu jepen studentëve herët 
+      në kurs si një mjet diagnostikimi dhe në fund të kursit si mjet  
+      vlerësimi.</dd>
+  </dl>
+  <br>
+  <p>Pasi i shtoni aktivitetet tuaja, mund ti zhvendosni ato lart e poshtë kursit 
+    duke klikuar në ikonat me shigjeta të vogla (<img src="f:/php_programe/moodle/pix/t/up.gif" width="9" height="10"> 
+    <img src="f:/php_programe/moodle/pix/t/down.gif" width="9" height="10">) ngjitur me njera tjetën. Ju 
+    mund dhe ti fshini ato duke përdorur ikonën me kryq <img src="f:/php_programe/moodle/pix/t/delete.gif" width="10" height="10">, 
+    dhe ti rieditoni ato duke përdorur ikonën edit <img src="f:/php_programe/moodle/pix/t/edit.gif" width="10" height="11">.</p>
+  <p>&nbsp;</p>
+</blockquote>
+<h3 class="sectionheading"><a name="course"></a>Ekzekutimi i kursit</h3>
+<blockquote> 
+  <p>Ka ca plane për ta zgjeruar këtë  dokument në një tutorila më 
+    të kuptueshëm. Deri atëhere pak ide:</p>
+  <ol>
+    <li>Nëshkruani vetë te të gjitha forumet që të mbani lidhjet me aktivietet e klasës 
+    suaj. </li>
+    <li>Inkurajo të gjithë studentët që të mbushin profilin e tyre (t?7 përfshijnë edhe photot) 
+      dhe i lexoni të gjitha - kjo do tu ndihmojë  të kuptoni kontekstin e shkrimeve të tyre  të mëvonshme 
+      dhe tu ndihmojë që tu përgjigjeni sipas "kokës".</li>
+    <li>Mbani shënime vetë në forumin privat të &quot;<strong>Mësuesit</strong>&quot; 
+      (nën Administration). Kjo është veçanërisht e dobishme kur jep mësim në skuadër.</li>
+    <li>Përdor link-un &quot;<strong>Logs</strong>&quot;  (nën Administration) 
+      për të marrë akses te të gjitha logimet. Aty ju do shikoni një link për te një dritare popup 
+      e cila update-on çdo 60 sekonda dhe tregon aktivitetin e orës së fundit. 
+      Kjo është e dobishme për ta mbajtur hapur gjithë ditën desktop-in tuaj  dhe të ndiqni se çfarë ndodh 
+      në kursin tuaj.</li>
+    <li>Përdor aktivitetin &quot;<strong>Activity Reports</strong>&quot; (ngjitur me çdo emër 
+      të listës së gjithë njerzve, ose nga faqja e profilit të përdoruesve). Këto japin  
+      një mënyrë të hatashme për të parë se çforë po bën çdo person i veçantë në kurs.</li>
+    <li>Përgjigju shpejt studentëve. Mos e ler për më vonë - bëje tani. 
+      Jo vertëm se është e lehtë të mos mbingarkohesh me një volum që mund të gjenerohet, 
+      por mund të jetë pjesë  kyçe e ndërtimit dhe mbajtejes së ndjenjave të komunitetit  
+      kursin tuaj.</li>
+  </ol>
+  <p>&nbsp;</p>
+</blockquote>
+<h3 class="sectionheading"><a name="further"></a>Informacion i mëtejshëm</h3>
+<blockquote> 
+  <p>Nëse keni ndonjë problem të veçantë me sitein tuaj, kontaktoni 
+    administratorin e site-it.</p>
+  <p>Nëse keni ndonjë ide mbi përmirësimin e Moodle, madje edhe ndonjë histori  
+    të mirë, vizito <a href="http://moodle.org/" target="_top">moodle.org</a> 
+    dhe bashkohu me kursin e quajtur "<a href="http://moodle.org/course/view.php?id=5" target=_top >Using 
+    Moodle</a>". Do të kënaqemi tu dëgjojmë prej jush, dhe ju mund të ndihmoni në përmirësimin e Moodle.</p>
+  <p>Nëse doni të kontribuoni në kode pë module të reja, ose shkrim dokumentacioni, 
+    ose faqesh, kontakto me: <a href="http://moodle.org/user/view.php?id=1&course=1" target="_top">Martin 
+    Dougiamas</a> osenavigo &quot;bug tracker&quot; site-in  për Moodle, te <a href="http://moodle.org/bugs/" target="_top">moodle.org/bugs</a></p>
+  <p>Së fundi, kujtohu të përdorësh ikonën e help-it - këtu është një <a target="helpwindow" href="../help.php?file=index.html">indeks për gjithë skedarët help në Moodle</a>.</p>
+  <p align="center">Faleminderit që përdorni Moodle - dhe paç fat në mësimdhënien tuaj!</p>
+  <hr>
+  <p>&nbsp;</p>
+</blockquote>
+<p align="CENTER"><font size="1"><a href="." target="_top">Dokumentacioni i Moodle</a></font></p>
+<p align="CENTER"><font size="1">Version: $Id: teacher.html,v 1.4 2002/08/18 10:00:01 
+  martin Exp $</font></p>
+</body>

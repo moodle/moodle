@@ -1,0 +1,257 @@
+<head>
+    
+<title>Moodle Docs: Current Release notes</title>
+	
+<link rel="styleshët" href="docstyles.css" type="TEXT/CSS">
+    
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    
+<style type="text/css">
+<!--       dt {font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif; font-weight: bold;}
+       dd {margin-bottom:1em;} 
+-->
+</style>
+</head>
+
+<body bgcolor="#FFFFFF">
+<h1>Shenimet me te fundit te botuara</h1>
+
+<h3> Të reja në Moodle 1.2.1 (25 Mars, 2004)</h3>
+<ul>
+  <dl>
+    <dt>Rregullime të gabimeve të ndryshme të vogla</dt>
+    <dd> 
+      <ul>
+        <li>Rregulluar disa gabime (bugs) që shkaktoheshin nga vrojtimi i grafiqeve </li>
+        <li>Prërmirësuar siguria e skripteve cron</li>
+        <li>Rrëgulluar importi nëe  quiz-et WebCT të i mazheve që mungojnë</li>
+        <li>Rregulluar formatimi në dialogun e editorit për futjen e link-eve</li>
+        <li>Parandaluar shtimi i linkeve në fjalor për emra aktivitetesh që janë tashmë të link-uara</li>
+        <li>Rregulluar llogaritjet e timezone kur përdoruesi nuk është prezent</li>
+        <li>Karaktere si:( nuk konvertohen si një mimikë mërzitjeje</li>
+        <li>Përmirësuar manovrimi i ritmeve për forume të vetme kur është aktivizuar "secureforms".</li>
+        <li>Krijimi i pyetjeve me shumë zgjedhje tashmë është default për formatin me përgjigje korekte unike</li>
+        <li>Guest-ët tashmë nuk i shohin adresat e-mail nëse është zgjedhur opsioni "shfaq vetëm pjesmarsit e kursit"</li>
+        <li>Admin Primar është tashmë me numrin më të ulët në user_admins, sesa admin me userid më të ulët.</li>
+        <li>Modifikuar flash-i i MP3 për të ndiçuar më mirë butonin Play </li>
+        <li>Përmirësime të ndryshme në shumë paketa gjuhësh</li>
+      </ul>
+    </dd>
+  </dl>
+</ul>
+
+<br />
+
+
+<h3> Të reja në  Moodle 1.2 (20 Mars, 2004)</h3>
+<ul>
+  <dl>
+    <dt>Tipare kryesore të reja</dt>
+    <dd> 
+      <ul>
+        <li>Suport për <strong>grupe</strong> brenda kurseve (me shumë opsione)</li>
+        <li><strong>Filtrat e Tektit</strong> lejojnë procesimin e të gjitha formateve të teksteve në, duke përfshirë <strong>linkimin automatik </strong>, <strong>suportin matematik</strong>, <strong>përmbajtje shumë-gjuhëshe</strong> e shumë të tjera</li>
+        <li>Një <strong>Modul Fjalori</strong>  i ri fantastik (në saje të Williams Castillo!) me shumë mënyra të ndryshme ndërtimi aktivitetesh të bazuara në mbledhjen e përcaktimeve</li>
+        <li>Një <strong>Modul Mësimi</strong> i ri i madh (në saje të Ray Kingdon!) që krijon lehtësisht përmbajtje aktive me pyetje etj.</li>
+        <li>Një <strong>Modul Etiketa</strong> i ri që lejon ëfardo  HTML-je në faqen e kursit</li>
+        <li>Një <strong> editor WYSIWYG </strong> i pëermirësuar,  më i shpejtë dhe i pajtueshëm me më shumë sisteme se varianti i vjetër</li>
+        <li><strong>Backup Automatik</strong> mund të kronometrohet nga administratori për të gjitha kurset</li>
+      </ul>
+    </dd>
+    <dt>Kurset</dt>
+    <dd> 
+      <ul>
+        <li>Aktivitetet mund të zhvendosen në skemat e kursit, duke lejuar më shumë struktura</li>
+        <li>Një raportim i ri për Aktivitete reçente e bën më të lehtë të shikosh se çfarë ka ndodhur</li>
+        <li>Një buton i ri "log" në çdo aktivitet të lidh faqen e log-eve për aktivitetin </li>
+        <li>Butoni Restore tashmë është funksional</li>
+        <li>Pamje e &quot;indeksit&quot; është përmirësuar për çdo modul</li>
+        <li>Përmirësime në shfaqjen e pjesmarsve, duke përfshirë shfletimin dhe kërkimin</li>
+        <li>Daunlodimet Excel janë më kompatibël me sisteme të ndryshme operative</li>
+        <li>Raportim më i mirë për gabimet kur shton/updeton aktivitete</li>
+        <li>Kutia e kërkimit nuk është më e auto-fokusuar (ajo shkaktonte mërzi më parë)</li>
+        <li>Link-u i vetë-rreshqitjes nëper faqen e kursit për studentët</li>
+        <li>Link-u i ndryshimit të password-it në faqet e kursit për studentët</li>
+        <li>Studentët tashmë lejohen të shikojnë raorimet e aktiviteteve</li>
+        <li>Mësuesit mund të shfletojnë skedarët e kursit për imazhe kur përdor editorin e ri</li>
+        <li>Imazh i ri i një kutie bosh e destinuar për lëvizjen e aktiviteteve</li>
+        <li>Aksesimet nuk ruhen tashmë nga kurset, kështu që merr kuptim listimi i pjesmarsve</li>
+        <li>Aktiviteti navbar tashmë ka butona për aktivitete që paraprijne ose pasojnë</li>
+        <li>Në disa sisteme datat e skedarëve ishin jo korrekt - kjo është rregulluar.</li>
+        <li>Përdoruesit e bisedave të vjetra nuk shfaqen më aktivitetet reçente</li>
+      </ul>
+    </dd>
+    <dt>Administrimi i Site-it</dt>
+    <dd> 
+      <ul>
+        <li>Një siguri e madhe i lejon mësuesve të parandalojnë log-imet si admin të studentëve</li>
+        <li>Vendosje e  re e &quot;forcelogin&quot;  detyron njerzit të log-ohen para se të mund të shohin diçka në site</li>
+        <li>Vendosje e  re e &quot;opentogoogle&quot; lejon Google dhe njerzit e referuar nga Google të hyjë si guest</li>
+        <li>Vendosje e  re e &quot;timezone&quot; lejon  të vendoset një timezone default për gjithë site-in</li>
+        <li>Vendosje e  re e &quot;deleteunconfirmed&quot; specifikon deri sa do pritet që llogaria e email-it të konfirmohet</li>
+        <li>Vendosje e  re e &quot;allowunenroll&quot; lejon/nuk lejon studentët të çregjistrohen vetë nga kursi</li>
+        <li>Vendosje e  re e &quot;fullnamedisplay&quot; lejon rishkrimin e emerave të plotë të studentëve kështu që studenti  shikon &quot;firstname lastname&quot;, &quot;lastname firstname&quot; ose &quot;firstname&quot;</li>
+        <li>Përdorues individualë mund ta çaktivizojnë email-in e tyre nga mësuesi ose admin</li>
+        <li>Përmasat e Upload mund të kontrollohet tashmë nëpërmjet Moodle duke përdorur &quot;maxbytes&quot;. </li>
+        <li>Kukit Moodle mund të personalizohen</li>
+        <li>Përfshihet skripti i analizës së performancës së  databazës</li>
+        <li>Përfshihet skripti standalone për të kontrolluar serverin nëse është kompatibël me Moodle</li>
+        <li>Nëse një skedar i quajtur cronextra.php ekziston në dataroot atëhere cron-i do të ekzekutohet.  Kjo lejon që site-et të kenë tipare  &quot;special&quot; mirëmbajtje.</li>
+        <li>Formatet e kurseve janë tashmë si plugins, në direktori të veçanta</li>
+        <li>Përdoruesit mund të ngarkojnë nga skedarë teksti</li>
+        <li>Nëse $CFG-&gt;disableuserimages është përcaktuar (në config.php) atëhere imazhet  e përdoruesve nuk mund të ndryshojnë</li>
+        <li>Nëse $CFG-&gt;admineditalways është e përcaktuar atëhere administratori mund të editojë çdo postim në çdo kohë.</li>
+        <li>Nëse $CFG-&gt;filterall është përcaktuar atëhere edhe gjërat e vogla si subjekti i forumit apo emrat e aktiviteteve filtrohen</li>
+        <li>Suport për përdorues demo  të kufizuar (psh mësues demo në Moodle.org) - usernames mund të shtohen te një listë emrash në config.php. psh $CFG-&gt;restrictusers = 'teacher,fred';</li>
+      </ul>
+    </dd>
+    <dt>Stilet</dt>
+    <dd> 
+      <ul>
+        <li>Rregullon që Internet Explorer të përdorë style shët</li>
+        <li>Miscellaneous rregullon dhe përmirëson stilet - <strong>Stilet e personalizuara duhen updejtuar!</strong></li>
+      </ul>
+    </dd>
+    <dt>Përkthimet</dt>
+    <dd> 
+      <ul>
+        <li>Gjuhët e reja: Galego dhe Lituanisht</li>
+        <li>Interfejs i përmirësuar për editimin e gjuhës.</li>
+        <li>Lista e emrave të vendeve tashmë mund të përkthehet.</li>
+        <li>Paketat e gjuhëve tashmë mund të percaktojnë gjuhën default.</li>
+        <li>Paketat e gjuhëve tasmë mund të përcaktojnë renditjen e emrave të njerzve</li>
+        <li>Skedarët e gjuhëve tashmë janë shkruar duke përdorur më me efektivitet kodet PHP</li>
+        <li>Së fundi u hoq linefëd-i fals në stringjet me shumë rreshta</li>
+        <li>Kurset mund tashmë ta  &quot;detyrojnë&quot; një gjuhë për gjithë përdoruesit</li>
+      </ul>
+    </dd>
+    <dt>Backup / Restore</dt>
+    <dd> 
+      <ul>
+        <li>Backup-e automatike mund të programohen nga administratori për të gjitha kurset</li>
+        <li>Log-et mund të rivendosen plotësisht</li>
+        <li>Të gjithë përdoruesit e duhur mund të inkludohen tashmë në backup-e kursesh (edhe sikur të jetë çregjistruar)</li>
+        <li>Rregullime dhe përmirësime të përziera</li>
+      </ul>
+    </dd>
+    <dt>Filtrat e tekstit dhe Formatimi</dt>
+    <dd> 
+      <ul>
+        <li>Paralajmërim: filtarat e rinj të tekstit mund të rrisin ngarkesën në server. Përdori ata me kujdes. </li>
+        <li> <strong>Filtri i fjalorthit </strong> i ri mund të krijojë link-e për futje fjalori nga fjalë që ndeshen nëper Moodle.</li>
+        <li><strong>Filtri TeX </strong> i ri  mund të konvertojë kodet TeX që gjen kudo në Moodle në shënime të vërteta Matematike (formati GIF i imazhit). ka edhe një filtër <strong>algebra</strong> me një format inputi më të thjeshtë (si kalkulatriçet).</li>
+        <li><strong>Filiti i censor</strong> i ri mund të filtrojë fjalët e këqia.</li>
+        <li><strong>Filtri multilang</strong> i ri mundëson futjen e teksteve në shumëgjuhë, dhe vetëm më e mira do t'i shfaqet çdo përdoruesi (në varësi nga gjuha e zgjedhur)</li>
+        <li>Etiketa &lt;nolink&gt; mund të përdoret për të parandaluar autolinkimin brenda një pasazhi teksti.</li>
+        <li>Lejohen më shumë etiketa (tags), duke përfshirë &lt;acronym&gt; dhe &lt;math&gt;.</li>
+        <li>Disa zona ku teksti me parë nuk filtrohej mirë janë rregulluar.</li>
+      </ul>
+    </dd>
+    <dt>Zhvillimi i API</dt>
+    <dd> 
+      <ul>
+        <li>Një udhëzues i ri mbi kodet është i vlefshëm</li>
+        <li>Një udhëzues i ri mbi Filozofinë është i vlefshëm ;-)</li>
+        <li>Përmirësimi i template-eve për module të reja</li>
+        <li>Modulet duhet të  specifikojnë versionin minimal të Moodle me të cilin janë kompatibël</li>
+        <li>Skriptet mund të specifikojnë të print_header() nëse faqja është  XML e pastër</li>
+        <li>Çdo modul mund të ruajë dhe gjejë preferencat midis log-imeve</li>
+      </ul>
+    </dd>
+    <dt>Chats</dt>
+    <dd> 
+      <ul>
+        <li>Seksionet e Chat-it mund të fshihen</li>
+        <li>Kohët e programuar për chat tashmë shfaqin timezone për ta bëre të qartë </li>
+      </ul>
+    </dd>
+    <dt>Forumet</dt>
+    <dd> 
+      <ul>
+        <li>Preferencat e pamjes së Forum-it janë të ruajtura midis logimeve</li>
+        <li>&quot;Show parent&quot; link-on të gjitha postimet për navigim të shpejtë nëpër  forume</li>
+        <li>Etiketa Anchor lejon postime individuale në të gjitha pamjet</li>
+        <li>Përmirësime në ekzekutimin manual të cron-it, si edhe të mesazhev të gabimit në logime</li>
+        <li>Shtyp butonin e renditjes kur do gtë rendisesh</li>
+        <li>Versione të shumta të përmirësuara të tekstit në e-mail-et e postimeve HTML te forumeve</li>
+        <li>Kur përgjigjesh mesazheve, shfaqet një përmbledhje e përgjigjeve.</li>
+        <li>Kur përdor një editor HTML për të postuar, opsionet e formteve të tjera nuk jepen më.</li>
+      </ul>
+    </dd>
+    <dt>Revistat</dt>
+    <dd> 
+      <ul>
+        <li>Pyetjet e revistes tashmë mund të përdorin editorin HTML</li>
+        <li>Disa rregullime në faqet e raoprteve kur vlerësohen futjet në revista</li>
+      </ul>
+    </dd>
+    <dt>Quiz-et</dt>
+    <dd> 
+      <ul>
+        <li>Pyetjet dhe Kategoritë tashmë mund të editohen pa nevojën e hapjes së një  quiz-i</li>
+        <li>Të gjitha pyetjet mund të përdorin tashmë çdo format editimi të  Moodle</li>
+        <li>Format i ri importi: formati <strong>GIFT</strong> (ky është formati default i ri)</li>
+        <li>Format i ri importi: <strong>Course Test Manager</strong></li>
+        <li>Format i ri importi: formati <strong>WebCT</strong></li>
+        <li>Format i ri importi: formati <strong>Aiken</strong></li>
+        <li>Pyetje me Përgjigje-Shkurt mund të përdorin karakterin yll (wildcards) </li>
+        <li>Imazhet tashmë funksionojnë në pyetjet nga kategoritë e jashtme te publikuara</li>
+        <li>Përmirësim i raporteve për të treguar më shumë informacion te lejojë fshirjen e tentativave</li>
+        <li>I shtuar një raport quiz-i i ri i detajuar për analiza statistikore</li>
+        <li>Të gjitha tipet e pyetjeve mund te ketë tashmë deri në 10 përgjigje secila</li>
+        <li>Menutë në quiz-e mundësojnë editimin pa patur nevojë për butona</li>
+        <li>Janë rregulluara gabimet që ndodhnin kur rivlerëson disa quiz-e me pyetje të rastit në to</li>
+        <li>Janë rregulluar gabimet që ndodhnin në backup-e të quiz-eve me pyetje të rastit në to</li>
+        <li>Shumë gabime të tjera të vogka janë rregulluar</li>
+      </ul>
+    </dd>
+   <dt>Resurset</dt>
+    <dd> 
+      <ul>
+        <li>Mësuesit mund të shfletojnë skedarët direkt kur krijohen skedarë që ngarkohen</li>
+        <li>Vendosjet e reja lejojnë një URL default, një faqe kërkimi default dhe vendosje "popup" default</li>
+        <li>Edhe skesarët e ngarkuar (trasferuar) mund të shfaqen në "popup"-e.</li>
+        <li>Shfaqja më e mirë e "popup"-eve kur përdoret navbar</li>
+        <li>Skedarët MP3 janë tashmë që "rjedhin" duke përdorur një Flash MP3 player</li>
+        <li>Skedarët Video (Media player, Quicktime) janë inkorporuar duke përdorur plugins-e lokale</li>
+      </ul>
+    </dd>
+    <dt>Workshop-e</dt>
+    <dd> 
+      <ul>
+        <li>Ndryshime në menachimin e vlerësimeve mes shokësh</li>
+        <li>Fazë e re vlerësimi</li>
+        <li>Opsione të reja për tabelen e klasës</li>
+      </ul>
+    </dd>
+    <dt>Miscellaneous</dt>
+    <dd> 
+      <ul>
+        <li>Moodle tashmë injoron çdo folder-i që Frontpage mund të ketë shtuar (_vti_cnf).</li>
+        <li>Përmirësimi i HTML -&gt; XHTML në shumë vende</li>
+        <li>Shumë rregullime për databazat që nuk vijnë nga MySQL</li>
+        <li>Stringjet e tekstit me pak kodime ishin bërë të shkëmbyeshme</li>
+        <li>Të dhënat e profilit të përdoruesit janë tashmi e pastruar mirë</li>
+        <li>Rregullimi për rastet kur Moodle është i inkorporuar brenda një skeme (psh në Postnuke)</li>
+        <li>Rregullime të gabimeve në modën Wiki</li>
+        <li>Admin nuk mundet më të editojë llogaritë e jashtme</li>
+        <li>Përdorues Qmail mund të përdorë &quot;qmail&quot; në fushat e smtphosts për rezultate më të mira</li>
+        <li>Metoda të shumfishta të ridrejtimit, për të kapërxyer disa gabime të brauzerit</li>
+        <li>Përmirësime të vogla në shfaqjen e notave në librin e notave</li>
+        <li>Më shumë fusha te profilite të studentit mund të editohen, si departmenti dhe institucioni.</li>
+        <li>Kur një student shtohet si një mësues, ai automatikisht çrregjistrohet si student</li>
+        <li>Upgraded ADOdb (shtresa e databazës)</li>
+      </ul>
+    </dd>
+  </dl>
+</ul>
+<hr>
+
+<center>
+  <p>
+<a href="./?file=releaseold.html">Informacion i vletër</a>
+</p>
+</center>
+<p>&nbsp;</p>
+<p align="CENTER"><font size="1"><a href="../doc/" target="_top">Dokumentacioni i Moodle</a></font></p>
+<p align="CENTER"><font size="1">Version: $Id$</font></p>

@@ -1,0 +1,33 @@
+<p align="center"><b>Ngarkimi i përdorusve</b></p>
+
+<p>Së pari, vërrejmë se<strong>nuk është zakonisht e domosdoshme të importohen përdorues në masë</strong> - për të kursyer punën tuaj të mirmabjtjes duhet së pari të eksploroni forma autentifikimi që nuk kërkojnë mirmbajtje manuale, siç janë lidhjet me databaza të jashtme ekzistuese ose që lejojnë përdorues të krijojnë llgaritë e tyre. Shiko seksionin e Autentifikimit tek menuja e admin.</p>
+<p>Nëse jeni i sigurtë që doni të importoni llogarira të shumfishta përdoruesi nga një skedar teksti, atëhere duhet ta formatoni tekstin tuaj si pason:</p>
+
+<ul>
+  <li>çdo rresht i skedarit përmban një rekord </li>
+  <li>çdo rekord është një seri të dhënash të ndara me presje</li>
+  <li>Rekordi i parë i skedarit është special, dhe përmban një listë  emrash të fushave të te dhënave. Ky përcakton formatin e pjesës tjetër të skedarit.
+    <blockquote>
+      <p><strong>Emër-fushat e kërkuara:</strong> këto fusha duhet futen te rekordi i parë, dhe të jenë të përcaktuara për  çdo përdorues</p>
+      <p></p>
+      <font color="#990000" face="Courier New, Courier, mono">username, password, firstname, lastname, email</font></p>
+</p>
+      <p><strong>Default fieldnames:</strong> këto janë opsionale - nëse ato nuk janë futur atëher vlerat e tyre merren nga primary admin</p>
+      <p><font color="#990000" face="Courier New, Courier, mono">institution, department, city, country, lang, timezone</font> </p>
+      <p><strong>Optional fieldnames: </strong>të gjitha këto janë krejt opsionale. Emrat e kurseve janë &quot;shortnames&quot; të kurseve - nëse janë presente kur përdoruesi do të regjistrohet si student në këto kurse. Emrat e grupeve duhet të shoqërohen me kurset koresponduese, psh. grupi1 per kursi1, etj.</p>
+      <p> <font color="#990000" face="Courier New, Courier, mono">idnumber, icq, phone1, phone2, address, url, description, mailformat, maildisplay, htmleditor, autosubscribe, kursi1, kursi2, kursi3, kursi4, kursi5, grupi1, grupi2, grupi3, grupi4, grupi5</font></p>
+    </blockquote>
+    </li>
+  <li>Presjet midis të dhënave duhet të kodohen si &amp;#44 - skripti do ti dekodojë automatikisht këto në presje. </li>
+  <li>Për fushat Boolean-e, përdor 0 për false dhe 1 për true. </li>
+  <li>Note: Nëse një përdorues është tashmë i regjistruar në databazën e përdoruesve të Moodle, ky skript do të kthejë 
+      userid number (database index) të këtij përdoruesi, dhe do ta regjistrojë përdoruesin si student çdo njërin nag
+      kurset e specifikua PA i ndryshuar të dhënat e tjera.</li>
+</ul>
+  
+  
+<p>Këtu është një shembull i skedarit shumë të rëndësishëm:</p>
+<p><font size="-1" face="Courier New, Courier, mono">username, password, firstname, lastname, email, lang, idnumber, maildisplay, course1, group1<br>
+jonest, verysecret, Tom, Jones, jonest@someplace.edu, en, 3663737, 1, Intro101, Section 1<br>
+reznort, somesecret, Trent, Reznor, reznort@someplace.edu, en_us, 6736733, 0, Advanced202, Section 3</font></p>
+

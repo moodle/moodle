@@ -1,0 +1,55 @@
+<P ALIGN=CENTER><B>Llogaritja e Notës Finale</B></P>
+
+<P>Tabela në këtë ekran tregon se si janë llogaritur notat finale për studentët.
+	Notat finale janë një shumë e peshuar e deri 5 komponentëve.
+	
+<OL>
+<LI>Nota e mësuesit për punën e aplikuar. Kjo është opsionale dhe përdoret
+	nëse mësuesi e ka vlerësuar punën e studentit. Nëse studenti dërgon 
+	më shumë se një pjesë pune përoret nota &quot;më e mirë&quot;. 
+      Më e mirë kuptohet pjesa e punës më notën e peshuar të mësuesit dhe 
+      shokëve më e larta ...
+<LI>Mesatarja e notave të shokëve për punën e tyre të aplikuar. përsëri
+      nëse studenti aplikon më shumë se një pjesë pune, përdoret nota &quot;më e mirë&quot;. 
+      Nota e shokëve opsionalisht mund të inkludohet te nota e mësuesit. 
+      Kjo notë do të perfshihej nëse numri i notave të shokëve	është shumme
+      i ulët ose mendohet se notat e shokëve janë të dyshimta ose si pasojë e  
+	"bias" (zakonisht në anën e lartë) ose se nuk janë të besueshme.
+	Kur përfshihet te nota e mësuesit ajo trajtohet në të njëjten mënyrë si 
+	nota e shokëve në llogaritjen e mesatares.
+<LI>"Bias" i studentit në notat e shokëve. Kjo është masë e asaj nëse noatat e
+	vëna nga studentët janë shumë të larta ose shumë të ulta. Nuk ështe një
+      matje absolute meqë është e bazuar në diferencat midis notës së studentit
+	dhe mesatares së shokëve për çdo aplikim të vlerësuar. Në përgjithësi
+	këtij komponenti nuk duhet dhënë peshë e lartë.
+<LI>Besueshmëria e studentit në vlerësimin me notë të punës së shokëve. 
+      Kjo është masë e asaj se mirë notat e studentëv ndjekin mesataren e shokëve
+	për një pjesë pune që ata vlerësojnë. Matja nuk llogarit bias-in e studentit  
+	dhe mesatarizon diferencat midis noatave të tyre dhe noatave mesatare. Në teori 
+	nëse studentët japin pikë të larta për punë të mirë dhe pikë të ulta 
+      për punë të dobët, besueshmëria e tyre është e lartë. Nëse dyshohet 
+      se studentët në përgjithësi janë vlerësues të dobët, atëhere notat e mësuesit 
+      duhet të inkludohen me mesataren e shokëve, kjo e bën besueshmërinë më të
+      kuptimtë.
+<LI>Nota mesatare e vënë nga mësuesi për vlerësimet e studentit.
+	Kjo përfshin edhe vlerësimet paraprake të bëra nga studenti për pjesë 
+	pune shembull edhe çdo notë që mësuesi ve mbi vlerësimet e prodhuara
+	gjatë fazës se vlerësimit mes shokësh. Në përgjithësi, ky komponent	
+      eshtë më i rëndësishëm se të dy,  "Bias"-i dhe Besueshmëria, prandaj  
+	duhet peshuar më shumë.
+</OL>
+
+<P>Këto pesë komponentë mund të peshohen si të mendohet përshtatshëm për 
+	detyrën. Psh, nota e mësuesit duhet peshuar fort nëse pjesa e vlerësimit mes
+	shokësh konsiderohet si pjesë e vogël e detyrës në tërësi.
+	Nga ana tjetër, nëse mësuesi u ve notë pak prej aplikimeve, këto nota mund   
+	të injorohen duke u dhënë atyre peshë zero. Nëse detyra është e gjithë
+	mbi studentët si gjyqtarë dhe reagimet e tyre atëhere dy komponentëve të parë
+	mund tu jepet zero (ose pak) dhe aftësia e studentëve në venien e notave do të përcaktonte 
+	notat finale.
+
+<P>Vini re se ky ekran përdoret në mënyrë iterative dhe notat finale normwlisht 
+      nuk janë të vlefëshme për studentët deri te faza finale e detyrës. 
+      Kur mësuesi është i kënaqur me notat finale dhe peshimet e tyre, ato mund të 
+	bëhen të vlefshme për studentët.
+</P>

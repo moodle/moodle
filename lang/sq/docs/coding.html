@@ -1,0 +1,189 @@
+<html>
+<head>
+<title>Moodle Docs: Porosi për kodet</title>
+<link rel="stylesheet" href="docstyles.css" type="TEXT/CSS">
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</head>
+<body bgcolor="#FFFFFF">
+<h1>Porosi për kodimin e Moodle</h1>
+<p class="normaltext">Ççdo projekt bashkpunimi ka nevojë për konsistencë dhe stabilitet 
+  për të qënë i fortë.</p>
+<p class="normaltext">Këto porosi jepen për të treguar synimin e kodit Moodle.  
+Disa nga kodet e vjetra mbulojnë pak fusha, 
+  por kjo do të rregullohet eventualisht. Të gjitha kodet e reja duhet 
+  duhet tu afrohen sa të jetë e mundur këtyre standarteve.</p>
+<h2>Rregulla të përgjithëshme</h2>
+<ol class="normaltext">
+  <li class="spaced">Të gjithë skedarët e kodeve duhet të kenë ekstenksionin (prapashtesën): .php .</li>
+  <li class="spaced">Të gjithë skedarët template duhet të përdorin ekstenksionin: .html .</li>
+  <li class="spaced">Të gjithë skedarët tekst duhet të përdorin formatin Unix-style (shumica e editorëve 
+    të tekstit e kanë këtë opsion).</li>
+  <li class="spaced">Të gjitha etiketat (tags) php  duhet të jenë  'full' sikurse <font color="#339900">&lt;?php 
+    ?&gt;</font> ... jo 'short' sikurse <font color="#339900">&lt;? ?&gt;</font>. 
+  </li>
+  <li class="spaced">Të gjitha shënimet ekzistuse të copyright duhet të mbahen. Ju mund 
+    të shtoni kërkesat tuaja.</li>
+  <li class="spaced">Çdo skedar duhet të inkludojë skedrain kryesor config.php .</li>
+  <li class="spaced">Çdo skedar duhet të kontrollojë që identiteti i përdoruesit është i saktë, 
+    duke përdorur funksionet: require_login() dhe isadmin(), isteacher(), iscreator() ose isstudent().</li>
+  <li class="spaced">Aksesimet e databazës duhet të përdorin funksionet në lib/datalib.php 
+    gjithmonë e mundëshme - kjo mundëson kompatibilitetin ndërmjet një game të gjerë databazash. 
+    Ju duhet të kuptoni se thuajse çdo gjë është e mundur duke përdorur këto funksione. Nëse duhet të shkruani një kod SQL , sigurohuni që kodi është: cross-platform; i kufizuar për funksione specifikë 
+    brenda kodit (zakonisht një skedar lib.php); dhe i shënuar qartësisht.</li>
+  <li class="spaced">Mos krijoni dhe përdorni variabla  globale me përjashtim të artyre standarte 
+    $CFG, $SESSION,$THEME dhe $USER.</li>
+  <li class="spaced">Të gjitha variablat duhet të iniciohen dhe të testohen 
+    duke përdorur: isset() ose empty() para se ato të përdoren.</li>
+  <li class="spaced">Të gjitha stringjet duhet të jenë të përkthyeshëm - krijo tekste të reja në skedarët 
+    &quot;lang/en&quot; dhe thërriti ato duke përdorur funksionin  get_string() ose print_string().</li>
+  <li class="spaced">Të gjithë skedarët help duhet të jenë të përkthyeshëm - krijo tekste të reja 
+    në direktorinë &quot;en/help&quot; dhe thërriti ato duke përdorur: helpbutton().</li>
+  <li class="spaced">Të dhënat që hyjnë nga browser-i (nëpërmjet GET ose POST) automatikisht
+    zbatojnë magic_quotes (pavarësisht parametrave të PHP) kështu që ju mund ta fusni
+    atë në mënyrë të sigurtë drejtpërdrejt në databazë.  Të gjitha të dhënat e tjera (nga skedarë, ose nga databaza)
+    duhet të mënjanohen me: <font color="#339900">addslashes()</font> para se të futen në databazë.</li>
+</ol>
+<p>&nbsp;</p>
+<h2>Coding Style</h2>
+<p class="normaltext">E di që është pak e mërzitshme të ndryshosh stilin 
+  nëse jeni mësuar me një tjetër, por vini në balancë këtë mërzitje me mërzitjen e 
+  të gjithë njerzve të tjerë që do përpiqen më vonë të kuptojnë kodet Moodle me stile të përziera . 
+  Ka shumë arsye pro dhe kundër çdo stili që përdorin njerzit, 
+  por stili korent strong>është</strong>, prandaj mbetuni në të. </p>
+<ol class="normaltext">
+  <li class="spaced"><strong>Indent-imi</strong> duhet të jetë me 4 hapsira. 
+    Mos përdorni tab-et FARE. </li>
+  <li class="spaced"><strong>Emrat e variablave</strong> duhet të jenë lehtësisht të lexueshëm, 
+    me kuptim të fjalës në Anglisht. Nëse keni nevojë për më shumë se një fjalë  
+    atë here bashkojini ato, por mbaji sa më shkurt. Përdor
+emrat në shumës për tabelat e objekteve.
+    <p class="examplecode"><font color="#006600">GOOD: $quiz<br>
+      GOOD: $errorstring<br>
+GOOD: $assignments (për një tabelë objektesh)<br>
+      GOOD: $i (por vetëm pak cikle)<br>
+      <br />
+      BAD: $Quiz <br>
+      BAD: $aReallyLongVariableNameWithoutAGoodReason<br>
+      BAD: $error_string</font></p>
+  </li>
+  <li class="spaced"><strong>Konstantet</strong> duhet të jenë gjithmonë me germa të mëdha, 
+    dhe gjithmonë fillo me emrin e modulit. Ato duhet ti kenë fjalët të ndara 
+    me underscore. 
+    <p class="examplecode"><font color="#006600">define(&quot;FORUM_MODE_FLATOLDEST&quot;, 
+      1);</font></p>
+  </li>
+  <li class="spaced"><strong>Emrat e funksioneve</strong> duhet të jenë fjalë të thjeshta 
+    në Anglisht, dhe të fillojnë me emrin e modulit për të shmangur konfliktet midis moduleve. 
+    Fjalët duhet të ndahen me underscore. Parametrat duhet të kenë gjithmonë 
+    defaults nëse është e mundur. Vini re se nuk ka hapësira midis emrit të funksionit dhe 
+    kllapave që e pasojnë  (). <br>
+    <p class="examplecode"> <font color="#007700">funksion </font><font color="#0000BB">forum_set_display_mode</font><font color="#007700">(</font><font color="#0000BB">$mode</font><font color="#007700">=</font><font color="#0000BB">0</font><font color="#007700">) 
+      {<br />
+      &nbsp;&nbsp;&nbsp;&nbsp;global </font><font color="#0000BB">$USER</font><font color="#007700">, 
+      </font><font color="#0000BB">$CFG</font><font color="#007700">;<br />
+      <br />
+      &nbsp;&nbsp;&nbsp;&nbsp;if (</font><font color="#0000BB">$mode</font><font color="#007700">) 
+      {<br />
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000BB">$USER</font><font color="#007700">-&gt;</font><font color="#0000BB">mode 
+      </font><font color="#007700">= </font><font color="#0000BB">$mode</font><font color="#007700">;<br />
+      &nbsp;&nbsp;&nbsp;&nbsp;} else if (empty(</font><font color="#0000BB">$USER</font><font color="#007700">-&gt;</font><font color="#0000BB">mode</font><font color="#007700">)) 
+      {<br />
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000BB">$USER</font><font color="#007700">-&gt;</font><font color="#0000BB">mode 
+      </font><font color="#007700">= </font><font color="#0000BB">$CFG</font><font color="#007700">-&gt;</font><font color="#0000BB">forum_displaymode</font><font color="#007700">;<br />
+      &nbsp;&nbsp;&nbsp;&nbsp;}<br />
+      }</font></p>
+  </li>
+  <li class="spaced"><strong>Blloqet</strong> gjithmonë duhet të mbyllen në kllapa 
+    gjarpërushe (edhe kur ka vetëm një rresht). Moodle përdor këtë stil: 
+    <p class="examplecode"> <font color="#006600">if (</font><font color="#0000CC">$quiz</font><font color="#006600">-&gt;</font><font color="#0000CC">attempts</font><font color="#006600">) 
+      {<br />
+      &nbsp;&nbsp;&nbsp;&nbsp;if (</font><font color="#0000CC">$numattempts </font><font color="#006600">&gt; 
+      </font><font color="#0000CC">$quiz</font><font color="#006600">-&gt;</font><font color="#0000CC">attempts</font><font color="#006600">) 
+      {<br />
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000CC">error</font><font color="#006600">(</font><font color="#0000BB">$strtoomanyattempts</font><font color="#006600">, 
+      </font><font color="#CC0000">"view.php?id=$cm</font><font color="#006600">-&gt;</font><font color="#CC0000">id"</font><font color="#006600">);<br />
+      &nbsp;&nbsp;&nbsp;&nbsp;}<br />
+      }</font></p>
+  </li>
+  <li class="spaced"><strong>Stringjet</strong> duhet të përcaktohen duke përdorur thonjëza njëshe 
+    aty ku është e mundur, për të rritur shpejtësinë.<br>
+    <p class="examplecode"> <font color="#006600">$var = 'ca tekst pa ndonjë 
+      variabël';<br>
+      $var = &quot;me karaktere speciale si një rresht i ri \n&quot;;<br>
+      $var = 'një variabël shumë, shumë i gjatë me një '.$single.' variabël në të';<br>
+      $var = &quot;ca $tekst me $shumë variabla $brenda tij&quot;; </font></p>
+  </li>
+  <li class="spaced"><strong>Komentet</strong> duhet të përdorin dy ose tre slashe 
+    dhe në rresht me kodin. 
+    <p class="examplecode"><font color="#006600">function </font><font color="#0000BB">forum_get_ratings_mean</font><font color="#007700">(</font><font color="#0000BB">$postid</font><font color="#007700">, 
+      </font><font color="#0000BB">$scale</font><font color="#007700">, </font><font color="#0000BB">$ratings</font><font color="#007700">=</font><font color="#0000BB">NULL</font><font color="#007700">) 
+      {<br />
+      </font><font color="#FF8000">/// Kthen mesataren klasifikimeve të një postimi që i jepet përdoruesit 
+      corent nga të tjerë.<br />
+      /// Shkalla është një tabelë e klasifikimeve të mundëshme <br />
+      ///Ratings është një tabelë e thjeshtë e notave aktuale (numra të plotë)<br />
+      <br />
+      &nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#007700">if (!</font><font color="#0000BB">$ratings</font><font color="#007700">) 
+      {<br />
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000BB">$ratings 
+      </font><font color="#007700">= array(); &nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#FF8000">// 
+      Inicializon një tabelë bosh</font><font color="#007700"><br />
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (</font><font color="#0000BB">$rates 
+      </font><font color="#007700">= </font><font color="#0000BB">get_records</font><font color="#007700">(</font><font color="#DD0000">"forum_ratings"</font><font color="#007700">, 
+      </font><font color="#DD0000">"post"</font><font color="#007700">, </font><font color="#0000BB">$postid</font><font color="#007700">)) 
+      {<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#FF8000">// 
+      Proceson çdo klasifikim me rradhë</font><font color="#007700"><br />
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;foreach 
+      (</font><font color="#0000BB">$rates </font><font color="#007700">as </font><font color="#0000BB">$rate</font><font color="#007700">) 
+      {</font> <br>
+      ....etc </p>
+  </li>
+  <li class="spaced"><strong>Hapsirat</strong> duhet të përdoren lirisht - mos hezitoni  
+    ti hapni gjërat për të qenë sa më të qarta. Përgjithësisht, duhet 
+    një spacio midis kllapave dhe komandave normale, por jo spacio midis 
+    kllapave dhe variablave ose funksioneve:<br>
+    <p class="examplecode"> <font color="#007700">foreach (</font><font color="#0000BB">$objects 
+      </font><font color="#007700">as </font><font color="#0000BB">$key </font><font color="#007700">=&gt;</font><font color="#0000BB"> 
+      $thing</font><font color="#007700">)</font><font color="#006600"> {<br>
+      </font><font color="#007700">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000BB">process($thing);</font><font color="#006600"> 
+      <br>
+      } <br>
+      <br>
+      </font><font color="#007700">if (</font><font color="#0000BB">$x </font><font color="#007700">== 
+      </font><font color="#0000BB">$y</font><font color="#007700">)</font><font color="#006600"> 
+      {<br>
+      </font><font color="#007700">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000BB">$a 
+      </font><font color="#007700">= </font><font color="#0000BB">$b</font><font color="#007700">;</font><font color="#006600"><br>
+      } else if (</font><font color="#0000BB">$x </font><font color="#007700">== 
+      </font><font color="#0000BB">$z</font><font color="#006600">) {<br>
+      </font><font color="#007700">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000BB">$a 
+      </font><font color="#007700">= </font><font color="#0000BB">$c</font><font color="#007700">;</font><font color="#006600"><br>
+      } else {<br>
+      </font><font color="#007700">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000BB">$a 
+      </font><font color="#007700">= </font><font color="#0000BB">$d</font><font color="#007700">;</font><font color="#006600"><br>
+      } </font></p>
+  </li>
+</ol>
+<p>&nbsp;</p>
+<h2>Strukturat e Databazave</h2>
+<ol class="normaltext">
+  <li class="spaced">çdo tabelë duhet të ketë meauto-rritje një<strong>id</strong> fushe (INT10) si indeks primar.</li>
+  <li class="spaced">Tabela kryesore që përmban shembujt e çdo moduli duhet të ketë të njëjtin emër simoduli (psh <strong>widget</strong>) dhe t?7 përmbajë minimumi fushat e mëposhtme:
+    <ul>
+      <li><strong>id</strong> - siç përshkruhen më lart</li>
+      <li><strong>kurse</strong> -  id e kursit të cilit i përket çdo shembull</li>
+      <li><strong>emri</strong> - emri i plotë i çdo shembulli të modulit</li>
+    </ul>
+  </li>
+  <li class="spaced">Tabelat e tjera të shoqëruara me një modul që përmbajnë informacion mbi 'things' duhet të emërtohen <strong>widget_things</strong> (shilo shumsin).</li>
+  <li class="spaced">Emrat e kolonave duhet të jenë të thjeshta dhe të shkurtër, duke ndjekur po ato rregulla sikurse emrat e variablave.</li>
+  <li class="spaced">Aty ku është e mundur, kolonat që përmbajnë një referencë për id e fushës së një tabele tjetër(psh <strong>widget</strong>) duhet të thirret <strong>widgetid</strong>. (Shiko se kjo marveshje është e re dhe nuk gjendet në tabelat e vjetra)</li>
+  <li class="spaced">Fushat Boolean duhet të futen si fusha me numër të plotë të vogël (psh INT4) që përmban 0 os 1, për të lejuar më vonë zgjerimin e vlerave nëse është e nevojshme.</li>
+  <li class="spaced">Shumica e tabelave duhet të kenë një fushë <strong>timemodified</strong> (INT10) e cila updetohet me një timestamp korente e përftuar nga një funksion PHP <strong>time</strong>() .</li>
+</ol>
+<hr>
+<p align="CENTER"><font size="1"><a href="." target="_top">Dokumentacioni i Moodle</a></font></p>
+<p align="CENTER"><font size="1">Version: $Id$</font></p>
+</body>
+</html>

@@ -1,0 +1,82 @@
+<p align=center><b>Importimi i skedarëve "Course Test Manager"</b></p>
+
+<p>Course Test Manager(CTM) është një paketë software prodhuar nga kompania Course Technology në fund të jetës së saj. 
+Nuk është zhvilluar më tej nga Course Technology, sepse është zëvendësuar nga një tjetër produkt 
+i quajtur ExamView.  Megjithatë, nuk ka asnjë mjet në dispozicion për të mundësuar
+transferimin e këtij formati CTM në formate të tjerë testi.  Kjo ështe arsyeja pse është shkruar
+ky modul.</p>
+
+<p> Për të importuar pyetje nga CTM, ju duhet të keni të insatluar CTM në Windows, dhe 
+të keni akses te skedarët e të dhenave te  MS Access.  Kërkohen dy skedarë të dhënash që të
+aksesohen skedarët data:</p>
+<ul><li>System.mda - Ky skedar është në krye të direktorisë ku keni të instaluar CTM, dhe
+MS access i referehet këtij skedari si "System Database".</li>
+<li>ctm.mdb - ky është skedari databazë që përmban bankën e pyetjeve.  Ka një nga këto databaza
+për secilin kurs të instaluar në CTM.  është i lokalizuar në një direktori një nivel më postë se se
+direktoria ku është instaluar CTM.</li>
+</ul>
+
+</p>Procesi i importimit është diçka e ndryshme në varësi nëse moodle është në Windows apo në Linux. 
+Pavarësisht në çfarë platfome ekzekutohet moodle, ju duhet të keni një sistem Windows system (Windows 2000 ose Windows XP)
+në të njëjtin rjet me sitemin tuaj në mënyrë që të strehojë databazën e Access-it kur importohet banka.</p>
+
+<p>Procesi është më i lehtë kur moodle ekzekutohet në sisteme <b>Windows-based</b>.  Për të përdorur importimin CTM 
+mjafton të:</p>
+
+<ol><li>duke përdorur file manager-in, ngarko databazën e sistemit system.mda te moodle. Nuk ka rëndësi se nga cili kursi
+ta ngarkosh skedarin system.mda.  Moodle do ta gjejë atë sidoqoftë.</li>
+<li>Krijo quiz-in tënd dhe shko te procesi "importo pyetje nga skedari".  Ngarko skedarin që keni zgjedhur si databazë ctm.mdb 
+si skedar që do importohet.  Nëse e bëni këtë korektësisht, do shikoni një pamje tjetër ekrani që ju lejon 
+të zgjidhni nënkategorinë e pyetjeve që do importohen nga databaza. Arsyeja e kësaj është se
+banka e testeve CTM zakonisht përmban një numër të madh pyetjesh të kategorizuara, të bazuara në kapitujt e librit ose 
+në seksionet e kursit.</li>
+</ol>
+<p>Procesi në moodle që ekzekutohen në sisteme <b>Linux-based</b> përfshin edhe një komponent të tretë software-i të quajtur
+<a href="http://odbcsock.sourceforge.net/" target="_new"><b>ODBC Socket Server</b></a>.  Për të importura databaza CTM në Linux, 
+ju duhet së pari të download-oni dhe të instaloni këtë program të vogël në sistemin Windows që strehon databazën tuaj CTM.  
+<b>Mos</b> ndiq hapat e instalimit që thuhen në Instalimin e ODBC Socket Server. Ato janë më të komplikuara se sa duhen të jenë! 
+Ndiq këto hapa për të instaluar këtë program në sistemin tuaj Windows:</P>
+
+<ol><li>Shko te sistemi windows dhe çkompreso (unzip) skedarin e instalimit të që download-uat nga 
+<a href="http://odbcsock.sourceforge.net/" target="_new">ky site</a>.</li>
+<li>Kopjo skedarin binar ODBCSocketServer.exe në një direktori, të tillë si direktoria e ssitemit 
+(zakonisht C:\WINNT\ ose C:\Windows) ose në dirktorinë Program Files. </li> 
+
+<li>Instalo ODBC Socket Server si një Service në sistemin tuaj me komandën:<br />
+<b>&lt;path-i ku u kopjua skedari i mësipërm&gt;ODBCSocketServer.exe /Service</b><br />
+Ju mund ta bëni këtë duke shtypur këtë komandë nga Start-&gt;Run... dialog-u, ose nga një command prompt.</li>
+
+<li>Hap  Service Manager ose nga 
+Start-&gt;Settings-&gt;Control Panels-&gt;Administrative Tools-&gt;Services ose duke klikuar me të djathtën te
+<b>My Computer</b>, duke zgjedhur <b>Manage</b>, mandej duke zgjedhur <B>Services and Applications-&gt;Services</b> nga 
+paneli djathtas.  Ju mund ta aksesoni Service manager edhe duke shtypur <b>services.msc</b> te Start-&gt;Run... 
+dialog-u</li>
+
+<li>Te Service manager, kliko me të djathtën mbi ODBC Socket Server item dhe zgjidh <b>Start</b> item. Gjendja e saj  
+duhet të ndryshojë në "started" kur bën këtë. Vini re se ju mund të ndaloni dhe/ose çaktivizoni (disable) këtë shërbim pasi
+ta keni kompletuar procesin e importimit.</li>
+
+<li>Sigurohuni që skedarët system.mda dhe ctm.mdb të jenë në kompjuterin tuaj, 
+dhe që drajveri i MS Access ODBC është prezent. Instalohet gjatë një instalimi standard të Windows.  Ju mund
+të përcaktoni nëse është instaluar duke hapur "Data Sources" item në "Administrative Tools" dhe referoju tub-it "Drivers".
+Juve do tju duhet të përcaktoni ku është instaluar CTM dhe të lokalizoni skedarin system.mda file dhe skedarin ctm.mdb  
+ose databazat që ju jeni të interesuar në importimin e të dhënave. Shënoni path-in lokal për te këto skedarë 
+si edhe adresën IP ose hostname të Windows server.  Juve do t'ju duhet ky informacion për procesin e importimit.</li>
+
+<li>Tani ju mund të importoni bankën (ose bankat) e pyetjeve në moodle. Krijoni quiz-in tuaj dhe shkoni 
+te procesi "importo pyetje nga skedar".  <B>KëTU GJëRAT JANë Të NDRYSHME PëR LINUX - </B>
+JU DUHET Të SPECIFIKONI NJë SKEDAR MAKET Në FUSHëB E NGARKIMEVE Që Të FILLOJë PROCESI I IMPORTIMIT. 
+KY SKEDAR <b>NUK</b> DO PROCESOHET, ëSHTë VETëM NJë VENDMBAJTëS PëR INFORMACIONIN E IMPORTIMIT. 
+Më pas, juve do t'u dali një pamje ekrani ku ju mund të shtypni hostname për makinën Windows ODBC Socket Server
+si edhe path-in e sistemit dhe databazat e bankës së pyetjeve.  Shtypni informacionin që ju mbajtët shënim 
+nga hapi i mëparshemm dhe klikoni "Connect to Server". Nëse çdo gjë është bërë korrekt, juve do t'ju shfaqet një
+formë që ju lejon të zgjidhni  nën-kategoritë e pyetjeve për t'u importuar nga databazae.  
+NëSE ARRINI KëTë HAP PA MESAZHE GABIMI, JU KENI NDëRTUAR NJë SOCKET SERVER KORREKTëSISHT
+DHE JU MUND Të IMPORTONI PYETJE TE MOODLE!</li>
+</ol>
+
+<P>Nëse merni mesazhe gabimi gjatë këtij procesi, ju mund ta gjeni këte informacion teknik të dobishëm. 
+ODBC Socket server përdor portën 9628 për të hapur një socket dhe XML query për një tabelë XML  me rezultate të
+një hetimi (query).  Klasa e importimit kontrollon këtë XML dhe e përdort atë ashtu siç përdor unë nje hetim lokal 
+(local query) për të importuar. 
+</p>

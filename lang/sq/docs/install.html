@@ -1,0 +1,418 @@
+<head>
+    
+<title>Moodle Docs: Instalimi</title>
+	
+<link rel="stylesheet" href="docstyles.css" type="TEXT/CSS">
+    
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</head>
+
+<body bgcolor="#FFFFFF">
+<h1>Instalimi i Moodle</h1>
+<blockquote>
+  <p>Ky udhërrëfyes shpjegon si ta instalosh Moodle për herë të parë.  Ai shkon në detaje 
+   për disa hapa, për të mbuluar një gamë të gjerë ndryshimesh të vogla midis
+   web server të setup-eve të web server, kështu që ky dokument mund të duket i gjatë dhe i komplikuar.  
+   - Zakonisht unë kryej setup-in e Moodle në pak minuta!</p>
+  <p>Harxho pak kohë për këtë dokument  - që të mos harxhosh kohën më vonë.</p>
+  <p>Seksionet në këtë dokument:</p>
+  <ol>
+    <li><a href="#requirements">Kërkesat</a></li>
+    <li><a href="#downloading">Download</a></li>
+    <li><a href="#site">Struktura e Site-it</a></li>
+    <li><a href="#data">Krijo një direktori për të dhënat (data)</a></li>
+    <li><a href="#database">Krijo një databazë</a></li>
+    <li><a href="#webserver">Kontrollo vendosjet e  web server-it</a></li>
+    <li><a href="#config">Edito config.php</a></li>
+    <li><a href="#admin">Shko te faqja  admin </a></li>
+    <li><a href="#cron">Ndërto cron</a></li>
+    <li><a href="#course">Krijo një kurs të ri</a></li>
+  </ol>
+  <p>&nbsp;</p>
+</blockquote>
+<h3 class="sectionheading"><a name="requirements"></a>1. Kërkesat</h3>
+<blockquote> 
+  <p>Moodle është zhvilluar kryesisht për Linux duke përdorur Apache, MySQL dhe PHP (gjithashtu 
+    e njohur si platforma LAMP), por është e testuar edhe me PostgreSQL 
+    dhe në sistemet operative: Windows XP, Mac OS X dhe Netware 6 </p>
+  <p>Kërkesat për Moodle janë:</p>
+  <ol>
+    <li>Web server software. Shumica e njerëzve përdorin <a href="http://www.apache.org/" target="_blank">Apache</a>, 
+      por Moodle duhet të punojë mirë në çdo web server që suporton PHP, si 
+       IIS në platforma  Windows .</li>
+    <li><a href="http://www.php.net/" target="_blank">PHP</a> gjuha e skriptimit (versioni 4.1.0 
+      ose më vonë), me këto vendosje: 
+      <ul>
+        <li><a href="http://www.boutell.com/gd/" target="_blank">GD library</a> 
+          e kthyer në ON, me suport për formatet JPG dhe PNG</li>
+        <li>zlib library e kthyer ON (nëse don të përdorësh backup/restore në Windows)</li>
+        <li>Sessions support e kthyer në ON</li>
+        <li>File uploading e kthyer në ON</li>
+        <li>Safe Mode duhet të kthehet OFF (shiko forume në moodle.org për probleme 
+          z´të shkaktuara nga Safe Mode)</li>
+      </ul>
+    </li>
+    <li>një server databaze funksionuese: <a href="http://www.mysql.com/" target="_blank">MySQL</a> 
+      or <a href="http://www.postgresql.org/" target="_blank">PostgreSQL</a> janë 
+      krejt të suportara dhe rekomandohet për përdorim me Moodle 1.1. Të gjitha databazat  
+      e tjera do të suportohen nga versionet pasardhëse.</li>
+  </ol>
+  <p>Shumica e web host-eve e suportojnë gjithë këtë në mënyrë default. Nëse ju jeni të regjistruar në  
+    nga ato pak webhost-e që nuk  suportojnë këtë veçori pyet përse, 
+    dhe shiko mundësinë e webhost-eve të tjerë.</p>
+  <p>Nëse do që Moodle të ekzekutohet në kompjuterin tuaj dhe gjithçka duket paksa e tmerrshme, 
+    atëhere shiko guidën tonë: <a href="http://moodle.org/doc/?file=installamp.html">Installing 
+    Apache, MySQL and PHP</a>. Aty jepen disa instruksione të instalimit hap-pas-hapi 
+    në shumicën e platformave të njohuara.</p>
+  <p>&nbsp;</p>
+</blockquote>
+<h3 class="sectionheading"><a name="downloading"></a>2. Download</h3>
+<blockquote>
+  <p>Ka dy mënyra për ta marrë Moodle, si një paketë të kompresuar dhe nëpërmjet CVS. Këto 
+    janë shpjeguar me hollësi në faqen e  download-imit: <a href="http://moodle.org/download/" target="_blank">http://moodle.org/download/</a></p>
+  <p>Pas download-imit dhe çpaketimit të arshivës ose kontrollit të skedarëve  nëpërmjet 
+    CVS, do të keni një direktori të quajtur  &quot;moodle&quot;, e cila përmban 
+    një numër skedarësh dhe folderash. </p>
+  <p>Ju mund  ta vendosni krejt folder-in në direktorinë e dokumentave të web server-it tuaj, 
+    e në këtë rast site-i do jetë alokuar në <b>http://yourwebserver.com/moodle</b>, 
+    ose ta kopjoni gjithë përmbajtjen drejtpërsëdrejti në direktorinë e dokumentave të web server-it kryesor , e në këtë rast site-i do të jetë thjesht <b>http://yourwebserver.com</b>.</p>
+</blockquote>
+<p>&nbsp;</p>
+<h3 class="sectionheading"><a name="site"></a>3. Struktura e Site-it</h3>
+<blockquote>
+  <p>Këtu është një përmbledhe e shkurtër e përmbajtejes së folderit të Moodle, për tju ndihmuar  
+    që të orientoheni:</p>
+  <blockquote>
+    <p>config.php - i VETMI skedar që duhet të editoni për z´të filluar<br>
+      version.php - përcakton versionin korent të kodit të Moodle<br>
+      index.php - faqja front e site-it</p>
+    <ul>
+      <li>admin/ - kodi i administrimit të krejt server-it </li>
+      <li>auth/ - modulet plugin për autentifikimin e përdoruesve  </li>
+      <li>course/ - kodi për shfaqjen dhe menaxhimin e kurseve </li>
+      <li>doc/ - dokumentimi ndihmues për Moodle (psh kjo faqe)</li>
+      <li>files/ - kodi i shfaqjes dhe menxhimit të skedarëve të ngarkuar</li>
+      <li>lang/ - tekstet në gjuhë të ndryshme, nga një direktori për çdo gjuhëe </li>
+      <li>lib/ - biblotekat e kodeve të bërthamës së Moodle </li>
+      <li>login/ - kodi për menxhimin e logimeve dhe krijimin e llogarive </li>
+      <li>mod/ - të gjitha modulet e kurseve të Moodle</li>
+      <li>pix/ - grafika e site-it</li>
+      <li>theme/ - tema packs/skins për të ndryshuar pamjen e  site-it.</li>
+      <li>user/ - kodi i shfaqjes dhe menaxhimit të përdoruesve</li>
+    </ul>
+    <p>&nbsp;</p>
+  </blockquote>
+</blockquote>
+<h3 class="sectionheading"><a name="data"></a>4. Krijo një direktori të dhënash</h3>
+<blockquote>
+  <p>Moodle ka nevojë për ca hapësirë në hard disk tuaj për të ruajtur skedarët e ngarkuar, 
+    të tilla si dokumenta kursi dhe foto përdoruesish.</p>
+  <p>Krijo një dirketori diku për këtë qëllim.  Për siguri, është mirë që kjo dirketori të  
+    MOS jetë e aksesueshme nërmjet  web-it.  Mënyra më e lehtë për ta bërë këtë 
+     është thjesht ta alokosh atë JASHTE direktorisë web, përndryshe duhet ta mbrosh atë 
+     me krijimin e një skedari nëdirektorinë e të dhënave të quajtur .htaccess, i cili përmban rrehstin:
+  <blockquote>
+     
+    <pre>deny from all</pre>
+  </blockquote>
+  <p>Për tu siguruar që Moodle mund të ruajë skedarët e ngarkuar në këtë direktori, kontrollo që 
+     software i web server-it (psh Apache) e ka lejen të shkruajë në 
+    këtë direktori. Në makinat Unix, kjo do të thotë që pronar (owner) i kësaj direktorie 
+    të jetë si &quot;nobody&quot; ose &quot;apache&quot;.</p>
+  <p>Në shumë hosting servera, ju duhet ta kufizoni aksesin e skedarëve vetëm 
+     te "group"-i juaj (për të ndaluar klientët e tjerë të webhost nga shikimi ose ndryshimi i skedarëve tuaj) .  Fol me administratorin e serverit nëse keni  
+     probleme për këtë siguri.</p>
+</blockquote>
+<p>&nbsp;</p>
+<h3 class="sectionheading"><a name="database"></a>5. Krijo një databazë</h3>
+<blockquote>
+  <p>Ju duhet të krijoni një databazë bosh (psh "moodle") në sistemin e databazave tuaja 
+    me një përdorues të veçantë (psh "moodleuser") që ka akse te kjo databazë 
+    (dhe vetëm tek kjo  databazë). Ju mund të përdorni përdoruesin "root" nëse dëshironi, por 
+    kjo nuk është e  rekomandueshme për një system: nëse hacker-at ja arrijnë ta zbulojnë
+    password-in atëhere krejt sistemi juaj i databazave do të jetë në rrezik, e jo vetëm 
+    databaza juaj.
+</p>
+  <p>Shembull i rreshtit të komandës për MySQL: </p>
+  <pre>
+   # mysql -u root -p
+   > CREATE DATABASE moodle; 
+   > GRANT SELECT,INSERT,UPDATE,DELETE,CREATE,DROP,INDEX,ALTER ON moodle.* 
+           TO moodleuser@localhost IDENTIFIED BY 'yourpassword'; 
+   > quit 
+   # mysqladmin -p reload
+</pre>
+  <p>Shembull i rreshtit të komandës për PostgreSQL: </p>
+  <pre>
+   # su - postgres
+   > psql -c "create user moodleuser createdb;" template1
+   > psql -c "create database moodle;" -U moodleuser template1
+   > psql -c "alter user moodleuser nocreatedb;" template1
+</pre>
+  <p>(Për MySQL unë rekomandoj përdorimin e  <a href="http://phpmyadmin.sourceforge.net/">phpMyAdmin</a> 
+    për të menxhuar databazat tuaja - ju mund ta bëni këtë nëpërmjet një web interface).</p>
+  <p>Sikurse te versioni 1.0.8, Moodle tashmë suporton prefikset e tabelabe, dhe mund bëjë share 
+   një databazë me tabelat e aplikimeve të tjera.</p>
+</blockquote>
+<p>&nbsp;</p>
+<h3 class="sectionheading"><a name="webserver" id="webserver"></a>6. Kontrollo vendosjet e web serverit tuaj</h3>
+<blockquote>
+  <p>Së pari, sigurohu që web serveri mund ta përdori index.php si një faqe  default 
+     (ndoshta krahas me index.html, default.htm dhe etj.).</p>
+  <p>Në Apache, kjo bëhet duke përdorur parametrin DirectoryIndex në skedarin tuaj httpd.conf 
+    Imi duket zakonisht si ky:</p>
+  <blockquote>
+    <pre><strong>DirectoryIndex</strong> index.php index.html index.htm </pre>
+  </blockquote>
+  <p>Vetëm sigurohu që index.php është në këtë listë (preferencialisht nga fillimi 
+  i listëst).</p>
+  <p>Së dyti, <b>nëse po përdorni Apache 2</b>, atëhere duhet ta ktheni në on variablin <i>AcceptPathInfo</i>
+     , i cili lejon që skriptimet të kalohen me argumente si http://server/file.php/arg1/arg2.
+     Kjo është esenciale për të lejuar link-e ndërmjet resource-ve tuaja, dhe gjithashtu 
+     jep një ngritje performance për përdoruesit e site-it tuaj Moodle. Ju mund  
+     ta ktheni në on duke shtuar këto rradhë në skedarin tuaj httpd.conf file.</p>
+  <blockquote>
+    <pre><strong>AcceptPathInfo</strong> on </pre>
+  </blockquote>
+  <p>Së treti, Moodle kërkon një numër vendosjesh PHP settings që të aktivizohen për këtë  
+     punë.  <b>Në shumicën e serverave këto janë vendosje default.</b>
+     Megjithatë, disa servera PHP (dhe ca versione të vjetra të PHP) mund 
+     ti kenë të vendosura ndryshe.  Këto quhen skedar konfigurimi të PHP
+    (zakonisht të quajtur php.ini):</p>
+  <blockquote>
+
+    <pre>magic_quotes_gpc = 1    (e preferushme por jo e domosdoshme)
+magic_quotes_runtime = 0    (necessary)
+file_uploads = 1
+session.auto_start = 0
+session.bug_compat_warn = 0
+</pre>
+  </blockquote>
+  <p>Nëse ju nuk keni akses te httpd.conf ose php.ini në serverin tuaj, ose keni 
+    Moodle në një server me aplikime të tjera që kërkojnë vendosje të ndyshme, 
+    atëhere mos u shqetëso, ju mund mbishkruani gjithçka duke vendosur parametrat default. 
+  <p>Për ta bërë këtë, ju duhet të krijoni një skedar të quajtur <b>.htaccess</b> në direktorinë kryesore të Moodle
+     i cili të përmbajë përcaktimet e këtyre vendosjeve.
+     Kjo mund të funksionojë vetëm në Apache servera dhe vetëm kur "Overrides" janë të lejueshme.
+     
+  <blockquote>
+    <pre>
+DirectoryIndex index.php index.html index.htm
+
+&lt;IfDefine APACHE2>
+     <b>AcceptPathInfo</b> on
+&lt;/IfDefine>
+
+php_flag magic_quotes_gpc 1
+php_flag magic_quotes_runtime 0
+php_flag file_uploads 1
+php_flag session.auto_start 0
+php_flag session.bug_compat_warn 0</pre>
+  </blockquote>
+  <p>Ju mund të përcaktoni edhe përmasat maksimale të skedarëve të ngarkuar:
+     
+  <blockquote>
+    <pre>
+LimitRequestBody 0
+php_value upload_max_filesize 2M
+php_value post_max_size 2M
+     </pre>
+  </blockquote>
+  <p>Gjëja më e lehtë është vetëm të kopjosh skedarin shembull nga lib/htaccess 
+     dhe ta editosh atë sipas nevojave tuaja.  Ai përmban  instruksione të mëtejshme.  Për 
+     shembull, në një Unix shell:
+  <blockquote>
+    <pre>cp lib/htaccess .htaccess</pre>
+  </blockquote>
+</blockquote>
+<p>&nbsp;</p>
+<h3 class="sectionheading"><a name="config"></a>7. Edit config.php</h3>
+<blockquote>
+  <p>Tashmë ju mund të editoni skedarin e konfigurimit, <strong>config.php</strong>, duke përdorur një 
+     editor teksti. Ky skedar përdoret nga të gjithë skedarët e tjerë të Moodle.</p>
+  <p>Para se të fillosh, bëj një kopje të <strong>config-dist.php</strong> dhe emërtoje atë 
+    config.php. Ne e bëjmë këtë në mënyrë që skedari juaj config.php të mos mbishkruhet në rast 
+    se ju bëni  upgrade të Moodle më vonë. </p>
+  <p>Edito <strong>config.php</strong> për të specifikuar detajet e databazës që 
+    ju keni përcaktuar (duke pëfshirë një prefiks table - vini re se kjo KERKOHET për 
+    PostgreSQL), si edhe adresën e site-it, direktorinë e "file system" dhe atë të "data". 
+    Skedari config vetë ka detaje dhe shembuj.</p>
+  <p>Pasi e keni bërë këtë pjesa tjetër e instalimit është nëpërmjet një web interface. 
+    Në pjesën tjetër të këtij dokumenti instalimi ne do supozojmë që adresa e site-it tuaj është: 
+    <u>http://example.com/moodle</u></p>
+</blockquote>
+<p>&nbsp;</p>
+<h3 class="sectionheading"><a name="admin"></a>8. Shko te faqja admin</h3>
+<blockquote> 
+  <p>Faqja admin duhet të punojë në: <u>http://example.com/moodle/admin</u>. 
+    Nëse provoni ta aksesoni faqen "front page" të site-it tuaj, ju do të shkoni automatikisht  
+    aty. Herën  e parë që ju aksesoni faqen admin, do tju paraqitet me një 
+     GPL &quot;shrinkwrap&quot; marrveshje me të cilën ju duhet të bini dakort para se të mund  
+    të vazhdoni me setup.</p>
+  <p>(Moodle do përpiqet edhe që të vendosë ca cookies në browser-in tuaj. Nëse ju e keni 
+    setup-in e browser-it që të pranojë cookies, atëhere ai <b>must</b> i pranon 
+    cookies e Moodle, përndryshe Moodle nuk do funksionojë mirë.) 
+  <p>Tani Moodle do fillojë të ndërtojë databazën tuaj dhe të krijojë tabela për të ruajtur 
+    të dhëna. Së pari, krijohen tabelat e databazës. Ju duhet të shikoni një numër 
+    komandash të SQL të pasuara nga mesazhe (të kuqe në të gjelbër) që duken 
+    si kjo:</p>
+  <blockquote> 
+    <p>CREATE TABLE course ( id int(10) unsigned NOT NULL auto_increment, category 
+      int(10) unsigned NOT NULL default '0', password varchar(50) NOT NULL default 
+      '', fullname varchar(254) NOT NULL default '', shortname varchar(15) NOT 
+      NULL default '', summary text NOT NULL, format tinyint(4) NOT NULL default 
+      '1', teacher varchar(100) NOT NULL default 'Teacher', startdate int(10) 
+      unsigned NOT NULL default '0', enddate int(10) unsigned NOT NULL default 
+      '0', timemodified int(10) unsigned NOT NULL default '0', PRIMARY KEY (id)) 
+      TYPE=MyISAM</p>
+    <p><font color="#006600">SUCCESS</font></p>
+    <p>...e kështu më tej, të pasuara nga: <font color="#006600">Main databases set up 
+      successfully.</font> </p>
+  </blockquote>
+  <p>Nëse nuk i shikoni këto, atëhere duhet të ketë ndonjë problem me databazën 
+    ose me parametrat e konfigurimit të përcaktuara në config.php. Kontrollo që PHP nuk është 
+    në modën "Safe Mode" (web hostet shpesh e venë safe mode 
+    në "on"). Ju mund të kontrolloni variablat  PHP duke krijuar një skedar të vogël që përmban 
+    &lt? phpinfo() ?&gt dhe shikoje atë nëpërmjet browser-it. Kontrollo gjithë këto  
+    dhe provo këtë faqe përsëri.</p>
+  <p>Shko poshtë në fund të faqes dhe shtyp link-un &quot;Continue&quot; 
+  .</p>
+  <p>Më pas do të shikoni një faqe të ngjashme që ndërton tablat e kërkuar nga 
+    çdo modul Moodle. Si më parë, ato duhet të jenë të gjitha <font color="#006600">jeshile</font>.</p>
+  <p>Shko poshtë në fund të faqes dhe shtyp link-un&quot;Continue&quot; 
+    .</p>
+  <p>Ju duhet të shikoni tani një formë ku përcaktohen më shumë variabla të konfigurimit 
+    për instalimin tuaj, si gjuha default, SMTP hosts etj. 
+    Mos u shqetësoni shumë mbi kryerjen e gjithçkaje tani - gjithmonë 
+    mund të ktheheni mbrapsht dhe ti editoni këto më vonë duke përdorur interfejsin e admin. Shko poshtë 
+    në fund dhe kliko click &quot;ruaj ndryshimet&quot;.</p>
+  <p>Nëse ju e gjeni vehten të ngecur në këtë faqe, pa mundur të vazhdosh, 
+    atëhere serveri ka një problem që unë e quaj "buggy referrer" . 
+    Kjo është e lehtë për ta rregulluar: kthejeni në off vendosjen &quot;secureforms&quot;  dhe 
+    provo edhe njëherë.</p>
+  <p>Faqja tjetër është një formë ku ju mund të përcaktoni parametrat për site-in tuaj Moodle 
+    dhe front page, si emri, formati, përshkrimi etj. Plotëso 
+    këtë formë (ju mund të ktheheni mbrapsht dhe ti ndryshoni më vonë) dhe shtypni 
+    &quot;Ruaj ndryshimet&quot;.</p>
+  <p>Së fundi, ju do të pyeteni për krijimin e një përdoruesi administrues i nivelit më të lartë 
+    për aksesim të mëtejshëm të faqeve admin. Plotso me detaje me emrin tuaj, 
+ email etj. dhe mandej kliko &quot;Ruaj ndryshimet&quot;. Jo të gjitha fushat jan 
+    të domosdoshme, por nëse shmagni ndonjë fushë të rëndësishme do tu kërkohet ta mbushni atë. 
+  </p>
+  <blockquote> 
+    <blockquote> 
+      <blockquote> 
+        <blockquote> 
+          <blockquote> 
+            <p><strong>Sigurohuni që ta mbani mend username dhe password-in që ju zgjodhët 
+              pë llogarinë e përdoruesit administrator, sepse do tju duhet për të 
+              aksesuar faqen e administrimit më vonë.</strong></p>
+          </blockquote>
+        </blockquote>
+      </blockquote>
+    </blockquote>
+  </blockquote>
+  <p>(Nëse për ndonjë arsye instalimi juaj është ndërprerë, ose ka ndonjë  system error 
+    që ju pengon të logoheni duke përdorur llogarinë  admin, ju 
+    mund të përdorni një  default username të &quot;<strong>admin</strong>&quot;, 
+    me password &quot;<strong>admin</strong>&quot;.)</p>
+  <p>Pas suksesit, ju do të riktheheni te home page i site-it tuaj. Vini re 
+    link-et e administrimit që shfaqen poshtë majtas faqes (këto 
+    çështje do të shfaqen të ndara n?7 faqen Admin) - këto çështje janë të dukshme 
+    për ju sepse jeni loguar si admin user. I gjithë administrimi i mëtejshëm 
+    i Moodle mund të bëhet duke përdorur këtë menu, si:</p>
+  <ul>
+    <li>krijo dh fshi kurse</li>
+    <li>krijo dhe edito llogari të përdoruesve</li>
+    <li>administrimi i llogarive të mësuesve</li>
+    <li>ndryshimi i vendosjeve të site-it si temat etj.</li>
+  </ul>
+</blockquote>
+<p>&nbsp;</p>
+<h3 class="sectionheading"><a name="cron"></a>9. Ndërto cron</h3>
+<blockquote> 
+  <p>Disa nga modulet e Moodle kërkojnë të kryhen kontrolle të vazhdueshme. Për shembull, 
+    Moodle ka nevojë të kontrollojë forumet e diskutimeve që të mund të dërgojë kopje t?7 postimeve 
+    te njerëz që janë regjistruar.</p>
+  <p>Skripti që e bën gjithë këtë është lokalizuar në direktorinë admin, dhe quhet 
+    cron.php. Megjithatë, ai mund të mos ekzekutohet vet vetio, kështu që ju duhet të ngrini një mekanizëm 
+    ku ky skript ekzekutohet rregullisht (psh çdo 5 ose 10 minuta). Kjo jep një 
+     &quot;heartbeat&quot; kështu që skripti mund t?7 kryejë funksionet në perioda 
+    të përcaktuara ng çdo modul.</p>
+  <p>Vini re që makina që kryen cron-in <b>nuk ka nevojë të jetë e njëjta 
+    makinë që ekzekuton Moodle</b>. Psh, nëse keni një server web të kufizuar
+    që host-on shërbimin që nuk ka cron, atëhere ju mund të zgjidhni ta ekzekutoni 
+    cron-in në një server tjetër në kompjuterin tuaj. Gjithë puna është që 
+    skedari cron.php të thirret regullisht. </p>
+  <p>Ngarkesa e këtij skripti nuk është e lartë, kështu që çdo 5 minuta është e arsyeshme, 
+    por nëse jeni në merak për të mund ta reduktoni 
+    në 15 minuta ose edhe 30 minuta. Eshtë më e mira mos ta bëni periodën kohore  
+    shumë të gajtë, sepse vonesat e dërgimit të email-ve mund ta ngadalësojë aktivitetin brenda kursit.</p>
+  <p>Së pari, testoni këtë skript duke e ekzekutuar drejt nga  browser-i juaj:</p>
+  <blockquote> 
+    <pre>http://example.com/moodle/admin/cron.php</pre>
+  </blockquote>
+  <p>Tani, ju duhet të ngrini një mënyrë për ta ekzekutuar skriptin automatikisht dhe 
+    regullisht. </p>
+  <h4> Ekzekutimi i skriptit nga rresht komanda</h4>
+  <p>Ju mund ta thirni faqen nga rresht komanda siç bëtë tek shembulli më  
+    lart. Për shembull, ju mund të përdorni një utilitet të Unix-it si 'wget':</p>
+  <blockquote>
+    <pre>wget -q -O /dev/null http://example.com/moodle/admin/cron.php</pre>
+  </blockquote>
+  <p>Vini re që në këtë shembull rezultati është flakur (te /dev/null).</p>
+  <p>E njëjat gjë kur përdoret lynx:</p>
+  <blockquote>
+  <pre>lynx -dump http://example.com/moodle/admin/cron.php &gt; /dev/null</pre>
+  </blockquote>
+ <p>Alternativisht ju mund të përdorni një version standalone të PHP, i kompiluar të ekzekutohet 
+    në rresht komandë. Avantazhi i kësaj është që logimet e web serveri juaj  
+    nuk janë të mbushura me kërkesa konstante për cron.php. Disavantazhi është 
+    se ju duhet të keni akses te versioni command-line version i php.</p>
+  <blockquote>
+    <pre>/opt/bin/php /web/moodle/admin/cron.php
+
+
+(Windows) C:\apache\php\php.exe C:\apache\htdocs\moodle\admin\cron.php
+
+</pre>
+  </blockquote>
+  <h4>Automatikisht ekzekuton skriptin çdo 5 minuta</h4>
+  <p><b>Në sisteme Unix</b>: Përdor <b>cron</b>. Edito vendosjet e  cron nga commandline 
+    duke përdorur &quot;crontab -e&quot; dhe duke shtuar një rresht si:</p>
+  <blockquote>
+    <pre>*/5 * * * * wget -q -O /dev/null http://example.com/moodle/admin/cron.php</pre>
+  </blockquote>
+  <p>Zakonisht, komanda "crontab" do tju vejë në editorin 'vi'. Ju hyni në 
+     "insert mode" duke shtypur "i", mandej shtyp rreshtin e mëspërm, pastaj dil nga moda "insert mode" 
+ duke shtypur ESC.  Ju e ruani dhe dilni duke shtypur":wq", ose dilni pa e ruajtur duke shtypur ":q!" (pa thonjëza).</p>
+  <p><b>Në sistemet Windows</b>: Mënyra më e thjeshtë është të përdorni këtë paketë të vogël <a href="http://moodle.org/download/moodle-cron-for-windows.zip" title="Kliko që ta download-osh këtë paketë (150k)" target="_blank">moodle-cron-for-windows.zip</a> 
+    e cila e bën gjithë këtë gjë shmë të lehtë. Ju mund të eksploroni duke përdorurveçoritë e 
+    Windows për "Scheduled Tasks".</p>
+  <p>Në web host-ët: Paneli juaj i kontrollit web-based mund të ketë një faqe web  që ju lejon 
+  të ngrini një proces cron. Pyesni administratorin tuaj për detaje se si 
+    funksionon.</p>
+  <p></p>
+</blockquote>
+<h3 class="sectionheading"><a name="course"></a>10. Krijo kurs të ri</h3>
+<blockquote>
+  <p>Tashmë që Moodle ekzekutohet mirë, ju mund të krijoni një kurs. </p>
+  <p>Zgjidh &quot;Krijo një kurs të ri&quot; nga faqja  Admin (ose link-u admin 
+     në home page).</p>
+  <p>Plotëso formën, duke patur kujdes te formati i kursit. Nuk duhet të 
+    shqetësoheni për detaje shumë në këtë fazë, sepse çdo gjë mund 
+    të ndryshohet më vonë nga  mësuesi.</p>
+  <p>Shtyp &quot;Ruaj ndryshimet&quot;, dhe ju do kaloni në një formë tjetër ku 
+    ju mund të caktoni mësues për kursin. Ju mund të shtoni llogaritë e përdoruesve ekzistues 
+    nga kjo formë - nëse doni të krijoni një llogari të re mësuesi atëhere ose kërko 
+    që mësuesi të krijojë një nga vetvetja (shiko faqen login), ose krijo një 
+    prej tyre duke përdorur &quot;Shto një përdorues të ri&quot; në faqen Admin.</p>
+  <p>Pasi bëhet kjo, kursi është gati për tu personalizuar, dhe është i aksesueshëm nëpërmjet link-ut &quot;Kurset&quot; 
+    në home page.</p>
+  <p>Shiko  &quot;<a href="./?file=teacher.html">Manuali i Mesuesit</a>&quot; për më shumë detaje 
+    në ndërtimin e kurseve.</p>
+</blockquote>
+<p>&nbsp;</p>
+<p align="CENTER"><font size="1"><a href="." target="_top">Dokumentacioni i Moodle</a></font></p>
+<p align="CENTER"><font size="1">Version: $Id$</font></p>
+</body>

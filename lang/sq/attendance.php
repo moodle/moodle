@@ -1,0 +1,71 @@
+<?PHP // $Id$ 
+      // attendance.php - created with Moodle 1.2.1 (2004032500)
+
+
+$string['absentlong'] = 'Mungon';
+$string['absentshort'] = 'M';
+$string['addingmultiple'] = 'Vëzhgimi i pjesëmarrjes së shumëfishtë po shtohet';
+$string['addmultiple'] = 'Shto vëzhgimin e pjesëmarrjes së shumëfishtë';
+$string['allmodulename'] = 'Të gjitha vëzhgimet për pjesëmarrjen';
+$string['auto'] = 'automatike';
+$string['autoattend'] = 'Gjej automatikisht pjesëmarrjen duke u bazuar mbi loge-et e aktivitetit të përdoruesve';
+$string['autoattendmulti'] = 'Gjej automatikisht pjesëmarrjen për të gjitha listat duke u bazuar në log-et e përdoruesit';
+$string['autoattendshort'] = 'Automatik nga log-et';
+$string['choosedays'] = 'Ditët e javët në të cilat të vëzhgohet pjesëmarrja';
+$string['dayofroll'] = 'Dita e vëzhgimit të pjesëmarrjes';
+$string['defaultautoattend'] = 'Nëse do të merret pjesëmarrja duke u bazuar në log-et e përdoruesve si default';
+$string['defaultdynamicsection'] = 'Nëse do të lëvizësh listat e pjesëmarrjes në javën aktuale si default';
+$string['defaultgrade'] = 'Nëse do t\'i bësh listat e pjesëmarrjes të vlerësueshme si default';
+$string['defaulthoursinclass'] = 'Sa orë duhet të ketë në një listë pjesëmarrjeje default';
+$string['defaultmaxgrade'] = 'Cila duhet të jetë nota standarte maksimale për pjesëmarrje të plotë';
+$string['defaultstudentstatus'] = 'Gjendja e prezencës standarte për studentët kur një prezencë e re regjistrohet';
+$string['downloadexcelfull'] = 'Downloado komplet faqen Excel';
+$string['downloadexceltotals'] = 'Downloado përmbledhjen e  faqes Excel ';
+$string['downloadtextfull'] = 'Downloado raportin e plotë në formë teksti';
+$string['downloadtexttotals'] = 'Downloado përmbledhjen e raportit në formë teksti';
+$string['dynamicsection'] = 'Përcakto javën për prezencën bazuar në këtë datë';
+$string['dynamicsectionmulti'] = 'Vendos automatikisht regjistrimet në sekstionet e tyre javore';
+$string['dynsectionshort'] = 'E zhvendosur dinamikish te seksioni';
+$string['endbeforestart'] = 'Data e përfundimit është para datës së fillimit';
+$string['endmulti'] = 'Data për regjistrimin e prezencës së fundit';
+$string['for'] = 'për';
+$string['friday'] = 'Pre';
+$string['gradeshort'] = 'E vlerësuar';
+$string['gradevalue'] = 'Bëje këtë regjistrim të vlerësueshëm';
+$string['gradevaluemulti'] = 'Bëji këto regjistrime të vlerësueshmeri valutabili';
+$string['hoursinclass'] = 'Numri i orëve të një cikli didaktik';
+$string['hoursineachclass'] = 'Numri i orëve për çdo cikël didaktik';
+$string['hoursinfullreport'] = 'Numri maksimal i orëve të prezencës që duhet të çfaqet në një faqe të një raporti';
+$string['maxgradeshort'] = 'Vlerësimi maksimal';
+$string['maxgradevalue'] = 'Vlerësimi maksimal për prezencë të plotë';
+$string['modulename'] = 'Prezenca';
+$string['modulenameplural'] = 'Regjistrime të prezenzës';
+$string['monday'] = 'Hën';
+$string['norolls'] = 'Nuk kai regjistrime prezence në  këtë kurs';
+$string['notes'] = 'Informavion shtesë';
+$string['notesfor'] = 'Informacion shtesë përper';
+$string['noviews'] = 'Më vjen keq, nuk ka të dhëna për regjistrimin tuaj këtu';
+$string['of'] = 'e';
+$string['pages'] = 'Faqet';
+$string['presentlong'] = 'Prezent';
+$string['presentshort'] = 'X';
+$string['saturday'] = 'Sht';
+$string['startafterend'] = 'Data e fillimit është pas datës së përfundimit të kursit';
+$string['startmulti'] = 'Data për regjistrimin e prezencës së parë';
+$string['sunday'] = 'Die';
+$string['takeroll'] = 'Regjistro  prezencën në këtë ditë?';
+$string['tardiesperabsence'] = 'Sa vonesa llogariten si një mungesë?';
+$string['tardylong'] = 'Vonesë';
+$string['tardyshort'] = 'V';
+$string['thursday'] = 'Enj';
+$string['tuesday'] = 'Mar';
+$string['viewall'] = 'Paraqit të gjitha prezencat e regjistruara';
+$string['viewmulti'] = 'Paraqit raportin si faqe të shumëfishta';
+$string['viewone'] = 'Paraqit të gjitha faqet e raportit';
+$string['viewsection'] = 'Paraqit të gjitha regjistrimet e prezencave nga ky seksion';
+$string['viewtable'] = 'Paraqit raportin në formë tabele';
+$string['viewweek'] = 'Paraqit të gjitha regjistrimet e prezencave nga kalendari javor';
+$string['wednesday'] = 'Mër';
+$string['weekmodulename'] = 'Të gjitha regjistrimet e prezencës të javës së fundit';
+
+?>
