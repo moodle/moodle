@@ -34,7 +34,7 @@
 
     //Check other parameters
     if (!isset($backup_users)) {
-        $backup_users = 2;
+        $backup_users = 1;
     }
    
     if (!isset($backup_logs)) {
@@ -136,44 +136,47 @@
 
         //Now print the Users tr
         echo "<tr>";
-        echo "<td align=\"right\"><P><B>";
-        echo get_string("users").":";
-        echo "</td><td>";
-        $user_options[0] = get_string("all");
-        $user_options[1] = get_string("course");
-        $user_options[2] = get_string("needed");
-        choose_from_menu($user_options, "backup_users", $backup_users, "");
+        echo "<td colspan=\"2\"><P><B>";
+        $user_options[0] = get_string("includeallusers");
+        $user_options[1] = get_string("includecourseusers");
+        ///$user_options[2] = get_string("includeneededusers");--->NOT IMPLEMENTED
+        echo "<li>".$user_options[$backup_users]."<P>";
+        //Add as hidden name
+        echo "<input type=\"hidden\" name=\"backup_users\" value=\"".$backup_users."\">";
+        //Print info
+        $table->data = user_check_backup($id,$backup_unique_code,$backup_users);  
+        print_table($table); 
         echo "</td></tr>";
 
-        //Now print the Logs tr
-        echo "<tr>";
-        echo "<td align=\"right\"><P><B>";
-        echo get_string("logs").":";                                               
-        echo "</td><td>";
-        $log_options[0] = get_string("no");
-        $log_options[1] = get_string("yes"); 
-        choose_from_menu($log_options, "backup_logs", $backup_logs, ""); 
-        echo "</td></tr>";
+        //Now print the Logs tr conditionally
+        if ($backup_logs) {
+            echo "<tr>";
+            echo "<td colspan=\"2\"><P><B>";
+            echo "<li>".get_string("includelogentries");; 
+            echo "</td></tr>";
+        }
+        //Add as hidden name
+        echo "<input type=\"hidden\" name=\"backup_logs\" value=\"".$backup_logs."\">";
 
-        //Now print the User Files tr
-        echo "<tr>";
-        echo "<td align=\"right\"><P><B>";
-        echo get_string ("userfiles").":";
-        echo "</td><td>";
-        $user_file_options[0] = get_string("no"); 
-        $user_file_options[1] = get_string("yes"); 
-        choose_from_menu($user_file_options, "backup_user_files", $backup_user_files, "");
-        echo "</td></tr>";
+        //Now print the User Files tr conditionally
+        if ($backup_user_files) {
+            echo "<tr>";
+            echo "<td colspan=\"2\"><P><B>";
+            echo "<li>".get_string("includeuserfiles");;
+            echo "</td></tr>";
+        }
+        //Add as hidden name
+        echo "<input type=\"hidden\" name=\"backup_user_files\" value=\"".$backup_user_files."\">";
 
-        //Now print the Course Files tr
-        echo "<tr>";
-        echo "<td align=\"right\"><P><B>";
-        echo get_string ("coursefiles").":";
-        echo "</td><td>";
-        $course_file_options[0] = get_string("no");
-        $course_file_options[1] = get_string("yes");
-        choose_from_menu($course_file_options, "backup_course_files", $backup_course_files, "");
-        echo "</td></tr>";
+        //Now print the Course Files tr conditionally
+       if ($backup_course_files) {
+            echo "<tr>";
+            echo "<td colspan=\"2\"><P><B>";
+            echo "<li>".get_string("includecoursefiles");; 
+            echo "</td></tr>";
+        }
+        //Add as hidden name
+        echo "<input type=\"hidden\" name=\"backup_course_files\" value=\"".$backup_course_files."\">";
     }
 ?>
 </table>

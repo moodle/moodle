@@ -27,5 +27,52 @@
                                WHERE backup_code = '$backup_unique_code'",false);
         return $status;
     }
+ 
+    //Calculate the number of users to backup and put their ids in backup_ids
+    //Return an array of info (name,value)
+    function user_check_backup($course,$backup_unique_code,$backup_users) {
+        //$backup_users=0-->all
+        //              1-->course
+        //              2-->needed-->NOT IMPLEMEMTED
+
+        global $CFG;
+
+        if ($backup_users == 0) {
+            //Insert all users (from user)
+            $sql_insert = "INSERT INTO {$CFG->prefix}backup_ids
+                               (backup_code, table_name, old_id)
+                           SELECT DISTINCT '$backup_unique_code','user',u.id
+                           FROM {$CFG->prefix}user u";
+        } else {
+            //Insert only course users (from user_students and user_teachers)
+            $sql_insert = "INSERT INTO {$CFG->prefix}backup_ids
+                               (backup_code, table_name, old_id)
+                           SELECT DISTINCT '$backup_unique_code','user',u.id
+                           FROM {$CFG->prefix}user u,
+                                {$CFG->prefix}user_students s,
+                                {$CFG->prefix}user_teachers t
+                           WHERE s.course = '$course' AND
+                                 t.course = s.course AND
+                                 (s.userid = u.id OR t.userid = u.id)";
+        }
+        //Execute the insert
+        $status = execute_sql($sql_insert,false);
+
+        //Now execute the select
+        $ids = get_records_sql("SELECT DISTINCT u.old_id,u.table_name
+                                FROM {$CFG->prefix}backup_ids u
+                                WHERE backup_code = '$backup_unique_code' AND
+                                      table_name ='user'");
+    
+        //Gets the user data
+        $info[0][0] = get_string("users");
+        if ($ids) {
+            $info[0][1] = count($ids);      
+        } else {
+            $info[0][1] = 0;
+        }
+
+        return $info;
+    }
 
 ?>

@@ -37,7 +37,7 @@ function backup_upgrade($oldversion=0) {
 
     if ($oldversion < 2003050301 and $result) {
         $result = execute_sql("ALTER TABLE `{$CFG->prefix}backup_ids`
-                         ADD `time` INT(10) UNSIGNED");
+                         ADD `info` VARCHAR(30)");
     } 
 
 
