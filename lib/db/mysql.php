@@ -182,6 +182,17 @@ function main_upgrade($oldversion=0) {
         }
     }
 
+    if ($oldversion < 2002111100) {
+        print_simple_box_start("CENTER", "", "#FFCCCC");
+        echo "<FONT SIZE=+1>";
+        echo "<P>Changes have been made to all built-in themes, to add the new popup navigation menu.";
+        echo "<P>If you have customised themes, you will need to edit theme/xxxx/header.html as follows:";
+        echo "<UL><LI>Change anywhere it says <B>$"."button</B> to say <B>$"."menu</B>";
+        echo "<LI>Add <B>$"."button</B> elsewhere (eg at the end of the navigation bar)</UL>";
+        echo "<P>See the standard themes for examples, eg: theme/standard/header.html";
+        print_simple_box_end();
+    }
+
 
     return true;
 }
