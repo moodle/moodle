@@ -342,14 +342,7 @@ function forum_user_complete($course, $user, $mod, $forum) {
 
     if ($posts = forum_get_user_posts($forum->id, $user->id)) {
         foreach ($posts as $post) {
-            if ($post->parent) {
-                $footer = "<A HREF=\"$CFG->wwwroot/mod/forum/discuss.php?d=$post->discussion&parent=$post->parent\">".
-                           get_string("parentofthispost", "forum")."</A>";
-            } else {
-                $footer = "";
-            }
-
-            forum_print_post($post, $course->id, $ownpost=false, $reply=false, $link=false, $rate=false, $footer);
+            forum_print_post($post, $course->id, $ownpost=false, $reply=false, $link=false, $rate=false);
         }
 
     } else {
