@@ -46,11 +46,7 @@
                                              lastaccess < '$cutofftime' AND
                                              u.id = s.user GROUP BY u.id")) {
             foreach ($users as $user) {
-                if (delete_records("user_students", "user", $user->id)) {
-
-                    // Delete other things ... this should be modular than it is right now:
-                    delete_records("forum_subscriptions", "user", $user->id);
-
+                if (unenrol_student($user->id)) {
                     echo "Deleted student enrolment for $user->firstname $user->lastname ($user->id)\n";
                 }
             }

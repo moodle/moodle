@@ -30,9 +30,6 @@
             error("An error occurred while trying to unenrol you.");
         }
 
-        // remove some other things
-        delete_records("forum_subscriptions", "user", $user->id);
-
         add_to_log($course->id, "course", "unenrol", "view.php?id=$course->id", "$user->id");
 
         if ($user->id == $USER->id) {

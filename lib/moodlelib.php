@@ -1045,9 +1045,16 @@ function remove_teacher($user, $course=0) {
     global $db;
 
     if ($course) {
+        /// First delete any crucial stuff that might still send mail
+        if ($forums = get_records("forum", "course", $course)) {
+            foreach ($forums as $forum) {
+                $db->Execute("DELETE FROM forum_subscriptions WHERE forum = '$forum->id' AND user = '$user'");
+            }
+        }
         return $db->Execute("DELETE FROM user_teachers WHERE user = '$user' AND course = '$course'");
     } else {
-        return $db->Execute("DELETE FROM user_teachers WHERE user = '$user'");
+        delete_records("forum_subscriptions", "user", $user);
+        return delete_records("user_teachers", "user", $user);
     }
 }
 
@@ -1070,9 +1077,17 @@ function unenrol_student($user, $course=0) {
     global $db;
 
     if ($course) {
+        /// First delete any crucial stuff that might still send mail
+        if ($forums = get_records("forum", "course", $course)) {
+            foreach ($forums as $forum) {
+                $db->Execute("DELETE FROM forum_subscriptions WHERE forum = '$forum->id' AND user = '$user'");
+            }
+        }
         return $db->Execute("DELETE FROM user_students WHERE user = '$user' AND course = '$course'");
+
     } else {
-        return $db->Execute("DELETE FROM user_students WHERE user = '$user'");
+        delete_records("forum_subscriptions", "user", $user);
+        return delete_records("user_students", "user", $user);
     }
 }
 
