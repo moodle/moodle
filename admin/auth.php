@@ -25,18 +25,8 @@
         if (count($err) == 0) {
             print_header();
             foreach ($config as $name => $value) {
-                unset($conf);
-                $conf->name  = $name;
-                $conf->value = $value;
-                if ($current = get_record("config", "name", $name)) {
-                    $conf->id = $current->id;
-                    if (! update_record("config", $conf)) {
-                        notify("Could not update $name to $value");
-                    }
-                } else {
-                    if (! insert_record("config", $conf)) {
-                        notify("Error: could not add new variable $name !");
-                    }
+                if (! set_config($name, $value)) {
+                    notify("Problem saving config $name as $value");
                 }
             }
             redirect("auth.php", get_string("changessaved"), 1);
@@ -103,6 +93,20 @@
 
     require("$CFG->dirroot/auth/$auth/config.html");
 
+    if ($auth != "email" and $auth != "none") {
+        echo "<tr valign=\"top\">";
+	    echo "<td align=right nowrap><p>";
+        print_string("changepassword", "auth");
+        echo ":</p></td>";
+	    echo "<td>";
+        echo "<INPUT TYPE=\"text\" NAME=\"changepassword\" SIZE=40 VALUE=\"$config->changepassword\">";
+        echo "</td>";
+        echo "<td>";
+        print_string("changepasswordhelp","auth");
+        echo "</td></tr>";
+
+    }
+
     echo "<tr valign=\"top\">";
 	echo "<td align=right nowrap><p>";
     print_string("guestloginbutton", "auth");
@@ -113,6 +117,7 @@
     echo "<td>";
     print_string("showguestlogin","auth");
     echo "</td></tr></table>";
+
 
     echo "<CENTER><P><INPUT TYPE=\"submit\" VALUE=\"";
     print_string("savechanges");

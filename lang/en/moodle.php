@@ -384,6 +384,7 @@ $string['participants'] = "Participants";
 $string['password'] = "Password";
 $string['passwordchanged'] = "Password has been changed";
 $string['passwordsdiffer'] = "These passwords do not match";
+$string['passwordrecovery'] = "Yes, help me log in";
 $string['passwordsent'] = "Password has been sent";
 $string['passwordsenttext'] = "
    <P>An email has been sent to your address at \$a->email.

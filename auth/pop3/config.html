@@ -13,7 +13,10 @@
 	<TD ALIGN=RIGHT><P>auth_pop3type:</TD>
 	<TD>
     <? $pop3types = array("pop3","pop3cert");
-       choose_from_menu($pop3types, "auth_pop3type", $config->auth_pop3type, "");
+       foreach($pop3types as $pop3type) {
+           $pop3options[$pop3type] = $pop3type;
+       }
+       choose_from_menu($pop3options, "auth_pop3type", $config->auth_pop3type, "");
     ?>
     <? formerr($err["auth_pop3type"]); ?>
     </TD>

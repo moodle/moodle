@@ -53,13 +53,24 @@
             </FORM>
             </CENTER>
     <? } ?>
-      <HR>
-        <P ALIGN=CENTER><? print_string("forgotten") ?></P> 
-        <CENTER>
-        <FORM NAME="form3" ACTION="forgot_password.php" METHOD=post>
-        <INPUT type="submit" NAME="Submit" VALUE="<? print_string("senddetails") ?>">
-        </FORM>
-        </CENTER>
+    <? if ($CFG->changepassword or $CFG->auth == "email" or $CFG->auth == "none") {
+          if ($CFG->auth == "email" or $CFG->auth == "none") {
+              $changepassword = "forgot_password.php";
+              $changebuttonname = get_string("senddetails");
+          } else {
+              $changepassword = $CFG->changepassword;
+              $changebuttonname = get_string("passwordrecovery");
+          }
+    
+    ?>
+          <HR>
+            <P ALIGN=CENTER><? print_string("forgotten") ?></P> 
+            <CENTER>
+            <FORM NAME="form3" ACTION="<?=$changepassword ?>" METHOD=post>
+            <INPUT type="submit" NAME="Submit" VALUE="<?=$changebuttonname?>">
+            </FORM>
+            </CENTER>
+    <? } ?>
         </BLOCKQUOTE>
       </FONT> </TD>
     <? if ($show_instructions) { ?>

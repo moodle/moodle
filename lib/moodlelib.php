@@ -980,7 +980,7 @@ function set_field($table, $field, $newvalue, $selector, $value) {
 function set_config($name, $value) {
 // No need for get_config because they are usually always available in $CFG
 
-    if (get_field("config", "value", "name", $name)) {
+    if (get_field("config", "name", "name", $name)) {
         return set_field("config", "value", $value, "name", $name);
     } else {
         $config->name = $name;
@@ -1432,8 +1432,22 @@ function authenticate_user_login($username, $password) {
 
     global $CFG;
 
+    $md5password = md5($password);
+
     if (!isset($CFG->auth)) {
         $CFG->auth = "email";    // Default authentication module
+    }
+
+    if ($username == "guest") {
+        $CFG->auth = "none";     // Guest account always internal
+    }
+
+    // If this is the admin, then just use internal methods
+    if ($user = get_record_sql("SELECT u.id FROM user u, user_admins a 
+                                WHERE u.id = a.user 
+                                  AND u.username = '$username' 
+                                  AND u.password = '$md5password'")) {
+        return get_user_info_from_db("username", $username);
     }
 
     require_once("$CFG->dirroot/auth/$CFG->auth/lib.php");
@@ -1441,23 +1455,14 @@ function authenticate_user_login($username, $password) {
     if (auth_user_login($username, $password)) {  // Successful authentication
 
         if ($user = get_user_info_from_db("username", $username)) {
-            if (md5($password) <> $user->password) {
-                set_field("user", "password", md5($password), "username", $username);
+            if ($md5password <> $user->password) {
+                set_field("user", "password", $md5password, "username", $username);
             }
             return $user;
 
         } else {
             return create_user_record($username, $password);
         }
-    }
-
-    // It's possible that the user is the admin user, defined locally.
-    $password = md5($password);
-    if ($user = get_record_sql("SELECT u.id FROM user u, user_admins a 
-                                WHERE u.id = a.user 
-                                  AND u.username = '$username' 
-                                  AND u.password = '$password'")) {
-        return get_user_info_from_db("username", $username);
     }
 
     return false;

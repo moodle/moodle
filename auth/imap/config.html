@@ -13,7 +13,10 @@
 	<TD ALIGN=RIGHT><P>auth_imaptype:</TD>
 	<TD>
     <? $imaptypes = array("imap","imapssl", "imapcert", "imaptls");
-       choose_from_menu($imaptypes, "auth_imaptype", $config->auth_imaptype, "");
+       foreach($imaptypes as $imaptype) {
+           $imapoptions[$imaptype] = $imaptype;
+       }
+       choose_from_menu($imapoptions, "auth_imaptype", $config->auth_imaptype, "");
     ?>
     </TD>
     <TD>
