@@ -1,9 +1,6 @@
 <?PHP  // $Id$
        // Authentication by looking up a POP3 server
 
-// This code is completely untested so far  -  IT NEEDS TESTERS!
-// Looks like it should work though ...
-
 function auth_user_login ($username, $password) {
 // Returns true if the username and password work
 // and false if they are wrong or don't exist.
@@ -21,7 +18,7 @@ function auth_user_login ($username, $password) {
 
     error_reporting(0);
     $connection = imap_open($host, $username, $password, OP_HALFOPEN);
-    error_reporting(7);   
+    error_reporting($CFG->debug);   
 
     if ($connection) {
         imap_close($connection);
