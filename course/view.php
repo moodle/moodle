@@ -61,12 +61,10 @@
     }
 
     $strcourse = get_string("course");
-    $strcourses = get_string("courses");
 
     $loggedinas = "<p class=\"logininfo\">".user_login_string($course, $USER)."</p>";
 
-    print_header("$strcourse: $course->fullname", "$course->fullname", 
-                 "<a href=\"$CFG->wwwroot/course/\">$strcourses</a> -> $course->shortname", 
+    print_header("$strcourse: $course->fullname", "$course->fullname", "$course->shortname", 
                  "", "", true, update_course_icon($course->id), $loggedinas);
 
     get_all_mods($course->id, $mods, $modnames, $modnamesplural, $modnamesused);
