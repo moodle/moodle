@@ -49,7 +49,7 @@
                  "<A HREF=\"$CFG->wwwroot/admin\">$stradministration</A> -> 
                   <A HREF=\"teacher.php\">$strassignteachers</A> ->
                   $course->shortname", "");
-    print_heading($course->fullname);
+    print_heading("<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->fullname</A>");
 
 
 /// Get all existing teachers for this course.
