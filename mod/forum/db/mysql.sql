@@ -75,7 +75,7 @@ CREATE TABLE prefix_forum_queue (
   postid int(10) unsigned default 0 NOT NULL,
   PRIMARY KEY  (id),
   KEY user (userid),
-  KEY post (postid),
+  KEY post (postid)
 ) COMMENT='For keeping track of posts that will be mailed in digest form';
 # --------------------------------------------------------
 
