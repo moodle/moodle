@@ -143,7 +143,7 @@
             if(uploader != null) {
                 uploader.reset();
             }
-            set_dir('<?php print($_REQUEST['wdir']);?>');
+            set_dir('<?php print(!empty($_REQUEST['wdir'])) ? $_REQUEST['wdir'] : "";?>');
             return true;
         }
         -->
