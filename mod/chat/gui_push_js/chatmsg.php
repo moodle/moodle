@@ -37,7 +37,7 @@ if ($arsc_my = arsc_getdatafromsid($arsc_sid))
  echo $arsc_parameters["htmlhead_js"];
  
  set_magic_quotes_runtime(0);
- set_time_limit(0);
+ @set_time_limit(0);
  $arsc_sendtime = date("H:i:s");
  $arsc_timeid = arsc_microtime();
  $arsc_message = "/msg ".$arsc_my["user"]." ".$arsc_lang["welcome"];

@@ -1,6 +1,6 @@
 #!/usr/local/php-cgi/current/bin/php -q
 <?php
-set_time_limit (0);
+@set_time_limit (0);
 set_magic_quotes_runtime(0);
 
 include("../config.inc.php");
