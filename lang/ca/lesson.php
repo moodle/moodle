@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // lesson.php - created with Moodle 1.4 development (2004062600)
+      // lesson.php - created with Moodle 1.5 unstable development (2004090600)
 
 
 $string['actionaftercorrectanswer'] = 'Acció després d\'una resposta correcta';
@@ -47,6 +47,7 @@ $string['multipleanswer'] = 'Múltiples respostes';
 $string['nextpage'] = 'Pàgina següent';
 $string['noanswer'] = 'No s\'ha donat cap resposta';
 $string['noattemptrecordsfound'] = 'No s\'ha trobat cap registre d\'intents: no hi ha qualificació.';
+$string['nobranchtablefound'] = 'No s\'ha trobat cap taula de ramificació';
 $string['normal'] = 'Normal: segueix el camí de la lliçó';
 $string['notdefined'] = 'No està definit';
 $string['notitle'] = 'Sense títol';
