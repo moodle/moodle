@@ -259,6 +259,7 @@ $string['frontpagedescription'] = "Kezdõ oldal leírás";
 $string['frontpageformat'] = "Kezdõ oldal formátum";
 $string['fulllistofcourses'] = "Minden tanfolyam";
 $string['fullname'] = "Teljes név";
+$string['fullnamedisplay'] = '$a->lastname $a->firstname';
 $string['fullprofile'] = "Teljes profil";
 $string['fullsitename'] = "Az oldal teljes neve";
 $string['gd1'] = "GD 1.x telepítve";
