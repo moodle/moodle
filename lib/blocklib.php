@@ -194,11 +194,13 @@ function blocks_print_group(&$page, &$pageblocks, $position) {
 
     if(empty($pageblocks[$position])) {
         $pageblocks[$position] = array();
+        $maxweight = 0;
+    }
+    else {
+        $maxweight = max(array_keys($pageblocks[$position]));
     }
 
     $isediting = $page->user_is_editing();
-
-    $maxweight = max(array_keys($pageblocks[$position]));
 
     foreach($pageblocks[$position] as $instance) {
         $block = blocks_get_record($instance->blockid);
