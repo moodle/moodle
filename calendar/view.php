@@ -312,7 +312,7 @@ function calendar_show_month_detailed($m, $y, $courses, $groups, $users) {
         $events = array();
     }
     else {
-        $events = get_records_select('event', $whereclause);
+        $events = get_records_select('event', $whereclause, 'timestart');
     }
 
     // Extract information: events vs. time

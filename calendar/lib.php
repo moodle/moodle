@@ -112,7 +112,7 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
         $events = array();
     }
     else {
-        $events = get_records_select('event', $whereclause);
+        $events = get_records_select('event', $whereclause, 'timestart');
     }
 
     // This is either a genius idea or an idiot idea: in order to not complicate things, we use this rule: if, after
@@ -297,8 +297,7 @@ function calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxeve
     if ($whereclause === false) {
         $events = false;
     } else {
-        $whereclause .= ' ORDER BY timestart'; // We want them this way
-        $events = get_records_select('event', $whereclause);
+        $events = get_records_select('event', $whereclause, 'timestart');
     }
 
     // This is either a genius idea or an idiot idea: in order to not complicate things, we use this rule: if, after
