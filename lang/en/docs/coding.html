@@ -38,7 +38,20 @@
     the &quot;lang/en&quot; files with concise English lowercase names and retrieve them 
     from your code using get_string() or print_string().</li>
   <li class="spaced">All help files should be translatable - create new texts 
-    in the &quot;en/help&quot; directory and call them using helpbutton().</li>
+    in the &quot;en/help&quot; directory and call them using helpbutton().
+    <p>If you need to update a help file: 
+    <ul>
+    <li>with a minor change, where an old translation of the
+        file would still make sense, then it's OK to make the change
+        but you should notify translation@moodle.org</li>
+    <li>for a major change you should create a new file by adding  
+        an incrementing number (eg filename2.html) so that translators 
+        can easily see it's a new version of the file.  Obviously the 
+        new code and the help index files should also be modified to point 
+        to the newest versions.</li>
+    </ul>
+    </p>
+</li>
   <li class="spaced">Incoming data from the browser (sent via GET or POST) automatically
     has magic_quotes applied (regardless of the PHP settings) so that you can safely
     insert it straight into the database.  All other raw data (from files, or from databases)
