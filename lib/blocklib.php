@@ -312,6 +312,13 @@ function blocks_find_instance($instanceid, $blocksarray) {
     return false;
 }
 
+// Simple entry point for anyone that wants to use blocks
+function blocks_setup(&$PAGE) {
+    $pageblocks = blocks_get_by_page($PAGE);
+    blocks_execute_url_action($PAGE, $pageblocks);
+    return $pageblocks;
+}
+
 function blocks_execute_action($page, &$pageblocks, $blockaction, $instanceorid) {
     global $CFG;
 
