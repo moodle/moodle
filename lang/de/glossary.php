@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.2 development (2004020300)
+      // glossary.php - created with Moodle 1.2 alpha (2004022200)
 
 
 $string['addcomment'] = 'Kommentar einfügen';
@@ -95,6 +95,7 @@ $string['exportglossary'] = 'Export des Glossars';
 $string['exporttomainglossary'] = 'Übertrag zum Hauptglossar.';
 $string['filetoimport'] = 'Datei zum importieren';
 $string['fillfields'] = 'Konzept und Definition sind Pflichtfelder.';
+$string['filtername'] = 'Automatische Verlinkung des Glossars';
 $string['fullmatch'] = 'Überprüfe das ganze Wort nur dann <br><small>(wenn es automatisch verlinkt wurde)</small>';
 $string['glossarytype'] = 'Art des Glossars';
 $string['glosssaryexported'] = 'Glossar wurde exportiert';
