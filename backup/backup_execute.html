@@ -226,6 +226,13 @@
         }
     }
 
+    //Now, zip all the backup directory contents
+    if ($status) {
+        echo "<li>Zipping backup";
+        $status = backup_zip ($preferences,$moodle_home);
+
+    }
+
     if (!$status) {
         error ("An error has ocurred");
     }

@@ -985,6 +985,61 @@
         return $results;
     }
 
+    //This function creates the zip file containing all the backup info
+    //moodle.xml, moddata, user_files, course_files.
+    //The zipped file is created in the backup directory and named with
+    //the "oficial" name of the backup
+    //It uses "pclzip" if available or system "zip" (unix only)
+    function backup_zip ($preferences,$moodle_home) {
+    
+        global $CFG;
+
+        $status = true;
+
+        //Base dir where everything happens
+        $basedir = $CFG->dataroot."/temp/backup/".$preferences->backup_unique_code;
+        //Backup xip file name
+        $name = $preferences->backup_name;
+        //List base_dir files and directories
+        $filelist = list_directories_and_files ($basedir);
+
+        if (empty($CFG->zip)) {    // Use built-in php-based zip function
+                    $files = array();
+                    foreach ($filelist as $file) {
+//                        //If directory, append "/"
+//                        if (is_dir($basedir."/".$file)) {
+//                            $file = $file."/";
+//                        }
+                        //Include into array
+                        $files[] = $basedir."/".$file;
+                    }
+                    include_once($moodle_home."/lib/pclzip/pclzip.lib.php");
+                    $archive = new PclZip("$basedir/$name");
+                    if (($list = $archive->create($files,PCLZIP_OPT_REMOVE_PATH,$basedir)) == 0) {
+                        error($archive->errorInfo(true));
+                        $status = false;
+                    }
+                    $list = $archive->listContent();
+                    for ($i=0; $i<sizeof($list); $i++) {
+                        for(reset($list[$i]); $key = key($list[$i]); next($list[$i])) {
+                            echo "File $i / [$key] = ".$list[$i][$key]."<br>";
+                        }
+                        echo "<br>";
+                    }
+                } else {                   // Use external zip program
+                    $files = "";
+                    foreach ($filelist as $file) {
+                        $files .= basename($file);
+                        $files .= " ";
+                    }
+                    $command = "cd $basedir ; $CFG->zip -r $name $files";
+                    $status = Exec($command);
+                }
+
+        return $status;
+
+    } 
+
     // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     //This functions are used to copy any file or directory ($from_file)
