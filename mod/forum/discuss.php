@@ -55,6 +55,12 @@
         }
     }
 
+    if ($forum->type == "teacher") {
+        if (!isteacher($course->id)) {
+            error("You must be a $course->teacher to view this forum");
+        }
+    }
+
     $logparameters = "d=$discussion->id";
     if ($parent) {
         $logparameters .= "&parent=$parent";
