@@ -1078,6 +1078,14 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
 
     global $THEME, $CFG;
 
+    static $formattedtext;        // Cached version of formatted text for a post
+    static $formattedtextid;      // The ID number of the post
+
+    if (empty($formattedtextid) or $formattedtextid != $post->id) {    // Recalculate the formatting
+        $formattedtext = format_text($post->message, $post->format, NULL, $course->id);
+        $formattedtextid = $post->id;
+    }
+
     $output = "";
 
     $output .= "<style> <!--";       /// Styles for autolinks
@@ -1125,7 +1133,7 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
         $output .= "</div>";
     }
 
-    $output .= format_text($post->message, $post->format, NULL, $course->id);
+    $output .= $formattedtext;
 
     $output .= "<p align=right><font size=-1>";
 
