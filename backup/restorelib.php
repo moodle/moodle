@@ -513,7 +513,7 @@
                 $newid=null;
                 //check if it exists (by username) and get its id
                 $user_exists = true;
-                $user_data = get_record("user","username",$user->username);
+                $user_data = get_record("user","username",addslashes($user->username));
                 if (!$user_data) {
                     $user_exists = false;
                 } else {
