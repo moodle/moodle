@@ -33,9 +33,10 @@
                 print_footer();
                 die;
             }
-    
+
             $USER = $user;
             $USER->loggedin = true;
+            $USER->site = $CFG->wwwroot;   // for added security
             save_session("USER");
     
             if (!update_user_in_db()) {

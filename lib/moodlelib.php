@@ -951,10 +951,12 @@ function require_login($courseid=0) {
       
     // First check that the user is logged in to the site.
 
-    if (! (isset($USER->loggedin) and $USER->confirmed) ) { // They're not
+    if (! (isset($USER->loggedin) and $USER->confirmed and ($USER->site == $CFG->wwwroot)) ) { // They're not
         $SESSION->wantsurl = $FULLME;
         $SESSION->fromurl  = $HTTP_REFERER;
         save_session("SESSION");
+        $USER = NULL;
+        save_session("USER");
         if ($PHPSESSID) { // Cookies not enabled.
             redirect("$CFG->wwwroot/login/?PHPSESSID=$PHPSESSID");
         } else {
