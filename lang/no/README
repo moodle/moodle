@@ -1,18 +1,17 @@
 Logg for endringer
 
-Oversettelse til Moodle v. 1.1.1. 
+Oversettelse til Moodle v. 1.2. 
 
+Endringer 29. mars 2004:
+Flere oppdateringer tilpasset versjon 1.2, og noen nye filer. (Kun php-filer endret.) Enda flere vil komme etter hvert. 
+Endring i språkbruk: Bruk av begrepet "kurs" erstattes med "klasse".
 
-Sist endret 8. des. 2003. 
-
+Endringer 8. des. 2003. (v. 1.1.1)
 Størst tilskudd i det siste er mange hjelpefiler. 
 Php-filene kommer etter hvert med større oppdateringer.
-
 
 Denne oversettelsen er tilpasset hovedsakelig for bruk i høgskole og universitet, men kan med mindre endringer modifiseres til videregående/grunnskole/annet. 
 Dette kommer tydeligst frem i bruken av begreper som 'studenter' og 'studier' i stedet for 'elever' og 'fag'. 
 
-
 Oversettelsen er kraftig videreutviklet fra opprinnelig oversettelse fra november 2002 av Jøran Sørbø, joran.sorbo@teleweb.no. 
-
 Stig Bjarne Haugen, sbh@hinesna.no (Vedlikeholder oversettelsen) 
