@@ -145,7 +145,10 @@ HTMLArea.Config = function () {
           "insertorderedlist", "insertunorderedlist", "outdent", "indent", "separator",
           "forecolor", "hilitecolor", "separator",
           "inserthorizontalrule", "createanchor", "createlink", "unlink", "insertimage", "inserttable",
-          "insertsmile", "insertchar", "separator", "htmlmode", "separator", "popupeditor" ]
+          "insertsmile", "insertchar", "separator", "htmlmode", "separator", "popupeditor"<?php
+          if(!empty($CFG->aspellpath) && !empty($CFG->editorspelling)) {
+              echo ",\"spellcheck\"";
+          }?> ]
     ];
 
     this.fontname = {
@@ -223,6 +226,9 @@ HTMLArea.Config = function () {
         lefttoright: [ "Direction left to right", "ed_left_to_right.gif", false, function(e) {e.execCommand("lefttoright");} ],
         righttoleft: [ "Direction right to left", "ed_right_to_left.gif", false, function(e) {e.execCommand("righttoleft");} ],
         insertsmile: ["Insert Smiley", "em.icon.smile.gif", false, function(e) {e.execCommand("insertsmile");} ],
+        <?php if(!empty($CFG->aspellpath) && !empty($CFG->editorspelling)) {
+            echo "spellcheck: [\"Spell-check\", \"spell-check.gif\", false, spellClickHandler ],\n";
+        }?>
         insertchar: [ "Insert Char", "icon_ins_char.gif", false, function(e) {e.execCommand("insertchar");} ]
     };
 
@@ -1336,7 +1342,7 @@ HTMLArea.prototype._createLink = function(link) {
         outparam = {
         f_anchors:anchors };
     }
-    this._popupDialog("link_std.php?id=<?php echo $id; ?>", function(param) {
+    this._popupDialog("link_std.php?id=<?php print(isset($id) && !empty($id)) ? $id : ''; ?>", function(param) {
         if (!param)
             return false;
         var a = link;
@@ -1381,10 +1387,16 @@ HTMLArea.prototype._insertImage = function(image) {
         f_height : image.height
     };
     this._popupDialog("<?php
-    if(isteacher($id)) {
-        echo "insert_image.php?id=$id";
+    if(!empty($id)) {
+        if(isteacher($id)) {
+            echo "insert_image.php?id=";
+            print(isset($id) && !empty($id)) ? $id : "";
+        } else {
+            echo "insert_image_std.php?id=";
+            print(isset($id) && !empty($id)) ? $id : "";
+        }
     } else {
-        echo "insert_image_std.php?id=$id";
+        echo "insert_image_std.php?id=";
     }?>", function(param) {
         if (!param) {   // user must have pressed Cancel
             return false;
@@ -1609,12 +1621,12 @@ HTMLArea.prototype.execCommand = function(cmdID, UI, param) {
         HTMLArea._object = this;
         if (HTMLArea.is_ie) {
             {
-                window.open(this.popupURL("fullscreen.php?id=<?php print($id);?>"), "ha_fullscreen",
+                window.open(this.popupURL("fullscreen.php?id=<?php print(isset($id) && !empty($id)) ? $id : '';?>"), "ha_fullscreen",
                     "toolbar=no,location=no,directories=no,status=no,menubar=no," +
                         "scrollbars=no,resizable=yes,width=800,height=600");
             }
         } else {
-            window.open(this.popupURL("fullscreen.php?id=<?php print($id);?>"), "ha_fullscreen",
+            window.open(this.popupURL("fullscreen.php?id=<?php print(isset($id) && !empty($id)) ? $id : '';?>"), "ha_fullscreen",
                     "toolbar=no,menubar=no,personalbar=no,width=800,height=600," +
                     "scrollbars=no,resizable=yes");
         }
