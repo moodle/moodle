@@ -56,6 +56,10 @@ function HTMLArea(textarea, config) {
 		this._mdoc = document; // cache the document, we need it in plugins
 		this.doctype = '';
 	}
+	// Hide cut, copy and paste buttons from gecko browsers
+	if (HTMLArea.is_gecko) {
+		this.config.hideSomeButtons(" cut copy paste ");
+	}
 };
 
 // cache some regexps
