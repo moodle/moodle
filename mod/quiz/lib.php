@@ -2029,7 +2029,7 @@ function quiz_save_question_options($question) {
 /// be true, but it's something to keep in mind if fiddling with
 /// question.php
 ///
-/// Returns $result->error or $result->notice
+/// Returns $result->error or $result->noticeyesno or $result->notice
     
     switch ($question->qtype) {
         case SHORTANSWER:
@@ -2092,7 +2092,7 @@ function quiz_save_question_options($question) {
             /// Perform sanity checks on fractional grades
             if ($maxfraction != 1) {
                 $maxfraction = $maxfraction * 100;
-                $result->notice = get_string("fractionsnomax", "quiz", $maxfraction);
+                $result->noticeyesno = get_string("fractionsnomax", "quiz", $maxfraction);
                 return $result;
             }
         break;
@@ -2158,7 +2158,7 @@ function quiz_save_question_options($question) {
             /// Perform sanity checks on fractional grades
             if ($maxfraction != 1) {
                 $maxfraction = $maxfraction * 100;
-                $result->notice = get_string("fractionsnomax", "quiz", $maxfraction);
+                $result->noticeyesno = get_string("fractionsnomax", "quiz", $maxfraction);
                 return $result;
             }
         break;
@@ -2237,13 +2237,30 @@ function quiz_save_question_options($question) {
             if (!$oldanswers = get_records("quiz_answers", "question", $question->id, "id ASC")) {
                 $oldanswers = array();
             }
+            
+
+            // following hack to check at least two answers exist
+            $answercount = 0;
+            foreach ($question->answer as $key=>$dataanswer) {
+                if ($dataanswer != "") {
+                    $answercount++;
+                }
+            }
+            $answercount += count($oldanswers);
+            if ($answercount < 2) { // check there are at lest 2 answers for multiple choice
+                $result->notice = get_string("notenoughanswers", "quiz", "2");
+                return $result;
+            }
+            
+            
+
+            // Insert all the new answers
 
             $totalfraction = 0;
             $maxfraction = -1;
 
             $answers = array();
 
-            // Insert all the new answers
             foreach ($question->answer as $key => $dataanswer) {
                 if ($dataanswer != "") {
                     if ($answer = array_shift($oldanswers)) {  // Existing answer, so reuse it
@@ -2298,14 +2315,14 @@ function quiz_save_question_options($question) {
             if ($options->single) {
                 if ($maxfraction != 1) {
                     $maxfraction = $maxfraction * 100;
-                    $result->notice = get_string("fractionsnomax", "quiz", $maxfraction);
+                    $result->noticeyesno = get_string("fractionsnomax", "quiz", $maxfraction);
                     return $result;
                 }
             } else {
                 $totalfraction = round($totalfraction,2);
                 if ($totalfraction != 1) {
                     $totalfraction = $totalfraction * 100;
-                    $result->notice = get_string("fractionsaddwrong", "quiz", $totalfraction);
+                    $result->noticeyesno = get_string("fractionsaddwrong", "quiz", $totalfraction);
                     return $result;
                 }
             }
@@ -2317,6 +2334,23 @@ function quiz_save_question_options($question) {
                 $oldsubquestions = array();
             }
 
+
+            // following hack to check at least three answers exist
+            $answercount = 0;
+            foreach ($question->subquestions as $key=>$questiontext) {
+                $answertext = $question->subanswers[$key];
+                if (!empty($questiontext) and !empty($answertext)) {
+                    $answercount++;
+                }
+            }
+            $answercount += count($oldsubquestions);
+            if ($answercount < 3) { // check there are at lest 3 answers for matching type questions
+                $result->notice = get_string("notenoughanswers", "quiz", "3");
+                return $result;
+            }
+
+
+            
             $subquestions = array();
 
             // Insert all the new question+answer pairs
@@ -2345,7 +2379,7 @@ function quiz_save_question_options($question) {
             }
 
             if (count($subquestions) < 3) {
-                $result->notice = get_string("notenoughsubquestions", "quiz");
+                $result->noticeyesno = get_string("notenoughsubquestions", "quiz");
                 return $result;
             }
 

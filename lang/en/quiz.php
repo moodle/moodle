@@ -115,6 +115,7 @@ $string['noresponse'] = 'No Response';
 $string['noreview'] = 'You are not allowed to review this quiz';
 $string['noreviewuntil'] = 'You are not allowed to review this quiz until $a';
 $string['notenoughsubquestions'] = 'Not enough sub-questions have been defined!<br>Do you want to go back and fix this question?';
+$string['notenoughanswers'] = 'This type of question requires at least $a answers';
 $string['numerical'] = 'Numerical';
 $string['paragraphquestion'] = 'Paragraph Question not supported at line $a. The question will be ignored';
 $string['percentcorrect'] = 'Percent Correct';

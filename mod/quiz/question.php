@@ -147,7 +147,11 @@
             }
 
             if (!empty($result->notice)) {
-                notice_yesno($result->notice, "question.php?id=$question->id", "edit.php");
+                notice($result->notice, "question.php?id=$question->id");
+            }
+
+            if (!empty($result->noticeyesno)) {
+                notice_yesno($result->noticeyesno, "question.php?id=$question->id", "edit.php");
                 print_footer($course);
                 exit;
             }
