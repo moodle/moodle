@@ -907,8 +907,6 @@ function print_whole_category_list($category=NULL, $displaylist=NULL, $parentsli
         
     } else {
         $category->id = "0";
-        echo "<table width=\"100%\" class=\"categorybox\">";
-        $toplevel = true;
     }
 
     if ($categories = get_categories($category->id)) {   // Print all the children recursively
@@ -928,10 +926,6 @@ function print_whole_category_list($category=NULL, $displaylist=NULL, $parentsli
             print_whole_category_list($cat, $displaylist, $parentslist, $depth + 1);         
         }
     }
-
-    if (isset($toplevel)) {
-        echo "</table>";
-    }
 }
 
 
@@ -940,68 +934,87 @@ function print_category_info($category, $depth) {
 /// This function is only used by print_whole_category_list() above
 
     global $CFG;
+    static $strallowguests, $strrequireskey, $strsummary;
 
-    $strallowguests = get_string("allowguests");
-    $strrequireskey = get_string("requireskey");
+    if (empty($strsummary)) {
+        $strallowguests = get_string("allowguests");
+        $strrequireskey = get_string("requireskey");
+        $strsummary = get_string("summary");
+    }
 
     if (empty($THEME->custompix)) {
         $pixpath = "$CFG->wwwroot/pix";
     } else {
         $pixpath = "$CFG->wwwroot/theme/$CFG->theme/pix";
     }
-
-    echo "<tr>";
-    echo "<td valign=\"top\">";
-    for ($i=0; $i<$depth;$i++) {
-        echo "<ul style=\"margin-bottom:0;margin-top:0\">";
-    }
-
-    $catimage = "";
     $catlinkcss = $category->visible ? "" : " class=\"dimmed\" ";
 
     if ($CFG->frontpage == FRONTPAGECOURSELIST) {
         $catimage = "<img src=\"$pixpath/i/course.gif\" width=16 height=16 border=0>";
+    } else {
+        $catimage = "&nbsp";
     }
-    echo "<font size=+1>$catimage <span class=\"categoryname\"><a $catlinkcss ".
-         "href=\"$CFG->wwwroot/course/category.php?id=$category->id\">$category->name</a></span></font>";
+
+    echo "\n\n<table border=0 cellpadding=3 cellspacing=0 width=\"100%\"><tr>";
 
     if ($CFG->frontpage == FRONTPAGECOURSELIST) {
-        if ($courses = get_courses($category->id)) {
+        $courses = get_courses($category->id);
+
+        echo "<tr>";
+
+        if ($depth) {
+            $indent = $depth*30;
+            $rows = count($courses) + 1;
+            echo "<td rowspan=\"$rows\" valign=\"top\" width=\"$indent\">";
+            print_spacer(10, $indent);
+            echo "</td>";
+        }
+    
+        echo "<td valign=\"top\">$catimage</td>";
+        echo "<td valign=\"top\" width=\"100%\" class=\"categoryname\"><font size=+1>";
+        echo "<a $catlinkcss href=\"$CFG->wwwroot/course/category.php?id=$category->id\">$category->name</a>";
+        echo "</font></td>";
+        echo "<td>&nbsp;</td>";
+        echo "</tr>\n";
+
+        if ($courses) {
             foreach ($courses as $course) {
-                echo "<ul style=\"margin-bottom:0;margin-top:0\">";
                 $linkcss = $course->visible ? "" : " class=\"dimmed\" ";
-                echo "<span class=\"coursename\">";
+                echo "<tr><td valign=\"top\" width=\"30\">&nbsp;";
+                echo "</td>\n<td valign=\"top\" class=\"coursename\" width=\"100%\">";
                 echo "<a $linkcss href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->fullname</a>";
-                echo "&nbsp;&nbsp;";
+                echo "</td>\n<td align=\"right\" valign=\"top\" nowrap>";
                 if ($course->guest ) {
                     echo "<a title=\"$strallowguests\" href=\"$CFG->wwwroot/course/view.php?id=$course->id\">";
-                    echo "<img alt=\"\" height=16 width=16 border=0 src=\"$pixpath/i/user.gif\"></a>";
+                    echo "<img alt=\"\" height=16 width=16 border=0 src=\"$pixpath/i/user.gif\"></a> ";
                 }
                 if ($course->password) {
                     echo "<a title=\"$strrequireskey\" href=\"$CFG->wwwroot/course/view.php?id=$course->id\">";
-                    echo "<img alt=\"\" height=16 width=16 border=0 src=\"$pixpath/i/key.gif\"></a>";
+                    echo "<img alt=\"\" height=16 width=16 border=0 src=\"$pixpath/i/key.gif\"></a> ";
                 }
-                echo "</span>";
-                echo "</ul>";
+                if ($course->summary) {
+                    link_to_popup_window ("/course/info.php?id=$course->id", "courseinfo", 
+                                          "<img alt=\"info\" height=16 width=16 border=0 src=\"$pixpath/i/info.gif\">", 
+                                           400, 500, $strsummary);
+                }
+                echo "</td></tr>\n";
             }
         }
-        for ($i=0; $i<$depth;$i++) {
-            echo "</ul>";
-        }
-        echo "</td>";
-        echo "</tr>";
     } else {
-        for ($i=0; $i<$depth;$i++) {
-            echo "</ul>";
+
+        if ($depth) {
+            $indent = $depth*20;
+            echo "<td valign=\"top\" width=\"$indent\">";
+            print_spacer(10, $indent);
+            echo "</td>";
         }
-        echo "</td>";
-        echo "<td valign=\"top\">";
-        if ($category->coursecount) {
-            echo $category->coursecount;
-        }
-        echo "</td>";
-        echo "</tr>";
+    
+        echo "<td valign=\"top\" width=\"100%\" class=\"categoryname\"><font size=+1>";
+        echo "<a $catlinkcss href=\"$CFG->wwwroot/course/category.php?id=$category->id\">$category->name</a>";
+        echo "</font></td>";
+        echo "<td valign=\"top\">$category->coursecount</td></tr>";
     }
+    echo "\n</table>\n";
 }
 
 function print_courses_sideblock($category=0, $width="100%") {

@@ -248,7 +248,7 @@ function frmchecked(&$var, $true_value = "checked", $false_value = "") {
 
 
 function link_to_popup_window ($url, $name="popup", $linkname="click here", 
-                               $height=400, $width=500, $title="Popup window") {
+                               $height=400, $width=500, $title="Popup window", $options="none") {
 /// This will create a HTML link that will work on both 
 /// Javascript and non-javascript browsers.
 /// Relies on the Javascript function openpopup in javascript.php
@@ -256,7 +256,9 @@ function link_to_popup_window ($url, $name="popup", $linkname="click here",
 
     global $CFG;
 
-    $options = "menubar=0,location=0,scrollbars,resizable,width=$width,height=$height";
+    if ($options == "none") {
+        $options = "menubar=0,location=0,scrollbars,resizable,width=$width,height=$height";
+    }
     $fullscreen = 0;
 
     echo "<a target=\"$name\" title=\"$title\" href=\"$CFG->wwwroot$url\" ".

@@ -53,7 +53,11 @@
                 if (!$teacher->role) {
                     $teacher->role = $course->teacher;
                 }
-                echo "$teacher->role: <a target=\"userinfo\" href=\"$CFG->wwwroot/user/view.php?id=$teacher->id&course=$site->id\">$teacher->firstname $teacher->lastname</a><br />";
+                echo "$teacher->role: ";
+                link_to_popup_window ("/user/view.php?id=$teacher->id&course=$site->id", "opener", 
+                                      "$teacher->firstname $teacher->lastname", 400, 500, "$teacher->role", 
+                                      "");
+                echo "<br />";
             }
         }
         echo "</font></p>";
