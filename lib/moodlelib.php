@@ -1147,6 +1147,11 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml="", $a
 
     global $CFG, $_SERVER;
 
+    global $course;                // This is a bit of an ugly hack to be gotten rid of later
+    if (!empty($course->lang)) {   // Course language is defined
+        $CFG->courselang = $course->lang;
+    }
+
     include_once("$CFG->libdir/phpmailer/class.phpmailer.php");
 
     if (!$user) {
