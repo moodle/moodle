@@ -31,7 +31,7 @@
 
 /// Our two users are defined - let's set up the page
 
-    print_header(get_string('messagehistory', 'message'));
+    print_header(get_string('messagehistory', 'message'), '', '', '', '<base target="_blank">');
 
 /// Print out a heading including the users we are looking at
 
