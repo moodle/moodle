@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.2 + (2004032100)
+      // forum.php - created with Moodle 1.2.1 (2004032400)
 
 
 $string['addanewdiscussion'] = 'ディスカッショントピックを追加';
@@ -7,7 +7,7 @@ $string['addanewtopic'] = 'トピックを追加';
 $string['allowchoice'] = '全ての人が選択可能にする';
 $string['allowdiscussions'] = '$a  はこのフォーラムに投稿可能ですか?';
 $string['allowratings'] = '投稿を評価可能にしますか?';
-$string['allowsdiscussions'] = 'このフォーラムでは一つのディスカッショントピックでで開始してください。';
+$string['allowsdiscussions'] = 'このフォーラムでは一つのディスカッショントピックで開始してください。';
 $string['anyfile'] = '全てのファイル';
 $string['attachment'] = '添付ファイル';
 $string['bynameondate'] = '$a->date - $a->name の投稿';
@@ -15,7 +15,7 @@ $string['configdisplaymode'] = '表示モードが設定されていない場合のデフォルト表示
 $string['configlongpost'] = 'この文字長以上の長さ(HTMLは含まない)は長いと考えられます。';
 $string['configmanydiscussions'] = 'フォーラムページに表示されるディスカッションの最大数';
 $string['configmaxbytes'] = '全てのフォーラム添付ファイルに関するデフォルトの最大サイズ(コース制限及び他のローカル設定に従います)';
-$string['configshortpost'] = 'この文字長以下の長さ(HTMLは含まない)は長いと考えられます。';
+$string['configshortpost'] = 'この文字長以下の長さ(HTMLは含まない)は短いと考えられます。';
 $string['couldnotadd'] = 'エラーのため投稿出来ませんでした';
 $string['couldnotdeleteratings'] = '申し訳ございません、評価済みのため削除出来ませんでした';
 $string['couldnotdeletereplies'] = '申し訳ございません、返信済みのため削除出来ませんでした';
