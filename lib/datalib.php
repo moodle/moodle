@@ -874,7 +874,10 @@ function get_course_students($courseid, $sort="u.lastaccess DESC") {
 
     global $CFG;
 
-    return get_records_sql("SELECT u.* FROM {$CFG->prefix}user u, {$CFG->prefix}user_students s
+    return get_records_sql("SELECT u.id, u.username, u.firstname, u.lastname, u.maildisplay,
+                            u.email, u.city, u.country, u.lastaccess, u.lastlogin, u.picture
+                            FROM {$CFG->prefix}user u, 
+                                 {$CFG->prefix}user_students s
                             WHERE s.course = '$courseid' AND s.userid = u.id AND u.deleted = '0'
                             ORDER BY $sort");
 }
