@@ -2,6 +2,19 @@
 
 $CHOICE_MAX_NUMBER = 6;
 
+$COLUMN_HEIGHT = 300;
+
+define("CHOICE_PUBLISH_NOT",       "0");
+define("CHOICE_PUBLISH_ANONYMOUS", "1");
+define("CHOICE_PUBLISH_NAMES",     "2");
+
+$CHOICE_PUBLISH = array (CHOICE_PUBLISH_NOT        => get_string("publishnot", "choice"),
+                         CHOICE_PUBLISH_ANONYMOUS  => get_string("publishanonymous", "choice"),
+                         CHOICE_PUBLISH_NAMES      => get_string("publishnames", "choice"));
+
+
+/// Standard functions /////////////////////////////////////////////////////////
+
 function choice_user_outline($course, $user, $mod, $choice) {
     if ($current = get_record("choice_answers", "choice", $choice->id, "userid", $user->id)) {
         $result->info = "'".choice_get_answer($choice, $current->answer)."'";

@@ -52,8 +52,16 @@
     }
 
     foreach ($choices as $choice) {
-        $answer = $answers[$choice->id];
-        $aa = choice_get_answer($choice, $answer->answer);
+        if (!empty($answers[$choice->id])) {
+            $answer = $answers[$choice->id];
+        } else {
+            $answer = "";
+        }
+        if (!empty($answer->answer)) {
+            $aa = choice_get_answer($choice, $answer->answer);
+        } else {
+            $aa = "";
+        }
 
         if ($course->format == "weeks" || $course->format == "topics") {
             $table->data[] = array ("$choice->section",

@@ -19,12 +19,14 @@ CREATE TABLE prefix_choice (
   course integer NOT NULL default '0',
   name varchar(255) NOT NULL default '',
   text text NOT NULL default '',
+  format integer NOT NULL default '0',
   answer1 varchar(255) NOT NULL default 'Yes',
   answer2 varchar(255) NOT NULL default 'No',
   answer3 varchar(255) default NULL,
   answer4 varchar(255) default NULL,
   answer5 varchar(255) default NULL,
   answer6 varchar(255) default NULL,
+  publish integer NOT NULL default '0',
   timemodified integer NOT NULL default '0'
 );
 

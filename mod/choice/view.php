@@ -19,6 +19,9 @@
         error("Course module is incorrect");
     }
 
+    for ($i=1; $i <= $CHOICE_MAX_NUMBER; $i++) {
+        $answerchecked[$i] = "";
+    }
     if ($current = get_record("choice_answers", "choice", $choice->id, "userid", $USER->id)) {
         $answerchecked[$current->answer] = "CHECKED";
     }
@@ -71,25 +74,146 @@
 
     print_simple_box( text_to_html($choice->text) , "center");
 
-    echo "<CENTER><P><FORM name=\"form\" method=\"post\" action=\"view.php\">";
-    echo "<TABLE CELLPADDING=20 CELLSPACING=20><TR>";
+    if (!$current or !$choice->publish) {  // They haven't made their choice yet
+        echo "<CENTER><P><FORM name=\"form\" method=\"post\" action=\"view.php\">";
+        echo "<TABLE CELLPADDING=20 CELLSPACING=20><TR>";
 
-    foreach ($choice->answer as $key => $answer) {
-        if ($answer) {
-            echo "<TD ALIGN=CENTER>";
-            echo "<INPUT type=radio name=answer value=\"$key\" ".$answerchecked[$key].">";
-            p($answer);
-            echo "</TD>";
+        foreach ($choice->answer as $key => $answer) {
+            if ($answer) {
+                echo "<TD ALIGN=CENTER>";
+                echo "<INPUT type=radio name=answer value=\"$key\" ".$answerchecked[$key].">";
+                p($answer);
+                echo "</TD>";
+            }
+        }
+    
+        echo "</TR></TABLE>";
+        echo "<INPUT type=hidden name=id value=\"$cm->id\">";
+        if (!isguest()) {
+            echo "<INPUT type=submit value=\"".get_string("savemychoice","choice")."\">";
+        }
+        echo "</P></FORM></CENTER>";
+
+    } else {  // Print results.
+
+        print_heading(get_string("responses", "choice"));
+
+        if (! $users = get_course_users($course->id, "u.firstname ASC")) {
+            error("No users found (very strange)");
+        }
+
+        if ( $allanswers = get_records("choice_answers", "choice", $choice->id)) {
+            foreach ($allanswers as $aa) {
+                $answers[$aa->userid] = $aa;
+            }
+        } else {
+            $answers = array () ;
+        }
+
+        $timenow = time();
+
+        foreach ($choice->answer as $key => $answer) {  
+            $useranswer[$key] = array();
+        }
+        foreach ($users as $user) {
+            if (!empty($user->id) and !empty($answers[$user->id])) {
+                $answer = $answers[$user->id];
+                $useranswer[(int)$answer->answer][] = $user;
+            } else {
+                $answer = "";
+                $useranswer[(int)$answer->answer][] = $user;
+            }
+        }
+        foreach ($choice->answer as $key => $answer) {  
+            if (!$choice->answer[$key]) {
+                unset($useranswer[$key]);     // Throw away any data that doesn't apply
+            }
+        }
+        ksort($useranswer);
+
+        switch ($choice->publish) {
+          case CHOICE_PUBLISH_NAMES:
+
+            $tablewidth = (int) (100.0 / count($useranswer));
+
+            echo "<TABLE CELLPADDING=5 CELLSPACING=10 ALIGN=CENTER>";
+            echo "<TR>";
+            foreach ($useranswer as $key => $answer) {
+                if ($key) {
+                    echo "<TH WIDTH=\"$tablewidth%\">";
+                } else {
+                    echo "<TH BGCOLOR=\"$THEME->body\" WIDTH=\"$tablewidth%\">";
+                }
+                echo choice_get_answer($choice, $key);
+                echo "</TH>";
+            }
+            echo "</TR><TR>";
+        
+            foreach ($useranswer as $key => $answer) {
+                if ($key) {
+                    echo "<TD WIDTH=\"$tablewidth%\" VALIGN=TOP NOWRAP BGCOLOR=\"$THEME->cellcontent\">";
+                } else {
+                    echo "<TD WIDTH=\"$tablewidth%\" VALIGN=TOP NOWRAP BGCOLOR=\"$THEME->body\">";
+                }
+    
+                echo "<TABLE WIDTH=100%>";
+                foreach ($answer as $user) {
+                    echo "<TR><TD WIDTH=10 NOWRAP>";
+                    print_user_picture($user->id, $course->id, $user->picture);
+                    echo "</TD><TD WIDTH=100% NOWRAP>";
+                    echo "<P>$user->firstname $user->lastname</P>";
+                    echo "</TD></TR>";
+                }
+                echo "</TABLE>";
+        
+                echo "</TD>";
+            }
+            echo "</TR></TABLE>";
+            break;
+
+
+          case CHOICE_PUBLISH_ANONYMOUS:
+            $tablewidth = (int) (100.0 / count($useranswer));
+
+            echo "<TABLE CELLPADDING=5 CELLSPACING=10 ALIGN=CENTER>";
+            echo "<TR>";
+            foreach ($useranswer as $key => $answer) {
+                if ($key) {
+                    echo "<TH WIDTH=\"$tablewidth%\">";
+                } else {
+                    echo "<TH BGCOLOR=\"$THEME->body\" WIDTH=\"$tablewidth%\">";
+                }
+                echo choice_get_answer($choice, $key);
+                echo "</TH>";
+            }
+            echo "</TR>";
+
+            $maxcolumn = 0;
+            foreach ($useranswer as $key => $answer) {
+                $column[$key] = count($answer);
+                if ($column[$key] > $maxcolumn) {
+                    $maxcolumn = $column[$key];
+                }
+            }
+
+            echo "<TR>";
+            foreach ($useranswer as $key => $answer) {
+                $height = $COLUMN_HEIGHT * ((float)$column[$key] / (float)$maxcolumn);
+                echo "<TD VALIGN=\"BOTTOM\" ALIGN=\"CENTER\">";
+                echo "<IMG SRC=\"column.png\" HEIGHT=\"$height\" width=\"49\"></TD>";
+            }
+            echo "</TR>";
+
+            echo "<TR>";
+            foreach ($useranswer as $key => $answer) {
+                echo "<TD ALIGN=\"CENTER\">".$column[$key]."</TD>";
+            }
+            echo "</TR></TABLE>";
+
+            break;
         }
     }
-
-    echo "</TR></TABLE>";
-    echo "<INPUT type=hidden name=id value=\"$cm->id\">";
-    if (!isguest()) {
-        echo "<INPUT type=submit value=\"".get_string("savemychoice","choice")."\">";
-    }
-    echo "</P></FORM></CENTER>";
-
+    
     print_footer($course);
 
 

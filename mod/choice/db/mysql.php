@@ -17,6 +17,10 @@ function choice_upgrade($oldversion) {
     if ($oldversion < 2002122300) {
         execute_sql("ALTER TABLE `choice_answers` CHANGE `user` `userid` INT(10) UNSIGNED DEFAULT '0' NOT NULL ");
     }
+    if ($oldversion < 2003010100) {
+        execute_sql(" ALTER TABLE `choice` ADD `format` TINYINT(2) UNSIGNED DEFAULT '0' NOT NULL AFTER `text` ");
+        execute_sql(" ALTER TABLE `choice` ADD `publish` TINYINT(2) UNSIGNED DEFAULT '0' NOT NULL AFTER `answer6` ");
+    }
     return true;
 }
 
