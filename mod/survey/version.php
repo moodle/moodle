@@ -5,7 +5,7 @@
 //  This fragment is called by /admin/index.php
 ////////////////////////////////////////////////////////////////////////////////
 
-$module->version  = 20020727;
+$module->version  = 2002080500;
 $module->cron     = 0;
 
 function survey_upgrade($oldversion) {

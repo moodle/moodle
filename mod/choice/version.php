@@ -5,7 +5,7 @@
 //  This fragment is called by /admin/index.php
 ////////////////////////////////////////////////////////////////////////////////
 
-$module->version  = 20011110;
+$module->version  = 2002080500;
 $module->cron     = 0;
 
 function choice_upgrade($oldversion) {
