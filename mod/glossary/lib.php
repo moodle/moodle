@@ -535,7 +535,7 @@ function  glossary_print_entry_aliases($course, $cm, $glossary, $entry,$mode="",
 }
 
 function glossary_print_entry_icons($course, $cm, $glossary, $entry,$mode="",$hook="", $type = 'print') {
-    global $THEME, $USER;
+    global $THEME, $USER, $CFG;
 
     $importedentry = ($entry->sourceglossaryid == $glossary->id);
     $isteacher = isteacher($course->id);
