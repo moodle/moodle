@@ -862,7 +862,7 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5, $f
     }
 }
 
-function forum_print_discussion($course, $discussion, $post, $mode) {
+function forum_print_discussion($course, $forum, $discussion, $post, $mode) {
 
     global $USER;
 
@@ -872,7 +872,7 @@ function forum_print_discussion($course, $discussion, $post, $mode) {
 
     forum_print_mode_form($discussion->id, $mode);
 
-    if ($discussion->assessed && $USER->id) {
+    if ($forum->assessed && $USER->id) {
         echo "<FORM NAME=form METHOD=POST ACTION=rate.php>";
         echo "<INPUT TYPE=hidden NAME=id VALUE=\"$course->id\">";
     }
@@ -895,7 +895,7 @@ function forum_print_discussion($course, $discussion, $post, $mode) {
             break;
     }
 
-    if ($discussion->assessed && $USER->id) {
+    if ($forum->assessed && $USER->id) {
         echo "<CENTER><P ALIGN=center><INPUT TYPE=submit VALUE=\"".get_string("sendinratings", "forum")."\"></P></CENTER>";
         echo "</FORM>";
     }

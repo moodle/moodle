@@ -66,7 +66,7 @@
                  "$navmiddle -> $navtail", "", "", true, $updatebutton);
     }
 
-    forum_print_discussion($course, $discussion, $post, $USER->mode);
+    forum_print_discussion($course, $forum, $discussion, $post, $USER->mode);
 
     print_footer($course);
 

@@ -104,7 +104,7 @@
                 error("Could not find the first post in this forum");
             }
             forum_set_display_mode($mode);
-            forum_print_discussion($course, $discussion, $post, $USER->mode);
+            forum_print_discussion($course, $forum, $discussion, $post, $USER->mode);
             break;
 
         case "eachuser":
