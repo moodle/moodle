@@ -39,12 +39,16 @@
     $currentlang = current_language();
 
     print_header("$site->shortname: $title", "$site->fullname",
-                 "<A HREF=\"index.php\">$stradministration</A> -> $navigation");
+                 "<a href=\"index.php\">$stradministration</a> -> $navigation");
 
     if (!$mode) {
         print_heading("$strcurrentlanguage: $currentlang - ".get_string("thislanguage"));
-        print_heading("<A HREF=\"lang.php?mode=missing\">$strmissingstrings</A>");
-        print_heading("<A HREF=\"lang.php?mode=compare\">$strcomparelanguage</A>");
+        print_heading("<a href=\"lang.php?mode=missing\">$strmissingstrings</a>");
+        print_heading("<a href=\"lang.php?mode=compare\">$strcomparelanguage</a>");
+        echo "<center><hr noshade size=1>";
+        $options["lang"] = $currentlang;
+        print_single_button("http://moodle.org/download/lang/", $options, get_string("latestlanguagepack"));
+        echo "</center>";
         print_footer();
         exit;
     }
