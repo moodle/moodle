@@ -204,7 +204,7 @@ if ($usehtmleditor = can_use_html_editor()) {
 print_header(strip_tags("$course->shortname: $glossary->name"), "$course->fullname",
              "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> -> 
               <A HREF=\"index.php?id=$course->id\">$strglossaries</A> -> 
-              <A HREF=\"view.php?id=$cm->id\">$glossary->name</A> -> $stredit", "form.text",
+              <A HREF=\"view.php?id=$cm->id\">$glossary->name</A> -> $stredit", "",
               "", true, "", navmenu($course, $cm));
 
     echo '<p align="center"><font size="3"><b>' . stripslashes_safe($glossary->name);
