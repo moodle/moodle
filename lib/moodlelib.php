@@ -1725,8 +1725,20 @@ function get_string($identifier, $module="", $a=NULL) {
         }
     }
 
-    // If the preferred language was English we can abort now
+    // If it's a module, then look within the module pack itself mod/xxxx/lang/en/module.php
 
+    if ($module != "moodle") {
+        $modlangpath = "$CFG->dirroot/mod/$module/lang";
+        $langfile = "$modlangpath/$lang/$module.php";
+        if (file_exists($langfile)) {
+            if ($result = get_string_from_file($identifier, $langfile, "\$resultstring")) {
+                eval($result);
+                return $resultstring;
+            }
+        }
+    }
+
+    // If the preferred language was English we can abort now
     if ($lang == "en") {
         return "[[$identifier]]";
     }
@@ -1755,6 +1767,18 @@ function get_string($identifier, $module="", $a=NULL) {
     if ($result = get_string_from_file($identifier, $langfile, "\$resultstring")) {
         eval($result);
         return $resultstring;
+    }
+
+    // If it's a module, then look within the module pack itself mod/xxxx/lang/en/module.php
+
+    if ($module != "moodle") {
+        $langfile = "$modlangpath/en/$module.php";
+        if (file_exists($langfile)) {
+            if ($result = get_string_from_file($identifier, $langfile, "\$resultstring")) {
+                eval($result);
+                return $resultstring;
+            }
+        }
     }
 
     return "[[$identifier]]";  // Last resort
