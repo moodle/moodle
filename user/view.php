@@ -5,6 +5,7 @@
     require("../config.php");
     require("../lib/countries.php");
     require("lib.php");
+    require("../mod/discuss/lib.php");
 
     require_variable($id);
     require_variable($course);
@@ -114,7 +115,7 @@
     echo "</TD></TR></TABLE></TABLE>";
 
 //  Print other functions
-    if ($id == $USER->id and !isguest() ) {
+    if ($user->id == $USER->id and !isguest() ) {
         echo "<CENTER><TABLE ALIGN=CENTER><TR>";
         echo "<TD NOWRAP><P><FORM ACTION=\"../course/unenrol.php\" METHOD=GET>";
         echo "<INPUT type=hidden name=id value=\"$course->id\">";
@@ -122,6 +123,8 @@
         echo "</FORM></P></TD>";
         echo "</TR></TABLE></CENTER>\n";
     }
+
+    print_user_discussions($course, $user);
 
     print_footer($course);
 
