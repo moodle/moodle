@@ -185,6 +185,7 @@ CREATE TABLE prefix_course_modules (
   added number(10) default '0' not null, 
   deleted number(1) default '0' not null,
   score number(4) default '0' not null,
+  indent number(5) default '0' not null,  
   visible number(1) default '1' not null
 );
 
@@ -203,10 +204,10 @@ create or replace trigger p_course_modules_trig
 .
 /
 
-insert into prefix_course_modules (course,module,instance,section,added,deleted,score) values (1,1,1,1,1,1,1); 
-insert into prefix_course_modules (course,module,instance,section,added,deleted,score) values (2,2,2,2,2,2,2); 
-insert into prefix_course_modules (course,module,instance,section,added,deleted,score) values (3,3,3,3,3,3,3); 
-insert into prefix_course_modules (course,module,instance,section,added,deleted,score) values (4,4,4,4,4,4,4); 
+insert into prefix_course_modules (course,module,instance,section,added,deleted,score,indent,visible) values (1,1,1,1,1,1,1,1,1); 
+insert into prefix_course_modules (course,module,instance,section,added,deleted,score,indent,visible) values (2,2,2,2,2,2,2,2,2); 
+insert into prefix_course_modules (course,module,instance,section,added,deleted,score,indent,visible) values (3,3,3,3,3,3,3,3,3); 
+insert into prefix_course_modules (course,module,instance,section,added,deleted,score,indent,visible) values (4,4,4,4,4,4,4,4,4); 
 
 select * from prefix_course_modules;
 
