@@ -18,7 +18,7 @@
     optional_variable($file, "");
     optional_variable($wdir, "");
     optional_variable($action, "");
-    optional_variable($usecheckboxes, "");
+    optional_variable($usecheckboxes, true);
 
     if (! $course = get_record("course", "id", $id) ) {
         error("That's an invalid course id");
@@ -77,10 +77,14 @@
                     for(field in params) {
                         var value = params[field];
                         switch(field) {
-                            case "url" : upper.document.getElementById('f_href').value = value; break;
-                            case "imodified" : upper.document.getElementById('imodified').value = value; break;
-                            case "isize" : upper.document.getElementById('isize').value = value; break;
-                            case "itype" : upper.document.getElementById('itype').value = value; break;
+                            case "url" :
+                                //upper.document.getElementById('f_href').value = value;
+                                upper.opener.document.getElementById('f_href').value = value;
+                                upper.close();
+                                break;
+                            //case "imodified" : upper.document.getElementById('imodified').value = value; break;
+                            //case "isize" : upper.document.getElementById('isize').value = value; break;
+                            //case "itype" : upper.document.getElementById('itype').value = value; break;
                         }
                     }
                 }

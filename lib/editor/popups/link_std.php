@@ -16,13 +16,6 @@
   <title><?php print_string("insertlink","editor");?></title>
   <script type="text/javascript" src="popup.js"></script>
   <script type="text/javascript">
-    window.resizeTo(400, 200);
-
-//I18N = window.opener.HTMLArea.I18N.dialogs;
-
-//function i18n(str) {
-//  return (I18N[str] || str);
-//};
 
 function onTargetChanged() {
   var f = document.getElementById("f_other_target");
@@ -41,7 +34,7 @@ function Init() {
   if (param) {
       document.getElementById("f_href").value = param["f_href"];
       document.getElementById("f_title").value = param["f_title"];
-      comboSelectValue(target_select, param["f_target"]);
+      //comboSelectValue(target_select, param["f_target"]);
       if (target_select.value != param.f_target) {
         var opt = document.createElement("option");
         opt.value = param.f_target;
@@ -92,12 +85,29 @@ function onCancel() {
   return false;
 };
 
+function onBrowse() {
+    var lx = (screen.width - 470) / 2;
+    var tx = (screen.height - 400) / 2;
+
+    var settings = "toolbar=no,";
+    settings += " location=no,";
+    settings += " directories=no,";
+    settings += " status=no,";
+    settings += " menubar=no,";
+    settings += " scrollbars=no,";
+    settings += " resizable=no,";
+    settings += " width=470,";
+    settings += " height=400,";
+
+    var newwin = window.open("link.php?id=<?php echo $id; ?>","",""+ settings +" left="+ lx +", top="+ tx +"");
+    return false;
+}
 </script>
 
 <style type="text/css">
 html, body {
-  width: 400;
-  height: 200;
+  width: 400px;
+  height: 180px;
   background: ButtonFace;
   color: ButtonText;
   font: 11px Tahoma,Verdana,sans-serif;
@@ -105,9 +115,7 @@ html, body {
   padding: 0px;
 }
 body { padding: 5px; }
-table {
-  font: 11px Tahoma,Verdana,sans-serif;
-}
+table { font: 11px Tahoma,Verdana,sans-serif; }
 select, input, button { font: 11px Tahoma,Verdana,sans-serif; }
 button { width: 70px; }
 table .label { text-align: right; width: 8em; }
@@ -150,6 +158,7 @@ border-bottom: 1px solid black; letter-spacing: 2px;
 </table>
 
 <div id="buttons">
+  <?php print(isteacher($id))? "<button type=\"button\" name=\"browse\" onclick=\"return onBrowse();\">Browse</button>" : ""; ?>
   <button type="button" name="ok" onclick="return onOK();"><?php print_string("ok","editor");?></button>
   <button type="button" name="cancel" onclick="return onCancel();"><?php print_string("cancel","editor");?></button>
 </div>

@@ -1428,12 +1428,7 @@ HTMLArea.prototype._createLink = function(link) {
         f_title  : link.title,
         f_target : link.target
     };
-    this._popupDialog("<?php
-    if(isteacher($id)) {
-        echo "link.php?id=$id";
-    } else {
-        echo "link_std.php?id=$id";
-    }?>", function(param) {
+    this._popupDialog("link_std.php?id=<?php echo $id; ?>", function(param) {
         if (!param)
             return false;
         var a = link;
@@ -1676,7 +1671,7 @@ HTMLArea.prototype.execCommand = function(cmdID, UI, param) {
         case "hilitecolor":
         (HTMLArea.is_ie) && (cmdID = "backcolor");
         case "forecolor":
-        this._popupDialog("select_color.html", function(color) {
+        this._popupDialog("select_color.php", function(color) {
             if (color) { // selection not canceled
                 editor._doc.execCommand(cmdID, false, "#" + color);
             }
