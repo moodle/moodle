@@ -271,11 +271,11 @@ Ga naar onderstaand adres om dit te bevestigen en om een nieuw wachtwoord te kri
 
 In de meeste e-mail programma's zou dit moeten verschijnen als een blauwe link waarop je kunt klikken. Als dat niet werkt, knip en plak het adres dan in de adresbalk van je browser.
 
-Als je hulp nodig hebt, neem dan contakt op met de site-beheerder, \$a->admin";
+Als je hulp nodig hebt, neem dan contact op met de site-beheerder, \$a->admin";
 $string['emailpasswordconfirmationsubject'] = "\$a: bevestiging van de wijziging van het paswoord";
 $string['emailpasswordconfirmsent'] = "Er is een e-mail verstuurd naar jouw adres: <b>\$a</b>.
 <p>Daarin staan eenvoudige instructies om je aanvraag tot wijziging van je wachtwoord te bevestigen en om deze wijziging door te voeren.
-Indien je blijft moeilijkheden ondervinden, neem dan contakt op met je site-beheerder.";
+Indien je blijft moeilijkheden ondervinden, neem dan contact op met je site-beheerder.";
 $string['emailpasswordsent'] = "Bedankt voor de bevestiging van de wijziging van je wachtwoord.
 <p>Er is een e-mail met je nieuw wachtwoord naar <b>\$a->email</b> gestuurd.
 <p>Het nieuwe wachtwoord werd automatisch gegenereerd. Misschien wil je het <a href=\$a->link>wachtwoord veranderen</a> in iets wat je gemakkelijker kunt onthouden.";

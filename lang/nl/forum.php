@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.2 development (2003092900)
+      // forum.php - created with Moodle 1.2 development (2003100900)
 
 
 $string['addanewdiscussion'] = "Voeg een nieuw onderwerp voor discussie toe";
@@ -113,7 +113,7 @@ $string['repliesmany'] = "\$a antwoorden tot nu toe";
 $string['repliesone'] = "\$a antwoord tot nu toe";
 $string['reply'] = "Antwoord";
 $string['search'] = "Zoek";
-$string['searchforums'] = "Doorzoek de forums";
+$string['searchforums'] = "Zoeken in forums";
 $string['searcholderposts'] = "Doorzoek oudere bijdragen...";
 $string['searchresults'] = "Zoekresultaten";
 $string['sendinratings'] = "Verzend mijn laatste classificaties";
