@@ -192,7 +192,7 @@
             }
     
         } else {    // module not installed yet, so install it
-            if (!empty($updated_modules)) {
+            if (empty($updated_modules)) {
                 $strmodulesetup    = get_string("modulesetup");
                 print_header($strmodulesetup, $strmodulesetup, $strmodulesetup);
             }
