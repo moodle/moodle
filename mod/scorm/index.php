@@ -41,13 +41,13 @@
 
     if ($course->format == "weeks") {
         $table->head  = array ($strweek, $strname, $strsummary);
-        $table->align = array ("CENTER", "LEFT", "LEFT");
+        $table->align = array ("center", "left", "left");
     } else if ($course->format == "topics") {
         $table->head  = array ($strtopic, $strname, $strsummary);
-        $table->align = array ("CENTER", "LEFT", "LEFT");
+        $table->align = array ("center", "left", "left");
     } else {
         $table->head  = array ($strlastmodified, $strname, $strsummary);
-        $table->align = array ("LEFT", "LEFT", "LEFT");
+        $table->align = array ("left", "left", "left");
     }
 
     foreach ($scorms as $scorm) {

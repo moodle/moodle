@@ -72,7 +72,6 @@
 	<input type="hidden" name="cmi_core_total_time"  />
 	<input type="hidden" name="cmi_core_score_raw" />
 	<input type="hidden" name="cmi_suspend_data" />
-	
    </form>
 </body>
 </html>

@@ -64,7 +64,7 @@
     //
     if (!$cm->visible and !isteacher($course->id)) {
         print_header($pagetitle, "$course->fullname", "$navigation $scorm->name", "", "", true, 
-                     update_module_button($cm->id, $course->id, $strscorm), navmenu($course, $cm));
+        	     update_module_button($cm->id, $course->id, $strscorm), navmenu($course, $cm));
         notice(get_string("activityiscurrentlyhidden"));
     } else {
     	print_header($pagetitle, "$course->fullname","$navigation <a target=\"{$CFG->framename}\" href=\"$ME?id=$cm->id\" title=\"$scorm->summary\">$scorm->name</a>",
@@ -81,7 +81,7 @@
 
     	print_heading($scorm->name);
 
-    	print_simple_box(text_to_html($scorm->summary), "CENTER");
+    	print_simple_box(text_to_html($scorm->summary), "center");
 
     	if (isguest()) {
             print_heading(get_string("guestsno", "scorm"));
@@ -89,8 +89,8 @@
             exit;
     	}
         echo "<br />";
-        echo "<style type=\"text/css\">.scormlist { list-style-type:none; }</style>\n";
-        print_simple_box_start("CENTER");
+        $liststyle = "style=\"list-style-type:none;\"";
+        print_simple_box_start("center");
     	echo "<table>\n";
     	echo "  <tr><th>".get_string("coursestruct","scorm")."</th></tr>\n";
 	$organization = $scorm->launch;
@@ -99,7 +99,7 @@
 		if (isset($_POST['organization'])) {
 		    $organization = $_POST['organization'];
 		}
-		echo "<tr><td align='center'><form name='changeorg' method='POST' action='view.php?id=$cm->id'>".get_string('organizations','scorm').": \n";
+		echo "<tr><td align='center'><form name='changeorg' method='post' action='view.php?id=$cm->id'>".get_string('organizations','scorm').": \n";
 		choose_from_menu($orgs, 'organization', "$organization", '','submit()');
 		echo "</form></td></tr>\n"; 
 	    }
@@ -112,7 +112,7 @@
 	    	$orgidentifier = $org->organization;
 	    }
 	}
-    	echo "  <tr><td nowrap=\"nowrap\">\n<ul class=\"scormlist\"'>\n";
+    	echo "  <tr><td nowrap=\"nowrap\">\n<ul $liststyle>\n";
     	$incomplete = false;
     	if ($scoes = get_records_select("scorm_scoes","scorm='$scorm->id' AND organization='$orgidentifier' order by id ASC")){
 	    $level=0;
@@ -131,7 +131,7 @@
 	    	 	    $i--;
 	    	 	}
 	    	 	if (($i == 0) && ($sco->parent != $orgidentifier)) {
-	    	 	    echo "  <li><ul id='".$sublist."' class=\"scormlist\"'>\n";
+	    	 	    echo "  <li><ul id='s".$sublist."' $liststyle>\n";
     			    $level++;
     			} else {
     			    echo $closelist;
@@ -145,9 +145,9 @@
     		$nextsco = next($scoes);
     		if (($nextsco !== false) && ($sco->parent != $nextsco->parent) && (($level==0) || (($level>0) && ($nextsco->parent == $sco->identifier)))) {
     		    $sublist++;
-    		    echo "      <img src=\"pix/minus.gif\" onClick='expandCollide(this,".$sublist.");' alt=\"\" />\n";
+    		    echo "      <img src=\"pix/minus.gif\" onclick='expandCollide(this,\"s".$sublist."\");' alt=\"-\" title=\"".get_string('collide','scorm')."\" />\n";
     		} else {
-    		    echo "      <img src=\"pix/spacer.gif\" alt=\"\" />\n";
+    		    echo "      <img src=\"pix/spacer.gif\" alt=\" \" />\n";
     		}
     		if ($sco->launch) {
     		    $score = "";
@@ -164,10 +164,10 @@
     		    	}
     		    } else {
     			if ($sco->type == 'sco') {
-    			    echo "      <img src=\"pix/notattempted.gif\" alt=\"".get_string("notattempted","scorm")."\" />";
+    			    echo "      <img src=\"pix/notattempted.gif\" alt=\"".get_string("notattempted","scorm")."\" title=\"".get_string("notattempted","scorm")."\" />";
     			    $incomplete = true;
     			} else {
-    			    echo "      <img src=\"pix/asset.gif\" alt=\"".get_string("asset","scorm")."\" />";
+    			    echo "      <img src=\"pix/asset.gif\" alt=\"".get_string("asset","scorm")."\" title=\"".get_string("asset","scorm")."\" />";
     			}
     		    }
     		    echo "      &nbsp;<a href=\"javascript:playSCO(".$sco->id.")\">$sco->title</a> $score\n    </li>\n";
@@ -182,8 +182,8 @@
 	echo "</ul></td></tr>\n";
     	echo "</table>\n";
     	print_simple_box_end();
-    	echo "<form name=\"theform\" method=\"POST\" action=\"playscorm.php?id=$cm->id\">\n";
-    	echo "<table align=\"CENTER\">\n<tr>\n<td align=\"center\">";
+    	echo "<form name=\"theform\" method=\"post\" action=\"playscorm.php?id=$cm->id\">\n";
+    	echo "<table align=\"center\">\n<tr>\n<td align=\"center\">";
     	print_string("mode","scorm");
         echo ": <input type=\"radio\" id=\"b\" name=\"mode\" value=\"browse\" /><label for=\"b\">".get_string("browse","scorm")."</label>\n";
         if ($incomplete === true) {
@@ -197,7 +197,7 @@
 	<input type="submit" value="'.get_string("entercourse","scorm").'" />';
         echo "\n</td>\n</tr>\n</table>\n</form><br />";
 ?>
-<script language="javascript">
+<script language="javascript" type="text/javascript">
 <!--
     function playSCO(scoid,status) {
     	document.theform.scoid.value = scoid;
@@ -207,14 +207,18 @@
     function expandCollide(which,list) {
     	var nn=document.ids?true:false
 	var w3c=document.getElementById?true:false
-	var beg=nn?"document.ids.":w3c?"document.getElementById(":"document.all.";
-	var mid=w3c?").style":".style";
-    	
+	var beg=nn?"document.ids.":w3c?"document.getElementById('":"document.all.";
+	var mid=w3c?"').style":".style";
+	
     	if (eval(beg+list+mid+".display") != "none") {
     	    which.src = "pix/plus.gif";
+    	    which.alt = "+";
+    	    which.title = "<?php echo get_string('expand','scorm') ?>";
     	    eval(beg+list+mid+".display='none';");
     	} else {
     	    which.src = "pix/minus.gif";
+    	    which.alt = "-";
+    	    which.title = "<?php echo get_string('collide','scorm') ?>";
     	    eval(beg+list+mid+".display='block';");
     	}
     	

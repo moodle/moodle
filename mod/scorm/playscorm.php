@@ -73,7 +73,7 @@
 	//
 	$bodyscripts = "";
 	if ($scorm->popup != "") {
-	    $bodyscripts = "onLoad='SCOInitialize();' onUnload='SCOFinish(); closeMain();' onbeforeUnload='SCOFinish();'";
+	    $bodyscripts = "onload='SCOInitialize();' onunload='SCOFinish(); closeMain();'";
 	}
     	print_header($pagetitle, "$course->fullname",
 		"$navigation <a target=\"{$CFG->framename}\" href=\"view.php?id=$cm->id\" title=\"$scorm->summary\">$scorm->name</a>",
@@ -91,7 +91,7 @@
                 $currentSCO = $_POST['scoid'];
         ?>
             <br />
-            <script language="Javascript">
+            <script language="Javascript" type="text/javascript">
             <!--
                 function playSCO(scoid) {
             	    document.navform.scoid.value=scoid;
@@ -101,8 +101,8 @@
             	function expandCollide(which,list) {
     		    var nn=document.ids?true:false
 		    var w3c=document.getElementById?true:false
-		    var beg=nn?"document.ids.":w3c?"document.getElementById(":"document.all.";
-		    var mid=w3c?").style":".style";
+		    var beg=nn?"document.ids.":w3c?"document.getElementById('":"document.all.";
+		    var mid=w3c?"').style":".style";
     	
     		    if (eval(beg+list+mid+".display") != "none") {
     			which.src = "pix/plus.gif";
@@ -115,14 +115,12 @@
     		}
             -->
             </script>
-            <style type="text/css">
-                .scormlist { list-style-type:none; }
-            </style>
         <?php
-            print_simple_box_start("CENTER");
+            $liststyle = "style=\"list-style-type:none;\"";
+            print_simple_box_start("center");
     	    echo "<table>\n";
     	    echo "  <tr><th>".get_string("coursestruct","scorm")."</th></tr>\n";
-    	    echo "  <tr><td nowrap=\"nowrap\">\n<ul class=\"scormlist\"'>\n";
+    	    echo "  <tr><td nowrap=\"nowrap\">\n<ul $liststyle>\n";
     	    $incomplete = false;
     	    if ($scoes = get_records_select("scorm_scoes","scorm='$scorm->id' AND organization='$currentorg' order by id ASC")){
     		$level=0;
@@ -141,7 +139,7 @@
 	    	 	    	$i--;
 	    	 	    }
 	    	 	    if (($i == 0) && ($sco->parent != $currentorg)) {
-	    	 	    	echo "  <li><ul id='".$sublist."' class=\"scormlist\"'>\n";
+	    	 	    	echo "  <li><ul id='s".$sublist."' $liststyle>\n";
     			    	$level++;
     			    } else {
     			    	echo $closelist;
@@ -154,22 +152,22 @@
     		    $nextsco = next($scoes);
     		    if (($nextsco !== false) && ($sco->parent != $nextsco->parent) && (($level==0) || (($level>0) && ($nextsco->parent == $sco->identifier)))) {
     			$sublist++;
-    			echo "      <img src=\"pix/minus.gif\" onClick='expandCollide(this,".$sublist.");' alt=\"\" />\n";
+    			echo "      <img src=\"pix/minus.gif\" onclick='expandCollide(this,\"s".$sublist."\");' alt=\"-\" title=\"".get_string('collide','scorm')."\" />\n";
     		    } else {
-    			echo "      <img src=\"pix/spacer.gif\" alt=\"\" />\n";
+    			echo "      <img src=\"pix/spacer.gif\" alt=\" \" />\n";
     		    }
     		    
     		    if ($sco->launch) {
     		        $startbold = '';
     		        $endbold = '';
     		        if ($sco->id == $currentSCO) {
-    			    $startbold = '-> <b>';
-    			    $endbold = '</b> <-';
+    			    $startbold = '-&gt; <b>';
+    			    $endbold = '</b> &lt;-';
     		    	}
     		    	if (($currentSCO == "") && ($mode != "normal")) {
     		    	    $currentSCO = $sco->id;
- 			    $startbold = '-> <b>';
-    			    $endbold = '</b> <-';
+ 			    $startbold = '-&gt; <b>';
+    			    $endbold = '</b> &gt;-';
     		    	}
     		    	$score = "";
     			if ($sco_user=get_record("scorm_sco_users","scoid",$sco->id,"userid",$USER->id)) {
@@ -190,10 +188,10 @@
 			    }
     			} else {
     			    if ($sco->type == 'sco') {
-    				echo "      <img src=\"pix/notattempted.gif\" alt=\"".get_string("notattempted","scorm")."\" />";
+    				echo "      <img src=\"pix/notattempted.gif\" alt=\"".get_string("notattempted","scorm")."\" title=\"".get_string("notattempted","scorm")."\" />";
     				$incomplete = true;
     			    } else {
-    				echo "      <img src=\"pix/asset.gif\" alt=\"".get_string("asset","scorm")."\" />";
+    				echo "      <img src=\"pix/asset.gif\" alt=\"".get_string("asset","scorm")."\" title=\"".get_string("asset","scorm")."\" />";
     			    }
     			}
     			echo "      &nbsp;$startbold<a href=\"javascript:playSCO(".$sco->id.");\">$sco->title</a> $score$endbold\n    </li>\n";
@@ -214,11 +212,11 @@
     	echo "<table width=\"100%\">\n    <tr>\n";
     	echo "          <td align=\"center\" nowrap=\"nowrap\">
 		     <iframe name=\"cmi\" width=\"1\" height=\"1\" src=\"cmi.php?id=$cm->id\" style=\"visibility: hidden\"></iframe>
-		     <form name=\"navform\" method=\"POST\" action=\"playscorm.php?id=$cm->id\" target=\"_top\">
+		     <form name=\"navform\" method=\"post\" action=\"playscorm.php?id=$cm->id\" target=\"_top\">
 		     	<input name=\"scoid\" type=\"hidden\" />
 			<input name=\"currentorg\" type=\"hidden\" value=\"$currentorg\" />
 		     	<input name=\"mode\" type=\"hidden\" value=\"".$mode."\" />
-		     	<input name=\"prev\" type=\"button\" value=\"".get_string("prev","scorm")."\" onClick=\"top.changeSco('previous');\" />&nbsp;\n";
+		     	<input name=\"prev\" type=\"button\" value=\"".get_string("prev","scorm")."\" onclick=\"top.changeSco('previous');\" />&nbsp;\n";
 		     	
 	if ($scorm->popup == "") {
 	    $currentorg = '';
@@ -254,7 +252,7 @@
 	    }
 	    choose_from_menu($options, "courseStructure", "", "", "document.navform.scoid.value=document.navform.courseStructure.options[document.navform.courseStructure.selectedIndex].value;document.navform.submit();");
 	}
-	echo "     	&nbsp;<input name=\"next\" type=\"button\" value=\"".get_string("next","scorm")."\" onClick=\"top.changeSco('continue')\" />\n";
+	echo "     	&nbsp;<input name=\"next\" type=\"button\" value=\"".get_string("next","scorm")."\" onclick=\"top.changeSco('continue')\" />\n";
 	echo "	     </form>
 		</td>\n";
 	
