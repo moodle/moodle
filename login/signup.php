@@ -3,6 +3,10 @@
     require_once("../config.php");
     require_once("../auth/$CFG->auth/lib.php");
 
+    if ($CFG->auth != 'email' and (empty($CFG->auth_user_create) or !(function_exists('auth_user_create'))) ) {
+        error("Sorry, you may not use this page.");
+    }
+
     if ($user = data_submitted()) {
 
         $user->firstname = strip_tags($user->firstname);
@@ -19,7 +23,7 @@
             $user->lang = current_language();
             $user->firstaccess = time();
             $user->secret = random_string(15);
-            if (isset($CFG->auth_user_create) and $CFG->auth_user_create==1 and function_exists('auth_user_create') ){
+            if (!empty($CFG->auth_user_create) and function_exists('auth_user_create') ){
                 if (! auth_user_exists($user->username)) {
                     if (! auth_user_create($user,$plainpass)) {
                         error("Could not add user to authentication module!");
