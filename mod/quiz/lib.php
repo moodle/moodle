@@ -100,12 +100,98 @@ function quiz_cron () {
 // Any other quiz functions go here.  Each of them must have a name that 
 // starts with quiz_
 
-function  quiz_print_question($number, $questionid) {
-    echo "<P><B>$number</B></P>";
-    echo "<UL>";
-    echo "<P>XXXXXX</P>";
-    echo "</UL>";
-    echo "<HR>";
+function  quiz_print_question($number, $questionid, $grade, $courseid) {
+    
+    if (!$question = get_record("quiz_questions", "id", $questionid)) {
+        notify("Error: Question not found!");
+    }
+
+    $stranswer = get_string("answer", "quiz");
+    $strmarks  = get_string("marks", "quiz");
+
+    echo "<TABLE WIDTH=100% CELLSPACING=10><TR><TD NOWRAP WIDTH=100 VALIGN=top>";
+    echo "<P ALIGN=CENTER><B>$number</B><BR><FONT SIZE=1>$grade $strmarks</FONT></P>";
+    print_spacer(1,100);
+    echo "</TD><TD VALIGN=TOP>";
+
+    switch ($question->type) {
+       case 1: // shortanswer
+           if (!$options = get_record("quiz_shortanswer", "question", $question->id)) {
+               notify("Error: Missing question options!");
+           }
+           if (!$answer = get_record("quiz_answers", "id", $options->answer)) {
+               notify("Error: Missing question answers!");
+           }
+           echo "<P>$question->question</P>";
+           if ($question->image) {
+               print_file_picture($question->image, $courseid, 200);
+           }
+           echo "<P ALIGN=RIGHT>$stranswer: <INPUT TYPE=TEXT NAME=q$question->id SIZE=20></P>";
+           break;
+
+       case 2: // true-false
+           if (!$options = get_record("quiz_truefalse", "question", $question->id)) {
+               notify("Error: Missing question options!");
+           }
+           if (!$true = get_record("quiz_answers", "id", $options->true)) {
+               notify("Error: Missing question answers!");
+           }
+           if (!$false = get_record("quiz_answers", "id", $options->false)) {
+               notify("Error: Missing question answers!");
+           }
+           if (!$true->answer) {
+               $true->answer = get_string("true", "quiz");
+           }
+           if (!$false->answer) {
+               $false->answer = get_string("false", "quiz");
+           }
+           echo "<P>$question->question</P>";
+           if ($question->image) {
+               print_file_picture($question->image, $courseid, 200);
+           }
+           echo "<P ALIGN=RIGHT>$stranswer:&nbsp;&nbsp;";
+           echo "<INPUT TYPE=RADIO NAME=\"q$question->id\" VALUE=\"$true->id\">$true->answer";
+           echo "&nbsp;&nbsp;&nbsp;";
+           echo "<INPUT TYPE=RADIO NAME=\"q$question->id\" VALUE=\"$false->id\">$false->answer</P>";
+           break;
+
+       case 3: // multiple-choice
+           if (!$options = get_record("quiz_multichoice", "question", $question->id)) {
+               notify("Error: Missing question options!");
+           }
+           if (!$answers = get_records_sql("SELECT * from quiz_answers WHERE id in ($options->answers)")) {
+               notify("Error: Missing question answers!");
+           }
+           echo "<P>$question->question</P>";
+           if ($question->image) {
+               print_file_picture($question->image, $courseid, 200);
+           }
+           echo "<TABLE ALIGN=right>";
+           echo "<TR><TD valign=top>$stranswer:&nbsp;&nbsp;</TD><TD>";
+           echo "<TABLE ALIGN=right>";
+           $answerids = explode(",", $options->answers);
+           foreach ($answerids as $key => $answerid) {
+               $answer = $answers[$answerid];
+               $qnum = $key + 1;
+               echo "<TR><TD valign=top>";
+               if (!$options->single) {
+                   echo "<INPUT TYPE=RADIO NAME=q$question->id VALUE=\"$answer->id\">";
+               } else {
+                   echo "<INPUT TYPE=CHECKBOX NAME=q$question->id VALUE=\"$answer->id\">";
+               }
+               echo "</TD>";
+               echo "<TD valign=top>$qnum. $answer->answer</TD>";
+               echo "</TR>";
+           }
+           echo "</TABLE>";
+           echo "</TABLE>";
+           break;
+
+       default: 
+           notify("Error: Unknown question type!");
+    }
+
+    echo "</TD></TR></TABLE>";
 }
 
 

@@ -3,7 +3,7 @@
 # http://www.phpmyadmin.net/ (download page)
 #
 # Host: localhost
-# Generation Time: Oct 03, 2002 at 11:15 PM
+# Generation Time: Oct 07, 2002 at 12:23 AM
 # Server version: 3.23.49
 # PHP Version: 4.2.3
 # Database : `moodle`
@@ -39,7 +39,7 @@ CREATE TABLE `quiz` (
 CREATE TABLE `quiz_answers` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `question` int(10) unsigned NOT NULL default '0',
-  `answer` int(10) unsigned NOT NULL default '0',
+  `answer` varchar(255) NOT NULL default '',
   `grade` float NOT NULL default '0',
   `feedback` varchar(255) NOT NULL default '',
   PRIMARY KEY  (`id`)
@@ -99,7 +99,8 @@ CREATE TABLE `quiz_multichoice` (
   `layout` tinyint(4) NOT NULL default '0',
   `answers` varchar(255) NOT NULL default '',
   `single` tinyint(4) NOT NULL default '0',
-  PRIMARY KEY  (`id`)
+  PRIMARY KEY  (`id`),
+  KEY `question` (`question`)
 ) TYPE=MyISAM COMMENT='Options for multiple choice questions';
 # --------------------------------------------------------
 
@@ -122,12 +123,11 @@ CREATE TABLE `quiz_question_grades` (
 
 CREATE TABLE `quiz_questions` (
   `id` int(10) NOT NULL auto_increment,
-  `course` int(10) NOT NULL default '0',
+  `category` int(10) NOT NULL default '0',
   `name` varchar(255) NOT NULL default '',
   `question` text NOT NULL,
+  `image` varchar(255) NOT NULL default '',
   `type` smallint(6) NOT NULL default '0',
-  `options` int(10) NOT NULL default '0',
-  `category` int(10) NOT NULL default '0',
   PRIMARY KEY  (`id`)
 ) TYPE=MyISAM COMMENT='The quiz questions themselves';
 # --------------------------------------------------------
@@ -155,7 +155,8 @@ CREATE TABLE `quiz_shortanswer` (
   `question` int(10) unsigned NOT NULL default '0',
   `answer` int(10) NOT NULL default '0',
   `case` tinyint(4) NOT NULL default '0',
-  PRIMARY KEY  (`id`)
+  PRIMARY KEY  (`id`),
+  KEY `question` (`question`)
 ) TYPE=MyISAM COMMENT='Options for short answer questions';
 # --------------------------------------------------------
 
@@ -168,6 +169,8 @@ CREATE TABLE `quiz_truefalse` (
   `question` int(10) unsigned NOT NULL default '0',
   `true` int(10) unsigned NOT NULL default '0',
   `false` int(10) unsigned NOT NULL default '0',
-  PRIMARY KEY  (`id`)
+  PRIMARY KEY  (`id`),
+  KEY `question` (`question`)
 ) TYPE=MyISAM COMMENT='Options for True-False questions';
+
 

@@ -85,23 +85,28 @@
 /// Print all the questions
 
     echo "<BR>";
-    print_simple_box_start("CENTER");
 
     if (!$quiz->questions) {
-        error("No questions have bee defined!", "view.php?id=$cm->id");
+        error("No questions have been defined!", "view.php?id=$cm->id");
     }
 
     $questions = explode(",", $quiz->questions);
 
+    if (!$grades = get_records_sql("SELECT question, grade FROM quiz_question_grades WHERE question in ($quiz->questions)")) {
+        error("No grades were found for these questions!");
+    }
+
     echo "<FORM METHOD=POST ACTION=attempt.php>";
     echo "<INPUT TYPE=hidden NAME=q VALUE=\"$quiz->id\">";
     foreach ($questions as $key => $questionid) {
-        quiz_print_question($key+1, $questionid);
+        print_simple_box_start("CENTER", "90%");
+        quiz_print_question($key+1, $questionid, $grades[$questionid]->grade, $course->id);
+        print_simple_box_end();
+        echo "<BR>";
     }
     echo "<CENTER><INPUT TYPE=submit VALUE=\"".get_string("savemyanswers", "quiz")."\"></CENTER>";
     echo "</FORM>";
 
-    print_simple_box_end();
 
 // Finish the page
     print_footer($course);

@@ -6,7 +6,9 @@ function quiz_upgrade($oldversion) {
 
     global $CFG;
 
-    if ($oldversion < 2002100300) {
+    if ($oldversion < 2002110100) {
+
+        echo "The quiz module is under heavy development ... at this stage you should delete all existing quiz tables, as well as the quiz entry in the 'modules' table, then come back here to rebuild them.";
 
     }
 
