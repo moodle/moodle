@@ -113,6 +113,10 @@ function assignment_upgrade($oldversion) {
         modify_database('','ALTER TABLE prefix_assignment_submissions ADD INDEX timemarked (timemarked);');
     }
 
+    if ($oldversion < 2005010500) { 
+        table_column('assignment', '', 'emailteachers', 'integer', '2', 'unsigned', 0, 'not null', 'resubmit');
+    }
+
     return true;
 }
 

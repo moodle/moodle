@@ -20,6 +20,17 @@ $string['description'] = 'Description';
 $string['duedate'] = 'Due date';
 $string['duedateno'] = 'No due date';
 $string['early'] = '$a early';
+$string['emailteachers'] = 'Email alerts to teachers';
+$string['emailteachermail'] = '
+$a->username has updated their assignment submission 
+for \'$a->assignment\'
+
+It is available here:
+
+    $a->url';
+$string['emailteachermailhtml'] = '$a->username has updated their assignment submission 
+for <i>\'$a->assignment\'</i><br /><br />
+It is <a href=\"$a->url\">available on the web site</a>.';
 $string['existingfiledeleted'] = 'Existing file has been deleted: $a';
 $string['failedupdatefeedback'] = 'Failed to update submission feedback for user $a';
 $string['feedback'] = 'Feedback';

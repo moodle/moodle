@@ -44,6 +44,7 @@
             $submission->numfiles     = 1;
             $submission->comment = addslashes($submission->comment);
             if (update_record("assignment_submissions", $submission)) {
+                assignment_email_teachers($course, $cm, $assignment, $submission);
                 print_heading(get_string('uploadedfile'));
             } else {
                 notify(get_string("uploadfailnoupdate", "assignment"));
@@ -56,6 +57,7 @@
             $newsubmission->numfiles     = 1;
             if (insert_record("assignment_submissions", $newsubmission)) {
                 add_to_log($course->id, "assignment", "upload", "view.php?a=$assignment->id", "$assignment->id", $cm->id);
+                assignment_email_teachers($course, $cm, $assignment, $submission);
                 print_heading(get_string('uploadedfile'));
             } else {
                 notify(get_string("uploadnotregistered", "assignment", $newfile_name) );

@@ -111,6 +111,10 @@ function assignment_upgrade($oldversion) {
         modify_database('','CREATE INDEX prefix_assignment_submissions_timemarked_idx ON prefix_assignment_submissions (timemarked);');
     }
 
+    if ($oldversion < 2005010500) { 
+        table_column('assignment', '', 'emailteachers', 'integer', '2', 'unsigned', 0, 'not null', 'resubmit');
+    }
+
     return true;
 }
 

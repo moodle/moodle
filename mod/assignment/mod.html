@@ -23,6 +23,9 @@
     if (empty($form->timedue)) {
         $form->timedue = "";
     }
+    if (empty($form->emailteachers)) {
+        $form->emailteachers = "";
+    }
 ?>
 
 <form name="form" method="post" action="mod.php">
@@ -88,6 +91,16 @@
         $options[0] = get_string("no"); $options[1] = get_string("yes");
         choose_from_menu($options, "resubmit", $form->resubmit, "");
         helpbutton("resubmit", get_string("allowresubmit", "assignment"), "assignment");
+    ?>
+    </td>
+</tr>
+<tr>
+    <td align="right"><b><?php print_string("emailteachers", "assignment") ?>:</b></td>
+    <td>
+    <?php 
+        $options[0] = get_string("no"); $options[1] = get_string("yes");
+        choose_from_menu($options, "emailteachers", $form->emailteachers, "");
+        helpbutton("emailteachers", get_string("emailteachers", "assignment"), "assignment");
     ?>
     </td>
 </tr>

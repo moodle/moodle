@@ -9,6 +9,7 @@ CREATE TABLE prefix_assignment (
   description text NOT NULL default '',
   format integer NOT NULL default '0',
   resubmit integer NOT NULL default '0',
+  emailteachers integer NOT NULL default '0',
   type integer NOT NULL default '1',
   maxbytes integer NOT NULL default '100000',
   timedue integer NOT NULL default '0',
