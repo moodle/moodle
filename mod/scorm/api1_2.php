@@ -301,9 +301,15 @@ function SCORMapi() {
 	    errorCode = "0";
 	   
             if (nav.event != "") {
-            <?php
+<?php
 		if ($sco != $last) {
-	            echo "setTimeout('top.changeSco(nav.event);',500);\n";
+?>
+		if (nav.event == 'previous') {
+		    setTimeout('top.changeSco("previous");',500);
+		} else {
+		    setTimeout('top.changeSco("continue");',500);
+		}
+<?php
 		} else {
 		    echo "exitloc = '".$CFG->wwwroot."/mod/scorm/view.php?id=".$cm->id."';\n";
 		    echo "setTimeout('top.location = exitloc;',500);\n";
