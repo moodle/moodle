@@ -36,14 +36,17 @@
                   "", "", true);
 
     // check that this is not a "rapid" second submission, caused by using the back button
-    if ($submissions = exercise_get_user_submissions($exercise, $USER)) {
-        // returns all submissions, newest on first
-        foreach ($submissions as $submission) {
-            if ($submission->timecreated > $timenow - $CFG->maxeditingtime) {
-                // ignore this submission
-                redirect("view.php?id=$cm->id");
-                print_footer($course);
-                exit();
+    // only check if a student, teachers may want to submit a set of exercise variants
+    if (isstudent($course->id)) {
+        if ($submissions = exercise_get_user_submissions($exercise, $USER)) {
+            // returns all submissions, newest on first
+            foreach ($submissions as $submission) {
+                if ($submission->timecreated > $timenow - $CFG->maxeditingtime) {
+                    // ignore this submission
+                    redirect("view.php?id=$cm->id");
+                    print_footer($course);
+                    exit();
+                }
             }
         }
     }

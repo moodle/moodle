@@ -173,6 +173,7 @@
                 fwrite ($bf,full_tag("RESUBMIT",6,false,$submission->resubmit));       
                 fwrite ($bf,full_tag("MAILED",6,false,$submission->mailed));       
                 fwrite ($bf,full_tag("ISEXERCISE",6,false,$submission->isexercise));       
+                fwrite ($bf,full_tag("LATE",6,false,$submission->late));       
                 //Now we backup any exercise assessments (if student data required)
                 if ($preferences->mods["exercise"]->userinfo) {
                     $status = backup_exercise_assessments($bf,$preferences,$exerciseid,$submission->id);

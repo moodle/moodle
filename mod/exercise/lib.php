@@ -1297,10 +1297,10 @@ function exercise_get_user_submissions($exercise, $user) {
         error("Course is misconfigured");
         }
 	if (isteacher($course->id, $user->id)) {
-		return get_records_select("exercise_submissions ",
+		return get_records_select("exercise_submissions",
              "exerciseid = $exercise->id AND isexercise = 1", "timecreated" );
 		}
-    return get_records_select("exercise_submissions ",
+    return get_records_select("exercise_submissions",
              "exerciseid = $exercise->id AND userid = $user->id", "timecreated" );
 }
 
@@ -2005,7 +2005,7 @@ function exercise_list_user_submissions($exercise, $user) {
 	$table->cellspacing = 0;
 
 	if ($submissions = exercise_get_user_submissions($exercise, $user)) {
-		foreach ($submissions as $submission) {
+        foreach ($submissions as $submission) {
 			$action = '';
 			$comment = '';
 			// allow user to delete submission if it's warm
@@ -2013,30 +2013,33 @@ function exercise_list_user_submissions($exercise, $user) {
 				$action = "<a href=\"submissions.php?action=userconfirmdelete&id=$cm->id&sid=$submission->id\">".
 					get_string("delete", "exercise")."</a>";
 			}
-			// get the teacher assessments (could be more than one, if unlikely, when multiple teachers)
-			if ($assessments = get_records_select("exercise_assessments", "exerciseid = $exercise->id AND 
-					submissionid = $submission->id")) {
-				foreach ($assessments as $assessment) {
-					// make sure it's real
-					if ($assessment->timecreated < $timenow - $CFG->maxeditingtime) { // it's cold
-						if ($action) {
-							$action .= " | ";
-						}
-						$action .= "<a href=\"assessments.php?action=viewassessment&id=$cm->id&aid=$assessment->id\">".
-						get_string("viewassessment", "exercise")."</a>";
-                        if ($comment) {
-                            $action .= " | ";
-                        }
-                        $grade = number_format($assessment->grade * $exercise->grade / 100.0, 1);
-                        if ($submission->late) {
-						    $comment .= get_string("grade").
-                                ": <font color=\"red\">($grade)</font>";
-                        } else {
-						    $comment .= get_string("grade").": $grade";
+            // if this is a teacher's submission (an exercise descrription) ignore any assessments
+            if (!$submission->isexercise) {
+                // get the teacher assessments (could be more than one, if unlikely, when multiple teachers)
+                if ($assessments = get_records_select("exercise_assessments", "exerciseid = $exercise->id AND 
+                            submissionid = $submission->id")) {
+                    foreach ($assessments as $assessment) {
+                        // make sure it's real
+                        if ($assessment->timecreated < $timenow - $CFG->maxeditingtime) { // it's cold
+                            if ($action) {
+                                $action .= " | ";
+                            }
+                            $action .= "<a href=\"assessments.php?action=viewassessment&id=$cm->id&aid=$assessment->id\">".
+                                get_string("viewassessment", "exercise")."</a>";
+                            if ($comment) {
+                                $action .= " | ";
+                            }
+                            $grade = number_format($assessment->grade * $exercise->grade / 100.0, 1);
+                            if ($submission->late) {
+                                $comment .= get_string("grade").
+                                    ": <font color=\"red\">($grade)</font>";
+                            } else {
+                                $comment .= get_string("grade").": $grade";
+                            }
                         }
                     }
-				}
-			}
+                }
+            }
    			if (!$comment and isstudent($course->id, $user->id)) {
 				$comment = get_string("awaitingassessmentbythe", "exercise", $course->teacher);
 			}
