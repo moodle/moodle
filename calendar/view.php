@@ -164,20 +164,6 @@
 
     print_footer();
 
-function calendar_show_event($event) {
-    // In this case, we haven't been given month, day, year. So we 'll have to
-    // get them from the event date, and return them to the main function.
-
-    $startdate = usergetdate($event->timestart); // This is only to be returned
-    $coursecache = array();
-
-    print_side_block_start(get_string('eventview', 'calendar'), '', 'mycalendar');
-    calendar_print_event_table($event, $event->timestart, $event->timestart + $event->timeduration, $coursecache, true);
-    print_side_block_end();
-
-    return $startdate; // We need this to set "current" day, month, year
-}
-
 function calendar_show_day($d, $m, $y, $courses, $groups, $users) {
     global $CFG, $THEME;
 
@@ -512,12 +498,21 @@ function calendar_show_upcoming_events($courses, $groups, $users, $futuredays, $
     $events = calendar_get_upcoming($courses, $groups, $users, $futuredays, $maxevents);
     $numevents = count($events);
 
-    if(!$numevents) {
-        // There are no events in the specified time period
-        return;
+    // New event button
+    if(isguest()) {
+        $text = get_string('upcomingevents', 'calendar').': '.calendar_course_filter_selector('from=upcoming');
+    }
+    else {
+        $text = '<div style="float: left;">'.get_string('upcomingevents', 'calendar').': '.calendar_course_filter_selector('from=upcoming').'</div><div style="float: right;">';
+        $text.= '<form style="display: inline;" action="'.CALENDAR_URL.'event.php" method="get">';
+        $text.= '<input type="hidden" name="action" value="new" />';
+        $text.= '<input type="hidden" name="cal_m" value="'.$m.'" />';
+        $text.= '<input type="hidden" name="cal_y" value="'.$y.'" />';
+        $text.= '<input type="submit" value="'.get_string('newevent', 'calendar').'" />';
+        $text.= '</form></div>';
     }
 
-    print_side_block_start(get_string('upcomingevents', 'calendar').': '.calendar_course_filter_selector('from=upcoming'), '', 'mycalendar');
+    print_side_block_start($text, '', 'mycalendar');
     for($i = 0; $i < $numevents; ++$i) {
         echo '<p>';
         if(!empty($events[$i]->icon)) {

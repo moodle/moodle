@@ -89,7 +89,7 @@
         redirect($CFG->wwwroot.'/calendar/view.php?view=month&cal_d='.$_GET['cal_d'].'&cal_m='.$_GET['cal_m'].'&cal_y='.$_GET['cal_y']);
         break;
         case 'upcoming':
-        redirect($CFG->wwwroot.'/calendar/view.php?view=upcoming&cal_d='.$_GET['cal_d'].'&cal_m='.$_GET['cal_m'].'&cal_y='.$_GET['cal_y']);
+        redirect($CFG->wwwroot.'/calendar/view.php?view=upcoming');
         break;
         case 'day':
         redirect($CFG->wwwroot.'/calendar/view.php?view=day&cal_d='.$_GET['cal_d'].'&cal_m='.$_GET['cal_m'].'&cal_y='.$_GET['cal_y']);

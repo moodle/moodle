@@ -307,8 +307,8 @@ function calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxeve
                 $time = calendar_time_representation($event->timestart + $event->timeduration);
 
                 // This var always has the printable time representation
-                $eventtime = '<span class="calendarexpired">'.get_string('expired', 'calendar').' '.
-                    calendar_get_link_tag($day, CALENDAR_URL.'view.php?view=day&amp;', $enddate['mday'], $enddate['mon'], $enddate['year']).'</span> ('.$time.')';
+                $eventtime = '<span class="dimmed_text"><a class="dimmed" href="'.calendar_get_link_href(CALENDAR_URL.'view.php?view=day&amp;', $enddate['mday'], $enddate['mon'], $enddate['year']).'">'.$day.'</a> ('.$time.')</span>';
+
             }
             else if($event->timeduration) {
                 // It has a duration
