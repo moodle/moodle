@@ -1189,6 +1189,10 @@ function cleanAttributes2($htmlTag){
     foreach ($attrArray as $arreach) {
         $attStr .=  ' '.strtolower($arreach['name']).'="'.$arreach['value'].'" ';
     }
+
+    // Remove last space from attribute list
+    $attStr = rtrim($attStr);
+
     $xhtml_slash = '';
     if (preg_match('%/\s*$%', $attrlist)) {
         $xhtml_slash = ' /';
