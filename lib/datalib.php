@@ -22,16 +22,16 @@ function execute_sql($command, $feedback=true) {
 
     global $db;
 
-    $result = $db->Execute("$command");
+    $result = $db->Execute($command);
 
     if ($result) {
         if ($feedback) {
-            echo "<p><font color=\"green\"><b>".get_string("success")."</b></font></p>";
+            echo '<p><font color="green"><b>'. get_string('success') .'</b></font></p>';
         }
         return true;
     } else {
         if ($feedback) {
-            echo "<p><font color=\"red\"><b>".get_string("error")."</b></font></p>";
+            echo '<p><font color="red"><b>'. get_string('error') .'</b></font></p>';
         }
         return false;
     }
@@ -48,7 +48,7 @@ function execute_sql($command, $feedback=true) {
 * @param    type description
 */
 
-function modify_database($sqlfile="", $sqlstring="") {
+function modify_database($sqlfile='', $sqlstring='') {
 
     global $CFG;
 
@@ -57,7 +57,7 @@ function modify_database($sqlfile="", $sqlstring="") {
     if (!empty($sqlfile)) {
         if (!is_readable($sqlfile)) {
             $success = false;
-            echo "<p>Tried to modify database, but \"$sqlfile\" doesn't exist!</p>";
+            echo '<p>Tried to modify database, but "'. $sqlfile .'" doesn\'t exist!</p>';
             return $success;
         } else {
             $lines = file($sqlfile);
@@ -66,21 +66,21 @@ function modify_database($sqlfile="", $sqlstring="") {
         $lines[] = $sqlstring;
     }
 
-    $command = "";
+    $command = '';
 
     foreach ($lines as $line) {
         $line = rtrim($line);
         $length = strlen($line);
 
-        if ($length and $line[0] <> "#") {
-            if (substr($line, $length-1, 1) == ";") {
+        if ($length and $line[0] <> '#') {
+            if (substr($line, $length-1, 1) == ';') {
                 $line = substr($line, 0, $length-1);   // strip ;
                 $command .= $line;
-                $command = str_replace("prefix_", $CFG->prefix, $command); // Table prefixes
+                $command = str_replace('prefix_', $CFG->prefix, $command); // Table prefixes
                 if (! execute_sql($command)) {
                     $success = false;
                 }
-                $command = "";
+                $command = '';
             } else {
                 $command .= $line;
             }
@@ -101,72 +101,72 @@ function modify_database($sqlfile="", $sqlstring="") {
 * @param    type description
 */
 
-function table_column($table, $oldfield, $field, $type="integer", $size="10",
-                      $signed="unsigned", $default="0", $null="not null", $after="") {
+function table_column($table, $oldfield, $field, $type='integer', $size='10',
+                      $signed='unsigned', $default='0', $null='not null', $after='') {
     global $CFG, $db;
 
     switch (strtolower($CFG->dbtype)) {
 
-        case "mysql":
-        case "mysqlt":
+        case 'mysql':
+        case 'mysqlt':
 
             switch (strtolower($type)) {
-                case "text":
-                    $type = "TEXT";
-                    $signed = "";
+                case 'text':
+                    $type = 'TEXT';
+                    $signed = '';
                     break;
-                case "integer":
-                    $type = "INTEGER($size)";
+                case 'integer':
+                    $type = 'INTEGER('. $size .')';
                     break;
-                case "varchar":
-                    $type = "VARCHAR($size)";
-                    $signed = "";
+                case 'varchar':
+                    $type = 'VARCHAR('. $size .')';
+                    $signed = '';
                     break;
             }
 
             if (!empty($oldfield)) {
-                $operation = "CHANGE $oldfield $field";
+                $operation = 'CHANGE '. $oldfield .' '. $field;
             } else {
-                $operation = "ADD $field";
+                $operation = 'ADD '. $field;
             }
 
-            $default = "DEFAULT '$default'";
+            $default = 'DEFAULT \''. $default .'\'';
 
             if (!empty($after)) {
-                $after = "AFTER `$after`";
+                $after = 'AFTER `'. $after .'`';
             }
 
-            return execute_sql("ALTER TABLE {$CFG->prefix}$table $operation $type $signed $default $null $after");
+            return execute_sql('ALTER TABLE '. $CFG->prefix . $table .' '. $operation .' '. $type .' '. $signed .' '. $default .' '. $null .' '. $after);
             break;
 
-        case "postgres7":        // From Petri Asikainen
+        case 'postgres7':        // From Petri Asikainen
             //Check db-version
             $dbinfo = $db->ServerInfo();
             $dbver = substr($dbinfo['version'],0,3);
 
             //to prevent conflicts with reserved words
-            $realfield = "\"$field\"";
-            $field = "\"${field}_alter_column_tmp\"";
-            $oldfield = "\"$oldfield\"";
+            $realfield = '"'. $field .'"';
+            $field = '"'. $field .'_alter_column_tmp"';
+            $oldfield = '"'. $oldfield .'"';
 
             switch (strtolower($type)) {
-                case "integer":
+                case 'integer':
                     if ($size <= 4) {
-                        $type = "INT2";
+                        $type = 'INT2';
                     }
                     if ($size <= 10) {
-                        $type = "INT";
+                        $type = 'INT';
                     }
                     if  ($size > 10) {
-                        $type = "INT8";
+                        $type = 'INT8';
                     }
                     break;
-                case "varchar":
-                    $type = "VARCHAR($size)";
+                case 'varchar':
+                    $type = 'VARCHAR('. $size .')';
                     break;
             }
 
-            $default = "'$default'";
+            $default = '\''. $default .'\'';
 
             //After is not implemented in postgesql
             //if (!empty($after)) {
@@ -174,61 +174,61 @@ function table_column($table, $oldfield, $field, $type="integer", $size="10",
             //}
 
             //Use transactions
-            execute_sql("BEGIN");
+            execute_sql('BEGIN');
 
             //Allways use temporaly column
-            execute_sql("ALTER TABLE {$CFG->prefix}$table ADD COLUMN $field $type");
+            execute_sql('ALTER TABLE '. $CFG->prefix . $table .' ADD COLUMN '. $field .' '. $type);
             //Add default values
-            execute_sql("UPDATE {$CFG->prefix}$table SET $field=$default");
+            execute_sql('UPDATE '. $CFG->prefix . $table .' SET '. $field .'='. $default);
 
 
-            if ($dbver >= "7.3") {
+            if ($dbver >= '7.3') {
                 // modifying 'not null' is posible before 7.3
                 //update default values to table
-                if ($null == "NOT NULL") {
-                    execute_sql("UPDATE {$CFG->prefix}$table SET $field=$default where $field IS NULL");
-                    execute_sql("ALTER TABLE {$CFG->prefix}$table ALTER COLUMN $field SET $null");
+                if ($null == 'NOT NULL') {
+                    execute_sql('UPDATE '. $CFG->prefix . $table .' SET '. $field .'='. $default .' WHERE '. $field .' IS NULL');
+                    execute_sql('ALTER TABLE '. $CFG->prefix . $table .' ALTER COLUMN '. $field .' SET '. $null);
                 } else {
-                    execute_sql("ALTER TABLE {$CFG->prefix}$table ALTER COLUMN $field DROP NOT NULL");
+                    execute_sql('ALTER TABLE '. $CFG->prefix . $table .' ALTER COLUMN '. $field .' DROP NOT NULL');
                 }
             }
 
-            execute_sql("ALTER TABLE {$CFG->prefix}$table ALTER COLUMN $field SET DEFAULT $default");
+            execute_sql('ALTER TABLE '. $CFG->prefix . $table .' ALTER COLUMN '. $field .' SET DEFAULT '. $default);
 
-            if ( $oldfield != "\"\"" ) {
-                execute_sql("UPDATE {$CFG->prefix}$table SET $field = $oldfield");
-                execute_sql("ALTER TABLE  {$CFG->prefix}$table drop column $oldfield");
+            if ( $oldfield != '""' ) {
+                execute_sql('UPDATE '. $CFG->prefix . $table .' SET '. $field .' = '. $oldfield);
+                execute_sql('ALTER TABLE  '. $CFG->prefix . $table .' DROP COLUMN '. $oldfield);
             }
 
-            execute_sql("ALTER TABLE {$CFG->prefix}$table RENAME COLUMN $field TO $realfield");
+            execute_sql('ALTER TABLE '. $CFG->prefix . $table .' RENAME COLUMN '. $field .' TO '. $realfield');
 
-            return execute_sql("COMMIT");
+            return execute_sql('COMMIT');
             break;
 
         default:
             switch (strtolower($type)) {
-                case "integer":
-                    $type = "INTEGER";
+                case 'integer':
+                    $type = 'INTEGER';
                     break;
-                case "varchar":
-                    $type = "VARCHAR";
+                case 'varchar':
+                    $type = 'VARCHAR';
                     break;
             }
 
-            $default = "DEFAULT '$default'";
+            $default = 'DEFAULT \''. $default .'\'';
 
             if (!empty($after)) {
-                $after = "AFTER $after";
+                $after = 'AFTER '. $after;
             }
 
             if (!empty($oldfield)) {
-                execute_sql("ALTER TABLE {$CFG->prefix}$table RENAME COLUMN $oldfield $field");
+                execute_sql('ALTER TABLE '. $CFG->prefix . $table .' RENAME COLUMN '. $oldfield .' '. $field);
             } else {
-                execute_sql("ALTER TABLE {$CFG->prefix}$table ADD COLUMN $field $type");
+                execute_sql('ALTER TABLE '. $CFG->prefix . $table .' ADD COLUMN '. $field .' '. $type);
             }
 
-            execute_sql("ALTER TABLE {$CFG->prefix}$table ALTER COLUMN $field SET $null");
-            return execute_sql("ALTER TABLE {$CFG->prefix}$table ALTER COLUMN $field SET $default");
+            execute_sql('ALTER TABLE '. $CFG->prefix . $table .' ALTER COLUMN '. $field .' SET '. $null);
+            return execute_sql('ALTER TABLE '. $CFG->prefix . $table .' ALTER COLUMN '. $field .' SET '. $default);
             break;
 
     }
@@ -245,23 +245,23 @@ function table_column($table, $oldfield, $field, $type="integer", $size="10",
 *
 * @param    type description
 */
-function record_exists($table, $field1="", $value1="", $field2="", $value2="", $field3="", $value3="") {
+function record_exists($table, $field1='', $value1='', $field2='', $value2='', $field3='', $value3='') {
 
     global $CFG;
 
     if ($field1) {
-        $select = "WHERE $field1 = '$value1'";
+        $select = 'WHERE '. $field1 .' = \''. $value1 .'\'';
         if ($field2) {
-            $select .= " AND $field2 = '$value2'";
+            $select .= ' AND '. $field2 .' = \''. $value2 .'\'';
             if ($field3) {
-                $select .= " AND $field3 = '$value3'";
+                $select .= ' AND '. $field3 .' = \''. $value3 .'\'';
             }
         }
     } else {
-        $select = "";
+        $select = '';
     }
 
-    return record_exists_sql("SELECT * FROM $CFG->prefix$table $select LIMIT 1");
+    return record_exists_sql('SELECT * FROM '. $CFG->prefix . $table .' '. $select .' LIMIT 1');
 }
 
 
@@ -278,7 +278,7 @@ function record_exists_sql($sql) {
 
     if (!$rs = $db->Execute($sql)) {
         if (isset($CFG->debug) and $CFG->debug > 7) {
-            notify($db->ErrorMsg()."<br /><br />$sql");
+            notify($db->ErrorMsg().'<br /><br />'.$sql);
         }
         return false;
     }
@@ -298,23 +298,23 @@ function record_exists_sql($sql) {
 *
 * @param    type description
 */
-function count_records($table, $field1="", $value1="", $field2="", $value2="", $field3="", $value3="") {
+function count_records($table, $field1='', $value1='', $field2='', $value2='', $field3='', $value3='') {
 
     global $CFG;
 
     if ($field1) {
-        $select = "WHERE $field1 = '$value1'";
+        $select = 'WHERE '. $field1 .' = \''. $value1 .'\'';
         if ($field2) {
-            $select .= " AND $field2 = '$value2'";
+            $select .= ' AND '. $field2 .' = \''. $value2 .'\'';
             if ($field3) {
-                $select .= " AND $field3 = '$value3'";
+                $select .= ' AND '. $field3 .' = \''. $value3 .'\'';
             }
         }
     } else {
-        $select = "";
+        $select = '';
     }
 
-    return count_records_sql("SELECT COUNT(*) FROM $CFG->prefix$table $select");
+    return count_records_sql('SELECT COUNT(*) FROM '. $CFG->prefix . $table .' '. $select);
 }
 
 /**
@@ -325,15 +325,15 @@ function count_records($table, $field1="", $value1="", $field2="", $value2="", $
 * @param    type description
 *
 */
-function count_records_select($table, $select="", $countitem="COUNT(*)") {
+function count_records_select($table, $select='', $countitem='COUNT(*)') {
 
     global $CFG;
 
     if ($select) {
-        $select = "WHERE $select";
+        $select = 'WHERE '.$select;
     }
 
-    return count_records_sql("SELECT $countitem FROM $CFG->prefix$table $select");
+    return count_records_sql('SELECT '. $countitem .' FROM '. $CFG->prefix . $table .' '. $select);
 }
 
 
@@ -348,10 +348,10 @@ function count_records_sql($sql) {
 
     global $CFG, $db;
 
-    $rs = $db->Execute("$sql");
+    $rs = $db->Execute($sql);
     if (!$rs) {
         if (isset($CFG->debug) and $CFG->debug > 7) {
-            notify($db->ErrorMsg()."<br /><br />$sql");
+            notify($db->ErrorMsg() .'<br /><br />'. $sql);
         }
         return 0;
     }
@@ -378,20 +378,20 @@ function count_records_sql($sql) {
 * @param    string  $value3 the value of the field for the third criteria
 * @return   object(fieldset)    a fieldset object containing the first record selected
 */
-function get_record($table, $field1, $value1, $field2="", $value2="", $field3="", $value3="") {
+function get_record($table, $field1, $value1, $field2='', $value2='', $field3='', $value3='') {
 
     global $CFG ;
 
-    $select = "WHERE $field1 = '$value1'";
+    $select = 'WHERE '. $field1 .' = \''. $value1 .'\'';
 
     if ($field2) {
-        $select .= " AND $field2 = '$value2'";
+        $select .= ' AND '. $field2 .' = \''. $value2 .'\'';
         if ($field3) {
-            $select .= " AND $field3 = '$value3'";
+            $select .= ' AND '. $field3 .' = \''. $value3 .'\'';
         }
     }
 
-    return get_record_sql("SELECT * FROM $CFG->prefix$table $select");
+    return get_record_sql('SELECT * FROM '. $CFG->prefix . $table .' '. $select);
 }
 
 /**
@@ -407,14 +407,14 @@ function get_record_sql($sql) {
     global $db, $CFG;
 
     if (isset($CFG->debug) and $CFG->debug > 7) {    // Debugging mode - don't use limit
-       $limit = "";
+       $limit = '';
     } else {
-       $limit = " LIMIT 1";    // Workaround - limit to one record
+       $limit = ' LIMIT 1';    // Workaround - limit to one record
     }
 
-    if (!$rs = $db->Execute("$sql$limit")) {
+    if (!$rs = $db->Execute($sql . $limit)) {
         if (isset($CFG->debug) and $CFG->debug > 7) {    // Debugging mode - print checks
-            notify( $db->ErrorMsg() . "<br /><br />$sql$limit" );
+            notify( $db->ErrorMsg() . '<br /><br />'. $sql . $limit );
         }
         return false;
     }
@@ -427,16 +427,16 @@ function get_record_sql($sql) {
         return (object)$rs->fields;
 
     } else {                          // Error: found more than one record
-        notify("Error:  Turn off debugging to hide this error.");
-        notify("$sql$limit");
+        notify('Error:  Turn off debugging to hide this error.');
+        notify($sql . $limit);
         if ($records = $rs->GetAssoc(true)) {
-            notify("Found more than one record in get_record_sql !");
+            notify('Found more than one record in get_record_sql !');
             print_object($records);
         } else {
-            notify("Very strange error in get_record_sql !");
+            notify('Very strange error in get_record_sql !');
             print_object($rs);
         }
-        print_continue("$CFG->wwwroot/admin/config.php");
+        print_continue($CFG->wwwroot .'/admin/config.php');
     }
 }
 
@@ -447,15 +447,15 @@ function get_record_sql($sql) {
 *
 * @param    type description
 */
-function get_record_select($table, $select="", $fields="*") {
+function get_record_select($table, $select='', $fields='*') {
 
     global $CFG;
 
     if ($select) {
-        $select = "WHERE $select";
+        $select = 'WHERE '. $select;
     }
 
-    return get_record_sql("SELECT $fields FROM $CFG->prefix$table $select");
+    return get_record_sql('SELECT '. $fields .' FROM '. $CFG->prefix . $table .' '. $select);
 }
 
 
@@ -469,36 +469,36 @@ function get_record_select($table, $select="", $fields="*") {
 *
 * @param    type description
 */
-function get_records($table, $field="", $value="", $sort="", $fields="*", $limitfrom="", $limitnum="") {
+function get_records($table, $field='', $value='', $sort='', $fields='*', $limitfrom='', $limitnum='') {
 
     global $CFG;
 
     if ($field) {
-        $select = "WHERE $field = '$value'";
+        $select = 'WHERE '. $field .' = \''. $value .'\'';
     } else {
-        $select = "";
+        $select = '';
     }
 
-    if ($limitfrom !== "") {
+    if ($limitfrom !== '') {
         switch ($CFG->dbtype) {
-            case "mysql":
-                 $limit = "LIMIT $limitfrom,$limitnum";
+            case 'mysql':
+                 $limit = 'LIMIT '. $limitfrom .','. $limitnum;
                  break;
-            case "postgres7":
-                 $limit = "LIMIT $limitnum OFFSET $limitfrom";
+            case 'postgres7':
+                 $limit = 'LIMIT '. $limitnum .' OFFSET '. $limitfrom;
                  break;
             default:
-                 $limit = "LIMIT $limitnum,$limitfrom";
+                 $limit = 'LIMIT '. $limitnum .','. $limitfrom;
         }
     } else {
-        $limit = "";
+        $limit = '';
     }
 
     if ($sort) {
-        $sort = "ORDER BY $sort";
+        $sort = 'ORDER BY '. $sort;
     }
 
-    return get_records_sql("SELECT $fields FROM $CFG->prefix$table $select $sort $limit");
+    return get_records_sql('SELECT '. $fields .' FROM '. $CFG->prefix . $table .' '. $select .' '. $sort .' '. $limit);
 }
 
 /**
@@ -511,34 +511,34 @@ function get_records($table, $field="", $value="", $sort="", $fields="*", $limit
 *
 * @param    type description
 */
-function get_records_select($table, $select="", $sort="", $fields="*", $limitfrom="", $limitnum="") {
+function get_records_select($table, $select='', $sort='', $fields='*', $limitfrom='', $limitnum='') {
 
     global $CFG;
 
     if ($select) {
-        $select = "WHERE $select";
+        $select = 'WHERE '. $select;
     }
 
-    if ($limitfrom !== "") {
+    if ($limitfrom !== '') {
         switch ($CFG->dbtype) {
-            case "mysql":
-                 $limit = "LIMIT $limitfrom,$limitnum";
+            case 'mysql':
+                 $limit = 'LIMIT '. $limitfrom .','. $limitnum;
                  break;
-            case "postgres7":
-                 $limit = "LIMIT $limitnum OFFSET $limitfrom";
+            case 'postgres7':
+                 $limit = 'LIMIT '. $limitnum .' OFFSET '. $limitfrom;
                  break;
             default:
-                 $limit = "LIMIT $limitnum,$limitfrom";
+                 $limit = 'LIMIT '. $limitnum .','. $limitfrom;
         }
     } else {
-        $limit = "";
+        $limit = '';
     }
 
     if ($sort) {
-        $sort = "ORDER BY $sort";
+        $sort = 'ORDER BY '. $sort;
     }
 
-    return get_records_sql("SELECT $fields FROM $CFG->prefix$table $select $sort $limit");
+    return get_records_sql('SELECT '. $fields .' FROM '. $CFG->prefix . $table .' '. $select .' '. $sort .' '. $limit);
 }
 
 
@@ -552,21 +552,21 @@ function get_records_select($table, $select="", $sort="", $fields="*", $limitfro
 *
 * @param    type description
 */
-function get_records_list($table, $field="", $values="", $sort="", $fields="*") {
+function get_records_list($table, $field='', $values='', $sort='', $fields='*') {
 
     global $CFG;
 
     if ($field) {
-        $select = "WHERE $field in ($values)";
+        $select = 'WHERE '. $field .' IN ( '. $values .')';
     } else {
-        $select = "";
+        $select = '';
     }
 
     if ($sort) {
-        $sort = "ORDER BY $sort";
+        $sort = 'ORDER BY '. $sort;
     }
 
-    return get_records_sql("SELECT $fields FROM $CFG->prefix$table $select $sort");
+    return get_records_sql('SELECT '. $fields .' FROM '. $CFG->prefix . $table .' '. $select .' '. $sort);
 }
 
 
@@ -585,7 +585,7 @@ function get_records_sql($sql) {
 
     if (!$rs = $db->Execute($sql)) {
         if (isset($CFG->debug) and $CFG->debug > 7) {
-            notify($db->ErrorMsg()."<br /><br />$sql");
+            notify($db->ErrorMsg() .'<br /><br />'. $sql);
         }
         return false;
     }
@@ -613,21 +613,21 @@ function get_records_sql($sql) {
 *
 * @param    type description
 */
-function get_records_menu($table, $field="", $value="", $sort="", $fields="*") {
+function get_records_menu($table, $field='', $value='', $sort='', $fields='*') {
 
     global $CFG;
 
     if ($field) {
-        $select = "WHERE $field = '$value'";
+        $select = 'WHERE '. $field .' = \''. $value .'\'';
     } else {
-        $select = "";
+        $select = '';
     }
 
     if ($sort) {
-        $sort = "ORDER BY $sort";
+        $sort = 'ORDER BY '. $sort;
     }
 
-    return get_records_sql_menu("SELECT $fields FROM $CFG->prefix$table $select $sort");
+    return get_records_sql_menu('SELECT '. $fields .' FROM '. $CFG->prefix . $table .' '. $select .' '. $sort);
 }
 
 /**
@@ -639,19 +639,19 @@ function get_records_menu($table, $field="", $value="", $sort="", $fields="*") {
 *
 * @param    type description
 */
-function get_records_select_menu($table, $select="", $sort="", $fields="*") {
+function get_records_select_menu($table, $select='', $sort='', $fields='*') {
 
     global $CFG;
 
     if ($select) {
-        $select = "WHERE $select";
+        $select = 'WHERE '. $select;
     }
 
     if ($sort) {
-        $sort = "ORDER BY $sort";
+        $sort = 'ORDER BY '. $sort;
     }
 
-    return get_records_sql_menu("SELECT $fields FROM $CFG->prefix$table $select $sort");
+    return get_records_sql_menu('SELECT '. $fields .' FROM '. $CFG->prefix . $table .' '. $select .' '. $sort);
 }
 
 
@@ -670,7 +670,7 @@ function get_records_sql_menu($sql) {
 
     if (!$rs = $db->Execute($sql)) {
         if (isset($CFG->debug) and $CFG->debug > 7) {
-            notify($db->ErrorMsg()."<br /><br />$sql");
+            notify($db->ErrorMsg() .'<br /><br />'. $sql);
         }
         return false;
     }
@@ -694,29 +694,29 @@ function get_records_sql_menu($sql) {
 *
 * @param    type description
 */
-function get_field($table, $return, $field1, $value1, $field2="", $value2="", $field3="", $value3="") {
+function get_field($table, $return, $field1, $value1, $field2='', $value2='', $field3='', $value3='') {
 
     global $db, $CFG;
 
-    $select = "WHERE $field1 = '$value1'";
+    $select = 'WHERE '. $field1 .' = \''. $value1 .'\'';
 
     if ($field2) {
-        $select .= " AND $field2 = '$value2'";
+        $select .= ' AND '. $field2 .' = \''. $value2 .'\'';
         if ($field3) {
-            $select .= " AND $field3 = '$value3'";
+            $select .= ' AND '. $field3 .' = \''. $value3 .'\'';
         }
     }
 
-    $rs = $db->Execute("SELECT $return FROM $CFG->prefix$table $select");
+    $rs = $db->Execute('SELECT '. $return .' FROM '. $CFG->prefix . $table .' '. $select);
     if (!$rs) {
         if (isset($CFG->debug) and $CFG->debug > 7) {
-            notify($db->ErrorMsg()."<br /><br />SELECT $return FROM $CFG->prefix$table $select");
+            notify($db->ErrorMsg() .'<br /><br />SELECT '. $return .' FROM '. $CFG->prefix . $table .' '. $select);
         }
         return false;
     }
 
     if ( $rs->RecordCount() == 1 ) {
-        return $rs->fields["$return"];
+        return $rs->fields[$return];
     } else {
         return false;
     }
@@ -737,7 +737,7 @@ function get_field_sql($sql) {
     $rs = $db->Execute($sql);
     if (!$rs) {
         if (isset($CFG->debug) and $CFG->debug > 7) {
-            notify($db->ErrorMsg()."<br /><br />$sql");
+            notify($db->ErrorMsg() .'<br /><br />'. $sql);
         }
         return false;
     }
@@ -756,20 +756,20 @@ function get_field_sql($sql) {
 *
 * @param    type description
 */
-function set_field($table, $newfield, $newvalue, $field1, $value1, $field2="", $value2="", $field3="", $value3="") {
+function set_field($table, $newfield, $newvalue, $field1, $value1, $field2='', $value2='', $field3='', $value3='') {
 
     global $db, $CFG;
 
-    $select = "WHERE $field1 = '$value1'";
+    $select = 'WHERE '. $field1 .' = \''. $value1 .'\'';
 
     if ($field2) {
-        $select .= " AND $field2 = '$value2'";
+        $select .= ' AND '. $field2 .' = \''. $value2 .'\'';
         if ($field3) {
-            $select .= " AND $field3 = '$value3'";
+            $select .= ' AND '. $field3 .' = \''. $value3 .'\'';
         }
     }
 
-    return $db->Execute("UPDATE $CFG->prefix$table SET $newfield = '$newvalue' $select");
+    return $db->Execute('UPDATE '. $CFG->prefix . $table .' SET '. $newfield  .' = \''. $newvalue .'\' '. $select);
 }
 
 
@@ -780,23 +780,23 @@ function set_field($table, $newfield, $newvalue, $field1, $value1, $field2="", $
 *
 * @param    type description
 */
-function delete_records($table, $field1="", $value1="", $field2="", $value2="", $field3="", $value3="") {
+function delete_records($table, $field1='', $value1='', $field2='', $value2='', $field3='', $value3='') {
 
     global $db, $CFG;
 
     if ($field1) {
-        $select = "WHERE $field1 = '$value1'";
+        $select = 'WHERE '. $field1 .' = \''. $value1 .'\'';
         if ($field2) {
-            $select .= " AND $field2 = '$value2'";
+            $select .= ' AND '. $field2 .' = \''. $value2 .'\'';
             if ($field3) {
-                $select .= " AND $field3 = '$value3'";
+                $select .= ' AND '. $field3 .' = \''. $value3 .'\'';
             }
         }
     } else {
-        $select = "";
+        $select = '';
     }
 
-    return $db->Execute("DELETE FROM $CFG->prefix$table $select");
+    return $db->Execute('DELETE FROM '. $CFG->prefix . $table .' '. $select);
 }
 
 /**
@@ -806,15 +806,15 @@ function delete_records($table, $field1="", $value1="", $field2="", $value2="", 
 *
 * @param    type description
 */
-function delete_records_select($table, $select="") {
+function delete_records_select($table, $select='') {
 
     global $CFG, $db;
 
     if ($select) {
-        $select = "WHERE $select";
+        $select = 'WHERE '.$select;
     }
 
-    return $db->Execute("DELETE FROM $CFG->prefix$table $select");
+    return $db->Execute('DELETE FROM '. $CFG->prefix . $table .' '. $select);
 }
 
 
@@ -831,7 +831,7 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
     global $db, $CFG;
 
 /// Execute a dummy query to get an empty recordset
-    if (!$rs = $db->Execute("SELECT * FROM $CFG->prefix$table WHERE $primarykey ='-1'")) {
+    if (!$rs = $db->Execute('SELECT * FROM '. $CFG->prefix . $table .' WHERE '. $primarykey  .' = \'-1\'')) {
         return false;
     }
 
@@ -843,7 +843,7 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
 /// Run the SQL statement
     if (!$rs = $db->Execute($insertSQL)) {
         if (isset($CFG->debug) and $CFG->debug > 7) {
-            notify($db->ErrorMsg()."<br /><br />$insertSQL");
+            notify($db->ErrorMsg() .'<br /><br />'.$insertSQL);
         }
         return false;
     }
@@ -855,9 +855,9 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
 
 /// Find the return ID of the newly inserted record
     switch ($CFG->dbtype) {
-        case "postgres7":             // Just loves to be special
+        case 'postgres7':             // Just loves to be special
             $oid = $db->Insert_ID();
-            if ($rs = $db->Execute("SELECT $primarykey FROM $CFG->prefix$table WHERE oid = $oid")) {
+            if ($rs = $db->Execute('SELECT '. $primarykey .' FROM '. $CFG->prefix . $table .' WHERE oid = '. $oid)) {
                 if ($rs->RecordCount() == 1) {
                     return (integer) $rs->fields[0];
                 }
@@ -888,14 +888,14 @@ function update_record($table, $dataobject) {
     }
 
     // Determine all the fields in the table
-    if (!$columns = $db->MetaColumns("$CFG->prefix$table")) {
+    if (!$columns = $db->MetaColumns($CFG->prefix . $table)) {
         return false;
     }
     $data = (array)$dataobject;
 
     // Pull out data matching these fields
     foreach ($columns as $column) {
-        if ($column->name <> "id" and isset($data[$column->name]) ) {
+        if ($column->name <> 'id' and isset($data[$column->name]) ) {
             $ddd[$column->name] = $data[$column->name];
         }
     }
@@ -903,21 +903,21 @@ function update_record($table, $dataobject) {
     // Construct SQL queries
     $numddd = count($ddd);
     $count = 0;
-    $update = "";
+    $update = '';
 
     foreach ($ddd as $key => $value) {
         $count++;
-        $update .= "$key = '$value'";
+        $update .= $key .' = \''. $value .'\'';
         if ($count < $numddd) {
-            $update .= ", ";
+            $update .= ', ';
         }
     }
 
-    if ($rs = $db->Execute("UPDATE $CFG->prefix$table SET $update WHERE id = '$dataobject->id'")) {
+    if ($rs = $db->Execute('UPDATE '. $CFG->prefix . $table .' SET '. $update .' WHERE id = \''. $dataobject->id .'\'')) {
         return true;
     } else {
         if (isset($CFG->debug) and $CFG->debug > 7) {
-            notify($db->ErrorMsg()."<br /><br />UPDATE $CFG->prefix$table SET $update WHERE id = '$dataobject->id'");
+            notify($db->ErrorMsg() .'<br /><br />UPDATE '. $CFG->prefix . $table .' SET '. $update .' WHERE id = \''. $dataobject->id .'\'');
         }
         return false;
     }
@@ -946,13 +946,13 @@ function get_user_info_from_db($field, $value) {
 
 /// Get all the basic user data
 
-    if (! $user = get_record_select("user", "$field = '$value' AND deleted <> '1'")) {
+    if (! $user = get_record_select('user', $field .' = \''. $value .'\' AND deleted <> \'1\'')) {
         return false;
     }
 
 /// Add membership information
 
-    if ($admins = get_records("user_admins", "userid", $user->id)) {
+    if ($admins = get_records('user_admins', 'userid', $user->id)) {
         $user->admin = true;
     }
 
@@ -960,14 +960,14 @@ function get_user_info_from_db($field, $value) {
 
 /// Determine enrolments based on current enrolment module
 
-    require_once("$CFG->dirroot/enrol/$CFG->enrol/enrol.php");
+    require_once($CFG->dirroot .'/enrol/'. $CFG->enrol .'/enrol.php');
     $enrol = new enrolment_plugin();
     $enrol->get_student_courses($user);
     $enrol->get_teacher_courses($user);
 
 /// Get various settings and preferences
 
-    if ($displays = get_records("course_display", "userid", $user->id)) {
+    if ($displays = get_records('course_display', 'userid', $user->id)) {
         foreach ($displays as $display) {
             $user->display[$display->course] = $display->display;
         }
@@ -979,9 +979,9 @@ function get_user_info_from_db($field, $value) {
         }
     }
 
-    if ($groups = get_records("groups_members", "userid", $user->id)) {
+    if ($groups = get_records('groups_members', 'userid', $user->id)) {
         foreach ($groups as $groupmember) {
-            $courseid = get_field("groups", "courseid", "id", $groupmember->groupid);
+            $courseid = get_field('groups', 'courseid', 'id', $groupmember->groupid);
             $user->groupmember[$courseid] = $groupmember->groupid;
         }
     }
@@ -1019,7 +1019,7 @@ function adminlogin($username, $md5password) {
 * @param    type description
 */
 function get_guest() {
-    return get_user_info_from_db("username", "guest");
+    return get_user_info_from_db('username', 'guest');
 }
 
 
@@ -1090,7 +1090,7 @@ function get_teacher($courseid) {
 
     global $CFG;
 
-    if ( $teachers = get_course_teachers($courseid, "t.authority ASC")) {
+    if ( $teachers = get_course_teachers($courseid, 't.authority ASC')) {
         foreach ($teachers as $teacher) {
             if ($teacher->authority) {
                 return $teacher;   // the highest authority teacher
@@ -1132,8 +1132,8 @@ function get_recent_enrolments($courseid, $timestart) {
 *
 * @param    type description
 */
-function get_course_students($courseid, $sort="s.timeaccess", $dir="", $page=0, $recordsperpage=99999,
-                             $firstinitial="", $lastinitial="", $group=NULL, $search="", $fields='', $exceptions='') {
+function get_course_students($courseid, $sort='s.timeaccess', $dir='', $page=0, $recordsperpage=99999,
+                             $firstinitial='', $lastinitial='', $group=NULL, $search='', $fields='', $exceptions='') {
 
     global $CFG;
 
@@ -1145,12 +1145,12 @@ function get_course_students($courseid, $sort="s.timeaccess", $dir="", $page=0, 
         $sort = str_replace('u.', '', $sort); // the get_user function doesn't use the u. prefix to fields
         $fields = str_replace('u.', '', $fields);
         if ($sort) {
-            $sort = "$sort $dir";
+            $sort = $sort .' '. $dir;
         }
         // Now we have to make sure site teachers are excluded
         if ($teachers = get_records('user_teachers', 'course', SITEID)) {
             foreach ($teachers as $teacher) {
-                $exceptions .= ",$teacher->userid";
+                $exceptions .= ','. $teacher->userid;
             }
             $exceptions = ltrim($exceptions, ',');
         }
@@ -1159,31 +1159,31 @@ function get_course_students($courseid, $sort="s.timeaccess", $dir="", $page=0, 
     }
 
     switch ($CFG->dbtype) {
-        case "mysql":
-             $fullname = " CONCAT(firstname,\" \",lastname) ";
-             $limit = "LIMIT $page,$recordsperpage";
-             $LIKE = "LIKE";
+        case 'mysql':
+             $fullname = ' CONCAT(firstname," ",lastname) ';
+             $limit = 'LIMIT '. $page .','. $recordsperpage;
+             $LIKE = 'LIKE';
              break;
-        case "postgres7":
+        case 'postgres7':
              $fullname = " firstname||' '||lastname ";
-             $limit = "LIMIT $recordsperpage OFFSET ".($page);
-             $LIKE = "ILIKE";
+             $limit = 'LIMIT '. $recordsperpage .' OFFSET '.($page);
+             $LIKE = 'ILIKE';
              break;
         default:
-             $fullname = " firstname||\" \"||lastname ";
-             $limit = "LIMIT $recordsperpage,$page";
-             $LIKE = "ILIKE";
+             $fullname = ' firstname||" "||lastname ';
+             $limit = 'LIMIT '. $recordsperpage .','. $page;
+             $LIKE = 'ILIKE';
     }
 
     $groupmembers = '';
 
     // make sure it works on the site course
-    $select = "s.course = '$courseid' AND ";
+    $select = 's.course = \''. $courseid .'\' AND ';
     if ($courseid == SITEID) {
         $select = '';
     }
 
-    $select .= "s.userid = u.id AND u.deleted = '0' ";
+    $select .= 's.userid = u.id AND u.deleted = \'0\' ';
 
     if (!$fields) {
         $fields = 'u.id, u.confirmed, u.username, u.firstname, u.lastname, '.
@@ -1193,31 +1193,31 @@ function get_course_students($courseid, $sort="s.timeaccess", $dir="", $page=0, 
     }
 
     if ($search) {
-        $search = " AND ($fullname $LIKE '%$search%' OR email $LIKE '%$search%') ";
+        $search = ' AND ('. $fullname .' '. $LIKE .'\'%'. $search .'%\' OR email '. $LIKE .'\'%'. $search .'%\') ';
     }
 
     if ($firstinitial) {
-        $select .= " AND u.firstname $LIKE '$firstinitial%' ";
+        $select .= ' AND u.firstname '. $LIKE .'\''. $firstinitial .'%\' ';
     }
 
     if ($lastinitial) {
-        $select .= " AND u.lastname $LIKE '$lastinitial%' ";
+        $select .= ' AND u.lastname '. $LIKE .'\''. $lastinitial .'%\' ';
     }
 
     if ($group === 0) {   /// Need something here to get all students not in a group
         return array();
 
     } else if ($group !== NULL) {
-        $groupmembers = ", {$CFG->prefix}groups_members gm ";
-        $select .= " AND u.id = gm.userid AND gm.groupid = '$group'";
+        $groupmembers = ', '. $CFG->prefix .'groups_members gm ';
+        $select .= ' AND u.id = gm.userid AND gm.groupid = \''. $group .'\'';
     }
 
     if (!empty($exceptions)) {
-        $select .= " AND u.id NOT IN ($exceptions)";
+        $select .= ' AND u.id NOT IN ('. $exceptions .')';
     }
 
     if ($sort) {
-        $sort = " ORDER BY $sort ";
+        $sort = ' ORDER BY '. $sort .' ';
     }
 
     $students = get_records_sql("SELECT $fields
@@ -1234,10 +1234,10 @@ function get_course_students($courseid, $sort="s.timeaccess", $dir="", $page=0, 
     // These also include teachers on real courses minus those on the site
     if ($teachers = get_records('user_teachers', 'course', SITEID)) {
         foreach ($teachers as $teacher) {
-            $exceptions .= ",$teacher->userid";
+            $exceptions .= ','. $teacher->userid;
         }
         $exceptions = ltrim($exceptions, ',');
-        $select .= " AND u.id NOT IN ($exceptions)";
+        $select .= ' AND u.id NOT IN ('. $exceptions .')';
     }
     if (!$teachers = get_records_sql("SELECT $fields
                             FROM {$CFG->prefix}user u,
@@ -1257,7 +1257,7 @@ function get_course_students($courseid, $sort="s.timeaccess", $dir="", $page=0, 
 *
 * @param    type description
 */
-function count_course_students($course, $search="", $firstinitial="", $lastinitial="", $group=NULL, $exceptions='') {
+function count_course_students($course, $search='', $firstinitial='', $lastinitial='', $group=NULL, $exceptions='') {
 
     if ($students = get_course_students($course->id, '', '', 0, 999999, $firstinitial, $lastinitial, $group, $search, '', $exceptions)) {
         return count($students);
@@ -1272,12 +1272,12 @@ function count_course_students($course, $search="", $firstinitial="", $lastiniti
 *
 * @param    type description
 */
-function get_course_teachers($courseid, $sort="t.authority ASC", $exceptions='') {
+function get_course_teachers($courseid, $sort='t.authority ASC', $exceptions='') {
 
     global $CFG;
 
     if (!empty($exceptions)) {
-        $except = " AND u.id NOT IN ($exceptions) ";
+        $except = ' AND u.id NOT IN ('. $exceptions .') ';
     } else {
         $except = '';
     }
@@ -1297,7 +1297,7 @@ function get_course_teachers($courseid, $sort="t.authority ASC", $exceptions='')
 *
 * @param    type description
 */
-function get_course_users($courseid, $sort="timeaccess DESC", $exceptions='', $fields='') {
+function get_course_users($courseid, $sort='timeaccess DESC', $exceptions='', $fields='') {
 
     /// Using this method because the single SQL is too inefficient
     // Note that this has the effect that teachers and students are
@@ -1325,32 +1325,32 @@ function search_users($courseid, $groupid, $searchtext, $sort='', $exceptions=''
     global $CFG;
 
     switch ($CFG->dbtype) {
-        case "mysql":
-             $fullname = " CONCAT(u.firstname,\" \",u.lastname) ";
-             $LIKE = "LIKE";
+        case 'mysql':
+             $fullname = ' CONCAT(u.firstname," ",u.lastname) ';
+             $LIKE = 'LIKE';
              break;
-        case "postgres7":
+        case 'postgres7':
              $fullname = " u.firstname||' '||u.lastname ";
-             $LIKE = "ILIKE";
+             $LIKE = 'ILIKE';
              break;
         default:
-             $fullname = " u.firstname||\" \"||u.lastname ";
-             $LIKE = "ILIKE";
+             $fullname = ' u.firstname||" "||u.lastname ';
+             $LIKE = 'ILIKE';
     }
 
     if (!empty($exceptions)) {
-        $except = " AND u.id NOT IN ($exceptions) ";
+        $except = ' AND u.id NOT IN ('. $exceptions .') ';
     } else {
         $except = '';
     }
 
     if (!empty($sort)) {
-        $order = " ORDER by $sort";
+        $order = ' ORDER BY '. $sort;
     } else {
         $order = '';
     }
 
-    $select = "u.deleted = '0' AND u.confirmed = '1'";
+    $select = 'u.deleted = \'0\' AND u.confirmed = \'1\'';
 
     if (!$courseid or $courseid == SITEID) {
         return get_records_sql("SELECT u.id, u.firstname, u.lastname, u.email
@@ -1396,7 +1396,7 @@ function search_users($courseid, $groupid, $searchtext, $sort='', $exceptions=''
 *
 * @param    type description
 */
-function get_site_users($sort="u.lastaccess DESC", $fields='*', $exceptions='') {
+function get_site_users($sort='u.lastaccess DESC', $fields='*', $exceptions='') {
 
     return get_course_users(SITEID, $sort, $exceptions, $fields);
 }
@@ -1418,59 +1418,59 @@ function get_site_users($sort="u.lastaccess DESC", $fields='*', $exceptions='') 
 * @param    string  $recordsperpage
 * @param    string  $fields a comma separated list of fields
 */
-function get_users($get=true, $search="", $confirmed=false, $exceptions="", $sort="firstname ASC",
-                   $firstinitial="", $lastinitial="", $page=0, $recordsperpage=99999, $fields="*") {
+function get_users($get=true, $search='', $confirmed=false, $exceptions='', $sort='firstname ASC',
+                   $firstinitial='', $lastinitial='', $page=0, $recordsperpage=99999, $fields='*') {
 
     global $CFG;
 
     switch ($CFG->dbtype) {
-        case "mysql":
-             $limit = "LIMIT $page,$recordsperpage";
-             $fullname = " CONCAT(firstname,\" \",lastname) ";
-             $LIKE = "LIKE";
+        case 'mysql':
+             $limit = 'LIMIT '. $page .','. $recordsperpage;
+             $fullname = ' CONCAT(firstname," ",lastname) ';
+             $LIKE = 'LIKE';
              break;
-        case "postgres7":
-             $limit = "LIMIT $recordsperpage OFFSET ".($page);
+        case 'postgres7':
+             $limit = 'LIMIT '. $recordsperpage .' OFFSET '.($page);
              $fullname = " firstname||' '||lastname ";
-             $LIKE = "ILIKE";
+             $LIKE = 'ILIKE';
              break;
         default:
-             $limit = "LIMIT $recordsperpage,$page";
-             $fullname = " firstname||\" \"||lastname ";
-             $LIKE = "ILIKE";
+             $limit = 'LIMIT '. $recordsperpage .','. $page;
+             $fullname = ' firstname||" "||lastname ';
+             $LIKE = 'ILIKE';
     }
 
-    $select = "username <> 'guest' AND deleted = 0";
+    $select = 'username <> \'guest\' AND deleted = 0';
 
     if ($search) {
         $select .= " AND ($fullname $LIKE '%$search%' OR email $LIKE '%$search%') ";
     }
 
     if ($confirmed) {
-        $select .= " AND confirmed = '1' ";
+        $select .= ' AND confirmed = \'1\' ';
     }
 
     if ($exceptions) {
-        $select .= " AND id NOT IN ($exceptions) ";
+        $select .= ' AND id NOT IN ('. $exceptions .') ';
     }
 
     if ($firstinitial) {
-        $select .= " AND firstname $LIKE '$firstinitial%'";
+        $select .= ' AND firstname '. $LIKE .' \''. $firstinitial .'%\'';
     }
     if ($lastinitial) {
-        $select .= " AND lastname $LIKE '$lastinitial%'";
+        $select .= ' AND lastname '. $LIKE .' \''. $lastinitial .'%\'';
     }
 
     if ($sort and $get) {
-        $sort = " ORDER BY $sort ";
+        $sort = ' ORDER BY '. $sort .' ';
     } else {
-        $sort = "";
+        $sort = '';
     }
 
     if ($get) {
-        return get_records_select("user", "$select $sort $limit", '', $fields);
+        return get_records_select('user', $select .' '. $sort .' '. $limit, '', $fields);
     } else {
-        return count_records_select("user", "$select $sort $limit");
+        return count_records_select('user', $select .' '. $sort .' '. $limit);
     }
 }
 
@@ -1482,26 +1482,26 @@ function get_users($get=true, $search="", $confirmed=false, $exceptions="", $sor
 *
 * @param    type description
 */
-function get_users_listing($sort="lastaccess", $dir="ASC", $page=0, $recordsperpage=99999,
-                           $search="", $firstinitial="", $lastinitial="") {
+function get_users_listing($sort='lastaccess', $dir='ASC', $page=0, $recordsperpage=99999,
+                           $search='', $firstinitial='', $lastinitial='") {
 
     global $CFG;
 
     switch ($CFG->dbtype) {
-        case "mysql":
-             $limit = "LIMIT $page,$recordsperpage";
-             $fullname = " CONCAT(firstname,\" \",lastname) ";
-             $LIKE = "LIKE";
+        case 'mysql':
+             $limit = 'LIMIT '. $page .','. $recordsperpage;
+             $fullname = ' CONCAT(firstname," ",lastname) ';
+             $LIKE = 'LIKE';
              break;
-        case "postgres7":
-             $limit = "LIMIT $recordsperpage OFFSET ".($page);
-             $fullname = " firstname||' '||lastname ";
-             $LIKE = "ILIKE";
+        case 'postgres7':
+             $limit = 'LIMIT '. $recordsperpage .' OFFSET '.($page);
+             $fullname = ' firstname||\' \'||lastname ';
+             $LIKE = 'ILIKE';
              break;
         default:
-             $limit = "LIMIT $recordsperpage,$page";
-             $fullname = " firstname||' '||lastname ";
-             $LIKE = "LIKE";
+             $limit = 'LIMIT '. $recordsperpage .','. $page;
+             $fullname = ' firstname||\' \'||lastname ';
+             $LIKE = 'LIKE';
     }
 
     $select = 'deleted <> 1';
@@ -1511,15 +1511,15 @@ function get_users_listing($sort="lastaccess", $dir="ASC", $page=0, $recordsperp
     }
 
     if ($firstinitial) {
-        $select .= " AND firstname $LIKE '$firstinitial%' ";
+        $select .= ' AND firstname '. $LIKE .' \''. $firstinitial .'%\' ';
     }
 
     if ($lastinitial) {
-        $select .= " AND lastname $LIKE '$lastinitial%' ";
+        $select .= ' AND lastname '. $LIKE .' \''. $lastinitial .'%\' ';
     }
 
     if ($sort) {
-        $sort = " ORDER BY $sort $dir";
+        $sort = ' ORDER BY '. $sort .' '. $dir;
     }
 
 /// warning: will return UNCONFIRMED USERS
@@ -1591,8 +1591,8 @@ function get_groups($courseid, $userid=0) {
     global $CFG;
 
     if ($userid) {
-        $dbselect = ", {$CFG->prefix}groups_members m";
-        $userselect = "AND m.groupid = g.id AND m.userid = '$userid'";
+        $dbselect = ', '. $CFG->prefix .'groups_members m';
+        $userselect = 'AND m.groupid = g.id AND m.userid = \''. $userid .'\'';
     } else {
         $dbselect = '';
         $userselect = '';
@@ -1609,10 +1609,10 @@ function get_groups($courseid, $userid=0) {
 *
 * @param    type description
 */
-function get_group_users($groupid, $sort="u.lastaccess DESC", $exceptions='') {
+function get_group_users($groupid, $sort='u.lastaccess DESC', $exceptions='') {
     global $CFG;
     if (!empty($exceptions)) {
-        $except = " AND u.id NOT IN ($exceptions) ";
+        $except = ' AND u.id NOT IN ('. $exceptions .') ';
     } else {
         $except = '';
     }
@@ -1641,7 +1641,7 @@ function get_users_not_in_group($courseid) {
 *
 * @param    type description
 */
-function get_group_students($groupid, $sort="u.lastaccess DESC") {
+function get_group_students($groupid, $sort='u.lastaccess DESC') {
     global $CFG;
     return get_records_sql("SELECT DISTINCT u.*
                               FROM {$CFG->prefix}user u,
@@ -1688,7 +1688,7 @@ function user_group($courseid, $userid) {
 */
 function get_site () {
 
-    if ( $course = get_record("course", "category", 0)) {
+    if ( $course = get_record('course', 'category', 0)) {
         return $course;
     } else {
         return false;
@@ -1703,38 +1703,38 @@ function get_site () {
 *
 * @param    type description
 */
-function get_courses($categoryid="all", $sort="c.sortorder ASC", $fields="c.*") {
+function get_courses($categoryid='all', $sort='c.sortorder ASC', $fields='c.*') {
 
     global $USER, $CFG;
 
-    $categoryselect = "";
-    if ($categoryid != "all") {
-        $categoryselect = "c.category = '$categoryid'";
+    $categoryselect = '';
+    if ($categoryid != 'all') {
+        $categoryselect = 'c.category = \''. $categoryid .'\'';
     }
 
-    $teachertable = "";
-    $visiblecourses = "";
-    $sqland = "";
+    $teachertable = '';
+    $visiblecourses = '';
+    $sqland = '';
     if (!empty($categoryselect)) {
-        $sqland = "AND ";
+        $sqland = 'AND ';
     }
     if (!empty($USER->id)) {  // May need to check they are a teacher
         if (!iscreator()) {
-            $visiblecourses = "$sqland ((c.visible > 0) OR (t.userid = '$USER->id' AND t.course = c.id))";
-            $teachertable = ", {$CFG->prefix}user_teachers t";
+            $visiblecourses = $sqland .' ((c.visible > 0) OR (t.userid = \''. $USER->id .'\' AND t.course = c.id))';
+            $teachertable = ', '. $CFG->prefix .'user_teachers t';
         }
     } else {
-        $visiblecourses = "$sqland c.visible > 0";
+        $visiblecourses = $sqland .' c.visible > 0';
     }
 
     if ($categoryselect or $visiblecourses) {
-        $selectsql = "{$CFG->prefix}course c $teachertable WHERE $categoryselect $visiblecourses";
+        $selectsql = $CFG->prefix .'course c '. $teachertable .' WHERE '. $categoryselect .' '. $visiblecourses;
     } else {
-        $selectsql = "{$CFG->prefix}course c $teachertable";
+        $selectsql = $CFG->prefix .'course c '. $teachertable;
     }
 
 
-    return get_records_sql("SELECT DISTINCT $fields FROM $selectsql ORDER BY $sort");
+    return get_records_sql('SELECT DISTINCT '. $fields .' FROM '. $selectsql .' ORDER BY '. $sort);
 }
 
 
@@ -1745,51 +1745,51 @@ function get_courses($categoryid="all", $sort="c.sortorder ASC", $fields="c.*") 
 *
 * @param    type description
 */
-function get_courses_page($categoryid="all", $sort="c.sortorder ASC", $fields="c.*",
-                          &$totalcount, $limitfrom="", $limitnum="") {
+function get_courses_page($categoryid='all', $sort='c.sortorder ASC', $fields='c.*',
+                          &$totalcount, $limitfrom='', $limitnum='') {
 
     global $USER, $CFG;
 
-    $categoryselect = "";
-    if ($categoryid != "all") {
-        $categoryselect = "c.category = '$categoryid'";
+    $categoryselect = '';
+    if ($categoryid != 'all') {
+        $categoryselect = 'c.category = \''. $categoryid .'\'';
     }
 
-    $teachertable = "";
-    $visiblecourses = "";
-    $sqland = "";
+    $teachertable = '';
+    $visiblecourses = '';
+    $sqland = '';
     if (!empty($categoryselect)) {
-        $sqland = "AND ";
+        $sqland = 'AND ';
     }
     if (!empty($USER)) {  // May need to check they are a teacher
         if (!iscreator()) {
-            $visiblecourses = "$sqland ((c.visible > 0) OR (t.userid = '$USER->id' AND t.course = c.id))";
-            $teachertable = ", {$CFG->prefix}user_teachers t";
+            $visiblecourses = $sqland .' ((c.visible > 0) OR (t.userid = \''. $USER->id .'\' AND t.course = c.id))';
+            $teachertable = ', '. $CFG->prefix .'user_teachers t';
         }
     } else {
-        $visiblecourses = "$sqland c.visible > 0";
+        $visiblecourses = $sqland .' c.visible > 0';
     }
 
-    if ($limitfrom !== "") {
+    if ($limitfrom !== '') {
         switch ($CFG->dbtype) {
-            case "mysql":
-                 $limit = "LIMIT $limitfrom,$limitnum";
+            case 'mysql':
+                 $limit = 'LIMIT '. $limitfrom .','. $limitnum;
                  break;
-            case "postgres7":
-                 $limit = "LIMIT $limitnum OFFSET $limitfrom";
+            case 'postgres7':
+                 $limit = 'LIMIT '. $limitnum .' OFFSET '. $limitfrom;
                  break;
             default:
-                 $limit = "LIMIT $limitnum,$limitfrom";
+                 $limit = 'LIMIT '. $limitnum .','. $limitfrom;
         }
     } else {
-        $limit = "";
+        $limit = '';
     }
 
-    $selectsql = "{$CFG->prefix}course c $teachertable WHERE $categoryselect $visiblecourses";
+    $selectsql = $CFG->prefix .'course c '. $teachertable .' WHERE '. $categoryselect .' '. $visiblecourses;
 
-    $totalcount = count_records_sql("SELECT COUNT(DISTINCT c.id) FROM $selectsql");
+    $totalcount = count_records_sql('SELECT COUNT(DISTINCT c.id) FROM '. $selectsql);
 
-    return get_records_sql("SELECT DISTINCT $fields FROM $selectsql ORDER BY $sort $limit");
+    return get_records_sql('SELECT DISTINCT '. $fields .' FROM '. $selectsql .' ORDER BY '. $sort .' '. $limit);
 }
 
 
@@ -1800,18 +1800,18 @@ function get_courses_page($categoryid="all", $sort="c.sortorder ASC", $fields="c
 *
 * @param    type description
 */
-function get_my_courses($userid, $sort="visible DESC,sortorder ASC") {
+function get_my_courses($userid, $sort='visible DESC,sortorder ASC') {
 
     global $CFG;
 
     $course = array();
 
-    if ($students = get_records("user_students", "userid", $userid, "", "id, course")) {
+    if ($students = get_records('user_students', 'userid', $userid, '', 'id, course')) {
         foreach ($students as $student) {
             $course[$student->course] = $student->course;
         }
     }
-    if ($teachers = get_records("user_teachers", "userid", $userid, "", "id, course")) {
+    if ($teachers = get_records('user_teachers', 'userid', $userid, '', 'id, course')) {
         foreach ($teachers as $teacher) {
             $course[$teacher->course] = $teacher->course;
         }
@@ -1822,7 +1822,7 @@ function get_my_courses($userid, $sort="visible DESC,sortorder ASC") {
 
     $courseids = implode(',', $course);
 
-    return get_records_list("course", "id", $courseids, $sort);
+    return get_records_list('course', 'id', $courseids, $sort);
 
 //  The following is correct but VERY slow with large datasets
 //
@@ -1844,46 +1844,46 @@ function get_my_courses($userid, $sort="visible DESC,sortorder ASC") {
 *
 * @param    type description
 */
-function get_courses_search($searchterms, $sort="fullname ASC", $page=0, $recordsperpage=50, &$totalcount) {
+function get_courses_search($searchterms, $sort='fullname ASC', $page=0, $recordsperpage=50, &$totalcount) {
 
     global $CFG;
 
     switch ($CFG->dbtype) {
-        case "mysql":
-             $limit = "LIMIT $page,$recordsperpage";
+        case 'mysql':
+             $limit = 'LIMIT '. $page .','. $recordsperpage;
              break;
-        case "postgres7":
-             $limit = "LIMIT $recordsperpage OFFSET ".($page * $recordsperpage);
+        case 'postgres7':
+             $limit = 'LIMIT '. $recordsperpage .' OFFSET '.($page * $recordsperpage);
              break;
         default:
-             $limit = "LIMIT $recordsperpage,$page";
+             $limit = 'LIMIT '. $recordsperpage .','. $page;
     }
 
     //to allow case-insensitive search for postgesql
-    if ($CFG->dbtype == "postgres7") {
-        $LIKE = "ILIKE";
-        $NOTLIKE = "NOT ILIKE";   // case-insensitive
-        $REGEXP = "~*";
-        $NOTREGEXP = "!~*";
+    if ($CFG->dbtype == 'postgres7') {
+        $LIKE = 'ILIKE';
+        $NOTLIKE = 'NOT ILIKE';   // case-insensitive
+        $REGEXP = '~*';
+        $NOTREGEXP = '!~*';
     } else {
-        $LIKE = "LIKE";
-        $NOTLIKE = "NOT LIKE";
-        $REGEXP = "REGEXP";
-        $NOTREGEXP = "NOT REGEXP";
+        $LIKE = 'LIKE';
+        $NOTLIKE = 'NOT LIKE';
+        $REGEXP = 'REGEXP';
+        $NOTREGEXP = 'NOT REGEXP';
     }
 
-    $fullnamesearch = "";
-    $summarysearch = "";
+    $fullnamesearch = '';
+    $summarysearch = '';
 
     foreach ($searchterms as $searchterm) {
         if ($fullnamesearch) {
-            $fullnamesearch .= " AND ";
+            $fullnamesearch .= ' AND ';
         }
         if ($summarysearch) {
-            $summarysearch .= " AND ";
+            $summarysearch .= ' AND ';
         }
 
-        if (substr($searchterm,0,1) == "+") {
+        if (substr($searchterm,0,1) == '+') {
             $searchterm = substr($searchterm,1);
             $summarysearch .= " summary $REGEXP '(^|[^a-zA-Z0-9])$searchterm([^a-zA-Z0-9]|$)' ";
             $fullnamesearch .= " fullname $REGEXP '(^|[^a-zA-Z0-9])$searchterm([^a-zA-Z0-9]|$)' ";
@@ -1892,17 +1892,17 @@ function get_courses_search($searchterms, $sort="fullname ASC", $page=0, $record
             $summarysearch .= " summary $NOTREGEXP '(^|[^a-zA-Z0-9])$searchterm([^a-zA-Z0-9]|$)' ";
             $fullnamesearch .= " fullname $NOTREGEXP '(^|[^a-zA-Z0-9])$searchterm([^a-zA-Z0-9]|$)' ";
         } else {
-            $summarysearch .= " summary $LIKE '%$searchterm%' ";
-            $fullnamesearch .= " fullname $LIKE '%$searchterm%' ";
+            $summarysearch .= ' summary '. $LIKE .'\'%'. $searchterm .'%\' ';
+            $fullnamesearch .= ' fullname '. $LIKE .'\'%'. $searchterm .'%\' ';
         }
 
     }
 
-    $selectsql = "{$CFG->prefix}course WHERE ($fullnamesearch OR $summarysearch) AND category > '0'";
+    $selectsql = $CFG->prefix .'course WHERE ('. $fullnamesearch .' OR '. $summarysearch .') AND category > \'0\'';
 
-    $totalcount = count_records_sql("SELECT COUNT(*) FROM $selectsql");
+    $totalcount = count_records_sql('SELECT COUNT(*) FROM '. $selectsql);
 
-    $courses = get_records_sql("SELECT * FROM $selectsql ORDER BY $sort $limit");
+    $courses = get_records_sql('SELECT * FROM '. $selectsql .' ORDER BY '. $sort .' '. $limit);
 
     if ($courses) {  /// Remove unavailable courses from the list
         foreach ($courses as $key => $course) {
@@ -1926,12 +1926,12 @@ function get_courses_search($searchterms, $sort="fullname ASC", $page=0, $record
 *
 * @param    type description
 */
-function get_categories($parent="none", $sort="sortorder ASC") {
+function get_categories($parent='none', $sort='sortorder ASC') {
 
-    if ($parent == "none") {
-        $categories = get_records("course_categories", "", "", $sort);
+    if ($parent == 'none') {
+        $categories = get_records('course_categories', '', '', $sort);
     } else {
-        $categories = get_records("course_categories", "parent", $parent, $sort);
+        $categories = get_records('course_categories', 'parent', $parent, $sort);
     }
     if ($categories) {  /// Remove unavailable categories from the list
         $creator = iscreator();
@@ -1962,7 +1962,7 @@ function fix_course_sortorder($categoryid=0, $n=0) {
             $count++;
         }
     }
-    set_field("course_categories", "coursecount", $count, "id", $categoryid);
+    set_field('course_categories', 'coursecount', $count, 'id', $categoryid);
 
     if ($categories = get_categories($categoryid)) {
         foreach ($categories as $category) {
@@ -1991,29 +1991,29 @@ function make_default_scale() {
     $defaultscale = NULL;
     $defaultscale->courseid = 0;
     $defaultscale->userid = 0;
-    $defaultscale->name  = get_string("separateandconnected");
-    $defaultscale->scale = get_string("postrating1", "forum").",".
-                           get_string("postrating2", "forum").",".
-                           get_string("postrating3", "forum");
+    $defaultscale->name  = get_string('separateandconnected');
+    $defaultscale->scale = get_string('postrating1', 'forum').','.
+                           get_string('postrating2', 'forum').','.
+                           get_string('postrating3', 'forum');
     $defaultscale->timemodified = time();
 
     /// Read in the big description from the file.  Note this is not
     /// HTML (despite the file extension) but Moodle format text.
-    $parentlang = get_string("parentlang");
-    if (is_readable("$CFG->dirroot/lang/$CFG->lang/help/forum/ratings.html")) {
-        $file = file("$CFG->dirroot/lang/$CFG->lang/help/forum/ratings.html");
-    } else if ($parentlang and is_readable("$CFG->dirroot/lang/$parentlang/help/forum/ratings.html")) {
-        $file = file("$CFG->dirroot/lang/$parentlang/help/forum/ratings.html");
-    } else if (is_readable("$CFG->dirroot/lang/en/help/forum/ratings.html")) {
-        $file = file("$CFG->dirroot/lang/en/help/forum/ratings.html");
+    $parentlang = get_string('parentlang');
+    if (is_readable($CFG->dirroot .'/lang/'. $CFG->lang .'/help/forum/ratings.html')) {
+        $file = file($CFG->dirroot .'/lang/'. $CFG->lang .'/help/forum/ratings.html');
+    } else if ($parentlang and is_readable($CFG->dirroot .'/lang/'. $parentlang .'/help/forum/ratings.html')) {
+        $file = file($CFG->dirroot .'/lang/'. $parentlang .'/help/forum/ratings.html');
+    } else if (is_readable($CFG->dirroot .'/lang/en/help/forum/ratings.html')) {
+        $file = file($CFG->dirroot .'/lang/en/help/forum/ratings.html');
     } else {
-        $file = "";
+        $file = '';
     }
 
-    $defaultscale->description = addslashes(implode("", $file));
+    $defaultscale->description = addslashes(implode('', $file));
 
-    if ($defaultscale->id = insert_record("scale", $defaultscale)) {
-        execute_sql("UPDATE {$CFG->prefix}forum SET scale = '$defaultscale->id'", false);
+    if ($defaultscale->id = insert_record('scale', $defaultscale)) {
+        execute_sql('UPDATE '. $CFG->prefix .'forum SET scale = \''. $defaultscale->id .'\'', false);
     }
 }
 
@@ -2032,13 +2032,13 @@ function get_scales_menu($courseid=0) {
              WHERE courseid = '0' or courseid = '$courseid'
           ORDER BY courseid ASC, name ASC";
 
-    if ($scales = get_records_sql_menu("$sql")) {
+    if ($scales = get_records_sql_menu($sql)) {
         return $scales;
     }
 
     make_default_scale();
 
-    return get_records_sql_menu("$sql");
+    return get_records_sql_menu($sql);
 }
 
 /// MODULE FUNCTIONS /////////////////////////////////////////////////
@@ -2189,7 +2189,7 @@ function instance_is_visible($moduletype, $module) {
 * @param    string  $cm      the course_module->id if there is one
 * @param    string  $user    if log regards $user other than $USER
 */
-function add_to_log($courseid, $module, $action, $url="", $info="", $cm=0, $user=0) {
+function add_to_log($courseid, $module, $action, $url='', $info='', $cm=0, $user=0) {
 
     global $db, $CFG, $USER, $REMOTE_ADDR;
 
@@ -2199,29 +2199,29 @@ function add_to_log($courseid, $module, $action, $url="", $info="", $cm=0, $user
         if (isset($USER->realuser)) {  // Don't log
             return;
         }
-        $userid = empty($USER->id) ? "0" : $USER->id;
+        $userid = empty($USER->id) ? '0' : $USER->id;
     }
 
     $timenow = time();
     $info = addslashes($info);
     $url = html_entity_decode($url); // for php < 4.3.0 this is defined in moodlelib.php
 
-    $result = $db->Execute("INSERT INTO {$CFG->prefix}log (time, userid, course, ip, module, cmid, action, url, info)
-        VALUES ('$timenow', '$userid', '$courseid', '$REMOTE_ADDR', '$module', '$cm', '$action', '$url', '$info')");
+    $result = $db->Execute('INSERT INTO '. $CFG->prefix .'log (time, userid, course, ip, module, cmid, action, url, info)
+        VALUES (' . "'$timenow', '$userid', '$courseid', '$REMOTE_ADDR', '$module', '$cm', '$action', '$url', '$info')");
 
     if (!$result and ($CFG->debug > 7)) {
-        echo "<p>Error: Could not insert a new entry to the Moodle log</p>";  // Don't throw an error
+        echo '<p>Error: Could not insert a new entry to the Moodle log</p>';  // Don't throw an error
     }
     if (!$user and isset($USER->id)) {
         if ($courseid == SITEID) {
-            $db->Execute("UPDATE {$CFG->prefix}user SET lastIP='$REMOTE_ADDR', lastaccess='$timenow'
-                     WHERE id = '$USER->id' ");
+            $db->Execute('UPDATE '. $CFG->prefix .'user SET lastIP=\''. $REMOTE_ADDR .'\', lastaccess=\''. $timenow .'\'
+                     WHERE id = \''. $USER->id .'\' ');
         } else if (isstudent($courseid)) {
-            $db->Execute("UPDATE {$CFG->prefix}user_students SET timeaccess = '$timenow' ".
-                         "WHERE course = '$courseid' AND userid = '$userid'");
+            $db->Execute('UPDATE '. $CFG->prefix .'user_students SET timeaccess = \''. $timenow .'\' '.
+                         'WHERE course = \''. $courseid .'\' AND userid = \''. $userid .'\'');
         } else if (isteacher($courseid, false, false)) {
-            $db->Execute("UPDATE {$CFG->prefix}user_teachers SET timeaccess = '$timenow' ".
-                         "WHERE course = '$courseid' AND userid = '$userid'");
+            $db->Execute('UPDATE '. $CFG->prefix .'user_teachers SET timeaccess = \''. $timenow .'\' '.
+                         'WHERE course = \''. $courseid .'\' AND userid = \''. $userid .'\'');
         }
     }
 }
@@ -2235,33 +2235,33 @@ function add_to_log($courseid, $module, $action, $url="", $info="", $cm=0, $user
 * @param    string  $select SQL select criteria
 * @param    string  $order  SQL order by clause to sort the records returned
 */
-function get_logs($select, $order="l.time DESC", $limitfrom="", $limitnum="", &$totalcount) {
+function get_logs($select, $order='l.time DESC', $limitfrom='', $limitnum='', &$totalcount) {
     global $CFG;
 
-    if ($limitfrom !== "") {
+    if ($limitfrom !== '') {
         switch ($CFG->dbtype) {
-            case "mysql":
-                 $limit = "LIMIT $limitfrom,$limitnum";
+            case 'mysql':
+                 $limit = 'LIMIT '. $limitfrom .','. $limitnum;
                  break;
-            case "postgres7":
-                 $limit = "LIMIT $limitnum OFFSET $limitfrom";
+            case 'postgres7':
+                 $limit = 'LIMIT '. $limitnum .' OFFSET '. $limitfrom;
                  break;
             default:
-                 $limit = "LIMIT $limitnum,$limitfrom";
+                 $limit = 'LIMIT '. $limitnum .','. $limitfrom;
         }
     } else {
-        $limit = "";
+        $limit = '';
     }
 
     if ($order) {
-        $order = "ORDER BY $order";
+        $order = 'ORDER BY '. $order;
     }
 
     $selectsql = "{$CFG->prefix}log l LEFT JOIN {$CFG->prefix}user u ON l.userid = u.id ".((strlen($select) > 0) ? "WHERE $select" : "");
-    $totalcount = count_records_sql("SELECT COUNT(*) FROM $selectsql");
+    $totalcount = count_records_sql('SELECT COUNT(*) FROM '. $selectsql);
 
-    return get_records_sql("SELECT l.*, u.firstname, u.lastname, u.picture
-                                FROM $selectsql $order $limit");
+    return get_records_sql('SELECT l.*, u.firstname, u.lastname, u.picture
+                                FROM '. $selectsql .' '. $order .' '. $limit);
 }
 
 
@@ -2276,7 +2276,7 @@ function get_logs_usercourse($userid, $courseid, $coursestart) {
     global $CFG;
 
     if ($courseid) {
-        $courseselect = " AND course = '$courseid' ";
+        $courseselect = ' AND course = \''. $courseid .'\' ';
     } else {
         $courseselect = '';
     }
@@ -2299,7 +2299,7 @@ function get_logs_userday($userid, $courseid, $daystart) {
     global $CFG;
 
     if ($courseid) {
-        $courseselect = " AND course = '$courseid' ";
+        $courseselect = ' AND course = \''. $courseid .'\' ';
     } else {
         $courseselect = '';
     }
@@ -2326,7 +2326,7 @@ function get_logs_userday($userid, $courseid, $daystart) {
 
 function count_login_failures($mode, $username, $lastlogin) {
 
-    $select = "module='login' AND action='error' AND time > $lastlogin";
+    $select = 'module=\'login\' AND action=\'error\' AND time > '. $lastlogin;
 
     if (isadmin()) {    // Return information about all accounts
         if ($count->attempts = count_records_select('log', $select)) {
@@ -2334,7 +2334,7 @@ function count_login_failures($mode, $username, $lastlogin) {
             return $count;
         }
     } else if ($mode == 'everybody' or ($mode == 'teacher' and isteacher())) {
-        if ($count->attempts = count_records_select('log', "$select AND info = '$username'")) {
+        if ($count->attempts = count_records_select('log', $select .' AND info = \''. $username .'\'')) {
             return $count;
         }
     }
@@ -2354,9 +2354,9 @@ function count_login_failures($mode, $username, $lastlogin) {
 */
 function print_object($object) {
 
-    echo "<pre>";
+    echo '<pre>';
     print_r($object);
-    echo "</pre>";
+    echo '</pre>';
 }
 
 
