@@ -1,4 +1,4 @@
-<?PHP // $Id$ 
+<?php // $Id$ 
 
 $string['beep'] = 'beep';
 $string['chatintro'] = 'Introduction text';

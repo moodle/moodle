@@ -1,4 +1,4 @@
-<?PHP // $Id$ 
+<?php // $Id$ 
       // forum.php - created with Moodle 1.2 development (2003111400)
 
 
@@ -91,7 +91,7 @@ $string['openmode1'] = 'No discussions, but replies are allowed';
 $string['openmode2'] = 'Discussions and replies are allowed';
 $string['parent'] = 'Show parent';
 $string['parentofthispost'] = 'Parent of this post';
-$string['postadded'] = 'Your post was successfully added.<P>You have $a to edit it if you want to make any changes.';
+$string['postadded'] = 'Your post was successfully added.<p>You have $a to edit it if you want to make any changes.';
 $string['postincontext'] = 'See this post in context';
 $string['postmailinfo'] = 'This is a copy of a message posted on the $a website.
 

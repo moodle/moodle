@@ -1,4 +1,4 @@
-<?PHP // $Id$ 
+<?php // $Id$ 
       // moodle.php - created with Moodle 1.5 development (2004082300)
 
 
@@ -110,12 +110,15 @@ $string['backuplogshelp'] = 'If enabled, then course logs will be included in au
 $string['backupnameformat'] = '%%Y%%m%%d-%%H%%M';
 $string['backupnoneusersinfo'] = 'Notice: You have selected to backup \"none\" users, so all the modules backup have been switched to \"without user data\" mode. Please note that the \"exercise\" and \"workshop\" modules aren\'t compatible with this type of backup, so they have been deactivated completely.';
 $string['backuporiginalname'] = 'Backup Name';
-$string['backupsavetohelp'] = 'Full path to the directory where you want to save the backup files<br>(leave blank to save in its course default dir)';
+$string['backupsavetohelp'] = 'Full path to the directory where you want to save the backup files<br />(leave blank to save in its course default dir)';
 $string['backuptakealook'] = 'Please take a look to your backup logs in:
   $a';
 $string['backupuserfileshelp'] = 'Choose whether user files (eg profile images) should be included in automated backups';
 $string['backupusershelp'] = 'Select whether you want to include all the users in the server or only the needed users for each course';
 $string['backupversion'] = 'Backup Version';
+$string['blockconfiga'] = 'Configuring a $a block';
+$string['blockconfigin'] = 'Course: Configuring a block in $a';
+$string['blockconfigbad'] = 'This block has not been implemented correctly and thus cannot provide a configuration interface.';
 $string['blockdeleteconfirm'] = 'You are about to completely delete the block \'$a\'.  This will completely delete everything in the database associated with this block.  Are you SURE you want to continue?';
 $string['blockdeletefiles'] = 'All data associated with the block \'$a->block\' has been deleted from the database.  To complete the deletion (and prevent the block re-installing itself), you should now delete this directory from your server: $a->directory';
 $string['blocks'] = 'Blocks';
@@ -146,6 +149,17 @@ $string['choosereportfilter'] = 'Choose a filter for the report';
 $string['choosetheme'] = 'Choose theme';
 $string['chooseuser'] = 'Choose a user';
 $string['city'] = 'City/town';
+$string['clambroken'] = 'Your administrator has enabled virus checking for file uploads but has misconfigured something.<br />Your file upload was NOT successful. Your administrator has been emailed to notify them so they can fix it.<br />Maybe try uploading this file later.';
+$string['clamdeletedfile'] = 'The file has been deleted';
+$string['clamdeletedfilefailed'] ='The file could not be deleted';
+$string['clamemailsubject'] = '$a :: Clam AV notification';
+$string['clamfailed'] = 'Clam AV has failed to run.  The return error message was $a. Here is the output from Clam:';
+$string['clamlost'] = 'Moodle is configured to run clam on file upload, but the path supplied to Clam AV, $a,  is invalid.';
+$string['clamlostandactinglikevirus'] = 'In addition, moodle is configured so that if clam fails to run, files are treated like viruses.  This essentially means that no student can upload a file successfully until you fix this.';
+$string['clammovedfile'] = 'The file has been moved to your specified quarantine directory, the new location is $a';
+$string['clammovedfilebasic'] = 'The file has been moved to a quarantine directory.';
+$string['clamquarantinedirfailed'] = 'Could not move the file into your specified quarantine directory, $a. You need to fix this as files are being deleted if they\'re found to be infected.';
+$string['clamunknownerror'] = 'There was an unknown error with clam.';
 $string['cleaningtempdata'] = 'Cleaning temp data';
 $string['clicktochange'] = 'Click to change';
 $string['closewindow'] = 'Close this window';
@@ -155,7 +169,11 @@ $string['configallowunenroll'] = 'If this is set \'Yes\', then students are allo
 $string['configallusersaresitestudents'] = 'For activities on the front page of the site, should ALL users be considered as students?  If you answer \"Yes\", then any confirmed user account will be allowed to participate as a student in those activities.  If you answer \"No\", then only users who are already a participant in at least one course will be able to take part in those front page activities. Only admins and specially assigned teachers can act as teachers for these front page activities.';
 $string['configautologinguests'] = 'Should visitors be logged in as guests automatically when entering courses with guest access?';
 $string['configcachetext'] = 'For larger sites or sites that use text filters, this setting can really speed things up.  Copies of texts will be retained in their processed form for the time specified here.  Setting this too small may actually slow things down slightly,  but setting it too large may mean texts take too long to refresh (with new links, for example).';
+$string['configclamactlikevirus'] = 'Treat files like viruses';
+$string['configclamdonothing'] = 'Treat files as OK';
+$string['configclamfailureonupload'] = 'If you have configured clam to scan uploaded files, but it is configured incorrectly or fails to run for some unknown reason, how should it behave?  If you choose \'Treat files like viruses\', they\'ll be moved into the quarantine area, or deleted. If you choose \'Treat files as OK\', the files will be moved to the desination directory like normal. Either way, admins will be alerted that clam has failed.  If you choose \'Treat files like viruses\' and for some reason clam fails to run (usually because you have entered an invalid pathtoclam), ALL files that are uploaded will be moved to the given quarantine area, or deleted. Be careful with this setting.';
 $string['configcountry'] = 'If you set a country here, then this country will be selected by default on new user accounts.  To force users to choose a country, just leave this unset.';
+$string['configdbsessions'] = 'If enabled, this setting will use the database to store information about current sessions.  This is especially useful for large/busy sites or sites built on cluster of servers.  For most sites this should probably be left disabled so that the server disk is used instead.  Note that changing this setting now will log out all current users (including you).';
 $string['configdebug'] = 'If you turn this on, then PHP\'s error_reporting will be increased so that more warnings are printed.  This is only useful for developers.';
 $string['configdeleteunconfirmed'] = 'If you are using email authentication, this is the period within which a response will be accepted from users.  After this period, old unconfirmed accounts are deleted.';
 $string['configdigestmailtime'] = 'People who choose to have emails sent to them in digest form will be emailed the digest daily. This setting controls which time of day the daily mail will be sent (the next cron that runs after this hour will send it).';
@@ -189,7 +207,10 @@ $string['confignoreplyaddress'] = 'Emails are sometimes sent out on behalf of a 
 $string['confignotifyloginfailures'] = 'If login failures have been recorded, email notifications can be sent out.  Who should see these notifications?';
 $string['confignotifyloginthreshold'] = 'If notifications about failed logins are active, how many failed login attempts by one user or one IP address is it worth notifying about?';
 $string['configopentogoogle'] = 'If you enable this setting, then Google will be allowed to enter your site as a Guest.  In addition, people coming in to your site via a Google search will automatically be logged in as a Guest.  Note that this only provides transparent access to courses that already allow guest access.';
-$string['configproxyhost'] = 'If this <B>server</B> needs to use a proxy computer (eg a firewall) to access the Internet, then provide the proxy hostname and port here.  Otherwise leave it blank.';
+$string['configpathtoclam'] = 'Path to clam AV.  Probably something like /usr/bin/clamscan or /usr/bin/clamdscan. You need this in order for clam AV to run.';
+$string['configproxyhost'] = 'If this <b>server</b> needs to use a proxy computer (eg a firewall) to access the Internet, then provide the proxy hostname and port here.  Otherwise leave it blank.';
+$string['configquarantinedir'] = 'If you want clam AV to move infected files to a quarantine directory, enter it here. It must be writable by the webserver.  If you leave this blank, or if you enter a directory that doesn\'t exit or isn\'t writable, infected files will be deleted.  Do not include a trailing slash.';
+$string['configrunclamonupload'] = 'Run clam AV on file upload? You will need a correct path in pathtoclam for this to work.  (Clam AV is a free virus scanner that you can get from http://www.clamav.net/)';
 $string['configsecureforms'] = 'Moodle can use an additional level of security when accepting data from web forms. If this is enabled, then the browser\'s HTTP_REFERER variable is checked against the current form address.  In a very few cases this can cause problems if the user is using a firewall (eg Zonealarm) configured to strip HTTP_REFERER from their web traffic.  Symptoms are getting \'stuck\' on a form. If your users are having problems with the login page (for example) you might want to disable this setting, although it might leave your site more open to brute-force password attacks.  If in doubt, leave this set to \'Yes\'.';
 $string['configsessioncookie'] = 'This setting customises the name of the cookie used for Moodle sessions.  This is optional, and only useful to avoid cookies being confused when there is more than one copy of Moodle running within the same web site.';
 $string['configsessiontimeout'] = 'If people logged in to this site are idle for a long time (without loading pages) then they are automatically logged out (their session is ended).  This variable specifies how long this time should be.';
@@ -238,6 +259,7 @@ $string['createaccount'] = 'Create my new account';
 $string['createfolder'] = 'Create a folder in $a';
 $string['createuserandpass'] = 'Create a new username and password to log in with';
 $string['createziparchive'] = 'Create zip archive';
+$string['creatingblocks'] = 'Creating blocks';
 $string['creatingcategoriesandquestions'] = 'Creating categories and questions';
 $string['creatingcoursemodules'] = 'Creating course modules';
 $string['creatingevents'] = 'Creating events';
@@ -323,6 +345,7 @@ $string['editcoursesettings'] = 'Edit course settings';
 $string['editfiles'] = 'Edit files';
 $string['editgroupprofile'] = 'Edit group profile';
 $string['editinga'] = 'Editing $a';
+$string['editlock'] = 'This value cannot be edited!';
 $string['editmyprofile'] = 'Edit profile';
 $string['editorbgcolor'] = 'Background-color';
 $string['editorcleanonpaste'] = 'Clean Word HTML on paste';
@@ -358,9 +381,9 @@ line at the top of your web browser window.
 If you need help, please contact the site administrator,
 $a->admin';
 $string['emailconfirmationsubject'] = '$a: account confirmation';
-$string['emailconfirmsent'] = '   <P>An email should have been sent to your address at <B>$a</B>
-   <P>It contains easy instructions to complete your registration.
-   <P>If you continue to have difficulty, contact the site administrator.';
+$string['emailconfirmsent'] = '   <p>An email should have been sent to your address at <b>$a</b>
+   <p>It contains easy instructions to complete your registration.
+   <p>If you continue to have difficulty, contact the site administrator.';
 $string['emaildigest'] = 'Email digest type';
 $string['emaildigestcomplete'] = 'Complete (daily email with full posts)';
 $string['emaildigestoff'] = 'No digest (single email per forum post)';
@@ -397,12 +420,12 @@ If you need help, please contact the site administrator,
 $a->admin';
 $string['emailpasswordconfirmationsubject'] = '$a: change password confirmation';
 $string['emailpasswordconfirmsent'] = 'An email should have been sent to your address at <b>$a</b>.
-<p>It contains easy instructions to confirm and complete this password change.
+<br />It contains easy instructions to confirm and complete this password change.
 If you continue to have difficulty, contact the site administrator.';
 $string['emailpasswordsent'] = 'Thank you for confirming the change of password.
-<p>An email containing your new password has been sent to your address at <b>$a->email</b>.
-<p>The new password was automatically generated - you might like to
-<a href=$a->link>change your password</a> to something easier to remember.';
+An email containing your new password has been sent to your address at<br /><b>$a->email</b>.<br />
+The new password was automatically generated - you might like to
+<a href=\"$a->link\">change your password</a> to something easier to remember.';
 $string['enable'] = 'Enable';
 $string['encryptedcode'] = 'Encrypted code';
 $string['enrolledincourse'] = 'Enrolled in course \"$a\"';
@@ -410,9 +433,9 @@ $string['enrolledincoursenot'] = 'Not enrolled in course \"$a\"';
 $string['enrollfirst'] = 'You have to enroll in one of the courses before you can use the site activities';
 $string['enrolmentconfirmation'] = 'You are about to enroll yourself as a member of this course.<br />Are you sure you wish to do this?';
 $string['enrolmentkey'] = 'Enrolment key';
-$string['enrolmentkeyfrom'] = 'This course requires an \'enrolment key\' - a one-time<BR>
+$string['enrolmentkeyfrom'] = 'This course requires an \'enrolment key\' - a one-time<br />
 password that you should have received from $a';
-$string['enrolmentkeyhint'] = 'That enrolment key was incorrect, please try again<BR>
+$string['enrolmentkeyhint'] = 'That enrolment key was incorrect, please try again<br />
 (Here\'s a hint - it starts with \'$a\')';
 $string['enrolmentnew'] = 'New enrolment in $a';
 $string['enrolmentnewuser'] = '$a->user has enrolled in course \"$a->course\"';
@@ -455,6 +478,8 @@ $string['force'] = 'Force';
 $string['forcedmode'] = 'forced mode';
 $string['forcelanguage'] = 'Force language';
 $string['forceno'] = 'Do not force';
+$string['forcepasswordchange'] = 'Force password change';
+$string['forcepasswordchangehelp'] = 'Prompt user to change it on their next login';
 $string['forgotten'] = 'Forgotten your username or password?';
 $string['format'] = 'Format';
 $string['formathtml'] = 'HTML format';
@@ -481,6 +506,7 @@ $string['gd1'] = 'GD 1.x is installed';
 $string['gd2'] = 'GD 2.x is installed';
 $string['gdneed'] = 'GD must be installed to see this graph';
 $string['gdnot'] = 'GD is not installed';
+$string['go'] = 'Go';
 $string['gpl'] = 'Copyright (C) 1999-2004  Martin Dougiamas  (http://dougiamas.com)
 
 This program is free software; you can redistribute it and/or modify
@@ -572,6 +598,7 @@ $string['institution'] = 'Institution';
 $string['invalidemail'] = 'Invalid email address';
 $string['invalidlogin'] = 'Invalid login, please try again';
 $string['ip_address'] = 'IP Address';
+$string['jump'] = 'Jump';
 $string['jumpto'] = 'Jump to...';
 $string['keep'] = 'Keep';
 $string['langltr'] = 'Language direction left-to-right';
@@ -605,7 +632,7 @@ $string['loginsteps'] = 'Hi! For full access to courses you\'ll need to take
    Each of the individual courses may also have a one-time
    \"enrolment key\", which you won\'t need until later. Here are
    the steps:
-   <ol size=\"2\">
+   <ol>
    <li>Fill out the <a href=\"$a\">New Account</a> form with your details.</li>
    <li>An email will be immediately sent to your email address.</li>
    <li>Read your email, and click on the web link it contains.</li>
@@ -756,7 +783,7 @@ $string['noteuserschangednonetocourse'] = 'Note: course users need to be restore
 $string['nothingnew'] = 'Nothing new since your last login';
 $string['noticenewerbackup'] = 'This backup file has been created with Moodle $a->backuprelease ($a->backupversion) and it\'s newer than your currently installed Moodle $a->serverrelease ($a->serverversion). This could cause some inconsistencies because backwards compatibility of backup files cannot be guaranteed.';
 $string['notifyloginfailuresmessage'] = '$a->time, IP: $a->ip, User: $a->info';
-$string['notifyloginfailuresmessageend'] = 'You can view these logs at $a/course/log.php?id=1&chooselog=1&modid=site_errors.';
+$string['notifyloginfailuresmessageend'] = 'You can view these logs at $a/course/log.php?id=1&amp;chooselog=1&amp;modid=site_errors.';
 $string['notifyloginfailuresmessagestart'] = 'Here is a list of failed login attempts at $a since you were last notified ';
 $string['notifyloginfailuressubject'] = '$a :: Failed logins notification';
 $string['notincluded'] = 'Not included';
@@ -788,10 +815,10 @@ $string['passwordconfirmchange'] = 'Confirm password change';
 $string['passwordrecovery'] = 'Yes, help me log in';
 $string['passwordsdiffer'] = 'These passwords do not match';
 $string['passwordsent'] = 'Password has been sent';
-$string['passwordsenttext'] = '   <P>An email has been sent to your address at $a->email.
-   <P><B>Please check your email for your new password</B>
-   <P>The new password was automatically generated, so you might like to
-   <A HREF=$a->link>change it to something easier to remember</A>.';
+$string['passwordsenttext'] = '   <p>An email has been sent to your address at $a->email.
+   <p><b>Please check your email for your new password</b>
+   <p>The new password was automatically generated, so you might like to
+   <a href=$a->link>change it to something easier to remember</a>.';
 $string['pathnotexists'] = 'Path doesn\'t exist in your server!';
 $string['pathslasherror'] = 'Path can\'t end with a slash!!';
 $string['paymentinstant'] = 'Use the button below to pay and be enrolled within minutes!';
@@ -871,7 +898,7 @@ $string['scheduledbackupstatus'] = 'Scheduled backup status';
 $string['search'] = 'Search';
 $string['searchagain'] = 'Search again';
 $string['searchcourses'] = 'Search courses';
-$string['searchhelp'] = 'You can search for multiple words at once.<p>word : find any match of this word within the text.<br>+word : only exact matching words will be found.<br>-word : don\'t include results containing this word.';
+$string['searchhelp'] = 'You can search for multiple words at once.<br /><br />word : find any match of this word within the text.<br />+word : only exact matching words will be found.<br />-word : don\'t include results containing this word.';
 $string['searchresults'] = 'Search results';
 $string['sec'] = 'sec';
 $string['secs'] = 'secs';
@@ -1000,12 +1027,20 @@ $string['updatinga'] = 'Updating: $a';
 $string['updatingain'] = 'Updating $a->what in $a->in';
 $string['upload'] = 'Upload';
 $string['uploadafile'] = 'Upload a file';
+$string['uploadedfile'] = 'File uploaded successfully';
+$string['uploadfailednotrecovering'] = 'Your file upload has failed because there was a problem with one of the files, $a->name.<br/> Here is a log of the problems:<br />$a->problem<br />Not recovering.';
+$string['uploadfilelog'] = 'Upload log for file $a';
 $string['uploadedfileto'] = 'Uploaded $a->file to $a->directory';
+$string['uploadedfiletoobig'] = 'Sorry, but that file is too big (limit is $a bytes)';
 $string['uploadformlimit'] = 'Uploaded file exceeded the maximum size limit set by the form';
+$string['uploadlabel'] = 'Title:';
 $string['uploadnofilefound'] = 'No file was found - are you sure you selected one to upload?';
 $string['uploadnotallowed'] = 'Uploads are not allowed';
+$string['uploadoldfilesdeleted'] = 'The old file(s) in your upload area have been deleted';
 $string['uploadpartialfile'] = 'File was only partially uploaded';
 $string['uploadproblem'] = 'An unknown problem occurred while uploading the file \'$a\' (perhaps it was too large?)';
+$string['uploadrenamedchars'] = 'File was renamed from $a->oldname to $a->newname because of invalid characters.';
+$string['uploadrenamedcollision'] = 'File was renamed from $a->oldname to $a->newname because there was a filename conflict.';
 $string['uploadserverlimit'] = 'Uploaded file exceeded the maximum size limit set by the server';
 $string['uploadthisfile'] = 'Upload this file';
 $string['uploadusers'] = 'Upload users';
@@ -1027,6 +1062,13 @@ $string['userzones'] = 'User zones';
 $string['usingexistingcourse'] = 'Using existing course';
 $string['version'] = 'Version';
 $string['view'] = 'View';
+$string['virusfoundsubject'] = '$a: Virus found!';
+$string['virusfound'] = 'Attention administrator! Clam AV has found a virus in a file uploaded by $a->user for the course $a->course. Here is the output of clamscan:';
+$string['virusfounduser'] = 'The file you have uploaded, $a->filename, has been scanned by a virus checker and found to be infected! Your file upload was NOT successful.';
+$string['virusfoundlater'] = 'A file you uploaded on $a->date with the filename $a->filename for the course $a->course has since been found to contain a virus.  Here is a summary of what has happened to your file:'."\n\n".'$a->action'."\n\n".'If this was submitted work, you may want to resubmit it so that your tutor can see it.';
+$string['virusfoundlateradmin'] = 'Attention administrator! A file that was uploaded on $a->date with the filename $a->filename for the course $a->course by the user $a->user has since been found to contain a virus.  Here is a summary of what has happened to the file:'."\n\n".'$a->action'."\n\n".'The user has also been notified.';
+$string['virusfoundlateradminnolog'] = 'Attention administrator! A file that was uploaded with the filename $a->filename has since been found to contain a virus. Moodle was unable to resolve this file back to the user that originally uploaded it.'."\n\n".'Here is a summary of what has happened to the file:'."\n\n".'$a->action';
+$string['virusplaceholder'] = 'This file that has been uploaded was found to contain a virus and has been moved or delted and the user notified.';
 $string['webpage'] = 'Web page';
 $string['week'] = 'Week';
 $string['weekhide'] = 'Hide this week from $a';

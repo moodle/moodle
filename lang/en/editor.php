@@ -1,10 +1,10 @@
-<?PHP // $Id$
+<?php // $Id$
       // editor.php - created with Moodle 1.2 (2004032000)
 
 
 $string['about'] = 'About this editor';
 $string['absbottom'] = 'Absbottom';
-$string['absmiddle'] = 'Absmiddle';
+$string['middle'] = 'middle';
 $string['address'] = 'Address';
 $string['alignment'] = 'Alignment';
 $string['alternatetext'] = 'Alternate text';

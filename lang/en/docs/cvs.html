@@ -23,12 +23,12 @@
   <ol>
     <li><a href="#1">Joining the project as a developer</a></li>
     <li><a href="#2">CVS Modules</a> </li>
-    <li><a href="#3">Basic CVS Commands</a> <br>
-      3.1. <a href="#3.1">CVS on Unix</a> <br>
+    <li><a href="#3">Basic CVS Commands</a> <br />
+      3.1. <a href="#3.1">CVS on Unix</a> <br />
       3.2. <a href="#3.2">CVS on Windows</a></li>
-    <li> <a href="#4">Working with Branches</a><br>
-      4.1. <a href="#4.1">Trunk development</a><br>
-      4.2. <a href="#4.2">Stable branches for each release</a><br>
+    <li> <a href="#4">Working with Branches</a><br />
+      4.1. <a href="#4.1">Trunk development</a><br />
+      4.2. <a href="#4.2">Stable branches for each release</a><br />
       4.3. <a href="#4.3">Feature branches for large changes</a> </li>
   </ol>
   <p>&nbsp;</p>
@@ -99,7 +99,7 @@ update -dP</div>
             <pre> :ext:<font color="#990000">myusername</font>@cvs.sourceforge.net:/cvsroot/moodle</pre>
           </li>
           <li>Under the &quot;Module&quot; field, type &quot;<strong>moodle</strong>&quot; to get the latest development version of Moodle, &quot;<strong>contrib</strong>&quot; to get the contributions directory, or &quot;<strong>mysql</strong>&quot; to get the MySQL Admin module.</li>
-          <li>Press the button: &quot;<strong>OK</strong>&quot; and everything should be downloaded.<br>
+          <li>Press the button: &quot;<strong>OK</strong>&quot; and everything should be downloaded.<br />
           </li>
         </ol>
       </ol>
@@ -111,7 +111,7 @@ update -dP</div>
       <ol>
         <ol>
           <li> Right-mouse-click on your Moodle folder (or any file) and select &quot;<strong>CVS Update</strong>&quot;. </li>
-          <li>Sit back and watch the logs scroll by. Take note of conflicts that may occur if your local code has changes that conflict with the incoming versions - you will need to edit these files and resolve the conflicts manually. <br>
+          <li>Sit back and watch the logs scroll by. Take note of conflicts that may occur if your local code has changes that conflict with the incoming versions - you will need to edit these files and resolve the conflicts manually. <br />
           </li>
         </ol>
       </ol>
@@ -124,7 +124,7 @@ update -dP</div>
         <ol>
           <li> Right-mouse-click on your Moodle folder (or any file) and select &quot;<strong>CVS Commit...</strong>&quot;.</li>
           <li>In the dialog box, type a clear description of the changes you are committing.</li>
-          <li>Click &quot;OK&quot;. Your changes will be sent to the server.<br>
+          <li>Click &quot;OK&quot;. Your changes will be sent to the server.<br />
           </li>
         </ol>
       </ol>
@@ -166,27 +166,27 @@ update -dP</div>
       <p>Periodically, bug fixes in the STABLE branch should be merged into the trunk so that they become available in future versions of Moodle. A floating tag called MOODLE_XX_MERGED will be maintained to keep track of the last merge. The procedure for such a merge is as follows:</p>
       <ol>
         <ol>
-          <li>Get out the very latest trunk version.<br>
-            <br>
+          <li>Get out the very latest trunk version.<br />
+            <br />
             <div class="commandline">cvs update -dPA</div>
           </li>
-          <li>Merge everything on the branch since the last merge, into your trunk version<br><br>
+          <li>Merge everything on the branch since the last merge, into your trunk version<br /><br />
             <div class="commandline">cvs update -kk -j MOODLE_13_MERGED -j MOODLE_13_STABLE</div>
 	      </li>
           <li>Carefully watch the update logs for conflicts, and fix every file that you see with a conflict</li>
-          <li>Check the merged copy back into CVS trunk version<br>
-            <br>
+          <li>Check the merged copy back into CVS trunk version<br />
+            <br />
             <div class="commandline">cvs commit</div>
           </li>
-          <li>Go back to the branch version<br><br>
+          <li>Go back to the branch version<br /><br />
             <div class="commandline">cvs update -dPr MOODLE_13_STABLE</div>
 			</li>
-          <li>Update the floating merge tag so that this process can be repeated next time<br><br>
+          <li>Update the floating merge tag so that this process can be repeated next time<br /><br />
             <div class="commandline">cvs tag -RF MOODLE_13_MERGED</div>
           </li>
         </ol>
       </ol>
-      <p><br>
+      <p><br />
         Finally, the values for <em>$version</em> in all the Moodle version.php files within the stable branch should not be updated at all if possible (except the last digit if necessary). The reason is that someone updating from a very stable version to the next very stable version could miss database upgrades that happened on the trunk. </p>
     </blockquote>
     <p>&nbsp;</p>
@@ -200,17 +200,17 @@ update -dP</div>
         <ol>
           <li>Discuss with other developers to make sure it's necessary!</li>
           <li>Make a new tag on the <strong>trunk</strong> (for all of moodle) called <strong>MOODLE_XX_WIDGET_PRE</strong>
-		  <br><br>
+		  <br /><br />
             <div class="commandline">cvs tag -R MOODLE_XX_WIDGET_PRE</div></li>
           <li>Create your branch called <span class="style1"><strong>MOODLE_XX_WIDGET</strong></span>
-		  <br><br>
+		  <br /><br />
             <div class="commandline">cvs tag -Rb <span class="style1">MOODLE_XX_WIDGET</span></strong></div></li>
           <li>Work in that branch until the feature is reasonably stable. Commit as necessary.
-		  <br><br>
+		  <br /><br />
             <div class="commandline">cvs commit</div></li>
           <li>When ready, merge the whole branch into the trunk, fix conflicts, commit it to the trunk and then abandon the branch.
-		  <br>
-		  <br>
+		  <br />
+		  <br />
             <div class="commandline">
             <strong>cvs update -dPA</strong><br />
             <strong>cvs update -kk -j <span class="style1">MOODLE_XX_WIDGET</span></strong><br />

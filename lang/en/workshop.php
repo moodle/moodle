@@ -1,4 +1,4 @@
-<?PHP // $Id$ 
+<?php // $Id$ 
       // workshop.php - created with Moodle 1.2 development (2004013101)
 
 
@@ -7,6 +7,7 @@ $string['accumulative'] = 'Accumulative';
 $string['action'] = 'Action';
 $string['addacomment'] = 'Add a Comment';
 $string['afterdeadline'] = 'After Deadline: $a';
+$string['ago'] = "\$a ago";
 $string['agreetothisassessment'] = 'Agree to this Assessment';
 $string['allgradeshaveamaximumof'] = 'All Grades have a Maximum of: $a';
 $string['allowresubmit'] = 'Allow Resubmissions';
@@ -22,6 +23,7 @@ $string['assessmentby'] = 'Assessment by $a';
 $string['assessmentdropped'] = 'Assessment Dropped';
 $string['assessmentgrade'] = 'Assessment Grade: $a';
 $string['assessmentnotyetagreed'] = 'Assessment not yet agreed';
+$string['assessmentnotyetgraded'] = 'Assessment not yet graded';
 $string['assessmentofresubmission'] = 'This is an Assessment of a revised piece of the work. <br />The form here has been filled with your previous grades and comments. <br />Please amend these after looking at the revised work.';
 $string['assessmentofthissubmission'] = 'Assessment of this submission';
 $string['assessments'] = 'Assessments';
@@ -34,11 +36,14 @@ $string['assessmentwasagreedon'] = 'Assessment was agreed on $a';
 $string['assessor'] = 'Assessor';
 $string['assessthissubmission'] = 'Assess this submission';
 $string['assignmentnotinthecorrectphase'] = 'Assignment not in the Correct Phase';
+$string['attachment'] = 'Attachment';
+$string['attachments'] = 'Attachments';
 $string['authorofsubmission'] = 'Author of Submission';
 $string['averageerror'] = 'Average Error';
 $string['awaitinggradingbyteacher'] = 'Awaiting Grading by $a';
 $string['beforedeadline'] = 'Before Deadline: $a';
 $string['calculationoffinalgrades'] = 'Calculation of Final Grades';
+$string['clearlateflag'] = "Clear Late Flag";
 $string['closeassignment'] = 'Close Assignment';
 $string['comment'] = 'Comment';
 $string['commentby'] = 'Comment by';
@@ -59,8 +64,10 @@ $string['dontshowgrades'] = 'Don\'t Show Grades';
 $string['edit'] = 'Edit';
 $string['editacomment'] = 'Edit a Comment';
 $string['editingassessmentelements'] = 'Editing Assessment Elements';
+$string['editsubmission'] = 'Edit Submission';
 $string['element'] = 'Element';
 $string['elementweight'] = 'Element Weight';
+$string['enterpassword'] = "Enter Password";
 $string['errorbanded'] = 'Error Banded';
 $string['errortable'] = 'Error Table';
 $string['excellent'] = 'Excellent';
@@ -119,22 +126,25 @@ $string['modulenameplural'] = 'Workshops';
 $string['movingtophase'] = 'Moving to Phase $a';
 $string['namesnotshowntostudents'] = 'Names not shown to $a';
 $string['newassessments'] = 'New Assessments';
+$string['newattachment'] = 'New Attachment';
 $string['newgradings'] = 'New Gradings';
 $string['newsubmissions'] = 'New Submissions';
 $string['noassessments'] = 'No Assessments';
 $string['noassessmentsdone'] = 'No Assessments Done';
+$string['noattachments'] = 'No Attachments';
 $string['nosubmission'] = 'No Submission';
 $string['nosubmissionsavailableforassessment'] = 'No Submissions available for assessment';
 $string['notavailable'] = 'Not Available';
 $string['notenoughexamplessubmitted'] = 'Not enough Examples submitted.';
-$string['noteonassessmentelements'] = 'Note that grading is broken down into a number of \'Assessment Elements\'.<BR>
-	This makes the grading easier and more consistent. As teacher you must add these <BR>
-	Elements before making the assignment available to students. This is done by<BR>
-	clicking on the assignment in the course, if no elements are present you will be asked<BR>
-	to add them. You can change the number of elements using the Edit Assignment screen,<BR>
+$string['noteonassessmentelements'] = 'Note that grading is broken down into a number of \'Assessment Elements\'.<br />
+	This makes the grading easier and more consistent. As teacher you must add these <br />
+	Elements before making the assignment available to students. This is done by<br />
+	clicking on the assignment in the course, if no elements are present you will be asked<br />
+	to add them. You can change the number of elements using the Edit Assignment screen,<br />
 	the elements themselves can be amended from the &quot;Managing Assessment&quot; screen. ';
 $string['noteonstudentassessments'] = '{Grade from Student / Grading Grade for Assessment}';
 $string['notgraded'] = 'Not Graded';
+$string['notitle'] = 'No Title';
 $string['notitlegiven'] = 'No Title Given';
 $string['numberofassessmentelements'] = 'Number of Comments, Assessment Elements, Grade Bands, Criterion Statments or Categories in a Rubric';
 $string['numberofassessments'] = 'Number of Assessments';
@@ -143,6 +153,7 @@ $string['numberofassessmentsdropped'] = 'Number of Assessments dropped: $a';
 $string['numberofassessmentsofstudentsubmissions'] = 'Number of Assessments of Student Submissions';
 $string['numberofassessmentsweighted'] = 'Number of Assessments (weighted): $a';
 $string['numberofassessmentsofteachersexamples'] = 'Number of Assessments of Examples from Teacher';
+$string['numberofattachments'] = 'Number of Attachments expected on Submissions';
 $string['numberofentries'] = 'Number of Entries';
 $string['numberofnegativeresponses'] = 'Number of Negative Responses';
 $string['numberofsubmissions'] = 'Number of Submissions: $a';
@@ -156,6 +167,7 @@ $string['overallocation'] = 'Over Allocation';
 $string['overallpeergrade'] = 'Overall Peer Grade: $a';
 $string['overallteachergrade'] = 'Overall Teacher Grade: $a';
 $string['ownwork'] = 'Own Work';
+$string['passwordprotectedworkshop'] = "Password Protected Workshop";
 $string['percentageofassessments'] = 'Percentage of Assessments to Drop';
 $string['phase'] = 'Phase';
 $string['phase1'] = 'Set Up Assignment';
@@ -176,6 +188,7 @@ $string['present'] = 'Present';
 $string['reasonforadjustment'] = 'Reason for Adjustment';
 $string['reassess'] = 'Re-assess';
 $string['regradestudentassessments'] = 'Re-grade Student Assessments';
+$string['removeallattachments'] = 'Remove All Attachments';
 $string['repeatanalysis'] = 'Repeat Analysis';
 $string['reply'] = 'Reply';
 $string['returnto'] = 'Return to';
@@ -186,6 +199,7 @@ $string['saveleaguetableoptions'] = 'Save League Table Options';
 $string['savemyassessment'] = 'Save my Assessment';
 $string['savemycomment'] = 'Save my Comment';
 $string['savemygrading'] = 'Save my Grading';
+$string['savemysubmission'] = 'Save my Submission';
 $string['saveoverallocation'] = 'Save Over Allocation Level';
 $string['scale10'] = 'Score out of 10';
 $string['scale100'] = 'Score out of 100';
@@ -234,13 +248,15 @@ $string['typeofscale'] = 'Type of Scale';
 $string['ungradedassessments'] = '$a Ungraded Assessments';
 $string['ungradedassessmentsofstudentsubmissions'] = '$a Ungraded Assessments of Student Submissions';
 $string['ungradedassessmentsofteachersubmissions'] = '$a Ungraded Assessments of Teacher Submissions';
+$string['uploadsuccess'] = 'Upload Successful';
+$string['usepassword'] = "Use Password";
 $string['verylax'] = "Very Lax";
 $string['verypoor'] = "Very Poor";
 $string['verystrict'] = "Very Strict";
 $string['view'] = 'View';
 $string['viewassessmentofteacher'] = 'View Assessment of $a';
 $string['viewotherassessments'] = 'View other Assessments';
-$string['warningonamendingelements'] = 'WARNING: There are submitted assessments. <BR>Do NOT change the number
+$string['warningonamendingelements'] = 'WARNING: There are submitted assessments. <br />Do NOT change the number
  of elements, the scale types or the element weights.';
 $string['weight'] = 'Weight';
 $string['weightederrorcount'] = 'Weighted Error Count: $a';
@@ -257,6 +273,7 @@ $string['workshopassessments'] = 'Workshop Assessments';
 $string['workshopcomments'] = 'Workshop Comments';
 $string['workshopfeedback'] = 'Workshop Feedback';
 $string['workshopsubmissions'] = 'Workshop Submissions';
+$string['wrongpassword'] = 'Incorrect password for this Workshop';
 $string['yourassessments'] = 'Your Assessments';
 $string['yourassessmentsofexamplesfromtheteacher'] = 'Your Assessments of Examples from the $a';
 $string['yourfeedbackgoeshere'] = 'Your Feedback goes Here';
