@@ -101,7 +101,7 @@ function lesson_upgrade($oldversion) {
 	}	
 	
 	if ($oldversion < 2004081700) {
-		execute_sql("CREATE TABLE `mdl_lesson_default` 
+		execute_sql("CREATE TABLE `{$CFG->prefix}lesson_default` 
 		( `id` int(10) unsigned NOT NULL auto_increment,
 		  `course` int(10) unsigned NOT NULL default '0',
 		  `practice` tinyint(3) unsigned NOT NULL default '0',
