@@ -181,8 +181,8 @@
             break;
 
         case 'eachuser':
-            if (!empty($forum->intro)) {
-                print_simple_box(text_to_html($forum->intro), "center");
+            if (!empty(trim($forum->intro))) {
+                print_simple_box(format_text($forum->intro), 'center');
             }
             echo '<p align="center">';
             if (forum_user_can_post_discussion($forum)) {
@@ -207,8 +207,8 @@
             break;
 
         default:
-            if (!empty($forum->intro)) {
-                print_simple_box(text_to_html($forum->intro), 'center');
+            if (!empty(trim($forum->intro))) {
+                print_simple_box(format_text($forum->intro), 'center');
             }
             echo '<p>&nbsp;</p>';
             if (!empty($showall)) {
