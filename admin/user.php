@@ -14,9 +14,12 @@
     optional_variable($page, 0);
     optional_variable($search, "");
 
+    unset($user);
+    unset($admin);
+    unset($teacher);
+
     if (! record_exists("user_admins")) {   // No admin user yet
 
-        unset($user);
         $user->firstname = get_string("admin");
         $user->lastname  = get_string("user");
         $user->username  = "admin";
@@ -31,7 +34,6 @@
             error("SERIOUS ERROR: Could not create admin user record !!!");
         }
 
-        unset($admin);
         $admin->userid = $user->id;
 
         if (! insert_record("user_admins", $admin)) {
@@ -46,7 +48,6 @@
             error("Could not find site-level course");
         }
 
-        unset($teacher);
         $teacher->userid = $user->id;
         $teacher->course = $site->id;
         $teacher->authority = 1;
