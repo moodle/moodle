@@ -58,7 +58,7 @@
         // This should point to the script that displays us; it's straightforward in this case.
         function url_get_path() {
             global $CFG;
-            return $CFG->wwwroot .'/pagetest.php';
+            return $CFG->wwwroot .'/blocks/pagedemo.php';
         }
 
         // We do not need any special request variables such as ID in this case, so we 're not
