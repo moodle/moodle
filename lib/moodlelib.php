@@ -973,6 +973,37 @@ function remove_course_contents($courseid, $showfeedback=true) {
         $result = false;
     }
 
+    // Delete any groups
+
+    if ($groups = get_records("groups", "courseid", $course->id)) {
+        foreach ($groups as $group) {
+            if (delete_records("groups_members", "groupid", $group->id)) {
+                if ($showfeedback) {
+                    notify("$strdeleted groups_members");
+                }
+            } else {
+                $result = false;
+            }
+            if (delete_records("groups", "id", $group->id)) {
+                if ($showfeedback) {
+                    notify("$strdeleted groups");
+                }
+            } else {
+                $result = false;
+            }
+        }
+    }
+
+    // Delete events
+
+    if (delete_records("event", "courseid", $course->id)) {
+        if ($showfeedback) {
+            notify("$strdeleted event");
+        }
+    } else {
+        $result = false;
+    }
+
     // Delete logs
 
     if (delete_records("log", "course", $course->id)) {
