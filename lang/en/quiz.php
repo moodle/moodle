@@ -5,6 +5,13 @@ $string['modulename'] = "Quiz";
 $string['modulenameplural'] = "Quizzes";
 #------------------------------------------------------------
 
+$string['corrresp'] = "Correct Response";
+$string['grade'] = "Grade";
+$string['indivresp'] = "Responses of Individuals to Each Item";
+$string['itemanal'] = "Item Response Analysis";
+$string['listitems'] = "Listing of Items in This Quiz";
+$string['noresponse'] = "No Response";
+$string['percentcorrect'] = "Percent Correct";
 $string['acceptederror'] = "Accepted error";
 $string['addquestions'] = "Add questions";
 $string['addingquestions'] = "This side of the page is where you manage your database of questions.  Questions are stored in categories to help you keep them organised, and can be used by any quiz in your course or even other courses if you choose to 'publish' them. <br /><br />After you select or create a question category you will be able to create or edit questions.  You can select any of these questions to add to your quiz over on the other side of this page.";
@@ -71,12 +78,8 @@ $string['filloutoneanswer'] = "You must fill out at least one possible answer.  
 $string['fillouttwochoices'] = "You must fill out at least two choices.  Choices left blank will not be used.";
 $string['filloutthreequestions'] = "You must fill out at least three questions.  Questions left blank will not be used.";
 $string['fileformat'] = "File format";
-$string['fractionsaddwrong'] = "The positive grades you have chosen do not add up to 100%%
-<BR>Instead, they add up to \$a%%
-<BR>Do you want to go back and fix this question?";
-$string['fractionsnomax'] = "One of the answers should be 100%%, so that it is
-<BR>possible to get a full grade for this question.
-<BR>Do you want to go back and fix this question?";
+$string['fractionsaddwrong'] = "The positive grades you have chosen do not add up to 100%%<BR>Instead, they add up to \$a%%<BR>Do you want to go back and fix this question?";
+$string['fractionsnomax'] = "One of the answers should be 100%%, so that it is<BR>possible to get a full grade for this question.<BR>Do you want to go back and fix this question?";
 $string['gradeaverage'] = "Average grade";
 $string['gradehighest'] = "Highest grade";
 $string['grademethod'] = "Grading method";
@@ -100,19 +103,9 @@ $string['nomoreattempts'] = "No more attempts are allowed";
 $string['noquestions'] = "No questions have been added yet";
 $string['noreview'] = "You are not allowed to review this quiz";
 $string['noreviewuntil'] = "You are not allowed to review this quiz until \$a";
-$string['notenoughsubquestions'] = "Not enough sub-questions have been defined!<br>
-Do you want to go back and fix this question?";
+$string['notenoughsubquestions'] = "Not enough sub-questions have been defined!<br>Do you want to go back and fix this question?";
 $string['numerical'] = "Numerical";
 $string['publish'] = "Publish";
-$string['qrindivresp'] = "Responses of Individuals to Each Item";
-$string['qrname'] = "Name";
-$string['qrgrade'] = "Grade";
-$string['qritemanal'] = "Item Response Analysis";
-$string['qrcorrresp'] = "Correct Response";
-$string['qrnoresponse'] = "No Response";
-$string['qrpercentcorrect'] = "Percent Correct";
-$string['qrlistitems'] = "Listing of Items in This Quiz";
-$string['qrquestion'] = "Question";
 $string['qti'] = "IMS QTI format";
 $string['question'] = "Question";
 $string['questioninuse'] = "The question '\$a' is currently being used:";

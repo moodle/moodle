@@ -15,27 +15,26 @@ class quiz_report extends quiz_default_report {
 
 /*
 //These definitions must be in the lang/en/quiz.php file
-$string['qrindivresp'] = "Responses of Individuals to Each Item";
-$string['qrname'] = "Name";
-$string['qrgrade'] = "Grade";
-$string['qritemanal'] = "Item Response Analysis";
-$string['qrcorrresp'] = "Correct Response";
-$string['qrnoresponse'] = "No Response";
-$string['qrpercentcorrect'] = "Percent Correct";
-$string['qrlistitems'] = "Listing of Items in This Quiz";
-$string['qrquestion'] = "Question";
+$string['corrresp'] = "Correct Response";
+$string['grade'] = "Grade";
+$string['indivresp'] = "Responses of Individuals to Each Item";
+$string['itemanal'] = "Item Response Analysis";
+$string['listitems'] = "Listing of Items in This Quiz";
+$string['noresponse'] = "No Response";
+$string['percentcorrect'] = "Percent Correct";
+$string['question'] = "Question";
 $string[''] = "";
 */
 
-        $strindivresp = get_string("qrindivresp", "quiz");
-        $strname = get_string("qrname", "quiz");
-        $strgrade = get_string("qrgrade", "quiz");
-        $stritemanal = get_string("qritemanal", "quiz");
-        $strcorrresp = get_string("qrcorrresp", "quiz");
-        $strnoresponse = get_string("qrnoresponse", "quiz");
-        $strpercentcorrect = get_string("qrpercentcorrect", "quiz");
-        $strlistitems = get_string("qrlistitems", "quiz");
-        $strquestion = get_string("qrquestion", "quiz");
+        $strindivresp = get_string("indivresp", "quiz");
+        $strname = get_string("name", "quiz");
+        $strgrade = get_string("grade", "quiz");
+        $stritemanal = get_string("itemanal", "quiz");
+        $strcorrresp = get_string("corrresp", "quiz");
+        $strnoresponse = get_string("noresponse", "quiz");
+        $strpercentcorrect = get_string("percentcorrect", "quiz");
+        $strlistitems = get_string("listitems", "quiz");
+        $strquestion = get_string("question", "quiz");
 //        $str = get_string("qr", "quiz");
 
     //Get the question ids
