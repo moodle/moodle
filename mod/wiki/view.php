@@ -60,6 +60,9 @@
     ### SAVE ID from Moodle
     $moodleID=@$_REQUEST["id"];
 
+/// Globally disable CamelCase, if the option is selected for this wiki.
+    $moodle_disable_camel_case = ($wiki->disablecamelcase == 1);
+
     if (($wiki_entry = wiki_get_default_entry($wiki, $course, $userid, $groupid))) {
 
 ///     ################# EWIKI Part ###########################

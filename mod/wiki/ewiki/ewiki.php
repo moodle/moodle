@@ -83,8 +83,23 @@
 	define("EWIKI_AUTO_LOGIN", 1);		# [auth_query] on startup
 
 	#-- allowed WikiPageNameCharacters
-	define("EWIKI_CHARS_L", "a-z_µ¤$\337-\377");
-	define("EWIKI_CHARS_U", "A-Z0-9\300-\336");
+
+#### BEGIN MOODLE CHANGES - to remove auto-camelcase linking.   
+    global $moodle_disable_camel_case;   
+    if ($moodle_disable_camel_case) {
+        define("EWIKI_CHARS_L", "");
+        define("EWIKI_CHARS_U", "");
+    }
+    else {
+#### END MOODLE CHANGES
+
+  	define("EWIKI_CHARS_L", "a-z_µ¤$\337-\377");
+    define("EWIKI_CHARS_U", "A-Z0-9\300-\336");
+
+#### BEGIN MOODLE CHANGES   
+    }
+#### END MOODLE CHANGES
+   
 	define("EWIKI_CHARS", EWIKI_CHARS_L.EWIKI_CHARS_U);
 
         #-- database
@@ -195,18 +210,21 @@
            "script_url" => (defined("EWIKI_SCRIPT_URL")?EWIKI_SCRIPT_URL:NULL),
            "script_binary" => EWIKI_SCRIPT_BINARY,
 	#-- heart of the wiki -- don't try to read this! ;)
+
            "wiki_pre_scan_regex" =>	'/
 		(?<![~!])
 		((?:(?:\w+:)*['.EWIKI_CHARS_U.']+['.EWIKI_CHARS_L.']+){2,}[\w\d]*)
 		|\^([-'.EWIKI_CHARS_L.EWIKI_CHARS_U.']{3,})
 		|\[ (?:"[^\]\"]+" | \s+ | [^:\]#]+\|)*  ([^\|\"\[\]\#]+)  (?:\s+ | "[^\]\"]+")* [\]\#] 
 		|(\w{3,9}:\/\/[^?#\s\[\]\'\"\)\,<]+)	/x',
+
            "wiki_link_regex" => "\007 [!~]?(
 		\#?\[[^<>\[\]\n]+\] |
 		\^[-".EWIKI_CHARS_U.EWIKI_CHARS_L."]{3,} |
 		\b([\w]{3,}:)*([".EWIKI_CHARS_U."]+[".EWIKI_CHARS_L."]+){2,}\#?[\w\d]* |
 		([a-z]{2,9}://|mailto:)[^\s\[\]\'\"\)\,<]+ |
 		\w[-_.+\w]+@(\w[-_\w]+[.])+\w{2,}	) \007x",
+
 	#-- rendering ruleset
            "wm_indent" => '<div style="margin-left:15px;" class="indent">',
            "wm_table_defaults" => 'cellpadding="2" border="1" cellspacing="0"',

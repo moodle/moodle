@@ -127,6 +127,16 @@
 
 <tr valign="top">
     <td align="right">
+    <?php helpbutton('wikilinkoptions', get_string('wikilinkoptions', 'wiki'), 'wiki') ?>
+    <b> <?php print_string('wikilinkoptions', 'wiki') ?>:</b></td>
+    <td>
+        <input type="checkbox" name="disablecamelcase" value="1" <?php echo $form->disablecamelcase?"CHECKED":""; ?> />
+            Disable CamelCase linking.<br />
+    </td>
+</tr>
+
+<tr valign="top">
+    <td align="right">
     <?php helpbutton('studentadminoptions', get_string('studentadminoptions', 'wiki'), 'wiki') ?>
     <b> <?php print_string('studentadminoptions', 'wiki') ?>:</b></td>
     <td>

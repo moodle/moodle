@@ -25,6 +25,7 @@ function wiki_add_instance($wiki) {
     $wiki->pagename = wiki_page_name($wiki);
 
     /// Check 'check boxes'. The variables won't be set at all of they were deselected.
+    $wiki->disablecamelcase = (isset($wiki->disablecamelcase)) ? 1 : 0;
     $wiki->setpageflags = (isset($wiki->setpageflags)) ? 1 : 0;
     $wiki->removepages = (isset($wiki->removepages)) ? 1 : 0;
     $wiki->strippages = (isset($wiki->strippages)) ? 1 : 0;
@@ -43,6 +44,7 @@ function wiki_update_instance($wiki) {
     $wiki->pagename = wiki_page_name($wiki);
 
     /// Check 'check boxes'. The variables won't be set at all of they were deselected.
+    $wiki->disablecamelcase = (isset($wiki->disablecamelcase)) ? 1 : 0;
     $wiki->setpageflags = (isset($wiki->setpageflags)) ? 1 : 0;
     $wiki->removepages = (isset($wiki->removepages)) ? 1 : 0;
     $wiki->strippages = (isset($wiki->strippages)) ? 1 : 0;

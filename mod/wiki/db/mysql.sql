@@ -15,6 +15,7 @@ CREATE TABLE `prefix_wiki` (
   `ewikiprinttitle` tinyint(4) NOT NULL default '1',
   `htmlmode` tinyint(4) NOT NULL default '0',
   `ewikiacceptbinary` tinyint(4) NOT NULL default '0',
+  `disablecamelcase` tinyint(4) NOT NULL default '0',
   `setpageflags` tinyint(4) NOT NULL default '1',
   `strippages` tinyint(4) NOT NULL default '1',
   `removepages` tinyint(4) NOT NULL default '1',

@@ -46,6 +46,11 @@ function wiki_upgrade($oldversion) {
                     .' ADD `revertchanges` TINYINT DEFAULT \'1\' NOT NULL AFTER `removepages`');
     }
 
+    if ($oldversion < 2004062400) {
+        execute_sql('ALTER TABLE `'.$CFG->prefix.'wiki`'
+                    .' ADD `disablecamelcase` TINYINT DEFAULT \'0\' NOT NULL AFTER `ewikiacceptbinary`');
+    }
+
     return true;
 }
 

@@ -10,6 +10,7 @@ $string['wikitype'] = 'Type';
 $string['ewikiprinttitle'] = 'Print the wiki name on every page.';
 $string['htmlmode'] = 'HTML Mode';
 $string['ewikiacceptbinary'] = 'Allow binary files';
+$string['wikilinkoptions'] = 'Wiki auto-linking options';
 $string['studentadminoptions'] = 'Student admin options';
 $string['initialcontent'] = 'Choose an Initial Page';
 $string['chooseafile'] = 'Choose/upload initial page';
