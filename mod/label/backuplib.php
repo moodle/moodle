@@ -2,6 +2,20 @@
     //This php script contains all the stuff to backup/restore
     //label mods
 
+    //This is the "graphical" structure of the label mod:
+    //
+    //                       label
+    //                     (CL,pk->id)
+    //
+    // Meaning: pk->primary key field of the table
+    //          fk->foreign key to link with parent
+    //          nt->nested field (recursive data)
+    //          CL->course level info
+    //          UL->user level info
+    //          files->table may have files)
+    //
+    //-----------------------------------------------------------
+
     //This function executes all the backup procedure about this mod
     function label_backup_mods($bf,$preferences) {
         global $CFG;

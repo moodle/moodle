@@ -2,6 +2,20 @@
     //This php script contains all the stuff to backup/restore
     //label mods
 
+    //This is the "graphical" structure of the label mod:   
+    //
+    //                       label 
+    //                    (CL,pk->id)
+    //
+    // Meaning: pk->primary key field of the table
+    //          fk->foreign key to link with parent
+    //          nt->nested field (recursive data)
+    //          CL->course level info
+    //          UL->user level info
+    //          files->table may have files)
+    //
+    //-----------------------------------------------------------
+
     //This function executes all the restore procedure about this mod
     function label_restore_mods($mod,$restore) {
 
@@ -19,7 +33,7 @@
             //print_object ($GLOBALS['traverse_array']);                                                  //Debug
             //$GLOBALS['traverse_array']="";                                                              //Debug
           
-            //Now, build the RESOURCE record structure
+            //Now, build the LABEL record structure
             $label->course = $restore->course_id;
             $label->name = backup_todb($info['MOD']['#']['NAME']['0']['#']);
             $label->content = backup_todb($info['MOD']['#']['CONTENT']['0']['#']);

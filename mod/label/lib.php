@@ -72,4 +72,11 @@ function label_user_complete($course, $user, $mod, $label) {
     return false;
 }
 
+function label_get_participants($labelid) {
+//Returns the users with data in one resource
+//(NONE, byt must exists on EVERY mod !!)
+
+    return false;
+}
+
 ?>
