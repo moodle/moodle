@@ -15,6 +15,7 @@
     require_once ("$moodle_home/config.php");
     require_once ("$moodle_home/version.php");
     require_once ("$moodle_home/lib/xmlize.php");
+    require_once ("$moodle_home/course/lib.php");
     require_once ("backup_version.php");
     require_once ("db/backup_$CFG->dbtype.php");
     require_once ("lib.php");
