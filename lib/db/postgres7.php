@@ -705,6 +705,7 @@ function main_upgrade($oldversion=0) {
         
         // odd! username was missing its unique index!
         // first silently drop it just in case...
+        execute_sql("ALTER TABLE {$CFG->prefix}user DROP CONSTRAINT {$CFG->prefix}user_username_uk;", false); 
         execute_sql("DROP INDEX {$CFG->prefix}user_username_uk", false);
         modify_database('', "CREATE UNIQUE INDEX prefix_user_username_uk ON prefix_user (username);");
 
