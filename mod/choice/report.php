@@ -35,7 +35,7 @@
                   <A HREF=view.php?id=$cm->id>$choice->name</A> -> $strresponses", "");
 
 
-    if (! $users = get_course_users($course->id)) {
+    if (! $users = get_course_users($course->id, "u.firstname ASC")) {
         error("No users found (very strange)");
     }
 
@@ -49,6 +49,10 @@
     }
 
     $timenow = time();
+
+    for ($i=0; $i<=2; $i++) {    // number of choices (presently hardcoded)
+        $useranswer[$i] = array();
+    }
 
     foreach ($users as $user) {
         $answer = $answers[$user->id];
