@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.2 alpha (2004022200)
+      // moodle.php - created with Moodle 1.2 nearly beta! (2004022400)
 
 
 $string['action'] = 'Actie';
@@ -626,6 +626,7 @@ $string['notenrolled'] = '$a is geen lid van dit vak.';
 $string['noteuserschangednonetocourse'] = 'Let op: de gebruikers van een vak moeten worden hersteld op het moment dat je gebruikers data aan het terugzetten bent. Deze instelling is voor je veranderd.';
 $string['nothingnew'] = 'Niets nieuws sinds je laatste login';
 $string['notincluded'] = 'Niet ingevoegd';
+$string['notingroup'] = 'Om deze activiteit te kunnen zien moet je lid zijn van een groep.';
 $string['nousersmatching'] = 'Er zijn geen gebruikers gevonden met de zoekterm \'$a\'';
 $string['nousersyet'] = 'Er zijn nog geen gebruikers';
 $string['now'] = 'Nu';
