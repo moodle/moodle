@@ -115,14 +115,14 @@
                     if (strpos($rec->info,"exists") !== false) {
                         $exists_count++;
                     }
-                    if (strpos($rec->info,"admin")) {
+                    if (strpos($rec->info,"student")) {
+                        $student_count++;
+                    } else if (strpos($rec->info,"teacher")) {
+                        $teacher_count++;
+                    } else if (strpos($rec->info,"admin")) {
                         $admin_count++;
                     } else if (strpos($rec->info,"coursecreator")) {
                         $coursecreator_count++;
-                    } else if (strpos($rec->info,"teacher")) {
-                    $teacher_count++;
-                    } else if (strpos($rec->info,"student")) {
-                        $student_count++;
                     } else if ($rec->info == "new" or $rec->info == "exists") {
                         $other_count++;
                     }
