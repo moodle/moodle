@@ -855,7 +855,7 @@ function get_user_timezone($tz = 99) {
     return $tz;
 }
 
-function get_user_dst_preset() {
+function get_user_timezone_preset() {
     global $CFG, $USER;
     static $preset = NULL;
 
@@ -1006,19 +1006,19 @@ function dst_changes_for_year($year, $dstpreset) {
 
 // $time must NOT be compensated at all, it has to be a pure timestamp
 function dst_offset_on($time) {
-    $preset = get_user_dst_preset();
+    $preset = get_user_timezone_preset();
 
     if(empty($preset)) {
         return 0;
     }
 
-    if(empty($USER) || empty($USER->dstchanges)) {
+    if(empty($USER) || empty($USER->dstoffsets)) {
         return 0;
     }
 
     $finaloffset = NULL;
 
-    foreach($USER->dstchanges as $from => $offset) {
+    foreach($USER->dstoffsets as $from => $offset) {
         if($from <= $time) {
             $finaloffset = $offset;
             break;
@@ -1027,6 +1027,7 @@ function dst_offset_on($time) {
 
     if($finaloffset === NULL) {
         // This means we haven't calculated far enough ahead, do it now?
+        print_object($USER->dstoffsets);
         error('Error in calculating DST offset for timestamp '.$time);
     }
 
