@@ -27,7 +27,7 @@ function openpopup(url,name,options,fullscreen) {
 }
 
 function copyrichtext(textname) { 
-  textname.value = document.richedit.docHtml;
+/// Legacy stub for old editor - to be removed soon
   return true;
 }
 

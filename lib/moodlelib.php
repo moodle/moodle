@@ -1574,20 +1574,28 @@ function ini_get_bool($ini_get_arg) {
 }
 
 function can_use_richtext_editor() {
+/// Compatibility stub to provide backward compatibility
+    return can_use_html_editor();
+}
+
+function can_use_html_editor() {
 /// Is the HTML editor enabled?  This depends on site and user
 /// settings, as well as the current browser being used.
+/// Returns false is editor is not being used, otherwise
+/// returns "MSIE" or "Gecko"
 
     global $USER, $CFG;
 
     if (!empty($USER->htmleditor) and !empty($CFG->htmleditor)) {
         if (check_browser_version("MSIE", 5.5)) {
-            return true;
-        } else if (check_browser_version("Gecko", 20030516) and !empty($CFG->useneweditor) ) {
-            return true;
+            return "MSIE";
+        } else if (check_browser_version("Gecko", 20030516)) {
+            return "Gecko";
         }
     }
     return false;
 }
+
 
 function check_gd_version() {
 /// Hack to find out the GD version by parsing phpinfo output

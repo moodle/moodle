@@ -799,6 +799,9 @@ function print_header ($title="", $heading="", $navigation="", $focus="", $meta=
         }
     }
 
+    // Add a stylesheet for the HTML editor
+    $meta = "<style type=\"text/css\">@import url($CFG->wwwroot/lib/editor/htmlarea.css);</style>\n$meta\n";
+
     // Specify character set ... default is iso-8859-1 but some languages might need something else
     // Could be optimised by carrying the charset variable around in $USER
     if (current_language() == "en") {
@@ -1268,10 +1271,11 @@ function make_table($table) {
     return $output;
 }
 
-function print_textarea($richedit, $rows, $cols, $width, $height, $name, $value="", $courseid=0) {
-/// Prints a richtext field or a normal textarea
+function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $value="", $courseid=0) {
+/// Prints a basic textarea field
+/// $width and height are legacy fields and no longer used
 
-    global $CFG, $THEME, $course;
+    global $CFG, $course;
 
     if (empty($courseid)) {
         if (!empty($course->id)) {  // search for it in global context
@@ -1279,69 +1283,49 @@ function print_textarea($richedit, $rows, $cols, $width, $height, $name, $value=
         }
     }
 
-    if ($richedit) {
-        if (!empty($CFG->useneweditor)) {   /// Use the new HTMLarea editor
-
-            if (!empty($courseid) and isteacher($courseid)) {
-                echo "<script type=\"text/javascript\" src=\"$CFG->wwwroot/lib/editor/htmlarea.php?id=$courseid\"></script>\n";
-            } else {
-                echo "<script type=\"text/javascript\" src=\"$CFG->wwwroot/lib/editor/htmlarea.php\"></script>\n";
-            }
-            echo "<script type=\"text/javascript\" src=\"$CFG->wwwroot/lib/editor/dialog.js\"></script>\n";
-            echo "<script type=\"text/javascript\" src=\"$CFG->wwwroot/lib/editor/lang/en.php\"></script>\n";
-            echo "<script type=\"text/javascript\" src=\"$CFG->wwwroot/lib/editor/popupwin.js\"></script>\n";
-            echo "<style type=\"text/css\">@import url($CFG->wwwroot/lib/editor/htmlarea.css);</style>\n";
-            if ($rows < 20) {
-                $rows = 20;  /// Minimum rows
-            }
-            if ($cols < 65) {
-                $cols = 65;  /// Minimum columns
-            }
-            echo "<textarea id=\"TA\" name=\"$name\" rows=\"$rows\" cols=\"$cols\" wrap=\"virtual\">";
-            p($value);
-            echo "</textarea>\n";
-
-        } else {                            /// Use the old Richtext editor
-            $richediturl = "$CFG->wwwroot/lib/rte/richedit.html";
-            if (!empty($courseid) and isteacher($courseid)) {
-                $richediturl = "$CFG->wwwroot/lib/rte/richedit.php?id=$courseid";
-            }
-    
-            echo "<object id=\"richedit\" style=\"background-color: buttonface\"";
-            echo " data=\"$richediturl\"";
-            echo " width=\"$width\" height=\"$height\" ";
-            echo " type=\"text/x-scriptlet\" VIEWASTEXT=\"true\"></object>\n";
-            echo "<textarea style=\"display:none\" name=\"$name\" rows=\"1\" cols=\"1\">";
-            p($value);
-            echo "</textarea>\n";
+    if ($usehtmleditor) {
+        if (!empty($courseid) and isteacher($courseid)) {
+            echo "<script type=\"text/javascript\" src=\"$CFG->wwwroot/lib/editor/htmlarea.php?id=$courseid\"></script>\n";
+        } else {
+            echo "<script type=\"text/javascript\" src=\"$CFG->wwwroot/lib/editor/htmlarea.php\"></script>\n";
         }
-    } else {
-        echo "<textarea name=\"$name\" rows=\"$rows\" cols=\"$cols\" wrap=\"virtual\">";
-        p($value);
-        echo "</textarea>\n";
+        echo "<script type=\"text/javascript\" src=\"$CFG->wwwroot/lib/editor/dialog.js\"></script>\n";
+        echo "<script type=\"text/javascript\" src=\"$CFG->wwwroot/lib/editor/lang/en.php\"></script>\n";
+        echo "<script type=\"text/javascript\" src=\"$CFG->wwwroot/lib/editor/popupwin.js\"></script>\n";
+
+        if ($rows < 20) {
+            $rows = 20;
+        }
+        if ($cols < 65) {
+            $cols = 65;
+        }
     }
+
+    echo "<textarea id=\"$name\" name=\"$name\" rows=\"$rows\" cols=\"$cols\" wrap=\"virtual\">";
+    p($value);
+    echo "</textarea>\n";
 }
 
 function print_richedit_javascript($form, $name, $source="no") {
-    global $CFG;
+/// Legacy function, provided for backward compatability
+    use_html_editor($name);
+}
 
-    if (!empty($CFG->useneweditor)) {   /// Use the new HTMLarea editor
-        echo "<script language=\"javascript\" type=\"text/javascript\" defer=\"1\">\n";
-        echo "var editor = null;\n";
-        echo "function initEditor() {\n";
-        echo "  editor = new HTMLArea(\"TA\");\n";
-        echo "  editor.generate();\n";
-        echo "  return false;\n";
-        echo "}\n";
-        echo "initEditor();\n";
-        echo "</script>\n";
+function use_html_editor($name="") {
+/// Sets up the HTML editor on textareas in the current page.
+/// If a field name is provided, then it will only be
+/// applied to that field - otherwise it will be used
+/// on every textarea in the page.
+///
+/// In most cases no arguments need to be supplied
 
-    } else {                            /// Use the old Richtext editor
-        echo "<script language=\"javascript\" event=\"onload\" for=\"window\">\n";
-        echo "   document.richedit.options = \"history=no;source=$source\";";
-        echo "   document.richedit.docHtml = $form.$name.innerText;";
-        echo "</script>";
+    echo "<script language=\"javascript\" type=\"text/javascript\" defer=\"1\">\n";
+    if (empty($name)) {
+        echo "HTMLArea.replaceAll();";
+    } else {
+        echo "HTMLArea.replace('$name')";
     }
+    echo "</script>";
 }
 
 
