@@ -1100,12 +1100,16 @@ function check_gd_version() {
 
     $gdversion = 0;
 
+
     foreach ($phpinfo as $text) {
-        $parts = explode('</b>',$text);
+        $parts = explode('</td>',$text);
         foreach ($parts as $key => $val) {
-            $parts[$key] = strip_tags($val);
+            $parts[$key] = trim(strip_tags($val));
         }
-        if ($parts[0]=="GD Version") {
+        if ($parts[0] == "GD Version") {
+            if (substr_count($parts[1], "2.0")) {
+                $parts[1] = "2.0";
+            }
             $gdversion = intval($parts[1]);
         }
     }
