@@ -116,6 +116,9 @@
             }
         }
 
+        /// Remove any duplicate entries
+        $conceptlist = filter_remove_duplicates($conceptlist);
+        
         //return $text;
         return filter_phrases($text, $conceptlist);
     }
