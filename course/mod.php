@@ -91,9 +91,7 @@
 
         }
 
-        $db->debug = true;
         rebuild_course_cache($mod->course);
-        $db->debug = false;
 
         if (!empty($SESSION->returnpage)) {
             $return = $SESSION->returnpage;
