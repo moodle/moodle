@@ -40,7 +40,7 @@
     if (!$search) {
         print_header_simple("$strsearch", "",
                  "<a href=\"index.php?id=$course->id\">$strforums</a> -> $strsearch", "search.search",
-                  "", "", "&nbsp;", navmenu($course), true);
+                  "", "", "&nbsp;", navmenu($course));
 
         print_simple_box_start("center");
         echo "<center>";
@@ -61,7 +61,7 @@
             print_header_simple("$strsearchresults", "",
                      "<a href=\"index.php?id=$course->id\">$strforums</a> ->
                       <a href=\"search.php?id=$course->id\">$strsearch</a> -> \"$search\"", "search.search",
-                      "", "", "&nbsp;", navmenu($course), true);
+                      "", "", "&nbsp;", navmenu($course));
             print_heading(get_string("nopostscontaining", "forum", $search));
 
             print_simple_box_start("center");
@@ -80,7 +80,7 @@
         print_header_simple("$strsearchresults", "",
                  "<a href=\"index.php?id=$course->id\">$strforums</a> ->
                   <a href=\"search.php?id=$course->id\">$strsearch</a> -> \"$search\"", "search.search",
-                  "", "",  $searchform, navmenu($course), true);
+                  "", "",  $searchform, navmenu($course));
 
         print_heading("$strsearchresults: $totalcount");
 
