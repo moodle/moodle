@@ -1,0 +1,18 @@
+<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+
+<input type="hidden" name="cmd" value="_xclick">
+<input type="hidden" name="business" value="<?php p($CFG->enrol_paypalbusiness)?>">
+<input type="hidden" name="item_name" value="<?php p($course->fullname) ?>">
+<input type="hidden" name="item_number" value="<?php p($course->id) ?>">
+<input type="hidden" name="custom" value="<?php p($USER->id) ?>">
+<input type="hidden" name="quantity" value="1">
+<input type="hidden" name="return" value="<?php echo "$CFG->wwwroot/enrol/paypal/thankyou.php?courseid=$course->id" ?>">
+<input type="hidden" name="cancel_return" value="<?php echo $CFG->wwwroot ?>">
+
+<input type="hidden" name="currency_code" value="<?php p($CFG->enrol_paypalcurrency) ?>">
+<input type="hidden" name="amount" value="<?php p($cost) ?>">
+
+<input type="submit" value="<?php print_string("sendpaymentbutton", "enrol_paypal") ?>">
+
+</form>
+

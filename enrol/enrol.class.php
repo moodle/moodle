@@ -57,8 +57,8 @@ function get_student_courses(&$user) {
 
             /// Is the student enrolment active right now?
 
-                if ( (!$student->timestart and !$student->timeend) or 
-                     ( $student->timestart < $currenttime and $currenttime < $student->timeend) ) {
+                if ( ( $student->timestart == 0 or ( $currenttime > $student->timestart )) and 
+                     ( $student->timeend   == 0 or ( $currenttime < $student->timeend )) ) {
                     $user->student[$student->course] = true;
                     $user->timeaccess[$student->course] = $student->timeaccess;
                 }
@@ -86,8 +86,8 @@ function get_teacher_courses(&$user) {
 
         /// Is teacher only teaching this course for a specific time period?
 
-            if ( (!$teacher->timestart and !$teacher->timeend) or 
-                 ( $teacher->timestart < $currenttime and $currenttime < $teacher->timeend) ) {
+            if ( ( $teacher->timestart == 0 or ( $currenttime > $teacher->timestart )) and 
+                 ( $teacher->timeend   == 0 or ( $currenttime < $teacher->timeend )) ) {
 
                 $user->teacher[$teacher->course] = true;
 
@@ -115,27 +115,11 @@ function get_teacher_courses(&$user) {
 * @param    course  current course object
 */
 function print_entry($course) {
-    global $CFG, $USER, $SESSION;
+    global $CFG, $USER, $SESSION, $THEME;
 
     $strloginto = get_string("loginto", "", $course->shortname);
     $strcourses = get_string("courses");
 
-
-/// Double check just in case they are actually enrolled already 
-/// This might occur if they were manually enrolled during this session
-
-    if (record_exists("user_students", "userid", $USER->id, "course", $course->id)) {
-        $USER->student[$course->id] = true;
-
-        if ($SESSION->wantsurl) {
-            $destination = $SESSION->wantsurl;
-            unset($SESSION->wantsurl);
-        } else {
-            $destination = "$CFG->wwwroot/course/view.php?id=$course->id";
-        }
-
-        redirect($destination);
-    }
 
 
 /// Automatically enrol into courses without password
@@ -201,7 +185,7 @@ function print_entry($course) {
 * @param    course  the current course, as an object
 */
 function check_entry($form, $course) {
-    global $CFG, $USER, $SESSION;
+    global $CFG, $USER, $SESSION, $THEME;
 
     if ($form->password == $course->password) {
 
@@ -278,6 +262,31 @@ function process_config($config) {
 *
 */
 function cron() {
+}
+
+
+/**
+* Returns the relevant icons for a course
+*
+* Returns the relevant icons for a course
+*
+* @param    course  the current course, as an object
+*/
+function get_access_icons($course) {
+    global $CFG;
+
+    if ($course->guest) {
+        $strallowguests = get_string("allowguests");
+        $str  = "<a title=\"$strallowguests\" href=\"$CFG->wwwroot/course/view.php?id=$course->id\">";
+        $str .= "<img vspace=4 alt=\"$strallowguests\" height=16 width=16 border=0 src=\"$CFG->pixpath/i/guest.gif\"></a>&nbsp;&nbsp;";
+    }
+    if ($course->password) {
+        $strrequireskey = get_string("requireskey");
+        $str .= "<a title=\"$strrequireskey\" href=\"$CFG->wwwroot/course/view.php?id=$course->id\">";
+        $str .= "<img vspace=4 alt=\"$strrequireskey\" height=16 width=16 border=0 src=\"$CFG->pixpath/i/key.gif\"></a>";
+    }
+
+    return $str;
 }
 
 
