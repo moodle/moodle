@@ -251,11 +251,13 @@
     }
 
     if ($search or $usercount > MAX_USERS_PER_PAGE) {
-        echo "<form action=teacher.php method=post>";
+        echo "<center>";
+        echo "<form action=teacher.php method=get>";
         echo "<input type=hidden name=id value=\"$course->id\">";
         echo "<input type=text name=search size=20>";
         echo "<input type=submit value=\"$searchstring\">";
         echo "</form>";
+        echo "</center>";
     }
 
     echo "</td></tr></table>";
