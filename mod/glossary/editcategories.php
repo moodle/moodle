@@ -51,8 +51,8 @@
     $strglossaries   = get_string("modulenameplural", "glossary");
     $strglossary     = get_string("modulename", "glossary");
 
-    print_header_simple(strip_tags("$glossary->name"), "",
-                        "<a href=\"index.php?id=$course->id\">$strglossaries</a> -> <a href=\"view.php?id=$cm->id&amp;tab=GLOSSARY_CATEGORY_VIEW\">$glossary->name</a> -> " . get_string("categories","glossary"),
+    print_header_simple(format_string($glossary->name), "",
+                        "<a href=\"index.php?id=$course->id\">$strglossaries</a> -> <a href=\"view.php?id=$cm->id&amp;tab=GLOSSARY_CATEGORY_VIEW\">".format_string($glossary->name,true)."</a> -> " . get_string("categories","glossary"),
                         "", "", true, update_module_button($cm->id, $course->id, $strglossary),
                         navmenu($course, $cm));
 

@@ -1701,7 +1701,7 @@ function glossary_open_xml($glossary) {
 
         //Open for writing
 
-        $glossaryname = clean_filename(strip_tags($glossary->name)); 
+        $glossaryname = clean_filename(strip_tags(format_string($glossary->name,true))); 
         $pathname = make_upload_directory("$glossary->course/glossary/$glossaryname");
         $filename = "$pathname/glossary.xml";
 
@@ -1786,7 +1786,7 @@ function glossary_check_moddata_dir($glossary) {
     if ( $status ) {
         $status = glossary_check_dir_exists($CFG->dataroot."/$glossary->course/glossary",true);
         if ( $status ) {
-            $status = glossary_check_dir_exists($CFG->dataroot."/$glossary->course/glossary/". clean_filename($glossary->name),true);
+            $status = glossary_check_dir_exists($CFG->dataroot."/$glossary->course/glossary/". clean_filename(strip_tags(format_string($glossary->name,true))),true);
         }
     }
     return $status;

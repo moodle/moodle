@@ -64,8 +64,8 @@
     $strglossary = get_string('modulename', 'glossary');
     $strcomments = get_string('comments', 'glossary');
 
-    print_header_simple(strip_tags("$glossary->name"), '',
-            "<a href=\"index.php?id=$course->id\">$strglossaries</a> -> <a href=\"view.php?id=$cm->id\">$glossary->name</a> -> <a href=\"comments.php?id=$cm->id&amp;eid=$entry->id\">$strcomments</a> -> " . $straction,
+    print_header_simple(format_string($glossary->name), '',
+            "<a href=\"index.php?id=$course->id\">$strglossaries</a> -> <a href=\"view.php?id=$cm->id\">".format_string($glossary->name,true)."</a> -> <a href=\"comments.php?id=$cm->id&amp;eid=$entry->id\">$strcomments</a> -> " . $straction,
             '', '', true, update_module_button($cm->id, $course->id, $strglossary),
             navmenu($course, $cm));
 

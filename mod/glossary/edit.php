@@ -64,6 +64,7 @@ if ( $confirm ) {
     $newentry->fullmatch = $form->fullmatch;
     $newentry->timemodified = $timenow;
     $newentry->approved = 0;
+    $newentry->aliases = "";
     if ( $glossary->defaultapproval or isteacher($course->id) ) {
         $newentry->approved = 1;
     }
@@ -80,12 +81,12 @@ if ( $confirm ) {
             $defaultformat = FORMAT_MOODLE;
         }
 
-        print_header_simple(strip_tags("$glossary->name"), "",
+        print_header_simple(format_string($glossary->name), "",
              "<a href=\"index.php?id=$course->id\">$strglossaries</a> ->
-              <a href=\"view.php?id=$cm->id\">$glossary->name</a> -> $stredit", "form.text",
+              <a href=\"view.php?id=$cm->id\">".format_string($glossary->name,true)."</a> -> $stredit", "form.text",
               "", true, "", navmenu($course, $cm));
 
-        print_heading($glossary->name);
+        print_heading(format_string($glossary->name));
 
         include("edit.html");
 
@@ -280,9 +281,9 @@ if ($usehtmleditor = can_use_richtext_editor()) {
     $defaultformat = FORMAT_MOODLE;
 }
 
-print_header_simple(strip_tags("$glossary->name"), "",
+print_header_simple(format_string($glossary->name), "",
              "<a href=\"index.php?id=$course->id\">$strglossaries</a> ->
-              <a href=\"view.php?id=$cm->id\">$glossary->name</a> -> $stredit", "",
+              <a href=\"view.php?id=$cm->id\">".format_string($glossary->name,true)."</a> -> $stredit", "",
               "", true, "", navmenu($course, $cm));
 
 $ineditperiod = ((time() - $newentry->timecreated <  $CFG->maxeditingtime) || $glossary->editalways);
@@ -295,8 +296,7 @@ if ( (!$ineditperiod  || $USER->id != $newentry->userid) and !isteacher($course-
     die;
 }
 
-    echo '<p align="center"><font size="3"><b>' . stripslashes_safe($glossary->name);
-    echo '</b></font></p>';
+    print_heading(format_string($glossary->name));
 
 /// Info box
 

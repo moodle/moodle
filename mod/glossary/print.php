@@ -143,7 +143,7 @@
     echo '<p align="right"><font size="-1">' . userdate(time()) . '</font></p>';
     echo get_string("site") . ': <strong>' . $site->fullname . '</strong><br />';
     echo get_string("course") . ': <strong>' . $course->fullname . ' ('. $course->shortname . ')</strong><br />';
-    echo get_string("modulename","glossary") . ': <strong>' . $glossary->name . '</strong><p>';
+    echo get_string("modulename","glossary") . ': <strong>' . format_string($glossary->name, true) . '</strong><p>';
     if ( $allentries ) {
         foreach ($allentries as $entry) {
 

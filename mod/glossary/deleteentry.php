@@ -44,8 +44,8 @@
 
     $strareyousuredelete = get_string("areyousuredelete","glossary");
 
-    print_header_simple("$glossary->name", "",
-                 "<a href=\"index.php?id=$course->id\">$strglossaries</a> -> $glossary->name",
+    print_header_simple(format_string($glossary->name), "",
+                 "<a href=\"index.php?id=$course->id\">$strglossaries</a> -> ".format_string($glossary->name),
                   "", "", true, update_module_button($cm->id, $course->id, $strglossary),
                   navmenu($course, $cm));
 

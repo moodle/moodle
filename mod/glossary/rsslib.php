@@ -48,7 +48,7 @@
                             continue;
                         }
 
-                        mtrace("Updating RSS feed for $glossary->name, ID: $glossary->id");
+                        mtrace("Updating RSS feed for ".format_string($glossary->name,true).", ID: $glossary->id");
 
                         //Some debug...
                         if ($CFG->debug > 7) {
@@ -124,9 +124,9 @@
                 //Now, if items, we begin building the structure
                 if (!empty($items)) {
                     //First all rss feeds common headers
-                    $header = rss_standard_header($glossary->name,
+                    $header = rss_standard_header(format_string($glossary->name,true),
                                                   $CFG->wwwroot."/mod/glossary/view.php?f=".$glossary->id,
-                                                  $glossary->intro);
+                                                  format_string($glossary->intro,true));
                     //Now all the rss items
                     if (!empty($header)) {
                         $articles = rss_add_items($items);

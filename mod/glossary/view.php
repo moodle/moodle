@@ -216,16 +216,16 @@
     $strsearchindefinition = get_string("searchindefinition", "glossary");
     $strsearch = get_string("search");
 
-    print_header(strip_tags("$course->shortname: $glossary->name"), "$course->fullname",
-        "$navigation <a href=\"index.php?id=$course->id\">$strglossaries</a> -> $glossary->name",
-        "", "", true, update_module_button($cm->id, $course->id, $strglossary),
-        navmenu($course, $cm));
+    $navigation = "<a href=\"index.php?id=$course->id\">$strglossaries</a> ->";
+
+    print_header_simple(format_string($glossary->name), "",
+                 "$navigation ".format_string($glossary->name), "", "", true, update_module_button($cm->id, $course->id, $strglossary), navmenu($course, $cm));
 
     //If rss are activated at site and glossary level and this glossary has rss defined, show link
         if (isset($CFG->enablerssfeeds) && isset($CFG->glossary_enablerssfeeds) &&
             $CFG->enablerssfeeds && $CFG->glossary_enablerssfeeds && $glossary->rsstype && $glossary->rssarticles) {
             echo '<table width="100%" border="0" cellpadding="3" cellspacing="0"><tr valign="top"><td align="right">';
-            $tooltiptext = get_string("rsssubscriberss","glossary",$glossary->name);
+            $tooltiptext = get_string("rsssubscriberss","glossary",format_string($glossary->name,true));
             if (empty($USER->id)) {
                 $userid = 0;
             } else {
@@ -235,15 +235,15 @@
             echo '</td></tr></table>';
         }
 
-    echo '<p align="center"><font size="3"><b>' . stripslashes_safe($glossary->name);
-    if ( $isuserframe and $mode != 'search') {
+
     /// the "Print" icon
+    $printicon = '';
+    if ( $isuserframe and $mode != 'search') {
         if (isteacher($course->id) or $glossary->allowprintview) {
-            echo " <a title =\"". get_string("printerfriendly","glossary") . "\" target=\"printview\" href=\"print.php?id=$cm->id&amp;mode=$mode&amp;hook=$hook&amp;sortkey=$sortkey&amp;sortorder=$sortorder&amp;offset=$offset\">\n";
-            echo '<img border="0" src="print.gif" alt="" /></a>';
+            $printicon = " <a title =\"". get_string("printerfriendly","glossary") . "\" target=\"printview\" href=\"print.php?id=$cm->id&amp;mode=$mode&amp;hook=$hook&amp;sortkey=$sortkey&amp;sortorder=$sortorder&amp;offset=$offset\"><img border=\"0\" src=\"print.gif\" alt=\"\" /></a>";
         }
     }
-    echo '</b></font></p>';
+    print_heading(format_string($glossary->name).$printicon);
 
 
 /// Info box

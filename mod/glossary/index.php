@@ -69,10 +69,10 @@
     foreach ($glossarys as $glossary) {
         if (!$glossary->visible) {
             //Show dimmed if the mod is hidden
-            $link = "<a class=\"dimmed\" href=\"view.php?id=$glossary->coursemodule\">$glossary->name</a>";
+            $link = "<a class=\"dimmed\" href=\"view.php?id=$glossary->coursemodule\">".format_string($glossary->name,true)."</a>";
         } else {
             //Show normal if the mod is visible
-            $link = "<a href=\"view.php?id=$glossary->coursemodule\">$glossary->name</a>";
+            $link = "<a href=\"view.php?id=$glossary->coursemodule\">".format_string($glossary->name,true)."</a>";
         }
         $printsection = "";
         if ($glossary->section !== $currentsection) {
@@ -92,7 +92,7 @@
             $rsslink = '';
             if ($glossary->rsstype and $glossary->rssarticles) {
                 //Calculate the tolltip text
-                $tooltiptext = get_string("rsssubscriberss","glossary",$glossary->name);
+                $tooltiptext = get_string("rsssubscriberss","glossary",format_string($glossary->name));
                 if (empty($USER->id)) {
                     $userid = 0;
                 } else {

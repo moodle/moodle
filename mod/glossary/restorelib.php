@@ -113,7 +113,7 @@
             $newid = insert_record ("glossary",$glossary);
 
             //Do some output
-            echo "<li>".get_string("modulename","glossary")." \"".$glossary->name."\"</li>";
+            echo "<li>".get_string("modulename","glossary")." \"".format_string(stripslashes($glossary->name),true)."\"</li>";
             backup_flush(300);
 
             if ($newid) {

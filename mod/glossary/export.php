@@ -41,12 +41,12 @@
         require_login($course->id);
     }
 
-    print_header(strip_tags("$course->shortname: $glossary->name"), "$course->fullname",
-        "$navigation <a href=\"index.php?id=$course->id\">$strglossaries</a> -> $glossary->name",
+    print_header("$course->shortname: ".format_string($glossary->name), "$course->fullname",
+        "$navigation <a href=\"index.php?id=$course->id\">$strglossaries</a> -> ".format_string($glossary->name),
         "", "", true, update_module_button($cm->id, $course->id, $strglossary),
         navmenu($course, $cm));
 
-    print_heading($glossary->name);
+    print_heading(format_string($glossary->name));
 
 /// Info box
 
@@ -64,7 +64,7 @@
     glossary_generate_export_file($glossary,$lastl,$lastcat);
     print_string("glosssaryexported","glossary");
 
-    $ffurl = "/$course->id/glossary/" . clean_filename(strip_tags($glossary->name)) ."/glossary.xml";
+    $ffurl = "/$course->id/glossary/" . clean_filename(strip_tags(format_string($glossary->name,true))) ."/glossary.xml";
     if ($CFG->slasharguments) {
         $ffurl = "../../file.php$ffurl" ;
     } else {

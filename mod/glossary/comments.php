@@ -42,7 +42,7 @@
     $straddcomment = get_string("addcomment", "glossary");
 
     print_header_simple(strip_tags("$strcomments: $entry->concept"), "",
-        "<a href=index.php?id=$course->id>$strglossaries</a> -> <a href=view.php?id=$cm->id>$glossary->name</a> -> $strcomments",
+        "<a href=index.php?id=$course->id>$strglossaries</a> -> <a href=view.php?id=$cm->id>".format_string($glossary->name,true)."</a> -> $strcomments",
         "", "", true, update_module_button($cm->id, $course->id, $strglossary),
         navmenu($course, $cm));
 

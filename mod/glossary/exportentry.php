@@ -46,8 +46,8 @@
     $entryalreadyexist = get_string("entryalreadyexist","glossary");
     $entryexported = get_string("entryexported","glossary");
 
-    print_header_simple("$glossary->name", "",
-                 "<a href=\"index.php?id=$course->id\">$strglossaries</a> -> $glossary->name",
+    print_header_simple(format_string($glossary->name), "",
+                 "<a href=\"index.php?id=$course->id\">$strglossaries</a> -> ".format_string($glossary->name),
                   "", "", true, "",
                   navmenu($course, $cm));
 
@@ -57,7 +57,7 @@
         if ( !$confirm ) {
             echo "<center>";
             $areyousure = get_string("areyousureexport","glossary");
-            notice_yesno ("<center><h2>$entry->concept</h2><p align=\"center\">$areyousure<br /><b>$mainglossary->name</b>?",
+            notice_yesno ("<center><h2>$entry->concept</h2><p align=\"center\">$areyousure<br /><b>".format_string($mainglossary->name)."</b>?",
                 "exportentry.php?id=$id&amp;mode=$mode&amp;hook=$hook&amp;entry=$entry->id&amp;confirm=1",
                 "view.php?id=$cm->id&amp;mode=$mode&amp;hook=$hook" );
 
