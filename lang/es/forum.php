@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.4 development (2004060400)
+      // forum.php - created with Moodle 1.4 development (2004062600)
 
 
 $string['addanewdiscussion'] = 'Colocar un nuevo tema de discusión aquí';
@@ -104,6 +104,7 @@ $string['postupdated'] = 'Su mensaje se ha actualizado';
 $string['processingdigest'] = 'Procesando el resumen por correo para el usuario $a';
 $string['processingpost'] = 'Procesando $a';
 $string['prune'] = 'Partir';
+$string['prunedpost'] = 'Se ha creado un nuevo debate a partir de ese mensaje';
 $string['pruneheading'] = 'Partir el mensaje y pasar a una nueva discusión';
 $string['rate'] = 'Calificar';
 $string['rating'] = 'Calificación';
