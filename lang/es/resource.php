@@ -1,8 +1,9 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.1 Beta (2003082001)
+      // resource.php - created with Moodle 1.1 (2003082800)
 
 
 $string['addresource'] = "Agregar material";
+$string['chooseafile'] = "Elija o suba un archivo";
 $string['configframesize'] = "Cuando se muestra una página web o un archivo cargado dentro de un marco (frame), este valor es el tamaño en pixeles del marco top que contiene el navegador.";
 $string['editingaresource'] = "Editar material";
 $string['example'] = "Ejemplo";
@@ -28,9 +29,6 @@ $string['newwindow'] = "Nueva ventana";
 $string['newwindowopen'] = "Mostrar el material en una nueva ventana (popup)";
 $string['note'] = "Nota";
 $string['notefile'] = "Para subir más de un archivo (y se puedan ver en la lista) utilice el 
-
-
-
 <A HREF=\$a >Administrador de archivos</A>.";
 $string['notypechosen'] = "Necesita elegir un texto. Regrese y trate nuevamente.";
 $string['resourcetype'] = "Tipo de material";

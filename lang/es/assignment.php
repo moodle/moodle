@@ -16,6 +16,7 @@ $string['assignmenttype'] = "Tipo de tarea";
 $string['configmaxbytes'] = "Tamaño máximo permitido por defecto para todas las tareas del sitio (sujeto a los límites del curso y otras variables del servidor)";
 $string['description'] = "Descripción";
 $string['duedate'] = "Fecha de entrega";
+$string['duedateno'] = "No hay fecha de entrega";
 $string['early'] = "\$a antes";
 $string['failedupdatefeedback'] = "Fallo al actualizar la calificación de \$a";
 $string['feedback'] = "Respuesta";
