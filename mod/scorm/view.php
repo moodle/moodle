@@ -89,22 +89,22 @@
             exit;
     	}
         echo "<br />";
+        echo "<style type=\"text/css\">.scormlist { list-style-type:none; }</style>\n";
         print_simple_box_start("CENTER");
     	echo "<table>\n";
     	echo "  <tr><th>".get_string("coursestruct","scorm")."</th></tr>\n";
-    	echo "  <tr><td nowrap>\n<ul compact style='list-style-type:none'>\n";
+    	echo "  <tr><td nowrap>\n<ul compact class=\"scormlist\"'>\n";
     	if ($scoes = get_records_select("scorm_scoes","scorm='$scorm->id' order by id ASC")){
     	    $level=0;
     	    $sublist=0;
     	    $parents[$level]="/";
-    	    $incomplete=false;
     	    foreach ($scoes as $sco) {
     		if ($parents[$level]!=$sco->parent) {
     		    if ($level>0 && $parents[$level-1]==$sco->parent) {
     			echo "  </ul>\n";
     			$level--;
     		    } else {
-    			echo "  <ul id='".$sublist."'compact style='list-style-type:none;'>\n";
+    			echo "  <ul id='".$sublist."' compact class=\"scormlist\"'>\n";
     			$level++;
     			$parents[$level]=$sco->parent;
     		    }
@@ -121,12 +121,6 @@
     		    	if ( $sco_user->cmi_core_lesson_status == "")
     		    	    $sco_user->cmi_core_lesson_status = "not attempted";
     			echo "      <img src=\"pix/".scorm_remove_spaces($sco_user->cmi_core_lesson_status).".gif\" alt=\"".get_string(scorm_remove_spaces($sco_user->cmi_core_lesson_status),"scorm")."\" title=\"".get_string(scorm_remove_spaces($sco_user->cmi_core_lesson_status),"scorm")."\" />\n";
-    			switch ($sco_user->cmi_core_lesson_status) {
-    				case "not attempted":
-    				case "incomplete":
-    				case "browsed":
-    				    $incomplete = true;
-    			}
     		    } else {
     			echo "      <img src=\"pix/notattempted.gif\" alt=\"".get_string("notattempted","scorm")."\" />";
     			$incomplete = true;
@@ -136,8 +130,11 @@
 		    echo "      &nbsp;$sco->title\n    </li>\n";
 		}
 	    }
+	    for ($i=0;$i<$level;$i++){
+	    	 echo "  </ul>\n";
+	    }
 	}
-	echo "</ul>\n</td></tr>\n";
+	echo "</ul></td></tr>\n";
     	echo "</table>\n";
     	print_simple_box_end();
     	echo "<form name=\"theform\" method=\"POST\" action=\"playscorm.php?id=$cm->id\">\n";

@@ -87,10 +87,12 @@
     				$row[] = "<a href=\"$CFG->wwwroot/user/view.php?id=$data->userid&course=$course->id\">".
     					 "$data->firstname $data->lastname</a>";
     				foreach ($user_data as $data) {
-        		    	$row[]="<img src=\"pix/".scorm_remove_spaces($data->cmi_core_lesson_status).".gif\" 
+    				    if ($data->cmi_core_score_raw > 0)
+    				    	$scoreview = "<br />".get_string("score","scorm").":&nbsp;".$data->cmi_core_score_raw;
+        		    	    $row[]="<img src=\"pix/".scorm_remove_spaces($data->cmi_core_lesson_status).".gif\" 
     						   alt=\"".get_string(scorm_remove_spaces($data->cmi_core_lesson_status),"scorm")."\"
     						   title=\"".get_string(scorm_remove_spaces($data->cmi_core_lesson_status),"scorm")."\">&nbsp;"
-    						   .$data->cmi_core_total_time;
+    						   .$data->cmi_core_total_time.$scoreview;
         			}
         		}
             	$table->data[] = $row; 

@@ -4,9 +4,7 @@
 /// (replace scorm with the name of your module and delete this line)
 
 
-$scorm_CONSTANT = 7;     /// for example
-$SCORM_TOP_FRAME_SIZE = 120;
-$SCORM_LEFT_FRAME_SIZE = 210;
+$SCORM_FRAME_SIZE = 140;
 
 function scorm_add_instance($scorm) {
 /// Given an object containing all the necessary data, 
@@ -175,12 +173,13 @@ function scorm_randstring($len = "8")
 
 function scorm_mkdirs($strPath)
 {
+ global $CFG;
  if (is_dir($strPath))
  	return true;
  $pStrPath = dirname($strPath);
  if (!scorm_mkdirs($pStrPath)) 
  	return false;
- return mkdir($strPath);
+ return mkdir($strPath, $CFG->directorypermissions);
 }
  
 function scorm_datadir($strPath, $existingdir="", $prefix = "SCORM")
@@ -192,7 +191,7 @@ function scorm_datadir($strPath, $existingdir="", $prefix = "SCORM")
 		do {
  			$datadir="/".$prefix.scorm_randstring();
  	 	} while (file_exists($strPath.$datadir));
- 		mkdir($strPath.$datadir);
+ 		mkdir($strPath.$datadir, $CFG->directorypermissions);
  		return $strPath.$datadir;
  	} else {
  		return false;

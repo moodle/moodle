@@ -65,11 +65,13 @@
 		    else if ($sco->type == "sca")
 			$sco_user->$element = "completed";
 		    $ident = insert_record("scorm_sco_users",$sco_user);
-	}
+		}
 	    }
 	    $sco = $first;
-	    if ($_GET["scoid"])
-		$sco = get_record("scorm_scoes","id",$_GET["scoid"]);
+	    if ($_GET["scoid"]) {
+		if ($sco = get_record("scorm_scoes","id",$_GET["scoid"]))
+		    unset($first);
+	    }
 	}
     }
     //
@@ -95,8 +97,9 @@
     if ($sco->id == $max)
 	$last = $sco;
 
-    // Get User data
+    // Get current sco User data
     $sco_user = get_record("scorm_sco_users","userid",$USER->id,"scoid",$sco->id);
+    
     if (scorm_external_link($sco->launch)) {
 	$result = $sco->launch;
     } else {
@@ -107,4 +110,33 @@
 	}
     }
     include("api1_2.php");
+
 ?>
+
+function SCOInitialize() { 
+<?php
+    if ( $sco->previous || $first) {
+    	print "\ttop.nav.document.navform.prev.disabled = true;\n";
+	print "\ttop.nav.document.navform.prev.style.display = 'none';\n";
+    }
+    if ( $sco->next || $last) {
+    	print "\ttop.nav.document.navform.next.disabled = true;\n";
+	print "\ttop.nav.document.navform.next.style.display = 'none';\n";
+    }
+?>
+	top.main.location="<?php echo $result ?>";
+	for (i=0;i<top.nav.document.navform.courseStructure.options.length;i++) {
+	    if ( top.nav.document.navform.courseStructure.options[i].value == <?php echo $sco->id; ?> )
+	    	top.nav.document.navform.courseStructure.options[i].selected = true;
+	}
+} 
+
+function changeSco(direction) {
+	if (direction == "prev")
+	    top.nav.document.navform.scoid.value="<?php echo $prevsco ?>";
+	else
+	    top.nav.document.navform.scoid.value="<?php echo $nextsco ?>";
+	    
+	//alert ("Prev: <?php echo $prevsco ?>\nNext: <?php echo $nextsco ?>\nNew SCO: "+top.nav.document.navform.scoid.value);
+	top.nav.document.navform.submit();
+}   

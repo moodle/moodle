@@ -119,6 +119,12 @@ function SCORMapi() {
 		    if ((parseFloat(value,10)).toString() != value) {
 			errorCode = 405;
 			return "false";
+		    } else {
+		    	rawvalue = parseFloat(value,10);
+		        if ((rawvalue<0) || (rawvalue>100)) {
+		           errorCode = 405;
+		           return "false";
+		        }
 		    }
 		    eval(param+'="'+value+'";');
 		    errorCode = 0;
@@ -278,27 +284,3 @@ function SCORMapi() {
 }
 
 var API = new SCORMapi();
-
-function SCOInitialize() { 
-<?php
-    if ( $sco->previous || $first) {
-    	print "\ttop.nav.document.navform.prev.disabled = true;\n";
-	print "\ttop.nav.document.navform.prev.style.display = 'none';\n";
-    }
-    if ( $sco->next || $last) {
-    	print "\ttop.nav.document.navform.next.disabled = true;\n";
-	print "\ttop.nav.document.navform.next.style.display = 'none';\n";
-    }
-?>
-	top.main.location="<?php echo $result ?>";
-} 
-
-function changeSco(direction) {
-	if (direction == "prev")
-	    top.nav.document.navform.scoid.value="<?php echo $prevsco ?>";
-	else
-	    top.nav.document.navform.scoid.value="<?php echo $nextsco ?>";
-	    
-	//alert ("Prev: <?php echo $prevsco ?>\nNext: <?php echo $nextsco ?>\nNew SCO: "+top.nav.document.navform.scoid.value);
-	top.nav.document.navform.submit();
-}
