@@ -38,7 +38,8 @@ $QUIZ_FILE_FORMAT = array ( "custom"   => get_string("custom", "quiz"),
                             "missingword" => get_string("missingword", "quiz"),
                             "blackboard" => get_string("blackboard", "quiz"),
                             "aon" => "AON",
-                            "multianswer" => get_string("multianswer", "quiz")
+                            "multianswer" => get_string("multianswer", "quiz"),
+                            "coursetestmanager" => "Course Test Manager"
                             );
 
 define("QUIZ_PICTURE_MAX_HEIGHT", "600");   // Not currently implemented

@@ -31,17 +31,21 @@
 
     if ($form = data_submitted()) {   /// Filename
 
-        if (!empty($_FILES['newfile'])) {
+        if (isset($form->filename)) {                 // file already on server
+            $newfile['tmp_name'] = $form->filename; 
+            $newfile['size'] = filesize($form->filename);
+
+        } else if (!empty($_FILES['newfile'])) {      // file was just uploaded
             $newfile = $_FILES['newfile'];
         }
 
         if (empty($newfile)) {
             notify(get_string("uploadproblem") );
 
-        } else if (!is_uploaded_file($newfile['tmp_name']) or $newfile['size'] == 0) {
+        } else if (!isset($filename) and (!is_uploaded_file($newfile['tmp_name']) or $newfile['size'] == 0)) {
             notify(get_string("uploadnofilefound") );
 
-        } else {
+        } else {  // Valid file is found
 
             if (! is_readable("format/$form->format".".php")) {
                 error("Format not known ($form->format)");
