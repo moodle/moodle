@@ -6,9 +6,9 @@
 
 $wiki_CONSTANT = 7;     /// for example
 $site = get_site();
-$WIKI_TYPES = array ('teacher' =>   $site->teacher,
+$WIKI_TYPES = array ('teacher' =>   get_string('defaultcourseteacher'),
                      'group' =>     get_string('groups',"wiki"),
-                     'student' =>   $site->student );
+                     'student' =>   get_string('defaultcoursestudent') );
 define("EWIKI_ESCAPE_AT", 0);       # For the algebraic filter
 
 function wiki_add_instance($wiki) {
