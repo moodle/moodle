@@ -230,12 +230,12 @@ function main_upgrade($oldversion=0) {
             execute_sql("INSERT INTO {$CFG->prefix}log_display VALUES ('user', 'view', 'user', 'CONCAT(firstname,' ',lastname)') ");
         }
     }
-    if ($oldversion < 2003010100) {
+    if ($oldversion < 2003010101) {
         delete_records("log_display", "module", "user");
         $new->module = "user";
         $new->action = "view";
         $new->mtable = "user";
-        $new->field  = "CONCAT(firstname,\' \',lastname)";
+        $new->field  = "CONCAT(firstname,\" \",lastname)";
         insert_record("log_display", $new);
 
         delete_records("log_display", "module", "course");
@@ -245,6 +245,8 @@ function main_upgrade($oldversion=0) {
         $new->field  = "fullname";
         insert_record("log_display", $new);
         $new->action = "update";
+        insert_record("log_display", $new);
+        $new->action = "enrol";
         insert_record("log_display", $new);
     }
 

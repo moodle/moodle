@@ -137,3 +137,7 @@ CREATE TABLE prefix_user_teachers (
 
 
 INSERT INTO prefix_log_display VALUES ('user', 'view', 'user', 'CONCAT(firstname," ",lastname)');
+INSERT INTO prefix_log_display VALUES ('course', 'view', 'course', 'fullname');
+INSERT INTO prefix_log_display VALUES ('course', 'update', 'course', 'fullname');
+INSERT INTO prefix_log_display VALUES ('course', 'enrol', 'course', 'fullname');
+INSERT INTO prefix_log_display VALUES ('course', 'update', 'course', 'fullname');
