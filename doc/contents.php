@@ -10,10 +10,13 @@
 
     print_header();
 
-    echo "<font size=2 face=\"san-serif\">";
     foreach ($string as $file => $filename) {
-        echo "<li><a target=\"main\" href=\"$CFG->wwwroot/doc/?file=$file\">$filename</a></li>";
+        if (substr($file,0,1) == "-") {
+            echo '<p style="font-size:small;margin-bottom:0px;font-family:Trebuchet MS, Verdana, Arial, Helvetica, sans-serif;">'.
+                  $filename.'</p>';
+        } else {
+            echo "<li style=\"font-size:small\"><a target=\"main\" href=\"$CFG->wwwroot/doc/?file=$file\">$filename</a></li>";
+        }
     }
-    echo "</font>";
     
 ?>

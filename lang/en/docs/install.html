@@ -1,41 +1,35 @@
 <head>
-    <title>Moodle Docs: Installation</title>
-	<link rel="stylesheet" href="../theme/standard/styles.php" type="TEXT/CSS">
-    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-	<style type="text/css">
-<!--
-.sectionheading {
-	font-size: medium;
-	font-weight: bold;
-	font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
-	border: 1px dotted;
-	padding: 10px;
-	background-color: #EEEEEE;
-}
--->
-</style>
+    
+<title>Moodle Docs: Installation</title>
+	
+<link rel="stylesheet" href="docstyles.css" type="TEXT/CSS">
+    
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 </head>
 
 <body bgcolor="#FFFFFF">
-<h2>Installing Moodle</h2>
-<p>This guide explains how to install Moodle for the first time.  It goes into some detail
+<h1>Installing Moodle</h1>
+<blockquote>
+  <p>This guide explains how to install Moodle for the first time.  It goes into some detail
    about some of the steps, in order to cover the wide variety of small differences between
    web server setups, so this document may look long and complicated.  Don't be put off by this 
    - I usually set Moodle up in a few minutes!</p>
-<p>Take your time and work through this document carefully - it will save you time later on.</p>
-<p>Sections in this document:</p>
-<ol>
-  <li><a href="#requirements">Requirements</a></li>
-  <li><a href="#downloading">Download</a></li>
-  <li><a href="#site">Site structure</a></li>
-  <li><a href="#data">Create a data directory</a></li>
-  <li><a href="#database">Create a database</a></li>
-  <li><a href="#webserver">Check web server settings</a></li>
-  <li><a href="#config">Edit config.php</a></li>
-  <li><a href="#admin">Go to the admin page</a></li>
-  <li><a href="#cron">Set up cron</a></li>
-  <li><a href="#course">Create a new course</a></li>
-</ol>
+  <p>Take your time and work through this document carefully - it will save you time later on.</p>
+  <p>Sections in this document:</p>
+  <ol>
+    <li><a href="#requirements">Requirements</a></li>
+    <li><a href="#downloading">Download</a></li>
+    <li><a href="#site">Site structure</a></li>
+    <li><a href="#data">Create a data directory</a></li>
+    <li><a href="#database">Create a database</a></li>
+    <li><a href="#webserver">Check web server settings</a></li>
+    <li><a href="#config">Edit config.php</a></li>
+    <li><a href="#admin">Go to the admin page</a></li>
+    <li><a href="#cron">Set up cron</a></li>
+    <li><a href="#course">Create a new course</a></li>
+  </ol>
+  <p>&nbsp;</p>
+</blockquote>
 <h3 class="sectionheading"><a name="requirements"></a>1. Requirements</h3>
 <blockquote> 
   <p>Moodle is primarily developed in Linux using Apache, MySQL and PHP (also 
@@ -70,7 +64,8 @@
     then please see our guide: <a href="http://moodle.org/doc/?file=installamp.html">Installing 
     Apache, MySQL and PHP</a>. It provides some step-by-step instructions to install 
     all this on most popular platforms.</p>
-<p>&nbsp;</p></blockquote>
+  <p>&nbsp;</p>
+</blockquote>
 <h3 class="sectionheading"><a name="downloading"></a>2. Download</h3>
 <blockquote>
   <p>There are two ways to get Moodle, as a compressed package and via CVS. These 
@@ -113,31 +108,28 @@
 <blockquote>
   <p>Moodle will also need some space on your hard disk to store uploaded files, 
     such as course documents and user pictures.</p>
-
   <p>Create a directory for this purpose somewhere.  For security, it's best that 
      this directory is NOT accessible directly via the web.  The easiest way to do this
      is to simply locate it OUTSIDE the web directory, otherwise protect it 
      by creating a file in the data directory called .htaccess, containing this line:
   <blockquote>
-     <pre>deny from all</pre>
+     
+    <pre>deny from all</pre>
   </blockquote>
-  
   <p>To make sure that Moodle can save uploaded files in this directory, check that 
      the web server software (eg Apache) has permission to write 
     to this directory. On Unix machines, this means setting the owner of the directory 
     to be something like &quot;nobody&quot; or &quot;apache&quot;.</p>
-
   <p>On many shared hosting servers, you will probably need to restrict all file access 
      to your "group" (to prevent other webhost customers from looking at or changing your files), 
      but provide full read/write access to everyone else (which will allow the web server
      to access your files).  Speak to your server administrator if you are having 
      trouble setting this up securely.</p>
-
 </blockquote>
 <p>&nbsp;</p>
 <h3 class="sectionheading"><a name="database"></a>5. Create a database</h3>
 <blockquote>
-<p>You need to create an empty database (eg "moodle") in your database system 
+  <p>You need to create an empty database (eg "moodle") in your database system 
     along with a special user (eg "moodleuser") that has access to that database 
     (and that database only). You could use the "root" user if you wanted to, but 
     this is not recommended for a production system: if hackers manage to discover
@@ -162,7 +154,7 @@
 </pre>
   <p>(For MySQL I highly recommend the use of <a href="http://phpmyadmin.sourceforge.net/">phpMyAdmin</a> 
     to manage your databases - you can do all this via a web interface).</p>
-<p>As of version 1.0.8, Moodle now supports table prefixes, and so can safely share 
+  <p>As of version 1.0.8, Moodle now supports table prefixes, and so can safely share 
    a database with tables from other applications.</p>
 </blockquote>
 <p>&nbsp;</p>
@@ -185,7 +177,6 @@
   <blockquote>
     <pre><strong>AcceptPathInfo</strong> on </pre>
   </blockquote>
-
   <p>Thirdly, Moodle requires a number of PHP settings to be active for it to 
      work.  <b>On most servers these will already be the default settings.</b>
      However, some PHP servers (and some of the more recent PHP versions) may 
@@ -193,7 +184,7 @@
      file (usually called php.ini):</p>
   <blockquote>
 
-<pre>magic_quotes_gpc = 1    (preferred but not necessary)
+    <pre>magic_quotes_gpc = 1    (preferred but not necessary)
 magic_quotes_runtime = 0    (necessary)
 file_uploads = 1
 session.auto_start = 0
@@ -206,7 +197,9 @@ session.bug_compat_warn = 0
   <p>To do this, you need to create a file called <b>.htaccess</b> in Moodle's
      main directory that contains definitions for these settings.
      This only works on Apache servers and only when Overrides have been allowed.
-     <blockquote><pre>
+     
+  <blockquote>
+    <pre>
 DirectoryIndex index.php index.html index.htm
 
 &lt;IfDefine APACHE2>
@@ -217,21 +210,23 @@ php_flag magic_quotes_gpc 1
 php_flag magic_quotes_runtime 0
 php_flag file_uploads 1
 php_flag session.auto_start 0
-php_flag session.bug_compat_warn 0</pre></blockquote>
-     <p>You can also do things like define the maximum size for uploaded files:
-     <blockquote><pre>
+php_flag session.bug_compat_warn 0</pre>
+  </blockquote>
+  <p>You can also do things like define the maximum size for uploaded files:
+     
+  <blockquote>
+    <pre>
 LimitRequestBody 0
 php_value upload_max_filesize 2M
 php_value post_max_size 2M
-     </pre></blockquote>
-
+     </pre>
+  </blockquote>
   <p>The easiest thing to do is just copy the sample file from lib/htaccess 
      and edit it to suit your needs.  It contains further instructions.  For 
      example, in a Unix shell:
   <blockquote>
     <pre>cp lib/htaccess .htaccess</pre>
   </blockquote>
-
 </blockquote>
 <p>&nbsp;</p>
 <h3 class="sectionheading"><a name="config"></a>7. Edit config.php</h3>
@@ -394,7 +389,6 @@ php_value post_max_size 2M
   <p>Usually, the "crontab" command will put you into the 'vi' editor. You enter 
      "insert mode" by pressing "i", then type in the line as above, then exit insert mode by 
      pressing ESC.  You save and exit by typing ":wq", or quit with saving using ":q!" (without the quotes).</p>
-
   <p><b>On Windows systems</b>: The simplest way is to use this little package <a href="http://moodle.org/download/moodle-cron-for-windows.zip" title="Click to download this package (150k)" target="_blank">moodle-cron-for-windows.zip</a> 
     which makes this whole thing very easy. You can also explore using the built-in 
     Windows feature for "Scheduled Tasks".</p>
@@ -424,5 +418,4 @@ php_value post_max_size 2M
 <p>&nbsp;</p>
 <p align="CENTER"><font size="1"><a href="." target="_top">Moodle Documentation</a></font></p>
 <p align="CENTER"><font size="1">Version: $Id$</font></p>
-
 </body>

@@ -1,152 +1,58 @@
 <html>
 <head>
 <title>Moodle Docs: Coding Guidelines</title>
-<link rel="stylesheet" href="../theme/standard/styles.php" type="TEXT/CSS">
+<link rel="stylesheet" href="docstyles.css" type="TEXT/CSS">
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<style type="text/css">
-
-<!--
-li {
-       padding-top: 10px;
-}
-
-.question {
-
-    font-size: medium;
-
-    font-weight: bold;
-
-    font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
-
-    border: 1px dotted;
-
-    padding: 10px;
-
-    background-color: #EEEEEE;
-
-}
-
-.answer {
-
-    font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
-
-    font-size: medium;
-
-    border: none;
-
-    padding-left: 40px;
-
-}
-
--->
-
-</style>
-<style type="text/css">
-
-<!--
-
-.normaltext {
-
-    font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
-
-    font-size: medium;
-
-    border: none;
-
-    padding-left: 10px;
-
-}
-
-.answercode {
-
-    font-family: "Courier New", Courier, mono;
-
-    font-size: small;
-
-    border: none;
-
-    padding-left: 60px;
-
-}
-
-.questionlink {
-
-    font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
-
-    font-size: medium;
-
-    border: none;
-
-    padding-left: 40px;
-
-}
-
--->
-
-</style>
-<style type="text/css">
-<!--
-.examplecode {
-	font-family: "Courier New", Courier, mono;
-	font-size: small;
-	border: thin dashed #999999;
-	background-color: #FBFBFB;
-	margin: auto;
-	padding: 30px;
-	height: auto;
-	width: auto;
-}
--->
-</style>
 </head>
 <body bgcolor="#FFFFFF">
-<h2>Moodle Coding Guidelines</h2>
+<h1>Moodle Coding Guidelines</h1>
 <p class="normaltext">Any collaborative project needs consistency and stability 
   to stay strong.</p>
 <p class="normaltext">These guidelines are to provide a goal for all Moodle code 
   to strive to. It's true that some of the older existing code falls short in 
   a few areas, but it will all be fixed eventually. All new code definitely must 
   adhere to these standards as closely as possible.</p>
-<h2 class="normaltext">General Rules</h2>
+<h2>General Rules</h2>
 <ol class="normaltext">
-  <li>All code files should use the .php extension.</li>
-  <li>All template files should use the .html extension.</li>
-  <li>All text files should use Unix-style text format (most text editors have 
-    this as an option).</li>
-  <li>All php tags should be 'full' tags like <font color="#339900">&lt;?php</font> 
-    - short tags are not allowed. </li>
-  <li>All existing copyright notices must be retained. You can add your own if 
-    necessary.</li>
-  <li>Each file should include the main config.php file.</li>
-  <li>Each file should check that the user is authenticated correctly, using require_login() 
-    and isadmin(), isteacher(), iscreator() or isstudent().</li>
-  <li>All access to databases should use the functions in lib/datalib.php whenever 
-    possible - this allows compatibility across a wide range of databases. You 
-    should find that almost anything is possible using these functions. Any other 
-    SQL statements should be: cross-platform; restricted to specific functions 
+  <li class="spaced">All code files should use the .php extension.</li>
+  <li class="spaced">All template files should use the .html extension.</li>
+  <li class="spaced">All text files should use Unix-style text format (most text 
+    editors have this as an option).</li>
+  <li class="spaced">All php tags must be 'full' tags like <font color="#339900">&lt;?php 
+    ?&gt;</font> ... not 'short' tags like <font color="#339900">&lt;? ?&gt;</font>. 
+  </li>
+  <li class="spaced">All existing copyright notices must be retained. You can 
+    add your own if necessary.</li>
+  <li class="spaced">Each file should include the main config.php file.</li>
+  <li class="spaced">Each file should check that the user is authenticated correctly, 
+    using require_login() and isadmin(), isteacher(), iscreator() or isstudent().</li>
+  <li class="spaced">All access to databases should use the functions in lib/datalib.php 
+    whenever possible - this allows compatibility across a wide range of databases. 
+    You should find that almost anything is possible using these functions. Any 
+    other SQL statements should be: cross-platform; restricted to specific functions 
     within your code (usally a lib.php file); and clearly marked.</li>
-  <li>Don't create or use global variables except for the standard $CFG, $SESSION, 
-    $THEME and $USER.</li>
-  <li>All variables should be initialised or at least tested for existence using 
-    isset() or empty() before they are used.</li>
-  <li>All strings should be translatable - create new texts in the &quot;lang/en&quot; 
-    files and call them using get_string() or print_string().</li>
-  <li>All help files should be translatable - create new texts in the &quot;en/help&quot; 
-    directory and call them using helpbutton().</li>
+  <li class="spaced">Don't create or use global variables except for the standard 
+    $CFG, $SESSION, $THEME and $USER.</li>
+  <li class="spaced">All variables should be initialised or at least tested for 
+    existence using isset() or empty() before they are used.</li>
+  <li class="spaced">All strings should be translatable - create new texts in 
+    the &quot;lang/en&quot; files and call them using get_string() or print_string().</li>
+  <li class="spaced">All help files should be translatable - create new texts 
+    in the &quot;en/help&quot; directory and call them using helpbutton().</li>
 </ol>
 <p>&nbsp;</p>
-<h2 class="normaltext">Coding Style</h2>
+<h2>Coding Style</h2>
 <p class="normaltext">I know it can be a little annoying to change your style 
   if you're used to something else, but balance that annoyance against the annoyance 
   of all the people trying later on to make sense of Moodle code with mixed styles. 
   There are obviously many good points for and against any style that people use, 
   but the current style just <strong>is</strong>, so please stick to it. </p>
 <ol class="normaltext">
-  <li><strong>Indenting</strong> should be consistently 4 spaces. Don't use tabs 
-    AT ALL. </li>
-  <li><strong>Variable names</strong> should always be easy-to-read, meaningful 
-    lowercase English words. If you really need more than one word then run them 
-    together, but keep them short as possible. 
+  <li class="spaced"><strong>Indenting</strong> should be consistently 4 spaces. 
+    Don't use tabs AT ALL. </li>
+  <li class="spaced"><strong>Variable names</strong> should always be easy-to-read, 
+    meaningful lowercase English words. If you really need more than one word 
+    then run them together, but keep them short as possible. 
     <p class="examplecode"><font color="#006600">GOOD: $quiz<br>
       GOOD: $errorstring<br>
       GOOD: $i (but only in little loops)<br>
@@ -155,16 +61,17 @@ li {
       BAD: $aReallyLongVariableNameWithoutAGoodReason<br>
       BAD: $error_string</font></p>
   </li>
-  <li><strong>Constants</strong> should always be in upper case, and always start 
-    with the name of the module. They should have words separated by underscores. 
+  <li class="spaced"><strong>Constants</strong> should always be in upper case, 
+    and always start with the name of the module. They should have words separated 
+    by underscores. 
     <p class="examplecode"><font color="#006600">define(&quot;FORUM_MODE_FLATOLDEST&quot;, 
       1);</font></p>
   </li>
-  <li><strong>Function names</strong> should be simple English words, and start 
-    with the name of the module to avoid conflicts between modules. Words should 
-    be separated by underscores. Parameters should always have sensible defaults 
-    if possible. Note there is no space between the function name and the following 
-    (brackets). <br>
+  <li class="spaced"><strong>Function names</strong> should be simple English 
+    words, and start with the name of the module to avoid conflicts between modules. 
+    Words should be separated by underscores. Parameters should always have sensible 
+    defaults if possible. Note there is no space between the function name and 
+    the following (brackets). <br>
     <p class="examplecode"> <font color="#007700">function </font><font color="#0000BB">forum_set_display_mode</font><font color="#007700">(</font><font color="#0000BB">$mode</font><font color="#007700">=</font><font color="#0000BB">0</font><font color="#007700">) 
       {<br />
       &nbsp;&nbsp;&nbsp;&nbsp;global </font><font color="#0000BB">$USER</font><font color="#007700">, 
@@ -181,8 +88,8 @@ li {
       &nbsp;&nbsp;&nbsp;&nbsp;}<br />
       }</font></p>
   </li>
-  <li><strong>Blocks</strong> must always be enclosed in curly braces (even if 
-    there is only one line). Moodle uses this style: 
+  <li class="spaced"><strong>Blocks</strong> must always be enclosed in curly 
+    braces (even if there is only one line). Moodle uses this style: 
     <p class="examplecode"> <font color="#006600">if (</font><font color="#0000CC">$quiz</font><font color="#006600">-&gt;</font><font color="#0000CC">attempts</font><font color="#006600">) 
       {<br />
       &nbsp;&nbsp;&nbsp;&nbsp;if (</font><font color="#0000CC">$numattempts </font><font color="#006600">&gt; 
@@ -193,16 +100,16 @@ li {
       &nbsp;&nbsp;&nbsp;&nbsp;}<br />
       }</font></p>
   </li>
-  <li><strong>Strings</strong> should be defined using single quotes where possible, 
-    for increased speed.<br>
+  <li class="spaced"><strong>Strings</strong> should be defined using single quotes 
+    where possible, for increased speed.<br>
     <p class="examplecode"> <font color="#006600">$var = 'some text without any 
       variables';<br>
       $var = &quot;with special characters like a new line \n&quot;;<br>
       $var = 'a very, very long string with a '.$single.' variable in it';<br>
       $var = &quot;some $text with $many variables $within it&quot;; </font></p>
   </li>
-  <li><strong>Comments</strong> should use two or three slashes and line up nicely 
-    with the code. 
+  <li class="spaced"><strong>Comments</strong> should use two or three slashes 
+    and line up nicely with the code. 
     <p class="examplecode"><font color="#006600">function </font><font color="#0000BB">forum_get_ratings_mean</font><font color="#007700">(</font><font color="#0000BB">$postid</font><font color="#007700">, 
       </font><font color="#0000BB">$scale</font><font color="#007700">, </font><font color="#0000BB">$ratings</font><font color="#007700">=</font><font color="#0000BB">NULL</font><font color="#007700">) 
       {<br />
@@ -227,10 +134,10 @@ li {
       {</font> <br>
       ....etc </p>
   </li>
-  <li><strong>Space</strong> should be used liberally - don't be afraid to spread 
-    things out a little to gain some clarity. Generally, there should be one space 
-    between brackets and normal statements, but no space between brackets and 
-    variables or functions:<br>
+  <li class="spaced"><strong>Space</strong> should be used liberally - don't be 
+    afraid to spread things out a little to gain some clarity. Generally, there 
+    should be one space between brackets and normal statements, but no space between 
+    brackets and variables or functions:<br>
     <p class="examplecode"> <font color="#007700">foreach (</font><font color="#0000BB">$objects 
       </font><font color="#007700">as </font><font color="#0000BB">$key </font><font color="#007700">=&gt;</font><font color="#0000BB"> 
       $thing</font><font color="#007700">)</font><font color="#006600"> {<br>
@@ -256,7 +163,6 @@ li {
 <p align="center" class="normaltext">&nbsp;</p>
 <hr>
 <p align="CENTER"><font size="1"><a href="." target="_top">Moodle Documentation</a></font></p>
-<p align="CENTER"><font size="1">Version: $Id: faq.html,v 1.6 2003/03/30 13:54:28 
-  moodler Exp $</font></p>
+<p align="CENTER"><font size="1">Version: $Id$</font></p>
 </body>
 </html>
