@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // exercise.php - created with Moodle 1.5 unstable development (2004091100)
+      // exercise.php - created with Moodle 1.5 unstable development (2004091700)
 
 
 $string['absent'] = '欠席';
@@ -26,7 +26,7 @@ $string['deadlineis'] = '提出期限は $a です';
 $string['delete'] = '削除';
 $string['deleting'] = '削除中';
 $string['description'] = '説明';
-$string['descriptionofexercise'] = 'エクササイズの説明文又は $a が行う作業は、Wordドキュメントは又はHTMLファイルにより作成します。このファイルは、エクササイズが $a に公開される以前にアップロードします。同一のエクササイズ又は作業に、別のWordドキュメントやHTMLファイルを作成し、エクササイズが $a に公開される前にアップロードすることも可能です。';
+$string['descriptionofexercise'] = 'エクササイズの説明文または $a が行う作業は、WordドキュメントやHTMLファイルにより作成します。このファイルは、エクササイズが $a に公開される以前にアップロードします。同一のエクササイズまたは作業に、別のWordドキュメントやHTMLファイルを作成し、エクササイズが $a に公開される前にアップロードすることも可能です。';
 $string['detailsofassessment'] = '評価詳細';
 $string['displayoffinalgrades'] = '最終成績を表示';
 $string['duedate'] = '締切日';

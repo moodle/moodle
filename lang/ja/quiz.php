@@ -3,7 +3,7 @@
 
 
 $string['acceptederror'] = '¥¨¥é¡¼ÈÏ°Ï';
-$string['addingquestions'] = '¤³¤ÎÉôÊ¬¤Ç¤Ï¥Ç¡¼¥¿¥Ù¡¼¥¹Æâ¤Î¼ÁÌä¤ò´ÉÍı¤·¤Ş¤¹¡£¼ÁÌä¤ÏÀ°Íı¤·¤ä¤¹¤¤¤è¤¦¤Ë¥«¥Æ¥´¥êËè¤ËÊİÂ¸¤µ¤ì¤Ş¤¹¡£¼ÁÌä¤Ï¥³¡¼¥¹Æâ¤ÎÁ´¤Æ¤Î¾®¥Æ¥¹¥È¤ËÍøÍÑ¤Ç¤­¤Ş¤¹¡£¡Ö¸ø³«¡×¤òÁª¤ó¤À¾ì¹ç¤ÏÂ¾¤Î¥³¡¼¥¹¤Ç¤âÍøÍÑ¤Ç¤­¤Ş¤¹¡£<br /><br />¼ÁÌä¤Î¥«¥Æ¥´¥ê¤òÁªÂòËô¤ÏºîÀ®¤·¤¿¸å¤Ë¼ÁÌä¤òºîÀ®¡¦ÊÔ½¸¤·¤Æ¤¯¤À¤µ¤¤¡£¤³¤Î¥Ú¡¼¥¸¤ÎÈ¿ÂĞÂ¦¤Ë¤¢¤ë¾®¥Æ¥¹¥È¤Ë¤É¤Î¼ÁÌä¤Ç¤âÄÉ²Ã¤¹¤ë¤³¤È¤¬¤Ç¤­¤Ş¤¹¡£';
+$string['addingquestions'] = '¤³¤ÎÉôÊ¬¤Ç¤Ï¥Ç¡¼¥¿¥Ù¡¼¥¹Æâ¤Î¼ÁÌä¤ò´ÉÍı¤·¤Ş¤¹¡£¼ÁÌä¤ÏÀ°Íı¤·¤ä¤¹¤¤¤è¤¦¤Ë¥«¥Æ¥´¥êËè¤ËÊİÂ¸¤µ¤ì¤Ş¤¹¡£¼ÁÌä¤Ï¥³¡¼¥¹Æâ¤ÎÁ´¤Æ¤Î¾®¥Æ¥¹¥È¤ËÍøÍÑ¤Ç¤­¤Ş¤¹¡£¡Ö¸ø³«¡×¤òÁª¤ó¤À¾ì¹ç¤ÏÂ¾¤Î¥³¡¼¥¹¤Ç¤âÍøÍÑ¤Ç¤­¤Ş¤¹¡£<br /><br />¼ÁÌä¤Î¥«¥Æ¥´¥ê¤òÁªÂò¤Ş¤¿¤ÏºîÀ®¤·¤¿¸å¤Ë¼ÁÌä¤òºîÀ®¡¦ÊÔ½¸¤·¤Æ¤¯¤À¤µ¤¤¡£¤³¤Î¥Ú¡¼¥¸¤ÎÈ¿ÂĞÂ¦¤Ë¤¢¤ë¾®¥Æ¥¹¥È¤Ë¤É¤Î¼ÁÌä¤Ç¤âÄÉ²Ã¤¹¤ë¤³¤È¤¬¤Ç¤­¤Ş¤¹¡£';
 $string['addquestions'] = '¾®¥Æ¥¹¥È¤òÄÉ²Ã';
 $string['addquestionstoquiz'] = '¸½ºß¤Î¾®¥Æ¥¹¥È¤Ë¼ÁÌä¤òÄÉ²Ã¤¹¤ë';
 $string['addselectedtoquiz'] = 'ÁªÂò¤·¤¿¤â¤Î¤ò¾®¥Æ¥¹¥È¤ËÄÉ²Ã¤¹¤ë';
@@ -67,7 +67,7 @@ $string['default'] = '¥Ç¥Õ¥©¥ë¥È';
 $string['defaultgrade'] = 'É¾²Á¤Î½é´üÃÍ';
 $string['defaultinfo'] = '¼ÁÌä¤ÎÉ¸½à¥«¥Æ¥´¥ê';
 $string['deleteattemptcheck'] = 'ËÜÅö¤Î¤³¤ì¤é¤ÎÄ©Àï¤òºï½ü¤·¤Æ¤âµ¹¤·¤¤¤Ç¤¹¤«?';
-$string['deletequestioncheck'] = ' \'$a\' ¤òËÜÅö¤Ëºï½ü¤·¤Æ¤âµ¹¤·¤¤¤Ç¤¹¤«?';
+$string['deletequestioncheck'] = '¡Ö $a ¡×¤òËÜÅö¤Ëºï½ü¤·¤Æ¤âµ¹¤·¤¤¤Ç¤¹¤«?';
 $string['description'] = 'ÀâÌÀ';
 $string['discrimination'] = '¼±ÊÌ¥¤¥ó¥Ç¥Ã¥¯¥¹';
 $string['eachattemptbuildsonthelast'] = '¤½¤ì¤¾¤ì¤Î²òÅú¤òºÇ¸å¤ËºîÀ®¤¹¤ë';
@@ -76,7 +76,7 @@ $string['editdatasets'] = '¥Ç¡¼¥¿¥»¥Ã¥È¤òÊÔ½¸¤¹¤ë';
 $string['editingcalculated'] = '·×»»ÌäÂê¤òÊÔ½¸¤¹¤ë';
 $string['editingdescription'] = 'ÀâÌÀ¤òÊÔ½¸¤¹¤ë';
 $string['editingmatch'] = 'ÁÈ¤ß¹ç¤ï¤»ÌäÂê¤òÊÔ½¸¤¹¤ë';
-$string['editingmultianswer'] = '±£¤·²òÅúÊı¼°¤òÊÔ½¸¤¹¤ë';
+$string['editingmultianswer'] = '·êËä¤áÌäÂê¤òÊÔ½¸¤¹¤ë';
 $string['editingmultichoice'] = 'Â¿»èÁªÂò¼°ÌäÂê¤òÊÔ½¸¤¹¤ë';
 $string['editingnumerical'] = '¿ôÃÍÌäÂê¤òÊÔ½¸¤¹¤ë';
 $string['editingquestion'] = '¼ÁÌä¤òÊÔ½¸¤¹¤ë';
@@ -108,7 +108,7 @@ $string['fractionsnomax'] = '¤³¤Î¼ÁÌä¤ËÂĞ¤¹¤ëÉ¾²Á¤òÍ¿¤¨¤ë¤¿¤á¤Ë¡¢<br />²òÅú¤Î°ì¤
 <br />¼ÁÌä¤ò½¤Àµ¤·¤Ş¤¹¤«?';
 $string['functiontakesnoargs'] = '´Ø¿ô $a ¤Ë¤Ï°ú¿ô¤Ï¤¢¤ê¤Ş¤»¤ó¡£';
 $string['functiontakesonearg'] = '´Ø¿ô $a ¤Ï¸·Ì©¤Ë1¤Ä¤Î°ú¿ô¤ò»ı¤ÄÉ¬Í×¤¬¤¢¤ê¤Ş¤¹¡£';
-$string['functiontakesoneortwoargs'] = '´Ø¿ô $a ¤Ï1¤ÄËô¤Ï2¤Ä¤Î°ú¿ô¤ò»ı¤ÄÉ¬Í×¤¬¤¢¤ê¤Ş¤¹¡£';
+$string['functiontakesoneortwoargs'] = '´Ø¿ô $a ¤Ï1¤Ä¤Ş¤¿¤Ï2¤Ä¤Î°ú¿ô¤ò»ı¤ÄÉ¬Í×¤¬¤¢¤ê¤Ş¤¹¡£';
 $string['functiontakestwoargs'] = '´Ø¿ô $a ¤Ï¸·Ì©¤Ë2¤Ä¤Î°ú¿ô¤ò»ı¤ÄÉ¬Í×¤¬¤¢¤ê¤Ş¤¹¡£';
 $string['generatevalue'] = '²¼µ­¤ÎÈÏ°Ï¤Ç¿·¤·¤¤ÃÍ¤òÀ¸À®¤¹¤ë';
 $string['geometric'] = '´ö²¿³ØÅª';
@@ -138,7 +138,7 @@ $string['missingquestiontext'] = '¼ÁÌäÆâÍÆ¤¬¸«¤Ä¤«¤ê¤Ş¤»¤ó¡£';
 $string['missingword'] = '·êËä¤á·Á¼°';
 $string['modulename'] = '¾®¥Æ¥¹¥È';
 $string['modulenameplural'] = '¾®¥Æ¥¹¥È';
-$string['multianswer'] = '±£¤·²òÅúÊı¼°(Cloze)';
+$string['multianswer'] = '·êËä¤áÌäÂê(Cloze)';
 $string['multichoice'] = 'Â¿»èÁªÂòÊı¼°';
 $string['multiplier'] = '¾è¿ô';
 $string['name'] = 'Ì¾¾Î';

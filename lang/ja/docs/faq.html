@@ -20,7 +20,7 @@ Moodle</a>コースを参照してください。あなたの問題が既に議論されている可能性があり
 
 
 <p class="normaltext">
-様々な方法を試してみても問題が解決しない場合で、ファイアーウォールの背後でMoodleを動かしている場合は、必須の機能又は
+様々な方法を試してみても問題が解決しない場合で、ファイアーウォールの背後でMoodleを動かしている場合は、必須の機能または
 必要なコミュニケーションをブロックしないように、ファイアーウォールを再設定されることをお勧めします。
 ファイアーウォールがMoodleに影響を及ぼすことは殆どありませんが、ファイアーウォールの設定ミスにより
 Moodleの機能に影響を及ぼすことがあります。
@@ -28,7 +28,7 @@ Moodleの機能に影響を及ぼすことがあります。
 
 <p class="normaltext">該当する答えを閲覧する時は下記のリンクをお使いください:</p>
 
-<p class="questionlink"><a href="#filenotfound">アップロードしたファイルへアクセス又は閲覧する時に、いつも「File not Found」というメッセージが表示されます。</a></p>
+<p class="questionlink"><a href="#filenotfound">アップロードしたファイルへアクセスまたは閲覧する時に、いつも「File not Found」というメッセージが表示されます。</a></p>
 
 <p class="questionlink"><a href="#php">PHP - どのバージョンがインストールされていますか?</a></p>
 
@@ -40,7 +40,7 @@ Moodleの機能に影響を及ぼすことがあります。
 
 <p class="questionlink"><a href="#failedopen">次のエラーが表示され続けます: Failed opening required '/web/moodle/lib/setup.php'</a></p>
 
-<p class="questionlink"><a href="#quotes">アポストロフィー(')又はクオート(&quot;)を追加したテキストは、エラーを生じるかスラッシュが追加されます。</a></p>
+<p class="questionlink"><a href="#quotes">アポストロフィー(')またはクオート(&quot;)を追加したテキストは、エラーを生じるかスラッシュが追加されます。</a></p>
 
 <p class="questionlink"><a href="#sessiontmp">session_startに関するエラーメッセージが表示され続けます。</a></p>
 
@@ -63,13 +63,13 @@ Moodleの機能に影響を及ぼすことがあります。
 <p class="questionlink">&nbsp;</p>
 
 
-<h3><a name="filenotfound"></a>アップロードしたファイルへアクセス又は閲覧する時に、いつも「File not Found」というメッセージが表示されます。</h3>
+<h3><a name="filenotfound"></a>アップロードしたファイルへアクセスまたは閲覧する時に、いつも「File not Found」というメッセージが表示されます。</h3>
 
 <p class="answer">例えば: Not Found: The requested URL /moodle/file.php/2/myfile.jpg was not found on this server. と表示される場合。</p>
 
 <p class="answer">スクリプト以下のURLが、直接スクリプトへ渡されるようにウェブサーバを設定する必要があります。
 Apache 1では通常この設定がなされていますが、Apache 2では設定されていません。
-この設定を行うには、httpd.conf又ローカルディレクトリの.htaccessファイルに下記の行を追加してください
+この設定を行うには、httpd.confまたローカルディレクトリの.htaccessファイルに下記の行を追加してください
 (詳細は<a href="./?file=install.html#webserver">インストールマニュアル</a>をご覧ください): </p>
 
 <p class="answercode"><b>AcceptPathInfo</b> on</p>
@@ -113,7 +113,7 @@ Apache 1では通常この設定がなされていますが、Apache 2では設定されていません。
 <p class="answercode">Parse error: parse error, unexpected T_VARIABLE in c:\program files\easyphp\www\moodle\config.php on line 94 <br />
   Fatal error: Call to undefined function: get_string() in c:\program files\easyphp\www\moodle\mod\resource\lib.php on line 11</p>
 
-<p class="answer">config.php(94行目より前)で、セミコロン又は閉じクオートが抜けている可能性があります。</p>
+<p class="answer">config.php(94行目より前)で、セミコロンまたは閉じクオートが抜けている可能性があります。</p>
 
 <p class="answer">その他の原因として、config.phpをWordのようなプログラムで開いて編集した後に、テキストファイルとして保存せずに、
 HTMLページとして保存している可能性が考えられます。</p>
@@ -130,7 +130,7 @@ HTMLページとして保存している可能性が考えられます。</p>
 
 <p class="answercode"> Warning: Cannot add header information - headers already sent by (output started at /webs/moodle/config.php:87) in /webs/moodle/login/index.php on line 54 </p>
 
-<p class="answer">config.phpの最後の?>の後に空白行又はスペースがあります。いくつかのテキストエディタ(例えばWindowsのワードパッド)は、空白行やスペースを追加することがありますので、
+<p class="answer">config.phpの最後の?>の後に空白行またはスペースがあります。いくつかのテキストエディタ(例えばWindowsのワードパッド)は、空白行やスペースを追加することがありますので、
 空白行やスペースを完全に取り去るために他のテキストエディタをお使いください。</p>
 
 <p class="answer">&nbsp;</p>
@@ -143,7 +143,7 @@ HTMLページとして保存している可能性が考えられます。</p>
 
 <p class="answer">&nbsp;</p>
 
-<h3><a name="quotes" id="quotes"></a>アポストロフィー(')又はクオート(&quot;)を追加したテキストは、エラーを生じるかスラッシュが追加されます。</h3>
+<h3><a name="quotes" id="quotes"></a>アポストロフィー(')またはクオート(&quot;)を追加したテキストは、エラーを生じるかスラッシュが追加されます。</h3>
 
 <p class="answer">アポストロフィーによって生じる問題は、「magic quotes」の設定ミスが原因しています。 Moodleでは次の設定を必要とします(通常デフォルトです):</p>
 
