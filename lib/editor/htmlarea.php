@@ -1430,7 +1430,12 @@ HTMLArea.prototype._createLink = function(link) {
 		f_title  : link.title,
 		f_target : link.target
 	};
-	this._popupDialog("link.php?id=<?php print($id);?>", function(param) {
+	this._popupDialog("<?php
+	if(isteacher($id)) {
+    	echo "link.php?id=$id";
+	} else {
+    	echo "link_std.php?id=$id";
+	}?>", function(param) {
 		if (!param)
 			return false;
 		var a = link;
@@ -1474,7 +1479,12 @@ HTMLArea.prototype._insertImage = function(image) {
 		f_width  : image.width,
 		f_height : image.height
 	};
-	this._popupDialog("insert_image.php?id=<?php echo $id ?>", function(param) {
+	this._popupDialog("<?php
+	if(isteacher($id)) {
+    	echo "insert_image.php?id=$id";
+	} else {
+    	echo "insert_image_std.php?id=$id";
+	}?>", function(param) {
 		if (!param) {	// user must have pressed Cancel
 			return false;
 		}
