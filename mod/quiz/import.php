@@ -108,7 +108,8 @@
     echo "<tr><td align=right>";
     print_string("category", "quiz");
     echo ":</td><td>";
-    choose_from_menu($categories, "category", "$category->id", "");
+    // choose_from_menu($categories, "category", "$category->id", "");
+    echo quiz_get_category_coursename($category);
     echo "</tr>";
 
     echo "<tr><td align=right>";
