@@ -1472,7 +1472,11 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5, $f
         } else {
             $discussion->replies = 0;
         }
-        $ownpost = ($discussion->userid == $USER->id);
+        if (!empty($USER->id)) {
+            $ownpost = ($discussion->userid == $USER->id);
+        } else {
+            $ownpost=false;
+        }
         switch ($forum_style) {
             case "minimal":
                 echo "<P><FONT COLOR=#555555>".userdate($discussion->modified, "%d %b, %H:%M")." - $discussion->firstname</FONT>";

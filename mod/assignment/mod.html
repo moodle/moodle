@@ -6,6 +6,30 @@
         $defaultformat = FORMAT_MOODLE;
         $onsubmit = "";
     }
+    if (empty($form->name)) {
+        $form->name = "";
+    }
+    if (empty($form->description)) {
+        $form->description = "";
+    }
+    if (empty($form->format)) {
+        $form->format = "";
+    }
+    if (empty($form->type)) {
+        $form->type = "";
+    }
+    if (empty($form->resubmit)) {
+        $form->resubmit = "";
+    }
+    if (empty($form->grade)) {
+        $form->grade = "";
+    }
+    if (empty($form->maxbytes)) {
+        $form->maxbytes = "";
+    }
+    if (empty($form->timedue)) {
+        $form->timedue = "";
+    }
 ?>
 
 <form name="form" method="post" <?=$onsubmit ?> action="<?=$ME ?>">
@@ -107,7 +131,6 @@
            print_date_selector("dueday", "duemonth", "dueyear", $form->timedue);
            echo "&nbsp;-&nbsp;";
            print_time_selector("duehour", "dueminute", $form->timedue);
-           formerr($err["duedate"]);
     ?></td>
 </tr>
 </table>
