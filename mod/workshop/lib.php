@@ -3490,7 +3490,7 @@ function workshop_print_submission_title($workshop, $submission) {
                 $ffurl = "file.php?file=/$filearea/$file";
             }
             return "<IMG SRC=\"$CFG->wwwroot/files/pix/$icon\" HEIGHT=16 WIDTH=16 BORDER=0 ALT=\"File\">".
-                "&nbsp;<A TARGET=\"uploadedfile\" HREF=\"$CFG->wwwroot/$ffurl\">$submission->title</A>";
+                "&nbsp;<A TARGET=\"uploadedfile$submission->id\" HREF=\"$CFG->wwwroot/$ffurl\">$submission->title</A>";
         }
     }
 }
