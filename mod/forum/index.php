@@ -61,11 +61,14 @@
 
         if ($learningforums) {           // Copy "full" data into this complete array
             foreach ($learningforums as $learningforum) {
-                $forum[$learningforum->id] = $learningforum;
+                $forums[$learningforum->id] = $learningforum;
             }
         }
 
         foreach ($forums as $forum) {
+            if (!isset($forum->visible)) {
+                $forum->visible = true;
+            }
             switch ($forum->type) {
                 case "news":
                 case "social":
@@ -81,9 +84,12 @@
                     }
                     break;
                 default:
-                    if (!$course->category) {      // On site level all forums are general forums
+                    if (!$course->category or empty($forum->section)) {   // Site level or section 0
                         $generalforums[] = $forum;
-                    }
+                        if (isset($forum->coursemodule)) {
+                            unset($learningforums[$forum->coursemodule]);
+                        }
+                    } 
                     break;
             }
         }
