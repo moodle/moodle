@@ -21,6 +21,7 @@
         $USER = get_user_info_from_db("id", $USER->realuser);
         $USER->loggedin = true;
         $USER->site = $CFG->wwwroot;
+        $USER->sessionIP = md5(getremoteaddr());     // Store the current IP in the session
 
         if (isset($SESSION->oldcurrentgroup)) {      // Restore previous "current group"
             $SESSION->currentgroup[$course->id] = $SESSION->oldcurrentgroup;
