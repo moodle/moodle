@@ -540,7 +540,7 @@ Chaque cours peut également nécessiter une clef d\'inscription à usage unique do
    <li>Récupérer ce message et cliquer sur le lien Web qu\'il contient.</li>
    <li>Votre inscription sera alors confirmée et vous serez connecté.</li>
    <li>Vous pourrez ensuite choisir le cours auquel vous souhaitez vous inscrire.</li>
-   <li>Si une clef d\'inscription vous est demandée, utilisez celle que votre professeur vous aura communiquée.</li>
+   <li>Si une clef d\'inscription vous est demandée, utilisez celle que votre enseignant vous aura communiquée.</li>
    <li>Vous aurez alors un accès au cours complet. À votre prochaine visite il vous suffira d\'entrer votre nom d\'utilisateur et mot de passe (dans le formulaire ci-contre) afin de vous connecter et d\'accéder à tous les cours auxquels vous serez inscrit.</li>
    </ol>';
 $string['loginstepsnone'] = '<p>Bonjour !</p>
@@ -666,7 +666,7 @@ $string['nostudentsfound'] = 'Aucun $a trouvé';
 $string['nostudentsyet'] = 'Pas encore d\'étudiant inscrit à ce cours';
 $string['nosuchemail'] = 'Adresse de courriel inconnue';
 $string['notavailable'] = 'Non disponible';
-$string['noteachersyet'] = 'Pas encore de professeur dans ce cours';
+$string['noteachersyet'] = 'Pas encore d\'enseignant dans ce cours';
 $string['notenrolled'] = '$a n\'est pas inscrit à ce cours.';
 $string['noteuserschangednonetocourse'] = 'Remarque : les utilisateurs du cours doivent être restaurés lors de la restauration de données utilisateur. Ce paramètre a été modifié pour vous.';
 $string['nothingnew'] = 'Rien de nouveau depuis votre dernière visite';
