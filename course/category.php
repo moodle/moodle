@@ -196,6 +196,7 @@
             }
             if ($swapcourse and $movecourse) {        // Renumber everything for robustness
                 $count=0;
+                begin_sql();
                 foreach ($courses as $course) {
                     $count++;
                     if ($course->id == $swapcourse->id) {
@@ -207,6 +208,7 @@
                         notify("Could not update that course!");
                     }
                 }
+                commit_sql();
             }
         }
 

@@ -58,6 +58,32 @@ function execute_sql($command, $feedback=true) {
         return false;
     }
 }
+/**
+* on DBs that support it, switch to transaction mode and begin a transaction
+* you'll need to ensure you call commit_sql() or your changes *will* be lost
+* this is _very_ useful for massive updates
+*/
+function begin_sql() {
+/// Completely general function - it just runs some SQL and reports success.
+
+    global $CFG;
+    if ($CFG->dbtype === 'postgres7') {
+        return execute_sql('BEGIN', false);
+    }
+    return true;
+}
+/**
+* on DBs that support it, commit the transaction 
+*/
+function commit_sql() {
+/// Completely general function - it just runs some SQL and reports success.
+
+    global $CFG;
+    if ($CFG->dbtype === 'postgres7') {
+        return execute_sql('COMMIT', false);
+    }
+    return true;
+}
 
 /**
  * Run an arbitrary sequence of semicolon-delimited SQL commands
