@@ -75,7 +75,7 @@ function update_instance($resource) {
 }
 
 function display() {
-    global $CFG, $THEME;
+    global $CFG;
 
 /// Set up generic stuff first, including checking for access
     parent::display();
@@ -95,7 +95,7 @@ function display() {
                        $resource->id, $cm->id);
             print_header();
             print_simple_box(format_text($resource->alltext, $resource->options, $formatoptions, $course->id), 
-                             "center", "", "$THEME->cellcontent", "20");
+                             "center", "", "", "20");
             print_footer($course);
         } else {                           /// Make a page and a pop-up window
 
@@ -132,7 +132,7 @@ function display() {
                      navmenu($course, $cm));
     
         print_simple_box(format_text($resource->alltext, $resource->options, $formatoptions, $course->id), 
-                         "center", "", "$THEME->cellcontent", "20");
+                         "center", "", "", "20");
     
         $strlastmodified = get_string("lastmodified");
         echo "<center><p><font size=\"1\">$strlastmodified: ".userdate($resource->timemodified)."</font></p></center>";

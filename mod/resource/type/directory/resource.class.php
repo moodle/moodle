@@ -8,7 +8,7 @@ function resource_directory($cmid=0) {
 
 
 function display() {
-    global $CFG, $THEME;
+    global $CFG;
 
 /// Set up generic stuff first, including checking for access
     parent::display();
@@ -86,7 +86,7 @@ function display() {
         exit;
     }
 
-    print_simple_box_start("center", "", "$THEME->cellcontent", '0' );
+    print_simple_box_start("center", "", "", '0' );
 
     $strftime = get_string('strftimedatetime');
     $strname = get_string("name");

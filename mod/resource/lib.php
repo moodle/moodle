@@ -323,7 +323,7 @@ function resource_user_outline($course, $user, $mod, $resource) {
 
 
 function resource_user_complete($course, $user, $mod, $resource) {
-    global $CFG, $THEME;
+    global $CFG;
 
     if ($logs = get_records_select("log", "userid='$user->id' AND module='resource' 
                                            AND action='view' AND info='$resource->id'", "time ASC")) {
