@@ -3,6 +3,7 @@
 
 $string['addcomment'] = "Add comment";
 $string['addentry'] = "Add a new entry";
+$string['approve'] = "Approve";
 $string['allentries'] = "ALL";
 $string['allcategories'] = "All Categories";
 $string['allowcomments'] = "Allow comments on entries";
@@ -27,6 +28,7 @@ $string['commentson'] = "Comments on";
 $string['concept'] = "Concept";
 $string['concepts'] = "Concepts";
 $string['deletingcomment'] = "Deleting comment";
+$string['defaultapproval'] = "Default approval status";
 $string['definition'] = "Definition";
 $string['definitions'] = "Definitions";
 $string['deleteentry'] = "Delete entry";
@@ -43,10 +45,12 @@ $string['editcategories'] = "Edit categories";
 $string['editentry'] = "Edit entry";
 $string['editingcomment'] = "Editing comment";
 $string['entries'] = "Entries";
+$string['entriesawaitingapproval'] = "All these entries are waiting for approval.";
 $string['entrieswithoutcategory'] = "Entries without category";
 $string['entry'] = "Entry";
 $string['entryalreadyexist'] = "Entry already exists";
 $string['entrydeleted'] = "Entry deleted";
+$string['entryishidden'] = "(this entry is currently hidden)";
 $string['entryusedynalink'] = "This entry should be<br>automatically linked";
 $string['entryexported'] = "Entry succesfully exported";
 $string['explainspecial'] = "Shows entries that do not begin with a letter";
@@ -80,6 +84,7 @@ $string['standardview'] = "Browse by alphabet";
 $string['studentcanpost'] = "Students can add entries";
 $string['usedynalink'] = "Link this glossary with other modules automatically";
 $string['warningstudentcapost'] = "(Applies only if the glossary is not the main one)";
+$string['waitingapproval'] = "Waiting approval";
 $string['writtenby'] = "by";
 $string['youarenottheauthor'] = "You are not the author of this comment, therefore, you are not allowed to edit it.";
 
