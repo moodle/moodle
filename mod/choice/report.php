@@ -52,8 +52,8 @@
         exit;
     }
 
-    if ( $allanswers = get_records("choice_answers", "choice", $choice->id)) {
-        foreach ($allanswers as $aa) {
+    if ( $allresponses = get_records("choice_responses", "choice", $choice->id)) {
+        foreach ($allresponses as $aa) {
             $answers[$aa->userid] = $aa;
         }
     } else {
@@ -69,9 +69,9 @@
         if (!empty($answers[$user->id])) {
             $answer = $answers[$user->id];
         } else {
-            $answer->answer = 0;
+            $answer->answerid = 0;
         }
-        $useranswer[(int)$answer->answer][] = $user;
+        $useranswer[(int)$answer->answerid][] = $user;
     }
     foreach ($choice->answer as $key => $answer) {
         if (!$choice->answer[$key]) {

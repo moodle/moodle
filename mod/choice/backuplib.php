@@ -9,7 +9,7 @@
     //                        |
     //                        |
     //                        |
-    //                   choice_answers 
+    //                   choice_responses 
     //               (UL,pk->id, fk->choice)     
     //
     // Meaning: pk->primary key field of the table
@@ -39,12 +39,6 @@
                 fwrite ($bf,full_tag("NAME",4,false,$choice->name));
                 fwrite ($bf,full_tag("TEXT",4,false,$choice->text));
                 fwrite ($bf,full_tag("FORMAT",4,false,$choice->format));
-                fwrite ($bf,full_tag("ANSWER1",4,false,$choice->answer1));
-                fwrite ($bf,full_tag("ANSWER2",4,false,$choice->answer2));
-                fwrite ($bf,full_tag("ANSWER3",4,false,$choice->answer3));
-                fwrite ($bf,full_tag("ANSWER4",4,false,$choice->answer4));
-                fwrite ($bf,full_tag("ANSWER5",4,false,$choice->answer5));
-                fwrite ($bf,full_tag("ANSWER6",4,false,$choice->answer6));
                 fwrite ($bf,full_tag("SHOWUNANSWERED",4,false,$choice->showunanswered));
                 fwrite ($bf,full_tag("TIMEOPEN",4,false,$choice->timeopen));
                 fwrite ($bf,full_tag("TIMECLOSE",4,false,$choice->timeclose));
@@ -52,10 +46,11 @@
                 fwrite ($bf,full_tag("RELEASE",4,false,$choice->release));
                 fwrite ($bf,full_tag("ALLOWUPDATE",4,false,$choice->allowupdate));
                 fwrite ($bf,full_tag("TIMEMODIFIED",4,false,$choice->timemodified));
-                //if we've selected to backup users info, then execute backup_choice_answers
+                //if we've selected to backup users info, then execute backup_choice_responses
                 if ($preferences->mods["choice"]->userinfo) {
-                    $status = backup_choice_answers($bf,$preferences,$choice->id);
+                    $status = backup_choice_responses($bf,$preferences,$choice->id);
                 }
+                backup_choice_answers($bf,$preferences,$choice->id);
                 //End mod
                 $status =fwrite ($bf,end_tag("MOD",3,true));
             }
@@ -63,16 +58,46 @@
         return $status;
     }
 
-    //Backup choice_answers contents (executed from choice_backup_mods)
-    function backup_choice_answers ($bf,$preferences,$choice) {
+    //Backup choice_responses contents (executed from choice_backup_mods)
+    function backup_choice_responses ($bf,$preferences,$choice) {
 
         global $CFG;
 
         $status = true;
 
-        $choice_answers = get_records("choice_answers","choice",$choice,"id");
+        $choice_responses = get_records("choice_responses","choice",$choice,"id");
         //If there is submissions
-        if ($choice_answers) {
+        if ($choice_responses) {
+            //Write start tag
+            $status =fwrite ($bf,start_tag("RESPONSES",4,true));
+            //Iterate over each answer
+            foreach ($choice_responses as $cho_resp) {
+                //Start answer
+                $status =fwrite ($bf,start_tag("RESPONSE",5,true));
+                //Print submission contents
+                fwrite ($bf,full_tag("ID",6,false,$cho_resp->id));
+                fwrite ($bf,full_tag("USERID",6,false,$cho_resp->userid));
+                fwrite ($bf,full_tag("CHOICE_RESPONSE",6,false,$cho_resp->answer));
+                fwrite ($bf,full_tag("TIMEMODIFIED",6,false,$cho_resp->timemodified));
+                //End answer
+                $status =fwrite ($bf,end_tag("RESPONSE",5,true));
+            }
+            //Write end tag
+            $status =fwrite ($bf,end_tag("RESPONSES",4,true));
+        }
+        return $status;
+    }
+    
+    //backup choice_answers contents (executed from choice_backup_mods)
+    function backup_choice_answers ($bf,$preferences,$choice) {
+
+        global $CFG;
+
+        $status = true;
+        
+        $choice_answers = get_records("choice_answers","choice",$choice,"choice");
+        //If there is submissions
+        if ($choice_answers) {            
             //Write start tag
             $status =fwrite ($bf,start_tag("ANSWERS",4,true));
             //Iterate over each answer
@@ -81,7 +106,6 @@
                 $status =fwrite ($bf,start_tag("ANSWER",5,true));
                 //Print submission contents
                 fwrite ($bf,full_tag("ID",6,false,$cho_ans->id));
-                fwrite ($bf,full_tag("USERID",6,false,$cho_ans->userid));
                 fwrite ($bf,full_tag("CHOICE_ANSWER",6,false,$cho_ans->answer));
                 fwrite ($bf,full_tag("TIMEMODIFIED",6,false,$cho_ans->timemodified));
                 //End answer
@@ -91,6 +115,11 @@
             $status =fwrite ($bf,end_tag("ANSWERS",4,true));
         }
         return $status;
+
+        
+        
+        
+    
     }
    
    ////Return an array of info (name,value)
@@ -106,7 +135,7 @@
         //Now, if requested, the user_data
         if ($user_data) {
             $info[1][0] = get_string("responses","choice");
-            if ($ids = choice_answer_ids_by_course ($course)) {
+            if ($ids = choice_response_ids_by_course ($course)) {
                 $info[1][1] = count($ids);
             } else {
                 $info[1][1] = 0;
@@ -132,13 +161,13 @@
                                  WHERE a.course = '$course'");
     }
    
-    //Returns an array of choice_answers id
-    function choice_answer_ids_by_course ($course) {
+    //Returns an array of choice_responses id
+    function choice_response_ids_by_course ($course) {
 
         global $CFG;
 
         return get_records_sql ("SELECT s.id , s.choice
-                                 FROM {$CFG->prefix}choice_answers s,
+                                 FROM {$CFG->prefix}choice_responses s,
                                       {$CFG->prefix}choice a
                                  WHERE a.course = '$course' AND
                                        s.choice = a.id");

@@ -24,8 +24,8 @@
         notice("There are no choices", "../../course/view.php?id=$course->id");
     }
 
-    if ( isset($USER->id) and $allanswers = get_records("choice_answers", "userid", $USER->id)) {
-        foreach ($allanswers as $aa) {
+    if ( isset($USER->id) and $allresponses = get_records("choice_responses", "userid", $USER->id)) {
+        foreach ($allresponses as $aa) {
             $answers[$aa->choice] = $aa;
         }
 
@@ -56,7 +56,7 @@
             $answer = "";
         }
         if (!empty($answer->answer)) {
-            $aa = format_string(choice_get_answer($choice, $answer->answer));
+            $aa = format_string(choice_get_answer($choice, $answer->answerid));
         } else {
             $aa = "";
         }

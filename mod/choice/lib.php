@@ -12,6 +12,9 @@ define('CHOICE_RELEASE_AFTER_ANSWER', '1');
 define('CHOICE_RELEASE_AFTER_CLOSE',  '2');
 define('CHOICE_RELEASE_ALWAYS',       '3');
 
+define('CHOICE_DISPLAY_HORIZONTAL',  '0');
+define('CHOICE_DISPLAY_VERTICAL',    '1');
+
 $CHOICE_PUBLISH = array (CHOICE_PUBLISH_ANONYMOUS  => get_string('publishanonymous', 'choice'),
                          CHOICE_PUBLISH_NAMES      => get_string('publishnames', 'choice'));
 
@@ -20,11 +23,13 @@ $CHOICE_RELEASE = array (CHOICE_RELEASE_NOT          => get_string('publishnot',
                          CHOICE_RELEASE_AFTER_CLOSE  => get_string('publishafterclose', 'choice'),
                          CHOICE_RELEASE_ALWAYS       => get_string('publishalways', 'choice'));
 
+$CHOICE_DISPLAY = array (CHOICE_DISPLAY_HORIZONTAL   => get_string('displayhorizontal', 'choice'),
+                         CHOICE_DISPLAY_VERTICAL     => get_string('displayvertical','choice'));
 
 /// Standard functions /////////////////////////////////////////////////////////
 
 function choice_user_outline($course, $user, $mod, $choice) {
-    if ($current = get_record("choice_answers", "choice", $choice->id, "userid", $user->id)) {
+    if ($current = get_record("choice_responses", "choice", $choice->id, "userid", $user->id)) {
         $result->info = "'".choice_get_answer($choice, $current->answer)."'";
         $result->time = $current->timemodified;
         return $result;
@@ -34,7 +39,7 @@ function choice_user_outline($course, $user, $mod, $choice) {
 
 
 function choice_user_complete($course, $user, $mod, $choice) {
-    if ($current = get_record("choice_answers", "choice", $choice->id, "userid", $user->id)) {
+    if ($current = get_record("choice_responses", "choice", $choice->id, "userid", $user->id)) {
         $result->info = "'".choice_get_answer($choice, $current->answer)."'";
         $result->time = $current->timemodified;
         echo get_string("answered", "choice").": $result->info , last updated ".userdate($result->time);
@@ -62,7 +67,25 @@ function choice_add_instance($choice) {
         $choice->timeclose = 0;
     }
 
-    return insert_record("choice", $choice);
+    //insert answers    
+    $result = insert_record("choice", $choice);
+    if ($result) {
+        for ($i = 1; $i < 7; $i++) {                      
+            if (!empty($choice->{'newanswer'.$i})) {         
+                $choiceanswers->answer = $choice->{'newanswer'.$i};
+                $choiceanswers->choice = $result;
+                $choiceanswers->timemodified = time();
+                insert_record("choice_answers", $choiceanswers);                
+            } else {
+                break;
+            }
+        }
+    }
+    if ($choice->addmorechoices > 0) { //make sure the page is reloaded if the user wants to add more choices.
+       redirect('mod.php?update='.$choice->coursemodule.'&return=true&addmore='.$choice->addmorechoices.'&sesskey='.$choice->sesskey);
+    } else {        
+       return $result; 
+    }    
 }
 
 
@@ -85,9 +108,46 @@ function choice_update_instance($choice) {
         $choice->timeclose = 0;
     }
     
+    //update answers
+    
+    $i = 0;
+    foreach ($choice as $current=>$value) {        
+    
+        if (strstr($current, "choiceanswer")) {
+           //this val is old, so update_record
+           if (!empty($value)) {
+                $choiceanswers->id = substr($current, 14); //get the ID of the answer that needs to be updated.
+                $choiceanswers->answer = $value;
+                $choiceanswers->choice = $choice->id;
+                $choiceanswers->timemodified = time();
+                update_record("choice_answers", $choiceanswers);                
+            }                                                              
+        } else if (strstr($current, "newanswer")) {
+            //this val is new, so insert_record            
+            if (!empty($value)) {
+                $choiceanswers->id = "";
+                $choiceanswers->answer = $value;
+                $choiceanswers->choice = $choice->id;
+                $choiceanswers->timemodified = time();
+                insert_record("choice_answers", $choiceanswers);                
+            }  
+        }      
+               
+    }
+   
+    
+    
+    
 //    global $db; $db->debug=true;
 
-    return update_record("choice", $choice);
+      $result = update_record("choice", $choice);
+      
+      
+      if ($choice->addmorechoices > 0) { //make sure the page is reloaded if the user wants to add more choices.
+         redirect('mod.php?update='.$choice->coursemodule.'&return=true&addmore='.$choice->addmorechoices.'&sesskey='.$choice->sesskey);
+      } else {        
+         return $result; 
+      }
 }
 
 
@@ -102,11 +162,15 @@ function choice_delete_instance($id) {
 
     $result = true;
 
-    if (! delete_records("choice_answers", "choice", "$choice->id")) {
+    if (! delete_records("choice_responses", "choice", "$choice->id")) {
         $result = false;
     }
 
     if (! delete_records("choice", "id", "$choice->id")) {
+        $result = false;
+    }
+    
+    if (! delete_records("choice_answers", "choice", "$choice->id")) {
         $result = false;
     }
 
@@ -115,14 +179,14 @@ function choice_delete_instance($id) {
 
 function choice_get_participants($choiceid) {
 //Returns the users with data in one choice
-//(users with records in choice_answers, students)
+//(users with records in choice_responses, students)
 
     global $CFG;
 
     //Get students
     $students = get_records_sql("SELECT DISTINCT u.id, u.id
                                  FROM {$CFG->prefix}user u,
-                                      {$CFG->prefix}choice_answers c
+                                      {$CFG->prefix}choice_responses c
                                  WHERE c.choice = '$choiceid' and
                                        u.id = c.userid");
 
@@ -133,38 +197,29 @@ function choice_get_participants($choiceid) {
 
 function choice_get_answer($choice, $code) {
 // Returns text string which is the answer that matches the code
-    switch ($code) {
-        case 1:
-            return "$choice->answer1";
-        case 2:
-            return "$choice->answer2";
-        case 3:
-            return "$choice->answer3";
-        case 4:
-            return "$choice->answer4";
-        case 5:
-            return "$choice->answer5";
-        case 6:
-            return "$choice->answer6";
-        default:
-            return get_string("notanswered", "choice");
-    }
+    if ($result = get_record("choice_answers", "id", $code)) {
+       return $result->answer;
+    } else {
+        return get_string("notanswered", "choice");
+    }            
 }
 
 function choice_get_choice($choiceid) {
-// Gets a full choice record
 
-    if ($choice = get_record("choice", "id", $choiceid)) {
-        $choice->answer[1] = $choice->answer1;
-        $choice->answer[2] = $choice->answer2;
-        $choice->answer[3] = $choice->answer3;
-        $choice->answer[4] = $choice->answer4;
-        $choice->answer[5] = $choice->answer5;
-        $choice->answer[6] = $choice->answer6;
-        return $choice;
-    } else {
-        return false;
-    }
+// Gets a full choice record      
+   if ($choice = get_record("choice", "id", $choiceid)) {
+       if ($choices = get_records("choice_answers", "choice", $choiceid, "id")) {
+           $inti = 1;
+           foreach ($choices as $aa) {                         
+              $choice->answer[$aa->id] = $aa->answer;     
+              $choice->answerid[$aa->id] = $aa->id;            
+              $inti = $inti +1;
+           }        
+           return $choice;
+       } else {     
+          return false;
+       }
+   }
 }
 
 ?>

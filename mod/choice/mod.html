@@ -8,24 +8,6 @@
     if (empty($form->format)) {
         $form->format = 0;
     }
-    if (empty($form->answer1)) {
-        $form->answer1 = get_string("yes");
-    }
-    if (empty($form->answer2)) {
-        $form->answer2 = get_string("no");
-    }
-    if (empty($form->answer3)) {
-        $form->answer3 = "";
-    }
-    if (empty($form->answer4)) {
-        $form->answer4 = "";
-    }
-    if (empty($form->answer5)) {
-        $form->answer5 = "";
-    }
-    if (empty($form->answer6)) {
-        $form->answer6 = "";
-    }
     if (empty($form->timeopen)) {
         $form->timeopen = "";
         $form->timerestrict = 0;
@@ -47,6 +29,9 @@
     if (empty($form->showunanswered)) {
         $form->showunanswered = 0;
     }
+    if (!(empty($form->addmorechoices))) {
+        error("not submitted!");
+    }
 
 ?>
 <form name="form" method="post" action="mod.php">
@@ -54,7 +39,7 @@
 <table cellpadding="5">
 
 <tr valign="top">
-    <td align="right"><b><?php print_string("choicename","choice") ?>:</b></td>
+    <td align="right"><strong><?php print_string("choicename","choice") ?>:</strong></td>
     <td>
         <input type="text" name="name" size="30" alt="<?php print_string("choicename","choice") ?>" value="<?php p($form->name) ?>" />
     </td>
@@ -96,48 +81,37 @@
     </td>
 </tr>
 
-<tr valign="top">
-    <td align="right"><b><?php print_string("choice","choice","1") ?>:</b></td>
-    <td>
-        <input type="text" name="answer1" size="60" alt="<?php print_string("choice","choice","1") ?>" value="<?php p($form->answer1) ?>" />
-        <?php helpbutton("options", get_string("modulenameplural", "choice"), "choice") ?>
-    </td>
-</tr>
+<?php
+$choiceqs = get_records_menu("choice_answers","choice", $form->instance,"id","id ,answer");
+foreach ($choiceqs as $current=>$answer) { 
+?>
 
-<tr valign="top">
-    <td align="right"><b><?php print_string("choice","choice","2") ?>:</b></td>
+<tr valign=top>
+    <td align=right><p><strong><?php print_string("choice","choice") ?>:</strong></p></td>
     <td>
-        <input type="text" name="answer2" size="60" alt="<?php print_string("choice","choice","2") ?>" value="<?php p($form->answer2) ?>" />
+        <input type="text" name="choiceanswer<?php p($current) ?>" size=60 value="<?php p($answer) ?>" ID="Textq<?php p($current) ?>">
         <?php helpbutton("options", get_string("modulenameplural", "choice"), "choice") ?>
     </td>
 </tr>
-
-<tr valign="top">
-    <td align="right"><b><?php print_string("choice","choice","3") ?>:</b></td>
+<?php
+} 
+for ($i = 1; $i < ($addmore + 5); $i++) {
+?>
+<tr valign=top>
+    <td align="right"><p><strong><?php print_string("choice","choice") ?>:</strong></p></td>
     <td>
-        <input type="text" name="answer3" size="60" alt="<?php print_string("choice","choice","3") ?>" value="<?php p($form->answer3) ?>" />
+        <input type="text" name="newanswer<?php p($i) ?>" size=60 value="" ID="Textqm<?php p($current) ?>">
         <?php helpbutton("options", get_string("modulenameplural", "choice"), "choice") ?>
     </td>
 </tr>
+<?php
+}
+?>
 <tr valign="top">
-    <td align="right"><b><?php print_string("choice","choice","4") ?>:</b></td>
+    <td align="right"><p><strong><?php print_string("addmorechoices","choice") ?>:</strong></p></td>
     <td>
-        <input type="text" name="answer4" size="60" alt="<?php print_string("choice","choice","4") ?>" value="<?php p($form->answer4) ?>" />
-        <?php helpbutton("options", get_string("modulenameplural", "choice"), "choice") ?>
-    </td>
-</tr>
-<tr valign="top">
-    <td align="right"><b><?php print_string("choice","choice","5") ?>:</b></td>
-    <td>
-        <input type="text" name="answer5" size="60" alt="<?php print_string("choice","choice","5") ?>" value="<?php p($form->answer5) ?>" />
-        <?php helpbutton("options", get_string("modulenameplural", "choice"), "choice") ?>
-    </td>
-</tr>
-<tr valign="top">
-    <td align="right"><b><?php print_string("choice","choice","6") ?>:</b></td>
-    <td>
-        <input type="text" name="answer6" size="60" alt="<?php print_string("choice","choice","6") ?>" value="<?php p($form->answer6) ?>" />
-        <?php helpbutton("options", get_string("modulenameplural", "choice"), "choice") ?>
+        <input name="addmorechoices" type="text" value="0" size="3" />
+        <input type="submit" value="add"/>
     </td>
 </tr>
 
@@ -160,7 +134,7 @@
 
         <table>
             <tr>
-                <td align="right"><b><?php print_string("choiceopen", "choice") ?>:</b></td>
+                <td align="right"><strong><?php print_string("choiceopen", "choice") ?>:</strong></td>
                 <td>
 
     <?php
@@ -179,7 +153,7 @@
                 </td>
             </tr>
             <tr>
-                <td align="right"><b><?php print_string("choiceclose", "choice") ?>:</b></td>
+                <td align="right"><strong><?php print_string("choiceclose", "choice") ?>:</strong></td>
                 <td>
 
     <?php
@@ -212,7 +186,18 @@
 </tr>
 
 <tr valign="top">
-    <td align="right"><b><?php print_string("publish","choice") ?>:</b></td>
+    <td align="right"><strong><?php print_string("displaymode","choice") ?>:</strong></td>
+    <td>
+        <?php
+        require_once("$CFG->dirroot/mod/choice/lib.php");
+        choose_from_menu($CHOICE_DISPLAY, "display", "$form->display", "");
+        ?>
+        <br />
+    </td>
+</tr>
+
+<tr valign="top">
+    <td align="right"><strong><?php print_string("publish","choice") ?>:</strong></td>
     <td>
         <?php
         require_once("$CFG->dirroot/mod/choice/lib.php");
@@ -223,7 +208,7 @@
 </tr>
 
 <tr valign="top">
-    <td align="right"><b><?php print_string("privacy","choice") ?>:</b></td>
+    <td align="right"><strong><?php print_string("privacy","choice") ?>:</strong></td>
     <td>
         <?php
         require_once("$CFG->dirroot/mod/choice/lib.php");
@@ -235,7 +220,7 @@
 
 
 <tr valign="top">
-    <td align="right"><b><?php print_string("allowupdate","choice") ?>:</b></td>
+    <td align="right"><strong><?php print_string("allowupdate","choice") ?>:</strong></td>
     <td>
         <?php
         $options[0] = get_string("no");
@@ -248,7 +233,7 @@
 
 
 <tr valign="top">
-    <td align="right"><b><?php print_string("showunanswered","choice") ?>:</b></td>
+    <td align="right"><strong><?php print_string("showunanswered","choice") ?>:</strong></td>
     <td>
         <?php
         $options[0] = get_string("no");

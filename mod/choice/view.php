@@ -22,7 +22,7 @@
     for ($i=1; $i <= $CHOICE_MAX_NUMBER; $i++) {
         $answerchecked[$i] = '';
     }
-    if (isset($USER->id) and $current = get_record("choice_answers", "choice", $choice->id, "userid", $USER->id)) {
+    if (isset($USER->id) and $current = get_record("choice_responses", "choice", $choice->id, "userid", $USER->id)) {
         $answerchecked[$current->answer] = 'CHECKED';
     } else {
         $current = false;
@@ -37,18 +37,18 @@
         } else {
             if ($current) {
                 $newanswer = $current;
-                $newanswer->answer = $form->answer;
+                $newanswer->answerid = $form->answer;
                 $newanswer->timemodified = $timenow;
-                if (! update_record("choice_answers", $newanswer)) {
+                if (! update_record("choice_responses", $newanswer)) {
                     error("Could not update your choice");
                 }
                 add_to_log($course->id, "choice", "choose again", "view.php?id=$cm->id", $choice->id, $cm->id);
             } else {
                 $newanswer->choice = $choice->id;
                 $newanswer->userid = $USER->id;
-                $newanswer->answer = $form->answer;
+                $newanswer->answerid = $form->answer;
                 $newanswer->timemodified = $timenow;
-                if (! insert_record("choice_answers", $newanswer)) {
+                if (! insert_record("choice_responses", $newanswer)) {
                     error("Could not save your choice");
                 }
                 add_to_log($course->id, "choice", "choose", "view.php?id=$cm->id", $choice->id, $cm->id);
@@ -75,7 +75,7 @@
     }
 
     if (isteacher($course->id)) {
-        if ( $allanswers = get_records("choice_answers", "choice", $choice->id)) {
+        if ( $allanswers = get_records("choice_responses", "choice", $choice->id)) {
             $responsecount = count($allanswers);
         } else {
             $responsecount = 0;
@@ -101,19 +101,44 @@
     if ( (!$current or $choice->allowupdate) and ($choice->timeclose >= time() or $choice->timeclose == 0) ) {
     // They haven't made their choice yet or updates allowed and choice is open
 
-        echo "<form name=\"form\" method=\"post\" action=\"view.php\">";
-        echo "<table cellpadding=\"20\" cellspacing=\"20\" align=\"center\"><tr>";
-
-        foreach ($choice->answer as $key => $answer) {
-            if ($answer) {
-                echo "<td align=\"center\">";
-                echo "<input type=\"radio\" name=\"answer\" value=\"$key\" ".$answerchecked[$key]." alt=\"".s(strip_tags($answer))."\" />";
-                echo format_string($answer);
-                echo "</td>";
-            }
-        }
-
-        echo "</tr></table>";
+        echo "<form name=\"form\" method=\"post\" action=\"view.php\">";        
+                switch ($choice->display) {
+                case "0":     //horizontal display mode.
+                    echo "<table cellpadding=\"20\" cellspacing=\"20\" align=\"center\"><tr>";
+                    foreach ($choice->answer as $key => $answer) {
+                        if ($answer) {                                                 
+                            echo "<td align=\"center\">";
+                            echo "<input type=\"radio\" name=\"answer\" value=\"".$choice->answerid[$key]."\" ".$answerchecked[$key]." alt=\"$answer\" />";                
+                            echo format_text($answer);
+                            echo "</td>";
+                        }
+                    }
+                    echo "</tr>";
+                    break;
+                case "1":    //vertical display mode
+                    echo "<table cellpadding=\"10\" cellspacing=\"10\" align=\"center\">";     
+		            if ( $choice->release == CHOICE_RELEASE_ALWAYS OR ( $choice->release == CHOICE_RELEASE_AFTER_ANSWER and $current )) {            
+                        echo "<tr><td></td><td align=\"center\"><strong>".get_string("responses", "choice")."</strong></td></tr>";
+                    }
+                                  
+                    foreach ($choice->answer as $key => $answer) {
+                        if ($answer) {                                                                 
+                            echo "<tr><td align=\"left\">";              
+                            echo "<input type=\"radio\" name=\"answer\" value=\"".$choice->answerid[$key]."\" ".$answerchecked[$key]." alt=\"$answer\" />".format_text($answer, FORMAT_PLAIN);                			
+				            echo "</td>";
+				           			            
+				            if ( $choice->release == CHOICE_RELEASE_ALWAYS OR ( $choice->release == CHOICE_RELEASE_AFTER_ANSWER and $current )) {            
+				                echo "<td align=\"center\">";
+				                echo count_records("choice_responses", "answer", $choice->answerid[$key]);
+     			                echo "</td>";
+     			            }
+	                        echo "</tr>";
+	                    }
+	                }
+					break;
+                }
+        
+        echo "</table>";
         echo "<center>";
         echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\" />";
         if (isstudent($course->id) or isteacher($course->id, 0, false)) {
@@ -128,7 +153,7 @@
 
 
 
-    // print the results
+    // print the results at the bottom of the screen
 
     if (  $choice->release == CHOICE_RELEASE_ALWAYS or
         ( $choice->release == CHOICE_RELEASE_AFTER_ANSWER and $current ) or
@@ -148,8 +173,8 @@
             exit;
         }
 
-        if ( $allanswers = get_records("choice_answers", "choice", $choice->id)) {
-            foreach ($allanswers as $aa) {
+        if ( $allresponses = get_records("choice_responses", "choice", $choice->id)) {
+            foreach ($allresponses as $aa) {
                 $answers[$aa->userid] = $aa;
             }
         } else {
@@ -164,7 +189,7 @@
         foreach ($users as $user) {
             if (!empty($user->id) and !empty($answers[$user->id])) {
                 $answer = $answers[$user->id];
-                $useranswer[(int)$answer->answer][] = $user;
+                $useranswer[(int)$answer->answerid][] = $user;
             } else {
                 $useranswer[0][] = $user;
             }
