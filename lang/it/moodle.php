@@ -495,7 +495,7 @@ $string['userprofilefor'] = "Profilo utente per \$a";
 $string['users'] = "Utenti";
 $string['webpage'] = "Pagina web";
 $string['week'] = "Settimana";
-$string['weeklyoutline'] = "profilo settimanale";
+$string['weeklyoutline'] = "Attivitˆ settimanale";
 $string['welcometocourse'] = "Benvenuto(a) a \$a";
 $string['welcometocoursetext'] = "Benvenuto(a) a \$a->coursename!
 
