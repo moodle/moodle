@@ -78,7 +78,9 @@
                             if ( $aliases = get_records("glossary_alias","entryid",$concept->id, "alias") ) {
                                 foreach ($aliases as $alias) {
                                     $currentalias = glossary_addslashes($replace,$alias->alias);
-                                    $currentconcept .= "|" . trim($currentalias);
+                                    if ( trim( $currentalias ) != '' ) {
+                                        $currentconcept .= "|" . trim($currentalias);
+                                    }
                                 }
                             }
                         }

@@ -515,7 +515,7 @@ function  glossary_print_entry_aliases($course, $cm, $glossary, $entry,$mode="",
     $return = '';
     if ( $aliases = get_records("glossary_alias","entryid",$entry->id) ) {
         foreach ($aliases as $alias) {
-            if ($alias->alias) {
+            if (trim($alias->alias)) {
                 if ($return == '') {
                     $return = '<select style="font-size:8pt">';
                 }
