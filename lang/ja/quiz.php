@@ -1,8 +1,9 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.0.7 (2002121000)
+      // quiz.php - created with Moodle 1.0.8 (2003010600)
 
 
 $string['addselectedtoquiz'] = "ÁªÂò¤·¤¿¤â¤Î¤ò¥¯¥¤¥º¤ËÄÉ²Ã¤¹¤ë";
+$string['allowreview'] = "Éü½¬¤òµö²Ä¤¹¤ë";
 $string['alreadysubmitted'] = "¤¹¤Ç¤Ë²òÅú¤µ¤ì¤Æ¤¤¤Þ¤¹
 
 ";
@@ -62,6 +63,8 @@ $string['guestsno'] = "¿½¤·Ìõ¤´¤¶¤¤¤Þ¤»¤ó¡¢¥²¥¹¥È¥æ¡¼¥¶¤Ï¥¯¥¤¥º¤Î±ÜÍ÷µÚ¤Ó²òÅú¤¬½
 $string['imagedisplay'] = "É½¼¨²èÁü";
 $string['introduction'] = "ÀâÌÀ";
 $string['marks'] = "ÆÀÅÀ";
+$string['missingname'] = "¼ÁÌäÌ¾¤¬¸«¤Ä¤«¤ê¤Þ¤»¤ó";
+$string['missingquestiontext'] = "¼ÁÌäÆâÍÆ¤¬¸«¤Ä¤«¤ê¤Þ¤»¤ó";
 $string['modulename'] = "¥¯¥¤¥º";
 $string['modulenameplural'] = "¥¯¥¤¥º";
 $string['multichoice'] = "Ê£¿ôÁªÂòÊý¼°";
@@ -69,6 +72,8 @@ $string['noanswers'] = "²òÅú¤¬ÁªÂò¤µ¤ì¤Æ¤¤¤Þ¤»¤ó!";
 $string['noattempts'] = "¤³¤Î¥¯¥¤¥º¤Ï²òÅú¤µ¤ì¤Æ¤¤¤Þ¤»¤ó";
 $string['nomoreattempts'] = "²òÅú²ó¿ô¤¬½ªÎ»¤·¤Þ¤·¤¿";
 $string['noquestions'] = "¼ÁÌä¤¬ºîÀ®¤µ¤ì¤Æ¤¤¤Þ¤»¤ó";
+$string['noreview'] = "¤³¤Î¥¯¥¤¥º¤ÎÉü½¬¤òµö²Ä¤µ¤ì¤Æ¤¤¤Þ¤»¤ó";
+$string['noreviewuntil'] = "\$a ¤Þ¤Ç¤³¤Î¥¯¥¤¥º¤ÎÉü½¬¤Ï½ÐÍè¤Þ¤»¤ó";
 $string['publish'] = "¸ø³«";
 $string['question'] = "¼ÁÌä";
 $string['questioninuse'] = "¼ÁÌä  '\$a' ¤Ï¸½ºß»ÈÍÑÃæ¤Ç¤¹¡§";

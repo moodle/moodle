@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.0.7 (2002121000)
+      // auth.php - created with Moodle 1.0.8 (2003010600)
 
 
 $string['auth_dbdescription'] = "ユーザ名とパスワードを確認するために外部のデータベースを使用します。新しいアカウントを作成する場合、他のフィールドの情報がMoodleへ複製されます。";
@@ -9,6 +9,7 @@ $string['auth_dbfielduser'] = "ユーザ名を含んだフィールド名";
 $string['auth_dbhost'] = "データベースサーバが稼動しているコンピュータ";
 $string['auth_dbname'] = "データベース名";
 $string['auth_dbpass'] = "上記ユーザ名に合致するパスワード";
+$string['auth_dbpasstype'] = "パスワードフィールドで使用するフォーマットを特定してください。MD5暗号化はPostNukeのような他の一般的なウェブアプリケーションへの接続に便利です。";
 $string['auth_dbtable'] = "データベースのテーブル名";
 $string['auth_dbtitle'] = "外部データベースを使用";
 $string['auth_dbtype'] = "データベースタイプ(詳細は<A HREF=../lib/adodb/readme.htm#drivers>ADOdb documentation</A>をご覧ください";
@@ -54,6 +55,8 @@ $string['changepasswordhelp'] = "ユーザがユーザ名/パスワードを忘れたときに回復又
 $string['chooseauthmethod'] = "認証方法の選択:";
 $string['guestloginbutton'] = "ゲストログインボタン";
 $string['instructions'] = "説明";
+$string['md5'] = "MD5暗号化";
+$string['plaintext'] = "テキスト";
 $string['showguestlogin'] = "ログインページのゲストログインボタンを表示／非表示に出来ます。";
 
 ?>

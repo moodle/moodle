@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.0.8 dev (2002121200)
+      // forum.php - created with Moodle 1.0.8 (2003010600)
 
 
 $string['addanewdiscussion'] = "トピックを追加";
@@ -37,7 +37,6 @@ $string['forums'] = "フォーラム";
 $string['forumtype'] = "フォーラムタイプ";
 $string['generalforum'] = "標準フォーラム";
 $string['generalforums'] = "総合フォーラム";
-$string['helpreading'] = "十分に読む";
 $string['inforum'] = "\$a";
 $string['intronews'] = "ニュースとお知らせ";
 $string['introsocial'] = "投稿制限無しフォーラム";
@@ -71,28 +70,6 @@ $string['openmode2'] = "ディスカッションと返信を許可";
 $string['parentofthispost'] = "この投稿の親記事";
 $string['postadded'] = "投稿が追加されました<P>変更したい場合は \$a 編集可能です";
 $string['postincontext'] = "この投稿の状態を見る";
-$string['postingtip'] = "<B>投稿のヒント:</B>
-
-返信するときは:
-
-<UL>
-
-<LI>投稿を慎重かつ感情をこめて読みます
-
-<LI>あなたがコメント出来る部分を探します
-</UL>
-
-投稿する場合は:
-
-<UL>
-
-<LI>シンプルかつトピックに沿ったものにします
-
-<LI>あなたの考えを明確に説明します
-
-<LI>あなたが回答できる質問を考えます
-
-</UL>";
 $string['postmailinfo'] = "これは \$a ウェブサイトに投稿された投稿のコピーです。返信をウェブサイト経由で追加する場合は、このリックをクリックしてください:";
 $string['postrating1'] = "主に分離認識の傾向がある";
 $string['postrating2'] = "分離認識と関連認識を同等に持っている";
@@ -101,6 +78,7 @@ $string['postupdated'] = "投稿が更新されました";
 $string['processingpost'] = "投稿 \$a を処理中";
 $string['rate'] = "評価";
 $string['ratings'] = "評価";
+$string['ratingssaved'] = "評価が保存されました";
 $string['re'] = "Re:";
 $string['readtherest'] = "残りのトピックを読む";
 $string['repliesmany'] = "\$a 件の返信があります";
