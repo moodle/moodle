@@ -466,6 +466,13 @@
         fwrite ($bf,full_tag("DATE",2,false,$preferences->backup_unique_code));
         //The original site wwwroot
         fwrite ($bf,full_tag("ORIGINAL_WWWROOT",2,false,$CFG->wwwroot));
+        //The zip method used
+        if (!empty($CFG->zip)) {
+            $zipmethod = 'external';
+        } else {
+            $zipmethod = 'internal';
+        }
+        fwrite ($bf,full_tag("ZIP_METHOD",2,false,$zipmethod));
         //Te includes tag
         fwrite ($bf,start_tag("DETAILS",2,true));
         //Now, go to mod element of preferences to print its status
