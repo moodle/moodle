@@ -436,6 +436,10 @@ function main_upgrade($oldversion=0) {
         }
     }
 
+    if ($oldversion < 2003081001) {
+        table_column("course", "format", "format", "varchar", "10", "", "topics");
+    }
+
     return $result;
 
 }

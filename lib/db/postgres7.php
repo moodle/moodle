@@ -208,6 +208,7 @@ function main_upgrade($oldversion=0) {
         }
     }
 
+
     return $result;
 }
 ?>    
