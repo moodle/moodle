@@ -20,36 +20,52 @@
     if (empty($config->ldap_version)) {
         $config->ldap_version  = "2";
     }
+    if (empty($config->ldap_memberattribute)) {
+        $config->ldap_memberattribute = "";
+    }
+    if (empty($config->ldap_creators)) {
+        $config->ldap_creators = "";
+    }
+    if (empty($config->ldap_create_context)) {
+        $config->ldap_create_context = "";
+    } 
+    if (empty($config->ldap_objectclass)) {
+        $config->ldap_objectclass = "";
+    }
+    if (empty($config->auth_user_guid)) {
+        $config->auth_user_guid = "";
+    }
+
 ?>
 <tr valign="top" BGCOLOR="<?php echo $THEME->cellheading2 ?>">
-	<TD ALIGN=RIGHT><P>ldap_host_url:</TD>
-	<TD>
+    <TD ALIGN=RIGHT><P>ldap_host_url:</TD>
+    <TD>
         <INPUT name=ldap_host_url TYPE=text SIZE=30 VALUE="<?php echo $config->ldap_host_url?>">
-	<?php  if (isset($err["ldap_host_url"])) formerr($err["ldap_host_url"]); ?>
-	</TD>
+    <?php  if (isset($err["ldap_host_url"])) formerr($err["ldap_host_url"]); ?>
+    </TD>
     <TD>
     <?php  print_string("auth_ldap_host_url","auth") ?>
     </TD>
 </TR>
 
 <tr valign="top" BGCOLOR="<?php echo $THEME->cellheading2 ?>">
-	<TD ALIGN=RIGHT><P>ldap_version:</TD>
-	<TD>
+    <TD ALIGN=RIGHT><P>ldap_version:</TD>
+    <TD>
     <?php
        $versions[2] = "2";
        $versions[3] = "3";
        choose_from_menu($versions, "ldap_version", $config->ldap_version, "");
-	   if (isset($err["ldap_version"])) formerr($err["ldap_version"]); 
+       if (isset($err["ldap_version"])) formerr($err["ldap_version"]); 
     ?>
-	</TD>
+    </TD>
     <TD>
     <?php  print_string("auth_ldap_version","auth") ?>
     </TD>
 </TR>
 
 <TR VALIGN=TOP BGCOLOR="<?php echo $THEME->cellheading2 ?>">
-	<TD ALIGN=RIGHT><P>ldap_contexts:</TD>
-	<TD>
+    <TD ALIGN=RIGHT><P>ldap_contexts:</TD>
+    <TD>
     <INPUT name=ldap_contexts TYPE=text SIZE=30 VALUE="<?php echo $config->ldap_contexts?>">
     <?php  if (isset($err["ldap_contexts"])) formerr($err["ldap_contexts"]); ?>
     </TD>
@@ -59,8 +75,8 @@
 </TR>
 
 <TR VALIGN=TOP BGCOLOR="<?php echo $THEME->cellheading2 ?>">
-	<TD ALIGN=RIGHT><P>ldap_user_attribute:</TD>
-	<TD>
+    <TD ALIGN=RIGHT><P>ldap_user_attribute:</TD>
+    <TD>
     <INPUT name=ldap_user_attribute TYPE=text SIZE=30 VALUE="<?php echo $config->ldap_user_attribute?>">
     <?php  if (isset($err["ldap_user_attribute"])) formerr($err["ldap_user_attribute"]); ?>
     </TD>
@@ -70,8 +86,8 @@
 </TR>
 
 <TR VALIGN=TOP BGCOLOR="<?php echo $THEME->cellheading2 ?>">
-	<TD ALIGN=RIGHT><P>ldap_objectclass:</TD>
-	<TD>
+    <TD ALIGN=RIGHT><P>ldap_objectclass:</TD>
+    <TD>
     <INPUT name=ldap_objectclass TYPE=text SIZE=30 VALUE="<?php echo $config->ldap_objectclass?>">
     <?php  if (isset($err["ldap_objectclass"])) formerr($err["ldap_objectclass"]); ?>
     </TD>
@@ -81,8 +97,8 @@
 </TR>
 
 <TR VALIGN=TOP BGCOLOR="<?php echo $THEME->cellheading2 ?>">
-	<TD ALIGN=RIGHT><P>ldap_search_sub:</TD>
-	<TD>
+    <TD ALIGN=RIGHT><P>ldap_search_sub:</TD>
+    <TD>
     <INPUT name=ldap_search_sub TYPE=text SIZE=1 VALUE="<?php echo $config->ldap_search_sub?>">
     <?php  if (isset($err["ldap_search_sub"])) formerr($err["ldap_search_sub"]); ?>
     </TD>
@@ -92,8 +108,8 @@
 </TR>
 
 <TR VALIGN=TOP BGCOLOR="<?php echo $THEME->cellheading2 ?>">
-	<TD ALIGN=RIGHT><P>ldap_bind_dn:</TD>
-	<TD>
+    <TD ALIGN=RIGHT><P>ldap_bind_dn:</TD>
+    <TD>
     <INPUT name=ldap_bind_dn TYPE=text SIZE=30 VALUE="<?php echo $config->ldap_bind_dn?>">
     <?php  if (isset($err["ldap_bind_dn"])) formerr($err["ldap_bind_dn"]); ?>
     </TD><TD>
@@ -102,8 +118,8 @@
 </TR>
 
 <TR VALIGN=TOP BGCOLOR="<?php echo $THEME->cellheading2 ?>">
-	<TD ALIGN=RIGHT><P>ldap_bind_pw:</TD>
-	<TD>
+    <TD ALIGN=RIGHT><P>ldap_bind_pw:</TD>
+    <TD>
     <INPUT name=ldap_bind_pw TYPE=text SIZE=30 VALUE="<?php echo $config->ldap_bind_pw?>">
     <?php  if (isset($err["ldap_bind_pw"])) formerr($err["ldap_bind_pw"]); ?>
     </TD><TD>
@@ -132,8 +148,8 @@
 </TR>
 
 <TR VALIGN=TOP BGCOLOR="<?php echo $THEME->cellheading2 ?>">
-	<TD ALIGN=RIGHT><P>ldap_create_context:</TD>
-	<TD>
+    <TD ALIGN=RIGHT><P>ldap_create_context:</TD>
+    <TD>
     <INPUT name=ldap_create_context TYPE=text SIZE=30 VALUE="<?php echo $config->ldap_create_context?>">
     <?php  if (isset($err["ldap_create_context"])) formerr($err["ldap_create_context"]); ?>
     </TD><TD>
@@ -142,8 +158,8 @@
 </TR>
 
 <TR>
-	<TD ALIGN=RIGHT><P><?php  print_string("firstname") ?>:</TD>
-	<TD>
+    <TD ALIGN=RIGHT><P><?php  print_string("firstname") ?>:</TD>
+    <TD>
     <INPUT name="auth_user_firstname" TYPE="text" SIZE="30" VALUE="<?php echo $config->auth_user_firstname?>">
     </TD>
     <TD rowspan=12 VALIGN=CENTER>
@@ -152,93 +168,93 @@
 </TR>
 
 <TR VALIGN=TOP>
-	<TD ALIGN=RIGHT><P><?php  print_string("lastname") ?>:</TD>
-	<TD>
+    <TD ALIGN=RIGHT><P><?php  print_string("lastname") ?>:</TD>
+    <TD>
     <INPUT name="auth_user_lastname" TYPE="text" SIZE="30" VALUE="<?php echo $config->auth_user_lastname?>">
     </TD>
 </TR>
 
 <TR VALIGN=TOP>
-	<TD ALIGN=RIGHT><P><?php  print_string("email") ?>:</TD>
-	<TD>
+    <TD ALIGN=RIGHT><P><?php  print_string("email") ?>:</TD>
+    <TD>
     <INPUT name="auth_user_email" TYPE="text" SIZE="30" VALUE="<?php echo $config->auth_user_email?>">
     </TD>
 </TR>
 
 <TR VALIGN=TOP>
-	<TD ALIGN=RIGHT><P><?php  print_string("phone") ?> 1:</TD>
-	<TD>
+    <TD ALIGN=RIGHT><P><?php  print_string("phone") ?> 1:</TD>
+    <TD>
     <INPUT name="auth_user_phone1" TYPE="text" SIZE="30" VALUE="<?php echo $config->auth_user_phone1?>">
     </TD>
 </TR>
 
 <TR VALIGN=TOP>
-	<TD ALIGN=RIGHT><P><?php  print_string("phone") ?> 2:</TD>
-	<TD>
+    <TD ALIGN=RIGHT><P><?php  print_string("phone") ?> 2:</TD>
+    <TD>
     <INPUT name="auth_user_phone2" TYPE="text" SIZE="30" VALUE="<?php echo $config->auth_user_phone2?>">
     </TD>
 </TR>
 
 <TR VALIGN=TOP>
-	<TD ALIGN=RIGHT><P><?php  print_string("department") ?>:</TD>
-	<TD>
+    <TD ALIGN=RIGHT><P><?php  print_string("department") ?>:</TD>
+    <TD>
     <INPUT name="auth_user_department" TYPE="text" SIZE="30" VALUE="<?php echo $config->auth_user_department?>">
     </TD>
 </TR>
 
 <TR VALIGN=TOP>
-	<TD ALIGN=RIGHT><P><?php  print_string("address") ?>:</TD>
-	<TD>
+    <TD ALIGN=RIGHT><P><?php  print_string("address") ?>:</TD>
+    <TD>
     <INPUT name="auth_user_address" TYPE="text" SIZE="30" VALUE="<?php echo $config->auth_user_address?>">
     </TD>
 </TR>
 
 <TR VALIGN=TOP>
-	<TD ALIGN=RIGHT><P><?php  print_string("city") ?>:</TD>
-	<TD>
+    <TD ALIGN=RIGHT><P><?php  print_string("city") ?>:</TD>
+    <TD>
     <INPUT name="auth_user_city" TYPE="text" SIZE="30" VALUE="<?php echo $config->auth_user_city?>">
     </TD>
 </TR>
 
 <TR VALIGN=TOP>
-	<TD ALIGN=RIGHT><P><?php  print_string("country") ?>:</TD>
-	<TD>
+    <TD ALIGN=RIGHT><P><?php  print_string("country") ?>:</TD>
+    <TD>
     <INPUT name="auth_user_country" TYPE="text" SIZE="30" VALUE="<?php echo $config->auth_user_country?>">
     </TD>
 </TR>
 
 <TR VALIGN=TOP>
-	<TD ALIGN=RIGHT><P><?php  print_string("description") ?>:</TD>
-	<TD>
+    <TD ALIGN=RIGHT><P><?php  print_string("description") ?>:</TD>
+    <TD>
     <INPUT name="auth_user_description" TYPE="text" SIZE="30" VALUE="<?php echo $config->auth_user_description?>">
     </TD>
 </TR>
 
 <TR VALIGN=TOP>
-	<TD ALIGN=RIGHT><P><?php  print_string("idnumber") ?>:</TD>
-	<TD>
+    <TD ALIGN=RIGHT><P><?php  print_string("idnumber") ?>:</TD>
+    <TD>
     <INPUT name="auth_user_idnumber" TYPE="text" SIZE="30" VALUE="<?php echo $config->auth_user_idnumber?>">
     </TD>
 </TR>
 
 <TR VALIGN=TOP>
-	<TD ALIGN=RIGHT><P><?php  print_string("language") ?>:</TD>
-	<TD>
+    <TD ALIGN=RIGHT><P><?php  print_string("language") ?>:</TD>
+    <TD>
     <INPUT name="auth_user_lang" TYPE="text" SIZE="30" VALUE="<?php echo $config->auth_user_lang?>">
     </TD>
 </TR>
 
 <TR VALIGN=TOP>
-	<TD ALIGN=RIGHT><P><?php  print_string("guid") ?>:</TD>
-	<TD>
+    <TD ALIGN=RIGHT><P><?php  print_string("guid") ?>:</TD>
+    <TD>
     <INPUT name="auth_user_guid" TYPE="text" SIZE="30" VALUE="<?php echo $config->auth_user_guid?>">
     </TD>
 </TR>
 
 
 <TR VALIGN=TOP>
-	<TD ALIGN=RIGHT><P><?php  print_string("instructions", "auth") ?>:</TD>
-	<TD>
+    <TD ALIGN=RIGHT><P><?php  print_string("instructions", "auth") ?>:</TD>
+    <TD>
     <TEXTAREA NAME=auth_instructions COLS=30 ROWS=10 WRAP=virtual><?php  p($config->auth_instructions) ?></TEXTAREA> 
     </TD>
     <TD>
