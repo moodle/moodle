@@ -98,7 +98,8 @@
 <TR VALIGN=TOP>
 	<TD ALIGN=RIGHT><P>maxeditingtime:</TD>
 	<TD>
-    <? $options[3600] = get_string("numminutes", "", 60);
+    <? unset($options);
+       $options[3600] = get_string("numminutes", "", 60);
        $options[2700] = get_string("numminutes", "", 45);
        $options[1800] = get_string("numminutes", "", 30);
        $options[900]  = get_string("numminutes", "", 15);
@@ -106,7 +107,6 @@
        $options[60]   = get_string("numminutes", "", 1);
 
        choose_from_menu ($options, "maxeditingtime", $config->maxeditingtime, "", "", "");
-       unset($options);
     ?>
     </TD>
     <TD>
@@ -116,7 +116,8 @@
 <TR VALIGN=TOP>
 	<TD ALIGN=RIGHT><P>longtimenosee:</TD>
 	<TD>
-    <? $options[1000] = get_string("numdays", "", 1000);
+    <? unset($options);
+       $options[1000] = get_string("numdays", "", 1000);
        $options[365]  = get_string("numdays", "", 365);
        $options[180]  = get_string("numdays", "", 180);
        $options[150]  = get_string("numdays", "", 150);
@@ -127,7 +128,6 @@
        $options[7]   = get_string("numdays", "", 7);
 
        choose_from_menu ($options, "longtimenosee", $config->longtimenosee, "", "", "");
-       unset($options);
     ?>
     </TD>
     <TD>
@@ -155,13 +155,13 @@
 <TR VALIGN=TOP>
 	<TD ALIGN=RIGHT><P>slasharguments:</TD>
 	<TD>
-    <? $options[0] = "file.php?file=/pic.jpg";
+    <? unset($options);
+       $options[0] = "file.php?file=/pic.jpg";
        $options[1] = "file.php/pic.jpg";
 
        $installed  = check_gd_version();
 
        choose_from_menu ($options, "slasharguments", $config->slasharguments, "", "", "");
-       unset($options);
     ?>
     </TD>
     <TD>
@@ -186,11 +186,11 @@
 <TR VALIGN=TOP>
 	<TD ALIGN=RIGHT><P>debug:</TD>
 	<TD>
-    <? $options[7]  = get_string("no");
+    <? unset($options);
+       $options[7]  = get_string("no");
        $options[15] = get_string("yes");
 
        choose_from_menu ($options, "debug", $config->debug, "", "", "");
-       unset($options);
     ?>
     </TD>
     <TD>
