@@ -127,8 +127,10 @@ function glossary_delete_instance($id) {
             if ($ents) {
                 delete_records_select("glossary_comments", "entryid in ($ents)");
                 delete_records_select("glossary_alias", "entryid in ($ents)");
+                delete_records_select("glossary_ratings", "entryid in ($ents)");
             }
         }
+        glossary_delete_glossary_attachments($glossary);
         delete_records("glossary_entries", "glossaryid", "$glossary->id");
     }
 
@@ -761,14 +763,30 @@ function glossary_search_entries($searchterms, $glossary, $includedefinition) {
 }
 
 function glossary_file_area_name($entry) {
-//  Creates a directory file name, suitable for make_upload_directory()
     global $CFG;
+//  Creates a directory file name, suitable for make_upload_directory()
 
-    return "$entry->course/$CFG->moddata/glossary/$entry->glossaryid/$entry->id";
+    // I'm doing this workaround for make it works for delete_instance also 
+    //  (when called from delete_instance, glossary is already deleted so
+    //   getting the course from mdl_glossary does not work)
+    $module = get_record("modules","name","glossary");
+    $cm = get_record("course_modules","module",$module->id,"instance",$entry->glossaryid);
+    return "$cm->course/$CFG->moddata/glossary/$entry->glossaryid/$entry->id";
 }
 
 function glossary_file_area($entry) {
     return make_upload_directory( glossary_file_area_name($entry) );
+}
+
+function glossary_main_file_area($glossary) {
+    $modarea = glossary_mod_file_area($glossary);
+    return "$modarea/$glossary->id";
+}
+
+function glossary_mod_file_area($glossary) {
+    global $CFG;
+    
+    return make_upload_directory( "$glossary->course/$CFG->moddata/glossary" );
 }
 
 function glossary_delete_old_attachments($entry, $exception="") {
@@ -787,6 +805,34 @@ function glossary_delete_old_attachments($entry, $exception="") {
         if (!$exception) {  // Delete directory as well, if empty
             rmdir("$basedir");
         }
+    }
+}
+function glossary_delete_glossary_attachments($glossary) {
+// Deletes all the user files in the attachments area for the glossary
+    if ( $entries = get_records("glossary_entries","glossaryid",$glossary->id) ) {
+        $deleted = 0;
+        foreach ($entries as $entry) {
+            if ( $entry->attachment ) {
+                if ($basedir = glossary_file_area($entry)) {
+                    if ($files = get_directory_list($basedir)) {
+                        foreach ($files as $file) {
+                            unlink("$basedir/$file");
+                        }
+                    }
+                    rmdir("$basedir");
+                    $deleted++;
+                }
+            }            
+        }
+        if ( $deleted ) {
+            $attachmentdir = glossary_main_file_area($glossary);
+            $glossarydir = glossary_mod_file_area($glossary);
+            
+            rmdir("$attachmentdir");
+            if (!$files = get_directory_list($glossarydir) ) {
+                rmdir( "$glossarydir" );
+            }
+        }        
     }
 }
 
