@@ -132,6 +132,32 @@
     //Now print the To Do list
     echo "<tr>";    
     echo "<td colspan=\"2\" align=\"center\"><P><B>";
+
+    //Here we check if backup_users = None. Then, we switch off every module
+    //user info, user_files, logs and exercises and workshop backups. A Warning is showed to
+    //inform the user.
+    if ($backup_users == 2) {
+        if ($allmods = get_records("modules") ) {
+            foreach ($allmods as $mod) {
+                $modname = $mod->name;
+                $var = "backup_user_info_".$modname;
+                if (isset($$var)) {
+                    $$var = 0;
+                }
+                $var = "backup_".$modname;
+                if (isset($$var)) {
+                    if ($modname == "exercise" || $modname == "workshop") {
+                        $$var = 0;
+                    }
+                }
+            }
+        $backup_user_files = 0;
+        $backup_logs = 0;
+        }
+        print_simple_box("<font color=\"red\">".get_string("backupnoneusersinfo")."</font>","center", "70%", "$THEME->cellheading", "20", "noticebox");
+        echo "<hr noshade size=\"1\">";
+    }
+
     echo get_string("backupdetails").":";
     echo "</td></tr>";
 
@@ -180,6 +206,7 @@
         echo "<td colspan=\"2\"><P><B>";
         $user_options[0] = get_string("includeallusers");
         $user_options[1] = get_string("includecourseusers");
+        $user_options[2] = get_string("includenoneusers");
         echo "<li>".$user_options[$backup_users]."<P>";
         //Add as hidden name
         echo "<input type=\"hidden\" name=\"backup_users\" value=\"".$backup_users."\">";

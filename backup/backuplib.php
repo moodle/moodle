@@ -33,79 +33,84 @@
     function user_check_backup($course,$backup_unique_code,$backup_users) {
         //$backup_users=0-->all
         //              1-->course (needed + enrolled)
+        //              2-->none
 
         global $CFG;
         global $db;
 
         $count_users = 0;
+
+        //If we've selected none, simply return 0
+        if ($backup_users == 0 or $backup_users == 1) {
         
-        //Calculate needed users (calling every xxxx_get_participants function + scales users)
-        $needed_users = backup_get_needed_users($course);
+            //Calculate needed users (calling every xxxx_get_participants function + scales users)
+            $needed_users = backup_get_needed_users($course);
 
-        //Calculate enrolled users (students + teachers)
-        $enrolled_users = backup_get_enrolled_users($course);
+            //Calculate enrolled users (students + teachers)
+            $enrolled_users = backup_get_enrolled_users($course);
 
-        //Calculate all users (every record in users table)
-        $all_users = backup_get_all_users();
+            //Calculate all users (every record in users table)
+            $all_users = backup_get_all_users();
 
-        //Calculate course users (needed + enrolled)
-        //First, needed
-        $course_users = $needed_users;
+            //Calculate course users (needed + enrolled)
+            //First, needed
+            $course_users = $needed_users;
         
-        //Now, enrolled
-        if ($enrolled_users) {
-            foreach ($enrolled_users as $enrolled_user) {
-                $course_users[$enrolled_user->id]->id = $enrolled_user->id; 
+            //Now, enrolled
+            if ($enrolled_users) {
+                foreach ($enrolled_users as $enrolled_user) {
+                    $course_users[$enrolled_user->id]->id = $enrolled_user->id; 
+                }
             }
-        }
        
-        //Now, depending of parameters, create $backupable_users
-        if ($backup_users == 0) {
-            $backupable_users = $all_users;
-        } else {
-            $backupable_users = $course_users;
+            //Now, depending of parameters, create $backupable_users
+            if ($backup_users == 0) {
+                $backupable_users = $all_users;
+            } else {
+                $backupable_users = $course_users;
+            }
+
+            //If we have backupable users
+            if ($backupable_users) {
+                //Iterate over users putting their roles
+                foreach ($backupable_users as $backupable_user) {
+                    $backupable_user->info = "";
+                    //Is Admin in tables (not is_admin()) !!
+                    if (record_exists("user_admins","userid",$backupable_user->id)) {
+                        $backupable_user->info .= "admin";
+                    }
+                    //Is Course Creator in tables (not is_coursecreator()) !!
+                    if (record_exists("user_coursecreators","userid",$backupable_user->id)) {
+                        $backupable_user->info .= "coursecreator";
+                    }
+                    //Is Teacher in tables (not is_teacher()) !!
+                    if (record_exists("user_teachers","course",$course,"userid",$backupable_user->id)) {
+                        $backupable_user->info .= "teacher";
+                    }
+                    //Is Student in tables (not is_student()) !!
+                    if (record_exists("user_students","course",$course,"userid",$backupable_user->id)) {
+                        $backupable_user->info .= "student";
+                    }
+                    //Is needed user (exists in needed_users) 
+                    if (isset($needed_users[$backupable_user->id])) {
+                        $backupable_user->info .= "needed";
+                    }
+                    //Now create the backup_id record
+                    $backupids_rec->backup_code = $backup_unique_code;
+                    $backupids_rec->table_name = "user";
+                    $backupids_rec->old_id = $backupable_user->id;
+                    $backupids_rec->info = $backupable_user->info;
+        
+                    //Insert the record id. backup_users decide it.
+                    //When all users
+                    $status = insert_record("backup_ids",$backupids_rec,false,"backup_code");
+                    $count_users++;
+                }
+                //Do some output     
+                backup_flush(30);
+            }
         }
 
-        //If we have backupable users
-        if ($backupable_users) {
-            //Iterate over users putting their roles
-            foreach ($backupable_users as $backupable_user) {
-                $backupable_user->info = "";
-                //Is Admin in tables (not is_admin()) !!
-                if (record_exists("user_admins","userid",$backupable_user->id)) {
-                    $backupable_user->info .= "admin";
-                }
-                //Is Course Creator in tables (not is_coursecreator()) !!
-                if (record_exists("user_coursecreators","userid",$backupable_user->id)) {
-                    $backupable_user->info .= "coursecreator";
-                }
-                //Is Teacher in tables (not is_teacher()) !!
-                if (record_exists("user_teachers","course",$course,"userid",$backupable_user->id)) {
-                    $backupable_user->info .= "teacher";
-                }
-                //Is Student in tables (not is_student()) !!
-                if (record_exists("user_students","course",$course,"userid",$backupable_user->id)) {
-                    $backupable_user->info .= "student";
-                }
-                //Is needed user (exists in needed_users) 
-                if (isset($needed_users[$backupable_user->id])) {
-                    $backupable_user->info .= "needed";
-                }
-                //Now create the backup_id record
-                $backupids_rec->backup_code = $backup_unique_code;
-                $backupids_rec->table_name = "user";
-                $backupids_rec->old_id = $backupable_user->id;
-                $backupids_rec->info = $backupable_user->info;
-    
-                //Insert the record id. backup_users decide it.
-                //When all users
-                $status = insert_record("backup_ids",$backupids_rec,false,"backup_code");
-                $count_users++;
-            }
-            //Do some output     
-            backup_flush(30);
-        }
-            
         //Prepare Info
         //Gets the user data
         $info[0][0] = get_string("users");
@@ -484,8 +489,10 @@
         //The user in backup
         if ($preferences->backup_users == 1) {
             fwrite ($bf,full_tag("USERS",3,false,"course"));
-        } else {
+        } else if ($preferences->backup_users == 0) {
             fwrite ($bf,full_tag("USERS",3,false,"all"));
+        } else {
+            fwrite ($bf,full_tag("USERS",3,false,"none"));
         }
         //The logs in backup
         if ($preferences->backup_logs == 1) {
