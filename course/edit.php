@@ -86,7 +86,7 @@
 
                 // place at beginning of category
                 fix_course_sortorder();
-                $form->sortorder = get_field_sql("SELECT min(sortorder)-1 FROM {$CFG->prefix}course WHERE category=$form->category");
+                $form->sortorder = get_field_sql("SELECT min(sortorder)-1 FROM {$CFG->prefix}course WHERE category=$form->category") || 1000;
 
                 if ($newcourseid = insert_record('course', $form)) {  // Set up new course
                     
