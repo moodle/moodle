@@ -58,6 +58,7 @@ $string['notefile'] = 'To upload more files into the course (so they appear in t
 $string['notypechosen'] = 'You need to choose a type.  Use your back button to go back and retry.';
 $string['pagedisplay'] = 'Display this resource within the current window';
 $string['pagewindow'] = 'Same window';
+$string['pan'] = 'Pan';
 $string['parameter'] = 'Parameter';
 $string['parameters'] = 'Parameters';
 $string['popupresource'] = 'This resource should appear in a popup window.';
@@ -80,4 +81,5 @@ $string['resourcetypetext'] = 'Compose a text page';
 $string['searchweb'] = 'Search for web page';
 $string['serverurl'] = 'Server URL ($a->wwwroot)';
 $string['variablename'] = 'Variable name';
+$string['vol'] = 'Vol';
 ?>
