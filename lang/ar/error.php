@@ -4,8 +4,12 @@
 
 $string['erroronline'] = 'ÎØÇÁ İí ÓØÑ $a';
 $string['fieldrequired'] = '\"$a\" ÍŞá ãØáæÈ';
-$string['invalidfieldname'] = '\"$a\" ÇÓã ÇáÍŞá ÛíÑ ÕÍíÍ';
-$string['missingfield'] = 'ÇáÍŞá\"$a\" ÛíÑ ãæÌæÏ';
+$string['invalidfieldname'] = '\"$a\"  ÇÓã ÇáÍŞá ÛíÑ ÕÍíÍ';
+$string['missingfield'] = 'ÇáÍŞá \"$a\" ÛíÑ ãæÌæÏ';
+$string['modulerequirementsnotmet'] = 'ÇáæÍÏ \" a$->modulename\" (a$->moduleversion) áÇíãßä ÊËÈÊåÇ ÇáÂä. ÃäåÇ ÊÊØáÈ ÃÕÏÇÑ ÌÏíÏ áãæÏá 
+(ÃäÊ ÊÓÊÎÏã ÇáÂä a$->currentmoodle, æÊÍÊÇÌ a$ ->requiremoodle)
+';
+$string['restricteduser'] = 'ÚĞÑÇ¡ ÃäÊ áÓÊ ãÎæáÇ ááŞíÇã ÈĞáß ÍÇáíÇğ';
 $string['unknowncourse'] = 'ÇÓã ÇáãäåÌ ÇáÏÑÇÓí ÛíÑ ãÚÑæİ\"$a\"';
 $string['usernotaddederror'] = 'ÇáãÓÊÎÏã\"$a\" áã íÊã ÇÖÇİÉ- ÎØÇÁ ÛíÑ ãÚÑæİ';
 $string['usernotaddedregistered'] = 'ÇáãÓÊÎÏã\"$a\" áã íÊã ÇÖÇİÉ- Êã ÊÓÌíáÉ ãä ŞÈá';

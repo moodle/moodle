@@ -17,6 +17,6 @@ $string['responses'] = 'ÅÌÇÈÇÊ';
 $string['responsesto'] = 'ÅÌÇÈÇÊ áÜ  $a ';
 $string['savemychoice'] = 'ÍÝÙ ÇáÇÎÊíÇÑ';
 $string['showunanswered'] = 'ÇÙåÑ ÇáÃÓÆáÉ ÇáÊì áã íÊã ÇáÇÌÇÈÉ ÚáíåÇ Ýí åíÆÉ ÚÇãæÏ';
-$string['viewallresponses'] = 'ÚÑÖ ÅÌÇÈÇÊ  $a  ';
+$string['viewallresponses'] = 'ãÚÇíÉ $a  ÅÌÇÈÇÊ    ';
 
 ?>

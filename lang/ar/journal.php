@@ -9,10 +9,11 @@ $string['editingended'] = 'ÇäÊåÊ İÊÑÉ ÇáÊÚÏíá';
 $string['editingends'] = 'ÊäÊåí İÊÑÉ ÇáÊÚÏíá';
 $string['entries'] = 'ãæÇÏ';
 $string['feedbackupdated'] = 'ÊÕÍíÍ ãÍÏË $a ááãÏÎáÇÊ ';
-$string['journalmail'] = '$a->ŞÇã ÇáãÏÑÓ ÈÅÑÓÇá ÈÚÖ ÇáÊÕÍíÍÇÊ Úáì ãÇÏÉ ãĞßÑÊß \'$a->journal\'
-ÊÓØíÚ ÑÄíÊåÇ æÇáÍÇŞåÇ ÈãÇÏÉ ÇáãĞßÑÉ';
-$string['journalmailhtml'] = '$a->ŞÇã ÇáãÏÑÓ ÈÅÑÓÇá ÈÚÖ ÇáÊÕÍíÍÇÊ Úáì ãÇÏÉ ãĞßÑÊß \'<i>$a->journal</i>\'<br /><br />
-ÊÓØíÚ ÑÄíÊåÇ æÇáÍÇŞåÇ <a href=\"$a->url\">ÈãÇÏÉ ãĞßÑÊß</a>.';
+$string['journalmail'] = 'a$->teacher ŞÇã íæÖÚ ÈÚÖ ÇáÊÕÍíÍÇÊ Úáì ãÇÏÉ ãĞßÑÊß ÇáãÓáãÉ áÜ \'a$->journal\'
+ÊÓÊØíÚ ãÔÇåÏÊåÇ ãÑİŞÉ ãÚ ãÇÏÉ ãĞßÑÊß: a$->url
+';
+$string['journalmailhtml'] = 'a$->teacher ŞÇã ÈæÖÚ ÈÚÖ ÇáÊÕÍíÍÇÊ Úáì ãÇÏÉ ãĞßÑÊß \'<i>a$->journal</i>\'<br /><br />
+ íãßäß ãÔÇåÏÊåÇ ãÑİŞÉ ãÚ áãÇÏÉ ãĞßÑÊß<a href=\"a$->url\">journal entry</a>.';
 $string['journalname'] = 'ÇÓã ÇáãĞßÑÉ';
 $string['journalquestion'] = 'ÓÄÇá ÇáãĞßÑÉ';
 $string['journalrating1'] = 'áíÓ ãŞäÚÇ';
@@ -29,6 +30,6 @@ $string['overallrating'] = 'ÛÇáÈíÉ ÇáÊÕäíİÇÊ';
 $string['rate'] = 'Õäİ';
 $string['saveallfeedback'] = 'ÃÍİÙ ÌãíÚ ÇáÊÕÍíÍÇÊ ÇáÎÇÕ Èí';
 $string['startoredit'] = ' ÊÚÏíá ãĞßÑÊí';
-$string['viewallentries'] = 'ÚÑÖ $a ãÏÎáÇÊ ÇáãĞßÑÉ';
+$string['viewallentries'] = 'ãÚÇíäÉ $a ãÏÎáÇÊ ÇáãĞßÑÉ';
 
 ?>

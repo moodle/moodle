@@ -8,11 +8,11 @@ $string['appointmentlocation'] = 'ãßÇä ÇáãæÚÏ';
 $string['appointmentname'] = 'ÇÓã ÇáãæÚÏ';
 $string['date'] = 'ÊÇÑíÎ ÇáãæÚÏ';
 $string['description'] = 'æÕÝ';
-$string['early'] = 'ãÈßÑ $a';
+$string['early'] = ' $a ãÈßÑ';
 $string['failedupdatefeedback'] = 'ÇÎØÇÁ áÊÓáíã ÇáÊÕÍíÇÊ ÇáãÍÏËÉ ááãÓÊÎÏã  $a';
 $string['feedback'] = 'ÊÕÍíÍ';
-$string['feedbackupdated'] = 'ÊÓáíã ÇáÊÕÍíÇÊ ÇáãÍÏËå  a$ ááäÇÓ';
-$string['late'] = 'ãÊÃÎÑ   $a';
+$string['feedbackupdated'] = 'ÊÓáíã ÇáÊÕÍíÇÊ ÇáãÍÏËå   $a ááäÇÓ';
+$string['late'] = ' $a ãÊÃÎÑ ';
 $string['maximumgrade'] = 'ÇáÏÑÌÉ ÇáÞÕæì';
 $string['maximumsize'] = 'ÇáÍÌã ÇáÇÞÕì';
 $string['modulename'] = 'ãæÚÏ';
@@ -37,9 +37,9 @@ $string['uploadfailnoupdate'] = 'Êã ÊÍãíá ÇáãáÝ æáßä áã íÍÏË ÊÓáíãß';
 $string['uploadfiletoobig'] = 'ÚÐÑÇð¡ ÍÌã ÇáãáÝ ÇßÈÑ ãä ÇáÍÌã ÇáãÓãæÍ Èå (ÇáÍÌã ÇáãÓãæÍ Èå åæ $a ÈÇíÊ)';
 $string['uploadnofilefound'] = 'áÇ íæÌÏ ÇáãáÝ - åá ÃäÊ ãÊÃßÏ ãä ÇÎÊíÇÑß ãáÝ áÊÍãíá¿';
 $string['uploadnotregistered'] = '\' $a\' Êã ÊÍãíáå ÈäÍÇÍ æáßä áã íÓÌá!';
-$string['uploadsuccess'] = 'Íãá  \' $a\' ÈäÌÇÍ';
-$string['viewfeedback'] = 'ÃÚÑÖ ÏÑÌÇÊ ÇáãæÚÏ æÇáÊÕÍíÍÇÊ';
-$string['viewsubmissions'] = ' $a ÚÑÖ ÇáãæÇÚíÏ ÇáãÓáãå';
+$string['uploadsuccess'] = 'Êã ÇáÊÍãíá\' $a\' ÈäÌÇÍ';
+$string['viewfeedback'] = 'ãÚÇíäÉ ÏÑÌÇÊ ÇáãæÚÏ æÇáÊÕÍíÍÇÊ';
+$string['viewsubmissions'] = 'ãÚÇíäÉ $a ÇáãæÇÚíÏ ÇáãÓáãå';
 $string['yoursubmission'] = 'ÊÓáíãß';
 
 ?>

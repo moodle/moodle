@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // attendance.php - created with Moodle 1.2 development (2004011700)
+      // attendance.php - created with Moodle 1.2 development (2004012800)
 
 
 $string['absentlong'] = 'ÛÇÆÈ';
@@ -59,12 +59,12 @@ $string['tardylong'] = 'ãÊÃÎÑ';
 $string['tardyshort'] = 'ã';
 $string['thursday'] = 'ÇáÎãíÓ';
 $string['tuesday'] = 'ÇáËáÇËÇÁ';
-$string['viewall'] = 'ÚÑÖ ÌãíÚ ÞæÇÆã ÇáÍÖæÑ';
-$string['viewmulti'] = 'ÚÑÖ ÇáÊÞÑíÑ Ýí ÚÏÉ ÕÝÍÇÊ';
-$string['viewone'] = 'ÚÑÖ ÌãíÚ ÕÝÍÇÊ ÇáÊÞÑíÑ';
-$string['viewsection'] = 'ÚÑÖ ÌãíÚ ÞæÇÆã ÍÖæÑ åÐÇ ÇáÌÒÁ';
-$string['viewtable'] = 'ÚÑÖ ÇáÊÞÇÑíÑ Ýí ÌÏæá æÇÍÏ';
-$string['viewweek'] = 'ÚÑÖ ÌãíÚ ÞæÇÆã ÇáÍÖæÑ ãä ÊÞæÓã ÇáÇÓÈæÚ';
+$string['viewall'] = 'ãÚÇíäÉ ÌãíÚ ÞæÇÆã ÇáÍÖæÑ';
+$string['viewmulti'] = 'ãÚÇíäÉ ÇáÊÞÑíÑ Ýí ÚÏÉ ÕÝÍÇÊ';
+$string['viewone'] = 'ãÚÇíäÉ ÌãíÚ ÕÝÍÇÊ ÇáÊÞÑíÑ';
+$string['viewsection'] = 'ãÚÇíäÉ ÌãíÚ ÞæÇÆã ÍÖæÑ åÐÇ ÇáÌÒÁ';
+$string['viewtable'] = 'ãÚÇíäÉ ÇáÊÞÇÑíÑ Ýí ÌÏæá æÇÍÏ';
+$string['viewweek'] = 'ãÚÇíäÉ ÌãíÚ ÞæÇÆã ÇáÍÖæÑ ãä ÊÞæÓã ÇáÇÓÈæÚ';
 $string['wednesday'] = 'ÇáÃÑÈÚÇÁ';
 $string['weekmodulename'] = 'ÌãíÚ ÞæÇÆã ÍÖæÑ ÇáÇÓÈæÚ ÇáãÇÖí';
 

@@ -189,6 +189,6 @@ $string['surveysaved'] = 'ÍÝÙ ÇáÇÓÊÈíÇä';
 $string['surveytype'] = 'äæÚ ÇáÇÓÊÈíÇä';
 $string['thanksforanswers'] = 'ÔßÑÇ Úáì ÇáÅÌÇÈÉ Úáì ÇáÇÓÊÈíÇä, $a';
 $string['time'] = 'ÇáæÞÊ';
-$string['viewsurveyresponses'] = 'ÚÑÖ $a ÑÏæÏ ÇáÇÓÊÈíÇä';
+$string['viewsurveyresponses'] = 'ãÚÇíäÉ $a ÑÏæÏ ÇáÇÓÊÈíÇä';
 
 ?>

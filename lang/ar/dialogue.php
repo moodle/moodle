@@ -13,15 +13,13 @@ $string['confirmclosure'] = 'ÃäÊ Úáì æÔß Ãä ÊÛáŞ ÍæÇÑğÇ ãÚ  $a. ÇáÍæÇÑÇÊ ÇáãÛáŞÉ
 $string['deleteafter'] = 'ÇÍĞİ ÇáÍæÇÑÇÊ ÇáãÛáŞÉ ÈÚÏ (ÇíÇã)';
 $string['dialogueclosed'] = 'ÍæÇÑ ãÛáŞ';
 $string['dialogueintro'] = 'ãŞÏãÉ ÍæÇÑ';
-$string['dialoguemail'] = '$a->userfrom ŞÇã ãä ÈÅÖÇİÉ ãÇÏÉ ÌÏíÏÉ áãÇÏÊß ÇáÍæÇÑíÉ
-\'$a->dialogue\'
-
+$string['dialoguemail'] = 'a$->userfrom ŞÇã ãä ÈÅÖÇİÉ ãÇÏÉ ÌÏíÏÉ áãÇÏÊß ÇáÍæÇÑíÉ a$->dialogue 
 ÊÓÊØÚ ãÔÇåÏÊåÇ ãáÍŞÉ áãÇÏÊß ÇáÍæÇÑíÉ:
 
-$a->url';
-$string['dialoguemailhtml'] = '$a->userfrom ŞÇã ãä ÈÅÖÇİÉ ãÇÏÉ ÌÏíÏÉ áãÇÏÊß
-ÇáÍæÇÑíÉ áÜ\'<i>$a->dialogue</i>\'<br /><br />
-ÊÓÊØÚ ãÔÇåÏÊåÇ ãáÍŞÉ <a href=\"$a->url\">áÍæÇÑß</a>.';
+a$->url';
+$string['dialoguemailhtml'] = 'a$->userfrom ŞÇã ãä ÈÅÖÇİÉ ãÇÏÉ ÌÏíÏÉ áãÇÏÊß
+ÇáÍæÇÑíÉ áÜ\'<i>a$->dialogue</i>\'<br /><br />
+ÊÓÊØÚ ãÔÇåÏÊåÇ ãáÍŞÉ <a href=\"a$->url\">áÍæÇÑß</a>.';
 $string['dialoguename'] = 'ÇÓã ÇáÍæÇÑ';
 $string['dialogueopened'] = 'İÊÍ ÇáÍæÇÑ ãÚ $a';
 $string['dialoguewith'] = 'ÍæÇÑ ãÚ $a';
@@ -52,7 +50,7 @@ $string['opendialogueentries'] = 'ãæÇÏ ÇáÍæÇÑ ÇáãİÊæÍ';
 $string['pane0'] = 'ÇİÊÍ ÍæÇÑ';
 $string['pane1'] = ' $a ÍæÇÑÇÊ ÊäÙÑ ÇáÑÏæÏ ãäß';
 $string['pane1one'] = '1 ÍæÇÑ íäÊÙÑ ÇáÑÏ ãäß';
-$string['pane2'] = 'ÍæÇÑÇÊ ÊäÊÙÑ ÇáÑÏæÏãä ÔÎÕ ÇÎÑ a$';
+$string['pane2'] = ' $a ÍæÇÑÇÊ ÊäÊÙÑ ÇáÑÏæÏãä ÔÎÕ ÇÎÑ ';
 $string['pane2one'] = '1 ÍæÇÑ íäÊÙÑ ÇáÑÏ ãä ÇáÔÎÕ ÇáÇÎÑ';
 $string['pane3'] = '$a ÍæÇÑÇÊ ãÛáŞÉ';
 $string['pane3one'] = '1 ÍæÇÑ ãÛáŞ';

@@ -45,8 +45,7 @@ $string['newwidth'] = 'ַבÚׁײ ַבÝÊַׁײם בבהַÝֿו (ַָבָß׃ב)';
 $string['newwindow'] = 'הַÝ׀ו ּֿםֿו';
 $string['newwindowopen'] = 'ֳÚׁײ ו׀ַ ַבדזֿׁ Ýם הַÝ׀ו ּֿםֿו';
 $string['note'] = 'דבֽזÙֹ';
-$string['notefile'] = 'בÊֽדםב ַבדבÝַÊ ֵבל ַבֽבÞֹ ַבַֿׁ׃םֹ (ז׀בß בÊÙוׁ Ýם ַבÞֶַדֹ) ַ׃Ê־ֿד 
-<A HREF=$a >דֿםׁ ַבדבÝַÊ</A>.';
+$string['notefile'] = 'בÊֽדםב ַבדבÝַÊ ֵבל ַבֽבÞֹ ַבַֿׁ׃םֹ (ז׀בß בÊÙוׁ Ýם ַבÞֶַדֹ) ַ׃Ê־ֿד <a href=\"a$\">File Manager</a>.';
 $string['notypechosen'] = 'בַָֿ דה ַ־Êםַׁ הזÚ.  ַ׃Ê־ֿד ׁׂ back בבּׁזÚ זֵÚַֹֿ ַבדַֽזבֹ.';
 $string['popupresource'] = 'בַ ָֿ ַה םÙוׁ ו׀ַ ַבדזֿׁ Ýם הַÝ׀ו ד׃ÊÞבו';
 $string['popupresourcelink'] = 'בז בד ÊÚדב¡ ֳהÞׁ והֱַ: $a';
