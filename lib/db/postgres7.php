@@ -549,6 +549,20 @@ function main_upgrade($oldversion=0) {
         set_field('blocks', 'version', 2004081200, 'name', 'course_list');
     }
 
+    if ($oldversion < 2004081500) {  // Adding new "auth" field to user table to allow more flexibility
+        table_column('user', '', 'auth', 'varchar', '20', '', 'manual', 'not null', 'id');
+
+        execute_sql("UPDATE {$CFG->prefix}user SET auth = 'manual'");  // Set everyone to 'manual' to be sure
+
+        if ($admins = get_admins()) {   // Set all the NON-admins to whatever the current auth module is
+            $adminlist = array();
+            foreach ($admins as $user) {
+                $adminlist[] = $user->id; 
+            }
+            $adminlist = implode(',', $adminlist);
+            execute_sql("UPDATE {$CFG->prefix}user SET auth = '$CFG->auth' WHERE id NOT IN ($adminlist)");
+        }
+    }
 
     return $result;
 

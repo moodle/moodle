@@ -23,6 +23,7 @@
             $user->lang = current_language();
             $user->firstaccess = time();
             $user->secret = random_string(15);
+            $user->auth = $CFG->auth;
             if (!empty($CFG->auth_user_create) and function_exists('auth_user_create') ){
                 if (! auth_user_exists($user->username)) {
                     if (! auth_user_create($user,$plainpass)) {

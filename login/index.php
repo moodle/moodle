@@ -5,6 +5,7 @@
 
     // Check if the guest user exists.  If not, create one.
     if (! record_exists("user", "username", "guest")) {
+        $guest->auth        = "manual"; 
         $guest->username    = "guest"; 
         $guest->password    = md5("guest");
         $guest->firstname   = addslashes(get_string("guestuser"));

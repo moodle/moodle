@@ -716,6 +716,7 @@ function create_user_record($username, $password) {
         }
     }
 
+    $newuser->auth = $CFG->auth;
     $newuser->username = $username;
     $newuser->password = md5($password);
     $newuser->lang = $CFG->lang;
