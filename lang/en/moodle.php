@@ -1,7 +1,6 @@
 <?PHP // $Id$ 
       // moodle.php - created with Moodle 1.2 development (2004013101)
 
-
 $string['action'] = 'Action';
 $string['active'] = 'Active';
 $string['activities'] = 'Activities';
@@ -25,6 +24,7 @@ $string['addnewuser'] = 'Add a new user';
 $string['address'] = 'Address';
 $string['addstudent'] = 'Add student';
 $string['addteacher'] = 'Add teacher';
+$string['advancedfilter'] = 'Advanced filter';
 $string['admin'] = 'Admin';
 $string['adminhelpaddnewuser'] = 'To manually create a new user account';
 $string['adminhelpassignadmins'] = 'Admins can do anything and go anywhere in the site';
@@ -94,6 +94,7 @@ $string['backupsavetohelp'] = 'Full path to the directory where you want to save
 $string['backupuserfileshelp'] = 'Choose whether user files (eg profile images) should be included in automated backups';
 $string['backupusershelp'] = 'Select whether you want to include all the users in the server or only the needed users for each course';
 $string['backupversion'] = 'Backup Version';
+$string['bycourseorder'] = 'By course order';
 $string['cancel'] = 'Cancel';
 $string['categories'] = 'Course categories';
 $string['category'] = 'Category';
@@ -212,6 +213,8 @@ $string['databasesetup'] = 'Setting up database';
 $string['databasesuccess'] = 'Database was successfully upgraded';
 $string['databaseupgradebackups'] = 'Backup version is now $a';
 $string['databaseupgrades'] = 'Upgrading database';
+$string['datemostrecentfirst'] = 'Date - most recent first';
+$string['datemostrecentlast'] = 'Date - most recent last';
 $string['day'] = 'day';
 $string['days'] = 'days';
 $string['defaultcoursefullname'] = 'Course Fullname 101';
@@ -626,6 +629,7 @@ $string['nopotentialcreators'] = 'No potential course creators';
 $string['nopotentialstudents'] = 'No potential students';
 $string['nopotentialteachers'] = 'No potential teachers';
 $string['normal'] = 'Normal';
+$string['normalfilter'] = 'Normal filter';
 $string['nostudentsfound'] = 'No $a found';
 $string['nostudentsyet'] = 'No students enrolled in this course yet';
 $string['nosuchemail'] = 'No such email address';
@@ -777,6 +781,7 @@ $string['sizemb'] = 'Mb';
 $string['socialheadline'] = 'Social forum - latest topics';
 $string['someallowguest'] = 'Some courses may allow guest access';
 $string['someerrorswerefound'] = 'Some information was missing or incorrect. Look below for details.';
+$string['sortby'] = 'Sort by';
 $string['startdate'] = 'Course start date';
 $string['startsignup'] = 'Start now by creating a new account!';
 $string['state'] = 'State/Province';
