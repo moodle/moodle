@@ -93,6 +93,14 @@
                  echo "<BLOCKQUOTE>";
                  echo format_text($CFG->auth_instructions);
                  echo "</BLOCKQUOTE>";
+                 require_once("../auth/$CFG->auth/lib.php");
+                 if (isset($CFG->auth_user_create) and $CFG->auth_user_create==1 and function_exists('auth_user_create') ){?>
+				    <FORM NAME="form4" ACTION="signup.php" METHOD=get>
+                    <INPUT type="submit" VALUE="<? print_string("startsignup") ?>">
+                    </FORM>
+                    </CENTER>
+                 <?
+				 }
              }
           ?>
     

@@ -21,7 +21,7 @@
 
     $starttime = microtime();
 
-    require_once("../config.php");
+    require_once("/usr/local/moodle/config.php");
 
     echo "<PRE>\n";
 

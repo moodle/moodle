@@ -1,6 +1,7 @@
 <?PHP // $Id$
 
     require_once("../config.php");
+    require_once("../auth/$CFG->auth/lib.php");
 
     if ( isset($p) and isset($s) ) {     #  p = user.secret   s = user.username
 
@@ -25,9 +26,14 @@
                 if (!set_field("user", "firstaccess", time(), "id", $user->id)) {
                     error("Could not set this user's first access date!");
                 }
+                if (isset($CFG->auth_user_create) and $CFG->auth_user_create==1 and function_exists('auth_user_activate') ) {
+				    if (!auth_user_activate($user->username)) {
+					  error("Could not activate this user!");
+					}
+                }
 
                 // The user has confirmed successfully, let's log them in
-
+                
                 if (!$USER = get_user_info_from_db("username", $user->username)) {
                     error("Something serious is wrong with the database");
                 }

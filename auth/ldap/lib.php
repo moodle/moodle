@@ -1,10 +1,11 @@
 <?PHP  // $Id$
 //CHANGELOG:
+//20.02.2003 Added support for user creation
 //12.10.2002 Reformatted source for consistency
 //03.10.2002 First version to CVS
 //29.09.2002 Clean up and splitted code to functions v. 0.02
 //29.09.2002 LDAP authentication functions v. 0.01
-//Distributed under GPL (c)Petri Asikainen 2002
+//Distributed under GPL (c)Petri Asikainen 2002-2003
 
 
 function auth_user_login ($username, $password) {
@@ -48,24 +49,15 @@ function auth_get_userinfo($username){
 /// reads userinformation from ldap and return it in array()
     global $CFG;
 
-    $config = (array)$CFG;
-    $fields = array("firstname", "lastname", "email", "phone1", "phone2", 
-                    "department", "address", "city", "country", "description", 
-                    "idnumber", "lang");
-
-    $moodleattributes = array();
-    foreach ($fields as $field) {
-        if ($config["auth_user_$field"]) {
-            $moodleattributes[$field] = $config["auth_user_$field"];
-        }
-    }
-
+    $config = (array)$CFGo;
+    $moodleattributes = auth_ldap_attributes();
+   
     $ldap_connection=auth_ldap_connect();
 
     $result = array();
     $search_attribs = array();
   
-    foreach ($moodleattributes as $key=>$value) {
+    foreach ($attrmap as $key=>$value) {
         array_push($search_attribs, $value);
     }
 
@@ -79,7 +71,7 @@ function auth_get_userinfo($username){
 
     if ($user_info_result) {
         $user_entry = ldap_get_entries($ldap_connection, $user_info_result);
-        foreach ($moodleattributes as $key=>$value){
+        foreach ($attrmap as $key=>$value){
             if(isset($user_entry[0][$value][0])){
                 $result[$key]=$user_entry[0][$value][0];
             }
@@ -93,7 +85,7 @@ function auth_get_userinfo($username){
 
 
 
-function auth_get_userlist() {
+function auth_get_userlist($filter="*") {
 /// returns all users from ldap servers
     global $CFG;
 
@@ -107,18 +99,22 @@ function auth_get_userlist() {
     }
 
     $contexts = explode(";",$CFG->ldap_contexts);
+  
+    if (!empty($CFG->ldap_create_context)){
+	  array_push($contexts, $CFG->ldap_create_context);
+    }
 
     foreach ($contexts as $context) {
 
         if ($CFG->ldap_search_sub) {
             //use ldap_search to find first user from subtree
             $ldap_result = ldap_search($ldap_connection, $context, 
-                                       "(".$CFG->ldap_objectclass.")", 
+                                       "(&(".$CFG->ldap_user_attribute."=".$filter.")(".$CFG->ldap_objectclass."))", 
                                        array($CFG->ldap_user_attribute));
         } else {
             //search only in this context
             $ldap_result = ldap_list($ldap_connection, $context, 
-                                     "(".$CFG->ldap_objectclass.")", 
+                                     "(&(".$CFG->ldap_user_attribute."=".$filter.")(".$CFG->ldap_objectclass."))",
                                      array($CFG->ldap_user_attribute));
         }
 
@@ -133,7 +129,77 @@ function auth_get_userlist() {
     return $fresult;
 }
 
+function auth_user_exists ($username) {
+//returns true if given usernname exist on ldap
+   $users = auth_get_userlist($username);
+   return count($users); 
+}
 
+function auth_user_create ($userobject,$plainpass) {
+//create new user to ldap
+//use auth_user_exists to prevent dublicate usernames
+//return true if user is created, false on error
+	global $CFG;
+    $attrmap = auth_ldap_attributes();
+    $ldapconnect = auth_ldap_connect();
+    $ldapbind = auth_ldap_bind($ldapconnect);
+    
+    $newuser = array();
+     
+    foreach ($attrmap as $key=>$value){
+            if(isset($userobject->$key) ){
+                $newuser[$value]=utf8_encode($userobject->$key);
+            }
+    }
+    
+    //Following sets all mandatory and other forced attribute values
+    //this should be moved to config inteface ASAP
+    $newuser['objectClass']= array("inetOrgPerson","organizationalPerson","person","top");
+    $newuser['uniqueId']= $userobject->username;
+    $newuser['logindisabled']="TRUE";
+    $newuser['userpassword']=$plainpass;
+    unset($newuser[country]);
+        
+    $uadd = ldap_add($ldapconnect, $CFG->ldap_user_attribute."=$userobject->username,".$CFG->ldap_create_context, $newuser);
+
+    ldap_close($ldapconnect);
+    return $uadd;
+    
+}
+
+function auth_user_activate ($username) {
+//activate new ldap-user after email-address is confirmed
+	global $CFG;
+
+    $ldapconnect = auth_ldap_connect();
+    $ldapbind = auth_ldap_bind($ldapconnect);
+
+    $userdn = auth_ldap_find_userdn($ldapconnect, $username);
+    
+    $newinfo['loginDisabled']="FALSE";
+
+    $result = ldap_modify($ldapconnect, $userdn, $newinfo);
+    ldap_close($ldapconnect);
+    return $result;
+}
+
+function auth_user_disable ($username) {
+//activate new ldap-user after email-address is confirmed
+	global $CFG;
+
+    $ldapconnect = auth_ldap_connect();
+    $ldapbind = auth_ldap_bind($ldapconnect);
+
+    $userdn = auth_ldap_find_userdn($ldapconnect, $username);
+    $newinfo['loginDisabled']="TRUE";
+
+    $result = ldap_modify($ldapconnect, $userdn, $newinfo);
+    ldap_close($ldapconnect);
+    return $result;
+}
+
+//PRIVATE FUNCTIONS starts
+//private functions are named as auth_ldap*
 
 function auth_ldap_connect(){
 /// connects to ldap-server
@@ -192,6 +258,10 @@ function auth_ldap_find_userdn ($ldap_connection, $username){
 
     //get all contexts and look for first matching user
     $ldap_contexts = explode(";",$CFG->ldap_contexts);
+    
+    if (!empty($CFG->ldap_create_context)){
+	  array_push($ldap_contexts, $CFG->ldap_create_context);
+    }
   
     foreach ($ldap_contexts as $context) {
 
@@ -217,4 +287,21 @@ function auth_ldap_find_userdn ($ldap_connection, $username){
     return $ldap_user_dn;
 }
 
+function auth_ldap_attributes (){
+//returns array containg attribute mappings between Moodle and ldap
+	global $CFG;
+
+    $config = (array)$CFG;
+    $fields = array("firstname", "lastname", "email", "phone1", "phone2", 
+                    "department", "address", "city", "country", "description", 
+                    "idnumber", "lang");
+
+    $moodleattributes = array();
+    foreach ($fields as $field) {
+        if ($config["auth_user_$field"]) {
+            $moodleattributes[$field] = $config["auth_user_$field"];
+        }
+    }
+	return $moodleattributes;
+}
 ?>

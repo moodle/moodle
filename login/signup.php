@@ -1,23 +1,35 @@
 <?PHP // $Id$
 
-	require_once("../config.php");
+    require_once("../config.php");
 	require_once("../lib/countries.php");
+    require_once("../auth/$CFG->auth/lib.php");
 
 	if ($user = data_submitted()) {
 
 		validate_form($user, $err);
 
 		if (count((array)$err) == 0) {
-
+		    $plainpass = $user->password;
             $user->password = md5($user->password);
             $user->confirmed = 0;
             $user->lang = current_language();
             $user->firstaccess = time();
             $user->secret = random_string(15);
+            if (isset($CFG->auth_user_create) and $CFG->auth_user_create==1 and function_exists('auth_user_create') ){
+			    if (! auth_user_exists($user->username)) {
+				    if (! auth_user_create($user,$plainpass)) {
+				        error("Could not add user to authentication module!");
+                    }
+				} else {
+				    error("User already exists on authentication database.");
+                }
+            }
 
 			if (! ($user->id = insert_record("user", $user)) ) {
                 error("Could not add your record to the database!");
             }
+
+           
 
             if (! send_confirmation_email($user)) {
                 error("Tried to send you an email but failed!");
@@ -62,7 +74,7 @@
  *****************************************************************************/
 
 function validate_form($user, &$err) {
-
+  global $CFG;
 	if (empty($user->username))
 		$err->username = get_string("missingusername");
 
@@ -74,6 +86,12 @@ function validate_form($user, &$err) {
         if (strcmp($user->username, $string)) 
             $err->username = get_string("alphanumerical");
     }
+
+    if (isset($CFG->auth_user_create) and $CFG->auth_user_create==1 and function_exists('auth_user_exists') ){
+        if (auth_user_exists($user->username)) {
+		    $err->username = get_string("usernameexists");
+		}
+	}         
 
 
 	if (empty($user->password)) 

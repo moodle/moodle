@@ -23,6 +23,7 @@ $string['auth_imaptitle'] = "Use an IMAP server";
 $string['auth_imaptype'] = "The IMAP server type.  IMAP servers can have different types of authentication and negotiation.";
 $string['instructions'] = "Instructions";
 $string['auth_ldap_bind_dn'] = "If you want to use bind-user to search users, specify it here. Someting like 'cn=ldapuser,ou=public,o=org'";
+$string['auth_ldap_create_context'] = "If you enable user creation with email confirmation, specify context where users are created. This context should be different from other users to prevent security issues. You don't need to add this context to ldap_context-variable, Moodle will search for users from this context automaticly.";
 $string['auth_ldap_bind_pw'] = "Password for bind-user.";
 $string['auth_ldap_contexts'] = "List of contexts where users are located. Separate different contexts with ';'. For example: 'ou=users,o=org; ou=others,o=org'";
 $string['auth_ldap_host_url'] = "Specify LDAP host in URL-form like 'ldap://ldap.myorg.com/' or 'ldaps://ldap.myorg.com/' ";
@@ -47,6 +48,9 @@ $string['auth_pop3host'] = "The POP3 server address. Use the IP number, not DNS 
 $string['auth_pop3port'] = "Server port (110 is the most common)";
 $string['auth_pop3title'] = "Use a POP3 server";
 $string['auth_pop3type'] = "Server type. If your server uses certificate security, choose pop3cert.";
+$string['auth_user_create'] = "Enable user creation";
+$string['auth_user_creation'] = "New (anonymous) users create user account for her/hiself. Account will be created to selected authentication module  and  confirmed via email. If you enable this , remember to configure also module specific options for user creation.";
+$string['auth_usernameexists'] = "Selected username already exists. Please choose new one.";
 $string['authenticationoptions'] = "Authentication options";
 $string['authinstructions'] = "Here you can provide instructions for your users, so they know which username and password they should be using.  The text you enter here will appear on the login page.  If you leave this blank then no instructions will be printed.";
 $string['changepassword'] = "Change password URL";

@@ -2,7 +2,7 @@
        // config.php - allows admin to edit all configuration variables
 
     include("../config.php");
-
+    require_once("$CFG->dirroot/auth/$CFG->auth/lib.php"); //just to make sure that authentication functions are loaded
     require_login();
 
     if (!$site = get_site()) {
@@ -80,6 +80,9 @@
     $guestoptions[0] = get_string("hide");
     $guestoptions[1] = get_string("show");
 
+    $createoptions[0] = get_string("no");
+    $createoptions[1] = get_string("yes");
+
     $stradministration        = get_string("administration");
     $strauthentication        = get_string("authentication");
     $strauthenticationoptions = get_string("authenticationoptions","auth");
@@ -134,10 +137,22 @@
     echo "</td>";
     echo "<td>";
     print_string("showguestlogin","auth");
-    echo "</td></tr></table>";
+    echo "</td></tr>";
 
+    if (function_exists('auth_user_create')){    
+	    echo "<tr valign=\"top\">";
+		echo "<td align=right nowrap><p>";
+		print_string("auth_user_create", "auth");
+		echo ":</p></td>";
+		echo "<td>";
+		choose_from_menu($createoptions, "auth_user_create", $config->auth_user_create, "");
+		echo "</td>";
+		echo "<td>";
+		print_string("auth_user_creation","auth");
+		echo "</td></tr>";
+	}
 
-    echo "<CENTER><P><INPUT TYPE=\"submit\" VALUE=\"";
+    echo "</table><CENTER><P><INPUT TYPE=\"submit\" VALUE=\"";
     print_string("savechanges");
     echo "\"></P></CENTER></FORM>";
 
