@@ -64,7 +64,9 @@
        $sroll[$roll->userid][$roll->hour]->status=$roll->status;
        $sroll[$roll->userid][$roll->hour]->notes=$roll->notes;
      }
-   }
+   } else {
+       $sroll = array(); //just to set default value
+   }    
 
    // get the list of attendance records for all hours of the given day and 
    // put it in the array for use in the attendance table
@@ -128,8 +130,8 @@
       $abs=$tar=0;
       for($j=1;$j<=$form->hours;$j++) {
       // set the attendance defaults for each student
-          if ($sroll[$student->id][$j]->status == 1) {$status=$T;$tar++;}
-          elseif ($sroll[$student->id][$j]->status == 2) {$status=$A;$abs++;}
+          if (isset ($sroll[$student->id][$j]->status) && $sroll[$student->id][$j]->status == 1 ) {$status=$T;$tar++;}
+          elseif (isset ($sroll[$student->id][$j]->status) && $sroll[$student->id][$j]->status == 2 ) {$status=$A;$abs++;}
         else {$status=$P;}
       echo "<td align=\"left\" nowrap class=\"generaltablecell\" style=\"border-left: 1px dotted; border-top: 1px solid;\">".$status."</td>\n";
       } /// for loop
