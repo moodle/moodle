@@ -60,7 +60,7 @@ if (isadmin()) {
         }
         echo " </td>";
         echo "</tr>\n";
-        if (!$adminself && ($CFG->{'auth_'.$user->auth.'_stdchangepassword'} || $CFG->changepassword)){
+        if (!$adminself && (!empty($CFG->{'auth_'.$user->auth.'_stdchangepassword'}) || $CFG->changepassword)){
              if (get_user_preferences('auth_forcepasswordchange', NULL, $user->id)) {
                  $checked = ' checked="checked" ';
              } else {

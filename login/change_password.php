@@ -67,7 +67,7 @@
 
             $strpasswordchanged = get_string("passwordchanged");
 
-            if ($course->id) {
+            if (!empty($course->id)) {
                 add_to_log($course->id, "user", "change password", "view.php?id=$user->id&amp;course=$course->id", "$user->id");
                 $fullname = fullname($USER, true);
                 print_header($strpasswordchanged, $strpasswordchanged,
@@ -86,11 +86,8 @@
         }
     }
 
-
-
-    if ($course->id) {
-        $frm->id = $id;
-    }
+    // We NEED to set this, because the form assumes it has a value!
+    $frm->id = empty($course->id) ? 0 : $course->id;
 
     if (empty($frm->username)) {
         $frm->username = get_moodle_cookie();
