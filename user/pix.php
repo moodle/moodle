@@ -14,7 +14,10 @@
         $PATH_INFO = "";       // Will just show default picture
     }
 
-    $args = get_slash_arguments();
+    if (! $args = get_slash_arguments()) {
+        error("No valid arguments supplied");
+    }
+
     $numargs = count($args);
 
     if ($numargs == 2) {

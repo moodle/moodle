@@ -15,7 +15,10 @@
         error("This script DEPENDS on PATH_INFO being available.  Read the README.");
     }
 
-    $args = get_slash_arguments();
+    if (! $args = get_slash_arguments()) {
+        error("No valid arguments supplied");
+    }
+
     $numargs = count($args);
     $courseid = (integer)$args[0];
 
