@@ -1209,6 +1209,7 @@ function quiz_print_question_list($questionlist, $grades) {
     $strmovedown = get_string("movedown");
     $strsavegrades = get_string("savegrades", "quiz");
     $strtype = get_string("type", "quiz");
+    $strpreview = get_string("preview", "quiz");
 
     $count = 0;
     $sumgrade = 0;
@@ -1251,6 +1252,9 @@ function quiz_print_question_list($questionlist, $grades) {
         echo "<td>";
             echo "<a title=\"$strdelete\" href=\"edit.php?delete=$qnum\"><img
                  src=\"../../pix/t/delete.gif\" border=\"0\"></a>&nbsp;";
+            echo "<a title=\"$strpreview\" href=\"#\" onClick=\"openpopup('/mod/quiz/preview.php?id=$qnum','$strpreview','scrollbars=yes,resizable=yes,width=700,height=480', false)\"><img
+                  src=\"../../pix/i/search.gif\" border=\"0\"></a>&nbsp;";
+
             if ($canedit) {
                 echo "<a title=\"$stredit\" href=\"question.php?id=$qnum\"><img
                      src=\"../../pix/t/edit.gif\" border=\"0\"></a>\n";
@@ -1292,6 +1296,7 @@ function quiz_print_cat_question_list($categoryid, $quizselected=true) {
     $straddselectedtoquiz = get_string("addselectedtoquiz", "quiz");
     $strtype = get_string("type", "quiz");
     $strcreatemultiple = get_string("createmultiple", "quiz");
+    $strpreview = get_string("preview","quiz");
 
     if (!$categoryid) {
         echo "<p align=\"center\"><b>";
@@ -1395,6 +1400,8 @@ function quiz_print_cat_question_list($categoryid, $quizselected=true) {
             echo "<td>\n";
                 echo "<a title=\"$strdelete\" href=\"question.php?id=$question->id&delete=$question->id\">\n<img
                      src=\"../../pix/t/delete.gif\" border=0></a>&nbsp;";
+                echo "<a title=\"$strpreview\" href=\"#\" onClick=\"openpopup('/mod/quiz/preview.php?id=$question->id','$strpreview','scrollbars=yes,resizable=yes,width=700,height=480', false)\"><img
+                      src=\"../../pix/i/search.gif\" border=\"0\"></a>&nbsp;";
                 echo "<a title=\"$stredit\" href=\"question.php?id=$question->id\"><img
                      src=\"../../pix/t/edit.gif\" border=0></a>";
             echo "</td>\n";// deleted </tr> jm
