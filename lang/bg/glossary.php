@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005010100)
+      // glossary.php - created with Moodle 1.4.1+ (2004083101)
 
 
 $string['addcomment'] = 'Добавяне на коментар';
@@ -23,12 +23,12 @@ $string['back'] = 'Назад';
 $string['cantinsertcat'] = 'Добавянето на категория е невъзможно';
 $string['cantinsertrec'] = 'Добавянето на запис е невъзможно';
 $string['cantinsertrel'] = 'Невъзможно е създаването на връзка категория-запис';
-$string['casesensitive'] = 'За този запис се прави разика между малки/големи букви';
+$string['casesensitive'] = 'За този запис се прави разлика между малки/големи букви';
 $string['categories'] = 'Категории';
 $string['category'] = 'Категория';
 $string['categorydeleted'] = 'Категорията беше изтрита';
 $string['categoryview'] = 'Преглед по категории';
-$string['cnfallowcomments'] = 'Дефинира дали по подразбиране речника ще щриема коментари към записите.';
+$string['cnfallowcomments'] = 'Дефинира дали по подразбиране речника ще приема коментари към записите.';
 $string['cnfallowdupentries'] = 'Дефинира дали по подразбиране ще се допускат дублиращи се записи в речника.';
 $string['cnfapprovalstatus'] = 'Дефинира одобрението по подразбиране на записите, направени от студенти.';
 $string['cnfcasesensitive'] = 'Дефинира дали по подразбиране да се прави разлика между малки и главни букви при създаване на връзка към записа.';
@@ -89,7 +89,7 @@ $string['explainaddentry'] = 'Добавяне на нов запис към текущия речник.<br>\'Тер
 $string['explainall'] = 'Показване на ВСИЧКИ записи на една страница';
 $string['explainalphabet'] = 'За по лесно търсене, използвайте индекса';
 $string['explainexport'] = 'Беше генериран файл.<br>Изтеглете го и го пазете на сигурно място. По-късно можете до го импортирате в този или друг курс.';
-$string['explainimport'] = 'Трябва да укажете файл за импортиране и критерии за процеса.<p>Изпълнение на заявката и преглед на резултатите.</p>';
+$string['explainimport'] = 'Трябва да укажете файл за импортиране и критерии за процеса.<p>Изпълнение на заявката и преглед на резултатите.';
 $string['explainspecial'] = 'Показване на записите, които не започват със буква';
 $string['exportedentry'] = 'Експортиран запис';
 $string['exportedfile'] = 'Експортиран файл';
@@ -129,7 +129,7 @@ $string['printerfriendly'] = 'Версия за печат';
 $string['question'] = 'Въпрос';
 $string['rate'] = 'Оценяване';
 $string['rating'] = 'Оценка';
-$string['ratingeveryone'] = 'Всеки може да оценява записисте';
+$string['ratingeveryone'] = 'Всеки може да оценява записите';
 $string['ratingno'] = 'Няма оценки';
 $string['ratingonlyteachers'] = 'Само $a може да оценява записите';
 $string['ratings'] = 'Оценки';
@@ -141,7 +141,7 @@ $string['rejectionrpt'] = 'Доклад за отхвърляне';
 $string['rsssubscriberss'] = 'Показване на данните от RSS за термина \'$a\'';
 $string['searchindefinition'] = 'Пълнотекстово търсене';
 $string['secondaryglossary'] = 'Вторичен речник';
-$string['sendinratings'] = 'Изпращане на поцледните оценки';
+$string['sendinratings'] = 'Изпращане на последните оценки';
 $string['showall'] = 'Показване на \'ВСИЧКИ\"';
 $string['showalphabet'] = 'Показване на азбуката';
 $string['showspecial'] = 'Показване на \'Специални\'';
@@ -160,5 +160,11 @@ $string['withauthor'] = 'Термини с автор';
 $string['withoutauthor'] = 'Термини без автор';
 $string['writtenby'] = 'от';
 $string['youarenottheauthor'] = 'Тъй като не сте автор на коментара, нямате право да го редактирате.';
+$string['allowprintview'] = "Allow print view";
+$string['entryleveldefaultsettings'] = "Entry Level Default Settings";
+$string['entrysaved'] = "This entry has been saved";
+$string['entryupdated'] = "This entry has been updated";
+$string['glossaryleveldefaultsettings'] = "Glossary Level Default Settings";
+$string['printviewnotallowed'] = "Print view isn't allowed";
 
 ?>
