@@ -81,7 +81,6 @@ CREATE TABLE prefix_course_modules (
    instance integer NOT NULL default '0',
    section integer NOT NULL default '0',
    added integer NOT NULL default '0',
-   deleted integer NOT NULL default '0',
    score integer NOT NULL default '0',
    indent integer NOT NULL default '0',
    visible integer NOT NULL default '1',
@@ -92,7 +91,6 @@ CREATE INDEX prefix_course_modules_visible_idx ON prefix_course_modules (visible
 CREATE INDEX prefix_course_modules_course_idx ON prefix_course_modules (course);
 CREATE INDEX prefix_course_modules_module_idx ON prefix_course_modules (module);
 CREATE INDEX prefix_course_modules_instance_idx ON prefix_course_modules (instance);
-CREATE INDEX prefix_course_modules_deleted_idx ON prefix_course_modules (deleted);
 
 CREATE TABLE prefix_course_sections (
    id SERIAL PRIMARY KEY,

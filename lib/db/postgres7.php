@@ -1028,6 +1028,12 @@ function main_upgrade($oldversion=0) {
         modify_database('',"CREATE UNIQUE INDEX prefix_grade_prefs_courseidpref_uk ON prefix_grade_preferences (courseid,preference);");
     }
 
+    if ($oldversion < 2005033100) {   // Get rid of defunct field from course modules table
+         delete_records('course_modules', 'deleted', 1);  // Delete old records we don't need any more
+         execute_sql('DROP INDEX '.$CFG->prefix.'prefix_course_modules_deleted_idx;');  // Old index
+         execute_sql('ALTER TABLE '.$CFG->prefix.'course_modules DROP `deleted`;');    // Old field
+    }
+
     return $result;
 }
 

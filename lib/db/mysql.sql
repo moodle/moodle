@@ -129,7 +129,6 @@ CREATE TABLE `prefix_course_modules` (
   `instance` int(10) unsigned NOT NULL default '0',
   `section` int(10) unsigned NOT NULL default '0',
   `added` int(10) unsigned NOT NULL default '0',
-  `deleted` tinyint(1) unsigned NOT NULL default '0',
   `score` tinyint(4) NOT NULL default '0',
   `indent` int(5) unsigned NOT NULL default '0',
   `visible` tinyint(1) NOT NULL default '1',
@@ -139,8 +138,7 @@ CREATE TABLE `prefix_course_modules` (
   KEY `visible` (`visible`),
   KEY `course` (`course`),
   KEY `module` (`module`),
-  KEY `instance` (`instance`),
-  KEY `deleted` (`deleted`)
+  KEY `instance` (`instance`)
 ) TYPE=MyISAM;
 # --------------------------------------------------------
 
