@@ -40,7 +40,7 @@
     $searchform = forum_print_search_form($course, "", true, "plain");
 
 
-    // Build up the tables
+    // Start of the table for General Forums
 
     $generaltable->head  = array ($strforum, $strdescription, $strdiscussions);
     $generaltable->align = array ("left", "left", "center");
@@ -56,7 +56,6 @@
         $generaltable->align[] = "center";
     }
 
-    $learningtable = $generaltable;   // Headers etc are the same
 
     // Parse and organise all the forums.  Most forums are course modules but 
     // some special ones are not.  These get placed in the general forums 
@@ -178,6 +177,22 @@
         }
     } 
 
+
+    // Start of the table for Learning Forums
+    $learningtable->head  = array ($strforum, $strdescription, $strdiscussions);
+    $learningtable->align = array ("left", "left", "center");
+
+    if ($can_subscribe = (isstudent($course->id) or isteacher($course->id) or isadmin())) {
+        $learningtable->head[] = $strsubscribed;
+        $learningtable->align[] = "center";
+    }
+
+    if ($show_rss = ($can_subscribe && isset($CFG->enablerssfeeds) && isset($CFG->forum_enablerssfeeds) &&
+                     $CFG->enablerssfeeds && $CFG->forum_enablerssfeeds)) {
+        $learningtable->head[] = $strrss;
+        $learningtable->align[] = "center";
+    }
+
     /// Now let's process the learning forums
 
     if ($course->category) {    // Only real courses have learning forums
@@ -268,7 +283,7 @@
 
     if ($course->category) {
         print_header("$course->shortname: $strforums", "$course->fullname",
-                    "<a href=../../course/view.php?id=$course->id>$course->shortname</a> -> $strforums",
+                    "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> -> $strforums",
                     "", "", true, $searchform, navmenu($course));
     } else {
         print_header("$course->shortname: $strforums", "$course->fullname", "$strforums", 
