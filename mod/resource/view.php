@@ -56,7 +56,7 @@
 
         case WEBLINK:
             add_to_log($course->id, "resource", "view", "view.php?id=$cm->id", "$resource->id");
-            redirect($resource->reference);
+            redirect($resource->reference, "", 0);
             break;
 
         case WEBPAGE:
