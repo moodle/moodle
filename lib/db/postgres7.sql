@@ -297,7 +297,7 @@ CREATE TABLE prefix_user_students (
    enrol varchar (20) NOT NULL default ''
 );
 
-CREATE INDEX prefix_user_students_courseuserid_idx ON prefix_user_students (course,userid);
+CREATE UNIQUE INDEX prefix_user_students_courseuserid_uk ON prefix_user_students (course,userid);
 CREATE INDEX prefix_user_students_userid_idx ON prefix_user_students (userid);
 CREATE INDEX prefix_user_students_enrol_idx ON prefix_user_students (enrol);
 
@@ -315,7 +315,7 @@ CREATE TABLE prefix_user_teachers (
    enrol varchar (20) NOT NULL default ''
 );
 
-CREATE INDEX prefix_user_teachers_courseuserid_idx ON prefix_user_teachers (course,userid);
+CREATE UNIQUE INDEX prefix_user_teachers_courseuserid_uk ON prefix_user_teachers (course,userid);
 CREATE INDEX prefix_user_teachers_userid_idx ON prefix_user_teachers (userid);
 CREATE INDEX prefix_user_teachers_enrol_idx ON prefix_user_teachers (enrol);
 
