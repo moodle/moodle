@@ -6,27 +6,27 @@
 
 ?>
 <FORM ACTION="admin.php" METHOD="POST" ENCTYPE="multipart/form-data">
-<INPUT TYPE="HIDDEN" NAME="userid" VALUE="<? print $userid; ?>">
-<INPUT TYPE="HIDDEN" NAME="groupid" VALUE="<? print $groupid ?>">
-<INPUT TYPE="HIDDEN" NAME="action" VALUE="<? print $action; ?>">
-<INPUT TYPE="HIDDEN" NAME="id" VALUE="<? print $cm->id ?>">
-<INPUT TYPE="HIDDEN" NAME="wikipage" VALUE="<? print $wikipage?>">
-<? 
-  $remove_table=wiki_admin_remove_list($form->listall); 
+<INPUT TYPE="HIDDEN" NAME="userid" VALUE="<?php print $userid; ?>">
+<INPUT TYPE="HIDDEN" NAME="groupid" VALUE="<?php print $groupid ?>">
+<INPUT TYPE="HIDDEN" NAME="action" VALUE="<?php print $action; ?>">
+<INPUT TYPE="HIDDEN" NAME="id" VALUE="<?php print $cm->id ?>">
+<INPUT TYPE="HIDDEN" NAME="wikipage" VALUE="<?php print $wikipage?>">
+<?php
+  $remove_table=wiki_admin_remove_list($form->listall);
   print_table($remove_table);
 ?>
 <center>
-<?  
+<?php
   if(!count($remove_table->data)) {
     print get_string("nocandidatestoremove","wiki",get_string("listall","wiki"))."<br><br>";
   }
 ?>
-<? 
+<?php
   if($form->listall) {
-      print '  <input type="submit" name="listcandidates" value="'.get_string("listcandidates","wiki").'">'."\n";      
+      print '  <input type="submit" name="listcandidates" value="'.get_string("listcandidates","wiki").'">'."\n";
   } else {
-      print '  <input type="submit" name="listall" value="'.get_string("listall","wiki").'">'."\n";      
+      print '  <input type="submit" name="listall" value="'.get_string("listall","wiki").'">'."\n";
   }
-?>      
-  <input type="submit" name="proceed" value="<? print get_string("removeselectedpages","wiki"); ?>">
+?>
+  <input type="submit" name="proceed" value="<?php print get_string("removeselectedpages","wiki"); ?>">
 </center>
