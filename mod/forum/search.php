@@ -47,7 +47,8 @@
 
         $posts = get_records_sql("SELECT p.*,u.firstname,u.lastname,u.email,u.picture,u.id as userid 
                                   FROM forum_posts p, forum_discussions d, user u, forum f
-                                  WHERE message LIKE '%$search%' AND p.user = u.id 
+                                  WHERE (p.message LIKE '%$search%' OR p.subject LIKE '%$search%')
+                                        AND p.user = u.id 
                                         AND p.discussion = d.id AND d.course = '$course->id' 
                                         AND d.forum = f.id $notteacherforum
                                   ORDER BY p.modified DESC LIMIT 0, 50 ");
