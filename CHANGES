@@ -1,3 +1,61 @@
+2002-08-09 Friday 01:30  martin
+
+	* user/view.php: Better control of buttons for admin and in site
+	view
+
+2002-08-09 Friday 01:30  martin
+
+	* index.php: parameter for print_admin_links
+
+2002-08-09 Friday 01:29  martin
+
+	* course/: lib.php, loggraph.php, loginas.php, user.php: Tweaks and
+	cleanups
+
+2002-08-09 Friday 01:28  martin
+
+	* lib/moodlelib.php: Fixed a tricky little bug with
+	usergetmidnight() when no timezone was defined.
+
+2002-08-09 Friday 00:22  martin
+
+	* course/lib.php, course/user.php, lang/en/moodle.php,
+	user/view.php: More tidy ups in displays
+
+2002-08-09 Friday 00:02  martin
+
+	* user/: edit.php, view.php: Tweaks to the headers
+
+2002-08-08 Thursday 23:51  martin
+
+	* index.php, admin/site.php, admin/user.php, course/delete.php,
+	course/edit.php, course/lib.php, course/teacher.php,
+	lang/en/moodle.php, user/edit.php: 
+	Further excellent tidy-ups to the admin pages.	They are actually
+	starting to look/work as slick as the rest of the site.  :-)
+
+2002-08-08 Thursday 22:17  martin
+
+	* CHANGES, version.php, admin/index.php, admin/site.php,
+	admin/user.php, course/delete.php, lang/en/moodle.php,
+	lib/moodlelib.php, user/edit.html, user/edit.php: 
+	
+	Cleanup of the admin interface - especially the user management
+	
+	Bugs fixed, duplicate code removed, plus you can now add new users.
+	
+	Aaah much better.  :-)
+
+2002-08-08 Thursday 20:41  martin
+
+	* lib/moodlelib.php: Fixed tiny buglet on insert_record which made
+	it ignore NULL values
+
+2002-08-08 Thursday 15:20  martin
+
+	* admin/user.php: Damn .. this bug was stopping the admin user
+	being created properly.  (Checking for uploaded file)
+
 2002-08-08 Thursday 13:06  martin
 
 	* doc/future.html: Updated this page (because now bugs.moodle.org
