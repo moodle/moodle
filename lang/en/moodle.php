@@ -129,6 +129,7 @@ $string['coursecreators'] = "Course Creators";
 $string['courseinfo'] = "Course info";
 $string['coursefiles'] = "Course Files";
 $string['courseformats'] = "Course formats";
+$string['coursemanagement'] = "Course Management";
 $string['courserestore'] = "Course Restore";
 $string['courses'] = "Courses";
 $string['courseupdates'] = "Course updates";

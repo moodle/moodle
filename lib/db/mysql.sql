@@ -30,6 +30,7 @@ CREATE TABLE `prefix_config` (
 CREATE TABLE `prefix_course` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `category` int(10) unsigned NOT NULL default '0',
+  `sortorder` int(10) unsigned NOT NULL default '0',
   `password` varchar(50) NOT NULL default '',
   `fullname` varchar(254) NOT NULL default '',
   `shortname` varchar(15) NOT NULL default '',
@@ -63,7 +64,7 @@ CREATE TABLE `prefix_course_categories` (
   `description` text NOT NULL,
   `parent` int(10) unsigned NOT NULL default '0',
   `sortorder` int(10) unsigned NOT NULL default '0',
-  `courseorder` text NOT NULL,
+  `courseorder` int(10) unsigned NOT NULL default '0',
   `visible` tinyint(1) NOT NULL default '1',
   `timemodified` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`),

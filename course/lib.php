@@ -713,19 +713,13 @@ function print_admin_links ($siteid, $width=180) {
 		$modicon[]="";
     }
     if (iscreator()) {
-	    $moddata[]="<a href=\"$CFG->wwwroot/course/edit.php\">".get_string("addnewcourse")."</a>";
+	    $moddata[]="<a href=\"$CFG->wwwroot/course/index.php\">".get_string("coursemanagement")."</a>";
 		$modicon[]=$icon;
-		$moddata[]="<a href=\"$CFG->wwwroot/$CFG->admin/teacher.php\">".get_string("assignteachers")."</a>";
+	    $moddata[]="<a href=\"$CFG->wwwroot/course/edit.php\">".get_string("addnewcourse")."</a>";
 		$modicon[]=$icon;
         $fulladmin = "";
     }
     if (isadmin()) {
-	    $moddata[]="<a href=\"$CFG->wwwroot/course/categories.php\">".get_string("categories")."</a>";
-		$modicon[]=$icon;
-		$moddata[]="<a href=\"$CFG->wwwroot/course/delete.php\">".get_string("deletecourse")."</a>";
-		$modicon[]=$icon;
-		$moddata[]="<a href=\"$CFG->wwwroot/backup/backup.php\">".get_string("coursebackup")."</a>";
-		$modicon[]=$icon;
 		$moddata[]="<a href=\"$CFG->wwwroot/files/index.php?id=$siteid\">".get_string("courserestore")."</a>";
 		$modicon[]=$icon;
 		$moddata[]="<hr>";
@@ -853,14 +847,15 @@ function print_whole_category_list($category=NULL, $displaylist=NULL, $parentsli
 
     if ($category) {
         if ($category->visible or isadmin()) {
-            print_category_box($category, $depth);
+            print_category_info($category, $depth);
         } else {
             return;  // Don't bother printing children of invisible categories
         }
         
     } else {
-        print_simple_box_start("center", "100%");
         $category->id = "0";
+        echo "<table width=\"100%\" class=\"categorybox\">";
+        $toplevel = true;
     }
 
     if ($categories = get_categories($category->id)) {   // Print all the children recursively
@@ -881,14 +876,15 @@ function print_whole_category_list($category=NULL, $displaylist=NULL, $parentsli
         }
     }
 
-    if ($category->id == "0") {
-        print_simple_box_end();
+    if (isset($toplevel)) {
+        echo "</table>";
     }
 }
 
 
-function print_category_box($category, $depth) {
-/// Prints the category box in indented fashion
+function print_category_info($category, $depth) {
+/// Prints the category info in indented fashion
+/// This function is only used by print_whole_category_list() above
 
     global $CFG;
 
@@ -901,23 +897,21 @@ function print_category_box($category, $depth) {
         $pixpath = "$CFG->wwwroot/theme/$CFG->theme/pix";
     }
 
-    $size = $depth * 40;
-
     $catlinkcss = $category->visible ? "" : " class=\"dimmed\" ";
 
-    echo "<table class=\"categorybox\">";
     echo "<tr>";
-    echo "<td width=\"$size\">";
-    echo print_spacer(1, $size);
-    echo "<td width=\"100%\">";
-    echo "<font size=+1><a $catlinkcss href=\"$CFG->wwwroot/course/index.php?category=$category->id\">$category->name</a></font>";
-    echo "<br />";
-    //echo "<font size=+1>$category->name</font>";
+    echo "<td valign=\"top\">";
+    for ($i=0; $i<$depth;$i++) {
+        echo "<ul style=\"margin-bottom: 0\">";
+    }
+    echo "<font size=+1><a $catlinkcss ".
+         "href=\"$CFG->wwwroot/course/category.php?id=$category->id\">$category->name</a></font>";
+
     if ($CFG->frontpage == FRONTPAGECOURSELIST) {
-        if ($courses = get_courses($category)) {
+        if ($courses = get_courses($category->id)) {
             foreach ($courses as $course) {
                 $linkcss = $course->visible ? "" : " class=\"dimmed\" ";
-                echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+                echo "<ul>";
                 echo "<a $linkcss href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->fullname</a>";
                 echo "&nbsp;&nbsp;";
                 unset($courses[$key]);
@@ -929,14 +923,26 @@ function print_category_box($category, $depth) {
                     echo "<a title=\"$strrequireskey\" href=\"$CFG->wwwroot/course/view.php?id=$course->id\">";
                     echo "<img alt=\"\" height=16 width=16 border=0 src=\"$pixpath/i/key.gif\"></a>";
                 }
-                echo "<br />";
+                echo "</ul>";
             }
         }
+        for ($i=0; $i<$depth;$i++) {
+            echo "</ul>";
+        }
+        echo "</td>";
+        echo "</tr>";
+    } else {
+        for ($i=0; $i<$depth;$i++) {
+            echo "</ul>";
+        }
+        echo "</td>";
+        echo "<td valign=\"top\">";
+        if ($count = count_records("course", "category", $category->id)) {
+            echo $count;
+        }
+        echo "</td>";
+        echo "</tr>";
     }
-    echo "</td>";
-    echo "</tr>";
-    echo "</table>";
-
 }
 
 function print_courses_sideblock($category=0, $width="100%") {
@@ -954,12 +960,13 @@ function print_courses_sideblock($category=0, $width="100%") {
     if (count($categories) > 1) {     // Just print top level category links
         foreach ($categories as $category) {
             $linkcss = $category->visible ? "" : " class=\"dimmed\" ";
-            $moddata[]="<a $linkcss href=\"$CFG->wwwroot/course/index.php?category=$category->id\">$category->name</a>";
+            $moddata[]="<a $linkcss href=\"$CFG->wwwroot/course/category.php?id=$category->id\">$category->name</a>";
             $modicon[]=$icon;
         }
     } else {                          // Just print course names of single category
         $category = array_shift($categories);
-        $courses = get_courses($category);
+        $courses = get_courses($category->id);
+
         if ($courses) {
             foreach ($courses as $course) {
                 $linkcss = $course->visible ? "" : " class=\"dimmed\" ";
@@ -988,14 +995,14 @@ function print_courses($category, $width="100%") {
         $categories = get_categories(0);  // Parent = 0   ie top-level categories only
         if (count($categories) == 1) {
             $category   = array_shift($categories);
-            $courses    = get_courses($category);
+            $courses    = get_courses($category->id);
         } else {
-            $courses    = get_courses(0);
+            $courses    = get_courses("all");
         }
         unset($categories);
     } else {
         $categories = get_categories($category->id);  // sub categories
-        $courses    = get_courses($category);
+        $courses    = get_courses($category->id);
     }
 
     if ($categories) {

@@ -838,26 +838,13 @@ function get_site () {
     }
 }
 
-
-function get_courses($category=0, $sort="fullname ASC") {
+function get_courses($categoryid="all", $sort="sortorder ASC", $fields="*") {
 /// Returns list of courses, for whole site, or category
 
-    if ($category === 0) {         // Return all courses, except site
-        $courses = get_records_select("course", "category > 0", $sort);
-
-    } else if ($category === -1) { // Return all courses, even the site
-        $courses = get_records("course", "", "", $sort);
-
-    } else {                       // $category is an object
-        $courses = get_records("course", "category", $category->id);
-        if ($courses) {      // Reorder them
-            $courselist = explode(',', $category->courseorder);
-            $outcourses = array();
-            foreach ($courselist as $courseid) {
-                $outcourses[] = $courses[$courseid];
-            }
-            $courses = $outcourses;
-        }
+    if ($categoryid == "all") {
+        $courses = get_records("course", "", "", $sort, $fields);
+    } else {
+        $courses = get_records("course", "category", "$categoryid", $sort, $fields);
     }
 
     if ($courses) {  /// Remove unavailable courses from the list
@@ -871,6 +858,7 @@ function get_courses($category=0, $sort="fullname ASC") {
     }
     return $courses;
 }
+
 
 function get_my_courses($userid, $sort="c.fullname ASC") {
     global $CFG;
@@ -887,6 +875,8 @@ function get_my_courses($userid, $sort="c.fullname ASC") {
 
 
 function get_categories($parent="none", $sort="sortorder ASC") {
+/// Returns a sorted list of categories
+
     if ($parent == "none") {
         $categories = get_records("course_categories", "", "", $sort);
     } else {
@@ -905,43 +895,30 @@ function get_categories($parent="none", $sort="sortorder ASC") {
     return $categories;
 }
 
-function fix_category_courses($categoryid) {
-/// Given a category, this function makes sure the courseorder 
+
+function fix_course_sortorder($categoryid) {
+/// Given a category object, this function makes sure the courseorder 
 /// variable reflects the real world.
 
-    if (!$category = get_record("course_categories", "id", $categoryid)) {
-        return false;
+    if (!$courses = get_records("course", "category", "$categoryid", "sortorder ASC", "id, sortorder")) {
+        return true;
     }
 
-    $catcourseschanged = false;
+    $count = 0;
+    $modified = false;
 
-    if (trim($category->courseorder)) {
-        $catcourses = explode(',', $category->courseorder);
-    } else {
-        $catcourses = array();
-    }
-    $courses = get_records("course", "category", $category->id);
-
-    if ($catcourses) {
-        foreach ($catcourses as $key => $catcourse) {  // Look for missing courses
-            if (!isset($courses[$catcourse])) {
-                $catcourseschanged = true;
-                unset($catcourses[$key]);
-            }
+    foreach ($courses as $course) {
+        if ($course->sortorder != $count) {
+            set_field("course", "sortorder", $count, "id", $course->id);
+            $modified = true;
         }
+        $count++;
     }
-    if ($courses) {
-        foreach ($courses as $course) {
-            if (!in_array($course->id, $catcourses)) {
-                $catcourseschanged = true;
-                $catcourses[] = $course->id;
-            }
-        }
+
+    if ($modified) {
+        set_field("course_categories", "timemodified", time(), "id", $categoryid);
     }
-    if ($catcourseschanged) {
-        $category->courseorder = implode(',', $catcourses);
-        return set_field("course_categories", "courseorder", $category->courseorder, "id", $category->id);
-    }
+
     return true;
 }
 

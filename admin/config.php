@@ -71,7 +71,7 @@
     } else {
         print_header();
         print_heading($strconfigvariables);
-        print_simple_box(get_string("configintro"), "center");
+        print_simple_box(get_string("configintro"), "center", "50%");
         echo "<br />";
     }
 

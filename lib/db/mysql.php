@@ -422,6 +422,20 @@ function main_upgrade($oldversion=0) {
         table_column("course_categories", "", "timemodified", "integer", "10", "unsigned");
     }
 
+    if ($oldversion < 2003080400) {
+        table_column("course_categories", "courseorder", "courseorder", "integer", "10", "unsigned");
+        table_column("course", "", "sortorder", "integer", "10", "unsigned", "0", "", "category");
+    }
+
+    if ($oldversion < 2003080700) {
+        notify("Cleaning up categories and course ordering...");
+        if ($categories = get_categories()) {
+            foreach ($categories as $category) {
+                fix_course_sortorder($category->id);
+            }
+        }
+    }
+
     return $result;
 
 }

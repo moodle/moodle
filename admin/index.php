@@ -359,11 +359,8 @@
 		if (file_exists("$CFG->dirroot/admin/$CFG->dbtype")) {
             $table->data[0][0] .= "<p><a href=\"$CFG->dbtype/frame.php\">".get_string("managedatabase")."</a></p>";
 		}
-		$table->data[0][1] = "<p><a href=\"../course/edit.php\">".get_string("addnewcourse")."</a></p>".
-                         "<p><a href=\"teacher.php\">".get_string("assignteachers")."</a></p>".
-                         "<p><a href=\"../course/delete.php\">".get_string("deletecourse")."</a></p>".
-                         "<p><a href=\"../course/categories.php\">".get_string("categories")."</a></p>";
-        $table->data[0][1] .= "<p><a href=\"../backup/backup.php\">".get_string("coursebackup")."</a></p>";
+		$table->data[0][1] = "<p><a href=\"../course/index.php?edit=on\">".get_string("coursemanagement")."</a></p>".
+                             "<p><a href=\"../course/edit.php\">".get_string("addnewcourse")."</a></p>";
         $table->data[0][1] .= "<p><a href=\"../files/index.php?id=$site->id\">".get_string("courserestore")."</a></p>";
         if ($CFG->auth == "email" || $CFG->auth == "none" || $CFG->auth == "manual") {
 		    $table->data[0][2] = "<p><a href=\"user.php?newuser=true\">".get_string("addnewuser")."</a></p>";

@@ -44,7 +44,7 @@
 
             $form->timemodified = time();
 
-            fix_category_courses($form->category);
+            fix_course_sortorder($form->category);
 
             if (!empty($course)) {
                 if (update_record("course", $form)) {

@@ -1080,13 +1080,38 @@ function update_module_button($moduleid, $courseid, $string) {
 }
 
 function update_category_button($categoryid) {
-// Prints the editing button on a module "view" page
-    global $CFG;
+// Prints the editing button on a category page
+    global $CFG, $USER;
 
-    if (isadmin()) {
-        $string = get_string("editthiscategory");
+    if (iscreator()) {
+        if (!empty($USER->editing)) {
+            $string = get_string("turneditingoff");
+            $edit = "off";
+        } else {
+            $string = get_string("turneditingon");
+            $edit = "on";
+        }
         return "<form target=_parent method=get action=\"$CFG->wwwroot/course/category.php\">".
                "<input type=hidden name=id value=\"$categoryid\">".
+               "<input type=hidden name=edit value=\"$edit\">".
+               "<input type=submit value=\"$string\"></form>";
+    }
+}
+
+function update_categories_button() {
+// Prints the editing button on categories listing
+    global $CFG, $USER;
+
+    if (isadmin()) {
+        if (!empty($USER->editing)) {
+            $string = get_string("turneditingoff");
+            $edit = "off";
+        } else {
+            $string = get_string("turneditingon");
+            $edit = "on";
+        }
+        return "<form target=_parent method=get action=\"$CFG->wwwroot/course/index.php\">".
+               "<input type=hidden name=edit value=\"$edit\">".
                "<input type=submit value=\"$string\"></form>";
     }
 }

@@ -31,7 +31,7 @@
                 if ($newid = insert_record("course", $form)) {
                     $cat->name = get_string("miscellaneous");
                     if (insert_record("course_categories", $cat)) {
-                        redirect("$CFG->wwwroot/", get_string("changessaved"));
+                        redirect("$CFG->wwwroot/$CFG->admin/index.php", get_string("changessaved"));
                     } else {
                         error("Serious Error! Could not set up a default course category!");
                     }
@@ -61,7 +61,10 @@
         $form->id = "";
         $form->category = 0;
         $form->format = "social";
-        $form->newsitems = 0;
+        $form->teacher = get_string("defaultcourseteacher");
+        $form->teachers = get_string("defaultcourseteachers");
+        $form->student = get_string("defaultcoursestudent");
+        $form->students = get_string("defaultcoursestudents");
         $firsttime = true;
     }
 
@@ -87,7 +90,7 @@
     if ($firsttime) {
         print_header();
         print_heading($strsitesettings);
-        print_simple_box(get_string("configintrosite"), "center");
+        print_simple_box(get_string("configintrosite"), "center", "50%");
         echo "<br />";
     } else {
         print_header("$site->shortname: $strsitesettings", "$site->fullname",
@@ -114,9 +117,6 @@ function validate_form(&$form, &$err) {
 
     if (empty($form->shortname))
         $err["shortname"] = get_string("missingshortsitename");
-
-    if (empty($form->summary))
-        $err["summary"] = get_string("missingsitedescription");
 
     return;
 }

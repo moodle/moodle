@@ -6,6 +6,7 @@ $string['modulenameplural'] = "Forums";
 #------------------------------------------------------------
 
 $string['addanewdiscussion'] = "Add a new discussion topic";
+$string['addanewtopic'] = "Add a new topic";
 $string['allowchoice'] = "Allow everyone to choose";
 $string['allowdiscussions'] = "Can a \$a post to this forum?";
 $string['allowratings'] = "Allow posts to be rated?";
@@ -63,6 +64,7 @@ $string['nameteacher'] = "Teacher forum";
 $string['newforumposts'] = "New forum posts";
 $string['nodiscussions'] = "There are no discussion topics yet in this forum";
 $string['noguestpost'] = "Sorry, guests are not allowed to post";
+$string['nonews'] = "No news has been posted yet";
 $string['noposts'] = "No posts";
 $string['nopostscontaining'] = "No posts containing '\$a' were found";
 $string['nosubscribers'] = "There are no subscribers yet for this forum";

@@ -1,6 +1,17 @@
 <FORM METHOD="post" action="edit.php" NAME="form">
 <table cellpadding=9 cellspacing=0 >
 <tr valign=top>
+	<td><P><? print_string("category") ?>:</td>
+	<td><? 
+           $displaylist = array();
+           $parentlist = array();
+           make_categories_list($displaylist, $parentlist);
+           choose_from_menu($displaylist, "category", "$form->category", "");
+           helpbutton("coursecategory", get_string("category"));
+        ?>
+	</td>
+</tr>
+<tr valign=top>
 	<td><P><? print_string("fullname") ?>:</td>
 	<td><input type="text" name="fullname" maxlength="254" size=50 value="<? p($form->fullname) ?>">
     <? helpbutton("coursefullname", get_string("fullname")) ?>
@@ -47,17 +58,6 @@
     $choices["2"] = get_string("guestskey");
     choose_from_menu ($choices, "guest", $form->guest, "");
     helpbutton("guestaccess", get_string("opentoguests")); ?>
-	</td>
-</tr>
-<tr valign=top>
-	<td><P><? print_string("category") ?>:</td>
-	<td><? 
-           $displaylist = array();
-           $parentlist = array();
-           make_categories_list($displaylist, $parentlist);
-           choose_from_menu($displaylist, "category", "$form->category", "");
-           helpbutton("coursecategory", get_string("category"));
-        ?>
 	</td>
 </tr>
 <tr valign=top>

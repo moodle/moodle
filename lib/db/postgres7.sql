@@ -8,6 +8,7 @@ CREATE TABLE prefix_config (
 CREATE TABLE prefix_course (
    id SERIAL PRIMARY KEY,
    category integer NOT NULL default '0',
+   sortorder integer NOT NULL default '0',
    password varchar(50) NOT NULL default '',
    fullname varchar(254) NOT NULL default '',
    shortname varchar(15) NOT NULL default '',
@@ -34,7 +35,7 @@ CREATE TABLE prefix_course_categories (
    description text NOT NULL default '',
    parent integer NOT NULL default '0',
    sortorder integer NOT NULL default '0',
-   courseorder text NOT NULL default '',
+   courseorder integer NOT NULL default '0',
    visible integer NOT NULL default '1',
    timemodified` integer NOT NULL default '0'
 );

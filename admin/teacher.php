@@ -5,7 +5,7 @@
 
     define("MAX_USERS_PER_PAGE", 30);
 
-    optional_variable($id);         // course id
+    require_variable($id);         // course id
     optional_variable($add, "");
     optional_variable($remove, "");
     optional_variable($search, ""); // search string
@@ -21,6 +21,7 @@
     }
 
     $strassignteachers = get_string("assignteachers");
+    $strcourses = get_string("courses");
     $stradministration = get_string("administration");
     $strexistingteachers   = get_string("existingteachers");
     $strnoexistingteachers = get_string("noexistingteachers");
@@ -40,36 +41,6 @@
     }
 
 
-    if (!$id) {
-	    print_header("$site->shortname: $strassignteachers", "$site->fullname", 
-                     "<a href=\"index.php\">$stradministration</a> -> $strassignteachers");
-        
-        $isadmin = isadmin(); /// cache value
-        $courses = get_courses();
-
-		print_heading(get_string("choosecourse"));
-		print_simple_box_start("center");
-        
-        if (!empty($courses)) {
-		    foreach ($courses as $course) {
-		        if ($isadmin or isteacher($course->id, $USER->id)){
-			        echo "<a href=\"teacher.php?id=$course->id\">$course->fullname ($course->shortname)</a><br>\n";
-				    $coursesfound = TRUE;
-			    }
-		    }	
-        }
-		
-        print_simple_box_end();
-        
-        if ($coursesfound == FALSE) {         
-            print_heading(get_string("nocoursesyet"));
-            print_continue("../$CFG->admin/index.php");
-        }
-
-        print_footer();
-        exit;
-    }
-
     if (! $course = get_record("course", "id", $id)) {
         error("Course ID was incorrect (can't find it)");
     }
@@ -77,8 +48,9 @@
 
 	print_header("$site->shortname: $course->shortname: $strassignteachers", 
                  "$site->fullname", 
-                 "<a href=\"index.php\">$stradministration</a> -> 
-                  <a href=\"teacher.php\">$strassignteachers</a> -> $course->shortname", "");
+                 "<a href=\"../course/index.php\">$strcourses</a> -> ".
+                 "<a href=\"../course/view.php?id=$course->id\">$course->fullname</a> -> ".
+                 "$strassignteachers", "");
 
     print_heading("<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->fullname ($course->shortname)</a>");
 
@@ -156,7 +128,9 @@
         $teacherarray = array();
         foreach ($teachers as $teacher) {
             $teacherarray[] = $teacher->id;
-            echo "<p align=right>$teacher->firstname $teacher->lastname, $teacher->email &nbsp;&nbsp; <a href=\"teacher.php?id=$course->id&remove=$teacher->id\" title=\"$strremoveteacher\"><img src=\"../pix/t/right.gif\" border=0></a></p>";
+            echo "<p align=right>$teacher->firstname $teacher->lastname, $teacher->email &nbsp;";
+            print_user_picture($teacher->id, $site->id, $teacher->picture, false, false, false);
+            echo "&nbsp;&nbsp;<a href=\"teacher.php?id=$course->id&remove=$teacher->id\" title=\"$strremoveteacher\"><img src=\"../pix/t/right.gif\" border=0></a></p>";
         }
         $teacherlist = implode(",",$teacherarray);
         unset($teacherarray);
@@ -187,7 +161,9 @@
         foreach ($users as $user) {
             echo "<p align=left><a href=\"{$_SERVER['PHP_SELF']}?id=$course->id&add=$user->id\"".
                    "title=\"$straddteacher\"><img src=\"../pix/t/left.gif\"".
-                   "border=0></a>&nbsp;&nbsp;$user->firstname $user->lastname, $user->email";
+                   "border=0></a>&nbsp;&nbsp;";
+            print_user_picture($user->id, $site->id, $user->picture, false, false, false);
+            echo "&nbsp;$user->firstname $user->lastname, $user->email";
         }
     }
 
