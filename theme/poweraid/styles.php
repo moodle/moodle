@@ -253,7 +253,7 @@ select {
 }
 
 .categoryname {
-    font-size: large;
+    font-size: larger;
     font-weight: bold;
 }
 

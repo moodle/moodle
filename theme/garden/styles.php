@@ -309,7 +309,7 @@ a.dimmed:hover {
 }
 
 .categoryname {
-    font-size: large;
+    font-size: larger;
     font-weight: bold;
 }
 
