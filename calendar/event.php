@@ -307,6 +307,9 @@
                     $form->instance = 0;
                     $form->timeduration = 0;
                     $form->duration = 0;
+                    $form->repeat = 0;
+                    $form->repeats = '';
+                    $form->minutes = '';
                     $header = get_string('typeuser', 'calendar');
                 break;
                 case 'group':
@@ -327,6 +330,9 @@
                         $form->instance = 0;
                         $form->timeduration = 0;
                         $form->duration = 0;
+                        $form->repeat = 0;
+                        $form->repeats = '';
+                        $form->minutes = '';
                         $header = get_string('typegroup', 'calendar');
                     }
                 break;
@@ -348,6 +354,9 @@
                         $form->instance = 0;
                         $form->timeduration = 0;
                         $form->duration = 0;
+                        $form->repeat = 0;
+                        $form->repeats = '';
+                        $form->minutes = '';
                         $header = get_string('typecourse', 'calendar');
                     }
                 break;
@@ -362,6 +371,9 @@
                     $form->instance = 0;
                     $form->timeduration = 0;
                     $form->duration = 0;
+                    $form->repeat = 0;
+                    $form->repeats = '';
+                    $form->minutes = '';
                     $header = get_string('typesite', 'calendar');
                 break;
                 case 'defined':
