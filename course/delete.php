@@ -11,11 +11,13 @@
         error("You must be an administrator to use this page.");
     }
 
+    $stradmin = get_string("admin");
+
     if (!$id) {
-	    print_header("Delete a course", "Delete a course", 
-                     "<A HREF=\"$CFG->wwwroot/admin\">Admin</A> -> Delete a course");
+        $strdelete = get_string("deletecourse");
+	    print_header($strdelete, $strdelete, "<A HREF=\"$CFG->wwwroot/admin\">$stradmin</A> -> $strdelete");
         if ($courses = get_records_sql("SELECT * from course WHERE category > 0 ORDER BY fullname")) {
-            print_heading("Choose a course to delete");
+            print_heading("choosecourse");
             print_simple_box_start("CENTER");
             foreach ($courses as $course) {
                 echo "<A HREF=\"delete.php?id=$course->id\">$course->fullname</A><BR>";
@@ -34,9 +36,13 @@
     }
 
     if (! $delete) {
-	    print_header("Delete $course->shortname ?", "Delete $course->shortname ?", 
-                     "<A HREF=\"$CFG->wwwroot/admin\">Admin</A> -> Delete $course->shortname ?");
-        notice_yesno("Are you absolutely sure you want to completely delete this course and all the data it contains?<BR><BR>$course->fullname", "delete.php?id=$course->id&delete=".md5($course->timemodified), "delete.php");
+        $strdeletecheck = get_string("deletecheck", "", $course->shortname);
+        $strdeletecheckfull = get_string("deletecheckfull");
+	    print_header($strdeletecheck, $strdeletecheck, 
+                     "<A HREF=\"$CFG->wwwroot/admin\">$stradmin</A> -> $strdeletecheck");
+        notice_yesno("$strdeletecheckfull<BR><BR>$course->fullname", 
+                     "delete.php?id=$course->id&delete=".md5($course->timemodified), 
+                     "delete.php");
         exit;
     }
 
@@ -45,10 +51,12 @@
     }
 
     // OK checks done, delete the course now.
-	print_header("Deleting $course->shortname", "Deleting $course->shortname", 
-                 "<A HREF=\"$CFG->wwwroot/admin\">Admin</A> -> Deleting $course->shortname");
-    print_heading("Deleting $course->fullname");
+    $strdeletingcheck = get_string("deletingcheck", "", $course->shortname);
+	print_header($strdeletingcheck, $strdeletingcheck, 
+                 "<A HREF=\"$CFG->wwwroot/admin\">$stradmin</A> -> $strdeletingcheck");
+    print_heading($strdeletingcheck);
 
+    $strdeleted = get_string("deleted");
     // First delete every instance of every module
 
     if ($allmods = get_records_sql("SELECT * FROM modules") ) {
@@ -74,7 +82,7 @@
                 }
 
             }
-            notify("Deleted $count instances of $modname");
+            notify("$strdeleted $count instances of $modname");
         } 
     } else {
         error("No modules are installed!");
@@ -83,32 +91,32 @@
     // Delete any user stuff
 
     if (delete_records("user_students", "course", $course->id)) {
-        notify("Deleted student enrolments");
+        notify("$strdeleted student enrolments");
     }
 
     if (delete_records("user_teachers", "course", $course->id)) {
-        notify("Deleted teachers");
+        notify("$strdeleted teachers");
     }
 
     // Delete logs
 
     if (delete_records("log", "course", $course->id)) {
-        notify("Deleted logs");
+        notify("$strdeleted logs");
     }
 
     // Delete any course stuff
 
     if (delete_records("course_sections", "course", $course->id)) {
-        notify("Deleted course sections");
+        notify("$strdeleted course sections");
     }
     if (delete_records("course_modules", "course", $course->id)) {
-        notify("Deleted course modules");
+        notify("$strdeleted course modules");
     }
     if (delete_records("course", "id", $course->id)) {
-        notify("Deleted the main course record");
+        notify("$strdeleted the main course record");
     }
 
-    print_heading("$course->shortname has been completely deleted");
+    print_heading( get_string("deletedcourse", "", $course->shortname) );
 
     print_continue("delete.php");
 

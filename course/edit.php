@@ -38,7 +38,6 @@
 
         validate_form($course, $form, $err);
 
-
         if (count($err) == 0) {
 
             $form->timemodified = time();
@@ -46,7 +45,7 @@
             if ($course) {
                 if (update_record("course", $form)) {
                     add_to_log($course->id, "course", "update", "edit.php?id=$id", "");
-		            redirect("view.php?id=$course->id", "Changes saved");
+		            redirect("view.php?id=$course->id", get_string("changessaved"));
                 } else {
                     error("Serious Error! Could not update the course record! (id = $form->id)");
                 }
@@ -81,11 +80,11 @@
             $form = $course;
         } else {
             $form->startdate = time() + 3600 * 24;
-            $form->teacher = "Facilitator";
-            $form->student = "Student";
-            $form->fullname = "Course Fullname 101";
-            $form->shortname = "CF101";
-            $form->summary = "Write a concise and interesting paragraph here that explains what this course is about.";
+            $form->fullname = get_string("defaultcoursefullname");
+            $form->shortname = get_string("defaultcourseshortname");
+            $form->teacher = get_string("defaultcourseteacher");
+            $form->student = get_string("defaultcoursestudent");
+            $form->summary = get_string("defaultcoursesummary");
             $form->format = "weeks";
             $form->numsections = 10;
             $form->newsitems = 5;
@@ -95,20 +94,21 @@
 
     $form->categories = get_records_sql_menu("SELECT id,name FROM course_categories");
 
-    $editcoursesettings = get_string("editcoursesettings");
+    $streditcoursesettings = get_string("editcoursesettings");
+    $streditcoursesettings = get_string("editcoursesettings");
 
     if (isset($course)) {
-	    print_header($editcoursesettings, "$course->fullname", 
+	    print_header($streditcoursesettings, "$course->fullname", 
                      "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> 
-                      -> $editcoursesettings", $focus);
+                      -> $streditcoursesettings", $focus);
     } else {
-        print_header("Admin: Creating a new course", "$site->shortname: Administration",
-                     "<A HREF=\"$CFG->wwwroot/admin/\">Admin</A> 
-                      -> Create a new course", $focus);
+        print_header(get_string("addnewcourse"), get_string("addnewcourse"),
+                     "<A HREF=\"$CFG->wwwroot/admin/\">".get_string("admin")."</A> 
+                      -> ".get_string("addnewcourse"), $focus);
     }
 
     print_simple_box_start("center", "", "$THEME->cellheading");
-    print_heading($editcoursesettings);
+    print_heading($streditcoursesettings);
 	include("edit.html");
     print_simple_box_end();
 
@@ -121,22 +121,22 @@
 function validate_form($course, &$form, &$err) {
 
     if (empty($form->fullname))
-        $err["fullname"] = "Missing full name";
+        $err["fullname"] = get_string("missingfullname");
 
     if (empty($form->shortname))
-        $err["shortname"] = "Missing short name";
+        $err["shortname"] = get_string("missingshortname");
 
     if (empty($form->summary))
-        $err["summary"] = "Missing summary";
+        $err["summary"] = get_string("missingsummary");
 
     if (empty($form->teacher))
-        $err["teacher"] = "Must choose something";
+        $err["teacher"] = get_string("missingteacher");
 
     if (empty($form->student))
-        $err["student"] = "Must choose something";
+        $err["student"] = get_string("missingstudent");
 
     if (! $form->category)
-        $err["category"] = "You need to choose a category";
+        $err["category"] = get_string("missingcategory");
 
     return;
 }

@@ -81,7 +81,10 @@
 
     $teacher = get_teacher($course->id);
 
-    print_header("Login to $course->shortname", "Login to $course->shortname", "<A HREF=\".\">Courses</A> -> Login to $course->shortname", "form.password"); 
+    $strloginto = get_string("loginto", "", $course->shortname);
+    $strcourses = get_string("courses");
+
+    print_header($strloginto, $strloginto, "<A HREF=\".\">$strcourses</A> -> $strloginto", "form.password"); 
 
     print_course($course); 
 

@@ -43,8 +43,9 @@
     }
 
     $sectionname = $COURSE_SECTION[$course->format];
+    $stredit = get_string("edit", "", " $sectionname $section->section");
 
-    print_header("Edit $sectionname $section->section", "Edit $sectionname $section->section", "", "form.summary");
+    print_header($stredit, $stredit, "", "form.summary");
 
     include("editsection.html");
 
