@@ -303,9 +303,9 @@ function glossary_search_entries($searchterms, $glossary, $includedefinition) {
 
 
     foreach ($searchterms as $searchterm) {
-        if (strlen($searchterm) < 2) {
+/*        if (strlen($searchterm) < 2) {
             continue;
-        }
+        }*/
         if ($conceptsearch) {
             $conceptsearch.= " OR ";
         }
@@ -470,15 +470,20 @@ function glossary_print_attachments($entry, $return=NULL, $align="left") {
 // if return=html, then return a html string.
 // if return=text, then return a text-only string.
 // otherwise, print HTML for non-images, and return image HTML
-
+//     if attachment is an image, $align set its aligment.
     global $CFG;
+    
+    $newentry = $entry;
+    if ( $newentry->sourceglossaryid ) {
+        $newentry->glossaryid = $newentry->sourceglossaryid;
+    }
 
-    $filearea = glossary_file_area_name($entry);
+    $filearea = glossary_file_area_name($newentry);
 
     $imagereturn = "";
     $output = "";
 
-    if ($basedir = glossary_file_area($entry)) {
+    if ($basedir = glossary_file_area($newentry)) {
         if ($files = get_directory_list($basedir)) {
             $strattachment = get_string("attachment", "glossary");
             $strpopupwindow = get_string("popupwindow");
