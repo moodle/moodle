@@ -31,7 +31,7 @@
 /// Double check just in case they are actually enrolled already 
 /// This might occur if they were enrolled during this session
 
-    if ( $USER->student[$course->id] or $USER->teacher[$course->id] ) {
+    if ( !empty($USER->student[$course->id]) or !empty($USER->teacher[$course->id]) ) {
 
         if ($SESSION->wantsurl) {
             $destination = $SESSION->wantsurl;
@@ -43,6 +43,13 @@
         redirect($destination);
     }
 
+/// Double check just in case they are enrolled to start in the future 
+
+    if ($student = get_record('user_students', 'userid', $USER->id, 'course', $course->id)) { 
+        $message = get_string('enrolmentnotyet', '', userdate($student->timestart));
+        print_header();
+        notice($message, $CFG->wwwroot);
+    }
 
 /// Check the submitted enrollment key if there is one
 
