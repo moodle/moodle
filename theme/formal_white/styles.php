@@ -2,10 +2,13 @@
 
 /// We use PHP so we can do value substitutions into the styles
 
-    $nomoodlecookie = true;
-    require_once("../../config.php");
-    $themeurl = style_sheet_setup(filemtime("styles.php"), 300, $themename);
+    if (!isset($themename)) {
+        $themename = NULL;
+    }
 
+    $nomoodlecookie = true;
+    require_once("../../config.php"); 
+    $themeurl = style_sheet_setup(filemtime("styles.php"), 300, $themename);
 
 /// From here on it's nearly a normal stylesheet. 
 /// First are some CSS definitions for normal tags, 
@@ -24,6 +27,7 @@
 
 ?>
 
+
 body {
 	font-family: Arial, Helvetica, sans-serif;
 	font-size : 13px;
@@ -33,6 +37,16 @@ body {
 td, th {
  	font-family: Arial, Helvetica, sans-serif;
 	font-size : 13px;}
+
+th {
+    font-weight: bold; 
+    background-color: <?PHP echo $THEME->cellheading?>;
+}
+
+ul {
+   margin-bottom: 5px;
+   margin-top: 0px;
+}
 
 a:link {
     text-decoration: none; 
@@ -47,16 +61,6 @@ a:visited {
 a:hover {
     text-decoration: underline; 
     color: #990000;
-}
-
-th {
-    font-weight: bold; 
-    background-color: <?PHP echo $THEME->cellheading?>;
-}
-
-ul {
-   margin-bottom: 5px;
-   margin-top: 0px;
 }
 
 form { 
@@ -82,6 +86,8 @@ h4 {
 
 }
 
+
+
 .highlight {
     background-color: <?PHP echo $THEME->highlight?>;
 }
@@ -103,17 +109,6 @@ h4 {
 	background-color: #C6BDA8;
 }
 
-.generalbox {
-    border-width: 1px;
-    border-color: <?PHP echo $THEME->borders?>;
-    border-style: solid;
-	background-color: #FEF9F6;
-}
-
-.generalboxcontent {
-
-}
-
 .generaltable {
 }
 
@@ -128,6 +123,8 @@ h4 {
     border-width: 1px;
     border-color: <?PHP echo $THEME->borders?>;
     border-style: solid;
+    -moz-border-radius-bottomleft: 20px;
+    -moz-border-radius-bottomright: 20px;
 }
 
 .sideblockheading {
@@ -139,6 +136,8 @@ h4 {
 
 .sideblockmain {
     background-color: #FEF9F6;
+    -moz-border-radius-bottomleft: 20px;
+    -moz-border-radius-bottomright: 20px;
 }
 
 .sideblocklinks {
@@ -147,20 +146,14 @@ h4 {
 
 .sideblocklatestnews {
      background-color: #FEF9F6;
+    -moz-border-radius-bottomleft: 20px;
+    -moz-border-radius-bottomright: 20px;
 }
 
 .sideblockrecentactivity {
     background-color: #FEF9F6;
-}
-
-.siteinfo {
-    border-width: 1px;
-    border-color: <?PHP echo $THEME->borders?>;
-    border-style: solid;
-}
-
-.siteinfocontent {
-    
+    -moz-border-radius-bottomleft: 20px;
+    -moz-border-radius-bottomright: 20px;
 }
 
 .outlineheadingblock {
@@ -170,7 +163,30 @@ h4 {
     border-width: 1px;
     border-color: <?PHP echo $THEME->borders?>;
     border-style: solid;
+    -moz-border-radius: 3px;
 }
+
+.forumpost {
+    border-width: 1px;
+    border-color: <?PHP echo $THEME->borders?>;
+    border-style: solid;
+    -moz-border-radius-bottomleft: 20px;
+    -moz-border-radius-bottomright: 20px;
+}
+
+.forumpostpicture {
+	    background-color: #C6BDA8;
+}
+
+.forumpostside {
+    background-color: #E3DFD4;
+    -moz-border-radius-bottomleft: 20px;
+}
+
+.forumpostmessage {
+    -moz-border-radius-bottomright: 20px;
+}
+
 
 .weeklyoutline {
 }
@@ -270,24 +286,6 @@ h4 {
     border-style: dashed;
 }
 
-.forumpost {
-    border-width: 1px;
-    border-color: <?PHP echo $THEME->borders?>;
-    border-style: solid;
-}
-
-.forumpostpicture {
-    background-color: #C6BDA8;
-}
-
-.forumpostside {
-    background-color: #E3DFD4;
-}
-
-.forumpostmessage {
-}
-
-
 .siteinfo {
     border-width: 1px;
     border-color: <?PHP echo $THEME->borders?>;
@@ -295,7 +293,9 @@ h4 {
 }
 
 .siteinfocontent {
-		background-color: #E3DFD4;
+	 background-color: #FEF9F6;
+    -moz-border-radius: 20px;
+
 }
 
 
@@ -303,17 +303,27 @@ h4 {
     border-width: 1px;
     border-color: <?PHP echo $THEME->borders?>;
     border-style: solid;
+	background-color: #FEF9F6;
+    -moz-border-radius-topleft: 3px;
+    -moz-border-radius-topright: 3px;
+    -moz-border-radius-bottomleft: 15px;
+    -moz-border-radius-bottomright: 15px;
 }
 
 .generalboxcontent {
     background-image: none;
     background-color: <?PHP echo $THEME->cellcontent?>;
+    -moz-border-radius-topleft: 3px;
+    -moz-border-radius-topright: 3px;
+    -moz-border-radius-bottomleft: 15px;
+    -moz-border-radius-bottomright: 15px;
 }
 
 .noticebox {
     border-width: 1px;
     border-color: <?PHP echo $THEME->borders?>;
     border-style: solid;
+    -moz-border-radius: 3px;
 }
 
 .noticeboxcontent {
@@ -339,12 +349,12 @@ a.dimmed:hover {
     text-decoration: underline;
     color: #990000;
 }
+
 .dimmed_text {
     color: #AAAAAA;
 }
 
 .forumpostheader {
-  
 }
 
 .forumpostheadertopic {
@@ -353,7 +363,7 @@ a.dimmed:hover {
 }
 
 .forumpostheaderpicture {
-		background-color: #FEF9F6;
+	background-color: #FEF9F6;
 }
 
 .forumpostheadername {
@@ -394,7 +404,7 @@ a.dimmed:hover {
 }
 
 .headerhome {
-		background-color: #E3DFD4;
+	background-color: #E3DFD4;
 }
 
 .headerhomemain {
@@ -411,9 +421,14 @@ a.dimmed:hover {
 }
 
 .categoryboxcontent {
+
 }
 
 .categoryname {
+    font-weight: bold;
+}
+
+.categorynumber {
     font-weight: bold;
 }
 
@@ -427,9 +442,12 @@ a.dimmed:hover {
     border-width: 1px;
     border-color: <?PHP echo $THEME->borders?>;
     border-style: solid;
+    -moz-border-radius: 20px;
 }
 
 .courseboxinfo {
+	font-size : 11px;
+	font-weight: bold;
 }
 
 .courseboxsummary {
@@ -462,27 +480,35 @@ a.autolink:hover {
     border-width: 1px;
     border-color: <?PHP echo $THEME->borders?>;
     border-style: solid;
+    -moz-border-radius-bottomleft: 20px;
+    -moz-border-radius-bottomright: 20px;
     margin-bottom: 5px;
 }
 
 .userinfoboxside {
+    -moz-border-radius-bottomleft: 20px;
 }
 
 .userinfoboxcontent {
+    -moz-border-radius-bottomright: 20px;
 }
 
 .userinfoboxsummary {
 }
 
 .userinfoboxlinkcontent {
+    -moz-border-radius-bottomright: 20px;
 }
 
 .generaltab {
+    -moz-border-radius-topleft: 15px;
+    -moz-border-radius-topright: 15px;
 }
 
 .generaltabselected {
+    -moz-border-radius-topleft: 15px;
+    -moz-border-radius-topright: 15px;
 }
-
 
 .forumheaderlist {
     border-width: 1px;
@@ -505,4 +531,255 @@ a.autolink:hover {
     border-right: 0px;
     border-top: 0px;
 }
+
+.headingblockcontent {
+}
+
+
+
+
+TABLE.calendarmini {
+	width: 100%;
+    border-width: 1px;
+    border-color: <?PHP echo $THEME->borders?>;
+    border-style: solid;
+	font-size : 10px;
+    margin: 0px;
+    padding: 2px;
+    -moz-border-radius: 10px;
+}
+
+TABLE.calendarmonth {
+	width: 100%;
+    border-width: 1px;
+    border-color: <?PHP echo $THEME->borders?>;
+    border-style: solid;
+    margin: 0px;
+    padding: 0px;
+    -moz-border-radius: 10px;
+}
+
+.calendarweekend {
+    color: red;
+}
+
+.cal_day_mini {
+    text-align: center;
+    vertical-align: center;
+    width: 14%;
+   border-width: 1px;
+    border-color: <?PHP echo $THEME->cellcontent2?>;
+    border-style: solid;
+    -moz-border-radius: 4px;
+}
+
+.calendardaymonth {
+    width: 14%;
+    border-width: 1px;
+    border-color: <?PHP echo $THEME->cellcontent2?>;
+    border-style: solid;
+    vertical-align: top;
+	background-color: <?PHP echo $THEME->body?>;
+}
+
+.calendardaymonth TABLE {
+	margin-top: 0px;
+	margin-left: 0px;
+	font-size : 10px;
+	line-height: 1.2em;
+}
+
+.calendardaymonth DIV {
+	margin-top: 0px;
+	margin-left: 0px;
+	font-size: 10px;
+	line-height: 1.2em;
+}
+
+.calendarmini .calendarheader {
+    font-size: 10px;
+	font-weight: bold;
+    text-align: center;
+    vertical-align: center;
+}
+
+.calendarmonth .calendarheader {
+	text-align: center;
+    vertical-align: center;
+	font-weight: bold;
+    padding-bottom: 3px;
+    border-bottom: 2px <?PHP echo $THEME->borders?> solid;
+	background-color: <?PHP echo $THEME->body?>;
+}
+
+.sideblockmain .cal_event {
+
+}
+.sideblockmain .cal_event_date {
+
+}
+
+.cal_event_global {
+	background-color: #99cc99;
+	border: 2px #99cc99 solid;
+}
+
+.cal_event_course {
+	background-color: #ff9966;
+	border: 2px #ff9966 solid;
+}
+
+.cal_event_group {
+	background-color: orange;
+	border: 2px orange solid;
+}
+
+.cal_event_user {
+	background-color: #ffcc99;
+	border: 2px #ffcc99 solid;
+}
+
+.cal_duration_global {
+	border-top: 2px #99cc99 solid;
+	border-bottom: 2px #99cc99 solid;
+}
+
+.cal_duration_course {
+	border-top: 2px #ff9966 solid;
+	border-bottom: 2px #ff9966 solid;
+}
+
+.cal_duration_user {
+	border-top: 2px #ffcc99 solid;
+	border-bottom: 2px #ffcc99 solid;
+}
+
+.cal_duration_group {
+	border-top: 2px orange solid;
+	border-bottom: 2px orange solid;
+}
+
+.mycalendar {
+	background-color: <?PHP echo $THEME->cellcontent?>;
+	-moz-border-radius-bottomleft: 20px;
+    -moz-border-radius-bottomright: 20px;
+}
+
+.mycalendar .cal_event {
+	font-weight: bold;
+}
+.mycalendar .cal_event_date {
+	font-size: 10px;
+}
+
+.mycalendar TABLE.cal_filters {
+	width: 100%;
+    border-width: 1px;
+    border-color: <?PHP echo $THEME->borders?>;
+    border-style: solid;
+    margin: 0px;
+    padding: 2px;
+    -moz-border-radius: 10px;
+}
+
+.mycalendar .cal_filters THEAD TD {
+	border-bottom: 2px <?PHP echo $THEME->borders?> solid;
+    margin: 0px;
+    padding: 2px;
+}
+
+
+.mycalendar .cal_event_table {
+	width: 100%;
+    border-width: 1px;
+    border-color: <?PHP echo $THEME->borders?>;
+    border-style: solid;
+    margin: 0px;
+    padding: 2px;
+    -moz-border-radius: 10px;
+}
+
+.mycalendar .cal_event_table THEAD {
+	background-color: <?PHP echo $THEME->cellcontent?>;
+	text-align: center;
+	font-weight: bold;
+}
+
+.sideblockmain HR {
+	height: 1px;
+	border: none;
+	border-top: 1px #999 solid;
+	margin-top: 4px;
+	margin-bottom: 4px;
+}
+
+.mycalendar HR {
+	height: 1px;
+	border: none;
+	border-top: 1px #999 solid;
+	margin-top: 4px;
+	margin-bottom: 4px;
+}
+
+.cal_today {
+	border: 2px black solid;
+}
+
+.calendarexpired {
+	color: red;
+	font-weight: bold;
+}
+
+.calendarreferer {
+	font-weight: bold;
+}
+
+TD.cal_event_description {
+	width: 80%;
+	border-left: 2px <?php echo $THEME->borders?> solid;
+	vertical-align: top;
+	padding: 5px;
+}
+
+.cal_popup_fg {
+	background-color: <?php echo $THEME->cellcontent?>;
+	font-size: 11px;
+	font-family: Courier;
+	padding: 0px;
+	margin: 0px;
+}
+
+.cal_popup_bg {
+	border-top: 2px #ffcc66 solid;
+	border-left: 2px #ffcc66 solid;
+	border-right: 2px #663300 solid;
+	border-bottom: 2px #663300 solid;
+	padding: 0px;
+	margin: 0px;
+}
+
+.cal_popup_caption {
+	font-size: 11px;
+	font-weight: bold;
+	margin: 5px;
+}
+
+.cal_popup_close {
+	font-size: 11px;
+	font-weight: bold;
+	margin-right: 5px;
+}
+
+.sideblock .cal_controls {
+	font-size: 8px;
+}
+
+A IMG {
+	border: none;
+}
+
+TABLE.formtable TD {
+	padding: 9px;
+}
+
 
