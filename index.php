@@ -72,43 +72,46 @@
 
 /// Print Section
     if ($SITE->numsections > 0) {
-        print_simple_box_start('center', '100%', '', 5, 'sitetopic');
-
-        /// If currently moving a file then show the current clipboard
-        if (ismoving($SITE->id)) {
-            $stractivityclipboard = strip_tags(get_string('activityclipboard', '', addslashes($USER->activitycopyname)));
-            echo '<p><font size="2">';
-            echo "$stractivityclipboard&nbsp;&nbsp;(<a href=\"course/mod.php?cancelcopy=true\">". get_string('cancel') .'</a>)';
-            echo '</font></p>';
-        }
-
 
         if (!$section = get_record('course_sections', 'course', $SITE->id, 'section', 1)) {
             delete_records('course_sections', 'course', $SITE->id, 'section', 1); // Just in case
             $section->course = $SITE->id;
             $section->section = 1;
             $section->summary = '';
+            $section->sequence = '';
             $section->visible = 1;
             $section->id = insert_record('course_sections', $section);
         }
 
-        echo format_text($section->summary, FORMAT_HTML);
+        if (!empty($section->sequence) or !empty($section->summary) or $editing) {
+            print_simple_box_start('center', '100%', '', 5, 'sitetopic');
 
-        if ($editing) {
-            $streditsummary = get_string('editsummary');
-            echo "<a title=\"$streditsummary\" ".
-                 " href=\"course/editsection.php?id=$section->id\"><img src=\"$CFG->pixpath/t/edit.gif\" ".
-                 " height=\"11\" width=\"11\" border=\"0\" alt=\"$streditsummary\" /></a><br /><br />";
+            /// If currently moving a file then show the current clipboard
+            if (ismoving($SITE->id)) {
+                $stractivityclipboard = strip_tags(get_string('activityclipboard', '', addslashes($USER->activitycopyname)));
+                echo '<p><font size="2">';
+                echo "$stractivityclipboard&nbsp;&nbsp;(<a href=\"course/mod.php?cancelcopy=true\">". get_string('cancel') .'</a>)';
+                echo '</font></p>';
+            }
+
+            echo format_text($section->summary, FORMAT_HTML);
+
+            if ($editing) {
+                $streditsummary = get_string('editsummary');
+                echo "<a title=\"$streditsummary\" ".
+                     " href=\"course/editsection.php?id=$section->id\"><img src=\"$CFG->pixpath/t/edit.gif\" ".
+                     " height=\"11\" width=\"11\" border=\"0\" alt=\"$streditsummary\" /></a><br /><br />";
+            }
+
+            get_all_mods($SITE->id, $mods, $modnames, $modnamesplural, $modnamesused);
+            print_section($SITE, $section, $mods, $modnamesused, true);
+    
+            if ($editing) {
+                print_section_add_menus($SITE, $section->section, $modnames);
+            }
+            print_simple_box_end();
+            print_spacer(10);
         }
-
-        get_all_mods($SITE->id, $mods, $modnames, $modnamesplural, $modnamesused);
-        print_section($SITE, $section, $mods, $modnamesused, true);
-
-        if ($editing) {
-            print_section_add_menus($SITE, $section->section, $modnames);
-        }
-        print_simple_box_end();
-        print_spacer(10);
     }
 
     switch ($CFG->frontpage) {     /// Display the main part of the front page.
