@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // calendar.php - created with Moodle 1.3 development (2004042600)
+      // calendar.php - created with Moodle 1.3 Nearly Ready (2004052000)
 
 
 $string['april'] = 'Abril';
@@ -13,14 +13,17 @@ $string['courseevents'] = 'Eventos de curso';
 $string['dayview'] = 'Vista de Día';
 $string['daywithnoevents'] = 'No hay eventos este día.';
 $string['december'] = 'Diciembre';
-$string['default'] = 'Defecto';
+$string['default'] = 'Por defecto';
 $string['deleteevent'] = 'Eliminar evento';
 $string['detailedmonthview'] = 'Vista de Mes detallada';
+$string['durationminutes'] = 'Duración en minutos';
 $string['durationnone'] = 'Sin duración';
 $string['durationuntil'] = 'Hasta';
 $string['editevent'] = 'Editando evento';
 $string['errorbeforecoursestart'] = 'No puede fijar un evento antes de la fecha de comienzo del curso';
 $string['errorinvaliddate'] = 'Fecha no válida';
+$string['errorinvalidminutes'] = 'Especifique la duración en minutos con un número entre 1 y 999.';
+$string['errorinvalidrepeats'] = 'Especifique el número de eventos con un número entre 1 y 99.';
 $string['errornodescription'] = 'Se requiere una descripción';
 $string['errornoeventname'] = 'Se requiere un nombre';
 $string['eventdate'] = 'Fecha';
@@ -30,6 +33,7 @@ $string['eventendtime'] = 'Hora final';
 $string['eventinstanttime'] = 'Hora';
 $string['eventkind'] = 'Tipo de evento';
 $string['eventname'] = 'Nombre';
+$string['eventrepeat'] = 'Repeticiones';
 $string['eventsfor'] = '$a eventos';
 $string['eventstarttime'] = 'Hora de comienzo';
 $string['eventtime'] = 'Hora';
@@ -43,6 +47,7 @@ $string['february'] = 'Febrero';
 $string['fri'] = 'Vie';
 $string['friday'] = 'Viernes';
 $string['globalevents'] = 'Eventos globales';
+$string['gotocalendar'] = 'Ir al calendario';
 $string['groupevents'] = 'Eventos de grupo';
 $string['hidden'] = 'ocultos';
 $string['january'] = 'Enero';
@@ -65,6 +70,9 @@ $string['pref_startwday'] = 'Primer día de la semana';
 $string['pref_timeformat'] = 'Formato de hora';
 $string['preferences'] = 'Preferencias';
 $string['preferences_available'] = 'Sus preferencias personales';
+$string['repeatnone'] = 'No repeticiones';
+$string['repeatweeksl'] = 'Repetir semanalmente, creando juntos';
+$string['repeatweeksr'] = 'eventos';
 $string['sat'] = 'Sáb';
 $string['saturday'] = 'Sábado';
 $string['september'] = 'Septiembre';
