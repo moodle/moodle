@@ -1138,7 +1138,13 @@ function require_login($courseid=0) {
     // Next, check if the user can be in a particular course
     if ($courseid) {
         if ($USER->student[$courseid] || $USER->teacher[$courseid] || $USER->admin) {
-            if (!isset($USER->realuser)) {  // Don't update if this isn't a realuser
+            if (isset($USER->realuser)) {   // Make sure the REAL person can also access this course
+                if (!isteacher($courseid, $USER->realuser)) {
+                    print_header();
+                    notice(get_string("studentnotallowed", "", "$USER->firstname $USER->lastname"));
+                }
+
+            } else {  // just update their last login time
                 update_user_in_db();
             }
             if (!$USER->email) {            // User logged in, but has not set up profile!

@@ -433,6 +433,7 @@ $string['startdate'] = "Course start date";
 $string['startsignup'] = "Start now by creating a new account!";
 $string['status'] = "Status";
 $string['stringsnotset'] = "The following strings are not defined in \$a";
+$string['studentnotallowed'] = "Sorry, but you can not enter this course as '\$a'";
 $string['success'] = "Success";
 $string['summary'] = "Summary";
 $string['summaryof'] = "Summary of \$a";
