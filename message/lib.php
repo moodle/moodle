@@ -595,7 +595,7 @@ function message_history_link($userid1, $userid2=0, $returnstr=false, $keywords=
     }
 
     $str = link_to_popup_window("/message/history.php?user1=$userid1&user2=$userid2$keywords$position", 
-                    "message_history_$user->id", $linktext, 500, 500, '', 
+                    "message_history_$userid1", $linktext, 500, 500, '', 
                     'menubar=0,location=0,status,scrollbars,resizable,width=500,height=500', true);
 
     if ($returnstr) {
