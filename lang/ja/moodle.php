@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.1.1 (2003091111)
+      // moodle.php - created with Moodle 1.2 development (2003091600)
 
 
 $string['action'] = "操作";
@@ -478,6 +478,8 @@ $string['movedown'] = "下へ";
 $string['movefilestohere'] = "ファイルをここに移動する";
 $string['movefull'] = "\$a をこの場所に移動する";
 $string['movehere'] = "ここに移動する";
+$string['moveleft'] = "左へ";
+$string['moveright'] = "右へ";
 $string['moveselectedcoursesto'] = "選択したコースの移動 ...";
 $string['movetoanotherfolder'] = "他のフォルダへ移動する";
 $string['moveup'] = "上へ";

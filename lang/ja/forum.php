@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.1 Beta +++ (2003082702)
+      // forum.php - created with Moodle 1.2 development (2003091600)
 
 
 $string['addanewdiscussion'] = "ディスカッショントピックを追加";
@@ -78,6 +78,7 @@ $string['olderdiscussions'] = "過去のディスカッション";
 $string['openmode0'] = "ディスカッション不許可、返信不許可";
 $string['openmode1'] = "ディスカッション不許可、返信許可";
 $string['openmode2'] = "ディスカッションと返信を許可";
+$string['parent'] = "親記事を表示する";
 $string['parentofthispost'] = "この投稿の親記事";
 $string['postadded'] = "投稿が追加されました。<P>更新したい場合は \$a 編集出来ます。";
 $string['postincontext'] = "関連した投稿を見る";
