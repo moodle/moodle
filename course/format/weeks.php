@@ -132,6 +132,7 @@
 /// Now all the weekly sections
     $timenow = time();
     $weekdate = $course->startdate;    // this should be 0:00 Monday of that week
+    $weekdate += 7200;                 // Add two hours to avoid possible DST problems
     $section = 1;
     $sectionmenu = array();
     $weekofseconds = 604800;
