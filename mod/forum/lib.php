@@ -231,6 +231,8 @@ function forum_cron () {
                 continue;
             }
 
+            $CFG->courselang = $course->lang;
+
             $groupmode = false;
             if ($cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
                 if ($groupmode = groupmode($course, $cm)) {                  // Groups are being used
