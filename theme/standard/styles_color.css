@@ -4,11 +4,28 @@
 ** color
 */
 
+/*************************************************
+***
+*** This CSS file contains all color definitions
+*** like background-color, font-color,
+*** border-color etc.
+***
+*** Shortindex:
+*** basic and general styles
+*** header and footer styles
+*** content styles (alphabetically)
+*** activities, calendar, blocks
+*** 
+*** Please sort new styles for existing content
+*** into the appropriate part of this CSS file.
+*** Styles for new Blocks or Activities please
+*** place at the end.
+*** Wouldn't the alphabetical order be better?
+***
+**************************************************/
+
 
 /* basic styles */
-body {
-    background-color:#FAFAFA;
-}
 
 a:link,
 a:visited {
@@ -22,8 +39,8 @@ a.dimmed:visited {
 
 a.autolink:link,
 a.autolink:visited {
-    color:#000000;
     background-color:#DDDDDD; /* autolink */
+    color:#000000;
 }
 
 a.autolink:hover,
@@ -33,10 +50,17 @@ a.dimmed:hover {
 }
 
 /* general styles */
+body {
+    background-color:#FAFAFA;
+}
+
 th {
     background-color:#DDDDDD;
 }
 
+.highlight {
+    background-color:#AAFFAA; /* highlight */
+}
 
 /* header styles */
 
@@ -44,29 +68,87 @@ th {
 /* footer styles */
 
 
-/* content styles */
+/*****************************
+***
+*** content styles
+***
+******************************/
+/* many places */
 .generalbox {
     border-color:#DDDDDD; /* borders */
 }
 
-/* many */
 .noticebox {
     border-color:#DDDDDD; /* borders */
-}
-
-.highlight {
-    background-color:#AAFFAA; /* highlight */
-}
-
-/* entry-page index.php */ 
-.sitetopic {
-    border-color:#DDDDDD; /* borders */
-    background-color:#FFFFFF; /* cellheading */
 }
 
 /* summary of a user in a nice little box - weblib.php */
 .userinfobox {
     border-color:#DDDDDD; /* borders */
+}
+
+/* weblib.php table */
+.tabledivider {
+    border-color:#DDDDDD; /* borders */
+}
+
+/* entry-page index.php */ 
+.sitetopic {
+    background-color:#FFFFFF; /* cellheading */
+    border-color:#DDDDDD; /* borders */
+}
+
+
+/*****************************
+***
+*** Activities
+***
+******************************/
+/* admin, calednder, course */
+.dimmed_text {
+    color:#AAAAAA;
+}
+
+/* assignment, forum, glossary */
+.forumheaderlist,
+.forumpost {
+    border-color:#DDDDDD; /* borders */
+}
+
+/* course, entry-page, login */
+.headingblock {
+    border-color:#DDDDDD; /* borders */
+}
+
+/* course */
+.outlineheadingblock {
+    border-color:#DDDDDD; /* borders */
+}
+.weeklyoutlinesidehidden,
+.topicsoutlinesidehidden {
+    background-color:#AAAAAA; /* hidden */
+}
+
+.weeklyoutlinecontent,
+.topicsoutlinecontent {
+    border-color:#DDDDDD; /* cellheading */
+}
+
+.weeklyoutlinecontenthighlight, .topicsoutlinecontenthighlight {
+    border-color:#FFC85F; /* cellheading2 */
+}
+
+.weeklyoutlinecontenthidden,
+.topicsoutlinecontenthidden {
+    border-color:#AAAAAA; /* hidden */
+}
+
+.categoryboxcontent,
+.courseboxcontent {
+    border-color:#DDDDDD; /* borders */
+}
+.weeklydatetext {
+    color:#DDDDDD; /* cellheading2 */
 }
 
 /* glossary, wiki */
@@ -78,18 +160,30 @@ th {
     background-color:#DDDDDD; /* cellheading2 */
 }
 
-/* assignment, forum, glossary */
-.forumheaderlist,
-.forumpost {
+/* lang, forum */
+.teacheronly {
+    color:#990000;
+}
+
+.forumheadminimal {
+    color:#555555;
+}
+
+/* message */
+table.message_search_results td {
     border-color:#DDDDDD; /* borders */
 }
 
-/* weblib.php table */
-.tabledivider {
-    border-color:#DDDDDD; /* borders */
+/* weblib.php, wiki */
+.sideblockmain hr {
+    border-top-color:#999999;
 }
 
-/* calendar */
+/*****************************
+***
+*** Calendar
+***
+******************************/
 table.calendarmini {
     border-color:#DDDDDD; /* borders */
 }
@@ -180,7 +274,6 @@ table.calendarmonth,
     border-color:#FFC85F; /* borders */
 }
 
-.sideblockmain hr,
 .mycalendar hr {
     border-top-color:#999999;
 }
@@ -189,6 +282,11 @@ table.calendarmonth,
     border-color:#DDDDDD; /* borders */
 }
 
+/*****************************
+***
+*** Blocks
+***
+******************************/
 /* block_rss_client.php */
 .rssclientlink {
     border-top-color:#DDDDDD;
@@ -197,22 +295,6 @@ table.calendarmonth,
 .rssclientdescription {
     color:#555555;
 }
-
-/* message */
-table.message_search_results td {
-    border-color:#DDDDDD; /* borders */
-}
-
-/* course, entry-page, login */
-.headingblock {
-    border-color:#DDDDDD; /* borders */
-}
-
-/* course */
-.outlineheadingblock {
-    border-color:#DDDDDD; /* borders */
-}
-
 
 /* sideblock */
 /* calendar, weblib.php, wiki */
@@ -227,51 +309,6 @@ table.message_search_results td {
     background-color:#FCFCFC;
 }
 
-/* weblib.php, wiki */
 .sideblockmain hr {
     border-top-color:#999999;
-}
-
-
-/* course */
-.weeklyoutlinesidehidden,
-.topicsoutlinesidehidden {
-    background-color:#AAAAAA; /* hidden */
-}
-
-.weeklyoutlinecontent,
-.topicsoutlinecontent {
-    border-color:#DDDDDD; /* cellheading */
-}
-
-.weeklyoutlinecontenthighlight, .topicsoutlinecontenthighlight {
-    border-color:#FFC85F; /* cellheading2 */
-}
-
-.weeklyoutlinecontenthidden,
-.topicsoutlinecontenthidden {
-    border-color:#AAAAAA; /* hidden */
-}
-
-.categoryboxcontent,
-.courseboxcontent {
-    border-color:#DDDDDD; /* borders */
-}
-.weeklydatetext {
-    color:#DDDDDD; /* cellheading2 */
-}
-
-
-/* admin, calednder, course */
-.dimmed_text {
-    color:#AAAAAA;
-}
-
-/* lang, forum */
-.teacheronly {
-    color:#990000;
-}
-
-.forumheadminimal {
-    color:#555555;
 }

@@ -1,8 +1,29 @@
 /*  $Id$ */
 
 /*
-** typography
+** fonts
 */
+
+/*************************************************
+***
+*** This CSS file contains all font definitions
+*** like family, size, weight,
+*** text-align, letter-spacing
+*** etc.
+***
+*** Shortindex:
+*** basic and general styles
+*** header and footer styles
+*** content styles (alphabetically)
+*** activities, calendar, blocks
+*** 
+*** Please sort new styles for existing content
+*** into the appropriate part of this CSS file.
+*** Styles for new Blocks or Activities please
+*** place at the end.
+*** Wouldn't the alphabetical order be better?
+***
+**************************************************/
 
 
 /* basic styles */
@@ -14,6 +35,26 @@ font {
     font-size:1px;
 }
 
+a:link,
+a:visited {
+    text-decoration:none;
+}
+
+a.dimmed:link,
+a.dimmed:visited {
+    text-decoration:none;
+}
+
+a.autolink:link,
+a.autolink:visited {
+    text-decoration:none;
+}
+
+a.autolink:hover,
+a:hover,
+a.dimmed:hover {
+    text-decoration:underline;
+}
 
 /* general styles */
 body, td, th, li {
@@ -44,18 +85,44 @@ th {
     font-weight:bold;
 }
 
+.logininfo,
+#header-home .headermenu font {
+    font-size:x-small;
+}
 
 /* footer styles */
+.homelink {
+    font-size:x-small;
+}
 
 
-/* content styles */
+
+/*****************************
+***
+*** content styles
+***
+******************************/
+/* many places */
+
+
+
+
+/*****************************
+***
+*** Activities
+***
+******************************/
+/* index, admin, course, lang, adodb, quiz */
+.categoryname,
+.categorynumber {
+    font-size:larger;
+    font-weight:bold;
+}
+
+/* course */
 .activitydate, .activityhead {
     font-size:x-small;
     text-align:center;
-}
-
-.forumolddiscuss {
-    text-align:right;
 }
 
 .weeklydatetext {
@@ -63,19 +130,97 @@ th {
     font-weight:bold;
 }
 
-.feedbacktext {
-    text-align:right;
-}
-
-.headerhomemain {
-    font-size:x-large;
-    font-weight:bold;
-}
-
 .courseboxinfo {
     font-size:normal;
 }
 
+.courseboxteachers,
+.courseboxcost {
+    font-size:smaller;
+}
+
+.courseboxsummary {
+    font-size:small;
+}
+
+/* forum */
+.forumolddiscuss {
+    text-align:right;
+}
+
+.forumaddnew,
+.forumaddnewminimal,
+.forumnodiscuss,
+.forumnodiscussminimal,
+.forumolddiscussminimal,
+.noticeboxcontent {
+    text-align:center;
+}
+
+.forumnodiscuss,
+.forumnodiscussminimal {
+    font-weight:bold;
+}
+
+.forumpostheadername,
+.forumpostheaderreplies,
+.forumpostheaderdate {
+    font-size:small;
+}
+
+.forumaddnewminimal, 
+.forumnodiscussminimal,
+.forumheadminimal, 
+.foruminfominimal,
+.forumolddiscussminimal {
+    font-size:x-small;
+}
+
+/* message */
+.message_summary_link {
+    font-size:small;
+    text-align:right;
+}
+
+.message_link {
+    font-size:x-small;
+}
+
+.message_form {
+    font-size:0.78em;
+}
+
+.message_heading {
+    font-size:medium;
+    font-weight:bold;
+    text-align:center;
+}
+
+.message_date,
+.message_contact,
+.message_summary {
+    font-size:small;
+}
+
+.message_small_note, 
+.message_pix {
+    font-size:x-small;
+}
+
+/* quiz */
+.feedbacktext {
+    text-align:right;
+}
+
+.editorhelptext {
+    font-size:x-small;
+}
+
+/*****************************
+***
+*** Calendar
+***
+******************************/
 table.calendarmini {
     font-size:85%;
 }
@@ -128,74 +273,6 @@ table.calendarmonth thead td {
     text-align:center;
 }
 
-.rssclientlink {
-    font-size:x-small;
-}
-
-.rssclientdescription {
-    font-size:x-small;
-}
-
-.message_summary_link {
-    font-size:small;
-    text-align:right;
-}
-
-.message_link {
-    font-size:x-small;
-}
-
-.message_form {
-    font-size:0.78em;
-}
-
-.message_heading {
-    font-size:medium;
-    font-weight:bold;
-    text-align:center;
-}
-
-a:link,
-a:visited {
-    text-decoration:none;
-}
-
-.forumaddnew,
-.forumaddnewminimal,
-.forumnodiscuss,
-.forumnodiscussminimal,
-.forumolddiscussminimal,
-.noticeboxcontent {
-    text-align:center;
-}
-
-a.dimmed:link,
-a.dimmed:visited {
-    text-decoration:none;
-}
-
-.categoryname,
-.categorynumber {
-    font-size:larger;
-    font-weight:bold;
-}
-
-.courseboxteachers,
-.courseboxcost {
-    font-size:smaller;
-}
-
-a.autolink:link,
-a.autolink:visited {
-    text-decoration:none;
-}
-
-a.autolink:hover,
-a:hover,
-a.dimmed:hover {
-    text-decoration:underline;
-}
-
 table.calendarmonth tbody td table,
 table.calendarmonth tbody td div {
     font-size:0.75em;
@@ -203,32 +280,20 @@ table.calendarmonth tbody td div {
 }
 
 .calendarreferer,
-.forumnodiscuss,
-.forumnodiscussminimal, 
 .mycalendar .cal_event {
     font-weight:bold;
 }
 
-.message_date,
-.forumpostheadername,
-.forumpostheaderreplies,
-.forumpostheaderdate,
-.courseboxsummary,
-.message_contact,
-.message_summary {
-    font-size:small;
+/*****************************
+***
+*** Blocks
+***
+******************************/
+/* block_rss_client.php */
+.rssclientlink {
+    font-size:x-small;
 }
 
-.message_small_note, 
-.message_pix, 
-.editorhelptext, 
-.forumaddnewminimal, 
-.forumnodiscussminimal,
-.forumheadminimal, 
-.foruminfominimal,
-.forumolddiscussminimal, 
-.logininfo,
-#header-home .headermenu font,
-.homelink {
+.rssclientdescription {
     font-size:x-small;
 }
