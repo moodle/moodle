@@ -18,7 +18,10 @@ $FORUM_POST_RATINGS = array ("3" => get_string("postrating3", "forum"),
                              "2" => get_string("postrating2", "forum"),
                              "1" => get_string("postrating1", "forum") );
 
-$FORUM_LONG_POST = 600;
+$FORUM_SHORT_POST = 300;  // Less than this is "short"
+
+$FORUM_LONG_POST  = 600;  // More than this is "long"
+
 
 
 /// FUNCTIONS ///////////////////////////////////////////////////////////
@@ -232,13 +235,13 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
 }
 
 function forum_shorten_post($message) {
-    global $FORUM_LONG_POST;
+    global $FORUM_LONG_POST, $FORUM_SHORT_POST;
 
     if (strlen($message) > $FORUM_LONG_POST) {
-        // Look for the first return between 100 and $FORUM_LONG_POST
-        $shortmessage = substr($message, 100, $FORUM_LONG_POST);
+        // Look for the first return between $FORUM_SHORT_POST and $FORUM_LONG_POST
+        $shortmessage = substr($message, $FORUM_SHORT_POST, $FORUM_LONG_POST);
         if ($pos = strpos($shortmessage, "\n")) {
-            return substr($message, 0, 100 + $pos);
+            return substr($message, 0, $FORUM_SHORT_POST + $pos);
         } else {
             return substr($message, 0, $FORUM_LONG_POST)."...";
         }
