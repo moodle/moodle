@@ -38,11 +38,11 @@
         if ($course->category) {
             print_header($course->shortname, $course->fullname,
                  "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->
-                  <a href=\"../forum/index.php?id=$course->id\">$strforums</a> -> 
+                  <a href=\"../forum/index.php?id=$course->id\">$strforums</a> ->
                   <a href=\"view.php?f=$forum->id\">$forum->name</a>", '', '', true, "", navmenu($course, $cm));
         } else {
             print_header($course->shortname, $course->fullname,
-                 "<a href=\"../forum/index.php?id=$course->id\">$strforums</a> -> 
+                 "<a href=\"../forum/index.php?id=$course->id\">$strforums</a> ->
                   <a href=\"view.php?f=$forum->id\">$forum->name</a>", '', '', true, "", navmenu($course, $cm));
         }
         notice_yesno(get_string('noguestpost', 'forum').'<br /><br />'.get_string('liketologin'),
@@ -553,7 +553,7 @@
             } else {
                 $user_read_array = array();
             }
-            forum_print_posts_threaded($parent->id, $course, 0, false, false, $user_read_array, $discussion->forum);
+            forum_print_posts_threaded($parent->id, $course->id, 0, false, false, $user_read_array, $discussion->forum);
         }
         print_heading(get_string("yourreply", "forum").':');
     } else {
