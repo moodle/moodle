@@ -3,6 +3,7 @@
 
     require_once("../config.php");
     require_once("../backup/lib.php");
+    require_once("../backup/backup_scheduled.php");
 
     require_login();
 
@@ -57,6 +58,42 @@
         foreach ($config as $name => $value) {
             backup_set_config($name, $value);
         }
+
+        //And now, we execute schedule_backup_next_execution() for each course in the server to have the next
+        //execution time updated automatically everytime it's changed.
+        $status = true;
+        //get admin
+        $admin = get_admin();
+        if (!$admin) {
+            $status = false;
+        }
+        //get backup config
+        if ($status) {
+            if (! $backup_config =  backup_get_config()) {
+                $status = false;
+            }
+            //get courses
+            if ($courses = get_records("course")) {
+                //For each course, we check (insert, update) the backup_course table
+                //with needed data
+                foreach ($courses as $course) {
+                    //We check if the course exists in backup_course
+                    $backup_course = get_record("backup_courses","courseid",$course->id);
+                    //If it doesn't exist, create 
+                    if (!$backup_course) {
+                        $temp_backup_course->courseid = $course->id;
+                        $newid = insert_record("backup_courses",$temp_backup_course);
+                        //And get it from db
+                        $backup_course = get_record("backup_courses","id",$newid);
+                    }
+                    //Now, calculate next execution of the course
+                    $nextstarttime = schedule_backup_next_execution ($backup_course,$backup_config,time(),$admin->timezone);
+                    //Save it to db
+                    set_field("backup_courses","nextstarttime",$nextstarttime,"courseid",$backup_course->courseid);
+                }
+            }
+        }
+
         if (!$error) {
             redirect("$CFG->wwwroot/$CFG->admin/index.php", get_string("changessaved"), 1);
             exit;
