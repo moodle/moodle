@@ -507,7 +507,7 @@ function quiz_print_possible_question_image($quizid, $question) {
 
 function quiz_print_question($number, $question, $grade, $quizid, 
                              $feedback=NULL, $response=NULL, $actualgrade=NULL, $correct=NULL,
-                             $realquestion=NULL, $shuffleanswers=false, $showgrades=true) {
+                             $realquestion=NULL, $shuffleanswers=false, $showgrades=true, $courseid=0) {
 
 /// Prints a quiz question, any format
 /// $question is provided as an object
@@ -515,7 +515,7 @@ function quiz_print_question($number, $question, $grade, $quizid,
 
     if ($question->qtype == DESCRIPTION) {  // Special case question - has no answers etc
         echo '<p align="center">';
-        echo text_to_html($question->questiontext);
+        echo format_text($question->questiontext, FORMAT_HTML, NULL, $courseid);
         quiz_print_possible_question_image($quizid, $question);
         echo '</p>';
         return true;
@@ -563,7 +563,7 @@ function quiz_print_question($number, $question, $grade, $quizid,
 
        case SHORTANSWER: 
        case NUMERICAL:
-           echo text_to_html($question->questiontext);
+           echo format_text($question->questiontext, FORMAT_HTML, NULL, $courseid);
            quiz_print_possible_question_image($quizid, $question);
            if ($response) {
                $value = "value=\"$response[0]\"";
@@ -596,7 +596,7 @@ function quiz_print_question($number, $question, $grade, $quizid,
            if (!$false->answer) {
                $false->answer = get_string("false", "quiz");
            }
-           echo text_to_html($question->questiontext);
+           echo format_text($question->questiontext, FORMAT_HTML, NULL, $courseid);
            quiz_print_possible_question_image($quizid, $question);
 
            $truechecked = "";
@@ -639,7 +639,7 @@ function quiz_print_question($number, $question, $grade, $quizid,
            if (!$answers = get_records_list("quiz_answers", "id", $options->answers)) {
                notify("Error: Missing question answers!");
            }
-           echo text_to_html($question->questiontext);
+           echo format_text($question->questiontext, FORMAT_HTML, NULL, $courseid);
            quiz_print_possible_question_image($quizid, $question);
            echo "<table align=\"right\">";
            echo "<tr><td valign=\"top\">$stranswer:&nbsp;&nbsp;</td><td>";
@@ -692,7 +692,7 @@ function quiz_print_question($number, $question, $grade, $quizid,
                notify("Error: Missing subquestions for this question!");
            }
            if (!empty($question->questiontext)) {
-               echo text_to_html($question->questiontext);
+               echo format_text($question->questiontext, FORMAT_HTML, NULL, $courseid);
            }
            quiz_print_possible_question_image($quizid, $question);
 
@@ -741,7 +741,7 @@ function quiz_print_question($number, $question, $grade, $quizid,
            if (!$options = get_record("quiz_randomsamatch", "question", $question->id)) {
                notify("Error: Missing question options!");
            }
-           echo text_to_html($question->questiontext);
+           echo format_text($question->questiontext, FORMAT_HTML, NULL, $courseid);
            quiz_print_possible_question_image($quizid, $question);
 
            /// First, get all the questions available
@@ -826,7 +826,7 @@ function quiz_print_question($number, $question, $grade, $quizid,
            // For this question type, we better print the image on top:
            quiz_print_possible_question_image($quizid, $question);
 
-            $qtextremaining = text_to_html($question->questiontext);
+            $qtextremaining = format_text($question->questiontext, FORMAT_HTML, NULL, $courseid);
             // The regex will recognize text snippets of type {#X} where the X can be any text not containg } or white-space characters.
             while (ereg('\{#([^[:space:]}]*)}', $qtextremaining, $regs)) {
 
@@ -1041,7 +1041,7 @@ function quiz_print_quiz_questions($quiz, $results=NULL, $questions=NULL, $shuff
         print_simple_box_start("center", "90%");
         quiz_print_question($count, $question, $grades[$question->id]->grade, $quiz->id, 
                             $feedback, $response, $actualgrades, $correct, 
-                            $randomquestion, $quiz->shuffleanswers, $quiz->grade);
+                            $randomquestion, $quiz->shuffleanswers, $quiz->grade, $quiz->course);
         print_simple_box_end();
         echo "<br />";
     }
