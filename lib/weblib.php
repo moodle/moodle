@@ -441,6 +441,10 @@ function popup_form ($common, $options, $formname, $selected="", $nothing="choos
 //
 
     global $CFG;
+    
+    if (empty($options)) {
+        return '';
+    }
 
     if ($nothing == "choose") {
         $nothing = get_string("choose")."...";
@@ -1817,6 +1821,7 @@ function navmenu($course, $cm=NULL, $targetwindow="self") {
     $selectmod = NULL;
     $logslink = NULL;
     $flag = false;
+    $menu = array();
 
     $sectionrecs = get_records("course_sections","course","$course->id","section","section,visible");
 
