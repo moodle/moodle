@@ -105,8 +105,14 @@ function me() {
         }
         return $_SERVER["SCRIPT_NAME"];
 
+    } else if (!empty($_SERVER["URL"])) {     // May help IIS (not well tested)
+        if (!empty($_SERVER["QUERY_STRING"])) {
+            return $_SERVER["URL"]."?".$_SERVER["QUERY_STRING"];
+        }
+        return $_SERVER["URL"];
+
     } else {
-        notify("Warning: Could not find any of these web server variables: \$REQUEST_URI, \$PHP_SELF or \$SCRIPT_NAME");
+        notify("Warning: Could not find any of these web server variables: \$REQUEST_URI, \$PHP_SELF, \$SCRIPT_NAME or \$URL");
         return false;
     }
 }
