@@ -92,7 +92,7 @@
 			}
 		}
         $pane = $_GET['pane'];
-		notice_yesno(get_string("confirmclosure", "dialogue", "$user->firstname $user->lastname"), 
+		notice_yesno(get_string("confirmclosure", "dialogue", fullname($user)), 
 			 "dialogues.php?action=closeconversation&id=$cm->id&cid=$conversation->id&pane=$pane", 
 			 "view.php?id=$cm->id&pane=$pane");
 	}
@@ -209,8 +209,7 @@
             if (!$user =  get_record("user", "id", $conversation->recipientid)) {
 				error("Open dialogue: user record not found");
             }
-			redirect("view.php?id=$cm->id", get_string("dialogueopened", "dialogue", 
-                "$user->firstname $user->lastname"));
+			redirect("view.php?id=$cm->id", get_string("dialogueopened", "dialogue", fullname($user) ));
 		}
 	}
 	
