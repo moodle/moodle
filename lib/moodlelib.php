@@ -766,6 +766,9 @@ function isteacher($courseid=0, $userid=0, $includeadmin=true) {
 
     if (!$userid) {
         if ($courseid) {
+            if (empty($USER->id) or empty($USER->teacher)) {
+                return false;
+            }
             return !empty($USER->teacher[$courseid]);
         }
         if (!isset($USER->id)) {
