@@ -38,18 +38,16 @@
         global $CFG;
         global $db;
 
-$db->debug=true;
-
         $count_users = 0;
         
-        //Select all users from user
-        $users = get_records ("user");
+        //Select all users from user (only id)
+        //If there are a lot of users and we retrieve all the info->memory shortage !!
+        $users = get_records ("user","","","","id,id");
         //If we have users
         if ($users) {
             //Iterate over users putting their roles
             foreach ($users as $user) {
-echo $user->id."<br>";
-                   $user->info = "";
+                $user->info = "";
                 //Is Admin in tables (not is_admin()) !!
                 if (record_exists("user_admins","userid",$user->id)) {
                     $user->info .= "admin";
@@ -97,7 +95,6 @@ echo $user->id."<br>";
         $info[0][0] = get_string("users");
         $info[0][1] = $count_users;
 
-$db->debug=false;
         return $info;
     }
 
