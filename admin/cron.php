@@ -17,11 +17,11 @@
 
     require_once("../config.php");
 
-    echo "<PRE>\n";
+    echo "<pre>\n";
 
     $timenow  = time();
 
-///  Run all cron jobs for each module
+/// Run all cron jobs for each module
 
     if ($mods = get_records_select("modules", "cron > 0 AND (($timenow - lastcron) > cron)")) {
         foreach ($mods as $mod) {
@@ -40,44 +40,58 @@
         }
     }
 
+/// Run all core cron jobs, but not every time since they aren't too important.
+/// These don't have a timer to reduce load, so we'll use a random number 
+/// to randomly choose the percentage of times we should run these jobs.
 
-/// Unenrol users who haven't logged in for $CFG->longtimenosee
+    srand ((double) microtime() * 10000000);
+    $random100 = rand(0,100);
 
-    if ($CFG->longtimenosee) { // value in days
-        $longtime = $timenow - ($CFG->longtimenosee * 3600 * 24);
-        if ($users = get_users_longtimenosee($longtime)) {
-            foreach ($users as $user) {
-                if (unenrol_student($user->id)) {
-                    echo "Deleted student enrolment for $user->firstname $user->lastname ($user->id)\n";
+    if ($random100 < 20) {     // Approximately 20% of the time.
+
+        /// Unenrol users who haven't logged in for $CFG->longtimenosee
+
+        if ($CFG->longtimenosee) { // value in days
+            $longtime = $timenow - ($CFG->longtimenosee * 3600 * 24);
+            if ($users = get_users_longtimenosee($longtime)) {
+                foreach ($users as $user) {
+                    if (unenrol_student($user->id)) {
+                        echo "Deleted student enrolment for $user->firstname $user->lastname ($user->id)\n";
+                    }
                 }
             }
         }
-    }
-
-
-/// Delete users who haven't confirmed within seven days
-
-    $oneweek = $timenow - (7 * 24 * 3600);
-    if ($users = get_users_unconfirmed($oneweek)) {
-        foreach ($users as $user) {
-            if (delete_records("user", "id", $user->id)) {
-                echo "Deleted unconfirmed user for $user->firstname $user->lastname ($user->id)\n";
+    
+    
+        /// Delete users who haven't confirmed within seven days
+    
+        $oneweek = $timenow - (7 * 24 * 3600);
+        if ($users = get_users_unconfirmed($oneweek)) {
+            foreach ($users as $user) {
+                if (delete_records("user", "id", $user->id)) {
+                    echo "Deleted unconfirmed user for $user->firstname $user->lastname ($user->id)\n";
+                }
             }
         }
-    }
-
-
-/// Delete old queued mail that didn't get sent within 30 minutes
-
-    $oldmailtime = $timenow - 1800;
-    delete_records_select("mail_queue", "timecreated < '$oldmailtime'");
-
-
-/// Delete old logs to save space (this might need a timer to slow it down...)
-
-    if (!empty($CFG->loglifetime)) {  // value in days
-        $loglifetime = $timenow - ($CFG->loglifetime * 3600 * 24);
-        delete_records_select("log", "time < '$loglifetime'");
+    
+    
+        /// Delete duplicate enrolments (don't know what causes these yet - expired sessions?)
+    
+        if ($users = get_records_select("user_students", "userid > 0 GROUP BY course, userid ".
+                                        "HAVING count(*) > 1", "", "*,count(*)")) {
+            foreach ($users as $user) {
+               delete_records_select("user_students", "userid = '$user->userid' ".
+                                     "AND course = '$user->course' AND id <> '$user->id'");
+            }
+        }
+    
+    
+        /// Delete old logs to save space (this might need a timer to slow it down...)
+    
+        if (!empty($CFG->loglifetime)) {  // value in days
+            $loglifetime = $timenow - ($CFG->loglifetime * 3600 * 24);
+            delete_records_select("log", "time < '$loglifetime'");
+        }
     }
 
     echo "Cron script completed correctly\n";
