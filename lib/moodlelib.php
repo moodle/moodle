@@ -234,7 +234,7 @@ function userdate($date, $format="", $timezone=99, $fixday = true) {
 /// If parammeter fixday = true (default), then take off leading 
 /// zero from %d, else mantain it.
 
-    global $USER;
+    global $USER, $CFG;
 
     if ($format == "") {
         $format = get_string("strftimedaydatetime");
@@ -245,11 +245,14 @@ function userdate($date, $format="", $timezone=99, $fixday = true) {
         $fixday = ($formatnoday != $format);
     }
 
-    if ($timezone == 99) {
-        if (isset($USER->timezone)) {
+    if ($timezone == 99) {                    // Work out the best timezone to use
+        if (isset($USER->timezone)) {         // A user is logged in
             $timezone = (float)$USER->timezone;
+        } else if (isset($CFG->timezone)) {   // Use site's default timezone
+            $timezone = (float)$CFG->timezone;
         }
     }
+
     if (abs($timezone) > 13) {
         if ($fixday) {
             $datestring = strftime($formatnoday, $date);
