@@ -5,9 +5,12 @@
 	require_once("../config.php");
 	require_once("lib.php");
 
-
     if (!$site = get_site()) {
         error("Site isn't defined!");
+    }
+
+    if ($CFG->forcelogin) {
+        require_login();
     }
 
     if (isadmin()) {
