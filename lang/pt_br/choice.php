@@ -19,14 +19,14 @@ $string['publish'] = 'Publicar resultados';
 $string['publishafteranswer'] = 'Mostrar os resultados ao estudante só depois que ele tiver dado a sua resposta';
 $string['publishafterclose'] = 'Mostrar resultados aos estudantes apenas após o fechamento da pesquisa de opinião';
 $string['publishalways'] = 'Mostrar sempre os resultados aos estudantes';
-$string['publishanonymous'] = 'Publique resultados em forma anónima, sem mostrar o nome do aluno';
+$string['publishanonymous'] = 'Publique resultados em forma anônima, sem mostrar o nome do aluno';
 $string['publishnames'] = 'Publique resultados completos, mostrando os nomes dos alunos e os resultados';
 $string['publishnot'] = 'Não mostrar os resultados aos alunos';
 $string['responses'] = 'Respostas';
 $string['responsesto'] = 'Respostas a $a';
 $string['savemychoice'] = 'Gravar a minha resposta';
 $string['showunanswered'] = 'Mostrar coluna \"sem respostas\"';
-$string['timerestrict'] = 'Limitar a possibilidade de resposta a este período';
+$string['timerestrict'] = 'Aceitar respostas apenas neste período';
 $string['viewallresponses'] = 'Ver $a respostas';
 
 ?>
