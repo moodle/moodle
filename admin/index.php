@@ -61,7 +61,7 @@
                 print_header("Setting up database", "Setting up database", "Setting up module tables", "");
             }
             $updated_modules = true;
-            if (modify_database("$fullmod/install.sql")) {
+            if (modify_database("$fullmod/db/$CFG->dbtype.sql")) {
                 if ($module->id = insert_record("modules", $module)) {
                     notify("$module->name tables have been set up correctly");
                 } else {
