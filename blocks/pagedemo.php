@@ -148,8 +148,6 @@
             // but I'm not sure if it's worth the complexity increase...
             $pageblocks = blocks_get_by_page($PAGE);
         }
-
-        $missingblocks = blocks_get_missing($PAGE, $pageblocks);
     }
     
     // The actual display logic is here
@@ -177,8 +175,8 @@
     if(blocks_have_content($pageblocks[BLOCK_POS_RIGHT]) || $editing) {
         echo '<td style="vertical-align: top; width: '.$preferred_width_right.'px;">';
         blocks_print_group($PAGE, $pageblocks[BLOCK_POS_RIGHT]);
-        if ($editing && !empty($missingblocks)) {
-            blocks_print_adminblock($PAGE, $missingblocks);
+        if ($editing) {
+            blocks_print_adminblock($PAGE, $pageblocks);
         }
         echo '</td>';
     }
