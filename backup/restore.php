@@ -40,7 +40,7 @@
     
     //Check backup_version
     if ($file) {
-        $linkto = "restore.php?id=".$id."&file=".$file;
+        $linkto = "restore.php?id=".$id."&amp;file=".$file;
     } else {
         $linkto = "restore.php";
     }

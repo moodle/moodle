@@ -32,7 +32,7 @@ function Init() {
       document.getElementById("f_horiz").value = param["f_horiz"] != -1 ? param["f_horiz"] : 0;
       document.getElementById("f_width").value = param["f_width"];
       document.getElementById("f_height").value = param["f_height"];
-      window.ipreview.location.replace('preview.php?id='+ <?php print($course->id);?> +'&imageurl='+ param.f_url);
+      window.ipreview.location.replace('preview.php?id='+ <?php print($course->id);?> +'&amp;imageurl='+ param.f_url);
   }
   document.getElementById("f_url").focus();
 };
@@ -206,7 +206,7 @@ form { margin-bottom: 0px; margin-top: 0px; }
                 <option value="left"                   ><?php print_string("left","editor") ?></option>
                 <option value="right"                  ><?php print_string("right","editor") ?></option>
                 <option value="texttop"                ><?php print_string("texttop","editor") ?></option>
-                <option value="absmiddle"              ><?php print_string("absmiddle","editor") ?></option>
+                <option value="middle"              ><?php print_string("middle","editor") ?></option>
                 <option value="baseline" selected="1"  ><?php print_string("baseline","editor") ?></option>
                 <option value="absbottom"              ><?php print_string("absbottom","editor") ?></option>
                 <option value="bottom"                 ><?php print_string("bottom","editor") ?></option>
@@ -265,7 +265,7 @@ form { margin-bottom: 0px; margin-top: 0px; }
           print "";
       }?><br />
       <?php print(isteacher($id))?
-	  "<iframe id=\"ibrowser\" name=\"ibrowser\" src=\"".$CFG->wwwroot."/lib/editor/coursefiles.php?usecheckboxes=true&id=".$course->id."\" style=\"width: 100%; height: 200px;\"></iframe>":
+	  "<iframe id=\"ibrowser\" name=\"ibrowser\" src=\"".$CFG->wwwroot."/lib/editor/coursefiles.php?usecheckboxes=true&amp;id=".$course->id."\" style=\"width: 100%; height: 200px;\"></iframe>":
 	  "";?>
       </td>
       <td width="45%" valign="top"><?php print_string("preview","editor");?>:<br />

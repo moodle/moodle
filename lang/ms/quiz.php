@@ -86,11 +86,11 @@ $string['filloutoneanswer'] = 'Anda harus mengisi sekurang-kurangnya satu kemung
 $string['filloutthreequestions'] = 'Anda harus mengisi sekurang-kurangnya tiga soalan. Soalan yang dikosongkan tidak akan digunakan.';
 $string['fillouttwochoices'] = 'Anda harus mengisi sekurang-kurangnya tiga pilihan. Pilihan yang dikosongkan tidak akan digunakan.';
 $string['fractionsaddwrong'] = 'Gred positif yang anda pilih tidak menghasilkan jumlah 100%%
-<BR>Tetapi menghasilkan jumlah $a%%
-<BR>Adakah anda ingin kembali untuk memperbaiki soalan ini?';
+<br />Tetapi menghasilkan jumlah $a%%
+<br />Adakah anda ingin kembali untuk memperbaiki soalan ini?';
 $string['fractionsnomax'] = 'Salah satu dari jawapan harus bernilai 100%%, supaya
-<BR>berkemungkinan untuk memperoleh gred penuh untuk soalan ini.
-<BR>Adakah anda ingin kembali untuk memperbaiki soalan ini?';
+<br />berkemungkinan untuk memperoleh gred penuh untuk soalan ini.
+<br />Adakah anda ingin kembali untuk memperbaiki soalan ini?';
 $string['gift'] = 'Format GIFT';
 $string['gradeaverage'] = 'Gred sederhana';
 $string['gradehighest'] = 'Gred tertinggi';
@@ -127,7 +127,7 @@ $string['noreview'] = 'Anda tidak dibenarkan melihat kuiz ini';
 $string['noreviewuntil'] = 'Anda tidak dibenarkan melihat kuiz ini hingga $a';
 $string['noscript'] = 'JavaScript perlu diaktifkan terlebih dahulu!';
 $string['notenoughanswers'] = 'Soalan jenis ini memerlukan sekurang-kurangnya $a jawapan';
-$string['notenoughsubquestions'] = 'Sub-Soalan tidak mencukupi untuk ditentukan!<br> Adakah anda ingin kembali dan mengubahsuai soalan ini?';
+$string['notenoughsubquestions'] = 'Sub-Soalan tidak mencukupi untuk ditentukan!<br /> Adakah anda ingin kembali dan mengubahsuai soalan ini?';
 $string['numerical'] = 'Nombor';
 $string['paragraphquestion'] = 'Soalan Perenggan tidak dibenarkan pada barisan $a. Soalan tersebut akan diabaikan';
 $string['percentcorrect'] = 'Peratusan Betul';

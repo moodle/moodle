@@ -86,11 +86,11 @@ $string['filloutoneanswer'] = 'Vähemalt üks vastuse variant peab olema antud. Tü
 $string['filloutthreequestions'] = 'Peate vastama vähemalt kolmele küsimusele Tühjaks jäetud lünki ei võeta arvesse.';
 $string['fillouttwochoices'] = 'Vähemalt kaks valikuvarianti peab olems antud. Tühjad lüngad ei lähe arvesse.';
 $string['fractionsaddwrong'] = 'Teie poolt valitud positiivsete hinnete summa ei ulatu 100%%
-<BR>See ulatub aga $a%%
-<BR>Kas soovite minna tagasi ja parandada küsimust?';
+<br />See ulatub aga $a%%
+<br />Kas soovite minna tagasi ja parandada küsimust?';
 $string['fractionsnomax'] = 'Üks vastustest peaks olema 100%%, nii et oleks 
-<BR>võimalik saada selle küsimuse eest täishinne.
-<BR>Kas soovite minna tagasi ja parandada küsimust?';
+<br />võimalik saada selle küsimuse eest täishinne.
+<br />Kas soovite minna tagasi ja parandada küsimust?';
 $string['gift'] = 'KINKE formaat';
 $string['gradeaverage'] = 'Keskmine hinne';
 $string['gradehighest'] = 'Kõrgeim hinne';
@@ -127,7 +127,7 @@ $string['noreview'] = 'Teil pole lubatud seda küsimustikku vaadata';
 $string['noreviewuntil'] = 'Teil pole lubatud seda küsimustikku vaadata enne $a';
 $string['noscript'] = 'Jätkamiseks peab JavaScript olema lubatud!';
 $string['notenoughanswers'] = 'Seda tüüpi küsimus vajab vähemalt $a vastust';
-$string['notenoughsubquestions'] = 'Alaküsimusi pole piisavalt defineeritud!<br>
+$string['notenoughsubquestions'] = 'Alaküsimusi pole piisavalt defineeritud!<br />
 Kas soovite tagasi minna ja küsimusele uuesti vastata?';
 $string['numerical'] = 'Numbriline';
 $string['paragraphquestion'] = 'Lõigu küsimus real $a ei ole toetatud. Seda küsimust  ignoreeritakse ';

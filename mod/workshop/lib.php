@@ -1105,7 +1105,7 @@ function workshop_print_recent_mod_activity($activity, $course, $detail=false) {
 
     if ($detail) {
         echo "<img src=\"$CFG->modpixpath/$activity->type/icon.gif\" ".
-            "height=16 width=\"16\" alt=\"$activity->name\" />  ";
+            "height=\"16\" width=\"16\" alt=\"$activity->name\" />  ";
     }
     echo "<a href=\"$CFG->wwwroot/mod/workshop/view.php?" 
         . "#" . $activity->content->id . "\">".$activity->content->title;
@@ -1113,7 +1113,7 @@ function workshop_print_recent_mod_activity($activity, $course, $detail=false) {
     echo "</a>$closeformat";
 
     echo "<br /><font size=\"2\">";
-    echo "<a href=\"$CFG->wwwroot/user/view.php?id=" . $activity->user->userid . "&course=" . "$course\">"
+    echo "<a href=\"$CFG->wwwroot/user/view.php?id=" . $activity->user->userid . "&amp;course=" . "$course\">"
         . $activity->user->fullname . "</a>";
     echo " - " . userdate($activity->timestamp) . "</font></td></tr>";
     echo "</table>";

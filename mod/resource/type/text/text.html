@@ -73,7 +73,7 @@
 <tr valign="top">
 
     <td colspan="2">
-        <script>
+        <script type="text/javascript">
             var popupitems = [<?php echo $popupoptions; ?>];
             var allitems = [<?php echo $alloptions; ?>];
         </script>
@@ -113,7 +113,7 @@
         <?php p($strheight) ?><br />
         <?php
             if ($windowtype == "page") {
-                echo "<script>";
+                echo "<script type=\"text/javascript\">";
                 echo "lockoptions('form','windowpopup[1]', popupitems);";
                 echo "</script>";
             }

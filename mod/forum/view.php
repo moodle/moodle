@@ -124,7 +124,7 @@
             helpbutton("subscription", $streveryoneissubscribed, "forum");
             echo "<font size=\"1\">";
             if (isteacher($course->id)) {
-                echo "<a title=\"$strallowchoice\" href=\"subscribe.php?id=$forum->id&force=no\">$streveryoneissubscribed</a>";
+                echo "<a title=\"$strallowchoice\" href=\"subscribe.php?id=$forum->id&amp;force=no\">$streveryoneissubscribed</a>";
             } else {
                 echo $streveryoneissubscribed;
             }
@@ -139,7 +139,7 @@
             echo "<font size=\"1\">";
 
             if (isteacher($course->id)) {
-                echo "<a title=\"$strforcesubscribe\" href=\"subscribe.php?id=$forum->id&force=yes\">$streveryonecanchoose</a>";
+                echo "<a title=\"$strforcesubscribe\" href=\"subscribe.php?id=$forum->id&amp;force=yes\">$streveryonecanchoose</a>";
                 echo "</font><br /><font size=\"1\">";
                 echo "<a href=\"subscribers.php?id=$forum->id\">$strshowsubscribers</a>";
             } else {

@@ -107,7 +107,7 @@
         
         add_to_log($course->id, "exercise", "late flag cleared", "view.php?id=$cm->id", "submission $submission->id");
         
-        redirect("submissions.php?id=$cm->id&action=adminlist");
+        redirect("submissions.php?id=$cm->id&amp;action=adminlist");
     }
     
 
@@ -134,7 +134,7 @@
             }
         }
         notice_yesno(get_string("confirmdeletionofthisitem","exercise", get_string("submission", "exercise")), 
-             "submissions.php?action=admindelete&id=$cm->id&sid=$_GET[sid]", "submissions.php?id=$cm->id&action=adminlist");
+             "submissions.php?action=admindelete&amp;id=$cm->id&amp;sid=$_GET[sid]", "submissions.php?id=$cm->id&amp;action=adminlist");
         }
     
 
@@ -168,7 +168,7 @@
         exercise_delete_submitted_files($exercise, $submission);
         add_to_log($course->id, "exercise", "delete", "view.php?id=$cm->id", "submission $submission->id");
         
-        print_continue("submissions.php?id=$cm->id&action=adminlist");
+        print_continue("submissions.php?id=$cm->id&amp;action=adminlist");
         }
     
 
@@ -186,8 +186,8 @@
             }
 
         notice_yesno(get_string("clearlateflag","exercise")."?", 
-             "submissions.php?action=adminclearlate&id=$cm->id&sid=$_GET[sid]", 
-             "submissions.php?id=$cm->id&action=adminlist");
+             "submissions.php?action=adminclearlate&amp;id=$cm->id&amp;sid=$_GET[sid]", 
+             "submissions.php?id=$cm->id&amp;action=adminlist");
         }
     
 
@@ -218,7 +218,7 @@
         if (set_field("exercise_submissions", "title", $_POST['title'], "id", $_POST['sid'])) {
             print_heading(get_string("amendtitle", "exercise")." ".get_string("ok"));
             }
-        redirect("submissions.php?id=$cm->id&action=adminlist");
+        redirect("submissions.php?id=$cm->id&amp;action=adminlist");
         }
     
 
@@ -346,7 +346,7 @@
         // ...and save the anonimity setting 
         set_field("exercise", "anonymous", $form->anonymous, "id", "$exercise->id");
     
-        redirect("submissions.php?id=$cm->id&action=adminlist", get_string("entriessaved", "exercise"));
+        redirect("submissions.php?id=$cm->id&amp;action=adminlist", get_string("entriessaved", "exercise"));
         }
                 
         /*************** save weights (by teacher) ***************************/
@@ -371,7 +371,7 @@
             set_field("exercise", "gradingweight", $gradingweight, "id", "$exercise->id");
             }
     
-        redirect("submissions.php?id=$cm->id&action=adminlist", get_string("weightssaved", "exercise"));
+        redirect("submissions.php?id=$cm->id&amp;action=adminlist", get_string("weightssaved", "exercise"));
         }
                 
     
@@ -383,7 +383,7 @@
             }
             
         notice_yesno(get_string("confirmdeletionofthisitem","exercise", get_string("submission", "exercise")), 
-             "submissions.php?action=userdelete&id=$cm->id&sid=$_GET[sid]", "view.php?id=$cm->id");
+             "submissions.php?action=userdelete&amp;id=$cm->id&amp;sid=$_GET[sid]", "view.php?id=$cm->id");
         }
     
 

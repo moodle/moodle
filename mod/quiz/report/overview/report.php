@@ -69,7 +69,7 @@ class quiz_report extends quiz_default_report {
 
     /// Check to see if groups are being used in this quiz
         if ($groupmode = groupmode($course, $cm)) {   // Groups are being used
-            $currentgroup = setup_and_print_groups($course, $groupmode, "report.php?id=$cm->id&mode=overview");
+            $currentgroup = setup_and_print_groups($course, $groupmode, "report.php?id=$cm->id&amp;mode=overview");
         } else {
             $currentgroup = false;
         }
@@ -101,7 +101,7 @@ class quiz_report extends quiz_default_report {
             }
 
             $table->data[] = array ($picture, 
-                                    "<a href=\"$CFG->wwwroot/user/view.php?id=$grade->userid&course=$course->id\">".
+                                    "<a href=\"$CFG->wwwroot/user/view.php?id=$grade->userid&amp;course=$course->id\">".
                                     fullname($grade).'</a>', 
                                     "$userattempts", format_float($grade->grade));
         }
@@ -146,7 +146,7 @@ class quiz_report extends quiz_default_report {
                 $attemptlapse = "...";
             }
             $button = "<input type=\"checkbox\" name=\"box$attempt->id\" value=\"$attempt->id\" />";
-            $revurl = "review.php?q=$quiz->id&attempt=$attempt->id";
+            $revurl = "review.php?q=$quiz->id&amp;attempt=$attempt->id";
             if ($attemptgrade == $bestgrade) {
                 $userattempts[] = "$button&nbsp;<span class=\"highlight\">$attemptgrade</span>&nbsp;<a href=\"$revurl\">$attemptdate</a>&nbsp;($attemptlapse)";
             } else {

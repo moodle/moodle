@@ -4,7 +4,7 @@
 
 $string['about'] = 'Tietoja editorista';
 $string['absbottom'] = 'Absbottom';
-$string['absmiddle'] = 'Absmiddle';
+$string['middle'] = 'middle';
 $string['address'] = 'Osoite';
 $string['alignment'] = 'Tasaus';
 $string['alternatetext'] = 'Oletusteksti';

@@ -133,7 +133,7 @@ function print_entry($course) {
 
             print_header($strloginto, $course->fullname, "<a href=\".\">$strcourses</a> -> $strloginto");
             echo "<br />";
-            notice_yesno(get_string("enrolmentconfirmation"), "enrol.php?id=$course->id&confirm=1", $CFG->wwwroot);
+            notice_yesno(get_string("enrolmentconfirmation"), "enrol.php?id=$course->id&amp;confirm=1", $CFG->wwwroot);
             print_footer();
             exit;
 
@@ -214,7 +214,7 @@ function check_entry($form, $course) {
             
             $subject = get_string("welcometocourse", "", $course->fullname);
             $a->coursename = $course->fullname;
-            $a->profileurl = "$CFG->wwwroot/user/view.php?id=$USER->id&course=$course->id";
+            $a->profileurl = "$CFG->wwwroot/user/view.php?id=$USER->id&amp;course=$course->id";
             $message = get_string("welcometocoursetext", "", $a);
             
             if (! $teacher = get_teacher($course->id)) {

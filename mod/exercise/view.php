@@ -57,7 +57,7 @@
                 $action = "teachersview";
             }
             else {
-                redirect("assessments.php?action=editelements&id=$cm->id");
+                redirect("assessments.php?action=editelements&amp;id=$cm->id");
             }
         }
     }
@@ -209,7 +209,7 @@
                     foreach ($assessments as $assessment) {
                         $table->data[] = array(exercise_print_submission_title($exercise, $submission), 
                                 userdate($submission->timecreated), userdate($assessment->timecreated), 
-                                "<a href=\"assessments.php?action=viewassessment&id=$cm->id&aid=$assessment->id\">".$assessment->grade * $exercise->grade / 100.0."</a>");
+                                "<a href=\"assessments.php?action=viewassessment&amp;id=$cm->id&amp;aid=$assessment->id\">".$assessment->grade * $exercise->grade / 100.0."</a>");
                     }
                 } else {
                     // submission not yet assessed (by teacher)
@@ -352,9 +352,9 @@
         $tabs->names = array("1. ".get_string("phase1", "exercise"), 
             "2. ".get_string("phase2", "exercise", $course->student), 
             "3. ".get_string("phase3", "exercise", $course->student)); 
-        $tabs->urls = array("view.php?id=$cm->id&action=setupassignment", 
-            "view.php?id=$cm->id&action=openexercise",
-            "view.php?id=$cm->id&action=makeleaguetableavailable");
+        $tabs->urls = array("view.php?id=$cm->id&amp;action=setupassignment", 
+            "view.php?id=$cm->id&amp;action=openexercise",
+            "view.php?id=$cm->id&amp;action=makeleaguetableavailable");
         if ($exercise->phase) { // phase 1 or more
             $tabs->highlight = $exercise->phase - 1;
             } else {
@@ -367,10 +367,10 @@
                 case 0:
                 case 1: // set up assignment
                     if (isteacheredit($course->id)) {
-                        echo "<p><b><a href=\"assessments.php?id=$cm->id&action=editelements\">".
+                        echo "<p><b><a href=\"assessments.php?id=$cm->id&amp;action=editelements\">".
                             get_string("amendassessmentelements", "exercise")."</a></b> \n";
                         helpbutton("elements", get_string("amendassessmentelements", "exercise"), "exercise");
-                        echo "<p><b><a href=\"view.php?id=$cm->id&action=submitassignment\">".
+                        echo "<p><b><a href=\"view.php?id=$cm->id&amp;action=submitassignment\">".
                             get_string("submitexercisedescription", "exercise")."</a></b> \n";
                         helpbutton("submissionofdescriptions", get_string("submitexercisedescription", "exercise"), "exercise");
                     }
@@ -379,7 +379,7 @@
                 case 2: // submissions and assessments
                     // just show student submissions link, the (self) assessments are show above the assessment form for 
                     // the submissions
-                    echo "<p><b><a href=\"submissions.php?id=$cm->id&action=listforassessmentstudent\">".
+                    echo "<p><b><a href=\"submissions.php?id=$cm->id&amp;action=listforassessmentstudent\">".
                           get_string("studentsubmissionsforassessment", "exercise", 
                           exercise_count_unassessed_student_submissions($exercise))."</a></b> \n";
                     helpbutton("grading", get_string("studentsubmissionsforassessment", "exercise"), 
@@ -387,15 +387,15 @@
                     break;
                     
                 case 3: // show final grades
-                    echo "<p><b><a href=\"submissions.php?id=$cm->id&action=listforassessmentstudent\">".
+                    echo "<p><b><a href=\"submissions.php?id=$cm->id&amp;action=listforassessmentstudent\">".
                           get_string("studentsubmissionsforassessment", "exercise", 
                           exercise_count_unassessed_student_submissions($exercise))."</a></b> \n";
                     helpbutton("grading", get_string("studentsubmissionsforassessment", "exercise"), 
                             "exercise");
-                    print_heading("<a href=\"submissions.php?id=$cm->id&action=displayfinalgrades\">".
+                    print_heading("<a href=\"submissions.php?id=$cm->id&amp;action=displayfinalgrades\">".
                           get_string("displayoffinalgrades", "exercise")."</a>");
         }
-        print_heading("<a href=\"submissions.php?id=$cm->id&action=adminlist\">".
+        print_heading("<a href=\"submissions.php?id=$cm->id&amp;action=adminlist\">".
             get_string("administration")."</a>");
     }
     

@@ -112,11 +112,11 @@ $string['noassessmentsdone'] = 'Hinnanguid pole antud';
 $string['nosubmission'] = 'Pole esitust';
 $string['nosubmissionsavailableforassessment'] = 'Ühtegi tööd pole hindamiseks esitatud';
 $string['notavailable'] = 'Pole saadaval';
-$string['noteonassessmentelements'] = 'Pane tähele: hinnang on lahutatud hulgaks \"hindamiselementideks\".<BR>
-	See lihtsustab hindamist ja on loogilisem. Õpetaja peab need lisama<BR>
-	Elemendid on enne ülesande andmist õpilastele saadaval. Seda saab teha<BR>
-	Klikkides kursuse ülesandele, kui elemente pole näidatud, siis teil palutakse<BR>
-	need lisada. Võite muuta elementide arvu, kasutades menüüs Redigeeri Assigneeringuid,<BR>
+$string['noteonassessmentelements'] = 'Pane tähele: hinnang on lahutatud hulgaks \"hindamiselementideks\".<br />
+	See lihtsustab hindamist ja on loogilisem. Õpetaja peab need lisama<br />
+	Elemendid on enne ülesande andmist õpilastele saadaval. Seda saab teha<br />
+	Klikkides kursuse ülesandele, kui elemente pole näidatud, siis teil palutakse<br />
+	need lisada. Võite muuta elementide arvu, kasutades menüüs Redigeeri Assigneeringuid,<br />
 	elemente saab muuta &quot;Managing Assessment&quot; ekraanil. ';
 $string['notgraded'] = 'Hindamata';
 $string['notitlegiven'] = 'Pealkiri';
@@ -218,7 +218,7 @@ $string['verypoor'] = 'Väga halb';
 $string['view'] = 'Vaata';
 $string['viewassessmentofteacher'] = 'Vaata õpetaja…hinnet $a';
 $string['viewotherassessments'] = 'Vaata teisi hindeid';
-$string['warningonamendingelements'] = 'HOIATUS: on saadetud hinnaguid. <BR>Ära muuda elementide arvu, skaala tüüpe ega elementide kaalukust';
+$string['warningonamendingelements'] = 'HOIATUS: on saadetud hinnaguid. <br />Ära muuda elementide arvu, skaala tüüpe ega elementide kaalukust';
 $string['weight'] = 'Kaalukus';
 $string['weightederrorcount'] = 'Vealoenduse kaalukus: $a';
 $string['weightforbias'] = 'Kõrvalekande kaalukus';

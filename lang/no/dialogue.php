@@ -13,9 +13,9 @@ $string['confirmclosure'] = 'Du holder på å avslutte en dialog med $a. Avslutted
 $string['deleteafter'] = 'Slett avsluttede dialoger etter (antall dager)';
 $string['dialogueclosed'] = 'Dialogen er avsluttet';
 $string['dialogueintro'] = 'Introduksjon til dialog';
-$string['dialoguemail'] = '$a->userfrom har skrevet et nytt innlegg i din dialog \'$a->dialogue\'<br><br>
+$string['dialoguemail'] = '$a->userfrom har skrevet et nytt innlegg i din dialog \'$a->dialogue\'<br /><br />
 
-Du kan lese det i dialogen din:<br><br>
+Du kan lese det i dialogen din:<br /><br />
 
 $a->url';
 $string['dialoguemailhtml'] = '$a->userfrom har skrevet et nytt innlegg i din dialog \'<i>$a->dialogue</i>\'<br /><br />

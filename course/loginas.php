@@ -40,7 +40,7 @@
         error("Only teachers can use this page!");
     }
 
-    check_for_restricted_user($USER->username, "$CFG->wwwroot/user/view.php?id=$user&course=$course->id");
+    check_for_restricted_user($USER->username, "$CFG->wwwroot/user/view.php?id=$user&amp;course=$course->id");
 
     if ($course->category and !isstudent($course->id, $user) and !isadmin()) {
         error("This student is not in this course!");
@@ -74,7 +74,7 @@
     set_moodle_cookie($USER->username);
     $student_name = fullname($USER, true);
 
-    add_to_log($course->id, "course", "loginas", "../user/view.php?id=$course->id&user=$user", "$teacher_name -> $student_name");
+    add_to_log($course->id, "course", "loginas", "../user/view.php?id=$course->id&amp;user=$user", "$teacher_name -> $student_name");
 
 
     $strloginas    = get_string("loginas");

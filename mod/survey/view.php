@@ -67,7 +67,7 @@
             print_heading(get_string("surveycompleted", "survey"));
             print_heading(get_string("peoplecompleted", "survey", $numusers));
             echo "<center>";
-            survey_print_graph("id=$cm->id&sid=$USER->id&group=$currentgroup&type=student.png");
+            survey_print_graph("id=$cm->id&amp;sid=$USER->id&amp;group=$currentgroup&amp;type=student.png");
             echo "</center>";
 
         } else {
@@ -153,7 +153,7 @@
 
 <center>
 <br />
-<script>
+<script type="text/javascript">
 <!-- // BEGIN
 function checkform() {
 

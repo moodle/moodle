@@ -613,7 +613,7 @@
                     //Get the post record from database
                     $dbpos = get_record("forum_posts","id","$pos->new_id");
                     if ($dbpos) {
-                        $log->url = "discuss.php?d=".$dbpos->discussion."&parent=".$pos->new_id;
+                        $log->url = "discuss.php?d=".$dbpos->discussion."&amp;parent=".$pos->new_id;
                         $log->info = $pos->new_id;
                         $status = true;
                     }
@@ -628,7 +628,7 @@
                     //Get the post record from database
                     $dbpos = get_record("forum_posts","id","$pos->new_id");
                     if ($dbpos) {
-                        $log->url = "discuss.php?d=".$dbpos->discussion."&parent=".$pos->new_id;
+                        $log->url = "discuss.php?d=".$dbpos->discussion."&amp;parent=".$pos->new_id;
                         $log->info = $pos->new_id;
                         $status = true;
                     }
@@ -648,7 +648,7 @@
             }
             break;
         case "search":
-            $log->url = "search.php?id=".$log->course."&search=".urlencode($log->info);
+            $log->url = "search.php?id=".$log->course."&amp;search=".urlencode($log->info);
             $status = true;
             break;
         default:
@@ -791,10 +791,10 @@
                 //If it is a link to this course, update the link to its new location
                 if($rec->new_id && $rec2->new_id) {
                     //Now replace it
-                    $result= preg_replace($searchstring,$CFG->wwwroot.'/mod/forum/discuss.php?d='.$rec->new_id.'&parent='.$rec2->new_id,$result);
+                    $result= preg_replace($searchstring,$CFG->wwwroot.'/mod/forum/discuss.php?d='.$rec->new_id.'&amp;parent='.$rec2->new_id,$result);
                 } else {
                     //It's a foreign link so leave it as original
-                    $result= preg_replace($searchstring,$restore->original_wwwroot.'/mod/forum/discuss.php?d='.$old_id.'&parent='.$old_id2,$result);
+                    $result= preg_replace($searchstring,$restore->original_wwwroot.'/mod/forum/discuss.php?d='.$old_id.'&amp;parent='.$old_id2,$result);
                 }
             }
         }

@@ -150,7 +150,7 @@
                 $editall = choose_from_menu ($editmenu, "e$teacher->id", $teacher->editall, "", "", "", true);
             }
     
-            $removelink = "<a href=\"teacher.php?id=$course->id&remove=$teacher->id\">$strremoveteacher</a>";
+            $removelink = "<a href=\"teacher.php?id=$course->id&amp;remove=$teacher->id\">$strremoveteacher</a>";
 
             if (!$teacher->role) {
                 $teacher->role = $course->teacher;
@@ -201,7 +201,7 @@
 
 
         foreach ($users as $user) {
-            $addlink = "<a href=\"teacher.php?id=$course->id&add=$user->id\">$straddteacher</a>";
+            $addlink = "<a href=\"teacher.php?id=$course->id&amp;add=$user->id\">$straddteacher</a>";
             $picture = print_user_picture($user->id, $course->id, $user->picture, false, true);
             $table->data[] = array ($picture, fullname($user, true), $user->email, $addlink);
         }

@@ -4,7 +4,7 @@
 
 $string['about'] = 'Acerca deste editor';
 $string['absbottom'] = 'Fondo absoluto';
-$string['absmiddle'] = 'Medio absoluto';
+$string['middle'] = 'Medio absoluto';
 $string['address'] = 'Enderezo';
 $string['alignment'] = 'Aliñación';
 $string['alternatetext'] = 'Texto alterno';

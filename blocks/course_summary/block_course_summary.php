@@ -32,7 +32,7 @@ class CourseBlock_course_summary extends MoodleBlock {
             } else {
                 $editpage = $CFG->wwwroot.'/course/edit.php?id='.$this->course->id;
             }
-            $this->content->text .= '<div style="text-align: right;"><a href="'.$editpage.'"><img src="'.$CFG->pixpath.'/t/edit.gif" /></a></div>';
+            $this->content->text .= "<div align=\"right\"><a href=\"$editpage\"><img src=\"$CFG->pixpath/t/edit.gif\" alt=\"\" /></a></div>";
         }
         $this->content->footer = '';
 

@@ -192,7 +192,7 @@
                 <p><b><?php p($strnewwindow) ?></b></p>
             </td>
             <td>
-                <script>
+                <script type="text/javascript">
                     var subitems = [<?php echo $alljsoptions; ?>];
                     
                     function autowindow() {

@@ -759,7 +759,7 @@ $string['noteuserschangednonetocourse'] = 'OBS! När användardata återställs så m
 $string['nothingnew'] = 'Inget nytt sedan Din senaste inloggning';
 $string['noticenewerbackup'] = 'Den här säkerhetskopierade filen har skapats med Moodles $a->backuprelease ($a->backupversion)och den är nyare än Din nyligen installerade Moodle $a->serverrelease ($a->serverversion). Det här kan skapa en del ev oönskade förändringar eftersom det inte går att garantera bakåtkompatibilitet för säkerhetskopierade filer.';
 $string['notifyloginfailuresmessage'] = '$a->time, IP: $a->ip, Användare: $a->info';
-$string['notifyloginfailuresmessageend'] = 'Du kan se dessa loggar på $a/course/log.php?id=1&chooselog=1&modid=site_errors.';
+$string['notifyloginfailuresmessageend'] = 'Du kan se dessa loggar på $a/course/log.php?id=1&amp;chooselog=1&amp;modid=site_errors.';
 $string['notifyloginfailuresmessagestart'] = 'Här är en lista över misslyckade försök att logga in på $a sedan Du senast fick meddelande om sådana.';
 $string['notifyloginfailuressubject'] = '$a :: Information om misslyckade försök att logga in';
 $string['notincluded'] = 'Ingår ej';

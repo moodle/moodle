@@ -124,7 +124,7 @@ function survey_user_complete($course, $user, $mod, $survey) {
             
         } else {
         
-            survey_print_graph("id=$mod->id&sid=$user->id&type=student.png");
+            survey_print_graph("id=$mod->id&amp;sid=$user->id&amp;type=student.png");
         }
         
     } else {
@@ -320,7 +320,7 @@ function survey_print_all_responses($cmid, $results, $courseid) {
 
     foreach ($results as $a) {
         $table->data[] = array(print_user_picture($a->id, $courseid, $a->picture, false, true, false),
-               "<a href=\"report.php?action=student&student=$a->id&id=$cmid\">".fullname($a)."</a>", 
+               "<a href=\"report.php?action=student&amp;student=$a->id&amp;id=$cmid\">".fullname($a)."</a>", 
                userdate($a->time));
     }
 
@@ -487,7 +487,7 @@ function survey_print_graph($url) {
 
     } else {
         echo "<img height=\"$SURVEY_GHEIGHT\" width=\"$SURVEY_GWIDTH\" border=\"1\"".
-             " src=\"$CFG->wwwroot/mod/survey/graph.php?$url\" />";
+             " src=\"$CFG->wwwroot/mod/survey/graph.php?$url\" alt=\"\" />";
     }
 }
 

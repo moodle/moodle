@@ -153,8 +153,8 @@
         echo "<center><p align=\"center\">";
         echo get_string("firstname")." : ";
         if ($firstinitial) {
-            echo " <a href=\"index.php?id=$course->id&sort=firstname&dir=ASC&".
-                   "perpage=$perpage&lastinitial=$lastinitial\">$strall</a> ";
+            echo " <a href=\"index.php?id=$course->id&amp;sort=firstname&amp;dir=ASC&".
+                   "perpage=$perpage&amp;lastinitial=$lastinitial\">$strall</a> ";
         } else {
             echo " <b>$strall</b> ";
         }
@@ -162,8 +162,8 @@
             if ($letter == $firstinitial) {
                 echo " <b>$letter</b> ";
             } else {
-                echo " <a href=\"index.php?id=$course->id&sort=firstname&dir=ASC&".
-                       "perpage=$perpage&lastinitial=$lastinitial&firstinitial=$letter\">$letter</a> ";
+                echo " <a href=\"index.php?id=$course->id&amp;sort=firstname&amp;dir=ASC&".
+                       "perpage=$perpage&amp;lastinitial=$lastinitial&amp;firstinitial=$letter\">$letter</a> ";
             }
         }
         echo "<br />";
@@ -172,8 +172,8 @@
 
         echo get_string("lastname")." : ";
         if ($lastinitial) {
-            echo " <a href=\"index.php?id=$course->id&sort=lastname&dir=ASC&".
-                   "perpage=$perpage&firstinitial=$firstinitial\">$strall</a> ";
+            echo " <a href=\"index.php?id=$course->id&amp;sort=lastname&amp;dir=ASC&".
+                   "perpage=$perpage&amp;firstinitial=$firstinitial\">$strall</a> ";
         } else {
             echo " <b>$strall</b> ";
         }
@@ -181,15 +181,15 @@
             if ($letter == $lastinitial) {
                 echo " <b>$letter</b> ";
             } else {
-                echo " <a href=\"index.php?id=$course->id&sort=lastname&dir=ASC&".
-                       "perpage=$perpage&firstinitial=$firstinitial&lastinitial=$letter\">$letter</a> ";
+                echo " <a href=\"index.php?id=$course->id&amp;sort=lastname&amp;dir=ASC&".
+                       "perpage=$perpage&amp;firstinitial=$firstinitial&amp;lastinitial=$letter\">$letter</a> ";
             }
         }
         echo "</p>";
         echo "</center>";
 
         print_paging_bar($matchcount, $page, $perpage,
-                         "index.php?id=$course->id&sort=$sort&dir=$dir&perpage=$perpage&firstinitial=$firstinitial&lastinitial=$lastinitial&");
+                         "index.php?id=$course->id&amp;sort=$sort&amp;dir=$dir&amp;perpage=$perpage&amp;firstinitial=$firstinitial&amp;lastinitial=$lastinitial&");
 
     }
 
@@ -204,11 +204,11 @@
     } else if ($matchcount > 0) {
         print_user_table($students, $isteacher);
         print_paging_bar($matchcount, $page, $perpage,
-                         "index.php?id=$course->id&sort=$sort&dir=$dir&perpage=$perpage&firstinitial=$firstinitial&lastinitial=$lastinitial&");
+                         "index.php?id=$course->id&amp;sort=$sort&amp;dir=$dir&amp;perpage=$perpage&amp;firstinitial=$firstinitial&amp;lastinitial=$lastinitial&");
 
         if ($perpage < $totalcount) {
             echo "<center><p>";
-            echo "<a href=\"index.php?id=$course->id&sort=$sort&dir=$dir&perpage=99999\">".get_string("showall", "", $totalcount)."</a>";
+            echo "<a href=\"index.php?id=$course->id&amp;sort=$sort&amp;dir=$dir&amp;perpage=99999\">".get_string("showall", "", $totalcount)."</a>";
             echo "</p></center>";
         }
     }
@@ -250,9 +250,9 @@ function print_user_table($users, $isteacher) {
                 } else {
                     $columnicon = $dir == "asc" ? "down":"up";
                 }
-                $columnicon = " <img src=\"$CFG->pixpath/t/$columnicon.gif\" />";
+                $columnicon = " <img src=\"$CFG->pixpath/t/$columnicon.gif\" alt=\"\"/>";
             }
-            $$column = "<a href=\"index.php?id=$course->id&sort=$column&dir=$columndir\">".$colname["$column"]."</a>$columnicon";
+            $$column = "<a href=\"index.php?id=$course->id&amp;sort=$column&amp;dir=$columndir\">".$colname["$column"]."</a>$columnicon";
         }
 
         foreach ($users as $key => $user) {
@@ -290,7 +290,7 @@ function print_user_table($users, $isteacher) {
             $fullname = fullname($user, $isteacher);
 
             $table->data[] = array ($picture,
-                "<b><a href=\"$CFG->wwwroot/user/view.php?id=$user->id&course=$course->id\">$fullname</a></b>",
+                "<b><a href=\"$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$course->id\">$fullname</a></b>",
                 "<font size=\"2\">$user->city</font>",
                 "<font size=\"2\">$user->country</font>",
                 "<font size=\"2\">$lastaccess</font>");

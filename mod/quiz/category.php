@@ -157,7 +157,7 @@
         if ($category->id == $default) { 
             $delete = "";  // Can't delete default category
         } else {
-            $delete = "<a href=\"category.php?id=$course->id&delete=$category->id\">$strdelete</a>";
+            $delete = "<a href=\"category.php?id=$course->id&amp;delete=$category->id\">$strdelete</a>";
         }
         $table->data[] = array ("<input type=\"text\" name=\"c$category->id\" value=\"$category->name\" size=\"15\" />",
                                 "<input type=\"text\" name=\"i$category->id\" value=\"$category->info\" size=\"50\" />",

@@ -110,7 +110,7 @@ Apache 1では通常この設定がなされていますが、Apache 2では設定されていません。
 
 <p class="answer">下記のようなエラーが表示される場合は:</p>
 
-<p class="answercode">Parse error: parse error, unexpected T_VARIABLE in c:\program files\easyphp\www\moodle\config.php on line 94 <br>
+<p class="answercode">Parse error: parse error, unexpected T_VARIABLE in c:\program files\easyphp\www\moodle\config.php on line 94 <br />
   Fatal error: Call to undefined function: get_string() in c:\program files\easyphp\www\moodle\mod\resource\lib.php on line 11</p>
 
 <p class="answer">config.php(94行目より前)で、セミコロン又は閉じクオートが抜けている可能性があります。</p>
@@ -147,7 +147,7 @@ HTMLページとして保存している可能性が考えられます。</p>
 
 <p class="answer">アポストロフィーによって生じる問題は、「magic quotes」の設定ミスが原因しています。 Moodleでは次の設定を必要とします(通常デフォルトです):</p>
 
-<p class="answercode">magic_quotes_gpc = On<br>
+<p class="answercode">magic_quotes_gpc = On<br />
 
   magic_quotes_runtime = Off</p>
 

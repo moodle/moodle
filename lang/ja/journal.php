@@ -14,7 +14,7 @@ $string['journalmail'] = '$a->teacher дмдвд╩д┐д╬╞№╗я \'$a->journal\' д╦е╒егб╝е╔е
 е╒егб╝е╔е╨е├епд╧двд╩д┐д╬╞№╗яд╦─╔▓├д╡дьд╞ддд▐д╣:
 
 $a->url';
-$string['journalmailhtml'] = '$a->teacher дмдвд╩д┐д╬╞№╗я\'<i>$a- >journal</i>\' д╦е╒егб╝е╔е╨е├епдЄ┼ъ╣╞д╖д▐д╖д┐бг<br><br>
+$string['journalmailhtml'] = '$a->teacher дмдвд╩д┐д╬╞№╗я\'<i>$a- >journal</i>\' д╦е╒егб╝е╔е╨е├епдЄ┼ъ╣╞д╖д▐д╖д┐бг<br /><br />
 е╒егб╝е╔е╨е├епд╧двд╩д┐д╬<a href=\"$a->url\">╞№╗я</a>д╦─╔▓├д╡дьд╞ддд▐д╣бг';
 $string['journalname'] = '╞№╗я╠╛';
 $string['journalquestion'] = '╞№╗я╝┴╠ф';

@@ -394,9 +394,9 @@ $string['enrolledincoursenot'] = 'ไม่ได้ลงทะเบียนในรายวิชานี้';
 $string['enrollfirst'] = 'คุณต้องสมัครเป็นสมาชิกของรายวิชาใดวิชาหนึ่งก่อนจึงจะสามารถทำกิจกรรมในเว็บนี้ได้';
 $string['enrolmentconfirmation'] = 'คุณกำลังสมัครเข้าเป็นสมาชิกของรายวิชานี้ .<br /> ต้องการสมัครหรือไม่ ?';
 $string['enrolmentkey'] = 'รหัสผ่านเข้าเรียน';
-$string['enrolmentkeyfrom'] = 'รายวิชานี้ ต้องการ \'รหัสผ่าน\' <BR>
+$string['enrolmentkeyfrom'] = 'รายวิชานี้ ต้องการ \'รหัสผ่าน\' <br />
 คุณควรได้รับรหัสผ่านจาก $a';
-$string['enrolmentkeyhint'] = 'รหัสไม่ถูกต้องกรุณาตรวจสอบ<BR>
+$string['enrolmentkeyhint'] = 'รหัสไม่ถูกต้องกรุณาตรวจสอบ<br />
 ( ขึ้นต้นด้วย \'$a\')';
 $string['enrolmentnew'] = 'นักเรียนใหม่ใน $a';
 $string['enrolmentnewuser'] = '$a->user สมัครเป็นนักเรียนของรายวิชา\"$a->course\"';
@@ -724,7 +724,7 @@ $string['noteuserschangednonetocourse'] = 'ปล. ต้องทำการกู้สมาชิกในรายวิชานี้คืน
 $string['nothingnew'] = 'ไม่มีอะไรใหม่นับตั้งแต่คุณล็อกอินครั้งสุดท้าย';
 $string['noticenewerbackup'] = 'ไฟล์สำรองข้อมูลนี้สร้างขึ้นโดย  Moodle $a->backuprelease ($a->backupversion)  และใหม่กว่าเวอร์ชันที่คุณติดตั้งอยู่ในขณะนี้  คุณติดตั้ง  Moodle $a->serverrelease ($a->serverversion) อาจทำให้ระบบไม่เสถียรได้ค่ะ';
 $string['notifyloginfailuresmessage'] = '$a->time, IP: $a->ip, สมาชิก: $a->info';
-$string['notifyloginfailuresmessageend'] = 'คุณสามารถดูบันทึกดังกล่าวได้จาก $a/course/log.php?id=1&chooselog=1&modid=site_errors';
+$string['notifyloginfailuresmessageend'] = 'คุณสามารถดูบันทึกดังกล่าวได้จาก $a/course/log.php?id=1&amp;chooselog=1&amp;modid=site_errors';
 $string['notifyloginfailuresmessagestart'] = 'รายการของการล็อกอินเข้าสู่ระบบที่ไม่สำเร็จ เมื่อ $a นับตั้งแต่คุณได้รับการแจ้งครั้งสุดท้าย';
 $string['notifyloginfailuressubject'] = '$a :: แจ้งการล็อกอินเข้าสู่ระบบไม่สำเร็จ';
 $string['notincluded'] = 'ไม่รวม';
@@ -835,7 +835,7 @@ $string['scheduledbackupstatus'] = 'สถานะการตั้งเวลาเพื่อสำรองข้อมูล';
 $string['search'] = 'ค้นหา';
 $string['searchagain'] = 'ค้นอีกครั้ง';
 $string['searchcourses'] = 'ค้นหารายวิชา';
-$string['searchhelp'] = 'คุณสามารถค้นหาคำหลาย ๆ คำในครั้งเดียว  <p> คำ : ค้นหาคำที่อยู่ในข้อความให้ตรงกับคำที่ใส่ <br> +คำ : ค้นหาเฉพาะคำที่ตรงกับที่ระบุเท่านั้น <br>-คำ: ไม่รวมผลการค้นหาที่มีคำ ๆ นี้อยู่';
+$string['searchhelp'] = 'คุณสามารถค้นหาคำหลาย ๆ คำในครั้งเดียว  <p> คำ : ค้นหาคำที่อยู่ในข้อความให้ตรงกับคำที่ใส่ <br /> +คำ : ค้นหาเฉพาะคำที่ตรงกับที่ระบุเท่านั้น <br />-คำ: ไม่รวมผลการค้นหาที่มีคำ ๆ นี้อยู่';
 $string['searchresults'] = 'ผลการค้นหา';
 $string['sec'] = 'วินาที';
 $string['secs'] = 'วินาที';

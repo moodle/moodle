@@ -55,13 +55,13 @@
     meaningful lowercase English words. If you really need more than one word
     then run them together, but keep them short as possible. Use
 plural names for arrays of objects.
-    <p class="examplecode"><font color="#006600">GOOD: $quiz<br>
-      GOOD: $errorstring<br>
-GOOD: $assignments (for an array of objects)<br>
-      GOOD: $i (but only in little loops)<br>
+    <p class="examplecode"><font color="#006600">GOOD: $quiz<br />
+      GOOD: $errorstring<br />
+GOOD: $assignments (for an array of objects)<br />
+      GOOD: $i (but only in little loops)<br />
       <br />
-      BAD: $Quiz <br>
-      BAD: $aReallyLongVariableNameWithoutAGoodReason<br>
+      BAD: $Quiz <br />
+      BAD: $aReallyLongVariableNameWithoutAGoodReason<br />
       BAD: $error_string</font></p>
   </li>
   <li class="spaced"><strong>Constants</strong> should always be in upper case,
@@ -74,7 +74,7 @@ GOOD: $assignments (for an array of objects)<br>
     words, and start with the name of the module to avoid conflicts between modules.
     Words should be separated by underscores. Parameters should always have sensible
     defaults if possible. Note there is no space between the function name and
-    the following (brackets). <br>
+    the following (brackets). <br />
     <p class="examplecode"> <font color="#007700">function </font><font color="#0000BB">forum_set_display_mode</font><font color="#007700">(</font><font color="#0000BB">$mode</font><font color="#007700">=</font><font color="#0000BB">0</font><font color="#007700">)
       {<br />
       &nbsp;&nbsp;&nbsp;&nbsp;global </font><font color="#0000BB">$USER</font><font color="#007700">,
@@ -104,11 +104,11 @@ GOOD: $assignments (for an array of objects)<br>
       }</font></p>
   </li>
   <li class="spaced"><strong>Strings</strong> should be defined using single quotes
-    where possible, for increased speed.<br>
+    where possible, for increased speed.<br />
     <p class="examplecode"> <font color="#006600">$var = 'some text without any
-      variables';<br>
-      $var = &quot;with special characters like a new line \n&quot;;<br>
-      $var = 'a very, very long string with a '.$single.' variable in it';<br>
+      variables';<br />
+      $var = &quot;with special characters like a new line \n&quot;;<br />
+      $var = 'a very, very long string with a '.$single.' variable in it';<br />
       $var = &quot;some $text with $many variables $within it&quot;; </font></p>
   </li>
   <li class="spaced"><strong>Comments</strong> should use two or three slashes
@@ -129,37 +129,37 @@ GOOD: $assignments (for an array of objects)<br>
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (</font><font color="#0000BB">$rates
       </font><font color="#007700">= </font><font color="#0000BB">get_records</font><font color="#007700">(</font><font color="#DD0000">"forum_ratings"</font><font color="#007700">,
       </font><font color="#DD0000">"post"</font><font color="#007700">, </font><font color="#0000BB">$postid</font><font color="#007700">))
-      {<br>
+      {<br />
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#FF8000">//
       Process each rating in turn</font><font color="#007700"><br />
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;foreach
       (</font><font color="#0000BB">$rates </font><font color="#007700">as </font><font color="#0000BB">$rate</font><font color="#007700">)
-      {</font> <br>
+      {</font> <br />
       ....etc </p>
   </li>
   <li class="spaced"><strong>Space</strong> should be used liberally - don't be
     afraid to spread things out a little to gain some clarity. Generally, there
     should be one space between brackets and normal statements, but no space between
-    brackets and variables or functions:<br>
+    brackets and variables or functions:<br />
     <p class="examplecode"> <font color="#007700">foreach (</font><font color="#0000BB">$objects
       </font><font color="#007700">as </font><font color="#0000BB">$key </font><font color="#007700">=&gt;</font><font color="#0000BB">
-      $thing</font><font color="#007700">)</font><font color="#006600"> {<br>
+      $thing</font><font color="#007700">)</font><font color="#006600"> {<br />
       </font><font color="#007700">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000BB">process($thing);</font><font color="#006600">
-      <br>
-      } <br>
-      <br>
+      <br />
+      } <br />
+      <br />
       </font><font color="#007700">if (</font><font color="#0000BB">$x </font><font color="#007700">==
       </font><font color="#0000BB">$y</font><font color="#007700">)</font><font color="#006600">
-      {<br>
+      {<br />
       </font><font color="#007700">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000BB">$a
-      </font><font color="#007700">= </font><font color="#0000BB">$b</font><font color="#007700">;</font><font color="#006600"><br>
+      </font><font color="#007700">= </font><font color="#0000BB">$b</font><font color="#007700">;</font><font color="#006600"><br />
       } else if (</font><font color="#0000BB">$x </font><font color="#007700">==
-      </font><font color="#0000BB">$z</font><font color="#006600">) {<br>
+      </font><font color="#0000BB">$z</font><font color="#006600">) {<br />
       </font><font color="#007700">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000BB">$a
-      </font><font color="#007700">= </font><font color="#0000BB">$c</font><font color="#007700">;</font><font color="#006600"><br>
-      } else {<br>
+      </font><font color="#007700">= </font><font color="#0000BB">$c</font><font color="#007700">;</font><font color="#006600"><br />
+      } else {<br />
       </font><font color="#007700">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000BB">$a
-      </font><font color="#007700">= </font><font color="#0000BB">$d</font><font color="#007700">;</font><font color="#006600"><br>
+      </font><font color="#007700">= </font><font color="#0000BB">$d</font><font color="#007700">;</font><font color="#006600"><br />
       } </font></p>
   </li>
 </ol>

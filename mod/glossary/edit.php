@@ -138,7 +138,7 @@ if ( $confirm ) {
             if (! update_record("glossary_entries", $newentry)) {
                 error("Could not update your glossary");
             } else {
-                add_to_log($course->id, "glossary", "update entry", "view.php?id=$cm->id&mode=entry&hook=$newentry->id", $newentry->id,$cm->id);
+                add_to_log($course->id, "glossary", "update entry", "view.php?id=$cm->id&amp;mode=entry&amp;hook=$newentry->id", $newentry->id,$cm->id);
                 notify(get_string('entryupdated','glossary'));
             }
         } else {
@@ -169,7 +169,7 @@ if ( $confirm ) {
                      unset($newentry->attachment);
                 }
                 set_field("glossary_entries", "attachment", $newfilename, "id", $newentry->id);
-                add_to_log($course->id, "glossary", "add entry", "view.php?id=$cm->id&mode=entry&hook=$newentry->id", $newentry->id,$cm->id);
+                add_to_log($course->id, "glossary", "add entry", "view.php?id=$cm->id&amp;mode=entry&amp;hook=$newentry->id", $newentry->id,$cm->id);
                 notify(get_string('entrysaved','glossary'));
             }
         } else {
@@ -204,7 +204,7 @@ if ( $confirm ) {
             }
         }
     }
-    print_continue("view.php?id=$cm->id&mode=entry&hook=$newentry->id");
+    print_continue("view.php?id=$cm->id&amp;mode=entry&amp;hook=$newentry->id");
     print_footer();
     die;
 } else {

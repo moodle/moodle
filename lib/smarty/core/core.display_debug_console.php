@@ -8,8 +8,8 @@
 /**
  * Smarty debug_console function plugin
  *
- * Type:     core<br>
- * Name:     display_debug_console<br>
+ * Type:     core<br />
+ * Name:     display_debug_console<br />
  * Purpose:  display the javascript debug console window
  * @param array Format: null
  * @param Smarty

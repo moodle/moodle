@@ -119,8 +119,8 @@
                     $attemptgrade = "<span class=\"highlight\">$attemptgrade</span>";
                 }
                 if (!$available and $quiz->review) {
-                    $attemptgrade = "<a href=\"review.php?q=$quiz->id&attempt=$attempt->id\">$attemptgrade</a>";
-                    $attempt->attempt = "<a href=\"review.php?q=$quiz->id&attempt=$attempt->id\">$attempt->attempt</a>";
+                    $attemptgrade = "<a href=\"review.php?q=$quiz->id&amp;attempt=$attempt->id\">$attemptgrade</a>";
+                    $attempt->attempt = "<a href=\"review.php?q=$quiz->id&amp;attempt=$attempt->id\">$attempt->attempt</a>";
                 }
                 $table->data[] = array( $attempt->attempt, 
                                         format_time($attempt->timefinish - $attempt->timestart),
@@ -128,7 +128,7 @@
                                         $attemptgrade);
             } else {  // No grades are being used
                 if (!$available and $quiz->review) {
-                    $attempt->attempt = "<a href=\"review.php?q=$quiz->id&attempt=$attempt->id\">$attempt->attempt</a>";
+                    $attempt->attempt = "<a href=\"review.php?q=$quiz->id&amp;attempt=$attempt->id\">$attempt->attempt</a>";
                 }
                 $table->data[] = array( $attempt->attempt, 
                                         format_time($attempt->timefinish - $attempt->timestart),

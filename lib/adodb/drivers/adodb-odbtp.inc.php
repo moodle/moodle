@@ -394,7 +394,7 @@ class ADODB_odbtp extends ADOConnection{
 		if (! $this->_bindInputArray) return $sql; // no binding
 		$stmt = odbtp_prepare($sql,$this->_connectionID);
 		if (!$stmt) {
-		//	print "Prepare Error for ($sql) ".$this->ErrorMsg()."<br>";
+		//	print "Prepare Error for ($sql) ".$this->ErrorMsg()."<br />";
 			return $sql;
 		}
 		return array($sql,$stmt,false);

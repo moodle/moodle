@@ -93,7 +93,7 @@
         }
     }
 
-    echo "<BR>";
+    echo "<br />";
 
     print_table($table);
 

@@ -119,16 +119,16 @@ $string['nosubmissionsavailableforassessment'] = '評価すべき提出物はありません。
 $string['notavailable'] = '利用出来ません。';
 $string['notenoughexamplessubmitted'] = '十分な例が提出されていません。';
 $string['noteonassessmentelements'] = '評価は数多くの「評価要素」により成立ちます。このことで評価を、
-<BR>
+<br />
 簡単且つ首尾一貫したものにすることが出来ます。
 課題を学生に利用出来る
-<BR>
+<br />
 ようにする前に、教師としてこれらの要素を追加しなければなりません。コース課題
-<BR>
+<br />
 をクリックして要素が存在しない場合、追加するかどうかを尋ねられます。
-<BR>
+<br />
 「課題の編集」画面で要素数を変更することが出来ます。
-<BR>
+<br />
 要素自体は「評価の管理」画面で変更出来ます。 ';
 $string['notgraded'] = '評価無し';
 $string['notitlegiven'] = '題名がありません';
@@ -231,7 +231,7 @@ $string['verystrict'] = '非常に厳しい';
 $string['view'] = '表示';
 $string['viewassessmentofteacher'] = '$a 件の評価を表示する';
 $string['viewotherassessments'] = '他の評価を表示する';
-$string['warningonamendingelements'] = '警告：評価が登録されています。<BR>要素数、評価タイプ、要素比重を変更しないでください。';
+$string['warningonamendingelements'] = '警告：評価が登録されています。<br />要素数、評価タイプ、要素比重を変更しないでください。';
 $string['weight'] = '比重';
 $string['weightederrorcount'] = '比重エラーカウント： $a';
 $string['weightforbias'] = 'バイアスに対する比重';

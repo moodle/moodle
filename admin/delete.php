@@ -19,7 +19,7 @@
     }
 
     if (!$reallysure) {
-        notice_yesno ("Are you REALLY REALLY completely sure you want to delete everything inside the directory $deletedir (this includes all user images, and any other course files that have been created) ?", "delete.php?sure=yes&reallysure=yes", "index.php");
+        notice_yesno ("Are you REALLY REALLY completely sure you want to delete everything inside the directory $deletedir (this includes all user images, and any other course files that have been created) ?", "delete.php?sure=yes&amp;reallysure=yes", "index.php");
         exit;
     }
 

@@ -330,7 +330,7 @@ function resource_get_coursemodule_info($coursemodule) {
    if ($resource = get_record("resource", "id", $coursemodule->instance)) {
        if (!empty($resource->popup)) {
            $info->extra =  urlencode("target=\"resource$resource->id\" onClick=\"return ".
-                            "openpopup('/mod/resource/view.php?inpopup=true&id=".
+                            "openpopup('/mod/resource/view.php?inpopup=true&amp;id=".
                             $coursemodule->id.
                             "','resource$resource->id','$resource->popup');\"");
        }
@@ -384,7 +384,7 @@ function resource_fetch_remote_file ($cm, $url, $headers = "" ) {
                       "FORM"   => "action=");
     
         foreach ($tags as $tag => $key) {
-            $prefix = "fetch.php?id=$cm->id&url=";
+            $prefix = "fetch.php?id=$cm->id&amp;url=";
             if ( $tag == "IMG" or $tag == "LINK" or $tag == "FORM") {
                 $prefix = "";
             }

@@ -9,23 +9,23 @@
 /**
  * Smarty {html_radios} function plugin
  *
- * File:       function.html_radios.php<br>
- * Type:       function<br>
- * Name:       html_radios<br>
- * Date:       24.Feb.2003<br>
- * Purpose:    Prints out a list of radio input types<br>
- * Input:<br>
+ * File:       function.html_radios.php<br />
+ * Type:       function<br />
+ * Name:       html_radios<br />
+ * Date:       24.Feb.2003<br />
+ * Purpose:    Prints out a list of radio input types<br />
+ * Input:<br />
  *           - name       (optional) - string default "radio"
  *           - values     (required) - array
  *           - options    (optional) - associative array
  *           - checked    (optional) - array default not set
- *           - separator  (optional) - ie <br> or &nbsp;
+ *           - separator  (optional) - ie <br /> or &nbsp;
  *           - output     (optional) - without this one the buttons don't have names
  * Examples:
  * <pre>
  * {html_radios values=$ids output=$names}
- * {html_radios values=$ids name='box' separator='<br>' output=$names}
- * {html_radios values=$ids checked=$checked separator='<br>' output=$names}
+ * {html_radios values=$ids name='box' separator='<br />' output=$names}
+ * {html_radios values=$ids checked=$checked separator='<br />' output=$names}
  * </pre>
  * @link http://smarty.php.net/manual/en/language.function.html.radios.php {html_radios}
  *      (Smarty online manual)

@@ -105,11 +105,11 @@ $string['filloutthreequestions'] = 'Je moet minstens drie vragen invullen. Leeg 
 $string['fillouttwochoices'] = 'Je moet minstens twee keuzemogelijkheden invullen. Lege keuzemogelijkheden zullen niet worden gebruikt.';
 $string['forceregeneration'] = 'maak nieuwe waarden';
 $string['fractionsaddwrong'] = 'De positieve cijfers die je hebt gekozen tellen niet op tot 100%%
-<BR>In plaats daarvan tellen ze op tot $a%%
-<BR>Wil je terug gaan en deze vraag verbeteren?';
+<br />In plaats daarvan tellen ze op tot $a%%
+<br />Wil je terug gaan en deze vraag verbeteren?';
 $string['fractionsnomax'] = 'Eén van de antwoorden moet 100%% zijn, zodat het mogelijk is
-<BR>om een vol punt voor deze vraag te krijgen.
-<BR>Wil je terug gaan en deze vraag verbeteren?';
+<br />om een vol punt voor deze vraag te krijgen.
+<br />Wil je terug gaan en deze vraag verbeteren?';
 $string['functiontakesatleasttwo'] = 'De functie $a moet minstens twee argumenten hebben';
 $string['functiontakesnoargs'] = 'De functie $a neemt geen argumenten aan';
 $string['functiontakesonearg'] = 'De functie $a moet juist één argument hebben';
@@ -176,7 +176,7 @@ $string['noreview'] = 'Je mag deze test niet opnieuw bekijken';
 $string['noreviewuntil'] = 'Tot $a mag je deze test niet opnieuw bekijken';
 $string['noscript'] = 'Javascript moet ingeschakeld zijn om verder te kunnen gaan!';
 $string['notenoughanswers'] = 'Voor dit type vraag zijn minstens $a antwoorden nodig';
-$string['notenoughsubquestions'] = 'Er zijn onvoldoende deelvragen gedefinieerd!<br>Wil je teruggaan en deze vraag herstellen?';
+$string['notenoughsubquestions'] = 'Er zijn onvoldoende deelvragen gedefinieerd!<br />Wil je teruggaan en deze vraag herstellen?';
 $string['numerical'] = 'Numeriek';
 $string['optional'] = 'optioneel';
 $string['overdue'] = 'Te laat';

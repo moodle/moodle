@@ -85,7 +85,7 @@ function cancel() {
             $icon = $emoticons[$image];
             echo '<tr>';
             echo "<td><img alt=\"$name\" border=\"0\" hspace=\"10\" src=\"$pixpath/$image.gif\" ".
-                 " onclick=\"insert('$pixpath/$image.gif','$name')\" width=\"15\" height=\"15\"></td>";
+                 " onclick=\"insert('$pixpath/$image.gif','$name')\" width=\"15\" height=\"15\" /></td>";
             echo "<td>$name</td>";
             echo "<td class=\"smile\">$icon</td>";
             echo "</tr>";
@@ -104,7 +104,7 @@ function cancel() {
             $icon = $emoticons[$image];
             echo '<tr>';
             echo "<td><img alt=\"$name\" border=\"0\" hspace=\"10\" src=\"$pixpath/$image.gif\" ".
-                 " onclick=\"insert('$pixpath/$image.gif','$name')\" width=\"15\" height=\"15\"></td>";
+                 " onclick=\"insert('$pixpath/$image.gif','$name')\" width=\"15\" height=\"15\" /></td>";
             echo "<td>$name</td>";
             echo "<td class=\"smile\">$icon</td>";
             echo "</tr>";

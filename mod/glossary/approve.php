@@ -34,8 +34,8 @@
     if (! update_record("glossary_entries", $newentry)) {
         error("Could not update your glossary");
     } else {
-        add_to_log($course->id, "glossary", "approve entry", "showentry.php?id=$cm->id&eid=$eid", "$eid",$cm->id);
+        add_to_log($course->id, "glossary", "approve entry", "showentry.php?id=$cm->id&amp;eid=$eid", "$eid",$cm->id);
     }
-    redirect("view.php?id=$cm->id&mode=$mode&hook=$hook",get_string("entryapproved","glossary"),1);
+    redirect("view.php?id=$cm->id&amp;mode=$mode&amp;hook=$hook",get_string("entryapproved","glossary"),1);
     die;
 ?>

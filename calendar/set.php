@@ -92,7 +92,7 @@
 
     switch($_GET['from']) {
         case 'event':
-            redirect(CALENDAR_URL.'event.php?action='.$_GET['action'].'&type='.$_GET['type'].'&id='.intval($_GET['id']));
+            redirect(CALENDAR_URL.'event.php?action='.$_GET['action'].'&amp;type='.$_GET['type'].'&amp;id='.intval($_GET['id']));
         break;
         case 'month':
             redirect(CALENDAR_URL.'view.php?view=month&cal_d='.$_GET['cal_d'].'&cal_m='.$_GET['cal_m'].'&cal_y='.$_GET['cal_y']);

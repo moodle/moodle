@@ -101,7 +101,7 @@ $string['backuplogshelp'] = 'Vælg hvis du ønsker at inkludere kursuslog-filer i 
 $string['backupnameformat'] = '%%Y%%m%%d-%%H%%M';
 $string['backupnoneusersinfo'] = 'Bemærkning: Du har valgt at tage backup med \"Ingen brugere\", så alle modulbackups er skiftet til \"uden brugerdata\". Læg mærke til at \"opgave\" og \"projekt\" modulerne ikke er kompatibel med denne type backup, så de er blevet deaktiveret.';
 $string['backuporiginalname'] = 'Backup navn';
-$string['backupsavetohelp'] = 'Angiv den fulde sti til det bibliotek hvor backup-filerne skal gemmes i.<BR>(Lad det være blank for at bruge standart-stien)';
+$string['backupsavetohelp'] = 'Angiv den fulde sti til det bibliotek hvor backup-filerne skal gemmes i.<br />(Lad det være blank for at bruge standart-stien)';
 $string['backupuserfileshelp'] = 'Vælg hvis du ønsker at inkludere brugerfiler (avatars) i backup\'en';
 $string['backupusershelp'] = 'Vælg hvis du ønsker at inkludere alle brugere på serveren eller kun de nødvendige brugere i kurset i backup\'en';
 $string['backupversion'] = 'Backup version';
@@ -363,9 +363,9 @@ $string['enrolledincoursenot'] = 'Ikke tilmeldt kursus \"$a\"';
 $string['enrolmentconfirmation'] = 'Du er ved at tilmelde dig dette kursus<br />
 Er du sikker på at du vil gennemføre dette?';
 $string['enrolmentkey'] = 'Kursus nøgle';
-$string['enrolmentkeyfrom'] = 'Dette kursus kræver en kursusnøgle\' - et en-gangs<BR>
+$string['enrolmentkeyfrom'] = 'Dette kursus kræver en kursusnøgle\' - et en-gangs<br />
 password som du skulle have fået fra $a';
-$string['enrolmentkeyhint'] = 'Forkert kursusnøgle - prøv igen<BR>
+$string['enrolmentkeyhint'] = 'Forkert kursusnøgle - prøv igen<br />
 (Her er et hint - det starter med \'$a\')';
 $string['enrolmentnew'] = 'Nye tilmeldinger i $a';
 $string['enrolmentnointernal'] = 'Manuelle tilmeldinger er ikke muligt';
@@ -784,7 +784,7 @@ $string['scheduledbackupstatus'] = 'Schedulere backup status';
 $string['search'] = 'Søg';
 $string['searchagain'] = 'Søg igen';
 $string['searchcourses'] = 'Søg kurser';
-$string['searchhelp'] = 'Du kan søge efter flere ord på samme tid:<p>ord: vil søge efter enhver forekomst af ordet i teksten også hvis det forekommer i sammesatte ord.<br>+ord: vil kun finde ordet hvis det står frit i teksten. <br>-ord: retunere kun de resultater hvor ordet ikke forekommer. ';
+$string['searchhelp'] = 'Du kan søge efter flere ord på samme tid:<p>ord: vil søge efter enhver forekomst af ordet i teksten også hvis det forekommer i sammesatte ord.<br />+ord: vil kun finde ordet hvis det står frit i teksten. <br />-ord: retunere kun de resultater hvor ordet ikke forekommer. ';
 $string['searchresults'] = 'Søgeresultater';
 $string['sec'] = 'sekunder';
 $string['secs'] = 'sekunder';

@@ -87,7 +87,7 @@ $string['nosubmissionstograde'] = "Tällä hetkellä ei palautuksia arvioitavaksi";
 $string['nosubmissionstoremove'] = "Ei palautuksia poistettavaksi";
 $string['notavailable'] = "Tätä tehtävää valmistellaan, se ei ole vielä saatavilla.";
 $string['notenoughmarked'] = "Valittuja tehväviä ei ole riittävästi jotta  jaetut työt pitäisivät sisällään vähintään yhden huonon ja yhden hyvän tehtävän.";
-$string['noteonassessmentelements'] = "huomaa että vertaisarvioisun tehvän arvioiti on jaettu useisiin 'Arviointi elementteihin'.<BR>
+$string['noteonassessmentelements'] = "huomaa että vertaisarvioisun tehvän arvioiti on jaettu useisiin 'Arviointi elementteihin'.<br />
 	Tämä tekee arvioinnista helmpompaa ja yhdenmukaisempaa. Opettaja sinun pitää lisätä nämä 'Arviointi Elementit' ennen tehtävän antamista opiskejoille.
 	Tämä tehdään klikaamalla lisättyä vertaiarvioitua tehtäväää ja valitsemalla ensimmäinen vaihtoehto &quot;Vartaisarvioidun tehtävän hallinta&quot valikosta.";
 $string['notgraded'] = "Ei arviointia, vain muiden opiskelijoiden palaute";
@@ -159,7 +159,7 @@ $string['thegradeis'] = "Arviointi on";
 $string['therearegradedpeersubmissions'] = "\$a arvioitua työtä jaettu opiskelijoille";
 $string['therearepeersubmissions'] = "\$a työtä jaettu opiskelijoille";
 $string['typeofscale'] = "Asteikon tyyppi";
-$string['warningonamendingelements'] = "VAROITUS: Järjestelmässä on jo suoritettu arviointeja. <BR>ÄLÄ muuta elementtien lukumäärää, arvointi tapaa tai elementtien painotuksia.";
+$string['warningonamendingelements'] = "VAROITUS: Järjestelmässä on jo suoritettu arviointeja. <br />ÄLÄ muuta elementtien lukumäärää, arvointi tapaa tai elementtien painotuksia.";
 $string['weightingofgrading'] = "Arviointi tehokkuuden painotus";
 $string['weightingofpeer'] = "Vertaisarvioinnin painotus";
 $string['weightingofteacher'] = "Opettajan arvioinnin painotus";

@@ -74,10 +74,10 @@ global $HTTP_SERVER_VARS;
 			$conn->debug = $dbg;
 		}
 		if (isset($HTTP_SERVER_VARS['HTTP_HOST'])) {
-			$tracer .= '<br>'.$HTTP_SERVER_VARS['HTTP_HOST'];
+			$tracer .= '<br />'.$HTTP_SERVER_VARS['HTTP_HOST'];
 			if (isset($HTTP_SERVER_VARS['PHP_SELF'])) $tracer .= $HTTP_SERVER_VARS['PHP_SELF'];
 		} else 
-			if (isset($HTTP_SERVER_VARS['PHP_SELF'])) $tracer .= '<br>'.$HTTP_SERVER_VARS['PHP_SELF'];
+			if (isset($HTTP_SERVER_VARS['PHP_SELF'])) $tracer .= '<br />'.$HTTP_SERVER_VARS['PHP_SELF'];
 		//$tracer .= (string) adodb_backtrace(false);
 		
 		$tracer = substr($tracer,0,500);
@@ -138,7 +138,7 @@ global $HTTP_SERVER_VARS;
 				timer decimal(16,6))");
 			}
 			if (!$ok) {
-				ADOConnection::outp( "<b>LOGSQL Insert Failed</b>: $isql<br>$err2</br>");
+				ADOConnection::outp( "<b>LOGSQL Insert Failed</b>: $isql<br />$err2</br>");
 				$conn->_logsql = false;
 			}
 		}
@@ -293,7 +293,7 @@ Committed_AS:   348732 kB
 		$d_system = $info[2] - $last[2];
 		$d_idle = $info[3] - $last[3];
 		
-		//printf("Delta - User: %f  Nice: %f  System: %f  Idle: %f<br>",$d_user,$d_nice,$d_system,$d_idle);
+		//printf("Delta - User: %f  Nice: %f  System: %f  Idle: %f<br />",$d_user,$d_nice,$d_system,$d_idle);
 
 		if (strncmp(PHP_OS,'WIN',3)==0) {
 			if ($d_idle < 1) $d_idle = 1;
@@ -321,7 +321,7 @@ Committed_AS:   348732 kB
 		if ($arr) {
 			$s .= '<h3>Scripts Affected</h3>';
 			foreach($arr as $k) {
-				$s .= sprintf("%4d",$k[0]).' &nbsp; '.strip_tags($k[1]).'<br>';
+				$s .= sprintf("%4d",$k[0]).' &nbsp; '.strip_tags($k[1]).'<br />';
 			}
 		}
 		$this->conn->fnExecute = $saveE;
@@ -392,7 +392,7 @@ Committed_AS:   348732 kB
 			
 			if (!$rs) return "<p>$this->helpurl. ".$this->conn->ErrorMsg()."</p>";
 			$s = "<h3>Suspicious SQL</h3>
-<font size=1>The following SQL have high average execution times</font><br>
+<font size=1>The following SQL have high average execution times</font><br />
 <table border=1 bgcolor=white><tr><td><b>Avg Time</b><td><b>Count</b><td><b>SQL</b><td><b>Max</b><td><b>Min</b></tr>\n";
 			$max = $this->maxLength;
 			while (!$rs->EOF) {
@@ -400,9 +400,9 @@ Committed_AS:   348732 kB
 				$raw = urlencode($sql);
 				if (strlen($raw)>$max-100) {
 					$sql2 = substr($sql,0,$max-500);
-					$raw = urlencode($sql2).'&part='.crc32($sql);
+					$raw = urlencode($sql2).'&amp;part='.crc32($sql);
 				}
-				$prefix = "<a target=sql".rand()." href=\"?hidem=1&exps=1&sql=".$raw."&x#explain\">";
+				$prefix = "<a target=sql".rand()." href=\"?hidem=1&amp;exps=1&amp;sql=".$raw."&x#explain\">";
 				$suffix = "</a>";
 				if ($this->explain == false || strlen($prefix)>$max) {
 					$suffix = ' ... <i>String too long for GET parameter: '.strlen($prefix).'</i>';
@@ -468,7 +468,7 @@ Committed_AS:   348732 kB
 			$ADODB_FETCH_MODE = $save;
 			if (!$rs) return "<p>$this->helpurl. ".$this->conn->ErrorMsg()."</p>";
 			$s = "<h3>Expensive SQL</h3>
-<font size=1>Tuning the following SQL will reduce the server load substantially</font><br>
+<font size=1>Tuning the following SQL will reduce the server load substantially</font><br />
 <table border=1 bgcolor=white><tr><td><b>Load</b><td><b>Count</b><td><b>SQL</b><td><b>Max</b><td><b>Min</b></tr>\n";
 			$max = $this->maxLength;
 			while (!$rs->EOF) {
@@ -476,9 +476,9 @@ Committed_AS:   348732 kB
 				$raw = urlencode($sql);
 				if (strlen($raw)>$max-100) {
 					$sql2 = substr($sql,0,$max-500);
-					$raw = urlencode($sql2).'&part='.crc32($sql);
+					$raw = urlencode($sql2).'&amp;part='.crc32($sql);
 				}
-				$prefix = "<a target=sqle".rand()." href=\"?hidem=1&expe=1&sql=".$raw."&x#explain\">";
+				$prefix = "<a target=sqle".rand()." href=\"?hidem=1&amp;expe=1&amp;sql=".$raw."&x#explain\">";
 				$suffix = "</a>";
 				if($this->explain == false || strlen($prefix>$max)) {
 					$prefix = '';
@@ -639,7 +639,7 @@ Committed_AS:   348732 kB
 			break;
 		case 'poll':
 			echo "<iframe width=720 height=80% 
-				src=\"{$HTTP_SERVER_VARS['PHP_SELF']}?do=poll2&hidem=1\"></iframe>";
+				src=\"{$HTTP_SERVER_VARS['PHP_SELF']}?do=poll2&amp;hidem=1\"></iframe>";
 			break;
 		case 'poll2':
 			echo "<pre>";
@@ -653,7 +653,7 @@ Committed_AS:   348732 kB
 			break;
 		case 'viewsql':
 			if (empty($HTTP_GET_VARS['hidem']))
-				echo "&nbsp; <a href=\"?do=viewsql&clearsql=1\">Clear SQL Log</a><br>";
+				echo "&nbsp; <a href=\"?do=viewsql&amp;clearsql=1\">Clear SQL Log</a><br />";
 			echo($this->SuspiciousSQL($nsql));
 			echo($this->ExpensiveSQL($nsql));
 			echo($this->InvalidSQL($nsql));
@@ -880,7 +880,7 @@ Committed_AS:   348732 kB
 					if (empty($e1)) $e1 = '-1'; // postgresql fix
 					print ' &nbsp; '.$e1.': '.$e2;
 				} else {
-					print "<p>No Recordset returned<br></p>";
+					print "<p>No Recordset returned<br /></p>";
 				}
 			}
 		} // foreach

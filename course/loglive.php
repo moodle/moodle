@@ -26,7 +26,7 @@
     $date=time() - 3600;
 
     print_log($course, $user, $date, "l.time DESC", 0, 500, 
-              "loglive.php?id=$course->id&user=$user&date=$date");
+              "loglive.php?id=$course->id&amp;user=$user&amp;date=$date");
 
     exit;
 

@@ -50,9 +50,9 @@
             for ($i=1; $i<$numdirs-1; $i++) {
                $navigation .= " -> ";
                $link .= "/".urlencode($dirs[$i]);
-               $navigation .= "<a href=\"index.php?id=$course->id&wdir=$link\">".$dirs[$i]."</a>";
+               $navigation .= "<a href=\"index.php?id=$course->id&amp;wdir=$link\">".$dirs[$i]."</a>";
             }
-            $fullnav = "<a href=\"index.php?id=$course->id&wdir=/\">$strfiles</a> $navigation -> ".$dirs[$numdirs-1];
+            $fullnav = "<a href=\"index.php?id=$course->id&amp;wdir=/\">$strfiles</a> $navigation -> ".$dirs[$numdirs-1];
         }
 
         if ($course->id == SITEID) {
@@ -168,8 +168,8 @@
                     print_simple_box_end();
                     echo "<br />";
                     notice_yesno (get_string("deletecheckfiles"), 
-                                "index.php?id=$id&wdir=$wdir&action=delete&confirm=1",
-                                "index.php?id=$id&wdir=$wdir&action=cancel");
+                                "index.php?id=$id&amp;wdir=$wdir&amp;action=delete&amp;confirm=1",
+                                "index.php?id=$id&amp;wdir=$wdir&amp;action=cancel");
                 } else {
                     displaydir($wdir);
                 }
@@ -515,8 +515,8 @@
                 echo "<p align=\"center\">".get_string("areyousuretorestorethisinfo")."</p>";
                 $restore_path = "../backup/restore.php";
                 notice_yesno (get_string("areyousuretorestorethis"),
-                                $restore_path."?id=".$id."&file=".$id.$wdir."/".$file,
-                                "index.php?id=$id&wdir=$wdir&action=cancel");
+                                $restore_path."?id=".$id."&amp;file=".$id.$wdir."/".$file,
+                                "index.php?id=$id&amp;wdir=$wdir&amp;action=cancel");
             } else {
                 displaydir($wdir);
             }
@@ -598,7 +598,7 @@ function printfilelist($filelist) {
 
     foreach ($filelist as $file) {
         if (is_dir($basedir.$file)) {
-            echo "<img src=\"$CFG->pixpath/f/folder.gif\" height=\"16\" width=\"16\"> $file<br />";
+            echo "<img src=\"$CFG->pixpath/f/folder.gif\" height=\"16\" width=\"16\" alt=\"\" /> $file<br />";
             $subfilelist = array();
             $currdir = opendir($basedir.$file);
             while ($subfile = readdir($currdir)) { 
@@ -610,7 +610,7 @@ function printfilelist($filelist) {
 
         } else { 
             $icon = mimeinfo("icon", $file);
-            echo "<img src=\"$CFG->pixpath/f/$icon\"  height=\"16\" width=\"16\"> $file<br />";
+            echo "<img src=\"$CFG->pixpath/f/$icon\"  height=\"16\" width=\"16\" alt=\"\" /> $file<br />";
         }
     }
 }
@@ -697,10 +697,10 @@ function displaydir ($wdir) {
             echo "<tr>";
 
             print_cell("center", "<input type=\"checkbox\" name=\"file$count\" value=\"$fileurl\" />");
-            print_cell("left", "<a href=\"index.php?id=$id&wdir=$fileurl\"><img src=\"$CFG->pixpath/f/folder.gif\" height=\"16\" width=\"16\" border=\"0\" alt=\"Folder\"></a> <a href=\"index.php?id=$id&wdir=$fileurl\">".htmlspecialchars($dir)."</a>");
+            print_cell("left", "<a href=\"index.php?id=$id&amp;wdir=$fileurl\"><img src=\"$CFG->pixpath/f/folder.gif\" height=\"16\" width=\"16\" border=\"0\" alt=\"Folder\" /></a> <a href=\"index.php?id=$id&amp;wdir=$fileurl\">".htmlspecialchars($dir)."</a>");
             print_cell("right", "<b>$filesize</b>");
             print_cell("right", $filedate);
-            print_cell("right", "<a href=\"index.php?id=$id&wdir=$wdir&file=$filesafe&action=rename\">$strrename</a>");
+            print_cell("right", "<a href=\"index.php?id=$id&amp;wdir=$wdir&amp;file=$filesafe&amp;action=rename\">$strrename</a>");
     
             echo "</tr>";
         }
@@ -730,7 +730,7 @@ function displaydir ($wdir) {
                 $ffurl = "/file.php?file=/$id$fileurl";
             }
             link_to_popup_window ($ffurl, "display", 
-                                  "<img src=\"$CFG->pixpath/f/$icon\" height=\"16\" width=\"16\" border=\"0\" alt=\"File\">", 
+                                  "<img src=\"$CFG->pixpath/f/$icon\" height=\"16\" width=\"16\" border=\"0\" alt=\"File\" />", 
                                   480, 640);
             echo "<font size=\"-1\" face=\"Arial, Helvetica\">";
             link_to_popup_window ($ffurl, "display", 
@@ -742,17 +742,17 @@ function displaydir ($wdir) {
             print_cell("right", display_size($file_size));
             print_cell("right", $filedate);
             if ($icon == "text.gif" || $icon == "html.gif") {
-                $edittext = "<a href=\"index.php?id=$id&wdir=$wdir&file=$fileurl&action=edit\">$stredit</a>";
+                $edittext = "<a href=\"index.php?id=$id&amp;wdir=$wdir&amp;file=$fileurl&amp;action=edit\">$stredit</a>";
             } else if ($icon == "zip.gif") {
-                $edittext = "<a href=\"index.php?id=$id&wdir=$wdir&file=$fileurl&action=unzip\">$strunzip</a>&nbsp;";
-                $edittext .= "<a href=\"index.php?id=$id&wdir=$wdir&file=$fileurl&action=listzip\">$strlist</a> ";
+                $edittext = "<a href=\"index.php?id=$id&amp;wdir=$wdir&amp;file=$fileurl&amp;action=unzip\">$strunzip</a>&nbsp;";
+                $edittext .= "<a href=\"index.php?id=$id&amp;wdir=$wdir&amp;file=$fileurl&amp;action=listzip\">$strlist</a> ";
                 if (!empty($CFG->backup_version) and isteacheredit($id)) {
-                    $edittext .= "<a href=\"index.php?id=$id&wdir=$wdir&file=$filesafe&action=restore\">$strrestore</a> ";
+                    $edittext .= "<a href=\"index.php?id=$id&amp;wdir=$wdir&amp;file=$filesafe&amp;action=restore\">$strrestore</a> ";
                 }
             } else {
                 $edittext = "";
             }
-            print_cell("right", "$edittext <a href=\"index.php?id=$id&wdir=$wdir&file=$filesafe&action=rename\">$strrename</a>");
+            print_cell("right", "$edittext <a href=\"index.php?id=$id&amp;wdir=$wdir&amp;file=$filesafe&amp;action=rename\">$strrename</a>");
     
             echo "</tr>";
         }

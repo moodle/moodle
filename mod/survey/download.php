@@ -26,7 +26,7 @@
         error("Survey ID was incorrect");
     }
 
-    add_to_log($course->id, "survey", "download", "download.php?id=$cm->id&type=$type", "$survey->id", $cm->id);
+    add_to_log($course->id, "survey", "download", "download.php?id=$cm->id&amp;type=$type", "$survey->id", $cm->id);
 
 /// Check to see if groups are being used in this survey
 

@@ -395,7 +395,7 @@ if (!$mainglossary or $mainglossary->id == $form->instance ) {
     <td align="right" valign="top"><p><b><?php print_string("allowratings", "glossary") ?>:</b></p></td>
     <td>
         <?php 
-            echo "<script>";
+            echo "<script type=\"text/javascript\">";
             echo "  var subitemstime = ['startday','startmonth','startyear','starthour', 'startminute',".
                                    "'finishday','finishmonth','finishyear','finishhour','finishminute'];";
             echo "  var subitemsall = ['assessed', 'ratingtime', 'scale', 'startday','startmonth','startyear','starthour', 'startminute',".
@@ -456,12 +456,12 @@ if (!$mainglossary or $mainglossary->id == $form->instance ) {
             echo "<input type=\"hidden\" name=\"hfinishhour\" value=\"0\" />";
             echo "<input type=\"hidden\" name=\"hfinishminute\" value=\"0\" />";
 
-            echo "<script>";
+            echo "<script type=\"text/javascript\">";
             echo "lockoptions('form','userating', subitemsall);";
             echo "</script>";
 
             if (empty($form->ratingtime)) {
-                echo "<script>";
+                echo "<script type=\"text/javascript\">";
                 echo "lockoptions('form','ratingtime', subitemstime);";
                 echo "</script>";
             }

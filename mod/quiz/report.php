@@ -75,7 +75,7 @@
             if ($report == $mode) {
                 echo "<td><u>$strreport</u></td>";
             } else {
-                echo "<td><a href=\"report.php?id=$cm->id&mode=$report\">$strreport</a></td>";
+                echo "<td><a href=\"report.php?id=$cm->id&amp;mode=$report\">$strreport</a></td>";
             }
         }
         echo "</tr></table><hr size=\"1\" noshade=\"noshade\" />";

@@ -80,7 +80,7 @@ class CourseBlock_section_links extends MoodleBlock {
             $isvisible = get_field('course_sections', 'visible', 'course', $this->course->id, 'section', $highlight);
             if ($isvisible or isteacher($this->course->id)) {
                 $style = ($isvisible) ? '' : ' class="dimmed"';
-                $text .= "<br><a href=\"$link$highlight\"$style>$linktext</a>";
+                $text .= "<br /><a href=\"$link$highlight\"$style>$linktext</a>";
             }
         }
 

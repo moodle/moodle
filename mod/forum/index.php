@@ -43,17 +43,17 @@
     // Build up the tables
 
     $generaltable->head  = array ($strforum, $strdescription, $strdiscussions);
-    $generaltable->align = array ("LEFT", "LEFT", "CENTER");
+    $generaltable->align = array ("left", "left", "center");
 
     if ($can_subscribe = (isstudent($course->id) or isteacher($course->id) or isadmin())) {
         $generaltable->head[] = $strsubscribed;
-        $generaltable->align[] = "CENTER";
+        $generaltable->align[] = "center";
     }
 
     if ($show_rss = ($can_subscribe && isset($CFG->enablerssfeeds) && isset($CFG->forum_enablerssfeeds) &&
                      $CFG->enablerssfeeds && $CFG->forum_enablerssfeeds)) {
         $generaltable->head[] = $strrss;
-        $generaltable->align[] = "CENTER";
+        $generaltable->align[] = "center";
     }
 
     $learningtable = $generaltable;   // Headers etc are the same

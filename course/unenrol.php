@@ -56,7 +56,7 @@
         $strunenrolsure = get_string("unenrolsure", "", fullname($user, true));
     }
 
-    notice_yesno ($strunenrolsure, "unenrol.php?id=$id&user=$user->id&confirm=yes", "$HTTP_REFERER");
+    notice_yesno ($strunenrolsure, "unenrol.php?id=$id&amp;user=$user->id&amp;confirm=yes", "$HTTP_REFERER");
 
     print_footer();
 

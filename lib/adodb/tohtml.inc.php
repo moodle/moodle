@@ -113,7 +113,7 @@ GLOBAL $gSQLMaxRows,$gSQLBlockRows;
 				if ($htmlspecialchars) $v = htmlspecialchars(trim($v));
 				$v = trim($v);
 				if (strlen($v) == 0) $v = '&nbsp;';
-				$s .= "	<TD>". str_replace("\n",'<br>',stripslashes($v)) ."</TD>\n";
+				$s .= "	<TD>". str_replace("\n",'<br />',stripslashes($v)) ."</TD>\n";
 			  
 			}
 		} // for

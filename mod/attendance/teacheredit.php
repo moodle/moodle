@@ -82,7 +82,7 @@
                      "$streditinga", $focuscursor, "", false);
     }
 
-        $icon = "<img align=absmiddle height=16 width=16 src=\"$CFG->modpixpath/$module->name/icon.gif\">&nbsp;";
+        $icon = "<img align=middle height=16 width=16 src=\"$CFG->modpixpath/$module->name/icon.gif\" alt=\"\" />&nbsp;";
 
         print_heading_with_help($pageheading, "mods", $module->name, $icon);
         print_simple_box_start("center", "", "$THEME->cellheading");
@@ -213,7 +213,7 @@ if ($form->hours >1) {
 <input type="hidden" name=mode          value="<?php p($form->mode) ?>" />
 <br />
 <?php
-  echo "<a href=\"../mod/attendance/add.php?id=".$form->course . "&section=".$form->section ."\">Add multiple rolls</a><br /><br />";
+  echo "<a href=\"../mod/attendance/add.php?id=".$form->course . "&amp;section=".$form->section ."\">Add multiple rolls</a><br /><br />";
 ?>
 <input type="submit" value="<?php print_string("savechanges") ?>" />
 <input type="submit" name="cancel" value="<?php print_string("cancel") ?>" />

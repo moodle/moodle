@@ -43,9 +43,9 @@
         echo "<table border=\"0\" cellpadding=\"3\" cellspacing=\"3\" class=\"generalbox\" width=\"100%\">";
         echo "<tr>";
         echo "<th>&nbsp;</th>";
-        echo "<th><a href=\"report.php?id=$entry->id&sort=u.firstname\">$strname</a>";
-        echo "<th width=\"100%\"><a href=\"report.php?id=$entry->id&sort=r.rating\">$strrating</a>";
-        echo "<th><a href=\"report.php?id=$entry->id&sort=r.time\">$strtime</a>";
+        echo "<th><a href=\"report.php?id=$entry->id&amp;sort=u.firstname\">$strname</a>";
+        echo "<th width=\"100%\"><a href=\"report.php?id=$entry->id&amp;sort=r.rating\">$strrating</a>";
+        echo "<th><a href=\"report.php?id=$entry->id&amp;sort=r.time\">$strtime</a>";
         foreach ($ratings as $rating) {
             if (isteacher($glossary->course, $rating->id)) {
                 echo "<tr bgcolor=\"$THEME->cellcontent2\">";

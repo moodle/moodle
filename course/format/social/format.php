@@ -44,7 +44,7 @@
                        "<a href=\"../mod/forum/subscribe.php?id=$social->id\">$subtext</a></td>".
                        "</tr></table>";
         print_heading_block($headertext);
-        echo "<img alt=\"\" height=\"7\" src=\"../pix/spacer.gif\"><br />";
+        echo "<img alt=\"\" height=\"7\" src=\"../pix/spacer.gif\" /><br />";
 
         forum_print_latest_discussions($social->id, 10, "plain", "", false);
 

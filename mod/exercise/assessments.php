@@ -114,8 +114,8 @@
             }
             
         notice_yesno(get_string("confirmdeletionofthisitem","exercise", get_string("assessment", "exercise")), 
-             "assessments.php?action=admindelete&id=$cm->id&aid=$_GET[aid]", 
-             "submissions.php?action=adminlist&id=$cm->id");
+             "assessments.php?action=admindelete&amp;id=$cm->id&amp;aid=$_GET[aid]", 
+             "submissions.php?action=adminlist&amp;id=$cm->id");
         }
     
 
@@ -135,7 +135,7 @@
         // ...now delete the assessment...
         delete_records("exercise_assessments", "id", $_GET['aid']);
         
-        print_continue("submissions.php?id=$cm->id&action=adminlist");
+        print_continue("submissions.php?id=$cm->id&amp;action=adminlist");
         }
     
 
@@ -151,7 +151,7 @@
             }
         $submission = get_record("exercise_submissions", "id", $_GET['sid']);
         exercise_print_assessments_for_admin($exercise, $submission);
-        print_continue("submissions.php?action=adminlist&id=$cm->id");
+        print_continue("submissions.php?action=adminlist&amp;id=$cm->id");
         }
 
 
@@ -167,7 +167,7 @@
             }
         $user = get_record("user", "id", $_GET['userid']);
         exercise_print_assessments_by_user_for_admin($exercise, $user);
-        print_continue("submissions.php?action=adminlist&id=$cm->id");
+        print_continue("submissions.php?action=adminlist&amp;id=$cm->id");
         }
 
 
@@ -622,7 +622,7 @@
                 }
             }
         }
-        redirect("submissions.php?id=$cm->id&action=adminlist");
+        redirect("submissions.php?id=$cm->id&amp;action=adminlist");
     }
     
 
@@ -1097,7 +1097,7 @@
                     $_POST['aid'])) {
             error("Update grading grade: asseesment not updated");
         }
-        redirect("submissions.php?id=$cm->id&action=adminlist", get_string("savedok", "exercise"), 1);
+        redirect("submissions.php?id=$cm->id&amp;action=adminlist", get_string("savedok", "exercise"), 1);
     }
 
 
@@ -1109,7 +1109,7 @@
         }
             
         notice_yesno(get_string("confirmdeletionofthisitem","exercise", get_string("assessment", "exercise")), 
-             "assessments.php?action=userdelete&id=$cm->id&aid=$_GET[aid]", "view.php?id=$cm->id");
+             "assessments.php?action=userdelete&amp;id=$cm->id&amp;aid=$_GET[aid]", "view.php?id=$cm->id");
     }
     
 

@@ -57,7 +57,7 @@
     }
     
     if (!empty($_POST["scoid"]))
-    	    $scoid = "&scoid=".$_POST["scoid"];
+    	    $scoid = "&amp;scoid=".$_POST["scoid"];
     if (!empty($_POST['currentorg'])) {
 	$currentorg = $_POST['currentorg'];
     }
@@ -85,7 +85,7 @@
     	echo "     </tr>\n</table>\n";
     	
     	if ($scorm->popup != "") {
-    	    echo "<script id=\"scormAPI\" language=\"JavaScript\" type=\"text/javascript\" src=\"scormAPI.php?id=$cm->id&mode=".$mode.$scoid."\"></script>\n";
+    	    echo "<script id=\"scormAPI\" language=\"JavaScript\" type=\"text/javascript\" src=\"scormAPI.php?id=$cm->id&amp;mode=".$mode.$scoid."\"></script>\n";
 	    $currentSCO = "";
             if (!empty($_POST['scoid']))
                 $currentSCO = $_POST['scoid'];
@@ -154,9 +154,9 @@
     		    $nextsco = next($scoes);
     		    if (($nextsco !== false) && ($sco->parent != $nextsco->parent) && (($level==0) || (($level>0) && ($nextsco->parent == $sco->identifier)))) {
     			$sublist++;
-    			echo "      <img src=\"pix/minus.gif\" onClick='expandCollide(this,".$sublist.");'/>\n";
+    			echo "      <img src=\"pix/minus.gif\" onClick='expandCollide(this,".$sublist.");' alt=\"\" />\n";
     		    } else {
-    			echo "      <img src=\"pix/spacer.gif\" />\n";
+    			echo "      <img src=\"pix/spacer.gif\" alt=\"\" />\n";
     		    }
     		    
     		    if ($sco->launch) {
@@ -271,9 +271,9 @@
     	    //
     	    echo "<html>\n";
             echo "<head><title>$course->shortname: $scorm->name</title></head>\n";
-            echo "<script id=\"scormAPI\" language=\"JavaScript\" type=\"text/javascript\" src=\"scormAPI.php?id=$cm->id&mode=".$mode.$scoid."\"></script>\n";
+            echo "<script id=\"scormAPI\" language=\"JavaScript\" type=\"text/javascript\" src=\"scormAPI.php?id=$cm->id&amp;mode=".$mode.$scoid."\"></script>\n";
 	    echo "<frameset rows=\"$CFG->scorm_framesize,*\" onLoad=\"SCOInitialize();\" onUnload=\"SCOFinish();\" onbeforeUnload=\"SCOFinish();\">\n";
-            echo "\t    <frame name=\"navigation\" src=\"playscorm.php?id=$cm->id&mode=".$mode.'&currentorg='.$currentorg."&frameset=top\">\n";
+            echo "\t    <frame name=\"navigation\" src=\"playscorm.php?id=$cm->id&amp;mode=".$mode.'&amp;currentorg='.$currentorg."&amp;frameset=top\">\n";
             echo "\t    <frame name=\"main\" src=\"\">\n";
             echo "</frameset>\n";
             echo "</html>\n";

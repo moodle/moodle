@@ -400,7 +400,7 @@
                 //Get the new_id of the page (to recode the url field)
                 $pag = backup_getid($restore->backup_unique_code,"lesson_pages",$log->info);
                 if ($pag) {
-                    $log->url = "view.php?id=".$log->cmid."&action=navigation&pageid=".$pag->new_id;
+                    $log->url = "view.php?id=".$log->cmid."&amp;action=navigation&amp;pageid=".$pag->new_id;
                     $log->info = $pag->new_id;
                     $status = true;
                 }

@@ -36,7 +36,7 @@
                   $stractivityreport");
     } else {
         print_header("$course->shortname: $stractivityreport ($mode)", "$course->fullname",
-                 "<a href=\"../user/view.php?id=$user->id&course=$course->id\">$user->firstname $user->lastname</a> -> 
+                 "<a href=\"../user/view.php?id=$user->id&amp;course=$course->id\">$user->firstname $user->lastname</a> -> 
                   $stractivityreport -> $strmode");
     }
     print_heading("$course->fullname");
@@ -104,7 +104,7 @@
 
 
 function print_outline_row($mod, $instance, $result) {
-    $image = "<img src=\"../mod/$mod->modname/icon.gif\" height=\"16\" width=\"16\" alt=\"$mod->modfullname\">";
+    $image = "<img src=\"../mod/$mod->modname/icon.gif\" height=\"16\" width=\"16\" alt=\"$mod->modfullname\" />";
 
     echo "<tr>";
     echo "<td valign=\"top\">$image</td>";

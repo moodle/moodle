@@ -4,7 +4,7 @@
 
 $string['about'] = 'Info';
 $string['absbottom'] = 'Absbottom';
-$string['absmiddle'] = 'Absmiddle';
+$string['middle'] = 'middle';
 $string['address'] = 'Adres';
 $string['alignment'] = 'Uitlijning';
 $string['alternatetext'] = 'Alternatieve tekst';

@@ -38,7 +38,7 @@
                      "$strdeletecheck");
 
         notice_yesno("$strdeletecoursecheck<br /><br />$course->fullname ($course->shortname)", 
-                     "delete.php?id=$course->id&delete=".md5($course->timemodified), 
+                     "delete.php?id=$course->id&amp;delete=".md5($course->timemodified), 
                      "category.php?id=$course->category");
         exit;
     }

@@ -123,7 +123,7 @@ $string['plaintext'] = 'Tekst';
 $string['preview'] = 'Podgl±d';
 $string['readonly'] = 'Strony tylko do odczytu';
 $string['refs'] = 'Odwo³ania';
-$string['removenotice'] = 'Zauwa¿, ¿e tylko strony do których nie odwo³uj± siê ¿adne inne bêd± tutaj wy¶wietlone. Poniewa¿ silnik wiki dokonuje tylko ograniczonego testowania czy do strony s± jakie¶ odwo³ania, mo¿e wiêc nie wy¶wietliæ wszystkich stron.<br>
+$string['removenotice'] = 'Zauwa¿, ¿e tylko strony do których nie odwo³uj± siê ¿adne inne bêd± tutaj wy¶wietlone. Poniewa¿ silnik wiki dokonuje tylko ograniczonego testowania czy do strony s± jakie¶ odwo³ania, mo¿e wiêc nie wy¶wietliæ wszystkich stron.<br />
 Je¶li jednak wpierw opró¿nisz stronê, zostanie ona tutaj wy¶wietlona. Inne testy bazy danych s± równie¿ przedstawione. ';
 $string['removepagecheck'] = 'Czy na pewno usun±æ te strony?';
 $string['removepages'] = 'Usuñ strony';

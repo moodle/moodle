@@ -92,11 +92,11 @@ $string['noassessmentsdone'] = "No Assessments Done";
 $string['nosubmissionsavailableforassessment'] = "No Submissions available for assessment";
 $string['notavailable'] = "Not Available";
 $string['noteonassessmentelements'] = 
-	"Note that grading is broken down into a number of 'Assessment Elements'.<BR>
-	This makes the grading easier and more consistent. As teacher you must add these <BR>
-	Elements before making the assignment available to students. This is done by<BR>
-	clicking on the assignment in the course, if no elements are present you will be asked<BR>
-	to add them. You can change the number of elements using the Edit Assignment screen,<BR>
+	"Note that grading is broken down into a number of 'Assessment Elements'.<br />
+	This makes the grading easier and more consistent. As teacher you must add these <br />
+	Elements before making the assignment available to students. This is done by<br />
+	clicking on the assignment in the course, if no elements are present you will be asked<br />
+	to add them. You can change the number of elements using the Edit Assignment screen,<br />
 	the elements themselves can be amended from the &quot;Managing Assessment&quot; screen. ";
 $string['notitlegiven'] = "No Title Given";
 $string['notgraded'] = "Not Graded";
@@ -171,7 +171,7 @@ $string['verypoor'] = "Very Poor";
 $string['view'] = "View";
 $string['viewassessmentofteacher'] = "View Assessment of \$a";
 $string['viewotherassessments'] = "View other Assessments";
-$string['warningonamendingelements'] = "WARNING: There are submitted assessments. <BR>Do NOT change the number
+$string['warningonamendingelements'] = "WARNING: There are submitted assessments. <br />Do NOT change the number
  of elements, the scale types or the element weights.";
 $string['weightederrorcount'] = "Weighted Error Count: \$a";
 $string['weightforbias'] = "Weight for Bias";

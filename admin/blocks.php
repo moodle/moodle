@@ -160,10 +160,10 @@
 
         if ($blocks[$blockid]->visible) {
             $visible = '<a href="blocks.php?hide='.$blockid.'" title="'.$strhide.'">'.
-                       '<img src="'.$pixpath.'/i/hide.gif" style="height: 16px; width: 16px;" /></a>';
+                       '<img src="'.$pixpath.'/i/hide.gif" style="height: 16px; width: 16px;" alt=\"\" /></a>';
         } else {
             $visible = '<a href="blocks.php?show='.$blockid.'" title="'.$strshow.'">'.
-                       '<img src="'.$pixpath.'/i/show.gif" style="height: 16px; width: 16px;" /></a>';
+                       '<img src="'.$pixpath.'/i/show.gif" style="height: 16px; width: 16px;" alt=\"\" /></a>';
             $class = ' class="dimmed_text"'; // Leading space required!
         }
 

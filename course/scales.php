@@ -432,7 +432,7 @@
                 $data[] = $line;
             }
             $line = array();
-            $line[] = "<a target=\"scale\" title=\"$scale->name\" href=\"$CFG->wwwroot/course/scales.php?id=$course->id&scaleid=$scale->id&action=details\" "."onClick=\"return openpopup('/course/scales.php?id=$course->id\&scaleid=$scale->id&action=details', 'scale', 'menubar=0,location=0,scrollbars,resizable,width=600,height=450', 0);\">".$scale->name."</a><br /><font size=\"-1\">".str_replace(",",", ",$scale->scale)."</font>";
+            $line[] = "<a target=\"scale\" title=\"$scale->name\" href=\"$CFG->wwwroot/course/scales.php?id=$course->id&amp;scaleid=$scale->id&amp;action=details\" "."onClick=\"return openpopup('/course/scales.php?id=$course->id\&amp;scaleid=$scale->id&amp;action=details', 'scale', 'menubar=0,location=0,scrollbars,resizable,width=600,height=450', 0);\">".$scale->name."</a><br /><font size=\"-1\">".str_replace(",",", ",$scale->scale)."</font>";
             if (!empty($scale->courseid)) {
                 $scales_uses = course_scale_used($course->id,$scale->id);
             } else {
@@ -446,18 +446,18 @@
             }
             $buttons = "";
             if (empty($scales_uses) && ($incustom || isadmin())) {
-                $buttons .= "<a title=\"$stredit\" href=\"$path/scales.php?id=$course->id&scaleid=$scale->id&action=edit\"><img".
-                            " src=\"$pixpath/t/edit.gif\" hspace=\"2\" height=\"11\" width=\"11\" border=\"0\"></a> ";
+                $buttons .= "<a title=\"$stredit\" href=\"$path/scales.php?id=$course->id&amp;scaleid=$scale->id&amp;action=edit\"><img".
+                            " src=\"$pixpath/t/edit.gif\" hspace=\"2\" height=\"11\" width=\"11\" border=\"0\" alt=\"\" /></a> ";
                 if ($incustom && isadmin()) {
-                    $buttons .= "<a title=\"$strdown\" href=\"$path/scales.php?id=$course->id&scaleid=$scale->id&action=down\"><img".
-                                " src=\"$pixpath/t/down.gif\" hspace=\"2\" height=\"11\" width=\"11\" border=\"0\"></a> ";
+                    $buttons .= "<a title=\"$strdown\" href=\"$path/scales.php?id=$course->id&amp;scaleid=$scale->id&amp;action=down\"><img".
+                                " src=\"$pixpath/t/down.gif\" hspace=\"2\" height=\"11\" width=\"11\" border=\"0\" alt=\"\" /></a> ";
                 }
                 if (!$incustom && isadmin()) {
-                    $buttons .= "<a title=\"$strup\" href=\"$path/scales.php?id=$course->id&scaleid=$scale->id&action=up\"><img".
-                                " src=\"$pixpath/t/up.gif\" hspace=\"2\" height=\"11\" width=\"11\" border=\"0\"></a> ";
+                    $buttons .= "<a title=\"$strup\" href=\"$path/scales.php?id=$course->id&amp;scaleid=$scale->id&amp;action=up\"><img".
+                                " src=\"$pixpath/t/up.gif\" hspace=\"2\" height=\"11\" width=\"11\" border=\"0\" alt=\"\" /></a> ";
                 }
-                $buttons .= "<a title=\"$strdelete\" href=\"$path/scales.php?id=$course->id&scaleid=$scale->id&action=delete\"><img".
-                            " src=\"$pixpath/t/delete.gif\" hspace=\"2\" height=\"11\" width=\"11\" border=\"0\"></a> ";
+                $buttons .= "<a title=\"$strdelete\" href=\"$path/scales.php?id=$course->id&amp;scaleid=$scale->id&amp;action=delete\"><img".
+                            " src=\"$pixpath/t/delete.gif\" hspace=\"2\" height=\"11\" width=\"11\" border=\"0\" alt=\"\" /></a> ";
             }
             $line[] = $buttons;
             

@@ -109,7 +109,7 @@ $string['backuplogshelp'] = 'Se for activada, as estatísticas de acesso às disci
 $string['backupnameformat'] = '%%d%%m%%Y-%%H%%M';
 $string['backupnoneusersinfo'] = 'Atenção: como não seleccionou nenhum utilizador para  incluir na cópia de segurança, foi utilizada a opção de criar cópia de segurança sem incluir dados de utilizadores. Por favor repare que os módulos de \"exercício\" e \"workshop\" não são compatíveis com esse tipo de cópia de segurança, assim que foram completamente ignorados na cópia de segurança.';
 $string['backuporiginalname'] = 'Nome da cópia de segurança';
-$string['backupsavetohelp'] = 'Nome e caminho completo do directório onde quer guardar os ficheiros de cópia de segurança<br>(deixe em branco se quiser que fiquem no próprio directório da disciplina)';
+$string['backupsavetohelp'] = 'Nome e caminho completo do directório onde quer guardar os ficheiros de cópia de segurança<br />(deixe em branco se quiser que fiquem no próprio directório da disciplina)';
 $string['backupuserfileshelp'] = 'Escolha se os ficheiros de alunos (por exemplo fotografias) deverão ser incluidos nas cópias de segurança automatizadas';
 $string['backupusershelp'] = 'Escolha se quer que sejam incluidos todos os utilizadores no servidor, ou apenas os que forem necessários para cada disciplina';
 $string['backupversion'] = 'Versão da cópia de segurança';
@@ -397,9 +397,9 @@ $string['enrolledincoursenot'] = 'Não inscrito(a) na disciplina ';
 $string['enrollfirst'] = 'Tem que se inscrever em alguma das disciplinas para poder começar a usar as actividades do sítio.';
 $string['enrolmentconfirmation'] = 'Está prestes a inscrever-se como membro desta disciplina.<br />Tem a certeza que deseja continuar?';
 $string['enrolmentkey'] = 'Chave de inscrição';
-$string['enrolmentkeyfrom'] = 'Esta disciplina requer uma \'chave de inscrição\'.<br>Chave essa que deverá ser pedida a $a<br>
+$string['enrolmentkeyfrom'] = 'Esta disciplina requer uma \'chave de inscrição\'.<br />Chave essa que deverá ser pedida a $a<br />
 (Pode também \'Sair\' e a seguir entrar na disciplina como visitante)';
-$string['enrolmentkeyhint'] = 'A chave que usou é incorrecta; por favor tente novamente<br>(Dica - a chave começa com \'$a\')';
+$string['enrolmentkeyhint'] = 'A chave que usou é incorrecta; por favor tente novamente<br />(Dica - a chave começa com \'$a\')';
 $string['enrolmentnew'] = 'Nova inscrição em $a';
 $string['enrolmentnewuser'] = '$a->user inscreveu-se na disciplina \"$a->course\"';
 $string['enrolmentnointernal'] = 'Actualmente não se aceitam inscrições manuais';
@@ -590,7 +590,7 @@ $string['login_failure_logs'] = 'Relatórios de tentativas de entrada sem sucesso
 $string['loginas'] = 'Entrar como';
 $string['loginguest'] = 'Entrar como visitante';
 $string['loginsite'] = 'Entrar no sítio';
-$string['loginsteps'] = 'Viva!<br>
+$string['loginsteps'] = 'Viva!<br />
 <p>Para ter acesso completo às disciplinas precisa dedicar um minuto a criar uma nova conta de utilizador.</p>
 <p>Cada disciplina pode também ter uma \"chave de inscrição\", fornecida pelo docente.</p>
 <p>Siga as instruções:</p>
@@ -852,7 +852,7 @@ $string['scheduledbackupstatus'] = 'Estado de cópias de segurança programadas';
 $string['search'] = 'Procurar';
 $string['searchagain'] = 'Procurar novamente';
 $string['searchcourses'] = 'Procurar disciplinas';
-$string['searchhelp'] = 'Pode procurar várias palavras de uma só vez.<p>palavra: procurar ocorrências desta palavra, isolada ou dentro de outras.<br>+palavra: procura apenas ocorrências que contenham a palavra exacta.<br>-palavra: procura apenas ocorrências em que palavra não aparece.';
+$string['searchhelp'] = 'Pode procurar várias palavras de uma só vez.<p>palavra: procurar ocorrências desta palavra, isolada ou dentro de outras.<br />+palavra: procura apenas ocorrências que contenham a palavra exacta.<br />-palavra: procura apenas ocorrências em que palavra não aparece.';
 $string['searchresults'] = 'Procurar resultados';
 $string['sec'] = 'segundo';
 $string['secs'] = 'segundos';

@@ -49,11 +49,11 @@ $string['feedback'] = "Geribildirim";
 $string['filloutoneanswer'] = "En az bir muhtemel yanýtý doldurmalýsýnýz.  Boþ yanýtlar deðerlendirilemez.";
 $string['fillouttwochoices'] = "En az iki seçenek doldurmalýsýnýz.  Boþ seçenekler deðerlendirilemez.";
 $string['fractionsaddwrong'] = "The positive grades you have chosen do not add up to 100%%
-<BR>Instead, they add up to \$a%%
-<BR>Do you want to go back and fix this question?";
+<br />Instead, they add up to \$a%%
+<br />Do you want to go back and fix this question?";
 $string['fractionsnomax'] = "One of the answers should be 100%%, so that it is
-<BR>possible to get a full grade for this question.
-<BR>Do you want to go back and fix this question?";
+<br />possible to get a full grade for this question.
+<br />Do you want to go back and fix this question?";
 $string['gradeaverage'] = "Not ortalamasý";
 $string['gradehighest'] = "En yüksek not";
 $string['grademethod'] = "Not verme metodu";

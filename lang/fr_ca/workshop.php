@@ -112,10 +112,10 @@ $string['noassessmentsdone'] = 'Pas d\'évaluation effectuée';
 $string['nosubmission'] = 'Aucun travail remis';
 $string['nosubmissionsavailableforassessment'] = 'Pas de travaux disponibles pour évaluation';
 $string['notavailable'] = 'Pas disponible';
-$string['noteonassessmentelements'] = 'Sachez que l\'évaluation se fait à partir de critères.<BR>
-Ceci facilite l\'attribution d\'une note et assure une plus grande équité. Vous devez ajouter ces critères<BR> avant de rendre disponible cet atelier aux étudiants .
-Pour ce faire,<BR>
-cliquez sur l\'atelier dans le cours et on vous demandera d\'ajouter des critères<BR> s\'il n\'y en a aucun. Vous pouvez en ajouter d\'autres plus tard à l\'aide du menu d\'édition<BR>. Vous pouvez modifier les critères à l\'aide de la commande \'Gestion des évaluations\'.';
+$string['noteonassessmentelements'] = 'Sachez que l\'évaluation se fait à partir de critères.<br />
+Ceci facilite l\'attribution d\'une note et assure une plus grande équité. Vous devez ajouter ces critères<br /> avant de rendre disponible cet atelier aux étudiants .
+Pour ce faire,<br />
+cliquez sur l\'atelier dans le cours et on vous demandera d\'ajouter des critères<br /> s\'il n\'y en a aucun. Vous pouvez en ajouter d\'autres plus tard à l\'aide du menu d\'édition<br />. Vous pouvez modifier les critères à l\'aide de la commande \'Gestion des évaluations\'.';
 $string['notgraded'] = 'Évaluation formative avec grille d\'évaluation';
 $string['notitlegiven'] = 'Aucun titre fourni';
 $string['numberofassessmentelements'] = 'Nombre de critères, de commentaires ou d\'éléments ';
@@ -216,7 +216,7 @@ $string['verypoor'] = 'Très faible';
 $string['view'] = 'Voir';
 $string['viewassessmentofteacher'] = 'Voir l\'évaluation de $a';
 $string['viewotherassessments'] = 'Voir les autres évaluations';
-$string['warningonamendingelements'] = 'Attention : Des travaux ont été soumis.<br> Ne pas modifier le nombre de critères d\'évaluation, les échelles ou le poids des critères.';
+$string['warningonamendingelements'] = 'Attention : Des travaux ont été soumis.<br /> Ne pas modifier le nombre de critères d\'évaluation, les échelles ou le poids des critères.';
 $string['weight'] = 'Coefficient';
 $string['weightederrorcount'] = 'Nombre d\'erreurs pondérées: $a';
 $string['weightforbias'] = 'Poids pour les biais';

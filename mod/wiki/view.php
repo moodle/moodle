@@ -88,15 +88,15 @@
 
         /// Search Hilighting
         if($ewiki_title=="SearchPages") {
-            $qArgument="&q=".urlencode($q);
+            $qArgument="&amp;q=".urlencode($q);
         }
  
         /// Build the ewsiki script constant
         /// ewbase will also be needed by EWIKI_SCRIPT_BINARY
         $ewbase = $ME.'?id='.$moodleID;
-        if (isset($userid) && $userid!=0) $ewbase .= '&userid='.$userid;
-        if (isset($groupid) && $groupid!=0) $ewbase .= '&groupid='.$groupid;
-        $ewscript = $ewbase.'&page=';
+        if (isset($userid) && $userid!=0) $ewbase .= '&amp;userid='.$userid;
+        if (isset($groupid) && $groupid!=0) $ewbase .= '&amp;groupid='.$groupid;
+        $ewscript = $ewbase.'&amp;page=';
         define("EWIKI_SCRIPT", $ewscript);
         define("EWIKI_SCRIPT_URL", $ewscript);
 
@@ -136,7 +136,7 @@
         # Binary Handling
         if($wiki->ewikiacceptbinary) {
             define("EWIKI_UPLOAD_MAXSIZE", get_max_upload_file_size());
-            define("EWIKI_SCRIPT_BINARY", $ewbase."&binary=");
+            define("EWIKI_SCRIPT_BINARY", $ewbase."&amp;binary=");
             define("EWIKI_ALLOW_BINARY",1);
             define("EWIKI_IMAGE_CACHING",1);
             #define("EWIKI_AUTOVIEW",1);
@@ -217,7 +217,7 @@
     }
         
 /// Moodle Log
-    add_to_log($course->id, "wiki", $ewiki_action, "view.php?id=$cm->id&groupid=$groupid&userid=$userid&page=$page", $wiki->name." ".$ewiki_title);
+    add_to_log($course->id, "wiki", $ewiki_action, "view.php?id=$cm->id&amp;groupid=$groupid&amp;userid=$userid&amp;page=$page", $wiki->name." ".$ewiki_title);
 
 
 /// Print the page header
@@ -315,7 +315,7 @@
             $tabname = get_string("tab$tab", 'wiki');
             if ($ewiki_action != "$tab" && !in_array($page, $specialpages)) {          
                 echo '<td class="generaltab" '.$tabstyle.' bgcolor="'.$THEME->cellheading.'">';
-                echo '<a href="'.$ewbase.'&page='.$tab.'/'.$ewiki_id.'">'.$tabname.'</a>';
+                echo '<a href="'.$ewbase.'&amp;page='.$tab.'/'.$ewiki_id.'">'.$tabname.'</a>';
                 echo '</td>';
             } else {
                 echo '<td class="generaltabselected" '.$tabstyle.' bgcolor="'.$THEME->cellcontent.'">'.$tabname.'</td>';

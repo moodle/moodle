@@ -334,7 +334,7 @@ function ewiki_entry_downloads($row, $show_section=0, $fullinfo=false) {
 
    $info->id = $id;
    $info->size = $p_size;
-   $info->icon = ($p_icon ? '<img src="'.$p_icon.'" alt="['.$p_icon_t.']" align="left" width="14" height="14" border="0"> ' : '');
+   $info->icon = ($p_icon ? '<img src="'.$p_icon.'" alt="['.$p_icon_t.']" align="left" width="14" height="14" border="0" /> ' : '');
    $info->time = $p_time;
    $info->hits = $p_hits;
    $info->section = ($show_section ? ewiki_t('dwnl_section') . ": $p_section<br />" : '');
@@ -349,7 +349,7 @@ function ewiki_entry_downloads($row, $show_section=0, $fullinfo=false) {
                 $course->id = 1;
             }
             $picture = print_user_picture($user->id, $course->id, $user->picture, false, true, true);
-            $value = $picture." <a href=\"$CFG->wwwroot/user/view.php?id=$user->id&course=$course->id\">".
+            $value = $picture." <a href=\"$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$course->id\">".
                      fullname($user)."</a>";
         }
 

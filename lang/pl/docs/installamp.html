@@ -76,20 +76,20 @@ pakietu, który zawiera ca³e niezbêdne Ci oprogramowanie. Poni¿ej podano postêpow
     <li>Utwórz nowy katalog, w którym Moodle bêdzie mog³o przechowywaæ przes³ane dane np. <strong>C:\moodledata</strong></li>
     <li> Przejd¼ do katalogu Moodle. Zrób kopiê pliku config-dist.php, i nazwij j± config.php</li>
     <li> Zmodyfikuj config.php korzystaj±c z edytora tekstowego (Notatnik Windows wystarczy. Uwa¿aj tylko, aby nie dodaæ na koñcu pliku pustych odstêpów ani nowych linii). </li>
-    <li>Wprowad¼ informacje o twojej bazie danych:<br>
-      $CFG-&gt;dbtype = 'mysql';<br>
-      $CFG-&gt;dbhost = 'localhost';<br>
-      $CFG-&gt;dbname = 'moodle';<br>
-      $CFG-&gt;dbuser = 'root'; <br>
-      $CFG-&gt;dbpass = '';<br>
-      $CFG-&gt;dbpersist = true;<br>
-      $CFG-&gt;prefix = 'mdl_';<br>
+    <li>Wprowad¼ informacje o twojej bazie danych:<br />
+      $CFG-&gt;dbtype = 'mysql';<br />
+      $CFG-&gt;dbhost = 'localhost';<br />
+      $CFG-&gt;dbname = 'moodle';<br />
+      $CFG-&gt;dbuser = 'root'; <br />
+      $CFG-&gt;dbpass = '';<br />
+      $CFG-&gt;dbpersist = true;<br />
+      $CFG-&gt;prefix = 'mdl_';<br />
     </li>
-    <li>Nastêpnie wprowad¼ ¶cie¿ki dostêpu do plików:<br>
+    <li>Nastêpnie wprowad¼ ¶cie¿ki dostêpu do plików:<br />
       $CFG-&gt;wwwroot = 'http://localhost/moodle'; // Use an external address 
-      if you know it. <br>
-      $CFG-&gt;dirroot = 'C:\Program Files\EasyPHP\www\moodle'; <br>
-      $CFG-&gt;dataroot = 'C:\moodledata';<br>
+      if you know it. <br />
+      $CFG-&gt;dirroot = 'C:\Program Files\EasyPHP\www\moodle'; <br />
+      $CFG-&gt;dataroot = 'C:\moodledata';<br />
     </li>
     <li>Zapisz plik config.php - mo¿esz zignorowaæ pozosta³e ustawienia, je¶li jeszcze jakie¶ zosta³y.</li>
     <li>Ju¿ prawie koniec! Reszta instalacji odbywa siê poprzez sieæ. Wejd¼ na stronê       <a href="http://localhost/moodle/admin/" target="_blank">http://localhost/moodle/admin/</a> 

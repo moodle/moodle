@@ -68,7 +68,7 @@
     
 /// redirecting if adding a new entry
     if ($tab == GLOSSARY_ADDENTRY_VIEW ) {
-        redirect("edit.php?id=$cm->id&mode=$mode");
+        redirect("edit.php?id=$cm->id&amp;mode=$mode");
     }
 
 /// setting the defaut number of entries per page if not set
@@ -113,7 +113,7 @@
     if (!$cm->visible and !isteacher($course->id)) {
         notice(get_string("activityiscurrentlyhidden"));
     } 
-    add_to_log($course->id, "glossary", "view", "view.php?id=$cm->id&tab=$tab", $glossary->id, $cm->id);
+    add_to_log($course->id, "glossary", "view", "view.php?id=$cm->id&amp;tab=$tab", $glossary->id, $cm->id);
 
 /// stablishing flag variables
     if ( $sortorder = strtolower($sortorder) ) {
@@ -242,8 +242,8 @@
     echo '<p align="center"><font size="3"><b>' . stripslashes_safe($glossary->name);
     if ( $isuserframe and $mode != 'search') {
     /// the "Print" icon
-        echo " <a title =\"". get_string("printerfriendly","glossary") . "\" target=\"printview\" href=\"print.php?id=$cm->id&mode=$mode&hook=$hook&sortkey=$sortkey&sortorder=$sortorder&offset=$offset\">";
-        echo '<img border="0" src="print.gif"/></a>';
+        echo " <a title =\"". get_string("printerfriendly","glossary") . "\" target=\"printview\" href=\"print.php?id=$cm->id&amp;mode=$mode&amp;hook=$hook&amp;sortkey=$sortkey&amp;sortorder=$sortorder&amp;offset=$offset\">";
+        echo '<img border="0" src="print.gif" alt="" /></a>';
     }
     echo '</b></font></p>';
 
@@ -297,7 +297,7 @@
         if ( $offset < 0 ) {
             $paging = '<strong>' . $paging . '</strong>';
         } else {
-            $paging = "<a href=\"view.php?id=$id&mode=$mode&hook=$hook&offset=-1&sortkey=$sortkey&sortorder=$sortorder&fullsearch=$fullsearch\">" . $paging . '</a>';
+            $paging = "<a href=\"view.php?id=$id&amp;mode=$mode&amp;hook=$hook&amp;offset=-1&amp;sortkey=$sortkey&amp;sortorder=$sortorder&amp;fullsearch=$fullsearch\">" . $paging . '</a>';
         }
         if ($count > $entriesbypage ) {
             for ($i = 0; ($i*$entriesbypage) < $count  ; $i++   ) {
@@ -312,7 +312,7 @@
                 if ($offset / $entriesbypage == $i) {
                     $paging .= '<strong>' . $pagenumber . '</strong>';
                 } else {
-                    $paging .= "<a href=\"view.php?id=$id&mode=$mode&hook=$hook&offset=" . ($i*$entriesbypage) . "&sortkey=$sortkey&sortorder=$sortorder&fullsearch=$fullsearch\">" . $pagenumber . '</a>';
+                    $paging .= "<a href=\"view.php?id=$id&amp;mode=$mode&amp;hook=$hook&amp;offset=" . ($i*$entriesbypage) . "&amp;sortkey=$sortkey&amp;sortorder=$sortorder&amp;fullsearch=$fullsearch\">" . $pagenumber . '</a>';
                 }
             }
             $paging  = "<font size=\"1\"><center>" . get_string ("jumpto") . " $paging</center></font>";

@@ -54,7 +54,7 @@
         }
     }
 
-    add_to_log($course->id, "quiz", "review", "review.php?id=$cm->id&attempt=$attempt->id", "$quiz->id", "$cm->id");
+    add_to_log($course->id, "quiz", "review", "review.php?id=$cm->id&amp;attempt=$attempt->id", "$quiz->id", "$cm->id");
 
 
 // Print the page header

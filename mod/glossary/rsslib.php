@@ -194,7 +194,7 @@
                 $user->lastname = $rec->userlastname;
                 $item->author = fullname($user);
                 $item->pubdate = $rec->entrytimecreated;
-                $item->link = $CFG->wwwroot."/mod/glossary/showentry.php?courseid=".$glossary->course."&eid=".$rec->entryid;
+                $item->link = $CFG->wwwroot."/mod/glossary/showentry.php?courseid=".$glossary->course."&amp;eid=".$rec->entryid;
                 $item->description = format_text($rec->entrydefinition,$rec->entryformat,NULL,$glossary->course);
                 $items[] = $item;
                 $articlesleft--;
@@ -252,7 +252,7 @@
                 $user->lastname = $rec->userlastname;
                 //$item->author = fullname($user);
                 $item->pubdate = $rec->entrytimecreated;
-                $item->link = $CFG->wwwroot."/mod/glossary/showentry.php?courseid=".$glossary->course."&eid=".$rec->entryid;
+                $item->link = $CFG->wwwroot."/mod/glossary/showentry.php?courseid=".$glossary->course."&amp;eid=".$rec->entryid;
                 $item->description = format_text($rec->entrydefinition,$rec->entryformat,NULL,$glossary->course);
                 $items[] = $item;
                 $articlesleft--;

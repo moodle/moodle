@@ -101,13 +101,13 @@ $string['fillouttwochoices'] = 'Sie müssen mindestens zwei mögliche Antwort gebe
 $string['forceregeneration'] = 'erzwungene Wiederherstellung';
 $string['fractionsaddwrong'] = 'Ihre positiven gewählten Punktzahlen ergeben keine 100%%
 
-<BR>Statt dessen ergeben Sie $a%%
+<br />Statt dessen ergeben Sie $a%%
 
-<BR>Möchten Sie zurück gehen und diese Frage korrigieren?';
+<br />Möchten Sie zurück gehen und diese Frage korrigieren?';
 $string['fractionsnomax'] = 'Eine dieser Antworten sollte 100%% sein, so dass
-<br>es möglich ist, die volle Punktzahl für diese Frage zu bekommen.
+<br />es möglich ist, die volle Punktzahl für diese Frage zu bekommen.
 
-<br>Möchten Sie zurück gehen und diese Frage korrigieren?';
+<br />Möchten Sie zurück gehen und diese Frage korrigieren?';
 $string['functiontakesatleasttwo'] = 'Die Funktion $a erfordert mindestens zwei Einträge';
 $string['functiontakesnoargs'] = 'Die Funktion $a hat keine Einträge';
 $string['functiontakesonearg'] = 'Die Funktion $a erfordert genau einen Eintrag';
@@ -160,7 +160,7 @@ $string['noreview'] = 'Sie dürfen diesen Test nicht überprüfen';
 $string['noreviewuntil'] = 'Sie dürfen diesen Test bis $a nicht überprüfen';
 $string['noscript'] = 'JavaScript muß aktiviert sein, um fortzusetzen';
 $string['notenoughanswers'] = 'Diese Art von Fragen erfordert zumindest $a Antworten';
-$string['notenoughsubquestions'] = 'Nicht genügend Unter-Fragen wurden definiert\'<br>
+$string['notenoughsubquestions'] = 'Nicht genügend Unter-Fragen wurden definiert\'<br />
 
 Möchten Sie zurück gehen und diese Frage korrigieren?';
 $string['numerical'] = 'Numerisch';

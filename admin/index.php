@@ -21,7 +21,7 @@
 
 /// Check some PHP server settings
 
-    $documentationlink = "please read the <a href=\"../doc/?frame=install.html&sub=webserver\">install documentation</a>";
+    $documentationlink = "please read the <a href=\"../doc/?frame=install.html&amp;sub=webserver\">install documentation</a>";
 
     if (ini_get_bool('session.auto_start')) {
         error("The PHP server variable 'session.auto_start' should be Off - $documentationlink");
@@ -328,7 +328,7 @@
 
     $userdata .= "<font size=+1>&nbsp;</font><a href=\"../course/index.php?edit=on\">".get_string("assignteachers")."</a> - <font size=\"1\">".
                  get_string("adminhelpassignteachers").
-                 " <img src=\"../pix/t/user.gif\" height=\"11\" width=\"11\"></font><br />";
+                 " <img src=\"../pix/t/user.gif\" height=\"11\" width=\"11\" alt=\"\"></font><br />";
     $userdata .= "<font size=+1>&nbsp;</font><a href=\"creators.php\">".get_string("assigncreators")."</a> - <font size=\"1\">".
                  get_string("adminhelpassigncreators")."</font><br />";
     $userdata .= "<font size=+1>&nbsp;</font><a href=\"admin.php\">".get_string("assignadmins")."</a> - <font size=\"1\">".

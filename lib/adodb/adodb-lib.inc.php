@@ -724,7 +724,7 @@ global $HTTP_SERVER_VARS;
 	if ($inBrowser) {
 		$ss = htmlspecialchars($ss);
 		if ($zthis->debug === -1)
-			ADOConnection::outp( "<br>\n($zthis->databaseType): ".htmlspecialchars($sqlTxt)." &nbsp; <code>$ss</code>\n<br>\n",false);
+			ADOConnection::outp( "<br />\n($zthis->databaseType): ".htmlspecialchars($sqlTxt)." &nbsp; <code>$ss</code>\n<br />\n",false);
 		else 
 			ADOConnection::outp( "<hr>\n($zthis->databaseType): ".htmlspecialchars($sqlTxt)." &nbsp; <code>$ss</code>\n<hr>\n",false);
 	} else {

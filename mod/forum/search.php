@@ -28,7 +28,7 @@
         require_login($course->id);
     }
 
-    add_to_log($course->id, "forum", "search", "search.php?id=$course->id&search=".urlencode($search), $search); 
+    add_to_log($course->id, "forum", "search", "search.php?id=$course->id&amp;search=".urlencode($search), $search); 
 
     $strforums = get_string("modulenameplural", "forum");
     $strsearch = get_string("search", "forum");
@@ -85,7 +85,7 @@
         print_heading("$strsearchresults: $totalcount");
 
         echo "<center>";
-        print_paging_bar($totalcount, $page, $perpage, "search.php?search=$search&id=$course->id&perpage=$perpage&");
+        print_paging_bar($totalcount, $page, $perpage, "search.php?search=$search&amp;id=$course->id&amp;perpage=$perpage&");
         echo "</center>";
 
         foreach ($posts as $post) {
@@ -104,20 +104,20 @@
             if ($forum->type != "single") {
                 $fullsubject .= " -> <a href=\"discuss.php?d=$discussion->id\">$discussion->name</a>";
                 if ($post->parent != 0) {
-                    $fullsubject .= " -> <a href=\"discuss.php?d=$post->discussion&parent=$post->id\">$post->subject</a>";
+                    $fullsubject .= " -> <a href=\"discuss.php?d=$post->discussion&amp;parent=$post->id\">$post->subject</a>";
                 }
             }
 
             $post->subject = $fullsubject;
 
-            $fulllink = "<p align=\"right\"><a href=\"discuss.php?d=$post->discussion#$post->id\">".get_string("postincontext", "forum")."</a></p>";
+            $fulllink = "<a href=\"discuss.php?d=$post->discussion#$post->id\">".get_string("postincontext", "forum")."</a>";
             forum_print_post($post, $course->id, false, false, false, false, $fulllink, $search);
 
             echo "<br />";
         }
 
         echo "<center>";
-        print_paging_bar($totalcount, $page, $perpage, "search.php?search=".urlencode($search)."&id=$course->id&perpage=$perpage&");
+        print_paging_bar($totalcount, $page, $perpage, "search.php?search=".urlencode($search)."&amp;id=$course->id&amp;perpage=$perpage&");
         echo "</center>";
     }
 

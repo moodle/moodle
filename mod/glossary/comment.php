@@ -68,7 +68,7 @@
     $strcomments = get_string("comments", "glossary");
 
     print_header_simple(strip_tags("$glossary->name"), "",
-            "<a href=index.php?id=$course->id>$strglossaries</a> -> <a href=view.php?id=$cm->id>$glossary->name</a> -> <a href=comments.php?id=$cm->id&eid=$entry->id>$strcomments</a> -> " . $straction,
+            "<a href=index.php?id=$course->id>$strglossaries</a> -> <a href=view.php?id=$cm->id>$glossary->name</a> -> <a href=comments.php?id=$cm->id&amp;eid=$entry->id>$strcomments</a> -> " . $straction,
             "", "", true, update_module_button($cm->id, $course->id, $strglossary),
             navmenu($course, $cm));
     
@@ -91,8 +91,8 @@
             print_simple_box_end();
 
             print_footer($course);
-            add_to_log($course->id, "glossary", "delete comment", "comments.php?id=$cm->id&eid=$entry->id", "$comment->id",$cm->id);
-            redirect("comments.php?id=$cm->id&eid=$entry->id");
+            add_to_log($course->id, "glossary", "delete comment", "comments.php?id=$cm->id&amp;eid=$entry->id", "$comment->id",$cm->id);
+            redirect("comments.php?id=$cm->id&amp;eid=$entry->id");
 
         } else {
 
@@ -150,7 +150,7 @@
                 if (! $newentry->id = insert_record("glossary_comments", $newentry)) {
                     error("Could not insert this new comment");
                 } else {
-                    add_to_log($course->id, "glossary", "add comment", "comments.php?id=$cm->id&eid=$entry->id", "$newentry->id", $cm->id);
+                    add_to_log($course->id, "glossary", "add comment", "comments.php?id=$cm->id&amp;eid=$entry->id", "$newentry->id", $cm->id);
                 }
             } else {
                 $newentry->id = $form->cid;
@@ -159,7 +159,7 @@
                 if (! update_record("glossary_comments", $newentry)) {
                     error("Could not update this comment");
                 } else {
-                    add_to_log($course->id, "glossary", "update comment", "comments.php?id=$cm->id&eid=$entry->id", "$newentry->id",$cm->id);
+                    add_to_log($course->id, "glossary", "update comment", "comments.php?id=$cm->id&amp;eid=$entry->id", "$newentry->id",$cm->id);
                 }
             }
             print_simple_box_start("center","40%", "#FFBBBB");
@@ -168,7 +168,7 @@
 
             print_footer($course);
 
-            redirect("comments.php?id=$cm->id&eid=$entry->id");
+            redirect("comments.php?id=$cm->id&amp;eid=$entry->id");
 
         } else {
             /// original glossary entry

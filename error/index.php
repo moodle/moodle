@@ -25,7 +25,7 @@
   <p>If you have time, please let us know what you were trying 
      to do when the error occurred:
   <p><form action="<?php echo $CFG->wwwroot ?>/error/index.php" name="form" method="post">
-     <textarea rows="3" cols="50" name="text"></textarea><br>
+     <textarea rows="3" cols="50" name="text"></textarea><br />
      <input type="hidden" name="referer" value="<?php echo $HTTP_REFERER ?>">
      <input type="hidden" name="requested" value="<?php echo $REQUEST_URI ?>">
      <input type="submit" value="Send this off">

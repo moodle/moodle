@@ -49,9 +49,9 @@ $string['feedback'] = "回饋";
 $string['filloutoneanswer'] = "你至少需要輸入一個答案.  沒有答案的題目無效.";
 $string['fillouttwochoices'] = "你至少需要輸入兩個答案.  沒有內容的答案無效.";
 $string['fractionsaddwrong'] = "你所提供各選項分數總和並非 100%%, 而是 \$a%%
-<BR>請回去修正此題的錯誤分配?";
+<br />請回去修正此題的錯誤分配?";
 $string['fractionsnomax'] = "至少一個答案應該得分是 100%%, 才有可能拿到本題的滿分.
-<BR>想回去修正此題的錯誤分配嗎 ?";
+<br />想回去修正此題的錯誤分配嗎 ?";
 $string['gradeaverage'] = "平均得分";
 $string['gradehighest'] = "最高分數";
 $string['grademethod'] = "評分方式";

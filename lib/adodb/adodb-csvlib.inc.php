@@ -295,7 +295,7 @@ $ADODB_INCLUDED_CSV = 1;
 			chmod($filename,0644);
 		}else {
 			fclose($fd);
-			if ($debug)ADOConnection::outp( " Failed acquiring lock for $filename<br>\n");
+			if ($debug)ADOConnection::outp( " Failed acquiring lock for $filename<br />\n");
 			$ok = false;
 		}
 	

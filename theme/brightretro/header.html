@@ -12,7 +12,7 @@
 <body<?php 
    echo " $bodytags";
    if ($focus) { 
-       echo " onload=setfocus()"; 
+       echo " onload=\"setfocus()\""; 
    } 
    echo " bgcolor=\"$THEME->body\">";
 ?>
@@ -22,7 +22,7 @@
   <table width="100%" cellpadding="10" cellspacing="0" border="0" class="headerhome">
     <tr>
       <td valign="top" class="headerhomemain"><img 
-          border="0" src="<?php echo "$CFG->wwwroot/theme/$CFG->theme/logo.jpg" ?>" /></td>
+          border="0" src="<?php echo "$CFG->wwwroot/theme/$CFG->theme/logo.jpg" ?>" alt="" /></td>
       <td align="right" valign="top" class="headerhomemenu"><?php echo $menu ?></td>
     </tr>
   </table>

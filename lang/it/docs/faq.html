@@ -138,7 +138,7 @@ href="./?file=installamp.html">Redhat Linux</A></P>
 <H3><A name=errorgetstring></A>Le mie pagine visualizzano errori irreversibili come: call to undefined function: get_string()</H3>
 <p class=answer>Se vengono visualizzati errori come:</P>
 <p class=answercode>Parse error: parse error, unexpected T_VARIABLE in 
-c:\program files\easyphp\www\moodle\config.php on line 94 <BR>Fatal error: Call 
+c:\program files\easyphp\www\moodle\config.php on line 94 <br />Fatal error: Call 
 to undefined function: get_string() in c:\program 
 files\easyphp\www\moodle\mod\resource\lib.php on line 11</P>
 <p class=answer>allora &egrave; probabile che tu ti sia dimenticato un punto e 
@@ -175,7 +175,7 @@ sent by (output started at /webs/moodle/config.php:87) in
 <p class=answer>I problemi associati agli apostrofi sono causati da un settaggio 
   scorretto dei "magic quotes". Moodle ha bisogno dei seguenti settaggi (che sono 
   di solito di default):</P>
-<p class=answercode>magic_quotes_gpc = On<BR>magic_quotes_runtime = Off</P>
+<p class=answercode>magic_quotes_gpc = On<br />magic_quotes_runtime = Off</P>
 <p class=answer>Vedi la sezione <a href="./?file=install.html#webserver">Controllo delle impostazioni 
   del web server</A> nella documentazione di installazione.</P>
 <p class=answer>&nbsp;</P>
@@ -240,8 +240,8 @@ G:\web\moodle\lib\setup.php:1) in G:\web\moodle\lib\setup.php on line 123</P>
   cookies dal browser prima dell'installazione, utilizzare un browser diverso, 
   oppure modificare il file moodle/admin/user.php inserendo queste righe nella 
   parte superiore:</P>
-<p class=answercode>unset($user);<BR>
-  unset($admin);<BR>unset($teacher);</P>
+<p class=answercode>unset($user);<br />
+  unset($admin);<br />unset($teacher);</P>
 <p class=answer>Dopo aver eseguito una di queste procedure 
   potrebbe essere una buona ideacancellare tutte le tabelle del tuo database e reinstallare Moodle.</P>
 <p class=answer>&nbsp;</P>

@@ -266,8 +266,8 @@ class ChatDaemon {
                 echo "<p><font size=\"1\">";
                 echo fullname($userinfo['user'])."<br />";
                 echo "<font color=\"#888888\">$str->idle: ".format_time($lastping, $str)."</font> ";
-                echo '<a target="empty" href="http://'.$CFG->chat_serverhost.':'.$CFG->chat_serverport.'/?win=beep&beep='.$userinfo['user']->id.
-                     '&chat_sid='.$sessionid.'&groupid='.$this->sets_info[$sessionid]['groupid'].'">'.$str->beep."</a>\n";
+                echo '<a target="empty" href="http://'.$CFG->chat_serverhost.':'.$CFG->chat_serverport.'/?win=beep&amp;beep='.$userinfo['user']->id.
+                     '&chat_sid='.$sessionid.'&amp;groupid='.$this->sets_info[$sessionid]['groupid'].'">'.$str->beep."</a>\n";
                 echo "</font></p>";
                 echo "<td></tr>";
             }
@@ -366,7 +366,7 @@ class ChatDaemon {
                 // The refresh value is 2 seconds higher than the configuration variable because we are doing JS refreshes all the time.
                 // However, if the JS doesn't work for some reason, we still want to refresh once in a while.
                 $header .= "Refresh: ".(intval($CFG->chat_refresh_userlist) + 2)."; url=http://$CFG->chat_serverhost:$CFG->chat_serverport/?win=users&".
-                           "chat_sid=".$sessionid."&groupid=".$this->sets_info[$sessionid]['groupid']."\n";
+                           "chat_sid=".$sessionid."&amp;groupid=".$this->sets_info[$sessionid]['groupid']."\n";
                 $header .= "\n";
 
                 // That's enough headers for one lousy dummy response
@@ -970,7 +970,7 @@ while(true) {
                     continue;
                 }
 
-                if(!ereg('win=(chat|users|message|beep).*&chat_sid=([a-zA-Z0-9]*)&groupid=([0-9]*) HTTP', $data, $info)) {
+                if(!ereg('win=(chat|users|message|beep).*&chat_sid=([a-zA-Z0-9]*)&amp;groupid=([0-9]*) HTTP', $data, $info)) {
                     // Malformed data
                     $DAEMON->trace('UFO with '.$handle.': Request with malformed data; connection closed', E_USER_WARNING);
                     $DAEMON->dismiss_ufo($handle, true, 'Request with malformed data; connection closed');

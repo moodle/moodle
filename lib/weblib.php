@@ -39,7 +39,7 @@ define("FORMAT_WIKI",     "3");   // Wiki-formatted text
 define("FORMAT_MARKDOWN", "4");   // Markdown-formatted text http://daringfireball.net/projects/markdown/
 
 $ALLOWED_TAGS =
-"<p><br><b><i><u><font><table><tbody><span><div><tr><td><th><ol><ul><dl><li><dt><dd><h1><h2><h3><h4><h5><h6><hr><img><a><strong><emphasis><em><sup><sub><address><cite><blockquote><pre><strike><embed><object><param><acronym><nolink><style><lang><tex><algebra><math><mi><mn><mo><mtext><mspace><ms><mrow><mfrac><msqrt><mroot><mstyle><merror><mpadded><mphantom><mfenced><msub><msup><msubsup><munder><mover><munderover><mmultiscripts><mtable><mtr><mtd><maligngroup><malignmark><maction><cn><ci><apply><reln><fn><interval><inverse><sep><condition><declare><lambda><compose><ident><quotient><exp><factorial><divide><max><min><minus><plus><power><rem><times><root><gcd><and><or><xor><not><implies><forall><exists><abs><conjugate><eq><neq><gt><lt><geq><leq><ln><log><int><diff><partialdiff><lowlimit><uplimit><bvar><degree><set><list><union><intersect><in><notin><subset><prsubset><notsubset><notprsubset><setdiff><sum><product><limit><tendsto><mean><sdev><variance><median><mode><moment><vector><matrix><matrixrow><determinant><transpose><selector><annotation><semantics><annotation-xml><tt><code>";
+"<p><br /><b><i><u><font><table><tbody><span><div><tr><td><th><ol><ul><dl><li><dt><dd><h1><h2><h3><h4><h5><h6><hr><img><a><strong><emphasis><em><sup><sub><address><cite><blockquote><pre><strike><embed><object><param><acronym><nolink><style><lang><tex><algebra><math><mi><mn><mo><mtext><mspace><ms><mrow><mfrac><msqrt><mroot><mstyle><merror><mpadded><mphantom><mfenced><msub><msup><msubsup><munder><mover><munderover><mmultiscripts><mtable><mtr><mtd><maligngroup><malignmark><maction><cn><ci><apply><reln><fn><interval><inverse><sep><condition><declare><lambda><compose><ident><quotient><exp><factorial><divide><max><min><minus><plus><power><rem><times><root><gcd><and><or><xor><not><implies><forall><exists><abs><conjugate><eq><neq><gt><lt><geq><leq><ln><log><int><diff><partialdiff><lowlimit><uplimit><bvar><degree><set><list><union><intersect><in><notin><subset><prsubset><notsubset><notprsubset><setdiff><sum><product><limit><tendsto><mean><sdev><variance><median><mode><moment><vector><matrix><matrixrow><determinant><transpose><selector><annotation><semantics><annotation-xml><tt><code>";
 
 
 /// Functions
@@ -369,7 +369,7 @@ function close_window_button() {
 /// Prints a simple button to close a window
 
     echo "<center>\n";
-    echo "<script>\n";
+    echo "<script type=\"text/javascript\">\n";
     echo "<!--\n";
     echo "document.write('<form>');\n";
     echo "document.write('<input type=\"button\" onClick=\"self.close();\" value=\"".get_string("closewindow")."\" />');\n";
@@ -1093,7 +1093,7 @@ function print_header ($title="", $heading="", $navigation="", $focus="", $meta=
                     }
                     if (isadmin()) {
                         $menu .= ' (<a href="'.$CFG->wwwroot.'/course/log.php'.
-                                             '?chooselog=1&id=1&modid=site_errors">'.get_string('logs').'</a>)';
+                                             '?chooselog=1&amp;id=1&amp;modid=site_errors">'.get_string('logs').'</a>)';
                     }
                     $menu .= '</font>';
                 }
@@ -1141,7 +1141,7 @@ function print_header ($title="", $heading="", $navigation="", $focus="", $meta=
     if ($usexml) {       // Added by Gustav Delius / Mad Alex for MathML output
         $currentlanguage = current_language();
 
-        @header("Content-type: text/xml");
+        @header("Content-type: application/xhtml+xml");
         echo "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\" ?>\n";
         if (!empty($CFG->xml_stylesheets)) {
             $stylesheets = explode(";", $CFG->xml_stylesheets);
@@ -1405,14 +1405,14 @@ function print_user_picture($userid, $courseid, $picture, $large=false, $returns
     }
     if ($picture) {  // Print custom user picture
         if ($CFG->slasharguments) {        // Use this method if possible for better caching
-            $output .= "<img align=\"absmiddle\" src=\"$CFG->wwwroot/user/pix.php/$userid/$file.jpg\"".
+            $output .= "<img align=\"middle\" src=\"$CFG->wwwroot/user/pix.php/$userid/$file.jpg\"".
                        " border=\"0\" width=\"$size\" height=\"$size\" alt=\"\" />";
         } else {
-            $output .= "<img align=\"absmiddle\" src=\"$CFG->wwwroot/user/pix.php?file=/$userid/$file.jpg\"".
+            $output .= "<img align=\"middle\" src=\"$CFG->wwwroot/user/pix.php?file=/$userid/$file.jpg\"".
                        " border=\"0\" width=\"$size\" height=\"$size\" alt=\"\" />";
         }
     } else {         // Print default user pictures (use theme version if available)
-        $output .= "<img align=\"absmiddle\" src=\"$CFG->pixpath/u/$file.png\"".
+        $output .= "<img align=\"middle\" src=\"$CFG->pixpath/u/$file.png\"".
                    " border=\"0\" width=\"$size\" height=\"$size\" alt=\"\" />";
     }
     if ($link) {
@@ -1504,17 +1504,17 @@ function print_user($user, $course) {
     echo '<font size="1">';
     if ($isteacher) {
         $timemidnight = usergetmidnight(time());
-        echo "<a href=\"$CFG->wwwroot/course/user.php?id=$course->id&user=$user->id\">$string->activity</a><br />";
+        echo "<a href=\"$CFG->wwwroot/course/user.php?id=$course->id&amp;user=$user->id\">$string->activity</a><br />";
         if (!iscreator($user->id) or ($isadmin and !isadmin($user->id))) {  // Includes admins
             if ($course->category and isteacheredit($course->id) and isstudent($course->id, $user->id)) {  // Includes admins
-                echo "<a href=\"$CFG->wwwroot/course/unenrol.php?id=$course->id&user=$user->id\">$string->unenrol</a><br />";
+                echo "<a href=\"$CFG->wwwroot/course/unenrol.php?id=$course->id&amp;user=$user->id\">$string->unenrol</a><br />";
             }
             if ($USER->id != $user->id) {
-                echo "<a href=\"$CFG->wwwroot/course/loginas.php?id=$course->id&user=$user->id\">$string->loginas</a><br />";
+                echo "<a href=\"$CFG->wwwroot/course/loginas.php?id=$course->id&amp;user=$user->id\">$string->loginas</a><br />";
             }
         }
     }
-    echo "<a href=\"$CFG->wwwroot/user/view.php?id=$user->id&course=$course->id\">$string->fullprofile...</a>";
+    echo "<a href=\"$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$course->id\">$string->fullprofile...</a>";
     echo '</font>';
 
     echo '</td></tr></table>';
@@ -1548,10 +1548,10 @@ function print_group_picture($group, $courseid, $large=false, $returnstring=fals
     }
     if ($group->picture) {  // Print custom group picture
         if ($CFG->slasharguments) {        // Use this method if possible for better caching
-            $output .= "<img align=\"absmiddle\" src=\"$CFG->wwwroot/user/pixgroup.php/$group->id/$file.jpg\"".
+            $output .= "<img align=\"middle\" src=\"$CFG->wwwroot/user/pixgroup.php/$group->id/$file.jpg\"".
                        " border=\"0\" width=\"$size\" height=\"$size\" alt=\"\" title=\"$group->name\"/>";
         } else {
-            $output .= "<img align=\"absmiddle\" src=\"$CFG->wwwroot/user/pixgroup.php?file=/$group->id/$file.jpg\"".
+            $output .= "<img align=\"middle\" src=\"$CFG->wwwroot/user/pixgroup.php?file=/$group->id/$file.jpg\"".
                        " border=\"0\" width=\"$size\" height=\"$size\" alt=\"\" title=\"$group->name\"/>";
         }
     }
@@ -1648,7 +1648,7 @@ function print_table($table) {
     }
 
     print_simple_box_start("center", "$table->width", "#ffffff", 0);
-    echo "<table width=\"100%\" border=\"0\" valign=\"top\" align=\"center\" ";
+    echo "<table width=\"100%\" border=\"0\" align=\"center\" ";
     echo " cellpadding=\"$table->cellpadding\" cellspacing=\"$table->cellspacing\" class=\"generaltable\">\n";
 
     $countcols = 0;
@@ -1984,7 +1984,7 @@ function print_group_menu($groups, $groupmode, $currentgroup, $urlroot) {
     }
     echo ':';
     echo '</td><td nowrap="nowrap" align="left">';
-    popup_form($urlroot.'&group=', $groupsmenu, 'selectgroup', $currentgroup, "", "", "", false, "self");
+    popup_form($urlroot.'&amp;group=', $groupsmenu, 'selectgroup', $currentgroup, "", "", "", false, "self");
     echo '</tr></table>';
 
 }
@@ -2080,8 +2080,8 @@ function navmenu($course, $cm=NULL, $targetwindow="self") {
     }
     if ($selectmod and $isteacher) {
         $logslink = "<td><a target=\"$CFG->framename\" href=".
-                    "\"$CFG->wwwroot/course/log.php?chooselog=1&user=0&date=0&id=$course->id&modid=$selectmod->cm\">".
-                    "<img border=\"0\" height=\"16\" width=\"16\" src=\"$CFG->pixpath/i/log.gif\" /></a></td>";
+                    "\"$CFG->wwwroot/course/log.php?chooselog=1&amp;user=0&amp;date=0&amp;id=$course->id&amp;modid=$selectmod->cm\">".
+                    "<img border=\"0\" height=\"16\" width=\"16\" src=\"$CFG->pixpath/i/log.gif\" alt=\"\" /></a></td>";
 
     }
     if ($backmod) {
@@ -2185,7 +2185,7 @@ function print_grade_menu($courseid, $name, $current, $includenograde=true) {
     choose_from_menu($grades, "$name", "$current", "");
 
     $helpicon = "$CFG->pixpath/help.gif";
-    $linkobject = "<img align=\"absmiddle\" border=\"0\" height=\"17\" width=\"22\" alt=\"$strscales\" src=\"$helpicon\" />";
+    $linkobject = "<img align=\"middle\" border=\"0\" height=\"17\" width=\"22\" alt=\"$strscales\" src=\"$helpicon\" />";
     link_to_popup_window ("/course/scales.php?id=$courseid&amp;list=true", "ratingscales",
                           $linkobject, 400, 500, $strscales);
 }
@@ -2199,7 +2199,7 @@ function print_scale_menu($courseid, $name, $current) {
     $strscales = get_string("scales");
     choose_from_menu(get_scales_menu($courseid), "$name", $current, "");
     $helpicon = "$CFG->pixpath/help.gif";
-    $linkobject = "<img align=\"absmiddle\" border=\"0\" height=\"17\" width=\"22\" alt=\"$strscales\" src=\"$helpicon\" />";
+    $linkobject = "<img align=\"middle\" border=\"0\" height=\"17\" width=\"22\" alt=\"$strscales\" src=\"$helpicon\" />";
     link_to_popup_window ("/course/scales.php?id=$courseid&amp;list=true", "ratingscales",
                           $linkobject, 400, 500, $strscales);
 }
@@ -2213,7 +2213,7 @@ function print_scale_menu_helpbutton($courseid, $scale) {
 
     $strscales = get_string("scales");
     $helpicon = "$CFG->pixpath/help.gif";
-    $linkobject = "<img align=\"absmiddle\" border=\"0\" height=\"17\" width=\"22\" alt=\"$scale->name\" src=\"$helpicon\" />";
+    $linkobject = "<img align=\"middle\" border=\"0\" height=\"17\" width=\"22\" alt=\"$scale->name\" src=\"$helpicon\" />";
     link_to_popup_window ("/course/scales.php?id=$courseid&amp;list=true&amp;scale=$scale->id", "ratingscale",
                           $linkobject, 400, 500, $scale->name);
 }
@@ -2255,10 +2255,10 @@ function helpbutton ($page, $title="", $module="moodle", $image=true, $linktext=
     if ($image) {
         $icon = "$CFG->pixpath/help.gif";
         if ($linktext) {
-            $linkobject = "<span style=\"cursor:help;\">$title<img align=\"absmiddle\" border=\"0\" ".
+            $linkobject = "<span style=\"cursor:help;\">$title<img align=\"middle\" border=\"0\" ".
                           " height=\"17\" width=\"22\" alt=\"\" src=\"$icon\" /></span>";
         } else {
-            $linkobject = "<img align=\"absmiddle\" border=\"0\" height=\"17\" width=\"22\" ".
+            $linkobject = "<img align=\"middle\" border=\"0\" height=\"17\" width=\"22\" ".
                           " alt=\"$title\" style=\"cursor:help;\" src=\"$icon\" />";
         }
     } else {
@@ -2288,7 +2288,7 @@ function emoticonhelpbutton($form, $field) {
     helpbutton("emoticons", get_string("helpemoticons"), "moodle", false, true);
     echo "&nbsp;";
     link_to_popup_window ("/help.php?module=moodle&amp;file=emoticons.html", "popup",
-                          "<img src=\"$CFG->pixpath/s/smiley.gif\" border=\"0\" align=\"absmiddle\" width=\"15\" height=\"15\" />",
+                          "<img src=\"$CFG->pixpath/s/smiley.gif\" border=\"0\" align=\"middle\" width=\"15\" height=\"15\" alt=\"\" />",
                            400, 500, get_string("helpemoticons"));
     echo "<br />";
 }
@@ -2329,7 +2329,7 @@ function redirect($url, $message="", $delay="0") {
 
     if (empty($message)) {
         echo "<meta http-equiv=\"refresh\" content=\"$delay; url=$url\" />";
-        echo "<script>location.replace('$url');</script>";   // To cope with Mozilla bug
+        echo "<script type=\"text/javascript\">location.replace('$url');</script>";   // To cope with Mozilla bug
     } else {
         if (empty($delay)) {
             $delay = 3;  // There's no point having a message with no delay
@@ -2341,7 +2341,7 @@ function redirect($url, $message="", $delay="0") {
         echo "</center>";
         flush();
         sleep($delay);
-        echo "<script>location.replace('$url');</script>";   // To cope with Mozilla bug
+        echo "<script type=\"text/javascript\">location.replace('$url');</script>";   // To cope with Mozilla bug
     }
     die;
 }

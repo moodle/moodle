@@ -405,8 +405,8 @@ $string['enrolledincoursenot'] = 'Non iscritto al corso ';
 $string['enrollfirst'] = 'E\' necessario registrarsi a un corso prima di poter visualizzare le attività del sito';
 $string['enrolmentconfirmation'] = 'Stai per iscriverti a questo corso.<br /> Sei sicuro di volerlo fare?';
 $string['enrolmentkey'] = 'Chiave di accesso';
-$string['enrolmentkeyfrom'] = 'Questo corso richiede una \'chiave di accesso\' - una sola volta -<BR> password che dovresti ottenere da $a';
-$string['enrolmentkeyhint'] = 'Questa chiave di accesso è inesatta, riprovare, prego.<BR>
+$string['enrolmentkeyfrom'] = 'Questo corso richiede una \'chiave di accesso\' - una sola volta -<br /> password che dovresti ottenere da $a';
+$string['enrolmentkeyhint'] = 'Questa chiave di accesso è inesatta, riprovare, prego.<br />
 
 (Questo è un suggerimento - essa inizia con \'$a\'';
 $string['enrolmentnew'] = 'Nuova registrazione a $a';
@@ -750,7 +750,7 @@ $string['noteuserschangednonetocourse'] = 'Nota: devono essere recuperati gli st
 $string['nothingnew'] = 'Nessuna novità dal tuo ultimo login';
 $string['noticenewerbackup'] = 'Questa copia di sicurezza è stata creata con Moodle $a->backuprelease ($a->backupversion) che è più recente della versione di Moodle attualmente installata $a->serverrelease ($a->serverversion). Questo può provocare alcune inconsistenze perché la compatibilità con versioni precedenti delle copie di sicurezza non può essere garantita. ';
 $string['notifyloginfailuresmessage'] = '$a->time, IP: $a->ip, Utente: $a->info';
-$string['notifyloginfailuresmessageend'] = 'Puoi visualizzare questi log al indirizzo $a/course/log.php?id=1&chooselog=1&modid=site_errors.';
+$string['notifyloginfailuresmessageend'] = 'Puoi visualizzare questi log al indirizzo $a/course/log.php?id=1&amp;chooselog=1&amp;modid=site_errors.';
 $string['notifyloginfailuresmessagestart'] = 'Ecco l\'elenco degli accessi falliti a $a dall\'ultima notifica.';
 $string['notifyloginfailuressubject'] = '$a :: Notifica accessi falliti';
 $string['notincluded'] = 'Non incluso';

@@ -66,10 +66,10 @@
                     }
                 }
                 if ($isteacheredit or ($isteacher and ismember($group->id))) {
-                    $t->linkeditprofile->url = "group.php?id=$course->id&group=$group->id&edit=on";
+                    $t->linkeditprofile->url = "group.php?id=$course->id&amp;group=$group->id&amp;edit=on";
                     $t->linkeditprofile->text = $streditgroupprofile;
                 }
-                $t->linkfullprofile->url = "group.php?id=$course->id&group=$group->id";
+                $t->linkfullprofile->url = "group.php?id=$course->id&amp;group=$group->id";
                 $t->linkfullprofile->text = $strgroupmemberssee;
 
                 include('groups-summary.html');

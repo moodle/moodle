@@ -953,7 +953,7 @@ function quiz_print_question_icon($question, $editlink=true) {
                 .$QUIZ_QUESTION_TYPE[$question->qtype]."\">";
     }
     echo '<img border="0" height="16" width="16" src="questiontypes/';
-    echo $QUIZ_QTYPES[$question->qtype]->name().'/icon.gif"/>';
+    echo $QUIZ_QTYPES[$question->qtype]->name().'/icon.gif" alt="" />';
     if ($editlink) {
         echo "</a>\n";
     }
@@ -976,7 +976,7 @@ function quiz_print_possible_question_image($quizid, $question) {
         } else {
             echo "$CFG->wwwroot/mod/quiz/quizfile.php?file=/$quizid/$question->id/$question->image";
         }
-        echo '" />';
+        echo '" alt="" />';
 
     }
 }
@@ -1286,13 +1286,13 @@ function quiz_print_question_list($questionlist, $grades) {
         echo "<td>";
         if ($count != 1) {
             echo "<a title=\"$strmoveup\" href=\"edit.php?up=$qnum\"><img
-                 src=\"../../pix/t/up.gif\" border=\"0\"></a>";
+                 src=\"../../pix/t/up.gif\" border=\"0\" alt=\"\" /></a>";
         }
         echo "</td>";
         echo "<td>";
         if ($count != $total) {
             echo "<a title=\"$strmovedown\" href=\"edit.php?down=$qnum\"><img
-                 src=\"../../pix/t/down.gif\" border=\"0\"></a>";
+                 src=\"../../pix/t/down.gif\" border=\"0\" alt=\"\" /></a>";
         }
         echo "</td>";
         echo "<td>$question->name</td>";
@@ -1308,13 +1308,13 @@ function quiz_print_question_list($questionlist, $grades) {
         }
         echo "<td>";
             echo "<a title=\"$strdelete\" href=\"edit.php?delete=$qnum\"><img
-                 src=\"../../pix/t/delete.gif\" border=\"0\"></a>&nbsp;";
+                 src=\"../../pix/t/delete.gif\" border=\"0\" alt=\"\" /></a>&nbsp;";
             echo "<a title=\"$strpreview\" href=\"#\" onClick=\"openpopup('/mod/quiz/preview.php?id=$qnum','$strpreview','scrollbars=yes,resizable=yes,width=700,height=480', false)\"><img
-                  src=\"../../pix/i/search.gif\" border=\"0\"></a>&nbsp;";
+                  src=\"../../pix/i/search.gif\" border=\"0\" alt=\"\" /></a>&nbsp;";
 
             if ($canedit) {
                 echo "<a title=\"$stredit\" href=\"question.php?id=$qnum\"><img
-                     src=\"../../pix/t/edit.gif\" border=\"0\"></a>\n";
+                     src=\"../../pix/t/edit.gif\" border=\"0\" alt=\"\" /></a>\n";
             }
         echo "</td>";
 
@@ -1380,7 +1380,7 @@ function quiz_print_cat_question_list($categoryid, $quizselected=true) {
     if (isteacheredit($category->course)) {
         echo "<td valign=\"top\"><b>$strcreatenewquestion:</b></td>";
         echo '<td valign="top" align="right">';
-        popup_form ("question.php?category=$category->id&qtype=", $QUIZ_QUESTION_TYPE, "addquestion",
+        popup_form ("question.php?category=$category->id&amp;qtype=", $QUIZ_QUESTION_TYPE, "addquestion",
                     "", "choose", "", "", false, "self");
         echo '<td width="10" valign="top" align="right">';
         helpbutton("questiontypes", $strcreatenewquestion, "quiz");
@@ -1455,12 +1455,12 @@ function quiz_print_cat_question_list($categoryid, $quizselected=true) {
         echo "</td>\n";
         if ($canedit) {
             echo "<td>\n";
-                echo "<a title=\"$strdelete\" href=\"question.php?id=$question->id&delete=$question->id\">\n<img
-                     src=\"../../pix/t/delete.gif\" border=\"0\"></a>&nbsp;";
+                echo "<a title=\"$strdelete\" href=\"question.php?id=$question->id&amp;delete=$question->id\">\n<img
+                     src=\"../../pix/t/delete.gif\" border=\"0\" alt=\"\" /></a>&nbsp;";
                 echo "<a title=\"$strpreview\" href=\"#\" onClick=\"openpopup('/mod/quiz/preview.php?id=$question->id','$strpreview','scrollbars=yes,resizable=yes,width=700,height=480', false)\"><img
-                      src=\"../../pix/i/search.gif\" border=\"0\"></a>&nbsp;";
+                      src=\"../../pix/i/search.gif\" border=\"0\" alt=\"\" /></a>&nbsp;";
                 echo "<a title=\"$stredit\" href=\"question.php?id=$question->id\"><img
-                     src=\"../../pix/t/edit.gif\" border=\"0\"></a>";
+                     src=\"../../pix/t/edit.gif\" border=\"0\" alt=\"\" /></a>";
             echo "</td>\n";// deleted </tr> jm
         }
         echo "</tr>\n";
@@ -1508,9 +1508,9 @@ function quiz_get_user_attempts_string($quiz, $attempts, $bestgrade) {
     foreach ($attempts as $attempt) {
         $attemptgrade = format_float(($attempt->sumgrades / $quiz->sumgrades) * $quiz->grade);
         if ($attemptgrade == $bestgrade) {
-            $userattempts[] = "<span class=\"highlight\"><a href=\"review.php?q=$quiz->id&attempt=$attempt->id\">$attemptgrade</a></span>";
+            $userattempts[] = "<span class=\"highlight\"><a href=\"review.php?q=$quiz->id&amp;attempt=$attempt->id\">$attemptgrade</a></span>";
         } else {
-            $userattempts[] = "<a href=\"review.php?q=$quiz->id&attempt=$attempt->id\">$attemptgrade</a>";
+            $userattempts[] = "<a href=\"review.php?q=$quiz->id&amp;attempt=$attempt->id\">$attemptgrade</a>";
         }
     }
     return implode(",", $userattempts);
@@ -1872,7 +1872,7 @@ function quiz_print_recent_mod_activity($activity, $course, $detail=false) {
 
     if ($detail) {
         echo "<img src=\"$CFG->modpixpath/$activity->type/icon.gif\" ".
-             "height=\"16\" width=\"16\" alt=\"$activity->type\">  ";
+             "height=\"16\" width=\"16\" alt=\"$activity->type\" />  ";
         echo "<a href=\"$CFG->wwwroot/mod/quiz/view.php?id=" . $activity->instance . "\">"
              . $activity->name . "</a> - ";
 
@@ -1881,13 +1881,13 @@ function quiz_print_recent_mod_activity($activity, $course, $detail=false) {
     if (isteacher($USER)) {
         $grades = "(" .  $activity->content->sumgrades . " / " . $activity->content->maxgrade . ") ";
         echo "<a href=\"$CFG->wwwroot/mod/quiz/review.php?q="
-             . $activity->instance . "&attempt="
+             . $activity->instance . "&amp;attempt="
              . $activity->content->attemptid . "\">" . $grades . "</a> ";
 
         echo  get_string("attempt", "quiz") . " - " . $activity->content->attempt . "<br />";
     }
     echo "<a href=\"$CFG->wwwroot/user/view.php?id="
-         . $activity->user->userid . "&course=$course\">"
+         . $activity->user->userid . "&amp;course=$course\">"
          . $activity->user->fullname . "</a> ";
 
     echo " - " . userdate($activity->timestamp);

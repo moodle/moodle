@@ -304,10 +304,10 @@ $string['emailpasswordsent'] = 'Gracias por confirmar el cambio de contraseña.
 $string['enable'] = 'Permitir';
 $string['enrolmentconfirmation'] = 'Está a punto de inscribirse como alumno en este curso. <br />¿Está seguro de que desea hacerlo?';
 $string['enrolmentkey'] = 'Clave de acceso';
-$string['enrolmentkeyfrom'] = 'Este curso requiere el uso de una \'clave de acceso\'. Si ha sido admitido<BR>
+$string['enrolmentkeyfrom'] = 'Este curso requiere el uso de una \'clave de acceso\'. Si ha sido admitido<br />
 
 en él y no le hemos enviado la clave, por favor háganoslo saber.';
-$string['enrolmentkeyhint'] = 'Esta \'clave de acceso\' es incorrecta, por favor inténtelo de nuevo<BR>
+$string['enrolmentkeyhint'] = 'Esta \'clave de acceso\' es incorrecta, por favor inténtelo de nuevo<br />
 
 (Una pista: comienza con \'$a\')';
 $string['entercourse'] = 'Clic aquí para entrar al curso';
@@ -356,10 +356,10 @@ $string['gd1'] = 'GD 1.x está instalado';
 $string['gd2'] = 'GD 2.x está instalado';
 $string['gdneed'] = 'GD debe estar instalado para ver este gráfico';
 $string['gdnot'] = 'GD no está instalado';
-$string['gpl'] = 'Copyright (C) 2001-2002  Martin Dougiamas  (http://dougiamas.com)<BR> Traducción: Antonio J. Navarro Vergara (http://www.sextaisla.com)
+$string['gpl'] = 'Copyright (C) 2001-2002  Martin Dougiamas  (http://dougiamas.com)<br /> Traducción: Antonio J. Navarro Vergara (http://www.sextaisla.com)
 Este programa es software gratuito. Ud. puede redistribuirlo y/o modificarlo bajo los términos de GNU General Public License según la publicación de The Free Software Foundation; incluso la versión 2 o alguna posterior.
 
-<BR>
+<br />
 
 Para más detalles vea: http://www.gnu.org/copyleft/gpl.html';
 $string['grade'] = 'Calificación';

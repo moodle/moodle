@@ -305,8 +305,8 @@ $string['enrolledincoursenot'] = '배움터 \"$a\" 에  참여하지 않음';
 $string['enrolmentconfirmation'] = '이 배움터의 구성원으로 참여하려고 합니까?<br />
 ';
 $string['enrolmentkey'] = '참여 키';
-$string['enrolmentkeyfrom'] = '이 배움터는 \'참여키\'가 필요합니다.<BR> 참여키는 $a 에게 받을 수 있습니다.';
-$string['enrolmentkeyhint'] = '참여키가 부정확합니다. 다시 입력해 주세요.<BR>
+$string['enrolmentkeyfrom'] = '이 배움터는 \'참여키\'가 필요합니다.<br /> 참여키는 $a 에게 받을 수 있습니다.';
+$string['enrolmentkeyhint'] = '참여키가 부정확합니다. 다시 입력해 주세요.<br />
 (힌트:  \'$a\'로 시작됨)';
 $string['entercourse'] = '이 코스에 들어가려면 클릭';
 $string['enteremailaddress'] = '이메일 주소로 새로운 비밀번호가 전송됩니다.';
@@ -688,8 +688,8 @@ $string['search'] = '찾기';
 $string['searchagain'] = '다시 찾기';
 $string['searchcourses'] = '배움터 찾기';
 $string['searchhelp'] = '여러 개의 단어로 검색할 수 있습니다.<p>word : 텍스트안에 이 단어와 관련된 어떤 것이라도 검색
-<br>+word : 정확이 일치하는 것만 검색
-<br>-word : 이 단어를 포함하지 않는 것만 보여주기';
+<br />+word : 정확이 일치하는 것만 검색
+<br />-word : 이 단어를 포함하지 않는 것만 보여주기';
 $string['searchresults'] = '찾은 결과';
 $string['sec'] = '초';
 $string['secs'] = '초';

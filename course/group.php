@@ -78,7 +78,7 @@
                 notify("A strange error occurred while trying to save ");
             } else {
                 notify(get_string('changessaved'));
-                print_continue("group.php?id=$course->id&group=$group->id");
+                print_continue("group.php?id=$course->id&amp;group=$group->id");
             }
         }
     }

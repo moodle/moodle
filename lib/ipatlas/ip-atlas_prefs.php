@@ -73,11 +73,11 @@ if(shouldrun($HTTP_SERVER_VARS['HTTP_USER_AGENT'])) {
 
 </head><body>
 
-<b><?php  echo t("IP-Atlas preferences"); ?></b> <?php  echo t("(cookie based)"); ?><br><br>
+<b><?php  echo t("IP-Atlas preferences"); ?></b> <?php  echo t("(cookie based)"); ?><br /><br />
 
 <?php
 if(isset($HTTP_POST_VARS["button"])) {
-print t("Your settings have been saved. You can now try"); ?> <a href="plot.php<?php  if(isset($HTTP_GET_VARS["lastquery"])) { echo "?address=$HTTP_GET_VARS[lastquery]"; } ?>"><?php  print t("plotting something.")."</a>"."<br><br>";
+print t("Your settings have been saved. You can now try"); ?> <a href="plot.php<?php  if(isset($HTTP_GET_VARS["lastquery"])) { echo "?address=$HTTP_GET_VARS[lastquery]"; } ?>"><?php  print t("plotting something.")."</a>"."<br /><br />";
 }
 
 
@@ -88,7 +88,7 @@ print t("Your settings have been saved. You can now try"); ?> <a href="plot.php<
 <?php  if(istheregd()) {
 echo t("Draw mode (defaults guessed for your browser):"); 
 
-print "<br><select name=\"seldrawmode\">";
+print "<br /><select name=\"seldrawmode\">";
 
 if(!isset($setseldrawmode)) {
   if(shouldrun($HTTP_SERVER_VARS['HTTP_USER_AGENT'])) {
@@ -106,7 +106,7 @@ if($setseldrawmode == "1") {
   echo "<option value=\"0\" selected>CSS";
 }
 
-print "</select><br><br>";
+print "</select><br /><br />";
 
 } else {
 
@@ -116,7 +116,7 @@ print "</select><br><br>";
 
 ?>
 
-<?php  echo t("Pointer Preferences (the dot that marks lat/lon):"); ?><br>
+<?php  echo t("Pointer Preferences (the dot that marks lat/lon):"); ?><br />
 <?php
 if($drawmode == "GD") {
 print '
@@ -184,7 +184,7 @@ print "<option value=\"$filename\">$curdot";
 
 }
 
-print "</select><br>";
+print "</select><br />";
 
 print '
 <input type="hidden" name="shape" value="Diamond">
@@ -196,11 +196,11 @@ print '
 
 ?>
 
-<br>
+<br />
 
 
 
-<?php  echo t("Other Preferences:") ?><br>
+<?php  echo t("Other Preferences:") ?><br />
 <?php  echo t("Earth Image:") ?>&nbsp;
 <select name="earthimage">
 
@@ -222,11 +222,11 @@ print "<option value=\"$curfile\">$curname";
 ?>
 
 </select>
-<br><br>
+<br /><br />
 <input type="Submit" name="button" value="<?php  echo t("Save") ?>">
 
 <div align="right">
-[ <a href="plot.php<?php  if(isset($HTTP_GET_VARS["lastquery"])) { echo "?address=$HTTP_GET_VARS[lastquery]"; } ?>"><?php  echo t("main") ?></a> ]<br><br>
+[ <a href="plot.php<?php  if(isset($HTTP_GET_VARS["lastquery"])) { echo "?address=$HTTP_GET_VARS[lastquery]"; } ?>"><?php  echo t("main") ?></a> ]<br /><br />
 </div>
 <?php  include("footer.inc"); ?>
 </body></html>

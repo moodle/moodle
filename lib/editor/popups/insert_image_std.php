@@ -184,7 +184,7 @@ form { padding: 0px; margin: 0px; }
   <option value="left"                   ><?php print_string("left","editor") ?></option>
   <option value="right"                  ><?php print_string("right","editor") ?></option>
   <option value="texttop"                ><?php print_string("texttop","editor") ?></option>
-  <option value="absmiddle"              ><?php print_string("absmiddle","editor") ?></option>
+  <option value="middle"              ><?php print_string("middle","editor") ?></option>
   <option value="baseline" selected="1"  ><?php print_string("baseline","editor") ?></option>
   <option value="absbottom"              ><?php print_string("absbottom","editor") ?></option>
   <option value="bottom"                 ><?php print_string("bottom","editor") ?></option>

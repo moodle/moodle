@@ -383,7 +383,7 @@ function require_login($courseid=0, $autologinguest=true) {
 
     // Check that the user account is properly set up
     if (user_not_fully_set_up($USER)) {
-        redirect("$CFG->wwwroot/user/edit.php?id=$USER->id&course=".SITEID);
+        redirect("$CFG->wwwroot/user/edit.php?id=$USER->id&amp;course=".SITEID);
         die;
     }
 
@@ -1632,7 +1632,7 @@ function send_confirmation_email($user) {
 
     $data->firstname = $user->firstname;
     $data->sitename = $site->fullname;
-    $data->link = "$CFG->wwwroot/login/confirm.php?p=$user->secret&s=$user->username";
+    $data->link = "$CFG->wwwroot/login/confirm.php?p=$user->secret&amp;s=$user->username";
     $data->admin = fullname($from)." ($from->email)";
 
     $message = get_string("emailconfirmation", "", $data);
@@ -1653,7 +1653,7 @@ function send_password_change_confirmation_email($user) {
 
     $data->firstname = $user->firstname;
     $data->sitename = $site->fullname;
-    $data->link = "$CFG->wwwroot/login/forgot_password.php?p=$user->secret&s=$user->username";
+    $data->link = "$CFG->wwwroot/login/forgot_password.php?p=$user->secret&amp;s=$user->username";
     $data->admin = fullname($from)." ($from->email)";
 
     $message = get_string("emailpasswordconfirmation", "", $data);

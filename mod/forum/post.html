@@ -15,7 +15,7 @@
     </td>
 </tr>
 <tr valign="top">
-    <td align="right" valign="center" nowrap="nowrap">
+    <td align="right" valign="middle" nowrap="nowrap">
 
     <font size="1">
      <?php
@@ -89,11 +89,11 @@
     <td align="right"><p><b><?php print_string("attachment", "forum") ?>:<br />(<?php print_string("optional") ?>)&nbsp;</b></p></td>
     <td>
     <?php $maxbytes = get_max_upload_file_size($CFG->maxbytes, $course->maxbytes, $forum->maxbytes); ?>
-    <?php 
-       require_once($CFG->dirroot.'/lib/uploadlib.php');
-       upload_print_form_fragment(1,array('attachment'),null,false,null,$course->maxbytes,$forum->maxbytes,false);
-       helpbutton("attachment", get_string("attachment", "forum"), "forum"); 
-       print_string("maxsize", "", display_size($maxbytes)); 
+    <input type="hidden" name="MAX_FILE_SIZE" value="<?php echo $maxbytes ?>" />
+    <input type="file" name="attachment" size="40" />
+    <?php
+    helpbutton("attachment", get_string("attachment", "forum"), "forum"); 
+    print_string("maxsize", "", display_size($maxbytes)); 
     ?>
     </td>
 </tr>

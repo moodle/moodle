@@ -63,7 +63,7 @@
 
     $logparameters = "d=$discussion->id";
     if ($parent) {
-        $logparameters .= "&parent=$parent";
+        $logparameters .= "&amp;parent=$parent";
     }
 
     if ($cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
@@ -104,10 +104,10 @@
     if ($course->category) {
         print_header("$course->shortname: $discussion->name", "$course->fullname",
                  "<a href=../../course/view.php?id=$course->id>$course->shortname</a> ->
-                  $navmiddle -> $navtail", "", "", true, $searchform, navmenu($course, $cm));
+                  $navmiddle -> $navtail", "", "", true, $searchform, navmenu($course, $cm), false);
     } else {
         print_header("$course->shortname: $discussion->name", "$course->fullname",
-                 "$navmiddle -> $navtail", "", "", true, $searchform, navmenu($course, $cm));
+                 "$navmiddle -> $navtail", "", "", true, $searchform, navmenu($course, $cm), false);
     }
 
 
@@ -149,7 +149,7 @@
 
     if ($groupmode == VISIBLEGROUPS or ($groupmode and isteacheredit($course->id))) {
         if ($groups = get_records_menu("groups", "courseid", $course->id, "name ASC", "id,name")) {
-            print_group_menu($groups, $groupmode, $discussion->groupid, "view.php?id=$cm->id&group=");
+            print_group_menu($groups, $groupmode, $discussion->groupid, "view.php?id=$cm->id&amp;group=");
         }
     }
 
@@ -171,7 +171,7 @@
                 }
                 $section = $courseforum->section;
                 if ($courseforum->id != $forum->id) {
-                    $url = "discuss.php?d=$discussion->id&move=$courseforum->id";
+                    $url = "discuss.php?d=$discussion->id&amp;move=$courseforum->id";
                     $forummenu[$url] = $courseforum->name;
                 }
             }

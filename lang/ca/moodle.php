@@ -739,7 +739,7 @@ $string['noteuserschangednonetocourse'] = 'Nota: els usuaris d\'un curs s\'han d
 $string['nothingnew'] = 'Cap novetat des de l\'última entrada';
 $string['noticenewerbackup'] = 'Aquesta còpia de seguretat ha estat creada amb Moodle $a->backuprelease ($a->backupversion) i és més nova que la vostra instal·lació de Moodle $a->serverrelease ($a->serverversion). Això pot donar lloc a algunes inconsistències perquè no es pot garantir la compatibilitat de les còpies cap enrere.';
 $string['notifyloginfailuresmessage'] = '$a->time, IP: $a->ip, usuari: $a->info';
-$string['notifyloginfailuresmessageend'] = 'Podeu veure aquí aquests registres: $a/course/log.php?id=1&chooselog=1&modid=site_errors';
+$string['notifyloginfailuresmessageend'] = 'Podeu veure aquí aquests registres: $a/course/log.php?id=1&amp;chooselog=1&amp;modid=site_errors';
 $string['notifyloginfailuresmessagestart'] = 'Heus ací una llista d\'intents fracassats d\'entrada en $a des de la darrera notificació';
 $string['notifyloginfailuressubject'] = '$a :: Notificació d\'entrades fracassades';
 $string['notincluded'] = 'No inclòs';
@@ -851,7 +851,7 @@ $string['scheduledbackupstatus'] = 'Estat de la còpia de seguretat programada';
 $string['search'] = 'Cerca';
 $string['searchagain'] = 'Torna a cercar';
 $string['searchcourses'] = 'Cerca cursos';
-$string['searchhelp'] = 'Podeu cercar diverses paraules de cop.<p>paraula : cerca qualsevol coincidència d\'aquesta paraula al text.<b /r>+paraula : cerca només coincidències exactes.<br> /-paraula : exclou els resultats que continguin aquesta paraula.';
+$string['searchhelp'] = 'Podeu cercar diverses paraules de cop.<p>paraula : cerca qualsevol coincidència d\'aquesta paraula al text.<b /r>+paraula : cerca només coincidències exactes.<br /> /-paraula : exclou els resultats que continguin aquesta paraula.';
 $string['searchresults'] = 'Resultats de la recerca';
 $string['sec'] = 'segon';
 $string['secs'] = 'segons';

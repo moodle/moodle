@@ -64,7 +64,7 @@ if (isset($errors)) {
       echo '<input type="hidden" name="casesensitive" value="0" />';
       echo '<input type="hidden" name="fullmatch" value="0" />';
     } else {
-        echo '<script>var items = [\'casesensitive\',\'fullmatch\'];</script>';
+        echo '<script type="text/javascript">var items = [\'casesensitive\',\'fullmatch\'];</script>';
 
         if (!empty($newentry->usedynalink)) {
             $selected = "checked=\"checked\"";
@@ -120,7 +120,7 @@ if (isset($errors)) {
     </td>
 </tr>
 <tr valign="top">
-    <td align="right" valign="center" nowrap="nowrap">
+    <td align="right" valign="middle" nowrap="nowrap">
 
     <font size="1">
      <?php

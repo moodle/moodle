@@ -108,7 +108,7 @@
             }
 
             if (update_record("user", $usernew)) {
-                add_to_log($course->id, "user", "update", "view.php?id=$user->id&course=$course->id", "");
+                add_to_log($course->id, "user", "update", "view.php?id=$user->id&amp;course=$course->id", "");
 
                 if ($user->id == $USER->id) {
                     // Copy data into $USER session variable
@@ -120,7 +120,7 @@
                         unset($USER->newadminuser);
                         redirect("$CFG->wwwroot/", get_string("changessaved"));
                     }
-                    redirect("$CFG->wwwroot/user/view.php?id=$user->id&course=$course->id", get_string("changessaved"));
+                    redirect("$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$course->id", get_string("changessaved"));
                 } else {
                     redirect("$CFG->wwwroot/$CFG->admin/user.php", get_string("changessaved"));
                 }

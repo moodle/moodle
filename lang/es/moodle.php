@@ -109,7 +109,7 @@ $string['backuplogshelp'] = 'Si se activa, los registros de actividad del curso 
 $string['backupnameformat'] = '%%Y%%m%%d-%%H%%M';
 $string['backupnoneusersinfo'] = 'Nota: Usted ha seleccionado hacer una copia de seguridad de \"ningún\" usuario, por lo que todas las copias de los módulos han sido cambiadas al modo \"sin datos de usuario\". Por favor, advierta que los módulos \"Ejercicio\" y \"Taller\" no son compatibles con este tipo de copia de seguridad, de modo que han sido completamente desactivados.';
 $string['backuporiginalname'] = 'Nombre de la copia de seguridad';
-$string['backupsavetohelp'] = 'Ruta completa del directorio en el que desea que se guarden las copias de seguridad<br>(dejarlo en blanco para guardarlas en el directorio por defecto de cada curso)';
+$string['backupsavetohelp'] = 'Ruta completa del directorio en el que desea que se guarden las copias de seguridad<br />(dejarlo en blanco para guardarlas en el directorio por defecto de cada curso)';
 $string['backupuserfileshelp'] = 'Seleccione si desea incluir los archivos personales de los usuarios (e.g., imágenes) en la copia de seguridad';
 $string['backupusershelp'] = 'Seleccione si desea incluir todos los usuarios del servidor o sólo los vinculados al curso';
 $string['backupversion'] = 'Versión de la copia de seguridad';
@@ -402,9 +402,9 @@ $string['enrolledincoursenot'] = 'No inscritos en el curso ';
 $string['enrollfirst'] = 'Debe matricularse en uno de los cursos antes de poder acceder a las actividades del sitio';
 $string['enrolmentconfirmation'] = 'Está a punto de inscribirse como alumno de este curso <br />¿Está seguro de que desea hacerlo?';
 $string['enrolmentkey'] = 'Contraseña de acceso';
-$string['enrolmentkeyfrom'] = 'Este curso requiere el uso de una \'contraseña de acceso\'<BR>
+$string['enrolmentkeyfrom'] = 'Este curso requiere el uso de una \'contraseña de acceso\'<br />
 que debería haber recibido de $a';
-$string['enrolmentkeyhint'] = 'La contraseña de acceso es incorrecta. Por favor, inténtelo de nuevo<BR>
+$string['enrolmentkeyhint'] = 'La contraseña de acceso es incorrecta. Por favor, inténtelo de nuevo<br />
 (Una pista: comienza con \'$a\')';
 $string['enrolmentnew'] = 'Nueva matriculación en $a';
 $string['enrolmentnewuser'] = '$a->user se ha matriculado en el curso \"$a->course\"';
@@ -748,7 +748,7 @@ $string['noteuserschangednonetocourse'] = 'Nota: Los alumnos de los cursos deben
 $string['nothingnew'] = 'Sin novedades desde el último acceso';
 $string['noticenewerbackup'] = 'Esta copia de seguridad ha sido creada con Moodle $a->backuprelease ($a->backupversion) y es más reciente que la versión instalada de Moodle $a->serverrelease ($a->serverversion). Esto podría ocasionar algunas inconsistencias debido a que no se puede garantizar la compatibilidad retrospectiva de las copias de seguridad.';
 $string['notifyloginfailuresmessage'] = '$a->time, IP: $a->ip, Usuario: $a->info';
-$string['notifyloginfailuresmessageend'] = 'Puede ver estos registros en $a/course/log.php?id=1&chooselog=1&modid=site_errors.';
+$string['notifyloginfailuresmessageend'] = 'Puede ver estos registros en $a/course/log.php?id=1&amp;chooselog=1&amp;modid=site_errors.';
 $string['notifyloginfailuresmessagestart'] = 'Listado de intentos fallidos de acceso a $a desde que se le envió la última notificación';
 $string['notifyloginfailuressubject'] = '$a :: Notificación de accesos fallidos';
 $string['notincluded'] = 'No incluido';

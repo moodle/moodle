@@ -345,7 +345,7 @@ if (isset($_GET['help'])) {
 <table class="main" align="center" cellpadding="3" cellspacing="0">
     <tr>
         <td class="td_mainlogo">
-            <p class="p_mainlogo"><img src="pix/moodlelogo-med.gif" width="240" height="60"></p>
+            <p class="p_mainlogo"><img src="pix/moodlelogo-med.gif" width="240" height="60" alt=\"\"></p>
         </td>
         <td class="td_mainlogo" valign="bottom">
             <p class="p_mainheader"><?php print_string('installation', 'install') ?></p>
@@ -623,7 +623,7 @@ function install_helpbutton($url, $title='') {
     }
     echo "<a href=\"javascript: void(0)\">";
     echo "<img src=\"./pix/help.gif\" height=\"17\" width=\"22\" alt=\"$title\"";
-    echo "border=\"0\" align=\"absmiddle\" title=\"$title\" ";
+    echo "border=\"0\" align=\"middle\" title=\"$title\" ";
     echo "onClick=\"return window.open('$url', 'Help', 'menubar=0,location=0,scrollbars,resizable,width=500,height=400')\">";
     echo "</a>\n";
 }

@@ -58,11 +58,11 @@ $string['filloutoneanswer'] = "Sie müssen mindestens eine mögliche Antwort geben
 $string['filloutthreequestions'] = "Sie müssen mindestens 2 Sachen auswählen. Leere Fragen werden nicht verwendet";
 $string['fillouttwochoices'] = "Sie müssen mindestens zwei mögliche Antwort geben. Leere Antworten werden ignoriert.";
 $string['fractionsaddwrong'] = "Ihre positiven gewählten Punktzahlen ergeben keine 100%%
-<BR>Statt dessen ergeben Sie \$a%%
-<BR>Möchten Sie zurück gehen und diese Frage korrigieren?";
+<br />Statt dessen ergeben Sie \$a%%
+<br />Möchten Sie zurück gehen und diese Frage korrigieren?";
 $string['fractionsnomax'] = "Eine dieser Antworten sollte 100%% sein, so dass
-<br>es möglich ist, die volle Punktzahl für diese Frage zu bekommen.
-<br>Möchten Sie zurück gehen und diese Frage korrigieren?";
+<br />es möglich ist, die volle Punktzahl für diese Frage zu bekommen.
+<br />Möchten Sie zurück gehen und diese Frage korrigieren?";
 $string['gradeaverage'] = "Durchschnittsnote";
 $string['gradehighest'] = "Beste Note";
 $string['grademethod'] = "Bewertungsschema";
@@ -86,7 +86,7 @@ $string['nomoreattempts'] = "Kein Versuch mehr zugelassen";
 $string['noquestions'] = "Es wurden noch keine Fragen eingetragen";
 $string['noreview'] = "Du darfst dieses Quiz nicht überprüfen";
 $string['noreviewuntil'] = "Du darfst dieses Quiz bis \$a nicht überprüfen";
-$string['notenoughsubquestions'] = "Nicht genügend Unter-Fragen wurden definiert'<br>
+$string['notenoughsubquestions'] = "Nicht genügend Unter-Fragen wurden definiert'<br />
 Möchten Sie zurück gehen und diese Frage korrigieren?";
 $string['publish'] = "Veröffentlichen";
 $string['qti'] = "IMS QTI Format";

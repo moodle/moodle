@@ -282,7 +282,7 @@ function main_upgrade($oldversion=0) {
         if ($files = get_directory_list($CFG->dataroot)) {
             echo "Attempting to update permissions for all files... ignore any errors.";
             foreach ($files as $file) {
-                echo "$CFG->dataroot/$file<br>";
+                echo "$CFG->dataroot/$file<br />";
                 @chmod("$CFG->dataroot/$file", $CFG->directorypermissions);
             }
         }
@@ -325,7 +325,7 @@ function main_upgrade($oldversion=0) {
         }
 
         $cerrors = "";
-        echo "Checking userdatabase:<br>";
+        echo "Checking userdatabase:<br />";
         foreach ($users as $user) {
             $lcname = trim(moodle_strtolower($user->username));
             if ($lcname != $user->username) {

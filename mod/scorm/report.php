@@ -88,7 +88,7 @@
     			$row[] = $picture;
     			if (is_array($user_data)) {
     				$data = current($user_data);
-    				$row[] = "<a href=\"$CFG->wwwroot/user/view.php?id=$data->userid&course=$course->id\">".
+    				$row[] = "<a href=\"$CFG->wwwroot/user/view.php?id=$data->userid&amp;course=$course->id\">".
     					 "$data->firstname $data->lastname</a>";
     				foreach ($user_data as $data) {
     				    $scoreview = "";
@@ -98,7 +98,7 @@
     		    			$data->cmi_core_lesson_status = "not attempted";
         		    	    $row[]="<img src=\"pix/".scorm_remove_spaces($data->cmi_core_lesson_status).".gif\" 
     						   alt=\"".get_string(scorm_remove_spaces($data->cmi_core_lesson_status),"scorm")."\"
-    						   title=\"".get_string(scorm_remove_spaces($data->cmi_core_lesson_status),"scorm")."\">&nbsp;"
+    						   title=\"".get_string(scorm_remove_spaces($data->cmi_core_lesson_status),"scorm")."\" />&nbsp;"
     						   .$data->cmi_core_total_time.$scoreview;
         			}
         		}

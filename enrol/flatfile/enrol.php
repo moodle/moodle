@@ -231,7 +231,7 @@ function process_config($config) {
 
                         if (!empty($CFG->enrol_mailstudents)) {
                             $a->coursename = "$course->fullname";
-                            $a->profileurl = "$CFG->wwwroot/user/view.php?id=$user->id&course=$course->id";
+                            $a->profileurl = "$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$course->id";
                             email_to_user($user, $teacher, get_string("enrolmentnew", '', $course->shortname), 
                                           get_string('welcometocoursetext', '', $a));
                         }

@@ -296,9 +296,9 @@ $string['emailpasswordsent'] = 'Thank you for confirming the change of password.
 <a href=$a->link>change your password</a> to something easier to remember.';
 $string['enrolmentconfirmation'] = 'You are about to enroll yourself as a member of this course.<br />Are you sure you wish to do this?';
 $string['enrolmentkey'] = 'Enrollment key';
-$string['enrolmentkeyfrom'] = 'This course requires an \'enrollment key\' - a one-time<BR>
+$string['enrolmentkeyfrom'] = 'This course requires an \'enrollment key\' - a one-time<br />
 password that you should have received from $a';
-$string['enrolmentkeyhint'] = 'That enrollment key was incorrect, please try again<BR>
+$string['enrolmentkeyhint'] = 'That enrollment key was incorrect, please try again<br />
 (Here\'s a hint - it starts with \'$a\')';
 $string['entercourse'] = 'Click to enter this course';
 $string['enteremailaddress'] = 'Enter in your email address to reset your 
@@ -673,7 +673,7 @@ $string['scalestip'] = 'To create custom scales, use the \'Scales...\' link in y
 $string['search'] = 'Search';
 $string['searchagain'] = 'Search again';
 $string['searchcourses'] = 'Search courses';
-$string['searchhelp'] = 'You can search for multiple words at once.<p>word : find any match of this word within the text.<br>+word : only exact matching words will be found.<br>-word : don\'t include results containing this word.';
+$string['searchhelp'] = 'You can search for multiple words at once.<br /><br />word : find any match of this word within the text.<br />+word : only exact matching words will be found.<br />-word : don\'t include results containing this word.';
 $string['searchresults'] = 'Search results';
 $string['sec'] = 'sec';
 $string['secs'] = 'secs';

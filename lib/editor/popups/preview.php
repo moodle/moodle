@@ -44,7 +44,7 @@
     echo "</style>\n";
     echo "</head>\n";
     echo "<body bgcolor=\"#ffffff\">\n";
-    print "<img src=\"$imageurl\" width=\"$width\" height=\"$height\" alt=\"\">";
+    print "<img src=\"$imageurl\" width=\"$width\" height=\"$height\" alt=\"\" />";
     echo "</body>\n</html>\n";
     
 ?>

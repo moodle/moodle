@@ -54,13 +54,13 @@
 /// Go back to the other page
 
     if ($chat_version == "header" OR $chat_version == "box") {
-        redirect("../gui_$chat_version/chatinput.php?chat_sid=$chat_sid&groupid=$groupid");
+        redirect("../gui_$chat_version/chatinput.php?chat_sid=$chat_sid&amp;groupid=$groupid");
 
     } else if ($chat_version == 'sockets') {
-        //redirect('./gui_sockets/chatinput.php?chat_sid='.$chat_sid.'&groupid='.$groupid);
+        //redirect('./gui_sockets/chatinput.php?chat_sid='.$chat_sid.'&amp;groupid='.$groupid);
 
     } else if ($chat_version == "text") {
-        redirect("../gui_$chat_version/index.php?chat_sid=$chat_sid&chat_lastid=$chat_lastid&groupid=$groupid");
+        redirect("../gui_$chat_version/index.php?chat_sid=$chat_sid&chat_lastid=$chat_lastid&amp;groupid=$groupid");
 
     } else {
         redirect("empty.php");

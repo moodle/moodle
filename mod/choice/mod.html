@@ -146,7 +146,7 @@
 <tr valign="top">
     <td align="right"><p><b><?php print_string("timerestrict", "choice") ?>:</b></p></td>
     <td>
-        <script>
+        <script type="text/javascript">
             var timeitems = ['openday','openmonth','openyear','openhour', 'openminute', 'closeday','closemonth','closeyear','closehour','closeminute'];
         </script>
 
@@ -200,7 +200,7 @@
 
     <?php
         if (! $form->timerestrict) {
-            echo "<script>";
+            echo "<script type=\"text/javascript\">";
             echo "lockoptions('form','timerestrict', timeitems);";
             echo "</script>\n";
         }

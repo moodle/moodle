@@ -257,7 +257,7 @@
                 $user->lastname = $rec->userlastname;
                 $item->author = fullname($user);
                 $item->pubdate = $rec->postcreated;
-                $item->link = $CFG->wwwroot."/mod/forum/discuss.php?d=".$rec->discussionid."&parent=".$rec->postid;
+                $item->link = $CFG->wwwroot."/mod/forum/discuss.php?d=".$rec->discussionid."&amp;parent=".$rec->postid;
                 $item->description = format_text($rec->postmessage,$rec->postformat,NULL,$forum->course);
                 $items[] = $item;
                 $articlesleft--;

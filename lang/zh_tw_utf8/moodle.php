@@ -282,15 +282,15 @@ $string['emaildisplayyes'] = '允許所有人觀看我的電子郵件';
 $string['emailenable'] = '這個電子郵件信箱可使用';
 $string['emailexists'] = '所輸入電子郵件的使用者已經申請過帳號.';
 $string['emailformat'] = '電子郵件格式';
-$string['emailmustbereal'] = '注意: 沒有輸入電子郵件者,僅能進入需要密碼的課程<BR>一旦忘記密碼需找課程教師重新設定密碼';
+$string['emailmustbereal'] = '注意: 沒有輸入電子郵件者,僅能進入需要密碼的課程<br />一旦忘記密碼需找課程教師重新設定密碼';
 $string['emailpasswordconfirmationsubject'] = '$a :變更密碼資訊';
 $string['enable'] = '啟動';
 $string['enrolledincourse'] = '加入課程!!  $a !!';
 $string['enrolledincoursenot'] = '未加入課程 !! $a !!';
 $string['enrolmentconfirmation'] = '你即將加入成為課程的成員。 <b>你確定要這樣做嗎??</b>';
 $string['enrolmentkey'] = '課程專屬密碼';
-$string['enrolmentkeyfrom'] = '本課程需要 課程專屬密碼 - 僅需輸入一次<BR>密碼請向開課教師 $a 索取';
-$string['enrolmentkeyhint'] = '所輸入的課程專屬密碼不正確, 請重新輸入<BR>(提示 - 以 $a  起始)';
+$string['enrolmentkeyfrom'] = '本課程需要 課程專屬密碼 - 僅需輸入一次<br />密碼請向開課教師 $a 索取';
+$string['enrolmentkeyhint'] = '所輸入的課程專屬密碼不正確, 請重新輸入<br />(提示 - 以 $a  起始)';
 $string['entercourse'] = '按下以進入課程';
 $string['enteremailaddress'] = '請輸入註冊登記的電子郵件 以便系統重新設定個人密嗎 並送到你的電子郵件信箱.';
 $string['error'] = '錯誤';
@@ -463,7 +463,7 @@ $string['loginsteps'] = '你好! 若要使用本網站功能你必須先在本�
    <LI>請於 <A HREF=$a>申請新帳號</A> 表格中輸入個人相關資料.
    <LI>依據指示完成註冊手續,進行登入動作.
    <LI>登入後請選擇想要參加的課程.
-   <br>部分課程開課教師可能會設定專屬密碼, 則需要取得專屬密碼後才能進入(僅需初次進入課程時輸入)
+   <br />部分課程開課教師可能會設定專屬密碼, 則需要取得專屬密碼後才能進入(僅需初次進入課程時輸入)
    進入課程後 未來只需要登入便可再次進入課程, 不需要再輸入課程專屬密碼
    </OL>';
 $string['loginstepsnone'] = '嗨!<P>需要完成註冊手續才可能進入本課程.
@@ -798,7 +798,7 @@ $string['user'] = '使用者';
 $string['userconfirmed'] = '確認 $a';
 $string['userdata'] = '使用者資料';
 $string['userdeleted'] = '本使用者帳號已被刪除';
-$string['userdescription'] = '個人簡介：<BR>學生請寫:<BR>學校/年級/班別<P>老師請寫:<BR>畢業學校系級與<BR>任教學校及科目';
+$string['userdescription'] = '個人簡介：<br />學生請寫:<br />學校/年級/班別<P>老師請寫:<br />畢業學校系級與<br />任教學校及科目';
 $string['userfiles'] = '使用者檔案';
 $string['username'] = '帳號名稱';
 $string['usernameexists'] = '帳號名稱重複(已被使用), 請另選新的名稱';

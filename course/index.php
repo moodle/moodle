@@ -327,7 +327,7 @@ function print_category_edit($category, $displaylist, $parentslist, $depth=-1, $
             echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
         }
         $linkcss = $category->visible ? "" : " class=\"dimmed\" ";
-        echo "<a $linkcss title=\"$str->edit\" href=\"category.php?id=$category->id&edit=on\">$category->name</a>";
+        echo "<a $linkcss title=\"$str->edit\" href=\"category.php?id=$category->id&amp;edit=on\">$category->name</a>";
         echo "</p>";
         echo "</td>";
 
@@ -336,23 +336,23 @@ function print_category_edit($category, $displaylist, $parentslist, $depth=-1, $
         echo "<td nowrap=\"nowrap\">";    /// Print little icons
 
         echo "<a title=\"$str->delete\" href=\"index.php?delete=$category->id\"><img".
-             " src=\"$pixpath/t/delete.gif\" height=\"11\" width=\"11\" border=\"0\"></a> ";
+             " src=\"$pixpath/t/delete.gif\" height=\"11\" width=\"11\" border=\"0\" alt=\"\" /></a> ";
 
         if (!empty($category->visible)) {
             echo "<a title=\"$str->hide\" href=\"index.php?hide=$category->id\"><img".
-                 " src=\"$pixpath/t/hide.gif\" height=\"11\" width=\"11\" border=\"0\"></a> ";
+                 " src=\"$pixpath/t/hide.gif\" height=\"11\" width=\"11\" border=\"0\" alt=\"\" /></a> ";
         } else {
             echo "<a title=\"$str->show\" href=\"index.php?show=$category->id\"><img".
-                 " src=\"$pixpath/t/show.gif\" height=\"11\" width=\"11\" border=\"0\"></a> ";
+                 " src=\"$pixpath/t/show.gif\" height=\"11\" width=\"11\" border=\"0\"alt=\"\" /></a> ";
         }
 
         if ($up) {
             echo "<a title=\"$str->moveup\" href=\"index.php?moveup=$category->id\"><img".
-                 " src=\"$pixpath/t/up.gif\" height=\"11\" width=\"11\" border=\"0\"></a> ";
+                 " src=\"$pixpath/t/up.gif\" height=\"11\" width=\"11\" border=\"0\" alt=\"\" /></a> ";
         }
         if ($down) {
             echo "<a title=\"$str->movedown\" href=\"index.php?movedown=$category->id\"><img".
-                 " src=\"$pixpath/t/down.gif\" height=\"11\" width=\"11\" border=\"0\"></a> ";
+                 " src=\"$pixpath/t/down.gif\" height=\"11\" width=\"11\" border=\"0\"alt=\"\" /></a> ";
         }
         echo "</td>";
 
@@ -364,7 +364,7 @@ function print_category_edit($category, $displaylist, $parentslist, $depth=-1, $
                 unset($tempdisplaylist[$key]);
             }
         }
-        popup_form ("index.php?move=$category->id&moveto=", $tempdisplaylist, "moveform$category->id", "$category->parent", "", "", "", false);
+        popup_form ("index.php?move=$category->id&amp;moveto=", $tempdisplaylist, "moveform$category->id", "$category->parent", "", "", "", false);
         echo "</td>";
         echo "</tr>";
     } else {

@@ -28,7 +28,7 @@
         require_login();
     }
 
-    add_to_log($course->id, "user", "view", "view.php?id=$user->id&course=$course->id", "$user->id");
+    add_to_log($course->id, "user", "view", "view.php?id=$user->id&amp;course=$course->id", "$user->id");
 
     if ($student = get_record("user_students", "userid", $user->id, "course", $course->id)) {
         $user->lastaccess = $student->timeaccess;
@@ -172,8 +172,8 @@
                 $switchpix   = 'email.gif';
             }
             $emailswitch = "&nbsp<a title=\"$switchclick\" ".
-                           "href=\"view.php?id=$user->id&course=$course->id&$switchparam=$user->id\">".
-                           "<img border=\"0\" width=\"11\" height=\"11\" src=\"$CFG->pixpath/t/$switchpix\" /></a>";
+                           "href=\"view.php?id=$user->id&amp;course=$course->id&$switchparam=$user->id\">".
+                           "<img border=\"0\" width=\"11\" height=\"11\" src=\"$CFG->pixpath/t/$switchpix\" alt=\"\" /></a>";
         } else {
             $emailswitch = '';
         }
@@ -186,7 +186,7 @@
     }
 
     if ($user->icq) {
-        print_row("ICQ:","<a href=\"http://web.icq.com/wwp?uin=$user->icq\">$user->icq <img src=\"http://web.icq.com/whitepages/online?icq=$user->icq&img=5\" width=\"18\" height=\"18\" border=\"0\" /></a>");
+        print_row("ICQ:","<a href=\"http://web.icq.com/wwp?uin=$user->icq\">$user->icq <img src=\"http://web.icq.com/whitepages/online?icq=$user->icq&amp;img=5\" width=\"18\" height=\"18\" border=\"0\" alt=\"\" /></a>");
     }
 
     if (isteacher($course->id)) {
@@ -194,7 +194,7 @@
             $courselisting = '';
             foreach ($mycourses as $mycourse) {
                 if ($mycourse->visible and $mycourse->category) {
-                    $courselisting .= "<a href=\"$CFG->wwwroot/user/view.php?id=$user->id&course=$mycourse->id\">$mycourse->fullname</a>, ";
+                    $courselisting .= "<a href=\"$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$mycourse->id\">$mycourse->fullname</a>, ";
                 }
             }
             print_row(get_string('courses').':', rtrim($courselisting,', '));

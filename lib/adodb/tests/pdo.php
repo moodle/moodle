@@ -29,7 +29,7 @@ while (!$rs->EOF) {
 	if ($cnt++ > 1000) break;
 }
 
-echo "<br>--------------------------------------------------------<br>\n\n\n";
+echo "<br />--------------------------------------------------------<br />\n\n\n";
 
 $stmt = $DB->PrepareStmt("select * from products");
 $rs = $stmt->Execute();

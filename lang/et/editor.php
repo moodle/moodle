@@ -4,7 +4,7 @@
 
 $string['about'] = 'Sellest redigeerijast';
 $string['absbottom'] = 'Täiesti all';
-$string['absmiddle'] = 'Täiesti keskel';
+$string['middle'] = 'Täiesti keskel';
 $string['address'] = 'Aadress';
 $string['alignment'] = 'Joondus';
 $string['alternatetext'] = 'Alt tekst';

@@ -556,7 +556,7 @@ function dialogue_print_conversation($dialogue, $conversation) {
     echo "<div align=\"right\">\n";
     if (!$conversation->subject) {
         // conversation does not have a subject, show add subject link
-        echo "<a href=\"dialogues.php?action=getsubject&amp;id=$cm->id&amp;cid=$conversation->id&pane=2\">".
+        echo "<a href=\"dialogues.php?action=getsubject&amp;id=$cm->id&amp;cid=$conversation->id&amp;pane=2\">".
             get_string("addsubject", "dialogue")."</a>\n";
         helpbutton("addsubject", get_string("addsubject", "dialogue"), "dialogue");
         echo "&nbsp; | ";
@@ -648,7 +648,7 @@ function dialogue_print_tabbed_heading($tabs) {
     if (!empty($tabs->names)) {
         echo "<tr>";
         echo "<td  class=\"generaltablecell\">".
-            "<img width=\"10\" src=\"$CFG->wwwroot/pix/spacer.gif\" alt=\"\"></td>\n";
+            "<img width=\"10\" src=\"$CFG->wwwroot/pix/spacer.gif\" alt=\"\" /></td>\n";
         foreach ($tabcontents as $key => $tab) {
             if (isset($align[$key])) {
                 $alignment = "align=\"$align[$key]\"";
@@ -671,7 +671,7 @@ function dialogue_print_tabbed_heading($tabs) {
                 echo "<td valign=top class=\"generaltab\" $alignment $width $wrapping bgcolor=\"$THEME->cellheading\">$tab</td>\n";
             }
         echo "<td  class=\"generaltablecell\">".
-            "<img width=\"10\" src=\"$CFG->wwwroot/pix/spacer.gif\" alt=\"\"></td>\n";
+            "<img width=\"10\" src=\"$CFG->wwwroot/pix/spacer.gif\" alt=\"\" /></td>\n";
         }
         echo "</tr>\n";
     } else {
@@ -681,7 +681,7 @@ function dialogue_print_tabbed_heading($tabs) {
     $ncells = count($tabs->names)*2 +1;
     $height = 2;
     echo "<tr><td colspan=\"$ncells\" bgcolor=\"$THEME->cellheading2\">".
-        "<img height=\"$height\" src=\"$CFG->wwwroot/pix/spacer.gif\" alt=\"\"></td></tr>\n";
+        "<img height=\"$height\" src=\"$CFG->wwwroot/pix/spacer.gif\" alt=\"\" /></td></tr>\n";
     echo "</table>\n";
     // print_simple_box_end();
 

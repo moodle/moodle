@@ -26,7 +26,7 @@ $rs = $db->Query('select firstname,lastname from adoxyz');
 $cnt = 0;
 while ($arr = $rs->FetchRow()) {
 	print_r($arr);
-	print "<br>";
+	print "<br />";
 	$cnt += 1;
 }
 

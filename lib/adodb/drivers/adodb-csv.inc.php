@@ -79,13 +79,13 @@ class ADODB_csv extends ADOConnection {
 	{
 	global $ADODB_FETCH_MODE;
 	
-		$url = $this->_url.'?sql='.urlencode($sql)."&nrows=$nrows&fetch=".
+		$url = $this->_url.'?sql='.urlencode($sql)."&amp;nrows=$nrows&amp;fetch=".
 			(($this->fetchMode !== false)?$this->fetchMode : $ADODB_FETCH_MODE).
-			"&offset=$offset";
+			"&amp;offset=$offset";
 		$err = false;
 		$rs = csv2rs($url,$err,false);
 		
-		if ($this->debug) print "$url<br><i>$err</i><br>";
+		if ($this->debug) print "$url<br /><i>$err</i><br />";
 
 		$at = strpos($err,'::::');
 		if ($at === false) {
@@ -136,13 +136,13 @@ class ADODB_csv extends ADOConnection {
 			$inputarr = false;
 		}
 		
-		$url =  $this->_url.'?sql='.urlencode($sql)."&fetch=".
+		$url =  $this->_url.'?sql='.urlencode($sql)."&amp;fetch=".
 			(($this->fetchMode !== false)?$this->fetchMode : $ADODB_FETCH_MODE);
 		$err = false;
 		
 		
 		$rs = csv2rs($url,$err,false);
-		if ($this->debug) print urldecode($url)."<br><i>$err</i><br>";
+		if ($this->debug) print urldecode($url)."<br /><i>$err</i><br />";
 		$at = strpos($err,'::::');
 		if ($at === false) {		
 			$this->_errorMsg = $err;

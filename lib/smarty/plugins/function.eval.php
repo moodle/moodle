@@ -9,9 +9,9 @@
 /**
  * Smarty {eval} function plugin
  *
- * Type:     function<br>
- * Name:     eval<br>
- * Purpose:  evaluate a template variable as a template<br>
+ * Type:     function<br />
+ * Name:     eval<br />
+ * Purpose:  evaluate a template variable as a template<br />
  * @link http://smarty.php.net/manual/en/language.function.eval.php {eval}
  *       (Smarty online manual)
  * @param array

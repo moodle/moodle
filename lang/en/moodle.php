@@ -770,7 +770,7 @@ $string['noteuserschangednonetocourse'] = 'Note: course users need to be restore
 $string['nothingnew'] = 'Nothing new since your last login';
 $string['noticenewerbackup'] = 'This backup file has been created with Moodle $a->backuprelease ($a->backupversion) and it\'s newer than your currently installed Moodle $a->serverrelease ($a->serverversion). This could cause some inconsistencies because backwards compatibility of backup files cannot be guaranteed.';
 $string['notifyloginfailuresmessage'] = '$a->time, IP: $a->ip, User: $a->info';
-$string['notifyloginfailuresmessageend'] = 'You can view these logs at $a/course/log.php?id=1&chooselog=1&modid=site_errors.';
+$string['notifyloginfailuresmessageend'] = 'You can view these logs at $a/course/log.php?id=1&amp;chooselog=1&amp;modid=site_errors.';
 $string['notifyloginfailuresmessagestart'] = 'Here is a list of failed login attempts at $a since you were last notified ';
 $string['notifyloginfailuressubject'] = '$a :: Failed logins notification';
 $string['notincluded'] = 'Not included';
@@ -885,7 +885,7 @@ $string['scheduledbackupstatus'] = 'Scheduled backup status';
 $string['search'] = 'Search';
 $string['searchagain'] = 'Search again';
 $string['searchcourses'] = 'Search courses';
-$string['searchhelp'] = 'You can search for multiple words at once.<p>word : find any match of this word within the text.<br />+word : only exact matching words will be found.<br />-word : don\'t include results containing this word.';
+$string['searchhelp'] = 'You can search for multiple words at once.<br /><br />word : find any match of this word within the text.<br />+word : only exact matching words will be found.<br />-word : don\'t include results containing this word.';
 $string['searchresults'] = 'Search results';
 $string['sec'] = 'sec';
 $string['secs'] = 'secs';

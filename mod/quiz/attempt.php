@@ -184,7 +184,7 @@
 
         if ($attempt = quiz_save_attempt($quiz, $questions, $result, $attemptnumber)) {
             add_to_log($course->id, "quiz", "submit",
-                       "review.php?id=$cm->id&attempt=$attempt->id", "$quiz->id", $cm->id);
+                       "review.php?id=$cm->id&amp;attempt=$attempt->id", "$quiz->id", $cm->id);
         } else {
             notice(get_string("alreadysubmitted", "quiz"), "view.php?id=$cm->id");
             print_footer($course);
@@ -232,7 +232,7 @@
 
     } else if ($attempt = quiz_start_attempt($quiz->id, $USER->id, $attemptnumber)) {
         add_to_log($course->id, "quiz", "attempt", 
-                "review.php?id=$cm->id&attempt=$attempt->id", "$quiz->id", $cm->id);
+                "review.php?id=$cm->id&amp;attempt=$attempt->id", "$quiz->id", $cm->id);
     } else {
         error("Sorry! Could not start the quiz (could not save starting time)");
     }

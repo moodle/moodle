@@ -86,11 +86,11 @@ $string['filloutoneanswer'] = 'Tem que preencher pelo menos uma possível respost
 $string['filloutthreequestions'] = 'Terá que preencher pelo menos três perguntas. Respostas a branco não serão usadas.';
 $string['fillouttwochoices'] = 'Tem que preencher pelo menos duas escolhas. Respostas em branco não serão consideradas.';
 $string['fractionsaddwrong'] = 'As notas positivas que escolheu não somam 100%%
-<BR>a soma é em vez $a%%
-<BR>quer voltar para traz e corrigi esta pergunta?';
+<br />a soma é em vez $a%%
+<br />quer voltar para traz e corrigi esta pergunta?';
 $string['fractionsnomax'] = 'Uma das respostas deve ser 100%% para que seja
-<BR>possível obter a cotação máxima nesta pergunta.
-<BR>Quer voltar para traz e corrigir esta pergunta?';
+<br />possível obter a cotação máxima nesta pergunta.
+<br />Quer voltar para traz e corrigir esta pergunta?';
 $string['gift'] = 'Formato GIFT';
 $string['gradeaverage'] = 'Nota média';
 $string['gradehighest'] = 'Nota mais alta';
@@ -127,7 +127,7 @@ $string['noreview'] = 'Não é permitido rever este mini-teste';
 $string['noreviewuntil'] = 'Não é permitido rever este mini-teste até $a';
 $string['noscript'] = 'O Javascript deverá estar activado para poder continuar! ';
 $string['notenoughanswers'] = 'Esse tipo de pergunta exige pelo menos $a respostas';
-$string['notenoughsubquestions'] = 'Não foram definidas sub-questões suficientes!<br>
+$string['notenoughsubquestions'] = 'Não foram definidas sub-questões suficientes!<br />
 Quer voltar atrás e corrigir a questão?';
 $string['numerical'] = 'Numérica';
 $string['paragraphquestion'] = 'Na linha $a, não são permitidas perguntas de parágrafo. A pergunta será ignorada.';

@@ -70,7 +70,7 @@ Je¶li nie znajdziesz odpowiedzi na swoje pytanie tutaj, udaj siê na kurs <a href
 Za ka¿dym razem gdy próbuje obejrzeæ, lub w inny sposób uzyskaæ dostêp do przes³anego przeze mnie pliku otrzymuje komentarz &quot;File not Found&quot; (&quot; Nie znaleziono pliku&quot;) </h3>
 
 <p class="answer">Przyk³ad :  Not Found : The requested URL /moodle/file.php/2/myfile.jpg
-  was not found on this server.<br> (Nie znaleziono : podany adres URL ... nie zosta³ znaleziony na serwerze)</p>
+  was not found on this server.<br /> (Nie znaleziono : podany adres URL ... nie zosta³ znaleziony na serwerze)</p>
 
 <p class="answer">Twój serwer musi byæ skonfigurowany tak, aby umo¿liwia³ przekazywanie czê¶ci adresu URL, po nazwie skryptu, bezpo¶rednio do  skryptu. Opcja jest domy¶lnie w³±czona w Apache 1, ale na ogó³ jest domy¶lnie wy³±czona w Apache 2. Aby j± w³±czyæ dodaj poni¿sz± linijkê do httpd.conf, albo do .htaccess w twoim lokalnym katalogu (szczegó³y : <a href="./?file=install.html#webserver">Dokumentacja instalacji</a> ) :  </p>
 
@@ -98,7 +98,7 @@ Za ka¿dym razem gdy próbuje obejrzeæ, lub w inny sposób uzyskaæ dostêp do przes³
 <h4 class="question"><a name="errorgetstring"></a>Na stronach pojawiaj± siê krytyczne b³êdy takie jak "call to undefined function: get_string()" ("odwo³anie do niezdefiniowanej funkcji get_string()")</h4>
 <p class="answer">Je¶li pokazuj± siê b³êdy takie jak:</p>
 <p class="answercode">Parse error: parse error, unexpected T_VARIABLE in c:\program
-  files\easyphp\www\moodle\config.php on line 94 <br>
+  files\easyphp\www\moodle\config.php on line 94 <br />
   Fatal error: Call to undefined function: get_string() in c:\program files\easyphp\www\moodle\mod\resource\lib.php
   on line 11</p>
 <p class="answer">wtedy prawdopodobne jest, i¿ przeoczy³e¶ ¶rednik, albo koniec cytatu z pewnej linii pliku config.php (znajduj±cej siê przed lini± 94)</p>
@@ -130,7 +130,7 @@ Za ka¿dym razem gdy próbuje obejrzeæ, lub w inny sposób uzyskaæ dostêp do przes³
 <h4 class="question"><a name="quotes" id="quotes"></a>Ka¿dy tekst zawieraj±cy apostrofy (') lub cudzys³owy (") powoduje b³êdy lub jest zwracany z znakami '³amane na' </h4>
 <p class="answer">Problemy z apostrofami pojawiaj± siê z powodu nieprawid³owego ustawienia &quot;magic
   quotes&quot;. Moodle wymaga nastêpuj±cych ustawieñ (na ogó³ s±to ustawienia domy¶lne): </p>
-<p class="answercode">magic_quotes_gpc = On<br>
+<p class="answercode">magic_quotes_gpc = On<br />
   magic_quotes_runtime = Off</p>
 <p class="answer">Zobacz rozdzia³ po¶wiêcony <a href="http://moodle.org/doc/?file=install.html#webserver">konfiguracji serwera</a> w dokumentacji instalacji, aby zapoznaæ siê ze szczegó³ami</p>
 

@@ -62,7 +62,7 @@
         $USER->teacher["$site->id"] = true;
         $USER->newadminuser = true;
 
-        redirect("$CFG->wwwroot/user/edit.php?id=$user->id&course=$site->id");
+        redirect("$CFG->wwwroot/user/edit.php?id=$user->id&amp;course=$site->id");
         exit;
 
     } else {
@@ -94,7 +94,7 @@
             }
         }
 
-        redirect("$CFG->wwwroot/user/edit.php?id=$user->id&course=$site->id");
+        redirect("$CFG->wwwroot/user/edit.php?id=$user->id&amp;course=$site->id");
         
     } else {                        // List all users for editing
 
@@ -147,7 +147,7 @@
             if ($confirm != md5($delete)) {
                 $fullname = fullname($user, true);
                 notice_yesno(get_string("deletecheckfull", "", "'$fullname'"),
-                     "user.php?delete=$delete&confirm=".md5($delete), "user.php");
+                     "user.php?delete=$delete&amp;confirm=".md5($delete), "user.php");
 
                 exit;
             } else if (!$user->deleted) {
@@ -188,10 +188,10 @@
                 } else {
                     $columnicon = $dir == "ASC" ? "down":"up";
                 }
-                $columnicon = " <img src=\"$CFG->pixpath/t/$columnicon.gif\" />";
+                $columnicon = " <img src=\"$CFG->pixpath/t/$columnicon.gif\" alt=\"\" />";
 
             }
-            $$column = "<a href=\"user.php?sort=$column&dir=$columndir&search=$search&firstinitial=$firstinitial&lastinitial=$lastinitial\">".$string[$column]."</a>$columnicon";
+            $$column = "<a href=\"user.php?sort=$column&amp;dir=$columndir&amp;search=$search&amp;firstinitial=$firstinitial&amp;lastinitial=$lastinitial\">".$string[$column]."</a>$columnicon";
         }
 
         if ($sort == "name") {
@@ -218,8 +218,8 @@
         echo "<center><p align=\"center\">";
         echo get_string("firstname")." : ";
         if ($firstinitial) {
-            echo " <a href=\"user.php?sort=firstname&dir=ASC&".
-                 "perpage=$perpage&lastinitial=$lastinitial\">$strall</a> ";
+            echo " <a href=\"user.php?sort=firstname&amp;dir=ASC&".
+                 "perpage=$perpage&amp;lastinitial=$lastinitial\">$strall</a> ";
         } else {
             echo " <b>$strall</b> ";
         }
@@ -227,8 +227,8 @@
             if ($letter == $firstinitial) {
                 echo " <b>$letter</b> ";
             } else {
-                echo " <a href=\"user.php?sort=firstname&dir=ASC&".
-                     "perpage=$perpage&lastinitial=$lastinitial&firstinitial=$letter\">$letter</a> ";
+                echo " <a href=\"user.php?sort=firstname&amp;dir=ASC&".
+                     "perpage=$perpage&amp;lastinitial=$lastinitial&amp;firstinitial=$letter\">$letter</a> ";
             }
         }
         echo "<br />";
@@ -237,8 +237,8 @@
 
         echo get_string("lastname")." : ";
         if ($lastinitial) {
-            echo " <a href=\"user.php?sort=lastname&dir=ASC&".
-                 "perpage=$perpage&firstinitial=$firstinitial\">$strall</a> ";
+            echo " <a href=\"user.php?sort=lastname&amp;dir=ASC&".
+                 "perpage=$perpage&amp;firstinitial=$firstinitial\">$strall</a> ";
         } else {
             echo " <b>$strall</b> ";
         }
@@ -246,15 +246,15 @@
             if ($letter == $lastinitial) {
                 echo " <b>$letter</b> ";
             } else {
-                echo " <a href=\"user.php?sort=lastname&dir=ASC&".
-                     "perpage=$perpage&firstinitial=$firstinitial&lastinitial=$letter\">$letter</a> ";
+                echo " <a href=\"user.php?sort=lastname&amp;dir=ASC&".
+                     "perpage=$perpage&amp;firstinitial=$firstinitial&amp;lastinitial=$letter\">$letter</a> ";
             }
         }
         echo "</p>";
         echo "</center>";
 
         print_paging_bar($usercount, $page, $perpage,
-                "user.php?sort=$sort&dir=$dir&perpage=$perpage&firstinitial=$firstinitial&lastinitial=$lastinitial&search=$search&");
+                "user.php?sort=$sort&amp;dir=$dir&amp;perpage=$perpage&amp;firstinitial=$firstinitial&amp;lastinitial=$lastinitial&amp;search=$search&");
 
         flush();
 
@@ -313,12 +313,12 @@
                     $confirmbutton = "";
                 }
                 $fullname = fullname($user, true);
-                $table->data[] = array ("<a href=\"../user/view.php?id=$user->id&course=$site->id\">$fullname</a>",
+                $table->data[] = array ("<a href=\"../user/view.php?id=$user->id&amp;course=$site->id\">$fullname</a>",
                                         "$user->email",
                                         "$user->city",
                                         "$user->country",
                                         $strlastaccess,
-                                        "<a href=\"../user/edit.php?id=$user->id&course=$site->id\">$stredit</a>",
+                                        "<a href=\"../user/edit.php?id=$user->id&amp;course=$site->id\">$stredit</a>",
                                         $deletebutton,
                                         $confirmbutton);
             }
@@ -338,8 +338,8 @@
             print_table($table);
 
             print_paging_bar($usercount, $page, $perpage,
-                             "user.php?sort=$sort&dir=$dir&perpage=$perpage".
-                             "&firstinitial=$firstinitial&lastinitial=$lastinitial&search=$search&");
+                             "user.php?sort=$sort&amp;dir=$dir&amp;perpage=$perpage".
+                             "&amp;firstinitial=$firstinitial&amp;lastinitial=$lastinitial&amp;search=$search&");
 
         }
 

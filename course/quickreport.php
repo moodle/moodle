@@ -263,7 +263,7 @@ $modname_value = array_flip($modnames);
         }
         $fullname = ucwords($allusers[$userid]->lastname) . ", " . ucwords($allusers[$userid]->firstname);
         if (!$isstudent){
-            $fullname = "<a href=\"user.php?id=$course->id&user=$userid>$fullname\"</a>";
+            $fullname = "<a href=\"user.php?id=$course->id&amp;user=$userid>$fullname\"</a>";
         }
         echo "<td align=\"left\"><b>$fullname</b></td>";
         $picture = print_user_picture($userid, $course->id, $allusers[$userid]->picture, false, true);

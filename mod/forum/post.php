@@ -46,7 +46,7 @@
             if (forum_update_post($post)) {
 
                 add_to_log($post->course, "forum", "update post", 
-                          "discuss.php?d=$post->discussion&parent=$post->id", "$post->id", $cm->id);
+                          "discuss.php?d=$post->discussion&amp;parent=$post->id", "$post->id", $cm->id);
 
                 $message = get_string("postupdated", "forum");
                 $timemessage = 1;
@@ -65,7 +65,7 @@
             if ($post->id = forum_add_new_post($post)) {
 
                 add_to_log($post->course, "forum", "add post", 
-                          "discuss.php?d=$post->discussion&parent=$post->id", "$post->id", $cm->id);
+                          "discuss.php?d=$post->discussion&amp;parent=$post->id", "$post->id", $cm->id);
 
                 $message = get_string("postadded", "forum", format_time($CFG->maxeditingtime));
                 $timemessage = 2;
@@ -330,13 +330,14 @@
 
             print_header();
             notice_yesno(get_string("deletesure", "forum"), 
-                         "post.php?delete=$delete&confirm=$delete",
+                         "post.php?delete=$delete&amp;confirm=$delete",
                          $_SERVER["HTTP_REFERER"]);
                          
             echo "<center><hr />";
             forum_print_post($post, $forum->course, $ownpost=false, $reply=false, $link=false);
+            echo "</center>";
         }
-
+        print_footer($course);
         die;
 
 
@@ -418,8 +419,9 @@
             include('prune.html');
                          
             forum_print_post($post, $forum->course, $ownpost=false, $reply=false, $link=false);
+            echo '</center>';
         }
-
+        print_footer($course);
         die;
 
 

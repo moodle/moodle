@@ -25,7 +25,7 @@ function rss_get_link($courseid, $userid, $modulename, $id, $tooltiptext="") {
 
     $rsspix = $pixpath."/i/rss.gif";
 
-    return "<a href=\"".$rsspath."\"><img src=\"$rsspix\" title=\"$tooltiptext\"></a>";
+    return "<a href=\"".$rsspath."\"><img src=\"$rsspix\" title=\"$tooltiptext\" alt=\"\" /></a>";
 
 }
 

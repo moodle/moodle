@@ -4,7 +4,7 @@
 
 $string['about'] = 'Om den här redigeraren';
 $string['absbottom'] = 'Absbottom';
-$string['absmiddle'] = 'Absmiddle';
+$string['middle'] = 'middle';
 $string['address'] = 'Adress';
 $string['alignment'] = 'Justering';
 $string['alternatetext'] = 'Alternativ text';

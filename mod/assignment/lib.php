@@ -788,7 +788,7 @@ function assignment_print_recent_mod_activity($activity, $course, $detail=false)
         echo "<br />";
     }
     echo "<a href=\"$CFG->wwwroot/user/view.php?id="
-         . $activity->user->userid . "&course=$course\">"
+         . $activity->user->userid . "&amp;course=$course\">"
          . $activity->user->fullname . "</a> ";
 
     echo " - " . userdate($activity->timestamp);

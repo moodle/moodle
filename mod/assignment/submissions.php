@@ -39,7 +39,7 @@
 
 /// Check to see if groups are being used in this assignment
     if ($groupmode = groupmode($course, $cm)) {   // Groups are being used
-        $currentgroup = setup_and_print_groups($course, $groupmode, "submissions.php?id=$assignment->id&sort=$sort&dir=$dir");
+        $currentgroup = setup_and_print_groups($course, $groupmode, "submissions.php?id=$assignment->id&amp;sort=$sort&amp;dir=$dir");
     } else {
         $currentgroup = false;
     }
@@ -150,10 +150,10 @@
         } else {
             $newdir = 'ASC';
         }
-        echo "<a href=\"submissions.php?id=$assignment->id&sort=$sorttype&dir=$newdir\">$label</a>";
+        echo "<a href=\"submissions.php?id=$assignment->id&amp;sort=$sorttype&amp;dir=$newdir\">$label</a>";
         if ($sort == $sorttype) {   // Current sort
              $diricon = $dir == 'ASC' ? 'down' : 'up';
-             echo " <img src=\"$CFG->pixpath/t/$diricon.gif\" />";
+             echo " <img src=\"$CFG->pixpath/t/$diricon.gif\" alt=\"\" />";
         }
         echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
     }

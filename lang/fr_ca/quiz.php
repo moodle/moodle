@@ -3,7 +3,7 @@
 
 
 $string['acceptederror'] = 'Erreur acceptable';
-$string['addingquestions'] = 'Vous gérez votre banque de questions de ce côté-ci de la page. Les questions sont classées en catégories afin d\'en faciliter la gestion. Chaque question peut être utilisée dans n\'importe quel test dans votre cours ou dans un autre cours si elle est publiée. <br><br /> Vous <b>devez choisir ou créer</b> une catégorie afin d\'être capable de créer ou d\'éditer une question. Vous pouvez choisir parmi les questions affichées pour les ajouter à votre test (à gauche de la page).';
+$string['addingquestions'] = 'Vous gérez votre banque de questions de ce côté-ci de la page. Les questions sont classées en catégories afin d\'en faciliter la gestion. Chaque question peut être utilisée dans n\'importe quel test dans votre cours ou dans un autre cours si elle est publiée. <br /><br /> Vous <b>devez choisir ou créer</b> une catégorie afin d\'être capable de créer ou d\'éditer une question. Vous pouvez choisir parmi les questions affichées pour les ajouter à votre test (à gauche de la page).';
 $string['addquestions'] = 'Ajouter des questions';
 $string['addquestionstoquiz'] = 'Ajouter des questions au test en cours';
 $string['addselectedtoquiz'] = 'Ajouter la sélection au test';
@@ -78,7 +78,7 @@ $string['feedback'] = 'Rétroaction';
 $string['fileformat'] = 'Format du fichier';
 $string['filloutoneanswer'] = 'Vous devez fournir au moins un choix de réponse. Les choix qui seront laissées vides ne seront pas pris en compte.';
 $string['filloutthreequestions'] = 'Vous devez fournir au moins trois choix. Les choix qui seront laissés vides ne seront pas utilisés.';
-$string['fillouttwochoices'] = 'Vous devez compléter au moins deux choix de réponse.<br>
+$string['fillouttwochoices'] = 'Vous devez compléter au moins deux choix de réponse.<br />
 
 Ceux qui seront laissées vides ne seront pas pris en compte.';
 $string['fractionsaddwrong'] = 'La somme des notes positives que vous avez choisies n\'atteint pas 100%%.<br/>Elle est de $a%%.<br/>Souhaitez-vous revenir en arrière pour corriger cela ?';

@@ -39,7 +39,7 @@
     $table->data[] = array("<b><a href=\"../course/index.php?edit=off\">".get_string("assignstudents")."</a></b>",
                            get_string("adminhelpassignstudents"));
     $table->data[] = array("<b><a href=\"../course/index.php?edit=on\">".get_string("assignteachers")."</a></b>",
-                           get_string("adminhelpassignteachers")." <img src=\"../pix/t/user.gif\" height=\"11\" width=\"11\">");
+                           get_string("adminhelpassignteachers")." <img src=\"../pix/t/user.gif\" height=\"11\" width=\"11\" alt=\"\" />");
     $table->data[] = array("<b><a href=\"creators.php\">".get_string("assigncreators")."</a></b>",
                            get_string("adminhelpassigncreators"));
     $table->data[] = array("<b><a href=\"admin.php\">".get_string("assignadmins")."</a></b>",

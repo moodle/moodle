@@ -94,7 +94,7 @@ $string['notenoughmarked'] = "No hay suficientes tareas marcadas como para garan
 $string['noteonassessmentelements'] = 
 	"Advierta que en una tarea calificada por los compa&ntilde;eros la calificaci&oacute;n est&aacute; partida en un n&uacute;mero de 'Elementos de Evaluaci&oacute;n'.<br />
 	Esto la hace m&aacute;s f&aacute;cil de calificar y m&aacute;s consistente. Como profesor usted debe a&ntilde;adir estos Elementos antes de hacer<br />
-	que la tarea est&eacute; disponible para los estudiantes. Esto se hace haciendo clic en la tarea calificada por los compa&ntilde;eros y eligiendo la<BR>
+	que la tarea est&eacute; disponible para los estudiantes. Esto se hace haciendo clic en la tarea calificada por los compa&ntilde;eros y eligiendo la<br />
 	primera opci&oacute;n en el men&uacute; &quot;Gesti&oacute;n de una Tarea Calificada por los Compa&ntilde;eros&quot.";
 
 $string['notgraded'] = "No calificar, s&oacute;lo comentarios por parte de otros estudiantes";

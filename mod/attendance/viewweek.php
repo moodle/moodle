@@ -33,7 +33,7 @@
     
     require_login($course->id);
 
-    add_to_log($course->id, "attendance", "viewweek", "viewweek.php?scope=".$scope."&id=$course->id");
+    add_to_log($course->id, "attendance", "viewweek", "viewweek.php?scope=".$scope."&amp;id=$course->id");
 
  
 if ($attendances) {
@@ -309,26 +309,26 @@ while (($multipage || $onepage) && (!$endonepage)) {
     echo "<p align=\"right\"><a href=\"viewall.php?id=".$course->id."\">";
     echo "$strviewall</a><br />";
     if ($onepage) {  // one page for all tables
-      echo "<a href=\"viewweek.php?scope=".$scope."&id=".$id ."\">";
+      echo "<a href=\"viewweek.php?scope=".$scope."&amp;id=".$id ."\">";
       echo "$strviewmulti</a><br />";
-      echo "<a href=\"viewweek.php?scope=".$scope."&id=".$id ."&onetable=1\">";
+      echo "<a href=\"viewweek.php?scope=".$scope."&amp;id=".$id ."&amp;onetable=1\">";
       echo "$strviewtable</a><br />";
     } else if ($onetable) { // one table for all
-      echo "<a href=\"viewweek.php?scope=".$scope."&id=".$id ."\">";
+      echo "<a href=\"viewweek.php?scope=".$scope."&amp;id=".$id ."\">";
       echo "$strviewmulti</a><br />";
-      echo "<a href=\"viewweek.php?scope=".$scope."&id=".$id ."&onepage=1\">";
+      echo "<a href=\"viewweek.php?scope=".$scope."&amp;id=".$id ."&amp;onepage=1\">";
       echo "$strviewone</a><br />";
     } else { // multiple pages
-      echo "<a href=\"viewweek.php?scope=".$scope."&id=".$id ."&onepage=1\">";
+      echo "<a href=\"viewweek.php?scope=".$scope."&amp;id=".$id ."&amp;onepage=1\">";
       echo "$strviewone</a><br />";
-      echo "<a href=\"viewweek.php?scope=".$scope."&id=".$id ."&onetable=1\">";
+      echo "<a href=\"viewweek.php?scope=".$scope."&amp;id=".$id ."&amp;onetable=1\">";
       echo "$strviewtable</a><br />";
     }
     if ($scope=="week") {  // week view for scope
-      echo "<a href=\"viewweek.php?scope=section&id=".$id."\">";
+      echo "<a href=\"viewweek.php?scope=section&amp;id=".$id."\">";
       echo "$strviewsection</a></p>";
     } else { // section view for scope
-      echo "<a href=\"viewweek.php?scope=week&id=".$id."\">";
+      echo "<a href=\"viewweek.php?scope=week&amp;id=".$id."\">";
       echo "$strviewweek</a></p>";
     }
 
@@ -493,8 +493,8 @@ function attendance_print_pagenav() {
     echo "<tr>";
     if ($minatt!=0) {
     echo "<th valign=\"top\" align=\"right\" nowrap class=\"generaltableheader\">".
-           "<a href=\"viewweek.php?scope=".$scope."&id=".$id ."&pagereport=1&page=".($page-1)."\">&lt;</a>&nbsp;\n";
-           "<a href=\"viewweek.php?scope=".$scope."&id=".$id ."&pagereport=1&page=1\">&lt;&lt;</a></th>\n";
+           "<a href=\"viewweek.php?scope=".$scope."&amp;id=".$id ."&amp;pagereport=1&amp;page=".($page-1)."\">&lt;</a>&nbsp;\n";
+           "<a href=\"viewweek.php?scope=".$scope."&amp;id=".$id ."&amp;pagereport=1&amp;page=1\">&lt;&lt;</a></th>\n";
     } else {
     echo "<th valign=\"top\" align=\"right\" nowrap class=\"generaltableheader\">&lt;&lt;&nbsp;&lt;</th>\n";
     }
@@ -502,8 +502,8 @@ function attendance_print_pagenav() {
            "$pg $page $of $maxpages</th>\n";
     if ($maxatt!=$numatt) {
       echo "<th valign=\"top\" align=\"right\" nowrap class=\"generaltableheader\">".
-      "<a href=\"viewweek.php?scope=".$scope."&id=".$id ."&pagereport=1&page=". ($page+1)."\">&gt;</a>&nbsp;".
-      "<a href=\"viewweek.php?scope=".$scope."&id=".$id ."&pagereport=1&page=$maxpages\">&gt;&gt;</a></th>";
+      "<a href=\"viewweek.php?scope=".$scope."&amp;id=".$id ."&amp;pagereport=1&amp;page=". ($page+1)."\">&gt;</a>&nbsp;".
+      "<a href=\"viewweek.php?scope=".$scope."&amp;id=".$id ."&amp;pagereport=1&amp;page=$maxpages\">&gt;&gt;</a></th>";
     } else {
     echo "<th valign=\"top\" align=\"right\" nowrap class=\"generaltableheader\">&gt;&nbsp;&gt;&gt;</th>\n";
     }

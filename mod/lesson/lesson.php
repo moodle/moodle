@@ -594,7 +594,7 @@
             }
         }
 		notice_yesno(get_string("confirmdeletionofthispage","lesson"), 
-			 "lesson.php?action=delete&id=$cm->id&pageid=$pageid]", 
+			 "lesson.php?action=delete&amp;id=$cm->id&amp;pageid=$pageid", 
              "view.php?id=$cm->id");
 		}
 	
@@ -1135,7 +1135,7 @@
 				}
 				/// CDC-FLAG ///
                 // no need to record anything in lesson_attempts				 
-                redirect("view.php?id=$cm->id&action=navigation&pageid=$newpageid");
+                redirect("view.php?id=$cm->id&amp;action=navigation&amp;pageid=$newpageid");
             	print_footer($course);
                 exit();
                 break;
@@ -2068,7 +2068,7 @@
         }
 
         echo "<center><table cellpadding=\"5\" border=\"1\">\n";
-        echo "<tr><td><a href=\"lesson.php?id=$cm->id&action=moveit&pageid=$pageid&after=0\"><small>".
+        echo "<tr><td><a href=\"lesson.php?id=$cm->id&amp;action=moveit&amp;pageid=$pageid&amp;after=0\"><small>".
             get_string("movepagehere", "lesson")."</small></a></td></tr>\n";
         while (true) {
             if ($page->id != $pageid) {
@@ -2076,7 +2076,7 @@
                     $title = "<< ".get_string("notitle", "lesson")."  >>";
                 }
                 echo "<tr><td bgcolor=\"$THEME->cellheading2\"><b>$title</b></td></tr>\n";
-                echo "<tr><td><a href=\"lesson.php?id=$cm->id&action=moveit&pageid=$pageid&after={$page->id}\"><small>".
+                echo "<tr><td><a href=\"lesson.php?id=$cm->id&amp;action=moveit&amp;pageid=$pageid&amp;after={$page->id}\"><small>".
                     get_string("movepagehere", "lesson")."</small></a></td></tr>\n";
             }
             if ($page->nextpageid) {
@@ -2327,7 +2327,7 @@
             }
         }
         if ($form->redisplay) {
-            redirect("lesson.php?id=$cm->id&action=editpage&pageid=$page->id");
+            redirect("lesson.php?id=$cm->id&amp;action=editpage&amp;pageid=$page->id");
         } else {
        		redirect("view.php?id=$cm->id", get_string("ok"));
         }

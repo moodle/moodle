@@ -644,7 +644,7 @@ function chat_format_message_manually($message, $courseid, $sender, $currentuser
 
     $message->picture = print_user_picture($sender->id, 0, $sender->picture, false, true, false);
     if ($courseid) {
-        $message->picture = "<a target=\"_new\" href=\"$CFG->wwwroot/user/view.php?id=$sender->id&course=$courseid\">$message->picture</a>";
+        $message->picture = "<a target=\"_new\" href=\"$CFG->wwwroot/user/view.php?id=$sender->id&amp;course=$courseid\">$message->picture</a>";
     }
 
     // Start processing the message

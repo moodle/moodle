@@ -472,7 +472,7 @@
 							}
 						}
 						/// CDC-FLAG ///
-                        redirect("view.php?id=$cm->id&action=navigation&pageid=$answer->jumpto",
+                        redirect("view.php?id=$cm->id&amp;action=navigation&amp;pageid=$answer->jumpto",
                                 get_string("endofbranch", "lesson"));
                         break;
                     } 
@@ -1088,11 +1088,11 @@
 			echo "<div align=\"center\">";
 			if (isteacheredit($course->id)) {
 				print_simple_box( "<table cellpadding=\"5\" border=\"0\">\n<tr><th>".get_string("whatdofirst", "lesson")."</th></tr><tr><td>".
-					"<a href=\"import.php?id=$cm->id&pageid=0\">".
+					"<a href=\"import.php?id=$cm->id&amp;pageid=0\">".
 					get_string("importquestions", "lesson")."</a></td></tr><tr><td>".
-					"<a href=\"lesson.php?id=$cm->id&action=addbranchtable&pageid=0&firstpage=1\">".
+					"<a href=\"lesson.php?id=$cm->id&amp;action=addbranchtable&amp;pageid=0&amp;firstpage=1\">".
 					get_string("addabranchtable", "lesson")."</a></td></tr><tr><td>".
-					"<a href=\"lesson.php?id=$cm->id&action=addpage&pageid=0&firstpage=1\">".
+					"<a href=\"lesson.php?id=$cm->id&amp;action=addpage&amp;pageid=0&amp;firstpage=1\">".
 					get_string("addaquestionpage", "lesson")." ".get_string("here","lesson").
 					"</a></td></tr></table\n");
 			}
@@ -1102,12 +1102,12 @@
         } else {
             // print the pages
             echo "<form name=\"lessonpages\" method=\"post\" action=\"view.php\">\n";
-            echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\">\n";
-            echo "<input type=\"hidden\" name=\"action\" value=\"navigation\">\n";
-            echo "<input type=\"hidden\" name=\"pageid\">\n";
+            echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\" />\n";
+            echo "<input type=\"hidden\" name=\"action\" value=\"navigation\" />\n";
+            echo "<input type=\"hidden\" name=\"pageid\" />\n";
 			/// CDC-FLAG /// link to grade essay questions
 			if (count_records("lesson_pages", "lessonid", $lesson->id, "qtype", LESSON_ESSAY) > 0) {
-				echo "<div align=\"center\"><a href=\"view.php?id=$cm->id&action=essayview\">".get_string("gradeessay", "lesson")."</a></div><br>";
+				echo "<div align=\"center\"><a href=\"view.php?id=$cm->id&amp;action=essayview\">".get_string("gradeessay", "lesson")."</a></div><br />";
 			}
 			/// CDC-FLAG /// tree code - in final release, will use lang file for all text output.
 			// NoticeFix next two lines and bowth viewAlls
@@ -1115,12 +1115,12 @@
 			$singlePage = false;
 			if($lesson->tree && !isset($_GET['display']) && !isset($_GET['viewAll'])) {  
 				echo "<div align=\"center\">";
-					echo get_string("treeview", "lesson")."<br><br>";
-					echo "<a href=\"view.php?id=$id&viewAll=1\">".get_string("viewallpages", "lesson")."</a><br><br>\n";
+					echo get_string("treeview", "lesson")."<br /><br />";
+					echo "<a href=\"view.php?id=$id&amp;viewAll=1\">".get_string("viewallpages", "lesson")."</a><br /><br />\n";
 					echo "<table><tr><td>";
 					lesson_print_tree($page->id, $lesson->id, $cm->id, $pixpath);
 					echo "</td></tr></table>";
-					echo "<br><a href=\"view.php?id=$id&viewAll=1\">".get_string("viewallpages", "lesson")."</a>\n";
+					echo "<br /><a href=\"view.php?id=$id&amp;viewAll=1\">".get_string("viewallpages", "lesson")."</a>\n";
 				echo "</div>";
 			} else {
 				if(isset($_GET['display']) && !isset($_GET['viewAll'])) {
@@ -1143,38 +1143,38 @@
 							break;
 						}
 					 }
-					echo "<center><a href=\"view.php?id=$id&viewAll=1\">".get_string("viewallpages", "lesson")."</a><br>\n";
-					echo "<a href=\"view.php?id=$id\">".get_string("backtreeview", "lesson")."</a><br>\n";
+					echo "<center><a href=\"view.php?id=$id&amp;viewAll=1\">".get_string("viewallpages", "lesson")."</a><br />\n";
+					echo "<a href=\"view.php?id=$id\">".get_string("backtreeview", "lesson")."</a><br />\n";
 					echo "<table cellpadding=\"5\" border=\"0\" width=\"80%\">\n";
 					if (isteacheredit($course->id)) {
 						/// CDC-FLAG 6/16/04 ///					
-						echo "<tr><td align=\"right\"><small><a href=\"import.php?id=$cm->id&pageid=$page->prevpageid\">".
+						echo "<tr><td align=\"right\"><small><a href=\"import.php?id=$cm->id&amp;pageid=$page->prevpageid\">".
 							get_string("importquestions", "lesson")."</a> | ".
-					        "<a href=\"lesson.php?id=$cm->id&action=addcluster&pageid=$page->prevpageid\">".
+					        "<a href=\"lesson.php?id=$cm->id&amp;action=addcluster&amp;pageid=$page->prevpageid\">".
 	                        get_string("addcluster", "lesson")."</a> | ".
-							"<a href=\"lesson.php?id=$cm->id&action=addendofcluster&pageid=$page->prevpageid\">".
+							"<a href=\"lesson.php?id=$cm->id&amp;action=addendofcluster&amp;pageid=$page->prevpageid\">".
                     	    get_string("addendofcluster", "lesson")."</a> | ".
-							"<a href=\"lesson.php?id=$cm->id&action=addbranchtable&pageid=$page->prevpageid\">".
+							"<a href=\"lesson.php?id=$cm->id&amp;action=addbranchtable&amp;pageid=$page->prevpageid\">".
 							get_string("addabranchtable", "lesson")."</a> | ".
-							"<a href=\"lesson.php?id=$cm->id&action=addpage&pageid=$page->prevpageid\">".
+							"<a href=\"lesson.php?id=$cm->id&amp;action=addpage&amp;pageid=$page->prevpageid\">".
 							get_string("addaquestionpage", "lesson")." ".get_string("here","lesson").
 							"</a></small></td></tr>\n";
 						/// CDC-FLAG ///							
 					} 				 
 				} else {
 					if($lesson->tree) {
-						echo "<center><a href=\"view.php?id=$id\">".get_string("backtreeview", "lesson")."</a><br></center>\n";
+						echo "<center><a href=\"view.php?id=$id\">".get_string("backtreeview", "lesson")."</a><br /></center>\n";
 					}	
 					echo "<center><table cellpadding=\"5\" border=\"0\" width=\"80%\">\n";
 					if (isteacheredit($course->id)) {
 						/// CDC-FLAG 6/16/04 ///
-						echo "<tr><td align=\"left\"><small><a href=\"import.php?id=$cm->id&pageid=0\">".
+						echo "<tr><td align=\"left\"><small><a href=\"import.php?id=$cm->id&amp;pageid=0\">".
 							get_string("importquestions", "lesson")."</a> | ".
-							"<a href=\"lesson.php?id=$cm->id&action=addcluster&pageid=0\">".
+							"<a href=\"lesson.php?id=$cm->id&amp;action=addcluster&amp;pageid=0\">".
 	                        get_string("addendofcluster", "lesson")."</a> | ".
 							"<a href=\"lesson.php?id=$cm->id&action=addbranchtable&pageid=0\">".
 							get_string("addabranchtable", "lesson")."</a> | ".
-							"<a href=\"lesson.php?id=$cm->id&action=addpage&pageid=0\">".
+                            "<a href=\"lesson.php?id=$cm->id&amp;action=addpage&amp;pageid=0\">".
 							get_string("addaquestionpage", "lesson")." ".get_string("here","lesson").
 							"</a></small></td></tr>\n";
 						/// CDC-FLAG ///
@@ -1186,13 +1186,13 @@
                 echo "<table width=\"100%\" border=\"1\"><tr><td bgcolor=\"$THEME->cellheading2\" colspan=\"2\"><b>$page->title</b>&nbsp;&nbsp;\n";
                 if (isteacheredit($course->id)) {
                     if ($npages > 1) {
-                        echo "<a title=\"".get_string("move")."\" href=\"lesson.php?id=$cm->id&action=move&pageid=$page->id\">\n".
-                            "<img src=\"$pixpath/t/move.gif\" hspace=\"2\" height=11 width=11 alt=\"move\" border=0></a>\n"; //CDC alt text added.
+                        echo "<a title=\"".get_string("move")."\" href=\"lesson.php?id=$cm->id&amp;action=move&amp;pageid=$page->id\">\n".
+                            "<img src=\"$pixpath/t/move.gif\" hspace=\"2\" height=\"11\" width=\"11\" border=\"0\" alt=\"move\" /></a>\n";
                     }
-                    echo "<a title=\"".get_string("update")."\" href=\"lesson.php?id=$cm->id&action=editpage&pageid=$page->id\">\n".
-                        "<img src=\"$pixpath/t/edit.gif\" hspace=\"2\" height=11 width=11 alt=\"edit\" border=0></a>\n".
-                        "<a title=\"".get_string("delete")."\" href=\"lesson.php?id=$cm->id&action=confirmdelete&pageid=$page->id\">\n".
-                        "<img src=\"$pixpath/t/delete.gif\" hspace=\"2\" height=11 width=11 alt=\"delete\" border=0></a>\n"; //CDC alt text added.
+                    echo "<a title=\"".get_string("update")."\" href=\"lesson.php?id=$cm->id&amp;action=editpage&amp;pageid=$page->id\">\n".
+                        "<img src=\"$pixpath/t/edit.gif\" hspace=\"2\" height=\"11\" width=\"11\" border=\"0\" alt=\"edit\" /></a>\n".
+                        "<a title=\"".get_string("delete")."\" href=\"lesson.php?id=$cm->id&amp;action=confirmdelete&amp;pageid=$page->id\">\n".
+                        "<img src=\"$pixpath/t/delete.gif\" hspace=\"2\" height=\"11\" width=\"11\" border=\"0\" alt=\"delete\" /></a>\n";
                     }
                     echo "</td></tr>\n";             
                 echo "<tr><td colspan=\"2\">\n";
@@ -1387,14 +1387,14 @@
                 echo "</td></tr></table></td></tr>\n";
                 if (isteacheredit($course->id)) {
 					/// CDC-FLAG /// 6/16/04				
-                    echo "<tr><td align=\"left\"><small><a href=\"import.php?id=$cm->id&pageid=$page->id\">".
+                    echo "<tr><td align=\"left\"><small><a href=\"import.php?id=$cm->id&amp;pageid=$page->id\">".
                         get_string("importquestions", "lesson")."</a> | ".    
-					     "<a href=\"lesson.php?id=$cm->id&action=addcluster&pageid=$page->id\">".
+					     "<a href=\"lesson.php?id=$cm->id&amp;action=addcluster&amp;pageid=$page->id\">".
                          get_string("addcluster", "lesson")."</a> | ".
-						 "<a href=\"lesson.php?id=$cm->id&action=addendofcluster&pageid=$page->id\">".
+						 "<a href=\"lesson.php?id=$cm->id&amp;action=addendofcluster&amp;pageid=$page->id\">".
                          get_string("addendofcluster", "lesson")."</a> | ".
-						 "<a href=\"lesson.php?id=$cm->id&action=addbranchtable&pageid=$page->id\">".
-                        get_string("addabranchtable", "lesson")."</a><br>";
+						 "<a href=\"lesson.php?id=$cm->id&amp;action=addbranchtable&amp;pageid=$page->id\">".
+                        get_string("addabranchtable", "lesson")."</a><br />";
 					/// CDC-FLAG ///					
                     // the current page or the next page is an end of branch don't show EOB link
 					$nextqtype = 0; // set to anything else EOB
@@ -1402,10 +1402,10 @@
                         $nextqtype = get_field("lesson_pages", "qtype", "id", $page->nextpageid);
                     }
                     if (($page->qtype != LESSON_ENDOFBRANCH) and ($nextqtype != LESSON_ENDOFBRANCH)) {
-                        echo "<a href=\"lesson.php?id=$cm->id&action=addendofbranch&pageid=$page->id\">".
+                        echo "<a href=\"lesson.php?id=$cm->id&amp;action=addendofbranch&amp;pageid=$page->id\">".
                         get_string("addanendofbranch", "lesson")."</a> | ";
                     }
-                    echo "<a href=\"lesson.php?id=$cm->id&action=addpage&pageid=$page->id\">".
+                    echo "<a href=\"lesson.php?id=$cm->id&amp;action=addpage&amp;pageid=$page->id\">".
                         get_string("addaquestionpage", "lesson")." ".get_string("here","lesson").
                         "</a></small></td></tr>\n";
                 }
@@ -1444,13 +1444,13 @@
 			/// CDC-FLAG ///
 			// NoticeFix both viewAll's
 			if(isset($_GET['display']) && !isset($_GET['viewAll'])) {
-				echo "<center><a href=\"view.php?id=$id&viewAll=1\">".get_string("viewallpages", "lesson")."</a><br>\n";
+				echo "<center><a href=\"view.php?id=$id&amp;viewAll=1\">".get_string("viewallpages", "lesson")."</a><br />\n";
 			}
 			if($lesson->tree && (isset($_GET['display']) || isset($_GET['viewAll']))) {
-				echo "<center><a href=\"view.php?id=$id\">".get_string("backtreeview", "lesson")."</a><br></center>\n";
+				echo "<center><a href=\"view.php?id=$id\">".get_string("backtreeview", "lesson")."</a><br /></center>\n";
 			}
 			/// CDC-FLAG ///			
-            print_heading("<a href=\"view.php?id=$cm->id&action=navigation\">".get_string("checknavigation",
+            print_heading("<a href=\"view.php?id=$cm->id&amp;action=navigation\">".get_string("checknavigation",
                         "lesson")."</a>\n");
         } 
     }

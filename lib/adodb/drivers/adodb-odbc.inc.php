@@ -188,7 +188,7 @@ class ADODB_odbc extends ADOConnection {
 		if ($this->debug && $argDatabasename) {
 			ADOConnection::outp("For odbc PConnect(), $argDatabasename is not used. Place dsn in 1st parameter.");
 		}
-	//	print "dsn=$argDSN u=$argUsername p=$argPassword<br>"; flush();
+	//	print "dsn=$argDSN u=$argUsername p=$argPassword<br />"; flush();
 		if ($this->curmode === false) $this->_connectionID = odbc_connect($argDSN,$argUsername,$argPassword);
 		else $this->_connectionID = odbc_pconnect($argDSN,$argUsername,$argPassword,$this->curmode);
 		

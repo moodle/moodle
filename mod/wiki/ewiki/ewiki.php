@@ -443,7 +443,7 @@
 	   "InterWikiSearch" => "http://sunir.org/apps/meta.pl?",
 	   "Wiki" => "WardsWiki",
 	   "WardsWiki" => "http://www.c2.com/cgi/wiki?",
-	   "WikiFind" => "http://c2.com/cgi/wiki?FindPage&value=",
+	   "WikiFind" => "http://c2.com/cgi/wiki?FindPage&amp;value=",
 	   "WikiPedia" => "http://www.wikipedia.com/wiki.cgi?",
 	   "MeatBall" => "MeatballWiki",
 	   "MeatballWiki" => "http://www.usemod.com/cgi-bin/mb.pl?",
@@ -1250,7 +1250,7 @@ function ewiki_page_info($id, &$data, $action) {
                      $course->id = 1;
                  }
                  $picture = print_user_picture($user->id, $course->id, $user->picture, false, true, true);
-                 $value = $picture." <a href=\"$CFG->wwwroot/user/view.php?id=$user->id&course=$course->id\">".fullname($user)."</a>";
+                 $value = $picture." <a href=\"$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$course->id\">".fullname($user)."</a>";
              } else {
                  continue;
                  //$value = @$current['author'];
@@ -2406,7 +2406,7 @@ function ewiki_link_regex_callback($uu, $force_noimg=0) {
                 ' alt="' . ($title) . '"' .
                 (@$states["titled"] ? ' title="' . ($title) . '"' : '').
 		($x && $y ? " width=\"$x\" height=\"$y\"" : "") .
-                $align . ">" . ($obj ? "</embed>" : "");
+                $align . " />" . ($obj ? "</embed>" : "");
                                             # htmlentities($title)
       }
 

@@ -411,7 +411,7 @@ function forum_cron () {
                 $postsubject = get_string('digestmailsubject', 'forum', $site->shortname);
                 $headerdata = New stdClass;
                 $headerdata->sitename = $site->fullname;
-                $headerdata->userprefs = $CFG->wwwroot.'/user/edit.php?id='.$userid.'&course='.$site->id;
+                $headerdata->userprefs = $CFG->wwwroot.'/user/edit.php?id='.$userid.'&amp;course='.$site->id;
 
                 $posttext = get_string('digestmailheader', 'forum', $headerdata)."\n\n";
                 $headerdata->userprefs = '<a target="_blank" href="'.$headerdata->userprefs.'">'.get_string('digestmailprefs', 'forum').'</a>';
@@ -488,7 +488,7 @@ function forum_cron () {
                             $posttext .= "\n".$post->subject.' '.get_string("bynameondate", "forum", $by);
                             $posttext .= "\n---------------------------------------------------------------------";
 
-                            $by->name = "<a target=\"_blank\" href=\"$CFG->wwwroot/user/view.php?id=$userfrom->id&course=$course->id\">$by->name</a>";
+                            $by->name = "<a target=\"_blank\" href=\"$CFG->wwwroot/user/view.php?id=$userfrom->id&amp;course=$course->id\">$by->name</a>";
                             $posthtml .= '<div><a target="_blank" href="'.$CFG->wwwroot.'/mod/forum/discuss.php?d='.$discussion->id.'#'.$post->id.'">'.$post->subject.'</a> '.get_string("bynameondate", "forum", $by).'</div>';
 
                         } else {
@@ -1358,7 +1358,7 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
     $output .= "<font size=\"2\">";
 
     $fullname = fullname($user, isteacher($course->id));
-    $by->name = "<a href=\"$CFG->wwwroot/user/view.php?id=$user->id&course=$course->id\">$fullname</a>";
+    $by->name = "<a href=\"$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$course->id\">$fullname</a>";
     $by->date = userdate($post->modified, "", $touser->timezone);
     $output .= get_string("bynameondate", "forum", $by);
 
@@ -1377,10 +1377,10 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
 
     $output .= $formattedtext;
 
-    $output .= "<p align=\"right\"><font size=-1>";
+    $output .= "<p align=\"right\"><font size=\"-1\">";
 
     if ($post->parent) {
-        $output .= "<a href=\"$CFG->wwwroot/mod/forum/discuss.php?d=$post->discussion&parent=$post->parent\">".get_string("parent", "forum")."</a> | ";
+        $output .= "<a href=\"$CFG->wwwroot/mod/forum/discuss.php?d=$post->discussion&amp;parent=$post->parent\">".get_string("parent", "forum")."</a> | ";
     }
 
     $age = time() - $post->created;
@@ -1461,7 +1461,7 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
     echo "<font size=\"2\">";
 
     $fullname = fullname($post, $isteacher);
-    $by->name = "<a href=\"$CFG->wwwroot/user/view.php?id=$post->userid&course=$courseid\">$fullname</a>";
+    $by->name = "<a href=\"$CFG->wwwroot/user/view.php?id=$post->userid&amp;course=$courseid\">$fullname</a>";
     $by->date = userdate($post->modified);
     print_string("bynameondate", "forum", $by);
 
@@ -1505,7 +1505,7 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
 
     if ($post->parent) {
         if ($threadedmode) {
-            $commands[] = "<a href=\"$CFG->wwwroot/mod/forum/discuss.php?d=$post->discussion&parent=$post->parent\">$strparent</a>";
+            $commands[] = "<a href=\"$CFG->wwwroot/mod/forum/discuss.php?d=$post->discussion&amp;parent=$post->parent\">$strparent</a>";
         } else {
             $commands[] = "<a href=\"$CFG->wwwroot/mod/forum/discuss.php?d=$post->discussion#$post->parent\">$strparent</a>";
         }
@@ -1529,7 +1529,7 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
     if ($reply) {
         $commands[] = "<a href=\"$CFG->wwwroot/mod/forum/post.php?reply=$post->id\">$strreply</a>";
     }
-    echo "<p align=\"right\"><font size=-1>";
+    echo "<p align=\"right\"><font size=\"-1\">";
     echo implode(' | ', $commands).'&nbsp;&nbsp;';
     echo "</font></p>";
 
@@ -1611,7 +1611,7 @@ function forum_print_discussion_header(&$post, $forum, $datestring="") {
     // User name
     $fullname = fullname($post, isteacher($forum->course));
     echo "<td bgcolor=\"$THEME->cellcontent2\" class=\"forumpostheadername\" align=\"left\" nowrap=\"nowrap\">";
-    echo "<a href=\"$CFG->wwwroot/user/view.php?id=$post->userid&course=$forum->course\">$fullname</a>";
+    echo "<a href=\"$CFG->wwwroot/user/view.php?id=$post->userid&amp;course=$forum->course\">$fullname</a>";
     echo "</td>\n";
 
     if ($forum->open or $forum->type == "teacher") {   // Show the column with replies
@@ -1622,7 +1622,7 @@ function forum_print_discussion_header(&$post, $forum, $datestring="") {
 
     echo "<td bgcolor=\"$THEME->cellcontent2\" class=\"forumpostheaderdate\" align=\"right\" nowrap=\"nowrap\">";
     $usedate = (empty($post->timemodified)) ? $post->modified : $post->timemodified;  // Just in case
-    $parenturl = (empty($post->lastpostid)) ? '' : '&parent='.$post->lastpostid;
+    $parenturl = (empty($post->lastpostid)) ? '' : '&amp;parent='.$post->lastpostid;
     echo '<a href="'.$CFG->wwwroot.'/mod/forum/discuss.php?d='.$post->discussion.$parenturl.'">'.
           userdate($usedate, $datestring).'</a>';
     echo "</td>\n";
@@ -1803,9 +1803,9 @@ function forum_print_rating_menu($postid, $userid, $scale) {
 function forum_print_mode_form($discussion, $mode) {
     GLOBAL $FORUM_LAYOUT_MODES;
 
-    echo "<center><p>";
-    popup_form("discuss.php?d=$discussion&mode=", $FORUM_LAYOUT_MODES, "mode", $mode, "");
-    echo "</p></center>\n";
+    echo "<div align=\"center\">";
+    popup_form("discuss.php?d=$discussion&amp;mode=", $FORUM_LAYOUT_MODES, "mode", $mode, "");
+    echo "</div>\n";
 }
 
 function forum_print_search_form($course, $search="", $return=false, $type="") {
@@ -1956,7 +1956,7 @@ function forum_print_attachments($post, $return=NULL) {
                 } else {
                     $ffurl = "file.php?file=/$filearea/$file";
                 }
-                $image = "<img border=\"0\" src=\"$CFG->pixpath/f/$icon\" height=\"16\" width=\"16\" alt=\"$strpopupwindow\">";
+                $image = "<img border=\"0\" src=\"$CFG->pixpath/f/$icon\" height=\"16\" width=\"16\" alt=\"$strpopupwindow\" />";
 
                 if ($return == "html") {
                     $output .= "<a href=\"$CFG->wwwroot/$ffurl\">$image</a> ";
@@ -1967,7 +1967,7 @@ function forum_print_attachments($post, $return=NULL) {
 
                 } else {
                     if ($icon == "image.gif") {    // Image attachments don't get printed as links
-                        $imagereturn .= "<br /><img src=\"$CFG->wwwroot/$ffurl\">";
+                        $imagereturn .= "<br /><img src=\"$CFG->wwwroot/$ffurl\" alt=\"\" />";
                     } else {
                         link_to_popup_window("/$ffurl", "attachment", $image, 500, 500, $strattachment);
                         echo "<a href=\"$CFG->wwwroot/$ffurl\">$file</a>";
@@ -1985,12 +1985,16 @@ function forum_print_attachments($post, $return=NULL) {
     return $imagereturn;
 }
 
-function forum_add_attachment($post, $inputname) {
+function forum_add_attachment($post, $newfile) {
 // $post is a full post record, including course and forum
 // $newfile is a full upload array from $_FILES
 // If successful, this function returns the name of the file
 
     global $CFG;
+
+    if (empty($newfile['name'])) {
+        return "";
+    }
 
     if (!$forum = get_record("forum", "id", $post->forum)) {
         return "";
@@ -2000,13 +2004,35 @@ function forum_add_attachment($post, $inputname) {
         return "";
     }
 
-    require_once($CFG->dirroot.'/lib/uploadlib.php');
-    $um = new upload_manager($inputname,true,false,$course,false,$forum->maxbytes);
-    $dir = forum_file_area_name($post);
-    if ($um->process_file_uploads($dir)) {
-        return $um->get_new_filename();
+    $maxbytes = get_max_upload_file_size($CFG->maxbytes, $course->maxbytes, $forum->maxbytes);
+
+    $newfile_name = clean_filename($newfile['name']);
+
+    if (valid_uploaded_file($newfile)) {
+        if ($maxbytes and $newfile['size'] > $maxbytes) {
+            return "";
+        }
+        if (! $newfile_name) {
+            notify("This file had a wierd filename and couldn't be uploaded");
+
+        } else if (! $dir = forum_file_area($post)) {
+            notify("Attachment could not be stored");
+            $newfile_name = "";
+
+        } else {
+            if (move_uploaded_file($newfile['tmp_name'], "$dir/$newfile_name")) {
+                chmod("$dir/$newfile_name", $CFG->directorypermissions);
+                forum_delete_old_attachments($post, $newfile_name);
+            } else {
+                notify("An error happened while saving the file on the server");
+                $newfile_name = "";
+            }
+        }
+    } else {
+        $newfile_name = "";
     }
-    // upload manager will print any errors.
+
+    return $newfile_name;
 }
 
 function forum_add_new_post($post) {
@@ -2521,7 +2547,7 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5,
         } else {
             echo '<p align="right">';
         }
-        echo "<a href=\"$CFG->wwwroot/mod/forum/view.php?f=$forum->id&showall=1\">";
+        echo "<a href=\"$CFG->wwwroot/mod/forum/view.php?f=$forum->id&amp;showall=1\">";
         echo get_string("olderdiscussions", "forum")."</a> ...</p>";
     }
 
@@ -2571,11 +2597,11 @@ function forum_print_discussion($course, $forum, $discussion, $post, $mode, $can
         case FORUM_MODE_FLATOLDEST :
         case FORUM_MODE_FLATNEWEST :
         default:
-            echo "<ul>";
+            echo "<ul><li>";
             if (forum_print_posts_flat($post->discussion, $course->id, $mode, $ratings, $reply)) {
                 $ratingsmenuused = true;
             }
-            echo "</ul>";
+            echo "</li></ul>";
             break;
 
         case FORUM_MODE_THREADED :
@@ -2636,9 +2662,10 @@ function forum_print_posts_threaded($parent, $course, $depth, $ratings, $reply) 
     if ($posts = forum_get_child_posts($parent)) {
         foreach ($posts as $post) {
 
-            echo "<ul>";
+            echo "<ul><li>";
             if ($depth > 0) {
                 $ownpost = ($USER->id == $post->userid);
+                echo "";
                 if (forum_print_post($post, $course, $ownpost, $reply, $link, $ratings)) {
                     $ratingsmenuused = true;
                 }
@@ -2646,15 +2673,15 @@ function forum_print_posts_threaded($parent, $course, $depth, $ratings, $reply) 
             } else {
                 $by->name = fullname($post, isteacher($course->id));
                 $by->date = userdate($post->modified);
-                echo "<li><p><a name=\"$post->id\"></a><font size=-1><b><a href=\"discuss.php?d=$post->discussion&parent=$post->id\">$post->subject</a></b> ";
+                echo "<p><a name=\"$post->id\"></a><font size=\"-1\"><b><a href=\"discuss.php?d=$post->discussion&amp;parent=$post->id\">$post->subject</a></b> ";
                 print_string("bynameondate", "forum", $by);
-                echo "</font></p></li>";
+                echo "</font></p>";
             }
 
             if (forum_print_posts_threaded($post->id, $course, $depth-1, $ratings, $reply)) {
                 $ratingsmenuused = true;
             }
-            echo "</ul>\n";
+            echo "</li></ul>\n";
         }
     }
     return $ratingsmenuused;
@@ -2675,7 +2702,7 @@ function forum_print_posts_nested($parent, $course, $ratings, $reply) {
                 $ownpost = ($USER->id == $post->userid);
             }
 
-            echo "<ul>";
+            echo "<ul><li>";
             if (forum_print_post($post, $course, $ownpost, $reply, $link, $ratings)) {
                 $ratingsmenuused = true;
             }
@@ -2683,7 +2710,7 @@ function forum_print_posts_nested($parent, $course, $ratings, $reply) {
             if (forum_print_posts_nested($post->id, $course, $ratings, $reply)) {
                 $ratingsmenuused = true;
             }
-            echo "</ul>\n";
+            echo "</li></ul>\n";
         }
     }
     return $ratingsmenuused;
@@ -2780,7 +2807,7 @@ function forum_print_recent_mod_activity($activity, $course, $detail=false) {
 
     if ($detail) {
         echo "<img src=\"$CFG->modpixpath/$activity->type/icon.gif\" ".
-             "height=\"16\" width=\"16\" alt=\"$activity->name\">  ";
+             "height=\"16\" width=\"16\" alt=\"$activity->name\" />  ";
     }
     echo "<a href=\"$CFG->wwwroot/mod/forum/discuss.php?d=" . $activity->content->discussion
          . "#" . $activity->content->id . "\">";
@@ -2789,7 +2816,7 @@ function forum_print_recent_mod_activity($activity, $course, $detail=false) {
     echo "</a>$closeformat";
 
     echo "<br /><font size=\"2\">";
-    echo "<a href=\"$CFG->wwwroot/user/view.php?id=" . $activity->user->userid . "&course=" . "$course\">"
+    echo "<a href=\"$CFG->wwwroot/user/view.php?id=" . $activity->user->userid . "&amp;course=" . "$course\">"
          . $activity->user->fullname . "</a>";
     echo " - " . userdate($activity->timestamp) . "</font></td></tr>";
     echo "</table>";

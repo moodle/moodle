@@ -10,7 +10,7 @@ $string['assignmentmail'] = '$a->teacher дмдвд╩д┐д╬ \'$a->assignment\' д╦┬╨д╣ды─
 
 $a->url';
 $string['assignmentmailhtml'] = '$a->teacher дмдвд╩д┐д╬ \'<i>$a->assignment</i>\' д╦┬╨д╣ды─є╜╨▓▌┬ъд╦е╒егб╝е╔е╨е├епдЄ┼ъ╣╞д╖д▐д╖д┐бг
-<br><br>
+<br /><br />
 е╒егб╝е╔е╨е├епд╧двд╩д┐д╬<a href=\"$a->url\">─є╜╨▓▌┬ъ</a>д╦─╔▓├д╡дьд╞ддд▐д╣бг';
 $string['assignmentname'] = '▓▌┬ъ╠╛';
 $string['assignmenttype'] = '▓▌┬ъе┐еде╫';

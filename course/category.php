@@ -248,7 +248,7 @@
         print_courses($category, "80%");
 
     } else { 
-        print_paging_bar($totalcount, $page, $perpage, "category.php?id=$category->id&perpage=$perpage&");
+        print_paging_bar($totalcount, $page, $perpage, "category.php?id=$category->id&amp;perpage=$perpage&");
 
         $strcourses  = get_string("courses");
         $strselect   = get_string("select");

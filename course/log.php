@@ -63,7 +63,7 @@
         print_log_selector_form($course, $user, $date, $modname, $modid, $modaction, $group);
 
         print_log($course, $user, $date, "l.time DESC", $page, $perpage, 
-                  "log.php?id=$course->id&chooselog=1&user=$user&date=$date&modid=$modid&modaction=$modaction&group=$group", 
+                  "log.php?id=$course->id&amp;chooselog=1&amp;user=$user&amp;date=$date&amp;modid=$modid&amp;modaction=$modaction&amp;group=$group", 
                   $modname, $modid, $modaction, $group);
 
     } else {

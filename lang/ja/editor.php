@@ -4,7 +4,7 @@
 
 $string['about'] = 'エディタに関して';
 $string['absbottom'] = 'Absbottom';
-$string['absmiddle'] = 'Absmiddle';
+$string['middle'] = 'middle';
 $string['address'] = 'アドレス';
 $string['alignment'] = '配置';
 $string['alternatetext'] = 'Alternate text';

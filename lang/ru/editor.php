@@ -4,7 +4,7 @@
 
 $string['about'] = 'ѕро этот редактор ';
 $string['absbottom'] = 'Abs внизу';
-$string['absmiddle'] = 'Abs посредине';
+$string['middle'] = 'Abs посредине';
 $string['address'] = 'адрес';
 $string['alignment'] = 'равнение';
 $string['alternatetext'] = 'алтернативный текст';

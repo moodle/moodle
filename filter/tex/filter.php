@@ -69,7 +69,7 @@ function string_file_picture_tex($imagefile, $tex= "", $height="", $width="") {
           $output .= urlencode($tex) . "', 'popup', 'menubar=0,location=0,scrollbars,";
           $output .= "resizable,width=300,height=240', 0);\">";
 	}
-        $output .= "<img border=\"0\" $title $height $width src=\"";
+        $output .= "<img border=\"0\" $title $height $width alt=\"\" src=\"";
         if ($CFG->slasharguments) {        // Use this method if possible for better caching
             $output .= "$CFG->wwwroot/$CFG->texfilterdir/pix.php/$imagefile";
         } else {

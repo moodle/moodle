@@ -108,7 +108,7 @@ $string['backuplogshelp'] = 'Die Log-Daten des Kurses werden in die automatische
 $string['backupnameformat'] = '%%Y%%m%%d-%%H%%M';
 $string['backupnoneusersinfo'] = 'Hinweis: Sie haben eine Sicherung \"ohne\" Teilnehmer/inenn ausgewählt. Alle Module werden dadurch umgestellt auf \"ohne Nutzerdaten\". Beachten Sie bitte besonders, dass diese Einstellungen nicht mit den Modulen \"Übung\" und \"Workshop\" kompatibel ist. Diese Module werden daher nicht mit gesichert.';
 $string['backuporiginalname'] = 'Name der Sicherung';
-$string['backupsavetohelp'] = 'Vollständiger Pfad in dem die Sicherungsdateien angelegt werden sollen <br>(leer lassen, um sie im Standardverzeichnis des Kurses zu speichern)';
+$string['backupsavetohelp'] = 'Vollständiger Pfad in dem die Sicherungsdateien angelegt werden sollen <br />(leer lassen, um sie im Standardverzeichnis des Kurses zu speichern)';
 $string['backupuserfileshelp'] = 'Wählen Sie, ob die Dateien der Teilnehmer/innen (z.B. die Bilder aus den Profilen) in die automatischen Sicherungen einbezogen werden sollen';
 $string['backupusershelp'] = 'Wählen Sie, ob alle Nutzer/innen auf dem Server oder nur die Teilnehmer/innen von Kursen einbezogen werden sollen';
 $string['backupversion'] = 'Sicherungsversion';
@@ -348,8 +348,8 @@ unter Verwendung Ihrer E-Mail-Adresse ist ein neuer Zugang zum Lernmanagementsys
 In den meisten E-Mail-Programmen erscheint dieser Link blau, so dass Sie diesen anklicken können.
 Sofern dies nicht funktioniert,
 kopieren Sie bitte diese Adresse in die obere Zeile des
-Browser-Fensters.<br>
-Nach Ablauf einer Woche wird der vorbereitete Zugang wieder gelöscht, wenn Sie ihn nicht bestätigen sollten; Sie müssten sich dann nochmal neu registrieren. Sollte die Anmeldung nicht von Ihnen stammen, können Sie diese Mail ignorieren.<br><br>
+Browser-Fensters.<br />
+Nach Ablauf einer Woche wird der vorbereitete Zugang wieder gelöscht, wenn Sie ihn nicht bestätigen sollten; Sie müssten sich dann nochmal neu registrieren. Sollte die Anmeldung nicht von Ihnen stammen, können Sie diese Mail ignorieren.<br /><br />
 Viel Erfolg!
 
 Grüße von der \'$a->sitename\'-Verwaltung, $a->admin';
@@ -400,8 +400,8 @@ $string['enrolledincoursenot'] = 'Nicht in Kurs ';
 $string['enrollfirst'] = 'Sie müssen zu einem Kurs angemeldet sein, bevor Sie diese Aktivität nutzen können.';
 $string['enrolmentconfirmation'] = 'Sie sind dabei, sich in diesen Kurs einzuschreiben.<br />Sind Sie sicher?';
 $string['enrolmentkey'] = 'Zugangs-Schlüssel';
-$string['enrolmentkeyfrom'] = 'Für diesen Kurs benötigen Sie einen \'Zugangs-Schlüssel\' - ein einmaliges Kennwort,<br>das Sie von $a bekommen haben sollten<BR>';
-$string['enrolmentkeyhint'] = 'Der Zugangs-Schlüssel war falsch, bitte versuchen Sie es erneut<BR>
+$string['enrolmentkeyfrom'] = 'Für diesen Kurs benötigen Sie einen \'Zugangs-Schlüssel\' - ein einmaliges Kennwort,<br />das Sie von $a bekommen haben sollten<br />';
+$string['enrolmentkeyhint'] = 'Der Zugangs-Schlüssel war falsch, bitte versuchen Sie es erneut<br />
 (Hier ist ein Hinweis - Er startet mit \'$a\')';
 $string['enrolmentnew'] = 'Neue Anmeldungen in $a';
 $string['enrolmentnewuser'] = '$a->user wurde im Kurs \"$a->course\" angemeldet';
@@ -436,7 +436,7 @@ $string['filloutallfields'] = 'Bitte füllen Sie alle Formular-Felder aus';
 $string['findmorecourses'] = 'Weitere Kurse finden...';
 $string['firstdayofweek'] = 'O';
 $string['firstname'] = 'Vorname';
-$string['firsttime'] = 'Sind Sie das erste Mal hier?<br>Bitte registrieren Sie sich:';
+$string['firsttime'] = 'Sind Sie das erste Mal hier?<br />Bitte registrieren Sie sich:';
 $string['followingoptional'] = 'Die folgenden Angaben sind optional';
 $string['followingrequired'] = 'Die folgenden Angaben sind zwingend';
 $string['force'] = 'Übergreifend';
@@ -575,8 +575,8 @@ $string['login_failure_logs'] = 'Login-Fehler Daten';
 $string['loginas'] = 'Login als';
 $string['loginguest'] = 'Gast-Login';
 $string['loginsite'] = 'Login';
-$string['loginsteps'] = 'Guten Tag,<br><br>
-hier können Sie sich anmelden, um an den verschiedenen Kursen teilzunehmen. Es sind dazu nur einige Informationen erforderlich.<br><br>
+$string['loginsteps'] = 'Guten Tag,<br /><br />
+hier können Sie sich anmelden, um an den verschiedenen Kursen teilzunehmen. Es sind dazu nur einige Informationen erforderlich.<br /><br />
 
 Gehen Sie bitte wie folgt vor: <OL size=2>
 <LI>
@@ -720,7 +720,7 @@ $string['noteuserschangednonetocourse'] = 'Anmerkung: Kursnutzer müssen bei der 
 $string['nothingnew'] = 'Nichts Neues seit Ihrem letzten Besuch';
 $string['noticenewerbackup'] = 'Diese Backup-Datei wurde erstellt mit moodle $a->backuprelease ($a->backupversion) und ist aktueller als die derzeit installierte moodle-Version $a->serverrelease ($a->serverversion). Das kann zu Fehlern führen, da ein abwärtskompatibles Backup nicht garantiert wird.';
 $string['notifyloginfailuresmessage'] = '$a->time, IP: $a->ip, User: $a->info';
-$string['notifyloginfailuresmessageend'] = 'Sie können diese Logs unter $a/course/log.php?id=1&chooselog=1&modid=site_errors einsehen.';
+$string['notifyloginfailuresmessageend'] = 'Sie können diese Logs unter $a/course/log.php?id=1&amp;chooselog=1&amp;modid=site_errors einsehen.';
 $string['notifyloginfailuresmessagestart'] = 'Dies ist eine Übersicht über gescheiterte Anmeldeversuche auf $a seit der letzten Benachrichtigung ';
 $string['notifyloginfailuressubject'] = '$a: Nachrichten von gescheiterten Logins';
 $string['notincluded'] = 'Nicht eingebunden';
@@ -834,7 +834,7 @@ $string['scheduledbackupstatus'] = 'Vorgesehener Backupstatus';
 $string['search'] = 'Suchen';
 $string['searchagain'] = 'Erneut Suchen';
 $string['searchcourses'] = 'Kurse suchen';
-$string['searchhelp'] = 'Sie können nach mehreren Begriffen gleichzeitig suchen.<p>word : findet jeden Treffer des Worts im gesamten Text.<br>+word : nur exakte Treffer werden gefunden .<br>-word : schließt Ergebnisse, die dieses Wort beinhalten, aus den Treffern aus.';
+$string['searchhelp'] = 'Sie können nach mehreren Begriffen gleichzeitig suchen.<p>word : findet jeden Treffer des Worts im gesamten Text.<br />+word : nur exakte Treffer werden gefunden .<br />-word : schließt Ergebnisse, die dieses Wort beinhalten, aus den Treffern aus.';
 $string['searchresults'] = 'Suchergebnisse';
 $string['sec'] = 'Sekunde';
 $string['secs'] = 'Sekunden';

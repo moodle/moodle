@@ -332,7 +332,7 @@ select  a.size_for_estimate as cache_mb_estimate,
 			if ($check != $rs->fields[0].'::'.$rs->fields[1]) {
 				if ($check) {
 					$carr = explode('::',$check);
-					$prefix = "<a href=\"?$type=1&sql=".rawurlencode($sql).'&x#explain">';
+					$prefix = "<a href=\"?$type=1&amp;sql=".rawurlencode($sql).'&x#explain">';
 					$suffix = '</a>';
 					if (strlen($prefix)>2000) {
 						$prefix = '';
@@ -351,7 +351,7 @@ select  a.size_for_estimate as cache_mb_estimate,
 		$rs->Close();
 		
 		$carr = explode('::',$check);
-		$prefix = "<a target=".rand()." href=\"?&hidem=1&$type=1&sql=".rawurlencode($sql).'&x#explain">';
+		$prefix = "<a target=".rand()." href=\"?&amp;hidem=1&$type=1&amp;sql=".rawurlencode($sql).'&x#explain">';
 		$suffix = '</a>';
 		if (strlen($prefix)>2000) {
 			$prefix = '';

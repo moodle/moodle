@@ -27,7 +27,7 @@
         error("You are not allowed to look at this page");
     }
 
-    add_to_log($course->id, "course", "user report", "user.php?id=$course->id&user=$user->id&mode=$mode", "$user->id"); 
+    add_to_log($course->id, "course", "user report", "user.php?id=$course->id&amp;user=$user->id&amp;mode=$mode", "$user->id"); 
 
     $stractivityreport = get_string("activityreport");
     $strparticipants   = get_string("participants");
@@ -42,11 +42,11 @@
         print_header("$course->shortname: $stractivityreport ($mode)", "$course->fullname",
                  "<a href=\"../course/view.php?id=$course->id\">$course->shortname</a> ->
                   <a href=\"../user/index.php?id=$course->id\">$strparticipants</a> ->
-                  <a href=\"../user/view.php?id=$user->id&course=$course->id\">$fullname</a> -> 
+                  <a href=\"../user/view.php?id=$user->id&amp;course=$course->id\">$fullname</a> -> 
                   $stractivityreport -> $strmode");
     } else {
         print_header("$course->shortname: $stractivityreport ($mode)", "$course->fullname",
-                 "<a href=\"../user/view.php?id=$user->id&course=$course->id\">$fullname</a> -> 
+                 "<a href=\"../user/view.php?id=$user->id&amp;course=$course->id\">$fullname</a> -> 
                   $stractivityreport -> $strmode");
     }
     print_heading($fullname);
@@ -59,7 +59,7 @@
         if ($mode == $listmode) {
             echo "<td><u>$strmode</u></td>";
         } else {
-            echo "<td><a href=\"user.php?id=$course->id&user=$user->id&mode=$listmode>$strmode\"</a></td>";
+            echo "<td><a href=\"user.php?id=$course->id&amp;user=$user->id&amp;mode=$listmode>$strmode\"</a></td>";
         }
     }
     echo "</tr></table>";
@@ -72,7 +72,7 @@
             print_log_graph($course, $user->id, "userday.png");
             echo "</center>";
             print_log($course, $user->id, usergetmidnight(time()), "l.time DESC", $page, $perpage, 
-                      "user.php?id=$course->id&user=$user->id&mode=$mode");
+                      "user.php?id=$course->id&amp;user=$user->id&amp;mode=$mode");
             break;
 
         case "alllogs" :
@@ -80,7 +80,7 @@
             print_log_graph($course, $user->id, "usercourse.png");
             echo "</center>";
             print_log($course, $user->id, 0, "l.time DESC", $page, $perpage, 
-                      "user.php?id=$course->id&user=$user->id&mode=$mode");
+                      "user.php?id=$course->id&amp;user=$user->id&amp;mode=$mode");
             break;
 
         case "outline" :
@@ -134,7 +134,7 @@
                                         $user_complete = $mod->modname."_user_complete";
                                         if (function_exists($user_complete)) {
                                             $image = "<img src=\"../mod/$mod->modname/icon.gif\" ".
-                                                     "height=\"16\" width=\"16\" alt=\"$mod->modfullname\">";
+                                                     "height=\"16\" width=\"16\" alt=\"$mod->modfullname\" />";
                                             echo "<h4>$image $mod->modfullname: ".
                                                  "<a href=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\">".
                                                  "$instance->name</a></h4>";
@@ -165,7 +165,7 @@
 
 
 function print_outline_row($mod, $instance, $result) {
-    $image = "<img src=\"../mod/$mod->modname/icon.gif\" height=\"16\" width=\"16\" alt=\"$mod->modfullname\">";
+    $image = "<img src=\"../mod/$mod->modname/icon.gif\" height=\"16\" width=\"16\" alt=\"$mod->modfullname\" />";
 
     echo "<tr>";
     echo "<td valign=\"top\">$image</td>";

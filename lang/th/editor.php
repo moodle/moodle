@@ -4,7 +4,7 @@
 
 $string['about'] = 'เกี่ยวกับเครื่องมือแก้ไข';
 $string['absbottom'] = 'ล่างสุด';
-$string['absmiddle'] = 'ตรงกลาง';
+$string['middle'] = 'ตรงกลาง';
 $string['address'] = 'ที่อยู่';
 $string['alignment'] = 'การจัดหน้า';
 $string['alternatetext'] = 'ข้อความอธิบาย';

@@ -67,7 +67,7 @@
     if ($groupmode = groupmode($course, $cm)) {   // Groups are being used
         $menuaction = $action == "student" ? "students" : $action;
         $currentgroup = setup_and_print_groups($course, $groupmode, 
-                                       "report.php?id=$cm->id&action=$menuaction&qid=$qid");
+                                       "report.php?id=$cm->id&amp;action=$menuaction&amp;qid=$qid");
     } else {
         $currentgroup = 0;
     }
@@ -80,18 +80,18 @@
 
     print_simple_box_start("center");
     if ($showscales) {
-        echo "<a href=\"report.php?action=summary&id=$id\">$strsummary</a>";
-        echo "&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"report.php?action=scales&id=$id\">$strscales</a>";
-        echo "&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"report.php?action=questions&id=$id\">$strquestions</a>";
-        echo "&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"report.php?action=students&id=$id\">$course->students</a>";
-        echo "&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"report.php?action=download&id=$id\">$strdownload</a>";
+        echo "<a href=\"report.php?action=summary&amp;id=$id\">$strsummary</a>";
+        echo "&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"report.php?action=scales&amp;id=$id\">$strscales</a>";
+        echo "&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"report.php?action=questions&amp;id=$id\">$strquestions</a>";
+        echo "&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"report.php?action=students&amp;id=$id\">$course->students</a>";
+        echo "&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"report.php?action=download&amp;id=$id\">$strdownload</a>";
         if (empty($action)) {
             $action = "summary";
         }
     } else {
-        echo "<a href=\"report.php?action=questions&id=$id\">$strquestions</a>";
-        echo "&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"report.php?action=students&id=$id\">$course->students</a>";
-        echo "&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"report.php?action=download&id=$id\">$strdownload</a>";
+        echo "<a href=\"report.php?action=questions&amp;id=$id\">$strquestions</a>";
+        echo "&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"report.php?action=students&amp;id=$id\">$course->students</a>";
+        echo "&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"report.php?action=download&amp;id=$id\">$strdownload</a>";
         if (empty($action)) {
             $action = "questions";
         }
@@ -109,8 +109,8 @@
         print_heading($strsummary);
 
         if (survey_count_responses($survey->id, $currentgroup)) {
-            echo "<p align=\"center\"><a href=\"report.php?action=scales&id=$id\">";
-            survey_print_graph("id=$id&group=$currentgroup&type=overall.png");
+            echo "<p align=\"center\"><a href=\"report.php?action=scales&amp;id=$id\">";
+            survey_print_graph("id=$id&amp;group=$currentgroup&amp;type=overall.png");
             echo "</a>";
         } else {
             notify(get_string("nobodyyet","survey"));
@@ -142,8 +142,8 @@
                     if ($virtualscales && $question->type > 0) {  // Don't show non-virtual scales if virtual
                         continue;
                     }
-                    echo "<p align=\"center\"><a title=\"$strseemoredetail\" href=\"report.php?action=questions&id=$id&qid=$question->multi\">";
-                    survey_print_graph("id=$id&qid=$question->id&group=$currentgroup&type=multiquestion.png");
+                    echo "<p align=\"center\"><a title=\"$strseemoredetail\" href=\"report.php?action=questions&amp;id=$id&amp;qid=$question->multi\">";
+                    survey_print_graph("id=$id&amp;qid=$question->id&amp;group=$currentgroup&amp;type=multiquestion.png");
                     echo "</a></p><br />";
                 } 
             }
@@ -201,15 +201,15 @@
                         $subquestion = $subquestions[$val];
                         if ($subquestion->type > 0) {
                             echo "<p align=\"center\">";
-                            echo "<a title=\"$strseemoredetail\" href=\"report.php?action=question&id=$id&qid=$subquestion->id\">";
-                            survey_print_graph("id=$id&qid=$subquestion->id&group=$currentgroup&type=question.png");
+                            echo "<a title=\"$strseemoredetail\" href=\"report.php?action=question&amp;id=$id&amp;qid=$subquestion->id\">";
+                            survey_print_graph("id=$id&amp;qid=$subquestion->id&amp;group=$currentgroup&amp;type=question.png");
                             echo "</a></p>";
                         }
                     }
                 } else if ($question->type > 0 ) {
                     echo "<p align=\"center\">";
-                    echo "<a title=\"$strseemoredetail\" href=\"report.php?action=question&id=$id&qid=$question->id\">";
-                    survey_print_graph("id=$id&qid=$question->id&group=$currentgroup&type=question.png");
+                    echo "<a title=\"$strseemoredetail\" href=\"report.php?action=question&amp;id=$id&amp;qid=$question->id\">";
+                    survey_print_graph("id=$id&amp;qid=$question->id&amp;group=$currentgroup&amp;type=question.png");
                     echo "</a></p>";
 
                 } else {
@@ -276,7 +276,7 @@
 
                 $table->data[] = array(
                        print_user_picture($a->userid, $course->id, $a->picture, false, true, true),
-                       "<a href=\"report.php?id=$id&action=student&student=$a->userid\">".fullname($a)."</a>",
+                       "<a href=\"report.php?id=$id&amp;action=student&amp;student=$a->userid\">".fullname($a)."</a>",
                        userdate($a->time), 
                        $answer1, $answer2);
     
@@ -332,7 +332,7 @@
          if ($showscales) {
              // Print overall summary
              echo "<p align=\"center\">";
-             survey_print_graph("id=$id&sid=$student&type=student.png");
+             survey_print_graph("id=$id&amp;sid=$student&amp;type=student.png");
              echo "</p>";
          
              // Print scales
@@ -352,8 +352,8 @@
                          continue;
                      }
                      echo "<p align=\"center\">";
-                     echo "<a title=\"$strseemoredetail\" href=\"report.php?action=questions&id=$id&qid=$question->multi\">";
-                     survey_print_graph("id=$id&qid=$question->id&sid=$student&type=studentmultiquestion.png");
+                     echo "<a title=\"$strseemoredetail\" href=\"report.php?action=questions&amp;id=$id&amp;qid=$question->multi\">";
+                     survey_print_graph("id=$id&amp;qid=$question->id&amp;sid=$student&amp;type=studentmultiquestion.png");
                      echo "</a></p><br />";
                  } 
              }

@@ -52,7 +52,7 @@ function display() {
             $count++;
             if ($count < $countsubs) {
                 $backsub .= "/$sub";
-                $subnav  .= " -> <a href=\"view.php?id={$this->cm->id}&subdir=$backsub\">$sub</a>";
+                $subnav  .= " -> <a href=\"view.php?id={$this->cm->id}&amp;subdir=$backsub\">$sub</a>";
             } else {
                 $subnav .= " -> $sub";
             }
@@ -69,7 +69,7 @@ function display() {
 
     if (isteacheredit($course->id)) {
         echo "<div align=\"right\"><img src=\"$CFG->pixpath/i/files.gif\" height=\"16\" width=\"16\" alt=\"\" />&nbsp".
-            "<a href=\"$CFG->wwwroot/files/index.php?id={$course->id}&wdir=/{$resource->reference}$subdir\">".
+            "<a href=\"$CFG->wwwroot/files/index.php?id={$course->id}&amp;wdir=/{$resource->reference}$subdir\">".
             get_string("editfiles")."...</a></div>";
     }
 
@@ -123,7 +123,7 @@ function display() {
         echo '</td>';
         echo '<td nowrap="nowrap"><p>';
         if ($icon == 'folder.gif') {
-            echo "<a href=\"view.php?id={$this->cm->id}&subdir=$subdir/$file\">$file</a>";
+            echo "<a href=\"view.php?id={$this->cm->id}&amp;subdir=$subdir/$file\">$file</a>";
         } else {
             link_to_popup_window($relativeurl, "resourcedirectory{$resource->id}", "$file", 450, 600, '');
         }

@@ -44,7 +44,7 @@
     }
 
     if ($currentgroup !== false) {
-        $params = "chat_enter=true&chat_sid=$chat_sid&groupid=$currentgroup";
+        $params = "chat_enter=true&chat_sid=$chat_sid&amp;groupid=$currentgroup";
     } else {
         $params = "chat_enter=true&chat_sid=$chat_sid";
     }

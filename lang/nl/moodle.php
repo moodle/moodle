@@ -109,7 +109,7 @@ $string['backuplogshelp'] = 'Selecteer als je de logbestanden van het vak mee in
 $string['backupnameformat'] = '%%d%%m%%Y-%%H%%M';
 $string['backupnoneusersinfo'] = 'Merk op: je hebt ervoor gekozen om \"geen\" gebruikers in de backup op te nemen. De backup van alle modules staat nu in de \"zonder gebruikersgegevens\"-modus. De modules \"oefening\" en \"workshop\" zijn niet compatibel met dit type backup en zullen niet mee in de backup gezet worden.';
 $string['backuporiginalname'] = 'Naam backup';
-$string['backupsavetohelp'] = 'Volledig pad naar de map waar je de backupbestanden wil bewaren<br>(laat blanco als je ze in de standaardmap van het vak wil bewaren)';
+$string['backupsavetohelp'] = 'Volledig pad naar de map waar je de backupbestanden wil bewaren<br />(laat blanco als je ze in de standaardmap van het vak wil bewaren)';
 $string['backupuserfileshelp'] = 'Selecteer als je gebruikersbestanden in de de backup';
 $string['backupusershelp'] = 'Selecteer als je alle gebruikers op de server of alleen de gebruikers van het vak in de backup wil';
 $string['backupversion'] = 'Versie backup';
@@ -395,9 +395,9 @@ $string['enrolledincoursenot'] = 'Niet aangemeld in vak ';
 $string['enrollfirst'] = 'Je moet aangemeld zijn bij één van de vakken voor je de siteactiviteiten kunt gebruiken.';
 $string['enrolmentconfirmation'] = 'Je staat op het punt jezelf aan te melden als lid van dit vak.<br />Weet je zeker dat je dit wilt doen?';
 $string['enrolmentkey'] = 'Vaksleutel';
-$string['enrolmentkeyfrom'] = 'Dit vak vereist een \'Vaksleutel\', een eenmalig<BR>
+$string['enrolmentkeyfrom'] = 'Dit vak vereist een \'Vaksleutel\', een eenmalig<br />
 wachtwoord dat je moet hebben gekregen van $a';
-$string['enrolmentkeyhint'] = 'Die \'Vaksleutel\' was niet correct. Probeer het nog eens.<BR>
+$string['enrolmentkeyhint'] = 'Die \'Vaksleutel\' was niet correct. Probeer het nog eens.<br />
 (Hier een hint: Hij begint met \'$a\')';
 $string['enrolmentnew'] = 'Nieuwe aanmelding in $a';
 $string['enrolmentnewuser'] = '$a->user is aangemeld bij het vak \"$a->course\"';
@@ -725,7 +725,7 @@ $string['noteuserschangednonetocourse'] = 'Let op: de gebruikers van een vak moe
 $string['nothingnew'] = 'Niets nieuws sinds je laatste log in';
 $string['noticenewerbackup'] = 'Dit backupbestand is gemaakt met Moodle $a->backuprelease ($a->backupversion) en is nieuwer dan je geïnstalleerde Moodle $a->serverrelease ($a->serverversion). Dit kan wat problemen veroorzaken omdat terugwaartse compatibiliteit van backupbestanden niet gegarandeerd kan worden.';
 $string['notifyloginfailuresmessage'] = '$a->time, IP-adres: $a->ip, Gebruiker: $a->info';
-$string['notifyloginfailuresmessageend'] = 'Je kunt deze logs bekijken op $a/course/log.php?id=1&chooselog=1&modid=site_errors.';
+$string['notifyloginfailuresmessageend'] = 'Je kunt deze logs bekijken op $a/course/log.php?id=1&amp;chooselog=1&amp;modid=site_errors.';
 $string['notifyloginfailuresmessagestart'] = 'Hier is een lijst van mislukte aanmeldingen op $a sinds je laatste notificatie';
 $string['notifyloginfailuressubject'] = '$a::Notificatie van mislukte aanmeldingen';
 $string['notincluded'] = 'Niet ingevoegd';
@@ -763,7 +763,7 @@ $string['passwordsenttext'] = '<P>Er is een e-mail verstuurd naar $a->email.
 $string['paymentinstant'] = 'Gebruik de knop om te betalen en je zult binnen enkele minuten aangemeld zijn!';
 $string['paymentrequired'] = 'Betaling vereist om dit vak binnen te gaan.';
 $string['paymentsorry'] = 'Bedankt voor je betaling! Jammer genoeg is je betaling nog niet volledig verwerkt en ben je nog niet geregistreerd om het vak \"$a->fullname\" binnen te gaan. Probeer binnen enkele seconden nog eens het vak binnen te gaan, maar als je blijft problemen hebben, waarschuw dan de $a->teacher of de site beheerder';
-$string['paymentthanks'] = 'Bedankt voor je betaling! Je bent nu aangemeld in je vak:<br>\"$a\"';
+$string['paymentthanks'] = 'Bedankt voor je betaling! Je bent nu aangemeld in je vak:<br />\"$a\"';
 $string['people'] = 'Mensen';
 $string['personalprofile'] = 'Persoonlijke profiel';
 $string['phone'] = 'Telefoon';
@@ -836,7 +836,7 @@ $string['scheduledbackupstatus'] = 'Status van geplande backup';
 $string['search'] = 'Zoek';
 $string['searchagain'] = 'Zoek nog een keer';
 $string['searchcourses'] = 'Zoek vakken';
-$string['searchhelp'] = 'Je kunt naar meer woorden tegelijkertijd zoeken.<p>woord : zoek naar elke instantie van dit woord in de tekst.<br>+word : alleen precies passende woorden worden gevonden.<br>-word : de resultaten waar dit woord in voorkomt worden niet getoond.';
+$string['searchhelp'] = 'Je kunt naar meer woorden tegelijkertijd zoeken.<p>woord : zoek naar elke instantie van dit woord in de tekst.<br />+word : alleen precies passende woorden worden gevonden.<br />-word : de resultaten waar dit woord in voorkomt worden niet getoond.';
 $string['searchresults'] = 'Zoekresultaten';
 $string['sec'] = 'seconde';
 $string['secs'] = 'seconden';

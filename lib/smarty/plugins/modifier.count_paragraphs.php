@@ -9,8 +9,8 @@
 /**
  * Smarty count_paragraphs modifier plugin
  *
- * Type:     modifier<br>
- * Name:     count_paragraphs<br>
+ * Type:     modifier<br />
+ * Name:     count_paragraphs<br />
  * Purpose:  count the number of paragraphs in a text
  * @link http://smarty.php.net/manual/en/language.modifier.count.paragraphs.php
  *          count_paragraphs (Smarty online manual)

@@ -88,14 +88,14 @@ $string['nosubmissionstoremove'] = "削除する提出物はありません";
 $string['notavailable'] = "この課題は準備中ですので利用できません。";
 $string['notenoughmarked'] = "割当てによって少なくとも1つの良い課題と1つの悪い課題を含むことを確実に出来る、十分明白な課題がありません";
 $string['noteonassessmentelements'] = "相互評価課題は数多くの「評価要素」により成立ちます。このことで評価を、
-<BR>
+<br />
 簡単且つ首尾一貫したものにすることが出来ます。
 課題を学生に利用出来る
-<BR>
+<br />
 ようにする前に、教師としてこれらの要素を追加しなければなりません。相互
-<BR>
+<br />
 評価課題をクリックして最初のオプション&quot;相互評価課題を管理する&quotメニュー
-<BR>
+<br />
 を選択して追加してください。
 ";
 $string['notgraded'] = "他の学生によるフィードバックのみ、評価無し";
@@ -167,7 +167,7 @@ $string['thegradeis'] = "評価は";
 $string['therearegradedpeersubmissions'] = "学生に割り当てられた評価済み課題は \$a あります";
 $string['therearepeersubmissions'] = "学生に割り当てられた課題は \$a あります";
 $string['typeofscale'] = "評価基準";
-$string['warningonamendingelements'] = "警告: 提出された評価があります。<BR>要素数やスケールタイプ、要素比重を変更しないでください。";
+$string['warningonamendingelements'] = "警告: 提出された評価があります。<br />要素数やスケールタイプ、要素比重を変更しないでください。";
 $string['weightingofgrading'] = "評価作業の比重";
 $string['weightingofpeer'] = "相互評価の比重";
 $string['weightingofteacher'] = "教師による評価の比重";

@@ -192,7 +192,7 @@ function print_recent_selector_form($course, $advancedfilter=0, $selecteduser=0,
 
         echo "</table>";
 
-        $advancedlink = "<a href=\"$CFG->wwwroot/course/recent.php?id=$course->id&advancedfilter=0\">" . get_string("normalfilter") . "</a>";
+        $advancedlink = "<a href=\"$CFG->wwwroot/course/recent.php?id=$course->id&amp;advancedfilter=0\">" . get_string("normalfilter") . "</a>";
         print_heading($advancedlink);
         echo "</center>";
         echo "</form>";
@@ -214,13 +214,13 @@ function print_recent_selector_form($course, $advancedfilter=0, $selecteduser=0,
             }
             $tmpdate = time() - ($count * 3600 * 24);
             $heading = $heading .
-                "<a href=\"$CFG->wwwroot/course/recent.php?id=$course->id&date=$tmpdate\"> $count $day</a> | ";
+                "<a href=\"$CFG->wwwroot/course/recent.php?id=$course->id&amp;date=$tmpdate\"> $count $day</a> | ";
         }
 
         $heading = $strsince . ": <a href=\"$CFG->wwwroot/course/recent.php?id=$course->id\">$strlastlogin</a>" . " | " . $heading;
         print_heading($heading);
 
-        $advancedlink = "<a href=\"$CFG->wwwroot/course/recent.php?id=$course->id&advancedfilter=1\">" . get_string("advancedfilter") . "</a>";
+        $advancedlink = "<a href=\"$CFG->wwwroot/course/recent.php?id=$course->id&amp;advancedfilter=1\">" . get_string("advancedfilter") . "</a>";
         print_heading($advancedlink);
 
     }
@@ -509,7 +509,7 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
     print_string("displayingrecords", "", $totalcount);
     echo "</p>";
 
-    print_paging_bar($totalcount, $page, $perpage, "$url&perpage=$perpage&");
+    print_paging_bar($totalcount, $page, $perpage, "$url&amp;perpage=$perpage&");
 
     echo '<table border="0" align="center" cellpadding="3" cellspacing="3">';
     foreach ($logs as $log) {
@@ -534,10 +534,10 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
         echo '<td nowrap="nowrap" align="right"><font size="2">'.userdate($log->time, '%a').'</td>';
         echo '<td nowrap="nowrap"><font size="2">'.userdate($log->time, $strftimedatetime).'</td>';
         echo '<td nowrap="nowrap"><font size="2">';
-        link_to_popup_window("/lib/ipatlas/plot.php?address=$log->ip&user=$log->userid", 'ipatlas',$log->ip, 400, 700);
+        link_to_popup_window("/lib/ipatlas/plot.php?address=$log->ip&amp;user=$log->userid", 'ipatlas',$log->ip, 400, 700);
         echo '</td>';
         $fullname = fullname($log, $isteacher);
-        echo '<td nowrap="nowrap"><font size="2"><a href="../user/view.php?id='."$log->userid&course=$log->course".'"><b>'.$fullname.'</b></td>';
+        echo '<td nowrap="nowrap"><font size="2"><a href="../user/view.php?id='."$log->userid&amp;course=$log->course".'"><b>'.$fullname.'</b></td>';
         echo '<td nowrap="nowrap"><font size="2">';
         link_to_popup_window( make_log_url($log->module,$log->url), 'fromloglive',"$log->module $log->action", 400, 600);
         echo '</td>';
@@ -546,7 +546,7 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
     }
     echo '</table>';
 
-    print_paging_bar($totalcount, $page, $perpage, "$url&perpage=$perpage&");
+    print_paging_bar($totalcount, $page, $perpage, "$url&amp;perpage=$perpage&");
 }
 
 
@@ -556,7 +556,7 @@ function print_log_graph($course, $userid=0, $type="course.png", $date=0) {
         echo "(".get_string("gdneed").")";
     } else {
         echo '<img border="0" src="'.$CFG->wwwroot.'/course/loggraph.php?id='.$course->id.
-             '&user='.$userid.'&type='.$type.'&date='.$date.'" />';
+             '&amp;user='.$userid.'&amp;type='.$type.'&amp;date='.$date.'" alt=\"\" />';
     }
 }
 
@@ -603,7 +603,7 @@ function print_recent_activity($course) {
                 $content = true;
             }
             $fullname = fullname($user, $isteacher);
-            echo '<font size="1"><a href="'.$CFG->wwwroot."/user/view.php?id=$user->id&course=$course->id\">$fullname</a></font><br />";
+            echo '<font size="1"><a href="'.$CFG->wwwroot."/user/view.php?id=$user->id&amp;course=$course->id\">$fullname</a></font><br />";
         }
         echo "</p>";
     }
@@ -985,7 +985,7 @@ function print_section_add_menus($course, $section, $modnames, $vertical=false, 
         $resourceraw = resource_get_resource_types();
 
         foreach ($resourceraw as $type => $name) {
-            $resources["resource&type=$type"] = $name;
+            $resources["resource&amp;type=$type"] = $name;
         }
         $resources['label'] = get_string('resourcetypelabel', 'resource');
     }
@@ -993,7 +993,7 @@ function print_section_add_menus($course, $section, $modnames, $vertical=false, 
     $output = '';
 
     $output .= '<div align="right"><table align="right"><tr><td>';
-    $output .= popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&amp;section=$section&add=",
+    $output .= popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&amp;section=$section&amp;add=",
                 $resources, "ressection$section", "", $straddresource, 'resource/types', $straddresource, true);
     $output .= '</td>';
 
@@ -1002,7 +1002,7 @@ function print_section_add_menus($course, $section, $modnames, $vertical=false, 
     }
 
     $output .= '<td>';
-    $output .= popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&amp;section=$section&add=",
+    $output .= popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&amp;section=$section&amp;add=",
                 $modnames, "section$section", "", $straddactivity, 'mods', $straddactivity, true);
     $output .= '</td></tr></table>';
     $output .= '</div>';
@@ -1134,7 +1134,7 @@ function print_category_info($category, $depth) {
     $catlinkcss = $category->visible ? "" : " class=\"dimmed\" ";
 
     if ($CFG->frontpage == FRONTPAGECOURSELIST) {
-        $catimage = '<img src="'.$CFG->pixpath.'/i/course.gif" width="16" height="16" border="0" />';
+        $catimage = '<img src="'.$CFG->pixpath.'/i/course.gif" width="16" height="16" border="0" alt="" />';
     } else {
         $catimage = "&nbsp";
     }
@@ -1689,25 +1689,25 @@ function make_editing_buttons($mod, $absolute=false, $moveselect=true, $indent=-
 
     if ($mod->visible) {
         $hideshow = "<a title=\"$str->hide\" href=\"$path/mod.php?hide=$mod->id\"><img".
-                    " src=\"$pixpath/t/hide.gif\" hspace=\"2\" height=\"11\" width=\"11\" border=\"0\" alt=\"$str->hide\"></a> ";
+                    " src=\"$pixpath/t/hide.gif\" hspace=\"2\" height=\"11\" width=\"11\" border=\"0\" alt=\"$str->hide\" /></a> ";
     } else {
         $hideshow = "<a title=\"$str->show\" href=\"$path/mod.php?show=$mod->id\"><img".
                     " src=\"$pixpath/t/show.gif\" hspace=\"2\" height=\"11\" width=\"11\" ".
-                    "border=\"0\" alt=\"$str->show\"></a> ";
+                    "border=\"0\" alt=\"$str->show\" /></a> ";
     }
     if ($mod->groupmode !== false) {
         if ($mod->groupmode == SEPARATEGROUPS) {
             $grouptitle = $str->groupsseparate;
             $groupimage = "$pixpath/t/groups.gif";
-            $grouplink  = "$path/mod.php?id=$mod->id&groupmode=0";
+            $grouplink  = "$path/mod.php?id=$mod->id&amp;groupmode=0";
         } else if ($mod->groupmode == VISIBLEGROUPS) {
             $grouptitle = $str->groupsvisible;
             $groupimage = "$pixpath/t/groupv.gif";
-            $grouplink  = "$path/mod.php?id=$mod->id&groupmode=1";
+            $grouplink  = "$path/mod.php?id=$mod->id&amp;groupmode=1";
         } else {
             $grouptitle = $str->groupsnone;
             $groupimage = "$pixpath/t/groupn.gif";
-            $grouplink  = "$path/mod.php?id=$mod->id&groupmode=2";
+            $grouplink  = "$path/mod.php?id=$mod->id&amp;groupmode=2";
         }
         if ($mod->groupmodelink) {
             $groupmode = "<a title=\"$grouptitle ($str->clicktochange)\" href=\"$grouplink\">".
@@ -1727,35 +1727,35 @@ function make_editing_buttons($mod, $absolute=false, $moveselect=true, $indent=-
                     " src=\"$pixpath/t/move.gif\" hspace=\"2\" height=\"11\" width=\"11\" ".
                     " border=\"0\" alt=\"$str->move\" /></a>";
     } else {
-        $move =     "<a title=\"$str->moveup\" href=\"$path/mod.php?id=$mod->id&move=-1\"><img".
+        $move =     "<a title=\"$str->moveup\" href=\"$path/mod.php?id=$mod->id&amp;move=-1\"><img".
                     " src=\"$pixpath/t/up.gif\" hspace=\"2\" height=\"11\" width=\"11\" ".
                     " border=\"0\" alt=\"$str->moveup\" /></a>".
-                    "<a title=\"$str->movedown\" href=\"$path/mod.php?id=$mod->id&move=1\"><img".
+                    "<a title=\"$str->movedown\" href=\"$path/mod.php?id=$mod->id&amp;move=1\"><img".
                     " src=\"$pixpath/t/down.gif\" hspace=\"2\" height=\"11\" width=\"11\" ".
                     " border=\"0\" alt=\"$str->movedown\" /></a>";
     }
 
     $leftright = "";
     if ($indent > 0) {
-        $leftright .= "<a title=\"$str->moveleft\" href=\"$path/mod.php?id=$mod->id&indent=-1\"><img".
+        $leftright .= "<a title=\"$str->moveleft\" href=\"$path/mod.php?id=$mod->id&amp;indent=-1\"><img".
                       " src=\"$pixpath/t/left.gif\" hspace=\"2\" height=\"11\" width=\"11\" ".
-                      " border=\"0\" alt=\"$str->moveleft\"></a>";
+                      " border=\"0\" alt=\"$str->moveleft\" /></a>";
     }
     if ($indent >= 0) {
-        $leftright .= "<a title=\"$str->moveright\" href=\"$path/mod.php?id=$mod->id&indent=1\"><img".
+        $leftright .= "<a title=\"$str->moveright\" href=\"$path/mod.php?id=$mod->id&amp;indent=1\"><img".
                       " src=\"$pixpath/t/right.gif\" hspace=\"2\" height=\"11\" width=\"11\" ".
-                      " border=\"0\" alt=\"$str->moveright\"></a>";
+                      " border=\"0\" alt=\"$str->moveright\" /></a>";
     }
 
     return "$leftright$move".
            "<a title=\"$str->update\" href=\"$path/mod.php?update=$mod->id\"><img".
            " src=\"$pixpath/t/edit.gif\" hspace=\"2\" height=\"11\" width=\"11\" border=\"0\" ".
-           " alt=\"$str->update\"></a>".
+           " alt=\"$str->update\" /></a>".
       //   Following line is commented out until this feature is more definite -- martin
       //     "<a title=\"$str->duplicate\" href=\"$path/mod.php?duplicate=$mod->id\"> 2 </a>".
            "<a title=\"$str->delete\" href=\"$path/mod.php?delete=$mod->id\"><img".
            " src=\"$pixpath/t/delete.gif\" hspace=\"2\" height=\"11\" width=\"11\" border=\"0\" ".
-           " alt=\"$str->delete\"></a>$hideshow$groupmode";
+           " alt=\"$str->delete\" /></a>$hideshow$groupmode";
 }
 
 ?>

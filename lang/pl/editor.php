@@ -4,7 +4,7 @@
 
 $string['about'] = 'O tym edytorze';
 $string['absbottom'] = 'Dó³';
-$string['absmiddle'] = '¦rodek';
+$string['middle'] = '¦rodek';
 $string['address'] = 'Adres';
 $string['alignment'] = 'Justowanie';
 $string['alternatetext'] = 'Tekst alternatywny';

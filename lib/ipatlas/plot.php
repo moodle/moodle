@@ -88,7 +88,7 @@ $display = "<div id=\"dotDiv\"><img width=\"$dotwidth\" height=\"$dotheight\" sr
 
 list($width, $height) = getimagecoords($earthimages, $earthimage) or die("Unable to find width/height for image $earthimage in config file");
 $extracss = "";
-$display = "<img src=\"plotimage.php?lat=$values[lat]&lon=$values[lon]\" width=\"$width\" height=\"$height\">";
+$display = "<img src=\"plotimage.php?lat=$values[lat]&amp;lon=$values[lon]\" width=\"$width\" height=\"$height\" alt=\"\" />";
 
 }
 
@@ -109,7 +109,7 @@ print '
 <table valign="top" cellpadding=0 cellspacing=0 border=0 background="'.$earthimage.'" width="'.$width.'" height="'.$height.'"><tr><td valign="top">'.$display.'</td></tr></table>
 
 
-<br>
+<br />
 ';
 
 if(isset($address)) {
@@ -119,7 +119,7 @@ print "$username $values[desc]";
 $PHP_SELF = $HTTP_SERVER_VARS['PHP_SELF'];
 
 print '
-<br><br>
+<br /><br />
 <form method="GET" action="'.$PHP_SELF.'#map">
 <table width="100%"><tr><td nowrap align="left">
 '.t("IP/Hostname:").' <input value="'.$values["address"].'" type="text" size="30" name="address"><input type="Submit" value="'.t("Submit").'"></td><td align="right" width="100%">

@@ -82,14 +82,14 @@
             delete_records("glossary_entries","id", $entry->id);                
         }
 
-        add_to_log($course->id, "glossary", "delete entry", "view.php?id=$cm->id&mode=$prevmode&hook=$hook", $entry->id,$cm->id);
-        redirect("view.php?id=$cm->id&mode=$prevmode&hook=$hook", $entrydeleted);
+        add_to_log($course->id, "glossary", "delete entry", "view.php?id=$cm->id&amp;mode=$prevmode&amp;hook=$hook", $entry->id,$cm->id);
+        redirect("view.php?id=$cm->id&amp;mode=$prevmode&amp;hook=$hook", $entrydeleted);
 
     } else {        // the operation has not been confirmed yet so ask the user to do so
 
         notice_yesno("<b>$entry->concept</b><p>$strareyousuredelete</p>",
-                      "deleteentry.php?id=$cm->id&mode=delete&confirm=1&entry=".s($entry->id)."&prevmode=$prevmode&hook=$hook",
-                      "view.php?id=$cm->id&mode=$prevmode&hook=$hook");
+                      "deleteentry.php?id=$cm->id&amp;mode=delete&amp;confirm=1&amp;entry=".s($entry->id)."&amp;prevmode=$prevmode&amp;hook=$hook",
+                      "view.php?id=$cm->id&amp;mode=$prevmode&amp;hook=$hook");
 
     }
 

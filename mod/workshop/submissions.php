@@ -97,7 +97,7 @@
             }
             
         notice_yesno(get_string("confirmdeletionofthisitem","workshop", get_string("submission", "workshop")), 
-             "submissions.php?action=admindelete&id=$cm->id&sid=$_GET[sid]", "submissions.php?id=$cm->id&action=adminlist");
+             "submissions.php?action=admindelete&amp;id=$cm->id&amp;sid=$_GET[sid]", "submissions.php?id=$cm->id&amp;action=adminlist");
         }
     
 
@@ -131,7 +131,7 @@
         // ..and finally the submitted file
         workshop_delete_submitted_files($workshop, $submission);
         
-        print_continue("submissions.php?id=$cm->id&action=adminlist");
+        print_continue("submissions.php?id=$cm->id&amp;action=adminlist");
         }
     
 
@@ -167,7 +167,7 @@
         if (set_field("workshop_submissions", "title", $_POST['title'], "id", $_POST['sid'])) {
             print_heading(get_string("amendtitle", "workshop")." ".get_string("ok"));
             }
-        print_continue("submissions.php?id=$cm->id&action=adminlist");
+        print_continue("submissions.php?id=$cm->id&amp;action=adminlist");
         }
     
 
@@ -300,7 +300,7 @@
         set_field("workshop", "anonymous", $form->anonymous, "id", "$workshop->id");
         add_to_log($course->id, "workshop", "league table", "view.php?id=$cm->id", $form->nentries, $cm->id);
 
-        redirect("submissions.php?action=adminlist&id=$cm->id");
+        redirect("submissions.php?action=adminlist&amp;id=$cm->id");
         }
 
 
@@ -312,7 +312,7 @@
             }
             
         notice_yesno(get_string("confirmdeletionofthisitem","workshop", get_string("submission", "workshop")), 
-             "submissions.php?action=userdelete&id=$cm->id&sid=$_GET[sid]", "view.php?id=$cm->id");
+             "submissions.php?action=userdelete&amp;id=$cm->id&amp;sid=$_GET[sid]", "view.php?id=$cm->id");
         }
     
 

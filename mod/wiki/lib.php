@@ -433,7 +433,7 @@ function wiki_get_other_wikis(&$wiki, &$user, &$course, $currentid=0) {
                             $pagename = $defpagename;
                         }
 
-                        $key = $ME.'?id='.$id.'&userid='.$student->id.'&page='.$pagename;
+                        $key = $ME.'?id='.$id.'&amp;userid='.$student->id.'&amp;page='.$pagename;
                         $wikis[$key] = fullname($student).':'.$pagename;
                     }
                 }
@@ -451,7 +451,7 @@ function wiki_get_other_wikis(&$wiki, &$user, &$course, $currentid=0) {
                             $pagename = $defpagename;
                         }
 
-                        $key = $ME.'?id='.$id.'&userid='.$student->id.'&page='.$pagename;
+                        $key = $ME.'?id='.$id.'&amp;userid='.$student->id.'&amp;page='.$pagename;
                         $wikis[$key] = fullname($student).':'.$pagename;
                     }
                 }
@@ -468,7 +468,7 @@ function wiki_get_other_wikis(&$wiki, &$user, &$course, $currentid=0) {
                         else {
                             $pagename = $defpagename;
                         }
-                        $key = $ME.'?id='.$id.'&userid='.$student->id.'&page='.$pagename;
+                        $key = $ME.'?id='.$id.'&amp;userid='.$student->id.'&amp;page='.$pagename;
                         $wikis[$key] = fullname($student).':'.$pagename;
                     }
                 }
@@ -480,7 +480,7 @@ function wiki_get_other_wikis(&$wiki, &$user, &$course, $currentid=0) {
                 $wiki_entries = get_records_sql($sql);
                 $wiki_entries=is_array($wiki_entries)?$wiki_entries:array();
                 foreach ($wiki_entries as $wiki_entry) {
-                    $key = $ME.'?id='.$id.'&userid='.$wiki_entry->userid.'&page='.$wiki_entry->pagename;
+                    $key = $ME.'?id='.$id.'&amp;userid='.$wiki_entry->userid.'&amp;page='.$wiki_entry->pagename;
                     $wikis[$key] = fullname($wiki_entry).':'.$wiki_entry->pagename;
                     if ($currentid == $wiki_entry->id) {
                         $wikis['selected'] = $key;
@@ -512,7 +512,7 @@ function wiki_get_other_wikis(&$wiki, &$user, &$course, $currentid=0) {
                 $wiki_entries=is_array($wiki_entries)?$wiki_entries:array();
                 foreach ($wiki_entries as $wiki_entry) {
                     if (($viewall === true) or ismember($viewall, $wiki_entry->userid)) {
-                        $key = $ME.'?id='.$id.'&userid='.$wiki_entry->userid.'&page='.$wiki_entry->pagename;
+                        $key = $ME.'?id='.$id.'&amp;userid='.$wiki_entry->userid.'&amp;page='.$wiki_entry->pagename;
                         $wikis[$key] = fullname($wiki_entry).':'.$wiki_entry->pagename;
                         if ($currentid == $wiki_entry->id) {
                             $wikis['selected'] = $key;
@@ -543,7 +543,7 @@ function wiki_get_other_wikis(&$wiki, &$user, &$course, $currentid=0) {
                         $pagename = $defpagename;
                     }
 
-                    $key = $ME.'?id='.$id.($group->id?"&groupid=".$group->id:"").'&page='.$pagename;
+                    $key = $ME.'?id='.$id.($group->id?"&amp;groupid=".$group->id:"").'&amp;page='.$pagename;
                     $wikis[$key] = $group->name.':'.$pagename;
                 }
             }
@@ -557,7 +557,7 @@ function wiki_get_other_wikis(&$wiki, &$user, &$course, $currentid=0) {
             $wiki_entries = get_records_sql($sql);
             $wiki_entries=is_array($wiki_entries)?$wiki_entries:array();
             foreach ($wiki_entries as $wiki_entry) {
-                $key = $ME.'?id='.$id.($wiki_entry->groupid?"&groupid=".$wiki_entry->groupid:"").'&page='.$wiki_entry->pagename;
+                $key = $ME.'?id='.$id.($wiki_entry->groupid?"&amp;groupid=".$wiki_entry->groupid:"").'&amp;page='.$wiki_entry->pagename;
                 $wikis[$key] = $wiki_entry->gname.':'.$wiki_entry->pagename;
                 if ($currentid == $wiki_entry->id) {
                     $wikis['selected'] = $key;
@@ -583,7 +583,7 @@ function wiki_get_other_wikis(&$wiki, &$user, &$course, $currentid=0) {
                             $pagename = $defpagename;
                         }
 
-                        $key = $ME.'?id='.$id.($group->id?"&groupid=".$group->id:"").'&page='.$pagename;
+                        $key = $ME.'?id='.$id.($group->id?"&amp;groupid=".$group->id:"").'&amp;page='.$pagename;
                         $wikis[$key] = $group->name.':'.$pagename;
                     }
                 }
@@ -597,7 +597,7 @@ function wiki_get_other_wikis(&$wiki, &$user, &$course, $currentid=0) {
                 $wiki_entries = get_records_sql($sql);
                 $wiki_entries=is_array($wiki_entries)?$wiki_entries:array();
                 foreach ($wiki_entries as $wiki_entry) {
-                    $key = $ME.'?id='.$id.($wiki_entry->groupid?"&groupid=".$wiki_entry->groupid:"").'&page='.$wiki_entry->pagename;
+                    $key = $ME.'?id='.$id.($wiki_entry->groupid?"&amp;groupid=".$wiki_entry->groupid:"").'&amp;page='.$wiki_entry->pagename;
                     $wikis[$key] = $wiki_entry->gname.':'.$wiki_entry->pagename;
                     if ($currentid == $wiki_entry->id) {
                         $wikis['selected'] = $key;
@@ -626,7 +626,7 @@ function wiki_get_other_wikis(&$wiki, &$user, &$course, $currentid=0) {
                 $wiki_entries=is_array($wiki_entries)?$wiki_entries:array();
                 foreach ($wiki_entries as $wiki_entry) {
                     if (($viewall === true) or $viewall == $wiki_entry->groupid) {
-                        $key = $ME.'?id='.$id.($wiki_entry->groupid?"&groupid=".$wiki_entry->groupid:"").'&page='.$wiki_entry->pagename;
+                        $key = $ME.'?id='.$id.($wiki_entry->groupid?"&amp;groupid=".$wiki_entry->groupid:"").'&amp;page='.$wiki_entry->pagename;
                         $wikis[$key] = $wiki_entry->gname.':'.$wiki_entry->pagename;
                         if ($currentid == $wiki_entry->id) {
                             $wikis['selected'] = $key;
@@ -986,10 +986,10 @@ function wiki_print_administration_actions($wiki, $cmid, $userid, $groupid, $pag
     
   /// Create the URL        
   $ewscript = 'admin.php?id='.$cmid;
-  if (isset($userid) && $userid!=0) $ewscript .= '&userid='.$userid;
-  if (isset($groupid) && $groupid!=0) $ewscript .= '&groupid='.$groupid;
-  if (isset($page)) $ewscript .= '&page='.$page;
-  $ewscript.="&action=";
+  if (isset($userid) && $userid!=0) $ewscript .= '&amp;userid='.$userid;
+  if (isset($groupid) && $groupid!=0) $ewscript .= '&amp;groupid='.$groupid;
+  if (isset($page)) $ewscript .= '&amp;page='.$page;
+  $ewscript.="&amp;action=";
 
 
     /// Build that action array according to wiki flags.

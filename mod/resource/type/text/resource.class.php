@@ -110,7 +110,7 @@ function display() {
 
             echo "\n<script language=\"Javascript\">";
             echo "\n<!--\n";
-            echo "openpopup('/mod/resource/view.php?inpopup=true&id={$this->cm->id}','resource{$resource->id}','{$resource->popup}');\n";
+            echo "openpopup('/mod/resource/view.php?inpopup=true&amp;id={$this->cm->id}','resource{$resource->id}','{$resource->popup}');\n";
             echo "\n-->\n";
             echo '</script>';
     
@@ -118,7 +118,7 @@ function display() {
                 print_simple_box(format_text($resource->summary, FORMAT_MOODLE, $formatoptions, $course->id), "center");
             }
     
-            $link = "<a href=\"$CFG->wwwroot/mod/resource/view.php?inpopup=true&id={$this->cm->id}\" target=\"resource{$resource->id}\" onClick=\"return openpopup('/mod/resource/view.php?inpopup=true&id={$this->cm->id}', 'resource{$resource->id}','{$resource->popup}');\">{$resource->name}</a>";
+            $link = "<a href=\"$CFG->wwwroot/mod/resource/view.php?inpopup=true&amp;id={$this->cm->id}\" target=\"resource{$resource->id}\" onClick=\"return openpopup('/mod/resource/view.php?inpopup=true&amp;id={$this->cm->id}', 'resource{$resource->id}','{$resource->popup}');\">{$resource->name}</a>";
     
             echo "<p>&nbsp</p>";
             echo '<p align="center">';

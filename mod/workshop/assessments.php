@@ -117,7 +117,7 @@
 			}
 			
 		notice_yesno(get_string("confirmdeletionofthisitem","workshop", get_string("assessment", "workshop")), 
-			 "assessments.php?action=admindelete&id=$cm->id&aid=$_GET[aid]", "submissions.php?action=adminlist&id=$cm->id");
+			 "assessments.php?action=admindelete&amp;id=$cm->id&amp;aid=$_GET[aid]", "submissions.php?action=adminlist&amp;id=$cm->id");
 		}
 	
 
@@ -138,7 +138,7 @@
 		// ...now delete the assessment...
 		delete_records("workshop_assessments", "id", $_GET['aid']);
 		
-		print_continue("submissions.php?id=$cm->id&action=adminlist");
+		print_continue("submissions.php?id=$cm->id&amp;action=adminlist");
 		}
 	
 
@@ -154,7 +154,7 @@
 			}
 		$submission = get_record("workshop_submissions", "id", $_GET['sid']);
 		workshop_print_assessments_for_admin($workshop, $submission);
-		print_continue("submissions.php?action=adminlist&id=$cm->id");
+		print_continue("submissions.php?action=adminlist&amp;id=$cm->id");
 		}
 
 
@@ -170,7 +170,7 @@
 			}
 		$user = get_record("user", "id", $_GET['userid']);
 		workshop_print_assessments_by_user_for_admin($workshop, $user);
-		print_continue("submissions.php?action=adminlist&id=$cm->id");
+		print_continue("submissions.php?action=adminlist&amp;id=$cm->id");
 		}
 
 
@@ -185,7 +185,7 @@
 		set_field("workshop_assessments", "timeagreed", $timenow, "id", $assessment->id);
 		echo "<centre><b>".get_string("savedok", "workshop")."</b></center><br />\n";
 			
-		add_to_log($course->id, "workshop", "agree", "assessments.php?action=viewassessment&id=$cm->id&aid=$assessment->id", "$assessment->id");
+		add_to_log($course->id, "workshop", "agree", "assessments.php?action=viewassessment&amp;id=$cm->id&amp;aid=$assessment->id", "$assessment->id");
 		print_continue("view.php?id=$cm->id");
 		}
 
@@ -558,7 +558,7 @@
 			
 		add_to_log($course->id, "workshop", "comment", "view.php?id=$cm->id", "$comment->id");
 
-		print_continue("assessments.php?action=viewassessment&id=$cm->id&aid=$assessment->id");
+		print_continue("assessments.php?action=viewassessment&amp;id=$cm->id&amp;aid=$assessment->id");
 		}
 
 
@@ -894,7 +894,7 @@
 		}
 			
         add_to_log($course->id, "workshop", "assess",
-                "assessments.php?action=viewassessment&id=$cm->id&aid=$assessment->id", "$assessment->id", "$cm->id");
+                "assessments.php?action=viewassessment&amp;id=$cm->id&amp;aid=$assessment->id", "$assessment->id", "$cm->id");
         
         // set up return address
         if (!$returnto = $form->returnto) {
@@ -935,10 +935,10 @@
             echo "<centre><b>".get_string("savedok", "workshop")."</b></center><br />\n";
             
             add_to_log($course->id, "workshop", "comment", 
-                    "assessments.php?action=viewassessment&id=$cm->id&aid=$assessment->id", "$comment->id");
+                    "assessments.php?action=viewassessment&amp;id=$cm->id&amp;aid=$assessment->id", "$comment->id");
         }
 
-        print_continue("assessments.php?action=viewassessment&id=$cm->id&aid=$assessment->id");
+        print_continue("assessments.php?action=viewassessment&amp;id=$cm->id&amp;aid=$assessment->id");
     }
 
 
@@ -964,14 +964,14 @@
             echo "<centre><b>".get_string("savedok", "workshop")."</b></centre><br />\n";
             
             add_to_log($course->id, "workshop", "grade", 
-                 "assessments.php?action=viewassessment&id=$cm->id&aid=$assessment->id", "$assessment->id", "$cm->id");
+                 "assessments.php?action=viewassessment&amp;id=$cm->id&amp;aid=$assessment->id", "$assessment->id", "$cm->id");
         }
         switch ($form->stype) {
             case "student" : 
-                redirect("assessments.php?action=listungradedstudentsubmissions&id=$cm->id");
+                redirect("assessments.php?action=listungradedstudentsubmissions&amp;id=$cm->id");
                 break;
             case "teacher" : 
-                redirect("assessments.php?action=listungradedteachersubmissions&id=$cm->id");
+                redirect("assessments.php?action=listungradedteachersubmissions&amp;id=$cm->id");
                 break;
         }
     }
@@ -986,7 +986,7 @@
             
         notice_yesno(get_string("confirmdeletionofthisitem","workshop", 
                 get_string("assessment", "workshop")), 
-                "assessments.php?action=userdelete&id=$cm->id&aid=$_GET[aid]", "view.php?id=$cm->id");
+                "assessments.php?action=userdelete&amp;id=$cm->id&amp;aid=$_GET[aid]", "view.php?id=$cm->id");
     }
     
 
@@ -1021,7 +1021,7 @@
 			}
 		}
 		// only called from list all submissions
-		print_continue("submissions.php?action=listallsubmissions&id=$cm->id");
+		print_continue("submissions.php?action=listallsubmissions&amp;id=$cm->id");
 	}
 
 

@@ -60,7 +60,7 @@
     print_heading(get_string('commentson','glossary')." <b>\"$entry->concept\"</b>");
 
     if ($glossary->allowcomments || isteacher($glossary->course)) { 
-        print_heading("<a href=\"comment.php?id=$cm->id&eid=$entry->id\">$straddcomment</a> <img title=\"$straddcomment\" src=\"comment.gif\" height=11 width=11 border=0>");
+        print_heading("<a href=\"comment.php?id=$cm->id&amp;eid=$entry->id\">$straddcomment</a> <img title=\"$straddcomment\" src=\"comment.gif\" height=\"11\" width=\"11\" border=\"0\" alt=\"\" />");
     }
 
     if ($comments = get_records("glossary_comments","entryid",$entry->id,"timemodified ASC")) {

@@ -72,10 +72,10 @@
     $strviewweek = get_string("viewweek", "attendance");
     echo "<p align=\"right\">";
   if (isteacher($course->id)) {
-    echo "<a href=\"teacheredit.php?update=".$cm->id."&return=true\">$strteacheredit</a><br/>";
+    echo "<a href=\"teacheredit.php?update=".$cm->id."&amp;return=true\">$strteacheredit</a><br/>";
   }
   echo "<a href=\"viewall.php?id=".$course->id."\">$strviewall</a><br/>";
-  echo "<a href=\"viewweek.php?scope=week&id=".$attendance->id."\">$strviewweek</a><br/></p>";
+  echo "<a href=\"viewweek.php?scope=week&amp;id=".$attendance->id."\">$strviewweek</a><br/></p>";
 
   // this is the wrapper table
   echo "<table align=\"center\" width=\"80\" class=\"generalbox\"".

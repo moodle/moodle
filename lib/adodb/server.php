@@ -18,7 +18,7 @@
  * 
  * example:
  *
- * http://localhost/php/server.php?select+*+from+table&nrows=10&offset=2
+ * http://localhost/php/server.php?select+*+from+table&amp;nrows=10&amp;offset=2
  */
 
 

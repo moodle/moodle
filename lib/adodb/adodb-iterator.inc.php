@@ -13,7 +13,7 @@
   
   		$rs = $db->Execute("select * from adoxyz");
 		foreach($rs as $k => $v) {
-			echo $k; print_r($v); echo "<br>";
+			echo $k; print_r($v); echo "<br />";
 		}
 		
 		

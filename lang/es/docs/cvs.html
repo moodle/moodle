@@ -33,12 +33,12 @@
   <ol>
     <li><a href="#1">Uni&eacute;ndote al proyecto como desarrollador </a></li>
     <li><a href="#2">M&oacute;dulos CVS </a> </li>
-    <li><a href="#3">Comandos b&aacute;sicos CVS </a> <br>
-      3.1. <a href="#3.1">CVS en Unix</a> <br>
+    <li><a href="#3">Comandos b&aacute;sicos CVS </a> <br />
+      3.1. <a href="#3.1">CVS en Unix</a> <br />
       3.2. <a href="#3.2">CVS en Windows</a></li>
-    <li> <a href="#4">Trabajando con ramas </a><br>
-      4.1. <a href="#4.1">Desarrollando en el tronco (trunk) </a><br>
-      4.2. <a href="#4.2">Ramas (branches) estables para cada versi&oacute;n </a><br>
+    <li> <a href="#4">Trabajando con ramas </a><br />
+      4.1. <a href="#4.1">Desarrollando en el tronco (trunk) </a><br />
+      4.2. <a href="#4.2">Ramas (branches) estables para cada versi&oacute;n </a><br />
       4.3. <a href="#4.3">Ramas de funcionalidades para grandes cambios </a> </li>
   </ol>
   <p>&nbsp;</p>
@@ -169,7 +169,7 @@ update -dP</div>
             o&quot;<strong>mysql</strong>&quot; para descargar el m&oacute;dulo MySQL
             Admin.</li>
           <li>Selecciona el bot&oacute;n&quot;<strong>OK</strong>&quot; y todo
-            deber&iacute;a ser descargado. <br>
+            deber&iacute;a ser descargado. <br />
           </li>
         </ol>
       </ol>
@@ -190,7 +190,7 @@ update -dP</div>
             conflictos que pudieran aparecer si has realizado modificaciones
             en tu copia local que entran en conflicto con cambios en las versiones
             que te est&aacute;s descargando - necesitar&aacute;s editar estos ficheros
-            y resolver los conflictos manualmente. <br>
+            y resolver los conflictos manualmente. <br />
           </li>
         </ol>
       </ol>
@@ -206,7 +206,7 @@ update -dP</div>
           Moodle (o de cualquier otro fichero) selecciona &quot;<strong>CVS Commit...</strong>&quot;.</li>
           <li>En el di&aacute;logo que aparece, introduce una descripci&oacute;n clara de los
             cambios que est&aacute;s enviando.</li>
-          <li>Selecciona &quot;OK&quot;. Tus cambios ser&aacute;n enviados al servidor. <br>
+          <li>Selecciona &quot;OK&quot;. Tus cambios ser&aacute;n enviados al servidor. <br />
           </li>
         </ol>
       </ol>
@@ -279,32 +279,32 @@ update -dP</div>
         combinaci&oacute;n. El procedimiento para realizar dicha combinaci&oacute;n es el siguiente:</p>
       <ol>
         <ol>
-          <li>Obt&eacute;n la &uacute;ltima version del tronco:<br>
-            <br>
+          <li>Obt&eacute;n la &uacute;ltima version del tronco:<br />
+            <br />
             <div class="commandline">cvs update -dPA</div>
           </li>
-          <li>Combina todo desde la rama desde la &uacute;ltima combinaci&oacute;n, en el tronco:<br>
-            <br>
+          <li>Combina todo desde la rama desde la &uacute;ltima combinaci&oacute;n, en el tronco:<br />
+            <br />
             <div class="commandline">cvs update -kk -j <span class="style1">MOODLE_XX_MERGED</span> -j <span class="style1">MOODLE_XX_STABLE</span></div>
 	      </li>
           <li>Observa atentamente los registros para ver si se producen conflictos,
             y soluciona cada fichero que veas que presenta problemas. </li>
-          <li>Guarda (commit) los cambios de la combinaci&oacute;n en el tronco CVS:<br>
-            <br>
+          <li>Guarda (commit) los cambios de la combinaci&oacute;n en el tronco CVS:<br />
+            <br />
             <div class="commandline">cvs commit</div>
           </li>
-          <li>Vuelve a la rama: <br>
-            <br>
+          <li>Vuelve a la rama: <br />
+            <br />
             <div class="commandline">cvs update -dPr <span class="style1">MOODLE_XX_STABLE</span></div>
 		  </li>
           <li>Actualiza la etiqueta flotante para que todo este proceso pueda
-            desarrollarse la pr&oacute;xima vez:<br>
-            <br>
+            desarrollarse la pr&oacute;xima vez:<br />
+            <br />
             <div class="commandline">cvs tag -RF <span class="style1">MOODLE_XX_MERGED</span></div>
           </li>
         </ol>
       </ol>
-      <p><br>
+      <p><br />
         Por &uacute;ltimo, los valores de la variable <em>$version</em> en todos
         los ficheros version.php de Moodle en la ramas NO deben ser actualizados
         en la medida de lo posible (excepto el &uacute;ltimo d&iacute;gito si
@@ -332,21 +332,21 @@ update -dP</div>
             de que es realmente necesaria! </li>
           <li>Crea una nueva etiqueta en el <strong>tronco</strong> (para todo
             Moodle) llamada <span class="style1">MOODLE_XX_WIDGET_PRE</span>
-		  <br>
-		  <br>
+		  <br />
+		  <br />
           <div class="commandline">cvs tag -R <span class="style1">MOODLE_XX_WIDGET_PRE</span></div></li>
           <li>Crea tu rama llamada <span class="style1">MOODLE_XX_WIDGET</span>
-		  <br>
-		  <br>
+		  <br />
+		  <br />
             <div class="commandline">cvs tag -Rb <span class="style1">MOODLE_XX_WIDGET</span></strong></div></li>
           <li>Trabaja en esa rama hasta que la funcionalidad sea razonablemente
-            estable. Envia los cambios al servidor CVS cuando estimes oportuno:<br>
-		  <br>
+            estable. Envia los cambios al servidor CVS cuando estimes oportuno:<br />
+		  <br />
           <div class="commandline">cvs commit</div></li>
           <li>Cuando la funcionalidad est&eacute; lista, combina toda la rama
             en el tronco, soluciona los posibles conflictos, gu&aacute;rdala
-            en el tronco y abandona la rama:<br>
-		  <br>
+            en el tronco y abandona la rama:<br />
+		  <br />
             <div class="commandline">
             <strong>cvs update -dPA</strong><br />
             <strong>cvs update -kk -j <span class="style1">MOODLE_XX_WIDGET</span></strong><br />

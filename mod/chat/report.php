@@ -46,7 +46,7 @@
 
         if ($groupid) {
             $groupselect = " AND groupid = '$currentgroup'";
-            $groupparam = "&groupid=$currentgroup";
+            $groupparam = "&amp;groupid=$currentgroup";
         } else {
             $groupselect = "";
             $groupparam = "";
@@ -60,7 +60,7 @@
 
         if ($deletesession and $isteacheredit) {
             notice_yesno(get_string("deletesessionsure", "chat"), 
-                         "report.php?id=$cm->id&deletesession=1&confirmdelete=1&start=$start&end=$end$groupparam", 
+                         "report.php?id=$cm->id&amp;deletesession=1&amp;confirmdelete=1&amp;start=$start&amp;end=$end$groupparam", 
                          "report.php?id=$cm->id");
         }
 
@@ -108,7 +108,7 @@
 
     if ($currentgroup) {
         $groupselect = " AND groupid = '$currentgroup'";
-        $groupparam = "&groupid=$currentgroup";
+        $groupparam = "&amp;groupid=$currentgroup";
     } else {
         $groupselect = "";
         $groupparam = "";
@@ -178,9 +178,9 @@
                 }
 
                 echo "<p align=\"right\">";
-                echo "<a href=\"report.php?id=$cm->id&start=$sessionstart&end=$sessionend$groupparam\">$strseesession</a>";
+                echo "<a href=\"report.php?id=$cm->id&amp;start=$sessionstart&amp;end=$sessionend$groupparam\">$strseesession</a>";
                 if ($isteacheredit) {
-                    echo "<br /><a href=\"report.php?id=$cm->id&start=$sessionstart&end=$sessionend&deletesession=1$groupparam\">$strdeletesession</a>";
+                    echo "<br /><a href=\"report.php?id=$cm->id&amp;start=$sessionstart&amp;end=$sessionend&amp;deletesession=1$groupparam\">$strdeletesession</a>";
                 }
                 echo "</p>";
                 print_simple_box_end();

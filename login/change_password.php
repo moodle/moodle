@@ -45,15 +45,15 @@
             $strpasswordchanged = get_string("passwordchanged");
 
             if ($course->id) {
-                add_to_log($course->id, "user", "change password", "view.php?id=$user->id&course=$course->id", "$user->id");
+                add_to_log($course->id, "user", "change password", "view.php?id=$user->id&amp;course=$course->id", "$user->id");
                 $fullname = fullname($USER, true);
                 print_header($strpasswordchanged, $strpasswordchanged,
                              "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> ->
                               <a href=\"$CFG->wwwroot/user/index.php?id=$course->id\">".get_string("participants")."</a> ->
-                              <a href=\"$CFG->wwwroot/user/view.php?id=$USER->id&course=$course->id\">$fullname</a> -> $strpasswordchanged", $focus);
-                notice($strpasswordchanged, "$CFG->wwwroot/user/view.php?id=$USER->id&course=$id");
+                              <a href=\"$CFG->wwwroot/user/view.php?id=$USER->id&amp;course=$course->id\">$fullname</a> -> $strpasswordchanged", $focus);
+                notice($strpasswordchanged, "$CFG->wwwroot/user/view.php?id=$USER->id&amp;course=$id");
             } else {
-                add_to_log(SITEID, "user", "change password", "view.php?id=$user->id&course=".SITEID, "$course->id");
+                add_to_log(SITEID, "user", "change password", "view.php?id=$user->id&amp;course=".SITEID, "$course->id");
                 print_header($strpasswordchanged, $strpasswordchanged, $strpasswordchanged, "");
                 notice($strpasswordchanged, "$CFG->wwwroot/");
             }
@@ -85,7 +85,7 @@
         print_header($strchangepassword, $strchangepassword,
                      "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> ->
                       <a href=\"$CFG->wwwroot/user/index.php?id=$course->id\">".get_string("participants")."</a> ->
-                      <a href=\"$CFG->wwwroot/user/view.php?id=$USER->id&course=$course->id\">$fullname</a> -> $strchangepassword", $focus);
+                      <a href=\"$CFG->wwwroot/user/view.php?id=$USER->id&amp;course=$course->id\">$fullname</a> -> $strchangepassword", $focus);
     } else {
         print_header($strchangepassword, $strchangepassword, $strchangepassword, $focus);
     }

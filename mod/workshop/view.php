@@ -56,7 +56,7 @@
 				$action = "teachersview";
 			}
 			else {
-    			redirect("assessments.php?action=editelements&id=$cm->id");
+    			redirect("assessments.php?action=editelements&amp;id=$cm->id");
 			}
 		}
 	}
@@ -337,11 +337,11 @@
                         "3. ".get_string("phase3", "workshop", $course->student), 
                         "4. ".get_string("phase4", "workshop", $course->student), 
                         "5. ".get_string("phase5", "workshop"));
-        $tabs->urls = array("view.php?id=$cm->id&action=setupassignment", 
-            "view.php?id=$cm->id&action=allowsubmissions",
-            "view.php?id=$cm->id&action=allowboth",
-            "view.php?id=$cm->id&action=allowassessments",
-            "view.php?id=$cm->id&action=makefinalgradesavailable");
+        $tabs->urls = array("view.php?id=$cm->id&amp;action=setupassignment", 
+            "view.php?id=$cm->id&amp;action=allowsubmissions",
+            "view.php?id=$cm->id&amp;action=allowboth",
+            "view.php?id=$cm->id&amp;action=allowassessments",
+            "view.php?id=$cm->id&amp;action=makefinalgradesavailable");
         if ($workshop->phase) { // phase 1 or more
             $tabs->highlight = $workshop->phase - 1;
         } else {
@@ -353,17 +353,17 @@
                 case 0:
                 case 1: // set up assignment
                     if ($workshop->nelements) {
-                        echo "<p><b><a href=\"assessments.php?id=$cm->id&action=editelements\">".
+                        echo "<p><b><a href=\"assessments.php?id=$cm->id&amp;action=editelements\">".
                           get_string("amendassessmentelements", "workshop")."</a></b> \n";
                         helpbutton("elements", get_string("amendassessmentelements", "workshop"), "workshop");
                     }
                     if ($workshop->ntassessments) { 
                         // if teacher examples show submission and assessment links
-                        echo "<p><b><a href=\"view.php?id=$cm->id&action=submitassignment\">".
+                        echo "<p><b><a href=\"view.php?id=$cm->id&amp;action=submitassignment\">".
                             get_string("submitexampleassignment", "workshop")."</a></b> \n";
                         helpbutton("submissionofexamples", get_string("submitexampleassignment", "workshop"),
                                 "workshop");
-                        echo "<p><b><a href=\"submissions.php?id=$cm->id&action=listforassessmentteacher\">".
+                        echo "<p><b><a href=\"submissions.php?id=$cm->id&amp;action=listforassessmentteacher\">".
                               get_string("teachersubmissionsforassessment", "workshop", 
                                   workshop_count_teacher_submissions_for_assessment($workshop, $USER)).
                               "</a></b> \n";
@@ -377,18 +377,18 @@
                 case 4:
 					if ($workshop->ntassessments) { // if teacher examples show student assessments link
 						if ($n = workshop_count_teacher_submissions_for_assessment($workshop, $USER)) {
-                            echo "<p><b><a href=\"submissions.php?id=$cm->id&action=listforassessmentteacher\">".
+                            echo "<p><b><a href=\"submissions.php?id=$cm->id&amp;action=listforassessmentteacher\">".
 							        get_string("teachersubmissionsforassessment", "workshop", $n)."</a></b> \n";
     						helpbutton("assessmentofexamples", get_string("teachersubmissionsforassessment", 
                                     "workshop"), "workshop");
                         }
 					}
-					echo "<p><b><a href=\"assessments.php?id=$cm->id&action=gradeallassessments\">".
+					echo "<p><b><a href=\"assessments.php?id=$cm->id&amp;action=gradeallassessments\">".
 						  get_string("ungradedassessments", "workshop", 
 						  workshop_count_ungraded_assessments($workshop))."</a></b> \n";
 					helpbutton("ungradedassessments", 
                             get_string("ungradedassessments", "workshop"), "workshop");
-                    echo "<p><b><a href=\"submissions.php?id=$cm->id&action=listforassessmentstudent\">".
+                    echo "<p><b><a href=\"submissions.php?id=$cm->id&amp;action=listforassessmentstudent\">".
                           get_string("studentsubmissionsforassessment", "workshop", 
                           workshop_count_student_submissions_for_assessment($workshop, $USER))."</a></b> \n";
                     helpbutton("gradingsubmissions", 
@@ -398,25 +398,25 @@
                 case 5: // Show "Final" Grades
 					if ($workshop->ntassessments) { // if teacher examples show student assessments link
 						if ($n = workshop_count_teacher_submissions_for_assessment($workshop, $USER)) {
-                            echo "<p><b><a href=\"submissions.php?id=$cm->id&action=listforassessmentteacher\">".
+                            echo "<p><b><a href=\"submissions.php?id=$cm->id&amp;action=listforassessmentteacher\">".
 							        get_string("teachersubmissionsforassessment", "workshop", $n)."</a></b> \n";
     						helpbutton("assessmentofexamples", get_string("teachersubmissionsforassessment", 
                                     "workshop"), "workshop");
                         }
 					}
-					echo "<p><b><a href=\"assessments.php?id=$cm->id&action=gradeallassessments\">".
+					echo "<p><b><a href=\"assessments.php?id=$cm->id&amp;action=gradeallassessments\">".
 						  get_string("ungradedassessments", "workshop", 
 						  workshop_count_ungraded_assessments($workshop))."</a></b> \n";
 					helpbutton("ungradedassessments", get_string("ungradedassessments", "workshop"), "workshop");
-                    echo "<p><b><a href=\"submissions.php?id=$cm->id&action=listforassessmentstudent\">".
+                    echo "<p><b><a href=\"submissions.php?id=$cm->id&amp;action=listforassessmentstudent\">".
                           get_string("studentsubmissionsforassessment", "workshop", 
                           workshop_count_student_submissions_for_assessment($workshop, $USER))."</a></b> \n";
                     helpbutton("gradingsubmissions", 
                             get_string("studentsubmissionsforassessment", "workshop"), "workshop");
-                    print_heading("<a href=\"submissions.php?id=$cm->id&action=displayfinalgrades\">".
+                    print_heading("<a href=\"submissions.php?id=$cm->id&amp;action=displayfinalgrades\">".
                           get_string("displayoffinalgrades", "workshop")."</a>");
         }
-        print_heading("<a href=\"submissions.php?id=$cm->id&action=adminlist\">".
+        print_heading("<a href=\"submissions.php?id=$cm->id&amp;action=adminlist\">".
             get_string("administration")."</a>");
     }
     

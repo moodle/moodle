@@ -4,7 +4,7 @@
 
 $string['about'] = 'Om denne editor';
 $string['absbottom'] = 'Absolut Bund';
-$string['absmiddle'] = 'Absolut midt';
+$string['middle'] = 'Absolut midt';
 $string['address'] = 'Adresse';
 $string['alignment'] = 'Placering';
 $string['alternatetext'] = 'Alternativ tekst';

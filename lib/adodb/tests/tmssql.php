@@ -32,11 +32,11 @@ include_once('DB.php');
 	
 	$dsn = "mssql://$username:$password@$hostname/$databasename";
 	$conn = &DB::connect($dsn);
-	print "date=".$conn->GetOne('select getdate()')."<br>";
+	print "date=".$conn->GetOne('select getdate()')."<br />";
 	@$conn->query('create table tester (id integer)');
 	print "<p>Delete</p>"; flush();
 	$rs = $conn->query('delete from tester');
-	print "date=".$conn->GetOne('select getdate()')."<br>";
+	print "date=".$conn->GetOne('select getdate()')."<br />";
 }
 
 function tadodb()
@@ -47,11 +47,11 @@ include_once('../adodb.inc.php');
 	$conn = NewADOConnection('mssql');
 	$conn->Connect('JAGUAR\vsdotnet','adodb','natsoft','northwind');
 //	$conn->debug=1;
-	print "date=".$conn->GetOne('select getdate()')."<br>";
+	print "date=".$conn->GetOne('select getdate()')."<br />";
 	$conn->Execute('create table tester (id integer)');
 	print "<p>Delete</p>"; flush();
 	$rs = $conn->Execute('delete from tester');
-	print "date=".$conn->GetOne('select getdate()')."<br>";
+	print "date=".$conn->GetOne('select getdate()')."<br />";
 }
 ?>
 <a href=tmssql.php?do=tmssql>mssql</a>

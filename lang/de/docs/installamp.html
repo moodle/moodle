@@ -7,7 +7,7 @@
 <body bgcolor="#FFFFFF">
 <h1>Installation von Apache, MySQL und PHP</h1>
 <blockquote>
-  <p>Moodle <br>
+  <p>Moodle <br />
   Moodle ist in einer Scriptsprache namens PHP geschrieben, und speichert die meisten Daten in einer Datenbank. Die favorisierte Datenbank ist MySQL. Bevor Moodle installiert werden kann ist es erforderlich eine PHP-Installation eingerichtet zu haben und eine Datenbank auf einem WebServer einzurichten. Diese Softwarepakete zu installieren kann agnz sch&ouml;n knifflig sein, diese Seite erkl&auml;rt mit einfachen Worten wie dies auf verschiedenen Plattformen m&ouml;glich ist:</p>
   <ul>
     <li><a href="#host" class="questionlink">Hosting Service</a></li>
@@ -73,18 +73,18 @@
       <li> Erstellen Sie einen leeren Ordner an anderer Stelle f&uuml;r die Ablage von hochgeladenen Dateien in Moodle, z.B. : <strong>C:\moodledata</strong></li>
       <li> Gehen Sie in Ihen Moodle-Ordner und erstellen Sie eine Kopie der Datei config-dist.php mit dem Namen config.php</li>
       <li> Bearbeiten Sie config.php mit einem Texteditor (z.B. mit Notepad oder einem HTML Editor). </li>
-      <li>Geben Sie folgenden Datenbankinformationen ein:<br>
-      $CFG-&gt;dbtype = 'mysql';<br>
-      $CFG-&gt;dbhost = 'localhost';<br>
-      $CFG-&gt;dbname = 'moodle';<br>
-      $CFG-&gt;dbuser = 'root'; <br>
-      $CFG-&gt;dbpass = '';<br>
-      $CFG-&gt;dbpersist = true;<br>
+      <li>Geben Sie folgenden Datenbankinformationen ein:<br />
+      $CFG-&gt;dbtype = 'mysql';<br />
+      $CFG-&gt;dbhost = 'localhost';<br />
+      $CFG-&gt;dbname = 'moodle';<br />
+      $CFG-&gt;dbuser = 'root'; <br />
+      $CFG-&gt;dbpass = '';<br />
+      $CFG-&gt;dbpersist = true;<br />
       $CFG-&gt;prefix = 'mdl_';</li>
-      <li>Und f&uuml;gen Sie die Pfade ein:<br>
+      <li>Und f&uuml;gen Sie die Pfade ein:<br />
       $CFG-&gt;wwwroot = 'http://localhost/moodle'; // Use an external address
-      if you know it. <br>
-      $CFG-&gt;dirroot = 'C:\Program Files\EasyPHP\www\moodle'; <br>
+      if you know it. <br />
+      $CFG-&gt;dirroot = 'C:\Program Files\EasyPHP\www\moodle'; <br />
       $CFG-&gt;dataroot = 'C:\moodledata';</li>
       <li>Speichern  Sie die config.php - alle anderen Einstellungen k&ouml;nnen Sie ignorieren.</li>
       <li>Sie sind nun fast fertig. Die weiteren Schritte des Setup nehmen Sie mit Ihrem Browser vor. Rufen Sie <a href="http://localhost/moodle/admin/" target="_blank">http://localhost/moodle/admin/</a>

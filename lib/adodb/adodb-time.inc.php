@@ -233,7 +233,7 @@ if you want PHP to handle negative timestamps between 1901 to 1969.
 
 - 27 Feb 2003 0.07
 All negative numbers handled by adodb now because of RH 7.3+ problems.
-See http://bugs.php.net/bug.php?id=20048&edit=2
+See http://bugs.php.net/bug.php?id=20048&amp;edit=2
 
 - 4 Feb 2003 0.06
 Fixed a typo, 1852 changed to 1582! This means that pre-1852 dates
@@ -287,7 +287,7 @@ define('ADODB_DATE_VERSION',0.15);
 	echo (mktime(0, 0, 0, 1, 1, 1960));  // prints -1
 	
 	References:
-	 http://bugs.php.net/bug.php?id=20048&edit=2
+	 http://bugs.php.net/bug.php?id=20048&amp;edit=2
 	 http://lists.debian.org/debian-glibc/2002/debian-glibc-200205/msg00010.html
 */
 
@@ -298,7 +298,7 @@ function adodb_date_test_date($y1,$m)
 	//print " $y1/$m ";
 	$t = adodb_mktime(0,0,0,$m,13,$y1);
 	if ("$y1-$m-13 00:00:00" != adodb_date('Y-n-d H:i:s',$t)) {
-		print "<b>$y1 error</b><br>";
+		print "<b>$y1 error</b><br />";
 		return false;
 	}
 	return true;
@@ -318,57 +318,57 @@ function adodb_date_test()
 	if (!defined('ADODB_TEST_DATES')) define('ADODB_TEST_DATES',1);
 	
 	$t = adodb_mktime(0,0,0);
-	if (!(adodb_date('Y-m-d') == date('Y-m-d'))) print 'Error in '.adodb_mktime(0,0,0).'<br>';
+	if (!(adodb_date('Y-m-d') == date('Y-m-d'))) print 'Error in '.adodb_mktime(0,0,0).'<br />';
 	
 	$t = adodb_mktime(0,0,0,6,1,2102);
-	if (!(adodb_date('Y-m-d',$t) == '2102-06-01')) print 'Error in '.adodb_date('Y-m-d',$t).'<br>';
+	if (!(adodb_date('Y-m-d',$t) == '2102-06-01')) print 'Error in '.adodb_date('Y-m-d',$t).'<br />';
 	
 	$t = adodb_mktime(0,0,0,2,1,2102);
-	if (!(adodb_date('Y-m-d',$t) == '2102-02-01')) print 'Error in '.adodb_date('Y-m-d',$t).'<br>';
+	if (!(adodb_date('Y-m-d',$t) == '2102-02-01')) print 'Error in '.adodb_date('Y-m-d',$t).'<br />';
 	
 	
 	print "<p>Testing gregorian <=> julian conversion<p>";
 	$t = adodb_mktime(0,0,0,10,11,1492);
 	//http://www.holidayorigins.com/html/columbus_day.html - Friday check
-	if (!(adodb_date('D Y-m-d',$t) == 'Fri 1492-10-11')) print 'Error in Columbus landing<br>';
+	if (!(adodb_date('D Y-m-d',$t) == 'Fri 1492-10-11')) print 'Error in Columbus landing<br />';
 	
 	$t = adodb_mktime(0,0,0,2,29,1500);
-	if (!(adodb_date('Y-m-d',$t) == '1500-02-29')) print 'Error in julian leap years<br>';
+	if (!(adodb_date('Y-m-d',$t) == '1500-02-29')) print 'Error in julian leap years<br />';
 	
 	$t = adodb_mktime(0,0,0,2,29,1700);
-	if (!(adodb_date('Y-m-d',$t) == '1700-03-01')) print 'Error in gregorian leap years<br>';
+	if (!(adodb_date('Y-m-d',$t) == '1700-03-01')) print 'Error in gregorian leap years<br />';
 	
 	print  adodb_mktime(0,0,0,10,4,1582).' ';
 	print adodb_mktime(0,0,0,10,15,1582);
 	$diff = (adodb_mktime(0,0,0,10,15,1582) - adodb_mktime(0,0,0,10,4,1582));
-	if ($diff != 3600*24) print " <b>Error in gregorian correction = ".($diff/3600/24)." days </b><br>";
+	if ($diff != 3600*24) print " <b>Error in gregorian correction = ".($diff/3600/24)." days </b><br />";
 		
-	print " 15 Oct 1582, Fri=".(adodb_dow(1582,10,15) == 5 ? 'Fri' : '<b>Error</b>')."<br>";
-	print " 4 Oct 1582, Thu=".(adodb_dow(1582,10,4) == 4 ? 'Thu' : '<b>Error</b>')."<br>";
+	print " 15 Oct 1582, Fri=".(adodb_dow(1582,10,15) == 5 ? 'Fri' : '<b>Error</b>')."<br />";
+	print " 4 Oct 1582, Thu=".(adodb_dow(1582,10,4) == 4 ? 'Thu' : '<b>Error</b>')."<br />";
 	
 	print "<p>Testing overflow<p>";
 	
 	$t = adodb_mktime(0,0,0,3,33,1965);
-	if (!(adodb_date('Y-m-d',$t) == '1965-04-02')) print 'Error in day overflow 1 <br>';
+	if (!(adodb_date('Y-m-d',$t) == '1965-04-02')) print 'Error in day overflow 1 <br />';
 	$t = adodb_mktime(0,0,0,4,33,1971);
-	if (!(adodb_date('Y-m-d',$t) == '1971-05-03')) print 'Error in day overflow 2 <br>';
+	if (!(adodb_date('Y-m-d',$t) == '1971-05-03')) print 'Error in day overflow 2 <br />';
 	$t = adodb_mktime(0,0,0,1,60,1965);
-	if (!(adodb_date('Y-m-d',$t) == '1965-03-01')) print 'Error in day overflow 3 '.adodb_date('Y-m-d',$t).' <br>';
+	if (!(adodb_date('Y-m-d',$t) == '1965-03-01')) print 'Error in day overflow 3 '.adodb_date('Y-m-d',$t).' <br />';
 	$t = adodb_mktime(0,0,0,12,32,1965);
-	if (!(adodb_date('Y-m-d',$t) == '1966-01-01')) print 'Error in day overflow 4 '.adodb_date('Y-m-d',$t).' <br>';
+	if (!(adodb_date('Y-m-d',$t) == '1966-01-01')) print 'Error in day overflow 4 '.adodb_date('Y-m-d',$t).' <br />';
 	$t = adodb_mktime(0,0,0,12,63,1965);
-	if (!(adodb_date('Y-m-d',$t) == '1966-02-01')) print 'Error in day overflow 5 '.adodb_date('Y-m-d',$t).' <br>';
+	if (!(adodb_date('Y-m-d',$t) == '1966-02-01')) print 'Error in day overflow 5 '.adodb_date('Y-m-d',$t).' <br />';
 	$t = adodb_mktime(0,0,0,13,3,1965);
-	if (!(adodb_date('Y-m-d',$t) == '1966-01-03')) print 'Error in mth overflow 1 <br>';
+	if (!(adodb_date('Y-m-d',$t) == '1966-01-03')) print 'Error in mth overflow 1 <br />';
 	
 	print "Testing 2-digit => 4-digit year conversion<p>";
-	if (adodb_year_digit_check(00) != 2000) print "Err 2-digit 2000<br>";
-	if (adodb_year_digit_check(10) != 2010) print "Err 2-digit 2010<br>";
-	if (adodb_year_digit_check(20) != 2020) print "Err 2-digit 2020<br>";
-	if (adodb_year_digit_check(30) != 2030) print "Err 2-digit 2030<br>";
-	if (adodb_year_digit_check(40) != 1940) print "Err 2-digit 1940<br>";
-	if (adodb_year_digit_check(50) != 1950) print "Err 2-digit 1950<br>";
-	if (adodb_year_digit_check(90) != 1990) print "Err 2-digit 1990<br>";
+	if (adodb_year_digit_check(00) != 2000) print "Err 2-digit 2000<br />";
+	if (adodb_year_digit_check(10) != 2010) print "Err 2-digit 2010<br />";
+	if (adodb_year_digit_check(20) != 2020) print "Err 2-digit 2020<br />";
+	if (adodb_year_digit_check(30) != 2030) print "Err 2-digit 2030<br />";
+	if (adodb_year_digit_check(40) != 1940) print "Err 2-digit 1940<br />";
+	if (adodb_year_digit_check(50) != 1950) print "Err 2-digit 1950<br />";
+	if (adodb_year_digit_check(90) != 1990) print "Err 2-digit 1990<br />";
 	
 	// Test string formating
 	print "<p>Testing date formating</p>";
@@ -376,7 +376,7 @@ function adodb_date_test()
 	$s1 = date($fmt,0);
 	$s2 = adodb_date($fmt,0);
 	if ($s1 != $s2) {
-		print " date() 0 failed<br>$s1<br>$s2<br>";
+		print " date() 0 failed<br />$s1<br />$s2<br />";
 	}
 	flush();
 	for ($i=100; --$i > 0; ) {
@@ -384,7 +384,7 @@ function adodb_date_test()
 		$ts = 3600.0*((rand()%60000)+(rand()%60000))+(rand()%60000);
 		$s1 = date($fmt,$ts);
 		$s2 = adodb_date($fmt,$ts);
-		//print "$s1 <br>$s2 <p>";
+		//print "$s1 <br />$s2 <p>";
 		$pos = strcmp($s1,$s2);
 
 		if (($s1) != ($s2)) {
@@ -394,9 +394,9 @@ function adodb_date_test()
 					break;
 				}
 			}
-			print "<b>Error date(): $ts<br><pre> 
+			print "<b>Error date(): $ts<br /><pre> 
 &nbsp; \"$s1\" (date len=".strlen($s1).")
-&nbsp; \"$s2\" (adodb_date len=".strlen($s2).")</b></pre><br>";
+&nbsp; \"$s2\" (adodb_date len=".strlen($s2).")</b></pre><br />";
 			$fail = true;
 		}
 		
@@ -404,9 +404,9 @@ function adodb_date_test()
 		$a2 = adodb_getdate($ts);
 		$rez = array_diff($a1,$a2);
 		if (sizeof($rez)>0) {
-			print "<b>Error getdate() $ts</b><br>";
+			print "<b>Error getdate() $ts</b><br />";
 				print_r($a1);
-			print "<br>";
+			print "<br />";
 				print_r($a2);
 			print "<p>";
 			$fail = true;
@@ -452,7 +452,7 @@ function adodb_date_test()
 		}
 		$cnt += 1;
 	}
-	echo "Tested $cnt dates<br>";
+	echo "Tested $cnt dates<br />";
 	if (!$fail) print "<p>Passed !</p>";
 	else print "<p><b>Failed</b> :-(</p>";
 }

@@ -47,7 +47,7 @@ if (1) {
 	$db->PConnect('','scott','natsoft');
 	$db->debug = true;
 	$db->Execute("delete from emp where ename='John'");
-	print $db->Affected_Rows().'<BR>';
+	print $db->Affected_Rows().'<br />';
 	$stmt = &$db->Prepare('insert into emp (empno, ename) values (:empno, :ename)');
 	$rs = $db->Execute($stmt,array('empno'=>4321,'ename'=>'John'));
 	// prepare not quite ready for prime time

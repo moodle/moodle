@@ -29,7 +29,7 @@ if (!$c1->PConnect('','scott','tiger'))
 	die("Cannot connect to server");
 $c1->debug=1;
 $rs = $c1->Execute('select rownum, p1.firstname,p2.lastname,p2.firstname,p1.lastname from adoxyz p1, adoxyz p2');
-print "Records=".$rs->RecordCount()."<br><pre>";
+print "Records=".$rs->RecordCount()."<br /><pre>";
 //$rs->_array = false;
 //$rs->connection = false;
 //print_r($rs);

@@ -112,11 +112,11 @@ $string['noassessmentsdone'] = 'Ocenitev ni izvedena';
 $string['nosubmission'] = 'Ni prispevkov';
 $string['nosubmissionsavailableforassessment'] = 'Ni prispevkov za ocenitev';
 $string['notavailable'] = 'Ni razpoložljivo';
-$string['noteonassessmentelements'] = 'Skupno oceno tvorijo elementi ocene.<BR>
-	S èlenitvijo bo ocenjevanje lažje in bolj konsistentno. Kot predavatelj morate dodati  <BR>
-	elemente ocene preden so naloge dodeljene študentom. Elemente boste dodali <BR>
-	s klikom na nalogo v predmetu. Èe ni doloèen še noben element ocene,<BR>
-	ga boste dodali. Število elementov boste spemenili na obrazcu Uredi naloge,<BR>
+$string['noteonassessmentelements'] = 'Skupno oceno tvorijo elementi ocene.<br />
+	S èlenitvijo bo ocenjevanje lažje in bolj konsistentno. Kot predavatelj morate dodati  <br />
+	elemente ocene preden so naloge dodeljene študentom. Elemente boste dodali <br />
+	s klikom na nalogo v predmetu. Èe ni doloèen še noben element ocene,<br />
+	ga boste dodali. Število elementov boste spemenili na obrazcu Uredi naloge,<br />
 	vsebino elementov pa boste dodpolnili na obrazcu Vodenje nalog. ';
 $string['notgraded'] = 'Ni ocenjeno';
 $string['notitlegiven'] = 'Ni naslova';
@@ -218,7 +218,7 @@ $string['verypoor'] = 'Zelo šibko';
 $string['view'] = 'Preglej';
 $string['viewassessmentofteacher'] = 'Preglej ocenitve avtorja: $a';
 $string['viewotherassessments'] = 'Preglej druge ocenitve';
-$string['warningonamendingelements'] = 'OPOZORILO: Oddane so ocenitve. <BR>Ne spreminjajte števila elementov, ocenjevalne lestvice ali uteži.';
+$string['warningonamendingelements'] = 'OPOZORILO: Oddane so ocenitve. <br />Ne spreminjajte števila elementov, ocenjevalne lestvice ali uteži.';
 $string['weight'] = 'Utež';
 $string['weightederrorcount'] = 'Uteženi števec napak: $a';
 $string['weightforbias'] = 'Utež za pristranost';

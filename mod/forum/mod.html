@@ -41,7 +41,6 @@
 ?>
 <form name="form" method="post" action="mod.php">
 <table cellpadding="5">
-<tr>
 <tr valign="top">
     <td align="right"><p><b><?php print_string("forumname", "forum")?>:</b></p></td>
     <td>
@@ -167,7 +166,7 @@
     <td align="right" valign="top"><p><b><?php print_string("allowratings", "forum") ?>:</b></p></td>
     <td>
         <?php
-            echo "<script>";
+            echo "<script type=\"text/javascript\">";
             echo "  var subitemstime = ['startday','startmonth','startyear','starthour', 'startminute',".
                                        "'finishday','finishmonth','finishyear','finishhour','finishminute'];";
             echo "  var subitemsall = ['assessed', 'assesspublic', 'ratingtime', 'scale', ".
@@ -237,12 +236,12 @@
             echo "<input type=\"hidden\" name=\"hfinishhour\" value=\"0\" />";
             echo "<input type=\"hidden\" name=\"hfinishminute\" value=\"0\" />";
 
-            echo "<script>";
+            echo "<script type=\"text/javascript\">";
             echo "lockoptions('form','userating', subitemsall);";
             echo "</script>";
 
             if (empty($form->ratingtime)) {
-                echo "<script>";
+                echo "<script type=\"text/javascript\">";
                 echo "lockoptions('form','ratingtime', subitemstime);";
                 echo "</script>";
             }

@@ -53,9 +53,9 @@
             for ($i=1; $i<$numdirs; $i++) {
                $navigation .= " -> ";
                $link .= "/".urlencode($dirs[$i]);
-               $navigation .= "<a href=\"".$_SERVER['PHP_SELF']."?id=$course->id&wdir=$link\">".$dirs[$i]."</a>";
+               $navigation .= "<a href=\"".$_SERVER['PHP_SELF']."?id=$course->id&amp;wdir=$link\">".$dirs[$i]."</a>";
             }
-            $fullnav = "<a href=\"".$_SERVER['PHP_SELF']."?id=$course->id&wdir=/\">$strfiles</a> $navigation";
+            $fullnav = "<a href=\"".$_SERVER['PHP_SELF']."?id=$course->id&amp;wdir=/\">$strfiles</a> $navigation";
         }
 
         print_header();
@@ -167,7 +167,7 @@
                 foreach ($USER->filelist as $file) {
                     $fullfile = $basedir.$file;
                     if (! fulldelete($fullfile)) {
-                        echo "<BR>Error: Could not delete: $fullfile";
+                        echo "<br />Error: Could not delete: $fullfile";
                     }
                 }
                 clearfilelist();
@@ -183,8 +183,8 @@
                     print_simple_box_end();
                     echo "<br />";
                     notice_yesno (get_string("deletecheckfiles"), 
-                                "".basename($_SERVER['PHP_SELF'])."?id=$id&wdir=$wdir&action=delete&confirm=1",
-                                "".basename($_SERVER['PHP_SELF'])."?id=$id&wdir=$wdir&action=cancel");
+                                "".basename($_SERVER['PHP_SELF'])."?id=$id&amp;wdir=$wdir&amp;action=delete&amp;confirm=1",
+                                "".basename($_SERVER['PHP_SELF'])."?id=$id&amp;wdir=$wdir&amp;action=cancel");
                 } else {
                     displaydir($wdir);
                 }
@@ -386,7 +386,7 @@
                     print_simple_box_start("center");
                     printfilelist($USER->filelist);
                     print_simple_box_end();
-                    echo "<BR>";
+                    echo "<br />";
                     echo "<P ALIGN=CENTER>".get_string("whattocallzip");
                     echo "<TABLE><TR><TD>";
                     echo "<FORM ACTION=\"".$_SERVER['PHP_SELF']."\" METHOD=post NAME=form>";
@@ -510,7 +510,7 @@
                     }
                     echo "</table>";
                 }
-                echo "<br><center><form action=\"".$_SERVER['PHP_SELF']."\" method=get>";
+                echo "<br /><center><form action=\"".$_SERVER['PHP_SELF']."\" method=get>";
                 echo " <INPUT TYPE=hidden NAME=id VALUE=$id>";
                 echo " <INPUT TYPE=hidden NAME=wdir VALUE=$wdir>";
                 echo " <INPUT TYPE=hidden NAME=action VALUE=cancel>";
@@ -626,7 +626,7 @@ function printfilelist($filelist) {
 
     foreach ($filelist as $file) {
         if (is_dir($basedir.$file)) {
-            echo "<IMG SRC=\"$CFG->pixpath/f/folder.gif\" HEIGHT=16 WIDTH=16> $file<BR>";
+            echo "<img src=\"$CFG->pixpath/f/folder.gif\" height=\"16\" width=\"16\" alt=\"\" /> $file<br />";
             $subfilelist = array();
             $currdir = opendir($basedir.$file);
             while ($subfile = readdir($currdir)) { 
@@ -638,7 +638,7 @@ function printfilelist($filelist) {
 
         } else { 
             $icon = mimeinfo("icon", $file);
-            echo "<IMG SRC=\"$CFG->pixpath/f/$icon\"  HEIGHT=16 WIDTH=16> $file<BR>";
+            echo "<img src=\"$CFG->pixpath/f/$icon\"  height=\"16\" width=\"16\" alt=\"\" /> $file<br />";
         }
     }
 }
@@ -723,10 +723,10 @@ function displaydir ($wdir) {
             echo "<TR>";
 
             print_cell("center", "<INPUT TYPE=checkbox NAME=\"file$count\" VALUE=\"$fileurl\">");
-            print_cell("left", "<A HREF=\"".basename($_SERVER['PHP_SELF'])."?id=$id&wdir=$fileurl\"><IMG SRC=\"$CFG->pixpath/f/folder.gif\" HEIGHT=16 WIDTH=16 BORDER=0 ALT=\"Folder\"></A> <A HREF=\"".basename($_SERVER['PHP_SELF'])."?id=$id&wdir=$fileurl\">".htmlspecialchars($dir)."</A>");
+            print_cell("left", "<A HREF=\"".basename($_SERVER['PHP_SELF'])."?id=$id&amp;wdir=$fileurl\"><img src=\"$CFG->pixpath/f/folder.gif\" height=\"16\" width=\"16\" border=\"0\" alt=\"Folder\" /></A> <A HREF=\"".basename($_SERVER['PHP_SELF'])."?id=$id&amp;wdir=$fileurl\">".htmlspecialchars($dir)."</A>");
             print_cell("right", "-");
             print_cell("right", $filedate);
-            print_cell("right", "<A HREF=\"".basename($_SERVER['PHP_SELF'])."?id=$id&wdir=$wdir&file=$filesafe&action=rename\">$strrename</A>");
+            print_cell("right", "<A HREF=\"".basename($_SERVER['PHP_SELF'])."?id=$id&amp;wdir=$wdir&amp;file=$filesafe&amp;action=rename\">$strrename</A>");
     
             echo "</TR>";
         }
@@ -756,7 +756,7 @@ function displaydir ($wdir) {
                 $ffurl = "/file.php?file=/$id$fileurl";
             }
             link_to_popup_window ($ffurl, "display", 
-                                  "<IMG SRC=\"$CFG->pixpath/f/$icon\" HEIGHT=16 WIDTH=16 BORDER=0 ALT=\"File\">", 
+                                  "<img src=\"$CFG->pixpath/f/$icon\" height=\"16\" width=\"16\" border=\"0\" alt=\"File\" />", 
                                   480, 640);
             echo "<font size=\"-1\" face=\"Arial, Helvetica\">";
             link_to_popup_window ($ffurl, "display", 
@@ -769,16 +769,16 @@ function displaydir ($wdir) {
             print_cell("right", $filedate);
 
             if ($icon == "text.gif" || $icon == "html.gif") {
-                $edittext = "<a href=\"".basename($_SERVER['PHP_SELF'])."?id=$id&wdir=$wdir&file=$fileurl&action=edit\">$stredit</a>";
+                $edittext = "<a href=\"".basename($_SERVER['PHP_SELF'])."?id=$id&amp;wdir=$wdir&amp;file=$fileurl&amp;action=edit\">$stredit</a>";
             } else if ($icon == "zip.gif") {
-                $edittext = "<a href=\"".basename($_SERVER['PHP_SELF'])."?id=$id&wdir=$wdir&file=$fileurl&action=unzip\">$strunzip</a>&nbsp;";
-                $edittext .= "<a href=\"".basename($_SERVER['PHP_SELF'])."?id=$id&wdir=$wdir&file=$fileurl&action=listzip\">$strlist</a> ";
+                $edittext = "<a href=\"".basename($_SERVER['PHP_SELF'])."?id=$id&amp;wdir=$wdir&amp;file=$fileurl&amp;action=unzip\">$strunzip</a>&nbsp;";
+                $edittext .= "<a href=\"".basename($_SERVER['PHP_SELF'])."?id=$id&amp;wdir=$wdir&amp;file=$fileurl&amp;action=listzip\">$strlist</a> ";
             } else if ($icon == "image.gif") {
                 $edittext = "<b><a onMouseDown=\"return set_value('$CFG->wwwroot$ffurl')\" href=\"\">$strchoose</a></b>";
             } else {
                 $edittext = "";
             }
-            print_cell("right", "$edittext <A HREF=\"".basename($_SERVER['PHP_SELF'])."?id=$id&wdir=$wdir&file=$filesafe&action=rename\">$strrename</A>");
+            print_cell("right", "$edittext <A HREF=\"".basename($_SERVER['PHP_SELF'])."?id=$id&amp;wdir=$wdir&amp;file=$filesafe&amp;action=rename\">$strrename</A>");
     
             echo "</TR>";
         }

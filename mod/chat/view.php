@@ -71,7 +71,7 @@
 
     if ($currentgroup) {
         $groupselect = " AND groupid = '$currentgroup'";
-        $groupparam = "&groupid=$currentgroup";
+        $groupparam = "&amp;groupid=$currentgroup";
     } else {
         $groupselect = "";
         $groupparam = "";
@@ -135,7 +135,7 @@
         foreach ($chatusers as $chatuser) {
             $lastping = $timenow - $chatuser->lastmessageping;
             echo "<tr><td width=\"35\">";
-            echo "<a href=\"$CFG->wwwroot/user/view.php?id=$chatuser->id&course=$chat->course\">";
+            echo "<a href=\"$CFG->wwwroot/user/view.php?id=$chatuser->id&amp;course=$chat->course\">";
             print_user_picture($chatuser->id, 0, $chatuser->picture, false, false, false);
             echo "</a></td><td valign=\"center\">";
             echo "<p><font size=\"1\">";

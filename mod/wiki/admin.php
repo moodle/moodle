@@ -44,13 +44,13 @@
     
     /// Build the ewsiki script constant
     $ewbase = 'view.php?id='.$id;
-    if (isset($userid) && $userid!=0) $ewbase .= '&userid='.$userid;
-    if (isset($groupid) && $groupid!=0) $ewbase .= '&groupid='.$groupid;
-    $ewscript = $ewbase.'&page=';
+    if (isset($userid) && $userid!=0) $ewbase .= '&amp;userid='.$userid;
+    if (isset($groupid) && $groupid!=0) $ewbase .= '&amp;groupid='.$groupid;
+    $ewscript = $ewbase.'&amp;page=';
     define("EWIKI_SCRIPT", $ewscript);
     if($wiki->ewikiacceptbinary) {
       define("EWIKI_UPLOAD_MAXSIZE", get_max_upload_file_size());
-      define("EWIKI_SCRIPT_BINARY", $ewbase."&binary=");
+      define("EWIKI_SCRIPT_BINARY", $ewbase."&amp;binary=");
     }
     
     
@@ -147,14 +147,14 @@
           // No additional info
         break;
       }
-      add_to_log($course->id, "wiki", $action, "admin.php?action=$action&userid=$userid&groupid=$groupid&id=$id", $wiki->name.($addloginfo?": ".$addloginfo:""));
-      $link="admin.php?action=$action".($userid?"&userid=".$userid:"").($groupid?"&groupid=".$groupid:"")."&id=$id&page=$page";            
+      add_to_log($course->id, "wiki", $action, "admin.php?action=$action&amp;userid=$userid&amp;groupid=$groupid&amp;id=$id", $wiki->name.($addloginfo?": ".$addloginfo:""));
+      $link="admin.php?action=$action".($userid?"&amp;userid=".$userid:"").($groupid?"&amp;groupid=".$groupid:"")."&amp;id=$id&amp;page=$page";            
       switch($action) {
         case "removepages": 
             if($form->proceed) {            
               if(!$confirm && $form->pagestodelete) {
                 notice_yesno(get_string("removepagecheck", "wiki")."<br />".join(", ", $form->pagestodelete),
-                  $link."&confirm=".urlencode(join(" ",$form->pagestodelete)), $link);       
+                  $link."&amp;confirm=".urlencode(join(" ",$form->pagestodelete)), $link);       
                 print_footer($course);
                 exit;
               }
@@ -181,7 +181,7 @@
         case "checklinks":
             if($form->proceed) {              
               if(!$confirm && $form->pagetocheck) {
-                $confirm="&confirm=".$form->pagetocheck;
+                $confirm="&amp;confirm=".$form->pagetocheck;
                 notice_yesno(get_string("checklinkscheck", "wiki").$form->pagetocheck,
                     $link.$confirm, $link);       
                 print_footer($course);
@@ -218,7 +218,7 @@
     } 
     
     /// Actions which need a confirmation. If confirmed, do the action
-    $redirect="view.php?".($groupid?"&groupid=".$groupid:"").($userid?"&userid=".$userid:"")."&id=$id&page=$page";
+    $redirect="view.php?".($groupid?"&amp;groupid=".$groupid:"").($userid?"&amp;userid=".$userid:"")."&amp;id=$id&amp;page=$page";
     if($confirm && !$err) {
       switch($action) {
         case "removepages":
@@ -280,7 +280,7 @@
         reset($wiki_list);
         $wiki_admin_list=array();
         while(list($key,$val)=each($wiki_list)) {
-          $wiki_admin_list[$key."&action=$action"]=$val;
+          $wiki_admin_list[$key."&amp;action=$action"]=$val;
         }
         choose_from_menu($wiki_admin_list, "wikiselect", $selected, "choose", $script);
         echo '</td>';        

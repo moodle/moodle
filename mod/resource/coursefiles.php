@@ -53,9 +53,9 @@
             for ($i=1; $i<$numdirs; $i++) {
                $navigation .= " -> ";
                $link .= "/".urlencode($dirs[$i]);
-               $navigation .= "<a href=\"".$ME."?id=$course->id&wdir=$link\">".$dirs[$i]."</a>";
+               $navigation .= "<a href=\"".$ME."?id=$course->id&amp;wdir=$link\">".$dirs[$i]."</a>";
             }
-            $fullnav = "<a href=\"".$ME."?id=$course->id&wdir=/\">$strfiles</a> $navigation";
+            $fullnav = "<a href=\"".$ME."?id=$course->id&amp;wdir=/\">$strfiles</a> $navigation";
         }
 
         print_header();
@@ -175,8 +175,8 @@
                     print_simple_box_end();
                     echo "<br />";
                     notice_yesno (get_string("deletecheckfiles"),
-                                "".basename($ME)."?id=$id&wdir=$wdir&action=delete&confirm=1",
-                                "".basename($ME)."?id=$id&wdir=$wdir&action=cancel");
+                                "".basename($ME)."?id=$id&amp;wdir=$wdir&amp;action=delete&amp;confirm=1",
+                                "".basename($ME)."?id=$id&amp;wdir=$wdir&amp;action=cancel");
                 } else {
                     displaydir($wdir);
                 }
@@ -619,7 +619,7 @@ function printfilelist($filelist) {
 
     foreach ($filelist as $file) {
         if (is_dir($basedir.$file)) {
-            echo "<img src=\"$CFG->pixpath/f/folder.gif\" height=\"16\" width=\"16\" /> $file<br />";
+            echo "<img src=\"$CFG->pixpath/f/folder.gif\" height=\"16\" width=\"16\" alt=\"\" /> $file<br />";
             $subfilelist = array();
             $currdir = opendir($basedir.$file);
             while ($subfile = readdir($currdir)) {
@@ -631,7 +631,7 @@ function printfilelist($filelist) {
 
         } else {
             $icon = mimeinfo("icon", $file);
-            echo "<img src=\"$CFG->pixpath/f/$icon\"  height=\"16\" width=\"16\" /> $file<br />";
+            echo "<img src=\"$CFG->pixpath/f/$icon\"  height=\"16\" width=\"16\" alt=\"\" /> $file<br />";
         }
     }
 }
@@ -717,10 +717,10 @@ function displaydir ($wdir) {
             echo "<tr>";
 
             print_cell("center", "<input type=\"checkbox\" name=\"file$count\" value=\"$fileurl\" />");
-            print_cell("left", "<a href=\"".basename($ME)."?id=$id&wdir=$fileurl\"><img src=\"$CFG->pixpath/f/folder.gif\" height=\"16\" width=\"16\" border=\"0\" alt=\"Folder\" /></a> <a href=\"".basename($ME)."?id=$id&wdir=$fileurl\">".htmlspecialchars($dir)."</a>");
+            print_cell("left", "<a href=\"".basename($ME)."?id=$id&amp;wdir=$fileurl\"><img src=\"$CFG->pixpath/f/folder.gif\" height=\"16\" width=\"16\" border=\"0\" alt=\"Folder\" /></a> <a href=\"".basename($ME)."?id=$id&amp;wdir=$fileurl\">".htmlspecialchars($dir)."</a>");
             print_cell("right", "-");
             print_cell("right", $filedate);
-            print_cell("right", "<a href=\"".basename($ME)."?id=$id&wdir=$wdir&file=$filesafe&action=rename\">$strrename</a>");
+            print_cell("right", "<a href=\"".basename($ME)."?id=$id&amp;wdir=$wdir&amp;file=$filesafe&amp;action=rename\">$strrename</a>");
 
             echo "</tr>";
         }
@@ -769,13 +769,13 @@ function displaydir ($wdir) {
             $edittext = "<b><a onMouseDown=\"return set_value('$selectfile')\" href=\"\">$strchoose</a></b>&nbsp;";
 
             if ($icon == "text.gif" || $icon == "html.gif") {
-                $edittext .= "<a href=\"".basename($ME)."?id=$id&wdir=$wdir&file=$fileurl&action=edit\">$stredit</a>";
+                $edittext .= "<a href=\"".basename($ME)."?id=$id&amp;wdir=$wdir&amp;file=$fileurl&amp;action=edit\">$stredit</a>";
             } else if ($icon == "zip.gif") {
-                $edittext .= "<a href=\"".basename($ME)."?id=$id&wdir=$wdir&file=$fileurl&action=unzip\">$strunzip</a>&nbsp;";
-                $edittext .= "<a href=\"".basename($ME)."?id=$id&wdir=$wdir&file=$fileurl&action=listzip\">$strlist</a> ";
+                $edittext .= "<a href=\"".basename($ME)."?id=$id&amp;wdir=$wdir&amp;file=$fileurl&amp;action=unzip\">$strunzip</a>&nbsp;";
+                $edittext .= "<a href=\"".basename($ME)."?id=$id&amp;wdir=$wdir&amp;file=$fileurl&amp;action=listzip\">$strlist</a> ";
             }
 
-            print_cell("right", "$edittext <a href=\"".basename($ME)."?id=$id&wdir=$wdir&file=$filesafe&action=rename\">$strrename</a>");
+            print_cell("right", "$edittext <a href=\"".basename($ME)."?id=$id&amp;wdir=$wdir&amp;file=$filesafe&amp;action=rename\">$strrename</a>");
 
             echo "</tr>";
         }

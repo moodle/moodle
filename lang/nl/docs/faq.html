@@ -55,7 +55,7 @@
 
 <h3><a name="errorgetstring"></a>Mijn pagina's tonen fatal errors zoals : call to undefined function: get_string()</h3>
 <p class="answer">Als je fouten ziet zoals:</p>
-<p class="answercode">Parse error: parse error, unexpected T_VARIABLE in c:\program files\easyphp\www\moodle\config.php on line 94 <br> Fatal error: Call to undefined function: get_string() in c:\program files\easyphp\www\moodle\mod\resource\lib.php on line 11</p>
+<p class="answercode">Parse error: parse error, unexpected T_VARIABLE in c:\program files\easyphp\www\moodle\config.php on line 94 <br /> Fatal error: Call to undefined function: get_string() in c:\program files\easyphp\www\moodle\mod\resource\lib.php on line 11</p>
 <p class="answer">dan heb je waarschijnlijk een puntkomma of aanhalingsteken vergeten in een lijn van config.php (vóór lijn 94).</p>
 <p class="answer">Een andere reden zou kunnen zijn dat je config.php hebt geopend in een programma zoals Word om het te bewerken en het dan bewaard hebt als een HTML-bestand in de plaats van een gewoon tekstbestand.</p>
 <p>&nbsp;</p>
@@ -75,7 +75,7 @@
 
 <h3><a name="quotes" id="quotes"></a>Telkens ik tekst toevoeg met een weglatingsteken (') of een aanhalingsteken (&quot;) krijg ik fouten of wordt er een schuine streep aan toegevoegd</h3>
 <p class="answer">Problemen veroorzaakt door accenten worden veroorzaakt door een foute instelling van &quot;magic&quotes&quot;. Moodle heeft volgende instelling nodig (zijn gewoonlijk standaardinstellingen):</p>
-<p class="answercode">magic_quotes_gpc = On<br>
+<p class="answercode">magic_quotes_gpc = On<br />
 magic_quotes_runtime = Off</p>
 <p class="answer">Lees ook het deel over <a href="./?file=install.html#webserver">webserverconfiguratie</a> in de installatiedocumentatie voor meer details.</p>
 <p class="answer">&nbsp;</p>

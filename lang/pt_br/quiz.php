@@ -102,11 +102,11 @@ $string['filloutthreequestions'] = 'Pelo menos 3 respostas têm que ser preenchid
 $string['fillouttwochoices'] = 'Tem que preencher pelo menos duas opções. Respostas em branco não serão consideradas.';
 $string['forceregeneration'] = 'forçar regeneração';
 $string['fractionsaddwrong'] = 'As notas positivas escolhidas não somam 100%%
-<BR>A soma é $a%%
-<BR>Quer retornar e corrigir esta pergunta?';
+<br />A soma é $a%%
+<br />Quer retornar e corrigir esta pergunta?';
 $string['fractionsnomax'] = 'Uma das respostas deve ser 100%% para que seja
-<BR>possível obter o voto total nesta pergunta.
-<BR>Quer retornar e corrigir esta pergunta?';
+<br />possível obter o voto total nesta pergunta.
+<br />Quer retornar e corrigir esta pergunta?';
 $string['functiontakesatleasttwo'] = 'A função $a deve ter pelo menos dois argumentos';
 $string['functiontakesnoargs'] = 'A função $a não inclui nenhum argumento';
 $string['functiontakesonearg'] = 'A função $a deve ter apenas um argumento';
@@ -173,7 +173,7 @@ $string['noreview'] = 'Não é permitido rever este questionário';
 $string['noreviewuntil'] = 'Não é permitido rever este questionário até $a';
 $string['noscript'] = 'Para continuar é necessário que o uso de javascript seja permitido no seu navegador!';
 $string['notenoughanswers'] = 'Este tipo de questão requer ao menos $a respostas';
-$string['notenoughsubquestions'] = 'Não foi definido um numero suficiente de perguntas subordinadas<br>Você quer voltar e corrigir esta pergunta?';
+$string['notenoughsubquestions'] = 'Não foi definido um numero suficiente de perguntas subordinadas<br />Você quer voltar e corrigir esta pergunta?';
 $string['numerical'] = 'Numérica';
 $string['optional'] = 'opcional';
 $string['overdue'] = 'Expirado';

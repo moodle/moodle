@@ -308,23 +308,23 @@ while (($multipage || $onepage) && (!$endonepage)) {
     if ($onepage) {  // one page for all tables
       echo "<p align=\"right\"><a href=\"viewall.php?id=".$course->id."\">";
       echo "$strviewmulti</a><br />";
-      echo "<a href=\"viewall.php?id=".$course->id."&onetable=1\">";
+      echo "<a href=\"viewall.php?id=".$course->id."&amp;onetable=1\">";
       echo "$strviewtable</a><br />";
-      echo "<a href=\"viewweek.php?scope=week&id=".$atts[$minatt]->attendance->id."\">";
+      echo "<a href=\"viewweek.php?scope=week&amp;id=".$atts[$minatt]->attendance->id."\">";
       echo "$strviewweek</a></p>";
     } else if ($onetable) { // one table for all
       echo "<p align=\"right\"><a href=\"viewall.php?id=".$course->id."\">";
       echo "$strviewmulti</a><br />";
-      echo "<a href=\"viewall.php?id=".$course->id."&onepage=1\">";
+      echo "<a href=\"viewall.php?id=".$course->id."&amp;onepage=1\">";
       echo "$strviewone</a><br />";
-      echo "<a href=\"viewweek.php?scope=week&id=".$atts[$minatt]->attendance->id."\">";
+      echo "<a href=\"viewweek.php?scope=week&amp;id=".$atts[$minatt]->attendance->id."\">";
       echo "$strviewweek</a></p>";
     } else { // multiple pages
-      echo "<p align=\"right\"><a href=\"viewall.php?id=".$course->id."&onepage=1\">";
+      echo "<p align=\"right\"><a href=\"viewall.php?id=".$course->id."&amp;onepage=1\">";
       echo "$strviewone</a><br />";
-      echo "<a href=\"viewall.php?id=".$course->id."&onetable=1\">";
+      echo "<a href=\"viewall.php?id=".$course->id."&amp;onetable=1\">";
       echo "$strviewtable</a><br />";
-      echo "<a href=\"viewweek.php?scope=week&id=".$atts[$minatt]->attendance->id."\">";
+      echo "<a href=\"viewweek.php?scope=week&amp;id=".$atts[$minatt]->attendance->id."\">";
       echo "$strviewweek</a></p>";
 
     }
@@ -499,8 +499,8 @@ function attendance_print_pagenav() {
     echo "<tr>";
     if ($minatt!=0) {
     echo "<th valign=\"top\" align=\"right\" nowrap class=\"generaltableheader\">".
-           "<a href=\"viewall.php?id=".$course->id ."&pagereport=1&page=1\">&lt;&lt;</a>&nbsp;\n".
-           "<a href=\"viewall.php?id=".$course->id ."&pagereport=1&page=".($page-1)."\">&lt;</a></th>\n";
+           "<a href=\"viewall.php?id=".$course->id ."&amp;pagereport=1&amp;page=1\">&lt;&lt;</a>&nbsp;\n".
+           "<a href=\"viewall.php?id=".$course->id ."&amp;pagereport=1&amp;page=".($page-1)."\">&lt;</a></th>\n";
     } else {
     echo "<th valign=\"top\" align=\"right\" nowrap class=\"generaltableheader\">&lt;&lt;&nbsp;&lt;</th>\n";
     }
@@ -508,8 +508,8 @@ function attendance_print_pagenav() {
            "$pg $page $of $maxpages</th>\n";
     if ($maxatt!=$numatt) {
       echo "<th valign=\"top\" align=\"right\" nowrap class=\"generaltableheader\">".
-      "<a href=\"viewall.php?id=".$course->id ."&pagereport=1&page=". ($page+1)."\">&gt;</a>&nbsp;".
-      "<a href=\"viewall.php?id=".$course->id ."&pagereport=1&page=$maxpages\">&gt;&gt;</a></th>";
+      "<a href=\"viewall.php?id=".$course->id ."&amp;pagereport=1&amp;page=". ($page+1)."\">&gt;</a>&nbsp;".
+      "<a href=\"viewall.php?id=".$course->id ."&amp;pagereport=1&amp;page=$maxpages\">&gt;&gt;</a></th>";
     } else {
     echo "<th valign=\"top\" align=\"right\" nowrap class=\"generaltableheader\">&gt;&nbsp;&gt;&gt;</th>\n";
     }

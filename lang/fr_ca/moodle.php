@@ -92,7 +92,7 @@ $string['backupkeephelp'] = 'Combien de sauvegardes automatiques récentes désire
 $string['backuplogshelp'] = 'Les journaux d\'évènements seront inclus dans les sauvegardes automatiques lorsque cette option est activée.';
 $string['backupnameformat'] = '%%Y%%m%%d-%%H%%M';
 $string['backuporiginalname'] = 'Nom de la sauvegarde';
-$string['backupsavetohelp'] = 'Donnez le parcours complet où vous désirez conserver les sauvegardes ou<br>laissez en blanc pour utiliser le répertoire du cours par défaut.';
+$string['backupsavetohelp'] = 'Donnez le parcours complet où vous désirez conserver les sauvegardes ou<br />laissez en blanc pour utiliser le répertoire du cours par défaut.';
 $string['backupuserfileshelp'] = 'Choisissez si vous désirez que les fichiers de l\'utilisateur (par exemple, la photo dans son profil) soient inclus dans les sauvegardes automatiques.';
 $string['backupusershelp'] = 'Choisissez si vous désirez inclure tous les utilisateurs inscrits au serveur ou uniquement les utilisateurs de chaque cours.';
 $string['backupversion'] = 'Version de la sauvegarde';
@@ -319,7 +319,7 @@ $string['enrolledincoursenot'] = 'Pas inscrit dans le cours \"$a\"';
 $string['enrolmentconfirmation'] = 'Vous allez vous inscrire à ce cours. <br /> Est-cela que vous désirez?';
 $string['enrolmentkey'] = 'Clé d\'inscription';
 $string['enrolmentkeyfrom'] = 'Ce cours nécessite une clé d\'inscription que vous aurez à entrer qu\'une seule fois. Vous pouvez l\'obtenir de $a.';
-$string['enrolmentkeyhint'] = 'Cette clé d\'inscription est incorrecte, veuillez essayer de nouveau<BR>
+$string['enrolmentkeyhint'] = 'Cette clé d\'inscription est incorrecte, veuillez essayer de nouveau<br />
 (La clé commence par « $a ».)';
 $string['entercourse'] = 'Cliquez pour entrer dans le cours';
 $string['enteremailaddress'] = 'Entrez votre adresse de courriel afin qu\'un nouveau mot de passe vous soit envoyé.';
@@ -474,7 +474,7 @@ $string['login'] = 'Connexion';
 $string['loginas'] = 'Connexion comme';
 $string['loginguest'] = 'Connexion comme visiteur anonyme';
 $string['loginsite'] = 'Se connecter sur le site';
-$string['loginsteps'] = 'Bonjour. Pour un accès complet aux cours, prenez   une minute pour vous créer un compte personnel sur ce site.<BR>
+$string['loginsteps'] = 'Bonjour. Pour un accès complet aux cours, prenez   une minute pour vous créer un compte personnel sur ce site.<br />
 Chaque cours peut également nécessiter une clé d\'inscription que vous aurez à entrer qu\'une seule fois (vous n\'en avez pas pas besoin pour l\'instant.<br />
 
 Voici les étapes à suivre :
@@ -490,7 +490,7 @@ Voici les étapes à suivre :
    </OL>';
 $string['loginstepsnone'] = 'Bonjour !<p>Pour un accès complet aux cours vous devez vous créer un compte.<p>Pour cela, vous avez seulement besoin de choisir un nom d\'utilisateur et un mot de passe à entrer dans le formulaire de cette page.<p>Si ce nom est déjà utilisé, on vous demandera d\'en choisir un autre.';
 $string['loginto'] = 'Se connecter sur $a';
-$string['loginusing'] = 'Connectez-vous ici en utilisant votre nom d\'utilisateur<br>et votre mot de passe';
+$string['loginusing'] = 'Connectez-vous ici en utilisant votre nom d\'utilisateur<br />et votre mot de passe';
 $string['logout'] = 'Déconnexion';
 $string['logs'] = 'Journal des évènements';
 $string['mainmenu'] = 'Menu principal';
@@ -640,7 +640,7 @@ $string['passwordsent'] = 'Le mot de passe a été envoyé';
 $string['passwordsenttext'] = '   <P>Un courriel vous a été envoyé à cette adresse : $a->email.
   <P><B>Veuillez lire ce courriel afin de récupérer votre nouveau mot de passe</B>
  <P>Ce nouveau mot de passe a été généré automatiquement, vous voudrez
-sans doute<BR> le <A HREF=$a->link>modifier</A> afin qu\'il vous soit plus facile de vous en rappeler.';
+sans doute<br /> le <A HREF=$a->link>modifier</A> afin qu\'il vous soit plus facile de vous en rappeler.';
 $string['people'] = 'La classe';
 $string['personalprofile'] = 'Profil personnel';
 $string['phone'] = 'Téléphone';
@@ -705,7 +705,7 @@ $string['scheduledbackupstatus'] = 'État des sauvegardes planifiées';
 $string['search'] = 'Chercher';
 $string['searchagain'] = 'Chercher de nouveau';
 $string['searchcourses'] = 'Chercher dans les cours';
-$string['searchhelp'] = 'Vous pouvez effectuer une recherche comportant plusieurs mots.<p>mot : trouver toutes les occurences de ce mot (séquence de lettres). <br>+mot : on cherche très exactement ce mot. <br>-mot : ce mot ne doit pas apparaître dans les résultats de la recherche';
+$string['searchhelp'] = 'Vous pouvez effectuer une recherche comportant plusieurs mots.<p>mot : trouver toutes les occurences de ce mot (séquence de lettres). <br />+mot : on cherche très exactement ce mot. <br />-mot : ce mot ne doit pas apparaître dans les résultats de la recherche';
 $string['searchresults'] = 'Résultats de la recherche';
 $string['sec'] = 'sec';
 $string['secs'] = 'secs';
@@ -746,7 +746,7 @@ $string['sizegb'] = 'Go';
 $string['sizekb'] = 'ko';
 $string['sizemb'] = 'Mo';
 $string['socialheadline'] = 'Forum public - derniers sujets';
-$string['someallowguest'] = 'Les visiteurs anonymes peuvent accéder à<br>certains cours';
+$string['someallowguest'] = 'Les visiteurs anonymes peuvent accéder à<br />certains cours';
 $string['someerrorswerefound'] = 'Certaines informations manquent ou sont incorrectes. Voir ci-dessous.';
 $string['sortby'] = 'Trier par';
 $string['startdate'] = 'Date de début du cours';

@@ -145,9 +145,9 @@
     		$nextsco = next($scoes);
     		if (($nextsco !== false) && ($sco->parent != $nextsco->parent) && (($level==0) || (($level>0) && ($nextsco->parent == $sco->identifier)))) {
     		    $sublist++;
-    		    echo "      <img src=\"pix/minus.gif\" onClick='expandCollide(this,".$sublist.");'/>\n";
+    		    echo "      <img src=\"pix/minus.gif\" onClick='expandCollide(this,".$sublist.");' alt=\"\" />\n";
     		} else {
-    		    echo "      <img src=\"pix/spacer.gif\" />\n";
+    		    echo "      <img src=\"pix/spacer.gif\" alt=\"\" />\n";
     		}
     		if ($sco->launch) {
     		    $score = "";

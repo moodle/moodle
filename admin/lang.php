@@ -159,7 +159,7 @@
             if (lang_save_file($langdir, $currentfile, $newstrings)) {
                 notify(get_string("changessaved")." ($langdir/$currentfile)", "green");
             } else {
-                error("Could not save the file '$currentfile'!", "lang.php?mode=compare&currentfile=$currentfile");
+                error("Could not save the file '$currentfile'!", "lang.php?mode=compare&amp;currentfile=$currentfile");
             }
         }
 
@@ -171,7 +171,7 @@
             if ($file == $currentfile) {
                 echo "<b>$file</b> &nbsp; ";
             } else {
-                echo "<a href=\"lang.php?mode=compare&currentfile=$file\">$file</a> &nbsp; ";
+                echo "<a href=\"lang.php?mode=compare&amp;currentfile=$file\">$file</a> &nbsp; ";
             }
         }
         echo '</font></center>';

@@ -64,9 +64,9 @@ diseñado de acuerdo con los siguientes criterios:</p>
 
   <li><strong>Moodle debe poder ejecutarse en la más amplia
 
-posible variedad de plataformas</strong><br>
+posible variedad de plataformas</strong><br />
 
-    <br>
+    <br />
     La plataforma de aplicaciones Web que funciona en la mayoría de las plataformas 
     es PHP combinada con MySQL, y este es el entorno en el que Moodle ha sido 
     desarrollado (sobre Linux, Windows, y Mac OS X). Moodle también usa la librería 
@@ -74,17 +74,17 @@ posible variedad de plataformas</strong><br>
     puede usar <a href="http://php.weblogs.com/ADOdb_manual#drivers">más de diez 
     marcas diferentes de bases de datos</a> (desafortunadamente, a pesar de ello, 
     no puede aún <em><strong>crear tablas</strong></em> en todas esas bases de 
-    datos. Hablaremos más sobre esto más adelante).<br>
+    datos. Hablaremos más sobre esto más adelante).<br />
 
-    <br>
+    <br />
 
   </li>
 
   <li><strong>Moodle debe ser fácil de instalar, aprender y
 
-modificar</strong><br>
+modificar</strong><br />
 
-    <br>
+    <br />
     Los primeros prototipos de Moodle (1999) se construyeron usando <a
 
  href="http://www.zope.org/" target="_top">Zope</a>, un avanzado servidor de aplicaciones 
@@ -98,31 +98,31 @@ modificar</strong><br>
     en librerías con funciones claramente tituladas y con una disposición de los 
     archivos de script, consistente. PHP es también fácil de instalar (existen 
     versiones ejecutables para todas las plataformas) y está ampliamente disponible, 
-    pues la mayoría de los servicios de alojamiento lo proporcionan como un estándar.<br>
+    pues la mayoría de los servicios de alojamiento lo proporcionan como un estándar.<br />
 
-    <br>
+    <br />
 
   </li>
 
   <li><strong>Debe ser fácil de actualizar desde una
 
-versión a la siguiente</strong><br>
+versión a la siguiente</strong><br />
 
-    <br>
+    <br />
     Moodle sabe cu&aacute;l es su versión (así como las versiones de todos los 
     módulos) y se ha construido un mecanismo interno para que Moodle pueda actualizarse 
     a sí mismo de forma apropiada a las nuevas versiones (por ejemplo, puede renombrar 
     las tablas de las bases de datos o añadir nuevos campos). Usando CVS en Unix, 
     por ejemplo, uno tan sólo tiene que hacer un "cvs update -d" y luego visitar 
-    la página principal del sitio para completar la actualización.<br>
+    la página principal del sitio para completar la actualización.<br />
 
-    <br>
+    <br />
 
   </li>
 
-  <li><strong>Debe ser modular para permitir el crecimiento</strong><br>
+  <li><strong>Debe ser modular para permitir el crecimiento</strong><br />
 
-    <br>
+    <br />
 
 Moodle tiene una serie de características modulares, incluyendo
 
@@ -134,15 +134,15 @@ características al código básico principal o
 
 incluso distribuirlas por separado. Hablaremos más de esto en la
 
-siguiente sección.<br>
+siguiente sección.<br />
 
-    <br>
+    <br />
 
   </li>
 
-  <li><strong>Debe poder usarse junto a otros sistemas.</strong><br>
+  <li><strong>Debe poder usarse junto a otros sistemas.</strong><br />
 
-    <br>
+    <br />
 
 Una de las cosas que hace Moodle es mantener todos los archivos para un
 
@@ -240,7 +240,7 @@ resumen de una contribución de un usuario</li>
 
       <li>widget_user_complete() - dada una instancia, imprime detalles
 
-sobre la contribución de un usuario<br>
+sobre la contribución de un usuario<br />
 
       </li>
 
@@ -373,7 +373,7 @@ sobre temas en el uso de Moodle</a>. Si usted crea un bonito tema que
 
 considera que otros podrían querer usar, &iexcl;por favor,
 
-envíelo en un archivo comprimido al foro sobre temas!.<br>
+envíelo en un archivo comprimido al foro sobre temas!.<br />
 
 </p>
 
@@ -415,21 +415,21 @@ subdirectorio del directorio "lang". La estructura del directorio
 
   <li>survey.php - cadenas para el módulo de encuesta</li>
 
-    <li>.... además de otros módulos si los hay.<br>
+    <li>.... además de otros módulos si los hay.<br />
 
-    <br>
+    <br />
       Se llama a las cadenas desde los archivos usando las funciones: <strong><em>get_string()</em></strong><em> 
       </em>o<em> <strong>print_string()</strong></em>. Cada cadena admite la sustitución 
       de variables para ayudar a la ordenación de variables en diferentes idiomas. 
-      Por ejemplo:<br>
+      Por ejemplo:<br />
 
-    <br>
+    <br />
 
 $strdueby = get_string("assignmentdueby", "assignment",      
 
-userdate($date)); <br>
+userdate($date)); <br />
 
-    <br>
+    <br />
 
 Si en un determinado idioma no existe una cadena, entonces se
 
@@ -588,7 +588,7 @@ sobre cómo arreglarlos.</p>
 
 <p style="text-align: center;">&iexcl;Gracias por usar Moodle!</p>
 
-<p style="text-align: center;">Saludos,<br>
+<p style="text-align: center;">Saludos,<br />
 
 <a href="http://dougiamas.com/" target="_top">Martin Dougiamas</a></p>
 

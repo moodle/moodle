@@ -292,7 +292,7 @@ function display() {
 
         echo "\n<script language=\"Javascript\">";
         echo "\n<!--\n";
-        echo "openpopup('/mod/resource/view.php?inpopup=true&id={$this->cm->id}','resource{$resource->id}','{$resource->popup}');\n";
+        echo "openpopup('/mod/resource/view.php?inpopup=true&amp;id={$this->cm->id}','resource{$resource->id}','{$resource->popup}');\n";
         echo "\n-->\n";
         echo '</script>';
 
@@ -301,7 +301,7 @@ function display() {
             print_simple_box(format_text($resource->summary, FORMAT_MOODLE, $formatoptions), "center");
         }
 
-        $link = "<a href=\"$CFG->wwwroot/mod/resource/view.php?inpopup=true&id={$this->cm->id}\" target=\"resource{$resource->id}\" onClick=\"return openpopup('/mod/resource/view.php?inpopup=true&id={$this->cm->id}', 'resource{$resource->id}','{$resource->popup}');\">{$resource->name}</a>";
+        $link = "<a href=\"$CFG->wwwroot/mod/resource/view.php?inpopup=true&amp;id={$this->cm->id}\" target=\"resource{$resource->id}\" onClick=\"return openpopup('/mod/resource/view.php?inpopup=true&amp;id={$this->cm->id}', 'resource{$resource->id}','{$resource->popup}');\">{$resource->name}</a>";
 
         echo "<p>&nbsp</p>";
         echo '<p align="center">';
@@ -320,7 +320,7 @@ function display() {
     if (empty($_GET['frameset']) and !$embedded and !$inpopup and $resource->options == "frame") {
         echo "<head><title>{$course->shortname}: {$resource->name}</title></head>\n";
         echo "<frameset rows=\"$CFG->resource_framesize,*\" border=\"2\">";
-        echo "<frame src=\"view.php?id={$this->cm->id}&type={$resource->type}&frameset=top\">";
+        echo "<frame src=\"view.php?id={$this->cm->id}&amp;type={$resource->type}&amp;frameset=top\">";
         echo "<frame src=\"$fullurl\">";
         echo "</frameset>";
         exit;
@@ -357,7 +357,7 @@ function display() {
 
         if ($resourcetype == "image") {
             echo "<center><p>";
-            echo "<img title=\"{$resource->name}\" class=\"resourceimage\" src=\"$fullurl\" />";
+            echo "<img title=\"{$resource->name}\" class=\"resourceimage\" src=\"$fullurl\" alt=\"\" />";
             echo "</p></center>";
 
         } else if ($resourcetype == "mp3") {
@@ -365,10 +365,10 @@ function display() {
             echo '<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000"';
             echo '        codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,0,0" ';
             echo '        width="600" height="70" id="mp3player" align="">';
-            echo "<param name=\"movie\" value=\"$CFG->wwwroot/lib/mp3player/mp3player.swf?src=$fullurl&autostart=yes\">";
+            echo "<param name=\"movie\" value=\"$CFG->wwwroot/lib/mp3player/mp3player.swf?src=$fullurl&amp;autostart=yes\">";
             echo '<param name="quality" value="high">';
             echo '<param name="bgcolor" value="#333333">';
-            echo "<embed src=\"$CFG->wwwroot/lib/mp3player/mp3player.swf?src=$fullurl&autostart=yes\" ";
+            echo "<embed src=\"$CFG->wwwroot/lib/mp3player/mp3player.swf?src=$fullurl&amp;autostart=yes\" ";
             echo " quality=\"high\" bgcolor=\"#333333\" width=\"600\" height=\"70\" name=\"mp3player\" ";
             echo ' type="application/x-shockwave-flash" ';
             echo ' pluginspage="http://www.macromedia.com/go/getflashplayer">';

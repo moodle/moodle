@@ -2,7 +2,7 @@
 
 $string['about'] = 'À propos de cet éditeur';
 $string['absbottom'] = 'Absbottom';
-$string['absmiddle'] = 'Absmiddle';
+$string['middle'] = 'middle';
 $string['address'] = 'Adresse';
 $string['alignment'] = 'Alignement';
 $string['alternatetext'] = 'Texte alt';
