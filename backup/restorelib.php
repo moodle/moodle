@@ -1531,7 +1531,7 @@
                                 $sca->userid = $user->new_id;
                             } else {
                                 //Assign it to admin
-                                $sca->userid = 1;
+                                $sca->userid = get_admin();
                             }
                             //The structure is equal to the db, so insert the scale
                             $newid = insert_record ("scale",$sca);
@@ -1747,7 +1747,7 @@
                                 $eve->userid = $user->new_id;
                             } else {
                                 //Assign it to admin
-                                $eve->userid = 1;
+                                $eve->userid = get_admin();
                             }
                             //We have to recode the groupid field
                             $group = backup_getid($restore->backup_unique_code,"group",$eve->groupid);
