@@ -2539,35 +2539,39 @@ function quiz_get_recent_mod_activity(&$activities, &$index, $sincetime, $course
                                    AND q.course = cm.course
                                  ORDER BY qa.timefinish ASC");
 
-  if (empty($quizzes))
-    return;
+    if (empty($quizzes))
+      return;
 
-  foreach ($quizzes as $quiz) {
-    $tmpactivity->type = "quiz";
-    $tmpactivity->defaultindex = $index;
-    $tmpactivity->instance = $quiz->quiz;
+    foreach ($quizzes as $quiz) {
+        if (empty($groupid) || ismember($groupid, $quiz->userid)) {
 
-    $tmpactivity->name = $quiz->name;
-    $tmpactivity->section = $quiz->section;
+          $tmpactivity->type = "quiz";
+          $tmpactivity->defaultindex = $index;
+          $tmpactivity->instance = $quiz->quiz;
 
-    $tmpactivity->content->attemptid = $quiz->id;
-    $tmpactivity->content->sumgrades = $quiz->sumgrades;
-    $tmpactivity->content->maxgrade = $quiz->maxgrade;
-    $tmpactivity->content->attempt = $quiz->attempt;
+          $tmpactivity->name = $quiz->name;
+          $tmpactivity->section = $quiz->section;
 
-    $tmpactivity->user->userid = $quiz->userid;
-    $tmpactivity->user->fullname = fullname($quiz);
-    $tmpactivity->user->picture = $quiz->picture;
+          $tmpactivity->content->attemptid = $quiz->id;
+          $tmpactivity->content->sumgrades = $quiz->sumgrades;
+          $tmpactivity->content->maxgrade = $quiz->maxgrade;
+          $tmpactivity->content->attempt = $quiz->attempt;
 
-    $tmpactivity->timestamp = $quiz->timefinish;
+          $tmpactivity->user->userid = $quiz->userid;
+          $tmpactivity->user->fullname = fullname($quiz);
+          $tmpactivity->user->picture = $quiz->picture;
 
-    $activities[] = $tmpactivity;
+          $tmpactivity->timestamp = $quiz->timefinish;
 
-    $index++;
-  }
+          $activities[] = $tmpactivity;
+
+          $index++;
+        }
+    }
 
   return;
 }
+
 
 function quiz_print_recent_mod_activity($activity, $course, $detail=false) {
     global $CFG, $THEME;
