@@ -34,22 +34,20 @@
                  "<A HREF=index.php?id=$course->id>$strlessons</A> -> <a href=\"view.php?id=$cm->id\">$lesson->name</a>-> $strimportquestions");
 
     if ($form = data_submitted()) {   /// Filename
-
+        
         if (isset($form->filename)) {                 // file already on server
             $newfile['tmp_name'] = $form->filename; 
             $newfile['size'] = filesize($form->filename);
 
         } else if (!empty($_FILES['newfile'])) {      // file was just uploaded
-            $newfile = $_FILES['newfile'];
+            require_once($CFG->dirroot.'/lib/uploadlib.php');
+            $um = new upload_manager('newfile',false,false,$course,false,0,false);
+            if ($um->preprocess_files()) { // validate and virus check! 
+                $newfile = $_FILES['newfile'];
+            }
         }
 
-        if (empty($newfile)) {
-            notify(get_string("uploadproblem") );
-
-        } else if (!isset($filename) and (!is_uploaded_file($newfile['tmp_name']) or $newfile['size'] == 0)) {
-            notify(get_string("uploadnofilefound") );
-
-        } else {  // Valid file is found
+        if (is_array($newfile)) { // either for file already on server or just uploaded file.
 
             if (! is_readable("../quiz/format/$form->format/format.php")) {
                 error("Format not known ($form->format)");
