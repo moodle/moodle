@@ -365,6 +365,18 @@
         }
 
     }
+
+    //This function send n white characters to the browser and flush the
+    //output buffer. Used to avoid browser timeouts and to show the progress.
+    function backup_flush($n=0,$time=false) {
+        if ($time) {
+            $ti = strftime("%X",time());
+        } else {
+            $ti = "";
+        }
+        echo str_repeat(" ", $n) . $ti . "\n";
+        flush();
+    }
     
 
 ?>
