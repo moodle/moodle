@@ -97,6 +97,7 @@ function display() {
             print_header();
             print_simple_box(format_text($resource->alltext, FORMAT_HTML, $formatoptions, $course->id), 
                                          "center", "", "$THEME->cellcontent", "20");
+            print_footer();
         } else {                           /// Make a page and a pop-up window
 
             print_header($pagetitle, $course->fullname, "$this->navigation {$resource->name}", 
