@@ -2,6 +2,7 @@
 // Strings for Moodle site 
 
 $string[activity] = "Activity";
+$string[activityreport] = "Activity report";
 $string[address] = "Address";
 $string[admin] = "Admin";
 $string[adminpage] = "Admin page";
