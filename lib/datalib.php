@@ -2029,7 +2029,7 @@ function get_courses_page($categoryid="all", $sort="c.sortorder ASC", $fields="c
     global $USER, $CFG;
 
     $categoryselect = "";
-    if ($categoryid != "all") {
+    if ($categoryid != "all" && is_numeric($categoryid)) {
         $categoryselect = "c.category = '$categoryid'";
     }
 
