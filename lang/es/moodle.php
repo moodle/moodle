@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.1 Beta (2003082001)
+      // moodle.php - created with Moodle 1.1 (2003082800)
 
 
 $string['action'] = "Acción";
@@ -113,21 +113,9 @@ $string['configframename'] = "Si está colocando la plataforma dentro de una marc
 $string['configgdversion'] = "Indica la versión instalada de GD. La versión mostrada es la que detectó el programa. No la cambie sin saber exactamente la versión instalada.";
 $string['confightmleditor'] = "Seleccione si permitir o no el uso del editor HTML. Para utilizarse requiere IE 5.5 o posterior. Los usuarios también pueden elegir no utilizarlo.";
 $string['configidnumber'] = "Esta opción especifica si:
-
-
-
 a) No se solicita ningún número de id a los usuarios.
-
-
-
 b) Se solicita el número pero se permite que el espacio quede en blanco.
-
-
-
 c) Se solicita el número y es indispensable que lo coloquen.
-
-
-
 Si el número de id es mostrado en su perfil de usuario.";
 $string['configintro'] = "En esta página puede especificar un número de variables de configuración que ayudan al software a operar correctamente en el servidor. No se preocupe mucho, los valores por defecto normalmnte funcionan muy bien, y siempre puede regresar a cambiar algún valor.";
 $string['configintroadmin'] = "En esta página puede configurar su cuenta de administrador, que tendrá control total sobre el sitio. Asegúrese de proporcionar una contraseña segura y una dirección de correo válida. También podrá crear más cuentas de administrador en el futuro.";
@@ -142,13 +130,7 @@ $string['configlongtimenosee'] = "Si los estudiantes no han participado durante 
 $string['configmaxeditingtime'] = "Especifica el tiempo que los participantes tienen para editar sus mensajes. Normalmente 30 minutos es suficiente.";
 $string['configproxyhost'] = "Si este <B>servidor</B> necesita proxy (por ejemplo firewall) para acceder a Internet, provea el nombre del proxy y el puerto.";
 $string['configsecureforms'] = "Moodle puede utilizar un nivel adicional de seguridad para aceptar datos de formularios web. 
-
-
-
 Si esta variable está habilitada, la variable HTTP_REFERER de su navegador será contrastada con la dirección del formulario. En algunos casos esto puede provocar problemas con los cortafuegos (por ej.: Zonealarm) si están configurados para quitar el HTTP_REFERER de su tráfico web.
-
-
-
 Si los usuarios experimentan problemas con la página de entrada (login) es posible que ésta sea la causa, aunque desactivando esta opción el sitio quede más expuesto a ataques de fuerza bruta de contraseñas. Ante la duda déjela activada.";
 $string['configsessiontimeout'] = "Todo usuario dentro del sitio que se mantenga inactivo por un largo tiempo (sin cargar páginas) será desactivado automáticamente. Muy útil para computadoras compartidas. Esta variable especifica el tiempo de espera.";
 $string['configslasharguments'] = "Archivos (imágenes, uploads etc.) proveídos por un script que usa 'slash arguments' (la segunda opción). Este método carga los archivos más fácilmente.  Algunos servidores php no permiten este método, por lo que si enfrenta problemas para subir archivos (como fotos de los usuarios), cambie esta variable a la primera opción";
@@ -262,23 +244,11 @@ Para completar el proceso de inscripción haga clic aquí:
   \$a->link
 
 Si usted no lo ha solicitado, ignore este mensaje.
-
-
-
 Felicitaciones 
-
-
-
 \$a->admin";
 $string['emailconfirmationsubject'] = "Información de la cuenta  \$a ";
 $string['emailconfirmsent'] = "   <P>Hemos enviado un correo electrónico a <B>\$a</B>,
-
-
-
    <P>ahí encontrará instrucciones sencillas para concluir el proceso.
-
-
-
    <P>Si enfrenta alguna dificultad contacte al Administrador del Sistema.";
 $string['emaildisplay'] = "Mostrar correo";
 $string['emaildisplaycourse'] = "Mostrar mi dirección de correo sólo a mis compañeros de curso";
@@ -288,21 +258,9 @@ $string['emailexists'] = "Esta dirección de correo ya está registrada.";
 $string['emailformat'] = "Formato de correo";
 $string['emailmustbereal'] = "IMPORTANTE: Para concluir el proceso debe colocar una dirección de correo verdadera";
 $string['emailpasswordconfirmation'] = "Hola \$a->firstname,
-
-
-
 Recibimos la solicitud de nueva contraseña para su cuenta en '\$a->sitename'.
-
-
-
 Para concluir el proceso diríjase a 
-
-
-
 \$a->link
-
-
-
 Si necesita ayuda adicional, entre en contacto con el administrador, \$a->admin";
 $string['emailpasswordconfirmationsubject'] = "\$a: confirmación de cambio de contraseña";
 $string['emailpasswordconfirmsent'] = "Un e-mail se ha enviado a su dirección <b>\$a</b>.
@@ -320,19 +278,14 @@ $string['emailpasswordsent'] = "Gracias por confirmar el cambio.
 $string['enrolmentconfirmation'] = "Está a punto de inscribirse como alumno de este curso <br />¿Está seguro que desea hacer eso?";
 $string['enrolmentkey'] = "contraseña de acceso";
 $string['enrolmentkeyfrom'] = "Este curso requiere el uso de una 'contraseña de acceso'<BR>
-
-
-
 que podrá obtener con \$a";
 $string['enrolmentkeyhint'] = "Esta 'contraseña de acceso' es incorrecta, por favor trate nuevamente<BR>
-
-
-
 (Una pista: comienza con '\$a')";
 $string['entercourse'] = "Clic aquí para entrar al curso";
 $string['enteremailaddress'] = "Escriba su dirección de correo. Una nueva contraseña le será enviada.";
 $string['error'] = "Error";
 $string['errortoomanylogins'] = "Lo sentimos, ha excedido el número permitido de intentos. Cierre y abra su navegador para intentar nuevamente.";
+$string['errorwhenconfirming'] = "Ha ocurrido un error, por lo que usted aún no ha sido confirmado. Si llegó aquí a través de un enlace en su correo electrónico, asegúrese de que esa línea  en su correo no esté rota o cortada. De ser así, tendrá que utilizar copiar y pegar para reconstruir adecuadamente el enlace.";
 $string['existing'] = "Existente";
 $string['existingadmins'] = "Administradores existentes";
 $string['existingcourse'] = "Curso existente";
@@ -378,21 +331,9 @@ $string['gdnot'] = "GD no instalado";
 $string['gpl'] = "Copyright (C) 2001-2002  Martin Dougiamas  (http://dougiamas.com)<BR> Traducción: Claudio Tavares (http://enlaceacademico.com)
 
 Este programa es software gratuito; Ud. puede redistribuirlo y/o modificarlo
-
-
-
 bajo los términos de GNU General Public License según la publicación
-
-
-
 de The Free Software Foundation; incluso la versión 2 o alguna posterior.
-
-
-
 <BR>
-
-
-
 Para más detalles vea: http://www.gnu.org/copyleft/gpl.html";
 $string['grade'] = "Calificación";
 $string['grades'] = "Calificaciones";
@@ -467,46 +408,16 @@ $string['loginas'] = "Entrar como";
 $string['loginguest'] = "Entrar como invitado";
 $string['loginsite'] = "Entrar al sitio";
 $string['loginsteps'] = "Para acceder al sistema tómese un minuto para
-
-
-
 crear una cuenta.
-
-
-
    <P>	 Estos son los pasos:
-
-
-
    <OL size=2>
-
-
-
    <LI>Llene el <A HREF=\$a>Formulario de registro</A>.
-
-
-
    <LI>El sistema le enviará un correo para verificar que su dirección esté correcta.
-
-
-
    <LI>Lea el correo y confirme su matrícula.
-
-
-
    <LI>Si algún curso en particular le solicita una &quot;contraseña de acceso&quot; utilice la que le brindaron cuando se matriculó.
-
-
-
    <LI>A partir de ese momento no necesitará utilizar más que su nombre y contraseña.
-
-
-
    </OL>";
 $string['loginstepsnone'] = "Hola.<P>Para acceder a todos los cursos necesita crear una cuenta.<P>Todo lo que tiene que hacer es inscribirse en esta página.
-
-
-
 <P>";
 $string['loginto'] = "Entrar a \$a";
 $string['loginusing'] = "Entre aquí usando su nombre y contraseña";
@@ -583,21 +494,12 @@ $string['newpasswordtext'] = "Hola \$a->firstname,
 La contraseña de su cuenta en '\$a->sitename' se ha cancelado y se le ha otorgado una nueva contraseña temporal.
 
    Nombre de usuario: \$a->username
-
-
-
    contraseña: \$a->newpassword
 
 Dirígase a esta página y cambie su contraseña temporal por una que pueda recordar mejor:
-
-
-
    \$a->link
 
 Atte. '\$a->sitename' El Administrador,
-
-
-
 \$a->signoff";
 $string['newpicture'] = "Imagen nueva";
 $string['newsitem'] = "nuevo ítem";
@@ -659,17 +561,8 @@ $string['passwordrecovery'] = "Sí, ayúdeme a entrar";
 $string['passwordsdiffer'] = "Las contraseñas son diferentes";
 $string['passwordsent'] = "Se ha enviado la contraseña";
 $string['passwordsenttext'] = "   <P>El sistema ha enviado un correo electrónico a \$a->email.
-
-
-
    <P><B>Revise su correo para recibir una nueva contraseña</B>
-
-
-
    <P>La nueva contraseña se genera automáticamente, por lo que tal vez Ud. desee
-
-
-
    <A HREF=\$a->link>cambiarla</A> por una que le sea más fácil recordar.";
 $string['people'] = "Personas";
 $string['personalprofile'] = "Información personal";
@@ -735,17 +628,8 @@ $string['search'] = "Buscar";
 $string['searchagain'] = "Volver a buscar";
 $string['searchcourses'] = "Buscar cursos";
 $string['searchhelp'] = "Puede buscar muchas palabras al mismo tiempo.<p>
-
-
-
 Si coloca una o más palabras, el buscador encuentra todos los mensajes que contengan esa o esas palabras en cualquier lugar.<br />
-
-
-
 Si coloca varias palabras separadas por el signo de adición (+) aparecerán los resultados que contengan todas esas palabras en el orden exacto en el que fueron colocadas.<br />
-
-
-
 Si coloca un signo de sustracción (-) antes de una palabra se mostrarán todos los mensajes que contengan la o las otras plabras pero que no contengan la palabra antecedida por este signo.";
 $string['searchresults'] = "Resultados de la búsqueda";
 $string['sec'] = "segundos";
