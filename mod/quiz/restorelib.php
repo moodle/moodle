@@ -9,17 +9,17 @@
     //                           quiz                                                      quiz_categories
     //                        (CL,pk->id)                                                   (CL,pk->id)
     //                            |                                                              |
-    //             -----------------------------------------------                               |
-    //             |                        |                    |                               |.......................................
-    //             |                        |                    |                               |                                      .
-    //             |                        |                    |                               |                                      .
-    //        quiz_attempts          quiz_grades         quiz_question_grades                    |    ----quiz_question_datasets----    .
-    //   (UL,pk->id, fk->quiz)   (UL,pk->id,fk->quiz)    (CL,pk->id,fk->quiz)                    |    |  (CL,pk->id,fk->question,  |    .
-    //             |                                              |                              |    |   fk->dataset_definition)  |    .
-    //             |                                              |                              |    |                            |    .
-    //             |                                              |                              |    |                            |    .
-    //             |                                              |                              |    |                            |    .
-    //       quiz_responses                                       |                        quiz_questions                     quiz_dataset_definitions
+    //           -------------------------------------------------------------------             |
+    //           |                        |                    |                   |             |.......................................
+    //           |                        |                    |                   |             |                                      .
+    //           |                        |                    |                   |             |                                      .
+    //      quiz_attempts        quiz_grades       quiz_question_grades   quiz_question_version  |    ----quiz_question_datasets----    .
+    // (UL,pk->id, fk->quiz) (UL,pk->id,fk->quiz)  (CL,pk->id,fk->quiz)    (CL,pk->id,fk->quiz)  |    |  (CL,pk->id,fk->question,  |    .
+    //             |                                              |                      .       |    |   fk->dataset_definition)  |    .
+    //             |                                              |                      .       |    |                            |    .
+    //             |                                              |                      .       |    |                            |    .
+    //             |                                              |                      .       |    |                            |    .
+    //       quiz_responses                                       |                      quiz_questions                       quiz_dataset_definitions
     //  (UL,pk->id, fk->attempt)----------------------------------------------------(CL,pk->id,fk->category,files)            (CL,pk->id,fk->category)
     //                                                                                           |                                      |
     //                                                                                           |                                      |
@@ -84,6 +84,7 @@
 
     // 2.-Standard module restore (Invoked via quiz_restore_mods). It includes this tables:
     //     - quiz
+    //     - quiz_question_version
     //     - quiz_question_grades
     //     - quiz_attempts
     //     - quiz_grades
@@ -323,6 +324,7 @@
             $question->qtype = backup_todb($que_info['#']['QTYPE']['0']['#']);
             $question->stamp = backup_todb($que_info['#']['STAMP']['0']['#']);
             $question->version = backup_todb($que_info['#']['VERSION']['0']['#']);
+            $question->hidden = backup_todb($que_info['#']['HIDDEN']['0']['#']);
 
             //Check if the question exists
             //by category and stamp
@@ -1366,6 +1368,8 @@
                              $mod->id, $newid);
                 //We have to restore the question_grades now (course level table)
                 $status = quiz_question_grades_restore_mods($newid,$info,$restore);
+                //We have to restore the question_versions now (course level table)
+                $status = quiz_question_versions_restore_mods($newid,$info,$restore);
                 //Now check if want to restore user data and do it.
                 if ($restore->mods['quiz']->userinfo) {
                     //Restore quiz_attempts
@@ -1431,6 +1435,77 @@
             if ($newid) {
                 //We have the newid, update backup_ids
                 backup_putid($restore->backup_unique_code,"quiz_question_grades",$oldid,
+                             $newid);
+            } else {
+                $status = false;
+            }
+        }
+
+        return $status;
+    }
+
+    //This function restores the quiz_question_versions
+    function quiz_question_versions_restore_mods($quiz_id,$info,$restore) {
+
+        global $CFG, $USER;
+
+        $status = true;
+
+        //Get the quiz_question_versions array
+        $versions = $info['MOD']['#']['QUESTION_VERSIONS']['0']['#']['QUESTION_VERSION'];
+
+        //Iterate over question_versions
+        for($i = 0; $i < sizeof($versions); $i++) {
+            $ver_info = $versions[$i];
+            //traverse_xmlize($ver_info);                                                                 //Debug
+            //print_object ($GLOBALS['traverse_array']);                                                  //Debug
+            //$GLOBALS['traverse_array']="";                                                              //Debug
+
+            //We'll need this later!!
+            $oldid = backup_todb($ver_info['#']['ID']['0']['#']);
+
+            //Now, build the QUESTION_VERSIONS record structure
+            $version->quiz = $quiz_id;
+            $version->oldquestion = backup_todb($ver_info['#']['OLDQUESTION']['0']['#']);
+            $version->newquestion = backup_todb($ver_info['#']['NEWQUESTION']['0']['#']);
+            $version->userid = backup_todb($ver_info['#']['USERID']['0']['#']);
+            $version->timestamp = backup_todb($ver_info['#']['TIMESTAMP']['0']['#']);
+
+            //We have to recode the oldquestion field
+            $question = backup_getid($restore->backup_unique_code,"quiz_questions",$version->oldquestion);
+            if ($question) {
+                $version->oldquestion = $question->new_id;
+            }
+
+            //We have to recode the newquestion field
+            $question = backup_getid($restore->backup_unique_code,"quiz_questions",$version->newquestion);
+            if ($question) {
+                $version->newquestion = $question->new_id;
+            }
+
+            //We have to recode the userid field
+            $user = backup_getid($restore->backup_unique_code,"user",$version->userid);
+            if ($user) {
+                $version->userid = $user->new_id;
+            } else {  //Assign to current user
+                $version->userid = $USER->id;
+            }
+
+            //The structure is equal to the db, so insert the quiz_question_versions
+            $newid = insert_record ("quiz_question_version",$version);
+
+            //Do some output
+            if (($i+1) % 10 == 0) {
+                echo ".";
+                if (($i+1) % 200 == 0) {
+                    echo "<br />";
+                }
+                backup_flush(300);
+            }
+
+            if ($newid) {
+                //We have the newid, update backup_ids
+                backup_putid($restore->backup_unique_code,"quiz_question_versions",$oldid,
                              $newid);
             } else {
                 $status = false;
@@ -1524,6 +1599,7 @@
             //Now, build the RESPONSES record structure
             $response->attempt = $attempt_id;
             $response->question = backup_todb($res_info['#']['QUESTION']['0']['#']);
+            $response->originalquestion = backup_todb($res_info['#']['ORIGINALQUESTION']['0']['#']);
             $response->answer = backup_todb($res_info['#']['ANSWER']['0']['#']);
             $response->grade = backup_todb($res_info['#']['GRADE']['0']['#']);
 
@@ -1531,6 +1607,12 @@
             $question = backup_getid($restore->backup_unique_code,"quiz_questions",$response->question);
             if ($question) {
                 $response->question = $question->new_id;
+            }
+
+            //We have to recode the originalquestion field
+            $question = backup_getid($restore->backup_unique_code,"quiz_questions",$response->originalquestion);
+            if ($question) {
+                $response->originalquestion = $question->new_id;
             }
 
             //We have to recode the answer field
@@ -1887,6 +1969,17 @@
                         $log->info = $mod->new_id;
                         $status = true;
                     }
+                }
+            }
+            break;
+        case "editquestions":
+            if ($log->cmid) {
+                //Get the new_id of the module (to recode the url field)
+                $mod = backup_getid($restore->backup_unique_code,$log->module,$log->info);
+                if ($mod) {
+                    $log->url = "view.php?id=".$log->cmid;
+                    $log->info = $mod->new_id;
+                    $status = true;
                 }
             }
             break;
