@@ -1004,6 +1004,9 @@ function print_courses_sideblock($category=0, $width="100%") {
     if (isset($USER->id) and !isadmin()) {    // Just print My Courses
         if ($courses = get_my_courses($USER->id)) {
             foreach ($courses as $course) {
+                if (!$course->category) {
+                    continue;
+                }
                 $linkcss = $course->visible ? "" : " class=\"dimmed\" ";
                 $moddata[]="<a $linkcss title=\"$course->shortname\" ".
                            "href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->fullname</a>";
@@ -1156,6 +1159,9 @@ function print_my_moodle() {
 
     if ($courses = get_my_courses($USER->id)) {
         foreach ($courses as $course) {
+            if (!$course->category) {
+                continue;
+            }
             print_course($course, "100%");
             echo "<br />\n";
         }
