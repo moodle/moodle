@@ -6,6 +6,8 @@ define('PAGE_CHAT_VIEW',   'mod-chat-view');
 
 page_map_class(PAGE_CHAT_VIEW, 'page_chat');
 
+$DEFINEDPAGES = array(PAGE_CHAT_VIEW);
+
 /**
  * Class that models the behavior of a chat
  *

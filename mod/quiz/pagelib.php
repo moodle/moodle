@@ -6,6 +6,8 @@ define('PAGE_QUIZ_VIEW',   'mod-quiz-view');
 
 page_map_class(PAGE_QUIZ_VIEW, 'page_quiz');
 
+$DEFINEDPAGES = array(PAGE_QUIZ_VIEW);
+
 /**
  * Class that models the behavior of a quiz
  *
