@@ -576,7 +576,7 @@ function filter_text($text) {
 }
 
 
-function clean_text($text, $format) {
+function clean_text($text, $format=FORMAT_MOODLE) {
 /// Given raw text (eg typed in by a user), this function cleans it up 
 /// and removes any nasty tags that could mess up Moodle pages.
 
@@ -1645,6 +1645,7 @@ function navmenu($course, $cm=NULL, $targetwindow="self") {
     $previousmod = NULL;
     $backmod = NULL;
     $nextmod = NULL;
+    $logslink = NULL;
     $flag = false;
 
     foreach ($modinfo as $mod) {
@@ -1664,6 +1665,7 @@ function navmenu($course, $cm=NULL, $targetwindow="self") {
             }
             if ($cm == $mod->cm) {
                 $selected = $url;
+                $selectmod = $mod;
                 $backmod = $previousmod;
                 $flag = true; // set flag so we know to use next mod for "next"
             }
@@ -1678,6 +1680,12 @@ function navmenu($course, $cm=NULL, $targetwindow="self") {
             $previousmod = $mod;
         }
     }
+    if ($selected and $isteacher) {
+        $logslink = "<td><a href=\"$CFG->wwwroot/course/log.php?chooselog=1&user=0&date=0&id=$course->id&url=".
+                     urlencode($selected).
+                    "\"><img border=\"0\" height=\"16\" width=\"16\" src=\"$CFG->pixpath/i/log.gif\"></a></td>";
+        
+    }
     if ($backmod) {
         $backmod = "<form action=\"$CFG->wwwroot/mod/$backmod->mod/view.php\" target=\"$CFG->framename\">".
                    "<input type=\"hidden\" name=\"id\" value=\"$backmod->cm\">".
@@ -1688,7 +1696,7 @@ function navmenu($course, $cm=NULL, $targetwindow="self") {
                    "<input type=\"hidden\" name=\"id\" value=\"$nextmod->cm\">".
                    "<input type=\"submit\" value=\"&gt;\"></form>";
     }
-    return "<table><tr><td>$backmod</td><td>" .
+    return "<table><tr>$logslink<td>$backmod</td><td>" .
             popup_form("$CFG->wwwroot/mod/", $menu, "navmenu", $selected, get_string("jumpto"),
                        "", "", true, $targetwindow).
             "</td><td>$nextmod</td></tr></table>";
