@@ -123,8 +123,8 @@
         //If we are deleting and bringing into a course or making a new course, same situation
         if($restore->restoreto == 0 || $restore->restoreto == 2) {
             echo '<li>'.get_string('creatingblocks');
-            if (!$status = restore_create_blocks($restore, $xml_file)) {
-                notify("Error while creating the course blocks");
+            if (!$status = restore_create_blocks($restore, $info->backup_block_format, $course_header->blockinfo, $xml_file)) {
+                notify('Error while creating the course blocks');
             }
         }
     }

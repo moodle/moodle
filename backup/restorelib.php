@@ -593,12 +593,12 @@
         delete_records('block_instance', 'pageid', $restore->course_id, 'pagetype', MOODLE_PAGE_COURSE);
         if (empty($backup_block_format)) {     // This is a backup from Moodle < 1.5
             if (empty($blockinfo)) {
-                echo " from pre 1.3";                                 //debug
+                echo ' (pre 1.3)';                                 //debug
                 // Looks like it's from Moodle < 1.3. Let's give the course default blocks...
                 $newpage = page_create_object(MOODLE_PAGE_COURSE, $restore->course_id);
                 blocks_repopulate_page($newpage);
             } else {
-                echo " from 1.3-1.4";                                 //debug
+                echo ' (1.3-1.4)';                                 //debug
                 // We just have a blockinfo field, this is a legacy 1.4 or 1.3 backup
                 $blockrecords = get_records_select('block', '', '', 'name, id');
                 $temp_blocks_l = array();
@@ -632,11 +632,9 @@
                     }
                 }
             }
-        } else if($info->backup_block_format == 'instances') {
-            echo " from 1.5";                                 //debug
-            if(!$status = restore_create_block_instances($restore,$xml_file)) {
-                $status = false;
-            }
+        } else if($backup_block_format == 'instances') {
+            echo ' (1.5)';                                 //debug
+            $status = restore_create_block_instances($restore,$xml_file);
         }
 
         return $status;
