@@ -46,7 +46,7 @@
     $newaccount = get_string("newaccount");
     $login = get_string("login");
 
-	print_header($newaccount, $newaccount, "<A HREF=\".\">$login</A> -> $newaccount", $focus);
+	print_header($newaccount, $newaccount, "<A HREF=\"index.php\">$login</A> -> $newaccount", $focus);
 	include("signup_form.php");
     print_footer();
 
