@@ -64,7 +64,7 @@ When was Ulysses S. Grant born? {#
 
 // OPTIONS 
 
-// ===Inline Comments===
+// ===Line Comments===
 
 // Subheading: Numerical questions below
 What's 2 plus 2? {#4}

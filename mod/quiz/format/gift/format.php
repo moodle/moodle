@@ -43,11 +43,11 @@
 //         =%25%Bethlehem#He was born here, but not raised here.
 //     }.
 //
-//     //this inline comment will be ignored by the filter
+//     //comment about questions below (this line ignored by filter)
 //     ::Numerical example::
 //     When was Ulysses S. Grant born? {#
 //         =1822:0      #Correct! 100% credit
-//         =%50%1982:2  #He was born in 1822.
+//         =%50%1822:2  #He was born in 1822.
 //                       You get 50% credit for being close.
 //      }
 // 
