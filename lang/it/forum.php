@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.4 beta (2004082300)
+      // forum.php - created with Moodle 1.4 ready tomorrow (2004083000)
 
 
 $string['addanewdiscussion'] = 'Aggiungi un nuovo argomento di discussione';
@@ -149,6 +149,8 @@ $string['subscriptions'] = 'Iscrizioni';
 $string['unsubscribe'] = 'Cancella la tua iscrizione da questo forum';
 $string['unsubscribed'] = 'Iscrizione cancellata';
 $string['unsubscribeshort'] = 'Disiscrivi';
+$string['yesforever'] = 'Si, per sempre';
+$string['yesinitially'] = 'Si, inizialmente';
 $string['youratedthis'] = 'Hai già votato questo';
 $string['yournewtopic'] = 'Il tuo nuovo argomento di discussione';
 $string['yourreply'] = 'La tua replica';

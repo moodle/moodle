@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.4 beta (2004082900)
+      // moodle.php - created with Moodle 1.4 ready tomorrow (2004083000)
 
 
 $string['action'] = 'Azione';
@@ -74,6 +74,7 @@ $string['allowguests'] = 'Questo corso permette l\'accesso ad utenti ospiti';
 $string['allowinternal'] = 'Permetti anche i metodi interni';
 $string['allownot'] = 'Non permettere';
 $string['allparticipants'] = 'Tutti i partecipanti';
+$string['allteachers'] = 'Tutti gli insegnati';
 $string['alphabet'] = 'A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z';
 $string['alphanumerical'] = 'Puo\' contenere solo lettere dell\'alfabeto o numeri';
 $string['alreadyconfirmed'] = 'La registrazione è già stata confermata';
@@ -148,6 +149,7 @@ $string['closewindow'] = 'Chiudi questa finestra';
 $string['comparelanguage'] = 'Confronta ed modifica la lingua corrente';
 $string['complete'] = 'Completo';
 $string['configallowunenroll'] = 'Se selezioni \'Si\', gli studenti possono disiscriversi da soli dai corsi quando preferiscono. Altrimenti questo può essere fatto solamente dagli insegnanti e dagli  amministratori.';
+$string['configallusersaresitestudents'] = 'Riguardo alle attività nella pagina principale, TUTTI gli utenti devo essere considerati studenti? Se la risposta è \"Si\" tutti gli utenti confermati potranno parteciapre come studenti a queste attività. Se la risposta è \"No\", allora solo gli utenti che sono già studenti di almeno un corso potranno prendere part alle attività della pagina principale. Solo gli amministratori e gli insegnati assegnati possono gestire come insegnati le attività della pagina pricipale.';
 $string['configautologinguests'] = 'I visitatori devono essere registrati automaticamente come ospiti quando entrano nei corsi con accesso agli ospiti?';
 $string['configcachetext'] = 'Per i siti grandi o i siti che usa filtri di testo, questa impostazione può velocizzare molto le cose. Copie dei testi saranno mantenute nella loro forma elaborata per il tempo qui specificato. Impostandolo troppo breve potrebbe rallentare un po\' le cose, ma impostandolo troppo lungo potrebbe significare attendere molto tempo prima che il testo venga aggiornato (i nuovi collegamenti, per esempio)';
 $string['configcountry'] = 'Se scegli uno stato qui, questo verrà proposto di default. Per obbligare un utente a scegliere il proprio stato, lascialo vuoto.';
@@ -191,6 +193,7 @@ $string['configproxyhost'] = 'Se questo <B>server</B> necessita di un proxy (ad 
 $string['configsecureforms'] = 'Moodle può utilizzare un ulteriore livello di sicurezza quando accetta dati da web form. Se questo é abilitato, la variabile del browser HTTP_REFERER é confrontata con l\'indirizzo del form attuale. In alcuni rari casi questo può causare problemi se l\'utente sta utilizzando un firewall (es. Zonealarm) configurato per controllare HTTP_REFERER nel suo traffico web. Uno dei sintomi é rimanere \'incollato\' a un form. Se gli utenti hanno avuto problemi con la pagina di login (per esempio) potresti voler disabilitare questo impostazione, questo può esporre il tuo sito ad attacchi di password per forza bruta. Se sei in dubbio, lascialo a \'Si\'.';
 $string['configsessioncookie'] = 'Questa impostazione personalizza il nome dei cookie usati per le sessoni di Moodle. Questa impostazione è opzionale, ed è utile solamente se più di una copia di Moodle viene esegueta sullo stesso sito web.';
 $string['configsessiontimeout'] = 'Se le persone loggate in questo sito sono inattive da molto tempo (senza caricare pagine) viene automaticamente terminata la loro sessione. Questa variabile specifica quanto deve essere questo tempo.';
+$string['configshowsiteparticipantslist'] = 'Tutti questi studenti del sito e insegnati del sito saranno mostrati nella lista dei partecipanti. Chi può vedere la lista di questi partecipanti?';
 $string['configslasharguments'] = 'Files (immagini, uploads etc) sono trasmessi attraverso uno script usando gli \'slash arguments\' (la seconda opzione a fianco).
 Questo metodo permette un \"cache\" più facile in molti browsers. Sfortunantamente alcuni server PHP non permettono questo metodo. Perciò se avete problemi nel visualizzare file o immagini salvate (ad esempio immagini dell\'utente), scegli la prima opzione.';
 $string['configsmtphosts'] = 'Impostare il nome intero di uno o più servers locali SMTP che Moodle dovrebbe usare (esempio \'mail.a.com\' oppure \'mail.a.com;mail.b.com\'). Se lasci questo campo vuoto, Moodle userà il metodo di spedizione della posta predefinito utilizzando il programma di posta del PHP (di default).';
@@ -902,9 +905,12 @@ $string['siteerrors'] = 'Errori sito';
 $string['sitefiles'] = 'File del sito';
 $string['sitelogs'] = 'Logs del sito';
 $string['sitenews'] = 'News del sito';
+$string['sitepartlist0'] = 'Devi essere un insegnate del sito per vedere la lista dei partecipanti al sito';
+$string['sitepartlist1'] = 'Devi essere un insegnate per poter vedere lalista dei partecipanti alsito';
 $string['sites'] = 'Siti';
 $string['sitesection'] = 'Includi una sezione';
 $string['sitesettings'] = 'Impostazioni sito';
+$string['siteteachers'] = 'Insegnati del sito';
 $string['size'] = 'Dimensione';
 $string['sizeb'] = 'bytes';
 $string['sizegb'] = 'Gb';
@@ -933,6 +939,7 @@ $string['strftimetime'] = '%%H:%%M';
 $string['stringsnotset'] = 'Le seguenti stringhe non sono definite in $a';
 $string['studentnotallowed'] = 'Spiacenti, ma non puoi accedere a questo corso come \'$a\' ';
 $string['students'] = 'Studenti';
+$string['studentsandteachers'] = 'Studenti e insegnati';
 $string['subcategories'] = 'Sottocategorie';
 $string['success'] = 'Operazione eseguita con successo';
 $string['summary'] = 'Riassunto';
