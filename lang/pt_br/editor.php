@@ -1,13 +1,14 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.4.2+ (2004083126)
+      // editor.php - created with Moodle 1.4.1 (2004083101)
 
 
 $string['about'] = 'Informações sobre este editor';
 $string['absbottom'] = 'Embaixo';
+$string['middle'] = 'No meio';
 $string['address'] = 'Endereço';
 $string['alignment'] = 'Alinhamento';
 $string['alternatetext'] = 'Texto alternativo';
-$string['anchorhelp'] = 'Cria apenas uma âncora. É necessário criar o link manualmente.';
+$string['anchorhelp'] = 'Isto cria apenas uma âncora. É necessário criar o link manualmente.';
 $string['anchorname'] = 'Nome da âncora';
 $string['anchors'] = 'Âncora';
 $string['baseline'] = 'Linha-base';

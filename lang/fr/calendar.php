@@ -95,4 +95,27 @@ $string['thursday'] = 'Jeudi';
 $string['friday'] = 'Vendredi';
 $string['saturday'] = 'Samedi';
 
+$string['pref_dstpreset'] = 'Heure d\'été';
+$string['notusingdst'] = 'Heure d\'été non utilisée';
+$string['dstpresetname'] = 'Nom du réglage';
+$string['dstpresetactivated'] = 'Activation';
+$string['dstpresetdeactivated'] = 'Désactivation';
+$string['dstpresetadjusttime'] = 'Ajustement';
+  	 
+$string['explain_dstpresetforced'] = 'L\'administrateur du site ne permet pas aux utilisateurs de modifier ce réglage.';
+$string['explain_dstpreset'] = 'Vous pouvez choisir dans le menu déroulant votre réglage de l\'heure d\'été.';
+$string['dstdefaultpresetname'] = 'Nouveau réglage heure d\'été';
+$string['nth'] = '{$a}er';
+$string['dsthumanreadable'] = 'Le $a->activate_index $a->activate_weekday de $a->activate_month, $a->direction de $a->offset minutes. Ce changement dure jusqu\'au $a->deactivate_index $a->deactivate_weekday de $a->deactivate_month.';
+$string['dstadjusttime'] = ''; //'Changer l\'heure';
+$string['dstof'] = 'de';
+$string['dstat'] = 'à';
+$string['dstonthe'] = 'Le';
+$string['dstby'] = 'de';
+$string['day'] = 'jour';
+$string['timeforward'] = 'Avancer l\'heure';
+$string['timerewind'] = 'Retarder l\'heure';
+$string['first'] = 'premier';
+$string['last'] = 'dernier';
+
 ?>

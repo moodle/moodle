@@ -1,5 +1,6 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.4.2+ (2004083126)
+      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004110200)
+
 
 $string['action'] = 'Ação';
 $string['active'] = 'Ativo';
@@ -115,9 +116,6 @@ $string['backuptakealook'] = 'Por favor controle os logs de backup em: $a';
 $string['backupuserfileshelp'] = 'Decida se os arquivos dos usuários (ex. imagens dos perfis) devem ser incluidos em backups automáticos';
 $string['backupusershelp'] = 'Escolha se você quer incluir todos os usuários do servidor ou apenas aqueles específicos de cada curso';
 $string['backupversion'] = 'Versão do Backup ';
-$string['blockconfiga'] = 'Configurando un box $a';
-$string['blockconfigbad'] = 'Este box não foi implementado corretamente e não compreende uma interface de configuração';
-$string['blockconfigin'] = 'Curso: Configurando um box em $a';
 $string['blockdeleteconfirm'] = 'Você está cancelando o box \'$a\'. Todas as informações e dados associados a este box serão cancelados da base de dados. Continuar?';
 $string['blockdeletefiles'] = 'Os dados associados ao box \'$a->block\' foram cancelados da base de dados. Para completar o cancelamento e evitar que o box reapareça você deve cancelar o seguinte diretório no servidor: $a->directory';
 $string['blocks'] = 'Box';
@@ -259,7 +257,6 @@ $string['createaccount'] = 'Cadastrar este novo usuário';
 $string['createfolder'] = 'Criar diretório em $a';
 $string['createuserandpass'] = 'Preencha com um novo nome de usuário e uma nova senha';
 $string['createziparchive'] = 'Criar um arquivo zip';
-$string['creatingblocks'] = 'Criando box';
 $string['creatingcategoriesandquestions'] = 'Criando categorias e questões';
 $string['creatingcoursemodules'] = 'Criando módulos de cursos';
 $string['creatingevents'] = 'Criando eventos';

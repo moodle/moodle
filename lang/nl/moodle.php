@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004112200)
+      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004121600)
 
 
 $string['action'] = 'Actie';
@@ -205,7 +205,7 @@ $string['configmaxeditingtime'] = 'Dit bepaalt hoe lang mensen de tijd hebben om
 $string['confignoreplyaddress'] = 'Soms verzendt Moodle e-mails voor een gebruiker (bijvoorbeeld bij forumberichten) Het e-mailadres dat je hier instelt wordt gebruikt als \"From\"-adres voor die gebruikers die ervoor gekozen hebben dat andere gebruikers niet rechtstreeks op hun mail mogen kunnen antwoorden (bijvoorbeeld wanneer een gebruiker zijn e-mailadres privé wil houden';
 $string['confignotifyloginfailures'] = 'Als er mislukte aanmeldingen gelogd worden, dan kunnen er e-mailnotificaties verstuurd worden. Wie moet deze notificaties zien?';
 $string['confignotifyloginthreshold'] = 'Als notificaties over mislukte aanmeldingen verzonden moeten worden, hoeveel aanmeldingspogingen  door één gebruiker of vanaf één IP-adres zijn het melden waard?';
-$string['configopentogoogle'] = 'Als je deze instelling inschakelt, dan zal Google als gast toegelaten worden tot je site. Mensen die jouw site binnenkomen via Moodle zullen automatisch als gast aangemeld zijn. Merk op dat dit alleen toegang zal geven tot vakken waar toegang voor gasten toegelaten is.';
+$string['configopentogoogle'] = 'Als je deze instelling inschakelt, dan zal Google als gast toegelaten worden tot je site. Mensen die jouw site binnenkomen via Goodle zullen automatisch als gast aangemeld zijn. Merk op dat dit alleen toegang zal geven tot vakken waar toegang voor gasten toegelaten is.';
 $string['configpathtoclam'] = 'Pad naar clam AV. Gewoonlijk iets als /usr/bin/clamscan of /usr/bin/clamdscan. Je hebt dit nodig om clam AV te laten lopen.';
 $string['configproxyhost'] = 'Als deze <B>server</B> een proxyserver (zoals bijvoorbeeld een firewall) nodig heeft om op het internet te komen, vul hier dan de hostname en de poort van de proxy in. Laat het leeg als dit niet het geval is.';
 $string['configquarantinedir'] = 'Als je wil dat clam AV besmette bestanden naar een quarantinemap verplaatst, zet het pad dan hier. Het moet beschrijfbaar zijn voor de webserver. Als je dit leeg laat of als je een map opgeeft die niet bestaat of niet beschrijfbaar is, dan zullen besmette bestanden verwijderd worden. Gebruik geen schijne streep achteraan het pad.';
@@ -214,6 +214,7 @@ $string['configsecureforms'] = 'Moodle kan een extra beveiliging toepassen wanne
 $string['configsessioncookie'] = 'Met deze instelling kun je de naam van de cookie die gebruikt wordt voor Moodlesessies, aanpassen. Deze instelling is optioneel en enkel nuttig om te verhinderen dat cookies in conflict komen wanneer meer dan één exemplaar van Moodle binnen dezelfde website draait.';
 $string['configsessiontimeout'] = 'Als mensen die ingelogd zijn op deze site voor een lange tijd niets doen (ze laden geen nieuwe pagina\'s) worden ze automatisch uitgelogd (hun sessie is beëindigd). Deze variabele geeft aan hoe lang deze tijd moet zijn. ';
 $string['configshowsiteparticipantslist'] = 'Al deze siteleerlingen en siteleraren zullen op de deelnemerslijst gezet worden. Wie zal er toelating krijgen om deze lijst met sitedeelnemers te zien?';
+$string['configsitepolicy'] = 'Als je een overeenkomst hebt voor het gebruik van de site die alle gebruikers moeten zien voor ze deze site gebruiken, geef dan hier een de URL naar die pagina op, anders laat je dit veld leeg. De URL kan naar gelijk waar verwijzen - een voor de had liggende plaats zou een bestand tussen de sitebestanden zijn, bijvoorbeeld http://jouwsite/file.php/1/overeenkomst.html';
 $string['configslasharguments'] = 'Bestanden (afbeeldingen, uploads en dergelijke) worden via een script aangeleverd dat gebruik maakt van \'slash arguments\' (hier de tweede optie). Deze methode zorgt ervoor dat bestanden makkelijker in webbrowsers, proxyservers en dergelijke kunnen worden gecachet. Helaas staan sommige PHP-servers deze methode niet toe. Dus kies de eerste optie als je problemen hebt met het bekijken van geüploade bestanden of afbeeldingen (bijvoorbeeld afbeeldingen van gebruikers).';
 $string['configsmtphosts'] = 'Geef de volledige naam van één of meer lokale SMTP-servers die Moodle moet gebruiken om mail te versturen (bijvoorbeeld: \'mail.a.com\' of \'mail.a.com;mail.b.com\'). Als je dit leeg laat gebruikt Moodle de standaard PHP-methode voor het versturen van mail.';
 $string['configsmtpuser'] = 'Als je hierboven een SMTP-server hebt ingevuld en deze server authenticatie nodig heeft, vul hier dan de gebruikersnaam en het wachtwoord in.';
@@ -629,6 +630,8 @@ $string['loginto'] = 'Log in op $a';
 $string['loginusing'] = 'Log hier in met gebruik van je gebruikersnaam en wachtwoord';
 $string['logout'] = 'Log uit';
 $string['logs'] = 'Statistieken';
+$string['logtoomanycourses'] = '[<a href=\"$a->url\">meer</a>]';
+$string['logtoomanyusers'] = '[<a href=\"$a->url\">meer</a>]';
 $string['mailadmins'] = 'Verwittig beheerders';
 $string['mailstudents'] = 'Verwittig leerlingen';
 $string['mailteachers'] = 'Verwittig leraren';
@@ -690,6 +693,7 @@ $string['moveright'] = 'Verplaats naar rechts';
 $string['moveselectedcoursesto'] = 'Verplaats geselecteerde vakken naar...';
 $string['movetoanotherfolder'] = 'Verplaats naar een andere map';
 $string['moveup'] = 'Verplaats naar boven';
+$string['mustchangepassword'] = 'Het wachwoord moet anders zijn dan het huidige';
 $string['mustconfirm'] = 'Je moet de log in bevestigen';
 $string['mycourses'] = 'Mijn vakken';
 $string['name'] = 'Naam';
@@ -742,6 +746,7 @@ $string['nofilesyet'] = 'Er zijn nog geen bestanden naar deze cursus geüpload';
 $string['nograde'] = 'Nog geen cijfer';
 $string['noimagesyet'] = 'Er zijn nog geen afbeeldingen naar dit vak geüpload';
 $string['nomorecourses'] = 'Er kunnen geen passende vakken meer worden gevonden';
+$string['nomoreidnumber'] = 'Er wordt geen idnummer gebruikt om botsingen te vermijden';
 $string['none'] = 'Geen';
 $string['nopotentialadmins'] = 'Geen mogelijke beheerders';
 $string['nopotentialcreators'] = 'Geen mogelijke vak-aanmakers';
@@ -805,6 +810,9 @@ $string['people'] = 'Mensen';
 $string['personalprofile'] = 'Persoonlijke profiel';
 $string['phone'] = 'Telefoon';
 $string['phpinfo'] = 'PHP-info';
+$string['policyagree'] = 'Je moet akkoord gaan met deze overeenkomst voor je verder kunt gaan met het gebruiken van deze site. Ga je akkoord?';
+$string['policyagreement'] = 'Overeenkomst voor  het gebruik van deze site';
+$string['policyagreementclick'] = 'Klik hier om de overeenkomst voor het gebruik van deze site te lezen';
 $string['popupwindow'] = 'Open het bestand in een nieuw venster';
 $string['potentialadmins'] = 'Mogelijke beheerders';
 $string['potentialcreators'] = 'Mogelijke vak-aanmakers';

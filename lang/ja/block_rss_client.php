@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // block_rss_client.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004121400)
+      // block_rss_client.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004121600)
 
 
 $string['block_rss_add_headline_block'] = 'RSSヘッドラインブロックの追加';
@@ -18,7 +18,7 @@ $string['block_rss_feed_updated'] = 'ニュースフィードが更新されました。';
 $string['block_rss_feeds'] = 'ニュースフィード';
 $string['block_rss_feeds_add_edit'] = 'フィードの追加/編集';
 $string['block_rss_feeds_title'] = 'リモートRSSフィード';
-$string['block_rss_find_more_feeds'] = '更にRSSフィードを探す';
+$string['block_rss_find_more_feeds'] = 'さらにRSSフィードを探す';
 $string['block_rss_no_feeds'] = 'このサイトで設定されたRSSフィードはありません。';
 $string['block_rss_num_entries'] = 'ブロックあたりのRSSリンク表示数';
 $string['block_rss_pick_feed'] = 'ニュースフィードを取得';
