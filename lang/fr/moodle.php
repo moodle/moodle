@@ -564,6 +564,7 @@ $string['latestlanguagepack'] = 'Vérifier les derniers fichiers de langue sur mo
 $string['latestnews'] = 'Dernières nouvelles';
 $string['leavetokeep'] = 'Laisser vide pour ne pas changer le mot de passe';
 $string['license'] = 'Licence GPL';
+$string['liketologin'] = 'Voulez-vous vous connecter maintenant avec un compte utilisateur nominal&nbsp;?';
 $string['list'] = 'Liste';
 $string['listfiles'] = 'Liste des fichiers dans $a';
 $string['listofallpeople'] = 'Liste de tous les utilisateurs';
