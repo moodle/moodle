@@ -306,6 +306,7 @@
         /// if we're browsing by alphabet and the current concept does not begin with
         ///     the letter we are look for.
             $showentry = 1;
+            $num = 0;
             if ( $mode == 'letter' and $hook != 'SPECIAL' and $hook != 'ALL' ) {
                 if ( strtoupper(substr($entry->concept, 0, strlen($hook))) != strtoupper($hook) ) {
                     $showentry = 0;
@@ -336,7 +337,7 @@
         /// if the entry is not approved, deal with it based on the current view and
         ///     user.
             if ( $showentry and $mode != 'approval' ) {
-                if ( !$entry->approved and isteacher($course->id, $entry->userid) ) {
+                if ( !$entry->approved and $USER->id != $entry->userid ) {
                     $showentry = 0;
                 }            
             }

@@ -1,8 +1,9 @@
 <?PHP // $Id$
-global $CFG, $USER, $THEME;
 
 require_once("../../config.php");
 require_once("lib.php");
+
+global $CFG, $USER, $THEME;
 
 require_variable($id);    // Course Module ID
 optional_variable($e);    // EntryID
@@ -52,7 +53,10 @@ if ( $confirm ) {
     $newentry->casesensitive = $form->casesensitive;
     $newentry->fullmatch = $form->fullmatch;
     $newentry->timemodified = $timenow;		
-    $newentry->approved = $glossary->defaultapproval or isteacher($course->id);
+    $newentry->approved = 0;
+    if ( $glossary->defaultapproval or isteacher($course->id) ) {
+        $newentry->approved = 1;
+    }
 
     if ($form->concept == '' or trim($form->text) == '' ) {
         $errors = get_string('fillfields','glossary');
@@ -106,6 +110,7 @@ if ( $confirm ) {
             } else {
                 unset($newentry->attachment);
             }
+
             if (! update_record("glossary_entries", $newentry)) {
                 error("Could not update your glossary");
             } else {
@@ -119,7 +124,7 @@ if ( $confirm ) {
         $newentry->timecreated = $timenow;
         $newentry->sourceglossaryid = 0;
         $newentry->teacherentry = isteacher($course->id);
-
+        
         $permissiongranted = 1;
         if ( !$glossary->allowduplicatedentries ) {
             if ($dupentries = get_record("glossary_entries","UCASE(concept)", strtoupper($newentry->concept), "glossaryid", $glossary->id)) {

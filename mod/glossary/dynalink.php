@@ -71,7 +71,7 @@
                         $href_tag_begin = "<a target=\"entry\" class=\"autolink\" title=\"$title\" href=\"$CFG->wwwroot/mod/glossary/showentry.php?courseid=$courseid&concept=$concepttitle\" ".
                              "onClick=\"return openpopup('/mod/glossary/showentry.php?courseid=$courseid\&concept=$concepttitle', 'entry', 'menubar=0,location=0,scrollbars,resizable,width=600,height=450', 0);\">";
                     }
-                    $replace = "\\[]'\"*()";
+                    $replace = "\\[]'\"*()\?";
                     $currentconcept = glossary_addslashes($replace,$concept->concept);                    
                     if ( $currentconcept = trim(strip_tags($currentconcept)) ) {
                         if ( !$concept->category ) {

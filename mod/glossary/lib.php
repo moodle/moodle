@@ -416,7 +416,7 @@ function glossary_print_entry($course, $cm, $glossary, $entry, $mode="",$hook=""
     if ( $displayformat < 0 ) {
         $displayformat = $glossary->displayformat;
     }
-    if ($entry->approved or ($USER->id == $entry->userid and !isteacher($course->id)) or $mode == 'approval') {
+    if ($entry->approved or ($USER->id == $entry->userid) or ($mode == 'approval' and !$entry->approved) ) {
         $permissiongranted = 0;
         $formatfile = "$CFG->dirroot/mod/glossary/formats/$displayformat.php";
         $functionname = "glossary_print_entry_by_format";
