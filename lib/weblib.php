@@ -1091,21 +1091,23 @@ function print_table($table) {
         echo "</tr>\n";
     }
 
-    foreach ($table->data as $row) {
-        echo "<tr valign=\"top\">";
-        foreach ($row as $key => $item) {
-            if (!isset($size[$key])) {
-                $size[$key] = "";
-            } 
-            if (!isset($align[$key])) {
-                $align[$key] = "";
-            } 
-            if (!isset($wrap[$key])) {
-                $wrap[$key] = "";
-            } 
-            echo "<td ".$align[$key].$size[$key].$wrap[$key]." class=\"generaltablecell\">$item</td>";
+    if (!empty($table->data)) {
+        foreach ($table->data as $row) {
+            echo "<tr valign=\"top\">";
+            foreach ($row as $key => $item) {
+                if (!isset($size[$key])) {
+                    $size[$key] = "";
+                } 
+                if (!isset($align[$key])) {
+                    $align[$key] = "";
+                } 
+                if (!isset($wrap[$key])) {
+                    $wrap[$key] = "";
+                } 
+                echo "<td ".$align[$key].$size[$key].$wrap[$key]." class=\"generaltablecell\">$item</td>";
+            }
+            echo "</tr>\n";
         }
-        echo "</tr>\n";
     }
     echo "</table>\n";
     print_simple_box_end();
