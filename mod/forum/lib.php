@@ -203,7 +203,7 @@ function forum_cron () {
 
     $timenow   = time();
     $endtime   = $timenow - $CFG->maxeditingtime;
-    $starttime = $cutofftime - 48 * 3600;   /// Two days earlier
+    $starttime = $endtime - 48 * 3600;   /// Two days earlier
 
     if ($posts = forum_get_unmailed_posts($starttime, $endtime)) {
 
