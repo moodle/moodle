@@ -550,4 +550,76 @@ function assignment_print_upload_form($assignment) {
     echo "</DIV>";
 }
 
+function assignment_get_recent_assignments($sincetime, $assignment="0", $user="") {
+// Returns all submitted assignments since a given time.  If assignment is specified then
+// this restricts the results
+
+    global $CFG;
+
+    if ($assignment) {
+        $assignmentselect = " AND asub.assignment = '$assignment'";
+    } else {
+        $assignmentselect = "";
+    }
+    if ($user) {
+        $userselect = " AND u.id = '$user'";
+    } else {
+        $userselect = "";
+    }
+
+    return get_records_sql("SELECT asub.*, u.firstname, u.lastname, u.picture, a.grade as maxgrade
+                              FROM {$CFG->prefix}assignment_submissions asub,
+                                   {$CFG->prefix}user u,
+                                   {$CFG->prefix}assignment a
+                             WHERE asub.timemodified > '$sincetime'
+                               AND asub.userid = u.id $userselect 
+                               AND a.id = asub.assignment $assignmentselect
+                             ORDER BY asub.timemodified ASC");
+}
+
+
+function assignment_print_recent_instance_activity($assignment, $timestart, $user="") {
+
+    global $CFG, $THEME;
+
+    if (!$assignments = assignment_get_recent_assignments($timestart, $assignment->id, $user)) {
+        return false;
+    }
+
+    foreach ($assignments as $anassignment) {
+        echo '<table border="0" cellpadding="3" cellspacing="0" class="sideblock">';
+        echo "<tr><td bgcolor=\"$THEME->cellcontent2\" class=\"\" width=\"35\" valign=\"top\">";
+        print_user_picture($anassignment->userid, $anassignment->course, $assignment->picture);
+        echo "</td>";
+
+        echo "<td nowrap bgcolor=\"$THEME->cellheading\" class=\"\" width=\"100%\">";
+
+        echo "<p>";
+        echo "<font size=2>";
+
+
+        $fullname = fullname($anassignment);
+        echo "<a href=\"$CFG->wwwroot/user/view.php?id=$anassignment->userid&course=$assignment->course\">$fullname</a>";
+
+        if (isteacher($USER)) {
+            $grade = "$anassignment->grade / $anassignment->maxgrade";
+            echo " (<a href=\"$CFG->wwwroot/mod/quiz/submissions.php?id=$anassignment->assignment\">$grade</a>)";
+
+            // setup temporary objects to use in assignment_print_user_files
+            $tmpassignment->course = $assignment->course;
+            $tmpassignment->id = $anassignment->assignment;
+            $tmpuser->id = $anassignment->userid;
+
+            echo " - ";
+
+            assignment_print_user_files($tmpassignment, $tmpuser);
+
+        }
+
+        echo "<br>";
+        echo userdate($anassignment->timemodified);
+
+        echo "</font></p></td></tr></table>";
+    }
+}
 ?>
