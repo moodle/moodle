@@ -623,38 +623,42 @@ function print_admin_links ($siteid, $width=180) {
 }
 
 function print_course_admin_links($course, $width=180) {
-    global $THEME, $CFG;
+    global $USER, $THEME, $CFG;
 
-    $adminicon[]="<IMG SRC=\"$CFG->wwwroot/pix/i/edit.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";
-    if (isediting($course->id)) {
-        $admindata[]="<A HREF=\"view.php?id=$course->id&edit=off\">".get_string("turneditingoff")."</A>";
+    if (isteacher($course->id)) {
+        $adminicon[]="<IMG SRC=\"$CFG->wwwroot/pix/i/edit.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";
+        if (isediting($course->id)) {
+            $admindata[]="<A HREF=\"view.php?id=$course->id&edit=off\">".get_string("turneditingoff")."</A>";
+        } else {
+            $admindata[]="<A HREF=\"view.php?id=$course->id&edit=on\">".get_string("turneditingon")."</A>";
+        }
+        $admindata[]="<A HREF=\"edit.php?id=$course->id\">".get_string("settings")."...</A>";
+        $adminicon[]="<IMG SRC=\"$CFG->wwwroot/pix/i/settings.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";
+        if (!$course->teachers) {
+            $course->teachers = get_string("defaultcourseteachers");
+        }
+        $admindata[]="<A HREF=\"teachers.php?id=$course->id\">$course->teachers...</A>";
+        $adminicon[]="<IMG SRC=\"$CFG->wwwroot/pix/i/settings.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";
+    
+        $admindata[]="<A HREF=\"grades.php?id=$course->id\">".get_string("grades")."...</A>";
+        $adminicon[]="<IMG SRC=\"$CFG->wwwroot/pix/i/grades.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";
+    
+        $admindata[]="<A HREF=\"log.php?id=$course->id\">".get_string("logs")."...</A>";
+        $adminicon[]="<IMG SRC=\"$CFG->wwwroot/pix/i/log.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";
+        $admindata[]="<A HREF=\"$CFG->wwwroot/files/index.php?id=$course->id\">".get_string("files")."...</A>";
+        $adminicon[]="<IMG SRC=\"$CFG->wwwroot/files/pix/files.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";
+    
+        $admindata[]="<A HREF=\"$CFG->wwwroot/doc/view.php?id=$course->id&file=teacher.html\">".get_string("help")."...</A>";
+        $adminicon[]="<IMG SRC=\"$CFG->wwwroot/mod/resource/icon.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";
+
+        if ($teacherforum = forum_get_course_forum($course->id, "teacher")) {
+            $admindata[]="<A HREF=\"$CFG->wwwroot/mod/forum/view.php?f=$teacherforum->id\">".get_string("nameteacher", "forum")."</A>";
+            $adminicon[]="<IMG SRC=\"$CFG->wwwroot/mod/forum/icon.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";
+        }
     } else {
-        $admindata[]="<A HREF=\"view.php?id=$course->id&edit=on\">".get_string("turneditingon")."</A>";
-    }
-    $admindata[]="<A HREF=\"edit.php?id=$course->id\">".get_string("settings")."...</A>";
-    $adminicon[]="<IMG SRC=\"$CFG->wwwroot/pix/i/settings.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";
-    if (!$course->teachers) {
-        $course->teachers = get_string("defaultcourseteachers");
-    }
-    $admindata[]="<A HREF=\"teachers.php?id=$course->id\">$course->teachers...</A>";
-    $adminicon[]="<IMG SRC=\"$CFG->wwwroot/pix/i/settings.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";
-
-    $admindata[]="<A HREF=\"grades.php?id=$course->id\">".get_string("grades")."...</A>";
-    $adminicon[]="<IMG SRC=\"$CFG->wwwroot/pix/i/grades.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";
-
-    $admindata[]="<A HREF=\"log.php?id=$course->id\">".get_string("logs")."...</A>";
-    $adminicon[]="<IMG SRC=\"$CFG->wwwroot/pix/i/log.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";
-    $admindata[]="<A HREF=\"$CFG->wwwroot/files/index.php?id=$course->id\">".get_string("files")."...</A>";
-    $adminicon[]="<IMG SRC=\"$CFG->wwwroot/files/pix/files.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";
-
-    $admindata[]="<A HREF=\"$CFG->wwwroot/doc/view.php?id=$course->id&file=teacher.html\">".get_string("help")."...</A>";
-    $adminicon[]="<IMG SRC=\"$CFG->wwwroot/mod/resource/icon.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";
-
-
-    if ($teacherforum = forum_get_course_forum($course->id, "teacher")) {
-        $admindata[]="<A HREF=\"$CFG->wwwroot/mod/forum/view.php?f=$teacherforum->id\">".get_string("nameteacher", "forum")."</A>";
-        $adminicon[]="<IMG SRC=\"$CFG->wwwroot/mod/forum/icon.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";
-    }
+        $admindata[]="<A HREF=\"grade.php?id=$course->id\">".get_string("grades")."...</A>";
+        $adminicon[]="<IMG SRC=\"$CFG->wwwroot/pix/i/grades.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";
+    } 
 
     print_side_block(get_string("administration"), "", $admindata, $adminicon, "", $width);
 }

@@ -3,7 +3,6 @@
 
 	require("../config.php");
 	require("lib.php");
-    require("../lib/psxlsgen.php");
 
     require_variable($id);              // course id
 

@@ -61,9 +61,7 @@
     
 
 /// Admin links and controls
-    if (isteacher($course->id)) {
-        print_course_admin_links($course);
-    }
+    print_course_admin_links($course);
 
 
 /// Start main column

@@ -46,9 +46,7 @@
       print_side_block(get_string("search","forum"), $searchform, "", "", "", $leftwidth);
 
 /// Admin links and controls
-      if (isteacher($course->id)) {
-          print_course_admin_links($course, "100%", $leftwidth);
-      }
+      print_course_admin_links($course);
 
       echo "</TD>";
 
