@@ -24,7 +24,8 @@ class CourseBlock_course_summary extends MoodleBlock {
         }
 
         $this->content = New stdClass;
-        $this->content->text = format_text($this->course->summary, FORMAT_HTML);
+        $options->noclean = true;    // Don't clean Javascripts etc
+        $this->content->text = format_text($this->course->summary, FORMAT_HTML, $options);
         if (isediting($this->course->id)) {
             if (empty($this->course->category)) {
                 $editpage = $CFG->wwwroot.'/admin/site.php';
