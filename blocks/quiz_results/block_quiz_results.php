@@ -51,7 +51,7 @@ class block_quiz_results extends block_base {
         }
 
         // Get the grades for this quiz
-        $grades = get_records('quiz_grades', 'quiz', $quizid, 'grade + 0, timemodified DESC');
+        $grades = get_records('quiz_grades', 'quiz', $quizid, 'grade, timemodified DESC');
 
         if(empty($grades)) {
             // No grades, sorry
@@ -108,7 +108,7 @@ class block_quiz_results extends block_base {
                     // Count this result only if the user is in a group
                     $groupid = $groupofuser[$grade->userid]->groupid;
                     if(!isset($groupgrades[$groupid])) {
-                        $groupgrades[$groupid] = array('sum' => $grade->grade, 'number' => 1, 'group' => $groupofuser[$grade->userid]->name);
+                        $groupgrades[$groupid] = array('sum' => floatval($grade->grade), 'number' => 1, 'group' => $groupofuser[$grade->userid]->name);
                     }
                     else {
                         $groupgrades[$groupid]['sum'] += $grade->grade;
@@ -117,8 +117,12 @@ class block_quiz_results extends block_base {
                 }
             }
 
-            // Sort groupgrades according to total grade, ascending
-            uasort($groupgrades, create_function('$a, $b', 'if($a["sum"] == $b["sum"]) return 0; return ($a["sum"] > $b["sum"] ? 1 : -1);'));
+            foreach($groupgrades as $groupid => $groupgrade) {
+                $groupgrades[$groupid]['average'] = $groupgrades[$groupid]['sum'] / $groupgrades[$groupid]['number'];
+            }
+
+            // Sort groupgrades according to average grade, ascending
+            uasort($groupgrades, create_function('$a, $b', 'if($a["average"] == $b["average"]) return 0; return ($a["average"] > $b["average"] ? 1 : -1);'));
 
             // How many groups do we have with graded member submissions to show?
             $numbest  = empty($this->config->showbest) ? 0 : min($this->config->showbest, count($groupgrades));
@@ -128,14 +132,14 @@ class block_quiz_results extends block_base {
             $remaining = $numbest;
             $groupgrade = end($groupgrades);
             while($remaining--) {
-                $best[key($groupgrades)] = $groupgrade['sum'] / $groupgrade['number'];
+                $best[key($groupgrades)] = $groupgrade['average'];
                 $groupgrade = prev($groupgrades);
             }
 
             $remaining = $numworst;
             $groupgrade = reset($groupgrades);
             while($remaining--) {
-                $worst[key($groupgrades)] = $groupgrade['sum'] / $groupgrade['number'];
+                $worst[key($groupgrades)] = $groupgrade['average'];
                 $groupgrade = next($groupgrades);
             }
 
