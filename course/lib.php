@@ -637,6 +637,7 @@ function print_admin_links ($siteid, $width=180) {
 		$modicon[]=$icon;
 		$moddata[]="<A HREF=\"$CFG->wwwroot/course/teacher.php\">".get_string("assignteachers")."</A>";
 		$modicon[]=$icon;
+        $fulladmin = "";
     }
     if (isadmin()) {
 	    $moddata[]="<A HREF=\"$CFG->wwwroot/course/categories.php\">".get_string("categories")."</A>";
@@ -655,8 +656,8 @@ function print_admin_links ($siteid, $width=180) {
 		$modicon[]=$icon;
 		$moddata[]="<A HREF=\"$CFG->wwwroot/admin/auth.php\">".get_string("authentication")."</A>";
 		$modicon[]=$icon;
+        $fulladmin = "<P><A HREF=\"$CFG->wwwroot/admin/\">".get_string("admin")."</A>...";
     }
-    $fulladmin = "<P><A HREF=\"$CFG->wwwroot/admin/\">".get_string("admin")."</A>...";
 
     print_side_block(get_string("administration"), "", $moddata, $modicon, $fulladmin, $width);
 
