@@ -67,10 +67,11 @@ function set_config($name, $value) {
 
 /// FUNCTIONS FOR HANDLING TIME ////////////////////////////////////////////
 
-function make_timestamp($year, $month=1, $day=1, $hour=0, $minute=0, $second=0) {
+function make_timestamp($year, $month=1, $day=1, $hour=0, $minute=0, $second=0, $timezone=99) {
 /// Given date parts in user time, produce a GMT timestamp
 
-    return mktime((int)$hour,(int)$minute,(int)$second,(int)$month,(int)$day,(int)$year);
+    $time = gmmktime((int)$hour,(int)$minute,(int)$second,(int)$month,(int)$day,(int)$year);
+    return usertime($time, $timezone);  // This is GMT
 }
 
 function format_time($totalsecs, $str=NULL) {
