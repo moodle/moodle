@@ -1280,6 +1280,25 @@ function get_directory_list( $rootdir ) {
     return $dirs;
 }
 
+function get_real_size($size=0) {
+// Converts numbers like 10M into bytes
+    if (!$size) {
+        return 0; 
+    }
+    $scan['MB'] = 1048576;
+    $scan['M'] = 1048576;
+    $scan['KB'] = 1024;
+    $scan['K'] = 1024;
+
+    while (list($key) = each($scan)) {
+        if ((strlen($size)>strlen($key))&&(substr($size, strlen($size) - strlen($key))==$key)) {
+            $size = substr($size, 0, strlen($size) - strlen($key)) * $scan[$key];
+            break;
+        }
+    }
+    return $size;
+}
+
 function clean_filename($string) {
     $string = eregi_replace("\.\.", "", $string);
     $string = eregi_replace("[^([:alnum:]|\.)]", "_", $string);
