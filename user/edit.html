@@ -1,5 +1,5 @@
 <?php
-   if (!isset($user->htmleditor)) {
+   if (!isset($user->htmleDITOr)) {
        $user->htmleditor = 1;
    }
    if (!isset($user->picture)) {
@@ -224,7 +224,18 @@ if (isadmin()) {
     ?>
     </td>
 </tr>
-<?php }  ?>
+<?php } else if (empty($CFG->gdversion) and isadmin()) {  ?>
+<tr valign=top>
+    <td align=right><p><?php print_string("newpicture") ?>:</td>
+    <td>
+    <?php 
+        echo "<a href=\"$CFG->wwwroot/$CFG->admin/config.php\">";
+        print_string('gdnot');
+        echo "</a>";
+    ?>
+    </td>
+</tr>
+<?php } ?>
 
 <tr valign=top>
     <td align=right><p><?php print_string("webpage") ?>:</td>
