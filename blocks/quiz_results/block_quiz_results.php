@@ -76,10 +76,14 @@ class block_quiz_results extends block_base {
             // The actual groupmode for the quiz is now known to be $groupmode
         }
 
-        if($groupmode != NOGROUPS) {
-            // Group mode
+        if(isteacheredit($courseid) && $groupmode == SEPARATEGROUPS) {
+            // We 'll make an exception in this case
+            $groupmode = VISIBLEGROUPS;
+        }
 
-            // Pull out the course groups
+        switch($groupmode) {
+            case VISIBLEGROUPS:
+            // Display group-mode results
             $groups = get_groups($courseid);
 
             if(empty($groups)) {
@@ -192,10 +196,33 @@ class block_quiz_results extends block_base {
                 }
                 $this->content->text .= '</tbody></table>';
             }
-        }
+            break;
 
 
-        else {
+            case SEPARATEGROUPS:
+            // This is going to be just like no-groups mode, only we 'll filter
+            // out the grades from people not in our group.
+            if(empty($USER) || empty($USER->id)) {
+                // Not logged in, so show nothing
+                return $this->content;
+            }
+
+            $mygroups = get_groups($courseid, $USER->id);
+            if(empty($mygroups)) {
+                // Not member of a group, show nothing
+                return $this->content;
+            }
+
+            $mygroupsusers = get_records_list('groups_members', 'groupid', implode(',', array_keys($mygroups)), '', 'userid, id');
+            // There should be at least one user there, ourselves. So no more tests.
+
+            // Just filter out the grades belonging to other users, and proceed as if there were no groups
+            $strallowedusers = implode(',', array_keys($mygroupsusers));
+            $grades = array_filter($grades, create_function('$el', '$allowed = explode(",", "'.$strallowedusers.'"); return in_array($el->userid, $allowed);'));
+
+            // NO break; HERE, JUST GO AHEAD
+            default:
+            case NOGROUPS:
             // Single user mode
             $numbest  = empty($this->config->showbest) ? 0 : min($this->config->showbest, count($grades));
             $numworst = empty($this->config->showworst) ? 0 : min($this->config->showworst, count($grades) - $numbest);
@@ -274,9 +301,8 @@ class block_quiz_results extends block_base {
                 }
                 $this->content->text .= '</tbody></table>';
             }
-
+            break;
         }
-
 
         return $this->content;
     }
