@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // survey.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004101900)
+      // survey.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004111000)
 
 
 $string['actual'] = '실적';
@@ -38,32 +38,37 @@ $string['colles14'] = '지도 교사라 나를 참여하게끔 용기를 북돋아준다.';
 $string['colles14short'] = '나에게 용기를 북돋아 준다.';
 $string['colles15'] = '지도 교사가 좋은 예시를 들어 설명해준다.';
 $string['colles15short'] = '좋은 예시를 들어준다.';
-$string['collesaintro'] = 'The purpose of this survey is to help us understand how well the online delivery of this unit enabled you to learn.
-
-Each one of the 24 statements below asks about your experience in this unit.';
 $string['done'] = '완료';
 $string['download'] = '다운로드';
 $string['downloadexcel'] = '엑셀 스프레드 형식으로 다운로드';
 $string['downloadinfo'] = '.';
 $string['downloadtext'] = '문서파일 형태로 다운로드';
 $string['editingasurvey'] = '조사 편집';
+$string['guestsnotallowed'] = '손님은 survey 제출이 허락되지 않았습니다.';
+$string['howlong'] = '이 조사를 마치는데 시간이 얼마나 걸렸습니까?';
+$string['howlongoptions'] = '1분 미만, 1-2분, 2-3분, 3-4분, 4-5분, 5-10분, 10분 초과';
 $string['ifoundthat'] = '을 발견하다.';
 $string['ipreferthat'] = '을 더 좋아하다.';
 $string['modulename'] = '조사';
 $string['modulenameplural'] = '조사';
 $string['name'] = '이름';
+$string['nobodyyet'] = '아무도 이 조사를 아직 끝마치지 않았습니다.';
 $string['notdone'] = '아직 되지 않았음';
 $string['othercomments'] = '다른 코멘트가 있습니까?';
 $string['question'] = '질문';
 $string['questions'] = '질문들';
+$string['questionsnotanswered'] = '몇몇의 선택형 질문들이 답해지지 않았습니다.';
 $string['report'] = '조사 리포트';
-$string['scaletimes5'] = '전혀,아주가끔,가끔,장종,매번';
+$string['savednotes'] = '저장되었습니다.';
+$string['scaleagree5'] = '전적으로 동의하지 않음, 조금 동의하지 않음, 중립, 조금 동의함, 전적으로 동의함. ';
+$string['scaletimes5'] = '전혀, 아주가끔, 가끔, 종종, 매번';
 $string['seemoredetail'] = '더 많은 정보를 보기 원하시면 이곳을 클릭하시오.';
 $string['summary'] = '요약';
 $string['surveycompleted'] = '당신은 이미 이것을 끝마쳤습니다. 밑에 보이는 그래프는 평균 점수에 관한 당신의 결과를 요약적으로 보여주는 것 입니다. ';
 $string['surveyname'] = '조사 이름';
 $string['surveysaved'] = '조사가 저장되었음';
 $string['surveytype'] = '조사 유형';
+$string['thanksforanswers'] = '조사에 응답해 주셔서 감사합니다.';
 $string['thischarset'] = 'euc-kr';
 $string['thisdirection'] = 'ltr';
 $string['thislanguage'] = '한국어';
