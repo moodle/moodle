@@ -12,6 +12,9 @@ $string['editingaresource'] = 'Editing a resource';
 $string['example'] = 'Example';
 $string['examplereference'] = 'Tobin, K. & Tippins, D (1993) Constructivism as a Referent for Teaching and Learning. In: K. Tobin (Ed) The Practice of Constructivism in Science Education, pp 3-21, Lawrence-Erlbaum, Hillsdale, NJ.';
 $string['exampleurl'] = 'http://www.example.com/somedirectory/somefile.html';
+$string['fetcherror'] = '<p align=center><font color=#FF0000><b>ERROR</b></font></p><p align=center>An error was found when trying to retrieve the web page.</p>';
+$string['fetchclienterror'] = '<p align=center><font color=#FF0000><b>ERROR</b></font></p><p align=center>An error was found on your web client when trying to retrieve the web page (possibly a wrong URL).</p>';
+$string['fetchservererror'] = '<p align=center><font color=#FF0000><b>ERROR</b></font></p><p align=center>An error was found on the remote server when trying to retrieve the web page (possibly a program error).</p>';
 $string['filename'] = 'File name';
 $string['fulltext'] = 'Full text';
 $string['htmlfragment'] = 'HTML fragment';
@@ -32,6 +35,7 @@ $string['newwindow'] = 'New window';
 $string['newwindowopen'] = 'Display this resource in a new popup window';
 $string['note'] = 'Note';
 $string['notefile'] = 'To upload more files into the course (so they appear in this list) use the 
+
 <A HREF="$a">File Manager</A>.';
 $string['notypechosen'] = 'You need to choose a type.  Use your back button to go back and retry.';
 $string['resourcetype'] = 'Type of resource';
