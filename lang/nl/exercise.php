@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // exercise.php - created with Moodle 1.4 development (2004080300)
+      // exercise.php - created with Moodle 1.4 development (2004081200)
 
 
 $string['absent'] = 'Afwezig';
@@ -9,6 +9,7 @@ $string['ago'] = '$a geleden';
 $string['amend'] = 'Wijzig';
 $string['amendassessmentelements'] = 'Wijzig beoordelingselementen';
 $string['amendtitle'] = 'Wijzig titel';
+$string['analysis'] = 'Analyse';
 $string['assess'] = 'Beoordeel';
 $string['assessed'] = 'Beoordeeld';
 $string['assessment'] = 'Beoordeling';
@@ -24,6 +25,7 @@ $string['comment'] = 'Commentaar';
 $string['comparisonofassessments'] = 'Vergelijking van beoordelingen';
 $string['confirmdeletionofthisitem'] = 'Bevestig de verwijdering van $a';
 $string['correct'] = 'Juist';
+$string['count'] = 'Meerekenen';
 $string['criterion'] = 'Criterium';
 $string['deadline'] = 'Deadline';
 $string['deadlineis'] = 'De deadline is $a';
@@ -69,9 +71,12 @@ $string['mail3'] = 'Je kunt het zien in je opdracht van de oefening';
 $string['mail6'] = 'Je beoordeling van de opdracht \'$a\' is herzien';
 $string['mail7'] = 'De commentaren die je $a gegeven heeft kunnen gelezen worden bij je opdracht van de oefening';
 $string['managingassignment'] = 'Beheer van de oefening';
+$string['maximum'] = 'Maximum';
 $string['maximumgradeforstudentassessments'] = 'Maximum cijfer voor beoordelingen van leerlingen: $a';
 $string['maximumgradeforsubmissions'] = 'Maximum cijfer voor inzendingen: $a';
 $string['maximumsize'] = 'Maximumgrootte';
+$string['mean'] = 'Gemiddelde';
+$string['minimum'] = 'Minimum';
 $string['modulename'] = 'Oefening';
 $string['modulenameplural'] = 'Oefeningen';
 $string['movingtophase'] = 'Verplaatsen naar fase $a';
@@ -119,6 +124,7 @@ $string['poor'] = 'Slecht';
 $string['present'] = 'Aanwezig';
 $string['reasonforadjustment'] = 'Reden voor aanpassing';
 $string['reassess'] = 'Beoordeel opnieuw';
+$string['regradestudentassessments'] = 'Geef opnieuw cijfers voor de leerlingbeoordelingen';
 $string['resubmissionfor'] = 'Herinzending voor $a';
 $string['resubmitnote'] = '* betekent dat de $a zijn inzending opnieuw mag doen.<br/>Dit vlagje kan aan elke inzending gegeven worden door te klikken <br/>op de <b>Laat $a toe opniew in te zenden</b>knop te drukken<br/>
 De leerling kan een inzending <b>naar keuze</b> opniew opsturen.';
@@ -138,6 +144,7 @@ $string['scalegood3'] = '3 punten goed/slecht schaal';
 $string['scalepresent'] = '2 punten aanwezig/afwezig schaal';
 $string['scaleyes'] = '2 punten ja/nee schaal';
 $string['specimenassessmentform'] = 'Voorbeeld evaluatieformulier';
+$string['standarddeviation'] = 'Standaardafwijking';
 $string['strict'] = 'Streng';
 $string['studentallowedtoresubmit'] = '$a TOEGELATEN om een herinzending te doen';
 $string['studentassessments'] = '$a Beoordelingen';

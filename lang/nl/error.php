@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // error.php - created with Moodle 1.2 (2004032000)
+      // error.php - created with Moodle 1.4 development (2004081200)
 
 
 $string['coursegroupunknown'] = 'Het vak dat met groep $a overeenkomt is niet gespecifieerd';
@@ -15,5 +15,6 @@ $string['restricteduser'] = 'Sorry, maar je hebt onvoldoende rechten om dat te d
 $string['unknowncourse'] = 'Onbekend vak \"$a\"';
 $string['usernotaddederror'] = 'Gebruiker \"$a\" niet toegevoegd - onbekende fout';
 $string['usernotaddedregistered'] = 'Gebruiker \"$a\" niet toegevoegd - gebruiker bestaat al';
+$string['usernotavailable'] = 'Je hebt het recht niet om de detailgegevens van deze gebruiker te zien';
 
 ?>

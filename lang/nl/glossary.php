@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.4 development (2004072901)
+      // glossary.php - created with Moodle 1.4 development (2004081200)
 
 
 $string['addcomment'] = 'Voeg commentaar toe';
@@ -71,6 +71,7 @@ $string['displayformatfullwithoutauthor'] = 'Volledig zonder auteur';
 $string['displayformats'] = 'Bekijk opmaakmogelijkheden';
 $string['displayformatssetup'] = 'Instellingen van de opmaakmogelijkheden';
 $string['duplicateentry'] = 'Dupliceer item';
+$string['editalways'] = 'Bewerk altijd';
 $string['editcategories'] = 'Bewerk categoriën';
 $string['editentry'] = 'Bewerk item';
 $string['editingcomment'] = 'Bewerk commentaar';
