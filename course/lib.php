@@ -532,6 +532,9 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
             $log->info = get_field($ld->mtable, $ld->field, 'id', $log->info);
         }
 
+        $log->url  = strip_tags(urldecode($log->url));   // Some XSS protection
+        $log->info = strip_tags(urldecode($log->info));  // Some XSS protection
+
         echo '<tr nowrap="nowrap">';
         if (! $course->category) {
             echo '<td nowrap="nowrap"><font size=2><a href="view.php?id='.$log->course.'">'.$courses[$log->course].'</a></td>';
