@@ -290,6 +290,13 @@ class quiz_default_questiontype {
                .'  been implemented for question type '.$this->name());
     }
 
+    function actual_number_of_questions($question) {
+        /// Used for the feature number-of-questions-per-page
+        /// to determine the actual number of questions wrapped
+        /// by this question. The default is ONE!
+        return 1;
+    }
+
     function grade_response($question, $nameprefix) {
     // Analyzes $question->response[] and determines the result
     // The result is to be returned in this structure:
@@ -809,7 +816,7 @@ function quiz_get_attempt_questions($quiz, $attempt, $attempting = false) {
         $prevresponses= array();
         while (--$prevattempt) {
             $prevresponses = get_records_sql("
-                    SELECT r.question, r.answer, r.attempt
+                    SELECT r.question, r.answer, r.attempt, r.grade
                     FROM {$CFG->prefix}quiz_responses r, {$CFG->prefix}quiz_attempts a
                     WHERE a.quiz='$quiz->id' AND a.userid='$attempt->userid'
                       AND a.attempt='$prevattempt' AND r.attempt=a.id ");
@@ -984,9 +991,124 @@ function quiz_print_possible_question_image($quizid, $question) {
     }
 }
 
-function quiz_print_quiz_questions($quiz, $questions,
-                                   $results=NULL, $shuffleorder=NULL) {
+function quiz_navigation_javascript($link) {
+    return "javascript:navigate($link);";
+}
+
+function quiz_print_navigation_panel($questions, $questionsperpage, $navigation) {
+    global $QUIZ_QTYPES;
+
+    $numberinglayout = array();
+    $nextqnumber = 1;
+    foreach ($questions as $question) {
+        if ($qnumberinc = $QUIZ_QTYPES[$question->qtype]
+                ->actual_number_of_questions($question)) {
+            $numberinglayout[] = $nextqnumber;
+            $nextqnumber += $qnumberinc;
+        }
+    }
+
+    if ($nextqnumber - $qnumberinc <= $questionsperpage) {
+        /// The total number of questions does not exceed the maximum
+        /// number of allowed questions per page so...
+        return 0;
+    }
+    /// else - Navigation menu will be printed!
+
+    ///////////////////////////////////////////////
+    /// Determine the layout of the navigation menu
+    ///////////////////////////////////////////////
+    if (1 == $questionsperpage) {
+        /// The simple case:
+        $pagelinkagelayout = $pagenavigationlayout = $numberinglayout;
+
+    } else {
+        /// More complicated:
+        $pagenavigationlayout = array();
+        $pagelinkagelayout = array($currentpagestart = 1);
+        foreach ($numberinglayout as $questionnumber) {
+            if ($questionnumber - $currentpagestart >= $questionsperpage) {
+                $pagenavigationlayout[] = $currentpagestart
+                        .'-'. ($questionnumber - 1);
+                if ($currentpagestart < $navigation
+                        && $navigation < $questionnumber) {
+                    // $navigation is out of sync so adjust for robustness
+                    $navigation = $currentpagestart;
+                }
+                $pagelinkagelayout[] = $currentpagestart = $questionnumber;
+            }
+        }
+        $pagenavigationlayout[] = $currentpagestart .'-'. ($nextqnumber - 1);
+        if ($currentpagestart < $navigation) {
+            // $firsquestion is out of sync so adjust it for robustness...
+            $navigation = $currentpagestart;
+        }
+    }
+
+    foreach ($pagelinkagelayout as $key => $link) {
+        if ($link < $navigation) {
+            $previouspagelink = $link;
+        } else if ($link == $navigation) {
+            $currentnavigationtitle = $pagenavigationlayout[$key];
+        } else {
+            $endpagelink = $link;
+            if (false == isset($nextpagelink)) {
+               $nextpagelink = $link; 
+            }
+        }
+    }
+
+    ///////////////////////////////////////////////
+    /// Print the navigation meny
+    ///////////////////////////////////////////////
+    print_simple_box_start('center', '*');
+    echo '<table><tr><td colspan="5" align="center"><table><tr>';
+    foreach ($pagelinkagelayout as $key => $link) {
+        echo '<td align="center">&nbsp;';
+        if ($link != $navigation) {
+            echo '<a href="' . quiz_navigation_javascript($link) . '">';
+        }
+        echo $pagenavigationlayout[$key];
+        if ($link != $navigation) {
+            echo '</a>';
+        }
+        echo '&nbsp;</td>';
+    }
+    echo '</tr></table></td></tr><tr><td width="20%" align="left">';
+    if (isset($previouspagelink)) {
+        echo '<a href="' . quiz_navigation_javascript('1') . '">|&lt;&lt;&lt;</a></td><td width="20%" align="center" cellpadding="2">';
+        echo '<a href="' . quiz_navigation_javascript($previouspagelink) . '">&lt;&lt;&lt;</a></td>';
+    } else {
+        echo '</td><td width="20%"></td>';
+    }
+    echo '<td width="20%" align="center"><b>';
+    echo $currentnavigationtitle;
+    echo '</b></td><td width="20%" align="center" cellpadding="2">';
+    if (isset($nextpagelink)) {
+        echo '<a href="';
+        echo quiz_navigation_javascript($nextpagelink);
+        echo '">&gt;&gt;&gt;</a></td><td width="20%" align="right"><a href="';
+        echo quiz_navigation_javascript($endpagelink);
+        echo '">&gt;&gt;&gt;|</a>';
+    } else {
+        echo '</td><td width="20%">';
+    }
+    echo '</td></tr></table>';
+    print_simple_box_end();
+
+    ////////////////////////////////////////////////
+    /// Return the potentially adjusted $navigation
+    ////////////////////////////////////////////////
+    return $navigation;
+}
+
+function quiz_print_quiz_questions($quiz, $questions, $results=NULL,
+                                   $shuffleorder=NULL, $navigation=0) {
 // Prints a whole quiz on one page.
+
+    if ($navigation < 0) {
+        $navigation = 0; // For robustness
+    }
 
     global $QUIZ_QTYPES;
 
@@ -1025,7 +1147,7 @@ function quiz_print_quiz_questions($quiz, $questions,
         ?>
         <script language="javascript" type="text/javascript">
         <!--
-            document.write("<form method=\"post\" action=\"attempt.php\" <?php print(addslashes($onsubmit));?>>\n");
+            document.write("<form name=\"responseform\" method=\"post\" action=\"attempt.php\" <?php print(addslashes($onsubmit));?>>\n");
         // -->
         </script>
         <noscript>
@@ -1033,12 +1155,19 @@ function quiz_print_quiz_questions($quiz, $questions,
         </noscript>
         <?php
     } else {
-    echo "<form method=\"post\" action=\"attempt.php\" $onsubmit>\n";
+        echo "<form name=\"responseform\" method=\"post\" action=\"attempt.php\" $onsubmit>\n";
     }
     // END EDIT
     echo "<input type=\"hidden\" name=\"q\" value=\"$quiz->id\" />\n";
 
-    // $count = 0;
+    if ($navigation && $quiz->questionsperpage) {
+        echo '<input type="hidden" id="navigation" name="navigation" value="0" />';
+        $navigation = quiz_print_navigation_panel($questions,
+                $quiz->questionsperpage, $navigation);
+    } else {
+        $navigation = 0;
+    }
+
     $nextquestionnumber = 1;
     $questionorder = array();
 
@@ -1055,18 +1184,31 @@ function quiz_print_quiz_questions($quiz, $questions,
 
         $questionorder[] = $question->id;
 
-        if ($results && isset($results->details[$question->id])) {
-            $details = $results->details[$question->id];
-        } else {
-            $details = false;
-        }
+        if (0 == $navigation
+                || $navigation <= $nextquestionnumber
+                && $nextquestionnumber - $navigation < $quiz->questionsperpage) {
+            if ($results && isset($results->details[$question->id])) {
+                $details = $results->details[$question->id];
+            } else {
+                $details = false;
+            }
 
-        print_simple_box_start("center", "90%");
-        $nextquestionnumber = $QUIZ_QTYPES[$question->qtype]->print_question
-                ($nextquestionnumber, $quiz, $question, $readonly, $details);
-        print_simple_box_end();
-        echo "<br />";
+            echo "<br />";
+            print_simple_box_start("center", "90%");
+            $nextquestionnumber = $QUIZ_QTYPES[$question->qtype]->print_question
+                    ($nextquestionnumber, $quiz, $question, $readonly, $details);
+            print_simple_box_end();
+        } else {
+            $nextquestionnumber += $QUIZ_QTYPES[$question->qtype]
+                    ->actual_number_of_questions($question);
+        }
     }
+
+    if ($navigation) {
+        quiz_print_navigation_panel($questions, $quiz->questionsperpage,
+                                    $navigation);
+    }
+    echo "<br />";
 
     if (empty($readonly)) {
         if (!empty($quiz->shufflequestions)) {  // Things have been mixed up, so pass the question order
@@ -1083,10 +1225,19 @@ function quiz_print_quiz_questions($quiz, $questions,
             echo "<center><strong>".get_string("noscript","quiz")."</strong></center>\n";
             echo "</noscript>\n";
         } else {
-        echo "<center>\n<input type=\"submit\" value=\"".get_string("savemyanswers", "quiz")."\" />\n</center>";
-    }
+            echo "<center>\n<input type=\"submit\" value=\"".get_string("savemyanswers", "quiz")."\" />\n</center>";
+        }
     }
     echo "</form>";
+
+    if ($navigation && $quiz->questionsperpage) {
+        echo '<script language="javascript" type="text/javascript">';
+        echo "function navigate(link) {
+                document.responseform.navigation.value=link;
+                document.responseform.submit();
+              }
+              </script>";
+    }
 
     return true;
 }
@@ -1695,7 +1846,8 @@ function quiz_calculate_best_attempt($quiz, $attempts) {
 }
 
 
-function quiz_save_attempt($quiz, $questions, $result, $attemptnum) {
+function quiz_save_attempt($quiz, $questions, $result,
+                           $attemptnum, $finished = true) {
 /// Given a quiz, a list of attempted questions and a total grade
 /// this function saves EVERYTHING so it can be reconstructed later
 /// if necessary.
@@ -1718,7 +1870,9 @@ function quiz_save_attempt($quiz, $questions, $result, $attemptnum) {
     // Now let's complete this record and save it
 
     $attempt->sumgrades = $result->sumgrades;
-    $attempt->timefinish = time();
+    if ($finished) {
+        $attempt->timefinish = time();
+    }
     $attempt->timemodified = time();
 
     if (!update_record("quiz_attempts", $attempt)) {
@@ -1741,7 +1895,8 @@ function quiz_save_attempt($quiz, $questions, $result, $attemptnum) {
                     ->convert_to_response_answer_field($question->response);
 
             $response->answer = $responseanswerfield;
-        } else {
+
+        } else if (!isset($response->answer)) {
             $response->answer = '';
         }
 
@@ -1770,7 +1925,7 @@ function quiz_extract_correctanswers($answers, $nameprefix) {
     return $correctanswers;
 }
 
-function quiz_grade_responses($quiz, $questions) {
+function quiz_grade_responses($quiz, $questions, $attemptid=0) {
 /// Given a list of questions (including ->response[] and ->maxgrade
 /// on each question) this function does all the hard work of calculating the
 /// score for each question, as well as a total grade for
@@ -1786,6 +1941,8 @@ function quiz_grade_responses($quiz, $questions) {
 /// []->grade            (Grade awarded on the specifik question)
 /// []->answers[]        (result answer records for the question response(s))
 /// []->correctanswers[] (answer records if question response(s) had been correct)
+///  - HOWEVER, ->answers[] and ->correctanswers[] are supplied only
+///             if there is a response on the question...
 /// The array ->answers[] is indexed like ->respoonse[] on its corresponding
 /// element in $questions. It is the case for ->correctanswers[] when
 /// there can be multiple responses per question but if there can be only one
@@ -1802,23 +1959,33 @@ function quiz_grade_responses($quiz, $questions) {
     $result->sumgrades = 0.0;
     foreach ($questions as $qid => $question) {
 
-        if (empty($question->qtype)) {
-            continue;
-        }
+        if (!isset($question->response) && $attemptid) {
+            /// No response on the question
+            /// This case is common if the quiz shows a limited
+            /// number of questions per page.
+            $response = get_record('quiz_responses', 'attempt',
+                                   $attemptid, 'question', $qid);
+            $resultdetails->grade = $response->grade;
 
-        $resultdetails = $QUIZ_QTYPES[$question->qtype]->grade_response
+        } else if (empty($question->qtype)) {
+            continue;
+
+        } else {
+
+            $resultdetails = $QUIZ_QTYPES[$question->qtype]->grade_response
                                 ($question, quiz_qtype_nameprefix($question));
 
-        // Negative grades will not do:
-        if (((float)($resultdetails->grade)) <= 0.0) {
-            $resultdetails->grade = 0.0;
+            // Negative grades will not do:
+            if (((float)($resultdetails->grade)) <= 0.0) {
+                $resultdetails->grade = 0.0;
 
-        // Neither will extra credit:
-        } else if (((float)($resultdetails->grade)) >= 1.0) {
-            $resultdetails->grade = $question->maxgrade;
+            // Neither will extra credit:
+            } else if (((float)($resultdetails->grade)) >= 1.0) {
+                $resultdetails->grade = $question->maxgrade;
             
-        } else {
-            $resultdetails->grade *= $question->maxgrade;
+            } else {
+                $resultdetails->grade *= $question->maxgrade;
+            }
         }
 
         // if time limit is enabled and exceeded, return zero grades

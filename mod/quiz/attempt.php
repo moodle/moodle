@@ -165,6 +165,9 @@
             } else if ('shuffleorder' == $key) {
                 $shuffleorder = explode(",", $value);   // Actual order questions were given in
 
+            } else if ('navigation' == $key) {
+                $navigation = $value;   // Determines next page to show in quiz
+
             } else {  // Useful for debugging new question types.  Must be last.
                 error("Unrecognizable input has been posted ($key -> $value)");
             }
@@ -184,13 +187,16 @@
             $questions[$qid]->maxgrade = $grade->grade;
         }
 
-        if (!$result = quiz_grade_responses($quiz, $questions)) {
+        if (!$result = quiz_grade_responses($quiz, $questions, $unattempt->id)) {
             error("Could not grade your quiz attempt!");
         }
 
-        if ($attempt = quiz_save_attempt($quiz, $questions, $result, $attemptnumber)) {
-            add_to_log($course->id, "quiz", "submit",
+        if ($attempt = quiz_save_attempt($quiz, $questions, $result,
+                                         $attemptnumber, 0 == $navigation)) {
+            if (empty($navigation)) {
+                add_to_log($course->id, "quiz", "submit",
                        "review.php?id=$cm->id&amp;attempt=$attempt->id", "$quiz->id", $cm->id);
+            }
         } else {
             notice(get_string("alreadysubmitted", "quiz"), "view.php?id=$cm->id");
             if (empty($quiz->popup)) {
@@ -199,38 +205,51 @@
             exit;
         }
 
-        if (! quiz_save_best_grade($quiz, $USER->id)) {
-            error("Sorry! Could not calculate your best grade!");
-        }
+        if (empty($navigation)) {
+            /// Attempt has finished
+
+            if (! quiz_save_best_grade($quiz, $USER->id)) {
+                error("Sorry! Could not calculate your best grade!");
+            }
         
-        if (empty($quiz->popup) and !$quiz->feedback) {
-            // No need to stop on this page, go directly to view.php
-            redirect('view.php?q='.$quiz->id);
-        }
+            if (empty($quiz->popup) and !$quiz->feedback) {
+                // No need to stop on this page, go directly to view.php
+                redirect('view.php?q='.$quiz->id);
+            }
 
-        $strgrade = get_string("grade");
-        $strscore = get_string("score", "quiz");
+            $strgrade = get_string("grade");
+            $strscore = get_string("score", "quiz");
 
-        if ($quiz->grade) {
-            print_heading("$strscore: $result->sumgrades/$quiz->sumgrades ($result->percentage %)");
-            print_heading("$strgrade: $result->grade/$quiz->grade");
-        }
+            if ($quiz->grade) {
+                print_heading("$strscore: $result->sumgrades/$quiz->sumgrades ($result->percentage %)");
+                print_heading("$strgrade: $result->grade/$quiz->grade");
+            }
 
-        /// continue button - use javascript to close down child window if in popup
-        include('attempt_close_js.php');
-
-        if ($quiz->feedback) {
-            $quiz->shuffleanswers = false;       // Never shuffle answers in feedback
-            quiz_print_quiz_questions($quiz, $questions, $result, $shuffleorder);
             /// continue button - use javascript to close down child window if in popup
             include('attempt_close_js.php');
-        }
 
-        if (empty($quiz->popup)) {
-            print_footer($course);
-        }
+            if ($quiz->feedback) {
+                $quiz->shuffleanswers = false;       // Never shuffle answers in feedback
 
-        exit;
+                /// Make sure to get all questions in case not all are shown
+                /// in quiz all the time.
+                $questions = quiz_get_attempt_questions($quiz, $attempt);
+                quiz_print_quiz_questions($quiz, $questions,
+                        quiz_grade_responses($quiz, $questions, $unattempt->id),
+                        $shuffleorder);
+                /// continue button - use javascript to close down child window if in popup
+                include('attempt_close_js.php');
+            }
+
+            if (empty($quiz->popup)) {
+                print_footer($course);
+            }
+
+            exit;
+        }
+    } else {
+        $navigation= 1;
+        $shuffleorder= NULL;
     }
 
 
@@ -289,7 +308,7 @@
 
     $questions = quiz_get_attempt_questions($quiz, $attempt, true);
     if ($quiz->attemptonlast && $attemptnumber >= 2 and
-            $quiz->attempts == 0 || !unattempt) {
+            $quiz->attempts == 0 || !$unattempt) {
         // There are unlimited attempts or it is a new attempt.
         // As the attempt also builds on the last, we can here
         // have the student see the scores of the pre-entered
@@ -303,7 +322,8 @@
     // We do not show feedback or correct answers during an attempt:
     $quiz->feedback = $quiz->correctanswers = false;
     
-    if (!quiz_print_quiz_questions($quiz, $questions, $result)) {
+    if (!quiz_print_quiz_questions($quiz, $questions,
+            $result, $shuffleorder, $navigation)) {
         print_continue("view.php?id=$cm->id");
     }
 

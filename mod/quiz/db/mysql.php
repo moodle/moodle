@@ -302,6 +302,9 @@ function quiz_upgrade($oldversion) {
         table_column('quiz_categories', '', 'sortorder', '', '', '', '999');
     }
 
+    if ($oldversion < 2005010300) {
+        table_column("quiz", "", "questionsperpage", "integer", "10", "", "0", "not null", "review");
+    }
     return true;
 }
 

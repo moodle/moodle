@@ -40,6 +40,15 @@ class quiz_description_qtype extends quiz_default_questiontype {
         return $currentnumber;        
     }
 
+    function actual_number_of_questions($question) {
+        /// Used for the feature number-of-questions-per-page
+        /// to determine the actual number of questions wrapped
+        /// by this question.
+        /// The question type description is not even a question
+        /// in itself so it will return ZERO!
+        return 0;
+    }
+
     function grade_response($question, $nameprefix) {
         $result->grade = 0.0;
         $result->answers = array();

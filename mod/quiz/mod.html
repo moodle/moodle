@@ -63,6 +63,9 @@
     if (!isset($form->review)) {
         $form->review = $CFG->quiz_allowreview;
     }
+    if (!isset($form->questionsperpage)) {
+        $form->questionsperpage = 0;
+    }
     if (!isset($form->shufflequestions)) {
         $form->shufflequestions = $CFG->quiz_shufflequestions;
     }
@@ -193,6 +196,22 @@
         </td>
     </tr>
 <?php } ?>
+
+<tr valign="top">
+    <td align="right"><b><?php print_string('questionsperpage', 'quiz') ?>:</b></td>
+    <td>
+    <?php
+        $perpage= array();
+        for ($i=0; $i<=50; ++$i) {
+            $perpage[$i] = $i;
+        }
+        $perpage[0] = get_string('allinone', 'quiz');
+
+        choose_from_menu($perpage, 'questionsperpage', $form->questionsperpage, '');
+        helpbutton('questionsperpage', get_string('questionsperpage'), 'quiz');
+     ?>
+    </td>
+</tr>
 
 <?php if (!$CFG->quiz_fix_shufflequestions) { ?>
     <tr valign="top">
