@@ -60,16 +60,21 @@
             $entry = $entrybyentry[$num];
             // Only update entries where feedback has actually changed.
             if (($vals[r] <> $entry->rating) || ($vals[c] <> addslashes($entry->comment))) {
+                $newentry->rating = $vals[r];
+                $newentry->comment = $vals[c];
+                $newentry->teacher = $USER->id;
+                $newentry->timemarked = $timenow;
+                $newentry->id = $num;
+                if (! update_record("journal_entries", $newentry)) {
+                    notify("Failed to update the journal feedback for user $entry->user");
+                    print_object($newentry);
+                } else {
+                    $count++;
+                }
                 $entrybyuser[$entry->user]->rating = $vals[r];
                 $entrybyuser[$entry->user]->comment = $vals[c];
                 $entrybyuser[$entry->user]->teacher = $USER->id;
                 $entrybyuser[$entry->user]->timemarked = $timenow;
-                $entrybyuser[$entry->user]->id = $num;
-                if (! update_record("journal_entries", $entrybyuser[$entry->user])) {
-                    error("Failed to update the journal feedback!");
-                } else {
-                    $count++;
-                }
             }
         }
         add_to_log($course->id, "journal", "update feedback", "report.php?id=$cm->id", "$count users");
