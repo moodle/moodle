@@ -5,7 +5,7 @@ class CourseBlock_calendar_upcoming extends MoodleBlock {
         $this->title = get_string('upcomingevents', 'calendar');
         $this->content_type = BLOCK_TYPE_TEXT;
         $this->course = $course;
-        $this->version = 2004041000;
+        $this->version = 2004051000;
     }
 
     function get_content() {
@@ -21,7 +21,8 @@ class CourseBlock_calendar_upcoming extends MoodleBlock {
 
         $this->content = New object;
         $this->content->text = '';
-        $this->content->footer = '';
+        $this->content->footer = '<hr /><div style="text-align: center;"><a href="'.$CFG->wwwroot.'/calendar/view.php?view=month">'.get_string('gotocalendar', 'calendar').'...</a>';
+        $this->content->footer .= '<br /><a href="'.$CFG->wwwroot.'/calendar/event.php?action=new">'.get_string('newevent', 'calendar').'...</a></div>';
 
         if($this->course === NULL) {
             // Overrides: use no course at all

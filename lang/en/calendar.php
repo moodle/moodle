@@ -39,6 +39,7 @@ $string['explain_maxevents'] = 'This sets the maximum number of upcoming events 
 $string['explain_startwday'] = 'Calendar weeks will be shown as starting on the day that you select here.';
 $string['explain_timeformat'] = 'You can choose to see times in either 12 or 24 hour format. If you choose \"default\", then the format will be automatically chosen according to the language you use in the site.';
 $string['globalevents'] = 'Global events';
+$string['gotocalendar'] = 'Go to calendar';
 $string['groupevents'] = 'Group events';
 $string['hidden'] = 'hidden';
 $string['manyevents'] = '$a events';
