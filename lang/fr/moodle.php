@@ -793,6 +793,7 @@ $string['order'] = 'Ordre';
 $string['other'] = 'Autre';
 $string['outline'] = 'Résumé';
 $string['page'] = 'Page';
+$string['pageheaderconfigablock'] = 'Configuration d\'un bloc dans %%fullname%%';
 $string['parentlanguage'] = 'en';
 $string['participants'] = 'Participants';
 $string['password'] = 'Mot de passe';
