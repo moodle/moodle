@@ -1,101 +1,44 @@
-/************************************************* 
-***
-*** layout
-***
-**************************************************/
+/*******************************************************************
+styles_layout.css
+    
+This CSS file contains all layout definitions like positioning,
+floats, margins, paddding, borders etc.
 
-/*************************************************
-***
-*** This CSS file contains all layout definitions
-*** like positioning, floats,
-*** margins, paddding,
-*** borders etc.
-***
-*** Shortindex:
-*** basic and general styles
-*** header and footer styles
-*** content styles (alphabetically)
-*** admin, course, activities, calendar, blocks
-*** 
-*** Please sort new styles for existing content
-*** into the appropriate part of this CSS file.
-*** Styles for new Blocks or Activities please
-*** place at the end.
-*** Wouldn't the alphabetical order be better?
-***
-**************************************************/
+Styles are organised into the following sections:
+    core
+    header
+    footer
+    admin
+    blocks
+    calendar
+    course
+    doc
+    login
+    message
+    tabs
+    user
+    modules
+        assignment
+        chat
+        choice
+        forum
+        glossary
+        journal
+        label
+        lesson
+        quiz
+        resource
+        scorm
+        survey
+        wiki
+        workshop
 
-
-/* basic styles */
-.clearer {
-    clear:both;
-    margin:0px;
-    padding:0px;
-    height:1px;
-    border:none;
-    background:transparent;
-}
-
-.continuebutton {
-    text-align: center;
-}
+*******************************************************************/
 
 
-/* general styles */
-
-form {
-    margin-bottom:0px;
-}
-
-table {
-    border-spacing: 0px;
-    border-collapse: collapse;
-}
-
-a img {
-    border:none;
-}
-
-/* header styles */
-#header-home {
-    padding:1em 0.5em;
-    height:2em;
-}
-
-#header {
-    padding:0.1em 0.5em;
-}
-
-.headermain {
-    float:left;
-}
-
-#header .headermain {
-    margin:0.2em 0em;
-}
-
-#footer {
-    text-align:center;
-}
-
-.headermenu {
-    float:right;
-    text-align:right;
-}
-
-#nav-bar {
-    padding:3px 0.5em;
-    height:1.3em;
-}
-
-#breadcrumb {
-    float:left;
-    margin:0.2em 0em;
-}
-
-#navbutton {
-    float:right;
-}
+/*******************************************************************
+*** Core
+*******************************************************************/
 
 #layout-table {
     width:100%;
@@ -110,15 +53,32 @@ a img {
     vertical-align:top;
 }
 
-/* footer styles */
+.clearer {
+    clear:both;
+    margin:0px;
+    padding:0px;
+    height:1px;
+    border:none;
+    background:transparent;
+}
 
+.continuebutton {
+    text-align: center;
+}
 
-/*****************************
-***
-*** content styles
-***
-******************************/
-/* many places */
+form {
+    margin-bottom:0px;
+}
+
+table {
+    border-spacing: 0px;
+    border-collapse: collapse;
+}
+
+a img {
+    border:none;
+}
+
 .generalbox {
     border-width:1px;
     border-style:solid;
@@ -157,13 +117,6 @@ a img {
     text-align: center;
 }
 
-/* summary of a user in a nice little box - weblib.php */
-.userinfobox {
-    margin-bottom:5px;
-    border-width:1px;
-    border-style:solid;
-}
-
 /* weblib.php table */
 .tabledivider {
     border-width:1px;
@@ -172,7 +125,6 @@ a img {
     border-right:0px;
     border-top:0px;
 }
-
 
 /* entry-page index.php */ 
 .sitetopic {
@@ -192,11 +144,6 @@ a img {
     padding-left: 10px;
 }
 
-/*****************************
-***
-*** Admin
-***
-******************************/
 /* admin, calendar */
 table.formtable {
     margin: auto;
@@ -213,235 +160,6 @@ table.formtable tbody th
     padding: 5px;
 }
 
-/*****************************
-***
-*** Course
-***
-******************************/
-
-.section .activity img.activityicon {
-    vertical-align:middle;
-    height:16px;
-    width:16px;
-}
-
-.section img.movetarget {
-    height:16px;
-    width:80px;
-}
-
-/* course, entry-page, login */
-.headingblock {
-    border-width:1px;
-    border-style:solid;
-    padding:5px;
-}
-
-
-/* course */
-
-#course-view .section td {
-    vertical-align:top;
-}
-
-#course-view .section .content {
-    padding:5px;
-    border-style:solid;
-    border-width:1px;
-    border-left:0px;
-    border-right:0px;
-}
-
-#course-view .section .side {
-    padding:5px;
-    border-style:solid;
-    border-width:1px;
-}
-
-#course-view .section .left {
-    border-right:0px;
-    text-align:center;
-    font-weight:bold;
-    width: 1.5em;
-}
-
-#course-view .section .right {
-    border-left:0px;
-    text-align:center;
-    width: 1.5em;
-}
-
-#course-view .current .side {
-}
-
-#course-view .topics {
-    margin-top: 9px;
-}
-
-#course-view .weeks {
-    margin-top: 9px;
-}
-
-#course-view .section .spacer {
-    height:0.5em;
-}
-
-#course-view .section .weekdates {
-}
-
-
-.categoryboxcontent,
-.courseboxcontent {
-    border-width:1px;
-    border-style:solid;
-}
-
-
-/* user */
-.userinfobox {
-    border-width: 1px;
-    border-style: solid;
-    border-collapse: separate;    
-}
-
-.userinfobox .left {
-    padding: 10px;
-    width: 100px;
-}
-
-.userinfobox .content {
-    padding: 10px;
-    vertical-align: top;
-}
-
-.userinfobox .links {
-    width: 100px;
-    padding: 5px;
-    vertical-align: bottom;
-}
-
-.userinfobox .list td {
-    padding: 3px;
-}
-
-.userinfobox .username {
-    padding-bottom: 20px;
-}    
-
-
-table.userinfobox {
-    width: 80%;
-    margin-left: 10%;
-    margin-right: 10%;
-}
-
-
-
-/*****************************
-***
-*** Activities
-***
-******************************/
-/* assignment, forum, glossary */
-.forumheaderlist,
-.forumpost {
-    border-width:1px;
-    border-style:solid;
-    border-collapse:separate;
-}
-
-.forumpost {
-    margin-top: 15px;
-}
-
-.forumpost .topic {
-    padding: 4px;
-}
-
-
-.forumpost .commands {
-    padding-top: 0.5em;
-    text-align:right;
-}
-
-.forumpost .ratings {
-    padding-top: 1em;
-    text-align:right;
-}
-
-.forumpost .content {
-    padding: 4px;
-}
-
-.forumpost .footer {
-    padding-top: 0.5em;
-    text-align:right;
-}
-
-.forumpost .link {
-    padding-top: 0.5em;
-    text-align:right;
-}
-
-
-.forumpost .left {
-    width: 35px;
-    padding: 4px;
-    text-align: center;
-    vertical-align: top;
-}
-
-.forumpostindent {
-    margin-left: 30px;
-}
-
-body#user-view .forumpost,
-.course .forumpost {
-    width: 100%;
-}
-
-body#mod-forum-search .c0 {
-    text-align: right;
-}
-
-body#mod-forum-search .introcontent {
-    padding: 15px;
-    font-weight:bold;
-}
-
-.forumolddiscuss {
-    text-align: right;
-}
-
-.forumheaderlist {
-    width: 100%;
-}
-
-.forumheaderlist td {
-    border-width:1px 0px 0px 1px;
-    border-style:solid;
-}
-
-.forumheaderlist .replies {
-    text-align: center;
-}
-
-.forumheaderlist .picture {
-    width: 35px;
-}
-
-.forumheaderlist .discussion .starter {
-    vertical-align: middle;
-}
-
-.forumheaderlist .discussion .lastpost {
-    white-space: nowrap;
-}
-
-.forumheaderlist .discussion .author {
-    white-space: nowrap;
-}
-
 .paging {
     text-align: center;
     margin: 10px 0px 10px 0px;
@@ -451,252 +169,225 @@ body#mod-forum-search .introcontent {
     padding-right:2px;
 } 
 
-
-/* glossary, wiki */
-.glossarypost .commands {
-    width: 200px;
-    white-space: nowrap;
-}
-
-.entryboxheader {
-    border-width: 1px 1px 0px 1px;
-    border-style: solid;
-}
-
-.entrybox {
-    border-width: 0px 1px 1px 1px;
-    border-style: solid;
-}
-
-.glossarypost {
-    width: 95%;
-    border-width:1px;
-    border-style:solid;
-    border-collapse:separate;
-    margin-bottom: 5px;
-    text-align: left;
+.cell {  /* Very generic table cell*/
+    vertical-align: top;
 }
 
 
-.entrylist {
-    border-width:0px;
+/*******************************************************************
+*** Header
+*******************************************************************/
+
+#header-home {
+    padding:1em 0.5em;
+    height:2em;
 }
 
-.entrylowersection {
-    padding-top: 10px;
+#header {
+    padding:0.1em 0.5em;
 }
-.entrylowersection table{
-    width: 100%;
+
+.headermain {
+    float:left;
 }
-.entrylowersection .aliases {
-    text-align:center;
-    font-size: 0.8em;
+
+#header .headermain {
+    margin:0.2em 0em;
 }
-.entrylowersection .icons,
-.entrylowersection .ratings {
+
+.headermenu {
+    float:right;
     text-align:right;
-    font-size: 0.8em;
-    padding-right: 5px;
-}
-.entrylowersection .ratings {
-    padding-bottom: 2px;
 }
 
-.glossarypost .entry {
-    padding: 3px;
+#nav-bar {
+    padding:3px 0.5em;
+    height:1.3em;
 }
 
-.glossarypost .picture {
-    width: 35px;
+#breadcrumb {
+    float:left;
+    margin:0.2em 0em;
 }
 
-.glossarycomment {
-    border-width:1px;
-    border-style:solid;
-    border-collapse:separate;
-    margin-bottom: 5px;
-    text-align: left;
+#navbutton {
+    float:right;
 }
 
 
-.glossarycomment .entry {
-    padding: 3px;
-}
+/*******************************************************************
+*** Footer
+*******************************************************************/
 
-.glossarycomment .picture {
-    width: 35px;
-}
-
-.glossarycomment .icons {
-    text-align: right;
-}
-
-/* tabs for glossary */
-
-.generaltab,
-.generaltabselected,
-.generaltabinactive {
-    background:none;
-}
-
-.glossarydisplay {
-    width: 70%;
-}
-
-.glossarydisplay .tabs {
-    width: 100%;
-}
-
-.glossarydisplay .separator {
-    width: 4px;
-}
-
-.glossarydisplay .tabs .selected,
-.glossarydisplay .tabs .inactive,
-.glossarydisplay .tabs .general {
-}
-
-.glossarypopup {
-    width: 95%;
-}
-
-.glossaryapproval {
-    width: 100%;
-}
-
-/******************************************************************/
-/* tabs */
-.tabs {
-    width: auto;
-}
-
-body#mod-quiz-report .tabs .side,
-body#message-index .tabs .side,
-body.course .tabs .side, 
-body.user .tabs .side,
-body#mod-forum-user .tabs .side {
-    border-style: solid;
-    border-width: 0px 0px 1px 0px;
-    border-color: #AAAAAA;
-    width: 50%;
-}
-
-body#mod-quiz-report .tabs,
-body#message-index .tabs,
-body.course .tabs,
-body.user .tabs,
-body#mod-forum-user .tabs {
-    margin-bottom: 15px;
-}
-
-.tabrow {
-    border-collapse:collapse;
-    width:100%;
-    margin:0;
-}
-.tabrow td {
-    height:34px;
-    padding:0 0 0 14px;
-    background:url(pix/tab/left.gif) top left no-repeat;
-}
-.tabrow th {
-    display:none;
-}
-.tabrow td .tablink {
-    display:block;
-    height:34px;
-    line-height:38px;
-    padding:0 14px 0 0;
-    background:url(pix/tab/right.gif) top right no-repeat;
+#footer {
     text-align:center;
-    white-space:nowrap;
-    text-decoration:none;
-}
-.tabrow td:hover {
-    background-image:url(pix/tab/left_hover.gif);
-}
-.tabrow td:hover .tablink {
-    line-height:32px;
-    background-image:url(pix/tab/right_hover.gif);
 }
 
-.tabrow .last span {
-    display:block;
-    padding:0px 1px 0px 0px;
-    background:url(pix/tab/right_end.gif) top right no-repeat;
-}
-.tabrow .selected {
-    background:url(pix/tab/left_active.gif) top left no-repeat;
-}
-.tabrow .selected .tablink {
-    background:url(pix/tab/right_active.gif) top right no-repeat;
-    line-height:38px;
-}
-.tabrow td.selected:hover {
-    background-image:url(pix/tab/left_active_hover.gif);
-}
-.tabrow td.selected:hover .tablink {
-    background-image:url(pix/tab/right_active_hover.gif);
+
+/*******************************************************************
+*** Admin
+*******************************************************************/
+
+body#admin-index .c0 {
+    vertical-align: top;
+    background: #FAFAFA;
+} 
+
+body#admin-modules table.generaltable td.cell,
+body#admin-modules .generaltablecell {
+    padding-top: 2px;
+    padding-bottom: 2px;
+} 
+
+body#admin-blocks table.generaltable td.cell,
+body#admin-blocks .generaltablecell {
+    padding-top: 1px;
+    padding-bottom: 1px;
+} 
+
+body#admin-config .confighelp {
+    display: block;
+    padding-bottom: 20px;
 }
 
-/******************************************************************/
 
-/* message */
-.message_link {
-    vertical-align:middle;
+/*******************************************************************
+*** Blocks
+*******************************************************************/
+
+/* block_search_forums.php */
+
+.block_search_forums.sideblock .searchform {
+    text-align: center;
 }
 
-.message_search_results {
-    border-collapse:collapse;
-    border-spacing:0px;
+.block_search_forums.sideblock .searchform img {
+    vertical-align: middle;
 }
 
-table.message_search_results td {
-    padding:5px;
+/* block_rss_client.php */
+.rssclientlink {
+    padding-bottom:5px;
+    border-top:1px solid;
+}
+
+.rssclientdescription {
+    padding-left:10px;
+    padding-bottom:8px;
+}
+
+
+/* sideblock */
+.sideblock {
+    width: 100%;
+    margin-bottom:1em;
+    border-collapse:separate;
     border-width:1px;
     border-style:solid;
 }
 
-
-/* quiz */
-.feedbacktext {
-    display:block;
+.sideblock .header {
+    padding:4px;
 }
 
-body#mod-quiz-report table#attempts,
-body#mod-quiz-report table#commands
-{
-    width: 80%;
-    margin: auto;
+.sideblock .header .hide-show {
+    float:right;
 }
-body#mod-quiz-report table#attempts {
-    margin: 20px auto;
+
+.sideblock .header .hide-show img.hide-show-image {
+    height:11px;
+    width:11px;
+    margin-top:0.25em;
 }
-body#mod-quiz-report table#attempts .header,
-body#mod-quiz-report table#attempts .cell
-{
-    padding: 4px;
+
+.sideblock .header .commands {
+    float: right;
+    margin-top: 0.3em;
 }
-body#mod-quiz-report table#attempts .header .commands {
-    display: inline;
+
+.sideblock .header .title {
+    float: left;
 }
-body#mod-quiz-report table#attempts .picture {
-    width: 40px;
+
+.sideblock .header .commands a {
+    margin: 0px 2px;
 }
-body#mod-quiz-report table#attempts td {
-    border-left-width: 1px;
-    border-right-width: 1px;
-    border-left-style: solid;
-    border-right-style: solid;
+
+.sideblock .content {
+    padding:4px;
+}
+
+.sideblock .content hr {
+    height:1px;
+    margin-top:4px;
+    margin-bottom:4px;
+    border:none;
+    border-top:1px solid;
+}
+
+.sideblock .header .hide-show img.hide-show-image {
+    background: url('../../pix/t/switch_minus.gif') no-repeat bottom;
+}
+
+.sideblock.hidden .header .hide-show img.hide-show-image {
+    background: url('../../pix/t/switch_plus.gif') no-repeat bottom;
+}
+
+.sideblock.hidden .content {
+    display: none;
+}
+
+.sideblock .list {
+    width: 100%;
+}
+
+.sideblock .list .c0{
+    padding: 2px;
+}
+
+.sideblock .footer {
+    margin-top:4px;
+}
+
+.sideblock .header .icon.hide,
+.sideblock .header .icon.edit {
+    margin-right: 6px;
+}
+
+/* sideblock weblib.php */
+.block_course_summary .content {
+    padding:10px;
+}
+
+/* blocklib.php */
+
+.block_adminblock .content {
+    text-align: center;
+    padding: 10px;
+}
+
+/* block_quiz_results.php */
+.block_quiz_results table.grades {
+    width: 100%;
+}
+
+.block_quiz_results table.grades caption {
+    margin: 1em 0px 0px 0px;
+    border-bottom: 1px solid;
+}
+
+.block_quiz_results table.grades .number, .block_quiz_results table.grades .grade {
+    width: 10%;
+}
+
+.block_quiz_results h1 {
+    margin: 4px;
 }
 
 
-/*****************************
-***
+/*******************************************************************
 *** Calendar
-***
-******************************/
-/* calendar */
+*******************************************************************/
 
 #calendar {
     width: 100%;
@@ -924,205 +615,85 @@ table.calendar-controls .next
     width: 30%;
 }
 
-/*****************************
-***
-*** Blocks
-***
-******************************/
-/* block_search_forums.php */
 
-.block_search_forums.sideblock .searchform {
-    text-align: center;
+/*******************************************************************
+*** Course
+*******************************************************************/
+
+#course-view .section td {
+    vertical-align:top;
 }
 
-.block_search_forums.sideblock .searchform img {
-    vertical-align: middle;
-}
-
-/* block_rss_client.php */
-.rssclientlink {
-    padding-bottom:5px;
-    border-top:1px solid;
-}
-
-.rssclientdescription {
-    padding-left:10px;
-    padding-bottom:8px;
-}
-
-
-/* sideblock */
-.sideblock {
-    width: 100%;
-    margin-bottom:1em;
-    border-collapse:separate;
-    border-width:1px;
+#course-view .section .content {
+    padding:5px;
     border-style:solid;
+    border-width:1px;
+    border-left:0px;
+    border-right:0px;
 }
 
-.sideblock .header {
-    padding:4px;
+#course-view .section .side {
+    padding:5px;
+    border-style:solid;
+    border-width:1px;
 }
 
-.sideblock .header .hide-show {
-    float:right;
+#course-view .section .left {
+    border-right:0px;
+    text-align:center;
+    font-weight:bold;
+    width: 1.5em;
 }
 
-.sideblock .header .hide-show img.hide-show-image {
-    height:11px;
-    width:11px;
-    margin-top:0.25em;
+#course-view .section .right {
+    border-left:0px;
+    text-align:center;
+    width: 1.5em;
 }
 
-.sideblock .header .commands {
-    float: right;
-    margin-top: 0.3em;
+#course-view .current .side {
 }
 
-.sideblock .header .title {
-    float: left;
+#course-view .topics {
+    margin-top: 9px;
 }
 
-.sideblock .header .commands a {
-    margin: 0px 2px;
+#course-view .weeks {
+    margin-top: 9px;
 }
 
-.sideblock .content {
-    padding:4px;
+#course-view .section .spacer {
+    height:0.5em;
 }
 
-.sideblock .content hr {
-    height:1px;
-    margin-top:4px;
-    margin-bottom:4px;
-    border:none;
-    border-top:1px solid;
+#course-view .section .weekdates {
 }
 
-.sideblock .header .hide-show img.hide-show-image {
-    background: url('../../pix/t/switch_minus.gif') no-repeat bottom;
+.section .activity img.activityicon {
+    vertical-align:middle;
+    height:16px;
+    width:16px;
 }
 
-.sideblock.hidden .header .hide-show img.hide-show-image {
-    background: url('../../pix/t/switch_plus.gif') no-repeat bottom;
+.section img.movetarget {
+    height:16px;
+    width:80px;
 }
 
-.sideblock.hidden .content {
-    display: none;
+.headingblock .link {
+    text-align:right;
 }
 
-.sideblock .list {
-    width: 100%;
-}
-
-.sideblock .list .c0{
-    padding: 2px;
-}
-
-.sideblock .footer {
-    margin-top:4px;
-}
-
-.sideblock .header .icon.hide,
-.sideblock .header .icon.edit {
-    margin-right: 6px;
-}
-
-/* sideblock weblib.php */
-.block_course_summary .content {
-    padding:10px;
-}
-
-/* blocklib.php */
-
-.block_adminblock .content {
-    text-align: center;
-    padding: 10px;
-}
-
-/* block_quiz_results.php */
-.block_quiz_results table.grades {
-    width: 100%;
-}
-
-.block_quiz_results table.grades caption {
-    margin: 1em 0px 0px 0px;
-    border-bottom: 1px solid;
-}
-
-.block_quiz_results table.grades .number, .block_quiz_results table.grades .grade {
-    width: 10%;
-}
-
-.block_quiz_results h1 {
-    margin: 4px;
-}
-
-/*****************************
-***
-*** Doc
-***
-******************************/
-
-/* contents.php */
-
-.cell {  /* Very generic table cell*/
-    vertical-align: top;
-}
-
-body#doc-contents h1 {
-    font-size: 1em;
-    margin: 1em 0px 0px 0px;
-}
-
-body#doc-contents ul {
-    list-style-type: none;
-    margin: 0px;
-    padding: 0px;
-    font-size: 0.8em;
-    width: 90%; /* try it on IE without this and see what happens */
-}
 
 body#course-view .unread {
     margin-left: 3em;
 } 
 
-body#admin-index .c0 {
-    vertical-align: top;
-    background: #FAFAFA;
-} 
-
-body#admin-modules table.generaltable td.cell,
-body#admin-modules .generaltablecell {
-    padding-top: 2px;
-    padding-bottom: 2px;
-} 
-
-body#admin-blocks table.generaltable td.cell,
-body#admin-blocks .generaltablecell {
-    padding-top: 1px;
-    padding-bottom: 1px;
-} 
-
-body#admin-config .confighelp {
-    display: block;
-    padding-bottom: 20px;
-}
 body#course-enrol .generalbox {
     margin-top: 20px;
 }
 body#course-enrol .coursebox {
     margin-top: 20px;
-}
-
-.loginbox .content {
-    border-width:1px;
-    border-style:solid;
-    padding:15px;
-}
-
-.headingblock .link {
-    text-align:right;
 }
 
 body#course-user .graph {
@@ -1146,3 +717,481 @@ body#course-user .section {
 body#course-user .section h2 {
     margin-top: 0px;
 }
+
+.headingblock {
+    border-width:1px;
+    border-style:solid;
+    padding:5px;
+}
+
+.categoryboxcontent,
+.courseboxcontent {
+    border-width:1px;
+    border-style:solid;
+}
+
+
+
+/*******************************************************************
+*** Doc
+*******************************************************************/
+
+body#doc-contents h1 {
+    font-size: 1em;
+    margin: 1em 0px 0px 0px;
+}
+
+body#doc-contents ul {
+    list-style-type: none;
+    margin: 0px;
+    padding: 0px;
+    font-size: 0.8em;
+    width: 90%; /* try it on IE without this and see what happens */
+}
+
+
+/*******************************************************************
+*** Login
+*******************************************************************/
+
+.loginbox .content {
+    border-width:1px;
+    border-style:solid;
+    padding:15px;
+}
+
+
+/*******************************************************************
+*** Message
+*******************************************************************/
+
+.message_link {
+    vertical-align:middle;
+}
+
+.message_search_results {
+    border-collapse:collapse;
+    border-spacing:0px;
+}
+
+table.message_search_results td {
+    padding:5px;
+    border-width:1px;
+    border-style:solid;
+}
+
+
+/*******************************************************************
+*** Tabs
+*******************************************************************/
+
+.tabs {
+    width: auto;
+    margin-bottom: 15px;
+}
+.tabs .side {
+    border-style: solid;
+    border-width: 0px 0px 1px 0px;
+    border-color: #AAAAAA;
+    width: 50%;
+}
+
+.tabrow {
+    border-collapse:collapse;
+    width:100%;
+    margin:0;
+}
+.tabrow td {
+    height:34px;
+    padding:0 0 0 14px;
+    background:url(pix/tab/left.gif) top left no-repeat;
+}
+.tabrow th {
+    display:none;
+}
+.tabrow td .tablink {
+    display:block;
+    height:34px;
+    line-height:38px;
+    padding:0 14px 0 0;
+    background:url(pix/tab/right.gif) top right no-repeat;
+    text-align:center;
+    white-space:nowrap;
+    text-decoration:none;
+}
+.tabrow td:hover {
+    background-image:url(pix/tab/left_hover.gif);
+}
+.tabrow td:hover .tablink {
+    line-height:32px;
+    background-image:url(pix/tab/right_hover.gif);
+}
+
+.tabrow .last span {
+    display:block;
+    padding:0px 1px 0px 0px;
+    background:url(pix/tab/right_end.gif) top right no-repeat;
+}
+.tabrow .selected {
+    background:url(pix/tab/left_active.gif) top left no-repeat;
+}
+.tabrow .selected .tablink {
+    background:url(pix/tab/right_active.gif) top right no-repeat;
+    line-height:38px;
+}
+.tabrow td.selected:hover {
+    background-image:url(pix/tab/left_active_hover.gif);
+}
+.tabrow td.selected:hover .tablink {
+    background-image:url(pix/tab/right_active_hover.gif);
+}
+
+
+/*******************************************************************
+*** User
+*******************************************************************/
+
+.userinfobox {
+    margin-bottom:5px;
+    border-width: 1px;
+    border-style: solid;
+    border-collapse: separate;    
+}
+
+.userinfobox .left {
+    padding: 10px;
+    width: 100px;
+}
+
+.userinfobox .content {
+    padding: 10px;
+    vertical-align: top;
+}
+
+.userinfobox .links {
+    width: 100px;
+    padding: 5px;
+    vertical-align: bottom;
+}
+
+.userinfobox .list td {
+    padding: 3px;
+}
+
+.userinfobox .username {
+    padding-bottom: 20px;
+}    
+
+
+table.userinfobox {
+    width: 80%;
+    margin-left: 10%;
+    margin-right: 10%;
+}
+
+
+/*******************************************************************
+*** Modules: Assignment
+*******************************************************************/
+
+/*******************************************************************
+*** Modules: Chat
+*******************************************************************/
+
+/*******************************************************************
+*** Modules: Choice
+*******************************************************************/
+
+/*******************************************************************
+*** Modules: Forum
+*******************************************************************/
+
+.forumheaderlist,
+.forumpost {
+    border-width:1px;
+    border-style:solid;
+    border-collapse:separate;
+}
+
+.forumpost {
+    margin-top: 15px;
+}
+
+.forumpost .topic {
+    padding: 4px;
+}
+
+.forumpost .commands {
+    padding-top: 0.5em;
+    text-align:right;
+}
+
+.forumpost .ratings {
+    padding-top: 1em;
+    text-align:right;
+}
+
+.forumpost .content {
+    padding: 4px;
+}
+
+.forumpost .footer {
+    padding-top: 0.5em;
+    text-align:right;
+}
+
+.forumpost .link {
+    padding-top: 0.5em;
+    text-align:right;
+}
+
+.forumpost .left {
+    width: 35px;
+    padding: 4px;
+    text-align: center;
+    vertical-align: top;
+}
+
+.mod-forum .indent {
+    margin-left: 30px;
+}
+
+body#user-view .forumpost,
+.course .forumpost {
+    width: 100%;
+}
+
+body#mod-forum-search .c0 {
+    text-align: right;
+}
+
+body#mod-forum-search .introcontent {
+    padding: 15px;
+    font-weight:bold;
+}
+
+.forumolddiscuss {
+    text-align: right;
+}
+
+.forumheaderlist {
+    width: 100%;
+}
+
+.forumheaderlist td {
+    border-width:1px 0px 0px 1px;
+    border-style:solid;
+}
+
+.forumheaderlist .replies {
+    text-align: center;
+}
+
+.forumheaderlist .picture {
+    width: 35px;
+}
+
+.forumheaderlist .discussion .starter {
+    vertical-align: middle;
+}
+
+.forumheaderlist .discussion .lastpost {
+    white-space: nowrap;
+}
+
+.forumheaderlist .discussion .author {
+    white-space: nowrap;
+}
+
+/*******************************************************************
+*** Modules: Glossary
+*******************************************************************/
+
+.glossarypost .commands {
+    width: 200px;
+    white-space: nowrap;
+}
+
+.entryboxheader {
+    border-width: 1px 1px 0px 1px;
+    border-style: solid;
+}
+
+.entrybox {
+    border-width: 0px 1px 1px 1px;
+    border-style: solid;
+}
+
+.glossarypost {
+    width: 95%;
+    border-width:1px;
+    border-style:solid;
+    border-collapse:separate;
+    margin-bottom: 5px;
+    text-align: left;
+}
+
+
+.entrylist {
+    border-width:0px;
+}
+
+.entrylowersection {
+    padding-top: 10px;
+}
+.entrylowersection table{
+    width: 100%;
+}
+.entrylowersection .aliases {
+    text-align:center;
+    font-size: 0.8em;
+}
+.entrylowersection .icons,
+.entrylowersection .ratings {
+    text-align:right;
+    font-size: 0.8em;
+    padding-right: 5px;
+}
+.entrylowersection .ratings {
+    padding-bottom: 2px;
+}
+.categoryheader {
+    width: 95%;
+}
+.glossaryformatheader {
+    width: 90%;
+}
+
+.glossarypost .entry {
+    padding: 3px;
+}
+
+.glossarypost .picture {
+    width: 35px;
+}
+
+.glossarycomment {
+    border-width:1px;
+    border-style:solid;
+    border-collapse:separate;
+    margin-bottom: 5px;
+    text-align: left;
+}
+
+
+.glossarycomment .entry {
+    padding: 3px;
+}
+
+.glossarycomment .picture {
+    width: 35px;
+}
+
+.glossarycomment .icons {
+    text-align: right;
+}
+
+.glossarydisplay {
+    width: 70%;
+}
+
+.glossarydisplay .tabs {
+    width: 100%;
+}
+
+.glossarydisplay .separator {
+    width: 4px;
+}
+
+.glossarydisplay .tabs .selected,
+.glossarydisplay .tabs .inactive,
+.glossarydisplay .tabs .general {
+}
+
+.glossarypopup {
+    width: 95%;
+}
+
+.glossaryapproval {
+    width: 100%;
+}
+
+/* Override default tab styles */
+.mod-glossary .tabs {
+    margin-bottom: 0px;
+}
+.mod-glossary .tabs .side {
+    border-style: none;
+    border-width: 0px;
+    width: auto;
+}
+
+
+/*******************************************************************
+*** Modules: Journal
+*******************************************************************/
+
+/*******************************************************************
+*** Modules: Label
+*******************************************************************/
+
+/*******************************************************************
+*** Modules: Lesson
+*******************************************************************/
+
+/*******************************************************************
+*** Modules: Quiz
+*******************************************************************/
+
+.feedbacktext {
+    display:block;
+}
+
+body#mod-quiz-report table#attempts,
+body#mod-quiz-report table#commands
+{
+    width: 80%;
+    margin: auto;
+}
+body#mod-quiz-report table#attempts {
+    margin: 20px auto;
+}
+body#mod-quiz-report table#attempts .header,
+body#mod-quiz-report table#attempts .cell
+{
+    padding: 4px;
+}
+body#mod-quiz-report table#attempts .header .commands {
+    display: inline;
+}
+body#mod-quiz-report table#attempts .picture {
+    width: 40px;
+}
+body#mod-quiz-report table#attempts td {
+    border-left-width: 1px;
+    border-right-width: 1px;
+    border-left-style: solid;
+    border-right-style: solid;
+}
+
+
+/*******************************************************************
+*** Modules: Resource
+*******************************************************************/
+
+/*******************************************************************
+*** Modules: Scorm
+*******************************************************************/
+
+/*******************************************************************
+*** Modules: Survey
+*******************************************************************/
+
+/*******************************************************************
+*** Modules: Wiki
+*******************************************************************/
+
+/*******************************************************************
+*** Modules: Workshop
+*******************************************************************/
+

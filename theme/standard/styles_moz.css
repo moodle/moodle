@@ -67,6 +67,14 @@
     -moz-border-radius-topleft:15px;
     -moz-border-radius-topright:15px;
 }
+.categoryheader {
+    -moz-border-radius-topleft:15px;
+    -moz-border-radius-topright:15px;
+}
+.glossaryformatheader {
+    -moz-border-radius-topleft:15px;
+    -moz-border-radius-topright:15px;
+}
 
 .entryboxheader {
     -moz-border-radius-topleft:10px;
