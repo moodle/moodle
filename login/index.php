@@ -11,6 +11,7 @@
         $guest->email       = "root@localhost";
         $guest->description = get_string("guestuserinfo");
         $guest->confirmed   = 1;
+        $guest->lang        = $CFG->lang;
         $guest->timemodified= time();
 
         if (! $guest->id = insert_record("user", $guest)) {
