@@ -77,7 +77,7 @@
 
 /// Check to see if they are submitting answers
     if ($rawanswers = data_submitted()) {
-        add_to_log($course->id, "quiz", "submit", "attempt.php?id=$cm->id", "$quiz->id");
+        add_to_log($course->id, "quiz", "submit", "attempt.php?id=$cm->id", "$quiz->id", $cm->id);
 
         $rawanswers = (array)$rawanswers;
 
@@ -154,7 +154,7 @@
         exit;
     }
 
-    add_to_log($course->id, "quiz", "attempt", "attempt.php?id=$cm->id", "$quiz->id");
+    add_to_log($course->id, "quiz", "attempt", "attempt.php?id=$cm->id", "$quiz->id", $cm->id);
 
 /// Print the quiz page
 
