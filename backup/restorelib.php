@@ -440,7 +440,6 @@
                 if ($user_exists and $create_user) {
                     //If user exists mark its newid in backup_ids (the same than old)
                     $status = backup_putid($restore->backup_unique_code,"user",$userid,$newid,'exists');
-echo $newid." ";
                     $create_user = false;
                 }
 
@@ -450,29 +449,39 @@ echo $newid." ";
                     //The structure is exactly as we need
                     $newid = insert_record ("user",$user);
                     //Put the new id
-                    $status = backup_putid($restore->backup_unique_code,"user",$userid,$newid);
+                    $status = backup_putid($restore->backup_unique_code,"user",$userid,$newid,"new");
                 }
 
                 //Here, if create_roles, do it as necessary
                 if ($create_roles) {
-                    //Get the newid from backup_ids
+                    //Get the newid and currecnt info from backup_ids
                     $data = backup_getid($restore->backup_unique_code,"user",$userid);
                     $newid = $data->new_id;
+                    $currinfo = $data->info.",";
                     //Now, depending of the role, create records in user_studentes and user_teacher 
                     //and/or mark it in backup_ids
                     if ($is_admin) {
-                        //Only put status in backup_ids
-                        $status = backup_putid($restore->backup_unique_code,"user",$userid,$newid,"admin");
+                        //If the record (user_admins) doesn't exists
+                        if (!record_exists("user_admins","userid",$newid)) {
+                            //Only put status in backup_ids
+                            $currinfo = $currinfo."admin,";
+                            $status = backup_putid($restore->backup_unique_code,"user",$userid,$newid,$currinfo);
+                        }
                     } 
                     if ($is_coursecreator) {
-                        //Only put status in backup_ids
-                        $status = backup_putid($restore->backup_unique_code,"user",$userid,$newid,"coursecreator");
+                        //If the record (user_coursecreators) doesn't exists
+                        if (!record_exists("user_coursecreators","userid",$newid)) {
+                            //Only put status in backup_ids
+                            $currinfo = $currinfo."coursecreator,";
+                            $status = backup_putid($restore->backup_unique_code,"user",$userid,$newid,$currinfo);
+                        }
                     } 
                     if ($is_teacher) {
                         //If the record (teacher) doesn't exists
                         if (!record_exists("user_teachers","userid",$newid,"course", $restore->course_id)) {
                             //Put status in backup_ids 
-                            $status = backup_putid($restore->backup_unique_code,"user",$userid,$newid,"teacher");
+                            $currinfo = $currinfo."teacher,";
+                            $status = backup_putid($restore->backup_unique_code,"user",$userid,$newid,$currinfo);
                             //Set course and user
                             $user->roles[teacher]->course = $restore->course_id;
                             $user->roles[teacher]->userid = $newid;
@@ -485,7 +494,8 @@ echo $newid." ";
                         //If the record (student) doesn't exists
                         if (!record_exists("user_students","userid",$newid,"course", $restore->course_id)) {
                             //Put status in backup_ids
-                            $status = backup_putid($restore->backup_unique_code,"user",$userid,$newid,"student");
+                            $currinfo = $currinfo."student,";
+                            $status = backup_putid($restore->backup_unique_code,"user",$userid,$newid,$currinfo);
                             //Set course and user
                             $user->roles[student]->course = $restore->course_id;
                             $user->roles[student]->userid = $newid;
@@ -495,8 +505,12 @@ echo $newid." ";
                         }
                     }
                     if (!$is_course_user) {
-                        //Put status in backup_ids
-                        $status = backup_putid($restore->backup_unique_code,"user",$userid,$newid,"user");
+                        //If the record (user) doesn't exists
+                        if (!record_exists("user","id",$newid)) {
+                            //Put status in backup_ids
+                            $currinfo = $currinfo."user,";
+                            $status = backup_putid($restore->backup_unique_code,"user",$userid,$newid,$currinfo);
+                        }
                     }
                 }
             }
