@@ -17,7 +17,7 @@ $string['auth_dbtitle'] = '外部データベースを使用';
 $string['auth_dbtype'] = 'データベースタイプ ( 詳細は<a href=../lib/adodb/readme.htm#drivers>ADOdb documentation</a>をご覧ください )';
 $string['auth_dbuser'] = 'データベースアクセス用のユーザ名';
 $string['auth_editlock'] = 'ロック値';
-$string['auth_editlock_expl'] = '<p><b>ロック値:</b> この設定を「Yes」にした場合、Moodleユーザ及び管理者がフィールドを直接編集できないようにします。外部認証システムにあるこの値をメンテナンスする時に使用してください。</p>';
+$string['auth_editlock_expl'] = '<p><b>ロック値:</b> この設定を「Yes」にした場合、Moodleユーザおよび管理者がフィールドを直接編集できないようにします。外部認証システムにあるこの値をメンテナンスする時に使用してください。</p>';
 $string['auth_emaildescription'] = 'メールによるアカウント確定はデフォルトの認証方法です。ユーザが新しいユーザ名とパスワードを選択してサインアップした場合、アカウント確定用メールがユーザのメールアドレスに送信されます。このメールにはユーザがアカウントを確定するためのリンクが記入されています。アカウント確定後のログインではMoodleデータベースに保存されているユーザ名とパスワードのみを確認します。';
 $string['auth_emailtitle'] = 'Emailベースの認証';
 $string['auth_fccreators'] = 'メンバーがコースの作成を許可されているグループの一覧です。複数のグループは「;」で分けてください。グループ名はFirstClassサーバと厳密に同じ名前にしてください。システムは、大文字と小文字を区別します。';
@@ -31,7 +31,7 @@ $string['auth_imapdescription'] = 'ユーザ名とパスワードを確認する
 $string['auth_imaphost'] = 'IMAPサーバーアドレスです。IPアドレスではなくドメイン名を使用してください。';
 $string['auth_imapport'] = 'IMAPサーバポート番号です。通常は143または993です。';
 $string['auth_imaptitle'] = 'IMAPサーバを使用';
-$string['auth_imaptype'] = 'IMAPサーバタイプです。IMAPサーバは異なる認証及びネゴシエーションを利用することが可能です。';
+$string['auth_imaptype'] = 'IMAPサーバタイプです。IMAPサーバは異なる認証およびネゴシエーションを利用することが可能です。';
 $string['auth_ldap_bind_dn'] = 'ユーザ検索にbindユーザを利用したい場合は、ここに明示してください。例 \'cn=ldapuser,ou=public,o=org\'';
 $string['auth_ldap_bind_pw'] = 'bindユーザ用のパスワード';
 $string['auth_ldap_bind_settings'] = 'Bind設定';
@@ -68,7 +68,7 @@ $string['auth_nntpdescription'] = 'ユーザ名とパスワードを確認する
 $string['auth_nntphost'] = 'NNTPサーバーアドレスです。IPアドレスではなくドメイン名を使用してください。';
 $string['auth_nntpport'] = 'サーバーポート(119が一般的です)';
 $string['auth_nntptitle'] = 'NNTPサーバを使用';
-$string['auth_nonedescription'] = 'ユーザはログインして外部サーバ及びメールによる認証無しにアカウントを直ちに作成できます。このオプションを使用するときは十分に注意してください - セキュリティー及び管理上の問題が発生するかもしれないことを考えてください。';
+$string['auth_nonedescription'] = 'ユーザはログインして外部サーバおよびメールによる認証無しにアカウントを直ちに作成できます。このオプションを使用するときは十分に注意してください - セキュリティーおよび管理上の問題が発生するかもしれないことを考えてください。';
 $string['auth_nonetitle'] = '認証無し';
 $string['auth_pamdescription'] = 'この方式では、サーバのネイティブユーザ名にアクセスする手段としてPAMを使用します。このモジュールを使用するためには、<a href=\"http://www.math.ohio-state.edu/~ccunning/pam_auth/\" target=\"_blank\">PHP4 PAM Authentication</a>がインストールされている必要があります。';
 $string['auth_pamtitle'] = 'PAM ( Pluggable Authentication Modules )';

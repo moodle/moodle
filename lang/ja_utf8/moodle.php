@@ -32,35 +32,35 @@ $string['addstudent'] = '学生の追加';
 $string['addteacher'] = '教師を追加';
 $string['admin'] = '管理';
 $string['adminhelpaddnewuser'] = '新しいユーザを作成します。';
-$string['adminhelpassignadmins'] = '管理者はサイト内で全ての作業及び移動を行うことができます。';
-$string['adminhelpassigncreators'] = 'コース作成者は新しいコースの作成及びコース内での教育を行うことができます。';
+$string['adminhelpassignadmins'] = '管理者はサイト内で全ての作業および移動を行うことができます。';
+$string['adminhelpassigncreators'] = 'コース作成者は新しいコースの作成およびコース内での教育を行うことができます。';
 $string['adminhelpassignstudents'] = 'コース内の管理メニューより学生を追加します。';
 $string['adminhelpassignteachers'] = 'アイコンを使用して選択したコースに教師を割り当てます。';
 $string['adminhelpauthentication'] = '内部のユーザアカウントまたは外部のデータベースを使用できます。';
-$string['adminhelpbackup'] = '自動バックアップ及びスケジュールの設定を行います。';
+$string['adminhelpbackup'] = '自動バックアップおよびスケジュールの設定を行います。';
 $string['adminhelpconfiguration'] = 'サイト全体の動作に関係する変数の設定を行います。';
 $string['adminhelpconfigvariables'] = 'サイトの一般的な運用に関わる設定を行います。';
-$string['adminhelpcourses'] = 'コース・カテゴリの設定及び人の割当てを行います。';
+$string['adminhelpcourses'] = 'コース・カテゴリの設定および人の割当てを行います。';
 $string['adminhelpeditorsettings'] = 'HTMLエディタの基本的な設定を行います。';
-$string['adminhelpedituser'] = 'ユーザアカウントリストの表示及び編集を行います。';
+$string['adminhelpedituser'] = 'ユーザアカウントリストの表示および編集を行います。';
 $string['adminhelpenrolments'] = 'ユーザ登録管理を内部的に行うか、外部より行うか選択してください。';
 $string['adminhelpfailurelogs'] = 'ログイン失敗のログを表示';
-$string['adminhelplanguage'] = '言語パックの確認及び編集を行います。';
+$string['adminhelplanguage'] = '言語パックの確認および編集を行います。';
 $string['adminhelplogs'] = 'サイトの全活動に関するログを表示します。';
-$string['adminhelpmanageblocks'] = 'インストール済みブロックの管理及び設定を行います。';
+$string['adminhelpmanageblocks'] = 'インストール済みブロックの管理および設定を行います。';
 $string['adminhelpmanagedatabase'] = 'データベースに直接アクセスする ( 注意してください! )';
-$string['adminhelpmanagefilters'] = 'テキストフィルタ及び関連設定を行います。';
-$string['adminhelpmanagemodules'] = 'インストール済モジュール及びそのセッティングを管理します。';
+$string['adminhelpmanagefilters'] = 'テキストフィルタおよび関連設定を行います。';
+$string['adminhelpmanagemodules'] = 'インストール済モジュールおよびそのセッティングを管理します。';
 $string['adminhelpsitefiles'] = 'ファイルの公開または外部バックアップファイルをアップロードします。';
 $string['adminhelpsitesettings'] = 'フロントページのデザインを設定します。';
 $string['adminhelpthemes'] = 'サイトのデザインを選択します。';
 $string['adminhelpuploadusers'] = 'テキストファイルより新しいユーザをインポートします。';
-$string['adminhelpusers'] = 'ユーザ及び認証の設定を行います。';
+$string['adminhelpusers'] = 'ユーザおよび認証の設定を行います。';
 $string['administration'] = '管理';
 $string['administrator'] = '管理者';
 $string['administrators'] = '管理者';
 $string['administratorsall'] = '全ての管理者';
-$string['administratorsandteachers'] = '管理者及び教師';
+$string['administratorsandteachers'] = '管理者および教師';
 $string['advancedfilter'] = '検索オプション';
 $string['advancedsettings'] = '高度な設定';
 $string['again'] = 'もう一度';
@@ -110,7 +110,7 @@ $string['backuploglaststatus'] = '最新実行ログ';
 $string['backuplogshelp'] = '「Yes」にした場合、コースログが自動バックアップに含まれます。';
 $string['backupmetacoursehelp'] = '「Yes」にした場合、メタコース情報 ( ユーザ登録情報の継承 ) は自動バックアップに含まれます。';
 $string['backupnameformat'] = '%%Y%%m%%d-%%H%%M';
-$string['backupnoneusersinfo'] = '注意: ユーザファイルのバックアップをしない設定がなされました。全てのモジュールは「ユーザデータを含まない形」でバックアップされます。「エクササイズ」及び「ワークショップモジュール」は、このタイプのバックアップに適さないため、バックアップされません。';
+$string['backupnoneusersinfo'] = '注意: ユーザファイルのバックアップをしない設定がなされました。全てのモジュールは「ユーザデータを含まない形」でバックアップされます。「エクササイズ」および「ワークショップモジュール」は、このタイプのバックアップに適さないため、バックアップされません。';
 $string['backuporiginalname'] = 'バックアップ名';
 $string['backupsavetohelp'] = 'バックアップファイル保存先ディレクトリをフルパスで入力してください。<br />( コースデフォルトディレクトリに保存する場合は空白 )';
 $string['backuptakealook'] = '次のバックアップログをご覧ください: $a';
@@ -290,7 +290,7 @@ $string['duplicatingain'] = '$a->in の $a->what を複写';
 $string['edhelpbgcolor'] = '編集領域の背景色を設定します。<br />正しい値の例: #ffffff　または　white';
 $string['edhelpcleanword'] = 'ここでは、Word特有のフォーマットをフィルタするか否かを設定します。';
 $string['edhelpenablespelling'] = 'スペルチェックを行うか否かを設定します。スペルチェックを行う場合、<strong>aspell</strong>が自動的にサーバにインストールされます。';
-$string['edhelpfontfamily'] = 'フォントファミリー属性は、フォントファミリーの一覧及び一般的なフォントファミリー名です。フォントファミリー名はコンマで分離してください。';
+$string['edhelpfontfamily'] = 'フォントファミリー属性は、フォントファミリーの一覧および一般的なフォントファミリー名です。フォントファミリー名はコンマで分離してください。';
 $string['edhelpfontlist'] = 'エディタのドロップダウンメニューで使用されるフォントを設定します。';
 $string['edhelpfontsize'] = 'デフォルトフォントサイズではフォントのサイズを設定します。<br />正しい値の例: medium, large, smaller, larger, 10pt, 11px.';
 $string['edit'] = '$a 編集';
@@ -689,7 +689,7 @@ $string['newcourse'] = '新規コース';
 $string['newpassword'] = '新規パスワード';
 $string['newpasswordtext'] = '$a->firstname さんこんにちは、
 
-「 $a->sitename 」のパスワードリセット及び仮パスワードの作成が完了しました。
+「 $a->sitename 」のパスワードリセットおよび仮パスワードの作成が完了しました。
 
 あなたの現在のログイン情報は下記のとおりです。
 ユーザ名: username: $a->username
@@ -790,7 +790,7 @@ $string['pathnotexists'] = 'サーバにパスが見当たりません!';
 $string['pathslasherror'] = 'パスの最後にスラッシュを付けないでください!!';
 $string['paymentinstant'] = '下のボタンをお使いください。お支払いと登録がすぐに完了します!';
 $string['paymentrequired'] = 'このコースへの登録は有料です。';
-$string['paymentsorry'] = 'お支払いありがとうございます! 残念ですが、あなたの支払い及びコース 「 $a->fullname 」 に入るための登録作業は完了してません。再度、支払い及び登録作業を行ってください。引き続きエラーが表示される場合は、$a->teacher またはサイト管理者にご連絡ください。';
+$string['paymentsorry'] = 'お支払いありがとうございます! 残念ですが、あなたの支払いおよびコース 「 $a->fullname 」 に入るための登録作業は完了してません。再度、支払いおよび登録作業を行ってください。引き続きエラーが表示される場合は、$a->teacher またはサイト管理者にご連絡ください。';
 $string['paymentthanks'] = 'お支払いありがとうございます! あなたは次のコースに登録されました:<br /> 「 $a 」';
 $string['people'] = '人';
 $string['personalprofile'] = 'プロフィール';
@@ -825,7 +825,7 @@ $string['registration'] = 'Moodle登録';
 $string['registrationemail'] = 'メール通知';
 $string['registrationinfo'] = '<p>このページではあなたのMoodleサイトをmoodle.orgに登録できます。登録は無料です。登録の主な利点は、発信数の少ないメーリングリストにあなたのメールアドレスが追加され、セキュリティーに関する警告やMoodleの最新リリースに関する情報を受取れることです。
 <p>デフォルトではあなたの情報は公開されず、他の人に販売・転送されることはありません。情報を収集する唯一の理由はサポートを目的とするものであり、Moodleコミュニティーの統計的全体像を構築するものにあります。<p>登録する場合、あなたのサイト名、国、URLがMoodleサイトの公開リストに登録されます。
-<p>全ての登録内容は公開リストに登録される前に手作業で確認されますが、1度登録されるといつでも登録内容(及び公開リストの内容)をこのフォームで再登録することができます。';
+<p>全ての登録内容は公開リストに登録される前に手作業で確認されますが、1度登録されるといつでも登録内容(および公開リストの内容)をこのフォームで再登録することができます。';
 $string['registrationno'] = 'いいえ、メールは送信しないでください。';
 $string['registrationsend'] = 'moodle.orgに登録情報を送信する。';
 $string['registrationyes'] = 'はい、重要事項を知らせてください。';
