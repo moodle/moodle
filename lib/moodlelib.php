@@ -818,6 +818,7 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml="", $a
 
     if ($messagehtml) {
         $mail->IsHTML(true);
+        $mail->Encoding = "quoted-printable";           // Encoding to use
         $mail->Body    =  $messagehtml;
         $mail->AltBody =  "\n$messagetext\n";
     } else {
