@@ -304,11 +304,11 @@ function print_recent_activity($course) {
             
                 switch ($log->action) {
                     case "add mod":
-                       $stradded = get_string("addeda", "", get_string("modulename", $info[0]));
+                       $stradded = get_string("added", "moodle", get_string("modulename", $info[0]));
                        $changelist["$log->info"] = array ("operation" => "add", "text" => "$stradded:<BR><A HREF=\"$CFG->wwwroot/course/$log->url\">$modname</A>");
                     break;
                     case "update mod":
-                       $strupdated = get_string("updatedthe", "", get_string("modulename", $info[0]));
+                       $strupdated = get_string("updated", "moodle", get_string("modulename", $info[0]));
                        if (! $changelist["$log->info"]) {
                            $changelist["$log->info"] = array ("operation" => "update", "text" => "$strupdated:<BR><A HREF=\"$CFG->wwwroot/course/$log->url\">$modname</A>");
                        }
@@ -317,7 +317,7 @@ function print_recent_activity($course) {
                        if ($changelist["$log->info"]["operation"] == "add") {
                            $changelist["$log->info"] = NULL;
                        } else {
-                           $strdeleted = get_string("deleteda", "", get_string("modulename", $info[0]));
+                           $strdeleted = get_string("deletedactivity", "moodle", get_string("modulename", $info[0]));
                            $changelist["$log->info"] = array ("operation" => "delete", "text" => $strdeleted);
                        }
                     break;
