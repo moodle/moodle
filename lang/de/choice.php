@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // choice.php - created with Moodle 1.2 development (2003122600)
+      // choice.php - created with Moodle 1.2 development (2004020300)
 
 
 $string['answered'] = 'Beantwortet';
@@ -8,6 +8,7 @@ $string['choicename'] = 'Wahlname';
 $string['choicetext'] = 'Wahltext';
 $string['modulename'] = 'Wahl ';
 $string['modulenameplural'] = 'Wahlen ';
+$string['mustchooseone'] = 'Sie müssen zuerst eine Antwort auswählen bevor Sie speichern. Es wurde noch nicht gespeichert.';
 $string['notanswered'] = 'Noch nicht beantwortet';
 $string['publish'] = 'Ergebnisse veröffentlichen';
 $string['publishanonymous'] = 'Anonyme Ergebnisse veröffentlichen, Namen der Teilnehmer nicht zeigen';

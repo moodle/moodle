@@ -1,16 +1,16 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.2 development (2003120700)
+      // assignment.php - created with Moodle 1.2 development (2004020300)
 
 
 $string['allowresubmit'] = 'Erneutes Einreichen erlauben';
 $string['assignmentdetails'] = 'Aufgabendetails';
-$string['assignmentmail'] = '$a->Trainer/in hat einen Kommentar zu Ihrer eingereichten Aufgabe \'$a->assignment\' verfasst.
-
-Sie finden diesen im Anhang Ihrer eingereichten Aufgabe:
-
+$string['assignmentmail'] = '$a->Trainer/in hat einen Kommentar zu Ihrer eingereichten Aufgabe \'$a->assignment\' verfasst.
+
+Sie finden diesen im Anhang Ihrer eingereichten Aufgabe:
+
 $a->url';
-$string['assignmentmailhtml'] = '$a->Trainer/in hat einen Kommentar zu Ihrer eingereichten Aufgabe verfasst.</i>\'<br /><br />
-Sie finden diesen im Anhang Ihrer 
+$string['assignmentmailhtml'] = '$a->Trainer/in hat einen Kommentar zu Ihrer eingereichten Aufgabe verfasst.</i>\'<br /><br />
+Sie finden diesen im Anhang Ihrer 
 <a href=\"$a->url\">eingereichten Aufgabe</a>:.';
 $string['assignmentname'] = 'Aufgabenname';
 $string['assignmenttype'] = 'Aufgabentyp';
@@ -19,6 +19,7 @@ $string['description'] = 'Beschreibung ';
 $string['duedate'] = 'Abgabedatum';
 $string['duedateno'] = 'keine fälliges Datum';
 $string['early'] = '$a früh';
+$string['existingfiledeleted'] = 'Die vorhandene Datei wurde gelöscht: $a';
 $string['failedupdatefeedback'] = 'Keine Aktualisierung der Rückmeldung für Benutzer $a';
 $string['feedback'] = 'Rückmeldung';
 $string['feedbackupdated'] = 'Rückmeldung aktualisiert für $a Teilnehmer/innen';

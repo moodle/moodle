@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.2 development (2004013101)
+      // moodle.php - created with Moodle 1.2 development (2004020300)
 
 
 $string['action'] = 'Aktion';
@@ -16,7 +16,7 @@ $string['add'] = 'Hinzufügen';
 $string['addadmin'] = 'Verwalter hinzufügen';
 $string['addcreator'] = 'Kursersteller hinzufügen';
 $string['added'] = 'Hinzugefügt $a';
-$string['addinganew'] = 'Füge ein $a';
+$string['addinganew'] = 'Neue Aktivität $a hinzufügen';
 $string['addinganewto'] = 'Füge $a->what ein zu $a->to';
 $string['addingdatatoexisting'] = 'Daten zu vorhandenen hinzufügen';
 $string['addnewcategory'] = 'Neue Kategorie hinzufügen';
@@ -111,6 +111,7 @@ $string['choose'] = 'Auswahl';
 $string['choosecourse'] = 'Kurs auswählen';
 $string['chooselivelogs'] = 'Oder momentane Aktivität beobachten';
 $string['chooselogs'] = 'Wählen Sie die anzuzeigende Statistik aus';
+$string['choosereportfilter'] = 'Wählen Sie einen Filter für den Bericht';
 $string['choosetheme'] = 'Thema auswählen';
 $string['chooseuser'] = 'Nutzer auswählen';
 $string['city'] = 'Stadt/Ort';
@@ -433,6 +434,7 @@ $string['includelogentries'] = 'Statistik-Einträge einbeziehen';
 $string['includemodules'] = 'Aktivitäten (Module) einbeziehen';
 $string['includeneededusers'] = 'Notwendige Nutzer einbeziehen';
 $string['includeuserfiles'] = 'Nutzer-Dateien einbeziehen';
+$string['institution'] = 'Institution';
 $string['invalidemail'] = 'Ungültige E-Mail-Adresse';
 $string['invalidlogin'] = 'Ungültiger Zugang, bitte versuchen Sie es erneut';
 $string['jumpto'] = 'Springen zu...';
