@@ -68,6 +68,9 @@
             foreach ($students as $student) {
                 print_user($student, $course, $string);
             }
+        } else if ($numstudents > $USER_HUGE_CLASS) {
+            print_heading(get_string("toomanytoshow"));
+
         } else {  // Print one big table with abbreviated info
             $columns = array("name", "city", "country", "lastaccess");
 
