@@ -207,7 +207,6 @@ function init() {
   $this->init_y_ticks();
 }
 
-
 function draw_text() {
   $colour = $this->parameter['outer_background'];
   if ($colour != 'none') $this->draw_rectangle($this->calculated['outer_border'], $colour, 'fill'); // graph background
