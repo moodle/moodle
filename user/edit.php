@@ -43,7 +43,6 @@
 /// If data submitted, then process and store.
 
 	if ($usernew = data_submitted()) {
-        $usernew->username = strtolower($usernew->username);
         $usernew->firstname = strip_tags($usernew->firstname);
         $usernew->lastname  = strip_tags($usernew->lastname);
 
