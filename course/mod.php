@@ -25,7 +25,7 @@
                 if (! update_instance($mod)) {
                     error("Could not update the $mod->modulename");
                 }
-                add_to_log("Updated $mod->modulename $mod->instance", $mod->course);
+                add_to_log($mod->course, "course", "update mod", "../mod/$mod->modulename/view.php?id=$mod->coursemodule", "$mod->modulename $mod->instance"); 
                 break;
 
             case "add":
@@ -44,7 +44,7 @@
                 if (! set_field("course_modules", "week", $weekid, "id", $mod->course_module)) {
                     error("Could not update the course module with the correct week");
                 }   
-                add_to_log("Added $mod->modulename $mod->instance", $mod->course);
+                add_to_log($mod->course, "course", "add mod", "../mod/$mod->modulename/view.php?id=$mod->coursemodule", "$mod->modulename $mod->instance"); 
                 break;
             case "delete":
                 if (! delete_instance($mod->instance)) {
@@ -56,7 +56,7 @@
                 if (! delete_mod_from_week($mod->coursemodule, "$mod->week")) {
                     error("Could not delete the $mod->modulename from that week");
                 }
-                add_to_log("Deleted $mod->modulename $mod->instance", $mod->course);
+                add_to_log($mod->course, "course", "delete mod", "view.php?id=$mod->course", "$mod->modulename $mod->instance"); 
                 break;
             default:
                 error("No mode defined");
@@ -130,6 +130,7 @@
             error("This course week doesn't exist");
         }
 
+        $form->coursemodule = $cm->id;
         $form->week       = $cm->week;     // The week ID
         $form->course     = $course->id;
         $form->module     = $module->id;
