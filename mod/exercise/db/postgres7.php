@@ -25,6 +25,11 @@ function exercise_upgrade($oldversion) {
         table_column("exercise_assessments","teachercomment","teachercomment","text","","","","NOT NULL");
     }
 
+    if ($oldversion < 2004100800) {
+        include_once("$CFG->dirroot/mod/exercise/lib.php");
+        exercise_refresh_events();
+    }
+
     return true;
 }
 
