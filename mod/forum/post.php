@@ -63,6 +63,12 @@
         die;
     }
 
+    if ($usehtmleditor = can_use_richtext_editor()) {
+        $defaultformat = FORMAT_HTML;
+        $onsubmit = "onsubmit=\"copyrichtext(theform.message);\"";
+    } else {
+        $defaultformat = FORMAT_MOODLE;
+    }
 
 
     if (isset($forum)) {      // User is starting a new discussion in a forum
@@ -90,6 +96,7 @@
         $post->subject = "";
         $post->user = $USER->id;
         $post->message = "";
+        $post->format = $defaultformat;
 
         forum_set_return();
 
@@ -116,6 +123,7 @@
         $post->subject = $parent->subject;
         $post->user = $USER->id;
         $post->message = "";
+        $post->format = $defaultformat;
 
         $strre = get_string("re", "forum");
         if (!(substr($post->subject, 0, 3) == $strre)) {
@@ -262,9 +270,6 @@
 
     $strforums = get_string("modulenameplural", "forum");
 
-    if ($usehtmleditor = can_use_richtext_editor()) {
-        $onsubmit = "onsubmit=\"copyrichtext(theform.message);\"";
-    }
 
     $navmiddle = "<A HREF=\"../forum/index.php?id=$course->id\">$strforums</A> -> <A HREF=\"view.php?f=$forum->id\">$forum->name</A>";
 

@@ -10,7 +10,11 @@
     </td>
 </tr>
 <tr valign=top>
-    <td align=right><P><B><? print_string("message", "forum"); ?>:</B><BR><BR><? helpbutton("text", get_string("helptext")) ?></P></TD>
+    <td align=right><P><B><? print_string("message", "forum"); ?>:</B>
+    <? if (!$usehtmleditor) { ?>
+        <BR><BR><? helpbutton("text", get_string("helptext")) ?></P>
+     <? } ?>
+    </TD>
     <td>
     <? if ($usehtmleditor) { ?>
         <object id="richedit" style="BACKGROUND-COLOR: buttonface" data="../../lib/rte/richedit.html"
