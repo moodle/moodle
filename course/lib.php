@@ -491,6 +491,10 @@ function print_admin_links ($siteid, $width=180) {
     $modicon[]=$icon;
     $moddata[]="<A HREF=\"$CFG->wwwroot/admin/lang.php\">".get_string("checklanguage")."</A>";
     $modicon[]=$icon;
+    if (file_exists("$CFG->dirroot/admin/$CFG->dbtype")) {
+        $moddata[]="<A HREF=\"$CFG->wwwroot/admin/$CFG->dbtype/\">".get_string("managedatabase")."</A>";
+        $modicon[]=$icon;
+    }
     $moddata[]="<HR>";
     $modicon[]="";
     $moddata[]="<A HREF=\"$CFG->wwwroot/course/edit.php\">".get_string("addnewcourse")."</A>";
