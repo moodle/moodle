@@ -418,8 +418,8 @@ class block_base {
      * @todo finish documenting this function
      */
     function applicable_formats() {
-        // Default case: the block can be used in all course types
-        return array('all' => true);
+        // Default case: the block can be used in all course types and not in quizzes
+        return array('all' => true, 'quiz' => false);
     }
     
 
