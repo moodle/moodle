@@ -49,7 +49,6 @@
             $usernew->username = trim(moodle_strtolower($usernew->username));
         }
 
-        $usernew->username = trim(moodle_strtolower($usernew->username));
         if (empty($_FILES['imagefile'])) {
             $_FILES['imagefile'] = NULL;    // To avoid using uninitialised variable later
         }
@@ -73,7 +72,7 @@
             $usernew->timemodified = time();
 
             if (isadmin()) {
-                if ($usernew->newpassword) {
+                if (!empty($usernew->newpassword)) {
                     $usernew->password = md5($usernew->newpassword);
                 }
             } else {
