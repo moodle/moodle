@@ -333,6 +333,7 @@ CREATE TABLE `prefix_user` (
   `url` varchar(255) default NULL,
   `description` text,
   `mailformat` tinyint(1) unsigned NOT NULL default '1',
+  `maildigest` tinyint(1) unsigned NOT NULL default '0',
   `maildisplay` tinyint(2) unsigned NOT NULL default '2',
   `htmleditor` tinyint(1) unsigned NOT NULL default '1',
   `autosubscribe` tinyint(1) unsigned NOT NULL default '1',

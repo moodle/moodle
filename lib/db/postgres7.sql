@@ -223,6 +223,7 @@ CREATE TABLE prefix_user (
    url varchar(255) default NULL,
    description text,
    mailformat integer NOT NULL default '1',
+   maildigest integer NOT NULL default '0',
    maildisplay integer NOT NULL default '2',
    htmleditor integer NOT NULL default '1',
    autosubscribe integer NOT NULL default '1',
