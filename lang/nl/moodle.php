@@ -115,6 +115,7 @@ $string['choosetheme'] = 'Kies een thema';
 $string['chooseuser'] = 'Kies een gebruiker ';
 $string['city'] = 'Plaats';
 $string['cleaningtempdata'] = 'Schoon de tijdelijke data op';
+$string['clicktochange'] = 'Klik om te wijzigen';
 $string['closewindow'] = 'Sluit dit venster';
 $string['comparelanguage'] = 'Vergelijk en bewerk huidige taal ';
 $string['complete'] = 'Voltooid';
