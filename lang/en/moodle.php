@@ -1112,6 +1112,7 @@ $string['writinggeneralinfo'] = 'Writing general info';
 $string['writinggroupsinfo'] = 'Writing groups info';
 $string['writingheader'] = 'Writing header';
 $string['writingloginfo'] = 'Writing logs info';
+$string['writingmessagesinfo'] = 'Writing messages info';
 $string['writingmoduleinfo'] = 'Writing modules info';
 $string['writingscalesinfo'] = 'Writing scales info';
 $string['writinguserinfo'] = 'Writing users info';
