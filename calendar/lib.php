@@ -335,11 +335,8 @@ function calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxeve
     return $output;
 }
 
-function calendar_print_event($event) {
-    global $CFG, $USER;
-
-    static $strftimetime;
-
+function calendar_add_event_metadata($event) {
+    global $CFG;
     if(!empty($event->modulename)) {                                // Activity event
         // The module name is set. I will assume that it has to be displayed, and
         // also that it is an automatically-generated event. And of course that the
@@ -375,6 +372,15 @@ function calendar_print_event($event) {
         $event->icon = '<img height="16" width="16" src="'.$CFG->pixpath.'/c/user.gif" alt="" style="vertical-align: middle;" />';
     }
 
+    return $event;
+}    
+
+function calendar_print_event($event) {
+    global $CFG, $USER;
+
+    static $strftimetime;
+
+    $event = calendar_add_event_metadata($event);
     echo '<table class="eventfull">';
     echo '<tr><td class="eventfullpicture">';
     if (!empty($event->icon)) {
@@ -784,6 +790,7 @@ function calendar_get_sideblock_upcoming($events, $linkhref = NULL) {
     }
 
     for ($i = 0; $i < $lines; ++$i) {
+        $events[$i] = calendar_add_event_metadata($events[$i]);
         $content .= '<div class="event">'.$events[$i]->icon.' ';
         if (!empty($events[$i]->referer)) {
             // That's an activity event, so let's provide the hyperlink
