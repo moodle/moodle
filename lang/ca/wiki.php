@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // wiki.php - created with Moodle 1.5 unstable development (2004083000)
+      // wiki.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004110200)
 
 
 $string['action'] = '-- Acció --';
@@ -37,7 +37,7 @@ $string['deleteversions'] = 'Nombre de versions recents que voleu suprimir';
 $string['deleteversionserror'] = 'Introduïu un nombre correcte de versions.';
 $string['diff'] = 'Diff';
 $string['differences'] = 'Diferències entre les versions $a->new_ver i $a->old_ver de: $a->pagename.';
-$string['disablecamel'] = 'Inhabilitat els enllaços CamelCase';
+$string['disablecamel'] = 'Inhabilita els enllaços CamelCase';
 $string['disabledpage'] = 'Actualment aquesta pàgina no està disponible.';
 $string['doesnotexist'] = 'Aquesta pàgina encara no existeix. Podeu fer clic en el botó Edita si voleu crear-la.';
 $string['downloadaszip'] = 'Fitxer zip descarregable';
@@ -148,20 +148,20 @@ $string['sitemap'] = 'Mapa del lloc';
 $string['smfor'] = 'Mapa del lloc';
 $string['status'] = 'Estat';
 $string['strippagecheck'] = 'Esteu segur que voleu estripar les versions velles d\'aquestes pàgines:';
-$string['strippages'] = 'Estripar pàgines';
+$string['strippages'] = 'Estripa pàgines';
 $string['studentadminoptions'] = 'Opcions d\'administració per als estudiants';
 $string['submit'] = 'Tramet';
 $string['tabattachments'] = 'Adjunts';
-$string['tabedit'] = 'Edició';
+$string['tabedit'] = 'Edita';
 $string['tabinfo'] = 'Història';
 $string['tablinks'] = 'Enllaços';
-$string['tabview'] = 'Visualització';
+$string['tabview'] = 'Visualitza';
 $string['thanksforcontribution'] = 'Gràcies per la vostra col·laboració';
 $string['thispageisntlinkedfromanywhereelse'] = 'No hi ha cap enllaç que meni a aquesta pàgina.';
 $string['updatedpages'] = 'Pàgines actualitzades';
 $string['uplerror'] = 'Alguna cosa no ha funcionat bé durant la càrrega del fitxer.';
 $string['uplinsect'] = 'Penja en';
-$string['uplnewnam'] = 'Desa amb un altre nom de fitxer';
+$string['uplnewnam'] = 'Desa amb un altre nom';
 $string['upload0'] = 'Utilitzeu aquest formulari per penjar un fitxer binari al wiki:';
 $string['uploadedon'] = 'Penjat';
 $string['uploadpicturebutton'] = 'Penja';
