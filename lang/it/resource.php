@@ -1,12 +1,14 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.4 beta (2004082300)
+      // resource.php - created with Moodle 1.4 beta (2004082900)
 
 
 $string['addresource'] = 'Aggiungi risorsa';
 $string['chooseafile'] = 'Scegli o aggiorna un file';
+$string['chooseparameter'] = 'Scegli parametro';
 $string['configdefaulturl'] = 'Questo valore è utilizzato come preimpostazione degli URL quando si crea una nuova risorsa con URL';
 $string['configfilterexternalpages'] = 'Abilitando questa impostazione tutti le risorse esterne (pagine web, file HTML inviati) saranno processati dai filtri definiti attualmente per il sito (come i collegamenti automatici del glossario, per esempio). Attivare questa opzione potrebbe rallentare il caricamento delle pagine del tuo corso in modo significativo - usalo con attenzione e solo se ti serve veramente.';
 $string['configframesize'] = 'Quando una pagina web  o un file é visualizzato in un frame, questa é la dimensione (in pixel) del frame superiore (che contiene la navigazione).';
+$string['configparametersettings'] = 'Questo imposta il valore standard per le impostazioni dei parametri nel modulo quando aggiungi una nuova risorsa. Dopo la prima volta, diventa una preferenza legata all\'utente.';
 $string['configpopup'] = 'Imposta automaticamente la visualizzazione della risorsa (se possibile) in una nuova finestra?';
 $string['configpopupdirectories'] = 'Le finestre di popup possono mostrare i collegamenti alla directory?';
 $string['configpopupheight'] = 'Altezza standard per le nuove finestre di popup';
@@ -17,9 +19,12 @@ $string['configpopupscrollbars'] = 'Le finestre di popup possono avere la barra 
 $string['configpopupstatus'] = 'Le finestre di popup possono mostrare la barra di stato?';
 $string['configpopuptoolbar'] = 'Le finestre di popup possono mostrare la barra strumenti?';
 $string['configpopupwidth'] = 'Larghezza standard per le nuove finestre di popup';
+$string['configsecretphrase'] = 'Questa frase segreta viene utilizzata per generare il codice criptato che viene spedito ad alcune risorse com parametro. Il codice criptato è generato da un valore md5 del indirizzo IP dell\'utente corrente concatenato con la frase segreta. es: code  = md5(IP.secretphrase). Questo permette al destinatario della risorsa di verificare la connessione per una maggiore sicurezza.';
 $string['configwebsearch'] = 'Quando aggiungi un URL come una Pagina web o un Collegamento web, questo collegamento è offerto come un sito per aiutare gli utenti a cercare l\'URL che vogliono';
+$string['configwindowsettings'] = 'Questo imposta il valore standard per le impostazioni della finestra nel modulo quando aggiungi una nuova risorsa. Dopo la prima volta, diventa una preferenza legata all\'utente.';
 $string['directlink'] = 'Collegamento diretto a questo file';
 $string['directoryinfo'] = 'Tutti i file nella cartella scelta verranno mostrati.';
+$string['display'] = 'Finestra';
 $string['editingaresource'] = 'Edita una risorsa';
 $string['encryptedcode'] = 'Codice criptato';
 $string['example'] = 'Esempio';

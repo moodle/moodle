@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.4 beta (2004082300)
+      // moodle.php - created with Moodle 1.4 beta (2004082900)
 
 
 $string['action'] = 'Azione';
@@ -326,6 +326,7 @@ $string['editordefaultfont'] = 'Font standard';
 $string['editorenablespelling'] = 'Abilita controllo ortografico';
 $string['editorfontlist'] = 'Lista font';
 $string['editorfontsize'] = 'font-size standard';
+$string['editorresettodefaults'] = 'Ripristina i valori standard';
 $string['editorsettings'] = 'Impostazioni editor';
 $string['editsummary'] = 'Modifica riassunto';
 $string['editthisactivity'] = 'Modifica questa attività';
@@ -528,6 +529,7 @@ $string['hiddensectionscollapsed'] = 'Le sezioni nascoste sono mostrate in modo 
 $string['hiddensectionsinvisible'] = 'Le sezioni nascoste sono completamente invisibili';
 $string['hide'] = 'Nascondi';
 $string['hidepicture'] = 'Nascondi immagine';
+$string['hidesettings'] = 'Nascondi impostazioni';
 $string['hits'] = 'Accessi';
 $string['hitsoncourse'] = 'Accessi al corso $a->coursename dell\'utente $a->username';
 $string['hitsoncoursetoday'] = 'Accessi di oggi al corso $a->coursename dell\'utente $a->username';
@@ -769,7 +771,6 @@ $string['order'] = 'Ordine';
 $string['other'] = 'Altro';
 $string['outline'] = 'Profilo';
 $string['page'] = 'Pagina';
-$string['parentlanguage'] = ' ';
 $string['participants'] = 'Partecipanti';
 $string['password'] = 'Password';
 $string['passwordchanged'] = 'La password è stata modificata';
@@ -892,6 +893,7 @@ $string['showonlytopic'] = 'Mostra solo argomento $a';
 $string['showonlyweek'] = 'Mostra solo settimana $a';
 $string['showrecent'] = 'Mostra le attività recenti';
 $string['showreports'] = 'Mostra i rapporti delle attività ';
+$string['showsettings'] = 'Mostra impostazioni';
 $string['showtheselogs'] = 'Mostra questi logs';
 $string['since'] = 'Dal';
 $string['sincelast'] = 'dall\'ultimo accesso';
