@@ -1575,10 +1575,10 @@ function quiz_save_attempt($quiz, $questions, $result, $attemptnum) {
         return false;
     }
 
-    if ($attempt->attempt != $attemptnum) {  // Double check.
-        notify("Number of this attempt is different to the unfinished one!");
-        return false;
-    }
+    // Not usually necessary, but there's some sort of very rare glitch 
+    // I've seen where the number wasn't already the same.  In these cases
+    // We upgrade the database to match the attemptnum we calculated
+    $attempt->attempt = $attemptnum;
 
     // Now let's complete this record and save it
 
