@@ -240,7 +240,7 @@ function forum_cron () {
             $groupmode = false;
             if ($cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
                 if ($groupmode = groupmode($course, $cm)) {                  // Groups are being used
-                    if (!$group = user_group($course->id, $userfrom->id)) {  // If user not in a group
+                    if (!$group = get_record("groups", "id", $discussion->groupid)) {   // Can't find group
                         continue;                                            // Be safe and don't send it to anyone
                     }
                 }
@@ -418,13 +418,13 @@ function forum_print_recent_activity($course, $isteacher, $timestart) {
                 /// Check whether this is belongs to a discussion in a group that 
                 /// should NOT be accessible to the current user
 
-                if (!$isteacheredit) {   /// Because editing teachers can see everything
+                if (!$isteacheredit) {   /// Because editing teachers can see everything anyway
                     if (!isset($cm[$post->forum])) {
                         $cm[$forum->id] = get_coursemodule_from_instance("forum", $forum->id, $course->id);
                         $groupmode[$forum->id] = groupmode($course, $cm[$forum->id]);
                     }
                     if ($groupmode[$forum->id]) {
-                        if ($mygroupid != forum_get_groupid_from_discussion($post->discussion, $course->id)) {
+                        if ($mygroupid != $post->groupid) {
                             continue;
                         }
                     }
@@ -775,7 +775,7 @@ function forum_get_post_from_log($log) {
 
     if ($log->action == "add post") {
 
-        return get_record_sql("SELECT p.*, d.forum, u.firstname, u.lastname, u.email, u.picture
+        return get_record_sql("SELECT p.*, d.forum, d.groupid, u.firstname, u.lastname, u.email, u.picture
                                  FROM {$CFG->prefix}forum_discussions d, 
                                       {$CFG->prefix}forum_posts p, 
                                       {$CFG->prefix}user u 
@@ -787,7 +787,7 @@ function forum_get_post_from_log($log) {
 
     } else if ($log->action == "add discussion") {
 
-        return get_record_sql("SELECT p.*, d.forum, u.firstname, u.lastname, u.email, u.picture
+        return get_record_sql("SELECT p.*, d.forum, d.groupid, u.firstname, u.lastname, u.email, u.picture
                                  FROM {$CFG->prefix}forum_discussions d, 
                                       {$CFG->prefix}forum_posts p, 
                                       {$CFG->prefix}user u 
@@ -810,23 +810,6 @@ function forum_get_firstpost_from_discussion($discussionid) {
                               AND d.firstpost = p.id ");
 }
 
-function forum_get_groupid_from_discussion($discussionid, $courseid) {
-/// Given a discussion id, return the groupid of the first poster
-    global $CFG;
-
-    if ($info = get_record_sql("SELECT gm.groupid as id
-                                  FROM {$CFG->prefix}forum_discussions d, 
-                                       {$CFG->prefix}forum_posts p,
-                                       {$CFG->prefix}groups g,
-                                       {$CFG->prefix}groups_members gm
-                                 WHERE d.id = '$discussionid' 
-                                   AND g.courseid = '$courseid'
-                                   AND gm.groupid = g.id
-                                   AND gm.userid = d.userid")) {
-        return $info->id;
-    }
-    return 0;
-}
 
 function forum_get_user_grades($forumid) {
 /// Get all user grades for a forum
