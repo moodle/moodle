@@ -438,6 +438,10 @@
 
 
 function validate_form(&$form, &$err) {
+
+    $form->name = trim($form->name);
+    $form->description = trim($form->description);
+
     if(empty($form->name)) {
         $err['name'] = get_string('errornoeventname', 'calendar');
     }
