@@ -34,6 +34,7 @@ CREATE TABLE `prefix_course` (
   `password` varchar(50) NOT NULL default '',
   `fullname` varchar(254) NOT NULL default '',
   `shortname` varchar(15) NOT NULL default '',
+  `idnumber` varchar(50) NOT NULL default '',
   `summary` text NOT NULL,
   `format` varchar(10) NOT NULL default 'topics',
   `showgrades` smallint(2) unsigned NOT NULL default '1',

@@ -780,6 +780,12 @@ function main_upgrade($oldversion=0) {
         table_column('user_teachers', "", 'timestart', 'int', '10', 'unsigned', '0', 'not null', 'editall');
     }
 
+    if ($oldversion < 2004062401) {
+        table_column('course', '', 'idnumber', 'varchar', '100', '', '', 'not null', 'shortname');
+        execute_sql('UPDATE '.$CFG->prefix.'course SET idnumber = shortname');   // By default
+    }
+
+
     return $result;
 
 }

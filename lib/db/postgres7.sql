@@ -12,6 +12,7 @@ CREATE TABLE prefix_course (
    password varchar(50) NOT NULL default '',
    fullname varchar(254) NOT NULL default '',
    shortname varchar(15) NOT NULL default '',
+   idnumber varchar(100) NOT NULL default '',
    summary text NOT NULL default '',
    format varchar(10) NOT NULL default 'topics',
    showgrades integer NOT NULL default '1',
