@@ -378,13 +378,14 @@
 
     print_table($table);
     
+    //////////////////////////////////////////////////////////////////////////////////////////////////
+    ////  IT IS ILLEGAL AND A VIOLATION OF THE GPL TO REMOVE OR MODIFY THE COPYRIGHT NOTICE BELOW ////
     $copyrighttext = "<a href=\"http://moodle.org/\">Moodle</a> ".
                      "<a href=\"../doc/?frame=release.html\">$CFG->release</a> ($CFG->version)<br />".
-                     "Open Source under the terms of the ".
-                     "<a href=\"../doc/?frame=licence.html\">GNU Public License</a><br />".
-                     "Copyright &copy; 2000-2003 Martin Dougiamas";
-
+                     "Copyright &copy; 2000-2003 Martin Dougiamas<br />".
+                     "<a href=\"../doc/?frame=licence.html\">GNU Public License</a>";
     echo "<center><p><font size=1>$copyrighttext</font></p></center>";
+    //////////////////////////////////////////////////////////////////////////////////////////////////
 
 
     echo "<table border=0 align=center width=100%><tr>";
