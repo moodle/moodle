@@ -99,7 +99,7 @@
             error("Could not reconstruct quiz results for attempt $attempt->id!");
         }
 
-        quiz_remove_unwanted_questions(&$questions, $quiz);
+        quiz_remove_unwanted_questions($questions, $quiz);
 
         if (!$result = quiz_grade_attempt_results($quiz, $questions)) {
             error("Could not re-grade this quiz attempt!");
@@ -161,7 +161,7 @@
             if (! $questions = quiz_get_attempt_responses($attempt, $quiz)) {
                 error("Could not reconstruct quiz results for attempt $attempt->id!");
             }
-            quiz_remove_unwanted_questions(&$questions, $quiz);
+            quiz_remove_unwanted_questions($questions, $quiz);
 
             if (!$result = quiz_grade_attempt_results($quiz, $questions)) {
                 error("Could not re-grade this quiz attempt!");

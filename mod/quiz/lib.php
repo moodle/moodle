@@ -496,7 +496,7 @@ function quiz_print_question($number, $question, $grade, $courseid,
            echo "<TD $truecorrect>";
            echo "<INPUT $truechecked TYPE=RADIO NAME=\"q$realquestion->id\" VALUE=\"$true->id\">$true->answer";
            echo "</TD><TD $falsecorrect>";
-           echo "<INPUT $falsechecked TYPE=RADIO NAME=\"q$realquestion->id\" VALUE=\"$false->id\">$false->answer</P>";
+           echo "<INPUT $falsechecked TYPE=RADIO NAME=\"q$realquestion->id\" VALUE=\"$false->id\">$false->answer";
            echo "</TD></TR></TABLE><BR CLEAR=ALL>";
            if ($feedback) {
                quiz_print_comment("<P ALIGN=right>$feedback[$feedbackid]</P>");
