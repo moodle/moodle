@@ -15,8 +15,12 @@
             redirect("$CFG->wwwroot/admin/");
         }
         $headerbutton = update_course_icon($site->id);
-    } else if (!isset($USER->id)) {
-        $headerbutton = "<FONT SIZE=2><A HREF=\"login/\">".get_string("login")."</A></FONT>";
+    } else {
+        if (isset($USER->id)) {
+            $headerbutton = "<FONT SIZE=2><A HREF=\"$CFG->wwwroot/login/logout.php\">".get_string("logout")."</A></FONT>";
+        } else {
+            $headerbutton = "<FONT SIZE=2><A HREF=\"$CFG->wwwroot/login\">".get_string("login")."</A></FONT>";
+        }
     }
     print_header("$site->fullname", "$site->fullname", "", "",
                  "<META NAME=\"Description\" CONTENT=\"".stripslashes(strip_tags($site->summary))."\">",

@@ -26,6 +26,14 @@ function print_header ($title="", $heading="", $navigation="", $focus="", $meta=
     } else {
         $styles = "$CFG->wwwroot/theme/standard/styles.css";
     }
+
+    if (!$button and $navigation) {
+        if (isset($USER->id)) {
+            $button = "<FONT SIZE=2><A HREF=\"$CFG->wwwroot/login/logout.php\">".get_string("logout")."</A></FONT>";
+        } else {
+            $button = "<FONT SIZE=2><A HREF=\"$CFG->wwwroot/login\">".get_string("login")."</A></FONT>";
+        }
+    }
  
     if (!$cache) {   // Do everything we can to prevent clients and proxies caching
         @header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
