@@ -4,8 +4,8 @@
  * CAS for login module
  * 10.03.2004 Creation
  */
-    require_once($CFG->dirroot."/config.php");
-    include_once($CFG->dirroot.'/auth/cas/cas/CAS.php');
+    require_once($CFG->dirroot.'/config.php');
+    include_once($CFG->dirroot.'/lib/cas/CAS.php');
     $cas_validate=false;
 
 /**
@@ -90,14 +90,4 @@ function cas_automatic_authenticate ($user="") {
    }
 }
 
-
-/**
- * logout the user from CAS server (destroy the ticket)
-*/
-function cas_logout () {
-       global $CFG;
-       phpCAS::client($CFG->cas_version,$CFG->cas_hostname,(Integer)$CFG->cas_port,$CFG->cas_baseuri);
-       $backurl = $CFG->wwwroot;
-       phpCAS::logout($backurl);
-}
 ?>
