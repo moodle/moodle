@@ -53,7 +53,8 @@ function filter_phrases ($text, $link_array, $ignoretagsopen=NULL, $ignoretagscl
 /// Add the user defined ignore tags to the default list
 /// Unless specified otherwise, we will not replace within <a></a> tags
     if ( $ignoretagsopen === NULL ) {
-        $ignoretagsopen  = array('<a(.+?)>');
+        //$ignoretagsopen  = array('<a(.+?)>');
+        $ignoretagsopen  = array('<a[^>]+?>');
         $ignoretagsclose = array('</a>');
     }
     
@@ -65,8 +66,8 @@ function filter_phrases ($text, $link_array, $ignoretagsopen=NULL, $ignoretagscl
 
 /// Remove everything enclosed by the ignore tags from $text
     $ignoretags = array();
-    foreach ($filterignoretagsopen as $key=>$opentag) {
-        $closetag = $filterignoretagsclose[$key];
+    foreach ($filterignoretagsopen as $ikey=>$opentag) {
+        $closetag = $filterignoretagsclose[$ikey];
     /// form regular expression
         $opentag  = str_replace('/','\/',$opentag); // delimit forward slashes
         $closetag = str_replace('/','\/',$closetag); // delimit forward slashes
@@ -74,7 +75,7 @@ function filter_phrases ($text, $link_array, $ignoretagsopen=NULL, $ignoretagscl
         
         preg_match_all($pregexp, $text, $list_of_ignores);
         foreach (array_unique($list_of_ignores[0]) as $key=>$value) {
-            $ignoretags['<~'.$key.'~>'] = $value;
+            $ignoretags['<#'.$ikey.'.'.$key.'#>'] = $value;
         }
         if (!empty($ignoretags)) {
             $text = str_replace($ignoretags,array_keys($ignoretags),$text);
@@ -82,17 +83,15 @@ function filter_phrases ($text, $link_array, $ignoretagsopen=NULL, $ignoretagscl
     }
 
 
-
 /// Remove tags from $text
     $tags = array();
-    preg_match_all('/<(.+?)>/is',$text,$list_of_tags);
+    preg_match_all('/<[^\#](.+?)[^\#]>/is',$text,$list_of_tags);
     foreach (array_unique($list_of_tags[0]) as $key=>$value) {
         $tags['<|'.$key.'|>'] = $value;
     }
     if (!empty($tags)) {
         $text = str_replace($tags,array_keys($tags),$text);
     }
-
 
 
 /// Time to cycle through each phrase to be linked
@@ -149,7 +148,6 @@ function filter_phrases ($text, $link_array, $ignoretagsopen=NULL, $ignoretagscl
             }
         }
 
-
     /// Finally we do our highlighting
         $text = preg_replace('/('.$linkobject->phrase.')/'.$modifiers, $linkobject->hreftagbegin.'$1'.$linkobject->hreftagend, $text);
 
@@ -168,15 +166,15 @@ function filter_phrases ($text, $link_array, $ignoretagsopen=NULL, $ignoretagscl
         $newtagsprefix = (string)(count($newtagsarray) + 1);
         $newtags = array();
         preg_match_all('/<(.+?)>/is',$text,$list_of_newtags);
-        foreach (array_unique($list_of_newtags[0]) as $key=>$value) {
-            $newtags['<|'.$newtagsprefix.'.'.$key.'|>'] = $value;
+        foreach (array_unique($list_of_newtags[0]) as $ntkey=>$value) {
+            $newtags['<%'.$newtagsprefix.'.'.$ntkey.'%>'] = $value;
         }
         if (!empty($newtags)) {
             $text = str_replace($newtags,array_keys($newtags),$text);
             $newtagsarray[] = $newtags;
         }
+        unset($newtags);
 
-    
     }
 
 
