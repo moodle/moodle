@@ -406,6 +406,7 @@ $string['failedloginattempts'] = '$a->attempts failed logins since your last log
 $string['failedloginattemptsall'] = '$a->attempts failed logins for $a->accounts accounts';
 $string['feedback'] = 'Feedback';
 $string['filemissing'] = '$a is missing';
+$string['file'] = 'File';
 $string['files'] = 'Files';
 $string['filesfolders'] = 'Files/folders';
 $string['filloutallfields'] = 'Please fill out all fields in this form';
