@@ -381,8 +381,10 @@
                     get_string("adminhelplanguage")."</font><br />";
     $configdata .= "<font size=+1>&nbsp;</font><a href=\"modules.php\">".get_string("managemodules")."</a> - <font size=1>".
                     get_string("adminhelpmanagemodules")."</font><br />";
-    $configdata .= "<font size=+1>&nbsp;</font><a href=\"backup.php\">".get_string("backup")."</a> - <font size=1>".
-                    get_string("adminhelpbackup")."</font><br />";
+    if (!isset($CFG->disablescheduledbackups)) {
+        $configdata .= "<font size=+1>&nbsp;</font><a href=\"backup.php\">".get_string("backup")."</a> - <font size=1>".
+                        get_string("adminhelpbackup")."</font><br />";
+    }
 
     $table->data[] = array("<font size=+1><b><a href=\"configure.php\">".get_string("configuration")."</a></b>", 
                             $configdata);
@@ -430,7 +432,7 @@
     ////  IT IS ILLEGAL AND A VIOLATION OF THE GPL TO REMOVE OR MODIFY THE COPYRIGHT NOTICE BELOW ////
     $copyrighttext = "<a href=\"http://moodle.org/\">Moodle</a> ".
                      "<a href=\"../doc/?frame=release.html\">$CFG->release</a> ($CFG->version)<br />".
-                     "Copyright &copy; 2000-2003 Martin Dougiamas<br />".
+                     "Copyright &copy; 2000-2004 Martin Dougiamas<br />".
                      "<a href=\"../doc/?frame=licence.html\">GNU Public License</a>";
     echo "<center><p><font size=1>$copyrighttext</font></p></center>";
     //////////////////////////////////////////////////////////////////////////////////////////////////
