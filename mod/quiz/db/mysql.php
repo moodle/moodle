@@ -292,6 +292,10 @@ function quiz_upgrade($oldversion) {
     if ($oldversion < 2004120501) {
         table_column("quiz_calculated", "", "correctanswerformat", "integer", "10", "", "2", "not null", "correctanswerlength");
     }
+
+    if ($oldversion < 2004121400) {  // New field to determine popup window behaviour
+        table_column("quiz", "", "popup", "integer", "4", "", "0", "not null", "subnet");
+    }
     
     return true;
 }

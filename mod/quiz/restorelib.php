@@ -1322,6 +1322,7 @@
             $quiz->timelimit = backup_todb($info['MOD']['#']['TIMELIMIT']['0']['#']);
             $quiz->password = backup_todb($info['MOD']['#']['PASSWORD']['0']['#']);
             $quiz->subnet = backup_todb($info['MOD']['#']['SUBNET']['0']['#']);
+            $quiz->popup = backup_todb($info['MOD']['#']['POPUP']['0']['#']);
 
             //We have to recode the questions field (a list of questions id)          
             //Extracts question id from sequence
