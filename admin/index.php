@@ -388,7 +388,7 @@
 
     $table->data[] = array("<font size=+1><b><a href=\"../course/index.php?edit=on\">".get_string("courses")."</a></b>",
                            "<font size=+1>&nbsp;</font>".get_string("adminhelpcourses"));
-    $table->data[] = array("<font size=+1><b><a href=\"../course/log.php?id=$site->id.php\">".get_string("logs")."</a></b>",
+    $table->data[] = array("<font size=+1><b><a href=\"../course/log.php?id=$site->id\">".get_string("logs")."</a></b>",
                            "<font size=+1>&nbsp;</font>".get_string("adminhelplogs"));
     $table->data[] = array("<font size=+1><b><a href=\"../files/index.php?id=$site->id\">".get_string("sitefiles")."</a></b>",
                            "<font size=+1>&nbsp;</font>".get_string("adminhelpsitefiles"));
