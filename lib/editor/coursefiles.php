@@ -93,16 +93,17 @@
         }
         
         function set_dir(strdir) {
-            // this function will be rewritten in near future - Janne -
-            if(window.parent.document.uploader != null) {
-                window.parent.document.uploader.wdir.value = strdir;
-            }
-            if(window.parent.document.cfolder != null) {
-                window.parent.document.cfolder.wdir.value = strdir;
-                window.parent.document.cfolder.name.value = "";
-            }
-            if(window.parent.document.irename != null) {
-                window.parent.document.irename.wdir.value = strdir;
+            // sets wdir values
+            var upper = window.parent.document;
+            if(upper) {
+                for(var i = 0; i < upper.forms.length; i++) {
+                    var f = upper.forms[i];
+                    try {
+                        f.wdir.value = strdir;
+                    } catch (e) {
+                        
+                    }
+                }
             }
         }
         
