@@ -14,10 +14,6 @@
         error("Site isn't defined!");
     }
 
-    if (!confirm_sesskey()) {
-        error(get_string('confirmsesskeybad', 'error'));
-    }
-
     require_variable($_REQUEST['block']);
     $blockid = intval($_REQUEST['block']);
    
@@ -40,6 +36,10 @@
     /// If data submitted, then process and store.
 
     if ($config = data_submitted()) {
+
+        if (!confirm_sesskey()) {
+             error(get_string('confirmsesskeybad', 'error'));
+        }
         if(!$block->has_config()) {
             error('This block does not support global configuration');
         }

@@ -13,13 +13,13 @@
         error("Site isn't defined!");
     }
 
-    if (!confirm_sesskey()) {
-        error(get_string('confirmsesskeybad', 'error'));
-    }
-
 /// If data submitted, then process and store.
 
-	if ($config = data_submitted()) {  
+    if ($config = data_submitted()) {
+
+        if (!confirm_sesskey()) {
+            error(get_string('confirmsesskeybad', 'error'));
+        }
         print_header();
         foreach ($config as $name => $value) {
             set_config($name, $value);

@@ -166,7 +166,7 @@
 
         $settings = ''; // By default, no configuration
         if($blockobject->has_config()) {
-            $settings = '<a href="block.php?block='.$blockid.'&sesskey='.$USER->sesskey.'">'.$strsettings.'</a>';
+            $settings = '<a href="block.php?block='.$blockid.'">'.$strsettings.'</a>';
         }
 
         $count = count_records('block_instance', 'blockid', $blockid);
