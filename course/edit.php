@@ -108,10 +108,6 @@
             $form->startdate = time() + 3600 * 24;
             $form->fullname = get_string("defaultcoursefullname");
             $form->shortname = get_string("defaultcourseshortname");
-            $form->teacher = get_string("defaultcourseteacher");
-            $form->teachers = get_string("defaultcourseteachers");
-            $form->student = get_string("defaultcoursestudent");
-            $form->students = get_string("defaultcoursestudents");
             $form->summary = get_string("defaultcoursesummary");
             $form->format = "weeks";
             $form->password = "";
@@ -122,6 +118,18 @@
             $form->category = $category;
             $form->id = "";
             $form->visible = 1;
+
+            if (current_language() == $CFG->lang) {
+                $form->teacher  = $site->teacher;
+                $form->teachers = $site->teachers;
+                $form->student  = $site->student;
+                $form->students = $site->students;
+            } else {
+                $form->teacher = get_string("defaultcourseteacher");
+                $form->teachers = get_string("defaultcourseteachers");
+                $form->student = get_string("defaultcoursestudent");
+                $form->students = get_string("defaultcoursestudents");
+            }
         }
     }
 
