@@ -632,6 +632,7 @@ $string['sec'] = "sec";
 $string['secs'] = "secs";
 $string['section'] = "Section";
 $string['sections'] = "Sections";
+$string['select'] = "Select";
 $string['selectacountry'] = "Select a country";
 $string['selectednowmove'] = "\$a files selected for moving. Now go to the destination and press 'Move files to here'";
 $string['senddetails'] = "Send my details via email";

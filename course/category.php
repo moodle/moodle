@@ -204,7 +204,7 @@
     } else {
 
         $strcourses  = get_string("courses");
-        $strmove     = get_string("move");
+        $strselect   = get_string("select");
         $stredit     = get_string("edit");
         $strdelete   = get_string("delete");
         $strbackup   = get_string("backup");
@@ -214,6 +214,8 @@
         $strhide     = get_string("hide");
         $strshow     = get_string("show");
         $strassignteachers     = get_string("assignteachers");
+        $strallowguests     = get_string("allowguests");
+        $strrequireskey     = get_string("requireskey");
 
         if (empty($THEME->custompix)) {
             $pixpath = "$CFG->wwwroot/pix";
@@ -228,8 +230,10 @@
         if ($creatorediting) {
             echo "<th>$stredit</th>";
             if ($adminediting) {
-                echo "<th>$strmove</th>";
+                echo "<th>$strselect</th>";
             }
+        } else {
+            echo "<th>&nbsp;</th>";
         }
         echo "</tr>";
 
@@ -280,12 +284,21 @@
                     echo "<input type=\"checkbox\" name=\"c$course->id\">";
                     $abletomovecourses = true;
 
-                 } else if (isteacher($course->id)) {
+                } else if (isteacher($course->id)) {
                     echo "<td>";
                     echo "<a title=\"$strassignteachers\" href=\"$CFG->wwwroot/$CFG->admin/teacher.php?id=$course->id\"><img".
                          " src=\"$pixpath/t/user.gif\" height=11 width=11 border=0></a> ";
-                 }
-                 echo "</td>";
+                }
+                echo "</td>";
+            } else {
+                echo "<td>";
+                if ($course->guest ) {
+                echo "<img title=\"$strallowguests\" alt=\"\" height=16 width=16 border=0 src=\"$pixpath/i/user.gif\">";
+                }
+                if ($course->password) {
+                    echo "<img title=\"$strrequireskey\" alt=\"\" height=16 width=16 border=0 src=\"$pixpath/i/key.gif\">";
+                }
+                echo "</td>";
             }
             echo "</tr>";
         }
