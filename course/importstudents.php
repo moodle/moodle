@@ -99,6 +99,9 @@
             if (array_key_exists($tmp->id,$alreadycourses)) {
                 unset($searchcourses[$tmp->id]);
             }
+	    if (!empty($tmp->metacourse)) {
+	      unset($searchcourses[$tmp->id]);
+	    }
         }
         if (array_key_exists($course->id,$searchcourses)) {
             unset($searchcourses[$course->id]);
