@@ -197,23 +197,25 @@ function forum_cron () {
         $realuser = $USER;
     }
 
-    $cutofftime = time() - $CFG->maxeditingtime;
+    /// Posts older than 2 days will not be mailed.  This is to avoid the problem where
+    /// cron has not been running for a long time, and then suddenly people are flooded
+    /// with mail from the past few weeks or months
 
-    if ($posts = forum_get_unmailed_posts($cutofftime)) {
+    $timenow   = time();
+    $endtime   = $timenow - $CFG->maxeditingtime;
+    $starttime = $cutofftime - 48 * 3600;   /// Two days earlier
+
+    if ($posts = forum_get_unmailed_posts($starttime, $endtime)) {
 
         /// Mark them all now as being mailed.  It's unlikely but possible there
         /// might be an error later so that a post is NOT actually mailed out,
         /// but since mail isn't crucial, we can accept this risk.  Doing it now
         /// prevents the risk of duplicated mails, which is a worse problem.
 
-        foreach ($posts as $key => $post) {
-            if (! set_field("forum_posts", "mailed", "1", "id", "$post->id")) {
-                echo "Error marking post id post->id as being mailed.  This post will not be mailed.\n";
-                unset($posts[$key]);
-            }
+        if (!forum_mark_old_posts_as_mailed($endtime)) {
+            echo "Errors occurred while trying to mark some posts as being mailed.\n";
+            return false;  // Don't continue trying to mail them, in case we are in a cron loop
         }
-
-        $timenow = time();
 
         @set_time_limit(0);   /// so that script does not get timed out when posting to many users
 
@@ -975,15 +977,24 @@ function forum_get_ratings($postid, $sort="u.firstname ASC") {
                              ORDER BY $sort");
 }
 
-function forum_get_unmailed_posts($cutofftime) {
+function forum_get_unmailed_posts($starttime, $endtime) {
 /// Returns a list of all new posts that have not been mailed yet
     global $CFG;
     return get_records_sql("SELECT p.*, d.course
                               FROM {$CFG->prefix}forum_posts p,
                                    {$CFG->prefix}forum_discussions d
                              WHERE p.mailed = 0
-                               AND p.created < '$cutofftime'
+                               AND p.created >= '$starttime'
+                               AND p.created < '$endtime'
                                AND p.discussion = d.id");
+}
+
+function forum_mark_old_posts_as_mailed($endtime) {
+/// Marks posts before a certain time as being mailed already
+    global $CFG;
+    return modify_database("UPDATE prefix_forum_posts
+                               SET mailed = '1'
+                             WHERE created < '$endtime'");
 }
 
 function forum_get_user_posts($forumid, $userid) {
