@@ -1,19 +1,21 @@
 <?PHP  // $Id: report.php,
 //  created from the above 2003/11/20 by Tom Robb tom@robb.net
-// Version 2.3  Modified 2003/11/27
-//  bug causing errors with null data in qr_answser_lookup() fixed
-//  
+// Version 2.3  Modified 2003/12/12 pm
+//  Instance delete function implemented
+// 
 
 /// This report shows the specific responses made by each student for each question.
+/// and provides an analysis of the responses for each item
 
 class quiz_report extends quiz_default_report {
 
     function display($quiz, $cm, $course) {     /// This function just displays the report
 
     global $CFG;
-    global $download, $quests,$qtally,$table_colcount,$max_choices, $analysis,$qs_in_order,$total_user_count,$match_number, $thismin,$thismax,$myxls,$match_qs,$formatbc,$workbook,$strquestion,$showtext,$debug;
+    global $download, $quests,$qtally,$table_colcount,$max_choices, $analysis,$qs_in_order,$total_user_count,$match_number, $thismin,$thismax,$myxls,$match_qs,$formatbc,$workbook,$strquestion,$showtext,$debug,$del;
     optional_variable($download, "");
     optional_variable($debug, "");
+    optional_variable($del, "");
 //$debug = 1;
 
 /*
@@ -27,11 +29,16 @@ $string['percentcorrect'] = "Percent Correct";
 $string['question'] = "Question";
 $string['withsummary'] = "with Summary Statistics";
 $string['discrimination'] = "Discrim. Index";
+$string[''] = "";
 */
 
-        $strgrade = get_string("grade");
+    if ($del>0){
+        delete_records('quiz_attempts', 'id', $del);
+    }
+
         $strindivresp = get_string("indivresp", "quiz");
         $strname = get_string("name", "quiz");
+        $strgrade = get_string("grade", "quiz");
         $stritemanal = get_string("itemanal", "quiz");
         $strcorrresp = get_string("corrresp", "quiz");
         $strnoresponse = get_string("noresponse", "quiz");
@@ -644,7 +651,9 @@ $string['discrimination'] = "Discrim. Index";
             //else the data to be printed is in $thisitem['data'] and $thisitem['score'] == 1 shows that the item was correct
                 if ($thisitem['score'] < 1) {$thiscolor = "ff0000";} else {$thiscolor = "000000";}
                 if ($thisitemkey == 0){
-                    print("<th align='left'>$thisitem&nbsp;</th>");
+            //modified to add DEL  Dec.  12, 2003
+                    $delstring = get_string('delete');
+                    print("<th align='left'>$thisitem<br><font size=-1>&nbsp;&nbsp;<a href='report.php?id=$cm->id&mode=fullstat&del=$thisattemptno'>($delstring)</a></font></th>");
                 } elseif ($thisitemkey == 1){
                     print("<td align='right'>&nbsp;$thisitem%&nbsp;&nbsp;</td>");
                 } elseif ($thisitemkey['qtype'] == 2){
@@ -784,6 +793,7 @@ $string['discrimination'] = "Discrim. Index";
 }
 ////just functions below here----------------------------------------------
 
+
 function qr_quiz_responses($quiz) {
 // Given any quiz number, get all responses and place in
 // $response object
@@ -916,22 +926,20 @@ function qr_answer_lookup($qid,$thisanswer){
     $qtally[$qid]['qtype'] = $thistype;
     switch ($thistype) {
         case 1:  //SHORTANSWER
-            if($returndata['data'] = $thisanswer) {;
-                $qtally[$qid]['response'][$thisanswer]++;
-                //convert all to lowercase to allow for mismatching cases to be correct
-                if (strpos(strtolower($quests[$qid]['correct']),trim(strtolower($thisanswer))) >-1){
-                    $qtally[$qid]['correct']++;
-                    $returndata['score'] = 1;
-                }
+            $returndata['data'] = $thisanswer;
+            $qtally[$qid]['response'][$thisanswer]++;
+            //convert all to lowercase to allow for mismatching cases to be correct
+            if (strpos(strtolower($quests[$qid]['correct']),trim(strtolower($thisanswer))) >-1){
+                $qtally[$qid]['correct']++;
+                $returndata['score'] = 1;
             }
             break;
         case 2:  //TRUEFALSE
-            if ($returndata['data'] = $quests[$qid]['choice'][$thisanswer]['answer']) {
-                $qtally[$qid][$quests[$qid]['choice'][$thisanswer]['answer']]++;
-                if ($quests[$qid]['correct']==$quests[$qid]['choice'][$thisanswer]['answer']){
-                    $returndata['score'] = 1;
-                    $qtally[$qid]['correct']++;
-                }
+            $returndata['data'] = $quests[$qid]['choice'][$thisanswer]['answer'];
+            $qtally[$qid][$quests[$qid]['choice'][$thisanswer]['answer']]++;
+            if ($quests[$qid]['correct']==$quests[$qid]['choice'][$thisanswer]['answer']){
+                $returndata['score'] = 1;
+                $qtally[$qid]['correct']++;
             }
             break;
         case 3:  //MULTICHOICE
@@ -950,13 +958,12 @@ function qr_answer_lookup($qid,$thisanswer){
             }
             break;
         case 8:  //NUMERICAL
-            if ($returndata['data'] = $thisanswer) {
+            $returndata['data'] = $thisanswer;
 //            $returndata['data'] = $thismin . "<" . $thisanswer . ">" . $thismax;
-                $qtally[$qid]['response'][$thisanswer]++;
-                if ($thisanswer >= $thismin[$qid] and $thisanswer <= $thismax[$qid]){
-                    $qtally[$qid]['correct']++;
-                    $returndata['score'] = 1;
-                }
+            $qtally[$qid]['response'][$thisanswer]++;
+            if ($thisanswer >= $thismin[$qid] and $thisanswer <= $thismax[$qid]){
+                $qtally[$qid]['correct']++;
+                $returndata['score'] = 1;
             }
             break;
     }
