@@ -202,6 +202,9 @@
                          "<P><A HREF=\"../course/log.php?id=$site->id\">".get_string("sitelogs")."</A></P>".
                          "<P><A HREF=\"../theme/index.php\">".get_string("choosetheme")."</A></P>".
                          "<P><A HREF=\"lang.php\">".get_string("checklanguage")."</A></P>";
+    if (file_exists("$CFG->dirroot/admin/$CFG->dbtype")) {
+        $table->data[0][0] .= "<P><A HREF=\"$CFG->dbtype/\">".get_string("managedatabase")."</A></P>";
+    }
     $table->data[0][1] = "<P><A HREF=\"../course/edit.php\">".get_string("addnewcourse")."</A></P>".
                          "<P><A HREF=\"../course/teacher.php\">".get_string("assignteachers")."</A></P>".
                          "<P><A HREF=\"../course/delete.php\">".get_string("deletecourse")."</A></P>";
