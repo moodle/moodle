@@ -48,6 +48,7 @@ $string['onyouwrote'] = 'On $a you wrote';
 $string['open'] = 'Open';
 $string['openadialoguewith'] = 'Open a Dialogue with';
 $string['opendialogue'] = 'Open Dialogue';
+$string['opendialogueentries'] = 'Open dialogue entries';
 $string['pane0'] = 'Open a Dialogue';
 $string['pane1'] = '$a Dialogues awaiting Replies from you';
 $string['pane1one'] = '1 Dialogue awaiting a Reply from you';
