@@ -37,10 +37,6 @@ define("FORMAT_HTML",   "1");   // Plain HTML (with some tags stripped)
 define("FORMAT_PLAIN",  "2");   // Plain text (even tags are printed in full)
 define("FORMAT_WIKI",   "3");   // Wiki-formatted text
 
-$JAVASCRIPT_TAGS = array("javascript:", "onclick=", "ondblclick=", "onkeydown=", "onkeypress=", "onkeyup=", 
-                         "onmouseover=", "onmouseout=", "onmousedown=", "onmouseup=", "onmousemove=",
-                         "onblur=", "onfocus=", "onload=", "onselect=", "onhelp=");
-
 $ALLOWED_TAGS = "<p><br><b><i><u><font><table><tbody><span><div><tr><td><ol><ul><dl><li><dt><dd><h1><h2><h3><h4><h5><h6><hr><img><a><strong><emphasis><sup><sub><address><cite><blockquote><pre><strike><embed><object><param>";
 
 
@@ -508,16 +504,15 @@ function clean_text($text, $format) {
 /// Given raw text (eg typed in by a user), this function cleans it up 
 /// and removes any nasty tags that could mess up Moodle pages.
 
-    global $JAVASCRIPT_TAGS, $ALLOWED_TAGS;
+    global $ALLOWED_TAGS;
 
     switch ($format) { 
         case FORMAT_MOODLE:
         case FORMAT_HTML:
         case FORMAT_WIKI:
             $text = strip_tags($text, $ALLOWED_TAGS);
-            foreach ($JAVASCRIPT_TAGS as $tag) {
-                $text = str_ireplace($tag, "", $text);
-            }
+            $text = str_ireplace("javascript:", " ", $text);           // Remove javascript: label
+            $text = eregi_replace("([^a-z])on([a-z]+)=", " ", $text);  // Remove javascript triggers
             return $text;
 
         case FORMAT_PLAIN:
