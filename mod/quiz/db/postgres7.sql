@@ -74,8 +74,8 @@ CREATE TABLE prefix_quiz_categories (
   course integer NOT NULL default '0',
   name varchar(255) NOT NULL default '',
   info text NOT NULL default '',
-  publish integer NOT NULL default '0'
-  stamp varchar(255) NOT NULL default '',
+  publish integer NOT NULL default '0',
+  stamp varchar(255) NOT NULL default ''
 );
 # --------------------------------------------------------
 
