@@ -13,7 +13,7 @@
     }
 ?>
 <tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
-	<td align="right"><p>auth_pop3host:</td>
+	<td align="right">auth_pop3host:</td>
 	<td>
         <input name="auth_pop3host" type="text" size="30" value="<?php echo $config->auth_pop3host?>" />
 	<?php  if (isset($err["auth_pop3host"])) formerr($err["auth_pop3host"]); ?>
@@ -25,7 +25,7 @@
 </tr>
 
 <tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
-	<td align="right"><p>auth_pop3type:</td>
+	<td align="right">auth_pop3type:</td>
 	<td>
     <?php  $pop3types = array("pop3","pop3cert", "pop3notls");
        foreach($pop3types as $pop3type) {
@@ -40,7 +40,7 @@
 </tr>
 
 <tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
-	<td align="right"><p>auth_pop3port:</td>
+	<td align="right">auth_pop3port:</td>
 	<td>
     <input name="auth_pop3port" type="text" size="6" value="<?php echo $config->auth_pop3port?>" />
     <?php  if (isset($err["auth_pop3port"])) formerr($err["auth_pop3port"]); ?>
@@ -51,7 +51,7 @@
 </tr>
 
 <tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
-	<td align="right"><p>auth_pop3mailbox:</td>
+	<td align="right">auth_pop3mailbox:</td>
 	<td>
     <input name="auth_pop3mailbox" type="text" size="6" value="<?php echo $config->auth_pop3mailbox?>" />
     <?php  if (isset($err["auth_pop3mailbox"])) formerr($err["auth_pop3mailbox"]); ?>
@@ -62,7 +62,7 @@
 </tr>
 
 <tr valign="top">
-	<td align="right"><p><?php  print_string("instructions", "auth") ?>:</td>
+	<td align="right"><?php  print_string("instructions", "auth") ?>:</td>
 	<td>
     <textarea name="auth_instructions" cols="30" rows="10" wrap="virtual"><?php  p($config->auth_instructions) ?></textarea> 
     </td>

@@ -95,14 +95,14 @@
     print_header("$site->shortname: $strauthenticationoptions", "$site->fullname",
                   "<a href=\"index.php\">$stradministration</a> -> <a href=\"users.php\">$strusers</a> -> $strauthenticationoptions", "$focus");
 
-    echo "<center><p><b>";
+    echo "<center><b>";
     echo "<form target=\"{$CFG->framename}\" name=\"authmenu\" method=\"post\" action=\"auth.php\">";
     echo "<input type=\"hidden\" name=\"sesskey\" value=\"".$USER->sesskey."\">";
     print_string("chooseauthmethod","auth");
 
     choose_from_menu ($options, "auth", $auth, "","document.location='auth.php?sesskey=$USER->sesskey&auth='+document.authmenu.auth.options[document.authmenu.auth.selectedIndex].value", "");
 
-    echo "</b></p></center>";
+    echo "</b></center>";
         
     print_simple_box_start("center", "100%");
     print_heading($options[$auth]);
@@ -124,9 +124,9 @@
     
     if ($auth != "email" and $auth != "none" and $auth != "manual") {
         echo "<tr valign=\"top\">";
-        echo "<td align=\"right\" nowrap=\"nowrap\"><p>";
+        echo "<td align=\"right\" nowrap=\"nowrap\">";
         print_string("changepassword", "auth");
-        echo ":</p></td>";
+        echo ":</td>";
         echo "<td>";
         echo "<input type=\"text\" name=\"changepassword\" size=\"40\" value=\"$config->changepassword\">";
         echo "</td>";
@@ -137,9 +137,9 @@
     }
 
     echo "<tr valign=\"top\">";
-    echo "<td align=\"right\" nowrap=\"nowrap\"><p>";
+    echo "<td align=\"right\" nowrap=\"nowrap\">";
     print_string("guestloginbutton", "auth");
-    echo ":</p></td>";
+    echo ":</td>";
     echo "<td>";
     choose_from_menu($guestoptions, "guestloginbutton", $config->guestloginbutton, "");
     echo "</td>";
@@ -149,9 +149,9 @@
 
     if (function_exists('auth_user_create')){    
     echo "<tr valign=\"top\">";
-    echo "<td align=\"right\" nowrap=\"nowrap\"><p>";
+    echo "<td align=\"right\" nowrap=\"nowrap\">";
     print_string("auth_user_create", "auth");
-    echo ":</p></td>";
+    echo ":</td>";
     echo "<td>";
     choose_from_menu($createoptions, "auth_user_create", $config->auth_user_create, "");
     echo "</td>";
@@ -160,9 +160,9 @@
     echo "</td></tr>";
     }
 
-    echo "</table><center><p><input type=\"submit\" value=\"";
+    echo "</table><center><input type=\"submit\" value=\"";
     print_string("savechanges");
-    echo "\"></p></center></form>";
+    echo "\"></center></form>";
 
     print_simple_box_end(); 
 

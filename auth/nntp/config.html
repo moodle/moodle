@@ -8,7 +8,7 @@
 ?>
 
 <tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
-	<td align="right"><p>auth_nntphost:</td>
+	<td align="right">auth_nntphost:</td>
 	<td>
         <input name="auth_nntphost" type="text" size="30" value="<?php echo $config->auth_nntphost?>" />
 	<?php  if (isset($err["auth_nntphost"]))  formerr($err["auth_nntphost"]); ?>
@@ -20,7 +20,7 @@
 </tr>
 
 <tr valign="top" bgcolor="<?php echo $THEME->cellheading2 ?>">
-	<td align="right"><p>auth_nntpport:</td>
+	<td align="right">auth_nntpport:</td>
 	<td>
     <input name="auth_nntpport" type="text" size="6" value="<?php echo $config->auth_nntpport?>" />
     <?php  if (isset($err["auth_nntpport"])) formerr($err["auth_nntpport"]); ?>
@@ -31,7 +31,7 @@
 </tr>
 
 <tr valign="top">
-	<td align="right"><p><?php  print_string("instructions", "auth") ?>:</td>
+	<td align="right"><?php  print_string("instructions", "auth") ?>:</td>
 	<td>
     <textarea name="auth_instructions" cols="30" rows="10" wrap="virtual"><?php  p($config->auth_instructions) ?></textarea> 
     </td>

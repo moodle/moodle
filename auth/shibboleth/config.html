@@ -1,133 +1,131 @@
-<?PHP
-?>
 <tr valign="top">
-    <TD ALIGN=RIGHT><P>Shibboleth WAYF url:</TD>
-    <TD>
-        <INPUT name=shib_wayf_url TYPE=text SIZE=30 VALUE="<?php echo $config->shib_wayf_url?>">
+    <td align="right">Shibboleth WAYF URL:</td>
+    <td>
+        <input name=shib_wayf_url type=text size=30 value="<?php echo $config->shib_wayf_url?>">
     <?php  if (isset($err["shib_wayf_url"])) formerr($err["shib_wayf_url"]); ?>
-    </TD>
-    <TD>
-    </TD>
-</TR>
-<TR>
-    <TD ALIGN=RIGHT><P>Shibboleth logout url:</TD>
-    <TD>
-    <INPUT name="shib_logout_url" TYPE="text" SIZE="30" VALUE="<?php echo $config->shib_logout_url?>">
-    </TD>
-    <TD rowspan=12 VALIGN=CENTER>                                                                                                                                 </TD>
-</TR>  
-<TR>
-    <TD ALIGN=RIGHT><P><?php  print_string("username") ?>:</TD>
-    <TD>
-    <INPUT name="shib_user_attribute" TYPE="text" SIZE="30" VALUE="<?php echo $config->shib_user_attribute?>">
-    </TD>
-    <TD rowspan=12 VALIGN=CENTER>
-    </TD>
-</TR>
+    </td>
+    <td>
+    </td>
+</tr>
+<tr>
+    <td align="right">Shibboleth logout URL:</td>
+    <td>
+    <input name="shib_logout_url" type="text" size="30" value="<?php echo $config->shib_logout_url?>">
+    </td>
+    <td rowspan=12 valign=center>                                                                                                                                 </td>
+</tr>  
+<tr>
+    <td align="right"><?php  print_string("username") ?>:</td>
+    <td>
+    <input name="shib_user_attribute" type="text" size="30" value="<?php echo $config->shib_user_attribute?>">
+    </td>
+    <td rowspan=12 valign=center>
+    </td>
+</tr>
 
-<TR>
-    <TD ALIGN=RIGHT><P><?php  print_string("firstname") ?>:</TD>
-    <TD>
-    <INPUT name="auth_user_firstname" TYPE="text" SIZE="30" VALUE="<?php echo $config->auth_user_firstname?>">
-    </TD>
-    <TD rowspan=12 VALIGN=CENTER>
-    </TD>
-</TR>
-<TR VALIGN=TOP>
-    <TD ALIGN=RIGHT><P><?php  print_string("lastname") ?>:</TD>
-    <TD>
-    <INPUT name="auth_user_lastname" TYPE="text" SIZE="30" VALUE="<?php echo $config->auth_user_lastname?>">
-    </TD>
-</TR>
+<tr>
+    <td align="right"><?php  print_string("firstname") ?>:</td>
+    <td>
+    <input name="auth_user_firstname" type="text" size="30" value="<?php echo $config->auth_user_firstname?>">
+    </td>
+    <td rowspan=12 valign=center>
+    </td>
+</tr>
+<tr valign="top">
+    <td align="right"><?php  print_string("lastname") ?>:</td>
+    <td>
+    <input name="auth_user_lastname" type="text" size="30" value="<?php echo $config->auth_user_lastname?>">
+    </td>
+</tr>
 
-<TR VALIGN=TOP>
-    <TD ALIGN=RIGHT><P><?php  print_string("email") ?>:</TD>
-    <TD>
-    <INPUT name="auth_user_email" TYPE="text" SIZE="30" VALUE="<?php echo $config->auth_user_email?>">
-    </TD>
-</TR>
+<tr valign="top">
+    <td align="right"><?php  print_string("email") ?>:</td>
+    <td>
+    <input name="auth_user_email" type="text" size="30" value="<?php echo $config->auth_user_email?>">
+    </td>
+</tr>
 
-<TR VALIGN=TOP>
-    <TD ALIGN=RIGHT><P><?php  print_string("phone") ?> 1:</TD>
-    <TD>
-    <INPUT name="auth_user_phone1" TYPE="text" SIZE="30" VALUE="<?php echo $config->auth_user_phone1?>">
-    </TD>
-</TR>
+<tr valign="top">
+    <td align="right"><?php  print_string("phone") ?> 1:</td>
+    <td>
+    <input name="auth_user_phone1" type="text" size="30" value="<?php echo $config->auth_user_phone1?>">
+    </td>
+</tr>
 
-<TR VALIGN=TOP>
-    <TD ALIGN=RIGHT><P><?php  print_string("phone") ?> 2:</TD>
-    <TD>
-    <INPUT name="auth_user_phone2" TYPE="text" SIZE="30" VALUE="<?php echo $config->auth_user_phone2?>">
-    </TD>
-</TR>
+<tr valign="top">
+    <td align="right"><?php  print_string("phone") ?> 2:</td>
+    <td>
+    <input name="auth_user_phone2" type="text" size="30" value="<?php echo $config->auth_user_phone2?>">
+    </td>
+</tr>
 
-<TR VALIGN=TOP>
-    <TD ALIGN=RIGHT><P><?php  print_string("department") ?>:</TD>
-    <TD>
-    <INPUT name="auth_user_department" TYPE="text" SIZE="30" VALUE="<?php echo $config->auth_user_department?>">
-    </TD>
-</TR>
+<tr valign="top">
+    <td align="right"><?php  print_string("department") ?>:</td>
+    <td>
+    <input name="auth_user_department" type="text" size="30" value="<?php echo $config->auth_user_department?>">
+    </td>
+</tr>
 
-<TR VALIGN=TOP>
-    <TD ALIGN=RIGHT><P><?php  print_string("address") ?>:</TD>
-    <TD>
-    <INPUT name="auth_user_address" TYPE="text" SIZE="30" VALUE="<?php echo $config->auth_user_address?>">
-    </TD>
-</TR>
+<tr valign="top">
+    <td align="right"><?php  print_string("address") ?>:</td>
+    <td>
+    <input name="auth_user_address" type="text" size="30" value="<?php echo $config->auth_user_address?>">
+    </td>
+</tr>
 
-<TR VALIGN=TOP>
-    <TD ALIGN=RIGHT><P><?php  print_string("city") ?>:</TD>
-    <TD>
-    <INPUT name="auth_user_city" TYPE="text" SIZE="30" VALUE="<?php echo $config->auth_user_city?>">
-    </TD>
-</TR>
+<tr valign="top">
+    <td align="right"><?php  print_string("city") ?>:</td>
+    <td>
+    <input name="auth_user_city" type="text" size="30" value="<?php echo $config->auth_user_city?>">
+    </td>
+</tr>
 
-<TR VALIGN=TOP>
-    <TD ALIGN=RIGHT><P><?php  print_string("country") ?>:</TD>
-    <TD>
-    <INPUT name="auth_user_country" TYPE="text" SIZE="30" VALUE="<?php echo $config->auth_user_country?>">
-    </TD>
-</TR>
+<tr valign="top">
+    <td align="right"><?php  print_string("country") ?>:</td>
+    <td>
+    <input name="auth_user_country" type="text" size="30" value="<?php echo $config->auth_user_country?>">
+    </td>
+</tr>
 
-<TR VALIGN=TOP>
-    <TD ALIGN=RIGHT><P><?php  print_string("description") ?>:</TD>
-    <TD>
-    <INPUT name="auth_user_description" TYPE="text" SIZE="30" VALUE="<?php echo $config->auth_user_description?>">
-    </TD>
-</TR>
+<tr valign="top">
+    <td align="right"><?php  print_string("description") ?>:</td>
+    <td>
+    <input name="auth_user_description" type="text" size="30" value="<?php echo $config->auth_user_description?>">
+    </td>
+</tr>
 
-<TR VALIGN=TOP>
-    <TD ALIGN=RIGHT><P><?php  print_string("idnumber") ?>:</TD>
-    <TD>
-    <INPUT name="auth_user_idnumber" TYPE="text" SIZE="30" VALUE="<?php echo $config->auth_user_idnumber?>">
-    </TD>
-</TR>
+<tr valign="top">
+    <td align="right"><?php  print_string("idnumber") ?>:</td>
+    <td>
+    <input name="auth_user_idnumber" type="text" size="30" value="<?php echo $config->auth_user_idnumber?>">
+    </td>
+</tr>
 
-<TR VALIGN=TOP>
-    <TD ALIGN=RIGHT><P><?php  print_string("language") ?>:</TD>
-    <TD>
-    <INPUT name="auth_user_lang" TYPE="text" SIZE="30" VALUE="<?php echo $config->auth_user_lang?>">
-    </TD>
-</TR>
+<tr valign="top">
+    <td align="right"><?php  print_string("language") ?>:</td>
+    <td>
+    <input name="auth_user_lang" type="text" size="30" value="<?php echo $config->auth_user_lang?>">
+    </td>
+</tr>
 
-<TR VALIGN=TOP>
-    <TD ALIGN=RIGHT><P><?php  print_string("guid") ?>:</TD>
-    <TD>
-    <INPUT name="auth_user_guid" TYPE="text" SIZE="30" VALUE="<?php echo $config->auth_user_guid?>">
-    </TD>
-</TR>
+<tr valign="top">
+    <td align="right"><?php  print_string("guid") ?>:</td>
+    <td>
+    <input name="auth_user_guid" type="text" size="30" value="<?php echo $config->auth_user_guid?>">
+    </td>
+</tr>
 
 
-<TR VALIGN=TOP>
-    <TD ALIGN=RIGHT><P><?php  print_string("instructions", "auth") ?>:</TD>
-    <TD>
-    <TEXTAREA NAME=auth_instructions COLS=30 ROWS=10 WRAP=virtual><?php  p($config->auth_instructions) ?></TEXTAREA> 
-    </TD>
-    <TD>
+<tr valign="top">
+    <td align="right"><?php  print_string("instructions", "auth") ?>:</td>
+    <td>
+    <textarea name="auth_instructions" cols="30" rows="10" wrap="virtual"><?php  p($config->auth_instructions) ?></textarea> 
+    </td>
+    <td>
     <?php  print_string("authinstructions","auth") ?>
     <?php  helpbutton("text", get_string("helptext")) ?>
-    </TD>
-</TR>
+    </td>
+</tr>
 
 
 

@@ -28,7 +28,7 @@
     }
 ?>
 <tr valign="top"  bgcolor="<?php echo $THEME->cellheading2 ?>">
-	<td align="right"><p>auth_dbhost:</td>
+	<td align="right">auth_dbhost:</td>
 	<td>
         <input name="auth_dbhost" type="text" size="30" value="<?php echo $config->auth_dbhost?>" />
 	<?php  if (isset($err["auth_dbhost"])) formerr($err["auth_dbhost"]); ?>
@@ -39,7 +39,7 @@
 </tr>
 
 <tr valign="top"  bgcolor="<?php echo $THEME->cellheading2 ?>">
-	<td align="right"><p>auth_dbtype:</td>
+	<td align="right">auth_dbtype:</td>
 	<td>
     <?php  $dbtypes = array("access","ado_access", "ado", "ado_mssql", "borland_ibase", "csv", "db2", "fbsql", "firebird", "ibase", "informix72", "informix", "mssql", "mysql", "mysqlt", "oci805", "oci8", "oci8po", "odbc", "odbc_mssql", "odbc_oracle", "oracle", "postgres64", "postgres7", "postgres", "proxy", "sqlanywhere", "sybase", "vfp");
        foreach ($dbtypes as $dbtype) {
@@ -55,7 +55,7 @@
 </tr>
 
 <tr valign="top"  bgcolor="<?php echo $THEME->cellheading2 ?>">
-	<td align="right"><p>auth_dbname:</td>
+	<td align="right">auth_dbname:</td>
 	<td>
     <input name="auth_dbname" type="text" size="30" value="<?php echo $config->auth_dbname?>" />
     <?php  if (isset($err["auth_dbname"]))formerr($err["auth_dbname"]); ?>
@@ -66,7 +66,7 @@
 </tr>
 
 <tr valign="top"  bgcolor="<?php echo $THEME->cellheading2 ?>">
-	<td align="right"><p>auth_dbuser:</td>
+	<td align="right">auth_dbuser:</td>
 	<td>
     <input name="auth_dbuser" type="text" size="30" value="<?php echo $config->auth_dbuser?>" />
     <?php  if (isset($err["auth_dbuser"])) formerr($err["auth_dbuser"]); ?>
@@ -77,7 +77,7 @@
 </tr>
 
 <tr valign="top"  bgcolor="<?php echo $THEME->cellheading2 ?>">
-	<td align="right"><p>auth_dbpass:</td>
+	<td align="right">auth_dbpass:</td>
 	<td>
     <input name="auth_dbpass" type="text" size="30" value="<?php echo $config->auth_dbpass?>" />
     <?php  if (isset($err["auth_dbpass"])) formerr($err["auth_dbpass"]); ?>
@@ -88,7 +88,7 @@
 </tr>
 
 <tr valign="top"  bgcolor="<?php echo $THEME->cellheading2 ?>">
-	<td align="right"><p>auth_dbtable:</td>
+	<td align="right">auth_dbtable:</td>
 	<td>
     <input name="auth_dbtable" type="text" size="30" value="<?php echo $config->auth_dbtable?>" />
     <?php  if (isset($err["auth_dbtable"])) formerr($err["auth_dbtable"]); ?>
@@ -99,7 +99,7 @@
 </tr>
 
 <tr valign="top"  bgcolor="<?php echo $THEME->cellheading2 ?>">
-	<td align="right"><p>auth_dbfielduser:</td>
+	<td align="right">auth_dbfielduser:</td>
 	<td>
     <input name="auth_dbfielduser" type="text" size="30" value="<?php echo $config->auth_dbfielduser?>" />
     <?php  if (isset($err["auth_dbfielduser"])) formerr($err["auth_dbfielduser"]); ?>
@@ -110,7 +110,7 @@
 </tr>
 
 <tr valign="top"  bgcolor="<?php echo $THEME->cellheading2 ?>">
-	<td align="right"><p>auth_dbfieldpass:</td>
+	<td align="right">auth_dbfieldpass:</td>
 	<td>
     <input name="auth_dbfieldpass" type="text" size="30" value="<?php echo $config->auth_dbfieldpass?>" />
     <?php  if (isset($err["auth_dbfieldpass"])) formerr($err["auth_dbfieldpass"]); ?>
@@ -121,7 +121,7 @@
 </tr>
 
 <tr valign="top"  bgcolor="<?php echo $THEME->cellheading2 ?>">
-	<td align="right"><p>auth_dbpasstype:</td>
+	<td align="right">auth_dbpasstype:</td>
 	<td>
     <?php  $passtype["plaintext"] = get_string("plaintext", "auth");
        $passtype["md5"]       = get_string("md5", "auth");
@@ -136,7 +136,7 @@
 
 
 <tr>
-	<td align="right"><p><?php  print_string("firstname") ?>:</td>
+	<td align="right"><?php  print_string("firstname") ?>:</td>
 	<td>
     <input name="auth_user_firstname" type="text" size="30" value="<?php echo $config->auth_user_firstname?>" />
     </td>
@@ -146,77 +146,77 @@
 </tr>
 
 <tr valign="top">
-	<td align="right"><p><?php  print_string("lastname") ?>:</td>
+	<td align="right"><?php  print_string("lastname") ?>:</td>
 	<td>
     <input name="auth_user_lastname" type="text" size="30" value="<?php echo $config->auth_user_lastname?>" />
     </td>
 </tr>
 
 <tr valign="top">
-	<td align="right"><p><?php  print_string("email") ?>:</td>
+	<td align="right"><?php  print_string("email") ?>:</td>
 	<td>
     <input name="auth_user_email" type="text" size="30" value="<?php echo $config->auth_user_email?>" />
     </td>
 </tr>
 
 <tr valign="top">
-	<td align="right"><p><?php  print_string("phone") ?> 1:</td>
+	<td align="right"><?php  print_string("phone") ?> 1:</td>
 	<td>
     <input name="auth_user_phone1" type="text" size="30" value="<?php echo $config->auth_user_phone1?>" />
     </td>
 </tr>
 
 <tr valign="top">
-	<td align="right"><p><?php  print_string("phone") ?> 2:</td>
+	<td align="right"><?php  print_string("phone") ?> 2:</td>
 	<td>
     <input name="auth_user_phone2" type="text" size="30" value="<?php echo $config->auth_user_phone2?>" />
     </td>
 </tr>
 
 <tr valign="top">
-	<td align="right"><p><?php  print_string("department") ?>:</td>
+	<td align="right"><?php  print_string("department") ?>:</td>
 	<td>
     <input name="auth_user_department" type="text" size="30" value="<?php echo $config->auth_user_department?>" />
     </td>
 </tr>
 
 <tr valign="top">
-	<td align="right"><p><?php  print_string("address") ?>:</td>
+	<td align="right"><?php  print_string("address") ?>:</td>
 	<td>
     <input name="auth_user_address" type="text" size="30" value="<?php echo $config->auth_user_address?>" />
     </td>
 </tr>
 
 <tr valign="top">
-	<td align="right"><p><?php  print_string("city") ?>:</td>
+	<td align="right"><?php  print_string("city") ?>:</td>
 	<td>
     <input name="auth_user_city" type="text" size="30" value="<?php echo $config->auth_user_city?>" />
     </td>
 </tr>
 
 <tr valign="top">
-	<td align="right"><p><?php  print_string("country") ?>:</td>
+	<td align="right"><?php  print_string("country") ?>:</td>
 	<td>
     <input name="auth_user_country" type="text" size="30" value="<?php echo $config->auth_user_country?>" />
     </td>
 </tr>
 
 <tr valign="top">
-	<td align="right"><p><?php  print_string("description") ?>:</td>
+	<td align="right"><?php  print_string("description") ?>:</td>
 	<td>
     <input name="auth_user_description" type="text" size="30" value="<?php echo $config->auth_user_description?>" />
     </td>
 </tr>
 
 <tr valign="top">
-	<td align="right"><p><?php  print_string("idnumber") ?>:</td>
+	<td align="right"><?php  print_string("idnumber") ?>:</td>
 	<td>
     <input name="auth_user_idnumber" type="text" size="30" value="<?php echo $config->auth_user_idnumber?>" />
     </td>
 </tr>
 
 <tr valign="top">
-	<td align="right"><p><?php  print_string("language") ?>:</td>
+	<td align="right"><?php  print_string("language") ?>:</td>
 	<td>
     <input name="auth_user_lang" type="text" size="30" value="<?php echo $config->auth_user_lang?>" />
     </td>
@@ -224,7 +224,7 @@
 
 
 <tr valign="top">
-	<td align="right"><p><?php  print_string("instructions", "auth") ?>:</td>
+	<td align="right"><?php  print_string("instructions", "auth") ?>:</td>
 	<td>
     <textarea name="auth_instructions" cols="30" rows="10" wrap="virtual"><?php  p($config->auth_instructions) ?></textarea> 
     </td>
