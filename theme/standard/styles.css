@@ -1,13 +1,13 @@
-A:link    {  font-family: "Trebuchet MS, Verdana, Arial, Helvetica, sans-serif"; text-decoration: none; color: blue}
-A:visited {  font-family: "Trebuchet MS, Verdana, Arial, Helvetica, sans-serif"; text-decoration: none; color: blue}
-A:hover   {  font-family: "Trebuchet MS, Verdana, Arial, Helvetica, sans-serif"; text-decoration: underline; color: red}
+A:link    {  font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif; text-decoration: none; color: blue}
+A:visited {  font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif; text-decoration: none; color: blue}
+A:hover   {  font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif; text-decoration: underline; color: red}
 
-BODY {font-family: "Trebuchet MS, Verdana, Arial, Helvetica, sans-serif"}
-P    {font-family: "Trebuchet MS, Verdana, Arial, Helvetica, sans-serif"}
-H1   {font-family: "Trebuchet MS, Verdana, Arial, Helvetica, sans-serif"}
-H2   {font-family: "Trebuchet MS, Verdana, Arial, Helvetica, sans-serif"}
-H3   {font-family: "Trebuchet MS, Verdana, Arial, Helvetica, sans-serif"}
-H4   {font-family: "Trebuchet MS, Verdana, Arial, Helvetica, sans-serif"}
-TH   {font-family: "Trebuchet MS, Verdana, Arial, Helvetica, sans-serif"; font-weight: bold; background-color: #FFD991;}
-TD   {font-family: "Trebuchet MS, Verdana, Arial, Helvetica, sans-serif"}
+BODY {font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif}
+P    {font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif}
+H1   {font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif}
+H2   {font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif}
+H3   {font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif}
+H4   {font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif}
+TH   {font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif; font-weight: bold; background-color: #FFD991;}
+TD   {font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif}
 
