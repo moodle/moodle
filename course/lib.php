@@ -724,6 +724,10 @@ function print_admin_links ($siteid, $width=180) {
 		$modicon[]=$icon;
 		$moddata[]="<a href=\"$CFG->wwwroot/course/delete.php\">".get_string("deletecourse")."</a>";
 		$modicon[]=$icon;
+		$moddata[]="<a href=\"$CFG->wwwroot/backup/backup.php\">".get_string("coursebackup")."</a>";
+		$modicon[]=$icon;
+		$moddata[]="<a href=\"$CFG->wwwroot/files/index.php?id=$siteid\">".get_string("courserestore")."</a>";
+		$modicon[]=$icon;
 		$moddata[]="<hr>";
 		$modicon[]="";
         if($CFG->auth == "email" || $CFG->auth == "none" || $CFG->auth == "manual"){
