@@ -48,6 +48,11 @@ if (function_exists($textfilter_function)) {
 
 function multilang_filter($courseid, $text) {
 
+/// Make sure XML is enabled in this PHP
+    if (!function_exists('xml_parser_create')) {
+        return $text;
+    }
+
 /// Do a quick check using stripos to avoid unnecessary work
     if (stripos($text, '<lang') === false) {
         return $text;
