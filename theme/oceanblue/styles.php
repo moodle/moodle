@@ -36,17 +36,17 @@ th {
 
 a:link {
     text-decoration: none; 
-    color: blue;
+    color: #0000CC;
 }
 
 a:visited {
     text-decoration: none; 
-    color: blue;
+    color: #0000CC;
 }
 
 a:hover {
     text-decoration: underline; 
-    color: red;
+    color: #FF0000;
 }
 
 form { 
