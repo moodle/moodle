@@ -32,23 +32,23 @@
 
     require_login($course->id);
     
-    if ($_POST["scoid"]) {
-        if ($_POST["cmi_core_lesson_location"]) {
+    if (!empty($_POST["scoid"])) {
+        if (!empty($_POST["cmi_core_lesson_location"])) {
     	    set_field("scorm_sco_users","cmi_core_lesson_location",$_POST["cmi_core_lesson_location"],"scoid",$_POST["scoid"],"userid",$USER->id);
     	}
-    	if ($_POST["cmi_core_lesson_status"]) {
+    	if (!empty($_POST["cmi_core_lesson_status"])) {
             set_field("scorm_sco_users","cmi_core_lesson_status",$_POST["cmi_core_lesson_status"],"scoid",$_POST["scoid"],"userid",$USER->id);
         }
-    	if ($_POST["cmi_core_exit"]) {
+    	if (!empty($_POST["cmi_core_exit"])) {
             set_field("scorm_sco_users","cmi_core_exit",$_POST["cmi_core_exit"],"scoid",$_POST["scoid"],"userid",$USER->id);
         }
-    	if ($_POST["cmi_core_total_time"]) {
+    	if (!empty($_POST["cmi_core_total_time"])) {
             set_field("scorm_sco_users","cmi_core_total_time",$_POST["cmi_core_total_time"],"scoid",$_POST["scoid"],"userid",$USER->id);
         }
-    	if ($_POST["cmi_core_score_raw"]) {
+    	if (!empty($_POST["cmi_core_score_raw"])) {
             set_field("scorm_sco_users","cmi_core_score_raw",$_POST["cmi_core_score_raw"],"scoid",$_POST["scoid"],"userid",$USER->id);
         }
-    	if ($_POST["cmi_suspend_data"]) {
+    	if (!empty($_POST["cmi_suspend_data"])) {
             set_field("scorm_sco_users","cmi_suspend_data",$_POST["cmi_suspend_data"],"scoid",$_POST["scoid"],"userid",$USER->id);
         }
     }
@@ -64,10 +64,9 @@
 	<input type="hidden" name="cmi_core_lesson_status" />
 	<input type="hidden" name="cmi_core_exit" />
 	<input type="hidden" name="cmi_core_session_time" />
-	<input type="hidden" name="cmi_core_total_time" />
+	<input type="hidden" name="cmi_core_total_time"  />
 	<input type="hidden" name="cmi_core_score_raw" />
 	<input type="hidden" name="cmi_suspend_data" />
    </form>
-   <?php echo $result?>
 </body>
 </html>

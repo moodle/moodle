@@ -127,14 +127,25 @@
     			    echo "  </ul></li>\n";
     			    $level--;
     			} else {
-    			    echo "  <li><ul id='".$sublist."' class=\"scormlist\"'>\n";
-    			    $level++;
+    			    $i = $level;
+    			    $closelist = "";
+    			    while (($i > 0) && ($parents[$level] != $sco->parent)) {
+	    	 	    	$closelist .= "  </ul></li>\n";
+	    	 	    	$i--;
+	    	 	    }
+	    	 	    if (($i == 0) && ($sco->parent != "/")) {
+	    	 	    	echo "  <li><ul id='".$sublist."' class=\"scormlist\"'>\n";
+    			    	$level++;
+    			    } else {
+    			    	echo $closelist;
+    			    	$level = $i;
+    			    }
     			    $parents[$level]=$sco->parent;
     			}
     		    }
     		    echo "    <li>\n";
     		    $nextsco = next($scoes);
-    		    if (($nextsco !== false) && ($sco->parent != $nextsco->parent) && (($level==0) || (($level>0) && ($nextsco->parent != $parents[$level-1])))) {
+    		    if (($nextsco !== false) && ($sco->parent != $nextsco->parent) && (($level==0) || (($level>0) && ($nextsco->parent == $sco->identifier)))) {
     			$sublist++;
     			echo "      <img src=\"pix/minus.gif\" onClick='expandCollide(this,".$sublist.");'/>\n";
     		    } else {
@@ -189,7 +200,7 @@
 	    
     	echo "<table width=\"100%\">\n    <tr>\n";
     	echo "          <td align=\"center\" nowrap>
-		     <iframe name=\"cmi\" width=\"1\" height=\"1\" src=\"cmi.php?id=$cm->id\" style=\"visibility: hidden;\"></iframe>
+		     <iframe name=\"cmi\" width=\"1\" height=\"1\" src=\"cmi.php?id=$cm->id\" style=\"visibility: hidden\"></iframe>
 		     <form name=\"navform\" method=\"POST\" action=\"playscorm.php?id=$cm->id\" target=\"_top\">
 		     	<input name=\"scoid\" type=\"hidden\" />
 		     	<input name=\"mode\" type=\"hidden\" value=\"".$mode."\" />
@@ -204,7 +215,15 @@
     			if ($level>0 && $parents[$level-1]==$sco->parent) {
     			    $level--;
     			} else {
-    			    $level++;
+    			    $i = $level;
+    			    while (($i > 0) && ($parents[$level] != $sco->parent)) {
+	    	 	    	$i--;
+	    	 	    }
+	    	 	    if (($i == 0) && ($sco->parent != "/")) {
+    			    	$level++;
+    			    } else {
+    			    	$level = $i;
+    			    }
     			    $parents[$level]=$sco->parent;
     			}
     		    }

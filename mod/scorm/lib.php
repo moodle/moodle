@@ -302,10 +302,15 @@ function scorm_endElement($parser, $name) {
     if ($name == "ITEM") {
         $level--;
     }
-    if ($name == "TITLE" && $level>0)
-    $manifest[$i]["title"] = $datacontent;
-    if ($name == "ADLCP:HIDERTSUI")
-    $manifest[$i][$datacontent] = 1;
+    if ($name == "TITLE" && $level>0) {
+    	$manifest[$i]["title"] = $datacontent;
+    }
+    if ($name == "ADLCP:HIDERTSUI") {
+    	$manifest[$i][$datacontent] = 1;
+    }
+    if ($name == "ORGANIZATION") {
+    	$level = 0;
+    }
 }
 
 function scorm_characterData($parser, $data) {
@@ -344,6 +349,7 @@ function scorm_parse($basedir,$file,$scorm_id) {
     $sco->scorm = $scorm_id;
     delete_records("scorm_scoes","scorm",$scorm_id);
     delete_records("scorm_sco_users","scormid",$scorm_id);
+    print_r($manifest);
     for ($j=1; $j<=$i; $j++) {
         $sco->identifier = $manifest[$j]["identifier"];
         $sco->parent = $manifest[$j]["parent"];

@@ -3,6 +3,7 @@
 //
 function SCORMapi() {
     var cmi= new Object();
+    var nav = new Object();
 
     var errorCode = 0;
     
@@ -53,7 +54,7 @@ function SCORMapi() {
 	    // end CMI Initialization
 	    //
 	    
-	    nav = new Object();
+	    // Navigation Object
 	    <?php 
 	        if ($scorm->auto) {
 	    	    echo 'nav.event = "continue";'."\n";
@@ -111,14 +112,10 @@ function SCORMapi() {
 	    switch (param) {
 		case "cmi.core.session_time":
 		    if (typeof(value) == "string") {
-		        var matchedtime = value.match(/([0-9]{2,4}):([0-9]{2}):([0-9]{2})/g);
-		        if (matchedtime != null) {
-		            var parsedtime = value.match(/[0-9]+/g);
-		            if (((parsedtime.length == 3) || (parsedtime.length == 4)) && (parsedtime[0]>=0) && (parsedtime[0]<=9999) && (parsedtime[1]>=0) && (parsedtime[1]<=59) && (parsedtime[2]>=0) && (parsedtime[2]<=59)) {
-		            	if ((parsedtime.length == 4) && (parsedtime[3]<=0) && (parsedtime[3]>=99)) {
-		                    errorCode = 405;
-		        	    return "false";
-		       	    	}
+		        var parsedtime = value.match(/^([0-9]{2,4}):([0-9]{2}):([0-9]{2})(\.[0-9]{1,2})?$/);
+		        if (parsedtime != null) {
+		            //top.alert(parsedtime);
+		            if (((parsedtime.length == 4) || (parsedtime.length == 5)) && (parsedtime[2]>=0) && (parsedtime[2]<=59) && (parsedtime[3]>=0) && (parsedtime[3]<=59)) {
 		                eval(param+'="'+value+'";');
 		        	errorCode = 0;
 		        	return "true";
@@ -249,11 +246,13 @@ function SCORMapi() {
 	    Initialized = false;
 	    errorCode = 0;
 	    cmi.core.total_time = AddTime(cmi.core.total_time, cmi.core.session_time);
+	    //top.alert(cmi.core.total_time);
 	    if (<?php echo $navObj ?>cmi.document.theform) {
 		cmiform = <?php echo $navObj ?>cmi.document.forms[0];
 		cmiform.scoid.value = "<?php echo $sco->id; ?>";
 		cmiform.cmi_core_total_time.value = cmi.core.total_time;
 		cmiform.submit();
+		
 	    }
             if (nav.event != "") {
             <?php

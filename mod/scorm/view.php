@@ -105,14 +105,26 @@
     			echo "  </ul></li>\n";
     			$level--;
     		    } else {
-    			echo "  <li><ul id='".$sublist."' class=\"scormlist\"'>\n";
-    			$level++;
+    			$i = $level;
+    			$closelist = "";
+    			while (($i > 0) && ($parents[$level] != $sco->parent)) {
+	    	 	    $closelist .= "  </ul></li>\n";
+	    	 	    $i--;
+	    	 	}
+	    	 	if (($i == 0) && ($sco->parent != "/")) {
+	    	 	    echo "  <li><ul id='".$sublist."' class=\"scormlist\"'>\n";
+    			    $level++;
+    			} else {
+    			    echo $closelist;
+    			    $level = $i;
+    			}
     			$parents[$level]=$sco->parent;
     		    }
-    		}
+    		} 
+    		
     		echo "    <li>\n";
     		$nextsco = next($scoes);
-    		if (($nextsco !== false) && ($sco->parent != $nextsco->parent) && (($level==0) || (($level>0) && ($nextsco->parent != $parents[$level-1])))) {
+    		if (($nextsco !== false) && ($sco->parent != $nextsco->parent) && (($level==0) || (($level>0) && ($nextsco->parent == $sco->identifier)))) {
     		    $sublist++;
     		    echo "      <img src=\"pix/minus.gif\" onClick='expandCollide(this,".$sublist.");'/>\n";
     		} else {
@@ -120,18 +132,21 @@
     		}
     		if ($sco->launch) {
     		    if ($sco_user=get_record("scorm_sco_users","scoid",$sco->id,"userid",$USER->id)) {
-    		    	if ( $sco_user->cmi_core_lesson_status == "")
+    		    	if ( $sco_user->cmi_core_lesson_status == "") {
     		    	    $sco_user->cmi_core_lesson_status = "not attempted";
+    		    	}
     			echo "      <img src=\"pix/".scorm_remove_spaces($sco_user->cmi_core_lesson_status).".gif\" alt=\"".get_string(scorm_remove_spaces($sco_user->cmi_core_lesson_status),"scorm")."\" title=\"".get_string(scorm_remove_spaces($sco_user->cmi_core_lesson_status),"scorm")."\" />\n";
- 			if (($sco_user->cmi_core_lesson_status == "not attempted") || ($sco_user->cmi_core_lesson_status == "incomplete"))
+ 			if (($sco_user->cmi_core_lesson_status == "not attempted") || ($sco_user->cmi_core_lesson_status == "incomplete")) {
  			    $incomplete = true;
+ 			}
     		    } else {
     			echo "      <img src=\"pix/notattempted.gif\" alt=\"".get_string("notattempted","scorm")."\" />";
     			$incomplete = true;
     		    }
     		    $score = "";
-    		    if ($sco_user->cmi_core_score_raw > 0)
-    			    $score = "(".get_string("score","scorm").":&nbsp;".$sco_user->cmi_core_score_raw.")";
+    		    if ($sco_user->cmi_core_score_raw > 0) {
+    			$score = "(".get_string("score","scorm").":&nbsp;".$sco_user->cmi_core_score_raw.")";
+    		    }
     		    echo "      &nbsp;<a href=\"javascript:playSCO(".$sco->id.")\">$sco->title</a> $score\n    </li>\n";
     		} else {
 		    echo "      &nbsp;$sco->title\n    </li>\n";
