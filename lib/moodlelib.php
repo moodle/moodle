@@ -383,7 +383,7 @@ function require_login($courseid=0, $autologinguest=true) {
 
     // Check that the user account is properly set up
     if (user_not_fully_set_up($USER)) {
-        redirect("$CFG->wwwroot/user/edit.php?id=$USER->id&course=SITEID");
+        redirect("$CFG->wwwroot/user/edit.php?id=$USER->id&course=".SITEID);
         die;
     }
 
@@ -1782,6 +1782,66 @@ function get_max_upload_sizes($sitebytes=0, $coursebytes=0, $modulebytes=0) {
 
     return $filesize;
 }
+
+
+function print_file_upload_error($filearray = '', $returnerror = false) {
+/// If there has been an error uploading a file, print the appropriate error message
+/// Numerical constants used as constant definitions not added until PHP version 4.2.0
+///
+/// filearray is a 1-dimensional sub-array of the $_FILES array
+/// eg $filearray = $_FILES['userfile1']
+/// If left empty then the first element of the $_FILES array will be used
+
+    if ($filearray == '' or !isset($filearray['error'])) {
+
+        if (empty($_FILES)) return false;
+
+        $files = $_FILES; /// so we don't mess up the _FILES array for subsequent code
+        $filearray = array_shift($files); /// use first element of array
+    }
+
+    switch ($filearray['error']) {
+
+        case 0: // UPLOAD_ERR_OK
+            if ($filearray['size'] > 0) {
+                $errmessage = get_string('uploadproblem', $filearray['name']);
+            } else {
+                $errmessage = get_string('uploadnofilefound'); /// probably a dud file name
+            }
+            break;
+
+        case 1: // UPLOAD_ERR_INI_SIZE
+            $errmessage = get_string('uploadserverlimit');
+            break;
+
+        case 2: // UPLOAD_ERR_FORM_SIZE
+            $errmessage = get_string('uploadformlimit');
+            break;
+
+        case 3: // UPLOAD_ERR_PARTIAL
+            $errmessage = get_string('uploadpartialfile');
+            break;
+
+        case 4: // UPLOAD_ERR_NO_FILE
+            $errmessage = get_string('uploadnofilefound');
+            break;
+
+        default:
+            $errmessage = get_string('uploadproblem', $filearray['name']);
+    }
+
+    if ($returnerror) {
+        return $errmessage;
+    } else {
+        notify($errmessage);
+        return true;
+    }
+
+}
+
+
+
+
 
 function get_directory_list($rootdir, $excludefile="", $descend=true, $getdirs=false, $getfiles=true) {
 /// Returns an array with all the filenames in
