@@ -193,32 +193,16 @@
 
         case "upload":
             html_header($course, $wdir);
-
-            if (!empty($_FILES['userfile'])) {
-                $userfile = $_FILES['userfile'];
-            } else {
-                $save = false;
-            }
+            require_once($CFG->dirroot.'/lib/uploadlib.php');
+                
             if (!empty($save)) {
-                if (!is_uploaded_file($userfile['tmp_name']) or $userfile['size'] == 0) {
-                    notify(get_string("uploadnofilefound"));
-                } else {
-                    $userfile_name = clean_filename($userfile['name']);
-                    if ($userfile_name) {
-                        $newfile = "$basedir$wdir/$userfile_name";
-                        if (move_uploaded_file($userfile['tmp_name'], $newfile)) {
-                            chmod($newfile, 0666);
-                            $a = NULL;
-                            $a->file = "$userfile_name (".$userfile['type'].")";
-                            $a->directory = $wdir;
-                            print_string("uploadedfileto", "", $a);
-                        } else {
-                            notify(get_string("uploadproblem", "", $userfile_name));
-                        }
-                    }
+                $um = new upload_manager('userfile',false,false,$course,false,0);
+                $dir = "$basedir$wdir";
+                if ($um->process_file_uploads($dir)) {
+                    notify(get_string('uploadedfile'));
                 }
+                // um will take care of error reporting.
                 displaydir($wdir);
-
             } else {
                 $upload_max_filesize = get_max_upload_file_size();
                 $filesize = display_size($upload_max_filesize);
@@ -231,11 +215,10 @@
                 echo "<P>$struploadafile ($strmaxsize) --> <B>$wdir</B>";
                 echo "<TABLE border=\"0\"><TR><TD COLSPAN=2>";
                 echo "<FORM ENCTYPE=\"multipart/form-data\" METHOD=\"post\" ACTION=\"".$_SERVER['PHP_SELF']."\">";
-                echo " <INPUT TYPE=hidden NAME=MAX_FILE_SIZE value=\"$upload_max_filesize\">";
+                upload_print_form_fragment(1,array('userfile'),null,false,null,$course->maxbytes,0,false);
                 echo " <INPUT TYPE=hidden NAME=id VALUE=$id>";
                 echo " <INPUT TYPE=hidden NAME=wdir VALUE=$wdir>";
                 echo " <INPUT TYPE=hidden NAME=action VALUE=upload>";
-                echo " <INPUT NAME=\"userfile\" TYPE=\"file\" size=\"40\">";
                 echo " </TD><TR><TD align=\"right\">";
                 echo " <INPUT TYPE=submit NAME=save VALUE=\"$struploadthisfile\">";
                 echo "</FORM>";
