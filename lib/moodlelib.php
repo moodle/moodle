@@ -464,6 +464,25 @@ function reset_login_count() {
     $SESSION->logincount = 0;
 }
 
+function check_for_restricted_user($username=NULL, $redirect="") {
+    global $CFG, $USER;
+
+    if (!$username) {
+        if (!empty($USER->username)) {
+            $username = $USER->username;
+        } else {
+            return false;
+        }
+    }
+
+    if (!empty($CFG->restrictusers)) {
+        $names = explode(',', $CFG->restrictusers);
+        if (in_array($username, $names)) {
+            error(get_string("restricteduser"), $redirect);
+        }
+    }
+}
+
 function isadmin($userid=0) {
 /// Is the user an admin?
     global $USER;
