@@ -1102,7 +1102,10 @@ function get_course_students($courseid, $sort="s.timeaccess", $dir="", $page=0, 
         $select .= " AND u.lastname $LIKE '$lastinitial%' ";
     }
 
-    if ($group) {
+    if ($group === 0) {   /// Need something here to get all students not in a group
+        return array();
+
+    } else if ($group !== NULL) {
         $groupmembers = ", {$CFG->prefix}groups_members gm ";
         $select .= " AND u.id = gm.userid AND gm.groupid = '$group'";
     }
@@ -1144,7 +1147,11 @@ function count_course_students($course, $search="", $firstinitial="", $lastiniti
     if ($lastinitial) {
         $select .= " AND u.lastname $LIKE '$lastinitial%'";
     } 
-    if ($group) {
+
+    if ($group === 0) {   /// Need something here to get all students not in a group
+        return 0;
+
+    } else if ($group !== NULL) {
         $groupmembers = ", {$CFG->prefix}groups_members gm ";
         $select .= " AND u.id = gm.userid AND gm.groupid = '$group'";
     }
