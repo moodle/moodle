@@ -1669,32 +1669,40 @@ function print_header_simple($title='', $heading='', $navigation='', $focus='', 
  * @param ? $usercourse ?
  * @todo Finish documenting this function
  */
-function print_footer ($course=NULL, $usercourse=NULL) {
+function print_footer($course=NULL, $usercourse=NULL) {
     global $USER, $CFG, $THEME;
 
 /// Course links
     if ($course) {
-        if ($course == 'home') {   // special case for site home page - please do not remove
+        if ($course == 'none') {          // Don't print any links etc
+            $homelink = '';
+            $loggedinas = '';
+        } else if ($course == 'home') {   // special case for site home page - please do not remove
+            $course = get_site();
             $homelink  = '<a title="moodle '. $CFG->release .' ('. $CFG->version .')" href="http://moodle.org/" target="_blank">';
             $homelink .= '<br /><img width="100" height="30" src="pix/moodlelogo.gif" border="0" alt="moodlelogo" /></a>';
-            $course = get_site();
-            $homepage = true;
+            $homepage  = true;
         } else {
-            $homelink = "<a target=\"{$CFG->framename}\" href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a>";
+            $homelink = '<a target="'.$CFG->framename.'" href="'.$CFG->wwwroot.
+                        '/course/view.php?id='.$course->id.'">'.$course->shortname.'</a>';
         }
     } else {
-        $homelink = "<a target=\"{$CFG->framename}\" href=\"$CFG->wwwroot/\">".get_string('home').'</a>';
-        $course = get_site();
+        $course = get_site();  // Set course as site course by default
+        $homelink = '<a target="'.$CFG->framename.'" href="'.$CFG->wwwroot.'/">'.get_string('home').'</a>';
     }
 
-    if (!$usercourse) {
+/// Set the user link if necessary
+    if (!$usercourse and is_object($course)) {
         $usercourse = $course;
     }
 
-/// User links
-    $loggedinas = user_login_string($usercourse, $USER);
+    if (!isset($loggedinas)) {
+        $loggedinas = user_login_string($usercourse, $USER);
+    }
 
-    include ($CFG->dirroot .'/theme/'. $CFG->theme .'/footer.html');
+/// Include the actual footer file
+
+    include ($CFG->dirroot.'/theme/'.$CFG->theme.'/footer.html');
 }
 
 /**
