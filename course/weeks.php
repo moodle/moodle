@@ -113,6 +113,8 @@
     $weekofseconds = 604800;
     $course->enddate = $course->startdate + ($weekofseconds * $course->numsections);
 
+    $strftimedateshort = " ".get_string("strftimedateshort");
+
     while ($weekdate < $course->enddate) {
 
         $nextweekdate = $weekdate + ($weekofseconds);
@@ -127,8 +129,8 @@
 
         $thisweek = (($weekdate <= $timenow) && ($timenow < $nextweekdate));
 
-        $weekday = userdate($weekdate, " %d %B");
-        $endweekday = userdate($weekdate+518400, " %d %B");
+        $weekday = userdate($weekdate, $strftimedateshort);
+        $endweekday = userdate($weekdate+518400, $strftimedateshort);
 
         if ($thisweek) {
             $colorsides = "bgcolor=\"$THEME->cellheading2\" class=\"weeklyoutlinesidehighlight\"";

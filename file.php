@@ -49,7 +49,7 @@
         header("Content-type: $mimetype");
         readfile("$pathname");
     } else {
-        error("Sorry, but the file you are looking for was not found", "course/view.php?id=$courseid");
+        error("Sorry, but the file you are looking for was not found ($pathname)", "course/view.php?id=$courseid");
     }
 
     exit;

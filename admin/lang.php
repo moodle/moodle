@@ -89,6 +89,7 @@
                 if (!isset($string[$key]) or $string[$key] == "") {
                     $value = htmlspecialchars($value);
                     $value = str_replace("$"."a", "\\$"."a", $value);
+                    $value = str_replace("%%","%",$value);
                     if ($first) {
                         echo "</PRE><HR><P><B>".get_string("stringsnotset","","$langdir/$file")."</B></P><PRE>";
                         $first = false;
@@ -188,6 +189,7 @@
                 echo "<TD WIDTH=40% BGCOLOR=\"$THEME->cellheading\" VALIGN=TOP>$envalue</TD>";
 
                 $value = str_replace("\\","",$string[$key]);          // Delete all slashes
+                $value = str_replace("%%","%",$value);
                 $value = htmlspecialchars($value);
 
                 $cellcolour = $value ? $THEME->cellcontent: $THEME->highlight;
@@ -261,6 +263,7 @@ function lang_save_file($path, $file, $strings) {
         $value = str_replace("\\","",$value);               // Delete all slashes
         $value = str_replace("$"."a", "\\$"."a", $value);   // Add slashes for $a
         $value = str_replace("\"", "\\\"", $value);         // Add slashes for "
+        $value = str_replace("%","%%",$value);              // Escape % characters
         if ($id == "string" and $value != ""){
             fwrite($f,"\$string['$stringname'] = \"$value\";\n");
         }

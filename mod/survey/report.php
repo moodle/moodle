@@ -216,6 +216,7 @@
         $strtime = get_string("time", "survey");
         $stractual = get_string("actual", "survey");
         $strpreferred = get_string("preferred", "survey");
+        $strdateformat = get_string("strftimedatetime");
 
         echo "<TABLE ALIGN=center CELLPADDING=0 CELLSPACING=10><TR><TD>&nbsp;<TH align=left>$strname<TH align=left>$strtime<TH align=left>$stractual<TH align=left>$strpreferred</TR>";
 
@@ -226,7 +227,7 @@
                 print_user_picture($a->userid, $course->id, $a->picture, false);
                 echo "</TD>";
                 echo "<TD><P><A HREF=\"report.php?id=$id&action=student&student=$a->userid\">$a->firstname $a->lastname</A></TD>";
-                echo "<TD><P>".userdate($a->time, "%d %B %Y, %I:%M %p")."</TD>";
+                echo "<TD><P>".userdate($a->time, $strdateformat)."</TD>";
                 echo "<TD BGCOLOR=\"$THEME->cellcontent\"><P>";
                 if ($a->answer1) {
                     echo "$a->answer1 - ".$answers[$a->answer1 - 1];

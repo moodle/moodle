@@ -40,7 +40,7 @@
             $userinfo = "$u->firstname $u->lastname";
         }
         if ($date) {
-            $dateinfo = userdate($date, "%A, %d %B %Y");
+            $dateinfo = userdate($date, get_string("strftimedaydate"));
         }
 
         if ($course->category) {

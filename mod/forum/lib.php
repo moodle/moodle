@@ -302,6 +302,8 @@ function forum_print_recent_activity(&$logs, $isteacher=false) {
     $heading = false;
     $content = false;
 
+    $strftimerecent = get_string("strftimerecent");
+
     foreach ($logs as $log) {
         if ($log->module == "forum") {
 
@@ -321,7 +323,7 @@ function forum_print_recent_activity(&$logs, $isteacher=false) {
                     $heading = true;
                     $content = true;
                 }
-                $date = userdate($post->modified, "%d %b, %H:%M");
+                $date = userdate($post->modified, $strftimerecent);
                 echo "<P><FONT SIZE=1 $teacherpost>$date - $post->firstname $post->lastname<BR>";
                 echo "\"<A HREF=\"$CFG->wwwroot/mod/forum/$log->url\">";
                 if ($log->action == "add") {
@@ -1468,6 +1470,11 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5, $f
 
     $discussioncount = 0;
 
+    if ($forum_style == "minimal") {
+        $strftimerecent = get_string("strftimerecent");
+        $strmore = get_string("more", "forum");
+    }
+
     foreach ($discussions as $discussion) {
         $discussioncount++;
 
@@ -1488,10 +1495,10 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5, $f
         }
         switch ($forum_style) {
             case "minimal":
-                echo "<P><FONT COLOR=#555555>".userdate($discussion->modified, "%d %b, %H:%M")." - $discussion->firstname</FONT>";
+                echo "<P><FONT COLOR=#555555>".userdate($discussion->modified, $strftimerecent)." - $discussion->firstname</FONT>";
                 echo "<BR>$discussion->subject ";
                 echo "<A HREF=\"$CFG->wwwroot/mod/forum/discuss.php?d=$discussion->discussion\">";
-                echo get_string("more", "forum")."...</A>";
+                echo $strmore."...</A>";
                 echo "</P>\n";
             break;
             case "header":

@@ -52,7 +52,7 @@
             break;
 
         case WEBPAGE:
-            if ($frameset) {
+            if (!empty($frameset)) {
                 print_header("$course->shortname: $resource->name", "$course->fullname", 
                 "$navigation <A TARGET=_top HREF=\"$resource->reference\" TITLE=\"$resource->reference\">$resource->name</A>",
                 "", "", true, update_module_button($cm->id, $course->id, $strresource), navmenu($course, $cm));
@@ -69,7 +69,7 @@
             break;
 
         case UPLOADEDFILE:
-            if ($frameset) {
+            if (!empty($frameset)) {
                 print_header("$course->shortname: $resource->name", "$course->fullname", "$navigation $resource->name",
                          "", "", true, update_module_button($cm->id, $course->id, $strresource), navmenu($course, $cm));
                 echo "<CENTER><FONT SIZE=-1>".text_to_html($resource->summary, true, false)."</FONT></CENTER>";

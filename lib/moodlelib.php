@@ -141,13 +141,11 @@ function userdate($date, $format="", $timezone=99) {
     global $USER;
 
     if ($format == "") {
-        $format      = "%A, %d %B %Y, %I:%M %p";
-        $formatnoday = "%A, DD %B %Y, %I:%M %p";
-        $fixday = true;
-    } else {
-        $formatnoday = str_replace("%d", "DD", $format);
-        $fixday = ($formatnoday != $format);
+        $format = get_string("strftimedaydatetime");
     }
+
+    $formatnoday = str_replace("%d", "DD", $format);
+    $fixday = ($formatnoday != $format);
 
     if ($timezone == 99) {
         if (isset($USER->timezone)) {

@@ -53,7 +53,11 @@
         $useranswer[$key] = array();
     }
     foreach ($users as $user) {
-        $answer = $answers[$user->id];
+        if (!empty($answers[$user->id])) {
+            $answer = $answers[$user->id];
+        } else {
+            $answer->answer = 0;
+        }
         $useranswer[(int)$answer->answer][] = $user;
     }
     foreach ($choice->answer as $key => $answer) {  

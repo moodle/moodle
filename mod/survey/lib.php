@@ -116,9 +116,10 @@ function survey_print_recent_activity(&$logs, $isteacher=false) {
 
     if ($surveys) {
         $content = true;
+        $strftimerecent = get_string("strftimerecent");
         print_headline(get_string("newsurveyresponses", "survey").":");
         foreach ($surveys as $survey) {
-            $date = userdate($survey->time, "%d %b, %H:%M");
+            $date = userdate($survey->time, $strftimerecent);
             echo "<P><FONT SIZE=1>$date - $survey->firstname $survey->lastname<BR>";
             echo "\"<A HREF=\"$CFG->wwwroot/mod/survey/$survey->url\">";
             echo "$survey->name";
@@ -213,6 +214,8 @@ function survey_count_responses($survey) {
 function survey_print_all_responses($survey, $results) {
     global $THEME;
 
+    $dateformat = get_string("strftimedatetime");
+
     echo "<TABLE CELLPADDING=5 CELLSPACING=2 ALIGN=CENTER>";
     echo "<TR><TD>Name<TD>Time<TD>Answered</TR>";
 
@@ -220,7 +223,7 @@ function survey_print_all_responses($survey, $results) {
                  
         echo "<TR>";
         echo "<TD><A HREF=\"report.php?action=student&student=$a->id&id=$survey\">$a->firstname $a->lastname</A></TD>";
-        echo "<TD>".userdate($a->time, "%d %B %Y, %I:%M %p")."</TD>";
+        echo "<TD>".userdate($a->time, $dateformat)."</TD>";
         echo "<TD align=right>$a->numanswers</TD>";
         echo "</TR>";
     }
