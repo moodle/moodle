@@ -541,9 +541,12 @@ function userdate($date, $format="", $timezone=99) {
         }
     }
     if (abs($timezone) > 13) {
-        return strftime("$format", $date);
+        $datestring = strftime("$format", $date);
+    } else {
+        $datestring = gmstrftime($format, $date + (int)($timezone * 3600));
     }
-    return gmstrftime($format, $date + (int)($timezone * 3600));
+
+    return str_replace(" 0", " ", $datestring);   // gets rid of unwanted zeroes
 }
 
 function usergetdate($date, $timezone=99) {

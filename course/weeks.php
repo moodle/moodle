@@ -141,8 +141,8 @@
 
         $thisweek = (($weekdate <= $timenow) && ($timenow < $nextweekdate));
 
-        $weekday = userdate($weekdate, "%d %B");
-        $endweekday = userdate($weekdate+518400, "%d %B");
+        $weekday = userdate($weekdate, " %d %B");
+        $endweekday = userdate($weekdate+518400, " %d %B");
 
         if ($thisweek) {
             $highlightcolor = $THEME->cellheading2;
