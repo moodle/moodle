@@ -698,6 +698,8 @@ function wiki_add_entry(&$wiki, &$course, $userid=0, $groupid=0) {
         $wiki_entry->timemodified = time();
         break;
     }
+    $wiki_entry->pagename = addslashes($wiki_entry->pagename);
+
     return insert_record("wiki_entries", $wiki_entry, true);
 }
 
