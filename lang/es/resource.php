@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.3 (2004052500)
+      // resource.php - created with Moodle 1.4 development (2004072500)
 
 
 $string['addresource'] = 'Agregar recurso';
@@ -21,6 +21,7 @@ $string['configwebsearch'] = 'Cuando agregue una URL como página web o como enla
 $string['directlink'] = 'Enlace directo a este archivo';
 $string['directoryinfo'] = 'Se mostrarán todos los archivos en el directorio elegido.';
 $string['editingaresource'] = 'Editar recurso';
+$string['encryptedcode'] = 'Código encriptado';
 $string['example'] = 'Ejemplo';
 $string['examplereference'] = 'Tobin, K. & Tippins, D (1993) Constructivism as a Referent for Teaching and Learning. En: K. Tobin (Ed.). The Practice of Constructivism in Science Education, pp 3-21, Lawrence-Erlbaum, Hillsdale, NJ.';
 $string['exampleurl'] = 'http://www.ejemplo.com/directorio/archivo.html';
@@ -29,6 +30,7 @@ $string['fetcherror'] = 'Ha ocurrido un problema al tratar de abrir la página we
 $string['fetchservererror'] = 'Ha ocurrido un problema con el servidor remoto al tratar de abrir la página web (posiblemente un error del programa).';
 $string['filename'] = 'Nombre del archivo';
 $string['filtername'] = 'Auto-enlace de recursos';
+$string['frameifpossible'] = 'Colocar el recurso en un marco para mantener visible la navegación por el sitio';
 $string['fulltext'] = 'Texto completo';
 $string['htmlfragment'] = 'Fragmento HTML';
 $string['maindirectory'] = 'Directorio principal de archivos';
@@ -51,17 +53,20 @@ $string['note'] = 'Nota';
 $string['notefile'] = 'Para subir más de un archivo (y se puedan ver en la lista) utilice el 
 <A HREF=$a >Administrador de archivos</A>.';
 $string['notypechosen'] = 'Necesita elegir un texto. Regrese e inténtelo de nuevo.';
+$string['pagedisplay'] = 'Mostrar este recurso dentro de la ventana actual';
+$string['pagewindow'] = 'La misma ventana';
+$string['parameter'] = 'Parámetro';
+$string['parameters'] = 'Parámetros';
 $string['popupresource'] = 'Este recurso debe aparecer en una ventana ';
 $string['popupresourcelink'] = 'Si no, haga clic aquí: $a';
 $string['resourcetype'] = 'Tipo de recurso';
-$string['resourcetype1'] = 'Referencia';
-$string['resourcetype2'] = 'Página web (se verá dentro)';
-$string['resourcetype3'] = 'Archivo cargado';
-$string['resourcetype4'] = 'Texto plano';
-$string['resourcetype5'] = 'Página web (se verá fuera)';
-$string['resourcetype6'] = 'Texto HTML';
-$string['resourcetype7'] = 'Programa';
-$string['resourcetype8'] = 'Texto Wiki';
-$string['resourcetype9'] = 'Directorio';
+$string['resourcetypedirectory'] = 'Mostrar un directorio';
+$string['resourcetypefile'] = 'Enlazar con un archivo o un sitio web';
+$string['resourcetypehtml'] = 'Componer una nueva página web';
+$string['resourcetypelabel'] = 'Insertar una etiqueta';
+$string['resourcetypereference'] = 'Enviar una referencia';
+$string['resourcetypetext'] = 'Componer una nueva página de texto';
+$string['searchweb'] = 'Buscar una página web';
+$string['variablename'] = 'Nombre de la variable';
 
 ?>
