@@ -10,9 +10,6 @@
     optional_variable($showall, "");   // show all discussions on one page
     optional_variable($group, -1);     // choose the current group
 
-    $strforums = get_string("modulenameplural", "forum");
-    $strforum = get_string("modulename", "forum");
-
     if ($id) {
         if (! $cm = get_record("course_modules", "id", $id)) {
             error("Course Module ID was incorrect");
@@ -23,6 +20,10 @@
         if (! $forum = get_record("forum", "id", $cm->instance)) {
             error("Forum ID was incorrect");
         }
+
+        $strforums = get_string("modulenameplural", "forum");
+        $strforum = get_string("modulename", "forum");
+
         $buttontext = update_module_button($cm->id, $course->id, $strforum);
 
     } else if ($f) {
@@ -32,6 +33,10 @@
         if (! $course = get_record("course", "id", $forum->course)) {
             error("Forum is misconfigured - don't know what course it's from");
         }
+
+        $strforums = get_string("modulenameplural", "forum");
+        $strforum = get_string("modulename", "forum");
+
         if ($cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
             $buttontext = update_module_button($cm->id, $course->id, $strforum);
         } else {
