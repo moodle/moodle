@@ -53,6 +53,7 @@
                 fwrite ($bf,full_tag("SHOWALL",4,false,$glossary->showall));
                 fwrite ($bf,full_tag("ALLOWCOMMENTS",4,false,$glossary->allowcomments));
                 fwrite ($bf,full_tag("USEDYNALINK",4,false,$glossary->usedynalink));
+                fwrite ($bf,full_tag("DEFAULTAPPROVAL",4,false,$glossary->defaultapproval));
                 fwrite ($bf,full_tag("TIMECREATED",4,false,$glossary->timecreated));
                 fwrite ($bf,full_tag("TIMEMODIFIED",4,false,$glossary->timemodified));
                 
@@ -154,6 +155,7 @@
                     fwrite ($bf,full_tag("USEDYNALINK",6,false,$glo_ent->usedynalink));
                     fwrite ($bf,full_tag("CASESENSITIVE",6,false,$glo_ent->casesensitive));
                     fwrite ($bf,full_tag("FULLMATCH",6,false,$glo_ent->fullmatch));
+                    fwrite ($bf,full_tag("APPROVED",6,false,$glo_ent->approved));
                     fwrite ($bf,full_tag("TIMECREATED",6,false,$glo_ent->timecreated));
                     fwrite ($bf,full_tag("TIMEMODIFIED",6,false,$glo_ent->timemodified));
                     fwrite ($bf,full_tag("TEACHERENTRY",6,false,$glo_ent->teacherentry));
