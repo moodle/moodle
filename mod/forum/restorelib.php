@@ -4,23 +4,24 @@
 
     //This is the "graphical" structure of the forum mod:
     //
-    //                           forum
-    //                        (CL,pk->id)
-    //                            |
-    //             -----------------------------------
-    //             |                                 |
-    //        subscriptions                    forum_discussions
-    //    (UL,pk->id, fk->forum)             (UL,pk->id, fk->forum)
-    //                                               |
-    //                                               |
-    //                                               |
-    //                                           forum_posts
-    //                             (UL,pk->id,fk->discussion,nt->parent,files)
-    //                                               |
-    //                                               |
-    //                                               |
-    //                                          forum_ratings
-    //                                      (UL,pk->id,fk->post)
+    //                               forum                                      
+    //                            (CL,pk->id)
+    //                                 |
+    //         ---------------------------------------------------        
+    //         |                                                 |
+    //    subscriptions                                  forum_discussions
+    //(UL,pk->id, fk->forum)           ---------------(UL,pk->id, fk->forum)
+    //                                 |                         |
+    //                                 |                         |
+    //                                 |                         |
+    //                                 |                     forum_posts
+    //                                 |-------------(UL,pk->id,fk->discussion,
+    //                                 |                  nt->parent,files) 
+    //                                 |                         |
+    //                                 |                         |
+    //                                 |                         |
+    //                            forum_read                forum_ratings
+    //                       (UL,pk->id,fk->post        (UL,pk->id,fk->post)
     //
     // Meaning: pk->primary key field of the table
     //          fk->foreign key to link with parent
@@ -104,6 +105,10 @@
                     if ($status) {
                         //Restore forum_discussions
                         $status = forum_discussions_restore_mods ($newid,$info,$restore);
+                    }
+                    if ($status) {
+                        //Restore forum_read
+                        $status = forum_read_restore_mods ($newid,$info,$restore);
                     }
                 }
             } else {
@@ -260,6 +265,88 @@
                 //Update discussion (only firstpost and userid will be changed)
                 $status = update_record("forum_discussions",$temp_discussion);
                 //echo "Updated firstpost ".$old_firstpost." to ".$temp_discussion->firstpost."<br />";                //Debug
+            } else {
+                $status = false;
+            }
+        }
+
+        return $status;
+    }
+
+    //This function restores the forum_read
+    function forum_read_restore_mods($forum_id,$info,$restore) {
+
+        global $CFG;
+
+        $status = true;
+
+        //Get the read array
+        $readposts = $info['MOD']['#']['READPOSTS']['0']['#']['READ'];
+
+        //Iterate over readposts
+        for($i = 0; $i < sizeof($readposts); $i++) {
+            $rea_info = $readposts[$i];
+            //traverse_xmlize($rea_info);                                                                 //Debug
+            //print_object ($GLOBALS['traverse_array']);                                                  //Debug
+            //$GLOBALS['traverse_array']="";                                                              //Debug
+
+            //We'll need this later!!
+            $oldid = backup_todb($rea_info['#']['ID']['0']['#']);
+
+            //Now, build the FORUM_READ record structure
+            $read->forumid = $forum_id;
+            $read->userid = backup_todb($rea_info['#']['USERID']['0']['#']);
+            $read->discussionid = backup_todb($rea_info['#']['DISCUSSIONID']['0']['#']);
+            $read->postid = backup_todb($rea_info['#']['POSTID']['0']['#']);
+            $read->firstread = backup_todb($rea_info['#']['FIRSTREAD']['0']['#']);
+            $read->lastread = backup_todb($rea_info['#']['LASTREAD']['0']['#']);
+
+            //Some recoding and check are performed now
+            $toinsert = true;
+
+            //We have to recode the userid field
+            $user = backup_getid($restore->backup_unique_code,"user",$read->userid);
+            if ($user) {
+                $read->userid = $user->new_id;
+            } else {
+                $toinsert = false;
+            }
+
+            //We have to recode the discussionid field
+            $discussion = backup_getid($restore->backup_unique_code,"forum_discussions",$read->discussionid);
+            if ($discussion) {
+                $read->discussionid = $discussion->new_id;
+            } else {
+                $toinsert = false;
+            }
+
+            //We have to recode the postid field
+            $post = backup_getid($restore->backup_unique_code,"forum_posts",$read->postid);
+            if ($post) {
+                $read->postid = $post->new_id;
+            } else {
+                $toinsert = false;
+            }
+
+            //The structure is equal to the db, so insert the forum_read
+            $newid = 0;
+            if ($toinsert) {
+                $newid = insert_record ("forum_read",$read);
+            }
+
+            //Do some output
+            if (($i+1) % 50 == 0) {
+                echo ".";
+                if (($i+1) % 1000 == 0) {
+                    echo "<br />";
+                }
+                backup_flush(300);
+            }
+
+            if ($newid) {
+                //We have the newid, update backup_ids
+                backup_putid($restore->backup_unique_code,"forum_read",$oldid,
+                             $newid);
             } else {
                 $status = false;
             }
