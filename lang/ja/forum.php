@@ -1,10 +1,10 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.4 development (2004072901)
+      // forum.php - created with Moodle 1.4 development (2004080300)
 
 
 $string['addanewdiscussion'] = 'ディスカッショントピックを追加';
 $string['addanewtopic'] = 'トピックを追加';
-$string['allowchoice'] = '全ての人が選択可能にする';
+$string['allowchoice'] = 'ユーザは登録を選択出来ます';
 $string['allowdiscussions'] = '$a  はこのフォーラムに投稿可能ですか?';
 $string['allowratings'] = '投稿を評価可能にしますか?';
 $string['allowsdiscussions'] = 'このフォーラムでは一つのディスカッショントピックで開始してください。';
@@ -41,10 +41,10 @@ $string['eachuserforum'] = 'ディスカッションを1件投稿';
 $string['edit'] = '編集';
 $string['editing'] = '編集';
 $string['emptymessage'] = '投稿に異常があります。空白のままか添付ファイルのサイズが制限を越えています。変更は保存されませんでした。';
-$string['everyonecanchoose'] = '全員が登録することが出来ます';
-$string['everyoneissubscribed'] = '全員がこのフォーラムに登録されます';
-$string['forcesubscribe'] = '全員を登録する';
-$string['forcesubscribeq'] = '全員を登録しますか?';
+$string['everyonecanchoose'] = 'ユーザは登録を選択出来ます';
+$string['everyoneissubscribed'] = 'ユーザは強制登録されます';
+$string['forcesubscribe'] = 'ユーザを強制登録する';
+$string['forcesubscribeq'] = 'ユーザを強制登録しますか?';
 $string['forum'] = 'フォーラム';
 $string['forumintro'] = 'フォーラム紹介';
 $string['forumname'] = 'フォーラム名';
