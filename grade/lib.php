@@ -1925,6 +1925,11 @@ function grade_view_all_grades($view_by_student) {
                 if ($category != 'student_data') {
                     if ($first == 0) {
                         $colcount++;
+                        if ($category == UNCATEGORISED) {
+                            $categoryname = get_string(UNCATEGORISED, 'grades');
+                        } else {
+                            $categoryname = $category;
+                        }
                         // only print the category headers if something is displayed for them
                         if ($preferences->show_weighted || $preferences->show_percent || $preferences->show_points) {
                             $stats_link = '<a href="javascript:void(0)"onclick="window.open(\'?id='.$course->id.'&amp;action=stats&amp;group='.$group.'&amp;category='.$category.'\',\''.get_string('statslink','grades').'\',\'height=200,width=300,scrollbars=no\')"><font size=-2>'.get_string('statslink','grades').'</font></a>';
@@ -1932,7 +1937,7 @@ function grade_view_all_grades($view_by_student) {
                             if ($view_by_student != -1) {
                                 $header .= '&amp;student='.$view_by_student;
                             }
-                            $header .='">'. $category .' '.$stats_link.'</a>';
+                            $header .='">'. $categoryname .' '.$stats_link.'</a>';
                         }
                         if ($preferences->display_weighted != 0) {
                             $header .= '('. $all_categories[$category]['stats']['weight'] . '%)';
