@@ -56,7 +56,7 @@ function main_upgrade($oldversion=0) {
             echo "Attempting to update permissions for all files... ignore any errors.";
             foreach ($files as $file) {
                 echo "$CFG->dataroot/$file<br>";
-                @chown("$CFG->dataroot/$file", $CFG->directorypermissions);
+                @chmod("$CFG->dataroot/$file", $CFG->directorypermissions);
             }
         }
     }
