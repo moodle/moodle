@@ -50,6 +50,8 @@
                 error("Sorry, but you must be a group member to subscribe.");
             }
         }
+    } else {
+        $cm->id = NULL;
     }
 
     $returnto = forum_go_back_to("index.php?id=$course->id");
@@ -73,7 +75,7 @@
 
     if ( forum_is_subscribed($user->id, $forum->id) ) {
         if (forum_unsubscribe($user->id, $forum->id) ) {
-            add_to_log($course->id, "forum", "unsubscribe", "view.php?f=$forum->id", "$forum->id");
+            add_to_log($course->id, "forum", "unsubscribe", "view.php?f=$forum->id", $forum->id, $cm->id);
             redirect($returnto, get_string("nownotsubscribed", "forum", $info), 1);
         } else {
             error("Could not unsubscribe you from that forum", $_SERVER["HTTP_REFERER"]);
@@ -81,7 +83,7 @@
         
     } else { // subscribe
         if (forum_subscribe($user->id, $forum->id) ) {
-            add_to_log($course->id, "forum", "subscribe", "view.php?f=$forum->id", "$forum->id");
+            add_to_log($course->id, "forum", "subscribe", "view.php?f=$forum->id", $forum->id, $cm->id);
             redirect($returnto, get_string("nowsubscribed", "forum", $info), 1);
         } else {
             error("Could not subscribe you to that forum", $_SERVER["HTTP_REFERER"]);

@@ -86,7 +86,6 @@ function forum_add_instance($forum) {
             error("Could not add the discussion for this forum");
         }
     }
-    add_to_log($forum->course, "forum", "add", "index.php?f=$forum->id", "$forum->id");
 
     return $forum->id;
 }
@@ -142,12 +141,7 @@ function forum_update_instance($forum) {
         }
     }
 
-    if (update_record("forum", $forum)) {
-        add_to_log($forum->course, "forum", "update", "index.php?f=$forum->id", "$forum->id");
-        return true;
-    } else {
-        return false;
-    }
+    return update_record("forum", $forum);
 }
 
 
@@ -244,7 +238,9 @@ function forum_cron () {
                         continue;                                            // Be safe and don't send it to anyone
                     }
                 }
-            } 
+            } else {
+                $cm->id = 0;
+            }
 
 
             if ($users = forum_subscribed_users($course, $forum)) {
@@ -329,7 +325,7 @@ function forum_cron () {
    
                     if (! email_to_user($userto, $userfrom, $postsubject, $posttext, $posthtml)) {
                         echo "Error: mod/forum/cron.php: Could not send out mail for id $post->id to user $userto->id ($userto->email) .. not trying again.\n";
-                        add_to_log($course->id, 'forum', 'mail error', "discuss.php?d=$discussion->id#$post->id", substr($post->subject,0,15), $userto->id);
+                        add_to_log($course->id, 'forum', 'mail error', "discuss.php?d=$discussion->id#$post->id", substr($post->subject,0,15), $cm->id, $userto->id);
                         $errorcount++;
                     } else {
                         $mailcount++;

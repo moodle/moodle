@@ -1701,10 +1701,10 @@ function navmenu($course, $cm=NULL, $targetwindow="self") {
             $previousmod = $mod;
         }
     }
-    if ($selected and $isteacher) {
-        $logslink = "<td><a href=\"$CFG->wwwroot/course/log.php?chooselog=1&user=0&date=0&id=$course->id&url=".
-                     urlencode($selected).
-                    "\"><img border=\"0\" height=\"16\" width=\"16\" src=\"$CFG->pixpath/i/log.gif\"></a></td>";
+    if ($selectmod and $isteacher) {
+        $logslink = "<td><a href=".
+                    "\"$CFG->wwwroot/course/log.php?chooselog=1&user=0&date=0&id=$course->id&modid=$selectmod->cm\">".
+                    "<img border=\"0\" height=\"16\" width=\"16\" src=\"$CFG->pixpath/i/log.gif\"></a></td>";
         
     }
     if ($backmod) {

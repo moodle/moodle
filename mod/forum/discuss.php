@@ -33,7 +33,12 @@
             }
             set_field("forum_discussions", "forum", $forum->id, "id", $discussion->id);
             $discussion->forum = $forum->id;
-            add_to_log($course->id, "forum", "move discussion", "discuss.php?d=$discussion->id", "$discussion->id");
+            if ($cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
+                add_to_log($course->id, "forum", "move discussion", "discuss.php?d=$discussion->id", "$discussion->id",
+                           $cm->id);
+            } else {
+                add_to_log($course->id, "forum", "move discussion", "discuss.php?d=$discussion->id", "$discussion->id");
+            }
             $discussionmoved = true;
         } else {
             error("You can't move to that forum - it doesn't exist!");
@@ -46,15 +51,16 @@
         }
     }
 
-    if (!$cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
-        //notify("Bad coursemodule for this discussion");  // Only affects navmenu
-    }
-
     $logparameters = "d=$discussion->id";
     if ($parent) {
         $logparameters .= "&parent=$parent";
     }
-    add_to_log($course->id, "forum", "view discussion", "discuss.php?$logparameters", "$discussion->id");
+
+    if ($cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
+        add_to_log($course->id, "forum", "view discussion", "discuss.php?$logparameters", "$discussion->id", $cm->id);
+    } else {
+        add_to_log($course->id, "forum", "view discussion", "discuss.php?$logparameters", "$discussion->id");
+    }
 
     unset($SESSION->fromdiscussion);
 

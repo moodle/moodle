@@ -35,6 +35,7 @@
         if ($cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
             $buttontext = update_module_button($cm->id, $course->id, $strforum);
         } else {
+            $cm->id = NULL;
             $buttontext = "";
         }
 
@@ -61,7 +62,7 @@
     }
 
     if ($cm) {
-        add_to_log($course->id, "forum", "view forum", "view.php?id=$cm->id", "$forum->id");
+        add_to_log($course->id, "forum", "view forum", "view.php?id=$cm->id", "$forum->id", $cm->id);
     } else {
         add_to_log($course->id, "forum", "view forum", "view.php?f=$forum->id", "$forum->id");
     }

@@ -22,7 +22,7 @@ define("FRONTPAGECATEGORYNAMES",  2);
 
 
 function print_log_selector_form($course, $selecteduser=0, $selecteddate="today",
-                                 $mod="", $modpage="", $modid=0) {
+                                 $mod="", $modid=0, $modaction="") {
 
     global $USER, $CFG;
 
@@ -84,10 +84,10 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate="today"
             if (!$mod->visible) {
                 $mod->name = "(".$mod->name.")";
             }
-            $activities["$mod->mod/view.php?id=$mod->cm"] = $mod->name;
+            $activities["$mod->cm"] = $mod->name;
 
             if ($mod->cm == $modid) {
-                $selectedactivity = "$mod->mod/view.php?id=$mod->cm";
+                $selectedactivity = "$mod->cm";
             }
         }
     }
@@ -135,7 +135,7 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate="today"
     }
     choose_from_menu ($users, "user", $selecteduser, get_string("allparticipants") );
     choose_from_menu ($dates, "date", $selecteddate, get_string("alldays"));
-    choose_from_menu ($activities, "url", $selectedactivity, get_string("allactivities"), "", "");
+    choose_from_menu ($activities, "modid", $selectedactivity, get_string("allactivities"), "", "");
     echo "<input type=submit value=\"".get_string("showtheselogs")."\">";
     echo "</form>";
     echo "</center>";
@@ -159,7 +159,7 @@ function make_log_url($module, $url) {
 
 
 function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $perpage=100, 
-                   $url="", $mod="", $modpage="", $modid=0) {
+                   $url="", $mod="", $modid=0, $modaction="") {
 
 // It is assumed that $date is the GMT time of midnight for that day, 
 // and so the next 86400 seconds worth of logs are printed.
@@ -182,9 +182,12 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
         $selector .= " AND l.module = '$mod'";
     }
 
-    if ($modpage and $modid) {
-        $LIKE = $CFG->dbtype == "mysql" ? "LIKE" : "ILIKE";
-        $selector .= " AND l.url $LIKE '%id=$modid%'";
+    if ($modid) {
+        $selector .= " AND l.cmid = '$modid'";
+    }
+
+    if ($modaction) {
+        $selector .= " AND l.action = '$modaction'";
     }
 
     if ($user) {

@@ -201,6 +201,7 @@ CREATE TABLE `prefix_log` (
   `ip` varchar(15) NOT NULL default '',
   `course` int(10) unsigned NOT NULL default '0',
   `module` varchar(10) NOT NULL default '',
+  `cmid` int(10) unsigned NOT NULL default '0',
   `action` varchar(15) NOT NULL default '',
   `url` varchar(100) NOT NULL default '',
   `info` varchar(255) NOT NULL default '',

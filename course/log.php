@@ -7,7 +7,8 @@
     require_variable($id);    // Course ID
     optional_variable($user, 0); // User to display
     optional_variable($date, 0); // Date to display
-    optional_variable($url, ""); // eg resource/view.php?id=66
+    optional_variable($modid, ""); // course_module->id
+    optional_variable($modaction, ""); // an action as recorded in the logs
     optional_variable($page, "0");     // which page to show
     optional_variable($perpage, "100"); // how many per page
 
@@ -45,21 +46,6 @@
             $dateinfo = userdate($date, get_string("strftimedaydate"));
         }
 
-        if ($url) {     // parse into parts:  resource/view.php?id=66 
-            $urlraw = urldecode($url);
-            $urlparts = split("/", $urlraw);
-            if ($urlparts[0] != "section" and $urlparts[0] != "") {
-                $modname = $urlparts[0];
-                $modparts = split('.php\?id=', $urlparts[1]);
-                if (count($modparts) == 2) {
-                    if (record_exists('course_modules', 'id', $modparts[1], 'course', $course->id)) {
-                        $modpage = $modparts[0];
-                        $modid = $modparts[1];
-                    }
-                }
-            }
-        }
-
         if ($course->category) {
             print_header("$course->shortname: $strlogs", "$course->fullname", 
                          "<a href=\"view.php?id=$course->id\">$course->shortname</a> ->
@@ -72,11 +58,11 @@
         
         print_heading("$course->fullname: $userinfo, $dateinfo (".usertimezone().")");
 
-        print_log_selector_form($course, $user, $date, $modname, $modpage, $modid);
+        print_log_selector_form($course, $user, $date, $modname, $modid, $modaction);
 
         print_log($course, $user, $date, "l.time DESC", $page, $perpage, 
-                  "log.php?id=$course->id&chooselog=1&user=$user&date=$date&url=$url", 
-                  $modname, $modpage, $modid);
+                  "log.php?id=$course->id&chooselog=1&user=$user&date=$date&modid=$modid&modaction=$modaction", 
+                  $modname, $modid, $modaction);
 
     } else {
         if ($course->category) {

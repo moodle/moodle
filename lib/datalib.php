@@ -1985,14 +1985,15 @@ function instance_is_visible($moduletype, $module) {
 * than web server hits, and provide a way to easily reconstruct what 
 * any particular student has been doing.
 *
-* @param	int	$course	the course id
-* @param	string	$module	the module name - e.g. forum, journal, resource, course, user etc
-* @param	string	$action	view, edit, post (often but not always the same as the file.php)
-* @param	string	$url	the file and parameters used to see the results of the action
-* @param	string	$info	additional description information 
-* @param	string	$user	optional, if log regards $user other than $USER
+* @param	int	    $course  the course id
+* @param	string	$module	 the module name - e.g. forum, journal, resource, course, user etc
+* @param	string	$action	 view, edit, post (often but not always the same as the file.php)
+* @param	string	$url	 the file and parameters used to see the results of the action
+* @param	string	$info	 additional description information 
+* @param	string	$cm	     the course_module->id if there is one
+* @param	string	$user	 if log regards $user other than $USER
 */
-function add_to_log($courseid, $module, $action, $url="", $info="", $user="") {
+function add_to_log($courseid, $module, $action, $url="", $info="", $cm=0, $user=0) {
 
     global $db, $CFG, $USER, $REMOTE_ADDR;
 
@@ -2008,22 +2009,8 @@ function add_to_log($courseid, $module, $action, $url="", $info="", $user="") {
     $timenow = time();
     $info = addslashes($info);
 
-    $result = $db->Execute("INSERT INTO {$CFG->prefix}log (time,
-                                        userid,
-                                        course,
-                                        ip,
-                                        module,
-                                        action,
-                                        url,
-                                        info)
-                             VALUES ('$timenow',
-                                        '$userid',
-                                        '$courseid',
-                                        '$REMOTE_ADDR',
-                                        '$module',
-                                        '$action',
-                                        '$url',
-                                        '$info')");
+    $result = $db->Execute("INSERT INTO {$CFG->prefix}log (time, userid, course, ip, module, cmid, action, url, info)
+        VALUES ('$timenow', '$userid', '$courseid', '$REMOTE_ADDR', '$module', '$cm', '$action', '$url', '$info')");
 
     if (!$result and ($CFG->debug > 7)) {
         echo "<P>Error: Could not insert a new entry to the Moodle log</P>";  // Don't throw an error

@@ -379,6 +379,32 @@ function main_upgrade($oldversion=0) {
     if ($oldversion < 2004012900) {
         table_column("config", "value", "value", "text", "", "", "");
     }
+
+    if ($oldversion < 2004013101) {
+        table_column("log", "", "cmid", "integer", "10", "unsigned", "0", "", "module");
+
+        /// try and extract as many cmids as possible from the existing logs
+
+        if ($coursemodules = get_records_sql("SELECT cm.*, m.name 
+                                                FROM {$CFG->prefix}course_modules cm, 
+                                                     {$CFG->prefix}modules m
+                                                WHERE cm.module = m.id")) {
+            foreach ($coursemodules as $cm) {
+                execute_sql("UPDATE {$CFG->prefix}log SET cmid = '$cm->id' 
+                             WHERE module = '$cm->name' AND url ILIKE 'view.php?id=$cm->id%'");
+                if ($cm->name == "forum") {
+                    execute_sql("UPDATE {$CFG->prefix}log SET cmid = '$cm->id' 
+                                 WHERE module = 'forum' AND url ILIKE '%?f=$cm->instance%'");
+                    if ($discussions = get_records("forum_discussions", "forum", $cm->instance)) {
+                        foreach ($discussions as $discussion) {
+                            execute_sql("UPDATE {$CFG->prefix}log SET cmid = '$cm->id' 
+                                         WHERE module = 'forum' AND url ILIKE '%?d=$discussion->id%'");
+                        }
+                    }
+                }
+            }
+        }
+    }
     
     return $result;
 }

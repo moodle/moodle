@@ -13,6 +13,10 @@
         error("Could not find this course!");
     }
 
+    if (! $cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
+        $cm->id = 0;
+    }
+
     require_login($course->id);
 
     if (!isteacher($course->id)) {
@@ -21,18 +25,18 @@
 
     unset($SESSION->fromdiscussion);
 
-    add_to_log($course->id, "forum", "view subscribers", "subscribers.php?id=$forum->id", "");
+    add_to_log($course->id, "forum", "view subscribers", "subscribers.php?id=$forum->id", "", $cm->id);
 
     $strsubscribers = get_string("subscribers", "forum");
     $strforums      = get_string("forums", "forum");
 
     if ($course->category) {
-        $navigation = "<A HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> ->
-                       <A HREF=\"index.php?id=$course->id\">$strforums</A> -> 
-                       <A HREF=\"view.php?f=$forum->id\">$forum->name</A> -> $strsubscribers";
+        $navigation = "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->
+                       <a href=\"index.php?id=$course->id\">$strforums</a> -> 
+                       <a href=\"view.php?f=$forum->id\">$forum->name</a> -> $strsubscribers";
     } else {
-        $navigation = "<A HREF=\"index.php?id=$course->id\">$strforums</A> -> 
-                       <A HREF=\"view.php?f=$forum->id\">$forum->name</A> -> $strsubscribers";
+        $navigation = "<a href=\"index.php?id=$course->id\">$strforums</a> -> 
+                       <a href=\"view.php?f=$forum->id\">$forum->name</a> -> $strsubscribers";
     }
 
     print_header("$course->shortname: $strsubscribers", "$course->fullname", "$navigation");
@@ -42,19 +46,19 @@
 
     } else {
         print_heading(get_string("subscribersto","forum", "'$forum->name'"));
-        echo "<TABLE ALIGN=CENTER cellpadding=5 cellspacing=5>";
+        echo '<table align="center" cellpadding="5" cellspacing="5">';
         foreach ($users as $user) {
-            echo "<TR><TD>";
+            echo "<tr><td>";
             print_user_picture($user->id, $course->id, $user->picture);
-            echo "</TD><TD BGCOLOR=\"$THEME->cellcontent\">";
+            echo "</td><td bgcolor=\"$THEME->cellcontent\">";
             echo "$user->firstname $user->lastname";
-            echo "</TD><TD BGCOLOR=\"$THEME->cellcontent\">";
+            echo "</td><td bgcolor=\"$THEME->cellcontent\">";
             echo "$user->email";
-            echo "</TD><TD>";
-            echo "<FONT SIZE=1><A HREF=\"subscribe.php?id=$forum->id&user=$user->id\">unsubscribe</A></FONT>";
-            echo "</TD></TR>";
+            echo "</td><td>";
+            echo "<font size=1><a href=\"subscribe.php?id=$forum->id&user=$user->id\">unsubscribe</a></font>";
+            echo "</td></tr>";
         }
-        echo "</TABLE>";
+        echo "</table>";
     }
 
     print_footer($course);

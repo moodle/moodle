@@ -25,13 +25,20 @@
 
         $post->attachment = $_FILES["attachment"];
 
+        if (!$cm = get_coursemodule_from_instance("forum", $post->forum, $post->course)) { // For the logs
+            $cm->id = 0;
+        }
+
         if (!$post->subject or !$post->message) {
             $post->error = get_string("emptymessage", "forum");
 
         } else if ($post->edit) {           // Updating a post
             $post->id = $post->edit;
             if (forum_update_post($post)) {
-                add_to_log($post->course, "forum", "update post", "discuss.php?d=$post->discussion&parent=$post->id", "$post->id");
+
+                add_to_log($post->course, "forum", "update post", 
+                          "discuss.php?d=$post->discussion&parent=$post->id", "$post->id", $cm->id);
+
                 $message = get_string("postupdated", "forum");
                 $timemessage = 1;
 
@@ -47,7 +54,10 @@
 
         } else if ($post->discussion) { // Adding a new post to an existing discussion
             if ($post->id = forum_add_new_post($post)) {
-                add_to_log($post->course, "forum", "add post", "discuss.php?d=$post->discussion&parent=$post->id", "$post->id");
+
+                add_to_log($post->course, "forum", "add post", 
+                          "discuss.php?d=$post->discussion&parent=$post->id", "$post->id", $cm->id);
+
                 $message = get_string("postadded", "forum", format_time($CFG->maxeditingtime));
                 $timemessage = 2;
 
@@ -67,7 +77,10 @@
             $discussion->name  = $post->subject;
             $discussion->intro = $post->message;
             if ($discussion->id = forum_add_discussion($discussion)) {
-                add_to_log($post->course, "forum", "add discussion", "discuss.php?d=$discussion->id", "$discussion->id");
+
+                add_to_log($post->course, "forum", "add discussion", 
+                           "discuss.php?d=$discussion->id", "$discussion->id", $cm->id);
+
                 $message = get_string("postadded", "forum", format_time($CFG->maxeditingtime));
                 $timemessage = 2;
 
@@ -251,6 +264,9 @@
                         forum_go_back_to("discuss.php?id=$post->discussion"));
 
             } else {
+                if (!$cm = get_coursemodule_from_instance("forum", $forum->id, $forum->course)) { // For the logs
+                    $cm->id = 0;
+                }
                 if (! $post->parent) {  // post is a discussion topic as well, so delete discussion
                     if ($forum->type == "single") {
                         notice("Sorry, but you are not allowed to delete that discussion!", 
@@ -258,13 +274,17 @@
                     }
                     forum_delete_discussion($discussion);
 
-                    add_to_log($discussion->course, "forum", "delete discussion", "view.php?id=$discussion->forum", "$post->id");
+                    add_to_log($discussion->course, "forum", "delete discussion", 
+                               "view.php?id=$discussion->forum", "$post->id", $cm->id);
+
                     redirect("view.php?f=$discussion->forum", 
                              get_string("deleteddiscussion", "forum"), 1);
 
                 } else if (forum_delete_post($post)) {
 
-                    add_to_log($discussion->course, "forum", "delete post", "discuss.php?d=$post->discussion", "$post->id");
+                    add_to_log($discussion->course, "forum", "delete post", 
+                               "discuss.php?d=$post->discussion", "$post->id", $cm->id);
+
                     redirect(forum_go_back_to("discuss.php?d=$post->discussion"), 
                              get_string("deletedpost", "forum"), 1);
                 } else {
