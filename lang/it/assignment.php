@@ -1,7 +1,8 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.0.6.2 (2002111100)
+      // assignment.php - created with Moodle 1.0.8.1 (2003011200)
 
 
+$string['allowresubmit'] = "Permettere di sottomettere più volte";
 $string['assignmentdetails'] = "Dettaglio compiti";
 $string['assignmentname'] = "Titolo del compito";
 $string['assignmenttype'] = "Tipo di compito";
@@ -9,6 +10,7 @@ $string['description'] = "Descrizione";
 $string['duedate'] = "Data di scadenza";
 $string['early'] = "\$a anticipo";
 $string['failedupdatefeedback'] = "Aggiornamento delle risposte alle consegne dell'utente \$a non riuscito";
+$string['feedback'] = "Risposte";
 $string['feedbackupdated'] = "Risposte alle consegne aggiornate per \$a utenti";
 $string['late'] = "\$a ritardo";
 $string['maximumgrade'] = "Voto massimo";
@@ -18,12 +20,14 @@ $string['modulenameplural'] = "Compiti";
 $string['newsubmissions'] = "Compiti consegnati";
 $string['notsubmittedyet'] = "Non ancora inviato";
 $string['overwritewarning'] = "Attenzione: trasferendo ulteriori allegati essi SOSTITUIRANNO quelli attualmente presenti.";
+$string['saveallfeedback'] = "Salva tutte le mie risposte";
 $string['submissionfeedback'] = "Risposte alla consegna";
 $string['submissions'] = "Consegne";
 $string['submitassignment'] = "Presenta il tuo compito usando questo form";
 $string['submitted'] = "Consegnato";
 $string['typeoffline'] = "Attività non in rete";
-$string['typeuploadsingle'] = "Trasferire un singolo file, punteggio
+$string['typeuploadsingle'] = "Trasferire un singolo file
+
 attibuibile per un valore compreso fra 0 e 100 punti";
 $string['uploadbadname'] = "Questo file contiene caratteri non conformi e non può essere trasferito.";
 $string['uploadedfiles'] = "files trasferiti";

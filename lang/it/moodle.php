@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.0.6.2 (2002111100)
+      // moodle.php - created with Moodle 1.0.8.1 (2003011200)
 
 
 $string['action'] = "Azione";
@@ -7,9 +7,10 @@ $string['activities'] = "Attività";
 $string['activity'] = "Attività";
 $string['activityreport'] = "Rapporto delle attività";
 $string['add'] = "Aggiungi";
+$string['addadmin'] = "Aggiungi amministratore";
 $string['added'] = "Aggiunto \$a";
-$string['addinganew'] = "Aggiungi una nuova \$a";
-$string['addinganewto'] = "Aggiunta di una nuova \$a->what alla \$a->to";
+$string['addinganew'] = "Aggiungi uno/a nuovo/a \$a";
+$string['addinganewto'] = "Aggiunta di uno/a nuovo/a \$a->what alla \$a->to";
 $string['addnewcourse'] = "Aggiungi un nuovo corso";
 $string['addnewuser'] = "Aggiungi un nuovo utente";
 $string['address'] = "Indirizzo";
@@ -29,7 +30,9 @@ $string['alphanumerical'] = "Puo' contenere solo lettere dell'alfabeto o numeri"
 $string['alreadyconfirmed'] = "La registrazione è già stata confermata";
 $string['answer'] = "Risposta";
 $string['assessment'] = "Valutazione";
+$string['assignadmins'] = "Assegna amministratori";
 $string['assignteachers'] = "Attribuisci insegnanti";
+$string['authentication'] = "Autenticazione";
 $string['availablecourses'] = "Corsi disponibili";
 $string['cancel'] = "Cancella";
 $string['categories'] = "Categorie di corso";
@@ -50,13 +53,13 @@ $string['city'] = "Paese/città";
 $string['closewindow'] = "Chiudi questa finestra";
 $string['comparelanguage'] = "Confronta ed edita la lingua corrente";
 $string['complete'] = "Completato";
-$string['configauth'] = "Scegli il modulo di autenticazione che vuoi usare. Per la massima sicurezza è impostato, di default, come 'email'. Il metodo'none' non è stato controllato e deve essere usato solo se si è consapevoli di ciò che si sta facendo esattamente. ";
-$string['configerrorlevel'] = "Scegli il numero di messaggi di attenzione PHP
-che desideri vengano mostrati. <i>Normale</i> è, di solito la scelta migliore.";
+$string['configcountry'] = "Se aggiungi una nazione qui, questa sarà scelta per difetto. Per forzare un utente ad usare una nazione, lasciare in bianco.";
+$string['configdebug'] = "Se si attiva questa opzione, Si incrementerà il livello di rapporto di errore e saranno stampati più avvertimenti. Questo è utile solo per sviluppatori.";
+$string['configerrorlevel'] = "Scegli il numero di messaggi di avvertimento PHP che vuoi siano mostrati. Questa <i>Normale</i> è, di solito la scelta migliore.";
 $string['configgdversion'] = "Indica la versione della libreria GD che è installata sul tuo webserver.  La versione mostrata come predefinita è quella che è stata automaticamente rilevata.  Non cambiare questa impostazione senza che tu realmente sappia quello che stai facendo.";
-$string['confightmleditor'] = "Scegli se permettere o no l'uso dell'editor HTML.   Anche se apri il permesso, questo editor comparirà solo quando l'utente sta usando un browser compatibile (IE 5.5 o successive versioni).Gli utenti possono anche scegliere di non usarlo.";
+$string['confightmleditor'] = "Scegli se permettere o no di usare lo editor HTML.   Anche se apri il permesso, questo editor comparirà solo quando l'utente sta usando un browser compatibile (IE 5.5 o successive versioni).Gli utenti possono anche scegliere di non usarlo.";
 $string['configintro'] = "In questa pagina puoi specificare un numero di variabili di configurazione che ti aiuteranno a settare Moodle per farlo lavorare adeguatamente sul tuo server.  Non te ne preoccupare troppo - le impostazioni predefinite normalmente lavorano perfettamente ed è sempre possibile tornare a questa pagina successivamente per modificare queste impostazioni.";
-$string['configlang'] = "Scegli una lingua di default per l'intero sito. 
+$string['configlang'] = "Scegli una lingua di default per tutto il sito. 
 Potrai modificare questa configurazione successivamente.";
 $string['configlangdir'] = "Nella scrittura di molte lingue straniere si procede da sinistra verso destra ma in alcune, come l'Arabo e l'Israeliano, da destra verso sinistra.";
 $string['configlocale'] = "Scegli una data locale - Questa opzione avrà effetto sulla visualizzazione delle date. È necessario che tu abbia la data locale del server su cui risiede il tuo sistema operativo correttamente configurata. Se non sai quale scegliere, lascia questo campo vuoto.";
@@ -65,11 +68,8 @@ $string['configmaxeditingtime'] = "Questo parametro specifica il tempo complessi
 $string['configproxyhost'] = "Se questo <B>server</B> necessita di un proxy (ad esempio un firewall) per accedere a Internet, allora indicare qui il nome del server (hostname) e il numero della porta di accesso. In caso contrario, lascia vuoto questo campo.";
 $string['configslasharguments'] = "Files (immagini, uploads etc) sono trasmessi attraverso uno script usando gli 'slash arguments' (la seconda opzione a fianco).
 
-Questo metodo permette ai files di essere trasferiti facilmente nella cache del vostro browser, server proxy etc. Considerato che alcuni servers PHP  non autorizzano il suddetto metodo,
-
-per cui ci potrebbero essere delle difficoltà di visualizzazione dei files trasferiti oppure delle immagini(esempio: le foto degli utenti iscritti), seleziona questa variabile sulla prima opzione.";
+Questo metodo permette un \"cache\" più facile in molti browsers. Sfortunantamente alcuni server PHP non permettono questo metodo. Perciò se avete problemi nel visualizzare file o immagini salvate (ad esempio immagini dell'utente), scegli la prima opzione.";
 $string['configsmtphosts'] = "Impostare il nome intero di uno o più servers locali SMTP che Moodle dovrebbe usare (esempio 'mail.a.com' oppure 'mail.a.com;mail.b.com'). Se lasci questo campo vuoto, Moodle userà il metodo di spedizione della posta predefinito utilizzando il programma di posta del PHP (di default).
-
 ";
 $string['configsmtpuser'] = "Se hai specificato un server SMPT ed esso richiede autenticazione, allora indica qui l'username e la password.";
 $string['configunzip'] = "Indica la path del tuo programma di compressione dati (Solo per Unix). Questo è necessario per decomprimere gli archivi sul server.";
@@ -113,7 +113,9 @@ $string['deletedactivity'] = "Cancellato \$a";
 $string['deletedcourse'] = "\$a è stato completamente cancellato";
 $string['deletednot'] = "Non è stato possibile cancellare \$a !";
 $string['deletingcourse'] = "Cancellazione \$a";
+$string['department'] = "Dipartimento";
 $string['description'] = "Descrizione";
+$string['displayingrecords'] = "Mostra \$a records";
 $string['displayingusers'] = "Mostra gli iscritti a iniziare da \$a->start fino a \$a->end";
 $string['documentation'] = "Documentazione di Moodle";
 $string['downloadexcel'] = "Download in formato Excel";
@@ -129,22 +131,20 @@ $string['edituser'] = "Edita account utenti";
 $string['email'] = "Indirizzo email";
 $string['emailconfirm'] = "Conferma il tuo account";
 $string['emailconfirmation'] = "Salve \$a->firstname,
+Un nuovo account è stato richiesto a '\$a->sitename' usando il tuo indirizzo di posta elettronica.
 
-Un nuovo account è stato richiesto su '\$a->sitename' utilizzando il tuo indirizzo email.
 
-Per confermare il tuo nuovo account, viene richiesto di cliccare sul web link seguente:
+Per confermare il tuo nuovo account, devi cliccare sul seguente link:
 
   \$a->link
 
-In molti programmi di posta, questo dovrebbe apparire come un link colorato di blu sul quale è sufficiente cliccarvi sopra. Se in questo modo non dovesse funzionare, allora taglia e incolla il link suddetto nella finestra degli indirizzi posta nel tuo browser e premi invio.
-
-Saluti dal '\$a->sitename' administrator,
-
-\$a->admin";
-$string['emailconfirmsent'] = "<P>Un email è stata inviata al tuo indirizzo <B>\$a</B>
-
+In molti programmi di posta, questo dovrebbe apparire come un link colorato di blu sul quale è sufficiente cliccare. Se in questo modo non dovesse funzionare, allora taglia e incolla il link nella finestra degli indirizzi in alto nel tuo browser e premi invio.
+Saluti dall'amministratore \$a->admin  del sito '\$a->sitename'
+";
+$string['emailconfirmsent'] = "<P>Una email è stata inviata al tuo indirizzo <B>\$a</B>
+<P> contiene istruzioni per completare la tua registrazione.
+<P> Se continui ad avere difficoltà contatta l'amministrare del sito.
 <P>Esso contiene delle semplici istruzioni per completare la tua registrazione.
-
 <P>Se incontri delle difficoltà, contatta l'amministratore del sito.";
 $string['emaildisplay'] = "Mostra Email";
 $string['emaildisplaycourse'] = "Permetti solo agli altri iscritti al corso di vedere il mio email";
@@ -156,11 +156,12 @@ $string['emailmustbereal'] = "Nota: il tuo indirizzo email deve essere valido";
 $string['enrolmentkey'] = "Chiave di accesso";
 $string['enrolmentkeyfrom'] = "Questo corso richiede una chiave di accesso' - una sola volta -<BR> password che dovresti ottenere da \$a";
 $string['enrolmentkeyhint'] = "Questa chiave di accesso è inesatta, riprovare, prego.<BR>
-
 (Questo è un suggerimento - essa inizia con '\$a'";
 $string['entercourse'] = "Clicca per accedere a questo corso";
 $string['enteremailaddress'] = "Digita il tuo email per cancellare la tua password e ottenere una nuova password spedita via email.";
 $string['error'] = "Errore";
+$string['errortoomanylogins'] = "Spiacente hai superato il numero ti tentativi di login permessi. Fai ripartire il tuo browser.";
+$string['existingadmins'] = "Amministratori esistenti";
 $string['existingteachers'] = "Insegnanti esistenti";
 $string['feedback'] = "Feedback";
 $string['filemissing'] = "\$a è mancante";
@@ -186,15 +187,13 @@ $string['fullprofile'] = "Descrizione integrale";
 $string['fullsitename'] = "Nome integrale del sito";
 $string['gd1'] = "GD 1.x è installato";
 $string['gd2'] = "GD 2.x è installato";
+$string['gdneed'] = "GD deve essere installato per vedere questo grafico";
 $string['gdnot'] = "GD non è installato";
-$string['gpl'] = "Copyright (C) 2001-2002  Martin Dougiamas 
-
+$string['gpl'] = "Copyright (C) 2001-2002  Martin Dougiamas (http://dougiamas.com)
+Questo programma e \"free software\"; può essere distribuito e/o modificato ai termini della Licenza Generale GNU come pubblicata dalla Free Software Foundation, versione 2, o successiva. 
 (http://dougiamas.com)
-
 Questo programma è un software gratuito; puoi ridistribuirlo e/o modificarlo alle condizioni previste da: GNU (General Public License) così come pubblicate dalla 'Free Software Foundation'; (l'una o l'altra versione 2 della Licenza),oppure (a tua scelta) ogni versione successiva.
-
 Questo programma è distribuito con la speranza che esso possa essere utile, ma SENZA NESSUNA GARANZIA; senza, persino, la garanzia implicita di COMMERCIABILITÁ o di IDONEITÀ PER UNO SCOPO PRECISO. Leggere la GNU 'General Public License' per ulteriori dettagli:
-
 http://www.gnu.org/copyleft/gpl.html";
 $string['grade'] = "Classifica";
 $string['grades'] = "Classifiche";
@@ -206,14 +205,20 @@ $string['guestuser'] = "Utente ospite";
 $string['guestuserinfo'] = "Questo utente è un utente speciale che ha accesso ai documenti del corso in modalità solo lettura in alcuni corsi.";
 $string['help'] = "Aiuto";
 $string['helphtml'] = "Come scrivere in html";
-$string['helppicture'] = "Come trasferire un'immagine";
+$string['helppicture'] = "Come trasferire una immagine";
 $string['helpquestions'] = "Come porre domande";
-$string['helprichtext'] = "Informazioni sull'editor HTML";
+$string['helpreading'] = "Leggi attentamente";
+$string['helprichtext'] = "Informazioni su editor HTML";
 $string['helptext'] = "Come scrivere del testo";
+$string['helpwriting'] = "Scrivi attentamente";
 $string['hide'] = "Nascondi";
+$string['hits'] = "Accessi";
+$string['hitsoncourse'] = "Accessi al corso \$a->coursename dell'utente \$a->username";
+$string['hitsoncoursetoday'] = "Accessi di oggi al corso \$a->coursename dell'utente \$a->username";
 $string['home'] = "Pagina principale";
 $string['hour'] = "ora";
 $string['hours'] = "ore";
+$string['howtomakethemes'] = "Come scegliere un nuovo tema";
 $string['htmleditor'] = "Usa l'editor HTML (solo IE, 5.5 o successive versioni)";
 $string['htmleditoravailable'] = "L'editor è disponibile";
 $string['htmleditordisabled'] = "Hai disabilitato l'editor HTML nel tuo profilo utente.";
@@ -227,6 +232,7 @@ $string['invalidlogin'] = "Login incorretto, riprova";
 $string['jumpto'] = "Scegli";
 $string['langltr'] = "Scrittura da sinistra a destra";
 $string['langrtl'] = "Scrittura da destra a sinistra";
+$string['language'] = "Lingua";
 $string['languagegood'] = "Questa versione linguistica è aggiornata! :-)";
 $string['lastaccess'] = "Ultimo accesso";
 $string['lastedited'] = "Ultima editazione";
@@ -236,7 +242,7 @@ $string['latestnews'] = "Ultimissime notizie";
 $string['leavetokeep'] = "Lascia in bianco per conservare la tua attuale password";
 $string['license'] = "Licenza GPL";
 $string['listofallpeople'] = "Lista di tutte le persone";
-$string['livelogs'] = "Logs dell'ultima ora";
+$string['livelogs'] = "Logs della ultima ora";
 $string['locale'] = "it_IT";
 $string['location'] = "Località";
 $string['loggedinas'] = "Sei collegato come \$a.";
@@ -245,33 +251,20 @@ $string['login'] = "Login";
 $string['loginas'] = "Login come";
 $string['loginguest'] = "Login come ospite";
 $string['loginsite'] = "Login al sito";
-$string['loginsteps'] = "Salve! Per un pieno accesso ai corsi è necessario creare un nuovo account per te su questo sito.
-
-Ciascuno dei corsi individuali pu&ograve; richiedere una chiave di iscrizione &quot;chiave di accesso&quot;, di cui non avrai più bisogno in seguito. Questi sonoi passaggi:
-
-   <OL size=2>
-
-   <LI>Compila il form <A HREF=\$a>Nuovo Utente</A> con i tuoi dati.
-
-   <LI>Un email verrà spedita al tuo indirizzo di posta elettronica.
-
-   <LI>Leggi l'email e clicca sul web link che essa contiene.
-
-   <LI>La tua registrazione sarà confermata e sarai riconosciuto dal sistema come utente registrato.
-
-   <LI>Adesso, seleziona il corso a cui intendi partecipare.
-
-   <LI>Se hai optato per una &quot;chiave di accesso&quot; - chiedine
-
-   l'invio al tuo insegnante. Questa chiave ti &quot;iscriverà&quot; al corso.
-
-   <LI>Puoi adesso accedere al corso integrale. Da ora avrai solo bisogno
-
-    del tuo username e della tua password (nel form di questa pagina)
-
-    per aver accesso al corso in cui ti sei iscritto.
-
-   </OL>";
+$string['loginsteps'] = "Salve! Per un pieno accesso ai corsi hai bisogno di un minuto per creare un nuovo account per te su questo sito.
+Ogni corso può anche avere una chiave di accesso, da usare solo al primo accesso, che ti verrà fornita dal docente del corso.
+Questi sono i passi per aprire il tuo account:
+<OL size=2>
+<LI>Compila il form <A HREF=\$a>Nuovo Utente</A> con i tuoi dati.
+<LI>Un email verrà spedita al tuo indirizzo di posta elettronica.
+<LI>Leggi l'email e clicca sul link che essa contiene.
+<LI>La tua registrazione sarà confermata e sarai riconosciuto dal sistema come utente registrato.
+<LI>Adesso, seleziona il corso a cui intendi partecipare.
+<LI>Se è richiesta una &quot;chiave di accesso&quot; - chiedine
+l'invio al tuo insegnante. Questa chiave ti &quot;iscriverà&quot; al corso.
+<LI>Puoi adesso accedere pienamente al corso. Da ora avrai solo bisogno
+del tuo username e della tua password (nel form di questa pagina)
+per aver accesso al corso in cui ti sei iscritto.   </OL>";
 $string['loginstepsnone'] = "Salve! <P> per un pieno accesso ai corsi avrai bisogno di creare un account.<P> Ciò di cui hai bisogno è di creare un username e una password e di usarli nel form di questa pagina!<P> Se qualcuno ha già scelto il tuo username, allora dovrai riprovare scegliendo un username diverso.";
 $string['loginto'] = "Login a \$a";
 $string['loginusing'] = "Fai il login qui utilizzando il tuo username e la password";
@@ -310,12 +303,12 @@ $string['missingteacher'] = "Devi scegliere qualcosa";
 $string['missingusername'] = "Non hai inserito un username";
 $string['modified'] = "Modificato";
 $string['modulesetup'] = "Configurazione modulo tabelle";
-$string['modulesuccess'] = "\$a le tabelle sono state settate correttamente";
+$string['modulesuccess'] = "\$a tabelle sono state settate correttamente";
 $string['mostrecently'] = "molto recentemente";
-$string['movedown'] = "Muovi giù";
+$string['movedown'] = "Muovi in basso";
 $string['movefilestohere'] = "Trasferisci i files qui";
 $string['movetoanotherfolder'] = "Trasferisci in un'altra cartella";
-$string['moveup'] = "Muovi sù";
+$string['moveup'] = "Muovi in alto";
 $string['mustconfirm'] = "È necessario confermare il tuo accesso";
 $string['mycourses'] = "I miei corsi";
 $string['name'] = "Nome";
@@ -328,23 +321,31 @@ $string['newaccount'] = "Nuovo account";
 $string['newpassword'] = "Nuova password";
 $string['newpasswordtext'] = "Salve \$a->firstname,
 
-La tua password su '\$a->sitename' è stata cancellata e sei registrato con la tua nuova password provvisoria.
-Le tue attuali configurazioni per il login sono:
+la password del tuo account a '\$a->sitename è stata resettata ed hai avuto una nuova password temporanea
 
-   username: \$a->username
+L'informazione attuale per il tuo login è ora:
 
-   password: \$a->newpassword
+username: \$a->username
 
-Vai a questa pagina per cambiare la tua password:
+password: \$a->newpassword
 
-   \$a->link
+Per favore vai alla seguente pagina per cambiare la tua password:
 
-In molti programmi di posta, questo dovrebbe apparire come un link colorato di blu sul quale è sufficiente cliccarvi sopra. Se in questo modo non dovesse funzionare,allora taglia e incolla il link suddetto nella finestra degli indirizzi posta nel tuo browser e premi invio.
 
-Saluti dall'amministratore di '\$a->sitename',
 
-\$a->signoff
+\$a-> link
 
+
+
+Nella maggior parte dei programmi di posta elettronica, questo deve apparire con un link in blu sul quale puoi semplicemente cliccare.
+
+Se questo non funziona, taglia e incolla questo indirizzo nella linea degli indirizzo in alto nel tuo browser web.
+
+
+
+Saluti dall' amministratore \$a->admin del sito
+
+\$a->sitename
 ";
 $string['newpicture'] = "Nuova immagine";
 $string['newsitem'] = "nuovo item";
@@ -354,11 +355,13 @@ $string['newuser'] = "Nuovo utente";
 $string['newusers'] = "Nuovi utenti";
 $string['no'] = "No";
 $string['nocoursesyet'] = "Nessun corso in questa categoria";
-$string['noexistingteachers'] = "Nessun insegnante operativo";
+$string['noexistingadmins'] = "Non esistono amministratori, questo è un errore grave e non avresti mai dovuto vedere questo messaggio. ";
+$string['noexistingteachers'] = "Non esistono insegnanti";
 $string['nofilesyet'] = "Nessun file è stato ancora trasferito sul server";
 $string['nograde'] = "Nessuna valutazione";
 $string['noimagesyet'] = "Nessuna immagine è stata ancora trasferita sul server";
 $string['none'] = "Nessuno";
+$string['nopotentialadmins'] = "Non ci sono possibili amministratori";
 $string['nopotentialteachers'] = "Non ci sono potenziali insegnanti";
 $string['normal'] = "Normale";
 $string['nostudentsyet'] = "Non ci sono ancora studenti registrati in questo corso";
@@ -383,18 +386,25 @@ $string['outline'] = "Profilo";
 $string['participants'] = "Partecipanti";
 $string['password'] = "Password";
 $string['passwordchanged'] = "La password è stata modificata";
-$string['passwordsdiffer'] = "Questa password non corrisponde";
+$string['passwordrecovery'] = "Si per favore aiutatemi per il login";
+$string['passwordsdiffer'] = "Queste password non corrispondono";
 $string['passwordsent'] = "La password è stata spedita";
 $string['passwordsenttext'] = "<P>Un email è stato spedito a \$a->email.
 
+<P><B> Per favore controlla la tua posta per avere la nuova passworf</B>
+
+<P>La nuova password è stata generata automaticamente, perciò potresti voler andare a
+
+<A HREF=\$a->link> per cambiarla in una più facile da ricordare</A>.
+
 <P><B>Controlla la tua casella email per la nuova password</B>
-
 <P>La nuova password è stata generata automaticamente, quindi dirigiti a questo link 
-
-   <A HREF=\$a->link> per cambiarla con una che sia, per te, più facile da ricordare</A>.";
+ <A HREF=\$a->link> 
+per cambiarla con una che sia, per te, più facile da ricordare</A>.";
 $string['people'] = "Persone";
 $string['personalprofile'] = "Profilo personale";
 $string['phone'] = "Telefono";
+$string['potentialadmins'] = "Amministratori possibili";
 $string['potentialteachers'] = "Potenziali insegnanti";
 $string['preferredlanguage'] = "Lingua preferita";
 $string['preview'] = "Anteprima";
@@ -402,9 +412,10 @@ $string['previeworchoose'] = "Anteprima o scegli tema";
 $string['question'] = "Domanda";
 $string['readme'] = "LEGGIMI";
 $string['recentactivity'] = "Attività recente";
+$string['removeadmin'] = "Rimuovi l'amministratore";
 $string['removeteacher'] = "Rimuovi insegnante";
 $string['rename'] = "Rinomina";
-$string['requireskey'] = "Questo corso richiede una chaive di accesso";
+$string['requireskey'] = "Questo corso richiede una chiave di accesso";
 $string['resources'] = "Risorse";
 $string['returningtosite'] = "Ciao, sei ritornato?";
 $string['revert'] = "Ripristina";
@@ -417,18 +428,20 @@ $string['sec'] = "secondo";
 $string['secs'] = "secondi";
 $string['section'] = "Sezione";
 $string['selectacountry'] = "Seleziona il tuo Paese";
-$string['senddetails'] = "Inviami i miei dati via email";
+$string['senddetails'] = "Invia i miei dati via email";
 $string['separateandconnected'] = "Significati separati e correlati della conoscenza";
 $string['serverlocaltime'] = "Ora del server locale";
 $string['settings'] = "Settaggi";
 $string['shortname'] = "Nome breve";
 $string['shortsitename'] = "Nome breve per il sito (es.: singola parola)";
+$string['show'] = "Mostra";
 $string['showallcourses'] = "Mostra tutti i corsi";
 $string['showalltopics'] = "Mostra tutti gli argomenti";
 $string['showallweeks'] = "Mostra tutte le settimane";
 $string['showlistofcourses'] = "Mostra la lista dei corsi";
 $string['showonlytopic'] = "Mostra solo argomento \$a";
 $string['showonlyweek'] = "Mostra solo settimana \$a";
+$string['showrecent'] = "Mostra le attività recenti";
 $string['showtheselogs'] = "Mostra questi logs";
 $string['site'] = "Sito";
 $string['sitelogs'] = "Logs del sito";
@@ -438,17 +451,10 @@ $string['sitesettings'] = "Settaggi sito";
 $string['size'] = "Dimensione";
 $string['socialheadline'] = "Forum relazionale - ultimi argomenti";
 $string['someallowguest'] = "Alcuni corsi possono permettere l'accesso agli ospiti";
+$string['someerrorswerefound'] = "Qualche informazione è mancante o incorretta. Vedi sotto per i dettagli.";
 $string['startdate'] = "Data di inizio del corso";
-$string['startsignup'] = "Inizia adesso per creare un nuovo account!";
+$string['startsignup'] = "Inizia adesso a creare un nuovo account!";
 $string['status'] = "Status";
-$string['strftimedate'] = "%%d %%B %%Y";
-$string['strftimedateshort'] = "%%d %%B";
-$string['strftimedatetime'] = "%%d %%B %%Y, %%H:%%M";
-$string['strftimedaydate'] = "%%A, %%d %%B %%Y";
-$string['strftimedaydatetime'] = "%%A, %%d %%B %%Y, %%H:%%M";
-$string['strftimerecent'] = "%%d %%b, %%H:%%M";
-$string['strftimerecentfull'] = "%%a, %%d %%b %%Y, %%H:%%M";
-$string['strftimetime'] = "%%H:%%M";
 $string['stringsnotset'] = "Le seguenti stringhe non sono definite in \$a";
 $string['studentnotallowed'] = "Spiacenti, ma non puoi accedere a questo corso come '\$a' ";
 $string['success'] = "Operazione eseguita con successo";
@@ -471,13 +477,14 @@ $string['toomanytoshow'] = "Ci sono troppi utenti da visualizzare";
 $string['topic'] = "Argomento";
 $string['topicoutline'] = "Argomento corrente";
 $string['total'] = "Totale";
-$string['turneditingoff'] = "Editazione chiusa";
-$string['turneditingon'] = "Editazione aperta";
+$string['turneditingoff'] = "Disabilita editazione corso...";
+$string['turneditingon'] = "Abilita editazione corso...";
 $string['undecided'] = "Indeciso";
 $string['unenrol'] = "Cancellare";
 $string['unenrolme'] = "Cancellami da \$a";
 $string['unenrolsure'] = "Sei sicuro di volerti cancellare \$a da questo corso?";
 $string['unsafepassword'] = "Password insicura - provane un'altra";
+$string['unusedaccounts'] = "Gli accounts non utilizzati per più di \$a giorni sono automaticamente rimossi.";
 $string['unzip'] = "Comprimi";
 $string['update'] = "Modifica";
 $string['updated'] = "Aggiornato \$a";
@@ -489,6 +496,9 @@ $string['updatinga'] = "Aggiornamento a \$a";
 $string['updatingain'] = "Aggiornamento a \$a->what in \$a->in";
 $string['upload'] = "Trasferire sul server";
 $string['uploadafile'] = "Trasferisci un file sul server";
+$string['uploadedfileto'] = "File \$a-> file salvata nel directory \$a->directory";
+$string['uploadnofilefound'] = "Non è stato trovato alcun file. Sei sicuro di averne selezionato un per l'upload?";
+$string['uploadproblem'] = "Un problema sconosciuto si è verificato salvando il file '\$a' (può essere troppo grande?)";
 $string['uploadthisfile'] = "Trasferisci questo file";
 $string['userdeleted'] = "Questo account è stato cancellato";
 $string['userdescription'] = "Descrizione";
@@ -502,8 +512,15 @@ $string['weeklyoutline'] = "Attività settimanale";
 $string['welcometocourse'] = "Benvenuto(a) a \$a";
 $string['welcometocoursetext'] = "Benvenuto(a) a \$a->coursename!
 
-Una delle prime cose che dovresti fare è di pubblicare il tuo profilo nella tua pagina all'interno del corso in modo da poterti conoscere meglio:
 
+
+Una delle prime cose che dovresti fare è quella di editare la pagina col tuo profilo nel corso in modo tale che possiamo avere maggiori informazioni su di te:
+
+
+
+\$a->prfileurl
+
+Una delle prime cose che dovresti fare è di pubblicare il tuo profilo nella tua pagina all'interno del corso in modo da poterti conoscere meglio:
   \$a->profileurl";
 $string['withchosenfiles'] = "Con i files scelti";
 $string['wordforstudent'] = "Come vuoi chiamare lo studente";

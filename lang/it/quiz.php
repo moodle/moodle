@@ -1,12 +1,13 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.0.6.2 (2002111100)
+      // quiz.php - created with Moodle 1.0.8.1 (2003011200)
 
 
 $string['addselectedtoquiz'] = "Aggiungi selezione al quiz";
+$string['allowreview'] = "Autorizza revisione";
 $string['alreadysubmitted'] = "È probabile che tu abbia già presentato questo tentativo";
 $string['alwaysavailable'] = "Sempre disponibile";
 $string['answer'] = "Risposta";
-$string['answerhowmany'] = "Una oppure risposte multiple?";
+$string['answerhowmany'] = "Una risposta oppure risposte multiple?";
 $string['answersingleno'] = "Risposte multiple permesse";
 $string['answersingleyes'] = "Una sola risposta";
 $string['attempt'] = "Tentativo \$a";
@@ -17,7 +18,7 @@ $string['attempts'] = "Tentativi";
 $string['attemptsallowed'] = "Tentativi permessi";
 $string['attemptsunlimited'] = "Tentativi illimitati";
 $string['backtoquiz'] = "Indietro all'editazione del quiz";
-$string['bestgrade'] = "Grado migliore";
+$string['bestgrade'] = "Voto migliore";
 $string['caseno'] = "Il maiuscolo non è importante";
 $string['casesensitive'] = "Il maiuscolo è importante";
 $string['caseyes'] = "Il maiuscolo è importante per tutte le lettere";
@@ -40,65 +41,77 @@ $string['editingmultichoice'] = "Edita un quiz a scelta multipla";
 $string['editingquestion'] = "Edita una domanda";
 $string['editingquiz'] = "Edita un quiz";
 $string['editingshortanswer'] = "Edita una domanda a risposta breve";
-$string['editingtruefalse'] = "Edita una doamanda vero/falso";
+$string['editingtruefalse'] = "Edita una domanda vero/falso";
 $string['false'] = "Falso";
 $string['feedback'] = "Feedback";
-$string['filloutoneanswer'] = "You must fill out at least one possible answer.  Answers left blank will not be used.";
-$string['fillouttwochoices'] = "You must fill out at least two choices.  Choices left blank will not be used.";
-$string['fractionsaddwrong'] = "The positive grades you have chosen do not add up to 100%%
-<BR>Instead, they add up to \$a%%
-<BR>Do you want to go back and fix this question?";
-$string['fractionsnomax'] = "One of the answers should be 100%%, so that it is
-<BR>possible to get a full grade for this question.
-<BR>Do you want to go back and fix this question?";
-$string['gradeaverage'] = "Average grade";
-$string['gradehighest'] = "Highest grade";
-$string['grademethod'] = "Grading method";
-$string['guestsno'] = "Sorry, guests can not see or attempt quizzes";
-$string['imagedisplay'] = "Image to display";
-$string['introduction'] = "Introduction";
-$string['marks'] = "Marks";
+$string['filloutoneanswer'] = "Devi fornire almeno una risposta possibile. Le risposte lasciate in bianco non saranno utilizzate utilizzate.";
+$string['fillouttwochoices'] = "Devi fornire almeno due scelte. Le scelte lasciate in bianco non saranno utilizzate.";
+$string['fractionsaddwrong'] = "I voti positivi che hai scelto non assommano a100%% ma solo a \$a%%
+<BR> Vuoi tornare indietro e correggere?
+
+<BR>ma solo a \$a%%
+
+<BR>Vuoi tornare indietro e risolvere la questione?";
+$string['fractionsnomax'] = "Una delle risposte deve essere 100%%, perchè sia
+
+<BR>possibile una votazione piena per questa domanda
+<BR> Vuoi tornare indietro e correggere?
+
+
+<BR>Vuoi tornare indietro e risolvere la questione?";
+$string['gradeaverage'] = "Voto medio";
+$string['gradehighest'] = "Voto più alto";
+$string['grademethod'] = "Metodo di valutazione";
+$string['guestsno'] = "Spiacente, gli ospiti non possono vedere o provare il quiz";
+$string['imagedisplay'] = "Immagine da mostrare (uploaded)";
+$string['introduction'] = "Introduzione";
+$string['marks'] = "Voti";
+$string['missingname'] = "Nome domanda mancante";
+$string['missingquestiontext'] = "Testo della domanda mancante";
 $string['modulename'] = "Quiz";
-$string['modulenameplural'] = "Quizzes";
-$string['multichoice'] = "Multiple Choice";
-$string['noanswers'] = "No answers were selected!";
-$string['noattempts'] = "No attempts have been made on this quiz";
-$string['nomoreattempts'] = "No more attempts are allowed";
-$string['noquestions'] = "No questions have been added yet";
-$string['publish'] = "Publish";
-$string['question'] = "Question";
-$string['questioninuse'] = "The question '\$a' is currently being used:";
-$string['questionname'] = "Question name";
-$string['questions'] = "Questions";
-$string['quizavailable'] = "The quiz is available until: \$a";
-$string['quizclose'] = "Close the quiz";
-$string['quizclosed'] = "This quiz closed on \$a";
+$string['modulenameplural'] = "Quiz";
+$string['multichoice'] = "Scelta multipla";
+$string['noanswers'] = "Non è stata selezionata nessuna risposta!";
+$string['noattempts'] = "Nessun tentativo è stato fatto per questo quiz";
+$string['nomoreattempts'] = "Non sono permessi ulteriori tentativi";
+$string['noquestions'] = "Non sono state aggiunte ancora domande";
+$string['noreview'] = "Non hai il permesso di rivedere questo quiz";
+$string['noreviewuntil'] = "Non hai il permesso di rivedere questo quiz fino a \$a";
+$string['publish'] = "Rendere pubblico";
+$string['question'] = "Domanda";
+$string['questioninuse'] = "La domanda '\$a' è attualmente in uso:";
+$string['questionname'] = "Nome della domanda";
+$string['questions'] = "Domande";
+$string['quizavailable'] = "Il quiz è disponibile fino a: \$a";
+$string['quizclose'] = "Chiudi il quiz";
+$string['quizclosed'] = "Il quiz è stato chiuso il \$a";
 $string['quiznotavailable'] = "The quiz will not be available until: \$a";
-$string['quizopen'] = "Open the quiz";
-$string['random'] = "Random set";
-$string['regrade'] = "Regrade all attempts";
-$string['regradecomplete'] = "All attempts have been regraded";
-$string['regradecount'] = "\$a->changed out of \$a->attempt grades were changed";
-$string['rename'] = "Rename";
-$string['report'] = "Reports";
-$string['save'] = "Save";
-$string['savegrades'] = "Save grades";
-$string['savemyanswers'] = "Save my answers";
-$string['savequiz'] = "Save this whole quiz";
-$string['score'] = "Raw score";
-$string['select'] = "Select";
-$string['selectcategoryabove'] = "Select a category above";
-$string['shortanswer'] = "Short Answer";
-$string['show'] = "Show";
-$string['showcorrectanswer'] = "In feedback, show correct answers?";
-$string['showfeedback'] = "After answering, show feedback?";
-$string['time'] = "Time";
-$string['timecompleted'] = "Completed";
-$string['timetaken'] = "Time taken";
-$string['true'] = "True";
-$string['truefalse'] = "True/False";
-$string['type'] = "Type";
-$string['viewallanswers'] = "View \$a completed quizzes";
-$string['yourfinalgradeis'] = "Your final grade for this quiz is \$a";
+$string['quizopen'] = "Apri il quiz";
+$string['random'] = "Insieme casuale";
+$string['readytosend'] = "Stai per inviare l'intero quiz per la valutazione. Sei sicuro di voler continuare?";
+$string['regrade'] = "Rivalutare tutti i tentativi";
+$string['regradecomplete'] = "Tutti i tentativi sono stati rivalutati";
+$string['regradecount'] = "\$a->changed su \$a->attempt valutazioni sono state cambiate";
+$string['rename'] = "Cambia il nome";
+$string['report'] = "Rapporti";
+$string['save'] = "Salva";
+$string['savegrades'] = "Salva i voti";
+$string['savemyanswers'] = "Salva le mie risposte";
+$string['savequiz'] = "Salva l'intero quiz";
+$string['score'] = "Valutazione grezza";
+$string['select'] = "Seleziona";
+$string['selectcategoryabove'] = "Scegli una tra le categorie elencate sopra";
+$string['shortanswer'] = "Risposta breve";
+$string['show'] = "Mostra";
+$string['showcorrectanswer'] = " Mostrare le risposte corrette nel feedback?";
+$string['showfeedback'] = "Mostrare il feedback dopo le risposte?";
+$string['time'] = "Ora";
+$string['timecompleted'] = "Completato";
+$string['timetaken'] = "Tempo impiegato";
+$string['true'] = "Vero";
+$string['truefalse'] = "Vero/Falso";
+$string['type'] = "Tipo";
+$string['viewallanswers'] = "Vedi \$a quiz completati";
+$string['yourfinalgradeis'] = "Il tuo voto finale per questo quiz è: \$a";
 
 ?>

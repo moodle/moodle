@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.0.6.2 (2002111100)
+      // forum.php - created with Moodle 1.0.8.1 (2003011200)
 
 
 $string['addanewdiscussion'] = "Aggiungi un nuovo argomento di discussione";
@@ -11,7 +11,7 @@ $string['anyfile'] = "Qualunque file";
 $string['attachment'] = "Allegato";
 $string['bynameondate'] = "di \$a->name - \$a->date";
 $string['couldnotadd'] = "Non è possibile aggiungere il tuo intervento a causa di un errore sconosciuto.";
-$string['couldnotdeleteratings'] = "Spiacenti, non può essere cancellato in quanto gli utenti lo hanno già valutato.";
+$string['couldnotdeleteratings'] = "Spiacenti,questo non può essere cancellato in quanto gli utenti lo hanno già valutato.";
 $string['couldnotdeletereplies'] = "Spiacenti, non può essere cancellato in quanto gli utenti hanno già dato le loro risposte.";
 $string['couldnotupdate'] = "Non è possibile aggiornare il tuo intervento a causa di un errore sconosciuto.";
 $string['delete'] = "Cancella";
@@ -26,10 +26,10 @@ $string['eachuserforum'] = "Ciascuna persona può postare una discussione";
 $string['edit'] = "Edita";
 $string['editing'] = "Pubblicazione";
 $string['emptymessage'] = "Qualche errore con il tuo post. Forse lo hai lasciato in bianco, oppure l'allegato era troppo grande.I tuoi cambiamenti NON sono stati salvati.";
-$string['everyonecanchoose'] = "Opzioni";
+$string['everyonecanchoose'] = "Tutti possono scegliere l'iscrizione";
 $string['everyoneissubscribed'] = "Iscrizione obbligatoria a questo forum in quanto ciò è previsto dal docente";
 $string['forcesubscribe'] = "Obbligare ognuno all'iscrizione";
-$string['forcesubscribeq'] = "Obbligare ognuno all'iscrizione?";
+$string['forcesubscribeq'] = "Obbligare tutti all'iscrizione?";
 $string['forum'] = "Forum";
 $string['forumintro'] = "Introduzione al forum";
 $string['forumname'] = "Nome del forum";
@@ -70,20 +70,8 @@ $string['openmode2'] = "Discussioni e risposte sono permesse";
 $string['parentofthispost'] = "Relativo a questo post";
 $string['postadded'] = "Il tuo messaggio è stato aggiunto con successo.<P>Hai \$a per editarlo se desideri apportare delle modifiche.";
 $string['postincontext'] = "Vedi questo messaggio nel contesto";
-$string['postingtip'] = "<B>Suggerimenti per il posting:</B>
-Quando rispondi a un post:
-<UL>
-<LI>leggi i posts degli altri accuratamente ed empaticamente
-<LI>concentrati sull'oggetto del discorso che vuoi commentare
-</UL>
-
-Nello scrivere:
-<UL>
-<LI>rendi i tuoi posts brevi e attinenti all' argomento
-<LI>spiega le tue idee chiaramente
-<LI>pensa alle domande che vuoi porre
-</UL>";
-$string['postmailinfo'] = "Questa è una copia del messaggio postato su \$a .
+$string['postmailinfo'] = "Questa è una copia del messaggio postato su \$a .
+
 Per aggiungere la tua risposta via internet, clicca su questo link:";
 $string['postrating1'] = "Le esposizioni in genere, sono INDIPENDENTI dai saperi";
 $string['postrating2'] = "Equamente indipendenti e connesse";
@@ -92,6 +80,7 @@ $string['postupdated'] = "Il tuo post è stato aggiornato";
 $string['processingpost'] = "Trattamento del post \$a";
 $string['rate'] = "Vota";
 $string['ratings'] = "Voti";
+$string['ratingssaved'] = "Voti archiviati";
 $string['re'] = "Re:";
 $string['readtherest'] = "Leggi il resto dell'argomento";
 $string['repliesmany'] = "\$a risposte al momento";
