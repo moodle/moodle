@@ -1,6 +1,6 @@
 <?PHP  // $Id$
 
-function glossary_print_entry_by_format($course, $cm, $glossary, $entry, $mode="",$hook="",$printicons=1) {
+function glossary_print_entry_by_format($course, $cm, $glossary, $entry, $mode="",$hook="",$printicons=1,$ratings=NULL) {
     global $THEME, $CFG, $USER;
 
     $colour = $THEME->cellheading2;
