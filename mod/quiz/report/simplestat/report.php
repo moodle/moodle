@@ -102,12 +102,20 @@ class quiz_report extends quiz_default_report {
                 $row++;
             }
 
-            $myxls->ChangePos($row,0);
-
         /// Print all the averages
+            $myxls->ChangePos($row,0);
             $myxls->InsertText("");
             for ($i=1; $i<=$count; $i++) {
                 $myxls->InsertNumber($average[$i]);
+            }
+
+        /// Print all the averages as percentages
+            $row++;
+            $myxls->ChangePos($row,0);
+            $myxls->InsertText("%");
+            for ($i=1; $i<=$count; $i++) {
+                $percent = format_float($average[$i] * 100);
+                $myxls->InsertText("$percent%");
             }
 
             $myxls->SendFileName("$course->shortname $quiz->name");
@@ -150,6 +158,14 @@ class quiz_report extends quiz_default_report {
                 echo "\t".$average[$i];
             }
             echo "\n";
+
+        /// Print all the averages as percentages
+            echo "\t%";
+            for ($i=1; $i<=$count; $i++) {
+                $percent = format_float($average[$i] * 100);
+                echo "\t$percent";
+            }
+            echo "\n";
         
             exit;
         }
@@ -164,7 +180,7 @@ class quiz_report extends quiz_default_report {
         echo "<tr>";
         echo "<td>&nbsp;</td>";
         for ($i=1; $i<=$count; $i++) {
-            echo "<th title=\"".$question[$i]->questiontext."\">$i</th>";
+            echo "<th title=\"".strip_tags($question[$i]->questiontext)."\">$i</th>";
         }
         echo "</tr>";
 
