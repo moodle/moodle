@@ -193,7 +193,7 @@ function calendar_show_day($d, $m, $y, $courses, $groups, $users) {
     $getvars = 'from=day&amp;cal_d='.$d.'&amp;cal_m='.$m.'&amp;cal_y='.$y; // For filtering
 
     $starttime = make_timestamp($y, $m, $d);
-    $endtime   = $starttime + SECS_IN_DAY - 1;
+    $endtime   = make_timestamp($y, $m, $d + 1) - 1;
 
     $events = calendar_get_upcoming($courses, $groups, $users, 1, 100, $starttime);
 
