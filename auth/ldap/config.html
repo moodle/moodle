@@ -241,7 +241,6 @@ if (!function_exists('ldap_connect')){ // Is php4-ldap really there?
 <tr>
    <td colspan="2">
         <h4><?php print_string("auth_ldap_passwdexpire_settings", "auth") ?> </h4>
-        <p> NOTE! This just configuration interface for expiration, code does not support expiration yet.!</p>
    </td>
 </tr>
 
@@ -249,9 +248,9 @@ if (!function_exists('ldap_connect')){ // Is php4-ldap really there?
     <td align="right"><P>ldap_expiration:</td>
     <td>
     <?php
-       $expiration['internal'] = "No";
-       $expiration['ldap'] = "LDAP";
-       choose_from_menu($expiration, "ldap_expriration", $config->ldap_expiration, "");
+       $expiration['0'] = "No";
+       $expiration['1'] = "LDAP";
+       choose_from_menu($expiration, "ldap_expiration", $config->ldap_expiration, "");
        if (isset($err["ldap_expiration"])) formerr($err["ldap_expiration"]); 
     ?>
     </td>

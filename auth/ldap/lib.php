@@ -257,6 +257,40 @@ function auth_get_users($filter='*') {
     return $fresult;
 }
 
+function auth_password_expire($username) {
+// returns number of days to password expiration
+// 0 if passowrd does not expire
+// or negative value if password is already expired
+    global $CFG ;
+    $result = false;
+    
+    $ldapconnection = auth_ldap_connect();
+    $user_dn = auth_ldap_find_userdn($ldapconnection, $username);
+    $search_attribs = array($CFG->ldap_expireattr);
+    $sr = ldap_read($ldapconnection, $user_dn, 'objectclass=*', $search_attribs);
+    if ($sr)  {
+        $info=ldap_get_entries($ldapconnection, $sr);
+        if ( empty($info[0][strtolower($CFG->ldap_expireattr)][0])) {
+            //error_log("ldap: no expiration value".$info[0][$CFG->ldap_expireattr]);
+            // no expiration attribute, password does not expire
+            $result = 0;
+        } else {
+            $now = time();
+            $expiretime = auth_ldap_expirationtime2unix($info[0][strtolower($CFG->ldap_expireattr)][0]);
+            if ($expiretime > $now) {
+                $result = ceil(($expiretime - $now) / DAYSECS);
+            } else {
+                $result = floor(($expiretime - $now) / DAYSECS);
+            }    
+        }
+    } else {    
+        error_log("ldap: auth_password_expire did't find expiration time!.");
+    }    
+
+    //error_log("ldap: auth_password_expire user $user_dn expires in $result days!");
+    return $result;
+}
+
 function auth_sync_users ($unsafe_optimizations = false, $bulk_insert_records = 1) {
 //Syncronizes userdb with ldap
 //This will add, rename 
@@ -545,7 +579,7 @@ function auth_ldap_init () {
 
     global $CFG;
     $default['ldap_objectclass'] = array(
-                        'edir' => 'inetOrgPerson',
+                        'edir' => 'User',
                         'posix' => 'posixAccount',
                         'samba' => 'sambaSamAccount',
                         'ad' => 'user',
@@ -559,12 +593,28 @@ function auth_ldap_init () {
                         'default' => 'cn'
                         );
     $default['ldap_memberattribute'] = array(
-                        'edir' => 'groupMembership',
+                        'edir' => 'member',
                         'posix' => 'member',
                         'samba' => 'member',
                         'ad' => 'member', //is this right?
                         'default' => 'member'
                         );
+    $default['ldap_memberattribute_isdn'] = array(
+                        'edir' => '1',
+                        'posix' => '0',
+                        'samba' => '0', //is this right?
+                        'ad' => '0', //is this right?
+                        'default' => '0'
+                        );
+    $default['ldap_expireattr'] = array (
+                        'edir' => 'passwordExpirationTime',
+                        'posix' => 'shadowExpire',
+                        'samba' => '', //No support yet
+                        'ad' => '', //No support yet
+                        'default' => ''
+                        );
+  
+
 
     foreach ($default as $key => $value) {
         //set defaults if overriding fields not set
@@ -572,7 +622,7 @@ function auth_ldap_init () {
             if (!empty($CFG->ldap_user_type) && !empty($default[$key][$CFG->ldap_user_type])) {
                 $CFG->{$key} = $default[$key][$CFG->ldap_user_type];
             }else {
-                //use defaut value if user_type not set
+                //use default value if user_type not set
                 if(!empty($default[$key]['default'])){
                     $CFG->$key = $default[$key]['default'];
                 }else {
@@ -589,29 +639,63 @@ function auth_ldap_init () {
     //all chages go in $CFG , no need to return value
 }
 
+function auth_ldap_expirationtime2unix ($time) {
+// takes expriration timestamp readed from ldap
+// returns it as unix seconds
+// depends on $CFG->usertype variable
+
+    global $CFG;
+    $result = false;
+    switch ($CFG->ldap_user_type) {
+        case 'edir':
+            $yr=substr($time,0,4);
+            $mo=substr($time,4,2);
+            $dt=substr($time,6,2);
+            $hr=substr($time,8,2);
+            $min=substr($time,10,2);
+            $sec=substr($time,12,2);
+            $result = mktime($hr,$min,$sec,$mo,dt,$yr); 
+            break;
+        case 'posix':
+            $result = $time * DAYSECS ; //The shadowExpire contains the number of DAYS between 01/01/1970 and the actual expiration date
+            break;
+        default:  
+            error('CFG->ldap_user_type not defined or function auth_ldap_expirationtime2unix does not support selected type!');
+    }        
+    return $result;
+}
+
 function auth_ldap_isgroupmember ($username='', $groupdns='') {
 // Takes username and groupdn(s) , separated by ;
 // Returns true if user is member of any given groups
 
-    global $CFG, $USER;
-
-   
+    global $CFG ;
+    $result = false;
+    $ldapconnection = auth_ldap_connect();
+    
     if (empty($username) OR empty($groupdns)) {
-        return false;
+        return $result;
     }
     
+    if ($CFG->ldap_memberattribute_isdn) {
+        $username=auth_ldap_find_userdn($ldapconnection, $username);
+    }
+
     $groups = explode(";",$groupdns);
 
-    //build filter
-    $filter = "(& ($CFG->ldap_user_attribute=$username)(|";
     foreach ($groups as $group){
-        $filter .= "($CFG->ldap_memberattribute=$group)";
+        $search = @ldap_read($ldapconnection, $group,  '('.$CFG->ldap_memberattribute.'='.$username.')', array($CFG->ldap_memberattribute));
+        if ($search) {$info = ldap_get_entries($ldapconnection, $search);
+        
+            if ($info['count'] > 0 ) {
+                // user is member of group
+                $result = true;
+                break;
+            }
+        }    
     }
-    $filter .= "))";
-    //search
-    $result = auth_ldap_get_userlist($filter);
    
-    return count($result);
+    return $result;
 
 }
 function auth_ldap_connect(){

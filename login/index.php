@@ -20,6 +20,27 @@
             notify("Could not create guest user record !!!");
         }
     }
+    
+    //Define variables used in page
+    if (!$site = get_site()) {
+        error("No site found!");
+    }
+
+    if (empty($CFG->langmenu)) {
+        $langmenu = "";
+    } else {
+        $currlang = current_language();
+        $langs    = get_list_of_languages();
+        if (empty($CFG->loginhttps)) {
+            $wwwroot = $CFG->wwwroot;
+        } else {
+            $wwwroot = str_replace('http','https',$CFG->wwwroot);
+        }
+        $langmenu = popup_form ("$wwwroot/login/index.php?lang=", $langs, "chooselang", $currlang, "", "", "", true);
+    }
+
+    $loginsite = get_string("loginsite");
+
 
     $frm = false;
     if ((!empty($SESSION->wantsurl) and strstr($SESSION->wantsurl,"username=guest")) or $loginguest) {
@@ -69,13 +90,19 @@
             unset($SESSION->lang);
             $SESSION->justloggedin = true;
 
+            //Select password change url
+            if (is_internal_auth() || $CFG->{'auth_'.$USER->auth.'_stdchangepassword'}){
+                $passwordchangeurl=$CFG->wwwroot.'/login/change_password.php';
+            } elseif($CFG->changepassword) {
+                $passwordchangeurl=$CFG->changepassword;
+            } 
+            
+
             // check whether the user should be changing password
             reload_user_preferences();
             if ($USER->preference['auth_forcepasswordchange']){
-                if (is_internal_auth() || $CFG->{'auth_'.$USER->auth.'_stdchangepassword'}){
-                    redirect("$CFG->wwwroot/login/change_password.php");
-                } elseif($CFG->changepassword) {
-                    redirect($CFG->changepassword);
+                if (isset($passwordchangeurl)) {
+                    redirect($passwordchangeurl);
                 } else {
                     error("You cannot proceed without changing your password. 
                            However there is no available page for changing it.
@@ -83,16 +110,39 @@
                 }
             }
 
+            
+            
             if (user_not_fully_set_up($USER)) {
-                redirect("$CFG->wwwroot/user/edit.php?id=$USER->id&amp;course=".SITEID);
+                $urltogo = $CFG->wwwroot.'/user/edit.php?id='.$USER->id.'&amp;course='.SITEID;
 
             } else if (strpos($wantsurl, $CFG->wwwroot) === 0) {   /// Matches site address
-                redirect($wantsurl);
+                $urltogo = $wantsurl;
 
             } else {
-                redirect("$CFG->wwwroot/");      /// Go to the standard home page
+                $urltogo = $CFG->wwwroot.'/';      /// Go to the standard home page
             }
-    
+
+            // check if user password has expired
+            // Currently supported only for ldap-authentication module
+            if (isset($CFG->ldap_expiration) && $CFG->ldap_expiration == 1 ) {
+                if (function_exists('auth_password_expire')){
+                    $days2expire = auth_password_expire($USER->username);
+                    if (intval($days2expire) > 0 && intval($days2expire) < intval($CFG->{$USER->auth.'_expiration_warning'})) {
+                        print_header("$site->fullname: $loginsite", "$site->fullname", $loginsite, $focus, "", true, "<div align=\"right\">$langmenu</div>"); 
+                        notice_yesno(get_string('auth_passwordwillexpire', 'auth', $days2expire), $passwordchangeurl, $urltogo); 
+                        print_footer();
+                        exit;
+                    } elseif (intval($days2expire) < 0 ) {
+                        print_header("$site->fullname: $loginsite", "$site->fullname", $loginsite, $focus, "", true, "<div align=\"right\">$langmenu</div>"); 
+                        notice_yesno(get_string('auth_passwordisexpired', 'auth'), $passwordchangeurl, $urltogo);
+                        print_footer();
+                        exit;
+                    }    
+                }
+            }
+
+            redirect($urltogo);
+            
             reset_login_count();
 
             die;
@@ -128,25 +178,6 @@
         $show_instructions = false;
     }
     
-    if (!$site = get_site()) {
-        error("No site found!");
-    }
-
-    if (empty($CFG->langmenu)) {
-        $langmenu = "";
-    } else {
-        $currlang = current_language();
-        $langs    = get_list_of_languages();
-        if (empty($CFG->loginhttps)) {
-            $wwwroot = $CFG->wwwroot;
-        } else {
-            $wwwroot = str_replace('http','https',$CFG->wwwroot);
-        }
-        $langmenu = popup_form ("$wwwroot/login/index.php?lang=", $langs, "chooselang", $currlang, "", "", "", true);
-    }
-
-    $loginsite = get_string("loginsite");
-
     print_header("$site->fullname: $loginsite", "$site->fullname", $loginsite, $focus, "", true, "<div align=\"right\">$langmenu</div>"); 
     include("index_form.html");
     print_footer();

@@ -77,6 +77,8 @@ $string['auth_nonedescription'] = 'Users can sign in and create valid accounts i
 $string['auth_nonetitle'] = 'No authentication';
 $string['auth_pamdescription'] = 'This method uses PAM to access the native usernames on this server. You have to install <a href=\"http://www.math.ohio-state.edu/~ccunning/pam_auth/\" target=\"_blank\">PHP4 PAM Authentication</a> in order to use this module.';
 $string['auth_pamtitle'] = 'PAM (Pluggable Authentication Modules)';
+$string['auth_passwordwillexpire'] = 'Your password will expire in $a days. Do you want change your password now?';
+$string['auth_passwordisexpired'] = 'Your password is expired. Do you want change your password now?';
 $string['auth_pop3description'] = 'This method uses a POP3 server to check whether a given username and password is valid.';
 $string['auth_pop3host'] = 'The POP3 server address. Use the IP number, not DNS name.';
 $string['auth_pop3mailbox'] = 'Name of the mailbox to attempt a connection with.  (usually INBOX)';
