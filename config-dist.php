@@ -109,6 +109,15 @@ $CFG->unzip = "/usr/bin/unzip";
 
 $CFG->slasharguments = true;
 
+// If this server needs to use a proxy computer (eg a firewall)
+// to access the Internet, then provide the proxy details here.
+// This will only affect a few minor features such as the ability
+// to see user locations plotted on a graph.
+// Otherwise, leave these blank
+
+$CFG->proxyhost = "";
+$CFG->proxyport = "";
+
 
 // You should not need to change anything else. To continue setting up 
 // Moodle, use your web browser to go to the moodle/admin web page.
