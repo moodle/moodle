@@ -8,7 +8,7 @@
 
     require_variable($id);   //course
     optional_variable($sort, "u.lastaccess");  //how to sort students
-    optional_variable($dir,"ASC");   //how to sort students
+    optional_variable($dir,"DESC");   //how to sort students
 
     if (! $course = get_record("course", "id", $id)) {
         error("Course ID is incorrect");
@@ -50,20 +50,15 @@
     if ($students = get_course_students($course->id, "$sort $dir")) {
         $numstudents = count($students);
         echo "<H2 align=center>$numstudents $course->students</H2>";
-        if ($numstudents < 30) {
+        if ($numstudents > 30) {
             foreach ($students as $student) {
                 print_user($student, $course, $string);
             }
         } else {  // Print one big table with abbreviated info
-            if ($dir == "ASC") {
-                $dir = "DESC";
-            } else {
-                $dir = "ASC";
-            }
             $table->head = array ("&nbsp;",
-                 "<A HREF=\"index.php?id=$course->id&sort=u.firstname&dir=$dir\">$string->name</A>",
-                 "<A HREF=\"index.php?id=$course->id&sort=u.country&dir=$dir\">$string->location</A>",
-                 "<A HREF=\"index.php?id=$course->id&sort=u.lastaccess&dir=$dir\">$string->lastaccess</A>");
+                 "$string->name <A HREF=\"index.php?id=$course->id&sort=u.firstname&dir=ASC\"><IMG BORDER=0 SRC=\"../pix/t/down.gif\"></A>",
+                 "$string->location <A HREF=\"index.php?id=$course->id&sort=u.country&dir=ASC\"><IMG BORDER=0 SRC=\"../pix/t/down.gif\"></A>",
+                 "$string->lastaccess <A HREF=\"index.php?id=$course->id&sort=u.lastaccess&dir=DESC\"><IMG BORDER=0 SRC=\"../pix/t/down.gif\"></A>");
             $table->align = array ("LEFT", "LEFT", "LEFT", "LEFT");
             $table->size = array ("35", "*", "*", "*");
             
@@ -76,7 +71,7 @@
                 }
 
                 $table->data[] = array (print_user_picture($student->id, $course->id, $student->picture, false, true),
-                    "<B>&nbsp;<A HREF=\"$CFG->wwwroot/user/view.php?id=$student->id&course=$course->id\">$student->firstname $student->lastname</A></B>",
+                    "<B><A HREF=\"$CFG->wwwroot/user/view.php?id=$student->id&course=$course->id\">$student->firstname $student->lastname</A></B>",
                     "$student->city, ".$COUNTRIES["$student->country"],
                     "$lastaccess");
             }
