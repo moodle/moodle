@@ -230,6 +230,7 @@
             redirect("edit.php");
         } else { // use the old code which simply overwrites old versions
             $question = $QUIZ_QTYPES[$qtype]->save_question($question, $form, $course);
+            redirect("edit.php");
         }
     } 
 
