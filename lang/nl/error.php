@@ -1,7 +1,8 @@
 <?PHP // $Id$ 
-      // error.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
+      // error.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004100800)
 
 
+$string['confirmsesskeybad'] = 'Je sessiesleutel om deze actie uit te voeren kon niet bevestigd worden. Deze beveiligingsfunctie verhindert dat er per ongeluk of met verkeerde bedoelingen belangrijke functies in jouw naam uitgevoerd kunnen worden. Bedenk goed of je deze opdracht wel echt wou uitvoeren.';
 $string['coursegroupunknown'] = 'Het vak dat met groep $a overeenkomt is niet gespecifieerd';
 $string['erroronline'] = 'Fout op lijn $a';
 $string['fieldrequired'] = '\"$a\" is een vereist veld';
