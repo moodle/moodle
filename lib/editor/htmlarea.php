@@ -103,8 +103,8 @@ HTMLArea.Config = function () {
 		[ "justifyleft", "justifycenter", "justifyright", "justifyfull", "separator",
 		  "insertorderedlist", "insertunorderedlist", "outdent", "indent", "separator",
 		  "forecolor", "hilitecolor", "separator",
-		  "inserthorizontalrule", "createlink", "insertimage", "inserttable", "htmlmode", "separator",
-		  "popupeditor", "separator", "showhelp", "about", "insertsmile", "insertchar" ]
+		  "inserthorizontalrule", "createlink", "insertimage", "inserttable",
+		  "insertsmile", "insertchar", "separator", "htmlmode", "separator", "popupeditor" ]
 	];
 
 	this.fontname = {
