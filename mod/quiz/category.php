@@ -68,6 +68,10 @@
     /// DISPLAY THE NORMAL USER INTERFACE
     $qcobject->display_user_interface();
 
+    print_footer($course);
+
+
+
 /**
 * Class quiz_category_object
 *
@@ -141,24 +145,17 @@ class quiz_category_object {
         $this->initialize();
         
         /// Interface for adding a new category:
-        echo '<h2 align="center">';
-        echo $this->str->addcategory;
-        helpbutton("categories_edit", $this->str->addcategory, "quiz");
-        echo '</h2>';
-        echo '<table width="100%"><tr><td>';
+        print_heading_with_help($this->str->addcategory, 'categories_edit', 'quiz');
         $this->output_new_table();
-        echo '</td></tr></table>';
+        echo '<br />';
     
         /// Interface for editing existing categories
-        echo '<h2 align="center">';
-        echo $this->str->editcategories;
-        helpbutton("categories", $this->str->editcategories, "quiz");
-        echo '</h2>';
-        echo '<table width="100%"><tr><td>';
+        print_heading_with_help($this->str->editcategories, 'categories', 'quiz');
         $this->output_edit_table();
-        echo '</td></tr></table>';
+        echo '<br />';
+
         print_continue('edit.php');
-        print_footer($this->course);
+
     }
 
  
@@ -195,7 +192,7 @@ class quiz_category_object {
         $this->newtable->head  = array ($this->str->parent, $this->str->category, $this->str->categoryinfo, $this->str->publish, $this->str->action);
         $this->newtable->width = 200;
         $this->newtable->data[] = array();
-        $this->newtable->tablealign = 'left';
+        $this->newtable->tablealign = 'center';
         
         /// Each section below adds a data cell to the table row
         
@@ -230,7 +227,7 @@ class quiz_category_object {
         echo "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\">";
         echo '<input type="hidden" name="id" value="'. $this->course->id . '" />';
         echo '<input type="hidden" name="addcategory" value="true" />';
-        echo make_table($this->newtable);
+        print_table($this->newtable);
         echo '</form>';
     }
     
@@ -245,7 +242,7 @@ class quiz_category_object {
         $this->edittable->head  = array ($this->str->course, $this->str->category, $this->str->categoryinfo, $this->str->questions, $this->str->publish, 
                                     $this->str->delete, $this->str->order, $this->str->movecategoryto);
         $this->edittable->width = 200;
-        $this->edittable->tablealign = 'left';
+        $this->edittable->tablealign = 'center';
         
         // get list of short names to add to the course display.  Only necessary if user has admin view.
         if (isadmin()) {
@@ -255,7 +252,7 @@ class quiz_category_object {
             $courses = $this->course->shortname;
         }
         $this->build_edit_table_body($this->categories, $courses);
-        echo make_table($this->edittable);
+        print_table($this->edittable);
     }
 /**
 * Recursively builds up the edit-categories table body
@@ -464,7 +461,7 @@ class quiz_category_object {
         echo "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\">";
         echo '<input type="hidden" name="id" value="'. $this->course->id . '" />';
         echo '<input type="hidden" name="updateid" value=' . $category->id . '" />';
-        echo make_table($edittable);
+        print_table($edittable);
         echo '</form></p>';
     }
 
