@@ -23,17 +23,17 @@
 
             if ($form->id) {
                 if (update_record("course", $form)) {
-		            redirect("$CFG->wwwroot/admin/index.php", "Changes saved");
+		            redirect("$CFG->wwwroot/admin/index.php", get_string("changessaved"));
                 } else {
                     error("Serious Error! Could not update the site record! (id = $form->id)");
                 }
             } else {
                 if ($newid = insert_record("course", $form)) {
-                    $cat->name = "General";
+                    $cat->name = get_string("miscellaneous");
                     if (insert_record("course_categories", $cat)) {
-		                redirect("$CFG->wwwroot/admin/index.php", "Changes saved", "1");
+		                redirect("$CFG->wwwroot/admin/index.php", get_string("changessaved"), "1");
                     } else {
-                        error("Serious Error! Could not set up the default categories!");
+                        error("Serious Error! Could not set up a default course category!");
                     }
                 } else {
                     error("Serious Error! Could not set up the site!");

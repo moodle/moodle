@@ -1,3 +1,183 @@
+2002-09-09 Monday 00:13  martin
+
+	* lib/weblib.php: 
+	
+	Added height and width to smiley icons, to make emails look better
+	in circumstances where external images are blocked (eg some webmail
+	programs like squirrelmail).
+
+2002-09-09 Monday 00:04  martin
+
+	* mod/forum/lib.php: 
+	
+	Added an "unsubscribe" link to emails
+
+2002-09-08 Sunday 23:39  martin
+
+	* mod/forum/lib.php: 
+	
+	Fixed a bug.  When replying to an email copy, you would be
+	forwarded to the login screen to login first.  However, this was
+	being saved as the place to go back to after replying.
+	
+	I added a check for this so now it behaves as you'd expect.
+
+2002-09-08 Sunday 17:47  martin
+
+	* mod/choice/mod.html: 
+	
+	Text window a bit bigger
+
+2002-09-08 Sunday 17:42  martin
+
+	* lang/en/choice.php, mod/choice/lib.php, mod/choice/mod.html,
+	mod/choice/report.php, mod/choice/version.php,
+	mod/choice/view.html, mod/choice/view.php: 
+	
+	Choices now support up to 6 choices.   Backward compatible to
+	2-choice format.
+
+2002-09-08 Sunday 17:41  martin
+
+	* course/: social.php, topics.php, weeks.php: 
+	
+	Tip over 'Edit profile' is the user's name
+
+2002-09-08 Sunday 17:22  martin
+
+	* lang/en/help/choice/options.html: 
+	
+	Help for choices
+
+2002-09-08 Sunday 13:29  martin
+
+	* course/: social.php, topics.php, weeks.php: 
+	
+	Clarified the "participants" link ...
+
+2002-09-08 Sunday 13:23  martin
+
+	* course/view.php: 
+	
+	Link at bottom now goes to site home, not this page
+
+2002-09-08 Sunday 13:15  martin
+
+	* course/teachers.php, lang/en/help/teachers.html: 
+	
+	Added documentation to the teachers page.
+
+2002-09-08 Sunday 13:15  martin
+
+	* lib/moodlelib.php: 
+	
+	Improved print_table() a bit (can now specify column widths)
+
+2002-09-08 Sunday 11:34  martin
+
+	* course/teachers.php: 
+	
+	Need this file to go with the previous changes!
+
+2002-09-08 Sunday 11:34  martin
+
+	* lang/en/moodle.php, user/index.php, user/lib.php: 
+	
+	Changes to improve display of teachers
+
+2002-09-08 Sunday 11:24  martin
+
+	* version.php, course/edit.html, course/edit.php, course/lib.php,
+	course/social.php, course/topics.php, course/weeks.php,
+	lang/en/moodle.php, lib/moodlelib.php, lib/db/mysql.sql,
+	user/index.php: 
+	
+	Changes to allow much better control over what "teachers" are
+	called in a course.  Firstly, the course settings page now allows
+	the teachers to specify the word they want to use in place of
+	"teachers" and "students" as well as "teacher" and "student". 
+	Secondly, a new teacher admin tool allows any teacher to modify the
+	order and displayed role of teachers in that course.  This affects
+	the display on the course listings, the participants page and so
+	on.
+
+2002-09-07 Saturday 22:57  martin
+
+	* admin/lang.php, lang/en/moodle.php, lib/moodlelib.php: 
+	
+	Improvements to the language checker.  As well as checking for
+	missing strings, you can now see the current language compared
+	side-by-side with English.
+
+2002-09-07 Saturday 22:56  martin
+
+	* admin/index.php: 
+	
+	Add a link if a "manage database" directory exists
+
+2002-09-07 Saturday 13:01  martin
+
+	* mod/newmodule_template.zip: 
+	
+	Slight update to README
+
+2002-09-07 Saturday 11:54  martin
+
+	* mod/newmodule_template.zip: 
+	
+	Added a README that explains the process
+
+2002-09-07 Saturday 11:31  martin
+
+	* mod/: README, newmodule_template.zip: 
+	
+	Added a template for new modules that contains the bare
+	necessities.
+
+2002-09-06 Friday 23:17  martin
+
+	* version.php: 
+	
+	Checking in the current release number for CVS users
+
+2002-09-06 Friday 23:10  martin
+
+	* user/view.php: 
+	
+	Don't try and print the last access date if it doesn't exist
+
+2002-09-06 Friday 22:06  martin
+
+	* version.php, admin/index.php, lib/moodlelib.php: 
+	
+	Added a new $release variable that shows the user-friendly version
+	number
+
+2002-09-06 Friday 22:05  martin
+
+	* lib/setup.php: 
+	
+	Cleaned up a bit
+
+2002-09-06 Friday 01:31  martin
+
+	* user/edit.php: 
+	
+	Fixed bug in password checking for new admin user ...
+
+2002-09-05 Thursday 20:29  martin
+
+	* UPGRADING.txt: 
+	
+	Updated the info to mention that the upgrading only works if you
+	are logged in as the *administrator* and visit the site home page.
+
+2002-09-05 Thursday 20:25  martin
+
+	* CHANGES: 
+	
+	CHANGES UP TO 1.0.3.1
+
 2002-09-05 Thursday 20:24  martin
 
 	* version.php: 

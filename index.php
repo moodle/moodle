@@ -57,8 +57,15 @@
          }
 
          if ($site->newsitems > 0 ) {
-             print_simple_box(get_string("courses"), "CENTER", $side, "$THEME->cellheading");
-             print_all_courses($cat=1, "minimal", 10);
+             $categories = get_all_categories();
+             if (count($categories) > 1) {
+                 print_simple_box(get_string("categories"), "CENTER", $side, "$THEME->cellheading");
+                 print_course_categories($categories, "none", $side);
+             } else {
+                 print_simple_box(get_string("courses"), "CENTER", $side, "$THEME->cellheading");
+                 $category = array_shift($categories);
+                 print_all_courses($category->id, "minimal", 10);
+             }
          } 
          print_spacer(1,$side);
      }
@@ -78,7 +85,7 @@
      if ($site->newsitems == 0 ) {
          print_simple_box(get_string("availablecourses"), "CENTER", "100%", "$THEME->cellheading");
          print_spacer(8,1);
-         print_all_courses();
+         print_all_courses("all");
 
      } else {
          if (! $newsforum = forum_get_course_forum($site->id, "news")) {

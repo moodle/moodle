@@ -172,10 +172,16 @@ function print_log($course, $user=0, $date=0, $order="ORDER BY l.time ASC") {
 }
 
 
-function print_all_courses($cat=1, $style="full", $maxcount=999) {
+function print_all_courses($category="all", $style="full", $maxcount=999) {
     global $CFG;
 
-    if ($courses = get_records("course", "category", $cat, "fullname ASC")) {
+    if ($category == "all") {
+        $courses = get_records_sql("SELECT * FROM course WHERE category > 0 ORDER BY fullname ASC");
+    } else {
+        $courses = get_records("course", "category", $category, "fullname ASC");
+    }
+
+    if ($courses) {
         if ($style == "minimal") {
             $count = 0;
             $icon  = "<IMG SRC=\"pix/i/course.gif\" HEIGHT=16 WIDTH=16 ALT=\"".get_string("course")."\">";
@@ -459,6 +465,10 @@ function get_all_sections($courseid) {
                             ORDER BY section");
 }
 
+function get_all_categories() {
+    return get_records_sql("SELECT * FROM course_categories ORDER by name");
+}
+
 function print_section($courseid, $section, $mods, $modnamesused, $absolute=false, $width="100%") {
     global $CFG;
 
@@ -521,6 +531,8 @@ function print_admin_links ($siteid, $width=180) {
     $modicon[]=$icon;
     $moddata[]="<A HREF=\"$CFG->wwwroot/course/edit.php\">".get_string("addnewcourse")."</A>";
     $modicon[]=$icon;
+    $moddata[]="<A HREF=\"$CFG->wwwroot/course/categories.php\">".get_string("categories")."</A>";
+    $modicon[]=$icon;
     $moddata[]="<A HREF=\"$CFG->wwwroot/course/teacher.php\">".get_string("assignteachers")."</A>";
     $modicon[]=$icon;
     $moddata[]="<A HREF=\"$CFG->wwwroot/course/delete.php\">".get_string("deletecourse")."</A>";
@@ -570,6 +582,20 @@ function print_course_admin_links($course, $width=180) {
     print_side_block("", $admindata, "", $adminicon, $width);
 }
 
+function print_course_categories($categories, $selected="none", $width=180) {
+    global $CFG, $THEME;
+
+    foreach ($categories as $cat) {
+        $caticon[]="<IMG SRC=\"$CFG->wwwroot/pix/i/course.gif\" HEIGHT=16 WIDTH=16>";
+        if ($cat->id == $selected) {
+            $catdata[]="$cat->name";
+        } else {
+            $catdata[]="<A HREF=\"$CFG->wwwroot/course/index.php?category=$cat->id\">$cat->name</A>";
+        }
+    }
+    $showall = "<P><A HREF=\"$CFG->wwwroot/course/index.php?category=all\">".get_string("fulllistofcourses")."</A>...";
+    print_side_block("", $catdata, $showall, $caticon, $width);
+}
 
 function print_log_graph($course, $userid=0, $type="course.png", $date=0) {
     global $CFG;
