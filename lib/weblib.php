@@ -1494,7 +1494,7 @@ function highlightfast($needle, $haystack) {
 function print_header ($title='', $heading='', $navigation='', $focus='', $meta='',
                        $cache=true, $button='&nbsp;', $menu='', $usexml=false, $bodytags='') {
 
-    global $USER, $CFG, $SESSION, $ME;
+    global $USER, $CFG, $THEME, $SESSION, $ME;
 
 /// This is an ugly hack to be replaced later by a proper global $COURSE
     global $course;
