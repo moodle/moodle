@@ -106,7 +106,7 @@
                         error("Answer received for non-existent question ($key)!");
                     }
                 }
-                $questions[$key]->answer[] = $value;  // Store answers in array
+                $questions[$key]->answer[] = trim($value);  // Store answers in array (whitespace trimmed)
             }
         }
 

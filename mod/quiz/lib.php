@@ -641,6 +641,7 @@ function quiz_print_cat_question_list($categoryid) {
     choose_from_menu($QUIZ_QUESTION_TYPE, "type", "", "");
     echo "<INPUT TYPE=hidden NAME=category VALUE=\"$category->id\">";
     echo "<INPUT TYPE=submit NAME=new VALUE=\"$strcreatenewquestion\">";
+    helpbutton("questiontypes", $strcreatenewquestion, "quiz");
     echo "</FORM>";
     echo "</CENTER>";
 
@@ -937,7 +938,7 @@ function quiz_grade_attempt_results($quiz, $questions) {
         switch ($question->type) {
             case SHORTANSWER:
                 if ($question->answer) {
-                    $question->answer = $question->answer[0];
+                    $question->answer = trim($question->answer[0]);
                 } else {
                     $question->answer = "";
                 }

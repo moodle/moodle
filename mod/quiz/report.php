@@ -116,6 +116,9 @@
 
         $users = array();
         foreach ($attempts as $attempt) {
+            if (!$attempt->timefinish) {  // Skip incomplete attempts
+                continue;
+            }
             if (! $questions = quiz_get_attempt_responses($attempt)) {
                 error("Could not reconstruct quiz results for attempt $attempt->id!");
             }

@@ -28,6 +28,7 @@
         }
         print_date_selector("openday", "openmonth", "openyear", $form->timeopen);
         print_time_selector("openhour", "openminute", $form->timeopen);
+        helpbutton("timeopen", get_string("quizopen","quiz"), "quiz");
      ?>
     </TD>
 </TR>
@@ -40,6 +41,7 @@
         }
         print_date_selector("closeday", "closemonth", "closeyear", $form->timeclose);
         print_time_selector("closehour", "closeminute", $form->timeclose);
+        helpbutton("timeopen", get_string("quizclose","quiz"), "quiz");
      ?>
     </TD>
 <TR valign=top>
@@ -53,6 +55,7 @@
             $options[$i] = "$i ".strtolower(get_string("attempts", "quiz"));
         }
         choose_from_menu($options, "attempts", "$form->attempts", "");
+        helpbutton("attempts", get_string("attemptsallowed","quiz"), "quiz");
      ?>
     </TD>
 </TR>
@@ -66,6 +69,7 @@
         $options[3] = get_string("attemptfirst", "quiz");
         $options[4] = get_string("attemptlast", "quiz");
         choose_from_menu($QUIZ_GRADE_METHOD, "grademethod", "$form->grademethod", "");
+        helpbutton("grademethod", get_string("grademethod","quiz"), "quiz");
      ?>
     </TD>
 </TR>
@@ -77,6 +81,7 @@
         $options[0] = get_string("no");
         $options[1] = get_string("yes");
         choose_from_menu($options, "feedback", "$form->feedback", "");
+        helpbutton("feedback", get_string("showfeedback","quiz"), "quiz");
      ?>
     </TD>
 </TR>
@@ -88,6 +93,7 @@
         $options[0] = get_string("no");
         $options[1] = get_string("yes");
         choose_from_menu($options, "correctanswers", "$form->correctanswers", "");
+        helpbutton("correctanswers", get_string("showcorrectanswer","quiz"), "quiz");
      ?>
     </TD>
 </TR>
@@ -99,6 +105,7 @@
             $grades[$i] = $i;
         }
         choose_from_menu($grades, "grade", "$form->grade", "");
+        helpbutton("maxgrade", get_string("maximumgrade"), "quiz");
      ?>
     </TD>
 </TR>

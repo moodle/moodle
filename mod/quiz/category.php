@@ -81,7 +81,10 @@
 
 /// Print heading
 
-    print_heading($streditcategories);
+    echo "<P ALIGN=CENTER><FONT SIZE=3>";
+    echo $streditcategories;
+    helpbutton("categories", $strcategories, "quiz");
+    echo "</FONT></P>";
 
 /// If data submitted, then process and store.
 

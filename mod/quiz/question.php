@@ -248,7 +248,7 @@
         case SHORTANSWER:
             $options = get_record("quiz_shortanswer", "question", "$question->id");// OK to fail
             $answersraw = get_records_list("quiz_answers", "id", "$options->answers");// OK to fail
-            print_heading(get_string("editingshortanswer", "quiz"));
+            print_heading_with_help(get_string("editingshortanswer", "quiz"), "shortanswer", "quiz");
             if ($answersraw) {
                 foreach ($answersraw as $answer) {
                     $answers[] = $answer;   // to renumber index 0,1,2...
@@ -266,7 +266,7 @@
             } else {
                 $question->answer = 0;
             }
-            print_heading(get_string("editingtruefalse", "quiz"));
+            print_heading_with_help(get_string("editingtruefalse", "quiz"), "truefalse", "quiz");
             require("truefalse.html");
         break;
 
@@ -278,13 +278,14 @@
                     $answers[] = $answer;   // to renumber index 0,1,2...
                 }
             }
-            print_heading(get_string("editingmultichoice", "quiz"));
+            print_heading_with_help(get_string("editingmultichoice", "quiz"), "multichoice", "quiz");
             require("multichoice.html");
         break;
-            case RANDOM:
-                print_heading("Sorry, random questions are not supported yet");
-                print_continue("edit.php");
-            break;
+
+        case RANDOM:
+            print_heading_with_help(get_string("editingrandom", "quiz"), "random", "quiz");
+            print_continue("edit.php");
+        break;
 
         default:
             error("Invalid question type");
