@@ -24,6 +24,7 @@ $QUIZ_QUESTION_TYPE = array ( MULTICHOICE   => get_string("multichoice", "quiz")
                               TRUEFALSE     => get_string("truefalse", "quiz"),
                               SHORTANSWER   => get_string("shortanswer", "quiz"),
                               MATCH         => get_string("match", "quiz"),
+                              RANDOM        => get_string("random", "quiz"),
                               RANDOMSAMATCH => get_string("randomsamatch", "quiz") );
 
 $QUIZ_FILE_FORMAT = array ( "custom"   => get_string("custom", "quiz"),
@@ -237,6 +238,20 @@ function quiz_get_question_grades($quizid, $questionlist) {
                             AND question IN ($questionlist)");
 }
 
+function quiz_get_random_categories($questionlist) {
+/// Given an array of questions, this function looks for random
+/// questions among them and returns a list of categories with 
+/// an associated count of random questions for each.
+
+    global $CFG;
+
+    return get_records_sql_menu("SELECT category,count(*) 
+                            FROM {$CFG->prefix}quiz_questions 
+                            WHERE id IN ($questionlist) 
+                              AND qtype = '".RANDOM."' 
+                              GROUP BY category ");
+}
+
 function quiz_get_grade_records($quiz) {
 /// Gets all info required to display the table of quiz results
 /// for report.php
@@ -250,59 +265,41 @@ function quiz_get_grade_records($quiz) {
 }
 
 function quiz_get_answers($question) {
-// Given a question, returns the correct answers and grades
+// Given a question, returns the correct answers for a given question
     global $CFG;
 
     switch ($question->qtype) {
         case SHORTANSWER:       // Could be multiple answers
-            return get_records_sql("SELECT a.*, sa.usecase, g.grade
+            return get_records_sql("SELECT a.*, sa.usecase
                                       FROM {$CFG->prefix}quiz_shortanswer sa,  
-                                           {$CFG->prefix}quiz_answers a,  
-                                           {$CFG->prefix}quiz_question_grades g
+                                           {$CFG->prefix}quiz_answers a
                                      WHERE sa.question = '$question->id' 
-                                       AND sa.question = a.question
-                                       AND sa.question = g.question");
+                                       AND sa.question = a.question ");
             break;
 
         case TRUEFALSE:         // Should be always two answers
-            return get_records_sql("SELECT a.*, g.grade
-                                      FROM {$CFG->prefix}quiz_answers a, 
-                                           {$CFG->prefix}quiz_question_grades g
-                                     WHERE a.question = '$question->id' 
-                                       AND a.question = g.question");
+            return get_records("quiz_answers", "question", $question->id);
             break;
 
         case MULTICHOICE:       // Should be multiple answers
-            return get_records_sql("SELECT a.*, mc.single, g.grade
+            return get_records_sql("SELECT a.*, mc.single
                                       FROM {$CFG->prefix}quiz_multichoice mc, 
-                                           {$CFG->prefix}quiz_answers a, 
-                                           {$CFG->prefix}quiz_question_grades g
+                                           {$CFG->prefix}quiz_answers a
                                      WHERE mc.question = '$question->id' 
-                                       AND mc.question = a.question 
-                                       AND mc.question = g.question");
+                                       AND mc.question = a.question ");
             break;
 
-        case RANDOM:
-           return false;  // Not done yet
-           break;
-
         case MATCH:
-            return get_records_sql("SELECT ms.*, g.grade
-                                      FROM {$CFG->prefix}quiz_match_sub ms, 
-                                           {$CFG->prefix}quiz_question_grades g
-                                     WHERE ms.question = '$question->id' 
-                                       AND ms.question = g.question");
+            return get_records("quiz_match_sub", "question", $question->id);
            break;
 
         case RANDOMSAMATCH:       // Could be any of many answers, return them all
-            return get_records_sql("SELECT a.*, g.grade
+            return get_records_sql("SELECT a.*
                                       FROM {$CFG->prefix}quiz_questions q,  
-                                           {$CFG->prefix}quiz_answers a,  
-                                           {$CFG->prefix}quiz_question_grades g
+                                           {$CFG->prefix}quiz_answers a
                                      WHERE q.category = '$question->category' 
                                        AND q.qtype = ".SHORTANSWER."
-                                       AND q.id = a.question
-                                       AND g.question = '$question->id'");
+                                       AND q.id = a.question ");
             break;
 
         default:
@@ -321,14 +318,25 @@ function quiz_get_attempt_responses($attempt, $quiz) {
                                         FROM {$CFG->prefix}quiz_responses r, 
                                              {$CFG->prefix}quiz_questions q
                                        WHERE r.attempt = '$attempt->id' 
-                                         AND q.id = r.question
-                                         AND q.id IN ($quiz->questions)")) {
+                                         AND q.id = r.question")) {
         notify("Could not find any responses for that attempt!");
         return false;
     }
 
+
     foreach ($responses as $key => $response) {
-        $responses[$key]->answer = explode(",",$response->answer);
+        if ($response->qtype == RANDOM) {
+            $responses[$key]->random = $response->answer;
+            $responses[$key]->answer = explode(",",$responses[$response->answer]->answer);
+            $responses[$response->answer]->delete = true;
+        } else {
+            $responses[$key]->answer = explode(",",$response->answer);
+        }
+    }
+    foreach ($responses as $key => $response) {
+        if (!empty($response->delete)) {
+            unset($responses[$key]);
+        }
     }
 
     return $responses;
@@ -352,12 +360,14 @@ function quiz_print_correctanswer($text) {
     echo "<P ALIGN=RIGHT><SPAN CLASS=highlight>$text</SPAN></P>";
 }
 
-function quiz_print_question_icon($question) {
+function quiz_print_question_icon($question, $editlink=true) {
 // Prints a question icon
 
     global $QUIZ_QUESTION_TYPE;
 
-    echo "<A HREF=\"question.php?id=$question->id\" TITLE=\"".$QUIZ_QUESTION_TYPE[$question->qtype]."\">";
+    if ($editlink) {
+        echo "<A HREF=\"question.php?id=$question->id\" TITLE=\"".$QUIZ_QUESTION_TYPE[$question->qtype]."\">";
+    }
     switch ($question->qtype) {
         case SHORTANSWER:
             echo "<IMG BORDER=0 HEIGHT=16 WIDTH=16 SRC=\"pix/sa.gif\">";
@@ -378,16 +388,19 @@ function quiz_print_question_icon($question) {
             echo "<IMG BORDER=0 HEIGHT=16 WIDTH=16 SRC=\"pix/rm.gif\">";
             break;
     }
-    echo "</A>\n";
+    if ($editlink) {
+        echo "</A>\n";
+    }
 }
 
-function quiz_print_question($number, $questionid, $grade, $courseid, 
-                             $feedback=NULL, $response=NULL, $actualgrade=NULL, $correct=NULL) {
-/// Prints a quiz question, any format
 
-    if (!$question = get_record("quiz_questions", "id", $questionid)) {
-        notify("Error: Question not found!");
-    }
+
+function quiz_print_question($number, $question, $grade, $courseid, 
+                             $feedback=NULL, $response=NULL, $actualgrade=NULL, $correct=NULL,
+                             $realquestion=NULL) {
+
+/// Prints a quiz question, any format
+/// $question is provided as an object
 
     if (empty($actualgrade)) {
         $actualgrade = 0;
@@ -404,9 +417,18 @@ function quiz_print_question($number, $questionid, $grade, $courseid,
         echo "<P ALIGN=CENTER><FONT SIZE=1>$grade $strmarks</FONT></P>";
     }
     print_spacer(1,100);
-    echo "</TD><TD VALIGN=TOP>";
+    echo "<p align=\"center\">";
+    quiz_print_question_icon($question, false);
+    echo "</p></TD><TD VALIGN=TOP>";
+
+    if (empty($realquestion)) { 
+        $realquestion->id = $question->id;
+    } else {    // Add a marker to connect this question to the actual random parent
+        echo "<input type=\"hidden\" name=\"q{$realquestion->id}rq$question->id\" value=\"x\">\n";
+    }
 
     switch ($question->qtype) {
+
        case SHORTANSWER: 
            if (!$options = get_record("quiz_shortanswer", "question", $question->id)) {
                notify("Error: Missing question options!");
@@ -420,7 +442,7 @@ function quiz_print_question($number, $questionid, $grade, $courseid,
            } else {
                $value = "";
            }
-           echo "<P ALIGN=RIGHT>$stranswer: <INPUT TYPE=TEXT NAME=q$question->id SIZE=20 $value></P>";
+           echo "<P ALIGN=RIGHT>$stranswer: <INPUT TYPE=TEXT NAME=q$realquestion->id SIZE=20 $value></P>";
            if ($feedback) {
                quiz_print_comment("<P ALIGN=right>$feedback[0]</P>");
            }
@@ -474,9 +496,9 @@ function quiz_print_question($number, $questionid, $grade, $courseid,
            }
            echo "<TABLE ALIGN=right cellpadding=5><TR><TD align=right>$stranswer:&nbsp;&nbsp;";
            echo "<TD $truecorrect>";
-           echo "<INPUT $truechecked TYPE=RADIO NAME=\"q$question->id\" VALUE=\"$true->id\">$true->answer";
+           echo "<INPUT $truechecked TYPE=RADIO NAME=\"q$realquestion->id\" VALUE=\"$true->id\">$true->answer";
            echo "</TD><TD $falsecorrect>";
-           echo "<INPUT $falsechecked TYPE=RADIO NAME=\"q$question->id\" VALUE=\"$false->id\">$false->answer</P>";
+           echo "<INPUT $falsechecked TYPE=RADIO NAME=\"q$realquestion->id\" VALUE=\"$false->id\">$false->answer</P>";
            echo "</TD></TR></TABLE><BR CLEAR=ALL>";
            if ($feedback) {
                quiz_print_comment("<P ALIGN=right>$feedback[$feedbackid]</P>");
@@ -511,9 +533,9 @@ function quiz_print_question($number, $questionid, $grade, $courseid,
                }
                echo "<TR><TD valign=top>";
                if ($options->single) {
-                   echo "<INPUT $checked TYPE=RADIO NAME=q$question->id VALUE=\"$answer->id\">";
+                   echo "<INPUT $checked TYPE=RADIO NAME=q$realquestion->id VALUE=\"$answer->id\">";
                } else {
-                   echo "<INPUT $checked TYPE=CHECKBOX NAME=q$question->id"."a$answer->id VALUE=\"$answer->id\">";
+                   echo "<INPUT $checked TYPE=CHECKBOX NAME=q$realquestion->id"."a$answer->id VALUE=\"$answer->id\">";
                }
                echo "</TD>";
                if (empty($feedback) or empty($correct[$answer->id])) {
@@ -532,10 +554,6 @@ function quiz_print_question($number, $questionid, $grade, $courseid,
            }
            echo "</TABLE>";
            echo "</TABLE>";
-           break;
-
-       case RANDOM:
-           echo "<P>Random questions not supported yet</P>";
            break;
 
        case MATCH: 
@@ -563,18 +581,18 @@ function quiz_print_question($number, $questionid, $grade, $courseid,
                echo "</td>";
                if (empty($response)) {
                    echo "<td align=right valign=top>";
-                   choose_from_menu($answers, "q$question->id"."r$subquestion->id");
+                   choose_from_menu($answers, "q$realquestion->id"."r$subquestion->id");
                } else {
                    if (empty($response[$key])) {
                        echo "<td align=right valign=top>";
-                       choose_from_menu($answers, "q$question->id"."r$subquestion->id");
+                       choose_from_menu($answers, "q$realquestion->id"."r$subquestion->id");
                    } else {
                        if ($response[$key] == $correct[$key]) {
                            echo "<td align=right valign=top class=highlight>";
-                           choose_from_menu($answers, "q$question->id"."r$subquestion->id", $response[$key]);
+                           choose_from_menu($answers, "q$realquestion->id"."r$subquestion->id", $response[$key]);
                        } else {
                            echo "<td align=right valign=top>";
-                           choose_from_menu($answers, "q$question->id"."r$subquestion->id", $response[$key]);
+                           choose_from_menu($answers, "q$realquestion->id"."r$subquestion->id", $response[$key]);
                        }
                    }
 
@@ -652,19 +670,19 @@ function quiz_print_question($number, $questionid, $grade, $courseid,
                echo "</td>";
                echo "<td align=right valign=top>";
                if (empty($response)) {
-                   choose_from_menu($randomanswers, "q$question->id"."r$randomquestion->id");
+                   choose_from_menu($randomanswers, "q$realquestion->id"."r$randomquestion->id");
                } else {
                    if (!empty($correct[$key])) {
                        if ($randomanswers[$responseanswer[$key]] == $correct[$key]) {
                            echo "<span=highlight>";
-                           choose_from_menu($randomanswers, "q$question->id"."r$randomquestion->id", $responseanswer[$key]);
+                           choose_from_menu($randomanswers, "q$realquestion->id"."r$randomquestion->id", $responseanswer[$key]);
                            echo "</span><br \>";
                        } else {
-                           choose_from_menu($randomanswers, "q$question->id"."r$randomquestion->id", $responseanswer[$key]);
+                           choose_from_menu($randomanswers, "q$realquestion->id"."r$randomquestion->id", $responseanswer[$key]);
                            quiz_print_correctanswer($correct[$key]);
                        }
                    } else {
-                       choose_from_menu($randomanswers, "q$question->id"."r$randomquestion->id", $responseanswer[$key]);
+                       choose_from_menu($randomanswers, "q$realquestion->id"."r$randomquestion->id", $responseanswer[$key]);
                    }
                    if (!empty($feedback[$key])) {
                        quiz_print_comment($feedback[$key]);
@@ -675,6 +693,9 @@ function quiz_print_question($number, $questionid, $grade, $courseid,
            echo "</table>";
            break;
 
+       case RANDOM:
+           echo "<P>Random questions should not be printed this way!</P>";
+           break;
 
        default: 
            notify("Error: Unknown question type!");
@@ -683,15 +704,39 @@ function quiz_print_question($number, $questionid, $grade, $courseid,
     echo "</TD></TR></TABLE>";
 }
 
-function quiz_print_quiz_questions($quiz, $results=NULL) {
+
+
+function quiz_print_quiz_questions($quiz, $results=NULL, $questions=NULL) {
 // Prints a whole quiz on one page.
+
+    /// Get the questions
 
     if (empty($quiz->questions)) {
         notify("No questions have been defined!", "view.php?id=$cm->id");
         return false;
     }
 
-    $questions = explode(",", $quiz->questions);
+    if (!$questions) {
+        if (!$questions = get_records_list("quiz_questions", "id", $quiz->questions, "")) {
+            notify("Error when reading questions cound not be read from the database!");
+            return false;
+        }
+    }
+
+
+    /// Examine the set of questions for random questions, and retrieve them 
+
+    if (empty($results)) {
+        if ($randomcats = quiz_get_random_categories($quiz->questions)) {
+            foreach ($randomcats as $randomcat => $randomdraw) {
+                /// Get the appropriate amount of random questions from this category
+                if (!$catquestions[$randomcat] = quiz_choose_random_questions($randomcat, $randomdraw)) {
+                    notify(get_string("toomanyrandom", "quiz", $randomcat), "view.php?id=$cm->id");
+                    return false;
+                }
+            }
+        }
+    }
 
     if (!$grades = get_records_list("quiz_question_grades", "question", $quiz->questions, "", "question,grade")) {
         notify("No grades were found for these questions!");
@@ -703,31 +748,47 @@ function quiz_print_quiz_questions($quiz, $results=NULL) {
     echo "<FORM METHOD=POST ACTION=attempt.php onsubmit=\"return confirm('$strconfirmattempt');\">";
     echo "<INPUT TYPE=hidden NAME=q VALUE=\"$quiz->id\">";
 
-    foreach ($questions as $key => $questionid) {
+    $count = 0;
+    foreach ($questions as $question) {
+        $count++;
+
         $feedback       = NULL;
         $response       = NULL;
         $actualgrades   = NULL;
         $correct        = NULL;
-        if (!empty($results)) {
-            if (!empty($results->feedback[$questionid])) {
-                $feedback      = $results->feedback[$questionid];
+        $randomquestion = NULL;
+
+        if (empty($results)) {
+            if ($question->qtype == RANDOM ) {   // Set up random questions
+                $randomquestion = $question;
+                $question = array_pop($catquestions[$randomquestion->category]);
+                $grades[$question->id]->grade = $grades[$randomquestion->id]->grade;
             }
-            if (!empty($results->response[$questionid])) {
-                $response      = $results->response[$questionid];
+        } else {
+            if (!empty($results->feedback[$question->id])) {
+                $feedback      = $results->feedback[$question->id];
             }
-            if (!empty($results->grades[$questionid])) {
-                $actualgrades  = $results->grades[$questionid];
+            if (!empty($results->response[$question->id])) {
+                $response      = $results->response[$question->id];
+            }
+            if (!empty($results->grades[$question->id])) {
+                $actualgrades  = $results->grades[$question->id];
             }
             if ($quiz->correctanswers) {
-                if (!empty($results->correct[$questionid])) {
-                    $correct   = $results->correct[$questionid];
+                if (!empty($results->correct[$question->id])) {
+                    $correct   = $results->correct[$question->id];
                 }
+            }
+            if (!empty($question->random)) {
+                $randomquestion = $question;
+                $question = get_record("quiz_questions", "id", $question->random);
+                $grades[$question->id]->grade = $grades[$randomquestion->id]->grade;
             }
         }
 
         print_simple_box_start("CENTER", "90%");
-        quiz_print_question($key+1, $questionid, $grades[$questionid]->grade, $quiz->course, 
-                            $feedback, $response, $actualgrades, $correct);
+        quiz_print_question($count, $question, $grades[$question->id]->grade, $quiz->course, 
+                            $feedback, $response, $actualgrades, $correct, $randomquestion);
         print_simple_box_end();
         echo "<BR>";
     }
@@ -739,8 +800,12 @@ function quiz_print_quiz_questions($quiz, $results=NULL) {
 
     return true;
 }
+
+
  
 function quiz_get_default_category($courseid) {
+/// Returns the current category
+
     if ($categories = get_records("quiz_categories", "course", $courseid, "id")) {
         foreach ($categories as $category) {
             return $category;   // Return the first one (lowest id)
@@ -801,6 +866,31 @@ function quiz_print_category_form($course, $current) {
     echo "<INPUT TYPE=submit VALUE=\"$streditcats\">";
     echo "</FORM>";
     echo "</TD></TR></TABLE>";
+}
+
+
+
+function quiz_choose_random_questions($category, $draws) {
+/// Given a question category and a number of draws, this function
+/// creates a random subset of that size - returned as an array of questions
+
+    if (!$pool = get_records_select_menu("quiz_questions", 
+                "category = '$category' AND qtype <> ".RANDOM, "", "id,qtype")) {
+        return false;
+    }
+
+    $countpool = count($pool);
+
+    if ($countpool == $draws) {
+        $chosen = $pool;
+    } else if ($countpool < $draws) {
+        return false;
+    } else {
+        $chosen = draw_rand_array($pool, $draws);
+    }
+
+    $chosenlist = implode(",", array_keys($chosen));
+    return get_records_list("quiz_questions", "id", $chosenlist);
 }
 
 
@@ -1127,6 +1217,7 @@ function quiz_calculate_best_grade($quiz, $attempts) {
     }
 }
 
+
 function quiz_save_attempt($quiz, $questions, $result, $attemptnum) {
 /// Given a quiz, a list of attempted questions and a total grade 
 /// this function saves EVERYTHING so it can be reconstructed later
@@ -1163,6 +1254,18 @@ function quiz_save_attempt($quiz, $questions, $result, $attemptnum) {
         $response->attempt = $attempt->id;
         $response->question = $question->id;
         $response->grade = $result->grades[$question->id];
+
+        if ($question->random) {
+            // First save the response of the random question
+            // the answer is the id of the REAL response
+            $response->answer = $question->random;
+            if (!insert_record("quiz_responses", $response)) {
+                notify("Error while saving response");
+                return false;
+            }
+            $response->question = $question->random;
+        }
+
         if (!empty($question->answer)) {
             $response->answer = implode(",",$question->answer);
         } else {
@@ -1194,16 +1297,32 @@ function quiz_grade_attempt_results($quiz, $questions) {
     if (!$questions) {
         error("No questions!");
     }
-    
+
+    if (!$grades = get_records_menu("quiz_question_grades", "quiz", $quiz->id, "", "question,grade")) {
+        error("No grades defined for these quiz questions!");
+    }
+
     $result->sumgrades = 0;
 
     foreach ($questions as $question) {
+
+        if (!empty($question->random)) {      // This question has been randomly chosen
+            $randomquestion = $question;      // Save it for later
+            if (!$question = get_record("quiz_questions", "id", $question->random)) {
+                error("Could not find the real question behind this random question!");
+            }
+            $question->answer = $randomquestion->answer;
+            $question->grade = $grades[$randomquestion->id];
+        } else {
+            $question->grade = $grades[$question->id];
+        }
+        
         if (!$answers = quiz_get_answers($question)) {
             error("No answers defined for question id $question->id!");
         }
 
         $grade    = 0;   // default
-        $correct = array();
+        $correct  = array();
         $feedback = array();
         $response = array();
 
@@ -1227,7 +1346,7 @@ function quiz_grade_attempt_results($quiz, $questions) {
                     }
                     if ($question->answer == $answer->answer) {
                         $feedback[0] = $answer->feedback;
-                        $grade = (float)$answer->fraction * $answer->grade;
+                        $grade = (float)$answer->fraction * $question->grade;
                     }
                 }
                 break;
@@ -1245,7 +1364,7 @@ function quiz_grade_attempt_results($quiz, $questions) {
                         $correct[$answer->id]  = true;
                     }
                     if ($question->answer == $answer->id) {
-                        $grade = (float)$answer->fraction * $answer->grade;
+                        $grade = (float)$answer->fraction * $question->grade;
                         $response[$answer->id] = true;
                     }
                 }
@@ -1263,10 +1382,10 @@ function quiz_grade_attempt_results($quiz, $questions) {
                             if ($questionanswer == $answer->id) {
                                 $response[$answer->id] = true;
                                 if ($answer->single) {
-                                    $grade = (float)$answer->fraction * $answer->grade;
+                                    $grade = (float)$answer->fraction * $question->grade;
                                     continue;
                                 } else {
-                                    $grade += (float)$answer->fraction * $answer->grade;
+                                    $grade += (float)$answer->fraction * $question->grade;
                                 }
                             }
                         }
@@ -1277,21 +1396,24 @@ function quiz_grade_attempt_results($quiz, $questions) {
             case MATCH:
                 $matchcount = $totalcount = 0;
 
-                foreach ($question->answer as $questionanswer) {  // Each answer is "questionid-answerid"
+                foreach ($question->answer as $questionanswer) {  // Each answer is "subquestionid-answerid"
                     $totalcount++;
-                    $qarr = explode('-', $questionanswer);        // Extract question/answer.
-                    if ($qarr[0] == $qarr[1]) {
+                    $qarr = explode('-', $questionanswer);        // Extract subquestion/answer.
+                    $subquestionid = $qarr[0];
+                    $subanswerid = $qarr[1];
+                    if (($subquestionid == $subanswerid) or 
+                        ($answers[$subquestionid]->answertext == $answers[$subanswerid]->answertext)) {   
+                        // Either the ids match exactly, or the answertexts match exactly 
+                        // (in case two subquestions had the same answer)
                         $matchcount++;
-                        $correct[$qarr[0]] = true;
-                        $response[$qarr[0]] = $qarr[1];
-                        $questiongrade = $answers[$qarr[0]]->grade;
+                        $correct[$subquestionid] = true;
                     } else {
-                        $correct[$qarr[0]] = false;
-                        $response[$qarr[0]] = $qarr[1];
+                        $correct[$subquestionid] = false;
                     }
+                    $response[$subquestionid] = $subanswerid;
                 }
 
-                $grade = $questiongrade * $matchcount / $totalcount;
+                $grade = $question->grade * $matchcount / $totalcount;
 
                 break;
 
@@ -1317,13 +1439,19 @@ function quiz_grade_attempt_results($quiz, $questions) {
                         $answer = $answers[$ranswer];         
                         $feedback[$rquestion] = $answer->feedback;
                         if ($answer->question == $rquestion) {    // Check that this answer matches the question
-                            $grade += (float)$answer->fraction * $answer->grade * $answerfraction;
+                            $grade += (float)$answer->fraction * $question->grade * $answerfraction;
                         }
                     }
                 }
                 break;
 
         }
+
+        if (!empty($randomquestion)) {      // This question has been randomly chosen
+            $question = $randomquestion;    // Restore the question->id
+            unset($randomquestion);
+        }
+
         if ($grade < 0.0) {   // No negative grades
             $grade = 0.0;
         }
@@ -1543,6 +1671,9 @@ function quiz_save_question_options($question) {
                     return $result;
                 }
             }
+        break;
+
+        case RANDOM:
         break;
 
         default:

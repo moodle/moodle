@@ -123,7 +123,7 @@
 
         $quiz->feedback = true;
         $quiz->correctanswers = true;
-        quiz_print_quiz_questions($quiz, $result);
+        quiz_print_quiz_questions($quiz, $result, $questions);
 
         if (empty($review)) {
             print_continue("report.php?q=$quiz->id");

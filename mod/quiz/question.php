@@ -268,11 +268,6 @@
             require("multichoice.html");
         break;
 
-        case RANDOM:
-            print_heading_with_help(get_string("editingrandom", "quiz"), "random", "quiz");
-            print_continue("edit.php");
-        break;
-
         case MATCH:
             if (!empty($question->id)) {
                 $options = get_record("quiz_match", "question", $question->id);
@@ -307,6 +302,11 @@
             $numberavailable = count_records("quiz_questions", "category", $category->id, "qtype", SHORTANSWER);
             print_heading_with_help(get_string("editingrandomsamatch", "quiz"), "randomsamatch", "quiz");
             require("randomsamatch.html");
+        break;
+
+        case RANDOM:
+            print_heading_with_help(get_string("editingrandom", "quiz"), "random", "quiz");
+            require("random.html");
         break;
 
         default:

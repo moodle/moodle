@@ -95,13 +95,19 @@
                 if (isset($questions[$key])) {          // It's a real question number, not a coded one
                     $questions[$key]->answer[] = trim($value);
 
+                } else if (substr_count($key, "rq")) {  // Random Question information
+                    $check = explode("rq", $key);
+                    $key   = $check[0];                 // The random question id
+                    $real  = $check[1];                 // The real question id
+                    $questions[$key]->random = $real;  
+
                 } else if (substr_count($key, "a")) {   // Checkbox style multiple answers
                     $check = explode("a", $key);
                     $key   = $check[0];                 // The main question number
                     $value = $check[1];                 // The actual answer
                     $questions[$key]->answer[] = trim($value);  
 
-                } else if (substr_count($key, "r")) {   // Random-style questions
+                } else if (substr_count($key, "r")) {   // Random-style answers
                     $check = explode("r", $key);
                     $key   = $check[0];                 // The main question
                     $rand  = $check[1];                 // The random sub-question
@@ -136,7 +142,7 @@
         print_continue("view.php?id=$cm->id");
 
         if ($quiz->feedback) {
-            quiz_print_quiz_questions($quiz, $result);
+            quiz_print_quiz_questions($quiz, $result, $questions);
             print_continue("view.php?id=$cm->id");
         }
 
