@@ -5,7 +5,7 @@
 //  This fragment is called by /admin/index.php
 ////////////////////////////////////////////////////////////////////////////////
 
-$module->version  = 2002082805;
+$module->version  = 2002082806;
 $module->cron     = 60;
 
 function assignment_upgrade($oldversion) {
@@ -59,8 +59,10 @@ function assignment_upgrade($oldversion) {
         execute_sql(" ALTER TABLE `assignment_submissions` CHANGE `id` `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT ");
     }
 
-    if ($oldversion < 2002082805) {
+    if ($oldversion < 2002082806) {
         // assignment file area was moved, so rename all the directories in existing courses
+
+        notify("Moving location of assignment files...");
 
         $basedir = opendir("$CFG->dataroot");
         while ($dir = readdir($basedir)) {
