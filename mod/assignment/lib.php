@@ -245,7 +245,7 @@ function assignment_grades($assignmentid) {
 
     if ($assignment->grade >= 0) {
         $return->grades = $grades;
-        $return->maxgrade = get_field("assignment", "grade", "id", "$assignmentid");
+        $return->maxgrade = $assignment->grade;
 
     } else {
         $scaleid = - ($assignment->grade);
