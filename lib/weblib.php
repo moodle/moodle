@@ -304,5 +304,23 @@ function text_to_html($text, $smiley=true) {
     return "<P>".$text."</P>";
 }
 
+function highlight($needle, $haystack) {
+// This function will highlight instances of $needle in $haystack
+
+    $parts = explode(strtolower($needle), strtolower($haystack));
+
+    $pos = 0;
+
+    foreach ($parts as $key => $part) {
+        $parts[$key] = substr($haystack, $pos, strlen($part));
+        $pos += strlen($part);
+
+        $parts[$key] .= "<SPAN CLASS=highlight>".substr($haystack, $pos, strlen($needle))."</SPAN>";
+        $pos += strlen($needle);
+    }   
+
+    return (join('', $parts));
+}
+
 
 ?>
