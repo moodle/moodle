@@ -45,11 +45,11 @@ $string['repeatdaily'] = 'Jeden Tag zur gleichen Zeit';
 $string['repeatnone'] = 'Keine Antworten - nur festgelegte Zeiten veröffentlichen';
 $string['repeattimes'] = 'Sitzungen wiederholen';
 $string['repeatweekly'] = 'Jede Woche zur gleichen Zeit';
-$string['savemessages'] = 'Anzahl der zu speichernden Mitteilungen';
+$string['savemessages'] = 'Speicherung der Chatprotokolle (Dauer)';
 $string['seesession'] = 'Die Sitzung einsehen';
 $string['sessions'] = 'Chat-Sitzungen';
 $string['strftimemessage'] = '%%H:%%M';
-$string['studentseereports'] = 'Jeder kann die vorherige Sitzung einsehen';
+$string['studentseereports'] = 'Teilnehmer/innen können Chatprotokolle sehen';
 $string['viewreport'] = 'Vorherige Chat-Sitzung einsehen';
 
 ?>

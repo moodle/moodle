@@ -16,9 +16,17 @@ $string['assignmentname'] = 'Link (Kursseite)';
 $string['assignmenttype'] = 'Aufgabentyp';
 $string['configmaxbytes'] = 'Voreingestellte maximale Größe für alle Einstellungen auf dieser Seite';
 $string['description'] = 'Zusammenfassung';
-$string['duedate'] = 'Abgabedatum';
+$string['duedate'] = 'Abgabetermin (Datum, Zeitpunkt)';
 $string['duedateno'] = 'Kein Abgabedatum';
 $string['early'] = '$a früh';
+$string['emailteachermail'] = '$a->username hat die Aufgabe \'$a->assignment\' überarbeitet und neu hochgeladen 
+
+Sie ist hier abgelegt:
+
+$a->url';
+$string['emailteachermailhtml'] = '$a->username hat die Aufgabe <i>\'$a->assignment\'</i> überarbeitet und neu hochgeladen <br /><br />
+Sie ist auf der Webseite <a href=\"$a->url\"> verfügbar.</a>.';
+$string['emailteachers'] = 'E-Mail-Nachrichten für Trainer/innen';
 $string['existingfiledeleted'] = 'Die vorhandene Datei wurde gelöscht: $a';
 $string['failedupdatefeedback'] = 'Keine Aktualisierung der Rückmeldung für Benutzer $a';
 $string['feedback'] = 'Rückmeldung';
@@ -48,7 +56,7 @@ $string['uploadnofilefound'] = 'Es wurde keine Datei gefunden. Sind Sie sicher, 
 $string['uploadnotregistered'] = '\'$a\' wurde korrekt hochgeladen, aber der Eintrag wurde nicht registriert!';
 $string['uploadsuccess'] = '\'$a\' wurde erfolgreich hochgeladen';
 $string['viewfeedback'] = 'Aufgabenbewertung und Rückmeldung anzeigen ';
-$string['viewsubmissions'] = 'Zeige $a eingereichte Aufgaben ';
+$string['viewsubmissions'] = '$a eingereichte Aufgabe(n) ansehen, bewerten und kommentieren ';
 $string['yoursubmission'] = 'Ihre eingereichten Aufgaben';
 
 ?>
