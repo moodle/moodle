@@ -38,6 +38,7 @@ $string['cnffullmatch'] = 'Stel als standaardinstelling in of een invoer, wannee
 $string['cnflinkentry'] = 'Stel als standaardinstelling in of een invoer automatisch gelinkt moet worden';
 $string['cnflinkglossaries'] = 'Stel als standaardinstelling in of een woordenlijst automatisch gelinkt moet worden';
 $string['cnfrelatedview'] = 'Kies het standaard schermformaat voor automatisch linken en invoerscherm';
+$string['cnfshowgroup'] = 'Stel in of er een scheiding tussen groeperingen moet getoond worden';
 $string['cnfsortkey'] = 'Kies de standaard sorteersleutel';
 $string['cnfsortorder'] = 'Kies de standaard sorteervolgorde';
 $string['cnfstudentcanpost'] = 'Stel als standaardinstelling in of een leerling al dan niet zelf kan invoeren';
