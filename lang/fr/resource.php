@@ -3,6 +3,7 @@
 
 
 $string['addresource'] = "Ajouter une ressource";
+$string['chooseafile'] = "Choisir un fichier";
 $string['configframesize'] = "Quand un page web ou un fichier est affiché dans un cadre (frame), cette valeur indique (en pixels) la taille du cadre contenant la navigation (en haut de la fenêtre).";
 $string['editingaresource'] = "Modifier une ressource";
 $string['example'] = "Exemple";
@@ -28,6 +29,7 @@ $string['newwindow'] = "Nouvelle fenêtre";
 $string['newwindowopen'] = "Afficher cette ressource dans une nouvelle fenêtre";
 $string['note'] = "Remarque";
 $string['notefile'] = "Pour déposer des fichiers dans le cours (afin qu'ils apparaissent dans cette liste), utiliser le
+
 <a href=\$a>Gestionnaire de fichiers</a>.";
 $string['notypechosen'] = "Vous devez choisir un type. Utiliser le bouton « Retour » de votre navigateur et recommencer.";
 $string['resourcetype'] = "Type de ressource";
