@@ -24,7 +24,7 @@
    function resource_check_backup_mods($course,$user_data=false) {
         //First the course data
         $info[0][0] = get_string("modulenameplural","resource");
-        if ($ids = choice_ids ($course)) {
+        if ($ids = resource_ids ($course)) {
             $info[0][1] = count($ids);
         } else {
             $info[0][1] = 0;
@@ -41,7 +41,7 @@
     // INTERNAL FUNCTIONS. BASED IN THE MOD STRUCTURE
 
     //Returns an array of resources id
-    function resources_ids ($course) {
+    function resource_ids ($course) {
 
         global $CFG;
 
