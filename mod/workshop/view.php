@@ -484,7 +484,7 @@
 					echo "<P><B><A HREF=\"view.php?id=$cm->id&action=makefinalgradesunavailable\">(".
 						  get_string("returnto", "workshop")." ".get_string("phase3", "workshop").")</A></B></P>";
 			}
-					echo "<P><B><A HREF=\"submissions.php?id=$cm->id&action=listallsubmissions\">".
+					echo "<P><B><A HREF=\"submissions.php?id=$cm->id&action=adminlist\">".
 						get_string("listofallsubmissions", "workshop")."</A></B></P>\n";
 		}
 	

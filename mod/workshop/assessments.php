@@ -113,8 +113,8 @@
 	/*************** agree (to) assessment (by student) ***************************/
 	elseif ($action == 'agreeassessment') {
 		$timenow = time();
-
-		if (!$assessment = get_record("workshop_assessments", "id", $_GET['aid'])) {
+		// assessment id comes from link or hidden form variable
+		if (!$assessment = get_record("workshop_assessments", "id", $_REQUEST['aid'])) { 
 			error("Assessment : agree assessment failed");
 			}
 		//save time of agreement
@@ -690,8 +690,11 @@
 			
 		// update the time of the assessment record (may be re-edited)...
 		set_field("workshop_assessments", "timecreated", $timenow, "id", $assessment->id);
-		// if the workshop does NOT have allow peer agreement then set timeagreed
-		if (!$workshop->agreeassessments) {
+		// if the workshop does NOT have allow peer agreement or it's self assessment then set timeagreed
+		if (!$submission = get_record("workshop_submissions", "id", $assessment->submissionid)) {
+			error ("Updateassessment: submission record not found");
+			}
+		if (!$workshop->agreeassessments or ($submission->userid == $USER->id)) {
 			set_field("workshop_assessments", "timeagreed", $timenow, "id", $assessment->id);
 			}
 		set_field("workshop_assessments", "grade", $grade, "id", $assessment->id);

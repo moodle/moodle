@@ -4,6 +4,9 @@
 /*************************************************
 	ACTIONS handled are:
 
+	adminconfirmdelete
+	admindelete
+	adminlist
 	calculatefinalgrades
 	displayfinalgrades (teachers only)
 	displayfinalweights
@@ -69,8 +72,76 @@
 		}
 
 
+	/******************* admin confirm delete ************************************/
+	if ($action == 'adminconfirmdelete' ) {
+
+		if (!isteacher($course->id)) {
+			error("Only teachers can look at this page");
+			}
+		if (!isset($_GET['sid'])) {
+			error("Admin confirm delete: submission id missing");
+			}
+			
+		notice_yesno(get_string("confirmdeletionofthisitem","workshop"), 
+			 "submissions.php?action=admindelete&id=$cm->id&sid=$_GET[sid]", "submissions.php?id=$cm->id&action=adminlist");
+		}
+	
+
+	/******************* admin delete ************************************/
+	elseif ($action == 'admindelete' ) {
+
+		if (!isteacher($course->id)) {
+			error("Only teachers can look at this page");
+			}
+		if (!$sid = isset($_GET['sid'])) {
+			error("Admin delete: submission id missing");
+			}
+		if (!$submission = get_record("workshop_submissions", "id", $sid)) {
+			error("Admin delete: can not get submission record");
+			}
+		print_string("deleting", "workshop");
+		// first get any assessments...
+		if ($assessments = workshop_get_assessments($submission)) {
+			foreach($assessments as $assessment) {
+				// ...and all the associated records...
+				delete_records("workshop_comments", "assessmentid", $assessment->id);
+				delete_records("workshop_grades", "assessmentid", $assessment->id);
+				echo ".";
+				}
+			// ...now delete the assessments...
+			delete_records("workshop_assessments", "submissionid", $submission->id);
+			}
+		// ...and the submission record...
+		delete_records("workshop_submissions", "id", $submission->id);
+		// ..and finally the submitted file
+		workshop_delete_submitted_files($workshop, $submission);
+		
+		print_continue("submissions.php?id=$cm->id&action=adminlist");
+		}
+	
+
+	/******************* list all submissions ************************************/
+	elseif ($action == 'adminlist' ) {
+
+		if (!isteacher($course->id)) {
+			error("Only teachers can look at this page");
+			}
+		if (empty($_GET['order'])) {
+			$order = "title";
+			}
+		else {
+			$order = $_GET['order'];
+			}
+			
+		print_heading(get_string("listofallsubmissions", "workshop").":", "center");
+		workshop_list_submissions_for_admin($workshop, $order);
+		print_continue("view.php?id=$cm->id");
+		
+		}
+	
+
 	/*************** calculate final grades (by teacher) ***************************/
-	if ($action == 'calculatefinalgrades') {
+	elseif ($action == 'calculatefinalgrades') {
 
 		$form = (object)$_POST;
 		
