@@ -12,8 +12,23 @@
     optional_variable($search, "");  // search string
     optional_variable($includedefinition);  // include definition in search function?
 
+    optional_variable($currentview);  // browsing entries by categories?
+    optional_variable($cat);  // categoryID
+
     if ($l == "" and $search == "" and $eid == "") {
     		$l = "A";
+    }
+    
+    if ( $currentview ) {
+          $currentview = strtolower($currentview);
+          if ( !$currentview ) {
+               $currentview = "";
+          } else {
+               if ( !$cat ) {
+                    $cat = 1;
+               }
+               $category = get_record("glossary_categories","id",$cat);
+          }
     }
 
     $search = trim(strip_tags($search));
@@ -133,6 +148,29 @@
 		echo get_string("search") . ": $search";
 	}
 
+     $data[0]->link = "view.php?id=$id&l=$l&eid=$eid&search=$search&includedefinition=$includedefinition";
+     $data[0]->caption = get_string("standardview","glossary");
+     
+     $data[1]->link = "view.php?id=$id&l=$l&eid=$eid&search=$search&includedefinition=$includedefinition&currentview=categories&cat=$cat";
+     $data[1]->caption = get_string("categoryview","glossary");
+     
+     $tCFG->TabTableBGColor = $THEME->cellcontent2;
+     $tCFG->TabTableWidth = "70%";
+     $tCFG->ActiveTabColor = $THEME->cellcontent2;
+     $tCFG->InactiveTabColor = $THEME->cellheading2;
+     $tCFG->TabsPerRow = 5;
+     $tCFG->TabSeparation = 4;
+     
+     if ( $cat ) {
+          $CurrentTab = 1;
+     } else {
+          $CurrentTab = 0;
+     }
+     print_tabbed_table_start($data, $CurrentTab, $tCFG);
+     echo "<center>";
+     if ( $cat ) {
+          echo "<b>$category->name</b><hr>";
+     }
 /// Printing the entries
 
 	if ( $search ) {	// looking for a term
@@ -154,17 +192,17 @@
                          $CurrentLetter = $FirstLetter;
 
 	                    if ( $glossary->displayformat == 0 ) {
-	                        if ( $DumpedDefinitions != 1) {
+	                        if ( $DumpedDefinitions > 0) {
 	                            echo "</table></center><p>";
 	                        }
-	                        echo "\n<center><TABLE BORDER=0 CELLSPACING=0 width=70% valign=top cellpadding=10><tr><td align=center BGCOLOR=\"$THEME->cellheading\"><b>";
+	                        echo "\n<center><TABLE BORDER=0 CELLSPACING=0 width=95% valign=top cellpadding=10><tr><td align=center BGCOLOR=\"$THEME->cellheading2\">";
 	                    }
-	                    echo $CurrentLetter;
+	                    echo "<b>$CurrentLetter</b>";
 
 	                    if ( $glossary->displayformat == 0 ) {
-	                        echo "\n</b></center></td></tr></TABLE></center>";
-	                        if ( $DumpedDefinitions != 1) {
-	                    		echo "\n<center><TABLE BORDER=1 CELLSPACING=0 width=70% valign=top cellpadding=10>";
+	                        echo "\n</center></td></tr></TABLE></center>";
+	                        if ( $DumpedDefinitions > 0) {
+	                    		echo "\n<center><TABLE BORDER=1 CELLSPACING=0 width=95% valign=top cellpadding=10>";
 	                    	}
 	                    }
                  	}
@@ -184,7 +222,7 @@
 
                  if ( $DumpedDefinitions == 1 ) {
 	                 if ( $glossary->displayformat == 0 ) {
-	                    echo "\n<center><TABLE BORDER=1 CELLSPACING=0 width=70% valign=top cellpadding=10>";
+	                    echo "\n<center><TABLE BORDER=1 CELLSPACING=0 width=95% valign=top cellpadding=10>";
 	                 }
                  }
                  if ($search) {
@@ -193,7 +231,7 @@
                  }
 	             glossary_print_entry($course, $cm, $glossary, $entry);
 
-				 if ( $glossary->displayformat != 0 ) {
+                 if ( $glossary->displayformat != 0 ) {
                  	echo "<p>";
                  }
             }
@@ -214,6 +252,9 @@
 	        echo "\n</TABLE></center>";
 	    }
 	}
+
+     echo "</center>";
+     print_tabbed_table_end();
 
 /// Finish the page
     print_footer($course);
