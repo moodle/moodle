@@ -1,0 +1,59 @@
+<p align="center"><b>「WebCT」フォーマットファイルのインポート</b></p>
+
+<p>WebCTインポートフィルタは開発中であり、すべてのWebCT問題タイプをサポートするわけではありません。</p>
+
+<p>この説明を書いている現在、多肢選択問題及び記述問題のみをサポートしています。</p>
+
+<p>これらの問題タイプのテキストファイル記述例です:</p>
+
+<pre>
+# Start of question: Short Answer Question
+:TYPE:S:
+:TITLE:記述問題
+:QUESTION:H
+WebCTラーニングハブの名称は?
+&lt;br /> 
+:IMAGE:dotcomLogoc.gif
+:ANSWERS:1
+:CASE:0
+:ANSWER1:WebCT.com:100:0:20:0
+:FEEDBACK1:H
+必ずラーニングハブを訪れてください\: www.WebCT.com
+:CAT:Default
+# End of question: Short Answer Question
+
+
+
+# Start of question: Multiple Choice Question
+:TYPE:MC:1:0:C
+:TITLE:多肢選択問題
+:FEEDBACK
+ダーウィンは進化論をまとめ上げ、ダーウィニズムを作りました。
+:QUESTION:H
+ダーウィン研究センターはどこにありますか?
+:IMAGE:
+:LAYOUT:vertical
+:ANSWER1:0:H
+メンローパーク、カリフォルニア
+:REASON1:H
+Sorry!
+:ANSWER2:0:H
+バンクーバー、カナダ、
+:REASON2:H
+Sorry!
+:ANSWER3:100:H
+ガラパゴス諸島、エクアドル
+:REASON3:H
+正解!
+:ANSWER4:0:H
+ロンドン、イギリス
+:REASON4:H
+ごめんなさい!
+:ANSWER5:0:H
+シドニー、オーストラリア
+:REASON5:H
+ごめんなさい!
+:CAT:Default
+# End of question: Multiple Choice Question
+
+</pre>
