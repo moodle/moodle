@@ -123,14 +123,14 @@ Restore Details:
         - Select Info to Restore (depending from backup)........DONE
         - Make decisions........................................DONE
            - About existing users...............................DONE
-        - Launch Restore........................................NO EXISTS
-        - Show progress.........................................NO EXISTS
-   - Restore Items:.............................................NO EXISTS
-        - Course................................................NO EXISTS
-           - Course Summary Data................................NO EXISTS
-              - Course Table....................................NO EXISTS
-              - Sections Table..................................NO EXISTS
-              - Modules Table...................................NO EXISTS
+        - Launch Restore........................................DONE
+        - Show progress.........................................DONE
+   - Restore Items:.............................................IN PROGRESS
+        - Course................................................DONE
+           - Course Summary Data................................DONE
+              - Course Table....................................DONE
+              - Sections Table..................................DONE
+              - Modules Table...................................DONE
            - User Accounts Info.................................NO EXISTS
               x teacheras. .....................................NO EXISTS
                  - None  .......................................NO EXISTS
@@ -173,6 +173,8 @@ Restore Details:
                  + course data..................................NO EXISTS
                  + user data....................................NO EXISTS
                  + files........................................NO EXISTS
+   - Readjust instance in course_modules........................NO EXISTS
+   - Readjust modinfo in course (serialize).....................NO EXISTS
    - Delete old entries at restore end.  .......................NO EXISTS   
       - From database...........................................NO EXISTS
       - From filesystem.........................................NO EXISTS
