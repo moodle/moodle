@@ -663,7 +663,11 @@ function forum_subscribed_users($course, $forum) {
 
     if ($forum->forcesubscribe) {
         if ($course->category) {
-            return get_course_users($course->id);
+            if ($forum->type == "teacher") {
+                return get_course_teachers($course->id);  // Only teachers can be subscribed to teacher forums
+            } else {
+                return get_course_users($course->id);     // Otherwise get everyone in the course
+            }
         } else {
             return get_site_users();
         }
