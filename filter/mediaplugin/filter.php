@@ -28,7 +28,7 @@
 function mediaplugin_filter($courseid, $text) {
     global $CFG;
 
-    $search = '/<a(.*)href=\"(.*)\.mp3\"([^>]*)>([^>]*)<\/a>/i';
+    $search = '/<a(.*?)href=\"(.*?)\.mp3\"([^>]*)>(.*?)<\/a>/i';
 
     $replace = '\\0&nbsp;<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000"';
     $replace .= ' codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,0,0" ';
