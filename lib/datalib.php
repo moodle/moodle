@@ -1112,7 +1112,7 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
             return false;
 
         default:
-            return $db->Insert_ID();  // Should work on most databases, but not all!
+            return (int)$db->Insert_ID();  // Should work on most databases, but not all!
     }
 }
 
