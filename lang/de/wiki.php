@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // wiki.php - created with Moodle 1.4 development (2004052800)
+      // wiki.php - created with Moodle 1.4 development (2004060100)
 
 
 $string['00empty'] = 'Leer';
@@ -16,6 +16,7 @@ $string['browse'] = 'Durchsuchen';
 $string['canceledit'] = 'Ändern';
 $string['changes'] = '$a Veränderungen';
 $string['changesfield'] = 'Zeit seit der letzten Änderung in Stunden';
+$string['changesfielderror'] = 'Bitte eine korrekte Anzahl Stunden eingeben.';
 $string['checklinks'] = 'Links prüfen';
 $string['checklinkscheck'] = 'Sind Sie sicher, das Sie die Links auf dieser Seite prüfen wollen?';
 $string['checklinksnotice'] = 'Haben Sie bitte etwas Geduld  bei diesem Vorgang.';
@@ -27,6 +28,8 @@ $string['created'] = 'Erstellt';
 $string['deletemewikiword'] = 'Löschen';
 $string['deletemewikiwordfound'] = '$a auf dieser Seite gefunden';
 $string['deletepage'] = 'Seite löschen';
+$string['deleteversions'] = 'Anzahl Versionen zum Löschen';
+$string['deleteversionserror'] = 'Bitte eine korrekte Anzahl Versionen eingeben.';
 $string['diff'] = 'Unterschiede';
 $string['disabledpage'] = 'Diese Seite ist derzeit nicht verfügbar';
 $string['doesnotexist'] = 'Diese Seite existiert nicht.  Klicken Sie auf den \'Bearbeiten\'-Button um die Seite zu erstellen.';
@@ -51,6 +54,7 @@ $string['fetchback'] = 'Zurück holen';
 $string['file'] = 'Datei';
 $string['filedownload'] = 'Download von Dateien';
 $string['fileisoftype'] = 'Dateiart';
+$string['filtername'] = 'Automatische verlinkung von Wikiseiten ';
 $string['flagbin'] = 'BIN';
 $string['flaghtm'] = 'HTM';
 $string['flagoff'] = 'OFF';
@@ -59,8 +63,9 @@ $string['flags'] = 'Markierung';
 $string['flagsset'] = 'Markierung verändert';
 $string['flagtxt'] = 'TXT';
 $string['flagwr'] = 'WR';
+$string['for'] = 'für';
 $string['forbidden'] = 'Sie sind nicht berechtigt, diese Seite zu bearbeiten.';
-$string['formattingrules'] = 'Formatierungsregeln';
+$string['groups'] = 'Gruppen';
 $string['hits'] = '$a Zugriffe';
 $string['howtooperate'] = 'Wie Seiten bearbeiten';
 $string['htmlmode'] = 'HTML-Modus';
@@ -73,6 +78,7 @@ $string['linkdead'] = 'Gescheitert';
 $string['linkok'] = 'OK';
 $string['linkschecked'] = 'Links geprüft';
 $string['listall'] = 'Alle auflisten';
+$string['listcandidates'] = 'Kandidaten anzeigen';
 $string['meta'] = 'Metadaten';
 $string['modulename'] = 'Wiki';
 $string['modulenameplural'] = 'Wikis';
@@ -84,6 +90,7 @@ $string['nocandidatestoremove'] = 'Keine ??? zum entfernen, wählen Sie §a, um al
 $string['nochangestorevert'] = 'Keine Veränderung vorhanden, die rückgängig gemacht werden können';
 $string['nohtml'] = 'Kein HTML';
 $string['nolinksfound'] = 'Keine Links auf der Seite gefunden.';
+$string['noregexp'] = 'Die Eingabe muss ein fester Text sein (reguläre Ausdrücke oder * können nicht verwendet werden). Am besten wird die IP Nummer des Angreifers verwendet, allerdings ohne Portangabe, denn diese ändert mit jedem Seitenzugriff.';
 $string['notadministratewiki'] = 'Sie sind nicht berechtigt, dieses Wiki zu administrieren.';
 $string['nothingtostrip'] = 'Es gibt keine Seiten mit mehreren Versionen.';
 $string['nowikicreated'] = 'In diesem Wiki sind noch keine Seiten bearbeitet worden.';
@@ -96,6 +103,7 @@ $string['pageactions'] = 'Seitenaktivitäten';
 $string['pageindex'] = 'Seitenindex';
 $string['pageinfo'] = 'Seiteninformationen';
 $string['pagename'] = 'Seitenname';
+$string['pageslinkingto'] = 'Seiten die auf diese Seite verweisen';
 $string['pagesremoved'] = 'Gelöschte Seiten';
 $string['pagesreverted'] = 'Veränderungen rückgängig gemacht.';
 $string['pagesstripped'] = 'Herausgenommene Seiten';
@@ -111,9 +119,11 @@ $string['revertchanges'] = 'Veränderungen rückgängig machen';
 $string['revertlastonly'] = 'Nur die letzte Veränderung';
 $string['revertpages'] = 'Massenveränderungen rückgängig machen';
 $string['revertpagescheck'] = 'Wollen Sie diese Veränderunegn wirklich rückgängig machen:';
+$string['revertthe'] = 'In die Tiefe der Seitenversionen gehen und nur die veränderten löschen';
 $string['safehtml'] = 'Sicheres HTML';
 $string['save'] = 'Speichern';
 $string['searchwiki'] = 'Wiki durchsuchen';
+$string['setpageflags'] = 'Seiteneinstellungen setzen';
 $string['status'] = 'Status';
 $string['strippagecheck'] = 'Sind Sie sicher, dass Sie ältere Versionen dieser Seite entfernen wollen?';
 $string['strippages'] = 'Seiten entfernen';
@@ -137,6 +147,7 @@ $string['wikilinks'] = 'Wiki Links';
 $string['wikiname'] = 'Seitenname';
 $string['wikistartederror'] = 'Die Einstellungen des Wikis können nicht mehr geändert werden.';
 $string['wikitype'] = 'Typ';
+$string['wikiusage'] = 'Wiki Anleitung';
 $string['wrongversionrange'] = '$a ist kein zulässiger Wert';
 
 ?>
