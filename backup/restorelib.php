@@ -575,6 +575,8 @@
 
                 //Here, if create_user, do it
                 if ($create_user) {
+                    //Unset the id because it's going to be inserted with a new one
+                    unset ($user->id);
                     //We addslashes to necessary fields
                     $user->username = addslashes($user->username);
                     $user->firstname = addslashes($user->firstname);
@@ -762,7 +764,6 @@
                         //$GLOBALS['traverse_array']="";                                                              //Debug
 
                         //Now build the SCALE record structure
-                        $sca->id = backup_todb($info['SCALE']['#']['ID']['0']['#']);
                         $sca->courseid = backup_todb($info['SCALE']['#']['COURSEID']['0']['#']);
                         $sca->userid = backup_todb($info['SCALE']['#']['USERID']['0']['#']);
                         $sca->name = backup_todb($info['SCALE']['#']['NAME']['0']['#']);
