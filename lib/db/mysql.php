@@ -19,6 +19,8 @@
 
 function main_upgrade($oldversion=0) {
 
+    global $CFG;
+
     if ($oldversion == 0) {
         execute_sql("
           CREATE TABLE `config` (
@@ -83,6 +85,86 @@ function main_upgrade($oldversion=0) {
         execute_sql(" INSERT INTO log_display VALUES ('resource', 'view', 'resource', 'name') ");
         execute_sql(" UPDATE log SET module = 'resource' WHERE module = 'reading' ");
         execute_sql(" UPDATE modules SET name = 'resource' WHERE name = 'reading' ");
+    }
+
+    if ($oldversion < 2002102503) {
+        require_once("$CFG->dirroot/mod/forum/lib.php");
+        require_once("$CFG->dirroot/course/lib.php");
+
+        if (! $module = get_record("modules", "name", "forum")) {
+            notify("Could not find forum module!!");
+            return false;
+        }
+
+        // First upgrade the site forums
+        if ($site = get_site()) {
+            print_heading("Making News forums editable for main site (moving to section 1)...");
+            if ($news = forum_get_course_forum($site->id, "news")) {
+                $mod->course = $site->id;
+                $mod->module = $module->id;
+                $mod->instance = $news->id;
+                $mod->section = 1;
+                if (! $mod->coursemodule = add_course_module($mod) ) {
+                    notify("Could not add a new course module to the site");
+                    return false;
+                }
+                if (! $sectionid = add_mod_to_section($mod) ) {
+                    notify("Could not add the new course module to that section");
+                    return false;
+                }
+                if (! set_field("course_modules", "section", $sectionid, "id", $mod->coursemodule)) {
+                    notify("Could not update the course module with the correct section");
+                    return false;
+                }
+            }
+        }
+
+
+        // Now upgrade the courses.
+        if ($courses = get_records_sql("SELECT * FROM course WHERE category > 0")) {
+            print_heading("Making News and Social forums editable for each course (moving to section 0)...");
+            foreach ($courses as $course) {
+                if ($course->format == "social") {  // we won't touch them
+                    continue;
+                }
+                if ($news = forum_get_course_forum($course->id, "news")) {
+                    $mod->course = $course->id;
+                    $mod->module = $module->id;
+                    $mod->instance = $news->id;
+                    $mod->section = 0;
+                    if (! $mod->coursemodule = add_course_module($mod) ) {
+                        notify("Could not add a new course module to the course '$course->fullname'");
+                        return false;
+                    }
+                    if (! $sectionid = add_mod_to_section($mod) ) {
+                        notify("Could not add the new course module to that section");
+                        return false;
+                    }
+                    if (! set_field("course_modules", "section", $sectionid, "id", $mod->coursemodule)) {
+                        notify("Could not update the course module with the correct section");
+                        return false;
+                    }
+                }
+                if ($social = forum_get_course_forum($course->id, "social")) {
+                    $mod->course = $course->id;
+                    $mod->module = $module->id;
+                    $mod->instance = $social->id;
+                    $mod->section = 0;
+                    if (! $mod->coursemodule = add_course_module($mod) ) {
+                        notify("Could not add a new course module to the course '$course->fullname'");
+                        return false;
+                    }
+                    if (! $sectionid = add_mod_to_section($mod) ) {
+                        notify("Could not add the new course module to that section");
+                        return false;
+                    }
+                    if (! set_field("course_modules", "section", $sectionid, "id", $mod->coursemodule)) {
+                        notify("Could not update the course module with the correct section");
+                        return false;
+                    }
+                }
+            }
+        }
     }
 
     return true;

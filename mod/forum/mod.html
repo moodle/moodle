@@ -17,8 +17,14 @@
        if (! $form->type) {
            $form->type = "general";
        }
-       choose_from_menu($FORUM_TYPES, "type", $form->type, "");
-       helpbutton("forumtype", get_string("forumtype", "forum"), "forum");
+       if ($form->type == "news") {
+           print_string("namenews", "forum");
+       } else if ($form->type == "social") {
+           print_string("namesocial", "forum");
+       } else {
+           choose_from_menu($FORUM_TYPES, "type", $form->type, "");
+           helpbutton("forumtype", get_string("forumtype", "forum"), "forum");
+       }
     ?>
 
     </td>

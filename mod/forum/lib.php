@@ -1208,7 +1208,7 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5, $f
         if (! $course = get_record("course", "category", 0)) {
             error("Could not find a top-level course!");
         }
-        if (! $forum = forum_get_course_news_forum($course->id)) {
+        if (! $forum = forum_get_course_forum($course->id, "news")) {
             error("Could not find or create a main forum in this course (id $course->id)");
         }
     }
