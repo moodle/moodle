@@ -91,17 +91,23 @@ class quiz_default_format {
         $currentquestion = array();
 
         foreach ($lines as $line) {
-           $line = trim($line);
-           if (empty($line)) {
-               if (!empty($currentquestion)) {
-                   if ($question = $this->readquestion($currentquestion)) {
-                       $questions[] = $question;
-                   }
-                   $currentquestion = array();
-               }
-           } else {
-               $currentquestion[] = $line;
-           }
+            $line = trim($line);
+            if (empty($line)) {
+                if (!empty($currentquestion)) {
+                    if ($question = $this->readquestion($currentquestion)) {
+                        $questions[] = $question;
+                    }
+                    $currentquestion = array();
+                }
+            } else {
+                $currentquestion[] = $line;
+            }
+        }
+
+        if (!empty($currentquestion)) {  // There may be a final question
+            if ($question = $this->readquestion($currentquestion)) {
+                $questions[] = $question;
+            }
         }
 
         return $questions;
