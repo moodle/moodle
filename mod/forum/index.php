@@ -54,11 +54,14 @@
     //Obtains all the forum data and visible field
     if ($forums = get_records_sql("SELECT f.*,cm.visible as visible
                                    FROM {$CFG->prefix}course_modules cm,
-                                        {$CFG->prefix}forum f
+                                        {$CFG->prefix}forum f,
+                                        {$CFG->prefix}modules md
                                    WHERE cm.course = '$id' AND
                                          f.course = '$id' AND
+                                         md.name = 'forum' AND
+                                         md.id = cm.module AND
                                          f.id = cm.instance
-                                   ORDER BY name ASC"))
+                                   ORDER BY f.name"))
        {
         foreach ($forums as $forum) {
             switch ($forum->type) {
