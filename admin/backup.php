@@ -68,10 +68,10 @@
             $status = false;
         }
         //get backup config
+        if (! $backup_config =  backup_get_config()) {
+            $status = false;
+        }
         if ($status) {
-            if (! $backup_config =  backup_get_config()) {
-                $status = false;
-            }
             //get courses
             if ($courses = get_records("course")) {
                 //For each course, we check (insert, update) the backup_course table
