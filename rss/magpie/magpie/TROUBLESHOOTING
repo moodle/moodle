@@ -1,0 +1,152 @@
+TROUBLESHOOTING
+
+
+Trouble Installing MagpieRSS:
+
+1.	Fatal error: Failed opening required '/path/to/script/rss_fetch.inc' 
+	(include_path='.:/usr/local/lib/php:/usr/local/lib/php/pear') 
+
+2.	Cache couldn't make dir './cache'.
+
+3.	Fatal error: Failed to load PHP's XML Extension. 
+	http://www.php.net/manual/en/ref.xml.php
+
+Trouble Using MagpieRSS
+
+4.	Warning: MagpieRSS: Failed to fetch example.com/index.rdf. 
+	(HTTP Error: Invalid protocol "")
+
+5.	Warning: MagpieRSS: Failed to parse RSS file. 
+	(not well-formed (invalid token) at line 19, column 98)
+
+6.	Warning: MagpieRSS: Failed to fetch http://localhost/rss/features.1-0.rss. 
+	(HTTP Response: HTTP/1.1 404 Not Found)
+
+If you would rather provide a custom error, see the COOKBOOK
+(http://magpierss.sf.net/cookbook.html) recipe 2.
+
+*************************************************************************
+1.	Fatal error: Failed opening required '/path/to/script/rss_fetch.inc' 
+	(include_path='.:/usr/local/lib/php:/usr/local/lib/php/pear') 
+	
+	This could mean that:
+	
+	a) PHP can't find the MagpieRSS files.
+	b) PHP found them the MagpieRSS files, but can't read them.
+	
+	a. Telling PHP where to look for MagpieRSS file.
+	
+	This might mean your PHP program can't find the MagpieRSS libraries. 
+	Magpie relies on 4 include files, rss_fetch.inc, rss_parse.inc,
+	rss_cache.inc, rss_util.inc, and for normal use you'll need all 4 (see the
+	cookbook for exceptions).
+
+	This can be fixed by making sure the MagpieRSS files are in your include
+	path.
+	
+	If you can edit your include path (for example your on a shared host) then
+	you need to replace:
+	
+	require_once('rss_fetch.inc');
+		
+	-with-
+		
+	define('MAGPIE_DIR', '/path/to/magpierss/');
+	require_once(MAGPIE_DIR.'rss_fetch.inc');
+
+	b.  PHP can't read the MagpieRSS files
+	
+	All PHP libraries need to be readable by your webserver.
+	
+	On Unix you can accomplish this with:
+	
+	chmod 755 rss_fetch.inc rss_parse.inc rss_cache.inc rss_util.inc
+	
+*************************************************************************
+2. Cache couldn't make dir './cache'.
+
+	MagpieRSS caches the results of fetched and parsed RSS to reduce the load on
+	both your server, and the remote server providing the RSS.  It does this by
+	writing files to a cache directory.
+
+	This error means the webserver doesn't have write access to the current
+	directory.
+	
+	a. Make a webserver writeable cache directory
+	
+	Find the webserver's group. (on my system it is 'www')
+	
+	mkdir ./cache
+	chgrp www directory_name
+	chmod g+w directory_name
+	
+	(this is the best, and desired solution)
+	
+	b. Tell MagpieRSS to create the cache directory somewhere the webserver can
+	write to.
+	
+	define('MAGPIE_CACHE_DIR', '/tmp/magpierss');
+
+	(this is not a great solution, and might have security considerations)
+		
+	c. Turn off cacheing.  
+	
+	Magpie can work fine with cacheing, but it will be slower, and you might
+	become a nuiance to the RSS provider, but it is an option.
+	
+	define('MAGPIE_CACHE_ON', 0);
+	
+	d. And lastly, do NOT
+	
+	chmod 777 ./cache
+	
+	Any of the above solutions are better then this.
+
+	NOTE: If none of this works for you, let me know.  I've got root, and a
+	custom compiled Apache on almost any box I ever touch, so I can be a little
+	out of touch with reality.  But I won't know that if I don't feedback.
+
+************************************************************************* 3.
+3.	Fatal error: Failed to load PHP's XML Extension. 
+	http://www.php.net/manual/en/ref.xml.php
+
+	-or-
+	
+	Fatal error: Failed to create an instance of PHP's XML parser.
+	http://www.php.net/manual/en/ref.xml.php
+	
+	Make sure your PHP was built with --with-xml
+	
+	This has been turned on by default for several versions of PHP, but it might
+	be turned off in your build.
+	
+	See php.net for details on building and configuring PHP.
+
+
+*************************************************************************
+4.	Warning: MagpieRSS: Failed to fetch index.rdf. 
+	(HTTP Error: Invalid protocol "")
+	
+	You need to put http:// in front of your the URL to your RSS feed
+
+*************************************************************************	
+5.	Warning: MagpieRSS: Failed to parse RSS file. 
+	(not well-formed (invalid token) at line 19, column 98)
+
+	There is a problem with the RSS feed you are trying to read. 
+	MagpieRSS is an XML parser, and therefore can't parse RSS feed with invalid
+	characters.  Some RSS parser are based on regular expressions, and can
+	parse invalid RSS but they have their own problems.
+
+	You could try contacting the author of the RSS feed, and pointing them to
+	the online RSS validator at:
+	
+	http://feeds.archive.org/validator/
+
+*************************************************************************	
+6.	Warning: MagpieRSS: Failed to fetch http://example.com/index.rdf 
+	(HTTP Response: HTTP/1.1 404 Not Found)
+
+	Its a 404!  The RSS file ain't there.
+	
+	

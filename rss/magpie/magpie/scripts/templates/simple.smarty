@@ -1,0 +1,46 @@
+<html>
+<head>
+<title>A Simple RSS Box:  I'm not a designer</title>
+</head>
+<body>
+
+<form>
+<b>RSS File:</b> 
+<input type=text" name="rss_url" value="{$rss_url}" size="50"> 
+<input type="submit">
+</form>
+
+<b>Displaying:</b> {$rss_url}
+<p>
+
+{* if $error display the error 
+  elseif parsed RSS object display the RSS 
+  else solicit user for a URL 
+*}
+
+{if $error }
+<b>Error:</b> {$error}
+{elseif $rss}
+<table border=1>
+  <tr>
+    <th colspan=2>
+      <a href="{$rss->channel.link}">{$rss->channel.title}</a>
+    </th>
+  </tr>
+  	{foreach from=$rss->items item=item}
+  	 <tr>
+	  <td>
+	  <a href="{$item.link}">{$item.title}</a>
+  	  </td>
+	  <td>
+	   {$item.dc.date|rss_date_parse|date_format:"%A, %B %e, %Y"}
+	  </td>
+	</tr>
+	{/foreach}
+</table>
+{else}
+  Enter the URL of an RSS file to display.
+{/if}
+
+</body>
+</html>

@@ -1,0 +1,27 @@
+Some example on how to use Magpie:
+
+* magpie_simple.php *
+  Simple example of fetching and parsing an RSS file. Expects to be
+  called with a query param 'rss_url=http://<some rss file>'
+
+* simple_smarty.php *
+  Similiar to magpie_simple, but using the Smarty template engine to do
+  display.  Also demostrates using rss_utils.inc and a smarty plugin to
+  parse and display when each RSS item was published.
+
+* magpie_debug.php *
+  Displays all the information available from a parsed feed.
+
+* smarty_plugin/modifier.rss_date_parse.php *
+ 
+  A Smarty plugin for parsing RSS style dates.  You must include rss_utils.inc
+  for this plugin to work.  It also must be installed in the Smarty plugin
+  directory, see the Smarty docs for details.
+
+* templates/simple.smarty
+  A Smarty template used by simple_smarty.php which demostrates
+  displaying an RSS feed and using the date parse plugin.
+  
+  
+The Smarty template engine and documentation on how to use it are available from
+http://smarty.php.net
