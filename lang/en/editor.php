@@ -1,4 +1,4 @@
-<?PHP // $Id$ 
+<?PHP // $Id$
       // editor.php - created with Moodle 1.2 (2004032000)
 
 
@@ -82,7 +82,7 @@ $string['removelink'] = 'Remove link';
 $string['right'] = 'Right';
 $string['righttoleft'] = 'Direction from right to left';
 $string['rows'] = 'Rows';
-$string['selectcolor'] = 'Select color'; 
+$string['selectcolor'] = 'Select color';
 $string['selection'] = 'Selection';
 $string['showhelp'] = 'Help using editor';
 $string['size'] = 'Size';
@@ -103,5 +103,7 @@ $string['vertical'] = 'Vertical';
 $string['width'] = 'Width';
 $string['wordclean'] = 'Clean Word HTML';
 $string['zip'] = 'Zip';
+$string['createanchor'] = 'Create anchor';
+$string['anchorname'] = 'Anchorname';
 
 ?>
