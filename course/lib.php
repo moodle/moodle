@@ -533,8 +533,8 @@ function print_heading_block($heading, $width="100%") {
     echo "<table width=\"$width\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\">";
     echo "<tr>";
     echo "<td bgcolor=\"$THEME->borders\">";
-    echo "<table class=\"blockheading\" width=\"100%\" border=\"0\" cellspacing=\"1\" cellpadding=\"5\">";
-    echo "<tr><td bgcolor=\"$THEME->cellheading\">";
+    echo "<table class=\"headingblockouter\" width=\"100%\" border=\"0\" cellspacing=\"1\" cellpadding=\"5\">";
+    echo "<tr><td bgcolor=\"$THEME->cellheading\" class=\"headingblockinner\">";
     echo stripslashes($heading);
     echo "</td></tr></table>";
     echo "</td></tr></table>";
