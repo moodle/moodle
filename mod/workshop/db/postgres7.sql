@@ -32,6 +32,9 @@ CREATE TABLE prefix_workshop (
   gradingweight INT  NOT NULL default '5',
   timeagreed INT8 NOT NULL default '0'
 );
+
+CREATE INDEX prefix_workshop_course_idx ON prefix_workshop (course);
+
 # --------------------------------------------------------
 
 #
@@ -53,6 +56,10 @@ CREATE TABLE prefix_workshop_submissions (
   finalgrade INT  NOT NULL default '0'
 );
 CREATE INDEX prefix_workshop_submissions_title_idx on prefix_workshop_submissions (title);
+CREATE INDEX prefix_workshop_submissions_workshopid_idx ON prefix_workshop_submissions (workshopid);
+CREATE INDEX prefix_workshop_submissions_userid_idx ON prefix_workshop_submissions (userid);
+CREATE INDEX prefix_workshop_submissions_mailed_idx ON prefix_workshop_submissions (mailed);
+
 # --------------------------------------------------------
 
 #
@@ -73,6 +80,12 @@ CREATE TABLE prefix_workshop_assessments (
   generalcomment text NOT NULL default '',
   teachercomment text NOT NULL default ''
   );
+
+CREATE INDEX prefix_workshop_assessments_workshopid_idx ON prefix_workshop_assessments (workshopid);
+CREATE INDEX prefix_workshop_assessments_submissionid_idx ON prefix_workshop_assessments (submissionid);
+CREATE INDEX prefix_workshop_assessments_userid_idx ON prefix_workshop_assessments (userid);
+CREATE INDEX prefix_workshop_assessments_mailed_idx ON prefix_workshop_assessments (mailed);
+
 # --------------------------------------------------------
 
 #
@@ -88,6 +101,9 @@ CREATE TABLE prefix_workshop_elements (
   maxscore INT  NOT NULL default '1',
   weight float NOT NULL default '1.0'
 );
+
+CREATE INDEX prefix_workshop_elements_workshopid_idx ON prefix_workshop_elements (workshopid);
+
 # --------------------------------------------------------
 
 #
@@ -102,6 +118,10 @@ CREATE TABLE prefix_workshop_grades (
   feedback text NOT NULL default '',
   grade INT NOT NULL default '0'
 );
+
+CREATE INDEX prefix_workshop_grades_workshopid_idx ON prefix_workshop_grades (workshopid);
+CREATE INDEX prefix_workshop_grades_assessmentid_idx ON prefix_workshop_grades (assessmentid);
+
 # --------------------------------------------------------
 CREATE TABLE prefix_workshop_comments (
   id SERIAL PRIMARY KEY,
@@ -113,6 +133,10 @@ CREATE TABLE prefix_workshop_comments (
   comments text NOT NULL default ''
 );
 
+CREATE INDEX prefix_workshop_comments_workshopid_idx ON prefix_workshop_comments (workshopid);
+CREATE INDEX prefix_workshop_comments_assessmentid_idx ON prefix_workshop_comments (assessmentid);
+CREATE INDEX prefix_workshop_comments_userid_idx ON prefix_workshop_comments (userid);
+CREATE INDEX prefix_workshop_comments_mailed_idx ON prefix_workshop_comments (mailed);
 
 INSERT INTO prefix_log_display VALUES ('workshop', 'assess', 'workshop', 'name');
 INSERT INTO prefix_log_display VALUES ('workshop', 'close', 'workshop', 'name');

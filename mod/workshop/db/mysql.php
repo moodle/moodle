@@ -81,6 +81,23 @@ function workshop_upgrade($oldversion) {
         workshop_refresh_events();
     }
 
+    if ($oldversion < 2004060401) {
+        modify_database('','ALTER TABLE prefix_workshop ADD INDEX course (course);');
+        modify_database('','ALTER TABLE prefix_workshop_assessments ADD INDEX userid (userid);');
+        modify_database('','ALTER TABLE prefix_workshop_assessments ADD INDEX workshopid (workshopid);');
+        modify_database('','ALTER TABLE prefix_workshop_assessments ADD INDEX submissionid (submissionid);');
+        modify_database('','ALTER TABLE prefix_workshop_assessments ADD INDEX mailed (mailed);');
+        modify_database('','ALTER TABLE prefix_workshop_comments ADD INDEX workshopid (workshopid);'); 
+        modify_database('','ALTER TABLE prefix_workshop_comments ADD INDEX assessmentid (assessmentid);'); 
+        modify_database('','ALTER TABLE prefix_workshop_comments ADD INDEX userid (userid);'); 
+        modify_database('','ALTER TABLE prefix_workshop_comments ADD INDEX mailed (mailed);'); 
+        modify_database('','ALTER TABLE prefix_workshop_elements ADD INDEX workshopid (workshopid);');
+        modify_database('','ALTER TABLE prefix_workshop_grades ADD INDEX workshopid (workshopid);'); 
+        modify_database('','ALTER TABLE prefix_workshop_grades ADD INDEX assessmentid (assessmentid);'); 
+        modify_database('','ALTER TABLE prefix_workshop_submissions ADD INDEX workshopid (workshopid);');
+        modify_database('','ALTER TABLE prefix_workshop_submissions ADD INDEX userid (userid);');
+        modify_database('','ALTER TABLE prefix_workshop_submissions ADD INDEX mailed (mailed);');
+    }
     
     return true;
 }

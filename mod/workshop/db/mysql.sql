@@ -33,7 +33,8 @@ CREATE TABLE `prefix_workshop` (
   `teacherloading` tinyint(3) unsigned NOT NULL default '5',
   `assessmentstodrop` tinyint(3) unsigned NOT NULL default '0',
   `showleaguetable` tinyint(3) unsigned NOT NULL default '0',
-  PRIMARY KEY  (`id`)
+  PRIMARY KEY  (`id`),
+  KEY `course` (`course`)
 ) COMMENT='Defines workshop';
 # --------------------------------------------------------
 
@@ -55,7 +56,10 @@ CREATE TABLE `prefix_workshop_submissions` (
   `gradinggrade` int(3) unsigned NOT NULL default '0',
   `finalgrade` int(3) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`),
-  INDEX `title` (`title`) 
+  INDEX `title` (`title`) ,
+  INDEX `workshopid` (`workshopid`),
+  INDEX `userid` (`userid`), 
+  INDEX `mailed` (`mailed`)
 ) COMMENT='Info about submitted work from teacher and students';
 # --------------------------------------------------------
 
@@ -78,7 +82,11 @@ CREATE TABLE `prefix_workshop_assessments` (
   `donotuse` tinyint(3) unsigned NOT NULL default '0',
   `generalcomment` text NOT NULL,
   `teachercomment` text NOT NULL,
-  PRIMARY KEY  (`id`)
+  PRIMARY KEY  (`id`), 
+  KEY `workshopid` (`workshopid`),
+  KEY `submissionid` (`submissionid`),
+  KEY `userid` (`userid`),
+  KEY `mailed` (`mailed`)
   ) COMMENT='Info about assessments by teacher and students';
 # --------------------------------------------------------
 
@@ -94,7 +102,8 @@ CREATE TABLE `prefix_workshop_elements` (
   `scale` tinyint(3) unsigned NOT NULL default '0',
   `maxscore` tinyint(3) unsigned NOT NULL default '1',
   `weight` float NOT NULL default '1.0',
-  PRIMARY KEY  (`id`)
+  PRIMARY KEY  (`id`),
+  KEY `workshopid` (`workshopid`)
 ) COMMENT='Info about marking scheme of assignment';
 # --------------------------------------------------------
 
@@ -124,7 +133,9 @@ CREATE TABLE `prefix_workshop_grades` (
   `elementno` int(10) unsigned NOT NULL default '0',
   `feedback` text NOT NULL default '',
   `grade` tinyint(3) NOT NULL default '0',
-  PRIMARY KEY  (`id`)
+  PRIMARY KEY  (`id`),
+  KEY `workshopid` (`workshopid`),
+  KEY `assessmentid` (`assessmentid`)
 ) COMMENT='Info about individual grades given to each element';
 # --------------------------------------------------------
 
@@ -140,7 +151,11 @@ CREATE TABLE `prefix_workshop_comments` (
   `timecreated` int(10) unsigned NOT NULL default '0',
   `mailed` tinyint(2) unsigned NOT NULL default '0',
   `comments` text NOT NULL,
-  PRIMARY KEY  (`id`)
+  PRIMARY KEY  (`id`),
+  KEY `workshopid` (`workshopid`),
+  KEY `assessmentid` (`assessmentid`),
+  KEY `userid` (`userid`),
+  KEY `mailed` (`mailed`)
 ) COMMENT='Defines comments';
 # --------------------------------------------------------
         
