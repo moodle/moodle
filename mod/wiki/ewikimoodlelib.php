@@ -48,10 +48,11 @@ function ewiki_database_moodle($action, &$args, $sw1, $sw2) {
 
          $select="(pagename=$id) AND wiki=".$wiki_entry->id."  $version ";
          $sort="version DESC";
-         $result_arr=get_records_select(EWIKI_DB_TABLE_NAME, $select,$sort,"*",0,1);
-         //Iterate to get the first (and unique!)
-         foreach ($result_arr as $obj) {
-             $result_obj = $obj;
+         if ($result_arr = get_records_select(EWIKI_DB_TABLE_NAME, $select,$sort,"*",0,1)) {
+             //Iterate to get the first (and unique!)
+             foreach ($result_arr as $obj) {
+                 $result_obj = $obj;
+            }
          }
          if($result_obj)  {
            //Convert to array

@@ -143,8 +143,49 @@ function wiki_print_recent_activity($course, $isteacher, $timestart) {
 /// Return true if there was output, or false is there was none.
 
     global $CFG;
+    if (!$logs = get_records_select("log", "time > '$timestart' AND ".
+                                           "course = '$course->id' AND ".
+                                           "module = 'wiki' AND ".
+                                           "action LIKE 'edit%' ", "time ASC")){
+        return false;
+    }
 
-    return false;  //  True if anything was printed, otherwise false
+    foreach ($logs as $log) {
+        //Create a temp valid module structure (course,id)
+        $tempmod->course = $log->course;
+        $tempmod->id = $log->cmid;
+        //Obtain the visible property from the instance
+        $modvisible = instance_is_visible($log->module,$tempmod);
+
+        //Only if the mod is visible
+        if ($modvisible) {
+            $wikis[$log->info] = wiki_log_info($log);
+            $wikis[$log->info]->pagename = $log->info;
+            $wikis[$log->info]->time = $log->time;
+            $wikis[$log->info]->url  = str_replace('&', '&amp;', $log->url);
+        }
+    }
+
+    if ($wikis) {
+        $strftimerecent = get_string("strftimerecent");
+        $content = true;
+        print_headline('Updated wiki page'.":");
+        foreach ($wikis as $wiki) {
+            $date = userdate($wiki->time, $strftimerecent);
+            echo $date.' - '.fullname($wiki)."<br />";
+            echo '"<a href="'.$CFG->wwwroot.'/mod/wiki/'.$wiki->url.'">';
+            echo $wiki->pagename;
+            echo '</a>"<br />';
+        }
+    }
+    return true;  //  True if anything was printed, otherwise false
+}
+
+function wiki_log_info($log) {
+    global $CFG;
+    return get_record_sql("SELECT u.firstname, u.lastname
+                             FROM {$CFG->prefix}user u
+                            WHERE u.id = '$log->userid'");
 }
 
 function wiki_cron () {
