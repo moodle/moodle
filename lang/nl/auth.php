@@ -1,7 +1,9 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005031000)
+      // auth.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005033100)
 
 
+$string['alternatelogin'] = 'Als je hier een URL ingeeft, dan zal die dienen als loginpagina voor deze site. De pagina moet een formulier bevatten met de actie ingesteld op <strong>\'$a\'</strong> en die de velden <strong>username</strong> en <strong>password</strong> teruggeeft.<br />Let er op dat je een juiste URL ingeeft. Zoniet sluit je jezelf uit de site.<br />Laat deze instelling leeg als je de standaard loginpagina wil gebruiken.';
+$string['alternateloginurl'] = 'URL van de alternatieve loginpagina';
 $string['auth_cas_baseuri'] = 'URI van de server (leeg laten als er geen baseUri is)<br />Als de CAS-server bijvoorbeeld antwoord op host.domein.be/CAS/ dan <br />cas_baseuri=CAS/';
 $string['auth_cas_create_user'] = 'Schakel dit in als je gebruikers met CAS-authenticatie in de Moodle-databank wil zetten. Indien niet ingeschakeld zullen enkel gebruikers die al in de Moodle-databank bestaan, kunnen aanmelden.';
 $string['auth_cas_enabled'] = 'Schakel dit in als je CAS-authenticatie wil gebruiken.';

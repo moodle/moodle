@@ -1,7 +1,8 @@
 <?PHP // $Id$ 
-      // choice.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
+      // choice.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005033100)
 
 
+$string['addmorechoices'] = 'Voeg meer keuzes toe';
 $string['allowupdate'] = 'Laat toe de keuze aan te passen';
 $string['answered'] = 'Beantwoord';
 $string['choice'] = 'Keuze $a';
@@ -9,6 +10,9 @@ $string['choiceclose'] = 'Tot';
 $string['choicename'] = 'Naam keuze ';
 $string['choiceopen'] = 'Open';
 $string['choicetext'] = 'Keuzetekst';
+$string['displayhorizontal'] = 'Toon horizontaal';
+$string['displaymode'] = 'Hoe tonen?';
+$string['displayvertical'] = 'Toon verticaal';
 $string['havetologin'] = 'Je moet aangemeld zijn voor je je keuze kunt insturen';
 $string['modulename'] = 'Keuze';
 $string['modulenameplural'] = 'Keuzes';
@@ -27,9 +31,6 @@ $string['responses'] = 'Antwoorden';
 $string['responsesto'] = 'Antwoorden op  $a';
 $string['savemychoice'] = 'Bewaar mijn antwoord';
 $string['showunanswered'] = 'Toon een kolom voor onbeantwoord';
-$string['thischarset'] = 'iso-8859-1';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Nederlands';
 $string['timerestrict'] = 'Beperk het beantwoorden tot deze periode';
 $string['viewallresponses'] = 'Bekijk $a antwoorden';
 

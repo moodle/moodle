@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // scorm.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
+      // scorm.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005033100)
 
 
 $string['asset'] = 'Bezit';
@@ -21,9 +21,12 @@ $string['configpopupwidth'] = 'Welke breedte wil je als standaardwaarde voor nie
 $string['coursepacket'] = 'Cursuspakket';
 $string['coursestruct'] = 'cursusstructuur';
 $string['datadir'] = 'Fout van het bestandssysteem: de gegevensfolder van de cursus kan niet gemaakt worden';
+$string['display'] = 'Toon';
 $string['domxml'] = 'DOMXML externe bibliotheek';
 $string['entercourse'] = 'Voeg een SCORM-cursus toe';
 $string['errorlogs'] = 'Foutenlogboek';
+$string['exit'] = 'Verlaat de SCORM-cursus';
+$string['expcoll'] = 'Maximaliseer/Minimaliseer';
 $string['failed'] = 'Mislukt';
 $string['found'] = 'Manifest gevonden';
 $string['gradeaverage'] = 'Gemiddeld cijfer';
@@ -66,9 +69,6 @@ $string['scoes'] = 'Scoes';
 $string['score'] = 'Score';
 $string['syntax'] = 'Syntaxfout';
 $string['tag_error'] = 'Onbekende tag ($a->tag) met deze inhoud: $a->value';
-$string['thischarset'] = 'iso-8859-1';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Nederlands';
 $string['too_many_attributes'] = 'Tag $a->tag heeft te veel attributen';
 $string['too_many_children'] = 'Tag $a->tag heeft teveel children';
 $string['trackingloose'] = 'WAARSCHUWING: de gegevens voor opvolging van dit SCORM-pakket zullen verloren gaan';

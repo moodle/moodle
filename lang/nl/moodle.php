@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005032300)
+      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005033100)
 
 
 $string['action'] = 'Actie';
@@ -451,6 +451,7 @@ $string['frontpagecourselist'] = 'Toon een lijst met vakken';
 $string['frontpagedescription'] = 'Beschrijving voorpagina';
 $string['frontpageformat'] = 'Format voorpagina';
 $string['frontpagenews'] = 'Toon nieuwsberichten';
+$string['frontpagetopiconly'] = 'Toon activiteiten of HTML (onderwerpsectie)';
 $string['fulllistofcourses'] = 'Alle vakken';
 $string['fullname'] = 'Volledige naam';
 $string['fullnamedisplay'] = '$a->voornaam $a->achternaam';
@@ -993,8 +994,10 @@ $string['timezone'] = 'Tijdzone';
 $string['to'] = 'Tot';
 $string['today'] = 'Vandaag';
 $string['todaylogs'] = 'Statistieken van vandaag';
+$string['toeveryone'] = 'Aan iedereen';
 $string['toomanybounces'] = 'Dat e-mailadres heeft te veel e-mails teruggestuurd. Je <b>moet</b> het wijzigen voor je verder kunt.';
 $string['toomanytoshow'] = 'Er zijn teveel gebruikers om te laten zien';
+$string['toonly'] = 'Aan $a alleen';
 $string['top'] = 'Hoogste niveau';
 $string['topic'] = 'Onderwerp';
 $string['topichide'] = 'Verberg dit onderwerp voor $a';
