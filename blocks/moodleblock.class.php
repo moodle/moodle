@@ -49,15 +49,20 @@ class MoodleBlock {
         return $this->get_content();
     }
     function print_block() {
-        // Wrap it up, in case we have buttons too
+        // Wrap the title in a floating DIV, in case we have edit controls to display
+        // These controls will always be wrapped on a right-floating DIV
         $title = '<div style="float: left;">'.$this->title.'</div>';
         if($this->edit_controls !== NULL) {
             $title .= $this->edit_controls;
         }
+
         $this->get_content();
 
         switch($this->content_type) {
             case BLOCK_TYPE_TEXT:
+                if(empty($this->content->text)) {
+                    break;
+                }
                 if ($this->edit_controls !== NULL || !$this->hide_header()) {
                     print_side_block($title, $this->content->text, NULL, NULL, $this->content->footer);
                 } else {
@@ -65,6 +70,9 @@ class MoodleBlock {
                 }
             break;
             case BLOCK_TYPE_LIST:
+                if(empty($this->content->items)) {
+                    break;
+                }
                 if ($this->edit_controls !== NULL || !$this->hide_header()) {
                     print_side_block($title, '', $this->content->items, $this->content->icons, $this->content->footer);
                 } else {
