@@ -150,10 +150,9 @@ class block_quiz_results extends block_base {
 
             $rank = 0;
             if(!empty($best)) {
-                $this->content->text .= '<h2>'.get_string('bestgroupgrades', 'block_quiz_results', $numbest).'</h2>';
-                $this->content->text .= '<table class="grades"><tbody>';
+                $this->content->text .= '<table class="grades"><caption>'.get_string('bestgroupgrades', 'block_quiz_results', $numbest).'</caption><colgroup class="number" /><colgroup class="name" /><colgroup class="grade" /><tbody>';
                 foreach($best as $groupid => $averagegrade) {
-                    $this->content->text .= '<tr><td width="10%">'.(++$rank).'.</td><td><a href="'.$CFG->wwwroot.'/course/group.php?group='.$groupid.'&amp;id='.$courseid.'">'.$groupgrades[$groupid]['group'].'</a></td><td width="10%">';
+                    $this->content->text .= '<tr><td>'.(++$rank).'.</td><td><a href="'.$CFG->wwwroot.'/course/group.php?group='.$groupid.'&amp;id='.$courseid.'">'.$groupgrades[$groupid]['group'].'</a></td><td>';
                     switch($gradeformat) {
                         case GRADE_FORMAT_FRA:
                             $this->content->text .= ($averagegrade.'/'.$quiz->grade);
@@ -174,10 +173,9 @@ class block_quiz_results extends block_base {
             $rank = 0;
             if(!empty($worst)) {
                 $worst = array_reverse($worst, true);
-                $this->content->text .= '<h2>'.get_string('worstgroupgrades', 'block_quiz_results', $numworst).'</h2>';
-                $this->content->text .= '<table class="grades"><tbody>';
+                $this->content->text .= '<table class="grades"><caption>'.get_string('worstgroupgrades', 'block_quiz_results', $numworst).'</caption><colgroup class="number" /><colgroup class="name" /><colgroup class="grade" /><tbody>';
                 foreach($worst as $groupid => $averagegrade) {
-                    $this->content->text .= '<tr><td width="10%">'.(++$rank).'.</td><td><a href="'.$CFG->wwwroot.'/course/group.php?group='.$groupid.'&amp;id='.$courseid.'">'.$groupgrades[$groupid]['group'].'</a></td><td width="10%">';
+                    $this->content->text .= '<tr><td>'.(++$rank).'.</td><td><a href="'.$CFG->wwwroot.'/course/group.php?group='.$groupid.'&amp;id='.$courseid.'">'.$groupgrades[$groupid]['group'].'</a></td><td>';
                     switch($gradeformat) {
                         case GRADE_FORMAT_FRA:
                             $this->content->text .= ($averagegrade.'/'.$quiz->grade);
@@ -234,10 +232,9 @@ class block_quiz_results extends block_base {
 
             $rank = 0;
             if(!empty($best)) {
-                $this->content->text .= '<h2>'.get_string('bestgrades', 'block_quiz_results', $numbest).'</h2>';
-                $this->content->text .= '<table class="grades"><tbody>';
+                $this->content->text .= '<table class="grades"><caption>'.get_string('bestgrades', 'block_quiz_results', $numbest).'</caption><colgroup class="number" /><colgroup class="name" /><colgroup class="grade" /><tbody>';
                 foreach($best as $userid => $gradeid) {
-                    $this->content->text .= '<tr><td width="10%">'.(++$rank).'.</td><td><a href="'.$CFG->wwwroot.'/user/view.php?id='.$userid.'&amp;course='.$courseid.'">'.fullname($users[$userid]).'</a></td><td width="10%">';
+                    $this->content->text .= '<tr><td>'.(++$rank).'.</td><td><a href="'.$CFG->wwwroot.'/user/view.php?id='.$userid.'&amp;course='.$courseid.'">'.fullname($users[$userid]).'</a></td><td>';
                     switch($gradeformat) {
                         case GRADE_FORMAT_FRA:
                             $this->content->text .= ($grades[$gradeid]->grade.'/'.$quiz->grade);
@@ -258,10 +255,9 @@ class block_quiz_results extends block_base {
             $rank = 0;
             if(!empty($worst)) {
                 $worst = array_reverse($worst, true);
-                $this->content->text .= '<h2>'.get_string('worstgrades', 'block_quiz_results', $numworst).'</h2>';
-                $this->content->text .= '<table class="grades"><tbody>';
+                $this->content->text .= '<table class="grades"><caption>'.get_string('worstgrades', 'block_quiz_results', $numworst).'</caption><colgroup class="number" /><colgroup class="name" /><colgroup class="grade" /><tbody>';
                 foreach($worst as $userid => $gradeid) {
-                    $this->content->text .= '<tr><td width="10%">'.(++$rank).'.</td><td><a href="'.$CFG->wwwroot.'/user/view.php?id='.$userid.'&amp;course='.$courseid.'">'.fullname($users[$userid]).'</a></td><td width="10%">';
+                    $this->content->text .= '<tr><td>'.(++$rank).'.</td><td><a href="'.$CFG->wwwroot.'/user/view.php?id='.$userid.'&amp;course='.$courseid.'">'.fullname($users[$userid]).'</a></td><td>';
                     switch($gradeformat) {
                         case GRADE_FORMAT_FRA:
                             $this->content->text .= ($grades[$gradeid]->grade.'/'.$quiz->grade);

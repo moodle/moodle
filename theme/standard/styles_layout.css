@@ -459,17 +459,19 @@ td.cal_event_description {
     text-align: left;
 }
 
+#block_quiz_results table.grades caption {
+    font-weight: bold;
+    margin: 1em 0px 0px 0px;
+    border-bottom: 1px solid;
+}
+
+#block_quiz_results table.grades .number, #block_quiz_results table.grades .grade {
+    width: 10%;
+    text-align: right;
+}
+
 #block_quiz_results h1 {
-    text-align: center;
     font-weight: bold;
     font-size: 1.2em;
     margin: 4px;
-}
-
-#block_quiz_results h2 {
-    text-align: center;
-    font-weight: bold;
-    font-size: 1em;
-    margin: 1em 0px 0px 0px;
-    border-bottom: 1px solid;
 }
