@@ -395,9 +395,6 @@ function require_login($courseid=0, $autologinguest=true) {
                     print_header();
                     notice(get_string("studentnotallowed", "", fullname($USER, true)), "$CFG->wwwroot/");
                 }
-
-            } else {  // just update their last login time
-                update_user_in_db();
             }
             return;   // user is a member of this course.
         }
@@ -415,7 +412,6 @@ function require_login($courseid=0, $autologinguest=true) {
                     notice(get_string("guestsnotallowed", "", $course->fullname));
                     break;
                 case 1: // Guests allowed
-                    update_user_in_db();
                     return;
                 case 2: // Guests allowed with key (drop through)
                     break;

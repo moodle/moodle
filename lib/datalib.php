@@ -987,28 +987,6 @@ function get_user_info_from_db($field, $value) {
     return $user;
 }
 
-/**
-* Updates user record to record their last access
-* 
-* longdesc
-*
-*/
-function update_user_in_db() {
-
-   global $db, $USER, $REMOTE_ADDR, $CFG;
-
-   if (!isset($USER->id)) 
-       return false;
-
-   $timenow = time();
-   if ($db->Execute("UPDATE {$CFG->prefix}user SET lastIP='$REMOTE_ADDR', lastaccess='$timenow' 
-                     WHERE id = '$USER->id' ")) {
-       return true;
-   } else {
-       return false;
-   }
-}
-
 
 /**
 * Does this username and password specify a valid admin user?

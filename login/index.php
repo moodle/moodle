@@ -57,10 +57,6 @@
                 $USER->lastname   = " ";
             }
     
-            if (!update_user_in_db()) {
-                error("Weird error: User not found");
-            }
-            
             if (!update_user_login_times()) {
                 error("Wierd error: could not update login records");
             }
