@@ -205,6 +205,7 @@ $string[mainmenu] = "Main menu";
 $string[markthistopic] = "Mark this topic as the current topic";
 $string[maximumchars] = "Maximum of \$a characters";
 $string[maximumgrade] = "Maximum grade";
+$string[maxsize] = "Max size: \$a";
 $string[missingcategory] = "You need to choose a category";
 $string[missingcity] = "Missing city/town";
 $string[missingcountry] = "Missing country";
