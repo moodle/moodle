@@ -1,8 +1,9 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.0.9 development (2003032602)
+      // quiz.php - created with Moodle 1.0.9 development (2003041200)
 
 
 $string['addquestions'] = "クイズを追加";
+$string['addquestionstoquiz'] = "現在のクイズに質問を追加する";
 $string['addselectedtoquiz'] = "選択したものをクイズに追加する";
 $string['allowreview'] = "復習を許可する";
 $string['alreadysubmitted'] = "すでに解答されています
@@ -34,10 +35,12 @@ $string['choice'] = "選択";
 $string['choices'] = "利用可能な選択";
 $string['correctanswer'] = "正解";
 $string['correctanswers'] = "正解";
+$string['createmultiple'] = "マルチ質問を作成する";
 $string['createnewquestion'] = "新しい質問を作成する";
 $string['custom'] = "カスタムフォーマット";
 $string['daysavailable'] = "日利用可能";
 $string['default'] = "デフォルト";
+$string['defaultgrade'] = "評価の初期値";
 $string['defaultinfo'] = "質問の標準カテゴリー";
 $string['deletequestioncheck'] = " '\$a' を本当に削除してよろしいですか?";
 $string['editcategories'] = "カテゴリーを編集する";
@@ -45,6 +48,7 @@ $string['editingmatch'] = "マッチング解答方式を編集する";
 $string['editingmultichoice'] = "複数解答方式を編集する";
 $string['editingquestion'] = "質問を編集する";
 $string['editingquiz'] = "クイズを編集する";
+$string['editingrandom'] = "ランダム方式を編集する";
 $string['editingrandomsamatch'] = "ランダム記述マッチング解答方式を編集する";
 $string['editingshortanswer'] = "記述式の質問を編集する";
 $string['editingtruefalse'] = "○/×方式の質問を編集する";
@@ -97,7 +101,8 @@ $string['quizclose'] = "クイズ終了日";
 $string['quizclosed'] = "このクイズは \$a に閉じられます";
 $string['quiznotavailable'] = "クイズは  \$a まで利用できません";
 $string['quizopen'] = "クイズ公開日";
-$string['random'] = "ランダム";
+$string['random'] = "ランダム方式";
+$string['randomcreate'] = "ランダム方式を作成する";
 $string['randomsamatch'] = "ランダム記述マッチング解答方式";
 $string['randomsamatchcreate'] = "ランダム記述マッチング解答方式を作成する";
 $string['randomsamatchintro'] = "各質問のマッチング解答をメニューより選択してください。";
@@ -120,9 +125,12 @@ $string['shortanswer'] = "記述式";
 $string['show'] = "表示";
 $string['showcorrectanswer'] = "フィードバックの中に正解を表示しますか?";
 $string['showfeedback'] = "解答後にフィードバックを表示しますか?";
+$string['shuffleanswers'] = "回答を混ぜる";
+$string['shufflequestions'] = "質問を混ぜる";
 $string['time'] = "時間";
 $string['timecompleted'] = "解答日時";
 $string['timetaken'] = "所要時間";
+$string['toomanyrandom'] = "要求されたランダム方式の質問数は、このカテゴリに含まれている数(\$a)より多くなっています！";
 $string['true'] = "○";
 $string['truefalse'] = "○/×方式";
 $string['type'] = "タイプ";
