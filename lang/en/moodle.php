@@ -295,6 +295,7 @@ $string['department'] = 'Department';
 $string['description'] = 'Description';
 $string['detailedmore'] = 'More detailed';    
 $string['detailedless'] = 'Less detailed';
+$string['directorypaths'] = 'Directory Paths';
 $string['disable'] = 'Disable';
 $string['displayingfirst'] = 'Only the first $a->count $a->things are displayed';
 $string['displayingrecords'] = 'Displaying $a records';
