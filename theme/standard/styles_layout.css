@@ -1189,6 +1189,19 @@ body#mod-forum-search .introcontent {
 /*******************************************************************
 *** Modules: Journal
 *******************************************************************/
+#mod-journal-view .lastedit,
+#mod-journal-view .editend {
+    margin: 5px;
+}
+#mod-journal-view .feedbackbox {
+    width: 75%;
+}
+#mod-journal-view .picture {
+    width: 35px;
+}
+#mod-journal-view .grade {
+    text-align: right;
+}
 
 /*******************************************************************
 *** Modules: Label
