@@ -53,7 +53,7 @@
         $searchstring = $strsearch;
     }
 
-	print_header("$site->shortname: $course->shortname: $strassigncreators", 
+	print_header("$site->shortname: $strassigncreators", 
                  "$site->fullname", 
                  "<a href=\"index.php\">$stradministration</a> -> 
                   <a href=\"{$_SERVER['PHP_SELF']}\">$strassigncreators</a>", "");
