@@ -39,7 +39,7 @@
     $userid     = (int)$args[1];
     $modulename = clean_param($args[2], PARAM_FILE);
     $instance   = (int)$args[3];
-    $filename   = clean_param($args[4], PARAM_FILE);
+    $filename   = 'rss.xml';
     
     if (!$course = get_record("course", "id", $courseid)) {
         not_found();
@@ -69,7 +69,7 @@
         not_found();
     }
 
-    $pathname = $CFG->dataroot.'/rss/'.$modulename.'/'.$filename;
+    $pathname = $CFG->dataroot.'/rss/'.$modulename.'/'.$instance.'.xml';
 
     //Check that file exists
     if (!file_exists($pathname)) {
