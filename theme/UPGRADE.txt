@@ -7,10 +7,6 @@ This file lists the major changes to the theme files between Moodle versions.
 Changes to 1.0.9 since 1.0.8.1
 --------------------------------
 
-ALL pix files can now be changed from within a theme, 
-see cordoroyblue for an example:  config.php and the 
-pix subdirectory.
-
 config.php contains two new entries:
 
   $THEME->custompix
@@ -54,4 +50,19 @@ Styles to show hidden topics on the course page
 .topicsoutlinecontenthidden
 
 
+Styles to show hidden weeks on the course page
+
+.weeklyoutlinesidehidden
+.weeklyoutlinecontenthidden
+
+
+Style for the date-text on the weekly format
+
+.weeklydatetext
+
+
+
+ALL pix files can now be changed from within a theme, 
+see cordoroyblue for an example:  config.php and the 
+pix subdirectory.
 

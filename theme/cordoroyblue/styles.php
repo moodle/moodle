@@ -155,7 +155,14 @@ form {
     border-style: solid;
 }
 
+.weeklyoutlinesidehidden {
+    border-width: 1px;
+    border-color: <?PHP echo $THEME->borders?>;
+    border-style: dashed;
+}
+
 .weeklyoutlinecontent {
+    background: #EEFAFF;
     border-width: 0px;
     border-top: 1px;
     border-bottom: 1px;
@@ -164,12 +171,27 @@ form {
 }
 
 .weeklyoutlinecontenthighlight {
-    background: #FDFBF1;
+    background: #FFFFFF;
     border-width: 0px;
     border-top: 1px;
     border-bottom: 1px;
     border-color: <?PHP echo $THEME->borders?>;
     border-style: solid;
+}
+
+.weeklyoutlinecontenthidden {
+    background: #EEFAFF;
+    border-width: 0px;
+    border-top: 1px;
+    border-bottom: 1px;
+    border-color: <?PHP echo $THEME->borders?>;
+    border-style: dashed;
+}
+
+.weeklydatetext {
+    font-size: medium;
+    font-weight: bold; 
+    color: <?PHP echo $THEME->cellheading2?>;
 }
 
 .topicsoutline {
@@ -189,7 +211,14 @@ form {
     border-style: solid;
 }
 
+.topicsoutlinesidehidden {
+    border-width: 1px;
+    border-color: <?PHP echo $THEME->borders?>;
+    border-style: dashed;
+}
+
 .topicsoutlinecontent {
+    background: #EEFAFF;
     border-width: 0px;
     border-top: 1px;
     border-bottom: 1px;
@@ -198,20 +227,22 @@ form {
 }
 
 .topicsoutlinecontenthighlight {
-    background: #FDFBF1;
+    background: #FFFFFF;
     border-width: 0px;
     border-top: 1px;
     border-bottom: 1px;
     border-color: <?PHP echo $THEME->borders?>;
     border-style: solid;
 }
-.topicsoutlinesidehidden {
-    background-color: <?PHP echo $THEME->hidden?>;
-}
 
 .topicsoutlinecontenthidden {
+    background: #EEFAFF;
+    border-width: 0px;
+    border-top: 1px;
+    border-bottom: 1px;
+    border-color: <?PHP echo $THEME->borders?>;
+    border-style: dashed;
 }
-
 
 .forumpost {
     border-width: 1px;

@@ -139,12 +139,24 @@ form {
 .weeklyoutlinesidehighlight {
 }
 
+.weeklyoutlinesidehidden {
+    background-color: <?PHP echo $THEME->hidden?>;
+}
+
 .weeklyoutlinecontent {
 }
 
 .weeklyoutlinecontenthighlight {
 }
 
+.weeklyoutlinecontenthidden {
+}
+
+.weeklydatetext {
+    font-size: medium;
+    font-weight: bold; 
+    color: <?PHP echo $THEME->cellheading2?>;
+}
 
 .topicsoutline {
 }
@@ -155,12 +167,18 @@ form {
 .topicsoutlinesidehighlight {
 }
 
+.topicsoutlinesidehidden {
+    background-color: <?PHP echo $THEME->hidden?>;
+}
+
 .topicsoutlinecontent {
 }
 
 .topicsoutlinecontenthighlight {
 }
 
+.topicsoutlinecontenthidden {
+}
 
 .siteinfo {
     border-width: 1px;
@@ -233,9 +251,3 @@ a.dimmed:hover {
     color: #990000;
 }
 
-.topicsoutlinesidehidden {
-    background-color: <?PHP echo $THEME->hidden?>;
-}
-
-.topicsoutlinecontenthidden {
-}
