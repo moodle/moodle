@@ -35,7 +35,6 @@
         $form = (object)$HTTP_POST_VARS;
 
         $form->startdate = mktime(0,0,0,(int)$form->startmonth,(int)$form->startday,(int)$form->startyear);
-        $form->enddate   = mktime(0,0,0,(int)$form->endmonth,(int)$form->endday,(int)$form->endyear);
 
         validate_form($course, $form, $err);
 
@@ -55,10 +54,10 @@
                 $form->timecreated = time();
 
                 if ($newid = insert_record("course", $form)) {  // Set up new course
-                    $week->course = $newid;   // Create a default week.
-                    $week->week = 0;
-                    $week->timemodified = time();
-                    $week->id = insert_record("course_weeks", $week);
+                    $section->course = $newid;   // Create a default section.
+                    $section->section = 0;
+                    $section->timemodified = time();
+                    $section->id = insert_record("course_sections", $section);
 
                     add_to_log($newid, "course", "new", "view.php?id=$newid", "");
 		            redirect("$CFG->wwwroot/admin/teacher.php?id=$newid", "Changes saved");
@@ -81,16 +80,16 @@
         if ($course) {
             $form = $course;
             $ts = getdate($course->startdate);
-            $te = getdate($course->enddate);
         } else {
             $ts = getdate(time() + 3600 * 24);
-            $te = getdate(time() + 3600 * 24 * 7 * 16);
             $form->teacher = "Facilitator";
             $form->student = "Student";
             $form->fullname = "Course Fullname 101";
             $form->shortname = "CF101";
             $form->summary = "Write a concise and interesting paragraph here that explains what this course is about.";
-            $form->format = 0;
+            $form->format = "weeks";
+            $form->numsections = 10;
+            $form->newsitems = 5;
             $form->category = 1;
         }
 
@@ -109,7 +108,7 @@
     for ($i=1;$i<=12;$i++) {
         $form->months[$i] = date("F", mktime(0,0,0,$i,1,2000));
     }
-    for ($i=2000;$i<=2005;$i++) {
+    for ($i=2000;$i<=2010;$i++) {
         $form->years[$i] = $i;
     }
 
@@ -154,14 +153,6 @@ function validate_form($course, &$form, &$err) {
 
     if (empty($form->student))
         $err["student"] = "Must choose something";
-
-    if ($form->startdate > $form->enddate)
-        $err["startdate"] = "Starts after it ends!";
-
-#    if (($form->startdate < time()) && ($course->format <> $form->format)) {
-#        $err["format"] = "Can't change the format now";
-#        $form->format = $course->format;
-#    }
 
     if (! $form->category)
         $err["category"] = "You need to choose a category";

@@ -16,7 +16,7 @@
                  "<A HREF=../../course/view.php?id=$course->id>$course->shortname</A> -> Choices", "");
 
 
-    if (! $choices = get_all_instances_in_course("choice", $course->id, "cw.week ASC")) {
+    if (! $choices = get_all_instances_in_course("choice", $course->id, "cw.section ASC")) {
         notice("There are no choices", "../../course/view.php?id=$course->id");
     }
 
@@ -49,7 +49,7 @@
                 break;
         }
 
-        $table->data[] = array ("<P>$choice->week</P>",
+        $table->data[] = array ("<P>$choice->section</P>",
                                 "<P><A HREF=\"view.php?id=$choice->coursemodule\">$choice->name</A></P>",
                                 "<P>$aa</P>");
     }

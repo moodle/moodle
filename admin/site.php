@@ -49,7 +49,7 @@
         $form = $course;
     } else {
         $form->category = 0;
-        $form->format = 1;
+        $form->newsitems = 1;
     }
 
     print_header("Admin: Setting up site", "Administration: Setting up site",

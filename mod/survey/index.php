@@ -17,7 +17,7 @@
                  "<A HREF=../../course/view.php?id=$course->id>$course->shortname</A> -> Surveys", "");
 
 
-    if (! $surveys = get_all_instances_in_course("survey", $course->id, "cw.week ASC")) {
+    if (! $surveys = get_all_instances_in_course("survey", $course->id, "cw.section ASC")) {
         notice("There are no surveys.", "../../course/view.php?id=$course->id");
     }
     
@@ -30,7 +30,7 @@
         } else {
             $ss = "<A HREF=\"view.php?id=$survey->coursemodule\">Not done yet</A>";
         }
-        $table->data[] = array ("$survey->week", 
+        $table->data[] = array ("$survey->section", 
                                 "<A HREF=\"view.php?id=$survey->coursemodule\">$survey->name</A>",
                                 "$ss");
     }

@@ -4,24 +4,24 @@
 
     include("../mod/forum/lib.php");
 
-    if (! $rawweeks = get_records("course_weeks", "course", $course->id) ) {
-        $week->course = $course->id;   // Create a default week.
-        $week->week = 0;
-        $week->id = insert_record("course_weeks", $week);
-        if (! $rawweeks = get_records("course_weeks", "course", $course->id) ) {
-            error("Error finding or creating week structures for this course");
+    if (! $rawsections = get_records("course_sections", "course", $course->id) ) {
+        $section->course = $course->id;   // Create a default section.
+        $section->section = 0;
+        $section->id = insert_record("course_sections", $section);
+        if (! $rawsections = get_records("course_sections", "course", $course->id) ) {
+            error("Error finding or creating section structures for this course");
         }
     }
     
-    foreach($rawweeks as $cw) {  //Index the weeks
-        $weeks[$cw->week] = $cw;
+    foreach($rawsections as $cw) {  //Index the sections
+        $sections[$cw->section] = $cw;
     }
 
-    if (isset($week)) {
-        if ($week == "all") {
-            unset($USER->week);
+    if (isset($section)) {
+        if ($section == "all") {
+            unset($USER->section);
         } else {
-            $USER->week = $week;
+            $USER->section = $section;
         }
     }
 
@@ -95,9 +95,10 @@
     $weekdate = $course->startdate;    // this should be 0:00 Monday of that week
     $week = 1;
     $weekofseconds = 604800;
+    $course->enddate = $course->startdate + ($weekofseconds * $course->numsections);
 
     echo "<TABLE BORDER=0 CELLPADDING=8 CELLSPACING=0 WIDTH=100%>";
-    while ($weekdate < $course->enddate) {
+    while ($weekdate <= $course->enddate) {
 
         $nextweekdate = $weekdate + ($weekofseconds);
 
@@ -128,11 +129,11 @@
         echo "<TD VALIGN=top BGCOLOR=\"$THEME->cellcontent\" WIDTH=\"100%\">";
         echo "<P><FONT SIZE=3 COLOR=\"$THEME->cellheading2\">$weekday - $endweekday</FONT></P>";
 
-        if (! $thisweek = $weeks[$week]) {
+        if (! $thisweek = $sections[$week]) {
             $thisweek->course = $course->id;   // Create a new week structure
             $thisweek->week = $week;
             $thisweek->summary = "";
-            $thisweek->id = insert_record("course_weeks", $thisweek);
+            $thisweek->id = insert_record("course_sections", $thisweek);
         }
 
         if ($USER->editing) {
@@ -162,8 +163,8 @@
 
         if ($USER->editing) {
             echo "<DIV ALIGN=right>";
-            popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&week=$week&add=", 
-                        $modtypes, "week$week", "", "Add...");
+            popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&section=$week&add=", 
+                        $modtypes, "section$week", "", "Add...");
             echo "</DIV>";
         }
 
@@ -171,9 +172,9 @@
         echo "<TD NOWRAP BGCOLOR=\"$highlightcolor\" VALIGN=top ALIGN=CENTER WIDTH=10>";
         echo "<FONT SIZE=1>";
         if (isset($USER->week)) {
-            echo "<A HREF=\"view.php?id=$course->id&week=all\" TITLE=\"Show all weeks\"><IMG SRC=../pix/i/allweeks.gif BORDER=0></A></FONT>";
+            echo "<A HREF=\"view.php?id=$course->id&week=all\" TITLE=\"Show all weeks\"><IMG SRC=../pix/i/all.gif BORDER=0></A></FONT>";
         } else {
-            echo "<A HREF=\"view.php?id=$course->id&week=$week\" TITLE=\"Show only week $week\"><IMG SRC=../pix/i/oneweek.gif BORDER=0></A></FONT>";
+            echo "<A HREF=\"view.php?id=$course->id&week=$week\" TITLE=\"Show only week $week\"><IMG SRC=../pix/i/one.gif BORDER=0></A></FONT>";
         }
         echo "</TD>";
         echo "</TR>";
@@ -193,7 +194,7 @@
         print_simple_box("Latest News", $align="CENTER", $width="100%", $color="$THEME->cellheading");
         print_simple_box_start("CENTER", "100%", "#FFFFFF", 3, 0);
         echo "<FONT SIZE=1>";
-        print_forum_latest_topics($news->id, 5, "minimal", "DESC", false);
+        print_forum_latest_topics($news->id, $course->newsitems, "minimal", "DESC", false);
         echo "</FONT>";
         print_simple_box_end();
     }

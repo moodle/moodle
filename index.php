@@ -28,11 +28,11 @@
     <TD VALIGN="TOP" NOWRAP>
       <? $readings = list_all_readings();
       
-         if ($site->format > 0 or $readings or $USER->editing) {
+         if ($site->newsitems > 0 or $readings or $USER->editing) {
       
              print_simple_box("Main Menu", $align="CENTER", $width="100%", $color="$THEME->cellheading");
 
-             if ($site->format > 0 ) {
+             if ($site->newsitems > 0 ) {
                  echo "<LI><A TITLE=\"Available courses on this server\" HREF=\"course/\"><B>Courses</B></A><BR></LI>";
              } 
 
@@ -60,7 +60,7 @@
     </TD>
 
     <TD WIDTH="70%" VALIGN="TOP">
-      <? if ($site->format == 0 ) {
+      <? if ($site->newsitems == 0 ) {
              print_simple_box("Available Courses", $align="CENTER", $width="100%", $color="$THEME->cellheading");
              echo "<IMG HEIGHT=8 SRC=\"pix/spacer.gif\" ALT=\"\"><BR>";
              print_all_courses();
@@ -87,7 +87,7 @@
              }
              print_simple_box("$headertext", $align="CENTER", $width="100%", $color="$THEME->cellheading");
              echo "<IMG HEIGHT=8 SRC=\"pix/spacer.gif\" ALT=\"\"><BR>";
-             print_forum_latest_topics($newsforum->id, $site->format);
+             print_forum_latest_topics($newsforum->id, $site->newsitems);
          }
       ?>
 

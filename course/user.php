@@ -41,15 +41,15 @@
 
 
     // Replace all the following with a better log-based method.
-    if ($course->format == 1) {
-        if ($weeks = get_records_sql("SELECT * FROM course_weeks WHERE course = '$course->id' ORDER BY week")) {
-            foreach ($weeks as $www) {
-                $week = (object)$www;
-                echo "<H2>Week $week->week</H2>";
-                if ($week->sequence) {
-                    $weekmods = explode(",", $week->sequence);
-                    foreach ($weekmods as $weekmod) {
-                        $mod = $mods[$weekmod];
+    if ($course->format == "weeks") {
+        if ($sections = get_records_sql("SELECT * FROM course_sections WHERE course = '$course->id' ORDER BY section")) {
+            foreach ($sections as $www) {
+                $section = (object)$www;
+                echo "<H2>Week $section->section</H2>";
+                if ($section->sequence) {
+                    $sectionmods = explode(",", $section->sequence);
+                    foreach ($sectionmods as $sectionmod) {
+                        $mod = $mods[$sectionmod];
                         $instance = get_record("$mod->modname", "id", "$mod->instance");
                         $userfile = "$CFG->dirroot/mod/$mod->name/user.php";
                         include($userfile);

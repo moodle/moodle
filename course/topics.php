@@ -8,17 +8,17 @@
 
     include("../mod/forum/lib.php");
 
-    if (! $rawweeks = get_records("course_weeks", "course", $course->id) ) {
-        $week->course = $course->id;   // Create a default week.
-        $week->week = 0;
-        $week->id = insert_record("course_weeks", $week);
-        if (! $rawweeks = get_records("course_weeks", "course", $course->id) ) {
-            error("Error finding or creating week structures for this course");
+    if (! $rawsections = get_records("course_sections", "course", $course->id) ) {
+        $section->course = $course->id;   // Create a default section.
+        $section->section = 0;
+        $section->id = insert_record("course_sections", $section);
+        if (! $rawsections = get_records("course_sections", "course", $course->id) ) {
+            error("Error finding or creating section structures for this course");
         }
     }
     
-    foreach($rawweeks as $cw) {  //Index the weeks
-        $weeks[$cw->week] = $cw;
+    foreach($rawsections as $cw) {  //Index the sections
+        $sections[$cw->section] = $cw;
     }
 
     if (isset($topic)) {
@@ -100,28 +100,23 @@
 
     print_simple_box("Topic Outline", $align="CENTER", $width="100%", $color="$THEME->cellheading");
     
-    // Everything below uses "week" terminology - each "week" is a topic.
+    // Everything below uses "section" terminology - each "section" is a topic.
 
-    // Now all the weekly modules
+    // Now all the sectionly modules
     $timenow = time();
-    $weekdate = $course->startdate;    // this should be 0:00 Monday of that week
-    $week = 1;
-    $weekofseconds = 604800;
+    $section = 1;
 
     echo "<TABLE BORDER=0 CELLPADDING=8 CELLSPACING=0 WIDTH=100%>";
-    while ($weekdate < $course->enddate) {
-
-        $nextweekdate = $weekdate + ($weekofseconds);
+    while ($section <= $course->numsections) {
 
         if (isset($USER->topic)) {         // Just display a single topic
-            if ($USER->topic != $week) { 
-                $week++;
-                $weekdate = $nextweekdate;
+            if ($USER->topic != $section) { 
+                $section++;
                 continue;
             }
         }
 
-        $currenttopic = ($course->marker == $week);
+        $currenttopic = ($course->marker == $section);
 
         if ($currenttopic) {
             $highlightcolor = $THEME->cellheading2;
@@ -131,30 +126,30 @@
 
         echo "<TR>";
         echo "<TD NOWRAP BGCOLOR=\"$highlightcolor\" VALIGN=top WIDTH=20>";
-        echo "<P ALIGN=CENTER><FONT SIZE=3><B>$week</B></FONT></P>";
+        echo "<P ALIGN=CENTER><FONT SIZE=3><B>$section</B></FONT></P>";
         echo "</TD>";
 
         echo "<TD VALIGN=top BGCOLOR=\"$THEME->cellcontent\" WIDTH=\"100%\">";
 
-        if (! $thisweek = $weeks[$week]) {
-            $thisweek->course = $course->id;   // Create a new week structure
-            $thisweek->week = $week;
-            $thisweek->summary = "";
-            $thisweek->id = insert_record("course_weeks", $thisweek);
+        if (! $thissection = $sections[$section]) {
+            $thissection->course = $course->id;   // Create a new section structure
+            $thissection->section = $section;
+            $thissection->summary = "";
+            $thissection->id = insert_record("course_sections", $thissection);
         }
 
         if ($USER->editing) {
-            $thisweek->summary .= "&nbsp;<A HREF=editweek.php?id=$thisweek->id><IMG SRC=\"../pix/t/edit.gif\" BORDER=0 ALT=\"Edit summary\"></A></P>";
+            $thissection->summary .= "&nbsp;<A HREF=editsection.php?id=$thissection->id><IMG SRC=\"../pix/t/edit.gif\" BORDER=0 ALT=\"Edit summary\"></A></P>";
         }
 
-        echo text_to_html($thisweek->summary);
+        echo text_to_html($thissection->summary);
 
         echo "<P>";
-        if ($thisweek->sequence) {
+        if ($thissection->sequence) {
 
-            $thisweekmods = explode(",", $thisweek->sequence);
+            $thissectionmods = explode(",", $thissection->sequence);
 
-            foreach ($thisweekmods as $modnumber) {
+            foreach ($thissectionmods as $modnumber) {
                 $mod = $mods[$modnumber];
                 $instancename = get_field("$mod->modname", "name", "id", "$mod->instance");
                 echo "<IMG SRC=\"../mod/$mod->modname/icon.gif\" HEIGHT=16 WIDTH=16 ALT=\"$mod->modfullname\">";
@@ -170,8 +165,8 @@
 
         if ($USER->editing) {
             echo "<DIV ALIGN=right>";
-            popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&week=$week&add=", 
-                        $modtypes, "week$week", "", "Add...");
+            popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&section=$section&add=", 
+                        $modtypes, "section$section", "", "Add...");
             echo "</DIV>";
         }
 
@@ -179,19 +174,18 @@
         echo "<TD NOWRAP BGCOLOR=\"$highlightcolor\" VALIGN=top ALIGN=CENTER WIDTH=10>";
         echo "<FONT SIZE=1>";
         if (isset($USER->topic)) {
-            echo "<A HREF=\"view.php?id=$course->id&topic=all\" TITLE=\"Show all topics\"><IMG SRC=../pix/i/allweeks.gif BORDER=0></A><BR><BR>";
+            echo "<A HREF=\"view.php?id=$course->id&topic=all\" TITLE=\"Show all topics\"><IMG SRC=../pix/i/all.gif BORDER=0></A><BR><BR>";
         } else {
-            echo "<A HREF=\"view.php?id=$course->id&topic=$week\" TITLE=\"Show only topic $week\"><IMG SRC=../pix/i/oneweek.gif BORDER=0></A><BR><BR>";
+            echo "<A HREF=\"view.php?id=$course->id&topic=$section\" TITLE=\"Show only topic $section\"><IMG SRC=../pix/i/one.gif BORDER=0></A><BR><BR>";
         }
-        if ($USER->editing and $course->marker != $week) {
-            echo "<A HREF=\"view.php?id=$course->id&marker=$week\" TITLE=\"Mark this topic as the current topic\"><IMG SRC=../pix/i/marker.gif BORDER=0></A><BR><BR>";
+        if ($USER->editing and $course->marker != $section) {
+            echo "<A HREF=\"view.php?id=$course->id&marker=$section\" TITLE=\"Mark this topic as the current topic\"><IMG SRC=../pix/i/marker.gif BORDER=0></A><BR><BR>";
         }
         echo "</TD>";
         echo "</TR>";
         echo "<TR><TD COLSPAN=3><IMG SRC=\"../pix/spacer.gif\" WIDTH=1 HEIGHT=1></TD></TR>";
 
-        $week++;
-        $weekdate = $nextweekdate;
+        $section++;
     }
     echo "</TABLE>";
     
@@ -204,7 +198,7 @@
         print_simple_box("Latest News", $align="CENTER", $width="100%", $color="$THEME->cellheading");
         print_simple_box_start("CENTER", "100%", "#FFFFFF", 3, 0);
         echo "<FONT SIZE=1>";
-        print_forum_latest_topics($news->id, 5, "minimal", "DESC", false);
+        print_forum_latest_topics($news->id, $course->newsitems, "minimal", "DESC", false);
         echo "</FONT>";
         print_simple_box_end();
     }

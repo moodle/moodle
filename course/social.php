@@ -34,7 +34,7 @@
           }
       }
       if ($USER->editing) {
-          $readingdata[] = "<A HREF=\"mod.php?id=$course->id&week=0&add=reading\">Add reading...</A>";
+          $readingdata[] = "<A HREF=\"mod.php?id=$course->id&section=0&add=reading\">Add reading...</A>";
           $readingicon[] = "&nbsp;";
       }
       print_side_block("", $readingdata, "", $readingicon);

@@ -3,15 +3,15 @@
 $MAXNEWSDISPLAY = 4;
 
 $FORMATS = array (
-             "1" => "Weekly layout",
-             "2" => "Social layout",
-             "3" => "Topics layout"
+             "weeks" => "Weekly layout",
+             "social" => "Social layout",
+             "topics" => "Topics layout"
            );
 
 $SECTION = array (
-             "1" => "week",
-             "2" => "section",
-             "3" => "topic"
+             "weeks" => "week",
+             "social" => "section",
+             "topics" => "topic"
            );
 
 

@@ -52,13 +52,13 @@
     }
 
     switch ($course->format) {
-        case 1:
+        case "weeks":
             include("weeks.php");
             break;
-        case 2:
+        case "social":
             include("social.php");
             break;
-        case 3:
+        case "topics":
             include("topics.php");
             break;
         default:

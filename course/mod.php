@@ -33,17 +33,17 @@
                 if (! $mod->instance = add_instance($mod)) {
                     error("Could not add a new instance of $mod->modulename");
                 }
-                // course_modules and course_weeks each contain a reference 
+                // course_modules and course_sections each contain a reference 
                 // to each other, so we have to update one of them twice.
 
                 if (! $mod->coursemodule = add_course_module($mod) ) {
                     error("Could not add a new course module");
                 }
-                if (! $weekid = add_mod_to_week($mod) ) {
-                    error("Could not add the new course module to that week");
+                if (! $sectionid = add_mod_to_section($mod) ) {
+                    error("Could not add the new course module to that section");
                 }
-                if (! set_field("course_modules", "week", $weekid, "id", $mod->coursemodule)) {
-                    error("Could not update the course module with the correct week");
+                if (! set_field("course_modules", "section", $sectionid, "id", $mod->coursemodule)) {
+                    error("Could not update the course module with the correct section");
                 }   
                 add_to_log($mod->course, "course", "add mod", "../mod/$mod->modulename/view.php?id=$mod->coursemodule", "$mod->modulename $mod->instance"); 
                 break;
@@ -54,8 +54,8 @@
                 if (! delete_course_module($mod->coursemodule)) {
                     notify("Could not delete the $mod->modulename (coursemodule)");
                 }
-                if (! delete_mod_from_week($mod->coursemodule, "$mod->week")) {
-                    notify("Could not delete the $mod->modulename from that week");
+                if (! delete_mod_from_section($mod->coursemodule, "$mod->section")) {
+                    notify("Could not delete the $mod->modulename from that section");
                 }
                 add_to_log($mod->course, "course", "delete mod", "view.php?id=$mod->course", "$mod->modulename $mod->instance"); 
                 break;
@@ -101,6 +101,10 @@
             error("This module doesn't exist");
         }
 
+        if (! $instance = get_record($module->name, "id", $cm->instance)) {
+            error("The required instance of this module doesn't exist");
+        }
+
         require_login($course->id);
 
         if (!isteacher($course->id)) {
@@ -108,10 +112,12 @@
         }
 
         $form->coursemodule = $cm->id;
-        $form->week         = $cm->week;
+        $form->section      = $cm->section;
         $form->course       = $cm->course;
         $form->instance     = $cm->instance;
         $form->modulename   = $module->name;
+        $form->fullmodulename  = strtolower($module->fullname);
+        $form->instancename = $instance->name;
 
         include("mod_delete.html");
 
@@ -132,25 +138,25 @@
             error("This module doesn't exist");
         }
 
-        $section = $SECTION[$course->format];
+        $sectionname = $SECTION[$course->format];
 
         if (! $form = get_record($module->name, "id", $cm->instance)) {
             error("The required instance of this module doesn't exist");
         }
         
-        if (! $cw = get_record("course_weeks", "id", $cm->week)) {
-            error("This course week doesn't exist");
+        if (! $cw = get_record("course_sections", "id", $cm->section)) {
+            error("This course section doesn't exist");
         }
 
         $form->coursemodule = $cm->id;
-        $form->week       = $cm->week;     // The week ID
-        $form->course     = $course->id;
-        $form->module     = $module->id;
-        $form->modulename = $module->name;
-        $form->instance   = $cm->instance;
-        $form->mode       = "update";
+        $form->section      = $cm->section;     // The section ID
+        $form->course       = $course->id;
+        $form->module       = $module->id;
+        $form->modulename   = $module->name;
+        $form->instance     = $cm->instance;
+        $form->mode         = "update";
 
-        $pageheading = "Updating a ".strtolower($module->fullname)." in $section $cw->week";
+        $pageheading = "Updating a ".strtolower($module->fullname)." in $sectionname $cw->section";
 
         
     } else if (isset($add)) {
@@ -161,27 +167,27 @@
         }
 
         require_variable($id);
-        require_variable($week);
+        require_variable($section);
 
         if (! $course = get_record("course", "id", $id)) {
             error("This course doesn't exist");
         }
 
-        $section = $SECTION[$course->format];
+        $sectionname = $SECTION[$course->format];
 
         if (! $module = get_record("modules", "name", $add)) {
             error("This module type doesn't exist");
         }
 
-        $form->week       = $week;         // The week number itself
+        $form->section    = $section;         // The section number itself
         $form->course     = $course->id;
         $form->module     = $module->id;
         $form->modulename = $module->name;
         $form->instance   = $cm->instance;
         $form->mode       = "add";
 
-        if ($form->week) {
-            $pageheading = "Adding a new ".strtolower($module->fullname)." to $section $form->week";
+        if ($form->section) {
+            $pageheading = "Adding a new ".strtolower($module->fullname)." to $sectionname $form->section";
         } else {
             $pageheading = "Adding a new ".strtolower($module->fullname);
         }
@@ -236,7 +242,7 @@ function add_course_module($mod) {
                                 SET course   = '$mod->course', 
                                     module   = '$mod->module',
                                     instance = '$mod->instance',
-                                    week     = '$mod->week',
+                                    section     = '$mod->section',
                                     added    = '$timenow' ")) {
         return 0;
     }
@@ -251,35 +257,35 @@ function add_course_module($mod) {
 
 }
 
-function add_mod_to_week($mod) {
-// Returns the course_weeks ID where the mod is inserted
+function add_mod_to_section($mod) {
+// Returns the course_sections ID where the mod is inserted
     GLOBAL $db;
 
-    if ($cw = get_record_sql("SELECT * FROM course_weeks 
-                              WHERE course = '$mod->course' AND week = '$mod->week'") ) {
+    if ($cw = get_record_sql("SELECT * FROM course_sections 
+                              WHERE course = '$mod->course' AND section = '$mod->section'") ) {
 
         if ($cw->sequence) {
             $newsequence = "$cw->sequence,$mod->coursemodule";
         } else {
             $newsequence = "$mod->coursemodule";
         }
-        if (!$rs = $db->Execute("UPDATE course_weeks SET sequence = '$newsequence' WHERE id = '$cw->id'")) {
+        if (!$rs = $db->Execute("UPDATE course_sections SET sequence = '$newsequence' WHERE id = '$cw->id'")) {
             return 0;
         } else {
-            return $cw->id;     // Return course_weeks ID that was used.
+            return $cw->id;     // Return course_sections ID that was used.
         }
        
     } else {  // Insert a new record
-        if (!$rs = $db->Execute("INSERT into course_weeks 
+        if (!$rs = $db->Execute("INSERT into course_sections 
                                  SET course   = '$mod->course', 
-                                     week     = '$mod->week',
+                                     section     = '$mod->section',
                                      summary  = '',
                                      sequence = '$mod->coursemodule' ")) {
             return 0;
         }
         // Get it out again - this is the most compatible way to determine the ID
-        if ($rs = $db->Execute("SELECT id FROM course_weeks 
-                                WHERE course = '$mod->course' AND week = '$mod->week'")) {
+        if ($rs = $db->Execute("SELECT id FROM course_sections 
+                                WHERE course = '$mod->course' AND section = '$mod->section'")) {
             return $rs->fields[0];
         } else {
             return 0;
@@ -291,17 +297,17 @@ function delete_course_module($mod) {
     return set_field("course_modules", "deleted", 1, "id", $mod);
 }
 
-function delete_mod_from_week($mod, $week) {
+function delete_mod_from_section($mod, $section) {
     GLOBAL $db;
 
-    if ($cw = get_record("course_weeks", "id", "$week") ) {
+    if ($cw = get_record("course_sections", "id", "$section") ) {
 
         $modarray = explode(",", $cw->sequence);
 
         if ($key = array_keys ($modarray, $mod)) {
             array_splice($modarray, $key[0], 1);
             $newsequence = implode(",", $modarray);
-            return set_field("course_weeks", "sequence", $newsequence, "id", $cw->id);
+            return set_field("course_sections", "sequence", $newsequence, "id", $cw->id);
         } else {
             return false;
         }
@@ -323,18 +329,18 @@ function move_module($id, $move) {
         error("This course module doesn't exist");
     }
     
-    if (! $thisweek = get_record("course_weeks", "id", $cm->week)) {
-        error("This course week doesn't exist");
+    if (! $thissection = get_record("course_sections", "id", $cm->section)) {
+        error("This course section doesn't exist");
     }
 
-    $mods = explode(",", $thisweek->sequence);
+    $mods = explode(",", $thissection->sequence);
 
     $len = count($mods);
     $pos = array_keys($mods, $cm->id);
     $thepos = $pos[0];
 
     if ($len == 0 || count($pos) == 0 ) {
-        error("Very strange. Could not find the required module in this week.");
+        error("Very strange. Could not find the required module in this section.");
     }
 
     if ($len == 1) {
@@ -348,47 +354,47 @@ function move_module($id, $move) {
     if ($move < 0) {    // Moving the module up
 
         if ($first) {
-            if ($thisweek->week == 1) {  // First week, do nothing
+            if ($thissection->section == 1) {  // First section, do nothing
                 return true;
-            } else {               // Push onto end of previous week
-                $prevweeknumber = $thisweek->week - 1;
-                if (! $prevweek = get_record_sql("SELECT * FROM course_weeks 
-                                                  WHERE course='$thisweek->course'
-                                                  AND week='$prevweeknumber' ")) {
-                    error("Previous week ($prevweek->id) doesn't exist");
+            } else {               // Push onto end of previous section
+                $prevsectionnumber = $thissection->section - 1;
+                if (! $prevsection = get_record_sql("SELECT * FROM course_sections 
+                                                  WHERE course='$thissection->course'
+                                                  AND section='$prevsectionnumber' ")) {
+                    error("Previous section ($prevsection->id) doesn't exist");
                 }
 
-                if ($prevweek->sequence) {
-                    $newsequence = "$prevweek->sequence,$cm->id";
+                if ($prevsection->sequence) {
+                    $newsequence = "$prevsection->sequence,$cm->id";
                 } else {
                     $newsequence = "$cm->id";
                 }
 
-                if (! set_field("course_weeks", "sequence", $newsequence, "id", $prevweek->id)) {
-                    error("Previous week could not be updated");
+                if (! set_field("course_sections", "sequence", $newsequence, "id", $prevsection->id)) {
+                    error("Previous section could not be updated");
                 }
 
-                if (! set_field("course_modules", "week", $prevweek->id, "id", $cm->id)) {
+                if (! set_field("course_modules", "section", $prevsection->id, "id", $cm->id)) {
                     error("Module could not be updated");
                 }
 
                 array_splice($mods, 0, 1);
                 $newsequence = implode(",", $mods);
-                if (! set_field("course_weeks", "sequence", $newsequence, "id", $thisweek->id)) {
+                if (! set_field("course_sections", "sequence", $newsequence, "id", $thissection->id)) {
                     error("Module could not be updated");
                 }
 
                 return true;
 
             }
-        } else {        // move up within this week
+        } else {        // move up within this section
             $swap = $mods[$thepos-1];
             $mods[$thepos-1] = $mods[$thepos];
             $mods[$thepos] = $swap;
             
             $newsequence = implode(",", $mods);
-            if (! set_field("course_weeks", "sequence", $newsequence, "id", $thisweek->id)) {
-                error("This week could not be updated");
+            if (! set_field("course_sections", "sequence", $newsequence, "id", $thissection->id)) {
+                error("This section could not be updated");
             }
             return true;
         }
@@ -396,44 +402,44 @@ function move_module($id, $move) {
     } else {            // Moving the module down
 
         if ($last) {
-            $nextweeknumber = $thisweek->week + 1;
-            if ($nextweek = get_record_sql("SELECT * FROM course_weeks 
-                                            WHERE course='$thisweek->course'
-                                            AND week='$nextweeknumber' ")) {
+            $nextsectionnumber = $thissection->section + 1;
+            if ($nextsection = get_record_sql("SELECT * FROM course_sections 
+                                            WHERE course='$thissection->course'
+                                            AND section='$nextsectionnumber' ")) {
 
-                if ($nextweek->sequence) {
-                    $newsequence = "$cm->id,$nextweek->sequence";
+                if ($nextsection->sequence) {
+                    $newsequence = "$cm->id,$nextsection->sequence";
                 } else {
                     $newsequence = "$cm->id";
                 }
 
-                if (! set_field("course_weeks", "sequence", $newsequence, "id", $nextweek->id)) {
-                    error("Next week could not be updated");
+                if (! set_field("course_sections", "sequence", $newsequence, "id", $nextsection->id)) {
+                    error("Next section could not be updated");
                 }
 
-                if (! set_field("course_modules", "week", $nextweek->id, "id", $cm->id)) {
+                if (! set_field("course_modules", "section", $nextsection->id, "id", $cm->id)) {
                     error("Module could not be updated");
                 }
 
                 array_splice($mods, $thepos, 1);
                 $newsequence = implode(",", $mods);
-                if (! set_field("course_weeks", "sequence", $newsequence, "id", $thisweek->id)) {
-                    error("This week could not be updated");
+                if (! set_field("course_sections", "sequence", $newsequence, "id", $thissection->id)) {
+                    error("This section could not be updated");
                 }
                 return true;
 
-            } else {        // There is no next week, so just return
+            } else {        // There is no next section, so just return
                 return true;
 
             }
-        } else {      // move down within this week
+        } else {      // move down within this section
             $swap = $mods[$thepos+1];
             $mods[$thepos+1] = $mods[$thepos];
             $mods[$thepos] = $swap;
             
             $newsequence = implode(",", $mods);
-            if (! set_field("course_weeks", "sequence", $newsequence, "id", $thisweek->id)) {
-                error("This week could not be updated");
+            if (! set_field("course_sections", "sequence", $newsequence, "id", $thissection->id)) {
+                error("This section could not be updated");
             }
             return true;
         }

@@ -49,6 +49,26 @@
 	</td>
 </tr>
 <tr valign=top>
+    <td><P>News items to show:</td>
+    <td><? 
+       $options = array("0" => "0 news items",
+                        "1" => "1 news item",
+                        "2" => "2 news items",
+                        "3" => "3 news items",
+                        "4" => "4 news items",
+                        "5" => "5 news items",
+                        "6" => "6 news items",
+                        "7" => "7 news items",
+                        "8" => "8 news items",
+                        "9" => "9 news items",
+                        "10" => "10 news items");
+       choose_from_menu ($options, "newsitems", "$form->newsitems");
+       formerr($err["newsitems"]);
+    ?>
+    </td>
+</tr>
+
+<tr valign=top>
 	<td><P>Word for teacher:</td>
 	<td><input type="text" name="teacher" size=25 value="<? p($form->teacher) ?>">
 	(eg Teacher, Tutor, Facilitator etc) <? formerr($err["teacher"]) ?>
@@ -70,12 +90,13 @@
 	?></td>
 </tr>
 <tr valign=top>
-	<td><P>End date:</td>
+	<td><P>Number of weeks/topics:</td>
 	<td><?
-           choose_from_menu ($form->days, "endday", "$form->endday");
-           choose_from_menu ($form->months, "endmonth", "$form->endmonth");
-           choose_from_menu ($form->years, "endyear", "$form->endyear");
-	       formerr($err["enddate"]);
+           for ($i=1; $i<=20; $i++) {
+              $sectionmenu[$i] = "$i";
+           }
+           choose_from_menu ($sectionmenu, "numsections", "$form->numsections");
+	       formerr($err["numsections"]);
 	?></td>
 </tr>
 <tr>

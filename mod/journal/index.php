@@ -16,22 +16,30 @@
                  "<A HREF=../../course/view.php?id=$course->id>$course->shortname</A> -> Journals", "");
 
 
-    if (! $journals = get_all_instances_in_course("journal", $course->id, "cw.week ASC")) {
+    if (! $journals = get_all_instances_in_course("journal", $course->id, "cw.section ASC")) {
         notice("There are no journals", "../../course/view.php?id=$course->id");
         die;
     }
 
     $timenow = time();
 
-    $table->head  = array ("Week", "Question", "Answer");
-    $table->align = array ("CENTER", "LEFT", "LEFT");
+    if ($course->format == "weeks") {
+        $table->head  = array ("Week", "Question", "Answer");
+        $table->align = array ("CENTER", "LEFT", "LEFT");
+    } else if ($course->format == "topics") {
+        $table->head  = array ("Topic", "Question", "Answer");
+        $table->align = array ("CENTER", "LEFT", "LEFT");
+    } else {
+        $table->head  = array ("Name", "Answer");
+        $table->align = array ("LEFT", "LEFT");
+    }
 
     foreach ($journals as $journal) {
 
         $entry = get_record_sql("SELECT text FROM journal_entries 
                                  WHERE user='$USER->id' AND journal='$journal->id'");
 
-        $journal->timestart  = $course->startdate + (($journal->week - 1) * 608400);
+        $journal->timestart  = $course->startdate + (($journal->section - 1) * 608400);
         if ($journal->daysopen) {
             $journal->timefinish = $journal->timestart + (3600 * 24 * $journal->daysopen);
         } else {
@@ -46,9 +54,14 @@
         } else {
             $text .= "View</A></P>";
         }
-        $table->data[] = array ("$journal->week",
-                                text_to_html($journal->intro),
-                                $text);
+        if ($course->format == "weeks" or $course->format == "topics") {
+            $table->data[] = array ("$journal->section",
+                                    text_to_html($journal->intro),
+                                    $text);
+        } else {
+            $table->data[] = array (text_to_html($journal->intro),
+                                    $text);
+        }
     }
 
     print_table($table);

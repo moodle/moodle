@@ -23,7 +23,7 @@
     echo "<TR><TH>Week<TH>Journal</TR>";
     foreach ($journals as $journal) {
 
-        $journal->timestart  = $course->startdate + (($journal->week - 1) * 608400);
+        $journal->timestart  = $course->startdate + (($journal->section - 1) * 608400);
         if ($journal->daysopen) {
             $journal->timefinish = $journal->timestart + (3600 * 24 * $journal->daysopen);
         } else {
@@ -41,7 +41,7 @@
             } else {
                 echo "<TD BGCOLOR=\"$THEME->cellheading\">";
             }
-            echo "$journal->week</TD>";
+            echo "$journal->section</TD>";
             echo "<TD BGCOLOR=\"$THEME->cellcontent\">";
             echo "<P><A HREF=\"$CFG->wwwroot/mod/journal/view.php?id=$journal->coursemodule\">$journal->name</A></P>";
             if ($entry->modified) {

@@ -21,7 +21,7 @@
 
     add_to_log($course->id, "journal", "view", "view.php?id=$cm->id", "$journal->id");
 
-    if (! $cw = get_record("course_weeks", "id", $cm->week)) {
+    if (! $cw = get_record("course_sections", "id", $cm->section)) {
         error("Course module is incorrect");
     }
 
@@ -41,11 +41,19 @@
     echo "<BR>";
 
     $timenow = time();
-    $timestart = $course->startdate + (($cw->week - 1) * 608400);
-    if ($journal->days) {
-        $timefinish = $timestart + (3600 * 24 * $journal->days);
-    } else {
-        $timefinish = $course->enddate;
+
+    if ($course->format == "weeks" and $journal->days) {
+        $timestart = $course->startdate + (($cw->section - 1) * 608400);
+        if ($journal->days) {
+            $timefinish = $timestart + (3600 * 24 * $journal->days);
+        } else {
+            $timefinish = $course->enddate;
+        }
+    } else {  // Have no time limits on the journals
+
+        $timestart = $timenow - 1;
+        $timefinish = $timenow + 1;
+        $journal->days = 0;
     }
 
     if ($timenow > $timestart) {

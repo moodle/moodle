@@ -2,9 +2,9 @@
 
 <CENTER>
 <FORM name="form" method="post" action="<?=$ME ?>">
-<? print_heading("Are you absolutely sure you want to delete the $form->modulename ?") ?>
+<? print_heading("Are you absolutely sure you want to delete the $form->fullmodulename '$form->instancename' ?") ?>
 <input type="hidden" name=mode         value="delete">
-<input type="hidden" name=week         value="<? echo $form->week; ?>">
+<input type="hidden" name=section      value="<? echo $form->section; ?>">
 <input type="hidden" name=course       value="<? p($form->course) ?>">
 <input type="hidden" name=coursemodule value="<? p($form->coursemodule) ?>">
 <input type="hidden" name=modulename   value="<? p($form->modulename) ?>">
