@@ -25,9 +25,6 @@
         $data[GLOSSARY_EXPORT_VIEW]->caption = get_string("exportentries", "glossary");
 
         $data[GLOSSARY_IMPORT_VIEW]->link = "import.php?id=$cm->id";
-        $data[GLOSSARY_EXPORT_VIEW]->link = "export.php?id=$cm->id&tab=".GLOSSARY_CATEGORY_VIEW;
-
-        $data[GLOSSARY_IMPORT_VIEW]->link = "import.php?id=$cm->id";
         $data[GLOSSARY_EXPORT_VIEW]->link = "export.php?id=$cm->id&mode=$mode&hook=$hook";
 
     }

@@ -70,17 +70,13 @@
                         $href_tag_begin = "<a target=\"entry\" class=\"autolink\" title=\"$title\" href=\"$CFG->wwwroot/mod/glossary/showentry.php?courseid=$courseid&concept=$concepttitle\" ".
                              "onClick=\"return openpopup('/mod/glossary/showentry.php?courseid=$courseid\&concept=$concepttitle', 'entry', 'menubar=0,location=0,scrollbars,resizable,width=600,height=450', 0);\">";
                     }
-
-                    $currentconcept = str_replace("|", "\|", $concept->concept);
-                    $currentconcept = str_replace("'", "\'", $currentconcept);
-                    $currentconcept = str_replace("*", "\*", $currentconcept);
+                    $replace = "\\[]'\"*()";
+                    $currentconcept = glossary_addslashes($replace,$concept->concept);                    
                     if ( $currentconcept = trim(strip_tags($currentconcept)) ) {
                         if ( !$concept->category ) {
                             if ( $aliases = get_records("glossary_alias","entryid",$concept->id, "alias") ) {
                                 foreach ($aliases as $alias) {
-                                    $currentalias = str_replace("|", "\|", $alias->alias);
-                                    $currentalias = str_replace("'", "\'", $currentalias);
-                                    $currentalias = str_replace("*", "\*", $currentalias);
+                                    $currentalias = glossary_addslashes($replace,$alias->alias);
                                     $currentconcept .= "|" . trim($currentalias);
                                 }
                             }
@@ -188,4 +184,12 @@
         }
     }
 
+    function glossary_addslashes ( $chars, $text ) {
+        if ( $chars ) {
+            for ($i = 0; $i < strlen($chars); $i++) {
+                $text = str_replace($chars[$i], "\\" . $chars[$i], $text);
+            }
+        }
+        return $text;
+    }
 ?>
