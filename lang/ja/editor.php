@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.2 + (2004032100)
+      // editor.php - created with Moodle 1.3 - (2004052400)
 
 
 $string['about'] = 'エディタに関して';
@@ -27,6 +27,7 @@ $string['cut'] = '選択したものを切り取る';
 $string['delete'] = '削除';
 $string['filebrowser'] = 'ファイルブラウザ';
 $string['forecolor'] = 'フォント色';
+$string['fullscreen'] = 'フルスクリーンエディタ';
 $string['heading'] = 'Heading';
 $string['height'] = '高さ';
 $string['hilitecolor'] = '背景色';
@@ -47,15 +48,18 @@ $string['justifyleft'] = '左寄せ';
 $string['justifyright'] = '右寄せ';
 $string['layout'] = 'レイアウト';
 $string['left'] = '左';
+$string['lefttoright'] = '左→右';
 $string['linkproperties'] = 'リンク属性';
 $string['linktarget'] = 'ターゲット';
 $string['linktargetblank'] = '新しいウインドウ';
 $string['linktargetnone'] = '無し';
+$string['linktargetother'] = 'その他';
 $string['linktargetself'] = '同一フレーム';
 $string['linktargettop'] = '同一ウインドウ';
 $string['linktitle'] = 'タイトル';
 $string['linkurl'] = 'URL';
 $string['middle'] = '中央';
+$string['minimize'] = 'エディタを最小化する';
 $string['move'] = '移動';
 $string['normal'] = 'ノーマル';
 $string['notimage'] = '選択したファイルは画像ではありません。画像を選択してください。';
@@ -75,7 +79,9 @@ $string['redo'] = 'やり直す';
 $string['removelink'] = 'リンクの削除';
 $string['rename'] = '変名';
 $string['right'] = '右';
+$string['righttoleft'] = '右→左';
 $string['rows'] = '列';
+$string['selectcolor'] = '色の選択';
 $string['selection'] = '選択';
 $string['showhelp'] = 'エディタのヘルプ';
 $string['size'] = 'サイズ';
@@ -94,6 +100,7 @@ $string['unorderedlist'] = '黒丸付きリスト';
 $string['upload'] = 'アップロード';
 $string['vertical'] = '垂直';
 $string['width'] = '幅';
+$string['wordclean'] = 'Word HTMLを取除く';
 $string['zip'] = 'Zip';
 
 ?>

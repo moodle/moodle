@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.3 development (2004050500)
+      // resource.php - created with Moodle 1.3 - (2004052400)
 
 
 $string['addresource'] = '¥ê¥½¡¼¥¹¤òÄÉ²Ã¤¹¤ë';
@@ -28,6 +28,7 @@ $string['fetchclienterror'] = '¥¦¥§¥Ö¥Ú¡¼¥¸¤ò¸¡º÷¤·¤Æ¤¤¤ë»þ¡¢¥¦¥§¥Ö¥¯¥é¥¤¥¢¥ó¥È¤
 $string['fetcherror'] = '¥¦¥§¥Ö¥Ú¡¼¥¸¤ò¸¡º÷¤·¤Æ¤¤¤ë»þ¡¢¥¨¥é¡¼¤¬È¯À¸¤·¤Þ¤·¤¿¡£';
 $string['fetchservererror'] = '¥¦¥§¥Ö¥Ú¡¼¥¸¤ò¸¡º÷¤·¤Æ¤¤¤ë»þ¡¢¥ê¥â¡¼¥È¥µ¡¼¥Ð¤Ë¥¨¥é¡¼¤¬È¯À¸¤·¤Þ¤·¤¿¡£¥×¥í¥°¥é¥à¥¨¥é¡¼¤À¤È»×¤ï¤ì¤Þ¤¹¡£';
 $string['filename'] = '¥Õ¥¡¥¤¥ëÌ¾';
+$string['filtername'] = '¥ê¥½¡¼¥¹¡¡¥ª¡¼¥È¥ê¥ó¥¯';
 $string['fulltext'] = '¥Õ¥ë¥Æ¥­¥¹¥È';
 $string['htmlfragment'] = 'HTML¥Õ¥é¥°¥á¥ó¥È';
 $string['maindirectory'] = '¥á¥¤¥ó¥Õ¥¡¥¤¥ë¥Ç¥£¥ì¥¯¥È¥ê';

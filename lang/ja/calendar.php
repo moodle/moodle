@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // calendar.php - created with Moodle 1.3 development (2004050500)
+      // calendar.php - created with Moodle 1.3 - (2004052400)
 
 
 $string['april'] = '4月';
@@ -47,6 +47,7 @@ $string['february'] = '2月';
 $string['fri'] = '金';
 $string['friday'] = '金曜日';
 $string['globalevents'] = '全体のイベント';
+$string['gotocalendar'] = 'カレンダーへ移動';
 $string['groupevents'] = 'グループイベント';
 $string['hidden'] = '非表示中';
 $string['january'] = '1月';
@@ -70,7 +71,8 @@ $string['pref_timeformat'] = '時間フォーマット';
 $string['preferences'] = '設定';
 $string['preferences_available'] = '個人設定';
 $string['repeatnone'] = '繰り返し無し';
-$string['repeatweeksr'] = 'イベント';
+$string['repeatweeksl'] = '毎週、作成イベント数';
+$string['repeatweeksr'] = '件';
 $string['sat'] = '土';
 $string['saturday'] = '土曜日';
 $string['september'] = '9月';
