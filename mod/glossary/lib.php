@@ -1529,7 +1529,10 @@ function glossary_print_dynaentry($courseid, $entries, $displayformat = -1) {
 function glossary_generate_export_file($glossary, $hook = "", $hook = 0) {
 global $CFG;
     glossary_check_moddata_dir($glossary);
-    $h = glossary_open_xml($glossary);
+
+    if (!$h = glossary_open_xml($glossary)) {
+        error("An error occurred while opening a file to write to.");
+    }
 
     $status = fwrite ($h,glossary_start_tag("INFO",1,true));
         fwrite ($h,glossary_full_tag("NAME",2,false,$glossary->name));
@@ -1626,8 +1629,15 @@ function glossary_open_xml($glossary) {
 
         //Open for writing
 
-        $file = $CFG->dataroot."/$glossary->course/glossary/". clean_filename(strip_tags($glossary->name)) ."/glossary.xml";
-        $h = fopen($file,"w");
+        $glossaryname = clean_filename(strip_tags($glossary->name)); 
+        $pathname = make_upload_directory("$glossary->course/glossary/$glossaryname");
+        $filename = "$pathname/glossary.xml";
+
+        if (!$h = fopen($filename,"w")) {
+            notify("Error opening '$filename'");
+            return false;
+        }
+
         //Writes the header
         $status = fwrite ($h,"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
         if ($status) {
