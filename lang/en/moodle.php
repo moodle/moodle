@@ -763,6 +763,7 @@ $string['normal'] = 'Normal';
 $string['normalfilter'] = 'Normal search';
 $string['nostudentsfound'] = 'No $a found';
 $string['nostudentsyet'] = 'No students enrolled in this course yet';
+$string['nostudentsingroup'] = 'There are no students in this group yet';
 $string['nosuchemail'] = 'No such email address';
 $string['notavailable'] = 'Not available';
 $string['noteachersyet'] = 'No teachers in this course yet';

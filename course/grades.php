@@ -35,20 +35,26 @@
         $currentgroup = false;
     }
 
-    if ($currentgroup) {
-        $students = get_group_students($currentgroup, "u.lastname ASC");
-    } else {
-        $students = get_course_students($course->id, "u.lastname ASC");
-    }
-
 /// Get a list of all students
-    if (!$students) {
-        print_header("$course->shortname: $strgrades", "$course->fullname", 
-                     "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> 
+    if ($currentgroup) {
+        if (!$students = get_group_students($currentgroup, "u.lastname ASC")) {
+            print_header("$course->shortname: $strgrades", "$course->fullname", 
+                     "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> 
                       -> $strgrades");
-        print_heading(get_string("nostudentsyet"));
-        print_footer($course);
-        exit;
+            setup_and_print_groups($course, $groupmode, "grades.php?id=$course->id");
+            notice(get_string("nostudentsingroup"), "$CFG->wwwroot/course/view.php?id=$course->id");
+            print_footer();
+            exit;
+        }
+    } else {
+        if (!$students = get_course_students($course->id, "u.lastname ASC")) {
+            print_header("$course->shortname: $strgrades", "$course->fullname", 
+                     "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> 
+                      -> $strgrades");
+            notice(get_string("nostudentsyet"), "$CFG->wwwroot/course/view.php?id=$course->id");
+            print_footer();
+            exit;
+        }
     }
 
     foreach ($students as $student) {
