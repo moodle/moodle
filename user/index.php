@@ -14,7 +14,6 @@
     optional_variable($lastinitial, "");     // only show students with this last initial
     optional_variable($firstinitial, "");    // only show students with this first initial
     optional_variable($perpage, "20");       // how many per page
-    optional_variable($showall, "");         // SHow everyone on one page
 
 
     if (! $course = get_record("course", "id", $id)) {
@@ -218,11 +217,7 @@
                 $lastaccess = $strnever;
             }
 
-            if ($showall and $numstudents > USER_LARGE_CLASS) {  // Don't show pictures
-                $picture = "";
-            } else {
-                $picture = print_user_picture($student->id, $course->id, $student->picture, false, true);
-            }
+            $picture = print_user_picture($student->id, $course->id, $student->picture, false, true);
 
             $fullname = fullname($student, $isteacher);
 
