@@ -556,10 +556,13 @@ function quiz_get_attempt_responses($attempt) {
             $responses[$key]->random = $response->answer;
             $responses[$response->answer]->delete = true;
 
-            $realanswer = $responses[$response->answer]->answer;
+            $realresponse = $responses[$response->answer];
+            $realanswer = $realresponse->answer;
 
             if (is_array($realanswer)) {
                 $responses[$key]->answer = $realanswer;
+            } else if ($realresponse->qtype == NUMERICAL or $realresponse->qtype == SHORTANSWER) {
+                $responses[$key]->answer = array("$realanswer");
             } else {
                 $responses[$key]->answer = explode(",", $realanswer);
             }
