@@ -152,7 +152,7 @@ class block_rss_client extends block_base {
             }
             
             if ($showtitle) {
-                $returnstring .= '<p><div align="center" class="rssclienttitle">'. $rss_record->title .'</div></p>';
+                $returnstring .= '<div class="rssclienttitle">'. $rss_record->title .'</div>';
             }
             if ($shownumentries > 0 && $shownumentries < count($rss->items) ) {
                 $rss->items = array_slice($rss->items, 0, $shownumentries);
@@ -167,6 +167,8 @@ class block_rss_client extends block_base {
                     $item['link'] = $item['guid'];
                 }
 
+                $item['link'] = str_replace('&', '&amp;', $item['link']);
+
                 $returnstring .= '<div class="rssclientlink"><a href="'. $item['link'] .'" target="_new">'. $item['title'] . '</a></div>' ."\n";
                 
                 if ($display_description && !empty($item['description'])){
@@ -174,12 +176,12 @@ class block_rss_client extends block_base {
                 }
             }
 
-            if ( isset($rss->channel['link']) && isset($rss->channel['title']) ) {
+            if (!empty($rss->channel['link']) && !empty($rss->channel['title']) ) {
                 $feedtitle = '<a href="'. $rss->channel['link'] .'">'. $rss->channel['title'] .'</a>';
             }
         }
 
-        if (isset($feedtitle) && $feedtitle != '' && $feedtitle != '<a href="'. $rss->channel['link'] .'"></a>') {
+        if (!empty($feedtitle) and ($feedtitle != '<a href="'. $rss->channel['link'] .'"></a>')) {
             $this->title = $feedtitle;
         }
         $returnstring .= '<br />';
