@@ -1,6 +1,6 @@
 <?php
 /* 
-V4.00 20 Oct 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
+V4.01 23 Oct 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. 
@@ -89,7 +89,17 @@ GLOBAL $ADODB_vers,$ADODB_CACHE_DIR,$ADODB_FETCH_MODE, $HTTP_GET_VARS,$ADODB_COU
 	
 	if (empty($_GET['nolog'])) {
 		echo "<h3>SQL Logging enabled</h3>";
-		$db->LogSQL();
+		$db->LogSQL();/*
+		$sql =
+"SELECT t1.sid, t1.sid, t1.title, t1.hometext, t1.notes, t1.aid, t1.informant, 
+t2.url, t2.email, t1.catid, t3.title, t1.topic, t4.topicname, t4.topicimage, 
+t4.topictext, t1.score, t1.ratings, t1.counter, t1.comments, t1.acomm 
+FROM `nuke_stories` `t1`, `nuke_authors` `t2`, `nuke_stories_cat` `t3`, `nuke_topics` `t4` 
+	WHERE ((t2.aid=t1.aid) AND (t3.catid=t1.catid) AND (t4.topicid=t1.topic) 
+	AND ((t1.alanguage='german') OR (t1.alanguage='')) AND (t1.ihome='0')) 
+	ORDER BY t1.time DESC";
+		$db->SelectLimit($sql);
+		echo $db->ErrorMsg();*/
 	}
 	$ADODB_CACHE_DIR = dirname(TempNam('/tmp','testadodb'));
 	$db->debug = false;
@@ -140,7 +150,7 @@ GLOBAL $ADODB_vers,$ADODB_CACHE_DIR,$ADODB_FETCH_MODE, $HTTP_GET_VARS,$ADODB_COU
 	else $rs->Close();
 		
 	//if ($db->databaseType !='vfp') $db->Execute("drop table ADOXYZ");
-		
+	
 	if ($create) {
 		if (false && $db->databaseType == 'ibase') {
 			print "<b>Please create the following table for testing:</b></p>$createtab</p>";
@@ -448,11 +458,49 @@ END adodb;
 	$time = $db->DBDate(time());
 	if (empty($HTTP_GET_VARS['hide'])) $db->debug = true;
 	switch($db->databaseType){
-	default:
+	case 'mssqlpo':
+	case 'mssql':
+		$sqlt = "CREATE TABLE mytable (
+  row1 INT  IDENTITY(1,1) NOT NULL,
+  row2 varchar(16),
+  PRIMARY KEY  (row1))";
+  		//$db->debug=1;
+  		if (!$db->Execute("delete from mytable")) 
+			$db->Execute($sqlt);
+			
+		$ok = $db->Execute("insert into mytable (row2) values ('test')");
+		$ins_id=$db->Insert_ID();
+		echo "Insert ID=";var_dump($ins_id);
+		if ($ins_id == 0) Err("Bad Insert_ID()");
+		$ins_id2 = $db->GetOne("select row1 from mytable");
+		if ($ins_id != $ins_id2) Err("Bad Insert_ID() 2");
+		
 		$arr = array(0=>'Caroline',1=>'Miranda');
 		$sql = "insert into ADOXYZ (id,firstname,lastname,created) values ($i*10+0,?,?,$time)";
 		break;
 		
+	case 'mysql':
+		$sqlt = "CREATE TABLE `mytable` (
+  `row1` int(11) NOT NULL auto_increment,
+  `row2` varchar(16) NOT NULL default '',
+  PRIMARY KEY  (`row1`),
+  KEY `myindex` (`row1`,`row2`)
+) ";
+		if (!$db->Execute("delete from mytable")) 
+			$db->Execute($sqlt);
+			
+		$ok = $db->Execute("insert into mytable (row2) values ('test')");
+		$ins_id=$db->Insert_ID();
+		echo "Insert ID=";var_dump($ins_id);
+		if ($ins_id == 0) Err("Bad Insert_ID()");
+		$ins_id2 = $db->GetOne("select row1 from mytable");
+		if ($ins_id != $ins_id2) Err("Bad Insert_ID() 2");
+		
+	default:
+		$arr = array(0=>'Caroline',1=>'Miranda');
+		$sql = "insert into ADOXYZ (id,firstname,lastname,created) values ($i*10+0,?,?,$time)";
+		break;
+	
 	case 'oci8':
 	case 'oci805':
 		$arr = array('first'=>'Caroline','last'=>'Miranda');
@@ -469,7 +517,9 @@ END adodb;
 	else $rs->Close();
 	$db->debug = false;
 	$db->Execute("insert into ADOXYZ (id,firstname,lastname,created) values ($i*10+1,'John','Lim',$time)");
-	echo "Insert ID=";var_dump($db->Insert_ID());
+	/*$ins_id=$db->Insert_ID();
+	echo "Insert ID=";var_dump($ins_id);*/
+	if ($db->databaseType == 'mysql') if ($ins_id == 0) Err('Bad Insert_ID');
 	$db->Execute("insert into ADOXYZ (id,firstname,lastname,created) values ($i*10+2,'Mary','Lamb',$time )");
 	$db->Execute("insert into ADOXYZ (id,firstname,lastname,created) values ($i*10+3,'George','Washington',$time )");
 	$db->Execute("insert into ADOXYZ (id,firstname,lastname,created) values ($i*10+4,'Mr. Alan','Tam',$time )");
@@ -1147,7 +1197,29 @@ END adodb;
 	
 	if ($pear) print "<p>PEAR DB emulation passed.</p>";
 	
-
+	$rs = $db->SelectLimit("select ".$db->sysDate." from adoxyz",1);
+	$date = $rs->fields[0];
+	if (!$date) Err("Bad sysDate");
+	else {
+		$ds = $db->UserDate($date,"d m Y");
+		if ($ds != date("d m Y")) Err("Bad UserDate: ".$ds);
+		else echo "Passed UserDate: $ds<p>";
+	}
+	
+	$rs = $db->SelectLimit("select ".$db->sysTimeStamp." from adoxyz",1);
+	$date = $rs->fields[0];
+	if (!$date) Err("Bad sysTimeStamp");
+	else {
+		$ds = $db->UserTimeStamp($date,"H \\h\\r\\s-d m Y");
+		if ($ds != date("H \\h\\r\\s-d m Y")) Err("Bad UserTimeStamp: ".$ds);
+		else echo "Passed UserTimeStamp: $ds<p>";
+		
+		$date = 100;
+		$ds = $db->UserTimeStamp($date,"H \\h\\r\\s-d m Y");
+		$ds2 = date("H \\h\\r\\s-d m Y",$date);
+		if ($ds != $ds2) Err("Bad UserTimeStamp 2: $ds: $ds2");
+		else echo "Passed UserTimeStamp 2: $ds<p>";
+	}
 	if ($db->hasTransactions) {
 		//$db->debug=1;
 		echo "<p>Testing StartTrans CompleteTrans</p>";

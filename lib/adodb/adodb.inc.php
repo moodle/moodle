@@ -14,7 +14,7 @@
 /**
 	\mainpage 	
 	
-	 @version V4.00 20 Oct 2003 (c) 2000-2003 John Lim (jlim\@natsoft.com.my). All rights reserved.
+	 @version V4.01 23 Oct 2003 (c) 2000-2003 John Lim (jlim\@natsoft.com.my). All rights reserved.
 
 	Released under both BSD license and Lesser GPL library license. You can choose which license
 	you prefer.
@@ -148,7 +148,7 @@
 		/**
 		 * ADODB version as a string.
 		 */
-		$ADODB_vers = 'V4.00 20 Oct 2003 (c) 2000-2003 John Lim (jlim#natsoft.com.my). All rights reserved. Released BSD & LGPL.';
+		$ADODB_vers = 'V4.01 23 Oct 2003 (c) 2000-2003 John Lim (jlim#natsoft.com.my). All rights reserved. Released BSD & LGPL.';
 	
 		/**
 		 * Determines whether recordset->RecordCount() is used. 
@@ -228,6 +228,8 @@
 	var $metaTablesSQL = '';
 	var $uniqueOrderBy = false; /// All order by columns have to be unique
 	var $emptyDate = '&nbsp;';
+	var $emptyTimeStamp = '&nbsp;';
+	var $lastInsID = false;
 	//--
 	var $hasInsertID = false; 		/// supports autoincrement ID?
 	var $hasAffectedRows = false; 	/// supports affected rows for update/delete?
@@ -719,7 +721,8 @@
 				if (!$array_2d) $inputarr = array($inputarr);
 				while(list(,$arr) = each($inputarr)) {
 					$sql = ''; $i = 0;
-					foreach($arr as $v) {
+					reset($arr);
+					while(list(,$v) = each($arr)) {
 						$sql .= $sqlarr[$i];
 						// from Ron Baldwin <ron.baldwin@sourceprose.com>
 						// Only quote string types	
@@ -897,9 +900,10 @@
 	 */ 
 		function Insert_ID()
 		{
-				if ($this->hasInsertID) return $this->_insertid();
-				if ($this->debug) ADOConnection::outp( '<p>Insert_ID error</p>');
-				return false;
+			if ($this->_logsql && $this->lastInsID) return $this->lastInsID;
+			if ($this->hasInsertID) return $this->_insertid();
+			if ($this->debug) ADOConnection::outp( '<p>Insert_ID error</p>');
+			return false;
 		}
 	
 	
@@ -2076,7 +2080,7 @@
 	function UnixTimeStamp($v)
 	{
 		if (!preg_match( 
-			"|^([0-9]{4})[-/\.]?([0-9]{1,2})[-/\.]?([0-9]{1,2})[ ,-]+(([0-9]{1,2}):?([0-9]{1,2}):?([0-9\.]{1,4}))?|", 
+			"|^([0-9]{4})[-/\.]?([0-9]{1,2})[-/\.]?([0-9]{1,2})[ ,-]*(([0-9]{1,2}):?([0-9]{1,2}):?([0-9\.]{1,4}))?|", 
 			($v), $rr)) return false;
 			
 		if ($rr[1] <= TIMESTAMP_FIRST_YEAR && $rr[2]<= 1) return 0;
@@ -2108,6 +2112,23 @@
 		
 		return adodb_date($fmt,$tt);
 	
+	}
+	
+		/**
+	 *
+	 * @param v  	is the character timestamp in YYYY-MM-DD hh:mm:ss format
+	 * @param fmt 	is the format to apply to it, using date()
+	 *
+	 * @return a timestamp formated as user desires
+	 */
+	function UserTimeStamp($v,$fmt='Y-m-d H:i:s')
+	{
+		if (is_numeric($v)) return adodb_date($fmt,$v);
+		$tt = $this->UnixTimeStamp($v);
+		// $tt == -1 if pre TIMESTAMP_FIRST_YEAR
+		if (($tt === false || $tt == -1) && $v != false) return $v;
+		if ($tt == 0) return $this->emptyTimeStamp;
+		return adodb_date($fmt,$tt);
 	}
 	
 	
@@ -2513,10 +2534,11 @@
 	 */
 	function UserTimeStamp($v,$fmt='Y-m-d H:i:s')
 	{
+		if (is_numeric($v)) return adodb_date($fmt,$v);
 		$tt = $this->UnixTimeStamp($v);
 		// $tt == -1 if pre TIMESTAMP_FIRST_YEAR
 		if (($tt === false || $tt == -1) && $v != false) return $v;
-		if ($tt == 0) return $this->emptyTimeStamp;
+		if ($tt === 0) return $this->emptyTimeStamp;
 		return adodb_date($fmt,$tt);
 	}
 	
@@ -2566,7 +2588,7 @@
 	{
 		
 		if (!preg_match( 
-			"|^([0-9]{4})[-/\.]?([0-9]{1,2})[-/\.]?([0-9]{1,2})[ ,-]+(([0-9]{1,2}):?([0-9]{1,2}):?([0-9\.]{1,4}))?|", 
+			"|^([0-9]{4})[-/\.]?([0-9]{1,2})[-/\.]?([0-9]{1,2})[ ,-]*(([0-9]{1,2}):?([0-9]{1,2}):?([0-9\.]{1,4}))?|", 
 			($v), $rr)) return false;
 		if ($rr[1] <= TIMESTAMP_FIRST_YEAR && $rr[2]<= 1) return 0;
 	
@@ -2776,7 +2798,10 @@
 		}
 		
 		$record = array();
-		foreach($this->bind as $k => $v) {
+		reset($this->bind);
+		while(list($k,$v) = each($this->bind)) {
+		//echo " $k $v, ";
+		//foreach($this->bind as $k => $v) {
 			$record[$k] = $this->fields[$v];
 		}
 

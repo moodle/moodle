@@ -1,6 +1,6 @@
 <?php
 /*
-V4.00 20 Oct 2003  (c) 2000-2003 John Lim. All rights reserved.
+V4.01 23 Oct 2003  (c) 2000-2003 John Lim. All rights reserved.
   Released under both BSD license and Lesser GPL library license.
   Whenever there is any discrepancy between the two licenses,
   the BSD license will take precedence.
@@ -114,10 +114,12 @@ class ADODB_informix72 extends ADOConnection {
 		return $this->_errorMsg;
 	}
 
-   function ErrorNo() 
-   {
-	  return ifx_error();
-   }
+	function ErrorNo()
+	{
+		preg_match("/.*SQLCODE=([^\]]*)/",ifx_error(),$parse); //!EOS
+		if (is_array($parse) && isset($parse[1])) return (int)$parse[1]; 
+		return 0;
+	}
 
    
     function &MetaColumns($table)

@@ -1,7 +1,7 @@
 <?php
 /*
 
-  version V4.00 20 Oct 2003 (c) 2000-2003 John Lim. All rights reserved.
+  version V4.01 23 Oct 2003 (c) 2000-2003 John Lim. All rights reserved.
 
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
@@ -449,7 +449,8 @@ NATSOFT.DOMAIN =
 			 }
 			 
 			 if (is_array($inputarr)) {
-				 foreach($inputarr as $k => $v) {
+				 reset($inputarr);
+				 while (list($k,$v) = each($inputarr)) {
 					if (is_array($v)) {
 						if (sizeof($v) == 2) // suggested by g.giunta@libero.
 							OCIBindByName($stmt,":$k",$inputarr[$k][0],$v[1]);
@@ -746,7 +747,8 @@ NATSOFT.DOMAIN =
 				} else {
 				// one statement to bind them all
 					$bindarr = array();
-					foreach($inputarr as $k => $v) {
+					reset($inputarr);
+					while(list($k,$v) = each($inputarr)) {
 						$bindarr[$k] = $v;
 						OCIBindByName($stmt,":$k",$bindarr[$k],4000);
 					}
@@ -763,7 +765,8 @@ NATSOFT.DOMAIN =
 		if (defined('ADODB_PREFETCH_ROWS')) @OCISetPrefetch($stmt,ADODB_PREFETCH_ROWS);
 			
 		if (is_array($inputarr)) {
-			foreach($inputarr as $k => $v) {
+			reset($inputarr);
+			while(list($k,$v) = each($inputarr)) {
 				if (is_array($v)) {
 					if (sizeof($v) == 2) // suggested by g.giunta@libero.
 						OCIBindByName($stmt,":$k",$inputarr[$k][0],$v[1]);

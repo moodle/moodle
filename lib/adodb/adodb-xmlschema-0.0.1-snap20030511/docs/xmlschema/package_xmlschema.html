@@ -1,0 +1,114 @@
+<H1>adodb-xmlschema</H1>
+<P>Written by <a href="mailto:richtl@arscognita.com">Richard Tango-Lowy</a>.</P>
+<P>For more information, contact <a href="richtl@arscognita.com">richtl@arscognita.com</a> 
+or visit our site at <a href="http://www.arscognita.com">www.arscognita.com</a>.</P>
+<P>At the moment, you should report bugs by mailing them to me. (If I can't convince John to
+make this part of ADODB :-), I'll  create a project for it on SourceForge.)
+
+<H2>Introduction</H2>
+<P><B>adodb-xmlschema</B> is a class that allows the user to quickly and easily
+build a database on any ADOdb-supported platform using a simple XML format.</P>
+<P>This library is dual-licensed under a BSD-style license and under the <B><a href="http://opensource.org/licenses/lgpl-license.php">GNU Lesser Public License</a></B>.
+See the <B>LICENSE</B> file for more information.</P>
+
+<H2>Features</H2><UL>
+	<LI>Darned easy to install
+	<LI>Quickly to create schemas that build on any platform supported by ADODB.</UL>
+
+<H2>Installation</H2>
+<P>To install adodb-xmlschema, simply copy the <tt>adodb-xmlschema.php</tt> file into your
+<B>ADODB</B> directory.</P>
+
+<H2>Quick Start</H2>
+<P>First, create an XML database schema. Let's call it "schema.xml:"</P><PRE>
+&lt;?xml version="1.0"?&gt;
+&lt;schema&gt;
+  &lt;table name="mytable"&gt;
+    &lt;field name="row1" type="I"&gt;
+      &lt;descr&gt;An integer row that's a primary key and autoincrements&lt;/descr&gt;
+      &lt;KEY/&gt;
+      &lt;AUTOINCREMENT/&gt;
+    &lt;/field&gt;
+    &lt;field name="row2" type="C" size="16"&gt;
+      &lt;descr&gt;A 16 character varchar row that can't be null&lt;/descr&gt;
+      &lt;NOTNULL/&gt;
+    &lt;/field&gt;
+  &lt;/table&gt;
+  &lt;index name="myindex" table="mytable"&gt;
+    &lt;col&gt;row1&lt;/col&gt;
+    &lt;col&gt;row2&lt;/col&gt;
+  &lt;/index&gt;
+  &lt;sql&gt;
+    &lt;descr&gt;SQL to be executed only on specific platforms&lt;/descr&gt;
+    &lt;query platform="postgres|postgres7"&gt;
+      insert into mytable ( row1, row2 ) values ( 12, 'stuff' )
+    &lt;/query&gt;
+    &lt;query platform="mysql"&gt;
+      insert into mytable ( row1, row2 ) values ( 12, 'different stuff' )
+    &lt;/query&gt;
+  &lt;/sql&gt;
+&lt;/schema&gt;
+</PRE><P>Create a new database using the appropriate tool for your platform.
+Executing the following PHP code will create the a <i>mytable</i> and <i>myindex</i>
+in the database and insert two rows into <i>mytable</i>. </P><PRE>				
+// To build the schema, start by creating a normal ADOdb connection:
+$db->NewADOConnection( 'mysql' );
+$db->Connect( ... );
+
+// Create the schema object and build the query array.
+$schema = <B>new adoSchema</B>( $db );
+
+// Build the SQL array
+$sql = $schema-><B>ParseSchema</B>( "schema.xml" );
+
+// Execute the SQL on the database
+$result = $schema-><B>ExecuteSchema</B>( $sql );
+
+// Finally, clean up after the XML parser
+// (PHP won't do this for you!)
+$schema-><B>Destroy</B>();
+</PRE>
+	
+<H2>XML Schema Format:</H2>
+<P>(See <a href="../xmlschema.dtd">ADOdb_schema.dtd</a> for the full specification)</P>
+<PRE>
+&lt;?xml version="1.0"?&gt;
+&lt;schema&gt;
+  &lt;table name="tablename" platform="platform1|platform2|..."&gt;
+    &lt;descr&gt;Optional description&lt;/descr&gt;
+    &lt;field name="fieldname" type="datadict_type" size="size"&gt;
+      &lt;KEY/&gt;
+      &lt;NOTNULL/&gt;
+      &lt;AUTOINCREMENT/&gt;
+      &lt;DEFAULT value="value"/&gt;
+    &lt;/field&gt;
+	... <i>more fields</i>
+  &lt;/table&gt;
+  ... <i>more tables</i>
+  
+  &lt;index name="indexname" platform="platform1|platform2|..."&gt;
+    &lt;descr&gt;Optional description&lt;/descr&gt;
+    &lt;col&gt;fieldname&lt;/col&gt;
+    ... <i>more columns</i>
+  &lt;/index&gt;
+  ... <i>more indices</i>
+  
+  &lt;sql platform="platform1|platform2|..."&gt;
+    &lt;descr&gt;Optional description&lt;/descr&gt;
+    &lt;query platform="platform1|platform2|..."&gt;SQL query&lt;/query&gt;
+    ... <i>more queries</i>
+  &lt;/sql&gt;
+  ... <i>more SQL</i>
+  &lt;/schema&gt;
+</PRE>
+<HR>
+<H2>Thanks</H2>
+<P>Thanks to John Lim for giving us ADODB, and for the hard work that keeps it on top of things. 
+And particulary for the datadict code that made xmlschema possible.</P>
+<P>And to the kind folks at <a href="http://phpdoc.org">PHP Documentor</a>. Cool tool.</P>
+<P>And to Linus. I thought the end of Amiga was the end of computing. Guess I was wrong :-)</P>
+<HR>
+<address>If you have any questions or comments, please email them to me  at 
+<a href="mailto:richtl@arscognita.com">richtl@arscognita.com</a>.</address>
+
+<P><TT>$Id$</TT></P>

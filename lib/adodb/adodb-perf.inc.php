@@ -1,6 +1,6 @@
 <?php
 /* 
-V4.00 20 Oct 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
+V4.01 23 Oct 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. See License.txt. 
@@ -39,6 +39,7 @@ global $HTTP_SERVER_VARS;
 
 	if (!empty($conn->_logsql)) {
 		$conn->_logsql = false; // disable logsql error simulation
+		$dbT = $conn->databaseType;
 		
 		$a0 = split(' ',$t0);
 		$a0 = (float)$a0[1]+(float)$a0[0];
@@ -51,11 +52,14 @@ global $HTTP_SERVER_VARS;
 		if (!$rs) {
 			$errM = $conn->ErrorMsg();
 			$errN = $conn->ErrorNo();
+			$conn->lastInsID = 0;
 			$tracer = substr('ERROR: '.htmlspecialchars($errM),0,250);
 		} else {
 			$tracer = '';
 			$errM = '';
 			$errN = 0;
+			$conn->lastInsID = $conn->Insert_ID();
+		
 		}
 		if (isset($HTTP_SERVER_VARS['HTTP_HOST'])) {
 			$tracer .= '<br>'.$HTTP_SERVER_VARS['HTTP_HOST'];
@@ -83,7 +87,7 @@ global $HTTP_SERVER_VARS;
 
 		$saved = $conn->debug;
 		$conn->debug = 0;
-		$dbT = $conn->databaseType;
+		
 		if ($conn->dataProvider == 'oci8' && $dbT != 'oci8po') {
 			$isql = "insert into adodb_logsql values($conn->sysTimeStamp,:b,:c,:d,:e,:f)";
 		} else if ($dbT == 'odbc_mssql' || $dbT == 'informix') {

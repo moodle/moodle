@@ -1,6 +1,6 @@
 <?php 
 /*
-V4.00 20 Oct 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
+  V4.01 23 Oct 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -72,7 +72,9 @@ GLOBAL $gSQLMaxRows,$gSQLBlockRows;
 		$s .= "<TR valign=top>\n";
 		
 		for ($i=0; $i < $ncols; $i++) {
-			$v = ($numoffset)? $rs->fields[$i] : next($rs->fields);
+			if ($i===0) $v=($numoffset) ? $rs->fields[0] : reset($rs->fields);
+			else $v = ($numoffset) ? $rs->fields[$i] : next($rs->fields);
+			
 			$type = $typearr[$i];
 			switch($type) {
 			case 'T':

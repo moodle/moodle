@@ -1,6 +1,6 @@
 <?php
 /*
- V4.00 20 Oct 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
+ V4.01 23 Oct 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -746,16 +746,14 @@ class ADORecordSet_postgres64 extends ADORecordSet{
 	function _fixblobs()
 	{
 		if ($this->fetchMode == PGSQL_NUM || $this->fetchMode == PGSQL_BOTH) {
-			foreach($this->_blobArr as $k => $v) {
+			reset($this->_blobArr);
+			while(list($k,$v) = each($this->_blobArr)) {
 				$this->fields[$k] = ADORecordSet_postgres64::_decode($this->fields[$k]);
 			}
 		}
 		if ($this->fetchMode == PGSQL_ASSOC || $this->fetchMode == PGSQL_BOTH) {
-			foreach($this->_blobArr as $k => $v) {
-				if (!isset($this->fields[$v])) {
-					$this->fields = false;
-					return;
-				}
+			reset($this->_blobArr);
+			while(list($k,$v) = each($this->_blobArr)) {
 				$this->fields[$v] = ADORecordSet_postgres64::_decode($this->fields[$v]);
 			}
 		}

@@ -1,4 +1,7 @@
 <?PHP
+
+// V4.01 23 Oct 2003
+
 error_reporting(E_ALL);
 
 require( "../adodb-xmlschema.inc.php" );
