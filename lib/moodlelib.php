@@ -3067,7 +3067,7 @@ function course_scale_used($courseid,$scaleid) {
     return $return;
 }
 
-function site_scale_used($scaleid) {
+function site_scale_used($scaleid,&$courses) {
 ////This function returns the nummber of activities
 ////using scaleid in the entire site
 
@@ -3076,9 +3076,11 @@ function site_scale_used($scaleid) {
     $return = 0;
 
     if (!empty($scaleid)) {
-        if ($courses = get_courses()) {
-            foreach ($courses as $course) {
-                $return += course_scale_used($course->id,$scaleid);
+        if (!is_array($courses) || count($courses) == 0) {
+            if ($courses = get_courses("all","c.sortorder ASC","c.id,c.shortname")) {
+                foreach ($courses as $course) {
+                    $return += course_scale_used($course->id,$scaleid);
+                }
             }
         }
     }
