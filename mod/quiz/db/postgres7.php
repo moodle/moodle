@@ -291,6 +291,10 @@ function quiz_upgrade($oldversion) {
         table_column("quiz", "", "questionsperpage", "integer", "10", "", "0", "not null", "review");
     }
 
+    if ($oldversion < 2005012700) {
+        table_column('quiz_grades', 'grade', 'grade', 'real', 2, '');
+    }
+
     return true;
 }
 

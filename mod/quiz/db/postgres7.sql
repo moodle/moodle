@@ -107,7 +107,7 @@ CREATE TABLE prefix_quiz_grades (
   id SERIAL PRIMARY KEY,
   quiz integer NOT NULL default '0',
   userid integer NOT NULL default '0',
-  grade varchar(10) NOT NULL default '0.0',
+  grade real NOT NULL default '0',
   timemodified integer NOT NULL default '0'
 );
 

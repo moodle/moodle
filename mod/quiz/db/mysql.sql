@@ -165,7 +165,7 @@ CREATE TABLE `prefix_quiz_grades` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `quiz` int(10) unsigned NOT NULL default '0',
   `userid` int(10) unsigned NOT NULL default '0',
-  `grade` varchar(10) NOT NULL default '0.0',
+  `grade` real NOT NULL default '0',
   `timemodified` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`),
   KEY `quiz` (`quiz`),
