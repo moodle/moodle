@@ -109,12 +109,10 @@ function import_multichoice( $question ) {
   $qo->single = $this->trans_single( $single );
 
   // run through the answers
-  // $qo->answer = array();
   $answers = $question['#']['answer'];  
   $a_count = 0;
   foreach ($answers as $answer) {
      $ans = $this->import_answer( $answer );
-     // $qo->answer[] = $ans;
      $qo->answer[$a_count] = $ans->answer;
      $qo->fraction[$a_count] = $ans->fraction;
      $qo->feedback[$a_count] = $ans->feedback;
@@ -155,6 +153,29 @@ function import_truefalse( $question ) {
   return $qo;
 }
 
+function import_shortanswer( $question ) {
+  // import short answer question
+
+  // get common parts
+  $qo = $this->import_headers( $question );
+
+  // header parts particular to shortanswer
+  $qo->qtype = SHORTANSWER;
+
+  // run through the answers
+  $answers = $question['#']['answer'];  
+  $a_count = 0;
+  foreach ($answers as $answer) {
+     $ans = $this->import_answer( $answer );
+     $qo->answer[$a_count] = $ans->answer;
+     $qo->fraction[$a_count] = $ans->fraction;
+     $qo->feedback[$a_count] = $ans->feedback;
+     ++$a_count;
+  }
+
+  return $qo;
+}
+
 function readquestions($lines) {
   // parse the array of lines into an array of questions
   // this *could* burn memory - but it won't happen that much
@@ -165,8 +186,9 @@ function readquestions($lines) {
   unset( $lines );
 
   // this converts xml to big nasty data structure
+  // the 0 means keep white space as it is (important for markdown format)
   // print_r it if you want to see what it looks like!
-  $xml = xmlize( $text ); 
+  $xml = xmlize( $text, 0 ); 
 
   // set up array to hold all our questions
   $questions = array();
@@ -181,6 +203,9 @@ function readquestions($lines) {
     }  
     elseif ($question_type=='truefalse') {
       $qo = $this->import_truefalse( $question );
+    }
+    elseif ($question_type=='shortanswer') {
+      $qo = $this->import_shortanswer( $question );
     }
     else {
       echo "<p>Question type $question_type not currently supported for xml import</p>";
@@ -449,10 +474,12 @@ function writequestion( $question ) {
     case SHORTANSWER:
         foreach($question->answers as $answer) {
             $percent = 100 * $answer->fraction;
-            $expout .= "<answer fraction=\"$percent\">\n";
-            $expout .= $this->writetext( $answer->answer );
-            $expout .= "<feedback>".$this->writetext( $answer->feedback )."</feedback>\n";
-            $expout .= "</answer>\n";
+            $expout .= "    <answer fraction=\"$percent\">\n";
+            $expout .= $this->writetext( $answer->answer,3,false );
+            $expout .= "      <feedback>\n";
+            $expout .= $this->writetext( $answer->feedback,4,false );
+            $expout .= "      </feedback>\n";
+            $expout .= "    </answer>\n";
         }
         break;
     case NUMERICAL:
