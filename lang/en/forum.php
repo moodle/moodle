@@ -59,6 +59,7 @@ $string['newforumposts'] = "New forum posts";
 $string['nodiscussions'] = "There are no discussion topics yet in this forum";
 $string['noguestpost'] = "Sorry, guests are not allowed to post";
 $string['noposts'] = "No posts";
+$string['nopostscontaining'] = "No posts containing '\$a' were found";
 $string['nosubscribers'] = "There are no subscribers yet for this forum";
 $string['nownotsubscribed'] = "\$a->name will NOT receive copies of '\$a->forum' by email.";
 $string['nowsubscribed'] = "\$a->name will receive copies of '\$a->forum' by email.";
@@ -69,6 +70,7 @@ $string['openmode1'] = "No discussions, but replies are allowed";
 $string['openmode2'] = "Discussions and replies are allowed";
 $string['parentofthispost'] = "Parent of this post";
 $string['postadded'] = "Your post was successfully added.<P>You have \$a to edit it if you want to make any changes.";
+$string['postincontext'] = "See this post in context";
 $string['postmailinfo'] = "This is a copy of a message posted on the \$a website.
 To add your reply via the website, click on this link:";
 

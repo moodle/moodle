@@ -53,7 +53,7 @@
                                   ORDER BY p.modified DESC LIMIT 0, 50 ");
 
         if (!$posts) {
-            print_heading("<BR>No posts found containing \"$search\"");
+            print_heading("<BR>".get_string("nopostscontaining", "forum", $search));
 
         } else {
             foreach ($posts as $post) {
@@ -75,7 +75,7 @@
                 $post->subject = $fullsubject;
                 $post->message = highlight("$search", $post->message);
 
-                $fulllink = "<P ALIGN=right><A HREF=\"discuss.php?d=$post->discussion&parent=$post->id\">See this post in context</A></P>";
+                $fulllink = "<P ALIGN=right><A HREF=\"discuss.php?d=$post->discussion&parent=$post->id\">".get_string("postincontext", "forum")."</A></P>";
                 forum_print_post($post, $course->id, false, false, false, false, $fulllink);
 
                 echo "<BR>";
