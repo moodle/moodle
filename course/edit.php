@@ -36,7 +36,7 @@
 
 /// If data submitted, then process and store.
 
-    if ($form = data_submitted()) {
+    if ($form = data_submitted() and confirm_sesskey()) {
 
         if (empty($course)) {
             check_for_restricted_user($USER->username, "$CFG->wwwroot");
@@ -186,6 +186,8 @@
                      "<a href=\"../$CFG->admin/index.php\">$stradministration</a> -> ".
                      "<a href=\"index.php\">$strcategories</a> -> $straddnewcourse", $focus);
     }
+
+    $form->sesskey = !empty($USER->id) ? $USER->sesskey : '';
 
     print_heading($streditcoursesettings);
     print_simple_box_start("center", "", "$THEME->cellheading");
