@@ -1,0 +1,156 @@
+<P ALIGN=CENTER><B>O richtextovém HTML editor</B></P>
+
+<P>Dostupnost:<B>
+<?php  if (!$CFG->htmleditor) {
+       print_string("htmleditordisabledadmin");
+   } else if (!$USER->htmleditor) {
+       print_string("htmleditordisabled");
+   } else if (!can_use_richtext_editor()) {
+       print_string("htmleditordisabledbrowser");
+   } else {
+       print_string("htmleditoravailable");
+   }
+?>
+</B></P>
+
+<P>Richtextový (richtext - obohacený text, text s formátováním) HTML editor poskytuje rozhraní pro zpracování textu. Toto rozhraní je vlo¾eno do va¹í webové stránky a umo¾òuje vám upravovat text tak, jak jste zvyklí z jiných editorù, pøièem¾ produkuje normální HTML kód.
+
+<P>Vedle formátování textu má øadu dal¹ích vlastností, které se vám mo¾ná budou hodit.
+
+<P><B>Vkládání textu z jiných aplikací</B></P>
+<UL>
+<P>Text z jiných aplikací systému Windows (napø. Microsoft Word) lze zkopírovat do schránky a vlo¾it do tohoto editoru. Formátování textu zùstane zachováno. Pou¾ijte klasické menu Zkopírovat/Vlo¾it (Control-C a Control-V).
+</UL>
+
+<P><B>Vkládání obrázkù <img border="0" hspace="10" src="lib/editor/images/ed_image.gif"></B></P>
+<UL>
+<P>Obrázky umístìné na libovolné webové stránce a dostupné pomocí URL mù¾ete zahrnout do va¹eho textu stisknutím tlaèítka "Vlo¾it obrázek - Insert Image".
+</UL>
+
+<P><B>Vkládání tabulek <img border="0" hspace="10" src="lib/editor/images/insert_table.gif"></B></P>
+<UL>
+<P>Text na webové stránce se rozmis»uje (napøíklad do sloupcù) tak, ¾e jej vlo¾íte do tabulky, èasto s neviditelnými okraji. K vlo¾ení tabulky pou¾ijte tlaèítko "Vlo¾it tabulku - Insert table" na pracovní li¹tì editoru.
+</UL>
+
+<P><B>Vkládání odkazù <img border="0" hspace="10" src="lib/editor/images/ed_link.gif"></B></P>
+<UL>
+<P>K vytvoøení odkazu nejprve napi¹te text, který chcete pou¾ít jako odkaz. Oznaète jej a kliknìte na pøíslu¹né tlaèítko v nástrojové li¹tì. Zadejte odkazovanou adresu URL. Hotovo!
+</UL>
+
+<P><B>Vkládání smajlíkù (emotikon) <img border="0" hspace="10" src="pix/s/smiley.gif" width="15" height="15"></B></P>
+<UL>
+<P>K vlo¾ení tìchto malých ikonek do va¹eho textu kliknìte na ikonu smajlíka v nástrojové li¹tì. Rozbalené okno vám nabídne následující ikony (pøípadnì mù¾ete do pøímo psát odpovídající text - bude zobrazen jako pøíslu¹ná ikona).
+
+    <table border="1">
+      <tr valign="top">
+        <td>
+        <table border="0" align="center" cellpadding="10">
+          <tr>
+            <td><img border="0" hspace="10" src="pix/s/smiley.gif" width="15" height="15"></td>
+            <td>usmívat se</td>
+            <td NOWRAP><FONT FACE=Courier>:-)</td>
+          </tr>
+          <tr>
+            <td><img alt border="0" hspace="10" src="pix/s/biggrin.gif" width="15" height="15"></td>
+            <td>zubit se</td>
+            <td NOWRAP><FONT FACE=Courier>:-D</td>
+          </tr>
+          <tr>
+            <td><img alt border="0" hspace="10" src="pix/s/wink.gif" width="15" height="15"></td>
+            <td>mrknout</td>
+            <td NOWRAP><FONT FACE=Courier>;-)</td>
+          </tr>
+          <tr>
+            <td><img alt border="0" hspace="10" src="pix/s/mixed.gif" width="15" height="15"></td>
+            <td>smí¹ený pocit</td>
+            <td NOWRAP><FONT FACE=Courier>:-/</td>
+          </tr>
+            <tr>
+              <td><img alt border="0" hspace="10" src="pix/s/thoughtful.gif" width="15" height="15"></td>
+              <td>zamy¹lený</td>
+              <td NOWRAP><FONT FACE=Courier>V-.</FONT></td>
+            </tr>
+          <tr>
+            <td><img alt border="0" hspace="10" src="pix/s/tongueout.gif" width="15" height="15"></td>
+            <td>vyplazený jazyk</td>
+            <td NOWRAP><FONT FACE=Courier>:-P</td>
+         </tr>
+          <tr>
+            <td><img alt border="0" hspace="10" src="pix/s/cool.gif" width="15" height="15"></td>
+            <td>v pohodì</td>
+            <td NOWRAP><FONT FACE=Courier>B-)</td>
+          </tr>
+            <tr>
+              <td><img alt border="0" hspace="10" src="pix/s/approve.gif" width="15" height="15"></td>
+              <td>souhlasit</td>
+              <td NOWRAP><FONT FACE=Courier>^-)</td>
+            </tr>
+            <tr>
+              <td><img alt border="0" hspace="10" src="pix/s/wideeyes.gif" width="15" height="15"></td>
+              <td>kulit oèi</td>
+              <td NOWRAP><FONT FACE=Courier>8-)</td>
+            </tr>
+            <tr>
+              <td><img alt border="0" hspace="10" src="pix/s/surprise.gif" width="15" height="15"></td>
+              <td>pøekvapení</td>
+              <td NOWRAP><FONT FACE=Courier>8-o</td>
+            </tr>
+        </table>
+        </td>
+        <td>
+        <table border="0" align="center" cellpadding="10">
+            <tr>
+              <td><img alt border="0" hspace="10" src="pix/s/sad.gif" width="15" height="15"></td>
+              <td>mrzutost</td>
+              <td NOWRAP><FONT FACE=Courier>:-(</td>
+            </tr>
+            <tr>
+              <td><img alt border="0" hspace="10" src="pix/s/shy.gif" width="15" height="15"></td>
+              <td>plachost</td>
+              <td NOWRAP><FONT FACE=Courier>8-.</td>
+            </tr>
+          <tr>
+            <td><img alt border="0" hspace="10" src="pix/s/blush.gif" width="15" height="15"></td>
+            <td>èervenání</td>
+            <td NOWRAP><FONT FACE=Courier>:-I</td>
+          </tr>
+            <tr>
+              <td><img alt border="0" hspace="10" src="pix/s/kiss.gif" width="15" height="15"></td>
+              <td>pusa</td>
+              <td NOWRAP><FONT FACE=Courier>:-X</td>
+            </tr>
+          <tr>
+            <td><img alt border="0" hspace="10" src="pix/s/clown.gif" width="15" height="15"></td>
+            <td>klaun</td>
+            <td NOWRAP><FONT FACE=Courier>:o)</td>
+          </tr>
+          <tr>
+            <td><img alt border="0" hspace="10" src="pix/s/blackeye.gif" width="15" height="15"></td>
+            <td>monokl</td>
+            <td NOWRAP><FONT FACE=Courier>P-|</td>
+          </tr>
+            <tr>
+              <td><img alt border="0" hspace="10" src="pix/s/angry.gif" width="15" height="15"></td>
+              <td>hnìv</td>
+              <td NOWRAP><FONT FACE=Courier>8-[</td>
+            </tr>
+            <tr>
+              <td><img alt border="0" hspace="10" src="pix/s/dead.gif" width="15" height="15"></td>
+              <td>bez ¾ivota</td>
+              <td NOWRAP><FONT FACE=Courier>xx-P</td>
+            </tr>
+            <tr>
+              <td><img alt border="0" hspace="10" src="pix/s/sleepy.gif" width="15" height="15"></td>
+              <td>ospalost</td>
+              <td NOWRAP><FONT FACE=Courier>|-.</td>
+            </tr>
+          <tr>
+            <td><img alt border="0" hspace="10" src="pix/s/evil.gif" width="15" height="15"></td>
+            <td>¹kodolibost</td>
+            <td NOWRAP><FONT FACE=Courier>}-]</td>
+          </tr>
+        </table>
+    </table>
+
+</UL>
+

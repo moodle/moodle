@@ -1,0 +1,71 @@
+<?PHP // $Id$ 
+      // attendance.php - created with Moodle 1.2 Beta (2004022400)
+
+
+$string['absentlong'] = 'Chybí';
+$string['absentshort'] = 'A';
+$string['addingmultiple'] = 'Pøidání vícenásobných docházkových archù';
+$string['addmultiple'] = 'Pøidat vícenásobné docházkové archy';
+$string['allmodulename'] = 'V¹echny docházkové archy';
+$string['auto'] = 'auto';
+$string['autoattend'] = 'Automaticky zapsat docházku na základì protokolù o èinnosti u¾ivatele';
+$string['autoattendmulti'] = 'Automaticky zapsat docházku do v¹ech archù na základì protokolù o èinnosti u¾ivatele';
+$string['autoattendshort'] = 'Automaticky z protokolù';
+$string['choosedays'] = 'Ve kterých dnech týdne dìlat docházku';
+$string['dayofroll'] = 'Datum, kdy dìlat docházku';
+$string['defaultautoattend'] = 'Zda implicitnì dìlat docházku na základì protokolù o èinnosti u¾ivatele';
+$string['defaultdynamicsection'] = 'Zda implicitnì pøesouvat docházku do správného týdne';
+$string['defaultgrade'] = 'Zda implicitnì vytváøet docházkový arch s mo¾ností udìlit body';
+$string['defaulthoursinclass'] = 'Kolik hodin by mìlo být na výchozím docházkovém archu';
+$string['defaultmaxgrade'] = 'Maximálnì kolik bodù se implicitnì dává za plnou docházku ';
+$string['defaultstudentstatus'] = 'Výchozí stav docházky na novém docházkovém archu';
+$string['downloadexcelfull'] = 'Stáhnout v¹e ve formátu listu Excelu';
+$string['downloadexceltotals'] = 'Stáhnout souhrn ve formátu listu Excelu';
+$string['downloadtextfull'] = 'Stáhnout v¹e ve formátu textového výpisu';
+$string['downloadtexttotals'] = 'Stáhnout souhrn ve formátu textového výpisu';
+$string['dynamicsection'] = 'Urèit týden docházky na základì tohoto datumu';
+$string['dynamicsectionmulti'] = 'Automaticky umístit archy do pøíslu¹ných týdnù';
+$string['dynsectionshort'] = 'Dynamicky pøesunuto do sekce';
+$string['endbeforestart'] = 'Koneèné datum je pøed poèáteèním';
+$string['endmulti'] = 'Datum posledního záznamového archu';
+$string['for'] = 'pro';
+$string['friday'] = 'Pá';
+$string['gradeshort'] = 'Obodováno';
+$string['gradevalue'] = 'Za tuto docházku mo¾no udìlit body';
+$string['gradevaluemulti'] = 'Za tyto docházky mo¾no udìlit body';
+$string['hoursinclass'] = 'Poèet hodin ve vyuèovací jednotce';
+$string['hoursineachclass'] = 'Poèet Hodin v ka¾dé vyuèovací jednotce';
+$string['hoursinfullreport'] = 'Nejvìt¹í poèet hodin docházky, které by se mìly zobrazit na jedné stránce výpisu';
+$string['maxgradeshort'] = 'Nejvìt¹í poèet bodù';
+$string['maxgradevalue'] = 'Nejvìt¹í bodová hodnota za plnou docházku';
+$string['modulename'] = 'Docházka';
+$string['modulenameplural'] = 'Docházkové archy';
+$string['monday'] = 'Po';
+$string['norolls'] = 'V tomto kurzu nejsou ¾ádné docházkové archy';
+$string['notes'] = 'Doplòující informace';
+$string['notesfor'] = 'Mimoøádné informace pro';
+$string['noviews'] = 'Je mi líto, pro vá¹ úèet zde nejsou ¾ádné údaje';
+$string['of'] = ' - ';
+$string['pages'] = 'Stránek';
+$string['presentlong'] = 'Pøítomna/Pøítomen';
+$string['presentshort'] = 'P';
+$string['saturday'] = 'So';
+$string['startafterend'] = 'Poèáteèní datum je po koneèném';
+$string['startmulti'] = 'Datum prvního docházkového archu';
+$string['sunday'] = 'Ne';
+$string['takeroll'] = 'Zapsat v tomto dni docházku?';
+$string['tardiesperabsence'] = 'Kolik zpo¾dìní bude poèítáno jako jedna absence';
+$string['tardylong'] = 'Zpo¾dení';
+$string['tardyshort'] = 'Z';
+$string['thursday'] = 'Èt';
+$string['tuesday'] = 'Út';
+$string['viewall'] = 'Zobrazit v¹echny docházkové archy';
+$string['viewmulti'] = 'Zobrazit výpis na více stránkách';
+$string['viewone'] = 'Zobrazit v¹echny stránky výpisu';
+$string['viewsection'] = 'Zobrazit v¹echny docházkové archy v této sekci';
+$string['viewtable'] = 'Zobrazit výpis jako tabulku';
+$string['viewweek'] = 'Zobrazit v¹echny docházkové archy z kalendáøního týdne';
+$string['wednesday'] = 'St';
+$string['weekmodulename'] = 'V¹echny docházkové archy z minulého týdne';
+
+?>

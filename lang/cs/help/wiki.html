@@ -1,0 +1,211 @@
+<p align="center"><b>Nápovìda k psaní Wiki stránek</b></p>
+
+<p>
+  Wiki stránky poskytují mo¾nost formátovat text intuitivními a lidmi snadno
+  èitelnými znaèkami.  Formátování je pøi zobrazování automaticky pøevedeno do
+  XHTML. Nemusíte tedy znát syntaxi HTML a pøitom nepøicházíte o mo¾nost
+  formátování vámi napsaných stránek. Dal¹í výhodou je, ¾e text vypadá èitelnìji
+  ne¾ klasická HTML stránka i <em>pøed</em> konverzí. Wiki text je alternativou
+  k vytváøení webových stránek pomocí ukládání jako HTML ve Wordu a umo¾òuje
+  snadnou úpravu tìchto stránek online. 
+</p>
+
+<p>
+  Wiki stránku pí¹ete jako obyèejný text. K dispozici máte navíc nìkolik
+  <em>speciálních</em> znakù, kterými urèujete, jak bude text na stránce vypadat
+  (formátovací znaky).
+</p>
+
+<h3>Formátování odstavce textu</h3>
+
+<p>
+  Odstavce se ve Wiki oddìlují prázdným øádkem. Chcete-li naformátovat celý
+  odstavec na urèitý typ, vlo¾te jeden z následujících znakù jako první znak
+  prvního øádku odstavce a za ním udìlìjte mezeru.
+</p>
+
+<table>
+  <tr><th>Znak</th><th>Typ odstavce</th></tr>
+  <tr><td>Nic</td><td>Obyèejný odstavec</td></tr>
+  <tr><td>&gt;</td><td>Odsazený odstavec</td></tr>
+  <tr><td>Mezera</td><td>Ji¾ naformátovaný text (pevná ¹íøka)</td></tr>
+  <tr><td>%</td><td>Ji¾ naformátovaný text <em>a</em> formátování Wikki je ignorováno</td></tr>
+  <tr><td>!#</td><td>Nadpis - místo # napi¹te úroveò nadpisu 1-6 (1 je nejvy¹¹í)</td></tr>
+  <tr><td>Q.</td><td>Otázka (z angl. Question) - do odstavce je pøidána informace o CSS stylu, co¾ umo¾ní zobrazit odstavec jako otázku (závisí na pou¾itém motivu stránek)</td></tr>
+  <tr><td>A.</td><td>Odpovìï (z angl. Answer) - jako Q., ale odpovìï</td></tr>
+</table>
+
+<h3>Formátování seznamù</h3>
+
+<p> 
+  Jednoduché seznamy se tvoøí prostým umístìním speciálního formátovacího znaku
+  na zaèátek ka¾dého øádku v seznamu, za kterým se umis»uje mezera. Seznam je
+  pøeru¹en prázdným øádkem. Seznamy mohou být rovnì¾ hierarchické - typy
+  vnoøených seznamù se mohou li¹it. Definice v seznamu definic a typy textu
+  mù¾ete volnì kombinovat, dokud nedosáhnete ký¾eného vzhledu. K urèení typu
+  polo¾ky seznamu pou¾ijte nìkterý z následujících znakù.
+</p>  
+
+<table>
+  <tr><th>Znak</th><th>Typ polo¾ky seznamu</th></tr>
+  <tr><td>*</td><td>Nesetøídìný seznam (puntík pøed polo¾kou)</td></tr>
+  <tr><td>#</td><td>Setøídìný seznam (1,2,3 atd.)</td></tr>
+  <tr><td>:</td><td>Seznam definic, definice</td></tr>
+  <tr><td>;</td><td>Seznam definic, text</td></tr>
+</table>  
+
+<p>Pøíklad vnoøeného seznamu:</p>
+<p><pre>
+  * první puntík
+  * druhý puntík
+  ## vnoøený øádek 1
+  ## vnoøený øádek 2
+  * tøetí puntík
+</pre></p>
+<p>Zobrazí se jako:
+<ul><li>první puntík</li>
+  <li>druhý puntík</li>
+  <ol><li>vnoøený øádek 1</li>
+    <li>vnoøený øádek 2</li></ol>
+  <li>tøetí puntík
+</ul></p>
+
+<h3>Formátování uvnitø øádku</h3>
+
+<p>
+  Formátování uvnitø øádku umo¾òuje oznaèit èást øádku tak, aby mìla urèitý styl.
+  Speciální formátovací znaky se mohou objevit kdekoliv na øádku, ale mìjte na
+  pamìti, ¾e nemohou pøecházet na dal¹í øádek. Následují ukázky kódu.
+</p>
+
+<table>
+  <tr><th>Wiki kód</th><th>Bude vypadat jako</th><th>Formátování</th></tr>
+  <tr><td>*hello world*</td><td><strong>hello world</strong></td><td>Silné, tuèné</td></tr>
+  <tr><td>/hello world/</td><td><em>hello world</em></td><td>Zvýraznìní, kurzíva</td></tr>
+  <tr><td>+hello world+</td><td><ins>hello world</ins></td><td>Vsazený text</td></tr>
+  <tr><td>-hello world-</td><td><del>hello world</del></td><td>Smazaný, pøe¹krtnutý</td></tr>
+  <tr><td>hello ~world~</td><td>hello <sub>world</sub></td><td>Dolní index</td></tr>
+  <tr><td>hello ^world^</td><td>hello <sup>world</sup></td><td>Horní index</td></tr>
+  <tr><td>"hello world"</td><td><q>hello world</q></td><td>V uvozovkách</td></tr>
+  <tr><td>%hello world%</td><td><code>hello world</code></td><td>Kód, pevná ¹íøka</td></tr>
+  <tr><td>@hello world@</td><td><cite>hello world</cite></td><td>Citace</td></tr>
+</table>  
+
+<h3>Zkratky</h3>
+
+<p>
+  Vysvìtlivky zkratek psaných velkými písmeny se umis»ují bezprostøednì za
+  zkratku do uvozovek (mezi posledním velkým písmenem zkratky a závorkou nesmí
+  být mezera). Napøíklad:
+</p>
+
+<p>
+  HTML(Hypertext Markup Language) 
+  <br />
+  bude pøeveden na
+  <br />
+  <acronym title="Hypertext Markup Language">HTML</acronym>
+</p>
+
+<h3>Hypertextové odkazy</h3>
+
+<p>
+  URL odkaz se umístí do textu a bezprostøednì za nìj (bez mezery) se napí¹e
+  text do uvozovek. Z tohoto textu se stane odkaz na zadanou URL. Napøíklad:
+</p>
+  
+<p>  
+  <em>http://www.google.com/(Vyhledat Googlem)</em> 
+  <br />
+  bude pøeveden na
+  <br />
+  <a href="http://www.google.com/">Vyhledat Googlem</a>
+</p>
+
+<p>
+  Podobným zpùsobem jsou automaticky pøevádìny emailové adresy:
+</p>
+<p>
+  nikdo@nikde.com(Pokusný u¾ivatel) 
+  <br />
+  bude pøeveden do
+  <br />
+  <a href="mailto:nobody@example.com">Pokusný u¾ivatel</a>
+</p>
+
+<h3>Odkazy na Moodle Moduly</h3>
+
+<p>
+  Znáte-li id èíslo zdroje (podívejte se na ?id=nn na konci URL adresy) a název
+  modulu, mù¾ete na pøíslu¹ný zdroj odkazovat pou¾itím syntaxe:
+</p>
+
+<p>
+  NázevModulu:nn(Popisný text)
+</p>
+
+<p>
+  napø. <em>resource:36(Moje nová stránka)</em> <em>forum:10(Pøejít do
+  diskusního fóra)</em>
+</p>
+
+<h3>Vkládání obrázkù</h3>
+
+<p>
+  Pomocí Wiki mù¾ete snadno vkládat do va¹ich stránek obrázky. Nejprve pomocí
+  správce souborù nahrejte obrázek do Moodle a zapamatujte si cestu k tomuto
+  souboru. Poté staèí psát:
+</p>
+
+<p>
+  /<em>..cesta k souboru..</em>(Alterantivní text)
+</p>
+
+<p>
+  napø.  /moje/pic00.jpg(Mùj obrázek)</p>
+
+<h3>Automaticé pøeformátování</h3>
+
+<p>
+  Mno¾ství obecnì pou¾ívaných textù je automaticky pøevedeno do jejich XHTML
+  ekvivalentù. Mezi ty nejdùle¾itìj¹í patøí:
+</p>
+
+<ul>
+  <li>HTTP odkazy jsou pøevedeny na aktivní odkazy
+  <li> ..., (R), (TM), (C), 1/4, 1/2, 3/4 jsou pøevedeny na odpovídající znak
+  <li> èíslo x èíslo se pøevede s pou¾itím znaku pro násobení
+  <li>Øádek zaèínající nejménì ètyømi pomlèkami je automaticky pøeveden na
+  horizontální èáru
+</ul>  
+
+<h3>Kontrola pravopisu (zatím zku¹ební verze)</h3>
+
+<p>
+  Wiki mù¾e být pøepnuto do re¾imu kontroly pravopisu. Umístìte do textu
+  následující øádku a v¹e, co následuje, bude zkontrolováno:
+
+<pre>
+!SPELL:kód_jazyka:varianta_jazyka
+
+Pøíklady:
+!SPELL:en:british
+!SPELL:cz
+</pre>
+
+<p>
+  "kód_jazyka" nahraïte pøíslu¹ným kódem (napøíklad en, fr, sk apod.),
+  "varianta_jazyka" (za dvojteèkou) je volitelná a mù¾e nabývat hodnot
+  "american", "british" nebo "canadian", je-li "kód_jazyka" en.
+</p>
+
+<p>
+  Pøi zobrazování jsou v¹echna neznámá slova zvýraznìna a návrhy na opravu
+  pravopisu mù¾ete vidìt, ponecháte-li kurzor my¹i na zvýraznìným slovem.
+</p>
+
+<p><em>POZNÁMKA: kontrola pravopisu pou¾ívá knihoven <strong>pspell</strong>.
+  Pro správnou funkci musí být tyto knihovny a odpovídající adresáøe nainstalovány
+  na va¹em serveru (jinak bude PHP hlásit chybu "calling undefined function").
+  Platforma Windows není plnì podporována.</em>
+</p>

@@ -1,0 +1,283 @@
+<HEAD>
+  <TITLE>Moodle: Instalace</TITLE>
+  <LINK REL="stylesheet" HREF="docstyles.css" TYPE="TEXT/CSS">
+  <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-2">
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF">
+
+<H1>Instalace Moodle</H1>
+<blockquote>
+<P>Tato příručka popisuje, jak probíhá první instalace Moodle. V některých krocích zabíhá trochu do detailů, aby bylo možno pokrýt drobné rozdíly v nastavování různých webových serverů, takže se tento dokument může jevit zbytečně dlouhý a komplikovaný. Není třeba nechávat se odradit - Moodle lze nastavit během několika minut!</P>
+<P>Dopřejte si čas a projděte tento dokument pečlivě - ušetříte si tím množství zbytečné práce později.</P>
+<P>Obsah tohoto dokumentu:</P>
+<OL>
+  <LI><A HREF="#requirements">Požadavky</A></LI>
+  <LI><A HREF="#downloading">Stahování</A></LI>
+  <LI><A HREF="#site">Struktura stránek</A></LI>
+  <LI><A HREF="#data">Vytvoření datového adresáře</A></LI>
+  <LI><A HREF="#database">Vytvoření databáze</A></LI>
+  <LI><A HREF="#webserver">Kontrola nastavení webového serveru</A></LI>
+  <LI><A HREF="#config">Úprava config.php</A></LI>
+  <LI><A HREF="#admin">Administrátorská stránka</A></LI>
+  <LI><A HREF="#cron">Nastavení cron</A></LI>
+  <LI><A HREF="#course">Vytvoření nového kurzu</A></LI>
+</OL>
+<p>&nbsp;</p>
+</blockquote>
+
+<h3 class="sectionheading"><a name="requirements"></a>1. Požadavky</H3>
+<blockquote> 
+
+  <p>Moodle je vyvíjen převážně v Linuxu pomocí PHP, Apache a MySQL. Je pravidleně testován na PostgreSQL a v prostředí Windows XP a Mac OS X.</p>
+  <p>Co potřebujete:</p>
+  <ol>
+    <li>běžící <A HREF="http://www.php.net/" target="_blank">PHP</A> (verze 4.1.0 nebo vyšší) s následujícími funkcemi (většina dnešních PHP instalací je má všechny):
+      <ul>
+      <LI><A HREF="http://www.boutell.com/gd/" target="_blank">Knihovna GD</A> s podporou formátů JPG a PNG</li>
+	<LI>Zapnutou zlib knihovnu (pokud chcete zálohovat/obnovovat kurzy na Windows serveru)</LI>
+      <LI>Zapnutou podporu sessions</LI>
+      <LI>Povoleno nahrávání souborů (file uploading)</LI>
+	<LI>Vypnutý Safe Mode (více o problémech s tímto režimem v diskusních fórech na moodle.org</LI>
+      </UL>
+</LI>
+    <li>běžící databázový server: doporučuje se <A HREF="http://www.mysql.com/" target="_blank">MySQL</A> nebo <A HREF="http://www.postgresql.org/">PostgreSQL</A>. Teoreticky je možno použít též MSSQL, Oracle, Interbase, Foxpro, Access, ADO, Sybase, DB2 nebo ODBC, ale v těchto případech budete muset ručně nastavovat databázové tabulky.</li>
+  </ol>
+  <p>Na platformě Windows je nejsnadnější cestou ke splnění těchto požadavků stažení a instalace <A HREF="http://www.foxserv.net/" target="_blank">FoxServ</A> nebo <A HREF="http://www.easyphp.org/" target="_blank">EasyPHP</A>. Tím získáte Apache, PHP i MySQL. Ujistěte se, že máte povolen modul GD - Moodle jinak nebude schopen zpracovávat obrázky.  Možná proto budete muset odstranit komentář (;) z následující řádky v souboru php.ini: 'extension=php_gd.dll'. Je též možné, že budete muset opravit adresář session.save_path - namísto standardního "/tmp" použijte nějaký adresář Windows, například "c:/temp".</p>
+
+  <p>Na platformě Mac OS X se doporučuje projekt <a href="http://fink.sourceforge.net/">fink</a>. Jeho stažením získáte snadno udržovatelný balík potřebného software. Nerozumíte-li si s příkazovou řádkou, bude pro vás nejsnadnější cestou k fungujícímu PHP na Mac OS X serveru <A HREF="http://www.entropy.ch/software/macosx/php/">Marc Liyanage's PHP Apache Module</A>.</p>
+
+  <p>Pracujete-li na Linuxu nebo jiném Unixu, pak asi víte, jak všechny tyto věci rozběhnout. Have a lot of fun... ;-) </p>
+
+</blockquote>
+<P>&nbsp;</P>
+
+<H3 class="sectionheading"><A NAME="downloading"></A>2. Stahování</H3>
+<blockquote>
+  <p>Moodle si můžete stáhnout buď jako zkomprimovaný balík nebo pomocí CVS. Oba způsoby jsou popsány v sekci 'Download' na <A HREF="http://moodle.org/">http://moodle.org/</A></p>
+  <p>Po stažení a rozbalení archívu (popřípadě po získání souborů přes CVS) naleznete adresář nazvaný &quot;moodle&quot; a v něm množství souborů a podadresářů.</p>
+  <p>Nyní musíte celý tento adresář umístit (tj. zkopírovat nebo přesunout) na váš server do adresáře s webovými dokumenty (například htdocs), čímž budou vaše stránky viditelné na adrese typu <B>http://vasserver.cz/moodle</B>, nebo se můžete rozhodnout zkopírovat celý obsah přímo do hlavního webového adresáře a stránky tak budou viset na něčem jako <B>http://vasserver.cz</B>.</p>
+</blockquote>
+<P>&nbsp;</P>
+
+<H3 class="sectionheading"><A NAME="site"></A>3. Struktura stránek</H3>
+<BLOCKQUOTE>
+  <p>Pro orientaci uvádíme stručný přehled obsahu adresáře Moodle:</p>
+  <blockquote>
+    <p>config.php - jediný soubor, který musíte na začátku ručně upravovat<br>
+      version.php - definuje verzi zdrojových kódů Moodle<BR>
+      index.php - titulní stránka</p>
+    <ul>
+      <li>admin/ - kód pro správu (administration) celého Moodle serveru </li>
+      <li>auth/ - zásuvné moduly pro ověřování (authentication) uživatelů </li>
+      <li>course/ - kód pro zobrazování a správu kurzů </li>
+      <li>doc/ - nápověda a dokumentace k Moodle (například tato stránka)</li>
+      <li>files/ - kód pro zobrazování a správu nahraných (uploaded) souborů </li>
+      <li>lang/ - používané texty v různých jazycích, na každou lokalizaci jeden podadresář </li>
+      <li>lib/ - knihovny používané jádrem Moodle </li>
+      <li>login/ - kód pro zpracování přihlášení uživatelů a zřizování nových účtů </li>
+      <li>mod/ - všechny moduly použitelné v Moodle kurzech </li>
+      <li>pix/ - grafika používaná na stránkách </li>
+      <li>theme/ - motivy stránek pro změnu jejich vzhledu </li>
+      <li>user/ - kód pro zobrazování a správu uživatelů </li>
+    </ul>
+    <p>&nbsp;</p>
+  </blockquote>
+</BLOCKQUOTE>
+
+<H3 class="sectionheading"><A NAME="data"></A>4. Vytvoření datového adresáře </H3>
+<blockquote>
+  <p>Moodle bude potřebovat nějaké místo na disku, kam bude ukládat nahrané soubory, jako jsou například studijní materiály či odevzdané úkoly a další dokumenty v kurzech nebo fotografie uživatelů.</p>
+
+  <p>Pro tyto účely vytvořte někde na vašem serveru adresář, do nějž bude Moodle tyto soubory ukládat. Z důvodů větší bezpečnosti je lepší, aby tento adresář NEBYL přístupný přímo přes web. Toho snadno dosáhnete tím, že jej umístíte mimo strukturu webového adresáře. Jinak lze též tento datový adresář ochránit vytvořením souboru nazvaným .htaccess, který bude obsahovat tuto řádku:
+  <blockquote>
+     <PRE>deny from all</PRE>
+  </blockquote>
+  
+  <p>Aby mohl Moodle tento adresář používat, ujistěte se, že proces webového serveru (například Apache) má právo zápisu do tohoto adresáře. Na Unixových strojích pro to většinou postačuje nastavit vlastníka tohoto adresáře na něco jako &quot;wwwrun&quot; nebo &quot;apache&quot;.</p>
+
+  <p>Na mnoha hostitelských webových serverech budete možná potřebovat omezit přístup dalších uživatelů serveru k souborům (a zabránit jim tak v jejich prohlížení nebo změně) a naopak poskytnout plný přístup pro čtení a zápis komukoliv dalšímu (což umožní webovému serveru přistupovat k vašim souborům). Máte-li problémy s bezpečným nastavením přístupu k vašim datům, promluvte si se správcem vašeho webu.</p>
+
+</blockquote>
+<P>&nbsp;</P>
+
+<H3 class="sectionheading"><A NAME="database"></A>5. Vytvoření databáze </H3>
+<blockquote>
+<p>Musíte vytvořit prázdnou databázi (nazvanou například "moodle") ve vašem databázovém systému, stejně jako zvláštního uživatele (například "moodleuser"), který bude mít k této (a jen této) databázi přístup. Chcete-li, použijte i superuživatele "root", ale toto se nedoporučuje: dojde-li k prozrazení hesla, je ohrožen celý váš databázový systém a ne pouze jedna databáze. 
+</p>
+  <p>Ukázka příkazových řádků pro MySQL: </p>
+  <PRE>
+   # mysql -u root -p
+   > CREATE DATABASE moodle; 
+   > GRANT SELECT,INSERT,UPDATE,DELETE,CREATE,DROP,INDEX,ALTER ON moodle.* 
+           TO moodleuser@localhost IDENTIFIED BY 'sem_napiste_heslo'; 
+   > quit 
+   # mysqladmin -p reload
+</PRE>
+  <p>Ukázka příkazových řádků pro PostgreSQL: </p>
+  <PRE>
+   # su - postgres
+   > psql -c "create user moodleuser createdb;" template1
+   > psql -c "create database moodle;" -U moodleuser template1
+   > psql -c "alter user moodleuser nocreatedb;" template1
+</PRE>
+  <p>(Pro správu databází MySQL lze doporučit <a href="http://phpmyadmin.sourceforge.net/">phpMyAdmin</a>).</p>
+<p>Od verze 1.0.8 Moodle podporuje předpony (prefixes) v názvech tabulek, takže můžete bez problémů sdílet jednu databázi s dalšími aplikacemi.</p>
+</blockquote>
+<P>&nbsp;</P>
+
+<H3 class="sectionheading"><A NAME="webserver" id="webserver"></A>6. Kontrola nastavení vašeho webového serveru</H3>
+<blockquote>
+  <p>Nejprve se ujistěte, že váš webový server je nastaven tak, aby používal index.php jako implicitní stránku (možná v kombinaci s index.html, default.htm a tak podobně).</p>
+  <p>V Apache se toto dělá pomocí parametru DirectoryIndex v souboru httpd.conf . Může vypadat například takto:</p>
+  <blockquote>
+    <pre><strong>DirectoryIndex</strong> index.php index.html index.htm </pre>
+  </blockquote>
+  <p>Stačí se ujistit, že index.php je na tomto seznamu (a pokud možno co nejvíce vlevo - kvůli výkonu).</p>
+  <p>Dále, <b>používáte-li Apache 2</b>, zapněte proměnnou <i>AcceptPathInfo</i>, která povoluje předávat skriptům argumenty ve formě http://server/file.php/arg1/arg2. To je nezbytné, chcete-li užívat relativní odkazy mezi vašimi zdroji. Zároveň to může zvýšit rychlost načítání vašich Moodle stránek. Tuto volbu můžete zapnout přidáním následujích řádek do httpd.conf:</p>
+  <blockquote>
+    <pre><strong>AcceptPathInfo</strong> on </pre>
+  </blockquote>
+
+  <p>Do třetice Moodle vyžaduje, aby bylo zapnuto několik funkcí PHP. <B>Na většině serverů jsou tyto funkce zapnuty implicitně.</B> Nicméně některé PHP servery (a některé starší verze PHP) mohou mít tyto věci nastaveny odlišně. Ujistěte se proto, zda váš konfigurační soubor PHP (většinou pojmenovaný php.ini) obsahuje:</p>
+  <blockquote>
+   <pre>magic_quotes_gpc = On
+   magic_quotes_runtime = Off
+   file_uploads = On
+   short_open_tag = On
+   session.auto_start = Off
+   session.bug_compat_warn = Off
+   </pre>
+  </blockquote>
+  <p>Nemáte-li na vašem serveru přístup k httpd.conf nebo php.ini, nebo pokud je Moodle na jednom serveru spolu s aplikacemi, které vyžadují jiné nastavení, můžete tato standardní nastavení POTLAČIT.     
+
+  <p>K tomu je potřeba vytvořit soubor <B>.htaccess</B> v hlavním adresáři Moodle a do něj napsat tato nastavení. Toto funguje pouze na serveru Apache, pokud má navíc povoleno Overrides.
+<BLOCKQUOTE><PRE>
+DirectoryIndex index.php index.html index.htm
+
+&lt;IfDefine APACHE2>
+     <b>AcceptPathInfo</b> on
+&lt;/IfDefine>
+
+php_value magic_quotes_gpc On
+php_value magic_quotes_runtime Off
+php_value file_uploads On
+php_value short_open_tag On
+php_value session.auto_start Off
+php_value session.bug_compat_warn Off</BLOCKQUOTE></PRE>
+     <P>Zde můžete rovněž nastavit další věci, jako například maximální možnou velikost nahrávaných (tj. na server posílaných) souborů:
+     <BLOCKQUOTE><PRE>
+php_value upload_max_filesize 2M
+php_value post_max_size 2M
+     </BLOCKQUOTE></PRE>
+
+  <p>Nejjednodušším způsobem bude asi zkopírovat si připravený soubor lib/htaccess a upravit jej podle vašich potřeb. Sledujte další pokyny v tomto souboru. 
+
+</blockquote>
+<p>&nbsp;</p>
+<H3 class="sectionheading"><A NAME="config"></A>7. Úprava config.php</H3>
+<blockquote>
+  <p>Nyní již můžete upravit hlavní konfigurační soubor <strong>config.php</strong> pomocí vašeho oblíbeného textového editoru. Tento soubor je používán ostatními skripty v Moodle.</p>
+  <p>Začněte tím, že vytvoříte kopii dodaného souboru config-dist.php a nazvěte ji config.php. Tím máte zaručeno, že pozdější aktualizace Moodle na vyšší verzi váš konfigurační soubor nepřepíše.</p>
+  <p>Upravte config.php tak, aby souhlasily podrobnosti o použité databázi, kterou jste pro Moodle vytvořili (včetně předpony - prefix - tabulek, to je NUTNÉ při použití PostgreSQL), dále údaje o adrese stránek, umístění instalace v systému souborů a cestě k datovému adresáři.  Soubor config.php obsahuje podrobnější instrukce.</p>
+  <p>Nadále budeme v tomto dokumentu předpokládat, že vaše instalace Moodle je dostupná na adrese <u>http://napriklad.cz/moodle</u></p>
+</blockquote>
+<P>&nbsp;</P>
+<H3><A NAME="admin"></A>8. Administrátorská stránka</H3>
+<blockquote> 
+  <p>Stránka určená pro správu Moodle by se nyní měla zobrazit na adrese <u>http://napriklad.cz/moodle/admin</u>. Nicméně i když si v této fázi budete chtít zobrazit titulní stránku, systém vás sám pošle na stránku správy k dokončení instalace. Při prvním načtení administrátorské stránky budete vybídnuti k souhlasu s licenčními podmínkami GPL (General Public License). Nebudete-li s těmito podmínkami souhlasit, v instalaci nebude možno pokračovat.</p>
+  <P>(Moodle se rovněž pokusí poslat vašemu prohlížeči nějaké cookies. Máte-li váš prohlížeč nastavený tak, že si můžete vybrat, zda chcete cookies přijmout nebo ne, pak cookies od Moodle přijmout <B>musíte</B>, jinak vám nebude Moodle správně pracovat.)
+  <p>Nyní začne Moodle nastavovat svou databázi a vytvářet v ní potřebné tabulky pro uchovávání svých dat. Nejdříve jsou nastaveny hlavní databázové tabulky. Měli byste vidět množství SQL povelů a za nimi informaci o tom, zda se povel podařilo úspěšně vykonat (pro přehlednost v zelené či červené barvě), tedy něco jako tohle:</p>
+  <blockquote> 
+    <p>CREATE TABLE course ( id int(10) unsigned NOT NULL auto_increment, category 
+      int(10) unsigned NOT NULL default '0', password varchar(50) NOT NULL default 
+      '', fullname varchar(254) NOT NULL default '', shortname varchar(15) NOT 
+      NULL default '', summary text NOT NULL, format tinyint(4) NOT NULL default 
+      '1', teacher varchar(100) NOT NULL default 'Teacher', startdate int(10) 
+      unsigned NOT NULL default '0', enddate int(10) unsigned NOT NULL default 
+      '0', timemodified int(10) unsigned NOT NULL default '0', PRIMARY KEY (id)) 
+      TYPE=MyISAM</p>
+    <p><FONT COLOR="#006600">SUCCESS</FONT></p>
+    <p>...a tak dále. Na konci pak něco jako: <FONT COLOR="#FF0000">Hlavní databáze byly úspěšně nastaveny</FONT>. </p>
+  </blockquote>
+  <p>Pokud nevidíte tohle, pak musí být někde problém s databází nebo údaji, které jste nastavili v config.php. Zkontrolujte, zda PHP náhodou neběží v omezeném bezpečném režimu "safe mode" (komerční hostitelé často poskytují web právě v tomto režimu). Nastavení PHP můžete snadno zjistit vytvořením malého souboru, který obsahuje &lt? phpinfo() ?&gt a na který se podíváte pomocí vašeho prohlížeče. Zkontrolujte ještě jednou celé nastavení a zkuste se znovu vrátit na stránku správy.</p>
+  <p>Přesuňte se až na dolní konec stránky a následujte odkaz &quot;Pokračovat&quot;.</p>
+  <p>Dále uvidíte podobnou stránku, která nastavuje všechny tabulky potřebné pro jednotlivými moduly. Stejně jako předtím, i nyní by všechno mělo projít na zelenou.</p>
+
+  <p>Opět sjeďte až na spodní okraj stránky a stiskněte &quot;Pokračovat&quot;.</p>
+
+  <p>Nyní byste měli vidět formulář, ve kterém můžete definovat řadu dalších proměnných, jako například implicitně nabízený jazyk vašich stránek, SMTP hostitele a tak podobně. Nemějte strach z toho, že zde nenastavíte všechno napoprvé správně. Na tuto stránku se můžete kdykoliv později vrátit pomocí administrátorského rozhraní. Sjeďte na konec stránky a stiskněte &quot;Uložit změny&quot;.</p>
+
+  <p>Pokud (a pouze pokud) se zaseknete na této nebo další stránce a nemůžete pokračovat, pak má váš server pravděpodobně problém, kterému se říká "buggy referrer". Odstranit jej je snadné: upravte váš config.php a nastavte proměnnou buggy_referrer na <i>true</i>, pak se znovu vraťte na tuto stránku.</p>
+
+  <p>Další stránku tvoří formulář, kde můžete nastavit parametry vašich Moodle stránek, jakými jsou název stránek, jejich popis a podobně. Vyplňte jej (můžete tyto věci měnit i později) a stiskněte &quot;Uložit změny&quot;.</p>
+
+  <p>Nakonec budete požádáni o vytvoření hlavního administrátorského účtu pro další přístup ke stránkám správy. Vyplňte podrobnosti o vašem jméně, emailové adrese apod. a klikněte na &quot;Uložit změny&quot;. Ne všechna pole jsou povinná, ale pokud nevyplníte některé, které je Moodlem vyžadováno, budete na něj znovu dotázáni.</p>
+  <blockquote> 
+    <blockquote> 
+ 
+         <p><strong>Pečlivě si zapamatujte uživatelské jméno a heslo, které jste použili pro administrátorský účet. Budete jej v budoucnu potřebovat při přístupu na stránky správy.</strong></p>
+ 
+    </blockquote>
+  </blockquote>
+  <p>Po úspěšném nastavení budete vráceni na hlavní stránku správy, která obsahuje řadu odkazů uspořádáných do nabídky (tyto položky se vám rovněž objeví na titulní stránce, jste-li přihlášen jako správce). Celá správa Moodle může být řízena z této nabídky, to znamená, že odtud můžete zejména:</p>
+  <ul>
+    <li>vytvářet a odstraňovat kurzy</li>
+    <li>vytvářet a upravovat uživatelské účty</li>
+    <li>spravovat účty učitelů</li>
+    <li>měnit nastavení stránek (motiv, název apod.)</li>
+  </ul>
+</blockquote>
+<P>&nbsp;</P>
+
+<H3 class="sectionheading"><A NAME="cron"></A>9. Nastavení cron</H3>
+<blockquote> 
+  <p>Některé moduly v Moodle vyžadují průběžnou kontrolu plnění svých úloh. Systém například potřebuje zkontrolovat diskusní fóra a odeslat nově vložené příspěvky emailem těm uživatelům, kteří si zřídili jejich odebírání.</p>
+  <p>Skript, který má tohle na starosti, je umístěn v adresáři admin a jmenuje se cron.php. Tento skript se však neumí spouštět sám, proto je třeba nastavit mechanismus pravidelného volání tohoto skriptu (například každých pět minut). Tím systém získá něco jako &quot;srdeční tep&quot; a skript může volat další funkce v periodách definovaných jednotlivými moduly.</p>
+  <P>Povšimněte si, že stroj volající cron.php <B>nemusí být tentýž, jako ten, na kterém vám běží Moodle.</B>. Je-li vám tedy poskytována webová schránka bez možnosti nastavení služby cron, můžete pravidelné volání vašeho skriptu zřídit na jakémkoliv jiném serveru či dokonce domácím počítači. Hlavní je, aby byl skript cron.php volán asi každých pět minut (nebo tak ňák).</p>
+  <p>Nejprve si vyzkoušejte, zda vám funguje ruční volání pomocí vašeho prohlížeče:</p>
+  <blockquote> 
+    <PRE>http://napriklad.cz/moodle/admin/cron.php</PRE>
+  </blockquote>
+  <p>Nyní potřebujte zařídit, aby se tento skript nějakým způsobem volal automaticky a pravidelně.</p>
+  <H4>Spouštění skriptu z příkazové řádky</H4>
+  <p>Lze volat stránku z příkazové řádky obdobným způsobem, jako bylo uvedeno v předchozím příkladu. Můžete například použít Unixový prográmek 'wget':</p>
+  <blockquote>
+    <PRE>wget -q -O /dev/null http://napriklad.cz/moodle/admin/cron.php</PRE>
+  </blockquote>
+  <p>Všimněte si, že v tomto příkladu je výstup stránky zahozen (resp. přesměrován na /dev/null).</p>
+  <p>Stejným způsobem při použití programu 'lynx':</p>
+  <blockquote>
+    <pre>lynx -dump http://napriklad.cz/moodle/admin/cron.php &gt; /dev/null</pre>
+  </blockquote>
+  <p>Případně můžete použít nezávislou verzi PHP zkompilovanou tak, aby se spouštěla na příkazové řádce. Výhodou tohoto způsobu je, že protokol vašeho webového serveru není zaplňován opakujícími se požadavky na cron.php. Nevýhodou je, že musíte mít přístup k řádkové verzi PHP:</p>
+  <blockquote>
+    <PRE>/opt/bin/php /web/moodle/admin/cron.php
+
+
+(Windows) C:\apache\php\php.exe C:\apache\htdocs\moodle\admin\cron.php
+</PRE>
+  </blockquote>
+  <h4>Automatické spouštění skriptu každých 5 minut</h4>
+  <p>Na Unixových systémech: Použijte <B>cron</B>. Upravte vaše nastavení cron z příkazové řádky pomocí &quot;crontab -e&quot; a přidejte řádku podobnou této:</p>
+  <blockquote>
+    <PRE>*/5 * * * * wget -q -O /dev/null http://napriklad.cz/moodle/admin/cron.php</PRE>
+  </blockquote>
+  <p>Na Windows: Nejsnadnější cestou je použít balík <A TITLE="Klikněte pro stažení (150k)" HREF="http://moodle.org/download/moodle-cron-for-windows.zip">moodle-cron-for-windows.zip</A>, který řeší celou věc velice jednoduše. Můžete rovněž vyzkoušet zabudovanou funkci Windows "Naplánované úlohy" (Scheduled Tasks).</p>
+  </p>
+</blockquote>
+
+<H3 class="sectionheading"><A NAME="course"></A>10. Vytvoření nového kurzu</H3>
+<blockquote>
+  <p>Nyní, když vám Moodle zdárně běží, můžete začít vytvářet kurzy.</p>
+  <p>Zvolte &quot;Vytvořit nový kurz&quot; z nabídky na stránce Správa (popřípadě administrátorský odkaz na hlavní stránce).</p>
+  <p>Vyplňte formulář, pozornost věnujte zejména položce uspořádání kurzu. V této fázi se nemusíte příliš starat o podrobnosti, všechna nastavení kurzu mohou být později upravena přiřazeným vyučujícím.</p>
+  <p>Stiskněte &quot;Uložit změny&quot; a ocitnete se na další stránce, kde k vytvořenému kurzu přiřazujte učitele. K dispozici jsou vám pouze již existující uživatelé. Chcete-li založit nový učitelský účet, požádejte příslušného učitele, aby si jej na vašich stránkách zřídil sám (podle pokynů na přihlašovací stránce) nebo mu jej založte ručně z nabídky &quot;Přidat nového uživatele&quot; na stránce Správa.</p>
+  <p>Je-li vše hotovo, je kurz připraven k dalším úpravám. Od této chvíle je přístupný z nabídky &quot;Kurzy&quot; na hlavní stránce.</p>
+  <p>Viz též &quot;<A HREF="./?file=teacher.html">Příručku učitele</A>&quot;, kde naleznete další podrobnosti týkající se výstavby kurzu.</p>
+</blockquote>
+<P>&nbsp;</P>
+<P ALIGN="CENTER"><FONT SIZE="1"><A HREF="." TARGET="_top">Moodle Dokumentace</A></FONT></P>
+<P ALIGN="CENTER"><FONT SIZE="1">Česká verze: $Id$</FONT></P>
+
+</BODY>
