@@ -417,6 +417,7 @@ function get_array_of_activities($courseid) {
 //  mod - name of the module (eg forum)
 //  section - the number of the section (eg week or topic)
 //  name - the name of the instance
+//  visible - when the instance is visible or no
 
     $mod = array();
 
@@ -436,6 +437,7 @@ function get_array_of_activities($courseid) {
                    $mod[$seq]->mod = $rawmods[$seq]->modname;
                    $mod[$seq]->section = $section->section;
                    $mod[$seq]->name = urlencode(get_field($rawmods[$seq]->modname, "name", "id", $rawmods[$seq]->instance));
+                   $mod[$seq]->visible = $rawmods[$seq]->visible;
                }
             }
         }
