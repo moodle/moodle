@@ -206,9 +206,9 @@
         $post->message = "";
         $post->format = $defaultformat;
 
-        $strre = get_string("re", "forum");
-        if (!(substr($post->subject, 0, 3) == $strre)) {
-            $post->subject = "$strre $post->subject";
+        $strre = get_string('re', 'forum');
+        if (!(substr($post->subject, 0, strlen($strre)) == $strre)) {
+            $post->subject = $strre.' '.$post->subject;
         }
 
         unset($SESSION->fromdiscussion);
