@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.1.1 (2003091000)
+      // quiz.php - created with Moodle 1.2 development (2003102700)
 
 
 $string['acceptederror'] = "Accepteret fejl";
@@ -24,7 +24,7 @@ $string['attemptsallowed'] = "Forsøg tilladt";
 $string['attemptsunlimited'] = "Ingen begrænsniger i antal forsøg";
 $string['backtoquiz'] = "Tilbage til redigering i quiz";
 $string['bestgrade'] = "Bedste bedømmelse";
-$string['blackboard'] = "Tavle";
+$string['blackboard'] = "BlackBoard";
 $string['caseno'] = "Nej, ingen case sensitivity";
 $string['casesensitive'] = "Case sensitivity";
 $string['caseyes'] = "Ja, der er case sensitivity";

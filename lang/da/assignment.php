@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.1 (2003082800)
+      // assignment.php - created with Moodle 1.2 development (2003102700)
 
 
 $string['allowresubmit'] = "Tillad gentagelser";
@@ -13,8 +13,10 @@ $string['assignmentmailhtml'] = "\$a->teacher har kikket det du har afleveret ig
 Du kan se evt kommentarer i slutningen på <a href=\\\"\$a->url\\\">det du har afleveret</a>.";
 $string['assignmentname'] = "Opgave navn";
 $string['assignmenttype'] = "Opgave type";
+$string['configmaxbytes'] = "General maksimum filstørrelse for alle afleveringsopgaver på sitet (Underlagt kursus begrænsninger og andre lokale indstillinger)";
 $string['description'] = "Beskrivelse";
 $string['duedate'] = "Afleveringsdato";
+$string['duedateno'] = "Ingen afleveringsfrist";
 $string['early'] = "\$a for tidlig";
 $string['failedupdatefeedback'] = "Mislykkedes at opdatere feedback på aflevering for bruger \$a";
 $string['feedback'] = "Feedback";

@@ -1,8 +1,9 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.1 (2003082800)
+      // resource.php - created with Moodle 1.2 development (2003102700)
 
 
 $string['addresource'] = "Tilføj materiale";
+$string['chooseafile'] = "Vælg eller upload en fil";
 $string['configframesize'] = "Når en webside eller en uploadet fil vises i en frame, så angiver denne værdi højden på topbaren (den øverste frame som indeholder navigationen)";
 $string['editingaresource'] = "Rediger i materialet";
 $string['example'] = "Eksempel";

@@ -1,12 +1,7 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.1.1 (2003091000)
+      // moodle.php - created with Moodle 1.2 development (2003103100)
 
-$string['nyklasse'] = "Ny Klasse";
-$string['klasser'] = "Klasser";
-$string['klasse'] = "Klasse";
-$string['manageklasser'] = "Administrer Klasser";
-$string['adminhelpmanageklasser'] = "Tilfj og fjern klasser";
-$string['selectklasse'] = "vaelg klasse";
+
 $string['action'] = "Hændelse";
 $string['activities'] = "Aktiviteter";
 $string['activity'] = "Aktivitet";
@@ -111,6 +106,7 @@ $string['cleaningtempdata'] = "Fjerner midlertidig data";
 $string['closewindow'] = "Luk dette vindue";
 $string['comparelanguage'] = "Sammenlign og redigér i sprog";
 $string['complete'] = "Færdiggør";
+$string['configallowunenroll'] = "Hvis denne er sat til 'Ja' kan eleverne selv framelde sig fra et kursus hvornår de har lyst. Eller har de ikke den mulighed, og denne funktionalitet er udelukkende styret af læreren og administratoren.";
 $string['configcountry'] = "Hvis du vælger et land her, vil dette land blive valgt som default af nye brugere. For at tvinge brugere til at vælge land, skal du ikke vælge noget her.";
 $string['configdebug'] = "Hvis du sætter denne til, vil PHP's fejlmeldinger øges og der vil printes flere af dem. Dette er kun for udviklere.";
 $string['configerrorlevel'] = "Vælg mængden af PHP advarsler, som du vil have vist. Normal er som regel det bedste valg.";
@@ -120,15 +116,24 @@ $string['confightmleditor'] = "Vælg om du vil tillade brug af den tilhørende HTM
 $string['configidnumber'] = "Denne mulighed angiver om en bruger skal angive et ID nummer i det hele taget. (b) Brugere bliver spurgt om et ID nummer men kan undlade at angive det. (c) Brugere bliver anmodet om et ID nummer og skal skrive et. Hvis der er angivet et ID nummer vises det i brugerens profil.";
 $string['configintro'] = "På denne side kan du vælge et antal variabler til konfiguration, som få Moodle til at virke bedre på din server. Normalt vil default indstillingerne virke fint og du kan altid vende tilbage til denne side og ændre indstillingerne.  ";
 $string['configintroadmin'] = "På denne side skal du konfigurere din overordnede administrator konto med hvilken der er fuld adgang til alle indstillinger. Husk at give det et sikkert brugernavn og kodeord, samt en fungerende emailadresse. Du kan oprette flere administratorer senere. ";
+$string['configintrosite'] = "På denne side kan du rette forsiden og navnet på dette site. Du kan også vende tilbage senere og rette det til senere ved at gå ind under 'Site Settings' fra forsiden.";
 $string['configlang'] = "Vælg et default sprog for hele sitet. Brugere kan override dette senere";
 $string['configlangdir'] = "De fleste sprog skrives fra venstre til højre, men nogle, som arabisk og hebræisk, skrives fra højre til venstre.";
+$string['configlanglist'] = "Hvis denne er blank, kan brugere vælge fra alle de sprog der er til rådighed i Moodle. Du kan imidlertid afkorte listen af sprog ved at skrive en kommasepareret liste af de sprogkoder det skal være muligt at vælge. For eksempel en, es_es, fr, it";
+$string['configlangmenu'] = "Vælg om du vil vise 'skift sprog' menuen på forsiden, loginsiden osv. Dette ændrer ikke brugerens mulighed for at ændre sprog i deres egen profil. ";
 $string['configlocale'] = "Lokalindstillinger for dit site. Det vil have indflydelse på format og sprog med hensyn til datoer. Du skal have disse lokalindstillinger installeret på din operativ system (f.eks. en_US eller en_ES). Hvis du ikke ved, hvad du skal vælge, så lad feltet stå tomt.";
+$string['configloglifetime'] = "Dette angiver hvor lang tid du ønsker at gemme logfiler med brugeraktiviteter. Logs der er ældrer end denne alder bliver automatisk slettet. Det er bedst at gemme logfilerne så længe du kan, i tilfælde af at du får brug for dem. Hvis du har en meget belastet server eller performance problemer, så kan du prøve at sætte levetiden for logfilerne ned.";
 $string['configlongtimenosee'] = "Hvis kursisterne ikke har været logget på i lang tid, så bliver de automatisk slettet fra kurset. Denne indstilling sætter tidsbegrænsningen.";
+$string['configmaxbytes'] = "Dette angiver hvor store filer der generalt kan uploades til hele siden. Denne indstilling er begrænset af PHP configurationsindstillingen 'upload_max_filesize' og Apache direktivet 'LimitRequestBody'. Det vil sige at denne indstilling er maksstørrelsen på filer der kan uploades fra et kursus eller et modul.";
 $string['configmaxeditingtime'] = "Denne angiver hvor lang tid brugerne har til editere i deres indlæg i et forum, logbog etc. Normalt er 30 minutter en god værdi.";
 $string['configproxyhost'] = "Hvis denne<B>server</B> skal bruge en proxy computer (f.eks. en firewall) for at komme på Internettet, så skriv proxy hostnavn og port her.";
+$string['configsecureforms'] = "Moodle kan tilføje et ekstra nivau af sikkerhed, når man skriver data til den. Hvis dette er aktivt så bliver browserens HTTP_REFERER variabel sammenholdt med det der bliver sendt til moodle vha. forms. Dette kan i få tilfælde give problemer hvis der er en firewall imellem f.eks. zonealarm kan være konfigureret til at fjerne HTTP_REFERER fra HTTP trafikken, eller proxier kan også lave det samme. Symtomerne er at man bliver hængene i form. Hvis brugerne har den type problemer med loginsiden så kan du slå det fra. Det gør dog sitet mere sårbart for 'Brute force' angreb. Hvis du er i tvivl så lad denne setting være slået til. ";
+$string['configsessioncookie'] = "Denne indstilling angiver navnet på den cookie der bliver brugt til Moodle sessioner. Den er valgfri, og kun brugbar hvis der er flere kopier af moodle der kører på samme server.";
+$string['configsessiontimeout'] = "Hvis brugere er inaktive på siden i lang tid (uden af skifte sider) så bliver de automatisk logget ud. (deres session slutter). Denne variabel specificere hvor lang tid der skal gå før de bliver logget ud.";
 $string['configslasharguments'] = "Filer (billeder, dokumenter etc.) tilføjes et script (anden option her), som gør at filen lettere hentes i webbrowsere, proxyservere etc. Uheldigvis tillader nogle PHP servere ikke denne metode, så hvis du har problemer med at få vist uploadede filer eller billeder (f.eks. billeder af brugerne), skal du vælge den første option.";
 $string['configsmtphosts'] = "Angiv fuld navn til en eller flere STMP servere som Moodle skal bruge til at sende mail (f.eks. mail.a.com, mail.b.com etc.) Hvis du intet angiver vil Moodle bruge PHP default metoden til at sende mail.";
 $string['configsmtpuser'] = "Hvis du har angivet en STMP server herover, og serveren kræver brugernavn og password, så indtast det her.";
+$string['configteacherassignteachers'] = "Skal almindelige undervisere tillades at tilføje andre undervisere til et kursus de underviser i. Hvis 'Nej' kan kun kursusopretteren og admins tilføje undervisere. ";
 $string['configunzip'] = "Indikerer placeringen af dit unzip program (kun for Unix). Dette for at kunne unzippe filer til serveren.";
 $string['configuration'] = "Konfiguration";
 $string['configvariables'] = "Instillinger af variabler";
@@ -159,6 +164,7 @@ $string['courseinfo'] = "Kursusinformation";
 $string['courserestore'] = "Kursus gendannelse";
 $string['courses'] = "Kurser";
 $string['courseupdates'] = "Kursus opdateringer";
+$string['courseuploadlimit'] = "Kursus upload begrænsning";
 $string['create'] = "Opret";
 $string['createaccount'] = "Opret min nye konto";
 $string['createfolder'] = "Opret folder i \$a";
@@ -254,7 +260,29 @@ $string['emaildisplayyes'] = "Tillad alle at se min email addresse";
 $string['emailexists'] = "Denne email addresse er allerede registreret.";
 $string['emailformat'] = "Email format";
 $string['emailmustbereal'] = "OBS: Din email addresse skal udfyldes rigtigt";
+$string['emailpasswordconfirmation'] = "Hej \$a->firstname,
+
+En ny konto er oprettet på'\$a->sitename'
+med din email addresse.
+
+For at bekræfte din oprettelse gå til følgende web addresse:
+
+  \$a->link
+
+I de fleste mail programmer kommer linket med blå skrift
+som du kan klikke på. Hvis det ikke virker,
+så kan du \\\"cut and paste\\\" addressen i addresse feltet i toppen af dit browservindue.
+
+Cheers fra '\$a->sitename' administrator,
+\$a->admin";
 $string['emailpasswordconfirmationsubject'] = "\$a: nyt kodeord godkendelse";
+$string['emailpasswordconfirmsent'] = "   <P>En email addresse skulle være sendt til din addresse <B>\$a</B>
+   <P>Den indeholder anvisninger på, hvordan du kan blive registreret.
+   <P>Hvis du stadig har problemer, så kontakt web administratoren.";
+$string['emailpasswordsent'] = "Du har accepteret at få et nyt kodeord.
+<p>Der er sendt en ny email til dig der indeholder det nye kodeord. 
+Email'en er sendt til <b>\$a->email</b> 
+<p>Det nye kodeord er genereret automatisk. Hvis du ønsker selv at skifte det til noget du lettere kan huske kan du gøre det her: <a href=\$a->link>Skift Kodeord</a>";
 $string['enrolmentconfirmation'] = "Du er ved at tilmelde dig dette kursus<br />
 Er du sikker på at du vil gennemføre dette?";
 $string['enrolmentkey'] = "Kursus nøgle";
@@ -267,6 +295,7 @@ $string['enteremailaddress'] = "Indtast din email addresse for at re-sette dit
    password og du får et nyt password sendt med en email";
 $string['error'] = "Fejl";
 $string['errortoomanylogins'] = "Beklager, du har oversteget antallet af gange, hvor du kan prøve at logge ind. Restart din browser";
+$string['errorwhenconfirming'] = "Du er ikke godkendt på grund af at der er sket en fejl. Hvis du har klikket på et link der er sendt til dig pr. email, så undersøg om httpadressen er i orden og ikke delt over flere linjer. Hvis den er så prøv at føje den sammen med cut'n paste så det bliver en lang linje.";
 $string['existing'] = "Eksisterende";
 $string['existingadmins'] = "Oprettede administratorer";
 $string['existingcourse'] = "Eksisterende kursus";
@@ -420,6 +449,7 @@ $string['markthistopic'] = "Marker dette emne som det igangværende";
 $string['maximumchars'] = "Maximum af \$a karakterer";
 $string['maximumgrade'] = "Maximum karakter";
 $string['maximumshort'] = "Max";
+$string['maximumupload'] = "Maksimal upload filstørrelse";
 $string['maxsize'] = "Max størrelse: \$a";
 $string['min'] = "min";
 $string['mins'] = "mins";
@@ -445,6 +475,8 @@ $string['missingteacher'] = "Du skal vælge noget";
 $string['missingurl'] = "Mangler URL";
 $string['missingusername'] = "Mangler username";
 $string['modified'] = "Ændret";
+$string['moduledeleteconfirm'] = "Du er ved at slette et komplet modul '\$a'. Det vil slette alle data fra data fra databasen (ikke filer) associeret med modulet. Er du sikker på du ønsker at fortsætte. ";
+$string['moduledeletefiles'] = "Alle data der tilhører modulet '\$a->module' er blevet slettet fra databasen. For at afslutte sletningen (og forhindre at det reinstallere sig selv) bør du nu slette biblioteket '\$a->directory' fra din server.";
 $string['modulesetup'] = "Sætter modul tabeller op";
 $string['modulesuccess'] = "\$a tabeller er sat op ";
 $string['moodleversion'] = "Moodle version";
@@ -456,6 +488,8 @@ $string['movedown'] = "Flyt ned";
 $string['movefilestohere'] = "Flyt filer hertil";
 $string['movefull'] = "Flyt \$a til denne plads";
 $string['movehere'] = "Flyt hertil";
+$string['moveleft'] = "Flyt til venstre";
+$string['moveright'] = "Flyt til højre";
 $string['moveselectedcoursesto'] = "Flyt det valgte kursus til...";
 $string['movetoanotherfolder'] = "Flyt til en anden folder";
 $string['moveup'] = "Flyt op";
@@ -472,7 +506,7 @@ $string['new'] = "Ny";
 $string['newaccount'] = "Ny konto";
 $string['newcourse'] = "Nyt kursus";
 $string['newpassword'] = "Nyt password";
-$string['newpasswordtext'] = "Hi \$a->firstname,
+$string['newpasswordtext'] = "Hej \$a->firstname,
 
 Dit password til '\$a->sitename' er ændret og du har fået et nyt midlertidigt password.
 
@@ -485,7 +519,7 @@ Gå til denne side for at ændre dit password:
 
 I de fleste mailprogrammer kommer det op som et blåt link, som du kan klikke på. Hvis det ikke virker, kan du cut and paste addressen op i addressefeltet i toppen af din. 
 
-Cheers fra '\$a->sitename' administrator,
+Hilsen '\$a->sitename' administrator,
 \$a->signoff
 ";
 $string['newpicture'] = "Nyt billede";
@@ -518,6 +552,7 @@ $string['nosuchemail'] = "email addresse eksisterer ikke";
 $string['notavailable'] = "Ikke tilgængelig";
 $string['noteachersyet'] = "Ingen lærere endnu";
 $string['notenrolled'] = "\$a er ikke deltager på dette kursus endnu.";
+$string['noteuserschangednonetocourse'] = "Note: Kursus brugere skal opdates når kurset genoprettes. Denne indstilling er rettet for dig.";
 $string['nothingnew'] = "Intet nyt siden din sidste login.";
 $string['notincluded'] = "Ikke inkluderet";
 $string['nousersmatching'] = "Ingen passende '\$a' blev fundet";
@@ -573,6 +608,12 @@ $string['readme'] = "README";
 $string['recentactivity'] = "Sidste aktivitet(er)";
 $string['registration'] = "Moodle Registrering";
 $string['registrationemail'] = "Email notifisering";
+$string['registrationinfo'] = "<p>Denne side kan du registrere dit moodle site hos moodle.org. 
+Registreringen er gratis.
+Hovedformålet med registreringen er at du vil blive tilføjet en sjældent brugt mailings liste der bruges til vigtige informationer såsom sikkerhedshuller, og nye versioner af moodle.
+<p>Som udgangspunkt vil dine informationer blive hemmeligholdt, og aldrig solgt eller givet videre til nogen anden. Den eneste årsag til at opsamle denne information er udelukkende til at opbygge et statistisk billede af moodle's udbredelse globalt set.
+<p>Hvis du ønsker det kan du tillade at dit sitenavn, land og URL bliver tilføjet til en frit tilgængelig liste af Moodlesites på moodle.org.
+<p>Alle nye registreringer er verificeret manuelt før de bliver tilføjet listen, men er du een gang blevet tilføjet kan du opdatere din registrering (og dine data på listen) hvornår det skal være ved at sende registreringen igen.";
 $string['registrationno'] = "Nej, jeg ønsker ikke at modtage email";
 $string['registrationsend'] = "Send registreringsinformation til moodle";
 $string['registrationyes'] = "Ja, oplys mig om vigtige opdateringer";
@@ -601,9 +642,11 @@ $string['scalescustom'] = "Egne skalaer";
 $string['scalescustomcreate'] = "Tilføj ny skala";
 $string['scalescustomno'] = "Der er ikke oprettet egne skalaer endnu";
 $string['scalesstandard'] = "Standart skala";
+$string['scalestip'] = "For at lave en skala, skal du bruge 'Skalaer..' linket i kursus-administrations-menuen";
 $string['search'] = "Søg";
 $string['searchagain'] = "Søg igen";
 $string['searchcourses'] = "Søg kurser";
+$string['searchhelp'] = "Du kan søge efter flere ord på samme tid:<p>ord: vil søge efter enhver forekomst af ordet i teksten også hvis det forekommer i sammesatte ord.<br>+ord: vil kun finde ordet hvis det står frit i teksten. <br>-ord: retunere kun de resultater hvor ordet ikke forekommer. ";
 $string['searchresults'] = "Søgeresultater";
 $string['sec'] = "sekunder";
 $string['secs'] = "sekunder";
@@ -611,6 +654,7 @@ $string['section'] = "Sektion";
 $string['sections'] = "Sektioner";
 $string['select'] = "Vælg";
 $string['selectacountry'] = "Vælg et land";
+$string['selectednowmove'] = "\$a filer er forvalgt til at skulle flyttes. Find hvor de skal hen og tryk på 'Flyt filer hertil'";
 $string['senddetails'] = "Send mine oplysninger via email";
 $string['separateandconnected'] = "Separate and tilknyttede måder at vide";
 $string['serverlocaltime'] = "Server's lokal tid";
@@ -637,6 +681,10 @@ $string['sitenews'] = "Site nyheder";
 $string['sites'] = "Sites";
 $string['sitesettings'] = "Site settings";
 $string['size'] = "Størrelse";
+$string['sizeb'] = "bytes";
+$string['sizegb'] = "Gb";
+$string['sizekb'] = "Kb";
+$string['sizemb'] = "Mb";
 $string['socialheadline'] = "Social forum - sidste emner";
 $string['someallowguest'] = "Nogle kurser tillader gæste adgang";
 $string['someerrorswerefound'] = "Nogle af oplysningerne manglede eller var forkerte. Se nedenfor for detaljer";
@@ -671,6 +719,7 @@ $string['theme'] = "Tema";
 $string['themes'] = "Temaer";
 $string['themesaved'] = "Gemt nyt tema";
 $string['thischarset'] = "iso-8859-1";
+$string['thisdirection'] = "Højre mod venstre";
 $string['thislanguage'] = "Dansk";
 $string['time'] = "Tid";
 $string['timezone'] = "Tidszone";
@@ -720,6 +769,7 @@ $string['userprofilefor'] = "Bruger profil for \$a";
 $string['users'] = "Brugere";
 $string['userzones'] = "Brugerzoner";
 $string['usingexistingcourse'] = "Benytter eksisterende kursus";
+$string['version'] = "Version";
 $string['view'] = "Vis";
 $string['webpage'] = "Web side";
 $string['week'] = "Uge";

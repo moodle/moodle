@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.1 (2003082800)
+      // forum.php - created with Moodle 1.2 development (2003102700)
 
 
 $string['addanewdiscussion'] = "Tilføj en ny diskusion";
@@ -14,6 +14,7 @@ $string['bynameondate'] = "ved \$a->name - \$a->date";
 $string['configdisplaymode'] = "Den normale visningsform for diskussioner, hvis der ikke er valgt andre.";
 $string['configlongpost'] = "Enhver besked over denne længde (eksklusiv HTML) bliver betragtet som lang.";
 $string['configmanydiscussions'] = "Max antal diskussioner vist på en forum-side.";
+$string['configmaxbytes'] = "General maksimum filstørrelse for alle filer vedhæftet et svar på dette site. (underlagt kursusbegrænsninger og andre lokale indstillinger) ";
 $string['configshortpost'] = "Enhver besked under denne længde (eksklusiv HTML) bliver betragtet som kort";
 $string['couldnotadd'] = "Kunne ikke tilføje dit indlæg pga en ukendt fejl";
 $string['couldnotdeleteratings'] = "Beklager, kan ikke slettes da andre allerede har rated det.";
@@ -50,6 +51,7 @@ $string['introsocial'] = "Et åbent forum med det emne, som du har lyst til at få
 $string['introteacher'] = "Et forum kun for lærer noter og diskussioner";
 $string['lastpost'] = "Sidste post";
 $string['learningforums'] = "Forum til læring";
+$string['maxattachmentsize'] = "Maksimal filstørrelse der kan vedhæftes";
 $string['maxtimehaspassed'] = "Beklager, men tiden er gået (\$a) og du kan ikke redigere i indlægget mere!  ";
 $string['message'] = "Meddelelse";
 $string['modeflatnewestfirst'] = "Viser svar i flad struktur med den nyeste først";
@@ -78,6 +80,7 @@ $string['olderdiscussions'] = "Tidligere diskussioner";
 $string['openmode0'] = "Ingen diskussioner, ingen svar";
 $string['openmode1'] = "Ingen diskussioner, men svar er tilladte";
 $string['openmode2'] = "Diskussioner og svar er tilladte";
+$string['parent'] = "Vis forgænger";
 $string['parentofthispost'] = "Første indlæg";
 $string['postadded'] = "Dit indlæg er tilføjet.<P>Du har \$a til at redigere i det, hvis du vil ændre noget.";
 $string['postincontext'] = "Se dette indlægs indhold";
