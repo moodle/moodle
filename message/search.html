@@ -2,7 +2,7 @@
 <input type="hidden" name="tab" value="search" />
 
 
-<table cellpadding="5" align="center">
+<table cellpadding="5" align="center" class="message_form">
 
 
     <tr>
@@ -39,12 +39,12 @@
             <input type="checkbox" name="includeblocked" alt="<?php print_string('includeblockedusers', 'message') ?>" /><?php print_string('includeblockedusers', 'message') ?></td>
     </tr>
     
-    <tr><td colspan="3"><input type="radio" name="keywordsoption" alt="<?php print_string('onlytome', 'message') ?>" value="tome" checked="checked" /><?php print_string('onlytome', 'message') ?></td></tr>
-    <tr><td colspan="3"><input type="radio" name="keywordsoption" alt="<?php print_string('onlyfromme', 'message') ?>" value="fromme" /><?php print_string('onlyfromme', 'message') ?></td></tr>
-    <tr><td colspan="3"><input type="radio" name="keywordsoption" alt="<?php print_string('allmine', 'message') ?>" value="allmine" /><?php print_string('allmine', 'message') ?></td></tr>
+    <tr><td>&nbsp;</td><td colspan="2"><input type="radio" name="keywordsoption" alt="<?php print_string('onlytome', 'message') ?>" value="tome" checked="checked" /><?php print_string('onlytome', 'message') ?></td></tr>
+    <tr><td>&nbsp;</td><td colspan="2"><input type="radio" name="keywordsoption" alt="<?php print_string('onlyfromme', 'message') ?>" value="fromme" /><?php print_string('onlyfromme', 'message') ?></td></tr>
+    <tr><td>&nbsp;</td><td colspan="2"><input type="radio" name="keywordsoption" alt="<?php print_string('allmine', 'message') ?>" value="allmine" /><?php print_string('allmine', 'message') ?></td></tr>
     
     <?php if (isadmin()) { ?>
-    <tr><td colspan="3"><input type="radio" name="keywordsoption" alt="<?php print_string('allusers', 'message') ?>" value="allusers" /><?php print_string('allusers', 'message') ?></td></tr>
+    <tr><td>&nbsp;</td><td colspan="2"><input type="radio" name="keywordsoption" alt="<?php print_string('allusers', 'message') ?>" value="allusers" /><?php print_string('allusers', 'message') ?></td></tr>
     <?php } ?>
 
 <?php

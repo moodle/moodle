@@ -58,7 +58,8 @@ function message_print_contacts() {
                 $fullnamelink = '<strong>'.$fullnamelink.' ('.$unread.')</strong>';
             }
         /// link to remove from contact list
-            $strcontact .= message_contact_link($contact->id, 'remove', true);
+            $strcontact = message_contact_link($contact->id, 'remove', true);
+            $strhistory = message_contact_link($contact->id, 'history', true);
             
             echo '<tr><td class="message_pix">';
             print_user_picture($contact->id, SITEID, $contact->picture, 20, false, true, 'userwindow');
@@ -68,7 +69,7 @@ function message_print_contacts() {
                                  $fullnamelink, 500, 500, get_string('sendmessageto', 'message', $fullname),
                                  'menubar=0,location=0,status,scrollbars,resizable,width=500,height=500');
             echo '</td>';
-            echo '<td class="message_link">'.$strcontact.'</td>';
+            echo '<td class="message_link">'.$strcontact.'&nbsp;'.$strhistory.'</td>';
             echo '</tr>';
         }
     }
@@ -94,6 +95,7 @@ function message_print_contacts() {
             }
         /// link to remove from contact list
             $strcontact = message_contact_link($contact->id, 'remove', true);
+            $strhistory = message_contact_link($contact->id, 'history', true);
             
             echo '<tr><td class="message_pix">';
             print_user_picture($contact->id, SITEID, $contact->picture, 20, false, true, 'userwindow');
@@ -103,7 +105,7 @@ function message_print_contacts() {
                                  $fullnamelink, 500, 500, get_string('sendmessageto', 'message', $fullname),
                                  'menubar=0,location=0,status,scrollbars,resizable,width=500,height=500');
             echo '</td>';
-            echo '<td class="message_link">'.$strcontact.'</td>';
+            echo '<td class="message_link">'.$strcontact.'&nbsp;'.$strhistory.'</td>';
             echo '</tr>';
         }
     }
@@ -153,6 +155,7 @@ function message_print_contacts() {
             
             $strcontact = message_contact_link($messageuser->useridfrom, 'add', true);
             $strblock   = message_contact_link($messageuser->useridfrom, 'block', true);
+            $strhistory = message_contact_link($messageuser->useridfrom, 'history', true);
             
             echo '<tr><td class="message_pix">';
             print_user_picture($messageuser->useridfrom, SITEID, $messageuser->picture, 20, false, true, 'userwindow');
@@ -162,7 +165,7 @@ function message_print_contacts() {
                                  $fullnamelink, 500, 500, get_string('sendmessageto', 'message', $fullname),
                                  'menubar=0,location=0,status,scrollbars,resizable,width=500,height=500');
             echo '</td>';
-            echo '<td class="message_link">'.$strcontact.'&nbsp;'.$strblock.'</td>';
+            echo '<td class="message_link">&nbsp;'.$strcontact.'&nbsp;'.$strblock.'&nbsp;'.$strhistory.'</td>';
             echo '</tr>';
         }
     }
@@ -526,9 +529,13 @@ function message_contact_link($userid, $linktype='add', $return=false) {
        $str->unblockcontact =  get_string('unblockcontact', 'message');
        $str->removecontact  =  get_string('removecontact', 'message');
        $str->addcontact     =  get_string('addcontact', 'message');
+       $str->messagehistory =  get_string('messagehistory', 'message');
     }
 
     switch ($linktype) {
+        case 'history':
+            $output = '<a target="message_history_'.$userid.'" title="'.$str->messagehistory.'" href="'.$CFG->wwwroot.'/message/history.php?user1='.$userid.'" onclick="return openpopup(\'/message/history.php?user1='.$userid.'\', \'message_history_'.$userid.'\', \'menubar=0,location=0,status,scrollbars,resizable,width=500,height=500\', 0);"><img src="'.$CFG->pixpath.'/t/log.gif" height="11" width="11" border="0"></a>';
+            break;
         case 'block':
             $output = '<a href="index.php?tab=contacts&amp;blockcontact='.$userid.
                    '&amp;sesskey='.$USER->sesskey.'" title="'.$str->blockcontact.'">'.

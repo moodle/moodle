@@ -808,4 +808,27 @@ TABLE.formtable TD {
 	font-size: x-small;
     color: #555555;
     padding-left: 10px;
+    padding-bottom: 8px;
+}
+
+.message_contact {
+	font-size: small;
+}
+.message_summary {
+	font-size: small;
+}
+.message_date {
+	font-size: small;
+}
+.message_small_note {
+	font-size: x-small;
+}
+.message_link {
+	font-size: x-small;
+}
+.message_pix {
+	font-size: x-small;
+}
+.message_form {
+	font-size: 0.78em;
 }
