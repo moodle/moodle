@@ -528,8 +528,8 @@ function calendar_top_controls($type, $data) {
         case 'month':
             list($prevmonth, $prevyear) = calendar_sub_month($data['m'], $data['y']);
             list($nextmonth, $nextyear) = calendar_add_month($data['m'], $data['y']);
-            $prevdate = calendar_gmmktime_check($prevmonth, 1, $prevyear);
-            $nextdate = calendar_gmmktime_check($nextmonth, 1, $nextyear);
+            $prevdate = calendar_mktime_check($prevmonth, 1, $prevyear);
+            $nextdate = calendar_mktime_check($nextmonth, 1, $nextyear);
             $content .= "<table style='width: 100%;'><tr>\n";
             $content .= '<td style="text-align: left; width: 30%;"><a href="'.calendar_get_link_href('view.php?view=month&amp;', 1, $prevmonth, $prevyear).'">&lt;&lt; '.strftime(get_string('strftimemonthyear'), $prevdate)."</a></td>\n";
             $content .= '<td style="text-align: center"><strong>'.strftime(get_string('strftimemonthyear'), $time)."</strong></td>\n";
