@@ -515,7 +515,7 @@
                 echo "<BR>";
                 $restore_path = "../backup/restore.php";
                 notice_yesno (get_string("areyousuretorestorethis"),
-                                $restore_path."?file=".$id.$wdir."/".$file,
+                                $restore_path."?id=".$id."&file=".$id.$wdir."/".$file,
                                 "index.php?id=$id&wdir=$wdir&action=cancel");
             } else {
                 displaydir($wdir);
@@ -745,7 +745,7 @@ function displaydir ($wdir) {
             } else if ($icon == "zip.gif") {
                 $edittext = "<A HREF=\"index.php?id=$id&wdir=$wdir&file=$fileurl&action=unzip\">$strunzip</A>&nbsp;";
                 $edittext .= "<A HREF=\"index.php?id=$id&wdir=$wdir&file=$fileurl&action=listzip\">$strlist</A> ";
-                if (!empty($CFG->backup_version) && isadmin()) {
+                if (!empty($CFG->backup_version) && isteacher($id)) {
                     $edittext .= "<A HREF=\"index.php?id=$id&wdir=$wdir&file=$filesafe&action=restore\">$strrestore</A> ";
                 }
             } else {
