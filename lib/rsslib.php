@@ -23,7 +23,7 @@ function rss_get_link($courseid, $userid, $modulename, $id, $tooltiptext='') {
 
     $rsspix = $CFG->pixpath .'/i/rss.gif';
 
-    return '<a href="'. $rsspath .'"><img src="'. $rsspix .'" title="'. $tooltiptext .'" alt="" /></a>';
+    return '<a href="'. $rsspath .'"><img src="'. $rsspix .'" title="'. strip_tags($tooltiptext) .'" alt="" /></a>';
 
 }
 
