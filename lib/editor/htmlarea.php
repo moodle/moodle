@@ -1002,7 +1002,7 @@ HTMLArea.prototype._wordClean = function() {
             replace(/<\/?span[^>]*>/gi,' ').
             replace(/<\/?div[^>]*>/gi,' ').
             replace(/<\/?pre[^>]*>/gi,' ').
-            replace(/<\/?h[1-6][^>]*>/gi,' ');
+            replace(/<(\/?)(h[1-6]+)[^>]*>/gi,'<$1$2>');
 
         //remove empty tags
         //D = D.replace(/<strong><\/strong>/gi,'').
@@ -2175,7 +2175,7 @@ HTMLArea.prototype.stripBaseURL = function(string) {
     // to path/#anchor which of course needs to be fixed
     var index = string.indexOf("/#")+1;
     if ((index > 0) && (string.indexOf(baseurl) > -1)) {
-        return string.substr(index);   
+        return string.substr(index);
     }
     return string; // Moodle doesn't use the code below because
                    // Moodle likes to keep absolute links
