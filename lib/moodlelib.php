@@ -169,6 +169,38 @@ function print_spacer($height=1, $width=1, $br=true) {
     }
 }
 
+function print_file_picture($path, $courseid=0, $height="", $width="", $link="") {
+// Given the path to a picture file in a course, or a URL,
+// this function includes the picture in the page.
+    global $CFG;
+
+    if ($height) {
+        $height = "HEIGHT=\"$height\"";
+    }
+    if ($width) {
+        $width = "WIDTH=\"$width\"";
+    }
+    if ($link) {
+        echo "<A HREF=\"$link\">";
+    }
+    if (substr(strtolower($path), 0, 7) == "http://") {
+        echo "<IMG BORDER=0 $height $width SRC=\"$path\">";
+    } else if ($courseid) {
+        echo "<IMG BORDER=0 $height $width SRC=\"";
+        if ($CFG->slasharguments) {        // Use this method if possible for better caching
+            echo "$CFG->wwwroot/file.php/$courseid/$path";
+        } else {
+            echo "$CFG->wwwroot/file.php?file=$courseid/$path";
+        }
+        echo "\">";
+    } else {
+        echo "Error: must pass URL or course";
+    }
+    if ($link) {
+        echo "</A>";
+    }
+}
+
 function print_user_picture($userid, $courseid, $picture, $large=false, $returnstring=false) {
     global $CFG;
 
