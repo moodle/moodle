@@ -228,7 +228,45 @@ function quiz_upgrade($oldversion) {
     if ($oldversion < 2004111400) {
         table_column("quiz_responses", "answer", "answer", "text", "", "", "", "not null");
     }
-    
+
+    if ($oldversion < 2004111700) {
+        execute_sql("DROP INDEX {$CFG->prefix}quiz_course_idx;",false);
+        execute_sql("DROP INDEX {$CFG->prefix}quiz_answers_question_idx;",false);
+        execute_sql("DROP INDEX {$CFG->prefix}quiz_attempts_quiz_idx;",false); 
+        execute_sql("DROP INDEX {$CFG->prefix}quiz_attempts_userid_idx;",false); 
+        execute_sql("DROP INDEX {$CFG->prefix}quiz_calculated_answer_idx;",false);
+        execute_sql("DROP INDEX {$CFG->prefix}quiz_categories_course_idx;",false); 
+        execute_sql("DROP INDEX {$CFG->prefix}quiz_dataset_definitions_category_idx;",false);
+        execute_sql("DROP INDEX {$CFG->prefix}quiz_grades_quiz_idx;",false); 
+        execute_sql("DROP INDEX {$CFG->prefix}quiz_grades_userid_idx;",false);
+        execute_sql("DROP INDEX {$CFG->prefix}quiz_numerical_question_idx;",false); 
+        execute_sql("DROP INDEX {$CFG->prefix}quiz_numerical_units_question_idx;",false);
+        execute_sql("DROP INDEX {$CFG->prefix}quiz_question_grades_quiz_idx;",false); 
+        execute_sql("DROP INDEX {$CFG->prefix}quiz_question_grades_question_idx;",false);
+        execute_sql("DROP INDEX {$CFG->prefix}quiz_questions_category_idx;",false); 
+        execute_sql("DROP INDEX {$CFG->prefix}quiz_randomsamatch_question_idx;",false);
+        execute_sql("DROP INDEX {$CFG->prefix}quiz_responses_attempt_idx;",false); 
+        execute_sql("DROP INDEX {$CFG->prefix}quiz_responses_question_idx;",false);
+
+        modify_database('','CREATE INDEX prefix_quiz_course_idx ON prefix_quiz (course);');
+        modify_database('','CREATE INDEX prefix_quiz_answers_question_idx ON prefix_quiz_answers (question);');
+        modify_database('','CREATE INDEX prefix_quiz_attempts_quiz_idx ON prefix_quiz_attempts (quiz);');
+        modify_database('','CREATE INDEX prefix_quiz_attempts_userid_idx ON prefix_quiz_attempts (userid);');
+        modify_database('','CREATE INDEX prefix_quiz_calculated_answer_idx ON prefix_quiz_calculated (answer);');
+        modify_database('','CREATE INDEX prefix_quiz_categories_course_idx ON prefix_quiz_categories (course);');
+        modify_database('','CREATE INDEX prefix_quiz_dataset_definitions_category_idx ON prefix_quiz_dataset_definitions (category);');
+        modify_database('','CREATE INDEX prefix_quiz_grades_quiz_idx ON prefix_quiz_grades (quiz);');
+        modify_database('','CREATE INDEX prefix_quiz_grades_userid_idx ON prefix_quiz_grades (userid);');
+        modify_database('','CREATE INDEX prefix_quiz_numerical_question_idx ON prefix_quiz_numerical (question);');
+        modify_database('','CREATE INDEX prefix_quiz_numerical_units_question_idx ON prefix_quiz_numerical_units (question);');
+        modify_database('','CREATE INDEX prefix_quiz_question_grades_quiz_idx ON prefix_quiz_question_grades (quiz);');
+        modify_database('','CREATE INDEX prefix_quiz_question_grades_question_idx ON prefix_quiz_question_grades (question);');
+        modify_database('','CREATE INDEX prefix_quiz_questions_category_idx ON prefix_quiz_questions (category);');
+        modify_database('','CREATE INDEX prefix_quiz_randomsamatch_question_idx ON prefix_quiz_randomsamatch (question);');
+        modify_database('','CREATE INDEX prefix_quiz_responses_attempt_idx ON prefix_quiz_responses (attempt);');
+        modify_database('','CREATE INDEX prefix_quiz_responses_question_idx ON prefix_quiz_responses (question);');
+    }
+
     return true;
 }
 

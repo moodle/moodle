@@ -37,6 +37,9 @@ CREATE TABLE prefix_quiz (
   password varchar(255) NOT NULL default '',
   subnet varchar(255) NOT NULL default ''
 );
+
+CREATE INDEX prefix_quiz_course_idx ON prefix_quiz (course);
+
 # --------------------------------------------------------
 
 #
@@ -50,6 +53,9 @@ CREATE TABLE prefix_quiz_answers (
   fraction varchar(10) NOT NULL default '0.0',
   feedback text NOT NULL default ''
 );
+
+CREATE INDEX prefix_quiz_answers_question_idx ON prefix_quiz_answers (question);
+
 # --------------------------------------------------------
 
 #
@@ -66,6 +72,10 @@ CREATE TABLE prefix_quiz_attempts (
   timefinish integer NOT NULL default '0',
   timemodified integer NOT NULL default '0'
 );
+
+CREATE INDEX prefix_quiz_attempts_quiz_idx ON prefix_quiz_attempts (quiz);
+CREATE INDEX prefix_quiz_attempts_userid_idx ON prefix_quiz_attempts (userid);
+
 # --------------------------------------------------------
 
 #
@@ -80,6 +90,9 @@ CREATE TABLE prefix_quiz_categories (
   publish integer NOT NULL default '0',
   stamp varchar(255) NOT NULL default ''
 );
+
+CREATE INDEX prefix_quiz_categories_course_idx ON prefix_quiz_categories (course);
+
 # --------------------------------------------------------
 
 #
@@ -93,6 +106,10 @@ CREATE TABLE prefix_quiz_grades (
   grade varchar(10) NOT NULL default '0.0',
   timemodified integer NOT NULL default '0'
 );
+
+CREATE INDEX prefix_quiz_grades_quiz_idx ON prefix_quiz_grades (quiz);
+CREATE INDEX prefix_quiz_grades_userid_idx ON prefix_quiz_grades (userid);
+
 # --------------------------------------------------------
 
 #
@@ -162,6 +179,7 @@ CREATE TABLE prefix_quiz_numerical (
 );
 # --------------------------------------------------------
 CREATE INDEX prefix_quiz_numerical_answer_idx ON prefix_quiz_numerical (answer);
+CREATE INDEX prefix_quiz_numerical_question_idx ON prefix_quiz_numerical (question);
 
 #
 # Table structure for table quiz_question_grades
@@ -173,6 +191,10 @@ CREATE TABLE prefix_quiz_question_grades (
   question integer NOT NULL default '0',
   grade integer NOT NULL default '0'
 );
+
+CREATE INDEX prefix_quiz_question_grades_quiz_idx ON prefix_quiz_question_grades (quiz);
+CREATE INDEX prefix_quiz_question_grades_question_idx ON prefix_quiz_question_grades (question);
+
 # --------------------------------------------------------
 
 #
@@ -191,6 +213,9 @@ CREATE TABLE prefix_quiz_questions (
   stamp varchar(255) NOT NULL default '',
   version integer NOT NULL default '1'
 );
+
+CREATE INDEX prefix_quiz_questions_category_idx ON prefix_quiz_questions (category);
+
 # --------------------------------------------------------
 
 #
@@ -203,6 +228,8 @@ CREATE TABLE prefix_quiz_randomsamatch (
   choose integer NOT NULL default '4'
 );
 
+CREATE INDEX prefix_quiz_randomsamatch_question_idx ON prefix_quiz_randomsamatch (question);
+
 #
 # Table structure for table quiz_responses
 #
@@ -214,6 +241,10 @@ CREATE TABLE prefix_quiz_responses (
   answer text NOT NULL default '',
   grade varchar(10) NOT NULL default '0.0'
 );
+
+CREATE INDEX prefix_quiz_responses_attempt_idx ON prefix_quiz_responses (attempt);
+CREATE INDEX prefix_quiz_responses_question_idx ON prefix_quiz_responses (question);
+
 # --------------------------------------------------------
 
 #
@@ -250,6 +281,7 @@ CREATE TABLE prefix_quiz_numerical_units (
     unit varchar(50) NOT NULL default ''
 );
 
+CREATE INDEX prefix_quiz_numerical_units_question_idx ON prefix_quiz_numerical_units (question);
 
 CREATE TABLE prefix_quiz_attemptonlast_datasets (
     id SERIAL8 PRIMARY KEY,
@@ -267,6 +299,8 @@ CREATE TABLE prefix_quiz_dataset_definitions (
     options varchar(255) NOT NULL default '',
     itemcount INT8  NOT NULL default '0'
 );
+
+CREATE INDEX prefix_quiz_dataset_definitions_category_idx ON prefix_quiz_dataset_definitions (category);
 
 CREATE TABLE prefix_quiz_dataset_items (
     id SERIAL8 PRIMARY KEY,
@@ -298,7 +332,7 @@ CREATE TABLE prefix_quiz_calculated (
 
 CREATE INDEX prefix_quiz_calculated_question_idx 
     ON  prefix_quiz_calculated (question);
-
+CREATE INDEX prefix_quiz_calculated_answer_idx ON prefix_quiz_calculated (answer);
 
 
 INSERT INTO prefix_log_display VALUES ('quiz', 'add', 'quiz', 'name');

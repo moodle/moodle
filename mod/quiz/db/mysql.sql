@@ -36,7 +36,8 @@ CREATE TABLE `prefix_quiz` (
   `timelimit` int(2) unsigned NOT NULL default '0',
   `password` varchar(255) NOT NULL default '',
   `subnet` varchar(255) NOT NULL default '',
-  PRIMARY KEY  (`id`)
+  PRIMARY KEY  (`id`),
+  KEY `course` (`course`)
 ) TYPE=MyISAM COMMENT='Main information about each quiz';
 # --------------------------------------------------------
 
@@ -100,7 +101,8 @@ CREATE TABLE `prefix_quiz_calculated` (
   `tolerancetype` int(10) NOT NULL default '1',
   `correctanswerlength` int(10) NOT NULL default '2',
   PRIMARY KEY  (`id`),
-  KEY `question` (`question`)
+  KEY `question` (`question`),
+  KEY `answer` (`answer`)
 ) TYPE=MyISAM COMMENT='Options for questions of type calculated';
 # --------------------------------------------------------
 
@@ -115,7 +117,8 @@ CREATE TABLE `prefix_quiz_categories` (
   `info` text NOT NULL,
   `publish` tinyint(4) NOT NULL default '0',
   `stamp` varchar(255) NOT NULL default '',
-  PRIMARY KEY  (`id`)
+  PRIMARY KEY  (`id`),
+  KEY `course` (`course`)
 ) TYPE=MyISAM COMMENT='Categories are for grouping questions';
 # --------------------------------------------------------
 
@@ -130,7 +133,8 @@ CREATE TABLE `prefix_quiz_dataset_definitions` (
   `type` int(10) NOT NULL default '0',
   `options` varchar(255) NOT NULL default '',
   `itemcount` int(10) unsigned NOT NULL default '0',
-  PRIMARY KEY  (`id`)
+  PRIMARY KEY  (`id`),
+  KEY `category` (`category`)
 ) TYPE=MyISAM COMMENT='Organises and stores properties for dataset items';
 # --------------------------------------------------------
 
@@ -233,7 +237,8 @@ CREATE TABLE `prefix_quiz_numerical` (
   `min` varchar(255) NOT NULL default '',
   `max` varchar(255) NOT NULL default '',
   PRIMARY KEY  (`id`),
-  KEY `answer` (`answer`)
+  KEY `answer` (`answer`),
+  KEY `question` (`question`)
 ) TYPE=MyISAM COMMENT='Options for numerical questions';
 # --------------------------------------------------------
 
@@ -246,7 +251,8 @@ CREATE TABLE `prefix_quiz_numerical_units` (
   `question` int(10) unsigned NOT NULL default '0',
   `multiplier` decimal(40,20) NOT NULL default '1.00000000000000000000',
   `unit` varchar(50) NOT NULL default '',
-  PRIMARY KEY  (`id`)
+  PRIMARY KEY  (`id`),
+  KEY `question` (`question`)
 ) TYPE=MyISAM COMMENT='Optional unit options for numerical questions';
 # --------------------------------------------------------
 
@@ -293,7 +299,8 @@ CREATE TABLE `prefix_quiz_questions` (
   `qtype` smallint(6) NOT NULL default '0',
   `stamp` varchar(255) NOT NULL default '',
   `version` int(10) NOT NULL default '1',
-  PRIMARY KEY  (`id`)
+  PRIMARY KEY  (`id`),
+  KEY `category` (`category`)
 ) TYPE=MyISAM COMMENT='The quiz questions themselves';
 # --------------------------------------------------------
 

@@ -270,6 +270,24 @@ function quiz_upgrade($oldversion) {
     if ($oldversion < 2004111400) {
         table_column("quiz_responses", "answer", "answer", "text", "", "", "", "not null");
     }
+
+    if ($oldversion < 2004111700) {
+        execute_sql("ALTER TABLE {$CFG->prefix}quiz DROP INDEX course;",false);
+        execute_sql("ALTER TABLE {$CFG->prefix}quiz_calculated DROP INDEX answer;",false);
+        execute_sql("ALTER TABLE {$CFG->prefix}quiz_categories DROP INDEX course;",false);
+        execute_sql("ALTER TABLE {$CFG->prefix}quiz_dataset_definitions DROP INDEX category;",false);
+        execute_sql("ALTER TABLE {$CFG->prefix}quiz_numerical DROP INDEX question;",false); 
+        execute_sql("ALTER TABLE {$CFG->prefix}quiz_numerical_units DROP INDEX question;",false);
+        execute_sql("ALTER TABLE {$CFG->prefix}quiz_questions DROP INDEX category;",false);
+
+        modify_database('','ALTER TABLE prefix_quiz ADD INDEX course (course);');
+        modify_database('','ALTER TABLE prefix_quiz_calculated ADD INDEX answer (answer);');
+        modify_database('','ALTER TABLE prefix_quiz_categories ADD INDEX course (course);');
+        modify_database('','ALTER TABLE prefix_quiz_dataset_definitions ADD INDEX category (category);');
+        modify_database('','ALTER TABLE prefix_quiz_numerical ADD INDEX question (question);');
+        modify_database('','ALTER TABLE prefix_quiz_numerical_units ADD INDEX question (question);');
+        modify_database('','ALTER TABLE prefix_quiz_questions ADD INDEX category (category);');
+    }
     
     return true;
 }
