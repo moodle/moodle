@@ -44,6 +44,9 @@
             echo "$journal->week</TD>";
             echo "<TD BGCOLOR=\"$THEME->cellcontent\">";
             echo "<P><A HREF=\"$CFG->wwwroot/mod/journal/view.php?id=$journal->coursemodule\">$journal->name</A></P>";
+            if ($entry->modified) {
+                echo "<P><FONT SIZE=1>Last edited: ".moodledate($entry->modified)."</FONT></P>";
+            }
             echo text_to_html($entry->text);
             if ($entry->teacher) {
                 echo "\n<BR CLEAR=ALL><TABLE><TR>";
