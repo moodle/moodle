@@ -102,11 +102,21 @@
             if (delete_records("course_categories", "id", $tempcat->id)) {
                 notify(get_string("categorydeleted", "", $tempcat->name));
             }
-            if ($children = get_records("course_categories", "parent", $tempcat->id)) {
-                // Send the children to live with their grandparent
-                foreach ($children as $childcat) {
+
+            /// Send the children categories to live with their grandparent
+            if ($childcats = get_records("course_categories", "parent", $tempcat->id)) {
+                foreach ($childcats as $childcat) {
                     if (! set_field("course_categories", "parent", $tempcat->parent, "id", $childcat->id)) {
                         notify("Could not update a child category!");
+                    }
+                }
+            }
+
+            ///  Send the children courses to live with their grandparent as well
+            if ($childcourses = get_records("course", "category", $tempcat->id)) {
+                foreach ($childcourses as $childcourse) {
+                    if (! set_field("course", "category", $tempcat->parent, "id", $childcourse->id)) {
+                        notify("Could not update a child course!");
                     }
                 }
             }
