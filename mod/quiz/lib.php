@@ -989,6 +989,10 @@ function quiz_print_quiz_questions($quiz, $questions,
 
     foreach ($questions as $question) {
 
+        if (empty($question->qtype)) {    // Just for robustness
+            continue;
+        }
+
         $questionorder[] = $question->id;
 
         if ($results && isset($results->details[$question->id])) {
