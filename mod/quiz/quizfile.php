@@ -26,8 +26,7 @@
     $idreg = '[0-9]+';
     if (!ereg("^/?($idreg)/($idreg)/((.+/)?([^/]+))$",
               $pathinfo,
-              $regs) )
-    {
+              $regs) ) {
         error("File parameters are badly formated");
     }
     if (! ($quiz = get_record('quiz', 'id', $regs[1]))) {
@@ -65,9 +64,12 @@
     // Now verify the consistency between $quiz, $question, its category and $relativepathname
     ///////////////////////////////////////////////////
 
-    if (!in_array($question->id, explode(',', $quiz->questions), FALSE)) {
-        error("Specified question is not on the specified quiz");
-    }
+    // For now, let's not worry about this.  The following check doesn't 
+    // work for randomly selected questions and it gets complicated
+    //if (!in_array($question->id, explode(',', $quiz->questions), FALSE)) {
+    //    error("Specified question is not on the specified quiz");
+    //}
+
     if (! ($questioncategory = get_record('quiz_categories', 'id',
                                           $question->category)))
     {
