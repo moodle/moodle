@@ -609,10 +609,10 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
     switch ($format) {
         case FORMAT_HTML:
             replace_smilies($text);
-            $text = filter_text($text, $courseid);
             if (!isset($options->noclean)) {
                 $text = clean_text($text, $format);
             }
+            $text = filter_text($text, $courseid);
             break;
 
         case FORMAT_PLAIN:
@@ -625,18 +625,18 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
         case FORMAT_WIKI:
             $text = wiki_to_html($text);
             $text = rebuildnolinktag($text);
-            $text = filter_text($text, $courseid);
             if (!isset($options->noclean)) {
                 $text = clean_text($text, $format);
             }
+            $text = filter_text($text, $courseid);
             break;
 
         case FORMAT_MARKDOWN:
             $text = markdown_to_html($text);
-            $text = filter_text($text, $courseid);
             if (!isset($options->noclean)) {
                 $text = clean_text($text, $format);
             }
+            $text = filter_text($text, $courseid);
             break;
 
         default:  // FORMAT_MOODLE or anything else
@@ -650,10 +650,10 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
                 $options->newlines=true;
             }
             $text = text_to_html($text, $options->smiley, $options->para, $options->newlines);
-            $text = filter_text($text, $courseid);
             if (!isset($options->noclean)) {
                 $text = clean_text($text, $format);
             }
+            $text = filter_text($text, $courseid);
             break;
     }
 
