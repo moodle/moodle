@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // survey.php - created with Moodle 1.0.8 beta test (2003010400)
+      // survey.php - created with Moodle 1.0.9 development (2003012000)
 
 
 $string['actual'] = "Toteutunut";
@@ -31,8 +31,8 @@ $string['attls18short'] = "oivalla empaattisesti";
 $string['attls19'] = "Kun hekilön mielipiteet ovat outoja minulle, pyrin laajentamaan ajatteluani ja ymmpärtämään miten hän voi ajatella niin.";
 $string['attls19short'] = "laajenna ajattelua";
 $string['attls1short'] = "keskity perustelujen laatuun";
-$string['attls2'] = "Haluan olla \"paholaisen asianajaja\", puolustaa vastakohtaa toisten väitteille.";
-$string['attls20'] = "Käytän aikaa löytääkseni virheet. Etsin  vaikka kirjallisesta ilmaisusta kohtia joita ei ole ilmaitu hyvin.";
+$string['attls2'] = "Haluan olla 'paholaisen asianajaja', puolustaa vastakohtaa toisten väitteille.";
+$string['attls20'] = "Käytän aikaa löytääkseni virheet. Etsin vaikka kirjallisesta ilmaisusta kohtia joita ei ole ilmaistu hyvin.";
 $string['attls20short'] = "mikä on vialla?";
 $string['attls2short'] = "Leiki \"paholaisen asianajajaa\"";
 $string['attls3'] = "Yritän ymmärtää ihmisten taustat, ja sen mikä saa heidät tuntemaan niin kun he tuntevat.";

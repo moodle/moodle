@@ -66,6 +66,7 @@ $string['configlocale'] = "P‰iv‰m‰‰riem muotoilu tehd‰‰n t‰m‰n sijainti tiedon m
 $string['configlongtimenosee'] = "Jos opiskelijat eiv‰t ole kirjaantuneet pitk‰‰n aikaan , heid‰t poistetaan kursseilta automaattisesti. M‰‰rittele t‰‰s‰ haluamasi aika.";
 $string['configmaxeditingtime'] = "M‰‰ritt‰‰ kauanko foorumi vieti‰ voidaan muokata.";
 $string['configproxyhost'] = "Jos <b>palvelimen</b> pit‰‰ k‰ytt‰‰ v‰lityspalvelinta, m‰‰rit‰ palvelin ja portti t‰ss‰.";
+$string['configsessiontimeout'] = "Jos sivuston k‰ytt‰j‰t ovat pitk‰n aikaa tekem‰tt‰ mit‰‰n, heid‰t voidaan kirjata pois j‰rjestelm‰st‰. M‰‰rittele t‰ss‰ sallittu joutoaika jonka j‰lkeen yhteys katkaistaan.";
 $string['configslasharguments'] = "Tiedostot jotka v‰litet‰‰n php-v‰lityksess‰ selaimille voidaan jakaa k‰ytt‰en 'slash arguments'-metodia. T‰m‰ mahdolistaa tiedostojen tallentumisen v‰lityspalvelimille. Kaikki php-palvelimet eiv‰t tue t‰t‰ ominaisuutta. Asta silloin k‰yttˆˆn ensimm‰inen vaihtoehto.";
 $string['configsmtphosts'] = "Anna SMTP palvelimen nimi jota k‰ytet‰‰n postin l‰hett‰miseen.
 Voit m‰‰ritell‰ useita palvelimia muodossa 'posti.domain.org;
@@ -205,8 +206,8 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details:
 
 http://www.gnu.org/copyleft/gpl.html";
-$string['grade'] = "Luokitus";
-$string['grades'] = "Luokitukset";
+$string['grade'] = "Arviointi";
+$string['grades'] = "Arvioinnit";
 $string['guestskey'] = "Salli vieraat joilla on avain";
 $string['guestsno'] = "ƒl‰ salli vieraita";
 $string['guestsnotallowed'] = " '\$a' ei salli vieraiden liitty‰.";

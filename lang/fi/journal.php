@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // journal.php - created with Moodle 1.0.9 development (2003011300)
+      // journal.php - created with Moodle 1.0.9 development (2003012000)
 
 
 $string['alwaysopen'] = "Aina avoinna";
@@ -21,7 +21,7 @@ $string['noratinggiven'] = "Ei arvostelua";
 $string['notopenuntil'] = "Tämä tehtävä avautuu vasta";
 $string['notstarted'] = "Et ole aloittanut tätä tehtävää vielä";
 $string['overallrating'] = "Yleisarvostelu";
-$string['rate'] = "Arvio";
+$string['rate'] = "Arvo";
 $string['saveallfeedback'] = "Talenna kaikki palautteeni";
 $string['startoredit'] = "Aloita tai muokkaa vastustustani";
 $string['viewallentries'] = "Katso kaikki vastaukset";
