@@ -6,8 +6,8 @@ $string['background.html'] = "Contesto";
 $string['philosophy.html'] = "Filosofia";
 $string['licence.html'] = "Licenza";
 $string['features.html'] = "Caratteristiche";
-$string['release.html'] = "Novit&agrave;";
-$string['future.html'] = "Novit&agrave; Future";
+$string['release.html'] = "Note di rilascio";
+$string['future.html'] = "Novit&agrave; nelle prossime versioni";
 $string['credits.html'] = "Credits";
 
 $string['-installation'] = "Amministrazione";
