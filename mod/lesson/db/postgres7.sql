@@ -96,75 +96,75 @@ CREATE INDEX prefix_lesson_grades_lessonid_idx ON prefix_lesson_grades (lessonid
 CREATE INDEX prefix_lesson_grades_userid_idx ON prefix_lesson_grades (userid);
 
 CREATE TABLE prefix_lesson_default 
-		( id SERIAL8 PRIMARY KEY,
-		  course INT8  NOT NULL default '0',
-		  practice INT  NOT NULL default '0',
-		  modattempts INT4 NOT NULL default '0',
-		  password varchar(32) NOT NULL default '',
-		  usepassword INT  NOT NULL default '0',
-		  grade INT NOT NULL default '0',
-		  custom INT  NOT NULL default '0',
-		  ongoing INT  NOT NULL default '0',
-		  usemaxgrade INT  NOT NULL default '0',
-		  maxanswers INT  NOT NULL default '4',
-		  maxattempts INT  NOT NULL default '5',
-		  review INT  NOT NULL default '0',
-		  nextpagedefault INT  NOT NULL default '0',
-		  minquestions INT  NOT NULL default '0',
-		  maxpages INT  NOT NULL default '0',
-		  timed INT  NOT NULL default '0',
-		  maxtime INT8  NOT NULL default '0',
-		  retake INT  NOT NULL default '1',
-		  tree INT  NOT NULL default '0',
-		  slideshow INT  NOT NULL default '0',
-		  width INT8  NOT NULL default '640',
-		  height INT8  NOT NULL default '480',
-		  bgcolor varchar(7) default '#FFFFFF',
-		  displayleft INT  NOT NULL default '0',
-		  highscores INT  NOT NULL default '0',
-		  maxhighscores INT8 NOT NULL default '0'
-		) ;
+        ( id SERIAL8 PRIMARY KEY,
+          course INT8  NOT NULL default '0',
+          practice INT  NOT NULL default '0',
+          modattempts INT4 NOT NULL default '0',
+          password varchar(32) NOT NULL default '',
+          usepassword INT  NOT NULL default '0',
+          grade INT NOT NULL default '0',
+          custom INT  NOT NULL default '0',
+          ongoing INT  NOT NULL default '0',
+          usemaxgrade INT  NOT NULL default '0',
+          maxanswers INT  NOT NULL default '4',
+          maxattempts INT  NOT NULL default '5',
+          review INT  NOT NULL default '0',
+          nextpagedefault INT  NOT NULL default '0',
+          minquestions INT  NOT NULL default '0',
+          maxpages INT  NOT NULL default '0',
+          timed INT  NOT NULL default '0',
+          maxtime INT8  NOT NULL default '0',
+          retake INT  NOT NULL default '1',
+          tree INT  NOT NULL default '0',
+          slideshow INT  NOT NULL default '0',
+          width INT8  NOT NULL default '640',
+          height INT8  NOT NULL default '480',
+          bgcolor varchar(7) default '#FFFFFF',
+          displayleft INT  NOT NULL default '0',
+          highscores INT  NOT NULL default '0',
+          maxhighscores INT8 NOT NULL default '0'
+        ) ;
 
 CREATE TABLE prefix_lesson_timer
-	( id SERIAL8 PRIMARY KEY,
-  	  lessonid INT8  not null,
-	  userid INT8  not null,
-	  starttime INT8  not null,
-  	  lessontime INT8  not null
-	);
+    ( id SERIAL8 PRIMARY KEY,
+        lessonid INT8  not null,
+      userid INT8  not null,
+      starttime INT8  not null,
+        lessontime INT8  not null
+    );
 
 CREATE TABLE prefix_lesson_branch
-	( id SERIAL8 PRIMARY KEY,
-	  lessonid INT8  not null,
-	  userid INT8  not null,
-	  pageid INT8  not null,
-	  retry INT8  not null,
-	  flag  INT  not null,
-	  timeseen INT8  not null
-	);
+    ( id SERIAL8 PRIMARY KEY,
+      lessonid INT8  not null,
+      userid INT8  not null,
+      pageid INT8  not null,
+      retry INT8  not null,
+      flag  INT  not null,
+      timeseen INT8  not null
+    );
 
 CREATE TABLE prefix_lesson_essay
-	( id SERIAL8 PRIMARY KEY,
-	  lessonid INT8  not null,
-	  userid INT8  not null,
-	  pageid INT8  not null,
-	  answerid INT8  not null,
-	  try INT8  not null,
-	  answer text not null,
-	  graded INT  not null default 0,
-	  score INT8  not null default 0,
-	  response text not null,
-	  sent INT  not null default 0,
-	  timesubmitted INT8  not null
-	);
+    ( id SERIAL8 PRIMARY KEY,
+      lessonid INT8  not null,
+      userid INT8  not null,
+      pageid INT8  not null,
+      answerid INT8  not null,
+      try INT8  not null,
+      answer text not null,
+      graded INT  not null default 0,
+      score INT8  not null default 0,
+      response text not null,
+      sent INT  not null default 0,
+      timesubmitted INT8  not null
+    );
 
 CREATE TABLE prefix_lesson_high_scores
-	( id SERIAL8 PRIMARY KEY,
-	  lessonid INT8  not null,
-	  userid INT8  not null,
-	  gradeid INT8  not null,
-	  nickname varchar(5) not null
-	);
+    ( id SERIAL8 PRIMARY KEY,
+      lessonid INT8  not null,
+      userid INT8  not null,
+      gradeid INT8  not null,
+      nickname varchar(5) not null
+    );
 
 
 INSERT INTO prefix_log_display VALUES ('lesson', 'start', 'lesson', 'name');

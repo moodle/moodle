@@ -108,67 +108,67 @@ CREATE TABLE `prefix_lesson_grades` (
 # --------------------------------------------------------
 
 CREATE TABLE `prefix_lesson_default` 
-		( `id` int(10) unsigned NOT NULL auto_increment,
-		  `course` int(10) unsigned NOT NULL default '0',
-		  `practice` tinyint(3) unsigned NOT NULL default '0',
-		  `modattempts` tinyint(3) unsigned NOT NULL default '0',
-		  `password` varchar(32) NOT NULL default '',
-		  `usepassword` int(3) unsigned NOT NULL default '0',
-		  `grade` tinyint(3) NOT NULL default '0',
-		  `custom` int(3) unsigned NOT NULL default '0',
-		  `ongoing` int(3) unsigned NOT NULL default '0',
-		  `usemaxgrade` tinyint(3) unsigned NOT NULL default '0',
-		  `maxanswers` int(3) unsigned NOT NULL default '4',
-		  `maxattempts` int(3) unsigned NOT NULL default '5',
-		  `review` tinyint(3) unsigned NOT NULL default '0',
-		  `nextpagedefault` int(3) unsigned NOT NULL default '0',
-		  `minquestions` tinyint(3) unsigned NOT NULL default '0',
-		  `maxpages` int(3) unsigned NOT NULL default '0',
-		  `timed` int(3) unsigned NOT NULL default '0',
-		  `maxtime` int(10) unsigned NOT NULL default '0',
-		  `retake` int(3) unsigned NOT NULL default '1',
-		  `tree` int(3) unsigned NOT NULL default '0',
-		  `slideshow` int(3) unsigned NOT NULL default '0',
-		  `width` int(10) unsigned NOT NULL default '640',
-		  `height` int(10) unsigned NOT NULL default '480',
-		  `bgcolor` varchar(7) default '#FFFFFF',
-		  `displayleft` int(3) unsigned NOT NULL default '0',
-		  `highscores` int(3) unsigned NOT NULL default '0',
-		  `maxhighscores` int(10) NOT NULL default '0',
-		  PRIMARY KEY  (`id`)
-		) COMMENT = 'Defines lesson_default';
+        ( `id` int(10) unsigned NOT NULL auto_increment,
+          `course` int(10) unsigned NOT NULL default '0',
+          `practice` tinyint(3) unsigned NOT NULL default '0',
+          `modattempts` tinyint(3) unsigned NOT NULL default '0',
+          `password` varchar(32) NOT NULL default '',
+          `usepassword` int(3) unsigned NOT NULL default '0',
+          `grade` tinyint(3) NOT NULL default '0',
+          `custom` int(3) unsigned NOT NULL default '0',
+          `ongoing` int(3) unsigned NOT NULL default '0',
+          `usemaxgrade` tinyint(3) unsigned NOT NULL default '0',
+          `maxanswers` int(3) unsigned NOT NULL default '4',
+          `maxattempts` int(3) unsigned NOT NULL default '5',
+          `review` tinyint(3) unsigned NOT NULL default '0',
+          `nextpagedefault` int(3) unsigned NOT NULL default '0',
+          `minquestions` tinyint(3) unsigned NOT NULL default '0',
+          `maxpages` int(3) unsigned NOT NULL default '0',
+          `timed` int(3) unsigned NOT NULL default '0',
+          `maxtime` int(10) unsigned NOT NULL default '0',
+          `retake` int(3) unsigned NOT NULL default '1',
+          `tree` int(3) unsigned NOT NULL default '0',
+          `slideshow` int(3) unsigned NOT NULL default '0',
+          `width` int(10) unsigned NOT NULL default '640',
+          `height` int(10) unsigned NOT NULL default '480',
+          `bgcolor` varchar(7) default '#FFFFFF',
+          `displayleft` int(3) unsigned NOT NULL default '0',
+          `highscores` int(3) unsigned NOT NULL default '0',
+          `maxhighscores` int(10) NOT NULL default '0',
+          PRIMARY KEY  (`id`)
+        ) COMMENT = 'Defines lesson_default';
 # --------------------------------------------------------
 
 CREATE TABLE `prefix_lesson_timer`
-	( `id` int(10) unsigned NOT NULL auto_increment,
-  	  `lessonid` int(10) unsigned not null,
-	  `userid` int(10) unsigned not null,
-	  `starttime` int(10) unsigned not null,
-  	  `lessontime` int(10) unsigned not null,
-	  PRIMARY KEY (`id`)
-	);
+    ( `id` int(10) unsigned NOT NULL auto_increment,
+        `lessonid` int(10) unsigned not null,
+      `userid` int(10) unsigned not null,
+      `starttime` int(10) unsigned not null,
+        `lessontime` int(10) unsigned not null,
+      PRIMARY KEY (`id`)
+    );
 # --------------------------------------------------------
 
 CREATE TABLE `prefix_lesson_branch`
-	( `id` int(10) unsigned not null auto_increment,
-	  `lessonid` int(10) unsigned not null,
-	  `userid` int(10) unsigned not null,
-	  `pageid` int(10) unsigned not null,
-	  `retry` int(10) unsigned not null,
-	  `flag`  tinyint(3) unsigned not null,
-	  `timeseen` int(10) unsigned not null,
-	  PRIMARY KEY (`id`)
-	);
+    ( `id` int(10) unsigned not null auto_increment,
+      `lessonid` int(10) unsigned not null,
+      `userid` int(10) unsigned not null,
+      `pageid` int(10) unsigned not null,
+      `retry` int(10) unsigned not null,
+      `flag`  tinyint(3) unsigned not null,
+      `timeseen` int(10) unsigned not null,
+      PRIMARY KEY (`id`)
+    );
 # --------------------------------------------------------
 
 CREATE TABLE `prefix_lesson_high_scores`
-	( `id` int(10) unsigned not null auto_increment,
-	  `lessonid` int(10) unsigned not null,
-	  `userid` int(10) unsigned not null,
-	  `gradeid` int(10) unsigned not null,
-	  `nickname` varchar(5) not null,
-	  PRIMARY KEY (`id`)
-	);
+    ( `id` int(10) unsigned not null auto_increment,
+      `lessonid` int(10) unsigned not null,
+      `userid` int(10) unsigned not null,
+      `gradeid` int(10) unsigned not null,
+      `nickname` varchar(5) not null,
+      PRIMARY KEY (`id`)
+    );
 # --------------------------------------------------------
 
 

@@ -3,7 +3,7 @@
 /// This page lists all the instances of lesson in a particular course
 
     require_once("../../config.php");
-	require_once("locallib.php");
+    require_once("locallib.php");
 
     require_variable($id);   // course
 
@@ -45,7 +45,7 @@
     $strdeadline  = get_string("deadline", "lesson");
     $strweek  = get_string("week");
     $strtopic  = get_string("topic");
-	$table = new stdClass;
+    $table = new stdClass;
 
     if ($course->format == "weeks") {
         $table->head  = array ($strweek, $strname, $strgrade, $strdeadline);

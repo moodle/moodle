@@ -1,8 +1,8 @@
 <?PHP  // $Id$ 
-		// modified by mnielsen @ CDC
-		/// Update:  The lib.php now contains only the functions that are
-		/// used outside of the lesson module.  All functions (I hope) that are only local
-		/// are now in locallib.php.  All the constants moved there as well.
+        // modified by mnielsen @ CDC
+        /// Update:  The lib.php now contains only the functions that are
+        /// used outside of the lesson module.  All functions (I hope) that are only local
+        /// are now in locallib.php.  All the constants moved there as well.
 
 /// Library of functions and constants for module lesson
 /// (replace lesson with the name of your module and delete this line)
@@ -13,42 +13,42 @@ function lesson_add_instance($lesson) {
 /// (defined by the form in mod.html) this function 
 /// will create a new instance and return the id number 
 /// of the new instance.
-	global $SESSION;
+    global $SESSION;
 
     $lesson->timemodified = time();
 
     $lesson->available = make_timestamp($lesson->availableyear, 
-			$lesson->availablemonth, $lesson->availableday, $lesson->availablehour, 
-			$lesson->availableminute);
+            $lesson->availablemonth, $lesson->availableday, $lesson->availablehour, 
+            $lesson->availableminute);
 
     $lesson->deadline = make_timestamp($lesson->deadlineyear, 
-			$lesson->deadlinemonth, $lesson->deadlineday, $lesson->deadlinehour, 
-			$lesson->deadlineminute);
-	
-	/// CDC-FLAG ///
-	if (!empty($lesson->password)) {
-		$lesson->password = md5($lesson->password);
-	} else {
-		unset($lesson->password);
-	}
-	/// CDC-FLAG ///
+            $lesson->deadlinemonth, $lesson->deadlineday, $lesson->deadlinehour, 
+            $lesson->deadlineminute);
+    
+    /// CDC-FLAG ///
+    if (!empty($lesson->password)) {
+        $lesson->password = md5($lesson->password);
+    } else {
+        unset($lesson->password);
+    }
+    /// CDC-FLAG ///
 
-	if ($lesson->lessondefault) {
-		$lessondefault = $lesson;
-		unset($lessondefault->lessondefault);
-		unset($lessondefault->name);
-		unset($lessondefault->timemodified);
-		unset($lessondefault->available);
-		unset($lessondefault->deadline);
-		if ($lessondefault->id = get_field("lesson_default", "id", "course", $lessondefault->course)) {
-			update_record("lesson_default", $lessondefault);
-		} else {
-			insert_record("lesson_default", $lessondefault);
-		}
-	} else {
-		unset($lesson->lessondefault);
-	}
-	
+    if ($lesson->lessondefault) {
+        $lessondefault = $lesson;
+        unset($lessondefault->lessondefault);
+        unset($lessondefault->name);
+        unset($lessondefault->timemodified);
+        unset($lessondefault->available);
+        unset($lessondefault->deadline);
+        if ($lessondefault->id = get_field("lesson_default", "id", "course", $lessondefault->course)) {
+            update_record("lesson_default", $lessondefault);
+        } else {
+            insert_record("lesson_default", $lessondefault);
+        }
+    } else {
+        unset($lesson->lessondefault);
+    }
+    
     return insert_record("lesson", $lesson);
 }
 
@@ -61,81 +61,81 @@ function lesson_update_instance($lesson) {
 
     $lesson->timemodified = time();
     $lesson->available = make_timestamp($lesson->availableyear, 
-			$lesson->availablemonth, $lesson->availableday, $lesson->availablehour, 
-			$lesson->availableminute);
+            $lesson->availablemonth, $lesson->availableday, $lesson->availablehour, 
+            $lesson->availableminute);
     $lesson->deadline = make_timestamp($lesson->deadlineyear, 
-			$lesson->deadlinemonth, $lesson->deadlineday, $lesson->deadlinehour, 
-			$lesson->deadlineminute);
+            $lesson->deadlinemonth, $lesson->deadlineday, $lesson->deadlinehour, 
+            $lesson->deadlineminute);
     $lesson->id = $lesson->instance;
 
-	/// CDC-FLAG ///
-	if (!empty($lesson->password)) {
-		$lesson->password = md5($lesson->password);
-	} else {
-		unset($lesson->password);
-	}
-	/// CDC-FLAG ///
+    /// CDC-FLAG ///
+    if (!empty($lesson->password)) {
+        $lesson->password = md5($lesson->password);
+    } else {
+        unset($lesson->password);
+    }
+    /// CDC-FLAG ///
 
-	if ($lesson->lessondefault) {
-		$lessondefault = $lesson;
-		unset($lessondefault->lessondefault);
-		unset($lessondefault->name);
-		unset($lessondefault->timemodified);
-		unset($lessondefault->available);
-		unset($lessondefault->deadline);
-		if ($lessondefault->id = get_field("lesson_default", "id", "course", $lessondefault->course)) {
-			update_record("lesson_default", $lessondefault);
-		} else {
-			insert_record("lesson_default", $lessondefault);
-		}
-	} else {
-		unset($lesson->lessondefault);
-	}
-	
-	if (!empty($lesson->deleteattempts)) {
-		$subject = "Delete User Attempts";
-		$message = "";
+    if ($lesson->lessondefault) {
+        $lessondefault = $lesson;
+        unset($lessondefault->lessondefault);
+        unset($lessondefault->name);
+        unset($lessondefault->timemodified);
+        unset($lessondefault->available);
+        unset($lessondefault->deadline);
+        if ($lessondefault->id = get_field("lesson_default", "id", "course", $lessondefault->course)) {
+            update_record("lesson_default", $lessondefault);
+        } else {
+            insert_record("lesson_default", $lessondefault);
+        }
+    } else {
+        unset($lesson->lessondefault);
+    }
+    
+    if (!empty($lesson->deleteattempts)) {
+        $subject = "Delete User Attempts";
+        $message = "";
 
-		if ($userid = get_field("user", "id", "username", $lesson->deleteattempts)) {
-			if (delete_records("lesson_attempts", "lessonid", $lesson->id, "userid", $userid)) {
-				// email good
-				$message .= "Successfully deleted attempts from \"$lesson->name\" lesson!<br />";
-			} else {
-				// email couldnt delete
-				$message .= "Failed to delete attempts from \"$lesson->name\" lesson!<br />";
-			}
-			if (delete_records("lesson_grades", "lessonid", $lesson->id, "userid", $userid)) {
-				// email good
-				$message .= "Successfully deleted grades from \"$lesson->name\" lesson!<br />";
-			} else {
-				// email couldnt delete
-				$message .= "Failed to delete grades from \"$lesson->name\" lesson!<br />";
-			}
-			if (delete_records("lesson_timer", "lessonid", $lesson->id, "userid", $userid)) {
-				// email good
-				$message .= "Successfully deleted time records from \"$lesson->name\" lesson!<br />";
-			} else {
-				// email couldnt delete
-				$message .= "Failed to delete time records from \"$lesson->name\" lesson!<br />";
-			}
+        if ($userid = get_field("user", "id", "username", $lesson->deleteattempts)) {
+            if (delete_records("lesson_attempts", "lessonid", $lesson->id, "userid", $userid)) {
+                // email good
+                $message .= "Successfully deleted attempts from \"$lesson->name\" lesson!<br />";
+            } else {
+                // email couldnt delete
+                $message .= "Failed to delete attempts from \"$lesson->name\" lesson!<br />";
+            }
+            if (delete_records("lesson_grades", "lessonid", $lesson->id, "userid", $userid)) {
+                // email good
+                $message .= "Successfully deleted grades from \"$lesson->name\" lesson!<br />";
+            } else {
+                // email couldnt delete
+                $message .= "Failed to delete grades from \"$lesson->name\" lesson!<br />";
+            }
+            if (delete_records("lesson_timer", "lessonid", $lesson->id, "userid", $userid)) {
+                // email good
+                $message .= "Successfully deleted time records from \"$lesson->name\" lesson!<br />";
+            } else {
+                // email couldnt delete
+                $message .= "Failed to delete time records from \"$lesson->name\" lesson!<br />";
+            }
 
-		} else {
-			// email couldnt find user
-			$message .= "Could not find user in database.<br />";
-		}
-		$message .= "<br /> User ID used: $lesson->deleteattempts <br />";
-		
-		$txt = format_text_email($message, FORMAT_HTML);
-		
-		if ($currentuser = get_record("user", "id", $lesson->deleteattemptsid)) {
-			email_to_user($currentuser, $currentuser, $subject, $txt, $message);
-		}
-		// unset lessondefault
-	}
-	unset($lesson->deleteattempts);
-	unset($lesson->deleteattemptsid);
-	
-	return update_record("lesson", $lesson);
+        } else {
+            // email couldnt find user
+            $message .= "Could not find user in database.<br />";
+        }
+        $message .= "<br /> User ID used: $lesson->deleteattempts <br />";
+        
+        $txt = format_text_email($message, FORMAT_HTML);
+        
+        if ($currentuser = get_record("user", "id", $lesson->deleteattemptsid)) {
+            email_to_user($currentuser, $currentuser, $subject, $txt, $message);
+        }
+        // unset lessondefault
+    }
+    unset($lesson->deleteattempts);
+    unset($lesson->deleteattemptsid);
+    
+    return update_record("lesson", $lesson);
 }
 
 
@@ -205,27 +205,27 @@ function lesson_user_complete($course, $user, $mod, $lesson) {
     if ($attempts = get_records_select("lesson_attempts", "lessonid = $lesson->id AND userid = $user->id",
                 "retry, timeseen")) {
         print_simple_box_start();
-		$table->head = array (get_string("attempt", "lesson"),  get_string("numberofpagesviewed", "lesson"),
-			get_string("numberofcorrectanswers", "lesson"), get_string("time"));
-		$table->width = "100%";
-		$table->align = array ("center", "center", "center", "center");
-		$table->size = array ("*", "*", "*", "*");
-		$table->cellpadding = 2;
-		$table->cellspacing = 0;
+        $table->head = array (get_string("attempt", "lesson"),  get_string("numberofpagesviewed", "lesson"),
+            get_string("numberofcorrectanswers", "lesson"), get_string("time"));
+        $table->width = "100%";
+        $table->align = array ("center", "center", "center", "center");
+        $table->size = array ("*", "*", "*", "*");
+        $table->cellpadding = 2;
+        $table->cellspacing = 0;
 
         $retry = 0;
         $npages = 0;
         $ncorrect = 0;
         
-		foreach ($attempts as $attempt) {
-			if ($attempt->retry == $retry) {
-				$npages++;
+        foreach ($attempts as $attempt) {
+            if ($attempt->retry == $retry) {
+                $npages++;
                 if ($attempt->correct) {
                     $ncorrect++;
                 }
                 $timeseen = $attempt->timeseen;
             } else {
-			    $table->data[] = array($retry + 1, $npages, $ncorrect, userdate($timeseen));
+                $table->data[] = array($retry + 1, $npages, $ncorrect, userdate($timeseen));
                 $retry++;
                 $npages = 1;
                 if ($attempt->correct) {
@@ -233,13 +233,13 @@ function lesson_user_complete($course, $user, $mod, $lesson) {
                 } else {
                     $ncorrect = 0;
                 }
-			}
-		}
-        if ($npages) {
-			    $table->data[] = array($retry + 1, $npages, $ncorrect, userdate($timeseen));
+            }
         }
-		print_table($table);
-	    print_simple_box_end();
+        if ($npages) {
+                $table->data[] = array($retry + 1, $npages, $ncorrect, userdate($timeseen));
+        }
+        print_table($table);
+        print_simple_box_end();
         // also print grade summary
         if ($grades = get_records_select("lesson_grades", "lessonid = $lesson->id AND userid = $user->id",
                     "grade DESC")) {
@@ -290,9 +290,9 @@ function lesson_grades($lessonid) {
 /// indexed by user.  It also returns a maximum allowed grade.
     global $CFG;
 
-	if (!$lesson = get_record("lesson", "id", $lessonid)) {
-		return NULL;
-	}
+    if (!$lesson = get_record("lesson", "id", $lessonid)) {
+        return NULL;
+    }
     if ($lesson->usemaxgrade) {
         $grades = get_records_sql_menu("SELECT userid,MAX(grade) FROM {$CFG->prefix}lesson_grades WHERE
                 lessonid = $lessonid GROUP BY userid");
@@ -302,18 +302,18 @@ function lesson_grades($lessonid) {
     }
     
     // convert grades from percentages and tidy the numbers
-	if (!$lesson->practice) {  // dont display practice lessons CDC-FLAG
-		if ($grades) {
-			foreach ($grades as $userid => $grade) {
-				$return->grades[$userid] = number_format($grade * $lesson->grade / 100.0, 1);
-			}
-		}
-		$return->maxgrade = $lesson->grade;
-		
-		return $return;
-	} else {
-		return NULL;
-	}
+    if (!$lesson->practice) {  // dont display practice lessons CDC-FLAG
+        if ($grades) {
+            foreach ($grades as $userid => $grade) {
+                $return->grades[$userid] = number_format($grade * $lesson->grade / 100.0, 1);
+            }
+        }
+        $return->maxgrade = $lesson->grade;
+        
+        return $return;
+    } else {
+        return NULL;
+    }
 }
 
 /*******************************************************************/

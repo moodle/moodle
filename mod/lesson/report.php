@@ -40,7 +40,7 @@
     if (! $grades = get_records('lesson_grades', 'lessonid', $lesson->id, 'completed')) {
         $grades = array();
     }
-	
+    
     if (! $times = get_records('lesson_timer', 'lessonid', $lesson->id, 'starttime')) {
         $times = array();
     }
@@ -90,7 +90,7 @@
             if (!array_key_exists($attempt->userid, $studentdata) || !array_key_exists($attempt->retry, $studentdata[$attempt->userid])) {
                 // restore/setup defaults
                 $n = 0;
-				$timestart = 0;
+                $timestart = 0;
                 $timeend = 0;
                 $usergrade = NULL;
 
@@ -107,7 +107,7 @@
                         $n++; // if not equal, then increment n
                     }
                 }
-				$n = 0;
+                $n = 0;
                 // search for the time record for this try. if not there, the nulls defined above will be used.
                 foreach($times as $time) {
                     // check to see if the grade matches the correct user
@@ -239,32 +239,32 @@
 
         // some stat calculations
         if ($numofattempts == 0) {
-			$avescore = get_string("notcompleted", "lesson");
-		} else {
-			$avescore = format_float($avescore/$numofattempts, 2, ".", ",");
-		}
-		if ($avetime == NULL) {
-			$avetime = get_string("notcompleted", "lesson");
-		} else {
-        	$avetime = format_float($avetime/$numofattempts, 0, ".", ",");
-			$avetime = format_time($avetime);
-		}
+            $avescore = get_string("notcompleted", "lesson");
+        } else {
+            $avescore = format_float($avescore/$numofattempts, 2, ".", ",");
+        }
+        if ($avetime == NULL) {
+            $avetime = get_string("notcompleted", "lesson");
+        } else {
+            $avetime = format_float($avetime/$numofattempts, 0, ".", ",");
+            $avetime = format_time($avetime);
+        }
         if ($hightime == NULL) {
-        	$hightime = get_string("notcompleted", "lesson");
+            $hightime = get_string("notcompleted", "lesson");
         } else {
-			$hightime = format_time($hightime);
-		}
-		if ($lowtime == NULL) {
-        	$lowtime = get_string("notcompleted", "lesson");
+            $hightime = format_time($hightime);
+        }
+        if ($lowtime == NULL) {
+            $lowtime = get_string("notcompleted", "lesson");
         } else {
-			$lowtime = format_time($lowtime);
-		}
-		if ($highscore == NULL) {
-			$highscore = get_string("notcompleted", "lesson");
-		}
-		if ($lowscore == NULL) {
-			$lowscore = get_string("notcompleted", "lesson");
-		}
+            $lowtime = format_time($lowtime);
+        }
+        if ($highscore == NULL) {
+            $highscore = get_string("notcompleted", "lesson");
+        }
+        if ($lowscore == NULL) {
+            $lowscore = get_string("notcompleted", "lesson");
+        }
 
         // output the stats
         print_heading(get_string('lessonstats', 'lesson'));

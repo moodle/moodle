@@ -1,13 +1,13 @@
 <?php
-	require_once("../../config.php");
+    require_once("../../config.php");
 ?>
 
 img {
-	border:0;
+    border:0;
 }
 
 .hidden-label {
-	display: none;
+    display: none;
 }
 
 .footer {
@@ -18,21 +18,21 @@ img {
 }
 
 .leftmenutable {
-	width:170px;
-	height:400px;
-	overflow:auto;	
-	background-color: <?PHP echo $THEME->cellheading2 ?>;
-	vertical-align:top;
+    width:170px;
+    height:400px;
+    overflow:auto;    
+    background-color: <?PHP echo $THEME->cellheading2 ?>;
+    vertical-align:top;
 }
 
 .leftmenu a:link, .leftmenu a:active, .leftmenu a:visited, .leftmenu1 a:link, .leftmenu1 a:active, .leftmenu1 a:visited{
-	font-size:.7em;
-	vertical-align:top;
+    font-size:.7em;
+    vertical-align:top;
 }
 
 .main a:link, .main a:active, .main a:visited{
-	font-size:.9em; 
-	vertical-align:top;
+    font-size:.9em; 
+    vertical-align:top;
 }
 
 .viewpos {
