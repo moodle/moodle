@@ -36,6 +36,10 @@
               get_string("viewsurveyresponses", "survey", $numusers)."</A></P>";
     }
 
+    if (isguest()) {
+        notify(get_string("guestsnotallowed", "survey"));
+    }
+
 
 //  Check the survey hasn't already been filled out.
 
@@ -92,6 +96,12 @@
                 survey_print_single($question);
             }
         }
+    }
+
+    if (isguest()) {
+        echo "</form>";
+        print_footer($course);
+        exit;
     }
 
 ?>
