@@ -1,18 +1,18 @@
 <?PHP // $Id$ 
-      // calendar.php - created with Moodle 1.4 + (2004083100)
+      // calendar.php - created with Moodle 1.4.1 (2004083101)
 
 
 $string['calendar'] = 'Egutegia';
-$string['calendarheading'] = '$a Egutegia';
+$string['calendarheading'] = '$a-egutegia';
 $string['clickhide'] = 'Ezkutatu';
 $string['clickshow'] = 'Erakutsi';
 $string['confirmeventdelete'] = 'Ziur al zaude ekitaldi hau ezabatu nahi duzula?';
 $string['courseevents'] = 'Ikastaroko ekitaldiak';
-$string['dayview'] = 'Eguneko bista';
+$string['dayview'] = 'Egun honetakoak';
 $string['daywithnoevents'] = 'Ekitaldirik ez egun honetan';
 $string['default'] = 'Berez dakarrena';
 $string['deleteevent'] = 'Ezabatu ekitaldia';
-$string['detailedmonthview'] = 'Hileko bista zehatza';
+$string['detailedmonthview'] = 'Hileko ekitaldiak zehatz-mehatz';
 $string['durationminutes'] = 'Iraupena minututan';
 $string['durationnone'] = 'Iraupenik ez';
 $string['durationuntil'] = 'Noiz arte';
@@ -30,7 +30,8 @@ $string['eventendtime'] = 'Amaiera-ordua';
 $string['eventinstanttime'] = 'Ordua';
 $string['eventkind'] = 'Ekitaldi-mota';
 $string['eventname'] = 'Izena';
-$string['eventsfor'] = '$a ekitaldiak';
+$string['eventrepeat'] = 'Errepikatu';
+$string['eventsfor'] = '$a-(e)rako ekitaldiak';
 $string['eventstarttime'] = 'Hasiera-ordua';
 $string['eventtime'] = 'Ordua';
 $string['eventview'] = 'Zehaztasunak';
@@ -72,7 +73,7 @@ $string['tt_editevent'] = 'Editatu ekitaldia';
 $string['tt_hidecourse'] = 'Ikastaroko ekitaldiak agerian (sakatu ezkutatzeko)';
 $string['tt_hideglobal'] = 'Ekitaldi orokorrak agerian (sakatu ezkutatzeko)';
 $string['tt_hidegroups'] = 'Taldeko ekitaldiak agerian (sakatu ezkutatzeko)';
-$string['tt_hideuser'] = 'Erabiltzaileen ekitaldiak agerian (sakatu izkutatzeko)';
+$string['tt_hideuser'] = 'Erabiltzaileen ekitaldiak agerian (sakatu ezkutatzeko)';
 $string['tt_showcourse'] = 'Ikastaroko ekitaldiak ezkutuan (sakatu ikusteko)';
 $string['tt_showglobal'] = 'Ekitaldi orokorrak ezkutuan (sakatu ikusteko)';
 $string['tt_showgroups'] = 'Taldeko ekitaldiak ezkutuan (sakatu ikusteko)';
