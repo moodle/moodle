@@ -95,7 +95,7 @@ function print_side_block($heading="", $list=NULL, $footer="", $icons=NULL) {
             } else {
                 echo "";
             }
-            echo "</TD>\n<TD WIDTH=100%>";
+            echo "</TD>\n<TD WIDTH=100% VALIGN=top>";
             echo "<P><FONT SIZE=2>$string</FONT></P>";
             echo "</TD></TR>\n";
         }

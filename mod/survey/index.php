@@ -21,8 +21,16 @@
         notice("There are no surveys.", "../../course/view.php?id=$course->id");
     }
     
-    $table->head  = array ("Week", "Name", "Status");
-    $table->align = array ("CENTER", "LEFT", "LEFT");
+    if ($course->format == "weeks") {
+        $table->head  = array ("Week", "Name", "Status");
+        $table->align = array ("CENTER", "LEFT", "LEFT");
+    } else if ($course->format == "topics") {
+        $table->head  = array ("Topic", "Name", "Status");
+        $table->align = array ("CENTER", "LEFT", "LEFT");
+    } else {
+        $table->head  = array ("Name", "Status");
+        $table->align = array ("LEFT", "LEFT");
+    }
 
     foreach ($surveys as $survey) {
         if (survey_already_done($survey->id, $USER->id)) {
@@ -30,9 +38,14 @@
         } else {
             $ss = "<A HREF=\"view.php?id=$survey->coursemodule\">Not done yet</A>";
         }
-        $table->data[] = array ("$survey->section", 
-                                "<A HREF=\"view.php?id=$survey->coursemodule\">$survey->name</A>",
-                                "$ss");
+        if ($course->format == "weeks" or $course->format == "topics") {
+            $table->data[] = array ("$survey->section", 
+                                    "<A HREF=\"view.php?id=$survey->coursemodule\">$survey->name</A>",
+                                    "$ss");
+        } else {
+            $table->data[] = array ("<A HREF=\"view.php?id=$survey->coursemodule\">$survey->name</A>",
+                                    "$ss");
+        }
     }
 
     print_table($table);

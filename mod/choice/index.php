@@ -32,8 +32,16 @@
 
     $timenow = time();
 
-    $table->head  = array ("Week", "Question", "Answer");
-    $table->align = array ("CENTER", "LEFT", "CENTER");
+    if ($course->format == "weeks") {
+        $table->head  = array ("Week", "Question", "Answer");
+        $table->align = array ("CENTER", "LEFT", "LEFT");
+    } else if ($course->format == "topics") {
+        $table->head  = array ("Topic", "Question", "Answer");
+        $table->align = array ("CENTER", "LEFT", "LEFT");
+    } else {
+        $table->head  = array ("Question", "Answer");
+        $table->align = array ("LEFT", "LEFT");
+    }
 
     foreach ($choices as $choice) {
         $answer = $answers[$choice->id];
@@ -49,9 +57,14 @@
                 break;
         }
 
-        $table->data[] = array ("<P>$choice->section</P>",
-                                "<P><A HREF=\"view.php?id=$choice->coursemodule\">$choice->name</A></P>",
-                                "<P>$aa</P>");
+        if ($course->format == "weeks" || $course->format == "topics") {
+            $table->data[] = array ("$choice->section",
+                                    "<A HREF=\"view.php?id=$choice->coursemodule\">$choice->name</A>",
+                                    "$aa");
+        } else {
+            $table->data[] = array ("<A HREF=\"view.php?id=$choice->coursemodule\">$choice->name</A>",
+                                    "$aa");
+        }
     }
     print_table($table);
 
