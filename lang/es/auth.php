@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
+      // auth.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005031000)
 
 
 $string['auth_common_settings'] = 'Ajustes comunes';
@@ -14,7 +14,7 @@ $string['auth_dbpass'] = 'Contraseña correspondiente al nombre de usuario anteri
 $string['auth_dbpasstype'] = 'Especifique el formato que usa el campo de contraseña. La encriptación MD5 es útil para conectar con otras aplicaciones web como PostNuke';
 $string['auth_dbtable'] = 'Nombre de la tabla en la base de datos';
 $string['auth_dbtitle'] = 'Usar una base de datos externa';
-$string['auth_dbtype'] = 'El tipo de base de datos (Vea la <a href=../lib/adodb/readme.htm#drivers>documentación de ADOdb</a> para obtener más detalles)';
+$string['auth_dbtype'] = 'El tipo de base de datos (Vea la <a href=\"../lib/adodb/readme.htm#drivers\">documentación de ADOdb</a> para obtener más detalles)';
 $string['auth_dbuser'] = 'Nombre de usuario con acceso de lectura a la base de datos';
 $string['auth_editlock'] = 'Bloquear valor';
 $string['auth_editlock_expl'] = '<p><b>Bloquear valor:</b> Si está activado, los usuarios y administradores de Moodle no podrán editar directamente el campo. Utilice esta opción si está manteniendo estos datos en el sistema de autenticación externo. </p>';
@@ -101,7 +101,6 @@ $string['forcechangepasswordfirst_help'] = 'Forzar a los usuarios a cambiar la c
 $string['guestloginbutton'] = 'Botón de entrada para invitados';
 $string['instructions'] = 'Instrucciones';
 $string['md5'] = 'Encriptación MD5';
-$string['parentlanguage'] = 'es';
 $string['plaintext'] = 'Texto plano';
 $string['showguestlogin'] = 'Puede ocultar o mostrar el botón de entrada para invitados en la página de acceso.';
 $string['stdchangepassword'] = 'Utilizar Página de cambio de contraseña estándar';

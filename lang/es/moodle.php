@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005020101)
+      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005031000)
 
 
 $string['action'] = 'Acción';
@@ -164,67 +164,7 @@ $string['clicktochange'] = 'haga clic para cambiar';
 $string['closewindow'] = 'Cerrar esta ventana';
 $string['comparelanguage'] = 'Comparar y editar el presente idioma';
 $string['complete'] = 'Completado';
-$string['configallowunenroll'] = 'Si selecciona \'Sí\', los alumnos podrán darse de baja de sus cursos cuando quieran. De otro modo, no tendrán esa posibilidad y este proceso será controlado exclusivamente por los profesores y administradores.';
-$string['configallusersaresitestudents'] = 'Para las actividades de la página principal del sitio, ¿deberán TODOS los usuarios ser considerados estudiantes? Si usted responde \"Sí\", a cualquier cuenta de usuario confirmado se le permitirá participar como estudiante en dichas actividades. Si responde \"No\", sólo los usuarios que ya participan en al menos un curso podrán tomar parte en las actividades de esa página.';
-$string['configautologinguests'] = '¿Deberían los visitantes acceder como invitados automáticamente cuando entren a cursos con acceso para invitados?';
-$string['configcachetext'] = 'Para sitios grandes, o que usan filtros de texto, esta configuración puede acelerar las cosas. Las copias de los textos permanecerán en su formulario durante el tiempo aquí especificado. Si el lapso es muy pequeño el proceso puede enlentecerse ligeramente, pero si es muy grande es posible que se requiera mucho tiempo para actualizar los textos (con nuevos enlaces, por ejemplo).';
-$string['configclamactlikevirus'] = 'Tratar archivos como virus';
-$string['configclamdonothing'] = 'Tratar archivos como correctos';
-$string['configclamfailureonupload'] = 'Si usted ha configurado Clam para escanear los archivos subidos, pero está configurado incorrectamente o no funciona por alguna razón desconocida, ¿cómo debería comportarse? Si elige \'Tratar archivos como virus\', se trasladarán al área de cuarentena, o serán eliminados. Si elige \'Tratar los archivos como correctos\', serán trasladados al directorio de destino como cualquier archivo normal. En cualquier caso, los administradores serán alertados de que Clam ha fallado. Si elige \'Tratar archivos como virus\' y por alguna razón Clam no funciona (normalmente debido a que usted ha introducido un pathtoclam no válido), TODOS los archivos subidos serán trasladados al área de cuarentena, o eliminados. Sea cuidadoso al fijar este ajuste.';
-$string['configcountry'] = 'Si selecciona un país, entonces ese país estará seleccionado por defecto en las nuevas cuentas de usuario. Para forzar a los usuarios a elegir un país, deje el campo en blanco.';
-$string['configdbsessions'] = 'Si esta opción está activada, se usará la base de datos para almacenar información sobre las sesiones en curso. Esto es especialmente útil en sitios muy grandes o muy activos, o bien en sitios construidos sobre un conglomerado de servidores. En la mayoría de los sitios la opción debería quedar desactivada de modo que en su lugar se utilice el disco del servidor. Observe que si modifica ahora esta opción todos los usuarios serán desconectados (incluyéndolo a usted).';
-$string['configdebug'] = 'Si esta opción está activada, se mostrarán advertencias sobre errores PHP. Esta opción es útil sólo para desarrolladores.';
-$string['configdeleteunconfirmed'] = 'Si usted está utilizando la autenticación por email, éste es el período dentro del cual los usuarios han de aceptar una respuesta. Después de ese período, las cuentas antiguas no confirmadas se eliminarán.';
-$string['configdigestmailtime'] = 'Las personas que elijan que se les envíen correos en forma de resumen recibirán dicho resumen cada día. Este ajuste controla a qué hora se enviará diariamente el correo electrónico (i.e., el correo será enviado por el primer cron que se ejecute después de esa hora).';
-$string['configdisplayloginfailures'] = 'Muestra a los usuarios seleccionados información sobre los accesos fallidos.';
-$string['configenablerssfeeds'] = 'Este interruptor activa los canales RSS del sitio. Para ver cualquier cambio, necesitará habilitar también los canales RSS en los módulos individuales (hágalo en los ajustes de los módulos, en la configuración Admin).';
-$string['configenablerssfeedsdisabled'] = 'No está disponible porque los canales RSS están deshabilitados en todo el sitio. Para activarlos, vaya a los ajustes de Variables en la configuración Admin.';
-$string['configerrorlevel'] = 'Seleccione la cantidad de advertencias PHP que desea ver. \'Normal\' suele ser la mejor opción.';
-$string['configextendedusernamechars'] = 'Utilice este ajuste para permitir a los estudiantes usar cualesquiera caracteres en sus nombres de usuario (advierta que esto no afecta a sus nombres reales). El valor por defecto es \"false\", lo que obliga a usar en los nombres de usuario exclusivamente caracteres alfanuméricos.';
-$string['configfilteruploadedfiles'] = 'Seleccionando esta opción, Moodle procesará todos los archivos subidos (HTML y texto) con los filtros antes de mostrarlos.';
-$string['configforcelogin'] = 'Normalmente la página inicial es visible para todos, aunque no hayan ingresado al sistema. Si desea forzar el acceso de los usuarios antes de ver a primera página habilite esta opción.';
-$string['configforceloginforprofiles'] = 'Utilice este ajuste para forzar a los usuarios a entrar con su cuenta real (no como invitados) antes de que se les permita ver las páginas de los perfiles de los usuarios. Este valor está deshabilitado (\"false\") por defecto, de modo que los potenciales estudiantes sólo pueden informarse sobre los profesores de cada curso, pero esto significa también que los motores de búsqueda de Internet pueden verlos.';
-$string['configframename'] = 'Si está colocando la plataforma dentro de un marco, escriba aquí su nombre. Si no, deje este valor como está: \'_top\'';
-$string['configfullnamedisplay'] = 'Esta variable define cómo se presentan los nombres completos. En Español lo normal es utilizar \"nombre + apellido\", pero puede optar por ocultar completamente los apellidos o dejarlo a la elección del paquete de idioma en uso.';
-$string['configgdversion'] = 'Indica la versión instalada de GD. La versión mostrada es la que detectó el programa. No la cambie a menos que sepa realmente lo que está haciendo.';
-$string['confightmleditor'] = 'Seleccione si permitir o no el uso del editor HTML. Incluso si elige la primera opción, el editor sólo aparecerá si se utiliza un navegador compatible. Los usuarios también pueden elegir no utilizarlo.';
-$string['configidnumber'] = 'Esta opción especifica si: (a) No se solicita ningún número de ID a los usuarios. (b) Se solicita el número pero se permite que el espacio quede en blanco. (c) Se solicita el número y es indispensable que lo escriban. (d) Si el número de ID aparece en su perfil de usuario.';
-$string['configintro'] = 'En esta página puede especificar un número de variables de configuración que ayudan al software a operar correctamente en el servidor. No se preocupe mucho, los valores por defecto normalmnte funcionan muy bien, y siempre puede regresar a cambiar algún valor.';
-$string['configintroadmin'] = 'En esta página puede configurar su cuenta de administrador, que tendrá control total sobre el sitio. Asegúrese de proporcionar una contraseña segura y una dirección de correo válida. También podrá crear más cuentas de administrador en el futuro.';
-$string['configintrosite'] = 'Esta página permite configurar la página principal y el nombre de su sitio. Podrá regresar más tarde para cambiar lo que desee.';
-$string['configlang'] = 'Seleccione un idioma para el sitio. Cada usuario podrá personalizar su propio idioma.';
-$string['configlangdir'] = 'La mayoría de los idiomas se escriben de izquierda a derecha; otros, como el árabe o el hebreo, de derecha a izquierda.';
-$string['configlanglist'] = 'Deje este espacio en blanco para permitir que los usuarios seleccionen el idioma que deseen. Sin embargo, usted puede reducir el número de opciones escribiendo las contraseñas de los mismos separadas por comas: en,es,fr,it';
-$string['configlangmenu'] = 'Seleccione si desea o no mostrar el menú de idioma en las páginas principal, de acceso, etc. Esto no afecta la posibilidad que tienen los usuarios de elegir su idioma preferido en sus datos personales.';
-$string['configlocale'] = 'Seleccione una identidad de idioma local -esto afectará el formato de las fechas-. Necesita tener estos datos instalados en su sistema operativo (e.g., en_US o es_ES). Si no sabe qué elegir, déjelo en blanco.';
-$string['configloginhttps'] = 'Si se activa esta opción, Moodle usará una conexión segura https para la página de entrada (lo que proporciona un acceso seguro), y luego volverá a la conexión URL http normal. PRECAUCIÓN: este ajuste REQUIERE que https esté activado específicamente en el servidor: de no ser así, usted SE QUEDARÁ SIN PODER ENTRAR AL SITIO.';
-$string['configloglifetime'] = 'Especifica el tiempo que desea mantener los registros en la base de datos. Todo registro con más días de los indicados aquí se borrará automáticamente. Lo mejor es mantener este número tan alto como se pueda. Sin embargo, si el sitio está muy cargado y se experimentan deficiencias de rendimiento es posible mejorarlo disminuyendo este número.';
-$string['configlongtimenosee'] = 'Si los estudiantes no han participado durante tiempo especificado aquí serán dados de baja de los cursos.';
-$string['configmaxbytes'] = 'Especifica el tamaño máximo de los archivos que los usuarios pueden subir en todo el sitio. Esta variable está limitada por las variables PHP upload_max_filesize y Apache LimitRequestBody.';
-$string['configmaxeditingtime'] = 'Especifica el tiempo que los participantes tienen para editar sus mensajes. Normalmente 30 minutos es suficiente.';
-$string['confignoreplyaddress'] = 'En ocasiones los correos electrónicos son enviados en nombre de un usuario (e.g., los mensajes a un foro). La dirección de correo electrónico aquí especificada se usará como la dirección \"De\" en aquellos casos en que los destinatarios no puedan replicar directamente al usuario (e.g., cuando el usuario elige mantener en privado su dirección).';
-$string['confignotifyloginfailures'] = 'Si se han registrado fallos en el acceso, se pueden enviar notificaciones por correo. ¿Quién debería ver esas notificaciones?';
-$string['confignotifyloginthreshold'] = 'Si están activas las notificaciones de accesos fallidos, ¿cuántos intentos fallidos de acceso de un usuario o una dirección IP son necesarios para realizar la notificación?';
-$string['configopentogoogle'] = 'Si habilita esta opción Google podrá entrar en su sitio como invitado. Además, las personas que entren a su sitio mediante una búsqueda de Google ingresarán automáticamente como invitados. Observe que esto posibilita el acceso solamente  a los cursos en los que se permite el acceso de invitados.';
-$string['configpathtoclam'] = 'Ruta a Clam AV. Probablemente algo parecido a /usr/bin/clamscan o a /usr/bin/clamdscan. Esta ruta es necesaria para que Clam AV funcione.';
-$string['configproxyhost'] = 'Si este <B>servidor</B> necesita proxy (por ejemplo, un cortafuegos) para acceder a Internet, proporcione el nombre del proxy y el puerto. En otro caso, déjelo en blanco.';
-$string['configquarantinedir'] = 'Si desea que Clam AV traslade los archivos infectados a un directorio de cuarentena, escríbalo aquí. Debe ser escribible por el servidor web. Si lo deja en blanco, o si introduce un directorio inexistente o no escribible, los archivos infectados serán destruídos. No incluya una barra de cola.';
-$string['configrunclamonupload'] = '¿Ejecutar Clam AV al subir un archivo? Para que esto funcione, necesita una ruta correcta en pathtoclam. (Clam AV es un escáner de virus gratuito que puede conseguir en http://www.clamav.net/)';
-$string['configsecureforms'] = 'Moodle puede utilizar un nivel adicional de seguridad para aceptar datos de formularios web. Si esta variable está habilitada, la variable HTTP_REFERER de su navegador será contrastada con la dirección del formulario. En algunos casos esto puede provocar problemas con los cortafuegos (por ej.: Zonealarm) si están configurados para quitar el HTTP_REFERER de su tráfico web. Si los usuarios experimentan problemas con la página de entrada (login) es posible que ésta sea la causa, aunque desactivando esta opción el sitio quede más expuesto a ataques de fuerza bruta de contraseñas. Ante la duda déjela activada.';
-$string['configsessioncookie'] = 'Esta variable define el nombre de la cookie que Moodle utiliza para sus sesiones. Su definición es opcional, y sólo útil cuando existe más de una copia de Moodle instalada en el mismo sitio web.';
-$string['configsessiontimeout'] = 'Todo usuario dentro del sitio que se mantenga inactivo por un largo tiempo (sin cargar páginas) será desactivado automáticamente. Muy útil para computadoras compartidas. Esta variable especifica el tiempo de espera.';
-$string['configshowsiteparticipantslist'] = 'Todos estos estudiantes y profesores aparecerán en la lista de participantes del sitio. ¿A quién se le permitirá ver la lista de participantes?';
-$string['configsitepolicy'] = 'Si usted tiene una política del sitio que exige que todos los usuarios la vean y estén de acuerdo con ella antes de entrar, especifique aquí la URL. En caso contrario, deje el campo en blanco. La URL puede enlazar con cualquier sitio (un lugar conveniente podría ser un archivo tal como http://yoursite/file.php/1/policy.html)';
-$string['configslasharguments'] = 'Los archivos (imágenes, documentos subidos al servidor, etc.) son provistos por un script que usa \'slash arguments\' (la segunda opción). Este método carga los archivos más fácilmente.  Algunos servidores PHP no permiten este método, por lo que si tiene problemas para subir archivos (como fotos de los usuarios), cambie esta variable a la primera opción';
-$string['configsmtphosts'] = 'Escriba el nombre completo de uno o más servidores locales SMTP que Moodle utilizará para enviar correo (e.g., \'mail.a.com\' o \'mail.a.com;mail.b.com\'). Si lo deja en blanco se utilizará el método PHP.';
-$string['configsmtpuser'] = 'Si ha especificado un servidor SMTP, y éste requiere autenticación, escriba aquí el nombre de usuario y la contraseña.';
-$string['configteacherassignteachers'] = '¿Tienen los profesores la posibilidad de asignar nuevos profesores dentro de su curso? Si no, sólo lo podrán hacer los creadores y administradores.';
-$string['configtimezone'] = 'Aquí puede configurar la zona horaria por defecto. Ésta es la única zona horaria por defecto para mostrar fechas -cada usuario puede borrar esto poniendo la suya en su información personal. Seleccionar \"Hora del servidor\" hará que Moodle empareje su hora con la del servidor; si se selecciona en la información personal del usuario, sólo se configurará a este usaurio en esa zona horaria.';
-$string['configunzip'] = 'Indique la ubicación del programa UNZIP (sólo UNIX). Se necesita para descomprimir los archivos en el servidor. Si deja el campo en blanco, Moodle utilizará sus rutinas internas.';
 $string['configuration'] = 'Configuración';
-$string['configvariables'] = 'Configuración general';
-$string['configwarning'] = 'Tenga cuidado al cambiar estos valores, pueden ocasionarle problemas.';
-$string['configzip'] = 'Indique la ubicación del programa ZIP (sólo UNIX). Se necesita para descomprimir los archivos en el servidor. Si deja el campo en blanco, Moodle utilizará sus rutinas internas.';
 $string['confirm'] = 'Confirmar';
 $string['confirmed'] = 'Registro confirmado';
 $string['confirmednot'] = 'Su registro no se ha confirmado aún.';
@@ -384,9 +324,9 @@ Si necesita ayuda, contacte por favor con el administrador
 del sitio,
 $a->admin';
 $string['emailconfirmationsubject'] = 'Confirmación de la cuenta  $a ';
-$string['emailconfirmsent'] = '<P>Hemos enviado un correo electrónico a <B>$a</B>
-<P>En él encontrará instrucciones sencillas para concluir el proceso.
-<P>Si tuviera alguna dificultad, contacte con el Administrador del Sistema.';
+$string['emailconfirmsent'] = '<p>Hemos enviado un correo electrónico a <b>$a</b></p>
+<p>En él encontrará instrucciones sencillas para concluir el proceso.</p>
+<p>Si tuviera alguna dificultad, contacte con el Administrador del Sistema.</p>';
 $string['emaildigest'] = 'Tipo de resumen de correo';
 $string['emaildigestcomplete'] = 'Completo (correo diario con mensajes completos)';
 $string['emaildigestoff'] = 'Sin resumen (un correo por cada mensaje del foro)';
@@ -423,12 +363,12 @@ Si necesita ayuda adicional, póngase en contacto con el
 administrador, $a->admin';
 $string['emailpasswordconfirmationsubject'] = '$a: confirmación de cambio de contraseña';
 $string['emailpasswordconfirmsent'] = 'Hemos enviado un correo a su dirección <b>$a</b>.
-<p>Este mensaje contiene instrucciones sencillas para completar y confirmar el cambio de contraseña.
+<br />Este mensaje contiene instrucciones sencillas para completar y confirmar el cambio de contraseña.
 Si tuviera alguna dificultad, contacte con el Administrador.';
 $string['emailpasswordsent'] = 'Gracias por confirmar el cambio de contraseña.
 <p>Ya le enviamos un correo con su nueva contraseña a <b>$a->email</b>.
-<p>La nueva contraseña ha sido generada automáticamente.
-Le recomendamos que <a href=$a->link>cambie su contraseña</a> por otra más fácil de recordar.';
+<br />La nueva contraseña ha sido generada automáticamente.
+Le recomendamos que <a href=\"$a->link\">cambie su contraseña</a> por otra más fácil de recordar.';
 $string['enable'] = 'Habilitar';
 $string['encryptedcode'] = 'Código encriptado';
 $string['enrolledincourse'] = 'Inscritos en el curso ';
@@ -638,22 +578,22 @@ crear una cuenta.
 Cada curso puede disponer de una \"contraseña\"
 que sólo tendrá que usar la primera vez.
 Estos son los pasos:
-   <OL size=2>
-   <LI>Rellene el <a href=\"$a\">Formulario de Registro</a> con sus datos.
-   <LI>El sistema le enviará un correo para verificar que su dirección sea correcta.</li>
-   <LI>Lea el correo y confirme su matrícula.</li>
-   <li>Su registro será confirmado y usted podrá acceder al curso.</li>
-   <li>Seleccione el curso en el que desea participar.</li>
-   <LI>Si algún curso en particular le solicita una \"contraseña de acceso\"
+<ol>
+<li>Rellene el <a href=\"$a\">Formulario de Registro</a> con sus datos.</li>
+<li>El sistema le enviará un correo para verificar que su dirección sea correcta.</li>
+<li>Lea el correo y confirme su matrícula.</li>
+<li>Su registro será confirmado y usted podrá acceder al curso.</li>
+<li>Seleccione el curso en el que desea participar.</li>
+<li>Si algún curso en particular le solicita una \"contraseña de acceso\"
    utilice la que le facilitaron cuando se matriculó.
    Así quedará matriculado.</li>
-   <LI>A partir de ese momento no necesitará utilizar más que su nombre de usuario y contraseña
+<li>A partir de ese momento no necesitará utilizar más que su nombre de usuario y contraseña
    en el formulario de la página
    para entrar a cualquier curso en el que esté matriculado.</li>
-   </OL>';
+   </ol>';
 $string['loginstepsnone'] = '<p>¡Hola!</p>
 <p>Para acceder a todos los cursos necesita crear una cuenta.</p>
-<P>Todo lo que tiene que hacer es inscribirse en esta página.</p>
+<p>Todo lo que tiene que hacer es inscribirse en esta página.</p>
 <p>Si alguna otra persona hubiera elegido su nombre de usuario o su contraseña, deberá elegir un nombre de usuario diferente.</p>';
 $string['loginto'] = 'Entrar a $a';
 $string['loginusing'] = 'Entre aquí usando su nombre de usuario y contraseña';
@@ -828,10 +768,10 @@ $string['passwordconfirmchange'] = 'Confirmar cambio de contraseña';
 $string['passwordrecovery'] = 'Sí, ayúdeme a entrar';
 $string['passwordsdiffer'] = 'Las contraseñas son diferentes';
 $string['passwordsent'] = 'Se ha enviado la contraseña';
-$string['passwordsenttext'] = '   <P>El sistema ha enviado un correo electrónico a $a->email.
-   <P><B>Revise su correo para recibir una nueva contraseña</B>
-   <P>La nueva contraseña se genera automáticamente, por lo que tal vez usted desee
-   <A HREF=$a->link>cambiarla</A> por una que le sea más fácil recordar.';
+$string['passwordsenttext'] = '<p>El sistema ha enviado un correo electrónico a $a->email.</p>
+<p><b>Revise su correo para recibir una nueva contraseña</b></p>
+<p>La nueva contraseña se genera automáticamente, por lo que tal vez usted desee
+   <a href=\"$a->link\">cambiarla</a> por una que le sea más fácil recordar.</p>';
 $string['pathnotexists'] = '¡Esta ruta no existe en su servidor!';
 $string['pathslasherror'] = '¡La ruta no puede terminar con una barra!';
 $string['paymentinstant'] = '¡Utilice el botón de abajo para pagar y poder matricularse en minutos!';
@@ -869,12 +809,12 @@ $string['registration'] = 'Registro';
 $string['registrationemail'] = 'Notificaciones por correo electrónico';
 $string['registrationinfo'] = '<p>Esta página le permite registrar si sitio Moodle en moodle.org. El registro es gratuito.
 El principal beneficio del registro es que usted será incluido en una lista de correo de bajo volumen para
-notificaciones importantes como alertas de seguridad y nuevos lanzamientos de Moodle.
+notificaciones importantes como alertas de seguridad y nuevos lanzamientos de Moodle.</p>
 <p>Su información será confidencial, y nunca será vendida o transmitida a nadie más. La única razón para
 recopilar esta información es prestarle apoyo y ayudar a costruir un cuadro estadístico de la comunidad
-Moodle.
-<p>Si lo desea, puede escribir el nombre de su sitio, país y URL para que aparezca en la lista pública de los sitios que usan Moodle.
-<p>Todos los registros son verificados manualmente antes de ser colocados en la lista, pero una vez en ella, puede actualizar su registro (y sus datos en la lista pública) en cualquier momento rellenando de nuevo este formulario.';
+Moodle.</p>
+<p>Si lo desea, puede escribir el nombre de su sitio, país y URL para que aparezca en la lista pública de los sitios que usan Moodle.</p>
+<p>Todos los registros son verificados manualmente antes de ser colocados en la lista, pero una vez en ella, puede actualizar su registro (y sus datos en la lista pública) en cualquier momento rellenando de nuevo este formulario.</p>';
 $string['registrationno'] = 'No deseo recibir notificaciones por correo electrónico';
 $string['registrationsend'] = 'Enviar mi información de registro a moodle.org';
 $string['registrationyes'] = 'Sí, envíeme notificaciones por correo electrónico';
@@ -1050,7 +990,7 @@ $string['uploadafile'] = 'Subir un archivo';
 $string['uploadedfile'] = 'Archivo subido con éxito';
 $string['uploadedfileto'] = 'El archivo $a->file ha sido subido al directorio $a->directory';
 $string['uploadedfiletoobig'] = 'Lo sentimos, el archivo es demasiado grande (el límite es de $a bytes)';
-$string['uploadfailednotrecovering'] = 'La subida del archivo ha fallado debido a un problema con uno de los archivos, $a->name.<br/> Éste es el registro de los problemas:<br />$a->problem<br />Sin recuperar.';
+$string['uploadfailednotrecovering'] = 'La subida del archivo ha fallado debido a un problema con uno de los archivos, $a->name.<br /> Éste es el registro de los problemas:<br />$a->problem<br />Sin recuperar.';
 $string['uploadfilelog'] = 'Registro de subida para el archivo $a';
 $string['uploadformlimit'] = 'El archivo subido sobrepasa el límite de tamaño máximo establecido por el formulario';
 $string['uploadlabel'] = 'Título:';

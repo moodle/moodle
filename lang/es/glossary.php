@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
+      // glossary.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005031000)
 
 
 $string['addcomment'] = 'Agregar comentario';
@@ -93,7 +93,7 @@ $string['explainaddentry'] = 'Agregar una nueva entrada al glosario actual.<br /
 $string['explainall'] = 'Muestra TODAS las entradas en una página.';
 $string['explainalphabet'] = 'Navegue por el glosario usando este índice.';
 $string['explainexport'] = 'Se ha generado un archivo.<br />Descárguelo y guárdelo. Podrá importarlo en cualquier momento en éste u otro curso.';
-$string['explainimport'] = 'Debe especificar el archivo a importar y definir el criterio del proceso.<p>Someta su solicitud y revise los resultados.';
+$string['explainimport'] = 'Debe especificar el archivo a importar y definir el criterio del proceso.<p>Someta su solicitud y revise los resultados.</p>';
 $string['explainspecial'] = 'Muestra las entradas que no comienzan con una letra';
 $string['exportedentry'] = 'Entrada exportada';
 $string['exportedfile'] = 'Archivo exportado';
@@ -130,7 +130,6 @@ $string['noentry'] = 'No se econtró ninguna entrada.';
 $string['notcategorised'] = 'No clasificado';
 $string['numberofentries'] = 'Número de entradas';
 $string['onebyline'] = '(uno por línea)';
-$string['parentlanguage'] = 'es';
 $string['printerfriendly'] = 'Versión para impresión';
 $string['printviewnotallowed'] = 'No se permite vista de impresión';
 $string['question'] = 'Pregunta';
@@ -159,9 +158,6 @@ $string['sortchronogically'] = 'Buscar cronológicamente';
 $string['special'] = 'Especial';
 $string['standardview'] = 'Vista Normal';
 $string['studentcanpost'] = 'Los estudiantes pueden agregar entradas';
-$string['thischarset'] = 'iso-8859-1';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'es';
 $string['totalentries'] = 'Total de entradas ';
 $string['usedynalink'] = 'Hiperenlace automático';
 $string['waitingapproval'] = 'Esperando aprobación';

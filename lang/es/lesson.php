@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // lesson.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
+      // lesson.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005031000)
 
 
 $string['accesscontrol'] = 'Control de Acceso';
@@ -55,7 +55,7 @@ $string['displayinleftmenu'] = '¿Mostrar en menú de la izquierda?';
 $string['displayleftmenu'] = 'Mostrar menú de la izquierda';
 $string['displayofgrade'] = 'Mostrar calificación (sólo para estudiantes)';
 $string['displayreview'] = 'Mostrar botón Revisar';
-$string['displayscorewithessays'] = 'Usted ha obtenido una puntuación de $a->score sobre $a->tempmaxgrade en las preguntas calificadas automáticamente.<br>La(s) $a->essayquestions pregunta(s) de su ensayo serán calificadas y añadidas<br>a su calificación final en una fecha posterior.<br><br>Su calificación actual sin contar esa(s) pregunta(s) es de is $a->score sobre $a->grade';
+$string['displayscorewithessays'] = 'Usted ha obtenido una puntuación de $a->score sobre $a->tempmaxgrade en las preguntas calificadas automáticamente.<br />La(s) $a->essayquestions pregunta(s) de su ensayo serán calificadas y añadidas<br>a su calificación final en una fecha posterior.<br /><br />Su calificación actual sin contar esa(s) pregunta(s) es de is $a->score sobre $a->grade';
 $string['displayscorewithoutessays'] = 'Su puntuación es $a->score (sobre $a->grade).';
 $string['editlessonsettings'] = 'Editar los ajustes de Esta lección';
 $string['editpagecontent'] = 'Editar el contenido de esta página';
@@ -93,8 +93,8 @@ $string['hightime'] = 'Tiempo alto';
 $string['importquestions'] = 'Importar preguntas';
 $string['jump'] = 'Saltar';
 $string['jumptsto'] = 'salta a';
-$string['leftduringtimed'] = 'Se ha interrumpido una lección con tiempo fijo.<br>Por favor, haga clic en Continuar para volver a empezar la lección.';
-$string['leftduringtimednoretake'] = 'Se ha interrumpido una lección con tiempo fijo y<br>no se permite volver a empezar o continuar la lección.';
+$string['leftduringtimed'] = 'Se ha interrumpido una lección con tiempo fijo.<br />Por favor, haga clic en Continuar para volver a empezar la lección.';
+$string['leftduringtimednoretake'] = 'Se ha interrumpido una lección con tiempo fijo y<br />no se permite volver a empezar o continuar la lección.';
 $string['lesson'] = 'Lección $a';
 $string['lessonclosed'] = 'Esta lección se cerró el $a.';
 $string['lessondefault'] = 'Utilizar los ajustes de esta lección como valores por defecto';
@@ -123,7 +123,7 @@ $string['movingtonextpage'] = 'Traslado a la siguiente página';
 $string['multianswer'] = 'Multirrespuesta';
 $string['multipleanswer'] = 'Respuesta múltiple';
 $string['nameapproved'] = 'Nombre aprobado';
-$string['namereject'] = 'Lo sentimos, su nombre ha sido rechazado por el filtro.<br>Por favor, pruebe con otro nombre.';
+$string['namereject'] = 'Lo sentimos, su nombre ha sido rechazado por el filtro.<br />Por favor, pruebe con otro nombre.';
 $string['nextpage'] = 'Siguiente página';
 $string['noanswer'] = 'No se ha dado respuesta';
 $string['noattemptrecordsfound'] = 'No se encontraron registros de intentos. Sin calificación';
@@ -156,7 +156,6 @@ $string['page'] = 'Página: $a';
 $string['pagecontents'] = 'Contenido de la página';
 $string['pages'] = 'Páginas';
 $string['pagetitle'] = 'Título de la página';
-$string['parentlanguage'] = 'es';
 $string['password'] = 'Contraseña';
 $string['passwordprotectedlesson'] = '$a es una lección protegida con contraseña.';
 $string['pleasecheckoneanswer'] = 'Seleccione una respuesta';
@@ -210,9 +209,6 @@ $string['teachertimerwarning'] = 'El temporizador sólo funciona con estudiantes.
 $string['thatsthecorrectanswer'] = 'Esta es la respuesta correcta';
 $string['thatsthewronganswer'] = 'Esta es la respuesta equivocada';
 $string['thefollowingpagesjumptothispage'] = 'Las páginas siguientes saltan a esta página';
-$string['thischarset'] = 'iso-8859-1';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'es';
 $string['thispage'] = 'Esta página';
 $string['timed'] = 'Con límite de tiempo';
 $string['timeremaining'] = 'Tiempo restante';
