@@ -5,7 +5,7 @@ class CourseBlock_recent_activity extends MoodleBlock {
         $this->title = get_string('recentactivity');
         $this->content_type = BLOCK_TYPE_TEXT;
         $this->course = $course;
-        $this->version = 2004041000;
+        $this->version = 2004042900;
     }
 
     function get_content() {
@@ -18,13 +18,11 @@ class CourseBlock_recent_activity extends MoodleBlock {
         $this->content->text = '';
         $this->content->footer = '';
 
-        if ($this->course->showrecent) {
-            // Slightly hacky way to do it but...
-            ob_start();
-            print_recent_activity($this->course);
-            $this->content->text = ob_get_contents();
-            ob_end_clean();
-        }
+        // Slightly hacky way to do it but...
+        ob_start();
+        print_recent_activity($this->course);
+        $this->content->text = ob_get_contents();
+        ob_end_clean();
 
         return $this->content;
     }
