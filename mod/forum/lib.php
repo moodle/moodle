@@ -1259,7 +1259,7 @@ function forum_print_posts_nested($parent, $course, $assessed) {
 }
 
 function forum_set_display_mode($mode=0) {
-    global $USER;
+    global $USER, $FORUM_DEFAULT_DISPLAY_MODE;
 
     if ($mode) {
         $USER->mode = $mode;
