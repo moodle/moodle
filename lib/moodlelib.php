@@ -99,13 +99,18 @@ function set_user_preference($name, $value) {
     }
 
     if ($preference = get_record('user_preferences', 'userid', $USER->id, 'name', $name)) {
-        return set_field("user_preferences", "value", $value, "id", $preference->id);
+        if (set_field("user_preferences", "value", $value, "id", $preference->id)) {
+            $USER->preference[$name] = $value;
+            return true;
+        } else {
+            return false;
+        }
 
     } else {
         $preference->userid = $USER->id;
         $preference->name   = $name;
         $preference->value  = (string)$value;
-        if (insert_record('user_preferences', $record)) {
+        if (insert_record('user_preferences', $preference)) {
             $USER->preference[$name] = $value;
             return true;
         } else {
