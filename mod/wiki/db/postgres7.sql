@@ -24,6 +24,7 @@ CREATE TABLE prefix_wiki (
   timemodified INT8 NOT NULL default '0'
 ) ;
 
+CREATE INDEX prefix_wiki_course_idx ON prefix_wiki (course);
 
 #
 # Table structure for table mdl_wiki_entries
@@ -38,6 +39,12 @@ CREATE TABLE prefix_wiki_entries (
   pagename varchar(255) NOT NULL default '',
   timemodified INT8 NOT NULL default '0'
 ) ;
+
+CREATE INDEX prefix_wiki_entries_wikiid_idx ON prefix_wiki_entries (wikiid);
+CREATE INDEX prefix_wiki_entries_userid_idx ON prefix_wiki_entries (userid);
+CREATE INDEX prefix_wiki_entries_groupid_idx ON prefix_wiki_entries (groupid);
+CREATE INDEX prefix_wiki_entries_course_idx ON prefix_wiki_entries (course);
+CREATE INDEX prefix_wiki_entries_pagename_idx ON prefix_wiki_entries (pagename);
 
 
 CREATE TABLE prefix_wiki_pages (

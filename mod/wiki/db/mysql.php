@@ -71,6 +71,15 @@ function wiki_upgrade($oldversion) {
         }
     }
 
+    if ($oldversion < 2004083124) {
+        modify_database('','ALTER TABLE prefix_wiki ADD INDEX course (course);');
+        modify_database('','ALTER TABLE prefix_wiki_entries ADD INDEX course (course);');
+        modify_database('','ALTER TABLE prefix_wiki_entries ADD INDEX userid (userid);');
+        modify_database('','ALTER TABLE prefix_wiki_entries ADD INDEX groupid (groupid);');
+        modify_database('','ALTER TABLE prefix_wiki_entries ADD INDEX wikiid (wikiid);');
+        modify_database('','ALTER TABLE prefix_wiki_entries ADD INDEX pagename (pagename);');
+    }
+
     return true;
 }
 

@@ -36,6 +36,16 @@ function wiki_upgrade($oldversion) {
             }
         }
     }
+
+    if ($oldversion < 2004083124) {
+        modify_database('','CREATE INDEX prefix_wiki_course_idx ON prefix_wiki (course);');
+        modify_database('','CREATE INDEX prefix_wiki_entries_wikiid_idx ON prefix_wiki_entries (wikiid);');
+        modify_database('','CREATE INDEX prefix_wiki_entries_userid_idx ON prefix_wiki_entries (userid);');
+        modify_database('','CREATE INDEX prefix_wiki_entries_groupid_idx ON prefix_wiki_entries (groupid);');
+        modify_database('','CREATE INDEX prefix_wiki_entries_course_idx ON prefix_wiki_entries (course);');
+        modify_database('','CREATE INDEX prefix_wiki_entries_pagename_idx ON prefix_wiki_entries (pagename);');
+    }
+    
     return true;
 }
 
