@@ -219,6 +219,7 @@ $string['randomsamatchnumber'] = 'Number of questions to select';
 $string['readytosend'] = 'You are about to send your whole quiz to be graded.  Are you sure you want to continue?';
 $string['reattemptquiz'] = 'Re-attempt quiz';
 $string['recentlyaddedquestion'] = 'Recently added question!';
+$string['recurse'] = ' Include sub-categories ';
 $string['regrade'] = 'Regrade all attempts';
 $string['regradecomplete'] = 'All attempts have been regraded';
 $string['regradecount'] = '$a->changed out of $a->attempt grades were changed';
