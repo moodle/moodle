@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
+      // auth.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004111000)
 
 
 $string['auth_common_settings'] = 'Algemene instellingen';
@@ -47,6 +47,7 @@ $string['auth_ldap_host_url'] = 'Geef de LDAP-host in de vorm van een URL zoals 
 $string['auth_ldap_login_settings'] = 'login instellingen';
 $string['auth_ldap_memberattribute'] = 'Geef gebruiker lid attribuut, voor als gebruikers tot een groep behoren. Meestal \'member\'';
 $string['auth_ldap_objectclass'] = 'De filter om namen/gebruiker te zoeken. Gewoonlijk zet je dit op iets als objectClass=posixAccount. Staat standaard op objectclass=*, wat alle objecten van LDAP geeft.';
+$string['auth_ldap_opt_deref'] = 'Bepaalt hoe aliassen tijdens het zoeken behandeld worden. Kies één van volgende waarden: \"Nee\" (LDAP_DEREF_NEVER) of \"Ja\" (LDAP_DEREF_ALWAYS)';
 $string['auth_ldap_passwdexpire_settings'] = 'Instellingen voor het verlopen van het LDAP-wachtwoord';
 $string['auth_ldap_search_sub'] = 'Zet waarde <> 0 als je gebruikers wilt kunnen zoeken in subcontexten.';
 $string['auth_ldap_server_settings'] = 'LDAP-server instellingen';
