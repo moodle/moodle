@@ -17,6 +17,16 @@
  * structure of the array, it's much easier to explain by showing you.
  * Be aware that the array is somewhat tricky.  I use xmlize all the time,
  * but still need to use traverse_xmlize quite often to show me the structure!
+
+ ## THIS IS A PHP 5 VERSION:
+
+	> attached is the modified script. Basically it has a new optional parameter
+	> to specify an OUTPUT encoding. If not specified, it defaults to UTF-8.
+	> I recommend you to read this PHP bug. There you can see how PHP4, PHP5.0.0
+	> and PHP5.0.2 will handle this.
+	> http://bugs.php.net/bug.php?id=29711
+	> Ciao, Eloy :-)
+ ##
  *
  */
 
@@ -162,4 +172,3 @@ function traverse_xmlize($array, $arrName = "array", $level = 0) {
 }
 
 ?>
-
