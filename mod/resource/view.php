@@ -299,10 +299,11 @@
                     echo '        id="quicktime" align="" type="application/x-oleobject">';
                     echo "<param name=\"src\" value=\"$fullurl\" />";
                     echo '<param name="autoplay" value=true />';
+                    echo '<param name="loop" value=true />';
                     echo '<param name="controller" value=true />';
                     echo "\n<embed src=\"$fullurl\" name=\"quicktime\" type=\"$mimetype\" ";
                     echo ' height="450" width="600" ';
-                    echo ' autoplay="true" controller="true" ';
+                    echo ' autoplay="true" controller="true" loop="true" ';
                     echo ' pluginspage="http://quicktime.apple.com/">';
                     echo '</embed>';
                     echo '</object>';
