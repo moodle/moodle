@@ -49,8 +49,8 @@
                       "", "", true, "", navmenu($course, $cm));
 
         if (!$messages = get_records_select("chat_messages", "chatid = $chat->id AND 
-                                                              timestamp > '$start' AND 
-                                                              timestamp < '$end'", "timestamp ASC")) {
+                                                              timestamp >= '$start' AND 
+                                                              timestamp <= '$end'", "timestamp ASC")) {
             print_heading(get_string("nomessages", "chat"));
 
         } else {
