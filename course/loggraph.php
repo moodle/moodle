@@ -69,7 +69,7 @@
        $graph->x_data           = $days;
 
        $graph->y_data['logs']   = $logs;
-       $graph->y_format['logs'] = array('colour' => 'blue','line' => 'line','point' => 'square');
+       $graph->y_format['logs'] = array('colour' => 'blue','line' => 'line');
        $graph->y_label_left     = "Hits";
        $graph->label_size       = "6";
 
@@ -85,22 +85,28 @@
      case "userday.png":
 
        if ($date) {
-           $timestart = usergetmidnight($date);
+           $daystart = usergetmidnight($date);
        } else {
-           $timestart = usergetmidnight(time());
+           $daystart = usergetmidnight(time());
        }
-       while ($timestart < $timenow) {
-           $timefinish = $timestart + 3600;
-           if (! $logcount = get_record_sql("SELECT COUNT(*) as count FROM log
-                                             WHERE user = '$user->id' AND course = '$course->id'
-                                               AND `time` > '$timestart' AND `time` < '$timefinish'")) {
-               $logs[$i] = 0;
+       $dayfinish = $daystart + 86400;
+
+       for ($i=0; $i<=23; $i++) {
+           $logs[$i] = 0;
+           $hour = $daystart + $i * 3600;
+           $hh        = (int)userdate($hour, "%I");
+           $hours[$i] = userdate($hour, "$hh %p");
+       }
+
+       if ($rawlogs = get_records_sql("SELECT floor((`time` - $daystart)/3600) as hour, 
+                                              count(*) as num FROM log 
+                                       WHERE user = '$user->id' 
+                                         AND course = '$course->id'
+                                         AND `time` > '$daystart'
+                                       GROUP BY hour ")) {
+           foreach ($rawlogs as $rawlog) {
+               $logs[$rawlog->hour] = $rawlog->num;
            }
-           $logs[$i] = $logcount->count;
-           $hh = (int)userdate($timestart, "%I");
-           $hours[$i] = userdate($timestart, "$hh %p");
-           $i++;
-           $timestart = $timefinish;
        }
 
        $maxlogs = max($logs);
