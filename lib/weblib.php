@@ -1372,11 +1372,11 @@ function html_to_text($html) {
 function convert_urls_into_links(&$text) {
 /// Make lone URLs into links.   eg http://moodle.com/
     $text = eregi_replace("([[:space:]]|^|\(|\[)([[:alnum:]]+)://([^[:space:]]*)([[:alnum:]#?/&=])",
-                          "\\1<a href=\"\\2://\\3\\4\" target=\"newpage\">\\2://\\3\\4</a>", $text);
+                          "\\1<a href=\"\\2://\\3\\4\" target=\"_blank\">\\2://\\3\\4</a>", $text);
 
 /// eg www.moodle.com
     $text = eregi_replace("([[:space:]]|^|\(|\[)www\.([^[:space:]]*)([[:alnum:]#?/&=])",
-                          "\\1<a href=\"http://www.\\2\\3\" target=\"newpage\">www.\\2\\3</a>", $text);
+                          "\\1<a href=\"http://www.\\2\\3\" target=\"_blank\">www.\\2\\3</a>", $text);
 }
 
 /**
@@ -2635,9 +2635,13 @@ function make_table($table) {
  * @todo Finish documenting this function
  */
 function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $value='', $courseid=0) {
-/// $width and height are legacy fields and no longer used
+/// $width and height are legacy fields and no longer used as pixels like they used to be.
+/// However, you can set them to zero to override the mincols and minrows values below.
 
     global $CFG, $course;
+
+    $mincols = 65;
+    $minrows = 10;
 
     if (empty($courseid)) {
         if (!empty($course->id)) {  // search for it in global context
@@ -2656,13 +2660,13 @@ function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $v
         echo '<script type="text/javascript" src="'. $CFG->wwwroot .'/lib/editor/popupwin.js"></script>'."\n";
 
         if ($height) {    // Usually with legacy calls
-            if ($rows < 10) {
-                $rows = 10;
+            if ($rows < $minrows) {
+                $rows = $minrows;
             }
         }
         if ($width) {    // Usually with legacy calls
-            if ($cols < 65) {
-                $cols = 65;
+            if ($cols < $mincols) {
+                $cols = $mincols;
             }
         }
     }
