@@ -70,6 +70,7 @@
 
             unset($SESSION->wantsurl);
             unset($SESSION->lang);
+            $SESSION->justloggedin = true;
 
             if (user_not_fully_set_up($USER)) {
                 $site = get_site();
