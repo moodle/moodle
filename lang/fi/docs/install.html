@@ -1,257 +1,236 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
-<HTML>
-<HEAD>
-	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=iso-8859-1">
-	<TITLE>Moodle Docs: Installation</TITLE>
-	<META NAME="GENERATOR" CONTENT="OpenOffice.org 1.0.2  (Linux)">
-	<META NAME="CREATED" CONTENT="20030219;554200">
-	<META NAME="CHANGED" CONTENT="20030224;22153000">
-</HEAD>
-<BODY LANG="fi-FI" BGCOLOR="#ffffff">
-<H2>Moodle asennus</H2>
-<P>T&auml;m&auml; ohje opastaa Moodlen ensiasennuksessa. Se kattaa
+
+
+
+
+	
+	
+	
+	
+	
+
+<h2>Moodle asennus</h2>
+<p>Tämä ohje opastaa Moodlen ensiasennuksessa. Se kattaa
 erilaisten www-palvelinten eroavaisuudet, joskus
-yksityiskohtaisestikin, joten asennus saattaa n&auml;ytt&auml;&auml;
-pitk&auml;lt&auml; ja monimutkaiselta. Yleens&auml; Moodle on
-kuitenkin asennettu muutamassa minuutissa.</P>
-<P>Varaa aikaa lukeaksesi t&auml;m&auml; ohje kokonaan l&auml;pi,
-sit&auml; hy&ouml;ty&auml; my&ouml;hemmin.</P>
-<P>Ohjeen osat:</P>
-<OL>
-	<LI><P STYLE="margin-bottom: 0cm"><A HREF="#requirements">Vaatimukset</A>
-		</P>
-	<LI><P STYLE="margin-bottom: 0cm"><A HREF="#downloading">Lataus</A> 
-	</P>
-	<LI><P STYLE="margin-bottom: 0cm"><A HREF="#site">Sivuston rakenne</A></P>
-	<LI><P STYLE="margin-bottom: 0cm"><A HREF="#data">Luo data-hakemisto</A></P>
-	<LI><P STYLE="margin-bottom: 0cm"><A HREF="#database">Luo tietokanta</A></P>
-	<LI><P STYLE="margin-bottom: 0cm"><A HREF="#webserver">Tarkista
-	www-palvelimen asetukset</A></P>
-	<LI><P STYLE="margin-bottom: 0cm"><A HREF="#config">Muokkaa
-	config.php</A> 
-	</P>
-	<LI><P STYLE="margin-bottom: 0cm"><A HREF="#admin">Mene yll&auml;pito
-	sivulle</A></P>
-	<LI><P STYLE="margin-bottom: 0cm"><A HREF="#cron">Aseta cron</A> 
-	</P>
-	<LI><P><A HREF="#course">Luo uusi kurssi</A></P>
-</OL>
-<H3><A NAME="requirements"></A>1. Vaatimukset</H3>
-<BLOCKQUOTE>Moodle kehitet&auml;&auml;n ensisijaisesti
- Linux-ymp&auml;rist&ouml;ss&auml; k&auml;ytt&auml;en PHP, Apache ja
-MySQL -ohjelmistoja, sit&auml; testataan jatkuvasti my&ouml;s PostgreSQL ,
-Windows XP, Mac OS X ja Solaris -ymp&auml;rist&ouml;iss&auml;.</BLOCKQUOTE>
-<BLOCKQUOTE>Kaikki mit&auml; tarvitset on:</BLOCKQUOTE>
-<OL>
-	<LI><BLOCKQUOTE STYLE="margin-bottom: 0cm">Toimiva <A HREF="http://www.php.net/">PHP</A>
-	(version 4.1.0 or later) asennus, seuraavat toiminnot pit&auml;&auml;
-	olla aktivoituna ( n&auml;m&auml; toiminnot avat vakiona p&auml;&auml;ll&auml;
+yksityiskohtaisestikin, joten asennus saattaa näyttää
+pitkältä ja monimutkaiselta. Yleensä Moodle on
+kuitenkin asennettu muutamassa minuutissa.</p>
+<p>Varaa aikaa lukeaksesi tämä ohje kokonaan läpi,
+sitä hyötyä myöhemmin.</p>
+<p>Ohjeen osat:</p>
+<ol>
+	<li><p style="margin-bottom: 0cm;"><a href="http://www.skto.fi/moodle_test/files/index.php?id=fi&wdir=/docs&file=/docs/install.html&action=edit#requirements">Vaatimukset</a>
+		</p>
+	</li><li><p style="margin-bottom: 0cm;"><a href="http://www.skto.fi/moodle_test/files/index.php?id=fi&wdir=/docs&file=/docs/install.html&action=edit#downloading">Lataus</a> 
+	</p>
+	</li><li><p style="margin-bottom: 0cm;"><a href="http://www.skto.fi/moodle_test/files/index.php?id=fi&wdir=/docs&file=/docs/install.html&action=edit#site">Sivuston rakenne</a></p>
+	</li><li><p style="margin-bottom: 0cm;"><a href="http://www.skto.fi/moodle_test/files/index.php?id=fi&wdir=/docs&file=/docs/install.html&action=edit#data">Luo data-hakemisto</a></p>
+	</li><li><p style="margin-bottom: 0cm;"><a href="http://www.skto.fi/moodle_test/files/index.php?id=fi&wdir=/docs&file=/docs/install.html&action=edit#database">Luo tietokanta</a></p>
+	</li><li><p style="margin-bottom: 0cm;"><a href="http://www.skto.fi/moodle_test/files/index.php?id=fi&wdir=/docs&file=/docs/install.html&action=edit#webserver">Tarkista
+	www-palvelimen asetukset</a></p>
+	</li><li><p style="margin-bottom: 0cm;"><a href="http://www.skto.fi/moodle_test/files/index.php?id=fi&wdir=/docs&file=/docs/install.html&action=edit#config">Muokkaa
+	config.php</a> 
+	</p>
+	</li><li><p style="margin-bottom: 0cm;"><a href="http://www.skto.fi/moodle_test/files/index.php?id=fi&wdir=/docs&file=/docs/install.html&action=edit#admin">Mene ylläpito
+	sivulle</a></p>
+	</li><li><p style="margin-bottom: 0cm;"><a href="http://www.skto.fi/moodle_test/files/index.php?id=fi&wdir=/docs&file=/docs/install.html&action=edit#cron">Aseta cron</a> 
+	</p>
+	</li><li><p><a href="http://www.skto.fi/moodle_test/files/index.php?id=fi&wdir=/docs&file=/docs/install.html&action=edit#course">Luo uusi kurssi</a></p>
+</li></ol>
+<h3><a name="requirements"></a>1. Vaatimukset</h3>
+<blockquote>Moodle kehitetään ensisijaisesti
+ Linux-ympäristössä käyttäen PHP, Apache ja
+MySQL -ohjelmistoja, sitä testataan jatkuvasti myös PostgreSQL ,
+Windows XP, Mac OS X ja Solaris -ympäristöissä.</blockquote>
+<blockquote>Kaikki mitä tarvitset on:</blockquote>
+<ol>
+	<li><blockquote style="margin-bottom: 0cm;">Toimiva <a href="http://www.php.net/">PHP</a>
+	(version 4.1.0 or later) asennus, seuraavat toiminnot pitää
+	olla aktivoituna ( nämä toiminnot avat vakiona päällä
 	miltei jokaisessa PHP asennuksessa): 
-	</BLOCKQUOTE>
-	<UL>
-		<LI><BLOCKQUOTE STYLE="margin-bottom: 0cm"><A HREF="http://www.boutell.com/gd/">GD
-		kirjasto</A> joka tukee JPG ja PNG -tiedostomuotoja. ( PHP versio =&gt; 4.3
-		sis&auml;lt&auml;&auml; oman GD-kirjaston)</BLOCKQUOTE>
-		<LI><BLOCKQUOTE STYLE="margin-bottom: 0cm">Sessiotuki</BLOCKQUOTE>
-		<LI><BLOCKQUOTE STYLE="margin-bottom: 0cm">Tiedostojen l&auml;hetys sallittu 
-		</BLOCKQUOTE>
-	</UL>
-	<LI><BLOCKQUOTE>Toimiva tietokantapalvelin : <A HREF="http://www.mysql.com/">MySQL</A>
-	tai <A HREF="http://www.postgresql.org/">PostgreSQL</A> (7.x) ovat
+	</blockquote>
+	<ul>
+		<li><blockquote style="margin-bottom: 0cm;"><a href="http://www.boutell.com/gd/">GD
+		kirjasto</a> joka tukee JPG ja PNG -tiedostomuotoja. ( PHP versio =&gt; 4.3
+		sisältää oman GD-kirjaston)</blockquote>
+		</li><li><blockquote style="margin-bottom: 0cm;">Sessiotuki</blockquote>
+		</li><li><blockquote style="margin-bottom: 0cm;">Tiedostojen lähetys sallittu 
+		</blockquote>
+	</li></ul>
+	</li><li><blockquote>Toimiva tietokantapalvelin : <a href="http://www.mysql.com/">MySQL</a>
+	tai <a href="http://www.postgresql.org/">PostgreSQL</a> (7.x) ovat
 	suositeltavia. (MSSQL, Oracle, Interbase, Foxpro, Access, ADO,
 	Sybase, DB2 tai ODBC ovat teoriassa tuettuja mutta joudut asentamaan
-	tietokannan k&auml;sin.). 
-	</BLOCKQUOTE>
-</OL>
-<BLOCKQUOTE>Windows-ymp&auml;rist&ouml;ss&auml; on helpointa ladata
-<A HREF="http://www.foxserv.net/">FoxServ</A>, tai <A HREF="http://www.easyphp.org/">EasyPHP</A>
-jotka asentavat Apache, PHP, ja MySQL palvelimet. Muista ottaa GD-moduli k&auml;ytt&ouml;&ouml;n jotta&nbsp; Moodle voi k&auml;sitell&auml;
+	tietokannan käsin.). 
+	</blockquote>
+</li></ol>
+<blockquote>Windows-ympäristössä on helpointa ladata
+<a href="http://www.foxserv.net/">FoxServ</a>, tai <a href="http://www.easyphp.org/">EasyPHP</a>
+jotka asentavat Apache, PHP, ja MySQL palvelimet. Muista ottaa GD-moduli käyttöön jotta  Moodle voi käsitellä
 kuvia -voit joutua muokkaamaan php.ini-tiedostoa ja poistamaan
-kommentin (;)rivilt&auml;: 'extension=php_gd.dll'. Muuta my&ouml;s
-hakemisto session.save_path - oletuksesta &quot;/tmp&quot; k&auml;ytt&auml;m&auml;&auml;n
-Windows-hakemistoa kuten&nbsp; &quot;c:/temp&quot;.</BLOCKQUOTE>
-<BLOCKQUOTE>Mac OS X ymp&auml;rist&ouml;&ouml;n suosittelen the <A HREF="http://fink.sourceforge.net/">fink</A>
-projektia josta l&ouml;yd&auml;t helposti ladattavat paketit kaikkeen
-tarvittavaan. Jos et ole tottunut komentokehotteen k&auml;ytt&auml;j&auml;,
-<A HREF="http://www.entropy.ch/software/macosx/php/">Marc
-Liyanage's PHP Apache Module</A> on helpoin tapa saada php-toimimaan
-apachen kanssa.</BLOCKQUOTE>
-<BLOCKQUOTE>Jos k&auml;yt&auml;t&nbsp; Linuxia tai muuta&nbsp; Unixia
-silloin osaat varmaan tehd&auml; kaiken jo itse ;-) 
-</BLOCKQUOTE>
-<P>&nbsp;</P>
-<H3><A NAME="downloading"></A>2. Lataus</H3>
-<BLOCKQUOTE>Voit ladata Moodlen joko pakettina tai viimeisen version
-suoraan CVS:st&auml;. Yksityskohdat lataamisesta on selostettu
-sivulla <A HREF="http://moodle.com/">http://moodle.com/</A></BLOCKQUOTE>
-<BLOCKQUOTE>Lataamisen ja paketin purkamisen j&auml;lkeen, tai kun
-ole hakenut tiedostot&nbsp; CVS:st&auml;, sinulla on hakemisto
-nimelt&auml; moodle, mikä sis&auml;lt&auml;&auml; muita tiedostoja
-ja hakemistoja.</BLOCKQUOTE>
-<BLOCKQUOTE>Sijoita t&auml;m&auml; kansio www-hakemistoon jolloin
-sivustosi osoite on&nbsp; <B>http://yourwebserver.com/moodle</B>, tai
-kopioi hakemiston sis&auml;lt&ouml; suoraan www-hakemistoon jolloin
-sivustosi osoitteeksi tulee&nbsp; <B>http://yourwebserver.com</B>.</BLOCKQUOTE>
-<P>&nbsp;</P>
-<H3><A NAME="site"></A>3. Sivuston rakenne</H3>
-<BLOCKQUOTE>T&auml;ss&auml; lyhyt kuvaus sisuston rakenteesta</BLOCKQUOTE>
-<BLOCKQUOTE STYLE="margin-left: 3cm; margin-right: 3cm">config.php -
-asetustiedosto, ainut jota sinun pit&auml;&auml; muokata<BR>version.php
-- m&auml;&auml;ritt&auml;&auml; moodlen version<BR>index.php -
-sivuston etusivu</BLOCKQUOTE>
-<UL>
-	<LI><BLOCKQUOTE STYLE="margin-right: 3cm; margin-bottom: 0cm">admin/
-	- yll&auml;pitoon liittyv&auml;t sivut</BLOCKQUOTE>
-	<LI><BLOCKQUOTE STYLE="margin-right: 3cm; margin-bottom: 0cm">auth/
-	- k&auml;ytt&auml;j&auml;ntunnistusmodulit</BLOCKQUOTE>
-	<LI><BLOCKQUOTE STYLE="margin-right: 3cm; margin-bottom: 0cm">course/
-	- kurssien hallintaan liittyv&auml; koodi</BLOCKQUOTE>
-	<LI><BLOCKQUOTE STYLE="margin-right: 3cm; margin-bottom: 0cm">doc/ -
+kommentin (;)riviltä: 'extension=php_gd.dll'. Muuta myös
+hakemisto session.save_path - oletuksesta &quot;/tmp&quot; käyttämään
+Windows-hakemistoa kuten  &quot;c:/temp&quot;.</blockquote>
+<blockquote>Mac OS X ympäristöön suosittelen the <a href="http://fink.sourceforge.net/">fink</a>
+projektia josta löydät helposti ladattavat paketit kaikkeen
+tarvittavaan. Jos et ole tottunut komentokehotteen käyttäjä,
+<a href="http://www.entropy.ch/software/macosx/php/">Marc
+Liyanage's PHP Apache Module</a> on helpoin tapa saada php-toimimaan
+apachen kanssa.</blockquote>
+<blockquote>Jos käytät  Linuxia tai muuta  Unixia
+silloin osaat varmaan tehdä kaiken jo itse ;-) 
+</blockquote>
+<p> </p>
+<h3><a name="downloading"></a>2. Lataus</h3>
+<blockquote>Voit ladata Moodlen joko pakettina tai viimeisen version
+suoraan CVS:stä. Yksityskohdat lataamisesta on selostettu
+sivulla <a href="http://moodle.com/">http://moodle.com/</a></blockquote>
+<blockquote>Lataamisen ja paketin purkamisen jälkeen, tai kun
+ole hakenut tiedostot  CVS:stä, sinulla on hakemisto
+nimeltä moodle, mikä sisältää muita tiedostoja
+ja hakemistoja.</blockquote>
+<blockquote>Sijoita tämä kansio www-hakemistoon jolloin
+sivustosi osoite on  <b>http://yourwebserver.com/moodle</b>, tai
+kopioi hakemiston sisältö suoraan www-hakemistoon jolloin
+sivustosi osoitteeksi tulee  <b>http://yourwebserver.com</b>.</blockquote>
+<p> </p>
+<h3><a name="site"></a>3. Sivuston rakenne</h3>
+<blockquote>Tässä lyhyt kuvaus sisuston rakenteesta</blockquote>
+<blockquote style="margin-left: 3cm; margin-right: 3cm;">config.php -
+asetustiedosto, ainut jota sinun pitää muokata<br />version.php
+- määrittää moodlen version<br />index.php -
+sivuston etusivu</blockquote>
+<ul>
+	<li><blockquote style="margin-right: 3cm; margin-bottom: 0cm;">admin/
+	- ylläpitoon liittyvät sivut</blockquote>
+	</li><li><blockquote style="margin-right: 3cm; margin-bottom: 0cm;">auth/
+	- käyttäjäntunnistusmodulit</blockquote>
+	</li><li><blockquote style="margin-right: 3cm; margin-bottom: 0cm;">course/
+	- kurssien hallintaan liittyvä koodi</blockquote>
+	</li><li><blockquote style="margin-right: 3cm; margin-bottom: 0cm;">doc/ -
 	ohjeet 
-	</BLOCKQUOTE>
-	<LI><BLOCKQUOTE STYLE="margin-right: 3cm; margin-bottom: 0cm">files/
-	- tiedostojen hallintaan liityv&auml; koodi</BLOCKQUOTE>
-	<LI><BLOCKQUOTE STYLE="margin-right: 3cm; margin-bottom: 0cm">lang/
-	- Moodlen k&auml;&auml;nn&ouml;s tiedostot eri kielille kukin omassa
-	hakemistossaan</BLOCKQUOTE>
-	<LI><BLOCKQUOTE STYLE="margin-right: 3cm; margin-bottom: 0cm">lib/ -
-	Moodlen ydinkirjastot</BLOCKQUOTE>
-	<LI><BLOCKQUOTE STYLE="margin-right: 3cm; margin-bottom: 0cm">login/
-	- sis&auml;&auml;nkirjautuminen 
-	</BLOCKQUOTE>
-	<LI><BLOCKQUOTE STYLE="margin-right: 3cm; margin-bottom: 0cm">mod/ -
-	kurssi modulit</BLOCKQUOTE>
-	<LI><BLOCKQUOTE STYLE="margin-right: 3cm; margin-bottom: 0cm">pix/ -
-	yleinen sivustografiikka</BLOCKQUOTE>
-	<LI><BLOCKQUOTE STYLE="margin-right: 3cm; margin-bottom: 0cm">theme/
-	- ulkoasuteemat</BLOCKQUOTE>
-	<LI><BLOCKQUOTE STYLE="margin-right: 3cm">user/ -
-	K&auml;ytt&auml;j&auml;nhallintaan liittyv&auml; koodi</BLOCKQUOTE>
-</UL>
-<BLOCKQUOTE STYLE="margin-left: 3cm; margin-right: 3cm">&nbsp;</BLOCKQUOTE>
-<H3><A NAME="data"></A>4. Luo data-hakemisto</H3>
-<BLOCKQUOTE>Moodle tarvitsee levytilaa tallentaakseen palautetut
-teht&auml;v&auml;t, osallistujien kuvat ja muuta.</BLOCKQUOTE>
-<BLOCKQUOTE>Luo hakemisto jonnekin kiintolevyllesi. &Auml;l&auml;
-sijoita t&auml;t&auml; hakemistoa www-hakemistoon tietotuvan takia.
+	</blockquote>
+	</li><li><blockquote style="margin-right: 3cm; margin-bottom: 0cm;">files/
+	- tiedostojen hallintaan liityvä koodi</blockquote>
+	</li><li><blockquote style="margin-right: 3cm; margin-bottom: 0cm;">lang/
+	- Moodlen käännös tiedostot eri kielille kukin omassa
+	hakemistossaan</blockquote>
+	</li><li><blockquote style="margin-right: 3cm; margin-bottom: 0cm;">lib/ -
+	Moodlen ydinkirjastot</blockquote>
+	</li><li><blockquote style="margin-right: 3cm; margin-bottom: 0cm;">login/
+	- sisäänkirjautuminen 
+	</blockquote>
+	</li><li><blockquote style="margin-right: 3cm; margin-bottom: 0cm;">mod/ -
+	kurssi modulit</blockquote>
+	</li><li><blockquote style="margin-right: 3cm; margin-bottom: 0cm;">pix/ -
+	yleinen sivustografiikka</blockquote>
+	</li><li><blockquote style="margin-right: 3cm; margin-bottom: 0cm;">theme/
+	- ulkoasuteemat</blockquote>
+	</li><li><blockquote style="margin-right: 3cm;">user/ -
+	Käyttäjänhallintaan liittyvä koodi</blockquote>
+</li></ul>
+<blockquote style="margin-left: 3cm; margin-right: 3cm;"> </blockquote>
+<h3><a name="data"></a>4. Luo data-hakemisto</h3>
+<blockquote>Moodle tarvitsee levytilaa tallentaakseen palautetut
+tehtävät, osallistujien kuvat ja muuta.</blockquote>
+<blockquote>Luo hakemisto jonnekin kiintolevyllesi. Älä
+sijoita tätä hakemistoa www-hakemistoon tietotuvan takia.
 Helpointa on valita hakemisto www-hakemiston ulkopuolelta, muulloin
-suojaa hakemisto tiedostolla .htaccess, joka sis&auml;lt&auml;&auml;
+suojaa hakemisto tiedostolla .htaccess, joka sisältää
 rivin: 
-</BLOCKQUOTE>
-<PRE STYLE="margin-left: 2cm; margin-right: 2cm; margin-bottom: 0.5cm">deny from all</PRE><BLOCKQUOTE>
-Varmistaaksesi ett&auml; moodle voi tallenta tiedostoja
-hakemistoon, tarkista ett&auml; www-palvelimella (eli apache) on
-oikeudet kirjoittaa tuohon hakemistoon. Unix koneilla t&auml;m&auml;
-yleens&auml; tarkoittaa hakemiston omistajan asettamista joko &quot;apache&quot;
+</blockquote>
+<pre style="margin-left: 2cm; margin-right: 2cm; margin-bottom: 0.5cm;">deny from all</pre><blockquote>
+Varmistaaksesi että moodle voi tallenta tiedostoja
+hakemistoon, tarkista että www-palvelimella (eli apache) on
+oikeudet kirjoittaa tuohon hakemistoon. Unix koneilla tämä
+yleensä tarkoittaa hakemiston omistajan asettamista joko &quot;apache&quot;
 tai &quot;nobody&quot; komennolla chown. 
-</BLOCKQUOTE>
-<BLOCKQUOTE>Jos k&auml;yt&auml;t jaettua palveluntarjoajan
-palvelinta, kysy yll&auml;pidolta miten voit tehd&auml; asetukset
-turvallisesti.</BLOCKQUOTE>
-<H3><A NAME="database"></A>5. Luo tietokanta</H3>
-<BLOCKQUOTE>Tarvitset tyhj&auml;n tietokannan (esim &quot;moodle&quot;)
-tietokanta j&auml;rjestelm&auml;&auml;n ja erityisen k&auml;ytt&auml;j&auml;n
+</blockquote>
+<blockquote>Jos käytät jaettua palveluntarjoajan
+palvelinta, kysy ylläpidolta miten voit tehdä asetukset
+turvallisesti.</blockquote>
+<h3><a name="database"></a>5. Luo tietokanta</h3>
+<blockquote>Tarvitset tyhjän tietokannan (esim &quot;moodle&quot;)
+tietokanta järjestelmään ja erityisen käyttäjän
 (esim &quot;moodleuser&quot;) jolla on oikeudet tuohon kantaan (ja
-vain tuohon kantaan). &Auml;l&auml; k&ouml;yt&auml; root-tunnusta, se
-luo suuren tietoturvariskin.</BLOCKQUOTE>
-<BLOCKQUOTE>Esimerkkikomennot MySQL: 
-</BLOCKQUOTE>
-<PRE STYLE="margin-left: 1cm; margin-right: 1cm">   # mysql -u root -p
-   &gt; CREATE DATABASE moodle; 
-   &gt; GRANT SELECT,INSERT,UPDATE,DELETE,CREATE,DROP,INDEX,ALTER ON moodle.* 
-           TO moodleuser@localhost IDENTIFIED BY 'yourpassword'; 
-   &gt; quit 
-   # mysqladmin -p reload</PRE><BLOCKQUOTE>
+vain tuohon kantaan). Älä köytä root-tunnusta, se
+luo suuren tietoturvariskin.</blockquote>
+<blockquote>Esimerkkikomennot MySQL: 
+</blockquote>
+<pre style="margin-left: 1cm; margin-right: 1cm;">   # mysql -u root -p<br />   &gt; CREATE DATABASE moodle; <br />   &gt; GRANT SELECT,INSERT,UPDATE,DELETE,CREATE,DROP,INDEX,ALTER ON moodle.* <br />           TO moodleuser@localhost IDENTIFIED BY 'yourpassword'; <br />   &gt; quit <br />   # mysqladmin -p reload</pre><blockquote>
 Esimerkkikomennot PostgreSQL: 
-</BLOCKQUOTE>
-<PRE STYLE="margin-left: 1cm; margin-right: 1cm">   # su - postgres
-   &gt; psql -c &quot;create user moodleuser createdb;&quot; template1
-   &gt; psql -c &quot;create database moodle;&quot; -U moodleuser template1
-   &gt; psql -c &quot;alter user moodleuser nocreatedb;&quot; template1</PRE><BLOCKQUOTE>
-(MySQL k&auml;yt&auml;j&auml;n kannattaa tutustua&nbsp; <A HREF="http://phpmyadmin.sourceforge.net/">phpMyAdmin</A>
-helpottaakseen tietokannan hallintaa).</BLOCKQUOTE>
-<BLOCKQUOTE>Nykyisin moodle k&auml;ytt&auml;&auml; etuliitteit&auml;
-tauluissaan joten voit my&ouml;s k&auml;ytt&auml;&auml; olemassa
-olevaa tietokantaa Moodlen kanssa.</BLOCKQUOTE>
-<P>&nbsp;</P>
-<H3><A NAME="webserver"></A>6. Tarkista www-palvelimen asetukset</H3>
-<BLOCKQUOTE>Tarkista ensin, ett&auml; palvelin k&auml;ytt&auml;&auml;
-oletussivuna index.php-tiedostoja&nbsp; (ja tietenkin my&ouml;s
-index.html, default.htm ja muut voivat olla my&ouml;s
-   k&auml;yt&ouml;ss&auml;, jos tarvitset niit&auml; muualla).</BLOCKQUOTE>
-<BLOCKQUOTE>Apachessa t&auml;m&auml; asetus on &nbsp; DirectoryIndex&nbsp;
-httpd.conf tiedostossa. Esimerkki rivi n&auml;ytt&auml;&auml; siis
-t&auml;lt&auml;:</BLOCKQUOTE>
-<PRE STYLE="margin-left: 2cm; margin-right: 2cm; margin-bottom: 0.5cm">DirectoryIndex index.php index.html index.htm </PRE><BLOCKQUOTE>
-Se riitt&auml;&auml; ett&auml; index.php on listassa, sijainnilla ei
-ole v&auml;li&auml; (ellet sitten halua hioa php-suorituskyky&auml;
-huippuunsa).</BLOCKQUOTE>
-<BLOCKQUOTE>Toiseksi, tarkista ett&auml; Moodlen k&auml;ytt&auml;m&auml;t
-asetukset ovat oikein php.ini-tiedostossa. <B>Useimmat palvelimet on
-jo asetettu k&auml;ytt&auml;m&auml;&auml;n n&auml;it&auml; asetuksia.</B>
-Kuitenkin jotkut PHP-palvelimet (ja jotkut viimeisimm&auml;t
+</blockquote>
+<pre style="margin-left: 1cm; margin-right: 1cm;">   # su - postgres<br />   &gt; psql -c &quot;create user moodleuser createdb;&quot; template1<br />   &gt; psql -c &quot;create database moodle;&quot; -U moodleuser template1<br />   &gt; psql -c &quot;alter user moodleuser nocreatedb;&quot; template1</pre><blockquote>
+(MySQL käytäjän kannattaa tutustua  <a href="http://phpmyadmin.sourceforge.net/">phpMyAdmin</a>
+helpottaakseen tietokannan hallintaa).</blockquote>
+<blockquote>Nykyisin moodle käyttää etuliitteitä
+tauluissaan joten voit myös käyttää olemassa
+olevaa tietokantaa Moodlen kanssa.</blockquote>
+<p> </p>
+<h3><a name="webserver"></a>6. Tarkista www-palvelimen asetukset</h3>
+<blockquote>Tarkista ensin, että palvelin käyttää
+oletussivuna index.php-tiedostoja  (ja tietenkin myös
+index.html, default.htm ja muut voivat olla myös
+   käytössä, jos tarvitset niitä muualla).</blockquote>
+<blockquote>Apachessa tämä asetus on   DirectoryIndex 
+httpd.conf tiedostossa. Esimerkki rivi näyttää siis
+tältä:</blockquote>
+<pre style="margin-left: 2cm; margin-right: 2cm; margin-bottom: 0.5cm;">DirectoryIndex index.php index.html index.htm </pre><blockquote>
+Se riittää että index.php on listassa, sijainnilla ei
+ole väliä (ellet sitten halua hioa php-suorituskykyä
+huippuunsa).</blockquote>
+<blockquote>Toiseksi, tarkista että Moodlen käyttämät
+asetukset ovat oikein php.ini-tiedostossa. <b>Useimmat palvelimet on
+jo asetettu käyttämään näitä asetuksia.</b>
+Kuitenkin jotkut PHP-palvelimet (ja jotkut viimeisimmät
 PHP-versiot) voivat olla asetettuna toimimaan toisin. Tarkista
-seuraavat asetukset php.ini-tiedostosta:</BLOCKQUOTE>
-<PRE STYLE="margin-left: 2cm; margin-right: 2cm">magic_quotes_gpc = On
-magic_quotes_runtime = Off
-file_uploads = On
-short_open_tag = On
-session.auto_start = Off
-session.bug_compat_warn = Off</PRE><BLOCKQUOTE>
-Jollei sinulla ole p&auml;&auml;sy&auml; muokkaamaan palvelimen
+seuraavat asetukset php.ini-tiedostosta:</blockquote>
+<pre style="margin-left: 2cm; margin-right: 2cm;">magic_quotes_gpc = On<br />magic_quotes_runtime = Off<br />file_uploads = On<br />short_open_tag = On<br />session.auto_start = Off<br />session.bug_compat_warn = Off</pre><blockquote>
+Jollei sinulla ole pääsyä muokkaamaan palvelimen
 httpd.conf tai php.ini -tiedostoja, tai joku muu palvelimen sovellus
-vaatii eri asetukset, voit YLIM&Auml;&Auml;RITELL&Auml; palvelimen
-oletus-asetukset.</BLOCKQUOTE>
-<BLOCKQUOTE>Ylim&auml;&auml;ritell&auml;ksesi oletus-asetukset tee&nbsp;
-<B>.htaccess</B> tiedosto Moodle'n p&auml;&auml;hakemistoon . (T&auml;m&auml;
-toimii ainoastaan apache-palvelimella kun AllowOverride on päällä.</BLOCKQUOTE>
-<PRE STYLE="margin-left: 2cm; margin-right: 2cm">DirectoryIndex index.php index.html index.htm
-php_flag magic_quotes_gpc On
-php_flag magic_quotes_runtime Off
-php_flag file_uploads On
-php_flag short_open_tag On
-php_flag session.auto_start Off
-php_flag session.bug_compat_warn Off</PRE><BLOCKQUOTE>
-Voit my&ouml;s m&auml;&auml;ritell&auml; suurimman sallitun tiedoston
+vaatii eri asetukset, voit YLIMÄÄRITELLÄ palvelimen
+oletus-asetukset.</blockquote>
+<blockquote>Ylimääritelläksesi oletus-asetukset tee 
+<b>.htaccess</b> tiedosto Moodle'n päähakemistoon . (Tämä
+toimii ainoastaan apache-palvelimella kun AllowOverride on päällä.</blockquote>
+<pre style="margin-left: 2cm; margin-right: 2cm;">DirectoryIndex index.php index.html index.htm<br />php_flag magic_quotes_gpc On<br />php_flag magic_quotes_runtime Off<br />php_flag file_uploads On<br />php_flag short_open_tag On<br />php_flag session.auto_start Off<br />php_flag session.bug_compat_warn Off</pre><blockquote>
+Voit myös määritellä suurimman sallitun tiedoston
 koon: 
-</BLOCKQUOTE>
-<PRE STYLE="margin-left: 2cm; margin-right: 2cm">php_value upload_max_filesize 2M
-php_value post_max_size 2M
-     </PRE><BLOCKQUOTE>
-Helpointa on ottaa lib/htaccess tiedosto pohjaksi ja muokata sit&auml;
-tarpeen mukaan:</BLOCKQUOTE>
-<PRE STYLE="margin-left: 2cm; margin-right: 2cm; margin-bottom: 0.5cm">cp lib/htaccess .htaccess</PRE><P>
-&nbsp;</P>
-<H3><A NAME="config"></A>7. Muokkaa config.php</H3>
-<BLOCKQUOTE>Nyt voit muokata asetustiedostoa ,<STRONG>config.php</STRONG>.
-T&auml;m&auml; on ainoa Moodlen tiedosto jota sinun tarvitsee muokata
-.</BLOCKQUOTE>
-<BLOCKQUOTE>P&auml;&auml;st&auml;ksesi alkuun kopioi config-dist.php
-tiedostoksi&nbsp; config.php. Emme sis&auml;llyt&auml;
+</blockquote>
+<pre style="margin-left: 2cm; margin-right: 2cm;">php_value upload_max_filesize 2M<br />php_value post_max_size 2M<br />     </pre><blockquote>
+Helpointa on ottaa lib/htaccess tiedosto pohjaksi ja muokata sitä
+tarpeen mukaan:</blockquote>
+<pre style="margin-left: 2cm; margin-right: 2cm; margin-bottom: 0.5cm;">cp lib/htaccess .htaccess</pre><p>
+ </p>
+<h3><a name="config"></a>7. Muokkaa config.php</h3>
+<blockquote>Nyt voit muokata asetustiedostoa ,<strong>config.php</strong>.
+Tämä on ainoa Moodlen tiedosto jota sinun tarvitsee muokata
+.</blockquote>
+<blockquote>Päästäksesi alkuun kopioi config-dist.php
+tiedostoksi  config.php. Emme sisällytä
 config.php-tiedostoa suoraan pakettiin, jottei asetukset hukkuisi
-esim. Moodlen p&auml;ivityksen yhteydess&auml;.</BLOCKQUOTE>
-<BLOCKQUOTE>Muokaa config.php tiedostoa ja kirjoita asetukset sinne
-(muista&nbsp; &quot;table prefix&quot; - PostgreSQL ei toimi ilman
-t&auml;t&auml;), sivuston osoite, sivuston sijanti palvelimen
-tiedostoj&auml;rjestelm&auml;ss&auml; ja datahakemisto. config.php
-tiedostossa on tarvittavat ohjeet.</BLOCKQUOTE>
-<BLOCKQUOTE>T&auml;m&auml;n ohjeen loppuun asti oletamme sivustosi
-sijaitsevan osoitteessa: <U>http://example.com/moodle</U></BLOCKQUOTE>
-<P>&nbsp;</P>
-<H3><A NAME="admin"></A>8. Mene yll&auml;pitosivulle</H3>
-<BLOCKQUOTE>Yll&auml;pitosivun pit&auml;isi nyt toimia osoitteesta:
-<U>http://example.com/moodle/admin</U>. Jos koitat menn&auml; suoraan
-Moodlen etusivulle sinut ohjataan yll&auml;pitosivulle. Esimm&auml;isell&auml;
-kertaa sinulle esitet&auml;&auml;n GPL-lisenssi jonka ehdot sinun
-pit&auml;&auml; hyv&auml;ksy&auml;, jotta asennusta voidaan jatkaa.</BLOCKQUOTE>
-<BLOCKQUOTE>(Moodle k&auml;ytt&auml;&auml; evästeitä (cookies) ja
-eik&auml; toimi oikein jos est&auml;t evästeiden tallentamisen
+esim. Moodlen päivityksen yhteydessä.</blockquote>
+<blockquote>Muokaa config.php tiedostoa ja kirjoita asetukset sinne
+(muista  &quot;table prefix&quot; - PostgreSQL ei toimi ilman
+tätä), sivuston osoite, sivuston sijanti palvelimen
+tiedostojärjestelmässä ja datahakemisto. config.php
+tiedostossa on tarvittavat ohjeet.</blockquote>
+<blockquote>Tämän ohjeen loppuun asti oletamme sivustosi
+sijaitsevan osoitteessa: <u>http://example.com/moodle</u></blockquote>
+<p> </p>
+<h3><a name="admin"></a>8. Mene ylläpitosivulle</h3>
+<blockquote>Ylläpitosivun pitäisi nyt toimia osoitteesta:
+<u>http://example.com/moodle/admin</u>. Jos koitat mennä suoraan
+Moodlen etusivulle sinut ohjataan ylläpitosivulle. Esimmäisellä
+kertaa sinulle esitetään GPL-lisenssi jonka ehdot sinun
+pitää hyväksyä, jotta asennusta voidaan jatkaa.</blockquote>
+<blockquote>(Moodle käyttää evästeitä (cookies) ja
+eikä toimi oikein jos estät evästeiden tallentamisen
 selaimeesi!) 
-</BLOCKQUOTE>
-<BLOCKQUOTE>Nyt Moodle aloittaa tietokannan luonnin. N&auml;et
-tietokannan luomiseen liittyviä käskyjä ja niiden j&auml;lkeen tila-viestin (vihre&auml;
-tai punainen) komennon onnistumisesta:</BLOCKQUOTE>
-<BLOCKQUOTE STYLE="margin-left: 3cm; margin-right: 3cm">CREATE TABLE
+</blockquote>
+<blockquote>Nyt Moodle aloittaa tietokannan luonnin. Näet
+tietokannan luomiseen liittyviä käskyjä ja niiden jälkeen tila-viestin (vihreä
+tai punainen) komennon onnistumisesta:</blockquote>
+<blockquote style="margin-left: 3cm; margin-right: 3cm;">CREATE TABLE
 course ( id int(10) unsigned NOT NULL auto_increment, category
 int(10) unsigned NOT NULL default '0', password varchar(50) NOT NULL
 default '', fullname varchar(254) NOT NULL default '', shortname
@@ -259,117 +238,108 @@ varchar(15) NOT NULL default '', summary text NOT NULL, format
 tinyint(4) NOT NULL default '1', teacher varchar(100) NOT NULL
 default 'Teacher', startdate int(10) unsigned NOT NULL default '0',
 enddate int(10) unsigned NOT NULL default '0', timemodified int(10)
-unsigned NOT NULL default '0', PRIMARY KEY (id)) TYPE=MyISAM</BLOCKQUOTE>
-<BLOCKQUOTE STYLE="margin-left: 3cm; margin-right: 3cm"><FONT COLOR="#006600">SUCCESS</FONT></BLOCKQUOTE>
-<BLOCKQUOTE STYLE="margin-left: 3cm; margin-right: 3cm">.. ja niin
-edelleen: <FONT COLOR="#ff0000">Main databases set up successfully</FONT>.
-</BLOCKQUOTE>
-<BLOCKQUOTE>Jos tietokantaa ei pysty&auml; luomaan virheett&auml;
-joko php-asetuksissa , tietokannassa tai&nbsp; config.php tiedoston
-asetuksissa on vikaa. Tarkista&nbsp; ettei PHP ole rajatussa &quot;safe
-mode&quot;-tilassa (monien palveluntarjoajien palvelimen yleens&auml;
+unsigned NOT NULL default '0', PRIMARY KEY (id)) TYPE=MyISAM</blockquote>
+<blockquote style="margin-left: 3cm; margin-right: 3cm;"><font color="#006600">SUCCESS</font></blockquote>
+<blockquote style="margin-left: 3cm; margin-right: 3cm;">.. ja niin
+edelleen: <font color="#ff0000">Main databases set up successfully</font>.
+</blockquote>
+<blockquote>Jos tietokantaa ei pystyä luomaan virheettä
+joko php-asetuksissa , tietokannassa tai  config.php tiedoston
+asetuksissa on vikaa. Tarkista  ettei PHP ole rajatussa &quot;safe
+mode&quot;-tilassa (monien palveluntarjoajien palvelimen yleensä
 on)Voit tarkistaa php:n asetukset luomalla tiedosto info.php jossa on
-rivi &lt;? phpinfo() ?&gt; ja katsoa sit&auml; selaimella&nbsp; .
-tarkista viel&auml; kaikki asetukset ja erit&auml; uudelleen.</BLOCKQUOTE>
-<BLOCKQUOTE>Sivun lopusta l&ouml;ytyy &quot;Continue&quot; tai
-&quot;Jatka&quot; linkki, jatka sill&auml;.</BLOCKQUOTE>
-<BLOCKQUOTE>Seuraava sivu asettaa kurssimodulien tarvitsemat taulut.
-Taas kaiken pit&auml;isi n&auml;ytt&auml; vihre&auml;&auml;.</BLOCKQUOTE>
-<BLOCKQUOTE>Sivun lopusta l&ouml;ytyy &quot;Continue&quot; tai
-&quot;Jatka&quot; linkki, jatka sill&auml;.</BLOCKQUOTE>
-<BLOCKQUOTE>Seuraavalla sivulla on lomake jolla m&auml;&auml;ritell&auml;&auml;n
-sivuston muuttujat ( Oletuskieli, k&auml;ytett&auml;v&auml;
-lokalisointi ,SMTP(posti)-palvelimet jne..). &Auml;l&auml; murehdi
-liikaa asetuksia, voit aina palata muuttamaan niit&auml;. Tallenna
-muutokset ja jatka asennusta.</BLOCKQUOTE>
-<BLOCKQUOTE>Jos&nbsp; (ja vain jos) juutut t&auml;lle sivulle etk&auml;
-pysty jatkamaan, www-palvelimesi on ongelma mit&auml; kutsumme&nbsp;
-&quot;buggy referrer&quot; ongelmaksi. T&auml;m&auml; on helppo
-korjata: muokkaa config.php ja aseta muuttuja buggy_referrer = <I>true</I>,
-ja yrit&auml; uudelleen.</BLOCKQUOTE>
-<BLOCKQUOTE>Seuraavalla sivulla m&auml;&auml;rit&auml;t sivustolle
-nimen ja kuvauksen. Voit muuttaa n&auml;it&auml;kin my&ouml;hemmin.
-Tallenna muutokset ja jatka.</BLOCKQUOTE>
-<BLOCKQUOTE>Lopuksi m&auml;&auml;rittelet p&auml;&auml;k&auml;ytt&auml;j&auml;
-tunnuksen sivustolle. T&auml;yt&auml; henkil&ouml;tietosi, email jne
+rivi &lt;? phpinfo() ?&gt; ja katsoa sitä selaimella  .
+tarkista vielä kaikki asetukset ja eritä uudelleen.</blockquote>
+<blockquote>Sivun lopusta löytyy &quot;Continue&quot; tai
+&quot;Jatka&quot; linkki, jatka sillä.</blockquote>
+<blockquote>Seuraava sivu asettaa kurssimodulien tarvitsemat taulut.
+Taas kaiken pitäisi näyttä vihreää.</blockquote>
+<blockquote>Sivun lopusta löytyy &quot;Continue&quot; tai
+&quot;Jatka&quot; linkki, jatka sillä.</blockquote>
+<blockquote>Seuraavalla sivulla on lomake jolla määritellään
+sivuston muuttujat ( Oletuskieli, käytettävä
+lokalisointi ,SMTP(posti)-palvelimet jne..). Älä murehdi
+liikaa asetuksia, voit aina palata muuttamaan niitä. Tallenna
+muutokset ja jatka asennusta.</blockquote>
+<blockquote>Jos  (ja vain jos) juutut tälle sivulle etkä
+pysty jatkamaan, www-palvelimesi on ongelma mitä kutsumme 
+&quot;buggy referrer&quot; ongelmaksi. Tämä on helppo
+korjata: muokkaa config.php ja aseta muuttuja buggy_referrer = <i>true</i>,
+ja yritä uudelleen.</blockquote>
+<blockquote>Seuraavalla sivulla määrität sivustolle
+nimen ja kuvauksen. Voit muuttaa näitäkin myöhemmin.
+Tallenna muutokset ja jatka.</blockquote>
+<blockquote>Lopuksi määrittelet pääkäyttäjä
+tunnuksen sivustolle. Täytä henkilötietosi, email jne
 ja tallenna muutokset &quot;Save changes&quot;. . 
-</BLOCKQUOTE>
-<BLOCKQUOTE STYLE="margin-left: 7cm; margin-right: 7cm"><STRONG>Paina
-mieleen antamasi yll&auml;pit&auml;j&auml;n tunnus ja salasana,
-tarvitset niit&auml; my&ouml;hemmin. ;-)</STRONG></BLOCKQUOTE>
-<BLOCKQUOTE>Kun p&auml;&auml;k&auml;ytt&auml;j&auml; on luotu p&auml;&auml;set
-yll&auml;pito valikkoon , josta l&ouml;ytyy linkit sivuston
-yll&auml;pit&auml;miseksi, kuten:</BLOCKQUOTE>
-<UL>
-	<LI><BLOCKQUOTE STYLE="margin-bottom: 0cm">kurssien lis&auml;&auml;minen
-	ja poisto</BLOCKQUOTE>
-	<LI><BLOCKQUOTE STYLE="margin-bottom: 0cm">K&auml;ytt&auml;j&auml;tunnusten
-	hallinta</BLOCKQUOTE>
-	<LI><BLOCKQUOTE STYLE="margin-bottom: 0cm">Opettajien hallinta</BLOCKQUOTE>
-	<LI><BLOCKQUOTE STYLE="margin-bottom: 0cm">Teemojen valinta 
-	</BLOCKQUOTE>
-	<LI><BLOCKQUOTE>K&auml;ytt&auml;j&auml;tunnistuksen valinta. (Voit
-	k&auml;ytt&auml;&auml; esim. LDAP-palvelinta k&auml;ytt&auml;j&auml;n
-	tunnistukseen)</BLOCKQUOTE>
-</UL>
-<P>&nbsp;</P>
-<H3><A NAME="cron"></A>9. Aseta cron</H3>
-<BLOCKQUOTE>Jotkut Moodlen modulit vaativat ajastettuja ajoja
+</blockquote>
+<blockquote style="margin-left: 7cm; margin-right: 7cm;"><strong>Paina
+mieleen antamasi ylläpitäjän tunnus ja salasana,
+tarvitset niitä myöhemmin. ;-)</strong></blockquote>
+<blockquote>Kun pääkäyttäjä on luotu pääset
+ylläpito valikkoon , josta löytyy linkit sivuston
+ylläpitämiseksi, kuten:</blockquote>
+<ul>
+	<li><blockquote style="margin-bottom: 0cm;">kurssien lisääminen
+	ja poisto</blockquote>
+	</li><li><blockquote style="margin-bottom: 0cm;">Käyttäjätunnusten
+	hallinta</blockquote>
+	</li><li><blockquote style="margin-bottom: 0cm;">Opettajien hallinta</blockquote>
+	</li><li><blockquote style="margin-bottom: 0cm;">Teemojen valinta 
+	</blockquote>
+	</li><li><blockquote>Käyttäjätunnistuksen valinta. (Voit
+	käyttää esim. LDAP-palvelinta käyttäjän
+	tunnistukseen)</blockquote>
+</li></ul>
+<p> </p>
+<h3><a name="cron"></a>9. Aseta cron</h3>
+<blockquote>Jotkut Moodlen modulit vaativat ajastettuja ajoja
 toimiakseen. Esimerkiksi Foorumit tarkistetaan ajoittain, ja uusista
-viesteist&auml; l&auml;hetet&auml;&auml;n kopiot tilaajille.</BLOCKQUOTE>
-<BLOCKQUOTE>Yksi scripti tekee kaiken tarvittavan ja on nimelt&auml;&auml;n
-admin/cron.php. Sit&auml; ei voida kuitenkaan ajaa automaattisesti,
-vaan sinun pit&auml;&auml; ajastaa scripti ajettavaksi esim. 5
-minuutin v&auml;lein.</BLOCKQUOTE>
-<BLOCKQUOTE>Huomaa ettei ajastettavan koneen tarvitse olla sama jolla
+viesteistä lähetetään kopiot tilaajille.</blockquote>
+<blockquote>Yksi scripti tekee kaiken tarvittavan ja on nimeltään
+admin/cron.php. Sitä ei voida kuitenkaan ajaa automaattisesti,
+vaan sinun pitää ajastaa scripti ajettavaksi esim. 5
+minuutin välein.</blockquote>
+<blockquote>Huomaa ettei ajastettavan koneen tarvitse olla sama jolla
 Moodle on asennettu. Jos palveluntarjoajallasi ole cron-palvelua voit
 ajastaa oman kotikoneesi ajamaan/hakemaan admin/cron.php scriptin
-tietyin v&auml;liajoin.</BLOCKQUOTE>
-<BLOCKQUOTE>Tarkista ensin selaimellasi&nbsp; ett&auml; scripti
-toimii osoitteesta:</BLOCKQUOTE>
-<PRE STYLE="margin-left: 2cm; margin-right: 2cm; margin-bottom: 0.5cm">http://example.com/moodle/admin/cron.php</PRE><H4 STYLE="margin-left: 1cm; margin-right: 1cm; margin-top: 0cm">
-Scrptin ajamisen automatisointi</H4>
-<BLOCKQUOTE>Unix-j&auml;rjestemiss&auml;: k&auml;yt&auml;
-<B>cron</B>ia.Muokkaa cron asetuksia komenolla&nbsp; &quot;crontab
--e&quot;ja lis&auml;&auml; rivi:</BLOCKQUOTE>
-<PRE STYLE="margin-left: 2cm; margin-right: 2cm">*/5 * * * * {komento}
-
-missä {komento} on:
-wget -q -O /dev/null http://example.com/moodle/admin/cron.php
-tai
-lynx -dump http://example.com/moodle/admin/cron.php &gt; /dev/null
-tai
-/opt/bin/php /web/moodle/admin/cron.php</PRE><BLOCKQUOTE>
-Windows j&auml;rjestelmiss&auml;: Helpointa on k&auml;ytt&auml;&auml;
-pakettia <A HREF="http://moodle.com/download/moodle-cron-for-windows.zip">moodle-cron-for-windows.zip</A>
-joka tekee ajastuksesta tosi helppoa. Voit my&ouml;s k&auml;ytt&auml;&auml;
+tietyin väliajoin.</blockquote>
+<blockquote>Tarkista ensin selaimellasi  että scripti
+toimii osoitteesta:</blockquote>
+<pre style="margin-left: 2cm; margin-right: 2cm; margin-bottom: 0.5cm;">http://example.com/moodle/admin/cron.php</pre><h4 style="margin-left: 1cm; margin-right: 1cm; margin-top: 0cm;">
+Scrptin ajamisen automatisointi</h4>
+<blockquote>Unix-järjestemissä: käytä
+<b>cron</b>ia.Muokkaa cron asetuksia komenolla  &quot;crontab
+-e&quot;ja lisää rivi:</blockquote>
+<pre style="margin-left: 2cm; margin-right: 2cm;">*/5 * * * * {komento}<br /><br />missä {komento} on:<br />wget -q -O /dev/null http://example.com/moodle/admin/cron.php<br />tai<br />lynx -dump http://example.com/moodle/admin/cron.php &gt; /dev/null<br />tai<br />/opt/bin/php /web/moodle/admin/cron.php</pre><blockquote>
+Windows järjestelmissä: Helpointa on käyttää
+pakettia <a href="http://moodle.com/download/moodle-cron-for-windows.zip">moodle-cron-for-windows.zip</a>
+joka tekee ajastuksesta tosi helppoa. Voit myös käyttää
 windowsin &quot;Scheduled Tasks&quot;/&quot;Ajastetut
-toiminnot&quot;-toimintoa.<BR>Komento on esim: 
-</BLOCKQUOTE>
-<PRE STYLE="margin-left: 1cm; margin-right: 1cm; margin-bottom: 0.5cm">C:\apache\php\php.exe C:\apache\htdocs\moodle\admin\cron.php</PRE><H3 STYLE="margin-left: 1cm; margin-right: 1cm; margin-top: 0cm">
-<A NAME="course"></A>10. Luo uusi kurssi</H3>
-<BLOCKQUOTE>Nyt kun Moodle on asennettu, voit luoda ensimm&auml;isen
+toiminnot&quot;-toimintoa.<br />Komento on esim: 
+</blockquote>
+<pre style="margin-left: 1cm; margin-right: 1cm; margin-bottom: 0.5cm;">C:\apache\php\php.exe C:\apache\htdocs\moodle\admin\cron.php</pre><h3 style="margin-left: 1cm; margin-right: 1cm; margin-top: 0cm;">
+<a name="course"></a>10. Luo uusi kurssi</h3>
+<blockquote>Nyt kun Moodle on asennettu, voit luoda ensimmäisen
 kurssin. 
-</BLOCKQUOTE>
-<BLOCKQUOTE>Valitse &quot;Luo uusi kurssi&quot; yll&auml;pito
-sivulta.</BLOCKQUOTE>
-<BLOCKQUOTE>T&auml;yt&auml; kussin tiedot, opettaja voi kuitenkin
+</blockquote>
+<blockquote>Valitse &quot;Luo uusi kurssi&quot; ylläpito
+sivulta.</blockquote>
+<blockquote>Täytä kussin tiedot, opettaja voi kuitenkin
 aina halutessaan muuttaa kurssin tietoja, joten sinun ei tarvitse
-k&auml;ytt&auml;&auml; turhaan aikaa p&auml;hk&auml;iless&auml;si
-kurssi kuvauksia tai muuta.</BLOCKQUOTE>
-<BLOCKQUOTE>Paina&nbsp; &quot;Talleta muutokset&quot;, jonka j&auml;lkeen
-sinun pit&auml;&auml; valita kurssille opettaja(t).Voit lis&auml;t&auml;
-opettajaksi ainoastaan k&auml;ytt&auml;j&auml;n joka on jo
-j&auml;rjestelm&auml;ss&auml;. 
-</BLOCKQUOTE>
-<BLOCKQUOTE>Kun olet valinnut opettajan/opettajat kurssi on valmis
-k&auml;ytt&ouml;&ouml;n ja n&auml;kyviss&auml; Moodlen etusivulla.</BLOCKQUOTE>
-<BLOCKQUOTE>Katso&nbsp; &quot;Opettajan k&auml;sikirja&quot;:sta
-lis&auml;tietoja kurssien rakentamisesta.</BLOCKQUOTE>
-<P>&nbsp;</P>
-<P ALIGN=CENTER><A HREF="../var/www/html/moodle/lang/fi/docs/" TARGET="_top"><FONT SIZE=1>Moodle
-Documentation</FONT></A></P>
-<P ALIGN=CENTER><FONT SIZE=1>Version: $Id: install.html,v 1.6
-2003/01/28 03:06:20 moodler Exp $</FONT></P>
-</BODY>
-</HTML>
+käyttää turhaan aikaa pähkäilessäsi
+kurssien kuvauksia tai muuta.</blockquote>
+<blockquote>Paina  &quot;Talleta muutokset&quot;, jonka jälkeen
+sinun pitää valita kurssille opettaja(t).Voit lisätä
+opettajaksi ainoastaan käyttäjän joka on jo
+järjestelmässä. 
+</blockquote>
+<blockquote>Kun olet valinnut opettajan/opettajat kurssi on valmis
+käyttöön ja näkyvissä Moodlen etusivulla.</blockquote>
+<blockquote>Katso  &quot;Opettajan käsikirja&quot;:sta
+lisätietoja kurssien rakentamisesta.</blockquote>
+<p> </p>
+<p align="center"><a target="_top" href="http://www.skto.fi/moodle_test/var/www/html/moodle/lang/fi/docs/"><font size="1">Moodle
+Documentation</font></a></p>
+<p align="center"><font size="1">Version: $Id: install.html,v 1.6
+2003/01/28 03:06:20 moodler Exp $</font></p>

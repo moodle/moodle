@@ -1,11 +1,12 @@
 <?PHP // $Id$ 
-      // countries.php - created with Moodle 1.2 Beta +++ (2004031300)
+      // countries.php - created with Moodle 1.3 development (2004040500)
 
 
 $string['AD'] = 'Andorra';
 $string['AE'] = 'Yhdistyneet arabi emiirikunnat';
 $string['AF'] = 'Afganistan';
 $string['AG'] = 'Antigua ja Barbuda';
+$string['AI'] = 'Angola';
 $string['AL'] = 'Albania';
 $string['AM'] = 'Armenia';
 $string['AN'] = 'Alankomaiden Antillit';

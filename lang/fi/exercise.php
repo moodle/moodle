@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // exercise.php - created with Moodle 1.2 Beta +++ (2004031300)
+      // exercise.php - created with Moodle 1.3 development (2004040500)
 
 
 $string['absent'] = 'Puuttuva';
@@ -146,6 +146,7 @@ $string['verypoor'] = 'Erittäin heikkotasoinen';
 $string['view'] = 'Katsele';
 $string['viewassessment'] = 'Katsele arviointeja';
 $string['warningonamendingelements'] = 'VAROITUS: Palautettuja arviointeja ei ole. <br />ÄLÄ muuta arvosteluperusteiden määrää, asteikkotyyppejä tai arvosteluperusteiden painoarvoja.';
+$string['weightederrorcount'] = 'Painotettu virheiden määrä';
 $string['weightforgradingofassessments'] = 'Arviointien arvostelun painoarvo';
 $string['weightforteacherassessments'] = '$a arviointien painoarvo';
 $string['weights'] = 'Painoarvot';

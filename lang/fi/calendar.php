@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // calendar.php - created with Moodle 1.3 development (2004032800)
+      // calendar.php - created with Moodle 1.3 development (2004040500)
 
 
 $string['april'] = 'Huhtikuu';
@@ -13,6 +13,7 @@ $string['courseevents'] = 'Kurssin tapahtumat';
 $string['dayview'] = 'Päivänäkymä';
 $string['daywithnoevents'] = 'Ei tapahtumia tälle päivälle';
 $string['december'] = 'Joulukuu';
+$string['default'] = 'Oletus';
 $string['deleteevent'] = 'Poista tapahtuma';
 $string['detailedmonthview'] = 'Tarkennettu kuukausinäkymä';
 $string['durationnone'] = 'Ilman kestoa';
@@ -53,6 +54,7 @@ $string['mon'] = 'Ma';
 $string['monday'] = 'Maanantai';
 $string['monthlyview'] = 'Kuukausinäkymä';
 $string['newevent'] = 'Uusi tapahtuma';
+$string['noupcomingevents'] = 'Ei tulevia tapahtumia';
 $string['november'] = 'Marraskuu';
 $string['october'] = 'Lokakuu';
 $string['oneevent'] = '1 tapahtuma';

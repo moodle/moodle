@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // lesson.php - created with Moodle 1.3 development (2004032800)
+      // lesson.php - created with Moodle 1.3 development (2004040500)
 
 
 $string['actionaftercorrectanswer'] = 'Toiminto oikean vastauksen jälkeen';
@@ -33,7 +33,7 @@ $string['gradeis'] = 'Arvosana on $a';
 $string['handlingofretakes'] = 'Useiden yritysten arvioinnin käsittelytapa';
 $string['here'] = 'tänne';
 $string['importquestions'] = 'Tuo kysymykset';
-$string['jumpto'] = 'Hyppää kohtaan';
+$string['jump'] = 'Siirry';
 $string['maximumnumberofanswersbranches'] = 'Vastausten/haarojen maksimimäärä';
 $string['maximumnumberofattempts'] = 'Vastausyritysten maksimimäärä';
 $string['minimumnumberofquestions'] = 'Kysymysten minimimäärä';
@@ -66,6 +66,8 @@ $string['pleaseenteryouranswerinthebox'] = 'Kirjoita vastauksesi';
 $string['pleasematchtheabovepairs'] = 'Yhdistä yllä olevien listojen kohdat pareiksi';
 $string['questionoption'] = 'Kysymyksen vaihtoehtoinen toiminta';
 $string['questiontype'] = 'Kysymyksen tyyppi';
+$string['reached'] = 'saavutettu';
+$string['redisplaypage'] = 'Näytä sivu uudelleen';
 $string['response'] = 'Palaute';
 $string['sanitycheckfailed'] = 'Tarkistus epäonnistui: tämä yritys on poistettu';
 $string['savepage'] = 'Tallenna sivu';
@@ -76,6 +78,7 @@ $string['thatsthecorrectanswer'] = 'Vastaus on oikein';
 $string['thatsthewronganswer'] = 'Vastaus on väärin';
 $string['thefollowingpagesjumptothispage'] = 'Seuraavat sivut hyppäävät tälle sivulle';
 $string['thispage'] = 'Tämä sivu';
+$string['useeditor'] = 'Käytä editoria';
 $string['usemaximum'] = 'Valitse korkein';
 $string['usemean'] = 'Käytä keskiarvoa';
 $string['youhaveseen'] = 'Olet aikaisemmin aloittanut tämän oppitunnin.<br />Haluatko jatkaa sivulta, jolle viimeksi jäit?';
