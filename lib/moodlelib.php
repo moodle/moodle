@@ -3075,12 +3075,14 @@ function site_scale_used($scaleid,&$courses) {
 
     $return = 0;
 
+    if (!is_array($courses) || count($courses) == 0) {
+        $courses = get_courses("all","c.sortorder ASC","c.id,c.shortname");
+    }
+
     if (!empty($scaleid)) {
-        if (!is_array($courses) || count($courses) == 0) {
-            if ($courses = get_courses("all","c.sortorder ASC","c.id,c.shortname")) {
-                foreach ($courses as $course) {
-                    $return += course_scale_used($course->id,$scaleid);
-                }
+        if (is_array($courses) && count($courses) > 0) {
+            foreach ($courses as $course) {
+                $return += course_scale_used($course->id,$scaleid);
             }
         }
     }
