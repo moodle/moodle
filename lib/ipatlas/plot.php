@@ -6,6 +6,8 @@ include("plot.inc");
 if (isset($user)) {
     $user = get_record("user", "id", $user);
     $username = "<B>$user->firstname $user->lastname</B>";
+} else {
+    $username = "";
 }
 
 if($warnings == "1") {
