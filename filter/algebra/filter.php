@@ -150,6 +150,7 @@ function algebra_filter ($courseid, $text) {
            $algebra = str_replace('<>','#',$algebra);
            $algebra = str_replace('<=','%',$algebra);
            $algebra = str_replace('>=','!',$algebra);
+           $algebra = preg_replace('/([=><%!#] *)-/',"\$1 zeroplace -",$algebra);
            $algebra = str_replace('delta','zdelta',$algebra);
            $algebra = str_replace('beta','bita',$algebra);
            $algebra = str_replace('theta','thita',$algebra);
@@ -169,6 +170,7 @@ function algebra_filter ($courseid, $text) {
            if (preg_match('/parsehilight/',$texexp)) {
              $text = str_replace( $matches[0][$i],"<b>Syntax error:</b> " . $texexp,$text);
            } else if ($texexp) {
+              $texexp = str_replace('zeroplace','',$texexp);
               $texexp = str_replace('#','\not= ',$texexp);
               $texexp = str_replace('%','\leq ',$texexp);
               $texexp = str_replace('!','\geq ',$texexp);

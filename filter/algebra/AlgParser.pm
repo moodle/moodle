@@ -42,7 +42,7 @@ $binoper1 = '[-+=><%!#]';
 $openparen = '[{(\\[]';
 $closeparen = '[})\\]]';
 $varname = '[A-Za-z](?:_[0-9]+)?';
-$specialvalue = '(?:e|pi|da|db|dc|de|df|dg|dh|di|dj|dk|dl|dm|dn|do|dp|dq|dr|ds|dt|du|dv|dw|dx|dy|dz|infty|alpha|bita|gamma|zita|thita|iota|kappa|lambda|mu|nu|xi|rho|sigma|tau|phi|chi|psi|omega|zepslon|zdelta|xeta|zupslon)';
+$specialvalue = '(?:e|pi|da|db|dc|de|df|dg|dh|di|dj|dk|dl|dm|dn|do|dp|dq|dr|ds|dt|du|dv|dw|dx|dy|dz|infty|alpha|bita|gamma|zita|thita|iota|kappa|lambda|mu|nu|xi|rho|sigma|tau|phi|chi|psi|omega|zepslon|zdelta|xeta|zupslon|zeroplace)';
 $numberplain = '(?:\d+(?:\.\d*)?|\.\d+)';
 $numberE = '(?:' . $numberplain . 'E[-+]?\d+)';
 $number = '(?:' . $numberE . '|' . $numberplain . ')';

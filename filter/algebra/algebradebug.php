@@ -74,6 +74,7 @@ function algebra2tex($algebra) {
   $algebra = str_replace('<>','#',$algebra);
   $algebra = str_replace('<=','%',$algebra);
   $algebra = str_replace('>=','!',$algebra);
+  $algebra = preg_replace('/([=><%!#] *)-/',"\$1 zeroplace -",$algebra);
   $algebra = str_replace('delta','zdelta',$algebra);
   $algebra = str_replace('beta','bita',$algebra);
   $algebra = str_replace('theta','thita',$algebra);
@@ -95,6 +96,7 @@ function algebra2tex($algebra) {
 }
 
 function refineTeX($texexp) {
+  $texexp = str_replace('zeroplace','',$texexp);
   $texexp = str_replace('#','\not= ',$texexp);
   $texexp = str_replace('%','\leq ',$texexp);
   $texexp = str_replace('!','\geq ',$texexp);
