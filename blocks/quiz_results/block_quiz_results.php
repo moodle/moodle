@@ -56,6 +56,7 @@ class block_quiz_results extends block_base {
         if(empty($grades)) {
             // No grades, sorry
             // The block will hide itself in this case
+            return $this->content;
         }
 
         $groupmode = NOGROUPS;
