@@ -144,6 +144,9 @@ class Wiki {
           break;  
         }  
       }     	
+
+    // apply formatting to remainder of line
+    $line = $this->line_replace( $line );
       
     // generate appropriate list tag
     $ltag = "";
@@ -172,13 +175,13 @@ class Wiki {
     }
     
     // ---- (at least) means a <HR>
-    $line = eregi_replace( "^-{4}.*", "<hr />", $line );
+    $line = eregi_replace( "^-{4}.*", "<div class=\"hr\"><hr /></div>", $line );
     
     // is this a list line (starts with * # ; :)    
     if (eregi( "^[*#;:] ", $line )) {
       $line = $this->do_list( $line );	        
     }    	
-    
+
    // typographic conventions
     $line = eregi_replace( "--", "&#8212;", $line );
     $line = eregi_replace( " - ", " &#8211; ", $line );
@@ -289,6 +292,20 @@ class Wiki {
         	$buffer = $buffer . eregi_replace( "^\%","",$line) . "\n";
         	$this->block_state = STATE_NOTIKI;
         } 	
+        else
+        if (eregi("^Q. ",$line) ) {
+          // Question - para with a question class
+          $buffer = $buffer . "<p class=\"question\">\n";
+          $buffer = $buffer . eregi_replace( "^Q. ","",$line) . "\n";
+          $this->block_state = STATE_PARAGRAPH;
+        }
+        else
+        if (eregi("^A. ",$line) ) {
+          // Answer - para with an answer class
+          $buffer = $buffer . "<p class=\"answer\">\n";
+          $buffer = $buffer . eregi_replace( "^A. ","",$line ) . "\n";
+          $this->block_state = STATE_PARAGRAPH;
+        }
         else {
           // ordinary paragraph
           $buffer = $buffer . "<p>\n";
