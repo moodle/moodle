@@ -1482,6 +1482,9 @@ function enrol_student($userid, $courseid, $timestart=0, $timeend=0) {
         return update_record('user_students', $student);
 
     } else {
+        require_once("../mod/forum/lib.php");
+        forum_add_user($userid, $courseid);
+
         $student->userid = $userid;
         $student->course = $courseid;
         $student->timestart = $timestart;
