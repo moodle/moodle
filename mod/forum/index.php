@@ -110,7 +110,7 @@
     if ($course->category) {    // Only real courses have learning forums
         // Add extra field for section number, at the front
         array_unshift($table->head, "");
-        array_unshift($table->align, "CENTER");
+        array_unshift($table->align, "center");
     
         if ($learningforums = get_all_instances_in_course("forum", $course->id)) {
             foreach ($learningforums as $key => $forum) {
@@ -123,7 +123,7 @@
             foreach ($learningforums as $forum) {
                 $count = count_records("forum_discussions", "forum", "$forum->id");
     
-                $forum->intro = forum_shorten_post($forum->intro);
+                $forum->intro = format_text(forum_shorten_post($forum->intro));
     
                 if (!$forum->section) {     // some forums are in the "0" section
                     $forum->section = "";
