@@ -187,6 +187,7 @@ function clean_param($param, $options) {
         } else {
             $param =''; // not really ok
         }
+        $options ^= PARAM_URL; // Turn off the URL bit so that simple PARAM_URLs don't test true for PARAM_LOCALURL
     }
 
     if ($options & PARAM_LOCALURL) {
