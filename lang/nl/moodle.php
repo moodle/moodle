@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.3 Beta (2004051100)
+      // moodle.php - created with Moodle 1.3 Beta + (2004051600)
 
 
 $string['action'] = 'Actie';
@@ -283,6 +283,7 @@ $string['downloadtext'] = 'Download in tekst formaat';
 $string['doyouagree'] = 'Heb je deze voorwaarden gelezen en begrepen?';
 $string['edit'] = '$a bewerken';
 $string['editcoursesettings'] = 'Wijzig vakinstellingen';
+$string['editfiles'] = 'Bewerk bestanden';
 $string['editgroupprofile'] = 'Wijzig groepsprofiel';
 $string['editinga'] = 'Een $a bewerken';
 $string['editmyprofile'] = 'Wijzig profiel';
@@ -414,6 +415,7 @@ $string['grades'] = 'Cijfers';
 $string['group'] = 'Groep';
 $string['groupadd'] = 'Nieuwe groep';
 $string['groupaddusers'] = 'Voeg selectie toe aan groep';
+$string['groupfor'] = 'voor groep';
 $string['groupinfo'] = 'Info over geselecteerde groep';
 $string['groupinfomembers'] = 'Info over geselecteerde leden';
 $string['groupinfopeople'] = 'Info over geselecteerde personen';

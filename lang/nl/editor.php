@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.2 + (2004032100)
+      // editor.php - created with Moodle 1.3 Beta + (2004051600)
 
 
 $string['about'] = 'Info';
@@ -27,6 +27,7 @@ $string['cut'] = 'Knippen';
 $string['delete'] = 'Verwijder';
 $string['filebrowser'] = 'Bladeren in bestanden';
 $string['forecolor'] = 'Tekstkleur';
+$string['fullscreen'] = 'Volledig scherm';
 $string['heading'] = 'Koptekst (h)';
 $string['height'] = 'Hoogte';
 $string['hilitecolor'] = 'Achtergrondkleur';
@@ -47,6 +48,7 @@ $string['justifyleft'] = 'Links uitlijnen';
 $string['justifyright'] = 'Rechts uitlijnen';
 $string['layout'] = 'Opmaak';
 $string['left'] = 'Links';
+$string['lefttoright'] = 'Richting van links naar rechts';
 $string['linkproperties'] = 'Eigenschappen link';
 $string['linktarget'] = 'Doel';
 $string['linktargetblank'] = 'Nieuw venster';
@@ -57,6 +59,7 @@ $string['linktargettop'] = 'Zelfde venster';
 $string['linktitle'] = 'Titel';
 $string['linkurl'] = 'URL';
 $string['middle'] = 'Midden';
+$string['minimize'] = 'Verklein bewerkingsscherm';
 $string['move'] = 'Verplaats';
 $string['normal'] = 'Standaard';
 $string['notimage'] = 'Het geselecteerde bestand is geen afbeelding. Kies een afbeelding.';
@@ -76,7 +79,9 @@ $string['redo'] = 'Opnieuw';
 $string['removelink'] = 'Verwijder link';
 $string['rename'] = 'Hernoem';
 $string['right'] = 'Rechts';
+$string['righttoleft'] = 'Richting van recht naar links';
 $string['rows'] = 'Rijen';
+$string['selectcolor'] = 'Kies kleur';
 $string['selection'] = 'Selectie';
 $string['showhelp'] = 'Help ';
 $string['size'] = 'Grootte';
@@ -95,6 +100,7 @@ $string['unorderedlist'] = 'Lijst met opsommingstekens';
 $string['upload'] = 'Upload';
 $string['vertical'] = 'Verticaal';
 $string['width'] = 'Breedte';
+$string['wordclean'] = 'Opschonen Word HTML-document';
 $string['zip'] = 'Zip';
 
 ?>

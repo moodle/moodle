@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.3 development (2004041800)
+      // quiz.php - created with Moodle 1.3 Beta + (2004051600)
 
 
 $string['acceptederror'] = 'Geaccepteerde fout';
@@ -120,6 +120,7 @@ $string['noquestions'] = 'Er zijn nog geen vragen toegevoegd';
 $string['noresponse'] = 'Geen reactie';
 $string['noreview'] = 'Je mag deze test niet opniew bekijken';
 $string['noreviewuntil'] = 'Tot $a mag je deze test niet opnieuw bekijken';
+$string['notenoughanswers'] = 'Voor dit type vraag zijn minstens $a antwoorden nodig';
 $string['notenoughsubquestions'] = 'Er zijn onvoldoende deelvragen gedefinieerd!<br>Wil je teruggaan en deze vraag herstellen?';
 $string['numerical'] = 'Numeriek';
 $string['paragraphquestion'] = 'Vraagparagraaf niet ondersteund op lijn $a. De vraag wordt genegeerd';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.3 development (2004050300)
+      // resource.php - created with Moodle 1.3 Beta + (2004051600)
 
 
 $string['addresource'] = 'Voeg bron toe';
@@ -17,7 +17,7 @@ $string['configpopupscrollbars'] = 'Wil je dat standaard scrollen in popup-venst
 $string['configpopupstatus'] = 'Wil je dat popup-vensters standaard een statusbalk hebben?';
 $string['configpopuptoolbar'] = 'Wil je dat popup-vensters standaard een knoppenbalk hebben?';
 $string['configpopupwidth'] = 'Hoe breed zou een popup-venster standaard moeten zijn?';
-$string['configwebsearch'] = 'Wanneer je een URL als webpagina of link toevoegd, wordt deze plaats aangeboden als een site om de gebruiker te helpen de URL te zoeken.';
+$string['configwebsearch'] = 'Wanneer je een URL als webpagina of link toevoegt, wordt deze plaats aangeboden als een site om de gebruiker te helpen de URL te zoeken.';
 $string['directlink'] = 'Rechtstreekse link naar dit bestand';
 $string['directoryinfo'] = 'Alle bestanden in de gekozen map zullen getoond worden.';
 $string['editingaresource'] = 'Bewerk een bron';
@@ -28,6 +28,7 @@ $string['fetchclienterror'] = 'Er is een fout opgetreden bij je webclient, wanne
 $string['fetcherror'] = 'Er is een fout gevonden tijdens het ophalen van de webpagina.';
 $string['fetchservererror'] = 'Er is een fout gevonden bij de webserver terwijl je probeerde een webpagina op te halen (waarschijnlijk een programmafout).</p>';
 $string['filename'] = 'Bestandsnaam';
+$string['filtername'] = 'Automatisch linken van bronnen';
 $string['fulltext'] = 'Volledige tekst';
 $string['htmlfragment'] = 'HTML fragment';
 $string['maindirectory'] = 'Hoofdmap';
