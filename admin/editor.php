@@ -39,7 +39,7 @@
         print_heading($streditorsettings);
         print_simple_box("<center>$streditorsettingshelp</center>","center","50%");
         print("<br />\n");
-        print_simple_box_start("center", "", "$THEME->cellheading");
+        print_simple_box_start("center");
         include("editor.html");
         print_simple_box_end();
         print_footer();

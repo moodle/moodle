@@ -104,10 +104,10 @@
 
     echo "</b></p></center>";
         
-    print_simple_box_start("center", "100%", "$THEME->cellheading");
+    print_simple_box_start("center", "100%");
     print_heading($options[$auth]);
 
-    print_simple_box_start("center", "60%", "$THEME->cellcontent");
+    print_simple_box_start("center", "60%");
     print_string("auth_$auth"."description", "auth");
     print_simple_box_end();
 

@@ -65,10 +65,10 @@
     echo "</b></p></div>";
     
 /// Print current enrolment type description    
-    print_simple_box_start("center", "80%", "$THEME->cellheading");
+    print_simple_box_start("center", "80%");
     print_heading($options[$enrol]);
 
-    print_simple_box_start("center", "60%", "$THEME->cellcontent");
+    print_simple_box_start("center", "60%");
     print_string("description", "enrol_$enrol");
     print_simple_box_end();
 

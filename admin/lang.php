@@ -218,16 +218,16 @@
         if ($editable) {
             echo "<form name=\"$currentfile\" action=\"lang.php\" method=\"post\">";
         }
-        echo "<table width=\"100%\" cellpadding=\"2\" cellspacing=\"3\" border=\"0\">";
+        echo "<table width=\"100%\" cellpadding=\"2\" cellspacing=\"3\" border=\"0\" class=\"generalbox\">";
         foreach ($enstring as $key => $envalue) {
             $envalue = nl2br(htmlspecialchars($envalue));
             $envalue = preg_replace('/(\$a\-\&gt;[a-zA-Z0-9]*|\$a)/', '<b>$0</b>', $envalue);  // Make variables bold. 
             $envalue = str_replace("%%","%",$envalue);
             $envalue = str_replace("\\","",$envalue);              // Delete all slashes
 
-            echo "\n\n<tr>";
-            echo "<td dir=\"ltr\" lang=\"en\" width=\"20%\" bgcolor=\"$THEME->cellheading\" nowrap=\"nowrap\" valign=\"top\">$key</td>\n";
-            echo "<td dir=\"ltr\" lang=\"en\" width=\"40%\" bgcolor=\"$THEME->cellheading\" valign=\"top\">$envalue</td>\n";
+            echo "\n\n".'<tr>';
+            echo '<td dir="ltr" lang="en" width="20%" nowrap="nowrap" valign="top">'.$key.'</td>'."\n";
+            echo '<td dir="ltr" lang="en" width="40%" valign="top">'.$envalue.'</td>'."\n";
 
             $value = $string[$key];
             $value = str_replace("\r","",$value);              // Bad character caused by Windows
@@ -239,10 +239,10 @@
             $value = str_replace(">","&gt;",$value);
             $value = str_replace('"',"&quot;",$value);
 
-            $cellcolour = $value ? $THEME->cellcontent: $THEME->highlight;
+            $cellcolour = $value ? '': 'class="highlight"';
 
             if ($editable) {
-                echo "<td width=\"40%\" bgcolor=\"$cellcolour\" valign=\"top\">\n";
+                echo '<td width="40%" '.$cellcolour.' valign="top">'."\n";
                 if (isset($string[$key])) {
                     $valuelen = strlen($value);
                 } else {
@@ -251,29 +251,29 @@
                 $cols=50;
                 if (strstr($value, "\r") or strstr($value, "\n") or $valuelen > $cols) {
                     $rows = ceil($valuelen / $cols);
-                    echo "<textarea name=\"string-$key\" cols=\"$cols\" rows=\"$rows\">$value</textarea>\n";
+                    echo '<textarea name="string-'.$key.'" cols="'.$cols.'" rows="'.$rows.'">'.$value.'</textarea>'."\n";
                 } else {
                     if ($valuelen) {
                         $cols = $valuelen + 2;
                     }
-                    echo "<input type=\"text\" name=\"string-$key\" value=\"$value\" size=\"$cols\"></td>";
+                    echo '<input type="text" name="string-'.$key.'" value="'.$value.'" size="'.$cols.'"></td>';
                 }
-                echo "</td>\n";
+                echo '</td>';
 
             } else {
-                echo "<td width=\"40%\" bgcolor=\"$cellcolour\" valign=\"top\">$value</td>\n";
+                echo '<td width="40%" bgcolor="'.$cellcolour.'" valign="top">'.$value.'</td>';
             }
         }
         if ($editable) {
-            echo "<tr><td colspan=\"2\">&nbsp;<td><br />";
+            echo '<tr><td colspan="2">&nbsp;<td><br />';
             echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
-            echo "    <input type=\"hidden\" name=\"currentfile\" value=\"$currentfile\">";
-            echo "    <input type=\"hidden\" name=\"mode\" value=\"compare\">";
-            echo "    <input type=\"submit\" name=\"update\" value=\"".get_string("savechanges").": $currentfile\">";
-            echo "</td></tr>";
+            echo '    <input type="hidden" name="currentfile" value="'.$currentfile.'">';
+            echo '    <input type="hidden" name="mode" value="compare">';
+            echo '    <input type="submit" name="update" value="'.get_string('savechanges').': '.$currentfile.'">';
+            echo '</td></tr>';
         }
-        echo "</table>";
-        echo "</form>";
+        echo '</table>';
+        echo '</form>';
 
     }
 

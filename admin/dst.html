@@ -20,13 +20,10 @@
         ?>
         </div>
       </td>
-      <td style="vertical-align: middle;">
-        <div id="dstdisplayboard" style="display: none; margin: 1em; padding: 5px; border: 1px black solid; text-align: center; background-color: <?php echo $THEME->cellcontent; ?>; -moz-border-radius: 4px;"> </div>
-        <div style="text-align: center; margin: 1em;">
+      <td style="vertical-align: middle;text-align: center;">
           <input type="submit" name="mode_add" value="<?php print_string('add'); ?>..." />
           <input type="submit" name="mode_edit" value="<?php print_string('edit'); ?>" <?php if(empty($presets)) echo 'disabled="disabled"';?> />
           <input type="submit" name="mode_delete" value="<?php print_string('delete'); ?>" <?php if(empty($presets)) echo 'disabled="disabled"';?> />
-        </div>
       </td>
     </tr>
   </tbody>

@@ -212,7 +212,7 @@
                  6 => get_string('saturday', 'calendar')
             );
             print_heading(get_string('editingdstpreset', 'admin'));
-            print_simple_box_start('center', '70%', $THEME->cellheading);
+            print_simple_box_start('center', '70%');
             include('./dst_edit.html');
             print_simple_box_end();
 
@@ -231,7 +231,7 @@
             }
         }
         print_heading($strcalendardstpresets);
-        print_simple_box_start('center', '70%', $THEME->cellheading);
+        print_simple_box_start('center', '70%');
         include('./dst.html');
         print_simple_box_end();
     }

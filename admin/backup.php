@@ -118,11 +118,11 @@
     print_simple_box("<center>".get_string("adminhelpbackup")."</center>", "center", "50%");
     echo "<br />";
 
-    print_simple_box_start("center", "", "$THEME->cellheading");
+    print_simple_box_start("center");
 
     //Check for required functions...
-    if(!function_exists('utf8_encode')) {
-        print_simple_box("<font color=\"red\">You need to add XML support to your PHP installation</font>", "center", "70%", "$THEME->cellheading", "20", "noticebox");
+    if (!function_exists('utf8_encode')) {
+        notify("You need to add XML support to your PHP installation");
     } 
     include ("$CFG->dirroot/backup/config.html");
 

@@ -51,7 +51,7 @@
     print_simple_box("<center>".get_string("configwarning")."</center>", "center", "50%");
     echo "<br />";
 
-    print_simple_box_start("center", "", "$THEME->cellheading");
+    print_simple_box_start("center", "");
 	include("$CFG->dirroot/mod/$module/config.html");
     print_simple_box_end();
 

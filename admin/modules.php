@@ -144,14 +144,6 @@
 
 /// Print the table of all modules
 
-    if (empty($THEME->custompix)) {
-        $pixpath = "../pix";
-        $modpixpath = "../mod";
-    } else {
-        $pixpath = "../theme/$CFG->theme/pix";
-        $modpixpath = "../theme/$CFG->theme/pix/mod";
-    }
-
     $table->head  = array ($stractivitymodule, $stractivities, $strversion, "$strhide/$strshow", $strdelete, $strsettings);
     $table->align = array ("LEFT", "RIGHT", "LEFT", "CENTER", "CENTER", "CENTER");
     $table->wrap = array ("NOWRAP", "", "", "", "","");
@@ -160,7 +152,7 @@
 
     foreach ($modulebyname as $modulename => $module) {
 
-        $icon = "<img src=\"$modpixpath/$module->name/icon.gif\" hspace=\"10\" height=\"16\" width=\"16\" border=\"0\" alt=\"\" />";
+        $icon = "<img src=\"$CFG->modpixpath/$module->name/icon.gif\" hspace=\"10\" height=\"16\" width=\"16\" border=\"0\" alt=\"\" />";
 
         $delete = "<a href=\"modules.php?delete=$module->name&sesskey=$USER->sesskey\">$strdelete</a>";
 
@@ -174,11 +166,11 @@
 
         if ($module->visible) {
             $visible = "<a href=\"modules.php?hide=$module->name&amp;sesskey=$USER->sesskey\" title=\"$strhide\">".
-                       "<img src=\"$pixpath/i/hide.gif\" align=\"middle\" height=\"16\" width=\"16\" border=\"0\" alt=\"\" /></a>";
+                       "<img src=\"$CFG->pixpath/i/hide.gif\" align=\"middle\" height=\"16\" width=\"16\" border=\"0\" alt=\"\" /></a>";
             $class = "";
         } else {
             $visible = "<a href=\"modules.php?show=$module->name&amp;sesskey=$USER->sesskey\" title=\"$strshow\">".
-                       "<img src=\"$pixpath/i/show.gif\" align=\"middle\" height=\"16\" width=\"16\" border=\"0\" alt=\"\" /></a>";
+                       "<img src=\"$CFG->pixpath/i/show.gif\" align=\"middle\" height=\"16\" width=\"16\" border=\"0\" alt=\"\" /></a>";
             $class = "class=\"dimmed_text\"";
         }
         if ($module->name == "forum") {

@@ -156,15 +156,13 @@
     }
 
     if (!empty($CFG->enablerssfeeds)) {  //Defined in admin/variables page
-        if (file_exists("$CFG->dirroot/rss/rsslib.php")) {
-            include_once("$CFG->dirroot/rss/rsslib.php");
-            mtrace("Running rssfeeds if required...");
+        include_once("$CFG->libdir/rsslib.php");
+        mtrace("Running rssfeeds if required...");
 
-            if ( ! cron_rss_feeds()) {
-                mtrace("Something went wrong while generating rssfeeds!!!");
-            } else {
-                mtrace("Rssfeeds finished");
-            }
+        if ( ! cron_rss_feeds()) {
+            mtrace("Something went wrong while generating rssfeeds!!!");
+        } else {
+            mtrace("Rssfeeds finished");
         }
     }
 

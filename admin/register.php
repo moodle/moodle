@@ -47,7 +47,7 @@
 
 /// Print the form
 
-    print_simple_box_start("center", "", "$THEME->cellheading");
+    print_simple_box_start("center", "");
 
     echo "<form name=\"form\" action=\"http://moodle.org/register/\" method=\"post\">\n";
     echo "<table cellpadding=\"9\" border=\"0\">\n";

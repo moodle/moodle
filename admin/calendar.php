@@ -104,7 +104,7 @@
 
     // Main display starts here
 
-    print_simple_box_start('center', '100%', $THEME->cellheading);
+    print_simple_box_start('center');
     include('./calendar.html');
     print_simple_box_end();
 

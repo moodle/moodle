@@ -126,7 +126,7 @@
     $usehtmleditor = can_use_html_editor();
     $defaultformat = FORMAT_HTML;
 
-    print_simple_box_start("center", "", "$THEME->cellheading");
+    print_simple_box_start("center", "");
     include("site.html");
     print_simple_box_end();
 

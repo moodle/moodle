@@ -273,7 +273,7 @@
 
     $stradministration = get_string("administration");
     print_header("$site->shortname: $stradministration","$site->fullname", "$stradministration");
-    print_simple_box_start("center", "100%", "$THEME->cellcontent2", 20);
+    print_simple_box_start('center', '100%', '', 20);
     print_heading($stradministration);
 
     if (!empty($CFG->upgrade)) {  // Print notice about extra upgrading that needs to be done

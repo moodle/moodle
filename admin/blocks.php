@@ -140,16 +140,6 @@
 
 /// Print the table of all blocks
 
-    if (empty($THEME->custompix)) {
-        $pixpath = '../pix';
-        // [pj] This is not used anywhere, but I'm leaving it in for the future
-        //$modpixpath = '../mod';
-    } else {
-        $pixpath = '../theme/'.$CFG->theme.'/pix';
-        // [pj] This is not used anywhere, but I'm leaving it in for the future
-        //$modpixpath = '../theme/'.$CFG->theme.'/pix/mod';
-    }
-
     $table->head  = array ($strname, $strcourses, $strversion, $strhide.'/'.$strshow, $strmultiple, $strdelete, $strsettings);
     $table->align = array ('LEFT', 'RIGHT', 'LEFT', 'CENTER', 'CENTER', 'CENTER', 'CENTER');
     $table->wrap = array ('NOWRAP', '', '', '', '', '', '');
@@ -158,8 +148,6 @@
 
     foreach ($blockbyname as $blockname => $blockid) {
 
-        // [pj] This is not used anywhere, but I'm leaving it in for the future
-        //$icon = "<img src=\"$modpixpath/$block->name/icon.gif\" hspace="10" height="16" width="16" border="0">";
         $blockobject = $blockobjects[$blockid];
 
         $delete = '<a href="blocks.php?delete='.$blockid.'&sesskey='.$USER->sesskey.'">'.$strdelete.'</a>';
@@ -174,10 +162,10 @@
 
         if ($blocks[$blockid]->visible) {
             $visible = '<a href="blocks.php?hide='.$blockid.'&sesskey='.$USER->sesskey.'" title="'.$strhide.'">'.
-                       '<img src="'.$pixpath.'/i/hide.gif" style="height: 16px; width: 16px;" alt=\"\" /></a>';
+                       '<img src="'.$CFG->pixpath.'/i/hide.gif" style="height: 16px; width: 16px;" alt=\"\" /></a>';
         } else {
             $visible = '<a href="blocks.php?show='.$blockid.'&sesskey='.$USER->sesskey.'" title="'.$strshow.'">'.
-                       '<img src="'.$pixpath.'/i/show.gif" style="height: 16px; width: 16px;" alt=\"\" /></a>';
+                       '<img src="'.$CFG->pixpath.'/i/show.gif" style="height: 16px; width: 16px;" alt=\"\" /></a>';
             $class = ' class="dimmed_text"'; // Leading space required!
         }
         if ($blockobject->instance_allow_multiple()) {
