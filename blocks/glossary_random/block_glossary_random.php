@@ -22,6 +22,14 @@ class block_glossary_random extends block_base {
         } else {    
             $this->title = $this->config->title;
         }   
+
+		if (empty($this->config->glossary)) {
+            return false;
+        }
+
+		if (!isset($this->config->nexttime)) {
+            $this->config->nexttime = 0;
+        }
         
         //check if it's time to put a new entry in cache
 		if (time() > $this->config->nexttime) {
@@ -44,6 +52,9 @@ class block_glossary_random extends block_base {
                 case LASTMODIFIED:
 					$i=$numberofentries;
 					break;
+
+                default:
+                    $i = 0;
 					
 			}
 							
@@ -119,6 +130,10 @@ class block_glossary_random extends block_base {
 				
 		$this->content = new stdClass;
         $this->content->text = $this->config->cache;
+
+		if (empty($this->config->glossary)) {
+            return $this->content;
+        }
         
         // place link to glossary in the footer if the glossary is visible        
         $glossaryid = $this->config->glossary;
@@ -151,11 +166,13 @@ class block_glossary_random extends block_base {
     } 
 	
     function hide_header() {
+		if (empty($this->config->title)) {
+            return false;
+        }
         if ($this->config->title == "") {
             return true;
-        } else {
-            return false;
-        }    
+        }
+        return false;
     }
 	
 }
