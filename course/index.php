@@ -272,7 +272,7 @@
     /// Print link to create a new course
     echo "<center>";
     unset($options);
-    $option["category"] = $category->id;
+    $options["category"] = $category->id;
     print_single_button("edit.php", $options, get_string("addnewcourse"), "get");
     echo "<br />";
     echo "</center>";
