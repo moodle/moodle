@@ -1,4 +1,4 @@
-<!-- Ce fichier est en cours de traduction. Il sera mis à jour petit à petit -->
+<!-- Ce fichier est en cours de traduction. Il sera mis ı jour petit ı petit -->
 <head>
     
 <title>Documentation Moodle : Installation</title>
@@ -11,85 +11,85 @@
 <body bgcolor="#FFFFFF">
 <h1>Installation de Moodle</h1>
 <blockquote>
-  <p>Ce document explique une première installation de Moodle. Certaines étapes sont
-  décrites en détails, afin de couvrir la grande variété des petites particularités des
-  différents serveurs web. C'est pourquoi ce document vous semblera peut-être long et compliqué.
-  Ne vous laissez pas décourager pour autant - la mise en place de Moodle est d'habitude
+  <p>Ce document explique une premiËre installation de Moodle. Certaines Ètapes sont
+  dÈcrites en dÈtails, afin de couvrir la grande variÈtÈ des petites particularitÈs des
+  diffÈrents serveurs web. C'est pourquoi ce document vous semblera peut-Ítre long et compliquÈ.
+  Ne vous laissez pas dÈcourager pour autant - la mise en place de Moodle est d'habitude
   une affaire de minutes !</p>
-  <p>Prenez le temps d'étudier attentivement ces instructions - cela vous fera gagner du temps
-  tôt ou tard.</p>
-  <p>Voici les différentes sections de ce document :</p>
+  <p>Prenez le temps d'Ètudier attentivement ces instructions - cela vous fera gagner du temps
+  tÙt ou tard.</p>
+  <p>Voici les diffÈrentes sections de ce document :</p>
   <ol>
-    <li><a href="#requirements">Logiciels et réglages nécessaires</a></li>
-    <li><a href="#downloading">Téléchargement</a></li>
+    <li><a href="#requirements">Logiciels et rÈglages nÈcessaires</a></li>
+    <li><a href="#downloading">TÈlÈchargement</a></li>
     <li><a href="#site">Structure du site</a></li>
-    <li><a href="#data">Créer un répertoire de données</a></li>
-    <li><a href="#database">Créer une base de données</a></li>
-    <li><a href="#webserver">Vérifier les réglages de votre serveur web</a></li>
+    <li><a href="#data">CrÈer un rÈpertoire de donnÈes</a></li>
+    <li><a href="#database">CrÈer une base de donnÈes</a></li>
+    <li><a href="#webserver">VÈrifier les rÈglages de votre serveur web</a></li>
     <li><a href="#config">Modifier config.php</a></li>
     <li><a href="#admin">Visiter la page d'administration</a></li>
     <li><a href="#cron">Mettre en place un cron</a></li>
-    <li><a href="#course">Créer un nouveau cours</a></li>
+    <li><a href="#course">CrÈer un nouveau cours</a></li>
   </ol>
   <p>&nbsp;</p>
 </blockquote>
-<h3 class="sectionheading"><a name="requirements"></a>1. Logiciels et réglages nécessaires</h3>
+<h3 class="sectionheading"><a name="requirements"></a>1. Logiciels et rÈglages nÈcessaires</h3>
 <blockquote> 
-  <p>Moodle est principalement développé sur Linux avec Apache, MySQL et PHP (environnement
-  appelé parfois plateforme LAMP), mais est aussi testé régulièrement avec PostgreSQL 
-  et sur les systèmes d'exploitation Windows XP, Mac OS X et Netware 6.</p>
-  <p>Les logiciels et réglages nécessaires pour Moodle sont les suivants :</p>
+  <p>Moodle est principalement dÈveloppÈ sur Linux avec Apache, MySQL et PHP (environnement
+  appelÈ parfois plateforme LAMP), mais est aussi testÈ rÈguliËrement avec PostgreSQL 
+  et sur les systËmes d'exploitation Windows XP, Mac OS X et Netware 6.</p>
+  <p>Les logiciels et rÈglages nÈcessaires pour Moodle sont les suivants :</p>
   <ol>
     <li>Logiciel serveur web. La plupart des gens utilisent <a href="http://www.apache.org/"
     target="_blank">Apache</a>, mais Moodle devrait fonctionner tout aussi bien avec n'importe
     quel serveur web compatible avec PHP, comme IIS sur les plateformes Windows.</li>
     <li>Le langage <a href="http://www.php.net/" target="_blank">PHP</a> (version 4.1.0 
-     ou ultérieure), avec les réglages suivants : 
+     ou ultÈrieure), avec les rÈglages suivants : 
       <ul>
         <li>la librairie <a href="http://www.boutell.com/gd/" target="_blank">GD</a>,
-        installée et active (ON), supportant les formats JPG et PNG ;</li>
-        <li>la librairie zlib installée et active (ON), si vous voulez faire des backups
+        installÈe et active (ON), supportant les formats JPG et PNG ;</li>
+        <li>la librairie zlib installÈe et active (ON), si vous voulez faire des backups
         et les restaurer sous Windows ;</li>
         <li>support pour les sessions actif (ON) ;</li>
-        <li>le dépôt (upload) de fichiers actif (ON) ;</li>
-        <li>le mode «&nbsp;Safe Mode&nbsp;» doit être inactif (OFF) (voir les forums sur moodle.org pour
-        les problèmes causés par le mode «&nbsp;Safe Mode&nbsp;».</li>
+        <li>le dÈpÙt (upload) de fichiers actif (ON) ;</li>
+        <li>le mode ´&nbsp;Safe Mode&nbsp;ª doit Ítre inactif (OFF) (voir les forums sur moodle.org pour
+        les problËmes causÈs par le mode ´&nbsp;Safe Mode&nbsp;ª.</li>
       </ul>
     </li>
-    <li>Un serveur de base de données : <a href="http://www.mysql.com/" target="_blank">MySQL</a> 
-    ou <a href="http://www.postgresql.org/" target="_blank">PostgreSQL</a> sont complètement 
-    supportés et recommandés pour être utilisés avec Moodle 1.1. D'autres bases de données
-    seront pleinement supportées dans la prochaine version.</li>
+    <li>Un serveur de base de donnÈes : <a href="http://www.mysql.com/" target="_blank">MySQL</a> 
+    ou <a href="http://www.postgresql.org/" target="_blank">PostgreSQL</a> sont complËtement 
+    supportÈs et recommandÈs pour Ítre utilisÈs avec Moodle 1.1. D'autres bases de donnÈes
+    seront pleinement supportÈes dans la prochaine version.</li>
   </ol>
-  <p>La plupart des hôtes web proposent tout cela par défaut. Si vous vous êtes engagé
-  auprès d'un hôte web qui n'offre pas ces logiciels, demandez-lui pourquoi, et
-  envisagez de changer d'hébergement.</p>
+  <p>La plupart des hÙtes web proposent tout cela par dÈfaut. Si vous vous Ítes engagÈ
+  auprËs d'un hÙte web qui n'offre pas ces logiciels, demandez-lui pourquoi, et
+  envisagez de changer d'hÈbergement.</p>
   <p>Si vous voulez faire fonctionner Moodle sur votre propre ordinateur et que cela vous 
   fait un peu peur, lisez notre guide <a href="http://moodle.org/doc/?file=installamp.html">
-  Installation d'Apache, MySQL et PHP</a>. Ce document offre quelques pas-à-pas pour
+  Installation d'Apache, MySQL et PHP</a>. Ce document offre quelques pas-ı-pas pour
   l'installation de ces logiciels sur la plupart des plateformes.</p>
   <p>&nbsp;</p>
 </blockquote>
-<h3 class="sectionheading"><a name="downloading"></a>2. Téléchargement</h3>
+<h3 class="sectionheading"><a name="downloading"></a>2. TÈlÈchargement</h3>
 <blockquote>
-  <p>Il y a deux façons d'obtenir Moodle : par téléchargement d'un fichier compressé ou
-  à l'aide du CVS. Toutes deux sont expliquées en détail sur la page de téléchargement
+  <p>Il y a deux faÁons d'obtenir Moodle : par tÈlÈchargement d'un fichier compressÈ ou
+  ı l'aide du CVS. Toutes deux sont expliquÈes en dÈtail sur la page de tÈlÈchargement
   <a href="http://moodle.org/download/" target="_blank">http://moodle.org/download/</a>.</p>
-  <p>Après avoir téléchargé et décompressé l'archive ou obtenu les fichiers par CVS,
-  vous aurez sous les yeux un dossier nommé «&nbsp;moodle&nbsp;», contenant un certain nombre de dossiers
+  <p>AprËs avoir tÈlÈchargÈ et dÈcompressÈ l'archive ou obtenu les fichiers par CVS,
+  vous aurez sous les yeux un dossier nommÈ ´&nbsp;moodle&nbsp;ª, contenant un certain nombre de dossiers
   et de fichiers.</p>
-  <p>Vous pouvez placer ce dossier intégralement dans le dossier documents de votre serveur
-  web. Dans ce cas, le site Moodle sera accessible  à l'adresse <b>http://votreserveur.com/moodle/</b>.
+  <p>Vous pouvez placer ce dossier intÈgralement dans le dossier documents de votre serveur
+  web. Dans ce cas, le site Moodle sera accessible  ı l'adresse <b>http://votreserveur.com/moodle/</b>.
   Vous pouvez aussi copier le contenu de ce dossier dans le dossier documents de votre serveur.
-  Dans ce cas, le site Moodle sera accessible simplement à l'adresse <b>http://votreserveur.com/</b>.</p>
+  Dans ce cas, le site Moodle sera accessible simplement ı l'adresse <b>http://votreserveur.com/</b>.</p>
 </blockquote>
 <p>&nbsp;</p>
 <h3 class="sectionheading"><a name="site"></a>3. Structure du site</h3>
 <blockquote>
-  <p>Voici une bref aperçu du contenu du dossier Moodle, afin de vous permettre de ne pas
+  <p>Voici une bref aperÁu du contenu du dossier Moodle, afin de vous permettre de ne pas
   vous perdre :</p>
   <blockquote>
-    <p>config.php - l'UNIQUE fichier à modifier pour faire fonctionner votre site<br />
+    <p>config.php - l'UNIQUE fichier ı modifier pour faire fonctionner votre site<br />
       version.php - indique la version actuelle du programme Moodle<br />
       index.php - la page d'accueil du site</p>
     <ul>
@@ -97,44 +97,44 @@
       <li>auth/ - modules pour l'authentification des utilisateurs </li>
       <li>course/ - programmes pour l'affichage et la gestion des cours </li>
       <li>doc/ - documentation et fichiers d'aide de Moodle (p. ex. cette page) </li>
-      <li>files/ - programmes pour l'affichage et la gestion des fichiers déposés </li>
-      <li>lang/ - textes dans les différentes langues, un dossier par langue </li>
+      <li>files/ - programmes pour l'affichage et la gestion des fichiers dÈposÈs </li>
+      <li>lang/ - textes dans les diffÈrentes langues, un dossier par langue </li>
       <li>lib/ - librairies pour le coeur du programme Moodle </li>
-      <li>login/ - programmes de gestion du login et la création des comptes </li>
+      <li>login/ - programmes de gestion du login et la crÈation des comptes </li>
       <li>mod/ - tous les modules de cours Moodle </li>
-      <li>pix/ - les images et graphiques génériques du site </li>
-      <li>theme/ - différents thèmes pour changer l'aspect de votre site </li>
-      <li>user/ - programmes pour afficher et gérer les utilisateurs </li>
+      <li>pix/ - les images et graphiques gÈnÈriques du site </li>
+      <li>theme/ - diffÈrents thËmes pour changer l'aspect de votre site </li>
+      <li>user/ - programmes pour afficher et gÈrer les utilisateurs </li>
     </ul>
     <p>&nbsp;</p>
   </blockquote>
 </blockquote>
-<h3 class="sectionheading"><a name="data"></a>4. Créer un répertoire de données</h3>
+<h3 class="sectionheading"><a name="data"></a>4. CrÈer un rÈpertoire de donnÈes</h3>
 <blockquote>
-  <p>Moodle aura également besoin d'espace sur votre disque dur pour conserver les
-  fichiers déposés par les utilisateurs, comme les documents de cours ou les photos
+  <p>Moodle aura Ègalement besoin d'espace sur votre disque dur pour conserver les
+  fichiers dÈposÈs par les utilisateurs, comme les documents de cours ou les photos
   des utilisateurs.</p>
-  <p>Créez quelque part à cet effet un dossier. Par sécurité, ce dossier NE DOIT PAS
-  être accessible directement depuis le web. La manière la plus simple d'obtenir cela est
-  de le créer EN DEHORS du répertoire web. Sinon, vous pouvez protéger ce dossier en y
-  plaçant un fichier nommé «&nbsp;.htaccess&nbsp;», contenant cette ligne :</p>
+  <p>CrÈez quelque part ı cet effet un dossier. Par sÈcuritÈ, ce dossier NE DOIT PAS
+  Ítre accessible directement depuis le web. La maniËre la plus simple d'obtenir cela est
+  de le crÈer EN DEHORS du rÈpertoire web. Sinon, vous pouvez protÈger ce dossier en y
+  plaÁant un fichier nommÈ ´&nbsp;.htaccess&nbsp;ª, contenant cette ligne :</p>
   <blockquote>
     <pre>deny from all</pre>
   </blockquote>
-  <p>Faites en sorte que le logiciel serveur (p. ex. Apache) ait les privilèges pour
-  écrire dans ce dossier, afin que Moodle puisse enregistrer les fichiers déposés. Sur les
+  <p>Faites en sorte que le logiciel serveur (p. ex. Apache) ait les privilËges pour
+  Ècrire dans ce dossier, afin que Moodle puisse enregistrer les fichiers dÈposÈs. Sur les
   ordinateurs UNIX, cela signifie que le possesseur du dossier en question soit quelque
-  chose comme «&nbsp;nobody&nbsp;», «&nbsp;www&nbsp;» ou «&nbsp;apache&nbsp;».</p>
-  <p>Sur la plupart des serveurs web, vous devrez probablement restreindre à votre
-  «&nbsp;groupe&nbsp» tous les accès à vos fichiers (afin d'éviter que d'autres utilisateurs
-  du même fournisseur puissent voir ou modifier vos fichiers), mais accorder les droits
-  de lecture et d'écriture à tous les autres utilisateurs (ce qui permettra au serveur web
-  d'accéder à vos fichiers). Si vous avez des difficultés à gérer proprement cela, 
-  parlez-en à l'administrateur de votre serveur web.</p>
+  chose comme ´&nbsp;nobody&nbsp;ª, ´&nbsp;www&nbsp;ª ou ´&nbsp;apache&nbsp;ª.</p>
+  <p>Sur la plupart des serveurs web, vous devrez probablement restreindre ı votre
+  ´&nbsp;groupe&nbspª tous les accËs ı vos fichiers (afin d'Èviter que d'autres utilisateurs
+  du mÍme fournisseur puissent voir ou modifier vos fichiers), mais accorder les droits
+  de lecture et d'Ècriture ı tous les autres utilisateurs (ce qui permettra au serveur web
+  d'accÈder ı vos fichiers). Si vous avez des difficultÈs ı gÈrer proprement cela, 
+  parlez-en ı l'administrateur de votre serveur web.</p>
 </blockquote>
 <p>&nbsp;</p>
-<h3 class="sectionheading"><a name="database"></a>5. Créer une base de données</h3>
-<!-- Le reste doit encore être traduit -->
+<h3 class="sectionheading"><a name="database"></a>5. CrÈer une base de donnÈes</h3>
+<!-- Le reste doit encore Ítre traduit -->
 <blockquote>
   <p>You need to create an empty database (eg "moodle") in your database system 
     along with a special user (eg "moodleuser") that has access to that database 
@@ -165,7 +165,7 @@
    a database with tables from other applications.</p>
 </blockquote>
 <p>&nbsp;</p>
-<h3 class="sectionheading"><a name="webserver" id="webserver"></a>6. Vérifier les réglages de votre serveur web</h3>
+<h3 class="sectionheading"><a name="webserver" id="webserver"></a>6. VÈrifier les rÈglages de votre serveur web</h3>
 <blockquote>
   <p>Firstly, make sure that your web server is set up to use index.php as a default 
     page (perhaps in addition to index.html, default.htm and so on).</p>
@@ -404,7 +404,7 @@ php_value post_max_size 2M
     it works.</p>
   <p></p>
 </blockquote>
-<h3 class="sectionheading"><a name="course"></a>10. Créer un nouveau cours</h3>
+<h3 class="sectionheading"><a name="course"></a>10. CrÈer un nouveau cours</h3>
 <blockquote>
   <p>Now that Moodle is running properly, you can create a course. </p>
   <p>Select &quot;Create a new course&quot; from the Admin page (or the admin 
