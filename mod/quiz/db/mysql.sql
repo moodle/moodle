@@ -177,3 +177,9 @@ CREATE TABLE `quiz_truefalse` (
   KEY `question` (`question`)
 ) TYPE=MyISAM COMMENT='Options for True-False questions';
 
+
+INSERT INTO log_display VALUES ('quiz', 'view', 'quiz', 'name');
+INSERT INTO log_display VALUES ('quiz', 'report', 'quiz', 'name');
+INSERT INTO log_display VALUES ('quiz', 'attempt', 'quiz', 'name');
+INSERT INTO log_display VALUES ('quiz', 'submit', 'quiz', 'name');
+

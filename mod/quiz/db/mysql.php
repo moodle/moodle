@@ -13,6 +13,13 @@ function quiz_upgrade($oldversion) {
         execute_sql(" UPDATE `quiz_attempts` SET timestart = timemodified ");
         execute_sql(" UPDATE `quiz_attempts` SET timefinish = timemodified ");
     }
+    if ($oldversion < 2002102101) {
+        execute_sql(" DELETE FROM log_display WHERE module = 'quiz' ");
+        execute_sql(" INSERT INTO log_display VALUES ('quiz', 'view', 'quiz', 'name') ");
+        execute_sql(" INSERT INTO log_display VALUES ('quiz', 'report', 'quiz', 'name') ");
+        execute_sql(" INSERT INTO log_display VALUES ('quiz', 'attempt', 'quiz', 'name') ");
+        execute_sql(" INSERT INTO log_display VALUES ('quiz', 'submit', 'quiz', 'name') ");
+    }
 
     return true;
 }
