@@ -902,7 +902,7 @@ function print_category_info($category, $depth) {
     echo "<tr>";
     echo "<td valign=\"top\">";
     for ($i=0; $i<$depth;$i++) {
-        echo "<ul style=\"margin-bottom: 0\">";
+        echo "<ul style=\"margin-bottom:0;margin-top:0\">";
     }
     echo "<font size=+1><a $catlinkcss ".
          "href=\"$CFG->wwwroot/course/category.php?id=$category->id\">$category->name</a></font>";
@@ -910,7 +910,7 @@ function print_category_info($category, $depth) {
     if ($CFG->frontpage == FRONTPAGECOURSELIST) {
         if ($courses = get_courses($category->id)) {
             foreach ($courses as $course) {
-                echo "<ul style=\"margin-bottom: 0\">";
+                echo "<ul style=\"margin-bottom:0;margin-top:0\">";
                 $linkcss = $course->visible ? "" : " class=\"dimmed\" ";
                 echo "<a $linkcss href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->fullname</a>";
                 echo "&nbsp;&nbsp;";
