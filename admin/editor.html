@@ -102,6 +102,11 @@
     ?>
     <table border="0" cellpadding="2" cellspacing="1">
     <tr>
+        <td colspan="12"><input type="checkbox" name="buttons[fontname]"<?php print(in_array("fontname", $buttons)) ? " checked=\"checked\"": "";?> /> <?php print_string("fontname","editor");?>
+        <input type="checkbox" name="buttons[fontsize]"<?php print(in_array("fontsize", $buttons)) ? " checked=\"checked\"": "";?> /> <?php print_string("fontsize","editor");?>
+        <input type="checkbox" name="buttons[formatblock]"<?php print(in_array("formatblock", $buttons)) ? " checked=\"checked\"": "";?> /> <?php print_string("formatblock","editor");?></td>
+    </tr>
+    <tr>
         <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/images/ed_format_bold.gif" width="18" height="18" alt="<?php print_string("bold","editor");?>" title="<?php print_string("bold","editor");?>" /></td>
         <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/images/ed_format_italic.gif" width="18" height="18" alt="<?php print_string("italic","editor");?>" title="<?php print_string("italic","editor");?>" /></td>
         <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/images/ed_format_underline.gif" width="18" height="18" alt="<?php print_string("underline","editor");?>" title="<?php print_string("underline","editor");?>" /></td>
