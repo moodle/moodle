@@ -37,6 +37,17 @@ font {
     font-size:1px;
 }
 
+
+/* general styles */
+body, td, th, li {
+    font-family:"Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+    font-size:0.95em;
+}
+
+th {
+    font-weight:bold;
+}
+
 a:link,
 a:visited {
     text-decoration:none;
@@ -56,17 +67,6 @@ a.autolink:hover,
 a:hover,
 a.dimmed:hover {
     text-decoration:underline;
-}
-
-
-/* general styles */
-body, td, th, li {
-    font-family:"Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
-    font-size:0.95em;
-}
-
-th {
-    font-weight:bold;
 }
 
 
@@ -119,21 +119,6 @@ th {
 *** Course
 ***
 ******************************/
-
-
-/*****************************
-***
-*** Activities
-***
-******************************/
-/* index, admin, course, lang, adodb, quiz */
-.categoryname,
-.categorynumber {
-    font-size:larger;
-    font-weight:bold;
-}
-
-
 /* course */
 .activitydate, .activityhead {
     font-size:x-small;
@@ -156,6 +141,20 @@ th {
 
 .courseboxsummary {
     font-size:small;
+}
+
+
+
+/*****************************
+***
+*** Activities
+***
+******************************/
+/* index, admin, course, lang, adodb, quiz */
+.categoryname,
+.categorynumber {
+    font-size:larger;
+    font-weight:bold;
 }
 
 

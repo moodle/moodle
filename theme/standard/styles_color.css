@@ -133,7 +133,7 @@ th {
 }
 .weeklyoutlinesidehidden,
 .topicsoutlinesidehidden {
-    background-color:#AAAAAA; /* hidden */
+    border-color:#AAAAAA; /* hidden */
 }
 
 .weeklyoutlinecontent,
@@ -141,7 +141,8 @@ th {
     border-color:#DDDDDD; /* cellheading */
 }
 
-.weeklyoutlinecontenthighlight, .topicsoutlinecontenthighlight {
+.weeklyoutlinecontenthighlight, 
+.topicsoutlinecontenthighlight {
     border-color:#FFC85F; /* cellheading2 */
 }
 
