@@ -1197,6 +1197,7 @@ function quiz_print_cat_question_list($categoryid, $quizselected=true, $recurse=
     $strquestionname = get_string("questionname", "quiz");
     $strdelete = get_string("delete");
     $stredit = get_string("edit");
+    $strcopy = get_string("copy");
     $straddselectedtoquiz = get_string("addselectedtoquiz", "quiz");
     $strtype = get_string("type", "quiz");
     $strcreatemultiple = get_string("createmultiple", "quiz");
@@ -1296,7 +1297,9 @@ function quiz_print_cat_question_list($categoryid, $quizselected=true, $recurse=
                 echo "<a title=\"$strpreview\" href=\"#\" onClick=\"openpopup('/mod/quiz/preview.php?id=$question->id','$strpreview','scrollbars=yes,resizable=yes,width=700,height=480', false)\"><img
                       src=\"../../pix/t/preview.gif\" border=\"0\" alt=\"$strpreview\" /></a>&nbsp;";
                 echo "<a title=\"$stredit\" href=\"question.php?id=$question->id\"><img
-                     src=\"../../pix/t/edit.gif\" border=\"0\" alt=\"$stredit\" /></a>";
+                     src=\"../../pix/t/edit.gif\" border=\"0\" alt=\"$stredit\" /></a>&nbsp;";
+                echo "<a title=\"$strcopy\" href=\"question.php?id=$question->id&amp;copy=true\"><img
+                     src=\"../../pix/t/copy.gif\" border=\"0\" alt=\"$strcopy\" /></a>";
             echo "</td>\n";
         }
         echo "</tr>\n";

@@ -9,6 +9,8 @@
 
     optional_variable($qtype);
     optional_variable($category);
+    
+    optional_variable($copy, false); // true if a copy of the question should be created
 
     if ($id) {
         if (! $question = get_record("quiz_questions", "id", $id)) {
@@ -55,7 +57,7 @@
     }
 
     $strquizzes = get_string('modulenameplural', 'quiz');
-    $streditingquestion = get_string('editingquestion', 'quiz');
+    $streditingquestion = ($copy) ? get_string('copyingquestion', 'quiz') : get_string('editingquestion', 'quiz');
     if (isset($SESSION->modform->instance)) {
         $strediting = '<a href="edit.php">'.get_string('editingquiz', 'quiz').'</a> -> '.
             $streditingquestion;
@@ -64,7 +66,7 @@
             get_string("editquestions", "quiz").'</a> -> '.$streditingquestion;
     }
 
-    print_header_simple("$streditingquestion", "$streditingquestion",
+    print_header_simple("$streditingquestion", "",
                  "<a href=\"$CFG->wwwroot/mod/quiz/index.php?id=$course->id\">$strquizzes</a>".
                   " -> ".$strediting);
 
@@ -176,6 +178,13 @@
         $defaultformat = FORMAT_HTML;
     } else {
         $defaultformat = FORMAT_MOODLE;
+    }
+    
+    if ($copy) {
+        print_heading(get_string('copyingfrom', 'quiz', $question->name));
+        // clear question id so that the data is saved to a new question
+        $question->id = '';
+        $question->name .= '_copy';
     }
 
     require('questiontypes/'.$QUIZ_QTYPES[$qtype]->name().'/editquestion.php');
