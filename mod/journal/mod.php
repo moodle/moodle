@@ -9,54 +9,27 @@
 //
 /////////////////////////////////////////////////////////////
 
-function add_instance($form) {
+function add_instance($journal) {
 // Given an object containing all the necessary data, 
 // (defined by the form in mod.html) this function 
 // will create a new instance and return the id number 
 // of the new instance.
-//
-    GLOBAL $db;
 
-    $timenow = time();
+    $journal->timemodified = time();
 
-    if (!$rs = $db->Execute("INSERT into journal
-                                SET course   = '$form->course', 
-                                    name     = '$form->name',
-                                    intro    = '$form->intro',
-                                    days     = '$form->days',
-                                    timemodified = '$timenow'")) {
-        return 0;
-    }
-    
-    // Get it out again - this is the most compatible way to determine the ID
-    if ($rs = $db->Execute("SELECT id FROM journal
-                            WHERE course = $form->course AND timemodified = '$timenow'")) {
-        return $rs->fields[0];
-    } else {
-        return 0;
-    }
+    return insert_record("journal", $journal);
 }
 
 
-function update_instance($form) {
+function update_instance($journal) {
 // Given an object containing all the necessary data, 
 // (defined by the form in mod.html) this function 
 // will update an existing instance with new data.
-//
-    GLOBAL $db;
 
-    $timenow = time();
+    $journal->timemodified = time();
+    $journal->id = $journal->instance;
 
-    if (!$rs = $db->Execute("UPDATE journal
-                                SET course   = '$form->course', 
-                                    name     = '$form->name',
-                                    intro    = '$form->intro',
-                                    days     = '$form->days',
-                                    timemodified = '$timenow'
-                              WHERE id = '$form->instance' ")) {
-        return false;
-    }
-    return true;
+    return update_record("journal", $journal);
 }
 
 
@@ -64,19 +37,23 @@ function delete_instance($id) {
 // Given an ID of an instance of this module, 
 // this function will permanently delete the instance 
 // and any data that depends on it.  
-//
-    GLOBAL $db;
 
-    if (!$rs = $db->Execute("DELETE from journal_entries WHERE journal = '$id' ")) {
+    if (! $journal = get_record("journal", "id", $id)) {
         return false;
     }
 
-    if (!$rs = $db->Execute("DELETE from journal WHERE id = '$id' ")) {
-        return false;
+    $result = true;
+
+    if (! delete_records("journal_entries", "journal", $journal->id)) {
+        $result = false;
     }
 
-    return true;
-    
+    if (! delete_records("journal", "id", $journal->id)) {
+        $result = false;
+    }
+
+    return $result;
+
 }
 
 
