@@ -35,9 +35,14 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate="today"
     if (isadmin()) {
         if ($ccc = get_records_sql("SELECT * FROM course ORDER BY fullname")) {
             foreach ($ccc as $cc) {
-                $courses["$cc->id"] = "$cc->fullname";
+                if ($cc->category) {
+                    $courses["$cc->id"] = "$cc->fullname";
+                } else {
+                    $courses["$cc->id"] = " $cc->fullname (Site)";
+                }
             }
         }
+        asort($courses);
     }
 
     asort($users);
@@ -73,7 +78,7 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate="today"
     echo "<CENTER>";
     echo "<FORM ACTION=log.php METHOD=get>";
     if (isadmin()) {
-        choose_from_menu ($courses, "id", $course->id, "All courses");
+        choose_from_menu ($courses, "id", $course->id);
     } else {
         echo "<INPUT TYPE=hidden NAME=id VALUE=\"$course->id\">";
     }
