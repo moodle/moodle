@@ -427,6 +427,7 @@ $string['helptext'] = 'How to write text';
 $string['helpwiki'] = 'How to write Wiki text';
 $string['helpwriting'] = 'Write carefully';
 $string['hide'] = 'Hide';
+$string['hidepicture'] = 'Hide picture';
 $string['hits'] = 'Hits';
 $string['hitsoncourse'] = 'Hits on $a->coursename by $a->username';
 $string['hitsoncoursetoday'] = 'Today\'s hits on $a->coursename by $a->username';

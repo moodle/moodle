@@ -16,6 +16,17 @@
     </td>
 </tr>
 
+<tr valign=top>
+    <td align="right"><P><?php print_string("hidepicture") ?>:</td>
+    <td><?php 
+        $options = NULL;
+        $options[0] = get_string("no");
+        $options[1] = get_string("yes");
+        choose_from_menu ($options, "hidepicture", $group->hidepicture, "");
+    ?>
+    </td>
+</tr>
+
 <?php 
     $maxbytes = get_max_upload_file_size($CFG->maxbytes, $course->maxbytes);
     if (!empty($CFG->gdversion) and $maxbytes) {  

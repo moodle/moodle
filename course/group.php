@@ -71,8 +71,9 @@
                     $group->picture = save_profile_image($group->id, $filename, 'groups');
                 }
             }
-            $group->name = $form->name;
+            $group->name        = $form->name;
             $group->description = $form->description;
+            $group->hidepicture = $form->hidepicture;
             if (!update_record("groups", $group)) {
                 notify("A strange error occurred while trying to save ");
             } else {
