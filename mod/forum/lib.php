@@ -482,11 +482,11 @@ function forum_user_summary($course, $user, $mod, $forum) {
 
 function forum_user_outline($course, $user, $mod, $forum) {
 
-///XXX
     global $CFG;
     if ($posts = get_records_sql("SELECT p.*, u.id as userid, u.firstname, u.lastname, u.email, u.picture
-                                  FROM forum_posts p, user u 
-                                  WHERE p.discussion='$discussion->id' AND p.user = '$user->id' AND p.user = u.id
+                                  FROM forum f, forum_discussions d, forum_posts p, user u 
+                                  WHERE f.id = '$forum->id' AND d.forum = f.id AND p.discussion = d.id
+                                  AND p.user = '$user->id' AND p.user = u.id
                                   ORDER BY p.modified ASC")) {
 
         $result->info = count($posts)." posts";
@@ -502,11 +502,11 @@ function forum_user_outline($course, $user, $mod, $forum) {
 function forum_user_complete($course, $user, $mod, $forum) {
     global $CFG;
 
-///XXX
     if ($posts = get_records_sql("SELECT p.*, u.id as userid, u.firstname, u.lastname, u.email, u.picture
-                                  FROM forum_posts p, user u 
-                                  WHERE p.discussion='$discussion->id' AND p.user = '$user->id' AND p.user = u.id
-                                  ORDER BY p.modified")) {
+                                  FROM forum f, forum_discussions d, forum_posts p, user u 
+                                  WHERE f.id = '$forum->id' AND d.forum = f.id AND p.discussion = d.id
+                                  AND p.user = '$user->id' AND p.user = u.id
+                                  ORDER BY p.modified ASC")) {
 
         foreach ($posts as $post) {
             if ($post->parent) {
