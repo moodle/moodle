@@ -93,8 +93,8 @@ function auth_get_userinfo($username){
     if ($user_info_result) {
         $user_entry = ldap_get_entries($ldap_connection, $user_info_result);
         foreach ($attrmap as $key=>$value){
-            if(isset($user_entry[0][$value][0])){
-                $result[$key]=$user_entry[0][$value][0];
+            if(isset($user_entry[0]strtolower([$value])[0])){
+                $result[$key]=$user_entry[0]strtolower([$value])[0];
             }
         }
     }
