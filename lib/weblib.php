@@ -1636,9 +1636,9 @@ function print_header ($title='', $heading='', $navigation='', $focus='', $meta=
     if (substr($path, -1) == '/') {
         $path .= 'index';
     }
-    if (empty($path) or $path = '/index') {
+    if (empty($path) or $path == '/index') {
         $pageid    = 'site-index';
-        $pageclass = 'course course-'.SITEID;
+        $pageclass = 'course';
     } else {
         $pageid    = str_replace('/', '-', $path);
         $pageclass = explode('-', $pageid);
@@ -1648,6 +1648,8 @@ function print_header ($title='', $heading='', $navigation='', $focus='', $meta=
 
     if (isset($course->id)) {
         $pageclass .= ' course-'.$course->id;
+    } else {
+        $pageclass .= ' course-'.SITEID;
     }
 
     $bodytags .= ' class="'.$pageclass.'" id="'.$pageid.'"';
