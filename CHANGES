@@ -1,3 +1,30 @@
+2002-08-16 Friday 01:41  martin
+
+	* lang/en/forum.php, lang/en/moodle.php,
+	lang/en/help/waysofknowing.html, mod/forum/lib.php,
+	mod/forum/mod.html, mod/forum/subscribe.php, mod/forum/view.php: 
+	
+	Forum language fixes, and addition of help for separate/connected
+	knowing
+
+2002-08-15 Thursday 21:05  martin
+
+	* course/lib.php: 
+	
+	Log formatting
+
+2002-08-15 Thursday 21:03  martin
+
+	* course/lib.php: 
+	
+	Make the IP more visible in logs
+
+2002-08-15 Thursday 13:46  martin
+
+	* CHANGES: 
+	
+	Slightly clearer changelog format
+
 2002-08-15 Thursday 13:45  martin
 
 	* CHANGES: 
