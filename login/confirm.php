@@ -25,9 +25,6 @@
                 if (!set_field("user", "firstaccess", time(), "id", $user->id)) {
                     error("Could not set this user's first access date!");
                 }
-                if (!update_user_in_db($user->id)) {
-                    error("Could not update this user's information");
-                }
 
                 // The user has confirmed successfully, let's log them in
 
