@@ -1522,7 +1522,7 @@ function print_date_selector($day, $month, $year, $currenttime=0) {
     choose_from_menu($years,  $year,  $currentdate['year'], "");
 }
 
-function print_time_selector($hour, $minute, $currenttime=0) {
+function print_time_selector($hour, $minute, $currenttime=0, $step=5) {
 // Currenttime is a default timestamp in GMT
 // Prints form items with the names $hour and $minute
 
@@ -1530,10 +1530,13 @@ function print_time_selector($hour, $minute, $currenttime=0) {
         $currenttime = time();
     }
     $currentdate = usergetdate($currenttime);
+    if ($step != 1) {
+        $currentdate['minutes'] = ceil($currentdate['minutes']/$step)*$step;
+    }
     for ($i=0; $i<=23; $i++) {
         $hours[$i] = sprintf("%02d",$i);
     }
-    for ($i=0; $i<=59; $i++) {
+    for ($i=0; $i<=59; $i+=$step) {
         $minutes[$i] = sprintf("%02d",$i);
     }
     choose_from_menu($hours,   $hour,   $currentdate['hours'],   "");
