@@ -48,13 +48,13 @@
                 break;
             case "delete":
                 if (! delete_instance($mod->instance)) {
-                    error("Could not delete the $mod->modulename");
+                    notify("Could not delete the $mod->modulename (instance)");
                 }
                 if (! delete_course_module($mod->coursemodule)) {
-                    error("Could not delete the $mod->modulename");
+                    notify("Could not delete the $mod->modulename (coursemodule)");
                 }
                 if (! delete_mod_from_week($mod->coursemodule, "$mod->week")) {
-                    error("Could not delete the $mod->modulename from that week");
+                    notify("Could not delete the $mod->modulename from that week");
                 }
                 add_to_log($mod->course, "course", "delete mod", "view.php?id=$mod->course", "$mod->modulename $mod->instance"); 
                 break;
