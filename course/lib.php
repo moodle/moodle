@@ -1021,7 +1021,7 @@ function rebuild_course_cache($courseid=0) {
         $select = "";
     }
 
-    if ($courses = get_records_select("course", $select)) {
+    if ($courses = get_records_select("course", $select,'','id,fullname')) {
         foreach ($courses as $course) {
             $modinfo = serialize(get_array_of_activities($course->id));
             if (!set_field("course", "modinfo", $modinfo, "id", $course->id)) {
