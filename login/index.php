@@ -32,7 +32,13 @@
 
     if ($frm) {
         $frm->username = trim(moodle_strtolower($frm->username));
-        $user = authenticate_user_login($frm->username, $frm->password);
+
+        if (($frm->username == 'guest') and empty($CFG->guestloginbutton)) {
+            $user = false;    /// Can't log in as guest if guest button is disabled
+            $frm = false;
+        } else {
+            $user = authenticate_user_login($frm->username, $frm->password);
+        }
         update_login_count();
 
         if ($user) {
