@@ -305,6 +305,7 @@ $string['filesfolders'] = "ファイル/フォルダ";
 $string['filloutallfields'] = "全ての欄に入力してください。";
 $string['findmorecourses'] = "更にコースを探す...";
 $string['firstname'] = "名前";
+$string['fullnamedisplay'] = '$a->lastname $a->firstname';
 $string['firsttime'] = "はじめての方ですか?";
 $string['followingoptional'] = "下記は任意入力項目です";
 $string['followingrequired'] = "下記は必須入力項目です";
