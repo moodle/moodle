@@ -115,8 +115,8 @@ function assignment_refresh_events($courseid = 0) {
 
     foreach ($assignments as $assignment) {
         $event = NULL;
-        $event->name        = $assignment->name;
-        $event->description = $assignment->description;
+        $event->name        = addslashes($assignment->name);
+        $event->description = addslashes($assignment->description);
         $event->timestart   = $assignment->timedue;
 
         if ($event->id = get_field('event', 'id', 'modulename', 'assignment', 'instance', $assignment->id)) {
