@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.2 development (2003092900)
+      // moodle.php - created with Moodle 1.2 development (2003100900)
 
 
 $string['action'] = "Actie";
@@ -127,6 +127,7 @@ $string['configlocale'] = "Kies een sitebrede 'locale' - dit zal de opmaak en ta
 ";
 $string['configloglifetime'] = "Dit specificeert de lengte van de periode waarin statistieken van gebruikers-activiteit worden bewaard. Statistieken die ouder zijn dan deze leeftijd worden automatisch verwijderd. Het is verstandig om de statistieken zo lang mogelijk te bewaren, je kunt ze immers altijd nog nodig hebben. Maar als je een zeer drukke server hebt en prestatieproblemen ondervindt, kun je de periode misschien beter minder lang maken.";
 $string['configlongtimenosee'] = "Als het heel lang geleden is dat een leerling heeft ingelogd wordt hij/zij automatisch uit de vakken verwijderd. Deze parameter bepaalt deze tijd limiet.";
+$string['configmaxbytes'] = "Dit bepaalt de maximumgrootte van geüploade bestanden in heel de site. De instelling is beperkt door de PHP-instelling upload_max_filesize en de Apacheinstelling LimitRequestBody. Anderzijds beperkt maxbytes het berijk van groottes dat gekozen kan worden op vak of moduleniveau.";
 $string['configmaxeditingtime'] = "Dit bepaalt hoe lang mensen de tijd hebben om hun forumbijdrage, logboek, feedback en dergelijke te wijzigen. Meestal is 30 minuten een goede tijd.";
 $string['configproxyhost'] = "Als deze <B>server</B> een proxy computer (zoals bijvoorbeeld een firewall) nodig heeft om op het Internet te komen vul hier dan de hostname en de poort van de proxy in. Laat het leeg als dit niet het geval is.";
 $string['configsecureforms'] = "Moodle kan een extra beveiliging toepassen wanneer het gegevens aanneemt van webformulieren. Als je dit inschakelt, dan wordt de HTTP_REFERER variabele vergeleken met het huidige formulieradres. In zeldzame gevallen kan dit problemen veroorzaken als de gebruiker een firewall gebruikt (zoals Zonealarm) die geconfigureerd is om HTTP_REFERER uit het webverkeer te filteren. Het symptoom is: vastgeraken op een formulier. Als je gebruikers problemen hebben met de login-pagina (bijvoorbeeld) dan zou je kunnen overwegen om deze instelling uit te zetten, Hoewel dit je site meer blootstelt aan brute kracht-aanvallen op je wachtwoord. Bij twijfel laat je deze instelling op 'ja' staan.";
