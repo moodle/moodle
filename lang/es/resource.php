@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.3 development (2004042600)
+      // resource.php - created with Moodle 1.3 (2004052500)
 
 
 $string['addresource'] = 'Agregar material';
@@ -28,6 +28,7 @@ $string['fetchclienterror'] = 'Ha ocurrido un problema al tratar de abrir la pág
 $string['fetcherror'] = 'Ha ocurrido un problema al tratar de abrir la página web.';
 $string['fetchservererror'] = 'Ha ocurrido un problema con el servidor remoto al tratar de abrir la página web (posiblemente un error del programa).';
 $string['filename'] = 'Nombre del archivo';
+$string['filtername'] = 'Auto-enlace de recursos';
 $string['fulltext'] = 'Texto completo';
 $string['htmlfragment'] = 'Fragmento HTML';
 $string['maindirectory'] = 'Directorio principal de archivos';
@@ -50,7 +51,7 @@ $string['note'] = 'Nota';
 $string['notefile'] = 'Para subir más de un archivo (y se puedan ver en la lista) utilice el 
 <A HREF=$a >Administrador de archivos</A>.';
 $string['notypechosen'] = 'Necesita elegir un texto. Regrese e inténtelo de nuevo.';
-$string['popupresource'] = 'Este recurso debe aparecer en una ventana \"popup\".';
+$string['popupresource'] = 'Este recurso debe aparecer en una ventana ';
 $string['popupresourcelink'] = 'Si no, haga clic aquí: $a';
 $string['resourcetype'] = 'Tipo de material';
 $string['resourcetype1'] = 'Referencia';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.3 Nearly Ready (2004052000)
+      // moodle.php - created with Moodle 1.3 (2004052500)
 
 
 $string['action'] = 'Acción';
@@ -146,8 +146,10 @@ $string['configdeleteunconfirmed'] = 'Si usted está utilizando la autenticación 
 $string['configenablerssfeeds'] = 'Este interruptor activa los canales RSS del sitio. Para ver cualquier cambio, necesitará habilitar también los canales RSS en los módulos individuales (hágalo en los ajustes de los módulos, en la configuración Admin).';
 $string['configenablerssfeedsdisabled'] = 'No está disponible porque los canales RSS están deshabilitados en todo el sitio. Para activarlos, vaya a los ajustes de Variables en la configuración Admin.';
 $string['configerrorlevel'] = 'Seleccione la cantidad de advertencias PHP que desea ver. \'Normal\' suele ser la mejor opción.';
+$string['configextendedusernamechars'] = 'Utilice este ajuste para permitir a los estudiantes usar cualesquiera caracteres en sus nombres de usuario (advierta que esto no afecta a sus nombres reales). El valor por defecto es \"false\", lo que obliga a usar en los nombres de usuario exclusivamente caracteres alfanuméricos.';
 $string['configfilteruploadedfiles'] = 'Seleccionando esta opción, Moodle procesará todos los archivos subidos (HTML y texto) con los filtros antes de mostrarlos.';
 $string['configforcelogin'] = 'Normalmente la página inicial es visible para todos, aunque no hayan ingresado al sistema. Si desea forzar el acceso de los usuarios antes de ver a primera página habilite esta opción.';
+$string['configforceloginforprofiles'] = 'Utilice este ajuste para forzar a los usuarios a entrar con su cuenta real (no como invitados) antes de que se les permita ver las páginas de los perfiles de los usuarios. Este valor está deshabilitado (\"false\") por defecto, de modo que los potenciales estudiantes sólo pueden informarse sobre los profesores de cada curso, pero esto significa también que los motores de búsqueda de Internet pueden verlos.';
 $string['configframename'] = 'Si está colocando la plataforma dentro de una marco, coloque aquí su nombre. Si no, deje este valor como está: \'_top\'';
 $string['configfullnamedisplay'] = 'Esta variable define cómo se presentan los nombres completos. En Español lo normal es utilizar \"nombre + apellido\", pero puede optar por esconder completamente los apellidos o dejarlo a la lelección del paquete de idioma en uso.';
 $string['configgdversion'] = 'Indica la versión instalada de GD. La versión mostrada es la que detectó el programa. No la cambie sin saber exactamente la versión instalada.';
@@ -488,7 +490,7 @@ $string['includecoursefiles'] = 'Incluir los archivos del curso';
 $string['includecourseusers'] = 'Incluir los usuarios del curso';
 $string['included'] = 'Incluido';
 $string['includelogentries'] = 'Incluir las entradas de registro';
-$string['includemodules'] = 'Incluir&nbsp;Módulos';
+$string['includemodules'] = 'Incluir Módulos';
 $string['includeneededusers'] = 'Incluir suarios ecesarios';
 $string['includenoneusers'] = 'No incluir suarios';
 $string['includeuserfiles'] = 'Incluir los archivos de los usuarios';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // survey.php - created with Moodle 1.3 development (2004042600)
+      // survey.php - created with Moodle 1.3 (2004052500)
 
 
 $string['actual'] = 'Actual';
@@ -58,10 +58,15 @@ $string['attlsm3'] = 'Aprendizaje Individualizado';
 $string['attlsmintro'] = 'En discusión...';
 $string['attlsname'] = 'ATTLS (versión de 20 elementos)';
 $string['ciq1'] = '¿En qué momento, durante la clase, se sintió más involucrado como estudiante?';
+$string['ciq1short'] = 'Muy implicado';
 $string['ciq2'] = '¿En qué momento, durante la clase, se sintió más distanciado como estudiante?';
+$string['ciq2short'] = 'Muy distanciado';
 $string['ciq3'] = '¿Qué acción, de cualquiera de sus participantes, le ha parecido más útil o positiva dentro del foro?';
+$string['ciq3short'] = 'Momento útil';
 $string['ciq4'] = '¿Qué acción dentro del foro le ha parecido más compleja o confusa por parte de cualquiera de sus participantes?';
+$string['ciq4short'] = 'Momento confuso';
 $string['ciq5'] = '¿Qué evento le ha sorprendido más?';
+$string['ciq5short'] = 'Momento sorpresivo';
 $string['ciqintro'] = 'Responda las siguientes preguntas pensando en los eventos ocurridos durante la semana pasada en esta clase.';
 $string['ciqname'] = 'Incidentes críticos';
 $string['clicktocontinue'] = 'Haz clic aquí para continuar';
