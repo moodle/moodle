@@ -25,10 +25,12 @@
         error("Course module is incorrect");
     } 
     
-    require_login($course->id);    
-    if (isguest()) {
-        error("You must be logged to use this page.");
-    } 
+    if ($course->category) {
+        require_login($course->id);    
+        if (isguest()) {
+            error("You must be logged to use this page.");
+        } 
+    }
 
     if ( $eid ) {
         $l = '';

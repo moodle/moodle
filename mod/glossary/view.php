@@ -39,7 +39,9 @@
         error("Course module is incorrect");
     } 
     
-    require_login($course->id);
+    if ($course->category) {
+        require_login($course->id);
+    }
     if (!$cm->visible and !isteacher($course->id)) {
         notice(get_string("activityiscurrentlyhidden"));
     } 
