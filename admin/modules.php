@@ -28,6 +28,7 @@
     $strhide = get_string("hide");
     $strshow = get_string("show");
     $strsettings = get_string("settings");
+    $stractivities = get_string("activities");
     $stractivitymodule = get_string("activitymodule");
 
     print_header("$site->shortname: $strmanagemodules", "$site->fullname", 
@@ -149,10 +150,10 @@
         $modpixpath = "../theme/$CFG->theme/pix/mod";
     }
 
-    $table->head  = array ($stractivitymodule, $strversion, "$strhide/$strshow", $strdelete, $strsettings);
-    $table->align = array ("LEFT", "LEFT", "CENTER", "CENTER", "CENTER");
-    $table->wrap = array ("NOWRAP", "", "", "","");
-    $table->size = array ("100%", "10", "10", "10","12");
+    $table->head  = array ($stractivitymodule, $stractivities, $strversion, "$strhide/$strshow", $strdelete, $strsettings);
+    $table->align = array ("LEFT", "RIGHT", "LEFT", "CENTER", "CENTER", "CENTER");
+    $table->wrap = array ("NOWRAP", "", "", "", "","");
+    $table->size = array ("100%", "10", "10", "10", "10","12");
     $table->width = "100";
 
     foreach ($modulebyname as $modulename => $module) {
@@ -166,6 +167,8 @@
         } else {
             $settings = "";
         }
+
+        $count = count_records("$module->name");
 
         if ($module->visible) {
             $visible = "<a href=\"modules.php?hide=$module->name\" title=\"$strhide\">".
@@ -181,7 +184,7 @@
             $visible = "";
             $class = "";
         }
-        $table->data[] = array ("<p $class>$icon $modulename</p>", $module->version, $visible, $delete, $settings);
+        $table->data[] = array ("<p $class>$icon $modulename</p>", $count, $module->version, $visible, $delete, $settings);
     }
     print_table($table);
 
