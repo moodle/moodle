@@ -133,7 +133,28 @@ global $USER;
     if (! $course = get_record("course", "id", $dialogue->course)) {
         error("Course is misconfigured");
     }
-     // get the students on this course (default sort order)...
+    // add groups before list of students if it's the teacher
+    if (isteacher($course->id) and (groupmode($course) != NOGROUPS)) {
+        // get all the groups if the groups are visible
+        if (groupmode($course) == VISIBLEGROUPS) {
+            if (!$groups = get_records("groups", "courseid", $course->id)) {
+                error("Dialogue get available students: no groups found");
+            }
+            foreach ($groups as $group) {
+                $gnames["g{$group->id}"] = $group->name;
+            }
+        } else { // show teacher their group(s)
+            if($groups = get_groups($course->id, $USER->id)) {
+                foreach($groups as $group) {
+                    $gnames["g{$group->id}"] = $group->name;
+                }
+            }
+        }
+        if ($gnames) {
+            $gnames["spacer"] = "------------";
+        }
+    }
+    // get the students on this course (default sort order)...
 	if ($users = get_course_students($course->id)) {
 		foreach ($users as $otheruser) {
 			// ...exclude self and...
@@ -148,11 +169,18 @@ global $USER;
 			}
 		}
 	}
+    if (isset($gnames)) {
+        $list = $gnames;
+    }
     if (isset($names)) {
         natcasesort($names);
-        return $names;
+        if (isset($list)) {
+            $list += $names;
+        } else {
+            $list = $names;
+        }
     }
-    return;
+    return $list;
 }
 
 

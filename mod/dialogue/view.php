@@ -126,6 +126,7 @@
                     echo "<td align=\"right\"><b>".get_string("openadialoguewith", "dialogue").
                         " : </b></td>\n";
         			echo "<td>";
+                    
                     choose_from_menu($names, "recipientid");
                     echo "</td></tr>\n";
                     echo "<tr><td align=\"right\"><b>".get_string("subject", "dialogue")." : </b></td>\n";
