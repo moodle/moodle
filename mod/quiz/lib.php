@@ -411,11 +411,19 @@ function quiz_print_question($number, $question, $grade, $courseid,
 /// Prints a quiz question, any format
 /// $question is provided as an object
 
+    if ($question->image) {
+        if ($quizcategory = get_record("quiz_categories", "id", $question->category)) {
+            $question->course = $quizcategory->course;
+        } else {
+            $question->course = $courseid;
+        }
+    }
+
     if ($question->qtype == DESCRIPTION) {  // Special case question - has no answers etc
         echo '<p align="center">';
         echo text_to_html($question->questiontext);
         if ($question->image) {
-            print_file_picture($question->image, $courseid);
+            print_file_picture($question->image, $question->course);
         }
         echo '</p>';
         return true;
@@ -450,7 +458,7 @@ function quiz_print_question($number, $question, $grade, $courseid,
        case NUMERICAL:
            echo text_to_html($question->questiontext);
            if ($question->image) {
-               print_file_picture($question->image, $courseid);
+               print_file_picture($question->image, $question->course);
            }
            if ($response) {
                $value = "VALUE=\"$response[0]\"";
@@ -485,7 +493,7 @@ function quiz_print_question($number, $question, $grade, $courseid,
            }
            echo text_to_html($question->questiontext);
            if ($question->image) {
-               print_file_picture($question->image, $courseid);
+               print_file_picture($question->image, $question->course);
            }
 
            $truechecked = "";
@@ -530,7 +538,7 @@ function quiz_print_question($number, $question, $grade, $courseid,
            }
            echo text_to_html($question->questiontext);
            if ($question->image) {
-               print_file_picture($question->image, $courseid);
+               print_file_picture($question->image, $question->course);
            }
            echo "<TABLE ALIGN=right>";
            echo "<TR><TD valign=top>$stranswer:&nbsp;&nbsp;</TD><TD>";
@@ -586,7 +594,7 @@ function quiz_print_question($number, $question, $grade, $courseid,
                echo text_to_html($question->questiontext);
            }
            if (!empty($question->image)) {
-               print_file_picture($question->image, $courseid);
+               print_file_picture($question->image, $question->course);
            }
 
            if ($shuffleanswers) {
@@ -636,7 +644,7 @@ function quiz_print_question($number, $question, $grade, $courseid,
            }
            echo text_to_html($question->questiontext);
            if ($question->image) {
-               print_file_picture($question->image, $courseid);
+               print_file_picture($question->image, $question->course);
            }
 
            /// First, get all the questions available
