@@ -1,0 +1,103 @@
+<p align="center"><b>Jak pisaæ strony w formacie Wiki</b></p>
+
+<p>Strony w formacie Wiki s± pisane w sposób przejrzysty, z intuicyjnym i czytelnym dla cz³owieka formatowaniem, które zostanie przekszta³cone na XHTML w momencie wy¶wietlania. G³ównymi zaletami tego formatu jest to, i¿ nie musisz siê uczyæ jêzyka HTML, aby otrzymaæ zaawansowane rezultaty, oraz to, ¿e tekst napisany przez ciebie <em>wygl±da</em> dobrze, nawet <em>przed</em> konwersj±. Jest to te¿ alternatywa dla zapisywania plików pisanych w Wordzie jako stron HTML. Dziêki temu pozostaje mo¿liwo¶æ edytowania zasobów w ¶rodowisku on-line.</p>
+
+<p>W zasadzie w formacie tym piszesz w zwyczajny sposób. Dostêpny jest zestaw <em> specjalnych</em> znaków, które mo¿esz dodaæ. S³u¿± one do formatowania.
+
+<h3>Formatowanie na poziomie bloków</h3>
+
+<p> Bloki paragrafów s± od siebie oddzielone przynajmniej jedn± pust± lini±. Aby dodaæ specjalne formatowanie danego paragrafu, wstaw jeden z poni¿szych znaków jako pierwszy znak pierwszej linii danego bloku, a za nim umie¶æ znak odstêpu.</p>
+
+<table>
+  <tr><th>Znak</th><th>Styl bloku</th></tr>
+  <tr><td>Brak znaku</td><td>Zwyk³y paragraf</td></tr>
+  <tr><td>&gt;</td><td>Cytat</td></tr>
+  <tr><td>Odstêp (spacja)</td><td>Tekst z równymi odstêpami miêdzy znakami</td></tr>
+  <tr><td>%</td><td>Jw. <em>oraz</em> ignorowany jest format Wiki</td></tr>
+  <tr><td>!#</td><td>Nag³ówek -  # oznacza poziom nag³ówka (1 oznacza najwiêkszy).</td></tr>
+  <tr><td>Q.</td><td>Pytanie - wprowadzone po to, by w elegancki sposób prezentowaæ pytania i odpowiedzi</td></tr>
+  <tr><td>A.</td><td>Odpowied¼ - jw.</td></tr>
+</table>
+
+<h3>Formatowanie list</h3>
+
+<p> Proste listy mog± byæ tworzone w ³atwy sposób, poprzez umieszczenie specjalnego znaku na pocz±tku ka¿dej linii listy, a nastêpnie znaku odstêpu.
+Lista koñczy siê na pustej linii. Listy mog± dowolnie siê zagnie¿d¿aæ, a listy zagnie¿d¿one mog± byæ innego typu ni¿ te zewnêtrzne. Deklaracja listy i typy tekstu mog± byæ dowolnie mieszane i przeplatane w celu otrzymania zamierzonego efektu. Znaki specjalne s± nastêpuj±ce :</p>
+
+<table>
+  <tr><th>Znak</th><th>Rodzaj elementu listy</th></tr>
+  <tr><td>*</td><td>Lista nieuporz±dkowana (kropki)</td></tr>
+  <tr><td>#</td><td>Lista uporz±dkowana (1,2,3 itd.)</td></tr>
+  <tr><td>:</td><td>Lista definicji, definicja</td></tr>
+  <tr><td>;</td><td>Lista definicji, tekst</td></tr>
+</table>  
+
+<p>Przyk³ad list zagnie¿d¿onych</p>
+<p><pre>
+  * Pierwsza kropka
+  * Druga kropka
+  ## Linia zagnie¿d¿ona 1
+  ## Linia zagnie¿d¿ona 2
+  * Trzecia kropka
+</pre></p>
+<p>Daj efekt:
+<ul><li>Pierwsza kropka</li>
+  <li>Druga kropka</li>
+  <ol><li>Linia zagnie¿d¿ona 1</li>
+    <li>Linia zagnie¿d¿ona 2</li></ol>
+  <li>Trzecia kropka
+</ul></p>
+
+<h3>Formatowanie wewn±trz linii</h3>
+
+<p> Formatowanie wewn±trz linii pozwala nadaæ jednemu lub kilku wyrazom konkretny styl. Wykorzystane znaki specjalne mog± pojawiæ siê gdziekolwiek wewn±trz linii, ale pamiêtaj, ¿e format nie przechodzi z linii na linie. Kody s± nastêpuj±ce : </p>
+
+<table>
+  <tr><th>Przyk³ad</th><th>Efekt</th><th>Formatowanie</th></tr>
+  <tr><td>*hello world*</td><td><strong>hello world</strong></td><td>Pogrubienie</td></tr>
+  <tr><td>/hello world/</td><td><em>hello world</em></td><td>Kursywa</td></tr>
+  <tr><td>+hello world+</td><td><ins>hello world</ins></td><td>tekst 'wstawiony'</td></tr>
+  <tr><td>-hello world-</td><td><del>hello world</del></td><td>tekst wykre¶lony</td></tr>
+  <tr><td>hello ~world~</td><td>hello <sub>world</sub></td><td>Indeks dolny</td></tr>
+  <tr><td>hello ^world^</td><td>hello <sup>world</sup></td><td>Indeks górny</td></tr>
+  <tr><td>"hello world"</td><td><q>hello world</q></td><td>Cytat</td></tr>
+  <tr><td>%hello world%</td><td><code>hello world</code></td><td>Równe odstêpy miêdzy znakami</td></tr>
+  <tr><td>@hello world@</td><td><cite>hello world</cite></td><td>Cytat</td></tr>
+</table>  
+
+<h3>Akronimy (podpowiedzi)</h3>
+
+<p> Podpowiedzi s± tworzone poprzez wpisanie akronimu du¿ymi literami, a nastêpnie jego opisu umieszczonego w nawiasach. Pomiêdzy akronimem, a nawiasem nie mo¿e byæ znaku odstêpu. Przyk³ad (najechanie kursorem na dolny napis HTML spowoduje wy¶wietlenie po chwili podpowiedzi) :</p>
+
+<p>HTML(Hypertext Markup Language) <br />   <acronym title="Hypertext Markup Language">HTML</acronym></p>
+
+<h3>Hiper³±cza</h3>
+Mo¿esz wpisaæ odno¶nik, a nastêpnie (bez znaku odstêpu) tekst, który ma byæ wy¶wietlany, umieszczony w nawiasach. Przyk³ad :  </em>http://www.google.com/(Szukaj z Google)</em> zostanie przet³umaczone na 
+<a href="http://www.google.com/">Szukaj z Google</a>.
+
+<h3>Odno¶niki do modu³ów Moodle</h3>
+
+<p> Je¶li znasz numer id Moodle (szukaj ?id=nn na koñcu adresu modu³u), oraz nazwê modu³u, mo¿esz stworzyæ odno¶nik bezpo¶rednio do niego korzystaj±c z nastêpuj±cej sk³adni : </p>
+
+<p>NazwaModu³u:nn(Opis)</p>
+<p>np.  <em>resource:36(Moja nowa strona)</em>   <em>forum:10(Przejd¼ do forum)</em></p>
+
+<h3>Odno¶niki do grafiki w Moodle</h3>
+
+<p>Grafika mo¿e byæ mieszana z tekstem na stronach Wiki. Musisz najpierw przes³aæ grafikê i zapamiêtaæ jego ¶cie¿kê dostêpu. Sk³adnia jest nastêpuj±ca : 
+
+<p>/<em>..¶cie¿ka do pliku..</em>(tekst wskazówki)</p>
+
+<p>przyk³adowo,  /mypics/graphic.jpg(Obrazek z personelem)</p>
+
+<h3>Automatyczne formatowanie</h3>
+
+<p>Wiele powszechnie stosowanych funkcji jest t³umaczona na swoje odpowiedniki w XHTML automatycznie. Poni¿ej podano te najwa¿niejsze : </p>
+
+<ul>
+  <li>Linki HTTP s± konwertowane na aktywne odno¶niki
+  <li> ..., (R), (TM), (C), 1/4, 1/2, 3/4 s± zmieniane na odpowiednie znaki
+  <li> liczba x liczba jest zmieniane na prawid³owy znak mno¿enia.
+  <li>Linia rozpoczynaj±ca siê od przynajmniej czterech my¶lników jest zmieniana na poziom± liniê.
+</ul>  
+
