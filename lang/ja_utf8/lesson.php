@@ -1,5 +1,5 @@
-<?php // $Id$ 
-      // lesson.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005021000)
+<?PHP // $Id$ 
+      // lesson.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005031000)
 
 
 $string['accesscontrol'] = 'アクセスコントロール';
@@ -62,14 +62,17 @@ $string['displayscorewithoutessays'] = 'あなたのスコアは、 $a->score ( 
 $string['editlessonsettings'] = 'レッスン設定の編集';
 $string['editpagecontent'] = 'ページコンテンツの編集';
 $string['email'] = 'メール';
+$string['emailgradedessays'] = '評定済みの作文をメール送信';
 $string['emailsuccess'] = 'メール送信完了';
 $string['endofbranch'] = '分岐終了';
 $string['endofclustertitle'] = 'クラスタ終了';
 $string['endoflesson'] = 'レッスン終了';
 $string['entername'] = 'ハイスコア一覧のニックネームを入力してください。';
 $string['enterpassword'] = 'パスワードを入力してください:';
+$string['eolstudentoutoftime'] = 'お知らせ: このレッスンの制限時間が終わりました。時間終了後に答えた内容は計算から除外されます。';
 $string['eolstudentoutoftimenoanswers'] = 'あなたは問題に解答していません。このレッスンの評点は、0です。';
 $string['essay'] = '作文';
+$string['essayemailsubject'] = '$a 問題に対するあなたの評点';
 $string['essays'] = '作文';
 $string['essayscore'] = '作文スコア';
 $string['fileformat'] = 'ファイルフォーマット';
@@ -139,6 +142,7 @@ $string['numberofpagestoshow'] = 'ページ ( カード ) の表示数';
 $string['numberofpagesviewed'] = 'ページ閲覧数: $a';
 $string['ongoing'] = '進行中のスコアを表示';
 $string['ongoingnormal'] = 'あなたは $a->viewed の問題の中から $a->correct を正しく答えました。';
+$string['or'] = 'または';
 $string['other'] = 'その他';
 $string['outof'] = '$a 中';
 $string['outoftime'] = '時間切れ';
@@ -162,6 +166,7 @@ $string['randombranch'] = 'ランダム分岐ページ';
 $string['randompageinbranch'] = '分岐内のランダム問題';
 $string['rank'] = 'ランク';
 $string['redisplaypage'] = '再表示';
+$string['report'] = 'レポート';
 $string['response'] = 'フィードバック';
 $string['returnmainmenu'] = 'メインメニューに戻る';
 $string['returntocourse'] = 'コースに戻る';
@@ -185,6 +190,7 @@ $string['slideshowwidth'] = 'スライドショーの幅';
 $string['startlesson'] = 'レッスンの開始';
 $string['studentattemptlesson'] = '$a->lastname, $a->firstname の受験回数:  $a->attempt';
 $string['studentoneminwarning'] = '警告: レッスンが終了するまで、残り時間1分またはそれ以下です。';
+$string['studentresponse'] = '{$a} のレスポンス';
 $string['teacherongoingwarning'] = '進行中のスコアは学生のみに表示されます。進行中のスコアをテストするには、学生としてログインしてください。';
 $string['teachertimerwarning'] = 'タイマーは学生に対してのみ作動します。タイマーをテストするには、学生としてログインしてください。';
 $string['thatsthecorrectanswer'] = '正しい答えです';
@@ -214,6 +220,7 @@ $string['whatdofirst'] = '最初に何をしますか?';
 $string['wronganswerjump'] = '誤答のジャンプ先';
 $string['wronganswerscore'] = '誤答のスコア';
 $string['wrongresponse'] = '誤答に対するフィードバック';
+$string['youhavereceived'] = 'この作文問題で、 out of $a->outof 点中 $a->score 点を取りました。';
 $string['youhaveseen'] = 'あなたは既にこのレッスンを1ページ以上閲覧しました。<br />あなたが見た最後のページから始めますか?';
 $string['youranswer'] = 'あなたの答え';
 $string['yourcurrentgradeis'] = '現在の成績は $a です。';
