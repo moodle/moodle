@@ -1540,10 +1540,10 @@ function print_header ($title='', $heading='', $navigation='', $focus='', $meta=
         } else {
             $wwwroot = str_replace('http','https',$CFG->wwwroot);
         }
-        if (isset($USER->id)) {
-            $menu = '<font size="2"><a target="'. $CFG->framename .'" href="'. $wwwroot .'/login/logout.php">'. get_string('logout') .'</a></font>';
+        if (isset($course->id)) {
+            $menu = user_login_string($course->id);
         } else {
-            $menu = '<font size="2"><a target="'. $CFG->framename .'" href="'. $wwwroot .'/login/index.php">'. get_string('login') .'</a></font>';
+            $menu = user_login_string(SITEID);
         }
     }
 
@@ -1913,7 +1913,7 @@ function theme_setup($theme = '', $params=NULL) {
 function user_login_string($course, $user=NULL) {
     global $USER, $CFG;
 
-    if (empty($user)) {
+    if (empty($user) and isset($USER->id)) {
         $user = $USER;
     }
 

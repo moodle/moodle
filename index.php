@@ -40,7 +40,7 @@
         } else {
             $wwwroot = str_replace('http', 'https', $CFG->wwwroot);
         }
-        $loginstring = "<span class=\"logininfo\"><a href=\"$wwwroot/login/index.php\">".get_string('login').'</a></font>';
+        $loginstring = "<div class=\"logininfo\"><a href=\"$wwwroot/login/index.php\">".get_string('login').'</a></div>';
     } else {
         $loginstring = user_login_string($SITE);
         add_to_log(SITEID, 'course', 'view', 'view.php?id='.SITEID, SITEID);
@@ -70,7 +70,7 @@
 
     print_header(strip_tags($SITE->fullname), $SITE->fullname, 'home', '',
                  '<meta name="description" content="'. s(strip_tags($SITE->summary)) .'" />',
-                 true, '', $loginstring . '<br />' . $langmenu);
+                 true, '', $loginstring.$langmenu);
 
 ?>
 
