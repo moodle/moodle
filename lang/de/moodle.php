@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.2 Beta + (2004030702)
+      // moodle.php - created with Moodle 1.2 Beta + (2004031000)
 
 
 $string['action'] = 'Aktion';
@@ -171,6 +171,7 @@ $string['configuration'] = 'Konfiguration';
 $string['configvariables'] = 'Variablen konfigurieren';
 $string['configwarning'] = 'Vorsicht bei der Veränderung dieser Einstellungen, ungeeignete Werte können zu Problemen führen.';
 $string['configzip'] = 'Geben Sie hier den Pfad zum Programm zip an (nur Unix). Dieser wird für die Erstellung ZIP-Archiven auf dem Server benötigt.';
+$string['confirm'] = 'Bestätigen';
 $string['confirmed'] = 'Ihre Registrierung wurde bestätigt';
 $string['confirmednot'] = 'Ihre Registrierung wurde noch nicht bestätigt!';
 $string['continue'] = 'Weiter';
@@ -839,11 +840,13 @@ $string['uploadproblem'] = 'Ein unbekanntes Problem ist während dem Hochladen de
 $string['uploadthisfile'] = 'Diese Datei hochladen';
 $string['uploadusers'] = 'Nutzer hochladen';
 $string['user'] = 'Nutzer';
+$string['userconfirmed'] = 'Bestätigt $a';
 $string['userdeleted'] = 'Dieser Benutzer-Zugang wurde gelöscht';
 $string['userdescription'] = 'Beschreibung';
 $string['userfiles'] = 'Nutzer-Dateien';
 $string['username'] = 'Benutzername';
 $string['usernameexists'] = 'Dieser Benutzername ist bereits vergeben, probieren Sie einen anderen';
+$string['usernotconfirmed'] = 'Kann $a nicht bestätigen';
 $string['userprofilefor'] = 'Benutzer-Profil für $a';
 $string['users'] = 'Benutzer/innen';
 $string['usersnew'] = 'Neue Nutzer/innen';
