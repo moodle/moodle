@@ -1032,7 +1032,9 @@ function print_side_block($heading="", $content="", $list=NULL, $icons=NULL, $fo
 
     if ($content) {
         echo "$content";
-        echo "<font size=\"-1\">$footer</font>";
+        if ($footer) {
+            echo "<div style=\"font-size: x-small; text-align:right;\">$footer</div>";
+        }
     } else {
         echo "<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"2\">";
         if ($list) {
@@ -1050,7 +1052,7 @@ function print_side_block($heading="", $content="", $list=NULL, $icons=NULL, $fo
             if ($icons) {
                 echo "<td class=\"sideblocklinks\" valign=\"top\" width=\"16\">&nbsp;</td>";
             }
-            echo "<td class=\"sideblocklinks\"><font size=\"-1\">$footer</font></td>";
+            echo "<td class=\"sideblocklinks\"><div style=\"font-size: x-small; text-align:right;\">$footer</div></td>";
             echo "</tr>";
         }
         echo "</table>";

@@ -778,7 +778,7 @@ function calendar_get_sideblock_upcoming($courses, $groups, $users, $daysinfutur
         } else {
             $content .= $events[$i]->name;
         }
-        $content .= '</div><div class="cal_event_date">'.$events[$i]->time.'</div>';
+        $content .= '</div><div class="cal_event_date" style="text-align:right;">'.$events[$i]->time.'</div>';
         if ($i < $lines - 1) $content .= '<hr />';
     }
 
