@@ -1,9 +1,9 @@
 <?PHP // $Id$ 
-      // lesson.php - created with Moodle 1.3 - (2004052400)
+      // lesson.php - created with Moodle 1.4 (2004083100)
 
 
 $string['actionaftercorrectanswer'] = 'Reakcja po poprawnej odpowiedzi';
-$string['addabranchtable'] = 'WstawTabelê W±tków';
+$string['addabranchtable'] = 'Wstaw Tabelê W±tków';
 $string['addanendofbranch'] = 'Wstaw Koniec Tabeli W±tków';
 $string['addaquestionpage'] = 'Wstaw Stronê Pytañ';
 $string['answer'] = 'Odpowied¼';
@@ -47,6 +47,7 @@ $string['multipleanswer'] = 'Wielokrotne odpowiedzi';
 $string['nextpage'] = 'Nastêpna strona';
 $string['noanswer'] = 'Brak odpowiedzi';
 $string['noattemptrecordsfound'] = 'Brak prób: nie przyznano oceny';
+$string['nobranchtablefound'] = 'Nie znaleziono Tabeli W±tków';
 $string['normal'] = 'Normalnie - id¼ zgodnie z trybem lekcji';
 $string['notdefined'] = 'Brak definicji';
 $string['notitle'] = 'Brak tytu³u';

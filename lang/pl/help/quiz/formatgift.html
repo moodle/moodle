@@ -1,0 +1,277 @@
+<p align=center><b>Imporowanie plików w formacie "GIFT"</b></p>
+
+p>Format GIFT jest najbardziej wszechstronnym formatem. Zosta³ zaprojektowany jako prosta metoda dla nauczycieli tworzacych pytania jako plik tekstowy. GIFT obs³uguje pytania Wielokrotnego wyboru, Prawda-Fa³sz, Krótkie odpowiedzi, Dopasuj odpowied¼, Numeryczne jak i zadania typu "wstaw brakuj±ce s³owo".</p>
+
+<p>Kilka typów pytañ mo¿e byæ u¿yytych w jednym pliku tekstowym. Ponadto format ten zezwala na umieszczanie komentarzy, nazw pytañ, informacji zwrotnych i wa¿enie ocen. </p>
+
+<p>Kodowanie tekstu musi byæ identyczne z ustawieniami Moodle. 
+    Przyk³adowy plik z pytanamia znajdziesz tutaj: <a href="../../../../mod/quiz/format/gift/examples.txt">gift/examples.txt</a>.</p>
+
+<p>Nale¿y umieszczaæ pust± liniê (podwójna interlinia) pomiêdzy ka¿dym pytaniem. Mo¿na równie¿ zapisaæ ka¿d± odpowied¼ w osobnej linii i nawet zastosowaæ wciêcie. Przyk³ad:</p>
+    
+<pre>CzasNaE-Biznes to {
+	~codzienna gazeta 
+	~ksi±¿ka
+	=serwis www
+} o marketingu i biznesie.
+
+CzasNaE-Biznes to? {
+	=serwis www 
+	=e-zin
+}
+</pre>
+
+<h3>TYPY PYTAÑ</h3>
+
+<p><u><b>Wielokrotnego wyboru:</b></u><br />
+    
+    <p>W przypadku pytañ Wielokrotnego wyboru odpowiedzi b³êdne poprzedzamy tyld± (~) a poprawne znakiem równo¶ci (=).
+    </p>
+    
+<pre>CzasNaE-Biznes to?{~codzienna gazeta ~ksi±¿ka =serwis www i e-zin}</pre>
+   
+<p><u><b>Brakuj±ce s³owo:</b></u><br />     
+   
+   <p>Format ten automatycznie wstawia "miejsce na s³owo" _____ w ¶rodku zdania. 
+   Aby stworzyæ tego typu pytanie, wstaw odpowiedzi w miejsce, gdzie ma brakowaæ s³owa. Wstawienie odpowiedzi za ostatnim znakiem interpunkcyjnym nie dzia³a w tym przypadku.
+    
+    <pre>CzasNaE-Biznes to {~codzienna gazeta ~ksi±¿ka =serwis www} o marketingu i biznesie.</pre>
+    
+    <p>Wszystkie typy pytañ mog± byæ zapisane w formacie "Brakuj±ce s³owo"</p>
+    
+<p><u><b>Krótka odpowied¼:</b></u><br />
+  
+  <p>Wszystkie odpowiedzi w tym typie pytania s± poprzedzone znakiem równo¶ci (=).
+  Czyli wszystkie odpowiedzi s± poprawne. ¯adna z odpowiedzi nie mo¿e zaiweraæ tyldy (~)
+   </p>
+
+<pre>CzasNaE-Biznes to?{=serwis www =e-zin}
+
+Dla plus dwa równa siê {=cztery =4}.</pre>
+     
+     
+    <p>Je¶li jest tylko jedna poprawna, krótka odpowied¼, mo¿e byæ zapisana bez znaku równo¶ci (=) o ile nie mo¿na jej pomyliæ z pytaniem typu Prawda-Fa³sz. 
+    
+<p><u><b>Prawda-Fa³sz:</b></u><br />
+
+<p>W tym typie pytamy czy dane stwierdzenie jest prawd± czy fa³szem.
+
+Odpowied¼ musi byæ zapisana jako {TRUE} czyli prawda lub {FALSE}, czyli fa³sz. Alternatywnie mo¿na u¿yæ odpowiednio {T} lub {F}.</p>
+
+<pre>CzasNaE-Biznes to codzienna gazeta.{FALSE}
+
+CzasNaE-Biznes to serwis www.{T}</pre>
+
+<p><u><b>Pasuj±ce odpowiedzi:</b></u><br />
+
+<p>Pasuj±ce pary zaczynaj± siê od znaku równosci (=) i s± oddzielone znakiem "->". W pytaniu musz± znale¼æ siê przynajmniej trzy pasuj±ce pary.</p>
+
+<pre>Matching Question. {
+  =subquestion1 -> subanswer1
+  =subquestion2 -> subanswer2
+  =subquestion3 -> subanswer3
+}
+     
+Dopasuj stolice do pañstw. {
+  =Kanada -> Ottawa
+  =W³ochy  -> Rrzym
+  =Japonia  -> Tokio
+  =Indie  -> New Delhi
+}</pre>
+
+    <p>Pytania tego typu nie obs³uguj± informacji zwrotnej ani wa¿enia ocen.</p>
+
+<p><u><b>Numeryczne:</b></u><br />
+    
+<p>Odpowied¼ w pytaniu numerycznym musi zaczynaæ siê od znaku #.
+    
+Pytania tego typu mog± zaiweraæ margines b³êdu, który dopisujemy za odpowiedzi± poprzedzaj±c go dwukropkiem. Je¶li np. odpowiednia odpowied¼ mie¶ci siê pomiêdzy 1.5 a 2.5, zapiszemy odpowied¼ jako <u>{#2:0.5}</u>.
+
+    Je¶li nie zdefiniujesz marginesu b³edu, system ustawi go na zero.</p>
+    
+    
+<pre>Kiedy powsta³ CzasNaE-Biznes?{#2000}
+
+Jaka jest warto¶c pliczby pi (do 3 miejsc po przecinku)? {#3.1415:0.0005}
+</pre>
+    <p>Ewnetualnie odpowied¼ na pytanie numeryczne mo¿e byæ zapisana jako zakres w postaci {#<i>Warto¶æMinimalna</i>..<i>Warto¶æMaksymalna</i>}.</p>
+    
+  
+<pre>Jaka jest warto¶c pliczby pi (do 3 miejsc po przecinku)? {#3.141..3.142}</pre>
+   
+<p>Interfejs moodle nie obs³guje numerycznych pytañ wielokrotnego wyboru. Format GIFT jest tutaj pomocny. Aby uzyskaæ taki efekt, ka¿d± odpowied¼ nale¿y poprzedziæ znakiem równo¶ci (=).
+
+   Mo¿liwo¶æ ta przydaje siê je¶li chcemy przypisaæ mniejsz± wagê do odpowiedzi mieszcz±cej siê w marginesie b³êdu ni¿ do odpowiedzi poprawnej. Przyk³ad:</p>
+   
+   
+<pre>Kiedy powsta³ CzasNaE-Biznes?{ {#
+   =2000:0
+   =%50%2000:1
+}
+</pre>
+
+<p>W tym przypadku za odpowiedzi 1999 i 2001 zostanie przyznane 50% punktów.     
+         
+         
+    <p>Poniewa¿ interfejs Moodle nie obs³uguje numerycznych pytañ wielokrotnego wyboru, nie ma mo¿liwo¶ci ich edycji. Musisz skasowaæ pytanie i je ponownie zaimportowaæ.</p>
+
+
+<h3>OPCJE</h3>
+
+
+    <p>Poza podstawowymi formatami pytañ, format ten zawiera szereg opcji dodatkowych: komentarze, nazwa pytania, informacja zwrotna, waga odpowiedzi.</p>
+
+<p><u><b>Komentarze:</b></u><br />
+
+<p>Komentarze nie s± importowane do Moodle. S³u¿± do przejrzystego zapisu pliku z pytaniami.
+
+<p>Wszystkie linie rozpoczynaj±ce siê dwoma znakami backslah // (nie licz±c tabulacji i spacji) zostan± pominiête.
+    
+    
+<pre>     // Poni¿ej jest pytanie numeryczne
+Ile jest dwa plus dwa? {#4}
+</pre>
+
+<p><u><b>Nazwa pytania:</b></u><br />
+
+<p>Nazwa pytania musi znale¼æ siê przed pytaniem i nale¿y poprzedziæ i zakoñczyæ  j± podwójnym dwukropkiem ::.
+</p>
+
+<pre>::Pochodzenie pisam japoñskiego::Pismo japoñskie pochodzi z? {=Chin}
+
+::Wigilia::Wigiliê w Polsce obchodzi siê {~24 ~25 =26} grudnia.</pre>
+
+<p>Je¶li nie zdefiniujesz nazwy pytania, nazw± stanie siê samo pytanie.</p>
+
+<p><u><b>Informacja zwrotna:</b></u><br />
+
+<p>Do ka¿dej odpowiedzi mo¿e byæ dodana informacja zwrotna przy pomocy znaku hash (#).</p>
+
+<pre>Jaka jest odpowied¼ na to pytanie?{
+     ~z³a odpowied¼#informacja zwrotna do tej odpowiedzi
+     ~kolejna z³a odpowied¼#informacja zwrotna do tej odpowiedzi
+     =poprawna odpowied¼#Doskonale!
+}
+     
+CzasNaE-Biznes to?{
+	=serwis www#Zgadza siê. Jest to równie¿ e-zin!
+	=e-zin#Zgadza siê. Jest to równie¿ serwis www!
+}
+     
+CzasNaE-Biznes to codzienna gazeta.{FALSE#Jest to serwis www}
+</pre>
+     
+<p>W przypadku pytañ wielokrotnego wyboru, informacja zwrotna wy¶wietlana jest tylko do odpowiedzi, któr± wybra³ student.
+
+<p>W przypadku krótkich odpowiedzi informacja zwrotna pojawia siê wy³±cznie w przypadku poprawnej odpowiedzi.
+
+<p>W przypadku pytañ Prawda-Fa³sz informacja zwrotna pojawia siê wy³±cznie po wybraniu b³êdnej odpowiedzi.</p>
+
+<p><u><b>Waga odpowiedzi:</b></u><br />
+
+<p>Wa¿enie odpowiedzi dzia³a w przypadku pytañ wielokrotnego wyboru i krótkich odpowiedzi.
+
+Waga procentowa odpowiedzi musi znale¼æ siê za tyld± lub znakiem równo¶ci w przypadku krótkiej odpowiedzi ale przed odpowiedzi±. Warto¶æ wagi zamieszczamy pomiêdzy znakami procentu (np. %50%).
+
+Zaleca siê dodanie komentarza.</p>
+
+<pre>trudne pytanie.{
+	~z³a odpowied¼ 
+	~%50%prawie dobra odpowied¼ 
+	=dobra odpowied¼
+}
+          
+::Miasto Jezusa::Jezus pochodzi³ z {
+	~Jeruzalem#To by³o wa¿ne miasto w jego ¿yciu, ale odpowied¼ jest b³êdna.
+	~%25%Betlejem#Tutaj siê urodzi³, ale wychowywa³ gdzie indziej.
+	~%50%Galilea#Musisz byæ bardziej dok³adny.
+	=Nazaret#Tak!
+}
+
+::Miasto Jezusa::Jezus urodzi³ siê w {
+	=Betlejem#Zgadza siê.
+	=%50%Betleiem#Dobrze, ale pisze siê Betlejem.
+}
+ </pre>
+
+<p>Pierwsze dwa pytania to wielokrotne odpowiedzi, ostatnie pytanie to krótka odpowied¼ (patrz na ~ i =)</p>
+
+    <p>UWAGA: Mimo i¿ mo¿esz ustawiæ wagi, nie bêd± one widoczne i mo¿liwe do edycji poprzez interfejs Moodle. W trakcie edycji masz do wyboru predefiniowane wagi. Je¶li wagi zdefiniowane w formacie GIFT nie bêd± zgodne z predefiniowanymi, Moodle zmieni je na predefiniowane i tak zostan± zapisane.</font></p>
+
+<p><u><b>Wiele odpowiedzi poprawnych:</b></u><br />
+
+<p>Opcji tej u¿ywamy, gdy w pytaniu wielokrotnego wyboru nale¿y zaznaczyæ wiêcej ni¿ jedn± odpowied¼. Aby uzyskaæ taki efekt, musimy wstawiæ wagi sumuj±ce siê do 100 (dok³adnie) przy poprawnych odpowiedziach. ¯adna odpowied¼ nie mo¿e byæ odpowiedzi± pe³n± (tj. poprzedzon± znakiem =).
+</p>
+
+<pre>CzasNaE-Biznes to?{
+	~codzienna gazeta
+	~ksi±¿ka 
+	~%50%serwis www 
+	~%50%e-zin
+}
+</pre>
+          
+Aby pozbyæ siê problemu uzyskiwania maskymalnej punktacji za zaznaczenie wszystkich mo¿liwych opcji, umie¶æ ujemne wagi obok b³êdnych odpowiedzi.
+
+<pre>CzasNaE-Biznes to?{
+	~%-100%codzienna gazeta
+	~%-100%ksi±¿ka 
+	~%50%serwis www 
+	~%50%e-zin
+}
+
+CzasNaE-Biznes to?{
+	~%-50%codzienna gazeta
+	~%-50%ksi±¿ka 
+	~%50%serwis www 
+	~%50%e-zin
+}
+</pre>
+
+<p>W pierwszym przypadku ka¿da niepoprawna odpowied¼ da 0 punktów za pytanie. W drugim przypadku za niepoprawne odpowiedzi naliczane s± punkty karne.
+
+
+<p><u><b>Znaki specjalne ~ = # { } :</b></u><br />
+
+<p>Te symbole <b> ~ = # { } </b> s± znakami funkcyjnymi GIFT i nie mog± byæ u¿ywane normalnie w pytaniu lub odpowiedzi. Aby jednak u¿yæ ich w tre¶ci pytania lub odpowiedzi, nale¿y przed ka¿dym znakiem specjalnym postawiæ backslahs (\).
+Przyk³ad:</p>
+
+<pre>
+Which answer equals 5? {
+~ \= 2 + 2
+= \= 2 + 3
+~ \= 2 + 4  
+}
+
+::Znaki funkcyjne::
+Które z poni¿szych znaków nie s± znakami funkcyjnymi? {
+~ \~     # \~ jest znakiem kontrolnym.
+~ \=     # \= jest znakiem kontrolnym..
+~ \#     # \# jest znakiem kontrolnym..
+~ \{     # \{ jest znakiem kontrolnym..
+~ \}     # \} jest znakiem kontrolnym..
+= \     # Zgadza siê! \ (backslash) nie jest znakiem kontrolnym. 
+}
+</pre>
+
+    <p>W trakcie importu backspashe s± usuwane.</p>
+
+<p><u><b>Inne opcje:</b></u><br />
+
+<p>Pytania typu krótka odpowied¼ mog± byæ wra¿liwe na wielko¶æ liter. Aby uzyskaæ taki rezultat, nale¿y zmieniæ 0 na 1 w linii:<br />
+
+    <tt>$question-&gt;usecase = 0;  // Ignore case</tt></p>
+    
+    <p>W pliku <b>mod/quiz/gift/format.php</b>, gdzie znajduj± siê równie¿ edytowalne opcje</p>
+<p></p>
+
+<h3>PODZIÊKOWANIA</h3>
+
+<p><p>Filtr ten powsta³ wspólnie z wieloma cz³onkami spo³eczno¶ci Moodle. Zbudowano go na podstawie formatu "Brakuj±ce s³owo" napisanego przez Martina Dougiamasa i Thomasa Robba.
+
+Paul Tsuchido Shew napisa³ go w grudniu 2003 na podstawie sugestii spo³eczno¶ci.
+
+Nazwa jest skrótem od &quot;General Import Format Technology&quot; (Podstawowy Format Importu)</p>
+
+    <p><font size="-1">GIFT filter and documentation by Paul Tsuchido Shew http://ac.shew.jp. Last updated 27 Feb 2004. Translation to Polish Piotr Majewski http://cneb.pl. Last updated 19 Sep 2004.
+    </font></p>

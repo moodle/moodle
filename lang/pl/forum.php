@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.4 development (2004060400)
+      // forum.php - created with Moodle 1.4 (2004083100)
 
 
 $string['addanewdiscussion'] = 'Dodaj nowy temat dyskusji';
@@ -43,6 +43,7 @@ $string['editing'] = 'Edycja';
 $string['emptymessage'] = 'Co¶ nie tak z twoim postem. Byæ mo¿e by³  pusty lub za³±cznik by³ zbyt du¿y. Twoje zmiany nie zosta³y zapisane';
 $string['everyonecanchoose'] = 'Ka¿dy mo¿e siê zapisaæ na forum';
 $string['everyoneissubscribed'] = 'Ka¿dy jest zapisany na to forum';
+$string['existingsubscribers'] = 'Istniej±cy subskrybenci';
 $string['forcesubscribe'] = 'Ka¿dy jest automatycznie zapisywany na to forum';
 $string['forcesubscribeq'] = 'Wymusiæ u ka¿dego zapis na to forum?';
 $string['forum'] = 'Forum';
@@ -79,7 +80,6 @@ $string['nomorepostscontaining'] = ' Nie znaleziono wiêcej postów zawieraj±cych 
 $string['nonews'] = ' Nie umieszczono jeszcze ¿adnych nowo¶ci';
 $string['noposts'] = 'Brak wiadomo¶ci';
 $string['nopostscontaining'] = 'Nie znaleziono wiadomo¶ci zawieraj±cych \'$a \'';
-$string['noreply'] = ' ';
 $string['nosubscribers'] = 'Nikt jeszcze nie zapisa³ siê na to forum';
 $string['notingroup'] = 'Musisz byæ zapisany do grupy aby móc przegl±daæ to forum.';
 $string['nownotsubscribed'] = '$a ->name NIE bêdzie otrzymywaæ kopii \'$a->forum\' poczt± elektroniczn±.';
@@ -100,9 +100,11 @@ $string['postrating3'] = 'Demonstruje g³ównie poznawanie powi±zane';
 $string['posts'] = 'Posty';
 $string['posttoforum'] = 'Post do forum';
 $string['postupdated'] = 'Twój post zosta³ zaktualizowany';
+$string['potentialsubscribers'] = 'Potencjalni subskrybenci';
 $string['processingdigest'] = 'Przetwa¿anie streszczenia maili u¿ytkownika $a';
 $string['processingpost'] = 'Post $a jest w trakcie przetwarzania';
 $string['prune'] = 'Zerwij';
+$string['prunedpost'] = 'Z tego postu zosta³a utworzona nowa dyskusja';
 $string['pruneheading'] = 'Zerwij post i przejd¼ do nowej dyskusji';
 $string['rate'] = 'Oceñ';
 $string['rating'] = ' Oceny';
@@ -146,6 +148,8 @@ $string['subscriptions'] = 'Zapisy na fora';
 $string['unsubscribe'] = 'Wypisz siê z tego forum';
 $string['unsubscribed'] = 'Wypisany z forum';
 $string['unsubscribeshort'] = 'Wypisz';
+$string['yesforever'] = 'Tak, na zawsze';
+$string['yesinitially'] = 'Tak, wstêpnie';
 $string['youratedthis'] = 'Oceni³e¶(a¶) to';
 $string['yournewtopic'] = 'Twoja nowa dyskusja';
 $string['yourreply'] = 'Twoja odpowied¼';
