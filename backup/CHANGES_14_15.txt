@@ -35,6 +35,8 @@ Now I show the specific detailed status of every item in the process:
           mimic it.
 22. TODO: Review the wiki module fully (if possible, try to make binary
           uploaded contents to work).
+23. TODO: Add support for metacourses in backup and restore. Show a new option
+          to decide what to do (ignore, process).
 
 Eloy (stronk7)
 23-01-2004
