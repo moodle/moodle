@@ -472,7 +472,9 @@ function get_all_mods($courseid, &$mods, &$modnames, &$modnamesplural, &$modname
                 $modnamesused[$mod->modname] = $modnames[$mod->modname];
             }
         }
-        asort($modnamesused);
+        if ($modnamesused) {
+            asort($modnamesused);
+        }
     }
 }
 
