@@ -24,6 +24,7 @@
 ?>
 <form method="post" action="edit.php" name="form">
 <table cellpadding="9" cellspacing="0" >
+<?php if (iscreator()) { ?>
 <tr valign="top">
     <td align="right"><?php  print_string("category") ?>:</td>
     <td><?php
@@ -35,6 +36,7 @@
         ?>
     </td>
 </tr>
+<?php } ?>
 <tr valign="top">
     <td align="right"><?php  print_string("fullname") ?>:</td>
     <td><input type="text" name="fullname" maxlength="254" size="50" value="<?php  p($form->fullname) ?>" alt="<?php  print_string("fullname") ?>" />
@@ -264,8 +266,8 @@
 <?php if (!empty($CFG->allowcoursethemes)) { ?>
 <tr valign="top">
     <td align="right"> <?php print_string("forcetheme") ?>: </td>
-    <td> 
-      <?php 
+    <td>
+      <?php
          $themes[''] = get_string("forceno");
          $themes += get_list_of_themes();
          choose_from_menu($themes, 'theme', $form->theme, "", "", "");
@@ -292,6 +294,9 @@
     <td><input type="submit" value="<?php  print_string("savechanges") ?>" /></td>
 </tr>
 </table>
+<?php if(!iscreator()) { ?>
+<input type="hidden" name="category" value="<?php echo $form->category ?>" />
+<?php } ?>
 <input type="hidden" name="id" value="<?php echo $form->id ?>" />
 <input type="hidden" name="sesskey" value="<?php echo $form->sesskey ?>" />
 </form>
