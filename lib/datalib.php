@@ -75,7 +75,7 @@ function modify_database($sqlfile="", $sqlstring="") {
 function table_column($table, $oldfield, $field, $type="integer", $size="10",
                       $signed="unsigned", $default="0", $null="not null", $after="") {
 /// Add a new field to a table, or modify an existing one (if oldfield is defined).
-    global $CFG;
+    global $CFG, $db;
 
     switch (strtolower($CFG->dbtype)) {
 
@@ -107,9 +107,12 @@ function table_column($table, $oldfield, $field, $type="integer", $size="10",
             break;
 
         case "postgres7":        // From Petri Asikainen
-
+            //Check db-version
+            $dbinfo = $db->ServerInfo();
+            $dbver = substr($dbinfo[version],0,3);
+            
+            $field = "$field";
             //to prevent conflicts with reserved words
-            $field = "\"$field\"";
             $oldfield = "\"$oldfield\"";
 
             switch (strtolower($type)) {
@@ -129,7 +132,7 @@ function table_column($table, $oldfield, $field, $type="integer", $size="10",
                     break;
             }
 
-            $default = "DEFAULT '$default'";
+            $default = "'$default'";
 
             //After is not implemented in postgesql
             //if (!empty($after)) {
@@ -142,20 +145,18 @@ function table_column($table, $oldfield, $field, $type="integer", $size="10",
                 execute_sql("ALTER TABLE {$CFG->prefix}$table ADD COLUMN $field $type");
             }
 
-            /* SETTING OF COLUMN TO NULL/NOT NULL
-               IS NOT POSIBLE BEFORE POSTGRESQL 7.3
-               THIS COMMENTED OUT UNTIL  I FIGuRE OUT HOW GET POSTGESQL VERSION FROM ADODB
-
-            //update default values to table
-            if ($null == "NOT NULL") {
-              execute_sql("UPDATE {$CFG->prefix}$table SET $field=$default where $field=NULL");
-              execute_sql("ALTER TABLE {$CFG->prefix}$table ALTER COLUMN $field SET $null");
-            } else {
-               execute_sql("ALTER TABLE {$CFG->prefix}$table ALTER COLUMN $field DROP NOT NULL"
+            if ($dbver >= "7.3") {
+                // modifying 'not null' is posible before 7.3
+                //update default values to table
+                if ($null == "NOT NULL") {
+                    execute_sql("UPDATE {$CFG->prefix}$table SET $field=$default where $field IS NULL");
+                    execute_sql("ALTER TABLE {$CFG->prefix}$table ALTER COLUMN $field SET $null");
+                } else {
+                    execute_sql("ALTER TABLE {$CFG->prefix}$table ALTER COLUMN $field DROP NOT NULL");
+                }
             }
-            */
-  
-            execute_sql("ALTER TABLE {$CFG->prefix}$table ALTER COLUMN $field SET $default");
+
+            execute_sql("ALTER TABLE {$CFG->prefix}$table ALTER COLUMN $field SET DEFAULT $default");
 
             break;
 
