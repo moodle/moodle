@@ -1209,6 +1209,15 @@ function main_upgrade($oldversion=0) {
                               );");
     }
 
+    if ($oldversion < 2005022400) {
+        // Add more visible digits to the fields
+        table_column('dst_preset', 'activate_index', 'activate_index', 'tinyint', '2', '', '0', 'not null');
+        table_column('dst_preset', 'activate_day', 'activate_day', 'tinyint', '2', '', '0', 'not null');
+        // Add family and year fields
+        table_column('dst_preset', '', 'family', 'varchar', '100', '', '', 'not null', 'name');
+        table_column('dst_preset', '', 'year', 'int', '10', '', '0', 'not null', 'family');
+    }
+
     return $result;
 }
 

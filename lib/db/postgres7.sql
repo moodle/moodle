@@ -108,6 +108,8 @@ CREATE INDEX prefix_course_sections_coursesection_idx ON prefix_course_sections 
 CREATE TABLE prefix_dst_preset (
    id SERIAL PRIMARY KEY,
    name varchar(48) NOT NULL default '',
+   family varchar(100) NOT NULL default '',
+   year integer NOT NULL default '0',
    apply_offset integer NOT NULL default '0',
    activate_index integer NOT NULL default '1',
    activate_day integer NOT NULL default '1',
