@@ -1134,8 +1134,12 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
     print_string("bynameondate", "forum", $by);
 
     echo "</font></p></td></tr>";
-    echo "<tr><td bgcolor=\"$THEME->cellcontent2\" class=\"forumpostside\" width=\"10\">";
-    echo "&nbsp;";
+    echo "<tr><td bgcolor=\"$THEME->cellcontent2\" valign=\"top\" class=\"forumpostside\" width=\"10\">";
+    if ($group = user_group($courseid, $post->userid)) {
+        print_group_picture($group, $courseid, false, false, false);
+    } else {
+        echo "&nbsp;";
+    }
     echo "</td><td bgcolor=\"$THEME->cellcontent\" class=\"forumpostmessage\">\n";
 
     if ($post->attachment) {
