@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.0.9 Beta 1 (2003051600)
+      // moodle.php - created with Moodle 1.0.9 Beta 1 + (2003052000)
 
 
 $string['action'] = "Azione";
@@ -33,6 +33,7 @@ $string['allparticipants'] = "Tutti i partecipanti";
 $string['alphanumerical'] = "Puo' contenere solo lettere dell'alfabeto o numeri";
 $string['alreadyconfirmed'] = "La registrazione è già stata confermata";
 $string['answer'] = "Risposta";
+$string['areyousuretorestorethis'] = "Sei sicuro di voler recuperare i dati?";
 $string['assessment'] = "Valutazione";
 $string['assignadmins'] = "Assegna amministratori";
 $string['assigncreators'] = "Assegna creatori corsi";
@@ -40,9 +41,12 @@ $string['assignteachers'] = "Attribuisci insegnanti";
 $string['authentication'] = "Autenticazione";
 $string['availablecourses'] = "Corsi disponibili";
 $string['backup'] = "Copia di sicurezza";
+$string['backupdate'] = "Data copia di sicurezza";
 $string['backupdetails'] = "Dettagli copia di sicurezza";
 $string['backupdir'] = "backupdata";
 $string['backupnameformat'] = "%%Y%%m%%d-%%H%%M";
+$string['backuporiginalname'] = "Nome copia di sicurezza";
+$string['backupversion'] = "Versione copia di sicurezza";
 $string['cancel'] = "Cancella";
 $string['categories'] = "Categorie di corso";
 $string['category'] = "Categoria";
@@ -101,7 +105,8 @@ $string['country'] = "Paese";
 $string['course'] = "Corso";
 $string['coursebackup'] = "Copia di sicurezza del corso";
 $string['coursefiles'] = "File del corso";
-$string['courseformats'] = "Tipologie di corsi";
+$string['courseformats'] = "Tipologie di corso";
+$string['courserestore'] = "Recupera corso";
 $string['courses'] = "Corsi";
 $string['courseupdates'] = "Aggiornamenti del corso";
 $string['createaccount'] = "Crea il mio nuovo account";
@@ -203,6 +208,7 @@ $string['enteremailaddress'] = "Digita il tuo email per cancellare la tua passwo
 $string['error'] = "Errore";
 $string['errortoomanylogins'] = "Spiacente hai superato il numero ti tentativi di login permessi. Fai ripartire il tuo browser.";
 $string['existingadmins'] = "Amministratori esistenti";
+$string['existingcourse'] = "Corso esistente";
 $string['existingcreators'] = "Creatori di corsi esistenti";
 $string['existingteachers'] = "Insegnanti esistenti";
 $string['feedback'] = "Feedback";
@@ -279,6 +285,7 @@ $string['include'] = "Includi";
 $string['includeallusers'] = "Includi tutti gli utenti";
 $string['includecoursefiles'] = "Includi i file del corso";
 $string['includecourseusers'] = "Includi gli utenti del corso";
+$string['included'] = "Incluso";
 $string['includelogentries'] = "Includi i log";
 $string['includeneededusers'] = "Includi gli utenti necessari";
 $string['includeuserfiles'] = "Includi i file degli utenti";
@@ -366,6 +373,7 @@ $string['moduledeleteconfirm'] = "Stai per cancellare completamente il modulo '\
 $string['moduledeletefiles'] = "Tutti i dati associati con il modulo '\$a->module' é stato cancellato dalla base dati. Per completare la cancellazione (e prevenire che il modulo si re-installi automaticamente), devi ora cancellare questa directory dal tuo server: \$a->directory";
 $string['modulesetup'] = "Configurazione modulo tabelle";
 $string['modulesuccess'] = "\$a tabelle sono state settate correttamente";
+$string['moodleversion'] = "Versione Moodle";
 $string['mostrecently'] = "molto recentemente";
 $string['movedown'] = "Muovi in basso";
 $string['movefilestohere'] = "Trasferisci i files qui";
@@ -382,6 +390,7 @@ $string['never'] = "Mai";
 $string['neverdeletelogs'] = "Non cancellare mai i logs";
 $string['new'] = "Nuovo";
 $string['newaccount'] = "Nuovo account";
+$string['newcourse'] = "Nuovo corso";
 $string['newpassword'] = "Nuova password";
 $string['newpasswordtext'] = "Salve \$a->firstname,
 
@@ -407,9 +416,8 @@ Se questo non funziona, taglia e incolla questo indirizzo nella linea degli indi
 
 
 
-Saluti dall' amministratore \$a->admin del sito
-
-\$a->sitename";
+Saluti dall' amministratore del sito '\$a->sitename',
+\$a->signoff";
 $string['newpicture'] = "Nuova immagine";
 $string['newsitem'] = "nuovo item";
 $string['newsitems'] = "nuovi items";
@@ -421,6 +429,7 @@ $string['nocoursesyet'] = "Nessun corso in questa categoria";
 $string['noexistingadmins'] = "Non esistono amministratori, questo è un errore grave e non avresti mai dovuto vedere questo messaggio. ";
 $string['noexistingcreators'] = "Non esistono creatori di corsi";
 $string['noexistingteachers'] = "Non esistono insegnanti";
+$string['nofilesselected'] = "Non sono stati selezionati file da recuperare";
 $string['nofilesyet'] = "Nessun file è stato ancora trasferito sul server";
 $string['nograde'] = "Nessuna valutazione";
 $string['noimagesyet'] = "Nessuna immagine è stata ancora trasferita sul server";
@@ -435,6 +444,7 @@ $string['notavailable'] = "Non disponibile";
 $string['noteachersyet'] = "Non ci sono ancora insegnanti in questo corso";
 $string['notenrolled'] = "\$a non è registrato in questo corso.";
 $string['nothingnew'] = "Nessuna novità dal tuo ultimo login";
+$string['notincluded'] = "Non incluso";
 $string['nousersmatching'] = "Nessun utente '\$a' é stato trovato";
 $string['nousersyet'] = "Non ci sono ancora utenti registrati";
 $string['now'] = "adesso";
@@ -503,6 +513,8 @@ $string['rename'] = "Rinomina";
 $string['requireskey'] = "Questo corso richiede una chiave di accesso";
 $string['resources'] = "Risorse";
 $string['restore'] = "Ripristina";
+$string['restorecancelled'] = "Recupero annullato";
+$string['restoreto'] = "Recupera a";
 $string['returningtosite'] = "Ciao, sei ritornato?";
 $string['revert'] = "Ripristina";
 $string['role'] = "Funzione";
@@ -556,7 +568,7 @@ $string['strftimetime'] = "%%I:%%M %%p";
 $string['stringsnotset'] = "Le seguenti stringhe non sono definite in \$a";
 $string['studentnotallowed'] = "Spiacenti, ma non puoi accedere a questo corso come '\$a' ";
 $string['success'] = "Operazione eseguita con successo";
-$string['summary'] = "Risorsa";
+$string['summary'] = "Riassunto";
 $string['summaryof'] = "Riassunto di \$a";
 $string['supplyinfo'] = "Compilare con le tue informazioni";
 $string['teacheronly'] = "Solo per \$a";
@@ -617,7 +629,7 @@ $string['weekshow'] = "Mostra questa settimana a \$a";
 $string['welcometocourse'] = "Benvenuto(a) a \$a";
 $string['welcometocoursetext'] = "Benvenuto(a) a \$a->coursename!
 
-Una delle prime cose che dovresti fare è di pubblicare il tuo profilo nella tua pagina all'interno del corso in modo da poterti conoscere meglio:
+Una delle prime cose che dovresti fare è quella di editare la pagina col tuo profilo nel corso in modo tale che possiamo conoscerti meglio:
 
   \$a->profileurl";
 $string['withchosenfiles'] = "Con i files scelti";
@@ -633,6 +645,7 @@ $string['wordforteachers'] = "Come vuoi chiamare gli insegnanti";
 $string['wordforteacherseg'] = "es. Insegnanti, Tutors, Facilitatori etc.";
 $string['wrongpassword'] = "Password non corrispondente con questo username";
 $string['yes'] = "Sì";
+$string['youaregoingtorestorefrom'] = "Stai per recuperare da:";
 $string['yourlastlogin'] = "Il tuo ultimo login è stato:";
 $string['yourself'] = "Te stesso";
 $string['yourteacher'] = "Vostro \$a";
