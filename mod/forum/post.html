@@ -83,6 +83,8 @@
 </tr>
 
 
+<?php if ($forum->maxbytes != 1) {  //  1 = No attachments at all  ?>
+
 <tr valign=top>
     <td align=right><p><b><?php print_string("attachment", "forum") ?>:<br />(<?php print_string("optional") ?>)&nbsp;</b></p></td>
     <td>
@@ -94,8 +96,9 @@
        print_string("maxsize", "", display_size($maxbytes)); 
     ?>
     </td>
-
 </tr>
+
+<?php } ?>
 
 
 <tr>

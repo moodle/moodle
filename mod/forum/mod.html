@@ -102,6 +102,7 @@
 	<td>
         <?php
             $choices = get_max_upload_sizes($CFG->maxbytes, $course->maxbytes);
+            $choices[1] = get_string("uploadnotallowed");
             $choices[0] = get_string("courseuploadlimit") . " (".display_size($course->maxbytes).")";
             choose_from_menu ($choices, "maxbytes", $form->maxbytes, "");
             helpbutton("maxattachmentsize", get_string("maxattachmentsize", "forum"), "forum");
