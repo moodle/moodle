@@ -1,6 +1,6 @@
 <?PHP //$Id$
     //This page prints the backup form to select everything
- 
+
    //Checks for the required files/functions to backup every mod
     //And check if there is data about it on $form
     $count = 0;
@@ -20,33 +20,48 @@
             //Check data
             //Check module info
             $var = "backup_".$modname;
-            if (!isset($form->$var)) {
+            if (!isset($$var)) {
                 $form->$var = 1;
+            } else {
+                $form->$var = $$var;
             }
             //Check include user info
             $var = "backup_user_info_".$modname;
-            if (!isset($form->$var)) {
+            if (!isset($$var)) {
                 $form->$var = 1;
+            } else {
+                $form->$var = $$var;
             }
         }
     }
 
     //Check other parameters
-    if (!isset($form->backup_users)) {
+    if (!isset($backup_users)) {
         $form->backup_users = 2;
+    } else {
+        $form->backup_users = $backup_users;
     }
-    if (!isset($form->backup_logs)) {
+   
+    if (!isset($backup_logs)) {
         $form->backup_logs = 1;
+    } else {
+        $form->backup_logs = $backup_logs;
     }
-    if (!isset($form->backup_user_files)) {
+
+    if (!isset($backup_user_files)) {
         $form->backup_user_files = 1;
-    }
-    if (!isset($form->backup_course_files)) {
+    } else {
+        $form->backup_user_files = $backup_user_files;
+   }
+
+    if (!isset($backup_course_files)) {
         $form->backup_course_files = 1;
+    } else {
+        $form->backup_course_files = $backup_course_files;
     }
 
     if ($count == 0) {
-        error("No backupable modules are installed!");
+        notice("No backupable modules are installed!");
     }
 
 ?>
@@ -69,7 +84,7 @@
                 $backup_options[0] = get_string("no"); 
                 $backup_options[1] = get_string("yes");
                 $var = "backup_".$modname;
-                choose_from_menu($backup_options, $var, $form>$var, "");
+                choose_from_menu($backup_options, $var, $form->$var, "");
                 $backup_user_options[0] = get_string("withoutuserdata"); 
                 $backup_user_options[1] = get_string("withuserdata");
                 $var = "backup_user_info_".$modname;
