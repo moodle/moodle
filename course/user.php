@@ -61,7 +61,7 @@
     }
     echo "</TR></TABLE>";
 
-    get_all_mods($course->id, $mods, $modnames, $modnamesplural, $modnamesused, $modsectioncounts);
+    get_all_mods($course->id, $mods, $modnames, $modnamesplural, $modnamesused);
 
     switch ($mode) {
         case "todaylogs" :

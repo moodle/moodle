@@ -7,14 +7,14 @@ if (isadmin()) {
 	echo "<td><input type=text name=username size=20 value=\"";
     p($user->username);
     echo "\">";
-	echo formerr($err["username"]);
+	if (isset($err["username"])) formerr($err["username"]);
 	echo "</td>";
     echo "</tr>";
 
     echo "<tr valign=top>";
 	echo "<td><P>".get_string("newpassword").":</td>";
 	echo "<td><input type=text name=newpassword size=20 value=\"";
-    p($user->newpassword);
+    if (isset($user->newpassword)) p($user->newpassword);
     echo "\">";
 	if (isset($err["newpassword"])) {
         formerr($err["newpassword"]);
@@ -29,19 +29,19 @@ if (isadmin()) {
 <tr valign=top>
 	<td><P><? print_string("firstname") ?>:</td>
 	<td><input type="text" name="firstname" size=30 value="<? p($user->firstname) ?>">
-	<? formerr($err["firstname"]) ?>
+	<? if (isset($err["firstname"])) formerr($err["firstname"]); ?>
 	</td>
 </tr>
 <tr valign=top>
 	<td><P><? print_string("lastname") ?>:</td>
 	<td><input type="text" name="lastname" size=30 value="<? p($user->lastname) ?>">
-	<? formerr($err["lastname"]) ?>
+	<? if (isset($err["lastname"])) formerr($err["lastname"]); ?>
 	</td>
 </tr>
 <tr valign=top>
 	<td><P><? print_string("email") ?>:</td>
 	<td><input type="text" name="email" size=30 value="<? p($user->email) ?>">
-	<? formerr($err["email"]) ?>
+	<? if (isset($err["email"])) formerr($err["email"]); ?>
 	</td>
 </tr>
 <tr valign=top>
@@ -76,7 +76,7 @@ if (isadmin()) {
 <tr valign=top>
 	<td><P><? print_string("city") ?>:</td>
 	<td><input type="text" name="city" size=25 value="<? p($user->city) ?>">
-	<? formerr($err["city"]) ?>
+	<? if (isset($err["city"])) formerr($err["city"]); ?>
 	</td>
 </tr>
 <tr valign=top>
@@ -88,7 +88,7 @@ if (isadmin()) {
     }
     
     choose_from_menu ($COUNTRIES, "country", $user->country, get_string("selectacountry")."...", "", "") ?>
-	<? formerr($err["country"]) ?>
+	<? if (isset($err["country"])) formerr($err["country"]); ?>
 	</td>
 </tr>
 <tr valign=top>
@@ -99,7 +99,7 @@ if (isadmin()) {
                }
                choose_from_menu ($languages, "lang", $user->lang, "", "", "");
            }
-	       formerr($err["lang"]);
+	       if (isset($err["lang"])) formerr($err["lang"]);
         ?>
 	</td>
 </tr>
@@ -125,13 +125,13 @@ if (isadmin()) {
 
        choose_from_menu ($timezones, "timezone", $user->timezone, get_string("serverlocaltime"), "", "99");
 
-       echo "(".get_string(currentlocaltime).")";
+       echo "(".get_string("currentlocaltime").")";
 	?>
     </td>
 </tr>
 <tr valign=top>
 	<td><P><? print_string("userdescription") ?>:</td>
-	<td><? if ($err["description"]) {
+	<td><? if (isset($err["description"])) {
                formerr($err["description"]);
                echo "<BR>";
            } ?>
@@ -149,44 +149,44 @@ if (isadmin()) {
     <input type="file" name="imagefile" size=40>
     <? helpbutton("picture", get_string("helppicture"));
        print_string("maxsize", "", display_size(get_max_upload_file_size())); 
-	   formerr($err["imagefile"]);
+	   if (isset($err["imagefile"])) formerr($err["imagefile"]);
     ?>
 	</td>
 </tr>
 <tr valign=top>
 	<td><P><? print_string("webpage") ?>:</td>
 	<td><input type="text" name="url" size=50 value="<? p($user->url) ?>">
-	<? formerr($err["url"]) ?>
+	<? if (isset($err["url"])) formerr($err["url"]); ?>
 	</td>
 </tr>
 <tr valign=top>
 	<td><P><? print_string("icqnumber") ?>:</td>
 	<td><input type="text" name="icq" size=25 value="<? p($user->icq) ?>">
-	<? formerr($err["icq"]) ?>
+	<? if (isset($err["icq"])) formerr($err["icq"]); ?>
 	</td>
 </tr>
 <tr valign=top>
 	<td><P><? print_string("idnumber") ?>:</td>
 	<td><input type="text" name="idnumber" size=25 value="<? p($user->idnumber) ?>"> <? p($teacheronly) ?>
-	<? formerr($err["idnumber"]) ?>
+	<? if (isset($err["idnumber"])) formerr($err["idnumber"]); ?>
 	</td>
 </tr>
 <tr valign=top>
 	<td><P><? print_string("phone") ?> 1:</td>
 	<td><input type="text" name="phone1" size=25 value="<? p($user->phone1) ?>"> <? p($teacheronly) ?>
-	<? formerr($err["phone1"]) ?>
+	<? if (isset($err["phone1"])) formerr($err["phone1"]); ?>
 	</td>
 </tr>
 <tr valign=top>
 	<td><P><? print_string("phone") ?> 2:</td>
 	<td><input type="text" name="phone2" size=25 value="<? p($user->phone2) ?>"> <? p($teacheronly) ?>
-	<? formerr($err["phone2"]) ?>
+	<? if (isset($err["phone2"])) formerr($err["phone2"]); ?>
 	</td>
 </tr>
 <tr valign=top>
 	<td><P><? print_string("address") ?>:</td>
 	<td><input type="text" name="address" size=25 value="<? p($user->address) ?>"> <? p($teacheronly) ?>
-	<? formerr($err["address"]) ?>
+	<? if (isset($err["address"])) formerr($err["address"]); ?>
 	</td>
 </tr>
 <tr>

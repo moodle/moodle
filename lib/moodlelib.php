@@ -102,6 +102,11 @@ function format_time($totalsecs, $str=NULL) {
     $sh = ($hours == 1) ? $str->hour : $str->hours;
     $sd = ($days == 1)  ? $str->day  : $str->days;
 
+    $odays = "";
+    $ohours = "";
+    $omins = "";
+    $osecs = "";
+
     if ($days)  $odays  = "$days $sd";
     if ($hours) $ohours = "$hours $sh";
     if ($mins)  $omins  = "$mins $sm";
@@ -268,7 +273,7 @@ function require_login($courseid=0) {
     
     // Next, check if the user can be in a particular course
     if ($courseid) {
-        if ($USER->student[$courseid] || $USER->teacher[$courseid] || $USER->admin) {
+        if (!empty($USER->student[$courseid]) or !empty($USER->teacher[$courseid]) or !empty($USER->admin)) {
             if (isset($USER->realuser)) {   // Make sure the REAL person can also access this course
                 if (!isteacher($courseid, $USER->realuser)) {
                     print_header();
@@ -415,6 +420,9 @@ function isediting($courseid, $user=NULL) {
     global $USER;
     if (!$user){
         $user = $USER;
+    }
+    if (empty($user->editing)) {
+        return false;
     }
     return ($user->editing and isteacher($courseid, $user->id));
 }
@@ -770,6 +778,9 @@ function make_mod_upload_directory($courseid) {
 
 function valid_uploaded_file($newfile) {
 /// Returns current name of file on disk if true
+    if (empty($newfile)) {
+        return "";
+    }
     if (is_uploaded_file($newfile['tmp_name']) and $newfile['size'] > 0) {
         return $newfile['tmp_name'];
     } else {

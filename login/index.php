@@ -71,15 +71,21 @@
     }
 
     
+    if (empty($errormsg)) {
+        $errormsg = "";
+    }
+
     if (empty($SESSION->wantsurl)) {
 	    $SESSION->wantsurl = $HTTP_REFERER;
         save_session("SESSION");
     }
     
-    if (!$frm->username) 
+    if (empty($frm->username)) {
         $frm->username = get_moodle_cookie();
+        $frm->password = "";
+    }
     
-    if ($frm->username) {
+    if (!empty($frm->username)) {
         $focus = "form.password";
     } else {
         $focus = "form.username";

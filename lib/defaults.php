@@ -21,6 +21,7 @@
        "proxyhost"        => "",
        "proxyport"        => "",
        "maxeditingtime"   =>  1800,
+       "changepassword"   =>  true,
        "country"          => "",
        "guestloginbutton" =>  1
     );

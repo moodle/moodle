@@ -132,7 +132,7 @@
         }
         print_continue("index.php");
         print_simple_box_start("CENTER");
-        include("$CFG->dirroot/doc/release.html");
+        include("$CFG->dirroot/lang/en/docs/release.html");
         print_simple_box_end();
         print_continue("index.php");
         exit;
@@ -192,7 +192,7 @@
             }
     
         } else {    // module not installed yet, so install it
-            if (!$updated_modules) {
+            if (!empty($updated_modules)) {
                 $strmodulesetup    = get_string("modulesetup");
                 print_header($strmodulesetup, $strmodulesetup, $strmodulesetup);
             }
@@ -214,7 +214,7 @@
         }
     }
 
-    if ($updated_modules) {
+    if (!empty($updated_modules)) {
         print_continue("index.php");
         die;
     }
@@ -235,7 +235,7 @@
 
 /// If any new configurations were found then send to the config page to check
 
-    if ($configchange) {
+    if (!empty($configchange)) {
         redirect("config.php");
     }
 

@@ -13,6 +13,7 @@ I would suggest that you:
     MOST IMPORTANT
     |-------------------
     |
+    |   - files.php
     |   - install.html
     |   - upgrade.html
     |

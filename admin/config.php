@@ -75,13 +75,16 @@
     if (!isset($config)) {
         $config = $CFG;
     }
+    if (!isset($focus)) {
+        $focus = "";
+    }
 
     $stradmin = get_string("administration");
     $strconfigvariables = get_string("configvariables");
 
     if ($site) {
-        print_header("$site->shortname: $strconfigvariables", "$site->fullname",
-                      "<A HREF=\"index.php\">$stradmin</A> -> $strconfigvariables", "$focus");
+        print_header("$site->shortname: $strconfigvariables", $site->fullname,
+                      "<A HREF=\"index.php\">$stradmin</A> -> $strconfigvariables", $focus);
         print_heading($strconfigvariables);
     } else {
         print_header();

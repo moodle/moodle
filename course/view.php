@@ -26,19 +26,25 @@
 
     add_to_log($course->id, "course", "view", "view.php?id=$course->id", "$course->id");
 
-    if ( isteacher($course->id) ) {
-        if ($edit == "on") {
-            $USER->editing = true;
-        } else if ($edit == "off") {
-            $USER->editing = false;
+    if (isset($edit)) {
+        if (isteacher($course->id)) {
+            if ($edit == "on") {
+                $USER->editing = true;
+            } else if ($edit == "off") {
+                $USER->editing = false;
+            }
+            save_session("USER");
         }
     }
-    if ($help == "on") {
-        $USER->help = true;
-    } else if ($help == "off") {
-        $USER->help = false;
+
+    if (isset($help)) {
+        if ($help == "on") {
+            $USER->help = true;
+        } else if ($help == "off") {
+            $USER->help = false;
+        } 
+        save_session("USER");
     }
-    save_session("USER");
 
     $SESSION->fromdiscussion = "$CFG->wwwroot/course/view.php?id=$course->id";
     save_session("SESSION");
@@ -53,7 +59,7 @@
     print_header("$courseword: $course->fullname", "$course->fullname", "$course->shortname", "search.search", "", true,
                   update_course_icon($course->id));
 
-    get_all_mods($course->id, $mods, $modnames, $modnamesplural, $modnamesused, $modsectioncounts);
+    get_all_mods($course->id, $mods, $modnames, $modnamesplural, $modnamesused);
 
     if (! $sections = get_all_sections($course->id)) {
         $section->course = $course->id;   // Create a default section.

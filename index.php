@@ -26,6 +26,7 @@
                  "<META NAME=\"Description\" CONTENT=\"".stripslashes(strip_tags($site->summary))."\">",
                  true, "", $headerbutton);
 
+    $firstcolumn = false;  // for now
     $side = 175;
 
 ?>
@@ -38,7 +39,8 @@
   
      if ($site->newsitems > 0 or $sections[0]->sequence or isediting($site->id)) {
 
-         echo "<TD WIDTH=\"$side\" VALIGN=TOP NOWRAP>"; $firstcolumn=true;
+         echo "<TD WIDTH=\"$side\" VALIGN=TOP NOWRAP>"; 
+         $firstcolumn=true;
   
          if ($sections[0]->sequence or isediting($site->id)) {
              get_all_mods($site->id, $mods, $modnames, $modnamesplural, $modnamesused);

@@ -136,11 +136,13 @@
     $teacher = strtolower($course->teacher);
     if (!isadmin()) {
         $teacheronly = "(".get_string("teacheronly", "", $teacher).")";
+    } else {
+        $teacheronly = "";
     }
 
     print_heading( get_string("userprofilefor", "", "$userfullname") );
     print_simple_box_start("center", "", "$THEME->cellheading");
-    if ($err) {
+    if (!empty($err)) {
        echo "<CENTER>";
        notify(get_string("someerrorswerefound"));
        echo "</CENTER>";

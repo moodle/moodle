@@ -1071,7 +1071,7 @@ function forum_set_return() {
 function forum_go_back_to($default) {
     global $SESSION;
 
-    if ($SESSION->fromdiscussion) {
+    if (!empty($SESSION->fromdiscussion)) {
         $returnto = $SESSION->fromdiscussion;
         unset($SESSION->fromdiscussion);
         save_session("SESSION");
@@ -1467,7 +1467,7 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5, $f
             echo get_string("olderdiscussions", "forum")."</A> ...</P>";
             break;
         }
-        if ($replies[$discussion->discussion]) {
+        if (!empty($replies[$discussion->discussion])) {
             $discussion->replies = $replies[$discussion->discussion]->replies;
         } else {
             $discussion->replies = 0;
@@ -1624,7 +1624,7 @@ function forum_set_display_mode($mode=0) {
     if ($mode) {
         $USER->mode = $mode;
         save_session("USER");
-    } else if (!$USER->mode) {
+    } else if (empty($USER->mode)) {
         $USER->mode = $FORUM_DEFAULT_DISPLAY_MODE;
         save_session("USER");
     }

@@ -342,7 +342,7 @@ function print_recent_activity($course) {
         }
     }
 
-    if ($changelist) {
+    if (!empty($changelist)) {
         foreach ($changelist as $changeinfo => $change) {
             if ($change) {
                 $changes[$changeinfo] = $change;
@@ -473,7 +473,7 @@ function print_section_block($heading, $course, $section, $mods, $modnames, $mod
             $moddata[] = "<a title=\"$mod->modfullname\" href=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\">$instancename</a><BR>$editbuttons";
         }
     }
-    if (isediting($site->id)) {
+    if (isediting($course->id)) {
         $editmenu = popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&section=0&add=", 
                    $modnames, "section0", "", get_string("add")."...", "mods", get_string("activities"), true);
         $editmenu = "<DIV ALIGN=right>$editmenu</DIV>";

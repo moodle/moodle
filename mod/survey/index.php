@@ -49,8 +49,13 @@
         } else {
             $ss = $strnotdone;
         }
+        if ($survey->section) {
+            $section = "$survey->section";
+        } else {
+            $section = "";
+        }
         if ($course->format == "weeks" or $course->format == "topics") {
-            $table->data[] = array ("$survey->section", 
+            $table->data[] = array ($section, 
                                     "<A HREF=\"view.php?id=$survey->coursemodule\">$survey->name</A>",
                                     "<A HREF=\"view.php?id=$survey->coursemodule\">$ss</A>");
         } else {

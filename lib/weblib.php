@@ -272,7 +272,10 @@ function choose_from_menu ($options, $name, $selected="", $nothing="choose", $sc
 
     if ($script) {
         $javascript = "onChange=\"$script\"";
+    } else {
+        $javascript = "";
     }
+
     $output = "<SELECT NAME=$name $javascript>\n";
     if ($nothing) {
         $output .= "   <OPTION VALUE=\"$nothingvalue\"\n";
@@ -338,14 +341,14 @@ function popup_form ($common, $options, $formname, $selected="", $nothing="choos
         }
     }
     $output .= "</SELECT>";
-    if (!$return and $help) {
-        helpbutton($help, $helptext);
-    }
     $output .= "</FORM>\n";
 
     if ($return) {
         return $output;
     } else {
+        if ($help) {
+            helpbutton($help, $helptext);
+        }
         echo $output;
     }
 }
@@ -612,7 +615,7 @@ function print_footer ($course=NULL) {
         $realuserinfo = "";
     }
 
-    if ($USER->id) {
+    if (isset($USER->id) and $USER->id) {
         $username = "<A HREF=\"$CFG->wwwroot/user/view.php?id=$USER->id&course=$course->id\">$USER->firstname $USER->lastname</A>";
         $loggedinas = $realuserinfo.get_string("loggedinas", "moodle", "$username").
                       " (<A HREF=\"$CFG->wwwroot/login/logout.php\">".get_string("logout")."</A>)";
@@ -889,7 +892,7 @@ function update_course_icon($courseid) {
     global $CFG, $USER;
 
     if (isteacher($courseid)) {
-        if ($USER->editing) {
+        if (!empty($USER->editing)) {
             $string = get_string("turneditingoff");
             $edit = "off";
         } else {

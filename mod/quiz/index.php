@@ -62,8 +62,14 @@
 
         $bestgrade = quiz_get_best_grade($quiz->id, $USER->id);
 
+        if ($quiz->section) {
+            $section = "$quiz->section";
+        } else {
+            $section = "";
+        }
+
         if ($course->format == "weeks" or $course->format == "topics") {
-            $table->data[] = array ($quiz->section, $link, "$bestgrade / $quiz->grade");
+            $table->data[] = array ($section, $link, "$bestgrade / $quiz->grade");
         } else {
             $table->data[] = array ($link, "$bestgrade / $quiz->grade");
         }

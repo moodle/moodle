@@ -68,6 +68,7 @@
         $onsubmit = "onsubmit=\"copyrichtext(theform.message);\"";
     } else {
         $defaultformat = FORMAT_MOODLE;
+        $onsubmit = "";
     }
 
 
@@ -271,6 +272,10 @@
         $navtail = "$toppost->subject";
     }
 
+    if (empty($post->edit)) {
+        $post->edit = "";
+    }
+
     $strforums = get_string("modulenameplural", "forum");
 
 
@@ -278,13 +283,17 @@
 
     $cm = get_coursemodule_from_instance("forum", $forum->id, $course->id);
 
+    if (empty($discussion->name)) {
+        $discussion->name = $forum->name;
+    }
+
     if ($course->category) {
         print_header("$course->shortname: $discussion->name: $toppost->subject", "$course->fullname",
                  "<A HREF=../../course/view.php?id=$course->id>$course->shortname</A> ->
-                  $navmiddle -> $navtail", "$forumstart", "", true, "", navmenu($course, $cm));
+                  $navmiddle -> $navtail", "$formstart", "", true, "", navmenu($course, $cm));
     } else {
         print_header("$course->shortname: $discussion->name: $toppost->subject", "$course->fullname",
-                 "$navmiddle -> $navtail", "");
+                 "$navmiddle -> $navtail", "$formstart", "", true, "", navmenu($course, $cm));
 
     }
 

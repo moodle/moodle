@@ -58,7 +58,7 @@
 
     $navmiddle = "<A HREF=\"../forum/index.php?id=$course->id\">".get_string("forums", "forum")."</A> -> <A HREF=\"../forum/view.php?f=$forum->id\">$forum->name</A>";
 
-    $searchform = forum_print_search_form($course, $search, true, "plain");
+    $searchform = forum_print_search_form($course, "", true, "plain");
 
     if ($course->category) {
         print_header("$course->shortname: $discussion->name", "$course->fullname",

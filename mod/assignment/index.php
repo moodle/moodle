@@ -57,9 +57,14 @@
         }
         $due = userdate($assignment->timedue);
         $link = "<A HREF=\"view.php?id=$assignment->coursemodule\">$assignment->name</A>";
+        if ($assignment->section) {
+            $section = "$assignment->section";
+        } else {
+            $section = "";
+        }
 
         if ($course->format == "weeks" or $course->format == "topics") {
-            $table->data[] = array ($assignment->section, $link, $due, $submitted);
+            $table->data[] = array ($section, $link, $due, $submitted);
         } else {
             $table->data[] = array ($link, $due, $submitted);
         }

@@ -43,7 +43,7 @@
 
 
 /// Collect modules data
-    get_all_mods($course->id, $mods, $modnames, $modnamesplural, $modnamesused, $modsectioncounts);
+    get_all_mods($course->id, $mods, $modnames, $modnamesplural, $modnamesused);
 
 
 /// Search through all the modules, pulling out grade data
