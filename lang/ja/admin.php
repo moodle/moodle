@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // admin.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005032300)
+      // admin.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005032800)
 
 
 $string['adminseesallevents'] = '管理者に全てのイベントを表示';
@@ -86,7 +86,7 @@ $string['configvariables'] = '詳細設定';
 $string['configwarning'] = '間違った設定はトラブルの原因になりますので、これらの設定を変更する場合は注意してください。';
 $string['configzip'] = 'ZIPプログラムの場所を指定してください ( UNIXのみ、任意 )。これはZIP書庫をサーバ内で作成するために必要です。空白にした場合、Moodleは内部ルーチンを使用します';
 $string['confirmation'] = '確認';
-$string['cronwarning'] = 'メンテナンススクリプト cron.php が稼動していません ( 少なくとも24時間 )。<br>まだ設定していない場合は、インストールマニュアルの<em>cronの設定</em>をご覧ください。';
+$string['cronwarning'] = '<a href=\"cron.php\">cron.phpメンテナンススクリプト</a>が少なくとも24時間稼動していません。<br />cron.phpの自動化に関して<a href=\"../doc/?frame=install.html&sub=cron\">インストールドキュメント</a>をご覧ください。';
 $string['edithelpdocs'] = 'ヘルプ文書の編集';
 $string['editstrings'] = '翻訳ストリングの編集';
 $string['filteruploadedfiles'] = 'アップロードファイルをフィルタする';
