@@ -45,7 +45,7 @@
 <?php  include("$CFG->javascript"); ?>
 </HEAD>
 
-<BODY <?php  if ($focus) { echo "onLoad=setfocus()"; } echo " bgcolor=\"$THEME->body\" topmargin=\"$THEME->topmargin\" leftmargin=\"$THEME->leftmargin\" marginheight=\"$THEME->marginheight\" marginwidth=\"$THEME->marginwidth\" />"; ?>
+<BODY <?php  echo " $bodytags"; if ($focus) { echo "onLoad=setfocus()"; } echo " bgcolor=\"$THEME->body\" topmargin=\"$THEME->topmargin\" leftmargin=\"$THEME->leftmargin\" marginheight=\"$THEME->marginheight\" marginwidth=\"$THEME->marginwidth\" />"; ?>
 
 
 <?php  if ($home) {  // This is what gets printed on the home page only  ?>

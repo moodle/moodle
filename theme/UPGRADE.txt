@@ -258,3 +258,10 @@ TD.cal_event_description { }
 A IMG { }
 
 TABLE.formtable TD { }
+
+================================
+Changes from 1.3.2 - 1.3.3
+--------------------------------
+
+$bodytags variable is now included in header.html (important for SCORM)
+
