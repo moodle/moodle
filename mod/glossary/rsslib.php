@@ -28,6 +28,28 @@
             if ($glossaries = get_records("glossary")) {
                 foreach ($glossaries as $glossary) {
                     if (!empty($glossary->rsstype) && !empty($glossary->rssarticles) && $status) {
+
+                        $filename = rss_file_name('glossary', $glossary);  // RSS file
+
+                        //First let's make sure there is work to do by checking existing files
+                        if (file_exists($filename)) {
+                            if ($lastmodified = filemtime($filename)) {
+                                if (!glossary_rss_newstuff($glossary, $lastmodified)) {
+                                    continue;
+                                }
+                            }
+                        }
+
+                        //Ignore hidden forums
+                        if (!instance_is_visible('glossary',$glossary)) {
+                            if (file_exists($filename)) {
+                                @unlink($filename);
+                            }
+                            continue;
+                        }
+
+                        mtrace("Updating RSS feed for $glossary->name, ID: $glossary->id");
+
                         //Some debug...
                         if ($CFG->debug > 7) {
                             echo "ID: $glossary->id->";
@@ -55,6 +77,17 @@
             }
         }
         return $status;
+    }
+
+    function glossary_rss_newstuff($glossary, $time) {
+    // If there is new stuff in the glossary since $time then this returns
+    // true.  Otherwise it returns false.
+        if ($glossary->rsstype == 1) {
+            $items = glossary_rss_feed_withauthor($glossary, $time);
+        } else {
+            $items = glossary_rss_feed_withoutauthor($glossary, $time);
+        }
+        return (!empty($items));
     }
 
     //This function return the XML rss contents about the glossary record passed as parameter
@@ -118,11 +151,17 @@
 
     //This function returns "items" record array to be used to build the rss feed
     //for a Type=with author glossary
-    function glossary_rss_feed_withauthor($glossary) {
+    function glossary_rss_feed_withauthor($glossary, $newsince=0) {
 
         global $CFG;
 
         $items = array();
+
+        if ($newsince) {
+            $newsince = " AND e.timecreated > '$newsince'";
+        } else {        
+            $newsince = "";
+        }       
 
         if ($recs = get_records_sql ("SELECT e.id entryid, 
                                              e.concept entryconcept, 
@@ -136,8 +175,13 @@
                                            {$CFG->prefix}user u
                                       WHERE e.glossaryid = '$glossary->id' AND
                                             u.id = e.userid AND
-                                            e.approved = 1
+                                            e.approved = 1 $newsince
                                       ORDER BY e.timecreated desc")) {
+
+            //Are we just looking for new ones?  If so, then return now.
+            if ($newsince) {
+                return true;
+            }
             //Iterate over each entry to get glossary->rssarticles records
             $articlesleft = $glossary->rssarticles;
             $item = NULL;
@@ -164,11 +208,17 @@
 
     //This function returns "items" record array to be used to build the rss feed
     //for a Type=without author glossary
-    function glossary_rss_feed_withoutauthor($glossary) {
+    function glossary_rss_feed_withoutauthor($glossary, $newsince=0) {
 
         global $CFG;
 
         $items = array();
+
+        if ($newsince) {
+            $newsince = " AND e.timecreated > '$newsince'";
+        } else {
+            $newsince = "";
+        }
 
         if ($recs = get_records_sql ("SELECT e.id entryid,
                                              e.concept entryconcept,
@@ -182,8 +232,14 @@
                                            {$CFG->prefix}user u
                                       WHERE e.glossaryid = '$glossary->id' AND
                                             u.id = e.userid AND
-                                            e.approved = 1
+                                            e.approved = 1 $newsince
                                       ORDER BY e.timecreated desc")) {
+
+            //Are we just looking for new ones?  If so, then return now.
+            if ($newsince) {
+                return true;
+            }
+
             //Iterate over each entry to get glossary->rssarticles records
             $articlesleft = $glossary->rssarticles;
             $item = NULL;
