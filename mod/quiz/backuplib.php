@@ -142,6 +142,7 @@
                 fwrite ($bf,full_tag("ID",6,false,$question->id));
                 fwrite ($bf,full_tag("NAME",6,false,$question->name));
                 fwrite ($bf,full_tag("QUESTIONTEXT",6,false,$question->questiontext));
+                fwrite ($bf,full_tag("QUESTIONTEXTFORMAT",6,false,$question->questiontextformat));
                 fwrite ($bf,full_tag("IMAGE",6,false,$question->image));
                 fwrite ($bf,full_tag("DEFAULTGRADE",6,false,$question->defaultgrade));
                 fwrite ($bf,full_tag("QTYPE",6,false,$question->qtype));

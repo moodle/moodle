@@ -307,6 +307,7 @@
             $question->category = $new_category_id;
             $question->name = backup_todb($que_info['#']['NAME']['0']['#']);
             $question->questiontext = backup_todb($que_info['#']['QUESTIONTEXT']['0']['#']);
+            $question->questiontextformat = backup_todb($que_info['#']['QUESTIONTEXTFORMAT']['0']['#']);
             $question->image = backup_todb($que_info['#']['IMAGE']['0']['#']);
             $question->defaultgrade = backup_todb($que_info['#']['DEFAULTGRADE']['0']['#']);
             $question->qtype = backup_todb($que_info['#']['QTYPE']['0']['#']);
