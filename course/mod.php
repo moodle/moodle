@@ -5,6 +5,7 @@
     require("../config.php");
     require("lib.php");
 
+    require_login();
 
     if (isset($cancel)) {  
         if (!empty($SESSION->returnpage)) {
@@ -25,8 +26,6 @@
         } else {
             $mod = (object)$_POST;
         }
-
-        require_login($mod->course);
 
         if (!isteacher($mod->course)) {
             error("You can't modify this course!");
@@ -111,6 +110,10 @@
         if (! $cm = get_record("course_modules", "id", $id)) {
             error("This course module doesn't exist");
         }
+
+        if (!isteacher($cm->course)) {
+            error("You can't modify this course!");
+        }
     
         move_module($cm, $move);
 
@@ -129,6 +132,10 @@
         if (! $cm = get_record("course_modules", "id", $hide)) {
             error("This course module doesn't exist");
         }
+
+        if (!isteacher($cm->course)) {
+            error("You can't modify this course!");
+        }
    
         hide_course_module($cm->id);
 
@@ -146,6 +153,10 @@
 
         if (! $cm = get_record("course_modules", "id", $show)) {
             error("This course module doesn't exist");
+        }
+
+        if (!isteacher($cm->course)) {
+            error("You can't modify this course!");
         }
 
         if (! $section = get_record("course_sections", "id", $cm->section)) {
@@ -179,8 +190,6 @@
         if (! $course = get_record("course", "id", $cm->course)) {
             error("This course doesn't exist");
         }
-
-        require_login($course->id);
 
         if (!isteacher($course->id)) {
             error("You can't modify this course!");
@@ -225,6 +234,10 @@
 
         if (! $course = get_record("course", "id", $cm->course)) {
             error("This course doesn't exist");
+        }
+
+        if (!isteacher($course->id)) {
+            error("You can't modify this course!");
         }
 
         if (! $module = get_record("modules", "id", $cm->module)) {
@@ -303,8 +316,6 @@
     } else {
         error("No action was specfied");
     }
-
-    require_login($course->id);
 
     if (!isteacher($course->id)) {
         error("You can't modify this course!");
