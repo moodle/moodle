@@ -1,5 +1,5 @@
-<?php // $Id$ 
-      // forum.php - created with Moodle 1.2 development (2003111400)
+<?PHP // $Id$ 
+      // forum.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005020101)
 
 
 $string['addanewdiscussion'] = 'Add a new discussion topic';
@@ -21,8 +21,7 @@ $string['configoldpostdays'] = 'Number of days old any post is considered read.'
 $string['configreplytouser'] = 'When a forum post is mailed out, should it contain the user\'s email address so that recipients can reply personally rather than via the forum? Even if set to \'Yes\' users can choose in their profile to keep their email address secret.';
 $string['configshortpost'] = 'Any post under this length (not including HTML) is considered short.';
 $string['configtrackreadposts'] = 'Set to \'yes\' if you want to track read/unread for each user.';
-$string['configusermarksread'] = 'If \'yes\', the user must manually mark a post as read. '.
-                                 'If \'no\', when the post is viewed it is marked as read.';
+$string['configusermarksread'] = 'If \'yes\', the user must manually mark a post as read. If \'no\', when the post is viewed it is marked as read.';
 $string['couldnotadd'] = 'Could not add your post due to an unknown error';
 $string['couldnotdeleteratings'] = 'Sorry, that cannot be deleted as people have already rated it';
 $string['couldnotdeletereplies'] = 'Sorry, that cannot be deleted as people have already responded to it';
@@ -37,8 +36,8 @@ $string['digestmailsubject'] = '$a: forum digest';
 $string['digestsentusers'] = 'Email digests successfully sent to $a users.';
 $string['discussion'] = 'Discussion';
 $string['discussionmoved'] = 'This discussion has been moved to \'$a\'.';
-$string['discussions'] = 'Discussions';
 $string['discussionname'] = 'Discussion name';
+$string['discussions'] = 'Discussions';
 $string['discussionsstartedby'] = 'Discussions started by $a';
 $string['discussionsstartedbyrecent'] = 'Discussions recently started by $a';
 $string['discussthistopic'] = 'Discuss this topic';
@@ -98,7 +97,8 @@ $string['openmode1'] = 'No discussions, but replies are allowed';
 $string['openmode2'] = 'Discussions and replies are allowed';
 $string['parent'] = 'Show parent';
 $string['parentofthispost'] = 'Parent of this post';
-$string['postadded'] = 'Your post was successfully added.<p>You have $a to edit it if you want to make any changes.';
+$string['postadded'] = '<p>Your post was successfully added.</p>
+<p>You have $a to edit it if you want to make any changes.</p>';
 $string['postincontext'] = 'See this post in context';
 $string['postmailinfo'] = 'This is a copy of a message posted on the $a website.
 
@@ -110,11 +110,11 @@ $string['posts'] = 'Posts';
 $string['posttoforum'] = 'Post to forum';
 $string['postupdated'] = 'Your post was updated';
 $string['potentialsubscribers'] = 'Potential subscribers';
-$string['processingpost'] = 'Processing post $a';
 $string['processingdigest'] = 'Processing email digest for user $a';
+$string['processingpost'] = 'Processing post $a';
 $string['prune'] = 'Split';
-$string['pruneheading'] = 'Split the discussion and move this post to a new discussion';
 $string['prunedpost'] = 'A new discussion has been created from that post';
+$string['pruneheading'] = 'Split the discussion and move this post to a new discussion';
 $string['rate'] = 'Rate';
 $string['rating'] = 'Rating';
 $string['ratingeveryone'] = 'Everyone can rate posts';
@@ -161,8 +161,8 @@ $string['unreadpostsone'] = '1 unread post';
 $string['unsubscribe'] = 'Unsubscribe from this forum';
 $string['unsubscribed'] = 'Unsubscribed';
 $string['unsubscribeshort'] = 'Unsubscribe';
-$string['yesinitially'] = 'Yes, initially';
 $string['yesforever'] = 'Yes, forever';
+$string['yesinitially'] = 'Yes, initially';
 $string['youratedthis'] = 'You rated this';
 $string['yournewtopic'] = 'Your new discussion topic';
 $string['yourreply'] = 'Your reply';
