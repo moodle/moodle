@@ -113,7 +113,7 @@
             } else {
                 $timetaken = "-";
             }
-            if ($quiz->grade) {
+            if ($quiz->grade and $quiz->sumgrades) {
                 $attemptgrade = format_float(($attempt->sumgrades/$quiz->sumgrades)*$quiz->grade);
                 if ($attemptgrade == $mygrade) {
                     $attemptgrade = "<span class=\"highlight\">$attemptgrade</span>";
