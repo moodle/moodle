@@ -1332,6 +1332,17 @@ function quiz_print_category_form($course, $current) {
 }
 
 
+function quiz_get_category_coursename($category) {
+/// if the category is published, adds on the course
+/// name 
+    $cname=$category->name;
+    if ($category->publish) {
+        if ($catcourse=get_record("course","id",$category->id)) {
+            $cname .= " ($catcourse->shortname) ";
+        }
+    }
+    return $cname;
+}
 
 function quiz_choose_random_questions($category, $draws, $excluded=0) {
 /// Given a question category and a number of draws, this function
@@ -1509,6 +1520,7 @@ function quiz_print_cat_question_list($categoryid, $quizselected=true) {
     $strquestion = get_string("question", "quiz");
     $straddquestions = get_string("addquestions", "quiz");
     $strimportquestions = get_string("importquestions", "quiz");
+    $strexportquestions = get_string("exportquestions", "quiz");
     $strnoquestions = get_string("noquestions", "quiz");
     $strselect = get_string("select", "quiz");
     $strselectall = get_string("selectall", "quiz");
@@ -1553,6 +1565,14 @@ function quiz_print_cat_question_list($categoryid, $quizselected=true) {
     echo "<input type=\"hidden\" name=\"category\" value=\"$category->id\" />";
     echo "<input type=\"submit\" value=\"$strimportquestions\" />";
     helpbutton("import", $strimportquestions, "quiz");
+    echo '</form>';
+    echo '</td></tr>';
+
+    echo '<tr><td colspan="3" align="right">';
+    echo '<form method="get" action="export.php">';
+    echo "<input type=\"hidden\" name=\"category\" value=\"$category->id\" />";
+    echo "<input type=\"submit\" value=\"$strexportquestions\" />";
+    helpbutton("export", $strexportquestions, "quiz");
     echo '</form>';
     echo '</td></tr>';
 
@@ -2841,4 +2861,134 @@ function quiz_print_recent_mod_activity($activity, $course, $detail=false) {
     return;
 }
 
+    // this function creates default export filename
+    function default_export_filename($course,$category) {
+        //Take off some characters in the filename !!
+        $takeoff = array(" ", ":", "/", "\\", "|");
+        $export_word = str_replace($takeoff,"_",strtolower(get_string("exportfilename","quiz")));
+        //If non-translated, use "export"
+        if (substr($export_word,0,1) == "[") {
+            $export_word= "export";
+        }
+
+        //Calculate the date format string
+        $export_date_format = str_replace(" ","_",get_string("exportnameformat","quiz"));
+        //If non-translated, use "%Y%m%d-%H%M"
+        if (substr($export_date_format,0,1) == "[") {
+            $export_date_format = "%%Y%%m%%d-%%H%%M";
+        }
+
+        //Calculate the shortname
+        $export_shortname = clean_filename($course->shortname);
+        if (empty($export_shortname) or $export_shortname == '_' ) {
+            $export_shortname = $course->id;
+        }
+
+        //Calculate the category name
+        $export_categoryname = clean_filename($category->name);
+
+        //Calculate the final export filename
+        //The export word
+        $export_name = $export_word."-";
+        //The shortname
+        $export_name .= strtolower($export_shortname)."-";
+        //The category name
+        $export_name .= strtolower($export_categoryname)."-";
+        //The date format
+        $export_name .= userdate(time(),$export_date_format,99,false);
+        //The extension
+        $export_name .= ".txt";
+
+        return $export_name;
+    }
+
+// function to read all questions for category into big array
+// added by Howard Miller June 2004
+function get_questions_category( $category ) {
+
+    // questions will be added to an array
+    $qresults = array();
+
+    // get the list of questions for the category
+    $questions = get_records("quiz_questions","category",$category->id);
+
+    // iterate through questions, getting stuff we need 
+    foreach($questions as $question) {
+        $new_question = get_question_data( $question );
+        $qresults[] = $new_question;
+    }
+
+    return $qresults;
+}
+
+// function to read single question, parameter is object view of
+// quiz_categories record, results is a combined object 
+// defined as follows...
+// ->id		quiz_questions id
+// ->category	category
+// ->name	q name
+// ->questiontext
+// ->image
+// ->qtype	see defines at the top of this file
+// ->stamp	not too sure
+// ->version	not sure
+// ----SHORTANSWER
+// ->usecase
+// ->answers 	array of answers
+// ----TRUEFALSE
+// ->trueanswer	truefalse answer
+// ->falseanswer truefalse answer
+// ----MULTICHOICE
+// ->layout
+// ->single	many or just one correct answer
+// ->answers	array of answer objects
+function get_question_data( $question ) {
+    // what to do next depends of question type (qtype)
+    switch ($question->qtype)  {
+    case SHORTANSWER: 
+        $shortanswer = get_record("quiz_shortanswer","question",$question->id);
+        $question->usecase = $shortanswer->usecase;
+        $question->answers = array();
+        break;
+    case TRUEFALSE:
+        if (!$truefalse = get_record("quiz_truefalse","question",$question->id)) {
+            error( "quiz_truefalse record $question->id not found" );
+            }
+        $question->trueanswer = get_exp_answer( $truefalse->trueanswer );
+        $question->falseanswer = get_exp_answer( $truefalse->falseanswer );
+        break;
+    case MULTICHOICE:
+        if (!$multichoice = get_record("quiz_multichoice","question",$question->id)) {
+	    error( "quiz_multichoice $question->id not found" );
+            }
+        $question->layout = $multichoice->layout;
+        $question->single = $multichoice->single;
+        $question->answers = get_exp_answers( $multichoice->question );
+        break;
+    default:
+        error("No handler for question type $question->qtype in get_question");
+    }
+    return $question;
+}
+
+// function to return single answer
+// ->id		answer id
+// ->question	question number
+// ->answer
+// ->fraction
+// ->feedback
+function get_exp_answer( $id ) {
+    if (!$answer = get_record("quiz_answers","id",$id )) {
+        error( "quiz_answers record $id not found" );
+        }
+    return $answer;
+}
+
+// function to return array of answers for export
+function get_exp_answers( $question_num ) {
+    if (!$answers = get_records("quiz_answers","question",$question_num)) {
+        error( "quiz_answers question $question_num not found" );
+        }
+    return $answers;
+}
 ?>
