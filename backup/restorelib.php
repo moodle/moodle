@@ -543,6 +543,16 @@
             $course->hiddensections = addslashes($course_header->course_hiddensections);
             $course->timecreated = addslashes($course_header->course_timecreated);
             $course->timemodified = addslashes($course_header->course_timemodified);
+            //Calculate sortorder field
+            $sortmax = get_record_sql('SELECT MAX(sortorder) AS max
+                                       FROM ' . $CFG->prefix . 'course
+                                       WHERE category=' . $course->category);
+            if (!empty($sortmax->max)) {
+                $course->sortorder = $sortmax->max + 1;
+                unset($sortmax);
+            } else {
+                $course->sortorder = 100;
+            }
             //Adjust blockinfo field.
             //If the info doesn't exist in backup, we create defaults, else we recode it 
             //to current site blocks.
