@@ -35,16 +35,7 @@
     if ($scormdir = make_upload_directory("$course->id/$CFG->moddata/scorm")) {
         if ($tempdir = scorm_datadir($scormdir, $form->datadir)) {
             copy ("$coursedir/$form->reference", $tempdir."/".basename($form->reference));
-            if (empty($CFG->unzip)) {    // Use built-in php-based unzip function
-                include_once($CFG->dirroot.'/lib/pclzip/pclzip.lib.php');
-                $archive = new PclZip($tempdir."/".basename($form->reference));
-                if (!$list = $archive->extract($tempdir)) {
-                    error($archive->errorInfo(true));
-                }
-            } else {
-                $command = "cd $tempdir; $CFG->unzip -o ".basename($form->reference)." 2>&1";
-                exec($command);
-            }
+            unzip_file($tempdir."/".basename($form->reference), $tempdir, false);
             $result = scorm_validate($tempdir."/imsmanifest.xml");
         } else {
             $result = "packagedir";
