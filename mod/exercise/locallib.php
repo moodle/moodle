@@ -1801,7 +1801,7 @@ function exercise_print_assessment_form($exercise, $assessment = false, $allowch
 
             echo "  <TD BGCOLOR=\"$THEME->cellheading2\"><B>". get_string("criterion","exercise")."</B></TD>\n";
 
-            echo "  <TD BGCOLOR=\"$THEME->cellheading2\"><B>".get_string("select", "exercise")."</B></TD>\n";
+            echo "  <TD BGCOLOR=\"$THEME->cellheading2\"><B>".get_string("select")."</B></TD>\n";
             echo "  <TD BGCOLOR=\"$THEME->cellheading2\"><B>".get_string("suggestedgrade", "exercise")."</B></TD>\n";
             // find which criteria has been selected (saved in the zero element), if any
             if (isset($grades[0]->grade)) {

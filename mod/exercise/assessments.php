@@ -424,7 +424,7 @@
 							$rubrics[$i][$j] = "";
 						}
 						echo "<TR valign=top>\n";
-						echo "	<TD ALIGN=RIGHT><P><B>". get_string("grade","exercise")." $j:</B></TD>\n";
+						echo "	<TD ALIGN=RIGHT><P><B>". get_string("grade")." $j:</B></TD>\n";
 						echo "<TD><textarea name=\"rubric[$i][$j]\" rows=3 cols=75 wrap=\"virtual\">".
                             $rubrics[$i][$j]."</textarea>\n";
 						echo "	</TD></TR>\n";
