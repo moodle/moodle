@@ -50,7 +50,7 @@
 
     if ( forum_is_subscribed($USER->id, $forum->id) ) {
         if (forum_unsubscribe($USER->id, $forum->id) ) {
-            add_to_log($course->id, "forum", "unsubscribe", "index.php?id=$course->id", "$forum->id");
+            add_to_log($course->id, "forum", "unsubscribe", "view.php?f=$forum->id", "$forum->id");
             redirect($returnto, "You are now NOT subscribed to receive '$forum->name' by email.", 1);
         } else {
             error("Could not unsubscribe you from that forum", "$HTTP_REFERER");
@@ -58,7 +58,7 @@
         
     } else { // subscribe
         if (forum_subscribe($USER->id, $forum->id) ) {
-            add_to_log($course->id, "forum", "subscribe", "index.php?id=$course->id", "$forum->id");
+            add_to_log($course->id, "forum", "subscribe", "view.php?f=$forum->id", "$forum->id");
             redirect($returnto, "You are now subscribed to recieve '$forum->name' by email.", 1);
         } else {
             error("Could not subscribe you to that forum", "$HTTP_REFERER");
