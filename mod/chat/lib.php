@@ -357,10 +357,9 @@ function chat_get_latest_message($chatid, $groupid=0) {
 //////////////////////////////////////////////////////////////////////
 // login if not already logged in
 
-function chat_login_user($chatid, $version, $groupid, $course) {
+function chat_login_user($chatid, $version, $groupid, $course, $sendentermsg=false) {
     global $USER;
-
-    if ($chatuser = get_record_select('chat_users', "chatid='$chatid' AND userid='$USER->id' AND groupid='$groupid' LIMIT 1")) {
+    if ($chatuser = get_record_select('chat_users', "chatid='$chatid' AND userid='$USER->id' AND groupid='$groupid'")) {
         $chatuser->version  = $version;
         $chatuser->ip       = $USER->lastIP;
         $chatuser->lastping = time();
@@ -373,7 +372,6 @@ function chat_login_user($chatid, $version, $groupid, $course) {
         if (!update_record('chat_users', $chatuser)) {
             return false;
         }
-
     } else {
         $chatuser->chatid   = $chatid;
         $chatuser->userid   = $USER->id;
@@ -382,14 +380,14 @@ function chat_login_user($chatid, $version, $groupid, $course) {
         $chatuser->ip       = $USER->lastIP;
         $chatuser->lastping = $chatuser->firstping = $chatuser->lastmessageping = time();
         $chatuser->sid      = random_string(32);
-        $chatuser->course   = $course->id; //caching only, but needed for current_language() to work properly!
-        $chatuser->lang     = current_language();
+        $chatuser->course   = $course->id; //caching - needed for current_language too
+        $chatuser->lang     = current_language(); //caching - to resource intensive to find out later
 
         if (!insert_record('chat_users', $chatuser)) {
             return false;
         }
 
-        if ($version == 'header_js') {
+        if ($sendentermsg) {
             $message->chatid    = $chatuser->chatid;
             $message->userid    = $chatuser->userid;
             $message->groupid   = $groupid;

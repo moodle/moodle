@@ -61,5 +61,5 @@
         echo '<script type="text/javascript">parent.jsupdate.location.href = parent.jsupdate.document.anchors[0].href;</script>';
     }
 
-    //redirect('empty.php');
+    redirect('../empty.php');
 ?>

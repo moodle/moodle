@@ -44,7 +44,7 @@
         $groupname = '';
     }
 
-    if (!$chat_sid = chat_login_user($chat->id, 'header_js', $groupid, $course)) {
+    if (!$chat_sid = chat_login_user($chat->id, 'header_js', $groupid, $course, true)) {
         error('Could not log in to chat room!!');
     }
 

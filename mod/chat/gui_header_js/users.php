@@ -68,11 +68,13 @@
     function update() {
         for(i=0; i<uidles.length; i++) {
             el = document.getElementById(uidles[i]);
-            parts = el.innerHTML.split(":");
-            time = f + (parseInt(parts[0], 10)*60) + parseInt(parts[1], 10);
-            min = Math.floor(time/60);
-            sec = time % 60;
-            el.innerHTML = ((min < 10) ? "0" : "") + min + ":" + ((sec < 10) ? "0" : "") + sec;
+            if (el != null) {
+                parts = el.innerHTML.split(":");
+                time = f + (parseInt(parts[0], 10)*60) + parseInt(parts[1], 10);
+                min = Math.floor(time/60);
+                sec = time % 60;
+                el.innerHTML = ((min < 10) ? "0" : "") + min + ":" + ((sec < 10) ? "0" : "") + sec;
+            }
         }
         timer = setTimeout("update()", f*1000);
     }
@@ -92,7 +94,7 @@
     $strbeep    = get_string('beep', 'chat');
 
 
-    echo '<div style="display: none"><a href="'.$refreshurl.'" name="refreshlink">Refresh link</a></div>';
+    echo '<div style="display: none"><a href="'.$refreshurl.'" name="refreshLink">Refresh link</a></div>';
     echo '<table width="100%">';
     foreach ($chatusers as $chatuser) {
         $lastping = $timenow - $chatuser->lastmessageping;

@@ -80,7 +80,8 @@
         update_record('chat_users', $chatuser);
 
         if ($refreshusers) {
-            echo "parent.users.location.href = parent.users.document.anchors[0].href;\n";
+            echo "if (parent.users.document.anchors[0] != null) {" .
+                    "parent.users.location.href = parent.users.document.anchors[0].href;}\n";
         } else {
             foreach($us as $uid=>$lastping) {
                 $min = (int) ($lastping/60);
@@ -88,7 +89,8 @@
                 $min = $min < 10 ? '0'.$min : $min;
                 $sec = $sec < 10 ? '0'.$sec : $sec;
                 $idle = $min.':'.$sec;
-                echo "parent.users.document.getElementById('uidle{$uid}').innerHTML = '$idle';";
+                echo "if (parent.users.document.getElementById('uidle{$uid}') != null) {".
+                        "parent.users.document.getElementById('uidle{$uid}').innerHTML = '$idle';}\n";
             }
         }
         ?>
@@ -102,6 +104,6 @@
                 echo '<embed src="../beep.wav" autostart="true" hidden="true" name="beep" />';
             }
         ?>
-       <a href="<? echo $refreshurl ?>" name="refreshlink">Refresh link</a>
+       <a href="<? echo $refreshurl ?>" name="refreshLink">Refresh link</a>
     </body>
 </html>
