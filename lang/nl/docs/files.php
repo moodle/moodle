@@ -23,7 +23,7 @@ $string['teacher.html'] = "Lerarenhandleiding";
 $string['other.html'] = "Andere documenten";
 
 $string['-development'] = "Ontwikkeling";
-$string['developer.html'] = "Ontwikkelaarshandleiding";
+$string['developer.html'] = "Ontwikkelaarsgids";
 $string['coding.html'] = "Code Gids";
 $string['cvs.html'] = "CVS Gebruiken";
 
