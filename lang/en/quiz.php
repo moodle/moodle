@@ -72,6 +72,7 @@ $string['quiznotavailable'] = "The quiz will not be available until: \$a";
 $string['random'] = "Random set";
 $string['regrade'] = "Regrade all attempts";
 $string['regradecomplete'] = "All attempts have been regraded";
+$string['regradecount'] = "\$a->changed out of \$a->attempt grades were changed";
 $string['rename'] = "Rename";
 $string['report'] = "Reports";
 $string['save'] = "Save";

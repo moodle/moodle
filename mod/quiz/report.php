@@ -115,10 +115,16 @@
         }
 
         $users = array();
+        $count->attempt = 0;
+        $count->changed = 0;
         foreach ($attempts as $attempt) {
+
             if (!$attempt->timefinish) {  // Skip incomplete attempts
                 continue;
             }
+
+            $count->attempt++;
+
             if (! $questions = quiz_get_attempt_responses($attempt)) {
                 error("Could not reconstruct quiz results for attempt $attempt->id!");
             }
@@ -127,12 +133,13 @@
                 error("Could not re-grade this quiz attempt!");
             }
 
-            echo "<P ALIGN=center>$attempt->sumgrades --> $result->sumgrades</P>";
-            $attempt->sumgrades = $result->sumgrades;
+            if ($attempt->sumgrades != $result->sumgrades) {
+                $attempt->sumgrades = $result->sumgrades;
+                $count->changed++;
 
-            if (! update_record("quiz_attempts", $attempt)) {
-                notify("Could not regrade attempt $attempt->id");
-                continue;
+                if (! update_record("quiz_attempts", $attempt)) {
+                    notify("Could not regrade attempt $attempt->id");
+                }
             }
 
             $users[$attempt->user] = $attempt->user;
@@ -146,6 +153,7 @@
             }
         }   
         print_heading(get_string("regradecomplete", "quiz"));
+        print_heading(get_string("regradecount", "quiz", $count));
         print_continue("report.php?id=$cm->id");
         print_footer($course);
         exit;
