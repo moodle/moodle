@@ -143,13 +143,13 @@ function print_continue($link) {
 }
 
 
-function print_simple_box($message, $align="", $width="", $color="#FFFFFF", $padding=5, $border=1) {
-    print_simple_box_start($align, $width, $color, $padding, $border);
+function print_simple_box($message, $align="", $width="", $color="#FFFFFF", $padding=5, $class="generalbox") {
+    print_simple_box_start($align, $width, $color, $padding, $class);
     echo stripslashes($message);
     print_simple_box_end();
 }
 
-function print_simple_box_start($align="", $width="", $color="#FFFFFF", $padding=5, $border=1) {
+function print_simple_box_start($align="", $width="", $color="#FFFFFF", $padding=5, $class="generalbox") {
     global $THEME;
 
     if ($align) {
@@ -158,7 +158,7 @@ function print_simple_box_start($align="", $width="", $color="#FFFFFF", $padding
     if ($width) {
         $tablewidth = "WIDTH=\"$width\"";
     }
-    echo "<table $tablealign $tablewidth class=\"generalbox\" border=\"0\" cellpadding=\"$padding\" cellspacing=\"0\"><tr><td bgcolor=\"$color\">";
+    echo "<table $tablealign $tablewidth class=\"$class\" border=\"0\" cellpadding=\"$padding\" cellspacing=\"0\"><tr><td bgcolor=\"$color\" class=\"$class"."content\">";
 }
 
 function print_simple_box_end() {
