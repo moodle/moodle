@@ -1,9 +1,13 @@
 <?PHP // $Id$ 
-      // wiki.php - created with Moodle 1.4 alpha (2004081500)
+      // wiki.php - created with Moodle 1.4 aiming-for-beta-soon (2004082100)
 
 
 $string['action'] = '- - Acties - -';
 $string['administration'] = 'Beheer';
+$string['allowremovepages'] = 'Sta \'Pagina\'s verwijderen\' toe';
+$string['allowrevertchanges'] = 'Sta \'Terug naar vorige versie\' toe';
+$string['allowsetpage'] = 'Sta \'Set pagina vlaggen\' toe';
+$string['allowstrippages'] = 'Sta \'Pagina\'s opruimen\' toe';
 $string['attachments'] = 'Bijlage';
 $string['author'] = 'Auteur';
 $string['authorfieldpattern'] = 'Veldpatroon auteur';
@@ -33,6 +37,7 @@ $string['deleteversions'] = 'Verwijder versies';
 $string['deleteversionserror'] = 'Geef een juist versienummer in';
 $string['diff'] = 'Verschil';
 $string['differences'] = 'Verschillen tussen versie $a->new_ver en $a->old_ver van $a-pagename';
+$string['disablecamel'] = 'Schakel CamelCase linken uit';
 $string['disabledpage'] = 'Afgesloten pagina';
 $string['doesnotexist'] = 'Deze pagina bestaat nog niet. Klik op de bewerk-knop als je ze wil maken.';
 $string['downloadaszip'] = 'Downloadbaar zip-archief';
@@ -107,6 +112,7 @@ $string['nothingtostrip'] = 'Er zijn geen pagina\'s met meer dan één versie';
 $string['nowikicreated'] = 'Je kunt hier geen wiki maken en er is nog geen gemaakt om te bekijken.';
 $string['of'] = 'van';
 $string['offline'] = 'OFFLINE';
+$string['optional'] = 'Optioneel';
 $string['orphanedpage'] = 'Ongelinkte pagina';
 $string['orphanedpages'] = 'Ongelinkte pagina\'s';
 $string['otherwikis'] = 'Andere Wikis';
