@@ -119,7 +119,7 @@
     //Only show rss parameters if rss is activated at site and forum levels  
     if ($CFG->enablerssfeeds && $CFG->forum_enablerssfeeds) {
         echo "<tr valign=top>";
-        echo "<td align=right><p><b>".get_string("rsstype")."</b></p></td>";
+        echo "<td align=right><p><b>".get_string("rsstype").":</b></p></td>";
         echo "<td>";
         unset($choices);
         $choices[0] = get_string("none");
@@ -131,7 +131,7 @@
         echo "</tr>";
 
         echo "<tr valign=top>";
-        echo "<td align=right><p><b>".get_string("rssarticles")."</b></p></td>";
+        echo "<td align=right><p><b>".get_string("rssarticles").":</b></p></td>";
         echo "<td>";
         unset($choices);
         $choices[0] = "0";
