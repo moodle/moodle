@@ -9,6 +9,9 @@ define("FORUM_MODE_FLATNEWEST", -1);
 define("FORUM_MODE_THREADED", 2);
 define("FORUM_MODE_NESTED", 3);
 
+define("FORUM_FORCESUBSCRIBE", 1);
+define("FORUM_INITIALSUBSCRIBE", 2);
+
 $FORUM_LAYOUT_MODES = array ( FORUM_MODE_FLATOLDEST => get_string("modeflatoldestfirst", "forum"),
                               FORUM_MODE_FLATNEWEST => get_string("modeflatnewestfirst", "forum"),
                               FORUM_MODE_THREADED   => get_string("modethreaded", "forum"),
@@ -88,6 +91,13 @@ function forum_add_instance($forum) {
 
         if (! forum_add_discussion($discussion)) {
             error("Could not add the discussion for this forum");
+        }
+    }
+    
+    if ($forum->forcesubscribe == FORUM_INITIALSUBSCRIBE) { // all users should be subscribed initially
+        $users = get_course_users($forum->course);
+        foreach ($users as $user) {
+            forum_subscribe($user->id, $forum->id);
         }
     }
 
@@ -1203,7 +1213,7 @@ function forum_subscribed_users($course, $forum, $groupid=0) {
         $groupselect = "";
     }
 
-    if ($forum->forcesubscribe) {
+    if (forum_is_forcesubscribed($forum->id)) {
         if ($course->category) {
             if ($forum->type == "teacher") {
                 return get_course_teachers($course->id);  // Only teachers can be subscribed to teacher forums
@@ -1251,12 +1261,10 @@ function forum_get_course_forum($courseid, $type) {
             $forum->forcesubscribe = 1;
             $forum->open = 1;   // 0 - no, 1 - posts only, 2 - discuss and post
             $forum->assessed = 0;
-            if ($site = get_site()) {
-                if ($courseid == $site->id) {
-                    $forum->name  = get_string("sitenews");
-                    $forum->forcesubscribe = 0;
-                }
-            }
+            if ($courseid == SITEID) {
+                $forum->name  = get_string("sitenews");
+                $forum->forcesubscribe = 0;
+            }    
             break;
         case "social":
             $forum->name  = addslashes(get_string("namesocial", "forum"));
@@ -2234,7 +2242,7 @@ function forum_forcesubscribe($forumid, $value=1) {
 }
 
 function forum_is_forcesubscribed($forumid) {
-    return get_field("forum", "forcesubscribe", "id", $forumid);
+    return (get_field("forum", "forcesubscribe", "id", $forumid) == 1);
 }
 
 function forum_is_subscribed($userid, $forumid) {
@@ -2831,6 +2839,15 @@ function forum_update_subscriptions_button($courseid, $forumid) {
                "<input type=\"hidden\" name=\"id\" value=\"$forumid\" />".
                "<input type=\"hidden\" name=\"edit\" value=\"$edit\" />".
                "<input type=\"submit\" value=\"$string\" /></form>";
+    }
+}
+
+function forum_add_user($userid, $courseid) {
+/// Add subscriptions for new users
+    if ($forums = get_records_select('forum', "course = '$courseid' AND forcesubscribe = '2'")) {
+        foreach ($forums as $forum) {
+            forum_subscribe($userid, $forum->id);
+        }
     }
 }
 

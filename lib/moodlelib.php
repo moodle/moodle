@@ -831,11 +831,16 @@ function authenticate_user_login($username, $password) {
 
 function enrol_student($userid, $courseid, $timestart=0, $timeend=0) {
 /// Enrols a student in a given course
+    global $CFG;
 
     $course = get_record("course", "id", $courseid);
 
     if (!record_exists("user_students", "userid", $userid, "course", $courseid)) {
         if (record_exists("user", "id", $userid)) {
+
+            require_once('../mod/forum/lib.php');
+            forum_add_user($userid, $courseid);
+             
             $student->userid = $userid;
             $student->course = $courseid;
             $student->timestart = $timestart;
@@ -911,6 +916,13 @@ function add_teacher($userid, $courseid, $editall=1, $role="", $timestart=0, $ti
         $teacher->authority = 1;
     }
     delete_records("user_students", "userid", $userid, "course", $courseid); // Unenrol as student
+    
+    /// Add forum subscriptions for new users
+    if ($forums = get_records('forum', 'course', $courseid, 'forcesubscribe', 2)) {
+        foreach ($forums as $forum) {
+            forum_subscribe($userid, $forum->id);
+        }
+    }
 
     return insert_record("user_teachers", $teacher);
 
