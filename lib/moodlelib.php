@@ -3299,43 +3299,15 @@ function raise_memory_limit ($newlimit) {
         if ($cur == -1){
             return true; // unlimited mem!
         }
-      $cur = return_bytes($cur);
+      $cur = get_real_size($cur);
     }
 
-    $new = return_bytes($newlimit);
+    $new = get_real_size($newlimit);
     if ($new > $cur) {
         ini_set('memory_limit', $newlimit);
         return true;
     }
     return false;
-}
-
-/**
-* Function to transform strings like 5M or 128k into bytes.
-* Taken from PHP's documentation (see entry for ini_get())
-*
-* Return integer (in bytes)
-*
-* @param    value    string with the value
-*/
-function return_bytes($val) {
-   $val = trim($val);
-   if (empty($val)) {
-       return '';
-   }
-   $last = $val{strlen($val)-1};
-   switch($last) {
-       case 'k':
-       case 'K':
-           return (int) $val * 1024;
-           break;
-       case 'm':
-       case 'M':
-           return (int) $val * 1048576;
-           break;
-       default:
-           return $val;
-   }
 }
 
 /// ENCRYPTION  ////////////////////////////////////////////////
