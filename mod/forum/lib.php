@@ -780,60 +780,60 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
     $output = "";
 
     if ($post->parent) {
-        $output .= "<TABLE BORDER=0 CELLPADDING=1 CELLSPACING=1><TR><TD BGCOLOR=#888888>";
-        $output .= "<TABLE BORDER=0 CELLPADDING=3 CELLSPACING=0>";
+        $output .= '<table border="0" cellpadding="1" cellspacing="1"><tr><td bgcolor="#888888">';
+        $output .= '<table border="0" cellpadding="3" cellspacing="0">';
     } else {
-        $output .= "<TABLE BORDER=0 CELLPADDING=1 CELLSPACING=1 WIDTH=100%><TR><TD BGCOLOR=#888888>";
-        $output .= "<TABLE BORDER=0 CELLPADDING=3 CELLSPACING=0 WIDTH=100%>";
+        $output .= '<table border="0" cellpadding="1" cellspacing="1" width="100%"><tr><td bgcolor="#888888">';
+        $output .= '<table border="0" cellpadding="3" cellspacing="0" width="100%">';
     }
 
-    $output .= "<TR><TD BGCOLOR=\"$THEME->cellcontent2\" WIDTH=35 VALIGN=TOP>";
+    $output .= "<tr><td bgcolor=\"$THEME->cellcontent2\" width=\"35\" valign=\"top\">";
     $output .= print_user_picture($user->id, $course->id, $user->picture, false, true);
-    $output .= "</TD>";
+    $output .= "</td>";
 
     if ($post->parent) {
-        $output .= "<TD NOWRAP BGCOLOR=\"$THEME->cellheading\">";
+        $output .= "<td nowrap bgcolor=\"$THEME->cellheading\">";
     } else {
-        $output .= "<TD NOWRAP BGCOLOR=\"$THEME->cellheading2\">";
+        $output .= "<td nowrap bgcolor=\"$THEME->cellheading2\">";
     }
-    $output .= "<P>";
-    $output .= "<FONT SIZE=3><B>$post->subject</B></FONT><BR>";
-    $output .= "<FONT SIZE=2>";
-    $by->name = "<A HREF=\"$CFG->wwwroot/user/view.php?id=$user->id&course=$course->id\">$user->firstname $user->lastname</A>";
+    $output .= "<p>";
+    $output .= "<font size=3><b>$post->subject</b></font><br />";
+    $output .= "<font size=2>";
+    $by->name = "<a href=\"$CFG->wwwroot/user/view.php?id=$user->id&course=$course->id\">$user->firstname $user->lastname</a>";
     $by->date = userdate($post->modified, "", $touser->timezone);
     $output .= get_string("bynameondate", "forum", $by);
-    $output .= "</FONT></P></TD></TR>";
-    $output .= "<TR><TD BGCOLOR=\"$THEME->cellcontent2\" WIDTH=10>";
+    $output .= "</font></p></td></tr>";
+    $output .= "<tr><td bgcolor=\"$THEME->cellcontent2\" width=10>";
     $output .= "&nbsp;";
-    $output .= "</TD><TD BGCOLOR=\"$THEME->cellcontent\">\n";
+    $output .= "</td><td bgcolor=\"$THEME->cellcontent\">\n";
 
     if ($post->attachment) {
         $post->course = $course->id;
         $post->forum = get_field("forum_discussions", "forum", "id", $post->discussion);
-        $output .= "<DIV ALIGN=right>";
+        $output .= "<div align=right>";
         $output .= forum_print_attachments($post, "html");
-        $output .= "</DIV>";
+        $output .= "</div>";
     }
 
     $output .= format_text($post->message, $post->format);
 
-    $output .= "<P ALIGN=right><FONT SIZE=-1>";
+    $output .= "<p align=right><font size=-1>";
 
     $age = time() - $post->created;
     if ($ownpost) {
-        $output .= "<A HREF=\"$CFG->wwwroot/mod/forum/post.php?delete=$post->id\">".get_string("delete", "forum")."</A>";
+        $output .= "<a href=\"$CFG->wwwroot/mod/forum/post.php?delete=$post->id\">".get_string("delete", "forum")."</a>";
         if ($reply) {
-            $output .= " | <A TARGET=\"_blank\" HREF=\"$CFG->wwwroot/mod/forum/post.php?reply=$post->id\">".get_string("reply", "forum")."</A>";
+            $output .= " | <a target=\"_blank\" href=\"$CFG->wwwroot/mod/forum/post.php?reply=$post->id\">".get_string("reply", "forum")."</a>";
         }
         $output .= "&nbsp;&nbsp;";
     } else {
         if ($reply) {
-            $output .= "<A TARGET=\"_blank\" HREF=\"$CFG->wwwroot/mod/forum/post.php?reply=$post->id\">".get_string("reply", "forum")."</A>&nbsp;&nbsp;";
+            $output .= "<a target=\"_blank\" href=\"$CFG->wwwroot/mod/forum/post.php?reply=$post->id\">".get_string("reply", "forum")."</a>&nbsp;&nbsp;";
         }
     }
 
-    $output .= "</P>";
-    $output .= "<DIV ALIGN=right><P ALIGN=right>";
+    $output .= "</p>";
+    $output .= "<div align=right><p align=right>";
     
     if ($link) {
         if ($post->replies == 1) {
@@ -841,14 +841,14 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
         } else {
             $replystring = get_string("repliesmany", "forum", $post->replies);
         }
-        $output .= "<A HREF=\"$CFG->wwwroot/mod/forum/discuss.php?d=$post->discussion\"><B>".get_string("discussthistopic", "forum")."</B></A> ($replystring)&nbsp;&nbsp;";
+        $output .= "<a href=\"$CFG->wwwroot/mod/forum/discuss.php?d=$post->discussion\"><B>".get_string("discussthistopic", "forum")."</b></a> ($replystring)&nbsp;&nbsp;";
     }
-    $output .= "</P></DIV>";
+    $output .= "</p></div>";
     if ($footer) {
-        $output .= "<P>$footer</P>";
+        $output .= "<p>$footer</p>";
     }
-    $output .= "</TD></TR></TABLE>\n";
-    $output .= "</TD></TR></TABLE>\n\n";
+    $output .= "</td></tr></table>\n";
+    $output .= "</td></tr></table>\n\n";
 
     return $output;
 }
@@ -859,61 +859,62 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
 
     echo "<a name=\"$post->id\"></a>";
     if ($post->parent) {
-        echo "<TABLE BORDER=0 CELLPADDING=3 CELLSPACING=0 CLASS=\"forumpost\">";
+        echo '<table border="0" cellpadding="3" cellspacing="0" class="forumpost">';
     } else {
-        echo "<TABLE BORDER=0 CELLPADDING=3 CELLSPACING=0 CLASS=\"forumpost\" WIDTH=100%>";
+        echo '<table border="0" cellpadding="3" cellspacing="0" class="forumpost" width="100%">';
     }
 
-    echo "<TR><TD BGCOLOR=\"$THEME->cellcontent2\" CLASS=\"forumpostpicture\" WIDTH=35 VALIGN=TOP>";
+    echo "<tr><td bgcolor=\"$THEME->cellcontent2\" class=\"forumpostpicture\" width=\"35\" valign=\"top\">";
     print_user_picture($post->userid, $courseid, $post->picture);
-    echo "</TD>";
+    echo "</td>";
 
     if ($post->parent) {
-        echo "<TD NOWRAP BGCOLOR=\"$THEME->cellheading\" CLASS=\"forumpostheader\" WIDTH=\"100%\">";
+        echo "<td nowrap bgcolor=\"$THEME->cellheading\" class=\"forumpostheader\" width=\"100%\">";
     } else {
-        echo "<TD NOWRAP BGCOLOR=\"$THEME->cellheading2\" CLASS=\"forumpostheadertopic\" WIDTH=\"100%*\">";
+        echo "<td nowrap bgcolor=\"$THEME->cellheading2\" class=\"forumpostheadertopic\" width=\"100%\">";
     }
-    echo "<P>";
-    echo "<FONT SIZE=3><B>$post->subject</B></FONT><BR>";
-    echo "<FONT SIZE=2>";
-    $by->name = "<A HREF=\"$CFG->wwwroot/user/view.php?id=$post->userid&course=$courseid\">$post->firstname $post->lastname</A>";
+    echo "<p>";
+    echo "<font size=3><b>$post->subject</b></font><br>";
+    echo "<font size=2>";
+    $by->name = "<a href=\"$CFG->wwwroot/user/view.php?id=$post->userid&course=$courseid\">$post->firstname $post->lastname</a>";
     $by->date = userdate($post->modified);
     print_string("bynameondate", "forum", $by);
-    echo "</FONT></P></TD></TR>";
-    echo "<TR><TD BGCOLOR=\"$THEME->cellcontent2\" CLASS=\"forumpostside\" WIDTH=10>";
+    echo "</font></p></td></tr>";
+    echo "<tr><td bgcolor=\"$THEME->cellcontent2\" class=\"forumpostside\" width=\"10\">";
     echo "&nbsp;";
-    echo "</TD><TD BGCOLOR=\"$THEME->cellcontent\" CLASS=\"forumpostmessage\">\n";
+    echo "</td><td bgcolor=\"$THEME->cellcontent\" class=\"forumpostmessage\">\n";
 
     if ($post->attachment) {
         $post->course = $courseid;
         $post->forum = get_field("forum_discussions", "forum", "id", $post->discussion);
-        echo "<DIV ALIGN=right>";
-        forum_print_attachments($post);
-        echo "</DIV>";
+        echo "<div align=\"right\">";
+        $attachedimages = forum_print_attachments($post);
+        echo "</div>";
     }
 
     if ($link and (strlen(strip_tags($post->message)) > FORUM_LONG_POST)) {
         // Print shortened version
         echo format_text(forum_shorten_post($post->message), $post->format);
         $numwords = count_words(strip_tags($post->message));
-        echo "<P><A HREF=\"$CFG->wwwroot/mod/forum/discuss.php?d=$post->discussion\">";
+        echo "<p><a href=\"$CFG->wwwroot/mod/forum/discuss.php?d=$post->discussion\">";
         echo get_string("readtherest", "forum");
-        echo "</A> (".get_string("numwords", "", $numwords).")...</P>";
+        echo "</a> (".get_string("numwords", "", $numwords).")...</p>";
     } else {
         // Print whole message
         echo format_text($post->message, $post->format);
+        echo $attachedimages;
     }
 
-    echo "<P ALIGN=right><FONT SIZE=-1>";
+    echo "<p align=right><font size=-1>";
 
     $age = time() - $post->created;
     if ($ownpost) {
         if ($age < $CFG->maxeditingtime) {
-            echo "<A HREF=\"$CFG->wwwroot/mod/forum/post.php?edit=$post->id\">".get_string("edit", "forum")."</A> | ";
+            echo "<a href=\"$CFG->wwwroot/mod/forum/post.php?edit=$post->id\">".get_string("edit", "forum")."</a> | ";
         }
     }
     if ($ownpost or isteacher($courseid)) {
-        echo "<A HREF=\"$CFG->wwwroot/mod/forum/post.php?delete=$post->id\">".get_string("delete", "forum")."</A>";
+        echo "<a href=\"$CFG->wwwroot/mod/forum/post.php?delete=$post->id\">".get_string("delete", "forum")."</a>";
         if ($reply) {
             echo "| ";
         } else {
@@ -921,12 +922,12 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
         }
     }
     if ($reply) {
-        echo "<A HREF=\"$CFG->wwwroot/mod/forum/post.php?reply=$post->id\">".get_string("reply", "forum")."</A>";
+        echo "<a href=\"$CFG->wwwroot/mod/forum/post.php?reply=$post->id\">".get_string("reply", "forum")."</a>";
         echo "&nbsp;&nbsp;";
     }
-    echo "</P>";
+    echo "</p>";
 
-    echo "<DIV ALIGN=right><P ALIGN=right>";
+    echo "<div align=right><p align=right>";
     if ($rate && $USER->id) {
         if (isteacher($courseid)) {
             forum_print_ratings($post->id);
@@ -946,14 +947,14 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
         } else {
             $replystring = get_string("repliesmany", "forum", $post->replies);
         }
-        echo "<A HREF=\"$CFG->wwwroot/mod/forum/discuss.php?d=$post->discussion\"><B>".get_string("discussthistopic", "forum")."</B></A> ($replystring)&nbsp;&nbsp;";
+        echo "<a href=\"$CFG->wwwroot/mod/forum/discuss.php?d=$post->discussion\"><b>".get_string("discussthistopic", "forum")."</b></a> ($replystring)&nbsp;&nbsp;";
     }
-    echo "</P>";
+    echo "</p>";
     if ($footer) {
-        echo "<P>$footer</P>";
+        echo "<p>$footer</p>";
     }
-    echo "</DIV>";
-    echo "</TD></TR>\n</TABLE>\n\n";
+    echo "</div>";
+    echo "</td></tr>\n</table>\n\n";
 }
 
 
@@ -1175,11 +1176,14 @@ function forum_delete_old_attachments($post, $exception="") {
 function forum_print_attachments($post, $return=NULL) {
 // if return=html, then return a html string.
 // if return=text, then return a text-only string.
-// otherwise, print HTML
+// otherwise, print HTML for non-images, and return image HTML
 
     global $CFG;
 
     $filearea = forum_file_area_name($post);
+
+    $imagereturn = "";
+    $output = "";
 
     if ($basedir = forum_file_area($post)) {
         if ($files = get_directory_list($basedir)) {
@@ -1202,16 +1206,23 @@ function forum_print_attachments($post, $return=NULL) {
                     $output .= "$strattachment $file:\n$CFG->wwwroot/$ffurl\n";
 
                 } else {
-                    link_to_popup_window("/$ffurl", "attachment", $image, 500, 500, $strattachment);
-                    echo "<a href=\"$CFG->wwwroot/$ffurl\">$file</a>";
-                    echo "<br />";
+                    if ($icon == "image.gif") {    // Image attachments don't get printed as links
+                        $imagereturn .= "<br /><img src=\"$CFG->wwwroot/$ffurl\">";
+                    } else {
+                        link_to_popup_window("/$ffurl", "attachment", $image, 500, 500, $strattachment);
+                        echo "<a href=\"$CFG->wwwroot/$ffurl\">$file</a>";
+                        echo "<br />";
+                    }
                 }
             }
         }
     }
+
     if ($return) {
         return $output;
     }
+
+    return $imagereturn;
 }
 
 function forum_add_attachment($post, $newfile) {
