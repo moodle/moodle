@@ -115,7 +115,7 @@
         }
     } else {
         if (!$glossary->allowcomments && !isteacher($glossary->course)) {
-            error("You can't add/edit comments in this glossary!");
+            error("You can't add/edit comments to this glossary!");
         }
         if ( $action == "edit" ) {
             if (!isset($comment->timemodified)) {
