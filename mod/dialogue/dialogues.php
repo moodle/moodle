@@ -131,7 +131,11 @@
 		if ($conversations = dialogue_get_conversations($dialogue, $USER, "closed = 0")) {
 			foreach ($conversations as $conversation) {
 				$textarea_name = "reply$conversation->id";
-				if (!empty($_POST[$textarea_name])) {
+                $stripped_text = '';
+                if (isset($_POST[$textarea_name])) {
+                    $stripped_text = strip_tags(trim($_POST[$textarea_name]));
+                }
+				if ($stripped_text) {
                     unset($item);
 					$item->dialogueid = $dialogue->id;
 					$item->conversationid = $conversation->id;
@@ -179,9 +183,11 @@
 
 		if ($_POST['recipientid'] == 0) {
 			redirect("view.php?id=$cm->id", get_string("nopersonchosen", "dialogue"));
-        } elseif (empty($_POST['firstentry'])) {
-			redirect("view.php?id=$cm->id", get_string("notextentered", "dialogue"));
         } else {
+            $stripped_text = strip_tags(trim($_POST['firstentry']));
+            if (!$stripped_text) {
+			    redirect("view.php?id=$cm->id", get_string("notextentered", "dialogue"));
+            }
 			$conversation->dialogueid = $dialogue->id;
 			$conversation->userid = $USER->id;
 			$conversation->recipientid = $_POST['recipientid'];
