@@ -53,6 +53,12 @@ function resource_upgrade($oldversion) {
         rebuild_course_cache();
     }
 
+    if ($oldversion < 2004111200) { //drop first to avoid conflicts when upgrading
+        execute_sql("ALTER TABLE {$CFG->prefix}resource DROP INDEX course;",false);
+
+        modify_database('','ALTER TABLE prefix_resource ADD INDEX course (course);');
+    }
+
     return true;
 }
 

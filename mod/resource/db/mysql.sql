@@ -26,7 +26,8 @@ CREATE TABLE prefix_resource (
   options varchar(255) NOT NULL default '',
   timemodified int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (id),
-  UNIQUE KEY id (id)
+  UNIQUE KEY id (id),
+  KEY `course` (`course`)
 ) TYPE=MyISAM;
 
 

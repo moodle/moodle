@@ -27,6 +27,7 @@ CREATE TABLE prefix_resource (
   timemodified integer NOT NULL default '0'
 );
 
+CREATE INDEX prefix_resource_course_idx ON prefix_resource (course);
 
 #
 # Dumping data for table `log_display`
