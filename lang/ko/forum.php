@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.4.2 nearly (2004083122)
+      // forum.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004101900)
 
 
 $string['addanewdiscussion'] = '새 토론 주제 추가하기';
@@ -129,6 +129,7 @@ $string['subscription'] = '이메일로 보기';
 $string['subscriptions'] = '이메일로 보기';
 $string['thischarset'] = 'euc-kr';
 $string['thisdirection'] = 'ltr';
+$string['thislanguage'] = '&#54620;&#44397;&#50612;';
 $string['unsubscribe'] = '이 포럼을 이메일로 구독하지 않기';
 $string['unsubscribed'] = '이메일로 구독 않함';
 $string['youratedthis'] = '당신의 평가';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.4.2 nearly (2004083121)
+      // glossary.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004101900)
 
 
 $string['addcomment'] = '덧글 쓰기';
@@ -143,6 +143,7 @@ $string['standardview'] = '문사순으로 보기';
 $string['studentcanpost'] = '학생들이 항목을 추가할 수 있음';
 $string['thischarset'] = 'euc-kr';
 $string['thisdirection'] = 'ltr';
+$string['thislanguage'] = '&#54620;&#44397;&#50612;';
 $string['totalentries'] = '전체 항목';
 $string['usedynalink'] = '자료집 항목으로 자동 링크함';
 $string['waitingapproval'] = '승인  대기중';

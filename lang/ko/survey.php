@@ -1,11 +1,19 @@
 <?PHP // $Id$ 
-      // survey.php - created with Moodle 1.4.2 nearly (2004083122)
+      // survey.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004101900)
 
 
+$string['actual'] = '실적';
+$string['actualclass'] = '학급 실적';
 $string['answers'] = '대답';
+$string['attls10'] = '무언가를 분석할 때에는 가능한한 객관적인 입장에 서는 것이 나에게는 중요합니다.';
+$string['attls11'] = '나는 사람들에 대항하여 생각하기 보다 그들과 함께 생각하기 위해 노력합니다.';
 $string['attls11short'] = '사람들과 같이 생각하기';
+$string['attls13'] = '나는 누군가의 의견을 평가하려 하기 보다는 더 이해할 수 있도록 노력합니다.';
 $string['attls13short'] = '이해하기';
+$string['attls14'] = '나는 다른 사람들이 그들의 주장을 명백히 하는데에 도움을 주기위해 그들의 생각에서 결점을 지적해내려 노력합니다.';
 $string['attls14short'] = '취약부분 지적';
+$string['attls15'] = '나는 논쟁거리가 되는 이슈를 다룰 때 다른 사람들이 왜 그렇게 생각하며 왜 그렇게 행동하는지를 알기 위해 내 자신을 그들의 입장에 놓아보는 경향이 있다.';
+$string['attls15short'] = '그들의 입장에 서보기';
 $string['attls20short'] = '무엇이 잘못되었지?';
 $string['attls2short'] = '결점만 보는 사람 역활';
 $string['attls3short'] = '출신';
@@ -32,9 +40,7 @@ $string['colles15'] = '지도 교사가 좋은 예시를 들어 설명해준다.';
 $string['colles15short'] = '좋은 예시를 들어준다.';
 $string['collesaintro'] = 'The purpose of this survey is to help us understand how well the online delivery of this unit enabled you to learn.
 
-Each one of the 24 statements below asks about your experience in this unit.
-
-';
+Each one of the 24 statements below asks about your experience in this unit.';
 $string['done'] = '완료';
 $string['download'] = '다운로드';
 $string['downloadexcel'] = '엑셀 스프레드 형식으로 다운로드';
@@ -60,6 +66,7 @@ $string['surveysaved'] = '조사가 저장되었음';
 $string['surveytype'] = '조사 유형';
 $string['thischarset'] = 'euc-kr';
 $string['thisdirection'] = 'ltr';
+$string['thislanguage'] = '한국어';
 $string['time'] = '시간';
 $string['viewsurveyresponses'] = 'View $a survey responses';
 

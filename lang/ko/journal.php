@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // journal.php - created with Moodle 1.4.2 nearly (2004083121)
+      // journal.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004101900)
 
 
 $string['alwaysopen'] = '항상 공개';
@@ -31,6 +31,7 @@ $string['saveallfeedback'] = '나의 모든 의견을 저장해라(기억해라)';
 $string['startoredit'] = '나의 저널기재를 시작 또는 편집합니다.';
 $string['thischarset'] = 'euc-kr';
 $string['thisdirection'] = 'ltr';
+$string['thislanguage'] = '&#54620;&#44397;&#50612;';
 $string['viewallentries'] = '저널을 다시 보다';
 
 ?>
