@@ -115,6 +115,19 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
         $events = get_records_select('event', $whereclause);
     }
 
+    // This is either a genius idea or an idiot idea: in order to not complicate things, we use this rule: if, after
+    // possibly removing courseid 1 from $courses, there is only one course left, then clicking on a day in the month
+    // will also set the $SESSION->cal_courses_shown variable to that one course. Otherwise, we 'd need to add extra
+    // arguments to this function.
+
+    $courses = array_diff($courses, array(1));
+    if(count($courses) == 1) {
+        $morehref = '&amp;course='.reset($courses);
+    }
+    else {
+        $morehref = '';
+    }
+
     // We want to have easy access by day, since the display is on a per-day basis.
     // Arguments passed by reference.
     calendar_events_by_day($events, $display->tstart, $eventsbyday, $durationbyday, $typesbyday);
@@ -163,7 +176,7 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
 
         // Special visual fx if an event is defined
         if(isset($eventsbyday[$day])) {
-            $dayhref = calendar_get_link_href(CALENDAR_URL.'view.php?view=day&amp;', $day, $m, $y);
+            $dayhref = calendar_get_link_href(CALENDAR_URL.'view.php?view=day'.$morehref.'&amp;', $day, $m, $y);
 
             // OverLib popup
             $popupcontent = '';
@@ -260,7 +273,7 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
 function calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxevents, $fromtime=0) {
     global $CFG;
 
-    $display = &New object;
+    $display = &New stdClass;
     $display->range = $daysinfuture; // How many days in the future we 'll look
     $display->maxevents = $maxevents;
 
@@ -294,6 +307,19 @@ function calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxeve
         $events = get_records_select('event', $whereclause);
     }
 
+    // This is either a genius idea or an idiot idea: in order to not complicate things, we use this rule: if, after
+    // possibly removing courseid 1 from $courses, there is only one course left, then clicking on a day in the month
+    // will also set the $SESSION->cal_courses_shown variable to that one course. Otherwise, we 'd need to add extra
+    // arguments to this function.
+
+    $courses = array_diff($courses, array(1));
+    if(count($courses) == 1) {
+        $morehref = '&amp;course='.reset($courses);
+    }
+    else {
+        $morehref = '';
+    }
+
     if($events !== false) {
         foreach($events as $event) {
             if($processed >= $display->maxevents) break;
@@ -324,7 +350,7 @@ function calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxeve
                 $time = calendar_time_representation($event->timestart + $event->timeduration);
 
                 // This var always has the printable time representation
-                $eventtime = '<span class="dimmed_text"><a class="dimmed" href="'.calendar_get_link_href(CALENDAR_URL.'view.php?view=day&amp;', $enddate['mday'], $enddate['mon'], $enddate['year']).'">'.$day.'</a> ('.$time.')</span>';
+                $eventtime = '<span class="dimmed_text"><a class="dimmed" href="'.calendar_get_link_href(CALENDAR_URL.'view.php?view=day'.$morehref.'&amp;', $enddate['mday'], $enddate['mon'], $enddate['year']).'">'.$day.'</a> ('.$time.')</span>';
 
             }
             else if($event->timeduration) {
@@ -336,7 +362,7 @@ function calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxeve
                     $timeend = calendar_time_representation($event->timestart + $event->timeduration);
 
                     // Set printable representation
-                    $eventtime = calendar_get_link_tag($day, CALENDAR_URL.'view.php?view=day&amp;', $enddate['mday'], $enddate['mon'], $enddate['year']).
+                    $eventtime = calendar_get_link_tag($day, CALENDAR_URL.'view.php?view=day'.$morehref.'&amp;', $enddate['mday'], $enddate['mon'], $enddate['year']).
                         ' ('.$timestart.' -> '.$timeend.')';
                 }
                 else {
@@ -347,8 +373,8 @@ function calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxeve
                     $timeend = calendar_time_representation($event->timestart + $event->timeduration);
 
                     // Set printable representation
-                    $eventtime = calendar_get_link_tag($daystart, CALENDAR_URL.'view.php?view=day&amp;', $startdate['mday'], $startdate['mon'], $startdate['year']).
-                        ' ('.$timestart.') -> '.calendar_get_link_tag($dayend, CALENDAR_URL.'view.php?view=day&amp;', $enddate['mday'], $enddate['mon'], $enddate['year']).
+                    $eventtime = calendar_get_link_tag($daystart, CALENDAR_URL.'view.php?view=day'.$morehref.'&amp;', $startdate['mday'], $startdate['mon'], $startdate['year']).
+                        ' ('.$timestart.') -> '.calendar_get_link_tag($dayend, CALENDAR_URL.'view.php?view=day'.$morehref.'&amp;', $enddate['mday'], $enddate['mon'], $enddate['year']).
                         ' ('.$timeend.')';
                 }
             }
@@ -358,7 +384,7 @@ function calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxeve
                 $time = calendar_time_representation($event->timestart);
 
                 // Set printable representation
-                $eventtime = calendar_get_link_tag($day, CALENDAR_URL.'view.php?view=day&amp;', $startdate['mday'], $startdate['mon'], $startdate['year']).' ('.$time.')';
+                $eventtime = calendar_get_link_tag($day, CALENDAR_URL.'view.php?view=day'.$morehref.'&amp;', $startdate['mday'], $startdate['mon'], $startdate['year']).' ('.$time.')';
             }
 
             $outkey = count($output);
