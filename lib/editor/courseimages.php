@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?php // $Id$
 
 //  Manage all uploaded files in a course file area
 
@@ -356,25 +356,16 @@
             if (!empty($name)) {
                 html_header($course, $wdir);
                 $name = clean_filename($name);
-                if (empty($CFG->zip)) {    // Use built-in php-based zip function
-                    $files = array();
-                    foreach ($USER->filelist as $file) {
-                        $files[] = "$basedir/$file";
-                    }
-                    include_once('../pclzip/pclzip.lib.php');
-                    $archive = new PclZip("$basedir/$wdir/$name");
-                    if (($list = $archive->create($files,'',"$basedir/$wdir/")) == 0) {
-                        error($archive->errorInfo(true));
-                    }
-                } else {                   // Use external zip program
-                    $files = "";
-                    foreach ($USER->filelist as $file) {
-                        $files .= basename($file);
-                        $files .= " ";
-                    }
-                    $command = "cd $basedir/$wdir ; $CFG->zip -r $name $files";
-                    Exec($command);
+
+                $files = array();
+                foreach ($USER->filelist as $file) {
+                   $files[] = "$basedir/$file";
                 }
+
+                if (!zip_files($files,"$basedir/$wdir/$name")) {
+                    error(get_string("zipfileserror","error"));
+                }
+
                 clearfilelist();
                 displaydir($wdir);
                    
@@ -415,10 +406,6 @@
         case "unzip":
             html_header($course, $wdir);
             if (!empty($file)) {
-                $strname = get_string("name");
-                $strsize = get_string("size");
-                $strmodified = get_string("modified");
-                $strstatus = get_string("status");
                 $strok = get_string("ok");
                 $strunpacking = get_string("unpacking", "", $file);
 
@@ -426,41 +413,8 @@
 
                 $file = basename($file);
 
-                if (empty($CFG->unzip)) {    // Use built-in php-based unzip function
-                    include_once('../pclzip/pclzip.lib.php');
-                    $archive = new PclZip("$basedir/$wdir/$file");
-                    if (!$list = $archive->extract("$basedir/$wdir")) {
-                        error($archive->errorInfo(true));
-                    } else {  // print some output
-                        echo "<table cellpadding=\"4\" cellspacing=\"2\" border=\"0\" width=640>";
-                        echo "<tr><th align=left>$strname</th>";
-                        echo "<th align=right>$strsize</th>";
-                        echo "<th align=right>$strmodified</th>";
-                        echo "<th align=right>$strstatus</th></tr>";
-                        foreach ($list as $item) {
-                            echo "<tr>";
-                            $item['filename'] = str_replace("$basedir/$wdir/", "", $item['filename']);
-                            print_cell("left", $item['filename']);
-                            if (! $item['folder']) {
-                                print_cell("right", display_size($item['size']));
-                            } else {
-                                echo "<td>&nbsp;</td>";
-                            }
-                            $filedate  = userdate($item['mtime'], get_string("strftimedatetime"));
-                            print_cell("right", $filedate);
-                            print_cell("right", $item['status']);
-                            echo "</tr>";
-                        }
-                        echo "</table>";
-                    }
-                    
-                } else {                     // Use external unzip program
-                    print_simple_box_start("center");
-                    echo "<PRE>";
-                    $command = "cd $basedir/$wdir ; $CFG->unzip -o $file 2>&1";
-                    passthru($command);
-                    echo "</PRE>";
-                    print_simple_box_end();
+                if (!unzip_file("$basedir/$wdir/$file")) {
+                    error(get_string("unzipfileserror","error"));
                 }
 
                 echo "<CENTER><FORM ACTION=\"".$_SERVER['PHP_SELF']."\" METHOD=get>";
