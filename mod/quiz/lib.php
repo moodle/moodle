@@ -729,14 +729,16 @@ function quiz_print_quiz_questions($quiz, $results=NULL, $questions=NULL, $shuff
             return false;
         }
 
-        if ($shuffleorder) {                             // Order has been defined, so reorder questions
-            $oldquestions = $questions;
-            $questions = array();
-            foreach ($shuffleorder as $key) {     
-                $questions[] = $oldquestions[$key];      // This loses the index key, but doesn't matter
-            }
-        } else if (!empty($quiz->shufflequestions)) {    // Mix everything up
+        if (!empty($quiz->shufflequestions)) {    // Mix everything up
             $questions = swapshuffle_assoc($questions);
+        }
+    }
+
+    if ($shuffleorder) {                             // Order has been defined, so reorder questions
+        $oldquestions = $questions;
+        $questions = array();
+        foreach ($shuffleorder as $key) {     
+            $questions[] = $oldquestions[$key];      // This loses the index key, but doesn't matter
         }
     }
 
@@ -785,6 +787,8 @@ function quiz_print_quiz_questions($quiz, $results=NULL, $questions=NULL, $shuff
     foreach ($questions as $question) {
         $count++;
 
+        $questionorder[] = $question->id;
+
         $feedback       = NULL;
         $response       = NULL;
         $actualgrades   = NULL;
@@ -819,7 +823,6 @@ function quiz_print_quiz_questions($quiz, $results=NULL, $questions=NULL, $shuff
             }
         }
 
-        $questionorder[] = $question->id;
 
         print_simple_box_start("CENTER", "90%");
         quiz_print_question($count, $question, $grades[$question->id]->grade, $quiz->course, 
@@ -1454,8 +1457,8 @@ function quiz_grade_attempt_results($quiz, $questions) {
                     $qarr = explode('-', $questionanswer);        // Extract subquestion/answer.
                     $subquestionid = $qarr[0];
                     $subanswerid = $qarr[1];
-                    if (($subquestionid == $subanswerid) or 
-                        ($answers[$subquestionid]->answertext == $answers[$subanswerid]->answertext)) {   
+                    if ($subquestionid and $subanswerid and (($subquestionid == $subanswerid) or 
+                        ($answers[$subquestionid]->answertext == $answers[$subanswerid]->answertext))) {   
                         // Either the ids match exactly, or the answertexts match exactly 
                         // (in case two subquestions had the same answer)
                         $matchcount++;
@@ -1543,7 +1546,9 @@ function quiz_save_question_options($question) {
     switch ($question->qtype) {
         case SHORTANSWER:
 
-            $oldanswers = get_records("quiz_answers", "question", $question->id, "id ASC"); // might be NULL
+            if (!$oldanswers = get_records("quiz_answers", "question", $question->id, "id ASC")) {
+                $oldanswers = array();
+            }
 
             $answers = array();
             $maxfraction = -1;
@@ -1608,7 +1613,9 @@ function quiz_save_question_options($question) {
 
         case TRUEFALSE:
 
-            $oldanswers = get_records("quiz_answers", "question", $question->id, "id ASC"); // might be NULL
+            if (!$oldanswers = get_records("quiz_answers", "question", $question->id, "id ASC")) {
+                $oldanswers = array();
+            }
 
             if ($true = array_shift($oldanswers)) {  // Existing answer, so reuse it
                 $true->fraction = $question->answer;
@@ -1672,7 +1679,9 @@ function quiz_save_question_options($question) {
 
         case MULTICHOICE:
 
-            $oldanswers = get_records("quiz_answers", "question", $question->id, "id ASC"); // might be NULL
+            if (!$oldanswers = get_records("quiz_answers", "question", $question->id, "id ASC")) {
+                $oldanswers = array();
+            }
 
             $totalfraction = 0;
             $maxfraction = -1;
@@ -1749,7 +1758,9 @@ function quiz_save_question_options($question) {
 
         case MATCH:
 
-            $oldsubquestions = get_records("quiz_match_sub", "question", $question->id, "id ASC"); // might be NULL
+            if (!$oldsubquestions = get_records("quiz_match_sub", "question", $question->id, "id ASC")) {
+                $oldsubquestions = array();
+            }
 
             $subquestions = array();
 
