@@ -45,6 +45,9 @@
 
 
 /// Set error reporting back to normal
+    if (empty($CFG->debug)) {
+        $CFG->debug = 7;
+    }
     error_reporting($CFG->debug);   
 
 
