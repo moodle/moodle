@@ -637,7 +637,7 @@ function print_header ($title="", $heading="", $navigation="", $focus="", $meta=
 // $cache - should this page be cacheable?
 // $button - HTML code for a button (usually for module editing)
 // $menu - HTML code for a popup menu 
-    global $USER, $CFG, $THEME;
+    global $USER, $CFG, $THEME, $SESSION;
 
     if (file_exists("$CFG->dirroot/theme/$CFG->theme/styles.php")) {
         $styles = $CFG->stylesheet;
@@ -1180,6 +1180,16 @@ function helpbutton ($page, $title="", $module="moodle", $image=true, $linktext=
         $url = "/help.php?module=$module&file=$page.html";
     }
     link_to_popup_window ($url, "popup", $linkobject, 400, 500, $title);
+}
+
+function emoticonhelpbutton($form, $field) {
+/// Prints a special help button that is a link to the "live" emoticon popup
+    global $CFG, $SESSION;
+
+    $SESSION->inserttextform = $form;
+    $SESSION->inserttextfield = $field;
+    helpbutton("emoticons", get_string("helpemoticons"), "moodle", false, true);
+    echo "&nbsp;<img src=\"$CFG->wwwroot/pix/s/smiley.gif\" align=\"absmiddle\" width=15 height=15></a>";
 }
 
 function notice ($message, $link="") {

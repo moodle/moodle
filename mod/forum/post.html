@@ -18,14 +18,20 @@
     <td align="right" valign="center" nowrap>
 
     <font SIZE="1">
-     <? helpbutton("reading", get_string("helpreading"), "moodle", true, true) ?><br \>
-     <? helpbutton("writing", get_string("helpwriting"), "moodle", true, true) ?><br \>
-     <? helpbutton("questions", get_string("helpquestions"), "moodle", true, true) ?><br \>
-     <? if ($usehtmleditor) { ?>
-        <? helpbutton("richtext", get_string("helprichtext"), "moodle", true, true) ?>
-     <? } else { ?>
-        <? helpbutton("text", get_string("helptext"), "moodle", true, true) ?>
-     <? } ?><br \>
+     <?PHP
+        helpbutton("reading", get_string("helpreading"), "moodle", true, true);
+        echo "<br />";
+        helpbutton("writing", get_string("helpwriting"), "moodle", true, true);
+        echo "<br />";
+        helpbutton("questions", get_string("helpquestions"), "moodle", true, true);
+        echo "<br />";
+        if ($usehtmleditor) {
+           helpbutton("richtext", get_string("helprichtext"), "moodle", true, true);
+        } else {
+           emoticonhelpbutton("theform", "message");
+        } 
+      ?>
+     <br />
      </font>
 
     </td>
@@ -33,8 +39,14 @@
 <tr valign=top>
     <td align=right><p><b><? print_string("formattexttype"); ?>:</b></p></td>
     <td>
-    <? choose_from_menu(format_text_menu(), "format", $post->format, ""); ?>
-    <? helpbutton("textformat", get_string("formattexttype")) ?>
+    <?PHP 
+       choose_from_menu(format_text_menu(), "format", $post->format, "");
+     ?>
+    <font SIZE="1">
+    <?PHP 
+        helpbutton("textformat", get_string("helpformatting"));
+     ?>
+    </font>
 
     </td>
 </tr>

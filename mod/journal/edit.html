@@ -1,35 +1,44 @@
 <FORM name="theform" method="post" <?=$onsubmit ?> action="edit.php">
 <table><tr>
     <td align=right>
-    <font SIZE="1">
-     <? helpbutton("reading", get_string("helpreading"), "moodle", true, true) ?><br \>
-     <? helpbutton("writing", get_string("helpwriting"), "moodle", true, true) ?><br \>
-     <? if ($usehtmleditor) { ?>
-        <? helpbutton("richtext", get_string("helprichtext"), "moodle", true, true) ?>
-     <? } else { ?>
-        <? helpbutton("text", get_string("helptext"), "moodle", true, true) ?>
-     <? } ?><br \>
+    <font size="1">
+     <?PHP
+        helpbutton("reading", get_string("helpreading"), "moodle", true, true);
+        echo "<br />";
+        helpbutton("writing", get_string("helpwriting"), "moodle", true, true);
+        echo "<br />";
+        if ($usehtmleditor) {
+           helpbutton("richtext", get_string("helprichtext"), "moodle", true, true);
+        } else {
+           emoticonhelpbutton("theform", "text");
+        } 
+      ?>
+     <br />
     </font>
     </td>
 </tr></table>
 
 <? print_textarea($usehtmleditor, 20, 60, 595, 400, "text", $entry->text); ?>
 
-<P align=center>
-<? print_string("formattexttype");
+<p align=center>
+<?PHP
+   print_string("formattexttype");
    echo ":&nbsp;";
    choose_from_menu(format_text_menu(), "format", $entry->format, "");
-   helpbutton("textformat", get_string("formattexttype")) ?>
-</P>
+   echo "<font size=\"1\">";
+   helpbutton("textformat", get_string("helpformatting"));
+   echo "</font>";
+?>
+</p>
 
-<P align=center>
-<INPUT type="hidden" name=id value="<?=$cm->id ?>">
-<INPUT type="submit" value="<? print_string("savechanges") ?>">
-<INPUT type="reset" value="<? print_string("revert") ?>">
+<p align=center>
+<input type="hidden" name=id value="<?=$cm->id ?>">
+<input type="submit" value="<? print_string("savechanges") ?>">
+<input type="reset" value="<? print_string("revert") ?>">
 </P>
-</FORM>
+</form>
 
-<? 
+<?PHP 
    if ($usehtmleditor) { 
        print_richedit_javascript("theform", "text", "no");
    }
