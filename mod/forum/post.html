@@ -11,7 +11,9 @@
 </tr>
 <tr valign=top>
     <td align=right><P><B><? print_string("message", "forum"); ?>:</B>
-    <? if (!$usehtmleditor) { ?>
+     <? if ($usehtmleditor) { ?>
+        <BR><BR><? helpbutton("richtext", get_string("helprichtext")) ?></P>
+     <? } else { ?>
         <BR><BR><? helpbutton("text", get_string("helptext")) ?></P>
      <? } ?>
     </TD>
