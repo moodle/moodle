@@ -113,5 +113,15 @@ $string['fontsize'] = 'Font-size';
 $string['formatblock'] = 'Format';
 $string['nolink'] = 'Prevent automatic linking';
 $string['alertnoselectedtext'] = 'You must select text first!';
+$string['searchandreplace'] = 'Search and replace';
+$string['findwhat'] = 'Find';
+$string['replacewith'] = 'Replace';
+$string['options'] = 'Options';
+$string['regularexpressions'] = 'Use regular expressions';
+$string['matchcase'] = 'Match case';
+$string['closeafterreplace'] = 'Close after replace';
+$string['replaceall'] = 'Replace all';
+$string['itemsreplaced'] = 'items replaced!';
+$string['searchnotfound'] = 'Search string Not Found!';
 
 ?>
