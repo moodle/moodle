@@ -1484,6 +1484,9 @@
         //Now, if we have anything in scales, we have to restore that
         //scales
         if ($scales) {
+            //Get admin->id for later use
+            $admin = get_admin();
+            $adminid = $admin->id;
             if ($scales !== true) {
                 //Iterate over each scale
                 foreach ($scales as $scale) {
@@ -1531,7 +1534,7 @@
                                 $sca->userid = $user->new_id;
                             } else {
                                 //Assign it to admin
-                                $sca->userid = get_admin();
+                                $sca->userid = $adminid;
                             }
                             //The structure is equal to the db, so insert the scale
                             $newid = insert_record ("scale",$sca);
