@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.2 Beta +++ (2004031300)
+      // moodle.php - created with Moodle 1.3 development (2004032800)
 
 
 $string['action'] = 'Actie';
@@ -848,6 +848,7 @@ $string['upload'] = 'Upload';
 $string['uploadafile'] = 'Upload een bestand';
 $string['uploadedfileto'] = '$a->file is geüpload naar $a->directory';
 $string['uploadnofilefound'] = 'Er is geen bestand gevonden - weet je zeker dat je een bestand geselecteerd hebt om te uploaden?';
+$string['uploadnotallowed'] = 'Uploads niet toegestaan';
 $string['uploadproblem'] = 'Een was een onbekend probleem tijdens het uploaden van bestand \'$a\' (was het misschien te groot?)';
 $string['uploadthisfile'] = 'Upload dit bestand';
 $string['uploadusers'] = 'Upload gebruikers';
