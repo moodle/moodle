@@ -96,6 +96,13 @@
             $loglifetime = $timenow - ($CFG->loglifetime * 3600 * 24);
             delete_records_select("log", "time < '$loglifetime'");
         }
+
+        /// Delete old cached texts
+
+        if (!empty($CFG->cachetext)) {   // Defined in config.php
+            $cachelifetime = time() - $CFG->cachetext;
+            delete_records_select("text_cache", "timemodified < '$cachelifetime'");
+        }
     }
 
     if (file_exists("$CFG->dataroot/cronextra.php")) {
