@@ -1154,7 +1154,7 @@ function print_course_admin_links($course, $width=180) {
         $adminicon[]="<img src=\"$CFG->modpixpath/resource/icon.gif\" height=16 width=16 alt=\"\">";
 
         if ($teacherforum = forum_get_course_forum($course->id, "teacher")) {
-            $admindata[]="<a href=\"$CFG->wwwroot/mod/forum/view.php?f=$teacherforum->id\">$teacherforum->name</a>";
+            $admindata[]="<a href=\"$CFG->wwwroot/mod/forum/view.php?f=$teacherforum->id\">".get_string("nameteacher","forum")."</a>";
             $adminicon[]="<img src=\"$CFG->modpixpath/forum/icon.gif\" height=16 width=16 alt=\"\">";
         }
 
