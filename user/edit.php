@@ -6,6 +6,8 @@
     require_variable($id);       // user id
     require_variable($course);   // course id
 
+    
+
     if (! $user = get_record("user", "id", $id)) {
         error("User ID was incorrect");
     }
