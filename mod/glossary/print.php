@@ -10,6 +10,8 @@
     optional_variable($sortorder,"asc");           // Sorting order 
     optional_variable($offset);                    // number of entries to bypass
 
+    print_header();
+
     if (! $cm = get_record("course_modules", "id", $id)) {
         error("Course Module ID was incorrect");
     } 
@@ -214,5 +216,7 @@
     if ($tableisopen) {
         echo '</table>';
     }
-    echo '<center><font size=-1>' . userdate(time()) . '</font></center>'
+    echo '<center><font size=-1>' . userdate(time()) . '</font></center>';
+
+    echo '</body></html>';
 ?>
