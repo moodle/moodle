@@ -2155,7 +2155,12 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5,
     }
 
     if ($olddiscussionlink) {
-        echo "<p align=center><a href=\"$CFG->wwwroot/mod/forum/view.php?f=$forum->id&showall=1\">";
+        if ($forum_style == "minimal") {
+            echo '<p align="center">';
+        } else {
+            echo '<p align="right">';
+        }
+        echo "<a href=\"$CFG->wwwroot/mod/forum/view.php?f=$forum->id&showall=1\">";
         echo get_string("olderdiscussions", "forum")."</a> ...</p>";
     }
 }
