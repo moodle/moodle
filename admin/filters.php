@@ -51,8 +51,8 @@
         $plugins = get_list_of_plugins($filterlocation);
         foreach ($plugins as $key => $plugin) {
             if (is_readable("$CFG->dirroot/$filterlocation/$plugin/filter.php")) {
-                $name = get_string("filtername", $plugin);
-                if ($name == "[[filtername]]") {
+                $name = trim(get_string("filtername", $plugin));
+                if (empty($name) or $name == "[[filtername]]") {
                     $name = $plugin;
                 }
                 $allfilters["$filterlocation/$plugin"] = $name;
