@@ -909,6 +909,8 @@ function forum_cron () {
 
                 $mailcount=0;
                 foreach ($users as $userto) {
+                    $USER->lang = $userto->lang;  // Affects the language of get_string
+
                     $by->name = "$userfrom->firstname $userfrom->lastname";
                     $by->date = userdate($post->created, "", $userto->timezone);
                     $strbynameondate = get_string("bynameondate", "forum", $by);
