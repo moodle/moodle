@@ -50,6 +50,20 @@ a.autolink.glossary:hover {
     cursor: help;
 }
 
+.tablink a:link,
+.tablink a:visited {
+    color:#000066;
+}
+
+.tablink a:hover {
+    text-decoration: none;
+}
+
+.selected .tablink a:link,
+.selected .tablink a:visited {
+    color:#000000;
+}
+
 
 /* general styles */
 body {
