@@ -23,6 +23,7 @@
 
     $fullname = "$user->firstname $user->lastname";
 
+
     add_to_log($course->id, "user", "view", "view.php?id=$user->id&course=$course->id", "$user->id");
 
     if ($course->category) {
@@ -31,6 +32,12 @@
                       <A HREF=\"index.php?id=$course->id\">Participants</A> -> $fullname", "");
     } else {
         print_header("Personal profile: $fullname", "Personal profile: $fullname", "$fullname", "");
+    }
+
+    if (!isstudent($course->id, $user->id) && !isteacher($course->id, $user->id)) {
+        print_heading("$fullname is not enrolled in this course");
+        print_footer($course);
+        die;
     }
 
 
