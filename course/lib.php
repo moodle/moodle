@@ -380,9 +380,13 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate="today"
     }
 
     if ($showgroups) {
-        $cgroups = get_groups($course->id);
-        foreach ($cgroups as $cgroup) {
-            $groups[$cgroup->id] = $cgroup->name;
+        if ($cgroups = get_groups($course->id)) {
+            foreach ($cgroups as $cgroup) {
+                $groups[$cgroup->id] = $cgroup->name;
+            }
+        }
+        else {
+            $groups = array();
         }
         choose_from_menu ($groups, "group", $selectedgroup, get_string("allgroups") );
     }
