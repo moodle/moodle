@@ -70,7 +70,7 @@ $string['openmode1'] = 'ללא דיונים, אולם תגובות מותרות';
 $string['openmode2'] = 'דיונים ותגובות מותרים';
 $string['parent'] = 'Show parent';
 $string['parentofthispost'] = 'Parent of this post';
-$string['postadded'] = 'Your post was successfully added.<P>You have $a to edit it if you want to make any changes.';
+$string['postadded'] = 'Your post was successfully added.<br />You have $a to edit it if you want to make any changes.';
 $string['postmailinfo'] = 'This is a copy of a message posted on the $a website.
 To add your reply via the website, click on this link:';
 $string['posts'] = 'הודעות';
