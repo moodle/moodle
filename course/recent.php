@@ -110,7 +110,7 @@
 
     } else { // you chose a group of activities
 
-        if (isteacher($user)) {
+        if (isteacher($course->id)) {
             $hiddenfilter = "";
         } else {
             $hiddenfilter = " AND cs.visible = '1' ";
@@ -135,7 +135,7 @@
             $activityfilter = "";
         }
 
-        if (isteacher($user)) {
+        if (isteacher($course->id)) {
             $hiddenfilter = "";
         } else {
             $hiddenfilter = " AND cm.visible = '1' ";
@@ -231,7 +231,7 @@
 
         $section = 0;
 
-        if (isteacher($user)) {
+        if (isteacher($course->id)) {
             $teacher = true;
         } else {
             $teacher = false;
