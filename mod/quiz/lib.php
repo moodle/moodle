@@ -2088,7 +2088,8 @@ function quiz_grade_attempt_results($quiz, $questions) {
         $question->grade = $grades[$question->id];
         
         if (!$answers = quiz_get_answers($question)) {
-            error("No answers defined for question id $question->id!");
+            notify("No answers defined for question id $question->id!");
+            continue;
         }
 
         $questionresult = quiz_grade_attempt_question_result($question,
