@@ -54,15 +54,15 @@
     if ($course->format == "weeks") {
         $table->head  = array ($strweek, $strname, $strquizcloses, $gradecol);
         $table->align = array ("center", "left", "left", "left");
-        $table->size = array (10, "*", 10);
+        $table->size = array (10, "*", "*", "*");
     } else if ($course->format == "topics") {
         $table->head  = array ($strtopic, $strname, $strquizcloses, $gradecol);
         $table->align = array ("center", "left", "left", "left");
-        $table->size = array (10, "*", 10);
+        $table->size = array (10, "*", "*", "*");
     } else {
         $table->head  = array ($strname, $strquizcloses, $gradecol);
         $table->align = array ("left", "left", "left");
-        $table->size = array ("*", 10);
+        $table->size = array ("*", "*", "*");
     }
 
     foreach ($quizzes as $quiz) {
