@@ -751,20 +751,15 @@ function clam_change_log($oldpath, $newpath, $update=true) {
     global $CFG;
     
     if (!$record = get_record('log', 'info', $oldpath, 'module', 'upload')) {
-        error_log('couldn\'t find record');
         return false;
     }
     $record->info = $newpath;
     if ($update) {
-        if (update_record('log', $record)) {
-            error_log('updated record');
-        }
+        update_record('log', $record);
     }
     else {
         unset($record->id);
-        if (insert_record('log', $record)) {
-            error_log('inserted record');
-        }
+        insert_record('log', $record);
     }
 }
 ?>
