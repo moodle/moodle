@@ -152,20 +152,19 @@ $CFG->admin = 'admin';
 // Setting this to true will enable admins to edit any post at any time
 //      $CFG->admineditalways = true;
 //
-// These variables define default block variables.
-// **WARNING** -- If it is set it is the only one that is used.
+// These variables define DEFAULT block variables for new courses
+// If this one is set it overrides all others and is the only one used.
 //      $CFG->defaultblocks_override = 'participants,activity_modules,search_forums,admin,course_list:news_items,calendar_upcoming,recent_activity';
 //
 // These variables define the specific settings for defined course formats.
-// **WARNING ** -- They override any settings defined in the format's own config 
-//                 file.
-$CFG->defaultblocks_site = 'site_main_menu,admin,course_list:course_summary,calendar_month';
+// They override any settings defined in the formats own config file.
+//      $CFG->defaultblocks_site = 'site_main_menu,admin,course_list:course_summary,calendar_month';
 //      $CFG->defaultblocks_social = 'participants,search_forums,calendar_month,calendar_upcoming,social_activities,recent_activity,admin,course_list';
 //      $CFG->defaultblocks_topics = 'participants,activity_modules,search_forums,admin,course_list:news_items,calendar_upcoming,recent_activity';
 //      $CFG->defaultblocks_weeks = 'participants,activity_modules,search_forums,admin,course_list:news_items,calendar_upcoming,recent_activity';
 //
-// This variable is used when no other default setting is found.
-$CFG->defaultblocks = 'participants,activity_modules,search_forums,admin,course_list:news_items,calendar_upcoming,recent_activity';
+// These blocks are used when no other default setting is found.
+//      $CFG->defaultblocks = 'participants,activity_modules,search_forums,admin,course_list:news_items,calendar_upcoming,recent_activity';
 //
 //
 // This setting will put Moodle in Unicode mode.  It's very new and
@@ -173,21 +172,9 @@ $CFG->defaultblocks = 'participants,activity_modules,search_forums,admin,course_
 // NOT RECOMMENDED FOR PRODUCTION SITES
 //      $CFG->unicode = true;
 //
-// To use spell-checking (experimental) define a path below to your
-// locally-installed copy of Aspell (0.50.1 or newer)
-//      $CFG->aspellpath = '/usr/bin/aspell'; // *nix
-//      $CFG->aspellpath = '"c:\path\to\aspell\aspell.exe"'; // Windows
-//
 // Seconds for files to remain in caches. Decrease this if you are worried
 // about students being served outdated versions of uploaded files.
 //      $CFG->filelifetime = 86400;
-// 
-// The following two settings allow you to specify allowed domains for 
-// email addresses.  If the first one is set, then Moodle will DISALLOW
-// all domains EXCEPT those listed.  Otherwise, if the second one is set
-// then all addresses are ALLOWED EXCEPT those listed.
-//      $CFG->allowemailaddresses = "myschool.edu.au hotmail.com";
-//      $CFG->denyemailaddresses = "hotmail.com yahoo.com";
 // 
 // If this setting is set to true, then Moodle will track the IP of the 
 // current user to make sure it hasn't changed during a session.  This 
@@ -198,20 +185,20 @@ $CFG->defaultblocks = 'participants,activity_modules,search_forums,admin,course_
 //
 //
 // The following lines are for handling email bounces.
-// $CFG->handlebounces = true;
-// $CFG->minbounces = 10;
-// $CFG->bounceratio = .20;
+//      $CFG->handlebounces = true;
+//      $CFG->minbounces = 10;
+//      $CFG->bounceratio = .20;
 // The next lines are needed both for bounce handling and any other email to module processing.
 // mailprefix must be EXACTLY four characters.
 // Uncomment and customise this block for Postfix 
-//$CFG->mailprefix = 'mdl+'; // + is the separator for Exim and Postfix.
-//$CFG->mailprefix = 'mdl-'l // - is the separator for qmail 
-//$CFG->maildomain = 'youremaildomain.com';
+//      $CFG->mailprefix = 'mdl+'; // + is the separator for Exim and Postfix.
+//      $CFG->mailprefix = 'mdl-'l // - is the separator for qmail 
+//      $CFG->maildomain = 'youremaildomain.com';
 //
 // The following setting will tell Moodle to respect your PHP session 
 // settings. Use this if you want to control session configuration
 // from php.ini, httpd.conf or .htaccess files. 
-//     $CFG->respectsessionsettings = true;
+//      $CFG->respectsessionsettings = true;
 
 //=========================================================================
 // ALL DONE!  To continue installation, visit your main page with a browser
