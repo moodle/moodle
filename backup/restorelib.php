@@ -1744,6 +1744,11 @@
             //in backup_ids->info will be the real info (serialized)
             $events = restore_read_xml_events($restore,$xml_file);
         }
+
+        //Get admin->id for later use
+        $admin = get_admin();
+        $adminid = $admin->id;
+
         //Now, if we have anything in events, we have to restore that
         //events
         if ($events) {
@@ -1793,7 +1798,7 @@
                                 $eve->userid = $user->new_id;
                             } else {
                                 //Assign it to admin
-                                $eve->userid = get_admin();
+                                $eve->userid = $adminid;
                             }
                             //We have to recode the groupid field
                             $group = backup_getid($restore->backup_unique_code,"group",$eve->groupid);
