@@ -16,6 +16,8 @@
         error("Filenames contain illegal characters!");
     }
 
+    print_simple_box_start("center", "96%");
+
     $helpfound = false;
     $langs = array(current_language(), get_string("parentlanguage"), "en");  // Fallback
 
@@ -70,6 +72,8 @@
         echo "</p>";
         $helpfound = true;
     }
+
+    print_simple_box_end();
 
     if (!$helpfound) {
         notify("Help file '$file' could not be found!");
