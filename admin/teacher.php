@@ -119,9 +119,11 @@
         $users = get_records_sql("SELECT * from user WHERE confirmed = 1 
                                   AND (firstname LIKE '%$search%' OR 
                                        lastname LIKE '%$search%' OR 
-                                       email LIKE '%$search%')");
+                                       email LIKE '%$search%')
+                                  AND username <> 'guest'");
     } else {
-        $users = get_records("user", "confirmed", "1");
+        $users = get_records_sql("SELECT * from user WHERE confirmed = 1 
+                                  AND username <> 'guest'");
     }
 
     
