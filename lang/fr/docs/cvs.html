@@ -1,8 +1,10 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
 <title>Documentation Moodle : Comment utiliser CVS ?</title>
-	<link rel="stylesheet" href="docstyles.css" type="TEXT/CSS">
-	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<link rel="stylesheet" href="docstyles.css" type="text/css" />
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 	<style type="text/css">
 		<!--
 		.style1 {color: #990000}
@@ -159,7 +161,7 @@ cvs commit</div>
 	<ol>
 		<ol>
 		<li>Cliquez avec le bouton droit de la souris sur votre dossier Moodle (ou sur n'importe quel fichier) et s&eacute;lectionnez &laquo;&nbsp;<strong>CVS Update</strong>&nbsp;&raquo;.</li>
-		<li>Attendez et voyez d&eacute;filer les historiques (logs). Prenez note des conflits pouvant survenir si votre code local a des modifications en contradiction avec les versions t&eacute;l&eacute;charg&eacute;es. Vous aurez &agrave; r&eacute;soudre manuellement ces fichiers en les modifiant.
+		<li>Attendez et voyez d&eacute;filer les historiques (logs). Prenez note des conflits pouvant survenir si votre code local a des modifications en contradiction avec les versions t&eacute;l&eacute;charg&eacute;es. Vous aurez &agrave; r&eacute;soudre manuellement ces fichiers en les modifiant.</li>
 		</ol>
 	</ol>
 	<blockquote>
@@ -179,8 +181,8 @@ cvs commit</div>
 	<h2><a name="4" id="4"></a>4. Travailler avec des branches</h2>
 	<blockquote>
 	<p>Le diagramme suivant montre comment le module principal <strong>moodle</strong> se ramifie en plusieurs versions (branches) au cours du temps.</p>
-	<p align="center"><img src="pix/cvstree.png" width="500" height="200"></p>
-	<p>Pour voir toutes les balises et branches actuellement disponibles, utilisez la commande suivante sur n'importe quel fichier suffisamment ancien (par exemple index.php dans le dossier principal de moodle)&nbsp;:<p>
+	<p align="center"><img src="pix/cvstree.png" width="500" height="200" alt="cvstree" /></p>
+	<p>Pour voir toutes les balises et branches actuellement disponibles, utilisez la commande suivante sur n'importe quel fichier suffisamment ancien (par exemple index.php dans le dossier principal de moodle)&nbsp;:</p>
 	<div class="commandline">cvs status -v index.php</div>
 	<p>Quelques recommandations au sujet des balises&nbsp;:</p>
 	<ul>	
@@ -241,7 +243,7 @@ cvs commit</div>
 		<li>Cr&eacute;ez une nouvelle balise sur le <strong>tronc</strong> (pour la totalit&eacute; de moodle) avec le nom <strong>MOODLE_XX_WIDGET_PRE</strong><br /><br />
 		<div class="commandline">cvs tag -R MOODLE_XX_WIDGET_PRE<span>&nbsp;</span></div></li>
 		<li>Cr&eacute;ez votre nouvelle branche avec le nom <span class="style1"><strong>MOODLE_XX_WIDGET</strong></span><br /><br />
-		<div class="commandline">cvs tag -Rb <span class="style1">MOODLE_XX_WIDGET</span></strong></div></li>
+		<div class="commandline">cvs tag -Rb <span class="style1"><strong>MOODLE_XX_WIDGET</strong></span></div></li>
 		<li>Travaillez dans cette branche jusqu'&agrave; ce que la fonctionnalit&eacute; soit raisonnablement stable. Copiez vos fichiers dans le CVS suivant vos besoins.<br /><br />
 		<div class="commandline">cvs commit<span>&nbsp;</span></div></li>
 		<li>Lorsque vous &ecirc;tes pr&ecirc;t, incorporez toute la branche dans le tronc&nbsp;: copiez tous ses fichiers dans le tronc et abandonnez la branche.<br /><br />
