@@ -1,11 +1,11 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.0.6 dev (2002100200)
+      // forum.php - created with Moodle 1.0.6.3 dev (2002111200)
 
 
 $string['addanewdiscussion'] = "Lis‰‰ uusi keskustelu";
 $string['allowchoice'] = "Anna kaikkien valita";
 $string['allowdiscussions'] = "Voiko \$a avata uusia keskusteluja?";
-$string['allowratings'] = "Voidaanko viestej‰ arvioida?";
+$string['allowratings'] = "Voidaanko viestej‰ luokitella?";
 $string['allowsdiscussions'] = "T‰m‰ foorumi antaa jokaisen aloittaa yhden uuden keskustelun.";
 $string['anyfile'] = "Mik‰ tahansa tiedosto";
 $string['attachment'] = "Liite";
@@ -58,6 +58,7 @@ $string['newforumposts'] = "Foorumin uudet viestit";
 $string['nodiscussions'] = "T‰ss‰ foorumissa ei ole viel‰ keskusteluja";
 $string['noguestpost'] = "Pahus, vieraat eiv‰t saa kirjoitaa foorumiin";
 $string['noposts'] = "Ei viestej‰";
+$string['nopostscontaining'] = "Viestej‰ jotka sis‰lt‰v‰t '\$a' ei lˆytynyt";
 $string['nosubscribers'] = "T‰ll‰ foorumilla ei ole tilaajia";
 $string['nownotsubscribed'] = "\$a->name EI saa kopioita viesteist‰'\$a->forum' s‰hkˆpostiinsa.";
 $string['nowsubscribed'] = "\$a->name SAA kopiot viesteist‰ '\$a->forum' s‰hkˆpostiinsa.";
@@ -68,6 +69,7 @@ $string['openmode1'] = "Ei keskusteluja, mutta vastaaminen sallitaan";
 $string['openmode2'] = "Keskustelut ja vastaukset sallitaan";
 $string['parentofthispost'] = "T‰m‰n viestin alku";
 $string['postadded'] = "Viestisi on lis‰tty.<P>Sinulla \$a aikaa muokata viesti‰ jos haluat muuttaa sit‰.";
+$string['postincontext'] = "Katso t‰t‰ viesti‰ kontektissa";
 $string['postingtip'] = "<B>Vihjeet:</B>
 <br>Kun vastaat:
 <UL>
@@ -83,13 +85,13 @@ Kun kirjoitat:
 </UL>";
 $string['postmailinfo'] = "T‰m‰ on kopio viestist‰ \$a sivustolla.
 Lis‰t‰ksesi vastauksen viestiin suoraan sivustolle, klikkaa seuraavaa linkki‰:";
-$string['postrating1'] = "Sis‰lt‰‰ enimm‰kseen irrallista tietoa";
-$string['postrating2'] = "Yht‰l‰isesti irrallista ja aiheeseen liittyv‰‰ tietoa";
-$string['postrating3'] = "Sis‰lt‰‰ enimm‰kseen aiheeseen liittyv‰‰ tietoa";
+$string['postrating1'] = "Suurimmaksi osaksi eristyv‰‰ osaamista";
+$string['postrating2'] = "Yht‰laisesti eristynyt ja sosiaalinen";
+$string['postrating3'] = "Suurimmaksi osaksi sosiaalista osaamista";
 $string['postupdated'] = "Viestisi on p‰ivitetty";
 $string['processingpost'] = "K‰sitell‰‰n viesti‰ \$a";
-$string['rate'] = "Arvio";
-$string['ratings'] = "Arviot";
+$string['rate'] = "Luokka";
+$string['ratings'] = "Luokittelut";
 $string['re'] = "Re:";
 $string['readtherest'] = "Lue loput t‰st‰ aiheesta";
 $string['repliesmany'] = "\$a vastausta t‰h‰n menness‰";
@@ -97,7 +99,8 @@ $string['repliesone'] = "\$a vastaus t‰h‰n menness‰";
 $string['reply'] = "Vastaa";
 $string['search'] = "Etsi";
 $string['searchforums'] = "Etsi Foorumeista";
-$string['sendinratings'] = "L‰het‰ viimeisimm‰t arviot";
+$string['searchresults'] = "Haun tulokset";
+$string['sendinratings'] = "L‰het‰ viimeisimm‰t luokittelut viestest‰ni";
 $string['showsubscribers'] = "N‰yt‰ tilaajat";
 $string['singleforum'] = "Yksinkertainen keskustelu";
 $string['subject'] = "Aihe";
@@ -106,7 +109,7 @@ $string['subscribed'] = "Tilaaja";
 $string['subscribers'] = "Tilaajat";
 $string['subscribersto'] = "Tilaa '\$a'";
 $string['unsubscribe'] = "Poista t‰m‰n foorumin tilaus";
-$string['youratedthis'] = "Arviot t‰m‰n";
+$string['youratedthis'] = "Luokittelit t‰m‰n";
 $string['yournewtopic'] = "Uusi keskustelun aiheesi";
 $string['yourreply'] = "Vastauksesi";
 
