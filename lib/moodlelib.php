@@ -216,7 +216,7 @@ function userdate($date, $format="", $timezone=99) {
         $timezone = (float)$USER->timezone;
     }
     if (abs($timezone) > 12) {
-        return date("$format", $date);
+        return strftime("$format", $date);
     }
     return gmstrftime($format, $date + (int)($timezone * 3600));
 }
