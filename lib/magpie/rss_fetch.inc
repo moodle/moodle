@@ -151,7 +151,10 @@ function fetch_rss ($url) {
         
         // setup headers
         if ( $cache_status == 'STALE' ) {
-            $rss = $cache->get( $url );
+			// modified by Daryl Hawes - stale cache reads were failing because the wrong 
+			// string was being passed for filename
+//            $rss = $cache->get( $url );
+            $rss = $cache->get( $cache_key );
             if ( $rss->etag and $rss->last_modified ) {
                 $request_headers['If-None-Match'] = $rss->etag;
                 $request_headers['If-Last-Modified'] = $rss->last_modified;
