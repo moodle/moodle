@@ -3,6 +3,14 @@
     -moz-border-radius:3px;
 }
 
+.notifyproblem {
+    -moz-border-radius:10px;
+}
+
+.notifysuccess {
+    -moz-border-radius:10px;
+}
+
 .sideblock {
     -moz-border-radius-bottomleft:20px;
     -moz-border-radius-bottomright:20px;

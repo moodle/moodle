@@ -36,6 +36,10 @@
     background:transparent;
 }
 
+.continuebutton {
+    text-align: center;
+}
+
 
 /* general styles */
 th {
@@ -524,6 +528,11 @@ body#admin-index .c0 {
 } 
 
 body#admin-modules .generaltablecell {
+    padding-top: 1px;
+    padding-bottom: 1px;
+} 
+
+body#admin-blocks .generaltablecell {
     padding-top: 1px;
     padding-bottom: 1px;
 } 
