@@ -86,13 +86,12 @@
                           "chat$course->id$chat->id", "$strenterchat", 500, 700, $strchat);
     print_simple_box_end();
 
-    print_spacer(20,20);
-
+    echo "<br />";
     print_simple_box( text_to_html($chat->intro) , "center");
+    echo "<br />";
 
     if ($chatusers = chat_get_users($chat->id)) {
         $timenow = time();
-        print_spacer(20,20);
         print_simple_box_start("center");
         print_heading($strcurrentusers);
         echo "<table width=\"100%\">";
@@ -110,8 +109,6 @@
         echo "</table>";
         print_simple_box_end();
     }
-
-    print_spacer(50,50);
 
 
 /// Finish the page
