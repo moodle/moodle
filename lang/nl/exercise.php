@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // exercise.php - created with Moodle 1.2 development (2004011700)
+      // exercise.php - created with Moodle 1.2 alpha (2004022200)
 
 
 $string['absent'] = 'Afwezig';
@@ -84,7 +84,7 @@ te klikken op de opdracht in het vak. Als er nog geen elementen zijn, word je ge
 ze toe te voegen. Je kunt het aantal elementen wijzigen met het Bewerk Opdracht scherm,<br/>
 
 de elementen zelf kunnen aangepast worden op het &quot;Beheer opdracht&quot; scherm.';
-$string['noteonstudentassessments'] = '{Cijfer van leerling / Beoordelingscijfer van leraar';
+$string['noteonstudentassessments'] = '{Cijfer van leerling / Beoordelingscijfer van leraar}';
 $string['notgraded'] = 'Nog geen cijfer gegeven';
 $string['notitlegiven'] = 'Nog geen titel gegeven';
 $string['nowpleasemakeyourownassessment'] = 'Beoordeel nu zelf het werk van $a.<br/>Merk op dat het beoordelingsformulier begint met de cijfers van het<br/>leerlingenformulier. Breng de nodige verbeteringen aan en <br/>klik dan op één van de knoppen onderaan de pagina.';
@@ -105,13 +105,13 @@ $string['pleasegradetheassessment'] = 'Geef een cijfer voor de beoordeling van d
 $string['pleasesubmityourwork'] = 'Stuur je werk in met dit formulier';
 $string['pleaseusethisform'] = 'Vul dit formulier in wanneer je klaar bent<br/>met alle instructies van onderstaande
 oefening. ';
-$string['pleaseviewtheexercise'] = 'Bekijk de hieronder opgegeven oefening door op der titel ervan te klikken.<br/>Volg de instructies in deze oefening.<br/>Wanneer je klaar bent met de oefening<br/>klik je op de Beoordeel- (of Herbeoordeel-)link aan de <br/>rechterkant van de titel. Als je deze beoordeling gedaan hebt, krijg je <br/>verdere instructies te zien over wat er volgt.';
+$string['pleaseviewtheexercise'] = 'Bekijk de hieronder opgegeven oefening door op de titel ervan te klikken.<br/>Volg de instructies in deze oefening.<br/>Wanneer je klaar bent met de oefening<br/>klik je op de Beoordeel- (of Herbeoordeel-)link aan de <br/>rechterkant van de titel. Als je deze beoordeling gedaan hebt, krijg je <br/>verdere instructies te zien over wat er volgt.';
 $string['poor'] = 'Slecht';
 $string['present'] = 'Aanwezig';
 $string['reasonforadjustment'] = 'Reden voor aanpassing';
 $string['reassess'] = 'Beoordeel opnieuw';
 $string['resubmissionfor'] = 'Herinzending voor $a';
-$string['resubmitnote'] = '.* dat de $a zijn inzending opnieuw mag doen.<br/>Dit vlagje kan aan elke inzending gegeven worden door te klikken <br/>op de <b>Laat $a toe opniew in te zenden</b>knop te drukken<br/>
+$string['resubmitnote'] = '* betekent dat de $a zijn inzending opnieuw mag doen.<br/>Dit vlagje kan aan elke inzending gegeven worden door te klikken <br/>op de <b>Laat $a toe opniew in te zenden</b>knop te drukken<br/>
 De leerling kan een inzending <b>naar keuze</b> opniew opsturen.';
 $string['rubric'] = 'Rubriek';
 $string['savedok'] = 'Bewaren succesvol';
