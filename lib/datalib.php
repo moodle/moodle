@@ -1133,7 +1133,7 @@ function get_course_students($courseid, $sort="s.timeaccess", $dir="", $page=0, 
 
     return get_records_sql("SELECT u.id, u.username, u.firstname, u.lastname, u.maildisplay, u.mailformat,
                             u.email, u.city, u.country, u.lastlogin, u.picture, u.department, u.institution,
-                            u.lang, u.timezone, s.timeaccess as lastaccess
+                            u.emailstop, u.lang, u.timezone, s.timeaccess as lastaccess
                             FROM {$CFG->prefix}user u, 
                                  {$CFG->prefix}user_students s $groupmembers
                             WHERE $select $sort $dir $limit");
@@ -1195,7 +1195,7 @@ function get_course_teachers($courseid, $sort="t.authority ASC") {
 
     return get_records_sql("SELECT u.id, u.username, u.firstname, u.lastname, u.maildisplay, u.mailformat,
                                    u.email, u.city, u.country, u.lastlogin, u.picture, u.lang, u.timezone, 
-                                   t.authority,t.role,t.editall,t.timeaccess as lastaccess
+                                   u.emailstop, t.authority,t.role,t.editall,t.timeaccess as lastaccess
                             FROM {$CFG->prefix}user u, 
                                  {$CFG->prefix}user_teachers t
                             WHERE t.course = '$courseid' AND t.userid = u.id AND u.deleted = '0'
@@ -1266,7 +1266,7 @@ function get_site_users($sort="u.lastaccess DESC", $select="") {
         $selectinfo = $select;
     } else {
         $selectinfo = "u.id, u.username, u.firstname, u.lastname, u.maildisplay, u.mailformat,".
-                      "u.email, u.city, u.country, u.lastaccess, u.lastlogin, u.picture, u.lang, u.timezone";
+                      "u.email, u.emailstop, u.city, u.country, u.lastaccess, u.lastlogin, u.picture, u.lang, u.timezone";
     }
                   
 
