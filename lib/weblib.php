@@ -1008,7 +1008,7 @@ function highlight($needle, $haystack, $case=0,
         return $haystack;
     }
 
-    $list_of_words = eregi_replace("[^-a-zA-Z0-9&']", " ", $needle);
+    $list_of_words = eregi_replace("[^-a-zA-Z0-9&.']", " ", $needle);
     $list_array = explode(" ", $list_of_words);
     for ($i=0; $i<sizeof($list_array); $i++) {
         if (strlen($list_array[$i]) == 1) {
@@ -1033,12 +1033,18 @@ function highlight($needle, $haystack, $case=0,
     if ($list_of_words_cp{strlen($list_of_words_cp)-1}=="|") {
         $list_of_words_cp{strlen($list_of_words_cp)-1}="";
     }
-    $list_of_words_cp = "(".trim($list_of_words_cp).")";
 
-    if (!$case){
-        $haystack = eregi_replace("$list_of_words_cp", "$left_string"."\\1"."$right_string", $haystack);
-    } else {
-        $haystack = ereg_replace("$list_of_words_cp", "$left_string"."\\1"."$right_string", $haystack);
+    $list_of_words_cp = trim($list_of_words_cp);
+
+    if ($list_of_words_cp) {
+
+      $list_of_words_cp = "(". $list_of_words_cp .")";
+
+      if (!$case){
+	$haystack = eregi_replace("$list_of_words_cp", "$left_string"."\\1"."$right_string", $haystack);
+      } else {
+	$haystack = ereg_replace("$list_of_words_cp", "$left_string"."\\1"."$right_string", $haystack);
+      }
     }
     $haystack = str_replace(array_keys($final),$final,$haystack);
 
