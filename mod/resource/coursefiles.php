@@ -374,7 +374,7 @@
                     foreach ($USER->filelist as $file) {
                         $files[] = "$basedir/$file";
                     }
-                    include_once('../pclzip/pclzip.lib.php');
+                    include_once($CFG->libdir.'/pclzip/pclzip.lib.php');
                     $archive = new PclZip("$basedir/$wdir/$name");
                     if (($list = $archive->create($files,'',"$basedir/$wdir/")) == 0) {
                         error($archive->errorInfo(true));
