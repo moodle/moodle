@@ -96,6 +96,7 @@ $string['noassessmentsdone'] = "No se han hecho evaluaciones";
 $string['nosubmissionsavailableforassessment'] = "No hay envíos disponibles para evaluar";
 $string['notavailable'] = "No disponible";
 $string['noteonassessmentelements'] = "Advierta que la calificación está dividida en una serie de 'elementos de evaluación'; esto hace que sea más sencilla y consistente. Como profesor usted debe añadir estos 'elementos de evaluación' antes de plantear la tarea a los estudiantes.</ br>
+
 Esto se consigue haciendo clic en la tarea dentro del curso; de no haber elementos se le pedirá que los añada. Puede cambiar el número de elementos usando la ventana 'editar tarea', el elemento en sí puede ser rectificado desde la pantalla &quot;Administrar tarea&quot;. ";
 $string['notgraded'] = "Ninguna calificación";
 $string['notitlegiven'] = "Aún no tiene título";
@@ -116,7 +117,7 @@ $string['phase'] = "Fase";
 $string['phase1'] = "Determinar la tarea";
 $string['phase2'] = "\$a Envíos y evaluaciones";
 $string['phase3'] = "Cálculo de la calificación final";
-$string['phase4'] = "Mostrar las calificaciones finales";
+$string['phase4'] = "Cálculo de calificaciones finales";
 $string['phase5'] = "Mostrar calificaciones finales";
 $string['pleaseassesstheseexamplesfromtheteacher'] = "Por favor evalúe estos ejemplos de la \$a";
 $string['pleaseassessthesestudentsubmissions'] = "Por favor evalúe estos \$a envíos";
