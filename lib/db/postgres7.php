@@ -339,6 +339,10 @@ function main_upgrade($oldversion=0) {
         table_column("course", "", "groupmodeforce", "integer", "4", "unsigned", "0", "", "groupmode");
     }
 
+    if ($oldversion < 2004010900) {
+        table_column("course_modules", "", "groupmode", "integer", "4", "unsigned", "0", "", "visible");
+    }
+
     return $result;
 }
 

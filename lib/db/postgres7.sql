@@ -67,7 +67,8 @@ CREATE TABLE prefix_course_modules (
    deleted integer NOT NULL default '0',
    score integer NOT NULL default '0',
    indent integer NOT NULL default '0',
-   visible integer NOT NULL default '1'
+   visible integer NOT NULL default '1',
+   groupmode integer NOT NULL default '0'
 );
 
 CREATE TABLE prefix_course_sections (

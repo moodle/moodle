@@ -110,6 +110,7 @@ CREATE TABLE `prefix_course_modules` (
   `score` tinyint(4) NOT NULL default '0',
   `indent` int(5) unsigned NOT NULL default '0',
   `visible` tinyint(1) NOT NULL default '1',
+  `groupmode` tinyint(4) NOT NULL default '0',
   PRIMARY KEY  (`id`),
   UNIQUE KEY `id` (`id`)
 ) TYPE=MyISAM;
