@@ -596,7 +596,6 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
             $text = htmlentities($text);
             $text = rebuildnolinktag($text);
             $text = str_replace("  ", "&nbsp; ", $text);
-            replace_smilies($text);
             $text = nl2br($text);
             break;
 
