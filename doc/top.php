@@ -7,14 +7,14 @@
     } else {
         $currlang = current_language();
         $langs    = get_list_of_languages();
-        $langmenu = popup_form ("$CFG->wwwroot/doc/?lang=", $langs, "chooselang", $currlang, "", "", "", true);
+        $langmenu = popup_form ("$CFG->wwwroot/doc/?lang=", $langs, "chooselang", $currlang, "", "", "", true, "parent");
     }
 
     if (! $site = get_site()) {
         error("Site is misconfigured");
     }
     $strdocumentation = get_string("documentation");
-    print_header("$site->shortname: $strdocumentation", "$site->fullname", "$strdocumentation", "", "", true, $langmenu, navmenu($site));
+    print_header("$site->shortname: $strdocumentation", "$site->fullname", "$strdocumentation", "", "", true, $langmenu, navmenu($site, NULL, "parent"));
     
 ?>
 
