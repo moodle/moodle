@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.3 development (2004042600)
+      // forum.php - created with Moodle 1.3 Nearly Ready (2004052000)
 
 
 $string['addanewdiscussion'] = 'Colocar un nuevo tema de discusión aquí';
@@ -11,7 +11,8 @@ $string['allowsdiscussions'] = 'Foro abierto a todos';
 $string['anyfile'] = 'Cualquier archivo';
 $string['attachment'] = 'Archivo adjunto';
 $string['bynameondate'] = 'de $a->name - $a->date';
-$string['configdisplaymode'] = 'La forma de visualización por defecto, si no se ha configurado ninguna.';
+$string['configdisplaymode'] = 'Forma de visualización por defecto, si no se ha configurado ninguna.';
+$string['configenablerssfeeds'] = 'Este interruptor permite canales RSS para todos los foros. Necesitará activar los canales manualmente en los ajustes de cada foro.';
 $string['configlongpost'] = 'Cualquier mensaje que exceda esta extensión (sin incluir código HTML) se considera largo.';
 $string['configmanydiscussions'] = 'Máximo número de temas mostrados en una página de foro.';
 $string['configmaxbytes'] = 'Tamaño máximo por defecto para los archivos adjuntos a los mensajes de los foros en este sitio (sujeto a los límites del curso y otras configuraciones del servidor)';
@@ -68,7 +69,7 @@ $string['nameteacher'] = 'Foro de profesores';
 $string['newforumposts'] = 'Nuevos mensajes';
 $string['nodiscussions'] = 'Aún no hay temas en este foro';
 $string['noguestpost'] = 'Lo sentimos, los invitados no pueden escribir aquí';
-$string['nomorepostscontaining'] = 'No se encontraron más mensajes conteniendo $a';
+$string['nomorepostscontaining'] = 'No se encontraron más mensajes que contengan $a';
 $string['nonews'] = 'Sin novedades aún';
 $string['noposts'] = 'No hay mensajes';
 $string['nopostscontaining'] = 'No se encontraron mensajes con \'$a\'';
@@ -112,11 +113,13 @@ $string['repliesmany'] = '$a respuestas';
 $string['repliesone'] = '$a respuesta';
 $string['reply'] = 'Responder';
 $string['replyforum'] = 'Responder al foro';
+$string['rsssubscriberssdiscussions'] = 'Mostrar el canal RSS para los temas \'$a\'';
+$string['rsssubscriberssposts'] = 'Mostrar el canal RSS para los mensajes \'$a\'';
 $string['search'] = 'Buscar';
 $string['searchforums'] = 'Buscar foros';
 $string['searcholderposts'] = 'Buscar mensajes antiguos...';
 $string['searchresults'] = 'Resultado';
-$string['sendinratings'] = 'Guardar calificaciones';
+$string['sendinratings'] = 'Enviar mis últimas calificaciones';
 $string['showsubscribers'] = 'Mostrar/editar suscriptores actuales';
 $string['singleforum'] = 'Debate sencillo';
 $string['startedby'] = 'Comenzado por';

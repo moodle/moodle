@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.3 development (2004042600)
+      // editor.php - created with Moodle 1.3 Nearly Ready (2004052000)
 
 
 $string['about'] = 'Acerca de este editor';
@@ -27,6 +27,7 @@ $string['cut'] = 'Cortar selección';
 $string['delete'] = 'Eliminar';
 $string['filebrowser'] = 'Navegador de archivos';
 $string['forecolor'] = 'Color de fuente';
+$string['fullscreen'] = 'Editor pantalla completa';
 $string['heading'] = 'Encabezado';
 $string['height'] = 'Altura';
 $string['hilitecolor'] = 'Color de fondo';
@@ -47,6 +48,7 @@ $string['justifyleft'] = 'Izquierda';
 $string['justifyright'] = 'Derecha';
 $string['layout'] = 'Diseño';
 $string['left'] = 'Izquierda';
+$string['lefttoright'] = 'Dirección de izquierda a derecha';
 $string['linkproperties'] = 'Propiedades de vínculo';
 $string['linktarget'] = 'Destino';
 $string['linktargetblank'] = 'Nueva ventana';
@@ -57,6 +59,7 @@ $string['linktargettop'] = 'La misma ventana';
 $string['linktitle'] = 'Título';
 $string['linkurl'] = 'URL';
 $string['middle'] = 'Centrado';
+$string['minimize'] = 'Minimizar editor';
 $string['move'] = 'Mover';
 $string['normal'] = 'Normal';
 $string['notimage'] = 'El archivo seleccionado no es una imagen. Por favor, seleccione una imagen!';
@@ -70,13 +73,15 @@ $string['percent'] = 'Porcentaje';
 $string['pixels'] = 'Píxeles';
 $string['popupeditor'] = 'Agrandar el editor';
 $string['preformatted'] = 'Preformateado';
-$string['preview'] = 'Visualizar';
+$string['preview'] = 'Previsualizar';
 $string['properties'] = 'Propiedades';
 $string['redo'] = 'Rehacer la última acción';
 $string['removelink'] = 'Eliminar vínculo';
 $string['rename'] = 'Renombrar';
 $string['right'] = 'Derecha';
+$string['righttoleft'] = 'Dirección de derecha a izquierda';
 $string['rows'] = 'Filas';
+$string['selectcolor'] = 'Seleccionar color';
 $string['selection'] = 'Selección';
 $string['showhelp'] = 'Mostrar ayuda';
 $string['size'] = 'Tamaño';
@@ -95,6 +100,7 @@ $string['unorderedlist'] = 'Lista con viñetas';
 $string['upload'] = 'Subir';
 $string['vertical'] = 'Vertical';
 $string['width'] = 'Anchura';
+$string['wordclean'] = 'Limpiar Word HTML';
 $string['zip'] = 'Comprimir';
 
 ?>
