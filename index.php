@@ -52,7 +52,7 @@
     <TD WIDTH="55%" VALIGN="TOP">
       <? print_simple_box("Site News", $align="CENTER", $width="100%", $color="$THEME->cellheading"); ?>
 
-      <BR>
+      <IMG HEIGHT=8 SRC="pix/spacer.gif"><BR>
 
       <? include("mod/discuss/lib.php");
          forum_latest_topics();
@@ -60,7 +60,12 @@
     
     </TD>
     <TD WIDTH="30%" VALIGN="TOP"> 
-      <? print_simple_box($site->summary, $align="", $width="100%", $color="$THEME->cellheading"); ?>
+      <? 
+         if ($USER->editing) {
+             $site->summary .= "<BR><CENTER><A HREF=\"admin/site.php\"><IMG SRC=\"pix/i/edit.gif\" BORDER=0></A>";
+         }
+         print_simple_box($site->summary, $align="", $width="100%", $color="$THEME->cellheading");
+      ?>
     </TD>
   </TR>
 </TABLE>
