@@ -85,7 +85,7 @@ function dialogue_cron () {
                 get_string("newentry", "dialogue");
             $posttext  = "$course->shortname -> $strdialogues -> $dialogue->name\n";
             $posttext .= "---------------------------------------------------------------------\n";
-            $posttext .= get_string("dialoguemail", "dialogue", $dialogueinfo);
+            $posttext .= get_string("dialoguemail", "dialogue", $dialogueinfo)." \n";
             $posttext .= "---------------------------------------------------------------------\n";
             if ($userto->mailformat == 1) {  // HTML
                 $posthtml = "<p><font face=\"sans-serif\">".
