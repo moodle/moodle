@@ -118,6 +118,8 @@ function qualified_me() {
         $hostname = $_SERVER["HTTP_HOST"];
     } else if (!empty($_ENV["HTTP_HOST"])) {
         $hostname = $_ENV["HTTP_HOST"];
+    } else if (!empty($_SERVER["SERVER_NAME"])) {
+        $hostname = $_SERVER["SERVER_NAME"];
     } else if (!empty($_ENV["SERVER_NAME"])) {
         $hostname = $_ENV["SERVER_NAME"];
     } else {
