@@ -59,10 +59,7 @@ function message_print_contacts() {
                 $strcontact .= '<strong>( '.get_string('unreadmessages', 'message', $unread).')</strong>';
             }
         /// link to remove from contact list
-            $strcontact .= ' [<a href="index.php?tab=contacts&amp;removecontact='.$contact->id.
-                           '&amp;sesskey='.$USER->sesskey.'" title="'.
-                           get_string('removecontact', 'message').'">'.
-                           get_string('removecontact', 'message').'</a>]</td>';
+            $strcontact .= message_contact_link($contact->id, 'remove', true);
             
             echo '<tr><td class="message_pic">';
             print_user_picture($contact->id, SITEID, $contact->picture, 20, false, false);
@@ -100,10 +97,7 @@ function message_print_contacts() {
                 $strcontact .= '<strong>( '.get_string('unreadmessages', 'message', $unread).')</strong>';
             }
         /// link to remove from contact list
-            $strcontact .= ' [<a href="index.php?tab=contacts&amp;removecontact='.$contact->id.
-                           '&amp;sesskey='.$USER->sesskey.'" title="'.
-                           get_string('removecontact', 'message').'">'.
-                           get_string('removecontact', 'message').'</a>]</td>';
+            $strcontact .= message_contact_link($contact->id, 'remove', true);
             
             echo '<tr><td class="message_pic">';
             print_user_picture($contact->id, SITEID, $contact->picture, 20, false, false);
@@ -160,14 +154,9 @@ function message_print_contacts() {
         foreach ($unknownmessages as $messageuser) {
             $strcontact = '<strong>( '.get_string('unreadmessages', 'message', $messageuser->count).')</strong>';
         /// link to add to contact list
-            $strcontact .= ' [<a href="index.php?tab=contacts&amp;addcontact='.$messageuser->useridfrom.
-                           '&amp;sesskey='.$USER->sesskey.'" title="'.
-                           get_string('addcontact', 'message').'">'.
-                           get_string('addcontact', 'message').'</a>]</td>';
-            $strblock = '[<a href="index.php?tab=contacts&amp;blockcontact='.$messageuser->useridfrom.
-                        '&amp;sesskey='.$USER->sesskey.'" title="'.
-                        get_string('blockcontact', 'message').'">'.
-                        get_string('blockcontact', 'message').'</a>]</td>';
+            
+            $strcontact .= message_contact_link($messageuser->useridfrom, 'add', true);
+            $strblock   .= message_contact_link($messageuser->useridfrom, 'block', true);
             
             echo '<tr><td class="message_pic">';
             print_user_picture($messageuser->useridfrom, SITEID, $messageuser->picture, 20, false, false);
@@ -301,7 +290,8 @@ function message_remove_contact($contactid) {
 }
 
 function message_unblock_contact($contactid) {
-    return message_add_contact($contactid, 0);
+    global $USER;
+    return delete_records('message_contacts', 'userid', $USER->id, 'contactid', $contactid);
 }
 
 function message_block_contact($contactid) {
@@ -339,39 +329,20 @@ function message_print_search_results($frm) {
             echo '<strong>'.get_string('userssearchresults', 'message', count($users)).'</strong>';
             echo '<table class="message_users">';
             foreach ($users as $user) {
+            
                 if (($contact = message_get_contact($user->id)) !== false)  {
                     if ($contact->blocked == 0) { /// not blocked
-                        $strcontact = '[<a href="index.php?tab=contacts&amp;removecontact='.$user->id.
-                                      '&amp;sesskey='.$USER->sesskey.'" title="'.
-                                      get_string('removecontact', 'message').'">'.
-                                      get_string('removecontact', 'message').'</a>]</td>';
-                        $strblock = '[<a href="index.php?tab=contacts&amp;blockcontact='.$user->id.
-                                    '&amp;sesskey='.$USER->sesskey.'" title="'.
-                                    get_string('blockcontact', 'message').'">'.
-                                    get_string('blockcontact', 'message').'</a>]</td>';
+                        $strcontact = message_contact_link($user->id, 'remove', true);
+                        $strblock   = message_contact_link($user->id, 'block', true);
                     } else { // blocked
-                        $strcontact = '[<a href="index.php?tab=contacts&amp;unblockcontact='.$user->id.
-                                      '&amp;sesskey='.$USER->sesskey.'" title="'.
-                                      get_string('addcontact', 'message').'">'.
-                                      get_string('addcontact', 'message').'</a>]</td>';
-                        $strblock = '[<a href="index.php?tab=contacts&amp;removecontact='.$user->id.
-                                    '&amp;sesskey='.$USER->sesskey.'" title="'.
-                                    get_string('unblockcontact', 'message').'">'.
-                                    get_string('unblockcontact', 'message').'</a>]</td>';
-
+                        $strcontact = message_contact_link($user->id, 'add', true);
+                        $strblock   = message_contact_link($user->id, 'unblock', true);
                     }
-
                 } else {
-                    $strcontact = '[<a href="index.php?tab=contacts&amp;addcontact='.$user->id.
-                                  '&amp;sesskey='.$USER->sesskey.'" title="'.
-                                  get_string('addcontact', 'message').'">'.
-                                  get_string('addcontact', 'message').'</a>]</td>';
-                    $strblock = '[<a href="index.php?tab=contacts&amp;blockcontact='.$user->id.
-                                '&amp;sesskey='.$USER->sesskey.'" title="'.
-                                get_string('blockcontact', 'message').'">'.
-                                get_string('blockcontact', 'message').'</a>]</td>';
-
+                    $strcontact = message_contact_link($user->id, 'add', true);
+                    $strblock   = message_contact_link($user->id, 'block', true);
                 }
+                
                 echo '<tr><td class="message_pic">';
                 print_user_picture($user->id, SITEID, $user->picture, 20, false, false);
                 echo '</td>';
@@ -422,27 +393,76 @@ function message_print_search_results($frm) {
         if (($messages = message_search($keywords, $fromme, $tome, $courseid)) !== false) {
         
         /// get a list of contacts
-            $contacts = get_records_sql("SELECT contactid, blocked FROM {$CFG->prefix}message_contacts
-                                         WHERE userid='$USER->id'");
-                                         
-            echo '<strong>'.get_string('keywordssearchresults', 'message', count($messages)).'</strong>';
-            echo '<table class="message_users">';
+            if (($contacts = get_records('message_contacts', 'userid', $USER->id, '', 'contactid, blocked') ) === false) {
+                $contacts = array();
+            }
 
+        /// print heading with number of results
+        echo '<strong>'.get_string('keywordssearchresults', 'message', count($messages)).'</strong>';
+
+        /// print table headings
+            echo '<table class="message_users" cellpadding="5" border="1">';
+            echo '<tr>';
+            echo '<td align="center"><strong>'.get_string('to').'</strong></td>';
+            echo '<td align="center"><strong>'.get_string('from').'</strong></td>';
+            echo '<td align="center"><strong>'.get_string('message', 'message').'</strong></td>';
+            echo '<td align="center"><strong>'.get_string('timesent', 'message').'</strong></td>';
+            echo "</tr>\n";
+
+            $blockedcount = 0;
             foreach ($messages as $message) {
-            /// ignore messages from blocked users
-                if ((!$frm->includeblocked) and isset($contacts[$message->useridfrom]) and ($contacts[$message->useridfrom]->blocked == 1)) {
+
+            /// ignore messages to and from blocked users unless $frm->includeblocked is set
+                if ((!$frm->includeblocked) and (
+                      ( isset($contacts[$message->useridfrom]) and ($contacts[$message->useridfrom]->blocked == 1)) or
+                      ( isset($contacts[$message->useridto]  ) and ($contacts[$message->useridto]->blocked   == 1))
+                                                )
+                   ) {
+                    $blockedcount ++;
                     continue;
                 }
-                echo '<tr><td class="message_pic">';
-                print_user_picture($message->useridfrom, SITEID, $message->picture, 20, false, false);
+                   
+            /// load up user to record
+                if ($message->useridto !== $USER->id) {
+                    $userto = get_record('user', 'id', $message->useridto);
+                    $tocontact = (array_key_exists($message->useridto, $contacts) and 
+                                    ($contacts[$message->useridto]->blocked == 0) );
+                    $toblocked = (array_key_exists($message->useridto, $contacts) and 
+                                    ($contacts[$message->useridto]->blocked == 1) );
+                } else {
+                    $userto = false;
+                    $tocontact = false;
+                    $toblocked = false;
+                }
+            
+            /// load up user from record
+                if ($message->useridfrom !== $USER->id) {
+                    $userfrom = get_record('user', 'id', $message->useridfrom);
+                    $fromcontact = (array_key_exists($message->useridfrom, $contacts) and 
+                                    ($contacts[$message->useridfrom]->blocked == 0) );
+                    $fromblocked = (array_key_exists($message->useridfrom, $contacts) and 
+                                    ($contacts[$message->useridfrom]->blocked == 1) );
+                } else {
+                    $userfrom = false;
+                    $fromcontact = false;
+                    $fromblocked = false;
+                }
+
+            /// print out message row
+                echo '<tr valign="top">';
+                echo '<td class="message_contact">';
+                message_print_user($userto, $tocontact, $toblocked);
                 echo '</td>';
                 echo '<td class="message_contact">';
-                link_to_popup_window("/message/user.php?id=$message->useridfrom", "message_$message->useridfrom", fullname($message), 400, 400, get_string('sendmessageto', 'message', fullname($message)));
+                message_print_user($userfrom, $fromcontact, $fromblocked);
                 echo '</td>';
                 echo '<td>'.message_shorten_message($message->message, 20).'</td>';
-                echo '</tr>';
-             }
+                echo '<td>'.userdate($message->timecreated, get_string('strftimedatetime')).'</td>';
+                echo "</tr>\n";
+            }
+            
 
+            if ($blockedcount > 0) echo '<tr><td colspan="4" align="center">'.get_string('blockedmessages', 'message', $blockedcount).'</td></tr>';
             echo '</table>';
         
         } else {
@@ -455,11 +475,73 @@ function message_print_search_results($frm) {
         notify(get_string('emptysearchstring', 'message'));
     }
 
+    echo '<br />';
     print_single_button($ME, array( 'tab' => 'search'), get_string('newsearch', 'message') );
 
     echo '</div>';
 }
 
+
+function message_print_user ($user=false, $iscontact=false, $isblocked=false) {
+    global $USER;
+    if ($user === false) {
+        print_user_picture($USER->id, SITEID, $USER->picture, 20, false, false);
+    } else {
+        print_user_picture($user->id, SITEID, $user->picture, 20, false, false);
+        link_to_popup_window("/message/user.php?id=$user->id", "message_$user->id", fullname($user), 400, 400, get_string('sendmessageto', 'message', fullname($user)));
+        echo '<br />';
+        if ($iscontact) {
+            message_contact_link($user->id, 'remove');
+        } else {
+            message_contact_link($user->id, 'add');
+        }
+        echo '&nbsp;';
+        if ($isblocked) {
+            message_contact_link($user->id, 'unblock');
+        } else {
+            message_contact_link($user->id, 'block');
+        }
+    }
+}
+
+
+/// linktype can be: add, remove, block, unblock
+function message_contact_link ($userid, $linktype='add', $returnstr=false) {
+    global $USER;
+    switch ($linktype) {
+        case 'block':
+            $str = '[<a href="index.php?tab=contacts&amp;blockcontact='.$userid.
+                   '&amp;sesskey='.$USER->sesskey.'" title="'.
+                   get_string('blockcontact', 'message').'">'.
+                   get_string('blockcontact', 'message').'</a>]';
+            break;
+        case 'unblock':
+            $str = '[<a href="index.php?tab=contacts&amp;unblockcontact='.$userid.
+                   '&amp;sesskey='.$USER->sesskey.'" title="'.
+                   get_string('unblockcontact', 'message').'">'.
+                   get_string('unblockcontact', 'message').'</a>]';
+            break;
+        case 'remove':
+            $str = '[<a href="index.php?tab=contacts&amp;removecontact='.$userid.
+                   '&amp;sesskey='.$USER->sesskey.'" title="'.
+                   get_string('removecontact', 'message').'">'.
+                   get_string('removecontact', 'message').'</a>]';
+            break;
+        case 'add':
+        default:
+            $str = '[<a href="index.php?tab=contacts&amp;addcontact='.$userid.
+                   '&amp;sesskey='.$USER->sesskey.'" title="'.
+                   get_string('addcontact', 'message').'">'.
+                   get_string('addcontact', 'message').'</a>]';
+
+    }
+    if ($returnstr) {
+        return $str;
+    } else {
+        echo $str;
+        return true;
+    }
+}
 
 
 
@@ -541,12 +623,15 @@ function message_search_users($courseid, $searchtext, $sort='', $exceptions='') 
 
 
 
-function message_search($searchterms, $fromme=true, $tome=true, $courseid='none') {
+function message_search($searchterms, $fromme=true, $tome=true, $courseid='none', $userid=0) {
 /// Returns a list of posts found using an array of search terms
 /// eg   word  +word -word
 ///
 
     global $CFG, $USER;
+
+    /// If no userid sent then assume current user
+    if ($userid == 0) $userid = $USER->id; 
 
     /// Some differences in syntax for PostgreSQL
     if ($CFG->dbtype == "postgres7") {
@@ -586,36 +671,53 @@ function message_search($searchterms, $fromme=true, $tome=true, $courseid='none'
     $messagesearch = "($messagesearch) ";
 
 
-    /////////////////////////////////////
+    /// There are several possibilities
+    /// 1. courseid = SITEID : The admin is searching messages by all users
+    /// 2. courseid = ??     : A teacher is searching messages by users in
+    ///                        one of their courses - currently disabled
+    /// 3. courseid = none   : User is searching their own messages;
+    ///    a.  Messages from user
+    ///    b.  Messages to user
+    ///    c.  Messages to and from user
+
+    if ($courseid == SITEID) { /// admin is searching all messages
+        $m_read   = get_records_sql("SELECT m.id, m.useridto, m.useridfrom, m.message, m.timecreated
+                                     FROM {$CFG->prefix}message_read m 
+                                     WHERE $messagesearch");
+        $m_unread = get_records_sql("SELECT m.id, m.useridto, m.useridfrom, m.message, m.timecreated
+                                     FROM {$CFG->prefix}message m 
+                                     WHERE $messagesearch");
+                                     
+        if ($m_read   === false) $m_read   = array();
+        if ($m_unread === false) $m_unread = array();
     
-    if ($courseid !== SITEID) {
-        if ($courseid == 'none') {
-            if     ($fromme and $tome) $messagesearch .= "AND (m.useridfrom='$USER->id' OR m.useridto='$USER->id') ";
-            elseif ($fromme)           $messagesearch .= "AND m.useridfrom='$USER->id' ";
-            elseif ($tome)             $messagesearch .= "AND m.useridto='$USER->id' ";
-        } else {
-            /// Code in here for searching for messages between users in a particular course
-            /// This is not implemented at present because of potential abuse issues
-            /// Temporary measure, in case we ever get here is all the users messages
-            $messagesearch .= "AND (m.useridto='$USER->id' OR m.useridfrom='$USER->id')  ";
-        }
+    } elseif ($courseid !== 'none') {
+        /// This has not been implemented due to security concerns
+
+    } else {
+    
+        if     ($fromme and $tome) $messagesearch .= "AND (m.useridfrom='$userid' OR m.useridto='$userid') ";
+        elseif ($fromme)           $messagesearch .= "AND m.useridfrom='$userid' ";
+        elseif ($tome)             $messagesearch .= "AND m.useridto='$userid' ";
+        
+        $m_read   = get_records_sql("SELECT m.id, m.useridto, m.useridfrom, m.message, m.timecreated
+                                     FROM {$CFG->prefix}message_read m 
+                                     WHERE $messagesearch");
+        $m_unread = get_records_sql("SELECT m.id, m.useridto, m.useridfrom, m.message, m.timecreated
+                                     FROM {$CFG->prefix}message m 
+                                     WHERE $messagesearch");
+                                     
+        if ($m_read   === false) $m_read   = array();
+        if ($m_unread === false) $m_unread = array();
+    
     }
 
-    $messages = array();
+    /// The keys may be duplicated in $m_read and $m_unread so we can't
+    /// do a simple concatenation
+    $message = array();
+    foreach ($m_read as $m) $messages[] = $m;
+    foreach ($m_unread as $m) $messages[] = $m;
 
-    if (($m_unread = get_records_sql("SELECT m.id, m.useridfrom, m.message, u.firstname, u.lastname, u.picture 
-                            FROM {$CFG->prefix}user u, {$CFG->prefix}message m
-                            WHERE $messagesearch AND u.id=m.useridfrom ") ) !== false) {
-        foreach ($m_unread as $m) $messages[] = $m;
-    }
-
-    if (($m_read = get_records_sql("SELECT m.id, m.useridfrom, m.message_read, u.firstname, u.lastname, u.picture 
-                            FROM {$CFG->prefix}user u, {$CFG->prefix}message m
-                            WHERE $messagesearch AND u.id=m.useridfrom ") ) !== false) {
-        foreach ($m_read as $m) $messages[] = $m;
-    }
-
-    ///////////////////////////////////////
 
     return (empty($messages)) ? false : $messages;
 }
