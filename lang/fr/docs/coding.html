@@ -43,6 +43,8 @@
 
 <li class="spaced">Les magic_quotes sont automatiquement appliqu&eacute;es aux donn&eacute;es en provenance du navigateur (envoy&eacute;es via GET ou POST), ind&eacute;pendamment des r&eacute;glages de PHP. Il est donc s&ucirc;r de les ins&eacute;rer directement dans la base de donn&eacute;es. Toutes les autres donn&eacute;es brutes (en provenance de fichiers ou de bases de donn&eacute;es) doivent &ecirc;tre encod&eacute;es avec <font color="#339900">addslashes()</font> avant de les ins&eacute;rer dans la base de donn&eacute;es.</li>
 
+<li class="spaced">IMPORTANT : tous les textes dans Moodle, tout particuli&egrave;rement ceux qui proviennent des utilisateurs, doivent &ecirc;tre affich&eacute;s &agrave; l'aide de la fonction format_text(). Ceci permet de s'assurer que le texte est filtr&eacute; et nettoy&eacute; correctement.</li>
+
 </ol>
 
 <p>&nbsp;</p>
