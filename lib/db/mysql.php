@@ -393,6 +393,10 @@ function main_upgrade($oldversion=0) {
         print_simple_box("Thanks for upgrading!<p>There are many changes since the last release.  Please read the release notes carefully.  If you are using CUSTOM themes you will need to edit them.  You will also need to check your site's config.php file.", "center", "50%", "$THEME->cellheading", "20", "noticebox");
     }
 
+    if ($oldversion < 2003052300) {
+        table_column("user", "", "autosubscribe", "integer", "1", "unsigned", "1", "", "htmleditor");
+    }
+
     return $result;
 
 }

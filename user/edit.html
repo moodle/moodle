@@ -79,6 +79,15 @@ if (isadmin()) {
     choose_from_menu ($choices, "mailformat", $user->mailformat, "") ?>
     </td>
 </tr>
+<tr valign=top>
+    <td><p><?php print_string("autosubscribe") ?>:</td>
+    <td><?php 
+    unset($choices);
+    $choices["1"] = get_string("autosubscribeyes");
+    $choices["0"] = get_string("autosubscribeno");
+    choose_from_menu ($choices, "autosubscribe", $user->autosubscribe, "") ?>
+    </td>
+</tr>
 <?php if ($CFG->htmleditor) { ?>
 <tr valign=top>
     <td><p><?php print_string("textediting") ?>:</td>

@@ -126,6 +126,8 @@ CREATE TABLE prefix_user (
    description text,
    mailformat integer NOT NULL default '1',
    maildisplay integer NOT NULL default '2',
+   htmleditor integer NOT NULL default '1',
+   autosubscribe integer NOT NULL default '1',
    timemodified integer NOT NULL default '0',
    CONSTRAINT user_username_uk UNIQUE (username)
 );

@@ -68,9 +68,13 @@
                $options[1] = get_string("subscribestop", "forum");
                choose_from_menu($options, "unsubscribe", 0, "");
            } else {
+               $default = 0;
+               if (!empty($USER->autosubscribe)) {
+                   $default = 1;
+               }
                $options[0] = get_string("subscribestop", "forum");
                $options[1] = get_string("subscribestart", "forum");
-               choose_from_menu($options, "subscribe", 0, "");
+               choose_from_menu($options, "subscribe", $default, "");
            }
        }
        helpbutton("subscription", get_string("subscription", "forum"), "forum"); 
