@@ -61,6 +61,20 @@ CREATE TABLE prefix_forum_posts (
 # --------------------------------------------------------
 
 #
+# Table structure for table `forum_queue`
+#
+
+CREATE TABLE prefix_forum_queue (
+  id SERIAL PRIMARY KEY,
+  userid integer default 0 NOT NULL,
+  discussionid integer default 0 NOT NULL,
+  postid integer default 0 NOT NULL
+);
+
+
+# --------------------------------------------------------
+
+#
 # Table structure for table `forum_ratings`
 #
 

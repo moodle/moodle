@@ -65,6 +65,21 @@ CREATE TABLE prefix_forum_posts (
 # --------------------------------------------------------
 
 #
+# Table structure for table `forum_queue`
+#
+
+CREATE TABLE prefix_forum_queue (
+  id int(10) unsigned NOT NULL auto_increment, 
+  userid int(10) unsigned default 0 NOT NULL,
+  discussionid int(10) unsigned default 0 NOT NULL,
+  postid int(10) unsigned default 0 NOT NULL,
+  PRIMARY KEY  (id),
+  KEY user (userid),
+  KEY post (postid),
+) COMMENT='For keeping track of posts that will be mailed in digest form';
+# --------------------------------------------------------
+
+#
 # Table structure for table `forum_ratings`
 #
 

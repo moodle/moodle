@@ -114,7 +114,19 @@ function forum_upgrade($oldversion) {
       table_column("forum","","rssarticles","tinyint","2", "unsigned", "0", "", "rsstype");
       set_config("forum_enablerssfeeds",0);
   }
-  
+
+  if ($oldversion < 2004060100) {
+      modify_database('', "CREATE TABLE `prefix_forum_queue` (
+                                `id` int(11) unsigned NOT NULL auto_increment,
+                                `userid` int(11) unsigned default 0 NOT NULL,
+                                `discussionid` int(11) unsigned default 0 NOT NULL,
+                                `postid` int(11) unsigned default 0 NOT NULL,
+                                PRIMARY KEY  (`id`),
+                                KEY `user` (userid),
+                                KEY `post` (postid),
+                              ) TYPE=MyISAM COMMENT='For keeping track of posts that will be mailed in digest form';");
+  }
+
   return true;
 
 }
