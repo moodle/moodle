@@ -35,11 +35,13 @@
         $entrybyentry = array () ;
     }
 
-    print_header("$course->shortname: Journals", "$course->fullname",
-                 "<A HREF=../../course/view.php?id=$course->id>$course->shortname</A> ->
-                  <A HREF=index.php?id=$course->id>Journals</A> ->
-                  <A HREF=view.php?id=$cm->id>$journal->name</A> -> Responses", "",
-                  "", true);
+    $strentries = get_string("entries", "journal");
+    $strjournals = get_string("modulenameplural", "journal");
+
+    print_header("$course->shortname: $strjournals", "$course->fullname",
+                 "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->
+                  <a href=\"index.php?id=$course->id\">$strjournals</a> ->
+                  <a href=\"view.php?id=$cm->id\">$journal->name</a> -> $strentries", "", "", true);
 
     if ($data = data_submitted()) {
        
