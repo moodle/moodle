@@ -111,6 +111,7 @@ $string['choose'] = 'Choose';
 $string['choosecourse'] = 'Choose a course';
 $string['chooselivelogs'] = 'Or watch current activity';
 $string['chooselogs'] = 'Choose which logs you want to see';
+$string['choosereportfilter'] = 'Choose a filter for the report';
 $string['choosetheme'] = 'Choose theme';
 $string['chooseuser'] = 'Choose a user';
 $string['city'] = 'City/town';
