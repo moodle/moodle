@@ -18,11 +18,12 @@
 <input type="hidden" name="currency_code" value="<?php p($CFG->enrol_paypalcurrency) ?>">
 <input type="hidden" name="amount" value="<?php p($cost) ?>">
 
+<input type="hidden" name="for_auction" value="false">
 <input type="hidden" name="no_note" value="1">
 <input type="hidden" name="notify_url" value="<?php echo "$CFG->wwwroot/enrol/paypal/ipn.php"?>">
 <input type="hidden" name="return" value="<?php echo "$CFG->wwwroot/enrol/paypal/return.php?id=$course->id" ?>">
 <input type="hidden" name="cancel_return" value="<?php echo $CFG->wwwroot ?>">
-<input type="hidden" name="rm" value="1">
+<input type="hidden" name="rm" value="2">
 <input type="hidden" name="cbt" value="<?php print_string("continuetocourse") ?>">
 
 <input type="hidden" name="first_name" value="<?php p($USER->firstname) ?>">

@@ -38,6 +38,19 @@
     $data->payment_currency = $data->mc_currency;
 
 
+/// get the user and course records
+
+    if (! $user = get_record("user", "id", $data->userid) ) {
+        email_paypal_error_to_admin("Not a valid user id", $data);
+        die;
+    }
+
+    if (! $course = get_record("course", "id", $data->courseid) ) {
+        email_paypal_error_to_admin("Not a valid course id", $data);
+        die;
+    }
+
+
 /// Open a connection back to PayPal to validate the data
 
     $header = '';
@@ -62,12 +75,38 @@
         $result = fgets($fp, 1024);
         if (strcmp($result, "VERIFIED") == 0) {          // VALID PAYMENT!
 
-            // check the payment_status is Completed
 
-            if ($data->payment_status != "Completed") {   // Not complete?
-                email_paypal_error_to_admin("Transaction status is: $data->payment_status", $data);
+            // check the payment_status and payment_reason
+
+            // If status is not completed or pending then unenrol the student if already enrolled
+            // and notify admin
+
+            if ($data->payment_status != "Completed" and $data->payment_status != "Pending") {
+                unenrol_student($data->userid, $data->courseid);
+                email_paypal_error_to_admin("Status not completed or pending. User unenrolled from course", $data);
                 die;
             }
+
+            // If status is pending and reason is other than echeck then we are on hold until further notice
+            // Email user to let them know. Email admin.
+
+            if ($data->payment_status == "Pending" and $data->pending_reason != "echeck") {
+                email_to_user($user, getadmin(), "Moodle: Paypal payment", "Your Paypal payment is pending.");
+                email_paypal_error_to_admin("Payment pending", $data);
+                die;
+            }
+
+            // If our status is not completed or not pending on an echeck clearance then ignore and die
+            // This check is redundant at present but may be useful if paypal extend the return codes in the future
+
+            if (! ( $data->payment_status == "Completed" or 
+                   ($data->payment_status == "Pending" and $data->pending_reason == "echeck") ) ) {
+                die;
+            }
+
+            // At this point we only proceed with a status of completed or pending with a reason of echeck
+
+
 
             if ($existing = get_record("enrol_paypal", "txn_id", $data->txn_id)) {   // Make sure this transaction doesn't exist already
                 email_paypal_error_to_admin("Transaction $data->txn_id is being repeated!", $data);
@@ -120,11 +159,11 @@
                 if (!empty($CFG->enrol_paypalmailstudents)) {
                     $a->coursename = "$course->fullname";
                     $a->profileurl = "$CFG->wwwroot/user/view.php?id=$user->id";
-                    email_to_user($user, $teacher, get_string("enrolmentnew"), get_string('welcometocoursetext', '', $a));
+                    email_to_user($user, $teacher, get_string("enrolmentnew", '', $course->shortname), get_string('welcometocoursetext', '', $a));
                 }
 
                 if (!empty($CFG->enrol_paypalmailteachers)) {
-                    email_to_user($teacher, $user, get_string("enrolmentnew"), "I have enrolled in your class via Paypal");
+                    email_to_user($teacher, $user, get_string("enrolmentnew", '', $course->shortname), "I have enrolled in your class via Paypal");
                 }
             }
 
