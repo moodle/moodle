@@ -41,7 +41,7 @@ if ( $confirm ) {
         $form->fullmatch = 0;
     }
     $timenow = time();
-    $form->text = clean_text($form->text, $form->format);
+    //$form->text = clean_text($form->text, $form->format);
 
     $newentry->course = $glossary->course;
     $newentry->glossaryid = $glossary->id;
