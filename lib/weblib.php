@@ -1091,6 +1091,8 @@ function filter_text($text, $courseid=NULL) {
 
     global $CFG;
 
+    require_once($CFG->libdir.'/filterlib.php');
+
     if (!empty($CFG->textfilters)) {
         $textfilters = explode(',', $CFG->textfilters);
         foreach ($textfilters as $textfilter) {
