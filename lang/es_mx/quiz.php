@@ -1,9 +1,10 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.0.6 (2002102600)
+      // quiz.php - created with Moodle 1.0.8 (2003010600)
 
 
 $string['addselectedtoquiz'] = "Agregar al cuestionario";
-$string['alreadysubmitted'] = "Parece que usted ya soemtió este cuestionario";
+$string['allowreview'] = "Permitir revisión";
+$string['alreadysubmitted'] = "Parece que usted ya respondió este cuestionario";
 $string['alwaysavailable'] = "Siempre disponible";
 $string['answer'] = "Respuesta";
 $string['answerhowmany'] = "¿Una o varias respuestas?";
@@ -54,6 +55,8 @@ $string['guestsno'] = "Lo sentimos, los invitados no pueden ver o responder cues
 $string['imagedisplay'] = "Imagen a mostrar";
 $string['introduction'] = "Introducción";
 $string['marks'] = "Marcas";
+$string['missingname'] = "La pregunta no tiene nombre";
+$string['missingquestiontext'] = "La pregunta no tiene texto";
 $string['modulename'] = "Cuestionario";
 $string['modulenameplural'] = "Cuestionarios";
 $string['multichoice'] = "Opción múltiple";
@@ -61,6 +64,8 @@ $string['noanswers'] = "No se seleccionó ninguna respuesta";
 $string['noattempts'] = "No se ha participado en este cuestionario";
 $string['nomoreattempts'] = "No se permiten más respuestas";
 $string['noquestions'] = "Aún no se han agregado perguntas";
+$string['noreview'] = "No está autorizado para ";
+$string['noreviewuntil'] = "No está autorizado para revistar este cuestionario hasta \$a";
 $string['publish'] = "Publicar";
 $string['question'] = "Pregunta";
 $string['questioninuse'] = "la pregunta '\$a' está en uso:";
@@ -72,6 +77,7 @@ $string['quizclosed'] = "Este cuestionario está cerrado en \$a";
 $string['quiznotavailable'] = "Este cuestionario no estará disponible hasta el \$a";
 $string['quizopen'] = "Abrir cuestionario";
 $string['random'] = "Organizado al azar";
+$string['readytosend'] = "Está a punto de enviar su cuestionario para que sea evaluado. ¿Está seguro de que desea continuar?";
 $string['regrade'] = "Ver todas las respuestas";
 $string['regradecomplete'] = "Se han visto todas las repuestas";
 $string['regradecount'] = "Se han cambiado \$a->changed de \$a->attempt calificaciones";

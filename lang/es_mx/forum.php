@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.0.6.1 (2002110600)
+      // forum.php - created with Moodle 1.0.8 (2003010600)
 
 
 $string['addanewdiscussion'] = "Colocar un mensaje aquí";
@@ -70,20 +70,8 @@ $string['openmode2'] = "Permitir debates y respuestas";
 $string['parentofthispost'] = "Anterior a este mensaje";
 $string['postadded'] = "Su mensaje se ha colocado con éxito.<P>Tiene \$a para hacer cualquier cambio.";
 $string['postincontext'] = "Ver el mensaje en su contexto";
-$string['postingtip'] = "<B>Recomendaciones</B><BR>
-Cuando responde:
-<UL>
-<LI>lea el mensaje con cuidado y atención
-<LI>haga comentarios precisos y pertinentes
-</UL>
-
-Cuando escribe:
-<UL>
-<LI>mantenga sus mensajes cortos y sobre el tema
-<LI>piense antes de escribir, para que se exprese con claridad
-<LI>Tipo de preguntas
-</UL>";
 $string['postmailinfo'] = "Esta es una copia del mensaje publicado en \$a .
+
 Para responder a este mensaje diríjase a:";
 $string['postrating1'] = "Pertinete";
 $string['postrating2'] = "Ambos";
@@ -92,6 +80,7 @@ $string['postupdated'] = "Su mensaje se ha actualizado";
 $string['processingpost'] = "Procesando \$a";
 $string['rate'] = "Calificar";
 $string['ratings'] = "Calificaiones";
+$string['ratingssaved'] = "Calificación guardada.";
 $string['re'] = "Re:";
 $string['readtherest'] = "Ver el resto del tema";
 $string['repliesmany'] = "\$a respuestas";

@@ -1,12 +1,27 @@
 <?PHP // $Id$ 
-      // survey.php - created with Moodle 1.0.6 beta 1 (2002102200)
-// Traducido por Claudio Tavares Mastrangelo
-// enlaceacademico.com
+      // survey.php - created with Moodle 1.0.8 (2003010600)
+
+
 $string['actual'] = "Actual";
+$string['actualclass'] = "Clase actual";
+$string['actualstudent'] = "\$a actual";
 $string['allquestions'] = "Todos los temas en orden, todos los estudiantes";
 $string['allscales'] = "Todas las escalas, todos los estudiantes";
 $string['alreadysubmitted'] = "Ya envió esta información";
 $string['analysisof'] = "Análisis de \$a";
+$string['attls1'] = "Al evaluar lo que alguien dice, me centro en lo que dice y no en quién es.";
+$string['attls10'] = "Es importante mantenerse lo más objetivo posible cuando se analiza a alguien.";
+$string['attls10short'] = "Sea objetivo";
+$string['attls11'] = "Trato de pensar con las personas en lugar de contra ellas.";
+$string['attls11short'] = "Piense CON las personas";
+$string['attls12'] = "Tengo un criterio que utilizo para evaluar argumentos.";
+$string['attls12short'] = "Utilize un criterio para evaluar";
+$string['attls13'] = "Prefiero tratar de entender a los demás antes que evaluarlos.";
+$string['attls13short'] = "Trate de entender";
+$string['attls14'] = "Trato de señalar las debilidades en los argumentos para clarificar las ideas.";
+$string['attls14short'] = "Señale los puntos débiles";
+$string['attls15'] = "Trato de colocarme en el lugar de los demás para comprender cómo piensan y por qué.";
+$string['attls15short'] = "Colóquese en el lugar de los otros";
 $string['done'] = "Hecho";
 $string['download'] = "Descargar";
 $string['downloadexcel'] = "Descargar como hoja de cálculo";

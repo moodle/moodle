@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.0.6.1 (2002110600)
+      // moodle.php - created with Moodle 1.0.8 (2003010600)
 
 
 $string['action'] = "Acción";
@@ -7,6 +7,7 @@ $string['activities'] = "Actividades";
 $string['activity'] = "Actividad";
 $string['activityreport'] = "Reporte de Actividades";
 $string['add'] = "Agregar";
+$string['addadmin'] = "Agregar administrador";
 $string['added'] = "Agregado: \$a";
 $string['addinganew'] = "Agregando \$a";
 $string['addinganewto'] = "Agregando \$a->what a \$a->to";
@@ -29,7 +30,9 @@ $string['alphanumerical'] = "Sólo puede contener caracteres alfanuméricos";
 $string['alreadyconfirmed'] = "Registro confirmado";
 $string['answer'] = "Respuesta";
 $string['assessment'] = "Evaluación";
+$string['assignadmins'] = "Asignar administrador";
 $string['assignteachers'] = "Asignar maestros";
+$string['authentication'] = "Autenticación";
 $string['availablecourses'] = "Cursos disponibles";
 $string['cancel'] = "Cancelar";
 $string['categories'] = "Categorías";
@@ -50,7 +53,8 @@ $string['city'] = "Ciudad";
 $string['closewindow'] = "Cerrar esta ventana";
 $string['comparelanguage'] = "Compare y edite el presente idioma";
 $string['complete'] = "Completado";
-$string['configauth'] = "Elija el módulo de autenticación que desea utilizar. Por defecto: 'email', la mejor seguridad. 'none' no autentica nada, cuidado, no lo elija a menos que sepa exactamente lo que hace.";
+$string['configcountry'] = "País donde radica la institución. Si se deja en blanco, cada alumno podrá elejir un país.";
+$string['configdebug'] = "Para desarrolladores en busca de algún bug.";
 $string['configerrorlevel'] = "Elije la cantidad de advertencias php que desea ver. Normal suele ser la mejor opción.";
 $string['configgdversion'] = "Indica la versión instalada de GD. La versión mostrada es la que detectó el programa. No la cambie sin saber exactamente.";
 $string['confightmleditor'] = "Elija si permitir o no el uso del editor HTML. Para utilizarse requiere IE 5.5 o posterior. Los usuarios también pueden elegir no utilizarlo.";
@@ -105,7 +109,10 @@ $string['deletedactivity'] = "Se borró \$a";
 $string['deletedcourse'] = "\$a se ha borrado satisfactoriamente";
 $string['deletednot'] = "¡No se puede borrar \$a!";
 $string['deletingcourse'] = "Borrando \$a";
+$string['department'] = "Departamento";
 $string['description'] = "Descripción";
+$string['displayingrecords'] = "Mostrando \$a registros.";
+$string['displayingusers'] = "Mostrando los usuarios \$a->start a \$a->end";
 $string['documentation'] = "Documentación";
 $string['downloadexcel'] = "Descargar en formato .xls";
 $string['downloadtext'] = "Descargar en formato de texto";
@@ -121,17 +128,29 @@ $string['email'] = "Dirección de correo";
 $string['emailconfirm'] = "Confirme su cuenta";
 $string['emailconfirmation'] = "Hola \$a->firstname,
 
+
+
 Alguien, seguramente usted, ha solicitado la apertura de una cuenta en '\$a->sitename' utilizando esta dirección de correo.
+
+
 
 Para completar el proceso de inscripción haga clic aquí:
 
+
+
   \$a->link
 
+
+
 Si usted no lo ha solicitado, ignore esta mensaje.
+
 Felicitaciones 
+
 \$a->admin";
 $string['emailconfirmsent'] = "   <P>Hemos enviado un correo electrónico a <B>\$a</B>,
+
    <P>ahí encontrará instrucciones sencillas para concluir el proceso.
+
    <P>Si enfrenta alguna dificultad contace al Administrador del Sistema.";
 $string['emaildisplay'] = "Mostrar correo";
 $string['emaildisplaycourse'] = "Mostrar mi dirección de correo sólo a mis compañeros de curso";
@@ -142,12 +161,16 @@ $string['emailformat'] = "Formato de correo";
 $string['emailmustbereal'] = "IMPORTANTE: Para concluir el proceso debe colocar su verdadera dirección";
 $string['enrolmentkey'] = "Llave de acceso";
 $string['enrolmentkeyfrom'] = "Este curso requiere el uso de una 'llave de acceso'<BR>
+
 que podrá obtener con \$a";
 $string['enrolmentkeyhint'] = "Esta 'llave de acceso' es incorrecta, por favor trate nuevamente<BR>
+
 (Una pista: comienza con '\$a')";
 $string['entercourse'] = "Clic aquí para entrar al curso";
 $string['enteremailaddress'] = "Escriba su dirección de correo. Una nueva contraseña le será enviada.";
 $string['error'] = "Error";
+$string['errortoomanylogins'] = "Lo sentimos, ha exedido el número permitido de intentos. Cierre y abra su navegador para intentar nuevamente.";
+$string['existingadmins'] = "Administradores existentes";
 $string['existingteachers'] = "Maestros existentes";
 $string['feedback'] = "Respuesta";
 $string['filemissing'] = "No se encuentra \$a";
@@ -173,13 +196,20 @@ $string['fullprofile'] = "Información completa";
 $string['fullsitename'] = "Nombre completo del sitio";
 $string['gd1'] = "GD 1.x instalado";
 $string['gd2'] = "GD 2.x instalado";
+$string['gdneed'] = "GD debe estar instalado para ver este gráfico.";
 $string['gdnot'] = "GD no instalado";
 $string['gpl'] = "Copyright (C) 2001-2002  Martin Dougiamas  (http://dougiamas.com)<BR> Traducción: Claudio Tavares (http://enlaceacademico.com)
 
+
+
 Este programa es software gratuito; Ud. puede redistribuirlo y/o modificarlo
+
 bajo los términos de GNU General Public License según la publicación
+
 de The Free Software Foundation; incluso la versión 2 o alguna posterior.
+
 <BR>
+
 Para más detalles vea: http://www.gnu.org/copyleft/gpl.html";
 $string['grade'] = "Calificación";
 $string['grades'] = "Calificaciones";
@@ -193,12 +223,18 @@ $string['help'] = "Ayuda";
 $string['helphtml'] = "Cómo escribir html";
 $string['helppicture'] = "Cómo subir una imagen";
 $string['helpquestions'] = "Cómo responder preguntas";
+$string['helpreading'] = "Lea con atención";
 $string['helprichtext'] = "Sobre el editor HTML";
 $string['helptext'] = "Cómo escribir texto";
+$string['helpwriting'] = "Escriba cuidadosamente";
 $string['hide'] = "Esconder";
+$string['hits'] = "Clics";
+$string['hitsoncourse'] = "Clics de \$a->username en \$a->coursename";
+$string['hitsoncoursetoday'] = "Clics de hoy de \$a->username en \$a->coursename";
 $string['home'] = "Página Principal";
 $string['hour'] = "hora";
 $string['hours'] = "horas";
+$string['howtomakethemes'] = "Cómo desarrollar temas";
 $string['htmleditor'] = "Usar editor de HTML";
 $string['htmleditoravailable'] = "El editor HTML está disponible";
 $string['htmleditordisabled'] = "Usted ha desactivado el editor HTML en su infromación personal.";
@@ -209,8 +245,10 @@ $string['icqnumber'] = "Número de ICQ";
 $string['idnumber'] = "Número de matrícula";
 $string['invalidemail'] = "Dirección de correo no válida";
 $string['invalidlogin'] = "No concuerda, por favor trate nuevamente";
+$string['jumpto'] = "Ir a...";
 $string['langltr'] = "Dirección inversa de lenguaje";
 $string['langrtl'] = "Dirección de lenguaje normal";
+$string['language'] = "Lenguaje";
 $string['languagegood'] = "¡Este lenguaje está actualizado! :-)";
 $string['lastaccess'] = "Último acceso";
 $string['lastedited'] = "Última edición";
@@ -223,24 +261,35 @@ $string['listofallpeople'] = "Lista total de personas";
 $string['livelogs'] = "Regsitros en vivo de la última hora";
 $string['locale'] = "es_MX";
 $string['location'] = "Ubicación";
-$string['loggedinas'] = "Ud. está en el sistema \$a.";
+$string['loggedinas'] = "Ud. está en el sistema como \$a";
 $string['loggedinnot'] = "Ud. no está en el sistema.";
 $string['login'] = "Acceso";
 $string['loginas'] = "Entrar como";
 $string['loginguest'] = "Entrar como invitado";
 $string['loginsite'] = "Entrar al sitio";
 $string['loginsteps'] = "Para acceder al sistema tómese un minuto para
+
 crear una cuenta.
+
    <P>	 Estos son los pasos:
+
    <OL size=2>
+
    <LI>Llene la <A HREF=\$a>Forma de registro</A>.
+
    <LI>El sistema le enviará un correo para verificar que su dirección esté correcta.
+
    <LI>Lea el correo y confirme su matrícula.
+
    <LI>Si algún curso en particular le solicita una &quot;llave de acceso&quot; utilice la que le brindaron cuando se matriculó.
+
    <LI>A partir de ese momento no necesitará utilizar más que su nombre y contraseña.
+
    </OL>";
 $string['loginstepsnone'] = "Hola.<P>Para acceder a todos los cursos necesita crear
+
 una cuenta.<P>Todo lo que tiene que hacer es inscribirse en esta página.
+
 <P>";
 $string['loginto'] = "Entrar a \$a";
 $string['loginusing'] = "Entre aquí usando su nombre y contraseña";
@@ -297,15 +346,26 @@ $string['newaccount'] = "Nueva cuenta";
 $string['newpassword'] = "Nueva contraseña";
 $string['newpasswordtext'] = "Hola \$a->firstname,
 
+
+
 La contraseña de su cuenta en '\$a->sitename' se ha cancelado y se le otorgado una nueva contraseña temporal.
 
+
+
    Nombre de usuario: \$a->username
+
    contraseña: \$a->newpassword
 
+
+
 Dirígase a esta página y cambie su contraseña temporal por una que pueda recordar mejor:
+
    \$a->link
 
+
+
 Atte. '\$a->sitename' El Administrador,
+
 \$a->signoff";
 $string['newpicture'] = "Imagen nueva";
 $string['newsitem'] = "nuevo ítem";
@@ -315,11 +375,13 @@ $string['newuser'] = "Nuevo usuario";
 $string['newusers'] = "Nuevos usuarios";
 $string['no'] = "No";
 $string['nocoursesyet'] = "No hay cursos en esta categoría";
+$string['noexistingadmins'] = "No existe administrador. Este es un error serio. Entre en contacto con su Administrador del Sistema.";
 $string['noexistingteachers'] = "No hay maestros";
 $string['nofilesyet'] = "Aún no se han colocado archivos en su curso";
 $string['nograde'] = "No hay grado";
 $string['noimagesyet'] = "Aún no se han colocado imágenes en su curso";
 $string['none'] = "Ninguno";
+$string['nopotentialadmins'] = "No hay administradores potenciales";
 $string['nopotentialteachers'] = "No hay maestros potenciales";
 $string['normal'] = "Normal";
 $string['nostudentsyet'] = "Aún no se ha inscrito ningún alumno en este curso";
@@ -344,15 +406,20 @@ $string['outline'] = "Diagrama";
 $string['participants'] = "Participantes";
 $string['password'] = "Contraseña";
 $string['passwordchanged'] = "La contraseña ha cambiado";
+$string['passwordrecovery'] = "Sí, ayúdeme a entrar";
 $string['passwordsdiffer'] = "Las contraseñas son diferentes";
 $string['passwordsent'] = "Se ha enviado la contraseña";
 $string['passwordsenttext'] = "   <P>El sistema ha enviado un correo electrónico a \$a->email.
+
    <P><B>Revise su correo para recibir una nueva contraseña</B>
+
    <P>La nueva contraseña se genera automáticamente, por lo que tal vez Ud. desee
+
    <A HREF=\$a->link>cambiarla</A> por una que le sea más fácil recordar.";
 $string['people'] = "Personas";
 $string['personalprofile'] = "Información personal";
 $string['phone'] = "Teléfono";
+$string['potentialadmins'] = "Administradores potenciales";
 $string['potentialteachers'] = "Maestros potenciales";
 $string['preferredlanguage'] = "Lenguaje preferido";
 $string['preview'] = "Vista previa";
@@ -360,6 +427,7 @@ $string['previeworchoose'] = "Prever o elegir un tema";
 $string['question'] = "Pregunta";
 $string['readme'] = "LÉAME";
 $string['recentactivity'] = "Actividad reciente";
+$string['removeadmin'] = "Quitar admnistrador";
 $string['removeteacher'] = "Quitar maestro";
 $string['rename'] = "Renombrar";
 $string['requireskey'] = "Este curso requiere una llave de acceso";
@@ -381,12 +449,14 @@ $string['serverlocaltime'] = "Hora local del servidor";
 $string['settings'] = "Configuración";
 $string['shortname'] = "Nombre corto";
 $string['shortsitename'] = "Nombre corto para el sitio (una palabra)";
+$string['show'] = "Mostrar";
 $string['showallcourses'] = "Mostrar todos los cursos";
 $string['showalltopics'] = "Mostrar todos los temas";
 $string['showallweeks'] = "mostrar todas las semanas";
 $string['showlistofcourses'] = "Mostrar listas de cursos";
 $string['showonlytopic'] = "Mostrar sólo el tema \$a";
 $string['showonlyweek'] = "Mostrar sólo semana \$a";
+$string['showrecent'] = "Mostrar actividad reciente";
 $string['showtheselogs'] = "Mostrar esos registros";
 $string['site'] = "Sitio";
 $string['sitelogs'] = "Registros";
@@ -396,18 +466,12 @@ $string['sitesettings'] = "Configurar página";
 $string['size'] = "Tamaño";
 $string['socialheadline'] = "Foro social, últimos temas";
 $string['someallowguest'] = "Si solamente desea ver el funcionamiento de la plataforma puede entrar como invitado. Esto le permitirá ver algunos cursos, pero no podrá 
+
 participar en ellos (escribir, etc.) Para entrar como invitado haga clic aquí";
+$string['someerrorswerefound'] = "Alguna información está incorrecta. Abajo aparecen más detalles.";
 $string['startdate'] = "Fecha de inicio del curso";
 $string['startsignup'] = "Comience ya creando una cuenta";
 $string['status'] = "Estatus";
-$string['strftimedate'] = "%%d %%B %%Y";
-$string['strftimedateshort'] = "%%d %%B";
-$string['strftimedatetime'] = "%%d %%B %%Y, %%H:%%M";
-$string['strftimedaydate'] = "%%A, %%d %%B %%Y";
-$string['strftimedaydatetime'] = "%%A, %%d %%B %%Y, %%H:%%M";
-$string['strftimerecent'] = "%%d %%b, %%H:%%M";
-$string['strftimerecentfull'] = "%%a, %%d %%b %%Y, %%H:%%M";
-$string['strftimetime'] = "%%H:%%M";
 $string['stringsnotset'] = "Las siguientes cadenas no están definidas en \$a";
 $string['studentnotallowed'] = "Lo sentimos '\$a', pero no puede entrar a este curso.";
 $string['success'] = "Éxito";
@@ -437,6 +501,7 @@ $string['unenrol'] = "Destituir";
 $string['unenrolme'] = "Quitar de \$a";
 $string['unenrolsure'] = "¿Está seguro de que desea destituir a \$a de este curso?";
 $string['unsafepassword'] = "Contraseña no adecuada - intente alguna otra";
+$string['unusedaccounts'] = "Las personas que no entren al curso durante \$a días se darán de baja automáticamente. Su cuenta seguirá existiendo y podrán reinscribirse en cualquier momento.";
 $string['unzip'] = "Unzip";
 $string['update'] = "Actualizar";
 $string['updated'] = "Actualizado: \$a";
@@ -448,6 +513,9 @@ $string['updatinga'] = "Actualizando \$a";
 $string['updatingain'] = "Actualizando \$a->what en \$a->in";
 $string['upload'] = "Subir";
 $string['uploadafile'] = "Subir un archivo";
+$string['uploadedfileto'] = "Se cargó el archivo \$a->file al directorio \$a->directory";
+$string['uploadnofilefound'] = "No se encontró el archivo. ¿Está seguro de que seleccionó uno?";
+$string['uploadproblem'] = "Ha ocurrido un problema inesperado al subir \$a (Tal vez es demasiado grande).";
 $string['uploadthisfile'] = "Subir este archivo";
 $string['userdeleted'] = "Esta cuenta se ha cancelado";
 $string['userdescription'] = "Descripción";
@@ -461,8 +529,13 @@ $string['weeklyoutline'] = "Diagrama semanal";
 $string['welcometocourse'] = "Bienvenido a \$a";
 $string['welcometocoursetext'] = "Bienvenido a \$a->coursename
 
+
+
 Lo primero que debe hacer es actualizar su información personal,
+
 así podremos saber algo más sobre usted.
+
+
 
   \$a->profileurl";
 $string['withchosenfiles'] = "Con los archivos escojidos";

@@ -1,16 +1,18 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.0.6.1 (2002110600)
+      // assignment.php - created with Moodle 1.0.8 (2003010600)
 
 
+$string['allowresubmit'] = "Permitir corrección";
 $string['assignmentdetails'] = "Detalles de la tarea";
 $string['assignmentname'] = "Título";
 $string['assignmenttype'] = "Tipo de tarea";
 $string['description'] = "Descripción";
 $string['duedate'] = "Fecha de entrega";
-$string['early'] = "\$a temprano";
+$string['early'] = "\$a antes";
 $string['failedupdatefeedback'] = "Fallo al actualizar la calificación de \$a";
+$string['feedback'] = "Respuesta";
 $string['feedbackupdated'] = "Respuesta actualizada para \$a personas";
-$string['late'] = "\$a tarde";
+$string['late'] = "\$a después";
 $string['maximumgrade'] = "Máxima calificacón";
 $string['maximumsize'] = "Tamaño máximo";
 $string['modulename'] = "Tarea";
@@ -18,6 +20,7 @@ $string['modulenameplural'] = "Tareas";
 $string['newsubmissions'] = "Tareas enviadas";
 $string['notsubmittedyet'] = "Aún no ha hecho esta tarea";
 $string['overwritewarning'] = "Advertencia: Si envía un nuevo archivo, REEMPLAZARÁ al anterior.";
+$string['saveallfeedback'] = "Guardar respuesta";
 $string['submissionfeedback'] = "Calificación de la tarea";
 $string['submissions'] = "Envíos";
 $string['submitassignment'] = "Enviar su tarea";
