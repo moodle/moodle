@@ -85,12 +85,14 @@ function table_column($table, $oldfield, $field, $type="integer", $size="10",
             switch (strtolower($type)) {
                 case "text":
                     $type = "TEXT";
+                    $signed = "";
                     break;
                 case "integer":
                     $type = "INTEGER($size)";
                     break;
                 case "varchar":
                     $type = "VARCHAR($size)";
+                    $signed = "";
                     break;
             }
 
