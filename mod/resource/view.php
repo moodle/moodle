@@ -64,7 +64,7 @@
                 print_header($pagetitle, "$course->fullname", 
                   "$navigation <a target=\"{$CFG->framename}\" href=\"$resource->reference\" 
                                 title=\"$resource->reference\">$resource->name</a>", "", "", true, 
-                                update_module_button($cm->id, $course->id, $strresource), navmenu($course, $cm));
+                                update_module_button($cm->id, $course->id, $strresource), navmenu($course, $cm, "parent"));
                 echo "<center><font size=-1>".text_to_html($resource->summary, true, false)."</font></center>";
 
             } else {
@@ -98,10 +98,16 @@
             // (could check for more embeddable media here...)
 
             if ($frameset == "top" or $embedded) {
+                if ($frameset == "top") {
+                    $targetwindow = "parent";
+                } else {
+                    $targetwindow = "self";
+                }
+
                 print_header($pagetitle, "$course->fullname", 
                              "$navigation <a target=\"$CFG->framename\" HREF=\"$fullurl\">$resource->name</A>",
                              "", "", true, update_module_button($cm->id, $course->id, $strresource), 
-                             navmenu($course, $cm));
+                             navmenu($course, $cm, $targetwindow));
                 echo "<center><font size=-1>".text_to_html($resource->summary, true, false)."</font></center>";
                 add_to_log($course->id, "resource", "view", "view.php?id=$cm->id", "$resource->id");
             }

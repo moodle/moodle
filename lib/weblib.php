@@ -326,7 +326,7 @@ function choose_from_menu ($options, $name, $selected="", $nothing="choose", $sc
     }
 }   
 
-function popup_form ($common, $options, $formname, $selected="", $nothing="choose", $help="", $helptext="", $return=false) {
+function popup_form ($common, $options, $formname, $selected="", $nothing="choose", $help="", $helptext="", $return=false, $targetwindow="self") {
 ///  Implements a complete little popup form
 ///  $common   = the URL up to the point of the variable that changes
 ///  $options  = A list of value-label pairs for the popup list
@@ -343,7 +343,7 @@ function popup_form ($common, $options, $formname, $selected="", $nothing="choos
     }
 
     $startoutput = "<form target=\"{$CFG->framename}\" name=$formname>";
-    $output = "<select name=popup onchange=\"top.location=document.$formname.popup.options[document.$formname.popup.selectedIndex].value\">\n";
+    $output = "<select name=popup onchange=\"$targetwindow.location=document.$formname.popup.options[document.$formname.popup.selectedIndex].value\">\n";
 
     if ($nothing != "") {
         $output .= "   <option value=\"javascript:void(0)\">$nothing</option>\n";
@@ -1291,7 +1291,7 @@ function update_categories_button() {
     }
 }
 
-function navmenu($course, $cm=NULL) {
+function navmenu($course, $cm=NULL, $targetwindow="self") {
 // Given a course and a (current) coursemodule
 // This function returns a small popup menu with all the 
 // course activity modules in it, as a navigation menu
@@ -1337,7 +1337,8 @@ function navmenu($course, $cm=NULL) {
         }
     }
 
-    return popup_form("$CFG->wwwroot/mod/", $menu, "navmenu", $selected, get_string("jumpto"), "", "", true);
+    return popup_form("$CFG->wwwroot/mod/", $menu, "navmenu", $selected, get_string("jumpto"), 
+                      "", "", true, $targetwindow);
 }   
 
 
