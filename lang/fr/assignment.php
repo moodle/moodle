@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.0.6.4 (2002112400)
+      // assignment.php - created with Moodle 1.0.8 beta test (2003010400)
 
 
 $string['allowresubmit'] = "Accepter de nouvelles soumissions";
@@ -9,8 +9,9 @@ $string['assignmenttype'] = "Type du devoir";
 $string['description'] = "Description";
 $string['duedate'] = "À rendre le";
 $string['early'] = "\$a en avance";
-$string['failedupdatefeedback'] = "Impossible d'enregistrer l'annotation pour \$a";
-$string['feedbackupdated'] = "Annotation enregistrée pour \$a";
+$string['failedupdatefeedback'] = "Impossible d'enregistrer le feedback pour \$a";
+$string['feedback'] = "Feedback";
+$string['feedbackupdated'] = "Feedback enregistré pour \$a";
 $string['late'] = "\$a en retard";
 $string['maximumgrade'] = "Note maximale";
 $string['maximumsize'] = "Taille maximale";
@@ -19,7 +20,8 @@ $string['modulenameplural'] = "Devoirs";
 $string['newsubmissions'] = "Devoirs rendus";
 $string['notsubmittedyet'] = "Pas encore rendu";
 $string['overwritewarning'] = "Attention: Un nouvel envoi remplacera votre devoir déjà remis";
-$string['submissionfeedback'] = "Annotation du devoir";
+$string['saveallfeedback'] = "Enregistrer tous mes feedbacks";
+$string['submissionfeedback'] = "Feedback du devoir";
 $string['submissions'] = "Devoirs rendus";
 $string['submitassignment'] = "Envoyer votre devoir en utilisant ce formulaire";
 $string['submitted'] = "Devoir rendu";
@@ -33,7 +35,7 @@ $string['uploadfiletoobig'] = "Désolé, ce fichier est trop gros (la limite est d
 $string['uploadnofilefound'] = "Aucun fichier n'a été trouvé, êtes-vous certain d'en avoir choisi un à envoyer ?";
 $string['uploadnotregistered'] = "« \$a » a été correctement envoyé mais votre soumission n'a pu être enregistrée !";
 $string['uploadsuccess'] = "« \$a » a été correctement envoyé";
-$string['viewfeedback'] = "Afficher les notes et annotations des devoirs";
+$string['viewfeedback'] = "Afficher les notes et feedbacks des devoirs";
 $string['viewsubmissions'] = "Voir les devoirs rendus de \$a";
 $string['yoursubmission'] = "Votre devoir";
 

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.0.6.4 (2002112400)
+      // auth.php - created with Moodle 1.0.8 beta test (2003010400)
 
 
 $string['auth_dbdescription'] = "Cette méthode utilise une base de données externe afin de vérifier qu'un nom d'utilisateur et son mot de passe sont valides. Si le compte concerné est nouveau, il est possible de copier des données provenant de certains champs vers Moodle.";
@@ -9,6 +9,7 @@ $string['auth_dbfielduser'] = "Nom du champ contenant les noms des utilisateurs"
 $string['auth_dbhost'] = "La machine contenant la base de données";
 $string['auth_dbname'] = "Nom de la base de données";
 $string['auth_dbpass'] = "Mot de passe pour ce compte";
+$string['auth_dbpasstype'] = "Indiquez la méthode avec laquelle est crypté le champ qui contient le mot de passe. L'algorithme MD5 est utile pour une utilisation conjointe avec d'autres applications Web telles que PostNuke.";
 $string['auth_dbtable'] = "Nom de la table dans la base de données";
 $string['auth_dbtitle'] = "Utiliser une base de données externe";
 $string['auth_dbtype'] = "Type de la base de données (voir la <a href=../lib/adodb/readme.htm#drivers>documentation de ADOdb</a> pour plus d'information)";
@@ -48,6 +49,8 @@ $string['changepasswordhelp'] = "Vous pouvez indiquer dans cette zone l'URL d'un
 $string['chooseauthmethod'] = "Choisir une méthode d'authentification";
 $string['guestloginbutton'] = "Bouton de connexion anonyme";
 $string['instructions'] = "Instructions";
+$string['md5'] = "Cryptage MD5";
+$string['plaintext'] = "Texte en clair";
 $string['showguestlogin'] = "Vous pouvez choisir de montrer ou non le bouton de connexion en tant qu'utilisateur anonyme sur la page de connexion.";
 
 ?>
