@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // scorm.php - created with Moodle 1.3.1 + (2004052501)
+      // scorm.php - created with Moodle 1.4 development (2004070800)
 
 
 $string['autocontinue'] = 'Авто-продолжение';
@@ -17,6 +17,12 @@ $string['incomplete'] = 'Не завершено';
 $string['mode'] = 'Режим';
 $string['modulename'] = 'Scorm';
 $string['modulenameplural'] = 'Scorms';
+$string['newheight'] = 'Высота окна по умолчанию (в пикселях)';
+$string['newresizable'] = 'Разрешить изменение размера окна';
+$string['newscrollbars'] = 'Разрешить прокукручивание в окне';
+$string['newstatus'] = 'Показать полосу состояния';
+$string['newwidth'] = 'Ширина окна по умолчанию (в пикселях)';
+$string['newwindow'] = 'Новое окно';
 $string['next'] = 'Продолжить';
 $string['nomanifest'] = 'Манифест не найден';
 $string['noreports'] = 'Нет отчетов для показа';
