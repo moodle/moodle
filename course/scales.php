@@ -39,6 +39,9 @@
     $stroptions = get_string("action");
     $strtype = get_string("group");
 
+    /// init this here so we can pass it by reference to every call to site_scale_used to avoid getting the courses out of the db over and over again
+    $courses = array();
+
     /// If scale data is being submitted, then save it and continue
 
     $errors = NULL;
@@ -98,8 +101,8 @@
             error("Scale ID was incorrect");
         }
 
-        $scales_course_uses = course_scale_used($course->id,$scale->id);
-        $scales_site_uses = site_scale_used($scale->id);
+        //        $scales_course_uses = course_scale_used($course->id,$scale->id);
+        //        $scales_site_uses = site_scale_used($scale->id,$courses);
         $scalemenu = make_menu_from_list($scale->scale);
 
         print_header("$course->shortname: $strscales", "$course->fullname",
@@ -146,7 +149,7 @@
             
         //Calculate the uses
         if ($scale->courseid == 0) {
-            $scale_uses = site_scale_used($scale->id);
+            $scale_uses = site_scale_used($scale->id,$courses);
         } else {
             $scale_uses = course_scale_used($course->id,$scale->id);
         }
@@ -246,7 +249,7 @@
 
         //Calculate the uses
         if ($scale->courseid == 0) {
-            $scale_uses = site_scale_used($scale->id);
+            $scale_uses = site_scale_used($scale->id,$courses);
         } else {
             $scale_uses = course_scale_used($course->id,$scale->id);
         }
@@ -279,7 +282,7 @@
 
         //Calculate the uses
         if ($scale->courseid == 0) {
-            $scale_uses = site_scale_used($scale->id);
+            $scale_uses = site_scale_used($scale->id,$courses);
         } else {
             $scale_uses = course_scale_used($course->id,$scale->id);
         }
@@ -440,7 +443,7 @@
             if (!empty($scale->courseid)) {
                 $scales_uses = course_scale_used($course->id,$scale->id);
             } else {
-                $scales_uses = site_scale_used($scale->id);
+                $scales_uses = site_scale_used($scale->id,$courses);
             }
             $line[] = $scales_uses;
             if ($incustom) {

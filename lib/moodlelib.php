@@ -4185,14 +4185,18 @@ function course_scale_used($courseid, $scaleid) {
  * @return int
  * @todo Finish documenting this function. Is return type correct?
  */
-function site_scale_used($scaleid) {
+function site_scale_used($scaleid,&$courses) {
 
     global $CFG;
 
     $return = 0;
 
+    if (!is_array($courses) || count($courses) == 0) {
+        $courses = get_courses("all",false,"c.id,c.shortname");
+    }
+
     if (!empty($scaleid)) {
-        if ($courses = get_courses()) {
+        if (is_array($courses) && count($courses) > 0) {
             foreach ($courses as $course) {
                 $return += course_scale_used($course->id,$scaleid);
             }
