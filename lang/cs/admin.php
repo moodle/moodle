@@ -3,6 +3,7 @@
 
 
 $string['blockinstances'] = 'Výskyty';
+$string['blockmultiple'] = 'Slo¾ený';
 $string['cachetext'] = '®ivotnost mezipamìti textu';
 $string['change'] = 'zmìnit';
 $string['filteruploadedfiles'] = 'Filtrovat nahrané soubory';

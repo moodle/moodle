@@ -3,8 +3,5 @@
 
 
 $string['filtername'] = 'Automaticky propojovat názvy èinností';
-$string['parentlanguage'] = 'sk';
-$string['thischarset'] = 'iso-8859-2';
-$string['thisdirection'] = 'ltr';
 
 ?>
