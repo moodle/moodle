@@ -28,9 +28,10 @@ all you normally will need to do is this:
     old installion to the new installation (or make a 
     new one by editing config-dist.php).
 
-3)  Visit the home page of your installation.  Moodle
-    will automatically detect the new version and perform 
-    any database upgrades that might be necessary.
+3)  Visit the home page of your installation while logged
+    in as an admin.  Moodle will automatically detect the 
+    new version and perform any database upgrades that 
+    might be necessary.
 
 If all goes well (no error messages) then you can just 
 go on using Moodle normally.
