@@ -50,7 +50,20 @@
             if ($currmodule->version == $module->version) {
                 // do nothing
             } else if ($currmodule->version < $module->version) {
-                notify("$module->name module needs upgrading");  // XXX do the upgrade here
+                notify("$module->name module needs upgrading");
+                $upgrade_function = $module->name."_upgrade";
+                if (function_exists($upgrade_function)) {
+                    if ($upgrade_function($currmodule->version, $module)) {
+                        // OK so far, now update the modules record
+                        $module->id = $currmodule->id;
+                        if (! update_record("modules", $module)) {
+                            error("Could not update $module->name record in modules table!");
+                        }
+                        notify("$module->name module was successfully upgraded");
+                    } else {
+                        notify("Upgrading $module->name from $currmodule->version to $module->version FAILED!");
+                    }
+                }
                 $updated_modules = true;
             } else {
                 error("Version mismatch: $module->name can't downgrade $currmodule->version -> $module->version !");
@@ -67,7 +80,7 @@
                 } else {
                     error("$module->name module could not be added to the module list!");
                 }
-            } else {
+            } else { 
                 error("$module->name tables could NOT be set up successfully!");
             }
         }
@@ -101,7 +114,7 @@
     echo "<LI><B><A HREF=\"user.php\">Edit a user's account</A></B>";
     echo "<LI><B><A HREF=\"teacher.php\">Assign teachers to courses</A></B>";
     echo "<LI><B>Delete a course</B>";
-    echo "<LI><B>View Logs</B>";
+    echo "<LI><B><A HREF=\"../course/log.php?id=$site->id\">Site Logs</A></B>";
     echo "</UL>";
 
     print_footer();
