@@ -195,7 +195,7 @@
                  " height=\"11\" width=\"11\" border=\"0\" alt=\"$streditsummary\" /></a><br />";
         }
 
-        echo '<br clear="all">';
+        echo '<br clear="all" />';
 
         get_all_mods($site->id, $mods, $modnames, $modnamesplural, $modnamesused);
         print_section($site, $section, $mods, $modnamesused, true);

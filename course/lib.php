@@ -1170,22 +1170,22 @@ function print_category_info($category, $depth) {
                 echo "</td>\n<td align=\"right\" valign=\"top\" nowrap=\"nowrap\" class=\"coursename\">";
                 if ($course->guest ) {
                     echo "<a title=\"$strallowguests\" href=\"$CFG->wwwroot/course/view.php?id=$course->id\">";
-                    echo "<img hspace=\"1\" alt=\"$strallowguests\" height=\"16\" width=\"16\" border=\"0\" src=\"$CFG->pixpath/i/guest.gif\"></a>";
+                    echo "<img hspace=\"1\" alt=\"$strallowguests\" height=\"16\" width=\"16\" border=\"0\" src=\"$CFG->pixpath/i/guest.gif\" /></a>";
                 } else {
-                    echo "<img alt=\"\" height=\"16\" width=\"18\" border=\"0\" src=\"$CFG->pixpath/spacer.gif\">";
+                    echo "<img alt=\"\" height=\"16\" width=\"18\" border=\"0\" src=\"$CFG->pixpath/spacer.gif\" />";
                 }
                 if ($course->password) {
                     echo "<a title=\"$strrequireskey\" href=\"$CFG->wwwroot/course/view.php?id=$course->id\">";
-                    echo "<img hspace=\"1\" alt=\"$strrequireskey\" height=\"16\" width=\"16\" border=\"0\" src=\"$CFG->pixpath/i/key.gif\"></a>";
+                    echo "<img hspace=\"1\" alt=\"$strrequireskey\" height=\"16\" width=\"16\" border=\"0\" src=\"$CFG->pixpath/i/key.gif\" /></a>";
                 } else {
-                    echo "<img alt=\"\" height=\"16\" width=\"18\" border=\"0\" src=\"$CFG->pixpath/spacer.gif\">";
+                    echo "<img alt=\"\" height=\"16\" width=\"18\" border=\"0\" src=\"$CFG->pixpath/spacer.gif\" />";
                 }
                 if ($course->summary) {
                     link_to_popup_window ("/course/info.php?id=$course->id", "courseinfo",
-                                          "<img hspace=\"1\" alt=\"$strsummary\" height=\"16\" width=\"16\" border=\"0\" src=\"$CFG->pixpath/i/info.gif\">",
+                                          "<img hspace=\"1\" alt=\"$strsummary\" height=\"16\" width=\"16\" border=\"0\" src=\"$CFG->pixpath/i/info.gif\" />",
                                            400, 500, $strsummary);
                 } else {
-                    echo "<img alt=\"\" height=\"16\" width=\"18\" border=\"0\" src=\"$CFG->pixpath/spacer.gif\">";
+                    echo "<img alt=\"\" height=\"16\" width=\"18\" border=\"0\" src=\"$CFG->pixpath/spacer.gif\" />";
                 }
                 echo "</td></tr>\n";
             }
@@ -1712,11 +1712,11 @@ function make_editing_buttons($mod, $absolute=false, $moveselect=true, $indent=-
         if ($mod->groupmodelink) {
             $groupmode = "<a title=\"$grouptitle ($str->clicktochange)\" href=\"$grouplink\">".
                          "<img src=\"$groupimage\" hspace=\"2\" height=\"11\" width=\"11\" ".
-                         "border=\"0\" alt=\"$grouptitle\"></a>";
+                         "border=\"0\" alt=\"$grouptitle\" /></a>";
         } else {
             $groupmode = "<img title=\"$grouptitle ($str->forcedmode)\" ".
                          " src=\"$groupimage\" hspace=\"2\" height=\"11\" width=\"11\" ".
-                         "border=\"0\" alt=\"$grouptitle\">";
+                         "border=\"0\" alt=\"$grouptitle\" />";
         }
     } else {
         $groupmode = "";
@@ -1725,14 +1725,14 @@ function make_editing_buttons($mod, $absolute=false, $moveselect=true, $indent=-
     if ($moveselect) {
         $move =     "<a title=\"$str->move\" href=\"$path/mod.php?copy=$mod->id\"><img".
                     " src=\"$pixpath/t/move.gif\" hspace=\"2\" height=\"11\" width=\"11\" ".
-                    " border=\"0\" alt=\"$str->move\"></a>";
+                    " border=\"0\" alt=\"$str->move\" /></a>";
     } else {
         $move =     "<a title=\"$str->moveup\" href=\"$path/mod.php?id=$mod->id&move=-1\"><img".
                     " src=\"$pixpath/t/up.gif\" hspace=\"2\" height=\"11\" width=\"11\" ".
-                    " border=\"0\" alt=\"$str->moveup\"></a>".
+                    " border=\"0\" alt=\"$str->moveup\" /></a>".
                     "<a title=\"$str->movedown\" href=\"$path/mod.php?id=$mod->id&move=1\"><img".
                     " src=\"$pixpath/t/down.gif\" hspace=\"2\" height=\"11\" width=\"11\" ".
-                    " border=\"0\" alt=\"$str->movedown\"></a>";
+                    " border=\"0\" alt=\"$str->movedown\" /></a>";
     }
 
     $leftright = "";
