@@ -102,12 +102,13 @@ function SCORMapi() {
     function LMSSetValue (param,value) {
 	if (Initialized) {
 	    //top.status="SET "+param+" = "+value;
-	    top.alert("SET "+param+" = "+value);
+	    //top.alert("SET "+param+" = "+value);
 	    switch (param) {
 		case "cmi.core.session_time":
 		    //top.alert(typeof(value));
 		    if (typeof(value) == "string") {
-		        var parsedtime = value.match(/[0-9]+/g);
+		        var parsedtime = value.match(/[0-9]{2,4}/g);
+		        //top.alert(parsedtime);
 		        if (((parsedtime.length == 3) || (parsedtime.length == 4)) && (parsedtime[0]>=0) && (parsedtime[0]<=9999) && (parsedtime[1]>=0) && (parsedtime[1]<=59) && (parsedtime[2]>=0) && (parsedtime[2]<=59)) {
 		            if ((parsedtime.length == 4) && (parsedtime[3]<=0) && (parsedtime[3]>=99)) {
 		                errorCode = 405;
