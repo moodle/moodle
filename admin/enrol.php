@@ -16,6 +16,10 @@
         error("Only the admin can use this page");
     }
 
+    if (!confirm_sesskey()) {
+        error(get_string('confirmsesskeybad', 'error'));
+    }
+
     $enrol = clean_filename($enrol);
     require_once("$CFG->dirroot/enrol/$enrol/enrol.php");   /// Open the class
 
@@ -27,7 +31,7 @@
 	if ($frm = data_submitted()) {
         if ($enrolment->process_config($frm)) {
             set_config('enrol', $frm->enrol);
-            redirect("enrol.php", get_string("changessaved"), 1);
+            redirect("enrol.php?sesskey=$USER->sesskey", get_string("changessaved"), 1);
         }
 	} else {
         $frm = $CFG;
@@ -50,13 +54,14 @@
                    <a href=\"users.php\">$str->users</a> -> $str->enrolments");
 
     echo "<form target=\"{$CFG->framename}\" name=\"enrolmenu\" method=\"post\" action=\"enrol.php\">";
+    echo "<input type=\"hidden\" name=\"sesskey\" value=\"".$USER->sesskey."\">";
     echo "<div align=\"center\"><p><b>";
 
 
 /// Choose an enrolment method
     echo get_string('chooseenrolmethod').': ';
 	choose_from_menu ($options, "enrol", $enrol, "",
-                      "document.location='enrol.php?enrol='+document.enrolmenu.enrol.options[document.enrolmenu.enrol.selectedIndex].value", "");
+                      "document.location='enrol.php?sesskey=$USER->sesskey&enrol='+document.enrolmenu.enrol.options[document.enrolmenu.enrol.selectedIndex].value", "");
 
     echo "</b></p></div>";
     
