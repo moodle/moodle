@@ -11,6 +11,10 @@ class CourseBlock_course_summary extends MoodleBlock {
     function get_content() {
         global $USER, $CFG;
 
+        if($this->content !== NULL) {
+            return $this->content;
+        }
+
         $this->content = New object;
         $this->content->text = '';
         $this->content->footer = '';
