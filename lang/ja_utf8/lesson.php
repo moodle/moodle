@@ -1,8 +1,8 @@
 <?php // $Id$ 
-      // lesson.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004100800)
+      // lesson.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004101900)
 
 
-$string['actionaftercorrectanswer'] = '正解後の動作';
+$string['actionaftercorrectanswer'] = '正解後のアクション';
 $string['addabranchtable'] = '分岐表の追加';
 $string['addanendofbranch'] = '分岐終了の追加';
 $string['addaquestionpage'] = '問題ページの追加';
@@ -75,8 +75,6 @@ $string['modulenameplural'] = 'レッスン';
 $string['movepagehere'] = 'ページをここに移動する';
 $string['moving'] = 'ページ移動: $a';
 $string['movingtonextpage'] = '次ページに移動中';
-$string['multianswer'] = '重複解答';
-$string['multipleanswer'] = '重複解答';
 $string['namereject'] = '申し訳ございません、あなたの名前はフィルタにより拒否されました。<br>別の名前をお使いください。';
 $string['nextpage'] = '次ページ';
 $string['noanswer'] = '解答がありません。';
