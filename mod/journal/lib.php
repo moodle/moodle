@@ -292,6 +292,20 @@ function journal_get_participants($journalid) {
     return ($students);
 }
 
+function journal_scale_used ($journalid,$scaleid) {
+//This function returns if a scale is being used by one journal
+    
+    $return = false;                  
+                                 
+    $rec = get_record("journal","id","$journalid","assessed","-$scaleid");
+
+    if (!empty($rec)) {
+        $return = true;
+    }
+
+    return $return;
+}
+
 // SQL FUNCTIONS ///////////////////////////////////////////////////////////////////
 
 function journal_get_users_done($journal) {

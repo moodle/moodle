@@ -362,6 +362,20 @@ function glossary_get_participants($glossaryid) {
     return ($students);
 }
 
+function glossary_scale_used ($glossaryid,$scaleid) {
+//This function returns if a scale is being used by one glossary
+   
+    $return = false;
+
+    $rec = get_record("glossary","id","$glossaryid","scale","-$scaleid");
+
+    if (!empty($rec)) {
+        $return = true;               
+    }                            
+    
+    return $return;
+}
+
 //////////////////////////////////////////////////////////////////////////////////////
 /// Any other glossary functions go here.  Each of them must have a name that
 /// starts with glossary_

@@ -377,6 +377,20 @@ function assignment_get_participants($assignmentid) {
     return ($students);
 }
 
+function assignment_scale_used ($assignmentid,$scaleid) {
+//This function returns if a scale is being used by one assignment
+
+    $return = false;
+
+    $rec = get_record("assignment","id","$assignmentid","grade","-$scaleid");
+
+    if (!empty($rec)) {
+        $return = true;
+    }
+
+    return $return;
+}
+
 /// SQL STATEMENTS //////////////////////////////////////////////////////////////////
 
 function assignment_log_info($log) {

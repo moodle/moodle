@@ -584,6 +584,20 @@ function forum_get_participants($forumid) {
     return ($st_subscriptions);
 }
 
+function forum_scale_used ($forumid,$scaleid) {
+//This function returns if a scale is being used by one forum
+    
+    $return = false;
+                                 
+    $rec = get_record("forum","id","$forumid","scale","-$scaleid");
+        
+    if (!empty($rec)) { 
+        $return = true;
+    }
+    
+    return $return;
+}
+
 /// SQL FUNCTIONS ///////////////////////////////////////////////////////////
 
 function forum_get_post_full($postid) {
