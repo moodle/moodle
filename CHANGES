@@ -1,3 +1,80 @@
+2002-10-26 Saturday 13:17  moodler
+
+	* mod/quiz/lib.php: 
+	
+	Fixed minor bug after creating default category.
+
+2002-10-26 Saturday 12:37  moodler
+
+	* RELEASE.html, version.php: 
+	
+	Updated version numbers in preparation for 1.0.6 release
+
+2002-10-26 Saturday 11:37  moodler
+
+	* mod/forum/lib.php: 
+	
+	Better formatting for the link
+
+2002-10-26 Saturday 11:33  moodler
+
+	* mod/forum/lib.php: 
+	
+	OK, this should be better ...
+
+2002-10-26 Saturday 11:21  moodler
+
+	* mod/forum/lib.php: 
+	
+	A first try at a new shortening algorithm ... checking in to do
+	some tests on various servers
+
+2002-10-26 Saturday 11:13  moodler
+
+	* mod/quiz/: version.php, db/mysql.php, db/mysql.sql: 
+	
+	Changed type of quiz_answers.feedback to TEXT (255 chars was a bit
+	cramped)
+
+2002-10-26 Saturday 10:31  moodler
+
+	* lib/setup.php: 
+	
+	Added some commented-out code that MIGHT help people with string
+	slash problems.
+
+2002-10-25 Friday 23:34  moodler
+
+	* mod/quiz/report.php: 
+	
+	Added quiz max grade in column title, for reference
+
+2002-10-25 Friday 23:27  moodler
+
+	* mod/forum/lib.php: 
+	
+	Added TARGET=_blank to links in HTML email ... apparently these
+	links were causing problems in Hotmail.  Normally I'd say "Good!",
+	but ...  :-)
+
+2002-10-25 Friday 22:46  moodler
+
+	* mod/forum/index.php: 
+	
+	Remove "news" and "social" forums from learning forums.
+
+2002-10-25 Friday 18:18  compuproggy
+
+	* lang/de/merge_translations/merger.php: 
+	
+	[no log message]
+
+2002-10-25 Friday 17:14  moodler
+
+	* CHANGES: 
+	
+	About time
+
 2002-10-25 Friday 17:10  moodler
 
 	* mod/forum/lib.php: 
