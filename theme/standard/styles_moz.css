@@ -1,0 +1,108 @@
+
+.headingblock {
+    -moz-border-radius:3px;
+}
+
+.sideblock {
+    -moz-border-radius-bottomleft:20px;
+    -moz-border-radius-bottomright:20px;
+}
+
+.generalbox {
+    -moz-border-radius-topleft:3px;
+    -moz-border-radius-topright:3px;
+    -moz-border-radius-bottomleft:15px;
+    -moz-border-radius-bottomright:15px;
+}
+
+.generalboxcontent {
+    -moz-border-radius-topleft:3px;
+    -moz-border-radius-topright:3px;
+    -moz-border-radius-bottomleft:15px;
+    -moz-border-radius-bottomright:15px;
+}
+
+.noticebox {
+    -moz-border-radius:3px;
+}
+
+.userinfobox {
+    -moz-border-radius-bottomleft:20px;
+    -moz-border-radius-bottomright:20px;
+}
+
+.userinfoboxsummary {
+}
+
+.generaltab {
+    -moz-border-radius-topleft:15px;
+    -moz-border-radius-topright:15px;
+}
+
+.generaltabselected {
+    -moz-border-radius-topleft:15px;
+    -moz-border-radius-topright:15px;
+}
+
+table.calendarmini {
+    -moz-border-radius:10px;
+}
+
+table.calendarmini tbody td {
+    -moz-border-radius:4px;
+}
+
+.eventfull {
+    -moz-border-radius-bottomleft:15px;
+    -moz-border-radius-bottomright:15px;
+}
+
+.eventfullside {
+    -moz-border-radius-bottomleft:15px;
+}
+
+.eventfullmessage {
+    -moz-border-radius-bottomright:15px;
+}
+
+#block_course_summary, #block_course_summary .sideblockmain {
+    -moz-border-radius:20px;
+}
+
+.sitetopic {
+    -moz-border-radius:15px;
+}
+
+.sitetopiccontent {
+    -moz-border-radius:15px;
+}
+
+.headingblock, .outlineheadingblock {
+    -moz-border-radius:3px;
+}
+
+.sideblock, .forumpost {
+    -moz-border-radius-bottomleft:20px;
+    -moz-border-radius-bottomright:20px;
+}
+
+.forumpostside, .userinfoboxside {
+    -moz-border-radius-bottomleft:20px;
+}
+
+.categoryboxcontent, .courseboxcontent {
+    -moz-border-radius:20px;
+}
+
+.userinfoboxlinkcontent, .forumpostmessage, .userinfoboxcontent {
+    -moz-border-radius-bottomright:20px;
+}
+
+.mycalendar .cal_event_table, table.calendarmonth, .mycalendar table.cal_filters {
+    -moz-border-radius:10px;
+}
+
+.sideblockmain, .sideblocklatestnews, .sideblockrecentactivity, .mycalendar {
+    -moz-border-radius-bottomleft:20px;
+    -moz-border-radius-bottomright:20px;
+}

@@ -1,0 +1,276 @@
+/*  $Id$ */
+
+/*
+** color
+*/
+
+
+/* basic styles */
+body {
+    background-color:#FAFAFA;
+}
+
+a:link,
+a:visited {
+    color:#0000FF;
+}
+
+a.dimmed:link,
+a.dimmed:visited {
+    color:#AAAAAA; /* hidden */
+}
+
+a.autolink:link,
+a.autolink:visited {
+    color:#000000;
+    background-color:#DDDDDD; /* autolink */
+}
+
+a.autolink:hover,
+a:hover,
+a.dimmed:hover {
+    color:#FF0000;
+}
+
+/* general styles */
+th {
+    background-color:#DDDDDD;
+}
+
+
+/* header styles */
+
+
+/* footer styles */
+
+
+/* content styles */
+.generalbox {
+    border-color:#DDDDDD; /* borders */
+}
+
+/* many */
+.noticebox {
+    border-color:#DDDDDD; /* borders */
+}
+
+.highlight {
+    background-color:#AAFFAA; /* highlight */
+}
+
+/* entry-page index.php */ 
+.sitetopic {
+    border-color:#DDDDDD; /* borders */
+}
+
+/* summary of a user in a nice little box - weblib.php */
+.userinfobox {
+    border-color:#DDDDDD; /* borders */
+}
+
+/* glossary, wiki */
+.generaltab {
+    background-color:#FFD991; /* cellheading */
+}
+
+.generaltabselected {
+    background-color:#DDDDDD; /* cellheading2 */
+}
+
+/* assignment, forum, glossary */
+.forumheaderlist,
+.forumpost {
+    border-color:#DDDDDD; /* borders */
+}
+
+/* weblib.php table */
+.tabledivider {
+    border-color:#DDDDDD; /* borders */
+}
+
+/* calendar */
+table.calendarmini {
+    border-color:#DDDDDD; /* borders */
+}
+
+table.calendarmini tbody td {
+    border-color:#FEE6B9; /* cellcontent2 */
+}
+
+table.calendarmonth tbody td {
+    border-color:#FEE6B9; /* cellcontent2 */
+}
+
+.cal_event_global {
+    border-color:#2EBA0E !important;
+    background-color:#2EBA0E;
+}
+
+.cal_event_course {
+    border-color:#FF9966 !important;
+    background-color:#FF9966;
+}
+
+.cal_event_group {
+    border-color:#FBBB23 !important;
+    background-color:#FBBB23;
+}
+
+.cal_event_user {
+    border-color:#A1BECB !important;
+    background-color:#A1BECB;
+}
+
+.cal_duration_global {
+    border-top-color:#2EBA0E !important;
+    border-bottom-color:#2EBA0E !important;
+}
+
+.cal_duration_course {
+    border-top-color:#FF9966 !important;
+    border-bottom-color:#FF9966 !important;
+}
+
+.cal_duration_user {
+    border-top-color:#A1BECB !important;
+    border-bottom-color:#A1BECB !important;
+}
+
+.cal_duration_group {
+    border-top-color:#FBBB23 !important;
+    border-bottom-color:#FBBB23 !important;
+}
+
+.cal_weekend {
+    color:#FF0000;
+}
+
+.cal_today {
+    border-color:#000000 !important;
+}
+
+table.calendarmonth thead td {
+    border-bottom-color:#FFC85F;
+}
+
+.mycalendar .cal_filters thead td {
+    border-bottom-color:#FFC85F;
+}
+
+.mycalendar .cal_event_table thead {
+    background-color:#FFFFFF; /* cellcontent */
+}
+
+td.cal_event_description {
+    border-left-color:#FFC85F;
+}
+
+.cal_popup_fg {
+    background-color:#FFFFFF; /* cellcontent */
+}
+
+.cal_popup_bg {
+    border-color:#FEE6B9;
+}
+
+.mycalendar .cal_event_table, 
+table.calendarmonth, 
+.mycalendar table.cal_filters {
+    border-color:#FFC85F; /* borders */
+}
+
+.sideblockmain hr,
+.mycalendar hr {
+    border-top-color:#999999;
+}
+
+.eventfull {
+    border-color:#DDDDDD; /* borders */
+}
+
+/* block_rss_client.php */
+.rssclientlink {
+    border-top-color:#DDDDDD;
+}
+
+.rssclientdescription {
+    color:#555555;
+}
+
+/* message */
+table.message_search_results td {
+    border-color:#DDDDDD; /* borders */
+}
+
+/* course, entry-page, login */
+.headingblock {
+    border-color:#DDDDDD; /* borders */
+}
+
+/* course */
+.outlineheadingblock {
+    border-color:#DDDDDD; /* borders */
+}
+
+
+/* sideblock */
+/* calendar, weblib.php, wiki */
+.sideblock {
+    border-color:#DDDDDD; /* borders */
+}
+.sideblockmain {
+    background-color:#FCFCFC;
+}
+
+.sideblocklinks {
+    background-color:#FCFCFC;
+}
+
+/* weblib.php, wiki */
+.sideblockmain hr {
+    border-top-color:#999999;
+}
+
+
+/* course */
+.weeklyoutlinesidehidden,
+.topicsoutlinesidehidden {
+    background-color:#AAAAAA; /* hidden */
+}
+
+.weeklyoutlinecontent,
+.topicsoutlinecontent {
+    border-color:#DDDDDD; /* cellheading */
+}
+
+.weeklyoutlinecontenthighlight, .topicsoutlinecontenthighlight {
+    border-color:#FFC85F; /* cellheading2 */
+}
+
+.weeklyoutlinecontenthidden,
+.topicsoutlinecontenthidden {
+    border-color:#AAAAAA; /* hidden */
+}
+
+.categoryboxcontent,
+.courseboxcontent {
+    border-color:#DDDDDD; /* borders */
+}
+.weeklydatetext {
+    color:#DDDDDD; /* cellheading2 */
+}
+
+
+/* admin, calednder, course */
+.dimmed_text {
+    color:#AAAAAA;
+}
+
+/* lang, forum */
+.teacheronly {
+    color:#990000;
+}
+
+.forumheadminimal {
+    color:#555555;
+}
