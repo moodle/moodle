@@ -609,6 +609,7 @@
             fwrite ($bf,full_tag("GROUPMODE",3,false,$course->groupmode));
             fwrite ($bf,full_tag("GROUPMODEFORCE",3,false,$course->groupmodeforce));
             fwrite ($bf,full_tag("LANG",3,false,$course->lang));
+            fwrite ($bf,full_tag("THEME",3,false,$course->theme));
             fwrite ($bf,full_tag("COST",3,false,$course->cost));
             fwrite ($bf,full_tag("MARKER",3,false,$course->marker));
             fwrite ($bf,full_tag("VISIBLE",3,false,$course->visible));
@@ -990,6 +991,7 @@
                 fwrite ($bf,full_tag("CITY",4,false,$user_data->city));
                 fwrite ($bf,full_tag("COUNTRY",4,false,$user_data->country));
                 fwrite ($bf,full_tag("LANG",4,false,$user_data->lang));
+                fwrite ($bf,full_tag("THEME",4,false,$user_data->theme));
                 fwrite ($bf,full_tag("TIMEZONE",4,false,$user_data->timezone));
                 fwrite ($bf,full_tag("FIRSTACCESS",4,false,$user_data->firstaccess));
                 fwrite ($bf,full_tag("LASTACCESS",4,false,$user_data->lastaccess));
@@ -1312,6 +1314,7 @@
                 fwrite ($bf,full_tag("DESCRIPTION",4,false,$group->description));
                 fwrite ($bf,full_tag("PASSWORD",4,false,$group->password));
                 fwrite ($bf,full_tag("LANG",4,false,$group->lang));
+                fwrite ($bf,full_tag("THEME",4,false,$group->theme));
                 fwrite ($bf,full_tag("PICTURE",4,false,$group->picture));
                 fwrite ($bf,full_tag("HIDEPICTURE",4,false,$group->hidepicture));
                 fwrite ($bf,full_tag("TIMECREATED",4,false,$group->timecreated));

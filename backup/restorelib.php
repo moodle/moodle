@@ -584,6 +584,7 @@
             $course->groupmode = addslashes($course_header->course_groupmode);
             $course->groupmodeforce = addslashes($course_header->course_groupmodeforce);
             $course->lang = addslashes($course_header->course_lang);
+            $course->theme = addslashes($course_header->course_theme);
             $course->cost = addslashes($course_header->course_cost);
             $course->marker = addslashes($course_header->course_marker);
             $course->visible = addslashes($course_header->course_visible);
@@ -611,6 +612,12 @@
             if (!$restore->metacourse) {
                 $course->metacourse = 0;
             }
+
+            //Check if the theme exists in destination server
+            $themes = get_list_of_themes();
+            if (!in_array($course->theme, $themes)) {
+                $course->theme = '';
+            } 
 
             //Now insert the record
             $newid = insert_record("course",$course);
@@ -1073,6 +1080,12 @@
                         $user->policyagreed = 0;
                     } else {
                         //Nothing to do, we are in the same server
+                    }
+
+                    //Check if the theme exists in destination server
+                    $themes = get_list_of_themes();
+                    if (!in_array($user->theme, $themes)) {
+                        $user->theme = '';
                     }
 
                     //We are going to create the user
@@ -1596,6 +1609,7 @@
                         $gro->description = backup_todb($info['GROUP']['#']['DESCRIPTION']['0']['#']);
                         $gro->password = backup_todb($info['GROUP']['#']['PASSWORD']['0']['#']);
                         $gro->lang = backup_todb($info['GROUP']['#']['LANG']['0']['#']);
+                        $gro->theme = backup_todb($info['GROUP']['#']['THEME']['0']['#']);
                         $gro->picture = backup_todb($info['GROUP']['#']['PICTURE']['0']['#']);
                         $gro->hidepicture = backup_todb($info['GROUP']['#']['HIDEPICTURE']['0']['#']);
                         $gro->timecreated = backup_todb($info['GROUP']['#']['TIMECREATED']['0']['#']);
@@ -1612,6 +1626,13 @@
                         if ($create_group) {
                             //Me must recode the courseid to the restore->course_id 
                             $gro->courseid = $restore->course_id;
+
+                            //Check if the theme exists in destination server
+                            $themes = get_list_of_themes();
+                            if (!in_array($gro->theme, $themes)) {
+                                $gro->theme = '';
+                            }
+
                             //The structure is equal to the db, so insert the group
                             $newid = insert_record ("groups",$gro);
                         } else { 
@@ -2832,6 +2853,9 @@
                         case "LANG":
                             $this->info->course_lang = $this->getContents();
                             break;
+                        case "THEME":
+                            $this->info->course_theme = $this->getContents();
+                            break;
                         case "COST":
                             $this->info->course_cost = $this->getContents();
                             break;
@@ -3189,6 +3213,9 @@
                             break;
                         case "LANG": 
                             $this->info->tempuser->lang = $this->getContents();
+                            break;
+                        case "THEME": 
+                            $this->info->tempuser->theme = $this->getContents();
                             break;
                         case "TIMEZONE": 
                             $this->info->tempuser->timezone = $this->getContents();

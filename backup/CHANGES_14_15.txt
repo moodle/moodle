@@ -43,7 +43,7 @@ Now I show the specific detailed status of every item in the process:
 26. DONE: chat_users->course and chat_users->lang. No changes required!
 27. PROG: Make the backup/restore/config/logs/index.php XHTML 1.0 Transitional.
           Done in manual backups, config, logs and restore.
-28. TODO: Add course->theme, groups->them and user->theme. If no present,
+28. DONE: Add course->theme, groups->them and user->theme. If no present,
           default blank.
 29. TODO: Add support for block instances in modules. Bug 2517.
 Eloy (stronk7)
