@@ -355,8 +355,13 @@
 	}
     
     print_table($table);
+
     echo "<br><div align=center>";
     print_single_button("$CFG->wwwroot/doc", NULL, get_string("documentation"));
+    echo "</div>";
+
+    echo "<br><div align=center>";
+    print_single_button("register.php", NULL, get_string("registration"));
     echo "</div>";
 
     print_heading("Moodle $CFG->release ($CFG->version)", "CENTER", 1);
