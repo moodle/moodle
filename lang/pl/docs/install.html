@@ -30,7 +30,7 @@
   <li><a href="#webserver">Sprawdzanie ustawieñ serwera sieciowego.</a></li>
   <li><a href="#config">Edycja config.php</a></li>
   <li><a href="#admin">Wejd¼ na stronê administracyjn±</a></li>
-  <li><a href="#cron">Ustawienia automatycznego powiadomiania</a></li>
+  <li><a href="#cron">Ustawienia mechanizmu 'cron'</a></li>
   <li><a href="#course">Tworzenie nowego kursu</a></li>
 </ol>
 <h3 class="sectionheading"><a name="requirements"></a>1. Wymagania</h3>
@@ -44,7 +44,7 @@
       <ul>
         <li>W³±czona <a href="http://www.boutell.com/gd/" target="_blank">biblioteka GD</a> , z obs³ug±  formatów JPG i PNG.</li>
         <li>Obs³uga Sesji (session support) w³±czona.</li>
-        <li>Przesy³±nie plików (file uploading) w³±czone</li>
+        <li>Przesy³anie plików (file uploading) w³±czone</li>
         <li>Tryb awaryjny (Safe Mode) musi byæ wy³±czony (na forach znajduj±cych siê na moodle.org znajdziesz opis problemów powodowanych przez ten tryb)</li>
       </ul>
     </li>
@@ -218,7 +218,7 @@ Je¶li spróbujesz wej¶æ na g³ówn± stronê twojego serwisu, to i tak powiniene¶ zos
 
   <p>Powiniene¶ teraz ujrzeæ formularz, w którym mo¿esz okre¶liæ wiêcej zmiennych dotycz±cych instalacji, takich jak domy¶lny jêzyk, hosty SMTP itd. Nie przejmuj siê zbytnio ustawianiem wszystkiego teraz - zawsze mo¿esz tu wróciæ i zmodyfikowaæ warto¶ci tych zmiennych korzystaj±c z panelu administracyjnego. Przewiñ stronê do koñca i kliknij na &quot;Save changes&quot;.</p>
 
-  <p>Je¶li (i tylko wtedy gdy) utkniesz gdzie¶ podczas tego ca³ego procesu, bez mo¿liwo¶ci kontynuacji, to twój serwer ma najprawdopodobniej problem zwany &quot;buggy referrer&quot;. £atwo go jednak naprawiæ: po prostu wy³±cz ustawienie &quot;secureforms&quot; i spróbuj kontynuawaæ instalacjê.</p>
+  <p>Je¶li (i tylko wtedy gdy) utkniesz gdzie¶ podczas tego ca³ego procesu, bez mo¿liwo¶ci kontynuacji, to twój serwer ma najprawdopodobniej problem zwany &quot;buggy referrer&quot;. £atwo go jednak naprawiæ: po prostu wy³±cz ustawienie &quot;secureforms&quot; i spróbuj kontynuowaæ instalacjê.</p>
   <p>Na nastêpnej stronie mo¿esz zdefiniowaæ parametry swojego serwisu w Moodle, a tak¿e stronê tytu³ow± wybieraj±c takie rzeczy jak nazwa, format, opis serwisu itp. Wype³nij te pola (mo¿esz do nich zawsze wróciæ) i kliknij na &quot;Save changes&quot; (zapisz zmiany).</p>
 
   <p>Na koniec zostaniesz poproszony o utworzenie konta nadrzêdnego u¿ytkownika - administratora, za pomoc± którego bêdziesz mia³ pó¼niej dostêp do stron administracyjnych. Wype³nij formularz, umieszczaj±c w nim swoje imiê, adres e-mail itp. a nastêpnie kliknij na &quot;Save changes&quot; (zapisz zmiany). Nie wszystkie pola musz± zostaæ wype³nione, ale je¶li pominiesz które¶ z istotniejszych, zostaniesz o nie ponownie zapytany.  </p>
@@ -234,7 +234,7 @@ Je¶li spróbujesz wej¶æ na g³ówn± stronê twojego serwisu, to i tak powiniene¶ zos
     </blockquote>
   </blockquote>
   <p>(Je¶li z jakiejkolwiek przyczyny proces instalacji zosta³ przerwany, albo wyst±pi³ b³±d systemowy, który uniemo¿liwia zalogowanie siê na konto administratora, mo¿esz zazwyczaj zalogowaæ siê u¿ywaj±c domy¶lnej nazwy u¿ytkownika &quot;<strong>admin</strong>&quot;, z has³em &quot;<strong>admin</strong>&quot;.)</p>
-  <p>Gdy proces instalacji zakoñczy siê powodzeniem, zostaniesz przeniesiony z powrotem na stronê g³ówn± swojego serwisu. Zwróæ uwagê, na odno¶niki administracyjne widoczne po lewej stronie (te opcje dostêpne s± te¿ w panelu administracyjnym). S± ona widoczne tylko dla Ciebie, poniewa¿ jeste¶ zalogowany jako administratir. Ca³± administracja Moodle mo¿e byæ teraz wykonywana z tego menu. Mo¿esz za jego pomoc± np:</p>
+  <p>Gdy proces instalacji zakoñczy siê powodzeniem, zostaniesz przeniesiony z powrotem na stronê g³ówn± swojego serwisu. Zwróæ uwagê, na odno¶niki administracyjne widoczne po lewej stronie (te opcje dostêpne s± te¿ w panelu administracyjnym). S± ona widoczne tylko dla Ciebie, poniewa¿ jeste¶ zalogowany jako administrator. Ca³± administracja Moodle mo¿e byæ teraz wykonywana z tego menu. Mo¿esz za jego pomoc± np:</p>
   <ul>
     <li>tworzyæ i usuwaæ kursy</li>
     <li>tworzyæ i modyfikowaæ konta u¿ytkowników</li>
@@ -243,11 +243,11 @@ Je¶li spróbujesz wej¶æ na g³ówn± stronê twojego serwisu, to i tak powiniene¶ zos
   </ul>
 </blockquote>
 <p>&nbsp;</p>
-<h3 class="sectionheading"><a name="cron"></a>9. Ustawienia automatycznego powiadamiania (cron)</h3>
+<h3 class="sectionheading"><a name="cron"></a>9. Ustawienia mechanizmu 'cron'</h3>
 <blockquote> 
   <p>Niektóre modu³y Moodle wymagaj± cyklicznych testów, aby wykonywaæ swoje zadania. Na przyk³ad Moodle musi sprawdzaæ fora dyskusyjne, aby móc wys³aæ kopie postów osobom zapisanym na nie.</p>
   <p>Skrypt za to odpowiedzialny znajduje siê w katalogu 'admin' w pliku cron.php. Nie jest on jednak w stanie uruchomiæ sam siebie, dlatego te¿ musisz uruchomiæ mechanizm, który bêdzie regularnie uruchamiaæ ten skrypt (np. co piêæ minut). Bêdzie to takie &qout;bicie serca&quot; ca³ego serwisu, w rytm którego wspomniany skrypt mo¿e wykonywaæ funkcje w odstêpach czasu zdefiniowanych w modu³ach.</p>
-  <p>Zwróæ uwagê, ¿e maszyna która przeprowadza automatyczne powiadamianie <b>nie musi byæ t± samo± maszyn±, na której pracuje Moodle</b>. Je¶li przyk³adowo twój host nie posiada automatycznego powiadamiania, to mo¿esz uruchomiæ go na innym serwerze, albo na twoim komputerze w domu. Wa¿ne jest jedynie, aby plik cron.php by³ wywo³ywany regularnie. </p>
+  <p>Zwróæ uwagê, ¿e maszyna na której uruchomiony jest mechanizm 'cron' <b>nie musi byæ t± sam± maszyn±, na której pracuje Moodle</b>. Je¶li przyk³adowo twój host nie obs³uguje mechanizmu 'cron', to mo¿esz uruchomiæ go na innym serwerze, albo na twoim komputerze w domu. Wa¿ne jest jedynie, aby plik cron.php by³ wywo³ywany regularnie. </p>
 
   <p>Obci±¿enie wprowadzane przez ten skrypt nie jest zbyt du¿e, wiêc 5 minut jest na ogó³ rozs±dnym wyborem, ale je¶li chcesz mo¿esz wyd³u¿yæ odstêpy do piêtnastu czy nawet trzydziestu minut. Najlepiej by by³o jednak, gdyby ten odcinek czasu nie by³ te¿ zbyt d³ugi, jako ¿e opó¼nienia w przesy³aniu wiadomo¶ci poczt± mog± ograniczyæ aktywno¶æ na kursach.</p>
 
@@ -277,7 +277,7 @@ Je¶li spróbujesz wej¶æ na g³ówn± stronê twojego serwisu, to i tak powiniene¶ zos
 </pre>
   </blockquote>
   <h4>Automatyczne uruchamianie skryptu co piêæ minut</h4>
-  <p>W systemach Unix: Korzystaj z <b>cron</b>. Zmodyfikuj ustawienia automatycznego powiadamiania z linii poleceñ, wpisuj±c &quot;crontab -e&quot; i dodaj±c liniê nastêpuj±cej postaci :</p>
+  <p>W systemach Unix: Korzystaj z <b>cron</b>. Zmodyfikuj ustawienia mechanizmu 'cron' z linii poleceñ, wpisuj±c &quot;crontab -e&quot; i dodaj±c liniê nastêpuj±cej postaci :</p>
   <blockquote>
     <pre>*/5 * * * * wget -q -O /dev/null http://example.com/moodle/admin/cron.php</pre>
   </blockquote>
@@ -292,7 +292,7 @@ Je¶li spróbujesz wej¶æ na g³ówn± stronê twojego serwisu, to i tak powiniene¶ zos
   <p>Teraz gdy platforma Moodle dzia³a ju¿ prawid³owo mo¿esz utworzyæ kursy.</p>
   <p>Wybierz opcjê &quot;Utwórz nowy kurs&quot; ze strony administracyjnej (albo z odno¶ników administracyjnych na stronie g³ównej twojego serwisu).</p>
   <p>Wype³nij formularz, przyk³adaj±c szczególn± uwagê do formatu kursu. Nie musisz siê zbytnio przejmowaæ detalami, gdy¿ wszystkie one mog± zostaæ pó¼niej ustalone przez prowadz±cego.</p>
-  <p>Kliknij na &quot;Zapisz zmiany&quot;, a zostaniesz przeniesiony do nastêpnego forumlarza, na którym mo¿esz przyporz±dkowaæ prowadz±cych do kursów. W tym miejscu mo¿esz korzystaæ jedynie z ju¿ istniej±cych kont. Je¶li chcesz utworzyæ nowe konto prowadz±cego, to albo popro¶ prowadz±cego, aby utworzy³ je sobie sam (na stronie logowania), albo utwórz je sam, klikaj±c na odno¶nik &quot; Utwórz nowe konto&quot; na panelu administracyjnym./p>
+  <p>Kliknij na &quot;Zapisz zmiany&quot;, a zostaniesz przeniesiony do nastêpnego formularza, na którym mo¿esz przyporz±dkowaæ prowadz±cych do kursów. W tym miejscu mo¿esz korzystaæ jedynie z ju¿ istniej±cych kont. Je¶li chcesz utworzyæ nowe konto prowadz±cego, to albo popro¶ prowadz±cego, aby utworzy³ je sobie sam (na stronie logowania), albo utwórz je sam, klikaj±c na odno¶nik &quot; Utwórz nowe konto&quot; na panelu administracyjnym.</p>
 
   <p>Gdy kurs zosta³ utworzony, jest gotowy do zmiany ustawieñ, oraz staje siê dostêpny poprzez odno¶nik &quot;Kursy&quot; na stronie g³ównej.</p>
 
