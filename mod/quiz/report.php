@@ -73,7 +73,7 @@
             echo "<td><a href=\"report.php?id=$cm->id&mode=$report\">$strreport</a></td>";
         }
     }
-    echo "</tr></table><br /><br />";
+    echo "</tr></table><hr size=\"1\" noshade=\"noshade\" />";
 
 
 /// Open the selected quiz report and display it

@@ -285,7 +285,7 @@ function quiz_get_answers($question) {
 
         case MATCH:
             return get_records("quiz_match_sub", "question", $question->id);
-           break;
+            break;
 
         case RANDOMSAMATCH:       // Could be any of many answers, return them all
             return get_records_sql("SELECT a.*
@@ -1323,6 +1323,38 @@ function quiz_calculate_best_grade($quiz, $attempts) {
 }
 
 
+function quiz_calculate_best_attempt($quiz, $attempts) {
+/// Return the attempt with the best grade for a quiz
+
+    switch ($quiz->grademethod) {
+
+        case ATTEMPTFIRST:
+            foreach ($attempts as $attempt) {
+                return $attempt;
+            }
+            break;
+
+        case GRADEAVERAGE: // need to do something with it :-)
+        case ATTEMPTLAST:
+            foreach ($attempts as $attempt) {
+                $final = $attempt;
+            }
+            return $final;
+
+        default:
+        case GRADEHIGHEST:
+            $max = -1;
+            foreach ($attempts as $attempt) {
+                if ($attempt->sumgrades > $max) {
+                    $max = $attempt->sumgrades;
+                    $maxattempt = $attempt;
+                }
+            }
+            return $maxattempt;
+    }
+}
+
+
 function quiz_save_attempt($quiz, $questions, $result, $attemptnum) {
 /// Given a quiz, a list of attempted questions and a total grade 
 /// this function saves EVERYTHING so it can be reconstructed later
@@ -1988,7 +2020,9 @@ function quiz_save_question_options($question) {
 
 
 function quiz_remove_unwanted_questions(&$questions, $quiz) {
-/// Used by review.php
+/// Given an array of questions, and a list of question IDs,
+/// this function removes unwanted questions from the array
+/// Used by review.php to counter changing quizzes
 
     $quizquestions = array();
     $quizids = explode(",", $quiz->questions);

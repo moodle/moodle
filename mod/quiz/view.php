@@ -86,10 +86,10 @@
     }
 
     if ($quiz->attempts > 1) {
-        echo "<P ALIGN=CENTER>".get_string("attemptsallowed", "quiz").": $quiz->attempts</P>";
-        echo "<P ALIGN=CENTER>".get_string("grademethod", "quiz").": ".$QUIZ_GRADE_METHOD[$quiz->grademethod]."</P>";
+        echo "<p align=center>".get_string("attemptsallowed", "quiz").": $quiz->attempts</p>";
+        echo "<p align=center>".get_string("grademethod", "quiz").": ".$QUIZ_GRADE_METHOD[$quiz->grademethod]."</p>";
     } else {
-        echo "<BR>";
+        echo "<br />";
     }
 
     $strattempt       = get_string("attempt", "quiz");
