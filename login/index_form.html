@@ -10,39 +10,59 @@
     </TD>
   </TR>
   <TR>
-    <TD WIDTH="50%" VALIGN="TOP" bgcolor="<?=$THEME->cellheading?>"> 
-      <FONT SIZE=2>
-      <P ALIGN="CENTER">Log in using your username and password:</P>
-      <P ALIGN="CENTER"><? formerr($errormsg) ?></P>
+    <TD WIDTH="50%" VALIGN="TOP" bgcolor="<?=$THEME->cellheading?>"> <FONT SIZE=2> 
+      <P ALIGN="CENTER">Log in using your username and password:<BR>
+	  <? formerr($errormsg) ?>
+      </p></font>
       <FORM NAME="form" ACTION="<?=$CFG->wwwroot?>/login/" METHOD=post>
-      <CENTER>
-      <TABLE ALIGN=center>
-      <TR><TD align=right><P><FONT SIZE=2>Username:</FONT></P></TD>
-          <TD><INPUT TYPE="text" NAME="username" SIZE="15" value="<? p($frm->username) ?>">
-      </TD></TR>
-      <TR><TD align=right><P><FONT SIZE=2>Password:</FONT></P></TD>
-          <TD><INPUT TYPE="password" NAME="password" SIZE="15" value="<? p($frm->password) ?>">
-      </TD></TR>
-      </TABLE>
-      <BR>
-      <INPUT TYPE="submit" NAME="Submit" VALUE="Login">
-      </FORM>
-      </CENTER>
+        <table border="0" align="center">
+        <tr>
+            <td width="80%"><FONT SIZE=2>
+              <TABLE ALIGN=center>
+                <TR> 
+                  <TD align=right><P><FONT SIZE=2>Username:</FONT></P></TD>
+                  <TD><INPUT TYPE="text" NAME="username" SIZE="15" value="<? p($frm->username) ?>"> 
+                  </TD>
+                </TR>
+                <TR> 
+                  <TD height="24" align=right><P><FONT SIZE=2>Password:</FONT></P></TD>
+                  <TD><INPUT TYPE="password" NAME="password" SIZE="15" value="<? p($frm->password) ?>"> 
+                  </TD>
+                </TR>
+              </TABLE>
+              </FONT></td>
+            <td width="20%"><font size=2>
+              <input type="submit" name="Submit" value="Log in">
+              </font></td>
+        </tr>
+      </table>
+	  </FORM>
+      <FONT SIZE=2> 
       <BLOCKQUOTE>
-      <P>&nbsp;</P>
-      <P>You can log in as a guest (username <B>guest</B>, password <B>guest</B>) to get
-         immediate read-only access to selected courses.</P>
-      <P>&nbsp;</P>
-      <P>Forgotten your username or password? 
-         This site can <A HREF="forgot_password.php">email your details to your address</A>.</P>
-      </BLOCKQUOTE>
-      </FONT>
-    </TD>
+      <HR>
+        <P ALIGN=CENTER>Some courses may allow guest access:</P>
+        <CENTER>
+        <FORM NAME="form2" ACTION="<?=$CFG->wwwroot?>/login/" METHOD=post>
+        <INPUT TYPE="hidden" NAME="username" VALUE="guest">
+        <INPUT TYPE="hidden" NAME="password" VALUE="guest">
+        <INPUT type="submit" NAME="Submit"   VALUE="Log in as a guest">
+        </FORM>
+        </CENTER>
+      <HR>
+        <P ALIGN=CENTER>Forgotten your username or password?</P> 
+        <CENTER>
+        <FORM NAME="form3" ACTION="forgot_password.php" METHOD=post>
+        <INPUT type="submit" NAME="Submit" VALUE="Email my log in details">
+        </FORM>
+        </CENTER>
+        </BLOCKQUOTE>
+      </FONT> </TD>
     <TD WIDTH="50%" VALIGN="TOP" bgcolor="<?=$THEME->cellheading?>">
       <FONT SIZE=2>
-      <P>Hi! You need to create a new account for yourself on this server so we know who 
-        you are. Each of the individual courses may also have a one-time 
-        &quot;course entry key&quot;, which you won't need until later. Here are 
+      <P>Hi! For full access to courses you'll need to take a minute to create 
+        a new account for yourself on this web site.
+        Each of the individual courses may also have a one-time 
+        &quot;enrolment key&quot;, which you won't need until later. Here are 
         the steps:</P>
         <OL size=2>
       <LI>Fill out the <A HREF="signup.php">New Account</A> form with your details.
@@ -50,14 +70,19 @@
       <LI>Read your email, and click on the web link it contains.
       <LI>Your account will be confirmed and you will be logged in.
       <LI>Now, select the course you want to participate in.
-      <LI>If you are prompted for a &quot;course entry key&quot; - use the one 
+      <LI>If you are prompted for a &quot;enrolment key&quot; - use the one 
         that your teacher has given you. This will &quot;enrol&quot; you in the 
         course.
       <LI>You can now access the full course. From now on you will only need 
         to enter your personal username and password (in the form on this page) 
         to log in and access any course you have enrolled in.
-      <P ALIGN="CENTER"><B><A HREF="signup.php">Start now by creating a new account!</A></B></P>
+		</OL>
       </FONT>
+        <CENTER>
+        <FORM NAME="form4" ACTION="signup.php" METHOD=post>
+        <INPUT type="submit" NAME="Submit" VALUE="Start now by creating a new account!">
+        </FORM>
+        </CENTER>
       </TD>
   </TR>
 </TABLE>

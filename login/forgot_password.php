@@ -33,7 +33,7 @@
 		}
 	}
 
-	print_header("Forgot password?", "Have a new password sent to you", "", "form.email");
+	print_header("Email your login details", "Email your login details", "<A HREF=\"$CFG->wwwroot/login\">Login</A> -> Email username and password", "form.email");
 
 	include("forgot_password_form.html");
 
