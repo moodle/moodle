@@ -17,8 +17,8 @@ CREATE TABLE prefix_block_instance (
   id SERIAL8 PRIMARY KEY,
   blockid INT8 not null default '0',
   pageid INT8 not null default '0',
-  pagetype enum('course') not null,
-  position enum('l', 'r') not null,
+  pagetype varchar(12) not null check (pagetype in ('course')), 
+  position char not null check (position in ('l', 'r')),
   weight int not null default '0',
   visible int not null default '0',
   configdata text not null default ''
