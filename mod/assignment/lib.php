@@ -228,6 +228,10 @@ function assignment_cron () {
                 continue;
             }
 
+            if (! $mod->visible) {    /// Hold mail notification for hidden assignments until later
+                continue;
+            }
+
             $strassignments = get_string("modulenameplural", "assignment");
             $strassignment  = get_string("modulename", "assignment");
 
