@@ -96,12 +96,6 @@ if ( $confirm ) {
         print_footer($course);
         die;
     }
-    print_header_simple(strip_tags("$glossary->name"), "",
-                        "<A HREF=\"index.php?id=$course->id\">$strglossaries</A> ->
-              <A HREF=\"view.php?id=$cm->id\">$glossary->name</A> -> $stredit", "form.text",
-                        "", true, "", navmenu($course, $cm));
-
-    print_heading($glossary->name);
 
     if ($e) {
         //We are updating an entry, so we compare current session user with
@@ -142,11 +136,13 @@ if ( $confirm ) {
                 unset($newentry->attachment);
             }
 
-            if (! update_record("glossary_entries", $newentry)) {
-                error("Could not update your glossary");
+            if (update_record("glossary_entries", $newentry)) {
+                add_to_log($course->id, "glossary", "update entry", 
+                           "view.php?id=$cm->id&amp;mode=entry&amp;hook=$newentry->id", 
+                           $newentry->id, $cm->id);
+                $redirectmessage = get_string('entryupdated','glossary');
             } else {
-                add_to_log($course->id, "glossary", "update entry", "view.php?id=$cm->id&amp;mode=entry&amp;hook=$newentry->id", $newentry->id,$cm->id);
-                notify(get_string('entryupdated','glossary'));
+                error("Could not update your glossary");
             }
         } else {
             error("Could not update this glossary entry because this concept already exist.");
@@ -165,9 +161,7 @@ if ( $confirm ) {
             }
         }
         if ( $permissiongranted ) {
-            if (! $newentry->id = insert_record("glossary_entries", $newentry)) {
-                error("Could not insert this new entry");
-            } else {
+            if ($newentry->id = insert_record("glossary_entries", $newentry)) {
                 $e = $newentry->id;
                 $newentry->attachment = $_FILES["attachment"];
                 if ($newfilename = glossary_add_attachment($newentry, 'attachment')) {
@@ -176,8 +170,11 @@ if ( $confirm ) {
                      unset($newentry->attachment);
                 }
                 set_field("glossary_entries", "attachment", $newfilename, "id", $newentry->id);
-                add_to_log($course->id, "glossary", "add entry", "view.php?id=$cm->id&amp;mode=entry&amp;hook=$newentry->id", $newentry->id,$cm->id);
-                notify(get_string('entrysaved','glossary'));
+                add_to_log($course->id, "glossary", "add entry", 
+                           "view.php?id=$cm->id&amp;mode=entry&amp;hook=$newentry->id", $newentry->id,$cm->id);
+                $redirectmessage = get_string('entrysaved','glossary');
+            } else {
+                error("Could not insert this new entry");
             }
         } else {
             error("Could not insert this glossary entry because this concept already exist.");
@@ -211,9 +208,8 @@ if ( $confirm ) {
             }
         }
     }
-    print_continue("view.php?id=$cm->id&amp;mode=entry&amp;hook=$newentry->id");
-    print_footer();
-    die;
+    redirect("view.php?id=$cm->id&amp;mode=entry&amp;hook=$newentry->id", $redirectmessage);
+
 } else {
     if ($e) {
         $form = get_record("glossary_entries", "id", $e);
@@ -238,6 +234,8 @@ if ( $confirm ) {
         }
     }
 }
+
+
 //Fill and print the form.
 //We check every field has a default values here!!
 if (!isset($newentry->concept)) {
