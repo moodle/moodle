@@ -3,6 +3,7 @@
 $string['about'] = 'À propos de cet éditeur';
 $string['absbottom'] = 'Absbottom';
 $string['address'] = 'Adresse';
+$string['alertnoselectedtext'] = 'Veuillez d\'abord sélectionner du texte!';
 $string['alignment'] = 'Alignement';
 $string['alternatetext'] = 'Texte alt';
 $string['anchorname'] = 'Nom d\'ancrage';
@@ -66,6 +67,7 @@ $string['linkurl'] = 'URL';
 $string['middle'] = 'middle';
 $string['minimize'] = 'Minimiser l\'éditeur';
 $string['move'] = 'Déplacer';
+$string['nolink'] = 'Pas de lien des glossaires';
 $string['normal'] = 'Normal';
 $string['notimage'] = 'Le fichier sélectionné n\'est pas une image. Veuillez sélectionner une image !';
 $string['notset'] = 'Par défaut';
