@@ -18,6 +18,7 @@
 
     $imageurl = rawurldecode($imageurl);   /// Full URL starts with $CFG->wwwroot/file.php
     $imagepath = str_replace("$CFG->wwwroot/file.php", '', $imageurl);
+    $imagepath = str_replace("?file=", '', $imagepath); // if we're using second option of file path.
     
     if ($imagepath != $imageurl) {         /// This is an internal image
         $size = getimagesize($CFG->dataroot.$imagepath);
