@@ -618,7 +618,7 @@ function print_course_categories($categories, $selected="none", $width=180) {
                 print_spacer(8,1);
             }
             foreach ($categories as $category) {
-                print_simple_box_start("CENTER", "100%");
+                print_simple_box_start("LEFT", "100%");
                 print_heading("<A HREF=\"course/index.php?category=$category->id\">$category->name</A>", "LEFT");
                 $some = false;
                 echo "<UL>";
