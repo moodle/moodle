@@ -38,6 +38,6 @@ Now I show the specific detailed status of every item in the process:
           uploaded contents to work).
 23. TODO: Add support for metacourses in backup and restore. Show a new option
           to decide what to do (ignore, process).
-
+24. DONE: Take out THEME from backup directory.
 Eloy (stronk7)
 23-01-2004

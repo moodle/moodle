@@ -96,7 +96,7 @@
 
     //Print form     
     print_heading("$strcoursebackup: $course->fullname ($course->shortname)");
-    print_simple_box_start("center", "", "$THEME->cellheading");
+    print_simple_box_start("center");
 
     //Adjust some php variables to the execution of this script
     @ini_set("max_execution_time","3000");

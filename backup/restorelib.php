@@ -3331,7 +3331,7 @@
             $message->serverrelease = $CFG->release;
             $message->backupversion = $info->backup_moodle_version;
             $message->backuprelease = $info->backup_moodle_release;
-            print_simple_box(get_string('noticenewerbackup','',$message), "center", "70%", "$THEME->cellheading2", "20", "noticebox");
+            print_simple_box(get_string('noticenewerbackup','',$message), "center", "70%", '', "20", "noticebox");
             
         }
         

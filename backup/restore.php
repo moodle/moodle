@@ -106,7 +106,7 @@
     }
     //Print form
     print_heading("$strcourserestore".((empty($to) ? ': '.basename($file) : '')));
-    print_simple_box_start("center", "", "$THEME->cellheading");
+    print_simple_box_start('center');
     
     //Adjust some php variables to the execution of this script
     @ini_set("max_execution_time","3000");

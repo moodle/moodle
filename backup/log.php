@@ -44,7 +44,7 @@
                       $strlogs);
 
         print_heading($backuploglaststatus);
-        print_simple_box_start("center", "", "$THEME->cellheading");
+        print_simple_box_start('center');
         //Now, get every record from backup_courses
         $courses = get_records("backup_courses");
 
@@ -95,7 +95,7 @@
         $coursename = get_field("course","fullname","id","$courseid");
         print_heading("$strcourse: $coursename");
 
-        print_simple_box_start("center", "", "$THEME->cellheading");
+        print_simple_box_start('center');
         
         //First, me get all the distinct backups for that course in backup_log
         $executions = get_records_sql("SELECT DISTINCT laststarttime,laststarttime
