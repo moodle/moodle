@@ -602,6 +602,8 @@ function quiz_print_question($number, $question, $grade, $quizid,
 /// Prints a quiz question, any format
 /// $question is provided as an object
 
+    global $CFG, $THEME;
+
     $question->questiontextformat = isset($question->questiontextformat) ? $question->questiontextformat : NULL;
 
     if ($question->qtype == DESCRIPTION) {  // Special case question - has no answers etc
@@ -922,6 +924,8 @@ function quiz_print_question($number, $question, $grade, $quizid,
            // The regex will recognize text snippets of type {#X} 
            // where the X can be any text not containg } or white-space characters.
 
+           $strfeedback = get_string('feedback', 'quiz');
+
            while (ereg('\{#([^[:space:]}]*)}', $qtextremaining, $regs)) {
                $qtextsplits = explode($regs[0], $qtextremaining, 2);
                echo $qtextsplits[0];
@@ -957,11 +961,13 @@ function quiz_print_question($number, $question, $grade, $quizid,
                    case SHORTANSWER:
                    case NUMERICAL:
                        if (isset($feedback[$regs[1]-1])) {
-                           $title = " title=\"".s($feedback[$regs[1]-1])."\" ";
+                           $title = str_replace("'", "\\'", $feedback[$regs[1]-1] );
+                           $popup = " onmouseover=\"return overlib('$title', CAPTION, '$strfeedback', FGCOLOR, '$THEME->cellcontent');\" ".
+                                    " onmouseout=\"return nd();\" ";
                        } else {
-                           $title = "";
+                           $popup = '';
                        }
-                       echo " <input $style $title $inputname value=\"$actualresponse\" type=\"text\" size=\"12\" /> ";
+                       echo " <input $style $popup $inputname value=\"$actualresponse\" type=\"text\" size=\"12\" /> ";
                        break;
                    case MULTICHOICE:
                        $outputoptions = '';
@@ -977,10 +983,13 @@ function quiz_print_question($number, $question, $grade, $quizid,
                            $outputoptions .= "<option value=\"$answer->id\" $selected>$answer->answer</option>";
                        }
                        if ($feedbackitem) {
-                           echo "<select title=\"".s($feedbackitem)."\" $style $inputname>";
+                           $title = str_replace("'", "\\'", $feedbackitem);
+                           $popup = " onmouseover=\"return overlib('$title', CAPTION, '$strfeedback', FGCOLOR, '$THEME->cellcontent');\" ".
+                                    " onmouseout=\"return nd();\" ";
                        } else {
-                           echo "<select $style $inputname>";
+                           $popup = '';
                        }
+                       echo "<select $popup $style $inputname>";
                        echo $outputoptions;
                        echo '</select>';
                        break;

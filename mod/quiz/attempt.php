@@ -66,6 +66,8 @@
                   <A HREF=\"view.php?id=$cm->id\">$quiz->name</A> -> $strattemptnum", 
                   "", "", true);
 
+    echo '<div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>'; // for overlib
+
 /// Check availability
 
     if ($quiz->attempts and $attempts and count($attempts) >= $quiz->attempts) {

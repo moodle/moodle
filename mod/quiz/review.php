@@ -80,6 +80,8 @@
                   -> <a href=\"view.php?id=$cm->id\">$quiz->name</a> -> $strreview", 
                  "", "", true);
 
+    echo '<div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>'; // for overlib
+
     print_heading($quiz->name);
 
 
