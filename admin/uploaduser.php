@@ -13,31 +13,23 @@
         error("You must be an administrator to edit users this way.");
     }
 
-
     if (! $site = get_site()) {
         error("Could not find site-level course");
     }
 
+    if (!$adminuser = get_admin()) {
+        error("Could not find site admin");
+    }
+
     $streditmyprofile = get_string("editmyprofile");
-    $strnewuser = get_string("newuser");
-    $userfullname = $strnewuser;
-    $straddnewuser = get_string("importuser");
     $stradministration = get_string("administration");
-    $strusers = get_string("users");
     $strchoose = get_string("choose");
-    $struploadusers = get_string("uploadusers");
+    $struser = get_string("user");
+    $strusers = get_string("users");
     $strusersnew = get_string("usersnew");
-    $invalidfieldname = get_string("invalidfieldname");
-    $fieldrequired = get_string("fieldrequired");
-    $missingfield = get_string("missingfield");
-    $erroronline = get_string("erroronline");
-    $unknowncourse = get_string("unknowncourse");
-    $usernotaddedregistered = get_string("usernotaddedregistered");
-    $usernotaddederror = get_string("usernotaddederror");
-    $enroledincourse = get_string("enroledincourse");
-    $notenroledincourse = get_string("notenroledincourse");
-    
-    $adminuser = get_record("user","id",1);
+    $struploadusers = get_string("uploadusers");
+    $straddnewuser = get_string("importuser");
+
 
 /// Print the header
 
@@ -49,7 +41,6 @@
 /// If a file has been uploaded, then process it
 
     if ($filename = valid_uploaded_file($_FILES['userfile'])) {
-        $notifytext = '';
 
         //Fix mac/dos newlines
         $text = my_file_get_contents($filename);
@@ -97,7 +88,7 @@
         foreach ($header as $i => $h) {
             $h = trim($h); $header[$i] = $h; // remove whitespace
             if (!($required[$h] or $optionalDefaults[$h] or $optional[$h])) {
-                error("\"$h\" $invalidfieldname.", 'uploaduser.php');
+                error(get_string('invalidfieldname', 'error', $h), 'uploaduser.php');
             }
             if ($required[$h]) {
                 $required[$h] = 2;
@@ -106,7 +97,7 @@
         // check for required fields
         foreach ($required as $key => $value) {
             if ($value < 2) {
-                error("\"$key\" $fieldrequired.", 'uploaduser.php');
+                error(get_string('fieldrequired', 'error', $key), 'uploaduser.php');
             }
         }
         $linenum = 2; // since header is line 1
@@ -129,7 +120,9 @@
                 foreach ($record as $name => $value) {
                     // check for required values
                     if ($required[$name] and !$value) {
-                        error("$missingfield \"$name\" $erroronline $linenum.", 'uploaduser.php');
+                        error(get_string('missingfield', 'error', $name). " ".
+                              get_string('erroronline', 'error', $linenum), 
+                              'uploaduser.php');
                     }
                     // password needs to be encrypted
                     else if ($name == "password") {
@@ -162,7 +155,7 @@
                 }
                 for ($i=0; $i<5; $i++) {
                     if ($addcourse[$i] && !$courseid[$i]) {
-                        $notifytext .= "-1," . $addcourse[$i] . " $unknowncourse<br \>\n";
+                        notify(get_string('unknowncourse', 'error', $addcourse[$i]));
                     }
                 }
                 if (! $user->id = insert_record("user", $user)) {
@@ -170,39 +163,30 @@
                         //Record not added - probably because user is already registered
                         //In this case, output userid from previous registration
                         //This can be used to obtain a list of userids for existing users
-                        $error_uid = -1;
                         if ($user = get_record("user","username",$username)) {
-                            $error_uid = $user->id;
-                        }
-                        if ($error_uid != -1) {
-                            $notifytext .= $error_uid . "," . $username . ",$usernotaddedregistered";
+                            notify("$user->id ".get_string('usernotaddedregistered', 'error', $username));
                         } else {
-                            $notifytext .= $error_uid . "," . $username . ",$usernotaddederror";
+                            notify(get_string('usernotaddederror', 'error', $username));
                         } 
                     }
                 } else if ($user->username != "changeme") {
-                    $notifytext .= $user->id . "," . $user->username . ",";
+                    notify("$struser: $user->id = $user->username");
                     $numusers++;
                 }
-                $lbreak = 1;
                 for ($i=0; $i<5; $i++) {
                     if ($courseid[$i]) {
                         if (enrol_student($user->id, $courseid[$i])) {
-                            $lbreak = 0;
-                            $notifytext .= ",$enroledincourse $addcourse[$i]<br \>\n";
+                            notify('-->'. get_string('enrolledincourse', '', $addcourse[$i]));
                         } else {
-                            $notifytext .= ",$notenroledincourse $addcourse[$i]<br \>\n";
+                            notify('-->'.get_string('enrolledincoursenot', '', $addcourse[$i]));
                         }
                     }
-                }
-                if ($lbreak) {
-                    $notifytext .= "<br \>\n";
                 }
                 unset ($user);
             }
         }
         fclose($fp);
-        notify("$notifytext <br />\n$strusersnew: $numusers");
+        notify("$strusersnew: $numusers");
 
         echo '<hr />';
     }
