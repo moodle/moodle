@@ -1602,13 +1602,13 @@ function current_language() {
 /// Returns the code for the current language
     global $CFG, $USER, $SESSION;
 
-    if (isset($CFG->courselang)) {    // Course language can override all other settings for this page
+    if (!empty($CFG->courselang)) {    // Course language can override all other settings for this page
         return $CFG->courselang;
 
-    } else if (isset($SESSION->lang)) {    // Session language can override other settings
+    } else if (!empty($SESSION->lang)) {    // Session language can override other settings
         return $SESSION->lang;
 
-    } else if (isset($USER->lang)) {    // User language can override site language
+    } else if (!empty($USER->lang)) {    // User language can override site language
         return $USER->lang;
 
     } else {
