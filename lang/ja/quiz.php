@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004121600)
+      // quiz.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004122801)
 
 
 $string['acceptederror'] = 'エラー範囲';
@@ -167,6 +167,7 @@ $string['nodataset'] = '無し - ワイルドカードではありません';
 $string['nominal'] = '名義尺度';
 $string['nomoreattempts'] = '解答回数が終了しました。';
 $string['nopossibledatasets'] = '利用可能なデータセットがありません。';
+$string['noquestionintext'] = '問題テキストが埋め込み問題を含んでいません。';
 $string['noquestions'] = '問題が追加されていません。';
 $string['noresponse'] = '返答無し';
 $string['noreview'] = 'この小テストの復習を許可されていません。';
