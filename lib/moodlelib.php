@@ -887,14 +887,9 @@ function email_to_users(&$users, $from, $subject, $messagetext, $messagehtml="",
     $mail->From     = "$from->email";
     $mail->FromName = "$from->firstname $from->lastname";
     $mail->Subject  =  stripslashes($subject);
-    $mail->AddReplyTo("$from->email","$from->firstname $from->lastname");
-
-    $mail->AddAddress("$from->email","$from->firstname $from->lastname"); 
 
     foreach ($users as $user) {
-        if ($user->email <> $from->email) {
-            $mail->AddBCC("$user->email","$user->firstname $user->lastname"); 
-        }
+        $mail->AddAddress("$user->email","$user->firstname $user->lastname"); 
     }
 
     $mail->WordWrap = 70;                               // set word wrap
