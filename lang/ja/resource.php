@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.5 unstable development (2004091700)
+      // resource.php - created with Moodle 1.5 unstable development (2004092000)
 
 
 $string['addresource'] = '¥ê¥½¡¼¥¹¤òÄÉ²Ã¤¹¤ë';
@@ -24,7 +24,7 @@ $string['configwebsearch'] = 'URL¤ò¥¦¥§¥Ö¥Ú¡¼¥¸¤Þ¤¿¤Ï¥ê¥ó¥¯¤È¤·¤ÆÄÉ²Ã¤¹¤ë»þ¡¢¤³¤
 $string['configwindowsettings'] = '¤³¤³¤Ç¤Ï¡¢¿·¤·¤¤¥ê¥½¡¼¥¹¤òÅÐÏ¿¤¹¤ëºÝ¤Ë¥Õ¥©¡¼¥à¤ËÉ½¼¨¤µ¤ì¤ë¥¦¥¤¥ó¥É¥¦ÀßÄê¤Ë´Ø¤¹¤ëÃÍ¤òÅÐÏ¿¤·¤Þ¤¹¡£ºÇ½é¤Ë¥ê¥½¡¼¥¹¤òÅÐÏ¿¤·¤¿¸å¡¢¤³¤ÎÃÍ¤Ï¸Ä¡¹¤Î¥æ¡¼¥¶¤Î¥Ç¥Õ¥©¥ë¥È¤È¤Ê¤ê¤Þ¤¹¡£';
 $string['directlink'] = '¤³¤Î¥Õ¥¡¥¤¥ë¤ò¥À¥¤¥ì¥¯¥È¥ê¥ó¥¯¤¹¤ë';
 $string['directoryinfo'] = 'ÁªÂò¤·¤¿¥Ç¥£¥ì¥¯¥È¥ê¤ÎÁ´¥Õ¥¡¥¤¥ë¤¬É½¼¨¤µ¤ì¤Þ¤¹¡£';
-$string['display'] = 'É½¼¨';
+$string['display'] = '¥¦¥¤¥ó¥É¥¦';
 $string['editingaresource'] = '¥ê¥½¡¼¥¹¤òÊÔ½¸¤¹¤ë';
 $string['encryptedcode'] = '°Å¹æ²½¥³¡¼¥É';
 $string['example'] = 'Îã';
@@ -73,7 +73,7 @@ $string['resourcetype7'] = '¥×¥í¥°¥é¥à';
 $string['resourcetype8'] = 'Wiki-like¥Æ¥­¥¹¥È';
 $string['resourcetype9'] = '¥Ç¥£¥ì¥¯¥È¥ê';
 $string['resourcetypedirectory'] = '¥Ç¥£¥ì¥¯¥È¥ê¤ÎÉ½¼¨';
-$string['resourcetypefile'] = '¥Õ¥¡¥¤¥ë¤Þ¤¿¤Ï¥¦¥§¥Ö¤Ë¥ê¥ó¥¯';
+$string['resourcetypefile'] = '¥Õ¥¡¥¤¥ë¡¦¥¦¥§¥Ö¥µ¥¤¥È¤Ë¥ê¥ó¥¯';
 $string['resourcetypehtml'] = '¥¦¥§¥Ö¥Ú¡¼¥¸¤ÎºîÀ®';
 $string['resourcetypelabel'] = '¥é¥Ù¥ë¤ÎÁÞÆþ';
 $string['resourcetypetext'] = '¥Æ¥­¥¹¥È¥Ú¡¼¥¸¤ÎºîÀ®';
