@@ -53,39 +53,46 @@
     }
 
     $sessiongap = 5 * 60;    // 5 minutes
-    $sessionstart = 0;
-    $sessionend   = 0;
+    $sessionend = 0;
+    $sessionstart   = 0;
     $sessionusers = array();
-    $timelast   = 0;
+    $lasttime   = 0;
 
-    foreach ($messages as $message) {
-        if (!$timelast) {
-            $timelast = $message->timestamp;
+    foreach ($messages as $message) {  // We are walking BACKWARDS throuhg messages
+        if (!$lasttime) {
+            $lasttime = $message->timestamp;
         }
-        if (!$sessionstart) {
-            $sessionstart = $message->timestamp;
+        if (!$sessionend) {
+            $sessionend = $message->timestamp;
         }
-        if ($message->timestamp - $timelast < $sessiongap) {  // Same session
-            $sessionusers[$message->user] = $message->timestamp;  // Remember user
+        if (($lasttime - $message->timestamp) < $sessiongap) {  // Same session
+            if ($message->userid and !$message->system) {
+                $sessionusers[$message->userid] = $message->timestamp;  // Remember user
+            }
         } else {  
-            $sessionend = $lasttime;
+            $sessionstart = $lasttime;
 
-            print_heading(usertime($sessionstart)." --> ". usertime($sessionend));
+            if ($sessionend - $sessionstart > 60 and count($sessionusers) > 1) {
 
-            print_simple_box_start("center");
+                print_heading(userdate($sessionstart)." --> ". userdate($sessionend));
 
-            foreach ($sessionusers as $sessionuser => $lastusertime) {
-                $user = get_record("user", "id", $sessionuser);
-                print_user_picture($user->id, $course->id, $user->picture);
+                print_simple_box_start("center");
+
+                foreach ($sessionusers as $sessionuser => $lastusertime) {
+                    if ($user = get_record("user", "id", $sessionuser)) {
+                        print_user_picture($user->id, $course->id, $user->picture);
+                        echo "&nbsp;$user->firstname $user->lastname<br clear=all />";
+                    }
+                }
+
+                print_simple_box_end();
             }
 
-            print_simple_box_end();
-
-            $sessionstart = $message->timestamp;
+            $sessionend = $message->timestamp;
             $sessionusers = array();
-            $sessionusers[$message->user] = $message->timestamp;  // Remember user
+            $sessionusers[$message->userid] = $message->timestamp;  // Remember user
         }
-        $timelast = $message->timestamp;
+        $lasttime = $message->timestamp;
     }
 
 /// Finish the page
