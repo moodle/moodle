@@ -38,7 +38,7 @@
                        <A HREF=\"index.php?id=$course->id\">Forums</A> ->";
     }
 
-    add_to_log($course->id, "forum", "view forum", "index.php?f=$forum->id", "$forum->id");
+    add_to_log($course->id, "forum", "view forum", "view.php?f=$forum->id", "$forum->id");
 
     print_header("$course->shortname: $forum->name", "$course->fullname",
                  "$navigation $forum->name", "", "", true, $buttontext);
