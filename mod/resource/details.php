@@ -111,6 +111,12 @@
                 if ($form->instance) {     // Re-editing
                     if (!$form->alltext) {
                         $newwindow = "";
+                        $window->resizable = "checked";  // Defaults
+                        $window->scrollbars = "checked";
+                        $window->status = "checked";
+                        $window->location = "checked";
+                        $window->width = 620;
+                        $window->height = 450;
                     } else {
                         $newwindow = "checked";
                         $rawoptions = explode(',', $form->alltext); 
