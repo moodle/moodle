@@ -693,9 +693,7 @@ $string['sites'] = 'Sitios';
 $string['sitesettings'] = 'Configuración de la página de inicio';
 $string['size'] = 'Tamaño';
 $string['socialheadline'] = 'Foro de debate, últimos temas';
-$string['someallowguest'] = 'Si solamente desea ver el funcionamiento de la plataforma puede entrar como invitado. Esto le permitirá ver algunos cursos, pero no podrá
-
-participar en ellos (escribir, etc.). Para entrar como invitado haga clic aquí';
+$string['someallowguest'] = 'Algunos cursos pueden permitir el acceso como invitado';
 $string['someerrorswerefound'] = 'Alguna información se ha perdido o es incorrecta. Mire abajo para conocer los detalles.';
 $string['sortby'] = 'Ordenar por';
 $string['startdate'] = 'Fecha de inicio del curso';
