@@ -16,6 +16,8 @@
         error("Only teachers can view logs");
     }
 
+    session_write_close();
+
     $strlivelogs = get_string("livelogs");
     $strupdatesevery = get_string("updatesevery", "moodle", COURSE_LIVELOG_REFRESH);
 
