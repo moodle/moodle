@@ -760,7 +760,7 @@ function calendar_gmmktime_check($m, $d, $y, $default = false) {
         return $default;
     }
     else {
-        return gmmktime(0, 0, 0, $m, $d, $y);
+        return gmmktime(0, 0, 0, $m, $d, $y, 0);
     }
 }
 
@@ -770,7 +770,7 @@ function calendar_mktime_check($m, $d, $y, $default = false) {
         return $default;
     }
     else {
-        return mktime(0, 0, 0, $m, $d, $y);
+        return mktime(0, 0, 0, $m, $d, $y, 0);
     }
 }
 
@@ -1263,71 +1263,6 @@ function calendar_find_day_in_month($index, $weekday, $month, $year) {
     }
 
     return $targetday;
-}
-
-function calendar_dst_update_preset($dstpreset) {
-
-    // What's the date according to our user right now?
-    $now  = time();
-    $date = usergetdate($now);
-
-    $changes = calendar_dst_changes_for_year($date['year'], $dstpreset);
-
-    // Great... let's see where exactly we are now.
-    if($now < $changes['activate']) {
-        print_object("<<");
-        // DST has not been turned on this year
-        $dstpreset->next_change = $changes['activate'];
-        // For the last change, we need to fetch the previous year's DST deactivation timestamp
-        $prevchanges = calendar_dst_changes_for_year($date['year'] - 1, $dstpreset);
-        $dstpreset->last_change = $prevchanges['deactivate'];
-        $dstpreset->current_offset = 0;
-    }
-    else if($now < $changes['deactivate']) {
-        print_object("<>");
-        // DST is on for this year right now
-        $dstpreset->last_change = $changes['activate'];
-        $dstpreset->next_change = $changes['deactivate'];
-        $dstpreset->current_offset = $dstpreset->apply_offset;
-    }
-    else {
-        print_object(">>");
-        // DST has already been turned off; we are nearing the end of the year
-        $dstpreset->last_change = $changes['deactivate'];
-        // For the next change, we need to fetch next year's DST activation timestamp
-        $nextchanges = calendar_dst_changes_for_year($date['year'] + 1, $dstpreset);
-        $dstpreset->next_change = $nextchanges['activate'];
-        $dstpreset->current_offset = 0;
-    }
-
-    return $dstpreset;
-}
-
-function calendar_dst_changes_for_year($year, $dstpreset) {
-
-    $monthdayactivate   = calendar_find_day_in_month($dstpreset->activate_index,   $dstpreset->activate_day,   $dstpreset->activate_month,   $year);
-    $monthdaydeactivate = calendar_find_day_in_month($dstpreset->deactivate_index, $dstpreset->deactivate_day, $dstpreset->deactivate_month, $year);
-
-    if(isset($dstpreset->activate_time)) {
-        list($activate_hour, $activate_minute)     = explode(':', $dstpreset->activate_time);
-    }
-    else {
-        $activate_hour   = $dstpreset->activate_hour;
-        $activate_minute = $dstpreset->activate_minute;
-    }
-    if(isset($dstpreset->deactivate_time)) {
-        list($deactivate_hour, $deactivate_minute) = explode(':', $dstpreset->deactivate_time);
-    }
-    else {
-        $deactivate_hour   = $dstpreset->deactivate_hour;
-        $deactivate_minute = $dstpreset->deactivate_minute;
-    }
-    
-    $timezone       = get_user_timezone(99);
-    $timeactivate   = make_timestamp($year, $dstpreset->activate_month,   $monthdayactivate,   $activate_hour,   $activate_minute,   0, $timezone, false);
-    $timedeactivate = make_timestamp($year, $dstpreset->deactivate_month, $monthdaydeactivate, $deactivate_hour, $deactivate_minute, 0, $timezone, false);
-
-    return array('activate' => $timeactivate, 0 => $timeactivate, 'deactivate' => $timedeactivate, 1 => $timedeactivate);
 }
 
 function calendar_print_month_selector($name, $selected) {

@@ -164,7 +164,11 @@
         blocks_print_group($PAGE, $pageblocks[BLOCK_POS_CENTERUP]);
     }
 
-    echo '<div style="padding: 10px; background: gold; text-align: center;">Content Here</div>';
+    echo '<div style="padding: 10px; background: gold; text-align: center;">Content Here';
+    
+    print_object(make_timestamp(2005, 6, 1, 0, 0, 0));
+
+    echo '</div>';
 
     echo '<p style="text-align: center; padding: 10px; background: black; color: white;">Center-down position:</p>';
     if(blocks_have_content($pageblocks[BLOCK_POS_CENTERDOWN]) || $editing) {

@@ -165,7 +165,7 @@
                     // Calculate the last/next/current_offset variables
                     $preset->activate_time   = sprintf('%02d:%02d', $preset->activate_hour, $preset->activate_minute);
                     $preset->deactivate_time = sprintf('%02d:%02d', $preset->deactivate_hour, $preset->deactivate_minute);
-                    $preset = calendar_dst_update_preset($preset);
+                    $preset = dst_update_preset($preset);
                     print_object("record is:");
                     print_object($preset);
                     print_object('The last change time was: ');
