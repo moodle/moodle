@@ -97,6 +97,10 @@
         ini_set("session.gc_maxlifetime", $CFG->sessiontimeout);
     }
 
+/// Set sessioncookie variable if it isn't already
+    if (!isset($CFG->sessioncookie)) {
+        $CFG->sessioncookie = '';
+    }
 
 /// Location of standard files
 
@@ -171,11 +175,7 @@
     class object {};
     
     if (!isset($nomoodlecookie)) {
-        if (isset($CFG->sessioncookie)) {
-            session_name('MoodleSession'.$CFG->sessioncookie);
-        } else {
-            session_name('MoodleSession');
-        }
+        session_name('MoodleSession'.$CFG->sessioncookie);
         @session_start();
         if (! isset($_SESSION['SESSION'])) { 
             $_SESSION['SESSION'] = new object; 

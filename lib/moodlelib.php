@@ -500,11 +500,8 @@ function ismoving($courseid) {
 function set_moodle_cookie($thing) {
 /// Sets a moodle cookie with an encrypted string
     global $CFG;
-    if (isset($CFG->sessioncookie)) {
-        $cookiename = 'MOODLEID_'.$CFG->sessioncookie;
-    } else {
-        $cookiename = 'MOODLEID_';
-    }
+
+    $cookiename = 'MOODLEID_'.$CFG->sessioncookie;
 
     $days = 60;
     $seconds = 60*60*24*$days;
@@ -518,11 +515,7 @@ function get_moodle_cookie() {
 /// Gets a moodle cookie with an encrypted string
     global $CFG;
 
-    if (isset($CFG->sessioncookie)) {
-        $cookiename = 'MOODLEID_'.$CFG->sessioncookie;
-    } else {
-        $cookiename = 'MOODLEID_';
-    }
+    $cookiename = 'MOODLEID_'.$CFG->sessioncookie;
 
     if (empty($_COOKIE[$cookiename])) {
         return "";
