@@ -1,12 +1,14 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.5 development (2004082600)
+      // resource.php - created with Moodle 1.5 unstable development (2004083000)
 
 
 $string['addresource'] = 'リソースを追加する';
 $string['chooseafile'] = 'ファイルの選択またはアップロード';
+$string['chooseparameter'] = 'パラメータを選択';
 $string['configdefaulturl'] = 'ここでは新しいURLベースのリソースを作成する場合に前もって入力される値を設定します。';
 $string['configfilterexternalpages'] = 'この設定により全ての外部リソース(ウェブページ、アップロードしたHTMLファイル)に現在設定されているフィルター(例えば用語集自動リンク)が適用されます。設定することでコースページの動作が著しく遅くなる恐れがあります。必要がある時のみ注意してお使いください。';
 $string['configframesize'] = 'フレーム内にウェブページやアップロードしたファイルが表示される場合のトップフレーム(ナビゲーションを含む)のサイズ(ピクセル)です。';
+$string['configparametersettings'] = 'ここでは、新しいリソースを登録する際にフォームに表示されるデフォルトのパラメータの値を設定します。最初にリソースを登録した後、この値は個々のユーザのデフォルトとなります。';
 $string['configpopup'] = 'ポップアップウインドウに表示される新しいリソースを追加する場合、デフォルトでこのオプションを使用しますか?';
 $string['configpopupdirectories'] = 'デフォルトでダイレクトリンクをポップアップウインドウに表示しますか?';
 $string['configpopupheight'] = '新しいポップアップウインドウのデフォルトの高さは?';
@@ -17,7 +19,9 @@ $string['configpopupscrollbars'] = 'ポップアップウインドウをデフォルトでスクロー
 $string['configpopupstatus'] = 'ポップアップウインドウにデフォルトでステータスバーを表示しますか?';
 $string['configpopuptoolbar'] = 'ポップアップウインドウにデフォルトでツールバーを表示しますか?';
 $string['configpopupwidth'] = '新しいポップアップウインドウのデフォルトの幅は?';
+$string['configsecretphrase'] = 'このシークレットワードは、リソースをパラメータとして送信する時に使用する暗号コードを生成する為に使用されます。暗号コードは、ユーザのIPアドレスとシークレットワードを結びつけてmd5により生成されます。これにより、リソースが高度にセキュリティ対策をとられた通信を実現することが出来ます。';
 $string['configwebsearch'] = 'URLをウェブページまたはリンクとして追加する時、このロケーションは、ユーザがURLを検索する為のヘルプとして提供されます。';
+$string['configwindowsettings'] = 'ここでは、新しいリソースを登録する際にフォームに表示されるウインドウ設定に関する値を登録します。最初にリソースを登録した後、この値は個々のユーザのデフォルトとなります。';
 $string['directlink'] = 'このファイルをダイレクトリンクする';
 $string['directoryinfo'] = '選択したディレクトリの全ファイルが表示されます。';
 $string['display'] = '表示';
