@@ -145,7 +145,7 @@ function qualified_me() {
 
 function match_referer($good_referer = "") {
 /// returns true if the referer is the same as the good_referer.  If
-/// good_refer is not specified, use qualified_me as the good_referer 
+/// good_referer is not specified, use qualified_me as the good_referer 
 
 	if ($good_referer == "") { 
         $good_referer = qualified_me(); 
