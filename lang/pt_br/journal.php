@@ -23,5 +23,6 @@ $string['overallrating'] = "Avaliação global";
 $string['rate'] = "Taxa";
 $string['startoredit'] = "Comece ou edite minha entrada de diário";
 $string['viewallentries'] = "Veja todas as entradas do diário";
-
+$string['feedbackupdated'] = "Gabarito atualizado para entradas de \$a";
+$string['saveallfeedback'] = "Salvar todo meu gabarito";
 ?>

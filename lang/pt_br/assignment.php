@@ -36,5 +36,8 @@ $string['viewfeedback'] = "Classes e gabarito da atribuição da vista";
 $string['viewsubmissions'] = "Ver \$a tarefas enviadas";
 $string['yoursubmission'] = "Seu envio";
 $string['allowresubmit'] = "Enviar novamente reservado";
+$string['feedback'] = "Gabarito";
+$string['saveallfeedback'] = "Salvar todo meu gabarito";
+
 
 ?>

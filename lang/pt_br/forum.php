@@ -3,9 +3,9 @@
 
 
 $string['addanewdiscussion'] = "Adicione um tópico de discussão novo";
-$string['allowchoice'] = "Permita todo o mundo para escolher";
-$string['allowdiscussions'] = "Possa um \$a começo discussões novas?";
-$string['allowratings'] = "Permita taxar postos?";
+$string['allowchoice'] = "Permitir todos escolher";
+$string['allowdiscussions'] = "Permitir um \$a começar novas discussões?";
+$string['allowratings'] = "Permitir exibir tópicos?";
 $string['allowsdiscussions'] = "Este forum permite para cada pessoa começar um tópico de discussão.";
 $string['anyfile'] = "Qualquer arquivo";
 $string['attachment'] = "Anexo";
@@ -42,7 +42,7 @@ $string['intronews'] = "Notícias gerais e anúncios";
 $string['introsocial'] = "Um forum aberto para conversar sobre qualquer coisa que você queira";
 $string['introteacher'] = "Um forum para professor - só notas e discussão";
 $string['learningforums'] = "Foruns aprendendo";
-$string['maxtimehaspassed'] = "Desculpe, mas o tempo de máximo por editar este posto (\$a) passou!";
+$string['maxtimehaspassed'] = "Desculpe, mas o tempo de máximo por editar este tópico (\$a) passou!";
 $string['message'] = "Mensagem";
 $string['modeflatnewestfirst'] = "Exibição de respostas, com mais novo primeiro";
 $string['modeflatoldestfirst'] = "Exibição de respostas, com mais velho primeiro";
@@ -67,8 +67,8 @@ $string['olderdiscussions'] = "Discussões mais velhas";
 $string['openmode0'] = "Nenhuma discussão, nenhuma resposta";
 $string['openmode1'] = "Nenhuma discussão, mas são permitidas respostas";
 $string['openmode2'] = "São permitidas discussões e respostas";
-$string['parentofthispost'] = "Pai deste posto";
-$string['postadded'] = "Seu posto foi adicionado com sucesso.<P>Clique em \$a para editar, isto se você quer fazer qualquer mudança.";
+$string['parentofthispost'] = "Responsável deste tópico";
+$string['postadded'] = "Seu tópico foi adicionado com sucesso.<P>Clique em \$a para editar, isto se você quer fazer qualquer mudança.";
 $string['postincontext'] = "Veja este tópico no contexto";
 $string['postingtip'] = "<B>Cuidados para envio:</B> Quando respondendo: <UL> <LI>leia o tópico cuidadosamente <LI>procure coisas sobre as que você pode fazer um comentário </UL> Enquanto escrevendo: <UL> <LI>mantenha seus tópicos pequeno <LI>explique suas próprias idéias claramente <LI>pense nas perguntas que você pode fazer </UL>";
 $string['postmailinfo'] = "Esta é uma cópia de uma mensagem postada no \$a website. Para adicionar sua resposta pelo website, dê clique neste link:";
@@ -99,5 +99,5 @@ $string['unsubscribe'] = "dessubscritos deste forum";
 $string['youratedthis'] = "Você avaliou este";
 $string['yournewtopic'] = "Seu tópico de discussão novo";
 $string['yourreply'] = "Sua resposta";
-
+$string['ratingssaved'] = "As avaliações foram salvas";
 ?>
