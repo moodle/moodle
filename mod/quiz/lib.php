@@ -222,20 +222,25 @@ function quiz_print_correctanswer($text) {
 
 function quiz_print_question_icon($question) {
 // Prints a question icon
+
+    global $QUIZ_QUESTION_TYPE;
+
+    echo "<A HREF=\"question.php?id=$question->id\" TITLE=\"".$QUIZ_QUESTION_TYPE[$question->type]."\">";
     switch ($question->type) {
         case SHORTANSWER:
-            echo "<IMG HEIGHT=16 WIDTH=16 SRC=\"pix/sa.gif\">";
+            echo "<IMG BORDER=0 HEIGHT=16 WIDTH=16 SRC=\"pix/sa.gif\">";
             break;
         case TRUEFALSE:
-            echo "<IMG HEIGHT=16 WIDTH=16 SRC=\"pix/tf.gif\">";
+            echo "<IMG BORDER=0 HEIGHT=16 WIDTH=16 SRC=\"pix/tf.gif\">";
             break;
         case MULTICHOICE:
-            echo "<IMG HEIGHT=16 WIDTH=16 SRC=\"pix/mc.gif\">";
+            echo "<IMG BORDER=0 HEIGHT=16 WIDTH=16 SRC=\"pix/mc.gif\">";
             break;
         case RANDOM:
-            echo "<IMG HEIGHT=16 WIDTH=16 SRC=\"pix/rs.gif\">";
+            echo "<IMG BORDER=0 HEIGHT=16 WIDTH=16 SRC=\"pix/rs.gif\">";
             break;
     }
+    echo "</A>\n";
 }
 
 function quiz_print_question($number, $questionid, $grade, $courseid, 

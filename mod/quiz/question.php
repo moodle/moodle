@@ -123,6 +123,7 @@
                 delete_records("quiz_shortanswer", "question", $question->id);
 
                 $answers = array();
+                $maxfraction = -1;
 
                 // Insert all the new answers
                 foreach ($form->answer as $key => $formanswer) {
@@ -136,6 +137,9 @@
                             error("Could not insert quiz answer!");
                         }
                         $answers[] = $answer->id;
+                        if ($fraction[$key] > $maxfraction) {
+                            $maxfraction = $fraction[$key];
+                        }
                     }
                 }
 
@@ -145,6 +149,14 @@
                 $options->usecase = $form->usecase;
                 if (!insert_record("quiz_shortanswer", $options)) {
                     error("Could not insert quiz shortanswer options!");
+                }
+
+                /// Perform sanity checks on fractional grades
+                if ($maxfraction != 1) {
+                    $maxfraction = $maxfraction * 100;
+                    notice_yesno(get_string("fractionsnomax", "quiz", $maxfraction), "question.php?id=$question->id", "edit.php");
+                    print_footer($course);
+                    exit;
                 }
             break;
             case TRUEFALSE:
@@ -179,6 +191,9 @@
                 delete_records("quiz_answers", "question", $question->id);
                 delete_records("quiz_multichoice", "question", $question->id);
 
+                $totalfraction = 0;
+                $maxfraction = -1;
+
                 $answers = array();
 
                 // Insert all the new answers
@@ -193,6 +208,13 @@
                             error("Could not insert quiz answer!");
                         }
                         $answers[] = $answer->id;
+
+                        if ($fraction[$key] > 0) {                 // Sanity checks
+                            $totalfraction += $fraction[$key];
+                        }
+                        if ($fraction[$key] > $maxfraction) {
+                            $maxfraction = $fraction[$key];
+                        }
                     }
                 }
 
@@ -202,6 +224,23 @@
                 $options->single = $form->single;
                 if (!insert_record("quiz_multichoice", $options)) {
                     error("Could not insert quiz multichoice options!");
+                }
+
+                /// Perform sanity checks on fractional grades
+                if ($options->single) {
+                    if ($maxfraction != 1) {
+                        $maxfraction = $maxfraction * 100;
+                        notice_yesno(get_string("fractionsnomax", "quiz", $maxfraction), "question.php?id=$question->id", "edit.php");
+                        print_footer($course);
+                        exit;
+                    }
+                } else {
+                    if ($totalfraction != 1) {
+                        $totalfraction = $totalfraction * 100;
+                        notice_yesno(get_string("fractionsaddwrong", "quiz", $totalfraction), "question.php?id=$question->id", "edit.php");
+                        print_footer($course);
+                        exit;
+                    }
                 }
             break;
             case RANDOM:
