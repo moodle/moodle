@@ -172,8 +172,11 @@
             if (! $post = forum_get_post_full($discussion->firstpost)) {
                 error("Could not find the first post in this forum");
             }
-            forum_set_display_mode($mode);
-            forum_print_discussion($course, $forum, $discussion, $post, $USER->mode);
+            if ($mode) {
+                set_user_preference("forum_displaymode", $mode);
+            }
+            $displaymode = get_user_preferences("forum_displaymode", $CFG->forum_displaymode);
+            forum_print_discussion($course, $forum, $discussion, $post, $displaymode);
             break;
 
         case 'eachuser':
