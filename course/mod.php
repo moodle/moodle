@@ -35,7 +35,7 @@
             error("You can't modify this course!");
         }
 
-        $modlib = "../mod/$mod->modulename/lib.php";
+        $modlib = "$CFG->dirroot/mod/$mod->modulename/lib.php";
         if (file_exists($modlib)) {
             include_once($modlib);
         } else {
