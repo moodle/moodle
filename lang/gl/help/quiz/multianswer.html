@@ -1,0 +1,66 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD>
+<META content="text/html; charset=windows-1252" http-equiv=Content-Type>
+<META content="Microsoft FrontPage 4.0" name=GENERATOR></HEAD>
+<BODY>
+<P align=center><B>Respostas anidadas ("Cloze")</B></P>
+<P>Este tipo de pregunta é moi flexible e semellante ao popular formato coñecido 
+como ("Cloze").<P>As preguntas consisten nunha pasaxe de texto (en formato Moodle) que
+conteñen varias respostas anidadas tales como respostas de elección múltiple, 
+respuestas curtas e respostas numéricas.<P>Actualmente non dispomos dunha <I>interface</I> gráfica para crear este 
+tipo de preguntas, de xeito que é preciso especificar o formato da pregunta
+empregando a caixa de texto, ou ben importalas desde arquivos externos.<P>Amósase
+a continuación un exemplo do texto de entrada empregado para especificar unha pregunta 
+anidada:
+<FORM>
+<CENTER><TEXTAREA cols=60 rows=15 wrap=virtual>Esta pregunta consiste nun 
+texto que contén unha resposta incrustada {1:MULTICHOICE:Resposta 
+errónea#Feedback para esta resposta errónea~Outra resposta errónea#Feedback 
+para a outra resposta errónea~=Resposta correcta#Feedback para a resposta 
+correcta~%50%Resposta que vale a metade da nota#Feedback para a resposta 
+metade de nota} logo comprobará esta resposta curta {1:SHORTANSWER:Resposta 
+errónea#Feedback para esta resposta errónea~=Resposta correcta#Feedback para 
+a resposta correcta~%50%Resposta que vale a metade da nota#Feedback para 
+a resposta metade de nota} e, finalmente temos, un número con coma 
+flotante {2:NUMERICAL:=23.8:0.1#Feedback para a resposta correcta 
+23.8~%50%N/A#Feedback para a resposta metade de nota, situada na zona 
+próxima á resposta correcta}.
+
+Advirta que enderezos como www.moodle.org e emoticonas :-) funcionan do 
+modo habitual:
+a) ¿É correcto? {:MULTICHOICE:=Si#Correcto~Non#Temos diferentes opinións}
+b) ¿Que puntuación lle daría? {3:NUMERICAL:=3:2}
+
+¡Boa sorte!
+</TEXTAREA> </CENTER></FORM>
+<P>Os estudantes verán o exemplo anterior desta forma:</P>
+<FORM>
+<TABLE align=center border=0 cellPadding=5 cellSpacing=0 class=generalbox 
+width="90%">
+  <TBODY>
+  <TR>
+    <TD bgColor=#ffffff class=generalboxcontent>
+      <TABLE cellSpacing=10 width="100%">
+        <TBODY>
+        <TR>
+          <TD noWrap vAlign=top width=100>
+            <P align=center><B>3</B></P>
+            <P align=center><FONT size=1>8 Puntos</FONT></P><IMG alt="" height=1 
+            src="multianswer_files/spacer.htm" width=100><BR></TD>
+          <TD vAlign=top>
+            <P>Esta pregunta consiste nun texto que contén unha resposta 
+            incrustada <SELECT name=q4ma1><OPTION selected></OPTION><OPTION 
+              value=4>Resposta errónea</OPTION><OPTION value=5>Outra resposta 
+              errónea</OPTION><OPTION value=6>Resposta correcta</OPTION><OPTION 
+              value=7>Resposta que vale a metade da nota</OPTION></SELECT> 
+            logo comprobará esta resposta curta <INPUT name=q4ma2 size=8> e 
+            finalmente temos un número con coma flotante <INPUT name=q4ma3 
+            size=8> .<BR><BR>Advirta que enderezos como <A 
+            href="http://www.moodle.org/" 
+            target=newpage>http://www.moodle.org/</A> e emoticonas <IMG alt=:-) 
+            height=15 src="" width=15> funcionan do xeito habitual:<BR>a) ¿É 
+            correcto? <SELECT name=q4ma4><OPTION selected></OPTION><OPTION 
+              value=13>Sí</OPTION><OPTION value=14>No</OPTION></SELECT> <BR>b) 
+            ¿Que puntuación lle daría? <INPUT name=q4ma5 size=8> <BR><BR>¡Boa 
+            sorte!</P></TD></TR></TBODY></TABLE></TD></TR></TBODY></TABLE></FORM>
+						<BR></BODY></HTML>

@@ -1,0 +1,705 @@
+<head>
+    <title>Documentación de Moodle: Instalación</title>
+	<link rel="stylesheet" href="../theme/standard/styles.php" type="TEXT/CSS">
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<style type="text/css">
+<!--
+.sectionheading {
+	font-size: medium;
+	font-weight: bold;
+	font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+	border: 1px dotted;
+	padding: 10px;
+	background-color: #EEEEEE;
+}
+-->
+</style>
+</head>
+
+<body bgcolor="#FFFFFF">
+<h2>Instalación de Moodle</h2>
+
+<p>Esta guía explica cómo instalar Moodle por primera vez. Ahonda en detalles 
+  de algunos de los pasos, con la finalidad de cubrir una amplia variedad de pequeñas 
+  diferencias entre las opciones de los diversos servidores web, de manera que 
+  este documento puede parecer largo y complicado. No se desanime por esto, &iexcl;normalmente 
+  yo instalo Moodle en unos pocos minutos!</p>
+
+<p>Tómese su tiempo y lea este documento cuidadosamente, esto le
+
+ahorrará tiempo después.</p>
+
+<h3>Secciones de este documento</h3>
+
+<ol>
+  <li><a href="#requirements">Requisitos</a></li>
+  <li><a href="#downloading">Descarga</a></li>
+  <li><a href="#site">Estructura del sitio</a></li>
+  <li><a href="#data">Crear un directorio de datos</a></li>
+  <li><a href="#database">Crear una base de datos</a></li>
+  <li><a href="#webserver">Revisar las opciones del servidor web</a></li>
+  <li><a href="#config">Editar el archivo <span>config.php</span></a></li>
+  <li><a href="#admin">Ir a la página de administración</a></li>
+  <li><a href="#cron">Configurar el cron</a></li>
+  <li><a href="#course">Crear un nuevo curso</a></li>
+</ol>
+
+<h3 class="sectionheading"><a name="requirements"></a>1. Requisitos</h3>
+
+<div style="padding-left: 3em;">
+
+  <p>Moodle está desarrollado principalmente en Linux usando Apache, MySQL y PHP 
+    (la tambi&eacute;n denominada plataforma LAMP), aunque es revisado regularmente 
+    con PostgreSQL y en en los sistemas operativos Windows XP y Mac OS X y Netware 
+    6.</p>
+
+  <p>Los requisitos de Moodle son:</p>
+
+  <ol>
+    <li>Un servidor web. La mayor&iacute;a de la gente usa Apache, pero Moodle 
+      debe funcionar bien en cualquier servidor web que soporte PHP, como el IIS 
+      de las plataformas Windows.</li>
+    <li>Una instalación de <a href="http://www.php.net/">PHP</a> que esté funcionando 
+      (versión 4.1.0 o posterior), con las siguientes características: 
+      <ul>
+        <li><a href="http://www.boutell.com/gd/" target="_blank">GD library</a> 
+          activada, con soporte para los formatos JPG y PNG.</li>
+        <li>Soporte para sesiones (sessions) activado.</li>
+        <li>Habilitada la posibilidad de enviar (upload) archivos.</li>
+        <li>Modo seguro (safe mode) desactivado (consulte los foros en moodle.org 
+          para ver problemas causados por el &quot;safe mode&quot;).</li>
+      </ul>
+    </li>
+    <li>Una base de datos funcionando: Se recomiendan <a href="http://www.mysql.com/" target="_blank">MySQL</a> 
+      o <a href="http://www.postgresql.org/" target="_blank">PostgreSQL</a> , 
+      que est&aacute;n completamente soportadas en Moodle 1.1. El resto de las 
+      bases de datos ser&aacute;n soportadas en futuras versiones.</li>
+  </ol>
+
+  <p>La mayor&iacute;a de los servicios de alojamiento web (hosting) soportan 
+    todo esto por defecto. Si ha contratado los servicios de alguno de los pocos 
+    servicios de alojamiento web que no soportan estas caracter&iacute;sticas 
+    preg&uacute;nteles por qu&eacute;, y considere la posibilidad de trasladar 
+    su sistema a otra empresa.</p>
+  <p>Si quiere instalar Moodle en su propio ordenador y todo esto le parece un 
+    poco complicado, entonces vea nuestra gu&iacute;a para 
+	<a href="http://moodle.org/doc/?file=installamp.html">Instalar Apache, MySQL 
+    y PHP</a>. Le proporcionar&aacute; instrucciones paso a paso para instalar todo 
+    &eacute;sto en las plataformas m&aacute;s utilizadas.</p>
+  <p>&nbsp;</p>
+
+</div>
+
+<h3 class="sectionheading"><a name="downloading"></a>2. Descarga</h3>
+
+<div style="padding-left: 3em;">
+
+<p>Existen dos formas de obtener Moodle, como un paquete comprimido y a
+
+través de <abbr title="">CVS</abbr>. Esto se explica con
+
+detalle en la página de descarga en 
+<a href="http://moodle.org/download/" target="_blank">http://moodle.org/download/</a></p>
+
+  <p>Tras descargar y descomprimir el archivo, o revisar los archivos vía CVS, 
+    tendrá un directorio llamado "moodle", que contiene varios archivos y carpetas.</p>
+
+  <p>Puede tanto colocar la carpeta completa en su directorio de documentos de 
+    su servidor web, en cuyo caso el sitio estará localizado en <strong>http://suservidor.com/moodle</strong>, 
+    como copiar todos los contenidos directamente en el directorio principal de 
+    documentos del servidor web, en cuyo caso el sitio será simplemente <strong>http://suservidor.com</strong>.</p>
+
+<p>&nbsp;</p>
+
+</div>
+
+<h3 class="sectionheading"><a name="site"></a>3. Estructura del sitio</h3>
+
+<div style="padding-left: 3em;">
+
+<p>A continuación hay un breve resumen de los contenidos del 
+directorio Moodle, para ayudarle a orientarse:</p>
+
+<div style="padding-left: 3em;">
+
+    <p>config.php - El &Uacute;NICO archivo que necesita editar para empezar a 
+      trabajar <br>
+
+version.php - Define la versión actual del código de
+
+Moodle<br>
+
+index.php - La página principal del sitio</p>
+
+	
+
+<ul>
+
+  <li>admin/ - Código para administrar todo el servidor.</li>
+
+  <li>auth/ - Módulos para la autenticación de usuarios.</li>
+
+  <li>course/ - Código para presentar y gestionar los cursos.</li>
+
+      <li>doc/ - Documentación de ayuda de Moodle. (Por ejemplo esta página).</li>
+
+  <li>files/ - Código para presentar y gestionar los archivos cargados.</li>
+
+  <li>lang/ - Textos en diferentes idiomas, un directorio por idioma.</li>
+
+  <li>lib/ - Librerías del código fundamental de Moodle.</li>
+
+  <li>login/ - Código para manejar las entradas y
+
+creación de cuentas.</li>
+
+  <li>mod/ - Todos los módulos de los cursos de Moodle.</li>
+
+  <li>pix/ - Gráficos genéricos del sitio.</li>
+
+  <li>theme/ - Paquetes de temas/pieles para cambiar la apariencia del
+
+sitio.</li>
+
+      <li>user/ - Código para mostrar y gestionar los usuarios.</li>
+
+</ul>
+
+	</div>
+
+<p>&nbsp;</p>
+
+	</div>
+
+<h3 class="sectionheading"><a name="data"></a>4. Crear un directorio de datos</h3>
+
+<div style="padding-left: 3em;">
+
+<p>Moodle también necesita algo de espacio en su disco duro para
+
+almacenar los archivos que vayan a ser cargados, tales como la
+
+documentación de los cursos y las fotos de los usuarios.</p>
+
+  <p>Cr&eacute;e un directorio para esto en cualquier parte. Por seguridad, es 
+    mejor que este directorio NO sea accesible direcamente desde la web. La manera 
+    más sencilla de conseguir esto es simplemente colocarlo FUERA del directorio 
+    web, en caso contrario protéjalo creando un archivo en el directorio de datos 
+    llamado <span>.htaccess</span>, conteniendo la siguiente línea:</p>
+
+<blockquote>
+
+  <pre>deny from all</pre>
+
+</blockquote>
+
+  <p>Para asegurarse de que Moodle puede guardar los archivos subidos, en ese directorio, 
+    revise que el servidor web (por ejemplo Apache) tiene permiso de escritura 
+    en ese directorio. En las máquinas Unix, esto significa establecer que el 
+    dueño del directorio sea algo como "nobody" o "apache".</p>
+
+  <p>En muchos servidores de alojamiento compartido, probablemente usted tendrá 
+    que restringir todo acceso a los archivos de su "grupo" (para evitar que los 
+    clientes de otros sitios web alojados allí vean o cambien sus archivos), pero 
+    proporcione pleno acceso de lectura/escritura a cualquiera (lo que permitirá 
+    que el servidor web acceda a sus archivos). Hable con el administrador de 
+    su servidor si tiene algún problema al establecer esto de forma segura.</p>
+
+<p>&nbsp;</p>
+
+</div>
+
+<h3 class="sectionheading"><a name="database"></a>5. Crear una base de datos</h3>
+
+<div style="padding-left: 3em;"> 
+  <p>Tendrá que crear una base de datos vacía (por ejemplo "moodle") en su sistema 
+    de base de datos, junto con un usuario especial (por ejemplo "moodleuser") 
+    que tenga acceso a esa base de datos (y sólo a esa base de datos). Si quisiera 
+    podría usar el usuario &quot;root&quot;, pero esto no es recomendable en un 
+    sistema de producción: si los hackers (crackers realmente) descubren la contraseña 
+    todo su sistema de base de datos estaría en peligro, en vez de sólo una base 
+    de datos.</p>
+
+<p>Ejemplo de líneas de comando para MySQL:</p>
+
+  <pre>   # mysql -u root -p
+   > CREATE DATABASE moodle; 
+   > GRANT SELECT,INSERT,UPDATE,DELETE,CREATE,DROP,INDEX,ALTER ON moodle.* 
+           TO moodleuser@localhost IDENTIFIED BY 'yourpassword'; 
+   > quit 
+   # mysqladmin -p reload<br></pre>
+  <p>Ejemplo de líneas de comando para PostgreSQL: </p>
+
+<pre>   # su - postgres<br>   &gt; psql -c "create user moodleuser createdb;" template1<br>   &gt; psql -c "create database moodle;" -U moodleuser template1<br>   &gt; psql -c "alter user moodleuser nocreatedb;" template1<br></pre>
+
+  <p>(Para MySQL yo recomiendo vivamente el uso de <a
+
+ href="http://phpmyadmin.sourceforge.net/">phpMyAdmin</a> para manejar sus bases 
+    de datos. Puede hacer todo &eacute;sto mediante una interfaz web.</p>
+
+	
+
+<p>Desde la versión 1.0.8, Moodle soporta prefijos en las
+
+tablas, de manera que puede compartir de forma segura una base de datos
+
+con tablas desde otras aplicaciones.</p>
+
+<p>&nbsp;</p>
+
+</div>
+
+<h3 class="sectionheading"><a name="webserver" id="webserver"></a>6. Revisar las opciones de
+
+su servidor web</h3>
+
+<div style="padding-left: 3em;">
+
+<p>En primer lugar, asegúrese de que su servidor web está
+
+preparado para usar <span>index.php</span> como página por
+
+defecto (quizás además de index.html, default.htm y
+
+otras).</p>
+
+<p>En Apache, esto se logra usando un parámetro <span>DirectoryIndex</span>
+
+en su archivo <span>httpd.conf</span>. El mío normalmente
+
+aparece como sigue:</p>
+
+<blockquote>
+
+  <pre><strong>DirectoryIndex</strong> index.php index.html index.htm </pre>
+
+</blockquote>
+
+<p>Tan sólo asegúrese de que <span>index.php</span>
+
+está en la lista (y preferiblemente al principio de la lista, por
+
+una cuestión de eficacia).</p>
+
+  <p>En segundo lugar, <strong>si usted está usando Apache 2</strong>, entonces 
+    debe activar la variable <em>AcceptPathInfo</em>, la cual permite a los scripts 
+    que sean pasados por argumentos como http://server/file.php/arg1/arg2. Esto 
+    es esencial para permitir que existan enlaces relativos entre sus recursos, 
+    y también proporciona un rendimiento mejorado para las personas que usan su 
+    sitio Moodle. Puede activar esto añadiendo estas líneas a su archivo <span>httpd.conf</span>.</p>
+
+<blockquote>
+
+  <pre><strong>AcceptPathInfo</strong> on </pre>
+
+</blockquote>
+
+<p>En tercer lugar, Moodle requiere que PHP tenga activadas una serie
+
+de opciones para funcionar. <strong>En la mayoría de los
+
+servidores éstas ya están activadas</strong>. Sin
+
+embargo, algunos servidores PHP (y algunas de las más recientes
+
+versiones de PHP) pueden estar configurados de forma diferente. Estas
+
+están definidas en el archivo de configuración de PHP
+
+(normalmente llamado php.ini):</p>
+<blockquote>
+    <pre>
+	magic_quotes_gpc = On
+	magic_quotes_runtime = Off
+	file_uploads = On
+	short_open_tag = On
+	session.auto_start = Off
+	session.bug_compat_warn = Off
+</pre>
+</blockquote>
+<p>Si usted no tiene acceso en su servidor a httpd.conf o php.ini, o
+
+tiene Moodle en un servidor con otras aplicaciones que requieren una
+
+configuración diferente, entonces usted puede ANULAR todas las
+
+opciones por defecto.</p>
+
+  <p>Para hacer esto, necesita crear un archivo llamado <strong>.htaccess</strong> 
+    en el directorio principal de Moodle que contiene definiciones para estas 
+    opciones. Esto sólo funciona para servidores Apache y solo cuando están permitidas 
+    las anulaciones (overrides).</p>
+
+<blockquote>
+
+  <pre>DirectoryIndex index.php index.html index.htm<br>&lt;IfDefine APACHE2&gt;<br>     <strong>AcceptPathInfo</strong> on<br>&lt;/IfDefine&gt;<br><br>php_value magic_quotes_gpc On<br>php_value magic_quotes_runtime Off<br>php_value file_uploads On<br>php_value short_open_tag On<br>php_value session.auto_start Off<br>php_value session.bug_compat_warn Off</pre>
+
+</blockquote>
+
+	
+
+  <p>También puede usted definir cosas como el tamaño máximo de los archivos que 
+    podrán enviarse:</p>
+  <blockquote> 
+    <pre>LimitRequestBody 0
+php_value upload_max_filesize 2M<br>php_value post_max_size 2M<br>     </pre>
+  </blockquote>
+
+<p>La forma más sencilla de hacerlo es copiar el archivo de
+
+ejemplo que hay en lib/htaccess y editarlo de acuerdo con sus
+
+necesidades. Ese archivo contiene más instrucciones. Por
+
+ejemplo, en Unix:</p>
+
+<blockquote>
+
+  <pre>cp lib/htaccess .htaccess</pre>
+
+</blockquote>
+
+<p>&nbsp;</p>
+
+</div>
+
+<h3 class="sectionheading"><a name="config"></a>7. Editar config.php</h3>
+
+<div style="padding-left: 3em;">
+
+<p>Ahora usted puede editar el archivo de configuración, <strong>config.php</strong>,
+
+usando un editor de textos. Este archivo es usado por todos los otros
+
+archivos en Moodle.</p>
+
+  <p>Para comenzar, haga una copia de <strong>config-dist.php</strong> y llámelo 
+    <span>config.php</span>. Hacemos esto para que su <span>config.php</span> 
+    no pueda ser sobrescrito en caso de que actualice Moodle posteriormente.</p>
+
+  <p>Edite <strong>config.php</strong> para especificar los detalles de al base 
+    de datos que acaba de definir (incluyendo un prefijo de tabla - tenga en cuenta 
+    que esto lo EXIGE PostgreSQL), así como la dirección del sitio, el directorio 
+    archivos de sistema y el directorio de datos. El mismo archivo contiene instrucciones 
+    detalladas y ejemplos.</p>
+
+  <p>Despu&eacute;s de haber hecho esto, el resto de la instalaci&oacute;n es 
+    mediante una interfaz web. Para el resto de este documento de instalación 
+    vamos a asumir que su sitio está en: <u>http://ejemplo.com/moodle</u></p>
+
+<p>&nbsp;</p>
+
+</div>
+
+<h3 class="sectionheading"><a name="admin"></a>8. Ir a la página de administración</h3>
+
+<div style="padding-left: 3em;">
+
+<p>La página de administración debe estar ahora
+
+funcionando en: <u>http://ejemplo.com/moodle/admin</u>.
+
+Si intenta acceder a la página principal de su sitio se
+
+encontrará automáticamente en ella de todas maneras. La
+
+primera vez que acceda a la página de administración, se
+
+le presentará la licencia <abbr title="General Public License">GPL</abbr>
+
+que necesariamente tendrá que aceptar para poder continuar con la
+
+configuración.</p>
+
+<p>(Moodle también intentará poner algunas cookies
+
+en su navegador. Si tiene configurado su navegador para avisarle antes
+
+de aceptar las cookies, entonces <strong>debe</strong>
+
+aceptar las cookies de Moodle, o Moodle no
+
+podrá funcionar de forma apropiada.)</p>
+
+<p>Ahora Moodle empezará a preparar su base de datos y a crear
+
+tablas para almacenar los datos. En primer lugar, se crean las tablas
+
+principales de la base de datos. Verá una serie de sentencias
+
+SQL seguidas de mensajes de estado (en color verde o rojo) parecidos a
+
+estos:</p>
+
+<blockquote>
+
+  <p lang="en">CREATE TABLE course ( id int(10) unsigned NOT NULL
+
+auto_increment, category       int(10) unsigned NOT NULL default '0',
+
+password varchar(50) NOT NULL default       '', fullname varchar(254)
+
+NOT NULL default '', shortname varchar(15) NOT       NULL default '',
+
+summary text NOT NULL, format tinyint(4) NOT NULL default       '1',
+
+teacher varchar(100) NOT NULL default 'Teacher', startdate int(10)    
+
+unsigned NOT NULL default '0', enddate int(10) unsigned NOT NULL
+
+default       '0', timemodified int(10) unsigned NOT NULL default '0',
+
+PRIMARY KEY (id))       TYPE=MyISAM</p>
+
+<font color="#006600">SUCCESS</font></p>
+
+    <p>...y cosas así, seguidas de: <font color="#006600">Main 
+      databases set up successfully</font>. </p>
+
+</blockquote>
+
+  <p>Si usted no ve esto, quiere decir que hay algún problema con la base de datos 
+    o las opciones de configuración que ha definido en <span>config.php</span>. 
+    Revise que PHP no esté restringido por un "safe mode" (a menudo los alojamientos 
+    web comerciales tienen establecido el modo seguro). Puede revisar las variables 
+    PHP creando un pequeño archivo que contenga &lt;? phpinfo() ?&gt; y mirándolo 
+    con un navegador. Revise todo esto e intente entrar en la página de nuevo.</p>
+
+<p>Desplácese a la parte de abajo de la página y presione
+
+el enlace "Continuar".</p>
+
+<p>A continuación verá una página similar que
+
+establece todos las tablas requeridas por cada módulo de Moodle.
+
+Como antes, todas deben aparecer en <font color="#006600">verde</font>.</p>
+
+<p>Desplácese nuevamente a la parte de abajo de la página
+
+y seleccione el enlace "Continuar".</p>
+
+  <p>Ahora usted debe ver un formulario en el que puede definir más variables 
+    de configuración para su instalación, tales como el idioma por defecto, el 
+    <span
+
+ lang="en">servidor</span> <abbr title="Simple Mail Transfer Protocol">SMTP</abbr> 
+    y cosas por el estilo. No se preocupe demasiado de tener todo correcto ahora, 
+    siempre podrá volver y editar esto más adelante usando la interfaz de administración. 
+    Desplácese a la parte de abajo de la página y seleccione el enlace "Guardar 
+    cambios".</p>
+
+  <p>Si (y sólo si) usted se encuentra atascado en esta página o en la siguiente, 
+    incapaz de continuar, entonces su servidor probablemente tiene lo que yo llamo 
+    el problema del la referencia defectuosa (&quot;buggy referrer&quot;). Esto 
+    es fácil de arreglar: sólo tiene que desactivar la opci&oacute;n &quot;secureforms&quot;<em></em> 
+    del formulario, luego intente de nuevo entrar en la página.</p>
+
+<p>La siguiente página es un formulario en el que usted puede
+
+definir parámetros para su sitio Moodle y la página
+
+principal, tales como el nombre, formato, descripción y ese tipo
+
+de cosas. Rellénelo (siempre podrá volver y cambiar esto
+
+después) y luego haga clic en "Guardar cambios".</p>
+
+  <p>Finalmente, se le pedirá que cr&eacute;e un usuario administrador de máximo 
+    nivel para el futuro acceso a la página de administración. Rellene los detalles 
+    con su propio nombre, dirección de correo electrónico, etc.; y haga clic en 
+    "Guardar cambios". No todos los campos son obligatorios, pero si olvida rellenar 
+    un campo importante se le avisará.</p>
+
+<p style="padding-left: 9em; padding-right: 9em;"><strong>Asegúrese
+
+de recordar el nombre de usuario y contraseña que ha elegido
+
+para la cuenta de la administración, ya que serán
+
+necesarias para acceder a la página de administración en
+
+el futuro.</strong></p>
+
+  <p>(Si por alguna raz&oacute;n se interrumpe su instalaci&oacute;n, o hay un 
+    error del sistema de alg&uacute;n tipo que le impida entrar usando la cuenta 
+    de admininstrador, normalmente podr&aacute; entrar usando el usuario &quot;admin&quot;, 
+    con contrase&ntilde;a &quot;admin&quot;.)</p>
+  <p>Una vez conseguido esto usted puede volver a la página principal de su sitio. 
+    &Eacute;sta contiene una serie de enlaces dispuestos en un menú que aparece 
+    en la parte izquierda de la p&aacute;gina (estos elementos también aparecen 
+    en una p&aacute;gina aparte de Administraci&oacute;n). &Eacute;stos elementos 
+    s&oacute;lo son visibles para usted ya que ha entrado como el usuario administrador. 
+    Toda su gestión de administración puede desde ahora hacerse desde este menú, 
+    como por ejemplo:</p>
+
+<ul>
+
+  <li>Crear y borrar cursos</li>
+
+  <li>Crear y editar cuentas de usuario</li>
+
+  <li>Administrar cuentas de profesores</li>
+
+    <li>Cambiar opciones del sitio, como temas, etc.</li>
+
+</ul>
+
+<p>&nbsp;</p>
+
+</div>
+
+<h3 class="sectionheading"><a name="cron"></a>9. Configurar el cron</h3>
+
+<div style="padding-left: 3em;">
+
+<p>Algunos módulos de Moodle requieren revisiones continuas para
+
+llevar a cabo tareas. Por ejemplo, Moodle necesita revisar los foros de
+
+discusión para poder enviar copias de los mensajes a las
+
+personas que están suscritas.</p>
+
+  <p>El script que hace todo esto está en el directorio <span>admin</span>, y 
+    se llama <span>cron.php</span>. Sin embargo, no puede funcionar por sí mismo, 
+    de manera que usted tiene que establecer un mecanismo en el que este script 
+    se ejecute regularmente (<abbr title="Ejemplo">por ejemplo</abbr>, cada cinco 
+    o diez minutos). Esto proporciona un "pulso" de manera que el script pueda 
+    llevar a cabo funciones en determinados períodos definidos para cada módulo.</p>
+
+  <p>Tenga en cuenta que al máquina que ejecuta el cron <strong>no tiene que ser 
+    necesariamente la misma en la que está ejecutando Moodle</strong>. Por ejemplo, 
+    si usted tiene un servicio de alojamiento web limitado que no tiene cron, 
+    usted puede elegir ejecutar el cron en otro servidor o en su ordenador personal. 
+    Lo que importa es que el archivo <span>cron.php</span> sea llamado regularmente.</p>
+
+  <p>La carga de este script no es muy alta, as&iacute; que un intervalo de 5 
+    minutos es razonable generalmente, pero si &eacute;sto le preocupa, puede 
+    reducir el periodo de tiempo a algo as&iacute; como 15 minutos o incluso 30 
+    minutos. Es mejor no hacer el intervalo de tiempo demasiado largo, ya que 
+    el retrasar el env&iacute;o de mensajes de correo puede reducir la actividad 
+    del curso.</p>
+  <p>Primero, pruebe que el script funcione directamente desde su navegador:</p>
+
+<blockquote>
+
+  <pre>http://ejemplo.com/moodle/admin/cron.php</pre>
+
+</blockquote>
+
+<p>Ahora, usted necesita establecer alguna manera de ejecutar el script
+
+automáticamente y regularmente.</p>
+
+<h4>Ejecutar el script desde una línea de comandos</h4>
+
+<p>Usted puede llamar a la página desde una línea de
+
+comandos tal como hizo en el ejemplo de arriba. Por ejemplo, puede usar
+
+una utilidad Unix como 'wget':</p>
+
+<blockquote>
+
+  <pre>wget -q -O /dev/null http://ejemplo.com/moodle/admin/cron.php</pre>
+
+</blockquote>
+
+  <p>Advierta en este ejemplo que la salida se elimina (en /dev/null).</p>
+
+<p>Es lo mismo usando lynx:</p>
+
+<blockquote>
+
+  <pre>lynx -dump http://ejemplo.com/moodle/admin/cron.php &gt; /dev/null</pre>
+
+</blockquote>
+
+<p>Como alternativa puede usar una versión de PHP compilada para
+
+ejecutarse desde la línea de comandos. La ventaja de hacer esto
+
+es que las entradas a su servidor web no se llenan con constantes
+
+solicitudes a <span>cron.php</span>. La desventaja es que
+
+necesitará tener acceso a una versión de línea de
+
+comandos de PHP.</p>
+
+<blockquote>
+
+  <pre>/opt/bin/php /web/moodle/admin/cron.php<br><br><br>(Windows) C:\apache\php\php.exe C:\apache\htdocs\moodle\admin\cron.php<br><br></pre>
+
+</blockquote>
+
+<h4>Ejecutar el script automáticamente cada 5 minutos</h4>
+
+<p>En un sistema Unix: Use <strong>cron</strong>. Edite las opciones
+
+de cron desde la línea de comandos usando "crontab -e" y
+
+añada una línea como la siguiente:</p>
+
+<blockquote>
+
+  <pre>*/5 * * * * wget -q -O /dev/null http://example.com/moodle/admin/cron.php</pre>
+
+</blockquote>
+
+  <p>Normalmente, el comando &quot;crontab&quot; le enviar&aacute; al editor 'vi'. 
+    Se entra en &quot;modo de inserci&oacute;n&quot; presionando &quot;i&quot;, 
+    despu&eacute;s teclee la l&iacute;nea de arriba, luego salga del modo de inserci&oacute;n 
+    presionando ESC. Se guardan los cambios y se sale tecleando &quot;:wq&quot;, 
+    se puede salir tambi&eacute;n sin guardar usando &quot;:q!&quot; (sin las 
+    comillas).</p>
+  <p><b>En sistemas Windows</b>: La manera más sencilla es usar esta peque&aacute; 
+    aplicación <a href="http://moodle.org/download/moodle-cron-for-windows.zip" title="Haga clic para descargar esta aplicación(150k)" target="_blank">moodle-cron-for-windows.zip</a> 
+    que hace todo esto de forma muy sencilla. También puede probar a usar la aplicación 
+    integrada en Windows "Tareas programadas".</p>
+  <p></p>
+</div>
+<h3 class="sectionheading"><a name="course"></a>10. Crear un nuevo curso</h3>
+
+<div style="padding-left: 3em;">
+
+  <p>Ahora que Moodle está funcionando de manera apropiada, puede crear un curso.</p>
+
+<p>Seleccione "Crear un nuevo curso" desde la página "Admin" (o
+
+desde los enlaces de administración en la página
+
+principal).</p>
+
+<p>Rellene el formulario, prestando especial atención al formato
+
+del curso. En este momento no tiene que preocuparse demasiado por los
+
+detalles, pues todo puede ser cambiado después por el profesor.</p>
+
+  <p>Presione "Guardar cambios", aparecerá un nuevo formulario en el que puede 
+    asignar profesores al curso. Desde este formulario sólo pueden añadirse cuentas 
+    de usuarios existentes, si necesita una cuenta para un profesor debe pedirle 
+    al profesor que cr&eacute;e su cuenta él mismo (vea la página de entradas) 
+    o cr&eacute;ela usted utilizando la opción "Añadir nuevo usuario" en la página 
+    Admin.</p>
+
+<p>Una vez hecho esto, el curso está listo para ser
+
+personalizado y puede accederse al mismo a través del enlace
+
+"Cursos" en la página principal.</p>
+
+<p>Para obtener más detalles sobre la creación de cursos,
+
+vea el "<a href="./?file=teacher.html">Manual del Profesor</a>"</p>
+
+<p>&nbsp;</p>
+
+</div>
+
+<p align="CENTER"><font size="1"><a href="." target="_top">Documentación de Moodle</a></font></p>
+<p align="CENTER"><font size="1">Version: $Id$</font></p>
+
+</body>

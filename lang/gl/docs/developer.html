@@ -1,0 +1,607 @@
+<head>
+    <title>Documentaci&oacute;n de Moodle: Manual del desarrollador</title>
+	<link rel="stylesheet" href="../theme/standard/styles.php" type="TEXT/CSS">
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<style type="text/css">
+    <!--
+    .sectionheading {
+	  font-size: medium;
+	  font-weight: bold;
+	  font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+	  border: 1px dotted;
+	  padding: 10px;
+	  background-color: #EEEEEE;
+    }
+    -->
+    </style>
+</head>
+
+<body bgcolor="#FFFFFF">
+
+<h2>Manual del Desarrollador</h2>
+
+<p>Este documento describe un poco el diseño de Moodle y cómo se puede contribuir.</p>
+<p>Actuamente es un tanto escueto - &iexcl;con el tiempo se ir&aacute; mejorando 
+  la documentaci&oacute;n!</p>
+<p>Secciones de este documento:</p>
+<ol>
+
+  <li><a href="#architecture">Arquitectura de Moodle</a></li>
+
+  <li><a href="#contribute">Cómo contribuir</a>
+
+    <ul>
+
+      <li><a href="#activities">Las actividades para el aprendizaje</a></li>
+
+      <li><a href="#themes">Temas</a></li>
+
+      <li><a href="#languages">Idiomas</a></li>
+
+      <li><a href="#database">Esquemas de Bases de datos</a></li>
+
+      <li><a href="#courseformats">Formatos de cursos</a></li>
+
+      <li><a href="#doc">Documentación y artículos</a></li>
+
+      <li><a href="#bugs">Cómo participar en rastreo de fallos</a></li>
+
+    </ul>
+
+  </li>
+
+</ol>
+
+<p>&nbsp;</p>
+
+<h3 class="sectionheading"><a name="architecture"></a>1. Arquitectura de Moodle</h3>
+
+<p>Desde la perspectiva de un administrador de sistemas, Moodle ha sido
+
+diseñado de acuerdo con los siguientes criterios:</p>
+
+<ol>
+
+  <li><strong>Moodle debe poder ejecutarse en la más amplia
+
+posible variedad de plataformas</strong><br>
+
+    <br>
+    La plataforma de aplicaciones Web que funciona en la mayoría de las plataformas 
+    es PHP combinada con MySQL, y este es el entorno en el que Moodle ha sido 
+    desarrollado (sobre Linux, Windows, y Mac OS X). Moodle también usa la librería 
+    ADOdb para la abstracci&oacute;n de bases de datos, lo que significa que Moodle 
+    puede usar <a href="http://php.weblogs.com/ADOdb_manual#drivers">más de diez 
+    marcas diferentes de bases de datos</a> (desafortunadamente, a pesar de ello, 
+    no puede aún <em><strong>crear tablas</strong></em> en todas esas bases de 
+    datos. Hablaremos más sobre esto más adelante).<br>
+
+    <br>
+
+  </li>
+
+  <li><strong>Moodle debe ser fácil de instalar, aprender y
+
+modificar</strong><br>
+
+    <br>
+    Los primeros prototipos de Moodle (1999) se construyeron usando <a
+
+ href="http://www.zope.org/" target="_top">Zope</a>, un avanzado servidor de aplicaciones 
+    Web orientado a objetos. Desafortunadamente me pareció que aunque la tecnología 
+    era bastante buena, tenía una curva de aprendizaje muy elevada y no era muy 
+    flexible en términos de administración del sistema. El lenguaje PHP, por otro 
+    lado, es muy fácil de aprender (especialmente si has hecho algo de programación 
+    usando cualquier otro lenguaje de script). Pronto tomé la decisión de evitar 
+    usar un diseño orientado a clases, con la finalidad, una vez más, de mantenerlo 
+    fácil de entender para los principiantes. La reutilización del código se archiva 
+    en librerías con funciones claramente tituladas y con una disposición de los 
+    archivos de script, consistente. PHP es también fácil de instalar (existen 
+    versiones ejecutables para todas las plataformas) y está ampliamente disponible, 
+    pues la mayoría de los servicios de alojamiento lo proporcionan como un estándar.<br>
+
+    <br>
+
+  </li>
+
+  <li><strong>Debe ser fácil de actualizar desde una
+
+versión a la siguiente</strong><br>
+
+    <br>
+    Moodle sabe cu&aacute;l es su versión (así como las versiones de todos los 
+    módulos) y se ha construido un mecanismo interno para que Moodle pueda actualizarse 
+    a sí mismo de forma apropiada a las nuevas versiones (por ejemplo, puede renombrar 
+    las tablas de las bases de datos o añadir nuevos campos). Usando CVS en Unix, 
+    por ejemplo, uno tan sólo tiene que hacer un "cvs update -d" y luego visitar 
+    la página principal del sitio para completar la actualización.<br>
+
+    <br>
+
+  </li>
+
+  <li><strong>Debe ser modular para permitir el crecimiento</strong><br>
+
+    <br>
+
+Moodle tiene una serie de características modulares, incluyendo
+
+temas, actividades, interfaces de idioma, esquemas de base de datos y
+
+formatos de cursos. Esto le permite a cualquiera añadir
+
+características al código básico principal o
+
+incluso distribuirlas por separado. Hablaremos más de esto en la
+
+siguiente sección.<br>
+
+    <br>
+
+  </li>
+
+  <li><strong>Debe poder usarse junto a otros sistemas.</strong><br>
+
+    <br>
+
+Una de las cosas que hace Moodle es mantener todos los archivos para un
+
+curso en un único directorio en el servidor. Esto podría
+
+permitir que el administrador de un sistema proporcione similares
+
+formas de acceso a un nivel de archivo para cada profesor, tal como
+
+Appletalk, SMB, NFS, FTP, WebDAV y demás. Los módulos de
+
+autenticación le permiten a Moodle usar LDAP, IMAP, POP3, NNTP y
+
+otras bases de datos como fuentes de información de los
+
+usuarios. Por otra parte, aún queda trabajo por hacer sobre
+
+esto. Para futuras versiones de Moodle tenemos planeadas las siguientes
+
+características: importación y exportación de los
+
+datos de Moodle utilizando formatos basados en XML (incluyendo IMS y
+
+SCORM), incrementar el uso de hojas de estilo para el formateo de
+
+interfaces (de manera que puedan integrarse visualmente en otros sitios
+
+Web).</li>
+
+</ol>
+
+<p>&nbsp;</p>
+
+<h3 class="sectionheading"><a name="contribute" id="contribute"></a>2. Cómo contribuir</h3>
+
+<p>Tal como se ha mencionado más arriba, Moodle tiene una serie
+
+de características que son modulares. Incluso, aunque usted no
+
+sea un programador, hay cosas que usted podrá cambiar o con las
+
+que puede ayudar.</p>
+
+<h4><a name="activities" id="activities"></a>Actividades de Aprendizaje</h4>
+
+<div style="padding-left: 3em;">
+
+  <p>Estos son con mucho los módulos más importantes, y se encuentran en el directorio 
+    "mod". Por defecto hay siete módulos: Tarea, Consulta, Foro, Diario, Cuestionario, 
+    Material, y Encuesta. Cada módulo está en un subdirectorio separado y consiste 
+    en los siguientes elementos obligatorios (más los scripts extra que son únicos 
+    para cada módulo):</p>
+
+<ul>
+
+  <li>mod.html: un formulario para establecer o actualizar una
+
+instancia de este módulo</li>
+
+  <li>version.php: define alguna meta-información y proporciona
+
+código de actualización</li>
+
+  <li>icon.gif: un icono de 16x16 para el módulo</li>
+
+    <li>db/: volcados SQL de todas las tablas y datos requeridos de una base de 
+      datos (para cada tipo de base de datos)</li>
+
+  <li>index.php: una página para presentar la lista de todas las
+
+instancias en un curso</li>
+
+  <li>view.php: una página para ver una instancia en particular</li>
+
+    <li>lib.php: cualquiera/todas las funciones definidas para el módulo deben 
+      estar aquí. Si el m&oacute;dulo se llama "chisme", entonces las funciones 
+      requeridas incluyen: 
+      <ul>
+
+      <li>chisme_add_instance() - código para añadir una
+
+nueva instancia de chisme</li>
+
+      <li>chisme_update_instance() - código para actualizar una
+
+instancia existente</li>
+
+      <li>chisme_delete_instance() - código para borrar una
+
+instancia</li>
+
+      <li>chisme_user_outline() - dada una instancia, devuelve un
+
+resumen de una contribución de un usuario</li>
+
+      <li>widget_user_complete() - dada una instancia, imprime detalles
+
+sobre la contribución de un usuario<br>
+
+      </li>
+
+      <li>Para evitar posibles conflictos, cualquiera de las funciones
+
+de un módulo debe ser nombrada comenzando con chisme_ (el nombre
+
+del módulo más un guión bajo) y cualquier
+
+constante que usted defina debe comenzar con CHISME_ </li>
+
+    </ul>
+
+  </li>
+
+  <li>Finalmente, cada módulo tendrá algunos archivos de
+
+idioma que contienen cadenas para ese módulo. Lea más
+
+abajo.</li>
+
+</ul>
+
+<p>La forma más fácil de comenzar un nuevo módulo
+
+de actividad es usar la plantilla que hay en <strong><a
+
+ href="http://moodle.org/mod/newmodule_template.zip">mod/newmodule_template.zip</a>.</strong>
+
+Descomprímala y siga las instrucciones que hay en el documento "<span
+
+ lang="en">README</span>".</p>
+
+<p>Quizás también quiera antes enviar algo al <a
+
+ href="http://moodle.org/mod/forum/view.php?id=44" target="_top">Foro
+
+de módulos de actividades sobre el uso de Moodle</a>.</p>
+
+<p>&nbsp;</p>
+
+</div>
+
+<h4><a name="themes" id="themes"></a>Temas</h4>
+
+<div style="padding-left: 3em;">
+
+<p>Los temas (o pieles) definen la apariencia de un sitio. Con la
+
+distribución básica se proporciona una serie de temas
+
+simples, pero usted puede querer crear su propio tema, con sus propios
+
+colores, logo, estilos y gráficos.</p>
+
+<p>Cada tema es un subdirectorio del directorio "theme", y contiene al
+
+menos los siguientes archivos:</p>
+
+<ul>
+
+  <li><strong>config.php</strong>: define los colores del tema que se
+
+usan en todo el sitio</li>
+
+  <li><strong>styles.php</strong>: la hoja de estilos, contiene
+
+definiciones de CSS para elementos HTML estándar así como
+
+para varios elementos de Moodle.</li>
+
+  <li><strong>header.html</strong>: Incluido al principio de cada
+
+página. Este es el que usted necesita editar para añadir
+
+un logo al principio de las páginas, por ejemplo.</li>
+
+  <li><strong>footer.html</strong>: Incluido en el pie de cada
+
+página.</li>
+
+</ul>
+
+<p>Para crear sus propios temas para la versión actual de Moodle:</p>
+
+<ol>
+
+    <li>Copie una de las carpetas de tema existentes a una con un nuevo nombre. 
+      Le recomiendo comenzar con uno de los temas estándar.</li>
+
+  <li>Edite: config.php e inserte sus propios colores.</li>
+
+    <li>Edite: styles.php y cambie su hoja de estilos CSS.</li>
+
+  <li>Edite: header.html y footer.html para añadir nuevos logos
+
+o cambiar la disposición.</li>
+
+</ol>
+
+<p>Advierta que todos estos pasos son opcionales. Usted puede crear una
+
+apariencia radicalmente distinta para su sitio simplemente editando los
+
+colores que aparecen en el archivo config.php</p>
+
+  <p>Advierta también que las actualizaciones de Moodle <em>pueden</em> corromper 
+    ligeramente los temas, así que revise cuidadosamente las notas de al versión 
+    si está usando un tema personalizado.</p>
+
+<p>En particular, Moodle 2.0 tendrá un sistema de
+
+presentación completamente nuevo, probablemente basado en XSL
+
+transformando la salida de XML desde Moodle. Esto quiere decir que los
+
+temas para esta versión tendrán un formato completamente
+
+diferente, pero la ventaja será que habrá un grado de
+
+personalización mucho más alto (incluyendo mover
+
+elementos en la página).</p>
+
+<p>Encontrará más discusión sobre esto en el <a
+
+ href="http://moodle.org/mod/forum/view.php?id=46" target="_top">Foro
+
+sobre temas en el uso de Moodle</a>. Si usted crea un bonito tema que
+
+considera que otros podrían querer usar, &iexcl;por favor,
+
+envíelo en un archivo comprimido al foro sobre temas!.<br>
+
+</p>
+
+</div>
+
+<p>&nbsp;</p>
+
+<h4><a name="languages" id="languages"></a>Idiomas</h4>
+
+<div style="padding-left: 3em;">
+
+<p>Moodle ha sido diseñado para ser internacional. Cada "cadena"
+
+o "página" de texto que se presenta como parte de la interfaz
+
+surge de una serie de archivos de idioma. Cada idioma es un
+
+subdirectorio del directorio "lang". La estructura del directorio
+
+"lang" es la que sigue:</p>
+
+  <p><strong>lang/en</strong> - directorio que contiene todos los archivos para 
+    un idioma (por ejemplo, el inglés)</p>
+
+<ul>
+
+  <li>moodle.php - cadenas para la interfaz principal</li>
+
+    <li>assignment.php - cadenas para el módulo de tareas</li>
+    <li>choice.php - cadenas para el módulo consulta</li>
+
+  <li>forum.php - cadenas para el módulo del foro</li>
+
+  <li>journal.php - cadenas para el módulo del diario</li>
+
+  <li>quiz.php - cadenas para el módulo del cuestionario</li>
+
+    <li>resource.php - cadenas para el módulo de materiales</li>
+
+  <li>survey.php - cadenas para el módulo de encuesta</li>
+
+    <li>.... además de otros módulos si los hay.<br>
+
+    <br>
+      Se llama a las cadenas desde los archivos usando las funciones: <strong><em>get_string()</em></strong><em> 
+      </em>o<em> <strong>print_string()</strong></em>. Cada cadena admite la sustitución 
+      de variables para ayudar a la ordenación de variables en diferentes idiomas. 
+      Por ejemplo:<br>
+
+    <br>
+
+$strdueby = get_string("assignmentdueby", "assignment",      
+
+userdate($date)); <br>
+
+    <br>
+
+Si en un determinado idioma no existe una cadena, entonces se
+
+usará automáticamente en su lugar el equivalente en
+
+inglés.</li>
+
+</ul>
+
+<p><strong>lang/en/help</strong> - contiene todas las páginas de
+
+ayuda (para las ayudas emergentes sensibles al contexto)</p>
+
+<p>Las páginas principales de ayuda están situadas
+
+aquí, mientras que las páginas específicas de cada
+
+módulo están localizadas en subdirectorios con el nombre
+
+del módulo.</p>
+
+<p>Con la función <em>helpbutton</em>, usted puede insertar un
+
+botón de ayuda en una página.</p>
+
+<p>Por ejemplo: helpbutton("text", "Haga clic aquí para obtener
+
+ayuda sobre el texto");</p>
+
+<p>y para los módulos:</p>
+
+<p>helpbutton("forumtypes", "Forum types", "forum");</p>
+
+  <p>Tenga en cuenta que puede editar los idiomas en línea<em
+
+ lang="en"></em>, usando las herramientas web de Administración bajo "Idioma". 
+    Esto hace que sea fácil no sólo crear nuevos idiomas sino también refinar 
+    los existentes. Si va a comenzar a crear un nuevo idioma por favor comuníquese 
+    conmigo: <a href="http://dougiamas.com/" target="_top">Martin Dougiamas</a>.</p>
+
+<p>También querrá enviar un mensaje al <a
+
+ href="http://moodle.org/mod/forum/view.php?id=43" target="_top">Foro
+
+de idiomas sobre el uso de Moodle</a>. </p>
+
+<p>Si usted está haciendo el mantenimiento de un idioma de
+
+manera continuada, yo puedo darle <a href="?file=cvs.html">acceso de
+
+escritura al código fuente de Moodle en el CVS</a> de manera que
+
+pueda hacer el mantenimiento directo en los archivos.</p>
+
+<p>&nbsp;</p>
+
+</div>
+
+<h4><a name="database" id="database"></a>Esquemas de Bases de Datos</h4>
+
+<div style="padding-left: 3em;">
+
+<p>Dada una base de datos funcionando con tablas definidas, el
+
+intencionalmente simple <abbr title="Structured Query Language">SQL</abbr>
+
+usado en Moodle debe funcionar bien con una amplia variedad de marcas de
+
+bases de datos.</p>
+
+<p>Existe un problema con la <strong>creación automática</strong>
+
+de nuevas tablas en una base de datos, que es lo que Moodle intenta
+
+hacer tras la instalación inicial. Debido a que cada base de
+
+datos es muy diferente de las otras, aún no existe una manera de
+
+hacer esto de manera independiente del tipo de plataforma. Para ayudar
+
+a la automatización en cada base de datos, pueden crearse
+
+esquemas que enumeren el SQL requerido para crear tablas en Moodle en
+
+una base de datos determinada. Estos son los archivos que hay en <strong>lib/db</strong>
+
+y dentro del subdirectorio <strong>db</strong> de cada módulo.</p>
+
+  <p>Actualmente, sólo se soportan totalmente de esta manera, MySQL y PostgreSQL 
+    (nadie ha escrito esquemas para otras marcas).</p>
+  <p>Moodle 1.1 usar&aacute; un nuevo m&eacute;todo de esquemas XML independientes 
+    de la base de datos que har&aacute; que todo &eacute;sto no sea necesario.</p>
+  <p>&nbsp;</p>
+
+</div>
+
+<h4><a name="courseformats" id="courseformats"></a>Formatos de curso</h4>
+
+<div style="padding-left: 3em;">
+
+<p>Actualmente Moodle soporta tres formatos de curso diferentes:
+
+semanal, por temas y social.</p>
+
+  <p>Estos están un poco más conectados al resto del código (y, por tanto, son 
+    menos extendibles) pero sigue siendo bastante sencillo añadir nuevos módulos.</p>
+
+  <p>Si tiene cualquier idea para formatos diferentes que necesite o quiera ver 
+    integrados, póngase en contacto conmigo y yo haré mi mayor esfuerzo para tenerlos 
+    disponibles en futuras versiones.</p>
+
+<p>&nbsp;</p>
+
+</div>
+
+<h4><a name="doc" id="doc"></a>Documentación y artículos</h4>
+
+<div style="padding-left: 3em;">
+
+<p>Si a usted le apetece escribir un manual, un artículo, un
+
+documento académico o cualquier otra cosa sobre Moodle, por
+
+favor, &iexcl;hágalo!</p>
+
+  <p>Póngalo en la Web y asegúrese de poner enlaces a <a
+
+ href="http://moodle.org/" target="_top">http://moodle.org/</a></p>
+
+<p>&nbsp;</p>
+
+</div>
+
+<h4><a name="bugs" id="bugs"></a>Participar en el rastreo de fallos</h4>
+
+<div style="padding-left: 3em;">
+
+<p>Finalmente, me gustaría invitarle a registrarse en la lista
+
+de "rastreo de fallos" en <a target=_top href="http://moodle.org/bugs/">http://moodle.org/bugs</a> de manera que pueda enviar cualquier
+
+fallo que encuentre y quizás participar en la discusión
+
+sobre cómo arreglarlos.</p>
+
+  <p>"Fallos" no sólo incluye fallos de software de las versiones actuales de 
+    Moodle, sino también nuevas ideas, mejoras e incluso crítica constructiva 
+    de las actuales características. La belleza del código abierto radica en que 
+    cualquiera puede participar de alguna manera y ayudar a la creación de un 
+    producto mejor para que todos disfrutemos de él. &iexcl;En este proyecto sus 
+    ideas son muy bienvenidas!</p>
+
+<p>&nbsp;</p>
+
+</div>
+
+<p style="text-align: center;">&iexcl;Gracias por usar Moodle!</p>
+
+<p style="text-align: center;">Saludos,<br>
+
+<a href="http://dougiamas.com/" target="_top">Martin Dougiamas</a></p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+
+
+<p align="CENTER"><font size="1"><a href="." target="_top">Documentación de Moodle</a></font></p>
+<p align="CENTER"><font size="1">Version: $Id: developer.html,v 1.2 2001/12/09 
+  10:34:19 martin Exp $</font></p>
+</html>
+</body>

@@ -1,0 +1,403 @@
+<head>
+    <title>Moodle Docs: Teachers Manual</title>
+	<link rel="stylesheet" href="../theme/standard/styles.php" type="TEXT/CSS">
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<style type="text/css">
+    <!--
+    .sectionheading {
+	  font-size: medium;
+	  font-weight: bold;
+	  font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+	  border: 1px dotted;
+	  padding: 10px;
+    }
+    -->
+    </style>
+</head>
+
+<body bgcolor="#FFFFFF">
+
+<h2>Manual del Profesor</h2>
+
+<p>Esta página es una guía de consulta rápida para crear cursos en línea<em lang="en"></em> 
+  con Moodle. Perfila las principales funciones disponibles así como algunas de 
+  las principales decisiones que tendrá que tomar.</p>
+
+<h3>Secciones de este documento:</h3>
+
+<ol>
+
+ <li><a href="#started">Para comenzar</a></li>
+
+ <li><a href="#settings">Configuración del curso</a></li>
+
+ <li><a href="#upload">Subir archivos</a></li>
+
+ <li><a href="#activities">Establecer las actividades</a></li>
+
+ <li><a href="#course">Funcionamiento del curso</a></li>
+
+ <li><a href="#further">Información adicional</a></li>
+
+</ol>
+
+<h3 class="sectionheading"><a name="started"></a>Para comenzar</h3>
+
+<div style="padding-left: 3em;">
+
+  <p>Este documento parte de la suposición de que el administrador de su sitio 
+    ha instalado Moodle y le ha dado un curso nuevo, vac&iacute;o, para comenzar. 
+    También asume que usted ha entrado en su curso identificándose con su cuenta 
+    de profesor.</p>
+
+  <p>A continuación hay tres consejos generales que le ayudarán a comenzar.</p>
+
+<ol>
+
+ <li><strong>No tenga miedo de experimentar:</strong>
+
+ <p style="padding-left: 3em;">siéntase libre para hurgar por
+
+ahí y cambiar cosas. Es difícil romper nada en un curso
+
+Moodle e incluso aunque lo haga, normalmente es fácil repararlo.</p>
+
+ </li>
+
+ <li><strong>Tenga en cuenta y use estos pequeños iconos</strong>:
+      <blockquote> 
+ <p><img src="../pix/i/edit.gif"
+
+ alt="Icono de edición."> - el <strong>icono
+
+de edición</strong> le permite editar cualquier cosa que
+
+esté junto a él.</p>
+
+ <p><img src="../pix/help.gif"
+
+ alt="Icono de ayuda" width="22" height="17"
+
+ style="border: medium none ;"> - el <strong>icono de ayuda</strong> le
+
+proporcionará ayuda en una ventana emergente.</p>
+        <p>&nbsp;<img src="../pix/i/hide.gif" width="16" height="16"> - el <strong>icono 
+          de ojo-abierto</strong> le permitir&aacute; ocultar algo a los estudiantes</p>
+        <p>&nbsp;<img src="../pix/i/show.gif" width="16" height="16"> - el <strong>icono 
+          del ojo-cerrado</strong> le permitir&aacute; mostrar un elemento oculto</p>
+
+ </blockquote> 
+ </li>
+
+ <li><strong>Use la barra de navegación que aparece en la parte
+
+superior de la página</strong> 	
+
+ <blockquote>
+        <p>&eacute;sta le permite saber dónde se encuentra y evita que se pierda.</p>
+        <p>&nbsp;</p>
+      </blockquote>
+
+ </li>
+
+</ol>
+
+</div>
+
+<h3 class="sectionheading"><a name="settings"></a>Configuración del curso</h3>
+
+<div style="padding-left: 3em;">
+
+  <p>Lo primero que debe hacer es mirar bajo "Administración" en la página principal 
+    del curso y hacer clic en "<strong>Configuración</strong>" (Advierta que este 
+    enlace y de hecho toda la sección de Administración está disponible sólo para 
+    usted (y el administrador del sitio). Los estudiantes no podrán ver estos 
+    enlaces.</p>
+
+  <p>En la página de Configuración puede cambiar una serie de opciones de su curso, 
+    desde el nombre del mismo hasta el día en que comenzará. No vamos a hablar 
+    aquí de todas ellas, ya que todas tienen un icono de ayuda a su lado que las 
+    explica en detalle. Sin embargo, voy a hablar sobre la más importante de ellas: 
+    el <strong>formato de curso</strong>.</p>
+
+  <p>El formato de curso que usted elija decidirá la disposición básica de su 
+    curso, como una plantilla. Moodle versión 1.0 tiene tres formatos, en el futuro 
+    probablemente habrá muchos más (por favor, &iexcl;envíe sus ideas a <a href="mailto:martin@moodle.com">martin@moodle.com</a>!)</p>
+
+  <p>A continuación hay algunas pantallas de tres ejemplos de curso en cada uno 
+    de los tres formatos (ignore las diferencias de color, las cuales fueron establecidas 
+    para todo el sitio por el administrador):</p>
+
+<p align="center"><strong>Formato semanal:</strong><br>
+
+<img src="pix/weekly.jpg" alt="Vista de un curso con formato semanal."
+
+ width="570" height="527"></p>
+
+<p align="center">&nbsp;</p>
+
+  <p align="center"><strong>Formato por temas:</strong></p>
+  <p align="center"> <img src="pix/topics.jpg" alt="Vista de un curso con formato por temas."
+
+ width="570" height="463"></p>
+
+<p align="center">&nbsp;</p>
+
+  <p align="center"><strong>Formato social:</strong></p>
+  <p align="center"> <img src="pix/social.jpg" alt="Vista de un curso con formato social."
+
+ width="570" height="429"></p>
+  <p>&nbsp;</p>
+
+  <p>Advierta que los formatos semanal y por temas son muy similares en su estructura. 
+    La diferencia principal es que cada sección en el formato semanal cubre exactamente 
+    una semana, mientras que en el formato por temas cada sección cubre aquello 
+    que usted quiera. El formato social no usa mucho contenido y se basa o centra 
+    alrededor de un s&oacute;lo foro, que se presenta en la página principal.</p>
+
+  <p>Consulte los botones de ayuda en la página de Configuración del Curso para 
+    obtener más detalles.</p>
+
+<p>&nbsp;</p></div>
+
+<h3 class="sectionheading"><a name="upload"></a>Subir archivos</h3>
+
+<div style="padding-left: 3em;">
+
+  <p>Es posible que usted tenga contenidos que desee añadir a su curso, tales 
+    como páginas web, archivos de audio, archivos de v&iacute;deo, documentos 
+    en formato <span lang="en">Word</span>, o animaciones en <span lang="en">Flash</span>. 
+    Cualquier tipo de archivo existente puede subirse a su curso y almacenarse 
+    en el servidor. Estando sus archivos en el servidor, usted puede moverlos, 
+    renombrarlos, editarlos o borrarlos.</p>
+
+<p>Todo esto se logra a través del enlace <strong>Archivos</strong>
+
+en el menú de Administración. La sección de
+
+archivos aparece como esta:</p>
+
+<p align="center"><img src="pix/files.jpg"
+
+ alt="Vista de la sección de archivos de un curso." width="400"
+
+ height="347"></p>
+
+<p>&nbsp;</p>
+
+  <p>Esta interfaz está sólo disponible para los profesores, no es accesible para 
+    los estudiantes. Los alumnos podr&aacute;n acceder a los archivos individuales 
+    más tarde (como "Materiales", consulte la siguiente sección).</p>
+
+  <p>Tal como puede ver en la pantalla, los archivos se presentan como una lista 
+    en subdirectorios. Puede crear cualquier cantidad de subdirectorios para organizar 
+    sus archivos y mover sus archivos de uno a otro.</p>
+
+  <p>El subir archivos desde la web está restringido a uno a la vez. Si quiere 
+    subir un montón de archivos de una vez (por ejemplo un sitio web entero), 
+    lo más sencillo es usar un <strong>programa zip</strong> para comprimirlos 
+    en un único archivo, subir el archivo "zip" y descomprimirlo en el servidor 
+    (verá un enlace "unzip" junto a los archivos comprimidos zip).</p>
+
+  <p>Para ver una vista previa de cualquier archivo que haya subido sólo tiene 
+    que hacer clic en su nombre. Su navegador se ocupará de presentarlo o de descargarlo 
+    en su ordenador.</p>
+
+  <p>Pueden editarse <em lang="en">online</em> archivos en formato texto y <acronym title="HyperText Markup Language" lang="en">HTML</acronym>. 
+    Los otros tipos de archivo tendrán que se editados en su ordenador personal 
+    y subirlos de nuevo. Si usted sube un archivo con el mismo nombre que uno 
+    ya existente será automáticamente sobreescrito.</p>
+
+  <p>Una nota final: Si su contenido reside en la web, entonces usted no tendrá 
+    que subir los achivos en absoluto, puede enlazar con él directamente desde 
+    dentro del curso (vea el módulo Materiales en la siguiente sección).</p>
+  <p>&nbsp;</p>
+
+</div>
+
+<h3 class="sectionheading"><a name="activities"></a>Establecer las actividades</h3>
+
+<div style="padding-left: 3em;">
+
+<p>Crear un curso implica añadir módulos de actividad, en
+
+la página principal del curso, que los estudiantes
+
+usarán. Podrá revolver el orden siempre que quiera.</p>
+
+  <p>Para activar el modo de edici&oacute;n, haga clic en "Activar edición" que 
+    aparece bajo "Administración". Esto muestra u oculta los controles extra que 
+    le permiten manipular su página principal del curso. Advierta en la primera 
+    pantalla de arriba (la del Formato de curso semanal) que los controles de 
+    edición están activados.</p>
+
+  <p>Para añadir una nueva actividad, simplemente vaya a la semana o tema o sección 
+    de la pantalla donde quiere añadirla, y seleccione el tipo de actividad desde 
+    el menú desplegable. A continuación hay un resumen de las actividades estándar 
+    en Moodle 1.0:</p>
+
+  <dl>
+    <dt><strong>Tarea</strong></dt>
+    <dd>Una tarea es donde usted establece un trabajo que tienen que hacer los 
+      alumnos con una fecha de entrega y una calificación máxima. Los estudiantes 
+      podrán subir un archivo para cumplir con el requisito. La fecha en la que 
+      suben sus archivos queda registrada. Después, usted dispondrá de una página 
+      en la que puede ver cada archivo (y cuán tarde o temprano fue subido) y 
+      luego grabar una calificación y un comentario. Media hora después de que 
+      usted haya calificado a un alumno, Moodle enviará automáticamente un mensaje 
+      de correo electrónico a ese estudiante con una notificación.</dd>
+    <br>
+    <br>
+    <dt><strong>Consulta</strong></dt>
+    <dd>Una actividad de consulta es muy simple. Usted hace una pregunta y especifica 
+      una elecci&oacute;n de respuestas. Los estudiantes pueden hacer su elección 
+      y usted tiene una pantalla de informe en la que puede ver los resultados. 
+      Yo suelo usar esto para obtener consentimiento por parte de mis alumnos, 
+      pero usted puede usarlo para hacer una encuesta rápida o conseguir que la 
+      clase vote sobre algo. </dd>
+    <br>
+    <br>
+    <dt><strong>Foro</strong></dt>
+    <dd>Este módulo es, con mucho, el más importante. Es aquí donde la discusión 
+      tiene lugar. Cuando añada un nuevo foro, tendrá la posibilidad de elegir 
+      entre diferentes tipos: un &quot;debate sencillo&quot; sobre un &uacute;nico 
+      tema, un &quot;foro para uso general&quot; abierto a la participación de 
+      todos, o uno de tipo &quot;cada persona plantea un tema&quot;. </dd>
+    <br>
+    <br>
+    <dt><strong>Diario</strong></dt>
+    <dd>Cada actividad del diario es una entrada en el diario del curso entero. 
+      Para cada uno usted puede especificar una pregunta abierta que guíe lo que 
+      los estudiantes escriban, así como también un período de tiempo en el que 
+      el diario est&eacute; abierto (esto sólo en el formato de curso semanal). 
+      Como norma general se suele crear un diario por semana. Aliente a los alumnos 
+      a escribir de manera reflexiva y crítica en estos diarios, pues están sólo 
+      disponibles para ellos y usted. Después usted podrá calificar y comentar 
+      todas las entradas de esa semana o tópico, y los estudiantes recibirán un 
+      mensaje de correo electrónico automático informándoles de su respuesta. 
+    </dd>
+    <br>
+    <br>
+    <dt><strong>Material</strong></dt>
+    <dd>Los materiales son el contenido de su curso. Cada material puede ser un 
+      archivo que usted haya subido o al que apunta usando una direcci&oacute;n 
+      (URL). También usted puede mantener p&aacute;ginas simples con texto, escribiéndolas 
+      directamente en un formulario al efecto. </dd>
+    <br>
+    <br>
+    <dt><strong>Cuestionario</strong></dt>
+    <dd>Este módulo le permite diseñar y proponer exámenes o test, compuestos 
+      de preguntas de opci&oacute;n múltiple , verdadero/falso, y preguntas con 
+      respuestas cortas. Estas preguntas se mantienen clasificadas en una base 
+      de datos por categor&iacute;as, y pueden ser reutilizadas dentro de un curso 
+      e incluso entre varios cursos. Puede permitirse el intentar resolver los 
+      cuestionarios varias veces. Cada intento se califica automáticamente, y 
+      el profesor puede elegir si quiere que se muestren o no los comentarios 
+      o las respuestas correctas. Este módulo incluye utilidades de calificaci&oacute;n. 
+    </dd>
+    <br>
+    <br>
+    <dt><strong>Encuesta</strong></dt>
+    <dd>El módulo de encuesta proporciona una serie de instrumentos de encuesta 
+      predefinidos que son útiles para la evaluación y comprensión de su clase. 
+      Actualmente incluyen los instrumentos COLLES Y ATTLS. Pueden pasarse a los 
+      estudiantes al principio, como herramienta de diagnóstico, y al final del 
+      curso como herramienta de evaluación (En mis cursos, yo uso una cada semana).</dd>
+  </dl>
+
+<br>
+
+  <p>Tras añadir sus actividades usted puede moverlas arriba y abajo en la presentación 
+    de su curso haciendo clic en los pequeños iconos de flecha (<img src="../pix/t/up.gif"
+
+ alt="Arriba" width="9" height="10"> <img src="../pix/t/down.gif"
+
+ alt="Abajo" width="9" height="10">) que están junto a cada una de ellas. También 
+    puede eliminarlas usando el icono con forma de equis <img src="../pix/t/delete.gif" alt="Eliminar" width="10"
+
+ height="10">, y re-editarlas usando el icono de edición <img
+
+ src="../pix/t/edit.gif" alt="Editar." width="10" height="11">.</p>
+  <p>&nbsp;</p>
+
+</div>
+
+<h3 class="sectionheading"><a name="course"></a>Funcionamiento del curso</h3>
+
+<div style="padding-left: 3em;">
+
+  <p>Hay grandes planes para ampliar este documento y convertirlo en un tutorial 
+    m&aacute;s completo. Hasta entonces aquí hay algunas pocas ideas:</p>
+
+<ol>
+
+    <li>Suscríbase a todos los foros para mantenerse en contacto con la actividad 
+      de su clase.</li>
+
+    <li>Aliente a todos los estudiantes a rellenar sus perfiles (incluyendo fotos) 
+      y l&eacute;alos todos - esto le ayudará a poner en contexto las aportaciones 
+      posteriores y le facilitar&aacute; el contestar de forma que se ajuste sus 
+      propias necesidades.</li>
+
+    <li>Mantenga las notas para sí mismo en el "<strong>Foro de profesores</strong>" 
+      (bajo Administración). &Eacute;ste es especialmente útil cuando el profesorado 
+      trabaja en equipo.</li>
+
+    <li>Use el enlace "<strong>Registros</strong>" (bajo Administración) para 
+      obtener acceso a los registros completos y en bruto. En él verá un enlace 
+      a una ventana emergente que se actualiza cada sesenta segundos y que muestra 
+      la última hora de actividad. Es &uacute;til tenerla abierta en su escritorio 
+      todo el d&iacute;a para ver lo que ocurre en el curso.</li>
+
+    <li>Use el "<strong>Informe de Actividades</strong>" (junto a cada nombre 
+      en la lista de todas las personas, o desde cuaqluier página de perfil de 
+      usuario). Esto le proporciona una magnífica manera de ver lo que cualquier 
+      persona en particular ha estado haciendo en el curso.</li>
+
+    <li>Conteste a los estudiantes rápidamente. No lo deje para después, hágalo 
+      enseguida. No sólo es fácil agobiarse con la cantidad que puede generarse, 
+      sino que es una parte crucial de la creación y mantenimiento de un sentimiento 
+      de comunidad en su curso.</li>
+
+</ol>
+
+<p>&nbsp;</p></div>
+
+<h3 class="sectionheading"><a name="further"></a>Información adicional</h3>
+
+<div style="padding-left: 3em;">
+
+  <p>Si tiene cualquier problema particular con su sitio, debe contactar con su 
+    administrador local del sitio.</p>
+
+  <p>Si tiene grandes ideas para mejorar Moodle, o incluso alguna buena historia, 
+    venga a <a href="http://moodle.org/" target="_top">moodle.org</a> y únase 
+    al curso llamado "<a
+
+ href="http://moodle.org/course/view.php?id=5" target="_top">Using Moodle</a>". 
+    Nos encantará tener noticias suyas, y usted pude ayudar a mejorar Moodle.</p>
+
+  <p>Si desea contribuir programando nuevos módulos, o escribiendo documentación, 
+    o art&iacute;culos, contacte conmigo: <a href="http://moodle.org/user/view.php?id=1&course=1" target="_top">Martin 
+    Dougiamas</a> o &eacute;chele un vistazo al sitio "bug tracker" de Moodle 
+    (para correcci&oacute;n de errores y solicitud de mejoras), en <a href="http://moodle.org/bugs/" target="_top">moodle.org/bugs</a></p>
+
+  <p style="text-align: center;">Gracias por usar Moodle - &iexcl;y buena suerte 
+    con su ense&ntilde;anza!</p>
+
+<hr title="línea divisoria.">
+
+<p>&nbsp;</p>
+
+</div>
+
+<p style="text-align: center; font-size: 0.7em;"><a href="."
+
+ target="_top">Documentación de Moodle</a></p>
+
+<p style="text-align: center; font-size: 0.7em;">Version: $Id:
+
+teacher.html,v 1.4 2002/08/18 10:00:01 martin Exp $</p>
+
+</body>
+</html>

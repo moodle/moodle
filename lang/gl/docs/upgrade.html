@@ -1,0 +1,172 @@
+<head>
+    <title>Documentación de Moodle: Actualización</title>
+	<link rel="stylesheet" href="../theme/standard/styles.php" type="TEXT/CSS">
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<style type="text/css">
+    <!--
+    .sectionheading {
+	  font-size: medium;
+	  font-weight: bold;
+	  font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+	  border: 1px dotted;
+	  padding: 10px;
+	  background-color: #EEEEEE;
+    }
+    -->
+    </style>
+</head>
+
+<body bgcolor="#FFFFFF">
+<h2>Actualización de Moodle</h2>
+
+<p>Moodle está diseñado para actualizarse limpiamente
+
+desde una versión preliminar a cualquiera posterior.</p>
+
+<p>Al actualizar una instalación de Moodle debe seguir estos
+
+pasos:</p>
+
+<h3 class="sectionheading">1. Copia de seguridad de datos importantes</h3>
+
+<div style="padding-left: 3em;"> 
+  <p>Aunque no es estrictamente necesario, es siempre una buena idea hacer una 
+    copia de seguridad de cualquier sistema en producción antes de hacer una actualización 
+    importante, para el caso de que tenga que volver a la versión antigua por 
+    cualquier razón. De hecho, es una buena idea automatizar su servidor para 
+    que haga copias de seguridad (<span lang="en">backup</span>) de la instalación 
+    de Moodle diariamente, de manera que pueda saltarse este paso.</p>
+
+<p>Hay tres áreas que necesitan ser salvaguardadas:</p>
+  <blockquote> 
+    <p><strong>1. El directorio del software de Moodle en sí</strong></p>
+	<blockquote>
+		<p>Haga una copia separada de estos archivos antes de hacer la
+actualización, de manera que pueda recuperar su config.php
+y de cualquier módulo que haya añadido como temas, idiomas, etc.<strong><br>
+      		</strong></p>
+	</blockquote>
+    <p><strong>2. Su directorio de datos.</strong></p>
+	<blockquote>
+    	<p>Aquí es donde reside el contenido enviado (como los materiales de los cursos 
+      y las tareas de los estudiantes) así que es muy importante tener una copia 
+      de seguridad de estos archivos. Algunas veces la actualización puede mover 
+      o renombrar directorios dentro de su directorio de datos.<strong><br>
+        </strong></p>
+	</blockquote>
+    <p><strong>3. Su base de datos</strong></p>
+	<blockquote> 
+    	<p>La mayoría de las actualizaciónes de Moodle alterarán las tablas de la 
+      base de datos, añadiendo o cambiando campos. Cada base de datos tiene formas 
+      diferentes de hacer la copia de seguridad. Una manera de hacer una copia 
+      de seguridad de una base de datos MySQL es 'vocarla' en un &uacute;nico archivo 
+      SQL. El siguiente ejemplo muestra los comandos en Unix para volcar la base 
+      de datos llamada "moodle":</p>
+
+<p style="padding-left: 3em; font-family: 'Courier New',Courier,monospace;">mysqldump
+
+moodle &gt; moodle-backup-2002-10-26.sql</p>
+
+    <p>También puede usar la opción &quot;Exportar&quot; en la interfaz web de 
+      Moodle "Administrar Base de Datos" para hacer lo mismo en cualquier plataforma.</p>
+
+	<p>&nbsp;</p>
+	</blockquote>
+</blockquote>
+</div>
+
+<h3 class="sectionheading">2. Instalar el nuevo software de Moodle</h3>
+
+<blockquote>
+
+  <p><strong>Usar un archivo descargado</strong></p>
+  <blockquote>
+    <p>No sobreescriba una antigua instalación a menos que esté seguro de lo que 
+      está haciendo... algunas veces los archivos antiguos pueden causar problemas 
+      a la nueva instalación. La mejor manera es renombrar el directorio actual 
+      de Moodle, y luego descomprimir el nuevo archivo de Moodle en la antigua 
+      localización.</p>
+
+	
+
+<p
+
+ style="padding-left: 3em; font-family: 'Courier New',Courier,monospace;">mv
+
+moodle moodle.backup<br>
+      tar xvzf moodle-1.1.tgz</p>    <p>A continuación, copie su config.php y cualquier otra extensi&oacute;n,&nbsp;<em lang="en"></em>como 
+      los temas personalizados:</p>
+
+<p
+
+ style="padding-left: 3em; font-family: 'Courier New',Courier,monospace;">cp
+
+moodle.backup/config.php moodle<br>
+
+cp -pr moodle.backup/theme/mytheme moodle/theme/mytheme</p>
+ 
+</blockquote>
+
+<p><strong>Uso del CVS</strong></p>
+  <blockquote> 
+  <p>Si está usando el CVS, sólo tiene que ir al directorio raíz de Moodle y actualizar 
+    los nuevos archivos:</p>
+<p style="padding-left: 3em; font-family: 'Courier New',Courier,monospace;">cvs update -dP</p>
+
+<p>Asegúrese de usar el parámetro "d" para crear nuevos
+
+directorios si es necesario, y el parámetro "P" para cortar los
+
+directorios vacíos.</p>
+
+  <p>Si ha estado editando archivos de Moodle, mire atentamente los mensajes para 
+    detectar posibles conflictos. Todos sus temas personalizados y extensiones 
+    no estándar permanecer&aacute;n intactos.</p>
+
+<p>&nbsp;</p>
+</blockquote>
+</blockquote>
+<h3 class="sectionheading">3. Concluir la actualización</h3>
+
+<div style="padding-left: 3em;">
+
+  <p>El último paso es poner en funcionamiento los procesos de actualización dentro 
+    de Moodle.</p>
+
+<p>Para hacerlo, vaya a la <a target=_top href="../admin/index.php">página
+
+de admin de su instalación</a>.</p>
+
+  <p
+
+ style="padding-left: 3em; font-family: 'Courier New',Courier,monospace;">http://ejemplo.com/moodle/admin</p>
+
+<p>No importa si usted ha entrado como administrador o no.</p>
+
+  <p>Moodle detecta automáticamente la nueva versi&oacute;n y lleva a cabo todas 
+    las actualizaciones necesarias de las bases de datos y archivos de sistema. 
+    Si hay algo que no puede hacer por sí mismo (caso muy raro) entonces aparecerán 
+    mensajes diciéndole lo que tiene que hacer.<br>
+
+<br>
+
+Suponiendo que todo vaya bien (que no aparezca ningún mensaje de
+
+error) entonces &iexcl;puede comenzar a usar su nueva versión de
+
+Moodle y disfrutar de sus nuevas características!</p>
+
+<p>Si tiene problemas con la actualización, visite <a target=_top href="http://moodle.org/">moodle.org</a>
+y mande un mensaje al <a target=_top href="http://moodle.org/mod/forum/view.php?id=28">Foro de ayuda a la instalación</a>.</p>
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+</div>
+
+<p align="CENTER"><font size="1"><a href="." target="_top">Documentaci&oacute;n 
+  de Moodle</a></font></p>
+<p align="CENTER"><font size="1">Version: $Id$</font></p>
+
+
+</body>
