@@ -54,6 +54,8 @@
         $filename = $fileargs[0];            // Only keep what's before the '?'
     }
 
+    session_write_close();
+
     if (file_exists($pathname) and !is_dir($pathname)) {
         $lastmodified = filemtime($pathname);
         $mimetype = mimeinfo("type", $filename);
