@@ -55,7 +55,7 @@
         } else {
             print_header($course->shortname .': '. $strlogs, $course->fullname, 
                          "<a href=\"../$CFG->admin/index.php\">$stradministration</a> ->
-                          <a href=\"log.php?id=$course->id\">$strlogs</a> -> $userinfo, $dateinfo", );
+                          <a href=\"log.php?id=$course->id\">$strlogs</a> -> $userinfo, $dateinfo", '');
         }
         
         print_heading("$course->fullname: $userinfo, $dateinfo (".usertimezone().")");
