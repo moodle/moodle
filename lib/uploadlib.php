@@ -419,7 +419,7 @@ class upload_manager {
      * @return string
      */
     function get_errors() {
-        return '<p style="color:red;">'. $this->notify .'</p>';
+        return '<p class="notifyproblem">'. $this->notify .'</p>';
     }
 }
 

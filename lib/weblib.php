@@ -690,7 +690,7 @@ function popup_form($common, $options, $formname, $selected='', $nothing='choose
                         ' method="get"'.
                         ' target="'.$CFG->framename.'"'.
                         ' name="'.$formname.'"'.
-                        ' style="display: inline;">';
+                        ' class="popupform" style="display: inline;">';
 
     $output = '<select name="jump" onchange="'.$targetwindow.'.location=document.'.$formname.
                        '.jump.options[document.'.$formname.'.jump.selectedIndex].value;">'."\n";
@@ -2392,7 +2392,7 @@ function print_png($url, $sizex, $sizey, $returnstring, $parameters='alt=""') {
 
     if ($recentIE) {  // work around the HORRIBLE bug IE has with alpha transparencies
         $output .= '<img src="'. $CFG->pixpath .'/spacer.gif" width="'. $sizex .'" height="'. $sizey .'"'.
-                   ' border="0" style="width: '. $sizex .'px; height: '. $sizey .'px; '.
+                   ' border="0" class="png" style="width: '. $sizex .'px; height: '. $sizey .'px; '.
                    ' filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='.
                    "'$url', sizingMethod='scale') ".
                    ' '. $parameters .' />';
@@ -3295,7 +3295,7 @@ function emoticonhelpbutton($form, $field) {
     $SESSION->inserttextform = $form;
     $SESSION->inserttextfield = $field;
     $imagetext = '<img src="' . $CFG->pixpath . '/s/smiley.gif" border="0" align="middle" width="15" height="15" alt=""
-    style="margin-left: 7px" />';
+    class="emoticon" style="margin-left: 7px" />';
 
     helpbutton('emoticons', get_string('helpemoticons'), 'moodle', true, true, '', false, $imagetext);
 }
