@@ -6,6 +6,8 @@
 
     $recordsperpage = 30;
 
+    $db->debug = true;
+
     optional_variable($newuser, "");
     optional_variable($delete, "");
     optional_variable($confirm, "");

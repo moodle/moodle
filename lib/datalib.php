@@ -411,9 +411,9 @@ function insert_record($table, $dataobject, $returnid=true) {
     }
 
     if ($returnid) {
-        //if ($db->hasInsertID) {
-            //return $db->Insert_ID();   // ADOdb has stored the ID for us
-        //}
+        if ($CFG->dbtype == "mysql") { 
+            return $db->Insert_ID();   // ADOdb has stored the ID for us, but it isn't reliable
+        }
         
         // Try to pull the record out again to find the id.  This is the most cross-platform method.
         if ($rs = $db->Execute("SELECT id FROM $CFG->prefix$table WHERE $select")) {
@@ -735,7 +735,7 @@ function get_users_confirmed() {
 }
 
 
-function get_users_unconfirmed($cutofftime=999999999) {
+function get_users_unconfirmed($cutofftime=2000000000) {
     global $CFG;
     return get_records_sql("SELECT * 
                              FROM {$CFG->prefix}user 

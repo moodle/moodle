@@ -14,7 +14,8 @@
 </tr>
 <tr valign=top>
     <td align=right><P><? print_string("frontpagedescription") ?>:</P><BR>
-        <? helpbutton("text", get_string("helptext")) ?>
+     <? helpbutton("writing", get_string("helpwriting"), "moodle", true, true) ?><br \>
+     <? helpbutton("text", get_string("helptext"), "moodle", true, true) ?><br \>
     </td>
     <td><TEXTAREA NAME=summary COLS=50 ROWS=10 WRAP=virtual><? p($form->summary) ?></TEXTAREA>
     <? formerr($err["summary"]) ?>

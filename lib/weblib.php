@@ -1080,8 +1080,8 @@ function redirect($url, $message="", $delay=0) {
     die; 
 }
 
-function notify ($message) {
-    echo "<P align=center><B><FONT COLOR=#FF0000>$message</FONT></B></P>\n";
+function notify ($message, $color="red", $align="center") {
+    echo "<p align=\"$align\"><b><font color=\"$color\">$message</font></b></p>\n";
 }
 
 

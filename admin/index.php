@@ -42,7 +42,7 @@
             set_time_limit(0);  // To allow slow databases to complete the long SQL
             if (modify_database("$CFG->libdir/db/$CFG->dbtype.sql")) {
                 $db->debug = false;
-                notify($strdatabasesuccess);
+                notify($strdatabasesuccess, "green");
             } else {
                 $db->debug = false;
                 error("Error: Main databases NOT set up successfully");
@@ -67,12 +67,12 @@
             $strdatabasechecking = get_string("databasechecking", "", $a);
             $strdatabasesuccess  = get_string("databasesuccess");
             print_header($strdatabasechecking, $strdatabasechecking, $strdatabasechecking);
-            notify($strdatabasechecking);
+            print_heading($strdatabasechecking);
             $db->debug=true;
             if (main_upgrade($CFG->version)) {
                 $db->debug=false;
                 if (set_config("version", $version)) {
-                    notify($strdatabasesuccess);
+                    notify($strdatabasesuccess, "green");
                     print_continue("index.php");
                     die;
                 } else {
@@ -91,7 +91,7 @@
         print_header($strdatabaseupgrades, $strdatabaseupgrades, $strdatabaseupgrades);
 
         if (set_config("version", $version)) {
-            notify("You are currently using Moodle version $version (Release $release)");
+            print_heading("You are currently using Moodle version $version (Release $release)");
             print_continue("index.php");
             die;
         } else {
@@ -152,7 +152,7 @@
             if ($currmodule->version == $module->version) {
                 // do nothing
             } else if ($currmodule->version < $module->version) {
-                notify("$module->name module needs upgrading");
+                print_heading("$module->name module needs upgrading");
                 $upgrade_function = $module->name."_upgrade";
                 if (function_exists($upgrade_function)) {
                     $db->debug=true;
@@ -163,7 +163,8 @@
                         if (! update_record("modules", $module)) {
                             error("Could not update $module->name record in modules table!");
                         }
-                        notify(get_string("modulesuccess", "", $module->name));
+                        notify(get_string("modulesuccess", "", $module->name), "green");
+                        echo "<HR>";
                     } else {
                         $db->debug=false;
                         notify("Upgrading $module->name from $currmodule->version to $module->version FAILED!");
@@ -179,13 +180,15 @@
                 $strmodulesetup    = get_string("modulesetup");
                 print_header($strmodulesetup, $strmodulesetup, $strmodulesetup);
             }
+            print_heading($module->name);
             $updated_modules = true;
             $db->debug = true;
             set_time_limit(0);  // To allow slow databases to complete the long SQL
             if (modify_database("$fullmod/db/$CFG->dbtype.sql")) {
                 $db->debug = false;
                 if ($module->id = insert_record("modules", $module)) {
-                    notify(get_string("modulesuccess", "", $module->name));
+                    notify(get_string("modulesuccess", "", $module->name), "green");
+                    echo "<HR>";
                 } else {
                     error("$module->name module could not be added to the module list!");
                 }
