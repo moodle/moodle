@@ -151,7 +151,7 @@ CREATE TABLE prefix_quiz_shortanswer (
   usecase integer NOT NULL default '0'
 );
 # --------------------------------------------------------
-CREATE INDEX prefix_question_quiz_shortanswer_idx ON quiz_shortanswer (question);
+CREATE INDEX question_prefix_quiz_shortanswer_idx ON prefix_quiz_shortanswer (question);
 
 #
 # Table structure for table quiz_truefalse
@@ -163,7 +163,7 @@ CREATE TABLE prefix_quiz_truefalse (
   "true" integer NOT NULL default '0',
   "false" integer NOT NULL default '0'
 );
-CREATE INDEX prefix_question_quiz_truefalse_idx ON quiz_truefalse (question);
+CREATE INDEX question_prefix_quiz_truefalse_idx ON prefix_quiz_truefalse (question);
 
 
 INSERT INTO prefix_log_display VALUES ('quiz', 'view', 'quiz', 'name');

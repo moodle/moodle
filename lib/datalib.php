@@ -411,9 +411,9 @@ function insert_record($table, $dataobject, $returnid=true) {
     }
 
     if ($returnid) {
-        if ($db->hasInsertID) {
-            return $db->Insert_ID();   // ADOdb has stored the ID for us
-        }
+        //if ($db->hasInsertID) {
+            //return $db->Insert_ID();   // ADOdb has stored the ID for us
+        //}
         
         // Try to pull the record out again to find the id.  This is the most cross-platform method.
         if ($rs = $db->Execute("SELECT id FROM $CFG->prefix$table WHERE $select")) {
@@ -705,17 +705,22 @@ function get_users_search($search, $sort="u.firstname ASC") {
 
 
 function get_users_count() {
-    return count_record_select("user", "username <> 'guest' AND deleted <> 1");
+    return count_records_select("user", "username <> 'guest' AND deleted <> 1");
 }
 
 function get_users_listing($sort, $dir="ASC", $page=1, $recordsperpage=20) {
     global $CFG;
+
+    if ($CFG->dbtype == "mysql") {
+        $limit = "LIMIT $page,$recordsperpage";
+    } else {
+        $limit = "LIMIT $recordsperpage,$page";
+    }
     return get_records_sql("SELECT id, username, email, firstname, lastname, city, country, lastaccess  
                               FROM {$CFG->prefix}user 
                              WHERE username <> 'guest' 
                                AND deleted <> '1' 
-                          ORDER BY $sort $dir 
-                             LIMIT $page,$recordsperpage");
+                          ORDER BY $sort $dir $limit");
 
 }
 
@@ -742,13 +747,14 @@ function get_users_unconfirmed($cutofftime=999999999) {
 
 function get_users_longtimenosee($cutofftime) {
     global $CFG;
+
+    $db->debug = true;
     return get_records_sql("SELECT u.* 
                               FROM {$CFG->prefix}user u, 
                                    {$CFG->prefix}user_students s
-                             WHERE lastaccess > '0' 
-                               AND lastaccess < '$cutofftime' 
-                               AND u.id = s.userid 
-                          GROUP BY u.id");
+                             WHERE u.lastaccess > '0' 
+                               AND u.lastaccess < '$cutofftime' 
+                               AND u.id = s.userid");
 }
 
 
@@ -816,7 +822,7 @@ function add_to_log($course, $module, $action, $url="", $info="") {
 /// url    = the file and parameters used to see the results of the action
 /// info   = additional description information 
 
-    global $db, $USER, $REMOTE_ADDR;
+    global $db, $CFG, $USER, $REMOTE_ADDR;
 
     if (isset($USER->realuser)) {  // Don't log
         return;
@@ -825,7 +831,7 @@ function add_to_log($course, $module, $action, $url="", $info="") {
     $timenow = time();
     $info = addslashes($info);
 
-    $result = $db->Execute("INSERT INTO log (time,
+    $result = $db->Execute("INSERT INTO {$CFG->prefix}log (time,
                                         userid,
                                         course,
                                         ip,
