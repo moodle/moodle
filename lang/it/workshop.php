@@ -184,8 +184,13 @@ $string['weightforteacherassessments'] = "Peso per \$a Valutazioni";
 $string['weights'] = "Pasi";
 $string['weightsusedforfinalgrade'] = "Pesi usati per il punteggio finale";
 $string['weightsusedforsubmissions'] = "Pesi usati per le sottomissioni";
+$string['workshopagreedassessments'] = "Valutazioni di conformità del workshop";
+$string['workshopassessments'] = "Valutazioni workshop";
+$string['workshopcomments'] = "Commenti workshop";
+$string['workshopfeedback'] = "Risposte workshop";
+$string['workshopsubmissions'] = "Presentazioni workshop";
 $string['yourassessments'] = "La tua valutazione";
 $string['yourassessmentsofexamplesfromtheteacher'] = "La tua valutazione di esempi dal \$a";
-$string['yourfeedbackgoeshere'] = "Il tuo commento va qui";
+$string['yourfeedbackgoeshere'] = "La tua risposta va qui";
 
 ?>
