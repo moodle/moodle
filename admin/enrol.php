@@ -4,7 +4,7 @@
 
     include("../config.php");
 
-    $enrol = optional_param('enrol', $CFG->enrol);
+    $enrol = optional_param('enrol', $CFG->enrol, PARAM_ALPHA);
 
     require_login();
 
@@ -20,7 +20,6 @@
         error(get_string('confirmsesskeybad', 'error'));
     }
 
-    $enrol = clean_filename($enrol);
     require_once("$CFG->dirroot/enrol/$enrol/enrol.php");   /// Open the class
 
     $enrolment = new enrolment_plugin();
