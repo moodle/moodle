@@ -56,7 +56,7 @@
          }
      
          if (isadmin()) {
-             print_admin_links();
+             print_admin_links($site->id);
          }
       ?>
 
