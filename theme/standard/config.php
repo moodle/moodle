@@ -56,6 +56,30 @@ $THEME->parentsheets = false;
 ////////////////////////////////////////////////////////////////////////////////
 
 
+$THEME->modsheets = false;  
+
+/// By setting this to true, then this theme will search for 
+/// files named "styles.php" inside all Activity modules and 
+/// include them.   This allows modules to provide some basic 
+/// layouts so they work out of the box.
+
+
+$THEME->blocksheets = false;  
+
+/// By setting this to true, then this theme will search for 
+/// files named "styles.php" inside all Block modules and 
+/// include them.   This allows Blocks to provide some basic 
+/// layouts so they work out of the box.
+
+
+$THEME->langsheets = false;  
+
+/// By setting this to true, then this theme will search for 
+/// a file named "styles.php" inside the current language
+/// directory.  This allows different languages to provide 
+/// different styles.
+
+
 $THEME->custompix = false;
 
 /// If true, then this theme must have a "pix" 
