@@ -79,7 +79,9 @@
     if ($configs = get_records('config')) {
         $CFG = (array)$CFG;
         foreach ($configs as $config) {
-            $CFG[$config->name] = $config->value;
+            if (!isset($CFG[$config->name])) {
+                $CFG[$config->name] = $config->value;
+            }
         }
         $CFG = (object)$CFG;
         unset($configs);
