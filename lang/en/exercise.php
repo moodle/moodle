@@ -3,6 +3,7 @@
 $string['absent'] = "Absent";
 $string['accumulative'] = "Accumulative";
 $string['action'] = "Action";
+$string['ago'] = "\$a ago";
 $string['allgradeshaveamaximumof'] = "All Grades have a Maximum of: \$a";
 $string['amendassessmentelements'] = "Amend Assessment Elements";
 $string['amendtitle'] = "Amend Title";
