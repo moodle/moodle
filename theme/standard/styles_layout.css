@@ -389,6 +389,15 @@ table.userinfobox {
     margin-left: 30px;
 }
 
+body#mod-forum-search .c0 {
+    text-align: right;
+}
+
+body#mod-forum-search .introcontent {
+    padding: 15px;
+    font-weight:bold;
+}
+
 .forumolddiscussminimal {
     text-align: center;
 }
