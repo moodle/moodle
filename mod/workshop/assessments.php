@@ -467,7 +467,7 @@
 		// close table and form
 
 		?>
-		</table>
+		</table><br />
 		<input type="submit" value="<?php  print_string("savechanges") ?>" />
 		<input type="submit" name="cancel" value="<?php  print_string("cancel") ?>" />
 		</center>

@@ -210,7 +210,6 @@
 	
 	/****************** student's view could be in 1 of 4 stages ***********************/
 	elseif ($action == 'studentsview') {
-		workshop_print_assignment_info($workshop);
         // is a password needed?
 		if ($workshop->usepassword) {
 			$correctpass = false;
@@ -247,6 +246,7 @@
 				exit();
 			}
 		}
+		workshop_print_assignment_info($workshop);
 		// in Stage 1? - are there any teacher's submissions? and...
 		// ...has student assessed the required number of the teacher's submissions 
 		if ($workshop->ntassessments and (!workshop_test_user_assessments($workshop, $USER))) {
