@@ -821,6 +821,15 @@ table.calendar-controls .next
     margin-top:0.25em;
 }
 
+.sideblock .sideblockheading .commands {
+    float: right;
+    margin-top: 0.3em;
+}
+
+.sideblock .sideblockheading .commands a {
+    margin: 0px 2px;
+}
+
 .sideblockmain {
     padding:4px;
 }

@@ -395,6 +395,10 @@ table.calendar-controls .next {
     text-align: left;
 }
 
+.sideblock .sideblockheading .commands {
+    font-size: 0.75em;
+}
+
 .sideblock .footer {
     font-size:0.75em;
     text-align:center;
