@@ -1,75 +1,13 @@
 <?php
-    if (empty($form->name)) {
-        $form->name = "";
-    }
-    if (empty($form->type)) {
-        $form->type = "";
-    }
-    if (empty($form->summary)) {
-        $form->summary = "";
-    }
-    if (empty($form->reference)) {
-        $form->reference = "";
-    }
-    if (empty($form->alltext)) {
-        $form->alltext = "";
-    }
-    $nohtmleditorneeded = true;
+
+require_once("$CFG->dirroot/mod/resource/lib.php");
+
+include_once("$CFG->dirroot/mod/resource/type/$form->type/resource.class.php");
+
+$resource = new resource();
+
+$resource->setup($form);
+
+
+
 ?>
-
-
-<form name="form" method="post" action="../mod/resource/details.php">
-<table cellpadding=5>
-<tr valign=top>
-    <td align=right><p><b><?php print_string("name") ?>:</b></p></td>
-    <td>
-        <input type="text" name="name" size=50 value="<?php p($form->name) ?>">
-    </td>
-</tr>
-<tr valign=top>
-    <td align=right><p><b><?php print_string("resourcetype", "resource") ?>:</b></p></td>
-    <td>
-    <?php
-       require("$CFG->dirroot/mod/resource/lib.php");
-       asort($RESOURCE_TYPE);
-       if (!$form->type) {
-          $form->type = 4;
-       }
-       choose_from_menu($RESOURCE_TYPE, "type", $form->type, "");
-       helpbutton("resourcetype", get_string("resourcetype", "resource"), "resource");
-    ?>
-
-    </td>
-</tr>
-<tr valign=top>
-    <td align=right><p><b><?php print_string("summary") ?>:</b></p>
-     <font size="1">
-     <?php
-        helpbutton("summary", get_string("summary"), "resource", true, true);
-        echo "<br />";
-        helpbutton("writing", get_string("helpwriting"), "moodle", true, true);
-        echo "<br />";
-        helpbutton("text", get_string("helptext"), "moodle", true, true);
-     ?>
-     <br />
-     </font>
-    </td>
-    <td>
-        <?php print_textarea(false, 7, 50, 680, 400, "summary", $form->summary); ?>
-    </td>
-</tr>
-</table>
-<center>
-<input type="hidden" name=reference   value="<?php p($form->reference) ?>">
-
-<input type="hidden" name=course      value="<?php p($form->course) ?>">
-<input type="hidden" name=coursemodule  value="<?php p($form->coursemodule) ?>">
-<input type="hidden" name=section        value="<?php p($form->section) ?>">
-<input type="hidden" name=module      value="<?php p($form->module) ?>">
-<input type="hidden" name=modulename  value="<?php p($form->modulename) ?>">
-<input type="hidden" name=instance    value="<?php p($form->instance) ?>">
-<input type="hidden" name=mode        value="<?php p($form->mode) ?>">
-<input type="hidden" name=destination   value="<?php echo "$CFG->wwwroot/course/mod.php" ?>">
-<input type="submit" value="<?php print_string("continue") ?>">
-</center>
-</form>

@@ -1,25 +1,5 @@
 <?PHP  // $Id$
 
-define("REFERENCE",   "1");
-define("WEBPAGE",     "2");
-define("UPLOADEDFILE","3");
-define("PLAINTEXT",   "4");
-define("WEBLINK",     "5");
-define("HTML",        "6");
-define("PROGRAM",     "7");
-define("WIKITEXT",    "8");
-define("DIRECTORY",   "9");
-
-$RESOURCE_TYPE = array (REFERENCE    => get_string("resourcetype1", "resource"),
-                        WEBPAGE      => get_string("resourcetype2", "resource"),
-                        UPLOADEDFILE => get_string("resourcetype3", "resource"),
-                        PLAINTEXT    => get_string("resourcetype4", "resource"),
-                        WEBLINK      => get_string("resourcetype5", "resource"),
-                        HTML         => get_string("resourcetype6", "resource"),
-                        PROGRAM      => get_string("resourcetype7", "resource"),
-                        WIKITEXT     => get_string("resourcetype8", "resource"),
-                        DIRECTORY    => get_string("resourcetype9", "resource") );
-
 if (!isset($CFG->resource_framesize)) {
     set_config("resource_framesize", 130);
 } 
@@ -34,6 +14,10 @@ if (!isset($CFG->resource_defaulturl)) {
 
 if (!isset($CFG->resource_filterexternalpages)) {
     set_config("resource_filterexternalpages", false);
+}  
+
+if (!isset($CFG->resource_secretphrase)) {
+    set_config("resource_secretphrase", random_string(20));
 }  
 
 $RESOURCE_WINDOW_OPTIONS = array("resizable", "scrollbars", "directories", "location", 
@@ -56,7 +40,89 @@ foreach ($RESOURCE_WINDOW_OPTIONS as $popupoption) {
     }  
 }
 
-function resource_add_instance($resource) {
+/**
+* resource_base is the base class for resource types
+*
+* This class provides all the functionality for a resource
+*/
+
+class resource_base {
+
+var $cm;
+var $course;
+var $resource;
+
+
+/**
+* Constructor for the base resource class
+*
+* Constructor for the base resource class.
+* If cmid is set create the cm, course, resource objects.
+*
+* @param cmid   integer, the current course module id - not set for new resources
+*/
+function resource_base($cmid=0) {
+
+    if ($cmid) {
+        if (! $this->cm = get_record("course_modules", "id", $cmid)) {
+            error("Course Module ID was incorrect");
+        }
+
+        if (! $this->course = get_record("course", "id", $this->cm->course)) {
+            error("Course is misconfigured");
+        }
+
+        if (! $this->resource = get_record("resource", "id", $this->cm->instance)) {
+            error("Resource ID was incorrect");
+        }
+    } 
+}
+
+
+function display() {
+}
+
+
+function setup($form) {
+    global $CFG, $usehtmleditor;
+
+    if (! empty($form->course)) {
+        if (! $this->course = get_record("course", "id", $form->course)) {
+            error("Course is misconfigured");
+        }
+    }
+
+    if (empty($form->name)) {
+        $form->name = "";
+    }
+    if (empty($form->type)) {
+        $form->type = "";
+    }
+    if (empty($form->summary)) {
+        $form->summary = "";
+    }
+    if (empty($form->reference)) {
+        $form->reference = "";
+    }
+    if (empty($form->alltext)) {
+        $form->alltext = "";
+    }
+    $nohtmleditorneeded = true;
+
+    print_heading_with_help(get_string("resourcetype$form->type", 'resource'), $form->type, 'resource');
+
+    include("$CFG->dirroot/mod/resource/type/common.html");
+}
+
+
+function setup_end() {
+    global $CFG;
+
+    include("$CFG->dirroot/mod/resource/type/common_end.html");
+}
+
+
+function add_instance($resource) {
 // Given an object containing all the necessary data, 
 // (defined by the form in mod.html) this function 
 // will create a new instance and return the id number 
@@ -66,21 +132,31 @@ function resource_add_instance($resource) {
 
     $resource->timemodified = time();
 
-    if (isset($resource->setnewwindow)) {
+    if (isset($resource->windowpopup)) {
         $optionlist = array();
         foreach ($RESOURCE_WINDOW_OPTIONS as $option) {
             if (isset($resource->$option)) {
                 $optionlist[] = $option."=".$resource->$option;
             }
         }
-        $resource->alltext = implode(',', $optionlist);
+        $resource->popup = implode(',', $optionlist);
+        $resource->options = "";
+
+    } else if (isset($resource->windowpage)) {
+
+        if (isset($resource->framepage)) {
+            $resource->options = "frame";
+        } else {
+            $resource->options = "";
+        }
+        $resource->popup = "";
     }
 
     return insert_record("resource", $resource);
 }
 
 
-function resource_update_instance($resource) {
+function update_instance($resource) {
 // Given an object containing all the necessary data, 
 // (defined by the form in mod.html) this function 
 // will update an existing instance with new data.
@@ -90,21 +166,30 @@ function resource_update_instance($resource) {
     $resource->id = $resource->instance;
     $resource->timemodified = time();
 
-    if (isset($resource->setnewwindow)) {
+    if (isset($resource->windowpopup)) {
         $optionlist = array();
         foreach ($RESOURCE_WINDOW_OPTIONS as $option) {
             if (isset($resource->$option)) {
                 $optionlist[] = $option."=".$resource->$option;
             }
         }
-        $resource->alltext = implode(',', $optionlist);
+        $resource->popup = implode(',', $optionlist);
+        $resource->options = "";
+
+    } else if (isset($resource->windowpage)) {
+        if (isset($resource->framepage)) {
+            $resource->options = "frame";
+        } else {
+            $resource->options = "";
+        }
+        $resource->popup = "";
     }
 
     return update_record("resource", $resource);
 }
 
 
-function resource_delete_instance($id) {
+function delete_instance($id) {
 // Given an ID of an instance of this module, 
 // this function will permanently delete the instance 
 // and any data that depends on it.  
@@ -120,6 +205,43 @@ function resource_delete_instance($id) {
     }
 
     return $result;
+}
+
+
+
+} /// end of class definition
+
+
+
+function resource_add_instance($resource) {
+    global $CFG;
+    
+    require_once("$CFG->dirroot/mod/resource/type/$resource->type/resource.class.php");
+    $res = new resource();
+
+    return $res->add_instance($resource);
+}
+
+function resource_update_instance($resource) {
+    global $CFG;
+    
+    require_once("$CFG->dirroot/mod/resource/type/$resource->type/resource.class.php");
+    $res = new resource();
+
+    return $res->update_instance($resource);
+}
+
+function resource_delete_instance($id) {
+    global $CFG;
+    
+    if (! $resource = get_record("resource", "id", "$id")) {
+        return false;
+    }
+    
+    require_once("$CFG->dirroot/mod/resource/type/$resource->type/resource.class.php");
+    $res = new resource();
+
+    return $res->delete_instance($id);
 }
 
 
@@ -177,23 +299,23 @@ function resource_get_coursemodule_info($coursemodule) {
    $info = NULL;
 
    if ($resource = get_record("resource", "id", $coursemodule->instance)) {
-       if (($resource->type == UPLOADEDFILE or $resource->type == WEBLINK) and !empty($resource->alltext)) {
+       if (($resource->type == UPLOADEDFILE or $resource->type == WEBLINK) and !empty($resource->popup)) {
            $info->extra =  urlencode("target=\"resource$resource->id\" onClick=\"return ".
                             "openpopup('/mod/resource/view.php?inpopup=true&id=".
                             $coursemodule->id.
-                            "','resource$resource->id','$resource->alltext');\"");
+                            "','resource$resource->id','$resource->popup');\"");
        }
 
        require_once("$CFG->dirroot/files/mimetypes.php");
 
-       if ($resource->type == UPLOADEDFILE or $resource->type == WEBLINK or $resource->type == WEBPAGE) {
+       if ($resource->type == 'file' or $resource->type == 'url') {
 	       $icon = mimeinfo("icon", $resource->reference);
            if ($icon != 'unknown.gif') {
 		       $info->icon ="f/$icon";
-           } else if ($resource->type == WEBLINK or $resource->type == WEBPAGE) {
+           } else if ($resource->type == 'url') {
 		       $info->icon ="f/web.gif";
            }
-       } else if ($resource->type == DIRECTORY) {
+       } else if ($resource->type == 'directory') {
 		   $info->icon ="f/folder.gif";
        }
    }
@@ -337,6 +459,17 @@ function resource_redirect_tags($text, $url, $tagtoparse, $keytoparse,$prefix = 
         }
     }
     return $text;
+}
+
+function resource_is_url($path) {
+    $path = strtolower($path);
+    if (substr($path, 0, 7) == "http://") {
+        return true;
+    }
+    if (substr($path, 0, 6) == "ftp://") {
+        return true;
+    }
+    return false;
 }
 
 ?>

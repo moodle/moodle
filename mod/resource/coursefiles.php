@@ -67,7 +67,7 @@
 	    <script language="javascript" type="text/javascript">
 	    <!--
 	    function set_value(txt) {
-		    opener.document.forms['theform'].reference.value = txt;
+		    opener.document.forms['form'].reference.value = txt;
 		    window.close();
 	    }
         -->

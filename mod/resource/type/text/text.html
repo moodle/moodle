@@ -1,0 +1,24 @@
+<tr valign="top">
+    <td align="right" nowrap>
+        <p><b><?php print_string("fulltext", "resource") ?>:</b></p><br />
+        <font size="1">
+            <?php  helpbutton("writing", get_string("helpwriting"), "moodle", true, true) ?><br />
+            <?php  emoticonhelpbutton("theform", "alltext") ?> <br />
+        </font>
+    </td>
+    <td>
+        <?php print_textarea(false, 30, 65, 680, 400, "alltext", $form->alltext); ?>
+    </td>
+</tr> 
+<tr valign="top">
+    <td align="right" nowrap>
+        <p><b><?php print_string("formattexttype") ?>:</b></p><br />
+    </td>
+    <td>
+        <?php choose_from_menu($format_array, "options", $form->options, '') ?>
+        <font size="1">
+            <?php  helpbutton("textformat", get_string("formattexttype")) ?><br />
+        </font>
+    </td>
+</tr> 
+

@@ -1,0 +1,14 @@
+<tr valign="top">
+    <td align="right" nowrap>
+        <p><b><?php print_string("fulltext", "resource") ?>:</b></p><br />
+        <font size="1">
+            <?php  helpbutton("writing", get_string("helpwriting"), "moodle", true, true) ?><br />
+            <?php  helpbutton("text", get_string("helptext"), "moodle", true, true) ?> <br />
+            <?php  emoticonhelpbutton("theform", "alltext") ?> <br />
+        </font>
+    </td>
+    <td>
+        <?php print_textarea($usehtmleditor, 20, 60, 680, 400, "alltext", $form->alltext); ?>
+    </td>
+</tr> 
+

@@ -22,6 +22,8 @@ CREATE TABLE prefix_resource (
   reference varchar(255) default NULL,
   summary text NOT NULL,
   alltext text NOT NULL,
+  popup text NOT NULL,
+  options varchar(255) NOT NULL default '',
   timemodified int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (id),
   UNIQUE KEY id (id)
