@@ -7,9 +7,9 @@ $string['block_rss_feed_updated'] = 'Fil RSS mis ˆ jour';
 $string['block_rss_feed_added'] = 'Fil RSS ajoutŽ';
 $string['block_rss_feed_deleted'] = 'Fil RSS supprimŽ';
 
-$string['block_rss_num_entries'] = 'Nombre d\'articles RSS ˆ afficher par bloc.';
+$string['block_rss_client_num_entries'] = 'Nombre d\'articles RSS ˆ afficher par bloc.';
 $string['block_rss_submitters'] = 'Qui peut dŽfinir de nouveaux fils RSS&nbsp;? Les fils RSS sont mis ˆ la disposition des membres de votre site, pour leur permettre de les ajouter ˆ leurs propres pages.';
-$string['block_rss_choose_feed'] = 'SŽlectionner un fil RSS ˆ afficher dans ce bloc&nbsp;:';
+$string['block_rss_choose_feed'] = 'Choisir les fils RSS que vous dŽsirez rendre disponibles dans ce bloc&nbsp;:';
 $string['block_rss_no_feeds'] = 'Il n\'y a pas de fil RSS dŽfini sur ce site.';
 $string['block_rss_edit_news_feeds'] = 'Modifier les fils de nouvelles RSS';
 $string['block_rss_shownumentries'] = 'Nombre maximum d\'articles ˆ afficher par bloc.';
@@ -31,6 +31,5 @@ $string['block_rss_see_all_feeds'] = 'Afficher tous les fils RSS';
 $string['block_rss_edit_rss_block'] = 'Modifier le bloc manchette RSS';
 
 $string['block_rss_add_new'] = 'Ajouter nouveau';
-$string['block_rss_word_title'] = 'Titre';
 
 ?>
