@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // survey.php - created with Moodle 1.0.9 development (2003032500)
+      // survey.php - created with Moodle 1.0.9 development (2003042801)
 
 
 $string['actual'] = "実体験";
@@ -9,6 +9,7 @@ $string['allquestions'] = "全質問一覧、全学生";
 $string['allscales'] = "全スケール、全学生";
 $string['alreadysubmitted'] = "この調査は完了しています";
 $string['analysisof'] = "\$a の分析";
+$string['answers'] = "回答";
 $string['attls1'] = "発言を評価する場合、誰が発言したのかでは無く、議論の質に集中します。";
 $string['attls10'] = "何かを分析する場合には出来る限り客観的な考えを持つことが重要です。";
 $string['attls10short'] = "客観的に考える";

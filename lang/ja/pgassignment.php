@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // pgassignment.php - created with Moodle 1.0.9 development (2003032601)
+      // pgassignment.php - created with Moodle 1.0.9 development (2003042801)
 
 
 $string['absent'] = "欠席";
@@ -42,6 +42,7 @@ $string['doallocation'] = "学生に対する課題の割当てを続けますか？";
 $string['dontshowgrades'] = "コメントが承認された時のみ評価を表示する";
 $string['editingassessmentelements'] = "評価要素の編集";
 $string['element'] = "評価要素";
+$string['elements'] = "要素";
 $string['elementweight'] = "要素比重";
 $string['feedbackgoeshere'] = "ここにフィードバックが表示されます";
 $string['finalgrade'] = "最終評価";
@@ -55,6 +56,7 @@ $string['gradedawaitingreplydeadline'] = "評価済み、返答待ち (締切日は \$a)";
 $string['gradedby'] = "\$a による評価";
 $string['gradeddate'] = "評価期限";
 $string['gradedon'] = "\$a に対する評価";
+$string['grades'] = "評価";
 $string['gradethissubmission'] = "この提出物を評価する";
 $string['gradethiswork'] = "この課題を評価する";
 $string['grading'] = "評価";
@@ -149,6 +151,7 @@ $string['specimengradingform'] = "サンプル評価フォーム";
 $string['stopsubmissions'] = "提出を中止する";
 $string['submissiondate'] = "提出期限";
 $string['submissionfrom'] = "#\$a 提出物";
+$string['submissions'] = "提出";
 $string['submissionsalreadyallowed'] = "提出は既に許可されています";
 $string['submissionsalreadystopped'] = "提出は既に中止されました";
 $string['submissionsawaitinggrading'] = "評価待ち提出物 (\$a)";

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.0.9 development (2003041200)
+      // quiz.php - created with Moodle 1.0.9 development (2003042801)
 
 
 $string['addquestions'] = "¥¯¥¤¥º¤òÄÉ²Ã";
@@ -23,6 +23,7 @@ $string['attemptsallowed'] = "¥Á¥ã¥ì¥ó¥¸²ó¿ô";
 $string['attemptsunlimited'] = "À©¸ÂÌµ¤·";
 $string['backtoquiz'] = "¥¯¥¤¥ºÊÔ½¸¤ËÌá¤ë";
 $string['bestgrade'] = "ºÇ¹âÆÀÅÀ";
+$string['blackboard'] = "¹õÈÄ";
 $string['caseno'] = "²òÅú¤ÎÀºÅÙ¤Ï½ÅÍ×¤Ç¤Ï¤¢¤ê¤Ş¤»¤ó";
 $string['casesensitive'] = "²òÅú¤ÎÀºÅÙ";
 $string['caseyes'] = "²òÅú¤Ï¹çÃ×¤·¤Ê¤±¤ì¤Ğ¤Ê¤ê¤Ş¤»¤ó";
@@ -69,6 +70,7 @@ $string['fractionsnomax'] = "¤³¤Î¼ÁÌä¤ËÂĞ¤¹¤ëÉ¾²Á¤òÍ¿¤¨¤ë¤¿¤á¤Ë¡¢<BR>²òÅú¤Î°ì¤Ä¤
 $string['gradeaverage'] = "Ê¿¶ÑÆÀÅÀ";
 $string['gradehighest'] = "ºÇ¹âÆÀÅÀ";
 $string['grademethod'] = "É¾²ÁÊıË¡";
+$string['grades'] = "É¾²Á";
 $string['guestsno'] = "¿½¤·Ìõ¤´¤¶¤¤¤Ş¤»¤ó¡¢¥²¥¹¥È¥æ¡¼¥¶¤Ï¥¯¥¤¥º¤Î±ÜÍ÷µÚ¤Ó²òÅú¤¬½ĞÍè¤Ş¤»¤ó";
 $string['imagedisplay'] = "É½¼¨²èÁü";
 $string['importquestions'] = "¥Õ¥¡¥¤¥ë¤«¤é¥¯¥¤¥º¤ò¥¤¥ó¥İ¡¼¥È¤¹¤ë";
