@@ -369,9 +369,6 @@ function calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxeve
                 $output[$outkey]->description = $event->description;
             }
             else if($event->courseid == 1) {
-                // Global event
-                global $site;
-                $output[$outkey]->referer = '<a href="'.$CFG->wwwroot.'">'.$site->shortname.'</a>';
                 $output[$outkey]->icon = '<img src="'.$CFG->pixpath.'/c/site.gif" alt="" style="vertical-align: middle;" />';
                 $output[$outkey]->name = $event->name;
                 $output[$outkey]->time = $eventtime;
