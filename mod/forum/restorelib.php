@@ -688,7 +688,7 @@
 
         $searchstring='/\$@(FORUMVIEWBYID)\*([0-9]+)@\$/';
         //We look for it
-        preg_match_all($searchstring,$content,$foundset);
+        preg_match_all($searchstring,$result,$foundset);
         //If found, then we are going to look for its new id (in backup tables)
         if ($foundset[0]) {
             //print_object($foundset);                                     //Debug
@@ -709,7 +709,7 @@
 
         $searchstring='/\$@(FORUMVIEWBYF)\*([0-9]+)@\$/';
         //We look for it
-        preg_match_all($searchstring,$content,$foundset);
+        preg_match_all($searchstring,$result,$foundset);
         //If found, then we are going to look for its new id (in backup tables)
         if ($foundset[0]) {
             //print_object($foundset);                                     //Debug
@@ -730,7 +730,7 @@
 
         $searchstring='/\$@(FORUMDISCUSSIONVIEW)\*([0-9]+)@\$/';
         //We look for it
-        preg_match_all($searchstring,$content,$foundset);
+        preg_match_all($searchstring,$result,$foundset);
         //If found, then we are going to look for its new id (in backup tables)
         if ($foundset[0]) {
             //print_object($foundset);                                     //Debug
@@ -751,7 +751,7 @@
 
         $searchstring='/\$@(FORUMDISCUSSIONVIEWPARENT)\*([0-9]+)\*([0-9]+)@\$/';
         //We look for it
-        preg_match_all($searchstring,$content,$foundset);
+        preg_match_all($searchstring,$result,$foundset);
         //If found, then we are going to look for its new id (in backup tables)
         if ($foundset[0]) {
             //print_object($foundset);                                     //Debug
@@ -774,7 +774,7 @@
 
         $searchstring='/\$@(FORUMDISCUSSIONVIEWINSIDE)\*([0-9]+)\*([0-9]+)@\$/';
         //We look for it
-        preg_match_all($searchstring,$content,$foundset);
+        preg_match_all($searchstring,$result,$foundset);
         //If found, then we are going to look for its new id (in backup tables)
         if ($foundset[0]) {
             //print_object($foundset);                                     //Debug
@@ -829,8 +829,43 @@
                     $result = forum_decode_content_links($content,$restore);
                     if ($result != $content) {
                         //Update record
-                        $post->message = $result;
+                        $post->message = addslashes($result);
                         $status = update_record("forum_posts",$post);
+                        if ($CFG->debug>7) {
+                            echo "<br><hr>".$content."<br>changed to</br>".$result."<hr><br>";
+                        }
+                    }
+                    //Do some output
+                    if (($i+1) % 5 == 0) {
+                        echo ".";
+                        if (($i+1) % 100 == 0) {
+                            echo "<br>";
+                        }
+                        backup_flush(300);
+                    }
+                }
+            }
+        }
+
+        //FORUM: Decode every FORUM (intro) in the coure
+
+        //Check we are restoring forums
+        if ($restore->mods['forum']->restore == 1) {
+            //Get all course forums
+            if ($forums = get_records_sql ("SELECT f.id, f.intro
+                                       FROM {$CFG->prefix}forum f
+                                       WHERE f.course = $restore->course_id")) {
+                //Iterate over each forum->intro
+                $i = 0;   //Counter to send some output to the browser to avoid timeouts
+                foreach ($forums as $forum) {
+                    //Increment counter
+                    $i++;
+                    $content = $forum->intro;
+                    $result = forum_decode_content_links($content,$restore);
+                    if ($result != $content) {
+                        //Update record
+                        $forum->intro = addslashes($result);
+                        $status = update_record("forum",$forum);
                         if ($CFG->debug>7) {
                             echo "<br><hr>".$content."<br>changed to</br>".$result."<hr><br>";
                         }
@@ -865,7 +900,7 @@
                     $result = forum_decode_content_links($content,$restore);
                     if ($result != $content) {
                         //Update record
-                        $resource->alltext = $result;
+                        $resource->alltext = addslashes($result);
                         $status = update_record("resource",$resource);
                         if ($CFG->debug>7) {
                             echo "<br><hr>".$content."<br>changed to</br>".$result."<hr><br>";
