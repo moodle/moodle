@@ -46,10 +46,9 @@ function ImageCopyBicubic ($dst_img, $src_img, $dst_x, $dst_y, $src_x, $src_y, $
     } 
 }
 
-
-function save_user_image($userid, $filename) {
+function save_profile_image($id, $filename, $dir="users") {
 // Given a filename to a known image, this function scales and crops
-// it and saves it in the right place to be a user image.
+// it and saves it in the right place to be a "user" or "group" image.
 
     global $CFG;
 
@@ -59,19 +58,19 @@ function save_user_image($userid, $filename) {
 
     umask(0000);
 
-    if (!file_exists("$CFG->dataroot/users")) {
-        if (! mkdir("$CFG->dataroot/users", $CFG->directorypermissions)) {
+    if (!file_exists("$CFG->dataroot/$dir")) {
+        if (! mkdir("$CFG->dataroot/$dir", $CFG->directorypermissions)) {
             return false;
         }
     }
 
-    if (!file_exists("$CFG->dataroot/users/$userid")) {
-        if (! mkdir("$CFG->dataroot/users/$userid", $CFG->directorypermissions)) {
+    if (!file_exists("$CFG->dataroot/$dir/$id")) {
+        if (! mkdir("$CFG->dataroot/$dir/$id", $CFG->directorypermissions)) {
             return false;
         }
     }
     
-    $originalfile = "$CFG->dataroot/users/$userid/original";
+    $originalfile = "$CFG->dataroot/$dir/$id/original";
 
     if (!move_uploaded_file($filename, $originalfile)) {
         return false;
@@ -157,10 +156,10 @@ function save_user_image($userid, $filename) {
     ImageLine ($im2, 34, 34, 34, 0, $black2);
     ImageLine ($im2, 34, 0, 0, 0, $black2);
 
-    if (ImageJpeg($im1, "$CFG->dataroot/users/$userid/f1.jpg", 90) and 
-        ImageJpeg($im2, "$CFG->dataroot/users/$userid/f2.jpg", 95) ) {
-        @chmod("$CFG->dataroot/users/$userid/f1.jpg", 0666);
-        @chmod("$CFG->dataroot/users/$userid/f2.jpg", 0666);
+    if (ImageJpeg($im1, "$CFG->dataroot/$dir/$id/f1.jpg", 90) and 
+        ImageJpeg($im2, "$CFG->dataroot/$dir/$id/f2.jpg", 95) ) {
+        @chmod("$CFG->dataroot/$dir/$id/f1.jpg", 0666);
+        @chmod("$CFG->dataroot/$dir/$id/f2.jpg", 0666);
         return 1;
     } else {
         return 0;

@@ -68,7 +68,7 @@
 
         if (find_form_errors($user, $usernew, $err)) {
             if ($filename = valid_uploaded_file($_FILES['imagefile'])) { 
-                $usernew->picture = save_user_image($user->id, $filename);
+                $usernew->picture = save_profile_image($user->id, $filename);
             }
 
             $user = $usernew;
@@ -77,7 +77,7 @@
             $timenow = time();
 
             if ($filename = valid_uploaded_file($_FILES['imagefile'])) { 
-                $usernew->picture = save_user_image($user->id, $filename);
+                $usernew->picture = save_profile_image($user->id, $filename);
             } else {
                 $usernew->picture = $user->picture;
             }
