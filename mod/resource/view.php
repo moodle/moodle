@@ -19,7 +19,7 @@
 
     require ("$CFG->dirroot/mod/resource/type/$resource->type/resource.class.php");
     $resourceclass = "resource_$resource->type";
-    $resourceinstance = new $resourceclass($id);
+    $resourceinstance = new $resourceclass($cm->id);
 
     $resourceinstance->display();
 
