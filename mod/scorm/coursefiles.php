@@ -176,7 +176,7 @@
                 foreach ($USER->filelist as $file) {
                     $fullfile = $basedir.$file;
                     if (! fulldelete($fullfile)) {
-                        echo "<br>Error: Could not delete: $fullfile";
+                        echo "<br />Error: Could not delete: $fullfile";
                     }
                 }
                 clearfilelist();
@@ -396,7 +396,7 @@
                     print_simple_box_start("center");
                     printfilelist($USER->filelist);
                     print_simple_box_end();
-                    echo "<br>";
+                    echo "<br />";
                     echo "<p align=\"center\">".get_string("whattocallzip");
                     echo "<table><tr><td>";
                     echo "<form action=\"".$ME."\" method=\"post\" name=\"form\">";

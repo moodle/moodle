@@ -267,7 +267,7 @@
         echo '</form>';
     }
 
-    echo "<center><br><br><form method=\"get\" action=\"edit.php\"><input type=\"hidden\" name=\"question\" value=\"$question->id\"/><input type=\"submit\" name=\"backtoquiz\" value=\"$strbacktoquiz\"></form></center>\n";
+    echo "<center><br /><br /><form method=\"get\" action=\"edit.php\"><input type=\"hidden\" name=\"question\" value=\"$question->id\"/><input type=\"submit\" name=\"backtoquiz\" value=\"$strbacktoquiz\"></form></center>\n";
 
     print_footer();
 

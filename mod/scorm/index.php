@@ -71,7 +71,7 @@
         }
     }
 
-    echo "<br>";
+    echo "<br />";
 
     print_table($table);
 

@@ -736,7 +736,7 @@ function workshop_list_all_submissions($workshop, $user) {
         }
 
     echo "<center><p><b>".get_string("studentsubmissions", "workshop", $course->student).
-        "</b></center><br>\n";
+        "</b></center><br />\n";
     unset($table);
     $table->head = array (get_string("title", "workshop"), get_string("action", "workshop"), 
                         get_string("comment", "workshop"));
@@ -1022,7 +1022,7 @@ function workshop_list_self_assessments($workshop, $user) {
         }
     if (isset($table->data)) {
         echo "<p><center><b>".get_string("pleaseassessyoursubmissions", "workshop", $course->student).
-            "</b></center><br>\n";
+            "</b></center><br />\n";
         print_table($table);
         }
     }
@@ -1149,11 +1149,11 @@ function workshop_list_student_submissions($workshop, $user) {
     
     if (isset($table->data)) {
         echo "<p><center><b>".get_string("pleaseassessthesestudentsubmissions", "workshop", $course->student).
-            "</b></center><br>\n";
+            "</b></center><br />\n";
         print_table($table);
         }
     else {
-        echo "<p><center><b>".get_string("nosubmissionsavailableforassessment", "workshop")."</b></center><br>\n";
+        echo "<p><center><b>".get_string("nosubmissionsavailableforassessment", "workshop")."</b></center><br />\n";
         }
     }
 
@@ -1755,7 +1755,7 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
             error ("Workshop_print_assessment: Submission record not found");
             }
         echo workshop_print_submission_title($workshop, $submission);
-        echo "</td></tr></table><br CLEAR=ALL>\n";
+        echo "</td></tr></table><br CLEAR=ALL />\n";
     
         // see if this is a pre-filled assessment for a re-submission...
         if ($assessment->resubmission) {
@@ -1820,7 +1820,7 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
         // only show the grade if grading strategy > 0 and the grade is positive
         if ($showgrades and $workshop->gradingstrategy and $assessment->grade >= 0) { 
             echo "<center><b>".get_string("thegradeis", "workshop").": ".number_format($assessment->grade, 2)." (".
-                get_string("maximumgrade")." ".number_format($workshop->grade, 0).")</b></center><br CLEAR=ALL>\n";
+                get_string("maximumgrade")." ".number_format($workshop->grade, 0).")</b></center><br CLEAR=ALL />\n";
             }
         }
         
@@ -2689,7 +2689,7 @@ function workshop_print_upload_form($workshop) {
     echo "<form ENCTYPE=\"multipart/form-data\" METHOD=\"POST\" ACTION=upload.php>";
     echo " <input TYPE=hidden NAME=MAX_FILE_SIZE value=\"$workshop->maxbytes\" />";
     echo " <input TYPE=hidden NAME=id VALUE=\"$cm->id\" />";
-    echo "<b>".get_string("title", "workshop")."</b>: <input NAME=\"title\" TYPE=\"text\" SIZE=\"60\" MAXSIZE=\"100\" /><br><br>\n";
+    echo "<b>".get_string("title", "workshop")."</b>: <input NAME=\"title\" TYPE=\"text\" SIZE=\"60\" MAXSIZE=\"100\" /><br /><br />\n";
     echo " <input NAME=\"newfile\" TYPE=\"file\" size=\"50\" />";
     echo " <input TYPE=submit NAME=save VALUE=\"".get_string("uploadthisfile")."\" />";
     echo "</form>";

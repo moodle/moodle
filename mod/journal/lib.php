@@ -465,7 +465,7 @@ function journal_print_user_entry($course, $user, $entry, $teachers, $grades) {
         echo "</textarea><br />";
         echo "</td></tr>";
     }
-    echo "</table><br clear=\"all\">\n";
+    echo "</table><br clear=\"all\" />\n";
 }
 
 

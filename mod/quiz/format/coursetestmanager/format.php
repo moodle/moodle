@@ -265,7 +265,7 @@ class quiz_file_format {
 
 	  function deletedatabase($filename) {
 	  	if (! $this->fulldelete($filename)) {
-        echo "<br>Error: Could not delete: $filename";
+        echo "<br />Error: Could not delete: $filename";
         return false;
       }
 			return true;

@@ -183,7 +183,7 @@
 			}
 		//save time of agreement
 		set_field("workshop_assessments", "timeagreed", $timenow, "id", $assessment->id);
-		echo "<centre><b>".get_string("savedok", "workshop")."</b></center><br>\n";
+		echo "<centre><b>".get_string("savedok", "workshop")."</b></center><br />\n";
 			
 		add_to_log($course->id, "workshop", "agree", "assessments.php?action=viewassessment&id=$cm->id&aid=$assessment->id", "$assessment->id");
 		print_continue("view.php?id=$cm->id");
@@ -377,7 +377,7 @@
 					echo "	<td colspan=2 BGCOLOR=\"$THEME->cellheading2\">&nbsp;</td>\n";
 					echo "</tr>\n";
 				}
-				echo "</center></table><br>\n";
+				echo "</center></table><br />\n";
 				echo "<p><center><b>".get_string("gradetable","workshop")."</b></center>\n";
 				echo "<center><table cellpadding=5 border=1><tr><td ALIGN=\"CENTER\">".
 					get_string("numberofnegativeresponses", "workshop");
@@ -776,7 +776,7 @@
 						$totalweight += $weight;
 					}
 					$rawgrade += ($grade / $maxscore) * $weight;
-					// echo "\$key, \$maxscore, \$weight, \$totalweight, \$grade, \$rawgrade : $key, $maxscore, $weight, $totalweight, $grade, $rawgrade<br>";
+					// echo "\$key, \$maxscore, \$weight, \$totalweight, \$grade, \$rawgrade : $key, $maxscore, $weight, $totalweight, $grade, $rawgrade<br />";
 				}
 				$grade = 100.0 * ($rawgrade / $totalweight);
 				break;
@@ -932,7 +932,7 @@
             set_field("workshop_comments", "timecreated", $timenow, "id", $comment->id);
             // ..and kick to comment into life (probably not needed but just in case)
             set_field("workshop_comments", "mailed", 0, "id", $comment->id);
-            echo "<centre><b>".get_string("savedok", "workshop")."</b></center><br>\n";
+            echo "<centre><b>".get_string("savedok", "workshop")."</b></center><br />\n";
             
             add_to_log($course->id, "workshop", "comment", 
                     "assessments.php?action=viewassessment&id=$cm->id&aid=$assessment->id", "$comment->id");
@@ -961,7 +961,7 @@
             set_field("workshop_assessments", "gradinggrade", $form->gradinggrade, "id", $assessment->id);
             set_field("workshop_assessments", "timegraded", $timenow, "id", $assessment->id);
             set_field("workshop_assessments", "mailed", 0, "id", $assessment->id);
-            echo "<centre><b>".get_string("savedok", "workshop")."</b></centre><br>\n";
+            echo "<centre><b>".get_string("savedok", "workshop")."</b></centre><br />\n";
             
             add_to_log($course->id, "workshop", "grade", 
                  "assessments.php?action=viewassessment&id=$cm->id&aid=$assessment->id", "$assessment->id", "$cm->id");

@@ -142,7 +142,7 @@ class quiz_truefalse_qtype extends quiz_default_questiontype {
         echo "<input $truechecked type=\"radio\" $readonly $inputname value=\"$true->id\" />$true->answer";
         echo "</td><td $falsecorrect>";
         echo "<input $falsechecked type=\"radio\"  $readonly $inputname value=\"$false->id\" />$false->answer";
-        echo "</td></tr></table><br clear=\"all\">";// changed from clear=ALL jm
+        echo "</td></tr></table><br clear=\"all\" />";// changed from clear=ALL jm
         if ($quiz->feedback && isset($answers[$nameprefix])
                 && $feedback = $answers[$nameprefix]->feedback) {
            quiz_print_comment(

@@ -122,7 +122,7 @@
                 }
             }
         }
-        echo "</table><br clear=\"all\">\n";
+        echo "</table><br clear=\"all\" />\n";
         if ($exercise->showleaguetable) {
             exercise_print_league_table($exercise);
         }

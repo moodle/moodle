@@ -228,7 +228,7 @@
 				}
 			}
 		}
-		echo "</table><br clear=\"all\">\n";
+		echo "</table><br clear=\"all\" />\n";
         workshop_print_key($workshop);
 		if ($workshop->showleaguetable) {
 			workshop_print_league_table($workshop);

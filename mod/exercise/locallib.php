@@ -1540,7 +1540,7 @@ function exercise_print_assessment_form($exercise, $assessment = false, $allowch
                 echo "<center><table border=\"1\" width=\"30%\"><tr>
                     <td align=\"center\" bgcolor=\"$THEME->cellcontent\">\n";
                 echo exercise_print_submission_title($exercise, $teachersubmission);
-                echo "</td></tr></table><br clear=\"all\">\n";
+                echo "</td></tr></table><br clear=\"all\" />\n";
                 }
             }
         else { 
@@ -1553,14 +1553,14 @@ function exercise_print_assessment_form($exercise, $assessment = false, $allowch
         echo "<center><table border=\"1\" width=\"30%\"><tr>
             <td align=\"center\" bgcolor=\"$THEME->cellcontent\">\n";
         echo exercise_print_submission_title($exercise, $submission);
-        echo "</td></tr></table><br clear=\"all\">\n";
+        echo "</td></tr></table><br clear=\"all\" />\n";
         
         // only show the grade if grading strategy > 0 and the grade is positive
         if ($exercise->gradingstrategy and $assessment->grade >= 0) { 
 
             echo "<center><b>".get_string("thegradeis", "exercise").": ".
                 number_format($assessment->grade * $exercise->grade / 100.0, 2)." (".
-                get_string("maximumgrade")." ".number_format($exercise->grade, 0).")</b></center><br clear=\"all\">\n";
+                get_string("maximumgrade")." ".number_format($exercise->grade, 0).")</b></center><br clear=\"all\" />\n";
             }
         }
         
@@ -2358,12 +2358,12 @@ function exercise_print_teacher_assessment_form($exercise, $assessment, $submiss
         error ("Print teacher assessment form: Submission record not found");
     }
     echo exercise_print_submission_title($exercise, $teachersubmission);
-    echo "</td></tr></table><br clear=\"all\">\n";
+    echo "</td></tr></table><br clear=\"all\" />\n";
     
     echo "<center><table border=\"1\" width=\"30%\"><tr>
         <td align=\"center\" bgcolor=\"$THEME->cellcontent\">\n";
     echo exercise_print_submission_title($exercise, $submission);
-    echo "</td></tr></table></center><br clear=\"all\">\n";
+    echo "</td></tr></table></center><br clear=\"all\" />\n";
 
     ?>
     <form name="assessmentform" method="post" action="assessments.php">
@@ -2393,7 +2393,7 @@ function exercise_print_teacher_assessment_form($exercise, $assessment, $submiss
     if ($exercise->gradingstrategy and $assessment->grade >= 0) { 
         echo "<center><b>".get_string("thegradeis", "exercise").": ".
             number_format($assessment->grade * $exercise->grade / 100.0, 2)." (".
-            get_string("maximumgrade")." ".number_format($exercise->grade, 0).")</b></center><br clear=\"all\">\n";
+            get_string("maximumgrade")." ".number_format($exercise->grade, 0).")</b></center><br clear=\"all\" />\n";
         }
         
     echo "<center><table cellpadding=\"2\" border=\"1\">\n";

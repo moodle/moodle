@@ -172,8 +172,8 @@
                             "$stradd");
     print_table($table);
     echo "<input type=\"hidden\" name=\"id\" value=\"$course->id\" />";
-    echo "<center><br><input type=\"submit\" value=\"$strsavechanges\" /> ";
-    echo "<br><br><input type=\"submit\" name=\"backtoquiz\" value=\"$strbacktoquiz\" /> ";
+    echo "<center><br /><input type=\"submit\" value=\"$strsavechanges\" /> ";
+    echo "<br /><br /><input type=\"submit\" name=\"backtoquiz\" value=\"$strbacktoquiz\" /> ";
     echo "</center>";
     echo "</form>";
 

@@ -592,12 +592,12 @@ function assignment_print_submission($assignment, $user, $submission, $teachers,
     if ($submission->timemarked) {
         echo "&nbsp;&nbsp;<font size=1>".userdate($submission->timemarked)."</font>";
     }
-    echo "<br><textarea name=\"c$submission->id\" rows=6 cols=60 wrap=virtual>";
+    echo "<br /><textarea name=\"c$submission->id\" rows=6 cols=60 wrap=virtual>";
     p($submission->comment);
-    echo "</textarea><br>";
+    echo "</textarea><br />";
     echo "</td></tr>";
    
-    echo "</table><br clear=ALL>\n";
+    echo "</table><br clear=\"all\" />\n";
 }
 
 function assignment_print_feedback($course, $submission, $assignment) {

@@ -160,7 +160,7 @@
                 echo "<td align=\"center\">".number_format($gradinggrade + $grade, 1)."</td></tr>\n";
             }
         }
-        echo "</table><br CLEAR=ALL>\n";
+        echo "</table><br CLEAR=ALL />\n";
 		workshop_print_key($workshop);
         if ($workshop->showleaguetable) {
 			workshop_print_league_table($workshop);
