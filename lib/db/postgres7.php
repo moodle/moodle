@@ -911,6 +911,12 @@ function main_upgrade($oldversion=0) {
         fix_course_sortorder(0, 1, 1);
     } 
 
+    if ($oldversion < 2005021000) {     // New fields for theme choices
+        table_column('course', '', 'theme', 'varchar', '50', '', '', '', 'lang');
+        table_column('groups', '', 'theme', 'varchar', '50', '', '', '', 'lang');
+        table_column('user',   '', 'theme', 'varchar', '50', '', '', '', 'lang');
+    }
+
     return $result;
 }
 

@@ -1180,9 +1180,14 @@ function main_upgrade($oldversion=0) {
         }
     }
 
-    if ($oldversion < 2005020800) {
-        // Expand module column to max 20 chars
+    if ($oldversion < 2005020800) {     // Expand module column to max 20 chars
         table_column('log','module','module','varchar','20','','','not null');
+    }
+
+    if ($oldversion < 2005021000) {     // New fields for theme choices
+        table_column('course', '', 'theme', 'varchar', '50', '', '', '', 'lang');
+        table_column('groups', '', 'theme', 'varchar', '50', '', '', '', 'lang');
+        table_column('user',   '', 'theme', 'varchar', '50', '', '', '', 'lang');
     }
 
     return $result;
