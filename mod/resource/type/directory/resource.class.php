@@ -44,7 +44,7 @@ function display() {
         array_shift($subs);
         $countsubs = count($subs);
         $count = 0;
-        $subnav = "<a href=\"view.php?id={$cm->id}\">{$resource->name}</a>";
+        $subnav = "<a href=\"view.php?id={$cm->id}\">".format_string($resource->name,true)."</a>";
         $backsub = '';
         foreach ($subs as $sub) {
             $count++;
@@ -56,10 +56,10 @@ function display() {
             }
         }
     } else {
-        $subnav = $resource->name;
+        $subnav = format_string($resource->name);
     }
 
-    $pagetitle = strip_tags($course->shortname.': '.$resource->name);
+    $pagetitle = strip_tags($course->shortname.': '.format_string($resource->name));
 
     print_header($pagetitle, $course->fullname, "$this->navigation $subnav",
             "", "", true, update_module_button($cm->id, $course->id, $this->strresource),

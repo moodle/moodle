@@ -85,7 +85,7 @@ function display() {
     $course = $this->course;
     $resource = $this->resource; 
 
-    $pagetitle = strip_tags($course->shortname.': '.$resource->name);
+    $pagetitle = strip_tags($course->shortname.': '.format_string($resource->name));
     $formatoptions->noclean = true;
     $inpopup = !empty($_GET["inpopup"]);
 
@@ -99,7 +99,7 @@ function display() {
             print_footer($course);
         } else {                           /// Make a page and a pop-up window
 
-            print_header($pagetitle, $course->fullname, "$this->navigation {$resource->name}", 
+            print_header($pagetitle, $course->fullname, "$this->navigation ".format_string($resource->name), 
                          "", "", true, update_module_button($cm->id, $course->id, $this->strresource), 
                          navmenu($course, $cm));
 
@@ -113,7 +113,7 @@ function display() {
                 print_simple_box(format_text($resource->summary, FORMAT_MOODLE, $formatoptions, $course->id), "center");
             }
     
-            $link = "<a href=\"$CFG->wwwroot/mod/resource/view.php?inpopup=true&amp;id={$cm->id}\" target=\"resource{$resource->id}\" onclick=\"return openpopup('/mod/resource/view.php?inpopup=true&amp;id={$cm->id}', 'resource{$resource->id}','{$resource->popup}');\">{$resource->name}</a>";
+            $link = "<a href=\"$CFG->wwwroot/mod/resource/view.php?inpopup=true&amp;id={$cm->id}\" target=\"resource{$resource->id}\" onclick=\"return openpopup('/mod/resource/view.php?inpopup=true&amp;id={$cm->id}', 'resource{$resource->id}','{$resource->popup}');\">".format_string($resource->name,true)."</a>";
     
             echo "<p>&nbsp</p>";
             echo '<p align="center">';
@@ -127,7 +127,7 @@ function display() {
     } else {    /// not a popup at all
 
         add_to_log($course->id, "resource", "view", "view.php?id={$cm->id}", $resource->id, $cm->id);
-        print_header($pagetitle, $course->fullname, "$this->navigation {$resource->name}",
+        print_header($pagetitle, $course->fullname, "$this->navigation ".format_string($resource->name),
                      "", "", true, update_module_button($cm->id, $course->id, $this->strresource), 
                      navmenu($course, $cm));
     

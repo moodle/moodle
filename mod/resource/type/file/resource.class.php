@@ -213,7 +213,7 @@ function display() {
     $resourcetype = '';
     $embedded = false;
     $mimetype = mimeinfo("type", $resource->reference);
-    $pagetitle = strip_tags($course->shortname.': '.$resource->name);
+    $pagetitle = strip_tags($course->shortname.': '.format_string($resource->name));
 
     if ($resource->options != "frame") {
         if (in_array($mimetype, array('image/gif','image/jpeg','image/png'))) {  // It's an image
@@ -300,7 +300,7 @@ function display() {
         if ($inpopup) {
             print_header($pagetitle, $course->fullname);
         } else {
-            print_header($pagetitle, $course->fullname, "$this->navigation {$resource->name}", "", "", true, update_module_button($cm->id, $course->id, $this->strresource), navmenu($course, $cm));
+            print_header($pagetitle, $course->fullname, "$this->navigation ".format_string($resource->name), "", "", true, update_module_button($cm->id, $course->id, $this->strresource), navmenu($course, $cm));
         }
         notify(get_string('notallowedlocalfileaccess', 'resource', ''));
         if ($inpopup) {
@@ -315,7 +315,7 @@ function display() {
 
     if ($resource->popup and !$inpopup) {    /// Make a page and a pop-up window
 
-        print_header($pagetitle, $course->fullname, "$this->navigation {$resource->name}", "", "", true, update_module_button($cm->id, $course->id, $this->strresource), navmenu($course, $cm));
+        print_header($pagetitle, $course->fullname, "$this->navigation ".format_string($resource->name), "", "", true, update_module_button($cm->id, $course->id, $this->strresource), navmenu($course, $cm));
 
 
         echo "\n<script language=\"javascript\" type=\"text/javascript\">";
@@ -329,7 +329,7 @@ function display() {
             print_simple_box(format_text($resource->summary, FORMAT_MOODLE, $formatoptions), "center");
         }
 
-        $link = "<a href=\"$CFG->wwwroot/mod/resource/view.php?inpopup=true&amp;id={$cm->id}\" target=\"resource{$resource->id}\" onclick=\"return openpopup('/mod/resource/view.php?inpopup=true&amp;id={$cm->id}', 'resource{$resource->id}','{$resource->popup}');\">{$resource->name}</a>";
+        $link = "<a href=\"$CFG->wwwroot/mod/resource/view.php?inpopup=true&amp;id={$cm->id}\" target=\"resource{$resource->id}\" onclick=\"return openpopup('/mod/resource/view.php?inpopup=true&amp;id={$cm->id}', 'resource{$resource->id}','{$resource->popup}');\">".format_string($resource->name,true)."</a>";
 
         echo "<p>&nbsp;</p>";
         echo '<p align="center">';
@@ -350,7 +350,7 @@ function display() {
         echo "<html dir=\"ltr\">\n";
         echo '<head>';
         echo '<meta http-equiv="content-type" content="text/html; charset=iso-8859-1" />';
-        echo "<title>{$course->shortname}: {$resource->name}</title></head>\n";
+        echo "<title>{$course->shortname}: ".strip_tags(format_string($resource->name,true))."</title></head>\n";
         echo "<frameset rows=\"$CFG->resource_framesize,*\">";
         echo "<frame src=\"view.php?id={$cm->id}&amp;type={$resource->type}&amp;frameset=top\" />";
         if (!empty($localpath)) {  // Show it like this so we interpose some HTML
@@ -372,7 +372,7 @@ function display() {
     /// If we are in a frameset, just print the top of it
 
     if (!empty($_GET['frameset']) and $_GET['frameset'] == "top") {
-        print_header($pagetitle, $course->fullname, "$this->navigation {$resource->name}", "", "", true, update_module_button($cm->id, $course->id, $this->strresource), navmenu($course, $cm, "parent"));
+        print_header($pagetitle, $course->fullname, "$this->navigation ".format_string($resource->name), "", "", true, update_module_button($cm->id, $course->id, $this->strresource), navmenu($course, $cm, "parent"));
 
         $options->para = false;
         echo '<div class="summary">'.format_text($resource->summary, FORMAT_HTML, $options).'</div>';
@@ -394,13 +394,13 @@ function display() {
         if ($inpopup) {
             print_header($pagetitle);
         } else {
-            print_header($pagetitle, $course->fullname, "$this->navigation <a title=\"$strdirectlink\" target=\"$CFG->framename\" href=\"$fullurl\"> {$resource->name}</a>", "", "", true, update_module_button($cm->id, $course->id, $this->strresource), navmenu($course, $cm, "self"));
+            print_header($pagetitle, $course->fullname, "$this->navigation <a title=\"$strdirectlink\" target=\"$CFG->framename\" href=\"$fullurl\"> ".format_string($resource->name,true)."</a>", "", "", true, update_module_button($cm->id, $course->id, $this->strresource), navmenu($course, $cm, "self"));
 
         }
 
         if ($resourcetype == "image") {
             echo "<center><p>";
-            echo "<img title=\"{$resource->name}\" class=\"resourceimage\" src=\"$fullurl\" alt=\"\" />";
+            echo "<img title=\"".strip_tags(format_string($resource->name,true))."\" class=\"resourceimage\" src=\"$fullurl\" alt=\"\" />";
             echo "</p></center>";
 
         } else if ($resourcetype == "mp3") {
