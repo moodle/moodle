@@ -853,7 +853,10 @@
                 if ($page->qoption) {
                     // MULTIANSWER allowed, user's answer is an array
                     if (isset($_POST['answer'])) {
-                        $useranswers = optional_param('answer');
+						$useranswers = $_POST['answer'];
+						foreach ($useranswers as $key => $useranswer) {
+							$useranswers[$key] = clean_param($useranswer, PARAM_INT);
+						}
                     } else {
                         $noanswer = true;
                         break;
