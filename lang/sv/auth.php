@@ -16,6 +16,13 @@ $string['auth_dbtype'] = 'Databastyp (se <A HREF=../lib/adodb/readme.htm#drivers
 $string['auth_dbuser'] = 'Användarnamn med läsbehörighet till databasen';
 $string['auth_emaildescription'] = 'E-postbekräftelse är standardvalet som autenticeringsmetod.  När användaren registrerar sig, väljer eget nytt användarnamn och lösenord, kommer en bekräftelse via e-post sändas till användarens e-postadress.  Detta e-postbrev innehåller en säker länk till en sida där användaren kan bekräfta sitt konto. Framtida inlogging kontrollerar bara användarnamn och lösenord mot de lagrade värdena i Moodles databas.';
 $string['auth_emailtitle'] = 'E-postbaserad autenticering';
+$string['auth_fctitle'] = 'Använd en FirstClass server';
+$string['auth_fcdescription'] = "Denna metod använder en FirstClass server för att kontrollera huruvida ett givet användarnamn och lösenord är giltiga.";
+$string['auth_fchost'] = 'FirstClass serverns adress. Använd IP nummer eller DNS namn.';
+$string['auth_fcfppport'] = 'Serverport  (3333 är den vanligaste)';
+$string['auth_fcuserid'] = "Namn på FirstClass konto med rättigheten 'Underadministratör'.";
+$string['auth_fcpasswd'] = 'Lösenordet för ovanstående FirstClass konto.';
+$string['auth_fccreators'] = "Lista av FirstClass grupper som får behörighet att skapa nya kurser. Skilj på grupperna med ';'. Gruppernas namn måste anges exakt. Systemet gör skillnad på versaler och gemener.";
 $string['auth_imapdescription'] = 'Denna metod använder en IMAP-server för att kontrollera huruvida ett givet användarnamn och lösenord är giltigt.';
 $string['auth_imaphost'] = 'IMAP-serverns adress. Använd IP-nummer, inte DNS- namn.';
 $string['auth_imapport'] = 'IMAP-serverns portnummer. Vanligtvis är detta 143 eller 993.';
