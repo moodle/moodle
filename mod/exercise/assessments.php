@@ -377,7 +377,7 @@
 				break;
 				
 			case 3: // criterion grading
-				for ($j = 100; $j >= 0; $j--) {
+				for ($j = $exercise->grade; $j >= 0; $j--) {
 					$numbers[$j] = $j;
 				}
 				for ($i=0; $i<$exercise->nelements; $i++) {

@@ -164,7 +164,10 @@
 		if (exercise_count_teacher_submissions($exercise) == 0) {
 			redirect("view.php?id=$cm->id", get_string("noexercisedescriptionssubmitted", "exercise"));
 			}
-		else {
+		elseif (($exercise->gradingstrategy == 3) and ($exercise->nelements ==1 )) {
+            // only one criterion specified
+            redirect("view.php?id=$cm->id", get_string("numberofcriterionelements", "exercise"));
+        } else {
 			set_field("exercise", "phase", 2, "id", "$exercise->id");
 			add_to_log($course->id, "exercise", "open", "view.php?id=$cm->id", "$exercise->id", $cm->id);
 			redirect("view.php?id=$cm->id", get_string("movingtophase", "exercise", 2));

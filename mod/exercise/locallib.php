@@ -115,11 +115,30 @@ function exercise_compare_assessments($exercise, $assessment1, $assessment2) {
     }
     $sumdiffs = 0;
     $sumweights = 0;
-    for ($i=0; $i < $exercise->nelements; $i++) {
-        $diff = ($grades[0][$i] - $grades[1][$i]) * $weight[$i] / $maxscore[$i];
-        $sumdiffs += $diff * $diff; // use squared distances
-        $sumweights += $weight[$i];
-    }
+    switch ($exercise->gradingstrategy) {
+        case 1 : // accumulative grading and...
+        case 4 : // ...rubic grading
+            for ($i=0; $i < $exercise->nelements; $i++) {
+                $diff = ($grades[0][$i] - $grades[1][$i]) * $weight[$i] / $maxscore[$i];
+                $sumdiffs += $diff * $diff; // use squared distances
+                $sumweights += $weight[$i];
+                }
+            break;
+        case 2 :  // error banded grading
+            // ignore maxscores here, the grades are either 0 or 1,
+            for ($i=0; $i < $exercise->nelements; $i++) {
+                $diff = ($grades[0][$i] - $grades[1][$i]) * $weight[$i];
+                $sumdiffs += $diff * $diff; // use squared distances
+                $sumweights += $weight[$i];
+                }
+            break;
+        case 3 : // criterion grading
+            // here we only need to look at the difference between the "zero" grade elements
+            $diff = ($grades[0][0] - $grades[1][0]) / (count($elementsraw) - 1);
+            $sumdiffs = $diff * $diff;
+            $sumweights = 1;
+            break;
+    }            
     // convert to a sensible grade (always out of 100)
     $COMP = (object)$EXERCISE_ASSESSMENT_COMPS[$exercise->assessmentcomps];
     $factor = $COMP->value;
@@ -1852,7 +1871,7 @@ function exercise_print_assessment_form($exercise, $assessment = false, $allowch
                     .number_format($EXERCISE_EWEIGHTS[$elements[$i]->weight], 2)."</font></TD></tr>\n";
                 echo "<TR valign=\"top\">\n";
 
-                echo "  <TD BGCOLOR=\"$THEME->cellheading2\" align=\"center\"><B>".get_string("select", "exercise")."</B></TD>\n";
+                echo "  <TD BGCOLOR=\"$THEME->cellheading2\" align=\"center\"><B>".get_string("select")."</B></TD>\n";
                 echo "  <TD BGCOLOR=\"$THEME->cellheading2\"><B>". get_string("criterion","exercise")."</B></TD></tr>\n";
 
                 if (isset($grades[$i])) {
@@ -2320,7 +2339,7 @@ function exercise_print_teacher_assessment_form($exercise, $assessment, $submiss
 	<?PHP
 
     // now print a normal assessment form based on the student's assessment for this submission 
-    // and allow the teacher to grade and add comments
+    // and allow the teacher to grade and add additional comments
     $studentassessment = $assessment;
     $allowchanges = true;
     
@@ -2329,8 +2348,8 @@ function exercise_print_teacher_assessment_form($exercise, $assessment, $submiss
     
     // is there an existing assessment for the submission
     if (!$assessment = exercise_get_submission_assessment($submission, $USER)) {
-        // copy student's assessment without the comments for the student's submission
-        $assessment = exercise_copy_assessment($studentassessment, $submission);
+        // copy student's assessment with their comments for the teacher's assessment
+        $assessment = exercise_copy_assessment($studentassessment, $submission, true);
         }
 
     // only show the grade if grading strategy > 0 and the grade is positive
@@ -2591,7 +2610,7 @@ function exercise_print_teacher_assessment_form($exercise, $assessment, $submiss
             echo "<TR valign=top>\n";
             echo "  <TD BGCOLOR=\"$THEME->cellheading2\">&nbsp;</TD>\n";
             echo "  <TD BGCOLOR=\"$THEME->cellheading2\"><B>". get_string("criterion","exercise")."</B></TD>\n";
-            echo "  <TD BGCOLOR=\"$THEME->cellheading2\"><B>".get_string("select", "exercise")."</B></TD>\n";
+            echo "  <TD BGCOLOR=\"$THEME->cellheading2\"><B>".get_string("select")."</B></TD>\n";
             echo "  <TD BGCOLOR=\"$THEME->cellheading2\"><B>".get_string("suggestedgrade", "exercise")."</B></TD>\n";
             // find which criteria has been selected (saved in the zero element), if any
             if (isset($grades[0]->grade)) {
@@ -2639,7 +2658,7 @@ function exercise_print_teacher_assessment_form($exercise, $assessment, $submiss
                      "<P align=\"right\"><font size=\"1\">Weight: "
                     .number_format($EXERCISE_EWEIGHTS[$elements[$i]->weight], 2)."</font></TD></tr>\n";
                 echo "<TR valign=\"top\">\n";
-                echo "  <TD BGCOLOR=\"$THEME->cellheading2\" align=\"center\"><B>".get_string("select", "exercise")."</B></TD>\n";
+                echo "  <TD BGCOLOR=\"$THEME->cellheading2\" align=\"center\"><B>".get_string("select")."</B></TD>\n";
                 echo "  <TD BGCOLOR=\"$THEME->cellheading2\"><B>". get_string("criterion","exercise")."</B></TD></tr>\n";
                 if (isset($grades[$i])) {
                     $selection = $grades[$i]->grade;
