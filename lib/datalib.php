@@ -1317,7 +1317,7 @@ function get_course_teachers($courseid, $sort="t.authority ASC", $exceptions='')
 *
 * @param    type description
 */
-function get_course_users($courseid, $sort="timeaccess DESC", $exceptions='') {
+function get_course_users($courseid, $sort="timeaccess DESC", $exceptions='', $fields='*') {
 
     /// Using this method because the single SQL is too inefficient
     // Note that this has the effect that teachers and students are
@@ -1326,7 +1326,7 @@ function get_course_users($courseid, $sort="timeaccess DESC", $exceptions='') {
     if (!$teachers = get_course_teachers($courseid, $sort, $exceptions)) {
         $teachers = array();
     }
-    if (!$students = get_course_students($courseid, $sort, "", 0, 99999, "", "", NULL, "", '', $exceptions)) {
+    if (!$students = get_course_students($courseid, $sort, '', 0, 99999, '', '', NULL, '', $fields, $exceptions)) {
         $students = array();
     }
 
@@ -1416,9 +1416,9 @@ function search_users($courseid, $groupid, $searchtext, $sort='', $exceptions=''
 *
 * @param    type description
 */
-function get_site_users($sort="u.lastaccess DESC", $select="", $exceptions='') {
+function get_site_users($sort="u.lastaccess DESC", $fields='*', $exceptions='') {
 
-    return get_course_users(SITEID, $sort, '', 0, 999999, '', '', NULL, '', $select, $exceptions);
+    return get_course_users(SITEID, $sort, $exceptions, $fields);
 }
 
 
