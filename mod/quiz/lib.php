@@ -1085,12 +1085,10 @@ function quiz_print_category_form($course, $current) {
     $strshow = get_string("show", "quiz");
     $streditcats = get_string("editcategories", "quiz");
 
-    echo "<table width=\"100%\"><tr><td nowrap=\"nowrap\">";
-    echo "<form method=\"post\" action=\"edit.php\">"; 
+    echo "<table width=\"100%\"><tr><td width=\"20\" nowrap=\"nowrap\">";
     echo "<b>$strcategory:</b>&nbsp;";
-    choose_from_menu($catmenu, "cat", "$current");
-    echo "<input type=\"submit\" value=\"$strshow\" />";
-    echo "</form>";
+    echo "</td><td>";
+    popup_form ("edit.php?cat=", $catmenu, "catmenu", $current, "", "", "", false, "self");
     echo "</td><td align=\"right\">";
     echo "<form method=\"get\" action=\"category.php\">"; 
     echo "<input type=\"hidden\" name=\"id\" value=\"$course->id\" />";
@@ -1302,33 +1300,36 @@ function quiz_print_cat_question_list($categoryid, $quizselected=true) {
         return;
     }
     echo "<center>";
-    echo text_to_html($category->info);
+    echo format_text($category->info, FORMAT_MOODLE);
 
-    echo "<table><tr>";
-    echo "<td valign=\"top\"><b>$straddquestions:</b></td>";
-    echo "<td valign=\"top\" align=\"right\">";
-    echo "<form method=\"get\" action=\"question.php\">"; 
-    choose_from_menu($QUIZ_QUESTION_TYPE, "qtype", "", "");
-    echo "<input type=\"hidden\" name=\"category\" value=\"$category->id\" />";
-    echo "<input type=\"submit\" value=\"$strcreatenewquestion\" />";
+    echo '<table><tr>';
+    echo "<td valign=\"top\"><b>$strcreatenewquestion:</b></td>";
+    echo '<td valign="top" align="right">';
+    popup_form ("question.php?category=$category->id&qtype=", $QUIZ_QUESTION_TYPE, "addquestion", 
+                "", "", "", "", false, "self");
+    echo '<td width="10" valign="top" align="right">';
     helpbutton("questiontypes", $strcreatenewquestion, "quiz");
-    echo "</form>";
+    echo '</td></tr>';
 
-    echo "<form method=\"get\" action=\"import.php\">"; 
+    echo '<tr><td colspan="3" align="right">';
+    echo '<form method="get" action="import.php">'; 
     echo "<input type=\"hidden\" name=\"category\" value=\"$category->id\" />";
     echo "<input type=\"submit\" value=\"$strimportquestions\" />";
     helpbutton("import", $strimportquestions, "quiz");
-    echo "</form>";
+    echo '</form>';
+    echo '</td></tr>';
 
-    echo "<form method=\"get\" action=\"multiple.php\">"; 
+    echo '<tr><td colspan="3" align="right">';
+    echo '<form method="get" action="multiple.php">'; 
     echo "<input type=\"hidden\" name=\"category\" value=\"$category->id\" />";
     echo "<input type=\"submit\" value=\"$strcreatemultiple\" />";
     helpbutton("createmultiple", $strcreatemultiple, "quiz");
-    echo "</form>";
+    echo '</form>';
+    echo '</td></tr>';
 
-    echo "</tr></table>";
+    echo '</table>';
 
-    echo "</center>";
+    echo '</center>';
 
     if (!$questions = get_records("quiz_questions", "category", $category->id, "qtype ASC")) {
         echo "<p align=\"center\">";
