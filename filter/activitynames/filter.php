@@ -26,15 +26,17 @@
         if (!empty($modinfo)) {
             $cm = '';
             foreach ($modinfo as $activity) {
-//echo $activity->name."-".urldecode($activity->name)."<br>";
-                $title = strip_tags(urldecode($activity->name));
-                $href_tag_begin = "<a class=\"autolink\" title=\"$title\" href=\"$CFG->wwwroot/mod/$activity->mod/view.php?id=$activity->cm\">";
-                $currentname = urldecode($activity->name);
-                if ($currentname = trim($currentname)) {
-                    //Avoid integers < 1000 to be linked. See bug 1441.
-                    $intcurrent = intval($currentname);
-                    if (!(!empty($intcurrent) && strval($intcurrent) == $currentname && $intcurrent < 1000)) {
-                        $text = activity_link_names($text,$currentname,$href_tag_begin, "</a>");
+                //Exclude labels and hidden items
+                if ($activity->mod != "label" && $activity->visible) {
+                    $title = strip_tags(urldecode($activity->name));
+                    $href_tag_begin = "<a class=\"autolink\" title=\"$title\" href=\"$CFG->wwwroot/mod/$activity->mod/view.php?id=$activity->cm\">";
+                    $currentname = urldecode($activity->name);
+                    if ($currentname = trim($currentname)) {
+                        //Avoid integers < 1000 to be linked. See bug 1441.
+                        $intcurrent = intval($currentname);
+                        if (!(!empty($intcurrent) && strval($intcurrent) == $currentname && $intcurrent < 1000)) {
+                            $text = activity_link_names($text,$currentname,$href_tag_begin, "</a>");
+                        }
                     }
                 }
             }
