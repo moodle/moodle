@@ -969,7 +969,7 @@ function get_course_mods($courseid) {
 /// Just gets a raw list of all modules in a course
     global $CFG;
 
-    return get_records_sql("SELECT cm.*, m.name as modname
+    return get_records_sql("SELECT cm.*, m.name as modname, cm.visible as visible
                             FROM {$CFG->prefix}modules m, {$CFG->prefix}course_modules cm
                             WHERE cm.course = '$courseid' 
                             AND cm.deleted = '0'
