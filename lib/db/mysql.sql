@@ -143,6 +143,7 @@ CREATE TABLE user (
   address varchar(70) default NULL,
   city varchar(20) default NULL,
   country char(2) default NULL,
+  timezone float NOT NULL default '99',
   firstaccess int(10) unsigned NOT NULL default '0',
   lastaccess int(10) unsigned NOT NULL default '0',
   lastlogin int(10) unsigned NOT NULL default '0',
@@ -152,12 +153,10 @@ CREATE TABLE user (
   picture tinyint(1) default NULL,
   url varchar(255) default NULL,
   description text,
-  research tinyint(1) unsigned NOT NULL default '0',
-  forwardmail tinyint(1) unsigned NOT NULL default '0',
   timemodified int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (id),
-  UNIQUE KEY id (id),
-  UNIQUE KEY username (username)
+  UNIQUE KEY username (username),
+  UNIQUE KEY id (id)
 ) TYPE=MyISAM COMMENT='One record for each person';
 # --------------------------------------------------------
 
