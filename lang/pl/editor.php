@@ -1,0 +1,76 @@
+<?PHP // $Id$ 
+      // editor.php - created with Moodle 1.2 development (2003111400)
+
+
+$string['about'] = 'O tym edytorze';
+$string['absbottom'] = 'Dó³';
+$string['absmiddle'] = '¦rodek';
+$string['address'] = 'Adres';
+$string['alignment'] = 'Justowanie';
+$string['alternatetext'] = 'Tekst alternatywny';
+$string['baseline'] = 'Dolna linia';
+$string['bold'] = 'Czcionka pogrubiona';
+$string['borderthickness'] = 'Grubo¶æ ramki';
+$string['bottom'] = 'Dó³';
+$string['browse'] = 'Przegl±daj';
+$string['cancel'] = 'Anuluj';
+$string['cellpadding'] = 'Marginesy wewn±trz komórki';
+$string['cellspacing'] = 'Marginesy dooko³a komórki';
+$string['choosechar'] = 'Wybierz literê';
+$string['chooseicon'] = 'Wybierz ikonê do wstawienia';
+$string['close'] = 'Zamknij';
+$string['cols'] = 'Kolumny';
+$string['copy'] = 'Skopiuj zaznaczone';
+$string['createlink'] = 'Wstaw link';
+$string['cut'] = 'Wytnij zaznaczone';
+$string['forecolor'] = 'Kolor czcionki';
+$string['heading'] = 'Nag³ówek';
+$string['hilitecolor'] = 'Kolor t³a';
+$string['horizontal'] = 'Poziome';
+$string['horizontalrule'] = 'Linia horyzontalna';
+$string['htmlmode'] = 'Prze³±cz na kod HTML';
+$string['imageurl'] = 'URL do obrazka';
+$string['indent'] = 'Zwiêksz indent';
+$string['insertchar'] = 'Wstaw specjaln± literê';
+$string['insertimage'] = 'Wstaw zdjêcie';
+$string['insertsmile'] = 'Wstaw ikonkê (smiley)';
+$string['inserttable'] = 'Wstaw tabelê';
+$string['italic'] = 'Kursywa';
+$string['justifycenter'] = 'Wy¶rodkuj tekst';
+$string['justifyfull'] = 'Pe³ne justowanie';
+$string['justifyleft'] = 'Wyrównaj do lewej';
+$string['justifyright'] = 'Wyrównaj do prawej';
+$string['layout'] = 'Uk³ad';
+$string['left'] = 'Lewo';
+$string['middle'] = '¦rodek';
+$string['normal'] = 'Normalne';
+$string['notset'] = 'Nie ustawione';
+$string['ok'] = 'OK';
+$string['orderedlist'] = 'Lista ponumerowana';
+$string['outdent'] = 'Zmniejsz indent';
+$string['paste'] = 'Wklej';
+$string['path'] = '¦cie¿ka';
+$string['percent'] = 'Procent';
+$string['pixels'] = 'Piksele';
+$string['popupeditor'] = 'Powiêksz edytor';
+$string['preformatted'] = 'Preformatowany';
+$string['preview'] = 'Podgl±d';
+$string['redo'] = 'Powtórz swoje ostatnie dzia³anie';
+$string['right'] = 'Prawo';
+$string['rows'] = 'Rowki';
+$string['showhelp'] = 'Pomoc';
+$string['spacing'] = 'Spacje';
+$string['strikethrough'] = 'Literki z przeciêciem';
+$string['subscript'] = 'Indeks dolny';
+$string['superscript'] = 'Indeks górny';
+$string['textindicator'] = 'Aktualny styl';
+$string['textmode'] = 'Jeste¶ w trybie tekstowym. U¿yj przycisków [<>] aby wróciæ do trybu WYSIWYG.';
+$string['texttop'] = 'Tekst na górze';
+$string['top'] = 'Góra';
+$string['underline'] = 'Podkre¶l';
+$string['undo'] = 'Cofnij swoje ostatnie dzia³anie';
+$string['unorderedlist'] = 'Lista wypunktowana';
+$string['vertical'] = 'Pionowe';
+$string['width'] = 'Szeroko¶æ';
+
+?>
