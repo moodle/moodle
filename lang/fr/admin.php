@@ -107,6 +107,7 @@ $string['helpweekenddays'] = 'Quel jours sont traités comme jours du «&nbsp;week
 $string['managedstpresets'] = 'Gestion des réglages d\'heure d\'été';
 $string['nodstpresetsexist'] = 'Le support de l\'heure d\'été est désactivé pour tous les utilisateurs, car aucun réglage n\'est défini. Vous pouvez définir des réglages en cliquant sur le bouton ci-dessous.';
 $string['optionalmaintenancemessage'] = 'Message de maintenance facultatif';
+$string['returntocalendaroptions'] = 'Retour aux réglages du calendrier';
 $string['sitemaintenance'] = 'Ce site est actuellement en maintenance. Il est donc temporairement non disponible';
 $string['sitemaintenancemode'] = 'Mode maintenance';
 $string['sitemaintenanceon'] = 'Votre site est actuellement en mode maintenance (seuls les administrateurs peuvent se connecter et utiliser le site).';
