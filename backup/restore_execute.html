@@ -147,7 +147,7 @@
 
     //Now create user_files as needed
     if ($status and ($restore->user_files)) {
-        echo "<li>Copying User Files";
+        echo "<li>Copying User Files<br>";
         $status = restore_user_files($restore);
         //If all is ok (and we have a counter)
         if ($status and ($status !== true)) {
@@ -160,7 +160,7 @@
 
     //Now create course files as needed
     if ($status and ($restore->course_files)) {
-        echo "<li>Copying Course Files";
+        echo "<li>Copying Course Files<br>";
         $status = restore_course_files($restore);
         //If all is ok (and we have a counter)
         if ($status and ($status !== true)) {
