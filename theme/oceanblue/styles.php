@@ -37,7 +37,7 @@ body, td, th, li {
 }
 
 th {
-    font-weight: bold;
+    font-weight: normal;
     background-color: <?PHP echo $THEME->cellheading?>;
     background-image: url(<?PHP echo "$themeurl"?>/gradient.jpg);
 }
@@ -74,7 +74,6 @@ form {
     border-width: 1px;
     border-color: <?PHP echo $THEME->borders?>;
     border-style: solid;
-    -moz-border-radius: 3px;
 }
 
 .navbar {
@@ -95,30 +94,13 @@ form {
     border-width: 1px;
     border-color: <?PHP echo $THEME->borders?>;
     border-style: solid;
-    -moz-border-radius-bottomleft: 20px;
-    -moz-border-radius-bottomright: 20px;
 }
 
 .sideblockheading {
     background-image: url(<?PHP echo "$themeurl"?>/gradient.jpg);
 }
 
-.sideblockmain {
-    -moz-border-radius-bottomleft: 20px;
-    -moz-border-radius-bottomright: 20px;
-}
-
 .sideblocklinks {
-}
-
-.sideblocklatestnews {
-    -moz-border-radius-bottomleft: 20px;
-    -moz-border-radius-bottomright: 20px;
-}
-
-.sideblockrecentactivity {
-    -moz-border-radius-bottomleft: 20px;
-    -moz-border-radius-bottomright: 20px;
 }
 
 .outlineheadingblock {
@@ -126,28 +108,16 @@ form {
     border-width: 1px;
     border-color: <?PHP echo $THEME->borders?>;
     border-style: solid;
-    -moz-border-radius: 3px;
 }
 
 .forumpost {
     border-width: 1px;
     border-color: <?PHP echo $THEME->borders?>;
     border-style: solid;
-    -moz-border-radius-bottomleft: 20px;
-    -moz-border-radius-bottomright: 20px;
 }
 
 .forumpostpicture {
 }
-
-.forumpostside {
-    -moz-border-radius-bottomleft: 20px;
-}
-
-.forumpostmessage {
-    -moz-border-radius-bottomright: 20px;
-}
-
 
 .weeklyoutline {
 }
@@ -188,7 +158,7 @@ form {
 
 .weeklydatetext {
     font-size: medium;
-    font-weight: bold;
+    font-weight: normal;
     color: <?PHP echo $THEME->cellheading2?>;
 }
 
@@ -236,7 +206,6 @@ form {
     border-width: 1px;
     border-color: <?PHP echo $THEME->borders?>;
     border-style: solid;
-    -moz-border-radius: 20px;
     padding: 10px;
 }
 
@@ -245,24 +214,12 @@ form {
     border-width: 1px;
     border-color: <?PHP echo $THEME->borders?>;
     border-style: solid;
-    -moz-border-radius-topleft: 3px;
-    -moz-border-radius-topright: 3px;
-    -moz-border-radius-bottomleft: 15px;
-    -moz-border-radius-bottomright: 15px;
-}
-
-.generalboxcontent {
-    -moz-border-radius-topleft: 3px;
-    -moz-border-radius-topright: 3px;
-    -moz-border-radius-bottomleft: 15px;
-    -moz-border-radius-bottomright: 15px;
 }
 
 .noticebox {
     border-width: 1px;
     border-color: <?PHP echo $THEME->borders?>;
     border-style: solid;
-    -moz-border-radius: 3px;
 }
 
 .noticeboxcontent {
@@ -290,7 +247,7 @@ a.dimmed:hover {
 }
 
 .dimmed_text {
-    color: #AAAAAA;
+    color: #666666;
 }
 
 .forumpostheader {
@@ -331,7 +288,7 @@ a.dimmed:hover {
 
 .headermain {
     font-size: large;
-    font-weight: bold;
+    font-weight: normal;
 }
 
 .headermenu {
@@ -342,7 +299,7 @@ a.dimmed:hover {
 
 .headerhomemain {
     font-size: x-large;
-    font-weight: bold;
+    font-weight: normal;
 }
 
 .headerhomemenu {
@@ -355,12 +312,11 @@ a.dimmed:hover {
     border-width: 1px;
     border-color: <?PHP echo $THEME->borders?>;
     border-style: solid;
-    -moz-border-radius: 20px;
 }
 
 .categoryname {
     font-size: larger;
-    font-weight: bold;
+    font-weight: normal;
 }
 
 .coursename {
@@ -373,7 +329,6 @@ a.dimmed:hover {
     border-width: 1px;
     border-color: <?PHP echo $THEME->borders?>;
     border-style: solid;
-    -moz-border-radius: 20px;
 }
 
 .courseboxinfo {
@@ -385,13 +340,13 @@ a.dimmed:hover {
 
 a.autolink:link {
     text-decoration: none;
-    color: #000000;
+    color: #555555;
     background-color: <?PHP echo $THEME->autolink?>;
 }
 
 a.autolink:visited {
     text-decoration: none;
-    color: #000000;
+    color: #555555;
     background-color: <?PHP echo $THEME->autolink?>;
 }
 
@@ -404,36 +359,11 @@ a.autolink:hover {
     border-width: 1px;
     border-color: <?PHP echo $THEME->borders?>;
     border-style: solid;
-    -moz-border-radius-bottomleft: 20px;
-    -moz-border-radius-bottomright: 20px;
     margin-bottom: 5px;
-}
-
-.userinfoboxside {
-    -moz-border-radius-bottomleft: 20px;
-}
-
-.userinfoboxcontent {
-    -moz-border-radius-bottomright: 20px;
 }
 
 .userinfoboxsummary {
 }
-
-.userinfoboxlinkcontent {
-    -moz-border-radius-bottomright: 20px;
-}
-
-.generaltab {
-    -moz-border-radius-topleft: 15px;
-    -moz-border-radius-topright: 15px;
-}
-
-.generaltabselected {
-    -moz-border-radius-topleft: 15px;
-    -moz-border-radius-topright: 15px;
-}
-
 
 .forumheaderlist {
     border-width: 1px;
@@ -468,7 +398,6 @@ TABLE.calendarmini {
     font-size: .7em;
     margin: 0px;
     padding: 2px;
-    -moz-border-radius: 10px;
 }
 
 TABLE.calendarmonth {
@@ -478,7 +407,6 @@ TABLE.calendarmonth {
     border-style: solid;
     margin: 0px;
     padding: 2px;
-    -moz-border-radius: 10px;
 }
 
 TABLE.calendarmini TBODY TD {
@@ -488,7 +416,6 @@ TABLE.calendarmini TBODY TD {
     border-width: 2px;
     border-color: <?PHP echo $THEME->cellcontent2?>;
     border-style: solid;
-    -moz-border-radius: 4px;
 }
 
 TABLE.calendarmonth TBODY TD {
@@ -580,19 +507,14 @@ TABLE.calendarmonth THEAD TD {
 
 .sideblockmain .cal_event {
 	font-size: 0.8em;
-	font-weight: bold;
+	font-weight: normal;
 }
 .sideblockmain .cal_event_date {
 	font-size: 0.6em;
 }
 
-.mycalendar {
-	-moz-border-radius-bottomleft: 20px;
-    -moz-border-radius-bottomright: 20px;
-}
-
 .mycalendar .cal_event {
-	font-weight: bold;
+	font-weight: normal;
 }
 .mycalendar .cal_event_date {
 	font-size: 0.8em;
@@ -605,7 +527,6 @@ TABLE.calendarmonth THEAD TD {
     border-style: solid;
     margin: 0px;
     padding: 2px;
-    -moz-border-radius: 10px;
 }
 
 .mycalendar .cal_filters THEAD TD {
@@ -622,13 +543,12 @@ TABLE.calendarmonth THEAD TD {
     border-style: solid;
     margin: 0px;
     padding: 2px;
-    -moz-border-radius: 10px;
 }
 
 .mycalendar .cal_event_table THEAD {
 	background-color: <?PHP echo $THEME->cellcontent?>;
 	text-align: center;
-	font-weight: bold;
+	font-weight: normal;
 }
 
 .sideblockmain HR {
@@ -649,11 +569,11 @@ TABLE.calendarmonth THEAD TD {
 
 .calendarexpired {
 	color: red;
-	font-weight: bold;
+	font-weight: normal;
 }
 
 .calendarreferer {
-	font-weight: bold;
+	font-weight: normal;
 }
 
 TD.cal_event_description {
@@ -679,13 +599,13 @@ TD.cal_event_description {
 
 .cal_popup_caption {
     font-size: 75%;
-    font-weight: bold;
+    font-weight: normal;
     font-family: sans-serif;
 }
 
 .cal_popup_close {
 	font-size: 75%;
-	font-weight: bold;
+	font-weight: normal;
     font-family: sans-serif;
 	margin-right: 5px;
 }
@@ -707,8 +627,6 @@ TABLE.formtable TD {
     border-width: 1px;
     border-color: <?PHP echo $THEME->borders?>;
     border-style: solid;
-    -moz-border-radius-bottomleft: 15px;
-    -moz-border-radius-bottomright: 15px;
 }
 
 .eventfullheader {
@@ -718,18 +636,6 @@ TABLE.formtable TD {
     padding:8px;
 }
 
-.eventfullside {
-    -moz-border-radius-bottomleft: 15px;
-}
-
-.eventfullmessage {
-    -moz-border-radius-bottomright: 15px;
-}
-
-#block_course_summary, #block_course_summary .sideblockmain {
-    -moz-border-radius: 20px;
-}
- 
 #block_course_summary .sideblockmain {
     padding: 10px;
 }
@@ -738,10 +644,5 @@ TABLE.formtable TD {
     border-width: 1px;
     border-color: <?PHP echo $THEME->borders?>;
     border-style: solid;
-    -moz-border-radius: 15px;
-}
-
-.sitetopiccontent {
-    -moz-border-radius: 15px;
 }
 

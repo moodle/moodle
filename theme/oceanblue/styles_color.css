@@ -1,0 +1,564 @@
+/************************************************* 
+***
+*** color
+***
+**************************************************/
+
+/*************************************************
+***
+*** This CSS file contains all color definitions
+*** like background-color, font-color,
+*** border-color etc.
+***
+*** Shortindex:
+*** basic and general styles
+*** header and footer styles
+*** content styles (alphabetically)
+*** admin, course, activities, calendar, blocks
+*** 
+*** Please sort new styles for existing content
+*** into the appropriate part of this CSS file.
+*** Styles for new Blocks or Activities please
+*** place at the end.
+*** Wouldn't the alphabetical order be better?
+***
+**************************************************/
+
+
+/* basic styles */
+a:link,
+a:visited {
+    color:#0000FF;
+}
+
+a.dimmed:link,
+a.dimmed:visited {
+    color:#666666; /* hidden */
+}
+
+a.autolink:link,
+a.autolink:visited {
+    background-color:#DDDDDD; /* autolink */
+    color:#555555;
+}
+
+a.autolink:hover,
+a:hover,
+a.dimmed:hover {
+    color:#FF0000;
+}
+
+
+/* general styles */
+body {
+    background-color:#AAAAFF;
+    color:#000066;
+}
+
+th {
+    background-color:#DDDDDD;
+}
+
+.highlight {
+    background-color:#AAFFAA; /* highlight */
+}
+
+.highlight2 {
+    color:#AA0000; /* highlight missing terms in forum search */
+}
+
+/* Alternate rows even */
+.r0 {  
+}
+
+/* Alternate rows odd */
+.r1 {  
+}
+
+/* notification messages (can be good or bad) */
+.notifyproblem {
+    color:#660000;
+    padding: 10px;
+    text-align: center;
+}
+
+.notifysuccess {
+    color:#006600;
+    padding: 10px;
+    text-align:center;
+}
+
+.required {
+    background-color:#DDDDDD;
+}
+
+
+/* header styles */
+
+
+/* footer styles */
+
+
+/*****************************
+***
+*** content styles
+***
+******************************/
+/* many places */
+.generalbox {
+    border-color:#AAAAFF; /* borders */
+}
+.informationbox {
+    border-color:#AAAAFF; /* borders */
+}
+.feedbackbox {
+    border-color: #AAAAFF; /* borders */
+}
+.feedbackby {
+    background-color:#BBBBBB;
+}
+.userpicture {
+    background:#EEEEEE; 
+}
+
+.admin .generalboxcontent {
+    background-color:#EEEEEE; 
+}
+.admin .generalbox {
+    border-color:#BBBBBB; 
+}
+
+.admin .informationbox {
+    border-color:#BBBBBB; 
+    background-color:#FFFFFF; 
+}
+
+.noticebox {
+    border-color:#AAAAFF; /* borders */
+}
+
+.errorbox {
+    color:#ffffff;
+    border-color:#660000;
+    background-color:#990000;
+}
+
+/* summary of a user in a nice little box - weblib.php */
+.userinfobox {
+    border-color:#AAAAFF; /* borders */
+}
+
+
+/* weblib.php table */
+.tabledivider {
+    border-color:#AAAAFF; /* borders */
+}
+
+
+/* entry-page index.php */ 
+.sitetopic {
+    background-color:#FFFFFF; /* cellheading */
+    border-color:#AAAAFF; /* borders */
+}
+
+
+/*****************************
+***
+*** Admin
+***
+******************************/
+/* admin, calednder, course */
+.dimmed_text {
+    color:#666666;
+}
+
+
+/*****************************
+***
+*** Course
+***
+******************************/
+/* course, entry-page, login */
+.headingblock {
+    border-color:#AAAAFF; /* borders */
+}
+
+
+/* course */
+.headingblock .outline {
+    border-color:#AAAAFF; /* borders */
+}
+
+#course-view .section td {
+    border-color:#DDDDDD;
+}
+
+#course-view .section .content {
+}
+
+#course-view .section .side {
+    background: #EEEEEE;
+}
+
+#course-view .section .left {
+}
+
+#course-view .section .right {
+}
+
+#course-view .current .side{
+    background: #FFD991;
+}
+
+#course-view .topics {
+}
+
+#course-view .weeks {
+}
+
+#course-view .section .spacer {
+}
+
+#course-view .section .weekdates {
+    color:#666666;
+}
+
+.categoryboxcontent,
+.courseboxcontent {
+    border-color:#AAAAFF; /* borders */
+    background: #FFFFFF;
+}
+
+
+/* user */
+
+.userinfobox {
+    border-color: #DDDDDD;
+    background-color: #F7F7F7;
+}
+
+
+
+/*****************************
+***
+*** Activities
+***
+******************************/
+/* assignment, forum, glossary */
+.forumheaderlist,
+.forumpost {
+    border-color:#AAAAFF; /* borders */
+}
+
+.forumpost .content {
+    background: #FFFFFF;
+}
+
+.forumpost .left {
+    background:#EEEEEE; 
+}
+
+.forumpost .topic {
+    border-style:solid; /* borders */
+    border-width: 0px;
+    border-bottom-color: #EEEEEE;
+    border-bottom-width: 1px;
+}
+
+.forumpost .starter {
+    background:#DDDDDD; 
+}
+
+.forumheaderlist .discussion .starter {
+    background:#DDDDDD; 
+}
+
+.forumheaderlist td {
+    border-color: #FFFFFF;
+}
+
+
+/* survey */
+#mod-survey-view .r0 {
+    background-color: #EEEEEE;
+}
+#mod-survey-view .r1 {
+    background-color: #DDDDDD;
+}
+
+
+/* assignment */
+.assignmentsubmission {
+}
+
+.assignmentnew .assignmentfeedback{
+    background-color:#DDDDDD; /* cellheading2 */
+}   
+    
+.assignmentold .assignmentfeedback{
+    background-color:#BBBBBB; /* cellheading */
+}
+
+.assignmentheading {
+    background-color:#BBBBBB; /* cellheading */
+}
+
+
+/* workshop */
+
+.workshoppostpicture {
+    background-color:#FEE6B9; /* cellcontent2 */
+}
+
+.workshopassessmentheading {
+    background-color:#DDDDDD; /* cellheading2 */
+}
+
+
+/* glossary, wiki */
+.generaltab, .generaltabinactive {
+    background-color:#BBBBBB; /* cellheading */
+}
+
+.generaltabselected {
+    background-color:#DDDDDD; /* cellheading2 */
+}
+
+.generaltabinactive {
+    color:#CCCCCC;
+}
+
+.entryboxheader {
+    border-color: #BBBBBB;
+}
+
+.entrybox {
+    border-color: #BBBBBB;
+}
+
+.entry {
+}
+
+.glossarypost {
+    border-color: #DDDDDD;
+}
+
+.glossarypost .entryheader,
+.glossarypost .picture,
+.glossarypost .entryattachment,
+.glossarypost .left {
+    background-color: #F0F0F0;
+}
+
+
+#mod-glossary-report .generalbox .teacher {
+    background: #F0F0F0;
+}
+
+
+
+
+/* lang, forum */
+.teacheronly {
+    color:#990000;
+}
+
+.forumheadminimal {
+    color:#555555;
+}
+
+.forumthread .unread {
+    background: #FFD991;
+}
+
+.unread {
+    background: #FFD991;
+} 
+
+#mod-forum-view .unread {
+    padding-left: 3px;
+    padding-right: 3px;
+}
+
+#mod-forum-discuss .forumpost {
+    background: none;
+}
+
+#mod-forum-discuss .unread .forumpostmessage {
+    border-style: solid; 
+    border-color: #FFD991; 
+    border-width: 2px; 
+} 
+
+#mod-forum-discuss .forumthread .unread {
+} 
+
+#mod-forum-index .unread {
+}
+
+/* message */
+table.message_search_results td {
+    border-color:#AAAAFF; /* borders */
+}
+
+
+/* weblib.php, wiki */
+.sideblockmain hr {
+    border-top-color:#999999;
+}
+
+/* wiki */
+.sideblockheading {
+    background-color: #EEEEEE;
+}
+
+/*****************************
+***
+*** Calendar
+***
+******************************/
+
+#calendar .maincalendar,
+#calendar .sidecalendar
+{
+    border-color: #DDDDDD;
+}
+
+#calendar .maincalendar table.calendarmonth th {
+    border-color: #555555;
+}
+
+table.minicalendar {
+    border-color:#DDDDDD;
+}
+
+#calendar .maincalendar .eventlist .event {
+    border-color:#DDDDDD;
+}
+
+#calendar .maincalendar .eventlist .event .header,
+#calendar .maincalendar .eventlist .event .picture,
+#calendar .maincalendar .eventlist .event .side
+{
+    background-color:#EEEEEE;
+}
+
+#calendar .maincalendar table.calendarmonth ul.events-underway {
+    color:#999999;
+}
+
+#calendar .event_global,
+.minicalendar .event_global,
+.block_calendar_month .event_global {
+    border-color:#2EBA0E !important;
+    background-color:#2EBA0E;
+}
+
+#calendar .event_course,
+.minicalendar .event_course,
+.block_calendar_month .event_course {
+    border-color:#FF9966 !important;
+    background-color:#FF9966;
+}
+
+#calendar .event_group,
+.minicalendar .event_group,
+.block_calendar_month .event_group {
+    border-color:#FBBB23 !important;
+    background-color:#FBBB23;
+}
+
+#calendar .event_user,
+.minicalendar .event_user,
+.block_calendar_month .event_user {
+    border-color:#A1BECB !important;
+    background-color:#A1BECB;
+}
+
+#calendar .duration_global,
+.minicalendar .duration_global {
+    border-top-color:#2EBA0E !important;
+    border-bottom-color:#2EBA0E !important;
+}
+
+#calendar .duration_course,
+.minicalendar .duration_course {
+    border-top-color:#FF9966 !important;
+    border-bottom-color:#FF9966 !important;
+}
+
+#calendar .duration_group,
+.minicalendar .duration_group {
+    border-top-color:#FBBB23 !important;
+    border-bottom-color:#FBBB23 !important;
+}
+
+#calendar .duration_user,
+.minicalendar .duration_user {
+    border-top-color:#A1BECB !important;
+    border-bottom-color:#A1BECB !important;
+}
+
+#calendar .weekend,
+.minicalendar .weekend {
+    color:#FF0000;
+}
+
+#calendar .today,
+.minicalendar .today {
+    border-color:#555555 !important;
+}
+
+.cal_popup_fg {
+    background-color:#FFFFFF; /* cellcontent */
+}
+
+.cal_popup_bg {
+    border-color:#555555;
+    background-color:#FFFFFF;
+}
+
+
+/*****************************
+***
+*** Blocks
+***
+******************************/
+/* block_rss_client.php */
+.rssclientlink {
+    border-top-color:#DDDDDD;
+}
+
+.rssclientdescription {
+    color:#555555;
+}
+
+
+/* sideblock */
+/* calendar, weblib.php, wiki */
+.sideblock {
+    border-color:#AAAAFF; /* borders */
+}
+.sideblockmain {
+    background-color:#FCFCFC;
+}
+
+.sideblocklist {
+    background-color:#FCFCFC;
+}
+
+.sideblockmain hr {
+    border-top-color:#999999;
+}
+
+/* Messaging */
+.message .author {
+    color: #999999;
+}
+
+.message .time {
+    color: #999999;
+}
+
+.message .content {
+}

@@ -1,0 +1,942 @@
+/************************************************* 
+***
+*** layout
+***
+**************************************************/
+
+/*************************************************
+***
+*** This CSS file contains all layout definitions
+*** like positioning, floats,
+*** margins, paddding,
+*** borders etc.
+***
+*** Shortindex:
+*** basic and general styles
+*** header and footer styles
+*** content styles (alphabetically)
+*** admin, course, activities, calendar, blocks
+*** 
+*** Please sort new styles for existing content
+*** into the appropriate part of this CSS file.
+*** Styles for new Blocks or Activities please
+*** place at the end.
+*** Wouldn't the alphabetical order be better?
+***
+**************************************************/
+
+
+/* basic styles */
+.clearer {
+    clear:both;
+    margin:0px;
+    padding:0px;
+    height:1px;
+    border:none;
+    background:transparent;
+}
+
+.continuebutton {
+    text-align: center;
+}
+
+
+/* general styles */
+th {
+    background-image:url(gradient.jpg);
+    background-position:top;
+    background-repeat:repeat-x;
+}
+
+form {
+    margin-bottom:0px;
+}
+
+table {
+    border-spacing: 0px;
+    border-collapse: collapse;
+}
+
+a img {
+    border:none;
+}
+
+/* header styles */
+#header-home {
+    padding:1em 0.5em;
+    height:2em;
+}
+
+#header {
+    padding:0.1em 0.5em;
+}
+
+.headermain {
+    float:left;
+}
+
+#header .headermain {
+    margin:0.2em 0em;
+}
+
+.headermenu {
+    float:right;
+    text-align:right;
+}
+
+#nav-bar {
+    padding:3px 0.5em;
+    height:1.3em;
+    background-image:url(gradient.jpg);
+    background-position:top;
+    background-repeat:repeat-x;
+}
+
+#breadcrumb {
+    float:left;
+    margin:0.2em 0em;
+}
+
+#navbutton {
+    float:right;
+}
+
+#layout-table {
+    width:100%;
+    border-spacing:5px;
+    border-collapse:separate;
+}
+
+#layout-table #left-column,
+#layout-table #middle-column,
+#layout-table #right-column
+{
+    vertical-align:top;
+}
+
+/* footer styles */
+
+
+/*****************************
+***
+*** content styles
+***
+******************************/
+/* many places */
+.generalbox {
+    border-width:1px;
+    border-style:solid;
+}
+.noticebox {
+    border-width:1px;
+    border-style:solid;
+}
+.errorbox {
+    border-width:1px;
+    border-style:solid;
+    margin: 1em 15%;
+    width: 70%;
+}
+.errorbox .title {
+    padding: 5px;
+}
+.informationbox {
+    border-width:1px;
+    border-style:solid;
+}
+.feedbackbox {
+    border-width:1px;
+    border-style:solid;
+}
+.feedbackby {
+}
+.feedback {
+}
+
+
+/* summary of a user in a nice little box - weblib.php */
+.userinfobox {
+    margin-bottom:5px;
+    border-width:1px;
+    border-style:solid;
+}
+
+.userinfoboxside,
+.userinfoboxsummary,
+.userinfoboxlinkcontent { }
+
+
+/* weblib.php table */
+.tabledivider {
+    border-width:1px;
+    border-style:solid;
+    border-left:0px;
+    border-right:0px;
+    border-top:0px;
+}
+
+
+/* entry-page index.php */ 
+.sitetopic {
+    border-width:1px;
+    border-style:solid;
+}
+
+
+/* paging bar */
+.pagingbar {
+    text-align:center;
+}
+.pagingbar a {
+    padding-left: 10px;
+}
+.pagingbar .thispage {
+    padding-left: 10px;
+}
+
+/*****************************
+***
+*** Admin
+***
+******************************/
+/* admin, calendar */
+table.formtable {
+    margin: auto;
+}
+
+table.formtable tbody th {
+    background: none;
+    vertical-align: top;
+}
+
+table.formtable tbody td,
+table.formtable tbody th
+{
+    padding: 5px;
+}
+
+/*****************************
+***
+*** Course
+***
+******************************/
+
+.section .activity img.activityicon {
+    vertical-align:middle;
+    height:16px;
+    width:16px;
+}
+
+.section img.movetarget {
+    height:16px;
+    width:80px;
+}
+
+/* course, entry-page, login */
+.headingblock {
+    background-image:url(gradient.jpg);
+    background-position:top;
+    background-repeat:repeat-x;
+    border-width:1px;
+    border-style:solid;
+    padding:5px;
+}
+
+
+/* course */
+
+#course-view .section td {
+    vertical-align:top;
+}
+
+#course-view .section .content {
+    padding:5px;
+    border-style:solid;
+    border-width:1px;
+    border-left:0px;
+    border-right:0px;
+}
+
+#course-view .section .side {
+    padding:5px;
+    border-style:solid;
+    border-width:1px;
+}
+
+#course-view .section .left {
+    border-right:0px;
+    text-align:center;
+    font-weight:bold;
+    width: 1.5em;
+}
+
+#course-view .section .right {
+    border-left:0px;
+    text-align:center;
+    width: 1.5em;
+}
+
+#course-view .topics {
+    margin-top: 9px;
+}
+
+#course-view .weeks {
+    margin-top: 9px;
+}
+
+#course-view .section .spacer {
+    height:0.5em;
+}
+
+#course-view .section .weekdates {
+}
+
+
+.categoryboxcontent,
+.courseboxcontent {
+    border-width:1px;
+    border-style:solid;
+}
+
+
+/* user */
+.userinfobox {
+    border-width: 1px;
+    border-style: solid;
+    border-collapse: separate;    
+}
+
+.userinfobox .left {
+    padding: 10px;
+    width: 100px;
+}
+
+.userinfobox .content {
+    padding: 10px;
+    vertical-align: top;
+}
+
+.userinfobox .links {
+    width: 100px;
+    padding: 5px;
+    vertical-align: bottom;
+}
+
+.userinfobox .username {
+    padding-bottom: 20px;
+}    
+
+
+table.userinfobox {
+    width: 80%;
+    margin-left: 10%;
+    margin-right: 10%;
+}
+
+
+
+/*****************************
+***
+*** Activities
+***
+******************************/
+/* assignment, forum, glossary */
+.forumheaderlist,
+.forumpost {
+    border-width:1px;
+    border-style:solid;
+    border-collapse:separate;
+}
+
+.forumpost {
+    margin-top: 15px;
+}
+
+.forumpost .topic {
+    padding: 4px;
+}
+
+
+.forumpost .commands {
+    padding-top: 0.5em;
+    text-align:right;
+}
+
+.forumpost .ratings {
+    padding-top: 1em;
+    text-align:right;
+}
+
+.forumpost .content {
+    padding: 4px;
+}
+
+.forumpost .footer {
+    padding-top: 0.5em;
+    text-align:right;
+}
+
+.forumpost .left {
+    width: 35px;
+    padding: 4px;
+    text-align: center;
+    vertical-align: top;
+}
+
+.forumpostindent {
+    margin-left: 30px;
+}
+
+body#mod-forum-search .c0 {
+    text-align: right;
+}
+
+body#mod-forum-search .introcontent {
+    padding: 15px;
+    font-weight:bold;
+}
+
+.forumolddiscussminimal {
+    text-align: center;
+}
+
+.forumolddiscuss {
+    text-align: right;
+}
+
+.forumheaderlist {
+    width: 100%;
+}
+
+.forumheaderlist td {
+    border-width:1px 0px 0px 1px;
+    border-style:solid;
+}
+
+.forumheaderlist .replies {
+    text-align: center;
+}
+
+.forumheaderlist .picture {
+    width: 35px;
+}
+
+.forumheaderlist .discussion .starter {
+    vertical-align: middle;
+}
+
+.forumheaderlist .discussion .lastpost {
+    white-space: nowrap;
+}
+
+.forumheaderlist .discussion .author {
+    white-space: nowrap;
+}
+
+.paging {
+    text-align: center;
+    margin: 10px 0px 10px 0px;
+}
+
+.unread {
+    padding-right:2px;
+} 
+
+
+/* calendar, course, weblib,php, attandance
+dialouge, exercise, forum, lesson, quiz */
+.generaltableheader {
+    background-image:url(gradient.jpg);
+    background-position:top;
+    background-repeat:repeat-x;
+}
+
+
+/* glossary, wiki */
+.generaltab,
+.generaltabselected,
+.generaltabinactive {
+    background:none;
+}
+
+.glossarypost .commands {
+    width: 200px;
+    white-space: nowrap;
+}
+
+.entryboxheader {
+    border-width: 1px 1px 0px 1px;
+    border-style: solid;
+}
+
+.entrybox {
+    border-width: 0px 1px 1px 1px;
+    border-style: solid;
+}
+
+.glossarypost {
+    width: 95%;
+    border-width:1px;
+    border-style:solid;
+    border-collapse:separate;
+    margin-bottom: 5px;
+    text-align: left;
+}
+
+
+.entrylist {
+    border-width:0px;
+}
+
+.entrylowersection {
+    padding-top: 10px;
+}
+.entrylowersection table{
+    width: 100%;
+}
+.entrylowersection .aliases {
+    text-align:center;
+    font-size: 0.8em;
+}
+.entrylowersection .icons,
+.entrylowersection .ratings {
+    text-align:right;
+    font-size: 0.8em;
+}
+
+.glossarypost .entry {
+    padding: 3px;
+}
+
+.glossarypost .picture {
+    width: 35px;
+}
+
+
+/* message */
+.message_link {
+    vertical-align:middle;
+}
+
+.message_search_results {
+    border-collapse:collapse;
+    border-spacing:0px;
+}
+
+table.message_search_results td {
+    padding:5px;
+    border-width:1px;
+    border-style:solid;
+}
+
+
+/* quiz */
+.feedbacktext {
+    display:block;
+}
+
+
+/*****************************
+***
+*** Calendar
+***
+******************************/
+/* calendar */
+
+#calendar {
+    width: 100%;
+    border-spacing: 5px;
+    border-collapse: separate;
+}
+
+#calendar .maincalendar,
+#calendar .sidecalendar
+{
+    vertical-align: top;
+    border: 1px solid;
+}
+
+#calendar .sidecalendar {
+    width: 25%;
+}
+
+#calendar .maincalendar table.calendarmonth {
+    border-collapse: separate;
+    margin: 0px auto;
+    width: 98%;
+}
+
+#calendar .maincalendar table.calendarmonth th {
+    padding:10px;
+    border-bottom:2px solid;
+}
+
+#calendar .maincalendar table.calendarmonth td {
+    height: 5em;
+    padding-left: 4px;
+    padding-top: 4px;
+}
+
+#calendar .maincalendar table.calendarmonth td,
+table.minicalendar td,
+table.minicalendar th {
+    width:14%;
+    vertical-align:top;
+}
+
+#calendar .maincalendar table.calendarmonth td table td {
+    height: auto;
+}
+
+#calendar .maincalendar .heading,
+#calendar .sidecalendar .heading
+{
+    background-image:url(gradient.jpg);
+    background-position:top;
+    background-repeat:repeat-x;
+    padding: 5px;
+}
+
+#calendar .maincalendar .heading .buttons {
+    float: right;
+}
+
+#calendar .maincalendar .filters table,
+#calendar .sidecalendar .filters table,
+.sideblock.block_calendar_month .filters table
+{
+    border-collapse:separate;
+    border-spacing: 2px;
+    background-color: #EEEEEE;
+    padding: 2px;
+    width: 100%;
+}
+
+#calendar .maincalendar .filters {
+    padding: 0px 10px;
+}
+
+#calendar .sidecalendar .filters,
+.sideblock.block_calendar_month .filters
+{
+    padding: 5px;
+}
+
+#calendar .maincalendar .controls {
+    clear:both;
+    padding:10px;
+}
+
+#calendar .maincalendar table.calendarmonth ul.events-new,
+#calendar .maincalendar table.calendarmonth ul.events-underway
+{
+    padding:0px;
+    margin:0px;
+    list-style-type:none;
+}
+
+#calendar .maincalendar table.calendarmonth ul li {
+    margin-top: 4px;
+}
+
+table.minicalendar {
+    width: 100%;
+    margin:10px auto;
+    padding:2px;
+    border-width:1px;
+    border-style:solid;
+    border-collapse:separate;
+    border-spacing:1px !important;
+}
+
+table.minicalendar th {
+    padding: 0px 2px;
+}
+
+#calendar .maincalendar .eventlist {
+    padding: 10px;
+}
+
+#calendar .maincalendar .eventlist .event {
+    width:100%;
+    margin-bottom:10px;
+    border-spacing:0px;
+    border-collapse:separate;
+    border-width:1px;
+    border-style:solid;
+}
+
+#calendar .maincalendar .eventlist .event .name {
+    float:left;
+}
+
+#calendar .maincalendar .eventlist .event .course {
+    float:left;
+    clear:left;
+}
+
+#calendar .maincalendar .eventlist .event .date {
+    float:right;
+}
+
+#calendar .maincalendar .eventlist .event .description .commands {
+    width:100%;
+}
+
+#calendar .maincalendar .eventlist .event .description {
+    padding:5px;
+}
+
+#calendar .maincalendar .eventlist .event .picture {
+    padding:8px;
+}
+
+#calendar .maincalendar .eventlist .event .side {
+    width:32px;
+}
+
+#calendar #selecteventtype table {
+    margin:auto;
+}
+
+#calendar .event_global,
+#calendar .event_course,
+#calendar .event_group,
+#calendar .event_user,
+.minicalendar .event_global,
+.minicalendar .event_course,
+.minicalendar .event_group,
+.minicalendar .event_user,
+.block_calendar_month .event_global,
+.block_calendar_month .event_course,
+.block_calendar_month .event_group,
+.block_calendar_month .event_user
+{
+    border:2px solid !important;
+}
+
+#calendar .duration_global,
+#calendar .duration_course,
+#calendar .duration_group,
+#calendar .duration_user,
+.minicalendar .duration_global,
+.minicalendar .duration_course,
+.minicalendar .duration_group,
+.minicalendar .duration_user
+{
+    border-top:2px solid !important;
+    border-bottom:2px solid !important;
+}
+
+#calendar .today,
+.minicalendar .today {
+    border:2px solid !important;
+}
+    
+.cal_popup_bg {
+    padding:0px;
+    margin:0px;
+    border:1px solid;
+}
+
+.cal_popup_close {
+    margin-right:5px;
+}
+
+.cal_popup_caption {
+    background-image:url(gradient.jpg);
+    border-width:0px 0px 1px 0px;
+    border-style:solid;
+    padding-bottom:2px;
+}
+
+table.calendar-controls {
+    width: 100%;
+}
+
+table.calendar-controls .previous,
+table.calendar-controls .next
+{
+    width: 12%;
+}
+
+#calendar .maincalendar .calendar-controls .previous,
+#calendar .maincalendar .calendar-controls .next
+{
+    width: 30%;
+}
+
+/*****************************
+***
+*** Blocks
+***
+******************************/
+/* block_search_forums.php */
+
+.block_search_forums.sideblock .searchform {
+    text-align: center;
+}
+
+.block_search_forums.sideblock .searchform img {
+    vertical-align: center;
+}
+
+/* block_rss_client.php */
+.rssclientlink {
+    padding-bottom:5px;
+    border-top:1px solid;
+}
+
+.rssclientdescription {
+    padding-left:10px;
+    padding-bottom:8px;
+}
+
+
+/* sideblock */
+.sideblock {
+    width: 100%;
+    margin-bottom:1em;
+    border-collapse:separate;
+    border-width:1px;
+    border-style:solid;
+}
+
+.sideblockheading {
+    background-image:url(gradient.jpg);
+    background-position:top;
+    background-repeat:repeat-x;
+    padding:4px;
+}
+
+.sideblockheading .hide-show {
+    float:right;
+}
+
+.sideblockheading .hide-show img.hide-show-image {
+    height:11px;
+    width:11px;
+    margin-top:0.25em;
+}
+
+.sideblock .sideblockheading .commands {
+    float: right;
+    margin-top: 0.3em;
+}
+
+.sideblock .sideblockheading .commands a {
+    margin: 0px 2px;
+}
+
+.sideblockmain {
+    padding:4px;
+}
+
+.sideblockmain hr {
+    height:1px;
+    margin-top:4px;
+    margin-bottom:4px;
+    border:none;
+    border-top:1px solid;
+}
+
+.sideblock .sideblockheading .hide-show img.hide-show-image {
+    background: url('../../pix/t/switch_minus.gif') no-repeat bottom;
+}
+
+.sideblock.hidden .sideblockheading .hide-show img.hide-show-image {
+    background: url('../../pix/t/switch_plus.gif') no-repeat bottom;
+}
+
+.sideblock.hidden .sideblockmain {
+    display: none;
+}
+
+.sideblock .sideblocklist {
+    width: 100%;
+}
+
+.sideblock .footer {
+    margin-top:4px;
+}
+
+/* sideblock weblib.php */
+.block_course_summary .sideblockmain {
+    padding:10px;
+}
+
+/* blocklib.php */
+
+.block_adminblock .sideblockmain {
+    text-align: center;
+    padding: 10px;
+}
+
+/* block_quiz_results.php */
+.block_quiz_results table.grades {
+    width: 100%;
+}
+
+.block_quiz_results table.grades caption {
+    margin: 1em 0px 0px 0px;
+    border-bottom: 1px solid;
+}
+
+.block_quiz_results table.grades .number, .block_quiz_results table.grades .grade {
+    width: 10%;
+}
+
+.block_quiz_results h1 {
+    margin: 4px;
+}
+
+/*****************************
+***
+*** Doc
+***
+******************************/
+
+/* contents.php */
+
+body#doc-contents h1 {
+    font-size: 1em;
+    margin: 1em 0px 0px 0px;
+}
+
+body#doc-contents ul {
+    list-style-type: none;
+    margin: 0px;
+    padding: 0px;
+    font-size: 0.8em;
+    width: 90%; /* try it on IE without this and see what happens */
+}
+
+body#course-view .unread {
+    margin-left: 3em;
+} 
+
+body#admin-index .c0 {
+    vertical-align: top;
+    background: #FAFAFA;
+} 
+
+body#admin-modules .generaltablecell {
+    padding-top: 2px;
+    padding-bottom: 2px;
+} 
+
+body#admin-blocks .generaltablecell {
+    padding-top: 1px;
+    padding-bottom: 1px;
+} 
+
+body#admin-config .confighelp {
+    display: block;
+    padding-bottom: 20px;
+}
+body#course-enrol .generalbox {
+    margin-top: 20px;
+}
+body#course-enrol .coursebox {
+    margin-top: 20px;
+}

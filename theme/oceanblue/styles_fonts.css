@@ -1,0 +1,464 @@
+/************************************************* 
+***
+*** fonts
+***
+**************************************************/
+
+/*************************************************
+***
+*** This CSS file contains all font definitions
+*** like family, size, weight,
+*** text-align, letter-spacing
+*** etc.
+***
+*** Shortindex:
+*** basic and general styles
+*** header and footer styles
+*** content styles (alphabetically)
+*** admin, course, activities, calendar, blocks
+*** 
+*** Please sort new styles for existing content
+*** into the appropriate part of this CSS file.
+*** Styles for new Blocks or Activities please
+*** place at the end.
+*** Wouldn't the alphabetical order be better?
+***
+**************************************************/
+
+
+/* basic styles */
+font {
+    font-size:100%;
+}
+
+.clearer {
+    font-size:1px;
+}
+
+
+/* general styles */
+body, td, th, li {
+    font-family:"Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+    font-size:0.95em;
+}
+
+th {
+    font-weight:normal;
+}
+
+a:link,
+a:visited {
+    text-decoration:none;
+}
+
+a.dimmed:link,
+a.dimmed:visited {
+    text-decoration:none;
+}
+
+a.autolink:link,
+a.autolink:visited {
+    text-decoration:none;
+}
+
+a.autolink:hover,
+a:hover,
+a.dimmed:hover {
+    text-decoration:underline;
+}
+
+h1,h2,h3,h4,h5,h6 {
+    font-weight:normal;
+    text-align: center;
+}
+
+h1 {
+    font-size:1.8em;
+}
+h2 {
+    font-size:1.5em;
+}
+h3 {
+    font-size:1.2em;
+}
+h4 {
+    font-size:1.1em;
+}
+
+/* header styles */
+.headermain {
+    font-weight:normal;
+}
+
+#header-home .headermain {
+    font-size:1.5em;
+}
+
+#header .headermain {
+    font-size:1.3em;
+}
+
+#breadcrumb {
+    font-size:0.9em;
+    font-weight:normal;
+}
+
+.logininfo,
+#header-home .headermenu font {
+    font-size:x-small;
+}
+
+/* footer styles */
+.homelink {
+    font-size:x-small;
+}
+
+
+/*****************************
+***
+*** content styles
+***
+******************************/
+/* many places */
+
+.errorbox .title {
+    font-weight: normal;
+    font-size: 1.2em;
+    text-align: center;
+}
+
+/* paging bar */
+.pagingbar .title {
+    font-weight: normal;
+}
+.pagingbar .thispage {
+    font-weight: normal;
+}
+
+/*****************************
+***
+*** Admin
+***
+******************************/
+
+table.formtable tbody th {
+    font-weight: normal;
+    text-align: right;
+}
+
+
+/*****************************
+***
+*** Course
+***
+******************************/
+/* course */
+.activitydate, .activityhead {
+    font-size:x-small;
+    text-align:center;
+}
+
+.weeklydatetext {
+    font-size:medium;
+    font-weight:normal;
+}
+
+.courseboxinfo {
+    font-size:medium;
+}
+
+.courseboxteachers,
+.courseboxcost {
+    font-size:smaller;
+}
+
+.courseboxsummary {
+    font-size:small;
+}
+
+
+/* user */
+.userinfobox .username {
+    font-weight: normal;
+}
+
+.userinfobox .links {
+    font-size: 0.7em;
+}
+
+
+
+/*****************************
+***
+*** Activities
+***
+******************************/
+/* index, admin, course, lang, adodb, quiz */
+.categoryname,
+.categorynumber {
+    font-size:larger;
+    font-weight:normal;
+}
+
+
+/* forum */
+.forumolddiscuss {
+    text-align:right;
+}
+
+.forumaddnew,
+.forumaddnewminimal,
+.forumnodiscuss,
+.forumnodiscussminimal,
+.forumolddiscussminimal,
+.noticeboxcontent {
+    text-align:center;
+}
+
+.forumnodiscuss,
+.forumnodiscussminimal {
+    font-weight:normal;
+}
+
+.forumpostheadername,
+.forumpostheaderreplies,
+.forumpostheaderdate {
+    font-size:small;
+}
+
+.forumaddnewminimal, 
+.forumnodiscussminimal,
+.forumheadminimal, 
+.foruminfominimal,
+.forumolddiscussminimal {
+    font-size:x-small;
+}
+
+.forumpost .topic .subject {
+    font-weight: normal;
+}
+
+.forumpost .topic .author {
+    font-size: 0.8em;
+}
+
+.forumheaderlist .discussion .lastpost {
+    font-size: 0.7em;
+}
+
+
+
+/* message */
+.message_summary_link {
+    font-size:small;
+    text-align:right;
+}
+
+.message_link {
+    font-size:x-small;
+}
+
+.message_form {
+    font-size:0.78em;
+}
+
+.message_heading {
+    font-size:medium;
+    font-weight:normal;
+    text-align:center;
+}
+
+.message_date,
+.message_contact,
+.message_summary {
+    font-size:small;
+}
+
+.message_small_note, 
+.message_pix {
+    font-size:x-small;
+}
+
+
+/* quiz */
+.feedbacktext {
+    text-align:right;
+}
+
+.editorhelptext {
+    font-size:x-small;
+}
+
+
+/* glossary */
+.glossarypost .commands {
+    font-size: 0.7em;
+}
+.glossarypost .entryheader .author {
+    font-size: 0.7em;
+    font-style: italic;
+}
+.concept {
+    font-weight: normal;
+}
+
+
+/*****************************
+***
+*** Calendar
+***
+******************************/
+
+#calendar .maincalendar .eventlist .event .referer {
+    font-weight:normal;
+}
+
+#calendar .maincalendar .eventlist .event .course {
+    font-size:0.8em;
+}
+
+#calendar .maincalendar .eventlist .event .description .commands {
+    text-align: right;
+}
+
+#calendar .maincalendar table.calendarmonth td {
+    font-size:0.8em;
+    line-height:1.2em;
+}
+
+#calendar .maincalendar .heading,
+#calendar .sidecalendar .heading
+{
+    font-weight:normal;
+}
+
+#calendar .sidecalendar .filters,
+.sideblock.block_calendar_month .filters
+{
+    font-size:0.75em;
+}
+
+#calendar .maincalendar .controls {
+    font-size:1.2em;
+}
+
+#calendar .maincalendar .day {
+    font-weight: normal;
+}
+
+table.minicalendar {
+    font-size:0.85em;
+}
+
+table.minicalendar td {
+    text-align: center;
+}
+
+.sideblock.block_calendar_month .cal_popup_caption,
+.sideblock.block_calendar_month .cal_popup_fg div
+{
+    font-size: 0.85em !important;
+}
+
+.cal_popup_caption {
+    font-family:sans-serif;
+    font-size:0.8em;
+    font-weight:normal;
+}
+
+.cal_popup_close {
+    font-family:sans-serif;
+    font-size:0.8em;
+    font-weight:normal;
+}
+
+table.calendar-controls .previous {
+    text-align: left;
+}
+table.calendar-controls .current {
+    text-align: center;
+}
+table.calendar-controls .next {
+    text-align: right;
+}
+#calendar .maincalendar .calendar-controls .current {
+    font-weight: normal;
+}
+
+/*****************************
+***
+*** Blocks
+***
+******************************/
+
+.sideblockheading {
+    text-align: left;
+}
+
+.sideblock .sideblockheading .commands {
+    font-size: 0.75em;
+}
+
+.sideblock .footer {
+    font-size:0.75em;
+    text-align:center;
+}
+
+/* block_rss_client.php */
+.rssclientlink {
+    font-size:x-small;
+}
+
+.rssclientdescription {
+    font-size:x-small;
+}
+
+.sideblock.block_quiz_results h1 {
+    font-weight: normal;
+    font-size: 1.2em;
+}
+
+.sideblock.block_quiz_results table.grades caption {
+    font-weight: normal;
+}
+
+.sideblock.block_quiz_results table.grades .number, .block_quiz_results table.grades .grade {
+    text-align: right;
+}
+
+.sideblock.block_quiz_results {
+    text-align: center;
+}
+
+.sideblock.block_quiz_results table.grades {
+    text-align: left;
+}
+
+.sideblock.block_calendar_upcoming .event .date {
+    font-size:0.8em;
+    text-align:right;
+}
+
+/*****************************
+***
+*** User
+***
+******************************/
+
+body#user-index #longtimenosee {
+    text-align:center;
+}
+
+
+/* Messaging */
+
+.message .author {
+    font-weight: normal;
+}
+
+.message .time {
+    font-weight: italic;
+}
+
+.message .content {
+}
