@@ -1583,21 +1583,30 @@ function quiz_print_cat_question_list($categoryid, $quizselected=true) {
     echo format_text($category->info, FORMAT_MOODLE);
 
     echo '<table><tr>';
-    echo "<td valign=\"top\"><b>$strcreatenewquestion:</b></td>";
-    echo '<td valign="top" align="right">';
-    popup_form ("question.php?category=$category->id&qtype=", $QUIZ_QUESTION_TYPE, "addquestion",
-                "", "choose", "", "", false, "self");
-    echo '<td width="10" valign="top" align="right">';
-    helpbutton("questiontypes", $strcreatenewquestion, "quiz");
-    echo '</td></tr>';
 
-    echo '<tr><td colspan="3" align="right">';
-    echo '<form method="get" action="import.php">';
-    echo "<input type=\"hidden\" name=\"category\" value=\"$category->id\" />";
-    echo "<input type=\"submit\" value=\"$strimportquestions\" />";
-    helpbutton("import", $strimportquestions, "quiz");
-    echo '</form>';
-    echo '</td></tr>';
+    // check if editing of this category is allowed
+    if (isteacheredit($category->course)) {
+        echo "<td valign=\"top\"><b>$strcreatenewquestion:</b></td>";
+        echo '<td valign="top" align="right">';
+        popup_form ("question.php?category=$category->id&qtype=", $QUIZ_QUESTION_TYPE, "addquestion",
+                    "", "choose", "", "", false, "self");
+        echo '<td width="10" valign="top" align="right">';
+        helpbutton("questiontypes", $strcreatenewquestion, "quiz");
+        echo '</td></tr>';
+    
+        echo '<tr><td colspan="3" align="right">';
+        echo '<form method="get" action="import.php">';
+        echo "<input type=\"hidden\" name=\"category\" value=\"$category->id\" />";
+        echo "<input type=\"submit\" value=\"$strimportquestions\" />";
+        helpbutton("import", $strimportquestions, "quiz");
+        echo '</form>';
+        echo '</td></tr>';
+    }
+    else {
+        echo '<tr><td>';
+        print_string("publishedit","quiz");
+        echo '</td></tr>';
+    }
 
     echo '<tr><td colspan="3" align="right">';
     echo '<form method="get" action="export.php">';
@@ -1607,13 +1616,15 @@ function quiz_print_cat_question_list($categoryid, $quizselected=true) {
     echo '</form>';
     echo '</td></tr>';
 
-    echo '<tr><td colspan="3" align="right">';
-    echo '<form method="get" action="multiple.php">';
-    echo "<input type=\"hidden\" name=\"category\" value=\"$category->id\" />";
-    echo "<input type=\"submit\" value=\"$strcreatemultiple\" />";
-    helpbutton("createmultiple", $strcreatemultiple, "quiz");
-    echo '</form>';
-    echo '</td></tr>';
+    if (isteacheredit($category->course)) {
+        echo '<tr><td colspan="3" align="right">';
+        echo '<form method="get" action="multiple.php">';
+        echo "<input type=\"hidden\" name=\"category\" value=\"$category->id\" />";
+        echo "<input type=\"submit\" value=\"$strcreatemultiple\" />";
+        helpbutton("createmultiple", $strcreatemultiple, "quiz");
+        echo '</form>';
+        echo '</td></tr>';
+    }
 
     echo '</table>';
 
