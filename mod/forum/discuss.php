@@ -92,29 +92,67 @@
                  "$navmiddle -> $navtail", "", "", true, $searchform, navmenu($course, $cm));
     }
 
+
 /// Check to see if groups are being used in this forum
 /// If so, make sure the current person is allowed to see this discussion
+/// Also, if we know they should be able to reply, then explicitly set $canreply
+
+    $canreply = NULL;   /// No override one way or the other
 
     $groupmode = groupmode($course, $cm);
 
-    if ($groupmode == SEPARATEGROUPS and !isteacheredit($course->id)) {   // Groups must be kept separate
-        require_login();
+    if ($groupmode and !isteacheredit($course->id)) {   // Groups must be kept separate
         if (!$toppost = get_record("forum_posts", "id", $discussion->firstpost)) {
             error("Could not find the top post of the discussion");
         }
         if (!$group = user_group($course->id, $toppost->userid)) {   // Find the topic's group
             error("Could not find the appropriate group of this discussion");
         }
-        if (mygroupid($course->id) != $group->id) {
-            print_heading("Sorry, you can't see this discussion because you are not in this group");
-            print_footer();
-            die;
+
+        if ($groupmode == SEPARATEGROUPS) {
+            require_login();
+
+            if (mygroupid($course->id) == $group->id) {
+                $canreply = true;
+            } else {
+                print_heading("Sorry, you can't see this discussion because you are not in this group");
+                print_footer();
+                die;
+            }
+
+        } else if ($groupmode == VISIBLEGROUPS) {
+            if (mygroupid($course->id) == $group->id) {
+                $canreply = true;
+            }
         }
     }
 
 
-    echo "<table width=\"100%\"><tr><td width=\"33%\">&nbsp;</td><td width=\"33%\">";
+/// Print the controls across the top
+
+    echo "<table width=\"100%\"><tr><td width=\"33%\">";
+
+    if ($groupmode == VISIBLEGROUPS or ($groupmode and isteacheredit($course->id))) {
+        if ($groups = get_records_menu("groups", "courseid", $course->id, "name ASC", "id,name")) {
+
+            echo '<table><tr><td>';
+            if ($groupmode == VISIBLEGROUPS) {
+                print_string('groupsvisible');
+            } else {
+                print_string('groupsseparate');
+            }
+            echo ':';
+            echo '</td><td nowrap="nowrap" align="left" width="50%">';
+            popup_form("view.php?id=$cm->id&group=", $groups, 'selectgroup', $currentgroup, "", "", "", false, "self");
+            echo '</tr></table>';
+
+            echo '</td>';
+        }
+    }
+
+    echo "</td><td width=\"33%\">";
     forum_print_mode_form($discussion->id, $displaymode);
+
     echo "</td><td width=\"33%\">";
     if (isteacher($course->id)) {    // Popup menu to allow discussions to be moved to other forums
         if ($forums = get_all_instances_in_course("forum", $course)) {
@@ -138,7 +176,11 @@
         notify(get_string("discussionmoved", "forum", $forum->name));
     }
 
-    forum_print_discussion($course, $forum, $discussion, $post, $displaymode);
+
+/// Print the actual discussion
+
+    forum_print_discussion($course, $forum, $discussion, $post, $displaymode, $canreply);
+
 
     print_footer($course);
 

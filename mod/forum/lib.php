@@ -2173,7 +2173,7 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5,
     }
 }
 
-function forum_print_discussion($course, $forum, $discussion, $post, $mode) {
+function forum_print_discussion($course, $forum, $discussion, $post, $mode, $canreply=NULL) {
 
     global $USER;
 
@@ -2182,7 +2182,11 @@ function forum_print_discussion($course, $forum, $discussion, $post, $mode) {
     } else {
         $ownpost = false;
     }
-    $reply = forum_user_can_post($forum);
+    if ($canreply === NULL) {
+        $reply = forum_user_can_post($forum);
+    } else {
+        $reply = $canreply;
+    }
 
     $ratings = NULL;
     $ratingsmenuused = false;
