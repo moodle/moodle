@@ -43,21 +43,20 @@
         $form = $section;
     }
 
-    if ($usehtmleditor = can_use_richtext_editor()) {
-        $onsubmit = "onsubmit=\"copyrichtext(theform.summary);\"";
-    } else {
-        $onsubmit = "";
-    }
+    $usehtmleditor = can_use_html_editor();
 
     $sectionname = get_string("name$course->format");
     $stredit = get_string("edit", "", " $sectionname $section->section");
 
 	print_header("$course->shortname: $stredit", "$course->fullname", 
                  "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> 
-                  -> $stredit", "form.summary");
+                  -> $stredit");
 
     include("editsection.html");
 
+    if ($usehtmleditor) { 
+        use_html_editor();
+    }
     print_footer($course);
 
 ?>
