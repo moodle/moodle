@@ -67,18 +67,22 @@
                 fwrite ($bf,full_tag("SHOWLEAGUETABLE",4,false,$exercise->showleaguetable));
                 //Now we backup exercise elements
                 $status = backup_exercise_elements($bf,$preferences,$exercise->id);
+                //Now we backup any teacher submissions (these are an integral part of the exercise)
+                $status = backup_exercise_teacher_submissions($bf, $preferences, $exercise->id);
                 //if we've selected to backup users info, then execute backup_exercise_submisions
                 if ($preferences->mods["exercise"]->userinfo) {
-                    $status = backup_exercise_submissions($bf,$preferences,$exercise->id);
+                    $status = backup_exercise_student_submissions($bf,$preferences,$exercise->id);
                 }
                 //End mod
                 $status =fwrite ($bf,end_tag("MOD",3,true));
-            }
-        }
-        //if we've selected to backup users info, then backup files too
-        if ($status) {
-            if ($preferences->mods["exercise"]->userinfo) {
-                $status = backup_exercise_files($bf,$preferences);
+                //we need to backup the teacher files (the exercise descriptions)
+                $status = backup_exercise_teacher_files($bf, $preferences, $exercise->id);
+                //if we've selected to backup users info, then backup files too
+                if ($status) {
+                    if ($preferences->mods["exercise"]->userinfo) {
+                        $status = backup_exercise_student_files($bf,$preferences, $exercise->id);
+                    }
+                }
             }
         }
         return $status;  
@@ -97,17 +101,17 @@
             //Write start tag
             $status =fwrite ($bf,start_tag("ELEMENTS",4,true));
             //Iterate over each element
-            foreach ($exercise_elements as $wor_ele) {
+            foreach ($exercise_elements as $element) {
                 //Start element
                 $status =fwrite ($bf,start_tag("ELEMENT",5,true));
                 //Print element contents
-                fwrite ($bf,full_tag("ELEMENTNO",6,false,$wor_ele->elementno));
-                fwrite ($bf,full_tag("DESCRIPTION",6,false,$wor_ele->description));
-                fwrite ($bf,full_tag("SCALE",6,false,$wor_ele->scale));
-                fwrite ($bf,full_tag("MAXSCORE",6,false,$wor_ele->maxscore));
-                fwrite ($bf,full_tag("WEIGHT",6,false,$wor_ele->weight));
+                fwrite ($bf,full_tag("ELEMENTNO",6,false,$element->elementno));
+                fwrite ($bf,full_tag("DESCRIPTION",6,false,$element->description));
+                fwrite ($bf,full_tag("SCALE",6,false,$element->scale));
+                fwrite ($bf,full_tag("MAXSCORE",6,false,$element->maxscore));
+                fwrite ($bf,full_tag("WEIGHT",6,false,$element->weight));
                 //Now we backup exercise rubrics
-                $status = backup_exercise_rubrics($bf,$preferences,$exercise,$wor_ele->elementno);
+                $status = backup_exercise_rubrics($bf,$preferences,$exercise,$element->elementno);
                 //End element
                 $status =fwrite ($bf,end_tag("ELEMENT",5,true));
             }
@@ -133,12 +137,12 @@
             //Write start tag
             $status =fwrite ($bf,start_tag("RUBRICS",6,true));
             //Iterate over each element
-            foreach ($exercise_rubrics as $wor_rub) {
+            foreach ($exercise_rubrics as $rubric) {
                 //Start rubric
                 $status =fwrite ($bf,start_tag("RUBRIC",7,true));
                 //Print rubric contents
-                fwrite ($bf,full_tag("RUBRICNO",8,false,$wor_rub->rubricno));
-                fwrite ($bf,full_tag("DESCRIPTION",8,false,$wor_rub->description));
+                fwrite ($bf,full_tag("RUBRICNO",8,false,$rubric->rubricno));
+                fwrite ($bf,full_tag("DESCRIPTION",8,false,$rubric->description));
                 //End rubric
                 $status =fwrite ($bf,end_tag("RUBRIC",7,true));
             }
@@ -148,32 +152,71 @@
         return $status;
     }
 
-    //Backup exercise_submissions contents (executed from exercise_backup_mods)
-    function backup_exercise_submissions ($bf,$preferences,$exercise) {
+    //Backup exercise_teacher_submissions contents (executed from exercise_backup_mods)
+    function backup_exercise_teacher_submissions ($bf,$preferences,$exerciseid) {
 
         global $CFG;
 
         $status = true;
 
-        $exercise_submissions = get_records("exercise_submissions","exerciseid",$exercise,"id");
+        $exercise_submissions = get_records_select("exercise_submissions","exerciseid = $exerciseid
+                AND isexercise = 1");
         //If there is submissions
         if ($exercise_submissions) {
             //Write start tag
             $status =fwrite ($bf,start_tag("SUBMISSIONS",4,true));
             //Iterate over each submission
-            foreach ($exercise_submissions as $wor_sub) {
+            foreach ($exercise_submissions as $submission) {
                 //Start submission
                 $status =fwrite ($bf,start_tag("SUBMISSION",5,true));
                 //Print submission contents
-                fwrite ($bf,full_tag("ID",6,false,$wor_sub->id));       
-                fwrite ($bf,full_tag("USERID",6,false,$wor_sub->userid));       
-                fwrite ($bf,full_tag("TITLE",6,false,$wor_sub->title));       
-                fwrite ($bf,full_tag("TIMECREATED",6,false,$wor_sub->timecreated));       
-                fwrite ($bf,full_tag("RESUBMIT",6,false,$wor_sub->resubmit));       
-                fwrite ($bf,full_tag("MAILED",6,false,$wor_sub->mailed));       
-                fwrite ($bf,full_tag("ISEXERCISE",6,false,$wor_sub->isexercise));       
-                //Now we backup exercise assessments
-                $status = backup_exercise_assessments($bf,$preferences,$exercise,$wor_sub->id);
+                fwrite ($bf,full_tag("ID",6,false,$submission->id));       
+                fwrite ($bf,full_tag("USERID",6,false,$submission->userid));       
+                fwrite ($bf,full_tag("TITLE",6,false,$submission->title));       
+                fwrite ($bf,full_tag("TIMECREATED",6,false,$submission->timecreated));       
+                fwrite ($bf,full_tag("RESUBMIT",6,false,$submission->resubmit));       
+                fwrite ($bf,full_tag("MAILED",6,false,$submission->mailed));       
+                fwrite ($bf,full_tag("ISEXERCISE",6,false,$submission->isexercise));       
+                //Now we backup any exercise assessments (if student data required)
+                if ($preferences->mods["exercise"]->userinfo) {
+                    $status = backup_exercise_assessments($bf,$preferences,$exerciseid,$submission->id);
+                }
+                //End submission
+                $status =fwrite ($bf,end_tag("SUBMISSION",5,true));
+            }
+            //Write end tag
+            $status =fwrite ($bf,end_tag("SUBMISSIONS",4,true));
+        }
+        return $status;
+    }
+
+    //Backup exercise_student_submissions contents (executed from exercise_backup_mods)
+    function backup_exercise_student_submissions ($bf,$preferences,$exerciseid) {
+
+        global $CFG;
+
+        $status = true;
+
+        $exercise_submissions = get_records_select("exercise_submissions","exerciseid = $exerciseid
+                AND isexercise = 0");
+        //If there is submissions
+        if ($exercise_submissions) {
+            //Write start tag
+            $status =fwrite ($bf,start_tag("SUBMISSIONS",4,true));
+            //Iterate over each submission
+            foreach ($exercise_submissions as $submission) {
+                //Start submission
+                $status =fwrite ($bf,start_tag("SUBMISSION",5,true));
+                //Print submission contents
+                fwrite ($bf,full_tag("ID",6,false,$submission->id));       
+                fwrite ($bf,full_tag("USERID",6,false,$submission->userid));       
+                fwrite ($bf,full_tag("TITLE",6,false,$submission->title));       
+                fwrite ($bf,full_tag("TIMECREATED",6,false,$submission->timecreated));       
+                fwrite ($bf,full_tag("RESUBMIT",6,false,$submission->resubmit));       
+                fwrite ($bf,full_tag("MAILED",6,false,$submission->mailed));       
+                fwrite ($bf,full_tag("ISEXERCISE",6,false,$submission->isexercise));       
+                //Now we backup any exercise assessments
+                $status = backup_exercise_assessments($bf,$preferences,$exerciseid,$submission->id);
                 //End submission
                 $status =fwrite ($bf,end_tag("SUBMISSION",5,true));
             }
@@ -259,9 +302,8 @@
     }
 
 
-    //Backup exercise files because we've selected to backup user info
-    //and files are user info's level
-    function backup_exercise_files($bf,$preferences) {
+    //Backup the teacher's exercise files (they are an integral part of the exercise)
+    function backup_exercise_teacher_files($bf,$preferences, $exerciseid) {
 
         global $CFG;
        
@@ -270,12 +312,49 @@
         //First we check to moddata exists and create it as necessary
         //in temp/backup/$backup_code  dir
         $status = check_and_create_moddata_dir($preferences->backup_unique_code);
-        //Now copy the exercise dir
+        //in temp/backup/$backup_code/moddate create the exercise diretory
+        $status = check_dir_exists("$CFG->dataroot/temp/backup/$preferences->backup_unique_code/moddata/exercise", true);
         if ($status) {
-            //Only if it exists !! Thanks to Daniel Miksik.
-            if (is_dir($CFG->dataroot."/".$preferences->backup_course."/".$CFG->moddata."/exercise")) {
-                $status = backup_copy_file($CFG->dataroot."/".$preferences->backup_course."/".$CFG->moddata."/exercise",
-                                           $CFG->dataroot."/temp/backup/".$preferences->backup_unique_code."/moddata/exercise");
+            //Now copy the submission dirs
+            if ($submissions = get_records_select("exercise_submissions", "exerciseid = $exerciseid
+                        AND isexercise = 1")) {
+                foreach ($submissions as $submission) {
+                    //Only if it exists !! Thanks to Daniel Miksik.
+                    if (is_dir("{$CFG->dataroot}/$preferences->backup_course/{$CFG->moddata}/exercise/$submission->id")) {
+                        // create directory
+                        // $status = check_dir_exists("$CFG->dataroot/temp/backup/$preferences->backup_unique_code/moddata/exercise", true);
+                        // copy all the files in the directory
+                        $status = backup_copy_file("{$CFG->dataroot}/$preferences->backup_course/{$CFG->moddata}/exercise/$submission->id", "{$CFG->dataroot}/temp/backup/$preferences->backup_unique_code/moddata/exercise/$submission->id");
+                    }
+                }
+            }
+        }
+
+        return $status;
+
+    } 
+
+    //Backup students' exercise files because we've selected to backup user info
+    //and files are user info's level
+    function backup_exercise_student_files($bf,$preferences, $exerciseid) {
+
+        global $CFG;
+       
+        $status = true;
+
+        //First we check to moddata exists and create it as necessary
+        //in temp/backup/$backup_code  dir
+        $status = check_and_create_moddata_dir($preferences->backup_unique_code);
+        if ($status) {
+            //Now copy the submission dirs
+            if ($submissions = get_records_select("exercise_submissions", "exerciseid = $exerciseid
+                        AND isexercise = 0")) {
+                foreach ($submissions as $submission) {
+                    //Only if it exists !! Thanks to Daniel Miksik.
+                    if (is_dir("{$CFG->dataroot}/$preferences->backup_course/$CFG->moddata/exercise/$submission->id")) {
+                        $status = backup_copy_file("{$CFG->dataroot}/$preferences->backup_course/{$CFG->moddata}/exercise/$submission->id", "{$CFG->dataroot}/temp/backup/$preferences->backup_unique_code/moddata/exercise/$submission->id");
+                    }
+                }
             }
         }
 

@@ -81,12 +81,9 @@
                 backup_putid($restore->backup_unique_code,$mod->modtype,
                              $mod->id, $newid);
                 //We have to restore the exercise_elements table now (course level table)
-                $status = exercise_elements_restore_mods($newid,$info,$restore);
-                //Now check if want to restore user data and do it.
-                if ($restore->mods['exercise']->userinfo) {
-                    //Restore exercise_submissions
-                    $status = exercise_submissions_restore_mods ($mod->id, $newid,$info,$restore);
-                }
+                $status = exercise_elements_restore($newid,$info,$restore);
+                //restore the teacher submissions and optionally the student submissions
+                $status = exercise_submissions_restore($mod->id, $newid,$info,$restore);
             } else {
                 $status = false;
             }
@@ -102,7 +99,7 @@
     }
 
     //This function restores the exercise_elements
-    function exercise_elements_restore_mods($exercise_id,$info,$restore) {
+    function exercise_elements_restore($exercise_id,$info,$restore) {
 
         global $CFG;
 
@@ -140,7 +137,7 @@
 
             if ($newid) {
                 //We have to restore the exercise_rubrics table now (course level table)
-                $status = exercise_rubrics_restore_mods($exercise_id,$element->elementno,$ele_info,$restore);
+                $status = exercise_rubrics_restore($exercise_id,$element->elementno,$ele_info,$restore);
             } else {
                 $status = false;
             }
@@ -151,50 +148,52 @@
 
 
     //This function restores the exercise_rubrics
-    function exercise_rubrics_restore_mods($exercise_id,$elementno,$info,$restore) {
+    function exercise_rubrics_restore($exercise_id,$elementno,$info,$restore) {
 
         global $CFG;
 
         $status = true;
 
-        //Get the exercise_rubrics array
-        $rubrics = $info['#']['RUBRICS']['0']['#']['RUBRIC'];
+        //Get the exercise_rubrics array (optional)
+        if (isset($info['#']['RUBRICS']['0']['#']['RUBRIC'])) {
+            $rubrics = $info['#']['RUBRICS']['0']['#']['RUBRIC'];
 
-        //Iterate over exercise_rubrics
-        for($i = 0; $i < sizeof($rubrics); $i++) {
-            $rub_info = $rubrics[$i];
-            //traverse_xmlize($rub_info);                                                          //Debug
-            //print_object ($GLOBALS['traverse_array']);                                           //Debug
-            //$GLOBALS['traverse_array']="";                                                       //Debug
+            //Iterate over exercise_rubrics
+            for($i = 0; $i < sizeof($rubrics); $i++) {
+                $rub_info = $rubrics[$i];
+                //traverse_xmlize($rub_info);                                  //Debug
+                //print_object ($GLOBALS['traverse_array']);                   //Debug
+                //$GLOBALS['traverse_array']="";                               //Debug
 
-            //Now, build the exercise_RUBRICS record structure
-            $rubric->exerciseid = $exercise_id;
-            $rubric->elementno = $elementno;
-            $rubric->rubricno = backup_todb($rub_info['#']['RUBRICNO']['0']['#']);
-            $rubric->description = backup_todb($rub_info['#']['DESCRIPTION']['0']['#']);
+                //Now, build the exercise_RUBRICS record structure
+                $rubric->exerciseid = $exercise_id;
+                $rubric->elementno = $elementno;
+                $rubric->rubricno = backup_todb($rub_info['#']['RUBRICNO']['0']['#']);
+                $rubric->description = backup_todb($rub_info['#']['DESCRIPTION']['0']['#']);
 
-            //The structure is equal to the db, so insert the exercise_rubrics
-            $newid = insert_record ("exercise_rubrics",$rubric);
+                //The structure is equal to the db, so insert the exercise_rubrics
+                $newid = insert_record ("exercise_rubrics",$rubric);
 
-            //Do some output
-            if (($i+1) % 10 == 0) {
-                echo ".";
-                if (($i+1) % 200 == 0) {
-                    echo "<br>";
+                //Do some output
+                if (($i+1) % 10 == 0) {
+                    echo ".";
+                    if (($i+1) % 200 == 0) {
+                        echo "<br>";
+                    }
+                    backup_flush(300);
                 }
-                backup_flush(300);
-            }
 
-            if (!$newid) {
-                $status = false;
+                if (!$newid) {
+                    $status = false;
+                }
             }
         }
         return $status;
     }
 
 
-    //This function restores the exercise_submissions
-    function exercise_submissions_restore_mods($old_exercise_id, $new_exercise_id,$info,$restore) {
+    //This function restores the submissions
+    function exercise_submissions_restore($old_exercise_id, $new_exercise_id,$info,$restore) {
 
         global $CFG;
 
@@ -223,105 +222,110 @@
             $submission->mailed = backup_todb($sub_info['#']['MAILED']['0']['#']);
             $submission->isexercise = backup_todb($sub_info['#']['ISEXERCISE']['0']['#']);
 
-            //We have to recode the userid field
-            $user = backup_getid($restore->backup_unique_code,"user",$olduserid);
-            if ($user) {
-                $submission->userid = $user->new_id;
-            }
-
-            //The structure is equal to the db, so insert the exercise_submission
-            $newid = insert_record ("exercise_submissions",$submission);
-
-            //Do some output
-            if (($i+1) % 50 == 0) {
-                echo ".";
-                if (($i+1) % 1000 == 0) {
-                    echo "<br>";
+            //test if this is from teacher or we restoring student submissions
+            if ($submission->isexercise or $restore->mods['exercise']->userinfo) {
+                //We have to recode the userid field
+                $user = backup_getid($restore->backup_unique_code,"user",$olduserid);
+                if ($user) {
+                    $submission->userid = $user->new_id;
                 }
-                backup_flush(300);
-            }
 
-            if ($newid) {
-                //We have the newid, update backup_ids
-                backup_putid($restore->backup_unique_code,"exercise_submissions",$oldid,
-                             $newid);
+                //The structure is equal to the db, so insert the exercise_submission
+                $newid = insert_record ("exercise_submissions",$submission);
 
-                //Now copy moddata associated files
-                $status = exercise_restore_files ($oldid, $newid,$restore); 
-                //Now we need to restore exercise_assessments (user level table)
-                if ($status) {
-                    $status = exercise_assessments_restore_mods ($new_exercise_id, $newid,$sub_info,$restore);
+                //Do some output
+                if (($i+1) % 50 == 0) {
+                    echo ".";
+                    if (($i+1) % 1000 == 0) {
+                        echo "<br>";
+                    }
+                    backup_flush(300);
                 }
-            } else {
-                $status = false;
+
+                if ($newid) {
+                    //We have the newid, update backup_ids
+                    backup_putid($restore->backup_unique_code,"exercise_submissions",$oldid,
+                            $newid);
+
+                    //Now copy moddata associated files
+                    $status = exercise_restore_files($oldid, $newid,$restore); 
+                    //Now we need to restore exercise_assessments (user level table)
+                    if ($status and $restore->mods['exercise']->userinfo) {
+                        $status = exercise_assessments_restore($new_exercise_id, $newid,$sub_info,$restore);
+                    }
+                } else {
+                    $status = false;
+                }
             }
         }
 
-        return $status;
+    return $status;
     }
 
     //This function restores the exercise_assessments       
-    function exercise_assessments_restore_mods($new_exercise_id, $new_submission_id,$info,$restore) {
+    function exercise_assessments_restore($new_exercise_id, $new_submission_id,$info,$restore) {
 
         global $CFG;
 
         $status = true;
 
-        //Get the assessments array
-        $assessments = $info['#']['ASSESSMENTS']['0']['#']['ASSESSMENT'];
+        //Get the assessments array (optional)
+        if (isset($info['#']['ASSESSMENTS']['0']['#']['ASSESSMENT'])) {
+            $assessments = $info['#']['ASSESSMENTS']['0']['#']['ASSESSMENT'];
 
-        //Iterate over assessments
-        for($i = 0; $i < sizeof($assessments); $i++) {
-            $ass_info = $assessments[$i];
-            //traverse_xmlize($ass_info);                                                         //Debug
-            //print_object ($GLOBALS['traverse_array']);                                          //Debug
-            //$GLOBALS['traverse_array']="";                                                      //Debug
+            //Iterate over assessments
+            for($i = 0; $i < sizeof($assessments); $i++) {
+                $ass_info = $assessments[$i];
+                //traverse_xmlize($ass_info);                                                         //Debug
+                //print_object ($GLOBALS['traverse_array']);                                          //Debug
+                //$GLOBALS['traverse_array']="";                                                      //Debug
 
-            //We'll need this later!!
-            $oldid = backup_todb($ass_info['#']['ID']['0']['#']);
-            $olduserid = backup_todb($ass_info['#']['USERID']['0']['#']);
+                //We'll need this later!!
+                $oldid = backup_todb($ass_info['#']['ID']['0']['#']);
+                $olduserid = backup_todb($ass_info['#']['USERID']['0']['#']);
 
-            //Now, build the exercise_ASSESSMENTS record structure
-            $assessment->exerciseid = $new_exercise_id;
-            $assessment->submissionid = $new_submission_id;
-            $assessment->userid = backup_todb($ass_info['#']['USERID']['0']['#']);
-            $assessment->timecreated = backup_todb($ass_info['#']['TIMECREATED']['0']['#']);
-            $assessment->timegraded = backup_todb($ass_info['#']['TIMEGRADED']['0']['#']);
-            $assessment->grade = backup_todb($ass_info['#']['GRADE']['0']['#']);
-            $assessment->gradinggrade = backup_todb($ass_info['#']['GRADINGGRADE']['0']['#']);
-            $assessment->mailed = backup_todb($ass_info['#']['MAILED']['0']['#']);
-            $assessment->generalcomment = backup_todb($ass_info['#']['GENERALCOMMENT']['0']['#']);
-            $assessment->teachercomment = backup_todb($ass_info['#']['TEACHERCOMMENT']['0']['#']);
+                //Now, build the exercise_ASSESSMENTS record structure
+                $assessment->exerciseid = $new_exercise_id;
+                $assessment->submissionid = $new_submission_id;
+                $assessment->userid = backup_todb($ass_info['#']['USERID']['0']['#']);
+                $assessment->timecreated = backup_todb($ass_info['#']['TIMECREATED']['0']['#']);
+                $assessment->timegraded = backup_todb($ass_info['#']['TIMEGRADED']['0']['#']);
+                $assessment->grade = backup_todb($ass_info['#']['GRADE']['0']['#']);
+                $assessment->gradinggrade = backup_todb($ass_info['#']['GRADINGGRADE']['0']['#']);
+                $assessment->mailed = backup_todb($ass_info['#']['MAILED']['0']['#']);
+                $assessment->generalcomment = backup_todb($ass_info['#']['GENERALCOMMENT']['0']['#']);
+                $assessment->teachercomment = backup_todb($ass_info['#']['TEACHERCOMMENT']['0']['#']);
 
-            //We have to recode the userid field
-            $user = backup_getid($restore->backup_unique_code,"user",$olduserid);
-            if ($user) {
-                $assessment->userid = $user->new_id;
-            }
-
-            //The structure is equal to the db, so insert the exercise_assessment
-            $newid = insert_record ("exercise_assessments",$assessment);
-
-            //Do some output
-            if (($i+1) % 50 == 0) {
-                echo ".";
-                if (($i+1) % 1000 == 0) {
-                    echo "<br>";
+                //We have to recode the userid field
+                $user = backup_getid($restore->backup_unique_code,"user",$olduserid);
+                if ($user) {
+                    $assessment->userid = $user->new_id;
                 }
-                backup_flush(300);
-            }
 
-            if ($newid) {
-                //We have the newid, update backup_ids
-                backup_putid($restore->backup_unique_code,"exercise_assessments",$oldid,
-                             $newid);
+                //The structure is equal to the db, so insert the exercise_assessment
+                $newid = insert_record ("exercise_assessments",$assessment);
 
-                //Now we need to restore exercise_grades (user level table)   
-                if ($status) {
-                    $status = exercise_grades_restore_mods ($new_exercise_id, $newid,$ass_info,$restore);   
+                //Do some output
+                if (($i+1) % 50 == 0) {
+                    echo ".";
+                    if (($i+1) % 1000 == 0) {
+                        echo "<br>";
+                    }
+                    backup_flush(300);
                 }
-            } else {
-                $status = false;
+
+                if ($newid) {
+                    //We have the newid, update backup_ids
+                    backup_putid($restore->backup_unique_code,"exercise_assessments",$oldid,
+                            $newid);
+
+                    //Now we need to restore exercise_grades (user level table)   
+                    if ($status) {
+                        $status = exercise_grades_restore_mods ($new_exercise_id, $newid,$ass_info,$restore);   
+                    }
+                } else {
+                    $status = false;
+                }
             }
         }
 
@@ -335,37 +339,39 @@
 
         $status = true;
 
-        //Get the grades array
-        $grades = $info['#']['GRADES']['0']['#']['GRADE'];
+        //Get the grades array (optional)
+        if (isset($info['#']['GRADES']['0']['#']['GRADE'])) {
+            $grades = $info['#']['GRADES']['0']['#']['GRADE'];
 
-        //Iterate over grades
-        for($i = 0; $i < sizeof($grades); $i++) {
-            $gra_info = $grades[$i];
-            //traverse_xmlize($gra_info);                                                            //Debug
-            //print_object ($GLOBALS['traverse_array']);                                             //Debug
-            //$GLOBALS['traverse_array']="";                                                         //Debug
+            //Iterate over grades
+            for($i = 0; $i < sizeof($grades); $i++) {
+                $gra_info = $grades[$i];
+                //traverse_xmlize($gra_info);                           //Debug
+                //print_object ($GLOBALS['traverse_array']);            //Debug
+                //$GLOBALS['traverse_array']="";                        //Debug
 
-            //Now, build the exercise_GRADES record structure
-            $grade->exerciseid = $new_exercise_id;
-            $grade->assessmentid = $new_assessment_id;
-            $grade->elementno = backup_todb($gra_info['#']['ELEMENTNO']['0']['#']);
-            $grade->feedback = backup_todb($gra_info['#']['FEEDBACK']['0']['#']);
-            $grade->grade = backup_todb($gra_info['#']['GRADE_VALUE']['0']['#']);
+                //Now, build the exercise_GRADES record structure
+                $grade->exerciseid = $new_exercise_id;
+                $grade->assessmentid = $new_assessment_id;
+                $grade->elementno = backup_todb($gra_info['#']['ELEMENTNO']['0']['#']);
+                $grade->feedback = backup_todb($gra_info['#']['FEEDBACK']['0']['#']);
+                $grade->grade = backup_todb($gra_info['#']['GRADE_VALUE']['0']['#']);
 
-            //The structure is equal to the db, so insert the exercise_grade
-            $newid = insert_record ("exercise_grades",$grade);
+                //The structure is equal to the db, so insert the exercise_grade
+                $newid = insert_record ("exercise_grades",$grade);
 
-            //Do some output
-            if (($i+1) % 50 == 0) {
-                echo ".";
-                if (($i+1) % 1000 == 0) {
-                    echo "<br>";
+                //Do some output
+                if (($i+1) % 50 == 0) {
+                    echo ".";
+                    if (($i+1) % 1000 == 0) {
+                        echo "<br>";
+                    }
+                    backup_flush(300);
                 }
-                backup_flush(300);
-            }
 
-            if (!$newid) {
-                $status = false;
+                if (!$newid) {
+                    $status = false;
+                }
             }
         }
 
