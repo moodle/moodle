@@ -590,7 +590,7 @@ $string['missingshortname'] = 'Escribir: nombre corto';
 $string['missingshortsitename'] = 'Escribir: nombre del sitio';
 $string['missingsitedescription'] = 'Escribir: descripción del sitio';
 $string['missingsitename'] = 'Escribir: nombre del sitio';
-$string['missingstrings'] = 'Revisar cadenas (strings) perdidas';
+$string['missingstrings'] = 'Revisar cadenas (\'strings\') perdidas';
 $string['missingstudent'] = 'Debe elegir algo';
 $string['missingsummary'] = 'No hay resumen';
 $string['missingteacher'] = 'Debe elegir algo';
@@ -629,14 +629,20 @@ $string['new'] = 'Nuevo';
 $string['newaccount'] = 'Nueva cuenta';
 $string['newcourse'] = 'Nuevo curso';
 $string['newpassword'] = 'Nueva contraseña';
-$string['newpasswordtext'] = 'Hola $a->firstname,
-La contraseña de su cuenta en \'$a->sitename\' se ha cancelado y se le ha otorgado una nueva contraseña temporal.
-   Nombre de usuario: $a->username
+$string['newpasswordtext'] = 'Hola, $a->firstname,
 
-   Contraseña: $a->newpassword
-Dirígase a esta página y cambie su contraseña temporal por una que pueda recordar mejor:
+La contraseña de su cuenta en \'$a->sitename\' se ha cancelado y se le ha otorgado una nueva contraseña temporal. Su nueva información de acceso es:
 
-   $a->link
+Nombre de usuario: $a->username
+
+Contraseña: $a->newpassword
+
+Diríjase por favor a esta página y cambie su contraseña temporal por una que pueda recordar mejor:
+
+$a->link
+
+En la mayoría de los programas de correo electrónico el enlace anterior aparecerá como una línea de texto en azul sobre la que puede hacer clic. Si eso no sucede, copie y pegue la dirección en la barra de direcciones de su navegador.
+
 Atte. \'$a->sitename\' El Administrador,
 
 $a->signoff';
@@ -650,15 +656,15 @@ $string['next'] = 'Siguiente';
 $string['no'] = 'No';
 $string['nocoursesfound'] = 'No se encontraron cursos con las palabras $a';
 $string['nocoursesyet'] = 'No hay cursos en esta categoría';
-$string['noexistingadmins'] = 'No existe administrador. Este es un error serio. Entre en contacto con su Administrador del Sistema.';
+$string['noexistingadmins'] = 'No existe administrador. Este es un error serio y nunca debería haber visto este mensaje.';
 $string['noexistingcreators'] = 'No hay creadores';
 $string['noexistingstudents'] = 'No hay estudiantes';
 $string['noexistingteachers'] = 'No hay profesores';
 $string['nofilesselected'] = 'No se ha seleccionado ningún archivo para restaurar';
-$string['nofilesyet'] = 'Aún no se han colocado archivos en su curso';
+$string['nofilesyet'] = 'Aún no se han subido archivos a su curso';
 $string['nograde'] = 'No hay calificación';
-$string['noimagesyet'] = 'Aún no se han colocado imágenes en su curso';
-$string['nomorecourses'] = 'No se encontraron más cursos ';
+$string['noimagesyet'] = 'Aún no se han subido  imágenes en su curso';
+$string['nomorecourses'] = 'No se encontraron más cursos que cumplan el criterio';
 $string['none'] = 'Ninguno';
 $string['nopotentialadmins'] = 'No hay administradores potenciales';
 $string['nopotentialcreators'] = 'No hay creadores potenciales';
@@ -740,11 +746,11 @@ $string['recentactivityreport'] = 'Informe completo de la actividad reciente...'
 $string['refreshingevents'] = 'Refrescando eventos';
 $string['registration'] = 'Registro';
 $string['registrationemail'] = 'Notificaciones por correo electrónico';
-$string['registrationinfo'] = '<p>Esta página le permite registrar si sitio Moodle en moodle.org. el registro es gratuito.
+$string['registrationinfo'] = '<p>Esta página le permite registrar si sitio Moodle en moodle.org. El registro es gratuito.
 El principal beneficio del registro es que usted será incluido en una lista de correo de bajo volumen para notificaciones importantes como alertas de seguridad y nuevos lanzamientos de Moodle.
-<p>Su información será confidencial, y nunca será vendida o transmitida a nadia más. La única razón para recolectar esta información es para el soporte y para ayudar a costruir un cuadro estadístico de la comunidad Moodle.
+<p>Su información será confidencial, y nunca será vendida o transmitida a nadie más. La única razón para recopilar esta información es prestarle apoyo y ayudar a costruir un cuadro estadístico de la comunidad Moodle.
 <p>Si lo desea, puede escribir el nombre de su sitio, país y URL para que aparezca en la lista pública de los sitios que usan Moodle.
-<p>Todos los registros son verificados manualmente antes de ser colocados en la lista, pero una vez en ella, pueden actualizar su registro (y sus datos en la lista pública) en cualquier momento llenado este formulario otra vez.';
+<p>Todos los registros son verificados manualmente antes de ser colocados en la lista, pero una vez en ella, puede actualizar su registro (y sus datos en la lista pública) en cualquier momento rellenado este formulario otra vez.';
 $string['registrationno'] = 'No deseo recibir notificaciones por correo electrónico';
 $string['registrationsend'] = 'Enviar mi información de registro a moodle.org';
 $string['registrationyes'] = 'Sí, envíeme notificaciones por correo electrónico';
@@ -824,6 +830,7 @@ $string['sitefiles'] = 'Archivos del sitio';
 $string['sitelogs'] = 'Registros';
 $string['sitenews'] = 'Novedades';
 $string['sites'] = 'Sitios';
+$string['sitesection'] = 'Incluir una sección de tema';
 $string['sitesettings'] = 'Configurar página';
 $string['size'] = 'Tamaño';
 $string['sizeb'] = 'bytes';
