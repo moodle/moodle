@@ -688,6 +688,7 @@ function wiki_to_html($text) {
 
 function html_to_text($html) {
 /// Given HTML text, make it into plain text using external function
+    global $CFG;
 
     require_once("$CFG->libdir/html2text.php");
 
