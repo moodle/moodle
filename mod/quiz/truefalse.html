@@ -4,7 +4,9 @@
 <TR valign=top>
     <TD align=right><P><B><?php  print_string("category", "quiz") ?>:</B></P></TD>
     <TD>
-    <?php   choose_from_menu($categories, "category", "$question->category", ""); ?>
+    <?php   
+        quiz_category_select_menu($course->id, true, true);
+     ?>
     </TD>
 </TR>
 <TR valign=top>
@@ -43,7 +45,7 @@
                echo "<div align=right>";
                print_string("formattexttype");
                echo ":&nbsp;";
-               if (!$question->questiontextformat) {
+               if (!isset($question->questiontextformat)) {
                    $question->questiontextformat = FORMAT_MOODLE;
                }
                choose_from_menu(format_text_menu(), "questiontextformat", $question->questiontextformat, "");
