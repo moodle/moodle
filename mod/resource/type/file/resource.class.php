@@ -291,7 +291,8 @@ function display() {
         echo '</script>';
 
         if (trim(strip_tags($this->resource->summary))) {
-            print_simple_box(text_to_html($this->resource->summary), "center");
+            $formatoptions->noclean = true;
+            print_simple_box(format_text($this->resource->summary, FORMAT_MOODLE, $formatoptions), "center");
         }
 
         $link = "<a href=\"$CFG->wwwroot/mod/resource/view.php?inpopup=true&id={$this->cm->id}\" target=\"resource{$this->resource->id}\" onClick=\"return openpopup('/mod/resource/view.php?inpopup=true&id={$this->cm->id}', 'resource{$this->resource->id}','{$this->resource->popup}');\">{$this->resource->name}</a>";
@@ -415,7 +416,8 @@ function display() {
         }
 
         if (trim($this->resource->summary)) {
-            print_simple_box(format_text($this->resource->summary), 'center');
+            $formatoptions->noclean = true;
+            print_simple_box(format_text($this->resource->summary, FORMAT_MOODLE, $formatoptions), "center");
         }
 
         if ($inpopup) {

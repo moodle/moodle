@@ -79,14 +79,15 @@ function display() {
     }
 
     $pagetitle = strip_tags($this->course->shortname.': '.$this->resource->name);
-
+    $formatoptions->noclean = true;
     $inpopup = !empty($_GET["inpopup"]);
 
     if ($this->resource->popup) {
         if ($inpopup) {                    /// Popup only
             add_to_log($this->course->id, "resource", "view", "view.php?id={$this->cm->id}", $this->resource->id, $this->cm->id);
             print_header();
-            print_simple_box(format_text($this->resource->alltext, FORMAT_HTML), "center", "", "$THEME->cellcontent", "20");
+            print_simple_box(format_text($this->resource->alltext, FORMAT_HTML, $formatoptions), 
+                                         "center", "", "$THEME->cellcontent", "20");
         } else {                           /// Make a page and a pop-up window
 
             print_header($pagetitle, $this->course->fullname, "$navigation {$this->resource->name}", 
@@ -100,7 +101,7 @@ function display() {
             echo '</script>';
     
             if (trim(strip_tags($this->resource->summary))) {
-                print_simple_box(format_text($this->resource->summary, FORMAT_HTML), "center");
+                print_simple_box(format_text($this->resource->summary, FORMAT_MOODLE, $formatoptions), "center");
             }
     
             $link = "<a href=\"$CFG->wwwroot/mod/resource/view.php?inpopup=true&id={$this->cm->id}\" target=\"resource{$this->resource->id}\" onClick=\"return openpopup('/mod/resource/view.php?inpopup=true&id={$this->cm->id}', 'resource{$this->resource->id}','{$this->resource->popup}');\">{$this->resource->name}</a>";
@@ -121,7 +122,7 @@ function display() {
                      "", "", true, update_module_button($this->cm->id, $this->course->id, $strresource), 
                      navmenu($this->course, $this->cm));
     
-        print_simple_box(format_text($this->resource->alltext, FORMAT_HTML), "center", "", "$THEME->cellcontent", "20");
+        print_simple_box(format_text($this->resource->alltext, FORMAT_HTML, $formatoptions), "center", "", "$THEME->cellcontent", "20");
     
         echo "<center><p><font size=1>$strlastmodified: ".userdate($this->resource->timemodified)."</p></center>";
     

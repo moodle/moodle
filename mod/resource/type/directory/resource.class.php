@@ -71,7 +71,8 @@ function display() {
     }
 
     if (trim(strip_tags($this->resource->summary))) {
-        print_simple_box(text_to_html($this->resource->summary), "center");
+        $formatoptions->noclean = true;
+        print_simple_box(format_text($this->resource->summary, FORMAT_MOODLE, $formatoptions), "center");
         print_spacer(10,10);
     }
 
