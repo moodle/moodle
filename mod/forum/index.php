@@ -23,6 +23,8 @@
         require_login($course->id);
     }
 
+    $currentgroup = get_current_group($course->id);
+
     unset($SESSION->fromdiscussion);
 
     add_to_log($course->id, "forum", "view forums", "index.php?id=$course->id");
@@ -48,24 +50,38 @@
 
     $learningtable = $generaltable;   // Headers etc are the same
 
-    // Parse the forums
+    // Parse and organise all the forums.  Most forums are course modules but 
+    // some special ones are not.  These get placed in the general forums 
+    // category with the forums in section 0.
 
-    if ($forums = get_records("forum", "course", $id, "name ASC")) {
+    $generalforums = array();            // For now
+    $learningforums = get_all_instances_in_course("forum", $course);
+
+    if ($forums = get_records("forum", "course", $id, "name ASC")) {  // All known forums
+
+        if ($learningforums) {           // Copy "full" data into this complete array
+            foreach ($learningforums as $learningforum) {
+                $forum[$learningforum->id] = $learningforum;
+            }
+        }
+
         foreach ($forums as $forum) {
-            $forum->visible = true;
             switch ($forum->type) {
                 case "news":
                 case "social":
-                    $forum->visible = instance_is_visible("forum", $forum);
                     $generalforums[] = $forum;
+                    if (isset($forum->coursemodule)) {   // Should always be
+                        unset($learningforums[$forum->coursemodule]);
+                    }
                     break;
                 case "teacher": 
                     if (isteacher($course->id)) {
+                        $forum->visible = true;
                         $generalforums[] = $forum;
                     }
                     break;
                 default:
-                    if (!$course->category) {
+                    if (!$course->category) {      // On site level all forums are general forums
                         $generalforums[] = $forum;
                     }
                     break;
@@ -73,24 +89,76 @@
         }
     }
 
+    /// First, let's process the general forums and build up a display
+
+    if ($generalforums) {
+        foreach ($generalforums as $forum) {
+            if (isset($forum->groupmode)) {
+                $groupmode = groupmode($course, $forum);  /// Can do this because forum->groupmode is defined
+            } else {
+                $groupmode = NOGROUPS;
+            }
+                
+            if ($groupmode == SEPARATEGROUPS and !isteacheredit($course->id)) {
+                $count = count_records("forum_discussions", "groupid", $currentgroup);
+            } else {
+                $count = count_records("forum_discussions", "forum", "$forum->id");
+            }
+           
+            $forum->intro = forum_shorten_post($forum->intro);
+            replace_smilies($forum->intro);
+            $forum->intro = "<span style=\"font-size:x-small;\">$forum->intro</span>";;
+
+            if ($forum->visible) {
+                $forumlink = "<a href=\"view.php?f=$forum->id\">$forum->name</a>";
+            } else {
+                $forumlink = "<a class=\"dimmed\" href=\"view.php?f=$forum->id\">$forum->name</a>";
+            }
+
+            if ($can_subscribe) {
+                if (forum_is_forcesubscribed($forum->id)) {
+                    $sublink = get_string("yes");
+                } else {
+                    if ($groupmode and !isteacheredit($course->id) and !mygroupid($course->id)) {
+                        $sublink = get_string("no");   // Can't subscribe to a group forum (not in a group)
+                        $forumlink = $forum->name;
+                    } else {
+                        if (forum_is_subscribed($USER->id, $forum->id)) {
+                            $subscribed = get_string("yes");
+                            $subtitle = get_string("unsubscribe", "forum");
+                        } else {
+                            $subscribed = get_string("no");
+                            $subtitle = get_string("subscribe", "forum");
+                        }
+                        $sublink = "<a title=\"$subtitle\" href=\"subscribe.php?id=$forum->id\">$subscribed</a>";
+                    }
+                }
+                $generaltable->data[] = array ($forumlink, "$forum->intro", "$count", $sublink);
+            } else {
+                $generaltable->data[] = array ($forumlink, "$forum->intro", "$count");
+            }
+        }
+    } 
+
+    /// Now let's process the other forums and build up a display
+
     if ($course->category) {    // Only real courses have learning forums
         // Add extra field for section number, at the front
         array_unshift($learningtable->head, "");
         array_unshift($learningtable->align, "center");
     
-        if ($learningforums = get_all_instances_in_course("forum", $course)) {
-            foreach ($learningforums as $key => $forum) {
-                if ($forum->type == "news" or $forum->type == "social") {
-                    unset($learningforums[$key]);  // Remove these
-                }
-            }
-        }
 
         if ($learningforums) {
             $currentsection = "";
 
             foreach ($learningforums as $key => $forum) {
-                $count = count_records("forum_discussions", "forum", "$forum->id");
+                $groupmode = groupmode($course, $forum);  /// Can do this because forum->groupmode is defined
+                
+                if ($groupmode == SEPARATEGROUPS and !isteacheredit($course->id)) {
+                    $count = count_records("forum_discussions", "groupid", $currentgroup);
+                } else {
+                    $count = count_records("forum_discussions", "forum", "$forum->id");
+                }
     
                 $forum->intro = forum_shorten_post($forum->intro);
                 replace_smilies($forum->intro);
@@ -122,7 +190,7 @@
                     if (forum_is_forcesubscribed($forum->id)) {
                         $sublink = get_string("yes");
                     } else {
-                        if (groupmode($course, $forum) and !isteacheredit($course->id) and !mygroupid($course->id)) {
+                        if ($groupmode and !isteacheredit($course->id) and !mygroupid($course->id)) {
                             $sublink = get_string("no");   // Can't subscribe to a group forum (not in a group)
                             $forumlink = $forum->name;
                         } else {
@@ -143,45 +211,6 @@
             }
         }
     }
-
-    if ($generalforums) {
-        foreach ($generalforums as $forum) {
-            $count = count_records("forum_discussions", "forum", "$forum->id");
-
-            $forum->intro = forum_shorten_post($forum->intro);
-            replace_smilies($forum->intro);
-            $forum->intro = "<span style=\"font-size:x-small;\">$forum->intro</span>";;
-
-            if ($forum->visible) {
-                $forumlink = "<a href=\"view.php?f=$forum->id\">$forum->name</a>";
-            } else {
-                $forumlink = "<a class=\"dimmed\" href=\"view.php?f=$forum->id\">$forum->name</a>";
-            }
-
-            if ($can_subscribe) {
-                if (forum_is_forcesubscribed($forum->id)) {
-                    $sublink = get_string("yes");
-                } else {
-                    if (groupmode($course, $forum) and !isteacheredit($course->id) and !mygroupid($course->id)) {
-                        $sublink = get_string("no");   // Can't subscribe to a group forum (not in a group)
-                        $forumlink = $forum->name;
-                    } else {
-                        if (forum_is_subscribed($USER->id, $forum->id)) {
-                            $subscribed = get_string("yes");
-                            $subtitle = get_string("unsubscribe", "forum");
-                        } else {
-                            $subscribed = get_string("no");
-                            $subtitle = get_string("subscribe", "forum");
-                        }
-                        $sublink = "<a title=\"$subtitle\" href=\"subscribe.php?id=$forum->id\">$subscribed</a>";
-                    }
-                }
-                $generaltable->data[] = array ($forumlink, "$forum->intro", "$count", $sublink);
-            } else {
-                $generaltable->data[] = array ($forumlink, "$forum->intro", "$count");
-            }
-        }
-    } 
 
 
     /// Output the page
