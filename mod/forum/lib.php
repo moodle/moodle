@@ -1087,6 +1087,12 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
 
     $output = "";
 
+    $output .= "<style> <!--";       /// Styles for autolinks
+    $output .= "a.autolink:link {text-decoration: none; background-color: $THEME->autolink}\n";
+    $output .= "a.autolink:visited {text-decoration: none; background-color: $THEME->autolink}\n";
+    $output .= "a.autolink:hover {text-decoration: underline; color: red}\n";
+    $output .= "--> </style>\n\n";
+
     if ($post->parent) {
         $output .= '<table border="0" cellpadding="1" cellspacing="1"><tr><td bgcolor="#888888">';
         $output .= '<table border="0" cellpadding="3" cellspacing="0">';
