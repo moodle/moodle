@@ -177,6 +177,7 @@ $string['PL'] = '»Ê·‰œ«';
 $string['PM'] = '”«‰  »ÌÌ— Ê„ÌﬂÊ·Ê‰';
 $string['PN'] = '» ﬂ«Ì—‰';
 $string['PR'] = '(»ÊÌ— Ê—ÌﬂÊ( «·Ê·«Ì«  «·„ Õœ… ';
+$string['PS'] = 'Palestine';
 $string['PT'] = '«·»— €«·';
 $string['PW'] = '»«·«Ê';
 $string['PY'] = '»«—«ÃÊ«Ì';
