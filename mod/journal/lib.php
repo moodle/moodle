@@ -150,5 +150,55 @@ function journal_cron () {
     return true;
 }
 
+function journal_get_users_done($course, $journal) {
+    return get_records_sql("SELECT u.* FROM user u, user_students s, user_teachers t, journal_entries j
+                            WHERE ((s.course = '$course->id' AND s.user = u.id) OR 
+                                   (t.course = '$course->id' AND t.user = u.id))
+                              AND u.id = j.user AND j.journal = '$journal->id'
+                            ORDER BY j.modified DESC");
+}
+
+function journal_print_user_entry($course, $user, $entry, $teachers) {
+    global $THEME;
+
+    echo "\n<TABLE BORDER=1 CELLSPACING=0 valign=top cellpadding=10>";
+        
+    echo "\n<TR>";
+    echo "\n<TD ROWSPAN=2 BGCOLOR=\"$THEME->body\" WIDTH=35 VALIGN=TOP>";
+    print_user_picture($user->id, $course->id, $user->picture);
+    echo "</TD>";
+    echo "<TD NOWRAP WIDTH=100% BGCOLOR=\"$THEME->cellheading\">$user->firstname $user->lastname";
+    if ($entry) {
+        echo "&nbsp;&nbsp;<FONT SIZE=1>Last edited: ".userdate($entry->modified)."</FONT>";
+    }
+    echo "</TR>";
+
+    echo "\n<TR><TD WIDTH=100% BGCOLOR=\"$THEME->cellcontent\">";
+    if ($entry) {
+        echo text_to_html($entry->text);
+    } else {
+        echo "No entry";
+    }
+    echo "</TD></TR>";
+
+    if ($entry) {
+        echo "\n<TR>";
+        echo "<TD WIDTH=35 VALIGN=TOP>";
+        if (!$entry->teacher) {
+            $entry->teacher = $USER->id;
+        }
+        print_user_picture($entry->teacher, $course->id, $teachers[$entry->teacher]->picture);
+        echo "<TD BGCOLOR=\"$THEME->cellheading\">Teacher Feedback:";
+        choose_from_menu($RATING, "r$entry->id", $entry->rating, "Rate...");
+        if ($entry->timemarked) {
+            echo "&nbsp;&nbsp;<FONT SIZE=1>".userdate($entry->timemarked)."</FONT>";
+        }
+        echo "<BR><TEXTAREA NAME=\"c$entry->id\" ROWS=4 COLS=60 WRAP=virtual>";
+        p($entry->comment);
+        echo "</TEXTAREA><BR>";
+        echo "</TD></TR>";
+    }
+    echo "</TABLE><BR CLEAR=ALL>\n";
+}
 
 ?>

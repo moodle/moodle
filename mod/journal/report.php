@@ -26,12 +26,12 @@
     // make some easy ways to access the entries.
     if ( $eee = get_records_sql("SELECT * FROM journal_entries WHERE journal='$journal->id'")) {
         foreach ($eee as $ee) {
-            $entrybystudent[$ee->user] = $ee;
+            $entrybyuser[$ee->user] = $ee;
             $entrybyentry[$ee->id]     = $ee;
         }
         
     } else {
-        $entrybystudent = array () ;
+        $entrybyuser = array () ;
         $entrybyentry   = array () ;
     }
 
@@ -66,87 +66,48 @@
                                          WHERE id = '$num'")) {
                     error("Failed to update the journal feedback!");
                 }
-                $entrybystudent[$entry->user]->comment = $vals[c];
-                $entrybystudent[$entry->user]->rating = $vals[r];
-                $entrybystudent[$entry->user]->timemarked = $timenow;
-                $entrybystudent[$entry->user]->teacher = $USER->id;
+                $entrybyuser[$entry->user]->comment = $vals[c];
+                $entrybyuser[$entry->user]->rating = $vals[r];
+                $entrybyuser[$entry->user]->timemarked = $timenow;
+                $entrybyuser[$entry->user]->teacher = $USER->id;
                 $count++;
             }
         }
-        add_to_log($course->id, "journal", "update feedback", "report.php?id=$cm->id", "$count students");
+        add_to_log($course->id, "journal", "update feedback", "report.php?id=$cm->id", "$count users");
         notify("Journal feedback updated for $count people.");
     } else {
         add_to_log($course->id, "journal", "view responses", "report.php?id=$cm->id", "$journal->id");
     }
 
 
-    if (! $students = get_records_sql("SELECT u.* FROM user u, user_students s, user_teachers t
-                                       WHERE (s.course = '$course->id' AND s.user = u.id) OR 
-                                             (t.course = '$course->id' AND t.user = u.id)
-                                       ORDER BY u.lastaccess DESC")) {
-        notify("No students", "$CFG->wwwroot/course/view.php?id=$course->id");
-        die;
-    }
+    $teachers = get_course_teachers($course->id);
+    if (! $users = get_course_users($course->id)) {
+        print_heading("No users in this course yet");
 
-    if (! $teachers = get_records_sql("SELECT u.* FROM user u, user_teachers t 
-                                       WHERE t.course = '$course->id' AND t.user = u.id
-                                       ORDER BY u.lastaccess DESC")) {
-        notify("No teachers", "$CFG->wwwroot/course/view.php?id=$course->id");
-        die;
-    }
+    } else {
+        echo "<FORM ACTION=report.php METHOD=post>\n";
 
-    echo "<FORM ACTION=report.php METHOD=post>\n";
-    foreach ($students as $student) {
-        $entry = $entrybystudent[$student->id];
-
-        echo "\n<TABLE BORDER=1 CELLSPACING=0 valign=top cellpadding=10>";
-
-        echo "\n<TR>";
-        echo "\n<TD ROWSPAN=2 BGCOLOR=\"$THEME->body\" WIDTH=35 VALIGN=TOP>";
-        print_user_picture($student->id, $course->id, $student->picture);
-        echo "</TD>";
-        echo "<TD NOWRAP WIDTH=100% BGCOLOR=\"$THEME->cellheading\">$student->firstname $student->lastname";
-        if ($entry) {
-            echo "&nbsp;&nbsp;<FONT SIZE=1>Last edited: ".userdate($entry->modified)."</FONT>";
-        }
-        echo "</TR>";
-
-        echo "\n<TR><TD WIDTH=100% BGCOLOR=\"$THEME->cellcontent\">";
-        if ($entry) {
-            echo text_to_html($entry->text);
-        } else {
-            echo "No entry";
-        }
-        echo "</TD></TR>";
-
-        if ($entry) {
-            echo "\n<TR>";
-            echo "<TD WIDTH=35 VALIGN=TOP>";
-            if (!$entry->teacher) {
-                $entry->teacher = $USER->id;
+        if ($usersdone = journal_get_users_done($course, $journal)) {
+            foreach ($usersdone as $user) {
+                $entry = $entrybyuser[$user->id];
+                journal_print_user_entry($course, $user, $entry, $teachers);
             }
-            print_user_picture($entry->teacher, $course->id, $teachers[$entry->teacher]->picture);
-            echo "<TD BGCOLOR=\"$THEME->cellheading\">Teacher Feedback:";
-            choose_from_menu($RATING, "r$entry->id", $entry->rating, "Rate...");
-            if ($entry->timemarked) {
-                echo "&nbsp;&nbsp;<FONT SIZE=1>".userdate($entry->timemarked)."</FONT>";
-            }
-            echo "<BR><TEXTAREA NAME=\"c$entry->id\" ROWS=4 COLS=60 WRAP=virtual>";
-            p($entry->comment);
-            echo "</TEXTAREA><BR>";
-            echo "</TD></TR>";
         }
-        echo "</TABLE><BR CLEAR=ALL>\n";
 
+        foreach ($users as $user) {
+            if (! $usersdone[$user->id]) {
+                $entry = NULL;
+                journal_print_user_entry($course, $user, $entry, $teachers);
+            }
+        }
+        echo "<CENTER>";
+        echo "<INPUT TYPE=hidden NAME=id VALUE=\"$cm->id\">";
+        echo "<INPUT TYPE=submit VALUE=\"Save all my feedback\">";
+        echo "</CENTER>";
+        echo "</FORM>";
     }
-    echo "<CENTER>";
-    echo "<INPUT TYPE=hidden NAME=id VALUE=\"$cm->id\">";
-    echo "<INPUT TYPE=submit VALUE=\"Save all my feedback\">";
-    echo "</CENTER>";
-    echo "</FORM>";
-
+    
     print_footer($course);
-
  
 ?>
 
