@@ -8,6 +8,7 @@
        "changepassword"   =>  true,
        "country"          => "",
        "debug"            =>  7,
+       "secureforms"      =>  true,
        "framename"        =>  "_top",
        "gdversion"        =>  1,
        "guestloginbutton" =>  1,

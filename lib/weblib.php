@@ -134,11 +134,11 @@ function match_referer($goodreferer = "") {
 /// goodreferer is not specified, use qualified_me as the goodreferer 
     global $CFG;
 
-    if (!empty($CFG->buggy_referer)) {
+    if (empty($CFG->secureforms)) {    // Don't bother checking referer
         return true;
     }
 
-    if ($goodreferer == "nomatch") {
+    if ($goodreferer == "nomatch") {   // Don't bother checking referer
         return true;
     }
 

@@ -111,7 +111,7 @@ $CFG->directorypermissions = 0777;
 
 
 //=========================================================================
-// 6. ADMIN LOCATION  (most people can just ignore this setting)
+// 6. DIRECTORY LOCATION  (most people can just ignore this setting)
 //=========================================================================
 // A very few webhosts use /admin as a special URL for you to access a 
 // control panel or something.  Unfortunately this conflicts with the 
@@ -120,18 +120,6 @@ $CFG->directorypermissions = 0777;
 // new name here.  eg "moodleadmin".  This will fix admin links in Moodle.
 
 $CFG->admin = "admin";
-
-
-//=========================================================================
-// 7. TROUBLESHOOTING  (most people can just ignore this setting)
-//=========================================================================
-// A very small percentage of servers have a bug which causes HTTP_REFERER
-// not to work.  The symptoms of this are that you fill out the configure
-// form during Moodle setup but when hit save you find yourself on the 
-// same form, unable to progress.  If this happens to you, come back here
-// and set the following to true.  Otherwise this should always be false.
-
-$CFG->buggy_referer = false;
 
 
 //=========================================================================

@@ -33,9 +33,16 @@
     }
 
 
+/// This is to overcome the "insecure forms paradox"
+    if (isset($secureforms) and $secureforms == 0) {
+        $match = "nomatch";
+    } else {
+        $match = "";
+    }
+
 /// If data submitted, then process and store.
 
-	if ($config = data_submitted()) {
+	if ($config = data_submitted($match)) {  
 
         validate_form($config, $err);
 
