@@ -237,8 +237,8 @@ color: black;
         </table>
         <div class="space"></div>
         </fieldset>
-        </form>
-        </td>
+      </form>
+      </td>
     </tr>
   </table>
   <table border="0" cellpadding="2" cellspacing="0">
@@ -246,7 +246,7 @@ color: black;
           <td><form name="idelete" id="idelete">
           <input name="btnDelete" type="submit" id="btnDelete" value="<?php print_string("delete","editor");?>" onclick="return submit_form('delete');" /></form></td>
           <td><form name="imove" id="imove">
-          <input name="btnMove" type="submit" id="btnMove" value="<?php print_string("move","editor");?>" onclick="return submit_form('move');" /></td>
+          <input name="btnMove" type="submit" id="btnMove" value="<?php print_string("move","editor");?>" onclick="return submit_form('move');" /></form></td>
           <td><form name="izip" id="izip">
           <input name="btnZip" type="submit" id="btnZip" value="<?php print_string("zip","editor");?>" onclick="return submit_form('zip');" /></form></td>
           <td><form name="irename" id="irename" method="post" action="../coursefiles.php" target="fbrowser">
@@ -267,7 +267,6 @@ color: black;
           <input name="name" type="text" id="foldername" size="35" />
           <input name="btnCfolder" type="submit" id="btnCfolder" value="<?php print_string("createfolder","editor");?>" onclick="return checkvalue('foldername','cfolder');" />
           </form>
-          <div class="space"></div>
           <form action="../coursefiles.php?id=<?php print($course->id);?>" method="post" enctype="multipart/form-data" name="uploader" target="fbrowser" id="uploader">
           <input type="hidden" name="MAX_FILE_SIZE" value="<?php print($upload_max_filesize);?>" />
           <input type="hidden" name="id" VALUE="<?php print($course->id);?>" />
