@@ -19,8 +19,8 @@
 <tr>
     <td align="right" valign="top"><?php print_string("editorcleanonpaste");?>:</td>
     <td valign="top"><select name="killword">
-    <option value="1"<?php print(!$CFG->editorkillword)?"":" selected=\"selected\"";?>>Yes</option>
-    <option value="0"<?php print(!$CFG->editorkillword)?" selected=\"selected\"":"";?>>No</option>
+    <option value="1"<?php print(!$CFG->editorkillword)?"":" selected=\"selected\"";?>><?php print_string("yes");?></option>
+    <option value="0"<?php print(!$CFG->editorkillword)?" selected=\"selected\"":"";?>><?php print_string("no");?></option>
     </select></td>
     <td valign="top"><?php print_string("edhelpcleanword");?></td>
 </tr>
@@ -32,8 +32,8 @@
         $CFG->editorspelling = false;
     }
     ?>>
-    <option value="1"<?php print(!$CFG->editorspelling)?"":" selected=\"selected\"";?>>Yes</option>
-    <option value="0"<?php print(!$CFG->editorspelling)?" selected=\"selected\"":"";?>>No</option>
+    <option value="1"<?php print(!$CFG->editorspelling)?"":" selected=\"selected\"";?>><?php print_string("yes");?></option>
+    <option value="0"<?php print(!$CFG->editorspelling)?" selected=\"selected\"":"";?>><?php print_string("no");?></option>
     </select></td>
     <td valign="top"><?php print_string("edhelpenablespelling");?></td>
 </tr>
