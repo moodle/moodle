@@ -14,7 +14,7 @@
 
 	if ($form = data_submitted()) {
 
-        if (isset($USER)) {             // Additional identity check
+        if (!empty($USER->id)) {             // Additional identity check
             if (!confirm_sesskey()) {
                 error(get_string('confirmsesskeybad', 'error'));
             }
@@ -120,7 +120,7 @@
     $usehtmleditor = can_use_html_editor();
     $defaultformat = FORMAT_HTML;
 
-    $sesskey = isset($USER) ? $USER->sesskey : '';
+    $sesskey = !empty($USER->id) ? $USER->sesskey : '';
 
     print_simple_box_start("center", "", "$THEME->cellheading");
     include("site.html");

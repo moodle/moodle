@@ -3,7 +3,6 @@
 
     require_once("../config.php");
 
-
     if ($site = get_site()) {   // If false then this is a new installation
         require_login();
         if (!isadmin()) {
@@ -22,7 +21,7 @@
 
 	if ($config = data_submitted($match)) {  
 
-        if (isset($USER)) {             // Additional identity check
+        if (!empty($USER->id)) {             // Additional identity check
             if (!confirm_sesskey()) {
                 error(get_string('confirmsesskeybad', 'error'));
             }
@@ -88,7 +87,7 @@
         echo "<br />";
     }
 
-    $sesskey = isset($USER) ? $USER->sesskey : '';
+    $sesskey = !empty($USER->id) ? $USER->sesskey : '';
 
     print_simple_box_start("center", "", "$THEME->cellheading");
 	include("config.html");
